@@ -1272,6 +1272,7 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 		case 'restricthtmlnolink':
 		case 'restricthtml':		// Recommended for most html textarea
 		case 'restricthtmlallowclass':
+		case 'restricthtmlallowlinkscript':	// Allow link and script tag for head section.
 		case 'restricthtmlallowunvalid':
 			$out = dol_htmlwithnojs($out, 1, $check);
 			break;
@@ -2220,9 +2221,8 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 	}
 
 	if (!empty($message)) {
-		// Test log level
-		// @phan-suppress-next-line PhanPluginDuplicateArrayKey
-		$logLevels = array(LOG_EMERG => 'EMERG', LOG_ALERT => 'ALERT', LOG_CRIT => 'CRITICAL', LOG_ERR => 'ERR', LOG_WARNING => 'WARN', LOG_NOTICE => 'NOTICE', LOG_INFO => 'INFO', LOG_DEBUG => 'DEBUG');
+		// Test log level  @phan-ignore-next-line PhanPluginDuplicateArrayKey
+		$logLevels = array(LOG_EMERG => 'EMERG', LOG_ALERT => 'ALERT', LOG_CRIT => 'CRITICAL', LOG_ERR => 'ERR', LOG_WARNING => 'WARN', LOG_NOTICE => 'NOTICE',LOG_INFO => 'INFO', LOG_DEBUG => 'DEBUG');
 		if (!array_key_exists($level, $logLevels)) {
 			throw new Exception('Incorrect log level');
 		}
@@ -3431,7 +3431,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 		$smin	= (!empty($reg[5]) ? $reg[5] : '');
 		$ssec	= (!empty($reg[6]) ? $reg[6] : '');
 
-		$time = dol_mktime($shour, $smin, $ssec, $smonth, $sday, $syear, true);
+		$time = dol_mktime((int) $shour, (int) $smin, (int) $ssec, (int) $smonth, (int) $sday, (int) $syear, true);
 
 		if ($to_gmt) {
 			$tzo = new DateTimeZone('UTC');	// when to_gmt is true, base for offsettz and offsetdst (so timetouse) is UTC
@@ -4544,8 +4544,8 @@ function dol_user_country()
  *  Format address string
  *
  *  @param	string	$address    Address string, already formatted with dol_format_address()
- *  @param  int		$htmlid     Html ID (for example 'gmap')
- *  @param  int		$element    'thirdparty'|'contact'|'member'|'user'|'other'
+ *  @param  string	$htmlid     Html ID (for example 'gmap')
+ *  @param  string	$element    'thirdparty'|'contact'|'member'|'user'|'other'
  *  @param  int		$id         Id of object
  *  @param	int		$noprint	No output. Result is the function return
  *  @param  string  $charfornl  Char to use instead of nl2br. '' means we use a standad nl2br.
@@ -4861,8 +4861,8 @@ function getPictoForType($key, $morecss = '')
 		'select' => 'list',
 		'sellist' => 'list',
 		'radio' => 'check-circle',
-		'checkbox' => 'check-square',
-		'chkbxlst' => 'check-square',
+		'checkbox' => 'list',
+		'chkbxlst' => 'list',
 		'link' => 'link',
 		'icon' => "question",
 		'point' => "country",
@@ -4931,6 +4931,12 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 		$pictowithouttext = preg_replace('/(\.png|\.gif|\.svg)$/', '', $picto);
 		$pictowithouttext = str_replace('object_', '', $pictowithouttext);
 		$pictowithouttext = str_replace('_nocolor', '', $pictowithouttext);
+
+		// Fix some values of $pictowithouttext
+		$pictoconvertkey = array('facture' => 'bill', 'shipping' => 'shipment', 'fichinter' => 'intervention', 'agenda' => 'calendar', 'invoice_supplier' => 'supplier_invoice', 'order_supplier' => 'supplier_order');
+		if (in_array($pictowithouttext, array_keys($pictoconvertkey))) {
+			$pictowithouttext = $pictoconvertkey[$pictowithouttext];
+		}
 
 		if (strpos($pictowithouttext, 'fontawesome_') === 0 || strpos($pictowithouttext, 'fa-') === 0) {
 			// This is a font awesome image 'fontawesome_xxx' or 'fa-xxx'
@@ -5127,7 +5133,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'grip_title', 'grip', 'listlight', 'note', 'on', 'off', 'playdisabled', 'printer', 'resize', 'sign-out', 'stats', 'switch_on', 'switch_on_red', 'switch_off',
 				'uparrow', '1uparrow', '1downarrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected'
 			);
-			if (!isset($arrayconvpictotomarginleftonly[$pictowithouttext])) {
+			if (!array_key_exists($pictowithouttext, $arrayconvpictotomarginleftonly)) {
 				$marginleftonlyshort = 0;
 			}
 
@@ -7966,12 +7972,13 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto =
  *  @param	int			$cleanalsojavascript	Remove also occurrence of 'javascript:'.
  *  @param	int			$allowiframe			Allow iframe tags.
  *  @param	string[]	$allowed_tags			List of allowed tags to replace the default list
- *  @param	int			$allowlink				Allow "link" tags.
+ *  @param	int			$allowlink				Allow "link" tags (for head html section)
+ *  @param	int			$allowscript			Allow "script" tags (for head html section)
  *	@return string	    						String cleaned
  *
  * 	@see	dol_htmlwithnojs() dol_escape_htmltag() strip_tags() dol_string_nohtmltag() dol_string_neverthesehtmltags()
  */
-function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, $removeclassattribute = 1, $cleanalsojavascript = 0, $allowiframe = 0, $allowed_tags = array(), $allowlink = 0)
+function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, $removeclassattribute = 1, $cleanalsojavascript = 0, $allowiframe = 0, $allowed_tags = array(), $allowlink = 0, $allowscript = 0)
 {
 	if (empty($allowed_tags)) {
 		$allowed_tags = array(
@@ -7989,6 +7996,11 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 	if ($allowlink) {
 		if (!in_array('link', $allowed_tags)) {
 			$allowed_tags[] = "link";
+		}
+	}
+	if ($allowscript) {
+		if (!in_array('script', $allowed_tags)) {
+			$allowed_tags[] = "script";
 		}
 	}
 
@@ -8247,7 +8259,7 @@ function dol_nl2br($stringtoencode, $nl2brmode = 0, $forxml = false)
  *
  * @param	string	$stringtoencode				String to encode
  * @param	int     $nouseofiframesandbox		0=Default, 1=Allow use of option MAIN_SECURITY_USE_SANDBOX_FOR_HTMLWITHNOJS for html sanitizing (not yet working)
- * @param	string	$check						'restricthtmlnolink' or 'restricthtml' or 'restricthtmlallowclass' or 'restricthtmlallowunvalid'
+ * @param	string	$check						'restricthtmlnolink' or 'restricthtml' or 'restricthtmlallowclass' or 'restricthtmlallowlinkscript' or 'restricthtmlallowunvalid'
  * @return	string								HTML sanitized
  */
 function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = 'restricthtml')
@@ -8364,7 +8376,13 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 			$out = preg_replace('/&#x?[0-9]+/i', '', $out);	// For example if we have j&#x61vascript with an entities without the ; to hide the 'a' of 'javascript'.
 
 			// Keep only some html tags and remove also some 'javascript:' strings
-			$out = dol_string_onlythesehtmltags($out, 0, ($check == 'restricthtmlallowclass' ? 0 : 1), 1);
+			if ($check == 'restricthtmlallowlinkscript') {
+				$out = dol_string_onlythesehtmltags($out, 0, 1, 0, 0, array(), 1, 1);
+			} elseif ($check == 'restricthtmlallowclass') {
+				$out = dol_string_onlythesehtmltags($out, 0, 0, 1);
+			} else {
+				$out = dol_string_onlythesehtmltags($out, 0, 1, 1);
+			}
 
 			// Keep only some html attributes and exclude non expected HTML attributes and clean content of some attributes (keep only alt=, title=...).
 			if (getDolGlobalString('MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES')) {
@@ -13586,7 +13604,7 @@ function dolForgeCriteriaCallback($matches)
 	if (empty($matches[1])) {
 		return '';
 	}
-	$tmp = explode(':', $matches[1]);
+	$tmp = explode(':', $matches[1], 3);
 	if (count($tmp) < 3) {
 		return '';
 	}
@@ -13842,7 +13860,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 			$sql .= " AND r.element_type = '".$db->escape($objcon->table_element)."' AND r.fk_element = ".((int) $objcon->id);
 		}
 
-		if (is_object($filterobj) && get_class($filterobj) == 'Societe') {
+		if ((is_object($filterobj) && get_class($filterobj) == 'Societe') || (is_object($filterobj) && get_class($filterobj) == 'Contact')) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Dolresource') {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."element_resources as er";
@@ -13861,6 +13879,10 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 			$sql .= ", ".MAIN_DB_PREFIX."bom_bom as o";
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat') {
 			$sql .= ", ".MAIN_DB_PREFIX."contrat as o";
+		} elseif (is_object($filterobj) && get_class($filterobj) == 'Facture') {
+			$sql .= ", ".MAIN_DB_PREFIX."facture as o";
+		} elseif (is_object($filterobj) && get_class($filterobj) == 'FactureFournisseur') {
+			$sql .= ", ".MAIN_DB_PREFIX."facture_fourn as o";
 		}
 
 		$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
@@ -13896,6 +13918,16 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 				}
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat') {
 				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'contract'";
+				if ($filterobj->id) {
+					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
+				}
+			} elseif (is_object($filterobj) && get_class($filterobj) == 'Contact' && $filterobj->id) {
+				$sql .= " AND a.fk_contact = sp.rowid";
+				if ($filterobj->id) {
+					$sql .= " AND a.fk_contact = ".((int) $filterobj->id);
+				}
+			} elseif (is_object($filterobj) && get_class($filterobj) == 'Facture') {
+				$sql .= "AND a.fk_element = o.rowid";
 				if ($filterobj->id) {
 					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
 				}

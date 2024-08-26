@@ -139,13 +139,14 @@ if (!$sortorder) {
 
 // Security check
 $socid = 0;
+
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('projecttaskscard', 'globalcard'));
+
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
 $result = restrictedArea($user, 'projet', $id, 'projet&project');
 
 $diroutputmassaction = $conf->project->dir_output.'/tasks/temp/massgeneration/'.$user->id;
-
-// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-$hookmanager->initHooks(array('projecttaskscard', 'globalcard'));
 
 $progress = GETPOSTINT('progress');
 $budget_amount = GETPOSTFLOAT('budget_amount');

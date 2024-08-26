@@ -39,21 +39,37 @@ abstract class ModeleThirdPartyDoc extends CommonDocGenerator
 	/**
 	 *  Return list of active generation modules
 	 *
-	 * 	@param	DoliDB		$dbs				Database handler
-	 *  @param	integer		$maxfilenamelength  Max length of value to show
-	 * 	@return	array							List of templates
+	 *  @param  DoliDB  	$db                 Database handler
+	 *  @param  int<0,max>	$maxfilenamelength  Max length of value to show
+	 *  @return string[]|int<-1,0>				List of templates
 	 */
-	public static function liste_modeles($dbs, $maxfilenamelength = 0)
+	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
 		$type = 'company';
 		$list = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$list = getListOfModels($dbs, $type, $maxfilenamelength);
+		$list = getListOfModels($db, $type, $maxfilenamelength);
 
 		return $list;
 	}
+
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Function to build a document on disk using the generic odt module.
+	 *
+	 *	@param	Societe		$object				Object source to build document
+	 *	@param	Translate	$outputlangs		Lang output object
+	 *	@param	string		$srctemplatepath	Full path of source filename for generator using a template file
+	 *	@param	int<0,1>	$hidedetails		Do not show line details
+	 *	@param	int<0,1>	$hidedesc			Do not show desc
+	 *	@param	int<0,1>	$hideref			Do not show ref
+	 *	@return	int<-1,1>						1 if OK, <=0 if KO
+	 */
+	abstract public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0);
+	// phpcs:enable
 }
 
 /**
@@ -67,6 +83,17 @@ abstract class ModeleThirdPartyCode extends CommonNumRefGenerator
 	 *  @param DoliDB       $db     Database object
 	 */
 	abstract public function __construct($db);
+
+
+	/**
+	 * Return an example of result returned by getNextValue
+	 *
+	 * @param	?Translate		$langs		Object langs
+	 * @param	Societe|string	$objsoc		Object thirdparty
+	 * @param	int<-1,2>		$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
+	 * @return	string						Return string example
+	 */
+	//abstract public function getExample($langs = null, $objsoc = '', $type = -1);
 
 
 	/**
@@ -85,11 +112,11 @@ abstract class ModeleThirdPartyCode extends CommonNumRefGenerator
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Renvoie la liste des modeles de numérotation
+	 *  Return list of active generation modules
 	 *
-	 *  @param	DoliDB	$dbs     			Database handler
-	 *  @param  integer	$maxfilenamelength  Max length of value to show
-	 *  @return	array|int					List of numbers
+	 *  @param  DoliDB  	$dbs				Database handler
+	 *  @param  int<0,max>	$maxfilenamelength	Max length of value to show
+	 *  @return string[]|int<-1,0>				List of templates
 	 */
 	public static function liste_modeles($dbs, $maxfilenamelength = 0)
 	{
@@ -123,8 +150,6 @@ abstract class ModeleThirdPartyCode extends CommonNumRefGenerator
 	 */
 	public function getToolTip($langs, $soc, $type)
 	{
-		global $conf;
-
 		$langs->loadLangs(array("admin", "companies"));
 
 		$strikestart = '';

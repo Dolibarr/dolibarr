@@ -411,9 +411,9 @@ class ProductFournisseur extends Product
 				$multicurrency_buyprice /= (1 + ($ttx / 100));
 			}
 			$multicurrency_buyprice = price2num($multicurrency_buyprice, 'MU');
-			$multicurrency_unitBuyPrice = price2num($multicurrency_buyprice / $qty, 'MU');
+			$multicurrency_unitBuyPrice = price2num((float) $multicurrency_buyprice / $qty, 'MU');
 
-			$buyprice = $multicurrency_buyprice / $multicurrency_tx;
+			$buyprice = (float) $multicurrency_buyprice / $multicurrency_tx;
 			$fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $multicurrency_code);
 		}
 
@@ -972,11 +972,11 @@ class ProductFournisseur extends Product
 						if ($price_result >= 0) {
 							$fourn_price = price2num($price_result, 'MU');
 							if ($record["quantity"] != 0) {
-								$fourn_unitprice = price2num($fourn_price / $record["quantity"], 'MU');
+								$fourn_unitprice = price2num((float) $fourn_price / $record["quantity"], 'MU');
 							} else {
 								$fourn_unitprice = $fourn_price;
 							}
-							$fourn_unitprice_with_discount = $fourn_unitprice * (1 - $record["remise_percent"] / 100);
+							$fourn_unitprice_with_discount = (float) $fourn_unitprice * (1 - $record["remise_percent"] / 100);
 						}
 					}
 					if ($fourn_unitprice < $min || $min == -1) {

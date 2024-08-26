@@ -177,7 +177,7 @@ class Societe extends CommonObject
 	 */
 
 	/**
-	 * @var array<string,array{type:string,length?:string|int,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'noteditable' => 1, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id', 'css' => 'left'),
@@ -912,8 +912,6 @@ class Societe extends CommonObject
 	 */
 	public function __construct($db)
 	{
-		global $conf;
-
 		$this->db = $db;
 
 		$this->ismultientitymanaged = 1;
@@ -966,7 +964,9 @@ class Societe extends CommonObject
 		}
 		$this->import_key = trim((string) $this->import_key);
 
-		$this->accountancy_code_customer = trim((string) $this->code_compta);
+		$this->code_compta_client = trim(empty($this->code_compta_client) ? $this->code_compta : $this->code_compta_client);
+
+		$this->accountancy_code_customer = trim((string) $this->code_compta_client);
 		$this->accountancy_code_supplier = trim((string) $this->code_compta_fournisseur);
 		$this->accountancy_code_buy = trim((string) $this->accountancy_code_buy);
 		$this->accountancy_code_sell = trim((string) $this->accountancy_code_sell);
@@ -1169,7 +1169,9 @@ class Societe extends CommonObject
 		$contact->town              = $this->town;
 		$this->setUpperOrLowerCase();
 		$contact->phone_pro         = $this->phone;
-		$contact->roles				= explode(',', getDolGlobalString('CONTACTS_DEFAULT_ROLES'));
+		if (getDolGlobalString('CONTACTS_DEFAULT_ROLES')) {
+			$contact->roles			= explode(',', getDolGlobalString('CONTACTS_DEFAULT_ROLES'));
+		}
 
 		$contactId = $contact->create($user, $notrigger);
 		if ($contactId < 0) {
@@ -1475,7 +1477,7 @@ class Societe extends CommonObject
 			$this->get_codefournisseur($this, 1);
 		}
 
-		$this->code_compta_client = trim(empty($this->code_compta) ? $this->code_compta_client : $this->code_compta);
+		$this->code_compta_client = trim(empty($this->code_compta_client) ? $this->code_compta : $this->code_compta_client);
 		$this->code_compta = $this->code_compta_client; // for backward compatibility
 		$this->code_compta_fournisseur = (empty($this->code_compta_fournisseur) ? '' : trim($this->code_compta_fournisseur));
 
@@ -3711,7 +3713,7 @@ class Societe extends CommonObject
 		} else {
 			if ($type == 'customer') {
 				$this->code_compta_client = '';
-				$this->code_compta = '';
+				$this->code_compta = '';	// For backward compatibility
 			} elseif ($type == 'supplier') {
 				$this->code_compta_fournisseur = '';
 			}

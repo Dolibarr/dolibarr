@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2012	Regis Houssin	<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,7 +67,7 @@ if (isset($action) && !empty($action)) {
 		$diroutputslash .= '/';
 
 		// Scan directory tree on disk
-		$disktree = dol_dir_list($conf->$element->dir_output, 'directories', 1, '', array('^temp$'), '', '', 0);
+		$disktree = dol_dir_list($conf->$element->dir_output, 'directories', 1, '', array('^temp$'), '', 0, 0);
 
 		// Scan directory tree in database
 		$sqltree = $ecmdirstatic->get_full_arbo(0);

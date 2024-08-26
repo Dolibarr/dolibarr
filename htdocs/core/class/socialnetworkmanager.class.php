@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2024 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +41,7 @@ class SocialNetworkManager
 	private $platform;
 
 	/**
-	 * @var Object  Name of class handler
+	 * @var MastodonHandler	Instance of class handler
 	 */
 	private $handler;
 
@@ -58,22 +59,24 @@ class SocialNetworkManager
 	 *	Constructor
 	 *
 	 *  @param		string		$platform      name of social network
+	 *  @param      array       $authParams    other parameters
 	 */
-	public function __construct($platform)
+	public function __construct($platform, $authParams = [])
 	{
 		$this->platform = $platform;
-		$this->initializeHandler();
+		$this->initializeHandler($authParams);
 	}
 
 	/**
 	 * Initialize the social network needed
+	 *  @param      array       $authParams    other parameters
 	 * @return void   new instance if founded
 	 */
-	private function initializeHandler()
+	private function initializeHandler($authParams)
 	{
 		$handlerClass = dol_ucfirst($this->platform).'Handler';
 		if (class_exists($handlerClass)) {
-			$this->handler = new $handlerClass();
+			$this->handler = new $handlerClass($authParams);
 		} else {
 			$this->error = "Handler for $this->platform not found.";
 		}
@@ -86,27 +89,28 @@ class SocialNetworkManager
 	 * @param int       $maxNb      Maximum number of posts to retrieve (default is 5).
 	 * @param int       $cacheDelay Number of seconds to use cached data (0 to disable caching).
 	 * @param string    $cacheDir   Directory to store cached data.
+	 * @param array $authParams Authentication parameters
 	 * @return bool      Status code: false if error,  array if success.
 	 */
-	public function fetchPosts($urlAPI, $maxNb = 5, $cacheDelay = 60, $cacheDir = '')
+	public function fetchPosts($urlAPI, $maxNb = 5, $cacheDelay = 60, $cacheDir = '', $authParams = [])
 	{
 		if (!$this->handler) {
 			return false;
 		}
-		return $this->handler->fetch($urlAPI, $maxNb, $cacheDelay, $cacheDir);
+		return $this->handler->fetch($urlAPI, $maxNb, $cacheDelay, $cacheDir, $authParams);
 	}
 
 	/**
 	 * Get the list of retrieved posts.
 	 *
-	 * @return array List of posts.
+	 * @return array<array{id:string,content:string,created_at:string,url:string,media_url:string}|array{}>	List of posts.
 	 */
 	public function getPosts()
 	{
 		return $this->handler ? $this->handler->getPosts() : [];
 	}
 
-	 /**
+	/**
 	 * Get the last fetch date.
 	 *
 	 * @return int Timestamp of the last successful fetch.

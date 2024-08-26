@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (c) 2011      Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2020      Maxime DEMAREST      <maxime@indelog.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -231,13 +232,12 @@ class PropaleStats extends Stats
 	}
 
 
-
 	/**
 	 *	Return nb, amount of predefined product for year
 	 *
-	 *	@param	int		$year			Year to scan
-	 *  @param 	int     $limit      	Limit
-	 *	@return	array					Array of values
+	 *	@param	int		$year		Year to scan
+	 *  @param  int     $limit      Limit
+	 *	@return	array<int<0,11>,array{0:int<1,12>,1:int|float}>	Array of values
 	 */
 	public function getAllByProduct($year, $limit = 10)
 	{

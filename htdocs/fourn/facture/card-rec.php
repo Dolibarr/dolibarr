@@ -404,7 +404,7 @@ if (empty($reshook)) {
 			$db->rollback();
 			setEventMessages($line->error, $line->errors, 'errors');
 		}
-	} elseif ($action == 'update_extras') {
+	} elseif ($action == 'update_extras' && $usercancreate) {
 		$object->oldcopy = dol_clone($object, 2);
 
 		// Fill array 'array_options' with data from update form
@@ -566,14 +566,14 @@ if (empty($reshook)) {
 				// if price ht was forced (ie: from gui when calculated by margin rate and cost price). TODO Why this ?
 				if (!empty($price_ht)) {
 					$pu_ht = price2num($price_ht, 'MU');
-					$pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
+					$pu_ttc = price2num((float) $pu_ht * (1 + ((float) $tmpvat / 100)), 'MU');
 				} elseif ($tmpvat != $tmpprodvat) {
 					// On reevalue prix selon taux tva car taux tva transaction peut etre different
 					// de ceux du produit par default (par example si pays different entre vendeur et acheteur).
 					if ($price_base_type != 'HT') {
-						$pu_ht = price2num($pu_ttc / (1 + ($tmpvat / 100)), 'MU');
+						$pu_ht = price2num($pu_ttc / (1 + ((float) $tmpvat / 100)), 'MU');
 					} else {
-						$pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
+						$pu_ttc = price2num($pu_ht * (1 + ((float) $tmpvat / 100)), 'MU');
 					}
 				}
 
@@ -803,7 +803,7 @@ if (empty($reshook)) {
 			$label = $product->label;
 
 			// Check price is not lower than minimum (check is done only for standard or replacement invoices)
-			if (((getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight("produit", "ignore_price_min_advance")) || !getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) && $price_min && (price2num($pu_ht) * (1 - $remise_percent / 100) < price2num($price_min))) {
+			if (((getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight("produit", "ignore_price_min_advance")) || !getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) && $price_min && ((float) price2num($pu_ht) * (1 - (float) $remise_percent / 100) < (float) price2num($price_min))) {
 				setEventMessages($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency)), null, 'errors');
 				$error++;
 			}

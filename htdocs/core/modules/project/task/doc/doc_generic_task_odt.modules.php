@@ -79,7 +79,7 @@ class doc_generic_task_odt extends ModelePDFTask
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr';
 
@@ -452,12 +452,12 @@ class doc_generic_task_odt extends ModelePDFTask
 	/**
 	 *	Function to build a document on disk using the generic odt module.
 	 *
-	 *	@param	Commande	$object					Object source to build document
+	 *	@param	Project		$object					Object source to build document
 	 *	@param	Translate	$outputlangs			Lang output object
-	 * 	@param	string		$srctemplatepath	    Full path of source filename for generator using a template file
-	 *	@return	int         						1 if OK, <=0 if KO
+	 * 	@param	string		$srctemplatepath		Full path of source filename for generator using a template file
+	 *	@return	int<-1,1>							1 if OK, <=0 if KO
 	 */
-	public function write_file($object, $outputlangs, $srctemplatepath)
+	public function write_file($object, $outputlangs, $srctemplatepath = '')
 	{
 		// phpcs:enable
 		global $user, $langs, $conf, $mysoc, $hookmanager;

@@ -1063,9 +1063,11 @@ class Ldap
 	/**
 	 *  Returns an array containing attributes and values for first record
 	 *
+	 *  array{count:int,0..max:string,string:array}
+	 *
 	 *	@param	string	$dn			DN entry key
 	 *	@param	string	$filter		Filter
-	 *	@return	int|array			if KO: <=0 || if OK: array
+	 *	@return	int|array<'count'|int|string,int|string|array>	if KO: <=0 || if OK: array
 	 */
 	public function getAttribute($dn, $filter)
 	{
@@ -1545,13 +1547,19 @@ class Ldap
 	/**
 	 *	Converts ActiveDirectory time to Unix timestamp
 	 *
-	 *	@param	string	$value		AD time to convert
+	 *	@param	string	$value		AD time to convert (ns since 1601)
 	 *	@return	integer				Unix timestamp
 	 */
 	public function convertTime($value)
 	{
 		$dateLargeInt = $value; // nano secondes depuis 1601 !!!!
-		$secsAfterADEpoch = $dateLargeInt / (10000000); // secondes depuis le 1 jan 1601
+		if (PHP_INT_SIZE < 8) {
+			// 32 bit platform
+			$secsAfterADEpoch = (float) $dateLargeInt / (10000000.); // secondes depuis le 1 jan 1601
+		} else {
+			// At least 64 bit platform
+			$secsAfterADEpoch = (int) $dateLargeInt / (10000000); // secondes depuis le 1 jan 1601
+		}
 		$ADToUnixConvertor = ((1970 - 1601) * 365.242190) * 86400; // UNIX start date - AD start date * jours * secondes
 		$unixTimeStamp = intval($secsAfterADEpoch - $ADToUnixConvertor); // Unix time stamp
 		return $unixTimeStamp;

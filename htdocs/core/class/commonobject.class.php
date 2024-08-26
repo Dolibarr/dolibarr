@@ -140,7 +140,7 @@ abstract class CommonObject
 
 
 	/**
-	 * @var array		Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array();
 
@@ -167,12 +167,12 @@ abstract class CommonObject
 	public $linkedObjectsIds;
 
 	/**
-	 * @var mixed		Array of linked objects. Loaded by ->fetchObjectLinked
+	 * @var array<string,CommonObject[]>	Array of linked objects. Loaded by ->fetchObjectLinked, key = object type
 	 */
 	public $linkedObjects;
 
 	/**
-	 * @var boolean[]	Array of boolean with object id as key and value as true if linkedObjects full loaded for object id. Loaded by ->fetchObjectLinked. Important for pdf generation time reduction.
+	 * @var array<int,bool>	Array of boolean with object id as key and value as true if linkedObjects full loaded for object id. Loaded by ->fetchObjectLinked. Important for pdf generation time reduction.
 	 */
 	private $linkedObjectsFullLoaded = array();
 
@@ -2549,6 +2549,7 @@ abstract class CommonObject
 		}
 
 		$sql = "UPDATE ".$this->db->prefix().$this->table_element;
+		// @phan-suppress-next-line PhanTypeMismatchProperty
 		if (!empty($this->fields['fk_project'])) {		// Common case
 			if ($projectid) {
 				$sql .= " SET fk_project = ".((int) $projectid);
@@ -3977,20 +3978,22 @@ abstract class CommonObject
 					$diff = price2num($total_tva_by_vats[$obj->vatrate] - (float) $tmpvat, 'MT', 1);
 					//print 'Line '.$i.' rowid='.$obj->rowid.' vat_rate='.$obj->vatrate.' total_ht='.$obj->total_ht.' total_tva='.$obj->total_tva.' total_ttc='.$obj->total_ttc.' total_ht_by_vats='.$total_ht_by_vats[$obj->vatrate].' total_tva_by_vats='.$total_tva_by_vats[$obj->vatrate].' (new calculation = '.$tmpvat.') total_ttc_by_vats='.$total_ttc_by_vats[$obj->vatrate].($diff?" => DIFF":"")."<br>\n";
 					if ($diff) {
-						if (abs((float) $diff) > (10 * pow(10, -1 * getDolGlobalInt('MAIN_MAX_DECIMALS_TOT', 0)))) {
+						$maxdiff = (10 * pow(10, -1 * getDolGlobalInt('MAIN_MAX_DECIMALS_TOT', 0)));
+						if (abs((float) $diff) > $maxdiff) {
 							// If error is more than 10 times the accuracy of rounding. This should not happen.
-							$errmsg = 'A rounding difference was detected into TOTAL but is too high to be corrected. Some data in your lines may be corrupted. Try to edit each line manually to fix this before restarting.';
+							$errmsg = 'We found a rounding difference after line '.($obj->rowid).' between HT*VAT='.$tmpvat.' and total in database='.$total_tva_by_vats[$obj->vatrate].' (calculated with UP*qty) but diff='.$diff.' is too high (> '.$maxdiff.') to be corrected. Some data in your lines may be corrupted. Try to edit each line manually to fix this before restarting.';
 							dol_syslog($errmsg, LOG_WARNING);
 							$this->error = $errmsg;
 							$error++;
 							break;
 						}
+
 						if ($base_price_type == 'TTC') {
 							$sqlfix = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldtva." = ".price2num($obj->total_tva - (float) $diff).", total_ht = ".price2num($obj->total_ht + (float) $diff)." WHERE rowid = ".((int) $obj->rowid);
-							dol_syslog('We found a difference of '.$diff.' for line rowid = '.$obj->rowid.". We fix the total_vat and total_ht of line by running sqlfix = ".$sqlfix);
+							dol_syslog('We found a difference of '.$diff.' for line rowid = '.$obj->rowid.' between TotalHT('.$total_ht_by_vats[$obj->vatrate].')*VATrate('.$obj->vatrate.')='.$tmpvat.' and total in database='.$total_tva_by_vats[$obj->vatrate]." (calculated with UP*qty). We fix the total_vat and total_ht of line by running sqlfix = ".$sqlfix);
 						} else {
 							$sqlfix = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldtva." = ".price2num($obj->total_tva - (float) $diff).", total_ttc = ".price2num($obj->total_ttc - (float) $diff)." WHERE rowid = ".((int) $obj->rowid);
-							dol_syslog('We found a difference of '.$diff.' for line rowid = '.$obj->rowid.". We fix the total_vat and total_ttc of line by running sqlfix = ".$sqlfix);
+							dol_syslog('We found a difference of '.$diff.' for line rowid = '.$obj->rowid.' between TotalHT('.$total_ht_by_vats[$obj->vatrate].')*VATrate('.$obj->vatrate.')='.$tmpvat.' and total in database='.$total_tva_by_vats[$obj->vatrate]." (calculated with UP*qty). We fix the total_vat and total_ttc of line by running sqlfix = ".$sqlfix);
 						}
 
 						$resqlfix = $this->db->query($sqlfix);
@@ -5121,7 +5124,7 @@ abstract class CommonObject
 	 *
 	 *  @param	int		        $dateSelector       1=Show also date range input fields
 	 *  @param	Societe			$seller				Object thirdparty who sell
-	 *  @param	Societe			$buyer				Object thirdparty who buy
+	 *  @param	?Societe		$buyer				Object thirdparty who buy
 	 *  @param	string			$defaulttpldir		Directory where to find the template
 	 *	@return	void
 	 */
@@ -5171,7 +5174,7 @@ abstract class CommonObject
 	 *
 	 *	@param	string		$action				Action code
 	 *	@param  Societe		$seller            	Object of seller third party
-	 *	@param  Societe  	$buyer             	Object of buyer third party
+	 *	@param  ?Societe  	$buyer             	Object of buyer third party
 	 *	@param	int			$selected		   	ID line selected
 	 *	@param  int	    	$dateSelector      	1=Show also date range input fields
 	 *  @param	string		$defaulttpldir		Directory where to find the template
@@ -5257,7 +5260,7 @@ abstract class CommonObject
 	 *
 	 *	@param	string      		$action				GET/POST action
 	 *	@param  CommonObjectLine 	$line			    Selected object line to output
-	 *	@param  string	    		$var               	Not used
+	 *	@param  ''		    		$var               	Not used
 	 *	@param  int		    		$num               	Number of line (0)
 	 *	@param  int		    		$i					I
 	 *	@param  int		    		$dateSelector      	1=Show also date range input fields
@@ -5781,6 +5784,19 @@ abstract class CommonObject
 
 		$obj = new $classname($this->db);
 
+		// TODO: Check the following classes that seem possible for $obj, but removed for compatibility:
+		//  ModeleBankAccountDoc|ModeleExpenseReport|ModelePDFBom|ModelePDFCommandes|ModelePDFContract|
+		//  ModelePDFDeliveryOrder|ModelePDFEvaluation|ModelePDFFactures|ModelePDFFicheinter|
+		//  ModelePDFMo|ModelePDFMovement|ModelePDFProduct|ModelePDFProjects|ModelePDFPropales|
+		//  ModelePDFRecruitmentJobPosition|ModelePDFSupplierProposal|ModelePDFSuppliersInvoices|
+		//  ModelePDFSuppliersOrders|ModelePDFSuppliersPayments|ModelePdfExpedition|ModelePdfReception|
+		//  ModelePDFStock|ModelePDFStockTransfer|
+		//  ModeleDon|ModelePDFTask|
+		//  ModelePDFAsset|ModelePDFTicket|ModelePDFUserGroup|ModeleThirdPartyDoc|ModelePDFUser
+		//  Has no write_file: ModeleBarCode|ModeleImports|ModeleExports|
+		'@phan-var-force ModelePDFMember $obj';
+		// '@phan-var-force ModelePDFMember|ModeleBarCode|ModeleDon|ModeleExports|ModeleImports|ModelePDFAsset|ModelePDFContract|ModelePDFDeliveryOrder|ModelePDFEvaluation|ModelePDFFactures|ModelePDFFicheinter|ModelePDFMo|ModelePDFMovement|ModelePDFProduct|ModelePDFProjects|ModelePDFPropales|ModelePDFRecruitmentJobPosition|ModelePDFStock|ModelePDFStockTransfer|ModelePDFSupplierProposal|ModelePDFSuppliersInvoices|ModelePDFSuppliersOrders|ModelePDFSuppliersPayments|ModelePDFTask|ModelePDFTicket|ModelePDFUser|ModelePDFUserGroup|ModelePdfExpedition|ModelePdfReception|ModeleThirdPartyDoc $obj';
+
 		// If generator is ODT, we must have srctemplatepath defined, if not we set it.
 		if ($obj->type == 'odt' && empty($srctemplatepath)) {
 			$varfortemplatedir = $obj->scandir;
@@ -5835,9 +5851,8 @@ abstract class CommonObject
 		// update model_pdf in object
 		$this->model_pdf = $saved_model;
 
-		if (in_array(get_class($this), array('Adherent'))) {
-			'@phan-var-force Adherent $this';
-			$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1, 'tmp_cards', $moreparams);
+		if ($obj instanceof ModelePDFMember) {
+			$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1, 'tmp_cards');
 		} else {
 			$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $moreparams);
 		}
@@ -7351,7 +7366,7 @@ abstract class CommonObject
 		$param = array();
 		$param['options'] = array();
 		$reg = array();
-		// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
+		// @phan-suppress-next-line PhanTypeMismatchProperty
 		$size = !empty($this->fields[$key]['size']) ? $this->fields[$key]['size'] : 0;
 		// Because we work on extrafields
 		if (preg_match('/^(integer|link):(.*):(.*):(.*):(.*)/i', $val['type'], $reg)) {
@@ -7391,7 +7406,7 @@ abstract class CommonObject
 		// Special case that force options and type ($type can be integer, varchar, ...)
 		if (!empty($this->fields[$key]['arrayofkeyval']) && is_array($this->fields[$key]['arrayofkeyval'])) {
 			$param['options'] = $this->fields[$key]['arrayofkeyval'];
-			// Special case that prevent to force $type to have multiple input
+			// Special case that prevent to force $type to have multiple input @phan-suppress-next-line PhanTypeMismatchProperty
 			if (empty($this->fields[$key]['multiinput'])) {
 				$type = (($this->fields[$key]['type'] == 'checkbox') ? $this->fields[$key]['type'] : 'select');
 			}
@@ -7401,18 +7416,18 @@ abstract class CommonObject
 		//$elementtype=$this->fields[$key]['elementtype'];	// Seems not used
 		// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
 		$default = (!empty($this->fields[$key]['default']) ? $this->fields[$key]['default'] : '');
-		// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
+		// @phan-suppress-next-line PhanTypeMismatchProperty
 		$computed = (!empty($this->fields[$key]['computed']) ? $this->fields[$key]['computed'] : '');
-		// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
+		// @phan-suppress-next-line PhanTypeMismatchProperty
 		$unique = (!empty($this->fields[$key]['unique']) ? $this->fields[$key]['unique'] : 0);
-		// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
+		// @phan-suppress-next-line PhanTypeMismatchProperty
 		$required = (!empty($this->fields[$key]['required']) ? $this->fields[$key]['required'] : 0);
-		// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
+		// @phan-suppress-next-line PhanTypeMismatchProperty
 		$autofocusoncreate = (!empty($this->fields[$key]['autofocusoncreate']) ? $this->fields[$key]['autofocusoncreate'] : 0);
 
-		// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
+		// @phan-suppress-next-line PhanTypeMismatchProperty
 		$langfile = (!empty($this->fields[$key]['langfile']) ? $this->fields[$key]['langfile'] : '');
-		// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
+		// @phan-suppress-next-line PhanTypeMismatchProperty
 		$list = (!empty($this->fields[$key]['list']) ? $this->fields[$key]['list'] : 0);
 		$hidden = (in_array(abs($this->fields[$key]['visible']), array(0, 2)) ? 1 : 0);
 
@@ -7976,12 +7991,14 @@ abstract class CommonObject
 
 			if (!preg_match('/search_/', $keyprefix)) {
 				if (!empty($param_list_array[2])) {		// If the entry into $fields is set to add a create button
+					// @phan-suppress-next-line PhanTypeMismatchProperty
 					if (!empty($this->fields[$key]['picto'])) {
 						$morecss .= ' widthcentpercentminusxx';
 					} else {
 						$morecss .= ' widthcentpercentminusx';
 					}
 				} else {
+					// @phan-suppress-next-line PhanTypeMismatchProperty
 					if (!empty($this->fields[$key]['picto'])) {
 						$morecss .= ' widthcentpercentminusx';
 					}
@@ -8103,6 +8120,7 @@ abstract class CommonObject
 			$type = 'varchar'; // convert varchar(xx) int varchar
 		}
 		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
+			// @phan-suppress-next-line PhanTypeMismatchProperty
 			if (empty($this->fields[$key]['multiinput'])) {
 				$type = (($this->fields[$key]['type'] == 'checkbox') ? $this->fields[$key]['type'] : 'select');
 			}
@@ -8183,6 +8201,7 @@ abstract class CommonObject
 
 		// Format output value differently according to properties of field
 		if (in_array($key, array('rowid', 'ref')) && method_exists($this, 'getNomUrl')) {
+			// @phan-suppress-next-line PhanTypeMismatchProperty
 			if ($key != 'rowid' || empty($this->fields['ref'])) {	// If we want ref field or if we want ID and there is no ref field, we show the link.
 				$value = $this->getNomUrl(1, '', 0, '', 1);
 			}
@@ -8580,7 +8599,7 @@ abstract class CommonObject
 	/**
 	 * Return validation test result for a field
 	 *
-	 * @param 	array<string,?array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>	$fields	Array of properties of field to show
+	 * @param array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>	$fields	Array of properties of field to show
 	 * @param  	string  $fieldKey           Key of attribute
 	 * @param	string  $fieldValue         Value of attribute
 	 * @return 	bool 						Return false if fail true on success, see $this->error for error message
@@ -10858,7 +10877,7 @@ abstract class CommonObject
 	 * Existing categories are left untouch.
 	 *
 	 * @param 	string 		$type_categ 	Category type ('customer', 'supplier', 'website_page', ...)
-	 * @return	int							Array of category objects or < 0 if KO
+	 * @return	int[]|int					Array of category IDs or < 0 if KO
 	 */
 	public function getCategoriesCommon($type_categ)
 	{

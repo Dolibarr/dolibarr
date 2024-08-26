@@ -92,6 +92,10 @@ $error = 0;
 if ($user->socid) {
 	$socid = $user->socid;
 }
+
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('ecmmediascard', 'globalcard'));
+
 $result = restrictedArea($user, 'ecm', 0);
 
 $permissiontouploadfile = ($user->hasRight('ecm', 'setup') || $user->hasRight('mailing', 'creer') || $user->hasRight('website', 'write'));
@@ -103,9 +107,6 @@ $upload_dir = preg_replace('/\/$/', '', $diroutput).'/'.preg_replace('/^\//', ''
 $websitekey = '';
 
 $permissiontoadd = $permissiontouploadfile;	// Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
-
-// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-$hookmanager->initHooks(array('ecmmediascard', 'globalcard'));
 
 /*
  *	Actions
@@ -167,7 +168,7 @@ if ($action == 'refreshmanual') {
 	$diroutputslash .= '/';
 
 	// Scan directory tree on disk
-	$disktree = dol_dir_list($conf->ecm->dir_output, 'directories', 1, '', '^temp$', '', '', 0);
+	$disktree = dol_dir_list($conf->ecm->dir_output, 'directories', 1, '', '^temp$', '', 0, 0);
 
 	// Scan directory tree in database
 	$sqltree = $ecmdirstatic->get_full_arbo(0);

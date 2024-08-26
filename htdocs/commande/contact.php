@@ -49,7 +49,6 @@ if ($user->socid) {
 $hookmanager->initHooks(array('ordercontact', 'globalcard'));
 
 $result = restrictedArea($user, 'commande', $id, '');
-$hookmanager->initHooks(array('ordercontactcard', 'globalcard'));
 
 $usercancreate  =  $user->hasRight("commande", "creer");
 

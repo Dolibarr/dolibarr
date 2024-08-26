@@ -701,7 +701,7 @@ function activitytrim($product_type)
 	global $conf, $langs, $db;
 
 	// We display the last 3 years
-	$yearofbegindate = date('Y', dol_time_plus_duree(time(), -3, "y"));
+	$yearofbegindate = (int) date('Y', dol_time_plus_duree(time(), -3, "y"));
 	$out = '';
 	// breakdown by quarter
 	$sql = "SELECT DATE_FORMAT(p.datep,'%Y') as annee, DATE_FORMAT(p.datep,'%m') as mois, SUM(fd.total_ht) as Mnttot";

@@ -226,7 +226,7 @@ class Contrat extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -326,7 +326,7 @@ class Contrat extends CommonObject
 			}
 
 			$obj = new $classname();
-			'@phan-var-force CommonNumRefGenerator $obj';
+			'@phan-var-force ModelNumRefContracts $obj';
 			$numref = $obj->getNextValue($soc, $this);
 
 			if ($numref != "") {
@@ -959,7 +959,8 @@ class Contrat extends CommonObject
 					$this->nbofservicesclosed++;
 				}
 
-				$total_ttc += $objp->total_ttc; // TODO Not saved into database
+				// TODO Not saved into database
+				$total_ttc += $objp->total_ttc;
 				$total_vat += $objp->total_tva;
 				$total_ht += $objp->total_ht;
 
@@ -1045,7 +1046,7 @@ class Contrat extends CommonObject
 			$result = dol_include_once('/core/modules/contract/'.$module.'.php');
 			if ($result > 0) {
 				$modCodeContract = new $module();
-				'@phan-var-force CommonNumRefGenerator $modCodeContrat';
+				'@phan-var-force ModelNumRefContracts $modCodeContrat';
 
 				if (!empty($modCodeContract->code_auto)) {
 					// Force the ref to a draft value if numbering module is an automatic numbering
@@ -2635,7 +2636,7 @@ class Contrat extends CommonObject
 		require_once DOL_DOCUMENT_ROOT."/core/modules/contract/" . getDolGlobalString('CONTRACT_ADDON').'.php';
 		$obj = getDolGlobalString('CONTRACT_ADDON');
 		$modContract = new $obj();
-		'@phan-var-force CommonNumRefGenerator $modContrat';
+		'@phan-var-force ModelNumRefContracts $modContrat';
 		$clonedObj->ref = $modContract->getNextValue($objsoc, $clonedObj);
 
 		// get extrafields so they will be clone
@@ -2894,9 +2895,9 @@ class Contrat extends CommonObject
 	/**
 	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
@@ -3116,7 +3117,7 @@ class ContratLigne extends CommonObjectLine
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),

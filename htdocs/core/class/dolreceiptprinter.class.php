@@ -608,8 +608,9 @@ class dolReceiptPrinter extends Printer
 				$this->printer->cut();
 
 				// If is DummyPrintConnector send to log to debugging
-				if ($this->printer->connector instanceof DummyPrintConnector) {
-					$data = $this->printer->connector->getData();
+				$connector = $this->printer->connector;
+				if ($connector instanceof DummyPrintConnector) {
+					$data = $connector->getData();
 					dol_syslog($data);
 				}
 				// Close and print
@@ -967,8 +968,9 @@ class dolReceiptPrinter extends Printer
 				}
 			}
 			// If is DummyPrintConnector send to log to debugging
-			if ($this->printer->connector instanceof DummyPrintConnector || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
-				$data = $this->printer->connector->getData();
+			$connector = $this->printer->connector;
+			if ($connector instanceof DummyPrintConnector || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
+				$data = $connector->getData();
 				if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
 					echo rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
 				}

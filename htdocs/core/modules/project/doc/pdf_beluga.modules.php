@@ -78,7 +78,7 @@ class pdf_beluga extends ModelePDFProjects
 
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr';
 
@@ -168,13 +168,14 @@ class pdf_beluga extends ModelePDFProjects
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Fonction generant le projet sur le disque
+	 *	Function generating the project on disk
 	 *
-	 *	@param	Project		$object   		Object project a generer
-	 *	@param	Translate	$outputlangs	Lang output object
-	 *	@return	int         				1 if OK, <=0 if KO
+	 *	@param	Project		$object					Object source to build document
+	 *	@param	Translate	$outputlangs			Lang output object
+	 * 	@param	string		$srctemplatepath	    Full path of source filename for generator using a template file
+	 *	@return	int<-1,1>      						1 if OK, <=0 if KO
 	 */
-	public function write_file($object, $outputlangs)
+	public function write_file($object, $outputlangs, $srctemplatepath = '')
 	{
 		// phpcs:enable
 		global $conf, $hookmanager, $langs, $user;
@@ -702,7 +703,7 @@ class pdf_beluga extends ModelePDFProjects
 				// Pied de page
 				$this->_pagefoot($pdf, $object, $outputlangs);
 				if (method_exists($pdf, 'AliasNbPages')) {
-					$pdf->AliasNbPages();
+					$pdf->AliasNbPages();  // @phan-suppress-current-line PhanUndeclaredMethod
 				}
 
 				$pdf->Close();

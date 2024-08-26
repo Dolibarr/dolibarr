@@ -41,6 +41,11 @@ if (empty($htmlname)) {
 <!-- BEGIN PHP TEMPLATE formlayoutai.tpl.php -->
 <?php
 
+'
+@phan-var-force ?FormWebSite $formwebsite
+@phan-var-force ?FormMail $formmail
+';
+
 if (!isset($out)) {
 	$out = '';
 }

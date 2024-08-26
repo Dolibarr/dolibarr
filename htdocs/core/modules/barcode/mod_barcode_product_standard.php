@@ -39,7 +39,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
@@ -109,12 +109,16 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	/**
 	 * Return an example of result returned by getNextValue
 	 *
-	 * @param	Translate	$langs			Object langs
-	 * @param	?Product	$objproduct		Object product
-	 * @return	string						Return string example
+	 * @param	?Translate		$langs			Object langs
+	 * @param	?CommonObject	$objproduct		Object
+	 * @return	string							Return string example
 	 */
-	public function getExample($langs, $objproduct = null)
+	public function getExample($langs = null, $objproduct = null)
 	{
+		if (!$langs instanceof Translate) {
+			$langs = $GLOBALS['langs'];
+			'@phan-var-force Translate $langs';
+		}
 		$examplebarcode = $this->getNextValue($objproduct, '');
 		if (!$examplebarcode) {
 			$examplebarcode = $langs->trans('NotConfigured');

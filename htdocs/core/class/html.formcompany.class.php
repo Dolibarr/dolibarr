@@ -857,14 +857,15 @@ class FormCompany extends Form
 	/**
 	 * showContactRoles on view and edit mode
 	 *
-	 * @param 	string 		$htmlname 	Html component name and id
-	 * @param 	Contact 	$contact 	Contact Object
-	 * @param 	string 		$rendermode view, edit
-	 * @param 	array		$selected 	$key=>$val $val is selected Roles for input mode
-	 * @param	string		$morecss	More css
-	 * @return 	string   				String with contacts roles
+	 * @param 	string 		$htmlname 		Html component name and id
+	 * @param 	Contact 	$contact 		Contact Object
+	 * @param 	string 		$rendermode 	view, edit
+	 * @param 	array		$selected 		$key=>$val $val is selected Roles for input mode
+	 * @param	string		$morecss		More css
+	 * @param	string		$placeholder	Placeholder text (used when $rendermode is 'edit')
+	 * @return 	string   					String with contacts roles
 	 */
-	public function showRoles($htmlname, Contact $contact, $rendermode = 'view', $selected = array(), $morecss = 'minwidth500')
+	public function showRoles($htmlname, Contact $contact, $rendermode = 'view', $selected = array(), $morecss = 'minwidth500', $placeholder = '')
 	{
 		if ($rendermode === 'view') {
 			$toprint = array();
@@ -874,7 +875,7 @@ class FormCompany extends Form
 			return '<div class="select2-container-multi-dolibarr" style="width: 90%;" id="' . $htmlname . '"><ul class="select2-choices-dolibarr">' . implode(' ', $toprint) . '</ul></div>';
 		}
 
-		if ($rendermode === 'edit') {
+		if ($rendermode === 'edit') {	// A multiselect combo list
 			$contactType = $contact->listeTypeContacts('external', '', 1, '', '', 'agenda'); // We exclude agenda as there is no contact on such element
 			if (count($selected) > 0) {
 				$newselected = array();
@@ -889,7 +890,7 @@ class FormCompany extends Form
 					$selected = $newselected;
 				}
 			}
-			return $this->multiselectarray($htmlname, $contactType, $selected, 0, 0, $morecss, 0, '90%');
+			return $this->multiselectarray($htmlname, $contactType, $selected, 0, 0, $morecss, 0, '90%', '', '', $placeholder);
 		}
 
 		return 'ErrorBadValueForParameterRenderMode'; // Should not happened
@@ -901,7 +902,7 @@ class FormCompany extends Form
 	 *
 	 *    @param	string		$selected				Preselected value
 	 *    @param    string		$htmlname				HTML select name
-	 *    @param    array		$fields					Array with key of fields to refresh after selection
+	 *    @param    string[]	$fields					Array with key of fields to refresh after selection
 	 *    @param    int			$fieldsize				Field size
 	 *    @param    int			$disableautocomplete    1 To disable ajax autocomplete features (browser autocomplete may still occurs)
 	 *    @param	string		$moreattrib				Add more attribute on HTML input field

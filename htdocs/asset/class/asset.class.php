@@ -83,7 +83,7 @@ class Asset extends CommonObject
 	 */
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => "Id"),
@@ -1026,13 +1026,13 @@ class Asset extends CommonObject
 
 				// Get depreciation period
 				$depreciation_date_start = $this->date_start > $this->date_acquisition ? $this->date_start : $this->date_acquisition;
-				$depreciation_date_end = dol_time_plus_duree($depreciation_date_start, $fields['duration'], $fields['duration_type'] == 1 ? 'm' : ($fields['duration_type'] == 2 ? 'd' : 'y'));
+				$depreciation_date_end = dol_time_plus_duree((int) $depreciation_date_start, $fields['duration'], $fields['duration_type'] == 1 ? 'm' : ($fields['duration_type'] == 2 ? 'd' : 'y'));
 				$depreciation_amount = $fields['amount_base_depreciation_ht'];
 				if ($fields['duration_type'] == 2) { // Daily
 					$fiscal_period_start = $depreciation_date_start;
 					$fiscal_period_end = $depreciation_date_start;
 				} elseif ($fields['duration_type'] == 1) { // Monthly
-					$date_temp = dol_getdate($depreciation_date_start);
+					$date_temp = dol_getdate((int) $depreciation_date_start);
 					$fiscal_period_start = dol_get_first_day($date_temp['year'], $date_temp['mon'], false);
 					$fiscal_period_end = dol_get_last_day($date_temp['year'], $date_temp['mon'], false);
 				} else { // Annually
@@ -1637,6 +1637,9 @@ class Asset extends CommonObject
 
 			if (class_exists($classname)) {
 				$obj = new $classname();
+
+				'@phan-var-force ModeleNumRefAsset $obj';
+
 				$numref = $obj->getNextValue($this);
 
 				if ($numref != '' && $numref != '-1') {

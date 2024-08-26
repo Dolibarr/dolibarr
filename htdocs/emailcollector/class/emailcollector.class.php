@@ -111,7 +111,7 @@ class EmailCollector extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid'         => array('type' => 'integer', 'label' => 'TechnicalID', 'visible' => 2, 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'index' => 1),
@@ -1183,6 +1183,7 @@ class EmailCollector extends CommonObject
 						$oauthname = explode('-', $OAUTH_SERVICENAME);
 						// ex service is Google-Emails we need only the first part Google
 						$apiService = $serviceFactory->createService($oauthname[0], $credentials, $storage, array());
+						'@phan-var-force  OAuth\OAuth2\Service\AbstractService|OAuth\OAuth1\Service\AbstractService $apiService'; // createService is only ServiceInterface
 						// We have to save the token because Google give it only once
 						$refreshtoken = $tokenobj->getRefreshToken();
 						$tokenobj = $apiService->refreshAccessToken($tokenobj);
@@ -3092,7 +3093,7 @@ class EmailCollector extends CommonObject
 								if (empty($projecttocreate->ref)) {
 									// Get next Ref
 									$defaultref = '';
-									$modele = !getDolGlobalString('PROJECT_ADDON') ? 'mod_project_simple' : $conf->global->PROJECT_ADDON;
+									$modele = getDolGlobalString('PROJECT_ADDON', 'mod_project_simple');
 
 									// Search template files
 									$file = '';

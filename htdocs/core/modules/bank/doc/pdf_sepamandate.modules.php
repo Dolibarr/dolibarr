@@ -39,7 +39,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr';
 
@@ -116,14 +116,14 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	/**
 	 *  Function to create pdf of company bank account sepa mandate
 	 *
-	 *	@param	Account				$object				CompanyBankAccount bank account to generate document for
-	 *	@param	Translate			$outputlangs	    Lang output object
-	 *  @param	string				$srctemplatepath	Full path of source filename for generator using a template file
-	 *  @param	int					$hidedetails		Do not show line details (not used for this template)
-	 *  @param	int					$hidedesc			Do not show desc (not used for this template)
-	 *  @param	int					$hideref			Do not show ref (not used for this template)
-	 *  @param  null|array  		$moreparams         More parameters
-	 *	@return	int         				    		1 if OK, <=0 if KO
+	 *	@param	Account					$object				CompanyBankAccount bank account to generate document for
+	 *	@param	Translate				$outputlangs		Lang output object
+	 *  @param	string					$srctemplatepath	Full path of source filename for generator using a template file
+	 *	@param	int<0,1>				$hidedetails		Do not show line details
+	 *	@param	int<0,1>				$hidedesc			Do not show desc
+	 *	@param	int<0,1>				$hideref			Do not show ref
+	 *  @param  ?array<string,string>	$moreparams			More parameters
+	 *	@return	int<-1,1>									1 if OK, <=0 if KO
 	 */
 	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
@@ -437,7 +437,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				 */
 				$this->_pagefoot($pdf, $object, $outputlangs);
 				if (method_exists($pdf, 'AliasNbPages')) {
-					$pdf->AliasNbPages();
+					$pdf->AliasNbPages();  // @phan-suppress-current-line PhanUndeclaredMethod
 				}
 
 				$pdf->Close();

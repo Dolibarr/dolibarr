@@ -3,6 +3,7 @@
  * Copyright (C) 2006-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -162,7 +163,7 @@ if (!empty($_SESSION['ipaddress'])) {      // To avoid to make action twice
 	$errormessage       = $_SESSION['errormessage'];
 
 	if (is_object($object) && method_exists($object, 'call_trigger')) {
-		// Call trigger
+		// Call trigger @phan-suppress-next-line PhanUndeclaredMethod
 		$result = $object->call_trigger('PAYMENTONLINE_PAYMENT_KO', $user);
 		if ($result < 0) {
 			$error++;

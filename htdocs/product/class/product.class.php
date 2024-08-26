@@ -513,6 +513,7 @@ class Product extends CommonObject
 	 * @var float|string
 	 */
 	public $weight;
+
 	/**
 	 * @var int|string
 	 */
@@ -793,7 +794,7 @@ class Product extends CommonObject
 	 */
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int,string>,comment?:string,validate?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
@@ -1336,11 +1337,11 @@ class Product extends CommonObject
 		// Automated compute surface and volume if not filled
 		if (empty($this->surface) && !empty($this->length) && !empty($this->width) && $this->length_units == $this->width_units) {
 			$this->surface = (float) $this->length * (float) $this->width;
-			$this->surface_units = measuring_units_squared($this->length_units);
+			$this->surface_units = measuring_units_squared((int) $this->length_units);
 		}
 		if (empty($this->volume) && !empty($this->surface) && !empty($this->height) && $this->length_units == $this->height_units) {
 			$this->volume = $this->surface * (float) $this->height;
-			$this->volume_units = measuring_units_cubed($this->height_units);
+			$this->volume_units = measuring_units_cubed((int) $this->height_units);
 		}
 
 		if (empty($this->tva_tx)) {
@@ -2601,7 +2602,7 @@ class Product extends CommonObject
 				}
 			} else {
 				$price = (float) price2num($newprice, 'MU');
-				$price_ttc = ($newnpr != 1) ? price2num($newprice) * (1 + ($newvat / 100)) : $price;
+				$price_ttc = ($newnpr != 1) ? (float) price2num($newprice) * (1 + ($newvat / 100)) : $price;
 				$price_ttc = (float) price2num($price_ttc, 'MU');
 
 				if ($newminprice !== '' || $newminprice == 0) {
@@ -6942,6 +6943,51 @@ class Product extends CommonObject
 		$return .= '</div>';
 		$return .= '</div>';
 		return $return;
+	}
+
+	/**
+	 * Retrieve and display products.
+	 *
+	 * @param int $limit The maximum number of results to return.
+	 * @return array<int, array<string, mixed>>|int  return array if OK, -1 if KO
+	 */
+	public function getProductsToPreviewInEmail($limit)
+	{
+
+		if (!is_numeric($limit)) {
+			return -1;
+		}
+
+		$sql = "SELECT p.rowid, p.ref, p.label, p.description, p.entity, ef.filename
+				FROM ".MAIN_DB_PREFIX."product AS p
+				JOIN ".MAIN_DB_PREFIX."ecm_files AS ef ON p.rowid = ef.src_object_id
+				WHERE ef.entity IN (".getEntity('product').")
+				AND (ef.filename LIKE '%.png' OR ef.filename LIKE '%.jpeg' OR ef.filename LIKE '%.svg')
+				GROUP BY p.rowid, p.ref, p.label, p.description, p.entity, ef.filename
+				ORDER BY p.datec ASC
+				LIMIT " . ((int) $limit);
+
+		$resql = $this->db->query($sql);
+		$products = array();
+
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				$products[] = array(
+					'rowid' => $obj->rowid,
+					'ref' => $obj->ref,
+					'label' => $obj->label,
+					'description' => $obj->description,
+					'entity' => $obj->entity,
+					'filename' => $obj->filename
+				);
+			}
+		} else {
+			dol_print_error($this->db);
+		}
+		if (empty($products)) {
+			return -1;
+		}
+		return $products;
 	}
 }
 

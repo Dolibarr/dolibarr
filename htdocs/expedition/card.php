@@ -164,6 +164,9 @@ if (empty($reshook)) {
 		$result = $object->setDraft($user, 0);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
+		} else {
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			exit;
 		}
 	}
 	// Reopen
@@ -172,6 +175,9 @@ if (empty($reshook)) {
 		$result = $object->reOpen();
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
+		} else {
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			exit;
 		}
 	}
 
@@ -196,7 +202,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'update_extras') {
+	if ($action == 'update_extras' && $user->hasRight('expedition', 'creer')) {
 		$object->oldcopy = dol_clone($object, 2);
 		$attribute_name = GETPOST('attribute', 'restricthtml');
 

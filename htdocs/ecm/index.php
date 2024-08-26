@@ -82,6 +82,9 @@ $error = 0;
 if ($user->socid) {
 	$socid = $user->socid;
 }
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('ecmindexcard', 'globalcard'));
+
 $result = restrictedArea($user, 'ecm', 0);
 
 $permissiontoread = $user->hasRight('ecm', 'read');
@@ -89,9 +92,6 @@ $permissiontocreate = $user->hasRight('ecm', 'upload');
 $permissiontocreatedir = $user->hasRight('ecm', 'setup');
 $permissiontodelete = $user->hasRight('ecm', 'upload');
 $permissiontodeletedir = $user->hasRight('ecm', 'setup');
-
-// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-$hookmanager->initHooks(array('ecmindexcard', 'globalcard'));
 
 /*
  *	Actions
@@ -202,7 +202,7 @@ if ($action == 'refreshmanual' && $permissiontoread) {
 	$diroutputslash .= '/';
 
 	// Scan directory tree on disk
-	$disktree = dol_dir_list($conf->ecm->dir_output, 'directories', 1, '', '^temp$', '', '', 0);
+	$disktree = dol_dir_list($conf->ecm->dir_output, 'directories', 1, '', '^temp$', '', 0, 0);
 
 	// Scan directory tree in database
 	$sqltree = $ecmdirstatic->get_full_arbo(0);

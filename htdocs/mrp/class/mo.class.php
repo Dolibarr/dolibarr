@@ -84,7 +84,7 @@ class Mo extends CommonObject
 	 */
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'position' => 1, 'notnull' => 1, 'index' => 1, 'comment' => "Id",),
@@ -112,22 +112,43 @@ class Mo extends CommonObject
 		'status' => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'visible' => 2, 'position' => 1000, 'default' => '0', 'notnull' => 1, 'index' => 1, 'arrayofkeyval' => array('0' => 'Draft', '1' => 'Validated', '2' => 'InProgress', '3' => 'StatusMOProduced', '9' => 'Canceled')),
 		'fk_parent_line' => array('type' => 'integer:MoLine:mrp/class/mo.class.php', 'label' => 'ParentMo', 'enabled' => 1, 'visible' => 0, 'position' => 1020, 'default' => '0', 'notnull' => 0, 'index' => 1,'showoncombobox' => 0),
 	);
+	/**
+	 * @var int
+	 */
 	public $rowid;
+	/**
+	 * @var int
+	 */
 	public $entity;
+	/**
+	 * @var string
+	 */
 	public $ref;
 
 	/**
 	 * @var int mrptype
 	 */
 	public $mrptype;
+	/**
+	 * @var string
+	 */
 	public $label;
 
 	/**
 	 * @var float Quantity
 	 */
 	public $qty;
+	/**
+	 * @var int
+	 */
 	public $fk_warehouse;
+	/**
+	 * @var int
+	 */
 	public $fk_soc;
+	/**
+	 * @var int
+	 */
 	public $socid;
 
 	/**
@@ -145,9 +166,21 @@ class Mo extends CommonObject
 	 */
 	public $date_valid;
 
+	/**
+	 * @var int
+	 */
 	public $fk_user_creat;
+	/**
+	 * @var int
+	 */
 	public $fk_user_modif;
+	/**
+	 * @var string
+	 */
 	public $import_key;
+	/**
+	 * @var int
+	 */
 	public $status;
 
 	/**
@@ -341,7 +374,7 @@ class Mo extends CommonObject
 	 *
 	 * @param  	User 	$user      	User that creates
 	 * @param  	int 	$fromid     Id of object to clone
-	 * @return 	mixed 				New object created, <0 if KO
+	 * @return 	self|int<-1,1>		New object created, <0 if KO
 	 */
 	public function createFromClone(User $user, $fromid)
 	{
@@ -383,7 +416,7 @@ class Mo extends CommonObject
 		}
 
 
-		// Clear fields
+		// Clear fields  @phan-suppress-next-line PhanTypeMismatchProperty
 		$object->ref = empty($this->fields['ref']['default']) ? "copy_of_".$object->ref : $this->fields['ref']['default'];
 		$object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
 		$object->status = self::STATUS_DRAFT;
@@ -441,9 +474,9 @@ class Mo extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param int    $id   Id object
-	 * @param string $ref  Ref
-	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
+	 * @param	int		$id		Id object
+	 * @param	?string	$ref	Ref
+	 * @return int<-1,1>		Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null)
 	{
@@ -460,7 +493,7 @@ class Mo extends CommonObject
 	/**
 	 * Load object lines in memory from the database
 	 *
-	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
+	 * @return int<-1,1>	Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetchLines()
 	{
@@ -1755,15 +1788,20 @@ class Mo extends CommonObject
 	 *  If lines are into a template, title must also be into a template
 	 *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
 	 *
-	 * 	@param	MoLine	$line				Line
-	 * 	@param	string				$var				Var
-	 *	@param	string				$restrictlist		''=All lines, 'services'=Restrict to services only (strike line if not)
-	 *  @param	string				$defaulttpldir		Directory where to find the template
-	 *  @param  array       		$selectedLines      Array of lines id for selected lines
+	 * 	@param	CommonObjectLine	$line			Line
+	 * 	@param	string				$var			Var
+	 *	@param	string				$restrictlist	''=All lines, 'services'=Restrict to services only (strike line if not)
+	 *  @param	string				$defaulttpldir	Directory where to find the template
+	 *  @param  int[]  				$selectedLines	Array of lines id for selected lines
 	 * 	@return	void
 	 */
 	public function printOriginLine($line, $var, $restrictlist = '', $defaulttpldir = '/core/tpl', $selectedLines = array())
 	{
+		if (!$line instanceof MoLine) {
+			dol_syslog(__METHOD__.'::pringOriginLine $line is '.get_class($line).'<>MoLine', LOG_WARNING);
+			parent::printOriginLine($line, $var, $restrictlist, $defaulttpldir, $selectedLines);
+			return;
+		}
 		$productstatic = new Product($this->db);
 
 		$this->tpl['id'] = $line->id;
@@ -1939,9 +1977,9 @@ class Mo extends CommonObject
 	/**
 	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
@@ -2073,12 +2111,33 @@ class MoLine extends CommonObjectLine
 		'fk_unit' => array('type' => 'int', 'label' => 'Unit', 'enabled' => 1, 'visible' => 1, 'notnull' => 0, 'position' => 186)
 	);
 
+	/**
+	 * @var int
+	 */
 	public $rowid;
+	/**
+	 * @var int
+	 */
 	public $fk_mo;
+	/**
+	 * @var int
+	 */
 	public $origin_id;
+	/**
+	 * @var string
+	 */
 	public $origin_type;
+	/**
+	 * @var int
+	 */
 	public $position;
+	/**
+	 * @var int
+	 */
 	public $fk_product;
+	/**
+	 * @var int
+	 */
 	public $fk_warehouse;
 
 	/**
@@ -2090,18 +2149,42 @@ class MoLine extends CommonObjectLine
 	 * @var float Quantity frozen
 	 */
 	public $qty_frozen;
+	/**
+	 * @var int<0,1>
+	 */
 	public $disable_stock_change;
+	/**
+	 * @var float|int
+	 */
 	public $efficiency;
 
 	/**
 	 * @var string batch reference
 	 */
 	public $batch;
+	/**
+	 * @var string
+	 */
 	public $role;
+	/**
+	 * @var int
+	 */
 	public $fk_mrp_production;
+	/**
+	 * @var int
+	 */
 	public $fk_stock_movement;
+	/**
+	 * @var string
+	 */
 	public $import_key;
+	/**
+	 * @var int
+	 */
 	public $fk_parent_line;
+	/**
+	 * @var ?int
+	 */
 	public $fk_unit;
 
 	/**
@@ -2152,9 +2235,9 @@ class MoLine extends CommonObjectLine
 	/**
 	 * Create object into database
 	 *
-	 * @param  User $user      User that creates
-	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
-	 * @return int             Return integer <0 if KO, Id of created object if OK
+	 * @param  User		$user		User that creates
+	 * @param  int<0,1> $notrigger	0=launch triggers after, 1=disable triggers
+	 * @return int<-1,1>			Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = 0)
 	{
@@ -2169,9 +2252,9 @@ class MoLine extends CommonObjectLine
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param int    $id   Id object
-	 * @param string $ref  Ref
-	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
+	 * @param int		$id		Id object
+	 * @param string	$ref	Ref
+	 * @return int<-1,1>		Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null)
 	{
@@ -2270,9 +2353,9 @@ class MoLine extends CommonObjectLine
 	/**
 	 * Update object into database
 	 *
-	 * @param  User $user      User that modifies
-	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
-	 * @return int             Return integer <0 if KO, >0 if OK
+	 * @param  User		$user		User that modifies
+	 * @param  int<0,1> $notrigger	0=launch triggers after, 1=disable triggers
+	 * @return int<-1,1>			Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
@@ -2282,9 +2365,9 @@ class MoLine extends CommonObjectLine
 	/**
 	 * Delete object in database
 	 *
-	 * @param User 	$user       User that deletes
-	 * @param int 	$notrigger  0=launch triggers after, 1=disable triggers
-	 * @return int             	Return integer <0 if KO, >0 if OK
+	 * @param User		$user       User that deletes
+	 * @param int<0,1> 	$notrigger  0=launch triggers after, 1=disable triggers
+	 * @return int<-1,1>			Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = 0)
 	{

@@ -1594,7 +1594,7 @@ if ($action == 'updatecss' && $usercanedit) {
 			}
 
 
-			$dataposted = trim(GETPOST('WEBSITE_HTML_HEADER', 'restricthtmlallowunvalid'));
+			$dataposted = trim(GETPOST('WEBSITE_HTML_HEADER', 'restricthtmlallowlinkscript'));		// Must accept tags like '<script>' and '<link>'
 			$dataposted = preg_replace(array('/<html>\n*/ims', '/<\/html>\n*/ims'), array('', ''), $dataposted);
 			$dataposted = str_replace('<?=', '<?php', $dataposted);
 
@@ -2870,7 +2870,7 @@ $moreheadjs .= '<script type="text/javascript">'."\n";
 $moreheadjs .= 'var indicatorBlockUI = \''.DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif".'\';'."\n";
 $moreheadjs .= '</script>'."\n";
 
-llxHeader($moreheadcss.$moreheadjs, $langs->trans("Website").(empty($website->ref) ? '' : ' - '.$website->ref), $helpurl, '', 0, 0, $arrayofjs, $arrayofcss, '', '', '<!-- Begin div class="fiche" -->'."\n".'<div class="fichebutwithotherclass">');
+llxHeader($moreheadcss.$moreheadjs, $langs->trans("Website").(empty($website->ref) ? '' : ' - '.$website->ref), $helpurl, '', 0, 0, $arrayofjs, $arrayofcss, '', 'mod-website page-index', '<!-- Begin div class="fiche" -->'."\n".'<div class="fichebutwithotherclass">');
 
 print "\n";
 print '<!-- Open form for all page -->'."\n";
