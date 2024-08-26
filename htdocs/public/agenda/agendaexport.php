@@ -162,7 +162,7 @@ if (!isModEnabled('agenda')) {
 
 // Check config
 if (!getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY')) {
-	$user->getrights();
+	$user->loadRights();
 
 	top_httphead();
 
@@ -189,7 +189,7 @@ if ($reshook < 0) {
 } elseif (empty($reshook)) {
 	// Check exportkey
 	if (!GETPOST("exportkey") || getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY') != GETPOST("exportkey")) {
-		$user->getrights();
+		$user->loadRights();
 
 		top_httphead();
 
@@ -202,7 +202,7 @@ if ($reshook < 0) {
 
 
 // Define filename with prefix on filters predica (each predica set must have on cache file)
-$shortfilename = 'dolibarrcalendar';
+$shortfilename = 'calendar';
 $filename = $shortfilename;
 // Complete long filename
 foreach ($filters as $key => $value) {

@@ -639,7 +639,7 @@ if (empty($reshook)) {
 				$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 		}
-	} elseif ($action == 'set_incoterms' && isModEnabled('incoterm')) {
+	} elseif ($action == 'set_incoterms' && isModEnabled('incoterm') && $usercancreate) {
 		// Set incoterm
 		$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOSTFLOAT('location_incoterms'));
 		if ($result < 0) {
@@ -695,7 +695,7 @@ if (empty($reshook)) {
 		$remise_percent = (GETPOST('remiseforalllines') ? GETPOST('remiseforalllines') : 0);
 		$remise_percent = str_replace('*', '', $remise_percent);
 		foreach ($object->lines as $line) {
-			$tvatx= $line->tva_tx;
+			$tvatx = $line->tva_tx;
 			if (!empty($line->vat_src_code)) {
 				$tvatx .= ' ('.$line->vat_src_code.')';
 			}
@@ -1524,7 +1524,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'update_extras') {
+	if ($action == 'update_extras' && $usercancreate) {
 		$object->oldcopy = dol_clone($object, 2);
 		$attribute_name = GETPOST('attribute', 'restricthtml');
 
@@ -1850,7 +1850,7 @@ if ($action == 'create' && $usercancreate) {
 		if (empty($object->warehouse_id) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE')) {
 			$warehouse_id = getDolGlobalString('MAIN_DEFAULT_WAREHOUSE');
 		}
-		if (empty($object->warehouse_id) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER')) {
+		if (empty($object->warehouse_id) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER') && !empty($user->warehouse_id)) {
 			$warehouse_id = $user->fk_warehouse;
 		}
 	}
@@ -1926,7 +1926,7 @@ if ($action == 'create' && $usercancreate) {
 			print "<tr><td>".$langs->trans("DefaultContact").'</td><td>';
 			print img_picto('', 'contact', 'class="pictofixedwidth"');
 			//print $form->selectcontacts($soc->id, $contactid, 'contactid', 1, empty($srccontactslist) ? "" : $srccontactslist, '', 1, 'maxwidth300 widthcentpercentminusx');
-			print $form->select_contact($soc->id, $contactid, 'contactid', 1,  empty($srccontactslist) ? "" : $srccontactslist, '', 1, 'maxwidth300 widthcentpercentminusx', true);
+			print $form->select_contact($soc->id, $contactid, 'contactid', 1, empty($srccontactslist) ? "" : $srccontactslist, '', 1, 'maxwidth300 widthcentpercentminusx', true);
 			print '</td></tr>';
 
 			// Ligne info remises tiers
@@ -2295,6 +2295,7 @@ if ($action == 'create' && $usercancreate) {
 
 					if (array_key_exists('facture', $object->linkedObjects)) {
 						foreach ($object->linkedObjects['facture'] as $invoice) {
+							'@phan-var-force Facture $invoice';
 							if ($invoice->type == Facture::TYPE_DEPOSIT) {
 								$eligibleForDepositGeneration = false;
 								break;
@@ -2308,6 +2309,7 @@ if ($action == 'create' && $usercancreate) {
 
 							if (array_key_exists('facture', $proposal->linkedObjects)) {
 								foreach ($proposal->linkedObjects['facture'] as $invoice) {
+									'@phan-var-force Facture $invoice';
 									if ($invoice->type == Facture::TYPE_DEPOSIT) {
 										$eligibleForDepositGeneration = false;
 										break 2;
@@ -3045,9 +3047,8 @@ if ($action == 'create' && $usercancreate) {
 				$arrayforbutaction = array();
 				// Create a purchase order
 
-
-				if (! getDolGlobalInt('COMMANDE_DISABLE_ADD_PURCHASE_ORDER')) {
-					$arrayforbutaction[] = array('lang' => 'orders', 'enabled' => (isModEnabled("supplier_order") && $object->statut > Commande::STATUS_DRAFT), 'perm' => $usercancreatepurchaseorder, 'label' => 'AddPurchaseOrder', 'url' => '/fourn/commande/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id);
+				if (!getDolGlobalInt('COMMANDE_DISABLE_ADD_PURCHASE_ORDER')) {
+					$arrayforbutaction[] = array('lang' => 'orders', 'enabled' => (isModEnabled("supplier_order") && $object->statut > Commande::STATUS_DRAFT), 'perm' => $usercancreatepurchaseorder, 'label' => 'AddPurchaseOrder', 'url' => '/fourn/commande/card.php?action=create&amp;origin='.urlencode($object->element).'&amp;originid='.((int) $object->id));
 				}
 
 				/*if (isModEnabled("supplier_order") && $object->statut > Commande::STATUS_DRAFT && $object->getNbOfServicesLines() > 0) {

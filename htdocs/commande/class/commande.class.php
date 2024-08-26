@@ -292,7 +292,7 @@ class Commande extends CommonOrder
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -390,17 +390,17 @@ class Commande extends CommonOrder
 	/*
 	 * Signed by sender
 	 */
-	CONST STATUS_SIGNED_SENDER   = 1;
+	const STATUS_SIGNED_SENDER   = 1;
 
 	/*
 	 * Signed by receiver
 	 */
-	CONST STATUS_SIGNED_RECEIVER = 2;
+	const STATUS_SIGNED_RECEIVER = 2;
 
 	/*
 	 * Signed by all
 	 */
-	CONST STATUS_SIGNED_ALL      = 9; // To handle future kind of signature (ex: tripartite contract)
+	const STATUS_SIGNED_ALL      = 9; // To handle future kind of signature (ex: tripartite contract)
 
 
 	/**
@@ -443,7 +443,7 @@ class Commande extends CommonOrder
 				$mybool = ((bool) @include_once $dir.$file) || $mybool;
 			}
 
-			if ($mybool === false) {
+			if (!$mybool) {
 				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
@@ -3843,7 +3843,7 @@ class Commande extends CommonOrder
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      int			$withpicto                Add picto into link
 	 *	@param      string	    $option                   Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
@@ -4425,6 +4425,8 @@ class OrderLine extends CommonOrderLine
 			$this->multicurrency_total_ht	= $objp->multicurrency_total_ht;
 			$this->multicurrency_total_tva	= $objp->multicurrency_total_tva;
 			$this->multicurrency_total_ttc	= $objp->multicurrency_total_ttc;
+
+			$this->fetch_optionals();
 
 			$this->db->free($result);
 

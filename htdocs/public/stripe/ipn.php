@@ -93,7 +93,7 @@ if (getDolGlobalString('STRIPE_USER_ACCOUNT_FOR_ACTIONS')) {
 	// We set the user to use for all ipn actions in Dolibarr
 	$user = new User($db);
 	$user->fetch(getDolGlobalString('STRIPE_USER_ACCOUNT_FOR_ACTIONS'));
-	$user->getrights();
+	$user->loadRights();
 } else {
 	httponly_accessforbidden('Error: Setup of module Stripe not complete for mode '.dol_escape_htmltag($service).'. The STRIPE_USER_ACCOUNT_FOR_ACTIONS is not defined.', 400, 1);
 }

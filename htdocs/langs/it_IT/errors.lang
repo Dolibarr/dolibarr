@@ -303,7 +303,8 @@ ErrorThirpdartyOrMemberidIsMandatory=Terza parte o Membro di partnership è obbl
 ErrorFailedToWriteInTempDirectory=Impossibile scrivere nella directory temporanea
 ErrorQuantityIsLimitedTo=La quantità è limitata a %s
 ErrorFailedToLoadThirdParty=Impossibile trovare/caricare terze parti da id=%s, email=%s, nome=%s
-ErrorThisPaymentModeIsNotSepa=Questa modalità di pagamento non è un conto bancario
+ErrorThisPaymentModeIsNotDirectDebit=The payment mode is not direct debit
+ErrorThisPaymentModeIsNotCreditTransfer=The payment mode is not credit transfer
 ErrorStripeCustomerNotFoundCreateFirst=Stripe cliente non è impostato per questa terza parte (o impostato su un valore eliminato sul lato Stripe). creare (o ricollegalo) prima.
 ErrorCharPlusNotSupportedByImapForSearch=La ricerca IMAP non è in grado di cercare nel mittente o nel destinatario una stringa contenente il carattere +
 ErrorTableNotFound=Tabella <b> %s </b> non trovata
@@ -334,9 +335,9 @@ ErrorDictionaryNotFound=Dizionario <b>%s</b> non trovato
 ErrorFailedToCreateSymLinkToMedias=Impossibile creare il simbolico collegamento %s puntare a %s
 ErrorCheckTheCommandInsideTheAdvancedOptions=Controlla il ordine utilizzato per l'esportazione nelle Opzioni avanzate dell'esportazione
 ErrorEndTimeMustBeGreaterThanStartTime=L'ora di fine deve essere maggiore dell'ora di inizio
-ErrorIncoherentDates=data l'inizio deve essere inferiore a data fine
-ErrorEndHourIsNull=Fine data Non può essere zero
-ErrorStartHourIsNull=Inizia data Non può essere zero
+ErrorIncoherentDates=Start date must be earlier than end date
+ErrorEndHourIsNull=End date field cannot be empty
+ErrorStartHourIsNull=Start date field cannot be empty
 ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter=Troppi linee da elaborare. Si prega di utilizzare un filtro più selettivo.
 ErrorEmptyValueForQty=La quantità Non può deve essere zero.
 # Warnings

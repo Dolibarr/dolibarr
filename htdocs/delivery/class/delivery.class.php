@@ -119,6 +119,11 @@ class Delivery extends CommonObject
 	public $user_author_id;
 
 
+	const STATUS_DRAFT = 0;
+	const STATUS_VALIDATED = 1;
+	const STATUS_CANCELED = -1;
+
+
 	/**
 	 * Constructor
 	 *
@@ -267,9 +272,9 @@ class Delivery extends CommonObject
 	/**
 	 *	Create a line
 	 *
-	 *	@param	string	$origin_id				Id of order
+	 *	@param	int 	$origin_id				Id of order
 	 *	@param	string	$qty					Quantity
-	 *	@param	string	$fk_product				Id of predefined product
+	 *	@param	int 	$fk_product				Id of predefined product
 	 *	@param	string	$description			Description
 	 *  @param	array	$array_options			Array options
 	 *	@return	int								Return integer <0 if KO, >0 if OK
@@ -278,12 +283,11 @@ class Delivery extends CommonObject
 	{
 		// phpcs:enable
 		$error = 0;
-		$idprod = $fk_product;
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."deliverydet (fk_delivery, fk_origin_line,";
 		$sql .= " fk_product, description, qty)";
 		$sql .= " VALUES (".$this->id.",".((int) $origin_id).",";
-		$sql .= " ".($idprod > 0 ? ((int) $idprod) : "null").",";
+		$sql .= " ".($fk_product > 0 ? ((int) $fk_product) : "null").",";
 		$sql .= " ".($description ? "'".$this->db->escape($description)."'" : "null").",";
 		$sql .= (price2num($qty, 'MS')).")";
 
@@ -765,7 +769,7 @@ class Delivery extends CommonObject
 	}
 
 	/**
-	 *	Return clicable name (with picto eventually)
+	 *	Return clickable name (with picto eventually)
 	 *
 	 *	@param	int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
 	 *  @param  int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking

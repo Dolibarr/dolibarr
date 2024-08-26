@@ -135,6 +135,9 @@ $id = GETPOSTINT('id');
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
+
+$hookmanager->initHooks(array('contractlist'));
+
 $result = restrictedArea($user, 'contrat', $id);
 
 $diroutputmassaction = $conf->contrat->dir_output.'/temp/massgeneration/'.$user->id;
@@ -148,7 +151,6 @@ if ($search_status == '') {
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Contrat($db);
-$hookmanager->initHooks(array('contractlist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels

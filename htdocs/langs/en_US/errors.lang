@@ -422,3 +422,4 @@ OperNotDefined=Payment method not defined
 ErrorThisContactXIsAlreadyDefinedAsThisType=%s is already defined as contact for this type.
 ErrorThisGroupIsAlreadyDefinedAsThisType=The contacts with this group are already defined as contact for this type.
 EmptyMessageNotAllowedError=Empty message is not allowed
+ErrorIsNotInError=%s is not in error

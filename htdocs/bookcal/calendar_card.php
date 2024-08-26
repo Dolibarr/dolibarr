@@ -51,7 +51,7 @@ $dol_openinpopup = GETPOST('dol_openinpopup', 'aZ09');
 
 if (!empty($backtopagejsfields)) {
 	$tmpbacktopagejsfields = explode(':', $backtopagejsfields);
-	$dol_openinpopup = $tmpbacktopagejsfields[0];
+	$dol_openinpopup = preg_replace('/[^a-z0-9_]/i', '', $tmpbacktopagejsfields[0]);
 }
 
 // Initialize a technical objects
@@ -184,7 +184,7 @@ $formproject = new FormProjets($db);
 
 $title = $langs->trans("Calendar");
 $help_url = '';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-bookcal page-card_calendar');
 
 // Example : Adding jquery code
 // print '<script type="text/javascript">
