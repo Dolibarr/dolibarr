@@ -379,7 +379,8 @@ $sql .= " u.datestartvalidity, u.dateendvalidity,";
 $sql .= " u.ldap_sid, u.statut as status, u.entity,";
 $sql .= " u.tms as date_modification, u.datec as date_creation,";
 $sql .= " u2.rowid as id2, u2.login as login2, u2.firstname as firstname2, u2.lastname as lastname2, u2.admin as admin2, u2.fk_soc as fk_soc2, u2.office_phone as ofice_phone2, u2.user_mobile as user_mobile2, u2.email as email2, u2.gender as gender2, u2.photo as photo2, u2.entity as entity2, u2.statut as status2,";
-$sql .= " s.nom as name, s.canvas";
+$sql .= " s.nom as name, s.canvas,";
+$sql .= " co.code as country_code";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -400,6 +401,7 @@ if (isset($extrafields->attributes[$object->table_element]['label']) && is_array
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_soc = s.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u2 ON u.fk_user = u2.rowid";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON u.fk_country = co.rowid";
 // Add table from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
@@ -995,10 +997,6 @@ while ($i < $imaxinloop) {
 		break; // Should not happen
 	}
 
-	if (empty($obj->country_code)) {
-		$obj->country_code = '';		// TODO Add join in select with country table to get country_code
-	}
-
 	// Store properties in $object
 	$object->setVarsFromFetchObj($obj);
 
@@ -1020,6 +1018,7 @@ while ($i < $imaxinloop) {
 	$object->photo = $obj->photo;
 	$object->datestartvalidity = $db->jdate($obj->datestartvalidity);
 	$object->dateendvalidity = $db->jdate($obj->dateendvalidity);
+	$object->country_code = $obj->country_code;
 
 	$li = $object->getNomUrl(-1, '', 0, 0, 24, 1, 'login', '', 1);
 
