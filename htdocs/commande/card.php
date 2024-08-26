@@ -534,7 +534,7 @@ if (empty($reshook)) {
 				$action = '';
 			}
 
-			if (isModEnabled('categorie')) {
+			if (isModEnabled('category')) {
 				$categories = GETPOST('categories', 'array');
 				if (method_exists($object, 'setCategories')) {
 					$object->setCategories($categories);
@@ -667,7 +667,7 @@ if (empty($reshook)) {
 		//	$result = $object->setDiscount($user, price2num(GETPOST('remise_percent'), '', 2));
 		//} elseif ($action == 'setremiseabsolue' && $usercancreate) {
 		//	$result = $object->set_remise_absolue($user, price2num(GETPOST('remise_absolue'), 'MU', 2));
-	} elseif ($action == 'settags' && isModEnabled('categorie') && $usercancreate) {
+	} elseif ($action == 'settags' && isModEnabled('category') && $usercancreate) {
 		$result = $object->setCategories(GETPOST('categories', 'array'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -2811,7 +2811,7 @@ if ($action == 'create' && $usercancreate) {
 			}
 
 			// Tags-Categories
-			if (isModEnabled('categorie')) {
+			if (isModEnabled('category')) {
 				print '<tr><td>';
 				print '<table class="nobordernopadding centpercent"><tr><td>';
 				print $langs->trans("Categories");

@@ -663,7 +663,7 @@ class modCategorie extends DolibarrModules
 	 * @param int		$cat_id			Categorie id
 	 * @param string	$class			Class of the linked object
 	 * @param string	$enabled		Condition to enable this export
-	 * @param string	$permission		Permission to export the linked object
+	 * @param array		$permission		Permission to export the linked object
 	 * @param array		$fields_list	Additional fields of the linked object to export
 	 *
 	 * @return void
@@ -751,7 +751,7 @@ class modCategorie extends DolibarrModules
 		int		$cat_id,
 		string	$class_file,
 		string	$class,
-		string	$element,
+		string	$element
 	) {
 		$cat_type = Categorie::$MAP_ID_TO_CODE[$cat_id];
 

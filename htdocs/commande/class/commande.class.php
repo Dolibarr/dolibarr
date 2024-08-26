@@ -832,14 +832,15 @@ class Commande extends CommonOrder
 	}
 
 	/**
-	 * Sets object to supplied categories.
+	 * Sets object to given categories.
 	 *
-	 * Deletes object from existing categories not supplied.
 	 * Adds it to non existing supplied categories.
+	 * Deletes object from existing categories not supplied.
 	 * Existing categories are left untouch.
 	 *
-	 * @param int[]|int $categories Category or categories IDs
-	 * @return void
+	 * @param int[]|int $categories Category ID or array of Categories IDs
+	 *
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function setCategories($categories)
 	{

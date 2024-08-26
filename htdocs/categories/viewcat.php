@@ -1420,6 +1420,7 @@ if ($type == Categorie::TYPE_ORDER) {
 		print '<br>';
 		$param = '&limit='.$limit.'&id='.$id.'&type='.$type; $num = count($objects); $nbtotalofrecords = ''; $newcardbutton = '';
 
+		// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 		print_barre_liste($langs->trans("Orders"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'bill', 0, $newcardbutton, '', $limit);
 
 		print "<table class='noborder' width='100%'>\n";

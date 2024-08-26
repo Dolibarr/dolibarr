@@ -10920,18 +10920,19 @@ class Form
 
 
 	/**
-	 *  Output a combo list with orders qualified for a third party
+	 * Output a combo list with orders qualified for a third party
 	 *
-	 *  @param  int		$selected   	Id order preselected
-	 *  @param  string	$htmlname   	Name of HTML select
-	 *	@param	int		$maxlength		Maximum length of label
-	 *	@param	int		$option_only	Return only html options lines without the select tag
-	 *	@param	string	$show_empty		Add an empty line ('1' or string to show for empty line)
-	 *  @param	int		$discard_closed Discard closed projects (0=Keep,1=hide completely,2=Disable)
-	 *  @param	int		$forcefocus		Force focus on field (works with javascript only)
-	 *  @param	int		$disabled		Disabled
-	 *  @param	string	$morecss        More css added to the select component
-	 *	@return int         			Nbr of project if OK, <0 if KO
+	 * @param string	$selected		Id order preselected
+	 * @param string	$htmlname		Name of HTML select
+	 * @param int		$maxlength		Maximum length of label
+	 * @param int		$option_only	Return only html options lines without the select tag
+	 * @param string	$show_empty		Add an empty line ('1' or string to show for empty line)
+	 * @param int		$discard_closed Discard closed projects (0=Keep,1=hide completely,2=Disable)
+	 * @param int		$forcefocus		Force focus on field (works with javascript only)
+	 * @param int		$disabled		Disabled
+	 * @param string	$morecss		More css added to the select component
+	 *
+	 * @return int Nbr of project if OK, <0 if KO
 	 */
 	public function selectOrder($selected = '', $htmlname = 'orderid', $maxlength = 24, $option_only = 0, $show_empty = '1', $discard_closed = 0, $forcefocus = 0, $disabled = 0, $morecss = 'maxwidth500')
 	{
@@ -10954,7 +10955,7 @@ class Form
 			// Use select2 selector
 			if (!empty($conf->use_javascript_ajax)) {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-				$comboenhancement = ajax_combobox($htmlname, '', 0, $forcefocus);
+				$comboenhancement = ajax_combobox($htmlname, array(), 0, $forcefocus);
 				$out .= $comboenhancement;
 				$morecss = 'minwidth200imp maxwidth500';
 			}
