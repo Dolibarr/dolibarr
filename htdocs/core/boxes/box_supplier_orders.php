@@ -71,7 +71,7 @@ class box_supplier_orders extends ModeleBoxes
 
 		$text = $langs->trans("BoxTitleLatest".(getDolGlobalString('MAIN_LASTBOX_ON_OBJECT_DATE') ? "" : "Modified")."SupplierOrders", $max);
 		$this->info_box_head = array(
-			'text' => $text.'<a class="paddingleft" href="'.DOL_URL_ROOT.'/fourn/commande/list.php?sortfield=cf.tms&sortorder=DESC"><span class="badge">...</span></a>'
+			'text' => $text.'<a class="paddingleft" href="'.DOL_URL_ROOT.'/fourn/commande/list.php?mainmenu=commercial&leftmenu=orders_suppliers&sortfield=cf.tms&sortorder=DESC"><span class="badge">...</span></a>'
 		);
 
 		if ($user->hasRight('fournisseur', 'commande', 'lire')) {

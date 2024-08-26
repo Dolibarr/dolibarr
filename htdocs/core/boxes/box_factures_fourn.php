@@ -72,7 +72,7 @@ class box_factures_fourn extends ModeleBoxes
 
 		$text = $langs->trans("BoxTitleLast".(getDolGlobalString('MAIN_LASTBOX_ON_OBJECT_DATE') ? "" : "Modified")."SupplierBills", $max);
 		$this->info_box_head = array(
-			'text' => $text.'<a class="paddingleft" href="'.DOL_URL_ROOT.'/fourn/facture/list.php?sortfield=f.tms&sortorder=DESC"><span class="badge">...</span></a>'
+			'text' => $text.'<a class="paddingleft" href="'.DOL_URL_ROOT.'/fourn/facture/list.php?mainmenu=billing&leftmenu=supplier_bills&sortfield=f.tms&sortorder=DESC"><span class="badge">...</span></a>'
 		);
 
 		if ($user->hasRight('fournisseur', 'facture', 'lire')) {

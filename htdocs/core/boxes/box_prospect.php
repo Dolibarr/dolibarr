@@ -77,7 +77,7 @@ class box_prospect extends ModeleBoxes
 		$thirdpartystatic = new Client($this->db);
 
 		$this->info_box_head = array(
-			'text' => $langs->trans("BoxTitleLastModifiedProspects", $max).'<a class="paddingleft" href="'.DOL_URL_ROOT.'/societe/list.php?type=p&sortfield=s.tms&sortorder=DESC"><span class="badge">...</span></a>',
+			'text' => $langs->trans("BoxTitleLastModifiedProspects", $max).'<a class="paddingleft" href="'.DOL_URL_ROOT.'/societe/list.php?mainmenu=companies&leftmenu=prospects&type=p&sortfield=s.tms&sortorder=DESC"><span class="badge">...</span></a>',
 		);
 
 		if ($user->hasRight('societe', 'lire')) {

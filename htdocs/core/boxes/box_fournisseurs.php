@@ -70,7 +70,7 @@ class box_fournisseurs extends ModeleBoxes
 		$thirdpartystatic = new Fournisseur($this->db);
 
 		$this->info_box_head = array(
-			'text' => $langs->trans("BoxTitleLastModifiedSuppliers", $max).'<a class="paddingleft" href="'.DOL_URL_ROOT.'/societe/list.php?type=f&sortfield=s.tms&sortorder=DESC"><span class="badge">...</span></a>'
+			'text' => $langs->trans("BoxTitleLastModifiedSuppliers", $max).'<a class="paddingleft" href="'.DOL_URL_ROOT.'/societe/list.php?mainmenu=companies&leftmenu=suppliers&type=f&sortfield=s.tms&sortorder=DESC"><span class="badge">...</span></a>'
 		);
 
 		if ($user->hasRight('societe', 'lire')) {

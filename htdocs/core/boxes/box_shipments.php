@@ -75,7 +75,7 @@ class box_shipments extends ModeleBoxes
 		$societestatic = new Societe($this->db);
 
 		$this->info_box_head = array(
-			'text' => $langs->trans("BoxTitleLastCustomerShipments", $max).'<a class="paddingleft" href="'.DOL_URL_ROOT.'/expedition/list.php?sortfield=e.tms&sortorder=DESC"><span class="badge">...</span></a>'
+			'text' => $langs->trans("BoxTitleLastCustomerShipments", $max).'<a class="paddingleft" href="'.DOL_URL_ROOT.'/expedition/list.php?mainmenu=products&leftmenu=sendings&sortfield=e.tms&sortorder=DESC"><span class="badge">...</span></a>'
 		);
 
 		if ($user->hasRight('expedition', 'lire')) {

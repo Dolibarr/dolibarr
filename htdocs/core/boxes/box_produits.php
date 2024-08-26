@@ -73,7 +73,7 @@ class box_produits extends ModeleBoxes
 		$productstatic = new Product($this->db);
 
 		$this->info_box_head = array(
-			'text' => $langs->trans("BoxTitleLastProducts", $max).'<a class="paddingleft" href="'.DOL_URL_ROOT.'/product/list.php?sortfield=p.tms&sortorder=DESC"><span class="badge">...</span></a>',
+			'text' => $langs->trans("BoxTitleLastProducts", $max).'<a class="paddingleft" href="'.DOL_URL_ROOT.'/product/list.php?mainmenu=products&leftmenu=product&sortfield=p.tms&sortorder=DESC"><span class="badge">...</span></a>',
 		);
 
 		if ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire')) {

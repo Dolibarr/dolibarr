@@ -66,7 +66,7 @@ class box_last_modified_ticket extends ModeleBoxes
 
 		$text = $langs->trans("BoxLastModifiedTicketDescription", $max);
 		$this->info_box_head = array(
-			'text' => $text.'<a class="paddingleft" href="'.DOL_URL_ROOT.'/ticket/list.php?sortfield=t.tms&sortorder=DESC"><span class="badge">...</span></a>',
+			'text' => $text.'<a class="paddingleft" href="'.DOL_URL_ROOT.'/ticket/list.php?mainmenu=ticket&leftmenu=ticket&sortfield=t.tms&sortorder=DESC"><span class="badge">...</span></a>',
 			'limit' => dol_strlen($text)
 		);
 

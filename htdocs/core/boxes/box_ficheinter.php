@@ -69,7 +69,7 @@ class box_ficheinter extends ModeleBoxes
 		$thirdpartystatic = new Societe($this->db);
 
 		$this->info_box_head = array(
-			'text' => $langs->trans("BoxTitleLastFicheInter", $max).'<a class="paddingleft" href="'.DOL_URL_ROOT.'/fichinter/list.php?sortfield=f.tms&sortorder=DESC"><span class="badge">...</span></a>'
+			'text' => $langs->trans("BoxTitleLastFicheInter", $max).'<a class="paddingleft" href="'.DOL_URL_ROOT.'/fichinter/list.php?mainmenu=commercial&leftmenu=fichinter&sortfield=f.tms&sortorder=DESC"><span class="badge">...</span></a>'
 		);
 
 		if ($user->hasRight('ficheinter', 'lire')) {

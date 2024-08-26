@@ -70,7 +70,7 @@ class box_services_contracts extends ModeleBoxes
 		$form = new Form($this->db);
 
 		$this->info_box_head = array(
-			'text' => $langs->trans("BoxLastProductsInContract", $max).'<a class="paddingleft valignmiddle" href="'.DOL_URL_ROOT.'/contrat/list.php?sortfield=c.tms&sortorder=DESC"><span class="badge">...</span></a>'
+			'text' => $langs->trans("BoxLastProductsInContract", $max).'<a class="paddingleft valignmiddle" href="'.DOL_URL_ROOT.'/contrat/list.php?mainmenu=commercial&leftmenu=contracts&sortfield=c.tms&sortorder=DESC"><span class="badge">...</span></a>'
 		);
 
 		if ($user->hasRight('service', 'lire') && $user->hasRight('contrat', 'lire')) {
