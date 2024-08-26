@@ -66,7 +66,9 @@ class box_services_expired extends ModeleBoxes
 
 		$now = dol_now();
 
-		$this->info_box_head = array('text' => $langs->trans("BoxLastExpiredServices", $max));
+		$this->info_box_head = array(
+			'text' => $langs->trans("BoxLastExpiredServices", $max).'<a class="paddingleft valignmiddle" href="'.DOL_URL_ROOT.'/contrat/services_list.php?mainmenu=commercial&leftmenu=contracts&search_status=4%26filter=expired&sortfield=cd.date_fin_validite&sortorder=DESC"><span class="badge">...</span></a>'
+		);
 
 		if ($user->hasRight('contrat', 'lire')) {
 			// Select contracts with at least one expired service
