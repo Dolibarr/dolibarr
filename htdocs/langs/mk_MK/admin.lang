@@ -371,7 +371,7 @@ GenericMaskCodes3EAN=Сите други знаци во маската ќе о�
 GenericMaskCodes4a=<u>Example on the 99th %s of the third party TheCompany, with date 2023-01-31:</u><br>
 GenericMaskCodes4b=<u>Example on third party created on 2023-01-31:</u><br>
 GenericMaskCodes4c=<u>Example on product created on 2023-01-31:</u><br>
-GenericMaskCodes5=<b>ABC{yy}{mm}-{000000}</b> ќе даде b0ae</83738 Span> ABC2301-000099 <Span Class = 'Notranslate'> </b>   b0342fcfda19bz0 }-ZZZ/{dd}/XXX<span class='notranslate'></b> ќе даде <b>0199-ZZZ/31/XXX<span class='notrans '></b></span>
+GenericMaskCodes5=<b>ABC{yy}{mm}-{000000}</b> will give <b>ABC2301-000099</b><br><b>{0000+100@1}-ZZZ/{dd}/XXX</b> will give <b>0199-ZZZ/31/XXX</b>
 GenericMaskCodes5b=<b>IN{yy}{mm}-{0000}-{t}</b> will give <b>IN2301-0099-A</b> if the type of company is 'Responsable Inscripto' with code for type that is 'A_RI'
 GenericNumRefModelDesc=Враќа приспособлив број според дефинирана маска.
 DateStartThatModel=Оневозможете ја употребата на ова правило за нумерирање за сите трети страни создадени претходно
