@@ -1306,3 +1306,4 @@ TranslationOfKey=Translation of the key AnyTranslationKey
 SignedStatus=Signed status
 NbRecordQualified=Number of qualified records
 auto=auto
+ThisContactHasAnUser=Warning, you must assign the associated user and not this contact to allow access to this object.

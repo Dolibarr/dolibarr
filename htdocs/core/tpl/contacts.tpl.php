@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2012      Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2013-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2015-2016 Charlie BENKE 	<charlie@patas-monkey.com>
- * Copyright (C) 2021      Frédéric France     <frederic.france@netlogic.fr>
+/* Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2013-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2015-2016	Charlie BENKE		<charlie@patas-monkey.com>
+ * Copyright (C) 2021		Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2024		Solution Libre SAS	<contact@solution-libre.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -255,11 +256,13 @@ foreach (array('internal', 'external') as $source) {
 			$entry->contact_id   = $userstatic->id;
 			$entry->contact_html = $userstatic->getNomUrl(-1, '', 0, 0, 0, 0, '', 'valignmiddle');
 			$entry->contact_name = strtolower($userstatic->getFullName($langs));
+			$entry->contact_warning = false;
 		} elseif ($contact['source'] == 'external') {
 			$contactstatic->fetch($contact['id']);
 			$entry->contact_id   = $contactstatic->id;
 			$entry->contact_html = $contactstatic->getNomUrl(1, '', 0, '', 0, 0);
 			$entry->contact_name = strtolower($contactstatic->getFullName($langs));
+			$entry->contact_warning = ($contactstatic->user_id > 0);
 		}
 
 		if ($contact['source'] == 'internal') {
@@ -324,16 +327,27 @@ if ($permission) {
 }
 print "</tr>";
 
-foreach ($list as $entry) {
-	print '<tr class="oddeven" data-rowid="' . $entry->id . '">';
-
-	print '<td class="tdoverflowmax200" data-thirdparty_id="' . ((int) $entry->thirdparty_id) . '" data-thirdparty_name="' . dol_escape_htmltag($entry->thirdparty_name) . '">'.$entry->thirdparty_html.'</td>';
-	print '<td class="tdoverflowmax200" data-contact_id="' . ((int) $entry->contact_id) . '">'.$entry->contact_html.'</td>';
-	print '<td class="nowrap" data-nature="' . dol_escape_htmltag($entry->nature) . '"><span class="opacitymedium">'.dol_escape_htmltag($entry->nature_html).'</span></td>';
-	print '<td class="tdoverflowmax200" data-type_id="' . ((int) $entry->type_id) . '" data-type="' . dol_escape_htmltag($entry->type) . '">'.dol_escape_htmltag($entry->type).'</td>';
-	print '<td class="tdoverflowmax200 center" data-status_id="' . ((int) $entry->status) . '">'.$entry->status_html.'</td>';
-
-	if ($permission) {
+foreach ($list as $entry) { ?>
+	<tr class="oddeven" data-rowid="<?php echo $entry->id ?>">
+		<td class="tdoverflowmax200" data-thirdparty_id="<?php echo ((int) $entry->thirdparty_id) ?>" data-thirdparty_name="<?php echo dol_escape_htmltag($entry->thirdparty_name) ?>">
+			<?php echo $entry->thirdparty_html ?>
+		</td>
+		<td class="tdoverflowmax200" data-contact_id="<?php echo  ((int) $entry->contact_id) ?>">
+			<?php echo $entry->contact_html ?>
+		</td>
+		<td class="nowrap" data-nature="<?php echo dol_escape_htmltag($entry->nature) ?>">
+			<span class="opacitymedium">
+				<?php echo dol_escape_htmltag($entry->nature_html) ?>
+			</span>
+			<?php echo ($entry->contact_warning ? img_picto($langs->trans("ThisContactHasAnUser"), 'warning') : '') ?>
+		</td>
+		<td class="tdoverflowmax200" data-type_id="<?php echo ((int) $entry->type_id) ?>" data-type="<?php echo dol_escape_htmltag($entry->type) ?>">
+			<?php echo dol_escape_htmltag($entry->type) ?>
+		</td>
+		<td class="tdoverflowmax200 center" data-status_id="<?php echo ((int) $entry->status) ?>">
+			<?php echo $entry->status_html ?>
+		</td>
+	<?php if ($permission) {
 		$href = $_SERVER["PHP_SELF"];
 		$href .= '?id='.((int) $object->id);
 		$href .= '&action=deletecontact&token='.newToken();
