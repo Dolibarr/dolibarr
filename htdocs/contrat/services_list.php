@@ -310,12 +310,12 @@ if ($search_status == "5") {
 	$sql .= " AND cd.statut = 5";
 }
 if ($search_option == 'late' && $search_status != '0') {
-	$warning_date = $db->idate(dol_now() - $conf->contract->service->expires->warning_delay);
-	$sql .= " AND cd.date_fin_validite < '".$warning_date."'";
+	$warning_date = $db->idate(dol_now() - $conf->contract->services->expires->warning_delay);
+	$sql .= " AND cd.date_fin_validite < '".addslashes($warning_date)."'";
 }
 if ($search_option == 'late' && $search_status == '0') {
-	$warning_date = $db->idate(dol_now() - $conf->contract->service->expires->warning_delay);
-	$sql .= " AND (cd.date_ouverture_prevue < '".$warning_date."' OR cd.date_fin_validite < '".$warning_date."')";
+	$warning_date = $db->idate(dol_now() - $conf->contract->services->expires->warning_delay);
+	$sql .= " AND (cd.date_ouverture_prevue < '".addslashes($warning_date)."' OR cd.date_fin_validite < '".addslashes($warning_date)."')";
 }
 if ($search_subprice) {
 	$sql .= natural_search("cd.subprice", $search_subprice, 1);
