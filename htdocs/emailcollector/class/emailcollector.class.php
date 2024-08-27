@@ -1402,14 +1402,14 @@ class EmailCollector extends CommonObject
 				}
 			}
 
-			if (empty($targetdir)) {	// Use last date as filter if there is no targetdir defined.
+			if (empty($targetdir) || !getDolGlobalString('EMAILCOLLECTOR_NO_FILTER_ON_DATE_IF_THERE_IS_A_TARGETDIR')) {	// Use last date as filter if there is no targetdir defined.
 				$fromdate = 0;
 				if ($this->datelastok) {
 					$fromdate = $this->datelastok;
 				}
 				if ($fromdate > 0) {
 					// $search .= ($search ? ' ' : '').'SINCE '.date('j-M-Y', $fromdate - 1); // SENTSINCE not supported. Date must be X-Abc-9999 (X on 1 digit if < 10)
-					array_push($criteria, array("SINCE" => date('j-M-Y', $fromdate - 1)));
+					array_push($criteria, array("SINCE" => date('j-M-Y', $fromdate - 1)));	// -1 is to add a security to no forgot some email
 				}
 				//$search.=($search?' ':'').'SINCE 8-Apr-2022';
 			}
