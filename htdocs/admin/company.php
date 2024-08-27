@@ -219,7 +219,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 	dolibarr_set_const($db, "MAIN_INFO_TVAINTRA", GETPOST("tva", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_OBJECT", GETPOST("socialobject", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 
-	dolibarr_set_const($db, "SOCIETE_FISCAL_MONTH_START", (string) GETPOSTINT("SOCIETE_FISCAL_MONTH_START"), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "SOCIETE_FISCAL_MONTH_START", GETPOSTINT("SOCIETE_FISCAL_MONTH_START"), 'chaine', 0, '', $conf->entity);
 
 	// Sale tax options
 	$usevat = GETPOST("optiontva", 'aZ09');

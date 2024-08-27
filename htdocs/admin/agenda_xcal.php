@@ -66,7 +66,7 @@ if ($actionsave) {
 
 	$i += dolibarr_set_const($db, 'MAIN_AGENDA_XCAL_EXPORTKEY', $MAIN_AGENDA_XCAL_EXPORTKEY, 'chaine', 0, '', $conf->entity);
 	$i += dolibarr_set_const($db, 'MAIN_AGENDA_EXPORT_PAST_DELAY', $MAIN_AGENDA_EXPORT_PAST_DELAY, 'chaine', 0, '', $conf->entity);
-	$i += dolibarr_set_const($db, 'MAIN_AGENDA_EXPORT_CACHE', (string) $MAIN_AGENDA_EXPORT_CACHE, 'chaine', 0, '', $conf->entity);
+	$i += dolibarr_set_const($db, 'MAIN_AGENDA_EXPORT_CACHE', $MAIN_AGENDA_EXPORT_CACHE, 'chaine', 0, '', $conf->entity);
 	$i += dolibarr_set_const($db, 'AGENDA_EXPORT_FIX_TZ', $AGENDA_EXPORT_FIX_TZ, 'chaine', 0, '', $conf->entity);
 
 	if ($i >= 4) {

@@ -188,7 +188,7 @@ if ($action == 'update') {
 	// Update values
 	for ($i = 0; $i < 4; $i++) {
 		if (GETPOSTISSET('MAIN_METEO'.$plus.'_LEVEL'.$i)) {
-			dolibarr_set_const($db, 'MAIN_METEO'.$plus.'_LEVEL'.$i, (string) GETPOSTINT('MAIN_METEO'.$plus.'_LEVEL'.$i), 'chaine', 0, '', $conf->entity);
+			dolibarr_set_const($db, 'MAIN_METEO'.$plus.'_LEVEL'.$i, GETPOSTINT('MAIN_METEO'.$plus.'_LEVEL'.$i), 'chaine', 0, '', $conf->entity);
 		}
 	}
 
