@@ -195,7 +195,7 @@ $arrayfields = array(
 	'c.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => 0, 'position' => 500),
 	'lower_planned_end_date' => array('label' => $langs->trans("LowerDateEndPlannedShort"), 'checked' => 1, 'position' => 900, 'help' => $langs->trans("LowerDateEndPlannedShort")),
 	'status' => array('label' => $langs->trans("Status"), 'checked' => 1, 'position' => 1000),
-	'signed_status' =>array('label' => $langs->trans('SignedStatus'), 'checked' => 0, 'position' => 1001),
+	'c.signed_status' =>array('label' => $langs->trans('SignedStatus'), 'checked' => 0, 'position' => 1001),
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
@@ -1310,6 +1310,13 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['c.date_contrat']['checked'])) {
 			print '<td class="center">'.dol_print_date($db->jdate($obj->date_contrat), 'day', 'tzserver').'</td>';
 		}
+		// Signed Status
+		if (!empty($arrayfields['c.signed_status']['checked'])) {
+			print '<td class="center">'.$contracttmp->getLibSignedStatus(5).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
@@ -1353,13 +1360,6 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 				$totalarray['nbfield']++;
 				$totalarray['nbfield']++;
-				$totalarray['nbfield']++;
-			}
-		}
-		// Signed Status
-		if (!empty($arrayfields['c.signed_status']['checked'])) {
-			print '<td class="center">'.$obj->getLibSignedStatus(5).'</td>';
-			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
