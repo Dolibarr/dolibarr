@@ -1994,12 +1994,10 @@ class Contrat extends CommonObject
 			$text .= ($mode == 7 ? '</span><span class="nowraponall">' : '');
 			$text .= ($mode != 7 || $this->nbofservicesclosed > 0) ? ($this->nbofservicesclosed.ContratLigne::LibStatut(5, 3, -1, 'class="marginleft2"')) : '';
 			$text .= ($mode == 7 ? '</span>' : '');
+			$text .= $this->signed_status != '' ? ' '.$this->getLibSignedStatus(5) : '';
 			return $text;
 		} else {
-			$signed_label = ' (' . $this->getLibSignedStatus() . ')';
-			$status_label = $this->signed_status ? $this->labelStatus[$status] . $signed_label : $this->labelStatus[$status];
-			$status_label_short = $this->signed_status ? $this->labelStatusShort[$status] . $signed_label : $this->labelStatusShort[$status];
-			return dolGetStatus($status_label, $status_label_short, '', $statusType, $mode);
+			return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 		}
 	}
 
