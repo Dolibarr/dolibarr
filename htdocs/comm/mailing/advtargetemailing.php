@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2014 Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -230,6 +231,7 @@ if ($action == 'add') {
 		$advTarget->contact_lines = array();
 	}
 
+	$obj = null;
 	if ((count($advTarget->thirdparty_lines) > 0) || (count($advTarget->contact_lines) > 0)) {
 		// Add targets into database
 		$obj = new mailing_advthirdparties($db);
@@ -250,7 +252,7 @@ if ($action == 'add') {
 	if ($result == 0) {
 		setEventMessages($langs->trans("WarningNoEMailsAdded"), null, 'warnings');
 	}
-	if ($result < 0) {
+	if ($result < 0 && is_object($obj)) {
 		setEventMessages($obj->error, $obj->errors, 'errors');
 	}
 }
