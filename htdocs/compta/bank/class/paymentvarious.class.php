@@ -630,6 +630,7 @@ class PaymentVarious extends CommonObject
 		// phpcs:enable
 		global $langs;
 
+		/*
 		if (empty($status)) {
 			$status = 0;
 		}
@@ -646,6 +647,8 @@ class PaymentVarious extends CommonObject
 		$statusType = 'status'.$status;
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
+		*/
+		return '';
 	}
 
 
