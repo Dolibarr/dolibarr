@@ -2272,7 +2272,7 @@ while ($i < $imaxinloop) {
 			if (empty($typenArray)) {
 				$typenArray = $formcompany->typent_array(1);
 			}
-			print $typenArray[$obj->typent_code];
+			print $typenArray[$obj->typent_code]??'';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2516,6 +2516,7 @@ while ($i < $imaxinloop) {
 
 		// Total margin
 		if (!empty($arrayfields['total_margin']['checked'])) {
+
 			print '<td class="right nowrap">'.price($marginInfo['total_margin']).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2523,6 +2524,12 @@ while ($i < $imaxinloop) {
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'total_margin';
 			}
+
+
+			if(!isset($totalarray['val']['total_margin'])){
+				$totalarray['val']['total_margin'] = 0;
+			}
+
 			$totalarray['val']['total_margin'] += $marginInfo['total_margin'];
 		}
 
