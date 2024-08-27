@@ -429,7 +429,7 @@ class Lettering extends BookKeeping
 	 *
 	 * @param	array		$ids			ids array
 	 * @param	int			$notrigger		no trigger
-	 * @return	int
+	 * @return	int							Nb of affectd rows or <0 if error
 	 */
 	public function deleteLettering($ids, $notrigger = 0)
 	{

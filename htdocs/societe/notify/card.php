@@ -44,6 +44,10 @@ $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always ''
 if ($user->socid) {
 	$socid = $user->socid;
 }
+
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('thirdpartynotification', 'globalcard'));
+
 $result = restrictedArea($user, 'societe', '', '');
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -66,11 +70,6 @@ $pagenext = $page + 1;
 $now = dol_now();
 
 $object = new Societe($db);
-
-// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-$hookmanager->initHooks(array('thirdpartynotification', 'globalcard'));
-
-
 
 /*
  * Actions

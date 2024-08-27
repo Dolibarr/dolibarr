@@ -74,7 +74,7 @@ class Account extends CommonObject
 	 * @deprecated
 	 * @see $type
 	 */
-	private $courant; // @phpstan-ignore-line
+	public $courant;
 
 	/**
 	 * Bank account type. Check TYPE_ constants. It's integer but Company bank account use string to identify type account
@@ -95,7 +95,7 @@ class Account extends CommonObject
 	 * @deprecated 	Duplicate field. We already have the field $this->status
 	 * @see $status
 	 */
-	private $clos = self::STATUS_OPEN;
+	public $clos = self::STATUS_OPEN;
 
 	/**
 	 * Does it need to be conciliated?
@@ -165,7 +165,7 @@ class Account extends CommonObject
 	 * @deprecated
 	 * @see $owner_name
 	 */
-	private $proprio;
+	public $proprio;
 
 	/**
 	 * Name of account holder
@@ -199,7 +199,7 @@ class Account extends CommonObject
 	 * @deprecated
 	 * @see $address
 	 */
-	private $domiciliation;
+	public $domiciliation;
 
 	/**
 	 * Address of the bank account
@@ -278,7 +278,7 @@ class Account extends CommonObject
 	 * @deprecated
 	 * @see $balance
 	 */
-	private $solde; // @phpstan-ignore-line
+	public $solde;
 
 	/**
 	 * Balance. Used in Account::create
@@ -297,6 +297,11 @@ class Account extends CommonObject
 	 * @var string
 	 */
 	public $ics_transfer;
+
+	/**
+	 * @var string The previous ref in case of rename on update to rename attachment folders
+	 */
+	public $oldref;
 
 
 	/**
@@ -325,7 +330,7 @@ class Account extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -388,22 +393,6 @@ class Account extends CommonObject
 	const STATUS_OPEN = 0;
 	const STATUS_CLOSED = 1;
 
-
-	/**
-	 * Provide list of deprecated properties and replacements
-	 *
-	 * @return array<string,string>  Old property to new property mapping
-	 */
-	protected function deprecatedProperties()
-	{
-		return array(
-			'proprio' => 'owner_name',
-			'domiciliation' => 'owner_address',
-			'courant' => 'type',
-			'clos' => 'status',
-			'solde' => 'balance',
-		) + parent::deprecatedProperties();
-	}
 
 	/**
 	 *  Constructor
@@ -557,12 +546,12 @@ class Account extends CommonObject
 			$num = $this->db->num_rows($result);
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($result);
-				// Anciens liens (pour compatibilite)
+				// Old links (for compatibility)
 				$lines[$i][0] = $obj->url;
 				$lines[$i][1] = $obj->url_id;
 				$lines[$i][2] = $obj->label;
 				$lines[$i][3] = $obj->type;
-				// Nouveaux liens
+				// New links
 				$lines[$i]['url'] = $obj->url;
 				$lines[$i]['url_id'] = $obj->url_id;
 				$lines[$i]['label'] = $obj->label;
@@ -676,7 +665,7 @@ class Account extends CommonObject
 
 		if ($accline->insert() > 0) {
 			if ($categorie > 0) {
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class(";
+				$sql = "INSERT INTO ".MAIN_DB_PREFIX."category_bankline(";
 				$sql .= "lineid, fk_categ";
 				$sql .= ") VALUES (";
 				$sql .= ((int) $accline->id).", '".$this->db->escape($categorie)."'";
@@ -810,7 +799,7 @@ class Account extends CommonObject
 		$sql .= ", '".$this->db->escape($this->iban)."'";
 		$sql .= ", '".$this->db->escape($this->address)."'";
 		$sql .= ", ".((int) $this->pti_in_ctti);
-		$sql .= ", '".$this->db->escape($this->proprio)."'";
+		$sql .= ", '".$this->db->escape($this->owner_name ? $this->owner_name : $this->proprio)."'";
 		$sql .= ", '".$this->db->escape($this->owner_address)."'";
 		$sql .= ", '".$this->db->escape($this->owner_zip)."'";
 		$sql .= ", '".$this->db->escape($this->owner_town)."'";
@@ -895,7 +884,7 @@ class Account extends CommonObject
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
-		global $langs;
+		global $langs, $conf;
 
 		$error = 0;
 
@@ -916,11 +905,9 @@ class Account extends CommonObject
 			$this->label = "???";
 		}
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."bank_account SET ";
-
+		$sql = "UPDATE ".MAIN_DB_PREFIX."bank_account SET";
 		$sql .= " ref   = '".$this->db->escape($this->ref)."'";
 		$sql .= ",label = '".$this->db->escape($this->label)."'";
-
 		$sql .= ",courant = ".((int) $this->type);
 		$sql .= ",clos = ".((int) $this->status);
 		$sql .= ",rappro = ".((int) $this->rappro);
@@ -936,7 +923,7 @@ class Account extends CommonObject
 		$sql .= ",iban_prefix = '".$this->db->escape($this->iban)."'";
 		$sql .= ",domiciliation='".$this->db->escape($this->address)."'";
 		$sql .= ",pti_in_ctti=".((int) $this->pti_in_ctti);
-		$sql .= ",proprio = '".$this->db->escape($this->proprio)."'";
+		$sql .= ",proprio = '".$this->db->escape($this->owner_name ? $this->owner_name : $this->proprio)."'";
 		$sql .= ",owner_address = '".$this->db->escape($this->owner_address)."'";
 		$sql .= ",owner_zip = '".$this->db->escape($this->owner_zip)."'";
 		$sql .= ",owner_town = '".$this->db->escape($this->owner_town)."'";
@@ -963,6 +950,28 @@ class Account extends CommonObject
 				$result = $this->insertExtraFields();
 				if ($result < 0) {
 					$error++;
+				}
+			}
+
+			if (!$error && !empty($this->oldref) && $this->oldref !== $this->ref) {
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'bank/".$this->db->escape($this->ref)."'";
+				$sql .= " WHERE filepath = 'bank/".$this->db->escape($this->oldref)."' and src_object_type='bank_account' and entity = ".((int) $conf->entity);
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++;
+					$this->error = $this->db->lasterror();
+				}
+
+				// We rename directory in order not to lose the attachments
+				$oldref = dol_sanitizeFileName($this->oldref);
+				$newref = dol_sanitizeFileName($this->ref);
+				$dirsource = $conf->bank->dir_output.'/'.$oldref;
+				$dirdest = $conf->bank->dir_output.'/'.$newref;
+				if (file_exists($dirsource)) {
+					dol_syslog(get_class($this)."::update rename dir ".$dirsource." into ".$dirdest, LOG_DEBUG);
+					if (@rename($dirsource, $dirdest)) {
+						dol_syslog("Rename ok", LOG_DEBUG);
+					}
 				}
 			}
 
@@ -1013,7 +1022,7 @@ class Account extends CommonObject
 			return -2;
 		}
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."bank_account SET ";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."bank_account SET";
 		$sql .= " bank  = '".$this->db->escape($this->bank)."'";
 		$sql .= ",code_banque='".$this->db->escape($this->code_banque)."'";
 		$sql .= ",code_guichet='".$this->db->escape($this->code_guichet)."'";
@@ -1021,8 +1030,8 @@ class Account extends CommonObject
 		$sql .= ",cle_rib='".$this->db->escape($this->cle_rib)."'";
 		$sql .= ",bic='".$this->db->escape($this->bic)."'";
 		$sql .= ",iban_prefix = '".$this->db->escape($this->iban)."'";
-		$sql .= ",domiciliation='".$this->db->escape($this->domiciliation)."'";
-		$sql .= ",proprio = '".$this->db->escape($this->proprio)."'";
+		$sql .= ",domiciliation='".$this->db->escape($this->address ? $this->address : $this->domiciliation)."'";
+		$sql .= ",proprio = '".$this->db->escape($this->owner_name ? $this->owner_name : $this->proprio)."'";
 		$sql .= ",owner_address = '".$this->db->escape($this->owner_address)."'";
 		$sql .= ",owner_zip = '".$this->db->escape($this->owner_zip)."'";
 		$sql .= ",owner_town = '".$this->db->escape($this->owner_town)."'";
@@ -1107,8 +1116,8 @@ class Account extends CommonObject
 				$this->domiciliation = $obj->address;
 				$this->address       = $obj->address;
 				$this->pti_in_ctti   = $obj->pti_in_ctti;
-				$this->proprio = $obj->owner_name;
-				$this->owner_name = $obj->owner_name;
+				$this->proprio       = $obj->owner_name;
+				$this->owner_name    = $obj->owner_name;
 				$this->owner_address = $obj->owner_address;
 				$this->owner_zip     = $obj->owner_zip;
 				$this->owner_town    = $obj->owner_town;
@@ -1515,7 +1524,7 @@ class Account extends CommonObject
 	}
 
 	/**
-	 *  Return clicable name (with picto eventually)
+	 *  Return clickable name (with picto eventually)
 	 *
 	 *	@param	int		$withpicto					Include picto into link
 	 *  @param  string	$mode           			''=Link to card, 'transactions'=Link to transactions card
@@ -1627,7 +1636,9 @@ class Account extends CommonObject
 			$error++;
 			$this->error = 'IBANNotValid';
 		}
-		if (!checkSwiftForAccount($this) or !(empty($this->bic) && getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC'))) {
+		// Call function to check Swift/BIC.
+		// A non valid BIC/Swift is a problem if: it is not empty or always a problem if WITHDRAWAL_WITHOUT_BIC is not set).
+		if (!checkSwiftForAccount($this) && (!empty($this->bic) || !getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC'))) {
 			$error++;
 			$this->error = 'SwiftNotValid';
 		}
@@ -1904,8 +1915,8 @@ class Account extends CommonObject
 		$this->label           = 'My Big Company Bank account';
 		$this->courant         = Account::TYPE_CURRENT;
 		$this->clos            = Account::STATUS_OPEN;
-		$this->type = Account::TYPE_CURRENT;
-		$this->status = Account::STATUS_OPEN;
+		$this->type            = Account::TYPE_CURRENT;
+		$this->status          = Account::STATUS_OPEN;
 		$this->code_banque     = '30001';
 		$this->code_guichet    = '00794';
 		$this->number          = '12345678901';
@@ -1916,7 +1927,7 @@ class Account extends CommonObject
 		$this->bank            = 'MyBank';
 		$this->address         = 'Rue de Paris';
 		$this->proprio         = 'Owner';
-		$this->owner_name = 'Owner';
+		$this->owner_name      = 'Owner';
 		$this->owner_address   = 'Owner address';
 		$this->owner_zip       = 'Owner zip';
 		$this->owner_town      = 'Owner town';
@@ -1948,11 +1959,11 @@ class Account extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
@@ -2348,7 +2359,7 @@ class AccountLine extends CommonObjectLine
 			$nbko++;
 		}
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid=".(int) $this->rowid;
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."category_bankline WHERE lineid=".(int) $this->rowid;
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if (!$result) {
@@ -2507,7 +2518,7 @@ class AccountLine extends CommonObjectLine
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if (!empty($cat) && $cat > 0) {
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (";
+				$sql = "INSERT INTO ".MAIN_DB_PREFIX."category_bankline (";
 				$sql .= "lineid";
 				$sql .= ", fk_categ";
 				$sql .= ") VALUES (";

@@ -132,6 +132,7 @@ AlsoCloseAProjectTooltip=Hold den åben, hvis du stadig skal følge produktionso
 ReOpenAProject=Åbn projekt
 ConfirmReOpenAProject=Er du sikker på, at du vil genåbne dette projekt?
 ProjectContact=Kontakter af projektet
+ProjectContactTypeManager=Tildel mig som kontaktperson med typen
 TaskContact=Opgavekontakter
 ActionsOnProject=Begivenheder for projektet
 YouAreNotContactOfProject=Du er ikke en kontakt af denne private projekt

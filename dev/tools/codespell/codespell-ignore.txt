@@ -1,5 +1,5 @@
 # List of words codespell will ignore
-# one per line, case-sensitive (when not lowercase)
+# one per line, must be in lower case.
 
 # PROVid
 provid
@@ -7,10 +7,15 @@ provid
 # PostgreSQL
 postgresql
 
+# ZAR currency
+zar
+
 # Name of contributores
 noe
 udo
 tim
+
+ConfirmActionXxx
 
 # Inside email
 ba
@@ -83,3 +88,4 @@ datee
 
 # other
 blacklists
+confirmactionxxx

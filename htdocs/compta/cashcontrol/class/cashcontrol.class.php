@@ -113,7 +113,7 @@ class CashControl extends CommonObject
 	public $fk_user_creat;
 
 	/**
-	 * @var integer|string $date_valid
+	 * @var int|string $date_valid
 	 */
 	public $date_valid;
 	public $fk_user_valid;
@@ -370,7 +370,7 @@ class CashControl extends CommonObject
 	}
 
 	/**
-	 *  Return clicable link of object (with eventually picto)
+	 *  Return clickable link of object (with eventually picto)
 	 *
 	 *  @param  int     $withpicto                  Add picto into link
 	 *  @param  string  $option                     On what the link point to ('nolink', ...)
@@ -448,11 +448,11 @@ class CashControl extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{

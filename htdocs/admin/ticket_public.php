@@ -346,23 +346,6 @@ if (getDolGlobalInt('TICKET_ENABLE_PUBLIC_INTERFACE')) {
 	print '</tr>';
 	*/
 
-	/*if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2)
-	{
-		// Show logo for module
-		print '<tr class="oddeven"><td>' . $langs->trans("TicketsShowModuleLogo") . '</td>';
-		print '<td class="left">';
-		if ($conf->use_javascript_ajax) {
-			print ajax_constantonoff('TICKET_SHOW_MODULE_LOGO');
-		} else {
-			$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-			print $form->selectarray("TICKET_SHOW_MODULE_LOGO", $arrval, getDolGlobalInt('TICKET_SHOW_MODULE_LOGO'));
-		}
-		print '</td>';
-		print '<td class="center">';
-		print $form->textwithpicto('', $langs->trans("TicketsShowModuleLogoHelp"), 1, 'help');
-		print '</td>';
-		print '</tr>';
-	}*/
 
 	// Show logo for company
 	print '<tr class="oddeven"><td>'.$langs->trans("TicketsShowCompanyLogo").'</td>';

@@ -745,7 +745,7 @@ if ($ret) {
 
 
 /**
- * Reporte liens vers une facture de paiements sur table de jointure (lien n-n paiements factures)
+ * Records payment links for an invoice in a join table (link n<-->n for payments<-->invoices)
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
@@ -822,8 +822,8 @@ function migrate_paiements($db, $langs, $conf)
 }
 
 /**
- * Corrige paiement orphelins (liens paumes suite a bugs)
- * Pour verifier s'il reste des orphelins:
+ * Repair orphan payments (lost relations due to bugs)
+ * Query to check if there are still orphans:
  * select * from llx_paiement as p left join llx_paiement_facture as pf on pf.fk_paiement=p.rowid WHERE pf.rowid IS NULL AND (p.fk_facture = 0 OR p.fk_facture IS NULL)
  *
  * @param	DoliDB		$db		Database handler
@@ -887,7 +887,7 @@ function migrate_paiements_orphelins_1($db, $langs, $conf)
 					print '* '.$row[$i]['datec'].' paymentid='.$row[$i]['paymentid'].' pamount='.$row[$i]['pamount'].' fk_bank='.$row[$i]['fk_bank'].' bamount='.$row[$i]['bamount'].' socid='.$row[$i]['socid'].'<br>';
 				}
 
-				// On cherche facture sans lien paiement et du meme montant et pour meme societe.
+				// Look for invoices without payment relations with the same amount and same comppany
 				$sql = " SELECT distinct f.rowid from ".MAIN_DB_PREFIX."facture as f";
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid = pf.fk_facture";
 				$sql .= " WHERE f.fk_statut in (2,3) AND fk_soc = ".((int) $row[$i]['socid'])." AND total_ttc = ".((float) $row[$i]['pamount']);
@@ -932,8 +932,8 @@ function migrate_paiements_orphelins_1($db, $langs, $conf)
 }
 
 /**
- * Corrige paiement orphelins (liens paumes suite a bugs)
- * Pour verifier s'il reste des orphelins:
+ * Repair orphan payments (lost relations due to bugs)
+ * Query to check if there are still orphans:
  * select * from llx_paiement as p left join llx_paiement_facture as pf on pf.fk_paiement=p.rowid WHERE pf.rowid IS NULL AND (p.fk_facture = 0 OR p.fk_facture IS NULL)
  *
  * @param	DoliDB		$db		Database handler
@@ -998,7 +998,7 @@ function migrate_paiements_orphelins_2($db, $langs, $conf)
 					print '* '.$row[$i]['datec'].' paymentid='.$row[$i]['paymentid'].' pamount='.$row[$i]['pamount'].' fk_bank='.$row[$i]['fk_bank'].' '.$row[$i]['bamount'].' socid='.$row[$i]['socid'].'<br>';
 				}
 
-				// On cherche facture sans lien paiement et du meme montant et pour meme societe.
+				// Look for invoices without payment relations with the same amount and same comppany
 				$sql = " SELECT distinct f.rowid from ".MAIN_DB_PREFIX."facture as f";
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid = pf.fk_facture";
 				$sql .= " WHERE f.fk_statut in (2,3) AND fk_soc = ".((int) $row[$i]['socid'])." AND total_ttc = ".((float) $row[$i]['pamount']);
@@ -2474,7 +2474,7 @@ function migrate_commande_deliveryaddress($db, $langs, $conf)
 
 /**
  * Migration du champ fk_remise_except dans llx_facturedet doit correspondre a
- * lien dans llx_societe_remise_except vers llx_facturedet
+ * Link in `llx_societe_remise_except` to `llx_facturedet`
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
@@ -2893,10 +2893,10 @@ function migrate_element_time($db, $langs, $conf)
 
 				if ($obj->element_duration > 0) {
 					// convert to second
-					// only for int time and float time ex: 1,75 for 1h45
+					// only for int time and float time ex: 1.75 for 1h45
 					list($hour, $min) = explode('.', $obj->element_duration);
-					$hour = $hour * 60 * 60;
-					$min = ($min / 100) * 60 * 60;
+					$hour = (int) $hour * 60 * 60;
+					$min = (int) ((float) ('.'.$min)) * 3600;
 					$newtime = $hour + $min;
 
 					$sql2 = "UPDATE ".MAIN_DB_PREFIX."element_time SET";

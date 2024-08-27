@@ -303,7 +303,8 @@ ErrorThirpdartyOrMemberidIsMandatory=บุคคลที่สามหรื�
 ErrorFailedToWriteInTempDirectory=ไม่สามารถเขียนในไดเร็กทอรีชั่วคราว
 ErrorQuantityIsLimitedTo=จำนวนจำกัดอยู่ที่ %s
 ErrorFailedToLoadThirdParty=ไม่สามารถค้นหา/โหลดบุคคลที่สามจาก id=%s, email=%s, name= %s
-ErrorThisPaymentModeIsNotSepa=โหมดการชำระเงินนี้ไม่ใช่บัญชีธนาคาร
+ErrorThisPaymentModeIsNotDirectDebit=The payment mode is not direct debit
+ErrorThisPaymentModeIsNotCreditTransfer=The payment mode is not credit transfer
 ErrorStripeCustomerNotFoundCreateFirst=ลูกค้า Stripe ไม่ได้ถูกตั้งค่าสำหรับบุคคลที่สามนี้ (หรือตั้งค่าเป็นค่าที่ถูกลบบนฝั่ง Stripe) สร้าง (หรือแนบใหม่) ก่อน
 ErrorCharPlusNotSupportedByImapForSearch=การค้นหา IMAP ไม่สามารถค้นหาสตริงที่มีอักขระ + ลงในผู้ส่งหรือผู้รับได้
 ErrorTableNotFound=ไม่พบตาราง <b>%s</b>
@@ -334,9 +335,9 @@ ErrorDictionaryNotFound=ไม่พบพจนานุกรม <b>%s</b>
 ErrorFailedToCreateSymLinkToMedias=ไม่สามารถสร้างลิงก์สัญลักษณ์ %s เพื่อชี้ไปที่ %s
 ErrorCheckTheCommandInsideTheAdvancedOptions=ตรวจสอบคำสั่งที่ใช้สำหรับการส่งออกไปยังตัวเลือกขั้นสูงของการส่งออก
 ErrorEndTimeMustBeGreaterThanStartTime=End time must be greater than start time
-ErrorIncoherentDates=Date start must be less than date end
-ErrorEndHourIsNull=End date cannot be zero
-ErrorStartHourIsNull=Start date cannot be zero
+ErrorIncoherentDates=Start date must be earlier than end date
+ErrorEndHourIsNull=End date field cannot be empty
+ErrorStartHourIsNull=Start date field cannot be empty
 ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter=Too many lines to process. Please use a more selective filter.
 ErrorEmptyValueForQty=Quantity cannot be zero.
 # Warnings

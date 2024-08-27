@@ -525,7 +525,7 @@ for ($i = 0; $i < $nbrejourmois + $premierjourmois; $i++) {
 		}
 
 		// If no red button, we show green or grey button with number of day
-		if (isset($dejafait) === false || $dejafait != $numerojour) {
+		if (!isset($dejafait) || $dejafait != $numerojour) {
 			// green button
 			if (($numerojour >= $jourAJ && $_SESSION["mois"] == $moisAJ && $_SESSION["annee"] == $anneeAJ) || ($_SESSION["mois"] > $moisAJ && $_SESSION["annee"] == $anneeAJ) || $_SESSION["annee"] > $anneeAJ) {
 				print '<td class="center libre"><input type="submit" class="bouton ON centpercent nomarginleft buttonwebsite" name="choixjourajout[]" value="'.$numerojour.'"></td>'."\n";

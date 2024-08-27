@@ -890,7 +890,7 @@ if ($action == 'create' || $action == 'presend') {
 			$morehtmlref .= '<a class="editfielda" href="'.$url_page_current.'?action=editsubject&token='.newToken().'&track_id='.$object->track_id.'">'.img_edit($langs->transnoentitiesnoconv('SetTitle'), 0).'</a> ';
 		}
 		if ($action != 'editsubject') {
-			$morehtmlref .= $object->subject;
+			$morehtmlref .= dolPrintLabel($object->subject);
 		} else {
 			$morehtmlref .= '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 			$morehtmlref .= '<input type="hidden" name="action" value="setsubject">';
@@ -1018,7 +1018,7 @@ if ($action == 'create' || $action == 'presend') {
 				$object->ref = $object->id;
 				print $form->showrefnav($object, 'id', $linkback, 1, 'rowid', 'track_id');
 			} else {
-				print $object->track_id;
+				print dolPrintLabel($object->track_id);
 			}
 		} else {
 			print $langs->trans('None');
@@ -1362,15 +1362,15 @@ if ($action == 'create' || $action == 'presend') {
 
 					print '<div class="tagtd">';
 
-					print dol_print_phone($tab[$i]['phone'], '', '', '', 'AC_TEL').'<br>';
+					print dol_print_phone($tab[$i]['phone'], '', 0, 0, 'AC_TEL').'<br>';
 
 					if (!empty($tab[$i]['phone_perso'])) {
 						//print img_picto($langs->trans('PhonePerso'),'object_phoning.png','',0,0,0).' ';
-						print '<br>'.dol_print_phone($tab[$i]['phone_perso'], '', '', '', 'AC_TEL').'<br>';
+						print '<br>'.dol_print_phone($tab[$i]['phone_perso'], '', 0, 0, 'AC_TEL').'<br>';
 					}
 					if (!empty($tab[$i]['phone_mobile'])) {
 						//print img_picto($langs->trans('PhoneMobile'),'object_phoning.png','',0,0,0).' ';
-						print dol_print_phone($tab[$i]['phone_mobile'], '', '', '', 'AC_TEL').'<br>';
+						print dol_print_phone($tab[$i]['phone_mobile'], '', 0, 0, 'AC_TEL').'<br>';
 					}
 					print '</div>';
 

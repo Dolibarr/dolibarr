@@ -205,7 +205,7 @@ $formaccounting = new FormAccounting($db);
 
 $help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
 
-llxHeader('', $langs->trans('MenuDefaultAccounts'), $help_url);
+llxHeader('', $langs->trans('MenuDefaultAccounts'), $help_url, '', 0, 0, '', '', '', 'mod-accountancy page-admin_defaultaccounts');
 
 $linkback = '';
 print load_fiche_titre($langs->trans('MenuDefaultAccounts'), $linkback, 'title_accountancy');
