@@ -461,7 +461,7 @@ if (empty($reshook)) {
 
 	if ($action == 'setreexport') {
 		$setreexport = GETPOSTINT('value');
-		if (!dolibarr_set_const($db, "ACCOUNTING_REEXPORT", (string) $setreexport, 'yesno', 0, '', $conf->entity)) {
+		if (!dolibarr_set_const($db, "ACCOUNTING_REEXPORT", $setreexport, 'yesno', 0, '', $conf->entity)) {
 			$error++;
 		}
 

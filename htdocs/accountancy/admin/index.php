@@ -127,7 +127,7 @@ if ($action == 'update') {
 
 if ($action == 'setmanagezero') {
 	$setmanagezero = GETPOSTINT('value');
-	$res = dolibarr_set_const($db, "ACCOUNTING_MANAGE_ZERO", (string) $setmanagezero, 'yesno', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "ACCOUNTING_MANAGE_ZERO", $setmanagezero, 'yesno', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
 	}
@@ -141,7 +141,7 @@ if ($action == 'setmanagezero') {
 
 if ($action == 'setenabledraftexport') {
 	$setenabledraftexport = GETPOSTINT('value');
-	$res = dolibarr_set_const($db, "ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL", (string) $setenabledraftexport, 'yesno', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL", $setenabledraftexport, 'yesno', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
 	}
@@ -155,7 +155,7 @@ if ($action == 'setenabledraftexport') {
 
 if ($action == 'setenablesubsidiarylist') {
 	$setenablesubsidiarylist = GETPOSTINT('value');
-	$res = dolibarr_set_const($db, "ACCOUNTANCY_COMBO_FOR_AUX", (string) $setenablesubsidiarylist, 'yesno', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "ACCOUNTANCY_COMBO_FOR_AUX", $setenablesubsidiarylist, 'yesno', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
 	}
@@ -169,7 +169,7 @@ if ($action == 'setenablesubsidiarylist') {
 
 if ($action == 'setdisablebindingonsales') {
 	$setdisablebindingonsales = GETPOSTINT('value');
-	$res = dolibarr_set_const($db, "ACCOUNTING_DISABLE_BINDING_ON_SALES", (string) $setdisablebindingonsales, 'yesno', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "ACCOUNTING_DISABLE_BINDING_ON_SALES", $setdisablebindingonsales, 'yesno', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
 	}
@@ -183,7 +183,7 @@ if ($action == 'setdisablebindingonsales') {
 
 if ($action == 'setdisablebindingonpurchases') {
 	$setdisablebindingonpurchases = GETPOSTINT('value');
-	$res = dolibarr_set_const($db, "ACCOUNTING_DISABLE_BINDING_ON_PURCHASES", (string) $setdisablebindingonpurchases, 'yesno', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "ACCOUNTING_DISABLE_BINDING_ON_PURCHASES", $setdisablebindingonpurchases, 'yesno', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
 	}
@@ -197,7 +197,7 @@ if ($action == 'setdisablebindingonpurchases') {
 
 if ($action == 'setdisablebindingonexpensereports') {
 	$setdisablebindingonexpensereports = GETPOSTINT('value');
-	$res = dolibarr_set_const($db, "ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS", (string) $setdisablebindingonexpensereports, 'yesno', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS", $setdisablebindingonexpensereports, 'yesno', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
 	}
@@ -211,7 +211,7 @@ if ($action == 'setdisablebindingonexpensereports') {
 
 if ($action == 'setenablelettering') {
 	$setenablelettering = GETPOSTINT('value');
-	$res = dolibarr_set_const($db, "ACCOUNTING_ENABLE_LETTERING", (string) $setenablelettering, 'yesno', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "ACCOUNTING_ENABLE_LETTERING", $setenablelettering, 'yesno', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
 	}
@@ -225,7 +225,7 @@ if ($action == 'setenablelettering') {
 
 if ($action == 'setenableautolettering') {
 	$setenableautolettering = GETPOSTINT('value');
-	$res = dolibarr_set_const($db, "ACCOUNTING_ENABLE_AUTOLETTERING", (string) $setenableautolettering, 'yesno', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "ACCOUNTING_ENABLE_AUTOLETTERING", $setenableautolettering, 'yesno', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
 	}
@@ -239,7 +239,7 @@ if ($action == 'setenableautolettering') {
 
 if ($action == 'setenablevatreversecharge') {
 	$setenablevatreversecharge = GETPOSTINT('value');
-	$res = dolibarr_set_const($db, "ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE", (string) $setenablevatreversecharge, 'yesno', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE", $setenablevatreversecharge, 'yesno', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
 	}
