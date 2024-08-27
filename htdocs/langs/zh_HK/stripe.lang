@@ -39,7 +39,7 @@ STRIPE_TEST_WEBHOOK_KEY=測試Webhook密鑰
 STRIPE_LIVE_SECRET_KEY=線上密鑰
 STRIPE_LIVE_PUBLISHABLE_KEY=可公開線上密鑰
 STRIPE_LIVE_WEBHOOK_KEY=線上Webhook密鑰
-ONLINE_PAYMENT_WAREHOUSE=在線支付完成後用於減少庫存的庫存<br>（TODO 當發票上的操作完成減少庫存的選項並且在線支付自行生成發票時？）
+ONLINE_PAYMENT_WAREHOUSE=在線支付完成後用於減少存貨的存貨<br>（TODO 當發票上的操作完成減少存貨的選項並且在線支付自行生成發票時？）
 StripeLiveEnabled=已啟用 Stripe 實時模式（否則為測試/沙箱模式）
 StripeImportPayment=匯入 Stripe 付款
 ExampleOfTestCreditCard=用於測試付款的信用卡範例：%s => 有效，%s => CVC 錯誤，%s => 已過期，%s => 收費失敗

@@ -18,6 +18,7 @@
  * Copyright (C) 2021      Grégory Blémand      <gregory.blemand@atm-consulting.fr>
  * Copyright (C) 2023      Lenin Rivas      	<lenin.rivas777@gmail.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -3977,20 +3978,22 @@ abstract class CommonObject
 					$diff = price2num($total_tva_by_vats[$obj->vatrate] - (float) $tmpvat, 'MT', 1);
 					//print 'Line '.$i.' rowid='.$obj->rowid.' vat_rate='.$obj->vatrate.' total_ht='.$obj->total_ht.' total_tva='.$obj->total_tva.' total_ttc='.$obj->total_ttc.' total_ht_by_vats='.$total_ht_by_vats[$obj->vatrate].' total_tva_by_vats='.$total_tva_by_vats[$obj->vatrate].' (new calculation = '.$tmpvat.') total_ttc_by_vats='.$total_ttc_by_vats[$obj->vatrate].($diff?" => DIFF":"")."<br>\n";
 					if ($diff) {
-						if (abs((float) $diff) > (10 * pow(10, -1 * getDolGlobalInt('MAIN_MAX_DECIMALS_TOT', 0)))) {
+						$maxdiff = (10 * pow(10, -1 * getDolGlobalInt('MAIN_MAX_DECIMALS_TOT', 0)));
+						if (abs((float) $diff) > $maxdiff) {
 							// If error is more than 10 times the accuracy of rounding. This should not happen.
-							$errmsg = 'A rounding difference was detected into TOTAL but is too high to be corrected. Some data in your lines may be corrupted. Try to edit each line manually to fix this before restarting.';
+							$errmsg = 'We found a rounding difference after line '.($obj->rowid).' between HT*VAT='.$tmpvat.' and total in database='.$total_tva_by_vats[$obj->vatrate].' (calculated with UP*qty) but diff='.$diff.' is too high (> '.$maxdiff.') to be corrected. Some data in your lines may be corrupted. Try to edit each line manually to fix this before restarting.';
 							dol_syslog($errmsg, LOG_WARNING);
 							$this->error = $errmsg;
 							$error++;
 							break;
 						}
+
 						if ($base_price_type == 'TTC') {
 							$sqlfix = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldtva." = ".price2num($obj->total_tva - (float) $diff).", total_ht = ".price2num($obj->total_ht + (float) $diff)." WHERE rowid = ".((int) $obj->rowid);
-							dol_syslog('We found a difference of '.$diff.' for line rowid = '.$obj->rowid.". We fix the total_vat and total_ht of line by running sqlfix = ".$sqlfix);
+							dol_syslog('We found a difference of '.$diff.' for line rowid = '.$obj->rowid.' between TotalHT('.$total_ht_by_vats[$obj->vatrate].')*VATrate('.$obj->vatrate.')='.$tmpvat.' and total in database='.$total_tva_by_vats[$obj->vatrate]." (calculated with UP*qty). We fix the total_vat and total_ht of line by running sqlfix = ".$sqlfix);
 						} else {
 							$sqlfix = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldtva." = ".price2num($obj->total_tva - (float) $diff).", total_ttc = ".price2num($obj->total_ttc - (float) $diff)." WHERE rowid = ".((int) $obj->rowid);
-							dol_syslog('We found a difference of '.$diff.' for line rowid = '.$obj->rowid.". We fix the total_vat and total_ttc of line by running sqlfix = ".$sqlfix);
+							dol_syslog('We found a difference of '.$diff.' for line rowid = '.$obj->rowid.' between TotalHT('.$total_ht_by_vats[$obj->vatrate].')*VATrate('.$obj->vatrate.')='.$tmpvat.' and total in database='.$total_tva_by_vats[$obj->vatrate]." (calculated with UP*qty). We fix the total_vat and total_ttc of line by running sqlfix = ".$sqlfix);
 						}
 
 						$resqlfix = $this->db->query($sqlfix);
@@ -4990,25 +4993,19 @@ abstract class CommonObject
 		$totalWeight = 0;
 		$totalVolume = 0;
 		// defined for shipment only
-		$totalOrdered = '';
+		$totalOrdered = 0;
 		// defined for shipment only
-		$totalToShip = '';
+		$totalToShip = 0;
 
 		if (empty($this->lines)) {
-			return array();
+			return array('weight' => $totalWeight, 'volume' => $totalVolume, 'ordered' => $totalOrdered, 'toship' => $totalToShip);
 		}
 
 		foreach ($this->lines as $line) {
 			if (isset($line->qty_asked)) {
-				if (empty($totalOrdered)) {
-					$totalOrdered = 0; // Avoid warning because $totalOrdered is ''
-				}
 				$totalOrdered += $line->qty_asked; // defined for shipment only
 			}
 			if (isset($line->qty_shipped)) {
-				if (empty($totalToShip)) {
-					$totalToShip = 0; // Avoid warning because $totalToShip is ''
-				}
 				$totalToShip += $line->qty_shipped; // defined for shipment only
 			} elseif ($line->element == 'commandefournisseurdispatch' && isset($line->qty)) {
 				if (empty($totalToShip)) {
@@ -5272,9 +5269,7 @@ abstract class CommonObject
 	{
 		global $conf, $langs, $user, $object, $hookmanager;
 		global $form;
-		global $object_rights, $disableedit, $disablemove, $disableremove; // TODO We should not use global var for this !
-
-		$object_rights = $this->getRights();
+		global $disableedit, $disablemove, $disableremove; // TODO We should not use global var for this !
 
 		// var used into tpl
 		$text = '';
@@ -10716,15 +10711,15 @@ abstract class CommonObject
 	}
 
 	/**
-	 *	Set to a signed status
+	 * Set signed status & call trigger with context message
 	 *
-	 *	@param	User	$user			Object user that modify
-	 *  @param	int		$status			New status to set (often a constant like self::STATUS_XXX)
-	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *  @param  string  $triggercode    Trigger code to use
-	 *	@return	int						Return integer <0 if KO, >0 if OK
+	 * @param	User	$user			Object user that modify
+	 * @param	int		$status			New signed status to set (often a constant like self::STATUS_XXX)
+	 * @param	int		$notrigger		1 = Does not execute triggers, 0 = Execute triggers
+	 * @param	string	$triggercode	Trigger code to use
+	 * @return	int						0 < if KO, > 0 if OK
 	 */
-	public function setSignedStatusCommon($user, $status, $notrigger = 0, $triggercode = '')
+	public function setSignedStatusCommon(User $user, int $status, int $notrigger = 0, string $triggercode = '')
 	{
 		$error = 0;
 
@@ -10750,7 +10745,7 @@ abstract class CommonObject
 			}
 
 			if (!$error) {
-				$this->status = $status;
+				$this->signed_status = $status;
 				$this->db->commit();
 				return 1;
 			} else {

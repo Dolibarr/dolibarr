@@ -67,6 +67,10 @@ if ($object->id > 0) {
 	restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 }
 
+// Permissions
+$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'creer')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'creer')));
+
+
 /*
  * Actions
  */
@@ -82,7 +86,7 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
-	if ($action == 'delete' && GETPOST('langtodelete', 'alpha')) {
+	if ($action == 'delete' && GETPOST('langtodelete', 'alpha') && $usercancreate) {
 		$object = new Product($db);
 		$object->fetch($id);
 		$object->delMultiLangs(GETPOST('langtodelete', 'alpha'), $user);
@@ -91,7 +95,7 @@ if (empty($reshook)) {
 	}
 
 	// Add translation
-	if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
+	if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && $usercancreate) {
 		$object = new Product($db);
 		$object->fetch($id);
 		$current_lang = $langs->getDefaultLang();
@@ -126,7 +130,7 @@ if (empty($reshook)) {
 	}
 
 	// Edit translation
-	if ($action == 'vedit' && $cancel != $langs->trans("Cancel") && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
+	if ($action == 'vedit' && $cancel != $langs->trans("Cancel") && $usercancreate) {
 		$object = new Product($db);
 		$object->fetch($id);
 		$current_lang = $langs->getDefaultLang();
@@ -155,7 +159,7 @@ if (empty($reshook)) {
 	}
 
 	// Delete translation
-	if ($action == 'vdelete' && $cancel != $langs->trans("Cancel") && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
+	if ($action == 'vdelete' && $cancel != $langs->trans("Cancel") && $usercancreate) {
 		$object = new Product($db);
 		$object->fetch($id);
 		$langtodelete = GETPOST('langdel', 'alpha');

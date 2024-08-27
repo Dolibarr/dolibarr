@@ -117,8 +117,14 @@ if ($action == 'add') {
 if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes') {
 	$error = 0;
 	$key = GETPOST('key', 'alpha');
-	$name = GETPOST('socialnetwork_name');
-	$url = GETPOST('socialnetwork_url');
+	$name = '';
+	$sqlgetName = "SELECT note FROM ".MAIN_DB_PREFIX."boxes_def WHERE rowid=".((int) $key);
+
+	$resqName = $db->query($sqlgetName);
+	if ($resqName) {
+		$objName = $db->fetch_object($resqName);
+		$name = $objName->note;
+	}
 
 	$db->begin();
 
@@ -432,6 +438,7 @@ if ($resql) {
 						print '<td><input type="text" class="flat minwidth300" name="paramsVal[]" value="'.dol_escape_htmltag($val).'" />';
 					}
 					print '<button type="button" class="delete-param-btn" data-paramkey="'.htmlspecialchars($k).'">'.img_delete().'</button>';
+
 					print '</td>';
 					print '</tr>'."\n";
 				}
