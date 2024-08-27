@@ -1493,7 +1493,7 @@ class FormTicket
 			$topic = "";
 			foreach ($formmail->lines_model as $line) {
 				if ($this->param['models_id'] == $line->id) {
-					$topic = $line->topic;
+					$topic = make_substitutions($line->topic, $this->substit);
 					break;
 				}
 			}
