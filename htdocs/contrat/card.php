@@ -1403,7 +1403,7 @@ if ($action == 'create') {
 				$text .= '<br>';
 				$text .= $notify->confirmMessage('CONTRACT_MODIFY', $object->socid, $object);
 			}
-			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('UnsignIntervention'), $text, 'confirm_unsign', '', 0, 1);
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('UnsignContract'), $text, 'confirm_unsign', '', 0, 1);
 		}
 
 
