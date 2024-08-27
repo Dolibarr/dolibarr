@@ -4993,25 +4993,19 @@ abstract class CommonObject
 		$totalWeight = 0;
 		$totalVolume = 0;
 		// defined for shipment only
-		$totalOrdered = '';
+		$totalOrdered = 0;
 		// defined for shipment only
-		$totalToShip = '';
+		$totalToShip = 0;
 
 		if (empty($this->lines)) {
-			return array();
+			return array('weight' => $totalWeight, 'volume' => $totalVolume, 'ordered' => $totalOrdered, 'toship' => $totalToShip);
 		}
 
 		foreach ($this->lines as $line) {
 			if (isset($line->qty_asked)) {
-				if (empty($totalOrdered)) {
-					$totalOrdered = 0; // Avoid warning because $totalOrdered is ''
-				}
 				$totalOrdered += $line->qty_asked; // defined for shipment only
 			}
 			if (isset($line->qty_shipped)) {
-				if (empty($totalToShip)) {
-					$totalToShip = 0; // Avoid warning because $totalToShip is ''
-				}
 				$totalToShip += $line->qty_shipped; // defined for shipment only
 			} elseif ($line->element == 'commandefournisseurdispatch' && isset($line->qty)) {
 				if (empty($totalToShip)) {
