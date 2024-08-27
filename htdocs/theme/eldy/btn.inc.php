@@ -56,11 +56,10 @@ div.tabsAction > div.divButAction > a.butActionDelete,
 div.tabsAction > div.divButAction > a.butActionRefused {
 	margin-bottom: 1.4em !important;
 	margin-right: 0px !important;
-
 }
 .divButAction {
-    padding: 0 !important;
-    margin: 0 !important;
+	padding: 0 !important;
+	margin: 0 !important;
 }
 div.tabsActionNoBottom > a.butAction, div.tabsActionNoBottom > a.butActionRefused {
 	margin-bottom: 0 !important;
