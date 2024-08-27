@@ -56,7 +56,7 @@ if (isModEnabled('project')) {
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("contracts", "orders", "companies", "bills", "products", 'compta'));
+$langs->loadLangs(array("contracts", "orders", "companies", "bills", "products", 'compta', 'propal'));
 
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');

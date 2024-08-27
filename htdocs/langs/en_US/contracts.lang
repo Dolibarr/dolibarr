@@ -42,7 +42,6 @@ ConfirmActivateAllOnContract=This will open all services (not yet active). Are y
 ConfirmCloseContract=This will close all services (expired or not). Are you sure you want to close this contract?
 ConfirmCloseService=Are you sure you want to close this service with date <b>%s</b>?
 ValidateAContract=Validate a contract
-SignContract=Sign contract
 UnsignContract=Unsign contract
 ContractSign=Set Signed
 ContractUnsign=Set Unsigned
