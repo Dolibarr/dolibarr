@@ -3535,7 +3535,7 @@ class EmailCollector extends CommonObject
 			foreach ($arrayofemailtodelete as $imapemailnum => $imapemail) {
 				dol_syslog("EmailCollect::doCollectOneCollector delete email ".$imapemailnum);
 
-				$operationslog .= "<br> move email ".$imapemailnum;
+				$operationslog .= "<br> move email ".$imapemailnum.($mode> 0 ? ' (test)' : '');
 
 				if (empty($mode) && empty($error)) {
 					$tmptargetdir = $targetdir;
@@ -3570,7 +3570,7 @@ class EmailCollector extends CommonObject
 			foreach ($arrayofemailtodelete as $imapemail => $msgid) {
 				dol_syslog("EmailCollect::doCollectOneCollector delete email ".$imapemail." ".$msgid);
 
-				$operationslog .= "<br> delete email ".$imapemail." ".$msgid;
+				$operationslog .= "<br> delete email ".$imapemail." ".$msgid.($mode> 0 ? ' (test)' : '');
 
 				if (empty($mode) && empty($error)) {
 					$res = imap_mail_move($connection, $imapemail, $targetdir, CP_UID);
