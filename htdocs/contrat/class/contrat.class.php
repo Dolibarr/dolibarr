@@ -2938,12 +2938,12 @@ class Contrat extends CommonObject
 	public function setSignedStatus(User $user, int $status = 0, int $notrigger = 0, $triggercode = ''): int
 	{
 		global $langs;
-		$langs->loadLangs(array('interventions', 'commercial'));
+		$langs->loadLangs(array('contracts', 'commercial'));
 		$this->signed_status = $status;
 		$this->context['signature'] = $status;
 		switch ($status) {
 			case 0:
-				$this->context['actionmsg2'] = $langs->transnoentitiesnoconv('InterventionUnsignedInDolibarr');
+				$this->context['actionmsg2'] = $langs->transnoentitiesnoconv('ContractUnsignedInDolibarr');
 				break;
 			case 1:
 				$this->context['actionmsg2'] = $langs->transnoentitiesnoconv('SignedSender');
