@@ -636,7 +636,7 @@ class PaymentVarious extends CommonObject
 		global $langs;
 
 		if (empty($status)) {
-			$status = 1;
+			$status = 0;
 		}
 
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
