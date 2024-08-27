@@ -32,7 +32,7 @@ jobs:
       # This is faster for a big repo.
       - name: Get all changed php files (if PR)
         id: changed-php
-        uses: tj-actions/changed-files@v44
+        uses: tj-actions/changed-files@v45
         if: env.gh_event == 'pull_request'
         with:
           files: |
@@ -72,7 +72,7 @@ jobs:
       # The next uses git, which is slow for a bit repo.
       # - name: Get all changed php files (if PR)
       #   id: changed-php
-      #   uses: tj-actions/changed-files@v44
+      #   uses: tj-actions/changed-files@v45
       #   if: env.gh_event == 'pull_request'
       #   with:
       #     files: |

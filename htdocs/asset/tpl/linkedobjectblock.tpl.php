@@ -30,7 +30,9 @@ global $user;
 global $noMoreLinkedObjectBlockAfter;
 
 $langs = $GLOBALS['langs'];
+'@phan-var-force Translate $langs';
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
+'@phan-var-force CommonObject[] $linkedObjectBlock';
 
 // Load translation files required by the page
 $langs->load("assets");

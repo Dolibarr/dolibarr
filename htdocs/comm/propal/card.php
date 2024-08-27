@@ -1693,7 +1693,7 @@ if (empty($reshook)) {
 	} elseif ($action == 'setwarehouse' && $usercancreate) {
 		// warehouse
 		$result = $object->setWarehouse(GETPOSTINT('warehouse_id'));
-	} elseif ($action == 'update_extras') {
+	} elseif ($action == 'update_extras' && $usercancreate) {
 		$object->oldcopy = dol_clone($object, 2);
 		$attribute_name = GETPOST('attribute', 'restricthtml');
 

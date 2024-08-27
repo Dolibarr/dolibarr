@@ -43,7 +43,7 @@ abstract class CommonDocGenerator
 	public $name = '';
 
 	/**
-	 * @var string Version
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental' Version
 	 */
 	public $version = '';
 
@@ -1033,6 +1033,7 @@ abstract class CommonDocGenerator
 							dol_include_once($InfoFieldList[1]);
 							if ($classname && class_exists($classname)) {
 								$tmpobject = new $classname($this->db);
+								'@phan-var-force CommonObject $tmpobject';
 								$tmpobject->fetch($id);
 								// completely replace the id with the linked object name
 								$formatedarrayoption['options_'.$key] = $tmpobject->name;

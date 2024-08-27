@@ -1,3 +1,6 @@
+IntraCommReport=域内報告書
+IntraCommReports=Intracomm reports
+
 Module68000Name = 域内報告書
 Module68000Desc = 域内報告書管理(フランス語のDEB / DES形式のサポート)
 IntracommReportSetup = 域内報告書モジュールの設定
@@ -10,14 +13,11 @@ INTRACOMMREPORT_ROLE_ACTEUR=Rôlejouéparl'acteur
 INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation surlesの紹介
 INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligationsurlesexpéditions
 INTRACOMMREPORT_CATEG_FRAISDEPORT=Catégoriedeservicesdetype「Fraisdeport」
-
 INTRACOMMREPORT_NUM_DECLARATION=Numérodedéclarant
-
 # Menu
 MenuIntracommReport=域内報告書
 MenuIntracommReportNew=新規宣言
 MenuIntracommReportList=リスト
-
 # View
 NewDeclaration=新規宣言
 Declaration=宣言
@@ -25,16 +25,14 @@ AnalysisPeriod=分析期間
 TypeOfDeclaration=宣言の種類
 DEB=商品交換申告(DEB)
 DES=サービス交換宣言(DES)
-
 # Export page
 IntracommReportTitle=ProDouane形式のXMLファイルの準備
-
 # List
 IntracommReportList=生成された宣言のリスト
 IntracommReportNumber=宣言の数
 IntracommReportPeriod=分析期間
 IntracommReportTypeDeclaration=宣言の種類
 IntracommReportDownload=XMLファイルをダウンロードする
-
 # Invoice
 IntracommReportTransportMode=輸送モード
+DeleteIntraCommReport=Delete IntraComm report

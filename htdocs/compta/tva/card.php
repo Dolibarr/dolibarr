@@ -173,7 +173,7 @@ if (empty($reshook)) {
 		$error = 0;
 
 		$object->fk_account = GETPOSTINT("accountid");
-		$object->type_payment = GETPOST("type_payment", 'alphanohtml');
+		$object->type_payment = GETPOSTINT("type_payment");
 		$object->num_payment = GETPOST("num_payment", 'alphanohtml');
 
 		$object->datev = $datev;

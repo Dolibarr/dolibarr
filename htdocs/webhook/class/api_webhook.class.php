@@ -54,7 +54,7 @@ class Webhook extends DolibarrApi
 	}
 
 	/**
-	 * Get properties of a taregt object
+	 * Get properties of a target object
 	 *
 	 * Return an array with target information
 	 *
@@ -69,9 +69,9 @@ class Webhook extends DolibarrApi
 	}
 
 	/**
-	 * List taregts
+	 * List targets
 	 *
-	 * Get a list of taregts
+	 * Get a list of targets
 	 *
 	 * @param   string  $sortfield  Sort field
 	 * @param   string  $sortorder  Sort order

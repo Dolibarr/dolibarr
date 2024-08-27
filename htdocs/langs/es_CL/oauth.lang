@@ -10,7 +10,5 @@ SeePreviousTab=Ver la pestaña anterior
 OAuthIDSecret=ID de OAuth y secreto
 TOKEN_EXPIRED=Token expiró
 TOKEN_EXPIRE_AT=Token caduca a las
-OAUTH_GOOGLE_NAME=OAuth servicio de Google
-OAUTH_GITHUB_NAME=Servicio OAuth GitHub
 OAUTH_GITHUB_ID=Identificación de OAuth GitHub
 TokenExpired=Expirado

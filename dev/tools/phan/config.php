@@ -31,7 +31,8 @@ $sanitizeRegex
 			// Not documented:
 			'restricthtmlallowclass',
 			'restricthtmlallowunvalid',
-			'restricthtmlnolink'
+			'restricthtmlnolink',
+			'restricthtmlallowlinkscript'
 		)
 	).')*$/';
 
@@ -129,7 +130,7 @@ $VALID_MODULE_MAPPING = array(
 	'mymodule' => null, // modMyModule - Name used in module builder (avoid false positives)
 	'notification' => 'Notification',
 	'numberwords' => null, // Not provided by default, no module tests
-	'oauth' => 'Oauth',
+	'oauth' => 'OAuth',
 	'openstreetmap' => null,  // External module?
 	'opensurvey' => 'OpenSurvey',
 	'order' => 'Commande',
@@ -257,17 +258,18 @@ return [
 		'filtert' => 'int',
 		'forceall' => 'int<0,1>',
 		'form' => '\Form',
+		'formcompany' => '\FormCompany',
 		'hookmanager' => '\HookManager',
 		'inputalsopricewithtax' => 'int<0,1>',
 		'langs' => '\Translate',
 		'leftmenu' => 'string',
+		'linkedObjectBlock' => '\CommonObject[]', // See htdocs/core/class/html.form.class.php
 		'mainmenu' => 'string',
 		'menumanager' => '\MenuManager',
 		'mysoc' => '\Societe',
 		'nblines' => '\int',
-		'obj' => '\CommonObject',     // Deprecated
-		'object_rights' => 'int|stdClass',
 		'objectoffield' => '\CommonObject',
+		'objsoc' => '\Societe',
 		'senderissupplier' => 'int<0,2>',
 		'user' => '\User',
 		'website' => 'string',  // See discussion https://github.com/Dolibarr/dolibarr/pull/28891#issuecomment-2002268334  // Disable because Phan infers Website type
@@ -320,12 +322,12 @@ return [
 		// mymodule seen in cti, but not in git.
 		.'|htdocs/custom/mymodule/.*'  // @phpstan-ignore-line
 		.'|htdocs/.*/canvas/.*/tpl/.*.tpl.php'  // @phpstan-ignore-line
-		.'|htdocs/modulebuilder/template/.*'  // @phpstan-ignore-line
+		//.'|htdocs/modulebuilder/template/.*'  // @phpstan-ignore-line
 		// Included as stub (better analysis)
 		.'|htdocs/includes/nusoap/.*'  // @phpstan-ignore-line
 		// Included as stub (old version + incompatible typing hints)
 		.'|htdocs/includes/restler/.*'  // @phpstan-ignore-line
-		// Included as stub (did not seem properly analysed by phan without it)
+		// Included as stub (did not seem properly analyzed by phan without it)
 		.'|htdocs/includes/stripe/.*'  // @phpstan-ignore-line
 		.'|htdocs/conf/conf.php'  // @phpstan-ignore-line
 		// .'|htdocs/[^h].*/.*'  // For testing @phpstan-ignore-line
@@ -415,12 +417,12 @@ return [
 
 		'PhanCompatibleNegativeStringOffset',	// return false positive
 		'PhanPluginConstantVariableBool',		// a lot of false positive, in most cases, we want to keep the code as it is
-		'PhanPluginUnknownArrayPropertyType',	// this option costs more time to be supported than it solves time
+		// 'PhanPluginUnknownArrayPropertyType',	// this option costs more time to be supported than it solves time
 		'PhanTypeArraySuspiciousNullable',		// this option costs more time to be supported than it solves time
 		'PhanTypeInvalidDimOffset',				// this option costs more time to be supported than it solves time
 		'PhanTypeObjectUnsetDeclaredProperty',
 		'PhanTypePossiblyInvalidDimOffset',			// a lot of false positive, in most cases, we want to keep the code as it is
-		'PhanPluginUnknownArrayFunctionReturnType',	// a lot of false positive, in most cases, we want to keep the code as it is
+		// 'PhanPluginUnknownArrayFunctionReturnType',	// a lot of false positive, in most cases, we want to keep the code as it is
 
 		'PhanPluginWhitespaceTab',		// Dolibarr used tabs
 		'PhanPluginCanUsePHP71Void',	// Dolibarr is maintaining 7.0 compatibility
@@ -444,10 +446,10 @@ return [
 		'PhanPluginRedundantAssignment',				// Not essential, useless
 		'PhanPluginDuplicateCatchStatementBody',  // Requires PHP7.1 - 50+ occurrences
 
-		'PhanPluginUnknownArrayMethodParamType',	// Too many troubles to manage. Is enabled into config_extended only.
-		'PhanPluginUnknownArrayMethodReturnType',	// Too many troubles to manage. Is enabled into config_extended only.
+		// 'PhanPluginUnknownArrayMethodParamType',	// Too many troubles to manage. Is enabled in config_extended only.
+		// 'PhanPluginUnknownArrayMethodReturnType',	// Too many troubles to manage. Is enabled in config_extended only.
 		'PhanUndeclaredGlobalVariable',			// Too many false positives on .tpl.php files. Is enabled into config_extended only.
-		'PhanPluginUnknownObjectMethodCall',	// False positive for some class. Is enabled into config_extended only.
+		// 'PhanPluginUnknownObjectMethodCall',	// False positive for some class. Is enabled in config_extended only.
 	],
 	// You can put relative paths to internal stubs in this config option.
 	// Phan will continue using its detailed type annotations,

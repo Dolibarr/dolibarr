@@ -294,7 +294,7 @@ if (empty($reshook)) {
 							$moline->fk_mo = $object->id;
 							$moline->position = $pos;
 							$moline->fk_product = $line->fk_product;
-							$moline->fk_warehouse = GETPOST('idwarehouse-'.$line->id.'-'.$i);
+							$moline->fk_warehouse = GETPOSTINT('idwarehouse-'.$line->id.'-'.$i);
 							$moline->qty = $qtytoprocess;
 							$moline->batch = GETPOST('batch-'.$line->id.'-'.$i);
 							$moline->role = 'consumed';
@@ -366,7 +366,7 @@ if (empty($reshook)) {
 							$moline->fk_mo = $object->id;
 							$moline->position = $pos;
 							$moline->fk_product = $line->fk_product;
-							$moline->fk_warehouse = GETPOST('idwarehousetoproduce-'.$line->id.'-'.$i);
+							$moline->fk_warehouse = GETPOSTINT('idwarehousetoproduce-'.$line->id.'-'.$i);
 							$moline->qty = $qtytoprocess;
 							$moline->batch = GETPOST('batchtoproduce-'.$line->id.'-'.$i);
 							$moline->role = 'produced';

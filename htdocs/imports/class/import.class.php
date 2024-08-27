@@ -3,6 +3,7 @@
  * Copyright (C) 2016       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2020		Ahmad Jamaly Rabib	<rabib@metroworks.co.jp>
  * Copyright (C) 2021-2024  Frédéric France		<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,88 +51,97 @@ class Import
 	public $errno;
 
 	/**
-	 * @var array
+	 * @var array<array{position_of_profile:string,module:DolibarrModules}>
 	 */
 	public $array_import_module;
 
 	/**
-	 * @var array
+	 * @var int[]
 	 */
 	public $array_import_perms;
 
 	/**
-	 * @var array
+	 * @var string[]
 	 */
 	public $array_import_icon;
 
 	/**
-	 * @var array
+	 * @var string[]
 	 */
 	public $array_import_code;
 
 	/**
-	 * @var array
+	 * @var string[]
 	 */
 	public $array_import_label;
 
 	/**
-	 * @var array
+	 * @var array<string[]>
 	 */
 	public $array_import_tables;
 
 	/**
-	 * @var array
+	 * @var array<''|array<string,string>>
 	 */
 	public $array_import_tables_creator;
 
 	/**
-	 * @var array
+	 * @var array<array<string,string>>
 	 */
 	public $array_import_fields;
 
 	/**
-	 * @var array
+	 * @var array<''|array<string,string>>
 	 */
 	public $array_import_fieldshidden;
 
 	/**
-	 * @var array
+	 * @var array<''|array<string,string>>
 	 */
 	public $array_import_entities;
 
 	/**
-	 * @var array
+	 * @var array<''|array<string,string>>
 	 */
 	public $array_import_regex;
 
 	/**
-	 * @var array
+	 * @var array<''|array<string,string>>
 	 */
 	public $array_import_updatekeys;
 
 	/**
-	 * @var array
+	 * @var array<''|array<string,string>>
 	 */
 	public $array_import_preselected_updatekeys;
 
 	/**
-	 * @var array
+	 * @var array<''|array<string,string>>
 	 */
 	public $array_import_examplevalues;
 
 	/**
-	 * @var array
+	 * @var array<''|array<array{rule:string,file:string,class:string,method:string}>>
 	 */
 	public $array_import_convertvalue;
 
 	/**
-	 * @var array
+	 * @var array<''|array<string,string>>
 	 */
 	public $array_import_run_sql_after;
 
 	// To store import templates
+	/**
+	 * @var int
+	 */
 	public $id;
+	/**
+	 * @var string
+	 */
 	public $hexa; // List of fields in the export profile
+	/**
+	 * @var string
+	 */
 	public $datatoimport;
 
 	/**
@@ -211,9 +221,10 @@ class Import
 				$classname = $modulename;
 				require_once $file;
 				$module = new $classname($this->db);
+				'@phan-var-force DolibarrModules $module';
 
 				if (isset($module->import_code) && is_array($module->import_code)) {
-					foreach ($module->import_code as $r => $value) {
+					foreach ($module->import_code as $r => $value) {  // @phan-suppress-current-line PhanTypeMismatchForeach
 						if ($filter && ($filter != $module->import_code[$r])) {
 							continue;
 						}
@@ -257,13 +268,14 @@ class Import
 						$this->array_import_fields[$i] = $module->import_fields_array[$r];
 						// Array of hidden fields to import (key=field, value=label)
 						$this->array_import_fieldshidden[$i] = (isset($module->import_fieldshidden_array[$r]) ? $module->import_fieldshidden_array[$r] : '');
-						// Array of entiteis to export (key=field, value=entity)
+						// Array of entities to export (key=field, value=entity)
 						$this->array_import_entities[$i] = $module->import_entities_array[$r];
 						// Array of aliases to export (key=field, value=alias)
 						$this->array_import_regex[$i] = (isset($module->import_regex_array[$r]) ? $module->import_regex_array[$r] : '');
 						// Array of columns allowed as UPDATE options
 						$this->array_import_updatekeys[$i] = (isset($module->import_updatekeys_array[$r]) ? $module->import_updatekeys_array[$r] : '');
 						// Array of columns preselected as UPDATE options
+						// import_preselected_updatekeys_array does not exist - backward compatibility ?  @phan-suppress-next-line PhanUndeclaredProperty
 						$this->array_import_preselected_updatekeys[$i] = (isset($module->import_preselected_updatekeys_array[$r]) ? $module->import_preselected_updatekeys_array[$r] : '');
 						// Array of examples
 						$this->array_import_examplevalues[$i] = (isset($module->import_examplevalues_array[$r]) ? $module->import_examplevalues_array[$r] : '');
@@ -272,7 +284,7 @@ class Import
 						// Sql request to run after import
 						$this->array_import_run_sql_after[$i] = (isset($module->import_run_sql_after_array[$r]) ? $module->import_run_sql_after_array[$r] : '');
 						// Module
-						$this->array_import_module[$i] = array('position_of_profile'=>($module->module_position.'-'.$module->import_code[$r]), 'module'=>$module);
+						$this->array_import_module[$i] = array('position_of_profile' => ($module->module_position.'-'.$module->import_code[$r]), 'module' => $module);
 
 						dol_syslog("Import loaded for module ".$modulename." with index ".$i.", dataset=".$module->import_code[$r].", nb of fields=".count($module->import_fields_array[$r]));
 						$i++;
@@ -312,6 +324,7 @@ class Import
 		$classname = "Import".$model;
 		require_once $dir.$file;
 		$objmodel = new $classname($this->db, $datatoimport);
+		'@phan-var-force CommonObject $objmodel';
 
 		$outputlangs = $langs; // Lang for output
 		$s = '';
@@ -420,8 +433,8 @@ class Import
 	/**
 	 *	Delete object in database
 	 *
-	 *	@param      User	$user        	User that delete
-	 *  @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
+	 *	@param      User		$user        	User that delete
+	 *  @param      int<0,1>	$notrigger	    0=launch triggers after, 1=disable triggers
 	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)

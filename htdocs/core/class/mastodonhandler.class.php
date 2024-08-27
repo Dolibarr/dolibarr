@@ -40,33 +40,111 @@ class MastodonHandler
 	 */
 	public $error = '';
 
+	/**
+	 * @var string Access token for authenticated requests
+	 */
+	private $accessToken;
 
 	/**
-	 * fetch Social Network API to retrieve posts.
-	 *
-	 * @param string    $urlAPI     URL of the Fediverse API.
-	 * @param int       $maxNb      Maximum number of posts to retrieve (default is 5).
-	 * @param int       $cacheDelay Number of seconds to use cached data (0 to disable caching).
-	 * @param string    $cacheDir   Directory to store cached data.
-	 * @return bool      Status code: False if error, true if success.
+	 * @var string The client ID for the Mastodon app
 	 */
-	public function fetch($urlAPI, $maxNb = 5, $cacheDelay = 60, $cacheDir = '')
+	private $clientId;
+
+	/**
+	 * @var string The client secret for the Mastodon app
+	 */
+	private $clientSecret;
+
+	/**
+	 * @var string The redirect URI for the Mastodon app
+	 */
+	private $redirectUri;
+
+
+	/**
+	 * Constructor to set the necessary credentials.
+	 *
+	 * @param array   $authParams  parameters for authentication
+	 */
+	public function __construct($authParams)
 	{
-		$result = getURLContent($urlAPI, 'GET', '', 1, array(), array('http', 'https'), 0);
 
-		if (empty($result['content'])) {
-			$this->error = 'Error retrieving URL '.$urlAPI;
+		$this->clientId = $authParams['client_id'] ?? '';
+		$this->clientSecret = $authParams['client_secret'] ?? '';
+		$this->redirectUri = $authParams['redirect_uri'] ?? '';
+		$this->accessToken = $authParams['access_token'] ?? '';
+	}
+
+
+	/**
+	 * Fetch posts from Mastodon API using the access token.
+	 *
+	 * @param string $urlAPI The URL of the API endpoint
+	 * @param int $maxNb Maximum number of posts to retrieve
+	 * @param int $cacheDelay Cache delay in seconds
+	 * @param string $cacheDir Directory for caching
+	 * @param array $authParams Authentication parameters
+	 * @return array|false Array of posts if successful, False otherwise
+	 */
+	public function fetch($urlAPI, $maxNb = 5, $cacheDelay = 60, $cacheDir = '', $authParams = [])
+	{
+		if (empty($this->accessToken) && isset($authParams['access_token'])) {
 			return false;
 		}
+		$cacheFile = $cacheDir.'/'.dol_hash($urlAPI, 3);
+		$foundInCache = false;
+		$data = null;
 
-		$data = json_decode($result['content'], true);
-		if (!is_array($data)) {
-			$this->error = 'Invalid JSON format';
-			return false;
+		// Check cache
+		if ($cacheDelay > 0 && $cacheDir && dol_is_file($cacheFile)) {
+			$fileDate = dol_filemtime($cacheFile);
+			if ($fileDate >= (dol_now() - $cacheDelay)) {
+				$foundInCache = true;
+				$data = file_get_contents($cacheFile);
+			}
 		}
 
-		$this->posts = array_slice(array_map([$this, 'normalizeData'], $data), 0, $maxNb);
-		return true;
+		if (!$foundInCache) {
+			$headers = [
+				'Authorization: Bearer ' . $this->accessToken,
+				'Content-Type: application/json'
+			];
+
+			$result = getURLContent($urlAPI, 'GET', '', 1, $headers, array('http', 'https'), 0);
+			if (!empty($result['content'])) {
+				$data = $result['content'];
+
+				if ($cacheDir) {
+					dol_mkdir($cacheDir);
+					file_put_contents($cacheFile, $data);
+				}
+			} else {
+				$this->error = 'Error retrieving URL ' . $urlAPI;
+				return false;
+			}
+		}
+		if (!is_null($data)) {
+			$data = json_decode($data, true);
+			if (is_array($data)) {
+				$this->posts = [];
+				$count = 0;
+
+				foreach ($data as $postData) {
+					if ($count >= $maxNb) {
+						break;
+					}
+					$this->posts[$count] = $this->normalizeData($postData);
+					$count++;
+				}
+				return $this->posts;
+			} else {
+				$this->error = 'Invalid data format or empty response';
+				return false;
+			}
+		} else {
+			$this->error = 'Failed to retrieve or decode data';
+			return false;
+		}
 	}
 
 	/**
@@ -108,5 +186,41 @@ class MastodonHandler
 	public function getPosts()
 	{
 		return $this->posts;
+	}
+
+	/**
+	 * Getter for url to redirect
+	 * @return   string    url
+	 */
+	public function getRedirectUri()
+	{
+		return $this->redirectUri;
+	}
+
+	/**
+	 * Getter for access token
+	 * @return string  token
+	 */
+	public function getAccessToken()
+	{
+		return $this->accessToken;
+	}
+
+	/**
+	 * Getter for client Id
+	 * @return  string  client Id
+	 */
+	public function getClientId()
+	{
+		return $this->clientId;
+	}
+
+	/**
+	 * Getter for secret client
+	 * @return string  secret client
+	 */
+	public function getClientSecret()
+	{
+		return $this->clientSecret;
 	}
 }

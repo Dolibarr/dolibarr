@@ -14,6 +14,7 @@ ConfirmDeleteAction=Er du sikker på, du vil slette denne begivenhed?
 CardAction=Oversigt over begivenhed
 ActionOnCompany=Tilknyttet firma
 ActionOnContact=Tilknyttet kontakt
+ActionOnUser=Relateret bruger
 TaskRDVWith=Møde med %s
 ShowTask=Vis opgave
 ShowAction=Vis begivenhed

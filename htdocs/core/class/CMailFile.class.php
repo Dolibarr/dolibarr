@@ -615,7 +615,7 @@ class CMailFile
 			if (!empty($this->atleastonefile)) {
 				foreach ($filename_list as $i => $val) {
 					$content = file_get_contents($filename_list[$i]);
-					$smtps->setAttachment($content, $mimefilename_list[$i], $mimetype_list[$i], $cid_list[$i]);
+					$smtps->setAttachment($content, $mimefilename_list[$i], $mimetype_list[$i], (empty($cid_list[$i]) ? '' : $cid_list[$i]));
 				}
 			}
 
@@ -1145,7 +1145,7 @@ class CMailFile
 							$refreshtoken = $tokenobj->getRefreshToken();
 
 							if ($apiService instanceof OAuth\OAuth2\Service\AbstractService || $apiService instanceof OAuth\OAuth1\Service\AbstractService) {
-								// ServiceInterface does not provide refreshAccessToekn, AbstractService does
+								// ServiceInterface does not provide refreshAccessToken, AbstractService does
 								$tokenobj = $apiService->refreshAccessToken($tokenobj);
 								$tokenobj->setRefreshToken($refreshtoken);	// Restore the refresh token
 								$storage->storeAccessToken($OAUTH_SERVICENAME, $tokenobj);
@@ -1307,7 +1307,7 @@ class CMailFile
 							$refreshtoken = $tokenobj->getRefreshToken();
 
 							if ($apiService instanceof OAuth\OAuth2\Service\AbstractService || $apiService instanceof OAuth\OAuth1\Service\AbstractService) {
-								// ServiceInterface does not provide refreshAccessToekn, AbstractService does
+								// ServiceInterface does not provide refreshAccessToken, AbstractService does
 								// We must save the token because Google provides it only once
 								$tokenobj = $apiService->refreshAccessToken($tokenobj);
 								$tokenobj->setRefreshToken($refreshtoken);

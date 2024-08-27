@@ -30,8 +30,14 @@
  */
 abstract class Stats
 {
+	/**
+	 * @var DoliDB
+	 */
 	protected $db;
-	protected $lastfetchdate = array(); // Dates of cache file read by methods
+	/**
+	 * @var array<string,int>	Dates of cache file read by methods
+	 */
+	protected $lastfetchdate = array();
 	public $cachefilesuffix = ''; // Suffix to add to name of cache file (to avoid file name conflicts)
 
 	/**
@@ -356,8 +362,6 @@ abstract class Stats
 			$data = json_decode(file_get_contents($newpathofdestfile), true);
 			'@phan-var-force array<int<0,11>,array{0:int<1,12>,1:int|float}> $data';  // Phan can't decode json_decode's return value
 		} else {
-			// This method is defined in parent object only, not into abstract, so we disable phpstan warning
-			/** @phpstan-ignore-next-line */
 			$data = $this->getAllByProduct($year, $limit);
 		}
 
@@ -707,5 +711,22 @@ abstract class Stats
 			$this->db->free($resql);
 		}
 		return $result;
+	}
+
+
+	/**
+	 *	Return nb, amount of predefined product for year
+	 *
+	 *	@param	int		$year		Year to scan
+	 *  @param  int     $limit      Limit
+	 *	@return	array<int<0,11>,array{0:int<1,12>,1:int|float}>	Array of values
+	 */
+	public function getAllByProduct($year, $limit = 0)
+	{
+		// Needs to be implemented in child class when used
+		$msg = get_class($this)."::".__FUNCTION__." not implemented";
+		dol_syslog($msg, LOG_ERR);
+		$l = array(1,0); // Dummy result
+		return array($l,$l,$l,$l,$l,$l,$l,$l,$l,$l,$l,$l);
 	}
 }

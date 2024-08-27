@@ -1,7 +1,10 @@
-Module68000Name = 內部報告
+IntraCommReport=內部通信報告
+IntraCommReports=內部通信報告
+
+Module68000Name = 內部通信報告
 Module68000Desc = 內部報告管理（支持法國DEB/DES格式）
 IntracommReportSetup = 內部報告模組設置
-IntracommReportAbout = 關於內部報告
+IntracommReportAbout = 關於內部通信報告
 
 # Setup
 INTRACOMMREPORT_NUM_AGREMENT=許可證號（由負責的CISD發放）
@@ -12,7 +15,7 @@ INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=對運輸的義務等級
 INTRACOMMREPORT_CATEG_FRAISDEPORT=服務類別 "運輸費用"
 INTRACOMMREPORT_NUM_DECLARATION=申報人編號
 # Menu
-MenuIntracommReport=內部報告
+MenuIntracommReport=內部通信報告
 MenuIntracommReportNew=新申報
 MenuIntracommReportList=清單
 # View
@@ -32,3 +35,4 @@ IntracommReportTypeDeclaration=申報類型
 IntracommReportDownload=下載XML文件
 # Invoice
 IntracommReportTransportMode=運輸方式
+DeleteIntraCommReport=刪除內部通信報告
