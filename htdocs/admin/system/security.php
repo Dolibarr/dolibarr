@@ -155,7 +155,7 @@ print "<br>\n";
 $todisabletext = '';
 $i = 0;
 foreach ($arrayoffunctionstodisable as $functiontodisable) {
-	if (! in_array($functiontodisable, $arrayoffunctionsdisabled)) {
+	if (\function_exists($functiontodisable)) {
 		if ($i > 0) {
 			$todisabletext .= ', ';
 		}
@@ -170,7 +170,7 @@ if ($todisabletext) {
 $todisabletext = '';
 $i = 0;
 foreach ($arrayoffunctionstodisable2 as $functiontodisable) {
-	if (! in_array($functiontodisable, $arrayoffunctionsdisabled)) {
+	if (\function_exists($functiontodisable)) {
 		if ($i > 0) {
 			$todisabletext .= ', ';
 		}
@@ -182,8 +182,7 @@ if ($todisabletext) {
 	print img_picto('', 'warning', 'class="pictofixedwidth"').$langs->trans("IfCLINotRequiredYouShouldDisablePHPFunctions").': '.$todisabletext;
 	print '<br>';
 }
-
-if (in_array($functiontokeep, $arrayoffunctionsdisabled)) {
+if (!\function_exists($functiontokeep)) {
 	print img_picto($langs->trans("PHPFunctionsRequiredForCLI"), 'warning', 'class="pictofixedwidth"');
 } else {
 	print img_picto('', 'tick', 'class="pictofixedwidth"');

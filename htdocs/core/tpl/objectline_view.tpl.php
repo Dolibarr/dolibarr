@@ -35,7 +35,6 @@
  * $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
  * $outputalsopricetotalwithtax
  * $usemargins (0 to disable all margins columns, 1 to show according to margin setup)
- * $object_rights->creer initialized from = $object->getRights()
  * $disableedit, $disablemove, $disableremove
  *
  * $text, $description, $line
@@ -446,7 +445,11 @@ if ($outputalsopricetotalwithtax) {
 	$coldisplay++;
 }
 
-if ($this->status == 0 && !empty($object_rights->creer) && $action != 'selectlines') {
+// TODO Replace this with $permissiontoedit ?
+$objectRights = $this->getRights();
+$tmppermtoedit = $objectRights->creer;
+
+if ($this->status == 0 && $tmppermtoedit && $action != 'selectlines') {
 	$situationinvoicelinewithparent = 0;
 	if (isset($line->fk_prev_id) && in_array($object->element, array('facture', 'facturedet'))) {
 		// @phan-suppress-next-line PhanUndeclaredConstantOfClass

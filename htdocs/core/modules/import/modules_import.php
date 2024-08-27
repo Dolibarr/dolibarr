@@ -37,6 +37,9 @@ class ModeleImports
 	 */
 	public $db;
 
+	/**
+	 * @var string
+	 */
 	public $datatoimport;
 
 	/**
@@ -94,16 +97,34 @@ class ModeleImports
 	public $version_lib;
 
 	// Array of all drivers
+	/**
+	 * @var string[]
+	 */
 	public $driverlabel = array();
 
+	/**
+	 * @var string[]
+	 */
 	public $driverdesc = array();
 
+	/**
+	 * @var string[]
+	 */
 	public $driverversion = array();
 
+	/**
+	 * @var string[]
+	 */
 	public $drivererror = array();
 
+	/**
+	 * @var string[]
+	 */
 	public $liblabel = array();
 
+	/**
+	 * @var string[]
+	 */
 	public $libversion = array();
 
 	/**
@@ -256,7 +277,7 @@ class ModeleImports
 					$file = $dir."/import_".$moduleid.".modules.php";
 					$classname = "Import".ucfirst($moduleid);
 
-					require_once $file;
+					require_once	$file;
 					$module = new $classname($db, '');
 
 					// Picto
@@ -285,7 +306,7 @@ class ModeleImports
 	 */
 	public function getPictoForKey($key)
 	{
-		return $this->picto[$key];
+		return	$this->picto[$key];
 	}
 
 	/**
@@ -296,7 +317,7 @@ class ModeleImports
 	 */
 	public function getDriverLabelForKey($key)
 	{
-		return $this->driverlabel[$key];
+		return	$this->driverlabel[$key];
 	}
 
 	/**
@@ -307,7 +328,7 @@ class ModeleImports
 	 */
 	public function getDriverDescForKey($key)
 	{
-		return $this->driverdesc[$key];
+		return	$this->driverdesc[$key];
 	}
 
 	/**
@@ -318,7 +339,7 @@ class ModeleImports
 	 */
 	public function getDriverVersionForKey($key)
 	{
-		return $this->driverversion[$key];
+		return	$this->driverversion[$key];
 	}
 
 	/**
@@ -329,7 +350,7 @@ class ModeleImports
 	 */
 	public function getLibLabelForKey($key)
 	{
-		return $this->liblabel[$key];
+		return	$this->liblabel[$key];
 	}
 
 	/**
@@ -340,14 +361,14 @@ class ModeleImports
 	 */
 	public function getLibVersionForKey($key)
 	{
-		return $this->libversion[$key];
+		return	$this->libversion[$key];
 	}
 
 	/**
 	 * Get element from table name with prefix
 	 *
-	 * @param 	string	$tableNameWithPrefix		Table name with prefix
-	 * @return 	string	Element name or table element as default
+	 * @param 	string	$tableNameWithPrefix	Table name with prefix
+	 * @return 	string							Element name or table element as default
 	 */
 	public function getElementFromTableWithPrefix($tableNameWithPrefix)
 	{
@@ -358,6 +379,114 @@ class ModeleImports
 			$element = self::$mapTableToElement[$tableElement];
 		}
 
-		return $element;
+		return	$element;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Open input file
+	 *
+	 *	@param	string	$file       Path of filename
+	 *  @return int                 Return integer <0 if KO, >=0 if OK
+	 */
+	public function import_open_file($file)
+	{
+		// phpcs:enable
+		$msg = get_class($this)."::".__FUNCTION__." not implemented";
+		dol_syslog($msg, LOG_ERR);
+		$this->errors[] = $msg;
+		$this->error = $msg;
+		return -1;
+	}
+
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Return nb of records. File must be closed.
+	 *
+	 *	@param	string	$file       Path of filename
+	 *  @return	int					Return integer <0 if KO, >=0 if OK
+	 */
+	public function import_get_nb_of_lines($file)
+	{
+		// phpcs:enable
+		$msg = get_class($this)."::".__FUNCTION__." not implemented";
+		dol_syslog($msg, LOG_ERR);
+		$this->errors[] = $msg;
+		$this->error = $msg;
+		return -1;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Input header line from file
+	 *
+	 *  @return     int     Return integer <0 if KO, >=0 if OK
+	 */
+	public function import_read_header()
+	{
+		// phpcs:enable
+		$msg = get_class($this)."::".__FUNCTION__." not implemented";
+		dol_syslog($msg, LOG_ERR);
+		$this->errors[] = $msg;
+		$this->error = $msg;
+		return -1;
+	}
+
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Return array of next record in input file.
+	 *
+	 *  @return	array<string,array{val:mixed,type:int<-1,1>}>|boolean     Array of field values. Data are UTF8 encoded. [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=not empty string)
+	 */
+	public function import_read_record()
+	{
+		// phpcs:enable
+		$msg = get_class($this)."::".__FUNCTION__." not implemented";
+		dol_syslog($msg, LOG_ERR);
+		$this->errors[] = $msg;
+		$this->error = $msg;
+		return array();
+	}
+
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Close file handle
+	 *
+	 *  @return int
+	 */
+	public function import_close_file()
+	{
+		// phpcs:enable
+		$msg = get_class($this)."::".__FUNCTION__." not implemented";
+		dol_syslog($msg, LOG_ERR);
+		$this->errors[] = $msg;
+		$this->error = $msg;
+		return -1;
+	}
+
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 * Insert a record into database
+	 *
+	 *	@param	array<string,array{val:mixed,type:int<-1,1>}>|boolean	$arrayrecord                    Array of read values: [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=string), [fieldpos+1]...
+	 *	@param	array<string,string>	$array_match_file_to_database   Array of target fields where to insert data: [fieldpos] => 's.fieldname', [fieldpos+1]...
+	 *	@param	Object		$objimport                      Object import (contains objimport->array_import_tables, objimport->array_import_fields, objimport->array_import_convertvalue, ...)
+	 *	@param	int	$maxfields					Max number of fields to use
+	 *	@param	string		$importid			Import key
+	 *	@param	string[]	$updatekeys			Array of keys to use to try to do an update first before insert. This field are defined into the module descriptor.
+	 *	@return	int								Return integer <0 if KO, >0 if OK
+	 */
+	public function import_insert($arrayrecord, $array_match_file_to_database, $objimport, $maxfields, $importid, $updatekeys)
+	{
+		// phpcs:enable
+		$msg = get_class($this)."::".__FUNCTION__." not implemented";
+		dol_syslog($msg, LOG_ERR);
+		$this->errors[] = $msg;
+		$this->error = $msg;
+		return -1;
 	}
 }
