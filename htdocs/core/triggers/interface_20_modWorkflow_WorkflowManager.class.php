@@ -481,13 +481,15 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 								$object->setContract($linked_contract->id);
 								// don't set '$contractid' so it is not used when creating an intervention.
 							}
-							if (empty(NOLOGIN)) setEventMessage($langs->trans('TicketManyContractsLinked'), 'warnings');
+							if ($number_contracts_found > 1 && !defined('NOLOGIN')) {
+								setEventMessages($langs->trans('TicketManyContractsLinked'), null, 'warnings');
+							}
 							break;
 						}
 					}
 				}
-				if ($number_contracts_found == 0) {
-					if (empty(NOLOGIN)) setEventMessage($langs->trans('TicketNoContractFoundToLink'), 'mesgs');
+				if ($number_contracts_found == 0 && !defined('NOLOGIN')) {
+					setEventMessages($langs->trans('TicketNoContractFoundToLink'), null, 'mesgs');
 				}
 			}
 			// Automatically create intervention
