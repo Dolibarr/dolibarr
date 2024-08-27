@@ -1214,8 +1214,8 @@ class Notify
 						$link = '<a href="'.$urlwithroot.'/contrat/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 						$context_info = array_key_exists('signature', $object->context) ? $object->getLibSignedStatus() : '';
 						$dir_output = $conf->contract->multidir_output;
-						$object_type = 'contract';
-						$mesg = $outputlangs->transnoentitiesnoconv("EMailTextContractModified", $link, $context_info);
+						$object_type = 'contrat';
+						$mesg = $langs->transnoentitiesnoconv("EMailTextContractModified", $link, $context_info);
 						break;
 					default:
 						$object_type = $object->element;
