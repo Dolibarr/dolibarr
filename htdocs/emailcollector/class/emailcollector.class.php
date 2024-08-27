@@ -1173,7 +1173,7 @@ class EmailCollector extends CommonObject
 					// }
 					// Token expired so we refresh it
 					if (is_object($tokenobj) && $expire) {
-						$this->debuginfo .= 'Refresh token<br>';
+						$this->debuginfo .= 'Refresh token '.$OAUTH_SERVICENAME.'<br>';
 						$credentials = new Credentials(
 							getDolGlobalString('OAUTH_'.$this->oauth_service.'_ID'),
 							getDolGlobalString('OAUTH_'.$this->oauth_service.'_SECRET'),
