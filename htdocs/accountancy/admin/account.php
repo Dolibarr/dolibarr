@@ -192,7 +192,7 @@ if (empty($reshook)) {
 				}
 			}
 
-			if (!dolibarr_set_const($db, 'CHARTOFACCOUNTS', (string) $chartofaccounts, 'chaine', 0, '', $conf->entity)) {
+			if (!dolibarr_set_const($db, 'CHARTOFACCOUNTS', $chartofaccounts, 'chaine', 0, '', $conf->entity)) {
 				$error++;
 			}
 		} else {

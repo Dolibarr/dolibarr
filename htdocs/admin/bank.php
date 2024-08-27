@@ -58,7 +58,7 @@ $error = 0;
 if (in_array($action, array('setBANK_DISABLE_DIRECT_INPUT'))) {
 	$constname = preg_replace('/^set/', '', $action);
 	$constvalue = GETPOSTINT('value');
-	$res = dolibarr_set_const($db, $constname, (string) $constvalue, 'yesno', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, $constname, $constvalue, 'yesno', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
 	}
