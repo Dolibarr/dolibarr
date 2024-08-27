@@ -53,6 +53,8 @@ $MAXAGENDA = getDolGlobalString('AGENDA_EXT_NB');
 // List of available colors
 $colorlist = array('BECEDD', 'DDBECE', 'BFDDBE', 'F598B4', 'F68654', 'CBF654', 'A4A4A5');
 
+$reg = array();
+
 
 /*
  * Actions

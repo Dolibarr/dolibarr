@@ -303,8 +303,8 @@ ErrorThirpdartyOrMemberidIsMandatory=Définir un tiers ou un adhérent dans le p
 ErrorFailedToWriteInTempDirectory=Impossible d'écrire dans le répertoire temporaire
 ErrorQuantityIsLimitedTo=La quantité est limitée à %s
 ErrorFailedToLoadThirdParty=Impossible de trouver/charger un tiers à partir de id=%s, email=%s, name=%s
-ErrorThisPaymentModeIsNotDirectDebit=The payment mode is not direct debit
-ErrorThisPaymentModeIsNotCreditTransfer=The payment mode is not credit transfer
+ErrorThisPaymentModeIsNotDirectDebit=Le mode de paiement n'est pas le prélèvement automatique
+ErrorThisPaymentModeIsNotCreditTransfer=Le mode de paiement n'est pas le virement bancaire
 ErrorStripeCustomerNotFoundCreateFirst=Le client Stripe n'est pas défini pour ce tiers (ou défini sur une valeur supprimée du côté Stripe). Créez (ou rattachez) d'abord.
 ErrorCharPlusNotSupportedByImapForSearch=La recherche IMAP n'est pas en mesure de rechercher dans l'expéditeur ou le destinataire une chaîne contenant le caractère +
 ErrorTableNotFound=Table <b>%s</b> introuvable
@@ -422,3 +422,4 @@ OperNotDefined=Méthode de paiement non définie
 ErrorThisContactXIsAlreadyDefinedAsThisType=%s est déjà défini comme contact pour ce type.
 ErrorThisGroupIsAlreadyDefinedAsThisType=Les contacts avec ce groupe sont déjà définis comme contact pour ce type.
 EmptyMessageNotAllowedError=Les messages vides ne sont pas autorisés
+ErrorIsNotInError=%s is not in error

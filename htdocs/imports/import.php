@@ -753,6 +753,7 @@ if ($step == 4 && $datatoimport) {
 
 	// The separator has been defined, if it is a unique char, we check it is valid by reading the source file
 	if ($model == 'csv' && strlen($separator) == 1 && !GETPOSTISSET('separator')) {
+		'@phan-var-force ImportCsv $obj';
 		// Count the char in first line of file.
 		$fh = fopen($conf->import->dir_temp.'/'.$filetoimport, 'r');
 		if ($fh) {
@@ -781,12 +782,15 @@ if ($step == 4 && $datatoimport) {
 	$classname = "Import".ucfirst($model);
 	require_once $dir.$file;
 	$obj = new $classname($db, $datatoimport);
+	'@phan-var-force ModeleImports $obj';
 	if ($model == 'csv') {
+		'@phan-var-force ImportCsv $obj';
 		$obj->separator = $separator_used;
 		$obj->enclosure = $enclosure;
 		$obj->charset = '';
 	}
 	if ($model == 'xlsx') {
+		'@phan-var-force ImportXlsx $obj';
 		if (!preg_match('/\.xlsx$/i', $filetoimport)) {
 			$langs->load("errors");
 			$param = '&datatoimport='.$datatoimport.'&format='.$format;
@@ -803,7 +807,7 @@ if ($step == 4 && $datatoimport) {
 	// Load the source fields from input file into variable $arrayrecord
 	$fieldssource = array();
 	/** @var array<string,string> $fieldssource */
-	$result = $obj->import_open_file($conf->import->dir_temp.'/'.$filetoimport, $langs);
+	$result = $obj->import_open_file($conf->import->dir_temp.'/'.$filetoimport);
 	if ($result >= 0) {
 		// Read first line
 		$arrayrecord = $obj->import_read_record();
@@ -970,6 +974,7 @@ if ($step == 4 && $datatoimport) {
 
 	// Separator and enclosure
 	if ($model == 'csv') {
+		'@phan-var-force ImportCsv $obj';
 		print '<tr><td>'.$langs->trans("CsvOptions").'</td>';
 		print '<td>';
 		print '<form method="POST">';
@@ -1130,6 +1135,7 @@ if ($step == 4 && $datatoimport) {
 			break;
 		}*/
 		print '<tr style="height:'.$height.'" class="trimport oddevenimport">';
+		// Note: $code is int, but index should be fieldname? -> @phan-suppress-next-line PhanTypeMismatchDimFetch
 		$entity = (!empty($objimport->array_import_entities[0][$code]) ? $objimport->array_import_entities[0][$code] : $objimport->array_import_icon[0]);
 
 		$entityicon = !empty($entitytoicon[$entity]) ? $entitytoicon[$entity] : $entity; // $entityicon must string name of picto of the field like 'project', 'company', 'contact', 'modulename', ...
@@ -1545,14 +1551,16 @@ if ($step == 5 && $datatoimport) {
 	$classname = "Import".ucfirst($model);
 	require_once $dir.$file;
 	$obj = new $classname($db, $datatoimport);
+	'@phan-var-force ModeleImports $obj';
 	if ($model == 'csv') {
+		'@phan-var-force ImportCsv $obj';
 		$obj->separator = $separator_used;
 		$obj->enclosure = $enclosure;
 	}
 
 	// Load source fields in input file
 	$fieldssource = array();
-	$result = $obj->import_open_file($conf->import->dir_temp.'/'.$filetoimport, $langs);
+	$result = $obj->import_open_file($conf->import->dir_temp.'/'.$filetoimport);
 
 	if ($result >= 0) {
 		// Read first line
@@ -1636,6 +1644,7 @@ if ($step == 5 && $datatoimport) {
 
 	// Separator and enclosure
 	if ($model == 'csv') {
+		'@phan-var-force ImportCsv $obj';
 		print '<tr><td>'.$langs->trans("CsvOptions").'</td>';
 		print '<td>';
 		print $langs->trans("Separator").' : '.dol_escape_htmltag($separator);
@@ -1839,7 +1848,7 @@ if ($step == 5 && $datatoimport) {
 		// Open input file
 		$nbok = 0;
 		$pathfile = $conf->import->dir_temp.'/'.$filetoimport;
-		$result = $obj->import_open_file($pathfile, $langs);
+		$result = $obj->import_open_file($pathfile);
 		if ($result > 0) {
 			global $tablewithentity_cache;
 			$tablewithentity_cache = array();
@@ -2036,14 +2045,16 @@ if ($step == 6 && $datatoimport) {
 	$classname = "Import".ucfirst($model);
 	require_once $dir.$file;
 	$obj = new $classname($db, $datatoimport);
+	'@phan-var-force ModeleImports $obj';
 	if ($model == 'csv') {
+		'@phan-var-force ImportCsv $obj';
 		$obj->separator = $separator_used;
 		$obj->enclosure = $enclosure;
 	}
 
 	// Load source fields in input file
 	$fieldssource = array();
-	$result = $obj->import_open_file($conf->import->dir_temp.'/'.$filetoimport, $langs);
+	$result = $obj->import_open_file($conf->import->dir_temp.'/'.$filetoimport);
 	if ($result >= 0) {
 		// Read first line
 		$arrayrecord = $obj->import_read_record();
@@ -2122,6 +2133,7 @@ if ($step == 6 && $datatoimport) {
 
 	// Separator and enclosure
 	if ($model == 'csv') {
+		'@phan-var-force ImportCsv $obj';
 		print '<tr><td>'.$langs->trans("CsvOptions").'</td>';
 		print '<td>';
 		print $langs->trans("Separator").' : ';
@@ -2253,7 +2265,7 @@ if ($step == 6 && $datatoimport) {
 	// Open input file
 	$nbok = 0;
 	$pathfile = $conf->import->dir_temp.'/'.$filetoimport;
-	$result = $obj->import_open_file($pathfile, $langs);
+	$result = $obj->import_open_file($pathfile);
 	if ($result > 0) {
 		global $tablewithentity_cache;
 		$tablewithentity_cache = array();

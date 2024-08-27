@@ -56,6 +56,8 @@ $type = 'member';
 $action = GETPOST('action', 'aZ09');
 $modulepart = GETPOST('modulepart', 'aZ09');
 
+$reg = array();
+
 
 /*
  * Actions

@@ -217,6 +217,14 @@ class FormActions
 				$url .= ($projectid > 0 ? '&projectid='.((int) $projectid) : '').($taskid > 0 ? '&taskid='.((int) $taskid) : '');
 				$url .= ($assignedtouser > 0 ? '&assignedtouser='.((int) $assignedtouser) : '');
 				$url .= '&backtopage='.urlencode($urlbacktopage);
+
+				if ($typeelement == 'invoice_supplier') {
+					$messagingUrl = DOL_URL_ROOT.'/fourn/facture/messaging.php?id='.$object->id;
+					$morehtmlright .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 1);
+					$messagingUrl = DOL_URL_ROOT.'/fourn/facture/agenda.php?id='.$object->id;
+					$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 2);
+				}
+
 				$morehtmlright .= dolGetButtonTitle($langs->trans("AddEvent"), '', 'fa fa-plus-circle', $url);
 			}
 
