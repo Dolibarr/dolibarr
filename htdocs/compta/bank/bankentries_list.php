@@ -145,9 +145,11 @@ if (($sortfield == 'b.datev' || $sortfield == 'b.datev,b.dateo,b.rowid')) {
 $hookmanager->initHooks(array('banktransactionlist', $contextpage));
 $extrafields = new ExtraFields($db);
 
+$extrafieldsobjectkey = 'bank';	// Used by extrafields_..._tpl.php
+
 // fetch optionals attributes and labels
-$extrafields->fetch_name_optionals_label('banktransaction');
-$search_array_options = $extrafields->getOptionalsFromPost('banktransaction', '', 'search_');
+$extrafields->fetch_name_optionals_label($extrafieldsobjectkey);
+$search_array_options = $extrafields->getOptionalsFromPost($extrafieldsobjectkey, '', 'search_');
 
 $arrayfields = array(
 	'b.rowid' => array('label' => $langs->trans("Ref"), 'checked' => 1,'position' => 10),
@@ -1188,6 +1190,8 @@ if ($resql) {
 	if (!empty($arrayfields['b.fk_bordereau']['checked'])) {
 		print '<td class="liste_titre center"><input type="text" class="flat" name="search_fk_bordereau" value="'.dol_escape_htmltag($search_fk_bordereau).'" size="3"></td>';
 	}
+	// Extra fields
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 	// Action edit/delete and select
 	print '<td class="nowraponall center"></td>';
 
@@ -1368,8 +1372,8 @@ if ($resql) {
 						}
 					}
 				}
-				// Extra fields
-				$element = 'banktransaction';
+				// Extra
+				$element = $extrafieldsobjectkey;
 				if (!empty($extrafields->attributes[$element]['label']) && is_array($extrafields->attributes[$element]['label']) && count($extrafields->attributes[$element]['label'])) {
 					foreach ($extrafields->attributes[$element]['label'] as $key => $val) {
 						if (!empty($arrayfields["ef.".$key]['checked'])) {
