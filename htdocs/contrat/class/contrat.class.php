@@ -2922,8 +2922,6 @@ class Contrat extends CommonObject
 		return $return;
 	}
 
-	// @Todo getLibSignedStatus, LibSignedStatus
-
 	/**
 	 * Set signed status
 	 *
@@ -2936,6 +2934,48 @@ class Contrat extends CommonObject
 	public function setSignedStatus(User $user, int $status = 0, int $notrigger = 0, $triggercode = ''): int
 	{
 		return $this->setSignedStatusCommon($user, $status, $notrigger, $triggercode);
+	}
+
+	/**
+	 *	Returns the label for signed status
+	 *
+	 *	@param		int		$mode	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 *	@return		string			Label
+	 */
+	public function getLibSignedStatus(int $mode = 0): string
+	{
+		global $langs;
+		$langs->load("commercial");
+		$list_signed_status = $this->getSignedStatusLocalisedArray();
+		$signed_status_label = $list_signed_status[$this->signed_status];
+		$signed_status_label_short = $list_signed_status[$this->signed_status];
+		$signed_status_code = 'status'.$this->signed_status;
+		return dolGetStatus($signed_status_label, $signed_status_label_short, '', $signed_status_code, $mode);
+	}
+
+	/**
+	 *	Returns an array of signed statuses with associated localized labels
+	 *
+	 *	@return array
+	 */
+	public function getSignedStatusLocalisedArray(): array
+	{
+		global $langs;
+		$langs->load("commercial");
+
+		$l10n_signed_status_labels = [
+			self::SIGNED_STATUSES['STATUS_NO_SIGNATURE']			=> 'NoSignature',
+			self::SIGNED_STATUSES['STATUS_SIGNED_SENDER']			=> 'SignedSender',
+			self::SIGNED_STATUSES['STATUS_SIGNED_RECEIVER']			=> 'SignedReceiver',
+			self::SIGNED_STATUSES['STATUS_SIGNED_RECEIVER_ONLINE']	=> 'SignedReceiverOnline',
+			self::SIGNED_STATUSES['STATUS_SIGNED_ALL']				=> 'SignedAll'
+		];
+
+		$l10n_signed_status = [];
+		foreach (self::SIGNED_STATUSES as $signed_status_code) {
+			$l10n_signed_status[$signed_status_code] = $langs->transnoentitiesnoconv($l10n_signed_status_labels[$signed_status_code]);
+		}
+		return $l10n_signed_status;
 	}
 }
 
