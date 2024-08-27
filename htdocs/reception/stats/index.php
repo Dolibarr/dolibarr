@@ -57,7 +57,7 @@ $result = restrictedArea($user, 'reception', 0, '');
 
 $form = new Form($db);
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-reception page-stats_index');
 
 print load_fiche_titre($langs->trans("StatisticsOfReceptions"), '', 'dollyrevert');
 
