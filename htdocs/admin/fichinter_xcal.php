@@ -67,7 +67,7 @@ if ($actionsave) {
 
 	$i += dolibarr_set_const($db, 'MAIN_FICHINTER_XCAL_EXPORTKEY', $MAIN_FICHINTER_XCAL_EXPORTKEY, 'chaine', 0, '', $conf->entity);
 	$i += dolibarr_set_const($db, 'MAIN_FICHINTER_EXPORT_PAST_DELAY', $MAIN_FICHINTER_EXPORT_PAST_DELAY, 'chaine', 0, '', $conf->entity);
-	$i += dolibarr_set_const($db, 'MAIN_FICHINTER_EXPORT_CACHE', (string) $MAIN_FICHINTER_EXPORT_CACHE, 'chaine', 0, '', $conf->entity);
+	$i += dolibarr_set_const($db, 'MAIN_FICHINTER_EXPORT_CACHE', $MAIN_FICHINTER_EXPORT_CACHE, 'chaine', 0, '', $conf->entity);
 	$i += dolibarr_set_const($db, 'MAIN_FICHINTER_EXPORT_FIX_TZ', $MAIN_FICHINTER_EXPORT_FIX_TZ, 'chaine', 0, '', $conf->entity);
 
 	if ($i >= 4) {

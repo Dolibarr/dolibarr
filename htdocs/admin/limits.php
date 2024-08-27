@@ -104,8 +104,8 @@ if ($action == 'update' && !$cancel) {
 	}
 
 	if (!$error) {
-		dolibarr_set_const($db, $mainmaxdecimalsunit, (string) $valmainmaxdecimalsunit, 'chaine', 0, '', $conf->entity);
-		dolibarr_set_const($db, $mainmaxdecimalstot, (string) $valmainmaxdecimalstot, 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, $mainmaxdecimalsunit, $valmainmaxdecimalsunit, 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, $mainmaxdecimalstot, $valmainmaxdecimalstot, 'chaine', 0, '', $conf->entity);
 		dolibarr_set_const($db, $mainmaxdecimalsshown, $valmainmaxdecimalsshown, 'chaine', 0, '', $conf->entity);
 
 		dolibarr_set_const($db, $mainroundingruletot, $valmainroundingruletot, 'chaine', 0, '', $conf->entity);

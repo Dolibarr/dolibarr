@@ -66,7 +66,7 @@ if (empty($reshook)) {
 		if (!dolibarr_set_const($db, 'LDAP_SERVER_TYPE', GETPOST("type", 'aZ09'), 'chaine', 0, '', $conf->entity)) {
 			$error++;
 		}
-		if (!dolibarr_set_const($db, 'LDAP_USERACCOUNTCONTROL', (string) GETPOSTINT("userAccountControl"), 'chaine', 0, '', $conf->entity)) {
+		if (!dolibarr_set_const($db, 'LDAP_USERACCOUNTCONTROL', GETPOSTINT("userAccountControl"), 'chaine', 0, '', $conf->entity)) {
 			$error++;
 		}
 		if (!dolibarr_set_const($db, 'LDAP_SERVER_PROTOCOLVERSION', GETPOST("LDAP_SERVER_PROTOCOLVERSION", 'aZ09'), 'chaine', 0, '', $conf->entity)) {
@@ -78,7 +78,7 @@ if (empty($reshook)) {
 		if (!dolibarr_set_const($db, 'LDAP_SERVER_HOST_SLAVE', GETPOST("slave", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) {
 			$error++;
 		}
-		if (!dolibarr_set_const($db, 'LDAP_SERVER_PORT', (string) GETPOSTINT("port"), 'chaine', 0, '', $conf->entity)) {
+		if (!dolibarr_set_const($db, 'LDAP_SERVER_PORT', GETPOSTINT("port"), 'chaine', 0, '', $conf->entity)) {
 			$error++;
 		}
 		if (!dolibarr_set_const($db, 'LDAP_SERVER_DN', GETPOST("dn", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) {
