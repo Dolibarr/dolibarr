@@ -149,7 +149,8 @@ class Notify
 		'EXPENSE_REPORT_APPROVE',
 		'HOLIDAY_VALIDATE',
 		'HOLIDAY_APPROVE',
-		'ACTION_CREATE'
+		'ACTION_CREATE',
+		'CONTRACT_MODIFY'
 	);
 
 	/**
@@ -904,6 +905,13 @@ class Notify
 								$object_type = 'action';
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextActionAdded", $link);
 								break;
+							case 'CONTRACT_MODIFY':
+								$link = '<a href="'.$urlwithroot.'/contrat/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
+								$context_info = array_key_exists('signature', $object->context) ? $object->getLibSignedStatus() : '';
+								$dir_output = $conf->contract->multidir_output;
+								$object_type = 'contract';
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextContractModified", $link, $context_info);
+								break;
 							default:
 								$object_type = $object->element;
 								$dir_output = $conf->$object_type->multidir_output[$object->entity ? $object->entity : $conf->entity]."/".get_exdir(0, 0, 0, 1, $object, $object_type);
@@ -1201,6 +1209,13 @@ class Notify
 						$dir_output = $conf->agenda->dir_output;
 						$object_type = 'action';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextActionAdded", $link);
+						break;
+					case 'CONTRACT_MODIFY':
+						$link = '<a href="'.$urlwithroot.'/contrat/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
+						$context_info = array_key_exists('signature', $object->context) ? $object->getLibSignedStatus() : '';
+						$dir_output = $conf->contract->multidir_output;
+						$object_type = 'contract';
+						$mesg = $outputlangs->transnoentitiesnoconv("EMailTextContractModified", $link, $context_info);
 						break;
 					default:
 						$object_type = $object->element;
