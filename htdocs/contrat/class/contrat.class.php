@@ -2939,6 +2939,27 @@ class Contrat extends CommonObject
 	 */
 	public function setSignedStatus(User $user, int $status = 0, int $notrigger = 0, $triggercode = ''): int
 	{
+		global $langs;
+		$langs->loadLangs(array('interventions', 'commercial'));
+		$this->signed_status = $status;
+		$this->context['signature'] = $status;
+		switch ($status) {
+			case 0:
+				$this->context['actionmsg2'] = $langs->transnoentitiesnoconv('InterventionUnsignedInDolibarr');
+				break;
+			case 1:
+				$this->context['actionmsg2'] = $langs->transnoentitiesnoconv('SignedSender');
+				break;
+			case 2:
+				$this->context['actionmsg2'] = $langs->transnoentitiesnoconv('SignedReceiver');
+				break;
+			case 3:
+				$this->context['actionmsg2'] = $langs->transnoentitiesnoconv('SignedReceiverOnline');
+				break;
+			case 9:
+				$this->context['actionmsg2'] = $langs->transnoentitiesnoconv('SignedAll');
+				break;
+		}
 		return $this->setSignedStatusCommon($user, $status, $notrigger, $triggercode);
 	}
 
