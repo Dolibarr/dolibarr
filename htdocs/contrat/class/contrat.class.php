@@ -259,26 +259,16 @@ class Contrat extends CommonObject
 	const STATUS_VALIDATED = 1;
 	const STATUS_CLOSED = 2;
 
-	/*
-	 * No signature
+	/**
+	 * Signed statuses dictionary. Label used as key for string localizations.
 	 */
-	const STATUS_NO_SIGNATURE    = 0;
-
-	/*
-	 * Signed by sender
-	 */
-	const STATUS_SIGNED_SENDER   = 1;
-
-	/*
-	 * Signed by receiver
-	 */
-	const STATUS_SIGNED_RECEIVER = 2;
-
-	/*
-	 * Signed by all
-	 */
-	const STATUS_SIGNED_ALL      = 9; // To handle future kind of signature (ex: tripartite contract)
-
+	const SIGNED_STATUSES = [
+		'STATUS_NO_SIGNATURE' => 0,
+		'STATUS_SIGNED_SENDER' => 1,
+		'STATUS_SIGNED_RECEIVER' => 2,
+		'STATUS_SIGNED_RECEIVER_ONLINE' => 3,
+		'STATUS_SIGNED_ALL' => 9 // To handle future kind of signature (ex: tripartite contract)
+	];
 
 	/**
 	 *	Constructor
