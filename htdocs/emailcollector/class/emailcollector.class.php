@@ -1681,7 +1681,6 @@ class EmailCollector extends CommonObject
 				$matches = array();
 				preg_match_all('/([^: ]+): (.+?(?:\r\n\s(?:.+?))*)\r\n/m', $header, $matches);
 				$headers = array_combine($matches[1], $matches[2]);
-				//var_dump($headers);exit;
 
 				if (!empty($headers['in-reply-to']) && empty($headers['In-Reply-To'])) {
 					$headers['In-Reply-To'] = $headers['in-reply-to'];
@@ -1698,7 +1697,13 @@ class EmailCollector extends CommonObject
 
 				$headers['Subject'] = $this->decodeSMTPSubject($headers['Subject']);
 
-				$emailto = $this->decodeSMTPSubject($overview[0]->to);
+				if (getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')) {
+					$emailto = (string) $overview['to'];
+				} else {
+					$emailto = $this->decodeSMTPSubject($overview[0]->to);
+				}
+				//var_dump($headers);
+				//var_dump($overview);exit;
 
 				$operationslog .= '<br>** Process email #'.dol_escape_htmltag($iforemailloop);
 
@@ -1710,9 +1715,11 @@ class EmailCollector extends CommonObject
 					$operationslog .= " - ".dol_escape_htmltag((string) $imapemail);
 					$msgid = str_replace(array('<', '>'), '', $overview[0]->message_id);
 				}
-				$operationslog .= " - MsgId: ".$msgid." - References: ".dol_escape_htmltag($headers['References'] ?? '')." - Subject: ".dol_escape_htmltag($headers['Subject']);
+				$operationslog .= " - MsgId: ".$msgid;
+				$operationslog .= " - Date: ".($headers['Date'] ?? '');
+				$operationslog .= " - References: ".dol_escape_htmltag($headers['References'] ?? '')." - Subject: ".dol_escape_htmltag($headers['Subject']);
 
-				dol_syslog("-- Process email ".$iforemailloop." References: ".($headers['References'] ?? '')." Subject: ".$headers['Subject']);
+				dol_syslog("-- Process email #".$iforemailloop." MsgId: ".$msgid." Date: ".($headers['Date'] ?? '')." References: ".($headers['References'] ?? '')." Subject: ".$headers['Subject']);
 
 
 				$trackidfoundintorecipienttype = '';
