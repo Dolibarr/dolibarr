@@ -3,6 +3,77 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
+***** ChangeLog for 19.0.3 compared to 19.0.2 *****
+FIX: #29403 HRM - Unable to delete a skill in a job Profile (#29779)
+FIX: #29439 incomplete API return (#29796)
+FIX: #29756 Sql error on comment search (#29761)
+FIX: #29780 Restore filtes when using "back to list"
+FIX: #30010 : Use conf TICKET_MESSAGE_MAIL_INTRO instead of translation key (#30081)
+FIX: #30274 : Add the include before executing dolibarr_set_const (#30320)
+FIX: #30467
+FIX: #30576 - Salary payment - Date of the payment is not displayed (#30592)
+FIX: Accountancy - Avoid space on FEC name file (#29716)
+FIX: Accountancy - Generate entries of expense report with localtax (#30411)
+FIX: ASSET: annual depreciation starting year (Again ;-)) #26084 (#30040)
+FIX: Backport page inventory.php from v18 to fix pagination bugs causing data loss (#29688)
+FIX: back to page on error in contact card (#29627)
+FIX: Bad calculation of $nbtotalofrecord (#30183)
+FIX: Bad count of total of supplie rinvoice into the list
+FIX: Better compatibility when objectdesc is not valid, and warnings
+FIX: broken pdf preview when multicompany sharing (#30188)
+FIX: compatibility with MULTICOMPANY_TRANSVERSE_MODE (#30599)
+FIX: Conflict with autoload (#30399)
+FIX: Display the real_PMP on inventory when its value is equal to 0 (#22291)
+FIX: Error mesg show untranslated extrafield name (#30227)
+FIX: executeHooks $object default value (#29647)
+FIX: expedition PDF models using units labels (#30358)
+FIX: Extrafield intshowzero in list (#29789)
+FIX: Extrafields always been delete and re insert for categories (#29781)
+FIX: extrafields on Organized events was broken
+FIX: fatal error on loading pictures in attached documents of an event (#30553)
+FIX: for country type (#29745)
+FIX: group by qty in product margin tab (#29853)
+FIX: init total amounts in margin module (#29854)
+FIX: issue to get the right files exported in Quadratrus export.php (#30004)
+FIX: lang output for sales representative on PDF (#30469)
+FIX: langs in common docgenerator (#29774)
+FIX: langs overwrite (#29630)
+FIX: lettering (auto) for invoice deposit with company discount (#29633)
+FIX: missing $object and $action for hook parameters (#30484)
+FIX: Missing $param in hook call for list
+FIX: Missing expense report picto in list (#29917)
+FIX: Missing expense report picto in menu (#29908)
+FIX: Missing the description in tooltip when option show in tooltip on
+FIX: mo cloning (#29686)
+FIX: modification date from label in accounting bookkeeping list (#30038)
+FIX: move porpale ref pdf cornas (#29989)
+FIX: Not qualified lines for reception (#29473)
+FIX: on change ref for bank account attachment are lost (#30529)
+FIX: orders to bill menu (#30179)
+FIX: Page expands when ticket messages are too long (#29785)
+FIX: parameter name (#29666)
+FIX: PHP8 warning if $conf->reception is checked the old fashion way (#29697)
+FIX: PHP 8 warning on output of successful cronjob (#29922)
+FIX: PHP exception on getSpecialCode (#29646)
+FIX: php warning if cookie doesn’t exist (#29723)
+FIX: pos: invoice date incorrectly set because of timezome mismatches (reverts #36e91da) (#30184)
+FIX: public project form return an error if SOCIETE_EMAIL_UNIQUE (#29942)
+FIX: REPLENISH MANY FOURN WHEN ORDER ALREADY CREATE (#29710)
+FIX: Supplier Order search on date valid (#30448)
+FIX: Ternary operator condition is always true/false (#29649)
+FIX: to avoid error during upgrade with pgsql (#30443)
+FIX: transfer in accountancy for expense reports.
+FIX: uninitialised var (#29728)
+FIX: - Unknown Character on HTML (#30257)
+FIX: Unsigned propal having signing date (#29825)
+FIX: Update asset.class.php
+FIX: update date_echeance of supplier invoices when we update invoice date in the past (#29886)
+FIX: User List - Function is show in wrong column when module HRM enabled (#30186)
+FIX: var name error and remove useless code (#30601)
+FIX: Warning: Undefined property: PropaleLigne::$situation_percent in /home/httpd/vhosts/aflac.fr/domains/dol190.aflac.fr/httpdocs/core/lib/pdf.lib.php on line 2442 (#30033)
+FIX: wrong value for duration unit (#30261)
+FIX: The ZAR currency must show the R before the amount
+
 ***** ChangeLog for 19.0.2 compared to 19.0.1 *****
 FIX: $object->oldcopy may be a stdClass and not original object
 FIX: 16.0 - parent company gets emptied when updating a third party from the card in edit mode (#28269)
@@ -3091,7 +3162,7 @@ NEW: add quick dropdown menu in top right menu (experimental with MAIN_USE_TOP_M
 NEW: add region in export companies and contacts
 NEW: add rights on margin info on invoice list
 NEW: add search param for close date on order list
-NEW: add show preview for mail attachement on form mail
+NEW: add show preview for mail attachment on form mail
 NEW: add State/Province origin for products
 NEW: add the workflow interaction close intervention on closing ticket
 NEW: add tracking number in list and search_all items
@@ -4476,7 +4547,7 @@ FIX: access to public interface when origin email has an alias.
 FIX: Alias name is not into the email recipient label.
 FIX: allow standalone credit note even if no invoice
 FIX: an admin can not access his own permissions after enabling advanced permissions
-FIX: Attachement of linked files on ticket when sending a message
+FIX: Attachment of linked files on ticket when sending a message
 FIX: avoid non numeric warning
 FIX: Bad currency var used in stripe for connect
 FIX: Bad list of ticket on public interface for ticket emailcollector
@@ -5272,7 +5343,7 @@ NEW: hidden option to define an invoice template for each invoice type
 NEW: Highlight lines on lists when they are checked
 NEW: Notification module support expense report+holiday validation and approval
 NEW: On customer/supplier card, add simple tooltip to amount boxes
-NEW: Page to check if the operations/items created between two dates have attached item(s) and possibility to download all attachements
+NEW: Page to check if the operations/items created between two dates have attached item(s) and possibility to download all attachments
 NEW: possibility to add all rights of all modules in one time
 NEW: redirect if only one result on global search on card
 NEW: Permission to ignore price min
@@ -6716,7 +6787,7 @@ NEW: No external check of version without explicit click in about page.
 NEW: ODT docs for USER USERGROUP CONTRACT and PRODUCT class
 NEW: odt usergroup
 NEW: On invoices generated by template, we save if invoice come from a source template.
-NEW: option to copy into attachement files of events, files send by mail (with auto event creation)
+NEW: option to copy into attachment files of events, files send by mail (with auto event creation)
 NEW: PDF with numbertoword
 NEW: Permit multiple file upload in linked documents
 NEW: PHP 7.1 compatibility

@@ -163,6 +163,9 @@ if (empty($reshook)) {
 		$result = $object->setDraft($user, 0);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
+		} else {
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			exit;
 		}
 	}
 	// Reopen
@@ -171,6 +174,9 @@ if (empty($reshook)) {
 		$result = $object->reOpen();
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
+		} else {
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			exit;
 		}
 	}
 
@@ -262,6 +268,8 @@ if (empty($reshook)) {
 		$num = count($objectsrc->lines);
 		$totalqty = 0;
 
+		$product_batch_used = array();
+
 		for ($i = 0; $i < $num; $i++) {
 			$idl = "idl".$i;
 
@@ -299,11 +307,16 @@ if (empty($reshook)) {
 						//var_dump($sub_qty[$j]['id_batch']);
 
 						//var_dump($qty);var_dump($batch);var_dump($sub_qty[$j]['q']);var_dump($sub_qty[$j]['id_batch']);
-						if ($is_batch_or_serial==2 && $sub_qty[$j]['q']>1) {
+						if ($is_batch_or_serial==2 && ($sub_qty[$j]['q']>1 || ($sub_qty[$j]['q']>0 && in_array($sub_qty[$j]['id_batch'], $product_batch_used)))) {
 							setEventMessages($langs->trans("TooManyQtyForSerialNumber", $product->ref, ''), null, 'errors');
 							$totalqty=0;
 							break 2;
 						}
+
+						if ($is_batch_or_serial==2 && $sub_qty[$j]['q']>0) {
+							$product_batch_used[$j] = $sub_qty[$j]['id_batch']; // we stock the batch id to test if the same serial is shipped on another line for the same product
+						}
+
 						$j++;
 						$batch = "batchl".$i."_".$j;
 						$qty = "qtyl".$i.'_'.$j;

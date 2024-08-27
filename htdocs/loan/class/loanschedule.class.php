@@ -171,7 +171,7 @@ class LoanSchedule extends CommonObject
 
 		// Check parameters
 		if ($totalamount == 0) {
-			$this->errors[] = 'step1';
+			$this->errors[] = 'Amount must not be "0".';
 			return -1; // Negative amounts are accepted for reject prelevement but not null
 		}
 
@@ -419,8 +419,12 @@ class LoanSchedule extends CommonObject
 	{
 		$result = '';
 
-		if (!empty($capital) && !empty($rate) && !empty($nbterm)) {
-			$result = ($capital * ($rate / 12)) / (1 - pow((1 + ($rate / 12)), ($nbterm * -1)));
+		if (!empty($capital) && !empty($nbterm)) {
+			if (!empty($rate)) {
+				$result = ($capital * ($rate / 12)) / (1 - pow((1 + ($rate / 12)), ($nbterm * -1)));
+			} else {
+				$result = $capital / $nbterm;
+			}
 		}
 
 		return $result;
