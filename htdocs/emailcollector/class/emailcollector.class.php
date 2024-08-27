@@ -3466,28 +3466,10 @@ class EmailCollector extends CommonObject
 						if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 							// Move mail using PHP-IMAP
 							dol_syslog("EmailCollector::doCollectOneCollector move message ".($imapemail->getHeader()->get('subject'))." to ".$targetdir, LOG_DEBUG);
+							$operationslog .= '<br>Move mail '.($this->uidAsString($imapemail)).' - '.$msgid.' - '.$imapemail->getHeader()->get('subject').' to '.$targetdir;
 
-							if (empty($mode)) {	// $mode > 0 is test
-								$operationslog .= '<br>Move mail '.($this->uidAsString($imapemail)).' - '.$msgid.' to '.$targetdir;
-
-								$tmptargetdir = $targetdir;
-								if (!getDolGlobalString('MAIL_DISABLE_UTF7_ENCODE_OF_DIR')) {
-									$tmptargetdir = $this->getEncodedUtf7($targetdir);
-								}
-
-								try {
-									$result = $imapemail->move($tmptargetdir);
-								} catch (Exception $e) {
-									// Nothing to do. $result will remain 0
-								}
-								if (empty($result)) {
-									dol_syslog("Failed to move email into target directory ".$targetdir);
-									$operationslog .= '<br>Failed to move email into target directory '.$targetdir;
-									$errorforemail++;
-								}
-							} else {
-								$operationslog .= '<br>Do not move mail '.($this->uidAsString($imapemail)).' - '.$msgid.' (test mode)';
-							}
+							$arrayofemailtodelete[$this->uidAsString($imapemail)] = $imapemail;
+							// Note: Real move is done later using $arrayofemailtodelete
 						} else {
 							dol_syslog("EmailCollector::doCollectOneCollector move message ".($this->uidAsString($imapemail))." to ".$connectstringtarget, LOG_DEBUG);
 							$operationslog .= '<br>Move mail '.($this->uidAsString($imapemail)).' - '.$msgid;
@@ -3497,7 +3479,7 @@ class EmailCollector extends CommonObject
 						}
 					} else {
 						if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
-							dol_syslog("EmailCollector::doCollectOneCollector message '".($imapemail->getHeader()->get('subject'))."' using this->host=".$this->host.", this->access_type=".$this->acces_type." was set to read", LOG_DEBUG);
+							dol_syslog("EmailCollector::doCollectOneCollector message ".($this->uidAsString($imapemail))." '".($imapemail->getHeader()->get('subject'))."' using this->host=".$this->host.", this->access_type=".$this->acces_type." was set to read", LOG_DEBUG);
 						} else {
 							dol_syslog("EmailCollector::doCollectOneCollector message ".($this->uidAsString($imapemail))." to ".$connectstringtarget." was set to read", LOG_DEBUG);
 						}
@@ -3547,6 +3529,42 @@ class EmailCollector extends CommonObject
 
 		// Disconnect
 		if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
+			// We revert the order to move/delete the more recent first (with higher number) so renumbering does not affect number of others to delete
+			$arrayofemailtodelete = array_reverse($arrayofemailtodelete, true);
+
+			foreach ($arrayofemailtodelete as $imapemailnum => $imapemail) {
+				dol_syslog("EmailCollect::doCollectOneCollector delete email ".$imapemailnum);
+
+				$operationslog .= "<br> move email ".$imapemailnum;
+
+				if (empty($mode) && empty($error)) {
+					$tmptargetdir = $targetdir;
+					if (!getDolGlobalString('MAIL_DISABLE_UTF7_ENCODE_OF_DIR')) {
+						$tmptargetdir = $this->getEncodedUtf7($targetdir);
+					}
+
+					$result = 0;
+					try {
+						$result = $imapemail->move($tmptargetdir, false);
+					} catch (Exception $e) {
+						// Nothing to do. $result will remain 0
+						$operationslog .= '<br>Exception !!!! '.$e->getMessage();
+					}
+					if (empty($result)) {
+						dol_syslog("Failed to move email into target directory ".$targetdir);
+						$operationslog .= '<br>Failed to move email into target directory '.$targetdir;
+						$error++;
+					}
+				}
+			}
+
+			if (empty($mode) && empty($error)) {
+				dol_syslog("Expunge", LOG_DEBUG);
+				$operationslog .= "<br>Expunge";
+
+				$client->expunge(); // To validate all moves
+			}
+
 			$client->disconnect();
 		} else {
 			foreach ($arrayofemailtodelete as $imapemail => $msgid) {
