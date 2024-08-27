@@ -1996,7 +1996,10 @@ class Contrat extends CommonObject
 			$text .= ($mode == 7 ? '</span>' : '');
 			return $text;
 		} else {
-			return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
+			$signed_label = ' (' . $this->getLibSignedStatus() . ')';
+			$status_label = $this->signed_status ? $this->labelStatus[$status] . $signed_label : $this->labelStatus[$status];
+			$status_label_short = $this->signed_status ? $this->labelStatusShort[$status] . $signed_label : $this->labelStatusShort[$status];
+			return dolGetStatus($status_label, $status_label_short, '', $statusType, $mode);
 		}
 	}
 
