@@ -1658,13 +1658,10 @@ class EmailCollector extends CommonObject
 
 			$richarrayofemail = array();
 
-			$iforemailloop = 0;
 			foreach ($arrayofemail as $imapemail) {
 				if ($nbemailprocessed > 1000) {
 					break; // Do not process more than 1000 email per launch (this is a different protection than maxnbcollectedpercollect)
 				}
-				$iforemailloop++;
-
 
 				// GET header and overview datas
 				if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
@@ -1691,7 +1688,10 @@ class EmailCollector extends CommonObject
 			$richarrayofemail = dol_sort_array($richarrayofemail, 'date', 'asc');
 
 
+			$iforemailloop = 0;
 			foreach ($richarrayofemail as $tmpval) {
+				$iforemailloop++;
+
 				$imapemail = $tmpval['imapemail'];
 				$header = $tmpval['header'];
 				$overview = $tmpval['overview'];
