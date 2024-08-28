@@ -31,13 +31,8 @@
 // $object = Object fetched;
 // $sendto
 // $withmaindocfilemail
+
 '@phan-var-force CommonObject $objecttmp';
-
-if (!empty($sall) || !empty($search_all)) {
-	$search_all = empty($sall) ? $search_all : $sall;
-
-	print '<input type="hidden" name="search_all" value="'.$search_all.'">';
-}
 
 if ($massaction == 'predeletedraft') {
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassDraftDeletion"), $langs->trans("ConfirmMassDeletionQuestion", count($toselect)), "delete", null, '', 0, 200, 500, 1);
