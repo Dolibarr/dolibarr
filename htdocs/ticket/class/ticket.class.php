@@ -70,9 +70,13 @@ class Ticket extends CommonObject
 	public $track_id;
 
 	/**
-	 * @var int Thirdparty ID
+	 * @var int Third party ID
 	 */
 	public $fk_soc;
+
+	/**
+	 * @var int Third party ID
+	 */
 	public $socid;
 
 	/**
@@ -116,14 +120,14 @@ class Ticket extends CommonObject
 	public $private;
 
 	/**
-	 * @var int  Ticket statut
+	 * @var int Ticket status
 	 * @deprecated use status
 	 * @see $status
 	 */
 	public $fk_statut;
 
 	/**
-	 * @var int  Ticket status
+	 * @var int Ticket status
 	 */
 	public $status;
 
@@ -158,32 +162,32 @@ class Ticket extends CommonObject
 	public $severity_code;
 
 	/**
-	 * Type label
+	 * @var string Type label
 	 */
 	public $type_label;
 
 	/**
-	 * Category label
+	 * @var string Category label
 	 */
 	public $category_label;
 
 	/**
-	 * Severity label
+	 * @var string Severity label
 	 */
 	public $severity_label;
 
 	/**
-	 * Email from user
+	 * @var string Email from user
 	 */
 	public $email_from;
 
 	/**
-	 * Email to reply to
+	 * @var string Email to reply to
 	 */
 	public $origin_replyto;
 
 	/**
-	 * References from origin email
+	 * @var string References from origin email
 	 */
 	public $origin_references;
 
@@ -792,14 +796,14 @@ class Ticket extends CommonObject
 	/**
 	 * Load all objects in memory from database
 	 *
-	 * @param  User   		$user      	User for action
-	 * @param  string 		$sortorder 	Sort order
-	 * @param  string 		$sortfield 	Sort field
-	 * @param  int    		$limit     	Limit
-	 * @param  int    		$offset    	Offset page
-	 * @param  int    		$arch      	Archive or not (not used)
-	 * @param  string|array $filter    	Filter for query
-	 * @return int 						Return integer <0 if KO, >0 if OK
+	 * @param	User				$user		User for action
+	 * @param	string				$sortorder	Sort order
+	 * @param	string				$sortfield	Sort field
+	 * @param	int					$limit		Limit
+	 * @param	int					$offset		Offset page
+	 * @param	int					$arch		Archive or not (not used)
+	 * @param	array<string,int>	$filter		Filter for query
+	 * @return	int 								Return integer <0 if KO, >0 if OK
 	 */
 	public function fetchAll($user, $sortorder = 'ASC', $sortfield = 't.datec', $limit = 0, $offset = 0, $arch = 0, $filter = '')
 	{
