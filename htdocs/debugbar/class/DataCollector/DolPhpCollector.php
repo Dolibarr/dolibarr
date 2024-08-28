@@ -28,7 +28,7 @@ use DebugBar\DataCollector\Renderable;
 /**
  * Class PhpCollector
  *
- * This class collects all PHP errors, notice, advices, trigger_error,...
+ * This class collects all PHP errors, notices, advice, trigger_error,...
  * Supports 15 different types included.
  */
 class PhpCollector extends DataCollector implements Renderable

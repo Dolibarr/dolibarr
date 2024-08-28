@@ -1,10 +1,11 @@
 <?php
-/* Copyright (C) 2013-2018  Jean-François FERRY <hello@librethic.io>
- * Copyright (C) 2016       Christophe Battarel <christophe@altairis.fr>
- * Copyright (C) 2022-2023  Udo Tamm            <dev@dolibit.de>
- * Copyright (C) 2023       Alexandre Spangaro  <aspangaro@easya.solutions>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2013-2018  Jean-François FERRY 	<hello@librethic.io>
+ * Copyright (C) 2016       Christophe Battarel 	<christophe@altairis.fr>
+ * Copyright (C) 2022-2023  Udo Tamm            	<dev@dolibit.de>
+ * Copyright (C) 2023       Alexandre Spangaro  	<aspangaro@easya.solutions>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		Benjamin Falière		<benjamin.faliere@altairis.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,6 +53,17 @@ $type = 'ticket';
 
 $error = 0;
 $reg = array();
+
+// Initiate status list
+$statuslist = array(
+	Ticket::STATUS_IN_PROGRESS => $langs->trans("InProgress"),
+	Ticket::STATUS_NOT_READ => $langs->trans("NotRead"),
+	Ticket::STATUS_READ => $langs->trans("Read"),
+	Ticket::STATUS_ASSIGNED => $langs->trans("Assigned"),
+	Ticket::STATUS_NEED_MORE_INFO => $langs->trans("NeedMoreInformationShort"),
+	Ticket::STATUS_WAITING => $langs->trans("Waiting"),
+	Ticket::STATUS_CLOSED => $langs->trans("SolvedClosed")
+);
 
 /*
  * Actions
@@ -160,6 +172,13 @@ if ($action == 'updateMask') {
 			$error++;
 		}
 	}
+
+	$param_status = GETPOST('TICKET_SET_STATUS_ON_ANSWER');
+	$res = dolibarr_set_const($db, 'TICKET_SET_STATUS_ON_ANSWER', $param_status, 'chaine', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+
 
 	$param_delay_first_response = GETPOSTINT('delay_first_response');
 	$res = dolibarr_set_const($db, 'TICKET_DELAY_BEFORE_FIRST_RESPONSE', $param_delay_first_response, 'chaine', 0, '', $conf->entity);
@@ -428,7 +447,7 @@ foreach ($dirmodels as $reldir) {
 
 							require_once $dir.'/'.$file;
 							$module = new $classname($db);
-							'@phan-var-force CommonDocGenerator $module';
+							'@phan-var-force ModelePDFTicket $module';
 
 							$modulequalified = 1;
 							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -443,7 +462,7 @@ foreach ($dirmodels as $reldir) {
 								print(empty($module->name) ? $name : $module->name);
 								print "</td><td>\n";
 								if (method_exists($module, 'info')) {
-									print $module->info($langs);
+									print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
 								} else {
 									print $module->description;
 								}
@@ -576,6 +595,46 @@ if ($conf->use_javascript_ajax) {
 print '</td>';
 print '<td class="center">';
 print $formcategory->textwithpicto('', $langs->trans("TicketsAutoNotifyCloseHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
+
+// Automatically define status on answering a ticket
+print '<tr class="oddeven"><td>'.$langs->trans("TicketAutoChangeStatusOnAnswer").'</td>';
+print '<td class="left">';
+print $formcategory->selectarray("TICKET_SET_STATUS_ON_ANSWER", $statuslist, getDolGlobalString('TICKET_SET_STATUS_ON_ANSWER'));
+print '</td>';
+print '<td class="center">';
+print $formcategory->textwithpicto('', $langs->trans("TicketAutoChangeStatusOnAnswerHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
+
+// Check "Notify thirdparty" on ticket creation
+print '<tr class="oddeven"><td>'.$langs->trans("TicketAutoCheckNotifyThirdParty").'</td>';
+print '<td class="left">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('TICKET_CHECK_NOTIFY_THIRDPARTY_AT_CREATION');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $formcategory->selectarray("TICKET_CHECK_NOTIFY_THIRDPARTY_AT_CREATION", $arrval, getDolGlobalString('TICKET_CHECK_NOTIFY_THIRDPARTY_AT_CREATION'));
+}
+print '</td>';
+print '<td class="center">';
+print $formcategory->textwithpicto('', $langs->trans("TicketAutoCheckNotifyThirdPartyHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
+
+// Assign contact to a message
+print '<tr class="oddeven"><td>'.$langs->trans("TicketAssignContactToMessage").'</td>';
+print '<td class="left">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('TICKET_ASSIGN_CONTACT_TO_MESSAGE');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $formcategory->selectarray("TICKET_ASSIGN_CONTACT_TO_MESSAGE", $arrval, getDolGlobalString('TICKET_ASSIGN_CONTACT_TO_MESSAGE'));
+}
+print '</td>';
+print '<td class="center">';
+print $formcategory->textwithpicto('', $langs->trans("TicketAssignContactToMessageHelp"), 1, 'help');
 print '</td>';
 print '</tr>';
 

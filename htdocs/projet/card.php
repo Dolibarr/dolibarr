@@ -57,10 +57,10 @@ $backtopagejsfields = GETPOST('backtopagejsfields', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'aZ09');
 
-$dol_openinpopup = 0;
+$dol_openinpopup = '';
 if (!empty($backtopagejsfields)) {
 	$tmpbacktopagejsfields = explode(':', $backtopagejsfields);
-	$dol_openinpopup = $tmpbacktopagejsfields[0];
+	$dol_openinpopup = preg_replace('/[^a-z0-9_]/i', '', $tmpbacktopagejsfields[0]);
 }
 
 $status = GETPOSTINT('status');
@@ -243,11 +243,11 @@ if (empty($reshook)) {
 
 			$result = $object->create($user);
 			if (!$error && $result > 0) {
-				// Add myself as project leader
-				$typeofcontact = 'PROJECTLEADER';
+				// Add myself as Owner Contact Selected in the form
+				$typeofcontact = GETPOST('typeofcontact');
 				$result = $object->add_contact($user->id, $typeofcontact, 'internal');
 
-				// -3 means type not found (PROJECTLEADER renamed, de-activated or deleted), so don't prevent creation if it has been the case
+				// -3 means type not found (renamed, de-activated or deleted), so don't prevent creation if it has been the case
 				if ($result == -3) {
 					setEventMessage('ErrorPROJECTLEADERRoleMissingRestoreIt', 'errors');
 					$error++;
@@ -617,7 +617,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 	print '<table class="border centpercent tableforfieldcreate">';
 
 	$defaultref = '';
-	$modele = !getDolGlobalString('PROJECT_ADDON') ? 'mod_project_simple' : $conf->global->PROJECT_ADDON;
+	$modele = getDolGlobalString('PROJECT_ADDON', 'mod_project_simple');
 
 	// Search template files
 	$file = '';
@@ -633,11 +633,13 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 		}
 	}
 
-	if ($filefound) {
+	if ($filefound && !empty($classname)) {
 		$result = dol_include_once($reldir."core/modules/project/".$modele.'.php');
-		$modProject = new $classname();
+		if (class_exists($classname)) {
+			$modProject = new $classname();
 
-		$defaultref = $modProject->getNextValue($thirdparty, $object);
+			$defaultref = $modProject->getNextValue($thirdparty, $object);
+		}
 	}
 
 	if (is_numeric($defaultref) && $defaultref <= 0) {
@@ -892,6 +894,14 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 		print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 		print "</td></tr>";
 	}
+
+	// Selection of Owner contact type
+	print '<tr><td class="tdtop">'.$langs->trans("ProjectContactTypeManager").'</td>';
+	print '<td>';
+	$contactList = $object->liste_type_contact('internal', 'position', 1);
+	$typeofcontact = GETPOST('typeofcontact') ? GETPOST('typeofcontact') : 'PROJECTLEADER';
+	print $form->selectarray('typeofcontact', $contactList, $typeofcontact, 0, 0, 0, '', 0, 0, 0, '', '', 1);
+	print '</td></tr>';
 
 	// Other options
 	$parameters = array();

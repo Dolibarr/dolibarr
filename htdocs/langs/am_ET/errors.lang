@@ -303,7 +303,8 @@ ErrorThirpdartyOrMemberidIsMandatory=የሶስተኛ ወገን ወይም የአ�
 ErrorFailedToWriteInTempDirectory=በ temp ማውጫ ውስጥ መፃፍ አልተሳካም።
 ErrorQuantityIsLimitedTo=መጠኑ በ%s የተገደበ ነው።
 ErrorFailedToLoadThirdParty=ከ id=%s, email=%s, name= ማግኘት/ መጫን አልተቻለም %s
-ErrorThisPaymentModeIsNotSepa=ይህ የክፍያ ሁነታ የባንክ ሂሳብ አይደለም።
+ErrorThisPaymentModeIsNotDirectDebit=The payment mode is not direct debit
+ErrorThisPaymentModeIsNotCreditTransfer=The payment mode is not credit transfer
 ErrorStripeCustomerNotFoundCreateFirst=Stripe ደንበኛ ለዚህ ሶስተኛ አካል አልተዘጋጀም (ወይንም በ Stripe በኩል ወደ ተሰረዘ እሴት ተቀናብሯል)። መጀመሪያ ይፍጠሩ (ወይም እንደገና አያይዘው)።
 ErrorCharPlusNotSupportedByImapForSearch=የIMAP ፍለጋ ቁምፊ + የያዘ ሕብረቁምፊ ላኪ ወይም ተቀባይ መፈለግ አይችልም።
 ErrorTableNotFound=ሰንጠረዥ <b>%s</b> አልተገኘም
@@ -334,9 +335,9 @@ ErrorDictionaryNotFound=መዝገበ ቃላት <b>%s</b> አልተገኘም
 ErrorFailedToCreateSymLinkToMedias=ወደ %s ለመጠቆም የ%s ተምሳሌታዊ አገናኝ መፍጠር አልተሳካም
 ErrorCheckTheCommandInsideTheAdvancedOptions=ወደ ውጭ ለመላክ ጥቅም ላይ የዋለውን ትዕዛዝ ወደ ውጭ የላቁ አማራጮች ያረጋግጡ
 ErrorEndTimeMustBeGreaterThanStartTime=End time must be greater than start time
-ErrorIncoherentDates=Date start must be less than date end
-ErrorEndHourIsNull=End date cannot be zero
-ErrorStartHourIsNull=Start date cannot be zero
+ErrorIncoherentDates=Start date must be earlier than end date
+ErrorEndHourIsNull=End date field cannot be empty
+ErrorStartHourIsNull=Start date field cannot be empty
 ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter=Too many lines to process. Please use a more selective filter.
 ErrorEmptyValueForQty=Quantity cannot be zero.
 # Warnings

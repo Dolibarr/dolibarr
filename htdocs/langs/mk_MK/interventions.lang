@@ -17,7 +17,7 @@ ModifyIntervention=Изменете ја интервенцијата
 CloseIntervention=Затворена интервенција
 DeleteInterventionLine=Избришете ја линијата за интервенција
 ConfirmDeleteIntervention=Дали сте сигурни дека сакате да ја избришете оваа интервенција?
-ConfirmValidateIntervention=Дали сте сигурни дека сакате да ја потврдите оваа интервенција под името <b>%s<span class='notranslate'>b09a4b739f17f8z ?
+ConfirmValidateIntervention=Are you sure you want to validate this intervention under name <b>%s</b>?
 ConfirmModifyIntervention=Дали сте сигурни дека сакате да ја измените оваа интервенција?
 ConfirmCloseIntervention=Дали сте сигурни дека сакате да ја затворите оваа интервенција?
 ConfirmDeleteInterventionLine=Дали сте сигурни дека сакате да ја избришете оваа линија за интервенција?
@@ -65,7 +65,7 @@ InterLineDuration=Интервенција за времетраење на ли
 InterLineDesc=Интервенција за опис на линија
 RepeatableIntervention=Шаблон за интервенција
 ToCreateAPredefinedIntervention=За да креирате претходно дефинирана или повторлива интервенција, креирајте заедничка интервенција и претворете ја во шаблон за интервенција
-ConfirmReopenIntervention=Дали сте сигурни дека сакате да ја отворите интервенцијата <b>%s<span class='notranslate'></b></s?
+ConfirmReopenIntervention=Are you sure you want to open back the intervention <b>%s</b>?
 GenerateInter=Генерирајте интервенција
 FichinterNoContractLinked=Интервенцијата %s е создадена без поврзан договор.
 ErrorFicheinterCompanyDoesNotExist=Компанијата не постои. Интервенцијата не е создадена.

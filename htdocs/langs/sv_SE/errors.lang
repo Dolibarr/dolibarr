@@ -303,7 +303,8 @@ ErrorThirpdartyOrMemberidIsMandatory=Tredje part eller medlem i partnerskap är 
 ErrorFailedToWriteInTempDirectory=Det gick inte att skriva i den temporära katalogen
 ErrorQuantityIsLimitedTo=Antalet är begränsat till %s
 ErrorFailedToLoadThirdParty=Det gick inte att hitta/läsa in tredje part från id=%s, email=%s, name= %s
-ErrorThisPaymentModeIsNotSepa=Detta betalningssätt är inte ett bankkonto
+ErrorThisPaymentModeIsNotDirectDebit=The payment mode is not direct debit
+ErrorThisPaymentModeIsNotCreditTransfer=The payment mode is not credit transfer
 ErrorStripeCustomerNotFoundCreateFirst=Stripe-kund är inte inställd för denna tredje part (eller satt till ett värde som raderats på Stripe-sidan). Skapa (eller bifoga igen) det först.
 ErrorCharPlusNotSupportedByImapForSearch=IMAP-sökning kan inte söka i avsändare eller mottagare efter en sträng som innehåller tecknet +
 ErrorTableNotFound=Tabell <b> %s </b> hittades inte
@@ -334,9 +335,9 @@ ErrorDictionaryNotFound=Ordbok <b>%s</b> hittades inte
 ErrorFailedToCreateSymLinkToMedias=Det gick inte att skapa den symboliska länken %s för att peka på %s
 ErrorCheckTheCommandInsideTheAdvancedOptions=Kontrollera kommandot som används för exporten i de avancerade alternativen för exporten
 ErrorEndTimeMustBeGreaterThanStartTime=End time must be greater than start time
-ErrorIncoherentDates=Date start must be less than date end
-ErrorEndHourIsNull=End date cannot be zero
-ErrorStartHourIsNull=Start date cannot be zero
+ErrorIncoherentDates=Start date must be earlier than end date
+ErrorEndHourIsNull=End date field cannot be empty
+ErrorStartHourIsNull=Start date field cannot be empty
 ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter=Too many lines to process. Please use a more selective filter.
 ErrorEmptyValueForQty=Quantity cannot be zero.
 # Warnings

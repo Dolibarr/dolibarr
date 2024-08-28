@@ -27,6 +27,8 @@
 
 /**
  *	Class to manage menu Auguria
+ *
+ *	@phan-suppress PhanRedefineClass
  */
 class MenuManager
 {
@@ -36,12 +38,12 @@ class MenuManager
 	public $db;
 
 	/**
-	 * @var int Put 0 for internal users, 1 for external users
+	 * @var int<0,1>	0 for internal users, 1 for external users
 	 */
 	public $type_user;
 
 	/**
-	 * @var string To store default target to use onto links
+	 * @var string		Default target to use for links
 	 */
 	public $atarget = "";
 
@@ -55,9 +57,18 @@ class MenuManager
 	 */
 	public $menu;
 
+	/**
+	 * @var array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level:int,prefix:string}>
+	 */
 	public $menu_array;
+	/**
+	 * @var array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level:int,prefix:string}>
+	 */
 	public $menu_array_after;
 
+	/**
+	 * @var array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level:int,prefix:string}>
+	 */
 	public $tabMenu;
 
 
@@ -65,7 +76,7 @@ class MenuManager
 	 *  Constructor
 	 *
 	 *  @param	DoliDB		$db     	Database handler
-	 *  @param	int			$type_user	Type of user
+	 *  @param	int<0,1>	$type_user	Type of user
 	 */
 	public function __construct($db, $type_user)
 	{
@@ -100,7 +111,7 @@ class MenuManager
 			$_SESSION["mainmenu"] = $mainmenu;
 			$_SESSION["leftmenuopened"] = "";
 		} else {
-			// On va le chercher en session si non defini par le lien
+			// Look for the menu in the session if not set by the link
 			$mainmenu = isset($_SESSION["mainmenu"]) ? $_SESSION["mainmenu"] : '';
 		}
 		if (!empty($forcemainmenu)) {
@@ -119,7 +130,7 @@ class MenuManager
 				$_SESSION["leftmenuopened"] = $leftmenu;
 			}
 		} else {
-			// On va le chercher en session si non defini par le lien
+			// Look for the menu in the session if not set by the link
 			$leftmenu = isset($_SESSION["leftmenu"]) ? $_SESSION["leftmenu"] : '';
 		}
 		if (!empty($forceleftmenu)) {
@@ -141,9 +152,9 @@ class MenuManager
 	 *  Show menu.
 	 *  Menu defined in sql tables were stored into $this->tabMenu BEFORE this is called.
 	 *
-	 *	@param	string	$mode		    'top', 'topnb', 'left', 'jmobile' (used to get full xml ul/li menu)
-	 *  @param	array	$moredata		An array with more data to output
-	 *  @return int                     0 or nb of top menu entries if $mode = 'topnb'
+	 *	@param	string					$mode	    'top', 'topnb', 'left', 'jmobile' (used to get full xml ul/li menu)
+	 *  @param	?array<string,string>	$moredata	An array with more data to output
+	 *  @return int<0,max>							0 or nb of top menu entries if $mode = 'topnb'
 	 */
 	public function showmenu($mode, $moredata = null)
 	{

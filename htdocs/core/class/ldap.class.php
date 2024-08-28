@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2021	Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2006-2021	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -321,7 +322,7 @@ class Ldap
 		$this->error = '';
 		$this->connectedServer = '';
 
-		$ldapdebug = ((empty($dolibarr_main_auth_ldap_debug) || $dolibarr_main_auth_ldap_debug == "false") ? false : true);
+		$ldapdebug = !((empty($dolibarr_main_auth_ldap_debug) || $dolibarr_main_auth_ldap_debug == "false"));
 
 		if ($ldapdebug) {
 			dol_syslog(get_class($this)."::connectBind");
@@ -355,7 +356,12 @@ class Ldap
 					if ($ldapdebug) {
 						dol_syslog(get_class($this)."::connectBind serverPing true, we try ldap_connect to ".$host, LOG_DEBUG);
 					}
-					$this->connection = ldap_connect($host, $this->serverPort);
+					if (version_compare(PHP_VERSION, '8.3.0', '>=')) {
+						$uri = $host.':'.$this->serverPort;
+						$this->connection = ldap_connect($uri);
+					} else {
+						$this->connection = ldap_connect($host, $this->serverPort);
+					}
 				} else {
 					if (preg_match('/^ldaps/i', $host)) {
 						// With host = ldaps://server, the serverPing to ssl://server sometimes fails, even if the ldap_connect succeed, so
@@ -363,7 +369,12 @@ class Ldap
 						if ($ldapdebug) {
 							dol_syslog(get_class($this)."::connectBind serverPing false, we try ldap_connect to ".$host, LOG_DEBUG);
 						}
-						$this->connection = ldap_connect($host, $this->serverPort);
+						if (version_compare(PHP_VERSION, '8.3.0', '>=')) {
+							$uri = $host.':'.$this->serverPort;
+							$this->connection = ldap_connect($uri);
+						} else {
+							$this->connection = ldap_connect($host, $this->serverPort);
+						}
 					} else {
 						if ($ldapdebug) {
 							dol_syslog(get_class($this)."::connectBind serverPing false, no ldap_connect ".$host, LOG_DEBUG);
@@ -511,14 +522,26 @@ class Ldap
 	/**
 	 * Unbind of LDAP server (close connection).
 	 *
-	 * @return	boolean					true or false
-	 * @see close()
+	 * @return		boolean		true or false
+	 * @see	close()
 	 */
 	public function unbind()
 	{
 		$this->result = true;
-		if (is_resource($this->connection) || is_object($this->connection)) {
-			$this->result = @ldap_unbind($this->connection);
+		if (version_compare(PHP_VERSION, '8.1.0', '>=')) {
+			if (is_object($this->connection)) {
+				try {
+					$this->result = ldap_unbind($this->connection);
+				} catch (Throwable $exception) {
+					$this->error = 'Failed to unbind LDAP connection: '.$exception;
+					$this->result = false;
+					dol_syslog(get_class($this).'::unbind - '.$this->error, LOG_WARNING);
+				}
+			}
+		} else {
+			if (is_resource($this->connection)) {
+				$this->result = @ldap_unbind($this->connection);
+			}
 		}
 		if ($this->result) {
 			return true;
@@ -1062,9 +1085,11 @@ class Ldap
 	/**
 	 *  Returns an array containing attributes and values for first record
 	 *
+	 *  array{count:int,0..max:string,string:array}
+	 *
 	 *	@param	string	$dn			DN entry key
 	 *	@param	string	$filter		Filter
-	 *	@return	int|array			if KO: <=0 || if OK: array
+	 *	@return	int|array<'count'|int|string,int|string|array>	if KO: <=0 || if OK: array
 	 */
 	public function getAttribute($dn, $filter)
 	{
@@ -1245,7 +1270,7 @@ class Ldap
 	public function littleEndian($hex)
 	{
 		$result = '';
-		for ($x = dol_strlen($hex) - 2; $x >= 0; $x = $x - 2) {
+		for ($x = dol_strlen($hex) - 2; $x >= 0; $x -= 2) {
 			$result .= substr($hex, $x, 2);
 		}
 		return $result;
@@ -1544,13 +1569,19 @@ class Ldap
 	/**
 	 *	Converts ActiveDirectory time to Unix timestamp
 	 *
-	 *	@param	string	$value		AD time to convert
+	 *	@param	string	$value		AD time to convert (ns since 1601)
 	 *	@return	integer				Unix timestamp
 	 */
 	public function convertTime($value)
 	{
 		$dateLargeInt = $value; // nano secondes depuis 1601 !!!!
-		$secsAfterADEpoch = $dateLargeInt / (10000000); // secondes depuis le 1 jan 1601
+		if (PHP_INT_SIZE < 8) {
+			// 32 bit platform
+			$secsAfterADEpoch = (float) $dateLargeInt / (10000000.); // secondes depuis le 1 jan 1601
+		} else {
+			// At least 64 bit platform
+			$secsAfterADEpoch = (int) $dateLargeInt / (10000000); // secondes depuis le 1 jan 1601
+		}
 		$ADToUnixConvertor = ((1970 - 1601) * 365.242190) * 86400; // UNIX start date - AD start date * jours * secondes
 		$unixTimeStamp = intval($secsAfterADEpoch - $ADToUnixConvertor); // Unix time stamp
 		return $unixTimeStamp;

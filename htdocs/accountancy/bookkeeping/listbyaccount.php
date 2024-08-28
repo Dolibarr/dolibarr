@@ -153,7 +153,7 @@ if (empty($search_date_start) && empty($search_date_end) && !GETPOSTISSET('searc
 		$search_date_end = strtotime($fiscalYear->date_end);
 	} else {
 		$month_start = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
-		$year_start = dol_print_date(dol_now(), '%Y');
+		$year_start = (int) dol_print_date(dol_now(), '%Y');
 		if (dol_print_date(dol_now(), '%m') < $month_start) {
 			$year_start--; // If current month is lower that starting fiscal month, we start last year
 		}
@@ -1032,7 +1032,7 @@ $sous_total_credit = 0;
 $totalarray['val'] = array();
 $totalarray['val']['totaldebit'] = 0;
 $totalarray['val']['totalcredit'] = 0;
-$totalarray['val']['totalbalance']=0;
+$totalarray['val']['totalbalance'] = 0;
 
 while ($i < min($num, $limit)) {
 	$line = $object->lines[$i];
@@ -1283,7 +1283,7 @@ while ($i < min($num, $limit)) {
 
 	// Label operation
 	if (!empty($arrayfields['t.label_operation']['checked'])) {
-		// Affiche un lien vers la facture client/fournisseur
+		// Show a link to the customer/supplier invoice
 		$doc_ref = preg_replace('/\(.*\)/', '', $line->doc_ref);
 		if (strlen(length_accounta($line->subledger_account)) == 0) {
 			print '<td class="small tdoverflowmax350 classfortooltip" title="'.dol_escape_htmltag($line->label_operation).'">'.dol_escape_htmltag($line->label_operation).'</td>';

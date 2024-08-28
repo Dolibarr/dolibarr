@@ -176,12 +176,12 @@ class FactureFournisseur extends CommonInvoice
 	public $date_echeance;
 
 	/**
-	 * @var double $amount
+	 * @var float
 	 * @deprecated See $total_ttc, $total_ht, $total_tva
 	 */
 	public $amount = 0;
 	/**
-	 * @var double $remise
+	 * @var float
 	 * @deprecated
 	 */
 	public $remise = 0;
@@ -316,6 +316,11 @@ class FactureFournisseur extends CommonInvoice
 
 
 	/**
+	 * @var int Id User modifying
+	 */
+	public $fk_user_valid;
+
+	/**
 	 * Standard invoice
 	 */
 	const TYPE_STANDARD = 0;
@@ -418,6 +423,12 @@ class FactureFournisseur extends CommonInvoice
 
 		$this->db->begin();
 
+		// Defaults
+		$originaldatewhen = 0;
+		$nextdatewhen = 0;
+		$previousdaynextdatewhen = 0;
+		$_facrec = null;
+
 		// Create invoice from a template recurring invoice
 		if ($this->fac_rec > 0) {
 			$this->fk_fac_rec_source = $this->fac_rec;
@@ -433,10 +444,6 @@ class FactureFournisseur extends CommonInvoice
 				$nextdatewhen = dol_time_plus_duree($originaldatewhen, $_facrec->frequency, $_facrec->unit_frequency);
 				$previousdaynextdatewhen = dol_time_plus_duree($nextdatewhen, -1, 'd');
 				$this->socid = $_facrec->socid;
-			} else {
-				$originaldatewhen = 0;
-				$nextdatewhen = 0;
-				$previousdaynextdatewhen = 0;
 			}
 
 			$this->entity = $_facrec->entity; // Invoice created in same entity than template
@@ -506,8 +513,8 @@ class FactureFournisseur extends CommonInvoice
 			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && isset($this->thirdparty->default_lang)) {
 				$newlang = $this->thirdparty->default_lang; // for proposal, order, invoice, ...
 			}
-			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && isset($this->default_lang)) {
-				$newlang = $this->default_lang; // for thirdparty
+			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && property_exists($this, 'default_lang') && isset($this->default_lang)) { // @phan-suppress-current-line PhanUndeclaredProperty
+				$newlang = $this->default_lang; // for thirdparty  @phan-suppress-current-line PhanUndeclaredProperty
 			}
 			if (!empty($newlang)) {
 				$outputlangs = new Translate("", $conf);
@@ -747,7 +754,8 @@ class FactureFournisseur extends CommonInvoice
 					$localtax1_tx = $_facrec->lines[$i]->localtax1_tx;
 					$localtax2_tx = $_facrec->lines[$i]->localtax2_tx;
 
-					$fk_product_fournisseur_price = empty($_facrec->lines[$i]->fk_product_fournisseur_price) ? null : $_facrec->lines[$i]->fk_product_fournisseur_price;
+					// $fk_product_fournisseur_price not used and does not exist on line
+					// $fk_product_fournisseur_price = empty($_facrec->lines[$i]->fk_product_fournisseur_price) ? null : $_facrec->lines[$i]->fk_product_fournisseur_price;
 					$buyprice = empty($_facrec->lines[$i]->buyprice) ? 0 : $_facrec->lines[$i]->buyprice;
 
 					// If buyprice not defined from template invoice, we try to guess the best value
@@ -1204,7 +1212,7 @@ class FactureFournisseur extends CommonInvoice
 			$this->author = (int) $this->author;
 		}
 		if (isset($this->fk_user_valid)) {
-			$this->fk_user_valid = trim($this->fk_user_valid);
+			$this->fk_user_valid = (int) $this->fk_user_valid;
 		}
 		if (isset($this->fk_facture_source)) {
 			$this->fk_facture_source = (int) $this->fk_facture_source;
@@ -1948,7 +1956,7 @@ class FactureFournisseur extends CommonInvoice
 				}
 			}
 
-			// Set new ref and define current statut
+			// Set new ref and define current status
 			if (!$error) {
 				$this->ref = $this->newref;
 				$this->statut = self::STATUS_VALIDATED;
@@ -2056,13 +2064,13 @@ class FactureFournisseur extends CommonInvoice
 	 *	already have the right value (the caller has to manage the multilanguage).
 	 *
 	 *	@param      string      $desc                   Description of the line
-	 *	@param      double      $pu                     Unit price (HT or TTC according to price_base_type, > 0 even for credit note)
-	 *	@param      double      $txtva                  Force Vat rate to use, -1 for auto.
-	 *	@param      double      $txlocaltax1            LocalTax1 Rate
-	 *	@param      double      $txlocaltax2            LocalTax2 Rate
-	 *	@param      double      $qty                    Quantity
+	 *	@param      float      $pu                     Unit price (HT or TTC according to price_base_type, > 0 even for credit note)
+	 *	@param      float      $txtva                  Force Vat rate to use, -1 for auto.
+	 *	@param      float      $txlocaltax1            LocalTax1 Rate
+	 *	@param      float      $txlocaltax2            LocalTax2 Rate
+	 *	@param      float      $qty                    Quantity
 	 *	@param      int         $fk_product             Product/Service ID predefined
-	 *	@param      double      $remise_percent         Percentage discount of the line
+	 *	@param      float      $remise_percent         Percentage discount of the line
 	 *	@param      int         $date_start             Service start date
 	 *	@param      int         $date_end               Service expiry date
 	 *	@param      int         $fk_code_ventilation    Accounting breakdown code
@@ -2071,10 +2079,10 @@ class FactureFournisseur extends CommonInvoice
 	 *	@param      int         $type                   Type of line (0=product, 1=service)
 	 *	@param      int         $rang                   Position of line
 	 *	@param      int         $notrigger              Disable triggers
-	 *	@param      array       $array_options          extrafields array
+	 *	@param      array<string,mixed>	$array_options	extrafields array
 	 *	@param      int|null    $fk_unit                Code of the unit to use. Null to use the default one
 	 *	@param      int         $origin_id              id origin document
-	 *	@param      double      $pu_devise              Amount in currency
+	 *	@param      float      $pu_devise              Amount in currency
 	 *	@param      string      $ref_supplier           Supplier ref
 	 *	@param      int         $special_code           Special code
 	 *	@param      int         $fk_parent_line         Parent line id
@@ -2320,29 +2328,29 @@ class FactureFournisseur extends CommonInvoice
 	}
 
 	/**
-	 * Update a line detail into database
+	 * Update a line detail in the database
 	 *
-	 * @param     	int			$id            		Id of line invoice
-	 * @param     	string		$desc         		Description of line
-	 * @param     	double		$pu          		Prix unitaire (HT ou TTC selon price_base_type)
-	 * @param     	double		$vatrate       		VAT Rate (Can be '8.5', '8.5 (ABC)')
-	 * @param		double		$txlocaltax1		LocalTax1 Rate
-	 * @param		double		$txlocaltax2		LocalTax2 Rate
-	 * @param     	double		$qty           		Quantity
-	 * @param     	int			$idproduct			Id produit
-	 * @param	  	string		$price_base_type	HT or TTC
-	 * @param	  	int			$info_bits			Miscellaneous information of line
-	 * @param		int			$type				Type of line (0=product, 1=service)
-	 * @param     	double		$remise_percent  	Percentage discount of the line
-	 * @param		int			$notrigger			Disable triggers
-	 * @param      	int|string 	$date_start     	Date start of service
-	 * @param      	int|string  $date_end       	Date end of service
-	 * @param		array		$array_options		extrafields array
-	 * @param 		int|null	$fk_unit 			Code of the unit to use. Null to use the default one
-	 * @param		double		$pu_devise			Amount in currency
-	 * @param		string		$ref_supplier		Supplier ref
-	 * @param		int			$rang				Line rank
-	 * @return    	int<-1,1>      					Return integer <0 if KO, >0 if OK
+	 * @param	int			$id            		Id of line invoice
+	 * @param	string		$desc         		Description of line
+	 * @param	float		$pu          		Prix unitaire (HT ou TTC selon price_base_type)
+	 * @param	float		$vatrate       		VAT Rate (Can be '8.5', '8.5 (ABC)')
+	 * @param	float		$txlocaltax1		LocalTax1 Rate
+	 * @param	float		$txlocaltax2		LocalTax2 Rate
+	 * @param	float		$qty           		Quantity
+	 * @param	int			$idproduct			Id produit
+	 * @param	string		$price_base_type	HT or TTC
+	 * @param	int			$info_bits			Miscellaneous information of line
+	 * @param	int			$type				Type of line (0=product, 1=service)
+	 * @param	float		$remise_percent  	Percentage discount of the line
+	 * @param	int			$notrigger			Disable triggers
+	 * @param	int|string 	$date_start     	Date start of service
+	 * @param	int|string  $date_end       	Date end of service
+	 * @param	array<string,mixed>	$array_options	extrafields array
+	 * @param	?int		$fk_unit 			Code of the unit to use. Null to use the default one
+	 * @param	float		$pu_devise			Amount in currency
+	 * @param	string		$ref_supplier		Supplier ref
+	 * @param	int			$rang				Line rank
+	 * @return 	int<-1,1>      					Return integer <0 if KO, >0 if OK
 	 */
 	public function updateline($id, $desc, $pu, $vatrate, $txlocaltax1 = 0, $txlocaltax2 = 0, $qty = 1, $idproduct = 0, $price_base_type = 'HT', $info_bits = 0, $type = 0, $remise_percent = 0, $notrigger = 0, $date_start = '', $date_end = '', $array_options = [], $fk_unit = null, $pu_devise = 0, $ref_supplier = '', $rang = 0)
 	{
@@ -2832,7 +2840,7 @@ class FactureFournisseur extends CommonInvoice
 	}
 
 	/**
-	 *	Return clicable name (with picto eventually)
+	 *	Return clickable name (with picto eventually)
 	 *
 	 *	@param		int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@param		string	$option						Where point the link
@@ -3340,7 +3348,7 @@ class FactureFournisseur extends CommonInvoice
 		return $isUsed;
 	}
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
 	 *  @param		?array{selected?:int<0,1>}	$arraydata	Array of data
@@ -3765,7 +3773,8 @@ class SupplierInvoiceLine extends CommonObjectLine
 	public $oldline;
 
 	/**
-	 * @deprecated
+	 * @var string
+	 * @deprecated See $product_ref
 	 * @see $product_ref
 	 */
 	public $ref;
@@ -3830,7 +3839,13 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 */
 	public $description;
 
+	/**
+	 * @var int|string
+	 */
 	public $date_start;
+	/**
+	 * @var int|string
+	 */
 	public $date_end;
 
 	/**
@@ -3885,7 +3900,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 
 	/**
 	 * Percent of discount
-	 * @var float
+	 * @var float|string
 	 */
 	public $remise_percent;
 

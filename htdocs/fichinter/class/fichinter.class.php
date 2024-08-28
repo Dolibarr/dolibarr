@@ -58,7 +58,7 @@ class Fichinter extends CommonObject
 		'datee' => array('type' => 'date', 'label' => 'Datee', 'enabled' => 1, 'visible' => -1, 'position' => 90),
 		'datet' => array('type' => 'date', 'label' => 'Datet', 'enabled' => 1, 'visible' => -1, 'position' => 95),
 		'duree' => array('type' => 'double', 'label' => 'Duree', 'enabled' => 1, 'visible' => -1, 'position' => 100),
-		'signed_status' => array('type' => 'smallint(6)', 'label' => 'SignedStatus', 'enabled' => 1, 'visible' => -1, 'position' => 101, 'arrayofkeyval' => array(0 => 'NoSignature', 1 => 'SignedSender', 2 => 'SignedReceiver', 9 => 'SignedAll')),
+		'signed_status' => array('type' => 'smallint(6)', 'label' => 'SignedStatus', 'enabled' => 1, 'visible' => -1, 'position' => 101, 'arrayofkeyval' => array(0 => 'NoSignature', 1 => 'SignedSender', 2 => 'SignedReceiver', 3 => 'SignedReceiverOnline', 9 => 'SignedAll')),
 		'description' => array('type' => 'html', 'label' => 'Description', 'enabled' => 1, 'visible' => -1, 'position' => 105, 'showoncombobox' => 2),
 		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 110),
 		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 115),
@@ -203,27 +203,16 @@ class Fichinter extends CommonObject
 	 */
 	const STATUS_CLOSED = 3;
 
-
 	/**
-	 * No signature
+	 * Signed statuses dictionary. Label used as key for string localizations.
 	 */
-	const STATUS_NO_SIGNATURE    = 0;
-
-	/**
-	 * Signed by sender
-	 */
-	const STATUS_SIGNED_SENDER   = 1;
-
-	/**
-	 * Signed by receiver
-	 */
-	const STATUS_SIGNED_RECEIVER = 2;
-
-	/**
-	 * Signed by all
-	 */
-	const STATUS_SIGNED_ALL      = 9; // To handle future kind of signature (ex: tripartite contract)
-
+	const SIGNED_STATUSES = [
+		'STATUS_NO_SIGNATURE' => 0,
+		'STATUS_SIGNED_SENDER' => 1,
+		'STATUS_SIGNED_RECEIVER' => 2,
+		'STATUS_SIGNED_RECEIVER_ONLINE' => 3,
+		'STATUS_SIGNED_ALL' => 9 // To handle future kind of signature (ex: tripartite contract)
+	];
 
 	/**
 	 * Date delivery
@@ -342,6 +331,7 @@ class Fichinter extends CommonObject
 		$sql .= ", fk_projet";
 		$sql .= ", fk_contrat";
 		$sql .= ", fk_statut";
+		$sql .= ", signed_status";
 		$sql .= ", note_private";
 		$sql .= ", note_public";
 		$sql .= ") ";
@@ -358,6 +348,7 @@ class Fichinter extends CommonObject
 		$sql .= ", ".($this->fk_project ? ((int) $this->fk_project) : 0);
 		$sql .= ", ".($this->fk_contrat ? ((int) $this->fk_contrat) : 0);
 		$sql .= ", ".((int) $this->statut);
+		$sql .= ", ".($this->signed_status);
 		$sql .= ", ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : "null");
 		$sql .= ", ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : "null");
 		$sql .= ")";
@@ -492,7 +483,7 @@ class Fichinter extends CommonObject
 	 */
 	public function fetch($rowid, $ref = '')
 	{
-		$sql = "SELECT f.rowid, f.ref, f.ref_client, f.description, f.fk_soc, f.fk_statut as status,";
+		$sql = "SELECT f.rowid, f.ref, f.ref_client, f.description, f.fk_soc, f.fk_statut as status, f.signed_status,";
 		$sql .= " f.datec, f.dateo, f.datee, f.datet, f.fk_user_author,";
 		$sql .= " f.date_valid as datev,";
 		$sql .= " f.tms as datem,";
@@ -518,6 +509,7 @@ class Fichinter extends CommonObject
 				$this->socid        = $obj->fk_soc;
 				$this->status       = $obj->status;
 				$this->statut       = $obj->status;	// deprecated
+				$this->signed_status= $obj->signed_status;
 				$this->duration     = $obj->duree;
 				$this->datec        = $this->db->jdate($obj->datec);
 				$this->dateo        = $this->db->jdate($obj->dateo);
@@ -709,7 +701,7 @@ class Fichinter extends CommonObject
 				}
 			}
 
-			// Set new ref and define current statut
+			// Set new ref and define current status
 			if (!$error) {
 				$this->ref = $num;
 				$this->status = self::STATUS_VALIDATED;
@@ -857,10 +849,11 @@ class Fichinter extends CommonObject
 	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
+		global $langs;
 		// Init/load array of translation of status
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
-			global $langs;
-			$langs->load("fichinter");
+			$langs->load("interventions");
+			$langs->load("propal");
 
 			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
 			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated');
@@ -876,7 +869,54 @@ class Fichinter extends CommonObject
 		if ($status == self::STATUS_BILLED || $status == self::STATUS_CLOSED) {
 			$statuscode = 'status6';
 		}
-		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statuscode, $mode);
+
+		$signed_label = ' (' . $this->getLibSignedStatus() . ')';
+		$status_label = $this->signed_status ? $this->labelStatus[$status] . $signed_label : $this->labelStatus[$status];
+		$status_label_short = $this->signed_status ? $this->labelStatusShort[$status] . $signed_label : $this->labelStatusShort[$status];
+
+		return dolGetStatus($status_label, $status_label_short, '', $statuscode, $mode);
+	}
+
+	/**
+	 *	Returns the label for signed status
+	 *
+	 *	@param		int		$mode	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 *	@return		string			Label
+	 */
+	public function getLibSignedStatus(int $mode = 0): string
+	{
+		global $langs;
+		$langs->load("commercial");
+		$list_signed_status = $this->getSignedStatusLocalisedArray();
+		$signed_status_label = $list_signed_status[$this->signed_status];
+		$signed_status_label_short = $list_signed_status[$this->signed_status];
+		$signed_status_code = 'status'.$this->signed_status;
+		return dolGetStatus($signed_status_label, $signed_status_label_short, '', $signed_status_code, $mode);
+	}
+
+	/**
+	 *	Returns an array of signed statuses with associated localized labels
+	 *
+	 *	@return array
+	 */
+	public function getSignedStatusLocalisedArray(): array
+	{
+		global $langs;
+		$langs->load("commercial");
+
+		$l10n_signed_status_labels = [
+			self::SIGNED_STATUSES['STATUS_NO_SIGNATURE']			=> 'NoSignature',
+			self::SIGNED_STATUSES['STATUS_SIGNED_SENDER']			=> 'SignedSender',
+			self::SIGNED_STATUSES['STATUS_SIGNED_RECEIVER']			=> 'SignedReceiver',
+			self::SIGNED_STATUSES['STATUS_SIGNED_RECEIVER_ONLINE']	=> 'SignedReceiverOnline',
+			self::SIGNED_STATUSES['STATUS_SIGNED_ALL']				=> 'SignedAll'
+		];
+
+		$l10n_signed_status = [];
+		foreach (self::SIGNED_STATUSES as $signed_status_code) {
+			$l10n_signed_status[$signed_status_code] = $langs->transnoentitiesnoconv($l10n_signed_status_labels[$signed_status_code]);
+		}
+		return $l10n_signed_status;
 	}
 
 	/**
@@ -890,7 +930,7 @@ class Fichinter extends CommonObject
 	{
 		global $conf, $langs;
 
-		$langs->load('fichinter');
+		$langs->load('interventions');
 
 		$datas = [];
 		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Intervention").'</u>';
@@ -903,7 +943,7 @@ class Fichinter extends CommonObject
 	}
 
 	/**
-	 *	Return clicable name (with picto eventually)
+	 *	Return clickable name (with picto eventually)
 	 *
 	 *	@param		int		$withpicto					0=_No picto, 1=Includes the picto in the linkn, 2=Picto only
 	 *	@param		string	$option						Options
@@ -1026,7 +1066,7 @@ class Fichinter extends CommonObject
 				$mybool = ((bool) @include_once $dir.$file) || $mybool;
 			}
 
-			if ($mybool === false) {
+			if (!$mybool) {
 				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
@@ -1603,11 +1643,11 @@ class Fichinter extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
@@ -1642,16 +1682,37 @@ class Fichinter extends CommonObject
 	}
 
 	/**
-	 * Set signed status
+	 * Set signed status & object context. Call sign action trigger.
 	 *
-	 * @param  User   $user        Object user that modify
-	 * @param  int    $status      Newsigned  status to set (often a constant like self::STATUS_XXX)
-	 * @param  int    $notrigger   1 = Does not execute triggers, 0 = Execute triggers
-	 * @param  string $triggercode Trigger code to use
-	 * @return int                 0 < if KO, > 0 if OK
+	 * @param	User	$user			Object user that modify
+	 * @param	int		$status			New signed status to set (often a constant like self::STATUS_XXX)
+	 * @param	int		$notrigger		1 = Does not execute triggers, 0 = Execute triggers
+	 * @param	string	$triggercode	Trigger code to use
+	 * @return	int						0 < if KO, > 0 if OK
 	 */
-	public function setSignedStatus(User $user, int $status = 0, int $notrigger = 0, $triggercode = ''): int
+	public function setSignedStatus(User $user, int $status = 0, int $notrigger = 0, string $triggercode = ''): int
 	{
+		global $langs;
+		$langs->loadLangs(array('interventions', 'commercial'));
+		$this->signed_status = $status;
+		$this->context['signature'] = $status;
+		switch ($status) {
+			case 0:
+				$this->context['actionmsg2'] = $langs->transnoentitiesnoconv('InterventionUnsignedInDolibarr');
+				break;
+			case 1:
+				$this->context['actionmsg2'] = $langs->transnoentitiesnoconv('SignedSender');
+				break;
+			case 2:
+				$this->context['actionmsg2'] = $langs->transnoentitiesnoconv('SignedReceiver');
+				break;
+			case 3:
+				$this->context['actionmsg2'] = $langs->transnoentitiesnoconv('SignedReceiverOnline');
+				break;
+			case 9:
+				$this->context['actionmsg2'] = $langs->transnoentitiesnoconv('SignedAll');
+				break;
+		}
 		return $this->setSignedStatusCommon($user, $status, $notrigger, $triggercode);
 	}
 }

@@ -114,7 +114,7 @@ $form = new Form($db);
 $title = $langs->trans("Availabilities").' - '.$langs->trans("Files");
 $help_url = '';
 //$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-bookcal page-card_availabilities_document');
 
 if ($object->id) {
 	/*
