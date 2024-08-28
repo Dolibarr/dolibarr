@@ -796,13 +796,13 @@ class Ticket extends CommonObject
 	/**
 	 * Load all objects in memory from database
 	 *
-	 * @param	User				$user		User for action
-	 * @param	string				$sortorder	Sort order
-	 * @param	string				$sortfield	Sort field
-	 * @param	int					$limit		Limit
-	 * @param	int					$offset		Offset page
-	 * @param	int					$arch		Archive or not (not used)
-	 * @param	array<string,int>	$filter		Filter for query
+	 * @param	User						$user		User for action
+	 * @param	string						$sortorder	Sort order
+	 * @param	string						$sortfield	Sort field
+	 * @param	int							$limit		Limit
+	 * @param	int							$offset		Offset page
+	 * @param	int							$arch		Archive or not (not used)
+	 * @param	string|array<string,int>	$filter		Filter for query
 	 * @return	int 								Return integer <0 if KO, >0 if OK
 	 */
 	public function fetchAll($user, $sortorder = 'ASC', $sortfield = 't.datec', $limit = 0, $offset = 0, $arch = 0, $filter = '')
