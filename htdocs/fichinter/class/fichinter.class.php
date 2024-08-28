@@ -103,6 +103,9 @@ class Fichinter extends CommonObject
 	 */
 	public $socid;
 
+	/**
+	 * @var User User that created intervention
+	 */
 	public $author;
 
 	/**
