@@ -46,26 +46,40 @@ class FichinterLigne extends CommonObjectLine
 	 */
 	public $error = '';
 
-	// From llx_fichinterdet
 	/**
+	 * From llx_fichinterdet
 	 * @var int ID
 	 */
 	public $fk_fichinter;
 
-	public $desc; 		// Description ligne
+	/**
+	 * @var string Line description
+	 */
+	public $desc;
 
 	/**
 	 * @var int Date of intervention
 	 */
-	public $date; 		// Date intervention
+	public $date;
 	/**
 	 * @var int Date of intervention
 	 * @deprecated
 	 */
-	public $datei; 		// Date intervention
+	public $datei;
 
-	public $duration; 	// Duration of intervention
+	/**
+	 * @var int Duration of intervention
+	 */
+	public $duration;
+
+	/**
+	 * @var int Line rang
+	 */
 	public $rang = 0;
+
+	/**
+	 * @var float Taxe rate
+	 */
 	public $tva_tx;
 
 	/**
