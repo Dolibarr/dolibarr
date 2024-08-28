@@ -1576,7 +1576,7 @@ class Ticket extends CommonObject
 	/**
 	 * getTooltipContentArray
 	 *
-	 * @param array $params ex option, infologin
+	 * @param array<string> $params ex option, infologin
 	 * @since v18
 	 * @return array
 	 */
@@ -1812,14 +1812,14 @@ class Ticket extends CommonObject
 	/**
 	 * Add message into database
 	 *
-	 * @param 	User 	$user      		  	User that creates
-	 * @param 	int  	$notrigger 		  	0=launch triggers after, 1=disable triggers
-	 * @param 	array	$filename_list      List of files to attach (full path of filename on file system)
-	 * @param 	array	$mimetype_list      List of MIME type of attached files
-	 * @param 	array	$mimefilename_list  List of attached file name in message
-	 * @param 	boolean	$send_email      	Whether the message is sent by email
-	 * @param   int     $public_area    	0=Default, 1 if we are creating the message from a public area (so we can search contact from email to add it as contact of ticket if TICKET_ASSIGN_CONTACT_TO_MESSAGE is set)
-	 * @return 	int						  	Return integer <0 if KO, >0 if OK
+	 * @param	User				$user				User that creates
+	 * @param	int					$notrigger			0=launch triggers after, 1=disable triggers
+	 * @param	array<int,string>	$filename_list		List of files to attach (full path of filename on file system)
+	 * @param	array<int,string>	$mimetype_list		List of MIME type of attached files
+	 * @param	array<int,string>	$mimefilename_list	List of attached file name in message
+	 * @param	boolean				$send_email			Whether the message is sent by email
+	 * @param	int					$public_area		0=Default, 1 if we are creating the message from a public area (so we can search contact from email to add it as contact of ticket if TICKET_ASSIGN_CONTACT_TO_MESSAGE is set)
+	 * @return	int						  	Return integer <0 if KO, >0 if OK
 	 */
 	public function createTicketMessage($user, $notrigger = 0, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $send_email = false, $public_area = 0)
 	{
