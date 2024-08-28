@@ -1402,7 +1402,7 @@ class EmailCollector extends CommonObject
 				}
 			}
 
-			if (empty($targetdir) || !getDolGlobalString('EMAILCOLLECTOR_NO_FILTER_ON_DATE_IF_THERE_IS_A_TARGETDIR')) {	// Use last date as filter if there is no targetdir defined.
+			if (empty($targetdir) || !getDolGlobalString('EMAILCOLLECTOR_NO_FILTER_ON_DATE_IF_THERE_IS_A_TARGETDIR')) {	// Use the last date of successful check as a filter if there is no targetdir defined.
 				$fromdate = 0;
 				if ($this->datelastok) {
 					$fromdate = $this->datelastok;
@@ -1656,6 +1656,8 @@ class EmailCollector extends CommonObject
 			 */
 			dol_syslog("Start of loop on email", LOG_INFO, 1);
 
+			$richarrayofemail = array();
+
 			$iforemailloop = 0;
 			foreach ($arrayofemail as $imapemail) {
 				if ($nbemailprocessed > 1000) {
@@ -1679,6 +1681,21 @@ class EmailCollector extends CommonObject
 				$matches = array();
 				preg_match_all('/([^: ]+): (.+?(?:\r\n\s(?:.+?))*)\r\n/m', $header, $matches);
 				$headers = array_combine($matches[1], $matches[2]);
+
+
+				$richarrayofemail[] = array('imapemail' => $imapemail, 'header' => $header, 'headers' => $headers, 'overview' => $overview, 'date' => strtotime($headers['Date']));
+			}
+
+
+			// Sort email found by ascending date
+			$richarrayofemail = dol_sort_array($richarrayofemail, 'date', 'asc');
+
+
+			foreach ($richarrayofemail as $tmpval) {
+				$imapemail = $tmpval['imapemail'];
+				$header = $tmpval['header'];
+				$overview = $tmpval['overview'];
+				$headers = $tmpval['headers'];
 
 				if (!empty($headers['in-reply-to']) && empty($headers['In-Reply-To'])) {
 					$headers['In-Reply-To'] = $headers['in-reply-to'];
@@ -2219,7 +2236,7 @@ class EmailCollector extends CommonObject
 								$projectid = $objectemail->id;
 							}
 
-							if (get_class($objectemail) == 'Ticket') {
+							if ($objectemail instanceof Ticket) {
 								$ticketid = $objectemail->id;
 
 								$changeonticket_references = false;
@@ -2238,7 +2255,7 @@ class EmailCollector extends CommonObject
 									}
 								}
 								if ($changeonticket_references) {
-									$objectemail->update($user);
+									$objectemail->update($user, 1);		// We complete the references field, that is a field for technical tracking purpose, not a user field, so no need to execute triggers
 								}
 							}
 						}
@@ -3529,8 +3546,8 @@ class EmailCollector extends CommonObject
 
 		// Disconnect
 		if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
-			// We revert the order to move/delete the more recent first (with higher number) so renumbering does not affect number of others to delete
-			$arrayofemailtodelete = array_reverse($arrayofemailtodelete, true);
+			// We sort to move/delete array with the more recent first (with higher number) so renumbering does not affect number of others to delete
+			krsort($arrayofemailtodelete, SORT_NUMERIC);
 
 			foreach ($arrayofemailtodelete as $imapemailnum => $imapemail) {
 				dol_syslog("EmailCollect::doCollectOneCollector delete email ".$imapemailnum);
