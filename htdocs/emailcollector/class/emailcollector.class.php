@@ -1658,13 +1658,10 @@ class EmailCollector extends CommonObject
 
 			$richarrayofemail = array();
 
-			$iforemailloop = 0;
 			foreach ($arrayofemail as $imapemail) {
 				if ($nbemailprocessed > 1000) {
 					break; // Do not process more than 1000 email per launch (this is a different protection than maxnbcollectedpercollect)
 				}
-				$iforemailloop++;
-
 
 				// GET header and overview datas
 				if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
@@ -1691,7 +1688,10 @@ class EmailCollector extends CommonObject
 			$richarrayofemail = dol_sort_array($richarrayofemail, 'date', 'asc');
 
 
+			$iforemailloop = 0;
 			foreach ($richarrayofemail as $tmpval) {
+				$iforemailloop++;
+
 				$imapemail = $tmpval['imapemail'];
 				$header = $tmpval['header'];
 				$overview = $tmpval['overview'];
@@ -3110,7 +3110,16 @@ class EmailCollector extends CommonObject
 								$projecttocreate->description = dol_concatdesc(dolGetFirstLineOfText(dol_string_nohtmltag($description, 2), 10), '...'.$langs->transnoentities("SeePrivateNote").'...');
 								$projecttocreate->note_private = $descriptionfull;
 								$projecttocreate->entity = $conf->entity;
-								$projecttocreate->email_msgid = $msgid;
+								// Fields when action is an email (content should be added into agenda event)
+								$projecttocreate->email_date    = $dateemail;
+								$projecttocreate->email_msgid   = $msgid;
+								$projecttocreate->email_from    = $fromstring;
+								$projecttocreate->email_sender  = $sender;
+								$projecttocreate->email_to      = $to;
+								$projecttocreate->email_tocc    = $sendtocc;
+								$projecttocreate->email_tobcc   = $sendtobcc;
+								$projecttocreate->email_subject = $subject;
+								$projecttocreate->errors_to     = '';
 
 								$savesocid = $projecttocreate->socid;
 
@@ -3249,8 +3258,17 @@ class EmailCollector extends CommonObject
 								$tickettocreate->notify_tiers_at_create = getDolGlobalInt('TICKET_CHECK_NOTIFY_THIRDPARTY_AT_CREATION');
 								$tickettocreate->note_private = $descriptionfull;
 								$tickettocreate->entity = $conf->entity;
-								$tickettocreate->email_msgid = $msgid;
-								$tickettocreate->email_date = $dateemail;
+								// Fields when action is an email (content should be added into agenda event)
+								$tickettocreate->email_date    = $dateemail;
+								$tickettocreate->email_msgid   = $msgid;
+								$tickettocreate->email_from    = $fromstring;
+								$tickettocreate->email_sender  = $sender;
+								$tickettocreate->email_to      = $to;
+								$tickettocreate->email_tocc    = $sendtocc;
+								$tickettocreate->email_tobcc   = $sendtobcc;
+								$tickettocreate->email_subject = $subject;
+								$tickettocreate->errors_to     = '';
+
 								//$tickettocreate->fk_contact = $contactstatic->id;
 
 								$savesocid = $tickettocreate->socid;
@@ -3306,6 +3324,10 @@ class EmailCollector extends CommonObject
 										$this->error = 'Failed to create ticket: Can\'t get a valid value for the field ref with numbering template = '.$modele.', thirdparty id = '.$thirdpartystatic->id;
 									} else {
 										// Create ticket
+										$tickettocreate->context['actionmsg2'] = $langs->trans("ActionAC_EMAIL_IN").' - '.$langs->trans("TICKET_CREATEInDolibarr");
+										$tickettocreate->context['actionmsg'] = $langs->trans("ActionAC_EMAIL_IN").' - '.$langs->trans("TICKET_CREATEInDolibarr");
+										//$tickettocreate->email_fields_no_propagate_in_actioncomm = 0;
+
 										$result = $tickettocreate->create($user);
 										if ($result <= 0) {
 											$errorforactions++;

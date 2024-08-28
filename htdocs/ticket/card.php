@@ -935,7 +935,7 @@ if ($action == 'create' || $action == 'presend') {
 			$langs->load("mails");
 			$htmltooltip = $langs->trans("EmailMsgID").': '.$object->email_msgid;
 			$htmltooltip .= '<br>'.$langs->trans("EmailDate").': '.dol_print_date($object->email_date, 'dayhour');
-			$htmltooltip .= '<br>'.$langs->trans("MailFrom").': '.$object->email_from;
+			$htmltooltip .= '<br>'.$langs->trans("MailFrom").': '.$object->origin_email;
 			$htmltooltip .= '<br>'.$langs->trans("MailReply").': '.$object->origin_replyto;
 			$htmltooltip .= '<br>'.$langs->trans("MailReferences").': '.$object->origin_references;
 			$morehtmlref .= ($createdbyshown ? ' - ' : '<br>');
