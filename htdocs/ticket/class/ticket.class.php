@@ -344,7 +344,7 @@ class Ticket extends CommonObject
 	 *
 	 *  @param DoliDB $db Database handler
 	 */
-	public function __construct($db)
+	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
 
@@ -892,7 +892,7 @@ class Ticket extends CommonObject
 		}
 
 		// Case of external user
-		$socid = $user->socid ? $user->socid : 0;
+		$socid = $user->socid ?: 0;
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
 		if (!$user->hasRight('societe', 'client', 'voir')) {
@@ -1166,15 +1166,13 @@ class Ticket extends CommonObject
 
 		$this->db->begin();
 
-		if (!$error) {
-			if (!$notrigger) {
-				// Call trigger
-				$result = $this->call_trigger('TICKET_DELETE', $user);
-				if ($result < 0) {
-					$error++;
-				}
-				// End call triggers
+		if (!$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('TICKET_DELETE', $user);
+			if ($result < 0) {
+				$error++;
 			}
+			// End call triggers
 		}
 
 		if (!$error) {
@@ -1286,9 +1284,6 @@ class Ticket extends CommonObject
 			$error++;
 		}
 
-		if (!$error) {
-		}
-
 		unset($object->context['createfromclone']);
 
 		// End
@@ -1395,7 +1390,7 @@ class Ticket extends CommonObject
 	 */
 	public function loadCacheCategoriesTickets($publicgroup = -1)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		if ($publicgroup == -1 && !empty($this->cache_category_ticket) && count($this->cache_category_tickets)) {
 			// Cache already loaded
@@ -1676,7 +1671,7 @@ class Ticket extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), (($withpicto != 2) ? 'class="paddingright"' : ''), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ?: 'generic'), (($withpicto != 2) ? 'class="paddingright"' : ''), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref;
@@ -1725,7 +1720,7 @@ class Ticket extends CommonObject
 				$this->context['actionmsg'] = $langs->trans('TicketLogMesgReadBy', $this->ref, $user->getFullName($langs));
 				$this->context['actionmsg2'] = $langs->trans('TicketLogMesgReadBy', $this->ref, $user->getFullName($langs));
 
-				if (!$error && !$notrigger) {
+				if (!$notrigger) {
 					// Call trigger
 					$result = $this->call_trigger('TICKET_MODIFY', $user);
 					if ($result < 0) {
@@ -1823,7 +1818,7 @@ class Ticket extends CommonObject
 	 */
 	public function createTicketMessage($user, $notrigger = 0, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $send_email = false, $public_area = 0)
 	{
-		global $conf, $langs;
+		global $conf;
 		$error = 0;
 
 		$now = dol_now();
@@ -1987,7 +1982,6 @@ class Ticket extends CommonObject
 	 */
 	public function close(User $user, $mode = 0)
 	{
-		global $conf;
 
 		if ($this->status != Ticket::STATUS_CLOSED && $this->status != Ticket::STATUS_CANCELED) { // not closed
 			$this->db->begin();
@@ -2306,8 +2300,6 @@ class Ticket extends CommonObject
 	 */
 	public function getTicketAllContacts()
 	{
-		$array_contact = array();
-
 		$array_contact = $this->getIdTicketInternalContact();
 
 		$array_contact = array_merge($array_contact, $this->getIdTicketCustomerContact());
@@ -2506,10 +2498,7 @@ class Ticket extends CommonObject
 		// phpcs:enable
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-		global $conf;
-
 		$dir = $sdir.'/';
-		$nbphoto = 0;
 
 		$dir_osencoded = dol_osencode($dir);
 		if (file_exists($dir_osencoded)) {
@@ -2666,7 +2655,7 @@ class Ticket extends CommonObject
 	 */
 	public function newMessage($user, &$action, $private = 1, $public_area = 0)
 	{
-		global $mysoc, $conf, $langs;
+		global $mysoc, $langs;
 
 		$error = 0;
 
