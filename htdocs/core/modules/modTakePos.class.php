@@ -290,7 +290,7 @@ class modTakePos extends DolibarrModules
 			}
 			if ($searchcompanyid > 0) {
 				// We already have or we have create a thirdparty with id = $searchcompanyid, so we link use it into setup
-				dolibarr_set_const($this->db, "CASHDESK_ID_THIRDPARTY1", (string) $searchcompanyid, 'chaine', 0, '', $conf->entity);
+				dolibarr_set_const($this->db, "CASHDESK_ID_THIRDPARTY1", $searchcompanyid, 'chaine', 0, '', $conf->entity);
 			} else {
 				setEventMessages($societe->error, $societe->errors, 'errors');
 			}
@@ -309,7 +309,7 @@ class modTakePos extends DolibarrModules
 				$result = $category->create($user);
 
 				if ($result > 0) {
-					dolibarr_set_const($this->db, 'TAKEPOS_ROOT_CATEGORY_ID', (string) $result, 'chaine', 0, 'Id of category for products visible in TakePOS', $conf->entity);
+					dolibarr_set_const($this->db, 'TAKEPOS_ROOT_CATEGORY_ID', $result, 'chaine', 0, 'Id of category for products visible in TakePOS', $conf->entity);
 
 					/* TODO Create a generic product only if there is no product yet. If 0 product,  we create 1. If there is already product, it is better to show a message to ask to add product in the category */
 					/*
@@ -341,7 +341,7 @@ class modTakePos extends DolibarrModules
 				$searchaccountid = $cashaccount->create($user);
 			}
 			if ($searchaccountid > 0) {
-				dolibarr_set_const($this->db, "CASHDESK_ID_BANKACCOUNT_CASH1", (string) $searchaccountid, 'chaine', 0, '', $conf->entity);
+				dolibarr_set_const($this->db, "CASHDESK_ID_BANKACCOUNT_CASH1", $searchaccountid, 'chaine', 0, '', $conf->entity);
 			} else {
 				setEventMessages($cashaccount->error, $cashaccount->errors, 'errors');
 			}

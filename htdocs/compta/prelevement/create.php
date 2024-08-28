@@ -115,7 +115,7 @@ if (empty($reshook)) {
 		//var_dump($default_account);var_dump(getDolGlobalString($default_account));var_dump($id_bankaccount);exit;
 
 		if ($id_bankaccount != getDolGlobalInt($default_account)) {
-			$res = dolibarr_set_const($db, $default_account, (string) $id_bankaccount, 'chaine', 0, '', $conf->entity); // Set as default
+			$res = dolibarr_set_const($db, $default_account, $id_bankaccount, 'chaine', 0, '', $conf->entity); // Set as default
 		}
 		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 		$bank = new Account($db);

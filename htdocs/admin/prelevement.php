@@ -56,7 +56,7 @@ if ($action == "set") {
 	$id = GETPOSTINT('PRELEVEMENT_ID_BANKACCOUNT');
 	$account = new Account($db);
 	if ($account->fetch($id) > 0) {
-		$res = dolibarr_set_const($db, "PRELEVEMENT_ID_BANKACCOUNT", (string) $id, 'chaine', 0, '', $conf->entity);
+		$res = dolibarr_set_const($db, "PRELEVEMENT_ID_BANKACCOUNT", $id, 'chaine', 0, '', $conf->entity);
 		if (!($res > 0)) {
 			$error++;
 		}

@@ -76,7 +76,7 @@ if ($action == 'update') {
 
 	$db->begin();
 
-	$res = dolibarr_set_const($db, 'TAX_MODE', (string) $tax_mode, 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, 'TAX_MODE', $tax_mode, 'chaine', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
 	}
@@ -123,7 +123,7 @@ if ($action == 'update') {
 
 	dolibarr_set_const($db, "MAIN_INFO_VAT_RETURN", GETPOST("MAIN_INFO_VAT_RETURN", 'alpha'), 'chaine', 0, '', $conf->entity);
 
-	dolibarr_set_const($db, "MAIN_INFO_TVA_DAY_DEADLINE_SUBMISSION", (string) GETPOSTINT("deadline_day_vat"), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_TVA_DAY_DEADLINE_SUBMISSION", GETPOSTINT("deadline_day_vat"), 'chaine', 0, '', $conf->entity);
 
 	if (!$error) {
 		$db->commit();

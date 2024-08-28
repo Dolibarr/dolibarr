@@ -108,7 +108,7 @@ if ($action == 'updateMask') {
 			$error++;
 		}
 	} else {
-		$res = dolibarr_set_const($db, $code, (string) $value, 'chaine', 0, '', $conf->entity);
+		$res = dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity);
 		if (!($res > 0)) {
 			$error++;
 		}
@@ -167,7 +167,7 @@ if ($action == 'updateMask') {
 
 	if (GETPOSTISSET('product_category_id')) {
 		$param_ticket_product_category = GETPOSTINT('product_category_id');
-		$res = dolibarr_set_const($db, 'TICKET_PRODUCT_CATEGORY', (string) $param_ticket_product_category, 'chaine', 0, '', $conf->entity);
+		$res = dolibarr_set_const($db, 'TICKET_PRODUCT_CATEGORY', $param_ticket_product_category, 'chaine', 0, '', $conf->entity);
 		if (!($res > 0)) {
 			$error++;
 		}
@@ -181,13 +181,13 @@ if ($action == 'updateMask') {
 
 
 	$param_delay_first_response = GETPOSTINT('delay_first_response');
-	$res = dolibarr_set_const($db, 'TICKET_DELAY_BEFORE_FIRST_RESPONSE', (string) $param_delay_first_response, 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, 'TICKET_DELAY_BEFORE_FIRST_RESPONSE', $param_delay_first_response, 'chaine', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
 	}
 
 	$param_delay_between_responses = GETPOSTINT('delay_between_responses');
-	$res = dolibarr_set_const($db, 'TICKET_DELAY_SINCE_LAST_RESPONSE', (string) $param_delay_between_responses, 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, 'TICKET_DELAY_SINCE_LAST_RESPONSE', $param_delay_between_responses, 'chaine', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
 	}

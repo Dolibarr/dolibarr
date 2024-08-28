@@ -172,7 +172,7 @@ if ($action == 'setTICKET_ENABLE_PUBLIC_INTERFACE') {
 			$error++;
 		}
 	} else {
-		$res = dolibarr_set_const($db, $code, (string) $value, 'chaine', 0, '', $conf->entity);
+		$res = dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity);
 		if (!($res > 0)) {
 			$error++;
 		}
