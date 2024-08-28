@@ -3431,6 +3431,8 @@ if (!GETPOST('hide_websitemenu')) {
 				// Edit CKEditor
 				if (getDolGlobalInt('WEBSITE_ALLOW_CKEDITOR')) {
 					print '<a href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid.'&action=editcontent&token='.newToken().'" class="button bordertransp"'.$disabled.'>'.dol_escape_htmltag("CKEditor").'</a>';
+				} else {
+					print '<!-- Add option WEBSITE_ALLOW_CKEDITOR to allow ckeditor -->';
 				}
 
 				print '</span>';
