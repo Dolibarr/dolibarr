@@ -472,7 +472,8 @@ class Target extends CommonObject
 	public function update(User $user, $notrigger = 0)
 	{
 		// Clean trigger_codes
-		$this->trigger_codes = preg_replace('/[\r\n\s]/', '', $this->trigger_codes);
+		$this->trigger_codes = preg_replace('/\r\n/', ',', $this->trigger_codes);
+		$this->trigger_codes = preg_replace('/\s/', '', $this->trigger_codes);
 
 		return $this->updateCommon($user, $notrigger);
 	}
