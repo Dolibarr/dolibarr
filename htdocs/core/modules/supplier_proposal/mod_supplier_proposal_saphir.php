@@ -113,7 +113,7 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 
 		$old_code_client = $mysoc->code_client;
 		$mysoc->code_client = 'CCCCCCCCCC';
-		$numExample = $this->getNextValue($mysoc, '');
+		$numExample = $this->getNextValue($mysoc, null);
 		$mysoc->code_client = $old_code_client;
 
 		if (!$numExample) {
@@ -126,7 +126,7 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 	 *  Return next value
 	 *
 	 *  @param	Societe				$objsoc					Object third party
-	 * 	@param	SupplierProposal	$supplier_proposal		Object commercial proposal
+	 * 	@param	?SupplierProposal	$supplier_proposal		Object commercial proposal
 	 *  @return string|int<-1,0>							Next value if OK, -1 if KO
 	 */
 	public function getNextValue($objsoc, $supplier_proposal)

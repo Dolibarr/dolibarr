@@ -1072,6 +1072,7 @@ class Fichinter extends CommonObject
 			}
 
 			$obj = new $classname();
+			'@phan-var-force ModeleNumRefFicheinter $obj';
 			$numref = "";
 			$numref = $obj->getNextValue($soc, $this);
 
