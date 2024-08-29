@@ -888,8 +888,8 @@ class Fichinter extends CommonObject
 		global $langs;
 		$langs->load("commercial");
 		$list_signed_status = $this->getSignedStatusLocalisedArray();
-		$signed_status_label = $list_signed_status[$this->signed_status];
-		$signed_status_label_short = $list_signed_status[$this->signed_status];
+		$signed_status_label = $this->signed_status != '' ? $list_signed_status[$this->signed_status] : '';
+		$signed_status_label_short = $this->signed_status != '' ? $list_signed_status[$this->signed_status] : '';
 		$signed_status_code = 'status'.$this->signed_status;
 		return dolGetStatus($signed_status_label, $signed_status_label_short, '', $signed_status_code, $mode);
 	}
@@ -1072,6 +1072,7 @@ class Fichinter extends CommonObject
 			}
 
 			$obj = new $classname();
+			'@phan-var-force ModeleNumRefFicheinter $obj';
 			$numref = "";
 			$numref = $obj->getNextValue($soc, $this);
 
