@@ -2199,6 +2199,7 @@ class Task extends CommonObjectLine
 		if (getDolGlobalString('PROJECT_TASK_ADDON') && is_readable(DOL_DOCUMENT_ROOT."/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON').".php")) {
 			require_once DOL_DOCUMENT_ROOT."/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON').'.php';
 			$modTask = new $obj();
+			'@phan-var-force ModeleNumRefTask $modTask';
 			$defaultref = $modTask->getNextValue(0, $clone_task);
 		}
 

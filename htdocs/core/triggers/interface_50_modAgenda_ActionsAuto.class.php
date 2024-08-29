@@ -1530,6 +1530,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$actioncomm->userownerid = $user->id; // Owner of action
 		// Fields defined when action is an email (content should be into object->actionmsg to be added into event note, subject should be into object->actionms2 to be added into event label)
 		if (!property_exists($object, 'email_fields_no_propagate_in_actioncomm') || empty($object->email_fields_no_propagate_in_actioncomm)) {
+			$actioncomm->datep         = empty($object->email_date) ? $now : $object->email_date;
+			$actioncomm->datef         = empty($object->email_date) ? $now : $object->email_date;
 			$actioncomm->email_msgid   = empty($object->email_msgid) ? null : $object->email_msgid;
 			$actioncomm->email_from    = empty($object->email_from) ? null : $object->email_from;
 			$actioncomm->email_sender  = empty($object->email_sender) ? null : $object->email_sender;

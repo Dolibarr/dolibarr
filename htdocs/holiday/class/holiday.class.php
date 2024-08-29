@@ -237,6 +237,7 @@ class Holiday extends CommonObject
 			}
 
 			$obj = new $classname();
+			'@phan-var-force ModelNumRefHolidays $obj';
 			$numref = $obj->getNextValue($objsoc, $this);
 
 			if ($numref != "") {
