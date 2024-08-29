@@ -651,7 +651,7 @@ $sql = 'SELECT';
 if ($search_all || $search_user > 0) {
 	$sql = 'SELECT DISTINCT';
 }
-$sql .= " e.rowid, e.ref, e.ref_customer, e.date_expedition as date_expedition, e., e._units, e.date_delivery as delivery_date, e.fk_statut, e.billed, e.tracking_number, e.fk_shipping_method,";
+$sql .= " e.rowid, e.ref, e.ref_customer, e.date_expedition as date_expedition, e.weight, e.weight_units, e.date_delivery as delivery_date, e.fk_statut, e.billed, e.tracking_number, e.fk_shipping_method,";
 if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) {
 	// Link for delivery fields ref and date. Does not duplicate the line because we should always have only 1 link or 0 per shipment
 	$sql .= " l.date_delivery as date_reception,";
