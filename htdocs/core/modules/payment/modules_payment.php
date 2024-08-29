@@ -28,7 +28,7 @@ abstract class ModeleNumRefPayments extends CommonNumRefGenerator
 	 * 	Return next free value
 	 *
 	 *  @param	Societe			$objsoc     Object thirdparty
-	 *  @param  Object			$object		Object we need next value for
+	 *  @param  ?Paiement		$object		Object we need next value for
 	 *  @return string|int<-1,0>			Value if OK, <=0 if KO
 	 */
 	abstract public function getNextValue($objsoc, $object);

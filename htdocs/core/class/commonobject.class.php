@@ -18,6 +18,7 @@
  * Copyright (C) 2021      Grégory Blémand      <gregory.blemand@atm-consulting.fr>
  * Copyright (C) 2023      Lenin Rivas      	<lenin.rivas777@gmail.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -4992,25 +4993,19 @@ abstract class CommonObject
 		$totalWeight = 0;
 		$totalVolume = 0;
 		// defined for shipment only
-		$totalOrdered = '';
+		$totalOrdered = 0;
 		// defined for shipment only
-		$totalToShip = '';
+		$totalToShip = 0;
 
 		if (empty($this->lines)) {
-			return array();
+			return array('weight' => $totalWeight, 'volume' => $totalVolume, 'ordered' => $totalOrdered, 'toship' => $totalToShip);
 		}
 
 		foreach ($this->lines as $line) {
 			if (isset($line->qty_asked)) {
-				if (empty($totalOrdered)) {
-					$totalOrdered = 0; // Avoid warning because $totalOrdered is ''
-				}
 				$totalOrdered += $line->qty_asked; // defined for shipment only
 			}
 			if (isset($line->qty_shipped)) {
-				if (empty($totalToShip)) {
-					$totalToShip = 0; // Avoid warning because $totalToShip is ''
-				}
 				$totalToShip += $line->qty_shipped; // defined for shipment only
 			} elseif ($line->element == 'commandefournisseurdispatch' && isset($line->qty)) {
 				if (empty($totalToShip)) {
@@ -5274,9 +5269,7 @@ abstract class CommonObject
 	{
 		global $conf, $langs, $user, $object, $hookmanager;
 		global $form;
-		global $object_rights, $disableedit, $disablemove, $disableremove; // TODO We should not use global var for this !
-
-		$object_rights = $this->getRights();
+		global $disableedit, $disablemove, $disableremove; // TODO We should not use global var for this !
 
 		// var used into tpl
 		$text = '';
@@ -7512,6 +7505,7 @@ abstract class CommonObject
 					// If the textarea field has a list of arrayofkeyval into its definition, we suggest a combo with possible values to fill the textarea.
 					//var_dump($param['options']);
 					$out .= $form->selectarray($keyprefix.$key.$keysuffix."_multiinput", $param['options'], '', 1, 0, 0, "flat maxwidthonphone".$morecss);
+					$out .= '<input id="'.$keyprefix.$key.$keysuffix.'_multiinputadd" type="button" class="button" value="'.$langs->trans("Add").'">';
 					$out .= "<script>";
 					$out .= '
 					function handlemultiinputdisabling(htmlname){
@@ -7519,7 +7513,7 @@ abstract class CommonObject
 						multiinput = $("#"+htmlname+"_multiinput");
 						multiinput.find("option").each(function(){
 							tmpval = $("#"+htmlname).val();
-							tmpvalarray = tmpval.split(",");
+							tmpvalarray = tmpval.split("\n");
 							valtotest = $(this).val();
 							if(tmpvalarray.includes(valtotest)){
 								$(this).prop("disabled",true);
@@ -7533,27 +7527,31 @@ abstract class CommonObject
 					}
 
 					$(document).ready(function () {
-						$("#'.$keyprefix.$key.$keysuffix.'_multiinput").on("change",function() {
-							console.log("We add the selected value to the text area '.$keyprefix.$key.$keysuffix.'");
+						$("#'.$keyprefix.$key.$keysuffix.'_multiinputadd").on("click",function() {
 							tmpval = $("#'.$keyprefix.$key.$keysuffix.'").val();
 							tmpvalarray = tmpval.split(",");
-							valtotest = $(this).val();
+							valtotest = $("#'.$keyprefix.$key.$keysuffix.'_multiinput").val();
 							if(valtotest != -1 && !tmpvalarray.includes(valtotest)){
+								console.log("We add the selected value to the text area '.$keyprefix.$key.$keysuffix.'");
 								if(tmpval == ""){
 									tmpval = valtotest;
 								} else {
-									tmpval = tmpval + "," + valtotest;
+									tmpval = tmpval + "\n" + valtotest;
 								}
 								$("#'.$keyprefix.$key.$keysuffix.'").val(tmpval);
 								handlemultiinputdisabling("'.$keyprefix.$key.$keysuffix.'");
+								$("#'.$keyprefix.$key.$keysuffix.'_multiinput").val(-1);
+							} else {
+								console.log("We add nothing the text area '.$keyprefix.$key.$keysuffix.'");
 							}
 						});
 						$("#'.$keyprefix.$key.$keysuffix.'").on("change",function(){
-							handlemultiinputdisabling($(this).attr("id"));
+							handlemultiinputdisabling("'.$keyprefix.$key.$keysuffix.'");
 						});
 						handlemultiinputdisabling("'.$keyprefix.$key.$keysuffix.'");
 					})';
 					$out .= "</script>";
+					$value = str_replace(',', "\n", $value);
 				}
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 				$doleditor = new DolEditor($keyprefix.$key.$keysuffix, $value, '', 200, 'dolibarr_notes', 'In', false, false, false, ROWS_5, '90%');
@@ -8543,6 +8541,9 @@ abstract class CommonObject
 				return 'Error unexpected result from code evaluation';
 			}
 		} else {	// text|html|varchar
+			if (!empty($value) && preg_match('/^text/', (string) $type) && !preg_match('/search_/', $keyprefix) && !empty($param['options'])) {
+				$value = str_replace(',', "\n", $value);
+			}
 			$value = dol_htmlentitiesbr($value);
 		}
 
@@ -10335,6 +10336,11 @@ abstract class CommonObject
 			$value = $this->fields[$k];
 			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			$values[$k] = $this->quote($v, $value);
+			if (($value["type"] == "text") && !empty($value['arrayofkeyval']) && is_array($value['arrayofkeyval'])) {
+				// Clean values for text with selectbox
+				$v = preg_replace('/\s/', ',', $v);
+				$v = preg_replace('/,+/', ',', $v);
+			}
 			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			$tmp[] = $k.'='.$this->quote($v, $this->fields[$k]);
 		}
@@ -10718,15 +10724,15 @@ abstract class CommonObject
 	}
 
 	/**
-	 *	Set to a signed status
+	 * Set signed status & call trigger with context message
 	 *
-	 *	@param	User	$user			Object user that modify
-	 *  @param	int		$status			New status to set (often a constant like self::STATUS_XXX)
-	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *  @param  string  $triggercode    Trigger code to use
-	 *	@return	int						Return integer <0 if KO, >0 if OK
+	 * @param	User	$user			Object user that modify
+	 * @param	int		$status			New signed status to set (often a constant like self::STATUS_XXX)
+	 * @param	int		$notrigger		1 = Does not execute triggers, 0 = Execute triggers
+	 * @param	string	$triggercode	Trigger code to use
+	 * @return	int						0 < if KO, > 0 if OK
 	 */
-	public function setSignedStatusCommon($user, $status, $notrigger = 0, $triggercode = '')
+	public function setSignedStatusCommon(User $user, int $status, int $notrigger = 0, string $triggercode = '')
 	{
 		$error = 0;
 
@@ -10752,7 +10758,7 @@ abstract class CommonObject
 			}
 
 			if (!$error) {
-				$this->status = $status;
+				$this->signed_status = $status;
 				$this->db->commit();
 				return 1;
 			} else {

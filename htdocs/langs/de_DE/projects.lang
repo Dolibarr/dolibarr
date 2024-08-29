@@ -132,6 +132,7 @@ AlsoCloseAProjectTooltip=Offen lassen, wenn Sie noch zugehörige Produktionsaufg
 ReOpenAProject=Projekt öffnen
 ConfirmReOpenAProject=Möchten Sie dieses Projekt wirklich wiedereröffnen?
 ProjectContact=Projektkontakte
+ProjectContactTypeManager=Mich als Kontakt zuweisen vom Typ
 TaskContact=Kontakte zur Aufgabe
 ActionsOnProject=Projektaktionen
 YouAreNotContactOfProject=Sie sind diesem privaten Projekt nicht als Kontakt zugeordnet.
