@@ -261,7 +261,7 @@ if (empty($reshook)) {
 
 			// Validate invoice with stock change into warehouse getDolGlobalInt($constantforkey)
 			// Label of stock movement will be the same as when we validate invoice "Invoice XXXX validated"
-			$batch_rule = 0;	// Module productbatch is disabled in this if so no need for a batch_rule.
+			$batch_rule = 0;	// Module productbatch is disabled here, so no need for a batch_rule.
 			$res = $invoice->validate($user, '', getDolGlobalInt($constantforkey), 0, $batch_rule);
 
 			// Restore setup
@@ -388,11 +388,6 @@ if (empty($reshook)) {
 		$creditnote->create($user);
 
 		foreach ($invoice->lines as $line) {
-			// Extrafields
-			if (method_exists($line, 'fetch_optionals')) {
-				// load extrafields
-				$line->fetch_optionals();
-			}
 			// Reset fk_parent_line for no child products and special product
 			if (($line->product_type != 9 && empty($line->fk_parent_line)) || $line->product_type == 9) {
 				$fk_parent_line = 0;
@@ -501,19 +496,25 @@ if (empty($reshook)) {
 		$creditnote->update_price(1);
 
 		$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '');
-		if (isModEnabled('stock') && getDolGlobalString($constantforkey) != "1") {
+		$allowstockchange = getDolGlobalString($constantforkey) != "1";
+
+		if (isModEnabled('stock') && $allowstockchange) {
 			// If module stock is enabled and we do not setup takepo to disable stock decrease
 			$savconst = getDolGlobalString('STOCK_CALCULATE_ON_BILL');
 			$conf->global->STOCK_CALCULATE_ON_BILL = 1;	// We force setup to have update of stock on invoice validation/unvalidation
+
 			$constantforkey = 'CASHDESK_ID_WAREHOUSE'.(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '');
 
 			dol_syslog("Validate invoice with stock change into warehouse defined into constant ".$constantforkey." = ".getDolGlobalString($constantforkey)." or warehouseid= ".$warehouseid." if defined.");
+
 			$batch_rule = 0;
-			if (isModEnabled('productbatch') && getDolGlobalString('CASHDESK_FORCE_DECREASE_STOCK')) {
-				require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
-				$batch_rule = Productbatch::BATCH_RULE_SELLBY_EATBY_DATES_FIRST;
-			}
 			$res = $creditnote->validate($user, '', getDolGlobalString($constantforkey), 0, $batch_rule);
+			if ($res < 0) {
+				$error++;
+				dol_htmloutput_errors($creditnote->error, $creditnote->errors, 1);
+			}
+
+			// Restore setup
 			$conf->global->STOCK_CALCULATE_ON_BILL = $savconst;
 		} else {
 			$res = $creditnote->validate($user);
@@ -522,16 +523,18 @@ if (empty($reshook)) {
 		if (!$error && $res >= 0) {
 			$db->commit();
 		} else {
+			$creditnote->id = $placeid;	// Creation has failed, we reset to ID of source invoice so we go back to this one in action=history
 			$db->rollback();
 		}
 	}
 
 	if (($action == 'history' || $action == 'creditnote') && $user->hasRight('takepos', 'run')) {
-		if ($action == 'creditnote') {
+		if ($action == 'creditnote' && $creditnote->id > 0) {
 			$placeid = $creditnote->id;
 		} else {
 			$placeid = GETPOSTINT('placeid');
 		}
+
 		$invoice = new Facture($db);
 		$invoice->fetch($placeid);
 	}

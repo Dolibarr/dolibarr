@@ -3266,7 +3266,7 @@ class Facture extends CommonInvoice
 			if (!$vallabel && getDolGlobalString($keymandatory)) {
 				$langs->load("errors");
 				$error++;
-				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val)), null, 'errors');
+				$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val));
 			}
 		}
 
@@ -3338,7 +3338,7 @@ class Facture extends CommonInvoice
 			dol_syslog(get_class($this)."::validate", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
-				dol_print_error($this->db);
+				$this->error = $this->db->lasterror();
 				$error++;
 			}
 
@@ -3351,7 +3351,7 @@ class Facture extends CommonInvoice
 				// Define third party as a customer
 				$result = $this->thirdparty->setAsCustomer();
 
-				// If active we decrement the main product and its components at invoice validation
+				// If active (STOCK_CALCULATE_ON_BILL), we decrement the main product and its components at invoice validation
 				if ($this->type != self::TYPE_DEPOSIT && $result >= 0 && isModEnabled('stock') && getDolGlobalString('STOCK_CALCULATE_ON_BILL') && $idwarehouse > 0) {
 					require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 					$langs->load("agenda");
@@ -3364,17 +3364,20 @@ class Facture extends CommonInvoice
 							$mouvP->origin = &$this;	// deprecated
 							$mouvP->setOrigin($this->element, $this->id);
 
-							// TODO If warehouseid has been set into invoice line, we should use this value in priority
-							// $idwarehouse = $this->lines[$i]->fk_warehouse;
-
 							// We decrease stock for product
 							if ($this->type == self::TYPE_CREDIT_NOTE) {
-								$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("InvoiceValidatedInDolibarr", $num));
+								// TODO If warehouseid has been set into invoice line, we should use this value in priority
+								// $newidwarehouse = $this->lines[$i]->fk_warehouse ? $this->lines[$i]->fk_warehouse : $idwarehouse;
+								$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("InvoiceValidatedInDolibarr", $num), '', '', $this->lines[$i]->batch);
 								if ($result < 0) {
 									$error++;
 									$this->error = $mouvP->error;
+									$this->errors = array_merge($this->errors, $mouvP->errors);
 								}
 							} else {
+								// TODO If warehouseid has been set into invoice line, we should use this value in priority
+								// $newidwarehouse = $this->lines[$i]->fk_warehouse ? $this->lines[$i]->fk_warehouse : $idwarehouse;
+
 								$is_batch_line = false;
 								if ($batch_rule > 0) {
 									$productStatic->fetch($this->lines[$i]->fk_product);
@@ -3422,7 +3425,7 @@ class Facture extends CommonInvoice
 												if ($result < 0) {
 													$error++;
 													$this->error = $mouvP->error;
-													$this->errors = $mouvP->errors;
+													$this->errors = array_merge($this->errors, $mouvP->errors);
 													break;
 												}
 
@@ -3441,7 +3444,7 @@ class Facture extends CommonInvoice
 													if ($result < 0) {
 														$error++;
 														$this->error = $mouvP->error;
-														$this->errors = $mouvP->errors;
+														$this->errors = array_merge($this->errors, $mouvP->errors);
 													}
 												} else {
 													$error++;
@@ -3460,7 +3463,7 @@ class Facture extends CommonInvoice
 									if ($result < 0) {
 										$error++;
 										$this->error = $mouvP->error;
-										$this->errors = $mouvP->errors;
+										$this->errors = array_merge($this->errors, $mouvP->errors);
 									}
 								}
 							}
@@ -3483,7 +3486,7 @@ class Facture extends CommonInvoice
 				}
 				if ($result < 0) {
 					$this->error = $invoice_situation->error;
-					$this->errors = $invoice_situation->errors;
+					$this->errors = array_merge($this->errors, $invoice_situation->errors);
 					$error++;
 				}
 			}
