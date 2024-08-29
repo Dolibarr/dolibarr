@@ -6354,7 +6354,8 @@ class FactureLigne extends CommonInvoiceLine
 		$sql .= ' info_bits, total_ht, total_tva, total_ttc, total_localtax1, total_localtax2,';
 		$sql .= ' situation_percent, fk_prev_id,';
 		$sql .= ' fk_unit, fk_user_author, fk_user_modif,';
-		$sql .= ' fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc';
+		$sql .= ' fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc,';
+		$sql .= ' batch, fk_warehouse';
 		$sql .= ')';
 		$sql .= " VALUES (".$this->fk_facture.",";
 		$sql .= " ".($this->fk_parent_line > 0 ? $this->fk_parent_line : "null").",";
@@ -6397,6 +6398,8 @@ class FactureLigne extends CommonInvoiceLine
 		$sql .= ", ".price2num($this->multicurrency_total_ht);
 		$sql .= ", ".price2num($this->multicurrency_total_tva);
 		$sql .= ", ".price2num($this->multicurrency_total_ttc);
+		$sql .= ", '".$this->db->escape($this->batch)."'";
+		$sql .= ", ".((int) $this->fk_warehouse);
 		$sql .= ')';
 
 		dol_syslog(get_class($this)."::insert", LOG_DEBUG);
@@ -6610,6 +6613,9 @@ class FactureLigne extends CommonInvoiceLine
 		$sql .= ", multicurrency_total_ht=".price2num($this->multicurrency_total_ht);
 		$sql .= ", multicurrency_total_tva=".price2num($this->multicurrency_total_tva);
 		$sql .= ", multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc);
+
+		$sql .= ", batch = '".$this->db->escape($this->batch)."'";
+		$sql .= ", fk_warehouse = ".((int) $this->fk_warehouse);
 
 		$sql .= " WHERE rowid = ".((int) $this->rowid);
 
