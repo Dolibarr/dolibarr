@@ -8541,8 +8541,8 @@ abstract class CommonObject
 				return 'Error unexpected result from code evaluation';
 			}
 		} else {	// text|html|varchar
-			if (preg_match('/^text/', (string) $type) && !preg_match('/search_/', $keyprefix) && !empty($param['options'])) {
-				$value = str_replace(',', '<br>', $value);
+			if (!empty($value) && preg_match('/^text/', (string) $type) && !preg_match('/search_/', $keyprefix) && !empty($param['options'])) {
+				$value = str_replace(',', "\n", $value);
 			}
 			$value = dol_htmlentitiesbr($value);
 		}
