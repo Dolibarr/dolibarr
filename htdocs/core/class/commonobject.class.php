@@ -7505,6 +7505,7 @@ abstract class CommonObject
 					// If the textarea field has a list of arrayofkeyval into its definition, we suggest a combo with possible values to fill the textarea.
 					//var_dump($param['options']);
 					$out .= $form->selectarray($keyprefix.$key.$keysuffix."_multiinput", $param['options'], '', 1, 0, 0, "flat maxwidthonphone".$morecss);
+					$out .= '<input id="'.$keyprefix.$key.$keysuffix.'_multiinputadd" type="button" class="button" value="'.$langs->trans("Add").'">';
 					$out .= "<script>";
 					$out .= '
 					function handlemultiinputdisabling(htmlname){
@@ -7526,16 +7527,16 @@ abstract class CommonObject
 					}
 
 					$(document).ready(function () {
-						$("#'.$keyprefix.$key.$keysuffix.'_multiinput").on("change",function() {
+						$("#'.$keyprefix.$key.$keysuffix.'_multiinputadd").on("click",function() {
 							console.log("We add the selected value to the text area '.$keyprefix.$key.$keysuffix.'");
 							tmpval = $("#'.$keyprefix.$key.$keysuffix.'").val();
 							tmpvalarray = tmpval.split(",");
-							valtotest = $(this).val();
+							valtotest = $("#'.$keyprefix.$key.$keysuffix.'_multiinput").val();
 							if(valtotest != -1 && !tmpvalarray.includes(valtotest)){
 								if(tmpval == ""){
 									tmpval = valtotest;
 								} else {
-									tmpval = tmpval + "," + valtotest;
+									tmpval = tmpval + "\n" + valtotest;
 								}
 								$("#'.$keyprefix.$key.$keysuffix.'").val(tmpval);
 								handlemultiinputdisabling("'.$keyprefix.$key.$keysuffix.'");
