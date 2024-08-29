@@ -526,7 +526,7 @@ if (empty($reshook)) {
 		$object->socid = $socid;
 		$object->fk_project = GETPOSTINT('projectid');
 		$object->fk_contrat = GETPOSTINT('contratid');
-		$object->author_user_id = $user->id;
+		$object->user_author_id = $user->id;
 		$object->description = GETPOST('description', 'restricthtml');
 		$object->ref = $ref;
 		$object->ref_client = $ref_client;
