@@ -1126,6 +1126,7 @@ class CommandeFournisseur extends CommonOrder
 			}
 
 			$obj = new $classname();
+			'@phan-var-force ModeleNumRefSuppliersOrders $obj';
 			$numref = $obj->getNextValue($soc, $this);
 
 			if ($numref != "") {
