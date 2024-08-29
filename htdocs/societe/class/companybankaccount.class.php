@@ -545,6 +545,92 @@ class CompanyBankAccount extends Account
 		}
 	}
 
+
+	/**
+	 * 	Load several records from database
+	 *
+	 *	@param	int		$id			Id of record
+	 *	@param	string	$ref		Ref of record
+	 * 	@param	int		$socid		Id of company. If this is filled, function will return the first entry found (matching $default and $type)
+	 *  @param	int		$default	If id of company filled, we say if we want first record among all (-1), default record (1) or non default record (0)
+	 *  @param	string	$type		If id of company filled, we say if we want record of this type only
+	 * 	@return	int					Return integer <0 if KO, >0 if OK
+	 */
+	public function fetchAll($id, $ref = '', $socid = 0, $default = 1, $type = 'ban')
+	{
+		if (empty($id) && empty($ref) && empty($socid)) {
+			return -1;
+		}
+
+		$sql = "SELECT rowid, label, type, fk_soc as socid, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban,";
+		$sql .= " domiciliation as address,";
+		$sql .= " proprio as owner_name, owner_address, default_rib, datec, tms as datem, rum, frstrecur, date_rum,";
+		$sql .= " stripe_card_ref, stripe_account, ext_payment_site,";
+		$sql .= " last_main_doc, model_pdf";
+		$sql .= " FROM ".MAIN_DB_PREFIX."societe_rib";
+
+		if ($id) {
+			$sql .= " WHERE rowid = ".((int) $id);
+		} elseif ($ref) {
+			$sql .= " WHERE rowid = ".((int) $ref);
+		} elseif ($socid > 0) {
+			$sql .= " WHERE fk_soc  = ".((int) $socid);
+			if ($default > -1) {
+				$sql .= " AND default_rib = ".((int) $default);
+			}
+			if ($type) {
+				$sql .= " AND type = '".$this->db->escape($type)."'";
+			}
+		}
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
+
+				var_dump("AAAAAAAAAAAAAAAAAH".$this->db->num_rows($resql));
+				$obj = $this->db->fetch_object($resql);
+
+				$this->ref = $obj->socid.'-'.$obj->label; // Generate an artificial ref
+
+				$this->id = $obj->rowid;
+				$this->type = $obj->type;
+				$this->socid           = $obj->socid;
+				$this->bank            = $obj->bank;
+				$this->code_banque     = $obj->code_banque;
+				$this->code_guichet    = $obj->code_guichet;
+				$this->number          = $obj->number;
+				$this->cle_rib         = $obj->cle_rib;
+				$this->bic             = $obj->bic;
+				$this->iban = $obj->iban;
+
+				$this->domiciliation   = $obj->address;
+				$this->address         = $obj->address;
+
+				$this->proprio = $obj->owner_name;
+				$this->owner_name = $obj->owner_name;
+				$this->owner_address   = $obj->owner_address;
+				$this->label           = $obj->label;
+				$this->default_rib     = $obj->default_rib;
+				$this->datec           = $this->db->jdate($obj->datec);
+				$this->datem           = $this->db->jdate($obj->datem);
+				$this->rum             = $obj->rum;
+				$this->frstrecur       = $obj->frstrecur;
+				$this->date_rum        = $this->db->jdate($obj->date_rum);
+				$this->stripe_card_ref = $obj->stripe_card_ref;		// External system payment mode ID
+				$this->stripe_account  = $obj->stripe_account;		// External system customer ID
+				$this->ext_payment_site = $obj->ext_payment_site;	// External system name ('StripeLive', 'StripeTest', 'StancerLive', 'StancerTest', ...)
+				$this->last_main_doc   = $obj->last_main_doc;
+				$this->model_pdf   	   = $obj->model_pdf;
+			}
+			$this->db->free($resql);
+
+			return 1;
+		} else {
+			dol_print_error($this->db);
+			return -1;
+		}
+	}
+
 	/**
 	 *  Delete a rib from database
 	 *

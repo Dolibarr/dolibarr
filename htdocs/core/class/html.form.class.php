@@ -6271,6 +6271,60 @@ class Form
 		}
 	}
 
+	// ---------------------------------------------------------------------------------------
+	// MODIFICATIONS START
+	// ---------------------------------------------------------------------------------------
+	/**
+	 *    Show form with IBAN
+	 *
+	 * @param string $page Page
+	 * @param string $selected Id mode pre-selectionne
+	 * @param string $htmlname Name of select html field
+	 * @param string $filtertype To filter on field type in llx_c_paiement ('CRDT' or 'DBIT' or array('code'=>xx,'label'=>zz))
+	 * @param int $active Active or not, -1 = all
+	 * @param int $addempty 1=Add empty entry
+	 * @param string $type Type ('direct-debit' or 'bank-transfer')
+	 * @param int $nooutput 1=Return string, no output
+	 * @return    string                    HTML output or ''
+	 */
+	public function form_iban($page, $selected = '', $htmlname = 'mode_reglement_id', $filtertype = '', $active = 1, $addempty = 0, $type = '', $nooutput = 0): string
+	{
+		// phpcs:enable
+		global $langs;
+
+
+
+		$out = '';
+		if ($htmlname != "none") {
+			$out .= '<form method="POST" action="' . $page . '">';
+			$out .= '<input type="hidden" name="action" value="setmode">';
+			$out .= '<input type="hidden" name="token" value="' . newToken() . '">';
+			if ($type) {
+				$out .= '<input type="hidden" name="type" value="' . dol_escape_htmltag($type) . '">';
+			}
+			$out .= $this->select_types_paiements($selected, $htmlname, $filtertype, 0, $addempty, 0, 0, $active, '', 1);
+			$out .= '<input type="submit" class="button smallpaddingimp valignmiddle" value="' . $langs->trans("Modify") . '">';
+			$out .= '</form>';
+		} else {
+			if ($selected) {
+				$this->load_cache_types_paiements();
+				$out .= $this->cache_types_paiements[$selected]['label'];
+			} else {
+				$out .= "&nbsp;";
+			}
+		}
+
+		if ($nooutput) {
+			return $out;
+		} else {
+			print $out;
+		}
+		return '';
+	}
+	// ---------------------------------------------------------------------------------------
+	// MODIFICATIONS END
+	// ---------------------------------------------------------------------------------------
+
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
