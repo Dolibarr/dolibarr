@@ -540,6 +540,7 @@ class Ldap
 			}
 		} else {
 			if (is_resource($this->connection)) {
+				// @phan-suppress-next-line PhanTypeMismatchArgumentInternalReal
 				$this->result = @ldap_unbind($this->connection);
 			}
 		}
