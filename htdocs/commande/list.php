@@ -2524,7 +2524,6 @@ while ($i < $imaxinloop) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'total_margin';
 			}
 
-
 			if (!isset($totalarray['val']['total_margin'])) {
 				$totalarray['val']['total_margin'] = 0;
 			}
