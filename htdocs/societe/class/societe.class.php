@@ -177,7 +177,7 @@ class Societe extends CommonObject
 	 */
 
 	/**
-	 * @var array<string,array{type:string,length?:string|int,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'noteditable' => 1, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id', 'css' => 'left'),
@@ -1169,7 +1169,9 @@ class Societe extends CommonObject
 		$contact->town              = $this->town;
 		$this->setUpperOrLowerCase();
 		$contact->phone_pro         = $this->phone;
-		$contact->roles				= explode(',', getDolGlobalString('CONTACTS_DEFAULT_ROLES'));
+		if (getDolGlobalString('CONTACTS_DEFAULT_ROLES')) {
+			$contact->roles			= explode(',', getDolGlobalString('CONTACTS_DEFAULT_ROLES'));
+		}
 
 		$contactId = $contact->create($user, $notrigger);
 		if ($contactId < 0) {
@@ -2135,6 +2137,45 @@ class Societe extends CommonObject
 		if ((getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) && empty($this->price_level)) {
 			$this->price_level = 1;
 		}
+
+		return $result;
+	}
+
+	/**
+	 *    Search the thirdparty that match the most the provided parameters.
+	 *    Searching rules try to find the existing third party.
+	 *
+	 *    @param	int		$rowid			Id of third party
+	 *    @param    string	$ref			Reference of third party, name (Warning, this can return several records)
+	 *    @param    string	$ref_ext       	External reference of third party (Warning, this information is a free field not provided by Dolibarr)
+	 *    @param    string	$barcode       	Barcode of third party to load
+	 *    @param    string	$idprof1		Prof id 1 of third party (Warning, this can return several records)
+	 *    @param    string	$idprof2		Prof id 2 of third party (Warning, this can return several records)
+	 *    @param    string	$idprof3		Prof id 3 of third party (Warning, this can return several records)
+	 *    @param    string	$idprof4		Prof id 4 of third party (Warning, this can return several records)
+	 *    @param    string	$idprof5		Prof id 5 of third party (Warning, this can return several records)
+	 *    @param    string	$idprof6		Prof id 6 of third party (Warning, this can return several records)
+	 *    @param    string	$email   		Email of third party (Warning, this can return several records)
+	 *    @param    string	$ref_alias 		Name_alias of third party (Warning, this can return several records)
+	 * 	  @param	int		$is_client		Only client third party
+	 *    @param	int		$is_supplier	Only supplier third party
+	 *    @return   int						>0 if OK, <0 if KO or if two records found, 0 if not found.
+	 */
+	public function findNearest($rowid = 0, $ref = '', $ref_ext = '', $barcode = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '', $is_client = 0, $is_supplier = 0)
+	{
+		// A rowid is known, it is a unique key so we found it
+		if ($rowid) {
+			return $rowid;
+		}
+
+		// We try to find the thirdparty with exact matching on all fields
+		// TODO Replace this with step by step search
+		// Then search on barcode if we have it (+ restriction on is_client and is_supplier)
+		// Then search on profids with a OR (+ restriction on is_client and is_supplier)
+		// Then search on email with a OR (+ restriction on is_client and is_supplier)
+		// Then search ref, ref_ext or alias with a OR (+ restriction on is_client and is_supplier)
+		$tmpthirdparty = new Societe($this->db);
+		$result = $tmpthirdparty->fetch($rowid, $ref, $ref_ext, $barcode, $idprof1, $idprof2, $idprof3, $idprof4, $idprof5, $idprof6, $email, $ref_alias, $is_client, $is_supplier);
 
 		return $result;
 	}

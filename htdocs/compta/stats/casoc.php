@@ -72,15 +72,16 @@ if (GETPOST('subcat', 'alpha') === 'yes') {
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
+
+// Hook
+$hookmanager->initHooks(array('casoclist'));
+
 if (isModEnabled('comptabilite')) {
 	$result = restrictedArea($user, 'compta', '', '', 'resultat');
 }
 if (isModEnabled('accounting')) {
 	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
 }
-
-// Hook
-$hookmanager->initHooks(array('casoclist'));
 
 // Date range
 $year = GETPOSTINT("year");

@@ -71,6 +71,10 @@ You can use any web server supporting PHP (Apache, Nginx, ...) and a supported d
 
 - Follow the installer instructions;;;
 
+### Using Docker images
+
+Dolibarr is also available as a [Docker image](https://hub.docker.com/r/dolibarr/dolibarr). Installation instructions are available [here](https://github.com/Dolibarr/dolibarr-docker).
+
 ### Using ready to use SaaS/Cloud offers
 
 If you lack the time to install it yourself, consider exploring commercial 'ready-to-use' Cloud offerings (refer to https://saas.dolibarr.org). Keep in mind that this third option comes with associated costs.

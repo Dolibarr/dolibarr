@@ -65,10 +65,6 @@ if ($contextpage == 'poslist') {
 $id = GETPOSTINT('id');
 $contactid = GETPOSTINT('id');
 $ref = ''; // There is no ref for contacts
-if ($user->socid > 0) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'contact', $contactid, '');
 
 $search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_cti = preg_replace('/^0+/', '', preg_replace('/[^0-9]/', '', GETPOST('search_cti', 'alphanohtml'))); // Phone number without any special chars
@@ -188,6 +184,11 @@ if ($type == "c") {
 $object = new Contact($db);
 $extrafields = new ExtraFields($db);
 $hookmanager->initHooks(array($contextpage));
+
+if ($user->socid > 0) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'contact', $contactid, '');
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);

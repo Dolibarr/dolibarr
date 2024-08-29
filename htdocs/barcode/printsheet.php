@@ -68,10 +68,10 @@ if (!isModEnabled('barcode')) {
 if (!$user->hasRight('barcode', 'read')) {
 	accessforbidden();
 }
-restrictedArea($user, 'barcode');
-
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('printsheettools'));
+
+restrictedArea($user, 'barcode');
 
 $parameters = array();
 

@@ -691,19 +691,18 @@ if (getDolGlobalInt('PRODUIT_LIMIT_SIZE') <= 0) {
 } else {
 	$limit = getDolGlobalString('PRODUIT_LIMIT_SIZE');
 }
-
 print img_picto($langs->trans("Product"), 'product', 'class="paddingright"');
-print $form->select_produits($id_product, 'productid', $filtertype, $limit, 0, -1, 2, '', 1, array(), 0, '1', 0, 'minwidth200imp maxwidth300', 1, '', null, 1);
+print $form->select_produits((isset($id_product)?$id_product:0), 'productid', $filtertype, $limit, 0, -1, 2, '', 1, array(), 0, '1', 0, 'minwidth200imp maxwidth300', 1, '', null, 1);
 print '</td>';
 // Batch number
 if (isModEnabled('productbatch')) {
 	print '<td class="nowraponall">';
 	print img_picto($langs->trans("LotSerial"), 'lot', 'class="paddingright"');
-	print '<input type="text" name="batch" class="flat maxwidth75" value="'.dol_escape_htmltag($batch).'">';
+	print '<input type="text" name="batch" class="flat maxwidth75" value="'.dol_escape_htmltag((isset($batch)?$batch:'')).'">';
 	print '</td>';
 }
 // Qty
-print '<td class="right"><input type="text" class="flat maxwidth50 right" name="qty" value="'.price2num((float) $qty, 'MS').'"></td>';
+print '<td class="right"><input type="text" class="flat maxwidth50 right" name="qty" value="'.price2num((float) (isset($qty)?$qty:0), 'MS').'"></td>';
 // Button to add line
 print '<td class="right"><input type="submit" class="button" name="addline" value="'.dol_escape_htmltag($titletoadd).'"></td>';
 

@@ -187,6 +187,9 @@ if (!empty($canvas)) {
 $fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
 $fieldtype = (!empty($id) ? 'rowid' : 'ref');
 
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('productcard', 'globalcard'));
+
 if ($object->id > 0) {
 	if ($object->type == $object::TYPE_PRODUCT) {
 		restrictedArea($user, 'produit', $object->id, 'product&product', '', '');
@@ -197,9 +200,6 @@ if ($object->id > 0) {
 } else {
 	restrictedArea($user, 'produit|service', 0, 'product&product', '', '', $fieldtype);
 }
-
-// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-$hookmanager->initHooks(array('productcard', 'globalcard'));
 
 // Permissions
 $usercanread   = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'read')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'lire')));
@@ -431,14 +431,14 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 	// Barcode type
-	if ($action == 'setfk_barcode_type' && $createbarcode) {
+	if ($action == 'setfk_barcode_type' && $usercancreate) {
 		$result = $object->setValueFrom('fk_barcode_type', GETPOST('fk_barcode_type'), '', null, 'text', '', $user, 'PRODUCT_MODIFY');
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
 	}
 
 	// Barcode value
-	if ($action == 'setbarcode' && $createbarcode) {
+	if ($action == 'setbarcode' && $usercancreate) {
 		$result = $object->check_barcode(GETPOST('barcode'), GETPOST('barcode_type_code'));
 
 		if ($result >= 0) {
@@ -463,7 +463,7 @@ if (empty($reshook)) {
 	}
 
 	// Quick edit for extrafields
-	if ($action == 'update_extras') {
+	if ($action == 'update_extras' && $usercancreate) {
 		$object->oldcopy = dol_clone($object, 2);
 
 		// Fill array 'array_options' with data from update form
@@ -1055,9 +1055,12 @@ if (empty($reshook)) {
 	}
 
 
-	// Add product into object
-	if ($object->id > 0 && $action == 'addin') {
+	// Add product into object (when PRODUCT_ADD_FORM_ADD_TO is set)
+	if ($object->id > 0 && $action == 'addin') {	// Test on permission is done just after
 		$thirpdartyid = 0;
+		$permissiontoaddline = false;
+
+		// Get object and test permission
 		if (GETPOST('propalid') > 0) {
 			$propal = new Propal($db);
 			$result = $propal->fetch(GETPOST('propalid'));
@@ -1066,6 +1069,7 @@ if (empty($reshook)) {
 				exit;
 			}
 			$thirpdartyid = $propal->socid;
+			$permissiontoaddline = $user->hasRight('propal', 'creer');
 		} elseif (GETPOST('commandeid') > 0) {
 			$commande = new Commande($db);
 			$result = $commande->fetch(GETPOST('commandeid'));
@@ -1074,6 +1078,7 @@ if (empty($reshook)) {
 				exit;
 			}
 			$thirpdartyid = $commande->socid;
+			$permissiontoaddline = $user->hasRight('commande', 'creer');
 		} elseif (GETPOST('factureid') > 0) {
 			$facture = new Facture($db);
 			$result = $facture->fetch(GETPOST('factureid'));
@@ -1082,6 +1087,7 @@ if (empty($reshook)) {
 				exit;
 			}
 			$thirpdartyid = $facture->socid;
+			$permissiontoaddline = $user->hasRight('facture', 'creer');
 		}
 
 		if ($thirpdartyid > 0) {
@@ -1142,7 +1148,7 @@ if (empty($reshook)) {
 				}
 			}
 
-			if (GETPOST('propalid') > 0) {
+			if (GETPOST('propalid') > 0 && $permissiontoaddline) {
 				// Define cost price for margin calculation
 				$buyprice = 0;
 				if (($result = $propal->defineBuyPrice($pu_ht, price2num(GETPOST('remise_percent'), '', 2), $object->id)) < 0) {
@@ -1182,7 +1188,7 @@ if (empty($reshook)) {
 				}
 
 				setEventMessages($langs->trans("ErrorUnknown").": $result", null, 'errors');
-			} elseif (GETPOST('commandeid') > 0) {
+			} elseif (GETPOST('commandeid') > 0 && $permissiontoaddline) {
 				// Define cost price for margin calculation
 				$buyprice = 0;
 				if (($result = $commande->defineBuyPrice($pu_ht, price2num(GETPOST('remise_percent'), '', 2), $object->id)) < 0) {
@@ -1222,7 +1228,9 @@ if (empty($reshook)) {
 					header("Location: ".DOL_URL_ROOT."/commande/card.php?id=".urlencode((string) ($commande->id)));
 					exit;
 				}
-			} elseif (GETPOST('factureid') > 0) {
+
+				setEventMessages($langs->trans("ErrorUnknown").": $result", null, 'errors');
+			} elseif (GETPOST('factureid') > 0 && $permissiontoaddline) {
 				// Define cost price for margin calculation
 				$buyprice = 0;
 				if (($result = $facture->defineBuyPrice($pu_ht, price2num(GETPOST('remise_percent'), '', 2), $object->id)) < 0) {
@@ -1267,6 +1275,8 @@ if (empty($reshook)) {
 					header("Location: ".DOL_URL_ROOT."/compta/facture/card.php?facid=".$facture->id);
 					exit;
 				}
+
+				setEventMessages($langs->trans("ErrorUnknown").": $result", null, 'errors');
 			}
 		} else {
 			$action = "";
@@ -3085,7 +3095,7 @@ if (getDolGlobalString('PRODUCT_ADD_FORM_ADD_TO') && $object->id && ($action == 
 		}
 	}
 
-	//If any text is going to be printed, then we show the table
+	// If any text is going to be printed, then we show the table
 	if (!empty($html)) {
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';

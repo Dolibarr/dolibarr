@@ -422,3 +422,4 @@ OperNotDefined=Zahlungsart nicht definiert
 ErrorThisContactXIsAlreadyDefinedAsThisType=%s ist bereits als Kontakt für diesen Typ definiert.
 ErrorThisGroupIsAlreadyDefinedAsThisType=Die Kontakte dieser Gruppe sind bereits als Kontakt für diesen Typ definiert.
 EmptyMessageNotAllowedError=Nachricht darf nicht leer sein
+ErrorIsNotInError=%s ist nicht fehlerhaft

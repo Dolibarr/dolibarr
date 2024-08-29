@@ -88,9 +88,9 @@ abstract class ModeleNumRefBoms extends CommonNumRefGenerator
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param	Product	$objprod    Object product
-	 *  @param  Bom		$object		Object we need next value for
-	 *  @return string|int<-1,-1>	Next value if OK, -1 if KO
+	 *  @param	Product	$objprod		Object product
+	 *  @param  ?Bom	$object			Object we need next value for
+	 *  @return string|int<-1,0>		Next value if OK, 0 if KO
 	 */
 	abstract public function getNextValue($objprod, $object);
 }

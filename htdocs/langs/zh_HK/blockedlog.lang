@@ -1,7 +1,7 @@
 BlockedLog=不可更改日誌
 BlockedLogDesc=此模組將某些事件即時記錄到一個不可更改的日志中（記錄後無法修改），並以區塊鏈的方式儲存。此模組符合某些國家（如法國的2016金融法- Norme NF525）的法律要求。
 Fingerprints=已存檔事件和指紋
-FingerprintsDesc=這是瀏覽或提取不可更改日誌的工具。不可更改日誌會在記錄商務事件時實時生成並本地存檔到專用表格中。您可以使用此工具導出此存檔並將其保存到外部支持（一些國家，如法國，要求您每年這樣做）。請注意，沒有功能可以清除此日誌，並且任何試圖直接更改此日誌的更改（例如黑客所為）都會以無效指紋報告。如果您確實需要清除此表格，因為您使用您的應用程序進行演示/測試目的並希望清理數據以開始生產，您可以請求您的經銷商或整合商重置您的數據庫（所有數據將被移除）。
+FingerprintsDesc=這是瀏覽或提取不可更改日誌的工具。不可更改日誌會在記錄商務事件時實時生成並本地存檔到專用表格中。您可以使用此工具導出此存檔並將其保存到外部支持（一些國家，如法國，要求您每年這樣做）。請注意，沒有功能可以清除此日誌，並且任何試圖直接更改此日誌的更改（例如黑客所為）都會以無效指紋報告。如果您確實需要清除此表格，因為您使用您的應用程序進行 演示/ 測試 目的並希望清理數據以開始生產，您可以請求您的經銷商或整合商重置您的數據庫（所有數據將被移除）。
 CompanyInitialKey=公司初始金鑰(hash of genesis block)
 BrowseBlockedLog=不可更改的日誌
 ShowAllFingerPrintsMightBeTooLong=顯示所有歸檔的日誌（可能很長）
@@ -19,17 +19,17 @@ ListOfTrackedEvents=追蹤事件列表
 Fingerprint=指紋
 DownloadLogCSV=導出已存檔的日誌 (CSV)
 DataOfArchivedEvent=已存檔活動的完整數據
-ImpossibleToReloadObject=原始對象（類型%s, ID%s）未鏈接（請參見“完整數據”列以獲取未經更改保存的數據）
+ImpossibleToReloadObject=原始對象（類型%s, ID%s）未連接（請參見“完整數據”列以獲取未經更改保存的數據）
 BlockedLogAreRequiredByYourCountryLegislation=根據你所在國家的法律，可能需要使用不可更改日誌模塊。禁用此模塊可能會使未來的交易在法律和合法軟件使用方面無效，因為它們無法通過稅務審計驗證。
 BlockedLogActivatedBecauseRequiredByYourCountryLegislation=在根據貴國法規啟用不可更改日誌模組。禁用此模組可能會導致未來的交易在法律和合法軟件使用方面無效，因為它們無法通過稅務審計進行驗證。
 BlockedLogDisableNotAllowedForCountry=此模組在下列國家是強制使用的（僅用於防止誤操作禁用模組，如果您的國家在此清單中，不經編輯清單是無法禁用模組的。同時請注意，啟用/禁用此模組的操作會被記錄在不可更改的日誌中。）
 OnlyNonValid=無效
 TooManyRecordToScanRestrictFilters=記錄太多無法掃描/分析。請使用更嚴格的篩選器來限制列表資料。
-RestrictYearToExport=限制月份/年份匯出
+RestrictYearToExport=限制 月份 / 年份 匯出
 BlockedLogEnabled=已進入不可更改日誌的系統，啟動追蹤"事件"
 BlockedLogDisabled=完成一些記錄後，系統已被禁止在"事件" 的 "不可更改日誌" 追蹤。我們保存了一個特殊的指紋來追蹤鏈條是否損壞。
 BlockedLogDisabledBis=追蹤事件至不可更改日誌的系統已被禁用。這是因為尚未記錄任何數據。
-LinkHasBeenDisabledForPerformancePurpose=為了性能考量，文件的直接鏈接在第100行之後不顯示。
+LinkHasBeenDisabledForPerformancePurpose=為了性能考量，文件的直接連接在第100行之後不顯示。
 
 ## logTypes
 logBILL_DELETE=客戶發票已合理地刪除

@@ -72,12 +72,12 @@ if (!$sortorder) {
 	$sortorder = "DESC";
 }
 
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('warehousecard', 'stocklist', 'globalcard'));
+
 // Security check
 //$result=restrictedArea($user,'stock', $id, 'entrepot&stock');
 $result = restrictedArea($user, 'stock');
-
-// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-$hookmanager->initHooks(array('warehousecard', 'stocklist', 'globalcard'));
 
 $object = new Entrepot($db);
 $extrafields = new ExtraFields($db);
@@ -94,9 +94,9 @@ if ($id > 0 || !empty($ref)) {
 	}
 }
 
-$usercanread = (($user->hasRight('stock', 'lire')));
-$usercancreate = (($user->hasRight('stock', 'creer')));
-$usercandelete = (($user->hasRight('stock', 'supprimer')));
+$usercanread = $user->hasRight('stock', 'lire');
+$usercancreate = $user->hasRight('stock', 'creer');
+$usercandelete = $user->hasRight('stock', 'supprimer');
 
 
 /*
@@ -198,8 +198,8 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Modification entrepot
-	if ($action == 'update' && !$cancel) {
+	// Update warehouse
+	if ($action == 'update' && !$cancel && $user->hasRight('stock', 'creer')) {
 		if ($object->fetch($id)) {
 			$object->label = GETPOST("libelle");
 			$object->fk_parent   = GETPOST("fk_parent");
@@ -239,7 +239,7 @@ if (empty($reshook)) {
 			$action = 'edit';
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif ($action == 'update_extras') {
+	} elseif ($action == 'update_extras' && $user->hasRight('stock', 'creer')) {
 		$object->oldcopy = dol_clone($object, 2);
 
 		// Fill array 'array_options' with data from update form

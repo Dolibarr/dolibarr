@@ -18,6 +18,7 @@
  * Copyright (C) 2021      Grégory Blémand      <gregory.blemand@atm-consulting.fr>
  * Copyright (C) 2023      Lenin Rivas      	<lenin.rivas777@gmail.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -139,7 +140,7 @@ abstract class CommonObject
 
 
 	/**
-	 * @var array		Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array();
 
@@ -2548,6 +2549,7 @@ abstract class CommonObject
 		}
 
 		$sql = "UPDATE ".$this->db->prefix().$this->table_element;
+		// @phan-suppress-next-line PhanTypeMismatchProperty
 		if (!empty($this->fields['fk_project'])) {		// Common case
 			if ($projectid) {
 				$sql .= " SET fk_project = ".((int) $projectid);
@@ -3976,20 +3978,22 @@ abstract class CommonObject
 					$diff = price2num($total_tva_by_vats[$obj->vatrate] - (float) $tmpvat, 'MT', 1);
 					//print 'Line '.$i.' rowid='.$obj->rowid.' vat_rate='.$obj->vatrate.' total_ht='.$obj->total_ht.' total_tva='.$obj->total_tva.' total_ttc='.$obj->total_ttc.' total_ht_by_vats='.$total_ht_by_vats[$obj->vatrate].' total_tva_by_vats='.$total_tva_by_vats[$obj->vatrate].' (new calculation = '.$tmpvat.') total_ttc_by_vats='.$total_ttc_by_vats[$obj->vatrate].($diff?" => DIFF":"")."<br>\n";
 					if ($diff) {
-						if (abs((float) $diff) > (10 * pow(10, -1 * getDolGlobalInt('MAIN_MAX_DECIMALS_TOT', 0)))) {
+						$maxdiff = (10 * pow(10, -1 * getDolGlobalInt('MAIN_MAX_DECIMALS_TOT', 0)));
+						if (abs((float) $diff) > $maxdiff) {
 							// If error is more than 10 times the accuracy of rounding. This should not happen.
-							$errmsg = 'A rounding difference was detected into TOTAL but is too high to be corrected. Some data in your lines may be corrupted. Try to edit each line manually to fix this before restarting.';
+							$errmsg = 'We found a rounding difference after line '.($obj->rowid).' between HT*VAT='.$tmpvat.' and total in database='.$total_tva_by_vats[$obj->vatrate].' (calculated with UP*qty) but diff='.$diff.' is too high (> '.$maxdiff.') to be corrected. Some data in your lines may be corrupted. Try to edit each line manually to fix this before restarting.';
 							dol_syslog($errmsg, LOG_WARNING);
 							$this->error = $errmsg;
 							$error++;
 							break;
 						}
+
 						if ($base_price_type == 'TTC') {
 							$sqlfix = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldtva." = ".price2num($obj->total_tva - (float) $diff).", total_ht = ".price2num($obj->total_ht + (float) $diff)." WHERE rowid = ".((int) $obj->rowid);
-							dol_syslog('We found a difference of '.$diff.' for line rowid = '.$obj->rowid.". We fix the total_vat and total_ht of line by running sqlfix = ".$sqlfix);
+							dol_syslog('We found a difference of '.$diff.' for line rowid = '.$obj->rowid.' between TotalHT('.$total_ht_by_vats[$obj->vatrate].')*VATrate('.$obj->vatrate.')='.$tmpvat.' and total in database='.$total_tva_by_vats[$obj->vatrate]." (calculated with UP*qty). We fix the total_vat and total_ht of line by running sqlfix = ".$sqlfix);
 						} else {
 							$sqlfix = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldtva." = ".price2num($obj->total_tva - (float) $diff).", total_ttc = ".price2num($obj->total_ttc - (float) $diff)." WHERE rowid = ".((int) $obj->rowid);
-							dol_syslog('We found a difference of '.$diff.' for line rowid = '.$obj->rowid.". We fix the total_vat and total_ttc of line by running sqlfix = ".$sqlfix);
+							dol_syslog('We found a difference of '.$diff.' for line rowid = '.$obj->rowid.' between TotalHT('.$total_ht_by_vats[$obj->vatrate].')*VATrate('.$obj->vatrate.')='.$tmpvat.' and total in database='.$total_tva_by_vats[$obj->vatrate]." (calculated with UP*qty). We fix the total_vat and total_ttc of line by running sqlfix = ".$sqlfix);
 						}
 
 						$resqlfix = $this->db->query($sqlfix);
@@ -4989,25 +4993,19 @@ abstract class CommonObject
 		$totalWeight = 0;
 		$totalVolume = 0;
 		// defined for shipment only
-		$totalOrdered = '';
+		$totalOrdered = 0;
 		// defined for shipment only
-		$totalToShip = '';
+		$totalToShip = 0;
 
 		if (empty($this->lines)) {
-			return array();
+			return array('weight' => $totalWeight, 'volume' => $totalVolume, 'ordered' => $totalOrdered, 'toship' => $totalToShip);
 		}
 
 		foreach ($this->lines as $line) {
 			if (isset($line->qty_asked)) {
-				if (empty($totalOrdered)) {
-					$totalOrdered = 0; // Avoid warning because $totalOrdered is ''
-				}
 				$totalOrdered += $line->qty_asked; // defined for shipment only
 			}
 			if (isset($line->qty_shipped)) {
-				if (empty($totalToShip)) {
-					$totalToShip = 0; // Avoid warning because $totalToShip is ''
-				}
 				$totalToShip += $line->qty_shipped; // defined for shipment only
 			} elseif ($line->element == 'commandefournisseurdispatch' && isset($line->qty)) {
 				if (empty($totalToShip)) {
@@ -5271,9 +5269,7 @@ abstract class CommonObject
 	{
 		global $conf, $langs, $user, $object, $hookmanager;
 		global $form;
-		global $object_rights, $disableedit, $disablemove, $disableremove; // TODO We should not use global var for this !
-
-		$object_rights = $this->getRights();
+		global $disableedit, $disablemove, $disableremove; // TODO We should not use global var for this !
 
 		// var used into tpl
 		$text = '';
@@ -7362,7 +7358,7 @@ abstract class CommonObject
 		$param = array();
 		$param['options'] = array();
 		$reg = array();
-		// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
+		// @phan-suppress-next-line PhanTypeMismatchProperty
 		$size = !empty($this->fields[$key]['size']) ? $this->fields[$key]['size'] : 0;
 		// Because we work on extrafields
 		if (preg_match('/^(integer|link):(.*):(.*):(.*):(.*)/i', $val['type'], $reg)) {
@@ -7402,7 +7398,7 @@ abstract class CommonObject
 		// Special case that force options and type ($type can be integer, varchar, ...)
 		if (!empty($this->fields[$key]['arrayofkeyval']) && is_array($this->fields[$key]['arrayofkeyval'])) {
 			$param['options'] = $this->fields[$key]['arrayofkeyval'];
-			// Special case that prevent to force $type to have multiple input
+			// Special case that prevent to force $type to have multiple input @phan-suppress-next-line PhanTypeMismatchProperty
 			if (empty($this->fields[$key]['multiinput'])) {
 				$type = (($this->fields[$key]['type'] == 'checkbox') ? $this->fields[$key]['type'] : 'select');
 			}
@@ -7412,18 +7408,18 @@ abstract class CommonObject
 		//$elementtype=$this->fields[$key]['elementtype'];	// Seems not used
 		// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
 		$default = (!empty($this->fields[$key]['default']) ? $this->fields[$key]['default'] : '');
-		// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
+		// @phan-suppress-next-line PhanTypeMismatchProperty
 		$computed = (!empty($this->fields[$key]['computed']) ? $this->fields[$key]['computed'] : '');
-		// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
+		// @phan-suppress-next-line PhanTypeMismatchProperty
 		$unique = (!empty($this->fields[$key]['unique']) ? $this->fields[$key]['unique'] : 0);
-		// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
+		// @phan-suppress-next-line PhanTypeMismatchProperty
 		$required = (!empty($this->fields[$key]['required']) ? $this->fields[$key]['required'] : 0);
-		// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
+		// @phan-suppress-next-line PhanTypeMismatchProperty
 		$autofocusoncreate = (!empty($this->fields[$key]['autofocusoncreate']) ? $this->fields[$key]['autofocusoncreate'] : 0);
 
-		// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
+		// @phan-suppress-next-line PhanTypeMismatchProperty
 		$langfile = (!empty($this->fields[$key]['langfile']) ? $this->fields[$key]['langfile'] : '');
-		// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
+		// @phan-suppress-next-line PhanTypeMismatchProperty
 		$list = (!empty($this->fields[$key]['list']) ? $this->fields[$key]['list'] : 0);
 		$hidden = (in_array(abs($this->fields[$key]['visible']), array(0, 2)) ? 1 : 0);
 
@@ -7509,6 +7505,7 @@ abstract class CommonObject
 					// If the textarea field has a list of arrayofkeyval into its definition, we suggest a combo with possible values to fill the textarea.
 					//var_dump($param['options']);
 					$out .= $form->selectarray($keyprefix.$key.$keysuffix."_multiinput", $param['options'], '', 1, 0, 0, "flat maxwidthonphone".$morecss);
+					$out .= '<input id="'.$keyprefix.$key.$keysuffix.'_multiinputadd" type="button" class="button" value="'.$langs->trans("Add").'">';
 					$out .= "<script>";
 					$out .= '
 					function handlemultiinputdisabling(htmlname){
@@ -7516,7 +7513,7 @@ abstract class CommonObject
 						multiinput = $("#"+htmlname+"_multiinput");
 						multiinput.find("option").each(function(){
 							tmpval = $("#"+htmlname).val();
-							tmpvalarray = tmpval.split(",");
+							tmpvalarray = tmpval.split("\n");
 							valtotest = $(this).val();
 							if(tmpvalarray.includes(valtotest)){
 								$(this).prop("disabled",true);
@@ -7530,27 +7527,31 @@ abstract class CommonObject
 					}
 
 					$(document).ready(function () {
-						$("#'.$keyprefix.$key.$keysuffix.'_multiinput").on("change",function() {
-							console.log("We add the selected value to the text area '.$keyprefix.$key.$keysuffix.'");
+						$("#'.$keyprefix.$key.$keysuffix.'_multiinputadd").on("click",function() {
 							tmpval = $("#'.$keyprefix.$key.$keysuffix.'").val();
 							tmpvalarray = tmpval.split(",");
-							valtotest = $(this).val();
+							valtotest = $("#'.$keyprefix.$key.$keysuffix.'_multiinput").val();
 							if(valtotest != -1 && !tmpvalarray.includes(valtotest)){
+								console.log("We add the selected value to the text area '.$keyprefix.$key.$keysuffix.'");
 								if(tmpval == ""){
 									tmpval = valtotest;
 								} else {
-									tmpval = tmpval + "," + valtotest;
+									tmpval = tmpval + "\n" + valtotest;
 								}
 								$("#'.$keyprefix.$key.$keysuffix.'").val(tmpval);
 								handlemultiinputdisabling("'.$keyprefix.$key.$keysuffix.'");
+								$("#'.$keyprefix.$key.$keysuffix.'_multiinput").val(-1);
+							} else {
+								console.log("We add nothing the text area '.$keyprefix.$key.$keysuffix.'");
 							}
 						});
 						$("#'.$keyprefix.$key.$keysuffix.'").on("change",function(){
-							handlemultiinputdisabling($(this).attr("id"));
+							handlemultiinputdisabling("'.$keyprefix.$key.$keysuffix.'");
 						});
 						handlemultiinputdisabling("'.$keyprefix.$key.$keysuffix.'");
 					})';
 					$out .= "</script>";
+					$value = str_replace(',', "\n", $value);
 				}
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 				$doleditor = new DolEditor($keyprefix.$key.$keysuffix, $value, '', 200, 'dolibarr_notes', 'In', false, false, false, ROWS_5, '90%');
@@ -7987,12 +7988,14 @@ abstract class CommonObject
 
 			if (!preg_match('/search_/', $keyprefix)) {
 				if (!empty($param_list_array[2])) {		// If the entry into $fields is set to add a create button
+					// @phan-suppress-next-line PhanTypeMismatchProperty
 					if (!empty($this->fields[$key]['picto'])) {
 						$morecss .= ' widthcentpercentminusxx';
 					} else {
 						$morecss .= ' widthcentpercentminusx';
 					}
 				} else {
+					// @phan-suppress-next-line PhanTypeMismatchProperty
 					if (!empty($this->fields[$key]['picto'])) {
 						$morecss .= ' widthcentpercentminusx';
 					}
@@ -8114,6 +8117,7 @@ abstract class CommonObject
 			$type = 'varchar'; // convert varchar(xx) int varchar
 		}
 		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
+			// @phan-suppress-next-line PhanTypeMismatchProperty
 			if (empty($this->fields[$key]['multiinput'])) {
 				$type = (($this->fields[$key]['type'] == 'checkbox') ? $this->fields[$key]['type'] : 'select');
 			}
@@ -8194,6 +8198,7 @@ abstract class CommonObject
 
 		// Format output value differently according to properties of field
 		if (in_array($key, array('rowid', 'ref')) && method_exists($this, 'getNomUrl')) {
+			// @phan-suppress-next-line PhanTypeMismatchProperty
 			if ($key != 'rowid' || empty($this->fields['ref'])) {	// If we want ref field or if we want ID and there is no ref field, we show the link.
 				$value = $this->getNomUrl(1, '', 0, '', 1);
 			}
@@ -8536,6 +8541,9 @@ abstract class CommonObject
 				return 'Error unexpected result from code evaluation';
 			}
 		} else {	// text|html|varchar
+			if (!empty($value) && preg_match('/^text/', (string) $type) && !preg_match('/search_/', $keyprefix) && !empty($param['options'])) {
+				$value = str_replace(',', "\n", $value);
+			}
 			$value = dol_htmlentitiesbr($value);
 		}
 
@@ -8591,7 +8599,7 @@ abstract class CommonObject
 	/**
 	 * Return validation test result for a field
 	 *
-	 * @param 	array<string,?array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>	$fields	Array of properties of field to show
+	 * @param array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>	$fields	Array of properties of field to show
 	 * @param  	string  $fieldKey           Key of attribute
 	 * @param	string  $fieldValue         Value of attribute
 	 * @return 	bool 						Return false if fail true on success, see $this->error for error message
@@ -10328,6 +10336,11 @@ abstract class CommonObject
 			$value = $this->fields[$k];
 			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			$values[$k] = $this->quote($v, $value);
+			if (($value["type"] == "text") && !empty($value['arrayofkeyval']) && is_array($value['arrayofkeyval'])) {
+				// Clean values for text with selectbox
+				$v = preg_replace('/\s/', ',', $v);
+				$v = preg_replace('/,+/', ',', $v);
+			}
 			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			$tmp[] = $k.'='.$this->quote($v, $this->fields[$k]);
 		}
@@ -10711,15 +10724,15 @@ abstract class CommonObject
 	}
 
 	/**
-	 *	Set to a signed status
+	 * Set signed status & call trigger with context message
 	 *
-	 *	@param	User	$user			Object user that modify
-	 *  @param	int		$status			New status to set (often a constant like self::STATUS_XXX)
-	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *  @param  string  $triggercode    Trigger code to use
-	 *	@return	int						Return integer <0 if KO, >0 if OK
+	 * @param	User	$user			Object user that modify
+	 * @param	int		$status			New signed status to set (often a constant like self::STATUS_XXX)
+	 * @param	int		$notrigger		1 = Does not execute triggers, 0 = Execute triggers
+	 * @param	string	$triggercode	Trigger code to use
+	 * @return	int						0 < if KO, > 0 if OK
 	 */
-	public function setSignedStatusCommon($user, $status, $notrigger = 0, $triggercode = '')
+	public function setSignedStatusCommon(User $user, int $status, int $notrigger = 0, string $triggercode = '')
 	{
 		$error = 0;
 
@@ -10745,7 +10758,7 @@ abstract class CommonObject
 			}
 
 			if (!$error) {
-				$this->status = $status;
+				$this->signed_status = $status;
 				$this->db->commit();
 				return 1;
 			} else {

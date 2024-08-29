@@ -172,7 +172,7 @@ $formfile = new FormFile($db);
 $title = $langs->trans("WebsiteAccount");
 $help_url = '';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-website page-card_websiteaccount');
 
 // prepare output js
 $out_js = '';

@@ -90,7 +90,7 @@ class Target extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => "Id"),
@@ -223,6 +223,7 @@ class Target extends CommonObject
 			'recruitment'       => 'recruitmentjobposition',
 		);
 		// Define the array $arrayofkeyval for $this->fields["trigger_codes"]
+		// @phan-suppress-next-line PhanTypeMismatchProperty
 		if (!empty($this->fields["trigger_codes"]['arrayofkeyval']) && is_array($this->fields["trigger_codes"]['arrayofkeyval']) && !empty($this->fields["trigger_codes"]["multiinput"])) {
 			$sql = "SELECT c.code, c.label, c.elementtype FROM ".MAIN_DB_PREFIX."c_action_trigger as c ORDER BY c.rang ASC";
 			$resql = $this->db->query($sql);
@@ -470,9 +471,6 @@ class Target extends CommonObject
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
-		// Clean trigger_codes
-		$this->trigger_codes = preg_replace('/[\r\n\s]/', '', $this->trigger_codes);
-
 		return $this->updateCommon($user, $notrigger);
 	}
 
@@ -549,7 +547,7 @@ class Target extends CommonObject
 			if (!empty($this->fields['date_validation'])) {
 				$sql .= ", date_validation = '".$this->db->idate($now)."'";
 			}
-			if (!empty($this->fields['fk_user_valid'])) {
+			if (!empty($this->fields['fk_user_valid'])) { // @phan-suppress-current-line PhanTypeMismatchProperty
 				$sql .= ", fk_user_valid = ".((int) $user->id);
 			}
 			$sql .= " WHERE rowid = ".((int) $this->id);

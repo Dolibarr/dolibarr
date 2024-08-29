@@ -46,6 +46,10 @@ $socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
+
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('consumptionthirdparty', 'globalcard'));
+
 $result = restrictedArea($user, 'societe', $socid, '&societe');
 $object = new Societe($db);
 if ($socid > 0) {
@@ -89,11 +93,6 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 // Customer or supplier selected in drop box
 $thirdTypeSelect = GETPOST("third_select_id", 'aZ09');
 $type_element = GETPOST('type_element') ? GETPOST('type_element') : '';
-
-
-// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-$hookmanager->initHooks(array('consumptionthirdparty', 'globalcard'));
-
 
 /*
  * Actions

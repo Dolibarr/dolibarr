@@ -145,9 +145,11 @@ if (($sortfield == 'b.datev' || $sortfield == 'b.datev,b.dateo,b.rowid')) {
 $hookmanager->initHooks(array('banktransactionlist', $contextpage));
 $extrafields = new ExtraFields($db);
 
+$extrafieldsobjectkey = 'bank';	// Used by extrafields_..._tpl.php
+
 // fetch optionals attributes and labels
-$extrafields->fetch_name_optionals_label('banktransaction');
-$search_array_options = $extrafields->getOptionalsFromPost('banktransaction', '', 'search_');
+$extrafields->fetch_name_optionals_label($extrafieldsobjectkey);
+$search_array_options = $extrafields->getOptionalsFromPost($extrafieldsobjectkey, '', 'search_');
 
 $arrayfields = array(
 	'b.rowid' => array('label' => $langs->trans("Ref"), 'checked' => 1,'position' => 10),
@@ -1191,6 +1193,8 @@ if ($resql) {
 		print $form->selectyesno('search_conciliated', $search_conciliated, 1, false, 1, 1, 'search_status onrightofpage width75');
 		print '</td>';
 	}
+	// Extra fields
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 	// Action edit/delete and select
 	print '<td class="nowraponall center"></td>';
 
@@ -1370,8 +1374,8 @@ if ($resql) {
 						}
 					}
 				}
-				// Extra fields
-				$element = 'banktransaction';
+				// Extra
+				$element = $extrafieldsobjectkey;
 				if (!empty($extrafields->attributes[$element]['label']) && is_array($extrafields->attributes[$element]['label']) && count($extrafields->attributes[$element]['label'])) {
 					foreach ($extrafields->attributes[$element]['label'] as $key => $val) {
 						if (!empty($arrayfields["ef.".$key]['checked'])) {
@@ -1858,8 +1862,20 @@ if ($resql) {
 			}
 		}
 
+		if (!empty($arrayfields['b.fk_bordereau']['checked'])) {
+			$bordereaustatic->fetch($objp->fk_bordereau);
+			print '<td class="nowraponall center">';
+			print $bordereaustatic->getNomUrl();
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// Extra fields
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
-		$parameters = array('arrayfields' => $arrayfields, 'obj' => $objp, 'i' => $i, 'totalarray' => &$totalarray);
+		$parameters = array('arrayfields' => $arrayfields, 'object'=>$object, 'obj' => $objp, 'i' => $i, 'totalarray' => &$totalarray);
 		$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action);    // Note that $action and $objecttmpect may have been modified by hook
 		print $hookmanager->resPrint;
 

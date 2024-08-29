@@ -67,12 +67,13 @@ $socid = GETPOSTINT("socid");
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'banque', '', '', '');
-
-$object = new PaymentVarious($db);
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('variouscard', 'globalcard'));
+
+$result = restrictedArea($user, 'banque', '', '', '');
+
+$object = new PaymentVarious($db);
 
 $permissiontoadd = $user->hasRight('banque', 'modifier');
 
