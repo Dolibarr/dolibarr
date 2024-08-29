@@ -80,7 +80,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 	if (!empty($tmparray['id'])) {
 		if ($tmparray['code'] == 'FR' && $tmparray['id'] != $mysoc->country_id) {
 			// For FR, default value of option to show profid SIREN is on by default
-			$res = dolibarr_set_const($db, "MAIN_PROFID1_IN_ADDRESS", '1', 'chaine', 0, '', $conf->entity);
+			$res = dolibarr_set_const($db, "MAIN_PROFID1_IN_ADDRESS", 1, 'chaine', 0, '', $conf->entity);
 		}
 
 		$mysoc->country_id   = $tmparray['id'];
@@ -240,7 +240,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 
 	if (GETPOST("optionlocaltax1") == "localtax1on") {
 		if (!GETPOSTISSET('lt1')) {
-			dolibarr_set_const($db, "MAIN_INFO_VALUE_LOCALTAX1", '0', 'chaine', 0, '', $conf->entity);
+			dolibarr_set_const($db, "MAIN_INFO_VALUE_LOCALTAX1", 0, 'chaine', 0, '', $conf->entity);
 		} else {
 			dolibarr_set_const($db, "MAIN_INFO_VALUE_LOCALTAX1", GETPOST('lt1', 'aZ09'), 'chaine', 0, '', $conf->entity);
 		}
@@ -248,7 +248,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 	}
 	if (GETPOST("optionlocaltax2") == "localtax2on") {
 		if (!GETPOSTISSET('lt2')) {
-			dolibarr_set_const($db, "MAIN_INFO_VALUE_LOCALTAX2", '0', 'chaine', 0, '', $conf->entity);
+			dolibarr_set_const($db, "MAIN_INFO_VALUE_LOCALTAX2", 0, 'chaine', 0, '', $conf->entity);
 		} else {
 			dolibarr_set_const($db, "MAIN_INFO_VALUE_LOCALTAX2", GETPOST('lt2', 'aZ09'), 'chaine', 0, '', $conf->entity);
 		}
