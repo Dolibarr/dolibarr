@@ -2516,7 +2516,6 @@ while ($i < $imaxinloop) {
 
 		// Total margin
 		if (!empty($arrayfields['total_margin']['checked'])) {
-
 			print '<td class="right nowrap">'.price($marginInfo['total_margin']).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
