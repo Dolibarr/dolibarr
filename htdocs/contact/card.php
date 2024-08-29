@@ -144,7 +144,7 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
-	// Creation utilisateur depuis contact
+	// Create user from contact
 	if ($action == 'confirm_create_user' && $confirm == 'yes' && $user->hasRight('user', 'user', 'creer')) {
 		// Recuperation contact actuel
 		$result = $object->fetch($id);
@@ -207,7 +207,7 @@ if (empty($reshook)) {
 			$object->canvas = $canvas;
 		}
 
-		$object->entity = (GETPOSTISSET('entity') ? GETPOSTINT('entity') : $conf->entity);
+		$object->entity = ((GETPOSTISSET('entity') && GETPOST('entity') != '') ? GETPOSTINT('entity') : $conf->entity);
 		$object->socid = $socid;
 		$object->lastname = (string) GETPOST("lastname", 'alpha');
 		$object->firstname = (string) GETPOST("firstname", 'alpha');

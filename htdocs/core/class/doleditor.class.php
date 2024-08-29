@@ -251,7 +251,7 @@ class DolEditor
 										        }
 												*/
 										},
-									disableNativeSpellChecker: '.(!getDolGlobalString('CKEDITOR_NATIVE_SPELLCHECKER') ? 'true' : 'false');
+									disableNativeSpellChecker: '.(getDolGlobalString('CKEDITOR_NATIVE_SPELLCHECKER') ? 'false' : 'true');
 
 				if ($this->uselocalbrowser) {
 					$out .= ','."\n";
