@@ -31,7 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 
 /**
- *  Put here description of your class
+ *  Class to manage VAT - Value-added tax
+ *  (also known in French as TVA - Taxe sur la valeur ajoutée)
  */
 class Tva extends CommonObject
 {
@@ -51,14 +52,30 @@ class Tva extends CommonObject
 	public $picto = 'payment';
 
 	/**
+	 * @var float
 	 * @deprecated
 	 * @see $amount
 	 */
 	public $total;
 
+	/**
+	 * @var int Payment date
+	 */
 	public $datep;
+
+	/**
+	 * @var int Validation date
+	 */
 	public $datev;
+
+	/**
+	 * @var float|string VAT amount
+	 */
 	public $amount;
+
+	/**
+	 * @var int Payment type ID
+	 */
 	public $type_payment;
 
 	/**
@@ -146,7 +163,7 @@ class Tva extends CommonObject
 		$now = dol_now();
 
 		// Clean parameters
-		$this->amount = trim($this->amount);
+		$this->amount = (float) price2num($this->amount);
 		$this->label = trim($this->label);
 		$this->type_payment = (int) $this->type_payment;
 		$this->note = trim($this->note);
@@ -226,7 +243,7 @@ class Tva extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		$this->amount = trim($this->amount);
+		$this->amount = (float) price2num($this->amount);
 		$this->label = trim($this->label);
 		$this->note = trim($this->note);
 		$this->fk_user_creat = (int) $this->fk_user_creat;
@@ -421,9 +438,9 @@ class Tva extends CommonObject
 		$this->id = 0;
 
 		$this->tms = dol_now();
-		$this->datep = '';
-		$this->datev = '';
-		$this->amount = '';
+		$this->datep = dol_now();
+		$this->datev = dol_now();
+		$this->amount = 100.0;
 		$this->label = '';
 		$this->note = '';
 		$this->fk_bank = 0;
@@ -570,7 +587,7 @@ class Tva extends CommonObject
 		$this->db->begin();
 
 		// Clean parameters
-		$this->amount = price2num(trim($this->amount));
+		$this->amount = (float) price2num($this->amount);
 		$this->label = trim($this->label);
 		$this->note = trim($this->note);
 		$this->num_payment = trim($this->num_payment);
@@ -917,9 +934,9 @@ class Tva extends CommonObject
 	/**
 	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{

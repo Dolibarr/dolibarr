@@ -14,6 +14,7 @@ ConfirmDeleteAction=Er du sikker på at du vil slette denne hendelsen?
 CardAction=Handlingskort
 ActionOnCompany=Relatert firma
 ActionOnContact=Relatert kontakt
+ActionOnUser=Relatert bruker
 TaskRDVWith=Møte med %s
 ShowTask=Vis oppgave
 ShowAction=Vis handling

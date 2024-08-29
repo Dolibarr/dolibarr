@@ -14,6 +14,7 @@ ConfirmDeleteAction=Êtes-vous sûr de vouloir effacer cet événement ?
 CardAction=Fiche événement
 ActionOnCompany=Tiers concerné
 ActionOnContact=Contact concerné
+ActionOnUser=Utilisateur concerné
 TaskRDVWith=Rendez-vous avec %s
 ShowTask=Afficher tâche
 ShowAction=Afficher événement

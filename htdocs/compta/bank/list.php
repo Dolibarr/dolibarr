@@ -801,6 +801,8 @@ foreach ($accounts as $key => $type) {
 			foreach ($objecttmp->array_options as $k => $v) {
 				$obj->$k = $v;
 			}
+		} else {
+			$obj = null;
 		}
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook

@@ -243,7 +243,7 @@ if (!empty($supplier->id)) {
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
+llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-fourn-product page-list');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
