@@ -609,76 +609,76 @@ if ($object->id > 0) {
 	print '</tr>';
 
 
-	//	-------------------------------------------------------------
-	//	MODIFICATIONS START
-	//	-------------------------------------------------------------
-
-	print '<tr><td>';
-	print '<table class="nobordernopadding centpercent"><tr><td>';
-	print $langs->trans('CustomerIBAN');
-	print '</td>';
-	if ($action != 'editmode' && $object->status == $object::STATUS_DRAFT && $user->hasRight('facture', 'creer')) {
-		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editrib&token='.newToken().'&id='.$object->id.'&type='.urlencode($type).'">'.img_edit($langs->trans('SetRib'), 1).'</a></td>';
-	}
-	print '</tr></table>';
-	print '</td><td colspan="3">';
-
+//	//	-------------------------------------------------------------
+//	//	MODIFICATIONS START
+//	//	-------------------------------------------------------------
+//
+//	print '<tr><td>';
+//	print '<table class="nobordernopadding centpercent"><tr><td>';
+//	print $langs->trans('CustomerIBAN');
+//	print '</td>';
+//	if ($action != 'editmode' && $object->status == $object::STATUS_DRAFT && $user->hasRight('facture', 'creer')) {
+//		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editrib&token='.newToken().'&id='.$object->id.'&type='.urlencode($type).'">'.img_edit($langs->trans('SetRib'), 1).'</a></td>';
+//	}
+//	print '</tr></table>';
+//	print '</td><td colspan="3">';
+//
 //	$bac = new CompanyBankAccount($db);
-	$ribList = $object->thirdparty->get_all_rib();
-	$ribForSelection = [];
-	$default_rib = '';
-	foreach($ribList as $rib) {
-		$ribString = $rib->iban . (($rib->iban && $rib->bic) ? ' / ' : '') . $rib->bic;
-
-		$ribForSelection[] = $ribString;
-		if($rib->default_rib == 1){
-			$default_rib = $ribString;
-		}
-	}
-
-	if ($action == 'editrib') {
-		$form->form_iban($_SERVER['PHP_SELF'].'?id='.$object->id, $default_rib, 'ribList', $filtertype, 1, 0, $type, 0, $ribForSelection);
-	} else {
-		$form->form_iban($_SERVER['PHP_SELF'].'?id='.$object->id, $default_rib, 'none');
-	}
-	if (!empty($rib->iban)) {
-		if ($rib->verif() <= 0) {
-			print img_warning('Error on default bank number for IBAN : '.$langs->trans($rib->error));
-		}
-	} else {
-		if ($numopen || ($type != 'bank-transfer' && $object->mode_reglement_code == 'PRE') || ($type == 'bank-transfer' && $object->mode_reglement_code == 'VIR')) {
-			print img_warning($langs->trans("NoDefaultIBANFound"));
-		}
-	}
-	print '</td></tr>';
-
-	//	-------------------------------------------------------------
-	//	MODIFICATIONS END
-	//	-------------------------------------------------------------
-
-	// IBAN of seller or supplier
-	$title = 'CustomerIBAN';
-	if ($type == 'bank-transfer') {
-		$title = 'SupplierIBAN';
-	}
-	print '<tr><td>'.$langs->trans($title).'</td><td colspan="3">';
-
-	$bac = new CompanyBankAccount($db);
-	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-	$bac->fetch(0, '', $object->thirdparty->id);
-
-	print $bac->iban.(($bac->iban && $bac->bic) ? ' / ' : '').$bac->bic;
-	if (!empty($bac->iban)) {
-		if ($bac->verif() <= 0) {
-			print img_warning('Error on default bank number for IBAN : '.$langs->trans($bac->error));
-		}
-	} else {
-		if ($numopen || ($type != 'bank-transfer' && $object->mode_reglement_code == 'PRE') || ($type == 'bank-transfer' && $object->mode_reglement_code == 'VIR')) {
-			print img_warning($langs->trans("NoDefaultIBANFound"));
-		}
-	}
-
-	print '</td></tr>';
+//	$ribList = $object->thirdparty->get_all_rib();
+//	$ribForSelection = [];
+//	$default_rib = '';
+//	foreach($ribList as $rib) {
+//		$ribString = $rib->iban . (($rib->iban && $rib->bic) ? ' / ' : '') . $rib->bic;
+//
+//		$ribForSelection[] = $ribString;
+//		if($rib->default_rib == 1){
+//			$default_rib = $ribString;
+//		}
+//	}
+//
+//	if ($action == 'editrib') {
+//		$form->form_iban($_SERVER['PHP_SELF'].'?id='.$object->id, $_POST['ribList'] ?? $default_rib, 'ribList', $filtertype, 1, 0, $type, 0, $ribForSelection);
+//	} else {
+//		$form->form_iban($_SERVER['PHP_SELF'].'?id='.$object->id, $_POST['ribList'] ?? $default_rib, 'none');
+//	}
+//	if (!empty($rib->iban)) {
+//		if ($rib->verif() <= 0) {
+//			print img_warning('Error on default bank number for IBAN : '.$langs->trans($rib->error));
+//		}
+//	} else {
+//		if ($numopen || ($type != 'bank-transfer' && $object->mode_reglement_code == 'PRE') || ($type == 'bank-transfer' && $object->mode_reglement_code == 'VIR')) {
+//			print img_warning($langs->trans("NoDefaultIBANFound"));
+//		}
+//	}
+//	print '</td></tr>';
+//
+//	//	-------------------------------------------------------------
+//	//	MODIFICATIONS END
+//	//	-------------------------------------------------------------
+//
+//	// IBAN of seller or supplier
+//	$title = 'CustomerIBAN';
+//	if ($type == 'bank-transfer') {
+//		$title = 'SupplierIBAN';
+//	}
+//	print '<tr><td>'.$langs->trans($title).'</td><td colspan="3">';
+//
+//	$bac = new CompanyBankAccount($db);
+//	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
+//	$bac->fetch(0, '', $object->thirdparty->id);
+//
+//	print $bac->iban.(($bac->iban && $bac->bic) ? ' / ' : '').$bac->bic;
+//	if (!empty($bac->iban)) {
+//		if ($bac->verif() <= 0) {
+//			print img_warning('Error on default bank number for IBAN : '.$langs->trans($bac->error));
+//		}
+//	} else {
+//		if ($numopen || ($type != 'bank-transfer' && $object->mode_reglement_code == 'PRE') || ($type == 'bank-transfer' && $object->mode_reglement_code == 'VIR')) {
+//			print img_warning($langs->trans("NoDefaultIBANFound"));
+//		}
+//	}
+//
+//	print '</td></tr>';
 
 	print '</table>';
 
@@ -809,11 +809,71 @@ if ($object->id > 0) {
 			if ($user_perms) {
 				$remaintopaylesspendingdebit = $resteapayer - $pending;
 
+				// ------------------- ADDED
+				print '<div class="fichecenter">';
+				print '<div class="underbanner clearboth"></div>';
+
+				print '<table class="border centpercent tableforfield">';
+				// ------------------- ADDED
+
 				print '<form method="POST" action="">';
 				print '<input type="hidden" name="token" value="'.newToken().'" />';
 				print '<input type="hidden" name="id" value="'.$object->id.'" />';
 				print '<input type="hidden" name="type" value="'.$type.'" />';
 				print '<input type="hidden" name="action" value="new" />';
+
+				//	-------------------------------------------------------------
+				//	MODIFICATIONS START
+				//	-------------------------------------------------------------
+
+				print '<tr><td>';
+				print '<table class="nobordernopadding centpercent"><tr><td>';
+
+				$idHtmlIban = "ribList";
+				print '<label for="'.$idHtmlIban.'">'. $langs->trans('CustomerIBAN').' : </label>';
+				print '</td>';
+
+				if ($action != 'editmode' && $object->status == $object::STATUS_DRAFT && $user->hasRight('facture', 'creer')) {
+					print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editrib&token='.newToken().'&id='.$object->id.'&type='.urlencode($type).'">'.img_edit($langs->trans('SetRib'), 1).'</a></td>';
+				}
+
+				print '</tr></table>';
+				print '</td><td colspan="3">';
+
+				$ribList = $object->thirdparty->get_all_rib();
+				$ribForSelection = [];
+				$default_rib = '';
+				foreach($ribList as $rib) {
+					$ribString = $rib->iban . (($rib->iban && $rib->bic) ? ' / ' : '') . $rib->bic;
+
+					$ribForSelection[] = $ribString;
+					if($rib->default_rib == 1){
+						$default_rib = $ribString;
+					}
+				}
+
+				if ($action == 'editrib') {
+					$form->form_iban($_SERVER['PHP_SELF'].'?id='.$object->id, $_POST['ribList'] ?? $default_rib, 'ribList', $filtertype, 1, 0, $type, 0, $ribForSelection);
+				} else {
+					$form->form_iban($_SERVER['PHP_SELF'].'?id='.$object->id, $_POST['ribList'] ?? $default_rib, 'none');
+				}
+
+				if (!empty($rib->iban)) {
+					if ($rib->verif() <= 0) {
+						print img_warning('Error on default bank number for IBAN : '.$langs->trans($rib->error));
+					}
+				} else {
+					if ($numopen || ($type != 'bank-transfer' && $object->mode_reglement_code == 'PRE') || ($type == 'bank-transfer' && $object->mode_reglement_code == 'VIR')) {
+						print img_warning($langs->trans("NoDefaultIBANFound"));
+					}
+				}
+
+				print '</td></tr>';
+
+				//	-------------------------------------------------------------
+				//	MODIFICATIONS END
+				//	-------------------------------------------------------------
+
 				print '<label for="withdraw_request_amount">'.$langs->trans('BankTransferAmount').' </label>';
 				print '<input type="text" id="withdraw_request_amount" name="withdraw_request_amount" value="'.$remaintopaylesspendingdebit.'" size="9" />';
 				print '<input type="submit" class="butAction" value="'.$buttonlabel.'" />';
@@ -835,6 +895,13 @@ if ($object->id > 0) {
 					print '<input type="submit" class="butAction" value="'.$buttonlabel.'" />';
 					print '</form>';
 				}
+
+				// ------------------- ADDED
+				print '</table>';
+				print '</div>';
+
+				// ------------------- ADDED
+
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$buttonlabel.'</a>';
 			}
