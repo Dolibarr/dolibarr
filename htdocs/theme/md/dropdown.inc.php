@@ -585,6 +585,21 @@ dropdown-holder {
 }
 
 
+/** dropdown arrow used to clearly identify parent button of dropdown*/
+.dropdown-holder.open .dropdown-content::before {
+	--triangleBorderSize : 5px;
+	position: absolute;
+	content: "";
+	top: calc(var(--triangleBorderSize) * -1);
+	right: 12px;
+	width: 0px;
+	height: 0px;
+	border-style: solid;
+	border-width: 0 var(--triangleBorderSize) var(--triangleBorderSize) var(--triangleBorderSize);
+	border-color: transparent transparent #ffff transparent;
+	transform: rotate(0deg);
+}
+
 /* smartphone */
 @media only screen and (max-width: 767px)
 {
