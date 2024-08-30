@@ -945,7 +945,7 @@ if (empty($reshook)) {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("ActionAvailableOnVariantProductOnly").'">'.$langs->trans("TransferStock").'</a>';
 			}
 		} else {
-			print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("CorrectStock").'</a>';
+			print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("TransferStock").'</a>';
 		}
 
 		if ($user->hasRight('stock', 'mouvement', 'creer')) {

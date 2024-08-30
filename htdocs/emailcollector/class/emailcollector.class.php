@@ -2583,14 +2583,15 @@ class EmailCollector extends CommonObject
 
 									$operationslog .= '<br>We try to search existing thirdparty with '.$idtouseforthirdparty.' '.$emailtouseforthirdparty.' '.$nametouseforthirdparty.' '.$namealiastouseforthirdparty;
 
-									$result = $thirdpartystatic->fetch($idtouseforthirdparty, $nametouseforthirdparty, '', '', '', '', '', '', '', '', $emailtouseforthirdparty, $namealiastouseforthirdparty);
-									// TODO Replace with fetchBySimilarityRules()
+									// Try to find the thirdparty that match the most the information we have
+									$result = $thirdpartystatic->findNearest($idtouseforthirdparty, $nametouseforthirdparty, '', '', '', '', '', '', '', '', $emailtouseforthirdparty, $namealiastouseforthirdparty);
+
 									if ($result < 0) {
 										$errorforactions++;
 										$this->error = 'Error when getting thirdparty with name '.$nametouseforthirdparty.' (may be 2 record exists with same name ?)';
 										$this->errors[] = $this->error;
 										break;
-									} elseif ($result == 0) {
+									} elseif ($result == 0) {	// No thirdparty found
 										if ($operation['type'] == 'loadthirdparty') {
 											dol_syslog("Third party with id=".$idtouseforthirdparty." email=".$emailtouseforthirdparty." name=".$nametouseforthirdparty." name_alias=".$namealiastouseforthirdparty." was not found");
 
@@ -2653,6 +2654,8 @@ class EmailCollector extends CommonObject
 										}
 									} else {
 										dol_syslog("One and only one existing third party has been found");
+
+										$thirdpartystatic->fetch($result);
 
 										$operationslog .= '<br>Thirdparty already exists with id = '.dol_escape_htmltag($thirdpartystatic->id);
 									}
