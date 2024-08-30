@@ -145,8 +145,8 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 
 .butAction:hover, .dropdown-holder.open > .butAction   {
 	/** TODO use css var with hsl from --colortextlink to allow create darken or lighten color */
-	-webkit-box-shadow: 5px 5px 0px rgba(0,0,0,0.1), inset 0px 0px 200px rgba(0,0,0,0.3); /* fix hover feedback : use "inset" background to easily darken background */
-	box-shadow: 5px 5px 0px rgba(0,0,0,0.1), inset 0px 0px 200px rgba(0,0,0,0.3); /* fix hover feedback : use "inset" background to easily darken background */
+	-webkit-box-shadow: 0px 0px 6px rgba(50,50,50,0.4), inset 0px 0px 200px rgba(0,0,0,0.3); /* fix hover feedback : use "inset" background to easily darken background */
+	box-shadow: 0px 0px 6px rgba(50,50,50,0.4), inset 0px 0px 200px rgba(0,0,0,0.3); /* fix hover feedback : use "inset" background to easily darken background */
 }
 .butActionNew:hover   {
 	text-decoration: underline;
