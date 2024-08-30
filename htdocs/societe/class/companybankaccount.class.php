@@ -544,6 +544,7 @@ class CompanyBankAccount extends Account
 			return -1;
 		}
 	}
+
 	/**
 	 *  Delete a rib from database
 	 *
