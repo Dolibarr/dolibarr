@@ -95,16 +95,6 @@ class ContratLigne extends CommonObjectLine
 	public $statut;
 
 	/**
-	 * @var string
-	 */
-	public $labelStatus;
-
-	/**
-	 * @var string
-	 */
-	public $labelStatusShort;
-
-	/**
 	 * @var int 0 for product, 1 for service
 	 */
 	public $type;
@@ -391,6 +381,9 @@ class ContratLigne extends CommonObjectLine
 		} elseif ($status == self::STATUS_CLOSED) {
 			$labelStatus = $langs->transnoentities("ServiceStatusClosed");
 			$labelStatusShort = $langs->transnoentities("ServiceStatusClosed");
+		} else {
+			$labelStatus = '';
+			$labelStatusShort = '';
 		}
 
 		$statusType = 'status'.$status;
