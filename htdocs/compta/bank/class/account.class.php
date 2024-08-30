@@ -277,6 +277,11 @@ class Account extends CommonObject
 	 */
 	public $ics_transfer;
 
+	/**
+	 * @var string The previous ref in case of rename on update to rename attachment folders
+	 */
+	public $oldref;
+
 
 
 	/**
@@ -917,6 +922,28 @@ class Account extends CommonObject
 				$result = $this->insertExtraFields();
 				if ($result < 0) {
 					$error++;
+				}
+			}
+
+			if (!$error && !empty($this->oldref) && $this->oldref !== $this->ref) {
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'bank/".$this->db->escape($this->ref)."'";
+				$sql .= " WHERE filepath = 'bank/".$this->db->escape($this->oldref)."' and src_object_type='bank_account' and entity = ".((int) $conf->entity);
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++;
+					$this->error = $this->db->lasterror();
+				}
+
+				// We rename directory in order not to lose the attachments
+				$oldref = dol_sanitizeFileName($this->oldref);
+				$newref = dol_sanitizeFileName($this->ref);
+				$dirsource = $conf->bank->dir_output.'/'.$oldref;
+				$dirdest = $conf->bank->dir_output.'/'.$newref;
+				if (file_exists($dirsource)) {
+					dol_syslog(get_class($this)."::update rename dir ".$dirsource." into ".$dirdest, LOG_DEBUG);
+					if (@rename($dirsource, $dirdest)) {
+						dol_syslog("Rename ok", LOG_DEBUG);
+					}
 				}
 			}
 

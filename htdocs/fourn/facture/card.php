@@ -1669,14 +1669,6 @@ if (empty($reshook)) {
 
 				$ref_supplier = $productsupplier->ref_supplier;
 
-				$tva_tx = get_default_tva($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice', 'alpha'));
-				$tva_npr = get_default_npr($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice', 'alpha'));
-				if (empty($tva_tx)) {
-					$tva_npr = 0;
-				}
-				$localtax1_tx = get_localtax($tva_tx, 1, $mysoc, $object->thirdparty, $tva_npr);
-				$localtax2_tx = get_localtax($tva_tx, 2, $mysoc, $object->thirdparty, $tva_npr);
-
 				if (empty($pu)) {
 					$pu = 0; // If pu is '' or null, we force to have a numeric value
 				}
