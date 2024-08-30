@@ -2004,13 +2004,18 @@ if ($placeid > 0) {
 								$stock_real = price2num($obj->reel, 'MS');
 							}
 							$htmlforlines .= $line->qty;
+							$htmlforlines .= '&nbsp; ';
+							$htmlforlines .= '<span class="opacitylow" title="'.$langs->trans("Stock").' '.price($stock_real, 1, '', 1, 0).'">';
+							$htmlforlines .= '(';
 							if ($line->qty && $line->qty > $stock_real) {
 								$htmlforlines .= '<span style="color: var(--amountremaintopaycolor)">';
 							}
-							$htmlforlines .= ' <span class="posstocktoolow">('.$langs->trans("Stock").' '.$stock_real.')</span>';
+							$htmlforlines .= img_picto('', 'stock', 'class="pictofixedwidth"').price($stock_real, 1, '', 1, 0);
 							if ($line->qty && $line->qty > $stock_real) {
 								$htmlforlines .= "</span>";
 							}
+							$htmlforlines .= ')';
+							$htmlforlines .= '</span>';
 						} else {
 							dol_print_error($db);
 						}
