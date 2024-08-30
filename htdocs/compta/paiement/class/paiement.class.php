@@ -1212,7 +1212,8 @@ class Paiement extends CommonObject
 			}
 
 			$obj = new $classname();
-			$numref = "";
+			'@phan-var-force ModeleNumRefPayments $obj';
+
 			$numref = $obj->getNextValue($soc, $this);
 
 			/**

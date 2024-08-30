@@ -173,7 +173,9 @@ class Categorie extends CommonObject
 		'project' => 'ProjectsCategoriesArea',
 		'warehouse' => 'StocksCategoriesArea',
 		'actioncomm' => 'ActioncommCategoriesArea',
-		'website_page' => 'WebsitePageCategoriesArea'
+		'website_page' => 'WebsitePageCategoriesArea',
+		'ticket' => 'TicketCategoriesArea',
+		'knowledgemanagement' => 'KnowledgemanagementCategoriesArea'
 	);
 
 	/**

@@ -452,7 +452,6 @@ class modStock extends DolibarrModules
 		$this->export_sql_end[$r] .= ' AND e.entity IN ('.getEntity('stock').')';
 
 
-
 		// Imports
 		//--------
 

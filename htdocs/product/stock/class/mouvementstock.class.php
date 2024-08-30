@@ -556,7 +556,7 @@ class MouvementStock extends CommonObject
 					if ($price > 0 || (getDolGlobalString('STOCK_UPDATE_AWP_EVEN_WHEN_ENTRY_PRICE_IS_NULL') && $price == 0 && in_array($this->origin_type, array('order_supplier', 'invoice_supplier')))) {
 						$oldqtytouse = ($oldqty >= 0 ? $oldqty : 0);
 						// We make a test on oldpmp>0 to avoid to use normal rule on old data with no pmp field defined
-						if ($oldpmp > 0) {
+						if ($oldpmp > 0 && ($oldqtytouse + $qty) != 0) {
 							$newpmp = price2num((($oldqtytouse * $oldpmp) + ($qty * $price)) / ($oldqtytouse + $qty), 'MU');
 						} else {
 							$newpmp = $price; // For this product, PMP was not yet set. We set it to input price.

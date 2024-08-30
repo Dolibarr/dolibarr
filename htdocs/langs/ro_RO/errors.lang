@@ -303,8 +303,8 @@ ErrorThirpdartyOrMemberidIsMandatory=Terțul sau Membrul unui parteneriat este o
 ErrorFailedToWriteInTempDirectory=Eșec la scrierea în directorul temp
 ErrorQuantityIsLimitedTo=Cantitatea este limitată la  %s
 ErrorFailedToLoadThirdParty=Eșec la căutarea/găsirea terțului din id=%s, email=%s, nume=%s
-ErrorThisPaymentModeIsNotDirectDebit=The payment mode is not direct debit
-ErrorThisPaymentModeIsNotCreditTransfer=The payment mode is not credit transfer
+ErrorThisPaymentModeIsNotDirectDebit=Modul de plată nu este debit direct
+ErrorThisPaymentModeIsNotCreditTransfer=Modul de plată nu este transfer de credit
 ErrorStripeCustomerNotFoundCreateFirst=Clientul Stripe nu este setat pentru acest terț (sau setat la o valoare ștearsă pe partea de cont Stripe). Crează-l (sau reatașează-l) mai întâi.
 ErrorCharPlusNotSupportedByImapForSearch=Căutarea IMAP nu poate găsi în expeditor sau destinatar un șir care conține caracterul +
 ErrorTableNotFound=Tabelul <b>%s</b> nu a fost găsit
@@ -422,3 +422,4 @@ OperNotDefined=Metoda de plată nedefinită
 ErrorThisContactXIsAlreadyDefinedAsThisType=%s este deja definit ca și contact pentru acest tip.
 ErrorThisGroupIsAlreadyDefinedAsThisType=Persoanele de contact cu acest grup sunt deja definite ca persoane de contact pentru acest tip.
 EmptyMessageNotAllowedError=Mesajul gol nu este permis
+ErrorIsNotInError=%s nu este cu eroare
