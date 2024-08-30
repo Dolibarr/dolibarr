@@ -5,6 +5,7 @@
  * Copyright (C) 2017		Rui Strecht			<rui.strecht@aliartalentos.com>
  * Copyright (C) 2020       Open-Dsi         	<support@open-dsi.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -388,7 +389,7 @@ class FormCompany extends Form
 	public function select_state_ajax($parent_field_id = 'country_id', $selected = 0, $country_codeid = 0, $htmlname = 'state_id', $morecss = 'maxwidth200onsmartphone  minwidth300')
 	{
 		$html = '<script>';
-		$html.='$("select[name=\"'.$parent_field_id.'\"]").change(function(){
+		$html .= '$("select[name=\"'.$parent_field_id.'\"]").change(function(){
 				$.ajax( "'.dol_buildpath('/core/ajax/ziptown.php', 2).'", { data:{ selected: $("select[name=\"'.$htmlname.'\"]").val(), country_codeid: $(this).val(), htmlname:"'.$htmlname.'", morecss:"'.$morecss.'" } } )
 				.done(function(msg) {
 					$("span#target_'.$htmlname.'").html(msg);
@@ -399,10 +400,11 @@ class FormCompany extends Form
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *   Retourne la liste deroulante des regions actives don't le pays est actif
-	 *   La cle de la liste est le code (il peut y avoir plusieurs entree pour
+	 *   Provides the dropdown of the active regions including the actif country.
+	 *   The key of the list is the code (there may be more than one entry for a
+	 *   code but in that case the fields country and language are different).
 	 *   un code donnee mais dans ce cas, le champ pays et lang differe).
-	 *   Ainsi les liens avec les regions se font sur une region independemment de son name.
+	 *   This way the links with the regions are made independent of its name.
 	 *
 	 *   @param		string		$selected		Preselected value
 	 *   @param		string		$htmlname		Name of HTML select field
@@ -855,14 +857,15 @@ class FormCompany extends Form
 	/**
 	 * showContactRoles on view and edit mode
 	 *
-	 * @param 	string 		$htmlname 	Html component name and id
-	 * @param 	Contact 	$contact 	Contact Object
-	 * @param 	string 		$rendermode view, edit
-	 * @param 	array		$selected 	$key=>$val $val is selected Roles for input mode
-	 * @param	string		$morecss	More css
-	 * @return 	string   				String with contacts roles
+	 * @param 	string 		$htmlname 		Html component name and id
+	 * @param 	Contact 	$contact 		Contact Object
+	 * @param 	string 		$rendermode 	view, edit
+	 * @param 	array		$selected 		$key=>$val $val is selected Roles for input mode
+	 * @param	string		$morecss		More css
+	 * @param	string		$placeholder	Placeholder text (used when $rendermode is 'edit')
+	 * @return 	string   					String with contacts roles
 	 */
-	public function showRoles($htmlname, Contact $contact, $rendermode = 'view', $selected = array(), $morecss = 'minwidth500')
+	public function showRoles($htmlname, Contact $contact, $rendermode = 'view', $selected = array(), $morecss = 'minwidth500', $placeholder = '')
 	{
 		if ($rendermode === 'view') {
 			$toprint = array();
@@ -872,7 +875,7 @@ class FormCompany extends Form
 			return '<div class="select2-container-multi-dolibarr" style="width: 90%;" id="' . $htmlname . '"><ul class="select2-choices-dolibarr">' . implode(' ', $toprint) . '</ul></div>';
 		}
 
-		if ($rendermode === 'edit') {
+		if ($rendermode === 'edit') {	// A multiselect combo list
 			$contactType = $contact->listeTypeContacts('external', '', 1, '', '', 'agenda'); // We exclude agenda as there is no contact on such element
 			if (count($selected) > 0) {
 				$newselected = array();
@@ -887,7 +890,7 @@ class FormCompany extends Form
 					$selected = $newselected;
 				}
 			}
-			return $this->multiselectarray($htmlname, $contactType, $selected, 0, 0, $morecss, 0, '90%');
+			return $this->multiselectarray($htmlname, $contactType, $selected, 0, 0, $morecss, 0, '90%', '', '', $placeholder);
 		}
 
 		return 'ErrorBadValueForParameterRenderMode'; // Should not happened
@@ -899,7 +902,7 @@ class FormCompany extends Form
 	 *
 	 *    @param	string		$selected				Preselected value
 	 *    @param    string		$htmlname				HTML select name
-	 *    @param    array		$fields					Array with key of fields to refresh after selection
+	 *    @param    string[]	$fields					Array with key of fields to refresh after selection
 	 *    @param    int			$fieldsize				Field size
 	 *    @param    int			$disableautocomplete    1 To disable ajax autocomplete features (browser autocomplete may still occurs)
 	 *    @param	string		$moreattrib				Add more attribute on HTML input field

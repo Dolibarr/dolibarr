@@ -285,7 +285,7 @@ class EcmFiles extends CommonObject
 				$this->errors[] = 'Error '.$this->db->lasterror();
 				return --$error;
 			}
-			$maxposition = $maxposition + 1;
+			$maxposition += 1;
 		} else {
 			$maxposition = $this->position;
 		}

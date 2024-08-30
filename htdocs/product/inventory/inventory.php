@@ -59,6 +59,7 @@ $lineid = GETPOSTINT('lineid');
 $batch = GETPOST('batch', 'alphanohtml');
 $totalExpectedValuation = 0;
 $totalRealValuation = 0;
+$hookmanager->initHooks(array('inventorycard')); // Note that conf->hooks_modules contains array
 if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$result = restrictedArea($user, 'stock', $id);
 } else {
@@ -69,7 +70,7 @@ if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 $object = new Inventory($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->stock->dir_output.'/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('inventorycard')); // Note that conf->hooks_modules contains array
+
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -968,7 +969,12 @@ if ($object->status == $object::STATUS_DRAFT || $object->status == $object::STAT
 	print $formproduct->selectWarehouses((GETPOSTISSET('fk_warehouse') ? GETPOSTINT('fk_warehouse') : $object->fk_warehouse), 'fk_warehouse', 'warehouseopen', 1, 0, 0, '', 0, 0, array(), 'maxwidth300');
 	print '</td>';
 	print '<td>';
-	print $form->select_produits((GETPOSTISSET('fk_product') ? GETPOSTINT('fk_product') : $object->fk_product), 'fk_product', '', 0, 0, -1, 2, '', 0, null, 0, '1', 0, 'maxwidth300');
+	if (getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
+		$filtertype = '';
+	} else {
+		$filtertype = 0;
+	}
+	print $form->select_produits((GETPOSTISSET('fk_product') ? GETPOSTINT('fk_product') : $object->fk_product), 'fk_product', $filtertype, 0, 0, -1, 2, '', 0, null, 0, '1', 0, 'maxwidth300');
 	print '</td>';
 	if (isModEnabled('productbatch')) {
 		print '<td>';

@@ -661,7 +661,7 @@ if ($action == 'confirm_generateinvoice') {
 
 					// Update lineid into line of timespent
 					$sql = 'UPDATE '.MAIN_DB_PREFIX.'element_time SET invoice_line_id = '.((int) $lineid).', invoice_id = '.((int) $tmpinvoice->id);
-					$sql .= ' WHERE rowid IN ('.$db->sanitize(implode(',', $toselect)).') AND fk_user = '.((int) $userid);
+					$sql .= ' WHERE rowid = '.((int) $timespent_id).' AND fk_user = '.((int) $userid);
 					$result = $db->query($sql);
 					if (!$result) {
 						$error++;
@@ -733,9 +733,9 @@ if ($action == 'confirm_generateinvoice') {
 							$pu_ht_for_task = $pu_htline;
 							// If we want to reuse the value of timespent (so use same price than cost price)
 							if (getDolGlobalString('PROJECT_TIME_SPENT_INTO_INVOICE_USE_VALUE')) {
-								$pu_ht_for_task = price2num($timespent_data['totalvaluetodivideby3600'] / $timespent_data['timespent'], 'MU') * $prodDurationHours;
+								$pu_ht_for_task = (float) price2num($timespent_data['totalvaluetodivideby3600'] / $timespent_data['timespent'], 'MU') * $prodDurationHours;
 							}
-							$pa_ht = price2num($timespent_data['totalvaluetodivideby3600'] / $timespent_data['timespent'], 'MU') * $prodDurationHours;
+							$pa_ht = (float) price2num($timespent_data['totalvaluetodivideby3600'] / $timespent_data['timespent'], 'MU') * $prodDurationHours;
 						} else {
 							// If not product used, we use the hour unit for duration and unit price.
 							$pu_ht_for_task = 0;
@@ -2445,7 +2445,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 							}
 							$invoiced = true;
 						} else {
-							if ( intval($task_time->billable) == 1) {
+							if (intval($task_time->billable) == 1) {
 								print $langs->trans("No");
 							} else {
 								print $langs->trans("Disabled");
@@ -2502,8 +2502,8 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 							}
 							print '&nbsp;';
 							// Disable select if task not billable or already invoiced
-							$disabled = (intval($task_time->billable) !=1 || $invoiced);
-							$ctrl = '<input '.($disabled?'disabled':'').' id="cb' . $task_time->rowid . '" class="flat checkforselect marginleftonly" type="checkbox" name="toselect[]" value="' . $task_time->rowid . '"' . ($selected ? ' checked="checked"' : '') . '>';
+							$disabled = (intval($task_time->billable) != 1 || $invoiced);
+							$ctrl = '<input '.($disabled ? 'disabled' : '').' id="cb' . $task_time->rowid . '" class="flat checkforselect marginleftonly" type="checkbox" name="toselect[]" value="' . $task_time->rowid . '"' . ($selected ? ' checked="checked"' : '') . '>';
 							if ($disabled) {
 								// If disabled, a dbl-click very close outside the control
 								// will re-enable it, so that user is not blocked if needed.

@@ -6,6 +6,7 @@
  * Copyright (C) 2011-2014  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -200,11 +201,9 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 		$sql .= " OR (tva.datev IS NULL AND tva.datev between '" . $db->idate(dol_get_first_day($year)) . "' AND '" . $db->idate(dol_get_last_day($year)) . "')";
 		$sql .= ")";
 	}
-	if (preg_match('/^cs\./', $sortfield)
-		|| preg_match('/^tva\./', $sortfield)
-		|| preg_match('/^ptva\./', $sortfield)
-		|| preg_match('/^pct\./', $sortfield)
-		|| preg_match('/^bank\./', $sortfield)) {
+	if ($sortfield !== null
+		&& preg_match('/^(cs|tva|ptva|pct|bank)\./', $sortfield)
+	) {
 		$sql .= $db->order($sortfield, $sortorder);
 	}
 
@@ -285,8 +284,8 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 			print '</span></td>';
 			print '</tr>';
 
-			$total = $total + $obj->total;
-			$totalpaid = $totalpaid + $obj->totalpaid;
+			$total += $obj->total;
+			$totalpaid += $obj->totalpaid;
 			$i++;
 		}
 

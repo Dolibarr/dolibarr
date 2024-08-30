@@ -83,6 +83,7 @@ $version = GETPOST('version', 'alpha');
 $family = GETPOST('family', 'alpha');
 $picto = GETPOST('idpicto', 'alpha');
 $idmodule = GETPOST('idmodule', 'alpha');
+$format = '';  // Prevent undefined in css tab
 
 // Security check
 if (!isModEnabled('modulebuilder')) {
@@ -216,12 +217,31 @@ foreach ($dirsrootforscan as $tmpdirread) {
 }
 
 
+/**
+ * Produce copyright replacement string for user
+ *
+ * @param	User		$user	User to produce the copyright notice for.
+ * @param	Translate	$langs	Translation object to use.
+ * @param	int			$now	Date for which the copyright will be generated.
+ *
+ * @return	string	String to be used as replacement after Copyright (C)
+ */
+function getLicenceHeader($user, $langs, $now)
+{
+	$licInfo = $user->getFullName($langs);
+	$emailTabs = str_repeat("\t", (int) (max(0, (31 - mb_strlen($licInfo)) / 4)));
+	$licInfo .= ($user->email ? $emailTabs.'<'.$user->email.'>' : '');
+	$licInfo = dol_print_date($now, '%Y')."\t\t".$licInfo;
+	return $licInfo;
+}
+
 /*
  * Actions
  */
 
 if ($dirins && $action == 'initmodule' && $modulename) {
 	$modulename = ucfirst($modulename); // Force first letter in uppercase
+	$destdir = '/not_set/';
 
 	if (preg_match('/[^a-z0-9_]/i', $modulename)) {
 		$error++;
@@ -336,6 +356,8 @@ if ($dirins && $action == 'initmodule' && $modulename) {
 	// Edit PHP files
 	if (!$error) {
 		$listofphpfilestoedit = dol_dir_list($destdir, 'files', 1, '\.(php|MD|js|sql|txt|xml|lang)$', '', 'fullname', SORT_ASC, 0, 1);
+
+		$licInfo = getLicenceHeader($user, $langs, $now);
 		foreach ($listofphpfilestoedit as $phpfileval) {
 			//var_dump($phpfileval['fullname']);
 			$arrayreplacement = array(
@@ -347,7 +369,8 @@ if ($dirins && $action == 'initmodule' && $modulename) {
 				'Mon module' => $modulename,
 				'mon module' => $modulename,
 				'htdocs/modulebuilder/template' => strtolower($modulename),
-				'---Put here your own copyright and developer email---' => dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : ''),
+				'---Put here your own copyright and developer email---' => $licInfo,
+				'---Replace with your own copyright and developer email---' => $licInfo,
 				'Editor name' => $editorname,
 				'https://www.example.com' => $editorurl,
 				'$this->version = \'1.0\'' => '$this->version = \''.$version.'\'',
@@ -357,7 +380,7 @@ if ($dirins && $action == 'initmodule' && $modulename) {
 			);
 
 			if (getDolGlobalString('MODULEBUILDER_SPECIFIC_AUTHOR')) {
-				$arrayreplacement['---Put here your own copyright and developer email---'] = dol_print_date($now, '%Y').' ' . getDolGlobalString('MODULEBUILDER_SPECIFIC_AUTHOR');
+				$arrayreplacement['---Replace with your own copyright and developer email---'] = dol_print_date($now, '%Y')."\t\t" . getDolGlobalString('MODULEBUILDER_SPECIFIC_AUTHOR');
 			}
 
 			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
@@ -394,6 +417,9 @@ if ($dirins && $action == 'initmodule' && $modulename) {
 	}
 }
 
+$destdir = '/not_set/';  // Initialize (for static analysis)
+$destfile = '/not_set/';  // Initialize (for static analysis)
+$srcfile = '/not_set/';  // Initialize (for static analysis)
 
 // init API, PHPUnit
 if ($dirins && in_array($action, array('initapi', 'initphpunit', 'initpagecontact', 'initpagedocument', 'initpagenote', 'initpageagenda')) && !empty($module)) {
@@ -466,7 +492,8 @@ if ($dirins && in_array($action, array('initapi', 'initphpunit', 'initpagecontac
 			'myobject' => strtolower($objectname),
 			'MyObject' => $objectname,
 			'MYOBJECT' => strtoupper($objectname),
-			'---Put here your own copyright and developer email---' => dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : '')
+
+			'---Replace with your own copyright and developer email---' => getLicenceHeader($user, $langs, $now)
 		);
 
 		if ($action == 'initapi') {
@@ -527,7 +554,7 @@ if ($dirins && $action == 'initsqlextrafields' && !empty($module)) {
 			'MyObject' => $objectname,
 			'my object' => strtolower($objectname),
 			'myobject' => strtolower($objectname),
-			'---Put here your own copyright and developer email---' => dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : '')
+			'---Replace with your own copyright and developer email---' => getLicenceHeader($user, $langs, $now)
 		);
 
 		dolReplaceInFile($destfile1, $arrayreplacement);
@@ -572,7 +599,7 @@ if ($dirins && $action == 'inithook' && !empty($module)) {
 			'Mon module' => $modulename,
 			'mon module' => $modulename,
 			'htdocs/modulebuilder/template' => strtolower($modulename),
-			'---Put here your own copyright and developer email---' => dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : '')
+			'---Replace with your own copyright and developer email---' => getLicenceHeader($user, $langs, $now)
 		);
 
 		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
@@ -607,7 +634,7 @@ if ($dirins && $action == 'inittrigger' && !empty($module)) {
 			'Mon module' => $modulename,
 			'mon module' => $modulename,
 			'htdocs/modulebuilder/template' => strtolower($modulename),
-			'---Put here your own copyright and developer email---' => dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : '')
+			'---Replace with your own copyright and developer email---' => getLicenceHeader($user, $langs, $now)
 		);
 
 		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
@@ -642,7 +669,7 @@ if ($dirins && $action == 'initwidget' && !empty($module)) {
 			'Mon module' => $modulename,
 			'mon module' => $modulename,
 			'htdocs/modulebuilder/template' => strtolower($modulename),
-			'---Put here your own copyright and developer email---' => dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : '')
+			'---Replace with your own copyright and developer email---' => getLicenceHeader($user, $langs, $now)
 		);
 
 		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
@@ -677,7 +704,7 @@ if ($dirins && $action == 'initemailing' && !empty($module)) {
 			'Mon module' => $modulename,
 			'mon module' => $modulename,
 			'htdocs/modulebuilder/template' => strtolower($modulename),
-			'---Put here your own copyright and developer email---' => dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : '')
+			'---Replace with your own copyright and developer email---' => getLicenceHeader($user, $langs, $now)
 		);
 
 		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
@@ -712,7 +739,7 @@ if ($dirins && $action == 'initcss' && !empty($module)) {
 			'Mon module' => $modulename,
 			'mon module' => $modulename,
 			'htdocs/modulebuilder/template' => strtolower($modulename),
-			'---Put here your own copyright and developer email---' => dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : ''),
+			'---Replace with your own copyright and developer email---' => getLicenceHeader($user, $langs, $now)
 		);
 
 		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
@@ -752,7 +779,7 @@ if ($dirins && $action == 'initjs' && !empty($module)) {
 			'Mon module' => $modulename,
 			'mon module' => $modulename,
 			'htdocs/modulebuilder/template' => strtolower($modulename),
-			'---Put here your own copyright and developer email---' => dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : '')
+			'---Replace with your own copyright and developer email---' => getLicenceHeader($user, $langs, $now)
 		);
 
 		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
@@ -797,7 +824,7 @@ if ($dirins && $action == 'initcli' && !empty($module)) {
 			'__USER_FULLNAME__' => $user->getFullName($langs),
 			'__USER_EMAIL__' => $user->email,
 			'__YYYY-MM-DD__' => dol_print_date($now, 'dayrfc'),
-			'---Put here your own copyright and developer email---' => dol_print_date($now, 'dayrfc').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : '')
+			'---Replace with your own copyright and developer email---' => getLicenceHeader($user, $langs, $now)
 		);
 
 		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
@@ -808,6 +835,8 @@ if ($dirins && $action == 'initcli' && !empty($module)) {
 	}
 }
 
+
+$moduledescriptorfile = '/not_set/';
 
 // init Doc
 if ($dirins && $action == 'initdoc' && !empty($module)) {
@@ -838,7 +867,7 @@ if ($dirins && $action == 'initdoc' && !empty($module)) {
 			'__USER_FULLNAME__' => $user->getFullName($langs),
 			'__USER_EMAIL__' => $user->email,
 			'__YYYY-MM-DD__' => dol_print_date($now, 'dayrfc'),
-			'---Put here your own copyright and developer email---' => dol_print_date($now, 'dayrfc').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : '')
+			'---Replace with your own copyright and developer email---' => getLicenceHeader($user, $langs, $now)
 		);
 
 		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
@@ -1075,6 +1104,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 	}
 
 	// If we must reuse an existing table for properties, define $stringforproperties
+	// Generate class file from the table
 	$stringforproperties = '';
 	$tablename = GETPOST('initfromtablename', 'alpha');
 	if ($tablename) {
@@ -1097,14 +1127,14 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 			 *  'alwayseditable' says if field can be modified also when status is not draft ('1' or '0')
 			 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 			 *  'index' if we want an index in database.
-			 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
+			 *  'foreignkey' => 'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 			 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
 			 *  'isameasure' must be set to 1 or 2 if field can be used for measure. Field type must be summable like integer or double(24,8). Use 1 in most cases, or 2 if you don't want to see the column total into list (for example for percentage)
-			 *  'css' and 'cssview' and 'csslist' is the CSS style to use on field. 'css' is used in creation and update. 'cssview' is used in view mode. 'csslist' is used for columns in lists. For example: 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'cssview'=>'wordbreak', 'csslist'=>'tdoverflowmax200'
+			 *  'css' and 'cssview' and 'csslist' is the CSS style to use on field. 'css' is used in creation and update. 'cssview' is used in view mode. 'csslist' is used for columns in lists. For example: 'css' => 'minwidth300 maxwidth500 widthcentpercentminusx', 'cssview' => 'wordbreak', 'csslist' => 'tdoverflowmax200'
 			 *  'help' is a 'TranslationString' to use to show a tooltip on field. You can also use 'TranslationString:keyfortooltiponlick' for a tooltip on click.
 			 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
 			 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code.
-			 *  'arrayofkeyval' to set a list of values if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel"). Note that type can be 'integer' or 'varchar'
+			 *  'arrayofkeyval' to set a list of values if type is a list of predefined values. For example: array("0" => "Draft","1" => "Active","-1" => "Cancel"). Note that type can be 'integer' or 'varchar'
 			 *  'autofocusoncreate' to have field having the focus on a create form. Only 1 field should have this property set to 1.
 			 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
 			 *	'validate' is 1 if need to validate with $this->validateField()
@@ -1112,27 +1142,27 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 			 */
 
 			/*public $fields=array(
-			 'rowid'          =>array('type'=>'integer',        'label'=>'TechnicalID',      'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'index'=>1, 'position'=>1, 'comment'=>'Id'),
-			 'ref'            =>array('type'=>'varchar(128)',   'label'=>'Ref',              'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
-			 'entity'         =>array('type'=>'integer',        'label'=>'Entity',           'enabled'=>1, 'visible'=>0,  'default'=>1, 'notnull'=>1,  'index'=>1, 'position'=>20),
-			 'label'          =>array('type'=>'varchar(255)',   'label'=>'Label',            'enabled'=>1, 'visible'=>1,  'position'=>30,  'searchall'=>1, 'css'=>'minwidth200', 'help'=>'Help text', 'alwayseditable'=>'1'),
-			 'amount'         =>array('type'=>'double(24,8)',   'label'=>'Amount',           'enabled'=>1, 'visible'=>1,  'default'=>'null', 'position'=>40,  'searchall'=>0, 'isameasure'=>1, 'help'=>'Help text'),
-			 'fk_soc'         =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'visible'=>1, 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'searchall'=>1, 'help'=>'LinkToThirdparty'),
-			 'description'    =>array('type'=>'text',			'label'=>'Descrption',		 'enabled'=>1, 'visible'=>0,  'position'=>60),
-			 'note_public'    =>array('type'=>'html',			'label'=>'NotePublic',		 'enabled'=>1, 'visible'=>0,  'position'=>61),
-			 'note_private'   =>array('type'=>'html',			'label'=>'NotePrivate',		 'enabled'=>1, 'visible'=>0,  'position'=>62),
-			 'date_creation'  =>array('type'=>'datetime',       'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>500),
-			 'tms'            =>array('type'=>'timestamp',      'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>501),
-			 //'date_valid'     =>array('type'=>'datetime',       'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'position'=>502),
-			 'fk_user_creat'  =>array('type'=>'integer',        'label'=>'UserAuthor',       'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>510),
-			 'fk_user_modif'  =>array('type'=>'integer',        'label'=>'UserModif',        'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>511),
-			 //'fk_user_valid'  =>array('type'=>'integer',        'label'=>'UserValidation',   'enabled'=>1, 'visible'=>-1, 'position'=>512),
-			 'import_key'     =>array('type'=>'varchar(14)',    'label'=>'ImportId',         'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'index'=>0,  'position'=>1000),
-			 'status'         =>array('type'=>'integer',        'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'default'=>0, 'index'=>1,  'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Active', -1=>'Cancel')),
+			 'rowid' => array('type' => 'integer',        'label' => 'TechnicalID',      'enabled' => 1, 'visible' => -2, 'notnull' => 1,  'index' => 1, 'position' => 1, 'comment' => 'Id'),
+			 'ref' => array('type' => 'varchar(128)',   'label' => 'Ref',              'enabled' => 1, 'visible' => 1,  'notnull' => 1,  'showoncombobox' => 1, 'index' => 1, 'position' => 10, 'searchall' => 1, 'comment' => 'Reference of object'),
+			 'entity' => array('type' => 'integer',        'label' => 'Entity',           'enabled' => 1, 'visible' => 0,  'default' => 1, 'notnull' => 1,  'index' => 1, 'position' => 20),
+			 'label' => array('type' => 'varchar(255)',   'label' => 'Label',            'enabled' => 1, 'visible' => 1,  'position' => 30,  'searchall' => 1, 'css' => 'minwidth200', 'help' => 'Help text', 'alwayseditable' => '1'),
+			 'amount' => array('type' => 'double(24,8)',   'label' => 'Amount',           'enabled' => 1, 'visible' => 1,  'default' => 'null', 'position' => 40,  'searchall' => 0, 'isameasure' => 1, 'help' => 'Help text'),
+			 'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'visible' => 1, 'enabled' => 1, 'position' => 50, 'notnull' => -1, 'index' => 1, 'searchall' => 1, 'help' => 'LinkToThirdparty'),
+			 'description' => array('type' => 'text',			'label' => 'Descrption',		 'enabled' => 1, 'visible' => 0,  'position' => 60),
+			 'note_public' => array('type' => 'html',			'label' => 'NotePublic',		 'enabled' => 1, 'visible' => 0,  'position' => 61),
+			 'note_private' => array('type' => 'html',			'label' => 'NotePrivate',		 'enabled' => 1, 'visible' => 0,  'position' => 62),
+			 'date_creation' => array('type' => 'datetime',       'label' => 'DateCreation',     'enabled' => 1, 'visible' => -2, 'notnull' => 1,  'position' => 500),
+			 'tms' => array('type' => 'timestamp',      'label' => 'DateModification', 'enabled' => 1, 'visible' => -2, 'notnull' => 1,  'position' => 501),
+			 //'date_valid' => array('type' => 'datetime',       'label' => 'DateCreation',     'enabled' => 1, 'visible' => -2, 'position' => 502),
+			 'fk_user_creat' => array('type' => 'integer',        'label' => 'UserAuthor',       'enabled' => 1, 'visible' => -2, 'notnull' => 1,  'position' => 510),
+			 'fk_user_modif' => array('type' => 'integer',        'label' => 'UserModif',        'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'position' => 511),
+			 //'fk_user_valid' => array('type' => 'integer',        'label' => 'UserValidation',   'enabled' => 1, 'visible' => -1, 'position' => 512),
+			 'import_key' => array('type' => 'varchar(14)',    'label' => 'ImportId',         'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'index' => 0,  'position' => 1000),
+			 'status' => array('type' => 'integer', 'label' => 'Status',           'enabled' => 1, 'visible' => 1,  'notnull' => 1,  'default' => 0, 'index' => 1,  'position' => 1000, 'arrayofkeyval' => array(0 => 'Draft', 1 => 'Active', -1 => 'Cancel')),
 			 );*/
 
 			$stringforproperties = '// BEGIN MODULEBUILDER PROPERTIES'."\n";
-			$stringforproperties .= 'public $fields=array('."\n";
+			$stringforproperties .= 'public $fields = array('."\n";
 			$i = 10;
 			while ($obj = $db->fetch_object($_results)) {
 				// fieldname
@@ -1209,6 +1239,12 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 				}
 				// visible
 				$visible = -1;
+				if (in_array($fieldname, array('ref', 'label'))) {
+					$visible = 1;
+				}
+				if ($fieldname == 'entity') {
+					$visible = -2;
+				}
 				if ($fieldname == 'entity') {
 					$visible = -2;
 				}
@@ -1242,6 +1278,8 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 				// $alwayseditable
 				if ($fieldname == 'label') {
 					$alwayseditable = 1;
+				} else {
+					$alwayseditable = 0;
 				}
 				// index
 				$index = 0;
@@ -1276,36 +1314,36 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 				}
 
 				// Build the property string
-				$stringforproperties .= "'".$obj->Field."'=>array('type'=>'".$type."', 'label'=>'".$label."',";
+				$stringforproperties .= "'".$obj->Field."' => array('type' => '".$type."', 'label' => '".$label."',";
 				if ($default != '') {
-					$stringforproperties .= " 'default'=>".$default.",";
+					$stringforproperties .= " 'default' => ".$default.",";
 				}
-				$stringforproperties .= " 'enabled'=>".$enabled.",";
-				$stringforproperties .= " 'visible'=>".$visible;
+				$stringforproperties .= " 'enabled' => ".$enabled.",";
+				$stringforproperties .= " 'visible' => ".$visible;
 				if ($notnull) {
-					$stringforproperties .= ", 'notnull'=>".$notnull;
+					$stringforproperties .= ", 'notnull' => ".$notnull;
 				}
 				if ($alwayseditable) {
-					$stringforproperties .= ", 'alwayseditable'=>1";
+					$stringforproperties .= ", 'alwayseditable' => 1";
 				}
 				if ($fieldname == 'ref' || $fieldname == 'code') {
-					$stringforproperties .= ", 'showoncombobox'=>1";
+					$stringforproperties .= ", 'showoncombobox' => 1";
 				}
-				$stringforproperties .= ", 'position'=>".$position;
+				$stringforproperties .= ", 'position' => ".$position;
 				if ($index) {
-					$stringforproperties .= ", 'index'=>".$index;
+					$stringforproperties .= ", 'index' => ".$index;
 				}
 				if ($picto) {
-					$stringforproperties .= ", 'picto'=>'".$picto."'";
+					$stringforproperties .= ", 'picto' => '".$picto."'";
 				}
 				if ($css) {
-					$stringforproperties .= ", 'css'=>'".$css."'";
+					$stringforproperties .= ", 'css' => '".$css."'";
 				}
 				if ($cssview) {
-					$stringforproperties .= ", 'cssview'=>'".$cssview."'";
+					$stringforproperties .= ", 'cssview' => '".$cssview."'";
 				}
 				if ($csslist) {
-					$stringforproperties .= ", 'csslist'=>'".$csslist."'";
+					$stringforproperties .= ", 'csslist' => '".$csslist."'";
 				}
 				$stringforproperties .= "),\n";
 				$i += 5;
@@ -1315,6 +1353,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 		}
 	}
 
+	$filetogenerate = array();  // For static analysis
 	if (!$error) {
 		// Copy some files
 		$filetogenerate = array(
@@ -1326,14 +1365,14 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 			'myobject_list.php' => strtolower($objectname).'_list.php',
 			'admin/myobject_extrafields.php' => 'admin/'.strtolower($objectname).'_extrafields.php',
 			'lib/mymodule_myobject.lib.php' => 'lib/'.strtolower($module).'_'.strtolower($objectname).'.lib.php',
-			//'test/phpunit/MyObjectTest.php'=>'test/phpunit/'.strtolower($objectname).'Test.php',
+			//'test/phpunit/MyObjectTest.php' => 'test/phpunit/'.strtolower($objectname).'Test.php',
 			'sql/llx_mymodule_myobject.sql' => 'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql',
 			'sql/llx_mymodule_myobject.key.sql' => 'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.key.sql',
 			'sql/llx_mymodule_myobject_extrafields.sql' => 'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'_extrafields.sql',
 			'sql/llx_mymodule_myobject_extrafields.key.sql' => 'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'_extrafields.key.sql',
-			//'scripts/mymodule.php'=>'scripts/'.strtolower($objectname).'.php',
+			//'scripts/mymodule.php' => 'scripts/'.strtolower($objectname).'.php',
 			'class/myobject.class.php' => 'class/'.strtolower($objectname).'.class.php',
-			//'class/api_mymodule.class.php'=>'class/api_'.strtolower($module).'.class.php',
+			//'class/api_mymodule.class.php' => 'class/api_'.strtolower($module).'.class.php',
 		);
 
 		if (GETPOST('includerefgeneration', 'aZ09')) {
@@ -1359,15 +1398,21 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 			$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
 			dol_include_once($pathtofile);
 			$class = 'mod'.$module;
+			$moduleobj = null;
 			if (class_exists($class)) {
 				try {
 					$moduleobj = new $class($db);
+					'@phan-var-force DolibarrModules $moduleobj';
 				} catch (Exception $e) {
 					$error++;
 					dol_print_error($db, $e->getMessage());
 				}
 			}
-			$rights = $moduleobj->rights;
+			if (is_object($moduleobj)) {
+				$rights = $moduleobj->rights;
+			} else {
+				$rights = [];
+			}
 			$moduledescriptorfile = $destdir.'/core/modules/mod'.$module.'.class.php';
 			$checkComment = checkExistComment($moduledescriptorfile, 1);
 			if ($checkComment < 0) {
@@ -1414,9 +1459,9 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 
 		// Edit the class 'class/'.strtolower($objectname).'.class.php'
 		if (GETPOST('includerefgeneration', 'aZ09')) {
-			// Replace 'visible'=>1,  'noteditable'=>0, 'default'=>''
+			// Replace 'visible' => 1, 'noteditable' => 0, 'default' => ''
 			$arrayreplacement = array(
-				'/\'visible\'=>1,\s*\'noteditable\'=>0,\s*\'default\'=>\'\'/' => "'visible'=>4, 'noteditable'=>1, 'default'=>'(PROV)'"
+				'/\'visible\'s*=>s*1,\s*\'noteditable\'s*=>s*0,\s*\'default\'s*=>s*\'\'/' => "'visible' => 4, 'noteditable' => 1, 'default' => '(PROV)'"
 			);
 			//var_dump($arrayreplacement);exit;
 			//var_dump($destdir.'/class/'.strtolower($objectname).'.class.php');exit;
@@ -1444,7 +1489,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 			dolReplaceInFile($destdir.'/core/modules/mod'.$module.'.class.php', $arrayreplacement, '', 0, 0, 1);
 		}
 
-		// TODO Update entries '$myTmpObjects['MyObject']=array('includerefgeneration'=>0, 'includedocgeneration'=>0);'
+		// TODO Update entries '$myTmpObjects['MyObject'] = array('includerefgeneration' => 0, 'includedocgeneration' => 0);'
 
 
 		// Scan for object class files
@@ -1470,51 +1515,51 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 
 			// Regenerate left menu entry in descriptor for $objectname
 			$stringtoadd = "
-		\$this->menu[\$r++]=array(
-			'fk_menu'=>'fk_mainmenu=mymodule',
-			'type'=>'left',
-			'titre'=>'MyObject',
+		\$this->menu[\$r++] = array(
+			'fk_menu' => 'fk_mainmenu=mymodule',
+			'type' => 'left',
+			'titre' => 'MyObject',
 			'prefix' => img_picto('', \$this->picto, 'class=\"paddingright pictofixedwidth valignmiddle\"'),
-			'mainmenu'=>'mymodule',
-			'leftmenu'=>'myobject',
-			'url'=>'/mymodule/myobject_list.php',
-			'langs'=>'mymodule@mymodule',
-			'position'=>1000+\$r,
-			'enabled'=>'isModEnabled(\"mymodule\")',
-			'perms'=>'".(GETPOST('generatepermissions') ? '$user->hasRight("mymodule", "myobject", "read")' : '1')."',
-			'target'=>'',
-			'user'=>2,
-			'object'=>'MyObject'
+			'mainmenu' => 'mymodule',
+			'leftmenu' => 'myobject',
+			'url' => '/mymodule/myobject_list.php',
+			'langs' => 'mymodule@mymodule',
+			'position' => 1000 + \$r,
+			'enabled' => 'isModEnabled(\"mymodule\")',
+			'perms' => '".(GETPOST('generatepermissions') ? '$user->hasRight("mymodule", "myobject", "read")' : '1')."',
+			'target' => '',
+			'user' => 2,
+			'object' => 'MyObject'
 		);
-		\$this->menu[\$r++]=array(
-			'fk_menu'=>'fk_mainmenu=mymodule,fk_leftmenu=myobject',
-			'type'=>'left',
-			'titre'=>'List MyObject',
-			'mainmenu'=>'mymodule',
-			'leftmenu'=>'mymodule_myobject_list',
-			'url'=>'/mymodule/myobject_list.php',
-			'langs'=>'mymodule@mymodule',
-			'position'=>1000+\$r,
-			'enabled'=>'isModEnabled(\"mymodule\")',
-			'perms'=>'".(GETPOST('generatepermissions') ? '$user->hasRight("mymodule", "myobject", "read")' : '1')."',
-			'target'=>'',
-			'user'=>2,
-			'object'=>'MyObject'
-        );
-		\$this->menu[\$r++]=array(
-			'fk_menu'=>'fk_mainmenu=mymodule,fk_leftmenu=myobject',
-			'type'=>'left',
-			'titre'=>'New MyObject',
-			'mainmenu'=>'mymodule',
-			'leftmenu'=>'mymodule_myobject_new',
-			'url'=>'/mymodule/myobject_card.php?action=create',
-			'langs'=>'mymodule@mymodule',
-			'position'=>1000+\$r,
-			'enabled'=>'isModEnabled(\"mymodule\")',
-			'perms'=>'".(GETPOST('generatepermissions') ? '$user->hasRight("mymodule", "myobject", "write")' : '1')."',
-			'target'=>'',
-			'user'=>2,
-			'object'=>'MyObject'
+		\$this->menu[\$r++] = array(
+			'fk_menu' => 'fk_mainmenu=mymodule,fk_leftmenu=myobject',
+			'type' => 'left',
+			'titre' => 'List MyObject',
+			'mainmenu' => 'mymodule',
+			'leftmenu' => 'mymodule_myobject_list',
+			'url' => '/mymodule/myobject_list.php',
+			'langs' => 'mymodule@mymodule',
+			'position' => 1000 + \$r,
+			'enabled' => 'isModEnabled(\"mymodule\")',
+			'perms' => '".(GETPOST('generatepermissions') ? '$user->hasRight("mymodule", "myobject", "read")' : '1')."',
+			'target' => '',
+			'user' => 2,
+			'object' => 'MyObject'
+		);
+		\$this->menu[\$r++] = array(
+			'fk_menu' => 'fk_mainmenu=mymodule,fk_leftmenu=myobject',
+			'type' => 'left',
+			'titre' => 'New MyObject',
+			'mainmenu' => 'mymodule',
+			'leftmenu' => 'mymodule_myobject_new',
+			'url' => '/mymodule/myobject_card.php?action=create',
+			'langs' => 'mymodule@mymodule',
+			'position' => 1000 + \$r,
+			'enabled' => 'isModEnabled(\"mymodule\")',
+			'perms' => '".(GETPOST('generatepermissions') ? '$user->hasRight("mymodule", "myobject", "write")' : '1')."',
+			'target' => '',
+			'user' => 2,
+			'object' => 'MyObject'
 		);";
 			$stringtoadd = preg_replace('/MyObject/', $objectname, $stringtoadd);
 			$stringtoadd = preg_replace('/mymodule/', strtolower($module), $stringtoadd);
@@ -1529,15 +1574,21 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 		$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
 		dol_include_once($pathtofile);
 		$class = 'mod'.$module;
+		$moduleobj = null;
 		if (class_exists($class)) {
 			try {
 				$moduleobj = new $class($db);
+				'@phan-var-force DolibarrModules $moduleobj';
 			} catch (Exception $e) {
 				$error++;
 				dol_print_error($db, $e->getMessage());
 			}
 		}
-		$menus = $moduleobj->menu;
+		if (is_object($moduleobj)) {
+			$menus = $moduleobj->menu;
+		} else {
+			$menus = array();
+		}
 		$counter = 0 ;
 		foreach ($menus as $menu) {
 			if ($menu['leftmenu'] == strtolower($objectname)) {
@@ -1575,12 +1626,12 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 				'htdocs/modulebuilder/template/' => strtolower($modulename),
 				'myobject' => strtolower($objectname),
 				'MyObject' => $objectname,
-				//'MYOBJECT'=>strtoupper($objectname),
-				'---Put here your own copyright and developer email---' => dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : '')
+				//'MYOBJECT' => strtoupper($objectname),
+				'---Replace with your own copyright and developer email---' => getLicenceHeader($user, $langs, $now)
 			);
 
 			if (getDolGlobalString('MODULEBUILDER_SPECIFIC_AUTHOR')) {
-				$arrayreplacement['---Put here your own copyright and developer email---'] = dol_print_date($now, '%Y').' ' . getDolGlobalString('MODULEBUILDER_SPECIFIC_AUTHOR');
+				$arrayreplacement['---Replace with your own copyright and developer email---'] = dol_print_date($now, '%Y').' ' . getDolGlobalString('MODULEBUILDER_SPECIFIC_AUTHOR');
 			}
 
 			$result = dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);
@@ -1663,6 +1714,7 @@ if ($dirins && $action == 'initdic' && $module && empty($cancel)) {
 		if (class_exists($class)) {
 			try {
 				$moduleobj = new $class($db);
+				'@phan-var-force DolibarrModules $moduleobj';
 			} catch (Exception $e) {
 				$error++;
 				dol_print_error($db, $e->getMessage());
@@ -1744,6 +1796,9 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 		$error++;
 		setEventMessages($langs->trans("ErrorObjectNotFound", $langs->transnoentities($objectname)), null, 'errors');
 	}
+
+	$addfieldentry = array();
+
 	// We click on add property
 	if (!GETPOST('regenerateclasssql') && !GETPOST('regeneratemissing')) {
 		if (!GETPOST('propname', 'aZ09')) {
@@ -1758,6 +1813,7 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Type")), null, 'errors');
 		}
+
 
 		if (!$error && !GETPOST('regenerateclasssql') && !GETPOST('regeneratemissing')) {
 			$addfieldentry = array(
@@ -1779,8 +1835,8 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 				'cssview' => GETPOST('propcssview', 'alpha'),
 				'csslist' => GETPOST('propcsslist', 'alpha'),
 				'default' => GETPOST('propdefault', 'restricthtml'),
-				'noteditable' => intval(GETPOSTINT('propnoteditable')),
-				//'alwayseditable'=>intval(GETPOST('propalwayseditable', 'int')),
+				'noteditable' => GETPOSTINT('propnoteditable'),
+				//'alwayseditable' => GETPOSTINT('propalwayseditable'),
 				'validate' => GETPOSTINT('propvalidate')
 			);
 
@@ -1794,8 +1850,6 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 				}
 			}
 		}
-	} else {
-		$addfieldentry = array();
 	}
 
 	/*if (GETPOST('regeneratemissing'))
@@ -1906,9 +1960,12 @@ if ($dirins && $action == 'confirm_deletemodule') {
 		dol_include_once($pathtofile);
 		$class = 'mod'.$module;
 
+		$moduleobj = null;
+
 		if (class_exists($class)) {
 			try {
 				$moduleobj = new $class($db);
+				'@phan-var-force DolibarrMOdules $moduleobj';
 			} catch (Exception $e) {
 				$error++;
 				dol_print_error($db, $e->getMessage());
@@ -1987,9 +2044,11 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname) {
 		$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
 		dol_include_once($pathtofile);
 		$class = 'mod'.$module;
+		$moduleobj =  null;
 		if (class_exists($class)) {
 			try {
 				$moduleobj = new $class($db);
+				'@phan-var-force DolibarrMOdules $moduleobj';
 			} catch (Exception $e) {
 				$error++;
 				dol_print_error($db, $e->getMessage());
@@ -2076,6 +2135,8 @@ if (($dirins && $action == 'confirm_deletedictionary' && $dicname) || ($dirins &
 		if (!preg_match('/^c_/', $newdicname)) {
 			$newdicname = 'c_'.strtolower($dicname);
 		}
+	} else {
+		$newdicname = null;
 	}
 
 	dol_include_once($pathtofile);
@@ -2084,6 +2145,7 @@ if (($dirins && $action == 'confirm_deletedictionary' && $dicname) || ($dirins &
 	if (class_exists($class)) {
 		try {
 			$moduleobj = new $class($db);
+			'@phan-var-force DolibarrModules $moduleobj';
 		} catch (Exception $e) {
 			$error++;
 			dol_print_error($db, $e->getMessage());
@@ -2103,12 +2165,16 @@ if (($dirins && $action == 'confirm_deletedictionary' && $dicname) || ($dirins &
 	}
 
 	if (!empty(GETPOST('dictionnarykey'))) {
-		$newdicname = $dicts['tabname'][GETPOST('dictionnarykey') - 1];
+		$newdicname = $dicts['tabname'][GETPOSTINT('dictionnarykey') - 1];
 	}
 
-	//chercher la table dicname
-	$checkTable = $db->DDLDescTable(MAIN_DB_PREFIX.strtolower($newdicname));
-	if ($checkTable && $db->num_rows($checkTable) <= 0) {
+	// Lookup the table dicname
+	$checkTable = false;
+	if ($newdicname !== null) {
+		$checkTable = $db->DDLDescTable(MAIN_DB_PREFIX.strtolower($newdicname));
+	}
+
+	if (is_bool($checkTable) || $db->num_rows($checkTable) <= 0) {	 // @phpstan-ignore-line
 		$error++;
 	}
 
@@ -2153,7 +2219,7 @@ if (($dirins && $action == 'confirm_deletedictionary' && $dicname) || ($dirins &
 	}
 }
 if ($dirins && $action == 'updatedictionary' && GETPOST('dictionnarykey')) {
-	$keydict = GETPOST('dictionnarykey') - 1 ;
+	$keydict = GETPOSTINT('dictionnarykey') - 1 ;
 
 	$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
 	$destdir = $dirins.'/'.strtolower($module);
@@ -2164,6 +2230,7 @@ if ($dirins && $action == 'updatedictionary' && GETPOST('dictionnarykey')) {
 	if (class_exists($class)) {
 		try {
 			$moduleobj = new $class($db);
+			'@phan-var-force DolibarrMOdules $moduleobj';
 		} catch (Exception $e) {
 			$error++;
 			dol_print_error($db, $e->getMessage());
@@ -2232,6 +2299,7 @@ if ($dirins && $action == 'generatepackage') {
 	if (class_exists($class)) {
 		try {
 			$moduleobj = new $class($db);
+			'@phan-var-force DolibarrMOdules $moduleobj';
 		} catch (Exception $e) {
 			$error++;
 			dol_print_error($db, $e->getMessage());
@@ -2281,9 +2349,11 @@ if ($dirins && $action == 'addright' && !empty($module) && empty($cancel)) {
 	$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
 	dol_include_once($pathtofile);
 	$class = 'mod'.$module;
+	$moduleobj = null;
 	if (class_exists($class)) {
 		try {
 			$moduleobj = new $class($db);
+			'@phan-var-force DolibarrModules $moduleobj';
 		} catch (Exception $e) {
 			$error++;
 			dol_print_error($db, $e->getMessage());
@@ -2308,7 +2378,11 @@ if ($dirins && $action == 'addright' && !empty($module) && empty($cancel)) {
 	//check existing object permission
 	$counter = 0;
 	$permsForObject = array();
-	$permissions = $moduleobj->rights;
+	if (is_object($moduleobj)) {
+		$permissions = $moduleobj->rights;
+	} else {
+		$permissions = array();
+	}
 	$allObject = array();
 
 	$countPerms = count($permissions);
@@ -2332,15 +2406,16 @@ if ($dirins && $action == 'addright' && !empty($module) && empty($cancel)) {
 		}
 	}
 
+	$rightToAdd = array();
 	if (!$error) {
 		$key = $countPerms + 1;
 		//prepare right to add
-		$rightToAdd = [
+		$rightToAdd = array(
 			0 => $id,
 			1 => $label,
 			4 => $objectForPerms,
 			5 => $crud
-		];
+		);
 
 		if (isModEnabled(strtolower($module))) {
 			$result = unActivateModule(strtolower($module));
@@ -2377,9 +2452,11 @@ if ($dirins && GETPOST('action') == 'update_right' && GETPOST('modifyright') && 
 	$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
 	dol_include_once($pathtofile);
 	$class = 'mod'.$module;
+	$moduleobj = null;
 	if (class_exists($class)) {
 		try {
 			$moduleobj = new $class($db);
+			'@phan-var-force DolibarrModules $moduleobj';
 		} catch (Exception $e) {
 			$error++;
 			dol_print_error($db, $e->getMessage());
@@ -2413,16 +2490,26 @@ if ($dirins && GETPOST('action') == 'update_right' && GETPOST('modifyright') && 
 		// $label = "Delete objects of $module";
 	}
 
-	$permissions = $moduleobj->rights;
-	$key = (int) GETPOST('counter') - 1;
+	if (is_object($moduleobj)) {
+		$permissions = $moduleobj->rights;
+	} else {
+		$permissions = [];
+	}
+	$key = GETPOSTINT('counter') - 1;
 	//get permission want to delete from permissions array
-	$x1 = $permissions[$key][1];
-	$x2 = $permissions[$key][4];
-	$x3 = $permissions[$key][5];
+	if (array_key_exists($key, $permissions)) {
+		$x1 = $permissions[$key][1];
+		$x2 = $permissions[$key][4];
+		$x3 = $permissions[$key][5];
+	} else {
+		$x1 = null;
+		$x2 = null;
+		$x3 = null;
+	}
 	//check existing object permission
 	$counter = 0;
 	$permsForObject = array();
-	$permissions = $moduleobj->rights;
+	// $permissions = $moduleobj->rights;  // Already fetched above
 	$firstRight = 0;
 	$existRight = 0;
 	$allObject = array();
@@ -2464,6 +2551,7 @@ if ($dirins && GETPOST('action') == 'update_right' && GETPOST('modifyright') && 
 		if ($rewrite < 0) {
 			setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Permissions"), "mod".$module."class.php"), null, 'warnings');
 		} else {
+			$rightUpdated = null;  // I not set at this point
 			reWriteAllPermissions($moduledescriptorfile, $permissions, $key, $rightUpdated, '', '', 2);
 			setEventMessages($langs->trans('PermissionUpdatedSuccesfuly'), null);
 			clearstatcache(true);
@@ -2482,9 +2570,11 @@ if ($dirins && $action == 'confirm_deleteright' && !empty($module) && GETPOSTINT
 	$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
 	dol_include_once($pathtofile);
 	$class = 'mod'.$module;
+	$moduleobj = null;
 	if (class_exists($class)) {
 		try {
 			$moduleobj = new $class($db);
+			'@phan-var-force DolibarrMOdules $moduleobj';
 		} catch (Exception $e) {
 			$error++;
 			dol_print_error($db, $e->getMessage());
@@ -2654,9 +2744,11 @@ if ($dirins && $action == 'confirm_deletemenu' && GETPOSTINT('menukey')) {
 	$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
 	dol_include_once($pathtofile);
 	$class = 'mod'.$module;
+	$moduleobj = null;
 	if (class_exists($class)) {
 		try {
 			$moduleobj = new $class($db);
+			'@phan-var-force DolibarrMOdules $moduleobj';
 		} catch (Exception $e) {
 			$error++;
 			dol_print_error($db, $e->getMessage());
@@ -2716,9 +2808,11 @@ if ($dirins && $action == 'addmenu' && empty($cancel)) {
 	$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
 	dol_include_once($pathtofile);
 	$class = 'mod'.$module;
+	$moduleobj = null;
 	if (class_exists($class)) {
 		try {
 			$moduleobj = new $class($db);
+			'@phan-var-force DolibarrMOdules $moduleobj';
 		} catch (Exception $e) {
 			$error++;
 			dol_print_error($db, $e->getMessage());
@@ -2872,9 +2966,11 @@ if ($dirins && $action == "update_menu" && GETPOSTINT('menukey') && GETPOST('tab
 		$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
 		dol_include_once($pathtofile);
 		$class = 'mod'.$module;
+		$moduleobj = null;
 		if (class_exists($class)) {
 			try {
 				$moduleobj = new $class($db);
+				'@phan-var-force DolibarrMOdules $moduleobj';
 			} catch (Exception $e) {
 				$error++;
 				dol_print_error($db, $e->getMessage());
@@ -2973,9 +3069,11 @@ if ($dirins && $action == "update_props_module" && !empty(GETPOST('keydescriptio
 	dol_include_once($pathtofile);
 
 	$class = 'mod'.$module;
+	$moduleobj = null;
 	if (class_exists($class)) {
 		try {
 			$moduleobj = new $class($db);
+			'@phan-var-force DolibarrMOdules $moduleobj';
 		} catch (Exception $e) {
 			$error++;
 			dol_print_error($db, $e->getMessage());
@@ -3133,9 +3231,11 @@ if (!empty($module) && $module != 'initmodule' && $module != 'deletemodule') {
 		$loadclasserrormessage .= 'Line: '.$e->getLine()."<br>\n";
 	}
 
+	$moduleobj = null;
 	if (class_exists($class)) {
 		try {
 			$moduleobj = new $class($db);
+			'@phan-var-force DolibarrMOdules $moduleobj';
 		} catch (Exception $e) {
 			$error++;
 			print $e->getMessage();
@@ -3222,7 +3322,7 @@ if (is_array($listofmodules) && count($listofmodules) > 0) {
 			$linktoenabledisable .= ' &nbsp; <a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1], 1).'?save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 8px"').'</a>';
 		}
 	} else {
-		if (!empty($moduleobj)) {
+		if (is_object($moduleobj)) {
 			$linktoenabledisable .= '<a class="reposition asetresetmodule valignmiddle" href="'.$_SERVER["PHP_SELF"].'?id='.$moduleobj->numero.'&action=set&token='.newToken().'&value=mod'.$module.$param.'">';
 			$linktoenabledisable .= img_picto($langs->trans("ModuleIsNotActive", $urltomodulesetup), 'switch_off', 'style="padding-right: 8px"', false, 0, 0, '', 'classfortooltip', 1);
 			$linktoenabledisable .= "</a>\n";
@@ -3521,7 +3621,7 @@ if ($module == 'initmodule') {
 
 				print load_fiche_titre($form->textwithpicto($langs->trans("DescriptorFile"), $langs->transnoentitiesnoconv("File").' '.$pathtofile), '', '');
 
-				if (!empty($moduleobj)) {
+				if (is_object($moduleobj)) {
 					print '<div class="underbanner clearboth"></div>';
 					print '<div class="fichecenter">';
 					print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -3707,7 +3807,7 @@ if ($module == 'initmodule') {
 
 				print dol_get_fiche_head($head2, $tab, '', -1, '', 0, '', '', 0, 'formodulesuffix');
 
-				$posCursor = (empty($find)) ? array() : array('find'=>$find);
+				$posCursor = (empty($find)) ? array() : array('find' => $find);
 				$doleditor = new DolEditor('editfilecontent', $content, '', 300, 'Full', 'In', true, false, 'ace', 0, '99%', 0, $posCursor);
 				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ? GETPOST('format', 'aZ09') : 'html'));
 
@@ -3738,7 +3838,7 @@ if ($module == 'initmodule') {
 				print '<input type="hidden" name="file" value="'.dol_escape_htmltag($file).'">';
 				print '<input type="hidden" name="tab" value="'.$tab.'">';
 				print '<input type="hidden" name="module" value="'.$module.'">';
-				print $formadmin->select_language(getDolGlobalString('MAIN_LANG_DEFAULT'), 'newlangcode', 0, 0, 1, 0, 0, 'minwidth300', 1);
+				print $formadmin->select_language(getDolGlobalString('MAIN_LANG_DEFAULT'), 'newlangcode', 0, array(), 1, 0, 0, 'minwidth300', 1);
 				print '<input type="submit" name="addlanguage" class="button smallpaddingimp" value="'.dol_escape_htmltag($langs->trans("AddLanguageFile")).'"><br>';
 				print '</form>';
 
@@ -4155,7 +4255,7 @@ if ($module == 'initmodule') {
 						$pathtolib      = strtolower($module).'/lib/'.strtolower($module).'.lib.php';
 						$pathtoobjlib   = strtolower($module).'/lib/'.strtolower($module).'_'.strtolower($tabobj).'.lib.php';
 
-						$tmpobject = $tmpobject ?? null;
+						$tmpobject = $tmpobject ?? null;  // @phan-suppress-current-line PhanPluginDuplicateExpressionAssignmentOperation
 						if (is_object($tmpobject) && property_exists($tmpobject, 'picto')) {
 							$pathtopicto = $tmpobject->picto;
 							$realpathtopicto = '';
@@ -5051,7 +5151,7 @@ if ($module == 'initmodule') {
 				print '<input type="hidden" name="tab" value="'.$tab.'">';
 				print '<input type="hidden" name="module" value="'.$module.'">';
 
-				$posCursor = (empty($find)) ? array() : array('find'=>$find);
+				$posCursor = (empty($find)) ? array() : array('find' => $find);
 				$doleditor = new DolEditor('editfilecontent', $content, '', 300, 'Full', 'In', true, false, 'ace', 0, '99%', 0, $posCursor);
 				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ? GETPOST('format', 'aZ09') : 'html'));
 				print '<br>';
@@ -5486,7 +5586,7 @@ if ($module == 'initmodule') {
 				print '<input type="hidden" name="tab" value="'.$tab.'">';
 				print '<input type="hidden" name="module" value="'.$module.'">';
 
-				$posCursor = (empty($find)) ? array() : array('find'=>$find);
+				$posCursor = (empty($find)) ? array() : array('find' => $find);
 				$doleditor = new DolEditor('editfilecontent', $content, '', 300, 'Full', 'In', true, false, 'ace', 0, '99%', 0, $posCursor);
 				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ? GETPOST('format', 'aZ09') : 'html'));
 				print '<br>';
@@ -5737,7 +5837,7 @@ if ($module == 'initmodule') {
 				print '<input type="hidden" name="tab" value="'.$tab.'">';
 				print '<input type="hidden" name="module" value="'.$module.'">';
 
-				$posCursor = (empty($find)) ? array() : array('find'=>$find);
+				$posCursor = (empty($find)) ? array() : array('find' => $find);
 				$doleditor = new DolEditor('editfilecontent', $content, '', 300, 'Full', 'In', true, false, 'ace', 0, '99%', 0, $posCursor);
 				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ? GETPOST('format', 'aZ09') : 'html'));
 				print '<br>';
@@ -5793,7 +5893,7 @@ if ($module == 'initmodule') {
 				print '<input type="hidden" name="tab" value="'.$tab.'">';
 				print '<input type="hidden" name="module" value="'.$module.'">';
 
-				$posCursor = (empty($find)) ? array() : array('find'=>$find);
+				$posCursor = (empty($find)) ? array() : array('find' => $find);
 				$doleditor = new DolEditor('editfilecontent', $content, '', 300, 'Full', 'In', true, false, 'ace', 0, '99%', 0, $posCursor);
 				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ? GETPOST('format', 'aZ09') : 'html'));
 				print '<br>';
@@ -5860,7 +5960,7 @@ if ($module == 'initmodule') {
 				print '<input type="hidden" name="tab" value="'.$tab.'">';
 				print '<input type="hidden" name="module" value="'.$module.'">';
 
-				$posCursor = (empty($find)) ? array() : array('find'=>$find);
+				$posCursor = (empty($find)) ? array() : array('find' => $find);
 				$doleditor = new DolEditor('editfilecontent', $content, '', 300, 'Full', 'In', true, false, 'ace', 0, '99%', 0, $posCursor);
 				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ? GETPOST('format', 'aZ09') : 'html'));
 				print '<br>';
@@ -6100,7 +6200,7 @@ if ($module == 'initmodule') {
 				print '<input type="hidden" name="tab" value="'.$tab.'">';
 				print '<input type="hidden" name="module" value="'.$module.'">';
 
-				$posCursor = (empty($find)) ? array() : array('find'=>$find);
+				$posCursor = (empty($find)) ? array() : array('find' => $find);
 				$doleditor = new DolEditor('editfilecontent', $content, '', 300, 'Full', 'In', true, false, 'ace', 0, '99%', 0, $posCursor);
 				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ? GETPOST('format', 'aZ09') : 'html'));
 				print '<br>';
@@ -6238,6 +6338,7 @@ if ($module == 'initmodule') {
 						print '</td>';
 
 						print '<td>';
+						$texttoshow = null;
 						if ($cron['jobtype'] == 'method') {
 							$text = $langs->trans("CronClass");
 							$texttoshow = $langs->trans('CronModule').': '.$module.'<br>';
@@ -6303,7 +6404,7 @@ if ($module == 'initmodule') {
 				print '<input type="hidden" name="tab" value="'.$tab.'">';
 				print '<input type="hidden" name="module" value="'.$module.'">';
 
-				$posCursor = (empty($find)) ? array() : array('find'=>$find);
+				$posCursor = (empty($find)) ? array() : array('find' => $find);
 				$doleditor = new DolEditor('editfilecontent', $content, '', 300, 'Full', 'In', true, false, 'ace', 0, '99%', 0, $posCursor);
 				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ? GETPOST('format', 'aZ09') : 'html'));
 				print '<br>';
@@ -6450,10 +6551,11 @@ if ($module == 'initmodule') {
 			$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
 			dol_include_once($pathtofile);
 			$class = 'mod'.$module;
-
+			$moduleobj = null;
 			if (class_exists($class)) {
 				try {
 					$moduleobj = new $class($db);
+					'@phan-var-force DolibarrMOdules $moduleobj';
 				} catch (Exception $e) {
 					$error++;
 					dol_print_error($db, $e->getMessage());
@@ -6607,7 +6709,7 @@ if ($module == 'initmodule') {
 				print '<input type="hidden" name="tab" value="'.$tab.'">';
 				print '<input type="hidden" name="module" value="'.$module.'">';
 
-				$posCursor = (empty($find)) ? array() : array('find'=>$find);
+				$posCursor = (empty($find)) ? array() : array('find' => $find);
 				$doleditor = new DolEditor('editfilecontent', $content, '', 300, 'Full', 'In', true, false, 'ace', 0, '99%', 0, $posCursor);
 				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ? GETPOST('format', 'aZ09') : 'html'));
 				print '<br>';

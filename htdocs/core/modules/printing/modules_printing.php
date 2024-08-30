@@ -43,6 +43,12 @@ class PrintingDriver
 	public $error = '';
 
 	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
+
+
+	/**
 	 * @var string Name
 	 */
 	public $name;
@@ -114,5 +120,47 @@ class PrintingDriver
 		} else {
 			return $this->desc;
 		}
+	}
+
+	/**
+	 *  Return list of available printers
+	 *
+	 *  @return  int                     0 if OK, >0 if KO
+	 */
+	public function listAvailablePrinters()
+	{
+		$msg = get_class($this)."::".__FUNCTION__." not implemented";
+		dol_syslog($msg, LOG_ERR);
+		$this->errors[] = $msg;
+		return 1;
+	}
+
+	/**
+	 *  Return list of available printers
+	 *
+	 *  @return array	list of printers
+	 */
+	public function getlistAvailablePrinters()
+	{
+		$msg = get_class($this)."::".__FUNCTION__." not implemented";
+		dol_syslog($msg, LOG_ERR);
+		$this->errors[] = $msg;
+		return [];
+	}
+
+	/**
+	 *  Print selected file
+	 *
+	 * @param   string      $file       file
+	 * @param   string      $module     module
+	 * @param   string      $subdir     subdir for file
+	 * @return  int                     0 if OK, >0 if KO
+	 */
+	public function printFile($file, $module, $subdir = '')
+	{
+		$msg = get_class($this)."::".__FUNCTION__." not implemented";
+		dol_syslog($msg, LOG_ERR);
+		$this->errors[] = $msg;
+		return 1;
 	}
 }

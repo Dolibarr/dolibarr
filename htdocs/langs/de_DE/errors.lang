@@ -303,7 +303,8 @@ ErrorThirpdartyOrMemberidIsMandatory=Geschäftspartner oder Mitglied ist für di
 ErrorFailedToWriteInTempDirectory=Fehler beim Schreiben in das temporäre Verzeichnis
 ErrorQuantityIsLimitedTo=Die Menge ist auf %s begrenzt
 ErrorFailedToLoadThirdParty=Geschäftspartner mi id=%s, email=%s, name=%s konnte nicht gefunden/geladen werden
-ErrorThisPaymentModeIsNotSepa=Diese Zahlungsart ist kein Bankkonto
+ErrorThisPaymentModeIsNotDirectDebit=Die Zahlungsart ist nicht Lastschrifteinzug
+ErrorThisPaymentModeIsNotCreditTransfer=Die Zahlungsart ist nicht Überweisung
 ErrorStripeCustomerNotFoundCreateFirst=Stripe-Kunde ist für diesen Geschäftspartner nicht festgelegt (oder auf einen Wert gesetzt, der auf der Stripe-Seite gelöscht wurde). Erstellen Sie ihn zuerst (oder fügen Sie ihn erneut hinzu).
 ErrorCharPlusNotSupportedByImapForSearch=Die IMAP-Suche ist nicht in der Lage, im Absender oder Empfänger nach einer Zeichenfolge zu suchen, die das Zeichen + enthält
 ErrorTableNotFound=Tabelle <b>%s</b> nicht gefunden
@@ -335,8 +336,8 @@ ErrorFailedToCreateSymLinkToMedias=Der symbolische Link %s konnte nicht erstellt
 ErrorCheckTheCommandInsideTheAdvancedOptions=Überprüfen Sie den für den Export verwendeten Befehl in den erweiterten Optionen des Exports
 ErrorEndTimeMustBeGreaterThanStartTime=Endzeitpunkt muss nach dem Startzeitpunkt liegen
 ErrorIncoherentDates=Startzeitpunkt muss vor dem Endzeitpunkt liegen
-ErrorEndHourIsNull=Enddatum kann nicht Null sein
-ErrorStartHourIsNull=Startdatum kann nicht Null sein
+ErrorEndHourIsNull=Enddatum kann nicht leer sein
+ErrorStartHourIsNull=Startdatum kann nicht leer sein
 ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter=Zu viele Zeilen zum Verarbeiten. Bitte verwenden Sie einen selektiveren Filter.
 ErrorEmptyValueForQty=Die Menge darf nicht Null sein.
 # Warnings
@@ -421,3 +422,4 @@ OperNotDefined=Zahlungsart nicht definiert
 ErrorThisContactXIsAlreadyDefinedAsThisType=%s ist bereits als Kontakt für diesen Typ definiert.
 ErrorThisGroupIsAlreadyDefinedAsThisType=Die Kontakte dieser Gruppe sind bereits als Kontakt für diesen Typ definiert.
 EmptyMessageNotAllowedError=Nachricht darf nicht leer sein
+ErrorIsNotInError=%s ist nicht fehlerhaft

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2022       Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -124,6 +125,7 @@ $storage = new DoliStorage($db, $conf, $keyforprovider);
 // $requestedpermissionsarray contains list of scopes.
 // Conversion into URL is done by Reflection on constant with name SCOPE_scope_in_uppercase
 $apiService = $serviceFactory->createService('Google', $credentials, $storage, $requestedpermissionsarray);
+'@phan-var-force  OAuth\OAuth2\Service\Google $apiService'; // createService is only ServiceInterface
 
 // access type needed to have oauth provider refreshing token
 // also note that a refresh token is sent only after a prompt
@@ -151,10 +153,11 @@ if ($action == 'delete') {
 	exit();
 }
 
+
 if (!GETPOST('code')) {
 	dol_syslog("Page is called without the 'code' parameter defined");
 
-	// If we enter this page without 'code' parameter, it means we click on the link from login page and we want to get the redirect
+	// If we enter this page without 'code' parameter, it means we click on the link from login page ($forlogin is set) or from setup page and we want to get the redirect
 	// to the OAuth provider login page.
 	$_SESSION["backtourlsavedbeforeoauthjump"] = $backtourl;
 	$_SESSION["oauthkeyforproviderbeforeoauthjump"] = $keyforprovider;
@@ -164,14 +167,16 @@ if (!GETPOST('code')) {
 	// No need to save more data in sessions. We have several info into $_SESSION['datafromloginform'], saved when form is posted with a click
 	// on "Login with Google" with param actionlogin=login and beforeoauthloginredirect=google, by the functions_googleoauth.php.
 
+	// Set approval_prompt. Note: A refresh token will be provided only if prompt is done.
 	if ($forlogin) {
-		// Set approval_prompt
 		$approval_prompt = getDolGlobalString('OAUTH_GOOGLE_FORCE_PROMPT_ON_LOGIN', 'auto');	// Can be 'force'
 		$apiService->setApprouvalPrompt($approval_prompt);
+	} else {
+		$apiService->setApprouvalPrompt('force');
 	}
 
 	// This may create record into oauth_state before the header redirect.
-	// Creation of record with state in this tables depend on the Provider used (see its constructor).
+	// Creation of record with state, create record or just update column state of table llx_oauth_token (and create/update entry in llx_oauth_state) depending on the Provider used (see its constructor).
 	if ($state) {
 		$url = $apiService->getAuthorizationUri(array('state' => $state));
 	} else {
@@ -180,7 +185,7 @@ if (!GETPOST('code')) {
 	// The redirect_uri is included into this $url
 
 	// Add more param
-	$url .= '&nonce='.bin2hex(random_bytes(64/8));
+	$url .= '&nonce='.bin2hex(random_bytes(64 / 8));
 
 	if ($forlogin) {
 		// TODO Add param hd. What is it for ?
@@ -209,7 +214,9 @@ if (!GETPOST('code')) {
 		}
 	}
 
-	// we go on oauth provider authorization page
+	//var_dump($url);exit;
+
+	// we go on oauth provider authorization page, we will then go back on this page but into the other branch of the if (!GETPOST('code'))
 	header('Location: '.$url);
 	exit();
 } else {
@@ -233,8 +240,12 @@ if (!GETPOST('code')) {
 			$db->begin();
 
 			// This requests the token from the received OAuth code (call of the https://oauth2.googleapis.com/token endpoint)
-			// Result is stored into object managed by class DoliStorage into includes/OAuth/Common/Storage/DoliStorage.php, so into table llx_oauth_token
+			// Result is stored into object managed by class DoliStorage into includes/OAuth/Common/Storage/DoliStorage.php and into database table llx_oauth_token
 			$token = $apiService->requestAccessToken(GETPOST('code'), $state);
+
+			// The refresh token is inside the object token if the prompt was forced only.
+			//$refreshtoken = $token->getRefreshToken();
+			//var_dump($refreshtoken);
 
 			// Note: The extraparams has the 'id_token' than contains a lot of information about the user.
 			$extraparams = $token->getExtraParams();
@@ -305,8 +316,8 @@ if (!GETPOST('code')) {
 					$tmparray = (empty($_SESSION['datafromloginform']) ? array() : $_SESSION['datafromloginform']);
 					$entitytosearchuser = (isset($tmparray['entity']) ? $tmparray['entity'] : -1);
 
-					// Delete the token
-					$storage->clearToken('Google');
+					// Delete the old token
+					$storage->clearToken('Google');	// Delete the token called ("Google-".$storage->keyforprovider)
 
 					$tmpuser = new User($db);
 					$res = $tmpuser->fetch(0, '', '', 0, $entitytosearchuser, $useremail, 0, 1);	// Load user. Can load with email_oauth2.

@@ -69,6 +69,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
+$hookmanager->initHooks(array('resource', 'resource_card', 'globalcard'));
 
 $result = restrictedArea($user, 'resource', $object->id, 'resource');
 
@@ -80,7 +81,6 @@ $permissiontodelete = $user->hasRight('resource', 'delete');
  * Actions
  */
 
-$hookmanager->initHooks(array('resource', 'resource_card', 'globalcard'));
 $parameters = array('resource_id' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {

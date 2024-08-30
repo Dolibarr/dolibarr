@@ -303,7 +303,8 @@ ErrorThirpdartyOrMemberidIsMandatory=צד שלישי או חבר בשותפות 
 ErrorFailedToWriteInTempDirectory=נכשל כתיבה בספריה הזמנית
 ErrorQuantityIsLimitedTo=הכמות מוגבלת ל-%s
 ErrorFailedToLoadThirdParty=כשל באיתור/טעינת צד שלישי מ-id=%s, email=%s, name= %s
-ErrorThisPaymentModeIsNotSepa=מצב תשלום זה אינו חשבון בנק
+ErrorThisPaymentModeIsNotDirectDebit=The payment mode is not direct debit
+ErrorThisPaymentModeIsNotCreditTransfer=The payment mode is not credit transfer
 ErrorStripeCustomerNotFoundCreateFirst=לקוח Stripe אינו מוגדר עבור צד שלישי זה (או מוגדר לערך שנמחק בצד Stripe). תחילה צור (או צרף מחדש) אותו.
 ErrorCharPlusNotSupportedByImapForSearch=חיפוש IMAP אינו יכול לחפש בשולח או בנמען מחרוזת המכילה את התו +
 ErrorTableNotFound=הטבלה <b>%s</b> לא נמצאה
@@ -334,9 +335,9 @@ ErrorDictionaryNotFound=מילון <b>%s</b> לא נמצא
 ErrorFailedToCreateSymLinkToMedias=יצירת הקישור הסמלי %s נכשל כדי להצביע על %s
 ErrorCheckTheCommandInsideTheAdvancedOptions=בדוק את הפקודה המשמשת לייצוא אל האפשרויות המתקדמות של הייצוא
 ErrorEndTimeMustBeGreaterThanStartTime=End time must be greater than start time
-ErrorIncoherentDates=Date start must be less than date end
-ErrorEndHourIsNull=End date cannot be zero
-ErrorStartHourIsNull=Start date cannot be zero
+ErrorIncoherentDates=Start date must be earlier than end date
+ErrorEndHourIsNull=End date field cannot be empty
+ErrorStartHourIsNull=Start date field cannot be empty
 ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter=Too many lines to process. Please use a more selective filter.
 ErrorEmptyValueForQty=Quantity cannot be zero.
 # Warnings

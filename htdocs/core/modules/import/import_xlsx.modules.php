@@ -52,7 +52,7 @@ class ImportXlsx extends ModeleImports
 
 	/**
 	 * Dolibarr version of driver
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr';
 
@@ -645,7 +645,7 @@ class ImportXlsx extends ModeleImports
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getcustomeraccountancycodeifauto') {
 									if (strtolower($newval) == 'auto') {
 										$this->thirdpartyobject->get_codecompta('customer');
-										$newval = $this->thirdpartyobject->code_compta;
+										$newval = $this->thirdpartyobject->code_compta_client;
 										//print 'code_compta='.$newval;
 									}
 									if (empty($newval)) {
@@ -673,6 +673,7 @@ class ImportXlsx extends ModeleImports
 										if (!empty($classModForNumber) && !empty($pathModForNumber) && is_readable(DOL_DOCUMENT_ROOT.$pathModForNumber)) {
 											require_once DOL_DOCUMENT_ROOT.$pathModForNumber;
 											$modForNumber = new $classModForNumber();
+											'@phan-var-force ModeleNumRefMembers|ModeleNumRefCommandes|ModeleNumRefSuppliersInvoices|ModeleNumRefSuppliersOrders|ModeleNumRefProjects|ModeleNumRefTask|ModeleNumRefPropales $modForNumber';
 
 											$tmpobject = null;
 											// Set the object with the date property when we can

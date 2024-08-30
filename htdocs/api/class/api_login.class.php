@@ -37,11 +37,11 @@ class Login
 	 */
 	public function __construct()
 	{
-		global $conf, $db;
+		global $db;
 		$this->db = $db;
 
-		//$conf->global->MAIN_MODULE_API_LOGIN_DISABLED = 1;
-		if (getDolGlobalString('MAIN_MODULE_API_LOGIN_DISABLED')) {
+		//$conf->global->API_DISABLE_LOGIN_API = 1;
+		if (getDolGlobalString('API_DISABLE_LOGIN_API')) {
 			throw new RestException(403, "Error login APIs are disabled. You must get the token from backoffice to be able to use APIs");
 		}
 	}
@@ -100,7 +100,7 @@ class Login
 		}
 
 		// Authentication mode
-		if (empty($dolibarr_main_authentication)) {
+		if (empty($dolibarr_main_authentication) || $dolibarr_main_authentication == 'openid_connect') {
 			$dolibarr_main_authentication = 'dolibarr';
 		}
 
@@ -144,7 +144,7 @@ class Login
 
 		// Renew the hash
 		if (empty($tmpuser->api_key) || $reset) {
-			$tmpuser->getrights();
+			$tmpuser->loadRights();
 			if (!$tmpuser->hasRight('user', 'self', 'creer')) {
 				if (empty($tmpuser->api_key)) {
 					throw new RestException(403, 'No API token set for this user and user need write permission on itself to reset its API token');

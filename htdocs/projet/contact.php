@@ -61,10 +61,11 @@ if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && method_exists($obj
 
 // Security check
 $socid = 0;
-//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
-$result = restrictedArea($user, 'projet', $id, 'projet&project');
 
 $hookmanager->initHooks(array('projectcontactcard', 'globalcard'));
+
+//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
+$result = restrictedArea($user, 'projet', $id, 'projet&project');
 
 
 /*
@@ -104,7 +105,8 @@ if (empty($reshook)) {
 			foreach ($task_array as $task) {
 				$task_already_affected = false;
 				$personsLinked = $task->liste_contact(-1, $source);
-				if (!is_array($personsLinked) && count($personsLinked) < 0) {
+				if (!is_array($personsLinked)) {
+					// When liste_contact() does not return an array, it's an error.
 					setEventMessage($object->error, 'errors');
 				} else {
 					foreach ($personsLinked as $person) {

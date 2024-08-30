@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2008-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2009  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,7 +85,7 @@ if (empty($ftp_port)) {
 }
 $ftp_user = getDolGlobalString($s_ftp_user);
 $ftp_password = getDolGlobalString($s_ftp_password);
-$ftp_passive = getDolGlobalString($s_ftp_passive);
+$ftp_passive = getDolGlobalInt($s_ftp_passive);
 
 // For result on connection
 $ok = 0;

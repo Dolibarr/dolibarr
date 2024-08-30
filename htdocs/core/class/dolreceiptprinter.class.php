@@ -608,8 +608,9 @@ class dolReceiptPrinter extends Printer
 				$this->printer->cut();
 
 				// If is DummyPrintConnector send to log to debugging
-				if ($this->printer->connector instanceof DummyPrintConnector) {
-					$data = $this->printer->connector->getData();
+				$connector = $this->printer->connector;
+				if ($connector instanceof DummyPrintConnector) {
+					$data = $connector->getData();
 					dol_syslog($data);
 				}
 				// Close and print
@@ -932,7 +933,7 @@ class dolReceiptPrinter extends Printer
 								$spaces = str_repeat(' ', $spacestoadd > 0 ? $spacestoadd : 0);
 								$amount_payment = (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) ? $row->multicurrency_amount : $row->amount;
 								if ($row->code == "LIQ") {
-									$amount_payment = $amount_payment + $row->pos_change; // Show amount with excess received if is cash payment
+									$amount_payment += $row->pos_change; // Show amount with excess received if is cash payment
 								}
 								$this->printer->text($spaces.$langs->transnoentitiesnoconv("PaymentTypeShort".$row->code).' '.str_pad(price($amount_payment), 10, ' ', STR_PAD_LEFT)."\n");
 								if ($row->code == "LIQ" && $row->pos_change > 0) { // Print change only in cash payments
@@ -967,8 +968,9 @@ class dolReceiptPrinter extends Printer
 				}
 			}
 			// If is DummyPrintConnector send to log to debugging
-			if ($this->printer->connector instanceof DummyPrintConnector || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
-				$data = $this->printer->connector->getData();
+			$connector = $this->printer->connector;
+			if ($connector instanceof DummyPrintConnector || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
+				$data = $connector->getData();
 				if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
 					echo rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
 				}

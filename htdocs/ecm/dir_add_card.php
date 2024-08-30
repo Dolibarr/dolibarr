@@ -206,7 +206,7 @@ if ($action == 'add' && $permissiontoadd) {
  * View
  */
 
-llxHeader('', $langs->trans("ECMNewSection"));
+llxHeader('', $langs->trans("ECMNewSection"), '', '', 0, 0, '', '', '', 'mod-ecm page-dir_add_card');
 
 $form = new Form($db);
 $formecm = new FormEcm($db);

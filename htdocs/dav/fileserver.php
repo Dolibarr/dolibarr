@@ -58,7 +58,7 @@ require_once DOL_DOCUMENT_ROOT.'/includes/sabre/autoload.php';
 $user = new User($db);
 if (isset($_SERVER['PHP_AUTH_USER']) && $_SERVER['PHP_AUTH_USER'] != '') {
 	$user->fetch(0, $_SERVER['PHP_AUTH_USER']);
-	$user->getrights();
+	$user->loadRights();
 }
 
 // Load translation files required by the page
@@ -117,7 +117,7 @@ $authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(
 		}
 
 		// Authentication mode
-		if (empty($dolibarr_main_authentication)) {
+		if (empty($dolibarr_main_authentication) || $dolibarr_main_authentication == 'openid_connect') {
 			$dolibarr_main_authentication = 'dolibarr';
 		}
 

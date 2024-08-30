@@ -90,6 +90,10 @@ $search_agenda_label = GETPOST('search_agenda_label');
 if ($user->socid) {
 	$socid = $user->socid;
 }
+
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('contactagenda', 'globalcard'));
+
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', 'rowid', 0); // If we create a contact with no company (shared contacts), no check on write permission
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -108,9 +112,6 @@ if (!$sortfield) {
 if (!$sortorder) {
 	$sortorder = 'DESC';
 }
-
-// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-$hookmanager->initHooks(array('contactagenda', 'globalcard'));
 
 
 /*
@@ -259,6 +260,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		$out = '';
 		$newcardbutton = '';
+		$messagingUrl = DOL_URL_ROOT.'/contact/messaging.php?id='.$object->id;
+		$newcardbutton .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 1);
+		$messagingUrl = DOL_URL_ROOT.'/contact/agenda.php?id='.$object->id;
+		$newcardbutton .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 2);
+
 		if (isModEnabled('agenda')) {
 			$permok = $user->hasRight('agenda', 'myactions', 'create');
 			if ((!empty($objthirdparty->id) || !empty($objcon->id)) && $permok) {
