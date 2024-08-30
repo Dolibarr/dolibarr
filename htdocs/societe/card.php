@@ -324,7 +324,7 @@ if (empty($reshook)) {
 			} else {
 				$object->name				= GETPOST('name', 'alphanohtml');
 			}
-			$object->entity					= (GETPOSTISSET('entity') ? GETPOSTINT('entity') : $conf->entity);
+			$object->entity					= ((GETPOSTISSET('entity') && GETPOST('entity') != '') ? GETPOSTINT('entity') : $conf->entity);
 			$object->name_alias				= GETPOST('name_alias', 'alphanohtml');
 			$object->parent					= GETPOSTISSET('parent_company_id') ? GETPOSTINT('parent_company_id') : $object->parent;
 			$object->address				= GETPOST('address', 'alphanohtml');

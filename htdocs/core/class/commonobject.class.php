@@ -7505,6 +7505,7 @@ abstract class CommonObject
 					// If the textarea field has a list of arrayofkeyval into its definition, we suggest a combo with possible values to fill the textarea.
 					//var_dump($param['options']);
 					$out .= $form->selectarray($keyprefix.$key.$keysuffix."_multiinput", $param['options'], '', 1, 0, 0, "flat maxwidthonphone".$morecss);
+					$out .= '<input id="'.$keyprefix.$key.$keysuffix.'_multiinputadd" type="button" class="button" value="'.$langs->trans("Add").'">';
 					$out .= "<script>";
 					$out .= '
 					function handlemultiinputdisabling(htmlname){
@@ -7512,7 +7513,7 @@ abstract class CommonObject
 						multiinput = $("#"+htmlname+"_multiinput");
 						multiinput.find("option").each(function(){
 							tmpval = $("#"+htmlname).val();
-							tmpvalarray = tmpval.split(",");
+							tmpvalarray = tmpval.split("\n");
 							valtotest = $(this).val();
 							if(tmpvalarray.includes(valtotest)){
 								$(this).prop("disabled",true);
@@ -7526,27 +7527,31 @@ abstract class CommonObject
 					}
 
 					$(document).ready(function () {
-						$("#'.$keyprefix.$key.$keysuffix.'_multiinput").on("change",function() {
-							console.log("We add the selected value to the text area '.$keyprefix.$key.$keysuffix.'");
+						$("#'.$keyprefix.$key.$keysuffix.'_multiinputadd").on("click",function() {
 							tmpval = $("#'.$keyprefix.$key.$keysuffix.'").val();
 							tmpvalarray = tmpval.split(",");
-							valtotest = $(this).val();
+							valtotest = $("#'.$keyprefix.$key.$keysuffix.'_multiinput").val();
 							if(valtotest != -1 && !tmpvalarray.includes(valtotest)){
+								console.log("We add the selected value to the text area '.$keyprefix.$key.$keysuffix.'");
 								if(tmpval == ""){
 									tmpval = valtotest;
 								} else {
-									tmpval = tmpval + "," + valtotest;
+									tmpval = tmpval + "\n" + valtotest;
 								}
 								$("#'.$keyprefix.$key.$keysuffix.'").val(tmpval);
 								handlemultiinputdisabling("'.$keyprefix.$key.$keysuffix.'");
+								$("#'.$keyprefix.$key.$keysuffix.'_multiinput").val(-1);
+							} else {
+								console.log("We add nothing the text area '.$keyprefix.$key.$keysuffix.'");
 							}
 						});
 						$("#'.$keyprefix.$key.$keysuffix.'").on("change",function(){
-							handlemultiinputdisabling($(this).attr("id"));
+							handlemultiinputdisabling("'.$keyprefix.$key.$keysuffix.'");
 						});
 						handlemultiinputdisabling("'.$keyprefix.$key.$keysuffix.'");
 					})';
 					$out .= "</script>";
+					$value = str_replace(',', "\n", $value);
 				}
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 				$doleditor = new DolEditor($keyprefix.$key.$keysuffix, $value, '', 200, 'dolibarr_notes', 'In', false, false, false, ROWS_5, '90%');
@@ -8536,6 +8541,9 @@ abstract class CommonObject
 				return 'Error unexpected result from code evaluation';
 			}
 		} else {	// text|html|varchar
+			if (!empty($value) && preg_match('/^text/', (string) $type) && !preg_match('/search_/', $keyprefix) && !empty($param['options'])) {
+				$value = str_replace(',', "\n", $value);
+			}
 			$value = dol_htmlentitiesbr($value);
 		}
 
@@ -10328,6 +10336,11 @@ abstract class CommonObject
 			$value = $this->fields[$k];
 			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			$values[$k] = $this->quote($v, $value);
+			if (($value["type"] == "text") && !empty($value['arrayofkeyval']) && is_array($value['arrayofkeyval'])) {
+				// Clean values for text with selectbox
+				$v = preg_replace('/\s/', ',', $v);
+				$v = preg_replace('/,+/', ',', $v);
+			}
 			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			$tmp[] = $k.'='.$this->quote($v, $this->fields[$k]);
 		}

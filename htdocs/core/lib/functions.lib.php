@@ -1015,6 +1015,8 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 				$newout = $user->fk_user;
 			} elseif ($reg[1] == 'ENTITY_ID' || $reg[1] == 'ENTITYID') {
 				$newout = $conf->entity;
+			} elseif ($reg[1] == 'ID') {
+				$newout = '__ID__';     // We keep __ID__ we find into backtopage url
 			} else {
 				$newout = ''; // Key not found, we replace with empty string
 			}
@@ -3944,7 +3946,7 @@ function getArrayOfSocialNetworks()
  */
 function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetworks = array())
 {
-	global $user, $langs;
+	global $hookmanager, $langs, $user;
 
 	$htmllink = $value;
 
@@ -4017,6 +4019,23 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
 		$langs->load("errors");
 		$htmllink .= img_warning($langs->trans("ErrorBadSocialNetworkValue", $value));
 	}
+
+	if ($hookmanager) {
+		$parameters = array(
+			'value'=> $value,
+			'cid' => $cid,
+			'socid' => $socid,
+			'type' => $type,
+			'dictsocialnetworks' => $dictsocialnetworks,
+		);
+
+		$reshook = $hookmanager->executeHooks('printSocialNetworks', $parameters);
+		if ($reshook > 0) {
+			$htmllink = '';
+		}
+		$htmllink .= $hookmanager->resPrint;
+	}
+
 	return $htmllink;
 }
 
