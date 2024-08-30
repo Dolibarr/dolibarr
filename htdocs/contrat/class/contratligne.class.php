@@ -89,8 +89,15 @@ class ContratLigne extends CommonObjectLine
 	 */
 	public $fk_product;
 
-	public $statut; // 0 inactive, 4 active, 5 closed
-	public $type; // 0 for product, 1 for service
+	/**
+	 * @var int 0 inactive, 4 active, 5 closed
+	 */
+	public $statut;
+
+	/**
+	 * @var int 0 for product, 1 for service
+	 */
+	public $type;
 
 	/**
 	 * @var string
@@ -109,25 +116,90 @@ class ContratLigne extends CommonObjectLine
 	 */
 	public $description;
 
-	public $product_type; // 0 for product, 1 for service
+	/**
+	 * @var int 0 for product, 1 for service
+	 */
+	public $product_type;
+
+	/**
+	 * @var string
+	 */
 	public $product_ref;
+
+	/**
+	 * @var string
+	 */
 	public $product_label;
 
+	/**
+	 * @var int|string
+	 */
 	public $date_commande;
 
-	public $date_start; // date start planned
-	public $date_start_real; // date start real
-	public $date_end; // date end planned
-	public $date_end_real; // date end real
+	/**
+	 * @var int|string date start planned
+	 */
+	public $date_start;
 
+	/**
+	 * @var int|string date start real
+	 */
+	public $date_start_real;
+
+	/**
+	 * @var int|string date end planned
+	 */
+	public $date_end;
+
+	/**
+	 * @var int|string date end real
+	 */
+	public $date_end_real;
+
+	/**
+	 * @var float|string
+	 */
 	public $tva_tx;
+
+	/**
+	 * @var string
+	 */
 	public $vat_src_code;
+
+	/**
+	 * @var string|float
+	 */
 	public $localtax1_tx;
+
+	/**
+	 * @var string|float
+	 */
 	public $localtax2_tx;
-	public $localtax1_type; // Local tax 1 type
-	public $localtax2_type; // Local tax 2 type
+
+	/**
+	 * @var string Local tax 1 type
+	 */
+	public $localtax1_type;
+
+	/**
+	 * @var string Local tax 2 type
+	 */
+	public $localtax2_type;
+
+	/**
+	 * @var float
+	 */
 	public $qty;
+
+	/**
+	 * @var int|string
+	 */
 	public $remise_percent;
+
+	/**
+	 * @var float|string
+	 * @deprecated
+	 */
 	public $remise;
 
 	/**
@@ -153,10 +225,29 @@ class ContratLigne extends CommonObjectLine
 	 */
 	public $price_ht;
 
+	/**
+	 * @var float
+	 */
 	public $total_ht;
+
+	/**
+	 * @var float
+	 */
 	public $total_tva;
+
+	/**
+	 * @var float
+	 */
 	public $total_localtax1;
+
+	/**
+	 * @var float
+	 */
 	public $total_localtax2;
+
+	/**
+	 * @var float
+	 */
 	public $total_ttc;
 
 	/**
@@ -164,6 +255,9 @@ class ContratLigne extends CommonObjectLine
 	 */
 	public $fk_fournprice;
 
+	/**
+	 * @var float
+	 */
 	public $pa_ht;
 
 	/**
