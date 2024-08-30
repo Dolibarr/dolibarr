@@ -94,6 +94,4 @@ create table llx_facture_fourn
   multicurrency_total_ht		double(24,8) DEFAULT 0,
   multicurrency_total_tva	double(24,8) DEFAULT 0,
   multicurrency_total_ttc	double(24,8) DEFAULT 0,
-
-  fk_iban               smallint DEFAULT NULL           -- iban from selected bank account for transferts
 )ENGINE=innodb;
