@@ -306,16 +306,19 @@ print '</tr>';
 print '<tr class="oddeven" id="oauth_service_div"  style="display: none;">';
 print '<td>'.$langs->trans("MAIN_MAIL_SMTPS_OAUTH_SERVICE").'</td>';
 print '<td>';
+
+/** @phan-var-force array<string, array{label:string, data-html:string, disable?:int, css?:string}> $oauthservices */
 if (!isModEnabled('multicompany') || ($user->admin && !$user->entity)) {
 	print $form->selectarray('OAUTH_SERVICE_SOCIAL_NETWORK', $oauthservices, $conf->global->OAUTH_SERVICE_SOCIAL_NETWORK);
 } else {
-	$text = $oauthservices[getDolGlobalString('OAUTH_SERVICE_SOCIAL_NETWORK')];
+	$selectedKey = $oauthservices[getDolGlobalString('OAUTH_SERVICE_SOCIAL_NETWORK')];
+	$text = isset($oauthservices[$selectedKey]) ? $oauthservices[$selectedKey]['label'] : '';
 	if (empty($text)) {
 		$text = $langs->trans("Undefined");
 	}
 	$htmltext = $langs->trans("ContactSuperAdminForChange");
 	print $form->textwithpicto($text, $htmltext, 1, 'superadmin');
-	print '<input type="hidden" name="OAUTH_SERVICE_SOCIAL_NETWORK" value="'.getDolGlobalString('OAUTH_SERVICE_SOCIAL_NETWORK').'">';
+	print '<input type="hidden" name="OAUTH_SERVICE_SOCIAL_NETWORK" value="'.$selectedKey.'">';
 }
 print '</td>';
 print '</tr>';
