@@ -122,7 +122,7 @@ class mod_supplier_payment_bronan extends ModeleNumRefSupplierPayments
 	 * 	Return next free value
 	 *
 	 *  @param	Societe			$objsoc		Object thirdparty
-	 *  @param  PaiementFourn	$object		Object we need next value for
+	 *  @param  ?PaiementFourn	$object		Object we need next value for
 	 *  @return string|int<-1,0>			Next value if OK, <=0 if KO
 	 */
 	public function getNextValue($objsoc, $object)

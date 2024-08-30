@@ -109,7 +109,7 @@ class mod_supplier_payment_brodator extends ModeleNumRefSupplierPayments
 
 		$old_code_client = $mysoc->code_client;
 		$mysoc->code_client = 'CCCCCCCCCC';
-		$numExample = $this->getNextValue($mysoc, '');
+		$numExample = $this->getNextValue($mysoc, null);
 		$mysoc->code_client = $old_code_client;
 
 		if (!$numExample) {
@@ -122,7 +122,7 @@ class mod_supplier_payment_brodator extends ModeleNumRefSupplierPayments
 	 * 	Return next free value
 	 *
 	 *  @param	Societe			$objsoc		Object thirdparty
-	 *  @param  PaiementFourn	$object		Object we need next value for
+	 *  @param  ?PaiementFourn	$object		Object we need next value for
 	 *  @return string|int<-1,0>			Next value if OK, <=0 if KO
 	 */
 	public function getNextValue($objsoc, $object)

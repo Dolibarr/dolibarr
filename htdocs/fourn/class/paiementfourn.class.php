@@ -810,7 +810,7 @@ class PaiementFourn extends Paiement
 			}
 
 			$obj = new $classname();
-			$numref = "";
+			'@phan-var-force ModeleNumRefSupplierPayments $obj';
 			$numref = $obj->getNextValue($soc, $this);
 
 			/**

@@ -3046,6 +3046,7 @@ class EmailCollector extends CommonObject
 									$elementpath = $mod;
 									dol_include_once($moddesc['class']);
 									$objectmanaged = new $moddesc['object']($this->db);
+									'@phan-var-force CommonObject $objectmanaged';
 									foreach ($ids as $val) {
 										$res = $objectmanaged->fetch($val);
 										if ($res) {
@@ -3435,6 +3436,7 @@ class EmailCollector extends CommonObject
 
 								 $result = dol_include_once($reldir."core/modules/ticket/".$modele.'.php');
 								 $modModuleToUseForNextValue = new $classname;
+								'@phan-var-force ModeleNumRefTicket $modModuleToUseForNextValue';
 								 $defaultref = $modModuleToUseForNextValue->getNextValue(($thirdpartystatic->id > 0 ? $thirdpartystatic : null), $tickettocreate);
 								 }
 								 $candidaturetocreate->ref = $defaultref;

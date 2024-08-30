@@ -105,7 +105,8 @@ if (empty($reshook)) {
 			foreach ($task_array as $task) {
 				$task_already_affected = false;
 				$personsLinked = $task->liste_contact(-1, $source);
-				if (!is_array($personsLinked) && count($personsLinked) < 0) {
+				if (!is_array($personsLinked)) {
+					// When liste_contact() does not return an array, it's an error.
 					setEventMessage($object->error, 'errors');
 				} else {
 					foreach ($personsLinked as $person) {

@@ -1728,6 +1728,7 @@ class ExpenseReport extends CommonObject
 			}
 
 			$obj = new $classname();
+			'@phan-var-force ModeleNumRefExpenseReport $obj';
 			$numref = $obj->getNextValue($this);
 
 			if ($numref != "") {
