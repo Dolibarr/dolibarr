@@ -384,7 +384,7 @@ if ($action == "importSignature") {
 										if (getDolGlobalString("CONTRACT_SIGNATURE_XFORIMGSTART")) {
 											$param['xforimgstart'] = getDolGlobalString("CONTRACT_SIGNATURE_XFORIMGSTART");
 										} else {
-											$param['xforimgstart'] = 110;
+											$param['xforimgstart'] = (empty($s['w']) ? 110 : $s['w'] / 2 - 0);
 										}
 										if (getDolGlobalString("CONTRACT_SIGNATURE_YFORIMGSTART")) {
 											$param['yforimgstart'] = getDolGlobalString("CONTRACT_SIGNATURE_YFORIMGSTART");
@@ -410,7 +410,7 @@ if ($action == "importSignature") {
 								// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
 								// TODO Get position of box from PDF template
 
-								$param['xforimgstart'] = 110;
+								$param['xforimgstart'] = (empty($s['w']) ? 110 : $s['w'] / 2 - 0);
 								$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 62);
 								$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 16);
 
