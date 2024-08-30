@@ -290,7 +290,7 @@ $(document).ready(function() {
     });
 });
 </script>';
-// Methodes oauth
+// Methods oauth
 print '<td>'.$langs->trans("MAIN_MAIL_SMTPS_AUTH_TYPE").'</td>';
 print '<td>';
 print '<input type="radio" id="radio_oauth" name="'.$vartosmtpstype.'" value="XOAUTH2"'.(getDolGlobalString($vartosmtpstype) == 'XOAUTH2' ? ' checked' : '').(isModEnabled('oauth') ? '' : ' disabled').'>';
@@ -304,7 +304,7 @@ print '</td>';
 print '</tr>';
 
 print '<tr class="oddeven" id="oauth_service_div"  style="display: none;">';
-print '<td>'.$langs->trans("OAuthService").'</td>';
+print '<td>'.$langs->trans("MAIN_MAIL_SMTPS_OAUTH_SERVICE").'</td>';
 print '<td>';
 if (!isModEnabled('multicompany') || ($user->admin && !$user->entity)) {
 	print $form->selectarray('OAUTH_SERVICE_SOCIAL_NETWORK', $oauthservices, $conf->global->OAUTH_SERVICE_SOCIAL_NETWORK);
