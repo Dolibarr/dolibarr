@@ -673,6 +673,7 @@ class ImportXlsx extends ModeleImports
 										if (!empty($classModForNumber) && !empty($pathModForNumber) && is_readable(DOL_DOCUMENT_ROOT.$pathModForNumber)) {
 											require_once DOL_DOCUMENT_ROOT.$pathModForNumber;
 											$modForNumber = new $classModForNumber();
+											'@phan-var-force ModeleNumRefMembers|ModeleNumRefCommandes|ModeleNumRefSuppliersInvoices|ModeleNumRefSuppliersOrders|ModeleNumRefProjects|ModeleNumRefTask|ModeleNumRefPropales $modForNumber';
 
 											$tmpobject = null;
 											// Set the object with the date property when we can

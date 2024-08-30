@@ -449,6 +449,8 @@ class Commande extends CommonOrder
 			}
 
 			$obj = new $classname();
+			'@phan-var-force ModeleNumRefCommandes $obj';
+
 			$numref = $obj->getNextValue($soc, $this);
 
 			if ($numref != "") {
