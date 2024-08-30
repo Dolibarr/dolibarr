@@ -95,6 +95,16 @@ class ContratLigne extends CommonObjectLine
 	public $statut;
 
 	/**
+	 * @var string
+	 */
+	public $labelStatus;
+
+	/**
+	 * @var string
+	 */
+	public $labelStatusShort;
+
+	/**
 	 * @var int 0 for product, 1 for service
 	 */
 	public $type;
@@ -152,7 +162,7 @@ class ContratLigne extends CommonObjectLine
 	public $date_end;
 
 	/**
-	 * @var int|string date end real
+	 * @var null|int|string date end real
 	 */
 	public $date_end_real;
 
@@ -401,9 +411,9 @@ class ContratLigne extends CommonObjectLine
 
 	/**
 	 * getTooltipContentArray
-	 * @param array $params params to construct tooltip data
+	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
-	 * @return array
+	 * @return array<string,string>
 	 */
 	public function getTooltipContentArray($params)
 	{
