@@ -556,7 +556,7 @@ class MouvementStock extends CommonObject
 					if ($price > 0 || (getDolGlobalString('STOCK_UPDATE_AWP_EVEN_WHEN_ENTRY_PRICE_IS_NULL') && $price == 0 && in_array($this->origin_type, array('order_supplier', 'invoice_supplier')))) {
 						$oldqtytouse = ($oldqty >= 0 ? $oldqty : 0);
 						// We make a test on oldpmp>0 to avoid to use normal rule on old data with no pmp field defined
-						if ($oldpmp > 0) {
+						if ($oldpmp > 0 && ($oldqtytouse + $qty) != 0) {
 							$newpmp = price2num((($oldqtytouse * $oldpmp) + ($qty * $price)) / ($oldqtytouse + $qty), 'MU');
 						} else {
 							$newpmp = $price; // For this product, PMP was not yet set. We set it to input price.
@@ -1336,5 +1336,38 @@ class MouvementStock extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
+	}
+
+	/**
+	 * Retrieve date of last stock movement for
+	 *
+	 * @param int $fk_entrepot  Warehouse id
+	 * @param int $fk_product   Product id
+	 * @param string $batch     Batch number
+	 * @return string   		Date of last stock movement if found else empty string
+	 */
+	public function getDateLastMovementProductBatch($fk_entrepot, $fk_product, $batch)
+	{
+		$date = '';
+
+		$sql = 	"SELECT MAX(datem) as datem";
+		$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement";
+		$sql .= " WHERE fk_product = " . ((int) $fk_product);
+		$sql .= " AND fk_entrepot  = " .((int) $fk_entrepot);
+		$sql .= " AND batch = '" . $this->db->escape($batch) . "'";
+
+		$result = $this->db->query($sql);
+		if ($result) {
+			if ($this->db->num_rows($result)) {
+				$dateObj = $this->db->fetch_object($result);
+				$date = $dateObj->datem;
+			}
+			$this->db->free($result);
+		} else {
+			dol_print_error($this->db);
+			return $date;
+		}
+
+		return $date;
 	}
 }

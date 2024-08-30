@@ -68,8 +68,8 @@ $socid = '';
 if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'propal', $object->id);
 $hookmanager->initHooks(array('proposalcontactcard', 'globalcard'));
+$result = restrictedArea($user, 'propal', $object->id);
 
 $usercancreate = $user->hasRight("propal", "creer");
 

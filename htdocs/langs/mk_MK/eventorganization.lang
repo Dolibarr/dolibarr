@@ -26,7 +26,7 @@ EventOrganizationSetup=Поставување организација на на
 EventOrganization=Организација на настан
 EventOrganizationSetupPage = Страница за поставување организација на настан
 EVENTORGANIZATION_TASK_LABEL = Ознака на задачи што треба да се креираат автоматски кога проектот е потврден
-EVENTORGANIZATION_TASK_LABELTooltip = Кога потврдувате настан за организирање, некои задачи може автоматски да се креираат во проектот<br><br>На пример: <br>Испрати повик за конференции<br>Испрати повик за штандовиb0342fccfda19bzal предлагаат конференции<spanalid0</span ='notranslate'><br>Потврдете ја апликацијата за Booths<br>Отворете ги претплатите на настанот за присутнитеb0342fccfda19>b0342fccfda1 на настанот до звучниците<span class='notranslate'><br>Испратете потсетник за настанот до домаќините на Бут<br>Испратете потсетник за настанот до присутните
+EVENTORGANIZATION_TASK_LABELTooltip = When you validate an event to organize, some tasks can be automatically created in the project<br><br>For example: <br>Send Call for Conferences<br>Send Call for Booths<br>Validate suggestions of Conferences<br>Validate application for Booths<br>Open subscriptions to the event for attendees<br>Send a remind of the event to speakers<br>Send a remind of the event to Booth hosters<br>Send a remind of the event to attendees
 EVENTORGANIZATION_TASK_LABELTooltip2=Чувајте го празно ако не треба автоматски да креирате задачи.
 EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Категорија за додавање на трети лица автоматски креирана кога некој ќе предложи конференција
 EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Категоријата за додавање на трети лица автоматски се создава кога тие предлагаат штанд
@@ -108,8 +108,8 @@ PublicAttendeeSubscriptionPage = Јавен линк за регистрациј
 MissingOrBadSecureKey = Безбедносниот клуч е неважечки или недостасува
 EvntOrgWelcomeMessage = Овој формулар ви овозможува да се регистрирате како нов учесник на настанот
 EvntOrgDuration = Оваа конференција започнува на %s и завршува на %s.
-ConferenceAttendeeFee = Надоместок за присутните на конференцијата за настанот : „%s“ се јавува од %s до <span class='notranslate'>b0ecb2fz874 >.
-BoothLocationFee = Локација на штандот за настанот: '%s' се јавува од %s до <span class='notranslate'>b0ecb2ec87f49>z
+ConferenceAttendeeFee = Conference attendee fee for the event : '%s' occurring from %s to %s.
+BoothLocationFee = Booth location for the event : '%s' occurring from %s to %s
 EventType = Тип на настан
 LabelOfBooth=Ознака на штанд
 LabelOfconference=Ознака за конференција
@@ -143,7 +143,7 @@ Attendee = Присутен
 PaymentConferenceAttendee = Плаќање на присутните на конференцијата
 PaymentBoothLocation = Плаќање за локација на штанд
 DeleteConferenceOrBoothAttendee=Отстранете го учесникот
-RegistrationAndPaymentWereAlreadyRecorder=Регистрација и уплата веќе беа снимени за е-поштата <b>%s<span class='notranslate'>b09a4b739f17f8z
+RegistrationAndPaymentWereAlreadyRecorder=A registration and a payment were already recorded for the email <b>%s</b>
 EmailAttendee=Е-пошта на присутните
 EmailCompany=Е-пошта на компанијата
 EmailCompanyForInvoice=Е-пошта на компанијата (за фактура, доколку е различна од е-поштата на присутните)

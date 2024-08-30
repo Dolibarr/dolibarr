@@ -72,10 +72,10 @@ function check_authentication($authentication, &$error, &$errorcode, &$errorlabe
 
 		// Validation of login
 		if (!$error) {
-			$fuser->getrights(); // Load permission of user
+			$fuser->loadRights(); // Load permission of user
 
 			// Authentication mode
-			if (empty($dolibarr_main_authentication)) {
+			if (empty($dolibarr_main_authentication) || $dolibarr_main_authentication == 'openid_connect') {
 				$dolibarr_main_authentication = 'http,dolibarr';
 			}
 			// Authentication mode: forceuser

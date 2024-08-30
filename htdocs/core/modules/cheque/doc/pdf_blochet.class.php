@@ -3,6 +3,7 @@
  * Copyright (C) 2009-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2016      Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,22 +56,8 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	 */
 	public $line_per_page;
 
-	/**
-	 * @var Account bank account
-	 */
-	public $account;
-
-	public $amount;
-	public $date;
-	public $nbcheque;
-	public $ref;
 	public $ref_ext;
 
-
-	/**
-	 * @var array lines
-	 */
-	public $lines;
 
 	/**
 	 *	Constructor
@@ -215,7 +202,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		// Pied de page
 		$this->_pagefoot($pdf, '', $outputlangs);
 		if (method_exists($pdf, 'AliasNbPages')) {
-			$pdf->AliasNbPages();
+			$pdf->AliasNbPages();  // @phan-suppress-current-line PhanUndeclaredMethod
 		}
 
 		$pdf->Close();
@@ -420,7 +407,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 			$pdf->SetXY(180, $this->tab_top + 10 + $yp);
 			$pdf->MultiCell(20, $this->line_height, price($this->lines[$j]->amount_chq), 0, 'R', 0);
 
-			$yp = $yp + ($this->line_height * $nb_lines);
+			$yp += ($this->line_height * $nb_lines);
 		}
 	}
 

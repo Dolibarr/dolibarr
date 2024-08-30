@@ -301,7 +301,7 @@ class Fiscalyear extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      int			$withpicto                Add picto into link
 	 *  @param	    int   	    $notooltip		          1=Disable tooltip

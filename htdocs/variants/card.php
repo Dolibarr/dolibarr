@@ -49,15 +49,16 @@ if (!isModEnabled('variants')) {
 if ($user->socid > 0) { // Protection if external user
 	accessforbidden();
 }
+
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('productattributecard', 'globalcard'));
+
 $result = restrictedArea($user, 'variants');
 
 $object = new ProductAttribute($db);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'
-
-// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-$hookmanager->initHooks(array('productattributecard', 'globalcard'));
 
 $permissiontoread = $user->hasRight('variants', 'read');
 $permissiontoadd = $user->hasRight('variants', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php

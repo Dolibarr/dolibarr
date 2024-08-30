@@ -343,7 +343,7 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 		//var_dump($sFileName); var_dump(image_format_supported($sFileName));exit;
 		$imgsupported = image_format_supported($sFileName);
-		$isImageValid = ($imgsupported >= 0 ? true : false);
+		$isImageValid = ($imgsupported >= 0);
 		if (!$isImageValid) {
 			$sErrorNumber = '202';
 		}
@@ -742,7 +742,7 @@ function IsAllowedCommand($sCommand)
  */
 function GetCurrentFolder()
 {
-	$sCurrentFolder = isset($_GET['CurrentFolder']) ? GETPOST('CurrentFolder', '', 1) : '/';
+	$sCurrentFolder = isset($_GET['CurrentFolder']) ? GETPOST('CurrentFolder', 'alphanohtml', 1) : '/';
 
 	// Check the current folder syntax (must begin and start with a slash).
 	if (!preg_match('|/$|', $sCurrentFolder)) {

@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2019 Pierre Ardoin <mapiolca@me.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,7 +119,7 @@ if ($socid > 0) {
 
 				print '<td class="left">'.$fac->getLibStatut(2, $totalpaid).'</td>';
 				print '<td class="right">'.price($fac->total_ttc)."</td>\n";
-				$solde = $solde + $fac->total_ttc;
+				$solde += $fac->total_ttc;
 
 				print '<td class="right">&nbsp;</td>';
 				print '<td class="right">'.price($solde)."</td>\n";
@@ -153,7 +154,7 @@ if ($socid > 0) {
 						print "<td>&nbsp;</td>\n";
 						print "<td>&nbsp;</td>\n";
 						print '<td class="right">'.price($objp->amount).'</td>';
-						$solde = $solde - $objp->amount;
+						$solde -= $objp->amount;
 						print '<td class="right">'.price($solde)."</td>\n";
 
 						// Auteur

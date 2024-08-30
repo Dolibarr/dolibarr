@@ -203,23 +203,24 @@ class Members extends DolibarrApi
 	 *
 	 * Get a list of members
 	 *
-	 * @param string    $sortfield  Sort field
-	 * @param string    $sortorder  Sort order
-	 * @param int       $limit      Limit for list
-	 * @param int       $page       Page number
-	 * @param string    $typeid     ID of the type of member
-	 * @param int		$category   Use this param to filter list by category
-	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma.
-	 *                              Example: "(t.ref:like:'SO-%') and ((t.date_creation:<:'20160101') or (t.nature:is:NULL))"
-	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
-	 * @return array                Array of member objects
+	 * @param string    $sortfield  		Sort field
+	 * @param string    $sortorder  		Sort order
+	 * @param int       $limit      		Limit for list
+	 * @param int       $page       		Page number
+	 * @param string    $typeid     		ID of the type of member
+	 * @param int		$category   		Use this param to filter list by category
+	 * @param string    $sqlfilters 		Other criteria to filter answers separated by a comma.
+	 *                              		Example: "(t.ref:like:'SO-%') and ((t.date_creation:<:'20160101') or (t.nature:is:NULL))"
+	 * @param string	$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param bool      $pagination_data    If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @return array    					Array of member objects
 	 *
 	 * @throws	RestException	400		Error on SQL filters
 	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	404		No Member found
 	 * @throws	RestException	503		Error when retrieving Member list
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $typeid = '', $category = 0, $sqlfilters = '', $properties = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $typeid = '', $category = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
 		$obj_ret = array();
 
@@ -250,6 +251,9 @@ class Members extends DolibarrApi
 			}
 		}
 
+		//this query will return total orders with the filters given
+		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
 			if ($page < 0) {
@@ -275,6 +279,23 @@ class Members extends DolibarrApi
 			}
 		} else {
 			throw new RestException(503, 'Error when retrieve member list : '.$this->db->lasterror());
+		}
+
+		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		if ($pagination_data) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret = [];
+
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = [
+				'total' => (int) $total,
+				'page' => $page, //count starts from 0
+				'page_count' => ceil((int) $total / $limit),
+				'limit' => $limit
+			];
 		}
 
 		return $obj_ret;
@@ -661,13 +682,14 @@ class Members extends DolibarrApi
 	 *
 	 * Get a list of members types
 	 *
-	 * @param string    $sortfield  Sort field
-	 * @param string    $sortorder  Sort order
-	 * @param int       $limit      Limit for list
-	 * @param int       $page       Page number
-	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.libelle:like:'SO-%') and (t.subscription:=:'1')"
-	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
-	 * @return array                Array of member type objects
+	 * @param string    $sortfield  		Sort field
+	 * @param string    $sortorder  		Sort order
+	 * @param int       $limit      		Limit for list
+	 * @param int       $page       		Page number
+	 * @param string    $sqlfilters 		Other criteria to filter answers separated by a comma. Syntax example "(t.libelle:like:'SO-%') and (t.subscription:=:'1')"
+	 * @param string	$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param bool      $pagination_data    If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @return array                		Array of member type objects
 	 *
 	 * @url GET /types/
 	 *
@@ -675,7 +697,7 @@ class Members extends DolibarrApi
 	 * @throws	RestException	404		No Member Type found
 	 * @throws	RestException	503		Error when retrieving Member list
 	 */
-	public function indexType($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
+	public function indexType($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
 		$obj_ret = array();
 
@@ -695,6 +717,9 @@ class Members extends DolibarrApi
 				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 		}
+
+		//this query will return total orders with the filters given
+		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
@@ -721,6 +746,23 @@ class Members extends DolibarrApi
 			}
 		} else {
 			throw new RestException(503, 'Error when retrieve member type list : '.$this->db->lasterror());
+		}
+
+		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		if ($pagination_data) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret = [];
+
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = [
+				'total' => (int) $total,
+				'page' => $page, //count starts from 0
+				'page_count' => ceil((int) $total / $limit),
+				'limit' => $limit
+			];
 		}
 
 		return $obj_ret;

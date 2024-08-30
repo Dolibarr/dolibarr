@@ -923,7 +923,7 @@ class Task extends CommonObjectLine
 	}
 
 	/**
-	 *	Return clicable name (with picto eventually)
+	 *	Return clickable name (with picto eventually)
 	 *
 	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@param	string	$option			'withproject' or ''
@@ -1041,8 +1041,8 @@ class Task extends CommonObjectLine
 	 * Return list of tasks for all projects or for one particular project
 	 * Sort order is on project, then on position of task, and last on start date of first level task
 	 *
-	 * @param	User	$usert					Object user to limit tasks affected to a particular user
-	 * @param	User	$userp					Object user to limit projects of a particular user and public projects
+	 * @param	?User	$usert					Object user to limit tasks affected to a particular user
+	 * @param	?User	$userp					Object user to limit projects of a particular user and public projects
 	 * @param	int		$projectid				Project id
 	 * @param	int		$socid					Third party id
 	 * @param	int		$mode					0=Return list of tasks and their projects, 1=Return projects and tasks if exists
@@ -1053,12 +1053,12 @@ class Task extends CommonObjectLine
 	 * @param	int		$filterontaskuser		Filter on user assigned to task
 	 * @param	?Extrafields	$extrafields	Show additional column from project or task
 	 * @param   int     $includebilltime    	Calculate also the time to bill and billed
-	 * @param   array   $search_array_options 	Array of search filters. Not Used yet.
+	 * @param   array<string,string>   $search_array_options 	Array of search filters. Not Used yet.
 	 * @param   int     $loadextras         	Fetch all Extrafields on each project and task
 	 * @param	int		$loadRoleMode			1= will test Roles on task;  0 used in delete project action
 	 * @param	string	$sortfield				Sort field
 	 * @param	string	$sortorder				Sort order
-	 * @return 	array|string					Array of tasks
+	 * @return 	Task[]|string					Array of tasks
 	 */
 	public function getTasksArray($usert = null, $userp = null, $projectid = 0, $socid = 0, $mode = 0, $filteronproj = '', $filteronprojstatus = '-1', $morewherefilter = '', $filteronprojuser = 0, $filterontaskuser = 0, $extrafields = null, $includebilltime = 0, $search_array_options = array(), $loadextras = 0, $loadRoleMode = 1, $sortfield = '', $sortorder = '')
 	{
@@ -1515,7 +1515,7 @@ class Task extends CommonObjectLine
 			}
 		}
 
-		if ($ret == true) {
+		if ($ret) {
 			$this->db->commit();
 		} else {
 			$this->db->rollback();
@@ -2176,7 +2176,7 @@ class Task extends CommonObjectLine
 		$error = 0;
 
 		//Use 00:00 of today if time is use on task.
-		$now = dol_mktime(0, 0, 0, dol_print_date(dol_now(), '%m'), dol_print_date(dol_now(), '%d'), dol_print_date(dol_now(), '%Y'));
+		$now = dol_mktime(0, 0, 0, (int) dol_print_date(dol_now(), '%m'), (int) dol_print_date(dol_now(), '%d'), (int) dol_print_date(dol_now(), '%Y'));
 
 		$datec = $now;
 
@@ -2199,6 +2199,7 @@ class Task extends CommonObjectLine
 		if (getDolGlobalString('PROJECT_TASK_ADDON') && is_readable(DOL_DOCUMENT_ROOT."/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON').".php")) {
 			require_once DOL_DOCUMENT_ROOT."/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON').'.php';
 			$modTask = new $obj();
+			'@phan-var-force ModeleNumRefTask $modTask';
 			$defaultref = $modTask->getNextValue(0, $clone_task);
 		}
 
@@ -2644,11 +2645,11 @@ class Task extends CommonObjectLine
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{

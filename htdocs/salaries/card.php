@@ -497,8 +497,8 @@ if ($id > 0) {
 
 // Create
 if ($action == 'create' && $permissiontoadd) {
-	$year_current = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
-	$pastmonth = dol_print_date(dol_now(), "%m") - 1;
+	$year_current = (int) dol_print_date(dol_now('gmt'), "%Y", 'gmt');
+	$pastmonth = (int) dol_print_date(dol_now(), "%m") - 1;
 	$pastmonthyear = $year_current;
 	if ($pastmonth == 0) {
 		$pastmonth = 12;
@@ -1068,7 +1068,7 @@ if ($id > 0) {
 		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AlreadyPaid").' :</td><td class="right nowrap amountcard">'.price($totalpaid)."</td></tr>\n";
 		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AmountExpected").' :</td><td class="right nowrap amountcard">'.price($object->amount)."</td></tr>\n";
 
-		$resteapayer = $object->amount - $totalpaid;
+		$resteapayer = (float) $object->amount - $totalpaid;
 		$cssforamountpaymentcomplete = 'amountpaymentcomplete';
 
 		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("RemainderToPay")." :</td>";

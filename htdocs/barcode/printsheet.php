@@ -68,10 +68,10 @@ if (!isModEnabled('barcode')) {
 if (!$user->hasRight('barcode', 'read')) {
 	accessforbidden();
 }
-restrictedArea($user, 'barcode');
-
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('printsheettools'));
+
+restrictedArea($user, 'barcode');
 
 $parameters = array();
 
@@ -179,10 +179,12 @@ if (empty($reshook)) {
 
 			// Load barcode class for generating barcode image
 			$classname = "mod".ucfirst($generator);
+			// $module can be modTcpdfbarcode or modPhpbarcode that both extends ModeleBarCode
 			$module = new $classname($db);
-			'@phan-var-force ModeleBarCode $module';
-			if ($generator != 'tcpdfbarcode') {
-				// May be phpbarcode
+
+			// Build the file on disk for generator not able to return the document on the fly.
+			if ($generator != 'tcpdfbarcode') {		// $generator can be 'phpbarcode' (with this generator, barcode is generated on disk first) or 'tcpdfbarcode' (no need to enter this section with this generator).
+				'@phan-var-force modPhpbarcode $module';
 				$template = 'standardlabel';
 				$is2d = false;
 				if ($module->encodingIsSupported($encoding)) {
@@ -200,6 +202,7 @@ if (empty($reshook)) {
 					setEventMessages("Error, encoding ".$encoding." is not supported by encoder ".$generator.'. You must choose another barcode type or install a barcode generation engine that support '.$encoding, null, 'errors');
 				}
 			} else {
+				'@phan-var-force modTcpdfbarcode $module';
 				$template = 'tcpdflabel';
 				$encoding = $module->getTcpdfEncodingType($encoding); //convert to TCPDF compatible encoding types
 				$is2d = $module->is2d;

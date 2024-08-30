@@ -303,7 +303,8 @@ ErrorThirpdartyOrMemberidIsMandatory=Terțul sau Membrul unui parteneriat este o
 ErrorFailedToWriteInTempDirectory=Eșec la scrierea în directorul temp
 ErrorQuantityIsLimitedTo=Cantitatea este limitată la  %s
 ErrorFailedToLoadThirdParty=Eșec la căutarea/găsirea terțului din id=%s, email=%s, nume=%s
-ErrorThisPaymentModeIsNotSepa=Acest mod de plată nu este un cont bancar
+ErrorThisPaymentModeIsNotDirectDebit=Modul de plată nu este debit direct
+ErrorThisPaymentModeIsNotCreditTransfer=Modul de plată nu este transfer de credit
 ErrorStripeCustomerNotFoundCreateFirst=Clientul Stripe nu este setat pentru acest terț (sau setat la o valoare ștearsă pe partea de cont Stripe). Crează-l (sau reatașează-l) mai întâi.
 ErrorCharPlusNotSupportedByImapForSearch=Căutarea IMAP nu poate găsi în expeditor sau destinatar un șir care conține caracterul +
 ErrorTableNotFound=Tabelul <b>%s</b> nu a fost găsit
@@ -334,9 +335,9 @@ ErrorDictionaryNotFound=Dicționarul <b>%s</b> nu a fost găsit
 ErrorFailedToCreateSymLinkToMedias=Eșec la crearea legăturii simbolice %s care direcționează către %s
 ErrorCheckTheCommandInsideTheAdvancedOptions=Verifică comanda utilizată pentru export în Opțiuni avansate ale exportului
 ErrorEndTimeMustBeGreaterThanStartTime=Ora de încheiere trebuie să fie mai mare decât ora de început
-ErrorIncoherentDates=Data de început trebuie să fie mai mică decât data de sfârșit
-ErrorEndHourIsNull=Dată sfârșit nu poate fi zero
-ErrorStartHourIsNull=Dată început nu poate fi zero
+ErrorIncoherentDates=Data de început trebuie să fie anterioară datei de încheiere
+ErrorEndHourIsNull=Câmpul dată de încheiere nu poate fi gol
+ErrorStartHourIsNull=Câmpul dată de început nu poate fi gol
 ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter=Prea multe linii de procesat. Utilizează un filtru mai selectiv.
 ErrorEmptyValueForQty=Cantitatea nu poate fi zero.
 # Warnings
@@ -421,3 +422,4 @@ OperNotDefined=Metoda de plată nedefinită
 ErrorThisContactXIsAlreadyDefinedAsThisType=%s este deja definit ca și contact pentru acest tip.
 ErrorThisGroupIsAlreadyDefinedAsThisType=Persoanele de contact cu acest grup sunt deja definite ca persoane de contact pentru acest tip.
 EmptyMessageNotAllowedError=Mesajul gol nu este permis
+ErrorIsNotInError=%s nu este cu eroare
