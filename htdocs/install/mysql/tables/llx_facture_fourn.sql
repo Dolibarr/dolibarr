@@ -32,7 +32,7 @@ create table llx_facture_fourn
   type					smallint DEFAULT 0 NOT NULL,
   subtype				smallint DEFAULT NULL,					-- subtype of invoice (some countries need a subtype to classify invoices)
   fk_soc				integer NOT NULL,
-  
+
   datec					datetime,                      -- date de creation de la facture
   datef					date,                          -- date invoice
   date_pointoftax		date DEFAULT NULL,			   -- date point of tax (for GB)
@@ -87,11 +87,13 @@ create table llx_facture_fourn
 
   import_key			varchar(14),
   extraparams			varchar(255),					-- for stock other parameters with json format
-  
+
   fk_multicurrency		integer,
   multicurrency_code			varchar(3),
   multicurrency_tx			double(24,8) DEFAULT 1,
   multicurrency_total_ht		double(24,8) DEFAULT 0,
   multicurrency_total_tva	double(24,8) DEFAULT 0,
-  multicurrency_total_ttc	double(24,8) DEFAULT 0
+  multicurrency_total_ttc	double(24,8) DEFAULT 0,
+
+  fk_iban               smallint DEFAULT NULL           -- iban from selected bank account for transferts
 )ENGINE=innodb;
