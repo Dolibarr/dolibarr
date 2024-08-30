@@ -618,28 +618,32 @@ if ($object->id > 0) {
 	print $langs->trans('CustomerIBAN');
 	print '</td>';
 	if ($action != 'editmode' && $object->status == $object::STATUS_DRAFT && $user->hasRight('facture', 'creer')) {
-		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&token='.newToken().'&id='.$object->id.'&type='.urlencode($type).'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
+		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editrib&token='.newToken().'&id='.$object->id.'&type='.urlencode($type).'">'.img_edit($langs->trans('SetRib'), 1).'</a></td>';
 	}
 	print '</tr></table>';
 	print '</td><td colspan="3">';
-//	$filtertype = 'CRDT';
-//	if ($type == 'bank-transfer') {
-//		$filtertype = 'DBIT';
-//	}
-	$bac = new CompanyBankAccount($db);
-	var_dump("<pre>");
-	$bac->fetch(0, '', $object->thirdparty->id,-1);
-//	foreach()
-//	$bac->fetch(0, '', $object->thirdparty->id);
-	var_dump($bac);
-//	if ($action == 'editmode') {
-//		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id, 'mode_reglement_id', $filtertype, 1, 0, $type);
-//	} else {
-//		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $bac->iban.(($bac->iban && $bac->bic) ? ' / ' : '').$bac->bic, 'none');
-//	}
-	if (!empty($bac->iban)) {
-		if ($bac->verif() <= 0) {
-			print img_warning('Error on default bank number for IBAN : '.$langs->trans($bac->error));
+
+//	$bac = new CompanyBankAccount($db);
+	$ribList = $object->thirdparty->get_all_rib();
+	$ribForSelection = [];
+	$default_rib = '';
+	foreach($ribList as $rib) {
+		$ribString = $rib->iban . (($rib->iban && $rib->bic) ? ' / ' : '') . $rib->bic;
+
+		$ribForSelection[] = $ribString;
+		if($rib->default_rib == 1){
+			$default_rib = $ribString;
+		}
+	}
+
+	if ($action == 'editrib') {
+		$form->form_iban($_SERVER['PHP_SELF'].'?id='.$object->id, $default_rib, 'ribList', $filtertype, 1, 0, $type, 0, $ribForSelection);
+	} else {
+		$form->form_iban($_SERVER['PHP_SELF'].'?id='.$object->id, $default_rib, 'none');
+	}
+	if (!empty($rib->iban)) {
+		if ($rib->verif() <= 0) {
+			print img_warning('Error on default bank number for IBAN : '.$langs->trans($rib->error));
 		}
 	} else {
 		if ($numopen || ($type != 'bank-transfer' && $object->mode_reglement_code == 'PRE') || ($type == 'bank-transfer' && $object->mode_reglement_code == 'VIR')) {

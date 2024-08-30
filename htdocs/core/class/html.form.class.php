@@ -4742,6 +4742,135 @@ class Form
 		}
 	}
 
+	//	-------------------------------------------------------------
+	//	MODIFICATIONS START
+	//	-------------------------------------------------------------
+	/**
+	 * Return list of payment methods
+	 * Constant MAIN_DEFAULT_PAYMENT_TYPE_ID can used to set default value but scope is all application, probably not what you want.
+	 *
+	 * @param 	string 	$selected 		Id or code or preselected payment mode
+	 * @param 	string 	$htmlname 		Name of select field
+	 * @param 	string 	$filtertype 	To filter on field type in llx_c_paiement ('CRDT' or 'DBIT' or array('code'=>xx,'label'=>zz))
+	 * @param 	int 	$format 		0=id+label, 1=code+code, 2=code+label, 3=id+code
+	 * @param 	int 	$empty 			1=can be empty, 0 otherwise
+	 * @param 	int 	$noadmininfo 	0=Add admin info, 1=Disable admin info
+	 * @param 	int 	$maxlength 		Max length of label
+	 * @param 	int 	$active 		Active or not, -1 = all
+	 * @param 	string 	$morecss 		Add more CSS on select tag
+	 * @param 	int 	$nooutput 		1=Return string, do not send to output
+	 * @return  string|void             String for the HTML select component
+	 */
+	public function select_types_iban($selected = '', $htmlname = 'ribList', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0, $active = 1, $morecss = '', $nooutput = 0, $ribForSelection = [])
+	{
+		// phpcs:enable
+		global $langs, $user, $conf;
+
+
+		$out = '';
+
+//		dol_syslog(__METHOD__ . " " . $selected . ", " . $htmlname . ", " . $filtertype . ", " . $format, LOG_DEBUG);
+
+//		$filterarray = array();
+//		if ($filtertype == 'CRDT') {
+//			$filterarray = array(0, 2, 3);
+//		} elseif ($filtertype == 'DBIT') {
+//			$filterarray = array(1, 2, 3);
+//		} elseif ($filtertype != '' && $filtertype != '-1') {
+//			$filterarray = explode(',', $filtertype);
+//		}
+
+//		$this->load_cache_types_paiements();
+
+//		// Set default value if not already set by caller
+//		if (empty($selected) && getDolGlobalString('MAIN_DEFAULT_PAYMENT_TYPE_ID')) {
+//			dol_syslog(__METHOD__ . "Using deprecated option MAIN_DEFAULT_PAYMENT_TYPE_ID", LOG_NOTICE);
+//			$selected = getDolGlobalString('MAIN_DEFAULT_PAYMENT_TYPE_ID');
+//		}
+
+		$out .= '<select id="select' . $htmlname . '" class="flat selectrib' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '">';
+		if ($empty) {
+			$out .= '<option value="">&nbsp;</option>';
+		}
+
+		foreach ($ribForSelection as $rib){
+
+			$out .= '<option value="' . $rib . '"';
+
+			if ($selected == $rib) {
+				$out .= ' selected';
+			}
+
+			$out .= '>';
+			$out .= $rib;
+			$out .= '</option>';
+		}
+//		var_dump($out);
+//		foreach ($this->cache_types_paiements as $id => $arraytypes) {
+//			// If not good status
+//			if ($active >= 0 && $arraytypes['active'] != $active) {
+//				continue;
+//			}
+//
+//			// We skip of the user requested to filter on specific payment methods
+//			if (count($filterarray) && !in_array($arraytypes['type'], $filterarray)) {
+//				continue;
+//			}
+//
+//			// We discard empty lines if showempty is on because an empty line has already been output.
+//			if ($empty && empty($arraytypes['code'])) {
+//				continue;
+//			}
+//
+//			if ($format == 0) {
+//				$out .= '<option value="' . $id . '"';
+//			} elseif ($format == 1) {
+//				$out .= '<option value="' . $arraytypes['code'] . '"';
+//			} elseif ($format == 2) {
+//				$out .= '<option value="' . $arraytypes['code'] . '"';
+//			} elseif ($format == 3) {
+//				$out .= '<option value="' . $id . '"';
+//			}
+//			// Print attribute selected or not
+//			if ($format == 1 || $format == 2) {
+//				if ($selected == $arraytypes['code']) {
+//					$out .= ' selected';
+//				}
+//			} else {
+//				if ($selected == $id) {
+//					$out .= ' selected';
+//				}
+//			}
+//			$out .= '>';
+//			$value = '';
+//			if ($format == 0) {
+//				$value = ($maxlength ? dol_trunc($arraytypes['label'], $maxlength) : $arraytypes['label']);
+//			} elseif ($format == 1) {
+//				$value = $arraytypes['code'];
+//			} elseif ($format == 2) {
+//				$value = ($maxlength ? dol_trunc($arraytypes['label'], $maxlength) : $arraytypes['label']);
+//			} elseif ($format == 3) {
+//				$value = $arraytypes['code'];
+//			}
+//			$out .= $value ? $value : '&nbsp;';
+//			$out .= '</option>';
+//		}
+		$out .= '</select>';
+//		if ($user->admin && !$noadmininfo) {
+//			$out .= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+//		}
+		$out .= ajax_combobox('select' . $htmlname);
+
+		if (empty($nooutput)) {
+			print $out;
+		} else {
+			return $out;
+		}
+	}
+	//	-------------------------------------------------------------
+	//	MODIFICATIONS END
+	//	-------------------------------------------------------------
+
 
 	/**
 	 *  Selection HT or TTC
@@ -6287,12 +6416,10 @@ class Form
 	 * @param int $nooutput 1=Return string, no output
 	 * @return    string                    HTML output or ''
 	 */
-	public function form_iban($page, $selected = '', $htmlname = 'mode_reglement_id', $filtertype = '', $active = 1, $addempty = 0, $type = '', $nooutput = 0): string
+	public function form_iban($page, $selected = '', $htmlname = 'ribList', $filtertype = '', $active = 1, $addempty = 0, $type = '', $nooutput = 0, $ribForSelection = []): string
 	{
 		// phpcs:enable
 		global $langs;
-
-
 
 		$out = '';
 		if ($htmlname != "none") {
@@ -6302,13 +6429,56 @@ class Form
 			if ($type) {
 				$out .= '<input type="hidden" name="type" value="' . dol_escape_htmltag($type) . '">';
 			}
-			$out .= $this->select_types_paiements($selected, $htmlname, $filtertype, 0, $addempty, 0, 0, $active, '', 1);
+			$out .= $this->select_types_iban($selected, $htmlname, $filtertype, 0, $addempty, 0, 0, $active, '', 1, $ribForSelection);
 			$out .= '<input type="submit" class="button smallpaddingimp valignmiddle" value="' . $langs->trans("Modify") . '">';
 			$out .= '</form>';
 		} else {
 			if ($selected) {
-				$this->load_cache_types_paiements();
-				$out .= $this->cache_types_paiements[$selected]['label'];
+				$out .= $selected;
+//				$this->load_cache_types_paiements();
+				////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//
+//				$num = count($this->cache_types_paiements);        // TODO Use $conf->cache['payment_mode'] instead of $this->cache_types_paiements
+//				if ($num > 0) {
+//					return $num; // Cache already loaded
+//				}
+//
+//				dol_syslog(__METHOD__, LOG_DEBUG);
+//
+//				$this->cache_types_paiements = array();
+//
+//				$sql = "SELECT id, code, libelle as label, type, active";
+//				$sql .= " FROM " . $this->db->prefix() . "c_paiement";
+//				$sql .= " WHERE entity IN (" . getEntity('c_paiement') . ")";
+//
+//				$resql = $this->db->query($sql);
+//				if ($resql) {
+//					$num = $this->db->num_rows($resql);
+//					$i = 0;
+//					while ($i < $num) {
+//						$obj = $this->db->fetch_object($resql);
+//
+//						// Si traduction existe, on l'utilise, sinon on prend le libelle par default
+//						$label = ($langs->transnoentitiesnoconv("PaymentTypeShort" . $obj->code) != "PaymentTypeShort" . $obj->code ? $langs->transnoentitiesnoconv("PaymentTypeShort" . $obj->code) : ($obj->label != '-' ? $obj->label : ''));
+//						$this->cache_types_paiements[$obj->id]['id'] = $obj->id;
+//						$this->cache_types_paiements[$obj->id]['code'] = $obj->code;
+//						$this->cache_types_paiements[$obj->id]['label'] = $label;
+//						$this->cache_types_paiements[$obj->id]['type'] = $obj->type;
+//						$this->cache_types_paiements[$obj->id]['active'] = $obj->active;
+//						$i++;
+//					}
+//
+//					$this->cache_types_paiements = dol_sort_array($this->cache_types_paiements, 'label', 'asc', 0, 0, 1);
+//
+//					return $num;
+//				} else {
+//					dol_print_error($this->db);
+//					return -1;
+//				}
+//
+//				////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//				$out .= $this->cache_types_paiements[$selected]['label'];
 			} else {
 				$out .= "&nbsp;";
 			}
@@ -6316,9 +6486,8 @@ class Form
 
 		if ($nooutput) {
 			return $out;
-		} else {
-			print $out;
 		}
+		print $out;
 		return '';
 	}
 	// ---------------------------------------------------------------------------------------
