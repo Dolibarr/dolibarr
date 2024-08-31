@@ -79,9 +79,9 @@ function pdf_admin_prepare_head()
 /**
  *	Return array with format properties of default PDF format
  *
- *	@param		Translate|null	$outputlangs		Output lang to use to autodetect output format if we need 'auto' detection
- *  @param		string			$mode				'setup' = Use setup, 'auto' = Force autodetection whatever is setup
- *  @return     array								Array('width'=>w,'height'=>h,'unit'=>u);
+ *	@param		?Translate		$outputlangs		Output lang to use to autodetect output format if we need 'auto' detection
+ *  @param		'setup'|'auto'	$mode				'setup' = Use setup, 'auto' = Force autodetection whatever is setup
+ *  @return     array{width:float|int,height:float|int,unit:string}		Array('width'=>w,'height'=>h,'unit'=>u);
  */
 function pdf_getFormat(Translate $outputlangs = null, $mode = 'setup')
 {
@@ -120,9 +120,9 @@ function pdf_getFormat(Translate $outputlangs = null, $mode = 'setup')
 /**
  *      Return a PDF instance object. We create a FPDI instance that instantiate TCPDF.
  *
- *      @param	string		$format         Array(width,height). Keep empty to use default setup.
+ *      @param	array{float|int,float|int}|array{}|''	$format	Array(width,height). Keep empty to use default setup.
  *      @param	string		$metric         Unit of format ('mm')
- *      @param  string		$pagetype       'P' or 'l'
+ *      @param  'P'|'l'		$pagetype       'P' or 'l'
  *      @return TCPDF|TCPDI					PDF object
  */
 function pdf_getInstance($format = '', $metric = 'mm', $pagetype = 'P')

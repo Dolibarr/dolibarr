@@ -201,9 +201,9 @@ class mod_facture_terre extends ModeleNumRefFactures
 	 * ALTER TABLE llx_facture ADD INDEX calculated_numrefonly_idx (calculated_numrefonly);
 	 *
 	 * @param	Societe		$objsoc		Object third party
-	 * @param   Facture		$invoice	Object invoice
+	 * @param   ?Facture	$invoice	Object invoice
 	 * @param   string		$mode		'next' for next value or 'last' for last value
-	 * @return  string|int<-1,1>		Value if OK, <=0 if KO
+	 * @return  string|int<-1,0>		Value if OK, <=0 if KO
 	 */
 	public function getNextValue($objsoc, $invoice, $mode = 'next')
 	{

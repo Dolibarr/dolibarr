@@ -225,7 +225,7 @@ $arraylistofpdfformat = array(
 
 $s = $langs->trans("LibraryToBuildPDF")."<br>";
 $i = 0;
-$pdf = pdf_getInstance('A4');
+$pdf = pdf_getInstance(array(210, 297));
 if (class_exists('FPDF') && !class_exists('TCPDF')) {
 	if ($i) {
 		$s .= ' + ';

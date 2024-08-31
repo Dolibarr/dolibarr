@@ -308,7 +308,7 @@ if (empty($reshook)) {
 		$object->duration = GETPOSTINT('duration');
 		$object->fk_project = GETPOSTINT('projectid');
 		$object->fk_contrat = GETPOSTINT('contratid');
-		$object->author = $user->id;
+		$object->user_author_id = $user->id;
 		$object->description = GETPOST('description', 'restricthtml');
 		$object->ref = $ref;
 		$object->ref_client = $ref_client;
@@ -526,7 +526,7 @@ if (empty($reshook)) {
 		$object->socid = $socid;
 		$object->fk_project = GETPOSTINT('projectid');
 		$object->fk_contrat = GETPOSTINT('contratid');
-		$object->author = $user->id;
+		$object->user_author_id = $user->id;
 		$object->description = GETPOST('description', 'restricthtml');
 		$object->ref = $ref;
 		$object->ref_client = $ref_client;
