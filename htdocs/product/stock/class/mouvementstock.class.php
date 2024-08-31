@@ -408,7 +408,7 @@ class MouvementStock extends CommonObject
 					}
 				} else { // If not found, we add record
 					$productlot = new Productlot($this->db);
-					$productlot->origin = !empty($this->origin_type) ? $this->origin_type : '';
+					$productlot->origin_type = !empty($this->origin_type) ? $this->origin_type : '';
 					$productlot->origin_id = !empty($this->origin_id) ? $this->origin_id : 0;
 					$productlot->entity = $conf->entity;
 					$productlot->fk_product = $fk_product;
@@ -431,7 +431,8 @@ class MouvementStock extends CommonObject
 			}
 		}
 
-		// Check if stock is enough when qty is < 0
+		// Check if stock is enough when qty is < 0.
+		// THIS MUST BE DONE AT END OF MOVEMENTS
 		// Note that qty should be > 0 with type 0 or 3, < 0 with type 1 or 2.
 		if ($movestock && $qty < 0 && !getDolGlobalInt('STOCK_ALLOW_NEGATIVE_TRANSFER')) {
 			if (isModEnabled('productbatch') && $product->hasbatch() && !$skip_batch) {
@@ -1161,6 +1162,9 @@ class MouvementStock extends CommonObject
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->id;
 		$label .= '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
 		$qtylabel = (($this->qty > 0) ? '<span class="stockmovemententry">+' : '<span class="stockmovementexit">') . $this->qty . '</span>';
+		if ($this->inventorycode) {
+			$label .= '<br><b>'.$langs->trans('InventoryCode').':</b> '.$this->inventorycode;
+		}
 		$label .= '<br><b>'.$langs->trans('Qty').':</b> ' . $qtylabel;
 		if ($this->batch) {
 			$label .= '<br><b>'.$langs->trans('Batch').':</b> '.$this->batch;

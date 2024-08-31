@@ -102,14 +102,6 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	// Change customer bank information to withdraw
-	/*
-	if ($action == 'modify') {
-		for ($i = 1; $i < 9; $i++) {
-			dolibarr_set_const($db, GETPOST("nom".$i), GETPOST("value".$i), 'chaine', 0, '', $conf->entity);
-		}
-	}
-	*/
 	if ($action == 'create' && $permissiontocreate) {
 		$default_account = ($type == 'bank-transfer' ? 'PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT' : 'PRELEVEMENT_ID_BANKACCOUNT');
 		//var_dump($default_account);var_dump(getDolGlobalString($default_account));var_dump($id_bankaccount);exit;

@@ -200,7 +200,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';*/
 
 	// Create predefined invoice
-	if ($action == 'add') {
+	if ($action == 'add' && $usercancreate) {
 		if (!GETPOST('title', 'alphanohtml')) {
 			setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->trans("Title")), null, 'errors');
 			$action = "create";
@@ -456,7 +456,7 @@ if (empty($reshook)) {
 	}
 
 	// Add a new line
-	if ($action == 'addline' && $user->hasRight('facture', 'creer')) {
+	if ($action == 'addline' && $usercancreate) {
 		$langs->load('errors');
 		$error = 0;
 
@@ -989,9 +989,7 @@ $now = dol_now();
 $nowlasthour = dol_get_last_hour($now);
 
 
-/*
- * Create mode
- */
+// Create mode
 if ($action == 'create') {
 	print load_fiche_titre($langs->trans("CreateRepeatableInvoice"), '', 'bill');
 
@@ -1235,9 +1233,7 @@ if ($action == 'create') {
 		dol_print_error(null, "Error, no invoice ".$object->id);
 	}
 } else {
-	/*
-	 * View mode
-	 */
+	// View mode
 	if ($object->id > 0) {
 		$object->fetch_thirdparty();
 
