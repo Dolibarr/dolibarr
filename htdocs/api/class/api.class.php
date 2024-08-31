@@ -290,7 +290,7 @@ class DolibarrApi
 
 		unset($object->prefix_comm);
 
-		if (!isset($object->table_element) || $object->table_element != 'ticket') {
+		if (!isset($object->table_element) || ! in_array($object->table_element, array('expensereport_det', 'ticket'))) {
 			unset($object->comments);
 		}
 
