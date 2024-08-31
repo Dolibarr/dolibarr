@@ -44,6 +44,13 @@ $hookmanager->initHooks(array('usercard', 'globalcard'));
 
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
+// Define value to know what current user can do on properties of edited user
+if ($id > 0) {
+	// $user is the current logged user, $id is the user we want to edit
+	$canedituser = (($user->id == $id) && $user->hasRight("user", "self", "write")) || (($user->id != $id) && $user->hasRight("user", "user", "write"));
+}
+
+
 /*
  * Actions
  */
@@ -55,7 +62,7 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	if ($action == 'update' && !GETPOST('cancel', 'alpha')) {
+	if ($action == 'update' && !GETPOST('cancel', 'alpha') && $canedituser) {
 		$edituser = new User($db);
 		$edituser->fetch($id);
 
@@ -75,6 +82,7 @@ if (empty($reshook)) {
 /*
  * View
  */
+
 $form = new Form($db);
 
 if ($id > 0) {

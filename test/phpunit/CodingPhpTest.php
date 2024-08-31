@@ -650,6 +650,7 @@ class CodingPhpTest extends CommonClassTest
 			foreach ($matches as $key => $val) {
 				if (!preg_match('/\$user->hasR/', $val[0])
 					&& !preg_match('/\$permission/', $val[0])
+					&& !preg_match('/\$permto/', $val[0])
 					&& !preg_match('/\$usercan/', $val[0])
 					&& !preg_match('/\$canedit/', $val[0])
 					&& !preg_match('/already done/i', $val[0])
