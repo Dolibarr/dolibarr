@@ -118,6 +118,7 @@ $error = 0;
 $usercanread = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'lire')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'lire')));
 $usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'creer')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'creer')));
 $usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('product', 'product_advance', 'read_prices') : $user->hasRight('product', 'lire');
+$usercanupdatestock = $user->hasRight('stock', 'mouvement', 'creer');
 
 if ($object->isService()) {
 	$label = $langs->trans('Service');
@@ -244,7 +245,7 @@ if ($action == 'setdesiredstock' && $usercancreate) {
 
 
 // Correct stock
-if ($action == "correct_stock" && !$cancel && $usercancreate) {
+if ($action == "correct_stock" && !$cancel && $usercanupdatestock) {
 	if (!(GETPOSTINT("id_entrepot") > 0)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
 		$error++;
@@ -337,7 +338,7 @@ if ($action == "correct_stock" && !$cancel && $usercancreate) {
 }
 
 // Transfer stock from a warehouse to another warehouse
-if ($action == "transfert_stock" && !$cancel && $usercancreate) {
+if ($action == "transfert_stock" && !$cancel && $usercanupdatestock) {
 	if (!(GETPOSTINT("id_entrepot") > 0) || !(GETPOSTINT("id_entrepot_destination") > 0)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
 		$error++;
