@@ -1627,7 +1627,7 @@ if (empty($reshook)) {
 
 
 	if (!$error && getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB') && $usercancreate) {
-		if ($action == 'addcontact') {
+		if ($action == 'addcontact' && $usercancreate) {
 			if ($object->id > 0) {
 				$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
 				$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
@@ -1645,14 +1645,14 @@ if (empty($reshook)) {
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
-		} elseif ($action == 'swapstatut') {
+		} elseif ($action == 'swapstatut' && $usercancreate) {
 			// bascule du statut d'un contact
 			if ($object->id > 0) {
 				$result = $object->swapContactStatus(GETPOSTINT('ligne'));
 			} else {
 				dol_print_error($db);
 			}
-		} elseif ($action == 'deletecontact') {
+		} elseif ($action == 'deletecontact' && $usercancreate) {
 			// Efface un contact
 			$result = $object->delete_contact($lineid);
 

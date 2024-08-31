@@ -838,10 +838,7 @@ if (empty($reshook)) {
 				$db->rollback();
 			}
 		}
-	} elseif ($action == 'import_lines_from_object'
-		&& $user->hasRight('propal', 'creer')
-		&& $object->statut == Propal::STATUS_DRAFT
-	) {
+	} elseif ($action == 'import_lines_from_object' && $usercancreate && $object->statut == Propal::STATUS_DRAFT) {
 		// add lines from objectlinked
 		$fromElement = GETPOST('fromelement');
 		$fromElementid = GETPOST('fromelementid');
@@ -1713,8 +1710,8 @@ if (empty($reshook)) {
 		}
 	}
 
-	if (getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB') && $usercancreate) {
-		if ($action == 'addcontact') {
+	if (getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB')) {
+		if ($action == 'addcontact' && $usercancreate) {
 			if ($object->id > 0) {
 				$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
 				$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
@@ -1732,14 +1729,14 @@ if (empty($reshook)) {
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
-		} elseif ($action == 'swapstatut') {
+		} elseif ($action == 'swapstatut' && $usercancreate) {
 			// Toggle the status of a contact
 			if ($object->fetch($id) > 0) {
 				$result = $object->swapContactStatus(GETPOSTINT('ligne'));
 			} else {
 				dol_print_error($db);
 			}
-		} elseif ($action == 'deletecontact') {
+		} elseif ($action == 'deletecontact' && $usercancreate) {
 			// Delete a contact
 			$object->fetch($id);
 			$result = $object->delete_contact($lineid);

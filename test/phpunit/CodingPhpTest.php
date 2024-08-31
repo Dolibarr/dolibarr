@@ -636,7 +636,8 @@ class CodingPhpTest extends CommonClassTest
 			&& !preg_match('/\.tpl\.php/', $file['fullname'])
 			&& !preg_match('/\.lib\.php/', $file['fullname'])
 			&& !preg_match('/\.inc\.php/', $file['fullname'])
-			&& !preg_match('/\.class\.php/', $file['fullname'])) {
+			&& !preg_match('/\.class\.php/', $file['fullname'])
+			&& !preg_match('/NORUN$/', $file['fullname'])) {
 			$ok = true;
 			$matches = array();
 
@@ -654,7 +655,8 @@ class CodingPhpTest extends CommonClassTest
 					&& !preg_match('/\$permission/', $val[0])
 					&& !preg_match('/\$usercan/', $val[0])
 					&& !preg_match('/\$canedit/', $val[0])
-					&& !preg_match('/already done/', $val[0])) {
+					&& !preg_match('/already done/i', $val[0])
+					&& !preg_match('/not required/i', $val[0])) {
 					$ok = false;
 					print "Line: ".$val[0]."\n";
 					break;

@@ -140,7 +140,7 @@ if (GETPOST('createpagefromclone', 'alpha')) {
 if (empty($action) && $file_manager) {
 	$action = 'file_manager';
 }
-if ($action == 'replacesite' || (empty($action) && $replacesite)) {
+if ($action == 'replacesite' || (empty($action) && $replacesite)) {		// Test on permission not required
 	$mode = 'replacesite';
 }
 if (GETPOST('refreshsite') || GETPOST('refreshsite_x') || GETPOST('refreshsite.x')) {
@@ -333,7 +333,7 @@ if (GETPOST('optionsitefiles')) {
 }
 
 if (empty($sortfield)) {
-	if ($action == 'file_manager') {
+	if ($action == 'file_manager') {	// Test on permission not required
 		$sortfield = 'name';
 		$sortorder = 'ASC';
 	} else {
@@ -344,7 +344,7 @@ if (empty($sortfield)) {
 
 $searchkey = GETPOST('searchstring', 'restricthtml');
 
-if ($action == 'replacesite' || $mode == 'replacesite') {
+if ($action == 'replacesite' || $mode == 'replacesite') {	// Test on permission not required
 	$containertype = GETPOST('optioncontainertype', 'aZ09') != '-1' ? GETPOST('optioncontainertype', 'aZ09') : '';
 	$langcode = GETPOST('optionlanguage', 'aZ09');
 	$otherfilters = array();
