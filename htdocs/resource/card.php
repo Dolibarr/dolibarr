@@ -93,7 +93,7 @@ if (empty($reshook)) {
 			header("Location: ".$backtopage);
 			exit;
 		}
-		if ($action == 'add') {
+		if ($action == 'add') {	// Test on permission not required here
 			header("Location: ".DOL_URL_ROOT.'/resource/list.php');
 			exit;
 		}

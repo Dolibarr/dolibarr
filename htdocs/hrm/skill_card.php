@@ -136,19 +136,37 @@ if (empty($reshook)) {
 
 	if (!$error) {
 		if (is_array($skilldetArray) && count($skilldetArray) > 0) {
-			foreach ($skilldetArray as $key => $SkValueToUpdate) {
-				$skilldetObj = new Skilldet($object->db);
-				$res = $skilldetObj->fetch($key);
-				if ($res > 0) {
-					$skilldetObj->description = $SkValueToUpdate;
-					$resupd = $skilldetObj->update($user);
-					if ($resupd <= 0) {
-						setEventMessage($langs->trans('errorUpdateSkilldet'));
+			if ($action == 'add') {
+				$arraySkill = $object->fetchLines();
+				$index = 0;
+				foreach ($arraySkill as $skilldet) {
+					if (isset($skilldetArray[$index])) {
+						$SkValueToUpdate = $skilldetArray[$index];
+						$skilldet->description = $SkValueToUpdate;
+						$resupd = $skilldet->update($user);
+						if ($resupd <= 0) {
+							setEventMessage($langs->trans('errorUpdateSkilldet'), 'errors');
+						}
+					}
+					$index++;
+				}
+			} else {
+				foreach ($skilldetArray as $key => $SkValueToUpdate) {
+					$skilldetObj = new Skilldet($object->db);
+					$res = $skilldetObj->fetch($key);
+					if ($res > 0) {
+						$skilldetObj->description = $SkValueToUpdate;
+						$resupd = $skilldetObj->update($user);
+						if ($resupd <= 0) {
+							setEventMessage($langs->trans('errorUpdateSkilldet'), 'errors');
+						}
 					}
 				}
 			}
 		}
 	}
+
+
 
 
 	// Actions when linking object each other
@@ -232,14 +250,21 @@ if ($action == 'create') {
 	//print $object->showInputField($val, $key, $value, '', '['']', '', 0);
 
 	print '</table>' . "\n";
+	print '<hr>';
+
+	print '<table class="border centpercent =">' . "\n";
+	for ($i = 1; $i <= $MaxNumberSkill; $i++) {
+		print '<tr><td class="titlefieldcreate tdtop">'. $langs->trans('Description') . ' ' . $langs->trans('rank') . ' ' . $i . '</td>';
+		print '<td class="valuefieldcreate"><textarea name="descriptionline[]" rows="5"  class="flat minwidth100" style="margin-top: 5px; width: 90%"></textarea></td>';
+	}
+	print '</table>';
 
 	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" name="add" value="' . dol_escape_htmltag($langs->trans("Create")) . '">';
 	print '&nbsp; ';
-
-	print '<input type="' . ($backtopage ? "submit" : "button") . '" class="button button-cancel" name="cancel" value="' . dol_escape_htmltag($langs->trans("Cancel")) . '"' . ($backtopage ? '' : ' onclick="history.go(-1)"') . '>'; // Cancel for create does not post form if we don't know the backtopage
+	print '<input type="' . ($backtopage ? "submit" : "button") . '" class="button button-cancel" name="cancel" value="' . dol_escape_htmltag($langs->trans("Cancel")) . '"' . ($backtopage ? '' : ' onclick="history.go(-1)"') . '>';
 	print '</div>';
 
 	print '</form>';

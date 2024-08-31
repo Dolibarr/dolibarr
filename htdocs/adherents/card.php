@@ -57,6 +57,7 @@ $langs->loadLangs(array("companies", "bills", "members", "users", "other", "payp
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
+$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');	// if not set, $backtopage will be used
 $confirm = GETPOST('confirm', 'alpha');
 $rowid = GETPOSTINT('rowid');
 $id = GETPOST('id') ? GETPOSTINT('id') : $rowid;
@@ -182,7 +183,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'setsocid') {
+	if ($action == 'setsocid' && $caneditfieldmember) {
 		$error = 0;
 		if (!$error) {
 			if ($socid != $object->socid) {	// If link differs from currently in database

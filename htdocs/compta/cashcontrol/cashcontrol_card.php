@@ -101,13 +101,14 @@ if (!$user->hasRight("cashdesk", "run") && !$user->hasRight("takepos", "run")) {
 	accessforbidden();
 }
 
+$permissiontoadd = ($user->hasRight("cashdesk", "run") || $user->hasRight("takepos", "run"));
+$permissiontodelete = ($user->hasRight("cashdesk", "run") || $user->hasRight("takepos", "run")) || ($permissiontoadd && $object->status == 0);
+
 
 /*
  * Actions
  */
 
-$permissiontoadd = ($user->hasRight("cashdesk", "run") || $user->hasRight("takepos", "run"));
-$permissiontodelete = ($user->hasRight("cashdesk", "run") || $user->hasRight("takepos", "run")) || ($permissiontoadd && $object->status == 0);
 if (empty($backtopage)) {
 	$backtopage = DOL_URL_ROOT.'/compta/cashcontrol/cashcontrol_card.php?id='.(!empty($id) && $id > 0 ? $id : '__ID__');
 }
@@ -120,14 +121,14 @@ if (!getDolGlobalString('CASHDESK_ID_BANKACCOUNT_CASH') && !getDolGlobalString('
 
 
 if (GETPOST('cancel', 'alpha')) {
-	if ($action == 'valid') {
+	if ($action == 'valid') {	// Test on permission not required here
 		$action = 'view';
 	} else {
 		$action = 'create';
 	}
 }
 
-if ($action == "reopen") {
+if ($action == "reopen" && $permissiontoadd) {
 	$result = $object->setStatut($object::STATUS_DRAFT, null, '', 'CASHFENCE_REOPEN');
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -136,7 +137,7 @@ if ($action == "reopen") {
 	$action = 'view';
 }
 
-if ($action == "start") {
+if ($action == "start" && $permissiontoadd) {
 	$error = 0;
 	if (!GETPOST('posmodule', 'alpha') || GETPOST('posmodule', 'alpha') == '-1') {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Module")), null, 'errors');
@@ -153,7 +154,7 @@ if ($action == "start") {
 		$action = 'create';
 		$error++;
 	}
-} elseif ($action == "add") {
+} elseif ($action == "add" && $permissiontoadd) {
 	if (GETPOST('opening', 'alpha') == '') {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("InitialBankBalance")), null, 'errors');
 		$action = 'start';
@@ -194,7 +195,7 @@ if ($action == "start") {
 	}
 }
 
-if ($action == "valid") {	// validate = close
+if ($action == "valid" && $permissiontoadd) {	// validate = close
 	$object->fetch($id);
 
 	$db->begin();

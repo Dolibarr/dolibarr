@@ -76,6 +76,7 @@ $result = restrictedArea($user, 'banque', '', '', '');
 $object = new PaymentVarious($db);
 
 $permissiontoadd = $user->hasRight('banque', 'modifier');
+$permissiontodelete = $user->hasRight('banque', 'modifier');
 
 
 /**
@@ -107,7 +108,7 @@ if (empty($reshook)) {
 		$object->setProject(GETPOSTINT('projectid'));
 	}
 
-	if ($action == 'add') {
+	if ($action == 'add' && $permissiontoadd) {
 		$error = 0;
 
 		$datep = dol_mktime(12, 0, 0, GETPOSTINT("datepmonth"), GETPOSTINT("datepday"), GETPOSTINT("datepyear"));
@@ -186,7 +187,7 @@ if (empty($reshook)) {
 		$action = 'create';
 	}
 
-	if ($action == 'confirm_delete' && $confirm == 'yes') {
+	if ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontodelete) {
 		$result = $object->fetch($id);
 
 		if ($object->rappro == 0) {
@@ -220,7 +221,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'setaccountancy_code') {
+	if ($action == 'setaccountancy_code' && $permissiontodelete) {
 		$db->begin();
 
 		$result = $object->fetch($id);
@@ -236,7 +237,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'setsubledger_account') {
+	if ($action == 'setsubledger_account' && $permissiontodelete) {
 		$db->begin();
 
 		$result = $object->fetch($id);
@@ -254,7 +255,7 @@ if (empty($reshook)) {
 }
 
 // Action clone object
-if ($action == 'confirm_clone' && $confirm != 'yes') {
+if ($action == 'confirm_clone' && $confirm != 'yes') {	// Test on permission not required
 	$action = '';
 }
 
@@ -326,6 +327,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
 /*
  *	View
  */
+
 $form = new Form($db);
 if (isModEnabled('accounting')) {
 	$formaccounting = new FormAccounting($db);
@@ -542,13 +544,7 @@ if ($action == 'create') {
 	print '</form>';
 }
 
-
-/* ************************************************************************** */
-/*                                                                            */
-/* View mode                                                                  */
-/*                                                                            */
-/* ************************************************************************** */
-
+// View in read or edit mode
 if ($id) {
 	$alreadyaccounted = $object->getVentilExportCompta();
 

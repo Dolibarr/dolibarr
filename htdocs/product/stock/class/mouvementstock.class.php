@@ -1162,6 +1162,9 @@ class MouvementStock extends CommonObject
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->id;
 		$label .= '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
 		$qtylabel = (($this->qty > 0) ? '<span class="stockmovemententry">+' : '<span class="stockmovementexit">') . $this->qty . '</span>';
+		if ($this->inventorycode) {
+			$label .= '<br><b>'.$langs->trans('InventoryCode').':</b> '.$this->inventorycode;
+		}
 		$label .= '<br><b>'.$langs->trans('Qty').':</b> ' . $qtylabel;
 		if ($this->batch) {
 			$label .= '<br><b>'.$langs->trans('Batch').':</b> '.$this->batch;
