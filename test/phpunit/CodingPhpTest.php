@@ -653,6 +653,7 @@ class CodingPhpTest extends CommonClassTest
 					&& !preg_match('/\$permto/', $val[0])
 					&& !preg_match('/\$usercan/', $val[0])
 					&& !preg_match('/\$canedit/', $val[0])
+					&& !preg_match('/\$user->admin/', $val[0])
 					&& !preg_match('/already done/i', $val[0])
 					&& !preg_match('/not required/i', $val[0])) {
 						$ok = false;
