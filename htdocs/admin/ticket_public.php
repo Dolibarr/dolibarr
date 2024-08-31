@@ -53,9 +53,9 @@ $errors = array();
 
 if ($action == 'setTICKET_ENABLE_PUBLIC_INTERFACE') {
 	if (GETPOST('value')) {
-		$res = dolibarr_set_const($db, 'TICKET_ENABLE_PUBLIC_INTERFACE', '1', 'chaine', 0, '', $conf->entity);
+		$res = dolibarr_set_const($db, 'TICKET_ENABLE_PUBLIC_INTERFACE', 1, 'chaine', 0, '', $conf->entity);
 	} else {
-		$res = dolibarr_set_const($db, 'TICKET_ENABLE_PUBLIC_INTERFACE', '0', 'chaine', 0, '', $conf->entity);
+		$res = dolibarr_set_const($db, 'TICKET_ENABLE_PUBLIC_INTERFACE', 0, 'chaine', 0, '', $conf->entity);
 	}
 	if (!($res > 0)) {
 		$error++;

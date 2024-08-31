@@ -73,7 +73,7 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 		dolibarr_del_const($db, 'STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER', $conf->entity);
 	}
 
-	if (dolibarr_set_const($db, $code, '1', 'chaine', 0, '', $conf->entity) > 0) {
+	if (dolibarr_set_const($db, $code, 1, 'chaine', 0, '', $conf->entity) > 0) {
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	} else {

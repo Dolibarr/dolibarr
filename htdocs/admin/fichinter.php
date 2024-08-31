@@ -166,7 +166,7 @@ if ($action == 'updateMask') {
 	}
 } elseif ($action == 'set_FICHINTER_PRINT_PRODUCTS') {
 	$val = GETPOST('FICHINTER_PRINT_PRODUCTS', 'alpha');
-	$res = dolibarr_set_const($db, "FICHINTER_PRINT_PRODUCTS", ($val == 'on' ? '1' : '0'), 'bool', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "FICHINTER_PRINT_PRODUCTS", ($val == 'on' ? 1 : 0), 'bool', 0, '', $conf->entity);
 
 	if (!($res > 0)) {
 		$error++;
@@ -179,7 +179,7 @@ if ($action == 'updateMask') {
 	}
 } elseif ($action == 'set_FICHINTER_USE_SERVICE_DURATION') {
 	$val = GETPOST('FICHINTER_USE_SERVICE_DURATION', 'alpha');
-	$res = dolibarr_set_const($db, "FICHINTER_USE_SERVICE_DURATION", ($val == 'on' ? '1' : '0'), 'bool', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "FICHINTER_USE_SERVICE_DURATION", ($val == 'on' ? 1 : 0), 'bool', 0, '', $conf->entity);
 
 	if (!($res > 0)) {
 		$error++;
@@ -192,7 +192,7 @@ if ($action == 'updateMask') {
 	}
 } elseif ($action == 'set_FICHINTER_WITHOUT_DURATION') {
 	$val = GETPOST('FICHINTER_WITHOUT_DURATION', 'alpha');
-	$res = dolibarr_set_const($db, "FICHINTER_WITHOUT_DURATION", ($val == 'on' ? '1' : '0'), 'bool', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "FICHINTER_WITHOUT_DURATION", ($val == 'on' ? 1 : 0), 'bool', 0, '', $conf->entity);
 
 	if (!($res > 0)) {
 		$error++;
@@ -205,7 +205,7 @@ if ($action == 'updateMask') {
 	}
 } elseif ($action == 'set_FICHINTER_DATE_WITHOUT_HOUR') {
 	$val = GETPOST('FICHINTER_DATE_WITHOUT_HOUR', 'alpha');
-	$res = dolibarr_set_const($db, "FICHINTER_DATE_WITHOUT_HOUR", ($val == 'on' ? '1' : '0'), 'bool', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "FICHINTER_DATE_WITHOUT_HOUR", ($val == 'on' ? 1 : 0), 'bool', 0, '', $conf->entity);
 
 	if (!($res > 0)) {
 		$error++;
@@ -218,7 +218,7 @@ if ($action == 'updateMask') {
 	}
 } elseif ($action == "set_FICHINTER_ALLOW_ONLINE_SIGN") {
 	$val = GETPOST('FICHINTER_ALLOW_ONLINE_SIGN', 'alpha');
-	$res = dolibarr_set_const($db, "FICHINTER_ALLOW_ONLINE_SIGN", ($val == 'on' ? '1' : '0'), 'bool', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "FICHINTER_ALLOW_ONLINE_SIGN", ($val == 'on' ? 1 : 0), 'bool', 0, '', $conf->entity);
 
 	if (!($res > 0)) {
 		$error++;
@@ -231,7 +231,7 @@ if ($action == 'updateMask') {
 	}
 } elseif ($action == "set_FICHINTER_ALLOW_EXTERNAL_DOWNLOAD") {
 	$val = GETPOST('FICHINTER_ALLOW_EXTERNAL_DOWNLOAD', 'alpha');
-	$res = dolibarr_set_const($db, "FICHINTER_ALLOW_EXTERNAL_DOWNLOAD", ($val == 'on' ? '1' : '0'), 'bool', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "FICHINTER_ALLOW_EXTERNAL_DOWNLOAD", ($val == 'on' ? 1 : 0), 'bool', 0, '', $conf->entity);
 
 	if (!($res > 0)) {
 		$error++;
