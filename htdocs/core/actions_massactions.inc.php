@@ -133,6 +133,8 @@ if (!$error && $massaction == 'confirm_presend') {
 			$result = $objecttmp->fetch($toselectid);
 			if ($result > 0) {
 				$listofobjectid[$toselectid] = $toselectid;
+
+				// Set $tmpobjectid that is ID of parent object (thirdparty or user in most cases)
 				$tmpobjectid = ($objecttmp->fk_soc ? $objecttmp->fk_soc : $objecttmp->socid);
 				if ($objecttmp->element == 'societe') {
 					'@phan-var-force Societe $objecttmp';
@@ -159,7 +161,6 @@ if (!$error && $massaction == 'confirm_presend') {
 
 				if ($objectclass == 'Facture') {
 					'@phan-var-force Facture $objecttmp';
-					$tmpobjectid = $objecttmp->id;
 					$tmparraycontact = array();
 					$tmparraycontact = $objecttmp->liste_contact(-1, 'external', 0, 'BILLING');
 					if (is_array($tmparraycontact) && count($tmparraycontact) > 0) {
