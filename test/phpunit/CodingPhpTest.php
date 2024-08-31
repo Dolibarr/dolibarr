@@ -129,10 +129,10 @@ class CodingPhpTest extends CommonClassTest
 	{
 		$this->nbLinesToShow = 1;
 		//print 'Check php file '.$file['relativename']."\n";
-		$filecontent = file_get_contents($file['fullname']);
+		$filecontentorigin = file_get_contents($file['fullname']);
 
 		// We are not interested in the comments
-		$filecontent = $this->removePhpComments(file_get_contents($file['fullname']));
+		$filecontent = $this->removePhpComments($filecontentorigin);
 
 		// File path for reports
 		$report_filepath = "htdocs/{$file['relativename']}";
@@ -632,16 +632,25 @@ class CodingPhpTest extends CommonClassTest
 
 		// Test we don't have if ($action == 'xxx'... without test on permission
 		// We do not test on file into admin, protection is done on page on user->admin
-		if (!preg_match('/admin\//', $filecontent)
-			&& !preg_match('/\.tpl\.php/', $filecontent)
-			&& !preg_match('/\.lib\.php/', $filecontent)
-			&& !preg_match('/\.inc\.php/', $filecontent)
-			&& !preg_match('/\.class\.php/', $filecontent)) {
+		if (!preg_match('/admin\//', $file['fullname'])
+			&& !preg_match('/\.tpl\.php/', $file['fullname'])
+			&& !preg_match('/\.lib\.php/', $file['fullname'])
+			&& !preg_match('/\.inc\.php/', $file['fullname'])
+			&& !preg_match('/\.class\.php/', $file['fullname'])) {
 			$ok = true;
 			$matches = array();
-			preg_match_all('/if\s*\(\s*\$action\s*==\s*[\'"][a-z]+[\'"].*/', $filecontent, $matches, PREG_SET_ORDER);
+
+			// Get to part of string to use for analysis
+			$reg = array();
+			if (preg_match('/\*\s+Action(.*)\*\s+View/ims', $filecontentorigin, $reg)) {
+				$filecontentaction = $reg[1];
+			} else {
+				$filecontentaction = $filecontent;
+			}
+
+			preg_match_all('/if\s*\(\s*\$action\s*==\s*[\'"][a-z]+[\'"].*/', $filecontentaction, $matches, PREG_SET_ORDER);
 			foreach ($matches as $key => $val) {
-				if (!preg_match('/\$user->hasR/', $val[0])) {
+				if (!preg_match('/\$user->hasR/', $val[0]) && !preg_match('/\$permission/', $val[0]) && !preg_match('/\$usercan/', $val[0])) {
 					$ok = false;
 					print "Line: ".$val[0]."\n";
 					break;
