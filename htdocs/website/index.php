@@ -2588,7 +2588,7 @@ if ($action == 'importsiteconfirm' && $usercanedit) {
 						$action = 'importsite';
 					} else {
 						// Force mode dynamic on
-						dolibarr_set_const($db, 'WEBSITE_SUBCONTAINERSINLINE', '1', 'chaine', 0, '', $conf->entity);
+						dolibarr_set_const($db, 'WEBSITE_SUBCONTAINERSINLINE', 1, 'chaine', 0, '', $conf->entity);
 
 						header("Location: ".$_SERVER["PHP_SELF"].'?website='.$object->ref);
 						exit();
