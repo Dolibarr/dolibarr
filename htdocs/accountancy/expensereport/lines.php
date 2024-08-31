@@ -155,7 +155,7 @@ if (is_array($changeaccount) && count($changeaccount) > 0 && $user->hasRight('ac
 }
 
 if (GETPOST('sortfield') == 'erd.date, erd.rowid') {
-	$value = (GETPOST('sortorder') == 'asc,asc' ? '0' : '1');
+	$value = (GETPOST('sortorder') == 'asc,asc' ? 0 : 1);
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 	$res = dolibarr_set_const($db, "ACCOUNTING_LIST_SORT_VENTILATION_DONE", $value, 'yesno', 0, '', $conf->entity);
 }

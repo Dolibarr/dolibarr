@@ -4,7 +4,6 @@
  * Copyright (C) 2014-2015 Ari Elbaz (elarifr)	<github@accedinfo.com>
  * Copyright (C) 2014-2016 Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -163,7 +162,7 @@ if (is_array($changeaccount) && count($changeaccount) > 0 && $user->hasRight('ac
 }
 
 if (GETPOST('sortfield') == 'f.datef, f.ref, fd.rowid') {
-	$value = (GETPOST('sortorder') == 'asc,asc,asc' ? '0' : '1');
+	$value = (GETPOST('sortorder') == 'asc,asc,asc' ? 0 : 1);
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 	$res = dolibarr_set_const($db, "ACCOUNTING_LIST_SORT_VENTILATION_DONE", $value, 'yesno', 0, '', $conf->entity);
 }
