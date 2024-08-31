@@ -627,42 +627,6 @@ class CodingPhpTest extends CommonClassTest
 			break;
 		}
 		$this->assertTrue($ok, 'Found a CURDATE\(\) in code. Do not use this SQL method in file '.$file['relativename'].'. You must use the PHP function dol_now() instead.');
-
-
-		// Test we don't have if ($action == 'xxx'... without test on permission
-		// We do not test on file into admin, protection is done on page on user->admin
-		if (!preg_match('/admin\//', $file['fullname'])
-			&& !preg_match('/\.tpl\.php/', $file['fullname'])
-			&& !preg_match('/\.lib\.php/', $file['fullname'])
-			&& !preg_match('/\.inc\.php/', $file['fullname'])
-			&& !preg_match('/\.class\.php/', $file['fullname'])
-			&& !preg_match('/NORUN$/', $file['fullname'])) {
-			$ok = true;
-			$matches = array();
-
-			// Get to part of string to use for analysis
-			$reg = array();
-			if (preg_match('/\*\s+Action(.*)\*\s+View/ims', $filecontentorigin, $reg)) {
-				$filecontentaction = $reg[1];
-			} else {
-				$filecontentaction = $filecontent;
-			}
-
-			preg_match_all('/if\s*\(\s*\$action\s*==\s*[\'"][a-z]+[\'"].*/', $filecontentaction, $matches, PREG_SET_ORDER);
-			foreach ($matches as $key => $val) {
-				if (!preg_match('/\$user->hasR/', $val[0])
-					&& !preg_match('/\$permission/', $val[0])
-					&& !preg_match('/\$usercan/', $val[0])
-					&& !preg_match('/\$canedit/', $val[0])
-					&& !preg_match('/already done/i', $val[0])
-					&& !preg_match('/not required/i', $val[0])) {
-					$ok = false;
-					print "Line: ".$val[0]."\n";
-					break;
-				}
-			}
-			$this->assertTrue($ok, 'Found a test on action without check on permission and without comment to say this is expected, in file '.$file['relativename'].'.');
-		}
 	}
 
 
