@@ -317,6 +317,13 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 	/*if ($type != '') {
 		$sql .= " AND p.fk_product_type = ".((int) $type);
 	}*/
+	if (!$user->hasRight("produit", "lire")) {
+		$sql .= " AND p.fk_product_type <> ".((int) Product::TYPE_PRODUCT);
+	}
+	if (!$user->hasRight("service", "lire")) {
+		$sql .= " AND p.fk_product_type <> ".((int) Product::TYPE_SERVICE);
+	}
+
 	// Add where from hooks
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $product_static); // Note that $action and $object may have been modified by hook
