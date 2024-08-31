@@ -628,6 +628,27 @@ class CodingPhpTest extends CommonClassTest
 			break;
 		}
 		$this->assertTrue($ok, 'Found a CURDATE\(\) in code. Do not use this SQL method in file '.$file['relativename'].'. You must use the PHP function dol_now() instead.');
+
+
+		// Test we don't have if ($action == 'xxx'... without test on permission
+		// We do not test on file into admin, protection is done on page on user->admin
+		if (!preg_match('/admin\//', $filecontent)
+			&& !preg_match('/\.tpl\.php/', $filecontent)
+			&& !preg_match('/\.lib\.php/', $filecontent)
+			&& !preg_match('/\.inc\.php/', $filecontent)
+			&& !preg_match('/\.class\.php/', $filecontent)) {
+			$ok = true;
+			$matches = array();
+			preg_match_all('/if\s*\(\s*\$action\s*==\s*[\'"][a-z]+[\'"].*/', $filecontent, $matches, PREG_SET_ORDER);
+			foreach ($matches as $key => $val) {
+				if (!preg_match('/\$user->hasR/', $val[0])) {
+					$ok = false;
+					print "Line: ".$val[0]."\n";
+					break;
+				}
+			}
+			$this->assertTrue($ok, 'Found a test on action without check on permission and without comment to say this is expected, in file '.$file['relativename'].'.');
+		}
 	}
 
 
