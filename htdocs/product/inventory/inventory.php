@@ -1156,7 +1156,9 @@ if ($resql) {
 
 			// Picto delete line
 			print '<td class="right">';
-			print '<a class="reposition" href="'.DOL_URL_ROOT.'/product/inventory/inventory.php?id='.$object->id.'&lineid='.$obj->rowid.'&action=deleteline&page='.$page.$paramwithsearch.'&token='.newToken().'">'.img_delete().'</a>';
+			if ($permissiontoupdatestock) {
+				print '<a class="reposition" href="'.DOL_URL_ROOT.'/product/inventory/inventory.php?id='.$object->id.'&lineid='.$obj->rowid.'&action=deleteline&page='.$page.$paramwithsearch.'&token='.newToken().'">'.img_delete().'</a>';
+			}
 			$qty_tmp = price2num(GETPOST("id_".$obj->rowid."_input_tmp", 'MS')) >= 0 ? GETPOST("id_".$obj->rowid."_input_tmp") : $qty_view;
 			print '<input type="hidden" class="maxwidth50 right realqty" name="id_'.$obj->rowid.'_input_tmp" id="id_'.$obj->rowid.'_input_tmp" value="'.$qty_tmp.'">';
 			print '</td>';
