@@ -1253,6 +1253,7 @@ class ProductAttribute extends CommonObject
 		}
 		if (property_exists($this, 'amount')) {
 			$return .= '<br>';
+			// @phan-suppress-next-line PhanUndeclaredProperty
 			$return .= '<span class="info-box-label amount">'.price($this->amount, 0, $langs, 1, -1, -1, $conf->currency).'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
