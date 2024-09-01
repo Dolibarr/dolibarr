@@ -139,7 +139,7 @@ if ($id > 0) {
 }
 
 
-/**
+/*
  * Actions
  */
 
@@ -385,10 +385,10 @@ if (empty($reshook)) {
 
 			$object->fetch($id);
 
-			if ($action == 'addgroup') {
+			if ($action == 'addgroup') {	// Test on permission already done
 				$result = $object->SetInGroup($group, $editgroup->entity);
 			}
-			if ($action == 'removegroup') {
+			if ($action == 'removegroup') {	// Test on permission already done
 				$result = $object->RemoveFromGroup($group, $editgroup->entity);
 			}
 
@@ -766,7 +766,6 @@ if (empty($reshook)) {
 
 	// Actions to build doc
 	$upload_dir = $conf->user->dir_output;
-	$permissiontoadd = $user->hasRight("user", "user", "write");
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 
@@ -810,7 +809,6 @@ if ($object->id > 0) {
 $help_url = '';
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-user page-card');
-
 
 if ($action == 'create' || $action == 'adduserldap') {
 	print load_fiche_titre($title, '', 'user');
@@ -1521,16 +1519,12 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id", $langs->trans("EnableAUser"), $langs->trans("ConfirmEnableUser", $object->login), "confirm_enable", '', 0, 1);
 		}
 
-		/*
-		 * Confirmation suppression
-		 */
+		// Confirmation delete
 		if ($action == 'delete') {
 			print $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id", $langs->trans("DeleteAUser"), $langs->trans("ConfirmDeleteUser", $object->login), "confirm_delete", '', 0, 1);
 		}
 
-		/*
-		 * View mode
-		 */
+		// View mode
 		if ($action != 'edit') {
 			print dol_get_fiche_head($head, 'user', $title, -1, 'user');
 

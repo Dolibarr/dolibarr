@@ -94,7 +94,7 @@ if ($cancel) {
 	$action = 'view';
 }
 
-if ($action == "view" || $action == "presend" || $action == "dosubmit") {
+if ($action == "view" || $action == "presend" || $action == "dosubmit") {	// Test on permission not required here (anonymous action protected by mitigation of /public/... urls)
 	$error = 0;
 	$display_ticket = false;
 	if (!strlen($ref)) {

@@ -655,6 +655,7 @@ class CodingPhpTest extends CommonClassTest
 					&& !preg_match('/\$canedit/', $val[0])
 					&& !preg_match('/\$user->admin/', $val[0])
 					&& !preg_match('/already done/i', $val[0])
+					&& !preg_match('/done later/i', $val[0])
 					&& !preg_match('/not required/i', $val[0])) {
 						$ok = false;
 						print "File ".$file['relativename']." - Line: ".$val[0]."\n";

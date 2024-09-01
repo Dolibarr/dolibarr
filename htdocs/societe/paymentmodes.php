@@ -136,7 +136,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'update') {
+	if ($action == 'update' && $permissiontoaddupdatepaymentinformation) {
 		// Update the bank account
 		if (!GETPOST('label', 'alpha') || !(GETPOST('bank', 'alpha') || (getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC')!=0))) {
 			if (!GETPOST('label', 'alpha')) {
@@ -221,7 +221,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'updatecard') {
+	if ($action == 'updatecard' && $permissiontoaddupdatepaymentinformation) {
 		// Update credit card
 		if (!GETPOST('label', 'alpha') || !GETPOST('proprio', 'alpha') || !GETPOST('exp_date_month', 'alpha') || !GETPOST('exp_date_year', 'alpha')) {
 			if (!GETPOST('label', 'alpha')) {
@@ -284,7 +284,7 @@ if (empty($reshook)) {
 	}
 
 	// Add bank account
-	if ($action == 'add') {
+	if ($action == 'add' && $permissiontoaddupdatepaymentinformation) {
 		$error = 0;
 
 		if (!GETPOST('label', 'alpha')) {
@@ -380,7 +380,7 @@ if (empty($reshook)) {
 	}
 
 	// Add credit card
-	if ($action == 'addcard') {
+	if ($action == 'addcard' && $permissiontoaddupdatepaymentinformation) {
 		$error = 0;
 
 		if (!GETPOST('label', 'alpha') || !GETPOST('proprio', 'alpha') || !GETPOST('exp_date_month', 'alpha') || !GETPOST('exp_date_year', 'alpha')) {
@@ -447,7 +447,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'setasbankdefault' && GETPOSTINT('ribid') > 0) {
+	if ($action == 'setasbankdefault' && GETPOSTINT('ribid') > 0 && $permissiontoaddupdatepaymentinformation) {
 		$companybankaccount = new CompanyBankAccount($db);
 		$res = $companybankaccount->setAsDefault(GETPOSTINT('ribid'));
 		if ($res) {
@@ -459,7 +459,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'confirm_deletecard' && GETPOST('confirm', 'alpha') == 'yes') {
+	if ($action == 'confirm_deletecard' && GETPOST('confirm', 'alpha') == 'yes' && $permissiontoaddupdatepaymentinformation) {
 		// Delete the credi card
 		$companypaymentmode = new CompanyPaymentMode($db);
 		if ($companypaymentmode->fetch($ribid ? $ribid : $id)) {
@@ -486,7 +486,7 @@ if (empty($reshook)) {
 			setEventMessages($companypaymentmode->error, $companypaymentmode->errors, 'errors');
 		}
 	}
-	if ($action == 'confirm_deletebank' && GETPOST('confirm', 'alpha') == 'yes') {
+	if ($action == 'confirm_deletebank' && GETPOST('confirm', 'alpha') == 'yes' && $permissiontoaddupdatepaymentinformation) {
 		// Delete the bank account
 		$companybankaccount = new CompanyBankAccount($db);
 		if ($companybankaccount->fetch($ribid ? $ribid : $id) > 0) {
@@ -518,7 +518,7 @@ if (empty($reshook)) {
 	$savid = $id;
 
 	// Actions to build doc
-	if ($action == 'builddocrib') {
+	if ($action == 'builddocrib' && $permissiontoread) {
 		$action = 'builddoc';
 		$moreparams = array(
 			'use_companybankid' => GETPOST('companybankid'),
@@ -536,7 +536,7 @@ if (empty($reshook)) {
 
 	// Action for stripe
 	if (isModEnabled('stripe') && class_exists('Stripe')) {
-		if ($action == 'synccustomertostripe' || $action == 'synccustomertostripetest') {
+		if (($action == 'synccustomertostripe' || $action == 'synccustomertostripetest') && $permissiontoaddupdatepaymentinformation) {
 			if ($object->client == 0) {
 				$error++;
 				setEventMessages('ThisThirdpartyIsNotACustomer', null, 'errors');
@@ -565,7 +565,7 @@ if (empty($reshook)) {
 				}
 			}
 		}
-		if ($action == 'synccardtostripe') {
+		if ($action == 'synccardtostripe' && $permissiontoaddupdatepaymentinformation) {
 			// Create the credit card on current Stripe env
 			$companypaymentmode = new CompanyPaymentMode($db);
 			$companypaymentmode->fetch($id);
@@ -593,7 +593,7 @@ if (empty($reshook)) {
 				}
 			}
 		}
-		if ($action == 'syncsepatostripe') {
+		if ($action == 'syncsepatostripe' && $permissiontoaddupdatepaymentinformation) {
 			// Create the bank account on current Stripe env
 			$companypaymentmode = new CompanyPaymentMode($db);	// Get record in llx_societe_rib
 			$companypaymentmode->fetch($id);
@@ -625,7 +625,7 @@ if (empty($reshook)) {
 		}
 
 		// Set the customer Stripe account (for Live or Test env)
-		if ($action == 'setkey_account' || $action == 'setkey_accounttest') {
+		if (($action == 'setkey_account' || $action == 'setkey_accounttest') && $permissiontoaddupdatepaymentinformation) {
 			$error = 0;
 
 			$tmpservice = 'StripeTest';
@@ -692,7 +692,7 @@ if (empty($reshook)) {
 		}
 
 		// Set the supplier Stripe account (for Live or Test env)
-		if ($action == 'setkey_account_supplier' || $action == 'setkey_account_suppliertest') {
+		if (($action == 'setkey_account_supplier' || $action == 'setkey_account_suppliertest') && $permissiontoaddupdatepaymentinformation) {
 			$error = 0;
 
 			$tmpservice = 'StripeTest';
@@ -762,7 +762,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		if ($action == 'setlocalassourcedefault') {	// Set as default when payment mode defined locally (and may be also remotely)
+		if ($action == 'setlocalassourcedefault' && $permissiontoaddupdatepaymentinformation) {	// Set as default when payment mode defined locally (and may be also remotely)
 			try {
 				$companypaymentmode->setAsDefault($id);
 
@@ -773,7 +773,7 @@ if (empty($reshook)) {
 				$error++;
 				setEventMessages($e->getMessage(), null, 'errors');
 			}
-		} elseif ($action == 'setassourcedefault') {	// Set as default when payment mode defined remotely only
+		} elseif ($action == 'setassourcedefault' && $permissiontoaddupdatepaymentinformation) {	// Set as default when payment mode defined remotely only
 			try {
 				$cu = $stripe->customerStripe($object, $stripeacc, $servicestatus);
 				if (preg_match('/pm_|src_/', $source)) {
@@ -791,7 +791,7 @@ if (empty($reshook)) {
 				$error++;
 				setEventMessages($e->getMessage(), null, 'errors');
 			}
-		} elseif ($action == 'deletecard' && $source) {
+		} elseif ($action == 'deletecard' && $source && $permissiontoaddupdatepaymentinformation) {
 			// Delete the credit card on Stripe side
 			try {
 				if (preg_match('/pm_/', $source)) {
@@ -823,7 +823,7 @@ if (empty($reshook)) {
 				$error++;
 				setEventMessages($e->getMessage(), null, 'errors');
 			}
-		} elseif ($action == 'deletebank' && $source) {
+		} elseif ($action == 'deletebank' && $source && $permissiontoaddupdatepaymentinformation) {
 			// Delete the bank account on Stripe side
 			try {
 				if (preg_match('/pm_/', $source)) {
