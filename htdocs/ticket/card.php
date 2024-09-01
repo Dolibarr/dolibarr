@@ -755,6 +755,10 @@ if ($action == 'create' || $action == 'presend') {
 
 	$formticket->withcancel = 1;
 
+	// Init list of files
+	if (GETPOST("mode", "aZ09") == 'init') {
+		$formticket->clear_attached_files();
+	}
 	$formticket->showForm(1, 'create', 0, null, $action);
 	/*} elseif ($action == 'edit' && $user->rights->ticket->write && $object->status < Ticket::STATUS_CLOSED) {
 	$formticket = new FormTicket($db);
