@@ -121,8 +121,8 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 				$jsonstr = json_encode($resobject);
 
 				$headers = array(
-					'Content-Type: application/json',
-					'Accept: application/json'
+					'Content-Type: application/json'
+					//'Accept: application/json'
 				);
 
 				$response = getURLContent($tmpobject->url, 'POST', $jsonstr, 1, $headers, array('http', 'https'), 2, -1);
