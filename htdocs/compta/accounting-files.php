@@ -213,7 +213,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 			// if project filter is used on an expense report,
 			// show only total_ht/total_tva/total_ttc of the line considered by the project
 			if (!empty($projectid)) {
-				$sql .= " SELECT t.rowid as id, t.entity, t.ref, t.paid, td.total_ht, td.total_ttc, td.total_tva as total_vat,";
+				$sql .= " SELECT t.rowid as id, t.entity, t.ref, t.paid, SUM(td.total_ht) as total_ht, SUM(td.total_ttc) as total_ttc, SUM(td.total_tva) as total_vat,";
 				$sql .= " 0 as localtax1, 0 as localtax2, 0 as revenuestamp,";
 				$sql .= " td.multicurrency_code as currency, t.fk_user_author as fk_soc, t.date_fin as date, t.date_fin as date_due, 'ExpenseReport' as item, CONCAT(CONCAT(u.lastname, ' '), u.firstname) as thirdparty_name, '' as thirdparty_code, c.code as country_code, '' as vatnum, " . PAY_DEBIT . " as sens";
 				$sql .= " FROM " . MAIN_DB_PREFIX . "expensereport as t";
