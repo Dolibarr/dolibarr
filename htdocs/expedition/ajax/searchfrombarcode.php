@@ -41,11 +41,11 @@ $action = GETPOST("action", "alpha");
 $barcode = GETPOST("barcode", "aZ09");
 $response = "";
 
-$fk_entrepot = GETPOST("fk_entrepot", "int");
-$fk_inventory = GETPOST("fk_inventory", "int");
-$fk_product = GETPOST("fk_product", "int");
-$reelqty = GETPOST("reelqty", "int");
-$batch = GETPOST("batch", "int");
+$fk_entrepot = GETPOSTINT("fk_entrepot");
+$fk_inventory = GETPOSTINT("fk_inventory");
+$fk_product = GETPOSTINT("fk_product");
+$reelqty = GETPOSTINT("reelqty");
+$batch = GETPOSTINT("batch");
 $mode = GETPOST("mode", "aZ");
 
 $warehousefound = 0;

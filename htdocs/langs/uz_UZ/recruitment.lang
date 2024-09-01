@@ -4,40 +4,25 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
 ModuleRecruitmentName = Ishga qabul qilish
 # Module description 'ModuleRecruitmentDesc'
 ModuleRecruitmentDesc = Yangi ish joylariga ishga qabul qilish kampaniyalarini boshqaring va kuzatib boring
-
-#
 # Admin page
-#
 RecruitmentSetup = Ishga qabul qilishni sozlash
-Settings = Sozlamalar
 RecruitmentSetupPage = Ishga qabul qilish moduli uchun asosiy variantlarni sozlashni kiriting
 RecruitmentArea=Ishga qabul qilish maydoni
 PublicInterfaceRecruitmentDesc=Ishlarning ochiq sahifalari - bu ochiq ish joylarini ko'rsatish va ularga javob berish uchun ochiq URL manzillar. Har bir ochiq ish uchun har bir ish yozuvida bir xil havola mavjud.
 EnablePublicRecruitmentPages=Ochiq ish joylarining ommaviy sahifalarini yoqing
 
-#
-# About page
-#
-About = Haqida
-RecruitmentAbout = Ishga qabul qilish to'g'risida
-RecruitmentAboutPage = Sahifa haqida yollash
 NbOfEmployeesExpected=Kutilayotgan ishchilar soni
 JobLabel=Ish joyining yorlig'i
 WorkPlace=Ish joyi
@@ -49,7 +34,6 @@ PositionToBeFilled=Ish joyi
 PositionsToBeFilled=Ish joylari
 ListOfPositionsToBeFilled=Ish joylari ro'yxati
 NewPositionToBeFilled=Yangi ish joylari
-
 JobOfferToBeFilled=To'ldirilishi kerak bo'lgan ish joyi
 ThisIsInformationOnJobPosition=To'ldirilishi kerak bo'lgan lavozim to'g'risida ma'lumot
 ContactForRecruitment=Ishga qabul qilish uchun murojaat qiling
@@ -57,16 +41,16 @@ EmailRecruiter=Elektron pochta orqali yollovchi
 ToUseAGenericEmail=Umumiy elektron pochtadan foydalanish uchun. Agar aniqlanmagan bo'lsa, ishga qabul qilish uchun mas'ul bo'lgan elektron pochtadan foydalaniladi
 NewCandidature=Yangi dastur
 ListOfCandidatures=Arizalar ro'yxati
-Remuneration=Salary
-RequestedRemuneration=Requested salary
-ProposedRemuneration=Proposed salary
+Remuneration=Ish haqi
+RequestedRemuneration=Talab qilingan ish haqi
+ProposedRemuneration=Taklif etilgan ish haqi
 ContractProposed=Shartnoma taklif qilingan
 ContractSigned=Shartnoma imzolandi
 ContractRefused=Shartnoma rad etildi
 RecruitmentCandidature=Ilova
 JobPositions=Ish joylari
 RecruitmentCandidatures=Ilovalar
-InterviewToDo=Contacts to follow
+InterviewToDo=Kuzatiladigan kontaktlar
 AnswerCandidature=Ariza javobi
 YourCandidature=Sizning arizangiz
 YourCandidatureAnswerMessage=Arizangiz uchun tashakkur. <br> ...
@@ -77,3 +61,6 @@ ExtrafieldsApplication=Qo'shimcha atributlar (ish uchun arizalar)
 MakeOffer=Taklif qiling
 WeAreRecruiting=Biz ishga qabul qilamiz. Bu to'ldirilishi kerak bo'lgan ochiq lavozimlar ro'yxati...
 NoPositionOpen=Ayni paytda hech qanday lavozim ochilmagan
+ConfirmClose=Bekor qilishni tasdiqlang
+ConfirmCloseAsk=Haqiqatan ham bu ishga yollash nomzodini bekor qilmoqchimisiz
+Recruitment=Ishga qabul qilish

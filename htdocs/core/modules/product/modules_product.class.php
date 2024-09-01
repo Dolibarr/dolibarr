@@ -3,6 +3,8 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,20 +41,35 @@ abstract class ModelePDFProduct extends CommonDocGenerator
 	/**
 	 *  Return list of active generation modules
 	 *
-	 *  @param	DoliDB	$dbs     			Database handler
-	 *  @param  integer	$maxfilenamelength  Max length of value to show
-	 *  @return	array						List of templates
+	 *  @param  DoliDB  	$db                 Database handler
+	 *  @param  int<0,max>	$maxfilenamelength  Max length of value to show
+	 *  @return string[]|int<-1,0>				List of templates
 	 */
-	public static function liste_modeles($dbs, $maxfilenamelength = 0)
+	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
 		$type = 'product';
 		$list = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$list = getListOfModels($dbs, $type, $maxfilenamelength);
+		$list = getListOfModels($db, $type, $maxfilenamelength);
 		return $list;
 	}
+
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *	Function to build document
+	 *
+	 *	@param		Product		$object				Object source to build document
+	 *	@param		Translate	$outputlangs		Lang output object
+	 *	@param		string		$srctemplatepath	Full path of source filename for generator using a template file
+	 *	@param		int<0,1>	$hidedetails		Do not show line details
+	 *	@param		int<0,1>	$hidedesc			Do not show desc
+	 *	@param		int<0,1>	$hideref			Do not show ref
+	 *	@return		int<-1,1>						1 if OK, <=0 if KO
+	 */
+	abstract public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0);
 }
 
 /**
@@ -60,33 +77,14 @@ abstract class ModelePDFProduct extends CommonDocGenerator
  */
 abstract class ModeleProductCode extends CommonNumRefGenerator
 {
-
-	/**
-	 * @var int Automatic numbering
-	 */
-	public $code_auto;
-
-	/**
-	 * @var string Editable code
-	 */
-	public $code_modifiable;
-
-	public $code_modifiable_invalide; // Modified code if it is invalid
-
-	/**
-	 * @var int Code facultatif
-	 */
-	public $code_null;
-
-
 	/**
 	 *  Return next value available
 	 *
-	 *	@param	Product		$objproduct		Object product
-	 *	@param	int			$type		Type
-	 *  @return string      			Value
+	 *	@param	Product|string	$objproduct	Object product
+	 *	@param	int				$type		Type
+	 *  @return string      				Value
 	 */
-	public function getNextValue($objproduct = 0, $type = -1)
+	public function getNextValue($objproduct = '', $type = -1)
 	{
 		global $langs;
 		return $langs->trans("Function_getNextValue_InModuleNotWorking");
@@ -137,13 +135,13 @@ abstract class ModeleProductCode extends CommonNumRefGenerator
 
 		$strikestart = '';
 		$strikeend = '';
-		if (!empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) {
+		if (getDolGlobalString('MAIN_COMPANY_CODE_ALWAYS_REQUIRED') && !empty($this->code_null)) {
 			$strikestart = '<strike>';
 			$strikeend = '</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
 		}
 		$s = '';
 		if ($type == -1) {
-			$s .= $langs->trans("Name").': <b>'.$this->getNom($langs).'</b><br>';
+			$s .= $langs->trans("Name").': <b>'.$this->getName($langs).'</b><br>';
 			$s .= $langs->trans("Version").': <b>'.$this->getVersion().'</b><br>';
 		} elseif ($type == 0) {
 			$s .= $langs->trans("ProductCodeDesc").'<br>';
@@ -151,7 +149,7 @@ abstract class ModeleProductCode extends CommonNumRefGenerator
 			$s .= $langs->trans("ServiceCodeDesc").'<br>';
 		}
 		if ($type != -1) {
-			$s .= $langs->trans("ValidityControledByModule").': <b>'.$this->getNom($langs).'</b><br>';
+			$s .= $langs->trans("ValidityControledByModule").': <b>'.$this->getName($langs).'</b><br>';
 		}
 		$s .= '<br>';
 		$s .= '<u>'.$langs->trans("ThisIsModuleRules").':</u><br>';
@@ -202,4 +200,15 @@ abstract class ModeleProductCode extends CommonNumRefGenerator
 		// phpcs:enable
 		return 0;
 	}
+
+
+	/**
+	 * Return an example of result returned by getNextValue
+	 *
+	 * @param	?Translate		$langs		Object langs
+	 * @param	Product|string	$objproduct	Object product
+	 * @param	int<-1,2>		$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
+	 * @return	string						Return string example
+	 */
+	abstract public function getExample($langs = null, $objproduct = '', $type = -1);
 }

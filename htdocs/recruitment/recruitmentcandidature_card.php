@@ -35,17 +35,17 @@ require_once DOL_DOCUMENT_ROOT.'/recruitment/lib/recruitment_recruitmentcandidat
 $langs->loadLangs(array("recruitment", "other", "users"));
 
 // Get parameters
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'aZ09');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'recruitmentcandidaturecard'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'recruitmentcandidaturecard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
-$lineid = GETPOST('lineid', 'int');
+$lineid = GETPOSTINT('lineid');
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new RecruitmentCandidature($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->recruitment->dir_output.'/temp/massgeneration/'.$user->id;
@@ -56,7 +56,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-// Initialize array of search criterias
+// Initialize array of search criteria
 $search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val) {
@@ -70,7 +70,7 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 
 $permissiontoread = $user->hasRight('recruitment', 'recruitmentjobposition', 'read');
@@ -131,7 +131,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	if ($action == 'classin' && $permissiontoadd) {
-		$object->setProject(GETPOST('projectid', 'int'));
+		$object->setProject(GETPOSTINT('projectid'));
 	}
 	if ($action == 'confirm_decline' && $confirm == 'yes' && $permissiontoadd) {
 		$result = $object->setStatut($object::STATUS_REFUSED, null, '', $triggermodname);
@@ -141,7 +141,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'confirm_makeofferordecline' && $permissiontoadd && !GETPOST('cancel', 'alpha')) {
-		if (!(GETPOST('status', 'int') > 0)) {
+		if (!(GETPOSTINT('status') > 0)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CloseAs")), null, 'errors');
 			$action = 'makeofferordecline';
 		} else {
@@ -149,7 +149,7 @@ if (empty($reshook)) {
 			if ($object->status == $object::STATUS_VALIDATED) {
 				$db->begin();
 
-				if (GETPOST('status', 'int') == $object::STATUS_REFUSED) {
+				if (GETPOSTINT('status') == $object::STATUS_REFUSED) {
 					$result = $object->setStatut($object::STATUS_REFUSED, null, '', $triggermodname);
 					if ($result < 0) {
 						setEventMessages($object->error, $object->errors, 'errors');
@@ -171,7 +171,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'confirm_closeas' && $permissiontoadd && !GETPOST('cancel', 'alpha')) {
-		if (!(GETPOST('status', 'int') > 0)) {
+		if (!(GETPOSTINT('status') > 0)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CloseAs")), null, 'errors');
 			$action = 'makeofferordecline';
 		} else {
@@ -179,7 +179,7 @@ if (empty($reshook)) {
 			if ($object->status == $object::STATUS_CONTRACT_PROPOSED) {
 				$db->begin();
 
-				if (GETPOST('status', 'int') == $object::STATUS_CONTRACT_REFUSED) {
+				if (GETPOSTINT('status') == $object::STATUS_CONTRACT_REFUSED) {
 					$result = $object->setStatut($object::STATUS_CONTRACT_REFUSED, null, '', $triggermodname);
 					if ($result < 0) {
 						setEventMessages($object->error, $object->errors, 'errors');
@@ -348,7 +348,7 @@ if (($id || $ref) && $action == 'edit') {
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
 	$res = $object->fetch_optionals();
 
-	$head = recruitmentcandidaturePrepareHead($object);
+	$head = recruitmentCandidaturePrepareHead($object);
 	print dol_get_fiche_head($head, 'card', $langs->trans("RecruitmentCandidature"), -1, $object->picto);
 
 	$formconfirm = '';
@@ -487,9 +487,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$fuser->fetch($object->fk_user_creat);
 			$morehtmlref .= $fuser->getNomUrl(-1);
 		}
-		if (!empty($object->email_msgid)) {
-			$morehtmlref .= ' <small class="hideonsmartphone opacitymedium">('.$form->textwithpicto($langs->trans("CreatedByEmailCollector"), $langs->trans("EmailMsgID").': '.$object->email_msgid).')</small>';
-		}
+		$morehtmlref .= ' <small class="hideonsmartphone opacitymedium">('.$form->textwithpicto($langs->trans("CreatedByEmailCollector"), $langs->trans("EmailMsgID").': '.$object->email_msgid).')</small>';
 	} /* elseif (!empty($object->origin_email)) {
 		$morehtmlref .= $langs->trans("CreatedBy").' : ';
 		$morehtmlref .= img_picto('', 'email', 'class="paddingrightonly"');

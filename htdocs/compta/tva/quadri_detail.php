@@ -4,9 +4,10 @@
  * Copyright (C) 2004-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2006-2015  Yannick Warnier         <ywarnier@beeznest.org>
  * Copyright (C) 2014       Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019       Eric Seigne             <eric.seigne@cap-rel.fr>
  * Copyright (C) 2021-2022  Open-Dsi                <support@open-dsi.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +47,7 @@ require_once DOL_DOCUMENT_ROOT . '/expensereport/class/paymentexpensereport.clas
 // Load translation files required by the page
 $langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "product", "trips", "admin"));
 
-$refresh = (GETPOSTISSET('submit') || GETPOSTISSET('vat_rate_show') || GETPOSTISSET('invoice_type')) ? true : false;
+$refresh = (GETPOSTISSET('submit') || GETPOSTISSET('vat_rate_show') || GETPOSTISSET('invoice_type'));
 $invoice_type = GETPOSTISSET('invoice_type') ? GETPOST('invoice_type', 'alpha') : '';
 $vat_rate_show = GETPOSTISSET('vat_rate_show') ? GETPOST('vat_rate_show', 'alphanohtml') : -1;
 
@@ -131,7 +132,7 @@ $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0, 0, '',
 $period .= ' - ';
 $period .= $form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzserver');
 $prevyear = $date_start_year;
-$q=0;
+$q = 0;
 $prevquarter = $q;
 if ($prevquarter > 1) {
 	$prevquarter--;
@@ -162,10 +163,10 @@ if (getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'invoice') {
 if (getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'payment') {
 	$description .= '<br>' . $langs->trans("RulesVATInServices");
 }
-if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
 	$description .= '<br>' . $langs->trans("DepositsAreNotIncluded");
 }
-if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
 	$description .= $langs->trans("SupplierDepositsAreNotIncluded");
 }
 if (isModEnabled('accounting')) {
@@ -251,7 +252,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 			$company_static->name = $x_coll[$my_coll_rate]['company_name'][$id];
 			$company_static->name_alias = $x_coll[$my_coll_rate]['company_alias'][$id];
 			$company_static->email = $x_coll[$my_coll_rate]['company_email'][$id];
-			$company_static->tva_intra = isset($x_coll[$my_coll_rate]['tva_intra'][$id])?$x_coll[$my_coll_rate]['tva_intra'][$id]:0;
+			$company_static->tva_intra = isset($x_coll[$my_coll_rate]['tva_intra'][$id]) ? $x_coll[$my_coll_rate]['tva_intra'][$id] : 0;
 			$company_static->client = $x_coll[$my_coll_rate]['company_client'][$id];
 			$company_static->fournisseur = $x_coll[$my_coll_rate]['company_fournisseur'][$id];
 			$company_static->status = $x_coll[$my_coll_rate]['company_status'][$id];
@@ -403,7 +404,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 	$parameters["type"] = 'vat';
 
 	$object = array(&$x_coll, &$x_paye, &$x_both);
-	// Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
+	// Initialize a technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
 	$hookmanager->initHooks(array('externalbalance'));
 	$reshook = $hookmanager->executeHooks('addVatLine', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
@@ -499,8 +500,11 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 					print '<td class="left">' . dol_print_date($fields['datef'], 'day') . '</td>';
 
 					// Payment date
-					if (getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'payment' || getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'payment') print '<td class="left">' . dol_print_date($fields['datep'], 'day') . '</td>';
-					else print '<td></td>';
+					if (getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'payment' || getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'payment') {
+						print '<td class="left">' . dol_print_date($fields['datep'], 'day') . '</td>';
+					} else {
+						print '<td></td>';
+					}
 
 					// Company name
 					print '<td class="tdmaxoverflow150">';
@@ -630,8 +634,11 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 	print '<tr class="liste_titre liste_titre_topborder">';
 	print '<td class="left">' . $elementsup . '</td>';
 	print '<td class="left">' . $langs->trans("DateInvoice") . '</td>';
-	if (getDolGlobalString('TAX_MODE_BUY_PRODUCT') == 'payment' || getDolGlobalString('TAX_MODE_BUY_SERVICE') == 'payment') print '<td class="left">' . $langs->trans("DatePayment") . '</td>';
-	else print '<td></td>';
+	if (getDolGlobalString('TAX_MODE_BUY_PRODUCT') == 'payment' || getDolGlobalString('TAX_MODE_BUY_SERVICE') == 'payment') {
+		print '<td class="left">' . $langs->trans("DatePayment") . '</td>';
+	} else {
+		print '<td></td>';
+	}
 	print '<td class="left">' . $namesup . '</td>';
 	print '<td class="left">' . $productsup . '</td>';
 	if ($modetax != 1) {
@@ -678,13 +685,13 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 						|| ($type == 1 && getDolGlobalString('TAX_MODE_BUY_SERVICE') == 'invoice')) {
 					} else {
 						if (isset($fields['payment_amount']) && $fields['ftotal_ttc']) {
-							$ratiopaymentinvoice = ($fields['payment_amount'] / $fields['ftotal_ttc']);
+							$ratiopaymentinvoice = ($fields['payment_amount'] / (float) $fields['ftotal_ttc']);
 						}
 					}
 				}
 
 				// VAT paid
-				$temp_ht = $fields['totalht'] * $ratiopaymentinvoice;
+				$temp_ht = (float) $fields['totalht'] * $ratiopaymentinvoice;
 
 				// VAT
 				$temp_vat = $fields['vat'] * $ratiopaymentinvoice;
@@ -781,7 +788,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 						print price($fields['totalht']);
 						if (price2num($fields['ftotal_ttc'])) {
 							//print $fields['dtotal_ttc']."/".$fields['ftotal_ttc']." - ";
-							$ratiolineinvoice = ($fields['dtotal_ttc'] / $fields['ftotal_ttc']);
+							$ratiolineinvoice = ((float) $fields['dtotal_ttc'] / (float) $fields['ftotal_ttc']);
 							//print ' ('.round($ratiolineinvoice*100,2).'%)';
 						}
 						print '</td>';
@@ -802,7 +809,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 							print $langs->trans("NA");
 						} else {
 							if (isset($fields['payment_amount']) && $fields['ftotal_ttc']) {
-								$ratiopaymentinvoice = ($fields['payment_amount'] / $fields['ftotal_ttc']);
+								$ratiopaymentinvoice = ($fields['payment_amount'] / (float) $fields['ftotal_ttc']);
 							}
 							print price(price2num($fields['payment_amount'], 'MT'));
 							if (isset($fields['payment_amount'])) {
@@ -814,7 +821,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 
 					// VAT paid
 					print '<td class="nowrap right">';
-					$temp_ht = $fields['totalht'] * $ratiopaymentinvoice;
+					$temp_ht = (float) $fields['totalht'] * $ratiopaymentinvoice;
 					print price(price2num($temp_ht, 'MT'), 1);
 					print '</td>';
 

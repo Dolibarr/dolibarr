@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
+/* Copyright (C) 2003-2004	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2011	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2019		Nicolas ZABOURI				<info@inovea-conseil.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,14 +32,14 @@ require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class
 
 $hookmanager = new HookManager($db);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('suppliersproposalsindex'));
 
 // Load translation files required by the page
 $langs->loadLangs(array('supplier_proposal', 'companies'));
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if (isset($user->socid) && $user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
@@ -54,9 +55,11 @@ $supplier_proposalstatic = new SupplierProposal($db);
 $companystatic = new Societe($db);
 $form = new Form($db);
 $formfile = new FormFile($db);
+
+$title = $langs->trans("SupplierProposalArea");
 $help_url = "EN:Module_Ask_Price_Supplier|FR:Module_Demande_de_prix_fournisseur";
 
-llxHeader("", $langs->trans("SupplierProposalArea"), $help_url);
+llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-supplierproposal page-index');
 
 print load_fiche_titre($langs->trans("SupplierProposalArea"), '', 'supplier_proposal');
 
@@ -67,7 +70,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 $sql = "SELECT count(p.rowid), p.fk_statut";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= ", ".MAIN_DB_PREFIX."supplier_proposal as p";
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= " WHERE p.fk_soc = s.rowid";
@@ -75,7 +78,7 @@ $sql .= " AND p.entity IN (".getEntity('supplier_proposal').")";
 if ($user->socid) {
 	$sql .= ' AND p.fk_soc = '.((int) $user->socid);
 }
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 $sql .= " AND p.fk_statut IN (0,1,2,3,4)";
@@ -167,7 +170,7 @@ if (isModEnabled('supplier_proposal')) {
 	$sql = "SELECT c.rowid, c.ref, s.nom as socname, s.rowid as socid, s.canvas, s.client";
 	$sql .= " FROM ".MAIN_DB_PREFIX."supplier_proposal as c";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE c.fk_soc = s.rowid";
@@ -176,7 +179,7 @@ if (isModEnabled('supplier_proposal')) {
 	if ($socid) {
 		$sql .= " AND c.fk_soc = ".((int) $socid);
 	}
-	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 
@@ -225,7 +228,7 @@ $sql = "SELECT c.rowid, c.ref, c.fk_statut, s.nom as socname, s.rowid as socid, 
 $sql .= " date_cloture as datec";
 $sql .= " FROM ".MAIN_DB_PREFIX."supplier_proposal as c";
 $sql .= ", ".MAIN_DB_PREFIX."societe as s";
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= " WHERE c.fk_soc = s.rowid";
@@ -234,7 +237,7 @@ $sql .= " AND c.entity = ".$conf->entity;
 if ($socid) {
 	$sql .= " AND c.fk_soc = ".((int) $socid);
 }
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 $sql .= " ORDER BY c.tms DESC";
@@ -306,13 +309,13 @@ if (isModEnabled('supplier_proposal') && $user->hasRight('supplier_proposal', 'l
 	$sql = "SELECT s.nom as socname, s.rowid as socid, s.canvas, s.client, p.rowid as supplier_proposalid, p.total_ttc, p.total_tva, p.total_ht, p.ref, p.fk_statut, p.datec as dp";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql .= ", ".MAIN_DB_PREFIX."supplier_proposal as p";
-	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE p.fk_soc = s.rowid";
 	$sql .= " AND p.entity IN (".getEntity('supplier_proposal').")";
 	$sql .= " AND p.fk_statut = 1";
-	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
@@ -328,9 +331,11 @@ if (isModEnabled('supplier_proposal') && $user->hasRight('supplier_proposal', 'l
 		if ($num > 0) {
 			print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder centpercent">';
-			print '<tr class="liste_titre"><th colspan="5">'.$langs->trans("RequestsOpened").' <a href="'.DOL_URL_ROOT.'/supplier_proposal/list.php?search_status=1"><span class="badge">'.$num.'</span></a></th></tr>';
+			print '<tr class="liste_titre"><th colspan="5">'.$langs->trans("RequestsOpened");
+			print ' <a href="'.DOL_URL_ROOT.'/supplier_proposal/list.php?search_status=1" alt="'.$langs->trans("GoOnList").'"><span class="badge">'.$num.'</span></a>';
+			print '</th></tr>';
 
-			$nbofloop = min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
+			$nbofloop = min($num, (!getDolGlobalString('MAIN_MAXLIST_OVERLOAD') ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
 			while ($i < $nbofloop) {
 				$obj = $db->fetch_object($result);
 

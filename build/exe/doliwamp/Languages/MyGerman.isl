@@ -43,5 +43,5 @@ DoliWampWillStartApacheMysql=Die DoliWamp-Installation wird nun starten oder Apa
 OldVersionFoundAndMoveInNew=Eine alte Datenbankversion wurde gefunden und verschoben, um von der neuen Dolibarr-Version verwendet zu werden.
 OldVersionFoundButFailedToMoveInNew=Eine alte Datenbankversion wurde gefunden, konnte jedoch nicht verschoben werden, um mit der neuen Dolibarr-Version verwendet zu werden.
 
-DLLMissing=Your Windows installation is missing The "Micrsoft Visual C++ Redistributable for Visual Studio 2015" component. Please install the 32-bit version (vcredist_x86.exe) first (you can find it at https://www.microsoft.com/en-us/download/) and restart DoliWamp installation/upgrade after.
+DLLMissing=Your Windows installation is missing The "Micrsoft Visual C++ Redistributable for Visual Studio 2017" component. Please install the 32-bit version (vcredist_x86.exe) first (you can find it at https://www.microsoft.com/en-us/download/) and restart DoliWamp installation/upgrade after.
 ContinueAnyway=Fahren Sie trotzdem fort (der Installationsvorgang kann ohne diese Voraussetzung fehlschlagen).

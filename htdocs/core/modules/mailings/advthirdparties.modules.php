@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005-2010 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin       <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
 *
 * This file is an example to follow to add your own email selector inside
 * the Dolibarr email tool.
@@ -30,7 +31,7 @@ class mailing_advthirdparties extends MailingTargets
 	public $desc = "Third parties";
 	public $require_admin = 0;
 
-	public $require_module = array("none"); // This module should not be displayed as Selector in mailling
+	public $require_module = array("none"); // This module should not be displayed as Selector in mailing
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -59,7 +60,7 @@ class mailing_advthirdparties extends MailingTargets
 	 *    @param	array	$socid  		Array of id soc to add
 	 *    @param	int		$type_of_target	Defined in advtargetemailing.class.php
 	 *    @param	array	$contactid 		Array of contact id to add
-	 *    @return   int 					<0 if error, number of emails added if ok
+	 *    @return   int 					Return integer <0 if error, number of emails added if ok
 	 */
 	public function add_to_target_spec($mailing_id, $socid, $type_of_target, $contactid)
 	{
@@ -150,7 +151,7 @@ class mailing_advthirdparties extends MailingTargets
 							if (!array_key_exists($obj->email, $cibles)) {
 								$cibles[$obj->email] = array(
 									'email' => $obj->email,
-									'fk_contact' =>$obj->id,
+									'fk_contact' => $obj->id,
 									'lastname' => $obj->lastname,
 									'firstname' => $obj->firstname,
 									'other' => '',
@@ -184,11 +185,11 @@ class mailing_advthirdparties extends MailingTargets
 	 *	array of SQL request that returns two field:
 	 *	One called "label", One called "nb".
 	 *
-	 *	@return		array		Array with SQL requests
+	 *	@return		string[]		Array with SQL requests
 	 */
 	public function getSqlArrayForStats()
 	{
-		// CHANGE THIS: Optionnal
+		// CHANGE THIS: Optional
 
 		//var $statssql=array();
 		//$this->statssql[0]="SELECT field1 as label, count(distinct(email)) as nb FROM mytable WHERE email IS NOT NULL";
@@ -248,7 +249,7 @@ class mailing_advthirdparties extends MailingTargets
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 
-			if (!isModEnabled("categorie")) {
+			if (!isModEnabled("category")) {
 				$num = 0; // Force empty list if category module is not enabled
 			}
 

@@ -5,35 +5,27 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 Module56000Name=Tickets
 Module56000Desc=Σύστημα ticket για υποστήριξη αιτημάτων ή προβλημάτων
-
 Permission56001=Δείτε τα tickets
 Permission56002=Τροποποίηση tickets
 Permission56003=Διαγραφή tickets
 Permission56004=Διαχείριση tickets
 Permission56005=Δείτε τα tickets όλων των τρίτων (δεν ισχύει για εξωτερικούς χρήστες, πάντα περιορίζονται στο τρίτο μέρος από το οποίο εξαρτώνται)
 Permission56006=Εξαγωγή των tickets
-
 Tickets=Tickets
 TicketDictType=Ticket - Τύποι
 TicketDictCategory=Ticket - Ομάδες
-TicketDictSeverity=Ticket - Κρισιμότητα 
+TicketDictSeverity=Ticket - Κρισιμότητα
 TicketDictResolution=Ticket - Επίλυση
-
 TicketTypeShortCOM=Εμπορική ερώτηση
 TicketTypeShortHELP=Αίτημα για λειτουργική βοήθεια
 TicketTypeShortISSUE=Θέμα ή σφάλμα
@@ -41,54 +33,41 @@ TicketTypeShortPROBLEM=Πρόβλημα
 TicketTypeShortREQUEST=Αίτημα αλλαγής ή βελτίωσης
 TicketTypeShortPROJET=Έργο
 TicketTypeShortOTHER=Άλλο
-
 TicketSeverityShortLOW=Χαμηλή
 TicketSeverityShortNORMAL=Κανονική
 TicketSeverityShortHIGH=Υψηλή
 TicketSeverityShortBLOCKING=Κρίσιμο, Blocking
-
 TicketCategoryShortOTHER=Άλλο
-
 ErrorBadEmailAddress=Το πεδίο '%s' είναι εσφαλμένο
 MenuTicketMyAssign=Τα tickets μου
 MenuTicketMyAssignNonClosed=Τα ανοιχτά tickets μου
 MenuListNonClosed=Ανοιχτά tickets
-
 TypeContact_ticket_internal_CONTRIBUTOR=Συνεργάτης
 TypeContact_ticket_internal_SUPPORTTEC=Ανατεθειμένος χρήστης
 TypeContact_ticket_external_SUPPORTCLI=Επαφή πελάτη / παρακολούθηση συμβάντος
 TypeContact_ticket_external_CONTRIBUTOR=Εξωτερικός συνεργάτης
-
 OriginEmail=Email πελάτη που άνοιξε το ticket
+EmailReplyto=Απάντηση στο email
+EmailReferences=Αναφορές στα email
 Notify_TICKET_SENTBYMAIL=Στείλτε μήνυμα ticket μέσω email
-
 ExportDataset_ticket_1=Tickets
-
 # Status
 Read=Έχει αναγνωστεί
 Assigned=Έχει ανατεθεί
 NeedMoreInformation=Σε αναμονή περισσότερων πληροφοριών από τον χρήστη που άνοιξε το ticket
 NeedMoreInformationShort=Σε αναμονή περισσότερων πληροφοριών
-Answered=Απαντήθηκε
 Waiting=Σε αναμονή
-SolvedClosed=Επιλύθηκε 
+SolvedClosed=Επιλύθηκε
 Deleted=Διαγράφηκε
-
 # Dict
-Type=Τύπος
-Severity=Κρισιμότητα 
+Severity=Κρισιμότητα
 TicketGroupIsPublic=Η ομάδα είναι δημόσια
 TicketGroupIsPublicDesc=Αν η ομάδα του ticket είναι δημόσια, θα είναι ορατή στην φόρμα όταν δημιουργείται ένα ticket από την δημόσια διεπαφή
-
 # Email templates
 MailToSendTicketMessage=Για να στείλετε email από το μήνυμα ticket
-
-#
 # Admin page
-#
 TicketSetup=Ρύθμιση ενότητας ticket
 TicketSettings=Ρυθμίσεις
-TicketSetupPage=
 TicketPublicAccess=Μια δημόσια διεπαφή χωρίς υποχρέωση σύνδεσης είναι διαθέσιμη στην παρακάτω διεύθυνση URL
 TicketSetupDictionaries=Ο τύπος του ticket, ο βαθμός σοβαρότητας και οι αναλυτικοί κωδικοί ρυθμίζονται από λεξικά
 TicketParamModule=Ρύθμιση μεταβλητών ενότητας
@@ -105,10 +84,8 @@ TicketsEmailMustExistHelp=Στη δημόσια διεπαφή, η διεύθυ�
 TicketsShowProgression=Εμφάνιση της προόδου του ticket στη δημόσια διεπαφή
 TicketsShowProgressionHelp=Ενεργοποιήστε αυτήν την επιλογή για να αποκρύψετε την πρόοδο του ticket στις σελίδες δημόσιας διεπαφής
 TicketCreateThirdPartyWithContactIfNotExist=Ζητήστε όνομα και όνομα εταιρείας για άγνωστα email.
-TicketCreateThirdPartyWithContactIfNotExistHelp=Ελέγξτε εάν υπάρχει τρίτο μέρος ή επαφή για το email που καταχωρίσατε. Εάν όχι, ζητήστε ένα όνομα και ένα όνομα εταιρείας για να δημιουργήσετε ένα τρίτο μέρος με επαφή.
+TicketCreateThirdPartyWithContactIfNotExistHelp=Ελέγξτε εάν υπάρχει τρίτο μέρος ή επαφή για το email που καταχωρίσατε. Εάν όχι, ζητήστε ένα όνομα και το όνομα της εταιρείας για να δημιουργήσετε ένα τρίτο μέρος με επαφή.
 PublicInterface=Δημόσια διεπαφή
-TicketUrlPublicInterfaceLabelAdmin=Εναλλακτική διεύθυνση URL για δημόσια διεπαφή
-TicketUrlPublicInterfaceHelpAdmin=Είναι δυνατόν να ορίσετε ένα ψευδώνυμο(alias) στον διακομιστή ιστού και έτσι να διαθέσετε τη δημόσια διεπαφή με μια άλλη διεύθυνση URL (ο διακομιστής πρέπει να ενεργεί ως διακομιστής μεσολάβησης(proxy) σε αυτήν τη νέα διεύθυνση URL)
 TicketPublicInterfaceTextHomeLabelAdmin=Κείμενο καλωσορίσματος της δημόσιας διεπαφής
 TicketPublicInterfaceTextHome=Μπορείτε να δημιουργήσετε ένα ticket υποστήριξης ή να προβάλετε ένα υπάρχον από το αναγνωριστικό παρακολούθησης ticket.
 TicketPublicInterfaceTextHomeHelpAdmin=Το κείμενο που ορίζεται εδώ θα εμφανιστεί στην αρχική σελίδα της δημόσιας διεπαφής.
@@ -137,6 +114,8 @@ TicketsActivatePublicInterface=Ενεργοποίηση δημόσιας διε�
 TicketsActivatePublicInterfaceHelp=Η δημόσια διεπαφή επιτρέπει στους επισκέπτες να δημιουργούν tickets.
 TicketsAutoAssignTicket=Ορίστε αυτόματα τον χρήστη που δημιούργησε το ticket
 TicketsAutoAssignTicketHelp=Κατά τη δημιουργία ενός ticket, ο χρήστης μπορεί να αντιστοιχιστεί αυτόματα στο ticket.
+TicketAutoChangeStatusOnAnswer=Αυτόματη εκχώρηση κατάστασης όταν απαντάτε σε ticket
+TicketAutoChangeStatusOnAnswerHelp=Όταν ο χρήστης απαντήσει σε ένα ticket, η κατάσταση θα εφαρμοστεί αυτόματα στο ticket
 TicketNumberingModules=Ενότητα αρίθμησης ticket
 TicketsModelModule=Πρότυπα εγγράφων για tickets
 TicketNotifyTiersAtCreation=Ειδοποιήστε το τρίτο μέρος κατά τη δημιουργία
@@ -158,10 +137,13 @@ TicketChooseProductCategory=Κατηγορία προϊόντος για υπο�
 TicketChooseProductCategoryHelp=Επιλέξτε την κατηγορία προϊόντων υποστήριξης ticket Αυτό θα χρησιμοποιηθεί για την αυτόματη σύνδεση μιας σύμβασης με ένα ticket
 TicketUseCaptchaCode=Χρησιμοποιήστε γραφικό κώδικα (CAPTCHA) όταν δημιουργείτε ένα ticket
 TicketUseCaptchaCodeHelp=Προσθέτει επαλήθευση CAPTCHA κατά τη δημιουργία νέου ticket.
-
-#
+TicketsAllowClassificationModificationIfClosed=Να επιτρέπεται η τροποποίηση της ταξινόμησης των κλειστών ticket
+TicketsAllowClassificationModificationIfClosedHelp=Επιτρέψτε την τροποποίηση της ταξινόμησης (τύπος, ομάδα ticket, σημαντικότητα) ακόμη και αν τα εισιτήρια είναι κλειστά.
+TicketAutoCheckNotifyThirdParty=Επιλέξτε από προεπιλογή "Ειδοποίηση τρίτου μέρους" κατά τη δημιουργία ενός ticket
+TicketAutoCheckNotifyThirdPartyHelp=Κατά τη δημιουργία ενός ticket, η επιλογή "Ειδοποίηση τρίτου μέρους" θα ελέγχεται αυτόματα.
+TicketAssignContactToMessage=Αντιστοίχιση μιας εξωτερικής επαφής σε ένα μήνυμα
+TicketAssignContactToMessageHelp=Όταν μια προυπαρχουσα επαφή απαντά σε ένα μήνυμα, το όνομα αυτής εμφανίζεται στη λίστα μηνυμάτων ticket.
 # Index & list page
-#
 TicketsIndex=Τομέας ticket
 TicketList=Λίστα tickets
 TicketAssignedToMeInfos=Αυτή η σελίδα εμφανίζει τη λίστα tickets που έχει δημιουργηθεί ή έχει εκχωρηθεί στον τρέχοντα χρήστη
@@ -176,10 +158,7 @@ ShowAsConversation=Εμφάνιση ως λίστα συνομιλιών
 MessageListViewType=Εμφάνιση ως λίστα πίνακα
 ConfirmMassTicketClosingSendEmail=Αυτόματη αποστολή email κατά το κλείσιμο ticket
 ConfirmMassTicketClosingSendEmailQuestion=Θέλετε να ειδοποιήσετε τρίτους όταν κλείνετε αυτά τα ticket;
-
-#
 # Ticket card
-#
 Ticket=Ticket
 TicketCard=Καρτέλα ticket
 CreateTicket=Δημιουργία ticket
@@ -196,7 +175,7 @@ TicketReadOn=Συνέχισε να διαβάζεις
 TicketCloseOn=Ημερομηνία Κλεισίματος
 MarkAsRead=Μαρκάρετε το ticket ως αναγνωσμένο
 TicketHistory=Ιστορικό ticket
-AssignUser=Εκχώρηση στον χρήστη
+AssignUser=Ανάθεση στον χρήστη
 TicketAssigned=Το ticket έχει πλέον εκχωρηθεί
 TicketChangeType=Αλλαγή τύπου
 TicketChangeCategory=Αλλαγή αναλυτικού κώδικα
@@ -209,7 +188,7 @@ TicketMessagesList=Λίστα μηνυμάτων
 NoMsgForThisTicket=Δεν υπάρχει μήνυμα για αυτό το ticket
 TicketProperties=Κατηγοριοποίηση
 LatestNewTickets=Τελευταία %s πιο πρόσφατα tickets (δεν έχουν διαβαστεί)
-TicketSeverity=Κρισιμότητα 
+TicketSeverity=Κρισιμότητα
 ShowTicket=Εμφάνιση ticket
 RelatedTickets=Σχετικά ticket
 TicketAddIntervention=Δημιουργία παρέμβασης
@@ -221,8 +200,8 @@ ConfirmAbandonTicket=Επιβεβαιώνετε το κλείσιμο του tic
 ConfirmDeleteTicket=Παρακαλώ επιβεβαιώστε τη διαγραφή του ticket
 TicketDeletedSuccess=Το ticket διαγράφηκε με επιτυχία
 TicketMarkedAsClosed=Το ticket επισημάνθηκε ως κλειστό
-TicketDurationAuto=Υπολογισμένη διάρκεια
-TicketDurationAutoInfos=Η διάρκεια υπολογίζεται αυτόματα από τη σχετική παρέμβαση
+TicketDurationAuto=Διάρκεια παρεμβάσεων
+TicketDurationAutoInfos=Η διάρκεια υπολογίζεται αυτόματα από τις σχετικές παρεμβάσεις
 TicketUpdated=Το ticket ενημερώθηκε
 SendMessageByEmail=Αποστόλη μηνύματος μέσω email
 TicketNewMessage=Νέο μήνυμα
@@ -239,7 +218,7 @@ TicketMessageMailFooterHelpAdmin=Αυτό το κείμενο θα εισαχθ�
 TicketMessageHelp=Μόνο αυτό το κείμενο θα αποθηκευτεί στη λίστα μηνυμάτων της κάρτας ticket.
 TicketMessageSubstitutionReplacedByGenericValues=Οι μεταβλητές αντικατάστασης αντικαθίστανται από γενικές τιμές.
 ForEmailMessageWillBeCompletedWith=Για μηνύματα email που αποστέλλονται σε εξωτερικούς χρήστες, το μήνυμα θα συμπληρωθεί με
-TimeElapsedSince=Ο χρόνος πέρασε από 
+TimeElapsedSince=Ο χρόνος πέρασε από
 TicketTimeToRead=Ο χρόνος που πέρασε πριν από την ανάγνωση
 TicketTimeElapsedBeforeSince=Χρόνος που πέρασε πριν / από
 TicketContacts=Επαφές ticket
@@ -249,7 +228,7 @@ TicketMessageMailIntroAutoNewPublicMessage=Ένα νέο μήνυμα αναρτ
 TicketAssignedToYou=Το ticket σας έχει ανατεθεί
 TicketAssignedEmailBody=Σας έχει ανατεθεί το ticket #%s από τον %s
 TicketAssignedCustomerEmail=Το ticket σας είναι σε κατάσταση επεξεργασίας.
-TicketAssignedCustomerBody=This is an automatic email to confirm your ticket has been assigned for processing.
+TicketAssignedCustomerBody=Αυτό είναι ένα αυτοματοποιημένο email προς επιβεβαίωση της επεξεργασίας του ticket σας.
 MarkMessageAsPrivate=Επισήμανση μηνύματος ως απόρρητου
 TicketMessageSendEmailHelp=Θα σταλεί ένα email σε όλες τις αντιστοιχισμένες επαφές
 TicketMessageSendEmailHelp2a=(εσωτερικές επαφές, αλλά και εξωτερικές επαφές εκτός εάν η επιλογή "%s" έχει επιλεγεί)
@@ -279,20 +258,14 @@ TicketsDelayFromLastResponseTooLong=Έχει περάσει πάρα πολύς 
 TicketNoContractFoundToLink=Δεν βρέθηκε σύμβαση που να συνδέεται αυτόματα με αυτό το ticket. Συνδέστε μια σύμβαση μη αυτόματα.
 TicketManyContractsLinked=Πολλές συμβάσεις έχουν συνδεθεί αυτόματα με αυτό το ticket. Βεβαιωθείτε ότι έχετε επαληθεύσει ποιο πρέπει να επιλεγεί.
 TicketRefAlreadyUsed=Η αναφορά [%s] χρησιμοποιείται ήδη, η νέα σας αναφορά είναι [%s]
-
-#
 # Logs
-#
 TicketLogMesgReadBy=Το ticket %s διαβάστηκε από %s
 NoLogForThisTicket=Δεν υπάρχει αρχείο καταγραφής για αυτό το ticket ακόμα
 TicketLogAssignedTo=Το ticket %s ανατέθηκε σε %s
 TicketLogPropertyChanged=Το ticket %s τροποποιήθηκε: ταξινόμηση από %s σε %s
 TicketLogClosedBy=Το ticket %s έκλεισε απο %s
-TicketLogReopen=Εκ νέου άνοιγμα του ticket %s 
-
-#
+TicketLogReopen=Εκ νέου άνοιγμα του ticket %s
 # Public pages
-#
 TicketSystem=Σύστημα ticket
 ShowListTicketWithTrackId=Εμφάνιση λίστας ticket με βάση το αναγνωριστικό παρακολούθησης
 ShowTicketWithTrackId=Εμφάνιση ticket από το αναγνωριστικό παρακολούθησης
@@ -307,13 +280,13 @@ TicketNewEmailBodyCustomer=Αυτό είναι ένα αυτόματο μήνυ�
 TicketNewEmailBodyInfosTicket=Πληροφορίες για την παρακολούθηση του ticket
 TicketNewEmailBodyInfosTrackId=Αριθμός παρακολούθησης ticket: %s
 TicketNewEmailBodyInfosTrackUrl=Μπορείτε να δείτε την εξέλιξη του ticket κάνοντας κλικ στον παρακάτω σύνδεσμο
-TicketNewEmailBodyInfosTrackUrlCustomer=Μπορείτε να δείτε την πρόοδο του ticket στη συγκεκριμένη διεπαφή κάνοντας κλικ στον ακόλουθο σύνδεσμο
+TicketNewEmailBodyInfosTrackUrlCustomer=Μπορείτε να δείτε την πρόοδο του ticket στη δημόσια διεπαφή κάνοντας κλικ στον ακόλουθο σύνδεσμο
 TicketCloseEmailBodyInfosTrackUrlCustomer=Μπορείτε να δείτε το ιστορικό αυτού του ticket κάνοντας κλικ στον παρακάτω σύνδεσμο
 TicketEmailPleaseDoNotReplyToThisEmail=Παρακαλώ μην απαντήσετε απευθείας σε αυτό το μήνυμα ηλεκτρονικού ταχυδρομείου! Χρησιμοποιήστε το σύνδεσμο για να απαντήσετε μέσω της διεπαφής.
 TicketPublicInfoCreateTicket=Αυτή η φόρμα σάς επιτρέπει να καταγράψετε ένα ticket υποστήριξης στο σύστημα διαχείρισης.
 TicketPublicPleaseBeAccuratelyDescribe=Παρακαλώ διατυπώστε με σαφήνεια την ερώτησή σας. Δώστε τις περισσότερες δυνατές πληροφορίες για να μας επιτρέψετε να αναγνωρίσουμε σωστά το αίτημά σας.
 TicketPublicMsgViewLogIn=Παρακαλώ εισαγάγετε το αναγνωριστικό παρακολούθησης ticket
-TicketTrackId=Δημόσιο αναγνωριστικό παρακολούθησης
+TicketTrackId=αναγνωριστικό παρακολούθησης
 OneOfTicketTrackId=Ένα από τα αναγνωριστικά παρακολούθησης
 ErrorTicketNotFound=Δεν βρέθηκε ticket με αναγνωριστικό παρακολούθησης %s!
 Subject=Αντικείμενο
@@ -329,9 +302,8 @@ OldUser=Παλιός χρήστης
 NewUser=Νέος χρήστης
 NumberOfTicketsByMonth=Αριθμός tickets ανά μήνα
 NbOfTickets=Αριθμός tickets
-ExternalContributors=External contributors
-AddContributor=Add external contributor
-
+ExternalContributors=Εξωτερικοί συνεργάτες
+AddContributor=Προσθήκη εξωτερικού συνεργάτη
 # notifications
 TicketCloseEmailSubjectCustomer=Το Παρακαλώ εισαγάγετε το αναγνωριστικό παρακολούθησης ticket έκλεισε
 TicketCloseEmailBodyCustomer=Αυτό είναι ένα αυτόματο μήνυμα για να σας ενημερώσουμε ότι το ticket %s μόλις έκλεισε.
@@ -343,12 +315,8 @@ TicketNotificationRecipient=Αποδέκτης ειδοποίησης
 TicketNotificationLogMessage=Μήνυμα καταγραφής
 TicketNotificationEmailBodyInfosTrackUrlinternal=Προβολή ticket σε διεπαφή
 TicketNotificationNumberEmailSent=Στάλθηκε email ειδοποίησης: %s
-
 ActionsOnTicket=Ενέργειες στο ticket
-
-#
 # Boxes
-#
 BoxLastTicket=Πρόσφατα δημιουργημένα tickets
 BoxLastTicketDescription=Τα τελευταία %s δημιουργημένα tickets
 BoxLastTicketContent=
@@ -368,3 +336,4 @@ BoxNewTicketVSClose=Αριθμός νέων ticket έναντι κλειστών
 TicketCreatedToday=Το ticket δημιουργήθηκε σήμερα
 TicketClosedToday=Το ticket έκλεισε σήμερα
 KMFoundForTicketGroup=Βρήκαμε θέματα και συχνές ερωταπαντήσεις που μπορεί να σας βοηθήσουν, Παρακαλούμε να τα ελέγξετε πριν υποβάλετε το ticket σας
+SetTitle=Ορισμός τίτλου

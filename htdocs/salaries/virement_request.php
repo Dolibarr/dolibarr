@@ -3,6 +3,7 @@
  * Copyright (C) 2015       Charlie BENKE        <charlie@patas-monkey.com>
  * Copyright (C) 2017-2019  Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,20 +59,19 @@ if (isModEnabled('project')) {
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "users", "salaries", "hrm", "withdrawals"));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $type = 'salaire';
 
 $label = GETPOST('label', 'alphanohtml');
-$projectid = (GETPOST('projectid', 'int') ? GETPOST('projectid', 'int') : GETPOST('fk_project', 'int'));
+$projectid = (GETPOSTINT('projectid') ? GETPOSTINT('projectid') : GETPOSTINT('fk_project'));
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-
 
 
 $object = new Salary($db);
@@ -82,7 +82,7 @@ $childids = $user->getAllChildIds(1);
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('salaryinfo', 'globalcard'));
 
 $object = new Salary($db);
@@ -91,10 +91,10 @@ if ($id > 0 || !empty($ref)) {
 
 	// Check current user can read this salary
 	$canread = 0;
-	if (!empty($user->rights->salaries->readall)) {
+	if ($user->hasRight('salaries', 'readall')) {
 		$canread = 1;
 	}
-	if (!empty($user->rights->salaries->read) && $object->fk_user > 0 && in_array($object->fk_user, $childids)) {
+	if ($user->hasRight('salaries', 'read') && $object->fk_user > 0 && in_array($object->fk_user, $childids)) {
 		$canread = 1;
 	}
 	if (!$canread) {
@@ -102,9 +102,9 @@ if ($id > 0 || !empty($ref)) {
 	}
 }
 
-$permissiontoread = $user->rights->salaries->read;
-$permissiontoadd = $user->rights->salaries->write; // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
-$permissiontodelete = $user->rights->salaries->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
+$permissiontoread = $user->hasRight('salaries', 'read');
+$permissiontoadd = $user->hasRight('salaries', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
+$permissiontodelete = $user->hasRight('salaries', 'delete') || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_UNPAID);
 
 $moreparam = '';
 if ($type == 'bank-transfer') {
@@ -117,7 +117,7 @@ if ($type == 'bank-transfer') {
 // Load object
 if ($id > 0 || !empty($ref)) {
 	$ret = $object->fetch($id, $ref);
-	$isdraft = (($obj->statut == FactureFournisseur::STATUS_DRAFT) ? 1 : 0);
+	$isdraft = (($obj->status == FactureFournisseur::STATUS_DRAFT) ? 1 : 0);
 	if ($ret > 0) {
 		$object->fetch_thirdparty();
 	}
@@ -133,13 +133,13 @@ restrictedArea($user, 'salaries', $object->id, 'salary', '');
  */
 
 // Link to a project
-if ($action == 'classin' && $user->rights->banque->modifier) {
+if ($action == 'classin' && $user->hasRight('banque', 'modifier')) {
 	$object->fetch($id);
 	$object->setProject($projectid);
 }
 
 // set label
-if ($action == 'setlabel' && $user->rights->salaries->write) {
+if ($action == 'setlabel' && $user->hasRight('salaries', 'write')) {
 	$object->fetch($id);
 	$object->label = $label;
 	$object->update($user);
@@ -152,8 +152,8 @@ if ($reshook < 0) {
 }
 
 
-if ($action == "new") {
-		//var_dump($object);exit;
+if ($action == "add" && $permissiontoadd) {
+	//var_dump($object);exit;
 	if ($object->id > 0) {
 		$db->begin();
 
@@ -167,25 +167,23 @@ if ($action == "new") {
 
 			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 		} else {
-				dol_print_error($db, $error);
-				$db->rollback();
+			dol_print_error($db, $error);
+			$db->rollback();
 			setEventMessages($obj->error, $obj->errors, 'errors');
 		}
 	}
-		$action = '';
+	$action = '';
 }
 
 if ($action == "delete" && $permissiontodelete) {
 	if ($object->id > 0) {
-		$result = $object->demande_prelevement_delete($user, GETPOST('did', 'int'));
+		$result = $object->demande_prelevement_delete($user, GETPOSTINT('did'));
 		if ($result == 0) {
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 			exit;
 		}
 	}
 }
-
-
 
 
 /*
@@ -217,7 +215,7 @@ $userstatic->fetch($object->fk_user);
 
 // Label
 if ($action != 'editlabel') {
-	$morehtmlref .= $form->editfieldkey("Label", 'label', $object->label, $object, $user->rights->salaries->write, 'string', '', 0, 1);
+	$morehtmlref .= $form->editfieldkey("Label", 'label', $object->label, $object, $user->hasRight('salaries', 'write'), 'string', '', 0, 1);
 	$morehtmlref .= $object->label;
 } else {
 	$morehtmlref .= $langs->trans('Label').' :&nbsp;';
@@ -299,8 +297,9 @@ print '<tr><td>';
 print '<table class="nobordernopadding" width="100%"><tr><td>';
 print $langs->trans('DefaultPaymentMode');
 print '</td>';
-if ($action != 'editmode')
+if ($action != 'editmode') {
 	print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
+}
 print '</tr></table>';
 print '</td><td>';
 
@@ -312,12 +311,12 @@ if ($action == 'editmode') {
 print '</td></tr>';
 
 // Default Bank Account
-if (isModEnabled("banque")) {
+if (isModEnabled("bank")) {
 	print '<tr><td class="nowrap">';
 	print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 	print $langs->trans('DefaultBankAccount');
 	print '<td>';
-	if ($action != 'editbankaccount' && $user->rights->salaries->write) {
+	if ($action != 'editbankaccount' && $user->hasRight('salaries', 'write')) {
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
 	}
 	print '</tr></table>';
@@ -345,35 +344,36 @@ print '<div class="fichehalfright">';
 /*
 	 * Payments
 	 */
-	$sql = "SELECT p.rowid, p.num_payment as num_payment, p.datep as dp, p.amount,";
-	$sql .= " c.code as type_code,c.libelle as paiement_type,";
-	$sql .= ' ba.rowid as baid, ba.ref as baref, ba.label, ba.number as banumber, ba.account_number, ba.currency_code as bacurrency_code, ba.fk_accountancy_journal';
-	$sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as p";
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_typepayment = c.id";
-	$sql .= ", ".MAIN_DB_PREFIX."salary as s";
-	$sql .= " WHERE p.fk_salary = ".((int) $id);
-	$sql .= " AND p.fk_salary = s.rowid";
-	$sql .= " AND s.entity IN (".getEntity('tax').")";
-	$sql .= " ORDER BY dp DESC";
+$sql = "SELECT p.rowid, p.num_payment as num_payment, p.datep as dp, p.amount,";
+$sql .= " c.code as type_code,c.libelle as paiement_type,";
+$sql .= ' ba.rowid as baid, ba.ref as baref, ba.label, ba.number as banumber, ba.account_number, ba.currency_code as bacurrency_code, ba.fk_accountancy_journal';
+$sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as p";
+$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
+$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_typepayment = c.id";
+$sql .= ", ".MAIN_DB_PREFIX."salary as s";
+$sql .= " WHERE p.fk_salary = ".((int) $id);
+$sql .= " AND p.fk_salary = s.rowid";
+$sql .= " AND s.entity IN (".getEntity('tax').")";
+$sql .= " ORDER BY dp DESC";
 
-	//print $sql;
-	$resql = $db->query($sql);
+//print $sql;
+$resql = $db->query($sql);
 if ($resql) {
 	$totalpaid = 0;
 
 	$num = $db->num_rows($resql);
 
-	$i = 0; $total = 0;
+	$i = 0;
+	$total = 0;
 
-	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder paymenttable">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("RefPayment").'</td>';
 	print '<td>'.$langs->trans("Date").'</td>';
 	print '<td>'.$langs->trans("Type").'</td>';
-	if (isModEnabled("banque")) {
+	if (isModEnabled("bank")) {
 		print '<td class="liste_titre right">'.$langs->trans('BankAccount').'</td>';
 	}
 	print '<td class="right">'.$langs->trans("Amount").'</td>';
@@ -387,9 +387,9 @@ if ($resql) {
 			print '<tr class="oddeven"><td>';
 			print '<a href="'.DOL_URL_ROOT.'/salaries/payment_salary/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"), "payment").' '.$objp->rowid.'</a></td>';
 			print '<td>'.dol_print_date($db->jdate($objp->dp), 'dayhour', 'tzuserrel')."</td>\n";
-			$labeltype = $langs->trans("PaymentType".$objp->type_code) != ("PaymentType".$objp->type_code) ? $langs->trans("PaymentType".$objp->type_code) : $objp->paiement_type;
+			$labeltype = $langs->trans("PaymentType".$objp->type_code) != "PaymentType".$objp->type_code ? $langs->trans("PaymentType".$objp->type_code) : $objp->paiement_type;
 			print "<td>".$labeltype.' '.$objp->num_payment."</td>\n";
-			if (isModEnabled("banque")) {
+			if (isModEnabled("bank")) {
 				$bankaccountstatic->id = $objp->baid;
 				$bankaccountstatic->ref = $objp->baref;
 				$bankaccountstatic->label = $objp->baref;
@@ -405,8 +405,9 @@ if ($resql) {
 				}
 
 				print '<td class="right">';
-				if ($bankaccountstatic->id)
+				if ($bankaccountstatic->id) {
 					print $bankaccountstatic->getNomUrl(1, 'transactions');
+				}
 				print '</td>';
 			}
 			print '<td class="right nowrap amountcard">'.price($objp->amount)."</td>\n";
@@ -423,7 +424,7 @@ if ($resql) {
 	// print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AlreadyPaid").' :</td><td class="right nowrap amountcard">'.price($totalpaid)."</td></tr>\n";
 	// print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AmountExpected").' :</td><td class="right nowrap amountcard">'.price($object->amount)."</td></tr>\n";
 
-	 $resteapayer = $object->amount - $totalpaid;
+	$resteapayer = $object->amount - $totalpaid;
 	// $cssforamountpaymentcomplete = 'amountpaymentcomplete';
 
 	// print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("RemainderToPay")." :</td>";
@@ -447,23 +448,23 @@ print dol_get_fiche_end();
 print '<div class="tabsAction">'."\n";
 
 $sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande,";
-	$sql .= " pfd.date_traite as date_traite, pfd.amount, pfd.fk_prelevement_bons,";
-	$sql .= " pb.ref, pb.date_trans, pb.method_trans, pb.credite, pb.date_credit, pb.datec, pb.statut as status, pb.amount as pb_amount,";
-	$sql .= " u.rowid as user_id, u.email, u.lastname, u.firstname, u.login, u.statut as user_status";
-	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on pfd.fk_user_demande = u.rowid";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."prelevement_bons as pb ON pb.rowid = pfd.fk_prelevement_bons";
+$sql .= " pfd.date_traite as date_traite, pfd.amount, pfd.fk_prelevement_bons,";
+$sql .= " pb.ref, pb.date_trans, pb.method_trans, pb.credite, pb.date_credit, pb.datec, pb.statut as status, pb.amount as pb_amount,";
+$sql .= " u.rowid as user_id, u.email, u.lastname, u.firstname, u.login, u.statut as user_status";
+$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on pfd.fk_user_demande = u.rowid";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."prelevement_bons as pb ON pb.rowid = pfd.fk_prelevement_bons";
 if ($type == 'salaire') {
 	$sql .= " WHERE pfd.fk_salary = ".((int) $object->id);
 } else {
 	$sql .= " WHERE fk_facture = ".((int) $object->id);
 }
-	$sql .= " AND pfd.traite = 0";
-	$sql .= " AND pfd.type = 'ban'";
-	$sql .= " ORDER BY pfd.date_demande DESC";
-	$resql = $db->query($sql);
+$sql .= " AND pfd.traite = 0";
+$sql .= " AND pfd.type = 'ban'";
+$sql .= " ORDER BY pfd.date_demande DESC";
+$resql = $db->query($sql);
 
-	$hadRequest = $db->num_rows($resql);
+$hadRequest = $db->num_rows($resql);
 if ($object->paye == 0 && $hadRequest == 0) {
 	if ($resteapayer > 0) {
 		if ($user_perms) {
@@ -471,14 +472,14 @@ if ($object->paye == 0 && $hadRequest == 0) {
 			print '<input type="hidden" name="token" value="'.newToken().'" />';
 			print '<input type="hidden" name="id" value="'.$object->id.'" />';
 			print '<input type="hidden" name="type" value="'.$type.'" />';
-			print '<input type="hidden" name="action" value="new" />';
+			print '<input type="hidden" name="action" value="add" />';
 			print '<label for="withdraw_request_amount">'.$langs->trans('BankTransferAmount').' </label>';
 			print '<input type="text" id="withdraw_request_amount" name="request_transfer" value="'.price($resteapayer, 0, $langs, 1, -1, -1).'" size="9" />';
 			print '<input type="submit" class="butAction" value="'.$buttonlabel.'" />';
 			print '</form>';
 
 			if (getDolGlobalString('STRIPE_SEPA_DIRECT_DEBIT_SHOW_OLD_BUTTON')) {	// This is hidden, prefer to use mode enabled with STRIPE_SEPA_DIRECT_DEBIT
-				// TODO Replace this with a checkbox for each payment mode: "Send request to XXX immediatly..."
+				// TODO Replace this with a checkbox for each payment mode: "Send request to XXX immediately..."
 				print "<br>";
 				//add stripe sepa button
 				$buttonlabel = $langs->trans("MakeWithdrawRequestStripe");
@@ -486,7 +487,7 @@ if ($object->paye == 0 && $hadRequest == 0) {
 				print '<input type="hidden" name="token" value="'.newToken().'" />';
 				print '<input type="hidden" name="id" value="'.$object->id.'" />';
 				print '<input type="hidden" name="type" value="'.$type.'" />';
-				print '<input type="hidden" name="action" value="new" />';
+				print '<input type="hidden" name="action" value="add" />';
 				print '<input type="hidden" name="paymenservice" value="stripesepa" />';
 				print '<label for="withdraw_request_amount">'.$langs->trans('BankTransferAmount').' </label>';
 				print '<input type="text" id="withdraw_request_amount" name="request_transfer" value="'.price($resteapayer, 0, $langs, 1, -1, -1).'" size="9" />';
@@ -516,40 +517,34 @@ print '</div>';
 print '<div>';
 
 
-/*
- * Withdraw receipts
- */
 $bprev = new BonPrelevement($db);
 
-/*
-	 * Withdrawals
-	 */
 
-	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder centpercent">';
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
 
-	print '<tr class="liste_titre">';
-	 // Action column
+print '<tr class="liste_titre">';
+// Action column
 if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print '<td>&nbsp;</td>';
 }
-	print '<td class="left">'.$langs->trans("DateRequest").'</td>';
-	print '<td>'.$langs->trans("User").'</td>';
-	print '<td class="center">'.$langs->trans("Amount").'</td>';
-	print '<td class="center">'.$langs->trans("DateProcess").'</td>';
+print '<td class="left">'.$langs->trans("DateRequest").'</td>';
+print '<td>'.$langs->trans("User").'</td>';
+print '<td class="center">'.$langs->trans("Amount").'</td>';
+print '<td class="center">'.$langs->trans("DateProcess").'</td>';
 if ($type == 'bank-transfer') {
 	print '<td class="center">'.$langs->trans("BankTransferReceipt").'</td>';
 } else {
 	print '<td class="center">'.$langs->trans("WithdrawalReceipt").'</td>';
 }
-	print '<td>&nbsp;</td>';
-	 // Action column
+print '<td>&nbsp;</td>';
+// Action column
 if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print '<td>&nbsp;</td>';
 }
-	print '</tr>';
+print '</tr>';
 
-	$num = 0;
+$num = 0;
 if ($resql) {
 	$i = 0;
 
@@ -610,8 +605,8 @@ if ($resql) {
 				print $withdrawreceipt->getNomUrl(1);
 			}
 
-			if ($type != 'bank-transfer') {
-				if (!empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT)) {
+			if (!in_array($type, array('bank-transfer', 'salaire', 'salary'))) {
+				if (getDolGlobalString('STRIPE_SEPA_DIRECT_DEBIT')) {
 					$langs->load("stripe");
 					if ($obj->fk_prelevement_bons > 0) {
 						print ' &nbsp; ';
@@ -619,12 +614,12 @@ if ($resql) {
 					print '<a href="'.$_SERVER["PHP_SELF"].'?action=sepastripedirectdebit&paymentservice=stripesepa&token='.newToken().'&did='.$obj->rowid.'&id='.$object->id.'&type='.urlencode($type).'">'.img_picto('', 'stripe', 'class="pictofixedwidth"').$langs->trans("RequestDirectDebitWithStripe").'</a>';
 				}
 			} else {
-				if (!empty($conf->global->STRIPE_SEPA_CREDIT_TRANSFER)) {
+				if (getDolGlobalString('STRIPE_SEPA_CREDIT_TRANSFER')) {
 					$langs->load("stripe");
 					if ($obj->fk_prelevement_bons > 0) {
 						print ' &nbsp; ';
 					}
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=sepastripecredittransfer&paymentservice=stripesepa&token='.newToken().'&did='.$obj->rowid.'&id='.$object->id.'&type='.urlencode($type).'">'.img_picto('', 'stripe', 'class="pictofixedwidth"').$langs->trans("RequestDirectDebitWithStripe").'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=sepastripecredittransfer&paymentservice=stripesepa&token='.newToken().'&did='.$obj->rowid.'&id='.$object->id.'&type='.urlencode($type).'">'.img_picto('', 'stripe', 'class="pictofixedwidth"').$langs->trans("RequesCreditTransferWithStripe").'</a>';
 				}
 			}
 			print '</td>';
@@ -650,25 +645,25 @@ if ($resql) {
 	dol_print_error($db);
 }
 
-	// Past requests when bon prelevement
+// Past requests when bon prelevement
 
-	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande,";
-	$sql .= " pfd.date_traite as date_traite, pfd.amount, pfd.fk_prelevement_bons,";
-	$sql .= " pb.ref, pb.date_trans, pb.method_trans, pb.credite, pb.date_credit, pb.datec, pb.statut as status, pb.amount as pb_amount,";
-	$sql .= " u.rowid as user_id, u.email, u.lastname, u.firstname, u.login, u.statut as user_status";
-	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on pfd.fk_user_demande = u.rowid";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."prelevement_bons as pb ON pb.rowid = pfd.fk_prelevement_bons";
+$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande,";
+$sql .= " pfd.date_traite as date_traite, pfd.amount, pfd.fk_prelevement_bons,";
+$sql .= " pb.ref, pb.date_trans, pb.method_trans, pb.credite, pb.date_credit, pb.datec, pb.statut as status, pb.amount as pb_amount,";
+$sql .= " u.rowid as user_id, u.email, u.lastname, u.firstname, u.login, u.statut as user_status";
+$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on pfd.fk_user_demande = u.rowid";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."prelevement_bons as pb ON pb.rowid = pfd.fk_prelevement_bons";
 if ($type == 'salaire') {
 	$sql .= " WHERE pfd.fk_salary = ".((int) $object->id);
 } else {
 	$sql .= " WHERE fk_facture = ".((int) $object->id);
 }
-	$sql .= " AND pfd.traite = 1";
-	$sql .= " AND pfd.type = 'ban'";
-	$sql .= " ORDER BY pfd.date_demande DESC";
+$sql .= " AND pfd.traite = 1";
+$sql .= " AND pfd.type = 'ban'";
+$sql .= " ORDER BY pfd.date_demande DESC";
 
-	$resql = $db->query($sql);
+$resql = $db->query($sql);
 if ($resql) {
 	$numOfBp = $db->num_rows($resql);
 	$i = 0;
@@ -763,8 +758,8 @@ if ($num == 0 && $numOfBp == 0) {
 	print '<tr class="oddeven"><td colspan="7"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 }
 
-	print "</table>";
-	print '</div>';
+print "</table>";
+print '</div>';
 
 // End of page
 llxFooter();

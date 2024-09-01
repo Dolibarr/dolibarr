@@ -40,16 +40,16 @@ if (!$user->admin) {
 	accessforbidden();
 }
 
-$id = GETPOST('rowid', 'int');
+$id = GETPOSTINT('rowid');
 $action = GETPOST('action', 'aZ09');
 $optioncss = GETPOST('optionscss', 'alphanohtml');
 
 $mode = GETPOST('mode', 'aZ09') ? GETPOST('mode', 'aZ09') : 'createform'; // 'createform', 'filters', 'sortorder', 'focus'
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -73,7 +73,7 @@ $urlpage = GETPOST('urlpage', 'alphanohtml');
 $key = GETPOST('key', 'alphanohtml');
 $value = GETPOST('value', 'restricthtml');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('admindefaultvalues', 'globaladmin'));
 
 
@@ -83,7 +83,8 @@ $object = new DefaultValues($db);
  */
 
 if (GETPOST('cancel', 'alpha')) {
-	$action = 'list'; $massaction = '';
+	$action = 'list';
+	$massaction = '';
 }
 if (!GETPOST('confirmmassaction', 'alpha') && !empty($massaction) && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
@@ -200,7 +201,7 @@ $form = new Form($db);
 $formadmin = new FormAdmin($db);
 
 $wikihelp = 'EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
-llxHeader('', $langs->trans("Setup"), $wikihelp);
+llxHeader('', $langs->trans("Setup"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-defaultvalues');
 
 $param = '&mode='.$mode;
 
@@ -355,7 +356,7 @@ print '<input type="submit" class="button"'.$disabled.' value="'.$langs->trans("
 print '</td>'."\n";
 print '</tr>'."\n";
 
-$result = $object->fetchAll($sortorder, $sortfield, 0, 0, array('t.type'=>$mode,'t.entity'=>array($user->entity,$conf->entity)));
+$result = $object->fetchAll($sortorder, $sortfield, 0, 0, array('t.type'=>$mode, 't.entity'=>array($user->entity,$conf->entity)));
 
 if (!is_array($result) && $result < 0) {
 	setEventMessages($object->error, $object->errors, 'errors');
@@ -365,21 +366,30 @@ if (!is_array($result) && $result < 0) {
 
 		// Page
 		print '<td>';
-		if ($action != 'edit' || GETPOST('rowid', 'int') != $defaultvalue->id) print $defaultvalue->page;
-		else print '<input type="text" name="urlpage" value="'.dol_escape_htmltag($defaultvalue->page).'">';
+		if ($action != 'edit' || GETPOSTINT('rowid') != $defaultvalue->id) {
+			print $defaultvalue->page;
+		} else {
+			print '<input type="text" name="urlpage" value="'.dol_escape_htmltag($defaultvalue->page).'">';
+		}
 		print '</td>'."\n";
 
 		// Field
 		print '<td>';
-		if ($action != 'edit' || GETPOST('rowid') != $defaultvalue->id) print $defaultvalue->param;
-		else print '<input type="text" name="key" value="'.dol_escape_htmltag($defaultvalue->param).'">';
+		if ($action != 'edit' || GETPOST('rowid') != $defaultvalue->id) {
+			print $defaultvalue->param;
+		} else {
+			print '<input type="text" name="key" value="'.dol_escape_htmltag($defaultvalue->param).'">';
+		}
 		print '</td>'."\n";
 
 		// Value
 		if ($mode != 'focus' && $mode != 'mandatory') {
 			print '<td>';
-			if ($action != 'edit' || GETPOST('rowid') != $defaultvalue->id) print dol_escape_htmltag($defaultvalue->value);
-			else print '<input type="text" name="value" value="'.dol_escape_htmltag($defaultvalue->value).'">';
+			if ($action != 'edit' || GETPOST('rowid') != $defaultvalue->id) {
+				print dol_escape_htmltag($defaultvalue->value);
+			} else {
+				print '<input type="text" name="value" value="'.dol_escape_htmltag($defaultvalue->value).'">';
+			}
 			print '</td>';
 		}
 
@@ -392,7 +402,7 @@ if (!is_array($result) && $result < 0) {
 
 		// Actions
 		print '<td class="center">';
-		if ($action != 'edit' || GETPOST('rowid') != $defaultvalue->id)	{
+		if ($action != 'edit' || GETPOST('rowid') != $defaultvalue->id) {
 			print '<a class="editfielda marginleftonly marginrightonly" href="'.$_SERVER['PHP_SELF'].'?rowid='.$defaultvalue->id.'&entity='.$defaultvalue->entity.'&mode='.$mode.'&action=edit&token='.newToken().'">'.img_edit().'</a>';
 			print '<a class="marginleftonly marginrightonly" href="'.$_SERVER['PHP_SELF'].'?rowid='.$defaultvalue->id.'&entity='.$defaultvalue->entity.'&mode='.$mode.'&action=delete&token='.newToken().'">'.img_delete().'</a>';
 		} else {

@@ -1,3 +1,6 @@
+IntraCommReport=Informe intracomm
+IntraCommReports=Intracomm reports
+
 Module68000Name = Informe intracomm
 Module68000Desc = Xestión de informes intracomm (soporte para o formato francés DEB / DES)
 IntracommReportSetup = Configuración do módulo Intracommreport
@@ -10,14 +13,11 @@ INTRACOMMREPORT_ROLE_ACTEUR=Rol interpretado polo actor
 INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Nivel de obriga das presentacións
 INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Nivel de obriga dos envíos
 INTRACOMMREPORT_CATEG_FRAISDEPORT=Categoría de servizos tipo "Franqueo"
-
 INTRACOMMREPORT_NUM_DECLARATION=Número de declarante
-
 # Menu
 MenuIntracommReport=Informe intracomm
 MenuIntracommReportNew=Nova declaración
 MenuIntracommReportList=Listaxe
-
 # View
 NewDeclaration=Nova declaración
 Declaration=Declaracion
@@ -25,16 +25,14 @@ AnalysisPeriod=Período de análise
 TypeOfDeclaration=Tipo de declaración
 DEB=Declaración de cambio de mercadorías (DEB)
 DES=Declaración de intercambio de servizos (DES)
-
 # Export page
 IntracommReportTitle=Preparación dun ficheiro XML en formato ProAduana
-
 # List
 IntracommReportList=Lista de declaracións xeradas
 IntracommReportNumber=Número de declaración
 IntracommReportPeriod=Período de análise
 IntracommReportTypeDeclaration=Tipo de declaración
 IntracommReportDownload=descargar o ficheiro XML
-
 # Invoice
 IntracommReportTransportMode=Modo de transporte
+DeleteIntraCommReport=Delete IntraComm report

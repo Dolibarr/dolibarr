@@ -63,8 +63,6 @@ if (GETPOST('action', 'alpha') == 'set') {
 		$db->rollback();
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
-} elseif (GETPOST('action', 'alpha') == 'setmethod') {
-	dolibarr_set_const($db, "TAKEPOS_PRINT_METHOD", GETPOST('value', 'alpha'), 'chaine', 0, '', $conf->entity);
 }
 
 
@@ -75,7 +73,7 @@ if (GETPOST('action', 'alpha') == 'set') {
 $form = new Form($db);
 $formproduct = new FormProduct($db);
 
-llxHeader('', $langs->trans("CashDeskSetup"));
+llxHeader('', $langs->trans("CashDeskSetup"), '', '', 0, 0, '', '', '', 'mod-takepos page-admin_appearance');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("CashDeskSetup").' (TakePOS)', $linkback, 'title_setup');
@@ -86,9 +84,11 @@ print '<form action="'.$_SERVER["PHP_SELF"].'?terminal='.(empty($terminal) ? 1 :
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set">';
 
+print '<br>';
+
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td class="titlefield">'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
+print '<td>'.$langs->trans("Parameters").'</td><td></td>';
 print "</tr>\n";
 
 // Color theme
@@ -96,7 +96,7 @@ print '<tr class="oddeven"><td>';
 print $langs->trans("ColorTheme");
 print '</td><td>';
 $array = array(0=>"Eldy", 1=>$langs->trans("Colorful"));
-print $form->selectarray('TAKEPOS_COLOR_THEME', $array, (empty($conf->global->TAKEPOS_COLOR_THEME) ? '0' : $conf->global->TAKEPOS_COLOR_THEME), 0);
+print $form->selectarray('TAKEPOS_COLOR_THEME', $array, (!getDolGlobalString('TAKEPOS_COLOR_THEME') ? '0' : $conf->global->TAKEPOS_COLOR_THEME), 0);
 print "</td></tr>\n";
 
 // Don't display category section
@@ -159,14 +159,6 @@ print $langs->trans('ShowCategoryDescription');
 print '</td><td>';
 print ajax_constantonoff("TAKEPOS_SHOW_CATEGORY_DESCRIPTION", array(), $conf->entity, 0, 0, 1, 0);
 print "</td></tr>\n";
-
-// Use price excl. taxes (HT) and not price incl. taxes (TTC)
-print '<tr class="oddeven"><td>';
-print $langs->trans('UsePriceHT');
-print '</td><td>';
-print ajax_constantonoff("TAKEPOS_CHANGE_PRICE_HT", array(), $conf->entity, 0, 0, 1, 0);
-print "</td></tr>\n";
-
 
 print '</table>';
 

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2014-2018  Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2015-2023  Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2015-2024  Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,21 +71,6 @@ class Loan extends CommonObject
 	public $accountancy_account_insurance;
 	public $accountancy_account_interest;
 
-	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
-
-	/**
-	 * @var integer|string date_modification
-	 */
-	public $date_modification;
-
-	/**
-	 * @var integer|string date_validation
-	 */
-	public $date_validation;
-
 	public $insurance_amount;
 
 	/**
@@ -108,7 +94,7 @@ class Loan extends CommonObject
 	public $fk_project;
 
 	/**
-	 * @var int totalpaid
+	 * @var float totalpaid
 	 */
 	public $totalpaid;
 
@@ -131,7 +117,7 @@ class Loan extends CommonObject
 	 *  Load object in memory from database
 	 *
 	 *  @param	int		$id		 id object
-	 *  @return int				 <0 error , >=0 no error
+	 *  @return int				 Return integer <0 error , >=0 no error
 	 */
 	public function fetch($id)
 	{
@@ -182,7 +168,7 @@ class Loan extends CommonObject
 	 *  Create a loan into database
 	 *
 	 *  @param	User	$user	User making creation
-	 *  @return int				<0 if KO, id if OK
+	 *  @return int				Return integer <0 if KO, id if OK
 	 */
 	public function create($user)
 	{
@@ -288,7 +274,7 @@ class Loan extends CommonObject
 	 *  Delete a loan
 	 *
 	 *  @param	User	$user	Object user making delete
-	 *  @return int 			<0 if KO, >0 if OK
+	 *  @return int 			Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user)
 	{
@@ -348,7 +334,7 @@ class Loan extends CommonObject
 	 *  Update loan
 	 *
 	 *  @param	User	$user	User who modified
-	 *  @return int				<0 if error, >0 if ok
+	 *  @return int				Return integer <0 if error, >0 if ok
 	 */
 	public function update($user)
 	{
@@ -390,7 +376,7 @@ class Loan extends CommonObject
 	 *  Tag loan as paid completely
 	 *
 	 *  @param	User	$user	Object user making change
-	 *  @return	int				<0 if KO, >0 if OK
+	 *  @return	int				Return integer <0 if KO, >0 if OK
 	 */
 	public function setPaid($user)
 	{
@@ -416,7 +402,7 @@ class Loan extends CommonObject
 	 *	@deprecated
 	 *  @see setStarted()
 	 *  @param	User	$user	Object user making change
-	 *  @return	int				<0 if KO, >0 if OK
+	 *  @return	int				Return integer <0 if KO, >0 if OK
 	 */
 	public function set_started($user)
 	{
@@ -429,7 +415,7 @@ class Loan extends CommonObject
 	 *  Tag loan as payment started
 	 *
 	 *  @param	User	$user	Object user making change
-	 *  @return	int				<0 if KO, >0 if OK
+	 *  @return	int				Return integer <0 if KO, >0 if OK
 	 */
 	public function setStarted($user)
 	{
@@ -452,7 +438,7 @@ class Loan extends CommonObject
 	 *  Tag loan as payment as unpaid
 	 *
 	 *  @param	User	$user	Object user making change
-	 *  @return	int				<0 if KO, >0 if OK
+	 *  @return	int				Return integer <0 if KO, >0 if OK
 	 */
 	public function setUnpaid($user)
 	{
@@ -475,7 +461,7 @@ class Loan extends CommonObject
 	 *  Return label of loan status (unpaid, paid)
 	 *
 	 *  @param  int		$mode			0=label, 1=short label, 2=Picto + Short label, 3=Picto, 4=Picto + Label
-	 *  @param  integer	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount paid if you have it, 1 otherwise)
+	 *  @param  integer	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommend to put here amount paid if you have it, 1 otherwise)
 	 *  @return string					Label
 	 */
 	public function getLibStatut($mode = 0, $alreadypaid = -1)
@@ -489,7 +475,7 @@ class Loan extends CommonObject
 	 *
 	 *  @param  int		$status			Id status
 	 *  @param  int		$mode			0=Label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Label, 5=Short label + Picto
-	 *  @param  integer	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount paid if you have it, 1 otherwise)
+	 *  @param  integer	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommend to put here amount paid if you have it, 1 otherwise)
 	 *  @return string					Label
 	 */
 	public function LibStatut($status, $mode = 0, $alreadypaid = -1)
@@ -501,21 +487,23 @@ class Loan extends CommonObject
 		$langs->loadLangs(array("customers", "bills"));
 
 		unset($this->labelStatus); // Force to reset the array of status label, because label can change depending on parameters
-		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
-			global $langs;
-			$this->labelStatus[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv('Unpaid');
-			$this->labelStatus[self::STATUS_PAID] = $langs->transnoentitiesnoconv('Paid');
-			$this->labelStatus[self::STATUS_STARTED] = $langs->transnoentitiesnoconv("BillStatusStarted");
-			if ($status == 0 && $alreadypaid > 0) {
-				$this->labelStatus[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv("BillStatusStarted");
-			}
-			$this->labelStatusShort[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv('Unpaid');
-			$this->labelStatusShort[self::STATUS_PAID] = $langs->transnoentitiesnoconv('Enabled');
-			$this->labelStatusShort[self::STATUS_STARTED] = $langs->transnoentitiesnoconv("BillStatusStarted");
-			if ($status == 0 && $alreadypaid > 0) {
-				$this->labelStatusShort[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv("BillStatusStarted");
-			}
+		// Always true because of 'unset':
+		// if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
+		global $langs;
+		$this->labelStatus = array();
+		$this->labelStatus[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv('Unpaid');
+		$this->labelStatus[self::STATUS_PAID] = $langs->transnoentitiesnoconv('Paid');
+		$this->labelStatus[self::STATUS_STARTED] = $langs->transnoentitiesnoconv("BillStatusStarted");
+		if ($status == 0 && $alreadypaid > 0) {
+			$this->labelStatus[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv("BillStatusStarted");
 		}
+		$this->labelStatusShort[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv('Unpaid');
+		$this->labelStatusShort[self::STATUS_PAID] = $langs->transnoentitiesnoconv('Paid');
+		$this->labelStatusShort[self::STATUS_STARTED] = $langs->transnoentitiesnoconv("BillStatusStarted");
+		if ($status == 0 && $alreadypaid > 0) {
+			$this->labelStatusShort[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv("BillStatusStarted");
+		}
+		// }  // End of empty(labelStatus,labelStatusShort)
 
 		$statusType = 'status1';
 		if (($status == 0 && $alreadypaid > 0) || $status == self::STATUS_STARTED) {
@@ -530,7 +518,7 @@ class Loan extends CommonObject
 
 
 	/**
-	 *  Return clicable name (with eventually the picto)
+	 *  Return clickable name (with eventually the picto)
 	 *
 	 *  @param	int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
 	 *  @param	int		$maxlen						Label max length
@@ -569,7 +557,7 @@ class Loan extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowMyObject");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -588,13 +576,13 @@ class Loan extends CommonObject
 			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
-			$result .= ($maxlen ?dol_trunc($this->ref, $maxlen) : $this->ref);
+			$result .= ($maxlen ? dol_trunc($this->ref, $maxlen) : $this->ref);
 		}
 		$result .= $linkend;
 
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -609,7 +597,7 @@ class Loan extends CommonObject
 	 *  Used to build previews or test instances.
 	 * 	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -631,6 +619,8 @@ class Loan extends CommonObject
 		$this->capital = 20000;
 		$this->nbterm = 48;
 		$this->rate = 4.3;
+
+		return 1;
 	}
 
 	/**
@@ -704,11 +694,11 @@ class Loan extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string		HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
@@ -737,7 +727,7 @@ class Loan extends CommonObject
 		}
 
 		if (method_exists($this, 'LibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3, $this->alreadypaid).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3, $this->alreadypaid).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

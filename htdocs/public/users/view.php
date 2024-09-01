@@ -49,7 +49,7 @@ $mode     = GETPOST('mode', 'aZ09');
 $cancel   = GETPOST('cancel', 'alpha');
 $backtopage = '';
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $securekey = GETPOST('securekey', 'alpha');
 $suffix = GETPOST('suffix');
 
@@ -114,10 +114,10 @@ if (!empty($object->photo)) {
 $urllogo = '';
 $urllogofull = '';
 if (!empty($logosmall) && is_readable($dir.'/'.$logosmall)) {
-	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.($conf->entity > 1 ? '&amp;entity='.$conf->entity : '').'&amp;securekey='.urlencode($securekey).'&amp;file='.urlencode($logosmall);
+	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart='.urlencode($modulepart).($conf->entity > 1 ? '&amp;entity='.$conf->entity : '').'&amp;securekey='.urlencode($securekey).'&amp;file='.urlencode($logosmall);
 	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart='.$modulepart.($conf->entity > 1 ? '&entity='.$conf->entity : '').'&securekey='.urlencode($securekey).'&file='.urlencode($logosmall);
 } elseif (!empty($logo) && is_readable($dir.'/'.$logo)) {
-	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.($conf->entity > 1 ? '&amp;entity='.$conf->entity : '').'&amp;securekey='.urlencode($securekey).'&amp;file='.urlencode($logo);
+	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart='.urlencode($modulepart).($conf->entity > 1 ? '&amp;entity='.$conf->entity : '').'&amp;securekey='.urlencode($securekey).'&amp;file='.urlencode($logo);
 	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart='.$modulepart.($conf->entity > 1 ? '&entity='.$conf->entity : '').'&securekey='.urlencode($securekey).'&file='.urlencode($logo);
 }
 
@@ -146,13 +146,14 @@ if (getDolUserInt('USER_PUBLIC_HIDE_OFFICE_FAX', 0, $object)) {
 if (getDolUserInt('USER_PUBLIC_HIDE_USER_MOBILE', 0, $object)) {
 	$object->user_mobile = '';
 }
-if (getDolUserInt('USER_PUBLIC_HIDE_BIRTH', 0, $object)) {
-	$object->birth = '';
-}
 if (getDolUserInt('USER_PUBLIC_HIDE_SOCIALNETWORKS', 0, $object)) {
-	$object->socialnetworks = '';
+	$object->socialnetworks = [];
 }
-if (getDolUserInt('USER_PUBLIC_HIDE_ADDRESS', 0, $object)) {
+// By default, personal address not visible
+if (!getDolUserInt('USER_PUBLIC_SHOW_BIRTH', 0, $object)) {
+	$object->birth = null;
+}
+if (!getDolUserInt('USER_PUBLIC_SHOW_ADDRESS', 0, $object)) {
 	$object->address = '';
 	$object->town = '';
 	$object->zip = '';
@@ -187,7 +188,7 @@ if ($mode == 'vcard') {
 }
 
 $head = '';
-if (!empty($conf->global->MAIN_USER_PROFILE_CSS_URL)) {
+if (getDolGlobalString('MAIN_USER_PROFILE_CSS_URL')) {
 	$head = '<link rel="stylesheet" type="text/css" href="' . getDolGlobalString('MAIN_USER_PROFILE_CSS_URL').'?lang='.$langs->defaultlang.'">'."\n";
 }
 
@@ -254,7 +255,7 @@ print '</div>';
 print '</div>';
 
 
-if (!empty($conf->global->USER_IMAGE_PUBLIC_INTERFACE)) {
+if (getDolGlobalString('USER_IMAGE_PUBLIC_INTERFACE')) {
 	print '<div class="backimagepublicrecruitment">';
 	print '<img id="idUSER_IMAGE_PUBLIC_INTERFACE" src="' . getDolGlobalString('USER_IMAGE_PUBLIC_INTERFACE').'">';
 	print '</div>';
@@ -269,11 +270,13 @@ $socialnetworksdict = getArrayOfSocialNetworks();
 // Show barcode
 $showbarcode = GETPOST('nobarcode') ? 0 : 1;
 if ($showbarcode) {
-	$qrcodecontent = $output = $v->buildVCardString($object, $company, $langs);
+	$outdir = $conf->user->dir_temp;
+
+	$filename = $v->buildVCardString($object, $company, $langs, '', $outdir);
 
 	print '<br>';
 	print '<div class="floatleft inline-block valignmiddle paddingleft paddingright">';
-	print '<img style="max-width: 100%" src="'.$dolibarr_main_url_root.'/viewimage.php?modulepart=barcode&entity='.((int) $conf->entity).'&generator=tcpdfbarcode&encoding=QRCODE&code='.urlencode($qrcodecontent).'">';
+	print '<img style="max-width: 100%" src="'.$dolibarr_main_url_root.'/viewimage.php?modulepart=barcode&entity='.((int) $conf->entity).'&generator=tcpdfbarcode&encoding=QRCODE&code='.urlencode(basename($filename)).'">';
 	print '</div>';
 	print '<br>';
 }
@@ -315,6 +318,18 @@ if ($object->user_mobile && !getDolUserInt('USER_PUBLIC_HIDE_USER_MOBILE', 0, $o
 	$usersection .= '<div class="flexitemsmall">';
 	$usersection .= img_picto('', 'phone', 'class="pictofixedwidth"');
 	$usersection .= dol_print_phone($object->user_mobile, $object->country_code, 0, $mysoc->id, 'tel', ' ', 0, '');
+	$usersection .= '</div>';
+}
+if (getDolUserInt('USER_PUBLIC_SHOW_BIRTH', 0, $object) && !is_null($object->birth)) {
+	$usersection .= '<div class="flexitemsmall">';
+	$usersection .= img_picto('', 'calendar', 'class="pictofixedwidth"');
+	$usersection .= dol_print_date($object->birth);
+	$usersection .= '</div>';
+}
+if (getDolUserInt('USER_PUBLIC_SHOW_ADDRESS', 0, $object) && $object->address) {
+	$usersection .= '<div class="flexitemsmall">';
+	$usersection .= img_picto('', 'state', 'class="pictofixedwidth"');
+	$usersection .= dol_print_address(dol_format_address($object, 0, "\n", $langs), 'map', 'user', $object->id, 1);
 	$usersection .= '</div>';
 }
 
@@ -392,7 +407,7 @@ if (!getDolUserInt('USER_PUBLIC_HIDE_COMPANY', 0, $object)) {
 	if (!empty($mysoc->socialnetworks) && is_array($mysoc->socialnetworks) && count($mysoc->socialnetworks) > 0) {
 		foreach ($mysoc->socialnetworks as $key => $value) {
 			if ($value) {
-				$companysection .= '<div class="flexitemsmall">'.dol_print_socialnetworks($value, 0, $mysoc->id, $key, $socialnetworksdict).'</div>';
+				$companysection .= '<div class="flexitemsmall wordbreak">'.dol_print_socialnetworks($value, 0, $mysoc->id, $key, $socialnetworksdict).'</div>';
 			}
 		}
 	}
@@ -402,10 +417,10 @@ if (!getDolUserInt('USER_PUBLIC_HIDE_COMPANY', 0, $object)) {
 	$logosmall = $mysoc->logo_squarred_small ? $mysoc->logo_squarred_small : $mysoc->logo_small;
 	$logo = $mysoc->logo_squarred ? $mysoc->logo_squarred : $mysoc->logo;
 	$paramlogo = 'ONLINE_USER_LOGO_'.$suffix;
-	if (!empty($conf->global->$paramlogo)) {
-		$logosmall = $conf->global->$paramlogo;
-	} elseif (!empty($conf->global->ONLINE_USER_LOGO)) {
-		$logosmall = $conf->global->ONLINE_USER_LOGO;
+	if (getDolGlobalString($paramlogo)) {
+		$logosmall = getDolGlobalString($paramlogo);
+	} elseif (getDolGlobalString('ONLINE_USER_LOGO')) {
+		$logosmall = getDolGlobalString('ONLINE_USER_LOGO');
 	}
 	//print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
 	// Define urllogo

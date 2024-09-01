@@ -2,6 +2,7 @@
 /* Copyright (C) 2013-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +43,7 @@ $numsondage = GETPOST("id", 'alphanohtml');
 $object = new Opensurveysondage($db);
 $result = $object->fetch(0, $numsondage);
 if ($result <= 0) {
-	dol_print_error('', 'Failed to get survey id '.$numsondage);
+	dol_print_error(null, 'Failed to get survey id '.$numsondage);
 }
 
 $nblines = $object->fetch_lines();
@@ -89,8 +90,8 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x")) {		// bo
 			setEventMessages($langs->trans("VoteNameAlreadyExists"), null, 'errors');
 			$error++;
 		} else {
-			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'opensurvey_user_studs (nom, id_sondage, reponses)';
-			$sql .= " VALUES ('".$db->escape($nom)."', '".$db->escape($numsondage)."','".$db->escape($nouveauchoix)."')";
+			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'opensurvey_user_studs (nom, id_sondage, reponses, date_creation)';
+			$sql .= " VALUES ('".$db->escape($nom)."', '".$db->escape($numsondage)."', '".$db->escape($nouveauchoix)."', '".$db->idate(dol_now())."')";
 			$resql = $db->query($sql);
 			if (!$resql) {
 				dol_print_error($db);
@@ -165,6 +166,7 @@ if (GETPOST("ajoutercolonne") && GETPOST('nouvellecolonne') && $object->format =
 		dol_print_error($db);
 	} else {
 		header('Location: results.php?id='.$object->id_sondage);
+		exit;
 	}
 }
 
@@ -271,7 +273,7 @@ if (GETPOSTISSET("ajoutercolonne") && $object->format == "D") {
 						$reponsesadd = str_split($obj->reponses);
 						$lengthresponses = count($reponsesadd);
 						for ($cpt = $lengthresponses; $cpt > $cleinsertion; $cpt--) {
-							$reponsesadd[$cpt] = $reponsesadd[$cpt-1];
+							$reponsesadd[$cpt] = $reponsesadd[$cpt - 1];
 						}
 						$reponsesadd[$cleinsertion] = '0';
 						$reponsesadd = implode($reponsesadd);
@@ -343,7 +345,7 @@ for ($i = 0; $i < $nbcolonnes; $i++) {
 
 		//parcours de tous les sujets actuels
 		while (isset($toutsujet[$j])) {
-			//si le sujet n'est pas celui qui a été effacé alors on concatene
+			// If the subject is not the deleted subject, then concatenate the current subject
 			if ($i != $j) {
 				if (!empty($nouveauxsujets)) {
 					$nouveauxsujets .= ',';
@@ -383,7 +385,7 @@ for ($i = 0; $i < $nbcolonnes; $i++) {
 			// parcours de toutes les réponses actuelles
 			for ($j = 0; $j < $nbcolonnes; $j++) {
 				$car = substr($ensemblereponses, $j, 1);
-				//si les reponses ne concerne pas la colonne effacée, on concatene
+				//si les reponses ne concerne pas la colonne effacée, on concatenate
 				if ($i != $j) {
 					$newcar .= $car;
 				}
@@ -436,7 +438,7 @@ $toutsujet = explode(",", $object->sujet);
 $listofanswers = array();
 foreach ($toutsujet as $value) {
 	$tmp = explode('@', $value);
-	$listofanswers[] = array('label'=>$tmp[0], 'format'=>(!empty($tmp[1]) ? $tmp[1] : 'checkbox'));
+	$listofanswers[] = array('label' => $tmp[0], 'format' => (!empty($tmp[1]) ? $tmp[1] : 'checkbox'));
 }
 $toutsujet = str_replace("@", "<br>", $toutsujet);
 $toutsujet = str_replace("°", "'", $toutsujet);
@@ -486,7 +488,7 @@ if ($action == 'edit') {
 	$doleditor = new DolEditor('nouveauxcommentaires', $object->description, '', 120, 'dolibarr_notes', 'In', 1, 1, 1, ROWS_7, '90%');
 	$doleditor->Create(0, '');
 } else {
-	print (dol_textishtml($object->description) ? $object->description : dol_nl2br($object->description, 1, true));
+	print(dol_textishtml($object->description) ? $object->description : dol_nl2br($object->description, 1, true));
 }
 print '</td></tr>';
 
@@ -589,7 +591,7 @@ if (GETPOST('ajoutsujet')) {
 	if ($object->format == "A") {
 		print $langs->trans("AddNewColumn").':<br><br>';
 		print $langs->trans("Title").' <input type="text" name="nouvellecolonne" size="40"><br>';
-		$tmparray = array('checkbox'=>$langs->trans("CheckBox"), 'yesno'=>$langs->trans("YesNoList"), 'foragainst'=>$langs->trans("PourContreList"));
+		$tmparray = array('checkbox' => $langs->trans("CheckBox"), 'yesno' => $langs->trans("YesNoList"), 'foragainst' => $langs->trans("PourContreList"));
 		print $langs->trans("Type").' '.$form->selectarray("typecolonne", $tmparray, GETPOST('typecolonne')).'<br><br>';
 		print '<input type="submit" class="button" name="ajoutercolonne" value="'.dol_escape_htmltag($langs->trans("Add")).'">';
 		print '<input type="hidden" name="id_sondage" value="'.dol_escape_htmltag($object->id_sondage).'">';
@@ -727,7 +729,7 @@ if ($object->format == "D") {
 	for ($i = 0; $i < $nbofsujet; $i++) {
 		$cur = intval($toutsujet[$i]); // intval() est utiliser pour supprimer le suffixe @* qui déplaît logiquement à strftime()
 
-		if (isset($toutsujet[$i + 1]) === false) {
+		if (!isset($toutsujet[$i + 1])) {
 			$next = false;
 		} else {
 			$next = intval($toutsujet[$i + 1]);
@@ -755,7 +757,7 @@ if ($object->format == "D") {
 	$colspan = 1;
 	for ($i = 0; $i < $nbofsujet; $i++) {
 		$cur = intval($toutsujet[$i]);
-		if (isset($toutsujet[$i + 1]) === false) {
+		if (!isset($toutsujet[$i + 1])) {
 			$next = false;
 		} else {
 			$next = intval($toutsujet[$i + 1]);
@@ -905,7 +907,7 @@ while ($compteur < $num) {
 			}
 		}
 	} else {
-		//sinon on remplace les choix de l'utilisateur par une ligne de checkbox pour recuperer de nouvelles valeurs
+		// Else, replace the user's choices with a line of checkboxes to retrieve new values
 		if ($compteur == $ligneamodifier) {
 			for ($i = 0; $i < $nbcolonnes; $i++) {
 				$car = substr($ensemblereponses, $i, 1);
@@ -918,11 +920,11 @@ while ($compteur < $num) {
 					print '>';
 				}
 				if (!empty($listofanswers[$i]['format']) && $listofanswers[$i]['format'] == 'yesno') {
-					$arraychoice = array('2'=>'&nbsp;', '0'=>$langs->trans("No"), '1'=>$langs->trans("Yes"));
+					$arraychoice = array('2' => '&nbsp;', '0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
 					print $form->selectarray("choix".$i, $arraychoice, $car);
 				}
 				if (!empty($listofanswers[$i]['format']) && $listofanswers[$i]['format'] == 'foragainst') {
-					$arraychoice = array('2'=>'&nbsp;', '0'=>$langs->trans("Against"), '1'=>$langs->trans("For"));
+					$arraychoice = array('2' => '&nbsp;', '0' => $langs->trans("Against"), '1' => $langs->trans("For"));
 					print $form->selectarray("choix".$i, $arraychoice, $car);
 				}
 				print '</td>'."\n";
@@ -1031,11 +1033,11 @@ if (empty($testligneamodifier)) {
 			print '>';
 		}
 		if (!empty($listofanswers[$i]['format']) && $listofanswers[$i]['format'] == 'yesno') {
-			$arraychoice = array('2'=>'&nbsp;', '0'=>$langs->trans("No"), '1'=>$langs->trans("Yes"));
+			$arraychoice = array('2' => '&nbsp;', '0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
 			print $form->selectarray("choix".$i, $arraychoice);
 		}
 		if (!empty($listofanswers[$i]['format']) && $listofanswers[$i]['format'] == 'foragainst') {
-			$arraychoice = array('2'=>'&nbsp;', '0'=>$langs->trans("Against"), '1'=>$langs->trans("For"));
+			$arraychoice = array('2' => '&nbsp;', '0' => $langs->trans("Against"), '1' => $langs->trans("For"));
 			print $form->selectarray("choix".$i, $arraychoice);
 		}
 		print '</td>'."\n";
@@ -1128,11 +1130,10 @@ $toutsujet = explode(",", $object->sujet); // With old versions, this field was 
 $compteursujet = 0;
 $meilleursujet = '';
 for ($i = 0; $i < $nbcolonnes; $i++) {
-	if (isset($sumfor[$i]) === true && isset($meilleurecolonne) === true && $sumfor[$i] == $meilleurecolonne) {
+	if (isset($sumfor[$i]) && isset($meilleurecolonne) && ($sumfor[$i] == $meilleurecolonne)) {
 		$meilleursujet .= ($meilleursujet ? ", " : "");
 
 		if ($object->format == "D") {
-			$meilleursujetexport = $toutsujet[$i];
 			//var_dump($toutsujet);
 			if (strpos($toutsujet[$i], '@') !== false) {
 				$toutsujetdate = explode("@", $toutsujet[$i]);
@@ -1148,7 +1149,7 @@ for ($i = 0; $i < $nbcolonnes; $i++) {
 		$compteursujet++;
 	}
 }
-$meilleursujet = substr($meilleursujet, 1);
+//$meilleursujet = substr($meilleursujet, 1);
 $meilleursujet = str_replace("°", "'", $meilleursujet);
 
 // Show best choice
@@ -1157,9 +1158,9 @@ if ($nbofcheckbox >= 2) {
 	print '<p class="affichageresultats">'."\n";
 
 	if (isset($meilleurecolonne) && $compteursujet == "1") {
-		print "<img src=\"".DOL_URL_ROOT.'/opensurvey/img/medaille.png'."\"> ".$langs->trans('TheBestChoice').": <b>".$meilleursujet." </b>".$langs->trans("with")." <b>".$meilleurecolonne."</b> ".$vote_str.".\n";
+		print '<img src="'.DOL_URL_ROOT.'/opensurvey/img/medaille.png"> '.$langs->trans('TheBestChoice').": <b>".$meilleursujet."</b> - <b>".$meilleurecolonne."</b> ".$vote_str.".\n";
 	} elseif (isset($meilleurecolonne)) {
-		print "<img src=\"".DOL_URL_ROOT.'/opensurvey/img/medaille.png'."\"> ".$langs->trans('TheBestChoices').": <b>".$meilleursujet." </b>".$langs->trans("with")." <b>".$meilleurecolonne."</b> ".$vote_str.".\n";
+		print '<img src="'.DOL_URL_ROOT.'/opensurvey/img/medaille.png"> '.$langs->trans('TheBestChoices').": <b>".$meilleursujet."</b> - <b>".$meilleurecolonne."</b> ".$vote_str.".\n";
 	}
 	print '<br></p><br>'."\n";
 }

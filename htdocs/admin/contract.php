@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2011-2013      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2011-2018      Philippe Grand	    <philippe.grand@atoo-net.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +57,7 @@ if (!getDolGlobalString('CONTRACT_ADDON')) {
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
-$error=0;
+$error = 0;
 
 if ($action == 'updateMask') {
 	$maskconst = GETPOST('maskconstcontract', 'aZ09');
@@ -80,21 +82,22 @@ if ($action == 'updateMask') {
 	$contract->initAsSpecimen();
 
 	// Search template files
-	$file = ''; $classname = ''; $filefound = 0;
+	$file = '';
+	$classname = '';
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/contract/doc/pdf_".$modele.".modules.php", 0);
 		if (file_exists($file)) {
-			$filefound = 1;
 			$classname = "pdf_".$modele;
 			break;
 		}
 	}
 
-	if ($filefound) {
+	if ($classname !== '') {
 		require_once $file;
 
 		$module = new $classname($db);
+		'@phan-var-force ModelePDFContract $module';
 
 		if ($module->write_file($contract, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=contract&file=SPECIMEN.pdf");
@@ -133,8 +136,8 @@ if ($action == 'updateMask') {
 } elseif ($action == 'unsetdoc') {
 	dolibarr_del_const($db, "CONTRACT_ADDON_PDF", $conf->entity);
 } elseif ($action == 'setmod') {
-	// TODO Verifier si module numerotation choisi peut etre active
-	// par appel methode canBeActivated
+	// TODO Verify si the chosen numbering module can be activated by
+	// the method call canBeActivated
 
 	dolibarr_set_const($db, "CONTRACT_ADDON", $value, 'chaine', 0, '', $conf->entity);
 } elseif ($action == 'set_other') {
@@ -157,7 +160,7 @@ if ($action == 'updateMask') {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 } elseif ($action == "allowonlinesign") {
-	if (!dolibarr_set_const($db, "CONTRACT_ALLOW_ONLINESIGN", $value, 0, 'int', $conf->entity)) {
+	if (!dolibarr_set_const($db, "CONTRACT_ALLOW_ONLINESIGN", $value, 'int', 0, '', $conf->entity)) {
 		$error++;
 	}
 } elseif (preg_match('/set_(.*)/', $action, $reg)) {
@@ -201,7 +204,7 @@ if ($action == 'updateMask') {
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-contract');
 
 $form = new Form($db);
 
@@ -241,19 +244,21 @@ foreach ($dirmodels as $reldir) {
 					$file = substr($file, 0, dol_strlen($file) - 4);
 
 					require_once $dir.$file.'.php';
-
+					/** @var ModelNumRefContracts $module */
 					$module = new $file($db);
 
+					'@phan-var-force ModelNumRefContracts $module';
+
 					// Show modules according to features level
-					if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 						continue;
 					}
-					if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+					if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 						continue;
 					}
 
 					if ($module->isEnabled()) {
-						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
+						print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
 						print $module->info($langs);
 						print '</td>';
 
@@ -332,7 +337,9 @@ if ($resql) {
 	$num_rows = $db->num_rows($resql);
 	while ($i < $num_rows) {
 		$array = $db->fetch_array($resql);
-		array_push($def, $array[0]);
+		if (is_array($array)) {
+			array_push($def, $array[0]);
+		}
 		$i++;
 	}
 } else {
@@ -361,6 +368,7 @@ foreach ($dirmodels as $reldir) {
 		if (is_dir($dir)) {
 			$handle = opendir($dir);
 			if (is_resource($handle)) {
+				$filelist = array();
 				while (($file = readdir($handle)) !== false) {
 					$filelist[] = $file;
 				}
@@ -374,22 +382,25 @@ foreach ($dirmodels as $reldir) {
 							$classname = substr($file, 0, dol_strlen($file) - 12);
 
 							require_once $dir.'/'.$file;
+							/** @var ModelePDFContract $module */
 							$module = new $classname($db);
 
+							'@phan-var-force ModelePDFContract $module';
+
 							$modulequalified = 1;
-							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 								$modulequalified = 0;
 							}
-							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+							if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 								$modulequalified = 0;
 							}
 
 							if ($modulequalified) {
 								print '<tr class="oddeven"><td width="100">';
-								print (empty($module->name) ? $name : $module->name);
+								print(empty($module->name) ? $name : $module->name);
 								print "</td><td>\n";
 								if (method_exists($module, 'info')) {
-									print $module->info($langs);
+									print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
 								} else {
 									print $module->description;
 								}
@@ -408,7 +419,7 @@ foreach ($dirmodels as $reldir) {
 									print "</td>";
 								}
 
-								// Defaut
+								// Default
 								print '<td class="center">';
 								if (getDolGlobalString('CONTRACT_ADDON_PDF') == $name) {
 									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=unsetdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'&type=order_supplier" alt="'.$langs->trans("Disable").'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
@@ -510,7 +521,7 @@ print '</td></tr>'."\n";
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("HideClosedServiceByDefault").'</td>';
 print '<td class="right">';
-print $form->selectyesno("activate_hideClosedServiceByDefault", (getDolGlobalString('CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT') ? $conf->global->CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT : 0), 1);
+print $form->selectyesno("activate_hideClosedServiceByDefault", getDolGlobalInt('CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT', 0), 1);
 print '</td>';
 print '</tr>';
 
@@ -520,7 +531,7 @@ print '<td>'.$langs->trans("AllowOnlineSign").'</td>';
 print '<td class="right">';
 if (getDolGlobalString('CONTRACT_ALLOW_ONLINESIGN')) {
 	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=allowonlinesign&token='.newToken().'&value=0">';
-	print img_picto($langs->trans("Activited"), 'switch_on');
+	print img_picto($langs->trans("Activated"), 'switch_on');
 	print '</a>';
 } else {
 	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=allowonlinesign&token='.newToken().'&value=1">';

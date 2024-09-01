@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,17 +39,7 @@ class box_comptes extends ModeleBoxes
 	public $boxlabel = "BoxCurrentAccounts";
 	public $depends  = array("banque"); // Box active if module banque active
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
 	public $enabled = 1;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 
 	/**
 	 *  Constructor
@@ -63,12 +54,12 @@ class box_comptes extends ModeleBoxes
 		$this->db = $db;
 
 		// disable module for such cases
-		$listofmodulesforexternal = explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
+		$listofmodulesforexternal = explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL'));
 		if (!in_array('banque', $listofmodulesforexternal) && !empty($user->socid)) {
 			$this->enabled = 0; // disabled for external users
 		}
 
-		$this->hidden = empty($user->rights->banque->lire);
+		$this->hidden = !$user->hasRight('banque', 'lire');
 	}
 
 	/**
@@ -86,22 +77,23 @@ class box_comptes extends ModeleBoxes
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleCurrentAccounts"));
 
 		if ($user->hasRight('banque', 'lire')) {
-			$sql = "SELECT b.rowid, b.ref, b.label, b.bank,b.number, b.courant, b.clos, b.rappro, b.url";
+			$sql = "SELECT b.rowid, b.ref, b.label, b.bank, b.number, b.courant, b.clos, b.rappro, b.url";
 			$sql .= ", b.code_banque, b.code_guichet, b.cle_rib, b.bic, b.iban_prefix as iban";
-			$sql .= ", b.domiciliation, b.proprio, b.owner_address";
+			$sql .= ", b.domiciliation as address, b.proprio, b.owner_address";
 			$sql .= ", b.account_number, b.currency_code";
 			$sql .= ", b.min_allowed, b.min_desired, comment";
 			$sql .= ', b.fk_accountancy_journal';
 			$sql .= ', aj.code as accountancy_journal';
 			$sql .= " FROM ".MAIN_DB_PREFIX."bank_account as b";
-			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'accounting_journal as aj ON aj.rowid=b.fk_accountancy_journal';
+			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'accounting_journal as aj ON aj.rowid = b.fk_accountancy_journal';
 			$sql .= " WHERE b.entity = ".$conf->entity;
 			$sql .= " AND clos = 0";
-			//$sql.= " AND courant = 1";
 			$sql .= " ORDER BY label";
+
 			$sql .= $this->db->plimit($max, 0);
 
 			dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
+
 			$result = $this->db->query($sql);
 			if ($result) {
 				$num = $this->db->num_rows($result);
@@ -174,14 +166,14 @@ class box_comptes extends ModeleBoxes
 			} else {
 				$this->info_box_contents[0][0] = array(
 					'td' => '',
-					'maxlength'=>500,
+					'maxlength' => 500,
 					'text' => ($this->db->error().' sql='.$sql),
 				);
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="nohover opacitymedium left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed")
+				'td' => 'class="nohover left"',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}
@@ -189,9 +181,9 @@ class box_comptes extends ModeleBoxes
 	/**
 	 *  Method to show box
 	 *
-	 *  @param  array   $head       Array with properties of box title
-	 *  @param  array   $contents   Array with properties of box lines
-	 *  @param  int     $nooutput   No print, only return string
+	 *	@param	?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}	$head	Array with properties of box title
+	 *	@param	?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>	$contents	Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *  @return string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)

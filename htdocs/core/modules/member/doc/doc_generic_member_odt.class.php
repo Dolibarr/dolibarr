@@ -2,6 +2,7 @@
 /* Copyright (C) 2010-2012 	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -38,7 +39,7 @@ class doc_generic_member_odt extends ModelePDFMember
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr';
 
@@ -50,7 +51,7 @@ class doc_generic_member_odt extends ModelePDFMember
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		// Load translation files required by the page
 		$langs->loadLangs(array("main", "companies"));
@@ -189,11 +190,11 @@ class doc_generic_member_odt extends ModelePDFMember
 	 *	@param	Translate	$outputlangs		Lang output object
 	 * 	@param	string		$srctemplatepath	Full path of source filename for generator using a template file
 	 *	@param	string		$mode				Tell if doc module is called for 'member', ...
-	 *  @param  int         $nooutput           1=Generate only file on disk and do not return it on response
+	 *  @param  int<0,1>	$nooutput           1=Generate only file on disk and do not return it on response
 	 *  @param	string		$filename			Name of output file (without extension)
-	 *	@return	int         					1 if OK, <=0 if KO
+	 *	@return	int<-1,1>       				1 if OK, <=0 if KO
 	 */
-	public function write_file($object, $outputlangs, $srctemplatepath, $mode = 'member', $nooutput = 0, $filename = 'tmp_cards')
+	public function write_file($object, $outputlangs, $srctemplatepath = '', $mode = 'member', $nooutput = 0, $filename = 'tmp_cards')
 	{
 		// phpcs:enable
 		global $user, $langs, $conf, $mysoc, $hookmanager;
@@ -259,8 +260,8 @@ class doc_generic_member_odt extends ModelePDFMember
 
 				// Get extension (ods or odt)
 				$newfileformat = substr($newfile, strrpos($newfile, '.') + 1);
-				if (getDolGlobalInt('MAIN_DOC_USE_TIMING')) {
-					$format = getDolGlobalInt('MAIN_DOC_USE_TIMING');
+				if (getDolGlobalString('MAIN_DOC_USE_TIMING')) {
+					$format = getDolGlobalString('MAIN_DOC_USE_TIMING');
 					if ($format == '1') {
 						$format = '%Y%m%d%H%M%S';
 					}
@@ -292,13 +293,13 @@ class doc_generic_member_odt extends ModelePDFMember
 				// Recipient name
 				if (!empty($usecontact)) {
 					// We can use the company of contact instead of thirdparty company
-					if ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT))) {
+					if ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT'))) {
 						$object->contact->fetch_thirdparty();
 						$socobject = $object->contact->thirdparty;
 						$contactobject = $object->contact;
 					} else {
 						$socobject = $object->thirdparty;
-						// if we have a CUSTOMER contact and we dont use it as thirdparty recipient we store the contact object for later use
+						// if we have a CUSTOMER contact and we don't use it as thirdparty recipient we store the contact object for later use
 						$contactobject = $object->contact;
 					}
 				} else {
@@ -338,10 +339,10 @@ class doc_generic_member_odt extends ModelePDFMember
 				complete_substitutions_array($tmparray, $outputlangs, $object);
 				// Call the ODTSubstitution hook
 				$parameters = array(
-					'file'=>$file,
-					'object'=>$object,
-					'outputlangs'=>$outputlangs,
-					'substitutionarray'=>&$tmparray
+					'file' => $file,
+					'object' => $object,
+					'outputlangs' => $outputlangs,
+					'substitutionarray' => &$tmparray
 				);
 				$reshook = $hookmanager->executeHooks('ODTSubstitution', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				foreach ($tmparray as $key => $value) {
@@ -373,11 +374,11 @@ class doc_generic_member_odt extends ModelePDFMember
 				}
 
 				// Call the beforeODTSave hook
-				$parameters = array('odfHandler'=>&$odfHandler, 'file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+				$parameters = array('odfHandler' => &$odfHandler, 'file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				$reshook = $hookmanager->executeHooks('beforeODTSave', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
 				// Write new file
-				if (!empty($conf->global->MAIN_ODT_AS_PDF)) {
+				if (getDolGlobalString('MAIN_ODT_AS_PDF')) {
 					try {
 						$odfHandler->exportAsAttachedPDF($file);
 					} catch (Exception $e) {
@@ -401,7 +402,7 @@ class doc_generic_member_odt extends ModelePDFMember
 
 				$odfHandler = null; // Destroy object
 
-				$this->result = array('fullpath'=>$file);
+				$this->result = array('fullpath' => $file);
 
 				return 1; // Success
 			} else {
@@ -417,7 +418,7 @@ class doc_generic_member_odt extends ModelePDFMember
 	/**
 	 * get substitution array for object
 	 *
-	 * @param Adherent      $object         member
+	 * @param CommonObject  $object         member
 	 * @param Translate     $outputlangs    translation object
 	 * @param string        $array_key      key for array
 	 * @return array                        array of substitutions
@@ -425,6 +426,11 @@ class doc_generic_member_odt extends ModelePDFMember
 	public function get_substitutionarray_object($object, $outputlangs, $array_key = 'object')
 	{
 		// phpcs:enable
+		if (!$object instanceof Adherent) {
+			dol_syslog("Expected Adherent object, got ".gettype($object), LOG_ERR);
+			return array();
+		}
+
 		$array_other = array();
 		foreach ($object as $key => $value) {
 			if (!is_array($value) && !is_object($value)) {

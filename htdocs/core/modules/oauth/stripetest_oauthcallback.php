@@ -27,7 +27,6 @@ require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
 use OAuth\Common\Storage\DoliStorage;
 use OAuth\Common\Consumer\Credentials;
-use OAuth\OAuth2\Service\GitHub;
 
 // Define $urlwithroot
 $urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
@@ -56,7 +55,7 @@ $currentUri = $uriFactory->createFromAbsolute($urlwithroot.'/core/modules/oauth/
  * Load the credential for the service
  */
 
-/** @var $serviceFactory \OAuth\ServiceFactory An OAuth service factory. */
+/** @var \OAuth\ServiceFactory $serviceFactory An OAuth service factory. */
 $serviceFactory = new \OAuth\ServiceFactory();
 $httpClient = new \OAuth\Common\Http\Client\CurlClient();
 // TODO Set options for proxy and timeout
@@ -111,8 +110,8 @@ if (!getDolGlobalString($keyforparamsecret)) {
  * Actions
  */
 
-
-if ($action == 'delete') {
+if ($action == 'delete' && (!empty($user->admin) || $user->id == GETPOSTINT('userid'))) {
+	$storage->userid = GETPOSTINT('userid');
 	$storage->clearToken('StripeTest');
 
 	setEventMessages($langs->trans('TokenDeleted'), null, 'mesgs');
@@ -134,7 +133,7 @@ if (GETPOST('code')) {     // We are coming from oauth provider page
 
 		//$token = $apiService->requestAccessToken(GETPOST('code'), $state);
 		$token = $apiService->requestAccessToken(GETPOST('code'));
-		// Stripe is a service that does not need state to be stored as second paramater of requestAccessToken
+		// Stripe is a service that does not need state to be stored as second parameter of requestAccessToken
 
 		setEventMessages($langs->trans('NewTokenStored'), null, 'mesgs'); // Stored into object managed by class DoliStorage so into table oauth_token
 
@@ -150,8 +149,7 @@ if (GETPOST('code')) {     // We are coming from oauth provider page
 	} catch (Exception $e) {
 		print $e->getMessage();
 	}
-} else // If entry on page with no parameter, we arrive here
-{
+} else { // If entry on page with no parameter, we arrive here
 	$_SESSION["backtourlsavedbeforeoauthjump"] = $backtourl;
 	$_SESSION["oauthkeyforproviderbeforeoauthjump"] = $keyforprovider;
 	$_SESSION['oauthstateanticsrf'] = $state;

@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Account (from the Chart of Account) used by default for "user" third parties
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated account defined on user card will be used for Subledger accounting only. This one will be used for General Ledger and as default value of Subledger accounting if dedicated user accounting account on user is not defined.
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Account (from the Chart of Account) used by default for "users" on salaries
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated account defined on the user card will be used for Subledger accounting only. This one will be used for General Ledger, but also as the default value of Subledger accounting if no dedicated user accounting account is defined on the user.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Privzeti računovodski račun za izplačila plač
 CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=Pri ustvarjanju plače privzeto pustite prazno možnost »Samodejno ustvari skupno plačilo«.
 Salary=Plača
@@ -24,4 +24,10 @@ SalariesStatistics=Statistika plač
 SalariesAndPayments=Plače in plačila
 ConfirmDeleteSalaryPayment=Ali želite izbrisati to izplačilo plače?
 FillFieldFirst=Najprej izpolnite polje zaposlenega
-UpdateAmountWithLastSalary=Set amount of last salary
+UpdateAmountWithLastSalary=Določite znesek zadnje plače
+MakeTransferRequest=Vložite zahtevo za prenos
+VirementOrder=Zahteva za prenos kredita
+BankTransferAmount=Znesek kreditnega nakazila
+WithdrawalReceipt=Nalog za nakazilo
+OrderWaiting=Čakajoče naročilo
+FillEndOfMonth=Izpolnite s koncem meseca

@@ -46,8 +46,8 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 $action = GETPOST('action', 'aZ09');
-$id = GETPOST('id', 'int');
-$datetocheckbooking = GETPOST('datetocheck', 'int');
+$id = GETPOSTINT('id');
+$datetocheckbooking = GETPOSTINT('datetocheck');
 $error = 0;
 
 // Security check
@@ -62,10 +62,16 @@ $result = "{}";
  * Actions
  */
 
+// None
+
+
+/*
+ * View
+ */
+
 top_httphead('application/json');
 
-
-if ($action == 'verifyavailability') {
+if ($action == 'verifyavailability') {		// Test on permission not required here (anonymous action protected by mitigation of /public/... urls)
 	$response = array();
 	if (empty($id)) {
 		$error++;
@@ -86,58 +92,94 @@ if ($action == 'verifyavailability') {
 
 	// First get all ranges for the calendar
 	if (!$error) {
-		// TODO Select in database all availabilities
-
-		// TODO Select also all not available ranges
-
-		// Build the list of hours available (key = hour, value = duration)
-		$hour = '08'; $min = '00';
-		$response["availability"][$hour.":".$min] = 30;
-	}
-
-	// Now get ranges already reserved
-	// TODO Remove this
-	if (!$error) {
-		$datetocheckbooking_end = dol_time_plus_duree($datetocheckbooking, 1, 'd');
-
-		$sql = "SELECT b.datep, b.id";
-		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as b";
-		$sql .= " WHERE b.datep >= '".$db->idate($datetocheckbooking)."'";
-		$sql .= " AND b.datep < '".$db->idate($datetocheckbooking_end)."'";
-		$sql .= " AND fk_bookcal_availability IN (SELECT rowid FROM ".MAIN_DB_PREFIX."bookcal_availabilities WHERE fk_bookcal_calendar = ".((int) $id).")";
-		//$sql .= " AND b.transparency"
+		// Select in database all availabilities
+		$availabilitytab = array();
+		$sql = "SELECT ba.rowid as id, ba.duration, ba.startHour, ba.endHour, ba.start, ba.end";
+		$sql .= " FROM ".MAIN_DB_PREFIX."bookcal_availabilities as ba";
+		$sql .= " WHERE ba.fk_bookcal_calendar = ".((int) $id);
+		$sql .= " AND ba.status = 1";
 		$resql = $db->query($sql);
 		if ($resql) {
 			$num = $db->num_rows($resql);
 			$i = 0;
-			$response = array();
-			$response["content"] = array();
 			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
-				$dateobject = $obj->datep;
-				$dateobject = explode(" ", $dateobject)[1];
-				$dateobject = explode(":", $dateobject);
-
-				$dateobjectstring = $dateobject[0].$dateobject[1];
-
-				$response["content"][] = $dateobjectstring;
+				$starttime = $db->jdate($obj->start);
+				$endtime = $db->jdate($obj->end);
+				$offsetmin = $obj->duration % 60;
+				if ($offsetmin == 0) {
+					$offsetmin = 60;
+				}
+				$startHourstring = $obj->startHour;
+				$endHourstring = $obj->endHour;
+				if ($startHourstring <= 0) {
+					$startHourstring = 0;
+				}
+				if ($endHourstring >= 24) {
+					$endHourstring = 24;
+				}
+				$offsethour = round($obj->duration / 60);
+				// Creation of array of availabilties range
+				if ($datetocheckbooking >= $starttime && $datetocheckbooking <= $endtime) {
+					for ($hour=$startHourstring; $hour < $endHourstring; $hour+= $offsethour) {
+						for ($min=0; $min < 60; $min += $offsetmin) {
+							$hourstring = $hour;
+							$minstring = $min;
+							if ($hour < 10) {
+								$hourstring = "0".$hourstring;
+							}
+							if ($min < 10) {
+								$minstring = "0".$minstring;
+							}
+							$response["availability"][$hourstring.":".$minstring] = intval($obj->duration);
+						}
+					}
+				}
 				$i++;
 			}
-			if ($i == 0) {
-				$response["code"] = "NO_DATA_FOUND";
-			} else {
+			if ($i == $num) {
 				$response["code"] = "SUCCESS";
+			} else {
+				$response["code"] = "ERROR";
+				$error ++;
 			}
-		} else {
-			dol_print_error($db);
+		}
+
+		// Select also all not available ranges
+		if (!$error) {
+			$datetocheckbooking_end = dol_time_plus_duree($datetocheckbooking, 1, 'd');
+
+			$sql = "SELECT b.datep, b.id";
+			$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as b";
+			$sql .= " WHERE b.datep >= '".$db->idate($datetocheckbooking)."'";
+			$sql .= " AND b.datep < '".$db->idate($datetocheckbooking_end)."'";
+			$sql .= " AND b.code = 'AC_RDV'";
+			$sql .= " AND b.status = 0";
+			$sql .= " AND b.fk_bookcal_calendar = ".((int) $id);
+			$resql = $db->query($sql);
+			if ($resql) {
+				$num = $db->num_rows($resql);
+				$i = 0;
+				while ($i < $num) {
+					$obj = $db->fetch_object($resql);
+					$datebooking = $db->jdate($obj->datep);
+					$datebookingarray = dol_getdate($datebooking);
+					$hourstring = $datebookingarray["hours"];
+					$minstring = $datebookingarray["minutes"];
+					if ($hourstring < 10) {
+						$hourstring = "0".$hourstring;
+					}
+					if ($minstring < 10) {
+						$minstring = "0".$minstring;
+					}
+					$response["availability"][$hourstring.":".$minstring] *= -1;
+					$i++;
+				}
+			}
 		}
 	}
 	$result = $response;
 }
 
-
-/*
- * View
- */
 
 echo json_encode($result);

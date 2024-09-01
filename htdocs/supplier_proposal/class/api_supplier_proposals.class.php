@@ -22,14 +22,13 @@ require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class
 
 
 /**
- * API class for orders
+ * API class for supplier proposal
  *
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
  */
 class SupplierProposals extends DolibarrApi
 {
-
 	/**
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
@@ -53,9 +52,41 @@ class SupplierProposals extends DolibarrApi
 	}
 
 	/**
+	 * Delete commercial proposal
+	 *
+	 * @param   int     $id         Supplier proposal ID
+	 * @return  array
+	 */
+	public function delete($id)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('supplier_proposal', 'supprimer')) {
+			throw new RestException(403);
+		}
+		$result = $this->supplier_proposal->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Supplier Proposal not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('supplier_proposal', $this->supplier_proposal->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		if (!$this->supplier_proposal->delete(DolibarrApiAccess::$user)) {
+			throw new RestException(500, 'Error when delete Supplier Proposal : '.$this->supplier_proposal->error);
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Supplier Proposal deleted'
+			)
+		);
+	}
+
+	/**
 	 * Get properties of a supplier proposal (price request) object
 	 *
-	 * Return an array with supplier proposal informations
+	 * Return an array with supplier proposal information
 	 *
 	 * @param       int         $id         ID of supplier proposal
 	 * @return		Object					Object with cleaned properties
@@ -64,8 +95,8 @@ class SupplierProposals extends DolibarrApi
 	 */
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->supplier_proposal->lire) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('supplier_proposal', 'lire')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->supplier_proposal->fetch($id);
@@ -74,11 +105,104 @@ class SupplierProposals extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('supplier_proposal', $this->supplier_proposal->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$this->supplier_proposal->fetchObjectLinked();
 		return $this->_cleanObjectDatas($this->supplier_proposal);
+	}
+
+	/**
+	 * Create supplier proposal (price request) object
+	 *
+	 * @param   array   $request_data   Request data
+	 * @return  int     ID of supplier proposal
+	 */
+	public function post($request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('supplier_proposal', 'creer')) {
+			throw new RestException(403, "Insuffisant rights");
+		}
+		// Check mandatory fields
+		$result = $this->_validate($request_data);
+
+		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$this->supplier_proposal->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
+			$this->supplier_proposal->$field = $value;
+		}
+		/*if (isset($request_data["lines"])) {
+		  $lines = array();
+		  foreach ($request_data["lines"] as $line) {
+			array_push($lines, (object) $line);
+		  }
+		  $this->propal->lines = $lines;
+		}*/
+		if ($this->supplier_proposal->create(DolibarrApiAccess::$user) < 0) {
+			throw new RestException(500, "Error creating supplier proposal", array_merge(array($this->supplier_proposal->error), $this->supplier_proposal->errors));
+		}
+
+		return $this->supplier_proposal->id;
+	}
+
+	/**
+	 * Update supplier proposal general fields (won't touch lines of supplier proposal)
+	 *
+	 * @param	int		$id             Id of supplier proposal to update
+	 * @param	array	$request_data   Datas
+	 * @return	Object					Object with cleaned properties
+	 */
+	public function put($id, $request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('supplier_proposal', 'creer')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->supplier_proposal->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Supplier proposal not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('supplier_proposal', $this->supplier_proposal->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+		foreach ($request_data as $field => $value) {
+			if ($field == 'id') {
+				continue;
+			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$this->supplier_proposal->context['caller'] = $request_data['caller'];
+				continue;
+			}
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->supplier_proposal->array_options[$index] = $val;
+				}
+				continue;
+			}
+			$this->supplier_proposal->$field = $value;
+		}
+
+		// update end of validity date
+		if (empty($this->supplier_proposal->fin_validite) && !empty($this->supplier_proposal->duree_validite) && !empty($this->supplier_proposal->date_creation)) {
+			$this->supplier_proposal->fin_validite = $this->supplier_proposal->date_creation + ($this->supplier_proposal->duree_validite * 24 * 3600);
+		}
+		if (!empty($this->supplier_proposal->fin_validite)) {
+			if ($this->supplier_proposal->set_echeance(DolibarrApiAccess::$user, $this->supplier_proposal->fin_validite) < 0) {
+				throw new RestException(500, $this->supplier_proposal->error);
+			}
+		}
+
+		if ($this->supplier_proposal->update(DolibarrApiAccess::$user) > 0) {
+			return $this->get($id);
+		} else {
+			throw new RestException(500, $this->supplier_proposal->error);
+		}
 	}
 
 	/**
@@ -92,13 +216,14 @@ class SupplierProposals extends DolibarrApi
 	 * @param int		$page				Page number
 	 * @param string	$thirdparty_ids		Thirdparty ids to filter supplier proposals (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
 	 * @param string    $sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.datec:<:'20160101')"
-	 * @param string    $properties			Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
+	 * @param string    $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param bool      $pagination_data    If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return  array                       Array of order objects
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
-		if (!DolibarrApiAccess::$user->rights->supplier_proposal->lire) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('supplier_proposal', 'lire')) {
+			throw new RestException(403);
 		}
 
 		$obj_ret = array();
@@ -108,33 +233,24 @@ class SupplierProposals extends DolibarrApi
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
-		if (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) {
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir') && !$socids) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
 
 		$sql = "SELECT t.rowid";
-		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
-			$sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
-		}
-		$sql .= " FROM ".MAIN_DB_PREFIX."supplier_proposal AS t LEFT JOIN ".MAIN_DB_PREFIX."supplier_proposal_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
-
-		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
-			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
-		}
-
+		$sql .= " FROM ".MAIN_DB_PREFIX."supplier_proposal AS t";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."supplier_proposal_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 		$sql .= ' WHERE t.entity IN ('.getEntity('propal').')';
-		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
-			$sql .= " AND t.fk_soc = sc.fk_soc";
-		}
 		if ($socids) {
 			$sql .= " AND t.fk_soc IN (".$this->db->sanitize($socids).")";
 		}
-		if ($search_sale > 0) {
-			$sql .= " AND t.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
-		}
-		// Insert sale filter
-		if ($search_sale > 0) {
-			$sql .= " AND sc.fk_user = ".((int) $search_sale);
+		// Search on sale representative
+		if ($search_sale && $search_sale != '-1') {
+			if ($search_sale == -2) {
+				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+			} elseif ($search_sale > 0) {
+				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+			}
 		}
 		// Add sql filters
 		if ($sqlfilters) {
@@ -144,6 +260,9 @@ class SupplierProposals extends DolibarrApi
 				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 		}
+
+		//this query will return total supplier proposals with the filters given
+		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
@@ -172,9 +291,24 @@ class SupplierProposals extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieving supplier proposal list : '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No supplier proposal found');
+
+		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		if ($pagination_data) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret = [];
+
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = [
+				'total' => (int) $total,
+				'page' => $page, //count starts from 0
+				'page_count' => ceil((int) $total / $limit),
+				'limit' => $limit
+			];
 		}
+
 		return $obj_ret;
 	}
 

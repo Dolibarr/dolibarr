@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2019 Philippe Grand	    <philippe.grand@atoo-net.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,11 +38,11 @@ abstract class ModelePDFFicheinter extends CommonDocGenerator
 {
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Return list of active generation modules
+	 *  Return list of active generation modules
 	 *
-	 *  @param	DoliDB	$db     			Database handler
-	 *  @param  integer	$maxfilenamelength  Max length of value to show
-	 *  @return	array						List of templates
+	 *  @param  DoliDB  	$db                 Database handler
+	 *  @param  int<0,max>	$maxfilenamelength  Max length of value to show
+	 *  @return string[]|int<-1,0>				List of templates
 	 */
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
@@ -54,6 +55,21 @@ abstract class ModelePDFFicheinter extends CommonDocGenerator
 
 		return $list;
 	}
+
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Function to build pdf onto disk
+	 *
+	 *  @param		Fichinter		$object				Object to generate
+	 *  @param		Translate		$outputlangs		Lang output object
+	 *  @param		string			$srctemplatepath	Full path of source filename for generator using a template file
+	 *  @param		int<0,1>		$hidedetails		Do not show line details
+	 *  @param		int<0,1>		$hidedesc			Do not show desc
+	 *  @param		int<0,1>		$hideref			Do not show ref
+	 *  @return		int<0,1>							1=OK, 0=KO
+	 */
+	abstract public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0);
 }
 
 
@@ -62,7 +78,14 @@ abstract class ModelePDFFicheinter extends CommonDocGenerator
  */
 abstract class ModeleNumRefFicheinter extends CommonNumRefGenerator
 {
-	// No overload code
+	/**
+	 * 	Return next free value
+	 *
+	 *  @param	Societe|string		$objsoc     Object thirdparty
+	 *  @param  Fichinter|string	$object		Object we need next value for
+	 *	@return string|int<-1,0>    			Next value if OK, <=0 if KO
+	 */
+	abstract public function getNextValue($objsoc = '', $object = '');
 }
 
 
@@ -70,10 +93,10 @@ abstract class ModeleNumRefFicheinter extends CommonNumRefGenerator
 /**
  *  Create an intervention document on disk using template defined into FICHEINTER_ADDON_PDF
  *
- *  @param	DoliDB		$db  			objet base de donnee
+ *  @param	DoliDB		$db  			object base de donnee
  *  @param	Object		$object			Object fichinter
- *  @param	string		$modele			force le modele a utiliser ('' par defaut)
- *  @param	Translate	$outputlangs	objet lang a utiliser pour traduction
+ *  @param	string		$modele			force le modele a utiliser ('' par default)
+ *  @param	Translate	$outputlangs	object lang a utiliser pour traduction
  *  @param  int			$hidedetails    Hide details of lines
  *  @param  int			$hidedesc       Hide description
  *  @param  int			$hideref        Hide ref
@@ -91,8 +114,8 @@ function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails = 0,
 
 	// Positionne modele sur le nom du modele de fichinter a utiliser
 	if (!dol_strlen($modele)) {
-		if (!empty($conf->global->FICHEINTER_ADDON_PDF)) {
-			$modele = $conf->global->FICHEINTER_ADDON_PDF;
+		if (getDolGlobalString('FICHEINTER_ADDON_PDF')) {
+			$modele = getDolGlobalString('FICHEINTER_ADDON_PDF');
 		} else {
 			$modele = 'soleil';
 		}
@@ -108,7 +131,6 @@ function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails = 0,
 	// Search template files
 	$file = '';
 	$classname = '';
-	$filefound = 0;
 	$dirmodels = array('/');
 	if (is_array($conf->modules_parts['models'])) {
 		$dirmodels = array_merge($dirmodels, $conf->modules_parts['models']);
@@ -117,24 +139,25 @@ function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails = 0,
 		foreach (array('doc', 'pdf') as $prefix) {
 			$file = $prefix."_".$modele.".modules.php";
 
-			// On verifie l'emplacement du modele
+			// Get the location of the module and verify it exists
 			$file = dol_buildpath($reldir."core/modules/fichinter/doc/".$file, 0);
 			if (file_exists($file)) {
-				$filefound = 1;
 				$classname = $prefix.'_'.$modele;
 				break;
 			}
 		}
-		if ($filefound) {
+		if ($classname !== '') {
 			break;
 		}
 	}
 
 	// Charge le modele
-	if ($filefound) {
+	if ($classname !== '') {
 		require_once $file;
 
 		$obj = new $classname($db);
+
+		'@phan-var-force ModelePDFFicheinter $obj';
 
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.

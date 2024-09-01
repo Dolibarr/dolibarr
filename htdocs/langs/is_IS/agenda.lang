@@ -8,8 +8,6 @@ LocalAgenda=Default calendar
 ActionsOwnedBy=Event owned by
 ActionsOwnedByShort=Eigandi
 AffectedTo=Áhrifum á
-Event=Action
-Events=Viðburðir
 EventsNb=Number of events
 ListOfActions=Listi yfir atburði
 EventReports=Event reports
@@ -23,7 +21,6 @@ MenuDoneMyActions=Hætta aðgerðum minn
 ListOfEvents=List of events (default calendar)
 ActionsAskedBy=Actions skráð
 ActionsToDoBy=Actions áhrif til
-ActionsDoneBy=Actions gert með því að
 ActionAssignedTo=Aðgerð áhrif til
 ViewCal=Skoða dagatal
 ViewDay=Dagsskjár
@@ -45,6 +42,7 @@ CONTRACT_DELETEInDolibarr=Contract %s deleted
 PropalClosedSignedInDolibarr=Proposal %s signed
 PropalClosedRefusedInDolibarr=Proposal %s refused
 PropalValidatedInDolibarr=Tillaga %s  staðfestar
+PropalBackToDraftInDolibarr=Proposal %s go back to draft status
 PropalClassifiedBilledInDolibarr=Proposal %s classified billed
 InvoiceValidatedInDolibarr=Invoice %s  staðfestar
 InvoiceValidatedInDolibarrFromPos=Invoice %s validated from POS
@@ -56,16 +54,19 @@ MemberValidatedInDolibarr=Member %s validated
 MemberModifiedInDolibarr=Member %s modified
 MemberResiliatedInDolibarr=Member %s terminated
 MemberDeletedInDolibarr=Member %s deleted
+MemberExcludedInDolibarr=Member %s excluded
 MemberSubscriptionAddedInDolibarr=Subscription %s for member %s added
 MemberSubscriptionModifiedInDolibarr=Subscription %s for member %s modified
 MemberSubscriptionDeletedInDolibarr=Subscription %s for member %s deleted
 ShipmentValidatedInDolibarr=Shipment %s validated
-ShipmentClassifyClosedInDolibarr=Shipment %s classified billed
+ShipmentClassifyClosedInDolibarr=Shipment %s classified closed
 ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified re-open
 ShipmentBackToDraftInDolibarr=Shipment %s go back to draft status
 ShipmentDeletedInDolibarr=Shipment %s deleted
 ShipmentCanceledInDolibarr=Shipment %s canceled
 ReceptionValidatedInDolibarr=Reception %s validated
+ReceptionDeletedInDolibarr=Reception %s deleted
+ReceptionClassifyClosedInDolibarr=Reception %s classified closed
 OrderCreatedInDolibarr=Order %s created
 OrderValidatedInDolibarr=Panta %s  staðfestar
 OrderDeliveredInDolibarr=Order %s classified delivered
@@ -84,6 +85,9 @@ SupplierInvoiceSentByEMail=Vendor invoice %s sent by email
 ShippingSentByEMail=Shipment %s sent by email
 ShippingValidated= Shipment %s validated
 InterventionSentByEMail=Intervention %s sent by email
+ProjectSentByEMail=Project %s sent by email
+ProjectDeletedInDolibarr=Project %s deleted
+ProjectClosedInDolibarr=Project %s closed
 ProposalDeleted=Proposal deleted
 OrderDeleted=Order deleted
 InvoiceDeleted=Invoice deleted
@@ -123,17 +127,21 @@ MRP_MO_PRODUCEDInDolibarr=MO produced
 MRP_MO_DELETEInDolibarr=MO deleted
 MRP_MO_CANCELInDolibarr=MO canceled
 PAIDInDolibarr=%s paid
+ENABLEDISABLEInDolibarr=User enabled or disabled
+CANCELInDolibarr=Hætt við
 ##### End agenda events #####
 AgendaModelModule=Document templates for event
 DateActionStart=Upphafsdagur
 DateActionEnd=Lokadagur
 AgendaUrlOptions1=Þú getur einnig bætt við eftirfarandi breytur til að sía framleiðsla:
-AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b>.
-AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not owned by user <b>%s</b>.
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic events.
+AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
+AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> to include events of holidays.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
 AgendaShowBirthdayEvents=Birthdays of contacts
 AgendaHideBirthdayEvents=Hide birthdays of contacts
 Busy=Busy
@@ -157,6 +165,7 @@ DateActionBegin=Start event date
 ConfirmCloneEvent=Are you sure you want to clone the event <b>%s</b>?
 RepeatEvent=Repeat event
 OnceOnly=Once only
+EveryDay=Every day
 EveryWeek=Every week
 EveryMonth=Every month
 DayOfMonth=Day of month
@@ -171,4 +180,28 @@ ReminderType=Callback type
 AddReminder=Create an automatic reminder notification for this event
 ErrorReminderActionCommCreation=Error creating the reminder notification for this event
 BrowserPush=Browser Popup Notification
+Reminders=Reminders
 ActiveByDefault=Enabled by default
+Until=until
+DataFromWasMerged=Data from %s was merged
+AgendaShowBookcalCalendar=Booking calendar: %s
+MenuBookcalIndex=Online appointment
+BookcalLabelAvailabilityHelp=Label of the availability range. For example:<br>General availability<br>Availability during christmas holidays
+DurationOfRange=Duration of ranges
+BookCalSetup = Online appointment setup
+BookCalSetupPage = Online appointment setup page
+BOOKCAL_PUBLIC_INTERFACE_TOPIC = Interface title
+BookCalAbout = About BookCal
+BookCalAboutPage = BookCal about page
+Calendars=Dagatöl
+Availabilities=Availabilities
+NewAvailabilities=New availabilities
+NewCalendar=New calendar
+ThirdPartyBookCalHelp=Event booked in this calendar will be automatically linked to this third-party.
+AppointmentDuration = Appointment Duration : %s
+BookingSuccessfullyBooked=Your booking has been saved
+BookingReservationHourAfter=We confirm the reservation of our meeting at the date %s
+BookcalBookingTitle=Online appointment
+Transparency = Transparency
+ReadMore = Read more
+ReadLess = Read less

@@ -4,7 +4,6 @@ PrinterAdded=Se agregó la impresora %s
 TestSentToPrinter=Prueba enviada a la impresora %s
 ReceiptPrinter=Impresoras de recibos
 ReceiptPrinterDesc=Configuración de impresoras de recibos
-ReceiptPrinterTypeDesc=Ejemplo de valores posibles para el campo "Parámetros" según el tipo de controlador
 ReceiptPrinterProfileDesc=Descripción del perfil de la impresora de recibos
 ListPrinters=Lista de impresoras
 SetupReceiptTemplate=Configuración de plantilla

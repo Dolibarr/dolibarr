@@ -1,6 +1,8 @@
 <?php
-/* Copyright (C) 2015-2021  Frédéric France     <frederic.france@netlogic.fr>
+/* Copyright (C) 2015-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2020       Andreu Bisquerra    <jove@bisquerra.com>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Abbes Bahfir        <bafbes@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -110,7 +112,6 @@ use Mike42\Escpos\PrintConnectors\NetworkPrintConnector;
 use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 use Mike42\Escpos\PrintConnectors\CupsPrintConnector;
 use Mike42\Escpos\PrintConnectors\DummyPrintConnector;
-use Mike42\Escpos\CapabilityProfile;
 use Mike42\Escpos\Printer;
 use Mike42\Escpos\EscposImage;
 
@@ -130,10 +131,14 @@ class dolReceiptPrinter extends Printer
 	 */
 	public $db;
 
-	/*
+	/**
 	 * @var string[] array of tags
 	 */
 	public $tags;
+
+	/**
+	 * @var \Mike42\Escpos\Printer
+	 */
 	public $printer;
 	public $template;
 
@@ -276,7 +281,7 @@ class dolReceiptPrinter extends Printer
 
 		$error = 0;
 		$line = 0;
-		$obj = array();
+		$listofprinters = array();
 
 		$sql = "SELECT rowid, name, fk_type, fk_profile, parameter";
 		$sql .= " FROM ".$this->db->prefix()."printer_receipt";
@@ -288,44 +293,46 @@ class dolReceiptPrinter extends Printer
 			$num = $this->db->num_rows($resql);
 			while ($line < $num) {
 				$row = $this->db->fetch_array($resql);
-				switch ($row['fk_type']) {
-					case 1:
-						$row['fk_type_name'] = 'CONNECTOR_DUMMY';
-						break;
-					case 2:
-						$row['fk_type_name'] = 'CONNECTOR_FILE_PRINT';
-						break;
-					case 3:
-						$row['fk_type_name'] = 'CONNECTOR_NETWORK_PRINT';
-						break;
-					case 4:
-						$row['fk_type_name'] = 'CONNECTOR_WINDOWS_PRINT';
-						break;
-					case 5:
-						$row['fk_type_name'] = 'CONNECTOR_CUPS_PRINT';
-						break;
-					default:
-						$row['fk_type_name'] = 'CONNECTOR_UNKNOWN';
-						break;
+				if ($row) {
+					switch ($row['fk_type']) {
+						case 1:
+							$row['fk_type_name'] = 'CONNECTOR_DUMMY';
+							break;
+						case 2:
+							$row['fk_type_name'] = 'CONNECTOR_FILE_PRINT';
+							break;
+						case 3:
+							$row['fk_type_name'] = 'CONNECTOR_NETWORK_PRINT';
+							break;
+						case 4:
+							$row['fk_type_name'] = 'CONNECTOR_WINDOWS_PRINT';
+							break;
+						case 5:
+							$row['fk_type_name'] = 'CONNECTOR_CUPS_PRINT';
+							break;
+						default:
+							$row['fk_type_name'] = 'CONNECTOR_UNKNOWN';
+							break;
+					}
+					switch ($row['fk_profile']) {
+						case 0:
+							$row['fk_profile_name'] = 'PROFILE_DEFAULT';
+							break;
+						case 1:
+							$row['fk_profile_name'] = 'PROFILE_SIMPLE';
+							break;
+						case 2:
+							$row['fk_profile_name'] = 'PROFILE_EPOSTEP';
+							break;
+						case 3:
+							$row['fk_profile_name'] = 'PROFILE_P822D';
+							break;
+						default:
+							$row['fk_profile_name'] = 'PROFILE_STAR';
+							break;
+					}
+					$listofprinters[] = $row;
 				}
-				switch ($row['fk_profile']) {
-					case 0:
-						$row['fk_profile_name'] = 'PROFILE_DEFAULT';
-						break;
-					case 1:
-						$row['fk_profile_name'] = 'PROFILE_SIMPLE';
-						break;
-					case 2:
-						$row['fk_profile_name'] = 'PROFILE_EPOSTEP';
-						break;
-					case 3:
-						$row['fk_profile_name'] = 'PROFILE_P822D';
-						break;
-					default:
-						$row['fk_profile_name'] = 'PROFILE_STAR';
-						break;
-				}
-				$obj[] = $row;
 				$line++;
 			}
 		} else {
@@ -333,7 +340,7 @@ class dolReceiptPrinter extends Printer
 			$this->errors[] = $this->db->lasterror;
 		}
 
-		$this->listprinters = $obj;
+		$this->listprinters = $listofprinters;
 
 		return $error;
 	}
@@ -350,7 +357,7 @@ class dolReceiptPrinter extends Printer
 
 		$error = 0;
 		$line = 0;
-		$obj = array();
+		$listofprinters = array();
 
 		$sql = "SELECT rowid, name, template";
 		$sql .= " FROM ".$this->db->prefix()."printer_receipt_template";
@@ -361,7 +368,10 @@ class dolReceiptPrinter extends Printer
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			while ($line < $num) {
-				$obj[] = $this->db->fetch_array($resql);
+				$row = $this->db->fetch_array($resql);
+				if ($row) {
+					$listofprinters[] = $row;
+				}
 				$line++;
 			}
 		} else {
@@ -369,7 +379,7 @@ class dolReceiptPrinter extends Printer
 			$this->errors[] = $this->db->lasterror;
 		}
 
-		$this->listprinterstemplates = $obj;
+		$this->listprinterstemplates = $listofprinters;
 
 		return $error;
 	}
@@ -460,7 +470,6 @@ class dolReceiptPrinter extends Printer
 	 */
 	public function updatePrinter($name, $type, $profile, $parameter, $printerid)
 	{
-		global $conf;
 		$error = 0;
 
 		$sql = "UPDATE ".$this->db->prefix()."printer_receipt";
@@ -570,13 +579,12 @@ class dolReceiptPrinter extends Printer
 	/**
 	 *  Function to Send Test page to Printer
 	 *
-	 *  @param    int       $printerid      Printer id
-	 *  @return  int                        0 if OK; >0 if KO
+	 *  @param  int     $printerid      	Printer id
+	 *  @param	int		$addimgandbarcode	Add image and barcode into the test
+	 *  @return int                        	0 if OK; >0 if KO
 	 */
-	public function sendTestToPrinter($printerid)
+	public function sendTestToPrinter($printerid, $addimgandbarcode = 0)
 	{
-		global $conf;
-
 		$error = 0;
 		$img = EscposImage::load(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo_bw.png');
 		//$this->profile = CapabilityProfile::load("TM-T88IV");
@@ -585,20 +593,27 @@ class dolReceiptPrinter extends Printer
 			setEventMessages($this->error, $this->errors, 'errors');
 		} else {
 			try {
-				$this->printer->bitImage($img);
+				if ($addimgandbarcode) {
+					$this->printer->bitImage($img);
+				}
 				$this->printer->text("Hello World!\n");
-				$testStr = "1234567890";
-				$this->printer->barcode($testStr);
-				//$this->printer->qrcode($testStr, Printer::QR_ECLEVEL_M, 5, Printer::QR_MODEL_1);
+				if ($addimgandbarcode) {
+					$testStr = "1234567890";
+					$this->printer->barcode($testStr);
+					//$this->printer->qrcode($testStr, Printer::QR_ECLEVEL_M, 5, Printer::QR_MODEL_1);
+				}
+				$this->printer->text("\n");
 				$this->printer->text("Most simple example\n");
 				$this->printer->feed();
 				$this->printer->cut();
 
 				// If is DummyPrintConnector send to log to debugging
-				if ($this->printer->connector instanceof DummyPrintConnector) {
-					$data = $this->printer->connector->getData();
+				$connector = $this->printer->connector;
+				if ($connector instanceof DummyPrintConnector) {
+					$data = $connector->getData();
 					dol_syslog($data);
 				}
+				// Close and print
 				$this->printer->close();
 			} catch (Exception $e) {
 				$this->errors[] = $e->getMessage();
@@ -618,16 +633,17 @@ class dolReceiptPrinter extends Printer
 	 */
 	public function sendToPrinter($object, $templateid, $printerid)
 	{
-		global $conf, $mysoc, $langs, $user;
+		global $mysoc, $langs, $user;
 		global $hookmanager;
 
 		$langs->load('bills');
 
 		$error = 0;
 		$ret = $this->loadTemplate($templateid);
+
 		$now = dol_now('tzuser');
 		// tags a remplacer par leur valeur avant de parser (dol_value_xxx)
-		$this->template = str_replace('{dol_value_object_id}', $object->id, $this->template);
+		$this->template = str_replace('{dol_value_object_id}', (string) $object->id, $this->template);
 		$this->template = str_replace('{dol_value_object_ref}', $object->ref, $this->template);
 		//$this->template = str_replace('<dol_value_object_points>', $object->points, $this->template);
 		$this->template = str_replace('{dol_value_date}', dol_print_date($object->date, 'day'), $this->template);
@@ -668,14 +684,14 @@ class dolReceiptPrinter extends Printer
 		$this->template = str_replace('{dol_value_mysoc_idprof5}', $mysoc->idprof5, $this->template);
 		$this->template = str_replace('{dol_value_mysoc_idprof6}', $mysoc->idprof6, $this->template);
 		$this->template = str_replace('{dol_value_mysoc_tva_intra}', $mysoc->tva_intra, $this->template);
-		$this->template = str_replace('{dol_value_mysoc_capital}', $mysoc->capital, $this->template);
+		$this->template = str_replace('{dol_value_mysoc_capital}', (string) $mysoc->capital, $this->template);
 		$this->template = str_replace('{dol_value_mysoc_url}', $mysoc->url, $this->template);
 
 		$this->template = str_replace('{dol_value_vendor_firstname}', $user->firstname, $this->template);
 		$this->template = str_replace('{dol_value_vendor_lastname}', $user->lastname, $this->template);
 		$this->template = str_replace('{dol_value_vendor_mail}', $user->email, $this->template);
 
-		$parameters = array('object'=>$object);
+		$parameters = array('object' => $object);
 		$action = '';
 		$reshook = $hookmanager->executeHooks('sendToPrinterBefore', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook < 0) {
@@ -684,18 +700,33 @@ class dolReceiptPrinter extends Printer
 			return $reshook;
 		}
 
+		// escape special characters for xml_parse_into_struct
+		$this->template = htmlspecialchars($this->template, ENT_QUOTES | ENT_XML1);
+
 		// parse template
 		$this->template = str_replace("{", "<", $this->template);
 		$this->template = str_replace("}", ">", $this->template);
+
+		if (LIBXML_VERSION < 20900) {
+			// Avoid load of external entities (security problem).
+			// Required only if LIBXML_VERSION < 20900
+			// @phan-suppress-next-line PhanDeprecatedFunctionInternal
+			libxml_disable_entity_loader(true);
+		}
+
+		$vals = array();
+		$index = array();
+
 		$p = xml_parser_create();
 		xml_parse_into_struct($p, $this->template, $vals, $index);
 		xml_parser_free($p);
+
 		//print '<pre>'.print_r($index, true).'</pre>';
 		//print '<pre>'.print_r($vals, true).'</pre>';
 		// print ticket
-		$level = 0;
-		$nbcharactbyline = (!empty($conf->global->RECEIPT_PRINTER_NB_CHARACT_BY_LINE) ? $conf->global->RECEIPT_PRINTER_NB_CHARACT_BY_LINE : 48);
+		$nbcharactbyline = getDolGlobalInt('RECEIPT_PRINTER_NB_CHARACT_BY_LINE', 48);
 		$ret = $this->initPrinter($printerid);
+
 		if ($ret > 0) {
 			setEventMessages($this->error, $this->errors, 'errors');
 		} else {
@@ -709,12 +740,12 @@ class dolReceiptPrinter extends Printer
 					case 'DOL_PRINT_OBJECT_LINES':
 						foreach ($object->lines as $line) {
 							if ($line->fk_product) {
-								$spacestoadd = $nbcharactbyline - strlen($line->ref) - strlen($line->qty) - strlen($line->subprice) - 10 - 1;
+								$spacestoadd = $nbcharactbyline - strlen($line->ref) - strlen((string) $line->qty) - strlen(price($line->subprice)) - 10 - 1;
 								$spaces = str_repeat(' ', $spacestoadd > 0 ? $spacestoadd : 0);
 								$this->printer->text($line->ref . $spaces . $line->qty . str_pad(price($line->subprice), 10, ' ', STR_PAD_LEFT) . ' ' . str_pad(price($line->total_ttc), 10, ' ', STR_PAD_LEFT) . "\n");
 								$this->printer->text(strip_tags(htmlspecialchars_decode($line->product_label))."\n \n");
 							} else {
-								$spacestoadd = $nbcharactbyline - strlen($line->description) - strlen($line->qty) - strlen($line->subprice) - 10 - 1;
+								$spacestoadd = $nbcharactbyline - strlen($line->description) - strlen((string) $line->qty) - strlen(price($line->subprice)) - 10 - 1;
 								$spaces = str_repeat(' ', $spacestoadd > 0 ? $spacestoadd : 0);
 								$this->printer->text($line->description.$spaces.$line->qty.' '.str_pad(price($line->subprice), 10, ' ', STR_PAD_LEFT).' '.str_pad(price($line->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
 							}
@@ -723,15 +754,15 @@ class dolReceiptPrinter extends Printer
 					case 'DOL_PRINT_OBJECT_LINES_WITH_NOTES':
 						foreach ($object->lines as $line) {
 							if ($line->fk_product) {
-								$spacestoadd = $nbcharactbyline - strlen($line->ref) - strlen($line->qty) - 10 - 1;
+								$spacestoadd = $nbcharactbyline - strlen($line->ref) - strlen((string) $line->qty) - 10 - 1;
 								$spaces = str_repeat(' ', $spacestoadd > 0 ? $spacestoadd : 0);
 								$this->printer->text($line->ref.$spaces.$line->qty.' '.str_pad(price($line->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
 								$this->printer->text(strip_tags(htmlspecialchars_decode($line->product_label))."\n");
-								$spacestoadd = $nbcharactbyline - strlen($line->description) - strlen($line->qty) - 10 - 1;
+								$spacestoadd = $nbcharactbyline - strlen($line->description) - strlen((string) $line->qty) - 10 - 1;
 								$spaces = str_repeat(' ', $spacestoadd > 0 ? $spacestoadd : 0);
 								$this->printer->text($line->description."\n");
 							} else {
-								$spacestoadd = $nbcharactbyline - strlen($line->description) - strlen($line->qty) - 10 - 1;
+								$spacestoadd = $nbcharactbyline - strlen($line->description) - strlen((string) $line->qty) - 10 - 1;
 								$spaces = str_repeat(' ', $spacestoadd > 0 ? $spacestoadd : 0);
 								$this->printer->text($line->description.$spaces.$line->qty.' '.str_pad(price($line->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
 							}
@@ -780,8 +811,11 @@ class dolReceiptPrinter extends Printer
 						$this->printer->text($title.$spaces.str_pad(price($object->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
 						break;
 					case 'DOL_PRINT_CURR_DATE':
-						if (strlen($vals[$tplline]['value'])<2) $this->printer->text(date('d/m/Y H:i:s')."\n");
-						else $this->printer->text(date($vals[$tplline]['value'])."\n");
+						if (strlen($vals[$tplline]['value']) < 2) {
+							$this->printer->text(date('d/m/Y H:i:s')."\n");
+						} else {
+							$this->printer->text(date($vals[$tplline]['value'])."\n");
+						}
 						break;
 					case 'DOL_LINE_FEED':
 						$this->printer->feed();
@@ -875,7 +909,7 @@ class dolReceiptPrinter extends Printer
 					case 'DOL_PRINT_ORDER_LINES':
 						foreach ($object->lines as $line) {
 							if ($line->special_code == $this->orderprinter) {
-								$spacestoadd = $nbcharactbyline - strlen($line->ref) - strlen($line->qty) - 10 - 1;
+								$spacestoadd = $nbcharactbyline - strlen($line->ref) - strlen((string) $line->qty) - 10 - 1;
 								$spaces = str_repeat(' ', $spacestoadd > 0 ? $spacestoadd : 0);
 								$this->printer->text($line->ref.$spaces.$line->qty.' '.str_pad(price($line->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
 								$this->printer->text(strip_tags(htmlspecialchars_decode($line->desc))."\n");
@@ -899,7 +933,7 @@ class dolReceiptPrinter extends Printer
 								$spaces = str_repeat(' ', $spacestoadd > 0 ? $spacestoadd : 0);
 								$amount_payment = (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) ? $row->multicurrency_amount : $row->amount;
 								if ($row->code == "LIQ") {
-									$amount_payment = $amount_payment + $row->pos_change; // Show amount with excess received if is cash payment
+									$amount_payment += $row->pos_change; // Show amount with excess received if is cash payment
 								}
 								$this->printer->text($spaces.$langs->transnoentitiesnoconv("PaymentTypeShort".$row->code).' '.str_pad(price($amount_payment), 10, ' ', STR_PAD_LEFT)."\n");
 								if ($row->code == "LIQ" && $row->pos_change > 0) { // Print change only in cash payments
@@ -924,7 +958,7 @@ class dolReceiptPrinter extends Printer
 						$action = '';
 						$reshook = $hookmanager->executeHooks('sendToPrinterAfter', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
-						if (!$reshook || $reshook < 0 ) {
+						if (!$reshook || $reshook < 0) {
 							$this->printer->text($vals[$tplline]['tag']);
 							$this->printer->text($vals[$tplline]['value']);
 							$this->errors[] = 'UnknowTag: &lt;'.strtolower($vals[$tplline]['tag']).'&gt;';
@@ -934,8 +968,9 @@ class dolReceiptPrinter extends Printer
 				}
 			}
 			// If is DummyPrintConnector send to log to debugging
-			if ($this->printer->connector instanceof DummyPrintConnector || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
-				$data = $this->printer->connector->getData();
+			$connector = $this->printer->connector;
+			if ($connector instanceof DummyPrintConnector || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
+				$data = $connector->getData();
 				if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
 					echo rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
 				}
@@ -948,22 +983,23 @@ class dolReceiptPrinter extends Printer
 	}
 
 	/**
-	 *  Function to load Template
+	 *  Function to load Template into $this->template
 	 *
 	 *  @param   int       $templateid          Template id
 	 *  @return  int                            0 if OK; >0 if KO
 	 */
 	public function loadTemplate($templateid)
 	{
-		global $conf;
 		$error = 0;
+
 		$sql = "SELECT template";
 		$sql .= " FROM ".$this->db->prefix()."printer_receipt_template";
 		$sql .= " WHERE rowid = ".((int) $templateid);
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity IN (".getEntity('printer_receipt_template').")";
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$obj = $this->db->fetch_array($resql);
+			$obj = $this->db->fetch_object($resql);
 		} else {
 			$error++;
 			$this->errors[] = $this->db->lasterror;
@@ -972,7 +1008,7 @@ class dolReceiptPrinter extends Printer
 			$error++;
 			$this->errors[] = 'TemplateDontExist';
 		} else {
-			$this->template = $obj['0'];
+			$this->template = $obj->template;
 		}
 
 		return $error;
@@ -980,24 +1016,25 @@ class dolReceiptPrinter extends Printer
 
 
 	/**
-	 *  Function Init Printer
+	 *  Function Init Printer into $this->printer
 	 *
 	 *  @param   int       $printerid       Printer id
-	 *  @return  void|int                        0 if OK; >0 if KO
+	 *  @return  void|int                   0 if OK; >0 if KO
 	 */
 	public function initPrinter($printerid)
 	{
-		global $conf;
 		if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
 			$this->connector = new DummyPrintConnector();
 			$this->printer = new Printer($this->connector, $this->profile);
 			return;
 		}
+
 		$error = 0;
 		$sql = "SELECT rowid, name, fk_type, fk_profile, parameter";
 		$sql .= " FROM ".$this->db->prefix()."printer_receipt";
 		$sql .= " WHERE rowid = ".((int) $printerid);
-		$sql .= " AND entity = ".((int) $conf->entity);
+		$sql .= " AND entity IN (".getEntity('printer_receipt').")";
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_array($resql);
@@ -1007,8 +1044,12 @@ class dolReceiptPrinter extends Printer
 			}
 			if (!$error) {
 				$parameter = (isset($obj['parameter']) ? $obj['parameter'] : '');
+
+				dol_syslog("initPrinter printerid=".$printerid." parameter=".$parameter);
+
 				try {
-					$type = $obj['fk_type'];
+					$type = empty($obj['fk_type']) ? 0 : (int) $obj['fk_type'];
+					$found = true;
 					switch ($type) {
 						case 1:
 							$this->connector = new DummyPrintConnector();
@@ -1027,10 +1068,15 @@ class dolReceiptPrinter extends Printer
 							$this->connector = new CupsPrintConnector($parameter);
 							break;
 						default:
-							$this->connector = 'CONNECTOR_UNKNOWN';
+							$found = false;
 							break;
 					}
-					$this->printer = new Printer($this->connector, $this->profile);
+					if ($found) {
+						$this->printer = new Printer($this->connector, $this->profile);
+					} else {
+						$error++;
+						$this->errors[] = 'CONNECTOR_UNKNOWN';
+					}
 				} catch (Exception $e) {
 					$this->errors[] = $e->getMessage();
 					$error++;

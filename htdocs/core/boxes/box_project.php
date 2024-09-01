@@ -4,6 +4,7 @@
  * Copyright (C) 2015      Frederic France        <frederic.france@free.fr>
  * Copyright (C) 2016      Juan José Menent       <jmenent@2byte.es>
  * Copyright (C) 2020      Pierre Ardoin          <mapiolca@me.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,17 +35,7 @@ class box_project extends ModeleBoxes
 	public $boxcode = "project";
 	public $boximg  = "object_projectpub";
 	public $boxlabel;
-	//var $depends = array("projet");
-
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
+	// var $depends = array("projet");
 
 	/**
 	 *  Constructor
@@ -62,7 +53,7 @@ class box_project extends ModeleBoxes
 		$this->db = $db;
 		$this->boxlabel = "OpenedProjects";
 
-		$this->hidden = empty($user->rights->projet->lire);
+		$this->hidden = !$user->hasRight('projet', 'lire');
 	}
 
 	/**
@@ -82,7 +73,7 @@ class box_project extends ModeleBoxes
 		$totalnbTask = 0;
 
 		$textHead = $langs->trans("OpenedProjects");
-		$this->info_box_head = array('text' => $textHead, 'limit'=> dol_strlen($textHead));
+		$this->info_box_head = array('text' => $textHead, 'limit' => dol_strlen($textHead));
 
 		$i = 0;
 		// list the summary of the orders
@@ -93,7 +84,7 @@ class box_project extends ModeleBoxes
 			$companystatic = new Societe($this->db);
 
 			$socid = 0;
-			//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+			//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
 
 			// Get list of project id allowed to user (in a string list separated by coma)
 			$projectsListId = '';
@@ -216,9 +207,9 @@ class box_project extends ModeleBoxes
 	/**
 	 *	Method to show box
 	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
+	 *	@param	?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}	$head	Array with properties of box title
+	 *	@param	?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>	$contents	Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *	@return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)

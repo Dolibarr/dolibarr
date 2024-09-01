@@ -27,7 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 $action = GETPOST('action', 'aZ09');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'adminaccoutant'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'adminaccoutant'; // To manage different context of search
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'companies', 'other'));
@@ -73,7 +73,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 $form = new Form($db);
 
 $help_url = '';
-llxHeader('', $langs->trans("CompanyFoundation"), $help_url);
+llxHeader('', $langs->trans("CompanyFoundation"), $help_url, '', 0, 0, '', '', '', 'mod-admin page-openinghours');
 
 print load_fiche_titre($langs->trans("CompanyFoundation"), '', 'title_setup');
 

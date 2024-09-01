@@ -29,7 +29,7 @@
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 
@@ -59,7 +59,7 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
 				print 'jQuery("#value_choice").hide();';
 			}
 
-			if (GETPOST('type', 'alpha') == "separate") {
+			if (in_array(GETPOST('type', 'alpha'), ["separate", 'point', 'linestrg', 'polygon'])) {
 				print "jQuery('#size, #default_value, #langfile').val('').prop('disabled', true);";
 				print 'jQuery("#value_choice").hide();';
 			}
@@ -113,7 +113,7 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
 				unique.removeAttr('disabled');
 			}
 
-			if (type == 'separate')
+			if (type == 'separate' || type == 'point' || type == 'linestrg' || type == 'polygon')
 			{
 				required.removeAttr('checked').prop('disabled', true); alwayseditable.removeAttr('checked').prop('disabled', true); list.removeAttr('checked').prop('disabled', true);
 				jQuery('#size, #default_value, #langfile').val('').prop('disabled', true);
@@ -142,7 +142,7 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
 <input type="hidden" name="token" value="<?php echo newToken(); ?>">
 <input type="hidden" name="attrname" value="<?php echo $attrname; ?>">
 <input type="hidden" name="action" value="update">
-<input type="hidden" name="rowid" value="<?php echo (empty($rowid) ? '' : $rowid) ?>">
+<input type="hidden" name="rowid" value="<?php echo(empty($rowid) ? '' : $rowid) ?>">
 <input type="hidden" name="enabled" value="<?php echo dol_escape_htmltag($extrafields->attributes[$elementtype]['enabled'][$attrname]); ?>">
 
 <?php print dol_get_fiche_head(); ?>
@@ -223,14 +223,15 @@ if (in_array($type, array_keys($typewecanchangeinto))) {
 	}
 	print $formadmin->selectTypeOfFields('type', GETPOST('type', 'alpha') ? GETPOST('type', 'alpha') : $type, $typewecanchangeinto);
 } else {
-	print getPictoForType($type).$type2label[$type];
+	print getPictoForType($type);
+	print $type2label[$type];
 	print '<input type="hidden" name="type" id="type" value="'.$type.'">';
 }
 ?>
 </td></tr>
 
 <!-- Size -->
-<tr class="extra_size"><td class="fieldrequired"><?php echo $langs->trans("Size"); ?></td><td><input id="size" type="text" name="size" size="5" value="<?php echo $size; ?>"></td></tr>
+<tr class="extra_size"><td class="fieldrequired"><?php echo $langs->trans("Size"); ?></td><td><input id="size" type="text" name="size" class="width50" value="<?php echo $size; ?>"></td></tr>
 
 <!--  Value (for some fields like password, select list, radio, ...) -->
 <tr id="value_choice">
@@ -254,14 +255,14 @@ if (in_array($type, array_keys($typewecanchangeinto))) {
 </tr>
 
 <!-- Position -->
-<tr><td class="titlefield"><?php echo $langs->trans("Position"); ?></td><td class="valeur"><input type="text" name="pos" size="5" value="<?php echo dol_escape_htmltag($pos); ?>"></td></tr>
+<tr><td class="titlefield"><?php echo $langs->trans("Position"); ?></td><td class="valeur"><input type="text" name="pos" class="width50" value="<?php echo dol_escape_htmltag($pos); ?>"></td></tr>
 
 <!-- Language file -->
 <tr><td class="titlefield"><?php echo $langs->trans("LanguageFile"); ?></td><td class="valeur"><input type="text" name="langfile" class="minwidth200" value="<?php echo dol_escape_htmltag($langfile); ?>"></td></tr>
 
 <!-- Computed value -->
 <tr class="extra_computed_value">
-<?php if (empty($conf->global->MAIN_STORE_COMPUTED_EXTRAFIELDS)) { ?>
+<?php if (!getDolGlobalString('MAIN_STORE_COMPUTED_EXTRAFIELDS')) { ?>
 	<td><?php echo $form->textwithpicto($langs->trans("ComputedFormula"), $langs->trans("ComputedFormulaDesc"), 1, 'help', '', 0, 2, 'tooltipcompute'); ?></td>
 <?php } else { ?>
 	<td><?php echo $form->textwithpicto($langs->trans("ComputedFormula"), $langs->trans("ComputedFormulaDesc")).$form->textwithpicto($langs->trans("Computedpersistent"), $langs->trans("ComputedpersistentDesc"), 1, 'warning'); ?></td>
@@ -270,27 +271,27 @@ if (in_array($type, array_keys($typewecanchangeinto))) {
 </tr>
 
 <!-- Default Value (at sql setup level) -->
-<tr class="extra_default_value"><td><?php echo $langs->trans("DefaultValue").' ('.$langs->trans("Database").')'; ?></td><td class="valeur"><input id="default_value" type="text" name="default_value" size="5" value="<?php echo dol_escape_htmltag($default); ?>"></td></tr>
+<tr class="extra_default_value"><td><?php echo $langs->trans("DefaultValue").' ('.$langs->trans("Database").')'; ?></td><td class="valeur"><input id="default_value" type="text" name="default_value" class="width50" value="<?php echo dol_escape_htmltag($default); ?>"></td></tr>
 
 <!-- Unique -->
-<tr class="extra_unique"><td><?php echo $langs->trans("Unique"); ?></td><td class="valeur"><input id="unique" type="checkbox" name="unique"<?php echo ($unique ? ' checked' : ''); ?>></td></tr>
+<tr class="extra_unique"><td><?php echo $langs->trans("Unique"); ?></td><td class="valeur"><input id="unique" type="checkbox" name="unique"<?php echo($unique ? ' checked' : ''); ?>></td></tr>
 
 <!-- Required -->
-<tr class="extra_required"><td><?php echo $langs->trans("Mandatory"); ?></td><td class="valeur"><input id="required" type="checkbox" name="required"<?php echo ($required ? ' checked' : ''); ?>></td></tr>
+<tr class="extra_required"><td><?php echo $langs->trans("Mandatory"); ?></td><td class="valeur"><input id="required" type="checkbox" name="required"<?php echo($required ? ' checked' : ''); ?>></td></tr>
 
 <!-- Always editable -->
-<tr class="extra_alwayseditable"><td><?php echo $form->textwithpicto($langs->trans("AlwaysEditable"), $langs->trans("EditableWhenDraftOnly")); ?></td><td class="valeur"><input id="alwayseditable" type="checkbox" name="alwayseditable"<?php echo ($alwayseditable ? ' checked' : ''); ?>></td></tr>
+<tr class="extra_alwayseditable"><td><?php echo $form->textwithpicto($langs->trans("AlwaysEditable"), $langs->trans("EditableWhenDraftOnly")); ?></td><td class="valeur"><input id="alwayseditable" type="checkbox" name="alwayseditable"<?php echo($alwayseditable ? ' checked' : ''); ?>></td></tr>
 
 <!-- Visibility -->
 <tr><td class="extra_list"><?php echo $form->textwithpicto($langs->trans("Visibility"), $langs->trans("VisibleDesc").'<br><br>'.$langs->trans("ItCanBeAnExpression")); ?>
-</td><td class="valeur"><input id="list" class="minwidth100" type="text" name="list" value="<?php echo ($list != '' ? $list : '1'); ?>"></td></tr>
+</td><td class="valeur"><input id="list" class="minwidth100" type="text" name="list" value="<?php echo($list != '' ? $list : '1'); ?>"></td></tr>
 
 <!-- Visibility for PDF-->
 <tr><td class="extra_pdf"><?php echo $form->textwithpicto($langs->trans("DisplayOnPdf"), $langs->trans("DisplayOnPdfDesc")); ?>
 </td><td class="valeur"><input id="printable" class="minwidth100" type="text" name="printable" value="<?php echo dol_escape_htmltag($printable); ?>"></td></tr>
 
 <!-- Can be summed -->
-<tr class="extra_totalizable"><td><?php echo $form->textwithpicto($langs->trans("Totalizable"), $langs->trans("TotalizableDesc")); ?></td><td class="valeur"><input id="totalizable" type="checkbox" name="totalizable"<?php echo ($totalizable ? ' checked' : ''); ?>></td></tr>
+<tr class="extra_totalizable"><td><?php echo $form->textwithpicto($langs->trans("Totalizable"), $langs->trans("TotalizableDesc")); ?></td><td class="valeur"><input id="totalizable" type="checkbox" name="totalizable"<?php echo($totalizable ? ' checked' : ''); ?>></td></tr>
 
 <!-- Css edit -->
 <tr class="extra_css"><td><?php echo $form->textwithpicto($langs->trans("CssOnEdit"), $langs->trans("HelpCssOnEditDesc")); ?></td><td class="valeur"><input id="css" type="text" name="css" value="<?php echo $css ?>"></td></tr>
@@ -306,7 +307,7 @@ if (in_array($type, array_keys($typewecanchangeinto))) {
 
 <?php if (isModEnabled('multicompany')) { ?>
 	<!-- Multicompany entity -->
-	<tr><td><?php echo $langs->trans("AllEntities"); ?></td><td class="valeur"><input id="entitycurrentorall" type="checkbox" name="entitycurrentorall"<?php echo (empty($entitycurrentorall) ? ' checked' : ''); ?>></td></tr>
+	<tr><td><?php echo $langs->trans("AllEntities"); ?></td><td class="valeur"><input id="entitycurrentorall" type="checkbox" name="entitycurrentorall"<?php echo(empty($entitycurrentorall) ? ' checked' : ''); ?>></td></tr>
 <?php } ?>
 
 <!-- Show Enabled property when value is not a common value -->

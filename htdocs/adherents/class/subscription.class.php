@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,11 +43,6 @@ class Subscription extends CommonObject
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'subscription';
-
-	/**
-	 * @var int  Does myobject support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by fk_soc, 'field@table'=Test with link by field@table
-	 */
-	public $ismultientitymanaged = 'fk_adherent@adherent';
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -101,21 +98,21 @@ class Subscription extends CommonObject
 	public $fk_bank;
 
 	/**
-	 * @var array  Array with all fields into database and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
-		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>15),
-		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>20),
-		'fk_adherent' =>array('type'=>'integer', 'label'=>'Member', 'enabled'=>1, 'visible'=>-1, 'position'=>25),
-		'dateadh' =>array('type'=>'datetime', 'label'=>'DateSubscription', 'enabled'=>1, 'visible'=>-1, 'position'=>30),
-		'datef' =>array('type'=>'datetime', 'label'=>'DateEndSubscription', 'enabled'=>1, 'visible'=>-1, 'position'=>35),
-		'subscription' =>array('type'=>'double(24,8)', 'label'=>'Amount', 'enabled'=>1, 'visible'=>-1, 'position'=>40, 'isameasure'=>1),
-		'fk_bank' =>array('type'=>'integer', 'label'=>'BankId', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
-		'note' =>array('type'=>'html', 'label'=>'Note', 'enabled'=>1, 'visible'=>-1, 'position'=>50),
-		'fk_type' =>array('type'=>'integer', 'label'=>'MemberType', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
-		'fk_user_creat' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-2, 'position'=>60),
-		'fk_user_valid' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
+		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 15),
+		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'position' => 20),
+		'fk_adherent' => array('type' => 'integer', 'label' => 'Member', 'enabled' => 1, 'visible' => -1, 'position' => 25),
+		'dateadh' => array('type' => 'datetime', 'label' => 'DateSubscription', 'enabled' => 1, 'visible' => -1, 'position' => 30),
+		'datef' => array('type' => 'datetime', 'label' => 'DateEndSubscription', 'enabled' => 1, 'visible' => -1, 'position' => 35),
+		'subscription' => array('type' => 'double(24,8)', 'label' => 'Amount', 'enabled' => 1, 'visible' => -1, 'position' => 40, 'isameasure' => 1),
+		'fk_bank' => array('type' => 'integer', 'label' => 'BankId', 'enabled' => 1, 'visible' => -1, 'position' => 45),
+		'note' => array('type' => 'html', 'label' => 'Note', 'enabled' => 1, 'visible' => -1, 'position' => 50),
+		'fk_type' => array('type' => 'integer', 'label' => 'MemberType', 'enabled' => 1, 'visible' => -1, 'position' => 55),
+		'fk_user_creat' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -2, 'position' => 60),
+		'fk_user_valid' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserValidation', 'enabled' => 1, 'visible' => -1, 'position' => 65),
 	);
 
 
@@ -127,6 +124,8 @@ class Subscription extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 'fk_adherent@adherent';
 	}
 
 
@@ -134,10 +133,10 @@ class Subscription extends CommonObject
 	 *	Function who permitted creation of the subscription
 	 *
 	 *	@param	User	$user			User that create
-	 *	@param  bool 	$notrigger 		false=launch triggers after, true=disable triggers
-	 *	@return	int						<0 if KO, Id subscription created if OK
+	 *	@param  int 	$notrigger 		0=launch triggers after, 1=disable triggers
+	 *	@return	int						Return integer <0 if KO, Id subscription created if OK
 	 */
-	public function create($user, $notrigger = false)
+	public function create($user, $notrigger = 0)
 	{
 		global $langs;
 
@@ -184,6 +183,32 @@ class Subscription extends CommonObject
 			$this->fk_type = $type;
 		}
 
+		if (!empty($this->linkedObjectsIds) && empty($this->linked_objects)) {	// To use new linkedObjectsIds instead of old linked_objects
+			$this->linked_objects = $this->linkedObjectsIds; // TODO Replace linked_objects with linkedObjectsIds
+		}
+
+		// Add object linked
+		if (!$error && $this->id && !empty($this->linked_objects) && is_array($this->linked_objects)) {
+			foreach ($this->linked_objects as $origin => $tmp_origin_id) {
+				if (is_array($tmp_origin_id)) {       // New behaviour, if linked_object can have several links per type, so is something like array('contract'=>array(id1, id2, ...))
+					foreach ($tmp_origin_id as $origin_id) {
+						$ret = $this->add_object_linked($origin, $origin_id);
+						if (!$ret) {
+							$this->error = $this->db->lasterror();
+							$error++;
+						}
+					}
+				} else { // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
+					$origin_id = $tmp_origin_id;
+					$ret = $this->add_object_linked($origin, $origin_id);
+					if (!$ret) {
+						$this->error = $this->db->lasterror();
+						$error++;
+					}
+				}
+			}
+		}
+
 		if (!$error && !$notrigger) {
 			$this->context = array('member' => $member);
 			// Call triggers
@@ -209,7 +234,7 @@ class Subscription extends CommonObject
 	 *  Method to load a subscription
 	 *
 	 *  @param	int		$rowid		Id subscription
-	 *  @return	int					<0 if KO, =0 if not found, >0 if OK
+	 *  @return	int					Return integer <0 if KO, =0 if not found, >0 if OK
 	 */
 	public function fetch($rowid)
 	{
@@ -256,7 +281,7 @@ class Subscription extends CommonObject
 	 *
 	 *	@param	User	$user			User who updated
 	 *	@param 	int		$notrigger		0=Disable triggers
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user, $notrigger = 0)
 	{
@@ -277,7 +302,7 @@ class Subscription extends CommonObject
 		$sql .= " fk_type = ".((int) $this->fk_type).",";
 		$sql .= " fk_adherent = ".((int) $this->fk_adherent).",";
 		$sql .= " note = ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : 'null').",";
-		$sql .= " subscription = ".price2num($this->amount).",";
+		$sql .= " subscription = ".(float) price2num($this->amount).",";
 		$sql .= " dateadh = '".$this->db->idate($this->dateh)."',";
 		$sql .= " datef = '".$this->db->idate($this->datef)."',";
 		$sql .= " datec = '".$this->db->idate($this->datec)."',";
@@ -293,7 +318,7 @@ class Subscription extends CommonObject
 			$result = $member->update_end_date($user);
 
 			if (!$error && !$notrigger) {
-				$this->context = array('member'=>$member);
+				$this->context = array('member' => $member);
 				// Call triggers
 				$result = $this->call_trigger('MEMBER_SUBSCRIPTION_MODIFY', $user);
 				if ($result < 0) {
@@ -320,10 +345,10 @@ class Subscription extends CommonObject
 	 *	Delete a subscription
 	 *
 	 *	@param	User	$user		User that delete
-	 *	@param 	bool 	$notrigger  false=launch triggers after, true=disable triggers
-	 *	@return	int					<0 if KO, 0 if not found, >0 if OK
+	 *	@param 	int 	$notrigger  0=launch triggers after, 1=disable triggers
+	 *	@return	int					Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
-	public function delete($user, $notrigger = false)
+	public function delete($user, $notrigger = 0)
 	{
 		$error = 0;
 
@@ -395,7 +420,7 @@ class Subscription extends CommonObject
 
 
 	/**
-	 *  Return clicable name (with picto eventually)
+	 *  Return clickable name (with picto eventually)
 	 *
 	 *	@param	int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
 	 *  @param	int  	$notooltip					1=Disable tooltip
@@ -475,7 +500,6 @@ class Subscription extends CommonObject
 	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
-		global $langs;
 
 		//$langs->load("members");
 
@@ -512,10 +536,10 @@ class Subscription extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
+	 *  @param		array{selected:?int,member:?Adherent,bank:?Account}	$arraydata	Array of data
 	 *  @return		string								HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
@@ -530,7 +554,7 @@ class Subscription extends CommonObject
 
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">';
-		$return .= $this->getNomUrl(-1);
+		$return .= $this->getNomUrl(0);
 		$return .= '</span>';
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
@@ -540,11 +564,11 @@ class Subscription extends CommonObject
 		}
 
 		if (!empty($arraydata['member']) && is_object($arraydata['member'])) {
-			$return .= '<br><span class="inline-block">'.$arraydata['member']->getNomUrl(-4).'</span>';
+			$return .= '<br><div class="inline-block tdoverflowmax150">'.$arraydata['member']->getNomUrl(-4).'</div>';
 		}
 
 		if (property_exists($this, 'amount')) {
-			$return .= '<br><span class="margintoponly amount inline-block">'.price($this->amount).'</span>';
+			$return .= '<br><span class="amount inline-block">'.price($this->amount).'</span>';
 			if (!empty($arraydata['bank'])) {
 				$return .= ' &nbsp; <span class="info-box-label ">'.$arraydata['bank']->getNomUrl(-1).'</span>';
 			}

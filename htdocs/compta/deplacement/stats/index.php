@@ -2,6 +2,7 @@
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,13 +35,15 @@ $langs->loadLangs(array('trips', 'companies'));
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
-$userid = GETPOST('userid', 'int'); if ($userid < 0) {
+$userid = GETPOSTINT('userid');
+if ($userid < 0) {
 	$userid = 0;
 }
-$socid = GETPOST('socid', 'int'); if ($socid < 0) {
+$socid = GETPOSTINT('socid');
+if ($socid < 0) {
 	$socid = 0;
 }
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 
 // Security check
 if ($user->socid > 0) {
@@ -62,12 +65,12 @@ if ($userid > 0) {
 	}
 }
 
-$nowyear = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
-$year = GETPOST('year') > 0 ?GETPOST('year') : $nowyear;
-$startyear = $year - (empty($conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS) ? 2 : max(1, min(10, $conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS)));
+$nowyear = (int) dol_print_date(dol_now('gmt'), "%Y", 'gmt');
+$year = GETPOSTINT('year') > 0 ? GETPOSTINT('year') : $nowyear;
+$startyear = $year - (!getDolGlobalInt('MAIN_STATS_GRAPHS_SHOW_N_YEARS') ? 2 : max(1, min(10, getDolGlobalInt('MAIN_STATS_GRAPHS_SHOW_N_YEARS'))));
 $endyear = $year;
 
-$mode = GETPOST("mode") ?GETPOST("mode") : 'customer';
+$mode = GETPOST("mode") ? GETPOST("mode") : 'customer';
 
 
 /*
@@ -164,7 +167,7 @@ if (!$mesg) {
 
 $data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 
-if (!$user->hasRight('societe', 'client', 'voir') || $user->socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$filename_avg = $dir.'/ordersaverage-'.$user->id.'-'.$year.'.png';
 	if ($mode == 'customer') {
 		$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$user->id.'-'.$year.'.png';
@@ -227,7 +230,7 @@ $h++;
 
 complete_head_from_modules($conf, $langs, null, $head, $h, 'trip_stats');
 
-print dol_get_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1);
+print dol_get_fiche_head($head, 'byyear', '', -1);
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';

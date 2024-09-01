@@ -2,6 +2,7 @@
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,22 +39,22 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies'));
 
-$id = GETPOST('id', 'int');
-$idcomment = GETPOST('idcomment', 'int');
+$id = GETPOSTINT('id');
+$idcomment = GETPOSTINT('idcomment');
 $ref = GETPOST("ref", 'alpha', 1); // task ref
 $objectref = GETPOST("taskref", 'alpha'); // task ref
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-$withproject = GETPOST('withproject', 'int');
+$withproject = GETPOSTINT('withproject');
 
 // Security check
 $socid = 0;
-//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
 if (!$user->hasRight('projet', 'lire')) {
 	accessforbidden();
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('projectcard', 'globalcard'));
 
 $extrafields = new ExtraFields($db);
@@ -67,7 +68,7 @@ if ($id > 0 || !empty($ref)) {
 	$ret = $object->fetch($id, $ref); // If we create project, ref may be defined into POST but record does not yet exists into database
 	if ($ret > 0) {
 		$object->fetch_thirdparty();
-		if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) {
+		if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && method_exists($object, 'fetchComments') && empty($object->comments)) {
 			$object->fetchComments();
 		}
 		$id = $object->id;
@@ -83,7 +84,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_comments.inc.php';
 
 $title = $langs->trans('CommentPage');
 
-llxHeader('', $title, '');
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-project page-card_comment');
 
 $form = new Form($db);
 $formother = new FormOther($db);
@@ -100,7 +101,7 @@ $param = ($mode == 'mine' ? '&mode=mine' : '');
 
 if (!empty($_SESSION['pageforbacktolist']) && !empty($_SESSION['pageforbacktolist']['project'])) {
 	$tmpurl = $_SESSION['pageforbacktolist']['project'];
-	$tmpurl = preg_replace('/__SOCID__/', $object->socid, $tmpurl);
+	$tmpurl = preg_replace('/__SOCID__/', (string) $object->socid, $tmpurl);
 	$linkback = '<a href="'.$tmpurl.(preg_match('/\?/', $tmpurl) ? '&' : '?'). 'restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 } else {
 	$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
@@ -118,7 +119,7 @@ $morehtmlref .= '</div>';
 // Define a complementary filter for search of next/prev ref.
 if (!$user->hasRight('projet', 'all', 'lire')) {
 	$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
-	$object->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0').")";
+	$object->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0').")";
 }
 
 dol_banner_tab($object, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -143,7 +144,7 @@ print '</td></tr>';
 // Budget
 print '<tr><td>'.$langs->trans("Budget").'</td><td>';
 if (!is_null($object->budget_amount) && strcmp($object->budget_amount, '')) {
-	print price($object->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
+	print price($object->budget_amount, 0, $langs, 1, 0, 0, $conf->currency);
 }
 print '</td></tr>';
 
@@ -174,7 +175,7 @@ print nl2br($object->description);
 print '</td></tr>';
 
 // Categories
-if (isModEnabled('categorie')) {
+if (isModEnabled('category')) {
 	print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 	print $form->showCategories($object->id, Categorie::TYPE_PROJECT, 1);
 	print "</td></tr>";

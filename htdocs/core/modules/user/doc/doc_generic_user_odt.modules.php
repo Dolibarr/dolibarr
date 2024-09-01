@@ -2,6 +2,7 @@
 /* Copyright (C) 2010-2012 	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -38,7 +39,7 @@ class doc_generic_user_odt extends ModelePDFUser
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr';
 
@@ -217,15 +218,15 @@ class doc_generic_user_odt extends ModelePDFUser
 	/**
 	 *  Function to build a document on disk using the generic odt module.
 	 *
-	 *	@param		User		$object				Object source to build document
-	 *	@param		Translate	$outputlangs		Lang output object
-	 * 	@param		string		$srctemplatepath	Full path of source filename for generator using a template file
-	 *  @param		int			$hidedetails		Do not show line details
-	 *  @param		int			$hidedesc			Do not show desc
-	 *  @param		int			$hideref			Do not show ref
-	 *	@return		int         					1 if OK, <=0 if KO
+	 *	@param	User		$object				Object source to build document
+	 *	@param	Translate	$outputlangs		Lang output object
+	 *	@param	string		$srctemplatepath	Full path of source filename for generator using a template file
+	 *	@param	int<0,1>	$hidedetails		Do not show line details
+	 *	@param	int<0,1>	$hidedesc			Do not show desc
+	 *	@param	int<0,1>	$hideref			Do not show ref
+	 *	@return	int<-1,1>						1 if OK, <=0 if KO
 	 */
-	public function write_file($object, $outputlangs, $srctemplatepath, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 		// phpcs:enable
 		global $user, $langs, $conf, $mysoc, $hookmanager;
@@ -291,8 +292,8 @@ class doc_generic_user_odt extends ModelePDFUser
 
 				// Get extension (ods or odt)
 				$newfileformat = substr($newfile, strrpos($newfile, '.') + 1);
-				if (getDolGlobalInt('MAIN_DOC_USE_TIMING')) {
-					$format = getDolGlobalInt('MAIN_DOC_USE_TIMING');
+				if (getDolGlobalString('MAIN_DOC_USE_TIMING')) {
+					$format = getDolGlobalString('MAIN_DOC_USE_TIMING');
 					if ($format == '1') {
 						$format = '%Y%m%d%H%M%S';
 					}
@@ -323,11 +324,11 @@ class doc_generic_user_odt extends ModelePDFUser
 
 				// Recipient name
 				if (!empty($usecontact)) {
-					if ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT))) {
+					if ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT'))) {
 						$socobject = $object->contact;
 					} else {
 						$socobject = $object->thirdparty;
-						// if we have a CUSTOMER contact and we dont use it as recipient we store the contact object for later use
+						// if we have a CUSTOMER contact and we don't use it as recipient we store the contact object for later use
 						$contactobject = $object->contact;
 					}
 				} else {
@@ -367,7 +368,7 @@ class doc_generic_user_odt extends ModelePDFUser
 				complete_substitutions_array($tmparray, $outputlangs, $object);
 				$object->fetch_optionals();
 				// Call the ODTSubstitution hook
-				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$tmparray);
+				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs, 'substitutionarray' => &$tmparray);
 				$reshook = $hookmanager->executeHooks('ODTSubstitution', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				foreach ($tmparray as $key => $value) {
 					try {
@@ -377,8 +378,7 @@ class doc_generic_user_odt extends ModelePDFUser
 							} else {
 								$odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
 							}
-						} else // Text
-						{
+						} else { // Text
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
 					} catch (OdfException $e) {
@@ -397,11 +397,11 @@ class doc_generic_user_odt extends ModelePDFUser
 				}
 
 				// Call the beforeODTSave hook
-				$parameters = array('odfHandler'=>&$odfHandler, 'file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+				$parameters = array('odfHandler' => &$odfHandler, 'file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				$reshook = $hookmanager->executeHooks('beforeODTSave', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
 				// Write new file
-				if (!empty($conf->global->MAIN_ODT_AS_PDF)) {
+				if (getDolGlobalString('MAIN_ODT_AS_PDF')) {
 					try {
 						$odfHandler->exportAsAttachedPDF($file);
 					} catch (Exception $e) {
@@ -425,7 +425,7 @@ class doc_generic_user_odt extends ModelePDFUser
 
 				$odfHandler = null; // Destroy object
 
-				$this->result = array('fullpath'=>$file);
+				$this->result = array('fullpath' => $file);
 
 				return 1; // Success
 			} else {
@@ -441,7 +441,7 @@ class doc_generic_user_odt extends ModelePDFUser
 	/**
 	 * get substitution array for object
 	 *
-	 * @param User          $object         user
+	 * @param CommonObject  $object         user
 	 * @param Translate     $outputlangs    translation object
 	 * @param string        $array_key      key for array
 	 * @return array                        array of substitutions
@@ -449,12 +449,18 @@ class doc_generic_user_odt extends ModelePDFUser
 	public function get_substitutionarray_object($object, $outputlangs, $array_key = 'object')
 	{
 		// phpcs:enable
+		if (!$object instanceof User) {
+			dol_syslog("Expected User object, got ".gettype($object), LOG_ERR);
+			return array();
+		}
+
 		$array_other = array();
 		foreach ($object as $key => $value) {
 			if (!is_array($value) && !is_object($value)) {
 				$array_other[$array_key.'_'.$key] = $value;
 			}
 		}
+
 		return $array_other;
 	}
 }

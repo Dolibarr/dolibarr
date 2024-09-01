@@ -22,9 +22,11 @@ div.mainmenu.menu {
 	background-image: none;
 }
 
+/*
 div.mainmenu.menu::before {
 	content: "\f0c9";
 }
+*/
 
 div.mainmenu.generic1::before {
 	content: "\f249";
@@ -96,7 +98,11 @@ div.mainmenu.generic4::before {
 }
 
 .tmenu span.fas, .tmenu span.far {
-	color: unset !important;
+	<?php
+	if (!getDolGlobalString('THEME_MENU_COLORLOGO')) {
+		echo "color: unset !important;";
+	}
+	?>;
 	line-height: 28px;
 	text-align: center;
 }

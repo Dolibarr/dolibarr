@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2014	Regis Houssin	<regis.houssin@inodbox.com>
  * Copyright (C) 2014       Marcos García   <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonnumrefgenerator.class.php';
 abstract class ModelePDFProjects extends CommonDocGenerator
 {
 	/**
-	 * @var DoliDb Database handler
+	 * @var DoliDB Database handler
 	 */
 	public $db;
 
@@ -47,9 +48,9 @@ abstract class ModelePDFProjects extends CommonDocGenerator
 	/**
 	 *  Return list of active generation modules
 	 *
-	 *  @param  DoliDB	$db     			Database handler
-	 *  @param  integer	$maxfilenamelength  Max length of value to show
-	 *  @return	array						List of templates
+	 *  @param  DoliDB  	$db                 Database handler
+	 *  @param  int<0,max>	$maxfilenamelength  Max length of value to show
+	 *  @return string[]|int<-1,0>				List of templates
 	 */
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
@@ -62,14 +63,33 @@ abstract class ModelePDFProjects extends CommonDocGenerator
 
 		return $list;
 	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *	Function to build pdf project onto disk
+	 *
+	 *	@param	Project		$object					Object source to build document
+	 *	@param	Translate	$outputlangs			Lang output object
+	 * 	@param	string		$srctemplatepath	    Full path of source filename for generator using a template file
+	 *	@return	int<-1,1>      						1 if OK, <=0 if KO
+	 */
+	abstract public function write_file($object, $outputlangs, $srctemplatepath = '');
+	// phpcs:enable
 }
 
 
 
 /**
- *  Classe mere des modeles de numerotation des references de projets
+ *  Class mere des modeles de numerotation des references de projects
  */
 abstract class ModeleNumRefProjects extends CommonNumRefGenerator
 {
-	// No overload code
+	/**
+	 *  Return next value
+	 *
+	 *  @param   Societe		$objsoc		Object third party
+	 *  @param   Project		$project	Object project
+	 *  @return  string|int<-1,0>			Value if OK, 0 if KO
+	 */
+	abstract public function getNextValue($objsoc, $project);
 }

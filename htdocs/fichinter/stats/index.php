@@ -35,8 +35,8 @@ if (!$user->hasRight('ficheinter', 'lire')) {
 	accessforbidden();
 }
 
-$userid = GETPOST('userid', 'int');
-$socid = GETPOST('socid', 'int');
+$userid = GETPOSTINT('userid');
+$socid = GETPOSTINT('socid');
 // Security check
 if ($user->socid > 0) {
 	$action = '';
@@ -44,8 +44,8 @@ if ($user->socid > 0) {
 }
 
 $nowyear = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
-$year = GETPOST('year') > 0 ? GETPOST('year', 'int') : $nowyear;
-$startyear = $year - (empty($conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS) ? 2 : max(1, min(10, $conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS)));
+$year = GETPOST('year') > 0 ? GETPOSTINT('year') : $nowyear;
+$startyear = $year - (!getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS') ? 2 : max(1, min(10, getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS'))));
 $endyear = $year;
 
 $object_status = GETPOST('object_status', 'intcomma');
@@ -64,7 +64,7 @@ $objectstatic = new Fichinter($db);
 $title = $langs->trans("InterventionStatistics");
 $dir = $conf->ficheinter->dir_temp;
 
-llxHeader('', $title);
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-fichinter page-stats_index');
 
 print load_fiche_titre($title, '', 'intervention');
 
@@ -80,7 +80,7 @@ $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 // $data = array(array('Lib',val1,val2,val3),...)
 
 
-if (!$user->hasRight('societe', 'client', 'voir') || $user->socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$filenamenb = $dir.'/interventionsnbinyear-'.$user->id.'-'.$year.'.png';
 	$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsnbinyear-'.$user->id.'-'.$year.'.png';
 } else {
@@ -92,7 +92,8 @@ $px1 = new DolGraph();
 $mesg = $px1->isGraphKo();
 if (!$mesg) {
 	$px1->SetData($data);
-	$i = $startyear; $legend = array();
+	$i = $startyear;
+	$legend = array();
 	while ($i <= $endyear) {
 		$legend[] = $i;
 		$i++;
@@ -115,7 +116,7 @@ if (!$mesg) {
 $data = $stats->getAmountByMonthWithPrevYear($endyear, $startyear);
 // $data = array(array('Lib',val1,val2,val3),...)
 
-if (!$user->hasRight('societe', 'client', 'voir') || $user->socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$filenameamount = $dir.'/interventionsamountinyear-'.$user->id.'-'.$year.'.png';
 	$fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsamountinyear-'.$user->id.'-'.$year.'.png';
 } else {
@@ -127,7 +128,8 @@ $px2 = new DolGraph();
 $mesg = $px2->isGraphKo();
 if (!$mesg) {
 	$px2->SetData($data);
-	$i = $startyear; $legend = array();
+	$i = $startyear;
+	$legend = array();
 	while ($i <= $endyear) {
 		$legend[] = $i;
 		$i++;
@@ -149,7 +151,7 @@ if (!$mesg) {
 
 $data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 
-if (!$user->hasRight('societe', 'client', 'voir') || $user->socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$filename_avg = $dir.'/interventionsaverage-'.$user->id.'-'.$year.'.png';
 	$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsaverage-'.$user->id.'-'.$year.'.png';
 } else {
@@ -161,7 +163,8 @@ $px3 = new DolGraph();
 $mesg = $px3->isGraphKo();
 if (!$mesg) {
 	$px3->SetData($data);
-	$i = $startyear; $legend = array();
+	$i = $startyear;
+	$legend = array();
 	while ($i <= $endyear) {
 		$legend[] = $i;
 		$i++;
@@ -205,7 +208,7 @@ $type = 'fichinter_stats';
 
 complete_head_from_modules($conf, $langs, null, $head, $h, $type);
 
-print dol_get_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1);
+print dol_get_fiche_head($head, 'byyear', '', -1);
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -232,7 +235,7 @@ print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0
 print '<tr><td class="left">'.$langs->trans("Status").'</td><td class="left">';
 $tmp = $objectstatic->LibStatut(0); // To force load of $this->labelStatus
 $liststatus = $objectstatic->labelStatus;
-if (empty($conf->global->FICHINTER_CLASSIFY_BILLED)) {
+if (!getDolGlobalString('FICHINTER_CLASSIFY_BILLED')) {
 	unset($liststatus[$objectstatic::STATUS_BILLED]); // Option deprecated. In a future, billed must be managed with a dedicated field to 0 or 1
 }
 print $form->selectarray('object_status', $liststatus, $object_status, 1, 0, 0, '', 1);
@@ -288,7 +291,7 @@ foreach ($data as $val) {
 	print '<tr class="oddeven" height="24">';
 	print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$year.'</a></td>';
 	print '<td class="right">'.$val['nb'].'</td>';
-	print '<td class="right opacitylow" style="'.((!isset($val['nb_diff']) || $val['nb_diff'] >= 0) ? 'color: green;' : 'color: red;').'">'.(isset($val['nb_diff']) ? round($val['nb_diff']): "0").'%</td>';
+	print '<td class="right opacitylow" style="'.((!isset($val['nb_diff']) || $val['nb_diff'] >= 0) ? 'color: green;' : 'color: red;').'">'.(isset($val['nb_diff']) ? round($val['nb_diff']) : "0").'%</td>';
 	print '<td class="right">'.price(price2num($val['total'], 'MT'), 1).'</td>';
 	print '<td class="right opacitylow" style="'.((!isset($val['total_diff']) || $val['total_diff'] >= 0) ? 'color: green;' : 'color: red;').'">'.(isset($val['total_diff']) ? round($val['total_diff']) : "0").'%</td>';
 	print '<td class="right">'.price(price2num($val['avg'], 'MT'), 1).'</td>';

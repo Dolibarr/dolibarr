@@ -2,6 +2,7 @@
 /* Copyright (C)           Kai Blankenhorn      <kaib@bitfolge.de>
  * Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.org>
  * Copyright (C) 2020		Tobias Sekan		<tobias.sekan@startmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,7 +84,7 @@ function dol_quoted_printable_encode($input, $line_max = 76)
 
 
 /**
- *	Class to buld vCard files
+ *	Class to build vCard files
  */
 class vCard
 {
@@ -104,7 +105,7 @@ class vCard
 
 
 	/**
-	 *  mise en forme du numero de telephone
+	 *  Format phone number.
 	 *
 	 *  @param	int		$number		numero de telephone
 	 *  @param	string	$type		Type ('cell')
@@ -123,7 +124,7 @@ class vCard
 	}
 
 	/**
-	 *	mise en forme de la photo
+	 *	Format photo.
 	 *  warning NON TESTE !
 	 *
 	 *  @param  string  $type			Type 'image/jpeg' or 'JPEG'
@@ -139,7 +140,7 @@ class vCard
 	}
 
 	/**
-	 *	mise en forme du nom formate
+	 *	Format name.
 	 *
 	 *	@param	string	$name			Name
 	 *	@return	void
@@ -150,7 +151,8 @@ class vCard
 	}
 
 	/**
-	 *	mise en forme du nom complet
+	 *	Format the name.
+	 *  Set also the filename to use 'firstname lastname.vcf'
 	 *
 	 *	@param	string	$family			Family name
 	 *	@param	string	$first			First name
@@ -170,7 +172,7 @@ class vCard
 	}
 
 	/**
-	 *	mise en forme de l'anniversaire
+	 *	Format the birth date
 	 *
 	 *	@param	integer	  $date		Date
 	 *	@return	void
@@ -210,7 +212,7 @@ class vCard
 		$this->properties[$key] = encode($postoffice).";".encode($extended).";".encode($street).";".encode($city).";".encode($region).";".encode($zip).";".encode($country);
 
 		//if ($this->properties["LABEL;".$type.";".$this->encoding] == '') {
-			//$this->setLabel($postoffice, $extended, $street, $city, $region, $zip, $country, $type);
+		//$this->setLabel($postoffice, $extended, $street, $city, $region, $zip, $country, $type);
 		//}
 	}
 
@@ -351,7 +353,7 @@ class vCard
 	}
 
 	/**
-	 *  permet d'obtenir une vcard
+	 *  Return string of a vcard
 	 *
 	 *  @return	string
 	 */
@@ -367,11 +369,12 @@ class vCard
 		$text .= "REV:".date("Ymd")."T".date("His")."Z\r\n";
 		//$text .= "MAILER: Dolibarr\r\n";
 		$text .= "END:VCARD\r\n";
+
 		return $text;
 	}
 
 	/**
-	 *  permet d'obtenir le nom de fichier
+	 *  Return name of a file
 	 *
 	 *  @return	string		Filename
 	 */
@@ -385,18 +388,19 @@ class vCard
 	 * See RFC https://datatracker.ietf.org/doc/html/rfc6350
 	 *
 	 * @param	Object			$object		Object (User or Contact)
-	 * @param	Societe|null	$company	Company. May be null
+	 * @param	Societe|null	$company	Company. May be null.
 	 * @param	Translate		$langs		Lang object
 	 * @param	string			$urlphoto	Full public URL of photo
+	 * @param	string			$outdir		Directory where to store the temporary file
 	 * @return	string						String
 	 */
-	public function buildVCardString($object, $company, $langs, $urlphoto = '')
+	public function buildVCardString($object, $company, $langs, $urlphoto = '', $outdir = '')
 	{
 		global $dolibarr_main_instance_unique_id;
 
 		$this->setProdId('Dolibarr '.DOL_VERSION);
 
-		$this->setUid('DOLIBARR-USERID-'.dol_trunc(md5('vcard'.$dolibarr_main_instance_unique_id), 8, 'right', 'UTF-8', 1).'-'.$object->id);
+		$this->setUID('DOLIBARR-USERID-'.dol_trunc(md5('vcard'.$dolibarr_main_instance_unique_id), 8, 'right', 'UTF-8', 1).'-'.$object->id);
 		$this->setName($object->lastname, $object->firstname, "", $object->civility_code, "");
 		$this->setFormattedName($object->getFullName($langs, 1));
 
@@ -423,7 +427,7 @@ class vCard
 
 		if (!empty($object->socialnetworks)) {
 			foreach ($object->socialnetworks as $key => $val) {
-				if (empty($val)) {	// Disacard social network if empty
+				if (empty($val)) {	// Discard social network if empty
 					continue;
 				}
 				$urlsn = '';
@@ -454,9 +458,12 @@ class vCard
 
 		$country = $object->country_code ? $object->country : '';
 
-		if ($object->address || $object->town || $object->state || $object->zip || $object->country) {
-			$this->setAddress("", "", $object->address, $object->town, $object->state, $object->zip, $country, "");
-			//$this->setLabel("", "", $object->address, $object->town, $object->state, $object->zip, $country, "TYPE=HOME");
+		// User address
+		if (!($object->element != 'user') || getDolUserInt('USER_PUBLIC_SHOW_ADDRESS', 0, $object)) {
+			if ($object->address || $object->town || $object->state || $object->zip || $object->country) {
+				$this->setAddress("", "", $object->address, $object->town, $object->state, $object->zip, $country, "");
+				//$this->setLabel("", "", $object->address, $object->town, $object->state, $object->zip, $country, "TYPE=HOME");
+			}
 		}
 
 		if ($object->email) {
@@ -533,8 +540,19 @@ class vCard
 		}
 
 		// Birthday
-		if ($object->birth) {
-			$this->setBirthday($object->birth);
+		if (!($object->element != 'user') || getDolUserInt('USER_PUBLIC_SHOW_BIRTH', 0, $object)) {
+			if ($object->birth) {
+				$this->setBirthday($object->birth);
+			}
+		}
+
+		if ($outdir) {
+			$outfilename = $outdir.'/virtualcard_'.$object->element.'_'.$object->id.'.vcf';
+
+			file_put_contents($outfilename, $this->getVCard());
+			dolChmod($outfilename);
+
+			return $outfilename;
 		}
 
 		// Return VCard string

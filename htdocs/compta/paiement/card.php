@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@inodbox.com>
  * Copyright (C) 2013	   Marcos García		 <marcosgdf@gmail.com>
  * Copyright (C) 2015	   Juanjo Menent		 <jmenent@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +23,7 @@
 
 /**
  *	    \file       htdocs/compta/paiement/card.php
- *		\ingroup    facture
+ *		\ingroup    invoice
  *		\brief      Page of a customer payment
  *		\remarks	Nearly same file than fournisseur/paiement/card.php
  */
@@ -33,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-if (isModEnabled("banque")) {
+if (isModEnabled("bank")) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 }
 if (isModEnabled('margin')) {
@@ -43,23 +44,23 @@ if (isModEnabled('margin')) {
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'banks', 'companies'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($socid < 0) {
 	$socid = 0;
 }
 
 $object = new Paiement($db);
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('paymentcard', 'globalcard'));
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 $result = restrictedArea($user, $object->element, $object->id, 'paiement');	// This also test permission on read invoice
 
@@ -79,7 +80,7 @@ if (isModEnabled('stripe')) {
 
 	$service = 'StripeTest';
 	$servicestatus = 0;
-	if (!empty($conf->global->STRIPE_LIVE) && !GETPOST('forcesandbox', 'alpha')) {
+	if (getDolGlobalString('STRIPE_LIVE') && !GETPOST('forcesandbox', 'alpha')) {
 		$service = 'StripeLive';
 		$servicestatus = 1;
 	}
@@ -97,7 +98,7 @@ $error = 0;
 /*
  * Actions
  */
-$parameters = array('socid'=>$socid);
+$parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -120,7 +121,7 @@ if (empty($reshook)) {
 	if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('facture', 'paiement')) {
 		$db->begin();
 
-		$result = $object->delete();
+		$result = $object->delete($user);
 		if ($result > 0) {
 			$db->commit();
 
@@ -145,16 +146,16 @@ if (empty($reshook)) {
 			$db->commit();
 
 			// Loop on each invoice linked to this payment to rebuild PDF
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$outputlangs = $langs;
 				if (GETPOST('lang_id', 'aZ09')) {
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang(GETPOST('lang_id', 'aZ09'));
 				}
 
-				$hidedetails = !empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0;
-				$hidedesc = !empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0;
-				$hideref = !empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0;
+				$hidedetails = getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0;
+				$hidedesc = getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0;
+				$hideref = getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0;
 
 				$sql = 'SELECT f.rowid as facid';
 				$sql .= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf,'.MAIN_DB_PREFIX.'facture as f,'.MAIN_DB_PREFIX.'societe as s';
@@ -218,7 +219,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'setdatep' && GETPOST('datepday') && $user->hasRight('facture', 'paiement')) {
-		$datepaye = dol_mktime(GETPOST('datephour', 'int'), GETPOST('datepmin', 'int'), GETPOST('datepsec', 'int'), GETPOST('datepmonth', 'int'), GETPOST('datepday', 'int'), GETPOST('datepyear', 'int'));
+		$datepaye = dol_mktime(GETPOSTINT('datephour'), GETPOSTINT('datepmin'), GETPOSTINT('datepsec'), GETPOSTINT('datepmonth'), GETPOSTINT('datepday'), GETPOSTINT('datepyear'));
 		$res = $object->update_date($datepaye);
 		if ($res === 0) {
 			setEventMessages($langs->trans('PaymentDateUpdateSucceeded'), null, 'mesgs');
@@ -237,7 +238,7 @@ if (empty($reshook)) {
 				$label = '(CustomerInvoicePaymentBack)'; // Refund of a credit note
 			}
 
-			$bankaccountid = GETPOST('accountid', 'int');
+			$bankaccountid = GETPOSTINT('accountid');
 			if ($bankaccountid > 0) {
 				$object->paiementcode = $object->type_code;
 				$object->amounts = $object->getAmountsArray();
@@ -288,8 +289,8 @@ if ($action == 'delete') {
 
 // Confirmation of payment validation
 if ($action == 'valide') {
-	$facid = $_GET['facid'];
-	print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_validate', '', 0, 2);
+	$facid = GETPOSTINT('facid');
+	print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id.'&facid='.((int) $facid), $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_validate', '', 0, 2);
 }
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
@@ -308,17 +309,17 @@ print $form->editfieldval("Date", 'datep', $object->date, $object, $user->hasRig
 print '</td></tr>';
 
 // Payment type (VIR, LIQ, ...)
-$labeltype = $langs->trans("PaymentType".$object->type_code) != ("PaymentType".$object->type_code) ? $langs->trans("PaymentType".$object->type_code) : $object->type_label;
+$labeltype = $langs->trans("PaymentType".$object->type_code) != "PaymentType".$object->type_code ? $langs->trans("PaymentType".$object->type_code) : $object->type_label;
 print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>'.$labeltype;
 print $object->num_payment ? ' - '.$object->num_payment : '';
 print '</td></tr>';
 
 // Amount
-print '<tr><td>'.$langs->trans('Amount').'</td><td>'.price($object->amount, '', $langs, 0, -1, -1, $conf->currency).'</td></tr>';
+print '<tr><td>'.$langs->trans('Amount').'</td><td>'.price($object->amount, 0, $langs, 0, -1, -1, $conf->currency).'</td></tr>';
 
 $disable_delete = 0;
 // Bank account
-if (isModEnabled("banque")) {
+if (isModEnabled("bank")) {
 	$bankline = new AccountLine($db);
 
 	if ($object->fk_account > 0) {
@@ -360,7 +361,7 @@ print '</td></tr>';
 */
 
 // Bank account
-if (isModEnabled("banque")) {
+if (isModEnabled("bank")) {
 	if ($object->fk_account > 0) {
 		if ($object->type_code == 'CHQ' && $bankline->fk_bordereau > 0) {
 			include_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
@@ -420,13 +421,13 @@ if (isModEnabled("banque")) {
 }
 
 // Comments
-print '<tr><td class="tdtop">'.$form->editfieldkey("Comments", 'note', $object->note_private, $object, $user->hasRight('facture', 'paiement')).'</td><td>';
+print '<tr><td class="tdtop">'.$form->editfieldkey("Comments", 'note', $object->note_private, $object, $user->hasRight('facture', 'paiement')).'</td><td class="wordbreak">';
 print $form->editfieldval("Note", 'note', $object->note_private, $object, $user->hasRight('facture', 'paiement'), 'textarea:'.ROWS_3.':90%');
 print '</td></tr>';
 
 if (!empty($object->ext_payment_id)) {
 	// External payment ID
-	print '<tr><td class="tdtop">'.$langs->trans("StripePaymentId").'</td><td>';
+	print '<tr><td class="tdtop">'.$langs->trans("StripePaymentId").'</td><td class="wordbreak">';
 	if (isModEnabled('stripe') && in_array($object->ext_payment_site, array('Stripe', 'StripeLive'))) {
 		$tmp1 = explode('@', $object->ext_payment_id);
 		if (!empty($tmp1[1])) {
@@ -486,7 +487,7 @@ if ($resql) {
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans('Bill').'</td>';
 	print '<td>'.$langs->trans('Company').'</td>';
-	if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED)) {
+	if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_INVOICE_SHARING_ENABLED')) {
 		print '<td>'.$langs->trans('Entity').'</td>';
 	}
 	//Add Margin
@@ -529,7 +530,7 @@ if ($resql) {
 			print '<tr class="oddeven">';
 
 			// Invoice
-			print '<td>';
+			print '<td class="tdoverflowmax150">';
 			print $invoice->getNomUrl(1);
 			print "</td>\n";
 
@@ -539,7 +540,7 @@ if ($resql) {
 			print '</td>';
 
 			// Expected to pay
-			if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED)) {
+			if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_INVOICE_SHARING_ENABLED')) {
 				print '<td>';
 				$mc->getInfo($objp->entity);
 				print $mc->label;
@@ -554,7 +555,7 @@ if ($resql) {
 			// Expected to pay
 			print '<td class="right"><span class="amount">'.price($objp->total_ttc).'</span></td>';
 
-			// Amount payed
+			// Amount paid
 			print '<td class="right"><span class="amount">'.price($objp->amount).'</span></td>';
 
 			// Remain to pay
@@ -563,18 +564,18 @@ if ($resql) {
 			// Status
 			print '<td class="right">'.$invoice->getLibStatut(5, $alreadypayed).'</td>';
 
-			$parameters = array('fk_paiement'=> (int) $object->id);
+			$parameters = array('fk_paiement' => (int) $object->id);
 			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $objp, $action); // Note that $action and $object may have been modified by hook
 
 			print "</tr>\n";
 
 			// If at least one invoice is paid, disable delete. INVOICE_CAN_DELETE_PAYMENT_EVEN_IF_INVOICE_CLOSED Can be use for maintenance purpose. Never use this in production
-			if ($objp->paye == 1 && empty($conf->global->INVOICE_CAN_DELETE_PAYMENT_EVEN_IF_INVOICE_CLOSED)) {
+			if ($objp->paye == 1 && !getDolGlobalString('INVOICE_CAN_DELETE_PAYMENT_EVEN_IF_INVOICE_CLOSED')) {
 				$disable_delete = 1;
 				$title_button = dol_escape_htmltag($langs->transnoentitiesnoconv("CantRemovePaymentWithOneInvoicePaid"));
 			}
 
-			$total = $total + $objp->amount;
+			$total += $objp->amount;
 			$i++;
 		}
 	}
@@ -596,7 +597,7 @@ if ($resql) {
 
 print '<div class="tabsAction">';
 
-if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION)) {
+if (getDolGlobalString('BILL_ADD_PAYMENT_VALIDATION')) {
 	if ($user->socid == 0 && $object->statut == 0 && $action == '') {
 		if ($user->hasRight('facture', 'paiement')) {
 			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&action=valide&token='.newToken().'">'.$langs->trans('Valid').'</a>';

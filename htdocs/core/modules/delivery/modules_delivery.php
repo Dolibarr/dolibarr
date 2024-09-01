@@ -5,6 +5,7 @@
  * Copyright (C) 2006-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012 Philippe Grand	    <philippe.grand@atoo-net.com>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,8 +25,8 @@
 /**
  *	\file       htdocs/core/modules/delivery/modules_delivery.php
  *	\ingroup    expedition
- *	\brief      Fichier contenant la classe mere de generation de bon de livraison en PDF
- *				et la classe mere de numerotation des bons de livraisons
+ *	\brief      Fichier contenant la class mere de generation de bon de livraison en PDF
+ *				et la class mere de numerotation des bons de livraisons
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
@@ -33,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonnumrefgenerator.class.php';
 
 
 /**
- *	Classe mere des modeles de bon de livraison
+ *	Class mere des modeles de bon de livraison
  */
 abstract class ModelePDFDeliveryOrder extends CommonDocGenerator
 {
@@ -41,9 +42,9 @@ abstract class ModelePDFDeliveryOrder extends CommonDocGenerator
 	/**
 	 *  Return list of active generation modules
 	 *
-	 *  @param  DoliDB  $db                 Database handler
-	 *  @param  integer	$maxfilenamelength  Max length of value to show
-	 *  @return array                       List of templates
+	 *  @param  DoliDB  	$db                 Database handler
+	 *  @param  int<0,max>	$maxfilenamelength  Max length of value to show
+	 *  @return string[]|int<-1,0>				List of templates
 	 */
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
@@ -56,13 +57,35 @@ abstract class ModelePDFDeliveryOrder extends CommonDocGenerator
 
 		return $list;
 	}
+
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Function to build pdf onto disk
+	 *
+	 *  @param      Delivery	$object				Object to generate
+	 *  @param      Translate	$outputlangs		Lang output object
+	 *  @param      string		$srctemplatepath	Full path of source filename for generator using a template file
+	 *  @param      int<0,1>	$hidedetails		Do not show line details
+	 *  @param      int<0,1>	$hidedesc			Do not show desc
+	 *  @param      int<0,1>	$hideref			Do not show ref
+	 *  @return     int<0,1>             			1=OK, 0=KO
+	 */
+	abstract public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0);
 }
 
 
 /**
- *  Classe mere des modeles de numerotation des references de bon de livraison
+ *  Class mere des modeles de numerotation des references de bon de livraison
  */
 abstract class ModeleNumRefDeliveryOrder extends CommonNumRefGenerator
 {
-	// No overload code
+	/**
+	 * 	Return next free value
+	 *
+	 *  @param	Societe		$objsoc     Object thirdparty
+	 *  @param  Delivery	$object		Object we need next value for
+	 *  @return string|int<-1,0>  		Value if OK, 0 or -1 if KO
+	 */
+	abstract public function getNextValue($objsoc, $object);
 }

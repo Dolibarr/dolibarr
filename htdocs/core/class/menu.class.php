@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +20,7 @@
 /**
  *  \file       htdocs/core/class/menu.class.php
  *  \ingroup    core
- *  \brief      Fichier de la classe de gestion du menu gauche
+ *  \brief      Fichier de la class de gestion du menu gauche
  */
 
 
@@ -28,6 +29,11 @@
  */
 class Menu
 {
+	/**
+	 * List of menu items
+	 *
+	 * @var array<array{url:string,titre:string,enabled:int<0,2>,target:string,mainmenu:string,leftmenu:string,position:int,level?:int,id:string,idsel:string,classname:string,prefix?:string}>
+	 */
 	public $liste;
 
 	/**
@@ -35,7 +41,7 @@ class Menu
 	 */
 	public function __construct()
 	{
-		  $this->liste = array();
+		$this->liste = array();
 	}
 
 	/**
@@ -67,7 +73,7 @@ class Menu
 	 */
 	public function add($url, $titre, $level = 0, $enabled = 1, $target = '', $mainmenu = '', $leftmenu = '', $position = 0, $id = '', $idsel = '', $classname = '', $prefix = '')
 	{
-		$this->liste[] = array('url'=>$url, 'titre'=>$titre, 'level'=>$level, 'enabled'=>$enabled, 'target'=>$target, 'mainmenu'=>$mainmenu, 'leftmenu'=>$leftmenu, 'position'=>$position, 'id'=>$id, 'idsel'=>$idsel, 'classname'=>$classname, 'prefix'=>$prefix);
+		$this->liste[] = array('url' => $url, 'titre' => $titre, 'level' => $level, 'enabled' => $enabled, 'target' => $target, 'mainmenu' => $mainmenu, 'leftmenu' => $leftmenu, 'position' => $position, 'id' => $id, 'idsel' => $idsel, 'classname' => $classname, 'prefix' => $prefix);
 	}
 
 	/**
@@ -91,7 +97,7 @@ class Menu
 	public function insert($idafter, $url, $titre, $level = 0, $enabled = 1, $target = '', $mainmenu = '', $leftmenu = '', $position = 0, $id = '', $idsel = '', $classname = '', $prefix = '')
 	{
 		$array_start = array_slice($this->liste, 0, ($idafter + 1));
-		$array_new   = array(0=>array('url'=>$url, 'titre'=>$titre, 'level'=>$level, 'enabled'=>$enabled, 'target'=>$target, 'mainmenu'=>$mainmenu, 'leftmenu'=>$leftmenu, 'position'=>$position, 'id'=>$id, 'idsel'=>$idsel, 'classname'=>$classname, 'prefix'=>$prefix));
+		$array_new   = array(0 => array('url' => $url, 'titre' => $titre, 'level' => $level, 'enabled' => $enabled, 'target' => $target, 'mainmenu' => $mainmenu, 'leftmenu' => $leftmenu, 'position' => $position, 'id' => $id, 'idsel' => $idsel, 'classname' => $classname, 'prefix' => $prefix));
 		$array_end   = array_slice($this->liste, ($idafter + 1));
 		$this->liste = array_merge($array_start, $array_new, $array_end);
 	}
@@ -119,7 +125,6 @@ class Menu
 	{
 		$nb = 0;
 		foreach ($this->liste as $val) {
-			//if (dol_eval($val['enabled'], 1, 1, '1')) $nb++;
 			if (!empty($val['enabled'])) {
 				$nb++; // $val['enabled'] is already evaluated to 0 or 1, no need for dol_eval()
 			}

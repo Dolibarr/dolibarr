@@ -5,7 +5,7 @@
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2015-2016  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2019  Thibault FOUCART        <support@ptibogxiv.net>
- * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,8 +33,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/dons/modules_don.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/donation.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
+require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmargin.class.php';
@@ -47,17 +48,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 $langs->loadLangs(array('bills', 'companies', 'donations', 'users'));
 
-$id = GETPOST('rowid') ?GETPOST('rowid', 'int') : GETPOST('id', 'int');
+$id = GETPOST('rowid') ? GETPOSTINT('rowid') : GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 $amount = price2num(GETPOST('amount', 'alphanohtml'), 'MT');
 $donation_date = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
-$projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
-$public_donation = (int) GETPOST("public", 'int');
+$projectid = (GETPOST('projectid') ? GETPOSTINT('projectid') : 0);
+$public_donation = GETPOSTINT("public");
 
 $object = new Don($db);
 if ($id > 0 || $ref) {
@@ -77,7 +78,7 @@ $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array($object->element.'card', 'globalcard'));
 
 $upload_dir = $conf->don->dir_output;
@@ -86,7 +87,9 @@ $upload_dir = $conf->don->dir_output;
 // Security check
 $result = restrictedArea($user, 'don', $object->id);
 
-$permissiontoadd = $user->rights->don->creer;
+$permissiontoread = $user->hasRight('don', 'lire');
+$permissiontoadd = $user->hasRight('don', 'creer');
+$permissiontodelete = $user->hasRight('don', 'supprimer');
 
 
 /*
@@ -131,7 +134,7 @@ if (empty($reshook)) {
 		$result = $object->reopen($user);
 		if ($result >= 0) {
 			// Define output language
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				if (method_exists($object, 'generateDocument')) {
 					$outputlangs = $langs;
 					$newlang = '';
@@ -162,9 +165,9 @@ if (empty($reshook)) {
 
 
 	// Action update object
-	if ($action == 'update') {
+	if ($action == 'update' && $permissiontoadd) {
 		if (!empty($cancel)) {
-			header("Location: ".$_SERVER['PHP_SELF']."?id=".urlencode($id));
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".urlencode((string) ($id)));
 			exit;
 		}
 
@@ -185,19 +188,19 @@ if (empty($reshook)) {
 		if (!$error) {
 			$object->fetch($id);
 
-			$object->firstname = (string) GETPOST("firstname", 'alpha');
-			$object->lastname = (string) GETPOST("lastname", 'alpha');
-			$object->societe = (string) GETPOST("societe", 'alpha');
-			$object->address = (string) GETPOST("address", 'alpha');
-			$object->amount = price2num(GETPOST("amount", 'alpha'), '', 2);
-			$object->town = (string) GETPOST("town", 'alpha');
-			$object->zip = (string) GETPOST("zipcode", 'alpha');
-			$object->country_id = (int) GETPOST('country_id', 'int');
-			$object->email = (string) GETPOST("email", 'alpha');
+			$object->firstname = GETPOST("firstname", 'alpha');
+			$object->lastname = GETPOST("lastname", 'alpha');
+			$object->societe = GETPOST("societe", 'alpha');
+			$object->address = GETPOST("address", 'alpha');
+			$object->amount = GETPOSTFLOAT("amount");
+			$object->town = GETPOST("town", 'alpha');
+			$object->zip = GETPOST("zipcode", 'alpha');
+			$object->country_id = GETPOSTINT('country_id');
+			$object->email = GETPOST("email", 'alpha');
 			$object->date = $donation_date;
 			$object->public = $public_donation;
-			$object->fk_project = (int) GETPOST("fk_project", 'int');
-			$object->modepaymentid = (int) GETPOST('modepayment', 'int');
+			$object->fk_project = GETPOSTINT("fk_project");
+			$object->modepaymentid = GETPOSTINT('modepayment');
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
@@ -217,7 +220,7 @@ if (empty($reshook)) {
 
 
 	// Action add/create object
-	if ($action == 'add') {
+	if ($action == 'add' && $permissiontoadd) {
 		if (!empty($cancel)) {
 			header("Location: index.php");
 			exit;
@@ -225,7 +228,7 @@ if (empty($reshook)) {
 
 		$error = 0;
 
-		if (isModEnabled("societe") && !empty($conf->global->DONATION_USE_THIRDPARTIES) && !(GETPOST("socid", 'int') > 0)) {
+		if (isModEnabled("societe") && getDolGlobalString('DONATION_USE_THIRDPARTIES') && !(GETPOSTINT("socid") > 0)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdParty")), null, 'errors');
 			$action = "create";
 			$error++;
@@ -243,7 +246,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			$object->socid = (int) GETPOST("socid", 'int');
+			$object->socid = GETPOSTINT("socid");
 			$object->firstname = (string) GETPOST("firstname", 'alpha');
 			$object->lastname = (string) GETPOST("lastname", 'alpha');
 			$object->societe = (string) GETPOST("societe", 'alpha');
@@ -251,14 +254,14 @@ if (empty($reshook)) {
 			$object->amount = price2num(GETPOST("amount", 'alpha'), '', 2);
 			$object->zip = (string) GETPOST("zipcode", 'alpha');
 			$object->town = (string) GETPOST("town", 'alpha');
-			$object->country_id = (int) GETPOST('country_id', 'int');
+			$object->country_id = GETPOSTINT('country_id');
 			$object->email = (string) GETPOST('email', 'alpha');
 			$object->date = $donation_date;
 			$object->note_private = (string) GETPOST("note_private", 'restricthtml');
 			$object->note_public = (string) GETPOST("note_public", 'restricthtml');
 			$object->public = $public_donation;
-			$object->fk_project = (int) GETPOST("fk_project", 'int');
-			$object->modepaymentid = (int) GETPOST('modepayment', 'int');
+			$object->fk_project = GETPOSTINT("fk_project");
+			$object->modepaymentid = GETPOSTINT('modepayment');
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -278,7 +281,7 @@ if (empty($reshook)) {
 	}
 
 	// Action delete object
-	if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $user->hasRight('don', 'supprimer')) {
+	if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $permissiontodelete) {
 		$object->fetch($id);
 		$result = $object->delete($user);
 		if ($result > 0) {
@@ -291,8 +294,9 @@ if (empty($reshook)) {
 	}
 
 	// Action validation
-	if ($action == 'valid_promesse') {
+	if ($action == 'valid_promesse' && $permissiontoadd) {
 		$object->fetch($id);
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		if ($object->valid_promesse($id, $user->id) >= 0) {
 			setEventMessages($langs->trans("DonationValidated", $object->ref), null);
 			$action = '';
@@ -302,7 +306,7 @@ if (empty($reshook)) {
 	}
 
 	// Action cancel
-	if ($action == 'set_cancel') {
+	if ($action == 'set_cancel' && $permissiontoadd) {
 		$object->fetch($id);
 		if ($object->set_cancel($id) >= 0) {
 			$action = '';
@@ -312,7 +316,9 @@ if (empty($reshook)) {
 	}
 
 	// Action set paid
-	if ($action == 'set_paid') {
+	if ($action == 'set_paid' && $permissiontoadd) {
+		$modepayment = GETPOSTINT('modepayment');
+
 		$object->fetch($id);
 		if ($object->setPaid($id, $modepayment) >= 0) {
 			$action = '';
@@ -324,62 +330,33 @@ if (empty($reshook)) {
 		$object->setProject($projectid);
 	}
 
+	if ($action == 'update_extras' && $permissiontoadd) {
+		$object->fetch($id);
+
+		$object->oldcopy = dol_clone($object, 2);
+
+		// Fill array 'array_options' with data from update form
+		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
+
+		if ($ret < 0) {
+			$error++;
+		}
+
+		if (!$error) {
+			$result = $object->insertExtraFields('DON_MODIFY');
+			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+			}
+		}
+
+		if ($error) {
+			$action = 'edit_extras';
+		}
+	}
 
 	// Actions to build doc
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
-
-
-	// Remove file in doc form
-	/*if ($action == 'remove_file')
-	{
-		$object = new Don($db, 0, GETPOST('id', 'int'));
-		if ($object->fetch($id))
-		{
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
-			$object->fetch_thirdparty();
-
-			$langs->load("other");
-			$upload_dir = $conf->don->dir_output;
-			$file = $upload_dir . '/' . GETPOST('file');
-			$ret=dol_delete_file($file,0,0,0,$object);
-			if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
-			else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
-			$action='';
-		}
-	}
-	*/
-
-	/*
-	 * Build doc
-	 */
-	/*
-	if ($action == 'builddoc')
-	{
-		$object = new Don($db);
-		$result=$object->fetch($id);
-
-		// Save last template used to generate document
-		if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
-
-		// Define output language
-		$outputlangs = $langs;
-		$newlang='';
-		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && !empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) $newlang=$object->thirdparty->default_lang;
-		if (!empty($newlang))
-		{
-			$outputlangs = new Translate("",$conf);
-			$outputlangs->setDefaultLang($newlang);
-		}
-		$result=don_create($db, $object->id, '', $object->model_pdf, $outputlangs);
-		if ($result <= 0)
-		{
-			dol_print_error($db,$result);
-			exit;
-		}
-	}
-	*/
 }
 
 
@@ -387,11 +364,13 @@ if (empty($reshook)) {
  * View
  */
 
+$bankaccountstatic = new Account($db);
+
 $title = $langs->trans("Donation");
 
 $help_url = 'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones|DE:Modul_Spenden';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-donation page-card');
 
 $form = new Form($db);
 $formfile = new FormFile($db);
@@ -417,7 +396,7 @@ if ($action == 'create') {
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans('Ref').'</td><td>'.$langs->trans('Draft').'</td></tr>';
 
 	// Company
-	if (isModEnabled("societe") && !empty($conf->global->DONATION_USE_THIRDPARTIES)) {
+	if (isModEnabled("societe") && getDolGlobalString('DONATION_USE_THIRDPARTIES')) {
 		// Thirdparty
 		if ($soc->id > 0) {
 			print '<td class="fieldrequired">'.$langs->trans('ThirdParty').'</td>';
@@ -428,12 +407,12 @@ if ($action == 'create') {
 			$arrayoutstandingbills = $soc->getOutstandingBills();
 			$outstandingBills = $arrayoutstandingbills['opened'];
 			print ' ('.$langs->trans('CurrentOutstandingBill').': ';
-			print price($outstandingBills, '', $langs, 0, 0, -1, $conf->currency);
+			print price($outstandingBills, 0, $langs, 0, 0, -1, $conf->currency);
 			if ($soc->outstanding_limit != '') {
 				if ($outstandingBills > $soc->outstanding_limit) {
 					print img_warning($langs->trans("OutstandingBillReached"));
 				}
-				print ' / '.price($soc->outstanding_limit, '', $langs, 0, 0, -1, $conf->currency);
+				print ' / '.price($soc->outstanding_limit, 0, $langs, 0, 0, -1, $conf->currency);
 			}
 			print ')';
 			print '</td>';
@@ -442,8 +421,8 @@ if ($action == 'create') {
 			print '<td>';
 			$filter = '((s.client:IN:1,2,3) AND (status:=:1))';
 			print $form->select_company($soc->id, 'socid', $filter, 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
-			// Option to reload page to retrieve customer informations. Note, this clear other input
-			if (!empty($conf->global->RELOAD_PAGE_ON_CUSTOMER_CHANGE_DISABLED)) {
+			// Option to reload page to retrieve customer information. Note, this clear other input
+			if (getDolGlobalString('RELOAD_PAGE_ON_CUSTOMER_CHANGE_DISABLED')) {
 				print '<script type="text/javascript">
 				$(document).ready(function() {
 					$("#socid").change(function() {
@@ -465,7 +444,7 @@ if ($action == 'create') {
 
 	// Date
 	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("Date").'</td><td>';
-	print $form->selectDate($donation_date ? $donation_date : -1, '', '', '', '', "add", 1, 1);
+	print $form->selectDate($donation_date ? $donation_date : -1, '', 0, 0, 0, "add", 1, 1);
 	print '</td>';
 
 	// Amount
@@ -476,7 +455,7 @@ if ($action == 'create') {
 	print $form->selectyesno("public", $public_donation, 1);
 	print "</td></tr>\n";
 
-	if (!isModEnabled('societe') || empty($conf->global->DONATION_USE_THIRDPARTIES)) {
+	if (!isModEnabled('societe') || !getDolGlobalString('DONATION_USE_THIRDPARTIES')) {
 		print "<tr>".'<td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" value="'.dol_escape_htmltag(GETPOST("societe")).'" class="maxwidth200"></td></tr>';
 		print "<tr>".'<td>'.$langs->trans("Lastname").'</td><td><input type="text" name="lastname" value="'.dol_escape_htmltag(GETPOST("lastname")).'" class="maxwidth200"></td></tr>';
 		print "<tr>".'<td>'.$langs->trans("Firstname").'</td><td><input type="text" name="firstname" value="'.dol_escape_htmltag(GETPOST("firstname")).'" class="maxwidth200"></td></tr>';
@@ -492,7 +471,7 @@ if ($action == 'create') {
 
 		// Country
 		print '<tr><td><label for="selectcountry_id">'.$langs->trans('Country').'</label></td><td class="maxwidthonsmartphone">';
-		print img_picto('', 'globe-americas', 'class="paddingrightonly"').$form->select_country(GETPOST('country_id') != '' ?GETPOST('country_id') : $object->country_id);
+		print img_picto('', 'globe-americas', 'class="paddingrightonly"').$form->select_country(GETPOST('country_id') != '' ? GETPOST('country_id') : $object->country_id);
 		if ($user->admin) {
 			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
@@ -503,7 +482,7 @@ if ($action == 'create') {
 
 	// Payment mode
 	print "<tr><td>".$langs->trans("PaymentMode")."</td><td>\n";
-	$selected = GETPOST('modepayment', 'int');
+	$selected = GETPOSTINT('modepayment');
 	print img_picto('', 'payment', 'class="pictofixedwidth"');
 	print $form->select_types_paiements($selected, 'modepayment', 'CRDT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx', 1);
 	print "</td></tr>\n";
@@ -515,7 +494,7 @@ if ($action == 'create') {
 	if (!isset($note_public)) {
 		$note_public = $object->getDefaultCreateValueFor('note_public');
 	}
-	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC) ? 0 : 1, ROWS_3, '90%');
+	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
 	print $doleditor->Create(1);
 	print '</td></tr>';
 
@@ -527,7 +506,7 @@ if ($action == 'create') {
 		if (!isset($note_private)) {
 			$note_private = $object->getDefaultCreateValueFor('note_private');
 		}
-		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PRIVATE) ? 0 : 1, ROWS_3, '90%');
+		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
 		print $doleditor->Create(1);
 		print '</td></tr>';
 	}
@@ -567,11 +546,13 @@ if ($action == 'create') {
 if (!empty($id) && $action == 'edit') {
 	$result = $object->fetch($id);
 	if ($result < 0) {
-		dol_print_error($db, $object->error); exit;
+		dol_print_error($db, $object->error);
+		exit;
 	}
 	$result = $object->fetch_optionals();
 	if ($result < 0) {
-		dol_print_error($db); exit;
+		dol_print_error($db);
+		exit;
 	}
 
 	$hselected = 'card';
@@ -596,11 +577,11 @@ if (!empty($id) && $action == 'edit') {
 
 	// Date
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Date").'</td><td>';
-	print $form->selectDate($object->date, '', '', '', '', "update");
+	print $form->selectDate($object->date, '', 0, 0, 0, "update");
 	print '</td>';
 
 	// Amount
-	if ($object->statut == 0) {
+	if ($object->status == 0) {
 		print "<tr>".'<td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="amount" size="10" value="'.price($object->amount).'"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
 	} else {
 		print '<tr><td>'.$langs->trans("Amount").'</td><td>';
@@ -613,7 +594,7 @@ if (!empty($id) && $action == 'edit') {
 	print "</td>";
 	print "</tr>\n";
 
-	if (isModEnabled("societe") && !empty($conf->global->DONATION_USE_THIRDPARTIES)) {
+	if (isModEnabled("societe") && getDolGlobalString('DONATION_USE_THIRDPARTIES')) {
 		$company = new Societe($db);
 
 		print '<tr><td>'.$langs->trans("ThirdParty").'</td><td colspan="2">';
@@ -704,11 +685,13 @@ if (!empty($id) && $action != 'edit') {
 
 	$result = $object->fetch($id);
 	if ($result < 0) {
-		dol_print_error($db, $object->error); exit;
+		dol_print_error($db, $object->error);
+		exit;
 	}
 	$result = $object->fetch_optionals();
 	if ($result < 0) {
-		dol_print_error($db); exit;
+		dol_print_error($db);
+		exit;
 	}
 
 	$hselected = 'card';
@@ -780,7 +763,7 @@ if (!empty($id) && $action != 'edit') {
 	print yn($object->public);
 	print '</td></tr>';
 
-	if (isModEnabled("societe") && !empty($conf->global->DONATION_USE_THIRDPARTIES)) {
+	if (isModEnabled("societe") && getDolGlobalString('DONATION_USE_THIRDPARTIES')) {
 		$company = new Societe($db);
 
 		print '<tr><td>'.$langs->trans("ThirdParty").'</td><td colspan="2">';
@@ -813,8 +796,10 @@ if (!empty($id) && $action != 'edit') {
 	 * Payments
 	 */
 	$sql = "SELECT p.rowid, p.num_payment, p.datep as dp, p.amount,";
-	$sql .= "c.code as type_code,c.libelle as paiement_type";
+	$sql .= " c.code as type_code, c.libelle as paiement_type,";
+	$sql .= " b.fk_account";
 	$sql .= " FROM ".MAIN_DB_PREFIX."payment_donation as p";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON p.fk_bank = b.rowid";
 	$sql .= ", ".MAIN_DB_PREFIX."c_paiement as c ";
 	$sql .= ", ".MAIN_DB_PREFIX."don as d";
 	$sql .= " WHERE d.rowid = ".((int) $id);
@@ -827,12 +812,17 @@ if (!empty($id) && $action != 'edit') {
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
-		$i = 0; $total = 0; $totalpaid = 0;
+		$i = 0;
+
+		$totalpaid = 0;
 		print '<table class="noborder paymenttable centpercent">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("RefPayment").'</td>';
 		print '<td>'.$langs->trans("Date").'</td>';
 		print '<td>'.$langs->trans("Type").'</td>';
+		if (isModEnabled("bank")) {
+			print '<td>'.$langs->trans("BankAccount").'</td>';
+		}
 		print '<td class="right">'.$langs->trans("Amount").'</td>';
 		print '</tr>';
 
@@ -842,8 +832,30 @@ if (!empty($id) && $action != 'edit') {
 			print '<tr class="oddeven"><td>';
 			print '<a href="'.DOL_URL_ROOT.'/don/payment/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"), "payment").' '.$objp->rowid.'</a></td>';
 			print '<td>'.dol_print_date($db->jdate($objp->dp), 'day')."</td>\n";
-			$labeltype = $langs->trans("PaymentType".$objp->type_code) != ("PaymentType".$objp->type_code) ? $langs->trans("PaymentType".$objp->type_code) : $objp->paiement_type;
+			$labeltype = ($langs->trans("PaymentType".$objp->type_code) != "PaymentType".$objp->type_code) ? $langs->trans("PaymentType".$objp->type_code) : $objp->paiement_type;
 			print "<td>".$labeltype.' '.$objp->num_payment."</td>\n";
+			if (isModEnabled("bank")) {
+				$bankaccountstatic->fetch($objp->fk_account);
+				/*$bankaccountstatic->id = $objp->fk_bank;
+				$bankaccountstatic->ref = $objp->baref;
+				$bankaccountstatic->label = $objp->baref;
+				$bankaccountstatic->number = $objp->banumber;
+				$bankaccountstatic->currency_code = $objp->bacurrency_code;
+
+				if (isModEnabled('accounting')) {
+					$bankaccountstatic->account_number = $objp->account_number;
+
+					$accountingjournal = new AccountingJournal($db);
+					$accountingjournal->fetch($objp->fk_accountancy_journal);
+					$bankaccountstatic->accountancy_journal = $accountingjournal->getNomUrl(0, 1, 1, '', 1);
+				}
+				*/
+				print '<td class="nowraponall">';
+				if ($bankaccountstatic->id) {
+					print $bankaccountstatic->getNomUrl(1, 'transactions');
+				}
+				print '</td>';
+			}
 			print '<td class="right">'.price($objp->amount)."</td>\n";
 			print "</tr>";
 			$totalpaid += $objp->amount;
@@ -851,12 +863,17 @@ if (!empty($id) && $action != 'edit') {
 		}
 
 		if ($object->paid == 0) {
-			print "<tr><td colspan=\"3\" class=\"right\">".$langs->trans("AlreadyPaid")." :</td><td class=\"right\">".price($totalpaid)."</td></tr>\n";
-			print "<tr><td colspan=\"3\" class=\"right\">".$langs->trans("AmountExpected")." :</td><td class=\"right\">".price($object->amount)."</td></tr>\n";
+			$colspan = 3;
+			if (isModEnabled("bank")) {
+				$colspan++;
+			}
+			print '<tr><td colspan="'.$colspan.'" class="right">'.$langs->trans("AlreadyPaid").' :</td><td class="right">'.price($totalpaid)."</td></tr>\n";
+			print '<tr><td colspan="'.$colspan.'" class="right">'.$langs->trans("AmountExpected").' :</td><td class="right">'.price($object->amount)."</td></tr>\n";
 
 			$remaintopay = $object->amount - $totalpaid;
+			$resteapayeraffiche = $remaintopay;
 
-			print "<tr><td colspan=\"3\" class=\"right\">".$langs->trans("RemainderToPay")." :</td>";
+			print '<tr><td colspan="'.$colspan.'" class="right">'.$langs->trans("RemainderToPay")." :</td>";
 			print '<td class="right'.(!empty($resteapayeraffiche) ? ' amountremaintopay' : '').'">'.price($remaintopay)."</td></tr>\n";
 		}
 		print "</table>";
@@ -877,45 +894,48 @@ if (!empty($id) && $action != 'edit') {
 	// Actions buttons
 
 	print '<div class="tabsAction">';
-
-	// Re-open
-	if ($permissiontoadd && $object->statut == $object::STATUS_CANCELED) {
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_reopen&confirm=yes&token='.newToken().'">'.$langs->trans("ReOpen").'</a>';
-	}
-
-	print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&rowid='.$object->id.'">'.$langs->trans('Modify').'</a></div>';
-
-	if ($object->statut == $object::STATUS_DRAFT) {
-		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=valid_promesse&token='.newToken().'">'.$langs->trans("ValidPromess").'</a></div>';
-	}
-
-	if (($object->statut == $object::STATUS_DRAFT || $object->statut == $object::STATUS_VALIDATED) && $totalpaid == 0 && $object->paid == 0) {
-		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=set_cancel&token='.newToken().'">'.$langs->trans("ClassifyCanceled")."</a></div>";
-	}
-
-	// Create payment
-	if ($object->statut == $object::STATUS_VALIDATED && $object->paid == 0 && $user->hasRight('don', 'creer')) {
-		if ($remaintopay == 0) {
-			print '<div class="inline-block divButAction"><span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseRemainderToPayIsZero").'">'.$langs->trans('DoPayment').'</span></div>';
-		} else {
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/don/payment/payment.php?rowid='.$object->id.'&action=create&token='.newToken().'">'.$langs->trans('DoPayment').'</a></div>';
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);
+	if (empty($reshook)) {
+		// Re-open
+		if ($permissiontoadd && $object->status == $object::STATUS_CANCELED) {
+			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_reopen&confirm=yes&token='.newToken().'">'.$langs->trans("ReOpen").'</a>';
 		}
-	}
 
-	// Classify 'paid'
-	if ($object->statut == $object::STATUS_VALIDATED && round($remaintopay) == 0 && $object->paid == 0 && $user->hasRight('don', 'creer')) {
-		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=set_paid&token='.newToken().'">'.$langs->trans("ClassifyPaid")."</a></div>";
-	}
+		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&rowid='.$object->id.'">'.$langs->trans('Modify').'</a></div>';
 
-	// Delete
-	if ($user->hasRight('don', 'supprimer')) {
-		if ($object->statut == $object::STATUS_CANCELED || $object->statut == $object::STATUS_DRAFT) {
-			print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?rowid='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete")."</a></div>";
-		} else {
-			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("CantRemovePaymentWithOneInvoicePaid").'">'.$langs->trans("Delete")."</a></div>";
+		if ($object->status == $object::STATUS_DRAFT) {
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=valid_promesse&token='.newToken().'">'.$langs->trans("ValidPromess").'</a></div>';
 		}
-	} else {
-		print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans("Delete")."</a></div>";
+
+		if (($object->status == $object::STATUS_DRAFT || $object->status == $object::STATUS_VALIDATED) && $totalpaid == 0 && $object->paid == 0) {
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=set_cancel&token='.newToken().'">'.$langs->trans("ClassifyCanceled")."</a></div>";
+		}
+
+		// Create payment
+		if ($object->status == $object::STATUS_VALIDATED && $object->paid == 0 && $user->hasRight('don', 'creer')) {
+			if ($remaintopay == 0) {
+				print '<div class="inline-block divButAction"><span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseRemainderToPayIsZero").'">'.$langs->trans('DoPayment').'</span></div>';
+			} else {
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/don/payment/payment.php?rowid='.$object->id.'&action=create&token='.newToken().'">'.$langs->trans('DoPayment').'</a></div>';
+			}
+		}
+
+		// Classify 'paid'
+		if ($object->status == $object::STATUS_VALIDATED && round($remaintopay) == 0 && $object->paid == 0 && $user->hasRight('don', 'creer')) {
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=set_paid&token='.newToken().'">'.$langs->trans("ClassifyPaid")."</a></div>";
+		}
+
+		// Delete
+		if ($user->hasRight('don', 'supprimer')) {
+			if ($object->status == $object::STATUS_CANCELED || $object->status == $object::STATUS_DRAFT) {
+				print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?rowid='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete")."</a></div>";
+			} else {
+				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("CantRemovePaymentWithOneInvoicePaid").'">'.$langs->trans("Delete")."</a></div>";
+			}
+		} else {
+			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans("Delete")."</a></div>";
+		}
 	}
 
 	print "</div>";
@@ -929,8 +949,8 @@ if (!empty($id) && $action != 'edit') {
 	$filename = dol_sanitizeFileName($object->id);
 	$filedir = $conf->don->dir_output."/".dol_sanitizeFileName($object->id);
 	$urlsource = $_SERVER['PHP_SELF'].'?rowid='.$object->id;
-	$genallowed	= (($object->paid == 0 || $user->admin) && $user->rights->don->lire);
-	$delallowed	= $user->rights->don->creer;
+	$genallowed	= (($object->paid == 0 || $user->admin) && $user->hasRight('don', 'lire'));
+	$delallowed	= $user->hasRight('don', 'creer');
 
 	print $formfile->showdocuments('donation', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf);
 
@@ -939,7 +959,10 @@ if (!empty($id) && $action != 'edit') {
 	$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 	// Show online payment link
-	$useonlinepayment = (isModEnabled('paypal') || isModEnabled('stripe') || isModEnabled('paybox'));
+	// The list can be complete by the hook 'doValidatePayment' executed inside getValidOnlinePaymentMethods()
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+	$validpaymentmethod = getValidOnlinePaymentMethods('');
+	$useonlinepayment = count($validpaymentmethod);
 
 	if ($useonlinepayment) { //$object->statut != Facture::STATUS_DRAFT &&
 		print '<br><!-- Link to pay -->'."\n";

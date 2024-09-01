@@ -40,19 +40,19 @@ $langs->loadLangs(array('products', 'stocks'));
 $action = GETPOST('action', 'aZ09');
 $sref = GETPOST("sref", 'alpha');
 $snom = GETPOST("snom", 'alpha');
-$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
-$type = GETPOSTISSET('type') ? GETPOST('type', 'int') : Product::TYPE_PRODUCT;
+$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$type = GETPOSTISSET('type') ? GETPOSTINT('type') : Product::TYPE_PRODUCT;
 $search_barcode = GETPOST("search_barcode", 'alpha');
 $search_toolowstock = GETPOST('search_toolowstock');
 $tosell = GETPOST("tosell");
 $tobuy = GETPOST("tobuy");
-$fourn_id = GETPOST("fourn_id", 'int');
-$sbarcode = GETPOST("sbarcode", 'int');
+$fourn_id = GETPOSTINT("fourn_id");
+$sbarcode = GETPOSTINT("sbarcode");
 $search_stock_physique = GETPOST('search_stock_physique', 'alpha');
 
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0) {
 	$page = 0;
 }
@@ -62,7 +62,7 @@ if (!$sortfield) {
 if (!$sortorder) {
 	$sortorder = "ASC";
 }
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -71,9 +71,9 @@ $offset = $limit * $page;
 // Load sale and categ filters
 $search_sale = GETPOST("search_sale");
 if (GETPOSTISSET('catid')) {
-	$search_categ = GETPOST('catid', 'int');
+	$search_categ = GETPOSTINT('catid');
 } else {
-	$search_categ = GETPOST('search_categ', 'int');
+	$search_categ = GETPOSTINT('search_categ');
 }
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
@@ -87,24 +87,26 @@ if (!empty($canvas)) {
 
 // Define virtualdiffersfromphysical
 $virtualdiffersfromphysical = 0;
-if (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)
-	|| !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)
-	|| !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)
-	|| !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION)
-	|| !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)
+if (getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT')
+	|| getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER')
+	|| getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE')
+	|| getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION')
+	|| getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION_CLOSE')
 	|| isModEnabled('mrp')) {
 	$virtualdiffersfromphysical = 1; // According to increase/decrease stock options, virtual and physical stock may differs.
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('productreassortlist'));
 
 if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'produit|service', 0, 'product&product');
+$result = restrictedArea($user, 'stock');
 
 $object = new Product($db);
+
 
 /*
  * Actions
@@ -134,13 +136,19 @@ $helpurl = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 
 $form = new Form($db);
 $htmlother = new FormOther($db);
-if (!empty($objp->stock_physique) && $objp->stock_physique < 0) { print '<span class="warning">'; }
+if (!empty($objp->stock_physique) && $objp->stock_physique < 0) {
+	print '<span class="warning">';
+}
 
 $sql = 'SELECT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,';
 $sql .= ' p.fk_product_type, p.tms as datem,';
 $sql .= ' p.duration, p.tosell as statut, p.tobuy, p.seuil_stock_alerte, p.desiredstock,';
-$sql .= ' SUM(s.reel) as stock_physique';
-if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+if (getDolGlobalString('PRODUCT_STOCK_LIST_SHOW_WITH_PRECALCULATED_DENORMALIZED_PHYSICAL_STOCK')) {
+	$sql .= ' p.stock as stock_physique';
+} else {
+	$sql .= ' SUM(s.reel) as stock_physique';
+}
+if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 	$sql .= ', u.short_label as unit_short';
 }
 // Add fields from hooks
@@ -148,8 +156,10 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
-$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as s ON p.rowid = s.fk_product';
-if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+if (!getDolGlobalString('PRODUCT_STOCK_LIST_SHOW_WITH_PRECALCULATED_DENORMALIZED_PHYSICAL_STOCK')) {
+	$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'product_stock as s ON p.rowid = s.fk_product';
+}
+if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_units as u on p.fk_unit = u.rowid';
 }
 // Add table from hooks
@@ -173,43 +183,45 @@ if (!empty($search_categ) && $search_categ != '-1') {
 	}
 	$sql .= ")";
 }
-if (empty($conf->global->PRODUCT_STOCK_LIST_SHOW_VIRTUAL_WITH_NO_PHYSICAL)) {
-	$sql .= " AND EXISTS (SELECT e.rowid FROM ".MAIN_DB_PREFIX."entrepot as e WHERE e.rowid = s.fk_entrepot AND e.entity IN (".getEntity('stock')."))";
-} else {
-	$sql .= " AND 
+if (!getDolGlobalString('PRODUCT_STOCK_LIST_SHOW_WITH_PRECALCULATED_DENORMALIZED_PHYSICAL_STOCK')) {
+	if (!getDolGlobalString('PRODUCT_STOCK_LIST_SHOW_VIRTUAL_WITH_NO_PHYSICAL')) {
+		$sql .= " AND EXISTS (SELECT e.rowid FROM " . MAIN_DB_PREFIX . "entrepot as e WHERE e.rowid = s.fk_entrepot AND e.entity IN (" . getEntity('stock') . "))";
+	} else {
+		$sql .= " AND
 		(
-			EXISTS 
-				(SELECT e.rowid 
-				 FROM ".MAIN_DB_PREFIX."entrepot as e 
-				 WHERE e.rowid = s.fk_entrepot AND e.entity IN (".getEntity('stock').")) 
+			EXISTS
+				(SELECT e.rowid
+				 FROM " . MAIN_DB_PREFIX . "entrepot as e
+				 WHERE e.rowid = s.fk_entrepot AND e.entity IN (" . getEntity('stock') . "))
 			OR (
-				SELECT SUM(cd1.qty) as qty 
-				FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd1 
-				LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseur as c1 
-					ON c1.rowid = cd1.fk_commande 
+				SELECT SUM(cd1.qty) as qty
+				FROM " . MAIN_DB_PREFIX . "commande_fournisseurdet as cd1
+				LEFT JOIN " . MAIN_DB_PREFIX . "commande_fournisseur as c1
+					ON c1.rowid = cd1.fk_commande
 				WHERE c1.entity IN (1) AND cd1.fk_product = p.rowid AND c1.fk_statut in (3,4) AND cd1.qty <> 0
 			) IS NOT NULL
 			OR (
-				SELECT SUM(cd2.qty) as qty 
-				FROM ".MAIN_DB_PREFIX."commandedet as cd2 
-				LEFT JOIN ".MAIN_DB_PREFIX."commande as c2 ON c2.rowid = cd2.fk_commande 
+				SELECT SUM(cd2.qty) as qty
+				FROM " . MAIN_DB_PREFIX . "commandedet as cd2
+				LEFT JOIN " . MAIN_DB_PREFIX . "commande as c2 ON c2.rowid = cd2.fk_commande
 				WHERE c2.entity IN (1) AND cd2.fk_product = p.rowid AND c2.fk_statut in (1,2) AND cd2.qty <> 0
 			) IS NOT NULL
 			OR (
-				SELECT SUM(ed3.qty) as qty 
-				FROM ".MAIN_DB_PREFIX."expeditiondet as ed3 
-				LEFT JOIN ".MAIN_DB_PREFIX."expedition as e3 ON e3.rowid = ed3.fk_expedition 
-				LEFT JOIN ".MAIN_DB_PREFIX."commandedet as cd3 ON ed3.fk_origin_line = cd3.rowid 
-				LEFT JOIN ".MAIN_DB_PREFIX."commande as c3 ON c3.rowid = cd3.fk_commande 
+				SELECT SUM(ed3.qty) as qty
+				FROM " . MAIN_DB_PREFIX . "expeditiondet as ed3
+				LEFT JOIN " . MAIN_DB_PREFIX . "expedition as e3 ON e3.rowid = ed3.fk_expedition
+				LEFT JOIN " . MAIN_DB_PREFIX . "commandedet as cd3 ON ed3.fk_elementdet = cd3.rowid
+				LEFT JOIN " . MAIN_DB_PREFIX . "commande as c3 ON c3.rowid = cd3.fk_commande
 				WHERE e3.entity IN (1) AND cd3.fk_product = p.rowid AND c3.fk_statut IN (1,2) AND e3.fk_statut IN (1,2) AND ed3.qty <> 0
 			) IS NOT NULL
 			OR (
-				SELECT SUM(mp4.qty) as qty 
-				FROM ".MAIN_DB_PREFIX."mrp_production as mp4 
-				LEFT JOIN ".MAIN_DB_PREFIX."mrp_mo as m4 ON m4.rowid = mp4.fk_mo AND m4.entity IN (1) AND m4.status IN (1,2)
+				SELECT SUM(mp4.qty) as qty
+				FROM " . MAIN_DB_PREFIX . "mrp_production as mp4
+				LEFT JOIN " . MAIN_DB_PREFIX . "mrp_mo as m4 ON m4.rowid = mp4.fk_mo AND m4.entity IN (1) AND m4.status IN (1,2)
 				WHERE mp4.fk_product = p.rowid AND mp4.qty <> 0
 			) IS NOT NULL
 			) ";
+	}
 }
 if ($sall) {
 	$sql .= natural_search(array('p.ref', 'p.label', 'p.description', 'p.note'), $sall);
@@ -243,12 +255,22 @@ if (!empty($canvas)) {
 if ($fourn_id > 0) {
 	$sql .= " AND p.rowid = pf.fk_product AND pf.fk_soc = ".((int) $fourn_id);
 }
+if (getDolGlobalString('PRODUCT_STOCK_LIST_SHOW_WITH_PRECALCULATED_DENORMALIZED_PHYSICAL_STOCK')) {
+	if ($search_toolowstock) {
+		$sql .= " AND p.stock < p.seuil_stock_alerte";
+	}
+	if ($search_stock_physique != '') {
+		$sql .= natural_search('p.stock', $search_stock_physique, 1, 1);
+	}
+}
 // Add where from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
-$sql .= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,";
-$sql .= " p.fk_product_type, p.tms, p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock";
+if (!getDolGlobalString('PRODUCT_STOCK_LIST_SHOW_WITH_PRECALCULATED_DENORMALIZED_PHYSICAL_STOCK')) {
+	$sql .= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,";
+	$sql .= " p.fk_product_type, p.tms, p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock";
+}
 
 // Add GROUP BY from hooks
 $parameters = array();
@@ -256,19 +278,21 @@ $reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $obj
 $sql .= $hookmanager->resPrint;
 
 $sql_having = '';
-if ($search_toolowstock) {
-	$sql_having .= " HAVING SUM(".$db->ifsql('s.reel IS NULL', '0', 's.reel').") < p.seuil_stock_alerte";
-}
-if ($search_stock_physique != '') {
-	//$natural_search_physique = natural_search('HAVING SUM(' . $db->ifsql('s.reel IS NULL', '0', 's.reel') . ')', $search_stock_physique, 1, 1);
-	$natural_search_physique = natural_search('SUM(' . $db->ifsql('s.reel IS NULL', '0', 's.reel') . ')', $search_stock_physique, 1, 1);
-	$natural_search_physique = " " . substr($natural_search_physique, 1, -1); // remove first "(" and last ")" characters
-	if (!empty($sql_having)) {
-		$sql_having .= " AND";
-	} else {
-		$sql_having .= " HAVING";
+if (!getDolGlobalString('PRODUCT_STOCK_LIST_SHOW_WITH_PRECALCULATED_DENORMALIZED_PHYSICAL_STOCK')) {
+	if ($search_toolowstock) {
+		$sql_having .= " HAVING SUM(" . $db->ifsql('s.reel IS NULL', '0', 's.reel') . ") < p.seuil_stock_alerte";
 	}
-	$sql_having .= $natural_search_physique;
+	if ($search_stock_physique != '') {
+		//$natural_search_physique = natural_search('HAVING SUM(' . $db->ifsql('s.reel IS NULL', '0', 's.reel') . ')', $search_stock_physique, 1, 1);
+		$natural_search_physique = natural_search('SUM(' . $db->ifsql('s.reel IS NULL', '0', 's.reel') . ')', $search_stock_physique, 1, 1);
+		$natural_search_physique = " " . substr($natural_search_physique, 1, -1); // remove first "(" and last ")" characters
+		if (!empty($sql_having)) {
+			$sql_having .= " AND";
+		} else {
+			$sql_having .= " HAVING";
+		}
+		$sql_having .= $natural_search_physique;
+	}
 }
 
 // Add HAVING from hooks
@@ -338,10 +362,10 @@ if ($resql) {
 		$param .= "&tobuy=".urlencode($tobuy);
 	}
 	if ($type != '') {
-		$param .= "&type=".urlencode($type);
+		$param .= "&type=".urlencode((string) ($type));
 	}
 	if ($fourn_id) {
-		$param .= "&fourn_id=".urlencode($fourn_id);
+		$param .= "&fourn_id=".urlencode((string) ($fourn_id));
 	}
 	if ($snom) {
 		$param .= "&snom=".urlencode($snom);
@@ -353,19 +377,19 @@ if ($resql) {
 		$param .= "&search_sale=".urlencode($search_sale);
 	}
 	if ($search_categ > 0) {
-		$param .= "&search_categ=".urlencode($search_categ);
+		$param .= "&search_categ=".urlencode((string) ($search_categ));
 	}
 	if ($search_toolowstock) {
 		$param .= "&search_toolowstock=".urlencode($search_toolowstock);
 	}
 	if ($sbarcode) {
-		$param .= "&sbarcode=".urlencode($sbarcode);
+		$param .= "&sbarcode=".urlencode((string) ($sbarcode));
 	}
 	if ($search_stock_physique) {
 		$param .= '&search_stock_physique=' . urlencode($search_stock_physique);
 	}
 
-	llxHeader("", $texte, $helpurl);
+	llxHeader("", $texte, $helpurl, '', 0, 0, '', '', '', 'mod-product page-reassort');
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -387,7 +411,7 @@ if ($resql) {
 
 	// Filter on categories
 	$moreforfilter = '';
-	if (isModEnabled('categorie')) {
+	if (isModEnabled('category')) {
 		$moreforfilter .= '<div class="divsearchfield">';
 		$moreforfilter .= img_picto($langs->trans('Categories'), 'category', 'class="pictofixedwidth"');
 		$moreforfilter .= $htmlother->select_categories(Categorie::TYPE_PRODUCT, $search_categ, 'search_categ', 1);
@@ -412,7 +436,7 @@ if ($resql) {
 	$warehouses_list = $formProduct->cache_warehouses;
 	$nb_warehouse = count($warehouses_list);
 	$colspan_warehouse = 1;
-	if (!empty($conf->global->STOCK_DETAIL_ON_WAREHOUSE)) {
+	if (getDolGlobalString('STOCK_DETAIL_ON_WAREHOUSE')) {
 		$colspan_warehouse = $nb_warehouse > 1 ? $nb_warehouse + 1 : 1;
 	}
 
@@ -422,7 +446,7 @@ if ($resql) {
 	// Fields title search
 	print '<tr class="liste_titre_filter">';
 	// Action column
-	if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print '<td class="liste_titre maxwidthsearch">';
 		$searchpicto = $form->showFilterAndCheckAddButtons(0);
 		print $searchpicto;
@@ -456,7 +480,7 @@ if ($resql) {
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
-	if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print '<td class="liste_titre maxwidthsearch">';
 		$searchpicto = $form->showFilterAndCheckAddButtons(0);
 		print $searchpicto;
@@ -467,7 +491,7 @@ if ($resql) {
 	// Line for column titles
 	print '<tr class="liste_titre">';
 	// Action column
-	if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print_liste_field_titre('');
 	}
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.ref", '', $param, "", $sortfield, $sortorder);
@@ -479,7 +503,7 @@ if ($resql) {
 	print_liste_field_titre("DesiredStock", $_SERVER["PHP_SELF"], "p.desiredstock", '', $param, "", $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("PhysicalStock", $_SERVER["PHP_SELF"], "stock_physique", '', $param, "", $sortfield, $sortorder, 'right ');
 	// Details per warehouse
-	if (!empty($conf->global->STOCK_DETAIL_ON_WAREHOUSE)) {	// TODO This should be moved into the selection of fields on page product/list (page product/stock will be removed and replaced with product/list with its own context)
+	if (getDolGlobalString('STOCK_DETAIL_ON_WAREHOUSE')) {	// TODO This should be moved into the selection of fields on page product/list (page product/stock will be removed and replaced with product/list with its own context)
 		if ($nb_warehouse > 1) {
 			foreach ($warehouses_list as &$wh) {
 				print_liste_field_titre($wh['label'], '', '', '', '', '', '', '', 'right ');
@@ -490,18 +514,18 @@ if ($resql) {
 		print_liste_field_titre("VirtualStock", $_SERVER["PHP_SELF"], "", '', $param, "", $sortfield, $sortorder, 'right ', 'VirtualStockDesc');
 	}
 	// Units
-	if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+	if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 		print_liste_field_titre("Unit", $_SERVER["PHP_SELF"], "unit_short", '', $param, 'align="right"', $sortfield, $sortorder);
 	}
 	print_liste_field_titre('');
 	print_liste_field_titre("ProductStatusOnSell", $_SERVER["PHP_SELF"], "p.tosell", '', $param, "", $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("ProductStatusOnBuy", $_SERVER["PHP_SELF"], "p.tobuy", '', $param, "", $sortfield, $sortorder, 'right ');
 	// Hook fields
-	$parameters = array('param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+	$parameters = array('param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Action column
-	if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print_liste_field_titre('');
 	}
 	print "</tr>\n";
@@ -515,7 +539,7 @@ if ($resql) {
 
 		print '<tr>';
 		// Action column
-		if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td></td>';
 		}
 		print '<td class="nowrap">';
@@ -549,13 +573,17 @@ if ($resql) {
 		if ($objp->seuil_stock_alerte != '' && ($objp->stock_physique < $objp->seuil_stock_alerte)) {
 			print img_warning($langs->trans("StockLowerThanLimit", $objp->seuil_stock_alerte)).' ';
 		}
-		if ($objp->stock_physique < 0) { print '<span class="warning">'; }
+		if ($objp->stock_physique < 0) {
+			print '<span class="warning">';
+		}
 		print price(price2num($objp->stock_physique, 'MS'), 0, $langs, 1, 0);
-		if ($objp->stock_physique < 0) { print '</span>'; }
+		if ($objp->stock_physique < 0) {
+			print '</span>';
+		}
 		print '</td>';
 
 		// Details per warehouse
-		if (!empty($conf->global->STOCK_DETAIL_ON_WAREHOUSE)) {	// TODO This should be moved into the selection of fields on page product/list (page product/stock will be removed and replaced with product/list with its own context)
+		if (getDolGlobalString('STOCK_DETAIL_ON_WAREHOUSE')) {	// TODO This should be moved into the selection of fields on page product/list (page product/stock will be removed and replaced with product/list with its own context)
 			if ($nb_warehouse > 1) {
 				foreach ($warehouses_list as &$wh) {
 					print '<td class="right">';
@@ -571,13 +599,17 @@ if ($resql) {
 			if ($objp->seuil_stock_alerte != '' && ($product->stock_theorique < (float) $objp->seuil_stock_alerte)) {
 				print img_warning($langs->trans("StockLowerThanLimit", $objp->seuil_stock_alerte)).' ';
 			}
-			if ($objp->stock_physique < 0) { print '<span class="warning">'; }
+			if ($objp->stock_physique < 0) {
+				print '<span class="warning">';
+			}
 			print price(price2num($product->stock_theorique, 'MS'), 0, $langs, 1, 0);
-			if ($objp->stock_physique < 0) { print '</span>'; }
+			if ($objp->stock_physique < 0) {
+				print '</span>';
+			}
 			print '</td>';
 		}
 		// Units
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 			print '<td class="left">'.dol_escape_htmltag($objp->unit_short).'</td>';
 		}
 		print '<td class="center nowraponall">';
@@ -587,11 +619,11 @@ if ($resql) {
 		print '<td class="right nowrap">'.$product->LibStatut($objp->statut, 5, 0).'</td>';
 		print '<td class="right nowrap">'.$product->LibStatut($objp->tobuy, 5, 1).'</td>';
 		// Fields from hook
-		$parameters = array('obj'=>$objp);
+		$parameters = array('obj' => $objp);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $product); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		// Action column
-		if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td></td>';
 		}
 

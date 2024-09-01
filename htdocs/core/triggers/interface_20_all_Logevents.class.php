@@ -69,7 +69,7 @@ class InterfaceLogevents extends DolibarrTriggers
 
 		$this->family 		= "core";
 		$this->description  = "Triggers of this module allows to add security event records inside Dolibarr.";
-		$this->version 		= self::VERSION_DOLIBARR;  // VERSION_ 'DEVELOPMENT' or 'EXPERIMENTAL' or 'DOLIBARR'
+		$this->version 		= self::VERSIONS['prod'];
 		$this->picto 		= 'technic';
 		$this->event_label 	= '';
 		$this->event_desc 	= '';
@@ -88,9 +88,9 @@ class InterfaceLogevents extends DolibarrTriggers
 	 * @return	int					if KO: <0, if no trigger ran: 0, if OK: >0
 	 * @throws	Exception			dol_syslog can throw Exceptions
 	 */
-	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf): int
+	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
-		if (!empty($conf->global->MAIN_LOGEVENTS_DISABLE_ALL)) {
+		if (getDolGlobalString('MAIN_LOGEVENTS_DISABLE_ALL')) {
 			return 0; // Log events is disabled (hidden features)
 		}
 
@@ -100,6 +100,7 @@ class InterfaceLogevents extends DolibarrTriggers
 		}
 
 		if (empty($conf->entity)) {
+			global $entity;
 			$conf->entity = $entity; // forcing of the entity if it's not defined (ex: in login form)
 		}
 
@@ -141,7 +142,11 @@ class InterfaceLogevents extends DolibarrTriggers
 	private function initEventData($key_text, $object)
 	{
 		$this->event_date = dol_now();
-		$this->event_label = $this->event_desc = $key_text . ' : ' . $object->login;
+
+		$this->event_label = $this->event_desc = $key_text;
+		if (property_exists($object, 'login')) {
+			$this->event_label .= ' : ' . $object->login;
+		}
 		if ($key_text == InterfaceLogevents::EVENT_ACTION_DICT['USER_ENABLEDISABLE']) { // TODO should be refactored using an object property for event data.
 			$object->statut ? $this->event_desc .= ' - disabled' : $this->event_desc .= ' - enabled';
 		}

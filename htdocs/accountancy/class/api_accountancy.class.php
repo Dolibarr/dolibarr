@@ -92,8 +92,8 @@ class Accountancy extends DolibarrApi
 		global $conf, $langs;
 
 		// check rights
-		if (!DolibarrApiAccess::$user->rights->accounting->mouvements->export) {
-			throw new RestException(401, 'No permission to export accounting');
+		if (!DolibarrApiAccess::$user->hasRight('accounting', 'mouvements', 'export')) {
+			throw new RestException(403, 'No permission to export accounting');
 		}
 
 		// check parameters
@@ -219,6 +219,7 @@ class Accountancy extends DolibarrApi
 			$filter['t.doc_date<='] = $doc_date_end;
 		}
 
+		// @FIXME Critical bugged. Never use fetchAll without limit !
 		$result = $bookkeeping->fetchAll($sortorder, $sortfield, 0, 0, $filter, 'AND', $alreadyexport);
 
 		if ($result < 0) {

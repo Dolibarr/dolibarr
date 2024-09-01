@@ -4,6 +4,8 @@
  * Copyright (C) 2021 Greg Rastklan <greg.rastklan@atm-consulting.fr>
  * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +36,7 @@ global $langs, $user;
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT.'/hrm/lib/hrm.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/hrm/class/skill.class.php';
+require_once DOL_DOCUMENT_ROOT.'/hrm/class/evaluation.class.php';
 //require_once "../class/myclass.class.php";
 
 // Translations
@@ -56,14 +59,30 @@ $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'evaluation';
 
 $arrayofparameters = array(
-	'HRM_MAXRANK'=>array('type'=>'integer','enabled'=>1),
-	'HRM_DEFAULT_SKILL_DESCRIPTION'=>array('type'=>'varchar','enabled'=>1),
+	'HRM_MAXRANK' => array('type' => 'integer','enabled' => 1, 'css' => ''),
+	'HRM_DEFAULT_SKILL_DESCRIPTION' => array('type' => 'varchar','enabled' => 1, 'css' => ''),
 );
 
 $error = 0;
 $setupnotempty = 0;
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+
+$moduledir = 'hrm';
+// TODO Scan list of objects to fill this array
+$myTmpObjects = [
+	'evaluation' => [
+		'label' => 'Evaluation',
+		'includerefgeneration' => 1,
+		'includedocgeneration' => 1,
+		'class' => 'Evaluation'
+	],
+];
+
+$tmpobjectkey = GETPOST('object', 'aZ09');
+if ($tmpobjectkey && !array_key_exists($tmpobjectkey, $myTmpObjects)) {
+	accessforbidden('Bad value for object. Hack attempt ?');
+}
 
 
 /*
@@ -73,7 +92,7 @@ $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'update') {
-	$max_rank = GETPOST('HRM_MAXRANK', 'int');
+	$max_rank = GETPOSTINT('HRM_MAXRANK');
 
 	// We complete skill possible level notation if necessary
 	if (!empty($max_rank)) {
@@ -81,7 +100,9 @@ if ($action == 'update') {
 		$TAllSkills = $static_skill->fetchAll();
 		if (is_array($TAllSkills)) {
 			foreach ($TAllSkills as &$skill) {
-				if (empty($skill->lines)) $skill->fetchLines();
+				if (empty($skill->lines)) {
+					$skill->fetchLines();
+				}
 				if (count($skill->lines) < $conf->global->HRM_MAXRANK) {
 					$skill->createSkills(count($skill->lines) + 1);
 				}
@@ -104,32 +125,33 @@ if ($action == 'update') {
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
-} elseif ($action == 'specimen') {
+} elseif ($action == 'specimen' && $tmpobjectkey) {
 	$modele = GETPOST('module', 'alpha');
-	$tmpobjectkey = GETPOST('object');
 
-	$tmpobject = new $tmpobjectkey($db);
+	$className = $myTmpObjects[$tmpobjectkey]['class'];
+	$tmpobject = new $className($db);
 	$tmpobject->initAsSpecimen();
 
 	// Search template files
-	$file = ''; $classname = ''; $filefound = 0;
+	$file = '';
+	$classname = '';
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
-		$file = dol_buildpath($reldir."core/modules/hrm/doc/pdf_".$modele."_".strtolower($tmpobjectkey).".modules.php", 0);
+		$file = dol_buildpath($reldir."core/modules/hrm/doc/pdf_".$modele.".modules.php", 0);
 		if (file_exists($file)) {
-			$filefound = 1;
 			$classname = "pdf_".$modele;
 			break;
 		}
 	}
 
-	if ($filefound) {
+	if ($classname !== '') {
 		require_once $file;
 
 		$module = new $classname($db);
+		'@phan-var-force ModelePDFEvaluation $module';
 
 		if ($module->write_file($tmpobject, $langs) > 0) {
-			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=".strtolower($tmpobjectkey)."&file=SPECIMEN.pdf");
+			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=hrm&file=evaluation/SPECIMEN.pdf");
 			return;
 		} else {
 			setEventMessages($module->error, null, 'errors');
@@ -141,7 +163,6 @@ if ($action == 'update') {
 	}
 } elseif ($action == 'setmod') {
 	// TODO Check if numbering module chosen can be activated by calling method canBeActivated
-	$tmpobjectkey = GETPOST('object');
 	if (!empty($tmpobjectkey)) {
 		$constforval = 'HRMTEST_'.strtoupper($tmpobjectkey)."_ADDON";
 		dolibarr_set_const($db, $constforval, $value, 'chaine', 0, '', $conf->entity);
@@ -152,17 +173,15 @@ if ($action == 'update') {
 } elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		$tmpobjectkey = GETPOST('object');
 		if (!empty($tmpobjectkey)) {
 			$constforval = 'HRMTEST_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
-			if ($conf->global->$constforval == "$value") {
+			if (getDolGlobalString($constforval) == "$value") {
 				dolibarr_del_const($db, $constforval, $conf->entity);
 			}
 		}
 	}
 } elseif ($action == 'setdoc') {
 	// Set or unset default model
-	$tmpobjectkey = GETPOST('object');
 	if (!empty($tmpobjectkey)) {
 		$constforval = 'HRMTEST_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
 		if (dolibarr_set_const($db, $constforval, $value, 'chaine', 0, '', $conf->entity)) {
@@ -178,7 +197,6 @@ if ($action == 'update') {
 		}
 	}
 } elseif ($action == 'unsetdoc') {
-	$tmpobjectkey = GETPOST('object');
 	if (!empty($tmpobjectkey)) {
 		$constforval = 'HRMTEST_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
 		dolibarr_del_const($db, $constforval, $conf->entity);
@@ -195,7 +213,7 @@ $form = new Form($db);
 $help_url = '';
 $page_name = "HRMSetup";
 
-llxHeader('', $langs->trans($page_name), $help_url);
+llxHeader('', $langs->trans($page_name), $help_url, '', 0, 0, '', '', '', 'mod-admin page-hrm');
 
 // Subheader
 $linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.$langs->trans("BackToModuleList").'</a>';
@@ -206,9 +224,6 @@ print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 $head = hrmAdminPrepareHead();
 print dol_get_fiche_head($head, 'settings', $langs->trans($page_name), -1, "hrm");
 
-$moduledir = 'hrm';
-$myTmpObjects = array();
-$myTmpObjects['evaluation'] = array('label'=>'Evaluation', 'includerefgeneration'=>1, 'includedocgeneration'=>0);
 
 foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 	if ($myTmpObjectKey != $type) {
@@ -247,11 +262,13 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 
 							$module = new $file($db);
 
+							'@phan-var-force ModeleNumRefEvaluation $module';
+
 							// Show modules according to features level
-							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 								continue;
 							}
-							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+							if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 								continue;
 							}
 
@@ -288,6 +305,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 
 								$nameofclass = ucfirst($myTmpObjectKey);
 								$mytmpinstance = new $nameofclass($db);
+								'@phan-var-force Evaluation $mytmpinstance';
 								$mytmpinstance->initAsSpecimen();
 
 								// Info
@@ -343,15 +361,18 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 			$num_rows = $db->num_rows($resql);
 			while ($i < $num_rows) {
 				$array = $db->fetch_array($resql);
-				array_push($def, $array[0]);
+				if (is_array($array)) {
+					array_push($def, $array[0]);
+				}
 				$i++;
 			}
 		} else {
 			dol_print_error($db);
 		}
 
-		print "<table class=\"noborder\" width=\"100%\">\n";
-		print "<tr class=\"liste_titre\">\n";
+		print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
+		print '<table class="noborder centpercent">'."\n";
+		print '<tr class="liste_titre">'."\n";
 		print '<td>'.$langs->trans("Name").'</td>';
 		print '<td>'.$langs->trans("Description").'</td>';
 		print '<td class="center" width="60">'.$langs->trans("Status")."</td>\n";
@@ -370,6 +391,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 				if (is_dir($dir)) {
 					$handle = opendir($dir);
 					if (is_resource($handle)) {
+						$filelist = array();
 						while (($file = readdir($handle)) !== false) {
 							$filelist[] = $file;
 						}
@@ -385,20 +407,22 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 									require_once $dir.'/'.$file;
 									$module = new $classname($db);
 
+									'@phan-var-force ModelePDFEvaluation $module';
+
 									$modulequalified = 1;
-									if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+									if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 										$modulequalified = 0;
 									}
-									if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+									if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 										$modulequalified = 0;
 									}
 
 									if ($modulequalified) {
 										print '<tr class="oddeven"><td width="100">';
-										print (empty($module->name) ? $name : $module->name);
+										print(empty($module->name) ? $name : $module->name);
 										print "</td><td>\n";
 										if (method_exists($module, 'info')) {
-											print $module->info($langs);
+											print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
 										} else {
 											print $module->description;
 										}
@@ -465,6 +489,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 		}
 
 		print '</table>';
+		print '</div>';
 	}
 }
 
@@ -483,7 +508,7 @@ if ($action == 'edit') {
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	foreach ($arrayofparameters as $constname => $val) {
-		if ($val['enabled']==1) {
+		if ($val['enabled'] == 1) {
 			$setupnotempty++;
 			print '<tr class="oddeven"><td>';
 			$tooltiphelp = (($langs->trans($constname . 'Tooltip') != $constname . 'Tooltip') ? $langs->trans($constname . 'Tooltip') : '');
@@ -545,7 +570,7 @@ if ($action == 'edit') {
 				print dolJSToSetRandomPassword($constname, 'generate_token' . $constname);
 			} elseif ($val['type'] == 'product') {
 				if (isModEnabled('product') || isModEnabled('service')) {
-					$selected = (empty($conf->global->$constname) ? '' : $conf->global->$constname);
+					$selected = getDolGlobalString($constname);
 					$form->select_produits($selected, $constname, '', 0);
 				}
 			} else {
@@ -568,7 +593,7 @@ if ($action == 'edit') {
 		print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 		foreach ($arrayofparameters as $constname => $val) {
-			if ($val['enabled']==1) {
+			if ($val['enabled'] == 1) {
 				$setupnotempty++;
 				print '<tr class="oddeven"><td>';
 				$tooltiphelp = (($langs->trans($constname . 'Tooltip') != $constname . 'Tooltip') ? $langs->trans($constname . 'Tooltip') : '');
@@ -577,7 +602,7 @@ if ($action == 'edit') {
 
 				if ($val['type'] == 'textarea') {
 					print dol_nl2br(getDolGlobalString($constname));
-				} elseif ($val['type']== 'html') {
+				} elseif ($val['type'] == 'html') {
 					print getDolGlobalString($constname);
 				} elseif ($val['type'] == 'yesno') {
 					print ajax_constantonoff($constname);
@@ -588,7 +613,7 @@ if ($action == 'edit') {
 					$tmp = explode(':', $val['type']);
 
 					$template = $formmail->getEMailTemplate($db, $tmp[1], $user, $langs, getDolGlobalString($constname));
-					if ($template<0) {
+					if ($template < 0) {
 						setEventMessages(null, $formmail->errors, 'errors');
 					}
 					print $langs->trans($template->label);
@@ -598,7 +623,7 @@ if ($action == 'edit') {
 					if ($result < 0) {
 						setEventMessages(null, $c->errors, 'errors');
 					}
-					$ways = $c->print_all_ways(' &gt;&gt; ', 'none', 0, 1); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formated text
+					$ways = $c->print_all_ways(' &gt;&gt; ', 'none', 0, 1); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formatted text
 					$toprint = array();
 					foreach ($ways as $way) {
 						$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"' . ($c->color ? ' style="background: #' . $c->color . ';"' : ' style="background: #bbb"') . '>' . $way . '</li>';

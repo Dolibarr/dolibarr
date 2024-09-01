@@ -2,6 +2,7 @@
 /* Copyright (C) 2005-2018  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -175,8 +176,8 @@ jQuery(function($){
 		dayNamesMin: tradDaysMin,
 		weekHeader: '<?php echo $langs->trans("Week"); ?>',
 		dateFormat: '<?php echo $langs->trans("FormatDateShortJQuery"); ?>',	/* Note dd/mm/yy means year on 4 digit in jquery format */
-		firstDay: <?php echo (isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : '1'); ?>,
-		isRTL: <?php echo ($langs->trans("DIRECTION") == 'rtl' ? 'true' : 'false'); ?>,
+		firstDay: <?php echo(isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : '1'); ?>,
+		isRTL: <?php echo($langs->trans("DIRECTION") == 'rtl' ? 'true' : 'false'); ?>,
 		showMonthAfterYear: false,  	/* TODO add specific to country	*/
 		 yearSuffix: ''			/* TODO add specific to country */
 	};
@@ -194,8 +195,7 @@ var select2arrayoflanguage = {
 	noResults: function () { return "<?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2NotFound")); ?>"; },
 	inputTooShort: function (input) {
 		var n = input.minimum;
-		/*console.log(input);
-		console.log(input.minimum);*/
+		/*console.log(input); console.log(input.minimum);*/
 		if (n > 1) return "<?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2Enter")); ?> " + n + " <?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2MoreCharacters")); ?>";
 			else return "<?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2Enter")); ?> " + n + " <?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2MoreCharacter")); ?>"
 		},
@@ -269,12 +269,12 @@ function formatDate(date,format)
 {
 	// alert('formatDate date='+date+' format='+format);
 
-	// Force parametres en chaine
+	// Force parameters en chaine
 	format=format+"";
 
 	var result="";
 
-	var year=date.getYear()+""; if (year.length < 4) { year=""+(year-0+1900); }
+	var year=date.getYear()+""; if (year.length < 4) { year=""+(year-0+2000); } /* #28334 */
 	var month=date.getMonth()+1;
 	var day=date.getDate();
 	var hour=date.getHours();
@@ -337,14 +337,14 @@ function getDateFromFormat(val,format)
 {
 	// alert('getDateFromFormat val='+val+' format='+format);
 
-	// Force parametres en chaine
+	// Force parameters en chaine
 	val=val+"";
 	format=format+"";
 
 	if (val == '') return 0;
 
 	var now=new Date();
-	var year=now.getYear(); if (year.length < 4) { year=""+(year-0+1900); }
+	var year=now.getYear(); if (year.length < 4) { year=""+(year-0+2000); } /*  #28334 */
 	var month=now.getMonth()+1;
 	var day=now.getDate();
 	var hour=now.getHours();
@@ -369,7 +369,7 @@ function getDateFromFormat(val,format)
 
 		// alert('substr='+substr);
 		if (substr == "yyyy") year=getIntegerInString(val,d,4,4);
-		if (substr == "yy")   year=""+(getIntegerInString(val,d,2,2)-0+1900);
+		if (substr == "yy")   year=""+(getIntegerInString(val,d,2,2)-0+2000); /*  #28334 */
 		if (substr == "MM" ||substr == "M")
 		{
 			month=getIntegerInString(val,d,1,2);
@@ -561,14 +561,14 @@ function hideMessage(fieldId,message) {
  *
  * @param	string	url			Url (warning: as any url called in ajax mode, the url called here must not renew the token)
  * @param	string	code		Code
- * @param	string	intput		Array of complementary actions to do if success
+ * @param	string	input		Array of complementary actions to do if success
  * @param	int		entity		Entity
- * @param	int		strict		Strict
+ * @param	int		strict		Strict (0=?, 1=?)
  * @param   int     forcereload Force reload
  * @param   int     userid      User id
  * @param	int		value       Value to set
  * @param   string  token       Token
- * @retun   boolean
+ * @return   boolean
  */
 function setConstant(url, code, input, entity, strict, forcereload, userid, token, value) {
 	var saved_url = url; /* avoid undefined url */
@@ -668,7 +668,7 @@ function setConstant(url, code, input, entity, strict, forcereload, userid, toke
  *
  * @param	{string}	url			Url (warning: as any url called in ajax mode, the url called here must not renew the token)
  * @param	{string}	code		Code
- * @param	{string}	intput		Array of complementary actions to do if success
+ * @param	{string}	input		Array of complementary actions to do if success
  * @param	{int}		entity		Entity
  * @param	{int}		strict		Strict
  * @param   {int}     forcereload Force reload
@@ -765,7 +765,7 @@ function delConstant(url, code, input, entity, strict, forcereload, userid, toke
  * @param	string	action		Action
  * @param	string	url			Url
  * @param	string	code		Code
- * @param	string	intput		Array of complementary actions to do if success
+ * @param	string	input		Array of complementary actions to do if success
  * @param	string	box			Box
  * @param	int		entity		Entity
  * @param	int		yesButton	yesButton
@@ -884,7 +884,7 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 								}
 							});
 							if ( !valid ) {
-								// remove invalid value, as it didnt match anything
+								// remove invalid value, as it didn't match anything
 								$( this ).val( "" );
 								select.val( "" );
 								input.data("ui-autocomplete").term = "";
@@ -976,8 +976,8 @@ function newpopup(url, title) {
 	var h = (argc > 3) ? argv[3] : 400;
 	var left = (screen.width - l)/2;
 	var top = (screen.height - h)/2;
-	var wfeatures = "directories=0,menubar=0,status=0,resizable=0,scrollbars=1,toolbar=0,width=" + l +",height=" + h + ",left=" + left + ",top=" + top;
-	fen=window.open(tmp,title,wfeatures);
+	var wfeatures = "directories=0,menubar=0,status=0,resizable=0,scrollbars=1,toolbar=0,location=0,width=" + l +",height=" + h + ",left=" + left + ",top=" + top;
+	fen = window.open(tmp, title, wfeatures);
 
 	return false;
 }
@@ -1163,7 +1163,7 @@ function dolroundjs(number, decimals) { return +(Math.round(number + "e+" + deci
  *
  */
 function pricejs(amount, mode = 'MT', currency_code = '', force_locale = '') {
-	var main_max_dec_shown = <?php echo (int) str_replace('.', '', getDolGlobalInt('MAIN_MAX_DECIMALS_SHOWN')); ?>;
+	var main_max_dec_shown = <?php echo (int) str_replace('.', '', getDolGlobalString('MAIN_MAX_DECIMALS_SHOWN')); ?>;
 	var main_rounding_unit = <?php echo (int) getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT'); ?>;
 	var main_rounding_tot = <?php echo (int) getDolGlobalInt('MAIN_MAX_DECIMALS_TOT'); ?>;
 	var main_decimal_separator = <?php echo json_encode($dec) ?>;
@@ -1241,7 +1241,7 @@ function price2numjs(amount) {
 	var dec = <?php echo json_encode($dec) ?>;
 	var thousand = <?php echo json_encode($thousand) ?>;
 
-	var main_max_dec_shown = <?php echo (int) str_replace('.', '', getDolGlobalInt('MAIN_MAX_DECIMALS_SHOWN')); ?>;
+	var main_max_dec_shown = <?php echo (int) str_replace('.', '', getDolGlobalString('MAIN_MAX_DECIMALS_SHOWN')); ?>;
 	var main_rounding_unit = <?php echo (int) getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT'); ?>;
 	var main_rounding_tot = <?php echo (int) getDolGlobalInt('MAIN_MAX_DECIMALS_TOT'); ?>;
 
@@ -1265,7 +1265,7 @@ function price2numjs(amount) {
 	amount = amount.replace(thousand, '');        // Replace of thousand before replace of dec to avoid pb if thousand is .
 	amount = amount.replace(dec, '.');
 
-	//console.log("amount before="+amount+" rouding="+rounding)
+	//console.log("amount before="+amount+" rounding="+rounding)
 	var res = Math.round10(amount, - rounding);
 	// Other solution is
 	// var res = dolroundjs(amount, rounding)
@@ -1277,7 +1277,7 @@ function price2numjs(amount) {
 
 
 <?php
-if (empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) && !defined('DISABLE_JQUERY_JNOTIFY')) {
+if (!getDolGlobalString('MAIN_DISABLE_JQUERY_JNOTIFY') && !defined('DISABLE_JQUERY_JNOTIFY')) {
 	?>
 // Defined properties for JNotify
 $(document).ready(function() {
@@ -1300,7 +1300,10 @@ $(document).ready(function() {
 		});
 	}
 });
-<?php } ?>
+	<?php
+} ?>
+
+
 
 jQuery(document).ready(function() {
 	// Force to hide menus when page is inside an iFrame so we can show any page into a dialog popup
@@ -1317,17 +1320,48 @@ jQuery(document).ready(function() {
 });
 
 
+jQuery(document).ready(function() {
+	jQuery(".butAction.dropdown-toggle").on("click", function(event) {
+		console.log("Click on .butAction.dropdown-toggle");
+		var parentholder = jQuery(".butAction.dropdown-toggle").closest(".dropdown");
+		var offset = parentholder.offset();
+		var widthdocument = $(document).width();
+		var left = offset.left;
+		var right = widthdocument - offset.left - parentholder.width();
+		var widthpopup = parentholder.children(".dropdown-content").width();
+		console.log("left="+left+" right="+right+" width="+widthpopup+" widthdocument="+widthdocument);
+		if (widthpopup + right >= widthdocument) {
+			right = 10;
+		}
+		parentholder.toggleClass("open");
+		parentholder.children(".dropdown-content").css({"right": right+"px", "left": "auto"});
+	});
+
+	// Close drop down
+	jQuery(document).on("click", function(event) {
+		// search if click was outside drop down
+		if (!$(event.target).closest('.butAction.dropdown-toggle').length) {
+			let parentholder = jQuery(".butAction.dropdown-toggle").closest(".dropdown.open");
+			if(parentholder){
+				// Hide the menus.
+				parentholder.removeClass("open");
+			}
+		}
+	});
+});
+
+
+<?php
+if (!getDolGlobalString('MAIN_DISABLE_SELECT2_FOCUS_PROTECTION') && !defined('DISABLE_SELECT2_FOCUS_PROTECTION')) {
+	?>
 /*
- * Hacky fix for a bug in select2 with jQuery 3.6.0's new nested-focus "protection"
+ * Hacky fix for a bug in select2 with jQuery 3.6.4's new nested-focus "protection"
+ * This fix needs to click a second time when clicking into a combo with ajax (see Test4d and Test5a in test_forms.php
  * see: https://github.com/select2/select2/issues/5993
  * see: https://github.com/jquery/jquery/issues/4382
  *
  * TODO: Recheck with the select2 GH issue and remove once this is fixed on their side
  */
-
-<?php
-if (empty($conf->global->MAIN_DISABLE_SELECT2_FOCUS_PROTECTION) && !defined('DISABLE_SELECT2_FOCUS_PROTECTION')) {
-	?>
 $(document).on('select2:open', (e) => {
 	console.log("Execute the focus (click on combo or use space when on component");
 	const target = $(e.target);

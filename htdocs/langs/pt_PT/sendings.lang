@@ -21,7 +21,7 @@ QtyShipped=Quant. Enviada
 QtyShippedShort=Quant. exp.
 QtyPreparedOrShipped=Quantidade preparada ou expedida
 QtyToShip=Quant. a Enviar
-QtyToReceive=Qty to receive
+QtyToReceive=Quantidade a receber
 QtyReceived=Quant. Recebida
 QtyInOtherShipments=Quantidade noutras expedições
 KeepToShip=Quantidade remanescente a expedir
@@ -39,38 +39,48 @@ StatusSendingValidatedShort=Validado
 StatusSendingProcessedShort=Processado
 SendingSheet=Folha de expedição
 ConfirmDeleteSending=Tem certeza de que deseja eliminar esta expedição?
-ConfirmValidateSending=Tem a certeza de que deseja validar esta expedição com a referência <b> %s </b>?
+ConfirmValidateSending=Tem a certeza que pretende para validar este Expedição com a referência  '><b>%s</b>?
 ConfirmCancelSending=Tem a certeza que deseja cancelar esta expedição?
 DocumentModelMerou=Mérou modelo A5
 WarningNoQtyLeftToSend=Atenção, não existe qualquer produto à espera de ser enviado.
-StatsOnShipmentsOnlyValidated=Statistics are only for validated shipments. Date used is the date of validation of shipment (planned delivery date is not always known)
+StatsOnShipmentsOnlyValidated=As estatísticas são apenas para remessas validadas. data usado é o data de validação de validação de Expedição (a entrega planejada data nem sempre é conhecida)
 DateDeliveryPlanned=Data prevista de entrega
 RefDeliveryReceipt=Ref. do recibo de entrega
 StatusReceipt=Estado do recibo de entrega
 DateReceived=Data da entrega recebida
-ClassifyReception=Classify reception
-SendShippingByEMail=Send shipment by email
+ClassifyReception=Classificar Recebido
+SendShippingByEMail=Enviar Expedição por e-mail
 SendShippingRef=Submissão da expedição %s
 ActionsOnShipping=Eventos em embarque
 LinkToTrackYourPackage=Link para acompanhar o seu pacote
-ShipmentCreationIsDoneFromOrder=For the moment, creation of a new shipment is done from the Sales Order record.
+ShipmentCreationIsDoneFromOrder=No momento, a criação de um novo Expedição é feita a partir do registro encomenda de vendas.
 ShipmentLine=Linha da expedição
-ProductQtyInCustomersOrdersRunning=Product quantity from open sales orders
-ProductQtyInSuppliersOrdersRunning=Product quantity from open purchase orders
+ProductQtyInCustomersOrdersRunning=Quantidade de produtos de pedidos de vendas abrir
+ProductQtyInSuppliersOrdersRunning=Quantidade de produtos dos pedidos de compra abrir
 ProductQtyInShipmentAlreadySent=Quantidade do produto da encomenda de venda em aberto já enviado
-ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from open purchase orders already received
-NoProductToShipFoundIntoStock=No product to ship found in warehouse <b>%s</b>. Correct stock or go back to choose another warehouse.
+ProductQtyInSuppliersShipmentAlreadyRecevied=Quantidade de produtos de abrir pedidos de compra já recebidos
+NoProductToShipFoundIntoStock=Nenhum produto para envio foi encontrado no armazém <b>%s</b>. Corrija o estoque ou volte para escolher outro armazém.
 WeightVolShort=Peso/Volume
 ValidateOrderFirstBeforeShipment=Deve validar a encomenda antes de poder efetuar expedições.
+NoLineGoOnTabToAddSome=Sem linha, vá na aba "%s" para adicionar
 
 # Sending methods
 # ModelDocument
 DocumentModelTyphon=Modelo de documento mais completo para a entrega recibos (logo. ..)
-DocumentModelStorm=More complete document model for delivery receipts and extrafields compatibility (logo...)
+DocumentModelStorm=Modelo de documento mais completo para recibos de entrega e compatibilidade de campos extras (logotipo...)
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=EXPEDITION_ADDON_NUMBER constante não definida
 SumOfProductVolumes=Soma dos volumes dos produtos
 SumOfProductWeights=Soma dos pesos dos produtos
 
 # warehouse details
 DetailWarehouseNumber= Detalhes do armazém
-DetailWarehouseFormat= W:%s (Qty: %d)
+DetailWarehouseFormat= W:%s (Qtd: %d)
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Exibir o último data da entrada em estoque durante a criação de Expedição para número de série ou lote
+CreationOptions=Opções disponíveis durante a criação de Expedição
+
+ShipmentDistribution=Distribuição Expedição
+
+ErrorTooManyCombinationBatchcode=Nenhum envio para a linha %s porque muitas combinações de armazém, produto, lote Código foram encontradas (%s).
+ErrorNoCombinationBatchcode=Não foi possível salvar a linha %s como a combinação de armazém-produto-lote/serial (%s, %s,  '>%s, %s) não foi encontrado em estoque.
+
+ErrorTooMuchShipped=A quantidade enviada não deve ser maior que a quantidade solicitada para a linha %s

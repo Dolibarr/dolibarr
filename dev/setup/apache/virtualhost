@@ -71,7 +71,7 @@
     </Files>
 
 
-	# Log directoves        
+	# Log directives        
 	ErrorLog /var/log/apache2/myvirtualalias_error_log
 	TransferLog /var/log/apache2/myvirtualalias_access_log
 	
@@ -82,7 +82,7 @@
 	AddEncoding gzip .jgz
 
 
-	# Add cach performance directives
+	# Add cache performance directives
 	ExpiresActive On
 	ExpiresByType image/x-icon A2592000
 	ExpiresByType image/gif A2592000

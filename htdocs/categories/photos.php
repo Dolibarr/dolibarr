@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2014       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,23 +38,24 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/categories.lib.php';
 $langs->loadlangs(array('categories', 'bills'));
 
 
-$id      = GETPOST('id', 'int');
+$id      = GETPOSTINT('id');
 $label   = GETPOST('label', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm');
 
 if ($id == '' && $label == '') {
-	dol_print_error('', 'Missing parameter id');
+	dol_print_error(null, 'Missing parameter id');
 	exit();
 }
 
-// Security check
-$result = restrictedArea($user, 'categorie', $id, '&category');
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('categorycard'));
 
 $object = new Categorie($db);
 $result = $object->fetch($id, $label);
 if ($result <= 0) {
-	dol_print_error($db, $object->error); exit;
+	dol_print_error($db, $object->error);
+	exit;
 }
 
 $type = $object->type;
@@ -63,36 +65,50 @@ if (is_numeric($type)) {
 
 $upload_dir = $conf->categorie->multidir_output[$object->entity];
 
+// Security check
+$result = restrictedArea($user, 'categorie', $id, '&category');
+
+$permissiontoadd = $user->hasRight('categorie', 'creer');
+
+
 /*
  * Actions
  */
 
-if (isset($_FILES['userfile']) && $_FILES['userfile']['size'] > 0 && GETPOST("sendit") && !empty($conf->global->MAIN_UPLOAD_DOC)) {
-	if ($object->id) {
-		$file = $_FILES['userfile'];
-		if (is_array($file['name']) && count($file['name']) > 0) {
-			foreach ($file['name'] as $i => $name) {
-				if (empty($file['tmp_name'][$i]) || intval($conf->global->MAIN_UPLOAD_DOC) * 1000 <= filesize($file['tmp_name'][$i])) {
-					setEventMessage($file['name'][$i].' : '.$langs->trans(empty($file['tmp_name'][$i]) ? 'ErrorFailedToSaveFile' : 'MaxSizeForUploadedFiles'));
-					unset($file['name'][$i], $file['type'][$i], $file['tmp_name'][$i], $file['error'][$i], $file['size'][$i]);
+$parameters = array('id' => $id,  'label' => $label, 'confirm' => $confirm, 'type' => $type, 'uploaddir' => $upload_dir, 'sendfile' => (GETPOST("sendit") ? true : false));
+// Note that $action and $object may be modified by some hooks
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+
+if (empty($reshook)) {
+	if (isset($_FILES['userfile']) && $_FILES['userfile']['size'] > 0 && GETPOST("sendit") && getDolGlobalString('MAIN_UPLOAD_DOC')) {
+		if ($object->id) {
+			$file = $_FILES['userfile'];
+			if (is_array($file['name']) && count($file['name']) > 0) {
+				foreach ($file['name'] as $i => $name) {
+					if (empty($file['tmp_name'][$i]) || (getDolGlobalInt('MAIN_UPLOAD_DOC') * 1000) <= filesize($file['tmp_name'][$i])) {
+						setEventMessage($file['name'][$i].' : '.$langs->trans(empty($file['tmp_name'][$i]) ? 'ErrorFailedToSaveFile' : 'MaxSizeForUploadedFiles'), 'errors');
+						unset($file['name'][$i], $file['type'][$i], $file['tmp_name'][$i], $file['error'][$i], $file['size'][$i]);
+					}
 				}
 			}
-		}
 
-		if (!empty($file['tmp_name'])) {
-			$object->add_photo($upload_dir, $file);
+			if (!empty($file['tmp_name'])) {
+				$object->add_photo($upload_dir, $file);
+			}
 		}
 	}
-}
 
-if ($action == 'confirm_delete' && $_GET["file"] && $confirm == 'yes' && $user->hasRight('categorie', 'creer')) {
-	$object->delete_photo($upload_dir."/".$_GET["file"]);
-}
+	if ($action == 'confirm_delete' && GETPOST("file") && $confirm == 'yes' && $permissiontoadd) {
+		$object->delete_photo($upload_dir."/".GETPOST("file"));
+	}
 
-if ($action == 'addthumb' && $_GET["file"]) {
-	$object->addThumbs($upload_dir."/".$_GET["file"]);
+	if ($action == 'addthumb' && GETPOST("file") && $permissiontoadd) {
+		$object->addThumbs($upload_dir."/".GETPOST("file"));
+	}
 }
-
 
 /*
  * View
@@ -123,10 +139,10 @@ if ($object->id) {
 	dol_banner_tab($object, 'label', $linkback, ($user->socid ? 0 : 1), 'label', 'label', $morehtmlref, '&type='.$type, 0, '', '', 1);
 
 	/*
-	 * Confirmation de la suppression de photo
-	*/
+	 * Confirmation deletion of picture
+	 */
 	if ($action == 'delete') {
-		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&type='.$type.'&file='.$_GET["file"], $langs->trans('DeletePicture'), $langs->trans('ConfirmDeletePicture'), 'confirm_delete', '', 0, 1);
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&type='.urlencode($type).'&file='.urlencode(GETPOST("file")), $langs->trans('DeletePicture'), $langs->trans('ConfirmDeletePicture'), 'confirm_delete', '', 0, 1);
 	}
 
 	print '<br>';
@@ -160,7 +176,7 @@ if ($object->id) {
 	print '<div class="tabsAction">'."\n";
 
 	if ($action != 'ajout_photo' && $user->hasRight('categorie', 'creer')) {
-		if (!empty($conf->global->MAIN_UPLOAD_DOC)) {
+		if (getDolGlobalString('MAIN_UPLOAD_DOC')) {
 			print '<a class="butAction hideonsmartphone" href="'.$_SERVER['PHP_SELF'].'?action=ajout_photo&amp;id='.$object->id.'&amp;type='.$type.'">';
 			print $langs->trans("AddPhoto").'</a>';
 		} else {
@@ -174,7 +190,7 @@ if ($object->id) {
 	/*
 	 * Ajouter une photo
 	*/
-	if ($action == 'ajout_photo' && $user->hasRight('categorie', 'creer') && !empty($conf->global->MAIN_UPLOAD_DOC)) {
+	if ($action == 'ajout_photo' && $user->hasRight('categorie', 'creer') && getDolGlobalString('MAIN_UPLOAD_DOC')) {
 		// Affiche formulaire upload
 		$formfile = new FormFile($db);
 		$formfile->form_attach_new_file($_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;type='.$type, $langs->trans("AddPhoto"), 1, '', $user->hasRight('categorie', 'creer'), 50, $object, '', false, '', 0);

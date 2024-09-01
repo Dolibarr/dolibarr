@@ -33,9 +33,9 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('trips', 'companies', 'bills', 'orders'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 $action = GETPOST('action', 'aZ09');
 
 $childids = $user->getAllChildIds(1);
@@ -55,15 +55,15 @@ if (!$object->fetch($id, $ref) > 0) {
 	dol_print_error($db);
 }
 
-$permissionnote = $user->rights->expensereport->creer; // Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->hasRight('expensereport', 'creer'); // Used by the include of actions_setnotes.inc.php
 
 if ($object->id > 0) {
 	// Check current user can read this expense report
 	$canread = 0;
-	if (!empty($user->rights->expensereport->readall)) {
+	if ($user->hasRight('expensereport', 'readall')) {
 		$canread = 1;
 	}
-	if (!empty($user->rights->expensereport->lire) && in_array($object->fk_user_author, $childids)) {
+	if ($user->hasRight('expensereport', 'lire') && in_array($object->fk_user_author, $childids)) {
 		$canread = 1;
 	}
 	if (!$canread) {
@@ -80,7 +80,7 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 if (empty($reshook)) {
-	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be 'include', not 'include_once'
 }
 
 

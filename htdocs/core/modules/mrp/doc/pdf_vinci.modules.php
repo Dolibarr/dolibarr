@@ -5,7 +5,9 @@
  * Copyright (C) 2010-2014 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2017      Ferran Marcet         <fmarcet@2byte.es>
- * Copyright (C) 2018-2023 Frédéric France       <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024 Frédéric France       <frederic.france@free.fr>
+ * Copyright (C) 2024      MDW                   <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024      Josep Lluís Amador    <joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +45,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 class pdf_vinci extends ModelePDFMo
 {
 	/**
-	 * @var DoliDb Database handler
+	 * @var DoliDB Database handler
 	 */
 	public $db;
 
@@ -69,7 +71,7 @@ class pdf_vinci extends ModelePDFMo
 
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr';
 
@@ -84,7 +86,7 @@ class pdf_vinci extends ModelePDFMo
 		global $langs, $mysoc;
 
 		// Load translation files required by the page
-		$langs->loadLangs(array("main", "bills"));
+		$langs->loadLangs(array("main", "bills", "mrp"));
 
 		$this->db = $db;
 		$this->name = "vinci";
@@ -116,7 +118,7 @@ class pdf_vinci extends ModelePDFMo
 		}
 
 		// Define position of columns
-		$this->posxdesc = $this->marge_gauche + 1; // For module retrocompatibility support durring PDF transition: TODO remove this at the end
+		$this->posxdesc = $this->marge_gauche + 1; // For module retrocompatibility support during PDF transition: TODO remove this at the end
 	}
 
 
@@ -124,15 +126,15 @@ class pdf_vinci extends ModelePDFMo
 	/**
 	 *  Function to build pdf onto disk
 	 *
-	 *  @param		CommandeFournisseur	$object				Id of object to generate
-	 *  @param		Translate			$outputlangs		Lang output object
-	 *  @param		string				$srctemplatepath	Full path of source filename for generator using a template file
-	 *  @param		int					$hidedetails		Do not show line details
-	 *  @param		int					$hidedesc			Do not show desc
-	 *  @param		int					$hideref			Do not show ref
-	 *  @return		int										1=OK, 0=KO
+	 *	@param		Mo			$object				Object source to build document
+	 *  @param		Translate	$outputlangs		Lang output object
+	 *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file
+	 *  @param		int<0,1>	$hidedetails		Do not show line details
+	 *  @param		int<0,1>	$hidedesc			Do not show desc
+	 *  @param		int<0,1>	$hideref			Do not show ref
+	 *  @return		int<-1,1>							1 if OK, <=0 if KO
 	 */
-	public function write_file($object, $outputlangs = '', $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 		// phpcs:enable
 		global $user, $langs, $conf, $hookmanager, $mysoc;
@@ -141,7 +143,7 @@ class pdf_vinci extends ModelePDFMo
 			$outputlangs = $langs;
 		}
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (!empty($conf->global->MAIN_USE_FPDF)) {
+		if (getDolGlobalString('MAIN_USE_FPDF')) {
 			$outputlangs->charset_output = 'ISO-8859-1';
 		}
 
@@ -150,9 +152,9 @@ class pdf_vinci extends ModelePDFMo
 
 		global $outputlangsbis;
 		$outputlangsbis = null;
-		if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) && $outputlangs->defaultlang != $conf->global->PDF_USE_ALSO_LANGUAGE_CODE) {
+		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && $outputlangs->defaultlang != getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE')) {
 			$outputlangsbis = new Translate('', $conf);
-			$outputlangsbis->setDefaultLang($conf->global->PDF_USE_ALSO_LANGUAGE_CODE);
+			$outputlangsbis->setDefaultLang(getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE'));
 			$outputlangsbis->loadLangs(array("main", "orders", "companies", "bills", "dict", "products"));
 		}
 
@@ -163,12 +165,9 @@ class pdf_vinci extends ModelePDFMo
 		$nblines = count($object->lines);
 
 		$hidetop = 0;
-		if (!empty($conf->global->MAIN_PDF_DISABLE_COL_HEAD_TITLE)) {
-			$hidetop = $conf->global->MAIN_PDF_DISABLE_COL_HEAD_TITLE;
+		if (getDolGlobalString('MAIN_PDF_DISABLE_COL_HEAD_TITLE')) {
+			$hidetop = getDolGlobalString('MAIN_PDF_DISABLE_COL_HEAD_TITLE');
 		}
-
-		// Loop on each lines to detect if there is at least one image to show
-		$realpatharray = array();
 
 		if ($conf->mrp->dir_output) {
 			$object->fetch_thirdparty();
@@ -203,7 +202,7 @@ class pdf_vinci extends ModelePDFMo
 					$hookmanager = new HookManager($this->db);
 				}
 				$hookmanager->initHooks(array('pdfgeneration'));
-				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
@@ -212,9 +211,9 @@ class pdf_vinci extends ModelePDFMo
 				$pdf = pdf_getInstance($this->format);
 				$default_font_size = pdf_getPDFFontSize($outputlangs); // Must be after pdf_getInstance
 				$heightforinfotot = 50; // Height reserved to output the info and total part
-				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
+				$heightforfreetext = getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT', 5); // Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
-				if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS)) {
+				if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS')) {
 					$heightforfooter += 6;
 				}
 				$pdf->SetAutoPageBreak(1, 0);
@@ -225,7 +224,7 @@ class pdf_vinci extends ModelePDFMo
 				}
 				$pdf->SetFont(pdf_getPDFFont($outputlangs));
 				// Set path to the background PDF File
-				if (!empty($conf->global->MAIN_ADD_PDF_BACKGROUND)) {
+				if (getDolGlobalString('MAIN_ADD_PDF_BACKGROUND')) {
 					$pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/' . getDolGlobalString('MAIN_ADD_PDF_BACKGROUND'));
 					$tplidx = $pdf->importPage(1);
 				}
@@ -235,14 +234,15 @@ class pdf_vinci extends ModelePDFMo
 				$pdf->SetDrawColor(128, 128, 128);
 
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
-				$pdf->SetSubject($outputlangs->transnoentities("Mo"));
+				$pdf->SetSubject($outputlangs->transnoentities("ManufacturingOrder"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
-				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Mo")." ".$outputlangs->convToOutputCharset($object->thirdparty->name));
+				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("ManufacturingOrder")." ".$outputlangs->convToOutputCharset($object->thirdparty->name));
 				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
 				}
 
+				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 				// Does we have at least one line with discount $this->atleastonediscount
@@ -333,11 +333,10 @@ class pdf_vinci extends ModelePDFMo
 						}
 
 
-						// apply note frame to previus pages
+						// apply note frame to previous pages
 						$i = $pageposbeforenote;
 						while ($i < $pageposafternote) {
 							$pdf->setPage($i);
-
 
 							$pdf->SetDrawColor(128, 128, 128);
 							// Draw note frame
@@ -391,7 +390,7 @@ class pdf_vinci extends ModelePDFMo
 						}
 					}
 
-					$tab_height = $tab_height - $height_note;
+					$tab_height -= $height_note;
 					$tab_top = $posyafter + 6;
 				} else {
 					$height_note = 0;
@@ -399,7 +398,7 @@ class pdf_vinci extends ModelePDFMo
 
 				$nexY = $tab_top + 5;
 
-				// Use new auto collum system
+				// Use new auto column system
 				$this->prepareArrayColumnField($object, $outputlangs, $hidedetails, $hidedesc, $hideref);
 
 				// Loop on each lines
@@ -419,12 +418,6 @@ class pdf_vinci extends ModelePDFMo
 					$prod = new Product($this->db);
 					$prod->fetch($bom->lines[$i]->fk_product);
 
-					// Define size of image if we need it
-					$imglinesize = array();
-					if (!empty($realpatharray[$i])) {
-						$imglinesize = pdf_getSizeForImage($realpatharray[$i]);
-					}
-
 					$pdf->setTopMargin($tab_top_newpage);
 					$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
 					$pageposbefore = $pdf->getPage();
@@ -433,33 +426,6 @@ class pdf_vinci extends ModelePDFMo
 					$posYAfterImage = 0;
 					$posYAfterDescription = 0;
 
-					// We start with Photo of product line
-					if (!empty($imglinesize['width']) && !empty($imglinesize['height']) && ($curY + $imglinesize['height']) > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot))) {	// If photo too high, we moved completely on new page
-						$pdf->AddPage('', '', true);
-						if (!empty($tplidx)) {
-							$pdf->useTemplate($tplidx);
-						}
-						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
-							$this->_pagehead($pdf, $object, 0, $outputlangs);
-						}
-						$pdf->setPage($pageposbefore + 1);
-
-						$curY = $tab_top_newpage;
-
-						// Allows data in the first page if description is long enough to break in multiples pages
-						if (!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE)) {
-							$showpricebeforepagebreak = 1;
-						} else {
-							$showpricebeforepagebreak = 0;
-						}
-					}
-
-					if (!empty($imglinesize['width']) && !empty($imglinesize['height'])) {
-						$curX = $this->posxpicture - 1;
-						$pdf->Image($realpatharray[$i], $curX + (($this->posxtva - $this->posxpicture - $imglinesize['width']) / 2), $curY, $imglinesize['width'], $imglinesize['height'], '', '', '', 2, 300); // Use 300 dpi
-						// $pdf->Image does not increase value return by getY, so we save it manually
-						$posYAfterImage = $curY + $imglinesize['height'];
-					}
 					// Description of product line
 					$curX = $this->posxdesc - 1;
 					$showpricebeforepagebreak = 1;
@@ -490,14 +456,13 @@ class pdf_vinci extends ModelePDFMo
 							} else {
 								// We found a page break
 								// Allows data in the first page if description is long enough to break in multiples pages
-								if (!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE)) {
+								if (getDolGlobalString('MAIN_PDF_DATA_ON_FIRST_PAGE')) {
 									$showpricebeforepagebreak = 1;
 								} else {
 									$showpricebeforepagebreak = 0;
 								}
 							}
-						} else // No pagebreak
-						{
+						} else { // No pagebreak
 							$pdf->commitTransaction();
 						}
 						$posYAfterDescription = $pdf->GetY();
@@ -542,14 +507,13 @@ class pdf_vinci extends ModelePDFMo
 							} else {
 								// We found a page break
 								// Allows data in the first page if description is long enough to break in multiples pages
-								if (!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE)) {
+								if (getDolGlobalString('MAIN_PDF_DATA_ON_FIRST_PAGE')) {
 									$showpricebeforepagebreak = 1;
 								} else {
 									$showpricebeforepagebreak = 0;
 								}
 							}
-						} else // No pagebreak
-						{
+						} else { // No pagebreak
 							$pdf->commitTransaction();
 						}
 						$posYAfterDescription = max($posYAfterDescription, $pdf->GetY());
@@ -567,7 +531,7 @@ class pdf_vinci extends ModelePDFMo
 						$curY = $tab_top_newpage;
 					}
 
-					$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par defaut
+					$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par default
 
 					// Quantity
 					// Enough for 6 chars
@@ -595,8 +559,6 @@ class pdf_vinci extends ModelePDFMo
 				}
 
 
-
-
 				// Show square
 				if ($pagenb == $pageposbeforeprintlines) {
 					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, $hidetop, 0, $object->multicurrency_code);
@@ -620,7 +582,7 @@ class pdf_vinci extends ModelePDFMo
 				// Pied de page
 				$this->_pagefoot($pdf, $object, $outputlangs);
 				if (method_exists($pdf, 'AliasNbPages')) {
-					$pdf->AliasNbPages();
+					$pdf->AliasNbPages();  // @phan-suppress-current-line PhanUndeclaredMethod
 				}
 
 				$pdf->Close();
@@ -629,7 +591,7 @@ class pdf_vinci extends ModelePDFMo
 
 				// Add pdfgeneration hook
 				$hookmanager->initHooks(array('pdfgeneration'));
-				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {
@@ -639,7 +601,7 @@ class pdf_vinci extends ModelePDFMo
 
 				dolChmod($file);
 
-				$this->result = array('fullpath'=>$file);
+				$this->result = array('fullpath' => $file);
 
 				return 1; // No error
 			} else {
@@ -658,10 +620,10 @@ class pdf_vinci extends ModelePDFMo
 	 *  Show payments table
 	 *
 	 *  @param	TCPDF		$pdf     		Object PDF
-	 *  @param  CommandeFournisseur		$object			Object order
+	 *  @param  Mo			$object			Object order
 	 *	@param	int			$posy			Position y in PDF
 	 *	@param	Translate	$outputlangs	Object langs for output
-	 *	@return int							<0 if KO, >0 if OK
+	 *	@return int							Return integer <0 if KO, >0 if OK
 	 */
 	protected function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
 	{
@@ -675,7 +637,7 @@ class pdf_vinci extends ModelePDFMo
 	 *   Show miscellaneous information (payment mode, payment term, ...)
 	 *
 	 *   @param		TCPDF		$pdf     		Object PDF
-	 *   @param		CommandeFournisseur		$object			Object to show
+	 *   @param		Mo			$object			Object to show
 	 *   @param		int			$posy			Y
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @return	integer
@@ -706,7 +668,7 @@ class pdf_vinci extends ModelePDFMo
 
 			$pdf->SetFont('', '', $default_font_size - 2);
 			$pdf->SetXY($posxval, $posy);
-			$lib_condition_paiement = $outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code) != ('PaymentCondition'.$object->cond_reglement_code) ? $outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code) : $outputlangs->convToOutputCharset($object->cond_reglement_doc ? $object->cond_reglement_doc : $object->cond_reglement_label);
+			$lib_condition_paiement = ($outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code) != 'PaymentCondition'.$object->cond_reglement_code) ? $outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code) : $outputlangs->convToOutputCharset($object->cond_reglement_doc ? $object->cond_reglement_doc : $object->cond_reglement_label);
 			$lib_condition_paiement = str_replace('\n', "\n", $lib_condition_paiement);
 			$pdf->MultiCell(80, 4, $lib_condition_paiement, 0, 'L');
 
@@ -722,7 +684,7 @@ class pdf_vinci extends ModelePDFMo
 
 			$pdf->SetFont('', '', $default_font_size - 2);
 			$pdf->SetXY($posxval, $posy);
-			$lib_mode_reg = $outputlangs->transnoentities("PaymentType".$object->mode_reglement_code) != ('PaymentType'.$object->mode_reglement_code) ? $outputlangs->transnoentities("PaymentType".$object->mode_reglement_code) : $outputlangs->convToOutputCharset($object->mode_reglement);
+			$lib_mode_reg = $outputlangs->transnoentities("PaymentType".$object->mode_reglement_code) != 'PaymentType'.$object->mode_reglement_code ? $outputlangs->transnoentities("PaymentType".$object->mode_reglement_code) : $outputlangs->convToOutputCharset($object->mode_reglement);
 			$pdf->MultiCell(80, 5, $lib_mode_reg, 0, 'L');
 
 			$posy = $pdf->GetY() + 2;
@@ -741,7 +703,7 @@ class pdf_vinci extends ModelePDFMo
 	 *	@param  Facture		$object         Object invoice
 	 *	@param  int			$deja_regle     Montant deja regle
 	 *	@param	int			$posy			Position depart
-	 *	@param	Translate	$outputlangs	Objet langs
+	 *	@param	Translate	$outputlangs	Object langs
 	 *	@return int							Position pour suite
 	 */
 	protected function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
@@ -829,7 +791,7 @@ class pdf_vinci extends ModelePDFMo
 		} else {
 			//if (!empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
 			//{
-				//Local tax 1
+			//Local tax 1
 			foreach ($this->localtax1 as $localtax_type => $localtax_rate) {
 				if (in_array((string) $localtax_type, array('2', '4', '6'))) {
 					continue;
@@ -848,7 +810,7 @@ class pdf_vinci extends ModelePDFMo
 							$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 						}
 						$totalvat = $outputlangs->transcountrynoentities("TotalLT1", $mysoc->country_code).' ';
-						$totalvat .= vatrate(abs($tvakey), 1).$tvacompl;
+						$totalvat .= vatrate(abs((float) $tvakey), 1).$tvacompl;
 						$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
 						$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
@@ -859,7 +821,7 @@ class pdf_vinci extends ModelePDFMo
 
 			//if (!empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')
 			//{
-				//Local tax 2
+			//Local tax 2
 			foreach ($this->localtax2 as $localtax_type => $localtax_rate) {
 				if (in_array((string) $localtax_type, array('2', '4', '6'))) {
 					continue;
@@ -878,7 +840,7 @@ class pdf_vinci extends ModelePDFMo
 							$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 						}
 						$totalvat = $outputlangs->transcountrynoentities("TotalLT2", $mysoc->country_code).' ';
-						$totalvat .= vatrate(abs($tvakey), 1).$tvacompl;
+						$totalvat .= vatrate(abs((float) $tvakey), 1).$tvacompl;
 						$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
 						$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
@@ -942,8 +904,8 @@ class pdf_vinci extends ModelePDFMo
 	 *   Show table for lines
 	 *
 	 *   @param		TCPDF		$pdf     		Object PDF
-	 *   @param		string		$tab_top		Top position of table
-	 *   @param		string		$tab_height		Height of table (rectangle)
+	 *   @param		float|int	$tab_top		Top position of table
+	 *   @param		float|int	$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y (not used)
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @param		int			$hidetop		Hide top bar of array
@@ -975,8 +937,8 @@ class pdf_vinci extends ModelePDFMo
 			$pdf->MultiCell(($pdf->GetStringWidth($title) + 3), 2, $title);
 
 			//$conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR='230,230,230';
-			if (!empty($conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR)) {
-				$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, $this->tabTitleHeight, 'F', null, explode(',', $conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR));
+			if (getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')) {
+				$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, $this->tabTitleHeight, 'F', null, explode(',', getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')));
 			}
 		}
 
@@ -999,7 +961,7 @@ class pdf_vinci extends ModelePDFMo
 				$pdf->line($colDef['xStartPos'], $tab_top, $colDef['xStartPos'], $tab_top + $tab_height);
 			}
 
-			if (empty($hidetop)) {
+			if (empty($hidetop) && array_key_exists('title', $colDef) && array_key_exists('width', $colDef)) {
 				$pdf->SetXY($colDef['xStartPos'] + $colDef['title']['padding'][3], $tab_top + $colDef['title']['padding'][0]);
 
 				$textWidth = $colDef['width'] - $colDef['title']['padding'][3] - $colDef['title']['padding'][1];
@@ -1017,20 +979,22 @@ class pdf_vinci extends ModelePDFMo
 	 *  Show top header of page.
 	 *
 	 *  @param	TCPDF		$pdf     		Object PDF
-	 *  @param  CommandeFournisseur		$object     	Object to show
+	 *  @param  Mo			$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
-	 *  @return	float|int
+	 *  @return	float|int                   Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
 		global $langs, $conf, $mysoc;
 
 		$ltrdirection = 'L';
-		if ($outputlangs->trans("DIRECTION") == 'rtl') $ltrdirection = 'R';
+		if ($outputlangs->trans("DIRECTION") == 'rtl') {
+			$ltrdirection = 'R';
+		}
 
 		// Load translation files required by the page
-		$outputlangs->loadLangs(array("main", "orders", "companies", "bills", "sendings"));
+		$outputlangs->loadLangs(array("main", "orders", "companies", "bills", "sendings", "mrp"));
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
@@ -1073,7 +1037,7 @@ class pdf_vinci extends ModelePDFMo
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
-		$title = $outputlangs->transnoentities("Mo")." ".$outputlangs->convToOutputCharset($object->ref);
+		$title = $outputlangs->transnoentities("ManufacturingOrder")." ".$outputlangs->convToOutputCharset($object->ref);
 		$pdf->MultiCell(100, 3, $title, '', 'R');
 		$posy += 1;
 
@@ -1087,7 +1051,7 @@ class pdf_vinci extends ModelePDFMo
 		}
 
 		$pdf->SetFont('', '', $default_font_size - 1);
-		if (!empty($conf->global->PDF_SHOW_PROJECT_TITLE)) {
+		if (getDolGlobalString('PDF_SHOW_PROJECT_TITLE')) {
 			$object->fetch_projet();
 			if (!empty($object->project->ref)) {
 				$posy += 3;
@@ -1097,7 +1061,7 @@ class pdf_vinci extends ModelePDFMo
 			}
 		}
 
-		if (!empty($conf->global->PDF_SHOW_PROJECT)) {
+		if (getDolGlobalString('PDF_SHOW_PROJECT')) {
 			$object->fetch_projet();
 			if (!empty($object->project->ref)) {
 				$outputlangs->load("projects");
@@ -1138,7 +1102,7 @@ class pdf_vinci extends ModelePDFMo
 			$pdf->SetFont('', 'B', $default_font_size + 3);
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, html_entity_decode($prodToMake->description), '', 'R');
+			$pdf->MultiCell($w, 3, html_entity_decode($prodToMake->description), '', 'R', false, 1, '', '', true, 0, false, true, 51, 'T', true);
 			$posy = $pdf->GetY() - 5;
 
 			// dimensions
@@ -1162,7 +1126,7 @@ class pdf_vinci extends ModelePDFMo
 
 		$pdf->SetTextColor(0, 0, 60);
 		$usehourmin = 'day';
-		if (!empty($conf->global->SUPPLIER_ORDER_USE_HOUR_FOR_DELIVERY_DATE)) {
+		if (getDolGlobalString('SUPPLIER_ORDER_USE_HOUR_FOR_DELIVERY_DATE')) {
 			$usehourmin = 'dayhour';
 		}
 		if (!empty($object->delivery_date)) {
@@ -1179,7 +1143,7 @@ class pdf_vinci extends ModelePDFMo
 		}
 
 		// Get contact
-		if (!empty($conf->global->DOC_SHOW_FIRST_SALES_REP)) {
+		if (getDolGlobalString('DOC_SHOW_FIRST_SALES_REP')) {
 			$arrayidcontact = $object->getIdContact('internal', 'SALESREPFOLL');
 			if (count($arrayidcontact) > 0) {
 				$usertmp = new User($this->db);
@@ -1224,7 +1188,7 @@ class pdf_vinci extends ModelePDFMo
 			// Show sender
 			$posy = 42 + $top_shift;
 			$posx = $this->marge_gauche;
-			if (!empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) {
+			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
 				$posx = $this->page_largeur - $this->marge_droite - 80;
 			}
 			$hautcadre = 40;
@@ -1261,7 +1225,7 @@ class pdf_vinci extends ModelePDFMo
 			}
 
 			// Recipient name
-			if ($usecontact && ($object->contact->fk_soc != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
+			if ($usecontact && ($object->contact->fk_soc != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT')))) {
 				$thirdparty = $object->contact;
 			} else {
 				$thirdparty = $object->thirdparty;
@@ -1310,7 +1274,7 @@ class pdf_vinci extends ModelePDFMo
 	 *   	Show footer of page. Need this->emetteur object
 	 *
 	 *   	@param	TCPDF		$pdf     			PDF
-	 * 		@param	CommandeFournisseur		$object				Object to show
+	 * 		@param	Mo			$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output
 	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	int								Return height of bottom margin including footer text
@@ -1322,15 +1286,14 @@ class pdf_vinci extends ModelePDFMo
 	}
 
 
-
 	/**
 	 *   	Define Array Column Field
 	 *
-	 *   	@param	object			$object    		common object
+	 *   	@param	Mo				$object    		common object
 	 *   	@param	Translate		$outputlangs    langs
-	 *      @param	int			   $hidedetails		Do not show line details
-	 *      @param	int			   $hidedesc		Do not show desc
-	 *      @param	int			   $hideref			Do not show ref
+	 *      @param	int				$hidedetails		Do not show line details
+	 *      @param	int				$hidedesc		Do not show desc
+	 *      @param	int				$hideref			Do not show ref
 	 *      @return	void
 	 */
 	public function defineColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
@@ -1350,18 +1313,18 @@ class pdf_vinci extends ModelePDFMo
 		);
 
 		/*
-		 * For exemple
+		 * For example
 		 $this->cols['theColKey'] = array(
 		 'rank' => $rank, // int : use for ordering columns
 		 'width' => 20, // the column width in mm
 		 'title' => array(
 		 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 		 'label' => ' ', // the final label : used fore final generated text
-		 'align' => 'L', // text alignement :  R,C,L
+		 'align' => 'L', // text alignment :  R,C,L
 		 'padding' => array(0.5,0.5,0.5,0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 		 ),
 		 'content' => array(
-		 'align' => 'L', // text alignement :  R,C,L
+		 'align' => 'L', // text alignment :  R,C,L
 		 'padding' => array(0.5,0.5,0.5,0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 		 ),
 		 );
@@ -1372,9 +1335,15 @@ class pdf_vinci extends ModelePDFMo
 			'status' => true,
 			'width' => 35, // in mm
 			'title' => array(
-				'textkey' => 'Ref'
+				'textkey' => 'Ref',
+				'align' => 'L',
+				'padding' => array(0.5, 1, 0.5, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			),
 			'border-left' => true, // add left line separator
+			'content' => array(
+				'align' => 'L',
+				'padding' => array(1, 0.5, 1, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+			),
 		);
 
 		$rank = 1; // do not use negative rank
@@ -1383,7 +1352,7 @@ class pdf_vinci extends ModelePDFMo
 			'width' => false, // only for desc
 			'status' => true,
 			'title' => array(
-				'textkey' => 'Designation', // use lang key is usefull in somme case with module
+				'textkey' => 'Designation', // use lang key is useful in somme case with module
 				'align' => 'L',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
@@ -1396,37 +1365,18 @@ class pdf_vinci extends ModelePDFMo
 			),
 		);
 
-		$rank = $rank + 10;
-		$this->cols['photo'] = array(
-			'rank' => $rank,
-			'width' => (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH) ? 20 : $conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH), // in mm
-			'status' => false,
-			'title' => array(
-				'textkey' => 'Photo',
-				'label' => ' '
-			),
-			'content' => array(
-				'padding' => array(0, 0, 0, 0), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
-			),
-			'border-left' => false, // remove left line separator
-		);
-
-		if (!empty($conf->global->MAIN_GENERATE_ORDERS_WITH_PICTURE)) {
-			$this->cols['photo']['status'] = true;
-		}
-
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['dim'] = array(
 			'rank' => $rank,
 			'status' => true,
 			'width' => 25, // in mm
 			'title' => array(
-				'textkey' => 'Size'
+				'textkey' => 'Dimensions'
 			),
 			'border-left' => true, // add left line separator
 		);
 
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['qty'] = array(
 			'rank' => $rank,
 			'width' => 16, // in mm
@@ -1437,7 +1387,7 @@ class pdf_vinci extends ModelePDFMo
 			'border-left' => true, // add left line separator
 		);
 
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['qtytot'] = array(
 			'rank' => $rank,
 			'width' => 25, // in mm
@@ -1466,6 +1416,7 @@ class pdf_vinci extends ModelePDFMo
 		if ($reshook < 0) {
 			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 		} elseif (empty($reshook)) {
+			// @phan-suppress-next-line PhanPluginSuspiciousParamOrderInternal
 			$this->cols = array_replace($this->cols, $hookmanager->resArray); // array_replace is used to preserve keys
 		} else {
 			$this->cols = $hookmanager->resArray;
