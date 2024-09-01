@@ -119,7 +119,7 @@ if ($action == "view" || $action == "presend" || $action == "dosubmit") {	// Tes
 	}
 
 	/*
-	if (!$error && $action == "dosubmit")
+	if (!$error && $action == "dosubmit")	// Test on permission not required here (anonymous action protected by mitigation of /public/... urls)
 	{
 		// Test MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS
 
@@ -136,7 +136,7 @@ if ($action == "view" || $action == "presend" || $action == "dosubmit") {	// Tes
 
 	if ($error || $errors) {
 		setEventMessages($object->error, $object->errors, 'errors');
-		if ($action == "dosubmit") {
+		if ($action == "dosubmit") {	// Test on permission not required here
 			$action = 'presend';
 		} else {
 			$action = '';

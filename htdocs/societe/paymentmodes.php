@@ -541,7 +541,7 @@ if (empty($reshook)) {
 				$error++;
 				setEventMessages('ThisThirdpartyIsNotACustomer', null, 'errors');
 			} else {
-				if ($action == 'synccustomertostripe') {
+				if ($action == 'synccustomertostripe') {	// Test on permission already done
 					$tmpservicestatus = 1;
 					$tmpservice = 'StripeLive';
 				} else {
