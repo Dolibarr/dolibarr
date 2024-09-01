@@ -2321,10 +2321,10 @@ if ((($action == 'updatesource' || $action == 'updatecontent' || $action == 'con
 			$error = checkPHPCode($phpfullcodestringold, $phpfullcodestring);
 
 			if ($error) {
-				if ($action == 'updatesource') {
+				if ($action == 'updatesource') {	// Test on permissions already done
 					$action = 'editsource';
 				}
-				if ($action == 'updatecontent') {
+				if ($action == 'updatecontent') {	// Test on permissions already done
 					$action = 'editcontent';
 				}
 			}
