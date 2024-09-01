@@ -270,12 +270,7 @@ $socialnetworksdict = getArrayOfSocialNetworks();
 // Show barcode
 $showbarcode = GETPOST('nobarcode') ? 0 : 1;
 if ($showbarcode) {
-	$outdir = '/tmp';
-	if ($object instanceof User) {
-		$outdir = $conf->user->dir_temp;
-	} elseif ($object instanceof Contact) {
-		$outdir = $conf->contact->dir_temp;
-	}
+	$outdir = $conf->user->dir_temp;
 
 	$filename = $v->buildVCardString($object, $company, $langs, '', $outdir);
 
