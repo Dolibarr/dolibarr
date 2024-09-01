@@ -2700,6 +2700,7 @@ class User extends CommonObject
 		$sql .= " WHERE fk_user = ".((int) $this->id);
 
 		dol_syslog(get_class($this).'::update_clicktodial', LOG_DEBUG);
+
 		$result = $this->db->query($sql);
 
 		$sql = "INSERT INTO ".$this->db->prefix()."user_clicktodial";
@@ -2711,6 +2712,7 @@ class User extends CommonObject
 		$sql .= ", '".$this->db->escape($this->clicktodial_poste)."')";
 
 		dol_syslog(get_class($this).'::update_clicktodial', LOG_DEBUG);
+
 		$result = $this->db->query($sql);
 		if ($result) {
 			$this->db->commit();

@@ -115,7 +115,10 @@ if (!$action) {
 	}
 }
 
-if ($source == 'organizedeventregistration') {
+
+// Load data required later for actions and view
+
+if ($source == 'organizedeventregistration') {		// Test on permission not required here (anonymous action protected by mitigation of /public/... urls)
 	// Finding the Attendee
 	$attendee = new ConferenceOrBoothAttendee($db);
 
@@ -166,7 +169,7 @@ if ($source == 'organizedeventregistration') {
 			}
 		}
 	}
-} elseif ($source == 'boothlocation') {
+} elseif ($source == 'boothlocation') {			// Test on permission not required here (anonymous action protected by mitigation of /public/... urls)
 	// Getting the amount to pay, the invoice, finding the thirdparty
 	$invoiceid = GETPOST('ref');
 	$invoice = new Facture($db);
@@ -361,7 +364,7 @@ $mesg = '';
  */
 
 // Action dopayment is called after clicking/choosing the payment mode
-if ($action == 'dopayment') {
+if ($action == 'dopayment') {	// Test on permission not required here (anonymous action protected by mitigation of /public/... urls)
 	dol_syslog("--- newpayment.php Execute action = ".$action." paymentmethod=".$paymentmethod.' amount='.$amount.' newamount='.GETPOST("newamount", 'alpha'), LOG_DEBUG, 0, '_payment');
 
 	if ($paymentmethod == 'paypal') {
@@ -488,7 +491,7 @@ if ($action == 'dopayment') {
 // Called when choosing Stripe mode.
 // When using the old Charge API architecture, this code is called after clicking the 'dopayment' with the Charge API architecture.
 // When using the PaymentIntent API architecture, the Stripe customer was already created when creating PaymentIntent when showing payment page, and the payment is already ok when action=charge.
-if ($action == 'charge' && isModEnabled('stripe')) {
+if ($action == 'charge' && isModEnabled('stripe')) {	// Test on permission not required here (anonymous action protected by mitigation of /public/... urls)
 	$amountstripe = (float) $amount;
 
 	// Correct the amount according to unit of currency

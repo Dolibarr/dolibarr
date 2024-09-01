@@ -2321,10 +2321,10 @@ if ((($action == 'updatesource' || $action == 'updatecontent' || $action == 'con
 			$error = checkPHPCode($phpfullcodestringold, $phpfullcodestring);
 
 			if ($error) {
-				if ($action == 'updatesource') {
+				if ($action == 'updatesource') {	// Test on permissions already done
 					$action = 'editsource';
 				}
-				if ($action == 'updatecontent') {
+				if ($action == 'updatecontent') {	// Test on permissions already done
 					$action = 'editcontent';
 				}
 			}
@@ -2338,10 +2338,10 @@ if ((($action == 'updatesource' || $action == 'updatecontent' || $action == 'con
 			if ($res < 0) {
 				$error++;
 				setEventMessages($objectpage->error, $objectpage->errors, 'errors');
-				if ($action == 'updatesource') {
+				if ($action == 'updatesource') {	// Test on permissions already done
 					$action = 'editsource';
 				}
-				if ($action == 'updatecontent') {
+				if ($action == 'updatecontent') {	// Test on permissions already done
 					$action = 'editcontent';
 				}
 			}
@@ -2400,10 +2400,10 @@ if ((($action == 'updatesource' || $action == 'updatecontent' || $action == 'con
 							exit;
 						}
 					} else {
-						if ($action == 'updatesource') {
+						if ($action == 'updatesource') {	// Test on permissions already done
 							$action = 'editsource';
 						}
-						if ($action == 'updatecontent') {
+						if ($action == 'updatecontent') {	// Test on permissions already done
 							$action = 'editcontent';
 						}
 					}
