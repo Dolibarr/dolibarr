@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2001-2006  Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2019  Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2017       Pierre-Henry Favre   <support@atm-consulting.fr>
- * Copyright (C) 2020       Maxime DEMAREST      <maxime@indelog.fr>
- * Copyright (C) 2021       Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2022-2024  Alexandre Spangaro   <aspangaro@easya.solutions>
+/* Copyright (C) 2001-2006  Rodolphe Quiedeville        <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2019  Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2017       Pierre-Henry Favre          <support@atm-consulting.fr>
+ * Copyright (C) 2020       Maxime DEMAREST             <maxime@indelog.fr>
+ * Copyright (C) 2021       Gauthier VERDOL             <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2022-2024  Alexandre Spangaro          <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -206,17 +206,33 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 			}
 		}
 		// Expense reports
-		if (GETPOST('selectexpensereports') && !empty($listofchoices['selectexpensereports']['perms']) && empty($projectid)) {
+		if (GETPOST('selectexpensereports') && !empty($listofchoices['selectexpensereports']['perms'])) {
 			if (!empty($sql)) {
 				$sql .= " UNION ALL";
 			}
-			$sql .= " SELECT t.rowid as id, t.entity, t.ref, t.paid, t.total_ht, t.total_ttc, t.total_tva as total_vat,";
-			$sql .= " 0 as localtax1, 0 as localtax2, 0 as revenuestamp,";
-			$sql .= " t.multicurrency_code as currency, t.fk_user_author as fk_soc, t.date_fin as date, t.date_fin as date_due, 'ExpenseReport' as item, CONCAT(CONCAT(u.lastname, ' '), u.firstname) as thirdparty_name, '' as thirdparty_code, c.code as country_code, '' as vatnum, ".PAY_DEBIT." as sens";
-			$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as t LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = t.fk_user_author LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = u.fk_country";
-			$sql .= " WHERE date_fin between  ".$wheretail;
-			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
-			$sql .= " AND t.fk_statut <> ".ExpenseReport::STATUS_DRAFT;
+			// if project filter is used on an expense report,
+			// show only total_ht/total_tva/total_ttc of the line considered by the project
+			if (!empty($projectid)) {
+				$sql .= " SELECT t.rowid as id, t.entity, t.ref, t.paid, td.total_ht, td.total_ttc, td.total_tva as total_vat,";
+				$sql .= " 0 as localtax1, 0 as localtax2, 0 as revenuestamp,";
+				$sql .= " td.multicurrency_code as currency, t.fk_user_author as fk_soc, t.date_fin as date, t.date_fin as date_due, 'ExpenseReport' as item, CONCAT(CONCAT(u.lastname, ' '), u.firstname) as thirdparty_name, '' as thirdparty_code, c.code as country_code, '' as vatnum, " . PAY_DEBIT . " as sens";
+				$sql .= " FROM " . MAIN_DB_PREFIX . "expensereport as t";
+				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "expensereport_det as td ON t.rowid = td.fk_expensereport";
+				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "user as u ON u.rowid = t.fk_user_author";
+				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_country as c ON c.rowid = u.fk_country";
+				$sql .= " WHERE date_fin between  " . $wheretail;
+				$sql .= " AND t.entity IN (" . $db->sanitize($entity == 1 ? '0,1' : $entity) . ')';
+				$sql .= " AND t.fk_statut <> " . ExpenseReport::STATUS_DRAFT;
+				$sql .= " AND fk_projet = ".((int) $projectid);
+			} else {
+				$sql .= " SELECT t.rowid as id, t.entity, t.ref, t.paid, t.total_ht, t.total_ttc, t.total_tva as total_vat,";
+				$sql .= " 0 as localtax1, 0 as localtax2, 0 as revenuestamp,";
+				$sql .= " t.multicurrency_code as currency, t.fk_user_author as fk_soc, t.date_fin as date, t.date_fin as date_due, 'ExpenseReport' as item, CONCAT(CONCAT(u.lastname, ' '), u.firstname) as thirdparty_name, '' as thirdparty_code, c.code as country_code, '' as vatnum, " . PAY_DEBIT . " as sens";
+				$sql .= " FROM " . MAIN_DB_PREFIX . "expensereport as t LEFT JOIN " . MAIN_DB_PREFIX . "user as u ON u.rowid = t.fk_user_author LEFT JOIN " . MAIN_DB_PREFIX . "c_country as c ON c.rowid = u.fk_country";
+				$sql .= " WHERE date_fin between  " . $wheretail;
+				$sql .= " AND t.entity IN (" . $db->sanitize($entity == 1 ? '0,1' : $entity) . ')';
+				$sql .= " AND t.fk_statut <> " . ExpenseReport::STATUS_DRAFT;
+			}
 		}
 		// Donations
 		if (GETPOST('selectdonations') && !empty($listofchoices['selectdonations']['perms'])) {
