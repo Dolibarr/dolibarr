@@ -118,7 +118,7 @@ if (getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT')
 }
 
 if ($virtualdiffersfromphysical) {
-	$usevirtualstock = !getDolGlobalString('STOCK_USE_REAL_STOCK_BY_DEFAULT_FOR_REPLENISHMENT') ? 1 : 0;
+	$usevirtualstock = getDolGlobalString('STOCK_USE_REAL_STOCK_BY_DEFAULT_FOR_REPLENISHMENT') ? 0 : 1;
 } else {
 	$usevirtualstock = 0;
 }
@@ -153,8 +153,8 @@ if ($draftorder == 'on') {
 	$draftchecked = "checked";
 }
 
-// Create orders
-if ($action == 'order' && GETPOST('valid')) {
+// Create purchase orders
+if ($action == 'order' && GETPOST('valid') && $user->hasRight('fournisseur', 'commande', 'creer')) {
 	$linecount = GETPOSTINT('linecount');
 	$box = 0;
 	$errorQty = 0;
@@ -208,6 +208,7 @@ if ($action == 'order' && GETPOST('valid')) {
 						$line->ref_fourn = $productsupplier->ref_supplier;
 						$line->type = $productsupplier->type;
 						$line->fk_unit = $productsupplier->fk_unit;
+
 						$suppliers[$productsupplier->fourn_socid]['lines'][] = $line;
 					}
 				} elseif ($idprod == -1) {
