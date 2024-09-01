@@ -171,6 +171,8 @@ if (isModEnabled("reception")) {
 	$permissiontodelete = $user->hasRight('fournisseur', 'commande', 'receptionner');
 }
 
+$error = 0;
+
 
 /*
  * Actions
@@ -289,11 +291,11 @@ if (empty($reshook)) {
 	// Create reception
 	if ($action == 'add' && $permissiontoadd) {
 		$error = 0;
-		$predef = '';
 
 		$db->begin();
 
 		$object->note = GETPOST('note', 'alpha');
+		$object->note_private = GETPOST('note', 'alpha');
 		$object->origin = $origin;
 		$object->origin_id = $origin_id;
 		$object->fk_project = GETPOSTINT('projectid');

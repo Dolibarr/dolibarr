@@ -193,7 +193,7 @@ if ($date && $dateIsValid) {	// Avoid heavy sql if mandatory date is not defined
 		dol_print_error($db);
 	}
 	//var_dump($stock_prod_warehouse);
-} elseif ($action == 'filter') {
+} elseif ($action == 'filter') {	// Test on permissions not required here
 	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
 }
 

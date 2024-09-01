@@ -30,6 +30,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 $langs->loadLangs(array('users', 'admin'));
 
 $action = (string) GETPOST('action', 'aZ09');
+$cancel = GETPOST('cancel', 'aZ09');
+
 $id = GETPOSTINT('id');
 
 // Security check
@@ -45,6 +47,7 @@ $hookmanager->initHooks(array('usercard', 'globalcard'));
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
 // Define value to know what current user can do on properties of edited user
+$canedituser = 0;
 if ($id > 0) {
 	// $user is the current logged user, $id is the user we want to edit
 	$canedituser = (($user->id == $id) && $user->hasRight("user", "self", "write")) || (($user->id != $id) && $user->hasRight("user", "user", "write"));
@@ -62,7 +65,7 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	if ($action == 'update' && !GETPOST('cancel', 'alpha') && $canedituser) {
+	if ($action == 'update' && !$cancel && $canedituser) {
 		$edituser = new User($db);
 		$edituser->fetch($id);
 

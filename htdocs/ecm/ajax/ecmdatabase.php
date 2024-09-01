@@ -41,6 +41,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 $action = GETPOST('action', 'aZ09');
 $element = GETPOST('element', 'alpha');
 
+$permissiontoread = $user->hasRight('ecm', 'read');
+
+
+/*
+ * Actions
+ */
+
+// None
+
 
 /*
  * View
@@ -54,7 +63,7 @@ top_httphead();
 if (isset($action) && !empty($action)) {
 	$error = 0;
 
-	if ($action == 'build' && !empty($element)) {
+	if ($action == 'build' && !empty($element) && $permissiontoread) {
 		require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
 		$ecmdirstatic = new EcmDirectory($db);

@@ -228,7 +228,7 @@ if ($action == 'setbankaccount' && $permissiontoadd) {
 	}
 }
 
-if ($action == 'add' && empty($cancel)) {
+if ($action == 'add' && empty($cancel) && $permissiontoadd) {
 	$error = 0;
 
 	if (empty($datev)) {
@@ -344,7 +344,7 @@ if ($action == 'add' && empty($cancel)) {
 	$action = 'create';
 }
 
-if ($action == 'confirm_delete') {
+if ($action == 'confirm_delete' && $permissiontodelete) {
 	$result = $object->fetch($id);
 	$totalpaid = $object->getSommePaiement();
 
@@ -389,7 +389,7 @@ if ($action == 'update' && !GETPOST("cancel") && $permissiontoadd) {
 	}
 }
 
-if ($action == 'confirm_clone' && $confirm != 'yes') {
+if ($action == 'confirm_clone' && $confirm != 'yes') {	// Test on permission not required here
 	$action = '';
 }
 
