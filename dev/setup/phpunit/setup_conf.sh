@@ -194,6 +194,7 @@ set +e
 	echo '$'force_install_databaselogin=\'travis\'';'
 	echo '$'force_install_databasepass=\'\'';'
 	echo '$'force_install_prefix=\'llx_\'';'
+	echo '$'force_install_createuser=false';'
 } > "$INSTALL_FORCED_FILE"
 
 if [ "$load_cache" != "1" ] ; then
