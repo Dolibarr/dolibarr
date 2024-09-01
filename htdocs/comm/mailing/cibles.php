@@ -268,22 +268,22 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 }
 
 // Action update description of emailing
-if ($action == 'settitle' || $action == 'setemail_from' || $action == 'setreplyto' || $action == 'setemail_errorsto' || $action == 'setevenunsubscribe') {
+if (($action == 'settitle' || $action == 'setemail_from' || $action == 'setreplyto' || $action == 'setemail_errorsto' || $action == 'setevenunsubscribe') && $permissiontocreate) {
 	$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, 2, 0, 1, $object, 'mailing');
 
-	if ($action == 'settitle') {
+	if ($action == 'settitle') {					// Test on permission already done
 		$object->title = trim(GETPOST('title', 'alpha'));
-	} elseif ($action == 'setemail_from') {
+	} elseif ($action == 'setemail_from') {			// Test on permission already done
 		$object->email_from = trim(GETPOST('email_from', 'alphawithlgt')); // Must allow 'name <email>'
-	} elseif ($action == 'setemail_replyto') {
+	} elseif ($action == 'setemail_replyto') {		// Test on permission already done
 		$object->email_replyto = trim(GETPOST('email_replyto', 'alphawithlgt')); // Must allow 'name <email>'
-	} elseif ($action == 'setemail_errorsto') {
+	} elseif ($action == 'setemail_errorsto') {		// Test on permission already done
 		$object->email_errorsto = trim(GETPOST('email_errorsto', 'alphawithlgt')); // Must allow 'name <email>'
-	} elseif ($action == 'settitle' && empty($object->title)) {
+	} elseif ($action == 'settitle' && empty($object->title)) {		// Test on permission already done
 		$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailTitle"));
-	} elseif ($action == 'setfrom' && empty($object->email_from)) {
+	} elseif ($action == 'setfrom' && empty($object->email_from)) {	// Test on permission already done
 		$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailFrom"));
-	} elseif ($action == 'setevenunsubscribe') {
+	} elseif ($action == 'setevenunsubscribe') {	// Test on permission already done
 		$object->evenunsubscribe = (GETPOST('evenunsubscribe') ? 1 : 0);
 	}
 

@@ -67,6 +67,8 @@ $hookmanager->initHooks(array('projectcontactcard', 'globalcard'));
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
 $result = restrictedArea($user, 'projet', $id, 'projet&project');
 
+$permissiontoadd = $user->hasRight('projet', 'creer');
+
 
 /*
  * Actions
@@ -81,7 +83,7 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	// Test if we can add contact to the tasks at the same times, if not or not required, make a redirect
 	$formconfirmtoaddtasks = '';
-	if ($action == 'addcontact') {
+	if ($action == 'addcontact' && $permissiontoadd) {
 		$form = new Form($db);
 
 		$source = GETPOST("source", 'aZ09');
@@ -105,7 +107,8 @@ if (empty($reshook)) {
 			foreach ($task_array as $task) {
 				$task_already_affected = false;
 				$personsLinked = $task->liste_contact(-1, $source);
-				if (!is_array($personsLinked) && count($personsLinked) < 0) {
+				if (!is_array($personsLinked)) {
+					// When liste_contact() does not return an array, it's an error.
 					setEventMessage($object->error, 'errors');
 				} else {
 					foreach ($personsLinked as $person) {
@@ -160,7 +163,7 @@ if (empty($reshook)) {
 	}
 
 	// Add new contact
-	if ($action == 'addcontact_confirm' && $user->hasRight('projet', 'creer')) {
+	if ($action == 'addcontact_confirm' && $permissiontoadd) {
 		if (GETPOST('confirm', 'alpha') == 'no') {
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 			exit;
@@ -273,7 +276,7 @@ if (empty($reshook)) {
 	}
 
 	// Change contact's status
-	if ($action == 'swapstatut' && $user->hasRight('projet', 'creer')) {
+	if ($action == 'swapstatut' && $permissiontoadd) {
 		if ($object->fetch($id)) {
 			$result = $object->swapContactStatus(GETPOSTINT('ligne'));
 		} else {
@@ -282,7 +285,7 @@ if (empty($reshook)) {
 	}
 
 	// Delete a contact
-	if (($action == 'deleteline' || $action == 'deletecontact') && $user->hasRight('projet', 'creer')) {
+	if (($action == 'deleteline' || $action == 'deletecontact') && $permissiontoadd) {
 		$object->fetch($id);
 		$result = $object->delete_contact(GETPOSTINT("lineid"));
 

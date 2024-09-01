@@ -145,9 +145,6 @@ if (isModEnabled('mrp')) {
 if (isModEnabled('eventorganization')) {
 	$langs->load("eventorganization");
 }
-//if (isModEnabled('stocktransfer')) {
-//	$langs->load("stockstransfer");
-//}
 
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
@@ -192,6 +189,13 @@ $hookmanager->initHooks(array('projectOverview'));
 
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
 $result = restrictedArea($user, 'projet', $object->id, 'projet&project');
+
+
+/*
+ * Actions
+ */
+
+// None
 
 
 /*

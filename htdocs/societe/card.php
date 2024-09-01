@@ -201,7 +201,7 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
-	if ($action == 'confirm_merge' && $confirm == 'yes' && $user->hasRight('societe', 'creer')) {
+	if ($action == 'confirm_merge' && $confirm == 'yes' && $permissiontoadd) {
 		$soc_origin_id = GETPOSTINT('soc_origin');
 		$soc_origin = new Societe($db);		// The thirdparty that we will delete
 
@@ -235,20 +235,20 @@ if (empty($reshook)) {
 		$_POST["supplier_code"] = "Acompleter";
 	}
 
-	if ($action == 'set_localtax1' && $user->hasRight('societe', 'creer')) {
+	if ($action == 'set_localtax1' && $permissiontoadd) {
 		//get selected from combobox
 		$value = GETPOST('lt1');
 		$object->fetch($socid);
 		$res = $object->setValueFrom('localtax1_value', $value, '', null, 'text', '', $user, 'COMPANY_MODIFY');
 	}
-	if ($action == 'set_localtax2' && $user->hasRight('societe', 'creer')) {
+	if ($action == 'set_localtax2' && $permissiontoadd) {
 		//get selected from combobox
 		$value = GETPOST('lt2');
 		$object->fetch($socid);
 		$res = $object->setValueFrom('localtax2_value', $value, '', null, 'text', '', $user, 'COMPANY_MODIFY');
 	}
 
-	if ($action == 'update_extras' && $user->hasRight('societe', 'creer')) {
+	if ($action == 'update_extras' && $permissiontoadd) {
 		$object->fetch($socid);
 
 		$object->oldcopy = dol_clone($object, 2);
@@ -275,7 +275,7 @@ if (empty($reshook)) {
 	}
 
 	// Add new or update third party
-	if ((!GETPOST('getcustomercode') && !GETPOST('getsuppliercode')) && ($action == 'add' || $action == 'update') && $user->hasRight('societe', 'creer')) {
+	if ((!GETPOST('getcustomercode') && !GETPOST('getsuppliercode')) && ($action == 'add' || $action == 'update') && $permissiontoadd) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		if (!GETPOST('name')) {
@@ -306,7 +306,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			if ($action == 'update') {
+			if ($action == 'update') {	// Test on permission not required here
 				$ret = $object->fetch($socid);
 				$object->oldcopy = clone $object;
 			} else {
@@ -324,7 +324,7 @@ if (empty($reshook)) {
 			} else {
 				$object->name				= GETPOST('name', 'alphanohtml');
 			}
-			$object->entity					= (GETPOSTISSET('entity') ? GETPOSTINT('entity') : $conf->entity);
+			$object->entity					= ((GETPOSTISSET('entity') && GETPOST('entity') != '') ? GETPOSTINT('entity') : $conf->entity);
 			$object->name_alias				= GETPOST('name_alias', 'alphanohtml');
 			$object->parent					= GETPOSTISSET('parent_company_id') ? GETPOSTINT('parent_company_id') : $object->parent;
 			$object->address				= GETPOST('address', 'alphanohtml');
@@ -480,7 +480,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			if ($action == 'add') {
+			if ($action == 'add' && $permissiontoadd) {
 				$error = 0;
 
 				$db->begin();
@@ -634,7 +634,7 @@ if (empty($reshook)) {
 				}
 			}
 
-			if ($action == 'update') {
+			if ($action == 'update' && $permissiontoadd) {
 				$error = 0;
 
 				if (GETPOST('cancel', 'alpha')) {
@@ -811,31 +811,31 @@ if (empty($reshook)) {
 	}
 
 	// Set third-party type
-	if ($action == 'set_thirdpartytype' && $user->hasRight('societe', 'creer')) {
+	if ($action == 'set_thirdpartytype' && $permissiontoadd) {
 		$object->fetch($socid);
 		$result = $object->setThirdpartyType(GETPOSTINT('typent_id'));
 	}
 
 	// Set incoterm
-	if ($action == 'set_incoterms' && $user->hasRight('societe', 'creer') && isModEnabled('incoterm')) {
+	if ($action == 'set_incoterms' && $permissiontoadd && isModEnabled('incoterm')) {
 		$object->fetch($socid);
 		$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOSTINT('location_incoterms'));
 	}
 
 	// Set parent company
-	if ($action == 'set_thirdparty' && $user->hasRight('societe', 'creer')) {
+	if ($action == 'set_thirdparty' && $permissiontoadd) {
 		$object->fetch($socid);
 		$result = $object->setParent(GETPOSTINT('parent_id'));
 	}
 
 	// Set sales representatives
-	if ($action == 'set_salesrepresentatives' && $user->hasRight('societe', 'creer')) {
+	if ($action == 'set_salesrepresentatives' && $permissiontoadd) {
 		$object->fetch($socid);
 		$result = $object->setSalesRep(GETPOST('commercial', 'array'));
 	}
 
 	// warehouse
-	if ($action == 'setwarehouse' && $user->hasRight('societe', 'creer')) {
+	if ($action == 'setwarehouse' && $permissiontoadd) {
 		$result = $object->setWarehouse(GETPOSTINT('fk_warehouse'));
 	}
 
@@ -863,7 +863,7 @@ if (empty($reshook)) {
 
 
 /*
- *  View
+ * View
  */
 
 $form = new Form($db);

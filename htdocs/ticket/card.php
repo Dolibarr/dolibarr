@@ -189,8 +189,10 @@ if (empty($reshook)) {
 	}
 
 	if (($action == 'add' || ($action == 'update' && $object->status < Ticket::STATUS_CLOSED)) && $permissiontoadd) {
-		$ifErrorAction = $action == 'add' ? 'create' : 'edit';
-		if ($action == 'add') $object->track_id = null;
+		$ifErrorAction = ($action == 'add' ? 'create' : 'edit');
+		if ($action == 'add') {		// Test on permission already done
+			$object->track_id = null;
+		}
 		$error = 0;
 
 		$fieldsToCheck = [
@@ -913,19 +915,29 @@ if ($action == 'create' || $action == 'presend') {
 			$createdbyshown++;
 		}
 
+		$createdfrompublicticket = 0;
+		$createdfromemailcollector = 0;
+		if (!empty($object->origin_email) && (empty($object->email_msgid) || preg_match('/dolibarr\-tic\d+/', $object->email_msgid))) {
+			// If ticket create from public interface - TODO Add a more robust test to know if created by public interface
+			$createdfrompublicticket = 1;
+		} elseif (!empty($object->email_msgid)) {
+			// If ticket create by emailcollector - TODO Add a more robust test to know if created by email collector (using import ky ?)
+			$createdfromemailcollector = 1;
+		}
+
 		//var_dump($object);
-		if (!empty($object->origin_email)) {	// If ticket create from public interface - TODO Add a more robust test to know if created by pubic interface
+		if ($createdfrompublicticket) {
 			$htmltooptip = $langs->trans("OriginEmail").': '.$object->origin_email;
 			$htmltooptip .= '<br>'.$langs->trans("IP").': '.$object->ip;
 			$morehtmlref .= ($createdbyshown ? ' - ' : '<br>');
 			$morehtmlref .= ($createdbyshown ? '' : $langs->trans("CreatedBy").' : ');
 			$morehtmlref .= img_picto('', 'email', 'class="paddingrightonly"');
 			$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">- '.$form->textwithpicto($langs->trans("CreatedByPublicPortal"), $htmltooptip, 1, 'help', '', 0, 3, 'tooltip').'</small>';
-		} elseif (!empty($object->email_msgid)) {	// If ticket create by emailcollector - TODO Add a more robust test to know if created by email collector (using import ky ?)
+		} elseif ($createdfromemailcollector) {
 			$langs->load("mails");
 			$htmltooltip = $langs->trans("EmailMsgID").': '.$object->email_msgid;
 			$htmltooltip .= '<br>'.$langs->trans("EmailDate").': '.dol_print_date($object->email_date, 'dayhour');
-			$htmltooltip .= '<br>'.$langs->trans("MailFrom").': '.$object->email_from;
+			$htmltooltip .= '<br>'.$langs->trans("MailFrom").': '.$object->origin_email;
 			$htmltooltip .= '<br>'.$langs->trans("MailReply").': '.$object->origin_replyto;
 			$htmltooltip .= '<br>'.$langs->trans("MailReferences").': '.$object->origin_references;
 			$morehtmlref .= ($createdbyshown ? ' - ' : '<br>');
