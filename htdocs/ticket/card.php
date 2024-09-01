@@ -189,8 +189,10 @@ if (empty($reshook)) {
 	}
 
 	if (($action == 'add' || ($action == 'update' && $object->status < Ticket::STATUS_CLOSED)) && $permissiontoadd) {
-		$ifErrorAction = $action == 'add' ? 'create' : 'edit';
-		if ($action == 'add') $object->track_id = null;
+		$ifErrorAction = ($action == 'add' ? 'create' : 'edit');
+		if ($action == 'add') {		// Test on permission already done
+			$object->track_id = null;
+		}
 		$error = 0;
 
 		$fieldsToCheck = [

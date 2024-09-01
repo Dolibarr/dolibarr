@@ -51,9 +51,9 @@ if (isModEnabled('multicompany') && $conf->entity > 1 && getDolGlobalString('MUL
 	accessforbidden();
 }
 
-$canreadperms = true;
+$permissiontoread = true;
 if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
-	$canreadperms = (!empty($user->admin) || $user->hasRight('user', 'group_advance', 'read'));
+	$permissiontoread = (!empty($user->admin) || $user->hasRight('user', 'group_advance', 'read'));
 }
 
 

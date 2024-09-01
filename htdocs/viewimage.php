@@ -343,7 +343,7 @@ if ($modulepart == 'barcode') {
 		$vcffile = '';
 		if ($reg[1] == 'user') {
 			$vcffile = $conf->user->dir_temp.'/'.$code;
-		} elseif ($reg[1] == 'user') {
+		} elseif ($reg[1] == 'contact') {
 			$vcffile = $conf->contact->dir_temp.'/'.$code;
 		}
 
