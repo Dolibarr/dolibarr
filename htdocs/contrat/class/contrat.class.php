@@ -2312,20 +2312,21 @@ class Contrat extends CommonObject
 			$now = dol_now();
 
 			if ($mode == 'inactive') {
-				$warning_delay = $conf->contrat->services->inactifs->warning_delay;
+				$warning_delay = $conf->contract->services->inactifs->warning_delay;
 				$label = $langs->trans("BoardNotActivatedServices");
 				$labelShort = $langs->trans("BoardNotActivatedServicesShort");
 				$url = DOL_URL_ROOT.'/contrat/services_list.php?mainmenu=commercial&leftmenu=contracts&search_status=0&sortfield=cd.date_fin_validite&sortorder=asc';
-			} elseif ($mode == 'expired') {
-				$warning_delay = $conf->contrat->services->expires->warning_delay;
+				$url_late = DOL_URL_ROOT.'/contrat/services_list.php?mainmenu=commercial&leftmenu=contracts&search_status=0&search_option=late';
+			} elseif ($mode == 'active') {
+				$warning_delay = $conf->contract->services->expires->warning_delay;
 				$url = DOL_URL_ROOT.'/contrat/services_list.php?mainmenu=commercial&leftmenu=contracts&search_status=4&filter=expired&sortfield=cd.date_fin_validite&sortorder=asc';
+				$url_late = DOL_URL_ROOT.'/contrat/services_list.php?mainmenu=commercial&leftmenu=contracts&search_status=4&search_option=late';
 				$label = $langs->trans("BoardExpiredServices");
 				$labelShort = $langs->trans("BoardExpiredServicesShort");
 			} else {
-				$warning_delay = $conf->contrat->services->expires->warning_delay;
-				$url = DOL_URL_ROOT.'/contrat/services_list.php?mainmenu=commercial&leftmenu=contracts&search_status=4&sortfield=cd.date_fin_validite&sortorder=asc';
-				//$url.= '&op2day='.$arraydatetouse['mday'].'&op2month='.$arraydatetouse['mon'].'&op2year='.$arraydatetouse['year'];
-				//if ($warning_delay >= 0) $url.='&amp;filter=expired';
+				$warning_delay = $conf->contract->services->expires->warning_delay;
+				$url = DOL_URL_ROOT.'/contrat/services_list.php?mainmenu=commercial&leftmenu=contracts&sortfield=cd.date_fin_validite&sortorder=asc';
+				$url_late = DOL_URL_ROOT.'/contrat/services_list.php?mainmenu=commercial&leftmenu=contracts&search_option=late';
 				$label = $langs->trans("BoardRunningServices");
 				$labelShort = $langs->trans("BoardRunningServicesShort");
 			}
@@ -2335,6 +2336,7 @@ class Contrat extends CommonObject
 			$response->label = $label;
 			$response->labelShort = $labelShort;
 			$response->url = $url;
+			$response->url_late = $url_late;
 			$response->img = img_object('', "contract");
 
 			while ($obj = $this->db->fetch_object($resql)) {
