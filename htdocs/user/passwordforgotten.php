@@ -77,7 +77,7 @@ if (GETPOST('dol_use_jmobile', 'alpha') || !empty($_SESSION['dol_use_jmobile']))
 }
 
 
-/**
+/*
  * Actions
  */
 
@@ -91,7 +91,7 @@ if ($reshook < 0) {
 
 if (empty($reshook)) {
 	// Validate new password
-	if ($action == 'validatenewpassword' && $username && $passworduidhash) {
+	if ($action == 'validatenewpassword' && $username && $passworduidhash) {	// Test on permission not required here. Security is managed by $passworduihash
 		$edituser = new User($db);
 		$result = $edituser->fetch('', $username, '', 0, $conf->entity);
 		if ($result < 0) {
@@ -118,7 +118,7 @@ if (empty($reshook)) {
 	}
 
 	// Action to set a temporary password and send email for reset
-	if ($action == 'buildnewpassword' && $username) {
+	if ($action == 'buildnewpassword' && $username) {	// Test on permission not required here. This action is done anonymously.
 		$sessionkey = 'dol_antispam_value';
 		$ok = (array_key_exists($sessionkey, $_SESSION) && (strtolower($_SESSION[$sessionkey]) == strtolower(GETPOST('code'))));
 
@@ -174,7 +174,7 @@ if (empty($reshook)) {
 }
 
 
-/**
+/*
  * View
  */
 

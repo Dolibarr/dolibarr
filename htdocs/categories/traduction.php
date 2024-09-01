@@ -47,9 +47,6 @@ if ($id == '' && $label == '') {
 	exit();
 }
 
-// Security check
-$result = restrictedArea($user, 'categorie', $id, '&category');
-
 $object = new Categorie($db);
 $result = $object->fetch($id, $label);
 if ($result <= 0) {
@@ -61,6 +58,11 @@ $type = $object->type;
 if (is_numeric($type)) {
 	$type = Categorie::$MAP_ID_TO_CODE[$type];   // For backward compatibility
 }
+
+// Security check
+$result = restrictedArea($user, 'categorie', $id, '&category');
+
+$permissiontoadd = $user->hasRight('categorie', 'creer');
 
 
 /*
@@ -76,9 +78,7 @@ if ($cancel == $langs->trans("Cancel")) {
 
 
 // validation of addition
-if ($action == 'vadd' &&
-$cancel != $langs->trans("Cancel") &&
-($user->hasRight('categorie', 'creer'))) {
+if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && $permissiontoadd) {
 	$object->fetch($id);
 	$current_lang = $langs->getDefaultLang();
 
@@ -125,9 +125,7 @@ $cancel != $langs->trans("Cancel") &&
 }
 
 // validation of the edition
-if ($action == 'vedit' &&
-$cancel != $langs->trans("Cancel") &&
-($user->hasRight('categorie', 'creer'))) {
+if ($action == 'vedit' && $cancel != $langs->trans("Cancel") && $permissiontoadd) {
 	$object->fetch($id);
 	$current_lang = $langs->getDefaultLang();
 

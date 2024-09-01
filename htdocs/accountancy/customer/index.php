@@ -119,7 +119,7 @@ if (($action == 'clean' || $action == 'validatehistory') && $user->hasRight('acc
 	// End clean database
 }
 
-if ($action == 'validatehistory') {
+if ($action == 'validatehistory' && $user->hasRight('accounting', 'bind', 'write')) {
 	$error = 0;
 	$nbbinddone = 0;
 	$nbbindfailed = 0;
