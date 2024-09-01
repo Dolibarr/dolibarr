@@ -375,9 +375,6 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		print '<div class="fichecenter">';
 		print '<div class="underbanner clearboth"></div>';
 
-		/*---------------------------------------
-		 * View object
-		 */
 		print '<table class="border tableforfield centpercent">';
 
 		// Resource type
