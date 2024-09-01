@@ -1554,7 +1554,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 		
-		if ((!empty($arrayfields['e.weight']['checked']) && !empty($object->trueWeight)) || !empty($arrayfields['e.volume']['checked'])) {
+		if ((!empty($arrayfields['e.weight']['checked']) && empty($object->trueWeight)) || !empty($arrayfields['e.volume']['checked'])) {
 			$tmparray = $object->getTotalWeightVolume();
 		}
 		
