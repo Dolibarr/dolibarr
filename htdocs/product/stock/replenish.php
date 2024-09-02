@@ -277,6 +277,7 @@ if ($action == 'order' && GETPOST('valid')) {
 			} else {
 				$order->socid = $suppliersid[$i];
 				$order->fetch_thirdparty();
+				$order->multicurrency_code = $order->thirdparty->multicurrency_code;
 
 				// Trick to know which orders have been generated using the replenishment feature
 				$order->source = $order::SOURCE_ID_REPLENISHMENT;
