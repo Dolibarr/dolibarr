@@ -2699,10 +2699,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '</form>';
 		}
 	} else {
-		/*
-		 * View
-		 */
-
+		// View
 		if (!empty($object->id)) {
 			$res = $object->fetch_optionals();
 		}

@@ -98,7 +98,6 @@ if ($user->socid) {
 $result = restrictedArea($user, 'tax', $object->id, 'chargesociales', 'charges');
 
 
-
 /*
  * Actions
  */

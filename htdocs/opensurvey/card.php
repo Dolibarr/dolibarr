@@ -63,8 +63,7 @@ $expiredate = dol_mktime(0, 0, 0, GETPOST('expiremonth'), GETPOST('expireday'), 
 
 $permissiontoread = $user->hasRight('opensurvey', 'read');
 $permissiontoadd = $user->hasRight('opensurvey', 'write');
-// permission delete doesn't exists
-$permissiontodelete = $user->hasRight('opensurvey', 'write');
+$permissiontodelete = $user->hasRight('opensurvey', 'write');	// permission delete doesn't exists
 
 
 /*
@@ -83,7 +82,7 @@ if (empty($reshook)) {
 	}
 
 	// Delete
-	if ($action == 'delete_confirm') {
+	if ($action == 'delete_confirm' && $permissiontodelete) {
 		// Security check
 		if (!$user->hasRight('opensurvey', 'write')) {
 			accessforbidden();
@@ -96,19 +95,19 @@ if (empty($reshook)) {
 	}
 
 	// Close
-	if ($action == 'close') {
+	if ($action == 'close' && $permissiontoadd) {
 		$object->status = Opensurveysondage::STATUS_CLOSED;
 		$object->update($user);
 	}
 
 	// Valid or Reopend
-	if ($action == 'reopen' || $action == 'validate') {
+	if (($action == 'reopen' || $action == 'validate') && $permissiontoadd) {
 		$object->status = Opensurveysondage::STATUS_VALIDATED;
 		$object->update($user);
 	}
 
 	// Update
-	if ($action == 'update') {
+	if ($action == 'update' && $permissiontoadd) {
 		// Security check
 		if (!$user->hasRight('opensurvey', 'write')) {
 			accessforbidden();
@@ -140,7 +139,7 @@ if (empty($reshook)) {
 	}
 
 	// Add comment
-	if (GETPOST('ajoutcomment')) {
+	if (GETPOST('ajoutcomment') && $permissiontoadd) {
 		$error = 0;
 
 		if (!GETPOST('comment', "alphanohtml")) {
@@ -165,7 +164,7 @@ if (empty($reshook)) {
 	}
 
 	// Delete comment
-	if ($action == 'deletecomment') {
+	if ($action == 'deletecomment' && $permissiontoadd) {
 		$idcomment = GETPOSTINT('idcomment');
 		if ($idcomment > 0) {
 			// Security check
@@ -177,7 +176,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'edit') {
+	if ($action == 'edit' && $permissiontoadd) {
 		// Security check
 		if (!$user->hasRight('opensurvey', 'write')) {
 			accessforbidden();
