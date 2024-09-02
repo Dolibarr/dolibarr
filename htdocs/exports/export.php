@@ -965,6 +965,10 @@ if ($step == 4 && $datatoexport) {
 	print '</tr>';
 
 	foreach ($array_selected as $code => $value) {
+		if (!isset($objexport->array_export_fields[0][$code])) {	// For example when field was in predefined filter but not more active (localtax1 disabled by setup of country)
+			continue;
+		}
+
 		print '<tr class="oddeven">';
 
 		$entity = (!empty($objexport->array_export_entities[0][$code]) ? $objexport->array_export_entities[0][$code] : $objexport->array_export_icon[0]);
@@ -1198,8 +1202,10 @@ if ($step == 5 && $datatoexport) {
 	print '<tr><td>'.$langs->trans("ExportedFields").'</td>';
 	$list = '';
 	foreach ($array_selected as $code => $label) {
-		$list .= (!empty($list) ? ', ' : '');
-		$list .= $langs->trans($objexport->array_export_fields[0][$code]);
+		if (isset($objexport->array_export_fields[0][$code])) {
+			$list .= (!empty($list) ? ', ' : '');
+			$list .= $langs->trans($objexport->array_export_fields[0][$code]);
+		}
 	}
 	print '<td>'.$list.'</td></tr>';
 
