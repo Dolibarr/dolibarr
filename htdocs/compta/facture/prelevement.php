@@ -104,6 +104,7 @@ if ($reshook < 0) {
 
 if (empty($reshook)) {
 	if ($action == "new" && $usercancreate) {
+		var_dump("OLA");
 		if ($object->id > 0) {
 			$db->begin();
 
@@ -863,7 +864,7 @@ if ($object->id > 0) {
 				}
 
 //				if ($action == 'editrib') {
-					$form->form_iban($_SERVER['PHP_SELF'].'?id='.$object->id, $_POST['ribList'] ?? $default_rib, 'ribList', $filtertype, 1, 0, $type, 0, $ribForSelection);
+					$selectedIban = $form->form_iban($_SERVER['PHP_SELF'].'?id='.$object->id, $_POST['ribList'] ?? $default_rib, 'ribList', $filtertype, 1, 0, $type, 0, $ribForSelection);
 //				} else {
 //					$form->form_iban($_SERVER['PHP_SELF'].'?id='.$object->id, $_POST['ribList'] ?? $default_rib, 'none');
 //				}
@@ -876,13 +877,13 @@ if ($object->id > 0) {
 						print img_warning('Error on default bank number for IBAN : '.$langs->trans($rib->error));
 					}
 				} else {
-					var_dump($numopen);
 					if ($numopen || ($type != 'bank-transfer' && $object->mode_reglement_code == 'PRE') || ($type == 'bank-transfer' && $object->mode_reglement_code == 'VIR')) {
 						print img_warning($langs->trans("NoDefaultIBANFound"));
 					}
 				}
 
 				print '</td></tr>';
+				var_dump($selectedIban);
 
 				// Bank Transfert Amount
 				print '<tr><td class="nowrap">';
