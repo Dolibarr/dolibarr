@@ -809,12 +809,21 @@ if ($object->id > 0) {
 			if ($user_perms) {
 				$remaintopaylesspendingdebit = $resteapayer - $pending;
 
-				// ------------------- ADDED
-				print '<div class="fichecenter">';
-				print '<div class="underbanner clearboth"></div>';
+				// ------------------- ADDED START
+//				print '<div class="fichecenter">';
+//				print '<div class="underbanner clearboth"></div>';
+//				print '<table class="border centpercent tableforfield">';
+				print("</div>");
 
+				$title = $langs->trans("NewStandingOrder");
+				if ($type == 'bank-transfer') {
+					$title = $langs->trans("NewPaymentByBankTransfer");
+				}
+
+				print load_fiche_titre($title);
+				print dol_get_fiche_head();
 				print '<table class="border centpercent tableforfield">';
-				// ------------------- ADDED
+				// ------------------- ADDED END
 
 				print '<form method="POST" action="">';
 				print '<input type="hidden" name="token" value="'.newToken().'" />';
@@ -826,19 +835,20 @@ if ($object->id > 0) {
 				//	MODIFICATIONS START
 				//	-------------------------------------------------------------
 
-				print '<tr><td>';
-				print '<table class="nobordernopadding centpercent"><tr><td>';
+//				print '<tr><td>';
+//				print '<table class="nobordernopadding centpercent"><tr><td>';
+				print '<tr><td class="titlefield">'.$langs->trans('CustomerIBAN').'</td>';
+				print '<td class="nowraponall">';
+
 
 				$idHtmlIban = "ribList";
-				print '<label for="'.$idHtmlIban.'">'. $langs->trans('CustomerIBAN').' : </label>';
-				print '</td>';
+//				print '<label for="'.$idHtmlIban.'">'. $langs->trans('CustomerIBAN').' : </label>';
+//				print '</td>';
 
-				if ($action != 'editmode' && $object->status == $object::STATUS_DRAFT && $user->hasRight('facture', 'creer')) {
-					print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editrib&token='.newToken().'&id='.$object->id.'&type='.urlencode($type).'">'.img_edit($langs->trans('SetRib'), 1).'</a></td>';
-				}
 
-				print '</tr></table>';
-				print '</td><td colspan="3">';
+
+//				print '</tr></table>';
+//				print '</td><td colspan="3">';
 
 				$ribList = $object->thirdparty->get_all_rib();
 				$ribForSelection = [];
@@ -852,17 +862,21 @@ if ($object->id > 0) {
 					}
 				}
 
-				if ($action == 'editrib') {
+//				if ($action == 'editrib') {
 					$form->form_iban($_SERVER['PHP_SELF'].'?id='.$object->id, $_POST['ribList'] ?? $default_rib, 'ribList', $filtertype, 1, 0, $type, 0, $ribForSelection);
-				} else {
-					$form->form_iban($_SERVER['PHP_SELF'].'?id='.$object->id, $_POST['ribList'] ?? $default_rib, 'none');
-				}
+//				} else {
+//					$form->form_iban($_SERVER['PHP_SELF'].'?id='.$object->id, $_POST['ribList'] ?? $default_rib, 'none');
+//				}
+//				if ($action != 'editmode' && $user->hasRight('facture', 'creer')) {
+//					print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editrib&token='.newToken().'&id='.$object->id.'&type='.urlencode($type).'">'.img_edit($langs->trans('SetRib'), 1).'</a></td>';
+//				}
 
 				if (!empty($rib->iban)) {
 					if ($rib->verif() <= 0) {
 						print img_warning('Error on default bank number for IBAN : '.$langs->trans($rib->error));
 					}
 				} else {
+					var_dump($numopen);
 					if ($numopen || ($type != 'bank-transfer' && $object->mode_reglement_code == 'PRE') || ($type == 'bank-transfer' && $object->mode_reglement_code == 'VIR')) {
 						print img_warning($langs->trans("NoDefaultIBANFound"));
 					}
@@ -870,13 +884,36 @@ if ($object->id > 0) {
 
 				print '</td></tr>';
 
+				// Bank Transfert Amount
+				print '<tr><td class="nowrap">';
+				print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+
+				// ORIGINAL
+				print '<label for="withdraw_request_amount">'.$langs->trans('BankTransferAmount').' </label>';
+
+				print '<td>';
+				print '</tr></table>';
+				print '</td><td colspan="3">';
+
+				// ORIGINAL
+				print '<input type="text" id="withdraw_request_amount" name="withdraw_request_amount" value="'.$remaintopaylesspendingdebit.'" size="9" />';
+
+				print '</td>';
+
+				print '</table>';
+				print '</div>';
+
+
+				// Button
+				// ORIGINAL
+				print '<input type="submit" class="butAction" value="'.$buttonlabel.'" />';
+
+				print '<br>';
+				print '<br>';
 				//	-------------------------------------------------------------
 				//	MODIFICATIONS END
 				//	-------------------------------------------------------------
 
-				print '<label for="withdraw_request_amount">'.$langs->trans('BankTransferAmount').' </label>';
-				print '<input type="text" id="withdraw_request_amount" name="withdraw_request_amount" value="'.$remaintopaylesspendingdebit.'" size="9" />';
-				print '<input type="submit" class="butAction" value="'.$buttonlabel.'" />';
 				print '</form>';
 
 				if (getDolGlobalString('STRIPE_SEPA_DIRECT_DEBIT_SHOW_OLD_BUTTON')) {	// This is hidden, prefer to use mode enabled with STRIPE_SEPA_DIRECT_DEBIT
@@ -896,11 +933,9 @@ if ($object->id > 0) {
 					print '</form>';
 				}
 
-				// ------------------- ADDED
-				print '</table>';
-				print '</div>';
-
-				// ------------------- ADDED
+				// ------------------------------- ADDED START
+				print '<div class="fichecenter">';
+				// ------------------------------- ADDED END
 
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$buttonlabel.'</a>';
