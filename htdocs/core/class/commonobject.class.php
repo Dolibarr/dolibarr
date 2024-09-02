@@ -9253,6 +9253,21 @@ abstract class CommonObject
 	 */
 	public static function commonReplaceThirdparty(DoliDB $dbs, $origin_id, $dest_id, array $tables, $ignoreerrors = 0)
 	{
+		global $hookmanager;
+
+		$hookmanager->initHooks(array('commonobject'));
+		$parameters = array(
+			'origin_id' => $origin_id,
+			'dest_id' => $dest_id,
+			'tables' => $tables,
+		);
+		$reshook = $hookmanager->executeHooks('commonReplaceThirdparty', $parameters);
+		if ($reshook) {
+			return true; // replacement code
+		} elseif ($reshook < 0) {
+			return $ignoreerrors === 1; // failure
+		} // reshook = 0 => execute normal code
+
 		foreach ($tables as $table) {
 			$sql = 'UPDATE '.$dbs->prefix().$table.' SET fk_soc = '.((int) $dest_id).' WHERE fk_soc = '.((int) $origin_id);
 
