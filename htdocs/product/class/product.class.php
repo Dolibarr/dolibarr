@@ -5301,7 +5301,16 @@ class Product extends CommonObject
 			return ['optimize' => $langs->trans("ShowProduct")];
 		}
 
-		if (!empty($this->entity)) {
+		// Does user has permission to read product/service
+		$permissiontoreadproduct = 0;
+		if ($this->type == self::TYPE_PRODUCT && $user->hasRight('product', 'read')) {
+			$permissiontoreadproduct = 1;
+		}
+		if ($this->type == self::TYPE_SERVICE && $user->hasRight('service', 'read')) {
+			$permissiontoreadproduct = 1;
+		}
+
+		if (!empty($this->entity) && $permissiontoreadproduct) {
 			$tmpphoto = $this->show_photos('product', $conf->product->multidir_output[$this->entity], 1, 1, 0, 0, 0, 80, 0, 0, 0, 0, 1);
 			if ($this->nbphoto > 0) {
 				$datas['photo'] = '<div class="photointooltip floatright">'."\n" . $tmpphoto . '</div>';
@@ -5323,90 +5332,93 @@ class Product extends CommonObject
 		if (!empty($this->label)) {
 			$datas['label'] = '<br><b>'.$langs->trans('ProductLabel').':</b> '.$this->label;
 		}
-		if (!empty($this->description)) {
-			$datas['description'] = '<br><b>'.$langs->trans('ProductDescription').':</b> '.dolGetFirstLineOfText($this->description, 5);
-		}
-		if ($this->type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
-			if (isModEnabled('productbatch')) {
-				$langs->load("productbatch");
-				$datas['batchstatus'] = "<br><b>".$langs->trans("ManageLotSerial").'</b>: '.$this->getLibStatut(0, 2);
-			}
-		}
-		if (isModEnabled('barcode')) {
-			$datas['barcode'] = '<br><b>'.$langs->trans('BarCode').':</b> '.$this->barcode;
-		}
 
-		if ($this->type == Product::TYPE_PRODUCT) {
-			if ($this->weight) {
-				$datas['weight'] = "<br><b>".$langs->trans("Weight").'</b>: '.$this->weight.' '.measuringUnitString(0, "weight", $this->weight_units);
+		if ($permissiontoreadproduct) {
+			if (!empty($this->description)) {
+				$datas['description'] = '<br><b>'.$langs->trans('ProductDescription').':</b> '.dolGetFirstLineOfText($this->description, 5);
 			}
-			$labelsize = "";
-			if ($this->length) {
-				$labelsize .= ($labelsize ? " - " : "")."<b>".$langs->trans("Length").'</b>: '.$this->length.' '.measuringUnitString(0, 'size', $this->length_units);
-			}
-			if ($this->width) {
-				$labelsize .= ($labelsize ? " - " : "")."<b>".$langs->trans("Width").'</b>: '.$this->width.' '.measuringUnitString(0, 'size', $this->width_units);
-			}
-			if ($this->height) {
-				$labelsize .= ($labelsize ? " - " : "")."<b>".$langs->trans("Height").'</b>: '.$this->height.' '.measuringUnitString(0, 'size', $this->height_units);
-			}
-			if ($labelsize) {
-				$datas['size'] = "<br>".$labelsize;
-			}
-
-			$labelsurfacevolume = "";
-			if ($this->surface) {
-				$labelsurfacevolume .= ($labelsurfacevolume ? " - " : "")."<b>".$langs->trans("Surface").'</b>: '.$this->surface.' '.measuringUnitString(0, 'surface', $this->surface_units);
-			}
-			if ($this->volume) {
-				$labelsurfacevolume .= ($labelsurfacevolume ? " - " : "")."<b>".$langs->trans("Volume").'</b>: '.$this->volume.' '.measuringUnitString(0, 'volume', $this->volume_units);
-			}
-			if ($labelsurfacevolume) {
-				$datas['surface'] = "<br>" . $labelsurfacevolume;
-			}
-		}
-		if ($this->type == Product::TYPE_SERVICE && !empty($this->duration_value)) {
-			// Duration
-			$datas['duration'] = '<br><b>'.$langs->trans("Duration").':</b> '.$this->duration_value;
-			if ($this->duration_value > 1) {
-				$dur = array("i" => $langs->trans("Minutes"), "h" => $langs->trans("Hours"), "d" => $langs->trans("Days"), "w" => $langs->trans("Weeks"), "m" => $langs->trans("Months"), "y" => $langs->trans("Years"));
-			} elseif ($this->duration_value > 0) {
-				$dur = array("i" => $langs->trans("Minute"), "h" => $langs->trans("Hour"), "d" => $langs->trans("Day"), "w" => $langs->trans("Week"), "m" => $langs->trans("Month"), "y" => $langs->trans("Year"));
-			}
-			$datas['duration'] .= (!empty($this->duration_unit) && isset($dur[$this->duration_unit]) ? "&nbsp;".$langs->trans($dur[$this->duration_unit]) : '');
-		}
-		if (empty($user->socid)) {
-			if (!empty($this->pmp) && $this->pmp) {
-				$datas['pmp'] = "<br><b>".$langs->trans("PMPValue").'</b>: '.price($this->pmp, 0, '', 1, -1, -1, $conf->currency);
-			}
-
-			if (isModEnabled('accounting')) {
-				if ($this->status && isset($this->accountancy_code_sell)) {
-					include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-					$selllabel = '<br>';
-					$selllabel .= '<br><b>'.$langs->trans('ProductAccountancySellCode').':</b> '.length_accountg($this->accountancy_code_sell);
-					$selllabel .= '<br><b>'.$langs->trans('ProductAccountancySellIntraCode').':</b> '.length_accountg($this->accountancy_code_sell_intra);
-					$selllabel .= '<br><b>'.$langs->trans('ProductAccountancySellExportCode').':</b> '.length_accountg($this->accountancy_code_sell_export);
-					$datas['accountancysell'] = $selllabel;
+			if ($this->type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
+				if (isModEnabled('productbatch')) {
+					$langs->load("productbatch");
+					$datas['batchstatus'] = "<br><b>".$langs->trans("ManageLotSerial").'</b>: '.$this->getLibStatut(0, 2);
 				}
-				if ($this->status_buy && isset($this->accountancy_code_buy)) {
-					include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-					$buylabel = '';
-					if (empty($this->status)) {
-						$buylabel .= '<br>';
+			}
+			if (isModEnabled('barcode')) {
+				$datas['barcode'] = '<br><b>'.$langs->trans('BarCode').':</b> '.$this->barcode;
+			}
+
+			if ($this->type == Product::TYPE_PRODUCT) {
+				if ($this->weight) {
+					$datas['weight'] = "<br><b>".$langs->trans("Weight").'</b>: '.$this->weight.' '.measuringUnitString(0, "weight", $this->weight_units);
+				}
+				$labelsize = "";
+				if ($this->length) {
+					$labelsize .= ($labelsize ? " - " : "")."<b>".$langs->trans("Length").'</b>: '.$this->length.' '.measuringUnitString(0, 'size', $this->length_units);
+				}
+				if ($this->width) {
+					$labelsize .= ($labelsize ? " - " : "")."<b>".$langs->trans("Width").'</b>: '.$this->width.' '.measuringUnitString(0, 'size', $this->width_units);
+				}
+				if ($this->height) {
+					$labelsize .= ($labelsize ? " - " : "")."<b>".$langs->trans("Height").'</b>: '.$this->height.' '.measuringUnitString(0, 'size', $this->height_units);
+				}
+				if ($labelsize) {
+					$datas['size'] = "<br>".$labelsize;
+				}
+
+				$labelsurfacevolume = "";
+				if ($this->surface) {
+					$labelsurfacevolume .= ($labelsurfacevolume ? " - " : "")."<b>".$langs->trans("Surface").'</b>: '.$this->surface.' '.measuringUnitString(0, 'surface', $this->surface_units);
+				}
+				if ($this->volume) {
+					$labelsurfacevolume .= ($labelsurfacevolume ? " - " : "")."<b>".$langs->trans("Volume").'</b>: '.$this->volume.' '.measuringUnitString(0, 'volume', $this->volume_units);
+				}
+				if ($labelsurfacevolume) {
+					$datas['surface'] = "<br>" . $labelsurfacevolume;
+				}
+			}
+			if ($this->type == Product::TYPE_SERVICE && !empty($this->duration_value)) {
+				// Duration
+				$datas['duration'] = '<br><b>'.$langs->trans("Duration").':</b> '.$this->duration_value;
+				if ($this->duration_value > 1) {
+					$dur = array("i" => $langs->trans("Minutes"), "h" => $langs->trans("Hours"), "d" => $langs->trans("Days"), "w" => $langs->trans("Weeks"), "m" => $langs->trans("Months"), "y" => $langs->trans("Years"));
+				} elseif ($this->duration_value > 0) {
+					$dur = array("i" => $langs->trans("Minute"), "h" => $langs->trans("Hour"), "d" => $langs->trans("Day"), "w" => $langs->trans("Week"), "m" => $langs->trans("Month"), "y" => $langs->trans("Year"));
+				}
+				$datas['duration'] .= (!empty($this->duration_unit) && isset($dur[$this->duration_unit]) ? "&nbsp;".$langs->trans($dur[$this->duration_unit]) : '');
+			}
+			if (empty($user->socid)) {
+				if (!empty($this->pmp) && $this->pmp) {
+					$datas['pmp'] = "<br><b>".$langs->trans("PMPValue").'</b>: '.price($this->pmp, 0, '', 1, -1, -1, $conf->currency);
+				}
+
+				if (isModEnabled('accounting')) {
+					if ($this->status && isset($this->accountancy_code_sell)) {
+						include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+						$selllabel = '<br>';
+						$selllabel .= '<br><b>'.$langs->trans('ProductAccountancySellCode').':</b> '.length_accountg($this->accountancy_code_sell);
+						$selllabel .= '<br><b>'.$langs->trans('ProductAccountancySellIntraCode').':</b> '.length_accountg($this->accountancy_code_sell_intra);
+						$selllabel .= '<br><b>'.$langs->trans('ProductAccountancySellExportCode').':</b> '.length_accountg($this->accountancy_code_sell_export);
+						$datas['accountancysell'] = $selllabel;
 					}
-					$buylabel .= '<br><b>'.$langs->trans('ProductAccountancyBuyCode').':</b> '.length_accountg($this->accountancy_code_buy);
-					$buylabel .= '<br><b>'.$langs->trans('ProductAccountancyBuyIntraCode').':</b> '.length_accountg($this->accountancy_code_buy_intra);
-					$buylabel .= '<br><b>'.$langs->trans('ProductAccountancyBuyExportCode').':</b> '.length_accountg($this->accountancy_code_buy_export);
-					$datas['accountancybuy'] = $buylabel;
+					if ($this->status_buy && isset($this->accountancy_code_buy)) {
+						include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+						$buylabel = '';
+						if (empty($this->status)) {
+							$buylabel .= '<br>';
+						}
+						$buylabel .= '<br><b>'.$langs->trans('ProductAccountancyBuyCode').':</b> '.length_accountg($this->accountancy_code_buy);
+						$buylabel .= '<br><b>'.$langs->trans('ProductAccountancyBuyIntraCode').':</b> '.length_accountg($this->accountancy_code_buy_intra);
+						$buylabel .= '<br><b>'.$langs->trans('ProductAccountancyBuyExportCode').':</b> '.length_accountg($this->accountancy_code_buy_export);
+						$datas['accountancybuy'] = $buylabel;
+					}
 				}
 			}
-		}
-		// show categories for this record only in ajax to not overload lists
-		if (isModEnabled('category') && !$nofetch) {
-			require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
-			$form = new Form($this->db);
-			$datas['categories'] = '<br>' . $form->showCategories($this->id, Categorie::TYPE_PRODUCT, 1);
+			// show categories for this record only in ajax to not overload lists
+			if (isModEnabled('category') && !$nofetch) {
+				require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+				$form = new Form($this->db);
+				$datas['categories'] = '<br>' . $form->showCategories($this->id, Categorie::TYPE_PRODUCT, 1);
+			}
 		}
 
 		return $datas;
@@ -5427,7 +5439,7 @@ class Product extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $maxlength = 0, $save_lastsearch_value = -1, $notooltip = 0, $morecss = '', $add_label = 0, $sep = ' - ')
 	{
-		global $conf, $langs, $hookmanager, $user;
+		global $langs, $hookmanager;
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 
 		$result = '';

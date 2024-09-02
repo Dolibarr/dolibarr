@@ -8346,7 +8346,7 @@ class Form
 
 				$oldValueForShowOnCombobox = 0;
 				foreach ($objecttmp->fields as $fieldK => $fielV) {
-					if (empty($fielV['showoncombobox']) || empty($objecttmp->$fieldK)) {
+					if (!array_key_exists('showoncombobox', $fielV) || !$fielV['showoncombobox'] || empty($objecttmp->$fieldK)) {
 						continue;
 					}
 

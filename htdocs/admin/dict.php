@@ -99,7 +99,7 @@ $confirm = GETPOST('confirm', 'alpha');
 
 $id = GETPOSTINT('id');
 $rowid = GETPOST('rowid', 'alpha');
-$entity = GETPOSTINT('entity');
+$entity = GETPOST('entity', 'alpha');	// Do not use GETPOSTINT here. Should be '', 0 or >0.
 $code = GETPOST('code', 'alpha');
 $from = GETPOST('from', 'alpha');
 

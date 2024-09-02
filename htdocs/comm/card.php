@@ -160,7 +160,7 @@ if (empty($reshook)) {
 	}
 
 	// Set accountancy code
-	if ($action == 'setcustomeraccountancycode') {
+	if ($action == 'setcustomeraccountancycode' && $user->hasRight('societe', 'creer')) {
 		$result = $object->fetch($id);
 		$object->code_compta_client = GETPOST("customeraccountancycode");
 		$object->code_compta = $object->code_compta_client; // For Backward compatibility
@@ -237,7 +237,7 @@ if (empty($reshook)) {
 	}
 
 	// set communication status
-	if ($action == 'setstcomm') {
+	if ($action == 'setstcomm' && $user->hasRight('societe', 'creer')) {
 		$object->fetch($id);
 		$object->stcomm_id = dol_getIdFromCode($db, GETPOST('stcomm', 'alpha'), 'c_stcomm');
 		$result = $object->update($object->id, $user);
@@ -249,7 +249,7 @@ if (empty($reshook)) {
 	}
 
 	// update outstandng limit
-	if ($action == 'setoutstanding_limit') {
+	if ($action == 'setoutstanding_limit' && $user->hasRight('societe', 'creer')) {
 		$object->fetch($id);
 		$object->outstanding_limit = GETPOST('outstanding_limit');
 		$result = $object->update($object->id, $user);
@@ -259,7 +259,7 @@ if (empty($reshook)) {
 	}
 
 	// update order min amount
-	if ($action == 'setorder_min_amount') {
+	if ($action == 'setorder_min_amount' && $user->hasRight('societe', 'creer')) {
 		$object->fetch($id);
 		$object->order_min_amount = price2num(GETPOST('order_min_amount', 'alpha'));
 		$result = $object->update($object->id, $user);
