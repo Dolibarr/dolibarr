@@ -6430,7 +6430,7 @@ class Form
 				$out .= '<input type="hidden" name="type" value="' . dol_escape_htmltag($type) . '">';
 			}
 			$out .= $this->select_types_iban($selected, $htmlname, $filtertype, 0, $addempty, 0, 0, $active, '', 1, $ribForSelection);
-			$out .= '<input type="submit" class="button smallpaddingimp valignmiddle" value="' . $langs->trans("Modify") . '">';
+			//$out .= '<input type="submit" class="button smallpaddingimp valignmiddle" value="' . $langs->trans("Modify") . '">';
 			$out .= '</form>';
 		} else {
 			if ($selected) {
@@ -6444,7 +6444,7 @@ class Form
 			return $out;
 		}
 		print $out;
-		return '';
+		return $selected;
 	}
 	// ---------------------------------------------------------------------------------------
 	// MODIFICATIONS END
