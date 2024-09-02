@@ -184,7 +184,7 @@ print '<input type="hidden" name="action" value="set">';
 print '<div class="div-table-responsive">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
+print '<td>'.$langs->trans("Parameters").'</td><td></td>';
 print "</tr>\n";
 
 print '<tr class="oddeven"><td class="fieldrequired">'.$langs->trans("TerminalNameDesc").'</td>';
@@ -477,6 +477,9 @@ if (getDolGlobalString('TAKEPOS_ADDON') == "terminal") {
 }
 
 print '</table>';
+
+print $form->buttonsSaveCancel("Save", '');
+
 print '</div>';
 
 // add free text on each terminal of cash desk
@@ -535,8 +538,6 @@ print '</div>';
 if ($atleastonefound == 0 && isModEnabled("bank")) {
 	print info_admin($langs->trans("AtLeastOneDefaultBankAccountMandatory"), 0, 0, 'error');
 }
-
-print '<br>';
 
 print $form->buttonsSaveCancel("Save", '');
 

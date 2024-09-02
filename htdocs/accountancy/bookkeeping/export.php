@@ -459,7 +459,7 @@ if (empty($reshook)) {
 		$param .= '&search_import_key='.urlencode($search_import_key);
 	}
 
-	if ($action == 'setreexport') {
+	if ($action == 'setreexport' && $user->hasRight('accounting', 'mouvements', 'export')) {
 		$setreexport = GETPOSTINT('value');
 		if (!dolibarr_set_const($db, "ACCOUNTING_REEXPORT", $setreexport, 'yesno', 0, '', $conf->entity)) {
 			$error++;

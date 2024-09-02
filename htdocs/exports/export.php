@@ -167,7 +167,7 @@ $result = restrictedArea($user, 'export');
  * Actions
  */
 
-if ($action == 'selectfield') {     // Selection of field at step 2
+if ($action == 'selectfield' && $user->hasRight('export', 'run')) {     // Selection of field at step 2
 	$fieldsarray = $objexport->array_export_fields[0];
 	$fieldsentitiesarray = $objexport->array_export_entities[0];
 	$fieldsdependenciesarray = $objexport->array_export_dependencies[0];
@@ -222,7 +222,7 @@ if ($action == 'selectfield') {     // Selection of field at step 2
 		setEventMessages($warnings, null, 'warnings');
 	}
 }
-if ($action == 'unselectfield') {
+if ($action == 'unselectfield' && $user->hasRight('export', 'run')) {
 	if (GETPOST("field") == 'all') {
 		$array_selected = array();
 		$_SESSION["export_selected_fields"] = $array_selected;
@@ -241,7 +241,7 @@ if ($action == 'unselectfield') {
 	}
 }
 
-if ($action == 'downfield' || $action == 'upfield') {
+if (($action == 'downfield' || $action == 'upfield') && $user->hasRight('export', 'run')) {
 	$pos = $array_selected[GETPOST("field")];
 	if ($action == 'downfield') {
 		$newpos = $pos + 1;
@@ -265,14 +265,14 @@ if ($action == 'downfield' || $action == 'upfield') {
 	}
 }
 
-if ($step == 1 || $action == 'cleanselect') {
+if ($step == 1 || $action == 'cleanselect') {	// Test on permission here not required
 	$_SESSION["export_selected_fields"] = array();
 	$_SESSION["export_filtered_fields"] = array();
 	$array_selected = array();
 	$array_filtervalue = array();
 }
 
-if ($action == 'builddoc') {
+if ($action == 'builddoc' && $user->hasRight('export', 'run')) {
 	// Check permission
 	if (empty($objexport->array_export_perms[0])) {
 		accessforbidden();
@@ -298,7 +298,7 @@ if ($action == 'builddoc') {
 }
 
 // Delete file
-if ($step == 5 && $action == 'confirm_deletefile' && $confirm == 'yes') {
+if ($step == 5 && $action == 'confirm_deletefile' && $confirm == 'yes' && $user->hasRight('import', 'run')) {
 	// Check permission
 	if (empty($objexport->array_export_perms[0])) {
 		accessforbidden();
@@ -316,7 +316,7 @@ if ($step == 5 && $action == 'confirm_deletefile' && $confirm == 'yes') {
 	exit;
 }
 
-if ($action == 'deleteprof') {
+if ($action == 'deleteprof' && $user->hasRight('import', 'run')) {
 	// Check permission
 	if (empty($objexport->array_export_perms[0])) {
 		accessforbidden();
@@ -329,7 +329,7 @@ if ($action == 'deleteprof') {
 }
 
 // TODO The export for filter is not yet implemented (old code created conflicts with step 2). We must use same way of working and same combo list of predefined export than step 2.
-if ($action == 'add_export_model') {
+if ($action == 'add_export_model' && $user->hasRight('import', 'run')) {
 	// Check permission
 	if (empty($objexport->array_export_perms[0])) {
 		accessforbidden();
@@ -380,7 +380,7 @@ if ($action == 'add_export_model') {
 }
 
 // Reload a predefined export model
-if ($step == 2 && $action == 'select_model') {
+if ($step == 2 && $action == 'select_model' && $user->hasRight('import', 'run')) {
 	$_SESSION["export_selected_fields"] = array();
 	$_SESSION["export_filtered_fields"] = array();
 
@@ -409,7 +409,7 @@ if ($step == 2 && $action == 'select_model') {
 }
 
 // Get form with filters
-if ($step == 4 && $action == 'submitFormField') {
+if ($step == 4 && $action == 'submitFormField' && $user->hasRight('import', 'run')) {
 	// Check permission
 	if (empty($objexport->array_export_perms[0])) {
 		accessforbidden();

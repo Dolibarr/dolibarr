@@ -118,7 +118,7 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
-	if ($action == 'add') {
+	if ($action == 'add' && $user->hasRight('banque', 'configurer')) {
 		$error = 0;
 
 		$db->begin();
@@ -237,7 +237,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'update') {
+	if ($action == 'update' && $user->hasRight('banque', 'configurer')) {
 		$error = 0;
 
 		// Update account

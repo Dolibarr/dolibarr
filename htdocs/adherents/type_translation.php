@@ -60,7 +60,7 @@ if ($cancel == $langs->trans("Cancel")) {
 	$action = '';
 }
 
-if ($action == 'delete' && GETPOST('langtodelete', 'alpha')) {
+if ($action == 'delete' && GETPOST('langtodelete', 'alpha') && $user->hasRight('adherent', 'configurer')) {
 	$object = new AdherentType($db);
 	$object->fetch($id);
 	$result = $object->delMultiLangs(GETPOST('langtodelete', 'alpha'), $user);

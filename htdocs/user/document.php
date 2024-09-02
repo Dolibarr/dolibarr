@@ -46,27 +46,25 @@ if (!isset($id) || empty($id)) {
 }
 
 // Define value to know what current user can do on users
-$canadduser = (!empty($user->admin) || $user->hasRight("user", "user", "write"));
-$canreaduser = (!empty($user->admin) || $user->hasRight("user", "user", "read"));
-$canedituser = (!empty($user->admin) || $user->hasRight("user", "user", "write"));
-$candisableuser = (!empty($user->admin) || $user->hasRight("user", "user", "delete"));
-$canreadgroup = $canreaduser;
-$caneditgroup = $canedituser;
+$permissiontoadd = (!empty($user->admin) || $user->hasRight("user", "user", "write"));
+$permissiontoread = (!empty($user->admin) || $user->hasRight("user", "user", "read"));
+$permissiontoedit = (!empty($user->admin) || $user->hasRight("user", "user", "write"));
+$permissiontodisable = (!empty($user->admin) || $user->hasRight("user", "user", "delete"));
+$permissiontoreadgroup = $permissiontoread;
+$permissiontoeditgroup = $permissiontoedit;
 if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
-	$canreadgroup = (!empty($user->admin) || $user->hasRight("user", "group_advance", "read"));
-	$caneditgroup = (!empty($user->admin) || $user->hasRight("user", "group_advance", "write"));
+	$permissiontoreadgroup = (!empty($user->admin) || $user->hasRight("user", "group_advance", "read"));
+	$permissiontoeditgroup = (!empty($user->admin) || $user->hasRight("user", "group_advance", "write"));
 }
 // Define value to know what current user can do on properties of edited user
 if ($id) {
 	// $user est le user qui edite, $id est l'id de l'utilisateur edite
-	$caneditfield = ((($user->id == $id) && $user->hasRight("user", "self", "write"))
-	|| (($user->id != $id) && $user->hasRight("user", "user", "write")));
-	$caneditpassword = ((($user->id == $id) && $user->hasRight("user", "self", "password"))
-	|| (($user->id != $id) && $user->hasRight("user", "user", "password")));
+	$permissiontoedit = ((($user->id == $id) && $user->hasRight("user", "self", "write")) || (($user->id != $id) && $user->hasRight("user", "user", "write")));
+	$permissiontoeditpassword = ((($user->id == $id) && $user->hasRight("user", "self", "password")) || (($user->id != $id) && $user->hasRight("user", "user", "password")));
 }
 
-$permissiontoadd = $caneditfield;	// Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
-$permtoedit = $caneditfield;
+$permissiontoadd = $permissiontoedit;	// Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
+$permtoedit = $permissiontoedit;
 
 // Security check
 $socid = 0;
@@ -80,7 +78,7 @@ $hookmanager->initHooks(array('usercard', 'userdoc', 'globalcard'));
 
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
-if ($user->id != $id && !$canreaduser) {
+if ($user->id != $id && !$permissiontoread) {
 	accessforbidden();
 }
 

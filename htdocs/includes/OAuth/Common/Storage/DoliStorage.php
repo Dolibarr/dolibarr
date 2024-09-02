@@ -65,6 +65,8 @@ class DoliStorage implements TokenStorageInterface
 	public $date_creation;
 	public $date_modification;
 
+	public $userid;		// ID of user for user specific OAuth entries
+
 
 	/**
 	 * @param 	DoliDB 	$db					Database handler
@@ -226,6 +228,9 @@ class DoliStorage implements TokenStorageInterface
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."oauth_token";
 		$sql .= " WHERE service = '".$this->db->escape($servicepluskeyforprovider)."'";
 		$sql .= " AND entity IN (".getEntity('oauth_token').")";
+		if (!empty($this->userid)) {
+			$sql .= " AND fk_user = ".((int) $this->userid);
+		}
 		$resql = $this->db->query($sql);
 		//}
 

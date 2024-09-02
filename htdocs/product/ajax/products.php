@@ -64,6 +64,12 @@ $warehouseId = GETPOST('warehouseid', 'int');
 // Security check
 restrictedArea($user, 'produit|service|commande|propal|facture', 0, 'product&product');
 
+/*
+ * Actions
+ */
+
+// None
+
 
 /*
  * View
