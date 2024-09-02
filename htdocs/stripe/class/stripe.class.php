@@ -344,7 +344,7 @@ class Stripe extends CommonObject
 	/**
 	 * Get the Stripe payment intent. Create it with confirmnow=false
 	 * Warning. If a payment was tried and failed, a payment intent was created.
-	 * But if we change something on object to pay (amount or other), reusing same payment intent is not allowed by Stripe.
+	 * But if we change something on object to pay (amount or other), reusing same payment intent, is not allowed by Stripe.
 	 * Recommended solution is to recreate a new payment intent each time we need one (old one will be automatically closed after a delay),
 	 * that's why i comment the part of code to retrieve a payment intent with object id (never mind if we cumulate payment intent with old ones that will not be used)
 	 * Note: This is used when option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION is on when making a payment from the public/payment/newpayment.php page
@@ -371,7 +371,7 @@ class Stripe extends CommonObject
 	{
 		global $conf, $user;
 
-		dol_syslog(get_class($this)."::getPaymentIntent", LOG_INFO, 1);
+		dol_syslog(get_class($this)."::getPaymentIntent description=".$description, LOG_INFO, 1);
 
 		$error = 0;
 
@@ -407,7 +407,7 @@ class Stripe extends CommonObject
 
 		if (is_object($object) && getDolGlobalInt('STRIPE_REUSE_EXISTING_INTENT_IF_FOUND') && !getDolGlobalInt('STRIPE_CARD_PRESENT')) {
 			// Warning. If a payment was tried and failed, a payment intent was created.
-			// But if we change something on object to pay (amount or other that does not change the idempotency key), reusing same payment intent is not allowed by Stripe.
+			// But if we change something on object to pay (amount or other that does not change the idempotency key), reusing same payment intent, is not allowed by Stripe.
 			// Recommended solution is to recreate a new payment intent each time we need one (old one will be automatically closed by Stripe after a delay), Stripe will
 			// automatically return the existing payment intent if idempotency is provided when we try to create the new one.
 			// That's why we can comment the part of code to retrieve a payment intent with object id (never mind if we cumulate payment intent with old ones that will not be used)
@@ -450,7 +450,7 @@ class Stripe extends CommonObject
 		if (empty($paymentintent)) {
 			// Try to create intent. See https://stripe.com/docs/api/payment_intents/create
 			$ipaddress = getUserRemoteIP();
-			$metadata = array('dol_version' => DOL_VERSION, 'dol_entity' => $conf->entity, 'ipaddress' => $ipaddress);
+			$metadata = array('dol_version' => DOL_VERSION, 'dol_entity' => $conf->entity, 'ipaddress' => $ipaddress, 'dol_noidempotency' => (int) $noidempotency_key);
 			if (is_object($object)) {
 				$metadata['dol_type'] = $object->element;
 				$metadata['dol_id'] = $object->id;
@@ -676,6 +676,8 @@ class Stripe extends CommonObject
 	{
 		global $conf;
 
+		$noidempotency_key = 1;
+
 		dol_syslog("getSetupIntent description=".$description.' confirmnow='.json_encode($confirmnow), LOG_INFO, 1);
 
 		$error = 0;
@@ -690,7 +692,7 @@ class Stripe extends CommonObject
 
 		if (empty($setupintent)) {
 			$ipaddress = getUserRemoteIP();
-			$metadata = array('dol_version' => DOL_VERSION, 'dol_entity' => $conf->entity, 'ipaddress' => $ipaddress);
+			$metadata = array('dol_version' => DOL_VERSION, 'dol_entity' => $conf->entity, 'ipaddress' => $ipaddress, 'dol_noidempotency' => (int) $noidempotency_key);
 			if (is_object($object)) {
 				$metadata['dol_type'] = $object->element;
 				$metadata['dol_id'] = $object->id;
