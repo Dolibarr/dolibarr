@@ -167,7 +167,7 @@ $result = restrictedArea($user, 'export');
  * Actions
  */
 
-if ($action == 'selectfield' && $user->hasRight('export', 'run')) {     // Selection of field at step 2
+if ($action == 'selectfield' && $user->hasRight('export', 'creer')) {     // Selection of field at step 2
 	$fieldsarray = $objexport->array_export_fields[0];
 	$fieldsentitiesarray = $objexport->array_export_entities[0];
 	$fieldsdependenciesarray = $objexport->array_export_dependencies[0];
@@ -222,7 +222,7 @@ if ($action == 'selectfield' && $user->hasRight('export', 'run')) {     // Selec
 		setEventMessages($warnings, null, 'warnings');
 	}
 }
-if ($action == 'unselectfield' && $user->hasRight('export', 'run')) {
+if ($action == 'unselectfield' && $user->hasRight('export', 'creer')) {
 	if (GETPOST("field") == 'all') {
 		$array_selected = array();
 		$_SESSION["export_selected_fields"] = $array_selected;
@@ -241,7 +241,7 @@ if ($action == 'unselectfield' && $user->hasRight('export', 'run')) {
 	}
 }
 
-if (($action == 'downfield' || $action == 'upfield') && $user->hasRight('export', 'run')) {
+if (($action == 'downfield' || $action == 'upfield') && $user->hasRight('export', 'creer')) {
 	$pos = $array_selected[GETPOST("field")];
 	if ($action == 'downfield') {
 		$newpos = $pos + 1;
@@ -272,7 +272,7 @@ if ($step == 1 || $action == 'cleanselect') {	// Test on permission here not req
 	$array_filtervalue = array();
 }
 
-if ($action == 'builddoc' && $user->hasRight('export', 'run')) {
+if ($action == 'builddoc' && $user->hasRight('export', 'lire')) {
 	// Check permission
 	if (empty($objexport->array_export_perms[0])) {
 		accessforbidden();
