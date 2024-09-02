@@ -724,12 +724,14 @@ if ($step == 3 && $datatoexport) {
 	print $objexport->array_export_label[0];
 	print '</td></tr>';
 
-	// Nbre champs exportes
+	// List of exported fields
 	print '<tr><td>'.$langs->trans("ExportedFields").'</td>';
 	$list = '';
 	foreach ($array_selected as $code => $value) {
-		$list .= (!empty($list) ? ', ' : '');
-		$list .= (isset($objexport->array_export_fields[0][$code]) ? $langs->trans($objexport->array_export_fields[0][$code]) : '');
+		if (isset($objexport->array_export_fields[0][$code])) {
+			$list .= (!empty($list) ? ', ' : '');
+			$list .= $langs->trans($objexport->array_export_fields[0][$code]);
+		}
 	}
 	print '<td>'.$list.'</td></tr>';
 
@@ -908,8 +910,10 @@ if ($step == 4 && $datatoexport) {
 	print '<tr><td>'.$langs->trans("ExportedFields").'</td>';
 	$list = '';
 	foreach ($array_selected as $code => $value) {
-		$list .= (!empty($list) ? ', ' : '');
-		$list .= $langs->trans($objexport->array_export_fields[0][$code]);
+		if (isset($objexport->array_export_fields[0][$code])) {
+			$list .= (!empty($list) ? ', ' : '');
+			$list .= $langs->trans($objexport->array_export_fields[0][$code]);
+		}
 	}
 	print '<td>'.$list.'</td>';
 	print '</tr>';
