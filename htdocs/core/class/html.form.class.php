@@ -6423,15 +6423,15 @@ class Form
 
 		$out = '';
 		if ($htmlname != "none") {
-			$out .= '<form method="POST" action="' . $page . '">';
-			$out .= '<input type="hidden" name="action" value="setmode">';
+//			$out .= '<form method="POST" action="' . $page . '">';
+//			$out .= '<input type="hidden" name="action" value="setmode">';
 			$out .= '<input type="hidden" name="token" value="' . newToken() . '">';
 			if ($type) {
 				$out .= '<input type="hidden" name="type" value="' . dol_escape_htmltag($type) . '">';
 			}
 			$out .= $this->select_types_iban($selected, $htmlname, $filtertype, 0, $addempty, 0, 0, $active, '', 1, $ribForSelection);
-			//$out .= '<input type="submit" class="button smallpaddingimp valignmiddle" value="' . $langs->trans("Modify") . '">';
-			$out .= '</form>';
+//			$out .= '<input type="submit" class="button smallpaddingimp valignmiddle" value="' . $langs->trans("Modify") . '">';
+//			$out .= '</form>';
 		} else {
 			if ($selected) {
 				$out .= $selected;

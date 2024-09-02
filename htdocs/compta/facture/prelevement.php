@@ -101,10 +101,8 @@ $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
-
 if (empty($reshook)) {
 	if ($action == "new" && $usercancreate) {
-		var_dump("OLA");
 		if ($object->id > 0) {
 			$db->begin();
 
@@ -866,7 +864,7 @@ if ($object->id > 0) {
 //				if ($action == 'editrib') {
 					$selectedIban = $form->form_iban($_SERVER['PHP_SELF'].'?id='.$object->id, $_POST['ribList'] ?? $default_rib, 'ribList', $filtertype, 1, 0, $type, 0, $ribForSelection);
 //				} else {
-//					$form->form_iban($_SERVER['PHP_SELF'].'?id='.$object->id, $_POST['ribList'] ?? $default_rib, 'none');
+//					$selectedIban = $form->form_iban($_SERVER['PHP_SELF'].'?id='.$object->id, $_POST['ribList'] ?? $default_rib, 'none');
 //				}
 //				if ($action != 'editmode' && $user->hasRight('facture', 'creer')) {
 //					print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editrib&token='.newToken().'&id='.$object->id.'&type='.urlencode($type).'">'.img_edit($langs->trans('SetRib'), 1).'</a></td>';
