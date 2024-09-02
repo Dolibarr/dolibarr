@@ -2164,8 +2164,12 @@ if ($action != 'dopayment') {
 				}
 
 				if ($showbutton) {
+					// By default noidempotency is set to 1, to avoid the error "Keys for idempotant requests...". It means we can pay several times the same tag/ref.
+					// If STRIPE_USE_IDEMPOTENCY_BY_DEFAULT is set or param noidempotency=0 is added, then with add an idempotent key, so we must use a different tag/ref for each payment (if not we will get an error).
+					$noidempotency_key = (GETPOSTISSET('noidempotency') ? GETPOSTINT('noidempotency') : (getDolGlobalInt('STRIPE_USE_IDEMPOTENCY_BY_DEFAULT') ? 0 : 1));
+
 					print '<div class="button buttonpayment" id="div_dopayment_stripe"><span class="fa fa-credit-card"></span> <input class="" type="submit" id="dopayment_stripe" name="dopayment_stripe" value="'.$langs->trans("StripeDoPayment").'">';
-					print '<input type="hidden" name="noidempotency" value="'.GETPOSTINT('noidempotency').'">';
+					print '<input type="hidden" name="noidempotency" value="'.$noidempotency_key.'">';
 					print '<br>';
 					print '<span class="buttonpaymentsmall">'.$langs->trans("CreditOrDebitCard").'</span>';
 					print '</div>';
