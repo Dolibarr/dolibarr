@@ -294,7 +294,7 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
 print '<input type="hidden" name="sourcetype" value="'.$sourcetype.'">';
 
-if ($nb) {
+if ($nb) {var_dump("ola");
 	if ($pricetowithdraw) {
 		$title = $langs->trans('BankToReceiveWithdraw').': ';
 		if ($type == 'bank-transfer') {

@@ -6435,50 +6435,6 @@ class Form
 		} else {
 			if ($selected) {
 				$out .= $selected;
-//				$this->load_cache_types_paiements();
-				////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-//
-//				$num = count($this->cache_types_paiements);        // TODO Use $conf->cache['payment_mode'] instead of $this->cache_types_paiements
-//				if ($num > 0) {
-//					return $num; // Cache already loaded
-//				}
-//
-//				dol_syslog(__METHOD__, LOG_DEBUG);
-//
-//				$this->cache_types_paiements = array();
-//
-//				$sql = "SELECT id, code, libelle as label, type, active";
-//				$sql .= " FROM " . $this->db->prefix() . "c_paiement";
-//				$sql .= " WHERE entity IN (" . getEntity('c_paiement') . ")";
-//
-//				$resql = $this->db->query($sql);
-//				if ($resql) {
-//					$num = $this->db->num_rows($resql);
-//					$i = 0;
-//					while ($i < $num) {
-//						$obj = $this->db->fetch_object($resql);
-//
-//						// Si traduction existe, on l'utilise, sinon on prend le libelle par default
-//						$label = ($langs->transnoentitiesnoconv("PaymentTypeShort" . $obj->code) != "PaymentTypeShort" . $obj->code ? $langs->transnoentitiesnoconv("PaymentTypeShort" . $obj->code) : ($obj->label != '-' ? $obj->label : ''));
-//						$this->cache_types_paiements[$obj->id]['id'] = $obj->id;
-//						$this->cache_types_paiements[$obj->id]['code'] = $obj->code;
-//						$this->cache_types_paiements[$obj->id]['label'] = $label;
-//						$this->cache_types_paiements[$obj->id]['type'] = $obj->type;
-//						$this->cache_types_paiements[$obj->id]['active'] = $obj->active;
-//						$i++;
-//					}
-//
-//					$this->cache_types_paiements = dol_sort_array($this->cache_types_paiements, 'label', 'asc', 0, 0, 1);
-//
-//					return $num;
-//				} else {
-//					dol_print_error($this->db);
-//					return -1;
-//				}
-//
-//				////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//				$out .= $this->cache_types_paiements[$selected]['label'];
 			} else {
 				$out .= "&nbsp;";
 			}
