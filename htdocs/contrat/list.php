@@ -311,7 +311,9 @@ $sql .= " c.rowid, c.ref, c.datec as date_creation, c.tms as date_modification, 
 $sql .= ' s.rowid as socid, s.nom as name, s.name_alias, s.email, s.town, s.zip, s.fk_pays as country_id, s.client, s.code_client, s.status as company_status, s.logo as company_logo,';
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
-$sql .= " MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") as lower_planned_end_date,";
+// TODO Add a denormalized field "perf_lower_planned_end_date" so we can remove the HAVING and then,
+// remove completely the SUM and GROUP BY (faster). Status of each service can be read into the loop that build the list.
+$sql .= " MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") as lower_planned_end_date,";	// lowest expiration date among open service lines
 $sql .= " SUM(".$db->ifsql("cd.statut=0", 1, 0).') as nb_initial,';
 $sql .= " SUM(".$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite >= '".$db->idate($now)."')", 1, 0).') as nb_running,';
 $sql .= " SUM(".$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now)."')", 1, 0).') as nb_expired,';
@@ -542,7 +544,12 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	} else {
 		/* The fast and low memory method to get and count full list converts the sql into a sql count */
 		$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
-		$sqlforcount = preg_replace('/LEFT JOIN '.MAIN_DB_PREFIX.'contratdet as cd ON c.rowid = cd.fk_contrat /', '', $sqlforcount);
+
+		$sqlforcount = str_replace('LEFT JOIN '.MAIN_DB_PREFIX.'c_country as country on (country.rowid = s.fk_pays)', '', $sqlforcount);
+		$sqlforcount = str_replace('LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as typent on (typent.id = s.fk_typent)', '', $sqlforcount);
+		$sqlforcount = str_replace('LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as state on (state.rowid = s.fk_departement)', '', $sqlforcount);
+		$sqlforcount = str_replace('LEFT JOIN '.MAIN_DB_PREFIX.'contratdet as cd ON c.rowid = cd.fk_contrat', '', $sqlforcount);
+		$sqlforcount = str_replace('LEFT JOIN '.MAIN_DB_PREFIX.'contrat_extrafields as ef on (c.rowid = ef.fk_object)', '', $sqlforcount);
 		$sqlforcount = preg_replace('/GROUP BY.*$/', '', $sqlforcount);
 
 		$resql = $db->query($sqlforcount);
