@@ -311,7 +311,7 @@ $sql .= " c.rowid, c.ref, c.datec as date_creation, c.tms as date_modification, 
 $sql .= ' s.rowid as socid, s.nom as name, s.name_alias, s.email, s.town, s.zip, s.fk_pays as country_id, s.client, s.code_client, s.status as company_status, s.logo as company_logo,';
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
-// TODO Add a denormalized field "perf_lower_planned_end_date" so we can remove the HAVING and then,
+// TODO Add a denormalized field "denormalized_lower_planned_end_date" so we can remove the HAVING and then,
 // remove completely the SUM and GROUP BY (faster). Status of each service can be read into the loop that build the list.
 $sql .= " MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") as lower_planned_end_date,";	// lowest expiration date among open service lines
 $sql .= " SUM(".$db->ifsql("cd.statut=0", 1, 0).') as nb_initial,';
