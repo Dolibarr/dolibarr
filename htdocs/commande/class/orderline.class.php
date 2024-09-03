@@ -49,8 +49,14 @@ class OrderLine extends CommonOrderLine
 	 */
 	public $element = 'commandedet';
 
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element = 'commandedet';
 
+	/**
+	 * @var OrderLine
+	 */
 	public $oldline;
 
 	/**
@@ -67,6 +73,9 @@ class OrderLine extends CommonOrderLine
 	 */
 	public $commande_id;
 
+	/**
+	 * @var int
+	 */
 	public $fk_parent_line;
 
 	/**
@@ -79,12 +88,19 @@ class OrderLine extends CommonOrderLine
 	 */
 	public $ref_ext;
 
+	/**
+	 * @var int
+	 */
 	public $fk_remise_except;
 
 	/**
 	 * @var int line rank
 	 */
 	public $rang = 0;
+
+	/**
+	 * @var int
+	 */
 	public $fk_fournprice;
 
 	/**
@@ -92,20 +108,41 @@ class OrderLine extends CommonOrderLine
 	 * @var float
 	 */
 	public $pa_ht;
+
+	/**
+	 * @var int|float|string
+	 */
 	public $marge_tx;
+
+	/**
+	 * @var float|string
+	 */
 	public $marque_tx;
 
 	/**
+	 * @var float|string
 	 * @deprecated
 	 * @see $remise_percent, $fk_remise_except
 	 */
 	public $remise;
 
-	// Start and end date of the line
+	/**
+	 * Start date of line
+	 * @var int|string
+	 */
 	public $date_start;
+
+	/**
+	 * End date of line
+	 * @var int|string
+	 */
 	public $date_end;
 
-	public $skip_update_total; // Skip update price total for special lines
+	/**
+	 * Skip update price total for special lines
+	 * @var int
+	 */
+	public $skip_update_total;
 
 
 	/**
