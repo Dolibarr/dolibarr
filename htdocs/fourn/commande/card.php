@@ -340,7 +340,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'reopen') {	// no test on permission here, permission to use will depends on status
+	if ($action == 'reopen' && $permissiontoadd) {	// no test on permission here, permission to use will depends on status
 		if (in_array($object->statut, array(1, 2, 3, 4, 5, 6, 7, 9))) {
 			if ($object->statut == 1) {
 				$newstatus = 0; // Validated->Draft
