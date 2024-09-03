@@ -775,7 +775,6 @@ if (empty($reshook)) {
 								setEventMessages($line->error, $line->errors, 'errors');
 								$error++;
 							}
-							unset($_POST[$stockLocation]);
 							unset($_POST[$qty]);
 						} elseif ($lines[$i]->entrepot_id > 0) {
 							// single warehouse shipment line
