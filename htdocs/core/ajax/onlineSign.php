@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		William Mead				<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -383,17 +384,17 @@ if ($action == "importSignature") {
 										if (getDolGlobalString("CONTRACT_SIGNATURE_XFORIMGSTART")) {
 											$param['xforimgstart'] = getDolGlobalString("CONTRACT_SIGNATURE_XFORIMGSTART");
 										} else {
-											$param['xforimgstart'] = 10;
+											$param['xforimgstart'] = (empty($s['w']) ? 110 : $s['w'] / 2 - 0);
 										}
 										if (getDolGlobalString("CONTRACT_SIGNATURE_YFORIMGSTART")) {
 											$param['yforimgstart'] = getDolGlobalString("CONTRACT_SIGNATURE_YFORIMGSTART");
 										} else {
-											$param['yforimgstart'] = (empty($s['h']) ? 240 : $s['h'] - 65);
+											$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 62);
 										}
 										if (getDolGlobalString("CONTRACT_SIGNATURE_WFORIMG")) {
 											$param['wforimg'] = getDolGlobalString("CONTRACT_SIGNATURE_WFORIMG");
 										} else {
-											$param['wforimg'] = $s['w'] / 2 - $param['xforimgstart'];
+											$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 16);
 										}
 
 										dolPrintSignatureImage($pdf, $langs, $param);
@@ -409,9 +410,9 @@ if ($action == "importSignature") {
 								// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
 								// TODO Get position of box from PDF template
 
-								$param['xforimgstart'] = 10;
-								$param['yforimgstart'] = (empty($s['h']) ? 240 : $s['h'] - 65);
-								$param['wforimg'] = $s['w'] / 2 - $param['xforimgstart'];
+								$param['xforimgstart'] = (empty($s['w']) ? 110 : $s['w'] / 2 - 0);
+								$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 62);
+								$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 16);
 
 								dolPrintSignatureImage($pdf, $langs, $param);
 							}
@@ -567,6 +568,8 @@ if ($action == "importSignature") {
 					// Document format not supported to insert online signature.
 					// We should just create an image file with the signature.
 				}
+				$user = new User($db);
+				$object->setSignedStatus($user, $object::SIGNED_STATUSES['STATUS_SIGNED_RECEIVER_ONLINE'], 0, 'FICHINTER_MODIFY');
 			}
 		} elseif ($mode == "societe_rib") {
 			$langs->load('withdrawals');

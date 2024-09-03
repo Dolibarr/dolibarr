@@ -90,7 +90,7 @@ if (GETPOST('cancel', 'alpha')) {
 }
 
 // Add a notification
-if ($action == 'add') {
+if ($action == 'add' && $permissiontoadd) {
 	$error = 0;
 
 	if ($actionid <= 0) {
@@ -103,7 +103,7 @@ if ($action == 'add') {
 		$db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def";
-		$sql .= " WHERE fk_user=".((int) $id)." AND fk_action=".((int) $actionid);
+		$sql .= " WHERE fk_user = ".((int) $id)." AND fk_action = ".((int) $actionid);
 		if ($db->query($sql)) {
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify_def (datec, fk_user, fk_action)";
 			$sql .= " VALUES ('".$db->idate($now)."', ".((int) $id).", ".((int) $actionid).")";
@@ -125,9 +125,9 @@ if ($action == 'add') {
 	}
 }
 
-// Remove a notification
-if ($action == 'delete') {
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def where rowid=".GETPOSTINT("actid");
+// Remove a notification (edit a user)
+if ($action == 'delete' && $permissiontoadd) {
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def where rowid = ".GETPOSTINT("actid");
 	$db->query($sql);
 }
 

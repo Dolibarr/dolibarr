@@ -399,7 +399,6 @@ HRMSetup=Configuración del módulo HRM
 CompanySetup=Configuración del módulo de empresas.
 CompanyCodeChecker=Opciones para la generación automática de códigos de clientes / proveedores.
 AccountCodeManager=Opciones para la generación automática de códigos contables de clientes / proveedores.
-NotificationsDesc=Las notificaciones por correo electrónico se pueden enviar automáticamente para algunos eventos de Dolibarr. <br> Los destinatarios de las notificaciones se pueden definir:
 DocumentModelOdt=Genere documentos desde plantillas de OpenDocument (archivos .ODT / .ODS de LibreOffice, OpenOffice, KOffice, TextEdit, ...)
 WatermarkOnDraft=Marca de agua en el proyecto de documento
 JSOnPaimentBill=Activar función para autocompletar líneas de pago en forma de pago

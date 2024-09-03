@@ -30,8 +30,14 @@
  */
 abstract class Stats
 {
+	/**
+	 * @var DoliDB
+	 */
 	protected $db;
-	protected $lastfetchdate = array(); // Dates of cache file read by methods
+	/**
+	 * @var array<string,int>	Dates of cache file read by methods
+	 */
+	protected $lastfetchdate = array();
 	public $cachefilesuffix = ''; // Suffix to add to name of cache file (to avoid file name conflicts)
 
 	/**

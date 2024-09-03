@@ -267,7 +267,7 @@ class Skill extends CommonObject
 		if (!$error) {
 			$this->db->commit();
 
-			setEventMessage($langs->trans('SkillCreated'), $i);
+			setEventMessage($langs->trans('SkillCreated', $i));
 			return 1;
 		} else {
 			$this->db->rollback();

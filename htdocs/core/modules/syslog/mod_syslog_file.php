@@ -10,7 +10,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/syslog/logHandler.php';
  */
 class mod_syslog_file extends LogHandler
 {
+	/**
+	 * @var string
+	 */
 	public $code = 'file';
+	/**
+	 * @var float|int Last log time, used to compute delay
+	 */
 	public $lastTime = 0;
 
 	/**
@@ -50,7 +56,7 @@ class mod_syslog_file extends LogHandler
 	/**
 	 * Is the logger active ?
 	 *
-	 * @return int		1 if logger enabled
+	 * @return int<0,1>		If logger enabled
 	 */
 	public function isActive()
 	{
@@ -60,7 +66,7 @@ class mod_syslog_file extends LogHandler
 	/**
 	 * 	Return array of configuration data
 	 *
-	 * 	@return	array		Return array of configuration data
+	 * 	@return	array<array{name:string,constant:string,default:string,css:string}>	Return array of configuration data
 	 */
 	public function configure()
 	{
@@ -128,10 +134,23 @@ class mod_syslog_file extends LogHandler
 		return $suffixinfilename ? preg_replace('/\.log$/i', $suffixinfilename.'.log', $tmp) : $tmp;
 	}
 
+
+	// @phan-suppress-next-line PhanPluginDuplicateArrayKey
+	const DOL_LOG_LEVELS = array(
+		LOG_EMERG => 'EMERG',
+		LOG_ALERT => 'ALERT',
+		LOG_CRIT => 'CRIT',
+		LOG_ERR => 'ERR',
+		LOG_WARNING => 'WARNING',
+		LOG_NOTICE => 'NOTICE',
+		LOG_INFO => 'INFO',
+		LOG_DEBUG => 'DEBUG'
+	);
+
 	/**
 	 * Export the message
 	 *
-	 * @param  	array 	$content 			Array containing the info about the message
+	 * @param	array{level:int,ip:string,ospid:string,osuser:string,message:string}	$content 	Array containing the info about the message
 	 * @param	string	$suffixinfilename	When output is a file, append this suffix into default log filename.
 	 * @return	void
 	 * @phan-suppress PhanPluginDuplicateArrayKey
@@ -142,50 +161,44 @@ class mod_syslog_file extends LogHandler
 			return; // Global option to disable output of this handler
 		}
 
+
+		// Prepare log message
+
+		$delay = "";
+		if (getDolGlobalString('MAIN_SYSLOG_SHOW_DELAY')) {
+			$now = microtime(true);
+			$delay = " ".sprintf("%05.3f", $this->lastTime != 0 ? $now - $this->lastTime : 0);
+			$this->lastTime = $now;
+		}
+		$message = dol_print_date(dol_now('gmt'), 'standard', 'gmt').$delay." ".sprintf("%-7s", self::DOL_LOG_LEVELS[$content['level']])." ".sprintf("%-15s", $content['ip']);
+		$message .= " ".sprintf("%7s", dol_trunc($content['ospid'], 7, 'right', 'UTF-8', 1));
+		$message .= " ".sprintf("%6s", dol_trunc($content['osuser'], 6, 'right', 'UTF-8', 1));
+		// @phan-suppress-next-line PhanParamSuspiciousOrder
+		$message .= " ".($this->ident > 0 ? str_pad('', ((int) $this->ident), ' ') : '').$content['message'];
+		$message .= "\n";
+
+
+		// Write log message
+
 		$logfile = $this->getFilename($suffixinfilename);
 
-		// Test constant SYSLOG_FILE_NO_ERROR (should stay a constant defined with define('SYSLOG_FILE_NO_ERROR',1);
+		$result = false;
 		if (defined('SYSLOG_FILE_NO_ERROR')) {
-			$filefd = @fopen($logfile, 'a+');
+			$filefd = @fopen($logfile, "a");
 		} else {
-			$filefd = fopen($logfile, 'a+');
+			$filefd = fopen($logfile, "a");
 		}
 
-		if (!$filefd) {
-			if (!defined('SYSLOG_FILE_NO_ERROR') || !constant('SYSLOG_FILE_NO_ERROR')) {
-				global $dolibarr_main_prod;
-				// Do not break dolibarr usage if log fails
-				//throw new Exception('Failed to open log file '.basename($logfile));
-				print 'Failed to open log file '.($dolibarr_main_prod ? basename($logfile) : $logfile);
-			}
-		} else {
-			// @phan-suppress-next-line PhanPluginDuplicateArrayKey
-			$logLevels = array(
-				LOG_EMERG => 'EMERG',
-				LOG_ALERT => 'ALERT',
-				LOG_CRIT => 'CRIT',
-				LOG_ERR => 'ERR',
-				LOG_WARNING => 'WARNING',
-				LOG_NOTICE => 'NOTICE',
-				LOG_INFO => 'INFO',
-				LOG_DEBUG => 'DEBUG'
-			);
-
-			$delay = "";
-			if (getDolGlobalString('MAIN_SYSLOG_SHOW_DELAY')) {
-				$now = microtime(true);
-				$delay = " ".sprintf("%05.3f", $this->lastTime != 0 ? $now - $this->lastTime : 0);
-				$this->lastTime = $now;
-			}
-
-			// @phan-suppress-next-line PhanParamSuspiciousOrder
-			$message = dol_print_date(dol_now('gmt'), 'standard', 'gmt').$delay." ".sprintf("%-7s", $logLevels[$content['level']])." ".sprintf("%-15s", $content['ip']);
-			$message .= " ".sprintf("%7s", dol_trunc($content['ospid'], 7, 'right', 'UTF-8', 1));
-			$message .= " ".sprintf("%6s", dol_trunc($content['osuser'], 6, 'right', 'UTF-8', 1));
-			$message .= " ".($this->ident > 0 ? str_pad(((string) ''), ((int) $this->ident), ((string) ' ')) : '').$content['message'];
-			fwrite($filefd, $message."\n");
+		if ($filefd !== false) {
+			$result = fwrite($filefd, $message);
 			fclose($filefd);
 			dolChmod($logfile);
+		}
+		if ($result === false && (!defined('SYSLOG_FILE_NO_ERROR') || !constant('SYSLOG_FILE_NO_ERROR'))) {
+			global $dolibarr_main_prod;
+			// Do not break dolibarr usage if log fails
+			//throw new Exception('Failed to open log file '.basename($logfile));
+			print 'Failed to write to log file '.($dolibarr_main_prod ? basename($logfile) : $logfile);
 		}
 	}
 }

@@ -155,7 +155,7 @@ print "<br>\n";
 $todisabletext = '';
 $i = 0;
 foreach ($arrayoffunctionstodisable as $functiontodisable) {
-	if (! in_array($functiontodisable, $arrayoffunctionsdisabled)) {
+	if (\function_exists($functiontodisable)) {
 		if ($i > 0) {
 			$todisabletext .= ', ';
 		}
@@ -170,7 +170,7 @@ if ($todisabletext) {
 $todisabletext = '';
 $i = 0;
 foreach ($arrayoffunctionstodisable2 as $functiontodisable) {
-	if (! in_array($functiontodisable, $arrayoffunctionsdisabled)) {
+	if (\function_exists($functiontodisable)) {
 		if ($i > 0) {
 			$todisabletext .= ', ';
 		}
@@ -182,8 +182,7 @@ if ($todisabletext) {
 	print img_picto('', 'warning', 'class="pictofixedwidth"').$langs->trans("IfCLINotRequiredYouShouldDisablePHPFunctions").': '.$todisabletext;
 	print '<br>';
 }
-
-if (in_array($functiontokeep, $arrayoffunctionsdisabled)) {
+if (!\function_exists($functiontokeep)) {
 	print img_picto($langs->trans("PHPFunctionsRequiredForCLI"), 'warning', 'class="pictofixedwidth"');
 } else {
 	print img_picto('', 'tick', 'class="pictofixedwidth"');
@@ -294,6 +293,8 @@ if (file_exists($installlock)) {
 } else {
 	print img_warning().' '.$langs->trans("WarningLockFileDoesNotExists", DOL_DATA_ROOT);
 }
+
+print '<br>';
 print '<br>';
 
 // Is upgrade unlocked
@@ -301,6 +302,7 @@ if (file_exists($installlock)) {	// If install not locked, no need to show this.
 	if (file_exists($upgradeunlock)) {
 		print '<strong>'.$langs->trans("DolibarrUpgrade").'</strong>: ';
 		print img_warning().' '.$langs->trans("WarningUpgradeHasBeenUnlocked", $upgradeunlock);
+		print '<br>';
 		print '<br>';
 	}
 }
@@ -379,7 +381,7 @@ print '<span class="bold"> -> Current PHP streams allowed = </span>';
 $arrayofstreams = stream_get_wrappers();
 if (!empty($arrayofstreams)) {
 	sort($arrayofstreams);
-	print(implode(',', $arrayofstreams)).' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("TryToKeepOnly", 'file,http,https,php,zip').')</span>'."\n";
+	print(implode(', ', $arrayofstreams)).' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("TryToKeepOnly", 'file,http,https,php,zip').')</span>'."\n";
 }
 print '</div>';
 

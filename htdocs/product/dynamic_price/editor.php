@@ -58,12 +58,16 @@ if (empty($eid)) { //This also disables fetch when eid == 0
 	$price_expression->fetch($eid);
 }
 
+$usercanread   = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'lire')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'lire')));
+$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'creer')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'creer')));
+$usercandelete = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'supprimer')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'supprimer')));
+
 
 /*
  * Actions
  */
 
-if ($action == 'add') {
+if ($action == 'add' && $usercancreate) {
 	if ($eid == 0) {
 		$result = $price_expression->find_title($title);
 		if ($result == 0) { //No existing entry found with title, ok
@@ -92,7 +96,7 @@ if ($action == 'add') {
 	}
 }
 
-if ($action == 'update') {
+if ($action == 'update' && $usercancreate) {
 	if ($eid != 0) {
 		$result = $price_expression->find_title($title);
 		if ($result == 0 || $result == $eid) { //No existing entry found with title or existing one is the current one, ok
@@ -121,7 +125,7 @@ if ($action == 'update') {
 	}
 }
 
-if ($action == 'delete') {
+if ($action == 'delete' && $usercancreate) {
 	if ($eid != 0) {
 		$price_expression->fetch($eid);
 		$result = $price_expression->delete($user);

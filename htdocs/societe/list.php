@@ -328,6 +328,8 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'societe', $socid, '');
 
+$permissiontoadd = $user->hasRight('societe', 'lire');
+
 
 /*
  * Actions
@@ -463,7 +465,7 @@ if (empty($reshook)) {
 	$uploaddir = $conf->societe->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
-	if ($action == 'setstcomm') {
+	if ($action == 'setstcomm' && $permissiontoadd) {
 		$object = new Client($db);
 		$result = $object->fetch(GETPOST('stcommsocid'));
 		$object->stcomm_id = dol_getIdFromCode($db, GETPOST('stcomm', 'alpha'), 'c_stcomm');

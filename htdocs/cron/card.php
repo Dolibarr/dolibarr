@@ -250,7 +250,6 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
 }
 
 
-
 /*
  * View
  */
@@ -560,9 +559,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print "</form>\n";
 } else {
-	/*
-	 * view card
-	 */
+	// view card
 	$now = dol_now();
 
 	print dol_get_fiche_head($head, 'card', $langs->trans("CronTask"), -1, 'cron');

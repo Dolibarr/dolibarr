@@ -108,9 +108,11 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$permissiontoadd = $user->hasRight('stock', 'creer');
 	$permissiontodelete = $user->hasRight('stock', 'supprimer');
+	$permissiontoupdatestock = $user->hasRight('stock', 'mouvement', 'creer');
 } else {
 	$permissiontoadd = $user->hasRight('stock', 'inventory_advance', 'write');
 	$permissiontodelete = $user->hasRight('stock', 'inventory_advance', 'write');
+	$permissiontoupdatestock = $user->hasRight('stock', 'inventory_advance', 'write');
 }
 
 $now = dol_now();
@@ -135,12 +137,12 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	$error = 0;
 
-	if ($action == 'cancel_record' && $permissiontoadd) {
+	if ($action == 'cancel_record' && $permissiontoupdatestock) {
 		$object->setCanceled($user);
 	}
 
 	// Close inventory by recording the stock movements
-	if ($action == 'update' && $user->hasRight('stock', 'mouvement', 'creer') && $object->status == $object::STATUS_VALIDATED) {
+	if ($action == 'update' && $permissiontoupdatestock && $object->status == $object::STATUS_VALIDATED) {
 		$stockmovment = new MouvementStock($db);
 		$stockmovment->setOrigin($object->element, $object->id);
 
@@ -267,7 +269,7 @@ if (empty($reshook)) {
 	}
 
 	// Save quantity found during inventory (when we click on Save button on inventory page)
-	if ($action == 'updateinventorylines' && $permissiontoadd) {
+	if ($action == 'updateinventorylines' && $permissiontoupdatestock) {
 		$sql = 'SELECT id.rowid, id.datec as date_creation, id.tms as date_modification, id.fk_inventory, id.fk_warehouse,';
 		$sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'inventorydet as id';
@@ -591,7 +593,7 @@ if ($action != 'record') {
 
 	if (empty($reshook)) {
 		if ($object->status == Inventory::STATUS_DRAFT) {
-			if ($permissiontoadd) {
+			if ($permissiontoupdatestock) {
 				if (getDolGlobalInt('INVENTORY_INCLUDE_SUB_WAREHOUSE') && !empty($object->fk_warehouse)) {
 					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=validate&token='.newToken().'">'.$langs->trans("Validate").' ('.$langs->trans("Start").')</a>';
 				} else {
@@ -604,13 +606,13 @@ if ($action != 'record') {
 
 		// Save
 		if ($object->status == $object::STATUS_VALIDATED) {
-			if ($permissiontoadd) {
+			if ($permissiontoupdatestock) {
 				print '<a class="butAction classfortooltip" id="idbuttonmakemovementandclose" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=record&page='.$page.$paramwithsearch.'&token='.newToken().'" title="'.dol_escape_htmltag($langs->trans("MakeMovementsAndClose")).'">'.$langs->trans("MakeMovementsAndClose").'</a>'."\n";
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('MakeMovementsAndClose').'</a>'."\n";
 			}
 
-			if ($permissiontoadd) {
+			if ($permissiontoupdatestock) {
 				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_cancel&page='.$page.$paramwithsearch.'&token='.newToken().'">'.$langs->trans("Cancel").'</a>'."\n";
 			}
 		}
@@ -627,7 +629,7 @@ if ($action != 'record') {
 if ($object->status == Inventory::STATUS_VALIDATED) {
 	print '<center>';
 	if (!empty($conf->use_javascript_ajax)) {
-		if ($permissiontoadd) {
+		if ($permissiontoupdatestock) {
 			// Link to launch scan tool
 			if (isModEnabled('barcode') || isModEnabled('productbatch')) {
 				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=updatebyscaning&token='.currentToken().'" class="marginrightonly paddingright marginleftonly paddingleft">'.img_picto('', 'barcode', 'class="paddingrightonly"').$langs->trans("UpdateByScaning").'</a>';
@@ -665,7 +667,7 @@ if ($object->status == Inventory::STATUS_VALIDATED) {
 
 // Popup for mass barcode scanning
 if ($action == 'updatebyscaning') {
-	if ($permissiontoadd) {
+	if ($permissiontoupdatestock) {
 		// Output the javascript to manage the scanner tool.
 		print '<script>';
 
@@ -969,7 +971,12 @@ if ($object->status == $object::STATUS_DRAFT || $object->status == $object::STAT
 	print $formproduct->selectWarehouses((GETPOSTISSET('fk_warehouse') ? GETPOSTINT('fk_warehouse') : $object->fk_warehouse), 'fk_warehouse', 'warehouseopen', 1, 0, 0, '', 0, 0, array(), 'maxwidth300');
 	print '</td>';
 	print '<td>';
-	print $form->select_produits((GETPOSTISSET('fk_product') ? GETPOSTINT('fk_product') : $object->fk_product), 'fk_product', '', 0, 0, -1, 2, '', 0, null, 0, '1', 0, 'maxwidth300');
+	if (getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
+		$filtertype = '';
+	} else {
+		$filtertype = 0;
+	}
+	print $form->select_produits((GETPOSTISSET('fk_product') ? GETPOSTINT('fk_product') : $object->fk_product), 'fk_product', $filtertype, 0, 0, -1, 2, '', 0, null, 0, '1', 0, 'maxwidth300');
 	print '</td>';
 	if (isModEnabled('productbatch')) {
 		print '<td>';
@@ -996,7 +1003,11 @@ if ($object->status == $object::STATUS_DRAFT || $object->status == $object::STAT
 	}
 	// Actions
 	print '<td class="center">';
-	print '<input type="submit" class="button paddingright" name="addline" value="'.$langs->trans("Add").'">';
+	if ($permissiontoupdatestock) {
+		print '<input type="submit" class="button paddingright" name="addline" value="'.$langs->trans("Add").'">';
+	} else {
+		print '<input type="submit" class="button paddingright" disabled="disabled" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'" name="addline" value="'.$langs->trans("Add").'">';
+	}
 	print '</td>';
 	print '</tr>';
 }
@@ -1147,7 +1158,9 @@ if ($resql) {
 
 			// Picto delete line
 			print '<td class="right">';
-			print '<a class="reposition" href="'.DOL_URL_ROOT.'/product/inventory/inventory.php?id='.$object->id.'&lineid='.$obj->rowid.'&action=deleteline&page='.$page.$paramwithsearch.'&token='.newToken().'">'.img_delete().'</a>';
+			if ($permissiontoupdatestock) {
+				print '<a class="reposition" href="'.DOL_URL_ROOT.'/product/inventory/inventory.php?id='.$object->id.'&lineid='.$obj->rowid.'&action=deleteline&page='.$page.$paramwithsearch.'&token='.newToken().'">'.img_delete().'</a>';
+			}
 			$qty_tmp = price2num(GETPOST("id_".$obj->rowid."_input_tmp", 'MS')) >= 0 ? GETPOST("id_".$obj->rowid."_input_tmp") : $qty_view;
 			print '<input type="hidden" class="maxwidth50 right realqty" name="id_'.$obj->rowid.'_input_tmp" id="id_'.$obj->rowid.'_input_tmp" value="'.$qty_tmp.'">';
 			print '</td>';

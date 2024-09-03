@@ -742,7 +742,7 @@ function IsAllowedCommand($sCommand)
  */
 function GetCurrentFolder()
 {
-	$sCurrentFolder = isset($_GET['CurrentFolder']) ? GETPOST('CurrentFolder', '', 1) : '/';
+	$sCurrentFolder = isset($_GET['CurrentFolder']) ? GETPOST('CurrentFolder', 'alphanohtml', 1) : '/';
 
 	// Check the current folder syntax (must begin and start with a slash).
 	if (!preg_match('|/$|', $sCurrentFolder)) {

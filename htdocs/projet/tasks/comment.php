@@ -84,6 +84,12 @@ $socid = 0;
 restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
 
 
+/*
+ * Actions
+ */
+
+// None
+
 
 /*
  * View

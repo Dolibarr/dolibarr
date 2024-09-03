@@ -173,7 +173,9 @@ class Categorie extends CommonObject
 		'project' => 'ProjectsCategoriesArea',
 		'warehouse' => 'StocksCategoriesArea',
 		'actioncomm' => 'ActioncommCategoriesArea',
-		'website_page' => 'WebsitePageCategoriesArea'
+		'website_page' => 'WebsitePageCategoriesArea',
+		'ticket' => 'TicketCategoriesArea',
+		'knowledgemanagement' => 'KnowledgemanagementCategoriesArea'
 	);
 
 	/**
@@ -1257,7 +1259,8 @@ class Categorie extends CommonObject
 		}
 
 		dol_syslog(get_class($this)."::get_full_arbo dol_sort_array", LOG_DEBUG);
-		$this->cats = dol_sort_array($this->cats, 'fulllabel', 'asc', true, false);
+
+		$this->cats = dol_sort_array($this->cats, 'fulllabel', 'asc', 1, 0, 1);		// Sort on full label like "Label 1 >> Sublabel a >> Subsublabel"
 
 		return $this->cats;
 	}

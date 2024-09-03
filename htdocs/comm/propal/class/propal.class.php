@@ -3643,7 +3643,8 @@ class Propal extends CommonObject
 			}
 
 			$obj = new $classname();
-			$numref = "";
+			'@phan-var-force ModeleNumRefPropales $obj';
+
 			$numref = $obj->getNextValue($soc, $this);
 
 			if ($numref != "") {
