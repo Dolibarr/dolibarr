@@ -114,7 +114,17 @@ if (empty($reshook)) {
 			}
 			$paymentservice = GETPOST('paymentservice');
 
-			$result = $object->demande_prelevement($user, price2num(GETPOST('withdraw_request_amount', 'alpha')), $newtype, $sourcetype);
+
+			// Get chosen iban id
+			$iban = explode(" / ", GETPOST('ribList'))[0];
+			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_rib WHERE iban_prefix = '".$iban."'" ;
+			$selectedRib = $object->db->query($sql);
+			if ($selectedRib) {
+				if ($selectedRib->num_rows) {
+					$obj = $object->db->fetch_object($selectedRib);
+				}
+			}
+			$result = $object->demande_prelevement($user, price2num(GETPOST('withdraw_request_amount', 'alpha')), $newtype, $sourcetype, 0, $obj->rowid ?? 0);
 
 			if ($result > 0) {
 				$db->commit();
@@ -604,84 +614,11 @@ if ($object->id > 0) {
 	} else {
 		$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
 	}
-	print "</td>";
+	print '</td>';
 	print '</tr>';
-
-
-//	//	-------------------------------------------------------------
-//	//	MODIFICATIONS START
-//	//	-------------------------------------------------------------
-//
-//	print '<tr><td>';
-//	print '<table class="nobordernopadding centpercent"><tr><td>';
-//	print $langs->trans('CustomerIBAN');
-//	print '</td>';
-//	if ($action != 'editmode' && $object->status == $object::STATUS_DRAFT && $user->hasRight('facture', 'creer')) {
-//		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editrib&token='.newToken().'&id='.$object->id.'&type='.urlencode($type).'">'.img_edit($langs->trans('SetRib'), 1).'</a></td>';
-//	}
-//	print '</tr></table>';
-//	print '</td><td colspan="3">';
-//
-//	$bac = new CompanyBankAccount($db);
-//	$ribList = $object->thirdparty->get_all_rib();
-//	$ribForSelection = [];
-//	$default_rib = '';
-//	foreach($ribList as $rib) {
-//		$ribString = $rib->iban . (($rib->iban && $rib->bic) ? ' / ' : '') . $rib->bic;
-//
-//		$ribForSelection[] = $ribString;
-//		if($rib->default_rib == 1){
-//			$default_rib = $ribString;
-//		}
-//	}
-//
-//	if ($action == 'editrib') {
-//		$form->form_iban($_SERVER['PHP_SELF'].'?id='.$object->id, $_POST['ribList'] ?? $default_rib, 'ribList', $filtertype, 1, 0, $type, 0, $ribForSelection);
-//	} else {
-//		$form->form_iban($_SERVER['PHP_SELF'].'?id='.$object->id, $_POST['ribList'] ?? $default_rib, 'none');
-//	}
-//	if (!empty($rib->iban)) {
-//		if ($rib->verif() <= 0) {
-//			print img_warning('Error on default bank number for IBAN : '.$langs->trans($rib->error));
-//		}
-//	} else {
-//		if ($numopen || ($type != 'bank-transfer' && $object->mode_reglement_code == 'PRE') || ($type == 'bank-transfer' && $object->mode_reglement_code == 'VIR')) {
-//			print img_warning($langs->trans("NoDefaultIBANFound"));
-//		}
-//	}
-//	print '</td></tr>';
-//
-//	//	-------------------------------------------------------------
-//	//	MODIFICATIONS END
-//	//	-------------------------------------------------------------
-//
-//	// IBAN of seller or supplier
-//	$title = 'CustomerIBAN';
-//	if ($type == 'bank-transfer') {
-//		$title = 'SupplierIBAN';
-//	}
-//	print '<tr><td>'.$langs->trans($title).'</td><td colspan="3">';
-//
-//	$bac = new CompanyBankAccount($db);
-//	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-//	$bac->fetch(0, '', $object->thirdparty->id);
-//
-//	print $bac->iban.(($bac->iban && $bac->bic) ? ' / ' : '').$bac->bic;
-//	if (!empty($bac->iban)) {
-//		if ($bac->verif() <= 0) {
-//			print img_warning('Error on default bank number for IBAN : '.$langs->trans($bac->error));
-//		}
-//	} else {
-//		if ($numopen || ($type != 'bank-transfer' && $object->mode_reglement_code == 'PRE') || ($type == 'bank-transfer' && $object->mode_reglement_code == 'VIR')) {
-//			print img_warning($langs->trans("NoDefaultIBANFound"));
-//		}
-//	}
-//
-//	print '</td></tr>';
-
 	print '</table>';
-
 	print '</div>';
+
 	print '<div class="fichehalfright">';
 	print '<div class="underbanner clearboth"></div>';
 
@@ -809,9 +746,6 @@ if ($object->id > 0) {
 				$remaintopaylesspendingdebit = $resteapayer - $pending;
 
 				// ------------------- ADDED START
-//				print '<div class="fichecenter">';
-//				print '<div class="underbanner clearboth"></div>';
-//				print '<table class="border centpercent tableforfield">';
 				print("</div>");
 
 				$title = $langs->trans("NewStandingOrder");
@@ -840,7 +774,7 @@ if ($object->id > 0) {
 				print '<td class="nowraponall">';
 
 
-				$idHtmlIban = "ribList";
+//				$idHtmlIban = "ribList";
 //				print '<label for="'.$idHtmlIban.'">'. $langs->trans('CustomerIBAN').' : </label>';
 //				print '</td>';
 
@@ -850,22 +784,21 @@ if ($object->id > 0) {
 //				print '</td><td colspan="3">';
 
 				$ribList = $object->thirdparty->get_all_rib();
-				$ribForSelection = [];
+				$ribForSelection = array();
 				$default_rib = '';
 				foreach($ribList as $rib) {
 					$ribString = $rib->iban . (($rib->iban && $rib->bic) ? ' / ' : '') . $rib->bic;
 
-					$ribForSelection[] = $ribString;
+					$ribForSelection[$rib->id] = $ribString;
 					if($rib->default_rib == 1){
 						$default_rib = $ribString;
 					}
 				}
 
-//				if ($action == 'editrib') {
-					$selectedIban = $form->form_iban($_SERVER['PHP_SELF'].'?id='.$object->id, $_POST['ribList'] ?? $default_rib, 'ribList', $filtertype, 1, 0, $type, 0, $ribForSelection);
-//				} else {
-//					$selectedIban = $form->form_iban($_SERVER['PHP_SELF'].'?id='.$object->id, $_POST['ribList'] ?? $default_rib, 'none');
-//				}
+
+				$selectedRib= $default_rib;
+				$selectedRib = $form->form_iban($_SERVER['PHP_SELF'].'?id='.$object->id, !empty(GETPOST('ribList')) ? GETPOST('ribList') : $default_rib, 'ribList', $filtertype, 1, 0, $type, 0, $ribForSelection);
+
 //				if ($action != 'editmode' && $user->hasRight('facture', 'creer')) {
 //					print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editrib&token='.newToken().'&id='.$object->id.'&type='.urlencode($type).'">'.img_edit($langs->trans('SetRib'), 1).'</a></td>';
 //				}
@@ -881,7 +814,6 @@ if ($object->id > 0) {
 				}
 
 				print '</td></tr>';
-				var_dump($selectedIban);
 
 				// Bank Transfert Amount
 				print '<tr><td class="nowrap">';
@@ -989,6 +921,7 @@ if ($object->id > 0) {
 	print '<td>'.$langs->trans("User").'</td>';
 	print '<td class="center">'.$langs->trans("Amount").'</td>';
 	print '<td class="center">'.$langs->trans("DateProcess").'</td>';
+	print '<td class="center">'.$langs->trans("CustomerIBAN").'</td>';
 	if ($type == 'bank-transfer') {
 		print '<td class="center">'.$langs->trans("BankTransferReceipt").'</td>';
 	} else {
@@ -1004,10 +937,12 @@ if ($object->id > 0) {
 	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande,";
 	$sql .= " pfd.date_traite as date_traite, pfd.amount, pfd.fk_prelevement_bons,";
 	$sql .= " pb.ref, pb.date_trans, pb.method_trans, pb.credite, pb.date_credit, pb.datec, pb.statut as status, pb.amount as pb_amount,";
-	$sql .= " u.rowid as user_id, u.email, u.lastname, u.firstname, u.login, u.statut as user_status";
+	$sql .= " u.rowid as user_id, u.email, u.lastname, u.firstname, u.login, u.statut as user_status,";
+	$sql .= " sr.iban_prefix as iban, sr.bic as bic";
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on pfd.fk_user_demande = u.rowid";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."prelevement_bons as pb ON pb.rowid = pfd.fk_prelevement_bons";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_rib as sr ON sr.rowid = pfd.fk_iban";
 	if ($type == 'bank-transfer') {
 		$sql .= " WHERE fk_facture_fourn = ".((int) $object->id);
 	} else {
@@ -1062,6 +997,9 @@ if ($object->id > 0) {
 
 			// Date process
 			print '<td class="center"><span class="opacitymedium">'.$langs->trans("OrderWaiting").'</span></td>';
+
+			// Iban
+			print '<td class="center"><span class="iban">' . $obj->iban." / ".$obj->bic . '</span></td>';
 
 			// Link to make payment now
 			print '<td class="minwidth75">';
@@ -1175,6 +1113,9 @@ if ($object->id > 0) {
 
 			// Amount
 			print '<td class="center"><span class="amount">'.price($obj->amount).'</span></td>';
+
+			// Iban
+			print '<td class="center"><span class="iban">' . $obj->iban." / ".$obj->bic . '</span></td>';
 
 			// Date process
 			print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->date_traite), 'dayhour', 'tzuserrel')."</td>\n";
