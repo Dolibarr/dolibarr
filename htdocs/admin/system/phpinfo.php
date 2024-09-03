@@ -93,7 +93,7 @@ if ($maxphp > 0 && $maxphp2 > 0 && $maxphp > $maxphp2) {
 
 
 print '<table class="noborder centpercent">';
-print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td></td></tr>';
 
 $ErrorPicturePath = "../../theme/eldy/img/error.png";
 $WarningPicturePath = "../../theme/eldy/img/warning.png";
@@ -245,7 +245,7 @@ foreach ($phparray as $key => $value) {
 	print '<table class="noborder">';
 	print '<tr class="liste_titre">';
 	print '<td class="titlefield">'.$key.'</td>';
-	print '<td colspan="2">'.$langs->trans("Value").'</td>';
+	print '<td colspan="2"></td>';
 	print "</tr>\n";
 
 	//var_dump($value);
