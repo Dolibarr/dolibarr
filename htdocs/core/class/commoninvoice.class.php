@@ -966,11 +966,11 @@ abstract class CommonInvoice extends CommonObject
 	 *	Create a withdrawal request for a direct debit order or a credit transfer order.
 	 *  Use the remain to pay excluding all existing open direct debit requests.
 	 *
-	 *	@param	User	$fuser      				User asking the direct debit transfer
-	 *  @param	float	$amount						Amount we request direct debit for
-	 *  @param	string	$type						'direct-debit' or 'bank-transfer'
-	 *  @param	string	$sourcetype					Source ('facture' or 'supplier_invoice')
-	 *  @param	int	$checkduplicateamongall		0=Default (check among open requests only to find if request already exists). 1=Check also among requests completely processed and cancel if at least 1 request exists whatever is its status.
+	 *	@param	    User	$fuser      				User asking the direct debit transfer
+	 *  @param  	float	$amount						Amount we request direct debit for
+	 *  @param	    string	$type						'direct-debit' or 'bank-transfer'
+	 *  @param	    string	$sourcetype					Source ('facture' or 'supplier_invoice')
+	 *  @param	    int 	$checkduplicateamongall		0=Default (check among open requests only to find if request already exists). 1=Check also among requests completely processed and cancel if at least 1 request exists whatever is its status.
 	 *	@return     int         						Return integer <0 if KO, 0 if a request already exists, >0 if OK
 	 */
 	public function demande_prelevement($fuser, $amount = 0, $type = 'direct-debit', $sourcetype = 'facture', $checkduplicateamongall = 0, $ribId = 0): int
