@@ -70,13 +70,31 @@ class PropaleLigne extends CommonObjectLine
 	 */
 	public $fk_parent_attribute = 'fk_propal';
 
+	/**
+	 * @var PropaleLigne
+	 */
 	public $oldline;
 
 	// From llx_propaldet
+	/**
+	 * @var int
+	 */
 	public $fk_propal;
+
+	/**
+	 * @var PropaleLigne
+	 */
 	public $fk_parent_line;
-	public $desc; // Description ligne
-	public $fk_product; // Id produit predefini
+
+	/**
+	 * @var string Line description
+	 */
+	public $desc;
+
+	/**
+	 * @var int Predefined product Id
+	 */
+	public $fk_product;
 	/**
 	 * @deprecated
 	 * @see $product_type
@@ -89,9 +107,19 @@ class PropaleLigne extends CommonObjectLine
 	 */
 	public $product_type = Product::TYPE_PRODUCT;
 
+	/**
+	 * @var float Quantity
+	 */
 	public $qty;
 
+	/**
+	 * @var float|string
+	 */
 	public $tva_tx;
+
+	/**
+	 * @var string
+	 */
 	public $vat_src_code;
 
 	/**
@@ -99,31 +127,76 @@ class PropaleLigne extends CommonObjectLine
 	 * @var float
 	 */
 	public $subprice;
+
+	/**
+	 * @var int|string
+	 */
 	public $remise_percent;
+
+	/**
+	 * @var int ID
+	 */
 	public $fk_remise_except;
 
+	/**
+	 * @var int line rank
+	 */
 	public $rang = 0;
 
+	/**
+	 * @var int
+	 */
 	public $fk_fournprice;
+
+	/**
+	 * @var float
+	 */
 	public $pa_ht;
+
+	/**
+	 * @var int|float|string
+	 */
 	public $marge_tx;
+
+	/**
+	 * @var float|string
+	 */
 	public $marque_tx;
 
 	/**
-	 * 1: frais de port
+	 * Tag for special lines (exclusive tags)
+	 * 1: shipping costs
 	 * 2: ecotaxe
 	 * 3: option line (when qty = 0)
 	 * @var int special code
 	 */
-	public $special_code; // Tag for special lines (exclusive tags)
+	public $special_code;
 
-	public $info_bits = 0; // Some other info:
-	// Bit 0: 	0 si TVA normal - 1 if TVA NPR
-	// Bit 1:	0 ligne normal - 1 if line with fixed discount
+	/**
+	 * Some other info:
+	 * Bit 0: 	0 si TVA normal - 1 if TVA NPR
+	 * Bit 1:	0 ligne normal - 1 if line with fixed discount
+	 * @var int
+	 */
+	public $info_bits = 0;
 
-	public $total_ht; // Total HT  de la ligne toute quantite et incluant la remise ligne
-	public $total_tva; // Total TVA  de la ligne toute quantite et incluant la remise ligne
-	public $total_ttc; // Total TTC de la ligne toute quantite et incluant la remise ligne
+	/**
+	 * Total amount excluding taxes (HT = "Hors Taxe" in French) including discounts
+	 * @var float
+	 */
+	public $total_ht;
+
+	/**
+	 * Total VAT amount (TVA = "Taxe sur la Valeur Ajoutée" in French)
+	 * @var float
+	 */
+	public $total_tva;
+
+	/**
+	 * Total amount including taxes (TTC = "Toutes Taxes Comprises" in French)
+	 * @var float
+	 */
+	public $total_ttc;
 
 	/**
 	 * @deprecated
@@ -180,24 +253,80 @@ class PropaleLigne extends CommonObjectLine
 	 */
 	public $product_barcode;
 
-	public $localtax1_tx; // Local tax 1
-	public $localtax2_tx; // Local tax 2
-	public $localtax1_type; // Local tax 1 type
-	public $localtax2_type; // Local tax 2 type
-	public $total_localtax1; // Line total local tax 1
-	public $total_localtax2; // Line total local tax 2
+	/**
+	 * @var string|float
+	 */
+	public $localtax1_tx;
 
+	/**
+	 * @var string|float
+	 */
+	public $localtax2_tx;
+
+	/**
+	 * @var string Local tax 1 type
+	 */
+	public $localtax1_type;
+
+	/**
+	 * @var string Local tax 2 type
+	 */
+	public $localtax2_type;
+
+	/**
+	 * @var float Line total local tax 1
+	 */
+	public $total_localtax1;
+
+	/**
+	 * @var float Line total local tax 2
+	 */
+	public $total_localtax2;
+
+	/**
+	 * @var int|string
+	 */
 	public $date_start;
+
+	/**
+	 * @var int|string
+	 */
 	public $date_end;
 
-	public $skip_update_total; // Skip update price total for special lines
+	/**
+	 * @var int Skip update price total for special lines
+	 */
+	public $skip_update_total;
 
 	// Multicurrency
+	/**
+	 * @var int multicurrency id
+	 */
 	public $fk_multicurrency;
+
+	/**
+	 * @var string Multicurrency code
+	 */
 	public $multicurrency_code;
+
+	/**
+	 * @var float Multicurrency subprice
+	 */
 	public $multicurrency_subprice;
+
+	/**
+	 * @var float Multicurrency total without tax
+	 */
 	public $multicurrency_total_ht;
+
+	/**
+	 * @var float Multicurrency total vat
+	 */
 	public $multicurrency_total_tva;
+
+	/**
+	 * @var float Multicurrency total with tax
+	 */
 	public $multicurrency_total_ttc;
 
 
