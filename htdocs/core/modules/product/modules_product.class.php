@@ -129,8 +129,6 @@ abstract class ModeleProductCode extends CommonNumRefGenerator
 	 */
 	public function getToolTip($langs, $product, $type)
 	{
-		global $conf;
-
 		$langs->loadLangs(array("admin", "companies"));
 
 		$strikestart = '';

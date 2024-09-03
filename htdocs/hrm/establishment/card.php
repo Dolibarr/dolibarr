@@ -55,6 +55,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'inclu
 $permissiontoread = $user->admin;
 $permissiontoadd = $user->admin; // Used by the include of actions_addupdatedelete.inc.php
 $permissiontodelete = $user->admin;
+
 $upload_dir = $conf->hrm->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 // Security check - Protection if external user
@@ -74,7 +75,7 @@ if (empty($permissiontoread)) {
  * Actions
  */
 
-if ($action == 'confirm_delete' && $confirm == "yes") {
+if ($action == 'confirm_delete' && $confirm == "yes" && $permissiontodelete) {
 	$result = $object->delete($user);
 	if ($result >= 0) {
 		header("Location: ../admin/admin_establishment.php");
@@ -82,7 +83,7 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
-} elseif ($action == 'add') {
+} elseif ($action == 'add' && $permissiontoadd) {
 	if (!$cancel) {
 		$error = 0;
 
@@ -117,7 +118,7 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 		header("Location: ../admin/admin_establishment.php");
 		exit;
 	}
-} elseif ($action == 'update') {
+} elseif ($action == 'update' && $permissiontoadd) {
 	// Update record
 	$error = 0;
 
@@ -153,6 +154,7 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 	}
 }
 
+
 /*
  * View
  */
@@ -162,9 +164,7 @@ llxHeader();
 $form = new Form($db);
 $formcompany = new FormCompany($db);
 
-/*
- * Action create
- */
+// Action create
 if ($action == 'create') {
 	print load_fiche_titre($langs->trans("NewEstablishment"));
 
