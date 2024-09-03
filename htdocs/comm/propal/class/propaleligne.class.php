@@ -82,7 +82,7 @@ class PropaleLigne extends CommonObjectLine
 	public $fk_propal;
 
 	/**
-	 * @var PropaleLigne
+	 * @var int
 	 */
 	public $fk_parent_line;
 
@@ -95,7 +95,9 @@ class PropaleLigne extends CommonObjectLine
 	 * @var int Predefined product Id
 	 */
 	public $fk_product;
+
 	/**
+	 * @var int
 	 * @deprecated
 	 * @see $product_type
 	 */
@@ -149,7 +151,7 @@ class PropaleLigne extends CommonObjectLine
 	public $fk_fournprice;
 
 	/**
-	 * @var float
+	 * @var float|int|string
 	 */
 	public $pa_ht;
 
@@ -204,6 +206,7 @@ class PropaleLigne extends CommonObjectLine
 	 */
 	public $remise;
 	/**
+	 * @var float|string
 	 * @deprecated
 	 * @see $subprice
 	 */
@@ -211,29 +214,37 @@ class PropaleLigne extends CommonObjectLine
 
 	// From llx_product
 	/**
+	 * @var float
 	 * @deprecated
 	 * @see $product_ref
 	 */
+
 	public $ref;
 	/**
 	 * Product reference
 	 * @var string
 	 */
+
 	public $product_ref;
 	/**
+	 * @var string
 	 * @deprecated
 	 * @see $product_label
 	 */
+
 	public $libelle;
 	/**
+	 * @var string
 	 * @deprecated
 	 * @see $product_label
 	 */
+
 	public $label;
 	/**
 	 *  Product label
 	 * @var string
 	 */
+
 	public $product_label;
 	/**
 	 * Product description
