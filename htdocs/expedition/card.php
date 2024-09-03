@@ -767,10 +767,9 @@ if (empty($reshook)) {
 						// line without lot
 						if ($lines[$i]->entrepot_id == 0) {
 							// single warehouse shipment line
-							$stockLocation = 0;
 							$qty = "qtyl".$line_id;
 							$line->id = $line_id;
-							$line->entrepot_id = GETPOST($stockLocation, 'int');
+							$line->entrepot_id = 0;
 							$line->qty = GETPOST($qty, 'int');
 							if ($line->update($user) < 0) {
 								setEventMessages($line->error, $line->errors, 'errors');
