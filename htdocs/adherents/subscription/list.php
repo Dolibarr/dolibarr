@@ -312,7 +312,7 @@ if ($statut != '') {
 	$param .= "&statut=".urlencode($statut);
 }
 if ($search_type) {
-	$param .= "&search_type=".urlencode($search_type);
+	$param .= "&search_type=".((int) $search_type);
 }
 if ($date_select) {
 	$param .= "&date_select=".urlencode($date_select);
