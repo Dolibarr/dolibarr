@@ -496,7 +496,7 @@ if ($dirins && in_array($action, array('initapi', 'initphpunit', 'initpagecontac
 			'---Replace with your own copyright and developer email---' => getLicenceHeader($user, $langs, $now)
 		);
 
-		if ($action == 'initapi') {
+		if ($action == 'initapi') {			// Test on permission already done
 			if (count($objects) >= 1) {
 				addObjectsToApiFile($srcfile, $destfile, $objects, $modulename);
 			}

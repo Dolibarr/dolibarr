@@ -99,14 +99,14 @@ if (($id > 0) || $ref) {
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('holidaycard', 'globalcard'));
 
-$cancreate = 0;
-$cancreateall = 0;
+$permissiontoadd = 0;
+$permissiontoaddall = 0;
 if ($user->hasRight('holiday', 'write') && in_array($fuserid, $childids)) {
-	$cancreate = 1;
+	$permissiontoadd = 1;
 }
 if ($user->hasRight('holiday', 'writeall')) {
-	$cancreate = 1;
-	$cancreateall = 1;
+	$permissiontoadd = 1;
+	$permissiontoaddall = 1;
 }
 
 $candelete = 0;
@@ -159,7 +159,7 @@ if (empty($reshook)) {
 	}
 
 	// Add leave request
-	if ($action == 'add' && $cancreate) {
+	if ($action == 'add' && $permissiontoadd) {
 		$users 		=  GETPOST('users', 'array');
 		$groups 	=  GETPOST('groups', 'array');
 
@@ -184,7 +184,7 @@ if (empty($reshook)) {
 		$description = trim(GETPOST('description', 'restricthtml'));
 
 		// Check that leave is for a user inside the hierarchy or advanced permission for all is set
-		if (!$cancreateall) {
+		if (!$permissiontoaddall) {
 			if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 				if (!$user->hasRight('holiday', 'write')) {
 					$error++;
@@ -332,7 +332,7 @@ if (empty($reshook)) {
 
 							if ($AutoSendMail && !$error) {
 								// send a mail to the user
-								$returnSendMail = sendMail($result, $cancreate, $now, $autoValidation);
+								$returnSendMail = sendMail($result, $permissiontoadd, $now, $autoValidation);
 								if (!empty($returnSendMail->msg)) {
 									setEventMessage($returnSendMail->msg, $returnSendMail->style);
 								}
@@ -664,13 +664,14 @@ llxFooter();
 if (is_object($db)) {
 	$db->close();
 }
+
 /**
  * send email to validator for current leave represented by (id)
  *
- * @param int		$id validator for current leave represented by (id)
- * @param int 	$cancreate flag for user right
- * @param int 	$now date
- * @param int		$autoValidation boolean flag on autovalidation
+ * @param int	$id 				validator for current leave represented by (id)
+ * @param int	$cancreate 			flag for user right
+ * @param int 	$now 				date
+ * @param int	$autoValidation 	boolean flag on autovalidation
  *
  * @return stdClass
  * @throws Exception
@@ -683,7 +684,7 @@ function sendMail($id, $cancreate, $now, $autoValidation)
 	$objStd->error = 0;
 	$objStd->style = '';
 
-	global $db, $user, $conf, $langs;
+	global $db, $user, $langs;
 
 	$object = new Holiday($db);
 

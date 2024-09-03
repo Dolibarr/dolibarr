@@ -872,7 +872,7 @@ if (empty($reshook)) {
 }
 
 /*
- *	View
+ * View
  */
 
 $help_url = '';
@@ -889,9 +889,8 @@ $invoicerectmp = new FactureFournisseurRec($db);
 $now = dol_now();
 $nowlasthour = dol_get_last_hour($now);
 
-/*
- * Create mode
- */
+// Create mode
+
 if ($action == 'create') {
 	print load_fiche_titre($langs->trans("CreateRepeatableInvoice"), '', 'bill');
 

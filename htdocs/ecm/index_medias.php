@@ -98,7 +98,11 @@ $hookmanager->initHooks(array('ecmmediascard', 'globalcard'));
 
 $result = restrictedArea($user, 'ecm', 0);
 
+$permissiontoread = ($user->hasRight('ecm', 'read') || $user->hasRight('mailing', 'lire') || $user->hasRight('website', 'read'));
 $permissiontouploadfile = ($user->hasRight('ecm', 'setup') || $user->hasRight('mailing', 'creer') || $user->hasRight('website', 'write'));
+$permissiontoadd = $permissiontouploadfile;	// Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
+
+
 $diroutput = $conf->medias->multidir_output[$conf->entity];
 
 $relativepath = $section_dir;
@@ -106,7 +110,7 @@ $upload_dir = preg_replace('/\/$/', '', $diroutput).'/'.preg_replace('/^\//', ''
 
 $websitekey = '';
 
-$permissiontoadd = $permissiontouploadfile;	// Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
+
 
 /*
  *	Actions
@@ -124,7 +128,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';	// This manage 's
 
 $backtopage = $savbacktopage;
 
-if ($action == 'renamefile') {	// Must be after include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php'; If action were renamefile, we set it to 'file_manager'
+if ($action == 'renamefile') {	// Test on permission not required here. Must be after include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php'; If action were renamefile, we set it to 'file_manager'
 	$action = 'file_manager';
 }
 
@@ -148,7 +152,7 @@ if ($action == 'add' && $permissiontouploadfile) {
 }
 
 // Remove directory
-if ($action == 'confirm_deletesection' && GETPOST('confirm', 'alpha') == 'yes') {
+if ($action == 'confirm_deletesection' && GETPOST('confirm', 'alpha') == 'yes' && $permissiontoadd) {
 	$result = $ecmdir->delete($user);
 	setEventMessages($langs->trans("ECMSectionWasRemoved", $ecmdir->label), null, 'mesgs');
 
@@ -158,7 +162,7 @@ if ($action == 'confirm_deletesection' && GETPOST('confirm', 'alpha') == 'yes') 
 // Refresh directory view
 // This refresh list of dirs, not list of files (for performance reason). List of files is refresh only if dir was not synchronized.
 // To refresh content of dir with cache, just open the dir in edit mode.
-if ($action == 'refreshmanual') {
+if ($action == 'refreshmanual' && $permissiontoread) {
 	$ecmdirtmp = new EcmDirectory($db);
 
 	// This part of code is same than into file ecm/ajax/ecmdatabase.php TODO Remove duplicate

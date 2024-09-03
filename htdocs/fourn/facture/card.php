@@ -2050,7 +2050,7 @@ if (empty($reshook)) {
 
 
 /*
- *	View
+ * View
  */
 
 $form = new Form($db);

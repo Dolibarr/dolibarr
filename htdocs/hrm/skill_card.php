@@ -608,9 +608,7 @@ if ($action != "create" && $action != "edit") {
 	$arrayfields = dol_sort_array($arrayfields, 'position');
 
 
-	/*
-	 * View
-	 */
+	// View
 
 	$form = new Form($db);
 
