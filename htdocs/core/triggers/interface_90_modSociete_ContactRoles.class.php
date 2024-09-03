@@ -6,6 +6,7 @@
  * Copyright (C) 2013 Cedric GROSS <c.gross@kreiz-it.fr>
  * Copyright (C) 2014 Marcos García <marcosgdf@gmail.com>
  * Copyright (C) 2015 Bahfir Abbes <bafbes@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,13 +46,12 @@ class InterfaceContactRoles extends DolibarrTriggers
 		$this->name = preg_replace('/^Interface/i', '', get_class($this));
 		$this->family = "agenda";
 		$this->description = "Triggers of this module auto link contact to company.";
-		// 'development', 'experimental', 'dolibarr' or version
-		$this->version = self::VERSION_DOLIBARR;
+		$this->version = self::VERSIONS['prod'];
 		$this->picto = 'company';
 	}
 
 	/**
-	 * Function called when a Dolibarrr business event is done.
+	 * Function called when a Dolibarr business event is done.
 	 * All functions "runTrigger" are triggered if file is inside directory htdocs/core/triggers or htdocs/module/code/triggers (and declared)
 	 *
 	 * Following properties may be set before calling trigger. The may be completed by this trigger to be used for writing the event into database:
@@ -63,7 +63,7 @@ class InterfaceContactRoles extends DolibarrTriggers
 	 * @param User $user		Object user
 	 * @param Translate $langs	Object langs
 	 * @param conf $conf		Object conf
-	 * @return int <0 if KO, 0 if no triggered ran, >0 if OK
+	 * @return int Return integer <0 if KO, 0 if no triggered ran, >0 if OK
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{

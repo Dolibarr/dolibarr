@@ -23,6 +23,7 @@ ToOfferALinkForOnlinePaymentOnFreeAmount=URL for å tilby en %s online betalings
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL for å tilby en %s online betalingsside for et medlemsabonnement
 ToOfferALinkForOnlinePaymentOnDonation=URL for å tilby en %s online betalingsside for betaling av en donasjon
 YouCanAddTagOnUrl=Du kan også legge til url-parameter <b>&tag=<i>value</i></b> til hvilken som helst av disse URL-ene (bare obligatorisk for betaling som ikke er koblet til et objekt) for å legge til ditt eget betalingskommentarmerke. <br> For nettadressen til betalinger uten eksisterende objekt, kan du også legge til parameteren <strong>&noidempotency=1</strong> slik at den samme lenken med samme tag kan brukes flere ganger (noen betalingsmodus kan begrense betalingen til 1 for hver enkelt lenke uten denne parameteren)
+YouCanEmbedOnWebsite=Hvis du ønsker å integrere betalingssiden i et Dolibarr-nettsted, kan du inkludere parameteren: <b>&ws=website_ref</b>.<br>I tillegg, to sider som heter <b>paymentok</b>og<b>paymentko</b> må opprettes på nettstedet for å motta omdirigeringen på nettet etter en vellykket eller mislykket innbetaling.
 SetupStripeToHavePaymentCreatedAutomatically=Sett opp Stripe med url <b> %s</b> for å få betaling opprettet automatisk når den er validert av Stripe.
 AccountParameter=Kontoparametre
 UsageParameter=Parametre for bruk
@@ -51,6 +52,7 @@ StripeAccount=Stripe-konto
 StripeChargeList=Liste over Stripe-kostnader
 StripeTransactionList=Liste over stripe-transaksjoner
 StripeCustomerId=Stripe kunde-id
+StripePaymentId=Stripe betalings-ID
 StripePaymentModes=Stripe betalingsmåter
 LocalID=Lokal ID
 StripeID=Stripe ID
@@ -70,9 +72,19 @@ ToOfferALinkForTestWebhook=Link til oppsett av Stripe WebHook for oppkall av IPN
 ToOfferALinkForLiveWebhook=Link til oppsett av Stripe WebHook for oppkall av IPN (live-modus)
 PaymentWillBeRecordedForNextPeriod=Betalingen blir registrert for neste periode.
 ClickHereToTryAgain=<a href="%s">Klikk her for å prøve igjen ...</a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=På grunn av sterke regler for godkjenning av kunder, må opprettelse av et kort gjøres fra Stripe backoffice. Du kan klikke her for å slå på Stripe kundeoppføring: %s
+CreationOfPaymentModeMustBeDoneFromStripeInterface=På grunn av sterke kunde Autentiseringregler, må opprettelsen av et kort gjøres fra Stripe backoffice. Du kan klikke her for å slå på Stripe kunde-posten: %s
 STRIPE_CARD_PRESENT=Kort til stede for Stripe-terminaler
 TERMINAL_LOCATION=Plassering (adresse) for Stripe Terminaler
 RequestDirectDebitWithStripe=Be om direktedebet med Stripe
+RequesCreditTransferWithStripe=Be om kredittoverføring med Stripe
 STRIPE_SEPA_DIRECT_DEBIT=Aktiver direktedebet gjennom Stripe
-
+STRIPE_KLARNA=Aktiver betalingene med Klarna
+STRIPE_BANCONTACT=Aktiver betalingene med BANCONTACT
+STRIPE_IDEAL=Aktiver betalingene med IDEAL
+STRIPE_GIROPAY=Aktiver betalinger med GIROPAY
+STRIPE_SOFORT=Aktiver betalingene med SOFORT
+StripeConnect_Mode=Stripe Connect-modus
+ExampleOnlyForBECustomers=Bare for belgiske kunder
+ExampleOnlyForDECustomers=Bare for tyske kunder
+ExampleOnlyForNLCustomers=Bare for nederlandske kunder
+ExampleOnlyForATBEDEITNLESCustomers=Bare for kunder fra Østerrike, Belgia, Tyskland, Italia, Nederland, Spania

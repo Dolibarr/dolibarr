@@ -2,6 +2,7 @@
 /* Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2007-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,12 +46,12 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 $htmlname = GETPOST('htmlname', 'aZ09');
 $filter = GETPOST('filter', 'alpha');
-$outjson = (GETPOST('outjson', 'int') ? GETPOST('outjson', 'int') : 0);
+$outjson = (GETPOSTINT('outjson') ? GETPOSTINT('outjson') : 0);
 $action = GETPOST('action', 'aZ09');
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $excludeids = GETPOST('excludeids', 'intcomma');
-$showtype = GETPOSTINT('showtype', 'alpha');
-$showcode = GETPOSTINT('showcode', 'alpha');
+$showtype = GETPOSTINT('showtype');
+$showcode = GETPOSTINT('showcode');
 
 $object = new Societe($db);
 if ($id > 0) {
@@ -73,7 +74,6 @@ restrictedArea($user, 'societe', $object->id, '&societe');
 top_httphead('application/json');
 
 //print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
-//print_r($_GET);
 
 if (!empty($action) && $action == 'fetch' && !empty($id)) {
 	require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -97,7 +97,7 @@ if (!empty($action) && $action == 'fetch' && !empty($id)) {
 		return;
 	}
 
-	// Filter on the company to search can be:
+	// The filter on the company to search for can be:
 	// Into an array with key $htmlname123 (we take first one found). Which page use this ?
 	// Into a var with name $htmlname can be 'prodid', 'productid', ...
 	$match = preg_grep('/('.preg_quote($htmlname, '/').'[0-9]+)/', array_keys($_GET));
@@ -105,8 +105,8 @@ if (!empty($action) && $action == 'fetch' && !empty($id)) {
 
 	$id = (!empty($match[0]) ? $match[0] : '');		// Take first key found into GET array with matching $htmlname123
 
-	// When used from jQuery, the search term is added as GET param "term".
-	$searchkey = (($id && GETPOST($id, 'alpha')) ? GETPOST($id, 'alpha') : (($htmlname && GETPOST($htmlname, 'alpha')) ?GETPOST($htmlname, 'alpha') : ''));
+	// When used from jQuery, the search term is added as GET param $htmlname.
+	$searchkey = (($id && GETPOST($id, 'alpha')) ? GETPOST($id, 'alpha') : (($htmlname && GETPOST($htmlname, 'alpha')) ? GETPOST($htmlname, 'alpha') : ''));
 	if (!$searchkey) {
 		return;
 	}
@@ -120,6 +120,10 @@ if (!empty($action) && $action == 'fetch' && !empty($id)) {
 	} else {
 		$excludeids = array();
 	}
+
+	// FIXME
+	// If SOCIETE_USE_SEARCH_TO_SELECT is set, check that nb of chars in $filter is >= to avoid DOS attack
+
 
 	$arrayresult = $form->select_thirdparty_list(0, $htmlname, $filter, 1, $showtype, 0, null, $searchkey, $outjson, 0, 'minwidth100', '', false, $excludeids, $showcode);
 

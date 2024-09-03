@@ -5,36 +5,25 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModuleEventOrganizationName = Begivenhedsorganisation
 EventOrganizationDescription = Begivenhedsorganisation gennem modulprojekt
 EventOrganizationDescriptionLong= Administrer tilrettelæggelsen af en begivenhed (show, konferencer, deltagere eller talere, med offentlige sider til forslag, afstemning eller registrering)
-#
-# Menu
-#
 EventOrganizationMenuLeft = Organiserede begivenheder
 EventOrganizationConferenceOrBoothMenuLeft = Konference eller stand
-
 PaymentEvent=Betaling af arrangement
-
-#
+EventFee=Event gebyr
 # Admin page
-#
 NewRegistration=Registrering
 EventOrganizationSetup=Opsætning af begivenhedsorganisation
 EventOrganization=Arrangement organisering
-Settings=Indstillinger
 EventOrganizationSetupPage = Konfigurationsside for begivenhedsorganisation
 EVENTORGANIZATION_TASK_LABEL = Etiket over opgaver, der skal oprettes automatisk, når projektet valideres
 EVENTORGANIZATION_TASK_LABELTooltip = Når du validerer en begivenhed til at organisere, kan nogle opgaver automatisk oprettes i projektet <br> <br> For eksempel: <br> Send Ring for konferencer <br> Send Ring for boder <br> Valider forslag af konferencer <br> Valider ansøgning om Boder <br> Åbne abonnementer til begivenheden for deltagerne <br> Send en påmindelse om begivenheden til højttalere <br> Send en påmindelse om begivenheden til standværter <br> Send en påmindelse om begivenheden til deltagere
@@ -49,10 +38,7 @@ EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Skabelon for e-mail til brug ved
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Skabelon til e-mail til brug ved afsendelse af e-mails fra massaktionen "Send e-mails" på deltagerlisten
 EVENTORGANIZATION_FILTERATTENDEES_CAT = I formularen til at oprette/tilføje en deltager begrænser listen over tredjeparter til tredjeparter i kategorien
 EVENTORGANIZATION_FILTERATTENDEES_TYPE = I formularen til at oprette/tilføje en deltager begrænser listen over tredjeparter til tredjeparter med arten
-
-#
 # Object
-#
 OrganizedEvent=Organiseret arrangement
 EventOrganizationConfOrBooth= Konference eller stand
 EventOrganizationConfOrBoothes=Konferencer eller stande
@@ -64,10 +50,7 @@ DateOfRegistration = Dato for registrering
 ConferenceOrBoothAttendee = Konference eller messedeltager
 ApplicantOrVisitor=Ansøger eller besøgende
 Speaker=Højttaler
-
-#
 # Template Mail
-#
 YourOrganizationEventConfRequestWasReceived = Din anmodning om konference blev modtaget
 YourOrganizationEventBoothRequestWasReceived = Din anmodning om stand blev modtaget
 EventOrganizationEmailAskConf = Anmodning om konference
@@ -76,11 +59,8 @@ EventOrganizationEmailBoothPayment = Betaling af din bod
 EventOrganizationEmailRegistrationPayment = Tilmelding til et arrangement
 EventOrganizationMassEmailAttendees = Kommunikation til deltagere
 EventOrganizationMassEmailSpeakers = Kommunikation til taler
-ToSpeakers=Til talere 
-
-#
+ToSpeakers=Til talere
 # Event
-#
 AllowUnknownPeopleSuggestConf=Tillad folk at foreslå konferencer
 AllowUnknownPeopleSuggestConfHelp=Tillad ukendte mennesker at foreslå en konference, de vil lave
 AllowUnknownPeopleSuggestBooth=Tillad folk at ansøge om en bod
@@ -89,27 +69,29 @@ PriceOfRegistration=Pris for registrering
 PriceOfRegistrationHelp=Pris at betale for at tilmelde sig eller deltage i arrangementet
 PriceOfBooth=Abonnementspris for at stå en kabine
 PriceOfBoothHelp=Abonnementspris for at stå en kabine
+EventOrganizationICSLinkProject=Link ICS til begivenheden
 EventOrganizationICSLink=Link ICS til konferencer
-ConferenceOrBoothInformation=Oplysninger om konference eller stand
+ConferenceOrBoothInformation=Konference eller stand information
+ConferenceOrBoothFormat=Konference- eller stand-tilstand
+ConferenceOrBoothFormatID=ID for konference- eller stand-tilstand
+ConferenceOrBoothFormatCode=Kode for konference- eller stand-tilstand
+ConferenceOrBoothFormatLabel=Etiket for konference- eller stand-tilstand
 Attendees=Deltagere
-ListOfAttendeesOfEvent=Liste over deltagere i arrangementsprojektet
+ListOfAttendeesOfEvent=Liste over deltagere i begivenhedsprojekter
+ListOfConfOrBoothOfEvent=Liste over konferencer eller stande af eventprojekter
 DownloadICSLink = Download ICS-link
 EVENTORGANIZATION_SECUREKEY = Seed for at sikre nøglen til den offentlige registreringsside for at foreslå en konference
 SERVICE_BOOTH_LOCATION = Service, der bruges til fakturarække om en standplacering
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service brugt til fakturarækken om et deltagerabonnement på en begivenhed
 NbVotes=Antal stemmer
-#
 # Status
-#
 EvntOrgDraft = Udkast til
 EvntOrgSuggested = Foreslået
 EvntOrgConfirmed = Bekræftet
 EvntOrgNotQualified = Ikke kvalificeret
 EvntOrgDone = Gjort
 EvntOrgCancelled = Annulleret
-#
-# Public page
-#
+# Other
 SuggestForm = Forslagsside
 SuggestOrVoteForConfOrBooth = Side for forslag eller afstemning
 EvntOrgRegistrationHelpMessage = Her kan du stemme på en konference eller foreslå en ny til arrangementet. Du kan også ansøge om at få en bod under arrangementet.
@@ -132,6 +114,7 @@ EventType = Begivenhedstype
 LabelOfBooth=Båsetiket
 LabelOfconference=Konference label
 ConferenceIsNotConfirmed=Tilmelding ikke tilgængelig, konference er ikke bekræftet endnu
+EventRegistrationAreClosed=Tilmeldinger til arrangementer er lukket
 DateMustBeBeforeThan=%s skal være før %s
 DateMustBeAfterThan=%s skal være efter %s
 MaxNbOfAttendeesReached=Det maksimale antal deltagere er nået
@@ -144,13 +127,8 @@ OrganizationEventBulkMailToAttendees=Dette er en påmindelse om din deltagelse i
 OrganizationEventBulkMailToSpeakers=Dette er en påmindelse om din deltagelse i arrangementet som foredragsholder
 OrganizationEventLinkToThirdParty=Link til tredjepart (kunde, leverandør eller partner)
 OrganizationEvenLabelName=Offentligt navn på konferencen eller standen
-
 NewSuggestionOfBooth=Ansøgning om bod
 NewSuggestionOfConference=Ansøgning om at afholde en konference
-
-#
-# Vote page
-#
 EvntOrgRegistrationWelcomeMessage = Velkommen til konferencesiden eller messesiden.
 EvntOrgRegistrationConfWelcomeMessage = Velkommen til konferencesiden.
 EvntOrgRegistrationBoothWelcomeMessage = Velkommen til siden med forslag til stand.
@@ -158,8 +136,8 @@ EvntOrgVoteHelpMessage = Her kan du se og stemme på de foreslåede begivenheder
 VoteOk = Din stemme er blevet accepteret.
 AlreadyVoted = Du har allerede stemt på denne begivenhed.
 VoteError = Der opstod en fejl under afstemningen. Prøv igen.
-
 SubscriptionOk=Din registrering er blevet registreret
+AmountOfRegistrationPaid=Indbetalt tilmeldingsbeløb
 ConfAttendeeSubscriptionConfirmation = Bekræftelse af dit abonnement på en begivenhed
 Attendee = Deltager
 PaymentConferenceAttendee = Konference deltager betaling
@@ -169,9 +147,16 @@ RegistrationAndPaymentWereAlreadyRecorder=En registrering og en betaling blev al
 EmailAttendee=E -mail til deltager
 EmailCompany=Firma e-mail
 EmailCompanyForInvoice=Firmaets e -mail (for faktura, hvis den er forskellig fra deltagerens e -mail)
-ErrorSeveralCompaniesWithEmailContactUs=Flere virksomheder med denne e -mail er fundet, så vi kan ikke automatisk validere din registrering. Kontakt os venligst på %s for en manuel validering
-ErrorSeveralCompaniesWithNameContactUs=Flere virksomheder med dette navn er fundet, så vi kan ikke automatisk validere din registrering. Kontakt os venligst på %s for en manuel validering
+ErrorSeveralCompaniesWithEmailContactUs=Der er fundet flere virksomheder med denne e-mail, så vi kan ikke automatisk validere din registrering. Kontakt os venligst på %s for en manuel validering
+ErrorSeveralCompaniesWithNameContactUs=Der er fundet flere virksomheder med dette navn, så vi kan ikke automatisk validere din registrering. Kontakt os venligst på %s for en manuel validering
 NoPublicActionsAllowedForThisEvent=Ingen offentlige handlinger er åbne for offentligheden for denne begivenhed
 MaxNbOfAttendees=Max antal deltagere
 DateStartEvent=Begivenhedens startdato
 DateEndEvent=Begivenheds slutdato
+ModifyStatus=Rediger status
+ConfirmModifyStatus=Bekræft statusændring
+ConfirmModifyStatusQuestion=Er du sikker på, at du vil ændre %s valgte post(er)?
+RecordsUpdated=%s Optegnelser opdateret
+RecordUpdated=Rekord opdateret
+NoRecordUpdated=Ingen post opdateret
+ProfitPerValidatedAttendee=Fortjeneste pr. deltager

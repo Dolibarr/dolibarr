@@ -11,7 +11,7 @@ TypeOfSupport=Rodzaj wsparcia
 TypeSupportCommunauty=Społeczność (za darmo)
 TypeSupportCommercial=Komercyjny
 TypeOfHelp=Typ
-NeedHelpCenter=Need support?
+NeedHelpCenter=Potrzebujesz wsparcia?
 Efficiency=Efektywność
 TypeHelpOnly=Tylko pomoc
 TypeHelpDev=Pomoc+Rozwoj
@@ -20,4 +20,4 @@ BackToHelpCenter=W przeciwnym razie <a href="%s"> wróć do strony głównej Cen
 LinkToGoldMember=Możesz zadzwonić do jednego z trenerów wybranych przez Dolibarr dla Twojego języka (%s), klikając ich widżet (status i maksymalna cena są aktualizowane automatycznie):
 PossibleLanguages=Obsługiwane języki
 SubscribeToFoundation=Pomóż projektowi Dolibarr, zasubskrybuj fundację
-SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
+SeeOfficalSupport=Oficjalne wsparcie Dolibarr w Twoim języku: <br> <b> <a href="%s" target="_blank" rel="noopener noreferrer"> %s </a> </b>

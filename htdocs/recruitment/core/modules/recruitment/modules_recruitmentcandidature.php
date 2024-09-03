@@ -6,6 +6,7 @@
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2012      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonnumrefgenerator.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php'; // required for use by classes that inherit
 
 
@@ -37,20 +39,17 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php'; // requir
  */
 abstract class ModelePDFRecruitmentCandidature extends CommonDocGenerator
 {
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of active generation modules
 	 *
-	 *  @param	DoliDB	$db     			Database handler
-	 *  @param  integer	$maxfilenamelength  Max length of value to show
-	 *  @return	array						List of templates
+	 *  @param  DoliDB  	$db                 Database handler
+	 *  @param  int<0,max>	$maxfilenamelength  Max length of value to show
+	 *  @return string[]|int<-1,0>				List of templates
 	 */
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
-		global $conf;
-
 		$type = 'recruitmentjobcandidature';
 		$list = array();
 
@@ -66,93 +65,13 @@ abstract class ModelePDFRecruitmentCandidature extends CommonDocGenerator
 /**
  *  Parent class to manage numbering of RecruitmentCandidature
  */
-abstract class ModeleNumRefRecruitmentCandidature
+abstract class ModeleNumRefRecruitmentCandidature extends CommonNumRefGenerator
 {
 	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	/**
-	 *	Return if a module can be used or not
+	 * 	Return next free value
 	 *
-	 *	@return		boolean     true if module can be used
+	 *  @param	RecruitmentCandidature	$object		Object we need next value for
+	 *  @return	string|int<-1,0>					Next value if OK, <=0 if KO
 	 */
-	public function isEnabled()
-	{
-		return true;
-	}
-
-	/**
-	 *	Returns the default description of the numbering template
-	 *
-	 *	@return     string      Descriptive text
-	 */
-	public function info()
-	{
-		global $langs;
-		$langs->load("recruitment");
-		return $langs->trans("NoDescription");
-	}
-
-	/**
-	 *	Returns an example of numbering
-	 *
-	 *	@return     string      Example
-	 */
-	public function getExample()
-	{
-		global $langs;
-		$langs->load("recruitment");
-		return $langs->trans("NoExample");
-	}
-
-	/**
-	 *  Checks if the numbers already in the database do not
-	 *  cause conflicts that would prevent this numbering working.
-	 *
-	 *	@param	Object		$object		Object we need next value for
-	 *	@return boolean     			false if conflict, true if ok
-	 */
-	public function canBeActivated($object)
-	{
-		return true;
-	}
-
-	/**
-	 *	Returns next assigned value
-	 *
-	 *	@param	Object		$object		Object we need next value for
-	 *	@return	string      Valeur
-	 */
-	public function getNextValue($object)
-	{
-		global $langs;
-		return $langs->trans("NotAvailable");
-	}
-
-	/**
-	 *	Returns version of numbering module
-	 *
-	 *	@return     string      Valeur
-	 */
-	public function getVersion()
-	{
-		global $langs;
-		$langs->load("admin");
-
-		if ($this->version == 'development') {
-			return $langs->trans("VersionDevelopment");
-		}
-		if ($this->version == 'experimental') {
-			return $langs->trans("VersionExperimental");
-		}
-		if ($this->version == 'dolibarr') {
-			return DOL_VERSION;
-		}
-		if ($this->version) {
-			return $this->version;
-		}
-		return $langs->trans("NotAvailable");
-	}
+	abstract public function getNextValue($object);
 }

@@ -8,8 +8,6 @@ LocalAgenda=Default calendar
 ActionsOwnedBy=Event owned by
 ActionsOwnedByShort=Owner
 AffectedTo=Assigned to
-Event=Event
-Events=Events
 EventsNb=Number of events
 ListOfActions=List of events
 EventReports=Event reports
@@ -23,7 +21,6 @@ MenuDoneMyActions=My terminated events
 ListOfEvents=List of events (default calendar)
 ActionsAskedBy=Events reported by
 ActionsToDoBy=Events assigned to
-ActionsDoneBy=Events done by
 ActionAssignedTo=Event assigned to
 ViewCal=Month view
 ViewDay=Day view
@@ -89,6 +86,8 @@ ShippingSentByEMail=Shipment %s sent by email
 ShippingValidated= Shipment %s validated
 InterventionSentByEMail=Intervention %s sent by email
 ProjectSentByEMail=Project %s sent by email
+ProjectDeletedInDolibarr=Project %s deleted
+ProjectClosedInDolibarr=Project %s closed
 ProposalDeleted=Proposal deleted
 OrderDeleted=Order deleted
 InvoiceDeleted=Invoice deleted
@@ -128,17 +127,21 @@ MRP_MO_PRODUCEDInDolibarr=MO produced
 MRP_MO_DELETEInDolibarr=MO deleted
 MRP_MO_CANCELInDolibarr=MO canceled
 PAIDInDolibarr=%s paid
+ENABLEDISABLEInDolibarr=User enabled or disabled
+CANCELInDolibarr=Canceled
 ##### End agenda events #####
 AgendaModelModule=Document templates for event
 DateActionStart=Start date
 DateActionEnd=End date
 AgendaUrlOptions1=You can also add following parameters to filter output:
-AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b>.
-AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not owned by user <b>%s</b>.
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic events.
+AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
+AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> to include events of holidays.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
 AgendaShowBirthdayEvents=Birthdays of contacts
 AgendaHideBirthdayEvents=Hide birthdays of contacts
 Busy=Busy
@@ -181,3 +184,24 @@ Reminders=Reminders
 ActiveByDefault=Enabled by default
 Until=until
 DataFromWasMerged=Data from %s was merged
+AgendaShowBookcalCalendar=Booking calendar: %s
+MenuBookcalIndex=Online appointment
+BookcalLabelAvailabilityHelp=Label of the availability range. For example:<br>General availability<br>Availability during christmas holidays
+DurationOfRange=Duration of ranges
+BookCalSetup = Online appointment setup
+BookCalSetupPage = Online appointment setup page
+BOOKCAL_PUBLIC_INTERFACE_TOPIC = Interface title
+BookCalAbout = About BookCal
+BookCalAboutPage = BookCal about page
+Calendars=Calendars
+Availabilities=Availabilities
+NewAvailabilities=New availabilities
+NewCalendar=New calendar
+ThirdPartyBookCalHelp=Event booked in this calendar will be automatically linked to this third-party.
+AppointmentDuration = Appointment Duration : %s
+BookingSuccessfullyBooked=Your booking has been saved
+BookingReservationHourAfter=We confirm the reservation of our meeting at the date %s
+BookcalBookingTitle=Online appointment
+Transparency = Transparency
+ReadMore = Read more
+ReadLess = Read less

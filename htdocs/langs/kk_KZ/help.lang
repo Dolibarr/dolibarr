@@ -11,7 +11,7 @@ TypeOfSupport=Қолдау түрі
 TypeSupportCommunauty=Қауымдастық (тегін)
 TypeSupportCommercial=Коммерциялық
 TypeOfHelp=Түрі
-NeedHelpCenter=Need support?
+NeedHelpCenter=Қолдау керек пе?
 Efficiency=Тиімділік
 TypeHelpOnly=Тек көмек
 TypeHelpDev=Көмек+Даму
@@ -20,4 +20,4 @@ BackToHelpCenter=Әйтпесе, <a href="%s"> Анықтама орталығы
 LinkToGoldMember=Сіз өз тіліңізге Dolibarr таңдаған жаттықтырушылардың біріне қоңырау шала аласыз (%s), олардың виджетін басу арқылы (күй мен максималды баға автоматты түрде жаңартылады):
 PossibleLanguages=Қолдау көрсетілетін тілдер
 SubscribeToFoundation=Dolibarr жобасына көмектесіңіз, қорға жазылыңыз
-SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
+SeeOfficalSupport=Өз тіліңізде ресми Dolibarr қолдауы үшін: <br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>

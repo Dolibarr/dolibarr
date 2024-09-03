@@ -5,36 +5,25 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModuleEventOrganizationName = Evenementenorganisatie
 EventOrganizationDescription = Evenementenorganisatie via moduleproject
 EventOrganizationDescriptionLong= Beheer de organisatie van een evenement (show, conferenties, aanwezigen of sprekers, met openbare pagina's voor suggestie, stemmen of registratie)
-#
-# Menu
-#
 EventOrganizationMenuLeft = Georganiseerde evenementen
 EventOrganizationConferenceOrBoothMenuLeft = Conferentie of stand
-
 PaymentEvent=Betaling van evenement
-
-#
+EventFee=Evenementkosten
 # Admin page
-#
 NewRegistration=Registratie
 EventOrganizationSetup=Evenementorganisatie instellen
 EventOrganization=Evenementenorganisatie
-Settings=Instellingen
 EventOrganizationSetupPage = Instellingenpagina voor evenementorganisatie
 EVENTORGANIZATION_TASK_LABEL = Label van taken om automatisch te maken wanneer het project is gevalideerd
 EVENTORGANIZATION_TASK_LABELTooltip = Wanneer u een evenement valideert om te organiseren, kunnen sommige taken automatisch worden aangemaakt in het project <br> <br> Bijvoorbeeld: <br> Stuur oproep voor conferenties <br> Stuur oproep voor standen <br> Valideer suggesties van Openen voor conferenties a0342fz <br> Stuur een herinnering aan het evenement naar sprekers <br> Stuur een herinnering aan het evenement naar standhosters <br> Stuur een herinnering aan het evenement naar deelnemers
@@ -49,10 +38,7 @@ EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Sjabloon van e-mail om te gebrui
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Sjabloon van e-mail om te gebruiken bij het verzenden van e-mails van de massaction "Stuur e-mails" op de deelnemerslijst
 EVENTORGANIZATION_FILTERATTENDEES_CAT = In het formulier om een deelnemer aan te maken/toe te voegen, wordt de lijst met derden beperkt tot derden in de categorie
 EVENTORGANIZATION_FILTERATTENDEES_TYPE = In het formulier om een deelnemer aan te maken/toe te voegen, wordt de lijst van derden beperkt tot derden met de aard
-
-#
 # Object
-#
 OrganizedEvent=Georganiseerd evenement
 EventOrganizationConfOrBooth= Conferentie of stand
 EventOrganizationConfOrBoothes=Conferenties of stands
@@ -64,10 +50,7 @@ DateOfRegistration = Registratie datum
 ConferenceOrBoothAttendee = Conference Or Booth Attendee
 ApplicantOrVisitor=Aanvrager of bezoeker
 Speaker=Spreker
-
-#
 # Template Mail
-#
 YourOrganizationEventConfRequestWasReceived = Uw verzoek voor een conferentie is ontvangen
 YourOrganizationEventBoothRequestWasReceived = Uw aanvraag voor een stand is ontvangen
 EventOrganizationEmailAskConf = Verzoek om conferentie
@@ -77,10 +60,7 @@ EventOrganizationEmailRegistrationPayment = Registratie voor een evenement
 EventOrganizationMassEmailAttendees = Communicatie naar deelnemers
 EventOrganizationMassEmailSpeakers = Communicatie naar sprekers
 ToSpeakers=Naar sprekers
-
-#
 # Event
-#
 AllowUnknownPeopleSuggestConf=Toestaan dat mensen conferenties voorstellen
 AllowUnknownPeopleSuggestConfHelp=Laat onbekende mensen een conferentie voorstellen die ze willen doen
 AllowUnknownPeopleSuggestBooth=Laat mensen een stand aanvragen
@@ -89,27 +69,29 @@ PriceOfRegistration=Prijs van registratie
 PriceOfRegistrationHelp=Prijs te betalen om te registreren of deel te nemen aan het evenement
 PriceOfBooth=Abonnementsprijs om een stand te staan
 PriceOfBoothHelp=Abonnementsprijs om een stand te staan
+EventOrganizationICSLinkProject=Link ICS voor het evenement
 EventOrganizationICSLink=Koppel ICS voor conferenties
-ConferenceOrBoothInformation=Informatie over conferentie of stand Or
+ConferenceOrBoothInformation=Conferentie- of standinformatie
+ConferenceOrBoothFormat=Conferentie- of standmodus
+ConferenceOrBoothFormatID=ID van conferentie- of standmodus
+ConferenceOrBoothFormatCode=Code voor conferentie- of standmodus
+ConferenceOrBoothFormatLabel=Label van conferentie- of standmodus
 Attendees=deelnemers
-ListOfAttendeesOfEvent=Lijst met deelnemers van het evenementproject
+ListOfAttendeesOfEvent=Lijst met deelnemers aan evenementenprojecten
+ListOfConfOrBoothOfEvent=Lijst met conferenties of stands van evenementenprojecten
 DownloadICSLink = ICS-link downloaden
 EVENTORGANIZATION_SECUREKEY = Seed om de sleutel voor de openbare registratiepagina te beveiligen om een conferentie voor te stellen
 SERVICE_BOOTH_LOCATION = Service gebruikt voor de factuurregel over een standlocatie
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service die wordt gebruikt voor de factuurrij over een deelnemersabonnement op een evenement
 NbVotes=Aantal stemmen
-#
 # Status
-#
 EvntOrgDraft = Ontwerp
 EvntOrgSuggested = Suggereerde
 EvntOrgConfirmed = bevestigd
 EvntOrgNotQualified = Niet gekwalificeerd
 EvntOrgDone = Uitgevoerd
 EvntOrgCancelled = Geannuleerd
-#
-# Public page
-#
+# Other
 SuggestForm = Suggestie pagina
 SuggestOrVoteForConfOrBooth = Pagina voor suggestie of stem
 EvntOrgRegistrationHelpMessage = Hier kunt u stemmen op een conferentie of een nieuwe voorstellen voor het evenement. U kunt zich ook aanmelden voor een stand tijdens het evenement.
@@ -132,6 +114,7 @@ EventType = Taak type
 LabelOfBooth=Booth label
 LabelOfconference=Conferentie label
 ConferenceIsNotConfirmed=Registratie niet beschikbaar, conferentie is nog niet bevestigd
+EventRegistrationAreClosed=De inschrijvingen voor evenementen zijn gesloten
 DateMustBeBeforeThan=%s moet vóór %s zijn
 DateMustBeAfterThan=%s moet na %s
 MaxNbOfAttendeesReached=Het maximum aantal deelnemers is bereikt
@@ -144,13 +127,8 @@ OrganizationEventBulkMailToAttendees=Dit is een herinnering aan uw deelname aan 
 OrganizationEventBulkMailToSpeakers=Dit is een herinnering aan je deelname aan het evenement als spreker
 OrganizationEventLinkToThirdParty=Link naar derde partij (klant, leverancier of partner)
 OrganizationEvenLabelName=Openbare naam van de conferentie of stand
-
 NewSuggestionOfBooth=Aanvraag voor een stand
 NewSuggestionOfConference=Aanvraag om een conferentie te houden
-
-#
-# Vote page
-#
 EvntOrgRegistrationWelcomeMessage = Welkom op de congres- of standsuggestiepagina.
 EvntOrgRegistrationConfWelcomeMessage = Welkom op de pagina met congressuggesties.
 EvntOrgRegistrationBoothWelcomeMessage = Welkom op de stand suggestie pagina.
@@ -158,8 +136,8 @@ EvntOrgVoteHelpMessage = Hier kunt u de voorgestelde evenementen voor het projec
 VoteOk = Uw stem is geaccepteerd.
 AlreadyVoted = Je hebt al op dit evenement gestemd.
 VoteError = Er is een fout opgetreden tijdens het stemmen, probeer het opnieuw.
-
 SubscriptionOk=Uw aanmelding is geregistreerd
+AmountOfRegistrationPaid=Bedrag van de betaalde inschrijving
 ConfAttendeeSubscriptionConfirmation = Bevestiging van uw inschrijving op een evenement
 Attendee = deelnemer
 PaymentConferenceAttendee = Conferentie deelnemer betaling
@@ -169,9 +147,16 @@ RegistrationAndPaymentWereAlreadyRecorder=Een registratie en een betaling waren 
 EmailAttendee=E-mailadres van deelnemer
 EmailCompany=Bedrijfs e-mail
 EmailCompanyForInvoice=Bedrijfse-mail (voor factuur, indien anders dan e-mailadres van deelnemer)
-ErrorSeveralCompaniesWithEmailContactUs=Er zijn verschillende bedrijven met dit e-mailadres gevonden, dus we kunnen uw registratie niet automatisch valideren. Neem contact met ons op via %s voor een handmatige validatie
-ErrorSeveralCompaniesWithNameContactUs=Er zijn verschillende bedrijven met deze naam gevonden, dus we kunnen uw registratie niet automatisch valideren. Neem contact met ons op via %s voor een handmatige validatie
+ErrorSeveralCompaniesWithEmailContactUs=Er zijn meerdere bedrijven met dit e-mailadres gevonden, dus we kunnen uw registratie niet automatisch valideren. Neem contact met ons op via %s voor een handmatige validatie
+ErrorSeveralCompaniesWithNameContactUs=Er zijn meerdere bedrijven met deze naam gevonden, dus we kunnen uw registratie niet automatisch valideren. Neem contact met ons op via %s voor een handmatige validatie
 NoPublicActionsAllowedForThisEvent=Er zijn geen openbare acties voor dit evenement toegankelijk
 MaxNbOfAttendees=Max aantal deelnemers
 DateStartEvent=Startdatum evenement
 DateEndEvent=Einddatum evenement
+ModifyStatus=Status wijzigen
+ConfirmModifyStatus=Bevestig statuswijziging
+ConfirmModifyStatusQuestion=Are you sure you want to modify the %s selected record(s)?
+RecordsUpdated=%s Records bijgewerkt
+RecordUpdated=Record bijgewerkt
+NoRecordUpdated=Geen record bijgewerkt
+ProfitPerValidatedAttendee=Winst per deelnemer

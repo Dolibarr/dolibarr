@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2010 Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +36,7 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
@@ -60,9 +61,10 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 	/**
 	 *  Return description of module
 	 *
-	 *  @return     string      Descriptive text
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
 		global $langs, $db;
 
@@ -82,6 +84,7 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("CommRequest"), $langs->transnoentities("CommRequest"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
+		$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
 		$mask = getDolGlobalString('SUPPLIER_PROPOSAL_SAPHIR_MASK');
 
@@ -89,7 +92,7 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="masksupplier_proposal" value="'.$mask.'">', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
 		$texte .= '</tr>';
 
@@ -122,9 +125,9 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 	/**
 	 *  Return next value
 	 *
-	 *  @param	Societe				$objsoc     			Object third party
+	 *  @param	Societe				$objsoc					Object third party
 	 * 	@param	SupplierProposal	$supplier_proposal		Object commercial proposal
-	 *  @return string      								Value if OK, 0 if KO
+	 *  @return string|int<-1,0>							Next value if OK, -1 if KO
 	 */
 	public function getNextValue($objsoc, $supplier_proposal)
 	{
@@ -133,7 +136,7 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		// On defini critere recherche compteur
-		$mask = empty($conf->global->SUPPLIER_PROPOSAL_SAPHIR_MASK) ? '' : $conf->global->SUPPLIER_PROPOSAL_SAPHIR_MASK;
+		$mask = !getDolGlobalString('SUPPLIER_PROPOSAL_SAPHIR_MASK') ? '' : $conf->global->SUPPLIER_PROPOSAL_SAPHIR_MASK;
 
 		if (!$mask) {
 			$this->error = 'NotConfigured';

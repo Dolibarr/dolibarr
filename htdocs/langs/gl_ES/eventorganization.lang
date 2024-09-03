@@ -5,173 +5,158 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModuleEventOrganizationName = Organización de eventos
 EventOrganizationDescription = Organización de eventos mediante o Módulo de Proxectos
-EventOrganizationDescriptionLong= Xestionar a organización dun evento (espectáculo, conferencias, asistentes ou ponentes, con páxinas públicas para suxestión, votación ou rexistro) 
-#
-# Menu
-#
+EventOrganizationDescriptionLong= Xestionar a organización dun evento (espectáculo, conferencias, asistentes ou ponentes, con páxinas públicas para suxestión, votación ou rexistro)
 EventOrganizationMenuLeft = Eventos organizados
 EventOrganizationConferenceOrBoothMenuLeft = Conferencia ou Stand
-
-PaymentEvent=Pagamento do evento 
-
-#
+PaymentEvent=Pagamento do evento
+EventFee=Tarifa do evento
 # Admin page
-#
 NewRegistration=Rexistro
 EventOrganizationSetup=Configuración da Organización de Eventos
 EventOrganization=Organización de eventos
-Settings=Configuracións
 EventOrganizationSetupPage = Páxina de configuración da Organización de Eventos
-EVENTORGANIZATION_TASK_LABEL = Etiqueta de tarefas para crear automaticamente cando o proxecto é validado 
+EVENTORGANIZATION_TASK_LABEL = Etiqueta de tarefas para crear automaticamente cando o proxecto é validado
 EVENTORGANIZATION_TASK_LABELTooltip = Cando valida un evento organizado, pódense crear automaticamente algunhas tarefas no proxecto<br><br>Por exemplo<br>Enviar Chamada para Conferencias<br>Enviar Chamada para Stand<br>validar suxerencias para Conferencias<br>Validar aplicacións para Stand<br>Abrir subscricións a eventos para os participantes<br>Enviar lembranza do evento aos ponentes<br>Enviar lembranza do evento aos anfitrións do Stand<br>Enviar lembranza do evento aos asistentes
 EVENTORGANIZATION_TASK_LABELTooltip2=Manteña o campo baleiro se non precisa crear tarefas automaticamente.
-EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Categoría para engadir a terceiros creada automaticamente cando alguén suxire unha conferencia 
-EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Categoría para engadir a terceiros creada automaticamente cando suxiren un stand 
+EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Categoría para engadir a terceiros creada automaticamente cando alguén suxire unha conferencia
+EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Categoría para engadir a terceiros creada automaticamente cando suxiren un stand
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Modelo de correo electrónico para enviar despois de recibir unha suxestión dunha conferencia.
-EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Modelo de correo electrónico para enviar despois de recibir a suxestión dun stand. 
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Padrón de correo electrónico para enviar despois do pagamento dun rexistro a un stand. 
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Modelo de correo electrónico para enviar despois de recibir a suxestión dun stand.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Padrón de correo electrónico para enviar despois do pagamento dun rexistro a un stand.
 EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Padrón de correo electrónico para enviar despois de pagar un rexistro a un evento. 
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Padrón de correo electrónico para usar ao enviar correos electrónicos desde a acción masiva "Enviar correos electrónicos" aos ponentes
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Padrón de correo electrónico para usar ao enviar correos electrónicos desde a acción masiva "Enviar correos electrónicos" aos asistentes
 EVENTORGANIZATION_FILTERATTENDEES_CAT = No formulario para crear/engadir un asistente, restrinxe a lista de terceiros a  na categoría de terceiros
-EVENTORGANIZATION_FILTERATTENDEES_TYPE = No formulario para crear/engadir un asistente, restrinxe a lista de terceiros a aos de natureza terceiros 
-
-#
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = No formulario para crear/engadir un asistente, restrinxe a lista de terceiros a aos de natureza terceiros
 # Object
-#
 OrganizedEvent=Evento organizado
 EventOrganizationConfOrBooth= Conferencia ou Stand
 EventOrganizationConfOrBoothes=Conferencias ou Stands
-ManageOrganizeEvent = Xestionar a organización dun evento 
+ManageOrganizeEvent = Xestionar a organización dun evento
 ConferenceOrBooth = Conferencia ou Stand
 ConferenceOrBoothTab = Conferencia ou Stand
 AmountPaid = Cantidade xa paga
 DateOfRegistration = Data de rexistro
-ConferenceOrBoothAttendee = Asistente á conferencia ou stand 
+ConferenceOrBoothAttendee = Asistente á conferencia ou stand
 ApplicantOrVisitor=Solicitante ou visitante
 Speaker=Ponente
-
-#
 # Template Mail
-#
 YourOrganizationEventConfRequestWasReceived = A súa solicitude para a conferencia foi recibida
 YourOrganizationEventBoothRequestWasReceived = A súa solicitude para a stand foi recibida
-EventOrganizationEmailAskConf = Solicitude de conferencia 
-EventOrganizationEmailAskBooth = Solicitude de stand 
+EventOrganizationEmailAskConf = Solicitude de conferencia
+EventOrganizationEmailAskBooth = Solicitude de stand
 EventOrganizationEmailBoothPayment = Pagamento do seu stand
-EventOrganizationEmailRegistrationPayment = Inscrición nun evento 
-EventOrganizationMassEmailAttendees = Comunicación aos asistentes 
+EventOrganizationEmailRegistrationPayment = Inscrición nun evento
+EventOrganizationMassEmailAttendees = Comunicación aos asistentes
 EventOrganizationMassEmailSpeakers = Comunicación aos relatores
 ToSpeakers=Aos ponentes
-
-#
 # Event
-#
-AllowUnknownPeopleSuggestConf=Permitir á xente suxerir conferencias 
-AllowUnknownPeopleSuggestConfHelp=Permitir que persoas descoñecidas suxiran unha conferencia que queren facer 
+AllowUnknownPeopleSuggestConf=Permitir á xente suxerir conferencias
+AllowUnknownPeopleSuggestConfHelp=Permitir que persoas descoñecidas suxiran unha conferencia que queren facer
 AllowUnknownPeopleSuggestBooth=Permite que a xente solicite un stand
 AllowUnknownPeopleSuggestBoothHelp=Permitir que persoas descoñecidas soliciten un stand
-PriceOfRegistration=Prezo da inscrición 
-PriceOfRegistrationHelp=Prezo a pagar para inscribirse ou participar no evento 
+PriceOfRegistration=Prezo da inscrición
+PriceOfRegistrationHelp=Prezo a pagar para inscribirse ou participar no evento
 PriceOfBooth=Prezo da subscrición para estar nun stand
 PriceOfBoothHelp=Prezo da subscrición para estar nun stand
+EventOrganizationICSLinkProject=Ligazón ICS para o evento
 EventOrganizationICSLink=Ligazón ICS para conferencias
 ConferenceOrBoothInformation=Información sobre conferencia ou stand
-Attendees=Asistentes 
-ListOfAttendeesOfEvent=Listaxe de asistentes ao evento 
+ConferenceOrBoothFormat=Modo conferencia ou stand
+ConferenceOrBoothFormatID=ID do modo conferencia ou stand
+ConferenceOrBoothFormatCode=Código de modo conferencia ou stand
+ConferenceOrBoothFormatLabel=Etiqueta do modo conferencia ou stand
+Attendees=Asistentes
+ListOfAttendeesOfEvent=Listaxe de asistentes a proxectos do evento
+ListOfConfOrBoothOfEvent=Listaxe de conferencias ou stands de proxectos de eventos
 DownloadICSLink = Descargar ligazón ICS
 EVENTORGANIZATION_SECUREKEY = Semente para asegurar a chave da páxina pública de rexistro para suxerir unha conferencia
 SERVICE_BOOTH_LOCATION = Servizo empregado para a fila de facturas sobre a situación do stand
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Servizo utilizado para a fila da factura sobre a subscrición dun asistente a un evento
-NbVotes=Número de votos 
-#
+NbVotes=Número de votos
 # Status
-#
 EvntOrgDraft = Non validada
-EvntOrgSuggested = Suxerido 
-EvntOrgConfirmed = Confirmado 
-EvntOrgNotQualified = Non cualificado 
+EvntOrgSuggested = Suxerido
+EvntOrgConfirmed = Confirmado
+EvntOrgNotQualified = Non cualificado
 EvntOrgDone = Realizados
-EvntOrgCancelled = Cancelado 
-#
-# Public page
-#
+EvntOrgCancelled = Anulado
+# Other
 SuggestForm = Páxina de suxestións
-SuggestOrVoteForConfOrBooth = Páxina para suxestión ou voto 
-EvntOrgRegistrationHelpMessage = Aquí pode votar por unha conferencia ou suxerir unha nova para o evento. Tamén pode solicitar ter un stand durante o evento. 
-EvntOrgRegistrationConfHelpMessage = Aquí pode suxerir unha nova conferencia para animar durante o evento. 
+SuggestOrVoteForConfOrBooth = Páxina para suxestión ou voto
+EvntOrgRegistrationHelpMessage = Aquí pode votar por unha conferencia ou suxerir unha nova para o evento. Tamén pode solicitar ter un stand durante o evento.
+EvntOrgRegistrationConfHelpMessage = Aquí pode suxerir unha nova conferencia para animar durante o evento.
 EvntOrgRegistrationBoothHelpMessage = Aquí pode solicitar un stand durante o evento.
-ListOfSuggestedConferences = Listaxe de conferencias suxeridas 
+ListOfSuggestedConferences = Listaxe de conferencias suxeridas
 ListOfSuggestedBooths=Stands suxeridos
 ListOfConferencesOrBooths=Conferencias ou stands de eventos do proxecto
-SuggestConference = Suxerir unha nova conferencia 
+SuggestConference = Suxerir unha nova conferencia
 SuggestBooth = Suxerir un stand
-ViewAndVote = Ver e votar por eventos suxeridos 
-PublicAttendeeSubscriptionGlobalPage = Ligazón pública para a inscrición ao evento 
-PublicAttendeeSubscriptionPage = Ligazón pública para a inscrición só neste evento 
+ViewAndVote = Ver e votar por eventos suxeridos
+PublicAttendeeSubscriptionGlobalPage = Ligazón pública para a inscrición ao evento
+PublicAttendeeSubscriptionPage = Ligazón pública para a inscrición só neste evento
 MissingOrBadSecureKey = A clave de seguridade non é válida ou inexistente
 EvntOrgWelcomeMessage = Este formulario permítelle rexistrarse como novo participante no evento
-EvntOrgDuration = Esta conferencia comeza en %s e remata en %s. 
+EvntOrgDuration = Esta conferencia comeza en %s e remata en %s.
 ConferenceAttendeeFee = Importe de asistente á conferencia para o evento:' %s ' acontece de %s a %s
 BoothLocationFee = Localización do stand para o evento: "%s" que acontece do %s ao %s
 EventType = Tipo de evento
 LabelOfBooth=Etiqueta de stand
-LabelOfconference=Etiqueta de conferencia 
+LabelOfconference=Etiqueta de conferencia
 ConferenceIsNotConfirmed=Rexistro non dispoñible, a conferencia aínda non está confirmada
+EventRegistrationAreClosed=As inscricións para eventos están pechadas
 DateMustBeBeforeThan=%s debe ser antes de %s
 DateMustBeAfterThan=%s debe ser despois de %s
 MaxNbOfAttendeesReached=Alcanzouse o número máximo de participantes
 NewSubscription=Rexistro
 OrganizationEventConfRequestWasReceived=A súa suxestión para unha conferencia foi recibida
 OrganizationEventBoothRequestWasReceived=A súa solicitude para un stand foi recibida
-OrganizationEventPaymentOfBoothWasReceived=O seu pagamento polo seu stand rexistrouse 
-OrganizationEventPaymentOfRegistrationWasReceived=O seu pagamento pola inscrición ao evento rexistrouse 
-OrganizationEventBulkMailToAttendees=Esta é unha lembranza da súa participación no evento como asistente 
-OrganizationEventBulkMailToSpeakers=Esta é unha lembranza da súa participación no evento como ponente 
-OrganizationEventLinkToThirdParty=Ligazón a terceiros (cliente, provedor ou asociado) 
+OrganizationEventPaymentOfBoothWasReceived=O seu pagamento polo seu stand rexistrouse
+OrganizationEventPaymentOfRegistrationWasReceived=O seu pagamento pola inscrición ao evento rexistrouse
+OrganizationEventBulkMailToAttendees=Esta é unha lembranza da súa participación no evento como asistente
+OrganizationEventBulkMailToSpeakers=Esta é unha lembranza da súa participación no evento como ponente
+OrganizationEventLinkToThirdParty=Ligazón a terceiros (cliente, provedor ou asociado)
 OrganizationEvenLabelName=Nome público da conferencia ou posto
-
 NewSuggestionOfBooth=Solicitude de stand
 NewSuggestionOfConference=Solicitude para realizar unha conferencia
-
-#
-# Vote page
-#
-EvntOrgRegistrationWelcomeMessage = Benvido á páxina de suxestións de conferencias ou stands. 
+EvntOrgRegistrationWelcomeMessage = Benvido á páxina de suxestións de conferencias ou stands.
 EvntOrgRegistrationConfWelcomeMessage = Benvida á páxina de suxestións de conferencia
 EvntOrgRegistrationBoothWelcomeMessage = Benvida á páxina de suxestións de stands
 EvntOrgVoteHelpMessage = Aquí pode ver e votar os eventos suxeridos para o proxecto
 VoteOk = O seu voto foi aceptado
 AlreadyVoted = Xa votou para este evento
-VoteError = Produciuse un erro durante a votación, ténteo de novo. 
-
+VoteError = Produciuse un erro durante a votación, ténteo de novo.
 SubscriptionOk=O seu rexistro foi gravado
+AmountOfRegistrationPaid=Importe da subscrición pagada
 ConfAttendeeSubscriptionConfirmation = Confirmación da súa subscrición ao evento
 Attendee = Asistente
 PaymentConferenceAttendee = Pagamento de asistente á conferencia
 PaymentBoothLocation = Pagamento da localización do stand
-DeleteConferenceOrBoothAttendee=Eliminar asistente 
-RegistrationAndPaymentWereAlreadyRecorder=Xa se rexistrou unha inscrición e un pagamento para este correo electrónico <b> %s</b> 
-EmailAttendee=Correo electrónico do asistente 
+DeleteConferenceOrBoothAttendee=Eliminar asistente
+RegistrationAndPaymentWereAlreadyRecorder=Xa se rexistrou unha inscrición e un pagamento para este correo electrónico <b> %s</b>
+EmailAttendee=Correo electrónico do asistente
 EmailCompany=Correo electrónico da empresa
-EmailCompanyForInvoice=Correo electrónico da empresa (para factura, se é diferente do correo electrónico do participante) 
-ErrorSeveralCompaniesWithEmailContactUs=Atopáronse varias empresas con este correo electrónico polo que non podemos validar automaticamente a súa inscrición. Póñase en contacto connosco en %s para unha validación manual 
-ErrorSeveralCompaniesWithNameContactUs=Atopáronse varias empresas con este nome polo que non podemos validar automaticamente a súa inscrición. Póñase en contacto connosco en %s para unha validación manual 
-NoPublicActionsAllowedForThisEvent=Non hai accións públicas abertas ao público para este evento 
+EmailCompanyForInvoice=Correo electrónico da empresa (para factura, se é diferente do correo electrónico do participante)
+ErrorSeveralCompaniesWithEmailContactUs=Atopáronse varias empresas con este correo electrónico polo que non podemos validar automaticamente a súa inscrición. Póñase en contacto connosco en %s para unha validación manual
+ErrorSeveralCompaniesWithNameContactUs=Atopáronse varias empresas con este nome polo que non podemos validar automaticamente a súa inscrición. Póñase en contacto connosco en %s para unha validación manual
+NoPublicActionsAllowedForThisEvent=Non hai accións públicas abertas ao público para este evento
 MaxNbOfAttendees=Número máximo de asistentes
 DateStartEvent=Data de inicio do evento
 DateEndEvent=Data de finalización do evento
+ModifyStatus=Modificar o estado
+ConfirmModifyStatus=Confirmar a modificación de estado
+ConfirmModifyStatusQuestion=Está certo de querer modificar o %s rexistro(s) seleccionado(s)?
+RecordsUpdated=%s Rexistros actualizados
+RecordUpdated=Rexistro actualizado
+NoRecordUpdated=Non se actualizou ningún rexistro
+ProfitPerValidatedAttendee=Beneficio por asistente

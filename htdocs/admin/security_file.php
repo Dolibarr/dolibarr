@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2017	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2017	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2013		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +56,7 @@ $error = 0;
  * Actions
  */
 
-if (GETPOST('sendit') && !empty($conf->global->MAIN_UPLOAD_DOC)) {
+if (GETPOST('sendit') && getDolGlobalString('MAIN_UPLOAD_DOC')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	dol_add_file_process($upload_dir, 1, 0, 'userfile');
@@ -86,7 +87,7 @@ if ($action == 'updateform') {
 		if (!preg_match('/^0/', $tmpumask)) {
 			$tmpumask = '0'.$tmpumask;
 		}
-		if (empty($tmpumask) || $tmpumask === '0') {
+		if (empty($tmpumask)) {  // Also matches '0'
 			$tmpumask = '0664';
 		}
 
@@ -118,7 +119,7 @@ if ($action == 'updateform') {
 $form = new Form($db);
 
 $wikihelp = 'EN:Setup_Security|FR:Paramétrage_Sécurité|ES:Configuración_Seguridad';
-llxHeader('', $langs->trans("Files"), $wikihelp);
+llxHeader('', $langs->trans("Files"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-security_file');
 
 print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
 
@@ -155,7 +156,7 @@ if (isset($max)) {
 }
 print '</td>';
 print '<td class="nowrap">';
-print '<input class="flat" name="MAIN_UPLOAD_DOC" type="text" size="6" value="'.dol_escape_htmltag($conf->global->MAIN_UPLOAD_DOC).'"> '.$langs->trans("Kb");
+print '<input class="flat" name="MAIN_UPLOAD_DOC" type="text" size="6" value="'.dol_escape_htmltag(getDolGlobalString('MAIN_UPLOAD_DOC')).'"> '.$langs->trans("Kb");
 print '</td>';
 print '</tr>';
 
@@ -165,7 +166,7 @@ print '<td>';
 print $form->textwithpicto($langs->trans("UMask"), $langs->trans("UMaskExplanation"));
 print '</td>';
 print '<td class="nowrap">';
-print '<input class="flat" name="MAIN_UMASK" type="text" size="6" value="'.dol_escape_htmltag($conf->global->MAIN_UMASK).'">';
+print '<input class="flat" name="MAIN_UMASK" type="text" size="6" value="'.dol_escape_htmltag(getDolGlobalString('MAIN_UMASK')).'">';
 print '</td>';
 print '</tr>';
 
@@ -177,7 +178,7 @@ print '<span class="opacitymedium">'.$langs->trans("AntiVirusCommandExample").'<
 // Check command in inside safe_mode
 print '</td>';
 print '<td>';
-if (ini_get('safe_mode') && !empty($conf->global->MAIN_ANTIVIRUS_COMMAND)) {
+if (ini_get('safe_mode') && getDolGlobalString('MAIN_ANTIVIRUS_COMMAND')) {
 	$langs->load("errors");
 	$basedir = preg_replace('/"/', '', dirname($conf->global->MAIN_ANTIVIRUS_COMMAND));
 	$listdir = explode(';', ini_get('safe_mode_exec_dir'));
@@ -200,7 +201,7 @@ print '<td>'.$langs->trans("AntiVirusParam").'<br>';
 print '<span class="opacitymedium">'.$langs->trans("AntiVirusParamExample").'</span>';
 print '</td>';
 print '<td>';
-print '<input type="text" '.(defined('MAIN_ANTIVIRUS_PARAM') ? 'disabled ' : '').'name="MAIN_ANTIVIRUS_PARAM" class="minwidth500imp" value="'.(!empty($conf->global->MAIN_ANTIVIRUS_PARAM) ?dol_escape_htmltag($conf->global->MAIN_ANTIVIRUS_PARAM) : '').'">';
+print '<input type="text" '.(defined('MAIN_ANTIVIRUS_PARAM') ? 'disabled ' : '').'name="MAIN_ANTIVIRUS_PARAM" class="minwidth500imp" value="'.(getDolGlobalString('MAIN_ANTIVIRUS_PARAM') ? dol_escape_htmltag(getDolGlobalString('MAIN_ANTIVIRUS_PARAM')) : '').'">';
 if (defined('MAIN_ANTIVIRUS_PARAM')) {
 	print '<br><span class="opacitymedium">'.$langs->trans("ValueIsForcedBySystem").'</span>';
 }

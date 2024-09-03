@@ -1,0 +1,13 @@
+# Dolibarr language file - Source file is en_US - hrm
+HRM_EMAIL_EXTERNAL_SERVICE=E-mail para evitar el servicio externo de gestión de RRHH
+ConfirmDeleteEstablishment=¿Está seguro que quiere eliminar este establecimiento?
+HrmSetup=Configuración del módulo RRHH
+PositionsWithThisProfile=Posiciones con estos perfiles de trabajo
+MaxlevelGreaterThan=Nivel de empleado superior al esperado
+MaxLevelEqualTo=Nivel de empleado es igual al nivel esperado
+MaxLevelLowerThan=Nivel del empleado es inferior al nivel esperado
+MaxlevelGreaterThanShort=Nivel superior al esperado
+TypeKnowHow=Saber - Como
+SaveAddSkill =Habilidade(s) agregadas
+SaveLevelSkill =Nivel de habilidade(s) guardadas
+TheJobProfileHasNoSkillsDefinedFixBefore=El perfil de trabajo evaluado de este empleado no tiene la habilidad definida en él.  Por favor agregar habilidade(s), luego eliminar y reiniciar la evaluación

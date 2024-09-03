@@ -18,11 +18,11 @@
 
 /**
  *	    \file       htdocs/core/lib/member.lib.php
- *		\brief      Ensemble de fonctions de base pour les adherents
+ *		\brief      Ensemble de functions de base pour les adherents
  */
 
 /**
- *  Return array head with list of tabs to view object informations
+ *  Return array head with list of tabs to view object information
  *
  *  @return array Tabs of the module
  */
@@ -33,12 +33,12 @@ function mailmanspip_admin_prepare_head()
 	return array(
 		array(
 			DOL_URL_ROOT.'/admin/mailman.php',
-			$langs->trans('Mailman'),
+			'Mailman',
 			'mailman'
 		),
 		array(
 			DOL_URL_ROOT.'/admin/spip.php',
-			$langs->trans('SPIP'),
+			'SPIP',
 			'spip'
 		)
 	);

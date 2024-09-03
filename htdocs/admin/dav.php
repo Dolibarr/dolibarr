@@ -37,7 +37,9 @@ if (!$user->admin) {
 $action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
-
+if (empty($action)) {
+	$action = 'edit';
+}
 
 $arrayofparameters = array(
 	'DAV_RESTICT_ON_IP'=>array('css'=>'minwidth200', 'enabled'=>1),
@@ -58,6 +60,9 @@ dol_mkdir($conf->dav->dir_output.'/private');
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
+if ($action == 'update') {
+	$action = 'edit';
+}
 
 
 /*
@@ -66,7 +71,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 $help_url = 'EN:Module_DAV';
 
-llxHeader('', $langs->trans("DAVSetup"), $help_url);
+llxHeader('', $langs->trans("DAVSetup"), $help_url, '', 0, 0, '', '', '', 'mod-admin page-dav');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("DAVSetup"), $linkback, 'title_setup');
@@ -189,7 +194,7 @@ $message .= '</div>';
 $message .= ajax_autoselect('webdavpublicurl');
 
 $message .= '<br>';
-if (!empty(getDolGlobalString('DAV_ALLOW_PUBLIC_DIR'))) {
+if (getDolGlobalString('DAV_ALLOW_PUBLIC_DIR')) {
 	$urlEntity = (isModEnabled('multicompany') ? '?entity=' . $conf->entity : '');
 	$url = '<a href="' . $urlwithroot . '/dav/fileserver.php/public/' . $urlEntity . '" target="_blank" rel="noopener noreferrer">' . $urlwithroot . '/dav/fileserver.php/public/' . $urlEntity . '</a>';
 

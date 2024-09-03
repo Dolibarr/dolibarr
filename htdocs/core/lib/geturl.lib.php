@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2008-2020	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +31,7 @@
  *
  * @param	string	  $url 				    URL to call.
  * @param	string    $postorget		    'POST', 'GET', 'HEAD', 'PUT', 'PUTALREADYFORMATED', 'POSTALREADYFORMATED', 'DELETE'
- * @param	string    $param			    Parameters of URL (x=value1&y=value2) or may be a formated content with $postorget='PUTALREADYFORMATED'
+ * @param	string    $param			    Parameters of URL (x=value1&y=value2) or may be a formatted content with $postorget='PUTALREADYFORMATED'
  * @param	integer   $followlocation		0=Do not follow, 1=Follow location.
  * @param	string[]  $addheaders			Array of string to add into header. Example: ('Accept: application/xrds+xml', ....)
  * @param	string[]  $allowedschemes		List of schemes that are allowed ('http' + 'https' only by default)
@@ -42,11 +43,11 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 {
 	//declaring of global variables
 	global $conf;
-	$USE_PROXY = empty($conf->global->MAIN_PROXY_USE) ? 0 : $conf->global->MAIN_PROXY_USE;
-	$PROXY_HOST = empty($conf->global->MAIN_PROXY_HOST) ? 0 : $conf->global->MAIN_PROXY_HOST;
-	$PROXY_PORT = empty($conf->global->MAIN_PROXY_PORT) ? 0 : $conf->global->MAIN_PROXY_PORT;
-	$PROXY_USER = empty($conf->global->MAIN_PROXY_USER) ? 0 : $conf->global->MAIN_PROXY_USER;
-	$PROXY_PASS = empty($conf->global->MAIN_PROXY_PASS) ? 0 : $conf->global->MAIN_PROXY_PASS;
+	$USE_PROXY = !getDolGlobalString('MAIN_PROXY_USE') ? 0 : $conf->global->MAIN_PROXY_USE;
+	$PROXY_HOST = !getDolGlobalString('MAIN_PROXY_HOST') ? 0 : $conf->global->MAIN_PROXY_HOST;
+	$PROXY_PORT = !getDolGlobalString('MAIN_PROXY_PORT') ? 0 : $conf->global->MAIN_PROXY_PORT;
+	$PROXY_USER = !getDolGlobalString('MAIN_PROXY_USER') ? 0 : $conf->global->MAIN_PROXY_USER;
+	$PROXY_PASS = !getDolGlobalString('MAIN_PROXY_PASS') ? 0 : $conf->global->MAIN_PROXY_PASS;
 
 	dol_syslog("getURLContent postorget=".$postorget." URL=".$url." param=".$param);
 
@@ -69,9 +70,9 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	}
 	curl_setopt($ch, CURLINFO_HEADER_OUT, true); // To be able to retrieve request header and log it
 
-	// By default use tls decied by PHP.
+	// By default use the TLS version decided by PHP.
 	// You can force, if supported a version like TLSv1 or TLSv1.2
-	if (!empty($conf->global->MAIN_CURL_SSLVERSION)) {
+	if (getDolGlobalString('MAIN_CURL_SSLVERSION')) {
 		curl_setopt($ch, CURLOPT_SSLVERSION, $conf->global->MAIN_CURL_SSLVERSION);
 	}
 	//curl_setopt($ch, CURLOPT_SSLVERSION, 6); for tls 1.2
@@ -81,7 +82,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		global $dolibarr_main_prod;
 		$ssl_verifypeer =  ($dolibarr_main_prod ? true : false);
 	}
-	if (!empty($conf->global->MAIN_CURL_DISABLE_VERIFYPEER)) {
+	if (getDolGlobalString('MAIN_CURL_DISABLE_VERIFYPEER')) {
 		$ssl_verifypeer = 0;
 	}
 
@@ -91,21 +92,27 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 	// Restrict use to some protocols only
 	$protocols = 0;
+	$redir_list = array();
 	if (is_array($allowedschemes)) {
 		foreach ($allowedschemes as $allowedscheme) {
 			if ($allowedscheme == 'http') {
 				$protocols |= CURLPROTO_HTTP;
-			}
-			if ($allowedscheme == 'https') {
+				$redir_list["HTTP"] = 1;
+			} elseif ($allowedscheme == 'https') {
 				$protocols |= CURLPROTO_HTTPS;
+				$redir_list["HTTPS"] = 1;
+			} elseif ($allowedscheme == 'ftp') {
+				$protocols |= CURLPROTO_FTP;
+				$redir_list["FTP"] = 1;
+			} elseif ($allowedscheme == 'ftps') {
+				$protocols |= CURLPROTO_FTPS;
+				$redir_list["FTPS"] = 1;
 			}
 		}
-		curl_setopt($ch, CURLOPT_PROTOCOLS, $protocols);
-		curl_setopt($ch, CURLOPT_REDIR_PROTOCOLS, $protocols);
 	}
 
-	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, empty($conf->global->MAIN_USE_CONNECT_TIMEOUT) ? 5 : $conf->global->MAIN_USE_CONNECT_TIMEOUT);
-	curl_setopt($ch, CURLOPT_TIMEOUT, empty($conf->global->MAIN_USE_RESPONSE_TIMEOUT) ? 30 : $conf->global->MAIN_USE_RESPONSE_TIMEOUT);
+	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, getDolGlobalInt('MAIN_USE_CONNECT_TIMEOUT', 5));
+	curl_setopt($ch, CURLOPT_TIMEOUT, getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT', 30));
 
 	// limit size of downloaded files. TODO Add MAIN_SECURITY_MAXFILESIZE_DOWNLOADED
 	$maxsize = getDolGlobalInt('MAIN_SECURITY_MAXFILESIZE_DOWNLOADED');
@@ -212,12 +219,22 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		if ($iptocheck) {
 			// Set CURLOPT_CONNECT_TO so curl will not try another resolution that may give a different result. Possible only on PHP v7+
 			if (defined('CURLOPT_CONNECT_TO')) {
-				$connect_to = array(sprintf("%s:%d:%s:%d", $newUrlArray['host'], empty($newUrlArray['port'])?'':$newUrlArray['port'], $iptocheck, empty($newUrlArray['port'])?'':$newUrlArray['port']));
+				$connect_to = array(sprintf("%s:%d:%s:%d", $newUrlArray['host'], empty($newUrlArray['port']) ? '' : $newUrlArray['port'], $iptocheck, empty($newUrlArray['port']) ? '' : $newUrlArray['port']));
 				//var_dump($newUrlArray);
 				//var_dump($connect_to);
 				curl_setopt($ch, CURLOPT_CONNECT_TO, $connect_to);
 			}
 		}
+
+		// Moving these just before the curl_exec option really limits
+		// on windows PHP 7.4.
+		curl_setopt($ch, CURLOPT_PROTOCOLS, $protocols);
+		curl_setopt($ch, CURLOPT_REDIR_PROTOCOLS, $protocols);
+		/* CURLOPT_REDIR_PROTOCOLS_STR available from PHP 7.85.0
+		if (version_compare(PHP_VERSION, '8.3.0', '>=') && version_compare(curl_version()['version'], '7.85.0', '>=')) {
+			curl_setopt($ch, CURLOPT_REDIR_PROTOCOLS_STR, implode(",", array_keys($redir_list)));
+		}
+		*/
 
 		// Getting response from server
 		$response = curl_exec($ch);
@@ -238,11 +255,12 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	$request = curl_getinfo($ch, CURLINFO_HEADER_OUT); // Reading of request must be done after sending request
 
 	dol_syslog("getURLContent request=".$request);
-	if (!empty($conf->global->MAIN_GETURLCONTENT_OUTPUT_RESPONSE)) {
-		// This may contains binary data, so we dont output reponse by default.
-		dol_syslog("getURLContent response =".$response);
+	if (getDolGlobalInt('MAIN_CURL_DEBUG')) {
+		// This may contains binary data, so we don't output response by default.
+		dol_syslog("getURLContent request=".$request, LOG_DEBUG, 0, '_curl');
+		dol_syslog("getURLContent response =".$response, LOG_DEBUG, 0, '_curl');
 	}
-	dol_syslog("getURLContent response size=".strlen($response)); // This may contains binary data, so we dont output it
+	dol_syslog("getURLContent response size=".strlen($response)); // This may contains binary data, so we don't output it
 
 	$rep = array();
 	if (curl_errno($ch)) {
@@ -253,7 +271,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		$rep['curl_error_no'] = curl_errno($ch);
 		$rep['curl_error_msg'] = curl_error($ch);
 
-		dol_syslog("getURLContent response array is ".join(',', $rep));
+		dol_syslog("getURLContent response array is ".implode(',', $rep));
 	} else {
 		//$info = curl_getinfo($ch);
 
@@ -286,8 +304,6 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
  */
 function isIPAllowed($iptocheck, $localurl)
 {
-	global $conf;
-
 	if ($localurl == 0) {	// Only external url allowed (dangerous, may allow to get malware)
 		if (!filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
 			// Deny ips like 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 0.0.0.0/8, 169.254.0.0/16, 127.0.0.0/8 et 240.0.0.0/4, ::1/128, ::/128, ::ffff:0:0/96, fe80::/10...
@@ -298,7 +314,7 @@ function isIPAllowed($iptocheck, $localurl)
 			$errormsg = 'Error bad hostname IP (IP is a local IP). Must be an external URL.';
 			return $errormsg;
 		}
-		if (!empty($conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP) && in_array($iptocheck, explode(',', $conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP))) {
+		if (getDolGlobalString('MAIN_SECURITY_ANTI_SSRF_SERVER_IP') && in_array($iptocheck, explode(',', getDolGlobalString('MAIN_SECURITY_ANTI_SSRF_SERVER_IP')))) {
 			$errormsg = 'Error bad hostname IP (IP is a local IP defined into MAIN_SECURITY_SERVER_IP). Must be an external URL.';
 			return $errormsg;
 		}
@@ -309,7 +325,7 @@ function isIPAllowed($iptocheck, $localurl)
 			$errormsg = 'Error bad hostname '.$iptocheck.'. Must be a local URL.';
 			return $errormsg;
 		}
-		if (!empty($conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP) && !in_array($iptocheck, explode(',', $conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP))) {
+		if (getDolGlobalString('MAIN_SECURITY_ANTI_SSRF_SERVER_IP') && !in_array($iptocheck, explode(',', getDolGlobalString('MAIN_SECURITY_ANTI_SSRF_SERVER_IP')))) {
 			$errormsg = 'Error bad hostname IP (IP is not a local IP defined into list MAIN_SECURITY_SERVER_IP). Must be a local URL in allowed list.';
 			return $errormsg;
 		}
@@ -344,15 +360,43 @@ function isIPAllowed($iptocheck, $localurl)
  */
 function getDomainFromURL($url, $mode = 0)
 {
+	$arrayof2levetopdomain = array(
+		'co.at', 'or.at', 'gv.at',
+		'avocat.fr', 'aeroport.fr', 'veterinaire.fr',
+		'com.ng', 'gov.ng', 'gov.ua', 'com.ua', 'in.ua', 'org.ua', 'edu.ua', 'net.ua',
+		'net.uk', 'org.uk', 'gov.uk', 'co.uk',
+		'com.mx'
+	);
+
+	// Set if tld is on 2 levels
+	$tldon2level = 0;
+	$parts = array_reverse(explode('.', $url));
+	if (!empty($parts[1]) && in_array($parts[1].'.'.$parts[0], $arrayof2levetopdomain)) {
+		$tldon2level = 1;
+	}
+
+	if ($tldon2level && $mode > 0) {
+		$mode++;
+	}
+
 	$tmpdomain = preg_replace('/^https?:\/\//i', '', $url); // Remove http(s)://
-	$tmpdomain = preg_replace('/\/.*$/i', '', $tmpdomain); // Remove part after domain
-	if ($mode == 2) {
+	$tmpdomain = preg_replace('/\/.*$/i', '', $tmpdomain); // Remove part after /
+	if ($mode == 3) {
+		$tmpdomain = preg_replace('/^.*\.([^\.]+)\.([^\.]+)\.([^\.]+)\.([^\.]+)$/', '\1.\2.\3.\4', $tmpdomain);
+	} elseif ($mode == 2) {
 		$tmpdomain = preg_replace('/^.*\.([^\.]+)\.([^\.]+)\.([^\.]+)$/', '\1.\2.\3', $tmpdomain); // Remove part 'www.' before 'abc.mydomain.com'
-	} else {
+	} elseif ($mode == 1) {
 		$tmpdomain = preg_replace('/^.*\.([^\.]+)\.([^\.]+)$/', '\1.\2', $tmpdomain); // Remove part 'www.abc.' before 'mydomain.com'
 	}
+
 	if (empty($mode)) {
-		$tmpdomain = preg_replace('/\.[^\.]+$/', '', $tmpdomain); // Remove first level domain (.com, .net, ...)
+		if ($tldon2level) {
+			$tmpdomain = preg_replace('/^.*\.([^\.]+)\.([^\.]+)\.([^\.]+)$/', '\1.\2.\3', $tmpdomain); // Remove part 'www.abc.' before 'mydomain.com'
+			$tmpdomain = preg_replace('/\.[^\.]+\.[^\.]+$/', '', $tmpdomain); // Remove TLD (.com.mx, .co.uk, ...)
+		} else {
+			$tmpdomain = preg_replace('/^.*\.([^\.]+)\.([^\.]+)$/', '\1.\2', $tmpdomain); // Remove part 'www.abc.' before 'mydomain.com'
+			$tmpdomain = preg_replace('/\.[^\.]+$/', '', $tmpdomain); // Remove TLD (.com, .net, ...)
+		}
 	}
 
 	return $tmpdomain;
@@ -361,23 +405,15 @@ function getDomainFromURL($url, $mode = 0)
 /**
  * Function root url from a long url
  * For example: https://www.abc.mydomain.com/dir/page.html return 'https://www.abc.mydomain.com'
- * For example: http://www.abc.mydomain.com/ return 'https://www.abc.mydomain.com'
+ * For example: https://www.abc.mydomain.com/ return 'https://www.abc.mydomain.com'
+ * For example: http://www.abc.mydomain.com/ return 'http://www.abc.mydomain.com'
  *
  * @param	string	  $url 				    Full URL.
  * @return	string						    Returns root url
  */
 function getRootURLFromURL($url)
 {
-	$prefix = '';
-	$tmpurl = $url;
-	$reg = null;
-	if (preg_match('/^(https?:\/\/)/i', $tmpurl, $reg)) {
-		$prefix = $reg[1];
-	}
-	$tmpurl = preg_replace('/^https?:\/\//i', '', $tmpurl); // Remove http(s)://
-	$tmpurl = preg_replace('/\/.*$/i', '', $tmpurl); // Remove part after domain
-
-	return $prefix.$tmpurl;
+	return preg_replace('/^([a-z]*:\/\/[^\/]*).*/i', '$1', $url);
 }
 
 /**

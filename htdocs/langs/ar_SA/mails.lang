@@ -2,12 +2,15 @@
 Mailing=مراسلة
 EMailing=مراسلة
 EMailings=EMailings
+SMSings=الرسائل القصيرة
 AllEMailings=جميع eMailings
 MailCard=بطاقة الإنترنت
 MailRecipients=المستفيدون
 MailRecipient=المتلقي
-MailTitle=العنوان
+MailTitle=ملصق
 MailFrom=من
+ForceEmailFrom=Default email From
+PhoneFrom=من
 MailErrorsTo=الأخطاء
 MailReply=وردا على
 MailTo=فاتورة الى:
@@ -16,6 +19,8 @@ MailCC=نسخة إلى
 MailToCCUsers=نسخ للمستخدمين
 MailCCC=نسخة إلى نسخة
 MailTopic=موضوع البريد الإلكتروني
+MailDate=Email date
+MailReferences=Message IDs in References
 MailText=رسالة
 MailFile=الملفات المرفقة
 MailMessage=هيئة البريد الإلكتروني
@@ -24,13 +29,13 @@ BodyNotIn=ليس في الجسد
 ShowEMailing=وتظهر مراسلة
 ListOfEMailings=قائمة emailings
 NewMailing=مراسلة جديدة
+NewSMSing=الرسائل القصيرة الجديدة
 EditMailing=تحرير مراسلة
 ResetMailing=إعادة إرساله عبر البريد الإلكتروني
 DeleteMailing=حذف البريد الإلكتروني
-DeleteAMailing=حذف البريد الإلكتروني
 PreviewMailing=معاينة مراسلة
 CreateMailing=إنشاء مراسلة
-TestMailing=تجربة استخدام الإنترنت
+TestMailing=اختبار
 ValidMailing=صحيح مراسلة
 MailingStatusDraft=مسودة
 MailingStatusValidated=صادق
@@ -50,6 +55,7 @@ ConfirmValidMailing=Are you sure you want to validate this emailing?
 ConfirmResetMailing=تحذير ، من خلال إعادة تهيئة البريد الإلكتروني <b> %s </b> ، ستسمح بإعادة إرسال هذا البريد الإلكتروني في بريد مجمع. هل انت متأكد من أنك تريد أن تفعل هذا؟
 ConfirmDeleteMailing=هل أنت متأكد أنك تريد حذف هذا البريد الإلكتروني؟
 NbOfUniqueEMails=عدد رسائل البريد الإلكتروني الفريدة
+NbOfUniquePhones=عدد الهواتف الفريدة
 NbOfEMails=عدد رسائل البريد الإلكتروني
 TotalNbOfDistinctRecipients=عدد المستفيدين متميزة
 NoTargetYet=ولم يعرف بعد المستفيدين (الذهاب على تبويبة 'المتلقين)
@@ -93,7 +99,7 @@ MailingModuleDescEmailsFromUser=إدخال رسائل البريد الإلكت�
 MailingModuleDescDolibarrUsers=المستخدمون الذين لديهم رسائل بريد إلكتروني
 MailingModuleDescThirdPartiesByCategories=أطراف ثالثة
 SendingFromWebInterfaceIsNotAllowed=الإرسال من واجهة الويب غير مسموح به.
-EmailCollectorFilterDesc=All filters must match to have an email being collected.<br>You can use the character "!" before the search string value if you need a negative test
+EmailCollectorFilterDesc=يجب أن تتطابق جميع المرشحات حتى يتم جمع البريد الإلكتروني.<br>يمكنك استخدام الحرف "!" قبل قيمة سلسلة البحث إذا كنت بحاجة إلى اختبار سلبي
 
 # Libelle des modules de liste de destinataires mailing
 LineInFile=خط المستندات في ملف ٪
@@ -107,6 +113,7 @@ MailNoChangePossible=صادق المتلقين للمراسلة لا يمكن ت
 SearchAMailing=البحث البريدية
 SendMailing=إرسال البريد الإلكتروني
 SentBy=أرسلها
+AdvancedAlternative=Advanced alternative
 MailingNeedCommand=Sending an emailing can be performed from command line. Ask your server administrator to launch the following command to send the emailing to all recipients:
 MailingNeedCommand2=ولكن يمكنك إرسالها عبر الإنترنت عن طريق إضافة معلمة MAILING_LIMIT_SENDBYWEB مع قيمة الحد الأقصى لعدد من رسائل البريد الإلكتروني التي تريد إرسالها من خلال هذه الدورة.
 ConfirmSendingEmailing=If you want to send emailing directly from this screen, please confirm you are sure you want to send emailing now from your browser ?
@@ -132,8 +139,8 @@ NoNotificationsWillBeSent=لا توجد إخطارات تلقائية بالبر
 ANotificationsWillBeSent=سيتم إرسال إشعار تلقائي واحد عبر البريد الإلكتروني
 SomeNotificationsWillBeSent=%s سيتم إرسال إشعارات تلقائية عبر البريد الإلكتروني
 AddNewNotification=اشترك في إشعار تلقائي جديد بالبريد الإلكتروني (الهدف / الحدث)
-ListOfActiveNotifications=قائمة بجميع الاشتراكات النشطة (الأهداف / الأحداث) للإخطار التلقائي بالبريد الإلكتروني
-ListOfNotificationsDone=قائمة بجميع إخطارات البريد الإلكتروني التلقائية المرسلة
+ListOfActiveNotifications=Active subscriptions (targets/events) for automatic email notification
+ListOfNotificationsDone=Automatic email notifications sent
 MailSendSetupIs=وقد تم تكوين إرسال البريد الإلكتروني الإعداد ل'٪ ق'. هذا الوضع لا يمكن أن تستخدم لإرسال إرساله عبر البريد الإلكتروني الشامل.
 MailSendSetupIs2=يجب عليك أولا الذهاب، مع حساب مشرف، في القائمة٪ sHome - إعداد - رسائل البريد الإلكتروني٪ s إلى تغيير المعلمة <strong>'٪ ق'</strong> لاستخدام وضع '٪ ق'. مع هذا الوضع، يمكنك إدخال الإعداد خادم SMTP المقدمة من قبل موفر خدمة الإنترنت واستخدام قداس ميزة البريد الإلكتروني.
 MailSendSetupIs3=إذا كان لديك أي أسئلة حول كيفية إعداد ملقم SMTP الخاص بك، يمكنك أن تطلب إلى٪ s.
@@ -167,7 +174,7 @@ NoContactWithCategoryFound=لم يتم العثور على فئة مرتبطة �
 NoContactLinkedToThirdpartieWithCategoryFound=لم يتم العثور على فئة مرتبطة ببعض الأطراف الثالثة
 OutGoingEmailSetup=رسائل البريد الإلكتروني الصادرة
 InGoingEmailSetup=رسائل البريد الإلكتروني الواردة
-OutGoingEmailSetupForEmailing=رسائل البريد الإلكتروني الصادرة (للوحدة النمطية %s)
+OutGoingEmailSetupForEmailing=Outgoing emails (%s)
 DefaultOutgoingEmailSetup=نفس التكوين من إعداد البريد الإلكتروني الصادر العام
 Information=معلومات
 ContactsWithThirdpartyFilter=جهات الاتصال مع مرشح طرف ثالث
@@ -175,12 +182,19 @@ Unanswered=لم يتم الرد عليها
 Answered=محلول
 IsNotAnAnswer=ليس إجابة (البريد الإلكتروني الأولي)
 IsAnAnswer=هي إجابة رسالة بريد إلكتروني أولية
-RecordCreatedByEmailCollector=السجل الذي تم إنشاؤه بواسطة مُجمع البريد الإلكتروني %s من البريد الإلكتروني %s
+RecordCreatedByEmailCollector=Record created by the Email Collector %s
 DefaultBlacklistMailingStatus=القيمة الافتراضية للحقل "%s" عند تكوين جهة اتصال جديدة
 DefaultStatusEmptyMandatory=فارغ ولكنه إلزامي
 WarningLimitSendByDay=تحذير: إعداد أو عقد المثيل الخاص بك يحد من عدد رسائل البريد الإلكتروني يوميًا إلى <b> %s </b>. قد تؤدي محاولة إرسال المزيد إلى إبطاء المثيل أو تعليقه. يرجى الاتصال بالدعم الخاص بك إذا كنت بحاجة إلى حصة أعلى.
-NoMoreRecipientToSendTo=No more recipient to send the email to
-EmailOptedOut=Email owner has requested to not contact him with this email anymore
-EvenUnsubscribe=Include opt-out emails
-EvenUnsubscribeDesc=Include opt-out emails when you select emails as targets. Usefull for mandatory service emails for example.
-XEmailsDoneYActionsDone=%s emails pre-qualified, %s emails successfully processed (for %s record/actions done)
+NoMoreRecipientToSendTo=لم يعد هناك مستلم لإرسال البريد الإلكتروني إليه
+EmailOptedOut=لقد طلب مالك البريد الإلكتروني عدم الاتصال به عبر هذا البريد الإلكتروني بعد الآن
+EvenUnsubscribe=قم بتضمين رسائل البريد الإلكتروني الخاصة بإلغاء الاشتراك
+EvenUnsubscribeDesc=قم بتضمين رسائل البريد الإلكتروني الخاصة بإلغاء الاشتراك عند تحديد رسائل البريد الإلكتروني كأهداف. مفيد لرسائل البريد الإلكتروني الخاصة بالخدمة الإلزامية على سبيل المثال.
+XEmailsDoneYActionsDone=%s رسائل البريد الإلكتروني المؤهلة مسبقًا، %s تمت معالجة رسائل البريد الإلكتروني بنجاح (لسجل %s / تم تنفيذ الإجراءات)
+YouCanMakeSomeInstructionForEmail=يمكنك عمل بعض التعليمات لبريدك الإلكتروني (على سبيل المثال: إنشاء صورة في قالب البريد الإلكتروني...)
+ModelTemplate=قالب البريد الإلكتروني
+YouCanChooseAModelForYouMailContent= يمكنك اختيار أحد نماذج القوالب أو إنشاء نموذج باستخدام الذكاء الاصطناعي
+TitleOfMailHolder=Title of the e-mail goes here
+ContentOfMailHolder=Content of email goes here...
+LastNews=Last News
+PasswordReset=Password reset

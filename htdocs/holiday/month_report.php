@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2007-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2011       François Legastelois    <flegastelois@teclib.com>
- * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2020       Tobias Sekan            <tobias.sekan@startmail.com>
+/* Copyright (C) 2007-2010	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2011		François Legastelois		<flegastelois@teclib.com>
+ * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2020		Tobias Sekan				<tobias.sekan@startmail.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,19 +36,19 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('holiday', 'hrm'));
 
-$action      = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view';
+$action      = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view';
 $massaction  = GETPOST('massaction', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ');
 $optioncss   = GETPOST('optioncss', 'aZ');
-$socid = 0;
-$id = GETPOST('id', 'int');
+
+$id = GETPOSTINT('id');
 
 $search_ref         = GETPOST('search_ref', 'alphanohtml');
-$search_employee    = GETPOST('search_employee', 'int');
-$search_type        = GETPOST('search_type', 'int');
+$search_employee    = GETPOST('search_employee', "intcomma");
+$search_type        = GETPOST('search_type', "intcomma");
 $search_description = GETPOST('search_description', 'alphanohtml');
 
-$limit       = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit       = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield   = GETPOST('sortfield', 'aZ09comma');
 $sortorder   = GETPOST('sortorder', 'aZ09comma');
 
@@ -58,7 +59,7 @@ if (!$sortorder) {
 	$sortorder = "ASC";
 }
 
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }
@@ -73,7 +74,11 @@ if ($user->socid > 0) {	// Protection if external user
 	//$socid = $user->socid;
 	accessforbidden();
 }
-$result = restrictedArea($user, 'holiday', $id, '');
+$result = restrictedArea($user, 'holiday', $id);
+
+if (!$user->hasRight('holiday', 'readall')) {
+	accessforbidden();
+}
 
 
 /*
@@ -81,7 +86,8 @@ $result = restrictedArea($user, 'holiday', $id, '');
  */
 
 if (GETPOST('cancel', 'alpha')) {
-	$action = 'list'; $massaction = '';
+	$action = 'list';
+	$massaction = '';
 }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
@@ -118,16 +124,16 @@ if (empty($reshook)) {
 }
 
 $arrayfields = array(
-	'cp.ref'=>array('label' => 'Ref', 'checked'=>1, 'position'=>5),
-	'cp.fk_type'=>array('label' => 'Type', 'checked'=>1, 'position'=>10),
-	'cp.fk_user'=>array('label' => 'Employee', 'checked'=>1, 'position'=>20),
-	'cp.date_debut'=>array('label' => 'DateDebCP', 'checked'=>-1, 'position'=>30),
-	'cp.date_fin'=>array('label' => 'DateFinCP', 'checked'=>-1, 'position'=>32),
-	'used_days'=>array('label' => 'NbUseDaysCPShort', 'checked'=>-1, 'position'=>34),
-	'date_start_month'=>array('label' => 'DateStartInMonth', 'checked'=>1, 'position'=>50),
-	'date_end_month'=>array('label' => 'DateEndInMonth', 'checked'=>1, 'position'=>52),
-	'used_days_month'=>array('label' => 'NbUseDaysCPShortInMonth', 'checked'=>1, 'position'=>54),
-	'cp.description'=>array('label' => 'DescCP', 'checked'=>-1, 'position'=>800),
+	'cp.ref' => array('label' => 'Ref', 'checked' => 1, 'position' => 5),
+	'cp.fk_type' => array('label' => 'Type', 'checked' => 1, 'position' => 10),
+	'cp.fk_user' => array('label' => 'Employee', 'checked' => 1, 'position' => 20),
+	'cp.date_debut' => array('label' => 'DateDebCP', 'checked' => -1, 'position' => 30),
+	'cp.date_fin' => array('label' => 'DateFinCP', 'checked' => -1, 'position' => 32),
+	'used_days' => array('label' => 'NbUseDaysCPShort', 'checked' => -1, 'position' => 34),
+	'date_start_month' => array('label' => 'DateStartInMonth', 'checked' => 1, 'position' => 50),
+	'date_end_month' => array('label' => 'DateEndInMonth', 'checked' => 1, 'position' => 52),
+	'used_days_month' => array('label' => 'NbUseDaysCPShortInMonth', 'checked' => 1, 'position' => 54),
+	'cp.description' => array('label' => 'DescCP', 'checked' => -1, 'position' => 800),
 );
 
 
@@ -139,14 +145,15 @@ $form = new Form($db);
 $formother = new FormOther($db);
 $holidaystatic = new Holiday($db);
 
-$listhalfday = array('morning'=>$langs->trans("Morning"), "afternoon"=>$langs->trans("Afternoon"));
+$listhalfday = array('morning' => $langs->trans("Morning"), "afternoon" => $langs->trans("Afternoon"));
 
 $title = $langs->trans('CPTitreMenu');
+$help_url = 'EN:Module_Holiday';
 
-llxHeader('', $title);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-holiday page-month_report');
 
-$search_month = GETPOST("remonth", 'int') ?GETPOST("remonth", 'int') : date("m", time());
-$search_year = GETPOST("reyear", 'int') ?GETPOST("reyear", 'int') : date("Y", time());
+$search_month = GETPOSTINT("remonth") ? GETPOSTINT("remonth") : date("m", time());
+$search_year = GETPOSTINT("reyear") ? GETPOSTINT("reyear") : date("Y", time());
 $year_month = sprintf("%04d", $search_year).'-'.sprintf("%02d", $search_month);
 
 $sql = "SELECT cp.rowid, cp.ref, cp.fk_user, cp.date_debut, cp.date_fin, cp.fk_type, cp.description, cp.halfday, cp.statut as status";
@@ -317,7 +324,7 @@ if (!empty($arrayfields['cp.fk_type']['checked'])) {
 	print_liste_field_titre($arrayfields['cp.fk_type']['label'], $_SERVER["PHP_SELF"], 'cp.fk_type', '', '', '', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['cp.fk_user']['checked'])) {
-	print_liste_field_titre($arrayfields['cp.fk_user']['label'], $_SERVER["PHP_SELF"], 'cp.fk_user', '', '', '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cp.fk_user']['label'], $_SERVER["PHP_SELF"], 'u.lastname', '', '', '', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['ct.label']['checked'])) {
 	print_liste_field_titre($arrayfields['ct.label']['label'], $_SERVER["PHP_SELF"], 'ct.label', '', '', '', $sortfield, $sortorder);
@@ -398,7 +405,7 @@ if ($num == 0) {
 		// Leave request
 		$holidaystatic->id = $obj->rowid;
 		$holidaystatic->ref = $obj->ref;
-		$holidaystatic->statut = $obj->status;
+		$holidaystatic->status = $obj->status;
 		$holidaystatic->status = $obj->status;
 		$holidaystatic->fk_user = $obj->fk_user;
 		$holidaystatic->fk_type = $obj->fk_type;

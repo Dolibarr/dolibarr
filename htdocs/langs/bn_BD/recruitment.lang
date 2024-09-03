@@ -4,73 +4,63 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
-ModuleRecruitmentName = Recruitment
+ModuleRecruitmentName = নিয়োগ
 # Module description 'ModuleRecruitmentDesc'
-ModuleRecruitmentDesc = Manage and follow recruitment campaigns for new job positions
-
-#
+ModuleRecruitmentDesc = নতুন চাকরির পদের জন্য নিয়োগ প্রচারাভিযান পরিচালনা এবং অনুসরণ করুন
 # Admin page
-#
-RecruitmentSetup = Recruitment setup
-Settings = Settings
-RecruitmentSetupPage = Enter here the setup of main options for the recruitment module
-RecruitmentArea=Recruitement area
-PublicInterfaceRecruitmentDesc=Public pages of jobs are public URLs to show and answer to open jobs. There is one different link for each open job, found on each job record.
-EnablePublicRecruitmentPages=Enable public pages of open jobs
+RecruitmentSetup = নিয়োগ সেটআপ
+RecruitmentSetupPage = এখানে নিয়োগ মডিউলের জন্য প্রধান বিকল্পগুলির সেটআপ লিখুন
+RecruitmentArea=নিয়োগের এলাকা
+PublicInterfaceRecruitmentDesc=চাকরির সর্বজনীন পৃষ্ঠাগুলি হল সর্বজনীন ইউআরএল যা দেখাতে এবং চাকরি খোলার জন্য উত্তর দেয়। প্রতিটি কাজের রেকর্ডে পাওয়া প্রতিটি খোলা কাজের জন্য একটি আলাদা লিঙ্ক রয়েছে।
+EnablePublicRecruitmentPages=খোলা চাকরির পাবলিক পৃষ্ঠাগুলি সক্ষম করুন
 
-#
-# About page
-#
-About = About
-RecruitmentAbout = About Recruitment
-RecruitmentAboutPage = Recruitment about page
-NbOfEmployeesExpected=Expected nb of employees
-JobLabel=Label of job position
-WorkPlace=Work place
-DateExpected=Expected date
-FutureManager=Future manager
-ResponsibleOfRecruitement=Responsible of recruitment
-IfJobIsLocatedAtAPartner=If job is located at a partner place
-PositionToBeFilled=Job position
-PositionsToBeFilled=Job positions
-ListOfPositionsToBeFilled=List of job positions
-NewPositionToBeFilled=New job positions
-
-JobOfferToBeFilled=Job position to be filled
-ThisIsInformationOnJobPosition=Information of the job position to be filled
-ContactForRecruitment=Contact for recruitment
-EmailRecruiter=Email recruiter
-ToUseAGenericEmail=To use a generic email. If not defined, the email of the responsible of recruitment will be used
-NewCandidature=New application
-ListOfCandidatures=List of applications
-RequestedRemuneration=Requested remuneration
-ProposedRemuneration=Proposed remuneration
-ContractProposed=Contract proposed
-ContractSigned=Contract signed
-ContractRefused=Contract refused
-RecruitmentCandidature=Application
-JobPositions=Job positions
-RecruitmentCandidatures=Applications
-InterviewToDo=Interview to do
-AnswerCandidature=Application answer
-YourCandidature=Your application
-YourCandidatureAnswerMessage=Thanks you for your application.<br>...
-JobClosedTextCandidateFound=The job position is closed. The position has been filled.
-JobClosedTextCanceled=The job position is closed.
-ExtrafieldsJobPosition=Complementary attributes (job positions)
-ExtrafieldsApplication=Complementary attributes (job applications)
-MakeOffer=Make an offer
+NbOfEmployeesExpected=কর্মীদের প্রত্যাশিত nb
+JobLabel=কাজের অবস্থানের লেবেল
+WorkPlace=কাজের জায়গা
+DateExpected=প্রত্যাশিত তারিখ
+FutureManager=ভবিষ্যৎ ম্যানেজার
+ResponsibleOfRecruitement=নিয়োগের দায়িত্ব
+IfJobIsLocatedAtAPartner=যদি চাকরি অংশীদারের জায়গায় থাকে
+PositionToBeFilled=চাকুরী পদমর্যাদা
+PositionsToBeFilled=চাকরির পদ
+ListOfPositionsToBeFilled=চাকরির পদের তালিকা
+NewPositionToBeFilled=নতুন চাকরির পদ
+JobOfferToBeFilled=চাকরির পদ পূরণ করতে হবে
+ThisIsInformationOnJobPosition=চাকরির পদের তথ্য পূরণ করতে হবে
+ContactForRecruitment=নিয়োগের জন্য যোগাযোগ করুন
+EmailRecruiter=ইমেল নিয়োগকারী
+ToUseAGenericEmail=একটি জেনেরিক ইমেল ব্যবহার করতে. সংজ্ঞায়িত না হলে, নিয়োগের জন্য দায়ীদের ইমেল ব্যবহার করা হবে
+NewCandidature=নূতন আবেদনপত্র
+ListOfCandidatures=অ্যাপ্লিকেশনের তালিকা
+Remuneration=বেতন
+RequestedRemuneration=বেতন চাওয়া হয়েছে
+ProposedRemuneration=প্রস্তাবিত বেতন
+ContractProposed=প্রস্তাবিত চুক্তি
+ContractSigned=চুক্তি স্বাক্ষরিত
+ContractRefused=চুক্তি প্রত্যাখ্যান
+RecruitmentCandidature=আবেদন
+JobPositions=চাকরির পদ
+RecruitmentCandidatures=অ্যাপ্লিকেশন
+InterviewToDo=অনুসরণ করার জন্য পরিচিতি
+AnswerCandidature=আবেদনের উত্তর
+YourCandidature=আপনার আবেদন
+YourCandidatureAnswerMessage=আপনার আবেদনের জন্য ধন্যবাদ।<br>...
+JobClosedTextCandidateFound=চাকরির অবস্থান বন্ধ। পদটি পূরণ করা হয়েছে।
+JobClosedTextCanceled=চাকরির অবস্থান বন্ধ।
+ExtrafieldsJobPosition=পরিপূরক বৈশিষ্ট্য (চাকরির পদ)
+ExtrafieldsApplication=পরিপূরক বৈশিষ্ট্য (চাকরির আবেদন)
+MakeOffer=প্রস্তাব দিন
+WeAreRecruiting=আমরা নিয়োগ করছি। এটি পূরণ করার জন্য খোলা পদের একটি তালিকা...
+NoPositionOpen=এই মুহূর্তে কোনো পজিশন খোলা নেই
+ConfirmClose=বাতিল নিশ্চিত করুন
+ConfirmCloseAsk=আপনি কি নিশ্চিত যে আপনি এই নিয়োগের প্রার্থীতা বাতিল করতে চান?
+Recruitment=নিয়োগ

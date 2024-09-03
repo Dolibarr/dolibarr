@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - accountancy
-Accounting=Contabilizando
 ACCOUNTING_EXPORT_SEPARATORCSV=Separador de columna de archivo a exportar
 ACCOUNTING_EXPORT_DATE=Formato de fecha de archivo a exportar
 ACCOUNTING_EXPORT_PIECE=Exportar el número de pieza
@@ -12,8 +11,12 @@ ACCOUNTING_EXPORT_PREFIX_SPEC=Especifique el prefijo del nombre del fichero
 Journals=Revistas
 JournalFinancial=Revistas financieras
 BackToChartofaccounts=Retornar gráfico de cuentas
+MainAccountForVatPaymentNotDefined=Cuenta (del Plan Contable) para el pago del IGV no definida en la configuración
+AccountancyAreaDescVat=PASO %s: Defina cuentas contables para cada tipo de IGV. Para esto, use la entrada del menú %s.
 Selectchartofaccounts=Seleccione el plan de cuentas activo
 Addanaccount=Agregar una cuenta contable
+MenuVatAccounts=Cuentas de IGV
+MenuTaxAccounts=Cuentas de IGV
 Binding=Vinculación a cuentas
 CustomersVentilation=Fijación de la factura del cliente
 CreateMvts=Crear nueva transacción
@@ -36,4 +39,7 @@ ACCOUNTING_EXPENSEREPORT_JOURNAL=Informe de Gastos Diario
 ACCOUNTING_SOCIAL_JOURNAL=Diario Social
 Codejournal=Periódico
 FinanceJournal=Periodo Financiero
+VATAccountNotDefined=Cuenta contable para IGV no definida
 TotalMarge=Margen total de ventas
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Activar la gestión del cobro revertido del IGV en las compras a proveedores
+DefaultBindingDesc=Esta página se puede usar para configurar las cuentas predeterminadas (desde el plan de cuentas) para vincular objetos comerciales con una cuenta, como pago de salarios, donaciones, impuestos e IGV, cuando no se haya configurado una cuenta específica.

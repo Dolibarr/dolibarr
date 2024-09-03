@@ -5,36 +5,25 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModuleEventOrganizationName = Organització d'esdeveniments
 EventOrganizationDescription = Organització d'esdeveniments mitjançant el mòdul Projectes
 EventOrganizationDescriptionLong= Gestionar l'organització d'un esdeveniment (espectacle, conferències, assistents o ponents, amb pàgines públiques de suggeriment, votació o registre)
-#
-# Menu
-#
 EventOrganizationMenuLeft = Esdeveniments organitzats
 EventOrganizationConferenceOrBoothMenuLeft = Conferència o estand
-
 PaymentEvent=Pagament de l'esdeveniment
-
-#
+EventFee=Quota de l'esdeveniment
 # Admin page
-#
 NewRegistration=Inscripció
 EventOrganizationSetup=Configuració de l'organització d'esdeveniments
 EventOrganization=Organització d'esdeveniments
-Settings=Configuració
 EventOrganizationSetupPage = Pàgina de configuració de l'organització d'esdeveniments
 EVENTORGANIZATION_TASK_LABEL = Nom de tasques per a crear automàticament quan es valida el projecte
 EVENTORGANIZATION_TASK_LABELTooltip = A l'validar un esdeveniment per organitzar, algunes tasques es poden crear automàticament en el <br> <br> projecte Per exemple: <br> Send Call per a les conferències <br> Enviar crida per a cabines de <br> suggeriments Validar de Conferències <br> aplicació Validar per a cabines de <br> subscripcions obertes per a l'esdeveniment per als assistents <br> Envia un recordatori de l'esdeveniment als ponents <br> Envia un recordatori de l'esdeveniment als organitzadors de l'estand <br> Envia un recordatori de l'esdeveniment als assistents
@@ -49,13 +38,10 @@ EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Plantilla de correu electrònic 
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Plantilla de correu electrònic per a utilitzar quan s'envien correus electrònics des de l'acció massiva "Envia correus electrònics" a la llista d'assistents
 EVENTORGANIZATION_FILTERATTENDEES_CAT = En el formulari per a crear/afegir un assistent, restringeix la llista de tercers a tercers de la categoria
 EVENTORGANIZATION_FILTERATTENDEES_TYPE = En el formulari per a crear/afegir un assistent, restringeix la llista de tercers a tercers amb la naturalesa
-
-#
 # Object
-#
 OrganizedEvent=Esdeveniment organitzat
 EventOrganizationConfOrBooth= Conferència o estand
-EventOrganizationConfOrBoothes=Conferències o Estands
+EventOrganizationConfOrBoothes=Conferences or Booths
 ManageOrganizeEvent = Gestionar l’organització d’un esdeveniment
 ConferenceOrBooth = Conferència o estand
 ConferenceOrBoothTab = Conferència o estand
@@ -64,10 +50,7 @@ DateOfRegistration = Data de registre
 ConferenceOrBoothAttendee = Assistent a conferències o estands
 ApplicantOrVisitor=Sol·licitant o visitant
 Speaker=Conferenciant
-
-#
 # Template Mail
-#
 YourOrganizationEventConfRequestWasReceived = S'ha rebut la vostra sol·licitud de conferència
 YourOrganizationEventBoothRequestWasReceived = La vostra sol·licitud d’estand s’ha rebut
 EventOrganizationEmailAskConf = Sol·licitud de conferència
@@ -77,10 +60,7 @@ EventOrganizationEmailRegistrationPayment = Inscripció a un esdeveniment
 EventOrganizationMassEmailAttendees = Comunicació als assistents
 EventOrganizationMassEmailSpeakers = Comunicació als altaveus
 ToSpeakers=A parlants
-
-#
 # Event
-#
 AllowUnknownPeopleSuggestConf=Permet que la gent suggereixi conferències
 AllowUnknownPeopleSuggestConfHelp=Permet que persones desconegudes suggereixin una conferència que vulguin fer
 AllowUnknownPeopleSuggestBooth=Permet que la gent sol·liciti un estand
@@ -89,27 +69,29 @@ PriceOfRegistration=Preu de la inscripció
 PriceOfRegistrationHelp=Preu a pagar per inscriure’s o participar a l’esdeveniment
 PriceOfBooth=Preu de la subscripció per a estand
 PriceOfBoothHelp=Preu de la subscripció per a estand
+EventOrganizationICSLinkProject=Enllaç ICS per a l'esdeveniment
 EventOrganizationICSLink=Enllaç ICS per a conferències
-ConferenceOrBoothInformation=Informació sobre conferències o estands
+ConferenceOrBoothInformation=Informació sobre la conferència o l'estand
+ConferenceOrBoothFormat=Conference or booth mode
+ConferenceOrBoothFormatID=ID of conference or booth mode
+ConferenceOrBoothFormatCode=Code of conference or booth mode
+ConferenceOrBoothFormatLabel=Label of conference or booth mode
 Attendees=Assistents
-ListOfAttendeesOfEvent=Llista d’assistents al projecte de l’esdeveniment
+ListOfAttendeesOfEvent=List of attendees of event projects
+ListOfConfOrBoothOfEvent=List of conferences or booths of event projects
 DownloadICSLink = Descarregueu l’enllaç ICS
 EVENTORGANIZATION_SECUREKEY = Llavor per a assegurar la clau de la pàgina de registre públic per a suggerir una conferència
 SERVICE_BOOTH_LOCATION = Servei que s'utilitza per a la fila de factures sobre una ubicació de l'estand
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Servei utilitzat per a la fila de factura sobre la subscripció d'un assistent a un esdeveniment
 NbVotes=Nombre de vots
-#
 # Status
-#
 EvntOrgDraft = Esborrany
 EvntOrgSuggested = Suggerit
 EvntOrgConfirmed = Confirmat
 EvntOrgNotQualified = No qualificat
 EvntOrgDone = Realitzades
 EvntOrgCancelled = Cancel·lat
-#
-# Public page
-#
+# Other
 SuggestForm = Pàgina de suggeriments
 SuggestOrVoteForConfOrBooth = Pàgina per suggerir o votar
 EvntOrgRegistrationHelpMessage = Aquí podeu votar per una conferència o suggerir-ne una de nova per a l'esdeveniment. També podeu sol·licitar tenir un estand durant l'esdeveniment.
@@ -132,6 +114,7 @@ EventType = Tipus d'esdeveniment
 LabelOfBooth=Nom de l'estand
 LabelOfconference=Nom de la conferència
 ConferenceIsNotConfirmed=La inscripció no està disponible, la conferència encara no està confirmada
+EventRegistrationAreClosed=Event registrations are closed
 DateMustBeBeforeThan=%s ha de ser anterior a %s
 DateMustBeAfterThan=%s ha de ser posterior a %s
 MaxNbOfAttendeesReached=S'ha arribat al nombre màxim de participants
@@ -144,13 +127,8 @@ OrganizationEventBulkMailToAttendees=Aquest és un recordatori de la vostra part
 OrganizationEventBulkMailToSpeakers=Aquest és un recordatori de la vostra participació a l’esdeveniment com a ponent
 OrganizationEventLinkToThirdParty=Enllaç a tercers (client, proveïdor o soci)
 OrganizationEvenLabelName=Nom públic de la conferència o estand
-
 NewSuggestionOfBooth=Sol·licitud d'estand
 NewSuggestionOfConference=Sol·licitud per a fer una conferència
-
-#
-# Vote page
-#
 EvntOrgRegistrationWelcomeMessage = Us donem la benvinguda a la pàgina de suggeriments de conferències o estands.
 EvntOrgRegistrationConfWelcomeMessage = Us donem la benvinguda a la pàgina de suggeriments de la conferència.
 EvntOrgRegistrationBoothWelcomeMessage = Us donem la benvinguda a la pàgina de suggeriments de l'estand.
@@ -158,8 +136,8 @@ EvntOrgVoteHelpMessage = Aquí podeu veure i votar els esdeveniments suggerits p
 VoteOk = El vostre vot s’ha acceptat.
 AlreadyVoted = Ja heu votat per aquest esdeveniment.
 VoteError = S'ha produït un error durant la votació. Torneu-ho a provar.
-
 SubscriptionOk=S'ha enregistrat la teva inscripció
+AmountOfRegistrationPaid=Import de la matrícula pagada
 ConfAttendeeSubscriptionConfirmation = Confirmació de la subscripció a un esdeveniment
 Attendee = Assistent
 PaymentConferenceAttendee = Pagament dels assistents a la conferència
@@ -170,8 +148,15 @@ EmailAttendee=Correu electrònic de l'assistent
 EmailCompany=Correu electrònic de l'empresa
 EmailCompanyForInvoice=Correu electrònic de l'empresa (per a la factura, si és diferent del correu electrònic dels assistents)
 ErrorSeveralCompaniesWithEmailContactUs=S'han trobat diverses empreses amb aquest correu electrònic, de manera que no podem validar automàticament el vostre registre. Si us plau, poseu-vos en contacte amb nosaltres a %s per a una validació manual
-ErrorSeveralCompaniesWithNameContactUs=S'han trobat diverses empreses amb aquest nom, de manera que no podem validar automàticament el vostre registre. Si us plau, poseu-vos en contacte amb nosaltres a %s per a obtenir una validació manual
+ErrorSeveralCompaniesWithNameContactUs=S'han trobat diverses empreses amb aquest nom, de manera que no podem validar automàticament el vostre registre. Si us plau, poseu-vos en contacte amb nosaltres a %s per a una validació manual
 NoPublicActionsAllowedForThisEvent=No hi ha cap acció pública oberta al públic per a aquest esdeveniment
 MaxNbOfAttendees=Nombre màxim d'assistents
 DateStartEvent=Data d'inici de l'esdeveniment
 DateEndEvent=Data de finalització de l'esdeveniment
+ModifyStatus=Modificar l'estat
+ConfirmModifyStatus=Confirmeu la modificació de l'estat
+ConfirmModifyStatusQuestion=Esteu segur que voleu modificar el(s) %s registres seleccionats?
+RecordsUpdated=%s Registres actualitzats
+RecordUpdated=Registre actualitzat
+NoRecordUpdated=No s'ha actualitzat cap registre
+ProfitPerValidatedAttendee=Benefici per assistent

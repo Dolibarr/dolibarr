@@ -29,7 +29,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php';
 
-// $supportedoauth2array is defined into oauth.lib.php
+$supportedoauth2array = getSupportedOauth2Array();
 
 // Define $urlwithroot
 $urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
@@ -90,6 +90,11 @@ if ($action == 'update') {
 					$error++;
 				}
 			}
+			if (GETPOSTISSET($constvalue.'_URL')) {
+				if (!dolibarr_set_const($db, $newconstvalue.'_URL', GETPOST($constvalue.'_URL'), 'chaine', 0, '', $conf->entity)) {
+					$error++;
+				}
+			}
 			if (GETPOSTISSET($constvalue.'_URLAUTHORIZE')) {
 				if (!dolibarr_set_const($db, $newconstvalue.'_URLAUTHORIZE', GETPOST($constvalue.'_URLAUTHORIZE'), 'chaine', 0, '', $conf->entity)) {
 					$error++;
@@ -119,6 +124,7 @@ if ($action == 'update') {
 			if ($constvalue !== $newconstvalue) {
 				dolibarr_del_const($db, $constvalue.'_ID', $conf->entity);
 				dolibarr_del_const($db, $constvalue.'_SECRET', $conf->entity);
+				dolibarr_del_const($db, $constvalue.'_URL', $conf->entity);
 				dolibarr_del_const($db, $constvalue.'_URLAUTHORIZE', $conf->entity);
 				dolibarr_del_const($db, $constvalue.'_SCOPE', $conf->entity);
 
@@ -139,7 +145,7 @@ if ($action == 'update') {
 					$error++;
 				}
 
-				// Update const where the token was used, might not be exhaustive
+				// Update other const that was using the renamed key as token (might not be exhaustive)
 				if (getDolGlobalString('MAIN_MAIL_SMTPS_OAUTH_SERVICE') == $oldname) {
 					if (!dolibarr_set_const($db, 'MAIN_MAIL_SMTPS_OAUTH_SERVICE', strtoupper($oldprovider).'-'.$newlabel, 'chaine', 0, '', $conf->entity)) {
 						$error++;
@@ -178,7 +184,9 @@ if ($action == 'confirm_delete') {
 			$callbacktodel .= '/core/modules/oauth/stripetest_oauthcallback.php?action=delete&keyforprovider='.$provider.'&token='.newToken().'&backtourl='.urlencode($backtourl);
 		} elseif ($label == 'OAUTH_MICROSOFT') {
 			$callbacktodel .= '/core/modules/oauth/microsoft_oauthcallback.php?action=delete&keyforprovider='.$provider.'&token='.newToken().'&backtourl='.urlencode($backtourl);
-		} elseif ($label == 'OAUTH_OTHER') {
+		} elseif ($label == 'OAUTH_MICROSOFT2') {
+			$callbacktodel .= '/core/modules/oauth/microsoft2_oauthcallback.php?action=delete&keyforprovider='.$provider.'&token='.newToken().'&backtourl='.urlencode($backtourl);
+		} elseif ($label == 'OAUTH_GENERIC') {
 			$callbacktodel .= '/core/modules/oauth/generic_oauthcallback.php?action=delete&keyforprovider='.$provider.'&token='.newToken().'&backtourl='.urlencode($backtourl);
 		}
 		header("Location: ".$callbacktodel);
@@ -194,7 +202,12 @@ if ($action == 'delete_entry') {
 
 	$globalkey = empty($provider) ? $label : $label.'-'.$provider;
 
-	if (!dolibarr_del_const($db, $globalkey.'_NAME', $conf->entity) || !dolibarr_del_const($db, $globalkey.'_ID', $conf->entity) || !dolibarr_del_const($db, $globalkey.'_SECRET', $conf->entity) ||  !dolibarr_del_const($db, $globalkey.'_URLAUTHORIZE', $conf->entity) || !dolibarr_del_const($db, $globalkey.'_SCOPE', $conf->entity)) {
+	if (!dolibarr_del_const($db, $globalkey.'_NAME', $conf->entity)
+		|| !dolibarr_del_const($db, $globalkey.'_ID', $conf->entity)
+		|| !dolibarr_del_const($db, $globalkey.'_SECRET', $conf->entity)
+		|| !dolibarr_del_const($db, $globalkey.'_URL', $conf->entity)
+		|| !dolibarr_del_const($db, $globalkey.'_URLAUTHORIZE', $conf->entity)
+		|| !dolibarr_del_const($db, $globalkey.'_SCOPE', $conf->entity)) {
 		setEventMessages($langs->trans("ErrorInEntryDeletion"), null, 'errors');
 		$error++;
 	} else {
@@ -206,9 +219,13 @@ if ($action == 'delete_entry') {
  * View
  */
 
-llxHeader();
-
 $form = new Form($db);
+
+$title = $langs->trans('ConfigOAuth');
+$help_url = 'EN:Module_OAuth|FR:Module_OAuth_FR|ES:Módulo_OAuth_ES';
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-admin page-oauth');
+
 // Confirmation of action process
 if ($action == 'delete') {
 	$formquestion = array();
@@ -218,7 +235,7 @@ if ($action == 'delete') {
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans('ConfigOAuth'), $linkback, 'title_setup');
+print load_fiche_titre($title, $linkback, 'title_setup');
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -234,6 +251,8 @@ print '<span class="opacitymedium">'.$langs->trans("ListOfSupportedOauthProvider
 
 print '<select name="provider" id="provider" class="minwidth150">';
 print '<option name="-1" value="-1">'.$langs->trans("OAuthProvider").'</option>';
+$list = getAllOauth2Array();
+// TODO Make a loop directly on getSupportedOauth2Array() and remove getAllOauth2Array()
 foreach ($list as $key) {
 	$supported = 0;
 	$keyforsupportedoauth2array = $key[0];
@@ -245,8 +264,20 @@ foreach ($list as $key) {
 		continue; // show only supported
 	}
 
-	$i++;
-	print '<option name="'.$keyforsupportedoauth2array.'" value="'.str_replace('_NAME', '', $keyforsupportedoauth2array).'">'.$supportedoauth2array[$keyforsupportedoauth2array]['name'].'</option>'."\n";
+	print '<option name="'.$keyforsupportedoauth2array.'" value="'.str_replace('_NAME', '', $keyforsupportedoauth2array).'">';
+
+	$keyforsupportedoauth2array = preg_replace('/^OAUTH_/', '', $keyforsupportedoauth2array);
+	$keyforsupportedoauth2array = preg_replace('/_NAME$/', '', $keyforsupportedoauth2array);
+	$keyforsupportedoauth2array = preg_replace('/-.*$/', '', $keyforsupportedoauth2array);
+	$keyforsupportedoauth2array = 'OAUTH_'.$keyforsupportedoauth2array.'_NAME';
+
+	$label = $langs->trans($keyforsupportedoauth2array);
+	if ($label == $keyforsupportedoauth2array) {
+		print $supportedoauth2array[$keyforsupportedoauth2array]['name'];
+	} else {
+		print $label;
+	}
+	print'</option>'."\n";
 }
 print '</select>';
 print ajax_combobox('provider');
@@ -269,8 +300,8 @@ foreach ($conf->global as $key => $val) {
 			$provider.'_NAME',
 			$provider.'_ID',
 			$provider.'_SECRET',
-			$provider.'_URLAUTHORIZE',	// For custom oauth links
-			$provider.'_SCOPE'			// For custom oauth links
+			$provider.'_URL',	// For custom oauth links
+			$provider.'_SCOPE'	// For custom oauth links
 		);
 	}
 }
@@ -354,16 +385,19 @@ if (count($listinsetup) > 0) {
 		if ($supported) {
 			$redirect_uri = $urlwithroot.'/core/modules/oauth/'.$supportedoauth2array[$keyforsupportedoauth2array]['callbackfile'].'_oauthcallback.php';
 			print '<tr class="oddeven value">';
-			print '<td>'.$langs->trans("UseTheFollowingUrlAsRedirectURI").'</td>';
+			print '<td>'.$form->textwithpicto($langs->trans("RedirectURL"), $langs->trans("UseTheFollowingUrlAsRedirectURI")).'</td>';
 			print '<td><input style="width: 80%" type="text" name="uri'.$keyforsupportedoauth2array.'" id="uri'.$keyforsupportedoauth2array.$keyforprovider.'" value="'.$redirect_uri.'" disabled>';
 			print ajax_autoselect('uri'.$keyforsupportedoauth2array.$keyforprovider);
 			print '</td>';
 			print '<td></td>';
 			print '</tr>';
 
-			if ($keyforsupportedoauth2array == 'OAUTH_OTHER_NAME') {
+			if ($keyforsupportedoauth2array == 'OAUTH_GENERIC_NAME') {
 				print '<tr class="oddeven value">';
-				print '<td>'.$langs->trans("URLOfServiceForAuthorization").'</td>';
+				print '<td>';
+				$tooltiphelp = $langs->trans("Example").'<br>https://mastodon.example.com<br>https://mastodon.social';
+				print $form->textwithpicto($langs->trans("URLOfOAuthServiceEndpoints"), $tooltiphelp);
+				print '</td>';
 				print '<td><input style="width: 80%" type="text" name="'.$key[3].'" value="'.getDolGlobalString($key[3]).'" >';
 				print '</td>';
 				print '<td></td>';
@@ -395,7 +429,7 @@ if (count($listinsetup) > 0) {
 		print '</tr>';
 
 		// Tenant
-		if ($keybeforeprovider == 'MICROSOFT') {
+		if ($keybeforeprovider == 'MICROSOFT' || $keybeforeprovider == 'MICROSOFT2') {
 			print '<tr class="oddeven value">';
 			print '<td><label for="'.$key[2].'">'.$langs->trans("OAUTH_TENANT").'</label></td>';
 			print '<td><input type="text" size="100" id="OAUTH_'.$keybeforeprovider.($keyforprovider ? '-'.$keyforprovider : '').'_TENANT" name="OAUTH_'.$keybeforeprovider.($keyforprovider ? '-'.$keyforprovider : '').'_TENANT" value="'.getDolGlobalString('OAUTH_'.$keybeforeprovider.($keyforprovider ? '-'.$keyforprovider : '').'_TENANT').'">';
@@ -406,9 +440,11 @@ if (count($listinsetup) > 0) {
 
 		// TODO Move this into token generation ?
 		if ($supported) {
-			if ($keyforsupportedoauth2array == 'OAUTH_OTHER_NAME') {
+			if ($keyforsupportedoauth2array == 'OAUTH_GENERIC_NAME') {
 				print '<tr class="oddeven value">';
-				print '<td>'.$langs->trans("Scopes").'</td>';
+				print '<td>';
+				print $form->textwithpicto($langs->trans("Scopes"), $langs->trans("ScopesDesc"));
+				print '</td>';
 				print '<td>';
 				print '<input style="width: 80%" type"text" name="'.$key[4].'" value="'.getDolGlobalString($key[4]).'" >';
 				print '</td>';

@@ -1,0 +1,192 @@
+								$objMod->dictionaries = $objMod->{"dictionnaries"}; // For backward compatibility
+							if (empty($objMod->dictionaries) && !empty($objMod->{"dictionnaries"})) {
+							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&id_entrepot='.$entrepotstatic->id.'&action=transfert&pdluoid='.$pdluo->id.'&token='.newToken().'">';
+						$object->date_ech = $object->periode;
+						$object->periode = $object->date_ech;
+						$reponsesadd = str_split($obj->reponses);
+						$sql .= " SET reponses = '".$db->escape($reponsesadd)."'";
+						$sql .= " SET reponses = '0".$db->escape($obj->reponses)."'";
+						$tmpfiles = dol_dir_list($tmpdir, 'files', 0, '\.od(s|t)$', '', 'name', SORT_ASC, 0);
+						// $object->periode = dol_get_last_day(year of $object->date_ech - 1m, month or $object->date_ech -1m)
+						//$pice = '<i class="fas fa-briefcase inline-block"></i>';
+						//$typea = ($objp->typea == 'birth') ? $picb : $pice;
+						print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=transfert&token='.newToken().'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
+					$dateemail = dol_stringtotime((string) $overview[0]->udate, 'gmt');
+					$object->periode = $newdateperiod;
+					$pice = '<i class="fas fa-briefcase inline-block"></i>';
+					$typea = ($data[$j]->typea == 'birth') ? $picb : $pice;
+					GETPOSTINT("mouvement"),
+					dol_syslog("msgid=".$overview[0]->message_id." date=".dol_print_date($overview[0]->udate, 'dayrfc', 'gmt')." from=".$overview[0]->from." to=".$overview[0]->to." subject=".$overview[0]->subject);
+					jQuery("#mouvement option").removeAttr("selected").change();
+					jQuery("#mouvement option[value=0]").attr("selected","selected").trigger("change");
+					jQuery("#mouvement option[value=1]").attr("selected","selected").trigger("change");
+					jQuery("#mouvement").trigger("change");
+				$action = 'transfert';
+				$date_liv = dol_mktime(GETPOST('rehour'), GETPOST('remin'), GETPOST('resec'), GETPOST("remonth"), GETPOST("reday"), GETPOST("reyear"));
+				$newfiletmp = preg_replace('/\.od(s|t)/i', '', $newfile);
+				$newfiletmp = preg_replace('/\.od[ts]/i', '', $newfile);
+				$object->period = dol_time_plus_duree($object->periode, 1, 'm');
+				$object->periode = dol_time_plus_duree($object->periode, 1, 'm');
+				$this->category->childs[] = $this->_cleanObjectDatas($cat);
+				$this->periode = $this->db->jdate($obj->period);
+				$tmp = array('id_users' => $obj->id_users, 'nom' => $obj->name, 'reponses' => $obj->reponses);
+				$tmpfiles = dol_dir_list($tmpdir, 'files', 0, '\.od(s|t)$', '', 'name', SORT_ASC, 0, 1); // Disable hook for the moment
+				//si les reponses ne concerne pas la colonne effacée, on concatenate
+				GETPOST("mouvement", 'alpha'),
+				GETPOSTINT("mouvement"),
+				if (jQuery("#mouvement").val() == \'0\') jQuery("#unitprice").removeAttr("disabled");
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=transfert&token='.newToken().'">'.$langs->trans("TransferStock").'</a>';
+			$action = 'transfert';
+			$date_com = dol_mktime(GETPOSTINT('rehour'), GETPOSTINT('remin'), GETPOSTINT('resec'), GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
+			$date_next_execution = (GETPOST('remonth') ? dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear')) : -1);
+			$date_next_execution = dol_mktime($rehour, $remin, 0, $remonth, $reday, $reyear);
+			$datesubscription = dol_mktime(12, 0, 0, GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
+			$ensemblereponses = $obj->reponses;
+			$field = preg_replace('/(:[!<>=\s]+:|:in:|:notin:|:like:|:notlike:).*$/', '', $tmpcrit);		// the name of the field
+			$newcrit = preg_replace('/(:[!<>=\s]+:|:in:|:notin:|:like:|:notlike:)/', '', $tmpcrit);
+			$object->periode = $dateperiod;
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("Payement").'</span> : <span class="info-box-label">'.$this->type_payment.'</span>';
+			$sql .= " '".$db->escape($conf->currency)."' as currency, 0 as fk_soc, t.date_ech as date, t.periode as date_due, 'SocialContributions' as item, '' as thirdparty_name, '' as thirdparty_code, '' as country_code, '' as vatnum, ".PAY_DEBIT." as sens";
+			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'opensurvey_user_studs (nom, id_sondage, reponses, date_creation)';
+			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'opensurvey_user_studs (nom, id_sondage, reponses, ip, date_creation)';
+			$sql = 'SELECT s.reponses';
+			$sql2 .= " SET reponses = '".$db->escape($newcar)."'";
+			$this->category->childs = array();
+			$tmpcrit = preg_replace('/^.*(:[!<>=\s]+:|:in:|:notin:|:like:|:notlike:)/', '\1', $tmpcrit);	// the condition after the name of the field
+			// mise a jour des reponses utilisateurs dans la base
+			if ($user->hasRight('stock', 'mouvement', 'lire')) {
+			if (empty($reyear) || empty($remonth) || empty($reday)) {
+			jQuery("#mouvement").change(function() {
+			preg_match('/:([!<>=\s]+|in|notin|like|notlike):/', $tmpcrit, $reg);
+			print $form->selectDate($object->periode, 'period', 0, 0, 0, 'charge', 1);
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=transfert&token='.newToken().'">'.$langs->trans("TransferStock").'</a>';
+			print '<span class="opacitymedium">'.$langs->trans("ClinkOnALinkOfColumn", $langs->transnoentitiesnoconv("Referers")).'</span>';
+			print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->periode), 'day').'</td>';
+			print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
+			print dol_print_date($object->periode, "day");
+		"sme",
+		$action = 'transfert';
+		$cle_rib = strtolower(checkES($rib, $CCC));
+		$date_com = dol_mktime(GETPOST('rehour'), GETPOST('remin'), GETPOST('resec'), GETPOST("remonth"), GETPOST("reday"), GETPOST("reyear"));
+		$date_next_execution = isset($date_next_execution) ? $date_next_execution : (GETPOST('remonth') ? dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear')) : -1);
+		$date_next_execution = isset($date_next_execution) ? $date_next_execution : (GETPOSTINT('remonth') ? dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear')) : -1);
+		$datefrom = dol_mktime(0, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
+		$datesubscription = dol_mktime(0, 0, 0, GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
+		$ensemblereponses = $obj->reponses;
+		$head[$h][1] = $langs->trans("Referers");
+		$head[$tab][1] = $langs->trans("Referers");
+		$out .= "<b>".$langs->trans("Referer").":</b> ".(isset($_SERVER["HTTP_REFERER"]) ? dol_htmlentities($_SERVER["HTTP_REFERER"], ENT_COMPAT) : '')."<br>\n";
+		$reday = GETPOSTINT('reday');
+		$sql .= "   (cs.periode IS NOT NULL AND cs.periode between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
+		$sql .= " OR (cs.periode IS NULL AND cs.date_ech between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
+		$sql .= ", '".$this->db->idate($this->periode)."'";
+		$sql .= ", cs.libelle as label, cs.fk_type, cs.amount, cs.fk_projet as fk_project, cs.paye, cs.periode as period, cs.import_key";
+		$sql .= ", periode='".$this->db->idate($this->periode)."'";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."chargesociales (fk_type, fk_account, fk_mode_reglement, libelle, date_ech, periode, amount, fk_projet, entity, fk_user_author, fk_user, date_creation)";
+		$sql = "SELECT id_users, nom as name, id_sondage, reponses";
+		$sql = "SELECT id_users, nom as name, reponses";
+		$test = "<IMG SRC=\"jav&#x0D;ascript:alert('XSS');\">";	// Same
+		$test = '/javas:cript/google.com';
+		$this->periode = $this->date_creation + 3600 * 24 * 30;
+		$title = $langs->trans('Product')." ".$shortlabel." - ".$langs->trans('Referers');
+		$title = $langs->trans('Service')." ".$shortlabel." - ".$langs->trans('Referers');
+		$title = $langs->transnoentities("Balance")." - ".$langs->transnoentities("AllTime");
+		// ceci afin d'etre compatible avec les cas ou la periode n'etait pas obligatoire
+		if (!empty($arrayfields['cs.periode']['checked'])) {
+		if ($newamount == 0 || empty($this->date_ech) || (empty($this->period) && empty($this->periode))) {
+		if ($user->hasRight('stock', 'mouvement', 'creer')) {
+		if (GETPOSTISSET("reday") && GETPOSTISSET("remonth") && GETPOSTISSET("reyear")) {
+		if (empty($reyear) || empty($remonth) || empty($reday)) {
+		print '<input type="hidden" name="action" value="addin">';
+		print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
+	 *  @param  float|string  $selectedrate       Force preselected vat rate. Can be '8.5' or '8.5 (NOO)' for example. Use '' for no forcing.
+	$date = $obj->periode;
+	$datepaid = dol_mktime(12, 0, 0, GETPOST("remonth"), GETPOST("reday"), GETPOST("reyear"));
+	$datepaid = dol_mktime(12, 0, 0, GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
+	$datepaye = dol_mktime(12, 0, 0, GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
+	$datepaye = dol_mktime(GETPOSTINT("rehour"), GETPOSTINT("remin"), GETPOSTINT("resec"), GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
+	$datepaye = dol_mktime(GETPOSTINT("rehour"), GETPOSTINT("remin"), GETPOSTINT("resec"), GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"), 'tzuserrel');
+	$ensemblereponses = $obj->reponses;
+	$head[$h][1] = $langs->trans('Referers');
+	$inj += preg_match('/on(dblclick|drop|durationchange|emptied|end|ended|error|focus|focusin|focusout|formdata|gotpointercapture|hashchange|input|invalid)[a-z]*\s*=/i', $tmpval);
+	$inj += preg_match('/on(dblclick|drop|durationchange|emptied|end|ended|error|focus|focusin|focusout|formdata|gotpointercapture|hashchange|input|invalid)[a-z]*\s*=/i', $val);
+	$opensurveysondage->mail_admin = $_SESSION['adresse'];
+	$pdf->SetXY($savx, $savy);
+	$reday = GETPOST('reday');
+	$savy = $pdf->getY();
+	$somethingshown = $formactions->showactions($object, 'mouvement', 0, 1, '', $MAXEVENT, '', $morehtmlcenter); // Show all action for product
+	$sql .= "   (cs.periode IS NOT NULL AND cs.periode between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
+	$sql .= " AND cs.periode <= '".$db->idate($search_date_limit_end)."'";
+	$sql .= " AND cs.periode >= '".$db->idate($search_date_limit_start)."'";
+	$sql .= " OR (cs.periode IS NULL AND cs.date_ech between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
+	$sql .= " SET reponses = '".$db->escape($nouveauchoix)."'";
+	$sql .= " cs.rowid, cs.libelle, cs.fk_type as type, cs.periode as period, cs.date_ech, cs.amount as total,";
+	$sql.= " ".MAIN_DB_PREFIX."notify_def as nd,";
+	$sql.= " AND nd.fk_action = ad.rowid";
+	$sql.= " WHERE u.rowid = nd.fk_user";
+	$sql.= " nd.rowid, ad.code, ad.label";
+	$title = $langs->trans('Batch')." ".$shortlabel." - ".$langs->trans('Referers');
+	$value = preg_replace('/([a-z\.]+)\s*([!<>=]+|in|notin|like|notlike)\s*/', '\1:\2:', $value); // Clean string 'x < 10' into 'x:<:10' so we can then explode on space to get all AND tests to do
+	'cs.periode'	=> array('label' => "PeriodEndDate", 'checked' => 1, 'position' => 50),
+	// Ligne de la periode d'analyse du rapport
+	// ceci afin d'etre compatible avec les cas ou la periode n'etait pas obligatoire
+	<strong>TaskItem(<em>pID, pName, pStart, pEnd, pColor, pLink, pMile, pRes, pComp, pGroup, pParent, pOpen, pDepend, pCaption, pNotes, pGantt</em>)</strong></p>
+	if ($action == "transfert") {
+	if ($object->id > 0 && $action == 'addin') {
+	if (GETPOST('reday')) {
+	if (GETPOSTINT("reyear") && GETPOSTINT("remonth") && GETPOSTINT("reday")) {
+	print '<option value="1"'.(GETPOST('mouvement') ? ' selected="selected"' : '').'>'.$langs->trans("Delete").'</option>';
+	print '<select name="mouvement" id="mouvement" class="minwidth100 valignmiddle">';
+	print '<td class="left" width="25%">'.$langs->trans("Referers").'</td>';
+	print '<td class="right">'.$langs->trans("NbOfMembers").' <span class="opacitymedium">('.$langs->trans("AllTime").')</span></td>';
+	print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
+	print '<tr><td>'.$langs->trans("Period")."</td><td>".dol_print_date($charge->periode, 'day')."</td></tr>\n";
+	print ajax_combobox("mouvement");
+	print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.lastname,cs.periode", "", $param, 'class="left"', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cs.amount']['label'], $_SERVER["PHP_SELF"], "cs.amount,cs.periode", '', $param, 'class="right"', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cs.date_ech']['label'], $_SERVER["PHP_SELF"], "cs.date_ech,cs.periode", '', $param, '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre($arrayfields['cs.fk_account']['label'], $_SERVER["PHP_SELF"], "cs.fk_account,cs.periode", '', $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cs.fk_mode_reglement']['label'], $_SERVER["PHP_SELF"], "cs.fk_mode_reglement,cs.periode", '', $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cs.fk_type']['label'], $_SERVER["PHP_SELF"], "cs.fk_type,cs.periode", '', $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cs.libelle']['label'], $_SERVER["PHP_SELF"], "cs.libelle,cs.periode", '', $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cs.paye']['label'], $_SERVER["PHP_SELF"], "cs.paye,cs.periode", '', $param, 'class="right"', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cs.periode']['label'], $_SERVER["PHP_SELF"], "cs.periode", '', $param, '', $sortfield, $sortorder, 'center ');
+	public $childs = array();
+	public $periode;
+	unset($_SESSION["adresse"]);
+          - creat,unitl,alltime,datas,referers
+          - informations,medias,uptodate,reenable,crypted,developpers
+          - ned
+ * Copyright (C) 2019   	Cedric Ancelin          <icedo.anc@gmail.com>
+ * Copyright (C) 2019   Cedric Ancelin          <icedo.anc@gmail.com>
+$permissiontoadd = $user->hasRight('stock', 'mouvement', 'creer');
+$permissiontodelete = $user->hasRight('stock', 'mouvement', 'creer'); // There is no deletion permission for stock movement as we should never delete
+$permissiontoread = $user->hasRight('stock', 'mouvement', 'lire');
+$sql .= " GROUP BY cs.rowid, cs.fk_type, cs.fk_user, cs.amount, cs.date_ech, cs.libelle, cs.paye, cs.periode, cs.fk_account, c.libelle, c.accountancy_code, ba.label, ba.ref, ba.number, ba.account_number, ba.iban_prefix, ba.bic, ba.currency_code, ba.clos, pay.code";
+$sql .= " cs.amount, cs.date_ech, cs.libelle as label, cs.paye, cs.periode, cs.fk_account,";
+$sql .= " cs.rowid, cs.libelle as label_sc, cs.fk_type as type, cs.periode, cs.date_ech, cs.amount as total, cs.paye,";
+$sql = "SELECT id_users, nom as name, id_sondage, reponses";
+$sql = 'SELECT nom as name, reponses';
+$title = $langs->trans("Referers", $object->name);
+$usercancreate = $user->hasRight('stock', 'mouvement', 'creer');
+$usercancreate = (($user->hasRight('stock', 'mouvement', 'creer')));
+$usercandelete = $user->hasRight('stock', 'mouvement', 'creer');
+$usercandelete = (($user->hasRight('stock', 'mouvement', 'supprimer')));
+$usercanread = $user->hasRight('stock', 'mouvement', 'lire');
+$usercanread = (($user->hasRight('stock', 'mouvement', 'lire')));
+* The private array ->status_short, ->statuts and ->status_long are now array ->labelStatusShort and ->labelStatus everywhere.
+- Fix: [ bug #485 ] Configurated amount for public auto-subscription form is not taken into account
+- New: Add proposals into referer page of thirdparty.
+AmountIn
+NEW: ModuleBuilder: Checkin comments begin and end before each actions
+Vous pouvez voir la progression du ticket en cliquant sur le lien
+for /F "tokens=2 delims=," %%i in ('tasklist /FI "IMAGENAME eq php.exe" /FO CSV /NH') do (
+function checkES($IentOfi, $InumCta)
+if (!$user->hasRight('stock', 'mouvement', 'lire')) {
+if (!empty($arrayfields['cs.periode']['checked'])) {
+if ($action == "transfert") {
+print $langs->trans("Developpers").':';
+print '<td class="right">'.$langs->trans("NbOfMembers").' <span class="opacitymedium">('.$langs->trans("AllTime").')</span></td>';
+print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "cs.periode", "", $param, '', $sortfield, $sortorder, 'center ');
+select#date_startday, select#date_startmonth, select#date_endday, select#date_endmonth, select#reday, select#remonth
+select#date_startday, select#date_startmonth, select#date_endday, select#date_endmonth, select#reday, select#remonth,

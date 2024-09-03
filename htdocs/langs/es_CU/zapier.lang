@@ -1,3 +1,0 @@
-# Dolibarr language file - Source file is en_US - zapier
-ModuleZapierForDolibarrDesc =Módulo Zapier para Dolibarr
-ZapierSetupPage=No hay necesidad de una configuración en el lado de Dolibarr para usar Zapier. Sin embargo, debe generar y publicar un paquete en zapier para poder utilizar Zapier con Dolibarr. Consulte la documentación en <a href="https://wiki.dolibarr.org/index.php/Module_Zapier"> en esta página wiki </a> .

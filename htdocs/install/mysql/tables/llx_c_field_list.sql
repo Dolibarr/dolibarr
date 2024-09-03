@@ -16,8 +16,9 @@
 --
 -- Change are done into list pages to use the new code to manage
 -- selection by users of fields. Once all changes are done with new
--- code, we will be able to use this table to store the content of
--- the $arrayfields table.
+-- code, we may be able to use this table to store the content of
+-- the $arrayfields table. This looks a bad idea (think performance) for standard
+-- features, but may be for canvas or external modules ? 
 -- Table not used / not required for the moment.
 -- ========================================================================
 

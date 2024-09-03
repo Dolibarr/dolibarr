@@ -9,28 +9,31 @@ descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Automatisch eine Kundenrechnung erstell
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Erstellt automatisch eine Kundenrechnung, nachdem ein Kundenauftrag geschlossen wurde. Die erstellte Rechnung lautet über denselben Betrag wie der Auftrag.
 descWORKFLOW_TICKET_CREATE_INTERVENTION=Bei der Erstellung eines Tickets automatisch einen Serviceauftrag erstellen.
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Setzt das entsprechende Angebot auf "abgerechnet", sofern der Kundenauftrag auf "abgerechnet" gesetzt wurde und sofern der Gesamtbetrag im Kundenauftrag gleich dem im Angebot ist.
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Setzt das verknüpfte Angebot auf "abgerechnet", sofern die Kundenrechnung erstellt wurde und sofern der Rechnungsbetrag identisch zur Angebotsumme ist.
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Kennzeichne den verknüpften Kundenauftrag als fakturiert ( = in Rechnung gestellt) sofern die Kundenrechnung als geprüft markiert wurde und die Beträge übereinstimmen.
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Kennzeichne verknüpfte Kundenaufträge als fakturiert ( = in Rechnung gestellt), sofern die Kundenrechnung als bezahlt markiert wurde und die Beträge übereinstimmen.
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Kennzeichne die verknüpften Aufträge als geliefert wenn die Lieferung erfolgt ist (und die Liefermenge der Bestellmenge entspricht).
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Den zugrundeliegenden Kundenauftrag als versendet kennzeichnen, wenn eine Sendung geschlossen wird (sofern die Gesamtmengen aller zugehörigen Sendungen mit denen des Kundenauftrags übereinstimmen)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Wenn ein Kundenauftrag auf 'in Rechnung gestellt/fakturiert' gesetzt wird, klassifiziere die verknüpften zugrundeliegenden Angebote auch als 'in Rechnung gestellt/fakturiert' (sofern der Betrag des Kundenauftrags derselbe ist wie der Gesamtbetrag der verknüpften angenommenen Angebote).
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Wenn ein Kundenrechnung freigegeben wird, klassifiziere die verknüpften zugrundeliegenden Angebote als 'in Rechnung gestellt/fakturiert' (sofern der Betrag der Rechnung dem Gesamtbetrag des verknüpften akzeptierten Angebote entspricht).
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Wenn ein Kundenrechnung auf 'bezahlt' gesetzt wird, klassifiziere verknüpfte zugrundeliegende Kundenaufträge als 'in Rechnung gestellt/fakturiert' (sofern der Betrag der Rechnung dem Gesamtbetrag der verknüpften Kundenaufträge entspricht). Wenn eine Rechnung für n Kundenaufträge erstellt wurde, werden alle Kundenaufträge auf 'in Rechnung gestellt/fakturiert' gesetzt.
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Wenn ein Kundenrechnung freigegeben wird, klassifiziere alle verknüpften zugrundeliegenden Kundenaufträge als 'in Rechnung gestellt/fakturiert' (sofern der Betrag der Rechnung dem Gesamtbetrag der verknüpften Kundenaufträge entspricht). Wenn eine gemeinsame Rechnung für n Kundenaufträge erstellt wurde, werden alle Kundenaufträge auf 'in Rechnung gestellt/fakturiert' gesetzt.
+descWORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER=Wenn ein Kundenrechnung freigegeben wird, klassifiziere den verknüpfte Kundenauftrag (falls es nur einen gibt) als in Rechnung gestellt, sofern der Gesamtbetrag des verknüpften Kundenauftrags dem Gesamtbetrag aller von ihm erstellten Rechnungen entspricht. Wenn Sie n Rechnungen für einen Kundenauftrag erstellen, wird der Auftrag auf 'in Rechnung gestellt/fakturiert' gesetzt, sobald alle Rechnungen freigegeben sind.
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Wenn eine Lieferung freigegeben wird, klassifiziere verknüpfte zugrundeliegende Kundenaufträge als versandt (sofern die mit allen Lieferungen versandte Gesamtmenge der im zu aktualisierenden Kundenauftrag entspricht).
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Wenn eine Lieferung abgeschlossen ist, klassifiziere den verknüpften zugrundeliegenden Kundenauftrag als versendet (sofern die in allen Lieferungen versendete Gesamtmenge der in dem  zu aktualisierenden Kundenauftrag entspricht).
 # Autoclassify purchase proposal
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Setzt das verknüpfte Lieferantenangebot auf "abgerechnet", sofern die Lieferanrenrechnung erstellt wurde und sofern der Rechnungsbetrag identisch zur Angebotsumme ist. 
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Wenn ein Lieferantenrechnung freigegeben wird, klassifiziere das verknüpfte zugrundeliegende Lieferantenangebot als 'in Rechnung gestellt/fakturiert' (sofern der Betrag der Rechnung mit dem Gesamtbetrag der verknüpften Angebote identisch ist).
 # Autoclassify purchase order
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Kennzeichne die verknüpfte Lieferantenbestellung als abgerechnet, wenn die Lieferantenrechnung erstellt wurde und die Gesamtbeträge übereinstimmen.
-descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Verknüpfte Lieferantenbestellung als eingegangen klassifizieren, wenn ein Wareneingang freigegeben wird (und wenn die von allen Wareneingängen eingegangene Menge mit der zu aktualisierenden Lieferantenbestellung übereinstimmt)
-descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Verknüpfte Lieferantenbestellung als eingegangen klassifizieren, wenn ein Wareneingang geschlossen wird (und wenn die von allen Wareneingängen eingegangene Menge mit der zu aktualisierenden Bestellung übereinstimmt)
-# Autoclassify purchase invoice
-descWORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE=Wareneingänge als „abgerechnet“ klassifizieren, wenn eine verknüpfte Einkaufsrechnung freigegeben wird (und wenn der Rechnungsbetrag mit dem Gesamtbetrag der verknüpften Wareneingänge übereinstimmt)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Wenn ein Lieferantenrechnung freigegeben wird, klassifiziere Sie die verknüpfte zugrundeliegende Lieferantenbestellung als 'in Rechnung gestellt/fakturiert' (sofern der Betrag der Rechnung mit dem Gesamtbetrag der verknüpften Bestellungen übereinstimmt).
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Wenn ein Wareneingang freigegeben wird, klassifiziere die verknüpfte zugrundeliegende Lieferantenbestellung als empfangen (sofern die in allen Wareneingängen empfangene Gesamtmenge mit der in der zu aktualisierenden Bestellung übereinstimmt).
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Wenn ein Wareneingang geschlossen wird, klassifiziere verknüpfte zugrundeliegende Lieferantenbestellungen als erhalten (sofern die aus der Lieferantenbestellung in allen Wareneingängen  empfangene Gesamtmenge der Menge der zu aktualisierenden Lieferantenbestellung entspricht).
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Wenn ein Kundenrechnung freigegeben wird, klassifiziere die verknüpfte Lieferung als geschlossen (sofern der Betrag der Rechnung mit dem Gesamtbetrag der verknüpften Lieferungen übereinstimmt).
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=Wenn ein Kundenrechnung freigegeben wird, klassifiziere die verknüpfte Lieferung als 'in Rechnung gestellt/fakturiert' (sofern der Betrag der Rechnung mit dem Gesamtbetrag der verknüpften Lieferungen übereinstimmt).
+# Autoclassify receptions
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Wenn eine Lieferantenrechnung freigegeben wird, klassifiziere die verknüpften Wareneingänge als geschlossen (sofern der Betrag der Rechnung mit dem Gesamtbetrag der verknüpften Wareneingänge entspreicht).
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=Wenn eine Lieferantenrechnung validiert wird, klassifiziere verknüpfte zugrundeliegende Wareneingänge als 'in Rechnung gestellt/fakturiert' (sofern der Betrag der Rechnung mit dem Gesamtbetrag der verknüpften Wareneingänge identisch ist).
 # Automatically link ticket to contract
-descWORKFLOW_TICKET_LINK_CONTRACT=Verknüpfen Sie beim Erstellen eines Tickets verfügbare Verträge passender Geschäftspartner
-descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Beim Verknüpfen von Verträgen unter denen der Mutterunternehmen suchen
+descWORKFLOW_TICKET_LINK_CONTRACT=Wenn ein Ticket erstellt wird, soll es mit verfügbaren Verträgen verknüpft werden, die demselben Geschäftspartner zugeordnet sind, wie das Ticket.
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Wenn ein Ticket automatisch mit Verträgen verknüpft wird, auch Verträge von übergeordneten Unternehmen (Muttergesellschaften) suchen.
 # Autoclose intervention
 descWORKFLOW_TICKET_CLOSE_INTERVENTION=Schließen Sie alle mit dem Ticket verknüpften Interaktionen, wenn ein Ticket geschlossen wird
 AutomaticCreation=Automatische Erstellung
 AutomaticClassification=Automatische Klassifikation
-# Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Verknüpfte Lieferung als abgeschlossen klassifizieren, wenn die Kundenrechnung freigegeben ist (und wenn der Rechnungsbetrag mit dem Gesamtbetrag der verknüpften Lieferungen übereinstimmt)
 AutomaticClosing=Automatisches Schließen
 AutomaticLinking=Automatisches Verknüpfen

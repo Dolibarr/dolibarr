@@ -36,6 +36,7 @@ $dolibarr_main_url_root='';
 // Examples:
 // $dolibarr_main_document_root='/var/www/dolibarr/htdocs';
 // $dolibarr_main_document_root='C:/My web sites/dolibarr/htdocs';
+// $dolibarr_main_document_root=realpath(__DIR__.'/..');
 //
 $dolibarr_main_document_root='';
 
@@ -44,7 +45,7 @@ $dolibarr_main_document_root='';
 // ==========================
 // This parameter defines the relative sub URLs to add to $dolibarr_main_url_root to
 // forge alternative root directories (used by modules developers).
-// You can put several values, separated by a coma, but number of entries must match
+// You can put several values, separated by a comma, but number of entries must match
 // number of entries into $dolibarr_main_document_root_alt.
 //
 // Examples:
@@ -57,7 +58,7 @@ $dolibarr_main_document_root='';
 // dolibarr_main_document_root_alt
 // ===============================
 // This parameter contains absolute alternative root file system directories (used by modules developers).
-// You can put several values, separated by a coma, but number of entries must match
+// You can put several values, separated by a comma, but number of entries must match
 // number of entries into $dolibarr_main_url_root_alt.
 //
 // Examples:
@@ -75,6 +76,7 @@ $dolibarr_main_document_root='';
 // Examples:
 // $dolibarr_main_data_root='/var/www/dolibarr/documents';
 // $dolibarr_main_data_root='E:/My web sites/dolibarr/documents';
+// $dolibarr_main_data_root=realpath(__DIR__.'/../../documents');
 //
 $dolibarr_main_data_root='';
 
@@ -128,8 +130,8 @@ $dolibarr_main_db_user='';
 // dolibarr_main_db_pass
 // =====================
 // This parameter contains password used to read and write into Dolibarr database.
-// If content is 'crypted:...', the password is encrypted/decrypted with dol_encode/dol_decode.  
-// If content is 'dolcrypt:...', the password is encrypted/decrypted with dolEncrypt/dolDecrypt.  
+// If content is 'crypted:...', the password is encrypted/decrypted with dol_encode/dol_decode.
+// If content is 'dolcrypt:...', the password is encrypted/decrypted with dolEncrypt/dolDecrypt.
 //
 // Examples:
 // $dolibarr_main_db_pass='myadminpass';
@@ -158,6 +160,7 @@ $dolibarr_main_db_type='';
 // Default value: depends on database driver
 // Examples:
 // dolibarr_main_db_character_set='utf8';
+// dolibarr_main_db_character_set='utf8mb4';
 //
 $dolibarr_main_db_character_set='utf8';
 
@@ -173,9 +176,14 @@ $dolibarr_main_db_character_set='utf8';
 $dolibarr_main_db_collation='utf8_unicode_ci';
 
 
+// dolibarr_main_db_encryption
+// If setto 1, Dolibarr make a reversible encryption of data (using AES) with mysql to store key and value into the table llx_const.
+// It is deprecated and should not be used anymore.
+
+
 // dolibarr_main_db_readonly
 // =========================
-// Set this to 1 to have the application working in readonly mode. All SQL commands INSERT/UPDATE/DELETE/CREATE/ALTER/TRUNCATE/DROP will be disabled. 
+// Set this to 1 to have the application working in readonly mode. All SQL commands INSERT/UPDATE/DELETE/CREATE/ALTER/TRUNCATE/DROP will be disabled.
 // Default value: 0
 // Examples:
 // $dolibarr_main_db_readonly='0';
@@ -186,7 +194,7 @@ $dolibarr_main_db_readonly=0;
 // dolibarr_main_instance_unique_id
 // ================================
 // An secret ID that is unique for each installation.
-// This value is also visible and never propagated outside of Dolibarr, so it can be used as a salt / key for some encryption (For example to get
+// This value is also never visible and never propagated outside of Dolibarr, so it can be used as a salt / key for some encryption (For example to get
 //  a unique hashed key, application will hash the value concatenated with a string. Example: md5('dolibarr'+dolibarr_main_instance_unique_id)
 // WARNING: Changing this value will also make some sensitive values encrypted in database wrong.
 // Default value: randomly defined during installation
@@ -195,6 +203,17 @@ $dolibarr_main_db_readonly=0;
 //
 $dolibarr_main_instance_unique_id='84b5bc91f83b56e458db71e0adac2b62';
 
+
+// dolibarr_main_dolcrypt_key
+// ==========================
+// An secret key to encrypt/decrypt data with dolcrypt() method, for reversible encryption.
+// This value is also never visible and never propagated outside of Dolibarr, it is used as key for the dolcrypt encryption.
+// WARNING: Changing this value will also make some sensitive values encrypted in database wrong.
+// Default value: ''. When not defined, the $dolibarr_main_instance_unique_id will be used instead.
+// Examples:
+// $dolibarr_main_dolcrypt_key='';
+//
+$dolibarr_main_dolcrypt_key='';
 
 
 //##################
@@ -260,8 +279,8 @@ $dolibarr_main_authentication='dolibarr';
 // 'https://my.domain.com' = Force redirect to https using this domain name.
 // Warning: If you enable this parameter, your web server must be configured to respond URL with https protocol.
 // According to your web server setup, some values may works and other not. Try different values (1,2 or 'https://my.domain.com') if you experience problems.
-// Even if a redirect to HTTPS is forced by the webserver, it is recommanded to set this value to another value than 0, so your session cookies will be 
-// flagged as secured. 
+// Even if a redirect to HTTPS is forced by the webserver, it is recommended to set this value to another value than 0, so your session cookies will be
+// flagged as secured.
 // Default value: 0
 // Possible values: 0, 1, 2 or 'https://my.domain.com'
 // Examples:
@@ -284,11 +303,21 @@ $dolibarr_main_prod='1';
 // ==================================
 // To restrict commands you can execute by the backup feature, enter allowed command here.
 // Note: If you can, defining permission on OS linux (using SELinux for example) may be a better choice.
-// Default value: 'mysqldump, mysql, pg_dump, pgrestore'
+// Default value: 'mysqldump, mysql, pg_dump, pgrestore, mariadb, mariadb-dump'
 // Examples:
 // $dolibarr_main_restrict_os_commands='mysqldump, /usr/local/bin/otherdumptool';
+// $dolibarr_main_restrict_os_commands='mariadb-dump, mariadb, mysqldump, mysql, pg_dump, pg_restore, clamdscan, clamdscan.exe';
 //
-$dolibarr_main_restrict_os_commands='mysqldump, mysql, pg_dump, pgrestore';
+$dolibarr_main_restrict_os_commands='mariadb-dump, mariadb, mysqldump, mysql, pg_dump, pg_restore, clamdscan, clamdscan.exe';
+
+// dolibarr_main_disabled_modules
+// ==================================
+// To restrict the activation and use of certain potentially security-sensitive modules.
+// Default value: array('dav')
+// Examples:
+// $dolibarr_main_disabled_modules = array('dav');
+//
+// $dolibarr_main_disabled_modules = array('dav');
 
 // dolibarr_main_restrict_ip
 // =========================
@@ -306,7 +335,7 @@ $dolibarr_main_restrict_ip='';
 // This might be required if you access Dolibarr behind a proxy that make bad URL rewriting, to avoid false alarms.
 // In most cases, you should always keep this to 0.
 // Default value: 0
-// Possible values: 0 or 1 (no strict CSRF test, only test on referer) or 2 (no CSRF test at all)
+// Possible values: 0 or 1 (no strict CSRF test, only test on referrer) or 2 (no CSRF test at all)
 // Examples:
 // $dolibarr_nocsrfcheck='0';
 //
@@ -314,7 +343,7 @@ $dolibarr_nocsrfcheck='0';
 
 // dolibarr_cron_allow_cli
 // =======================
-// If set to 1, you will be able to define some command line in the internale Job scheduler module.
+// If set to 1, you will be able to define some command line in the internal Job scheduler module.
 // Default value: '0'
 // Examples: '1'
 //
@@ -335,6 +364,14 @@ $dolibarr_cron_allow_cli='0';
 // Examples: '-1' (sending by cli is forbidden)
 //
 // $dolibarr_mailing_limit_sendbycli='0';
+
+// dolibarr_main_stream_to_disable
+// ================================
+// Can set a list of PHP stream to disable.
+// Default value: array('compress.zlib', 'compress.bzip2', 'ftp', 'ftps', 'glob', 'data', 'expect', 'ogg', 'rar', 'zip', 'zlib')
+// Examples: array('ftp', 'ftps')
+//
+// $dolibarr_main_stream_to_disable = array('compress.zlib', 'compress.bzip2', 'ftp', 'ftps', 'glob', 'data', 'expect', 'ogg', 'rar', 'zip', 'zlib');
 
 // MAIN_ANTIVIRUS_COMMAND (as a constant)
 // ======================
@@ -365,8 +402,8 @@ $dolibarr_cron_allow_cli='0';
 // =========================
 // If this value is set to a value, it forces the creation of a file install.lock once an upgrade process into a new version end.
 // The value is the octal value of permission to set on created file.
-// The file install.lock prevents the use of the migration process another time. You will have to delete it manually for 
-// next upgrade.
+// The file install.lock prevents the use of the install and upgrade process another time. You will have to delete it manually for
+// next install process or create a upgrade.unlock for next upgrade.
 // Default value: '0'
 // Example: '444';
 // $force_install_lockinstall='440';
@@ -379,7 +416,7 @@ $dolibarr_cron_allow_cli='0';
 
 // dolibarr_main_db_prefix
 // =======================
-// This parameter contains prefix of Dolibarr database. 
+// This parameter contains prefix of Dolibarr database.
 // Default value: 'llx_' if not defined
 // Examples:
 // $dolibarr_main_db_prefix='llx_';
@@ -434,5 +471,3 @@ $dolibarr_cron_allow_cli='0';
 //##############################
 // External modules
 //##############################
-
-

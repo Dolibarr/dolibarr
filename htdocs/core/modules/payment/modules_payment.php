@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015      Juanjo Menent	    <jmenent@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,96 +17,19 @@
  * or see https://www.gnu.org/
  */
 
-/**
- *  \class      ModeleNumRefPayments
- *  \brief      Payment numbering references mother class
- */
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonnumrefgenerator.class.php';
 
-abstract class ModeleNumRefPayments
+/**
+ * Payment numbering references mother class
+ */
+abstract class ModeleNumRefPayments extends CommonNumRefGenerator
 {
 	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	/**
-	 *	Return if a module can be used or not
+	 * 	Return next free value
 	 *
-	 *	@return		boolean     true if module can be used
+	 *  @param	Societe			$objsoc     Object thirdparty
+	 *  @param  Object			$object		Object we need next value for
+	 *  @return string|int<-1,0>			Value if OK, <=0 if KO
 	 */
-	public function isEnabled()
-	{
-		return true;
-	}
-
-	/**
-	 *	Return the default description of numbering module
-	 *
-	 *	@return     string      Descriptive text
-	 */
-	public function info()
-	{
-		global $langs;
-		$langs->load("bills");
-		return $langs->trans("NoDescription");
-	}
-
-	/**
-	 *	Return numbering example
-	 *
-	 *	@return     string      Example
-	 */
-	public function getExample()
-	{
-		global $langs;
-		$langs->load("bills");
-		return $langs->trans("NoExample");
-	}
-
-	/**
-	 *  Checks if the numbers already in the database do not
-	 *  cause conflicts that would prevent this numbering working.
-	 *
-	 *	@return     boolean     false if conflict, true if ok
-	 */
-	public function canBeActivated()
-	{
-		return true;
-	}
-
-	/**
-	 *	Returns the next value
-	 *
-	 *	@param	Societe		$objsoc     Object thirdparty
-	 *	@param	Object		$object		Object we need next value for
-	 *	@return	string      Valeur
-	 */
-	public function getNextValue($objsoc, $object)
-	{
-		global $langs;
-		return $langs->trans("NotAvailable");
-	}
-
-	/**
-	 *	Returns the module numbering version
-	 *
-	 *	@return     string      Value
-	 */
-	public function getVersion()
-	{
-		global $langs;
-		$langs->load("admin");
-
-		if ($this->version == 'development') {
-			return $langs->trans("VersionDevelopment");
-		} elseif ($this->version == 'experimental') {
-			return $langs->trans("VersionExperimental");
-		} elseif ($this->version == 'dolibarr') {
-			return DOL_VERSION;
-		} elseif ($this->version) {
-			return $this->version;
-		} else {
-			return $langs->trans("NotAvailable");
-		}
-	}
+	abstract public function getNextValue($objsoc, $object);
 }

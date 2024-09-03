@@ -35,7 +35,7 @@ $error = 0;
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 
 // List of status
 static $tmpstatus2label = array(
@@ -50,7 +50,7 @@ foreach ($tmpstatus2label as $key => $val) {
 $object = new Establishment($db);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'
 
 $permissiontoread = $user->admin;
 $permissiontoadd = $user->admin; // Used by the include of actions_addupdatedelete.inc.php
@@ -62,8 +62,12 @@ $upload_dir = $conf->hrm->multidir_output[isset($object->entity) ? $object->enti
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->element, $object->id, '', '', 'fk_soc', 'rowid', 0);
-if (!isModEnabled('hrm')) accessforbidden();
-if (empty($permissiontoread)) accessforbidden();
+if (!isModEnabled('hrm')) {
+	accessforbidden();
+}
+if (empty($permissiontoread)) {
+	accessforbidden();
+}
 
 
 /*
@@ -71,7 +75,7 @@ if (empty($permissiontoread)) accessforbidden();
  */
 
 if ($action == 'confirm_delete' && $confirm == "yes") {
-	$result = $object->delete($id);
+	$result = $object->delete($user);
 	if ($result >= 0) {
 		header("Location: ../admin/admin_establishment.php");
 		exit;
@@ -92,11 +96,11 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 			$object->address = GETPOST('address', 'alpha');
 			$object->zip = GETPOST('zipcode', 'alpha');
 			$object->town = GETPOST('town', 'alpha');
-			$object->country_id = GETPOST("country_id", 'int');
-			$object->status = GETPOST('status', 'int');
+			$object->country_id = GETPOSTINT("country_id");
+			$object->status = GETPOSTINT('status');
 			$object->fk_user_author	= $user->id;
 			$object->datec = dol_now();
-			$object->entity = GETPOST('entity', 'int') > 0 ?GETPOST('entity', 'int') : $conf->entity;
+			$object->entity = GETPOSTINT('entity') > 0 ? GETPOSTINT('entity') : $conf->entity;
 
 			$id = $object->create($user);
 
@@ -129,22 +133,22 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 			$object->address = GETPOST('address', 'alpha');
 			$object->zip 			= GETPOST('zipcode', 'alpha');
 			$object->town			= GETPOST('town', 'alpha');
-			$object->country_id     = GETPOST('country_id', 'int');
+			$object->country_id     = GETPOSTINT('country_id');
 			$object->fk_user_mod = $user->id;
-			$object->status         = GETPOST('status', 'int');
-			$object->entity         = GETPOST('entity', 'int') > 0 ?GETPOST('entity', 'int') : $conf->entity;
+			$object->status         = GETPOSTINT('status');
+			$object->entity         = GETPOSTINT('entity') > 0 ? GETPOSTINT('entity') : $conf->entity;
 
 			$result = $object->update($user);
 
 			if ($result > 0) {
-				header("Location: ".$_SERVER["PHP_SELF"]."?id=".GETPOST('id', 'int'));
+				header("Location: ".$_SERVER["PHP_SELF"]."?id=".GETPOSTINT('id'));
 				exit;
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 	} else {
-		header("Location: ".$_SERVER["PHP_SELF"]."?id=".GETPOST('id', 'int'));
+		header("Location: ".$_SERVER["PHP_SELF"]."?id=".GETPOSTINT('id'));
 		exit;
 	}
 }
@@ -228,7 +232,7 @@ if ($action == 'create') {
 	print '<tr>';
 	print '<td>'.$form->editfieldkey('Country', 'selectcountry_id', '', $object, 0).'</td>';
 	print '<td class="maxwidthonsmartphone">';
-	print $form->select_country(GETPOSTISSET('country_id') ? GETPOST('country_id', 'int') : ($object->country_id ? $object->country_id : $mysoc->country_id), 'country_id');
+	print $form->select_country(GETPOSTISSET('country_id') ? GETPOSTINT('country_id') : ($object->country_id ? $object->country_id : $mysoc->country_id), 'country_id');
 	if ($user->admin) {
 		print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 	}

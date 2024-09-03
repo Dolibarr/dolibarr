@@ -4,41 +4,27 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see .
 
-#
 # Generic
-#
-
 # Module label 'ModuleKnowledgeManagementName'
 ModuleKnowledgeManagementName = Knowledge Management System
 # Module description 'ModuleKnowledgeManagementDesc'
 ModuleKnowledgeManagementDesc=Manage a Knowledge Management (KM) or Help-Desk base
-
-#
 # Admin page
-#
 KnowledgeManagementSetup = Knowledge Management System setup
-Settings = Settings
 KnowledgeManagementSetupPage = Knowledge Management System setup page
-
-
-#
 # About page
-#
-About = About
 KnowledgeManagementAbout = About Knowledge Management
 KnowledgeManagementAboutPage = Knowledge Management about page
-
 KnowledgeManagementArea = Knowledge Management
 MenuKnowledgeRecord = Knowledge base
+MenuKnowledgeRecordShort = Knowledge base
 ListKnowledgeRecord = List of articles
 NewKnowledgeRecord = New article
 ValidateReply = Validate solution
@@ -47,8 +33,7 @@ KnowledgeRecord = Article
 KnowledgeRecordExtraFields = Extrafields for Article
 GroupOfTicket=Group of tickets
 YouCanLinkArticleToATicketCategory=You can link the article to a ticket group (so the article will be highlighted on any tickets in this group)
-SuggestedForTicketsInGroup=Suggested on ticket creation
-
+SuggestedForTicketsInGroup=Suggested on tickets creation
 SetObsolete=Set as obsolete
 ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
 ConfirmReopenKM=Do you want to restore this article to status "Validated" ?

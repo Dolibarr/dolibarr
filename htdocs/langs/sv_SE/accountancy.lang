@@ -16,8 +16,8 @@ ThisService=Denna tjänst
 ThisProduct=Denna produkt
 DefaultForService=Standard för tjänster
 DefaultForProduct=Standard för produkter
-ProductForThisThirdparty=Produkt för denna tredjepart
-ServiceForThisThirdparty=Tjänst för denna tredjepart
+ProductForThisThirdparty=Produkt för denna tredje part
+ServiceForThisThirdparty=Tjänst för denna tredje part
 CantSuggest=Kan inte föreslå
 AccountancySetupDoneFromAccountancyMenu=De flesta inställningarna för bokföringen görs från menyn %s
 ConfigAccountingExpert=Konfiguration av modulredovisningen (dubbel inmatning)
@@ -38,10 +38,10 @@ DeleteCptCategory=Ta bort redovisningskontot från gruppen
 ConfirmDeleteCptCategory=Är du säker på att du vill ta bort det här kontot konto från kontokoncernen?
 JournalizationInLedgerStatus=Status för bokföring
 AlreadyInGeneralLedger=Redan överfört till redovisningsjournaler och reskontra
-NotYetInGeneralLedger=Ännu inte överfört till redovisningsjournaler och reskontra
+NotYetInGeneralLedger=Ännu ej överfört till redovisningsjournaler och reskontra
 GroupIsEmptyCheckSetup=Gruppen är tom, kontrollera inställningen av den personliga redovisningsgruppen
 DetailByAccount=Visa detaljer efter konto
-DetailBy=Detail by
+DetailBy=Detalj av
 AccountWithNonZeroValues=Konton med icke-nollvärden
 ListOfAccounts=Förteckning över konton
 CountriesInEEC=Länder i EEG
@@ -52,28 +52,27 @@ AccountantFiles=Exportera källdokument
 ExportAccountingSourceDocHelp=Med det här verktyget kan du söka och exportera källhändelserna som används för att skapa din bokföring. <br> Den exporterade ZIP-filen kommer att innehålla listor över begärda objekt i CSV, såväl som deras bifogade filer i originalformat (PDF, ODT, DOCX...).
 ExportAccountingSourceDocHelp2=För att exportera verifikationer, använd menyn %s - %s
 ExportAccountingProjectHelp=Ange ett projekt om du behöver en redovisningsrapport endast för ett specifikt projekt. Kostnadsredovisningar och lånebetalningar ingår inte i projektredovisningar.
-ExportAccountancy=Export accountancy
-WarningDataDisappearsWhenDataIsExported=Warning, this list contains only the accounting entries that have not been already exported (Export date is empty). If you want to include the accounting entries already exported to re-export them, click on the button above.
+ExportAccountancy=Exportredovisning
+WarningDataDisappearsWhenDataIsExported=Varning, den här listan innehåller endast de redovisningsposter som inte redan har exporterats (exportdatumet är tomt). Om du vill inkludera de redan exporterade bokföringsposterna klickar du på knappen ovan.
 VueByAccountAccounting=Visa baserat på redovisningskonto
 VueBySubAccountAccounting=Visa efter redovisning av underkonto
 
-MainAccountForCustomersNotDefined=Huvudsakliga bokföringskonto för kunder som inte definierats i installationen
-MainAccountForSuppliersNotDefined=Huvudkonton för leverantörer som inte definierats i installationen
-MainAccountForUsersNotDefined=Huvudkontonskonto för användare som inte definierats i installationen
-MainAccountForVatPaymentNotDefined=Huvudkonton för momsbetalning som inte definieras i inställningen
-MainAccountForSubscriptionPaymentNotDefined=Huvudkonton för abonnemangsbetalning som inte definieras i inställningen
+MainAccountForCustomersNotDefined=Huvudkonto (från kontoplanen) för kunder som inte definierats i konfigurationen
+MainAccountForSuppliersNotDefined=Huvudkonto (från kontoplanen) för leverantörer som inte definierats i inställningen
+MainAccountForUsersNotDefined=Huvudkonto (från kontoplanen) för användare som inte definierats i inställningen
+MainAccountForVatPaymentNotDefined=Konto (från kontoplanen) för momsbetalning som inte definierats i inställningen
+MainAccountForSubscriptionPaymentNotDefined=Konto (från kontoplanen) för medlemsbetalning som inte definierats i inställningen
+MainAccountForRetainedWarrantyNotDefined=Konto (från kontoplanen) för den bibehållna garantin som inte definieras i inställningen
 UserAccountNotDefined=Redovisningskonto för användare är inte definierat i konfigurationen
-
 AccountancyArea=Redovisningsområde
 AccountancyAreaDescIntro=Användningen av bokföringsmodulen görs i flera steg:
 AccountancyAreaDescActionOnce=Följande åtgärder utförs vanligtvis en gång bara, eller en gång per år ...
-AccountancyAreaDescActionOnceBis=Nästa steg bör göras för att spara tid i framtiden genom att föreslå att du automatiskt använder rätt standardkonto när du överför data i bokföring
+AccountancyAreaDescActionOnceBis=Nästa steg bör göras för att spara tid i framtiden genom att föreslå dig automatiskt rätt standardkonto när du överför data i bokföring
 AccountancyAreaDescActionFreq=Följande åtgärder utförs vanligtvis varje månad, vecka eller dag för mycket stora företag ...
-
 AccountancyAreaDescJournalSetup=STEG %s: Kontrollera innehållet i din tidskriftslista från menyn %s
 AccountancyAreaDescChartModel=STEG %s: Kontrollera att det finns en kontodiagrammodell eller skapa en från menyn %s
 AccountancyAreaDescChart=STEG %s: Välj och | eller slutför ditt kontoplan från meny %s
-
+AccountancyAreaDescFiscalPeriod=STEP %s: Define a fiscal year by default on which to integrate your accounting entries, from menu %s.
 AccountancyAreaDescVat=STEG %s: Definiera redovisningskonton för varje moms. För detta, använd menyinmatningen %s.
 AccountancyAreaDescDefault=STEG %s: Definiera standardbokföringskonton. För detta, använd menyinmatningen %s.
 AccountancyAreaDescExpenseReport=STEG %s: Definiera standardkonton för varje typ av utgiftsrapport. Använd menyposten %s för detta.
@@ -81,19 +80,18 @@ AccountancyAreaDescSal=STEG %s: Definiera standardbokföringskonto för betalnin
 AccountancyAreaDescContrib=STEG %s: Definiera standardkonton för skatter (särskilda utgifter). För detta, använd menyposten %s.
 AccountancyAreaDescDonation=STEG %s: Definiera standardbokföringskonto för donation. För detta, använd menyinmatningen %s.
 AccountancyAreaDescSubscription=STEG %s: Definiera standardbokföringskonto för medlemsabonnemang. För detta, använd menyinmatningen %s.
-AccountancyAreaDescMisc=STEG %s: Ange obligatoriskt standardkonto och standardbokföringskonto för diverse transaktioner. För detta, använd menyinmatningen %s.
+AccountancyAreaDescMisc=STEG %s: Definiera obligatoriska standardkonton och standardkonton för diverse transaktioner. För detta, använd menyposten %s.
 AccountancyAreaDescLoan=STEG %s: Definiera standardbokföringskonto för lån. För detta, använd menyinmatningen %s.
 AccountancyAreaDescBank=STEG %s: Definiera bokföringskonto och kontokod för varje bank- och bokföringskonto. För detta, använd menyinmatningen %s.
 AccountancyAreaDescProd=STEG %s: Definiera bokföringskonton på dina produkter/tjänster. För detta, använd menyposten %s.
-
 AccountancyAreaDescBind=STEG %s: Kontrollera bindningen mellan befintliga %s linjer och bokföringskonto är klar så att applikationen kommer att kunna bokföra transaktioner i huvudboken med ett klick. Korrigera saknade bindningar. För detta, använd menyinmatningen %s.
 AccountancyAreaDescWriteRecords=STEG %s: Skriv transaktioner i huvudboken. För detta, gå till menyn <strong> %s </strong>, och klicka på knappen <strong> %s </strong>.
-AccountancyAreaDescAnalyze=STEG %s: Lägg till eller redigera befintliga transaktioner och generera rapporter och export.
-
-AccountancyAreaDescClosePeriod=STEG %s: Stäng period så vi kan inte göra ändringar i framtiden.
-
+AccountancyAreaDescAnalyze=STEG %s: Läs rapporter eller generera exportfiler för andra bokhållare.
+AccountancyAreaDescClosePeriod=STEG %s: Stäng perioden så att vi inte kan överföra mer data under samma period i framtiden.
+TheFiscalPeriodIsNotDefined=Ett obligatoriskt steg i installationen har inte slutförts (räkenskapsperioden är inte definierad)
 TheJournalCodeIsNotDefinedOnSomeBankAccount=Ett obligatoriskt steg i installationen har inte slutförts (bokföringskodjournal definieras inte för alla bankkonton)
 Selectchartofaccounts=Välj aktivt diagram över konton
+CurrentChartOfAccount=Aktuell aktiv kontoplan
 ChangeAndLoad=Ändra och ladda
 Addanaccount=Lägg till ett redovisningskonto
 AccountAccounting=Redovisningskonto
@@ -108,14 +106,14 @@ DataUsedToSuggestAccount=Data som används för att föreslå konto
 AccountAccountingSuggest=Konto föreslaget
 MenuDefaultAccounts=Standardkonton
 MenuBankAccounts=Bankkonton
-MenuVatAccounts=Vat konton
+MenuVatAccounts=VAT accounts
 MenuTaxAccounts=Skattekonton
 MenuExpenseReportAccounts=Utläggsrapport konton
 MenuLoanAccounts=Lån konton
 MenuProductsAccounts=Produktkonton
 MenuClosureAccounts=Avslutande konton
 MenuAccountancyClosure=Stängning
-MenuExportAccountancy=Export accountancy
+MenuExportAccountancy=Exportredovisning
 MenuAccountancyValidationMovements=Validera rörelser
 ProductsBinding=Produkter konton
 TransferInAccounting=Överföring i bokföring
@@ -141,8 +139,6 @@ ExpenseReportLines=Kostnadsberäkningar rapporterar att förbinda
 ExpenseReportLinesDone=Förbundna utgiftsrapporter
 IntoAccount=Bind rad med bokföringskonto
 TotalForAccount=Totalt redovisningskonto
-
-
 Ventilate=Binda
 LineId=Id-linje
 Processing=Bearbetning
@@ -155,22 +151,21 @@ VentilatedinAccount=Bindade framgångsrikt till bokföringskontot
 NotVentilatedinAccount=Ej bunden till bokföringskonto
 XLineSuccessfullyBinded=%s produkter / tjänster har framgångsrikt bundet till ett bokföringskonto
 XLineFailedToBeBinded=%s produkter / tjänster var inte bundna till något kontokonto
-
 ACCOUNTING_LIMIT_LIST_VENTILATION=Maximalt antal rader på listan och bindningssidan (rekommenderas: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Börja sorteringen av sidan "Bindning att göra" av de senaste elementen
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Börja sorteringen av sidan "Bindning gjort" av de senaste elementen
-
 ACCOUNTING_LENGTH_DESCRIPTION=Avkorta produkt och tjänster beskrivning i listor efter x chars (Bäst = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Avkorta produkt och tjänster kontobeskrivningsformulär i listor efter x chars (Bäst = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Längden på de allmänna bokföringskontona (Om du anger värdet till 6 här visas kontot '706' som '706000' på skärmen)
 ACCOUNTING_LENGTH_AACCOUNT=Längden på kontot för tredje partens konto (Om du anger värde till 6 här visas kontot "401" som "401000" på skärmen)
 ACCOUNTING_MANAGE_ZERO=Tillåt att hantera olika antal nollor i slutet av ett bokföringskonto. Behövs av vissa länder (som Schweiz). Om den är avstängd (standard) kan du ställa in följande två parametrar för att be programmet att lägga till virtuella nollor.
+ACCOUNTING_BANK_CONCILIATED=Transfer into accounting only the lines reconciliated in bank statements (by default, could be unchecked on each transfer)
 BANK_DISABLE_DIRECT_INPUT=Inaktivera direktinspelning av transaktion i bankkonto
+ACCOUNTANCY_ER_DATE_RECORD=Use the end date of the period of an expense report as the date for the transfer to accounting, instead of the date of the expense
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Aktivera utkastexport på loggbok
 ACCOUNTANCY_COMBO_FOR_AUX=Aktivera kombinationslista för dotterbolagskonto (kan vara långsam om du har många tredje parter, bryter förmågan att söka efter en del av värdet)
-ACCOUNTING_DATE_START_BINDING=Definiera ett datum för att börja binda och överföra i bokföring. Under detta datum överförs inte transaktionerna till bokföring.
-ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Vid bokföringsöverföring, vilken period är vald som standard
-
+ACCOUNTING_DATE_START_BINDING=Inaktivera bindning och överföring i bokföring när datumet är under detta datum (transaktionerna före detta datum kommer att exkluderas som standard)
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=På sidan för att överföra data till bokföring, vilken period är vald som standard
 ACCOUNTING_SELL_JOURNAL=Försäljningsjournal - försäljning och returer
 ACCOUNTING_PURCHASE_JOURNAL=Inköpsjournal - köp och returer
 ACCOUNTING_BANK_JOURNAL=Kassajournal - in- och utbetalningar
@@ -179,38 +174,33 @@ ACCOUNTING_MISCELLANEOUS_JOURNAL=Allmän journal
 ACCOUNTING_HAS_NEW_JOURNAL=Har ny loggbok
 ACCOUNTING_INVENTORY_JOURNAL=Inventeringsjournal
 ACCOUNTING_SOCIAL_JOURNAL=Socialloggbok
-
 ACCOUNTING_RESULT_PROFIT=Resultaträkningskonto (vinst)
 ACCOUNTING_RESULT_LOSS=Resultaträkningskonto (förlust)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Loggbok för stängning
-
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT=Redovisningsgrupper som används för balanskontot (avgränsade med komma)
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT=Redovisningsgrupper som används för resultaträkningen (avgränsade med komma)
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Konto (från kontoplanen) som ska användas som konto för övergångsbanköverföringar
 TransitionalAccount=Övergångsbanköverföringskonto
-
 ACCOUNTING_ACCOUNT_SUSPENSE=Konto (från kontoplanen) som ska användas som konto för icke allokerade medel antingen mottagna eller betalda, dvs medel i "väntar"
 DONATION_ACCOUNTINGACCOUNT=Konto (från kontoplanen) som ska användas för att registrera donationer (donationsmodul)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Konto (från kontoplanen) som ska användas för att registrera medlemskapsabonnemang (Medlemsmodul - om medlemskap registrerats utan faktura)
-
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Konto (från kontoplanen) som ska användas som standardkonto för att registrera kundinsättning
 UseAuxiliaryAccountOnCustomerDeposit=Lagra kundkonto som individuellt konto i huvudboken för rader med förskottsbetalningar (om det är inaktiverat förblir individuellt konto för förskottsrader tomt)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Konto (från kontoplanen) som ska användas som standard
 UseAuxiliaryAccountOnSupplierDeposit=Lagra leverantörskonto som individuellt konto i huvudboken för rader med förskottsbetalningar (om det är inaktiverat förblir individuellt konto för förskottsrader tomt)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Bokföringskonto som standard för att registrera kundbehållen garanti
-
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Konto (från kontoplanen) som ska användas som standardkonto för produkter köpta inom samma land (används om det inte definieras i produktbladet)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Konto (från kontoplanen) som ska användas som standardkonto för de produkter som köpts från EEC till ett annat EEC-land (används om det inte anges i produktbladet)
 ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=Konto (från kontoplanen) som ska användas som standardkonto för de produkter som köps och importeras från något annat främmande land (används om det inte definieras i produktbladet)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Konto (från kontoplanen) som ska användas som standardkonto för de sålda produkterna (används om det inte definieras i produktbladet)
 ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Konto (från kontoplanen) som ska användas som standardkonto för produkter som säljs från EEC till ett annat EEC-land (används om det inte anges i produktbladet)
 ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Konto (från kontoplanen) som ska användas som standardkonto för de produkter som säljs och exporteras till något annat främmande land (används om det inte anges i produktbladet)
-
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Konto (från kontoplanen) som ska användas som standardkonto för tjänster köpta inom samma land (används om det inte definieras i servicebladet)
 ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=Konto (från kontoplanen) som ska användas som standardkonto för tjänster som köpts från EEC till ett annat EEC-land (används om det inte anges i servicebladet)
 ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=Konto (från kontoplanen) som ska användas som standardkonto för de tjänster som köpts och importerats från ett annat främmande land (används om det inte anges i servicebladet)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Konto (från kontoplanen) som ska användas som standardkonto för de sålda tjänsterna (används om det inte definieras i servicebladet)
 ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Konto (från kontoplanen) som ska användas som standardkonto för tjänster som säljs från EEC till ett annat EEC-land (används om det inte anges i servicebladet)
 ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Konto (från kontoplanen) som ska användas som standardkonto för de tjänster som säljs och exporteras till något annat främmande land (används om det inte anges i servicebladet)
-
 Doctype=Typ av dokument
 Docdate=Datum
 Docref=Referens
@@ -232,7 +222,6 @@ AccountingAccountGroupsDesc=Här kan du definiera vissa grupper av bokföringsko
 ByAccounts=Enligt konton
 ByPredefinedAccountGroups=Av fördefinierade grupper
 ByPersonalizedAccountGroups=Av personliga grupper
-ByYear=Per år
 NotMatch=Inte inställd
 DeleteMvt=Ta bort några rader från bokföringen
 DelMonth=Månad att ta bort
@@ -271,41 +260,34 @@ OpeningBalance=Öppningsbalans
 ShowOpeningBalance=Visa öppningsbalans
 HideOpeningBalance=Dölj öppningsbalansen
 ShowSubtotalByGroup=Visa delsumma efter nivå
-
 Pcgtype=Grupp av konto
 PcgtypeDesc=Kontogrupp används som fördefinierade kriterier för 'filter' och 'gruppering' för vissa redovisningsrapporter. Till exempel används 'INKOMST' eller 'KOSTNAD' som grupper för redovisning av produkter för att skapa en kostnads- / inkomstrapport.
 AccountingCategoriesDesc=Anpassad grupp av konton kan användas för att gruppera redovisningskonton i ett namn för att underlätta filteranvändning eller skapa anpassade rapporter.
-
 Reconcilable=Förenlig
-
 TotalVente=Total turnover before tax
 TotalMarge=Total försäljning marginal
-
 DescVentilCustomer=Se här listan över kundfakturarader bundna (eller inte) till ett produktkonto från kontoplan
 DescVentilMore=I de flesta fall, om du använder fördefinierade produkter eller tjänster och du ställer in kontot (från kontoplan) på produkt-/tjänstkortet, kommer applikationen att kunna göra all bindning mellan dina fakturarader och redovisningskontot för ditt diagram av konton, bara med ett klick med knappen <strong> "%s" </strong> . Om kontot inte var inställt på produkt-/tjänstkort eller om du fortfarande har några rader som inte är bundna till ett konto, måste du göra en manuell bindning från menyn " <strong> %s </strong> ".
 DescVentilDoneCustomer=Se här listan över rader av fakturakunder och deras produktkonto från kontoplan
 DescVentilTodoCustomer=Bind fakturarader som inte redan är bundna till ett produktkonto från kontoplan
 ChangeAccount=Ändra produkt-/tjänstkonto (från kontoplan) för de valda raderna med följande konto:
 Vide=-
-DescVentilSupplier=Se här listan över leverantörsfakturarader bundna eller ännu inte bundna till ett produktkonto från kontoplan (endast post som inte redan överförts i bokföringen är synlig)
+DescVentilSupplier=Se här listan över leverantörsfakturarader som är bundna eller ännu inte bundna till ett produktkonto från kontoplan (endast post som inte redan överförts i bokföringen är synlig)
 DescVentilDoneSupplier=Här kan du se listan över leverantörsfakturor och deras bokföringskonto
 DescVentilTodoExpenseReport=Förbinda utläggsrapportsrader som inte redan är bundna med ett konto i bokföringen
 DescVentilExpenseReport=Här kan du se listan över kostnadsrapporter som är bundna (eller inte) till ett avgiftsredovisningskonto
 DescVentilExpenseReportMore=Om du ställer in bokföringskonto på typ av kostnadsrapportrader kommer applikationen att kunna göra alla bindningar mellan dina kostnadsrapporter och konton för ditt kontoplan, bara med ett klick med knappen <strong> "%s" </strong>. Om kontot inte var inställt på avgifterna eller om du fortfarande har några rader som inte är kopplade till något konto måste du göra en manuell bindning från menyn "<strong> %s </strong>".
 DescVentilDoneExpenseReport=Här kan du se listan över raderna för kostnadsrapporter och deras bokföringskonto
-
 Closure=Årlig nedläggning
-DescClosure=Se här antalet rörelser per månad som ännu inte har validerats och låst
+AccountancyClosureStep1Desc=Se här antalet rörelser per månad som ännu inte har validerats och låst
 OverviewOfMovementsNotValidated=Översikt över rörelser som inte är validerade och låsta
 AllMovementsWereRecordedAsValidated=Alla rörelser registrerades som validerade och låsta
 NotAllMovementsCouldBeRecordedAsValidated=Alla rörelser kunde inte registreras som validerade och låsta
-ValidateMovements=Validate and lock movements
+ValidateMovements=Validera och låsa rörelser
 DescValidateMovements=Alla ändringar eller raderingar av skrift, bokstäver och raderingar är förbjudna. Alla bidrag till en övning måste valideras, annars är det inte möjligt att stänga
-
 ValidateHistory=Förbind automatiskt
 AutomaticBindingDone=Automatiska bindningar gjorda (%s) - Automatisk bindning är inte möjlig för vissa poster (%s)
 DoManualBindingForFailedRecord=Du måste göra en manuell länk för %s rad(er) som inte länkas automatiskt.
-
 ErrorAccountancyCodeIsAlreadyUse=Fel, du kan inte ta bort eller inaktivera det här kontoplanen eftersom det används
 MvtNotCorrectlyBalanced=Rörelse inte korrekt balanserad. Debet = %s & kredit = %s
 Balancing=Balansering
@@ -318,19 +300,18 @@ ChangeBinding=Ändra bindningen
 Accounted=Redovisas i huvudbok
 NotYetAccounted=Ännu inte överfört till bokföring
 ShowTutorial=Visa handledning
+ClickOnUseTutorialForHelp=Welcome on the section to generate your accountancy. Click on the link "%s" to get advices on how to use it.
 NotReconciled=Inte avstämd
 WarningRecordWithoutSubledgerAreExcluded=Varning, alla rader utan definierat underreskontrakonto filtreras och exkluderas från denna vy
 AccountRemovedFromCurrentChartOfAccount=Redovisningskonto som inte finns i gällande kontoplan
-
 ## Admin
-BindingOptions=Bindande alternativ
+BindingOptions=Options for the transfer in accountancy
 ApplyMassCategories=Applicera masskategorier
 AddAccountFromBookKeepingWithNoCategories=Tillgängligt konto ännu inte i den personifierade gruppen
 CategoryDeleted=Kategori för bokföringskonto har tagits bort
 AccountingJournals=Bokföringsloggbok
 AccountingJournal=Bokföringsloggbok
 NewAccountingJournal=Ny bokföringsloggbok
-ShowAccountingJournal=Visa loggböcker
 NatureOfJournal=Journalens natur
 AccountingJournalType1=Övrig verksamhet
 AccountingJournalType2=Försäljning
@@ -338,7 +319,7 @@ AccountingJournalType3=Inköp
 AccountingJournalType4=Bank
 AccountingJournalType5=Räkningar
 AccountingJournalType8=Lager
-AccountingJournalType9=Har nya
+AccountingJournalType9=Balanserad vinst
 GenerationOfAccountingEntries=Generering av bokföringsposter
 ErrorAccountingJournalIsAlreadyUse=Denna loggboken används redan
 AccountingAccountForSalesTaxAreDefinedInto=Obs! Bokföringskonto för försäljningsskatt definieras i menyn <b> %s </b> - <b> %s </b>
@@ -349,23 +330,24 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Inaktivera bindning och överföring av 
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Inaktivera bindning och överföring i bokföring på kostnadsrapporter (kostnadsrapporter kommer inte att beaktas vid redovisning)
 ACCOUNTING_ENABLE_LETTERING=Aktivera bokstäverfunktionen i bokföringen
 ACCOUNTING_ENABLE_LETTERING_DESC=When this options is enabled, you can define, on each accounting entry, a code so you can group different accounting movements together. In the past, when different journals was managed independently, this feature was necessary to group movement lines of different journals together. However, with Dolibarr accountancy, such a tracking code, called "<b>%s</b>" is already saved automatically, so an automatic lettering is already done, with no risk of error so this feature has become useless for a common usage. Manual lettering feature is provided for end users that really don't trust the computer engine making the transfer of data in accountancy.
-EnablingThisFeatureIsNotNecessary=Enabling this feature is no more necessary for a rigourous accounting management.
+EnablingThisFeatureIsNotNecessary=Att aktivera den här funktionen är inte längre nödvändigt för en rigorös redovisningshantering.
 ACCOUNTING_ENABLE_AUTOLETTERING=Aktivera den automatiska bokstäverna vid överföring till bokföring
-ACCOUNTING_ENABLE_AUTOLETTERING_DESC=The code for the lettering is automatically generated and incremented and not choosed by the end user
-OptionsAdvanced=Advanced options
-ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Activate the management of VAT reverse charge on supplier purchases
-ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=When this option is enabled, you can define that a supplier or a given vendor invoice must be transfered into accountancy differently: A additionnal debit and a credit line will generated into the accounting on 2 given accounts from the chart of account defined into the "%s" setup page.
-
+ACCOUNTING_ENABLE_AUTOLETTERING_DESC=Koden för bokstäverna genereras automatiskt och inkrementeras och väljs inte av slutanvändaren
+ACCOUNTING_LETTERING_NBLETTERS=Antal bokstäver vid generering av bokstäverkod (standard 3)
+ACCOUNTING_LETTERING_NBLETTERS_DESC=Vissa bokföringsprogram accepterar bara en tvåbokstavskod. Denna parameter låter dig ställa in denna aspekt. Standardantalet bokstäver är tre.
+OptionsAdvanced=Avancerade alternativ
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Aktivera hanteringen av omvänd momsskyldighet på leverantörsköp
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=När det här alternativet är aktiverat kan du definiera att en leverantör eller en given leverantörsfaktura måste överföras till bokföring på annat sätt: En extra debitering och en kreditgräns kommer att genereras i bokföringen på 2 givna konton från kontoplanen som definieras i "%s" inställningssida.
 ## Export
 NotExportLettering=Exportera inte bokstäverna när filen genereras
-NotifiedExportDate=Flag not yet exported lines as Exported <span class="warning">(to modify a line flagged as exported, you will need to delete the whole transaction and re-transfert it into accounting)</span>
-NotifiedValidationDate=Validate and Lock the exported entries not yet already locked <span class="warning">(same effect than the "%s" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
+NotifiedExportDate=Flagga ännu inte exporterade rader som exporterade <span class="warning">(för att ändra en rad som flaggats som exporterad måste du radera hela transaktionen och överföra den till bokföringen igen)</span>
+NotifiedValidationDate=Validera och lås de exporterade posterna som ännu inte redan är låsta <span class="warning">(samma effekt som funktionen "%s", modifiering och radering av rader kommer DEFINITIVT inte att vara möjliga)</span>
 NotifiedExportFull=Exportera dokument?
 DateValidationAndLock=Datumvalidering och lås
 ConfirmExportFile=Bekräftelse på generering av bokföringsexportfilen?
 ExportDraftJournal=Exportera utkast till loggbok
 Modelcsv=Modell av export
-Selectmodelcsv=Välj en modell av export
+Selectmodelcsv=Select the default format for export
 Modelcsv_normal=Klassisk export
 Modelcsv_CEGID=Exportera till CEGID Expert Comptabilité
 Modelcsv_COALA=Exportera till Sage Coala
@@ -387,11 +369,10 @@ Modelcsv_Gestinumv3=Exportera för Gestinum (v3)
 Modelcsv_Gestinumv5=Exportera för Gestinum (v5)
 Modelcsv_charlemagne=Export för Aplim Charlemagne
 ChartofaccountsId=Diagram över konton Id
-
 ## Tools - Init accounting account on product / service
 InitAccountancy=Initära bokföring
 InitAccountancyDesc=Den här sidan kan användas för att initiera ett konto på produkter och tjänster som inte har ett kontokonto definierat för försäljning och inköp.
-DefaultBindingDesc=This page can be used to set the default accounts (from the chart of account) to use to link business objects with an account, like payment salaries, donation, taxes and VAT, when no specific account were already set.
+DefaultBindingDesc=Den här sidan kan användas för att ställa in standardkonton (från kontoplanen) som ska användas för att länka affärsobjekt med ett konto, som betalningslöner, donationer, skatter och moms, när inget specifikt konto redan var inställt.
 DefaultClosureDesc=Denna sida kan användas för att ställa in parametrar som används för bokslut.
 Options=alternativ
 OptionModeProductSell=Mode försäljning
@@ -420,14 +401,15 @@ SaleEECWithVAT=Försäljning i EEG med moms som inte är null, så vi antar att 
 SaleEECWithoutVATNumber=Försäljning i EEC utan moms men tredje parts momsregistreringsnummer är inte definierat. Vi faller tillbaka på kontot för standardförsäljning. Du kan fixa tredje parts momsregistreringsnummer eller ändra produktkontot som föreslås för bindning om det behövs.
 ForbiddenTransactionAlreadyExported=Förbjudet: Transaktionen har validerats och/eller exporterats.
 ForbiddenTransactionAlreadyValidated=Förbjudet: Transaktionen har validerats.
+DataMustHaveBeenTransferredInAccounting=The transfer of data in accounting must have been done
 ## Dictionary
 Range=Räckvidd av bokföringskonto
 Calculated=Beräknad
 Formula=Formel
-
 ## Reconcile
 LetteringAuto=Avstämning auto
 LetteringManual=Avstämning manuell
+LetteringPartial=Reconcile partial
 Unlettering=Ta bort avstämning
 UnletteringAuto=Ta bort automatisk avstämning
 UnletteringManual=Tabort manuell avstämning
@@ -437,17 +419,28 @@ AccountancyLetteringModifiedSuccessfully=%s avstämning har modifierats
 AccountancyNoUnletteringModified=Ingen avstämning har modifierats
 AccountancyOneUnletteringModifiedSuccessfully=En avstämning har modifierats
 AccountancyUnletteringModifiedSuccessfully=%s unreconcile har modifierats
-
+## Closure
+AccountancyClosureStep1=Steg 1: Validera och lås rörelserna
+AccountancyClosureStep2=Steg 2 : Stäng räkenskapsperioden
+AccountancyClosureStep3=Steg 3: Extrahera poster (valfritt)
+AccountancyClosureClose=Stäng räkenskapsperioden
+AccountancyClosureAccountingReversal=Extrahera och registrera "Retained Earnings"-poster
+AccountancyClosureStep3NewFiscalPeriod=Nästa räkenskapsperiod
+AccountancyClosureGenerateClosureBookkeepingRecords=Generera "Behållna intäkter"-poster för nästa räkenskapsperiod
+AccountancyClosureSeparateAuxiliaryAccounts=När du genererar "Retained Earnings"-posterna, specificera underreskontrakontona
+AccountancyClosureCloseSuccessfully=Räkenskapsperioden har avslutats framgångsrikt
+AccountancyClosureInsertAccountingReversalSuccessfully=Bokföringsposter för "Behållna vinstmedel" har infogats
 ## Confirm box
 ConfirmMassUnletteringAuto=Bekräftelse av automatisk avstämning av bulk
 ConfirmMassUnletteringManual=Bekräftelse av manuell avstämning av bulk
 ConfirmMassUnletteringQuestion=Är du säker på att du vill ta bort de %s valda posterna?
 ConfirmMassDeleteBookkeepingWriting=Massraderingsbekräftelse
-ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all line entries related to the same transaction will be deleted). Are you sure you want to delete the %s selected entries?
-
+ConfirmMassDeleteBookkeepingWritingQuestion=Detta kommer att radera transaktionen från bokföringen (alla radposter relaterade till samma transaktion kommer att raderas). Är du säker på att du vill ta bort de %s valda posterna?
+AccountancyClosureConfirmClose=Är du säker på att du vill stänga innevarande räkenskapsperiod? <span class="warning">Du förstår att avslutandet av räkenskapsperioden är en oåterkallelig åtgärd och kommer permanent att blockera alla ändringar eller raderingar av poster under denna period</span> .
+AccountancyClosureConfirmAccountingReversal=Är du säker på att du vill spela in poster för "Behållna intäkter"?
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Några obligatoriska steg för installationen var inte färdiga, var god fyll i dem
-ErrorNoAccountingCategoryForThisCountry=Ingen redovisningskoncern tillgänglig för land %s (Se Hem - Inställning - Ordböcker)
+ErrorNoAccountingCategoryForThisCountry=Ingen redovisningskontogrupp tillgänglig för landet %s (Se %s - %s - %s)
 ErrorInvoiceContainsLinesNotYetBounded=Du försöker att bokföra några rader i fakturan <strong> %s </strong>, men några andra rader är ännu inte förbundna till ett bokföringskonto. Bokföring av alla rader för denna faktura vägras.
 ErrorInvoiceContainsLinesNotYetBoundedShort=Vissa rader på fakturan är inte bundna till bokföringskonto.
 ExportNotSupported=Det exporterade formatet stöds inte på den här sidan
@@ -456,13 +449,15 @@ NoJournalDefined=Ingen loggbok definierad
 Binded=Förbundna rader
 ToBind=Rader att förbinda
 UseMenuToSetBindindManualy=Linjer som ännu inte är bundna, använd menyn <a href="%s"> %s </a> för att göra bindningen manuellt
-SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Note: this module or page is not completely compatible with the experimental feature of situation invoices. Some data may be wrong.
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Obs: denna modul eller sida är inte helt kompatibel med den experimentella funktionen i situationsfakturor. Vissa uppgifter kan vara felaktiga.
 AccountancyErrorMismatchLetterCode=Missmatch i avstämningskod
 AccountancyErrorMismatchBalanceAmount=Saldot (%s) är inte lika med 0
 AccountancyErrorLetteringBookkeeping=Fel har uppstått angående transaktionerna: %s
 ErrorAccountNumberAlreadyExists=Kontonumret %s finns redan
 ErrorArchiveAddFile=Kan inte lägga "%s"-filen i arkivet
-
+ErrorNoFiscalPeriodActiveFound=No active fiscal period found. You can create one from menu %s - %s - %s.
+ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=Bokföringsdokumentets datum är inte inom den aktiva räkenskapsperioden
+ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=Bokföringsdokumentets datum är inom en stängd räkenskapsperiod
 ## Import
 ImportAccountingEntries=Redovisningsposter
 ImportAccountingEntriesFECFormat=Bokföringsposter - FEC-format
@@ -484,11 +479,9 @@ FECFormatReconcilableDate=Avstämningsdatum (DateLet)
 FECFormatValidateDate=Deldatum validerat (ValidDate)
 FECFormatMulticurrencyAmount=Multivaluta belopp (Montantdevise)
 FECFormatMulticurrencyCode=Flervalskod (Idevise)
-
 DateExport=Datum export
-WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contain transactions modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
+WarningReportNotReliable=Varning, denna rapport är inte baserad på redovisningen, så den innehåller inte transaktioner som ändrats manuellt i redovisningen. Om din journalisering är uppdaterad är bokföringsvyn mer exakt.
 ExpenseReportJournal=Kostnadsrapportsloggbok
-DocsAlreadyExportedAreIncluded=Docs already exported are included
-ClickToShowAlreadyExportedLines=Click to show already exported lines
-
+DocsAlreadyExportedAreIncluded=Dokument som redan exporterats ingår
+ClickToShowAlreadyExportedLines=Klicka för att visa redan exporterade rader
 NAccounts=%s-konton

@@ -4,76 +4,63 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
 ModuleRecruitmentName = 招聘
 # Module description 'ModuleRecruitmentDesc'
 ModuleRecruitmentDesc = 管理和跟踪新工作职位的招聘活动
-
-#
 # Admin page
-#
 RecruitmentSetup = 招聘设置
-Settings = 设置
 RecruitmentSetupPage = 在此输入招聘模块的主要选项设置
 RecruitmentArea=招聘区
-PublicInterfaceRecruitmentDesc=Public pages of jobs are public URLs to show and answer to open jobs. There is one different link for each open job, found on each job record.
-EnablePublicRecruitmentPages=Enable public pages of open jobs
+PublicInterfaceRecruitmentDesc=空缺职位公共页面是公开 URLs，用于显示和回答空缺职位。每个空缺职位记录上都有一个针对本职位的不同链接。
+EnablePublicRecruitmentPages=启用空缺职位的公共页面
 
-#
-# About page
-#
-About = 关于
-RecruitmentAbout = About Recruitment
-RecruitmentAboutPage = Recruitment about page
 NbOfEmployeesExpected=预期的雇员人数
-JobLabel=Label of job position
+JobLabel=职位标签
 WorkPlace=工作地点
-DateExpected=Expected date
-FutureManager=Future manager
-ResponsibleOfRecruitement=Responsible of recruitment
-IfJobIsLocatedAtAPartner=If job is located at a partner place
+DateExpected=期望日期
+FutureManager=职位主管
+ResponsibleOfRecruitement=招聘负责人
+IfJobIsLocatedAtAPartner=如果空缺职位的工作位于合作伙伴地点
 PositionToBeFilled=工作岗位
 PositionsToBeFilled=工作岗位
 ListOfPositionsToBeFilled=工作岗位清单
 NewPositionToBeFilled=新工作岗位
-
-JobOfferToBeFilled=Job position to be filled
-ThisIsInformationOnJobPosition=Information of the job position to be filled
-ContactForRecruitment=Contact for recruitment
-EmailRecruiter=Email recruiter
-ToUseAGenericEmail=To use a generic email. If not defined, the email of the responsible of recruitment will be used
+JobOfferToBeFilled=空缺职位
+ThisIsInformationOnJobPosition=空缺职位信息
+ContactForRecruitment=招聘联系人
+EmailRecruiter=招聘人员电子邮件
+ToUseAGenericEmail=使用通用电子邮件。如果未定义，将使用招聘负责人的电子邮件
 NewCandidature=新申请
 ListOfCandidatures=申请清单
 Remuneration=工资
 RequestedRemuneration=要求的工资
 ProposedRemuneration=提议的工资
-ContractProposed=Contract proposed
-ContractSigned=Contract signed
-ContractRefused=Contract refused
+ContractProposed=拟议合同
+ContractSigned=合同已签
+ContractRefused=合同被拒绝
 RecruitmentCandidature=申请
 JobPositions=工作岗位
 RecruitmentCandidatures=申请
-InterviewToDo=Contacts to follow
-AnswerCandidature=Application answer
+InterviewToDo=需要关注的联系人
+AnswerCandidature=申请回复
 YourCandidature=您的申请
 YourCandidatureAnswerMessage=感谢您的申请<br>…
-JobClosedTextCandidateFound=The job position is closed. The position has been filled.
+JobClosedTextCandidateFound=该职位已关闭。该职位已招聘完成。
 JobClosedTextCanceled=这个职位已关闭
-ExtrafieldsJobPosition=补充属性（工作岗位）
-ExtrafieldsApplication=补充属性（工作岗位）
+ExtrafieldsJobPosition=自定义属性（职位）
+ExtrafieldsApplication=自定义属性（工作申请）
 MakeOffer=开价
 WeAreRecruiting=我们正在招聘。这是一份有待填补的空缺职位清单...
-NoPositionOpen=目前没有职位空缺
+NoPositionOpen=暂时没有职位空缺
+ConfirmClose=Confirm cancellation
+ConfirmCloseAsk=Are you sure you want to cancel this recruitment candidature
+Recruitment=招聘

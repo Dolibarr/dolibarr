@@ -2,6 +2,7 @@
 /* Copyright (C) 2012      Charles-François BENKE <charles.fr@benke.fr>
  * Copyright (C) 2005-2015 Laurent Destailleur    <eldy@users.sourceforge.net>
  * Copyright (C) 2014-2021 Frederic France        <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,17 +36,7 @@ class box_activity extends ModeleBoxes
 	public $boxlabel = 'BoxGlobalActivity';
 	public $depends = array("facture");
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
 	public $enabled = 1;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 
 	/**
 	 *  Constructor
@@ -60,12 +51,13 @@ class box_activity extends ModeleBoxes
 		$this->db = $db;
 
 		// FIXME: Pb into some status
-		$this->enabled = ($conf->global->MAIN_FEATURES_LEVEL); // Not enabled by default due to bugs (see previous comments)
+		$this->enabled = getDolGlobalInt('MAIN_FEATURES_LEVEL'); // Not enabled by default due to bugs (see previous comments)
 
-		$this->hidden = !((isModEnabled('facture') && $user->hasRight('facture', 'read'))
-			|| (isModEnabled('commande') && $user->hasRight('commande', 'read'))
+		$this->hidden = !(
+			(isModEnabled('invoice') && $user->hasRight('facture', 'read'))
+			|| (isModEnabled('order') && $user->hasRight('commande', 'read'))
 			|| (isModEnabled('propal') && $user->hasRight('propal', 'read'))
-			);
+		);
 	}
 
 	/**
@@ -90,14 +82,14 @@ class box_activity extends ModeleBoxes
 		$savMAIN_ACTIVATE_FILECACHE = getDolGlobalInt('MAIN_ACTIVATE_FILECACHE');
 		$conf->global->MAIN_ACTIVATE_FILECACHE = 1;
 
-		if (!empty($conf->global->MAIN_BOX_ACTIVITY_DURATION)) {
-			$nbofperiod = $conf->global->MAIN_BOX_ACTIVITY_DURATION;
+		if (getDolGlobalString('MAIN_BOX_ACTIVITY_DURATION')) {
+			$nbofperiod = getDolGlobalString('MAIN_BOX_ACTIVITY_DURATION');
 		}
 
 		$textHead = $langs->trans("Activity").' - '.$langs->trans("LastXMonthRolling", $nbofperiod);
 		$this->info_box_head = array(
 			'text' => $textHead,
-			'limit'=> dol_strlen($textHead),
+			'limit' => dol_strlen($textHead),
 		);
 
 		// compute the year limit to show
@@ -113,13 +105,13 @@ class box_activity extends ModeleBoxes
 
 			$sql = "SELECT p.fk_statut, SUM(p.total_ttc) as Mnttot, COUNT(*) as nb";
 			$sql .= " FROM (".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p";
-			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= ")";
 			$sql .= " WHERE p.entity IN (".getEntity('propal').")";
 			$sql .= " AND p.fk_soc = s.rowid";
-			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($user->socid) {
@@ -184,7 +176,7 @@ class box_activity extends ModeleBoxes
 				if (count($data) == 0) {
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center"',
-						'text'=>'<span class="opacitymedium">'.$langs->trans("NoRecordedProposals").'</span>',
+						'text' => '<span class="opacitymedium">'.$langs->trans("NoRecordedProposals").'</span>',
 					);
 					$line++;
 				}
@@ -192,7 +184,7 @@ class box_activity extends ModeleBoxes
 		}
 
 		// list the summary of the orders
-		if (isModEnabled('commande') && $user->hasRight("commande", "lire")) {
+		if (isModEnabled('order') && $user->hasRight("commande", "lire")) {
 			include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 			$commandestatic = new Commande($this->db);
 
@@ -202,13 +194,13 @@ class box_activity extends ModeleBoxes
 
 			$sql = "SELECT c.fk_statut, sum(c.total_ttc) as Mnttot, count(*) as nb";
 			$sql .= " FROM (".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
-			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= ")";
 			$sql .= " WHERE c.entity IN (".getEntity('commande').")";
 			$sql .= " AND c.fk_soc = s.rowid";
-			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($user->socid) {
@@ -244,7 +236,7 @@ class box_activity extends ModeleBoxes
 
 					$this->info_box_contents[$line][1] = array(
 						'td' => '',
-						'text' =>$langs->trans("Orders")."&nbsp;".$commandestatic->LibStatut($data[$j]->fk_statut, 0, 0),
+						'text' => $langs->trans("Orders")."&nbsp;".$commandestatic->LibStatut($data[$j]->fk_statut, 0, 0),
 					);
 
 					$this->info_box_contents[$line][2] = array(
@@ -270,7 +262,7 @@ class box_activity extends ModeleBoxes
 				if (count($data) == 0) {
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center"',
-						'text'=>$langs->trans("NoRecordedOrders"),
+						'text' => $langs->trans("NoRecordedOrders"),
 					);
 					$line++;
 				}
@@ -279,7 +271,7 @@ class box_activity extends ModeleBoxes
 
 
 		// list the summary of the bills
-		if (isModEnabled('facture') && $user->hasRight("facture", "lire")) {
+		if (isModEnabled('invoice') && $user->hasRight("facture", "lire")) {
 			include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 			$facturestatic = new Facture($this->db);
 
@@ -287,12 +279,12 @@ class box_activity extends ModeleBoxes
 			$data = array();
 			$sql = "SELECT f.fk_statut, SUM(f.total_ttc) as Mnttot, COUNT(*) as nb";
 			$sql .= " FROM (".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
-			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= ")";
 			$sql .= " WHERE f.entity IN (".getEntity('invoice').')';
-			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($user->socid) {
@@ -358,7 +350,7 @@ class box_activity extends ModeleBoxes
 				if (count($data) == 0) {
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center"',
-						'text'=>$langs->trans("NoRecordedInvoices"),
+						'text' => $langs->trans("NoRecordedInvoices"),
 					);
 					$line++;
 				}
@@ -427,7 +419,7 @@ class box_activity extends ModeleBoxes
 				if (count($data) == 0) {
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center"',
-						'text'=>$langs->trans("NoRecordedUnpaidInvoices"),
+						'text' => $langs->trans("NoRecordedUnpaidInvoices"),
 					);
 					$line++;
 				}
@@ -448,9 +440,9 @@ class box_activity extends ModeleBoxes
 	/**
 	 *  Method to show box
 	 *
-	 *  @param	array	$head       Array with properties of box title
-	 *  @param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
+	 *	@param	?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}	$head	Array with properties of box title
+	 *	@param	?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>	$contents	Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *  @return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)

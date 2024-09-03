@@ -16,8 +16,8 @@ ThisService=இந்த சேவை
 ThisProduct=இந்த தயாரிப்பு
 DefaultForService=Default for services
 DefaultForProduct=Default for products
-ProductForThisThirdparty=இந்த மூன்றாம் தரப்பினருக்கான தயாரிப்பு
-ServiceForThisThirdparty=இந்த மூன்றாம் தரப்பினருக்கான சேவை
+ProductForThisThirdparty=Product for this third party
+ServiceForThisThirdparty=Service for this third party
 CantSuggest=பரிந்துரைக்க முடியாது
 AccountancySetupDoneFromAccountancyMenu=கணக்குப்பதிவின் பெரும்பாலான அமைப்பு %s மெனுவில் இருந்து செய்யப்படுகிறது
 ConfigAccountingExpert=தொகுதி கணக்கியலின் கட்டமைப்பு (இரட்டை நுழைவு)
@@ -38,7 +38,7 @@ DeleteCptCategory=குழுவிலிருந்து கணக்கி�
 ConfirmDeleteCptCategory=கணக்கியல் கணக்குக் குழுவிலிருந்து இந்தக் கணக்கியல் கணக்கை நிச்சயமாக அகற்ற விரும்புகிறீர்களா?
 JournalizationInLedgerStatus=பத்திரிகை நிலை
 AlreadyInGeneralLedger=ஏற்கனவே கணக்கியல் இதழ்கள் மற்றும் லெட்ஜருக்கு மாற்றப்பட்டுள்ளது
-NotYetInGeneralLedger=கணக்குப் பத்திரிக்கைகள் மற்றும் லெட்ஜருக்கு இன்னும் மாற்றப்படவில்லை
+NotYetInGeneralLedger=Not yet transferred to accounting journals and ledger
 GroupIsEmptyCheckSetup=குழு காலியாக உள்ளது, தனிப்பயனாக்கப்பட்ட கணக்கியல் குழுவின் அமைப்பைச் சரிபார்க்கவும்
 DetailByAccount=கணக்கு மூலம் விவரங்களைக் காட்டு
 DetailBy=Detail by
@@ -53,27 +53,26 @@ ExportAccountingSourceDocHelp=With this tool, you can search and export the sour
 ExportAccountingSourceDocHelp2=உங்கள் பத்திரிகைகளை ஏற்றுமதி செய்ய, %s - %s என்ற மெனு உள்ளீட்டைப் பயன்படுத்தவும்.
 ExportAccountingProjectHelp=Specify a project if you need an accounting report only for a specific project. Expense reports and loan payments are not included in project reports.
 ExportAccountancy=Export accountancy
-WarningDataDisappearsWhenDataIsExported=Warning, this list contains only the accounting entries that have not been already exported (Export date is empty). If you want to include the accounting entries already exported to re-export them, click on the button above.
+WarningDataDisappearsWhenDataIsExported=Warning, this list contains only the accounting entries that have not been already exported (Export date is empty). If you want to include the accounting entries already exported, click on the button above.
 VueByAccountAccounting=கணக்கு கணக்கு மூலம் பார்க்கவும்
 VueBySubAccountAccounting=கணக்கியல் துணைக் கணக்கு மூலம் பார்க்கவும்
 
-MainAccountForCustomersNotDefined=வாடிக்கையாளர்களுக்கான முதன்மை கணக்கு கணக்கு அமைப்பில் வரையறுக்கப்படவில்லை
-MainAccountForSuppliersNotDefined=விற்பனையாளர்களுக்கான பிரதான கணக்கியல் கணக்கு அமைப்பில் வரையறுக்கப்படவில்லை
-MainAccountForUsersNotDefined=பயனர்களுக்கான பிரதான கணக்கியல் கணக்கு அமைப்பில் வரையறுக்கப்படவில்லை
-MainAccountForVatPaymentNotDefined=VAT செலுத்துதலுக்கான முதன்மை கணக்கு கணக்கு அமைப்பில் வரையறுக்கப்படவில்லை
-MainAccountForSubscriptionPaymentNotDefined=சந்தா செலுத்துதலுக்கான முதன்மை கணக்கு கணக்கு அமைப்பில் வரையறுக்கப்படவில்லை
+MainAccountForCustomersNotDefined=Main account (from the Chart of Account) for customers not defined in setup
+MainAccountForSuppliersNotDefined=Main account (from the Chart of Account) for vendors not defined in setup
+MainAccountForUsersNotDefined=Main account (from the Chart of Account) for users not defined in setup
+MainAccountForVatPaymentNotDefined=Account (from the Chart of Account) for VAT payment not defined in setup
+MainAccountForSubscriptionPaymentNotDefined=Account (from the Chart of Account) for membership payment not defined in setup
+MainAccountForRetainedWarrantyNotDefined=Account (from the Chart of Account) for the retained warranty not defined in setup
 UserAccountNotDefined=Accounting account for user not defined in setup
-
 AccountancyArea=கணக்கியல் பகுதி
 AccountancyAreaDescIntro=கணக்கியல் தொகுதியின் பயன்பாடு பல படிகளில் செய்யப்படுகிறது:
 AccountancyAreaDescActionOnce=பின்வரும் செயல்கள் வழக்கமாக ஒரு முறை அல்லது வருடத்திற்கு ஒரு முறை மட்டுமே செயல்படுத்தப்படும்...
-AccountancyAreaDescActionOnceBis=Next steps should be done to save you time in future by suggesting you automaticaly the correct default accounting account when transferring data in accounting
+AccountancyAreaDescActionOnceBis=Next steps should be done to save you time in future by suggesting you automatically the correct default accounting account when transferring data in accounting
 AccountancyAreaDescActionFreq=பின்வரும் செயல்கள் பொதுவாக ஒவ்வொரு மாதமும், வாரம் அல்லது நாளிலும் மிகப் பெரிய நிறுவனங்களுக்குச் செயல்படுத்தப்படும்...
-
 AccountancyAreaDescJournalSetup=STEP %s: Check content of your journal list from menu %s
 AccountancyAreaDescChartModel=படி %s: கணக்கு விளக்கப்படத்தின் மாதிரி உள்ளதா எனச் சரிபார்க்கவும் அல்லது %s மெனுவிலிருந்து ஒன்றை உருவாக்கவும்
 AccountancyAreaDescChart=STEP %s: %s மெனுவிலிருந்து உங்கள் கணக்கின் விளக்கப்படத்தைத் தேர்ந்தெடுத்து|அல்லது முடிக்கவும்
-
+AccountancyAreaDescFiscalPeriod=STEP %s: Define a fiscal year by default on which to integrate your accounting entries, from menu %s.
 AccountancyAreaDescVat=STEP %s: ஒவ்வொரு VAT விகிதங்களுக்கும் கணக்கியல் கணக்குகளை வரையறுக்கவும். இதற்கு, %s என்ற மெனு உள்ளீட்டைப் பயன்படுத்தவும்.
 AccountancyAreaDescDefault=STEP %s: இயல்புநிலை கணக்கியல் கணக்குகளை வரையறுக்கவும். இதற்கு, %s என்ற மெனு உள்ளீட்டைப் பயன்படுத்தவும்.
 AccountancyAreaDescExpenseReport=STEP %s: Define default accounting accounts for each type of Expense report. For this, use the menu entry %s.
@@ -81,19 +80,18 @@ AccountancyAreaDescSal=STEP %s: சம்பளம் செலுத்து�
 AccountancyAreaDescContrib=STEP %s: Define default accounting accounts for Taxes (special expenses). For this, use the menu entry %s.
 AccountancyAreaDescDonation=STEP %s: நன்கொடைக்கான இயல்புநிலை கணக்கியல் கணக்குகளை வரையறுக்கவும். இதற்கு, %s என்ற மெனு உள்ளீட்டைப் பயன்படுத்தவும்.
 AccountancyAreaDescSubscription=STEP %s: உறுப்பினர் சந்தாவுக்கான இயல்புநிலை கணக்கியல் கணக்குகளை வரையறுக்கவும். இதற்கு, %s என்ற மெனு உள்ளீட்டைப் பயன்படுத்தவும்.
-AccountancyAreaDescMisc=STEP %s: இதர பரிவர்த்தனைகளுக்கான கட்டாய இயல்புநிலை கணக்கு மற்றும் இயல்புநிலை கணக்கியல் கணக்குகளை வரையறுக்கவும். இதற்கு, %s என்ற மெனு உள்ளீட்டைப் பயன்படுத்தவும்.
+AccountancyAreaDescMisc=STEP %s: Define mandatory default accounts and default accounting accounts for miscellaneous transactions. For this, use the menu entry %s.
 AccountancyAreaDescLoan=STEP %s: கடன்களுக்கான இயல்புநிலை கணக்கியல் கணக்குகளை வரையறுக்கவும். இதற்கு, %s என்ற மெனு உள்ளீட்டைப் பயன்படுத்தவும்.
 AccountancyAreaDescBank=STEP %s: ஒவ்வொரு வங்கி மற்றும் நிதிக் கணக்குகளுக்கும் கணக்கியல் கணக்குகள் மற்றும் ஜர்னல் குறியீட்டை வரையறுக்கவும். இதற்கு, %s என்ற மெனு உள்ளீட்டைப் பயன்படுத்தவும்.
 AccountancyAreaDescProd=STEP %s: Define accounting accounts on your Products/Services. For this, use the menu entry %s.
-
 AccountancyAreaDescBind=STEP %s: ஏற்கனவே உள்ள %s கோடுகளுக்கு இடையே உள்ள பிணைப்பைச் சரிபார்த்து, கணக்கியல் கணக்கு முடிந்தது, எனவே ஒரே கிளிக்கில் லெட்ஜரில் பரிவர்த்தனைகளை ஜர்னலிஸ் செய்ய பயன்பாடு முடியும். விடுபட்ட பிணைப்புகளை முடிக்கவும். இதற்கு, %s என்ற மெனு உள்ளீட்டைப் பயன்படுத்தவும்.
 AccountancyAreaDescWriteRecords=STEP %s: பரிவர்த்தனைகளை லெட்ஜரில் எழுதவும். இதற்கு, <strong> %s </strong> மெனுவிற்குச் சென்று, <strong> %s a0a65d07z.
-AccountancyAreaDescAnalyze=STEP %s: ஏற்கனவே உள்ள பரிவர்த்தனைகளைச் சேர்க்கவும் அல்லது திருத்தவும் மற்றும் அறிக்கைகள் மற்றும் ஏற்றுமதிகளை உருவாக்கவும்.
-
-AccountancyAreaDescClosePeriod=STEP %s: எதிர்காலத்தில் மாற்றங்களைச் செய்ய முடியாது.
-
+AccountancyAreaDescAnalyze=STEP %s: Read reportings or generate export files for other bookkeepers.
+AccountancyAreaDescClosePeriod=STEP %s: Close period so we can't transfer anymore data in the same period in a future.
+TheFiscalPeriodIsNotDefined=A mandatory step in setup has not been completed (Fiscal period is not defined)
 TheJournalCodeIsNotDefinedOnSomeBankAccount=அமைப்பில் ஒரு கட்டாயப் படி முடிக்கப்படவில்லை (அனைத்து வங்கிக் கணக்குகளுக்கும் கணக்குக் குறியீடு ஜர்னல் வரையறுக்கப்படவில்லை)
 Selectchartofaccounts=கணக்குகளின் செயலில் உள்ள விளக்கப்படத்தைத் தேர்ந்தெடுக்கவும்
+CurrentChartOfAccount=Current active chart of account
 ChangeAndLoad=மாற்றவும் மற்றும் ஏற்றவும்
 Addanaccount=கணக்கியல் கணக்கைச் சேர்க்கவும்
 AccountAccounting=கணக்கியல் கணக்கு
@@ -108,7 +106,7 @@ DataUsedToSuggestAccount=Data used to suggest account
 AccountAccountingSuggest=Account suggested
 MenuDefaultAccounts=இயல்புநிலை கணக்குகள்
 MenuBankAccounts=வங்கி கணக்குகள்
-MenuVatAccounts=வாட் கணக்குகள்
+MenuVatAccounts=VAT accounts
 MenuTaxAccounts=வரி கணக்குகள்
 MenuExpenseReportAccounts=செலவு அறிக்கை கணக்குகள்
 MenuLoanAccounts=கடன் கணக்குகள்
@@ -141,8 +139,6 @@ ExpenseReportLines=இணைக்க வேண்டிய செலவு அ�
 ExpenseReportLinesDone=செலவு அறிக்கைகளின் வரம்புக்குட்பட்ட கோடுகள்
 IntoAccount=கணக்கியல் கணக்குடன் பிணைப்பு வரி
 TotalForAccount=மொத்த கணக்கு கணக்கு
-
-
 Ventilate=கட்டுதல்
 LineId=ஐடி வரி
 Processing=செயலாக்கம்
@@ -155,22 +151,21 @@ VentilatedinAccount=கணக்கியல் கணக்கில் வெ�
 NotVentilatedinAccount=கணக்கு கணக்குக்கு கட்டுப்படவில்லை
 XLineSuccessfullyBinded=%s தயாரிப்புகள்/சேவைகள் கணக்கியல் கணக்கில் வெற்றிகரமாக இணைக்கப்பட்டுள்ளன
 XLineFailedToBeBinded=%s தயாரிப்புகள்/சேவைகள் எந்த கணக்கியல் கணக்கிற்கும் கட்டுப்படவில்லை
-
 ACCOUNTING_LIMIT_LIST_VENTILATION=பட்டியல் மற்றும் பைண்ட் பக்கத்தில் உள்ள வரிகளின் அதிகபட்ச எண்ணிக்கை (பரிந்துரைக்கப்பட்டது: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO="செய்ய வேண்டியதைக் கட்டுப்படுத்துதல்" பக்கத்தை மிகச் சமீபத்திய கூறுகளின்படி வரிசைப்படுத்தத் தொடங்குங்கள்
 ACCOUNTING_LIST_SORT_VENTILATION_DONE="பைண்டிங் முடிந்தது" பக்கத்தை மிகச் சமீபத்திய கூறுகளின்படி வரிசைப்படுத்தத் தொடங்குங்கள்
-
 ACCOUNTING_LENGTH_DESCRIPTION=x எழுத்துகளுக்குப் பிறகு பட்டியல்களில் தயாரிப்பு மற்றும் சேவைகளின் விளக்கத்தை துண்டிக்கவும் (சிறந்தது = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=x எழுத்துகளுக்குப் பிறகு பட்டியல்களில் தயாரிப்பு மற்றும் சேவைகளின் கணக்கு விளக்கப் படிவத்தை துண்டிக்கவும் (சிறந்தது = 50)
 ACCOUNTING_LENGTH_GACCOUNT=பொது கணக்கு கணக்குகளின் நீளம் (இங்கு மதிப்பை 6 ஆக அமைத்தால், '706' கணக்கு '706000' போல் திரையில் தோன்றும்)
 ACCOUNTING_LENGTH_AACCOUNT=மூன்றாம் தரப்பு கணக்கியல் கணக்குகளின் நீளம் (இங்கு மதிப்பை 6 ஆக அமைத்தால், '401' கணக்கு '401000' போல் திரையில் தோன்றும்)
 ACCOUNTING_MANAGE_ZERO=கணக்கியல் கணக்கின் முடிவில் வெவ்வேறு எண்ணிக்கையிலான பூஜ்ஜியங்களை நிர்வகிக்க அனுமதிக்கவும். சில நாடுகளுக்கு (சுவிட்சர்லாந்து போன்ற) தேவை. ஆஃப் (இயல்புநிலை) என அமைக்கப்பட்டால், மெய்நிகர் பூஜ்ஜியங்களைச் சேர்க்க பயன்பாட்டைக் கேட்க பின்வரும் இரண்டு அளவுருக்களை அமைக்கலாம்.
+ACCOUNTING_BANK_CONCILIATED=Transfer into accounting only the lines reconciliated in bank statements (by default, could be unchecked on each transfer)
 BANK_DISABLE_DIRECT_INPUT=வங்கிக் கணக்கில் பரிவர்த்தனையின் நேரடிப் பதிவை முடக்கு
+ACCOUNTANCY_ER_DATE_RECORD=Use the end date of the period of an expense report as the date for the transfer to accounting, instead of the date of the expense
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=ஜர்னலில் வரைவு ஏற்றுமதியை இயக்கவும்
 ACCOUNTANCY_COMBO_FOR_AUX=துணைக் கணக்கிற்கான சேர்க்கை பட்டியலை இயக்கவும் (உங்களிடம் நிறைய மூன்றாம் தரப்பினர் இருந்தால் மெதுவாக இருக்கலாம், மதிப்பின் ஒரு பகுதியை தேடும் திறனை உடைக்கவும்)
-ACCOUNTING_DATE_START_BINDING=கணக்கியலில் பிணைப்பு மற்றும் பரிமாற்றத்தைத் தொடங்குவதற்கான தேதியை வரையறுக்கவும். இந்த தேதிக்கு கீழே, பரிவர்த்தனைகள் கணக்கியலுக்கு மாற்றப்படாது.
-ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, what is the period selected by default
-
+ACCOUNTING_DATE_START_BINDING=Disable binding & transfer in accountancy when date is below this date (the transactions before this date will be excluded by default)
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On the page to transfer data into accountancy, what is the period selected by default
 ACCOUNTING_SELL_JOURNAL=Sales journal - sales and returns
 ACCOUNTING_PURCHASE_JOURNAL=Purchase journal - purchase and returns
 ACCOUNTING_BANK_JOURNAL=Cash journal - receipts and disbursements
@@ -179,38 +174,33 @@ ACCOUNTING_MISCELLANEOUS_JOURNAL=General journal
 ACCOUNTING_HAS_NEW_JOURNAL=புதிய ஜர்னல் உள்ளது
 ACCOUNTING_INVENTORY_JOURNAL=Inventory journal
 ACCOUNTING_SOCIAL_JOURNAL=சமூக இதழ்
-
 ACCOUNTING_RESULT_PROFIT=முடிவு கணக்கு கணக்கு (லாபம்)
 ACCOUNTING_RESULT_LOSS=முடிவு கணக்கு கணக்கு (இழப்பு)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=மூடல் இதழ்
-
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT=Accounting groups used for the balance sheet account (separate by comma)
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT=Accounting groups used for the income statement (separate by comma)
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Account (from the Chart Of Account) to be used as the account for transitional bank transfers
 TransitionalAccount=இடைக்கால வங்கி பரிமாற்ற கணக்கு
-
 ACCOUNTING_ACCOUNT_SUSPENSE=Account (from the Chart Of Account) to be used as the account for unallocated funds either received or paid i.e. funds in "wait[ing]"
 DONATION_ACCOUNTINGACCOUNT=Account (from the Chart Of Account) to be used to register donations (Donation module)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Account (from the Chart Of Account) to be used to register memberships subscriptions (Membership module - if membership recorded without invoice)
-
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register customer deposit
 UseAuxiliaryAccountOnCustomerDeposit=Store customer account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default
 UseAuxiliaryAccountOnSupplierDeposit=Store supplier account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Accounting account by default to register customer retained warranty
-
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased within same country (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased from EEC to another EEC country (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased and imported from any other foreign country (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the sold products (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products sold from EEC to another EEC country (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products sold and exported to any other foreign country (used if not defined in the product sheet)
-
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the services purchased within same country (used if not defined in the service sheet)
 ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the services purchased from EEC to another EEC country (used if not defined in the service sheet)
 ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the services purchased and imported from other foreign country (used if not defined in the service sheet)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the sold services (used if not defined in the service sheet)
 ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the services sold from EEC to another EEC country (used if not defined in the service sheet)
 ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the services sold and exported to any other foreign country (used if not defined in the service sheet)
-
 Doctype=ஆவணத்தின் வகை
 Docdate=தேதி
 Docref=குறிப்பு
@@ -232,7 +222,6 @@ AccountingAccountGroupsDesc=கணக்கியல் கணக்கின்
 ByAccounts=கணக்குகள் மூலம்
 ByPredefinedAccountGroups=முன் வரையறுக்கப்பட்ட குழுக்களால்
 ByPersonalizedAccountGroups=தனிப்பயனாக்கப்பட்ட குழுக்களால்
-ByYear=ஆண்டு வாரியாக
 NotMatch=அமைக்கப்படவில்லை
 DeleteMvt=Delete some lines from accounting
 DelMonth=நீக்க வேண்டிய மாதம்
@@ -271,41 +260,34 @@ OpeningBalance=ஆரம்ப இருப்பு
 ShowOpeningBalance=தொடக்க இருப்பைக் காட்டு
 HideOpeningBalance=தொடக்க இருப்பை மறை
 ShowSubtotalByGroup=துணைத்தொகையை நிலை வாரியாகக் காட்டு
-
 Pcgtype=கணக்கு குழு
 PcgtypeDesc=கணக்கின் குழு சில கணக்கியல் அறிக்கைகளுக்கு முன் வரையறுக்கப்பட்ட 'வடிகட்டி' மற்றும் 'குழுப்படுத்துதல்' அளவுகோல்களாகப் பயன்படுத்தப்படுகிறது. எடுத்துக்காட்டாக, 'வருமானம்' அல்லது 'செலவு' என்பது செலவு/வருமான அறிக்கையை உருவாக்க தயாரிப்புகளின் கணக்கு கணக்குகளுக்கு குழுக்களாகப் பயன்படுத்தப்படுகிறது.
 AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease filter use or building of custom reports.
-
 Reconcilable=சமரசம் செய்யக்கூடியது
-
 TotalVente=வரிக்கு முந்தைய மொத்த விற்றுமுதல்
 TotalMarge=மொத்த விற்பனை அளவு
-
 DescVentilCustomer=Consult here the list of customer invoice lines bound (or not) to a product account from chart of account
 DescVentilMore=In most cases, if you use predefined products or services and you set the account (from chart of account) on the product/service card, the application will be able to make all the binding between your invoice lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on product/service cards or if you still have some lines not bound to an account, you will have to make a manual binding from the menu "<strong>%s</strong>".
 DescVentilDoneCustomer=Consult here the list of the lines of invoices customers and their product account from chart of account
 DescVentilTodoCustomer=Bind invoice lines not already bound with a product account from chart of account
 ChangeAccount=Change the product/service account (from chart of account) for the selected lines with the following account:
 Vide=-
-DescVentilSupplier=Consult here the list of vendor invoice lines bound or not yet bound to a product account from chart of account (only record not already transfered in accountancy are visible)
+DescVentilSupplier=Consult here the list of vendor invoice lines bound or not yet bound to a product account from chart of account (only record not already transferred in accountancy are visible)
 DescVentilDoneSupplier=விற்பனையாளர் விலைப்பட்டியல் மற்றும் அவர்களின் கணக்கியல் கணக்கின் வரிகளின் பட்டியலை இங்கே பார்க்கவும்
 DescVentilTodoExpenseReport=கட்டணம் கணக்கியல் கணக்குடன் ஏற்கனவே பிணைக்கப்படாத செலவு அறிக்கை வரிகளை பிணைக்கவும்
 DescVentilExpenseReport=கட்டணக் கணக்குக் கணக்கிற்குக் கட்டுப்பட்ட (அல்லது இல்லை) செலவு அறிக்கை வரிகளின் பட்டியலை இங்கே பார்க்கவும்
 DescVentilExpenseReportMore=நீங்கள் அமைப்பு இழப்பில் அறிக்கை வரிகளை வகையை கணக்கு கணக்கியல் என்றால், விண்ணப்பம் பொத்தானை <strong> "%s" </strong> மூலம் ஒரே கிளிக்கில், உங்கள் இழப்பில் அறிக்கை கோடுகள் மற்றும் கணக்குகளின் தரவரிசையில் கணக்கியல் கணக்கு இடையே கட்டாயமாக ஏற்றுக் கொள்ள வேண்டுமென்ற முடியும். கட்டண அகராதியில் கணக்கு அமைக்கப்படவில்லை என்றாலோ அல்லது எந்தக் கணக்கிற்கும் கட்டுப்படாத சில வரிகள் உங்களிடம் இருந்தாலோ, " <strong> %s </strong> " மெனுவிலிருந்து கைமுறையாகப் பிணைக்க வேண்டும்.
 DescVentilDoneExpenseReport=செலவு அறிக்கைகள் மற்றும் அவற்றின் கட்டணக் கணக்குகளின் வரிகளின் பட்டியலை இங்கே பார்க்கவும்
-
 Closure=வருடாந்திர மூடல்
-DescClosure=Consult here the number of movements by month not yet validated & locked
+AccountancyClosureStep1Desc=Consult here the number of movements by month not yet validated & locked
 OverviewOfMovementsNotValidated=Overview of movements not validated and locked
 AllMovementsWereRecordedAsValidated=All movements were recorded as validated and locked
 NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated and locked
 ValidateMovements=Validate and lock movements
 DescValidateMovements=எழுதுதல், எழுதுதல் மற்றும் நீக்குதல் ஆகியவற்றில் ஏதேனும் மாற்றம் அல்லது நீக்குதல் தடைசெய்யப்படும். ஒரு பயிற்சிக்கான அனைத்து உள்ளீடுகளும் சரிபார்க்கப்பட வேண்டும் இல்லையெனில் மூடுவது சாத்தியமில்லை
-
 ValidateHistory=தானாக பிணைக்கவும்
 AutomaticBindingDone=தானியங்கி பிணைப்புகள் செய்யப்பட்டன (%s) - சில பதிவுகளுக்கு தானியங்கு பிணைப்பு சாத்தியமில்லை (%s)
 DoManualBindingForFailedRecord=You have to do a manual link for the %s row(s) not linked automatically.
-
 ErrorAccountancyCodeIsAlreadyUse=Error, you cannot remove or disable this account of chart of account because it is used
 MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s & Credit = %s
 Balancing=சமநிலைப்படுத்துதல்
@@ -318,19 +300,18 @@ ChangeBinding=பிணைப்பை மாற்றவும்
 Accounted=லெட்ஜரில் கணக்கு வைக்கப்பட்டுள்ளது
 NotYetAccounted=இன்னும் கணக்கியலுக்கு மாற்றப்படவில்லை
 ShowTutorial=டுடோரியலைக் காட்டு
+ClickOnUseTutorialForHelp=Welcome on the section to generate your accountancy. Click on the link "%s" to get advices on how to use it.
 NotReconciled=சமரசம் செய்யவில்லை
 WarningRecordWithoutSubledgerAreExcluded=Warning, all lines without subledger account defined are filtered and excluded from this view
 AccountRemovedFromCurrentChartOfAccount=Accounting account that does not exist in the current chart of accounts
-
 ## Admin
-BindingOptions=பிணைப்பு விருப்பங்கள்
+BindingOptions=Options for the transfer in accountancy
 ApplyMassCategories=வெகுஜன வகைகளைப் பயன்படுத்துங்கள்
 AddAccountFromBookKeepingWithNoCategories=தனிப்பட்ட குழுவில் இன்னும் கணக்கு இல்லை
 CategoryDeleted=கணக்கியல் கணக்கிற்கான வகை அகற்றப்பட்டது
 AccountingJournals=கணக்கியல் இதழ்கள்
 AccountingJournal=கணக்கியல் இதழ்
 NewAccountingJournal=புதிய கணக்கியல் இதழ்
-ShowAccountingJournal=கணக்கியல் பத்திரிகையைக் காட்டு
 NatureOfJournal=இதழின் இயல்பு
 AccountingJournalType1=இதர செயல்பாடுகள்
 AccountingJournalType2=விற்பனை
@@ -338,7 +319,7 @@ AccountingJournalType3=கொள்முதல்
 AccountingJournalType4=வங்கி
 AccountingJournalType5=Expense reports
 AccountingJournalType8=சரக்கு
-AccountingJournalType9=புதியது
+AccountingJournalType9=Retained earnings
 GenerationOfAccountingEntries=Generation of accounting entries
 ErrorAccountingJournalIsAlreadyUse=இந்த இதழ் ஏற்கனவே பயன்பாட்டில் உள்ளது
 AccountingAccountForSalesTaxAreDefinedInto=குறிப்பு: விற்பனை வரிக்கான கணக்கு கணக்கு <b> %s </b> - <b> %s a0904
@@ -349,13 +330,14 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=வாங்குதல்களில�
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=செலவு அறிக்கைகள் மீதான கணக்கியலில் பிணைப்பு மற்றும் பரிமாற்றத்தை முடக்கு (கணக்கில் செலவு அறிக்கைகள் கணக்கில் எடுத்துக்கொள்ளப்படாது)
 ACCOUNTING_ENABLE_LETTERING=Enable the lettering function in the accounting
 ACCOUNTING_ENABLE_LETTERING_DESC=When this options is enabled, you can define, on each accounting entry, a code so you can group different accounting movements together. In the past, when different journals was managed independently, this feature was necessary to group movement lines of different journals together. However, with Dolibarr accountancy, such a tracking code, called "<b>%s</b>" is already saved automatically, so an automatic lettering is already done, with no risk of error so this feature has become useless for a common usage. Manual lettering feature is provided for end users that really don't trust the computer engine making the transfer of data in accountancy.
-EnablingThisFeatureIsNotNecessary=Enabling this feature is no more necessary for a rigourous accounting management.
+EnablingThisFeatureIsNotNecessary=Enabling this feature is no more necessary for a rigorous accounting management.
 ACCOUNTING_ENABLE_AUTOLETTERING=Enable the automatic lettering when transferring to accounting
-ACCOUNTING_ENABLE_AUTOLETTERING_DESC=The code for the lettering is automatically generated and incremented and not choosed by the end user
+ACCOUNTING_ENABLE_AUTOLETTERING_DESC=The code for the lettering is automatically generated and incremented and not chosen by the end user
+ACCOUNTING_LETTERING_NBLETTERS=Number of letters when generating lettering code (default 3)
+ACCOUNTING_LETTERING_NBLETTERS_DESC=Some accounting software only accepts a two-letter code. This parameter allows you to set this aspect. The default number of letters is three.
 OptionsAdvanced=Advanced options
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Activate the management of VAT reverse charge on supplier purchases
-ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=When this option is enabled, you can define that a supplier or a given vendor invoice must be transfered into accountancy differently: A additionnal debit and a credit line will generated into the accounting on 2 given accounts from the chart of account defined into the "%s" setup page.
-
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=When this option is enabled, you can define that a supplier or a given vendor invoice must be transferred into accountancy differently: A additional debit and a credit line will generated into the accounting on 2 given accounts from the chart of account defined into the "%s" setup page.
 ## Export
 NotExportLettering=Do not export the lettering when generating the file
 NotifiedExportDate=Flag not yet exported lines as Exported <span class="warning">(to modify a line flagged as exported, you will need to delete the whole transaction and re-transfert it into accounting)</span>
@@ -365,7 +347,7 @@ DateValidationAndLock=Date validation and lock
 ConfirmExportFile=கணக்கியல் ஏற்றுமதி கோப்பின் தலைமுறையை உறுதிப்படுத்தவா?
 ExportDraftJournal=ஏற்றுமதி வரைவு இதழ்
 Modelcsv=ஏற்றுமதி மாதிரி
-Selectmodelcsv=ஏற்றுமதி மாதிரியைத் தேர்ந்தெடுக்கவும்
+Selectmodelcsv=Select the default format for export
 Modelcsv_normal=கிளாசிக் ஏற்றுமதி
 Modelcsv_CEGID=CEGID நிபுணர் Comptabilité க்கான ஏற்றுமதி
 Modelcsv_COALA=முனிவர் கோலாவுக்கு ஏற்றுமதி
@@ -387,7 +369,6 @@ Modelcsv_Gestinumv3=Gestinum க்கான ஏற்றுமதி (v3)
 Modelcsv_Gestinumv5=Gestinum க்கான ஏற்றுமதி (v5)
 Modelcsv_charlemagne=அப்லிம் சார்லிமேனுக்கான ஏற்றுமதி
 ChartofaccountsId=கணக்கு ஐடியின் விளக்கப்படம்
-
 ## Tools - Init accounting account on product / service
 InitAccountancy=Init கணக்கியல்
 InitAccountancyDesc=விற்பனை மற்றும் வாங்குதல்களுக்கு வரையறுக்கப்பட்ட கணக்கு கணக்கு இல்லாத தயாரிப்புகள் மற்றும் சேவைகளில் கணக்கியல் கணக்கைத் தொடங்க இந்தப் பக்கம் பயன்படுத்தப்படலாம்.
@@ -417,17 +398,18 @@ SaleLocal=உள்ளூர் விற்பனை
 SaleExport=ஏற்றுமதி விற்பனை
 SaleEEC=EEC இல் விற்பனை
 SaleEECWithVAT=EEC இல் VAT இல் விற்பனையானது பூஜ்யமாக இல்லை, எனவே இது ஒரு உள்நாடு விற்பனை அல்ல, மேலும் பரிந்துரைக்கப்பட்ட கணக்கு நிலையான தயாரிப்புக் கணக்காகும்.
-SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of thirdparty is not defined. We fall back on the account for standard sales. You can fix the VAT ID of the thirdparty, or change the product account suggested for binding if needed.
+SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of third party is not defined. We fall back on the account for standard sales. You can fix the VAT ID of the third party, or change the product account suggested for binding if needed.
 ForbiddenTransactionAlreadyExported=தடைசெய்யப்பட்டது: பரிவர்த்தனை சரிபார்க்கப்பட்டது மற்றும்/அல்லது ஏற்றுமதி செய்யப்பட்டது.
 ForbiddenTransactionAlreadyValidated=தடைசெய்யப்பட்டது: பரிவர்த்தனை சரிபார்க்கப்பட்டது.
+DataMustHaveBeenTransferredInAccounting=The transfer of data in accounting must have been done
 ## Dictionary
 Range=கணக்கியல் கணக்கின் வரம்பு
 Calculated=கணக்கிடப்பட்டது
 Formula=சூத்திரம்
-
 ## Reconcile
 LetteringAuto=Reconcile auto
 LetteringManual=Reconcile manual
+LetteringPartial=Reconcile partial
 Unlettering=Unreconcile
 UnletteringAuto=Unreconcile auto
 UnletteringManual=Unreconcile manual
@@ -437,17 +419,28 @@ AccountancyLetteringModifiedSuccessfully=%s reconcile successfully modified
 AccountancyNoUnletteringModified=No unreconcile modified
 AccountancyOneUnletteringModifiedSuccessfully=One unreconcile successfully modified
 AccountancyUnletteringModifiedSuccessfully=%s unreconcile successfully modified
-
+## Closure
+AccountancyClosureStep1=Step 1 : Validate and lock the movements
+AccountancyClosureStep2=Step 2 : Close the fiscal period
+AccountancyClosureStep3=Step 3 : Extract entries (Optional)
+AccountancyClosureClose=Close fiscal period
+AccountancyClosureAccountingReversal=Extract and record "Retained earnings" entries
+AccountancyClosureStep3NewFiscalPeriod=Next fiscal period
+AccountancyClosureGenerateClosureBookkeepingRecords=Generate "Retained earnings" entries on the next fiscal period
+AccountancyClosureSeparateAuxiliaryAccounts=When generating the "Retained earnings" entries, detail the sub-ledger accounts
+AccountancyClosureCloseSuccessfully=Fiscal period has been closed successfully
+AccountancyClosureInsertAccountingReversalSuccessfully=Bookkeeping entries for "Retained earnings" has been inserted successfully
 ## Confirm box
 ConfirmMassUnletteringAuto=Bulk auto unreconcile confirmation
 ConfirmMassUnletteringManual=Bulk manual unreconcile confirmation
 ConfirmMassUnletteringQuestion=Are you sure you want to unreconcile the %s selected record(s)?
 ConfirmMassDeleteBookkeepingWriting=Bulk Delete confirmation
 ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all line entries related to the same transaction will be deleted). Are you sure you want to delete the %s selected entries?
-
+AccountancyClosureConfirmClose=Are you sure you want to close the current fiscal period ? <span class="warning">You understand that closing the fiscal period is an irreversible action and will permanently block any modification or deletion of entries over this period</span>.
+AccountancyClosureConfirmAccountingReversal=Are you sure you want to record entries for the "Retained earnings" ?
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=அமைவுக்கான சில கட்டாயப் படிகள் செய்யப்படவில்லை, தயவுசெய்து அவற்றை முடிக்கவும்
-ErrorNoAccountingCategoryForThisCountry=%s நாட்டிற்கு கணக்கியல் கணக்குக் குழு இல்லை (முகப்பு - அமைவு - அகராதிகளைப் பார்க்கவும்)
+ErrorNoAccountingCategoryForThisCountry=No accounting account group available for country %s (See %s - %s - %s)
 ErrorInvoiceContainsLinesNotYetBounded=விலைப்பட்டியல் <strong> %s </strong> இன் சில வரிகளை ஜர்னலிஸ் செய்ய முயற்சிக்கிறீர்கள், ஆனால் வேறு சில வரிகள் கணக்கியல் கணக்கிற்கு இன்னும் வரம்பில் இல்லை. இந்த விலைப்பட்டியலுக்கான அனைத்து விலைப்பட்டியல் வரிகளின் ஜர்னலைசேஷன் மறுக்கப்படுகிறது.
 ErrorInvoiceContainsLinesNotYetBoundedShort=விலைப்பட்டியலில் உள்ள சில வரிகள் கணக்கியல் கணக்குடன் பிணைக்கப்படவில்லை.
 ExportNotSupported=அமைக்கப்பட்ட ஏற்றுமதி வடிவம் இந்தப் பக்கத்தில் ஆதரிக்கப்படவில்லை
@@ -462,7 +455,9 @@ AccountancyErrorMismatchBalanceAmount=The balance (%s) is not equal to 0
 AccountancyErrorLetteringBookkeeping=Errors have occurred concerning the transactions: %s
 ErrorAccountNumberAlreadyExists=The accounting number %s already exists
 ErrorArchiveAddFile=Can't put "%s" file in archive
-
+ErrorNoFiscalPeriodActiveFound=No active fiscal period found. You can create one from menu %s - %s - %s.
+ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=The bookkeeping doc date is not inside the active fiscal period
+ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=The bookkeeping doc date is inside a closed fiscal period
 ## Import
 ImportAccountingEntries=கணக்கு பதிவுகள்
 ImportAccountingEntriesFECFormat=கணக்கியல் உள்ளீடுகள் - FEC வடிவம்
@@ -484,11 +479,9 @@ FECFormatReconcilableDate=சரிசெய்யக்கூடிய தே�
 FECFormatValidateDate=துண்டு தேதி சரிபார்க்கப்பட்டது (செல்லுபடியாகும் தேதி)
 FECFormatMulticurrencyAmount=மல்டிகரன்சி தொகை (மாண்டன்ட் டிவைஸ்)
 FECFormatMulticurrencyCode=மல்டிகரன்சி குறியீடு (ஐடிவைஸ்)
-
 DateExport=தேதி ஏற்றுமதி
 WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contain transactions modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
 ExpenseReportJournal=செலவு அறிக்கை இதழ்
 DocsAlreadyExportedAreIncluded=Docs already exported are included
 ClickToShowAlreadyExportedLines=Click to show already exported lines
-
 NAccounts=%s கணக்குகள்

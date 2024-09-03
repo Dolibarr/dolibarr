@@ -39,8 +39,6 @@ class modAccounting extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $conf;
-
 		$this->db = $db;
 		$this->numero = 50400;
 
@@ -336,7 +334,7 @@ class modAccounting extends DolibarrModules
 		$this->import_fields_array[$r] = array(
 			'b.code_journal'=>'FECFormatJournalCode*',
 			'b.journal_label'=>'FECFormatJournalLabel',
-			'b.piece_num'=>'FECFormatEntryNum*',
+			'b.piece_num'=>'FECFormatEntryNum', // not mandatory (keep empty to get next value of "piece_num" from "llx_accounting_bookkeeping" table)
 			'b.doc_date'=>'FECFormatEntryDate*',
 			'b.numero_compte'=>'FECFormatGeneralAccountNumber*',
 			'b.label_compte'=>'FECFormatGeneralAccountLabel*',
@@ -362,14 +360,14 @@ class modAccounting extends DolibarrModules
 			'b.sens'=>'rule-computeDirection'
 		); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
 		$this->import_convertvalue_array[$r]=array(
-			'b.piece_num' => array('rule' => 'compute', 'classfile' => '/accountancy/class/accountancyimport.class.php', 'class' => 'AccountancyImport', 'method' => 'cleanValue', 'element' => 'Accountancy'),
+			'b.piece_num' => array('rule' => 'compute', 'type' => 'int', 'classfile' => '/accountancy/class/accountancyimport.class.php', 'class' => 'AccountancyImport', 'method' => 'computePieceNum', 'element' => 'Accountancy'),
 			'b.numero_compte'=>array('rule'=>'accountingaccount'),
 			'b.subledger_account'=>array('rule'=>'accountingaccount'),
-			'b.debit' => array('rule' => 'compute', 'classfile' => '/accountancy/class/accountancyimport.class.php', 'class' => 'AccountancyImport', 'method' => 'cleanAmount', 'element' => 'Accountancy'),
-			'b.credit' => array('rule' => 'compute', 'classfile' => '/accountancy/class/accountancyimport.class.php', 'class' => 'AccountancyImport', 'method' => 'cleanAmount', 'element' => 'Accountancy'),
-			'b.multicurrency_amount' => array('rule' => 'compute', 'classfile' => '/accountancy/class/accountancyimport.class.php', 'class' => 'AccountancyImport', 'method' => 'cleanAmount', 'element' => 'Accountancy'),
-			'b.montant' => array('rule' => 'compute', 'classfile' => '/accountancy/class/accountancyimport.class.php', 'class' => 'AccountancyImport', 'method' => 'computeAmount', 'element' => 'Accountancy'),
-			'b.sens' => array('rule' => 'compute', 'classfile' => '/accountancy/class/accountancyimport.class.php', 'class' => 'AccountancyImport', 'method' => 'computeDirection', 'element' => 'Accountancy'),
+			'b.debit' => array('rule' => 'compute', 'type' => 'double', 'classfile' => '/accountancy/class/accountancyimport.class.php', 'class' => 'AccountancyImport', 'method' => 'cleanAmount', 'element' => 'Accountancy'),
+			'b.credit' => array('rule' => 'compute', 'type' => 'double', 'classfile' => '/accountancy/class/accountancyimport.class.php', 'class' => 'AccountancyImport', 'method' => 'cleanAmount', 'element' => 'Accountancy'),
+			'b.multicurrency_amount' => array('rule' => 'compute', 'type' => 'double', 'classfile' => '/accountancy/class/accountancyimport.class.php', 'class' => 'AccountancyImport', 'method' => 'cleanAmount', 'element' => 'Accountancy'),
+			'b.montant' => array('rule' => 'compute', 'type' => 'double', 'classfile' => '/accountancy/class/accountancyimport.class.php', 'class' => 'AccountancyImport', 'method' => 'computeAmount', 'element' => 'Accountancy'),
+			'b.sens' => array('rule' => 'compute', 'type' => 'varchar', 'classfile' => '/accountancy/class/accountancyimport.class.php', 'class' => 'AccountancyImport', 'method' => 'computeDirection', 'element' => 'Accountancy'),
 		);
 		$this->import_regex_array[$r] = array(
 			//'b.doc_date'=>'^\d{4}\d{2}\d{2}$',

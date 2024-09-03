@@ -5,36 +5,25 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModuleEventOrganizationName = Arrangementorganisasjon
 EventOrganizationDescription = Arrangementsorganisasjon gjennom Prosjektmodul
 EventOrganizationDescriptionLong= Administrer organiseringen av et arrangement (show, konferanser, deltakere eller foredragsholdere, med offentlige sider for forslag, stemme eller registrering)
-#
-# Menu
-#
 EventOrganizationMenuLeft = Organiserte arrangementer
 EventOrganizationConferenceOrBoothMenuLeft = Konferanse eller messe
-
 PaymentEvent=Betaling av arrangement
-
-#
+EventFee=Arrangementsavgift
 # Admin page
-#
 NewRegistration=Registrering
 EventOrganizationSetup=Oppsett av arrangementorganisasjon
 EventOrganization=Arrangementsorganisering
-Settings=Innstillinger
 EventOrganizationSetupPage = Konfigurasjonsside for arrangementsorganisasjon
 EVENTORGANIZATION_TASK_LABEL = Etikett over oppgaver som skal opprettes automatisk når prosjektet er validert
 EVENTORGANIZATION_TASK_LABELTooltip = Når du validerer et arrangement for å organisere, kan noen oppgaver automatisk opprettes i prosjektet. <br><br>For eksempel:<br> Send innkalling til konferanser <br>Send innkalling til stander <br>Valider forslag til konferanser <br>Valider søknad om stander<br> Åpne abonnementer på arrangementet for deltakere <br>Send en påminnelse om arrangementet til foredragsholdere <br>Send en påminnelse om arrangementet til Booth-verter<br> Send en påminnelse om arrangementet til deltakerne
@@ -49,10 +38,7 @@ EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Mal for e-post som skal brukes n
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Mal for e-post som skal brukes når du sender e-poster fra masseaksjonen "Send e-poster" på deltakerlisten
 EVENTORGANIZATION_FILTERATTENDEES_CAT = I skjemaet for å opprette/legge til en deltaker, begrenser listen over tredjeparter til tredjeparter i kategorien
 EVENTORGANIZATION_FILTERATTENDEES_TYPE = I skjemaet for å opprette/legge til en deltaker, begrenser listen over tredjeparter til tredjeparter med arten
-
-#
 # Object
-#
 OrganizedEvent=Organisert arrangement
 EventOrganizationConfOrBooth= Konferanse eller messe
 EventOrganizationConfOrBoothes=Konferanser eller stander
@@ -64,10 +50,7 @@ DateOfRegistration = Registreringsdato
 ConferenceOrBoothAttendee = Konferanse- eller standdeltaker
 ApplicantOrVisitor=Søker eller besøkende
 Speaker=Taler
-
-#
 # Template Mail
-#
 YourOrganizationEventConfRequestWasReceived = Din forespørsel om konferanse ble mottatt
 YourOrganizationEventBoothRequestWasReceived = Din forespørsel om stand ble mottatt
 EventOrganizationEmailAskConf = Forespørsel om konferanse
@@ -77,10 +60,7 @@ EventOrganizationEmailRegistrationPayment = Påmelding til et arrangement
 EventOrganizationMassEmailAttendees = Kommunikasjon til deltakere
 EventOrganizationMassEmailSpeakers = Kommunikasjon til foredragsholdere
 ToSpeakers=Til foredragsholdere
-
-#
 # Event
-#
 AllowUnknownPeopleSuggestConf=Tillat folk å foreslå konferanser
 AllowUnknownPeopleSuggestConfHelp=Tillat ukjente personer å foreslå en konferanse de ønsker å holde
 AllowUnknownPeopleSuggestBooth=La folk søke om stand
@@ -89,27 +69,29 @@ PriceOfRegistration=Pris for registrering
 PriceOfRegistrationHelp=Pris for å registrere seg eller delta i arrangementet
 PriceOfBooth=Abonnementspris for en stand
 PriceOfBoothHelp=Abonnementspris for en stand
+EventOrganizationICSLinkProject=Koble til ICS for arrangementet
 EventOrganizationICSLink=Koble til ICS for konferanser
 ConferenceOrBoothInformation=Informasjon om konferanse eller stand
+ConferenceOrBoothFormat=Konferanse- eller standmodus
+ConferenceOrBoothFormatID=ID for konferanse- eller standmodus
+ConferenceOrBoothFormatCode=Kode for konferanse- eller standmodus
+ConferenceOrBoothFormatLabel=Etikett for konferanse- eller standmodus
 Attendees=Deltakere
-ListOfAttendeesOfEvent=Liste over deltakere til arrangementsprosjektet
+ListOfAttendeesOfEvent=Liste over deltakere til arrangementsprosjekter
+ListOfConfOrBoothOfEvent=Liste over konferanser eller stander for arrangementsprosjekter
 DownloadICSLink = Last ned ICS-lenke
 EVENTORGANIZATION_SECUREKEY = Seed for å sikre nøkkelen til den offentlige registreringssiden for å foreslå en konferanse
 SERVICE_BOOTH_LOCATION = Tjenesten brukt for fakturalinjen om en standplassering
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Tjenesten som brukes for fakturalinjen om et deltakerabonnement på et arrangement
 NbVotes=Antall stemmer
-#
 # Status
-#
 EvntOrgDraft = Kladd
 EvntOrgSuggested = Foreslått
 EvntOrgConfirmed = Bekreftet
 EvntOrgNotQualified = Ikke kvalifisert
 EvntOrgDone = Utført
 EvntOrgCancelled = Kansellert
-#
-# Public page
-#
+# Other
 SuggestForm = Forslagsside
 SuggestOrVoteForConfOrBooth = Side for forslag eller stemme
 EvntOrgRegistrationHelpMessage = Her kan du stemme på en konferanse eller foreslå en ny til arrangementet. Du kan også søke om å ha stand under arrangementet.
@@ -132,6 +114,7 @@ EventType = Hendelsestype
 LabelOfBooth=Stand-etikett
 LabelOfconference=Konferanseetikett
 ConferenceIsNotConfirmed=Påmelding ikke tilgjengelig, konferansen er ikke bekreftet ennå
+EventRegistrationAreClosed=Påmeldinger til arrangementet er stengt
 DateMustBeBeforeThan=%s må være før %s
 DateMustBeAfterThan=%s må være etter %s
 MaxNbOfAttendeesReached=Maksimalt antall deltakere er nådd
@@ -144,13 +127,8 @@ OrganizationEventBulkMailToAttendees=Dette er en påminnelse om din deltakelse i
 OrganizationEventBulkMailToSpeakers=Dette er en påminnelse om din deltakelse i arrangementet som foredragsholder
 OrganizationEventLinkToThirdParty=Link til tredjepart (kunde, leverandør eller partner)
 OrganizationEvenLabelName=Offentlig navn på konferansen eller standen
-
 NewSuggestionOfBooth=Søknad om stand
 NewSuggestionOfConference=Søknad om å holde en konferanse
-
-#
-# Vote page
-#
 EvntOrgRegistrationWelcomeMessage = Velkommen til forslagssiden til konferanse eller stand.
 EvntOrgRegistrationConfWelcomeMessage = Velkommen til forslagssiden til konferanse.
 EvntOrgRegistrationBoothWelcomeMessage = Velkommen til forslagssiden til stand.
@@ -158,8 +136,8 @@ EvntOrgVoteHelpMessage = Her kan du se og stemme på de foreslåtte arrangemente
 VoteOk = Din stemme har blitt akseptert.
 AlreadyVoted = Du har allerede stemt på dette arrangementet.
 VoteError = Det har oppstått en feil under avstemningen, prøv igjen.
-
 SubscriptionOk=Registreringen din er registrert
+AmountOfRegistrationPaid=Innbetalt registreringsbeløp
 ConfAttendeeSubscriptionConfirmation = Bekreftelse på ditt abonnement på et arrangement
 Attendee = Deltaker
 PaymentConferenceAttendee = Betaling for konferansedeltakere
@@ -169,9 +147,16 @@ RegistrationAndPaymentWereAlreadyRecorder=En registrering og en betaling er alle
 EmailAttendee=Deltakerens epost
 EmailCompany=Firma epost
 EmailCompanyForInvoice=Firma-epost (for faktura, hvis forskjellig fra deltaker-epost)
-ErrorSeveralCompaniesWithEmailContactUs=Flere selskaper med denne epostadressen er funnet, så vi kan ikke automatisk validere registreringen din. Vennligst kontakt oss på %s for en manuell validering
+ErrorSeveralCompaniesWithEmailContactUs=Flere selskaper med denne eposten er funnet, så vi kan ikke automatisk validere registreringen din. Vennligst kontakt oss på %s for en manuell validering
 ErrorSeveralCompaniesWithNameContactUs=Flere selskaper med dette navnet er funnet, så vi kan ikke automatisk validere registreringen din. Vennligst kontakt oss på %s for en manuell validering
 NoPublicActionsAllowedForThisEvent=Ingen offentlige handlinger er åpne for offentligheten for dette arrangementet
 MaxNbOfAttendees=Maks antall deltakere
 DateStartEvent=Startdato for arrangementet
 DateEndEvent=Sluttdato for arrangementet
+ModifyStatus=Endre status
+ConfirmModifyStatus=Bekreft statusendring
+ConfirmModifyStatusQuestion=Er du sikker på at du vil endre %s valgte post(er)?
+RecordsUpdated=%s Poster oppdatert
+RecordUpdated=Posten er oppdatert
+NoRecordUpdated=Ingen post oppdatert
+ProfitPerValidatedAttendee=Fortjeneste per deltaker

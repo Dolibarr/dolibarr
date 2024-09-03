@@ -3,6 +3,7 @@
  * Copyright (c) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,10 +73,10 @@ class FichinterStats extends Stats
 			$this->field_line = '0';
 			//$this->where.= " AND c.fk_statut > 0";    // Not draft and not cancelled
 		}
-		if (empty($user->rights->societe->client->voir) && !$this->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$this->where .= (!empty($this->where) ? ' AND ' : '')." c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
-		$this->where .= ($this->where ? ' AND ' : '')."c.entity IN (".getEntity('fichinter').')';
+		$this->where .= ($this->where ? ' AND ' : '')."c.entity IN (".getEntity('intervention').')';
 
 		if ($this->socid) {
 			$this->where .= " AND c.fk_soc = ".((int) $this->socid);
@@ -98,7 +99,7 @@ class FichinterStats extends Stats
 
 		$sql = "SELECT date_format(c.date_valid,'%m') as dm, COUNT(*) as nb";
 		$sql .= " FROM ".$this->from;
-		if (empty($user->rights->societe->client->voir) && !$this->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE c.date_valid BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
@@ -122,7 +123,7 @@ class FichinterStats extends Stats
 
 		$sql = "SELECT date_format(c.date_valid,'%Y') as dm, COUNT(*) as nb, 0";
 		$sql .= " FROM ".$this->from;
-		if (empty($user->rights->societe->client->voir) && !$this->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE ".$this->where;
@@ -145,7 +146,7 @@ class FichinterStats extends Stats
 
 		$sql = "SELECT date_format(c.date_valid,'%m') as dm, 0";
 		$sql .= " FROM ".$this->from;
-		if (empty($user->rights->societe->client->voir) && !$this->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE c.date_valid BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
@@ -169,7 +170,7 @@ class FichinterStats extends Stats
 
 		$sql = "SELECT date_format(c.date_valid,'%m') as dm, 0";
 		$sql .= " FROM ".$this->from;
-		if (empty($user->rights->societe->client->voir) && !$this->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE c.date_valid BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
@@ -191,7 +192,7 @@ class FichinterStats extends Stats
 
 		$sql = "SELECT date_format(c.date_valid,'%Y') as year, COUNT(*) as nb, 0 as total, 0 as avg";
 		$sql .= " FROM ".$this->from;
-		if (empty($user->rights->societe->client->voir) && !$this->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE ".$this->where;
@@ -202,11 +203,11 @@ class FichinterStats extends Stats
 	}
 
 	/**
-	 *  Return nb, amount of predefined product for year
+	 *	Return nb, amount of predefined product for year
 	 *
-	 *  @param	int		$year			Year to scan
-	 *  @param  int     $limit      	Limit
-	 *  @return	array					Array of values
+	 *	@param	int		$year		Year to scan
+	 *  @param  int     $limit      Limit
+	 *	@return	array<int<0,11>,array{0:int<1,12>,1:int|float}>	Array of values
 	 */
 	public function getAllByProduct($year, $limit = 0)
 	{

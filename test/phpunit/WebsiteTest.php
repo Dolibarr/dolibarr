@@ -27,6 +27,7 @@
 global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (! defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
@@ -68,7 +69,7 @@ if (empty($user->id)) {
 		$user->rights->website = new stdClass();
 	}
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**
@@ -78,89 +79,8 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class WebsiteTest extends PHPUnit\Framework\TestCase
+class WebsiteTest extends CommonClassTest
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
-
-	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @param 	string	$name		Name
-	 * @return WebsiteTest
-	 */
-	public function __construct($name = '')
-	{
-		parent::__construct($name);
-
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
-
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
-
-	/**
-	 * setUpBeforeClass
-	 *
-	 * @return void
-	 */
-	public static function setUpBeforeClass(): void
-	{
-		global $conf,$user,$langs,$db;
-		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * tearDownAfterClass
-	 *
-	 * @return	void
-	 */
-	public static function tearDownAfterClass(): void
-	{
-		global $conf,$user,$langs,$db;
-		$db->rollback();
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * Init phpunit tests
-	 *
-	 * @return	void
-	 */
-	protected function setUp(): void
-	{
-		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * End phpunit tests
-	 *
-	 * @return	void
-	 */
-	protected function tearDown(): void
-	{
-		print __METHOD__."\n";
-	}
-
-
 	/**
 	 * testGetPagesFromSearchCriterias
 	 *
@@ -168,7 +88,7 @@ class WebsiteTest extends PHPUnit\Framework\TestCase
 	 */
 	public function testGetPagesFromSearchCriterias()
 	{
-		global $db, $website;
+		global $db, $website;	// We need the $website as global, it is used by the getPagesFromSearchCriterias()
 
 		$website = new Website($db);	// $website must be defined globally for getPagesFromSearchCriterias()
 
@@ -216,14 +136,39 @@ class WebsiteTest extends PHPUnit\Framework\TestCase
 		// Force permission so this is not the permission that will affect result of checkPHPCode
 		$user->rights->website->writephp = 1;
 
+		$t = '';
 		$s = '<?php exec("eee"); ?>';
-		$result = checkPHPCode('', $s);
+		$result = checkPHPCode($t, $s);
 		print __METHOD__." result checkPHPCode=".$result."\n";
 		$this->assertEquals($result, 1, 'checkPHPCode did not detect the string was dangerous');
 
+		$t = '';
 		$s = '<?php $_="{"; $_=($_^"<").($_^">;").($_^"/"); ?><?=${\'_\'.$_}["_"](${\'_\'.$_}["__"]);?>';
-		$result = checkPHPCode('', $s);
+		$result = checkPHPCode($t, $s);
 		print __METHOD__." result checkPHPCode=".$result."\n";
 		$this->assertEquals($result, 1, 'checkPHPCode did not detect the string was dangerous');
+	}
+
+	/**
+	 * testDolKeepOnlyPhpCode
+	 *
+	 * @return void
+	 */
+	public function testDolKeepOnlyPhpCode()
+	{
+		$s = 'HTML content <?php exec("eee"); ?> and more HTML content';
+		$result = dolKeepOnlyPhpCode($s);
+		print __METHOD__." result dolKeepOnlyPhpCode=".$result."\n";
+		$this->assertEquals('<?php exec("eee"); ?>', $result, 'dolKeepOnlyPhpCode did extract the correct string');
+
+		$s = 'HTML content <? exec("eee"); ?> and more HTML content';
+		$result = dolKeepOnlyPhpCode($s);
+		print __METHOD__." result dolKeepOnlyPhpCode=".$result."\n";
+		$this->assertEquals('<?php exec("eee"); ?>', $result, 'dolKeepOnlyPhpCode did extract the correct string');
+
+		$s = 'HTML content <?php test() <?php test2(); ?> and more HTML content';
+		$result = dolKeepOnlyPhpCode($s);
+		print __METHOD__." result dolKeepOnlyPhpCode=".$result."\n";
+		$this->assertEquals('<?php test() ?><?php test2(); ?>', $result, 'dolKeepOnlyPhpCode did extract the correct string');
 	}
 }

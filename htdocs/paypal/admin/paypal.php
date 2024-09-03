@@ -65,7 +65,7 @@ if ($action == 'setvalue' && $user->admin) {
 	if (!($result > 0)) {
 		$error++;
 	}
-	$result = dolibarr_set_const($db, "PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS", GETPOST('PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS', 'int'), 'chaine', 0, '', $conf->entity);
+	$result = dolibarr_set_const($db, "PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS", GETPOSTINT('PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS'), 'chaine', 0, '', $conf->entity);
 	if (!($result > 0)) {
 		$error++;
 	}
@@ -119,7 +119,7 @@ if ($action == 'setvalue' && $user->admin) {
 }
 
 if ($action == "setlive") {
-	$liveenable = GETPOST('value', 'int') ? 0 : 1;
+	$liveenable = GETPOSTINT('value') ? 0 : 1;
 	$res = dolibarr_set_const($db, "PAYPAL_API_SANDBOX", $liveenable, 'yesno', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
@@ -138,7 +138,7 @@ if ($action == "setlive") {
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("PaypalSetup"));
+llxHeader('', $langs->trans("PaypalSetup"), '', '', 0, 0, '', '', '', 'mod-paypal page-admin_paypal');
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
@@ -245,7 +245,7 @@ print '<input size="64" type="text" name="ONLINE_PAYMENT_CREDITOR" value="'.getD
 print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': '.$mysoc->name.'</span>';
 print '</td></tr>';
 
-if (isModEnabled("banque")) {
+if (isModEnabled("bank")) {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("BankAccount").'</td><td>';
 	print img_picto('', 'bank_account').' ';
@@ -334,7 +334,7 @@ print '</div>';
 
 print dol_get_fiche_end();
 
-print $form->buttonsSaveCancel("Modify", '');
+print $form->buttonsSaveCancel("Save", '');
 
 print '</form>';
 

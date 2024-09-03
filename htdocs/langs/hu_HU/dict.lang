@@ -137,7 +137,7 @@ CountryLV=Lettország
 CountryLB=Libanon
 CountryLS=Lesotho
 CountryLR=Libéria
-CountryLY=Líbiai
+CountryLY=Líbia
 CountryLI=Liechtenstein
 CountryLT=Litvánia
 CountryLU=Luxemburg
@@ -233,7 +233,7 @@ CountryUY=Uruguay
 CountryUZ=Üzbegisztán
 CountryVU=Vanuatu
 CountryVE=Venezuela
-CountryVN=Viet Nam
+CountryVN=Vietnam
 CountryVG=Brit Virgin-szigetek
 CountryVI=Amerikai Virgin-szigetek
 CountryWF=Wallis és Futuna
@@ -247,6 +247,7 @@ CountryJE=Jersey
 CountryME=Montenegró
 CountryBL=Saint Barthelemy
 CountryMF=Szent Márton
+CountryXK=Koszovó
 
 ##### Civilities #####
 CivilityMME=Asszony

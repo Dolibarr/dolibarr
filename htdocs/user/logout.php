@@ -50,7 +50,7 @@ if (!empty($_SESSION["dol_authmode"]) && ($_SESSION["dol_authmode"] == 'forceuse
 	unset($_SESSION["dol_login"]);
 	unset($_SESSION['dol_entity']);
 	unset($_SESSION['urlfrom']);
-	die("Applicative disconnection should be useless when connection was made in mode ".$_SESSION["dol_authmode"]);
+	die("Applicative disconnection should be useless when connection was made in mode ".$_SESSION["dol_authmode"]);	// TODO Really ? It at least delete the session file ?!
 }
 
 //global $conf, $langs, $user;
@@ -72,15 +72,15 @@ if ($reshook < 0) {
 }
 
 // Define url to go after disconnect
-$urlfrom = empty($_SESSION["urlfrom"]) ? '' : $_SESSION["urlfrom"];
+$urlfrom = empty($_SESSION["urlfrom"]) ? GETPOST('urlfrom') : $_SESSION["urlfrom"];
 
 // Define url to go
 $url = DOL_URL_ROOT."/index.php"; // By default go to login page
 if ($urlfrom) {
 	$url = DOL_URL_ROOT.$urlfrom;
 }
-if (!empty($conf->global->MAIN_LOGOUT_GOTO_URL)) {
-	$url = $conf->global->MAIN_LOGOUT_GOTO_URL;
+if (getDolGlobalString('MAIN_LOGOUT_GOTO_URL')) {
+	$url = getDolGlobalString('MAIN_LOGOUT_GOTO_URL');
 }
 
 if (GETPOST('dol_hide_topmenu')) {
@@ -97,6 +97,15 @@ if (GETPOST('dol_no_mouse_hover')) {
 }
 if (GETPOST('dol_use_jmobile')) {
 	$url .= (preg_match('/\?/', $url) ? '&' : '?').'dol_use_jmobile=1';
+}
+
+// Logout openid_connect sessions using OIDC logout URL if defined
+if (getDolGlobalInt('MAIN_MODULE_OPENIDCONNECT', 0) > 0 && !empty($_SESSION['OPENID_CONNECT']) && getDolGlobalString("MAIN_AUTHENTICATION_OIDC_LOGOUT_URL")) {
+	// We need the full URL
+	if (strpos($url, '/') === 0) {
+		$url = DOL_MAIN_URL_ROOT . $url;
+	}
+	$url = getDolGlobalString('MAIN_AUTHENTICATION_OIDC_LOGOUT_URL') . '?client_id=' . getDolGlobalString('MAIN_AUTHENTICATION_OIDC_CLIENT_ID') . '&returnTo=' . urlencode($url);
 }
 
 // Destroy session

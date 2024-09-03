@@ -3,6 +3,7 @@
  * Copyright (C) 2013-2016  Jean-François FERRY     <hello@librethic.io>
  *               2016       Christophe Battarel     <christophe@altairis.fr>
  * Copyright (C) 2019-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,19 +27,14 @@
 require_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
 
 /**
- * Class to manage the box
+ * Class to manage the box to show new daily tickets
  */
 class box_graph_nb_ticket_last_x_days extends ModeleBoxes
 {
-
 	public $boxcode = "box_graph_nb_ticket_last_x_days";
-	public $boximg = "ticket";
+	public $boximg  = "ticket";
 	public $boxlabel;
 	public $depends = array("ticket");
-
-	public $param;
-	public $info_box_head = array();
-	public $info_box_contents = array();
 
 	public $widgettype = 'graph';
 
@@ -107,7 +103,7 @@ class box_graph_nb_ticket_last_x_days extends ModeleBoxes
 		$minimumdatec = dol_time_plus_duree($today, -1 * ($days - 1), 'd');
 		$minimumdatecformated = dol_print_date($minimumdatec, 'dayrfc');
 
-		if ($user->rights->ticket->read) {
+		if ($user->hasRight('ticket', 'read')) {
 			$sql = "SELECT CAST(t.datec AS DATE) as datec, COUNT(t.datec) as nb";
 			$sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
 			$sql .= " WHERE CAST(t.datec AS DATE) > '".$this->db->idate($minimumdatec)."'";
@@ -124,7 +120,7 @@ class box_graph_nb_ticket_last_x_days extends ModeleBoxes
 						$minimumdatec = dol_time_plus_duree($minimumdatec, $intervaltoadd, 'd');
 						$minimumdatecformated = dol_print_date($minimumdatec, 'dayrfc');
 					}
-					$dataseries[] = array('label' => dol_print_date($objp->datec, 'day'), 'data' => $objp->nb);
+					$dataseries[] = array('label' => dol_print_date($this->db->jdate($objp->datec), 'day'), 'data' => $objp->nb);
 					$minimumdatec = dol_time_plus_duree($minimumdatec, $intervaltoadd, 'd');
 					$minimumdatecformated = dol_print_date($minimumdatec, 'dayrfc');
 					$i++;
@@ -193,14 +189,14 @@ class box_graph_nb_ticket_last_x_days extends ModeleBoxes
 				);
 			} else {
 				$this->info_box_contents[0][0] = array(
-					'td' => 'class="center opacitymedium"',
-					'text' => $stringtoshow.$langs->trans("BoxNoTicketLastXDays", $days)
+					'td' => 'class="center"',
+					'text' => '<span class="opacitymedium">'.$stringtoshow.$langs->trans("BoxNoTicketLastXDays", $days).'</span>'
 				);
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
 				'td' => 'class="left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed"),
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}
@@ -208,9 +204,9 @@ class box_graph_nb_ticket_last_x_days extends ModeleBoxes
 	/**
 	 *     Method to show box
 	 *
-	 *     @param  array $head     Array with properties of box title
-	 *     @param  array $contents Array with properties of box lines
-	 *     @param  int   $nooutput No print, only return string
+	 *	@param	?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}	$head	Array with properties of box title
+	 *	@param	?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>	$contents	Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *     @return string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)
