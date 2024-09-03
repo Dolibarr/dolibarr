@@ -390,7 +390,7 @@ if ($sourcetype != 'salary') {
 	if ($type == 'bank-transfer') {
 		$sql .= " f.ref_supplier,";
 	}
-	$sql .= " pd.rowid as request_row_id, pd.date_demande, pd.amount";
+	$sql .= " pd.rowid as request_row_id, pd.date_demande, pd.amount, pd.fk_iban as iban";
 	if ($type == 'bank-transfer') {
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f,";
 	} else {
@@ -417,7 +417,7 @@ if ($sourcetype != 'salary') {
 	}
 } else {
 	$sql = "SELECT s.ref, s.rowid, s.amount, CONCAT(u.lastname, ' ', u.firstname) as name, u.rowid as uid,";
-	$sql .= " pd.rowid as request_row_id, pd.date_demande, pd.amount";
+	$sql .= " pd.rowid as request_row_id, pd.date_demande, pd.amount, pd.fk_iban as iban";
 	$sql .= " FROM ".MAIN_DB_PREFIX."salary as s,";
 	$sql .= " ".MAIN_DB_PREFIX."user as u,";
 	$sql .= " ".MAIN_DB_PREFIX."prelevement_demande as pd";
@@ -551,7 +551,7 @@ if ($resql) {
 			$obj = $db->fetch_object($resql);
 			if ($sourcetype != 'salary') {
 				$bac = new CompanyBankAccount($db);	// Must include the new in loop so the fetch is clean
-				$bac->fetch(0, '', $obj->socid);
+				$bac->fetch($obj->iban ?? 0, '', $obj->socid);
 
 				$invoicestatic->id = $obj->rowid;
 				$invoicestatic->ref = $obj->ref;

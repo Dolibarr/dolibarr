@@ -6444,7 +6444,7 @@ class Form
 			return $out;
 		}
 		print $out;
-		return $selected;
+		return array_search($selected, $ribForSelection);
 	}
 	// ---------------------------------------------------------------------------------------
 	// MODIFICATIONS END
