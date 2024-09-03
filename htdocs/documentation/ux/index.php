@@ -1,9 +1,9 @@
 <?php
-/* 
+/*
  * Copyright (C) 2024 Anthony Damhet <a.damhet@progiseize.fr>
  *
- * This program and files/directory inner it is free software: you can 
- * redistribute it and/or modify it under the terms of the 
+ * This program and files/directory inner it is free software: you can
+ * redistribute it and/or modify it under the terms of the
  * GNU Affero General Public License (AGPL) as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -18,13 +18,13 @@
  */
 
 $res=0;
-if (! $res && file_exists("../main.inc.php")) : $res=@include '../main.inc.php'; 
+if (! $res && file_exists("../main.inc.php")) : $res=@include '../main.inc.php';
 endif;
-if (! $res && file_exists("../../main.inc.php")) : $res=@include '../../main.inc.php'; 
-endif; 
+if (! $res && file_exists("../../main.inc.php")) : $res=@include '../../main.inc.php';
+endif;
 
 // Protection if external user
-if ($user->socid > 0) : accessforbidden(); 
+if ($user->socid > 0) : accessforbidden();
 endif;
 
 // Includes
@@ -46,12 +46,12 @@ $documentation->view = array('Elements');
 $documentation->showSidebar(); ?>
 
 <div class="doc-wrapper">
-        
-    <?php $documentation->showBreadCrumb(); ?>
+		
+	<?php $documentation->showBreadCrumb(); ?>
 
-    <div class="doc-content-wrapper">
-        
-    </div>
+	<div class="doc-content-wrapper">
+		
+	</div>
 
 </div>
 <?php

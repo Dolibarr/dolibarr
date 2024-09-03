@@ -1,5 +1,5 @@
 <?php
-//define("NOLOGIN",1);		// This means this output page does not require to be logged.
+//define("NOLOGIN",1);        // This means this output page does not require to be logged.
 //if (!defined('NOREQUIREUSER'))  define('NOREQUIREUSER', '1');
 //if (!defined('NOREQUIREDB'))    define('NOREQUIREDB', '1');
 if (!defined('NOREQUIRESOC')) {
@@ -72,19 +72,19 @@ if (empty($usedolheader)) {
 	$arrayjs = array();
 	/*
 	$arraycss=array('/includes/jquery/plugins/datatables/media/css/jquery.dataTables.css',
-			'/includes/jquery/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css',
-			'/includes/jquery/plugins/datatables/extensions/ColReorder/css/colReorder.dataTables.min.css'
+	'/includes/jquery/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css',
+	'/includes/jquery/plugins/datatables/extensions/ColReorder/css/colReorder.dataTables.min.css'
 	);
 	$arrayjs=array('/includes/jquery/plugins/datatables/media/js/jquery.dataTables.js',
-			'/includes/jquery/plugins/datatables/extensions/Buttons/js/dataTables.buttons.js',
-			'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.colVis.min.js',
-			'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.html5.min.js',
-			'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.flash.min.js',
-			'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.print.min.js',
-			'/includes/jquery/plugins/datatables/extensions/ColReorder/js/dataTables.colReorder.min.js',
-			'/includes/jszip/jszip.min.js',
-			'/includes/pdfmake/pdfmake.min.js',
-			'/includes/pdfmake/vfs_fonts.js'
+	'/includes/jquery/plugins/datatables/extensions/Buttons/js/dataTables.buttons.js',
+	'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.colVis.min.js',
+	'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.html5.min.js',
+	'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.flash.min.js',
+	'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.print.min.js',
+	'/includes/jquery/plugins/datatables/extensions/ColReorder/js/dataTables.colReorder.min.js',
+	'/includes/jszip/jszip.min.js',
+	'/includes/pdfmake/pdfmake.min.js',
+	'/includes/pdfmake/vfs_fonts.js'
 	);
 	*/
 
@@ -171,7 +171,7 @@ $(document).ready(function() {
 
 
 <?php
-include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 $productspecimen = new Product($db);
 $productspecimen->initAsSpecimen();
 $object = $productspecimen;
@@ -362,7 +362,7 @@ if (!empty($conf->use_javascript_ajax)) {
 		<div class="tagtd tdlineupdown">lll</div>
 	</div>
 <!-- Using form into div make Firefox crazy (page loading does not end) -->
-<!--	<form class="liste_titre" method="POST" action="1.php">
+<!--    <form class="liste_titre" method="POST" action="1.php">
 		<div>line1<input type="hidden" name="cartitem" value="1"></div>
 		<div><label><input type="checkbox" name="hidedetails" value="2"> A checkbox inside a cell</label></div>
 		<div><input name="count" value="4"></div>
