@@ -42,6 +42,8 @@
 -- VPGSQL8.2 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_ecm_directories FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 -- VPGSQL8.2 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_ecm_files FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 
+-- VMYSQL4.3 ALTER TABLE llx_emailcollector_emailcollector MODIFY COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
 ALTER TABLE llx_ecm_files ADD COLUMN note_private text AFTER fk_user_m;
 ALTER TABLE llx_ecm_files ADD COLUMN note_public text AFTER note_private;
 

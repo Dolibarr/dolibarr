@@ -8,8 +8,6 @@ LocalAgenda=Standaard kalender
 ActionsOwnedBy=Actie gevraagd door
 ActionsOwnedByShort=Eigenaar
 AffectedTo=Toegewezen aan
-Event=Actie
-Events=Gebeurtenissen
 EventsNb=Aantal gebeurtenissen
 ListOfActions=Gebeurtenissenlijst
 EventReports=Overzicht gebeurtenissen
@@ -23,7 +21,6 @@ MenuDoneMyActions=Mijn beëindigde acties
 ListOfEvents=Lijst met evenementen (standaard kalender)
 ActionsAskedBy=Acties geregistreerd door
 ActionsToDoBy=Acties toegewezen aan
-ActionsDoneBy=Acties gedaan door
 ActionAssignedTo=Taken toegewezen aan
 ViewCal=Bekijk kalender
 ViewDay=Dag te bekijken
@@ -57,18 +54,18 @@ MemberValidatedInDolibarr=Lid %s gevalideerd
 MemberModifiedInDolibarr=Lid %s gewijzigd
 MemberResiliatedInDolibarr=Lidmaatschap %s beëindigd
 MemberDeletedInDolibarr=Lid %s verwijderd
-MemberExcludedInDolibarr=Member %s excluded
+MemberExcludedInDolibarr=Lid %s uitgesloten
 MemberSubscriptionAddedInDolibarr=Abonnement %s voor lid %s toegevoegd
 MemberSubscriptionModifiedInDolibarr=Abonnement %s voor lid %s gewijzigd
 MemberSubscriptionDeletedInDolibarr=Abonnement %s voor lid %s verwijderd
 ShipmentValidatedInDolibarr=Verzending %s gevalideerd
-ShipmentClassifyClosedInDolibarr=Verzending %s geclassificeerd als gefactureerd
+ShipmentClassifyClosedInDolibarr=Zending %s geclassificeerd gesloten
 ShipmentUnClassifyCloseddInDolibarr=Zending %s geclassificeerd, opnieuw openen
 ShipmentBackToDraftInDolibarr=Zending %s ga terug naar conceptstatus
 ShipmentDeletedInDolibarr=Verzending %s verwijderd
 ShipmentCanceledInDolibarr=Verzending%s geannuleerd
 ReceptionValidatedInDolibarr=Ontvangst %s gevalideerd
-ReceptionDeletedInDolibarr=Reception %s deleted
+ReceptionDeletedInDolibarr=Ontvangst %s verwijderd
 ReceptionClassifyClosedInDolibarr=Receptie %s geclassificeerd gesloten
 OrderCreatedInDolibarr=Bestelling %s aangemaakt
 OrderValidatedInDolibarr=Opdracht %s gevalideerd
@@ -88,7 +85,9 @@ SupplierInvoiceSentByEMail=Leveranciersfactuur %s verzonden per e-mail
 ShippingSentByEMail=Zending %s verzonden per e-mail
 ShippingValidated= Verzending %s gevalideerd
 InterventionSentByEMail=Interventie %s verzonden per e-mail
-ProjectSentByEMail=Project %s sent by email
+ProjectSentByEMail=Project %s verzonden per e-mail
+ProjectDeletedInDolibarr=Project %s verwijderd
+ProjectClosedInDolibarr=Project %s gesloten
 ProposalDeleted=Voorstel verwijderd
 OrderDeleted=Bestelling verwijderd
 InvoiceDeleted=Factuur verwijderd
@@ -104,7 +103,7 @@ HOLIDAY_MODIFYInDolibarr=Verlofverzoek %s gewijzigd
 HOLIDAY_APPROVEInDolibarr=Verlofverzoek %s goedgekeurd
 HOLIDAY_VALIDATEInDolibarr=Verlofverzoek %s gevalideerd
 HOLIDAY_DELETEInDolibarr=Verlofverzoek %s verwijderd
-EXPENSE_REPORT_CREATEInDolibarr=Overzicht van kosten %s aangemaakt 
+EXPENSE_REPORT_CREATEInDolibarr=Overzicht van kosten %s aangemaakt
 EXPENSE_REPORT_VALIDATEInDolibarr=Kosten rapportage %s goedgekeurd
 EXPENSE_REPORT_APPROVEInDolibarr=Overzicht van kosten %s goedgekeurd
 EXPENSE_REPORT_DELETEInDolibarr=Overzicht van kosten %s verwijderd
@@ -128,17 +127,21 @@ MRP_MO_PRODUCEDInDolibarr=MO geproduceerd
 MRP_MO_DELETEInDolibarr=MO verwijderd
 MRP_MO_CANCELInDolibarr=MO geannuleerd
 PAIDInDolibarr=%s betaald
+ENABLEDISABLEInDolibarr=Gebruiker ingeschakeld of uitgeschakeld
+CANCELInDolibarr=Geannuleerd
 ##### End agenda events #####
 AgendaModelModule=Document sjablonen voor evenement
 DateActionStart=Startdatum
 DateActionEnd=Einddatum
 AgendaUrlOptions1=U kunt ook de volgende parameters gebruiken om te filteren:
-AgendaUrlOptions3=<b>login=%s</b> om uitvoer van acties gedaan door gebruiker <b>%s</b> te beperken.
-AgendaUrlOptionsNotAdmin=<b>login=%s</b> om uitvoer van acties die niet zijn toegewezen aan gebruiker <b>%s</b> te beperken.
+AgendaUrlOptions3=<b>logina=%s</b> om de uitvoer te beperken tot acties die eigendom zijn van een gebruiker <b>%s</b> (gebruik <b> logina=!%s</b> voor evenementen die geen eigendom zijn van de gebruiker).
 AgendaUrlOptions4=<b> logint = %s </b>om de uitvoer te beperken tot acties die zijn toegewezen aan gebruiker <b> %s </b>(eigenaar en anderen).
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> om uitvoer van acties gekoppeld aan project<b>PROJECT_ID</b> te beperken.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> om automatische gebeurtenissen uit te sluiten.
+AgendaUrlOptionsType=<b>actiontype=%s</b> om automatische of handmatige gebeurtenissen te ontvangen
+AgendaUrlOptionsCode=<b>actioncode=%s</b> om alleen gebeurtenissen met een bepaalde code op te halen
 AgendaUrlOptionsIncludeHolidays= <b> includeholidays = 1 </b> om vakanties op te nemen.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> om te beperken tot gebeurtenissen in de afgelopen %s dagen (standaard is %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> om te beperken tot de laatste 50 gebeurtenissen (standaard en maximum is %s ).
 AgendaShowBirthdayEvents=Verjaardagen van contacten
 AgendaHideBirthdayEvents=Verjaardagen van contacten verbergen
 Busy=Bezig
@@ -162,7 +165,7 @@ DateActionBegin=Begindatum
 ConfirmCloneEvent=Weet u zeker dat u gebeurtenis <b> %s </b> wilt klonen?
 RepeatEvent=Herhaal gebeurtenis/taak
 OnceOnly=Eenmalig
-EveryDay=Every day
+EveryDay=Elke dag
 EveryWeek=Elke week
 EveryMonth=Elke maand
 DayOfMonth=Dag van de maand
@@ -177,5 +180,28 @@ ReminderType=Terugbellen
 AddReminder=Maak een automatische herinneringsmelding voor deze afspraak
 ErrorReminderActionCommCreation=Fout bij het maken van de herinneringsmelding voor deze afspraak
 BrowserPush=Browser pop-up melding
+Reminders=Herinneringen
 ActiveByDefault=Standaard ingeschakeld
-Until=until
+Until=tot
+DataFromWasMerged=Gegevens van %s zijn samengevoegd
+AgendaShowBookcalCalendar=Boekingskalender: %s
+MenuBookcalIndex=Online afspraak
+BookcalLabelAvailabilityHelp=Label van het beschikbaarheidsbereik. Bijvoorbeeld:<br>Algemene beschikbaarheid<br>Beschikbaarheid tijdens de kerstvakantie
+DurationOfRange=Duur van bereiken
+BookCalSetup = Online afspraak maken
+BookCalSetupPage = Pagina voor het instellen van online afspraken
+BOOKCAL_PUBLIC_INTERFACE_TOPIC = Titel interface
+BookCalAbout = Over BoekCal
+BookCalAboutPage = BookCal over pagina
+Calendars=Kalenders
+Availabilities=Beschikbaarheden
+NewAvailabilities=Nieuwe beschikbaarheden
+NewCalendar=Nieuwe kalender
+ThirdPartyBookCalHelp=Een evenement dat in deze kalender is geboekt, wordt automatisch aan deze derde partij gekoppeld.
+AppointmentDuration = Afspraakduur: %s
+BookingSuccessfullyBooked=Uw boeking is opgeslagen
+BookingReservationHourAfter=We bevestigen de reservering van onze bijeenkomst op de datum %s
+BookcalBookingTitle=Online afspraak
+Transparency = Transparantie
+ReadMore = Lees verder
+ReadLess = Lees minder

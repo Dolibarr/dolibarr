@@ -27,6 +27,10 @@
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/prelevement.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/rejetprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
@@ -41,16 +45,16 @@ if ($user->socid > 0) {
 }
 
 // Get supervariables
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 
 $type = GETPOST('type', 'aZ09');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -61,7 +65,7 @@ $pagenext = $page + 1;
 $object = new BonPrelevement($db);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
 
 // Security check
 if ($user->socid > 0) {
@@ -80,6 +84,14 @@ if ($type == 'bank-transfer') {
 /*
  * View
  */
+
+$form = new Form($db);
+
+$thirdpartystatic = new Societe($db);
+$invoicestatic = new Facture($db);
+$invoicesupplierstatic = new FactureFournisseur($db);
+$rej = new RejetPrelevement($db, $user, $type);
+
 
 llxHeader('', $langs->trans("WithdrawalsReceipts"));
 
@@ -149,17 +161,34 @@ if ($id > 0 || $ref) {
 		print '</td>';
 		print '</tr>';
 
+		$modulepart = 'prelevement';
+		if ($object->type == 'bank-transfer') {
+			$modulepart = 'paymentbybanktransfer';
+		}
+
 		print '<tr><td class="titlefieldcreate">';
 		$labelfororderfield = 'WithdrawalFile';
 		if ($object->type == 'bank-transfer') {
 			$labelfororderfield = 'CreditTransferFile';
 		}
 		print $langs->trans($labelfororderfield).'</td><td>';
-		$relativepath = 'receipts/'.$object->ref.'.xml';
-		$modulepart = 'prelevement';
-		if ($object->type == 'bank-transfer') {
-			$modulepart = 'paymentbybanktransfer';
+
+		if (isModEnabled('multicompany')) {
+			$labelentity = $conf->entity;
+			$relativepath = 'receipts/'.$object->ref.'-'.$labelentity.'.xml';
+
+			if ($type != 'bank-transfer') {
+				$dir = $conf->prelevement->dir_output;
+			} else {
+				$dir = $conf->paymentbybanktransfer->dir_output;
+			}
+			if (!dol_is_file($dir.'/'.$relativepath)) {	// For backward compatibility
+				$relativepath = 'receipts/'.$object->ref.'.xml';
+			}
+		} else {
+			$relativepath = 'receipts/'.$object->ref.'.xml';
 		}
+
 		print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'">'.$relativepath;
 		print img_picto('', 'download', 'class="paddingleft"');
 		print '</a>';
@@ -174,11 +203,8 @@ if ($id > 0 || $ref) {
 }
 
 
-$rej = new RejetPrelevement($db, $user, $type);
+// List errors
 
-/*
- * List errors
- */
 $sql = "SELECT pl.rowid, pl.amount, pl.statut";
 $sql .= " , s.rowid as socid, s.nom as name";
 $sql .= " , pr.motif, pr.afacturer, pr.fk_facture";
@@ -188,7 +214,7 @@ $sql .= " , ".MAIN_DB_PREFIX."societe as s";
 $sql .= " , ".MAIN_DB_PREFIX."prelevement_rejet as pr";
 $sql .= " WHERE p.rowid=".((int) $object->id);
 $sql .= " AND pl.fk_prelevement_bons = p.rowid";
-$sql .= " AND p.entity = ".$conf->entity;
+$sql .= " AND p.entity IN (".getEntity('facture').")";
 $sql .= " AND pl.fk_soc = s.rowid";
 $sql .= " AND pl.statut = 3 ";
 $sql .= " AND pr.fk_prelevement_lignes = pl.rowid";
@@ -199,7 +225,7 @@ $sql .= " ORDER BY pl.amount DESC";
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
@@ -214,14 +240,20 @@ $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
 
-	print_barre_liste($langs->trans("Rejects"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '');
+	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
+	print_barre_liste($langs->trans("Rejects"), $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', $num, $nbtotalofrecords, '');
 
 	print"\n<!-- debut table -->\n";
-	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Line").'</td><td>'.$langs->trans("ThirdParty").'</td><td class="right">'.$langs->trans("Amount").'</td>';
-	print '<td>'.$langs->trans("Reason").'</td><td align="center">'.$langs->trans("ToBill").'</td><td class="center">'.$langs->trans("Invoice").'</td></tr>';
+	print '<td>'.$langs->trans("Reason").'</td><td align="center">'.$langs->trans("ToBill").'</td>';
+	print '<td class="center">';
+	// Invoice to charge the error. No yet implemented.
+	//print $langs->trans("Invoice");
+	print '</td>';
+	print '</tr>';
 
 	$total = 0;
 
@@ -230,19 +262,39 @@ if ($resql) {
 		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
 
-			print '<tr class="oddeven"><td>';
+			$thirdpartystatic->id = $obj->socid;
+			$thirdpartystatic->name = $obj->name;
 
+			if ($obj->fk_facture > 0) {
+				$invoicestatic->fetch($obj->fk_facture);
+			}
+
+			print '<tr class="oddeven">';
+			print '<td>';
 			print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$obj->rowid.'">';
 			print img_picto('', 'statut'.$obj->statut).' ';
 			print substr('000000'.$obj->rowid, -6);
 			print '</a></td>';
-			print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.$obj->name."</a></td>\n";
+			print '<td>';
+			if ($type != 'bank-transfer') {
+				print $thirdpartystatic->getNomUrl(1, 'customer');
+			} else {
+				print $thirdpartystatic->getNomUrl(1, 'supplier');
+			}
+			print '</td>'."\n";
 
 			print '<td class="right"><span class="amount">'.price($obj->amount)."</span></td>\n";
-			print '<td>'.$rej->motifs[$obj->motif].'</td>';
+			print '<td>'.dol_escape_htmltag($rej->motifs[$obj->motif]).'</td>';
 
 			print '<td class="center">'.yn($obj->afacturer).'</td>';
-			print '<td class="center">'.$obj->fk_facture.'</td>';
+
+			// Invoice used to charge the error
+			print '<td class="center">';
+			if ($obj->fk_facture > 0) {
+				print $invoicestatic->getNomUrl(1);
+			}
+			print '</td>';
+
 			print "</tr>\n";
 
 			$total += $obj->amount;

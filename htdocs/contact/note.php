@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2001-2003,2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011      Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012      Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2010           Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2013           Florian Henry		 <florian.henry@open-concept.pro>
+/* Copyright (C) 2001-2005	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2011	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012 	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2010		Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2013		Florian Henry				<florian.henry@open-concept.pro>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +36,7 @@ $action = GETPOST('action', 'aZ09');
 // Load translation files required by the page
 $langs->load("companies");
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 
 $object = new Contact($db);
 if ($id > 0) {
@@ -48,25 +49,25 @@ if ($user->socid > 0) {
 		accessforbidden();
 	}
 }
-$result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
 
-
-$permissionnote = $user->hasRight('societe', 'creer'); // Used by the include of actions_setnotes.inc.php
-
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-// $hookmanager->initHooks(array('contactcard')); -> Name conflict with product/card.php
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('contactnote'));
 
+$result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
+
+$permissionnote = $user->hasRight('societe', 'creer'); // Used by the include of actions_setnotes.inc.php
 
 /*
  * Actions
  */
-$reshook = $hookmanager->executeHooks('doActions', array(), $object, $action); // Note that $action and $object may have been modified by some hooks
+
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 if (empty($reshook)) {
-	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be 'include', not 'include_once'
 }
 
 
@@ -76,12 +77,13 @@ if (empty($reshook)) {
 
 $now = dol_now();
 
-$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
+$title = $langs->trans("ContactNotes");
 
 $form = new Form($db);
 
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-llxHeader('', $title, $help_url);
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-societe page-contact-card_note');
 
 if ($id > 0) {
 	/*
@@ -102,7 +104,7 @@ if ($id > 0) {
 	$morehtmlref .= '</a>';
 
 	$morehtmlref .= '<div class="refidno">';
-	if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
+	if (!getDolGlobalString('SOCIETE_DISABLE_CONTACTS')) {
 		$objsoc = new Societe($db);
 		$objsoc->fetch($object->socid);
 		// Thirdparty

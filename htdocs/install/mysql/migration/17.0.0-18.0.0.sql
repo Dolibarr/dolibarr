@@ -2,6 +2,7 @@
 -- Be carefull to requests order.
 -- This file must be loaded by calling /install/index.php page
 -- when current version is 18.0.0 or higher.
+
 --
 -- To restrict request to Mysql version x.y minimum use -- VMYSQLx.y
 -- To restrict request to Pgsql version x.y minimum use -- VPGSQLx.y
@@ -32,15 +33,24 @@
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
 
--- v17
+-- Missing in v17 or lower
+
+-- VMYSQL4.3 ALTER TABLE llx_emailcollector_emailcollector MODIFY COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
 -- VMYSQL4.3 ALTER TABLE llx_hrm_skillrank CHANGE COLUMN `rank` rankorder integer;
 -- VPGSQL8.2 ALTER TABLE llx_hrm_skillrank CHANGE COLUMN rank rankorder integer;
+
+ALTER TABLE llx_projet_task ADD COLUMN fk_user_modif integer after fk_user_creat;
 
 ALTER TABLE llx_accounting_system CHANGE COLUMN fk_pays fk_country integer;
 
 ALTER TABLE llx_commande_fournisseurdet MODIFY COLUMN ref varchar(128);
 ALTER TABLE llx_facture_fourn_det MODIFY COLUMN ref varchar(128);
+
+ALTER TABLE llx_projet ADD COLUMN extraparams varchar(255);
+
+DELETE FROM llx_boxes WHERE box_id IN (select rowid FROM llx_boxes_def WHERE file IN ('box_bom.php@bom', 'box_bom.php', 'box_members.php', 'box_last_modified_ticket', 'box_members_last_subscriptions', 'box_members_last_modified', 'box_members_subscriptions_by_year'));
+DELETE FROM llx_boxes_def WHERE file IN ('box_bom.php@bom', 'box_bom.php', 'box_members.php', 'box_last_modified_ticket', 'box_members_last_subscriptions', 'box_members_last_modified', 'box_members_subscriptions_by_year');
 
 
 -- v18
@@ -52,6 +62,17 @@ ALTER TABLE llx_notify_def ADD COLUMN context varchar(128);
 ALTER TABLE llx_c_action_trigger ADD COLUMN contexts varchar(255) NULL;
 
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROJECT_CLOSE','Project closed','Executed when a project is closed','project',145);
+
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BILLREC_CREATE','Template invoices created','Executed when a Template invoices is created','facturerec',900);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BILLREC_MODIFY','Template invoices update','Executed when a Template invoices is updated','facturerec',901);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BILLREC_DELETE','Template invoices deleted','Executed when a Template invoices is deleted','facturerec',902);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BILLREC_AUTOCREATEBILL','Template invoices use to create invoices with auto batch','Executed when a Template invoices is use to create invoice with auto batch','facturerec',903);
+
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PARTNERSHIP_CREATE','Partnership created','Executed when a partnership is created','partnership',58000);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PARTNERSHIP_MODIFY','Partnership modified','Executed when a partnership is modified','partnership',58002);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PARTNERSHIP_SENTBYMAIL','Mails sent from partnership file','Executed when you send email from partnership file','partnership',58004);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PARTNERSHIP_DELETE','Partnership deleted','Executed when a partnership is deleted','partnership',58006);
+
 
 -- amount was removed in v12
 ALTER TABLE llx_facture DROP COLUMN amount;
@@ -67,7 +88,6 @@ ALTER TABLE llx_payment_salary MODIFY COLUMN datep datetime;
 
 INSERT INTO llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1179, 117, 'I-28'  , 28,   0, '0',   0, '0', 0, 'IGST',      1);
 INSERT INTO llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1176, 117, 'C+S-18',  0,   9, '1',   9, '1', 0, 'CGST+SGST - Same state sales', 1);
-
 
 ALTER TABLE llx_user ADD COLUMN flagdelsessionsbefore datetime DEFAULT NULL;
 
@@ -102,6 +122,14 @@ ALTER TABLE llx_bordereau_cheque ADD COLUMN type VARCHAR(6) DEFAULT 'CHQ';
 
 -- Element time
 ALTER TABLE llx_projet_task_time RENAME TO llx_element_time;
+
+-- VPGSQL8.2 ALTER SEQUENCE llx_projet_task_time_rowid_seq RENAME TO llx_element_time_rowid_seq;
+
+-- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
+-- VMYSQL4.1 update llx_element_time set task_date = NULL where DATE(STR_TO_DATE(task_date, '%Y-%m-%d')) IS NULL;
+-- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
+-- VMYSQL4.1 update llx_element_time set task_date = NULL where DATE(STR_TO_DATE(task_date, '%Y-%m-%d')) IS NULL;
+
 ALTER TABLE llx_element_time CHANGE COLUMN fk_task fk_element integer NOT NULL;
 ALTER TABLE llx_element_time CHANGE COLUMN task_date element_date date;
 ALTER TABLE llx_element_time CHANGE COLUMN task_datehour element_datehour datetime;
@@ -397,3 +425,149 @@ ALTER TABLE llx_mailing ADD COLUMN name_from varchar(128) AFTER email_from;
 
 ALTER TABLE llx_bom_bomline ADD COLUMN fk_default_workstation integer DEFAULT NULL;
 ALTER TABLE llx_mrp_production ADD COLUMN fk_default_workstation integer DEFAULT NULL;
+
+ALTER TABLE llx_facture ADD COLUMN subtype smallint DEFAULT NULL;
+
+CREATE TABLE llx_c_invoice_subtype (
+  rowid integer AUTO_INCREMENT PRIMARY KEY,
+  entity integer DEFAULT 1,
+  fk_country integer NOT NULL,
+  code varchar(4) NOT NULL,
+  label varchar(100),
+  active tinyint DEFAULT 1 NOT NULL
+) ENGINE=innodb;
+
+ALTER TABLE llx_c_invoice_subtype MODIFY COLUMN code varchar(4);
+ALTER TABLE llx_c_invoice_subtype ADD UNIQUE INDEX uk_c_invoice_subtype (entity, code);
+
+ALTER TABLE llx_projet ADD COLUMN fk_project integer DEFAULT NULL;
+
+-- Upgrade default PDF models to the 'new' ones (eproved since 4 dolibarr versions from now)
+--UPDATE llx_const SET value='eratosthene' WHERE name='COMMANDE_ADDON_PDF' and value='einstein';
+--UPDATE llx_const SET value='sponge' WHERE name='FACTURE_ADDON_PDF' and value='crabe';
+--UPDATE llx_const SET value='espadon' WHERE name='EXPEDITION_ADDON_PDF' and value='merou';
+--UPDATE llx_const SET value='cyan' WHERE name='PROPALE_ADDON_PDF' and value='azur';
+--UPDATE llx_const SET value='storm' WHERE name IN ('DELIVERY_ADDON_PDF','LIVRAISON_ADDON_PDF') and value='typhon';
+--UPDATE llx_const SET value='cornas' WHERE name='COMMANDE_SUPPLIER_ADDON_PDF' and value='muscadet';
+
+
+ALTER TABLE llx_c_propalst ADD COLUMN sortorder smallint DEFAULT 0;
+ALTER TABLE llx_c_stcomm ADD COLUMN sortorder smallint DEFAULT 0;
+
+ALTER TABLE llx_element_time ADD COLUMN ref_ext varchar(32);
+
+ALTER TABLE llx_c_ziptown ADD COLUMN town_up varchar(180);
+
+
+-- Email Collector
+ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN imap_encryption varchar(16) DEFAULT 'ssl' AFTER hostcharset;
+ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN norsh integer DEFAULT 0 AFTER imap_encryption;
+
+insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '1.1', 'Τιμολόγιο Πώλησης', 1);
+insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '1.2', 'Τιμολόγιο Πώλησης / Ενδοκοινοτικές Παραδόσεις', 1);
+insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '1.3', 'Τιμολόγιο Πώλησης / Παραδόσεις Τρίτων Χωρών', 1);
+insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '1.4', 'Τιμολόγιο Πώλησης / Πώληση για Λογαριασμό Τρίτων', 0);
+insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '1.5', 'Τιμολόγιο Πώλησης / Εκκαθάριση Πωλήσεων Τρίτων - Αμοιβή από Πωλήσεις Τρίτων', 0);
+insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '1.6', 'Τιμολόγιο Πώλησης / Συμπληρωματικό Παραστατικό', 0);
+insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '2.1', 'Τιμολόγιο Παροχής', 1);
+insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '2.2', 'Τιμολόγιο Παροχής / Ενδοκοινοτική Παροχή Υπηρεσιών', 1);
+insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '2.3', 'Τιμολόγιο Παροχής / Παροχή Υπηρεσιών σε λήπτη Τρίτης Χώρας', 1);
+insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '2.4', 'Τιμολόγιο Παροχής / Συμπληρωματικό Παραστατικό', 0);
+insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '3.1', 'Τίτλος Κτήσης (μη υπόχρεος Εκδότης)', 0);
+insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '3.2', 'Τίτλος Κτήσης (άρνηση έκδοσης από υπόχρεο Εκδότη)', 0);
+insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '6.1', 'Στοιχείο Αυτοπαράδοσης', 0);
+insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '6.2', 'Στοιχείο Ιδιοχρησιμοποίησης', 0);
+insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '7.1', 'Συμβόλαιο - Έσοδο', 0);
+insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '8.1', 'Ενοίκια - Έσοδο', 0);
+insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '8.2', 'Ειδικό Στοιχείο – Απόδειξης Είσπραξης Φόρου Διαμονής', 0);
+insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '11.1', 'ΑΛΠ', 1);
+insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '11.2', 'ΑΠΥ', 1);
+insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '11.3', 'Απλοποιημένο Τιμολόγιο', 0);
+insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '11.5', 'Απόδειξη Λιανικής Πώλησης για Λογ/σμό Τρίτων', 0);
+
+ALTER TABLE llx_partnership ADD COLUMN email_partnership varchar(64) after fk_member;
+
+ALTER TABLE llx_contratdet ADD INDEX idx_contratdet_statut (statut);
+
+ALTER TABLE fk_product_price_product DROP FOREIGN KEY fk_product_price_product;
+
+ALTER TABLE llx_societe_rib ADD COLUMN ext_payment_site varchar(128);
+
+-- Drop the composite unique index that exists on llx_commande_fournisseur to rebuild a new one without the fk_soc.
+-- The old design allowed for a duplicate reference as long as fk_soc was not the same.
+-- VMYSQL4.1 DROP INDEX uk_commande_fournisseur_ref on llx_commande_fournisseur;
+-- VPGSQL8.2 DROP INDEX uk_commande_fournisseur_ref;
+ALTER TABLE llx_commande_fournisseur ADD UNIQUE INDEX uk_commande_fournisseur_ref (ref, entity);
+
+-- Drop the composite unique index that exists on llx_actioncomm to rebuild a new one without unique feature.
+-- The old design introduced a deadlock over traffic intense Dolibarr instance.
+-- VMYSQL4.1 DROP INDEX uk_actioncomm_ref on llx_actioncomm;
+-- VPGSQL8.2 DROP INDEX uk_actioncomm_ref;
+ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_ref (ref, entity);
+
+-- Bump llx_reception.ref_supplier to allow up to 255 characters to match llx_commande_fournisseur.ref_supplier.
+-- See: https://github.com/Dolibarr/dolibarr/pull/25034
+ALTER TABLE llx_reception MODIFY COLUMN ref_supplier varchar(255);
+
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values ( 102, 10201, 'Αναλυτική Περιοδική Δήλωση (ΑΠΔ)', 1, 1, 'ΑΠΔ');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values ( 102, 10202, 'Φόρος Μισθωτών Υπηρεσιών (ΦΜΥ)', 1, 1, 'ΦΜΥ');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values ( 102, 10203, 'Ασφαλιστικές εισφορές (ΕΦΚΑ)', 1, 1, 'ΕΦΚΑ');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values ( 102, 10204, 'Προκαταβολή Φόρου Εισοδήματος', 0, 1, 'ΕΦΟΡΙΑ');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values ( 102, 10205, 'Ενιαίος Φόρος Ιδιοκτησίας Ακινήτων (ΕΝ.Φ.Ι.Α) ', 0, 1, 'ΕΝΦΙΑ');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values ( 102, 10206, 'Ετήσιο τέλος διατήρησης Μερίδας στο
+Γ.Ε.ΜΗ.', 1, 1, 'ΓΕΜΗ');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values ( 102, 10207, 'Επαγγελματικό Επιμελητήριο', 1, 1, 'ΕΕ');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values ( 102, 10208, 'Εμπορικό και Βιομηχανικό Επιμελητηρίο', 1, 1, 'ΕΒΕ');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values ( 102, 10209, 'Τέλη Κυκλοφορίας', 1, 1,'ΤΕΛΗ');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values ( 102, 10210, 'Ασφάλιση οχήματος', 1, 1,'ΑΣΦΑΛΕΙΑ');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values ( 102, 10211, 'Ενοίκιο', 1, 1,'ΕΝΟΙΚΙΟ');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values ( 102, 10212, 'Κοινόχρηστα', 1, 1, 'ΚΟΙΝΟ');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values ( 102, 10213, 'Ηλεκτροδότηση', 1, 1, 'ΡΕΥΜΑ');
+
+-- Leaves specific to Greece - info from https://www.kepea.gr/
+insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('5D1Y', 'Κανονική άδεια(Πενθήμερο 1ο έτος)', 1,  0, 1.667, 102, 6, 1);
+insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('5D2Y', 'Κανονική άδεια(Πενθήμερο 2ο έτος)', 1,  0, 1.75, 102, 7, 1);
+insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('5D3-10Y', 'Κανονική άδεια(Πενθήμερο 3ο έως 10ο έτος)', 1, 0, 1.833, 102, 8, 1);
+insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('5D10-25Y', 'Κανονική άδεια(Πενθήμερο 10ο έως 25ο έτος)', 1, 0, 2.083,    102, 9, 1);
+insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('5D25+Y', 'Κανονική άδεια(Πενθήμερο 25+ έτη)', 1, 0, 2.166,    102, 10, 1);
+insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('6D1Y', 'Κανονική άδεια(Εξαήμερο 1ο έτος)', 1, 0, 2.00,    102, 11, 1);
+insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('6D2Y', 'Κανονική άδεια(Εξαήμερο 2ο έτος)', 1, 0, 2.083,    102, 12, 1);
+insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('6D3-10Y', 'Κανονική άδεια(Εξαήμερο 3ο έως 10ο έτος)', 1, 0, 2.166,    102, 13, 1);
+insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('6D10-25Y', 'Κανονική άδεια(Εξαήμερο 10ο έως 25ο έτος)', 1, 0, 2.083,    102, 14, 1);
+insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('6D25+Y', 'Κανονική άδεια(Εξαήμερο 25+ έτη)', 1, 0, 2.166,    102, 15, 1);
+insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('5D-WED', 'Πενθήμερη άδεια γάμου(με αποδοχές)', 0, 0, 0, 102, 16, 0);
+insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('6D-WED', 'Εξαήμερη άδεια γάμου(με αποδοχές)', 0, 0, 0, 102, 17, 0);
+insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('7D-AR', 'Επταήμερη άδεια ιατρικώς υποβοηθούμενης αναπαραγωγής(με αποδοχές)', 0, 0, 0, 102, 18, 0);
+insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('1D-BC', 'Μονοήμερη άδεια προγεννητικών εξετάσεων(με αποδοχές)', 0, 0, 0, 102, 19, 0);
+insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('1D-GYN', 'Μονοήμερη άδεια γυναικολογικού ελέγχου(με αποδοχές)', 0,  0, 0, 102, 20, 0);
+insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('149D-ML', 'Άδεια Μητρότητας (Άδεια κύησης – λοχείας)56 ημέρες πριν-93 ημέρες μετα(με αποδοχές)', 0,  0, 0,    102, 21, 0);
+insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('14D-PL', '14ήμερη Άδεια πατρότητας(με αποδοχές)', 0,  0, 0, 102, 22, 0);
+insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('1-2H-CC', 'Άδεια φροντίδας παιδιών (μειωμένο ωράριο  https://www.kepea.gr/aarticle.php?id=1984)', 0,  0, 0, 102, 23, 0);
+insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('9M-M', 'Ειδική άδεια προστασίας μητρότητας 9 μηνών(χωρίς αποδοχές)', 0,  0, 0, 102, 24, 0);
+insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('4M-M', 'Τετράμηνη γονική Άδεια Ανατροφής Τέκνων(χωρίς αποδοχές)', 0,  0, 0, 102, 25, 0);
+insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('6-8D-SP', 'Εξαήμερη ή Οκταήμερη Άδεια για μονογονεϊκές οικογένειες(με αποδοχές)', 0, 0, 0, 102, 26, 0);
+insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('6-8-14D-FC', 'Άδεια για ασθένεια μελών οικογένειας(χωρίς αποδοχές, 6 ημέρες/έτος ένα παιδί - 8 ημέρες/έτος δύο παιδιά και σε 14 ημέρες/έτος τρία (3) παιδιά και πάνω', 0, 0, 0, 102, 27, 0);
+insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('10D-CD', 'Δεκαήμερη Γονική Άδεια για παιδί με σοβαρά νοσήματα και λόγω νοσηλείας παιδιών(με αποδοχές)', 0, 0, 0, 102, 28, 0);
+insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('30D-CD', 'Άδεια λόγω νοσηλείας των παιδιών(έως 30 ημέρες/έτος χωρίς αποδοχές)', 0, 0, 0, 102, 29, 0);
+insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('5D-CG', 'Άδεια φροντιστή(έως 5 ημέρες/έτος χωρίς αποδοχές)', 0, 0, 0, 102, 30, 0);
+insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('2D-CG', 'Άδεια απουσίας από την εργασία για λόγους ανωτέρας βίας(έως 2 ημέρες/έτος με αποδοχές)', 0,  0, 0, 102, 31, 0);
+insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('2D-SC', 'Άδεια για παρακολούθηση σχολικής επίδοσης(έως 2 ημέρες/έτος με αποδοχές)', 0, 0, 0, 102, 32, 0);
+insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('1D-BD', 'Μονοήμερη άδεια αιμοδοσίας(με αποδοχές)', 0,  0, 0, 102, 33, 0);
+insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('22D-BT', 'Άδεια για μετάγγιση αίματος & αιμοκάθαρση(έως 22 ημέρες/έτος με αποδοχές)', 0, 0, 0, 102, 34, 0);
+insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('30D-HIV', 'Άδεια λόγω AIDS(έως ένα (1) μήνα/έτος με αποδοχές)', 0, 0, 0, 102, 35, 0);
+insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('20D-CD', 'Άδεια πενθούντων γονέων(20 ημέρες με αποδοχές)', 0, 0, 0, 102, 36, 0);
+insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('2D-FD', 'Άδεια λόγω θανάτου συγγενούς(2 ημέρες με αποδοχές)', 0, 0, 0, 102, 37, 0);
+insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('DIS', 'Άδειες αναπήρων(30 ημέρες με αποδοχές)', 0, 0, 0, 102, 38, 0);
+insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('SE', 'Άδεια εξετάσεων μαθητών, σπουδαστών, φοιτητών(30 ημέρες χωρίς αποδοχές)', 0, 0, 0, 102, 39, 0);
+insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('NOT PAID', 'Άδεια άνευ αποδοχών(έως ένα (1) έτος)', 0, 0, 0, 102, 40, 0);
+
+-- hrm triggers
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('HRM_EVALUATION_CREATE', 'HR Evaluation created', 'Executed when an evaluation is created', 'hrm', 4000);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('HRM_EVALUATION_MODIFY', 'HR Evaluation modified', 'Executed when an evaluation is modified', 'hrm', 4001);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('HRM_EVALUATION_VALIDATE', 'HR Evaluation validated', 'Executed when an evaluation is validated', 'hrm', 4002);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('HRM_EVALUATION_UNVALIDATE', 'HR Evaluation back to draft', 'Executed when an evaluation is back to draft', 'hrm', 4003);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('HRM_EVALUATION_DELETE', 'HR Evaluation deleted', 'Executed when an evaluation is dleted', 'hrm', 4005);
+
+UPDATE llx_menu SET url = '/fourn/paiement/list.php?mainmenu=billing&leftmenu=suppliers_bills_payment' WHERE leftmenu = 'suppliers_bills_payment';
+
+UPDATE llx_paiement SET ref = rowid WHERE ref IS NULL OR ref = '';

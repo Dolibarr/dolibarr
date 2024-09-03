@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 $langs->loadLangs(array("main", "categories", "takepos", "printing"));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $type = (GETPOST('type', 'aZ09') ? GETPOST('type', 'aZ09') : Categorie::TYPE_PRODUCT);
 $catname = GETPOST('catname', 'alpha');
 $action = GETPOST('action', 'aZ09');
@@ -47,7 +47,7 @@ if (is_numeric($type)) {
 	$type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
 }
 
-if (!$user->rights->categorie->lire) {
+if (!$user->hasRight('categorie', 'lire')) {
 	accessforbidden();
 }
 
@@ -129,7 +129,7 @@ $arrayofjs = array(
 );
 $arrayofcss = array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
 
-llxHeader('', $title, '', '', 0, 0, $arrayofjs, $arrayofcss);
+llxHeader('', $title, '', '', 0, 0, $arrayofjs, $arrayofcss, '', 'mod-takepos page-admin_orderprinters');
 
 
 print load_fiche_titre($langs->trans("OrderPrinters"));
@@ -166,10 +166,10 @@ foreach ($fulltree as $key => $val) {
 	$desc = dol_htmlcleanlastbr($val['description']);
 
 	$data[] = array(
-		'rowid'=>$val['rowid'],
-		'fk_menu'=>$val['fk_menu'],
-		'fk_parent'=>$val['fk_parent'],
-		'label'=>$val['label']
+		'rowid' => $val['rowid'],
+		'fk_menu' => empty($val['fk_menu']) ? 0 : $val['fk_menu'],
+		'fk_parent' => $val['fk_parent'],
+		'label' => $val['label']
 	);
 }
 
@@ -184,7 +184,7 @@ if ($nbofentries > 0) {
 	print '<tr class="pair"><td colspan="3">';
 	print '<input type="hidden" name="action" value="SavePrinter1">';
 	foreach ($data as $row) {
-		if (strpos($conf->global->TAKEPOS_PRINTED_CATEGORIES_1, ';'.$row["rowid"].';') !== false) {
+		if (strpos(getDolGlobalString('TAKEPOS_PRINTED_CATEGORIES_1'), ';'.$row["rowid"].';') !== false) {
 			$checked = 'checked';
 		} else {
 			$checked = '';
@@ -218,7 +218,7 @@ if ($nbofentries > 0) {
 	print '<tr class="pair"><td colspan="3">';
 	print '<input type="hidden" name="action" value="SavePrinter2">';
 	foreach ($data as $row) {
-		if (strpos($conf->global->TAKEPOS_PRINTED_CATEGORIES_2, ';'.$row["rowid"].';') !== false) {
+		if (strpos(getDolGlobalString('TAKEPOS_PRINTED_CATEGORIES_2'), ';'.$row["rowid"].';') !== false) {
 			$checked = 'checked';
 		} else {
 			$checked = '';
@@ -252,7 +252,7 @@ if ($nbofentries > 0) {
 	print '<tr class="pair"><td colspan="3">';
 	print '<input type="hidden" name="action" value="SavePrinter3">';
 	foreach ($data as $row) {
-		if (strpos($conf->global->TAKEPOS_PRINTED_CATEGORIES_3, ';'.$row["rowid"].';') !== false) {
+		if (strpos(getDolGlobalString('TAKEPOS_PRINTED_CATEGORIES_3'), ';'.$row["rowid"].';') !== false) {
 			$checked = 'checked';
 		} else {
 			$checked = '';

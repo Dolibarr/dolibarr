@@ -173,6 +173,11 @@
             "name": "CP855",
             "python_encode": "cp855"
         },
+        "CP856": {
+            "iconv": "CP856",
+            "name": "CP856",
+            "python_encode": "cp856"
+        },
         "CP857": {
             "iconv": "CP857",
             "name": "CP857",
@@ -235,6 +240,11 @@
             "name": "CP932",
             "python_encode": "cp932"
         },
+        "ISO_8859-1": {
+            "iconv": "ISO_8859-1",
+            "name": "ISO_8859-1",
+            "python_encode": "latin_1"
+        },
         "ISO_8859-15": {
             "iconv": "ISO_8859-15",
             "name": "ISO_8859-15",
@@ -245,10 +255,40 @@
             "name": "ISO_8859-2",
             "python_encode": "iso8859_2"
         },
+        "ISO_8859-3": {
+            "iconv": "ISO_8859-3",
+            "name": "ISO_8859-3",
+            "python_encode": "iso8859_3"
+        },
+        "ISO_8859-4": {
+            "iconv": "ISO_8859-4",
+            "name": "ISO_8859-4",
+            "python_encode": "iso8859_4"
+        },
+        "ISO_8859-5": {
+            "iconv": "ISO_8859-5",
+            "name": "ISO_8859-5",
+            "python_encode": "iso8859_5"
+        },
+        "ISO_8859-6": {
+            "iconv": "ISO_8859-6",
+            "name": "ISO_8859-6",
+            "python_encode": "iso8859_6"
+        },
         "ISO_8859-7": {
             "iconv": "ISO_8859-7",
             "name": "ISO_8859-7",
             "python_encode": "iso8859_7"
+        },
+        "ISO_8859-8": {
+            "iconv": "ISO_8859-8",
+            "name": "ISO_8859-8",
+            "python_encode": "iso8859_8"
+        },
+        "ISO_8859-9": {
+            "iconv": "ISO_8859-9",
+            "name": "ISO_8859-9",
+            "python_encode": "iso8859_9"
         },
         "OXHOO-EUROPEAN": {
             "data": [
@@ -336,6 +376,74 @@
             "name": "AF-240 Customer Display",
             "notes": "This is a two-line, ESC/POS-aware customer display from Oxhoo. The ESC/POS command mode can be activated persistently by sending:\n\n    echo -ne \"\\n\\x02\\x05\\x43\\x31\\x03\" > /dev/ttyUSB0\n",
             "vendor": "Oxhoo"
+        },
+        "CT-S651": {
+            "codePages": {
+                "0": "CP437",
+                "1": "CP932",
+                "2": "CP850",
+                "3": "CP860",
+                "4": "CP863",
+                "5": "CP865",
+                "6": "CP852",
+                "7": "CP866",
+                "8": "CP857",
+                "9": "CP1252",
+                "16": "CP1252",
+                "17": "CP866",
+                "18": "CP852",
+                "19": "CP858",
+                "20": "Unknown",
+                "21": "Unknown",
+                "25": "Unknown",
+                "26": "Unknown",
+                "30": "TCVN-3-1",
+                "31": "TCVN-3-2",
+                "40": "CP864",
+                "255": "Unknown"
+            },
+            "colors": {
+                "0": "black",
+                "1": "red"
+            },
+            "features": {
+                "barcodeA": true,
+                "barcodeB": true,
+                "bitImageColumn": true,
+                "bitImageRaster": true,
+                "graphics": true,
+                "highDensity": true,
+                "paperFullCut": true,
+                "paperPartCut": true,
+                "pdf417Code": true,
+                "pulseBel": true,
+                "pulseStandard": true,
+                "qrCode": true,
+                "starCommands": false
+            },
+            "fonts": {
+                "0": {
+                    "columns": 48,
+                    "name": "Font A"
+                },
+                "1": {
+                    "columns": 64,
+                    "name": "Font B"
+                },
+                "2": {
+                    "columns": 72,
+                    "name": "Font C"
+                }
+            },
+            "media": {
+                "width": {
+                    "mm": 80,
+                    "pixels": 640
+                }
+            },
+            "name": "CT-S651",
+            "notes": "Citizen CT-S651 profile. This is a two-color thermal printer, supporting paper sizes from 58mm up to 83mm\n",
+            "vendor": "Citizen"
         },
         "NT-5890K": {
             "codePages": {
@@ -781,6 +889,91 @@
             "notes": "POS-5890 thermal printer series, also marketed under various other names.\n",
             "vendor": "Zjiang"
         },
+        "RP326": {
+            "codePages": {
+                "0": "CP437",
+                "1": "Unknown",
+                "2": "CP850",
+                "3": "CP860",
+                "4": "CP863",
+                "5": "CP865",
+                "6": "CP1251",
+                "7": "CP866",
+                "8": "Unknown",
+                "9": "Unknown",
+                "10": "Unknown",
+                "15": "CP862",
+                "16": "CP1252",
+                "17": "CP1253",
+                "18": "CP852",
+                "19": "CP858",
+                "20": "Unknown",
+                "21": "Unknown",
+                "22": "Unknown",
+                "23": "ISO_8859-1",
+                "24": "CP737",
+                "25": "CP1257",
+                "26": "Unknown",
+                "27": "CP720",
+                "28": "CP855",
+                "29": "CP857",
+                "30": "CP1250",
+                "31": "CP775",
+                "32": "CP1254",
+                "33": "CP1255",
+                "34": "CP1256",
+                "35": "CP1258",
+                "36": "ISO_8859-2",
+                "37": "ISO_8859-3",
+                "38": "ISO_8859-4",
+                "39": "ISO_8859-5",
+                "40": "ISO_8859-6",
+                "41": "ISO_8859-7",
+                "42": "ISO_8859-8",
+                "43": "ISO_8859-9",
+                "44": "ISO_8859-15",
+                "45": "Unknown",
+                "46": "CP856",
+                "47": "CP874"
+            },
+            "colors": {
+                "0": "black"
+            },
+            "features": {
+                "barcodeA": true,
+                "barcodeB": true,
+                "bitImageColumn": true,
+                "bitImageRaster": true,
+                "graphics": false,
+                "highDensity": true,
+                "paperFullCut": true,
+                "paperPartCut": true,
+                "pdf417Code": true,
+                "pulseBel": false,
+                "pulseStandard": true,
+                "qrCode": true,
+                "starCommands": false
+            },
+            "fonts": {
+                "0": {
+                    "columns": 42,
+                    "name": "Font A"
+                },
+                "1": {
+                    "columns": 56,
+                    "name": "Font B"
+                }
+            },
+            "media": {
+                "width": {
+                    "mm": "Unknown",
+                    "pixels": "Unknown"
+                }
+            },
+            "name": "RP326",
+            "notes": "",
+            "vendor": "Rongta"
+        },
         "SP2000": {
             "codePages": {
                 "0": "CP437",
@@ -870,6 +1063,65 @@
             "name": "SP2000 Series",
             "notes": "Star SP2000 impact printer series with ESC/POS emulation enabled",
             "vendor": "Star Micronics"
+        },
+        "Sunmi-V2": {
+            "codePages": {
+                "0": "CP437",
+                "2": "CP850",
+                "3": "CP860",
+                "4": "CP863",
+                "5": "CP865",
+                "13": "CP857",
+                "14": "CP737",
+                "15": "ISO_8859-7",
+                "16": "CP1252",
+                "17": "CP866",
+                "18": "CP852",
+                "19": "CP858",
+                "21": "CP874",
+                "33": "CP775",
+                "34": "CP855",
+                "36": "CP862",
+                "37": "CP864",
+                "254": "CP855"
+            },
+            "colors": {
+                "0": "black"
+            },
+            "features": {
+                "barcodeA": true,
+                "barcodeB": true,
+                "bitImageColumn": false,
+                "bitImageRaster": true,
+                "graphics": false,
+                "highDensity": true,
+                "paperFullCut": false,
+                "paperPartCut": false,
+                "pdf417Code": true,
+                "pulseBel": false,
+                "pulseStandard": true,
+                "qrCode": true,
+                "starCommands": false
+            },
+            "fonts": {
+                "0": {
+                    "columns": 32,
+                    "name": "Font A"
+                },
+                "1": {
+                    "columns": 42,
+                    "name": "Font B"
+                }
+            },
+            "media": {
+                "width": {
+                    "mm": 57.5,
+                    "pixels": 384
+                }
+            },
+            "name": "Sunmi V2",
+            "notes": "Sunmi mini-POS Android device with a built-in Virtual Bluetooth thermal printer.\n",
+            "vendor": "Sunmi"
         },
         "TEP-200M": {
             "codePages": {
@@ -1333,8 +1585,8 @@
             },
             "media": {
                 "width": {
-                    "mm": "Unknown",
-                    "pixels": "Unknown"
+                    "mm": 80,
+                    "pixels": 512
                 }
             },
             "name": "TM-T88IV",
@@ -1380,12 +1632,90 @@
             },
             "media": {
                 "width": {
-                    "mm": "Unknown",
-                    "pixels": "Unknown"
+                    "mm": 80,
+                    "pixels": 512
                 }
             },
             "name": "TM-T88IV South Asia",
             "notes": "Epson TM-T88IV profile (South Asia models)\n",
+            "vendor": "Epson"
+        },
+        "TM-T88V": {
+            "codePages": {
+                "0": "CP437",
+                "1": "CP932",
+                "2": "CP850",
+                "3": "CP860",
+                "4": "CP863",
+                "5": "CP865",
+                "11": "CP851",
+                "12": "CP853",
+                "13": "CP857",
+                "14": "CP737",
+                "15": "ISO_8859-7",
+                "16": "CP1252",
+                "17": "CP866",
+                "18": "CP852",
+                "19": "CP858",
+                "30": "TCVN-3-1",
+                "31": "TCVN-3-2",
+                "32": "CP720",
+                "33": "CP775",
+                "34": "CP855",
+                "35": "CP861",
+                "36": "CP862",
+                "37": "CP864",
+                "38": "CP869",
+                "39": "ISO_8859-2",
+                "40": "ISO_8859-15",
+                "41": "CP1098",
+                "45": "CP1250",
+                "46": "CP1251",
+                "47": "CP1253",
+                "48": "CP1254",
+                "49": "CP1255",
+                "50": "CP1256",
+                "51": "CP1257",
+                "52": "CP1258",
+                "53": "RK1048",
+                "255": "Unknown"
+            },
+            "colors": {
+                "0": "black"
+            },
+            "features": {
+                "barcodeA": true,
+                "barcodeB": true,
+                "bitImageColumn": true,
+                "bitImageRaster": true,
+                "graphics": true,
+                "highDensity": true,
+                "paperFullCut": true,
+                "paperPartCut": true,
+                "pdf417Code": true,
+                "pulseBel": false,
+                "pulseStandard": true,
+                "qrCode": true,
+                "starCommands": false
+            },
+            "fonts": {
+                "0": {
+                    "columns": 42,
+                    "name": "Font A"
+                },
+                "1": {
+                    "columns": 56,
+                    "name": "Font B"
+                }
+            },
+            "media": {
+                "width": {
+                    "mm": 80,
+                    "pixels": 512
+                }
+            },
+            "name": "TM-T88V",
+            "notes": "Epson TM-T88V profile\n",
             "vendor": "Epson"
         },
         "TM-U220": {
@@ -1610,6 +1940,52 @@
             "name": "TUP500 Series",
             "notes": "Star TUP500 thermal printer series with ESC/POS emulation enabled",
             "vendor": "Star Micronics"
+        },
+        "ZJ-5870": {
+            "codePages": {
+                "0": "CP437",
+                "1": "CP932",
+                "2": "CP850",
+                "3": "CP860",
+                "4": "CP863",
+                "5": "CP865",
+                "16": "CP1252",
+                "17": "CP866",
+                "18": "CP852"
+            },
+            "colors": {
+                "0": "black"
+            },
+            "features": {
+                "barcodeA": false,
+                "barcodeB": false,
+                "bitImageColumn": true,
+                "bitImageRaster": true,
+                "graphics": false,
+                "highDensity": false,
+                "paperFullCut": false,
+                "paperPartCut": false,
+                "pdf417Code": false,
+                "pulseBel": false,
+                "pulseStandard": true,
+                "qrCode": false,
+                "starCommands": false
+            },
+            "fonts": {
+                "0": {
+                    "columns": 32,
+                    "name": "Font A"
+                }
+            },
+            "media": {
+                "width": {
+                    "mm": 48,
+                    "pixels": 384
+                }
+            },
+            "name": "ZJ-5870 Thermal Receipt Printer",
+            "notes": "ESC/POS Profile for ZiJiang ZJ-5870 Thermal Receipt Printer, which may be branded AGPtEK or Esky, and identifies itself as a POS-58 Thermal Printer on selftest. This profile is suitable for alphanumberic character mode, but is untested on Chinese character mode. (Change modes by holding down feed button during power-on until the mode LED turns off, then release immediately.)\n",
+            "vendor": "ZiJiang"
         },
         "default": {
             "codePages": {

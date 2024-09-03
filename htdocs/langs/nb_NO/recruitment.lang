@@ -4,40 +4,25 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
 ModuleRecruitmentName = Rekruttering
 # Module description 'ModuleRecruitmentDesc'
 ModuleRecruitmentDesc = Administrer og følg rekrutteringskampanjer for nye stillinger
-
-#
 # Admin page
-#
 RecruitmentSetup = Rekrutteringsoppsett
-Settings = innstillinger
 RecruitmentSetupPage = Fyll inn oppsettet av hovedalternativene for rekrutteringsmodulen her
 RecruitmentArea=Rekrutteringsområde
 PublicInterfaceRecruitmentDesc=Offentlige sider med jobber er offentlige nettadresser for å vise og svare på åpne jobber. Det finnes en lenke for hver åpen jobb, funnet på hver jobbpost.
 EnablePublicRecruitmentPages=Aktiver offentlige sider med åpne jobber
 
-#
-# About page
-#
-About = Om
-RecruitmentAbout = Om rekruttering
-RecruitmentAboutPage = Om rekrutteringssiden
 NbOfEmployeesExpected=Forventet antall ansatte
 JobLabel=Etikett for stillingen
 WorkPlace=Arbeidssted
@@ -49,7 +34,6 @@ PositionToBeFilled=Stilling
 PositionsToBeFilled=Stillinger
 ListOfPositionsToBeFilled=Liste over stillinger
 NewPositionToBeFilled=Nye stillinger
-
 JobOfferToBeFilled=Jobbstilling som skal besettes
 ThisIsInformationOnJobPosition=Informasjon om stillingen som skal besettes
 ContactForRecruitment=Kontakt for rekruttering
@@ -77,3 +61,6 @@ ExtrafieldsApplication=Utfyllende attributter (jobbsøknader)
 MakeOffer=Gi et tilbud
 WeAreRecruiting=Vi rekrutterer. Dette er en liste over ledige stillinger som skal fylles...
 NoPositionOpen=Ingen ledige stillinger for øyeblikket
+ConfirmClose=Bekreft kansellering
+ConfirmCloseAsk=Er du sikker på at du vil kansellere dette rekrutteringskandidaturet
+Recruitment=Rekruttering

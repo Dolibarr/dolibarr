@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2017 	   Nicolas Zabouri      <info@inovea-conseil.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,20 +39,6 @@ class box_scheduled_jobs extends ModeleBoxes
 	public $depends = array("cron");
 
 	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	/**
-	 * @var string params
-	 */
-	public $param;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
-
-	/**
 	 *  Constructor
 	 *
 	 *  @param  DoliDB  $db         Database handler
@@ -63,7 +50,7 @@ class box_scheduled_jobs extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = !($user->hasRight('service', 'lire') && $user->hasRight('contrat', 'lire'));
+		$this->hidden = !($user->hasRight('cron', 'read'));
 	}
 
 	/**
@@ -79,7 +66,7 @@ class box_scheduled_jobs extends ModeleBoxes
 		$langs->load("cron");
 		$this->info_box_head = array('text' => $langs->trans("BoxScheduledJobs", $max));
 
-		if ($user->rights->cron->read) {
+		if ($user->hasRight('cron', 'read')) {
 			include_once DOL_DOCUMENT_ROOT . '/cron/class/cronjob.class.php';
 			$cronstatic = new Cronjob($this->db);
 			$resultarray = array();
@@ -103,7 +90,7 @@ class box_scheduled_jobs extends ModeleBoxes
 				while ($i < $num) {
 					$objp = $this->db->fetch_object($result);
 
-					if (dol_eval($objp->test, 1, 1, '')) {
+					if ((int) dol_eval($objp->test, 1, 1, '2')) {
 						$nextrun = $this->db->jdate($objp->datenextrun);
 						if (empty($nextrun)) {
 							$nextrun = $this->db->jdate($objp->datestart);
@@ -115,6 +102,8 @@ class box_scheduled_jobs extends ModeleBoxes
 							$cronstatic->ref = $objp->rowid;
 							$cronstatic->label = $langs->trans($objp->label);
 							$cronstatic->status = $objp->status;
+							$cronstatic->processing = $objp->processing;
+							$cronstatic->lastresult = $objp->lastresult ?? '';
 							$cronstatic->datenextrun = $this->db->jdate($objp->datenextrun);
 							$cronstatic->datelastrun = $this->db->jdate($objp->datelastrun);
 						}
@@ -197,8 +186,8 @@ class box_scheduled_jobs extends ModeleBoxes
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="nohover opacitymedium left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed")
+				'td' => 'class="nohover left"',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}
@@ -206,9 +195,9 @@ class box_scheduled_jobs extends ModeleBoxes
 	/**
 	 *	Method to show box
 	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
+	 *	@param	?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}	$head	Array with properties of box title
+	 *	@param	?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>	$contents	Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *	@return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)

@@ -19,11 +19,11 @@
 /**
  *	\file       htdocs/societe/canvas/actions_card_common.class.php
  *	\ingroup    thirdparty
- *	\brief      Fichier de la classe Thirdparty card controller (common)
+ *	\brief      File for the abstract class to manage third parties
  */
 
 /**
- *	Classe permettant la gestion des tiers par defaut
+ *	Abstract class to manage third parties
  */
 abstract class ActionsCardCommon
 {
@@ -39,6 +39,7 @@ abstract class ActionsCardCommon
 
 	//! Template container
 	public $tpl = array();
+
 	//! Object container
 	public $object;
 
@@ -46,7 +47,6 @@ abstract class ActionsCardCommon
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
-
 
 	/**
 	 * @var string[] Error codes (or messages)
@@ -93,19 +93,19 @@ abstract class ActionsCardCommon
 			$this->assign_post($action);
 		}
 
-		if ($_GET["type"] == 'f') {
+		if (GETPOST("type") == 'f') {
 			$this->object->fournisseur = 1;
 		}
-		if ($_GET["type"] == 'c') {
+		if (GETPOST("type") == 'c') {
 			$this->object->client = 1;
 		}
-		if ($_GET["type"] == 'p') {
+		if (GETPOST("type") == 'p') {
 			$this->object->client = 2;
 		}
-		if ($_GET["type"] == 'cp') {
+		if (GETPOST("type") == 'cp') {
 			$this->object->client = 3;
 		}
-		if ($_REQUEST["private"] == 1) {
+		if (GETPOST("private") == 1) {
 			$this->object->particulier = 1;
 		}
 
@@ -153,7 +153,7 @@ abstract class ActionsCardCommon
 			}
 
 			// Load object modCodeClient
-			$module = (!empty($conf->global->SOCIETE_CODECLIENT_ADDON) ? $conf->global->SOCIETE_CODECLIENT_ADDON : 'mod_codeclient_leopard');
+			$module = getDolGlobalString('SOCIETE_CODECLIENT_ADDON', 'mod_codeclient_leopard');
 			if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php') {
 				$module = substr($module, 0, dol_strlen($module) - 4);
 			}
@@ -192,7 +192,7 @@ abstract class ActionsCardCommon
 				$this->tpl['supplier_enabled'] = 1;
 
 				// Load object modCodeFournisseur
-				$module = $conf->global->SOCIETE_CODECLIENT_ADDON;
+				$module = getDolGlobalString('SOCIETE_CODECLIENT_ADDON');
 				if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php') {
 					$module = substr($module, 0, dol_strlen($module) - 4);
 				}
@@ -203,7 +203,7 @@ abstract class ActionsCardCommon
 						break;
 					}
 				}
-				$modCodeFournisseur = new $module;
+				$modCodeFournisseur = new $module();
 				$this->tpl['auto_suppliercode'] = $modCodeFournisseur->code_auto;
 				// We verified if the tag prefix is used
 				if ($modCodeFournisseur->code_auto) {
@@ -249,17 +249,17 @@ abstract class ActionsCardCommon
 
 			// Language
 			if (getDolGlobalInt('MAIN_MULTILANGS')) {
-				$this->tpl['select_lang'] = $formadmin->select_language(($this->object->default_lang ? $this->object->default_lang : $conf->global->MAIN_LANG_DEFAULT), 'default_lang', 0, 0, 1);
+				$this->tpl['select_lang'] = $formadmin->select_language((empty($this->object->default_lang) ? getDolGlobalString('MAIN_LANG_DEFAULT') : $this->object->default_lang), 'default_lang', 0, 0, 1);
 			}
 
 			// VAT
-			$this->tpl['yn_assujtva'] = $form->selectyesno('assujtva_value', $this->tpl['tva_assuj'], 1); // Assujeti par defaut en creation
+			$this->tpl['yn_assujtva'] = $form->selectyesno('assujtva_value', $this->tpl['tva_assuj'], 1); // Assujeti par default en creation
 
 			// Select users
 			$this->tpl['select_users'] = $form->select_dolusers($this->object->commercial_id, 'commercial_id', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 
 			// Local Tax
-			// TODO mettre dans une classe propre au pays
+			// TODO Implement country specific action in country specific class
 			if ($mysoc->country_code == 'ES') {
 				$this->tpl['localtax'] = '';
 
@@ -298,8 +298,9 @@ abstract class ActionsCardCommon
 			$this->tpl['country'] = ($img ? $img.' ' : '').$this->object->country;
 
 			$this->tpl['phone'] 	= dol_print_phone($this->object->phone, $this->object->country_code, 0, $this->object->id, 'AC_TEL');
+			$this->tpl['phone_mobile'] 	= dol_print_phone($this->object->phone_mobile, $this->object->country_code, 0, $this->object->id, 'AC_MOB');
 			$this->tpl['fax'] 		= dol_print_phone($this->object->fax, $this->object->country_code, 0, $this->object->id, 'AC_FAX');
-			$this->tpl['email'] 	= dol_print_email($this->object->email, 0, $this->object->id, 'AC_EMAIL');
+			$this->tpl['email'] 	= dol_print_email($this->object->email, 0, $this->object->id, 1);
 			$this->tpl['url'] 		= dol_print_url($this->object->url);
 
 			$this->tpl['tva_assuj'] = yn($this->object->tva_assuj);
@@ -313,7 +314,7 @@ abstract class ActionsCardCommon
 				//$s=picto_from_langcode($this->default_lang);
 				//print ($s?$s.' ':'');
 				$langs->load("languages");
-				$this->tpl['default_lang'] = ($this->default_lang ? $langs->trans('Language_'.$this->object->default_lang) : '');
+				$this->tpl['default_lang'] = (empty($this->object->default_lang) ? '' : $langs->trans('Language_'.$this->object->default_lang));
 			}
 
 			$this->tpl['image_edit'] = img_edit();
@@ -344,7 +345,7 @@ abstract class ActionsCardCommon
 			}
 
 			// Linked member
-			if (isModEnabled('adherent')) {
+			if (isModEnabled('member')) {
 				$langs->load("members");
 				$adh = new Adherent($this->db);
 				$result = $adh->fetch('', '', $this->object->id);
@@ -357,7 +358,7 @@ abstract class ActionsCardCommon
 			}
 
 			// Local Tax
-			// TODO mettre dans une classe propre au pays
+			// TODO Implement country specific action in country specific class
 			if ($mysoc->country_code == 'ES') {
 				$this->tpl['localtax'] = '';
 
@@ -382,7 +383,7 @@ abstract class ActionsCardCommon
 	 *  Assign POST values into object
 	 *
 	 *	@param		string		$action		Action string
-	 *  @return		string					HTML output
+	 *  @return		void
 	 */
 	private function assign_post($action)
 	{
@@ -396,12 +397,13 @@ abstract class ActionsCardCommon
 		$this->object->code_client			= GETPOST("code_client");
 		$this->object->fournisseur			= GETPOST("fournisseur");
 		$this->object->code_fournisseur = GETPOST("code_fournisseur");
-		$this->object->address = GETPOST("adresse");
+		$this->object->address = GETPOST("address");
 		$this->object->zip = GETPOST("zipcode");
 		$this->object->town					= GETPOST("town");
 		$this->object->country_id = GETPOST("country_id") ? GETPOST("country_id") : $mysoc->country_id;
 		$this->object->state_id = GETPOST("state_id");
-		$this->object->phone				= GETPOST("tel");
+		$this->object->phone				= GETPOST("phone");
+		$this->object->phone_mobile			= GETPOST("phone_mobile");
 		$this->object->fax					= GETPOST("fax");
 		$this->object->email				= GETPOST("email", 'alphawithlgt');
 		$this->object->url					= GETPOST("url");

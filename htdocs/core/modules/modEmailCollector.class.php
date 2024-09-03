@@ -16,8 +16,8 @@
  */
 
 /**
- * 	\defgroup   emailcollector     Module emailcollector
- *  \brief      emailcollector module descriptor.
+ * 	\defgroup   emailcollector     Module Emailcollector
+ *  \brief      Module to collect emails
  *
  *  \file       htdocs/core/modules/modEmailCollector.class.php
  *  \ingroup    emailcollector
@@ -91,8 +91,6 @@ class modEmailCollector extends DolibarrModules
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
 		$this->langfiles = array("admin");
-		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
-		$this->need_dolibarr_version = array(7, 0); // Minimum version of Dolibarr required by module
 		$this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
 		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
 		//$this->automatic_activation = array('FR'=>'davWasAutomaticallyActivatedBecauseOfYourCountryChoice');
@@ -129,7 +127,7 @@ class modEmailCollector extends DolibarrModules
 		// 'intervention'     to add a tab in intervention view
 		// 'invoice'          to add a tab in customer invoice view
 		// 'invoice_supplier' to add a tab in supplier invoice view
-		// 'member'           to add a tab in fundation member view
+		// 'member'           to add a tab in foundation member view
 		// 'opensurveypoll'	  to add a tab in opensurvey poll view
 		// 'order'            to add a tab in sales order view
 		// 'order_supplier'   to add a tab in supplier order view
@@ -159,7 +157,7 @@ class modEmailCollector extends DolibarrModules
 		// Cronjobs (List of cron jobs entries to add when module is enabled)
 		// unit_frequency must be 60 for minute, 3600 for hour, 86400 for day, 604800 for week
 		$this->cronjobs = array(
-			0=>array('label'=>'Email collector', 'priority'=>50, 'jobtype'=>'method', 'class'=>'/emailcollector/class/emailcollector.class.php', 'objectname'=>'EmailCollector', 'method'=>'doCollect', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>5, 'unitfrequency'=>60, 'status'=>1, 'test'=>'$conf->emailcollector->enabled')
+			0=>array('label'=>'Email collector', 'priority'=>50, 'jobtype'=>'method', 'class'=>'/emailcollector/class/emailcollector.class.php', 'objectname'=>'EmailCollector', 'method'=>'doCollect', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>5, 'unitfrequency'=>60, 'status'=>1, 'test'=>'isModEnabled("emailcollector")')
 		);
 
 
@@ -177,7 +175,7 @@ class modEmailCollector extends DolibarrModules
 			'langs'=>'admin', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>400,
 			'enabled'=>'isModEnabled("emailcollector") && preg_match(\'/^(admintools|all)/\', $leftmenu)', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms'=>'$user->admin', // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+			'perms'=>'$user->admin', // Use 'perms'=>'$user->hasRight("mymodule","level1","level2")' if you want your menu with a permission rules
 			'target'=>'',
 			'user'=>2); // 0=Menu for internal users, 1=external users, 2=both
 		$r++;
@@ -296,8 +294,9 @@ class modEmailCollector extends DolibarrModules
 				$sqlforexampleFilterC3 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, rulevalue, date_creation, fk_user_creat, status)";
 				$sqlforexampleFilterC3 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Leads' and entity = ".((int) $conf->entity)."), 'to', 'sales@example.com', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 1)";
 
+				$paramstring = 'tmp_from=EXTRACT:HEADER:^From:(.*)'."\n".'socid=SETIFEMPTY:1'."\n".'usage_opportunity=SET:1'."\n".'description=EXTRACT:BODY:(.*)'."\n".'title=SET:Lead or message from __tmp_from__ received by email';
 				$sqlforexampleActionC4 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectoraction (fk_emailcollector, type, actionparam, date_creation, fk_user_creat, status)";
-				$sqlforexampleActionC4 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Leads' and entity = ".((int) $conf->entity)."), 'project', 'tmp_from=EXTRACT:HEADER:^From:(.*);socid=SETIFEMPTY:1;usage_opportunity=SET:1;description=EXTRACT:BODY:(.*);title=SET:Lead or message from __tmp_from__ received by email', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 1)";
+				$sqlforexampleActionC4 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Leads' and entity = ".((int) $conf->entity)."), 'project', '".$this->db->escape($paramstring)."', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 1)";
 
 				$sql[] = $sqlforexampleC1;
 
@@ -327,8 +326,9 @@ class modEmailCollector extends DolibarrModules
 				$sqlforexampleFilterC3 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, rulevalue, date_creation, fk_user_creat, status)";
 				$sqlforexampleFilterC3 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Candidatures' and entity = ".((int) $conf->entity)."), 'to', 'jobs@example.com', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 1)";
 
+				$paramstring = 'tmp_from=EXTRACT:HEADER:^From:(.*)(<.*>)?'."\n".'fk_recruitmentjobposition=EXTRACT:HEADER:^To:[^\n]*\+([^\n]*)'."\n".'description=EXTRACT:BODY:(.*)'."\n".'lastname=SET:__tmp_from__';
 				$sqlforexampleActionC4 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectoraction (fk_emailcollector, type, actionparam, date_creation, fk_user_creat, status)";
-				$sqlforexampleActionC4 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Candidatures' and entity = ".((int) $conf->entity)."), 'candidature', 'tmp_from=EXTRACT:HEADER:^From:(.*)(<.*>)?;fk_recruitmentjobposition=EXTRACT:HEADER:^To:[^\n]*\+([^\n]*);description=EXTRACT:BODY:(.*);lastname=SET:__tmp_from__', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 1)";
+				$sqlforexampleActionC4 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Candidatures' and entity = ".((int) $conf->entity)."), 'candidature', '".$this->db->escape($paramstring)."', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 1)";
 
 				$sql[] = $sqlforexampleC1;
 

@@ -9,7 +9,7 @@ DIRECTION=rtl
 # cid0kr is for Korean
 # DejaVuSans is for some Eastern languages, some Asian languages and some Arabic languages
 # freemono is for ru_RU or uk_UA, uz_UZ
-# freeserif is for Tamil
+# freeserif is for Tamil or Ethiopian
 FONTFORPDF=DejaVuSans
 FONTSIZEFORPDF=10
 SeparatorDecimal=.
@@ -20,7 +20,7 @@ FormatDateShortJava=dd/MM/yyyy
 FormatDateShortJavaInput=dd/MM/yyyy
 FormatDateShortJQuery=dd/mm/yy
 FormatDateShortJQueryInput=dd/mm/yy
-FormatHourShortJQuery=HH: MI
+FormatHourShortJQuery=HH:MI
 FormatHourShort=%H:%M
 FormatHourShortDuration=%H:%M
 FormatDateTextShort=%d %b %Y
@@ -34,7 +34,7 @@ NoTemplateDefined=لا يوجد قالب متاح لهذا النوع من ال�
 AvailableVariables=متغيرات الاستبدال المتاحة
 NoTranslation=لا يوجد ترجمة
 Translation=الترجمة
-Translations=Translations
+Translations=ترجمات
 CurrentTimeZone=حسب توقيت خادم البي إتش بي
 EmptySearchString=أدخل معايير بحث غير فارغة
 EnterADateCriteria=أدخل معايير التاريخ
@@ -60,7 +60,7 @@ ErrorFailedToSendMail=فشل في إرسال البريد (المرسل = %s ، 
 ErrorFileNotUploaded=لم يتم تحميل الملف. تحقق من أن الحجم لا يتجاوز الحد الأقصى المسموح به ، وأن المساحة الخالية متوفرة على القرص وأنه لا يوجد بالفعل ملف بنفس الاسم في هذا الدليل.
 ErrorInternalErrorDetected=تم الكشف عن خطأ
 ErrorWrongHostParameter=معامل مضيف خاطئ (Wrong host parameter)
-ErrorYourCountryIsNotDefined=لم يتم تعريف بلدك. انتقل إلى Home-Setup-Edit وانشر النموذج مرة أخرى.
+ErrorYourCountryIsNotDefined=لم يتم تعريف بلدك. انتقل إلى Home-Setup-شركة/Foundation و وقم بنشر النموذج مرة أخرى.
 ErrorRecordIsUsedByChild=فشل حذف هذا السجل. يتم استخدام هذا السجل من قبل سجل فرعي واحد على الأقل.
 ErrorWrongValue=قيمة خاطئة
 ErrorWrongValueForParameterX=قيمة خاطئة للمعامل (parameter) %s
@@ -74,6 +74,7 @@ ErrorNoVATRateDefinedForSellerCountry=خطأ ، لم يتم تحديد معدل�
 ErrorNoSocialContributionForSellerCountry=خطأ ، لم يتم تحديد نوع الضرائب الاجتماعية | المالية للبلد "%s".
 ErrorFailedToSaveFile=خطأ، فشل في حفظ الملف.
 ErrorCannotAddThisParentWarehouse=أنت تحاول إضافة مستودع رئيسي هو بالفعل تابع لمستودع موجود
+ErrorInvalidSubtype=النوع الفرعي المحدد غير مسموح به
 FieldCannotBeNegative=لا يمكن أن يكون الحقل "%s" سالبًا
 MaxNbOfRecordPerPage=عدد السجلات الاعلى في الصفحة الواحدة
 NotAuthorized=غير مصرح لك ان تفعل ذلك.
@@ -103,7 +104,8 @@ RecordGenerated=تم إنشاء سجل
 LevelOfFeature=مستوى الميزات
 NotDefined=غير معرف
 DolibarrInHttpAuthenticationSoPasswordUseless=تم ضبط وضع مصادقة Dolibarr على <b> %s </b> في ملف التكوين <b> conf.php </b>. <br> هذا يعني أن قاعدة بيانات كلمة المرور خارجية لـ Dolibarr ، لذلك قد لا يكون لتغيير هذا الحقل أي تأثير.
-Administrator=مدير
+Administrator=مدير النظام
+AdministratorDesc=مسؤول النظام (يمكنه إدارة المستخدم والأذونات وأيضًا تكوين وحدات إعداد النظام و)
 Undefined=غير محدد
 PasswordForgotten=هل نسيت كلمة المرور؟
 NoAccount=لا يوجد حساب؟
@@ -113,7 +115,7 @@ LastConnexion=آخر تسجيل دخول
 PreviousConnexion=تسجيل الدخول السابق
 PreviousValue=القيمة السابقه
 ConnectedOnMultiCompany=متصل بالبيئة
-ConnectedSince=متصل منذ 
+ConnectedSince=متصل منذ
 AuthenticationMode=وضع المصادقة
 RequestedUrl=مطلوب URL
 DatabaseTypeManager=مدير نوع قاعدة البيانات
@@ -199,9 +201,7 @@ Hide=إخفاء
 ShowCardHere=عرض بطاقة
 Search=بحث
 SearchOf=بحث
-SearchMenuShortCut=Ctrl + shift + f
 QuickAdd=إضافة سريعة
-QuickAddMenuShortCut=Ctrl + shift + l
 Valid=صالح
 Approve=موافق
 Disapprove=رفض
@@ -213,8 +213,8 @@ Select=اختار
 SelectAll=اختر الكل
 Choose=أختر
 Resize=تغيير الحجم
+Crop=اقتصاص
 ResizeOrCrop=تغيير الحجم أو اقتصاص
-Recenter=إعادة توسيط
 Author=مؤلف
 User=المستعمل
 Users=المستخدمين
@@ -224,9 +224,9 @@ UserGroup=مجموعة المستخدمين
 UserGroups=مجموعات الاعضاء
 NoUserGroupDefined=لم يتم تحديد مجموعة مستخدمين
 Password=كلمة المرور
-PasswordRetype=Repeat your password
+PasswordRetype=أعد كتابة رقمك السري
 NoteSomeFeaturesAreDisabled=لاحظ أنه تم تعطيل الكثير من الميزات | الوحدات في هذا العرض التوضيحي.
-YourUserFile=Your user file
+YourUserFile=ملف المستخدم الخاص بك
 Name=اسم
 NameSlashCompany=الاسم | الشركة
 Person=شخص
@@ -237,6 +237,8 @@ PersonalValue=قيمة شخصية
 NewObject=جديد %s
 NewValue=القيمة الجديدة
 OldValue=القيمة القديمة %s
+FieldXModified=تم تعديل الحقل %s
+FieldXModifiedFromYToZ=تم تعديل الحقل %s من %s إلى %s
 CurrentValue=القيمة الحالية
 Code=الكود
 Type=اكتب
@@ -285,6 +287,7 @@ DateStart=تاريخ البدء
 DateEnd=تاريخ الانتهاء
 DateCreation=تاريخ الإنشاء
 DateCreationShort=تاريخ الإنشاء
+DateReading=Reading date
 IPCreation=إنشاء IP
 DateModification=تاريخ التعديل
 DateModificationShort=تاريخ التعديل
@@ -312,6 +315,8 @@ UserValidation=المستخدم المعتمد
 UserCreationShort=المستخدم المنشأ
 UserModificationShort=المستخدم المعدل
 UserValidationShort=المستخدم المعتمد
+UserClosing=إغلاق المستخدم
+UserClosingShort=إغلاق المستخدم
 DurationYear=سنة
 DurationMonth=شهر
 DurationWeek=أسبوع
@@ -346,6 +351,10 @@ MonthOfDay=شهر اليوم
 DaysOfWeek=ايام الاسبوع
 HourShort=س
 MinuteShort=د
+SecondShort=ثانية
+DayShort=د
+MonthShort=م
+YearShort=y
 Rate=معدل
 CurrencyRate=معدل تحويل العملات
 UseLocalTax=يشمل الضرائب
@@ -378,6 +387,7 @@ PriceUHT=سعر الوحدة (صافي)
 PriceUHTCurrency=سعر. الوحدة (الصافي)(العملة)
 PriceUTTC=السعر (شامل الضريبة)
 Amount=المبلغ
+Amounts=كميات
 AmountInvoice=مبلغ الفاتورة
 AmountInvoiced=المبلغ المفوتر
 AmountInvoicedHT=المبلغ المفوتر (بدون الضريبة)
@@ -388,6 +398,8 @@ AmountTTCShort=المبلغ (شامل الضريبة)
 AmountHT=المبلغ (غير شامل الضريبة)
 AmountTTC=المبلغ (شامل الضريبة)
 AmountVAT=مبلغ الضريبة
+DiscountHT=Discount (excl. tax)
+DiscountTTC=Discount (incl. tax)
 MulticurrencyAlreadyPaid=مسددة ، العملة الأصلية
 MulticurrencyRemainderToPay= المتبقي ، العملة الأصلية
 MulticurrencyPaymentAmount=المبلغ المدفوع ، العملة الأصلية
@@ -411,10 +423,13 @@ SubTotal=Subtotal
 TotalHTShort=المجموع (غ ش ض)
 TotalHT100Short=إجمالي 100%% (غ ش ض)
 TotalHTShortCurrency=الاجمالى (غ.ش.ض بعملة)
+TotalHTWithDiscount=Total (excl.) with discount
 TotalTTCShort=الإجمالي (ش.ض)
 TotalHT=الإجمالي (غ.ش.ض)
-TotalHTforthispage=الاجمالي لهذه الصفحة (غ.ش.ض) 
+TotalHTforthispage=الاجمالي لهذه الصفحة (غ.ش.ض)
 Totalforthispage=الاجمالي لهذه الصفحة
+GrandTotal=المجموع الإجمالي
+TotalforAllPages=المجموع لجميع الصفحات
 TotalTTC=الإجمالي (ش.ض)
 TotalTTCToYourCredit=الإجمالي (ش.ض) إلى رصيدك
 TotalVAT=إجمالي الضريبة
@@ -441,7 +456,7 @@ LT1ES=RE
 LT2ES=IRPF
 LT1IN=CGST
 LT2IN=SGST
-LT1GC=Additionnal cents
+LT1GC=سنتات إضافية
 VATRate=معدل الضريبة
 RateOfTaxN=معدل الضريبة %s
 VATCode=كود معدل الضريبة
@@ -449,6 +464,7 @@ VATNPR=معدل ضريبة NPR
 DefaultTaxRate=معدل الضريبة الافتراضي
 Average=متوسط
 Sum=مجموع
+StandardDeviationPop=Standard deviation
 Delta=دلتا
 StatusToPay=للدفع
 RemainToPay=المتبقي للدفع
@@ -479,7 +495,7 @@ ActionRunningNotStarted=للبدأ
 ActionRunningShort=في تقدم
 ActionDoneShort=تم الانتهاء
 ActionUncomplete=غير مكتمل
-LatestLinkedEvents=أحدث %s أحداث المرتبطة 
+LatestLinkedEvents=أحدث %s أحداث المرتبطة
 CompanyFoundation=الشركة | المؤسسة
 Accountant=المحاسب
 ContactsForCompany=اتصالات لهذا الطرف الثالث
@@ -487,10 +503,11 @@ ContactsAddressesForCompany=اتصالات | عناوين لهذا الطرف ا
 AddressesForCompany=عناوين لهذا الطرف الثالث
 ActionsOnCompany=أحداث لهذا الطرف الثالث
 ActionsOnContact=الأحداث لهذا الاتصال او العنوان
+ActionsOnUser=Events for this user
 ActionsOnContract=أحداث هذا العقد
 ActionsOnMember=الأحداث عن هذا العضو
 ActionsOnProduct=أحداث حول هذا المنتج
-ActionsOnAsset=Events for this fixed asset
+ActionsOnAsset=الأحداث لهذا الأصل الثابت
 NActionsLate=%s متأخر
 ToDo=للعمل
 Completed=مكتمل
@@ -514,6 +531,7 @@ NotYetAvailable=لم يتوفر بعد
 NotAvailable=غير متوفر
 Categories=العلامات | الفئات
 Category=العلامة | الفئة
+SelectTheTagsToAssign=حدد أوسمة/الفئات المراد تعيينها
 By=بواسطة
 From=من
 FromDate=من تاريخ
@@ -525,6 +543,7 @@ ToLocation=إلى
 at=على
 and=و
 or=أو
+otherwise=otherwise
 Other=آخر
 Others=آخرون
 OtherInformations=معلومات أخرى
@@ -543,6 +562,7 @@ Reportings=التقارير
 Draft=مسودة
 Drafts=المسودات
 StatusInterInvoiced=مفوترة
+Done=منتهي
 Validated=معتمد
 ValidatedToProduce=معتمد (للانتاج)
 Opened=فتح
@@ -552,8 +572,10 @@ New=جديد
 Discount=خصم
 Unknown=غير معروف
 General=عام
+Dimensions=أبعاد
 Size=حجم
 OriginalSize=الحجم الأصلي
+RotateImage=تدوير 90 درجة
 Received=تم الاستلام
 Paid=دفع
 Topic=الموضوع
@@ -567,7 +589,7 @@ NextStep=الخطوة التالية
 Datas=البيانات
 None=لا شيء
 NoneF=لا شيء
-NoneOrSeveral=الكل أو لا شيء 
+NoneOrSeveral=الكل أو لا شيء
 Late=متأخر
 LateDesc=يتم تعريف الصنف على أنه متأخر وفقًا لتكوين النظام في القائمة الرئيسية - الإعداد - التنبيهات.
 NoItemLate=لا يوجد صنف متأخر
@@ -639,6 +661,7 @@ ReportName=اسم التقرير
 ReportPeriod=فترة التقرير
 ReportDescription=وصف
 Report=تقرير
+Reports=تقارير
 Keyword=الكلمة الرئيسية
 Origin=الأصل
 Legend=عنوان تفسيري
@@ -692,7 +715,7 @@ CloseWindow=إغلاق النافذة
 Response=رد
 Priority=الأولوية
 SendByMail=ارسل بالبريد الإلكترونى
-MailSentBy=البريد الإلكتروني بواسطة
+MailSentByTo=تم إرسال البريد الإلكتروني بواسطة %s إلى %s
 NotSent=لم يرسل
 TextUsedInTheMessageBody=هيئة البريد الإلكتروني
 SendAcknowledgementByMail=إرسال بريد إلكتروني للتأكيد
@@ -714,9 +737,10 @@ ValueIsValid=القيمة صالحة
 ValueIsNotValid=القيمة غير صالحة
 RecordCreatedSuccessfully=تم إنشاء السجل بنجاح
 RecordModifiedSuccessfully=تم تعديل السجل بنجاح
-RecordsModified=تم تعديل %s سجل (سجلات) 
-RecordsDeleted=تم حذف %s سجل (سجلات) 
-RecordsGenerated=تم إنشاء %s سجل (سجلات) 
+RecordsModified=تم تعديل %s سجل (سجلات)
+RecordsDeleted=تم حذف %s سجل (سجلات)
+RecordsGenerated=تم إنشاء %s سجل (سجلات)
+ValidatedRecordWhereFound = لقد تم بالفعل التحقق من صحة بعض السجلات المحددة. لم يتم حذف أية سجلات.
 AutomaticCode=كود تلقائي
 FeatureDisabled=ميزة معطلة
 MoveBox=نقل البريمج
@@ -759,11 +783,10 @@ DisabledModules=الوحدات المعطلة
 For=لــ
 ForCustomer=للعميل
 Signature=التوقيع
-DateOfSignature=تاريخ التوقيع
 HidePassword=عرض الأمر مع كلمة مرور المخفية
 UnHidePassword=عرض الأمر الحقيقي مع كلمة مرور الواضحة
 Root=جذور
-RootOfMedias=جذر الوسائط العامة (/ الوسائط)
+RootOfMedias=جذر وسائل الإعلام العامة (/ وسائل الإعلام)
 Informations=معلومات
 Page=صفحة
 Notes=ملاحظات
@@ -812,7 +835,7 @@ URLPhoto=عنوان URL للصورة | الشعار
 SetLinkToAnotherThirdParty=ربط بطرف ثالث آخر
 LinkTo=ربط مع او بـ
 LinkToProposal=ربط مع العرض
-LinkToExpedition= Link to expedition
+LinkToExpedition= رابط للبعثة
 LinkToOrder=ربط مع الامر
 LinkToInvoice=ربط مع الفاتورة
 LinkToTemplateInvoice=ربط مع قالب الفاتورة
@@ -829,6 +852,7 @@ ClickToEdit=انقر للتحرير
 ClickToRefresh=انقر للتحديث
 EditWithEditor=تحرير باستخدام CKEditor
 EditWithTextEditor=تحرير باستخدام محرر النصوص
+EditHTML=تحرير HTML
 EditHTMLSource=تحرير مصدر HTML
 ObjectDeleted=تم حذف الكائن %s
 ByCountry=حسب البلد
@@ -898,12 +922,12 @@ MassFilesArea=مساحة للملفات التي تم إنشاؤها بواسط�
 ShowTempMassFilesArea=عرض مساحة الملفات التي تم إنشاؤها بواسطة الإجراءات الجماعية
 ConfirmMassDeletion=تأكيد الحذف الضخم
 ConfirmMassDeletionQuestion=هل أنت متأكد من أنك تريد حذف %s السجل (السجلات) المحددة؟
-ConfirmMassClone=Bulk clone confirmation
-ConfirmMassCloneQuestion=Select project to clone to
-ConfirmMassCloneToOneProject=Clone to project %s
+ConfirmMassClone=تأكيد الاستنساخ بالجملة
+ConfirmMassCloneQuestion=حدد مشروع للاستنساخ فيه
+ConfirmMassCloneToOneProject=استنساخ إلى مشروع %s
 RelatedObjects=كائنات ذات صلة
 ClassifyBilled=تصنيف الفواتير
-ClassifyUnbilled=تصنيف غير مفوتر
+ClassifyUnbilled=تصنيف غير مفوترة
 Progress=تقدم
 ProgressShort=تقدم
 FrontOffice=مكتب الإستقبال
@@ -911,18 +935,20 @@ BackOffice=المكتب الخلفي
 Submit=يقدم
 View=عرض
 Export=تصدير
+Import=يستورد
 Exports=صادرات
 ExportFilteredList=تصدير قائمة التى تم تصفيتها
 ExportList=قائمة التصدير
 ExportOptions=خيارات التصدير
 IncludeDocsAlreadyExported=تضمين المستندات التي تم تصديرها
-ExportOfPiecesAlreadyExportedIsEnable=Documents already exported are visible and will be exported
-ExportOfPiecesAlreadyExportedIsDisable=Documents already exported are hidden and won't be exported
+ExportOfPiecesAlreadyExportedIsEnable=المستندات التي تم تصديرها مرئية بالفعل. و سيتم تصديرها
+ExportOfPiecesAlreadyExportedIsDisable=المستندات التي تم تصديرها بالفعل مخفية و ولن يتم تصديرها
 AllExportedMovementsWereRecordedAsExported=تم تسجيل جميع حركات التصدير على أنها مصدرة
 NotAllExportedMovementsCouldBeRecordedAsExported=لا يمكن تسجيل جميع حركات التصدير على أنها مصدرة
 Miscellaneous=متفرقات
 Calendar=التقويم
 GroupBy=تجميع على حسب
+GroupByX=التجميع حسب %s
 ViewFlatList=عرض قائمة مسطحة
 ViewAccountList=عرض دفتر الأستاذ
 ViewSubAccountList=عرض دفتر الأستاذ الفرعي
@@ -934,7 +960,7 @@ DirectDownloadInternalLink=رابط التحميل الخاص
 PrivateDownloadLinkDesc=تحتاج إلى تسجيل الدخول وتحتاج إلى أذونات لعرض الملف أو تنزيله
 Download=تحميل
 DownloadDocument=تحميل مستند
-DownloadSignedDocument=Download signed document
+DownloadSignedDocument=قم بتنزيل الوثيقة الموقعة
 ActualizeCurrency=تحديث سعر العملة
 Fiscalyear=السنة المالية
 ModuleBuilder=الوحدة النمطية ومنشئ التطبيق
@@ -943,7 +969,7 @@ BulkActions=جملة إجراءات
 ClickToShowHelp=انقر لإظهار تعليمات تلميح الأدوات
 WebSite=الموقع الكتروني
 WebSites=مواقع الويب
-WebSiteAccounts=حسابات الموقع
+WebSiteAccounts=حسابات الوصول إلى الويب
 ExpenseReport=تقرير المصاريف
 ExpenseReports=تقارير المصاريف
 HR=الموارد البشرية
@@ -952,6 +978,7 @@ AutomaticallyCalculated=تحسب تلقائيا
 TitleSetToDraft=ارجع إلى المسودة
 ConfirmSetToDraft=هل أنت متأكد أنك تريد العودة إلى حالة المسودة؟
 ImportId=معرف الاستيراد
+Event=حدث
 Events=الأحداث
 EMailTemplates=قوالب البريد الإلكتروني
 FileNotShared=الملف غير متاح للجمهور الخارجي
@@ -1035,7 +1062,7 @@ SetRef=تعيين المرجع
 Select2ResultFoundUseArrows=تم العثور على بعض النتائج. استخدم الأسهم للتحديد.
 Select2NotFound=لا نتائج لبحثك
 Select2Enter=أدخل
-Select2MoreCharacter=أو أكثر 
+Select2MoreCharacter=أو أكثر
 Select2MoreCharacters=أحرف أو أكثر
 Select2MoreCharactersMore= <strong> صيغة البحث: </strong> <br> <kbd> <strong> | </strong> </kbd> <kbd> OR </kbd> (أ | ب) <br> <kbd> <strong> * </strong> </kbd> <kbd> أي حرف </kbd> (أ ب *) <br> <kbd> <strong> ^ </strong> </kbd> <kbd> البداية مع </kbd> (^ أ ب) <br> <kbd> <strong> $ </strong> </kbd> <kbd> النهاية مع </kbd> ( ab $) <br>
 Select2LoadingMoreResults=تحميل المزيد من النتائج ...
@@ -1058,9 +1085,10 @@ SearchIntoSupplierProposals=عروض الموردين
 SearchIntoInterventions=التدخلات
 SearchIntoContracts=عقود
 SearchIntoCustomerShipments=شحنات العملاء
+SearchIntoSupplierReceptions=Vendor receptions
 SearchIntoExpenseReports=تقارير المصاريف
 SearchIntoLeaves=الاجازات
-SearchIntoKM=Knowledge base
+SearchIntoKM=قاعدة المعرفة
 SearchIntoTickets=تذاكر
 SearchIntoCustomerPayments=مدفوعات العميل
 SearchIntoVendorPayments=مدفوعات الموردين
@@ -1071,6 +1099,7 @@ CommentPage=مساحة التعليقات
 CommentAdded=تم إضافة تعليق
 CommentDeleted=التعليق حذف
 Everybody=الجميع
+EverybodySmall=الجميع
 PayedBy=مدفوع بــ
 PayedTo=مدفوع لــ
 Monthly=شهريا
@@ -1083,9 +1112,9 @@ KeyboardShortcut=اختصارات لوحة المفاتيح
 AssignedTo=مخصص ل
 Deletedraft=حذف المسودة
 ConfirmMassDraftDeletion=تأكيد الحذف الشامل للمسودة
-FileSharedViaALink=ملف مشترك مع رابط عام
+FileSharedViaALink=تمت مشاركة الملف العام عبر الرابط
 SelectAThirdPartyFirst=حدد طرف ثالث أولاً ...
-YouAreCurrentlyInSandboxMode=أنت حاليًا في وضع %s "sandbox" 
+YouAreCurrentlyInSandboxMode=أنت حاليًا في وضع %s "sandbox"
 Inventory=المخزون
 AnalyticCode=الكود التحليلي
 TMenuMRP=تخطيط موارد التصنيع
@@ -1117,7 +1146,7 @@ ContactDefault_project_task=مهمة
 ContactDefault_propal=عرض
 ContactDefault_supplier_proposal=عرض المورد
 ContactDefault_ticket=تذكرة
-ContactAddedAutomatically=تمت إضافة جهة اتصال من جهات الاتصال الطرف الثالث
+ContactAddedAutomatically=تمت إضافة جهة الاتصال من أدوار جهة اتصال خارجية
 More=أكثر
 ShowDetails=عرض التفاصيل
 CustomReports=تقارير مخصصة
@@ -1132,16 +1161,16 @@ DeleteFileText=هل تريد حقا حذف هذا الملف؟
 ShowOtherLanguages=عرض اللغات الأخرى
 SwitchInEditModeToAddTranslation=قم بالتبديل في وضع التحرير لإضافة ترجمات لهذه اللغة
 NotUsedForThisCustomer=غير مستخدم لهذا العميل
-NotUsedForThisVendor=Not used for this vendor
+NotUsedForThisVendor=غير مستخدم لهذا المورد
 AmountMustBePositive=المبلغ  يجب أن يكون موجبًا
 ByStatus=حسب الحالة
 InformationMessage=معلومات
 Used=استخدم
 ASAP=في أقرب وقت ممكن
-CREATEInDolibarr=تم إنشاء %s سجل 
+CREATEInDolibarr=تم إنشاء %s سجل
 MODIFYInDolibarr=%s سجل معدّل
 DELETEInDolibarr=%s سجل تم حذفه
-VALIDATEInDolibarr=%s سجل تم اعتماده 
+VALIDATEInDolibarr=%s سجل تم اعتماده
 APPROVEDInDolibarr=%s سجل تم الموافقة عليه
 DefaultMailModel=نموذج البريد الافتراضي
 PublicVendorName=الاسم العام للمورد
@@ -1152,30 +1181,31 @@ OutOfDate=انتهت صلاحيته
 EventReminder=تذكير بالحدث
 UpdateForAllLines=تحديث لجميع البنود
 OnHold=في الانتظار
-Civility=Civility
-AffectTag=Assign a Tag
-AffectUser=Assign a User
-SetSupervisor=Set the supervisor
+Civility=Title of courtesy
+AffectTag=تعيين وسم
+AffectUser=تعيين مستخدم
+SetSupervisor=تعيين المشرف
 CreateExternalUser=إنشاء مستخدم خارجي
-ConfirmAffectTag=Bulk Tag Assignement
-ConfirmAffectUser=Bulk User Assignement
-ProjectRole=Role assigned on each project/opportunity
-TasksRole=Role assigned on each task (if used)
-ConfirmSetSupervisor=Bulk Supervisor Set
-ConfirmUpdatePrice=Choose a increase/decrease price rate
-ConfirmAffectTagQuestion=Are you sure you want to assign tags to the %s selected record(s)?
-ConfirmAffectUserQuestion=Are you sure you want to assign users to the %s selected record(s)?
-ConfirmSetSupervisorQuestion=Are you sure you want to set supervisor to the %s selected record(s)?
-ConfirmUpdatePriceQuestion=Are you sure you want to update the price of the %s selected record(s)?
+ConfirmAffectTag=مهمة وسم مجمعة
+ConfirmAffectUser=تعيين المستخدم بالجملة
+ContactRole=Contact role
+ContactRoles=Contact roles
+ProjectRole=الدور المعين لكل مشروع/فرصة
+TasksRole=الدور المعين لكل مهمة (إذا تم استخدامه)
+ConfirmSetSupervisor=مجموعة المشرف السائبة
+ConfirmUpdatePrice=اختر معدل زيادة/خفض السعر
+ConfirmAffectTagQuestion=هل أنت متأكد أنك تريد تعيين أوسمة إلى السجل (السجلات) المحدد %s؟
+ConfirmAffectUserQuestion=هل أنت متأكد من أنك تريد تعيين مستخدمين إلى السجل (السجلات) المحدد %s؟
+ConfirmSetSupervisorQuestion=هل أنت متأكد من أنك تريد تعيين المشرف على السجل (السجلات) المحدد %s؟
+ConfirmUpdatePriceQuestion=هل أنت متأكد أنك تريد تحديث سعر %s السجلات المحددة؟
 CategTypeNotFound=لا يوجد ملصق لنوع السجل
-Rate=معدل
-SupervisorNotFound=Supervisor not found
+SupervisorNotFound=لم يتم العثور على المشرف
 CopiedToClipboard=تم النسخ الى الحافظة
 InformationOnLinkToContract=هذا المبلغ هو مجموع بنود العقد . دون مراعاة قيمة الزمن
 ConfirmCancel=هل أنت متأكد أنك تريد إلغاء
 EmailMsgID=Email MsgID
-EmailDate=Email date
-SetToStatus=Set to status %s
+EmailDate=تاريخ البريد الإلكتروني
+SetToStatus=اضبط على حالة %s
 SetToEnabled=تعيين على تمكين
 SetToDisabled=تعيين إلى معطل
 ConfirmMassEnabling=تأكيد التمكين الشامل
@@ -1201,24 +1231,78 @@ CanceledHidden=إلغاء المخفية
 CanceledShown=أظهرت ملغاة
 Terminate=تعطيل
 Terminated=تم إنهاؤه
+Position=المنصب
 AddLineOnPosition=أضف سطرًا في الموضع (في النهاية إذا كان فارغًا)
 ConfirmAllocateCommercial=تعيين تأكيد مندوب المبيعات
+ConfirmUnallocateCommercial=Are you sure you want to unassign the sales representative(s) from all selected thirdparties?
 ConfirmAllocateCommercialQuestion=هل أنت متأكد من أنك تريد تعيين السجل (السجلات) المحددة %s؟
-CommercialsAffected=Sales representatives assigned
-CommercialAffected=Sales representative assigned
+ConfirmUnallocateCommercialQuestion=Are you sure you want to unassign the selected %s record(s)?
+CommercialsAffected=تم تعيين مندوبي المبيعات
+CommercialAffected=تم تعيين مندوب مبيعات
+CommercialsDisaffected=Sales representatives unlinked
+CommercialDisaffected=Sales representative unlinked
+Message=رسالة
+Progression=تقدم
 YourMessage=رسالتك
 YourMessageHasBeenReceived=وقد وردت الرسالة. سنقوم بالرد أو الاتصال بك في أقرب وقت ممكن.
 UrlToCheck=عنوان Url المراد التحقق منه
 Automation=أتمتة
 CreatedByEmailCollector=تم إنشاؤها بواسطة جامع البريد الإلكتروني
 CreatedByPublicPortal=تم إنشاؤه من بوابة عامة
-UserAgent=User Agent
+UserAgent=وكيل المستخدم
 InternalUser=مستخدم داخلي
 ExternalUser=مستخدم خارجي
-NoSpecificContactAddress=No specific contact or address
-NoSpecificContactAddressBis=This tab is dedicated to force specific contacts or addresses for the current object. Use it only if you want to define one or several specific contacts or addresses for the object when the information on the thirdparty is not enough or not accurate.
-HideOnVCard=Hide %s
-AddToContacts=Add address to my contacts
-LastAccess=Last access
-UploadAnImageToSeeAPhotoHere=Upload an image from the tab %s to see a photo here
-LastPasswordChangeDate=Last password change date
+NoSpecificContactAddress=لا يوجد اتصال أو عنوان محدد
+NoSpecificContactAddressBis=علامة التبويب هذه مخصصة لفرض جهات اتصال أو عناوين محددة للكائن الحالي. استخدمه فقط إذا كنت تريد تحديد جهة اتصال أو عناوين محددة واحدة أو أكثر للكائن عندما تكون المعلومات المتوفرة لدى الطرف الثالث غير كافية أو غير دقيقة.
+HideOnVCard=إخفاء %s
+ShowOnVCard=إظهار %s
+AddToContacts=إضافة عنوان إلى جهات الاتصال الخاصة بي
+LastAccess=آخر ولوج
+UploadAnImageToSeeAPhotoHere=قم بتحميل صورة من علامة التبويب %s لمشاهدة الصورة هنا
+LastPasswordChangeDate=تاريخ آخر تغيير لكلمة المرور
+PublicVirtualCardUrl=عنوان URL لصفحة بطاقة العمل الافتراضية
+PublicVirtualCard=بطاقة عمل افتراضية
+TreeView=عرض الشجرة
+DropFileToAddItToObject=قم بإسقاط ملف لإضافته إلى هذا الكائن
+UploadFileDragDropSuccess=تم تحميل الملف (الملفات) بنجاح
+SearchSyntaxTooltipForStringOrNum=للبحث داخل الحقول النصية، يمكنك استخدام الأحرف ^ أو $ لإجراء بحث "البدء أو النهاية بـ" أو استخدام ! لإجراء اختبار "لا يحتوي على". يمكنك استخدام | بين سلسلتين بدلاً من مسافة لشرط 'OR' بدلاً من 'و'. بالنسبة للقيم الرقمية، يمكنك استخدام عامل التشغيل <, > أو <=, >= أو != قبل القيمة، للتصفية باستخدام المقارنة الرياضية
+InProgress=قيد التنفيذ
+DateOfPrinting=تاريخ الطباعة
+ClickFullScreenEscapeToLeave=انقر هنا للتبديل في وضع ملء الشاشة. اضغط على ESCAPE للخروج من وضع ملء الشاشة.
+UserNotYetValid=غير صالحة بعد
+UserExpired=انتهى
+LinkANewFile=ربط ملف جديد/ وثيقة
+LinkedFiles=الملفات والمستندات المرتبطة
+NoLinkFound=لا يوجد روابط مسجلة
+LinkComplete=تم ربط الملف بنجاح
+ErrorFileNotLinked=لا يمكن ربط الملف
+LinkRemoved= الرابط%sتم إزالتة
+ErrorFailedToDeleteLink= فشل في إزالة الرابط '<b> %s </b>'
+ErrorFailedToUpdateLink= فشل تحديث الرابط '<b> %s </b>'
+URLToLink=عنوان URL للربط
+OverwriteIfExists=الكتابة فوق إذا كان الملف موجودا
+AmountSalary=راتب المبلغ
+InvoiceSubtype=فاتورة النوع الفرعي
+ConfirmMassReverse=تأكيد عكسي بالجملة
+ConfirmMassReverseQuestion=هل أنت متأكد أنك تريد عكس %s السجل (السجلات) المحدد؟
+ConfirmActionXxx=Confirm action %s
+ElementType=نوع العنصر
+ElementId=معرف العنصر
+Encrypted=مشفرة
+Settings=الإعدادات
+FillMessageWithALayout=املأ الرسالة بالتخطيط
+FillMessageWithAIContent=املأ الرسالة بمحتوى الذكاء الاصطناعي
+FillPageWithALayout=Fill page with a layout
+FillPageWithAIContent=Fill page with AI content
+EnterYourAIPromptHere=أدخل موجه الذكاء الاصطناعي الخاص بك هنا
+UseOrOperatorShort=أو
+GoOnList=اذهب إلى القائمة
+ShowSearchFields=قم بالبحث
+MyUserCard=ملف المستخدم الخاص بي
+PublicFile=الملف العام
+EntityNameNotDefined=No entity name
+AllEntities=All entities
+TranslationOfKey=Translation of the key AnyTranslationKey
+SignedStatus=Signed status
+NbRecordQualified=Number of qualified records
+auto=auto

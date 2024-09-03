@@ -23,11 +23,11 @@ if (!defined('NOBROWSERNOTIF')) {
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 // DDOS protection
-$size = (int) $_SERVER['CONTENT_LENGTH'];
+$size = (int) ($_SERVER['CONTENT_LENGTH'] ?? 0);
 if ($size > 10000) {
 	$langs->loadLangs(array("errors", "install"));
 	httponly_accessforbidden('<center>'.$langs->trans("ErrorRequestTooLarge").'<br><a href="'.DOL_URL_ROOT.'">'.$langs->trans("ClickHereToGoToApp").'</a></center>', 413, 1);
@@ -36,7 +36,6 @@ if ($size > 10000) {
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 header('Cache-Control: Public, must-revalidate');
-header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
 if (GETPOST('dol_hide_topmenu')) {
 	$conf->dol_hide_topmenu = 1;
@@ -72,7 +71,7 @@ $disablenofollow = 1;
 if (!preg_match('/'.constant('DOL_APPLICATION_TITLE').'/', $title)) {
 	$disablenofollow = 0;
 }
-if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 	$disablenofollow = 0;
 }
 
@@ -83,13 +82,13 @@ $colorbackhmenu1 = '60,70,100'; // topmenu
 if (!isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) {
 	$conf->global->THEME_ELDY_TOPMENU_BACK1 = $colorbackhmenu1;
 }
-$colorbackhmenu1 = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (empty($conf->global->THEME_ELDY_TOPMENU_BACK1) ? $colorbackhmenu1 : $conf->global->THEME_ELDY_TOPMENU_BACK1) : (empty($user->conf->THEME_ELDY_TOPMENU_BACK1) ? $colorbackhmenu1 : $user->conf->THEME_ELDY_TOPMENU_BACK1);
-$colorbackhmenu1 = join(',', colorStringToArray($colorbackhmenu1)); // Normalize value to 'x,y,z'
+$colorbackhmenu1 = getDolUserString('THEME_ELDY_ENABLE_PERSONALIZED') ? getDolUserString('THEME_ELDY_TOPMENU_BACK1', $colorbackhmenu1) : getDolGlobalString('THEME_ELDY_TOPMENU_BACK1', $colorbackhmenu1);
+$colorbackhmenu1 = implode(',', colorStringToArray($colorbackhmenu1)); // Normalize value to 'x,y,z'
 
 ?>
 <!-- BEGIN PHP TEMPLATE PASSWORDFORGOTTEN.TPL.PHP -->
 
-<body class="body bodylogin"<?php print empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: url(\''.DOL_URL_ROOT.'/viewimage.php?cache=1&noalt=1&modulepart=mycompany&file='.urlencode('logos/'.$conf->global->MAIN_LOGIN_BACKGROUND).'\')"'; ?>>
+<body class="body bodylogin"<?php print !getDolGlobalString('MAIN_LOGIN_BACKGROUND') ? '' : ' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: url(\''.DOL_URL_ROOT.'/viewimage.php?cache=1&noalt=1&modulepart=mycompany&file='.urlencode('logos/' . getDolGlobalString('MAIN_LOGIN_BACKGROUND')).'\')"'; ?>>
 
 <?php if (empty($conf->dol_use_jmobile)) { ?>
 <script>
@@ -103,11 +102,11 @@ $(document).ready(function () {
 <?php } ?>
 
 <div class="login_center center"<?php
-if (empty($conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND)) {
-	$backstyle = 'background: linear-gradient('.($conf->browser->layout == 'phone' ? '0deg' : '4deg').', rgb(240,240,240) 52%, rgb('.$colorbackhmenu1.') 52.1%);';
-	// old style:  $backstyle = 'background-image: linear-gradient(rgb('.$colorbackhmenu1.',0.3), rgb(240,240,240));';
-	$backstyle = getDolGlobalString('MAIN_LOGIN_BACKGROUND_STYLE', $backstyle);
-	print empty($conf->global->MAIN_LOGIN_BACKGROUND) ? ' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; '.$backstyle.'"' : '';
+if (!getDolGlobalString('ADD_UNSPLASH_LOGIN_BACKGROUND')) {
+		$backstyle = 'background: linear-gradient('.($conf->browser->layout == 'phone' ? '0deg' : '4deg').', rgb(240,240,240) 52%, rgb('.$colorbackhmenu1.') 52.1%);';
+		// old style:  $backstyle = 'background-image: linear-gradient(rgb('.$colorbackhmenu1.',0.3), rgb(240,240,240));';
+		$backstyle = getDolGlobalString('MAIN_LOGIN_BACKGROUND_STYLE', $backstyle);
+		print !getDolGlobalString('MAIN_LOGIN_BACKGROUND') ? ' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; '.$backstyle.'"' : '';
 }
 ?>>
 <div class="login_vertical_align">
@@ -151,7 +150,7 @@ if (!empty($disablenofollow)) {
 <div class="tagtd nowraponall center valignmiddle tdinputlogin">
 <!-- <span class="span-icon-user">-->
 <span class="fa fa-user"></span>
-<input type="text" maxlength="255" placeholder="<?php echo $langs->trans("Login"); ?>" <?php echo $disabled; ?> id="username" name="username" class="flat input-icon-user minwidth150" value="<?php echo dol_escape_htmltag($username); ?>" tabindex="1" />
+<input type="text" maxlength="255" placeholder="<?php echo $langs->trans("Login"); ?>" <?php echo $disabled; ?> id="username" name="username" class="flat input-icon-user minwidth150" value="<?php echo dol_escape_htmltag($username); ?>" tabindex="1" autocapitalize="off" autocomplete="on" spellcheck="false" autocorrect="off" />
 </div>
 </div>
 
@@ -164,8 +163,7 @@ if (!empty($captcha)) {
 	} else {
 		$php_self .= '?time='.dol_print_date(dol_now(), 'dayhourlog');
 	}
-	// TODO: provide accessible captcha variants
-	?>
+	// TODO: provide accessible captcha variants?>
 	<!-- Captcha -->
 	<div class="trinputlogin">
 	<div class="tagtd tdinputlogin nowrap none valignmiddle">
@@ -241,14 +239,14 @@ if (!empty($morelogincontent)) {
 <?php
 if ($mode == 'dolibarr' || !$disabled) {
 	if ($action != 'validatenewpassword' && empty($message)) {
-		print '<div class="center login_main_home divpasswordmessagedesc paddingtopbottom'.(empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent boxshadow').'" style="max-width: 70%">';
+		print '<div class="center login_main_home divpasswordmessagedesc paddingtopbottom'.(!getDolGlobalString('MAIN_LOGIN_BACKGROUND') ? '' : ' backgroundsemitransparent boxshadow').'" style="max-width: 70%">';
 		print '<span class="passwordmessagedesc opacitymedium">';
 		print $langs->trans('SendNewPasswordDesc');
 		print '</span>';
 		print '</div>';
 	}
 } else {
-	print '<div class="center login_main_home divpasswordmessagedesc paddingtopbottom'.(empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent boxshadow').'" style="max-width: 70%">';
+	print '<div class="center login_main_home divpasswordmessagedesc paddingtopbottom'.(!getDolGlobalString('MAIN_LOGIN_BACKGROUND') ? '' : ' backgroundsemitransparent boxshadow').'" style="max-width: 70%">';
 	print '<div class="warning center">';
 	print $langs->trans('AuthenticationDoesNotAllowSendNewPassword', $mode);
 	print '</div>';
@@ -269,7 +267,7 @@ if ($mode == 'dolibarr' || !$disabled) {
 <!-- Common footer is not used for passwordforgotten page, this is same than footer but inside passwordforgotten tpl -->
 
 <?php
-if (!empty($conf->global->MAIN_HTML_FOOTER)) {
+if (getDolGlobalString('MAIN_HTML_FOOTER')) {
 	print $conf->global->MAIN_HTML_FOOTER;
 }
 
@@ -287,8 +285,8 @@ if (!empty($morelogincontent) && is_array($morelogincontent)) {
 
 // Google Analytics
 // TODO Remove this, and add content into hook getPasswordForgottenPageExtraOptions() instead
-if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AN_ID)) {
-	$tmptagarray = explode(',', $conf->global->MAIN_GOOGLE_AN_ID);
+if (isModEnabled('google') && getDolGlobalString('MAIN_GOOGLE_AN_ID')) {
+	$tmptagarray = explode(',', getDolGlobalString('MAIN_GOOGLE_AN_ID'));
 	foreach ($tmptagarray as $tmptag) {
 		print "\n";
 		print "<!-- JS CODE TO ENABLE for google analtics tag -->\n";
@@ -308,7 +306,7 @@ if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AN_ID)) 
 
 // TODO Replace this with a hook
 // Google Adsense (need Google module)
-if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && !empty($conf->global->MAIN_GOOGLE_AD_SLOT)) {
+if (isModEnabled('google') && getDolGlobalString('MAIN_GOOGLE_AD_CLIENT') && getDolGlobalString('MAIN_GOOGLE_AD_SLOT')) {
 	if (empty($conf->dol_use_jmobile)) {
 		?>
 	<div class="center"><br>

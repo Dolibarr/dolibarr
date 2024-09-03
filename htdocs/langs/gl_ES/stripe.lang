@@ -23,6 +23,7 @@ ToOfferALinkForOnlinePaymentOnFreeAmount=URL para ofrecer unha páxina de pagame
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL para ofrecer unha páxina de pagamento en liña %s para unha subscrición de membro
 ToOfferALinkForOnlinePaymentOnDonation=URL para ofrecer unha páxina de pagamento en liña %s para o pagamento dunha doazón/subvención
 YouCanAddTagOnUrl=Tamén pode engadir o parámetro URL <b>&tag=<i>valore</i> </b> a calquera deses URL (obrigatorio só para o pagamento non ligado a un obxecto) para engadir a súa propia etiqueta de comentario de pagamento. <br> Para a URL de pagamentos sen ningún obxecto existente, tamén pode engadir o parámetro <strong> &noidempotency=1 </strong> para que a mesma ligazón coa mesma etiqueta poida usarse varias veces (algúns modos de pagamento poden limitar o pagamento a 1 por cada ligazón diferente sen este parámetro)
+YouCanEmbedOnWebsite=Se quere integrar a páxina de pagamento nun sitio web de Dolibarr, pode incluír os seguintes parámetros: <b>&ws=website_ref</b> .<br>, Adicionalmente dúas páxinas chamadas<b>paymentok</b> e <b>paymentko<span class='b7f8z0<b>debe crealas no sitio web para recibir a redirección despois dun pagamento en liña finalizado 
 SetupStripeToHavePaymentCreatedAutomatically=Configure o seu Stripe coa url <b>%s </b> para que o pagamento se cree automaticamente cando o valide Stripe.
 AccountParameter=Parámetros da conta
 UsageParameter=Parámetros de uso
@@ -41,7 +42,7 @@ STRIPE_LIVE_WEBHOOK_KEY=Chave live de Webhook
 ONLINE_PAYMENT_WAREHOUSE=Stock que se usará para diminuír o stock cando se faga o pagamento en liña <br> (TODO Cando se fai a opción de diminuír o stock nunha acción de factura e o pagamento en liña xera a factura?)
 StripeLiveEnabled=Stripe live activado (se non, proba modo sandbox)
 StripeImportPayment=Importar pagamentos de Stripe
-ExampleOfTestCreditCard=Exemplo de tarxeta de crédito para a proba SEPA: %s => válido, %s => erro CVC, %s => caducado, %s => fallo de carga
+ExampleOfTestCreditCard=Exemplo de tarxeta de crédito para un pagamento de proba: %s => válido, %s => erro CVC, %s => caducado, %s => fallo de carga
 ExampleOfTestBankAcountForSEPA=Exemplo de conta bancaria BAN para a proba de domiciliación bancaria: %s
 StripeGateways=Pasarelas de Stripe
 OAUTH_STRIPE_TEST_ID=Id de cliente de Stripe Connect (ca _...)
@@ -51,6 +52,7 @@ StripeAccount=Conta Stripe
 StripeChargeList=Listaxe de cargos Stripe
 StripeTransactionList=Listaxe de transaccións
 StripeCustomerId=Id de cliente de Stripe
+StripePaymentId=ID de pagamento de Stripe
 StripePaymentModes=Modos de pagamento de Stripe
 LocalID=ID local
 StripeID=ID Stripe
@@ -70,9 +72,19 @@ ToOfferALinkForTestWebhook=Ligazón para configurar Stripe WebHook para chamar a
 ToOfferALinkForLiveWebhook=Ligazón para configurar Stripe WebHook para chamar ao IPN (modo en directo)
 PaymentWillBeRecordedForNextPeriod=O pago será rexistrado para o seguinte período.
 ClickHereToTryAgain=<a href="%s"> Faga clic aquí para tentalo de novo ... </a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Debido a fortes regras de autenticación do cliente, a creación dunha tarxeta debe facerse desde o backoffice de Stripe. Pode facer clic aquí para activar o rexistro de cliente de Stripe:%s
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Debido as fortes regras de autenticación do cliente, a creación dunha tarxeta debe facerse desde o backoffice de Stripe. Pode premer aquí para activar o rexistro de cliente de Stripe:%s
 STRIPE_CARD_PRESENT=Transacción de tarxeta presente para terminais Stripe
 TERMINAL_LOCATION=Localización (enderezo) para terminais Stripe
 RequestDirectDebitWithStripe=Solicite domiciliación bancaria con Stripe
+RequesCreditTransferWithStripe=Solicite transferencia bancaria con Stripe
 STRIPE_SEPA_DIRECT_DEBIT=Activa os pagamentos por domiciliación bancaria a través de Stripe
-
+STRIPE_KLARNA=Activa os pagamentos usando Klarna
+STRIPE_BANCONTACT=Activa os pagamentos mediante BANCONTACT
+STRIPE_IDEAL=Activa os pagamentos usando IDEAL
+STRIPE_GIROPAY=Activa os pagamentos mediante GIROPAY
+STRIPE_SOFORT=Activa os pagamentos usando SOFORT
+StripeConnect_Mode=Modo de conexión Stripe
+ExampleOnlyForBECustomers=Só para clientes de Bélxica
+ExampleOnlyForDECustomers=Só para clientes alemáns
+ExampleOnlyForNLCustomers=Só para clientes holandeses
+ExampleOnlyForATBEDEITNLESCustomers=Só para clientes de Austria, Bélxica, Alemaña, Italia, Países Baixos e España

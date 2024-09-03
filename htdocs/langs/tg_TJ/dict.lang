@@ -247,10 +247,13 @@ CountryJE=Ҷерсӣ
 CountryME=Черногория
 CountryBL=Сент Бартелеми
 CountryMF=Сент Мартин
+CountryXK=Косово
 
 ##### Civilities #####
 CivilityMME=Бону.
+CivilityMMEShort=Бону.
 CivilityMR=Ҷаноб.
+CivilityMRShort=Ҷаноб.
 CivilityMLE=Бону.
 CivilityMTRE=Устод
 CivilityDR=Духтур

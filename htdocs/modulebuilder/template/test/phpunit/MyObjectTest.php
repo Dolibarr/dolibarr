@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
+/* Copyright (C) 2007-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2023		Alexandre Janniaux			<alexandre.janniaux@gmail.com>
+ * Copyright (C) ---Replace with your own copyright and developer email---
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +33,7 @@ require_once dirname(__FILE__).'/../../htdocs/mymodule/class/myobject.class.php'
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
-	$user->getrights();
+	$user->loadRights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
@@ -45,21 +46,36 @@ $langs->load("main");
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @phan-file-suppress PhanCompatibleVoidTypePHP70
  */
-class MyObjectTest extends PHPUnit\Framework\TestCase
+class MyObjectTest extends PHPUnit\Framework\TestCase  // @phan-suppress-current-line PhanUndeclaredExtendedClass
 {
+	/**
+	 * @var Conf Saved configuration object
+	 */
 	protected $savconf;
+	/**
+	 * @var User Saved User object
+	 */
 	protected $savuser;
+	/**
+	 * @var Translate Saved translations object (from $langs)
+	 */
 	protected $savlangs;
+	/**
+	 * @var DoliDB Saved database object
+	 */
 	protected $savdb;
 
 	/**
 	 * Constructor
 	 * We save global variables into local variables
+	 *
+	 * @param 	string	$name		Name
 	 */
-	public function __construct()
+	public function __construct($name = '')
 	{
-		parent::__construct();
+		parent::__construct($name);  // @phan-suppress-current-line PhanUndeclaredClass
 
 		//$this->sharedFixture
 		global $conf, $user, $langs, $db;
@@ -76,9 +92,9 @@ class MyObjectTest extends PHPUnit\Framework\TestCase
 	/**
 	 * Global test setup
 	 *
-	 * @return void
+	 * @return void No return value
 	 */
-	public static function setUpBeforeClass()
+	public static function setUpBeforeClass(): void
 	{
 		global $conf, $user, $langs, $db;
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
@@ -89,9 +105,9 @@ class MyObjectTest extends PHPUnit\Framework\TestCase
 	/**
 	 * Unit test setup
 	 *
-	 * @return void
+	 * @return void No return value
 	 */
-	protected function setUp()
+	protected function setUp(): void
 	{
 		global $conf, $user, $langs, $db;
 		$conf = $this->savconf;
@@ -105,9 +121,9 @@ class MyObjectTest extends PHPUnit\Framework\TestCase
 	/**
 	 * Unit test teardown
 	 *
-	 * @return void
+	 * @return void  No return value
 	 */
-	protected function tearDown()
+	protected function tearDown(): void
 	{
 		print __METHOD__."\n";
 	}
@@ -115,9 +131,9 @@ class MyObjectTest extends PHPUnit\Framework\TestCase
 	/**
 	 * Global test teardown
 	 *
-	 * @return void
+	 * @return void No return value
 	 */
-	public static function tearDownAfterClass()
+	public static function tearDownAfterClass(): void
 	{
 		global $conf, $user, $langs, $db;
 		$db->rollback();
@@ -130,6 +146,7 @@ class MyObjectTest extends PHPUnit\Framework\TestCase
 	 * A sample test
 	 *
 	 * @return bool
+	 * @phan-suppress PhanUndeclaredMethod
 	 */
 	public function testSomething()
 	{
@@ -141,7 +158,7 @@ class MyObjectTest extends PHPUnit\Framework\TestCase
 
 		$result = true;
 
-		print __METHOD__." result=".$result."\n";
+		print __METHOD__." result=".((int) $result)."\n";
 		$this->assertTrue($result);
 
 		return $result;
@@ -151,6 +168,7 @@ class MyObjectTest extends PHPUnit\Framework\TestCase
 	 * testMyObjectCreate
 	 *
 	 * @return int
+	 * @phan-suppress PhanUndeclaredMethod
 	 */
 	public function testMyObjectCreate()
 	{
@@ -178,6 +196,7 @@ class MyObjectTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @depends	testMyObjectCreate
 	 * The depends says test is run only if previous is ok
+	 * @phan-suppress PhanUndeclaredMethod
 	 */
 	public function testMyObjectDelete($id)
 	{
@@ -195,4 +214,4 @@ class MyObjectTest extends PHPUnit\Framework\TestCase
 		$this->assertLessThan($result, 0);
 		return $result;
 	}
-}
+}  // @phan-suppress-current-line PhanUndeclaredClass

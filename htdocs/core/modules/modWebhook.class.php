@@ -62,12 +62,12 @@ class modWebhook extends DolibarrModules
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 
 		// Module description, used if translation string 'ModuleWebhookDesc' not found (Webhook is name of module).
-		$this->description = "WebhookDescription";
+		$this->description = "WebHook";
 		// Used only if file README.md and README-LL.md not found.
-		$this->descriptionlong = "WebhookDescription";
+		$this->descriptionlong = "Interface to catch dolibarr triggers and send data of the event to an external URL";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
-		$this->version = 'experimental';
+		$this->version = 'dolibarr';
 		// Url to the file with your last numberversion of this module
 		//$this->url_last_version = 'http://www.example.com/versionmodule.txt';
 
@@ -130,7 +130,7 @@ class modWebhook extends DolibarrModules
 		// Dependencies
 		// A condition to hide module
 		$this->hidden = false;
-		// List of module class names as string that must be enabled if this module is enabled. Example: array('always1'=>'modModuleToEnable1','always2'=>'modModuleToEnable2', 'FR1'=>'modModuleToEnableFR'...)
+		// List of module class names as string that must be enabled if this module is enabled. Example: array('always'=>array('modModuleToEnable1','modModuleToEnable2'), 'FR'=>array('modModuleToEnableFR'...))
 		$this->depends = array();
 		$this->requiredby = array(); // List of module class names as string to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
@@ -181,7 +181,7 @@ class modWebhook extends DolibarrModules
 		// 'intervention'     to add a tab in intervention view
 		// 'invoice'          to add a tab in customer invoice view
 		// 'invoice_supplier' to add a tab in supplier invoice view
-		// 'member'           to add a tab in fundation member view
+		// 'member'           to add a tab in foundation member view
 		// 'opensurveypoll'	  to add a tab in opensurvey poll view
 		// 'order'            to add a tab in sales order view
 		// 'order_supplier'   to add a tab in supplier order view
@@ -278,176 +278,6 @@ class modWebhook extends DolibarrModules
 
 		// Main menu entries to add
 		$this->menu = array();
-		$r = 0;
-		// Add here entries to declare new menus
-		/* BEGIN MODULEBUILDER TOPMENU */
-		/*$this->menu[$r++] = array(
-			'fk_menu'=>'', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'type'=>'top', // This is a Top menu entry
-			'titre'=>'ModuleWebhookName',
-			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth valignmiddle"'),
-			'mainmenu'=>'webhook',
-			'leftmenu'=>'',
-			'url'=>'/webhook/webhookindex.php',
-			'langs'=>'', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'position'=>1000 + $r,
-			'enabled'=>'$conf->webhook->enabled', // Define condition to show or hide menu entry. Use '$conf->webhook->enabled' if entry must be visible if module is enabled.
-			'perms'=>'1', // Use 'perms'=>'$user->rights->webhook->webhook_target->read' if you want your menu with a permission rules
-			'target'=>'',
-			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
-		);*/
-		/* END MODULEBUILDER TOPMENU */
-		/* BEGIN MODULEBUILDER LEFTMENU WEBHOOK_TARGET
-		$this->menu[$r++]=array(
-			'fk_menu'=>'fk_mainmenu=webhook',      // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'type'=>'left',                          // This is a Left menu entry
-			'titre'=>'Webhook_target',
-			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth valignmiddle"'),
-			'mainmenu'=>'webhook',
-			'leftmenu'=>'webhook_target',
-			'url'=>'/webhook/webhookindex.php',
-			'langs'=>'',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'position'=>1000+$r,
-			'enabled'=>'$conf->webhook->enabled',  // Define condition to show or hide menu entry. Use '$conf->webhook->enabled' if entry must be visible if module is enabled.
-			'perms'=>'$user->rights->webhook->webhook_target->read',			                // Use 'perms'=>'$user->rights->webhook->level1->level2' if you want your menu with a permission rules
-			'target'=>'',
-			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
-		);
-		$this->menu[$r++]=array(
-			'fk_menu'=>'fk_mainmenu=webhook,fk_leftmenu=webhook_target',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'type'=>'left',			                // This is a Left menu entry
-			'titre'=>'List_Webhook_target',
-			'mainmenu'=>'webhook',
-			'leftmenu'=>'webhook_webhook_target_list',
-			'url'=>'/webhook/webhook_target_list.php',
-			'langs'=>'',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'position'=>1000+$r,
-			'enabled'=>'$conf->webhook->enabled',  // Define condition to show or hide menu entry. Use '$conf->webhook->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms'=>'$user->rights->webhook->webhook_target->read',			                // Use 'perms'=>'$user->rights->webhook->level1->level2' if you want your menu with a permission rules
-			'target'=>'',
-			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
-		);
-		$this->menu[$r++]=array(
-			'fk_menu'=>'fk_mainmenu=webhook,fk_leftmenu=webhook_target',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'type'=>'left',			                // This is a Left menu entry
-			'titre'=>'New_Webhook_target',
-			'mainmenu'=>'webhook',
-			'leftmenu'=>'webhook_webhook_target_new',
-			'url'=>'/webhook/webhook_target_card.php?action=create',
-			'langs'=>'',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'position'=>1000+$r,
-			'enabled'=>'$conf->webhook->enabled',  // Define condition to show or hide menu entry. Use '$conf->webhook->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms'=>'$user->rights->webhook->webhook_target->write',			                // Use 'perms'=>'$user->rights->webhook->level1->level2' if you want your menu with a permission rules
-			'target'=>'',
-			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
-		);
-		*/
-
-		/*$this->menu[$r++]=array(
-			// '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'fk_menu'=>'fk_mainmenu=webhook',
-			// This is a Left menu entry
-			'type'=>'left',
-			'titre'=>'List Webhook_target',
-			'mainmenu'=>'webhook',
-			'leftmenu'=>'webhook_webhook_target',
-			'url'=>'/webhook/webhook_target_list.php',
-			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'langs'=>'',
-			'position'=>1100+$r,
-			// Define condition to show or hide menu entry. Use '$conf->webhook->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'enabled'=>'$conf->webhook->enabled',
-			// Use 'perms'=>'$user->rights->webhook->level1->level2' if you want your menu with a permission rules
-			'perms'=>'1',
-			'target'=>'',
-			// 0=Menu for internal users, 1=external users, 2=both
-			'user'=>2,
-		);
-		$this->menu[$r++]=array(
-			// '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'fk_menu'=>'fk_mainmenu=webhook,fk_leftmenu=webhook_webhook_target',
-			// This is a Left menu entry
-			'type'=>'left',
-			'titre'=>'New Webhook_target',
-			'mainmenu'=>'webhook',
-			'leftmenu'=>'webhook_webhook_target',
-			'url'=>'/webhook/webhook_target_card.php?action=create',
-			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'langs'=>'',
-			'position'=>1100+$r,
-			// Define condition to show or hide menu entry. Use '$conf->webhook->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'enabled'=>'$conf->webhook->enabled',
-			// Use 'perms'=>'$user->rights->webhook->level1->level2' if you want your menu with a permission rules
-			'perms'=>'1',
-			'target'=>'',
-			// 0=Menu for internal users, 1=external users, 2=both
-			'user'=>2
-		);*/
-
-		/* END MODULEBUILDER LEFTMENU WEBHOOK_TARGET */
-		// Exports profiles provided by this module
-		$r = 1;
-		/* BEGIN MODULEBUILDER EXPORT WEBHOOK_TARGET */
-		/*
-		$this->export_code[$r]=$this->rights_class.'_'.$r;
-		$this->export_label[$r]='Webhook_targetLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
-		$this->export_icon[$r]='webhook_target@webhook';
-		// Define $this->export_fields_array, $this->export_TypeFields_array and $this->export_entities_array
-		$keyforclass = 'Webhook_target'; $keyforclassfile='/webhook/class/webhook_target.class.php'; $keyforelement='webhook_target@webhook';
-		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
-		//$this->export_fields_array[$r]['t.fieldtoadd']='FieldToAdd'; $this->export_TypeFields_array[$r]['t.fieldtoadd']='Text';
-		//unset($this->export_fields_array[$r]['t.fieldtoremove']);
-		//$keyforclass = 'Webhook_targetLine'; $keyforclassfile='/webhook/class/webhook_target.class.php'; $keyforelement='webhook_targetline@webhook'; $keyforalias='tl';
-		//include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
-		$keyforselect='webhook_target'; $keyforaliasextra='extra'; $keyforelement='webhook_target@webhook';
-		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		//$keyforselect='webhook_targetline'; $keyforaliasextra='extraline'; $keyforelement='webhook_targetline@webhook';
-		//include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		//$this->export_dependencies_array[$r] = array('webhook_targetline'=>array('tl.rowid','tl.ref')); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
-		//$this->export_special_array[$r] = array('t.field'=>'...');
-		//$this->export_examplevalues_array[$r] = array('t.field'=>'Example');
-		//$this->export_help_array[$r] = array('t.field'=>'FieldDescHelp');
-		$this->export_sql_start[$r]='SELECT DISTINCT ';
-		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'webhook_target as t';
-		//$this->export_sql_end[$r]  =' LEFT JOIN '.MAIN_DB_PREFIX.'webhook_target_line as tl ON tl.fk_webhook_target = t.rowid';
-		$this->export_sql_end[$r] .=' WHERE 1 = 1';
-		$this->export_sql_end[$r] .=' AND t.entity IN ('.getEntity('webhook_target').')';
-		$r++; */
-		/* END MODULEBUILDER EXPORT WEBHOOK_TARGET */
-
-		// Imports profiles provided by this module
-		$r = 1;
-		/* BEGIN MODULEBUILDER IMPORT WEBHOOK_TARGET */
-		/*
-		$this->import_code[$r]=$this->rights_class.'_'.$r;
-		$this->import_label[$r]='Webhook_targetLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
-		$this->import_icon[$r]='webhook_target@webhook';
-		$this->import_tables_array[$r] = array('t' => MAIN_DB_PREFIX.'webhook_webhook_target', 'extra' => MAIN_DB_PREFIX.'webhook_webhook_target_extrafields');
-		$this->import_tables_creator_array[$r] = array('t' => 'fk_user_author'); // Fields to store import user id
-		$import_sample = array();
-		$keyforclass = 'Webhook_target'; $keyforclassfile='/webhook/class/webhook_target.class.php'; $keyforelement='webhook_target@webhook';
-		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinimport.inc.php';
-		$import_extrafield_sample = array();
-		$keyforselect='webhook_target'; $keyforaliasextra='extra'; $keyforelement='webhook_target@webhook';
-		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
-		$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'webhook_webhook_target');
-		$this->import_regex_array[$r] = array();
-		$this->import_examplevalues_array[$r] = array_merge($import_sample, $import_extrafield_sample);
-		$this->import_updatekeys_array[$r] = array('t.ref' => 'Ref');
-		$this->import_convertvalue_array[$r] = array(
-			't.ref' => array(
-				'rule'=>'getrefifauto',
-				'class'=>(empty($conf->global->WEBHOOK_WEBHOOK_TARGET_ADDON) ? 'mod_webhook_target_standard' : $conf->global->WEBHOOK_WEBHOOK_TARGET_ADDON),
-				'path'=>"/core/modules/commande/".(empty($conf->global->WEBHOOK_WEBHOOK_TARGET_ADDON) ? 'mod_webhook_target_standard' : $conf->global->WEBHOOK_WEBHOOK_TARGET_ADDON).'.php'
-				'classobject'=>'Webhook_target',
-				'pathobject'=>'/webhook/class/webhook_target.class.php',
-			),
-			't.fk_soc' => array('rule' => 'fetchidfromref', 'file' => '/societe/class/societe.class.php', 'class' => 'Societe', 'method' => 'fetch', 'element' => 'ThirdParty'),
-			't.fk_user_valid' => array('rule' => 'fetchidfromref', 'file' => '/user/class/user.class.php', 'class' => 'User', 'method' => 'fetch', 'element' => 'user'),
-			't.fk_mode_reglement' => array('rule' => 'fetchidfromcodeorlabel', 'file' => '/compta/paiement/class/cpaiement.class.php', 'class' => 'Cpaiement', 'method' => 'fetch', 'element' => 'cpayment'),
-		);
-		$r++; */
-		/* END MODULEBUILDER IMPORT WEBHOOK_TARGET */
 	}
 
 	/**
@@ -460,8 +290,6 @@ class modWebhook extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
-		global $conf, $langs;
-
 		$result = $this->_load_tables('/install/mysql/tables/', 'webhook');
 		//$result = $this->_load_tables('/webhook/sql/');
 		if ($result < 0) {
@@ -472,40 +300,6 @@ class modWebhook extends DolibarrModules
 		$this->remove($options);
 
 		$sql = array();
-
-		// Document templates
-		$moduledir = dol_sanitizeFileName('webhook');
-		$myTmpObjects = array();
-		$myTmpObjects['Webhook_target'] = array('includerefgeneration'=>0, 'includedocgeneration'=>0);
-
-		foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
-			if ($myTmpObjectKey == 'Webhook_target') {
-				continue;
-			}
-			if ($myTmpObjectArray['includerefgeneration']) {
-				$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/'.$moduledir.'/template_webhook_targets.odt';
-				$dirodt = DOL_DATA_ROOT.'/doctemplates/'.$moduledir;
-				$dest = $dirodt.'/template_webhook_targets.odt';
-
-				if (file_exists($src) && !file_exists($dest)) {
-					require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-					dol_mkdir($dirodt);
-					$result = dol_copy($src, $dest, 0, 0);
-					if ($result < 0) {
-						$langs->load("errors");
-						$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
-						return 0;
-					}
-				}
-
-				$sql = array_merge($sql, array(
-					"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'standard_".strtolower($myTmpObjectKey)."' AND type = '".$this->db->escape(strtolower($myTmpObjectKey))."' AND entity = ".((int) $conf->entity),
-					"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('standard_".strtolower($myTmpObjectKey)."', '".$this->db->escape(strtolower($myTmpObjectKey))."', ".((int) $conf->entity).")",
-					"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'generic_".strtolower($myTmpObjectKey)."_odt' AND type = '".$this->db->escape(strtolower($myTmpObjectKey))."' AND entity = ".((int) $conf->entity),
-					"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('generic_".strtolower($myTmpObjectKey)."_odt', '".$this->db->escape(strtolower($myTmpObjectKey))."', ".((int) $conf->entity).")"
-				));
-			}
-		}
 
 		return $this->_init($sql, $options);
 	}

@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
-# About page
-# Right
+# Permissions
 Permission23101 = スケジュールされたジョブを読込む
 Permission23102 = スケジュールされたジョブの作成/更新
 Permission23103 = スケジュールされたジョブを削除する
@@ -13,9 +12,9 @@ KeyForCronAccess=cronジョブを起動するためのURLのセキュリティ�
 FileToLaunchCronJobs=修飾されたcronジョブをチェックして起動するコマンドライン
 CronExplainHowToRunUnix=Unix環境では、次のcrontabエントリを使用して、5分ごとにコマンドラインを実行する必要がある。
 CronExplainHowToRunWin=Microsoft(tm)Windows環境では、スケジュールされたタスクツールを使用して、5分ごとにコマンドラインを実行できる。
-CronMethodDoesNotExists=クラス%sには、メソッド%sが含まれていない。
-CronMethodNotAllowed=クラス%sのメソッド%sは、禁止されているメソッドのブラックリストに含まれている
-CronJobDefDesc=cronジョブプロファイルは、モジュール記述子ファイルに定義されている。モジュールが有効化されると、それらがロードされて使用可能になるため、管理ツールメニュー%sからジョブを管理できる。
+CronMethodDoesNotExists=クラス %s にはメソッド %s が含まれていない
+CronMethodNotAllowed=クラス %s のメソッド %s は禁止されたメソッドのブロックリストに含まれている
+CronJobDefDesc=cronジョブプロファイルは、モジュール記述子ファイルに定義されている。モジュールが活性化されると、それらがロードされて使用可能になるため、管理ツールメニュー%sからジョブを管理できる。
 CronJobProfiles=事前定義されたcronジョブプロファイルのリスト
 # Menu
 EnabledAndDisabled=有効および無効
@@ -30,7 +29,8 @@ CronExecute=今すぐ起動
 CronConfirmExecute=これらのスケジュールされたジョブを今すぐ実行してもよいか？
 CronInfo=スケジュールされたジョブモジュールを使用すると、ジョブをスケジュールして自動的に実行できる。ジョブは手動で開始することもできる。
 CronTask=ジョブ
-CronNone=なし
+CronNone=Next run of scheduled task
+CronNotYetRan=Never executed
 CronDtStart=以前ではない
 CronDtEnd=以後ではない
 CronDtNextLaunch=次の実行
@@ -49,8 +49,8 @@ CronEach=すべて
 JobFinished=ジョブが起動され、終了した
 Scheduled=予定
 #Page card
-CronAdd= ジョブを追加する
-CronEvery=それぞれジョブを実行する
+CronAdd=ジョブを追加する
+CronEvery=Run job every
 CronObject=作成するインスタンス/オブジェクト
 CronArgs=パラメータ
 CronSaveSucess=保存成功
@@ -58,7 +58,7 @@ CronNote=コメント
 CronFieldMandatory=フィールド%sは必須 
 CronErrEndDateStartDt=終了日を開始日より前にすることはできない
 StatusAtInstall=モジュールインストール時の状態
-CronStatusActiveBtn=スケジューリングを有効にする
+CronStatusActiveBtn=スケジューリングを有効化
 CronStatusInactiveBtn=無効にする
 CronTaskInactive=このジョブは無効になっている（スケジュールされていない）
 CronId=Id
@@ -67,7 +67,7 @@ CronModuleHelp=Dolibarrモジュールディレクトリの名前(外部Dolibarr
 CronClassFileHelp=ロードする相対パスとファイル名 (パスはWebサーバーのルートディレクトリからの相対パス). <BR> たとえば、Dolibarr製品オブジェクト  htdocs/product/class/<u>product.class.php</u> のfetchメソッドを呼び出す場合、クラスファイル名の値は<br><i>product/class/product.class.php</i>
 CronObjectHelp=ロードするオブジェクト名. <BR>たとえば、Dolibarr製品オブジェクト/htdocs/product/class/product.class.phpのfetchメソッドを呼び出す場合、クラスファイル名の値は<br><i>Product</i>
 CronMethodHelp=起動するオブジェクトメソッド. <BR>たとえば、Dolibarr 製品オブジェクト/htdocs/product/class/product.class.phpのfetchメソッドを呼び出す場合、methodの値は<br> <i> fetch</i> 
-CronArgsHelp=メソッドの引数. <BR> たとえば、Dolibarr製品オブジェクト/htdocs/product/class/product.class.phpのfetchメソッドを呼び出す場合、パラメーターの値は<br><i>0, ProductRef</i>を取りうる
+CronArgsHelp=メソッドの引数. <BR> たとえば、Dolibarr の fetch メソッドを呼び出す場合、製品 オブジェクト /htdocs/product/class/product.class.php に対して、パラメータの値としては<br><i>0、ProductRef</i>
 CronCommandHelp=実行するシステムコマンドライン。
 CronCreateJob=新規でスケジュールされたジョブを作成
 CronFrom=から
@@ -89,8 +89,9 @@ CleanUnfinishedCronjobShort=未完了の cronjob を消去
 CleanUnfinishedCronjob=処理が動作していない場合、処理詰まりしている cronjob を消去
 WarningCronDelayed=注意、パフォーマンスの目的で、有効なジョブの次の実行日が何であれ、ジョブは実行される前に最大%s時間まで遅延する可能性がある。
 DATAPOLICYJob=データクリーナとアノニマイザ
-JobXMustBeEnabled=ジョブ%sを有効にする必要がある
+JobXMustBeEnabled=ジョブ%sを有効化する必要がある
 EmailIfError=エラー時の警告メール
+JobNotFound=ジョブ %s がジョブのリストに見つからない (モジュールを無効化/有効化してみること)
 ErrorInBatch=ジョブ実行時のエラー %s
 
 # Cron Boxes

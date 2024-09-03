@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2020      Maxime DEMAREST      <maxime@indelog.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +21,7 @@
 
 /**
  *	\file       htdocs/compta/paiement/rapport.php
- *	\ingroup    facture
+ *	\ingroup    invoice
  *	\brief      Payment reports page
  */
 
@@ -40,17 +41,17 @@ if ($user->socid > 0) {
 }
 
 $dir = $conf->facture->dir_output.'/payments';
-if (empty($user->rights->societe->client->voir) || $socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$dir .= '/private/'.$user->id; // If user has no permission to see all, output dir is specific to user
 }
 
-$year = GETPOST('year', 'int');
+$year = GETPOSTINT('year');
 if (!$year) {
 	$year = date("Y");
 }
 
 // Security check
-if (empty($user->rights->facture->lire)) {
+if (!$user->hasRight('facture', 'lire')) {
 	accessforbidden();
 }
 
@@ -71,14 +72,14 @@ if ($action == 'builddoc') {
 	// We save charset_output to restore it because write_file can change it if needed for
 	// output format that does not support UTF8.
 	$sav_charset_output = $outputlangs->charset_output;
-	if ($rap->write_file($dir, GETPOST("remonth", "int"), GETPOST("reyear", "int"), $outputlangs) > 0) {
+	if ($rap->write_file($dir, GETPOSTINT("remonth"), GETPOSTINT("reyear"), $outputlangs) > 0) {
 		$outputlangs->charset_output = $sav_charset_output;
 	} else {
 		$outputlangs->charset_output = $sav_charset_output;
 		dol_print_error($db, $obj->error);
 	}
 
-	$year = GETPOST("reyear", "int");
+	$year = GETPOSTINT("reyear");
 }
 
 
@@ -98,8 +99,8 @@ print load_fiche_titre($titre, '', 'bill');
 print '<form method="post" action="rapport.php?year='.$year.'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="builddoc">';
-$cmonth = GETPOST("remonth") ?GETPOST("remonth") : date("n", time());
-$syear = GETPOST("reyear") ?GETPOST("reyear") : date("Y", time());
+$cmonth = GETPOST("remonth") ? GETPOST("remonth") : date("n", time());
+$syear = GETPOST("reyear") ? GETPOST("reyear") : date("Y", time());
 
 print $formother->select_month($cmonth, 'remonth');
 
@@ -119,7 +120,9 @@ foreach ($year_dirs as $d) {
 
 if ($year) {
 	if (is_dir($dir.'/'.$year)) {
-		if (!empty($year_dirs)) print '<br>';
+		if (!empty($year_dirs)) {
+			print '<br>';
+		}
 		print '<br>';
 		print '<table width="100%" class="noborder">';
 		print '<tr class="liste_titre">';
@@ -128,7 +131,7 @@ if ($year) {
 		print '<td class="right">'.$langs->trans("Date").'</td>';
 		print '</tr>';
 
-		$files = (dol_dir_list($dir.'/'.$year, 'files', 0, '^payments-[0-9]{4}-[0-9]{2}\.pdf$', '', 'name', 'DESC', 1));
+		$files = (dol_dir_list($dir.'/'.$year, 'files', 0, '^payments-[0-9]{4}-[0-9]{2}\.pdf$', '', 'name', SORT_DESC, 1));
 		foreach ($files as $f) {
 			$relativepath = $f['level1name'].'/'.$f['name'];
 			print '<tr class="oddeven">';

@@ -2,6 +2,8 @@
 /* Copyright (C) 2002       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +21,7 @@
 
 /**
  *      \file       htdocs/compta/sociales/class/paymentsocialcontribution.class.php
- *		\ingroup    facture
+ *		\ingroup    invoice
  *		\brief      File of class to manage payment of social contributions
  */
 
@@ -58,16 +60,42 @@ class PaymentSocialContribution extends CommonObject
 	public $fk_charge;
 
 	public $datec = '';
-	public $tms = '';
 	public $datep = '';
 
 	/**
-	 * @deprecated
+	 * @var string
+	 */
+	public $type_code;
+
+	/**
+	 * @var string
+	 */
+	public $type_label;
+
+	/**
+	 * @var int
+	 */
+	public $bank_account;
+
+	/**
+	 * @var int
+	 */
+	public $bank_line;
+
+	/**
+	 * @deprecated  Use $amount instead.
 	 * @see $amount
+	 * @var float|int
 	 */
 	public $total;
 
+	/**
+	 * @var float|int
+	 */
 	public $amount; // Total amount of payment
+	/**
+	 * @var array<float|int>
+	 */
 	public $amounts = array(); // Array of amounts
 
 	/**
@@ -77,12 +105,14 @@ class PaymentSocialContribution extends CommonObject
 
 	/**
 	 * @var string
-	 * @deprecated
+	 * @deprecated Use $num_payment instead
+	 * @see $num_payment
 	 */
 	public $num_paiement;
 
 	/**
-	 * @var string
+	 * @var string      Payment reference
+	 *                  (Cheque or bank transfer reference. Can be "ABC123")
 	 */
 	public $num_payment;
 
@@ -107,12 +137,12 @@ class PaymentSocialContribution extends CommonObject
 	public $chid;
 
 	/**
-	 * @var integer|string datepaye
+	 * @var int|string datepaye
 	 */
 	public $datepaye;
 
 	/**
-	 * @var integer|string paiementtype
+	 * @var int|string paiementtype
 	 */
 	public $paiementtype;
 
@@ -133,7 +163,7 @@ class PaymentSocialContribution extends CommonObject
 	 *
 	 *  @param      User	$user   				User making payment
 	 *	@param		int		$closepaidcontrib   	1=Also close paid contributions to paid, 0=Do nothing more
-	 *  @return     int     						<0 if KO, id of payment if OK
+	 *  @return     int     						Return integer <0 if KO, id of payment if OK
 	 */
 	public function create($user, $closepaidcontrib = 0)
 	{
@@ -145,7 +175,7 @@ class PaymentSocialContribution extends CommonObject
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 
-		// Validate parametres
+		// Validate parameters
 		if (!$this->datepaye) {
 			$this->error = 'ErrorBadValueForParameterCreatePaymentSocialContrib';
 			return -1;
@@ -156,7 +186,7 @@ class PaymentSocialContribution extends CommonObject
 			$this->fk_charge = (int) $this->fk_charge;
 		}
 		if (isset($this->amount)) {
-			$this->amount = trim($this->amount);
+			$this->amount = (float) $this->amount;
 		}
 		if (isset($this->fk_typepaiement)) {
 			$this->fk_typepaiement = (int) $this->fk_typepaiement;
@@ -179,11 +209,11 @@ class PaymentSocialContribution extends CommonObject
 
 		$totalamount = 0;
 		foreach ($this->amounts as $key => $value) {  // How payment is dispatch
-			$newvalue = price2num($value, 'MT');
+			$newvalue = (float) price2num($value, 'MT');
 			$this->amounts[$key] = $newvalue;
 			$totalamount += $newvalue;
 		}
-		$totalamount = price2num($totalamount);
+		$totalamount = (float) price2num($totalamount);
 
 		// Check parameters
 		if ($totalamount == 0) {
@@ -209,8 +239,8 @@ class PaymentSocialContribution extends CommonObject
 				// Insere tableau des montants / factures
 				foreach ($this->amounts as $key => $amount) {
 					$contribid = $key;
-					if (is_numeric($amount) && $amount <> 0) {
-						$amount = price2num($amount);
+					if (is_numeric($amount) && $amount != 0) {
+						$amount = (float) price2num($amount);
 
 						// If we want to closed paid invoices
 						if ($closepaidcontrib) {
@@ -221,8 +251,8 @@ class PaymentSocialContribution extends CommonObject
 							$creditnotes = 0;
 							//$deposits=$contrib->getSumDepositsUsed();
 							$deposits = 0;
-							$alreadypayed = price2num($paiement + $creditnotes + $deposits, 'MT');
-							$remaintopay = price2num($contrib->amount - $paiement - $creditnotes - $deposits, 'MT');
+							$alreadypayed = (float) price2num($paiement + $creditnotes + $deposits, 'MT');
+							$remaintopay = (float) price2num($contrib->amount - $paiement - $creditnotes - $deposits, 'MT');
 							if ($remaintopay == 0) {
 								$result = $contrib->setPaid($user);
 							} else {
@@ -257,7 +287,7 @@ class PaymentSocialContribution extends CommonObject
 	 *  Load object in memory from database
 	 *
 	 *  @param	int		$id         Id object
-	 *  @return int         		<0 if KO, >0 if OK
+	 *  @return int         		Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -296,8 +326,10 @@ class PaymentSocialContribution extends CommonObject
 				$this->tms = $this->db->jdate($obj->tms);
 				$this->datep = $this->db->jdate($obj->datep);
 				$this->amount = $obj->amount;
+				$this->total = $obj->amount;
 				$this->fk_typepaiement = $obj->fk_typepaiement;
 				$this->num_payment = $obj->num_payment;
+				$this->num_paiement = $obj->num_payment;
 				$this->note_private = $obj->note;
 				$this->fk_bank = $obj->fk_bank;
 				$this->fk_user_creat = $obj->fk_user_creat;
@@ -324,7 +356,7 @@ class PaymentSocialContribution extends CommonObject
 	 *
 	 *  @param	User	$user        	User that modify
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *  @return int         			<0 if KO, >0 if OK
+	 *  @return int         			Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
@@ -337,7 +369,7 @@ class PaymentSocialContribution extends CommonObject
 			$this->fk_charge = (int) $this->fk_charge;
 		}
 		if (isset($this->amount)) {
-			$this->amount = trim($this->amount);
+			$this->amount = (float) $this->amount;
 		}
 		if (isset($this->fk_typepaiement)) {
 			$this->fk_typepaiement = (int) $this->fk_typepaiement;
@@ -407,11 +439,10 @@ class PaymentSocialContribution extends CommonObject
 	 *
 	 *  @param	User	$user        	User that delete
 	 *  @param  int		$notrigger		0=launch triggers after, 1=disable triggers
-	 *  @return int						<0 if KO, >0 if OK
+	 *  @return int						Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		dol_syslog(get_class($this)."::delete");
@@ -421,7 +452,7 @@ class PaymentSocialContribution extends CommonObject
 		if ($this->bank_line > 0) {
 			$accline = new AccountLine($this->db);
 			$accline->fetch($this->bank_line);
-			$result = $accline->delete();
+			$result = $accline->delete($user);
 			if ($result < 0) {
 				$this->errors[] = $accline->error;
 				$error++;
@@ -507,24 +538,25 @@ class PaymentSocialContribution extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return	int
 	 */
 	public function initAsSpecimen()
 	{
 		$this->id = 0;
-
-		$this->fk_charge = '';
-		$this->datec = '';
-		$this->tms = '';
-		$this->datep = '';
-		$this->amount = '';
-		$this->fk_typepaiement = '';
-		$this->num_payment = '';
+		$this->fk_charge = 0;
+		$this->datec = dol_now();
+		$this->tms = dol_now();
+		$this->datep = dol_now();
+		$this->amount = 100;
+		$this->fk_typepaiement = 0;
+		$this->num_payment = 'ABC123';
 		$this->note_private = '';
 		$this->note_public = '';
-		$this->fk_bank = '';
-		$this->fk_user_creat = '';
-		$this->fk_user_modif = '';
+		$this->fk_bank = 0;
+		$this->fk_user_creat = 0;
+		$this->fk_user_modif = 0;
+
+		return 1;
 	}
 
 
@@ -538,7 +570,7 @@ class PaymentSocialContribution extends CommonObject
 	 *      @param  int		$accountid          Id of bank account to do link with
 	 *      @param  string	$emetteur_nom       Name of transmitter
 	 *      @param  string	$emetteur_banque    Name of bank
-	 *      @return int                 		<0 if KO, >0 if OK
+	 *      @return int                 		Return integer <0 if KO, >0 if OK
 	 */
 	public function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque)
 	{
@@ -549,13 +581,13 @@ class PaymentSocialContribution extends CommonObject
 
 		$error = 0;
 
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 			$acc = new Account($this->db);
 			$acc->fetch($accountid);
 
-			$total = $this->total;
+			$total = $this->amount;
 			if ($mode == 'payment_sc') {
 				$total = -$total;
 			}
@@ -642,7 +674,7 @@ class PaymentSocialContribution extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Mise a jour du lien entre le paiement de  charge et la ligne dans llx_bank generee
+	 *  Update the link between the Payment and the line generated in llx_bank
 	 *
 	 *  @param	int		$id_bank         Id if bank
 	 *  @return	int			             >0 if OK, <=0 if KO
@@ -727,7 +759,7 @@ class PaymentSocialContribution extends CommonObject
 	}
 
 	/**
-	 *  Return clicable name (with picto eventually)
+	 *  Return clickable name (with picto eventually)
 	 *
 	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 * 	@param	int		$maxlen			Longueur max libelle
@@ -772,7 +804,7 @@ class PaymentSocialContribution extends CommonObject
 				$result .= ' ';
 			}
 			if ($withpicto != 2) {
-				$result .= $link.($maxlen ?dol_trunc($this->ref, $maxlen) : $this->ref).$linkend;
+				$result .= $link.($maxlen ? dol_trunc($this->ref, $maxlen) : $this->ref).$linkend;
 			}
 		}
 
@@ -783,7 +815,7 @@ class PaymentSocialContribution extends CommonObject
 	/**
 	 *	Return if object was dispatched into bookkeeping
 	 *
-	 *	@return     int         <0 if KO, 0=no, 1=yes
+	 *	@return     int         Return integer <0 if KO, 0=no, 1=yes
 	 */
 	public function getVentilExportCompta()
 	{

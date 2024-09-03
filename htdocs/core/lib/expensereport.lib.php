@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2011	Regis Houssin	<regis.houssin@inodbox.com>
  * Copyright (C) 2022       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,7 +60,7 @@ function expensereport_prepare_head($object)
 	$head[$h][2] = 'documents';
 	$h++;
 
-	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
+	if (!getDolGlobalString('MAIN_DISABLE_NOTES_TAB')) {
 		$nbNote = 0;
 		if (!empty($object->note_private)) {
 			$nbNote++;
@@ -81,7 +82,7 @@ function expensereport_prepare_head($object)
 	$head[$h][2] = 'info';
 	$h++;
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'donation', 'add', 'external');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'expensereport', 'add', 'external');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'expensereport', 'remove');
 
@@ -92,12 +93,11 @@ function expensereport_prepare_head($object)
  * Returns an array with the tabs for the "Expense report payment" section
  * It loads tabs from modules looking for the entity payment
  *
- * @param	Paiement	$object		Current payment object
- * @return	array					Tabs for the payment section
+ * @param	PaymentExpenseReport	$object		Current payment object
+ * @return	array								Tabs for the payment section
  */
 function payment_expensereport_prepare_head(PaymentExpenseReport $object)
 {
-
 	global $langs, $conf;
 
 	$h = 0;
@@ -125,7 +125,7 @@ function payment_expensereport_prepare_head(PaymentExpenseReport $object)
 }
 
 /**
- *  Return array head with list of tabs to view object informations.
+ *  Return array head with list of tabs to view object information.
  *
  *  @return	array   	        head array with tabs
  */
@@ -133,13 +133,11 @@ function expensereport_admin_prepare_head()
 {
 	global $langs, $conf, $user, $db;
 
-	$h = 0;
-	$head = array();
-
 	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('expensereport');
 
 	$h = 0;
+	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT."/admin/expensereport.php";
 	$head[$h][1] = $langs->trans("ExpenseReports");
@@ -151,7 +149,7 @@ function expensereport_admin_prepare_head()
 	$head[$h][2] = 'expenserules';
 	$h++;
 
-	if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
+	if (getDolGlobalString('MAIN_USE_EXPENSE_IK')) {
 		$head[$h][0] = DOL_URL_ROOT."/admin/expensereport_ik.php";
 		$head[$h][1] = $langs->trans("ExpenseReportsIk");
 		$head[$h][2] = 'expenseik';

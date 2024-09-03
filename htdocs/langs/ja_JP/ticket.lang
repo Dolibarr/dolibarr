@@ -5,109 +5,87 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
-Module56000Name=切符売場
+Module56000Name= チケット
 Module56000Desc=発行または要求管理のためのチケットシステム
-
 Permission56001=チケットを見る
 Permission56002=チケットを変更する
 Permission56003=チケットを削除する
 Permission56004=チケットを管理する
 Permission56005=全取引先のチケットを参照すること(外部ユーザには有効ではなく、常に依存している取引先に限定される)
 Permission56006=チケットのエクスポート
-
 Tickets=切符売場
 TicketDictType=チケット-タイプ
-TicketDictCategory=チケット-グループ
+TicketDictCategory=チケット - グループ
 TicketDictSeverity=チケット-重大度
 TicketDictResolution=チケット-解決策
-
 TicketTypeShortCOM=商取引質問
-TicketTypeShortHELP=機能的なヘルプの要求
+TicketTypeShortHELP=機能的なサポートのリクエスト
 TicketTypeShortISSUE=問題またはバグ
 TicketTypeShortPROBLEM=問題
 TicketTypeShortREQUEST=変更または拡張要求
 TicketTypeShortPROJET=プロジェクト
 TicketTypeShortOTHER=その他
-
 TicketSeverityShortLOW=低い
 TicketSeverityShortNORMAL=正常
 TicketSeverityShortHIGH=高い
 TicketSeverityShortBLOCKING=クリティカル、ブロッキング
-
 TicketCategoryShortOTHER=その他
-
 ErrorBadEmailAddress=フィールド '%s'が正しくない
 MenuTicketMyAssign=私のチケット
 MenuTicketMyAssignNonClosed=私のオープンチケット
 MenuListNonClosed=オープンチケット
-
 TypeContact_ticket_internal_CONTRIBUTOR=貢献者
 TypeContact_ticket_internal_SUPPORTTEC=割り当てられたユーザ
 TypeContact_ticket_external_SUPPORTCLI=顧客連絡/インシデント追跡
 TypeContact_ticket_external_CONTRIBUTOR=外部寄稿者
-
 OriginEmail=レポーターのメール
+EmailReplyto=メールで返信
+EmailReferences=電子メールでの参照
 Notify_TICKET_SENTBYMAIL=メールでチケットメッセージを送信する
-
 ExportDataset_ticket_1=切符売場
-
 # Status
 Read=読む
 Assigned=割り当て済
-InProgress=進行中
 NeedMoreInformation=記者のフィードバック待機中
 NeedMoreInformationShort=フィードバック待機中
-Answered=答えた
 Waiting=待っている
 SolvedClosed=解決した
 Deleted=削除
-
 # Dict
-Type=タイプ
 Severity=重大度
 TicketGroupIsPublic=グループは公開されている
 TicketGroupIsPublicDesc=チケットグループが公開の場合、公開インターフェイスからチケットを作成するときにフォームに表示される
-
 # Email templates
 MailToSendTicketMessage=チケットメッセージからメールを送信するには
-
-#
 # Admin page
-#
 TicketSetup=チケットモジュールの設定
 TicketSettings=設定
-TicketSetupPage=
 TicketPublicAccess=IDを必要としない公開インターフェイスは、次のURLで入手できる。
 TicketSetupDictionaries=チケットのタイプ、重大度、および分析コードは辞書から構成できる
 TicketParamModule=モジュール変数の設定
 TicketParamMail=メールの設定
 TicketEmailNotificationFrom=回答の通知のための送信者メール
-TicketEmailNotificationFromHelp=バックオフィス内で回答が提供されたときに通知メールを送信するために使用する送信者メール。例： noreply@example.com
+TicketEmailNotificationFromHelp=バックオフィス内で回答が提供された場合に通知メールを送信するために使用する送信者の電子メール。たとえば、noreply@example.com
 TicketEmailNotificationTo=このメールアドレスにチケット作成を通知する
 TicketEmailNotificationToHelp=存在する場合、この電子メールアドレスにチケット作成が通知される
 TicketNewEmailBodyLabel=チケット作成後に送信されるテキストメッセージ
 TicketNewEmailBodyHelp=ここで指定されたテキストは、公開インターフェイスからの新規チケットの作成を確定する電子メールに挿入される。チケットの相談に関する情報は自動的に追加される。
 TicketParamPublicInterface=公開インターフェイスの設定
-TicketsEmailMustExist=チケットを作成するには、既存のメールアドレスが必要 
+TicketsEmailMustExist=チケットを作成するには、既存のメールアドレスが必要
 TicketsEmailMustExistHelp=公開インターフェイスでは、新規チケットを作成するために、電子メールアドレスがデータベースに既に入力されている必要がある。
+TicketsShowProgression=チケットの進行状況をパブリックインターフェースに表示する
+TicketsShowProgressionHelp=パブリック インターフェイス ページでチケットの進行状況を非表示にするには、このオプションを有効にする。
 TicketCreateThirdPartyWithContactIfNotExist=不明なメールについては、名前と法人名を尋ねること。
-TicketCreateThirdPartyWithContactIfNotExistHelp=入力したメールアドレスに取引先または連絡先が存在するかどうかを確認する。ない場合、名前と法人名を尋ね、連絡先を付加した取引先を作成する。
+TicketCreateThirdPartyWithContactIfNotExistHelp=入力したメールに 取引先 または連絡先が存在するかどうかを確認すること。そうでない場合は、名前と 法人 の名前を尋ねて、連絡先との 取引先 を作成する。
 PublicInterface=公開インターフェイス
-TicketUrlPublicInterfaceLabelAdmin=公開インターフェイスの代替URL
-TicketUrlPublicInterfaceHelpAdmin=Webサーバーのエイリアスを定義して、別のURLで公開インターフェイスを利用できるようにすることができる(サーバーはこの新規URLのプロキシとして機能する必要がある)
 TicketPublicInterfaceTextHomeLabelAdmin=公開インターフェイスのウェルカムテキスト
 TicketPublicInterfaceTextHome=サポートチケットを作成するか、その識別子追跡チケットから既存のものを表示できる。
 TicketPublicInterfaceTextHomeHelpAdmin=ここで定義されたテキストは、公開インターフェイスのホームページに表示される。
@@ -125,7 +103,9 @@ TicketParams=パラメータ
 TicketsShowModuleLogo=公開インターフェイスにモジュールのロゴを表示する
 TicketsShowModuleLogoHelp=このオプションを有効化と、公開インターフェイスのページでロゴモジュールが非表示になる
 TicketsShowCompanyLogo=公開インターフェイスに法人のロゴを表示する
-TicketsShowCompanyLogoHelp=このオプションを有効化すると、公開インターフェイスのページで主法人のロゴが非表示になる。
+TicketsShowCompanyLogoHelp=パブリック インターフェイスのページに主たる法人のロゴを表示するには、このオプションを有効にする。
+TicketsShowCompanyFooter=パブリックインターフェイスに法人のフッターを表示する
+TicketsShowCompanyFooterHelp=パブリック インターフェイスのページに主たる法人のフッターを表示するには、このオプションを有効にする。
 TicketsEmailAlsoSendToMainAddress=また、メインの電子メールアドレスに通知を送信する
 TicketsEmailAlsoSendToMainAddressHelp=このオプションを有効化と、設定「%s」で定義されたアドレスにも電子メールが送信される（タブ「%s」を参照）。
 TicketsLimitViewAssignedOnly=現在のユーザに割り当てられたチケットに表示を制限する(外部ユーザには無効で、常に依存している取引先に制限される)
@@ -142,23 +122,22 @@ TicketsPublicNotificationNewMessage=新規メッセージ/コメントがチケ�
 TicketsPublicNotificationNewMessageHelp=新規メッセージが公開インターフェイスから追加されたときに電子メール(s)を送信する(割り当てられたユーザまたは通知電子メールを(更新)および/または通知電子メールに)
 TicketPublicNotificationNewMessageDefaultEmail=通知メール(更新)
 TicketPublicNotificationNewMessageDefaultEmailHelp=チケットにユーザが割り当てられていない場合、またはユーザに既知の電子メールがない場合は、新規メッセージ通知ごとにこのアドレスに電子メールを送信する。
-TicketsAutoReadTicket=チケットを自動的に既読としてマークする（バックオフィスから作成された場合）
-TicketsAutoReadTicketHelp=バックオフィスから作成されたときに、チケットを自動的に既読としてマークする。パブリックインターフェイスからチケットを作成すると、チケットの状態は「未読」のままになる。
+TicketsAutoReadTicket=自動的に チケットを既読としてマークする (バックオフィスから作成された場合)
+TicketsAutoReadTicketHelp=自動的に バックオフィスから作成されたチケットに既読のマークを付ける。パブリックインターフェースからチケットを作成すると、チケットのステータスは「未読」のままになる。
 TicketsDelayBeforeFirstAnswer=新しいチケットは、次の期間(時間)の前に最初の回答を受取るべき:
 TicketsDelayBeforeFirstAnswerHelp=この期間(時間)を過ぎても新しいチケットが回答を受取らなかった場合、重要な警告アイコンがリストビューに表示される。
 TicketsDelayBetweenAnswers=未解決チケットは、次の期間(時間)は非アクティブにしないべき:
 TicketsDelayBetweenAnswersHelp=既に回答を受け取っていて未解決のチケットがこの期間(時間)を過ぎてもそれ以上のやり取りがない場合、リストビューに警告アイコンが表示される。
-TicketsAutoNotifyClose=チケットを閉じるときに自動的にサードパーティに通知する
-TicketsAutoNotifyCloseHelp=チケットを閉じるときに、サードパーティの連絡先の1つにメッセージを送信するように提案される。一括クローズ時に、チケットにリンクされているサードパーティの1つの連絡先にメッセージが送信される。
+TicketsAutoNotifyClose=チケットを閉じるときに 自動的に が 取引先 に通知する
+TicketsAutoNotifyCloseHelp=チケットを閉じるとき、取引先 連絡先の 1 つにメッセージを送信するよう提案されます。一括終了すると、チケットにリンクされた 取引先 の 1 人の連絡先にメッセージが送信される。
 TicketWrongContact=提供された連絡先は、現在のチケット連絡先の一部ではない。メールは送信されない。
 TicketChooseProductCategory=チケットサポートの製品カテゴリ
 TicketChooseProductCategoryHelp=チケットサポートの製品カテゴリを選択する。これは、契約をチケットに自動的にリンクするために使用される。
 TicketUseCaptchaCode=チケットの作成時にグラフィカル コード (CAPTCHA) を使用する
 TicketUseCaptchaCodeHelp=新しいチケットを作成するときに CAPTCHA 検証を追加する。
-
-#
+TicketsAllowClassificationModificationIfClosed=終了したチケットの分類を変更できるようにする
+TicketsAllowClassificationModificationIfClosedHelp=チケットがクローズされている場合でも、分類 (タイプ、チケット グループ、重大度) を変更できるようにする。
 # Index & list page
-#
 TicketsIndex=チケットエリア
 TicketList=チケット一覧
 TicketAssignedToMeInfos=このページには、現在のユーザによって作成または割り当てられたチケットリストが表示される
@@ -173,10 +152,7 @@ ShowAsConversation=会話リストとして表示
 MessageListViewType=テーブルリストとして表示
 ConfirmMassTicketClosingSendEmail=チケットを閉じるときに自動的にメールを送信する
 ConfirmMassTicketClosingSendEmailQuestion=これらのチケットを閉じるときにサードパーティに通知するか？
-
-#
 # Ticket card
-#
 Ticket=チケット
 TicketCard=チケットカード
 CreateTicket=チケットを作成する
@@ -198,7 +174,8 @@ TicketAssigned=チケットが割り当てられました
 TicketChangeType=タイプを変更する
 TicketChangeCategory=分析コードを変更する
 TicketChangeSeverity=重大度の変更
-TicketAddMessage=プライベート メッセージを追加
+TicketAddMessage=メッセージを追加または送信する
+TicketAddPrivateMessage=プライベートメッセージを追加する
 MessageSuccessfullyAdded=チケット追加
 TicketMessageSuccessfullyAdded=メッセージが正常に追加された
 TicketMessagesList=メッセージリスト
@@ -217,8 +194,8 @@ ConfirmAbandonTicket=チケットを終了し、状態を「放棄」に確定�
 ConfirmDeleteTicket=チケットの削除を確定すること
 TicketDeletedSuccess=チケットは正常に削除された
 TicketMarkedAsClosed=チケットはクローズとしてマークされている
-TicketDurationAuto=計算された期間
-TicketDurationAutoInfos=関連する介入から自動的に計算された期間
+TicketDurationAuto=介入期間
+TicketDurationAutoInfos=関連する介入から計算された期間 自動的に
 TicketUpdated=チケット更新
 SendMessageByEmail=メールでメッセージを送る
 TicketNewMessage=新規メッセージ
@@ -244,9 +221,14 @@ ConfirmReOpenTicket=このチケットを再度開くことを確定するか？
 TicketMessageMailIntroAutoNewPublicMessage=件名が%sの新規メッセージがチケットに投稿された。
 TicketAssignedToYou=割り当てられたチケット
 TicketAssignedEmailBody=%sによってチケット＃%sが割り当てられました
+TicketAssignedCustomerEmail=あなたのチケットは処理のために割り当てられた。
+TicketAssignedCustomerBody=これは、チケットが処理に割り当てられたことを確定するための自動メール。
 MarkMessageAsPrivate=メッセージを非公開としてマークする
-TicketMessageSendEmailHelp=割り当てられたすべての連絡先に電子メールが送信される (内部連絡先だけでなく、オプション「%s」がチェックされている場合を除き、外部連絡先も含まれる)。
-TicketMessagePrivateHelp=このメッセージは外部ユーザには表示されない
+TicketMessageSendEmailHelp=割り当てられたすべての連絡先に電子メールが送信される
+TicketMessageSendEmailHelp2a=(内部連絡先だけでなく外部連絡先も、だたしオプション "%s" の指定ありを除く)
+TicketMessageSendEmailHelp2b=(内部連絡先だけでなく、外部連絡先も)
+TicketMessagePrivateHelp=このメッセージは外部ユーザーには表示されない
+TicketMessageRecipientsHelp=チケットにリンクされたアクティブな連絡先が入力された受信者フィールド
 TicketEmailOriginIssuer=チケットの発行元の発行者
 InitialMessage=最初のメッセージ
 LinkToAContract=契約へのリンク
@@ -269,20 +251,15 @@ TicketsDelayForFirstResponseTooLong=チケット開封で無回答のまま過�
 TicketsDelayFromLastResponseTooLong=このチケットの最後の回答から過大な時間が経過した。
 TicketNoContractFoundToLink=このチケットに自動的にリンクされている契約は見つからない。契約を手動でリンクすること。
 TicketManyContractsLinked=多くの契約がこのチケットに自動的にリンクされている。どちらを選択するかを必ず確認すること。
-
-#
+TicketRefAlreadyUsed=参照 [%s] はすでに使用されている。新しい参照は [%s]  。
 # Logs
-#
 TicketLogMesgReadBy=%sによって読み取られたチケット%s
 NoLogForThisTicket=このチケットのログはまだない
 TicketLogAssignedTo=%sに割り当てられたチケット%s
 TicketLogPropertyChanged=チケット%sが変更された：%sから%sへの分類
 TicketLogClosedBy=チケット%sは%sによってクローズされた
 TicketLogReopen=チケット%s再開
-
-#
 # Public pages
-#
 TicketSystem=チケットシステム
 ShowListTicketWithTrackId=トラックIDからチケットリストを表示する
 ShowTicketWithTrackId=トラックIDからチケットを表示
@@ -297,13 +274,13 @@ TicketNewEmailBodyCustomer=これは、新規チケットがアカウントに�
 TicketNewEmailBodyInfosTicket=チケットを監視するための情報
 TicketNewEmailBodyInfosTrackId=チケット追跡番号：%s
 TicketNewEmailBodyInfosTrackUrl=次のリンクをクリックすると、チケットの進行状況を確認できる
-TicketNewEmailBodyInfosTrackUrlCustomer=次のリンクをクリックすると、特定のインターフェイスでチケットの進行状況を確認できる。
+TicketNewEmailBodyInfosTrackUrlCustomer=次のリンクをクリックすると、公開チケットポータルでチケットの進行状況を確認できる。
 TicketCloseEmailBodyInfosTrackUrlCustomer=次のリンクをクリックすると、このチケットの履歴を確認できる
 TicketEmailPleaseDoNotReplyToThisEmail=このメールに直接返信しないこと。リンクを使用して、インターフェースに返信する。
 TicketPublicInfoCreateTicket=このフォームを使用すると、管理システムにサポートチケットを記録できる。
-TicketPublicPleaseBeAccuratelyDescribe=質問を正確に説明すること。お客様のリクエストを正確に特定できるよう、できるだけ多くの情報を提供すること。
+TicketPublicPleaseBeAccuratelyDescribe=リクエストを正確に説明すること。リクエストを正確に識別できるよう、可能な限り多くの情報を提供すること。
 TicketPublicMsgViewLogIn=チケット追跡IDを入力すること
-TicketTrackId=公開トラッキングID
+TicketTrackId=トラッキングID
 OneOfTicketTrackId=トラッキングIDの1つ
 ErrorTicketNotFound=追跡ID%sのチケットが見つからない！
 Subject=科目
@@ -319,6 +296,8 @@ OldUser=古いユーザ
 NewUser=新規ユーザ
 NumberOfTicketsByMonth=1か月あたりのチケット数
 NbOfTickets=チケット数
+ExternalContributors=外部寄稿者
+AddContributor=外部貢献者の追加
 # notifications
 TicketCloseEmailSubjectCustomer=チケットは締め切られた
 TicketCloseEmailBodyCustomer=これは、チケット%sがちょうど閉じられたことを通知する自動メッセージ 。
@@ -330,12 +309,8 @@ TicketNotificationRecipient=通知の受信者
 TicketNotificationLogMessage=ログメッセージ
 TicketNotificationEmailBodyInfosTrackUrlinternal=チケットをインターフェースに表示
 TicketNotificationNumberEmailSent=送信された通知メール：%s
-
 ActionsOnTicket=チケットのイベント
-
-#
 # Boxes
-#
 BoxLastTicket=最新に作成されたチケット
 BoxLastTicketDescription=最新の%sが作成したチケット
 BoxLastTicketContent=
@@ -355,3 +330,4 @@ BoxNewTicketVSClose=チケット数とクローズドチケット（本日）
 TicketCreatedToday=今日作成されたチケット
 TicketClosedToday=本日終息したチケット
 KMFoundForTicketGroup=質問の回答となるトピックやFAQが見つかった。チケット提出前の確認に感謝する
+SetTitle=タイトルを設定

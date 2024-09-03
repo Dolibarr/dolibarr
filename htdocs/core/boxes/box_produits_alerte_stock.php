@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2012 Maxime Kohlhaas      <mko@atm-consulting.fr>
  * Copyright (C) 2015-2021 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2015      Juanjo Menent	    <jmenent@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,17 +42,6 @@ class box_produits_alerte_stock extends ModeleBoxes
 	public $depends = array("produit");
 
 	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
-
-	/**
 	 *  Constructor
 	 *
 	 *  @param  DoliDB	$db      	Database handler
@@ -63,8 +53,8 @@ class box_produits_alerte_stock extends ModeleBoxes
 
 		$this->db = $db;
 
-		$listofmodulesforexternal = explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
-		$tmpentry = array('enabled'=>((isModEnabled("product") || isModEnabled("service")) && isModEnabled('stock')), 'perms'=>!empty($user->rights->stock->lire), 'module'=>'product|service|stock');
+		$listofmodulesforexternal = explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL'));
+		$tmpentry = array('enabled' => ((isModEnabled("product") || isModEnabled("service")) && isModEnabled('stock')), 'perms' => $user->hasRight('stock', 'lire'), 'module' => 'product|service|stock');
 		$showmode = isVisibleToUserType(($user->socid > 0 ? 1 : 0), $tmpentry, $listofmodulesforexternal);
 		$this->hidden = ($showmode != 1);
 	}
@@ -86,7 +76,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleProductsAlertStock", $max));
 
-		if (($user->rights->produit->lire || $user->rights->service->lire) && $user->rights->stock->lire) {
+		if (($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire')) && $user->hasRight('stock', 'lire')) {
 			$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.barcode, p.seuil_stock_alerte, p.entity,";
 			$sql .= " p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export,";
 			$sql .= " p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export,";
@@ -95,10 +85,10 @@ class box_produits_alerte_stock extends ModeleBoxes
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as s on p.rowid = s.fk_product";
 			$sql .= ' WHERE p.entity IN ('.getEntity($productstatic->element).')';
 			$sql .= " AND p.seuil_stock_alerte > 0";
-			if (empty($user->rights->produit->lire)) {
+			if (!$user->hasRight('produit', 'lire')) {
 				$sql .= ' AND p.fk_product_type <> 0';
 			}
-			if (empty($user->rights->service->lire)) {
+			if (!$user->hasRight('service', 'lire')) {
 				$sql .= ' AND p.fk_product_type <> 1';
 			}
 			// Add where from hooks
@@ -169,7 +159,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 
 					if (!isModEnabled('dynamicprices') || empty($objp->fk_price_expression)) {
 						$price_base_type = $langs->trans($objp->price_base_type);
-						$price = ($objp->price_base_type == 'HT') ?price($objp->price) : $price = price($objp->price_ttc);
+						$price = ($objp->price_base_type == 'HT') ? price($objp->price) : $price = price($objp->price_ttc);
 					} else { //Parse the dynamic price
 						$productstatic->fetch($objp->rowid, '', '', 1);
 
@@ -180,7 +170,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 							if ($objp->price_base_type == 'HT') {
 								$price_base_type = $langs->trans("HT");
 							} else {
-								$price_result = $price_result * (1 + ($productstatic->tva_tx / 100));
+								$price_result *= (1 + ($productstatic->tva_tx / 100));
 								$price_base_type = $langs->trans("TTC");
 							}
 							$price = price($price_result);
@@ -195,7 +185,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="center nowraponall"',
 						'text' => price2num($objp->total_stock, 'MS').' / '.$objp->seuil_stock_alerte,
-						'text2'=>img_warning($langs->transnoentitiesnoconv("StockLowerThanLimit", $objp->seuil_stock_alerte)),
+						'text2' => img_warning($langs->transnoentitiesnoconv("StockLowerThanLimit", $objp->seuil_stock_alerte)),
 					);
 
 					$this->info_box_contents[$line][] = array(
@@ -215,7 +205,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center"',
-						'text'=>$langs->trans("NoTooLowStockProducts"),
+						'text' => $langs->trans("NoTooLowStockProducts"),
 					);
 				}
 
@@ -223,14 +213,14 @@ class box_produits_alerte_stock extends ModeleBoxes
 			} else {
 				$this->info_box_contents[0][0] = array(
 					'td' => '',
-					'maxlength'=>500,
+					'maxlength' => 500,
 					'text' => ($this->db->error().' sql='.$sql),
 				);
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="nohover opacitymedium left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed")
+				'td' => 'class="nohover left"',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}
@@ -238,9 +228,9 @@ class box_produits_alerte_stock extends ModeleBoxes
 	/**
 	 *	Method to show box
 	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
+	 *	@param	?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}	$head	Array with properties of box title
+	 *	@param	?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>	$contents	Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *	@return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)

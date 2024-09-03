@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2004-2017  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2018-2021  Frédéric France     <frederic.france@netlogic.fr>
- * Copyright (C) ---Put here your own copyright and developer email---
+/* Copyright (C) 2004-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2018-2023	Frédéric France				<frederic.france@netlogic.fr>
+ * Copyright (C) ---Replace with your own copyright and developer email---
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,26 +58,6 @@ class mymodulewidget1 extends ModeleBoxes
 	public $depends = array('mymodule');
 
 	/**
-	 * @var DoliDb Database handler
-	 */
-	public $db;
-
-	/**
-	 * @var mixed More parameters
-	 */
-	public $param;
-
-	/**
-	 * @var array Header informations. Usually created at runtime by loadBox().
-	 */
-	public $info_box_head = array();
-
-	/**
-	 * @var array Contents informations. Usually created at runtime by loadBox().
-	 */
-	public $info_box_contents = array();
-
-	/**
 	 * @var string 	Widget type ('graph' means the widget is a graph widget)
 	 */
 	public $widgettype = 'graph';
@@ -101,15 +81,17 @@ class mymodulewidget1 extends ModeleBoxes
 
 		$this->param = $param;
 
-		//$this->enabled = $conf->global->FEATURES_LEVEL > 0;         // Condition when module is enabled or not
-		//$this->hidden = ! ($user->rights->mymodule->myobject->read);   // Condition when module is visible by user (test on permission)
+		// Condition when module is enabled or not
+		// $this->enabled = getDolGlobalInt('MAIN_FEATURES_LEVEL') > 0;
+		// Condition when module is visible by user (test on permission)
+		// $this->hidden = !$user->hasRight('mymodule', 'myobject', 'read');
 	}
 
 	/**
 	 * Load data into info_box_contents array to show array later. Called by Dolibarr before displaying the box.
 	 *
-	 * @param int $max Maximum number of records to load
-	 * @return void
+	 * @param	int<0,max>	$max	Maximum number of records to load
+	 * @return	void
 	 */
 	public function loadBox($max = 5)
 	{
@@ -126,7 +108,7 @@ class mymodulewidget1 extends ModeleBoxes
 			// Title text
 			'text' => $text,
 			// Add a link
-			'sublink' => 'http://example.com',
+			'sublink' => 'https://example.com',
 			// Sublink icon placed after the text
 			'subpicto' => 'object_mymodule@mymodule',
 			// Sublink icon HTML alt text
@@ -135,7 +117,7 @@ class mymodulewidget1 extends ModeleBoxes
 			'target' => '',
 			// HTML class attached to the picto and link
 			'subclass' => 'center',
-			// Limit and truncate with "…" the displayed text lenght, 0 = disabled
+			// Limit and truncate with "…" the displayed text length, 0 = disabled
 			'limit' => 0,
 			// Adds translated " (Graph)" to a hidden form value's input (?)
 			'graph' => false
@@ -153,12 +135,12 @@ class mymodulewidget1 extends ModeleBoxes
 					// Main text for content of cell
 					'text' => 'First cell of first line',
 					// Link on 'text' and 'logo' elements
-					'url' => 'http://example.com',
+					'url' => 'https://example.com',
 					// Link's target HTML property
 					'target' => '_blank',
 					// Fist line logo (deprecated. Include instead logo html code into text or text2, and set asis property to true to avoid HTML cleaning)
 					//'logo' => 'monmodule@monmodule',
-					// Unformatted text, added after text. Usefull to add/load javascript code
+					// Unformatted text, added after text. Useful to add/load javascript code
 					'textnoformat' => '',
 
 					// Main text for content of cell (other method)
@@ -201,12 +183,12 @@ class mymodulewidget1 extends ModeleBoxes
 	}
 
 	/**
-	 * Method to show box. Called by Dolibarr eatch time it wants to display the box.
+	 * Method to show box. Called by Dolibarr each time it needs to display the box.
 	 *
-	 * @param array $head       Array with properties of box title
-	 * @param array $contents   Array with properties of box lines
-	 * @param int   $nooutput   No print, only return string
-	 * @return string
+	 * @param   ?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}   $head       Array with properties of box title
+	 * @param   ?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>   $contents   Array with properties of box lines
+	 * @param	int<0,1>	$nooutput	When 1, do not print, return string
+	 * @return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)
 	{

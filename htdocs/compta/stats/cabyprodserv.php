@@ -2,8 +2,10 @@
 /* Copyright (C) 2013       Antoine Iauch	        <aiauch@gpcsolutions.fr>
  * Copyright (C) 2013-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024       Charlene Benke      	<charlene@patas-monkey.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +23,7 @@
 
 /**
  *	   \file		htdocs/compta/stats/cabyprodserv.php
- *	   \brief	   Page reporting TO by Products & Services
+ *	   \brief	   	Page reporting Turnover billed by Products & Services
  */
 
 // Load Dolibarr environment
@@ -30,17 +32,22 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("products", "categories", "errors", 'accountancy'));
 
 // Security pack (data & check)
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
+
+// Hook
+$hookmanager->initHooks(array('cabyprodservlist'));
+
 if (isModEnabled('comptabilite')) {
 	$result = restrictedArea($user, 'compta', '', '', 'resultat');
 }
@@ -49,7 +56,7 @@ if (isModEnabled('accounting')) {
 }
 
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
-$modecompta = $conf->global->ACCOUNTING_MODE;
+$modecompta = getDolGlobalString('ACCOUNTING_MODE');
 if (GETPOST("modecompta")) {
 	$modecompta = GETPOST("modecompta");
 }
@@ -64,8 +71,10 @@ if (!$sortfield) {
 }
 
 // Category
-$selected_cat = (int) GETPOST('search_categ', 'int');
-$selected_soc = (int) GETPOST('search_soc', 'int');
+$selected_cat = GETPOST('search_categ', 'intcomma');
+$selected_catsoc = GETPOST('search_categ_soc', 'intcomma');
+$selected_soc = GETPOST('search_soc', 'intcomma');
+$typent_id = GETPOST('typent_id', 'int');
 $subcat = false;
 if (GETPOST('subcat', 'alpha') === 'yes') {
 	$subcat = true;
@@ -73,13 +82,10 @@ if (GETPOST('subcat', 'alpha') === 'yes') {
 $categorie = new Categorie($db);
 
 // product/service
-$selected_type = GETPOST('search_type', 'int');
+$selected_type = GETPOST('search_type', 'intcomma');
 if ($selected_type == '') {
 	$selected_type = -1;
 }
-
-// Hook
-$hookmanager->initHooks(array('cabyprodservlist'));
 
 // Date range
 $year = GETPOST("year");
@@ -103,10 +109,10 @@ $date_start = dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_star
 $date_end = dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"), 'tzserver');		// We use timezone of server so report is same from everywhere
 // Quarter
 if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
-	$q = GETPOST("q", "int");
+	$q = GETPOSTINT("q");
 	if (empty($q)) {
 		// We define date_start and date_end
-		$month_start = GETPOST("month") ?GETPOST("month") : ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
+		$month_start = GETPOST("month") ? GETPOST("month") : getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
 		$year_end = $year_start;
 		$month_end = $month_start;
 		if (!GETPOST("month")) {	// If month not forced
@@ -196,22 +202,28 @@ $tableparams = array();
 if (!empty($selected_cat)) {
 	$tableparams['search_categ'] = $selected_cat;
 }
+if (!empty($selected_catsoc)) {
+	$tableparams['search_categ_soc'] = $selected_catsoc;
+}
 if (!empty($selected_soc)) {
 	$tableparams['search_soc'] = $selected_soc;
 }
 if (!empty($selected_type)) {
 	$tableparams['search_type'] = $selected_type;
 }
-$tableparams['subcat'] = ($subcat === true) ? 'yes' : '';
+if (!empty($typent_id)) {
+	$tableparams['typent_id'] = $typent_id;
+}
+$tableparams['subcat'] = $subcat ? 'yes' : '';
 
 // Adding common parameters
 $allparams = array_merge($commonparams, $headerparams, $tableparams);
 $headerparams = array_merge($commonparams, $headerparams);
 $tableparams = array_merge($commonparams, $tableparams);
 
-$paramslink="";
+$paramslink = "";
 foreach ($allparams as $key => $value) {
-	$paramslink .= '&'.$key.'='.$value;
+	$paramslink .= '&'.urlencode($key).'='.urlencode($value);
 }
 
 
@@ -232,8 +244,8 @@ if ($modecompta == "BOOKKEEPINGCOLLECTED") {
 	$modecompta = "RECETTES-DEPENSES";
 }
 
-$exportlink="";
-$namelink="";
+$exportlink = "";
+$namelink = "";
 
 // Show report header
 if ($modecompta == "CREANCES-DETTES") {
@@ -242,7 +254,7 @@ if ($modecompta == "CREANCES-DETTES") {
 	//$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
 
 	$description = $langs->trans("RulesCADue");
-	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+	if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
 		$description .= $langs->trans("DepositsAreNotIncluded");
 	} else {
 		$description .= $langs->trans("DepositsAreIncluded");
@@ -250,7 +262,7 @@ if ($modecompta == "CREANCES-DETTES") {
 	$builddate = dol_now();
 } elseif ($modecompta == "RECETTES-DEPENSES") {
 	$name = $langs->trans("TurnoverCollected").', '.$langs->trans("ByProductsAndServices");
-	$calcmode = $langs->trans("CalcModeEngagement");
+	$calcmode = $langs->trans("CalcModePayment");
 	//$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
 
 	$description = $langs->trans("RulesCAIn");
@@ -277,7 +289,6 @@ if (isModEnabled('accounting') && $modecompta != 'BOOKKEEPING') {
 }
 
 
-
 $name = array();
 
 // SQL request
@@ -286,7 +297,7 @@ $catotal_ht = 0;
 $qtytotal = 0;
 
 if ($modecompta == 'CREANCES-DETTES') {
-	$sql = "SELECT DISTINCT p.rowid as rowid, p.ref as ref, p.label as label, p.fk_product_type as product_type,";
+	$sql = "SELECT p.rowid as rowid, p.ref as ref, p.label as label, p.fk_product_type as product_type,";
 	$sql .= " SUM(l.total_ht) as amount, SUM(l.total_ttc) as amount_ttc,";
 	$sql .= " SUM(CASE WHEN f.type = 2 THEN -l.qty ELSE l.qty END) as qty";
 
@@ -295,15 +306,11 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql .= $hookmanager->resPrint;
 
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
-	if ($selected_soc > 0) {
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as soc ON (soc.rowid = f.fk_soc)";
-	}
 	$sql .= ",".MAIN_DB_PREFIX."facturedet as l";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON l.fk_product = p.rowid";
-	if ($selected_cat === -2) {	// Without any category
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product";
+	if ($typent_id > 0) {
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as soc ON (soc.rowid = f.fk_soc)";
 	}
-
 	$parameters = array();
 	$hookmanager->executeHooks('printFieldListFrom', $parameters);
 	$sql .= $hookmanager->resPrint;
@@ -311,7 +318,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql .= " WHERE l.fk_facture = f.rowid";
 	$sql .= " AND f.fk_statut in (1,2)";
 	$sql .= " AND l.product_type in (0,1)";
-	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+	if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
 		$sql .= " AND f.type IN (0,1,2,5)";
 	} else {
 		$sql .= " AND f.type IN (0,1,2,3,5)";
@@ -322,33 +329,84 @@ if ($modecompta == 'CREANCES-DETTES') {
 	if ($selected_type >= 0) {
 		$sql .= " AND l.product_type = ".((int) $selected_type);
 	}
-	if ($selected_cat === -2) {	// Without any category
-		$sql .= " AND cp.fk_product is null";
-	} elseif ($selected_cat > 0) {	// Into a specific category
-		if ($subcat) {
-			$TListOfCats = $categorie->get_full_arbo('product', $selected_cat, 1);
 
-			$listofcatsql = "";
-			foreach ($TListOfCats as $key => $cat) {
-				if ($key !== 0) {
-					$listofcatsql .= ",";
+	// Search for tag/category ($searchCategoryProductList is an array of ID)
+	$searchCategoryProductOperator = -1;
+	$searchCategoryProductList = array($selected_cat);
+	if ($subcat) {
+		$TListOfCats = $categorie->get_full_arbo('product', $selected_cat, 1);
+		$searchCategoryProductList = array();
+		foreach ($TListOfCats as $key => $cat) {
+			$searchCategoryProductList[] = $cat['id'];
+		}
+	}
+	if (!empty($searchCategoryProductList)) {
+		$searchCategoryProductSqlList = array();
+		$listofcategoryid = '';
+		foreach ($searchCategoryProductList as $searchCategoryProduct) {
+			if (intval($searchCategoryProduct) == -2) {
+				$searchCategoryProductSqlList[] = "NOT EXISTS (SELECT ck.fk_product FROM ".MAIN_DB_PREFIX."categorie_product as ck WHERE l.fk_product = ck.fk_product)";
+			} elseif (intval($searchCategoryProduct) > 0) {
+				if ($searchCategoryProductOperator == 0) {
+					$searchCategoryProductSqlList[] = " EXISTS (SELECT ck.fk_product FROM ".MAIN_DB_PREFIX."categorie_product as ck WHERE l.fk_product = ck.fk_product AND ck.fk_categorie = ".((int) $searchCategoryProduct).")";
+				} else {
+					$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryProduct);
 				}
-				$listofcatsql .= $cat['rowid'];
 			}
 		}
-
-		$sql .= " AND (p.rowid IN ";
-		$sql .= " (SELECT fk_product FROM ".MAIN_DB_PREFIX."categorie_product cp WHERE ";
-		if ($subcat) {
-			$sql .= "cp.fk_categorie IN (".$db->sanitize($listofcatsql).")";
-		} else {
-			$sql .= "cp.fk_categorie = ".((int) $selected_cat);
+		if ($listofcategoryid) {
+			$searchCategoryProductSqlList[] = " EXISTS (SELECT ck.fk_product FROM ".MAIN_DB_PREFIX."categorie_product as ck WHERE l.fk_product = ck.fk_product AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
 		}
-		$sql .= "))";
+		if ($searchCategoryProductOperator == 1) {
+			if (!empty($searchCategoryProductSqlList)) {
+				$sql .= " AND (".implode(' OR ', $searchCategoryProductSqlList).")";
+			}
+		} else {
+			if (!empty($searchCategoryProductSqlList)) {
+				$sql .= " AND (".implode(' AND ', $searchCategoryProductSqlList).")";
+			}
+		}
 	}
+
+	// Search for tag/category ($searchCategorySocieteList is an array of ID)
+	$searchCategorySocieteOperator = -1;
+	$searchCategorySocieteList = array($selected_catsoc);
+	if (!empty($searchCategorySocieteList)) {
+		$searchCategorySocieteSqlList = array();
+		$listofcategoryid = '';
+		foreach ($searchCategorySocieteList as $searchCategorySociete) {
+			if (intval($searchCategorySociete) == -2) {
+				$searchCategorySocieteSqlList[] = "NOT EXISTS (SELECT cs.fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe as cs WHERE f.fk_soc = cs.fk_soc)";
+			} elseif (intval($searchCategorySociete) > 0) {
+				if ($searchCategorySocieteOperator == 0) {
+					$searchCategorySocieteSqlList[] = " EXISTS (SELECT cs.fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe as cs WHERE f.fk_soc = cs.fk_soc AND cs.fk_categorie = ".((int) $searchCategorySociete).")";
+				} else {
+					$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategorySociete);
+				}
+			}
+		}
+		if ($listofcategoryid) {
+			$searchCategorySocieteSqlList[] = " EXISTS (SELECT cs.fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe as cs WHERE f.fk_soc = cs.fk_soc AND cs.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+		}
+		if ($searchCategorySocieteOperator == 1) {
+			if (!empty($searchCategorySocieteSqlList)) {
+				$sql .= " AND (".implode(' OR ', $searchCategorySocieteSqlList).")";
+			}
+		} else {
+			if (!empty($searchCategorySocieteSqlList)) {
+				$sql .= " AND (".implode(' AND ', $searchCategorySocieteSqlList).")";
+			}
+		}
+	}
+
 	if ($selected_soc > 0) {
-		$sql .= " AND soc.rowid=".((int) $selected_soc);
+		$sql .= " AND f.fk_soc = ".((int) $selected_soc);
 	}
+
+	if ($typent_id > 0) {
+		$sql .= " AND soc.fk_typent = ".((int) $typent_id);
+	}
+
 	$sql .= " AND f.entity IN (".getEntity('invoice').")";
 
 	$parameters = array();
@@ -360,11 +418,16 @@ if ($modecompta == 'CREANCES-DETTES') {
 
 	dol_syslog("cabyprodserv", LOG_DEBUG);
 	$result = $db->query($sql);
+
+	$amount_ht = array();
+	$amount = array();
+	$qty = array();
 	if ($result) {
 		$num = $db->num_rows($result);
 		$i = 0;
 		while ($i < $num) {
 			$obj = $db->fetch_object($result);
+
 			$amount_ht[$obj->rowid] = $obj->amount;
 			$amount[$obj->rowid] = $obj->amount_ttc;
 			$qty[$obj->rowid] = $obj->qty;
@@ -396,34 +459,40 @@ if ($modecompta == 'CREANCES-DETTES') {
 	// Category filter
 	print '<tr class="liste_titre">';
 	print '<td>';
-	print img_picto('', 'category', 'class="paddingrightonly"');
+	print img_picto('', 'category', 'class="pictofixedwidth"');
 	print $formother->select_categories(Categorie::TYPE_PRODUCT, $selected_cat, 'search_categ', 0, $langs->trans("Category"));
 	print ' ';
-	print $langs->trans("SubCats").'? ';
-	print '<input type="checkbox" name="subcat" value="yes"';
+	print '<input type="checkbox" class="marginleft" id="subcat" name="subcat" value="yes"';
 	if ($subcat) {
 		print ' checked';
 	}
 	print '>';
+	print '<label for="subcat" class="marginrightonly">'.$langs->trans("SubCats").'?</label>';
 	// type filter (produit/service)
-	print ' ';
-	print $langs->trans("Type").': ';
-	$form->select_type_of_lines(isset($selected_type) ? $selected_type : -1, 'search_type', 1, 1, 1);
+	$form->select_type_of_lines(isset($selected_type) ? $selected_type : -1, 'search_type', $langs->trans("Type"), 1, 1);
 
-	//select thirdparty
-	print '</br>';
-	print img_picto('', 'company', 'class="paddingrightonly"');
-	print $form->select_thirdparty_list($selected_soc, 'search_soc', '', $langs->trans("ThirdParty"));
+	// Third party filter
+	print '<br>';
+	print img_picto('', 'category', 'class="pictofixedwidth"');
+	print $formother->select_categories(Categorie::TYPE_CUSTOMER, $selected_catsoc, 'search_categ_soc', 0, $langs->trans("CustomersProspectsCategoriesShort"));
+
+	// Type of third party filter
+	print '&nbsp; &nbsp;';
+	$formcompany = new FormCompany($db);
+	// NONE means we keep sort of original array, so we sort on position. ASC, means next function will sort on ascending label.
+	$sortparam = getDolGlobalString('SOCIETE_SORT_ON_TYPEENT', 'ASC');
+	print $form->selectarray("typent_id", $formcompany->typent_array(0), $typent_id, $langs->trans("ThirdPartyType"), 0, 0, '', 0, 0, 0, $sortparam, '', 1);
+
+	print '<br>';
+	print img_picto('', 'company', 'class="pictofixedwidth"');
+	print $form->select_company($selected_soc, 'search_soc', '', $langs->trans("ThirdParty"));
 	print '</td>';
 
 	print '<td colspan="5" class="right">';
 	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '</td>';
 
-	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldListeTitle', $parameters);
-	print $hookmanager->resPrint;
-
-	print '</td></tr>';
+	print '</tr>';
 
 	// Array header
 	print "<tr class=\"liste_titre\">";
@@ -554,6 +623,8 @@ if ($modecompta == 'CREANCES-DETTES') {
 		print '</tr>';
 
 		$db->free($result);
+	} else {
+		print '<tr><td colspan="6"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	}
 	print "</table>";
 	print '</div>';

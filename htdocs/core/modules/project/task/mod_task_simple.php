@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2010		Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +35,7 @@ class mod_task_simple extends ModeleNumRefTask
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
@@ -60,9 +62,10 @@ class mod_task_simple extends ModeleNumRefTask
 	/**
 	 *  Return description of numbering module
 	 *
-	 *  @return     string      Text with description
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
 		global $langs;
 		return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
@@ -84,9 +87,10 @@ class mod_task_simple extends ModeleNumRefTask
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *  @return     boolean     false if conflict, true if ok
+	 *	@param	Object		$object		Object we need next value for
+	 *  @return boolean     			false if KO (there is a conflict), true if OK
 	 */
-	public function canBeActivated()
+	public function canBeActivated($object)
 	{
 		global $conf, $langs, $db;
 
@@ -120,9 +124,9 @@ class mod_task_simple extends ModeleNumRefTask
 	/**
 	 *  Return next value
 	 *
-	 *  @param   Societe	$objsoc		Object third party
-	 *  @param   Task	$object		Object Task
-	 *  @return	string				Value if OK, 0 if KO
+	 *  @param	Societe|string	$objsoc	Object third party
+	 *  @param	Project|string	$object	Object Project
+	 *  @return	string|int<-1,0>		Value if OK, <=0 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{
@@ -147,32 +151,16 @@ class mod_task_simple extends ModeleNumRefTask
 			return -1;
 		}
 
-		$date = empty($object->date_c) ?dol_now() : $object->date_c;
-
-		//$yymm = strftime("%y%m",time());
-		$yymm = strftime("%y%m", $date);
+		$date = empty($object->date_c) ? dol_now() : $object->date_c;
+		$yymm = dol_print_date($date, "%y%m");
 
 		if ($max >= (pow(10, 4) - 1)) {
 			$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
 		} else {
-			$num = sprintf("%04s", $max + 1);
+			$num = sprintf("%04d", $max + 1);
 		}
 
 		dol_syslog("mod_task_simple::getNextValue return ".$this->prefix.$yymm."-".$num);
 		return $this->prefix.$yymm."-".$num;
-	}
-
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *  Return next reference not yet used as a reference
-	 *
-	 *  @param  Societe	$objsoc     Object third party
-	 *  @param  Task	$object     Object task
-	 *  @return string              Next not used reference
-	 */
-	public function task_get_num($objsoc = 0, $object = '')
-	{
-		return $this->getNextValue($objsoc, $object);
 	}
 }

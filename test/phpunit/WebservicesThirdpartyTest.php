@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,16 +30,16 @@ global $conf,$user,$langs,$db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/date.lib.php';
 require_once NUSOAP_PATH.'/nusoap.php';        // Include SOAP
-
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
 	$user->getrights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
-$conf->global->MAIN_UMASK='0666';
+$conf->global->MAIN_UMASK = '0666';
 
 
 /**
@@ -48,35 +49,30 @@ $conf->global->MAIN_UMASK='0666';
  * @backupStaticAttributes enabled
  * @remarks backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class WebservicesThirdpartyTest extends PHPUnit\Framework\TestCase
+class WebservicesThirdpartyTest extends CommonClassTest
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
 	protected $soapclient;
 
-	private $ns='http://www.dolibarr.org/ns/';
-
-
+	private $ns = 'http://www.dolibarr.org/ns/';
 
 
 	/**
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @return DateLibTest
+	 * @param 	string	$name		Name
+	 * @return WebservicesThirdpartyTest
 	 */
-	public function __construct()
+	public function __construct($name = '')
 	{
-		parent::__construct();
+		parent::__construct($name);
 
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
+		$this->savconf = $conf;
+		$this->savuser = $user;
+		$this->savlangs = $langs;
+		$this->savdb = $db;
 
 		$WS_DOL_URL = DOL_MAIN_URL_ROOT.'/webservices/server_thirdparty.php';
 
@@ -84,7 +80,7 @@ class WebservicesThirdpartyTest extends PHPUnit\Framework\TestCase
 		print __METHOD__." create nusoap_client for URL=".$WS_DOL_URL."\n";
 		$this->soapclient = new nusoap_client($WS_DOL_URL);
 		if ($this->soapclient) {
-			$this->soapclient->soap_defencoding='UTF-8';
+			$this->soapclient->soap_defencoding = 'UTF-8';
 			$this->soapclient->decodeUTF8(false);
 		}
 
@@ -93,57 +89,6 @@ class WebservicesThirdpartyTest extends PHPUnit\Framework\TestCase
 		print "\n";
 	}
 
-	/**
-	 * setUpBeforeClass
-	 *
-	 * @return void
-	 */
-	public static function setUpBeforeClass(): void
-	{
-		global $conf,$user,$langs,$db;
-		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * tearDownAfterClass
-	 *
-	 * @return	void
-	 */
-	public static function tearDownAfterClass(): void
-	{
-		global $conf,$user,$langs,$db;
-		$db->rollback();
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * Init phpunit tests
-	 *
-	 * @return  void
-	 */
-	protected function setUp(): void
-	{
-		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * End phpunit tests
-	 *
-	 * @return  void
-	 */
-	protected function tearDown(): void
-	{
-		print __METHOD__."\n";
-	}
 
 	/**
 	 * testWSThirdpartycreateThirdParty
@@ -153,23 +98,23 @@ class WebservicesThirdpartyTest extends PHPUnit\Framework\TestCase
 	public function testWSThirdpartycreateThirdParty()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		$WS_METHOD  = 'createThirdParty';
 
 
 		// Call the WebService method and store its result in $result.
-		$authentication=array(
-				'dolibarrkey'=>$conf->global->WEBSERVICES_KEY,
-				'sourceapplication'=>'DEMO',
-				'login'=>'admin',
-				'password'=>'admin',
-				'entity'=>'');
+		$authentication = array(
+				'dolibarrkey' => getDolGlobalString('WEBSERVICES_KEY'),
+				'sourceapplication' => 'DEMO',
+				'login' => 'admin',
+				'password' => 'admin',
+				'entity' => '');
 
-		$body = array (
+		$body = array(
 				"id" => null,
 				"ref" => "name",
 				"ref_ext" => "12",
@@ -208,14 +153,14 @@ class WebservicesThirdpartyTest extends PHPUnit\Framework\TestCase
 		);
 
 		// Test URL
-		$result='';
-		$parameters = array('authentication'=>$authentication, 'thirdparty'=>$body);
+		$result = '';
+		$parameters = array('authentication' => $authentication, 'thirdparty' => $body);
 		print __METHOD__." call method ".$WS_METHOD."\n";
 		try {
 			$result = $this->soapclient->call($WS_METHOD, $parameters, $this->ns, '');
 		} catch (SoapFault $exception) {
 			echo $exception;
-			$result=0;
+			$result = 0;
 		}
 		if (! $result || !empty($result['faultstring'])) {
 			//var_dump($soapclient);
@@ -246,30 +191,30 @@ class WebservicesThirdpartyTest extends PHPUnit\Framework\TestCase
 	public function testWSThirdpartygetThirdPartyById($result)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 		$id = $result['id'];
 
 		$WS_METHOD  = 'getThirdParty';
 
 		// Call the WebService method and store its result in $result.
-		$authentication=array(
-		'dolibarrkey'=>$conf->global->WEBSERVICES_KEY,
-		'sourceapplication'=>'DEMO',
-		'login'=>'admin',
-		'password'=>'admin',
-		'entity'=>'');
+		$authentication = array(
+		'dolibarrkey' => getDolGlobalString('WEBSERVICES_KEY'),
+		'sourceapplication' => 'DEMO',
+		'login' => 'admin',
+		'password' => 'admin',
+		'entity' => '');
 
-		$result='';
-		$parameters = array('authentication'=>$authentication, 'id'=>$id);
+		$result = '';
+		$parameters = array('authentication' => $authentication, 'id' => $id);
 		print __METHOD__." call method ".$WS_METHOD."\n";
 		try {
 			$result = $this->soapclient->call($WS_METHOD, $parameters, $this->ns, '');
 		} catch (SoapFault $exception) {
 			echo $exception;
-			$result=0;
+			$result = 0;
 		}
 		if (! $result || !empty($result['faultstring'])) {
 			//var_dump($soapclient);
@@ -307,31 +252,31 @@ class WebservicesThirdpartyTest extends PHPUnit\Framework\TestCase
 	public function testWSThirdpartygetThirdPartyByRefExt($result)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 		$id = $result['id'];
 
 		$WS_METHOD  = 'getThirdParty';
 
 		// Call the WebService method and store its result in $result.
-		$authentication=array(
-				'dolibarrkey'=>$conf->global->WEBSERVICES_KEY,
-				'sourceapplication'=>'DEMO',
-				'login'=>'admin',
-				'password'=>'admin',
-				'entity'=>'');
+		$authentication = array(
+				'dolibarrkey' => getDolGlobalString('WEBSERVICES_KEY'),
+				'sourceapplication' => 'DEMO',
+				'login' => 'admin',
+				'password' => 'admin',
+				'entity' => '');
 
 		// Test URL
-		$result='';
-		$parameters = array('authentication'=>$authentication, 'id'=>'', 'ref'=>'', 'ref_ext'=>'12');
+		$result = '';
+		$parameters = array('authentication' => $authentication, 'id' => '', 'ref' => '', 'ref_ext' => '12');
 		print __METHOD__." call method ".$WS_METHOD."\n";
 		try {
 			$result = $this->soapclient->call($WS_METHOD, $parameters, $this->ns, '');
 		} catch (SoapFault $exception) {
 			echo $exception;
-			$result=0;
+			$result = 0;
 		}
 		print $this->soapclient->response;
 		if (! $result || !empty($result['faultstring'])) {
@@ -368,30 +313,30 @@ class WebservicesThirdpartyTest extends PHPUnit\Framework\TestCase
 	public function testWSThirdpartydeleteThirdPartyById($result)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 		$id = $result['id'];
 
 		$WS_METHOD  = 'deleteThirdParty';
 
 		// Call the WebService method and store its result in $result.
-		$authentication=array(
-				'dolibarrkey'=>$conf->global->WEBSERVICES_KEY,
-				'sourceapplication'=>'DEMO',
-				'login'=>'admin',
-				'password'=>'admin',
-				'entity'=>'');
+		$authentication = array(
+				'dolibarrkey' => getDolGlobalString('WEBSERVICES_KEY'),
+				'sourceapplication' => 'DEMO',
+				'login' => 'admin',
+				'password' => 'admin',
+				'entity' => '');
 
-		$result='';
-		$parameters = array('authentication'=>$authentication, 'id'=>$id, 'ref'=>'', 'ref_ext'=>'');
+		$result = '';
+		$parameters = array('authentication' => $authentication, 'id' => $id, 'ref' => '', 'ref_ext' => '');
 		print __METHOD__." call method ".$WS_METHOD."\n";
 		try {
 			$result = $this->soapclient->call($WS_METHOD, $parameters, $this->ns, '');
 		} catch (SoapFault $exception) {
 			echo $exception;
-			$result=0;
+			$result = 0;
 		}
 		if (! $result || !empty($result['faultstring'])) {
 			print 'Error: '.$this->soapclient->error_str;
@@ -403,7 +348,10 @@ class WebservicesThirdpartyTest extends PHPUnit\Framework\TestCase
 		}
 
 		print __METHOD__." count(result)=".(is_array($result) ? count($result) : 0)."\n";
-		$this->assertEquals('OK', $result['result']['result_code']);
+
+		$resultcode = empty($result['result']['result_code']) ? 'KO' : $result['result']['result_code'];
+
+		$this->assertEquals('OK', $resultcode);
 
 		return $result;
 	}

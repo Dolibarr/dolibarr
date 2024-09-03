@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2023 Frédéric France      <frederic.france@netlogic.fr>
- * Copyright (C) 2021-2022 Waël Almoman         <info@almoman.com>
+/* Copyright (C) 2003-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2015-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2021-2023  Waël Almoman            <info@almoman.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,33 +23,23 @@
 /**
  *	\file       htdocs/core/boxes/box_members_by_tags.php
  *	\ingroup    adherent
- *	\brief      Module to show box of members
+ *	\brief      Module to show box of members by tags
  */
 
 include_once DOL_DOCUMENT_ROOT . '/core/boxes/modules_boxes.php';
 
 
 /**
- * Class to manage the box to show last modofied members
+ * Class to manage the box to show (last modified) members by tags
  */
 class box_members_by_tags extends ModeleBoxes
 {
-	public $boxcode = "box_members_by_tags";
-	public $boximg = "object_user";
+	public $boxcode  = "box_members_by_tags";
+	public $boximg   = "object_user";
 	public $boxlabel = "BoxTitleMembersByTags";
-	public $depends = array("adherent", "categorie");
+	public $depends  = array("adherent", "categorie");
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
 	public $enabled = 1;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 
 	/**
 	 *  Constructor
@@ -63,12 +54,12 @@ class box_members_by_tags extends ModeleBoxes
 		$this->db = $db;
 
 		// disable module for such cases
-		$listofmodulesforexternal = explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
+		$listofmodulesforexternal = explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL'));
 		if (!in_array('adherent', $listofmodulesforexternal) && !empty($user->socid)) {
 			$this->enabled = 0; // disabled for external users
 		}
 
-		$this->hidden = !(isModEnabled('adherent') && $user->rights->adherent->lire);
+		$this->hidden = !(isModEnabled('member') && $user->hasRight('adherent', 'lire'));
 	}
 
 	/**
@@ -79,7 +70,7 @@ class box_members_by_tags extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $user, $langs, $conf;
+		global $user, $langs;
 		$langs->load("boxes");
 
 		$this->max = $max;
@@ -88,18 +79,18 @@ class box_members_by_tags extends ModeleBoxes
 		$staticmember = new Adherent($this->db);
 
 		$now = dol_now();
-		$year = date('Y');
-		$numberyears = empty(getDolGlobalInt("MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH")) ? 2 : getDolGlobalInt("MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH");
+		$year = idate('Y');
+		$numberyears = getDolGlobalInt("MAIN_NB_OF_YEAR_IN_MEMBERSHIP_WIDGET_GRAPH", 0);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleMembersByTags").' ('.($year - $numberyears).' - '.$year.')');
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleMembersByTags").($numberyears ? ' ('.($year - $numberyears).' - '.$year.')' : ''));
 
-		if ($user->rights->adherent->lire) {
+		if ($user->hasRight('adherent', 'lire')) {
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherentstats.class.php';
 			require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 			$stats = new AdherentStats($this->db, $user->socid, $user->id);
 
 			// Show array
-			$sumMembers= $stats->countMembersByTagAndStatus($numberyears);
+			$sumMembers = $stats->countMembersByTagAndStatus($numberyears);
 			if ($sumMembers) {
 				$line = 0;
 				$this->info_box_contents[$line][] = array(
@@ -119,13 +110,13 @@ class box_members_by_tags extends ModeleBoxes
 					'text' => $labelstatus,
 				);
 				// Up to date
-				$labelstatus = $staticmember->LibStatut($staticmember::STATUS_VALIDATED, 1, dol_now() + 86400, 1);
+				$labelstatus = $staticmember->LibStatut($staticmember::STATUS_VALIDATED, 1, $now + 86400, 1);
 				$this->info_box_contents[$line][] = array(
 					'td' => 'class="right tdoverflowmax100" width="10%" title="'.dol_escape_htmltag($labelstatus).'"',
 					'text' => $labelstatus,
 				);
 				// Expired
-				$labelstatus = $staticmember->LibStatut($staticmember::STATUS_VALIDATED, 1, dol_now() - 86400, 1);
+				$labelstatus = $staticmember->LibStatut($staticmember::STATUS_VALIDATED, 1, $now - 86400, 1);
 				$this->info_box_contents[$line][] = array(
 					'td' => 'class="right tdoverflowmax100" width="10%" title="'.dol_escape_htmltag($labelstatus).'"',
 					'text' => $labelstatus
@@ -143,25 +134,24 @@ class box_members_by_tags extends ModeleBoxes
 					'text' => $labelstatus
 				);
 				// Total row
-				$labelstatus = $staticmember->LibStatut($staticmember::STATUS_RESILIATED, 0, 0, 1);
 				$this->info_box_contents[$line][] = array(
 					'td' => 'class="right tdoverflowmax100" width="10%" title="'.dol_escape_htmltag($langs->trans("Total")).'"',
 					'text' => $langs->trans("Total")
 				);
 				$line++;
+				$AdherentTag = array();
 				foreach ($sumMembers as $key => $data) {
-					$adhtype = new AdherentType($this->db);
-					$adhtype->id = $key;
-
-					if ($key=='total') {
+					if ($key == 'total') {
 						break;
 					}
-					$adhtype->label = $data['label'];
-					$AdherentType[$key] = $adhtype;
+					$adhtag = new Categorie($this->db);
+					$adhtag->id = (int) $key;
+					$adhtag->label = $data['label'];
+					$AdherentTag[$key] = $adhtag;
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
-						'text' => $adhtype->getNomUrl(1, dol_size(32)),
+						'text' => '<a href="'.DOL_MAIN_URL_ROOT.'/adherents/list.php?search_categ='.$adhtag->id.'&sortfield=d.datefin,t.subscription&sortorder=desc,desc&backtopage='.urlencode($_SERVER['PHP_SELF']).'">'.dol_trunc(($adhtag->ref ? $adhtag->ref : $adhtag->label), dol_size(32)).'</a>',
 						'asis' => 1,
 					);
 					$this->info_box_contents[$line][] = array(
@@ -171,17 +161,17 @@ class box_members_by_tags extends ModeleBoxes
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
-						'text' => (isset($data['members_pending']) && $data['members_pending'] > 0 ? $data['members_pending'] : '') . ' ' . $staticmember->LibStatut(Adherent::STATUS_VALIDATED, 1, $now, 3),
+						'text' => (isset($data['members_pending']) && $data['members_pending'] > 0 ? $data['members_pending'] : '') . ' ' . $staticmember->LibStatut(Adherent::STATUS_VALIDATED, 1, 0, 3),
 						'asis' => 1,
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
-						'text' => (isset($data['members_uptodate']) && $data['members_uptodate'] > 0 ? $data['members_uptodate'] : '') . ' ' . $staticmember->LibStatut(Adherent::STATUS_VALIDATED, 0, 0, 3),
+						'text' => (isset($data['members_uptodate']) && $data['members_uptodate'] > 0 ? $data['members_uptodate'] : '') . ' ' . $staticmember->LibStatut(Adherent::STATUS_VALIDATED, 0, $now + 86400, 3),
 						'asis' => 1,
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
-						'text' => (isset($data['members_expired']) && $data['members_expired'] > 0 ? $data['members_expired'] : '') . ' ' . $staticmember->LibStatut(Adherent::STATUS_VALIDATED, 1, 1, 3),
+						'text' => (isset($data['members_expired']) && $data['members_expired'] > 0 ? $data['members_expired'] : '') . ' ' . $staticmember->LibStatut(Adherent::STATUS_VALIDATED, 1, $now - 86400, 3),
 						'asis' => 1,
 					);
 					$this->info_box_contents[$line][] = array(
@@ -196,7 +186,7 @@ class box_members_by_tags extends ModeleBoxes
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
-						'text' => (isset($data['total_adhtype']) && $data['total_adhtype'] > 0 ? $data['total_adhtype'] : ''),
+						'text' => (isset($data['total_adhtag']) && $data['total_adhtag'] > 0 ? $data['total_adhtag'] : ''),
 						'asis' => 1,
 					);
 					$line++;
@@ -220,7 +210,7 @@ class box_members_by_tags extends ModeleBoxes
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="liste_total right"',
-						'text' => $sumMembers['total']['members_pending'].' '.$staticmember->LibStatut(Adherent::STATUS_VALIDATED, 1, $now, 3),
+						'text' => $sumMembers['total']['members_pending'].' '.$staticmember->LibStatut(Adherent::STATUS_VALIDATED, 1, 0, 3),
 						'asis' => 1
 					);
 					$this->info_box_contents[$line][] = array(
@@ -253,13 +243,13 @@ class box_members_by_tags extends ModeleBoxes
 				$this->info_box_contents[0][0] = array(
 					'td' => '',
 					'maxlength' => 500,
-					'text' => ($this->db->error() . ' sql=' . $sql)
+					'text' => ($this->db->lasterror())
 				);
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="nohover opacitymedium left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed")
+				'td' => 'class="nohover left"',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}
@@ -267,9 +257,9 @@ class box_members_by_tags extends ModeleBoxes
 	/**
 	 *	Method to show box
 	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
+	 *	@param	?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}	$head	Array with properties of box title
+	 *	@param	?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>	$contents	Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *	@return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)

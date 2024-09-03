@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Жолақ модулін орнату
-StripeDesc=Offer your customers an online payment page for payments with credit/debit cards via <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external">Stripe</a>. This can be used to allow your customers to make ad-hoc payments or for payments related to a particular Dolibarr object (invoice, order, ...)
+StripeDesc=Клиенттеріңізге <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external">Stripe</a> арқылы несиелік/дебеттік карталармен төлемдер жасау үшін онлайн төлем бетін ұсыныңыз. Бұл тұтынушыларға арнайы төлемдер жасауға немесе белгілі бір Dolibarr нысанына (шот-фактура, тапсырыс, ...) қатысты төлемдер жасауға мүмкіндік беру үшін пайдаланылуы мүмкін.
 StripeOrCBDoPayment=Несие картасы немесе Stripe арқылы төлеңіз
 FollowingUrlAreAvailableToMakePayments=Келушілерге Dolibarr нысандары бойынша төлем жасау үшін бетті ұсыну үшін келесі URL мекенжайлары қол жетімді
 PaymentForm=Төлем формасы
@@ -23,6 +23,7 @@ ToOfferALinkForOnlinePaymentOnFreeAmount=URL нысаны жоқ кез келг
 ToOfferALinkForOnlinePaymentOnMemberSubscription=Мүшелік жазылым үшін %s онлайн төлем бетін ұсынатын URL
 ToOfferALinkForOnlinePaymentOnDonation=Қайырымдылық төлемі үшін %s онлайн төлем бетін ұсынатын URL
 YouCanAddTagOnUrl=Сондай -ақ, URL мекенжайының кез келгеніне ur0 параметрін <b> & tag = <i> </i> </b> қосуға болады (тек объектіге байланысы жоқ төлем үшін міндетті). <br> Қолданыстағы объектісі жоқ төлемдердің URL мекенжайы үшін <strong> & noidempotency = 1 </strong> параметрін де қосуға болады, сондықтан сол тегпен бір сілтемені бірнеше рет қолдануға болады (кейбір төлем режимі әр түрлі сілтеме үшін төлемді 1 -ге дейін шектеуі мүмкін) параметр)
+YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful of failed online payment.
 SetupStripeToHavePaymentCreatedAutomatically=Stripe <b> %s </b> url көмегімен Stripe орнатыңыз, Stripe арқылы расталған кезде төлем автоматты түрде жасалады.
 AccountParameter=Есептік жазба параметрлері
 UsageParameter=Қолдану параметрлері
@@ -41,8 +42,8 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhook тірі кілті
 ONLINE_PAYMENT_WAREHOUSE=<br> (TODO) Акцияны төмендету опциясы шот -фактура бойынша жасалса және онлайн төлем өзі шот -фактураны шығаратын болса, акцияның төмендеуі үшін пайдаланылатын акция.
 StripeLiveEnabled=Stripe live қосылған (әйтпесе тест/құм жәшігі режимі)
 StripeImportPayment=Stripe төлемдерін импорттау
-ExampleOfTestCreditCard=Example of credit card for SEPA test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
-ExampleOfTestBankAcountForSEPA=Example of bank account BAN for direct debit test: %s
+ExampleOfTestCreditCard=Сынақ төлеміне арналған несие картасының мысалы: %s => жарамды, %s => CVC қатесі, %s => мерзімі аяқталды, %s => төлем сәтсіз аяқталды
+ExampleOfTestBankAcountForSEPA=Тікелей дебеттік сынаққа арналған банк шотының BAN мысалы: %s
 StripeGateways=Жолақты шлюздер
 OAUTH_STRIPE_TEST_ID=Stripe Connect клиент идентификаторы (шамамен _...)
 OAUTH_STRIPE_LIVE_ID=Stripe Connect клиент идентификаторы (шамамен _...)
@@ -51,6 +52,7 @@ StripeAccount=Stripe есептік жазбасы
 StripeChargeList=Stripe төлемдерінің тізімі
 StripeTransactionList=Stripe операцияларының тізімі
 StripeCustomerId=Stripe клиент идентификаторы
+StripePaymentId=Жолақты төлем идентификаторы
 StripePaymentModes=Жолақты төлем режимдері
 LocalID=Жергілікті идентификатор
 StripeID=Жолақ идентификаторы
@@ -62,7 +64,7 @@ DeleteACard=Картаны жою
 ConfirmDeleteCard=Бұл несиелік немесе дебеттік картаны шынымен жойғыңыз келе ме?
 CreateCustomerOnStripe=Stripe -де тұтынушы жасаңыз
 CreateCardOnStripe=Stripe картасын жасаңыз
-CreateBANOnStripe=Create bank on Stripe
+CreateBANOnStripe=Stripe-те банк жасаңыз
 ShowInStripe=Stripe -те көрсету
 StripeUserAccountForActions=Кейбір Stripe оқиғалары туралы электрондық пошта арқылы хабарландыру үшін қолданылатын пайдаланушы тіркелгісі (Stripe төлемдері)
 StripePayoutList=Stripe төлемдерінің тізімі
@@ -70,9 +72,19 @@ ToOfferALinkForTestWebhook=IPN -ге қоңырау шалу үшін Stripe Web
 ToOfferALinkForLiveWebhook=IPN -ге қоңырау шалу үшін Stripe WebHook орнатуға сілтеме (тікелей режим)
 PaymentWillBeRecordedForNextPeriod=Төлем келесі кезеңге жазылады.
 ClickHereToTryAgain= <a href="%s"> Қайталап көру үшін мына жерді басыңыз ... </a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Клиенттердің аутентификациясының күшті ережелеріне байланысты картаны Stripe backoffice -тен жасау керек. Stripe тұтынушылар жазбасын қосу үшін мына жерді басуға болады: %s
-STRIPE_CARD_PRESENT=Card Present for Stripe Terminals
-TERMINAL_LOCATION=Location (address) for Stripe Terminals
-RequestDirectDebitWithStripe=Request Direct Debit with Stripe
-STRIPE_SEPA_DIRECT_DEBIT=Enable the Direct Debit payments through Stripe
-
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Күшті тұтынушы аутентификация ережелеріне байланысты картаны жасау Stripe бэк-офисінен жасалуы керек. Stripe тұтынушы жазбасын қосу үшін осы жерді басуға болады: %s
+STRIPE_CARD_PRESENT=Жолақты терминалдарға арналған сыйлық картасы
+TERMINAL_LOCATION=Жолақты терминалдардың орналасқан жері (мекен-жайы).
+RequestDirectDebitWithStripe=Stripe арқылы тікелей дебет сұраңыз
+RequesCreditTransferWithStripe=Stripe арқылы несие аударуды сұраңыз
+STRIPE_SEPA_DIRECT_DEBIT=Stripe арқылы тікелей дебеттік төлемдерді қосыңыз
+STRIPE_KLARNA=Klarna көмегімен төлемдерді қосыңыз
+STRIPE_BANCONTACT=BANCONTACT арқылы төлемдерді қосыңыз
+STRIPE_IDEAL=IDEAL көмегімен төлемдерді қосыңыз
+STRIPE_GIROPAY=GIROPAY көмегімен төлемдерді қосыңыз
+STRIPE_SOFORT=SOFORT көмегімен төлемдерді қосыңыз
+StripeConnect_Mode=Жолақты қосылым режимі
+ExampleOnlyForBECustomers=Тек Бельгия тұтынушылары үшін
+ExampleOnlyForDECustomers=Тек неміс тұтынушылары үшін
+ExampleOnlyForNLCustomers=Тек голландиялық тұтынушылар үшін
+ExampleOnlyForATBEDEITNLESCustomers=Тек Австрия, Бельгия, Германия, Италия, Нидерланды, Испания тұтынушылары үшін

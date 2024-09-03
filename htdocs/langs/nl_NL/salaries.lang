@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Account (from the Chart of Account) used by default for "user" third parties
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated account defined on user card will be used for Subledger accounting only. This one will be used for General Ledger and as default value of Subledger accounting if dedicated user accounting account on user is not defined.
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Rekening (uit het rekeningschema) die standaard wordt gebruikt voor 'gebruikers' op het gebied van salarissen
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Het speciale account dat op de gebruikerskaart is gedefinieerd, wordt alleen gebruikt voor Subledger-boekhouding. Deze wordt gebruikt voor het grootboek, maar ook als de standaardwaarde van de subgrootboekboekhouding als er geen speciaal gebruikersaccount voor de gebruiker is gedefinieerd.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Standaard grootboekrekening voor salaris betalingen
 CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=Laat standaard de optie "Automatisch een totale betaling aanmaken" leeg bij het aanmaken van een Salaris
 Salary=Salaris
@@ -24,4 +24,10 @@ SalariesStatistics=Salaris statistieken
 SalariesAndPayments=Salarissen en betalingen
 ConfirmDeleteSalaryPayment=Wilt u deze salarisbetaling verwijderen?
 FillFieldFirst=Vul eerst het werknemersveld in
-UpdateAmountWithLastSalary=Vast bedrag met laatste salaris
+UpdateAmountWithLastSalary=Stel het bedrag van het laatste salaris in
+MakeTransferRequest=Overdrachtsverzoek indienen
+VirementOrder=Verzoek om overboeking
+BankTransferAmount=Bedrag van de overboeking
+WithdrawalReceipt=Betalingsopdracht
+OrderWaiting=In behandeling Bestelling
+FillEndOfMonth=Vul het einde van de maand in

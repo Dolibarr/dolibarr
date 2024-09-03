@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\CalDAV\Xml\Property;
 
 use Sabre\CalDAV\Plugin;
@@ -9,19 +11,20 @@ use Sabre\Xml\Writer;
 use Sabre\Xml\XmlSerializable;
 
 /**
- * Invite property
+ * Invite property.
  *
  * This property encodes the 'invite' property, as defined by
  * the 'caldav-sharing-02' spec, in the http://calendarserver.org/ns/
  * namespace.
  *
  * @see https://trac.calendarserver.org/browser/CalendarServer/trunk/doc/Extensions/caldav-sharing-02.txt
+ *
  * @copyright Copyright (C) fruux GmbH (https://fruux.com/)
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Invite implements XmlSerializable {
-
+class Invite implements XmlSerializable
+{
     /**
      * The list of users a calendar has been shared to.
      *
@@ -34,10 +37,9 @@ class Invite implements XmlSerializable {
      *
      * @param Sharee[] $sharees
      */
-    function __construct(array $sharees) {
-
+    public function __construct(array $sharees)
+    {
         $this->sharees = $sharees;
-
     }
 
     /**
@@ -45,10 +47,9 @@ class Invite implements XmlSerializable {
      *
      * @return array
      */
-    function getValue() {
-
+    public function getValue()
+    {
         return $this->sharees;
-
     }
 
     /**
@@ -66,63 +67,54 @@ class Invite implements XmlSerializable {
      * This allows serializers to be re-used for different element names.
      *
      * If you are opening new elements, you must also close them again.
-     *
-     * @param Writer $writer
-     * @return void
      */
-    function xmlSerialize(Writer $writer) {
-
-        $cs = '{' . Plugin::NS_CALENDARSERVER . '}';
+    public function xmlSerialize(Writer $writer)
+    {
+        $cs = '{'.Plugin::NS_CALENDARSERVER.'}';
 
         foreach ($this->sharees as $sharee) {
-
-            if ($sharee->access === DAV\Sharing\Plugin::ACCESS_SHAREDOWNER) {
-                $writer->startElement($cs . 'organizer');
+            if (DAV\Sharing\Plugin::ACCESS_SHAREDOWNER === $sharee->access) {
+                $writer->startElement($cs.'organizer');
             } else {
-                $writer->startElement($cs . 'user');
+                $writer->startElement($cs.'user');
 
                 switch ($sharee->inviteStatus) {
-                    case DAV\Sharing\Plugin::INVITE_ACCEPTED :
-                        $writer->writeElement($cs . 'invite-accepted');
+                    case DAV\Sharing\Plugin::INVITE_ACCEPTED:
+                        $writer->writeElement($cs.'invite-accepted');
                         break;
-                    case DAV\Sharing\Plugin::INVITE_DECLINED :
-                        $writer->writeElement($cs . 'invite-declined');
+                    case DAV\Sharing\Plugin::INVITE_DECLINED:
+                        $writer->writeElement($cs.'invite-declined');
                         break;
-                    case DAV\Sharing\Plugin::INVITE_NORESPONSE :
-                        $writer->writeElement($cs . 'invite-noresponse');
+                    case DAV\Sharing\Plugin::INVITE_NORESPONSE:
+                        $writer->writeElement($cs.'invite-noresponse');
                         break;
-                    case DAV\Sharing\Plugin::INVITE_INVALID :
-                        $writer->writeElement($cs . 'invite-invalid');
+                    case DAV\Sharing\Plugin::INVITE_INVALID:
+                        $writer->writeElement($cs.'invite-invalid');
                         break;
                 }
 
-                $writer->startElement($cs . 'access');
+                $writer->startElement($cs.'access');
                 switch ($sharee->access) {
-                    case DAV\Sharing\Plugin::ACCESS_READWRITE :
-                        $writer->writeElement($cs . 'read-write');
+                    case DAV\Sharing\Plugin::ACCESS_READWRITE:
+                        $writer->writeElement($cs.'read-write');
                         break;
-                    case DAV\Sharing\Plugin::ACCESS_READ :
-                        $writer->writeElement($cs . 'read');
+                    case DAV\Sharing\Plugin::ACCESS_READ:
+                        $writer->writeElement($cs.'read');
                         break;
-
                 }
                 $writer->endElement(); // access
-
             }
 
             $href = new DAV\Xml\Property\Href($sharee->href);
             $href->xmlSerialize($writer);
 
             if (isset($sharee->properties['{DAV:}displayname'])) {
-                $writer->writeElement($cs . 'common-name', $sharee->properties['{DAV:}displayname']);
+                $writer->writeElement($cs.'common-name', $sharee->properties['{DAV:}displayname']);
             }
             if ($sharee->comment) {
-                $writer->writeElement($cs . 'summary', $sharee->comment);
+                $writer->writeElement($cs.'summary', $sharee->comment);
             }
             $writer->endElement(); // organizer or user
-
         }
-
     }
-
 }

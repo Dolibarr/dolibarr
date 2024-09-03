@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
-# About page
-# Right
+# Permissions
 Permission23101 = Darllenwch Swydd wedi'i Amserlennu
 Permission23102 = Creu/diweddaru swydd a drefnwyd
 Permission23103 = Dileu swydd a drefnwyd
@@ -14,7 +13,7 @@ FileToLaunchCronJobs=Llinell orchymyn i wirio a lansio swyddi cron cymwys
 CronExplainHowToRunUnix=Ar amgylchedd Unix dylech ddefnyddio'r cofnod crontab canlynol i redeg y llinell orchymyn bob 5 munud
 CronExplainHowToRunWin=Ar amgylchedd Microsoft(tm) Windows gallwch ddefnyddio offer Tasg wedi'i Drefnu i redeg y llinell orchymyn bob 5 munud
 CronMethodDoesNotExists=Nid yw dosbarth %s yn cynnwys unrhyw ddull %s
-CronMethodNotAllowed=Mae dull %s o ddosbarth %s ar y rhestr ddu o ddulliau gwaharddedig
+CronMethodNotAllowed=Mae dull %s o'r dosbarth %s yn y rhestr flociau o ddulliau gwaharddedig
 CronJobDefDesc=Mae proffiliau swyddi Cron yn cael eu diffinio yn ffeil disgrifydd y modiwl. Pan fydd modiwl wedi'i actifadu, maen nhw'n cael eu llwytho ac ar gael fel y gallwch chi weinyddu'r swyddi o'r ddewislen offer gweinyddol %s.
 CronJobProfiles=Rhestr o broffiliau swyddi cron rhagosodedig
 # Menu
@@ -26,11 +25,12 @@ CronCommand=Gorchymyn
 CronList=Swyddi wedi'u hamserlennu
 CronDelete=Dileu swyddi a drefnwyd
 CronConfirmDelete=A ydych yn siŵr eich bod am ddileu'r swyddi hyn sydd wedi'u hamserlennu?
-CronExecute=Launch now
+CronExecute=Lansio nawr
 CronConfirmExecute=A ydych yn siŵr eich bod am gyflawni'r swyddi hyn sydd wedi'u hamserlennu nawr?
 CronInfo=Mae modiwl swydd wedi'i amserlennu yn caniatáu amserlennu swyddi i'w gweithredu'n awtomatig. Gellir cychwyn swyddi â llaw hefyd.
 CronTask=Job
-CronNone=Dim
+CronNone=Next run of scheduled task
+CronNotYetRan=Never executed
 CronDtStart=Nid o'r blaen
 CronDtEnd=Nid ar ôl
 CronDtNextLaunch=Dienyddiad nesaf
@@ -49,8 +49,8 @@ CronEach=Pob
 JobFinished=Lansio a gorffen swydd
 Scheduled=Wedi'i drefnu
 #Page card
-CronAdd= Ychwanegu swyddi
-CronEvery=Cyflawni swydd yr un
+CronAdd=Ychwanegu swyddi
+CronEvery=Run job every
 CronObject=Enghraifft / Gwrthrych i'w greu
 CronArgs=Paramedrau
 CronSaveSucess=Arbed yn llwyddiannus
@@ -58,7 +58,7 @@ CronNote=Sylw
 CronFieldMandatory=Mae meysydd %s yn orfodol
 CronErrEndDateStartDt=Ni all y dyddiad gorffen fod cyn y dyddiad dechrau
 StatusAtInstall=Statws wrth osod modiwl
-CronStatusActiveBtn=Enable scheduling
+CronStatusActiveBtn=Galluogi amserlennu
 CronStatusInactiveBtn=Analluogi
 CronTaskInactive=Mae'r swydd hon wedi'i hanalluogi (ddim wedi'i hamserlennu)
 CronId=Id
@@ -67,7 +67,7 @@ CronModuleHelp=Enw cyfeiriadur modiwl Dolibarr (hefyd yn gweithio gyda modiwl al
 CronClassFileHelp=Y llwybr cymharol ac enw'r ffeil i'w llwytho (mae'r llwybr yn gymharol â chyfeiriadur gwraidd gweinydd gwe). <BR> Er enghraifft i alw'r dull nôl o gwrthrych cynnyrch Dolibarr htdocs/product/class/ <u> product.class.php </u> , y gwerth ar gyfer enw ffeil dosbarth yw a0342fccfda19bz71080 a0342fccfda19bz71080 a0342fccfda19bz71080 a0342fccfda19bz7130 a0342fccfda19bz71080 a0342fccfda19bz7180 a0342fccfda19bz7180 a0342fccfda19bz7180 a0342fccfda19bz71080804 a0342fccfda19bz7180 a0342fccfda19bz7180 a0342fccfda.
 CronObjectHelp=Enw'r gwrthrych i'w lwytho. <BR> Er enghraifft i alw'r dull nôl gwrthrych Cynnyrch Dolibarr /htdocs/product/class/product.class.php, y gwerth ar gyfer enw ffeil dosbarth yw <br> <i> Cynnyrch </i>
 CronMethodHelp=Y dull gwrthrych i'w lansio. <BR> Er enghraifft i alw'r dull nôl o gwrthrych Cynnyrch Dolibarr /htdocs/product/class/product.class.php, gwerth y dull yw <br> <i> fetch </i>
-CronArgsHelp=Mae'r dadleuon dull. <BR> Er enghraifft i alw'r dull nôl gwrthrych Cynnyrch Dolibarr /htdocs/product/class/product.class.php, gall y gwerth ar gyfer paramedrau fod yn <br> <i> 0, ProductRef a0bae63758
+CronArgsHelp=Mae'r dadleuon dull. <BR> Er enghraifft i alw'r dull nôl gwrthrych Cynnyrch Dolibarr /htdocs/product/class/product.class.php, gall y gwerth ar gyfer paramedrau fod yn<br><i>0, ProductRef</i>
 CronCommandHelp=Llinell orchymyn y system i'w gweithredu.
 CronCreateJob=Creu Swydd Restredig newydd
 CronFrom=Oddiwrth
@@ -84,17 +84,18 @@ MakeLocalDatabaseDumpShort=Cronfa ddata wrth gefn leol
 MakeLocalDatabaseDump=Creu dympio cronfa ddata leol. Paramedrau yw: cywasgu ('gz' neu 'bz' neu 'dim'), math wrth gefn ('mysql', 'pgsql', 'auto'), 1, 'auto' neu enw ffeil i'w hadeiladu, nifer y ffeiliau wrth gefn i'w cadw
 MakeSendLocalDatabaseDumpShort=Anfon copi wrth gefn o gronfa ddata leol
 MakeSendLocalDatabaseDump=Anfon copi wrth gefn o gronfa ddata leol trwy e-bost. Paramedrau yw: i, o, pwnc, neges, enw ffeil (Enw'r ffeil a anfonwyd), hidlydd ('sql' ar gyfer copi wrth gefn o'r gronfa ddata yn unig)
-BackupIsTooLargeSend=Sorry, last backup file is too large to be send by email
-CleanUnfinishedCronjobShort=Clean unfinished cronjob
-CleanUnfinishedCronjob=Clean cronjob stuck in processing when the process is no longer running
+BackupIsTooLargeSend=Mae'n ddrwg gennym, mae'r ffeil wrth gefn olaf yn rhy fawr i'w hanfon trwy e-bost
+CleanUnfinishedCronjobShort=Glanhau cronjob anorffenedig
+CleanUnfinishedCronjob=Cronjob glân yn sownd wrth brosesu pan nad yw'r broses yn rhedeg mwyach
 WarningCronDelayed=Sylw, at ddiben perfformiad, beth bynnag yw'r dyddiad nesaf ar gyfer cyflawni swyddi wedi'u galluogi, efallai y bydd eich swyddi'n cael eu gohirio hyd at uchafswm o %s awr, cyn cael eu rhedeg.
 DATAPOLICYJob=Glanhawr data ac anonymizer
 JobXMustBeEnabled=Rhaid galluogi Job %s
-EmailIfError=Email for warning on error
-ErrorInBatch=Error when running the job %s
+EmailIfError=E-bost i rybuddio am gamgymeriad
+JobNotFound=Swydd %s heb ei chanfod yn y rhestr o swyddi (ceisiwch analluogi/galluogi modiwl)
+ErrorInBatch=Gwall wrth redeg y swydd %s
 
 # Cron Boxes
 LastExecutedScheduledJob=Y swydd a drefnwyd ddiwethaf a gyflawnwyd
 NextScheduledJobExecute=Y dasg nesaf i'w chyflawni
 NumberScheduledJobError=Nifer y swyddi a drefnwyd mewn camgymeriad
-NumberScheduledJobNeverFinished=Number of scheduled jobs never finished
+NumberScheduledJobNeverFinished=Nifer y swyddi a drefnwyd heb eu gorffen

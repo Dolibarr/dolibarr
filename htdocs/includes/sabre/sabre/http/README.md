@@ -1,7 +1,7 @@
 sabre/http
 ==========
 
-This library provides a toolkit to make working with the HTTP protocol easier.
+This library provides a toolkit to make working with the [HTTP protocol](https://tools.ietf.org/html/rfc2616) easier.
 
 Most PHP scripts run within a HTTP request but accessing information about the
 HTTP request is cumbersome at least.
@@ -28,10 +28,11 @@ The objects are extendable and easily mockable.
 Build status
 ------------
 
-| branch | status |
-| ------ | ------ |
-| master | [![Build Status](https://travis-ci.org/fruux/sabre-http.svg?branch=master)](https://travis-ci.org/fruux/sabre-http) |
-| 3.0    | [![Build Status](https://travis-ci.org/fruux/sabre-http.svg?branch=3.0)](https://travis-ci.org/fruux/sabre-http) |
+| branch | status                                                                                                        |
+|--------|---------------------------------------------------------------------------------------------------------------|
+| master | [![Build Status](https://travis-ci.org/sabre-io/http.svg?branch=master)](https://travis-ci.org/sabre-io/http) |
+| 4.2    | [![Build Status](https://travis-ci.org/sabre-io/http.svg?branch=4.2)](https://travis-ci.org/sabre-io/http)    |
+| 3.0    | [![Build Status](https://travis-ci.org/sabre-io/http.svg?branch=3.0)](https://travis-ci.org/sabre-io/http)    |
 
 Installation
 ------------
@@ -42,7 +43,7 @@ or edit a `composer.json` file, and make sure it contains something like this:
 ```json
 {
     "require" : {
-        "sabre/http" : "~3.0.0"
+        "sabre/http" : "~5.0.0"
     }
 }
 ```
@@ -83,7 +84,7 @@ $request = HTTP\Sapi::getRequest();
 This line should only happen once in your entire application. Everywhere else
 you should pass this request object around using dependency injection.
 
-You should always typehint on it's interface:
+You should always typehint on its interface:
 
 ```php
 function handleRequest(HTTP\RequestInterface $request) {
@@ -132,9 +133,9 @@ Simply extending Request and Response may pose some problems:
 
 1. You may want to extend the objects with new behaviors differently, in
    different subsystems of your application,
-2. The `Sapi::getRequest` factory always returns a instance of
+2. The `Sapi::getRequest` factory always returns an instance of
    `Request` so you would have to override the factory method as well,
-3. By controlling the instantation and depend on specific `Request` and
+3. By controlling the instantiation and depend on specific `Request` and
    `Response` instances in your library or application, you make it harder to
    work with other applications which also use `sabre/http`.
 
@@ -161,7 +162,7 @@ class MyRequest extends HTTP\RequestDecorator {
 Our application assumes that the true `Request` object was instantiated
 somewhere else, by some other subsystem. This could simply be a call like
 `$request = Sapi::getRequest()` at the top of your application,
-but could also be somewhere in a unittest.
+but could also be somewhere in a unit test.
 
 All we know in the current subsystem, is that we received a `$request` and
 that it implements `Sabre\HTTP\RequestInterface`. To decorate this object,
@@ -295,7 +296,7 @@ $remoteUrl = 'http://example.org/';
 // The url we're proxying from. Please note that this must be a relative url,
 // and basically acts as the base url.
 //
-// If youre $remoteUrl doesn't end with a slash, this one probably shouldn't
+// If your $remoteUrl doesn't end with a slash, this one probably shouldn't
 // either.
 $myBaseUrl = '/reverseproxy.php';
 // $myBaseUrl = '/~evert/sabre/http/examples/reverseproxy.php/';
@@ -411,10 +412,10 @@ function setBaseUrl($url);
  * If the full path is equal to the base url, this method will return an
  * empty string.
  *
- * This method will also urldecode the path, and if the url was incoded as
+ * This method will also urldecode the path, and if the url was encoded as
  * ISO-8859-1, it will convert it to UTF-8.
  *
- * If the path is outside of the base url, a LogicException will be thrown.
+ * If the path is outside the base url, a LogicException will be thrown.
  *
  * @return string
  */
@@ -490,7 +491,7 @@ function getBodyAsStream();
 function getBodyAsString();
 
 /**
- * Returns the message body, as it's internal representation.
+ * Returns the message body, as its internal representation.
  *
  * This could be either a string or a stream.
  *
@@ -514,7 +515,7 @@ function setBody($body);
 function getHeaders();
 
 /**
- * Returns a specific HTTP header, based on it's name.
+ * Returns a specific HTTP header, based on its name.
  *
  * The name must be treated as case-insensitive.
  *
@@ -528,7 +529,7 @@ function getHeader($name);
 /**
  * Updates a HTTP header.
  *
- * The case-sensitity of the name value must be retained as-is.
+ * The case-sensitivity of the name value must be retained as-is.
  *
  * @param string $name
  * @param string $value
@@ -560,7 +561,7 @@ function addHeaders(array $headers);
 /**
  * Removes a HTTP header.
  *
- * The specified header name must be treated as case-insenstive.
+ * The specified header name must be treated as case-insensitive.
  * This method should return true if the header was successfully deleted,
  * and false if the header did not exist.
  *
@@ -571,7 +572,7 @@ function removeHeader($name);
 /**
  * Sets the HTTP version.
  *
- * Should be 1.0 or 1.1.
+ * Should be 1.0, 1.1 or 2.0.
  *
  * @param string $version
  * @return void
@@ -592,7 +593,7 @@ function getHttpVersion();
 /**
  * Returns the current HTTP status.
  *
- * This is the status-code as well as the human readable string.
+ * This is the status-code as well as the human-readable string.
  *
  * @return string
  */
@@ -601,7 +602,7 @@ function getStatus();
 /**
  * Sets the HTTP status code.
  *
- * This can be either the full HTTP status code with human readable string,
+ * This can be either the full HTTP status code with human-readable string,
  * for example: "403 I can't let you do that, Dave".
  *
  * Or just the code, in which case the appropriate default message will be
@@ -634,7 +635,7 @@ function getBodyAsStream();
 function getBodyAsString();
 
 /**
- * Returns the message body, as it's internal representation.
+ * Returns the message body, as its internal representation.
  *
  * This could be either a string or a stream.
  *
@@ -659,7 +660,7 @@ function setBody($body);
 function getHeaders();
 
 /**
- * Returns a specific HTTP header, based on it's name.
+ * Returns a specific HTTP header, based on its name.
  *
  * The name must be treated as case-insensitive.
  *
@@ -673,7 +674,7 @@ function getHeader($name);
 /**
  * Updates a HTTP header.
  *
- * The case-sensitity of the name value must be retained as-is.
+ * The case-sensitivity of the name value must be retained as-is.
  *
  * @param string $name
  * @param string $value
@@ -705,7 +706,7 @@ function addHeaders(array $headers);
 /**
  * Removes a HTTP header.
  *
- * The specified header name must be treated as case-insenstive.
+ * The specified header name must be treated as case-insensitive.
  * This method should return true if the header was successfully deleted,
  * and false if the header did not exist.
  *
@@ -716,7 +717,7 @@ function removeHeader($name);
 /**
  * Sets the HTTP version.
  *
- * Should be 1.0 or 1.1.
+ * Should be 1.0, 1.1 or 2.0.
  *
  * @param string $version
  * @return void

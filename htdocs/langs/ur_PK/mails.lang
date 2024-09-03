@@ -2,20 +2,25 @@
 Mailing=ای میل کرنا
 EMailing=ای میل کرنا
 EMailings=ای میلز
+SMSings=SMSings
 AllEMailings=تمام ای میلز
 MailCard=ای میل کارڈ
 MailRecipients=وصول کنندگان
 MailRecipient=وصول کنندہ
-MailTitle=تفصیل
-MailFrom=From
+MailTitle=Label
+MailFrom=سے
+ForceEmailFrom=Default email From
+PhoneFrom=From
 MailErrorsTo=کی خرابیاں
 MailReply=کا جواب دیں
-MailTo=To
+MailTo=کو
 MailToUsers=صارف (صارفین) کو
 MailCC=میں کاپی کریں۔
 MailToCCUsers=صارفین کو کاپی کریں
 MailCCC=میں کیش شدہ کاپی
 MailTopic=ای میل کے موضوع
+MailDate=Email date
+MailReferences=Message IDs in References
 MailText=پیغام
 MailFile=منسلک فائلوں
 MailMessage=ای میل باڈی
@@ -24,13 +29,13 @@ BodyNotIn=جسم میں نہیں۔
 ShowEMailing=ای میل دکھائیں۔
 ListOfEMailings=ای میلز کی فہرست
 NewMailing=نئی ای میلنگ
+NewSMSing=New smsing
 EditMailing=ای میل میں ترمیم کریں۔
 ResetMailing=ای میل دوبارہ بھیجیں۔
 DeleteMailing=ای میل کو حذف کریں۔
-DeleteAMailing=ایک ای میل کو حذف کریں۔
 PreviewMailing=ای میل کا پیش نظارہ کریں۔
 CreateMailing=ای میل بنائیں
-TestMailing=ای میل کی جانچ کریں۔
+TestMailing=Test
 ValidMailing=درست ای میلنگ
 MailingStatusDraft=مسودہ
 MailingStatusValidated=تصدیق شدہ
@@ -50,6 +55,7 @@ ConfirmValidMailing=کیا آپ واقعی اس ای میل کی توثیق کر
 ConfirmResetMailing=انتباہ، <b> %s </b> ای میل کو دوبارہ شروع کرکے، آپ اس ای میل کو بلک میلنگ میں دوبارہ بھیجنے کی اجازت دیں گے۔ کیا آپ واقعی یہ کرنا چاہتے ہیں؟
 ConfirmDeleteMailing=کیا آپ واقعی اس ای میل کو حذف کرنا چاہتے ہیں؟
 NbOfUniqueEMails=منفرد ای میلز کی تعداد
+NbOfUniquePhones=No. of unique phones
 NbOfEMails=ای میلز کی تعداد
 TotalNbOfDistinctRecipients=مختلف وصول کنندگان کی تعداد
 NoTargetYet=ابھی تک کوئی وصول کنندگان کی وضاحت نہیں کی گئی (ٹیب 'وصول کنندگان' پر جائیں)
@@ -91,9 +97,9 @@ MailingModuleDescContactsByFunction=پوزیشن کے لحاظ سے رابطے
 MailingModuleDescEmailsFromFile=فائل سے ای میلز
 MailingModuleDescEmailsFromUser=صارف کے ذریعے ای میلز کا ان پٹ
 MailingModuleDescDolibarrUsers=ای میلز والے صارفین
-MailingModuleDescThirdPartiesByCategories=Third parties
+MailingModuleDescThirdPartiesByCategories=تیسرے فریقوں
 SendingFromWebInterfaceIsNotAllowed=ویب انٹرفیس سے بھیجنے کی اجازت نہیں ہے۔
-EmailCollectorFilterDesc=ای میل جمع کرنے کے لیے تمام فلٹرز کا مماثل ہونا چاہیے۔
+EmailCollectorFilterDesc=ای میل کو جمع کرنے کے لیے تمام فلٹرز کا مماثل ہونا ضروری ہے۔<br>آپ "!" حرف استعمال کر سکتے ہیں۔ اگر آپ کو منفی ٹیسٹ کی ضرورت ہو تو سرچ سٹرنگ ویلیو سے پہلے
 
 # Libelle des modules de liste de destinataires mailing
 LineInFile=فائل میں لائن %s
@@ -107,6 +113,7 @@ MailNoChangePossible=تصدیق شدہ ای میل کے وصول کنندگان 
 SearchAMailing=میلنگ تلاش کریں۔
 SendMailing=ای میل بھیجیں۔
 SentBy=کی طرف سے بھیجا
+AdvancedAlternative=Advanced alternative
 MailingNeedCommand=ای میل بھیجنا کمانڈ لائن سے انجام دیا جاسکتا ہے۔ اپنے سرور کے منتظم سے تمام وصول کنندگان کو ای میل بھیجنے کے لیے درج ذیل کمانڈ شروع کرنے کو کہیں۔
 MailingNeedCommand2=تاہم آپ MAILING_LIMIT_SENDBYWEB پیرامیٹر شامل کرکے انہیں آن لائن بھیج سکتے ہیں جس کی قیمت آپ سیشن کے ذریعے بھیجنا چاہتے ہیں۔ اس کے لیے ہوم - سیٹ اپ - دیگر پر جائیں۔
 ConfirmSendingEmailing=اگر آپ اس اسکرین سے براہ راست ای میل بھیجنا چاہتے ہیں، تو براہ کرم تصدیق کریں کہ آپ کو یقین ہے کہ آپ ابھی اپنے براؤزر سے ای میل بھیجنا چاہتے ہیں؟
@@ -132,8 +139,8 @@ NoNotificationsWillBeSent=اس ایونٹ کی قسم اور کمپنی کے ل�
 ANotificationsWillBeSent=1 خودکار اطلاع بذریعہ ای میل بھیجی جائے گی۔
 SomeNotificationsWillBeSent=%s خودکار اطلاعات بذریعہ ای میل بھیجی جائیں گی۔
 AddNewNotification=ایک نئے خودکار ای میل نوٹیفکیشن کو سبسکرائب کریں (ٹارگٹ/ایونٹ)
-ListOfActiveNotifications=خودکار ای میل اطلاع کے لیے تمام فعال سبسکرپشنز (اہداف/ایونٹس) کی فہرست
-ListOfNotificationsDone=بھیجے گئے تمام خودکار ای میل اطلاعات کی فہرست
+ListOfActiveNotifications=Active subscriptions (targets/events) for automatic email notification
+ListOfNotificationsDone=Automatic email notifications sent
 MailSendSetupIs=ای میل بھیجنے کی ترتیب کو '%s' پر ترتیب دیا گیا ہے۔ یہ موڈ بڑے پیمانے پر ای میل بھیجنے کے لیے استعمال نہیں کیا جا سکتا۔
 MailSendSetupIs2=آپ کو پہلے ایڈمن اکاؤنٹ کے ساتھ مینو میں جانا چاہیے اس موڈ کے ساتھ، آپ اپنے انٹرنیٹ سروس پرووائیڈر کی طرف سے فراہم کردہ SMTP سرور کا سیٹ اپ درج کر سکتے ہیں اور ماس ای میلنگ فیچر استعمال کر سکتے ہیں۔
 MailSendSetupIs3=اگر آپ کے پاس اپنے SMTP سرور کو سیٹ اپ کرنے کے بارے میں کوئی سوال ہے، تو آپ %s سے پوچھ سکتے ہیں۔
@@ -167,7 +174,7 @@ NoContactWithCategoryFound=کچھ رابطوں/پتوں سے منسلک کوئی
 NoContactLinkedToThirdpartieWithCategoryFound=کچھ تھرڈ پارٹیز سے منسلک کوئی زمرہ نہیں ملا
 OutGoingEmailSetup=باہر جانے والی ای میلز
 InGoingEmailSetup=آنے والی ای میلز
-OutGoingEmailSetupForEmailing=باہر جانے والی ای میلز (ماڈیول %s کے لیے)
+OutGoingEmailSetupForEmailing=Outgoing emails (%s)
 DefaultOutgoingEmailSetup=عالمی آؤٹ گوئنگ ای میل سیٹ اپ سے ایک جیسی ترتیب
 Information=معلومات
 ContactsWithThirdpartyFilter=تھرڈ پارٹی فلٹر کے ساتھ رابطے
@@ -175,8 +182,19 @@ Unanswered=لا جواب
 Answered=جواب دیا۔
 IsNotAnAnswer=جواب نہیں ہے (ابتدائی ای میل)
 IsAnAnswer=ابتدائی ای میل کا جواب ہے۔
-RecordCreatedByEmailCollector=ای میل کلکٹر %s ای میل %s سے ریکارڈ بنایا گیا
+RecordCreatedByEmailCollector=Record created by the Email Collector %s
 DefaultBlacklistMailingStatus=نیا رابطہ بناتے وقت فیلڈ '%s' کے لیے ڈیفالٹ قدر
 DefaultStatusEmptyMandatory=خالی لیکن لازمی
 WarningLimitSendByDay=WARNING: The setup or contract of your instance limits your number of emails per day to <b>%s</b>. Trying to send more may result in having your instance slow down or suspended. Please contact your support if you need a higher quota.
-NoMoreRecipientToSendTo=No more recipient to send the email to
+NoMoreRecipientToSendTo=ای میل بھیجنے کے لیے مزید وصول کنندہ نہیں۔
+EmailOptedOut=ای میل کے مالک نے اس ای میل کے ساتھ مزید رابطہ نہ کرنے کی درخواست کی ہے۔
+EvenUnsubscribe=آپٹ آؤٹ ای میلز شامل کریں۔
+EvenUnsubscribeDesc=جب آپ ای میلز کو اہداف کے طور پر منتخب کرتے ہیں تو آپٹ آؤٹ ای میلز کو شامل کریں۔ مثال کے طور پر لازمی سروس ای میلز کے لیے مفید ہے۔
+XEmailsDoneYActionsDone=%s ای میلز پہلے سے اہل ہیں، %s ای میلز پر کامیابی کے ساتھ کارروائی کی گئی (%s ریکارڈ کے لیے /کارروائیاں ہو چکی ہیں)
+YouCanMakeSomeInstructionForEmail=You can make some instructions for your Email (Example: generate image in email template...)
+ModelTemplate=Email template
+YouCanChooseAModelForYouMailContent= You can choose one of template models or generate one with AI
+TitleOfMailHolder=Title of the e-mail goes here
+ContentOfMailHolder=Content of email goes here...
+LastNews=Last News
+PasswordReset=Password reset

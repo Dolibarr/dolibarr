@@ -2,7 +2,8 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2015-2024  Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,16 +38,7 @@ class box_birthdays extends ModeleBoxes
 	public $boxlabel = "BoxTitleUserBirthdaysOfMonth";
 	public $depends = array("user");
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
 	public $enabled = 1;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 
 	/**
 	 *  Constructor
@@ -71,18 +63,22 @@ class box_birthdays extends ModeleBoxes
 	 */
 	public function loadBox($max = 20)
 	{
-		global $user, $langs;
-		$langs->load("boxes");
-
-		$this->max = $max;
+		global $conf, $user, $langs;
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 		include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 		$userstatic = new User($this->db);
 
+
+		$langs->load("boxes");
+
+		$this->max = $max;
+
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleUserBirthdaysOfMonth"));
 
-		if ($user->rights->user->user->lire) {
+		if ($user->hasRight('user', 'user', 'lire')) {
+			$data = array();
+
 			$tmparray = dol_getdate(dol_now(), true);
 
 			$sql = "SELECT u.rowid, u.firstname, u.lastname, u.birth as datea, date_format(u.birth, '%d') as daya, 'birth' as typea, u.email, u.statut as status";
@@ -90,77 +86,77 @@ class box_birthdays extends ModeleBoxes
 			$sql .= " WHERE u.entity IN (".getEntity('user').")";
 			$sql .= " AND u.statut = ".User::STATUS_ENABLED;
 			$sql .= dolSqlDateFilter('u.birth', 0, $tmparray['mon'], 0);
+			$sql .= " AND u.birth < '".$this->db->idate(dol_get_first_day($tmparray['year']))."'";
 			$sql .= ' UNION ';
 			$sql .= "SELECT u.rowid, u.firstname, u.lastname, u.dateemployment as datea, date_format(u.dateemployment, '%d') as daya, 'employment' as typea, u.email, u.statut as status";
 			$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 			$sql .= " WHERE u.entity IN (".getEntity('user').")";
 			$sql .= " AND u.statut = ".User::STATUS_ENABLED;
 			$sql .= dolSqlDateFilter('u.dateemployment', 0, $tmparray['mon'], 0);
+			$sql .= " AND u.dateemployment < '".$this->db->idate(dol_get_first_day($tmparray['year']))."'";
 			$sql .= " ORDER BY daya ASC";	// We want to have date of the month sorted by the day without taking into consideration the year
 			$sql .= $this->db->plimit($max, 0);
 
 			dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
-			$result = $this->db->query($sql);
-			if ($result) {
-				$num = $this->db->num_rows($result);
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$num = $this->db->num_rows($resql);
 
 				$line = 0;
 				while ($line < $num) {
-					$objp = $this->db->fetch_object($result);
+					$data[$line] = $this->db->fetch_object($resql);
 
-					$userstatic->id = $objp->rowid;
-					$userstatic->firstname = $objp->firstname;
-					$userstatic->lastname = $objp->lastname;
-					$userstatic->email = $objp->email;
-					$userstatic->statut = $objp->status;
+					$line++;
+				}
 
-					$dateb = $this->db->jdate($objp->datea);
-					$age = date('Y', dol_now()) - date('Y', $dateb);
+				$this->db->free($resql);
+			}
+
+			if (!empty($data)) {
+				$j = 0;
+				while ($j < count($data)) {
+					$userstatic->id = $data[$j]->rowid;
+					$userstatic->firstname = $data[$j]->firstname;
+					$userstatic->lastname = $data[$j]->lastname;
+					$userstatic->email = $data[$j]->email;
+					$userstatic->status = $data[$j]->status;
+
+					$dateb = $this->db->jdate($data[$j]->datea);
+					$age = idate('Y', dol_now()) - idate('Y', $dateb);
 
 					$picb = '<i class="fas fa-birthday-cake inline-block"></i>';
 					$pice = '<i class="fas fa-briefcase inline-block"></i>';
-					$typea = ($objp->typea == 'birth') ? $picb : $pice;
+					$typea = ($data[$j]->typea == 'birth') ? $picb : $pice;
 
-					$this->info_box_contents[$line][] = array(
+					$this->info_box_contents[$j][0] = array(
 						'td' => '',
 						'text' => $userstatic->getNomUrl(1),
 						'asis' => 1,
 					);
 
-					$this->info_box_contents[$line][] = array(
+					$this->info_box_contents[$j][1] = array(
 						'td' => 'class="center nowraponall"',
 						'text' => dol_print_date($dateb, "day", 'tzserver')
 					);
 
-					$this->info_box_contents[$line][] = array(
+					$this->info_box_contents[$j][2] = array(
 						'td' => 'class="right nowraponall"',
 						'text' => $age.' '.$langs->trans('DurationYears')
 					);
 
-					$this->info_box_contents[$line][] = array(
-						'td' => 'class="center nowraponall"',
+					$this->info_box_contents[$j][3] = array(
+						'td' => 'class="right nowraponall"',
 						'text' => $typea,
 						'asis' => 1
 					);
 
-					/*$this->info_box_contents[$line][] = array(
-						'td' => 'class="right" width="18"',
-						'text' => $userstatic->LibStatut($objp->status, 3)
-					);*/
-
-					$line++;
+					$j++;
 				}
-
-				if ($num == 0) {
-					$this->info_box_contents[$line][0] = array('td' => 'class="center"', 'text' => '<span class="opacitymedium">'.$langs->trans("None").'</span>');
-				}
-
-				$this->db->free($result);
-			} else {
+			}
+			if (is_array($data) && count($data) == 0) {
 				$this->info_box_contents[0][0] = array(
-					'td' => '',
-					'maxlength'=>500,
-					'text' => ($this->db->error().' sql='.$sql)
+					'td' => 'class="center"',
+					'text' => '<span class="opacitymedium">'.$langs->trans("None").'</span>',
 				);
 			}
 		} else {
@@ -174,9 +170,9 @@ class box_birthdays extends ModeleBoxes
 	/**
 	 *	Method to show box
 	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
+	 *	@param	?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}	$head	Array with properties of box title
+	 *	@param	?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>	$contents	Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *	@return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)

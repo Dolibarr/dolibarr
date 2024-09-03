@@ -12,7 +12,6 @@ MemberModifiedInDolibarr=Lid %s werd aangepast
 MemberResiliatedInDolibarr=Lid %s verwijderd
 MemberSubscriptionModifiedInDolibarr=Abonnement %s voor lid %s aangepast
 ShipmentValidatedInDolibarr=Shipment %s goedgekeurd
-ShipmentClassifyClosedInDolibarr=Verzending %s werd geclassificeerd als gefactureerd
 ShipmentBackToDraftInDolibarr=Verzending %s zet om naar conceptstatus
 ShipmentDeletedInDolibarr=Shipment %s gewist
 ProposalSentByEMail=Commercieel voorstel %s verzonden per e-mail
@@ -34,9 +33,8 @@ PROJECT_MODIFYInDolibarr=Project %s gewijzigd
 TICKET_CREATEInDolibarr=Ticket %s aangemaakt
 TICKET_MODIFYInDolibarr=Ticket %s aangepast
 AgendaModelModule=Document sjablonen voor een gebeurtenis
-AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> om de uitvoer van acties te beperken die niet werden toegewezen aan de gebruiker <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> om de uitvoer van acties te beperken die aan de gebruiker <b>%s</b> is toegewezen. (eigenaar en anderen).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> om de uitvoer te beperken tot acties die zijn gekoppeld aan project <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> om automatische gebeurtenis uit te sluiten.
 AgendaHideBirthdayEvents=Verberg verjaardagen van contacten
 ConfirmCloneEvent=Weet u zeker als u event <b>%s</b> wilt klonen?
+BOOKCAL_PUBLIC_INTERFACE_TOPIC =Interface titel

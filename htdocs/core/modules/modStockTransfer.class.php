@@ -3,6 +3,7 @@
  * Copyright (C) 2018-2019  Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2019-2022  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2021 		Gauthier VERDOL 		<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -109,7 +110,7 @@ class modStockTransfer extends DolibarrModules
 			),
 			// Set this to 1 if features of module are opened to external users
 			'moduleforexternal' => 0,
-			'contactelement'=>1
+			'contactelement' => 1
 		);
 		// Data directories to create when module is enabled.
 		// Example: this->dirs = array("/stocktransfer/temp","/stocktransfer/subdir");
@@ -119,7 +120,7 @@ class modStockTransfer extends DolibarrModules
 		// Dependencies
 		// A condition to hide module
 		$this->hidden = false;
-		// List of module class names as string that must be enabled if this module is enabled. Example: array('always1'=>'modModuleToEnable1','always2'=>'modModuleToEnable2', 'FR1'=>'modModuleToEnableFR'...)
+		// List of module class names as string that must be enabled if this module is enabled. Example: array('always'=>array('modModuleToEnable1','modModuleToEnable2'), 'FR'=>array('modModuleToEnableFR'...))
 		$this->depends = array('modStock', 'modProduct');
 		$this->requiredby = array(); // List of module class names as string to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
@@ -157,7 +158,7 @@ class modStockTransfer extends DolibarrModules
 		// 'intervention'     to add a tab in intervention view
 		// 'invoice'          to add a tab in customer invoice view
 		// 'invoice_supplier' to add a tab in supplier invoice view
-		// 'member'           to add a tab in fundation member view
+		// 'member'           to add a tab in foundation member view
 		// 'opensurveypoll'	  to add a tab in opensurvey poll view
 		// 'order'            to add a tab in sales order view
 		// 'order_supplier'   to add a tab in supplier order view
@@ -426,28 +427,36 @@ class modStockTransfer extends DolibarrModules
 		global  $conf, $langs;
 
 		$result = $this->_load_tables('/install/mysql/tables/', 'stocktransfer');
-		if ($result < 0) return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
+		if ($result < 0) {
+			return -1;
+		} // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
 
 		// Permissions
 		$this->remove($options);
 
 		$sql = array();
 
-		// Rôles
-		$resql = $this->db->query('SELECT rowid FROM '.MAIN_DB_PREFIX.'c_type_contact WHERE code = "STDEST" AND element = "StockTransfer" AND source = "internal"');
+		// Roles
+		$resql = $this->db->query("SELECT rowid FROM ".MAIN_DB_PREFIX."c_type_contact WHERE code = 'STDEST' AND element = 'stocktransfer' AND source = 'internal'");
 		$res = $this->db->fetch_object($resql);
-		$nextid=$this->getNextId();
-		if (empty($res)) $this->db->query('INSERT INTO '.MAIN_DB_PREFIX.'c_type_contact(rowid, element, source, code, libelle, active, module, position) VALUES('.((int) $nextid).', "StockTransfer", "internal", "STRESP", "Responsable du transfert de stocks", 1, NULL, 0)');
+		$nextid = $this->getNextId();
+		if (empty($res)) {
+			$this->db->query("INSERT INTO ".MAIN_DB_PREFIX."c_type_contact(rowid, element, source, code, libelle, active, module, position) VALUES(".((int) $nextid).", 'stocktransfer', 'internal', 'STRESP', 'Responsible for stock transfers', 1, NULL, 0)");
+		}
 
-		$resql = $this->db->query('SELECT rowid FROM '.MAIN_DB_PREFIX.'c_type_contact WHERE code = "STFROM" AND element = "StockTransfer" AND source = "external"');
+		$resql = $this->db->query("SELECT rowid FROM ".MAIN_DB_PREFIX."c_type_contact WHERE code = 'STFROM' AND element = 'stocktransfer' AND source = 'external'");
 		$res = $this->db->fetch_object($resql);
-		$nextid=$this->getNextId();
-		if (empty($res)) $this->db->query('INSERT INTO '.MAIN_DB_PREFIX.'c_type_contact(rowid, element, source, code, libelle, active, module, position) VALUES('.((int) $nextid).', "StockTransfer", "external", "STFROM", "Contact expéditeur transfert de stocks", 1, NULL, 0)');
+		$nextid = $this->getNextId();
+		if (empty($res)) {
+			$this->db->query("INSERT INTO ".MAIN_DB_PREFIX."c_type_contact(rowid, element, source, code, libelle, active, module, position) VALUES(".((int) $nextid).", 'stocktransfer', 'external', 'STFROM', 'Contact sending the stock transfer', 1, NULL, 0)");
+		}
 
-		$resql = $this->db->query('SELECT rowid FROM '.MAIN_DB_PREFIX.'c_type_contact WHERE code = "STDEST" AND element = "StockTransfer" AND source = "external"');
+		$resql = $this->db->query("SELECT rowid FROM ".MAIN_DB_PREFIX."c_type_contact WHERE code = 'STDEST' AND element = 'stocktransfer' AND source = 'external'");
 		$res = $this->db->fetch_object($resql);
-		$nextid=$this->getNextId();
-		if (empty($res)) $this->db->query('INSERT INTO '.MAIN_DB_PREFIX.'c_type_contact(rowid, element, source, code, libelle, active, module, position) VALUES('.((int) $nextid).', "StockTransfer", "external", "STDEST", "Contact destinataire transfert de stocks", 1, NULL, 0)');
+		$nextid = $this->getNextId();
+		if (empty($res)) {
+			$this->db->query("INSERT INTO ".MAIN_DB_PREFIX."c_type_contact(rowid, element, source, code, libelle, active, module, position) VALUES(".((int) $nextid).", 'stocktransfer', 'external', 'STDEST', 'Contact receiving the stock transfer', 1, NULL, 0)");
+		}
 
 		return $this->_init($sql, $options);
 	}
@@ -460,7 +469,7 @@ class modStockTransfer extends DolibarrModules
 	{
 		// Get free id for insert
 		$newid = 0;
-		$sql = "SELECT max(rowid) newid from ".MAIN_DB_PREFIX."c_type_contact";
+		$sql = "SELECT MAX(rowid) newid from ".MAIN_DB_PREFIX."c_type_contact";
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);

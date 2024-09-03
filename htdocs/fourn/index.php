@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 $langs->loadLangs(array("suppliers", "orders", "companies"));
 
 // Security check
-$socid = GETPOST("socid", 'int');
+$socid = GETPOSTINT("socid");
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -47,7 +47,7 @@ $commandestatic = new CommandeFournisseur($db);
 $facturestatic = new FactureFournisseur($db);
 $companystatic = new Societe($db);
 
-llxHeader("", $langs->trans("SuppliersArea"));
+llxHeader("", $langs->trans("SuppliersArea"), '', '', 0, 0, '', '', '', 'mod-fourn-facture page-index');
 
 print load_fiche_titre($langs->trans("SuppliersArea"));
 
@@ -61,11 +61,11 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 $sql = "SELECT count(cf.rowid), cf.fk_statut";
 $sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as cf,";
 $sql .= " ".MAIN_DB_PREFIX."societe as s";
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight("societe", "client", "voir") && !$socid) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 }
 $sql .= " WHERE cf.fk_soc = s.rowid ";
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight("societe", "client", "voir") && !$socid) {
 	$sql .= " AND sc.fk_user = ".((int) $user->id);
 }
 $sql .= " AND cf.entity = ".$conf->entity;
@@ -107,11 +107,11 @@ if (isModEnabled("supplier_order")) {
 	$sql .= " s.nom as name, s.rowid as socid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as cf";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight("societe", "client", "voir") && !$socid) {
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 	}
 	$sql .= " WHERE cf.fk_soc = s.rowid";
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight("societe", "client", "voir") && !$socid) {
 		$sql .= " AND sc.fk_user = ".((int) $user->id);
 	}
 	$sql .= " AND cf.entity = ".$conf->entity;
@@ -163,11 +163,11 @@ if (isModEnabled("supplier_invoice") && ($user->hasRight('fournisseur', 'facture
 	$sql .= ", s.nom as name, s.rowid as socid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as ff";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight("societe", "client", "voir") && !$socid) {
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 	}
 	$sql .= " WHERE s.rowid = ff.fk_soc";
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight("societe", "client", "voir") && !$socid) {
 		$sql .= " AND sc.fk_user = ".((int) $user->id);
 	}
 	$sql .= " AND ff.entity = ".$conf->entity;
@@ -230,24 +230,24 @@ print '</div><div class="fichetwothirdright">';
  */
 $max = 10;
 $sql = "SELECT s.rowid as socid, s.nom as name, s.town, s.datec, s.tms, s.prefix_comm, s.code_fournisseur";
-if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 	$sql .= ", spe.accountancy_code_supplier as code_compta_fournisseur";
 } else {
 	$sql .= ", s.code_compta_fournisseur";
 }
 $sql .= ", st.libelle as stcomm";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
 }
 $sql .= ", ".MAIN_DB_PREFIX."c_stcomm as st";
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight("societe", "client", "voir") && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= " WHERE s.fk_stcomm = st.id";
 $sql .= " AND s.fournisseur = 1";
 $sql .= " AND s.entity IN (".getEntity('societe').")";
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight("societe", "client", "voir") && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($socid) {

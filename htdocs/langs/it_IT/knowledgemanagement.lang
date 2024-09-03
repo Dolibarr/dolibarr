@@ -4,41 +4,27 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see .
 
-#
 # Generic
-#
-
 # Module label 'ModuleKnowledgeManagementName'
 ModuleKnowledgeManagementName = Sistema di gestione della conoscenza
 # Module description 'ModuleKnowledgeManagementDesc'
-ModuleKnowledgeManagementDesc=Gestire una base di Knowledge Management (KM) o Help-Desk
-
-#
+ModuleKnowledgeManagementDesc=Gestire una base di conoscenza (KM) o Help-Desk
 # Admin page
-#
 KnowledgeManagementSetup = Configurazione del sistema di gestione della conoscenza
-Settings = Impostazioni
 KnowledgeManagementSetupPage = Pagina di configurazione del sistema di gestione della conoscenza
-
-
-#
 # About page
-#
-About = Info
 KnowledgeManagementAbout = Informazioni sulla gestione della conoscenza
 KnowledgeManagementAboutPage = Gestione della conoscenza sulla pagina
-
 KnowledgeManagementArea = Gestione della conoscenza
 MenuKnowledgeRecord = Base di conoscenza
+MenuKnowledgeRecordShort = Base di conoscenza
 ListKnowledgeRecord = Elenco degli articoli
 NewKnowledgeRecord = Nuovo articolo
 ValidateReply = Convalida la soluzione
@@ -46,9 +32,14 @@ KnowledgeRecords = Articoli
 KnowledgeRecord = Articolo
 KnowledgeRecordExtraFields = Extracampi per l'art
 GroupOfTicket=Gruppo di biglietti
-YouCanLinkArticleToATicketCategory=You can link the article to a ticket group (so the article will be highlighted on any tickets in this group)
-SuggestedForTicketsInGroup=Consigliato per i biglietti quando il gruppo è
-
+YouCanLinkArticleToATicketCategory=Puoi collegamento l'articolo in un ticket gruppo (così l'articolo verrà essere evidenziato su qualsiasi ticket in questo gruppo)
+SuggestedForTicketsInGroup=Suggerito per la creazione di ticket
 SetObsolete=Imposta come obsoleto
 ConfirmCloseKM=Confermi la chiusura di questo articolo come obsoleto?
 ConfirmReopenKM=Vuoi ripristinare questo articolo allo stato "Convalidato"?
+BoxLastKnowledgerecordDescription=Ultimi %s articoli
+BoxLastKnowledgerecord=Ultimi articoli
+BoxLastKnowledgerecordContent=Ultimi articoli
+BoxLastKnowledgerecordModifiedContent=Ultimi modificato articoli
+BoxLastModifiedKnowledgerecordDescription=Ultimi %s modificato articoli
+BoxLastModifiedKnowledgerecord=Ultimi modificato articoli

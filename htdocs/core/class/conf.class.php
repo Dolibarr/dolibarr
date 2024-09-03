@@ -19,6 +19,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+
 /**
  *	\file       	htdocs/core/class/conf.class.php
  *	\ingroup		core
@@ -26,11 +27,10 @@
  *  				Config is stored into file conf.php
  */
 
-
 /**
  *  Class to stock current configuration
  */
-class Conf
+class Conf extends stdClass
 {
 	/**
 	 * @var Object 	Associative array with properties found in conf file
@@ -42,9 +42,14 @@ class Conf
 	 */
 	public $db;
 
-	//! To store properties found into database
+	/**
+	 * @var Object To store global setup found into database
+	 */
 	public $global;
-	//! To store browser info
+
+	/**
+	 * @var Object To store browser info (->name, ->os, ->version, ->ua, ->layout, ...)
+	 */
 	public $browser;
 
 	//! To store some setup of generic modules
@@ -66,17 +71,33 @@ class Conf
 	//! Used to store current currency (ISO code like 'USD', 'EUR', ...). To get the currency symbol: $langs->getCurrencySymbol($this->currency)
 	public $currency;
 
-	//! Used to store current css (from theme)
+	/**
+	 * @var string
+	 */
 	public $theme; // Contains current theme ("eldy", "auguria", ...)
+	//! Used to store current css (from theme)
+	/**
+	 * @var string
+	 */
 	public $css; // Contains full path of css page ("/theme/eldy/style.css.php", ...)
+
+	public $email_from;
 
 	//! Used to store current menu handler
 	public $standard_menu;
-	// List of activated modules
+
+	/**
+	 * @var array<string,string>  List of activated modules
+	 */
 	public $modules;
+	/**
+	 * @var array<string,array<string,string|array>>  List of activated modules
+	 */
 	public $modules_parts;
 
-	// An array to store cache results ->cache['nameofcache']=...
+	/**
+	 * @var array<string,mixed> An array to store cache results ->cache['nameofcache']=...
+	 */
 	public $cache;
 
 	/**
@@ -90,13 +111,17 @@ class Conf
 	public $logbuffer = array();
 
 	/**
-	 * @var LogHandlerInterface[]
+	 * @var LogHandler[]
 	 */
 	public $loghandlers = array();
 
-	//! Used to store running instance for multi-company (default 1)
+	/**
+	 * @var int Used to store running instance for multi-company (default 1)
+	 */
 	public $entity = 1;
-	//! Used to store list of entities to use for each element
+	/**
+	 * @var int[] Used to store list of entities to use for each element
+	 */
 	public $entities = array();
 
 	public $dol_hide_topmenu; // Set if we force param dol_hide_topmenu into login url
@@ -105,27 +130,77 @@ class Conf
 	public $dol_no_mouse_hover; // Set if we force param dol_no_mouse_hover into login url or if browser is smartphone
 	public $dol_use_jmobile; // Set if we force param dol_use_jmobile into login url. 0=default, 1=to say we use app from a webview app, 2=to say we use app from a webview app and keep ajax
 
+	public $format_date_short; // Format of day with PHP/C tags (strftime functions)
+	public $format_date_short_java; // Format of day with Java tags
+	public $format_hour_short;
+	public $format_hour_short_duration;
+	public $format_date_text_short;
+	public $format_date_text;
+	public $format_date_hour_short;
+	public $format_date_hour_sec_short;
+	public $format_date_hour_text_short;
+	public $format_date_hour_text;
+
 	public $liste_limit;
+	public $main_checkbox_left_column;
 
 	public $tzuserinputkey = 'tzserver';		// Use 'tzuserrel' to always store date in GMT and show date in time zone of user.
 
+
 	// TODO Remove this part.
+
+	/**
+	 * @var stdClass  	Supplier
+	 */
 	public $fournisseur;
+
+	/**
+	 * @var stdClass	Product
+	 */
 	public $product;
+
+	/**
+	 * @deprecated Use product
+	 */
+	public $produit;
 	public $service;
+	/**
+	 * @deprecated Use contract
+	 */
 	public $contrat;
+	public $contract;
 	public $actions;
 	public $agenda;
-	public $commande;
 	public $propal;
+	/**
+	 * @deprecated Use order
+	 */
+	public $commande;
+	public $order;
+	/**
+	 * @deprecated Use invoice
+	 */
 	public $facture;
+	public $invoice;
 	public $user;
+	/**
+	 * @deprecated Use member
+	 */
 	public $adherent;
+	public $member;
 	public $bank;
 	public $notification;
 	public $expensereport;
 	public $productbatch;
-
+	/**
+	 * @deprecated Use project
+	 */
+	public $projet;
+	public $project;
+	public $supplier_proposal;
+	public $supplier_order;
+	public $supplier_invoice;
+	public $category;
 
 
 	/**
@@ -168,7 +243,8 @@ class Conf
 			'member' => array(),
 			'hooks' => array(),
 			'dir' => array(),
-			'syslog' => array()
+			'syslog' => array(),
+			'websitetemplates' => array()
 		);
 
 		// First level object that are modules.
@@ -191,13 +267,14 @@ class Conf
 		$this->productbatch = new stdClass();
 	}
 
+
 	/**
 	 * Load setup values into conf object (read llx_const) for a specified entity
 	 * Note that this->db->xxx, this->file->xxx and this->multicompany have been already loaded when setEntityValues is called.
 	 *
 	 * @param	DoliDB	$db			Database handler
 	 * @param	int		$entity		Entity to get
-	 * @return	int					< 0 if KO, >= 0 if OK
+	 * @return	int					Return integer < 0 if KO, >= 0 if OK
 	 */
 	public function setEntityValues($db, $entity)
 	{
@@ -215,7 +292,7 @@ class Conf
 	 *  Note that this->db->xxx, this->file->xxx have been already set when setValues is called.
 	 *
 	 *  @param      DoliDB      $db     Database handler
-	 *  @return     int                 < 0 if KO, >= 0 if OK
+	 *  @return     int                 Return integer < 0 if KO, >= 0 if OK
 	 */
 	public function setValues($db)
 	{
@@ -224,7 +301,9 @@ class Conf
 		// Unset all old modules values
 		if (!empty($this->modules)) {
 			foreach ($this->modules as $m) {
-				if (isset($this->$m)) unset($this->$m);
+				if (isset($this->$m)) {
+					unset($this->$m);
+				}
 			}
 		}
 
@@ -240,6 +319,7 @@ class Conf
 		// First level object
 		// TODO Remove this part.
 		$this->fournisseur = new stdClass();
+		$this->compta = new stdClass();
 		$this->product = new stdClass();
 		$this->service = new stdClass();
 		$this->contrat = new stdClass();
@@ -248,7 +328,6 @@ class Conf
 		$this->commande = new stdClass();
 		$this->propal = new stdClass();
 		$this->facture = new stdClass();
-		$this->contrat = new stdClass();
 		$this->user	= new stdClass();
 		$this->adherent = new stdClass();
 		$this->bank = new stdClass();
@@ -277,6 +356,7 @@ class Conf
 			'hooks' => array(),
 			'dir' => array(),
 			'syslog' => array(),
+			'websitetemplates' => array(),
 		);
 
 		if (!is_null($db) && is_object($db)) {
@@ -305,7 +385,7 @@ class Conf
 							$value = $_ENV['DOLIBARR_'.$key];
 						}
 
-						$this->global->$key = dolDecrypt($value);
+						$this->global->$key = dolDecrypt($value);	// decrypt data excrypted with dolibarr_set_const($db, $name, $value)
 
 						if ($value && strpos($key, 'MAIN_MODULE_') === 0) {
 							$reg = array();
@@ -318,7 +398,7 @@ class Conf
 								}
 								$this->modules_parts[$partname][$params[0]][] = $value; // $value may be a string or an array
 							} elseif (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)_([A-Z]+)$/i', $key, $reg)) {
-								// If this is constant for all generic part activated by a module. It initializes
+								// If this is a constant for all generic part activated by a module. It initializes
 								// modules_parts['login'], modules_parts['menus'], modules_parts['substitutions'], modules_parts['triggers'], modules_parts['tpl'],
 								// modules_parts['models'], modules_parts['theme']
 								// modules_parts['sms'],
@@ -330,19 +410,19 @@ class Conf
 									$this->modules_parts[$partname] = array();
 								}
 
+								//$arrValue = json_decode($value, true, null, JSON_BIGINT_AS_STRING|JSON_THROW_ON_ERROR);
 								$arrValue = json_decode($value, true);
+								//var_dump($key); var_dump($value); var_dump($arrValue);
 
 								if (is_array($arrValue)) {
 									$newvalue = $arrValue;
 								} elseif (in_array($partname, array('login', 'menus', 'substitutions', 'triggers', 'tpl'))) {
 									$newvalue = '/'.$modulename.'/core/'.$partname.'/';
-								} elseif (in_array($partname, array('models', 'theme'))) {
-									$newvalue = '/'.$modulename.'/';
-								} elseif (in_array($partname, array('sms'))) {
+								} elseif (in_array($partname, array('models', 'theme', 'websitetemplates'))) {
 									$newvalue = '/'.$modulename.'/';
 								} elseif ($value == 1) {
 									$newvalue = '/'.$modulename.'/core/modules/'.$partname.'/'; // ex: partname = societe
-								} else {
+								} else {	// $partname can be any other value like 'sms', ...
 									$newvalue = $value;
 								}
 
@@ -359,11 +439,27 @@ class Conf
 									$modulename = 'supplier_proposal';
 								}
 								$this->modules[$modulename] = $modulename; // Add this module in list of enabled modules
+
 								// deprecated in php 8.2
+								//if (version_compare(phpversion(), '8.2') < 0) {
 								if (!isset($this->$modulename) || !is_object($this->$modulename)) {
-									$this->$modulename = new stdClass();
+									$this->$modulename = new stdClass();	// We need this to use the ->enabled and the ->multidir, ->dir...
 								}
-								$this->$modulename->enabled = true;
+								$this->$modulename->enabled = true;	// TODO Remove this
+
+								// Duplicate entry with the new name
+								/*
+								$mapping = $this->deprecatedProperties();
+								if (array_key_exists($modulename, $mapping)) {
+									$newmodulename = $mapping[$modulename];
+									$this->modules[$newmodulename] = $newmodulename;
+
+									if (!isset($this->$newmodulename) || !is_object($this->$newmodulename)) {
+										$this->$newmodulename = new stdClass();	// We need this to use the ->enabled and the ->multidir, ->dir...
+									}
+									$this->$newmodulename->enabled = true;	// TODO Remove this
+								}
+								*/
 							}
 						}
 					}
@@ -400,9 +496,8 @@ class Conf
 			if (!defined('NOREQUIREMC') && isModEnabled('multicompany')) {
 				global $mc;
 				$ret = @dol_include_once('/multicompany/class/actions_multicompany.class.php');
-				if ($ret) {
+				if ($ret && class_exists('ActionsMulticompany')) {
 					$mc = new ActionsMulticompany($db);
-					$this->mc = $mc;
 				}
 			}
 
@@ -495,6 +590,9 @@ class Conf
 			}
 
 			// For mycompany storage
+			$this->mycompany->multidir_output = array($this->entity => $rootfordata."/mycompany");
+			$this->mycompany->multidir_temp = array($this->entity => $rootfortemp."/mycompany/temp");
+			// For backward compatibility
 			$this->mycompany->dir_output = $rootfordata."/mycompany";
 			$this->mycompany->dir_temp = $rootfortemp."/mycompany/temp";
 
@@ -522,8 +620,8 @@ class Conf
 
 			// Exception: Some dir are not the name of module. So we keep exception here for backward compatibility.
 
-			// Module fournisseur
-			if (!empty($this->fournisseur)) {
+			// Module supplier is on
+			if (isModEnabled('fournisseur')) {
 				$this->fournisseur->commande = new stdClass();
 				$this->fournisseur->commande->multidir_output = array($this->entity => $rootfordata."/fournisseur/commande");
 				$this->fournisseur->commande->multidir_temp = array($this->entity => $rootfortemp."/fournisseur/commande/temp");
@@ -536,11 +634,11 @@ class Conf
 				$this->fournisseur->facture->dir_output = $rootfordata."/fournisseur/facture"; // For backward compatibility
 				$this->fournisseur->facture->dir_temp = $rootfortemp."/fournisseur/facture/temp"; // For backward compatibility
 
-				$this->supplierproposal = new stdClass();
-				$this->supplierproposal->multidir_output = array($this->entity => $rootfordata."/supplier_proposal");
-				$this->supplierproposal->multidir_temp = array($this->entity => $rootfortemp."/supplier_proposal/temp");
-				$this->supplierproposal->dir_output = $rootfordata."/supplier_proposal"; // For backward compatibility
-				$this->supplierproposal->dir_temp = $rootfortemp."/supplier_proposal/temp"; // For backward compatibility
+				$this->supplier_proposal = new stdClass();
+				$this->supplier_proposal->multidir_output = array($this->entity => $rootfordata."/supplier_proposal");
+				$this->supplier_proposal->multidir_temp = array($this->entity => $rootfortemp."/supplier_proposal/temp");
+				$this->supplier_proposal->dir_output = $rootfordata."/supplier_proposal"; // For backward compatibility
+				$this->supplier_proposal->dir_temp = $rootfortemp."/supplier_proposal/temp"; // For backward compatibility
 
 				$this->fournisseur->payment = new stdClass();
 				$this->fournisseur->payment->multidir_output = array($this->entity => $rootfordata."/fournisseur/payment");
@@ -548,8 +646,8 @@ class Conf
 				$this->fournisseur->payment->dir_output = $rootfordata."/fournisseur/payment"; // For backward compatibility
 				$this->fournisseur->payment->dir_temp = $rootfortemp."/fournisseur/payment/temp"; // For backward compatibility
 
-				// To prepare split of module fournisseur into module 'fournisseur' + supplier_order + supplier_invoice
-				if (!empty($this->fournisseur->enabled) && empty($this->global->MAIN_USE_NEW_SUPPLIERMOD)) {  // By default, if module supplier is on, and we don't use yet the new modules, we set artificially the module properties
+				// To prepare split of module supplier into module 'supplier' + 'supplier_order' + 'supplier_invoice'
+				if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {  // By default, if module supplier is on, and we don't use yet the new modules, we set artificially the module properties
 					$this->supplier_order = new stdClass();
 					$this->supplier_order->enabled = 1;
 					$this->supplier_order->multidir_output = array($this->entity => $rootfordata."/fournisseur/commande");
@@ -565,6 +663,11 @@ class Conf
 					$this->supplier_invoice->dir_temp = $rootfortemp."/fournisseur/facture/temp"; // For backward compatibility
 				}
 			}
+
+			// Module compta
+			$this->compta->payment = new stdClass();
+			$this->compta->payment->dir_output				= $rootfordata."/compta/payment";
+			$this->compta->payment->dir_temp					= $rootfortemp."/compta/payment/temp";
 
 			// Module product/service
 			$this->product->multidir_output 		= array($this->entity => $rootfordata."/produit");
@@ -622,12 +725,12 @@ class Conf
 				$this->global->MAIN_UMASK = '0660'; // Default mask
 			} else {
 				// We remove the execute bits on the file umask
-				$tmpumask = (octdec($this->global->MAIN_UMASK) & 0666);
+				$tmpumask = (octdec(getDolGlobalString('MAIN_UMASK')) & 0666);
 				$tmpumask = decoct($tmpumask);
-				if (!preg_match('/^0/', $tmpumask)) {
+				if (!preg_match('/^0/', $tmpumask)) {	// Convert string '123' into octal representation '0123'
 					$tmpumask = '0'.$tmpumask;
 				}
-				if (empty($tmpumask) || $tmpumask === '0') {
+				if (empty($tmpumask)) {		// when $tmpmask is null, '', or '0'
 					$tmpumask = '0664';
 				}
 				$this->global->MAIN_UMASK = $tmpumask;
@@ -650,15 +753,23 @@ class Conf
 				// If module lot/serial enabled, we force the inc/dec mode to STOCK_CALCULATE_ON_SHIPMENT_CLOSE and STOCK_CALCULATE_ON_RECEPTION_CLOSE
 				$this->global->STOCK_CALCULATE_ON_BILL = 0;
 				$this->global->STOCK_CALCULATE_ON_VALIDATE_ORDER = 0;
-				if (empty($this->global->STOCK_CALCULATE_ON_SHIPMENT)) $this->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE = 1;
-				if (empty($this->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) $this->global->STOCK_CALCULATE_ON_SHIPMENT = 1;
+				if (empty($this->global->STOCK_CALCULATE_ON_SHIPMENT)) {
+					$this->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE = 1;
+				}
+				if (empty($this->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) {
+					$this->global->STOCK_CALCULATE_ON_SHIPMENT = 1;
+				}
 				$this->global->STOCK_CALCULATE_ON_SUPPLIER_BILL = 0;
 				$this->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER = 0;
 				if (!isModEnabled('reception')) {
 					$this->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER = 1;
 				} else {
-					if (empty($this->global->STOCK_CALCULATE_ON_RECEPTION)) $this->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE = 1;
-					if (empty($this->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) $this->global->STOCK_CALCULATE_ON_RECEPTION = 1;
+					if (empty($this->global->STOCK_CALCULATE_ON_RECEPTION)) {
+						$this->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE = 1;
+					}
+					if (empty($this->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) {
+						$this->global->STOCK_CALCULATE_ON_RECEPTION = 1;
+					}
 				}
 			}
 
@@ -681,6 +792,10 @@ class Conf
 				$this->global->ACCOUNTING_MODE = 'RECETTES-DEPENSES'; // By default. Can be 'RECETTES-DEPENSES' ou 'CREANCES-DETTES'
 			}
 
+			if (!isset($this->global->MAIN_ENABLE_AJAX_TOOLTIP)) {
+				$this->global->MAIN_ENABLE_AJAX_TOOLTIP = 0;	// Not enabled by default (still trouble of persistent tooltip)
+			}
+
 			// By default, suppliers objects can be linked to all projects
 			if (!isset($this->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS)) {
 				$this->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS = 1;
@@ -693,23 +808,33 @@ class Conf
 
 			// MAIN_HTML_TITLE
 			if (!isset($this->global->MAIN_HTML_TITLE)) {
-				$this->global->MAIN_HTML_TITLE = 'noapp,thirdpartynameonly,contactnameonly,projectnameonly';
+				$this->global->MAIN_HTML_TITLE = 'thirdpartynameonly,contactnameonly,projectnameonly';
 			}
 
-			// conf->liste_limit = constante de taille maximale des listes
-			if (empty($this->global->MAIN_SIZE_LISTE_LIMIT)) {
-				$this->global->MAIN_SIZE_LISTE_LIMIT = 25;
+			// conf->liste_limit = constant to limit size of lists
+			$this->liste_limit = getDolGlobalInt('MAIN_SIZE_LISTE_LIMIT', 15);
+			if ((int) $this->liste_limit <= 0) {
+				// Mode automatic.
+				$this->liste_limit = 15;
+				if (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] < 910) {
+					$this->liste_limit = 10;
+				} elseif (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] > 1130) {
+					$this->liste_limit = 20;
+				}
 			}
-			$this->liste_limit = $this->global->MAIN_SIZE_LISTE_LIMIT;
 
-			// conf->product->limit_size = constante de taille maximale des select de produit
+			// conf->main_checkbox_left_column = constant to set checkbox list to left
+			if (!isset($this->main_checkbox_left_column)) {
+				$this->main_checkbox_left_column = getDolGlobalInt("MAIN_CHECKBOX_LEFT_COLUMN");
+			}
+
+			// Set PRODUIT_LIMIT_SIZE if never defined
 			if (!isset($this->global->PRODUIT_LIMIT_SIZE)) {
 				$this->global->PRODUIT_LIMIT_SIZE = 1000;
 			}
-			$this->product->limit_size = $this->global->PRODUIT_LIMIT_SIZE;
 
 			// Set PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE, may be modified later according to browser
-			$this->global->PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE = (isset($this->global->PRODUIT_DESC_IN_FORM) ? $this->global->PRODUIT_DESC_IN_FORM : 0);
+			$this->global->PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE = getDolGlobalInt('PRODUIT_DESC_IN_FORM');
 
 			// conf->theme et $this->css
 			if (empty($this->global->MAIN_THEME)) {
@@ -778,6 +903,9 @@ class Conf
 			if (!isset($this->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
 				$this->global->PDF_ALLOW_HTML_FOR_FREE_TEXT = 1; // allow html content into free footer text
 			}
+			if (!isset($this->global->MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING)) {
+				$this->global->MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING = 1;
+			}
 
 			// Default max file size for upload (deprecated)
 			//$this->maxfilesize = (empty($this->global->MAIN_UPLOAD_DOC) ? 0 : (int) $this->global->MAIN_UPLOAD_DOC * 1024);
@@ -812,11 +940,6 @@ class Conf
 				$this->global->USE_STRICT_CSV_RULES = 2;
 			}
 
-			// By default, option is on. Once set by user, this code is useless
-			if (!isset($this->global->ACCOUNTING_REEXPORT)) {
-				$this->global->ACCOUNTING_REEXPORT = 1;
-			}
-
 			// Use a SCA ready workflow with Stripe module (STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION by default if nothing defined)
 			if (!isset($this->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION) && empty($this->global->STRIPE_USE_NEW_CHECKOUT)) {
 				$this->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION = 1;
@@ -824,7 +947,7 @@ class Conf
 
 			// Define list of limited modules (value must be key found for "name" property of module, so for example 'supplierproposal' for Module "Supplier Proposal"
 			if (!isset($this->global->MAIN_MODULES_FOR_EXTERNAL)) {
-				$this->global->MAIN_MODULES_FOR_EXTERNAL = 'user,societe,propal,commande,facture,categorie,supplierproposal,fournisseur,contact,projet,contrat,ficheinter,expedition,reception,agenda,resource,adherent,blockedlog'; // '' means 'all'. Note that contact is added here as it should be a module later.
+				$this->global->MAIN_MODULES_FOR_EXTERNAL = 'user,societe,propal,commande,facture,categorie,supplierproposal,fournisseur,contact,projet,contrat,ficheinter,expedition,reception,agenda,resource,adherent,blockedlog,ticket'; // '' means 'all'. Note that contact is added here as it should be a module later.
 			}
 			if (!empty($this->modules_parts['moduleforexternal'])) {		// Module part to include an external module into the MAIN_MODULES_FOR_EXTERNAL list
 				foreach ($this->modules_parts['moduleforexternal'] as $key => $value) {
@@ -869,9 +992,9 @@ class Conf
 				$this->agenda->warning_delay = (isset($this->global->MAIN_DELAY_ACTIONS_TODO) ? (int) $this->global->MAIN_DELAY_ACTIONS_TODO : 7) * 86400;
 			}
 			if (isset($this->projet)) {
-				$this->projet->warning_delay = (isset($this->global->MAIN_DELAY_PROJECT_TO_CLOSE) ? (int) $this->global->MAIN_DELAY_PROJECT_TO_CLOSE : 7) * 86400;
+				$this->projet->warning_delay = (getDolGlobalInt('MAIN_DELAY_PROJECT_TO_CLOSE', 7) * 86400);
 				$this->projet->task = new StdClass();
-				$this->projet->task->warning_delay = (isset($this->global->MAIN_DELAY_TASKS_TODO) ? (int) $this->global->MAIN_DELAY_TASKS_TODO : 7) * 86400;
+				$this->projet->task->warning_delay = (getDolGlobalInt('MAIN_DELAY_TASKS_TODO', 7) * 86400);
 			}
 
 			if (isset($this->commande)) {
@@ -920,6 +1043,10 @@ class Conf
 				$this->global->PRODUIT_MULTIPRICES_LIMIT = 5;
 			}
 
+			if (!isset($this->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+				$this->global->MAIN_CHECKBOX_LEFT_COLUMN = 1;
+			}
+
 			// For modules that want to disable top or left menu
 			if (!empty($this->global->MAIN_HIDE_TOP_MENU)) {
 				$this->dol_hide_topmenu = $this->global->MAIN_HIDE_TOP_MENU;
@@ -952,8 +1079,8 @@ class Conf
 			if (!isset($this->global->MAIN_SECURITY_CSRF_WITH_TOKEN)) {
 				// Value 1 makes CSRF check for all POST parameters only
 				// Value 2 makes also CSRF check for GET requests with action = a sensitive requests like action=del, action=remove...
-				// Value 3 makes also CSRF check for all GET requests with a param action or massaction
-				$this->global->MAIN_SECURITY_CSRF_WITH_TOKEN = 2;
+				// Value 3 makes also CSRF check for all GET requests with a param action or massaction (except some non sensitive values)
+				$this->global->MAIN_SECURITY_CSRF_WITH_TOKEN = 2; // TODO Switch value to 3
 				// Note: Set MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL=1 to have a renewal of token at each page call instead of each session (not recommended)
 			}
 
@@ -962,7 +1089,7 @@ class Conf
 			}
 
 			if (!isset($this->global->MAIL_SMTP_USE_FROM_FOR_HELO)) {
-				$this->global->MAIL_SMTP_USE_FROM_FOR_HELO = 2;
+				$this->global->MAIL_SMTP_USE_FROM_FOR_HELO = 2;	// Use the domain in $dolibarr_main_url_root (mydomain.com)
 			}
 
 			if (!defined('MAIN_ANTIVIRUS_BYPASS_COMMAND_AND_PARAM')) {
@@ -1000,6 +1127,9 @@ class Conf
 			} else {
 				unset($this->global->MAIN_NO_CONCAT_DESCRIPTION);
 			}
+
+
+			// Simple deprecation management. We do not use DolDeprecationHandlet for $conf.
 
 			// product is new use
 			if (isset($this->product)) {
@@ -1071,8 +1201,8 @@ class Conf
 
 					require_once $handler_file_found;
 					$loghandlerinstance = new $handler();
-					if (!$loghandlerinstance instanceof LogHandlerInterface) {
-						throw new Exception('Log handler does not extend LogHandlerInterface');
+					if (!$loghandlerinstance instanceof LogHandler) {
+						throw new Exception('Log handler does not extend LogHandler');
 					}
 
 					if (empty($this->loghandlers[$handler])) {

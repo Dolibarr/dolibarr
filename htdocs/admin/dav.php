@@ -37,7 +37,9 @@ if (!$user->admin) {
 $action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
-
+if (empty($action)) {
+	$action = 'edit';
+}
 
 $arrayofparameters = array(
 	'DAV_RESTICT_ON_IP'=>array('css'=>'minwidth200', 'enabled'=>1),
@@ -58,6 +60,9 @@ dol_mkdir($conf->dav->dir_output.'/private');
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
+if ($action == 'update') {
+	$action = 'edit';
+}
 
 
 /*
@@ -66,7 +71,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 $help_url = 'EN:Module_DAV';
 
-llxHeader('', $langs->trans("DAVSetup"), $help_url);
+llxHeader('', $langs->trans("DAVSetup"), $help_url, '', 0, 0, '', '', '', 'mod-admin page-dav');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("DAVSetup"), $linkback, 'title_setup');
@@ -104,7 +109,7 @@ if ($action == 'edit') {
 		if ($key == 'DAV_ALLOW_PRIVATE_DIR') {
 			print $langs->trans("AlwaysActive");
 		} elseif ($key == 'DAV_ALLOW_PUBLIC_DIR' || $key == 'DAV_ALLOW_ECM_DIR') {
-			print $form->selectyesno($key, $conf->global->$key, 1);
+			print $form->selectyesno($key, getDolGlobalString($key), 1);
 		} else {
 			print '<input name="'.$key.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.getDolGlobalString($key).'">';
 		}
@@ -140,9 +145,9 @@ if ($action == 'edit') {
 		if ($key == 'DAV_ALLOW_PRIVATE_DIR') {
 			print $langs->trans("AlwaysActive");
 		} elseif ($key == 'DAV_ALLOW_PUBLIC_DIR' || $key == 'DAV_ALLOW_ECM_DIR') {
-			print yn($conf->global->$key);
+			print yn(getDolGlobalString($key));
 		} else {
-			print $conf->global->$key;
+			print getDolGlobalString($key);
 		}
 		print '</td></tr>';
 	}
@@ -189,7 +194,7 @@ $message .= '</div>';
 $message .= ajax_autoselect('webdavpublicurl');
 
 $message .= '<br>';
-if (!empty($conf->global->DAV_ALLOW_PUBLIC_DIR)) {
+if (getDolGlobalString('DAV_ALLOW_PUBLIC_DIR')) {
 	$urlEntity = (isModEnabled('multicompany') ? '?entity=' . $conf->entity : '');
 	$url = '<a href="' . $urlwithroot . '/dav/fileserver.php/public/' . $urlEntity . '" target="_blank" rel="noopener noreferrer">' . $urlwithroot . '/dav/fileserver.php/public/' . $urlEntity . '</a>';
 

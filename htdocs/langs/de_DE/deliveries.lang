@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Lieferung
 DeliveryRef=Ref. Lieferung
-DeliveryCard=Lieferschein – Übersicht
+DeliveryCard=Lieferschein
 DeliveryOrder=Lieferschein
 DeliveryDate=Liefertermin
 CreateDeliveryOrder=Lieferschein erstellen

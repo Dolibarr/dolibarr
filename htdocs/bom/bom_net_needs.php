@@ -33,21 +33,21 @@ require_once DOL_DOCUMENT_ROOT.'/bom/lib/bom.lib.php';
 $langs->loadLangs(array("mrp", "other", "stocks"));
 
 // Get parameters
-$id = GETPOST('id', 'int');
-$lineid = GETPOST('lineid', 'int');
+$id = GETPOSTINT('id');
+$lineid = GETPOSTINT('lineid');
 $ref    = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm  = GETPOST('confirm', 'alpha');
 $cancel   = GETPOST('cancel', 'aZ09');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'bomnet_needs'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'bomnet_needs'; // To manage different context of search
 $backtopage  = GETPOST('backtopage', 'alpha');
 
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new BOM($db);
 $extrafields = new ExtraFields($db);
 
-// Initialize technical objects for hooks
+// Initialize a technical objects for hooks
 $hookmanager->initHooks(array('bomnetneeds')); // Note that conf->hooks_modules contains array
 
 // Massaction
@@ -57,7 +57,7 @@ $diroutputmassaction = $conf->bom->dir_output.'/temp/massgeneration/'.$user->id;
 $extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-// Initialize array of search criterias
+// Initialize array of search criteria
 $search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val) {
@@ -71,7 +71,7 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 if ($object->id > 0) {
 	$object->calculateCosts();
 }
@@ -115,8 +115,13 @@ if (empty($reshook)) {
 			}
 		}
 	}
-	if ($action == 'treeview') $object->getNetNeedsTree($TChildBom, 1);
-	else $object->getNetNeeds($TChildBom, 1);
+
+	$TChildBom = array();
+	if ($action == 'treeview') {
+		$object->getNetNeedsTree($TChildBom, 1);
+	} else {
+		$object->getNetNeeds($TChildBom, 1);
+	}
 }
 
 
@@ -129,7 +134,7 @@ $formfile = new FormFile($db);
 
 $title = $langs->trans('BOM');
 $help_url ='EN:Module_BOM';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-bom page-net_needs');
 
 
 // Part to show record
@@ -187,35 +192,38 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	print dol_get_fiche_end();
 
-	$viewlink = dolGetButtonTitle($langs->trans('GroupByX', $langs->transnoentitiesnoconv("Products")), '', 'fa fa-bars imgforviewmode', $_SERVER['PHP_SELF'].'?id='.$object->id.'&token='.newToken(), '', 1, array('morecss' => 'reposition '.($action !== 'treeview' ? 'btnTitleSelected':'')));
-	$viewlink .= dolGetButtonTitle($langs->trans('TreeView'), '', 'fa fa-stream imgforviewmode', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=treeview&token='.newToken(), '', 1, array('morecss' => 'reposition marginleftonly '.($action == 'treeview' ? 'btnTitleSelected':'')));
+	$viewlink = dolGetButtonTitle($langs->trans('GroupByX', $langs->transnoentitiesnoconv("Products")), '', 'fa fa-bars imgforviewmode', $_SERVER['PHP_SELF'].'?id='.$object->id.'&token='.newToken(), '', 1, array('morecss' => 'reposition '.($action !== 'treeview' ? 'btnTitleSelected' : '')));
+	$viewlink .= dolGetButtonTitle($langs->trans('TreeView'), '', 'fa fa-stream imgforviewmode', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=treeview&token='.newToken(), '', 1, array('morecss' => 'reposition marginleftonly '.($action == 'treeview' ? 'btnTitleSelected' : '')));
 
-	print load_fiche_titre($langs->trans("BOMNetNeeds"), $viewlink, '');
+	print load_fiche_titre($langs->trans("BOMNetNeeds"), $viewlink, 'product');
 
 	/*
 	 * Lines
 	 */
 	$text_stock_options = $langs->trans("RealStockDesc").'<br>';
 	$text_stock_options .= $langs->trans("RealStockWillAutomaticallyWhen").'<br>';
-	$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE) ? '- '.$langs->trans("DeStockOnShipment").'<br>' : '');
-	$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) ? '- '.$langs->trans("DeStockOnValidateOrder").'<br>' : '');
-	$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_BILL) ? '- '.$langs->trans("DeStockOnBill").'<br>' : '');
-	$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) ? '- '.$langs->trans("ReStockOnBill").'<br>' : '');
-	$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) ? '- '.$langs->trans("ReStockOnValidateOrder").'<br>' : '');
-	$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) ? '- '.$langs->trans("ReStockOnDispatchOrder").'<br>' : '');
-	$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_RECEPTION) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE) ? '- '.$langs->trans("StockOnReception").'<br>' : '');
+	$text_stock_options .= (getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT') || getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE') ? '- '.$langs->trans("DeStockOnShipment").'<br>' : '');
+	$text_stock_options .= (getDolGlobalString('STOCK_CALCULATE_ON_VALIDATE_ORDER') ? '- '.$langs->trans("DeStockOnValidateOrder").'<br>' : '');
+	$text_stock_options .= (getDolGlobalString('STOCK_CALCULATE_ON_BILL') ? '- '.$langs->trans("DeStockOnBill").'<br>' : '');
+	$text_stock_options .= (getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_BILL') ? '- '.$langs->trans("ReStockOnBill").'<br>' : '');
+	$text_stock_options .= (getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER') ? '- '.$langs->trans("ReStockOnValidateOrder").'<br>' : '');
+	$text_stock_options .= (getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER') ? '- '.$langs->trans("ReStockOnDispatchOrder").'<br>' : '');
+	$text_stock_options .= (getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION') || getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION_CLOSE') ? '- '.$langs->trans("StockOnReception").'<br>' : '');
 
 	print '<table id="tablelines" class="noborder noshadow" width="100%">';
 	print "<thead>\n";
 	print '<tr class="liste_titre nodrag nodrop">';
 	print '<td class="linecoldescription">'.$langs->trans('Product');
-	if (!empty($conf->global->BOM_SUB_BOM)  && $action == 'treeview') {
+	if (getDolGlobalString('BOM_SUB_BOM')  && $action == 'treeview') {
 		print ' &nbsp; <a id="show_all" href="#">'.img_picto('', 'folder-open', 'class="paddingright"').$langs->trans("ExpandAll").'</a>&nbsp;&nbsp;';
 		print '<a id="hide_all" href="#">'.img_picto('', 'folder', 'class="paddingright"').$langs->trans("UndoExpandAll").'</a>&nbsp;';
 	}
 	print '</td>';
-	if ($action == 'treeview') print '<td class="left">'.$langs->trans('ProducedBy').'</td>';
+	if ($action == 'treeview') {
+		print '<td class="left">'.$langs->trans('ProducedBy').'</td>';
+	}
 	print '<td class="linecolqty right">'.$langs->trans('Quantity').'</td>';
+	print '<td></td>';	// For unit
 	print '<td class="linecolstock right">'.$form->textwithpicto($langs->trans("PhysicalStock"), $text_stock_options, 1).'</td>';
 	print '<td class="linecoltheoricalstock right">'.$form->textwithpicto($langs->trans("VirtualStock"), $langs->trans("VirtualStockDesc")).'</td>';
 	print  '</tr>';
@@ -229,16 +237,26 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				if (!empty($TProduct['bom'])) {
 					$prod = new Product($db);
 					$prod->fetch($TProduct['bom']->fk_product);
-					if ($TProduct['parentid'] != $object->id) print '<tr class="sub_bom_lines oddeven" parentid="'.$TProduct['parentid'].'">';
-					else print '<tr class="oddeven">';
-					if ($action == 'treeview') print '<td class="linecoldescription">'.str_repeat($repeatChar, $TProduct['level']).$prod->getNomUrl(1);
-					else print '<td class="linecoldescription">'.str_repeat($repeatChar, $TProduct['level']).$TProduct['bom']->getNomUrl(1);
+					if ($TProduct['parentid'] != $object->id) {
+						print '<tr class="sub_bom_lines oddeven" parentid="'.$TProduct['parentid'].'">';
+					} else {
+						print '<tr class="oddeven">';
+					}
+					if ($action == 'treeview') {
+						print '<td class="linecoldescription">'.str_repeat($repeatChar, $TProduct['level']).$prod->getNomUrl(1);
+					} else {
+						print '<td class="linecoldescription">'.str_repeat($repeatChar, $TProduct['level']).$TProduct['bom']->getNomUrl(1);
+					}
 					print ' <a class="collapse_bom" id="collapse-'.$fk_bom.'" href="#">';
 					print img_picto('', 'folder-open');
 					print '</a>';
 					print  '</td>';
-					if ($action == 'treeview') print '<td class="left">'.$TProduct['bom']->getNomUrl(1).'</td>';
+					if ($action == 'treeview') {
+						print '<td class="left">'.$TProduct['bom']->getNomUrl(1).'</td>';
+					}
 					print '<td class="linecolqty right">'.$TProduct['qty'].'</td>';
+					print '<td>';
+					print '</td>';
 					print '<td class="linecolstock right"></td>';
 					print '<td class="linecoltheoricalstock right"></td>';
 					print '</tr>';
@@ -248,12 +266,21 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						$prod = new Product($db);
 						$prod->fetch($fk_product);
 						$prod->load_virtual_stock();
-						if (empty($prod->stock_reel)) $prod->stock_reel = 0;
-						if ($fk_bom != $object->id) print '<tr class="sub_bom_lines oddeven" parentid="'.$fk_bom.'">';
-						else print '<tr class="oddeven">';
+						if (empty($prod->stock_reel)) {
+							$prod->stock_reel = 0;
+						}
+						if ($fk_bom != $object->id) {
+							print '<tr class="sub_bom_lines oddeven" parentid="'.$fk_bom.'">';
+						} else {
+							print '<tr class="oddeven">';
+						}
 						print '<td class="linecoldescription">'.str_repeat($repeatChar, $TInfos['level']).$prod->getNomUrl(1).'</td>';
-						if ($action == 'treeview') print '<td></td>';
+						if ($action == 'treeview') {
+							print '<td></td>';
+						}
 						print '<td class="linecolqty right">'.$TInfos['qty'].'</td>';
+						print '<td>';
+						print '</td>';
 						print '<td class="linecolstock right">'.price2num($prod->stock_reel, 'MS').'</td>';
 						print '<td class="linecoltheoricalstock right">'.$prod->stock_theorique.'</td>';
 						print '</tr>';
@@ -261,14 +288,25 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				}
 			}
 		} else {
-			foreach ($TChildBom as $fk_product => $qty) {
+			foreach ($TChildBom as $fk_product => $elem) {
 				$prod = new Product($db);
 				$prod->fetch($fk_product);
 				$prod->load_virtual_stock();
-				if (empty($prod->stock_reel)) $prod->stock_reel = 0;
+				if (empty($prod->stock_reel)) {
+					$prod->stock_reel = 0;
+				}
 				print '<tr class="oddeven">';
 				print '<td class="linecoldescription">'.$prod->getNomUrl(1).'</td>';
-				print '<td class="linecolqty right">'.$qty.'</td>';
+				print '<td class="linecolqty right">'.$elem['qty'].'</td>';
+				print '<td>';
+				$useunit = (($prod->type == Product::TYPE_PRODUCT && getDolGlobalInt('PRODUCT_USE_UNITS')) || (($prod->type == Product::TYPE_SERVICE) && ($elem['fk_unit'])));
+				if ($useunit) {
+					require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
+					$unit = new CUnits($db);
+					$unit->fetch($elem['fk_unit']);
+					print(isset($unit->label) ? "&nbsp;".$langs->trans(ucwords($unit->label))."&nbsp;" : '');
+				}
+				print '</td>';
 				print '<td class="linecolstock right">'.price2num($prod->stock_reel, 'MS').'</td>';
 				print '<td class="linecoltheoricalstock right">'.$prod->stock_theorique.'</td>';
 				print '</tr>';
@@ -289,10 +327,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if ($reshook < 0) {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 	}
-	print '</div>';
-
-
-	?>
+	print '</div>'; ?>
 
 		<script type="text/javascript" language="javascript">
 			$(document).ready(function() {

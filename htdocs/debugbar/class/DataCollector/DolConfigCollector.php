@@ -21,7 +21,7 @@
  *	\ingroup    debugbar
  */
 
-use \DebugBar\DataCollector\ConfigCollector;
+use DebugBar\DataCollector\ConfigCollector;
 
 /**
  * DolConfigCollector class
@@ -51,7 +51,7 @@ class DolConfigCollector extends ConfigCollector
 	/**
 	 *	Return collected data
 	 *
-	 *  @return    array   Array
+	 *  @return    array   Array of collected data
 	 */
 	public function collect()
 	{

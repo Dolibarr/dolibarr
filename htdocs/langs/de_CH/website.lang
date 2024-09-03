@@ -8,3 +8,6 @@ WEBSITE_CSS_URL=URL zu externer CSS Datei
 ViewSiteInNewTab=Webauftritt in neuem Tab anzeigen
 SetAsHomePage=Als Startseite definieren
 WebsiteAccounts=Webseitenkonten
+WebPortalInvoiceListMenu=Rechnungen
+WebPortalMemberCardTitle=Mitgliederkarte
+WebPortalMemberCardDesc=Mitgliederkarte

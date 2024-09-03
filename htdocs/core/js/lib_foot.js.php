@@ -70,20 +70,22 @@ jQuery(document).ready(function () {\n";
 
 if (empty($conf->dol_no_mouse_hover)) {
 	print '
+    /* for standard tooltip */
 	jQuery(".classfortooltip").tooltip({
+		tooltipClass: "mytooltip",
 		show: { collision: "flipfit", effect:"toggle", delay:50, duration: 20 },
 		hide: { delay: 250, duration: 20 },
-		tooltipClass: "mytooltip",
 		content: function () {
 			console.log("Return title for popup");
 			return $(this).prop("title");		/* To force to get title as is */
 		}
 	});
 
-	var opendelay = 80;
+	var opendelay = 100;
 	var elemtostoretooltiptimer = jQuery("#dialogforpopup");
 	var currenttoken = jQuery("meta[name=anti-csrf-currenttoken]").attr("content");
 
+	/* for ajax tooltip */
 	target = jQuery(".classforajaxtooltip");
 	target.tooltip({
 		tooltipClass: "mytooltip",
@@ -94,12 +96,13 @@ if (empty($conf->dol_no_mouse_hover)) {
 	target.off("mouseover mouseout");
 	target.on("mouseover", function(event) {
 		console.log("we will create timer for ajax call");
+	    event.stopImmediatePropagation();
+		clearTimeout(elemtostoretooltiptimer.data("openTimeoutId"));
+
 		var params = JSON.parse($(this).attr("data-params"));
 		params.token = currenttoken;
 		var elemfortooltip = $(this);
 
-	    event.stopImmediatePropagation();
-		clearTimeout(elemtostoretooltiptimer.data("openTimeoutId"));
 	    elemtostoretooltiptimer.data("openTimeoutId", setTimeout(function() {
 			target.tooltip("close");
 			$.ajax({
@@ -117,7 +120,7 @@ if (empty($conf->dol_no_mouse_hover)) {
 			 }, opendelay));
 	});
 	target.on("mouseout", function(event) {
-		console.log("mouse out");
+		console.log("mouse out of a .classforajaxtooltip");
 	    event.stopImmediatePropagation();
 	    clearTimeout(elemtostoretooltiptimer.data("openTimeoutId"));
 	    target.tooltip("close");
@@ -128,7 +131,7 @@ if (empty($conf->dol_no_mouse_hover)) {
 print '
 	jQuery(".classfortooltiponclicktext").dialog({
 		closeOnEscape: true, classes: { "ui-dialog": "highlight" },
-		maxHeight: window.innerHeight-60, width: '.($conf->browser->layout == 'phone' ? max($_SESSION['dol_screenwidth'] - 20, 320) : 700).',
+		maxHeight: window.innerHeight-60, width: '.($conf->browser->layout == 'phone' ? max((empty($_SESSION['dol_screenwidth']) ? 0 : $_SESSION['dol_screenwidth']) - 20, 320) : 700).',
 		modal: true,
 		autoOpen: false
 	}).css("z-index: 5000");
@@ -153,6 +156,7 @@ if (!defined('JS_JQUERY_DISABLE_DROPDOWN')) {
                   // Click onto the link "link to" or "hamburger", toggle dropdown
 				  $(document).on(\'click\', \'.dropdown dt a\', function () {
                   	  console.log("toggle dropdown dt a");
+                  	  setTimeout(() => { $(\'.inputsearch_dropdownselectedfields\').focus(); }, 200);
 
                       //$(this).parent().parent().find(\'dd ul\').slideToggle(\'fast\');
                       $(".ulselectedfields").removeClass("open");
@@ -229,7 +233,7 @@ if ($conf->browser->layout != 'phone') {
 print "\n/* JS CODE TO ENABLE reposition management (does not work if a redirect is done after action of submission) */\n";
 print '
 	jQuery(document).ready(function() {
-				/* If page_y set, we set scollbar with it */
+				/* If page_y set, we set scrollbar with it */
 				page_y=getParameterByName(\'page_y\', 0);				/* search in GET parameter */
 				if (page_y == 0) page_y = jQuery("#page_y").text();		/* search in POST parameter that is filed at bottom of page */
 				if (page_y > 0)

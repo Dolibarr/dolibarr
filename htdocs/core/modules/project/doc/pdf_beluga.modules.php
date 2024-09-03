@@ -2,6 +2,8 @@
 /* Copyright (C) 2010-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2018  Charlene Benke          <charlie@patas-monkey.com>
  * Copyright (C) 2018       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,14 +57,9 @@ require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 class pdf_beluga extends ModelePDFProjects
 {
 	/**
-	 * @var DoliDb Database handler
+	 * @var DoliDB Database handler
 	 */
 	public $db;
-
-	/**
-	 * @var string model name
-	 */
-	public $name;
 
 	/**
 	 * @var string model description (short text)
@@ -80,51 +77,10 @@ class pdf_beluga extends ModelePDFProjects
 	public $type;
 
 	/**
-	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 7.0 = array(7, 0)
-	 */
-	public $phpmin = array(7, 0);
-
-	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr';
-
-	 /**
-	  * @var int page_largeur
-	  */
-	public $page_largeur;
-
-	/**
-	 * @var int page_hauteur
-	 */
-	public $page_hauteur;
-
-	/**
-	 * @var array format
-	 */
-	public $format;
-
-	/**
-	 * @var int marge_gauche
-	 */
-	public $marge_gauche;
-
-	/**
-	 * @var int marge_droite
-	 */
-	public $marge_droite;
-
-	/**
-	 * @var int marge_haute
-	 */
-	public $marge_haute;
-
-	/**
-	 * @var int marge_basse
-	 */
-	public $marge_basse;
 
 	/**
 	 * Page orientation
@@ -132,18 +88,12 @@ class pdf_beluga extends ModelePDFProjects
 	 */
 	private $orientation;
 
-	/**
-	 * Issuer
-	 * @var Societe
-	 */
-	public $emetteur;
-
 	public $posxref;
 	public $posxdate;
-	public $posxsociete;
+	public $posxsociety;
 	public $posxamountht;
 	public $posxamountttc;
-	public $posstatut;
+	public $posxstatut;
 
 
 	/**
@@ -208,23 +158,24 @@ class pdf_beluga extends ModelePDFProjects
 		if ($this->page_largeur < 210) { // To work with US executive format
 			$this->posxref -= 20;
 			$this->posxdate -= 20;
-			$this->posxsociete -= 20;
+			$this->posxsociety -= 20;
 			$this->posxamountht -= 20;
 			$this->posxamountttc -= 20;
-			$this->posstatut -= 20;
+			$this->posxstatut -= 20;
 		}
 	}
 
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Fonction generant le projet sur le disque
+	 *	Function generating the project on disk
 	 *
-	 *	@param	Project		$object   		Object project a generer
-	 *	@param	Translate	$outputlangs	Lang output object
-	 *	@return	int         				1 if OK, <=0 if KO
+	 *	@param	Project		$object					Object source to build document
+	 *	@param	Translate	$outputlangs			Lang output object
+	 * 	@param	string		$srctemplatepath	    Full path of source filename for generator using a template file
+	 *	@return	int<-1,1>      						1 if OK, <=0 if KO
 	 */
-	public function write_file($object, $outputlangs)
+	public function write_file($object, $outputlangs, $srctemplatepath = '')
 	{
 		// phpcs:enable
 		global $conf, $hookmanager, $langs, $user;
@@ -235,7 +186,7 @@ class pdf_beluga extends ModelePDFProjects
 			$outputlangs = $langs;
 		}
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (!empty($conf->global->MAIN_USE_FPDF)) {
+		if (getDolGlobalString('MAIN_USE_FPDF')) {
 			$outputlangs->charset_output = 'ISO-8859-1';
 		}
 
@@ -266,7 +217,7 @@ class pdf_beluga extends ModelePDFProjects
 					$hookmanager = new HookManager($this->db);
 				}
 				$hookmanager->initHooks(array('pdfgeneration'));
-				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
@@ -276,9 +227,9 @@ class pdf_beluga extends ModelePDFProjects
 				$pdf->SetAutoPageBreak(1, 0);
 
 				$heightforinfotot = 40; // Height reserved to output the info and total part
-				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
+				$heightforfreetext = getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT', 5); // Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
-				if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS)) {
+				if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS')) {
 					$heightforfooter += 6;
 				}
 
@@ -288,12 +239,12 @@ class pdf_beluga extends ModelePDFProjects
 				}
 				$pdf->SetFont(pdf_getPDFFont($outputlangs));
 				// Set path to the background PDF File
-				if (!empty($conf->global->MAIN_ADD_PDF_BACKGROUND)) {
-					$pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
+				if (getDolGlobalString('MAIN_ADD_PDF_BACKGROUND')) {
+					$pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/' . getDolGlobalString('MAIN_ADD_PDF_BACKGROUND'));
 					$tplidx = $pdf->importPage(1);
 				}
 
-				// Complete object by loading several other informations
+				// Complete object by loading several other information
 				$task = new Task($this->db);
 				$tasksarray = array();
 				$tasksarray = $task->getTasksArray(0, 0, $object->id);
@@ -319,6 +270,7 @@ class pdf_beluga extends ModelePDFProjects
 					$pdf->SetCompression(false);
 				}
 
+				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 				// New page
@@ -356,7 +308,7 @@ class pdf_beluga extends ModelePDFProjects
 					$pdf->SetDrawColor(192, 192, 192);
 					$pdf->Rect($this->marge_gauche, $tab_top - 2, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_note + 2);
 
-					$tab_height = $tab_height - $height_note;
+					$tab_height -= $height_note;
 					$tab_top = $nexY + 6;
 				} else {
 					$height_note = 0;
@@ -368,106 +320,106 @@ class pdf_beluga extends ModelePDFProjects
 				$nexY = $tab_top + $heightoftitleline + 1;
 
 				$listofreferent = array(
-					'propal'=>array(
-						'name'=>"Proposals",
-						'title'=>"ListProposalsAssociatedProject",
-						'class'=>'Propal',
-						'table'=>'propal',
-						'datefieldname'=>'datep',
-						'test'=> isModEnabled('propal') && $user->hasRight('propal', 'lire'),
-						'lang'=>'propal'),
-					'order'=>array(
-						'name'=>"CustomersOrders",
-						'title'=>"ListOrdersAssociatedProject",
-						'class'=>'Commande',
-						'table'=>'commande',
-						'datefieldname'=>'date_commande',
-						'test'=> isModEnabled('commande') && $user->hasRight('commande', 'lire'),
-						'lang'=>'orders'),
-					'invoice'=>array(
-						'name'=>"CustomersInvoices",
-						'title'=>"ListInvoicesAssociatedProject",
-						'class'=>'Facture',
-						'margin'=>'add',
-						'table'=>'facture',
-						'datefieldname'=>'datef',
-						'test'=> isModEnabled('facture') && $user->hasRight('facture', 'lire'),
-						'lang'=>'bills'),
-					'invoice_predefined'=>array(
-						'name'=>"PredefinedInvoices",
-						'title'=>"ListPredefinedInvoicesAssociatedProject",
-						'class'=>'FactureRec',
-						'table'=>'facture_rec',
-						'datefieldname'=>'datec',
-						'test'=> isModEnabled('facture') && $user->hasRight('facture', 'lire'),
-						'lang'=>'bills'),
-					'order_supplier'=>array(
-						'name'=>"SuppliersOrders",
-						'title'=>"ListSupplierOrdersAssociatedProject",
-						'class'=>'CommandeFournisseur',
-						'table'=>'commande_fournisseur',
-						'datefieldname'=>'date_commande',
-						'test'=>(isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->commande->lire) || (isModEnabled("supplier_order") && $user->rights->supplier_order->lire),
-						'lang'=>'orders'),
-					'invoice_supplier'=>array(
-						'name'=>"BillsSuppliers",
-						'title'=>"ListSupplierInvoicesAssociatedProject",
-						'class'=>'FactureFournisseur',
-						'margin'=>'minus',
-						'table'=>'facture_fourn',
-						'datefieldname'=>'datef',
-						'test'=>(isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->facture->lire) || (isModEnabled("supplier_invoice") && $user->rights->supplier_invoice->lire),
-						'lang'=>'bills'),
-					'contract'=>array(
-						'name'=>"Contracts",
-						'title'=>"ListContractAssociatedProject",
-						'class'=>'Contrat',
-						'table'=>'contrat',
-						'datefieldname'=>'date_contrat',
-						'test'=> isModEnabled('contrat') && $user->hasRight('contrat', 'lire'),
-						'lang'=>'contract'),
-					'intervention'=>array(
-						'name'=>"Interventions",
-						'title'=>"ListFichinterAssociatedProject",
-						'class'=>'Fichinter',
-						'table'=>'fichinter',
-						'datefieldname'=>'date_valid',
-						'disableamount'=>1,
-						'test'=>$conf->ficheinter->enabled && $user->hasRight('ficheinter', 'lire'),
-						'lang'=>'interventions'),
-					'trip'=>array(
-						'name'=>"TripsAndExpenses",
-						'title'=>"ListExpenseReportsAssociatedProject",
-						'class'=>'Deplacement',
-						'table'=>'deplacement',
-						'datefieldname'=>'dated',
-						'margin'=>'minus',
-						'disableamount'=>1,
-						'test'=>$conf->deplacement->enabled && $user->rights->deplacement->lire,
-						'lang'=>'trip'),
-					'expensereport'=>array(
-						'name'=>"ExpensesReports",
-						'title'=>"ListExpenseReportsAssociatedProject",
-						'class'=>'ExpenseReport',
-						'table'=>'expensereport',
-						'datefieldname'=>'dated',
-						'margin'=>'minus',
-						'disableamount'=>1,
-						'test'=>$conf->expensereport->enabled && $user->rights->expensereport->lire,
-						'lang'=>'trip'),
-					'agenda'=>array(
-						'name'=>"Agenda",
-						'title'=>"ListActionsAssociatedProject",
-						'class'=>'ActionComm',
-						'table'=>'actioncomm',
-						'datefieldname'=>'datep',
-						'disableamount'=>1,
-						'test'=>$conf->agenda->enabled && $user->rights->agenda->allactions->read,
-						'lang'=>'agenda')
+					'propal' => array(
+						'name' => "Proposals",
+						'title' => "ListProposalsAssociatedProject",
+						'class' => 'Propal',
+						'table' => 'propal',
+						'datefieldname' => 'datep',
+						'test' => isModEnabled('propal') && $user->hasRight('propal', 'lire'),
+						'lang' => 'propal'),
+					'order' => array(
+						'name' => "CustomersOrders",
+						'title' => "ListOrdersAssociatedProject",
+						'class' => 'Commande',
+						'table' => 'commande',
+						'datefieldname' => 'date_commande',
+						'test' => isModEnabled('order') && $user->hasRight('commande', 'lire'),
+						'lang' => 'orders'),
+					'invoice' => array(
+						'name' => "CustomersInvoices",
+						'title' => "ListInvoicesAssociatedProject",
+						'class' => 'Facture',
+						'margin' => 'add',
+						'table' => 'facture',
+						'datefieldname' => 'datef',
+						'test' => isModEnabled('invoice') && $user->hasRight('facture', 'lire'),
+						'lang' => 'bills'),
+					'invoice_predefined' => array(
+						'name' => "PredefinedInvoices",
+						'title' => "ListPredefinedInvoicesAssociatedProject",
+						'class' => 'FactureRec',
+						'table' => 'facture_rec',
+						'datefieldname' => 'datec',
+						'test' => isModEnabled('invoice') && $user->hasRight('facture', 'lire'),
+						'lang' => 'bills'),
+					'order_supplier' => array(
+						'name' => "SuppliersOrders",
+						'title' => "ListSupplierOrdersAssociatedProject",
+						'class' => 'CommandeFournisseur',
+						'table' => 'commande_fournisseur',
+						'datefieldname' => 'date_commande',
+						'test' => (isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') && $user->hasRight('fournisseur', 'commande', 'lire')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')),
+						'lang' => 'orders'),
+					'invoice_supplier' => array(
+						'name' => "BillsSuppliers",
+						'title' => "ListSupplierInvoicesAssociatedProject",
+						'class' => 'FactureFournisseur',
+						'margin' => 'minus',
+						'table' => 'facture_fourn',
+						'datefieldname' => 'datef',
+						'test' => (isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') && $user->hasRight('fournisseur', 'facture', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire')),
+						'lang' => 'bills'),
+					'contract' => array(
+						'name' => "Contracts",
+						'title' => "ListContractAssociatedProject",
+						'class' => 'Contrat',
+						'table' => 'contrat',
+						'datefieldname' => 'date_contrat',
+						'test' => isModEnabled('contract') && $user->hasRight('contrat', 'lire'),
+						'lang' => 'contract'),
+					'intervention' => array(
+						'name' => "Interventions",
+						'title' => "ListFichinterAssociatedProject",
+						'class' => 'Fichinter',
+						'table' => 'fichinter',
+						'datefieldname' => 'date_valid',
+						'disableamount' => 1,
+						'test' => isModEnabled('intervention') && $user->hasRight('ficheinter', 'lire'),
+						'lang' => 'interventions'),
+					'trip' => array(
+						'name' => "TripsAndExpenses",
+						'title' => "ListExpenseReportsAssociatedProject",
+						'class' => 'Deplacement',
+						'table' => 'deplacement',
+						'datefieldname' => 'dated',
+						'margin' => 'minus',
+						'disableamount' => 1,
+						'test' => isModEnabled('deplacement') && $user->hasRight('deplacement', 'lire'),
+						'lang' => 'trip'),
+					'expensereport' => array(
+						'name' => "ExpensesReports",
+						'title' => "ListExpenseReportsAssociatedProject",
+						'class' => 'ExpenseReport',
+						'table' => 'expensereport',
+						'datefieldname' => 'dated',
+						'margin' => 'minus',
+						'disableamount' => 1,
+						'test' => isModEnabled('expensereport') && $user->hasRight('expensereport', 'lire'),
+						'lang' => 'trip'),
+					'agenda' => array(
+						'name' => "Agenda",
+						'title' => "ListActionsAssociatedProject",
+						'class' => 'ActionComm',
+						'table' => 'actioncomm',
+						'datefieldname' => 'datep',
+						'disableamount' => 1,
+						'test' => isModEnabled('agenda') && $user->hasRight('agenda', 'allactions', 'read'),
+						'lang' => 'agenda')
 				);
 
 				$hookmanager->initHooks(array('completeListOfReferent'));
-				$hookmanager->executeHooks('completeListOfReferent', ['listofreferent'=>$listofreferent], $object, $action);
+				$hookmanager->executeHooks('completeListOfReferent', ['listofreferent' => $listofreferent], $object, $action);
 				if (!empty($hookmanager->resArray)) {
 					$listofreferent = array_merge($listofreferent, $hookmanager->resArray);
 				}
@@ -487,7 +439,7 @@ class pdf_beluga extends ModelePDFProjects
 					}
 
 					//var_dump("$key, $tablename, $datefieldname, $dates, $datee");
-					$elementarray = $object->get_element_list($key, $tablename, $datefieldname, '', '', $projectField);
+					$elementarray = $object->get_element_list($key, $tablename, $datefieldname, null, null, $projectField);
 
 					$num = count($elementarray);
 					if ($num >= 0) {
@@ -596,7 +548,7 @@ class pdf_beluga extends ModelePDFProjects
 										// We found a page break
 
 										// Allows data in the first page if description is long enough to break in multiples pages
-										if (!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE)) {
+										if (getDolGlobalString('MAIN_PDF_DATA_ON_FIRST_PAGE')) {
 											$showpricebeforepagebreak = 1;
 										} else {
 											$showpricebeforepagebreak = 0;
@@ -616,7 +568,7 @@ class pdf_beluga extends ModelePDFProjects
 												$this->_pagehead($pdf, $object, 0, $outputlangs);
 											}
 											$pdf->setPage($pageposafter + 1);
-											$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par defaut
+											$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par default
 											$pdf->MultiCell(0, 3, ''); // Set interline to 3
 											$pdf->SetTextColor(0, 0, 0);
 
@@ -632,8 +584,7 @@ class pdf_beluga extends ModelePDFProjects
 										}
 									}
 									//var_dump($i.' '.$posybefore.' '.$posyafter.' '.($this->page_hauteur -  ($heightforfooter + $heightforfreetext + $heightforinfotot)).' '.$showpricebeforepagebreak);
-								} else // No pagebreak
-								{
+								} else { // No pagebreak
 									$pdf->commitTransaction();
 								}
 								$posYAfterDescription = $pdf->GetY();
@@ -651,7 +602,7 @@ class pdf_beluga extends ModelePDFProjects
 									$curY = $tab_top_newpage + $heightoftitleline + 1;
 								}
 
-								$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par defaut
+								$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par default
 
 								// Date
 								if ($tablename == 'commande_fournisseur' || $tablename == 'supplier_order') {
@@ -665,7 +616,7 @@ class pdf_beluga extends ModelePDFProjects
 										$date = $element->date_contrat;
 									}
 									if (empty($date)) {
-										$date = $element->datev; // Fiche inter
+										$date = $element->datev; // Intervention card
 									}
 								}
 
@@ -708,8 +659,8 @@ class pdf_beluga extends ModelePDFProjects
 								$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxstatut, 3, $outputstatut, 1, 'R', false, 1, '', '', true, 0, true);
 
 								if ($qualifiedfortotal) {
-									$total_ht = $total_ht + $element->total_ht;
-									$total_ttc = $total_ttc + $element->total_ttc;
+									$total_ht += $element->total_ht;
+									$total_ttc += $element->total_ttc;
 								}
 								$nexY = $pdf->GetY();
 								$curY = $nexY;
@@ -752,7 +703,7 @@ class pdf_beluga extends ModelePDFProjects
 				// Pied de page
 				$this->_pagefoot($pdf, $object, $outputlangs);
 				if (method_exists($pdf, 'AliasNbPages')) {
-					$pdf->AliasNbPages();
+					$pdf->AliasNbPages();  // @phan-suppress-current-line PhanUndeclaredMethod
 				}
 
 				$pdf->Close();
@@ -761,7 +712,7 @@ class pdf_beluga extends ModelePDFProjects
 
 				// Add pdfgeneration hook
 				$hookmanager->initHooks(array('pdfgeneration'));
-				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {
@@ -771,7 +722,7 @@ class pdf_beluga extends ModelePDFProjects
 
 				dolChmod($file);
 
-				$this->result = array('fullpath'=>$file);
+				$this->result = array('fullpath' => $file);
 
 				return 1; // No error
 			} else {
@@ -789,8 +740,8 @@ class pdf_beluga extends ModelePDFProjects
 	 *   Show table for lines
 	 *
 	 *   @param		TCPDF		$pdf     		Object PDF
-	 *   @param		string		$tab_top		Top position of table
-	 *   @param		string		$tab_height		Height of table (rectangle)
+	 *   @param		float|int	$tab_top		Top position of table
+	 *   @param		float|int	$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @param		int			$hidetop		Hide top bar of array
@@ -823,7 +774,7 @@ class pdf_beluga extends ModelePDFProjects
 	 *  @param  Project		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
-	 *  @return	void
+	 *  @return	float|int                   Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
@@ -879,6 +830,8 @@ class pdf_beluga extends ModelePDFProjects
 		}
 
 		$pdf->SetTextColor(0, 0, 60);
+
+		return 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

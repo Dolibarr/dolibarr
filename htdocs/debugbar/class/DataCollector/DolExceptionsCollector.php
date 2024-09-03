@@ -21,7 +21,7 @@
  *	\ingroup    debugbar
  */
 
-use \DebugBar\DataCollector\ExceptionsCollector;
+use DebugBar\DataCollector\ExceptionsCollector;
 
 /**
  * DolExceptionsCollector class

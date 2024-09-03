@@ -158,7 +158,7 @@ CountryMX=ເມັກຊິໂກ
 CountryFM=ໄມໂຄຣນີເຊຍ
 CountryMD=ມອນໂດວາ
 CountryMN=ມົງໂກລີ
-CountryMS=Monserrat
+CountryMS=Montserrat
 CountryMZ=ໂມຊໍາບິກ
 CountryMM=ມຽນມາ (ມຽນມາ)
 CountryNA=ນາມິເບຍ
@@ -247,10 +247,13 @@ CountryJE=Jersey
 CountryME=ມອນເຕເນໂກຣ
 CountryBL=ເຊນ Barthelemy
 CountryMF=ເຊນມາຕິນ
+CountryXK=ໂຄໂຊໂວ
 
 ##### Civilities #####
 CivilityMME=ນາງ.
+CivilityMMEShort=ນາງ.
 CivilityMR=ທ້າວ.
+CivilityMRShort=ທ້າວ.
 CivilityMLE=ນາງ​ສາວ.
 CivilityMTRE=ອາຈານ
 CivilityDR=ທ່ານໍ

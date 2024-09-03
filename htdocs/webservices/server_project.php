@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2016      Ion Agorria          <ion@agorria.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,11 +22,29 @@
  *       \brief      File that is entry point to call Dolibarr WebServices
  */
 
-if (!defined("NOCSRFCHECK")) {
-	define("NOCSRFCHECK", '1');
+if (!defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', '1'); // Do not check anti CSRF attack test
+}
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1'); // Do not check anti POST attack test
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1'); // If there is no need to load and show top and left menu
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1'); // Do not load ajax.lib.php library
+}
+if (!defined("NOLOGIN")) {
+	define("NOLOGIN", '1'); // If this page is public (can be called outside logged session)
+}
+if (!defined("NOSESSION")) {
+	define("NOSESSION", '1');
 }
 
-require '../master.inc.php';
+require '../main.inc.php';
 require_once NUSOAP_PATH.'/nusoap.php'; // Include SOAP
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ws.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -39,7 +58,7 @@ dol_syslog("Call Dolibarr webservices interfaces");
 $langs->load("main");
 
 // Enable and test if module web services is enabled
-if (empty($conf->global->MAIN_MODULE_WEBSERVICES)) {
+if (!getDolGlobalString('MAIN_MODULE_WEBSERVICES')) {
 	$langs->load("admin");
 	dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
 	print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
@@ -166,7 +185,7 @@ $elementtype = 'project';
 $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($elementtype, true);
 $extrafield_array = null;
-if (is_array($extrafields) && count($extrafields) > 0) {
+if (is_array($extrafields->attributes) && $extrafields->attributes[$elementtype]['count'] > 0) {
 	$extrafield_array = array();
 }
 if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
@@ -249,19 +268,22 @@ function createProject($authentication, $project)
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
 	if (empty($project['ref'])) {
-		$error++; $errorcode = 'KO'; $errorlabel = "Name is mandatory.";
+		$error++;
+		$errorcode = 'KO';
+		$errorlabel = "Name is mandatory.";
 	}
 
 
 	if (!$error) {
-		$fuser->getrights();
+		$fuser->loadRights();
 
-		if ($fuser->rights->projet->creer) {
+		if ($fuser->hasRight('projet', 'creer')) {
 			$newobject = new Project($db);
 			$newobject->ref = $project['ref'];
 			$newobject->title = $project['label'];
@@ -310,7 +332,8 @@ function createProject($authentication, $project)
 			}
 		} else {
 			$error++;
-			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
+			$errorcode = 'PERMISSION_DENIED';
+			$errorlabel = 'User does not have permission for this request';
 		}
 	}
 
@@ -341,19 +364,21 @@ function getProject($authentication, $id = '', $ref = '')
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
 	if (!$error && (($id && $ref))) {
 		$error++;
-		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter id and ref can't be both provided. You must choose one or other but not both.";
+		$errorcode = 'BAD_PARAMETERS';
+		$errorlabel = "Parameter id and ref can't be both provided. You must choose one or other but not both.";
 	}
 
 	if (!$error) {
-		$fuser->getrights();
+		$fuser->loadRights();
 
-		if ($fuser->rights->projet->lire) {
+		if ($fuser->hasRight('projet', 'lire')) {
 			$project = new Project($db);
 			$result = $project->fetch($id, $ref);
 			if ($result > 0) {
@@ -408,11 +433,13 @@ function getProject($authentication, $id = '', $ref = '')
 				);
 			} else {
 				$error++;
-				$errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id.' nor ref='.$ref;
+				$errorcode = 'NOT_FOUND';
+				$errorlabel = 'Object not found for id='.$id.' nor ref='.$ref;
 			}
 		} else {
 			$error++;
-			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
+			$errorcode = 'PERMISSION_DENIED';
+			$errorlabel = 'User does not have permission for this request';
 		}
 	}
 

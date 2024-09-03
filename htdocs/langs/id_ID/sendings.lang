@@ -39,7 +39,7 @@ StatusSendingValidatedShort=Divalidasi
 StatusSendingProcessedShort=Diproses
 SendingSheet=Lembar pengiriman
 ConfirmDeleteSending=Anda yakin ingin menghapus kiriman ini?
-ConfirmValidateSending=Apakah Anda yakin ingin memvalidasi pengiriman ini dengan referensi<b>%s </b>?
+ConfirmValidateSending=Apakah Anda yakin ingin memvalidasi pengiriman ini dengan referensi <b>%s</b>?
 ConfirmCancelSending=Anda yakin ingin membatalkan pengiriman ini?
 DocumentModelMerou=Model Merou A5
 WarningNoQtyLeftToSend=Peringatan, tidak ada produk yang menunggu untuk dikirim.
@@ -48,7 +48,7 @@ DateDeliveryPlanned=Tanggal pengiriman yang direncanakan
 RefDeliveryReceipt=Kwitansi pengiriman Ref
 StatusReceipt=Tanda terima pengiriman status
 DateReceived=Tanggal pengiriman diterima
-ClassifyReception=Klasifikasi penerimaan
+ClassifyReception=Klasifikasikan Diterima
 SendShippingByEMail=Kirim kiriman melalui email
 SendShippingRef=Pengajuan pengiriman %s
 ActionsOnShipping=Acara pengiriman
@@ -62,6 +62,10 @@ ProductQtyInSuppliersShipmentAlreadyRecevied=Kuantitas produk dari pesanan pembe
 NoProductToShipFoundIntoStock=Tidak ada produk untuk dikirim ditemukan di gudang<b>%s </b>. Perbaiki stok atau kembali untuk memilih gudang lain.
 WeightVolShort=Berat / Vol.
 ValidateOrderFirstBeforeShipment=Anda harus terlebih dahulu memvalidasi pesanan sebelum dapat melakukan pengiriman.
+NoLineGoOnTabToAddSome=Tidak ada baris, buka tab "%s" untuk menambahkan
+CreateInvoiceForThisCustomerFromSendings=Pengiriman tagihan
+IfValidateInvoiceIsNoSendingStayUnbilled=Jika validasi invoice 'Tidak', pengiriman akan tetap berstatus 'Tidak Ditagih' hingga invoice divalidasi.
+OptionToSetSendingBilledNotEnabled=Opsi dari modul Alur Kerja, untuk menyetel pengiriman ke 'Ditagih' secara otomatis saat faktur divalidasi, tidak diaktifkan, jadi Anda harus menyetel status pengiriman ke 'Ditagih' secara manual setelah faktur dibuat.
 
 # Sending methods
 # ModelDocument
@@ -70,7 +74,12 @@ DocumentModelStorm=Model dokumen yang lebih lengkap untuk resi pengiriman dan ko
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=EXPEDITION_ADDON_NUMBER Konstan tidak ditentukan
 SumOfProductVolumes=Jumlah volume produk
 SumOfProductWeights=Jumlah bobot produk
-
 # warehouse details
 DetailWarehouseNumber= Detail gudang
 DetailWarehouseFormat= W: %s (Jumlah: %d)
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Menampilkan tanggal terakhir pemasukan stok selama pembuatan pengiriman untuk nomor seri atau batch
+CreationOptions=Opsi yang tersedia selama pembuatan pengiriman
+ShipmentDistribution=Distribusi pengiriman
+ErrorTooManyCombinationBatchcode=Tidak ada pengiriman untuk baris %s karena terlalu banyak kombinasi gudang, produk, kode batch yang ditemukan (%s).
+ErrorNoCombinationBatchcode=Tidak dapat menyimpan baris %s sebagai kombinasi warehouse-product-lot/serial (%s, %s, %s) tidak ditemukan dalam stok.
+ErrorTooMuchShipped=Jumlah yang dikirim tidak boleh lebih besar dari jumlah yang dipesan untuk baris %s

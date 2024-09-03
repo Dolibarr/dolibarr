@@ -5,7 +5,7 @@
  * Copyright (C) 2016		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2021       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2021       Anthony Berton          <bertonanthony@gmail.com>
+ * Copyright (C) 2021-2023  Anthony Berton          <anthony.berton@bb2a.fr>
  * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -45,7 +45,7 @@ if (!$user->admin) {
 }
 
 $action = GETPOST('action', 'aZ09');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'adminihm'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'adminihm'; // To manage different context of search
 
 $mode = GETPOST('mode', 'aZ09') ? GETPOST('mode', 'aZ09') : 'other'; // 'template', 'dashboard', 'login', 'other'
 
@@ -77,11 +77,11 @@ if (preg_match('/^(set|del)_([A-Z_]+)$/', $action, $regs)) {
 	}
 }
 
-if ($action == 'removebackgroundlogin' && !empty($conf->global->MAIN_LOGIN_BACKGROUND)) {
+if ($action == 'removebackgroundlogin' && getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
 	dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1, 'chaine', 0, '', $conf->entity);
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-	$logofile = $conf->mycompany->dir_output.'/logos/'.$conf->global->MAIN_LOGIN_BACKGROUND;
+	$logofile = $conf->mycompany->dir_output.'/logos/' . getDolGlobalString('MAIN_LOGIN_BACKGROUND');
 	dol_delete_file($logofile);
 	dolibarr_del_const($db, "MAIN_LOGIN_BACKGROUND", $conf->entity);
 	$mysoc->logo = '';
@@ -106,6 +106,10 @@ if ($action == 'update') {
 		dolibarr_set_const($db, "MAIN_THEME", GETPOST("main_theme", 'aZ09'), 'chaine', 0, '', $conf->entity);
 		dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1, 'chaine', 0, '', $conf->entity);
 
+		if (GETPOSTISSET('THEME_ELDY_USECOMOACTROW')) {
+			dolibarr_set_const($db, "THEME_ELDY_USECOMOACTROW", GETPOST('THEME_ELDY_USECOMOACTROW'), 'chaine', 0, '', $conf->entity);
+		}
+
 		if (GETPOSTISSET('THEME_DARKMODEENABLED')) {
 			$val = GETPOST('THEME_DARKMODEENABLED');
 			if (!$val) {
@@ -117,7 +121,7 @@ if ($action == 'update') {
 		}
 
 		if (GETPOSTISSET('THEME_TOPMENU_DISABLE_IMAGE')) {
-			$val=GETPOST('THEME_TOPMENU_DISABLE_IMAGE');
+			$val = GETPOST('THEME_TOPMENU_DISABLE_IMAGE');
 			if (!$val) {
 				dolibarr_del_const($db, 'THEME_TOPMENU_DISABLE_IMAGE', $conf->entity);
 			} else {
@@ -244,14 +248,17 @@ if ($action == 'update') {
 		dolibarr_set_const($db, "MAIN_LANG_DEFAULT", GETPOST("MAIN_LANG_DEFAULT", 'aZ09'), 'chaine', 0, '', $conf->entity);
 		dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1, 'chaine', 0, '', $conf->entity);
 
-		dolibarr_set_const($db, "MAIN_SIZE_LISTE_LIMIT", GETPOST("main_size_liste_limit", 'int'), 'chaine', 0, '', $conf->entity);
-		dolibarr_set_const($db, "MAIN_SIZE_SHORTLIST_LIMIT", GETPOST("main_size_shortliste_limit", 'int'), 'chaine', 0, '', $conf->entity);
-		dolibarr_set_const($db, "MAIN_CHECKBOX_LEFT_COLUMN", GETPOST("MAIN_CHECKBOX_LEFT_COLUMN", 'int'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_SIZE_LISTE_LIMIT", GETPOSTINT("MAIN_SIZE_LISTE_LIMIT"), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_SIZE_SHORTLIST_LIMIT", GETPOSTINT("MAIN_SIZE_SHORTLIST_LIMIT"), 'chaine', 0, '', $conf->entity);
+
+		if (GETPOSTISSET("MAIN_CHECKBOX_LEFT_COLUMN")) {
+			dolibarr_set_const($db, "MAIN_CHECKBOX_LEFT_COLUMN", GETPOSTINT("MAIN_CHECKBOX_LEFT_COLUMN"), 'chaine', 0, '', $conf->entity);
+		}
 
 		//dolibarr_set_const($db, "MAIN_DISABLE_JAVASCRIPT", GETPOST("MAIN_DISABLE_JAVASCRIPT", 'aZ09'), 'chaine', 0, '', $conf->entity);
 		//dolibarr_set_const($db, "MAIN_BUTTON_HIDE_UNAUTHORIZED", GETPOST("MAIN_BUTTON_HIDE_UNAUTHORIZED", 'aZ09'), 'chaine', 0, '', $conf->entity);
 		//dolibarr_set_const($db, "MAIN_MENU_HIDE_UNAUTHORIZED", GETPOST("MAIN_MENU_HIDE_UNAUTHORIZED", 'aZ09'), 'chaine', 0, '', $conf->entity);
-		dolibarr_set_const($db, "MAIN_START_WEEK", GETPOST("MAIN_START_WEEK", 'int'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_START_WEEK", GETPOSTINT("MAIN_START_WEEK"), 'chaine', 0, '', $conf->entity);
 
 		dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_DAYS", GETPOST("MAIN_DEFAULT_WORKING_DAYS", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 		dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_HOURS", GETPOST("MAIN_DEFAULT_WORKING_HOURS", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
@@ -308,10 +315,10 @@ if ($action == 'update') {
 	$_SESSION["mainmenu"] = ""; // The menu manager may have changed
 
 	if (GETPOST('dol_resetcache')) {
-		dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", ((int) $conf->global->MAIN_IHM_PARAMS_REV) + 1, 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1, 'chaine', 0, '', $conf->entity);
 	}
 
-	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup&mode=".$mode.(GETPOSTISSET('page_y') ? '&page_y='.GETPOST('page_y', 'int') : ''));
+	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup&mode=".$mode.(GETPOSTISSET('page_y') ? '&page_y='.GETPOSTINT('page_y') : ''));
 	exit;
 }
 
@@ -322,12 +329,22 @@ if ($action == 'update') {
 
 $wikihelp = 'EN:First_setup|FR:Premiers_param&eacute;trages|ES:Primeras_configuraciones';
 
-llxHeader('', $langs->trans("Setup"), $wikihelp, '', 0, 0,
+llxHeader(
+	'',
+	$langs->trans("Setup"),
+	$wikihelp,
+	'',
+	0,
+	0,
 	array(
 	'/includes/ace/src/ace.js',
 	'/includes/ace/src/ext-statusbar.js',
 	'/includes/ace/src/ext-language_tools.js',
-	), array());
+	),
+	array(),
+	'',
+	'mod-admin page-ihm'
+);
 
 $form = new Form($db);
 $formother = new FormOther($db);
@@ -368,7 +385,7 @@ if ($mode == 'other') {
 	// Default language
 	print '<tr class="oddeven"><td>'.$langs->trans("DefaultLanguage").'</td><td>';
 	print img_picto('', 'language', 'class="pictofixedwidth"');
-	print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT, 'MAIN_LANG_DEFAULT', 1, null, '', 0, 0, 'minwidth300', 2);
+	print $formadmin->select_language(getDolGlobalString('MAIN_LANG_DEFAULT'), 'MAIN_LANG_DEFAULT', 1, null, '', 0, 0, 'minwidth300', 2);
 	//print '<input class="button button-save smallpaddingimp" type="submit" name="submit" value="'.$langs->trans("Save").'">';
 	print '</td>';
 	print '</tr>';
@@ -400,11 +417,13 @@ if ($mode == 'other') {
 	print '<td class="titlefieldmiddle"></td>';
 	print '</tr>';
 
-	// Show Quick Add link
-	print '<tr class="oddeven"><td>' . $langs->trans("ShowQuickAddLink") . '</td><td>';
-	print ajax_constantonoff("MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', 'other');
-	print '</td>';
-	print '</tr>';
+	if (!empty($conf->use_javascript_ajax)) {
+		// Show Quick Add link
+		print '<tr class="oddeven"><td>' . $langs->trans("ShowQuickAddLink") . '</td><td>';
+		print ajax_constantonoff("MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', 'other');
+		print '</td>';
+		print '</tr>';
+	}
 
 	// Hide wiki link on login page
 	$pictohelp = '<span class="fa fa-question-circle"></span>';
@@ -415,16 +434,24 @@ if ($mode == 'other') {
 	print '</tr>';
 
 	// Max size of lists
-	print '<tr class="oddeven"><td>' . $langs->trans("DefaultMaxSizeList") . '</td><td><input class="flat" name="main_size_liste_limit" size="4" value="' . $conf->global->MAIN_SIZE_LISTE_LIMIT . '"></td>';
+	print '<tr class="oddeven"><td>' . $langs->trans("DefaultMaxSizeList") . '</td><td><input class="flat width50" name="MAIN_SIZE_LISTE_LIMIT" value="';
+	if (getDolGlobalInt('MAIN_SIZE_LISTE_LIMIT') > 0) {
+		print getDolGlobalString('MAIN_SIZE_LISTE_LIMIT');
+	}
+	print '">';
+	if (getDolGlobalInt('MAIN_SIZE_LISTE_LIMIT') <= 0) {
+		print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Automatic").')</span>';
+	}
+	print '</td>';
 	print '</tr>';
 
 	// Max size of short lists on customer card
-	print '<tr class="oddeven"><td>' . $langs->trans("DefaultMaxSizeShortList") . '</td><td><input class="flat" name="main_size_shortliste_limit" size="4" value="' . $conf->global->MAIN_SIZE_SHORTLIST_LIMIT . '"></td>';
+	print '<tr class="oddeven"><td>' . $langs->trans("DefaultMaxSizeShortList") . '</td><td><input class="flat width50" name="MAIN_SIZE_SHORTLIST_LIMIT" value="' . getDolGlobalString('MAIN_SIZE_SHORTLIST_LIMIT') . '"></td>';
 	print '</tr>';
 
-	// Max size of lists
+	// Display checkboxes and fields menu left / right
 	print '<tr class="oddeven"><td>' . $langs->trans("MAIN_CHECKBOX_LEFT_COLUMN") . '</td><td>';
-	print ajax_constantonoff("MAIN_CHECKBOX_LEFT_COLUMN", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', 'other');
+	print ajax_constantonoff("MAIN_CHECKBOX_LEFT_COLUMN", array(), $conf->entity, 0, 0, 1, 0, 0, 1, '', 'other');
 	print '</td>';
 	print '</tr>';
 
@@ -484,11 +511,18 @@ if ($mode == 'other') {
 	print '</tr>';
 	*/
 
+
+	// Show search area in top menu
+	print '<tr class="oddeven"><td>' . $langs->trans("ShowSearchAreaInTopMenu") . '</td><td>';
+	print ajax_constantonoff("MAIN_USE_TOP_MENU_SEARCH_DROPDOWN", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', 'other');
+	print '</td>';
+	print '</tr>';
+
 	// Show bugtrack link
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("ShowBugTrackLink", $langs->transnoentitiesnoconv("FindBug")), $langs->trans("ShowBugTrackLinkDesc"));
 	print '</td><td>';
-	print '<input type="text" name="MAIN_BUGTRACK_ENABLELINK" value="' . (empty($conf->global->MAIN_BUGTRACK_ENABLELINK) ? '' : $conf->global->MAIN_BUGTRACK_ENABLELINK) . '">';
+	print '<input type="text" name="MAIN_BUGTRACK_ENABLELINK" value="' . (!getDolGlobalString('MAIN_BUGTRACK_ENABLELINK') ? '' : $conf->global->MAIN_BUGTRACK_ENABLELINK) . '">';
 	print '</td>';
 	print '</tr>';
 
@@ -556,7 +590,7 @@ if ($mode == 'dashboard') {
 	print '</td>';
 	print '</tr>';
 
-	if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
+	if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD')) {
 		// Block meteo
 		print '<tr class="oddeven"><td>' . $langs->trans('MAIN_DISABLE_METEO') . '</td><td>';
 		print ajax_constantonoff("MAIN_DISABLE_METEO", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '_red', 'dashboard');
@@ -664,7 +698,7 @@ if ($mode == 'login') {
 	print '<tr class="oddeven"><td><label for="imagebackground">' . $langs->trans("BackgroundImageLogin") . ' (png,jpg)</label></td><td>';
 	print '<div class="centpercent inline-block">';
 	$disabled = '';
-	if (!empty($conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND)) {
+	if (getDolGlobalString('ADD_UNSPLASH_LOGIN_BACKGROUND')) {
 		$disabled = ' disabled="disabled"';
 	}
 	$maxfilesizearray = getMaxFileSizeArray();
@@ -676,14 +710,14 @@ if ($mode == 'login') {
 	if ($disabled) {
 		print '(' . $langs->trans("DisabledByOptionADD_UNSPLASH_LOGIN_BACKGROUND") . ') ';
 	}
-	if (!empty($conf->global->MAIN_LOGIN_BACKGROUND)) {
+	if (getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
 		print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?action=removebackgroundlogin&token='.newToken().'&mode=login">' . img_delete($langs->trans("Delete")) . '</a>';
-		if (file_exists($conf->mycompany->dir_output . '/logos/' . $conf->global->MAIN_LOGIN_BACKGROUND)) {
+		if (file_exists($conf->mycompany->dir_output . '/logos/' . getDolGlobalString('MAIN_LOGIN_BACKGROUND'))) {
 			print ' &nbsp; ';
-			print '<img class="paddingleft valignmiddle" width="100" src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=mycompany&amp;file=' . urlencode('logos/' . $conf->global->MAIN_LOGIN_BACKGROUND) . '">';
+			print '<img class="marginleftonly boxshadow valignmiddle" width="100" src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=mycompany&amp;file=' . urlencode('logos/' . getDolGlobalString('MAIN_LOGIN_BACKGROUND')) . '">';
 		}
 	} else {
-		print '<img class="paddingleft valignmiddle" width="100" src="' . DOL_URL_ROOT . '/public/theme/common/nophoto.png">';
+		print '<img class="marginleftonly valignmiddle" width="100" src="' . DOL_URL_ROOT . '/public/theme/common/nophoto.png">';
 	}
 	print '</div>';
 	print '</td></tr>';

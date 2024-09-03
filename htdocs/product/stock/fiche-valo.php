@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/stock.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks', 'companies'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 
 // Security check
 $result = restrictedArea($user, 'stock');
@@ -43,7 +44,7 @@ $result = restrictedArea($user, 'stock');
 $form = new Form($db);
 
 $help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
-llxHeader("", $langs->trans("WarehouseCard"), $help_url);
+llxHeader("", $langs->trans("WarehouseCard"), $help_url, '', 0, 0, '', '', '', 'mod-product page-stock_fiche_valo');
 
 if ($id > 0) {
 	$entrepot = new Entrepot($db);
@@ -121,9 +122,9 @@ if ($id > 0) {
 		$url = DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&amp;file=entrepot-'.$entrepot->id.'-'.$year.'.png';
 		print '<img src="'.$url.'" alt="Valorisation du stock annee '.($year).'">';
 
-		if (file_exists(DOL_DATA_ROOT.'/entrepot/temp/entrepot-'.$entrepot->id.'-'.($year - 1).'.png')) {
-			$url = DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&amp;file=entrepot-'.$entrepot->id.'-'.($year - 1).'.png';
-			print '<br><img src="'.$url.'" alt="Valorisation du stock annee '.($year - 1).'">';
+		if (file_exists(DOL_DATA_ROOT.'/entrepot/temp/entrepot-'.$entrepot->id.'-'.((int) $year - 1).'.png')) {
+			$url = DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&amp;file=entrepot-'.$entrepot->id.'-'.((int) $year - 1).'.png';
+			print '<br><img src="'.$url.'" alt="Valorisation du stock annee '.((int) $year - 1).'">';
 		}
 	} else {
 		$langs->load("errors");

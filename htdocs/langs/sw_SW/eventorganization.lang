@@ -5,163 +5,158 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-ModuleEventOrganizationName = Event Organization
-EventOrganizationDescription = Event Organization through Module Project
-EventOrganizationDescriptionLong= Manage the organization of an event (show, conferences, attendees or speakers, with public pages for suggestion, vote or registration)
-#
-# Menu
-#
-EventOrganizationMenuLeft = Organized events
-EventOrganizationConferenceOrBoothMenuLeft = Conference Or Booth
-
-PaymentEvent=Payment of event
-
-#
+ModuleEventOrganizationName = Shirika la Tukio
+EventOrganizationDescription = Shirika la Tukio kupitia Mradi wa Moduli
+EventOrganizationDescriptionLong= Dhibiti mpangilio wa tukio (onyesho, makongamano, waliohudhuria au wazungumzaji, na kurasa za umma za mapendekezo, kura au usajili)
+EventOrganizationMenuLeft = Matukio yaliyopangwa
+EventOrganizationConferenceOrBoothMenuLeft = Mkutano Au Kibanda
+PaymentEvent=Malipo ya tukio
+EventFee=Event fee
 # Admin page
-#
-NewRegistration=Registration
-EventOrganizationSetup=Event Organization setup
-EventOrganization=Event organization
-Settings=Settings
-EventOrganizationSetupPage = Event Organization setup page
-EVENTORGANIZATION_TASK_LABEL = Label of tasks to create automatically when project is validated
-EVENTORGANIZATION_TASK_LABELTooltip = When you validate an organized event, some tasks can be automatically created in the project<br><br>For example: <br>Send Call for Conference<br>Send Call for Booth<br>Receive call for conferences<br>Receive call for Booth<br>Open subscriptions to events for attendees<br>Send remind of event to speakers<br>Send remind of event to Booth hoster<br>Send remind of event to attendees
-EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Category to add to third-parties automatically created when someone suggests a conference
-EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Category to add to third-parties automatically created when they suggests a booth
-EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Template of email to send after receiving a suggestion of a conference.
-EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Template of email to send after receiving a suggestion of a booth.
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Template of email to send after a registration to a booth has been paid.
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Template of email to send after a registration to an event has been paid.
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Template of email to use when sending emails from the massaction "Send emails" to speakers
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Template of email to use when sending emails from the massaction "Send emails" on attendee list
-EVENTORGANIZATION_FILTERATTENDEES_CAT = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties in the category
-EVENTORGANIZATION_FILTERATTENDEES_TYPE = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties with the nature
-
-#
+NewRegistration=Usajili
+EventOrganizationSetup=Mpangilio wa Shirika la Tukio
+EventOrganization=Shirika la tukio
+EventOrganizationSetupPage = Ukurasa wa kuanzisha Shirika la Tukio
+EVENTORGANIZATION_TASK_LABEL = Lebo ya kazi za kuunda kiotomatiki mradi utakapothibitishwa
+EVENTORGANIZATION_TASK_LABELTooltip = Unapoidhinisha tukio ili kupanga, baadhi ya kazi zinaweza kuundwa kiotomatiki katika mradi <br>  <br> Kwa mfano: <br> Tuma Wito kwa Mikutano <br> Tuma Simu kwa Booths <br> Thibitisha mapendekezo ya Mikutano <br> Thibitisha ombi la Booths <br> Fungua usajili wa tukio kwa waliohudhuria <br> Tuma ukumbusho wa tukio kwa wazungumzaji <br> Tuma ukumbusho wa tukio kwa wapangishaji wa Booth <br> Tuma ukumbusho wa tukio kwa waliohudhuria
+EVENTORGANIZATION_TASK_LABELTooltip2=Weka tupu ikiwa huhitaji kuunda kazi kiotomatiki.
+EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Kitengo cha kuongeza kwa wahusika wengine kiliundwa kiotomatiki mtu anapopendekeza mkutano
+EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Kitengo cha kuongeza kwa wahusika wengine kiliundwa kiotomatiki wanapopendekeza kibanda
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Kiolezo cha barua pepe cha kutuma baada ya kupokea pendekezo la mkutano.
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Kiolezo cha barua pepe cha kutuma baada ya kupokea pendekezo la kibanda.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Kiolezo cha barua pepe cha kutuma baada ya usajili kwenye kibanda kulipwa.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Kiolezo cha barua pepe cha kutuma baada ya usajili wa tukio kulipwa.
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Kiolezo cha barua pepe cha kutumia wakati wa kutuma barua pepe kutoka kwa mauaji "Tuma barua pepe" kwa wasemaji
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Kiolezo cha barua pepe cha kutumia wakati wa kutuma barua pepe kutoka kwa mauaji "Tuma barua pepe" kwenye orodha ya waliohudhuria
+EVENTORGANIZATION_FILTERATTENDEES_CAT = Katika fomu ya kuunda/kuongeza mhudhuriaji, inaweka vikwazo kwenye orodha ya wahusika wengine kwa wahusika wengine katika kategoria.
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = Katika fomu ya kuunda/kuongeza mhudhuriaji, inaweka vikwazo kwenye orodha ya wahusika wengine kwa wahusika wengine wenye asili.
 # Object
-#
-EventOrganizationConfOrBooth= Conference Or Booth
-ManageOrganizeEvent = Manage the organization of an event
-ConferenceOrBooth = Conference Or Booth
-ConferenceOrBoothTab = Conference Or Booth
-AmountPaid = Amount paid
-DateOfRegistration = Date of registration
-ConferenceOrBoothAttendee = Conference Or Booth Attendee
-
-#
+OrganizedEvent=Tukio lililoandaliwa
+EventOrganizationConfOrBooth= Mkutano Au Kibanda
+EventOrganizationConfOrBoothes=Conferences or Booths
+ManageOrganizeEvent = Dhibiti mpangilio wa tukio
+ConferenceOrBooth = Mkutano Au Kibanda
+ConferenceOrBoothTab = Mkutano Au Kibanda
+AmountPaid = Kiasi kilicholipwa
+DateOfRegistration = Tarehe ya usajili
+ConferenceOrBoothAttendee = Mhudhuriaji wa Mkutano au Kibanda
+ApplicantOrVisitor=Mwombaji au mgeni
+Speaker=Spika
 # Template Mail
-#
-YourOrganizationEventConfRequestWasReceived = Your request for conference was received
-YourOrganizationEventBoothRequestWasReceived = Your request for booth was received
-EventOrganizationEmailAskConf = Request for conference
-EventOrganizationEmailAskBooth = Request for booth
-EventOrganizationEmailBoothPayment = Payment of your booth
-EventOrganizationEmailRegistrationPayment = Registration for an event
-EventOrganizationMassEmailAttendees = Communication to attendees
-EventOrganizationMassEmailSpeakers = Communication to speakers
-ToSpeakers=To speakers
-
-#
+YourOrganizationEventConfRequestWasReceived = Ombi lako la mkutano lilipokelewa
+YourOrganizationEventBoothRequestWasReceived = Ombi lako la kibanda limepokelewa
+EventOrganizationEmailAskConf = Ombi la mkutano
+EventOrganizationEmailAskBooth = Ombi la kibanda
+EventOrganizationEmailBoothPayment = Malipo ya kibanda chako
+EventOrganizationEmailRegistrationPayment = Usajili wa tukio
+EventOrganizationMassEmailAttendees = Mawasiliano kwa waliohudhuria
+EventOrganizationMassEmailSpeakers = Mawasiliano kwa wazungumzaji
+ToSpeakers=Kwa wazungumzaji
 # Event
-#
-AllowUnknownPeopleSuggestConf=Allow people to suggest conferences
-AllowUnknownPeopleSuggestConfHelp=Allow unknown people to suggest a conference they want to do
-AllowUnknownPeopleSuggestBooth=Allow people to apply for a booth
-AllowUnknownPeopleSuggestBoothHelp=Allow unknown people to apply for a booth
-PriceOfRegistration=Price of registration
-PriceOfRegistrationHelp=Price to pay to register or participate in the event
-PriceOfBooth=Subscription price to stand a booth
-PriceOfBoothHelp=Subscription price to stand a booth
-EventOrganizationICSLink=Link ICS for conferences
-ConferenceOrBoothInformation=Conference Or Booth informations
-Attendees=Attendees
-ListOfAttendeesOfEvent=List of attendees of the event project
-DownloadICSLink = Download ICS link
-EVENTORGANIZATION_SECUREKEY = Seed to secure the key for the public registration page to suggest a conference
-SERVICE_BOOTH_LOCATION = Service used for the invoice row about a booth location
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service used for the invoice row about an attendee subscription to an event
-NbVotes=Number of votes
-#
+AllowUnknownPeopleSuggestConf=Ruhusu watu kupendekeza mikutano
+AllowUnknownPeopleSuggestConfHelp=Ruhusu watu wasiojulikana kupendekeza mkutano wanaotaka kufanya
+AllowUnknownPeopleSuggestBooth=Ruhusu watu kutuma maombi ya kibanda
+AllowUnknownPeopleSuggestBoothHelp=Ruhusu watu wasiojulikana kutuma maombi ya kibanda
+PriceOfRegistration=Bei ya usajili
+PriceOfRegistrationHelp=Bei ya kulipa ili kujiandikisha au kushiriki katika tukio
+PriceOfBooth=Bei ya usajili ili kusimama kibanda
+PriceOfBoothHelp=Bei ya usajili ili kusimama kibanda
+EventOrganizationICSLinkProject=Link ICS for the event
+EventOrganizationICSLink=Unganisha ICS kwa mikutano
+ConferenceOrBoothInformation=Conference Or Booth information
+ConferenceOrBoothFormat=Conference or booth mode
+ConferenceOrBoothFormatID=ID of conference or booth mode
+ConferenceOrBoothFormatCode=Code of conference or booth mode
+ConferenceOrBoothFormatLabel=Label of conference or booth mode
+Attendees=Waliohudhuria
+ListOfAttendeesOfEvent=List of attendees of event projects
+ListOfConfOrBoothOfEvent=List of conferences or booths of event projects
+DownloadICSLink = Pakua kiungo cha ICS
+EVENTORGANIZATION_SECUREKEY = Mbegu ili kupata ufunguo wa ukurasa wa usajili wa umma ili kupendekeza mkutano
+SERVICE_BOOTH_LOCATION = Huduma inayotumika kwa safu mlalo ya ankara kuhusu eneo la kibanda
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Huduma inayotumika kwa safu mlalo ya ankara kuhusu usajili wa mhudhuriaji kwa tukio
+NbVotes=Idadi ya kura
 # Status
-#
-EvntOrgDraft = Draft
-EvntOrgSuggested = Suggested
-EvntOrgConfirmed = Confirmed
-EvntOrgNotQualified = Not Qualified
-EvntOrgDone = Done
-EvntOrgCancelled = Cancelled
-#
-# Public page
-#
-SuggestForm = Suggestion page
-SuggestOrVoteForConfOrBooth = Page for suggestion or vote
-EvntOrgRegistrationHelpMessage = Here, you can vote for a conference or suggest a new one for the event. You can also apply to have a booth during the event.
-EvntOrgRegistrationConfHelpMessage = Here, you can suggest a new conference to animate during the event.
-EvntOrgRegistrationBoothHelpMessage = Here, you can apply to have a booth during the event.
-ListOfSuggestedConferences = List of suggested conferences
-ListOfSuggestedBooths = List of suggested booths
-ListOfConferencesOrBooths=List of conferences or booths of event project
-SuggestConference = Suggest a new conference
-SuggestBooth = Suggest a booth
-ViewAndVote = View and vote for suggested events
-PublicAttendeeSubscriptionGlobalPage = Public link for registration to the event
-PublicAttendeeSubscriptionPage = Public link for registration to this event only
-MissingOrBadSecureKey = The security key is invalid or missing
-EvntOrgWelcomeMessage = This form allows you to register as a new participant to the event : <b>%s</b>
-EvntOrgDuration = This conference starts on %s and ends on %s.
-ConferenceAttendeeFee = Conference attendee fee for the event : '%s' occurring from %s to %s.
-BoothLocationFee = Booth location for the event : '%s' occurring from %s to %s
-EventType = Event type
-LabelOfBooth=Booth label
-LabelOfconference=Conference label
-ConferenceIsNotConfirmed=Registration not available, conference is not confirmed yet
-DateMustBeBeforeThan=%s must be before %s
-DateMustBeAfterThan=%s must be after %s
-
-NewSubscription=Registration
-OrganizationEventConfRequestWasReceived=Your suggestion for a conference has been received
-OrganizationEventBoothRequestWasReceived=Your request for a booth has been received
-OrganizationEventPaymentOfBoothWasReceived=Your payment for your booth has been recorded
-OrganizationEventPaymentOfRegistrationWasReceived=Your payment for your event registration has been recorded
-OrganizationEventBulkMailToAttendees=This is a remind about your participation in the event as an attendee
-OrganizationEventBulkMailToSpeakers=This is a reminder on your participation in the event as a speaker
-OrganizationEventLinkToThirdParty=Link to third party (customer, supplier or partner)
-
-NewSuggestionOfBooth=Application for a booth
-NewSuggestionOfConference=Application for a conference
-
-#
-# Vote page
-#
-EvntOrgRegistrationWelcomeMessage = Welcome on the conference or booth suggestion page.
-EvntOrgRegistrationConfWelcomeMessage = Welcome on the conference suggestion page.
-EvntOrgRegistrationBoothWelcomeMessage = Welcome on the booth suggestion page.
-EvntOrgVoteHelpMessage = Here, you can view and vote for the suggested events for the project
-VoteOk = Your vote has been accepted.
-AlreadyVoted = You have already voted for this event.
-VoteError = An error has occurred during the vote, please try again.
-
-SubscriptionOk = Your registration has been validated
-ConfAttendeeSubscriptionConfirmation = Confirmation of your subscription to an event
-Attendee = Attendee
-PaymentConferenceAttendee = Conference attendee payment
-PaymentBoothLocation = Booth location payment
-DeleteConferenceOrBoothAttendee=Remove attendee
-RegistrationAndPaymentWereAlreadyRecorder=A registration and a payment were already recorded for the email <b>%s</b>
-EmailAttendee=Attendee email
-EmailCompanyForInvoice=Company email (for invoice, if different of attendee email)
-ErrorSeveralCompaniesWithEmailContactUs=Several companies with this email has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
-ErrorSeveralCompaniesWithNameContactUs=Several companies with this name has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
-NoPublicActionsAllowedForThisEvent=No public actions are open to public for this event
+EvntOrgDraft = Rasimu
+EvntOrgSuggested = Imependekezwa
+EvntOrgConfirmed = Imethibitishwa
+EvntOrgNotQualified = Hajahitimu
+EvntOrgDone = Imekamilika
+EvntOrgCancelled = Canceled
+# Other
+SuggestForm = Ukurasa wa pendekezo
+SuggestOrVoteForConfOrBooth = Ukurasa wa pendekezo au kura
+EvntOrgRegistrationHelpMessage = Hapa, unaweza kupiga kura kwa ajili ya mkutano au kupendekeza mpya kwa ajili ya tukio. Unaweza pia kutuma maombi ya kuwa na kibanda wakati wa tukio.
+EvntOrgRegistrationConfHelpMessage = Hapa, unaweza kupendekeza mkutano mpya ili kuhuisha wakati wa tukio.
+EvntOrgRegistrationBoothHelpMessage = Hapa, unaweza kutuma maombi ya kuwa na kibanda wakati wa tukio.
+ListOfSuggestedConferences = Orodha ya mikutano iliyopendekezwa
+ListOfSuggestedBooths=Vibanda vilivyopendekezwa
+ListOfConferencesOrBooths=Mikutano au vibanda vya mradi wa hafla
+SuggestConference = Pendekeza mkutano mpya
+SuggestBooth = Pendekeza kibanda
+ViewAndVote = Tazama na upigie kura matukio yaliyopendekezwa
+PublicAttendeeSubscriptionGlobalPage = Kiungo cha umma cha usajili kwa tukio
+PublicAttendeeSubscriptionPage = Kiungo cha umma cha usajili kwa tukio hili pekee
+MissingOrBadSecureKey = Ufunguo wa usalama ni batili au haupo
+EvntOrgWelcomeMessage = Fomu hii hukuruhusu kujiandikisha kama mshiriki mpya kwenye hafla
+EvntOrgDuration = Mkutano huu utaanza %s na inaisha %s.
+ConferenceAttendeeFee = Ada ya waliohudhuria mkutano kwa ajili ya tukio : '%s' ikitokea %s hadi %s.
+BoothLocationFee = Eneo la kibanda cha tukio : '%s' ikitokea %s hadi %s
+EventType = Aina ya tukio
+LabelOfBooth=Lebo ya kibanda
+LabelOfconference=Lebo ya mkutano
+ConferenceIsNotConfirmed=Usajili haupatikani, mkutano bado haujathibitishwa
+EventRegistrationAreClosed=Event registrations are closed
+DateMustBeBeforeThan=%s lazima iwe kabla ya %s
+DateMustBeAfterThan=%s lazima iwe baada ya %s
+MaxNbOfAttendeesReached=Idadi ya juu zaidi ya washiriki imefikiwa
+NewSubscription=Usajili
+OrganizationEventConfRequestWasReceived=Pendekezo lako la mkutano limepokelewa
+OrganizationEventBoothRequestWasReceived=Ombi lako la kibanda limepokelewa
+OrganizationEventPaymentOfBoothWasReceived=Malipo yako ya kibanda chako yamerekodiwa
+OrganizationEventPaymentOfRegistrationWasReceived=Malipo yako ya usajili wa tukio yako yamerekodiwa
+OrganizationEventBulkMailToAttendees=Huu ni ukumbusho kuhusu ushiriki wako katika tukio kama mhudhuriaji
+OrganizationEventBulkMailToSpeakers=Hiki ni kikumbusho cha ushiriki wako katika tukio kama mzungumzaji
+OrganizationEventLinkToThirdParty=Unganisha kwa wahusika wengine (mteja, mtoa huduma au mshirika)
+OrganizationEvenLabelName=Jina la umma la mkutano au kibanda
+NewSuggestionOfBooth=Maombi ya kibanda
+NewSuggestionOfConference=Ombi la kufanya mkutano
+EvntOrgRegistrationWelcomeMessage = Karibu kwenye ukurasa wa mapendekezo ya mkutano au kibanda.
+EvntOrgRegistrationConfWelcomeMessage = Karibu kwenye ukurasa wa mapendekezo ya mkutano.
+EvntOrgRegistrationBoothWelcomeMessage = Karibu kwenye ukurasa wa mapendekezo ya kibanda.
+EvntOrgVoteHelpMessage = Hapa, unaweza kutazama na kupiga kura kwa ajili ya matukio yaliyopendekezwa kwa mradi huo
+VoteOk = Kura yako imekubaliwa.
+AlreadyVoted = Tayari umepigia kura tukio hili.
+VoteError = Hitilafu imetokea wakati wa kupiga kura, tafadhali jaribu tena.
+SubscriptionOk=Usajili wako umerekodiwa
+AmountOfRegistrationPaid=Amount of registration paid
+ConfAttendeeSubscriptionConfirmation = Uthibitishaji wa usajili wako kwa tukio
+Attendee = Mhudhuriaji
+PaymentConferenceAttendee = Malipo ya waliohudhuria mkutano
+PaymentBoothLocation = Malipo ya eneo la kibanda
+DeleteConferenceOrBoothAttendee=Ondoa mshiriki
+RegistrationAndPaymentWereAlreadyRecorder=Usajili na malipo tayari yamerekodiwa kwa barua pepe <b> %s </b> 
+EmailAttendee=Barua pepe ya mshiriki
+EmailCompany=Barua pepe ya kampuni
+EmailCompanyForInvoice=Barua pepe ya kampuni (kwa ankara, ikiwa tofauti na barua pepe ya mhudhuriaji)
+ErrorSeveralCompaniesWithEmailContactUs=Several companies with this email has been found so we can't validate automatically your registration. Please contact us at %s for a manual validation
+ErrorSeveralCompaniesWithNameContactUs=Several companies with this name has been found so we can't validate automatically your registration. Please contact us at %s for a manual validation
+NoPublicActionsAllowedForThisEvent=Hakuna vitendo vya umma vilivyo wazi kwa tukio hili
+MaxNbOfAttendees=Idadi ya juu zaidi ya waliohudhuria
+DateStartEvent=Tarehe ya kuanza kwa tukio
+DateEndEvent=Tarehe ya mwisho ya tukio
+ModifyStatus=Rekebisha hali
+ConfirmModifyStatus=Thibitisha urekebishaji wa hali
+ConfirmModifyStatusQuestion=Je, una uhakika unataka kurekebisha %s rekodi zilizochaguliwa?
+RecordsUpdated=%s Rekodi zimesasishwa
+RecordUpdated=Rekodi imesasishwa
+NoRecordUpdated=Hakuna Rekodi iliyosasishwa
+ProfitPerValidatedAttendee=Profit per attendee

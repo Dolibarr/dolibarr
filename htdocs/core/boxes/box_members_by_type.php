@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2020 Frederic France      <frederic.france@netlogic.fr>
- * Copyright (C) 2021      Waël Almoman         <info@almoman.com>
+/* Copyright (C) 2003-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2015-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2021-2023  Waël Almoman            <info@almoman.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,17 +39,7 @@ class box_members_by_type extends ModeleBoxes
 	public $boxlabel = "BoxTitleMembersByType";
 	public $depends = array("adherent");
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
 	public $enabled = 1;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 
 	/**
 	 *  Constructor
@@ -63,12 +54,12 @@ class box_members_by_type extends ModeleBoxes
 		$this->db = $db;
 
 		// disable module for such cases
-		$listofmodulesforexternal = explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
+		$listofmodulesforexternal = explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL'));
 		if (!in_array('adherent', $listofmodulesforexternal) && !empty($user->socid)) {
 			$this->enabled = 0; // disabled for external users
 		}
 
-		$this->hidden = !(isModEnabled('adherent') && $user->rights->adherent->lire);
+		$this->hidden = !(isModEnabled('member') && $user->hasRight('adherent', 'lire'));
 	}
 
 	/**
@@ -79,7 +70,7 @@ class box_members_by_type extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $user, $langs, $conf;
+		global $user, $langs;
 		$langs->loadLangs(array("boxes", "members"));
 
 		$this->max = $max;
@@ -88,160 +79,75 @@ class box_members_by_type extends ModeleBoxes
 		require_once DOL_DOCUMENT_ROOT . '/adherents/class/adherent_type.class.php';
 		$staticmember = new Adherent($this->db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleMembersByType", $max));
+		$now = dol_now();
+		$year = idate('Y');
+		$numberyears = getDolGlobalInt("MAIN_NB_OF_YEAR_IN_MEMBERSHIP_WIDGET_GRAPH");
 
-		if ($user->rights->adherent->lire) {
-			$MembersToValidate = array();
-			$MembersPending = array();
-			$MembersValidated = array();
-			$MembersUpToDate = array();
-			$MembersExcluded = array();
-			$MembersResiliated = array();
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleMembersByType").($numberyears ? ' ('.($year - $numberyears).' - '.$year.')' : ''));
 
-			$SumToValidate = 0;
-			$SumPending = 0;
-			$SumExpired = 0;
-			$SumUpToDate = 0;
-			$SumResiliated = 0;
-			$SumExcluded = 0;
-
-			$AdherentType = array();
-
-			// Type of membership
-			$sql = "SELECT t.rowid, t.libelle as label, t.subscription,";
-			$sql .= " d.statut, count(d.rowid) as somme";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "adherent_type as t";
-			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "adherent as d";
-			$sql .= " ON t.rowid = d.fk_adherent_type";
-			$sql .= " AND d.entity IN (" . getEntity('adherent') . ")";
-			$sql .= " WHERE t.entity IN (" . getEntity('member_type') . ")";
-			$sql .= " GROUP BY t.rowid, t.libelle, t.subscription, d.statut";
-
-			dol_syslog("box_members_by_type::select nb of members per type", LOG_DEBUG);
-			$result = $this->db->query($sql);
-			if ($result) {
-				$num = $this->db->num_rows($result);
-				$i = 0;
-				while ($i < $num) {
-					$objp = $this->db->fetch_object($result);
-
-					$adhtype = new AdherentType($this->db);
-					$adhtype->id = $objp->rowid;
-					$adhtype->subscription = $objp->subscription;
-					$adhtype->label = $objp->label;
-					$AdherentType[$objp->rowid] = $adhtype;
-
-					if ($objp->statut == Adherent::STATUS_DRAFT) {
-						$MembersToValidate[$objp->rowid] = $objp->somme;
-					}
-					if ($objp->statut == Adherent::STATUS_VALIDATED) {
-						$MembersValidated[$objp->rowid] = $objp->somme;
-					}
-					if ($objp->statut == Adherent::STATUS_EXCLUDED) {
-						$MembersExcluded[$objp->rowid] = $objp->somme;
-					}
-					if ($objp->statut == Adherent::STATUS_RESILIATED) {
-						$MembersResiliated[$objp->rowid] = $objp->somme;
-					}
-
-					$i++;
-				}
-				$this->db->free($result);
-				$now = dol_now();
-
-				// Members up to date list
-				// current rule: uptodate = the end date is in future whatever is type
-				// old rule: uptodate = if type does not need payment, that end date is null, if type need payment that end date is in future)
-				$sql = "SELECT count(*) as somme , d.fk_adherent_type";
-				$sql .= " FROM " . MAIN_DB_PREFIX . "adherent as d, " . MAIN_DB_PREFIX . "adherent_type as t";
-				$sql .= " WHERE d.entity IN (" . getEntity('adherent') . ")";
-				$sql .= " AND d.statut = 1 AND (d.datefin >= '" . $this->db->idate($now) . "' OR t.subscription = 0)";
-				$sql .= " AND t.rowid = d.fk_adherent_type";
-				$sql .= " GROUP BY d.fk_adherent_type";
-
-				dol_syslog("index.php::select nb of uptodate members by type", LOG_DEBUG);
-				$result = $this->db->query($sql);
-				if ($result) {
-					$num2 = $this->db->num_rows($result);
-					$i = 0;
-					while ($i < $num2) {
-						$objp = $this->db->fetch_object($result);
-						$MembersUpToDate[$objp->fk_adherent_type] = $objp->somme;
-						$i++;
-					}
-					$this->db->free($result);
-				}
-				// Members pendding (Waiting for first subscription)
-				$sql = "SELECT count(*) as somme , d.fk_adherent_type";
-				$sql .= " FROM " . MAIN_DB_PREFIX . "adherent as d, " . MAIN_DB_PREFIX . "adherent_type as t";
-				$sql .= " WHERE d.entity IN (" . getEntity('adherent') . ")";
-				$sql .= " AND d.statut = 1 AND (d.datefin IS NULL AND t.subscription = 1)";
-				$sql .= " AND t.rowid = d.fk_adherent_type";
-				$sql .= " GROUP BY d.fk_adherent_type";
-
-				dol_syslog("index.php::select nb of uptodate members by type", LOG_DEBUG);
-				$result = $this->db->query($sql);
-				if ($result) {
-					$num2 = $this->db->num_rows($result);
-					$i = 0;
-					while ($i < $num2) {
-						$objp = $this->db->fetch_object($result);
-						$MembersPending[$objp->fk_adherent_type] = $objp->somme;
-						$i++;
-					}
-					$this->db->free($result);
-				}
-
+		if ($user->hasRight('adherent', 'lire')) {
+			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherentstats.class.php';
+			$stats = new AdherentStats($this->db, $user->socid, $user->id);
+			// Show array
+			$sumMembers = $stats->countMembersByTypeAndStatus($numberyears);
+			if ($sumMembers) {
 				$line = 0;
 				$this->info_box_contents[$line][] = array(
 					'td' => 'class=""',
 					'text' => '',
 				);
-				// Draft
+				// Members Status To Valid
 				$labelstatus = $staticmember->LibStatut($staticmember::STATUS_DRAFT, 0, 0, 1);
 				$this->info_box_contents[$line][] = array(
-					'td' => 'class="right tdoverflowmax100" width="15%" title="'.dol_escape_htmltag($labelstatus).'"',
+					'td' => 'class="right tdoverflowmax100" width="10%" title="'.dol_escape_htmltag($labelstatus).'"',
 					'text' => $labelstatus
 				);
-				// Pending (Waiting for first subscription)
+				// Waiting for subscription
 				$labelstatus = $staticmember->LibStatut($staticmember::STATUS_VALIDATED, 1, 0, 1);
 				$this->info_box_contents[$line][] = array(
-					'td' => 'class="right tdoverflowmax100" width="15%" title="'.dol_escape_htmltag($labelstatus).'"',
-					'text' => $labelstatus
+					'td' => 'class="right tdoverflowmax100" width="10%" title="'.dol_escape_htmltag($labelstatus).'"',
+					'text' => $labelstatus,
 				);
 				// Up to date
-				$labelstatus = $staticmember->LibStatut($staticmember::STATUS_VALIDATED, 1, dol_now() + 86400, 1);
+				$labelstatus = $staticmember->LibStatut($staticmember::STATUS_VALIDATED, 1, $now + 86400, 1);
 				$this->info_box_contents[$line][] = array(
-					'td' => 'class="right tdoverflowmax100" width="15%" title="'.dol_escape_htmltag($labelstatus).'"',
+					'td' => 'class="right tdoverflowmax100" width="10%" title="'.dol_escape_htmltag($labelstatus).'"',
 					'text' => $labelstatus,
 				);
 				// Expired
-				$labelstatus = $staticmember->LibStatut($staticmember::STATUS_VALIDATED, 1, dol_now() - 86400, 1);
+				$labelstatus = $staticmember->LibStatut($staticmember::STATUS_VALIDATED, 1, $now - 86400, 1);
 				$this->info_box_contents[$line][] = array(
-					'td' => 'class="right tdoverflowmax100" width="15%" title="'.dol_escape_htmltag($labelstatus).'"',
+					'td' => 'class="right tdoverflowmax100" width="10%" title="'.dol_escape_htmltag($labelstatus).'"',
 					'text' => $labelstatus
 				);
 				// Excluded
 				$labelstatus = $staticmember->LibStatut($staticmember::STATUS_EXCLUDED, 0, 0, 1);
 				$this->info_box_contents[$line][] = array(
-					'td' => 'class="right tdoverflowmax100" width="15%" title="'.dol_escape_htmltag($labelstatus).'"',
+					'td' => 'class="right tdoverflowmax100" width="10%" title="'.dol_escape_htmltag($labelstatus).'"',
 					'text' => $labelstatus
 				);
 				// Resiliated
 				$labelstatus = $staticmember->LibStatut($staticmember::STATUS_RESILIATED, 0, 0, 1);
 				$this->info_box_contents[$line][] = array(
-					'td' => 'class="right tdoverflowmax100" width="15%" title="'.dol_escape_htmltag($labelstatus).'"',
+					'td' => 'class="right tdoverflowmax100" width="10%" title="'.dol_escape_htmltag($labelstatus).'"',
 					'text' => $labelstatus
 				);
+				// Total row
+				$labelstatus = $staticmember->LibStatut($staticmember::STATUS_RESILIATED, 0, 0, 1);
+				$this->info_box_contents[$line][] = array(
+					'td' => 'class="right tdoverflowmax100" width="10%" title="'.dol_escape_htmltag($langs->trans("Total")).'"',
+					'text' => $langs->trans("Total")
+				);
 				$line++;
-
-				foreach ($AdherentType as $key => $adhtype) {
-					$SumToValidate += isset($MembersToValidate[$key]) ? $MembersToValidate[$key] : 0;
-					$SumPending += isset($MembersPending[$key]) ? $MembersPending[$key] : 0;
-					$SumExpired += isset($MembersValidated[$key]) ? $MembersValidated[$key] - (isset($MembersUpToDate[$key]) ? $MembersUpToDate[$key] : 0) - (isset($MembersPending[$key]) ? $MembersPending[$key] : 0): 0;
-					$SumUpToDate += isset($MembersUpToDate[$key]) ? $MembersUpToDate[$key] : 0;
-					$SumExcluded += isset($MembersExcluded[$key]) ? $MembersExcluded [$key] : 0;
-					$SumResiliated += isset($MembersResiliated[$key]) ? $MembersResiliated[$key] : 0;
+				$AdherentType = array();
+				foreach ($sumMembers as $key => $data) {
+					if ($key == 'total') {
+						break;
+					}
+					$adhtype = new AdherentType($this->db);
+					$adhtype->id = (int) $key;
+					$adhtype->label = $data['label'];
+					$AdherentType[$key] = $adhtype;
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
@@ -250,39 +156,43 @@ class box_members_by_type extends ModeleBoxes
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
-						'text' => (isset($MembersToValidate[$key]) && $MembersToValidate[$key] > 0 ? $MembersToValidate[$key] : '') . ' ' . $staticmember->LibStatut(Adherent::STATUS_DRAFT, 1, 0, 3),
+						'text' => (isset($data['members_draft']) && $data['members_draft'] > 0 ? $data['members_draft'] : '') . ' ' . $staticmember->LibStatut(Adherent::STATUS_DRAFT, 1, 0, 3),
 						'asis' => 1,
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
-						'text' => (isset($MembersPending[$key]) && $MembersPending[$key] > 0 ? $MembersPending[$key] : '') . ' ' . $staticmember->LibStatut(Adherent::STATUS_VALIDATED, 1, 0, 3),
+						'text' => (isset($data['members_pending']) && $data['members_pending'] > 0 ? $data['members_pending'] : '') . ' ' . $staticmember->LibStatut(Adherent::STATUS_VALIDATED, 1, 0, 3),
 						'asis' => 1,
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
-						'text' => (isset($MembersUpToDate[$key]) && $MembersUpToDate[$key] > 0 ? $MembersUpToDate[$key] : '') . ' ' . $staticmember->LibStatut(Adherent::STATUS_VALIDATED, 1, $now, 3),
+						'text' => (isset($data['members_uptodate']) && $data['members_uptodate'] > 0 ? $data['members_uptodate'] : '') . ' ' . $staticmember->LibStatut(Adherent::STATUS_VALIDATED, 0, 0, 3),
 						'asis' => 1,
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
-						'text' => (isset($MembersValidated[$key]) && ($MembersValidated[$key] - (isset($MembersUpToDate[$key]) ? $MembersUpToDate[$key] : 0) > 0) ? $MembersValidated[$key] - (isset($MembersUpToDate[$key]) ? $MembersUpToDate[$key] : 0) : '') . ' ' . $staticmember->LibStatut(Adherent::STATUS_VALIDATED, 1, 1, 3),
+						'text' => (isset($data['members_expired']) && $data['members_expired'] > 0 ? $data['members_expired'] : '') . ' ' . $staticmember->LibStatut(Adherent::STATUS_VALIDATED, 1, 1, 3),
 						'asis' => 1,
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
-						'text' => (isset($MembersExcluded[$key]) && $MembersExcluded[$key] > 0 ? $MembersExcluded[$key] : '') . ' ' . $staticmember->LibStatut(Adherent::STATUS_EXCLUDED, 1, $now, 3),
+						'text' => (isset($data['members_excluded']) && $data['members_excluded'] > 0 ? $data['members_excluded'] : '') . ' ' . $staticmember->LibStatut(Adherent::STATUS_EXCLUDED, 1, $now, 3),
 						'asis' => 1,
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
-						'text' => (isset($MembersResiliated[$key]) && $MembersResiliated[$key] > 0 ? $MembersResiliated[$key] : '') . ' ' . $staticmember->LibStatut(Adherent::STATUS_RESILIATED, 1, 0, 3),
+						'text' => (isset($data['members_resiliated']) && $data['members_resiliated'] > 0 ? $data['members_resiliated'] : '') . ' ' . $staticmember->LibStatut(Adherent::STATUS_RESILIATED, 1, 0, 3),
 						'asis' => 1,
 					);
-
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="right"',
+						'text' => (isset($data['total_adhtype']) && $data['total_adhtype'] > 0 ? $data['total_adhtype'] : ''),
+						'asis' => 1,
+					);
 					$line++;
 				}
 
-				if ($num == 0) {
+				if (count($sumMembers) == 0) {
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'colspan="7" class="center"',
 						'text' => $langs->trans("NoRecordedMembersByType")
@@ -295,32 +205,37 @@ class box_members_by_type extends ModeleBoxes
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="liste_total right"',
-						'text' => $SumToValidate.' '.$staticmember->LibStatut(Adherent::STATUS_DRAFT, 1, 0, 3),
+						'text' => $sumMembers['total']['members_draft'].' '.$staticmember->LibStatut(Adherent::STATUS_DRAFT, 1, 0, 3),
 						'asis' => 1
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="liste_total right"',
-						'text' => $SumPending.' '.$staticmember->LibStatut(Adherent::STATUS_VALIDATED, 1, 0, 3),
+						'text' => $sumMembers['total']['members_pending'].' '.$staticmember->LibStatut(Adherent::STATUS_VALIDATED, 1, 0, 3),
 						'asis' => 1
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="liste_total right"',
-						'text' => $SumUpToDate.' '.$staticmember->LibStatut(Adherent::STATUS_VALIDATED, 1, $now, 3),
+						'text' => $sumMembers['total']['members_uptodate'].' '.$staticmember->LibStatut(Adherent::STATUS_VALIDATED, 0, 0, 3),
 						'asis' => 1
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="liste_total right"',
-						'text' => $SumExpired.' '.$staticmember->LibStatut(Adherent::STATUS_VALIDATED, 1, 1, 3),
+						'text' => $sumMembers['total']['members_expired'].' '.$staticmember->LibStatut(Adherent::STATUS_VALIDATED, 1, 1, 3),
 						'asis' => 1
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="liste_total right"',
-						'text' => $SumExcluded.' '.$staticmember->LibStatut(Adherent::STATUS_EXCLUDED, 1, 0, 3),
+						'text' => $sumMembers['total']['members_excluded'].' '.$staticmember->LibStatut(Adherent::STATUS_EXCLUDED, 1, 0, 3),
 						'asis' => 1
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="liste_total right"',
-						'text' => $SumResiliated.' '.$staticmember->LibStatut(Adherent::STATUS_RESILIATED, 1, 0, 3),
+						'text' => $sumMembers['total']['members_resiliated'].' '.$staticmember->LibStatut(Adherent::STATUS_RESILIATED, 1, 0, 3),
+						'asis' => 1
+					);
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="liste_total right"',
+						'text' => $sumMembers['total']['all'],
 						'asis' => 1
 					);
 				}
@@ -328,13 +243,13 @@ class box_members_by_type extends ModeleBoxes
 				$this->info_box_contents[0][0] = array(
 					'td' => '',
 					'maxlength' => 500,
-					'text' => ($this->db->error() . ' sql=' . $sql)
+					'text' => ($this->db->lasterror())
 				);
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="nohover opacitymedium left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed")
+				'td' => 'class="nohover left"',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}
@@ -342,9 +257,9 @@ class box_members_by_type extends ModeleBoxes
 	/**
 	 *	Method to show box
 	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
+	 *	@param	?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}	$head	Array with properties of box title
+	 *	@param	?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>	$contents	Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *	@return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)

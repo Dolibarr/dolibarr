@@ -2,6 +2,7 @@
 /* Copyright (C) 2011-2014	Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2014	    Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,10 +35,10 @@ require_once DOL_DOCUMENT_ROOT.'/compta/localtax/class/localtax.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "product", "trips", "admin"));
 
-$local = GETPOST('localTaxType', 'int');
+$local = GETPOSTINT('localTaxType');
 
 // Date range
-$year = GETPOST("year", "int");
+$year = GETPOSTINT("year");
 if (empty($year)) {
 	$year_current = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 	$year_start = $year_current;
@@ -55,12 +56,12 @@ if (empty($date_start) || empty($date_end)) { // We define date_start and date_e
 			$date_start = dol_get_first_day($year_start, GETPOST("month"), false);
 			$date_end = dol_get_last_day($year_start, GETPOST("month"), false);
 		} else {
-			$date_start = dol_get_first_day($year_start, empty($conf->global->SOCIETE_FISCAL_MONTH_START) ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START, false);
-			if (empty($conf->global->MAIN_INFO_VAT_RETURN) || $conf->global->MAIN_INFO_VAT_RETURN == 2) {
+			$date_start = dol_get_first_day($year_start, !getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START, false);
+			if (!getDolGlobalString('MAIN_INFO_VAT_RETURN') || getDolGlobalInt('MAIN_INFO_VAT_RETURN') == 2) {
 				$date_end = dol_time_plus_duree($date_start, 3, 'm') - 1;
-			} elseif ($conf->global->MAIN_INFO_VAT_RETURN == 3) {
+			} elseif (getDolGlobalInt('MAIN_INFO_VAT_RETURN') == 3) {
 				$date_end = dol_time_plus_duree($date_start, 1, 'y') - 1;
-			} elseif ($conf->global->MAIN_INFO_VAT_RETURN == 1) {
+			} elseif (getDolGlobalInt('MAIN_INFO_VAT_RETURN') == 1) {
 				$date_end = dol_time_plus_duree($date_start, 1, 'm') - 1;
 			}
 		}
@@ -91,26 +92,29 @@ if (empty($min)) {
 
 // Define modetax (0 or 1)
 // 0=normal, 1=option vat for services is on debit, 2=option on payments for products
-$modetax = $conf->global->TAX_MODE;
+$modetax = getDolGlobalString('TAX_MODE');
 if (GETPOSTISSET("modetax")) {
-	$modetax = GETPOST("modetax", 'int');
+	$modetax = GETPOSTINT("modetax");
 }
 if (empty($modetax)) {
 	$modetax = 0;
 }
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
+
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(['customerlocaltaxlist']);
+
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
 if (empty($local)) {
 	accessforbidden('Parameter localTaxType is missing');
 	exit;
 }
-$hookmanager->initHooks(['customerlocaltaxlist']);
 
 $calc = 0;
 /*
@@ -140,13 +144,14 @@ $fsearch .= '<input type="hidden" name="localTaxType" value="'.$local.'">';
 $fsearch .= $langs->trans("SalesTurnoverMinimum").': ';
 $fsearch .= '<input type="text" name="min" id="min" value="'.$min.'" size="6">';
 
-$calc = $conf->global->MAIN_INFO_LOCALTAX_CALC.$local;
+$calc = getDolGlobalString('MAIN_INFO_LOCALTAX_CALC').$local;
 // Affiche en-tete du rapport
+$description = '';
 if ($calc == 0 || $calc == 1) {	// Calculate on invoice for goods and services
 	$calcmode = $calc == 0 ? $langs->trans("CalcModeLT".$local) : $langs->trans("CalcModeLT".$local."Rec");
 	$calcmode .= ' <span class="opacitymedium">('.$langs->trans("TaxModuleSetupToModifyRulesLT", DOL_URL_ROOT.'/admin/company.php').')</span>';
 	$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
-	if (!empty($conf->global->MAIN_MODULE_COMPTABILITE)) {
+	if (isModEnabled('comptabilite')) {
 		$description .= '<br>'.$langs->trans("WarningDepositsNotIncluded");
 	}
 	$description .= $fsearch;
@@ -164,7 +169,7 @@ if ($calc == 2) { 	// Invoice for goods, payment for services
 	$calcmode = $langs->trans("CalcModeLT2Debt");
 	$calcmode .= ' <span class="opacitymedium">('.$langs->trans("TaxModuleSetupToModifyRulesLT", DOL_URL_ROOT.'/admin/company.php').')</span>';
 	$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
-	if (!empty($conf->global->MAIN_MODULE_COMPTABILITE)) {
+	if (isModEnabled('comptabilite')) {
 		$description .= '<br>'.$langs->trans("WarningDepositsNotIncluded");
 	}
 	$description .= $fsearch;
@@ -178,8 +183,11 @@ if ($calc == 2) { 	// Invoice for goods, payment for services
 	$productsup = $langs->trans("Description");
 	$amountsup = $langs->trans("AmountHT");
 }
-report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array(), $calcmode);
 
+$periodlink = '';
+$exportlink = '';
+
+report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array(), $calcmode);
 
 $vatcust = $langs->transcountry($local == 1 ? "LT1" : "LT2", $mysoc->country_code);
 $vatsup = $langs->transcountry($local == 1 ? "LT1" : "LT2", $mysoc->country_code);
@@ -207,7 +215,7 @@ if ($calc == 0 || $calc == 2) {
 	$parameters["direction"] = 'sell';
 	$parameters["type"] = 'localtax'.$local;
 
-	// Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
+	// Initialize a technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
 	$hookmanager->initHooks(array('externalbalance'));
 	$reshook = $hookmanager->executeHooks('addVatLine', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
@@ -235,8 +243,8 @@ if ($calc == 0 || $calc == 2) {
 				print '<td class="nowrap">'.$intra.'</td>';
 				print '<td class="nowrap right">'.price($coll->amount).'</td>';
 				print '<td class="nowrap right">'.price($local == 1 ? $coll->localtax1 : $coll->localtax2).'</td>';
-				$totalamount = $totalamount + $coll->amount;
-				$total = $total + ($local == 1 ? $coll->localtax1 : $coll->localtax2);
+				$totalamount += $coll->amount;
+				$total += ($local == 1 ? $coll->localtax1 : $coll->localtax2);
 				print "</tr>\n";
 				$i++;
 			}
@@ -300,8 +308,8 @@ if ($calc == 0 || $calc == 1) {
 				print '<td class="nowrap">'.$intra."</td>";
 				print '<td class="nowrap right">'.price($coll->amount).'</td>';
 				print '<td class="nowrap right">'.price($local == 1 ? $coll->localtax1 : $coll->localtax2).'</td>';
-				$totalamount = $totalamount + $coll->amount;
-				$total = $total + ($local == 1 ? $coll->localtax1 : $coll->localtax2);
+				$totalamount += $coll->amount;
+				$total += ($local == 1 ? $coll->localtax1 : $coll->localtax2);
 				print "</tr>\n";
 				$i++;
 			}

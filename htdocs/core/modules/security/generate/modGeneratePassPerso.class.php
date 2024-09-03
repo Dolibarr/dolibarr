@@ -2,6 +2,7 @@
 /* Copyright (C) 2006-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2014		Teddy Andreotti		<125155@supinfo.com>
  * Copyright (C) 2017		Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,25 +34,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/security/generate/modules_genpassw
 class modGeneratePassPerso extends ModeleGenPassword
 {
 	/**
-	 * @var int ID
+	 * @var string ID
 	 */
 	public $id;
 
 	public $picto = 'fa-shield-alt';
-
-	/**
-	 * Minimum length (text visible by end user)
-	 *
-	 * @var string
-	 */
-	public $length;
-
-	/**
-	 * Minimum length in number of characters
-	 *
-	 * @var integer
-	 */
-	public $length2;
 
 	public $NbMaj;
 	public $NbNum;
@@ -59,20 +46,11 @@ class modGeneratePassPerso extends ModeleGenPassword
 	public $NbRepeat;
 
 	/**
-	 * Flag to 1 if we must clean ambiguous charaters for the autogeneration of password (List of ambiguous char is in $this->Ambi)
+	 * Flag to 1 if we must clean ambiguous characters for the autogeneration of password (List of ambiguous char is in $this->Ambi)
 	 *
 	 * @var integer
 	 */
 	public $WithoutAmbi = 0;
-
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $conf;
-	public $lang;
-	public $user;
 
 	public $Maj;
 	public $Min;
@@ -87,7 +65,7 @@ class modGeneratePassPerso extends ModeleGenPassword
 	 *  @param		DoliDB		$db			Database handler
 	 *	@param		Conf		$conf		Handler de conf
 	 *	@param		Translate	$langs		Handler de langue
-	 *	@param		User		$user		Handler du user connecte
+	 *	@param		User		$user		Handler du user connected
 	 */
 	public function __construct($db, $conf, $langs, $user)
 	{
@@ -99,7 +77,7 @@ class modGeneratePassPerso extends ModeleGenPassword
 		$this->langs = $langs;
 		$this->user = $user;
 
-		if (empty($conf->global->USER_PASSWORD_PATTERN)) {
+		if (!getDolGlobalString('USER_PASSWORD_PATTERN')) {
 			// default value at auto generation (12 chars, 1 uppercase, 1 digit, 0 special char, 3 repeat max, exclude ambiguous characters).
 			dolibarr_set_const($db, "USER_PASSWORD_PATTERN", '12;1;1;0;3;1', 'chaine', 0, '', $conf->entity);
 		}
@@ -110,13 +88,13 @@ class modGeneratePassPerso extends ModeleGenPassword
 		$this->Spe = "!@#$%&*()_-+={}[]\\|:;'/";
 		$this->Ambi = array("1", "I", "l", "|", "O", "0");
 
-		$tabConf = explode(";", $conf->global->USER_PASSWORD_PATTERN);
-		$this->length2 = $tabConf[0];
+		$tabConf = explode(";", getDolGlobalString('USER_PASSWORD_PATTERN'));
+		$this->length2 = (int) $tabConf[0];
 		$this->NbMaj = $tabConf[1];
 		$this->NbNum = $tabConf[2];
 		$this->NbSpe = $tabConf[3];
 		$this->NbRepeat = $tabConf[4];
-		$this->WithoutAmbi = $tabConf[5];
+		$this->WithoutAmbi = (int) $tabConf[5];
 	}
 
 	/**
@@ -162,6 +140,8 @@ class modGeneratePassPerso extends ModeleGenPassword
 	 *  Build new password
 	 *
 	 *  @return     string      Return a new generated password
+	 *
+	 *  @phan-suppress PhanPossiblyInfiniteRecursionSameParams
 	 */
 	public function getNewGeneratedPassword()
 	{
@@ -210,10 +190,10 @@ class modGeneratePassPerso extends ModeleGenPassword
 
 		$this->initAll();	// For the case this method is called alone
 
-		$password_a = preg_split('//u', $password, null, PREG_SPLIT_NO_EMPTY);
-		$maj = preg_split('//u', $this->Maj, null, PREG_SPLIT_NO_EMPTY);
-		$num = preg_split('//u', $this->Nb, null, PREG_SPLIT_NO_EMPTY);
-		$spe = preg_split('//u', $this->Spe, null, PREG_SPLIT_NO_EMPTY);
+		$password_a = preg_split('//u', $password, 0, PREG_SPLIT_NO_EMPTY);
+		$maj = preg_split('//u', $this->Maj, 0, PREG_SPLIT_NO_EMPTY);
+		$num = preg_split('//u', $this->Nb, 0, PREG_SPLIT_NO_EMPTY);
+		$spe = preg_split('//u', $this->Spe, 0, PREG_SPLIT_NO_EMPTY);
 		/*
 		$password_a = str_split($password);
 		$maj = str_split($this->Maj);
@@ -268,7 +248,7 @@ class modGeneratePassPerso extends ModeleGenPassword
 			return true;
 		}
 
-		$char = preg_split('//u', $password, null, PREG_SPLIT_NO_EMPTY);
+		$char = preg_split('//u', $password, 0, PREG_SPLIT_NO_EMPTY);
 
 		$last = "";
 		$count = 0;

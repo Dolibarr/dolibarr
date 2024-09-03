@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2011 Regis Houssin <regis.houssin@inodbox.com>
  * Copyright (C) 2014      Marcos García <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +20,7 @@
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 
@@ -42,16 +43,15 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	$trclass = 'oddeven';
 	if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) {
 		$trclass .= ' liste_sub_total';
-	}
-	?>
+	} ?>
 	<tr class="<?php echo $trclass; ?>">
 		<td><?php echo $langs->trans("SupplierOrder"); ?></td>
 		<td><?php print $objectlink->getNomUrl(1); ?></td>
 		<td class="left"><?php echo $objectlink->ref_supplier; ?></td>
 		<td class="center"><?php echo dol_print_date($objectlink->date, 'day'); ?></td>
 		<td class="right"><?php
-		if ($user->rights->fournisseur->commande->lire) {
-			$total = $total + $objectlink->total_ht;
+		if ($user->hasRight("fournisseur", "commande", "lire")) {
+			$total += $objectlink->total_ht;
 			echo price($objectlink->total_ht);
 		} ?></td>
 		<td class="right"><?php echo $objectlink->getLibStatut(3); ?></td>
@@ -61,7 +61,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 }
 if (count($linkedObjectBlock) > 1) {
 	?>
-	<tr class="liste_total <?php echo (empty($noMoreLinkedObjectBlockAfter) ? 'liste_sub_total' : ''); ?>">
+	<tr class="liste_total <?php echo(empty($noMoreLinkedObjectBlockAfter) ? 'liste_sub_total' : ''); ?>">
 		<td><?php echo $langs->trans("Total"); ?></td>
 		<td></td>
 		<td class="center"></td>

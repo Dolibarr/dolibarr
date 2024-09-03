@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
-# About page
-# Right
+# Permissions
 Permission23101 = Čtení naplánovaných úloh
 Permission23102 = Vytvoření/aktualizace naplánované úlohy
 Permission23103 = Smazat naplánovanou úlohu
@@ -13,8 +12,8 @@ KeyForCronAccess=Bezpečnostní klíč URL spuštění úlohy
 FileToLaunchCronJobs=Příkazový řádek pro kontrolu a spuštění kvalifikovaných úloh v cronu
 CronExplainHowToRunUnix=Na Unixových systémech by jste měli použít následující položku crontab ke spuštění příkazového řádku každých 5 minut
 CronExplainHowToRunWin=V prostředí Microsoft  Windows můžete pomocí nástrojů Naplánované úlohy spustit příkazový řádek každých 5 minut
-CronMethodDoesNotExists=Třída %s neobsahuje žádné metody %s
-CronMethodNotAllowed=Method %s of class %s is in blacklist of forbidden methods
+CronMethodDoesNotExists=Class %s does not contain any method %s
+CronMethodNotAllowed=Method %s of class %s is in blocklist of forbidden methods
 CronJobDefDesc=Profily úloh Cron jsou definovány do souboru deskriptoru modulu. Když je modul aktivován, jsou načteny a dostupné, takže můžete spravovat úlohy z nabídky nástrojů admin %s.
 CronJobProfiles=Seznam předdefinovaných úloh profilu cron
 # Menu
@@ -30,7 +29,8 @@ CronExecute=Launch now
 CronConfirmExecute=Jste si jisti, že chcete provést tyto naplánované úlohy nyní?
 CronInfo=Plánovací modul úloh umožňuje naplánovat úlohy, které se mají automaticky spouštět. Práce lze také spustit ručně.
 CronTask=Práce
-CronNone=Nikdo
+CronNone=Next run of scheduled task
+CronNotYetRan=Never executed
 CronDtStart=Ne předtím
 CronDtEnd=nikoli po
 CronDtNextLaunch=Další provedení
@@ -49,8 +49,8 @@ CronEach=Každý
 JobFinished=Práce zahájena a dokončena
 Scheduled=Scheduled
 #Page card
-CronAdd= Přidat práci
-CronEvery=Vykonat práci každý
+CronAdd=Přidat práci
+CronEvery=Run job every
 CronObject=Vytvoření Instance/objektu
 CronArgs=Parametry
 CronSaveSucess=Úspěšně uloženo
@@ -67,7 +67,7 @@ CronModuleHelp=Název adresáře modulu Dolibarr (také pracuje s externím modu
 CronClassFileHelp=Relativní cesta a název souboru k načtení (cesta je relativní k kořenovému adresáři webového serveru). <BR> Chcete-li například volat metodu načítání produktu Dolibarr Product htdocs / product / class / <u> product.class.php</u>, hodnota pro název souboru třídy je <br><i> product / class / product.class.php </i>
 CronObjectHelp=Název objektu, který chcete načíst. <BR> Chcete-li volat například metodu načítání produktu Dolibarr Product /htdocs/product/class/product.class.php, hodnota názvu souboru třídy je <br><i> Produkt </i>
 CronMethodHelp=Objektová metoda spuštění. <BR> Chcete-li například volat metodu načítání produktu Dolibarr Product /htdocs/product/class/product.class.php, hodnota metody je <br><i> načíst </i>
-CronArgsHelp=Argumenty metody. <BR> Chcete-li například volat metodu načítání produktu Dolibarr Product /htdocs/product/class/product.class.php, může být hodnota parametrů<br><i> 0, ProductRef </i>
+CronArgsHelp=The method arguments. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for parameters can be<br><i>0, ProductRef</i>
 CronCommandHelp=Spustit příkazový řádek.
 CronCreateJob=Vytvořit novou naplánovanou úlohu
 CronFrom=Z
@@ -91,6 +91,7 @@ WarningCronDelayed=Pozor, pokud jde o výkonnost, bez ohledu na to, co je pří�
 DATAPOLICYJob=Čistič dat a anonymizér
 JobXMustBeEnabled=Job %s must be enabled
 EmailIfError=Email for warning on error
+JobNotFound=Job %s not found in list of jobs (try to disable/enabled module)
 ErrorInBatch=Error when running the job %s
 
 # Cron Boxes

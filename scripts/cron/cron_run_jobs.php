@@ -56,7 +56,7 @@ $path = __DIR__.'/';
 // Error if Web mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+	exit(1);
 }
 
 require_once $path."../../htdocs/master.inc.php";
@@ -66,13 +66,13 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 // Check parameters
 if (!isset($argv[1]) || !$argv[1]) {
 	usage($path, $script_file);
-	exit(-1);
+	exit(1);
 }
 $key = $argv[1];
 
 if (!isset($argv[2]) || !$argv[2]) {
 	usage($path, $script_file);
-	exit(-1);
+	exit(1);
 }
 
 $userlogin = $argv[2];
@@ -92,23 +92,27 @@ $hookmanager->initHooks(array('cli'));
 $now = dol_now();
 
 @set_time_limit(0);
-print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." - userlogin=".$userlogin." - ".dol_print_date($now, 'dayhourrfc')." - ".gethostname()." *****\n";
+print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." - userlogin=".$userlogin." - ".dol_print_date($now, 'dayhourrfc', 'gmt')." - ".gethostname()." *****\n";
+
+// Show TZ of the serveur when ran from command line.
+$ini_path = php_ini_loaded_file();
+print 'TZ server = '.getServerTimeZoneString()." - set in PHP ini ".$ini_path."\n";
 
 // Check module cron is activated
 if (!isModEnabled('cron')) {
 	print "Error: module Scheduled jobs (cron) not activated\n";
-	exit(-1);
+	exit(1);
 }
 
 // Check security key
-if ($key != $conf->global->CRON_KEY) {
-	print "Error: securitykey is wrong\n";
-	exit(-1);
+if ($key != getDolGlobalString('CRON_KEY')) {
+	print "Error: securitykey provided ".substr($key, 0, 5)."... does not match securitykey in setup.\n";
+	exit(1);
 }
 
 if (!empty($dolibarr_main_db_readonly)) {
 	print "Error: instance in read-only mode\n";
-	exit(-1);
+	exit(1);
 }
 
 // If param userlogin is reserved word 'firstadmin'
@@ -132,19 +136,19 @@ $result = $user->fetch('', $userlogin, '', 1);
 if ($result < 0) {
 	echo "User Error: ".$user->error;
 	dol_syslog("cron_run_jobs.php:: User Error:".$user->error, LOG_ERR);
-	exit(-1);
+	exit(1);
 } else {
 	if (empty($user->id)) {
-		echo "User login: ".$userlogin." does not exists";
+		echo "User login: ".$userlogin." does not exists\n";
 		dol_syslog("User login:".$userlogin." does not exists", LOG_ERR);
-		exit(-1);
+		exit(1);
 	}
 }
 
 // Reload langs
-$langcode = (empty($conf->global->MAIN_LANG_DEFAULT) ? 'auto' : $conf->global->MAIN_LANG_DEFAULT);
-if (!empty($user->conf->MAIN_LANG_DEFAULT)) {
-	$langcode = $user->conf->MAIN_LANG_DEFAULT;
+$langcode = getDolGlobalString('MAIN_LANG_DEFAULT', 'auto');
+if (getDolUserString('MAIN_LANG_DEFAULT')) {
+	$langcode = getDolUserString('MAIN_LANG_DEFAULT');
 }
 if ($langs->getDefaultLang() != $langcode) {
 	$langs->setDefaultLang($langcode);
@@ -163,24 +167,35 @@ if (isset($argv[4]) && $argv[4] == '--force') {
 	$forcequalified = 1;
 }
 
-// create a jobs object
+// Create a jobs object
 $object = new Cronjob($db);
 
 $filter = array();
 if (!empty($id)) {
 	if (!is_numeric($id)) {
-		echo "Error: Bad value for parameter job id";
+		echo "Error: Bad value for parameter job id\n";
 		dol_syslog("cron_run_jobs.php Bad value for parameter job id", LOG_WARNING);
-		exit();
+		exit(2);
 	}
 	$filter['t.rowid'] = $id;
 }
 
-$result = $object->fetchAll('ASC,ASC,ASC', 't.priority,t.entity,t.rowid', 0, 0, 1, $filter, 0);
+
+// Update old jobs that were not closed correctly so processing is moved from 1 to 0 (otherwise task stopped with fatal error are always in status "in progress")
+$sql = "UPDATE ".MAIN_DB_PREFIX."cronjob set processing = 0";
+$sql .= " WHERE processing = 1";
+$sql .= " AND datelastrun <= '".$db->idate(dol_now() - getDolGlobalInt('CRON_MAX_DELAY_FOR_JOBS', 24) * 3600, 'gmt')."'";
+$sql .= " AND datelastresult IS NULL";
+$db->query($sql);
+
+dol_syslog("cron_run_jobs.php search qualified job using filter: ".json_encode($filter), LOG_DEBUG);
+echo "cron_run_jobs.php search qualified job using filter: ".json_encode($filter)."\n";
+
+$result = $object->fetchAll('ASC,ASC,ASC', 't.priority,t.entity,t.rowid', 0, 0, 1, $filter, ($forcequalified ? -1 : 0));
 if ($result < 0) {
 	echo "Error: ".$object->error;
 	dol_syslog("cron_run_jobs.php fetch Error ".$object->error, LOG_ERR);
-	exit(-1);
+	exit(1);
 }
 
 // TODO Duplicate code. This sequence of code must be shared with code into public/cron/cron_run_jobs.php php page.
@@ -199,7 +214,7 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 
 		// Force reload of setup for the current entity
 		if ((empty($line->entity) ? 1 : $line->entity) != $conf->entity) {
-			dol_syslog("cron_run_jobs.php we work on another entity conf than ".$conf->entity." so we reload mysoc, langs, user and conf", LOG_DEBUG);
+			dol_syslog("cron_run_jobs.php: we work on another entity conf than ".$conf->entity." so we reload mysoc, langs, user and conf", LOG_DEBUG);
 			echo " -> we change entity so we reload mysoc, langs, user and conf";
 
 			$conf->entity = (empty($line->entity) ? 1 : $line->entity);
@@ -211,20 +226,20 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 				$result = $user->fetch('', $userlogin, '', 1);
 				if ($result < 0) {
 					echo "\nUser Error: ".$user->error."\n";
-					dol_syslog("cron_run_jobs.php:: User Error:".$user->error, LOG_ERR);
-					exit(-1);
+					dol_syslog("cron_run_jobs.php: User Error:".$user->error, LOG_ERR);
+					exit(1);
 				} else {
 					if ($result == 0) {
-						echo "\nUser login: ".$userlogin." does not exists for entity ".$conf->entity."\n";
-						dol_syslog("User login:".$userlogin." does not exists", LOG_ERR);
-						exit(-1);
+						echo "\nUser login: ".$userlogin." does not exist for entity ".$conf->entity."\n";
+						dol_syslog("cron_run_jobs.php: User login: ".$userlogin." does not exist", LOG_ERR);
+						exit(1);
 					}
 				}
 				$user->getrights();
 			}
 
 			// Reload langs
-			$langcode = (empty($conf->global->MAIN_LANG_DEFAULT) ? 'auto' : $conf->global->MAIN_LANG_DEFAULT);
+			$langcode = getDolGlobalString('MAIN_LANG_DEFAULT', 'auto');
 			if (!empty($user->conf->MAIN_LANG_DEFAULT)) {
 				$langcode = $user->conf->MAIN_LANG_DEFAULT;
 			}
@@ -240,7 +255,10 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 		}
 
 		//If date_next_jobs is less of current date, execute the program, and store the execution time of the next execution in database
-		if ($forcequalified || (($line->datenextrun < $now) && (empty($line->datestart) || $line->datestart <= $now) && (empty($line->dateend) || $line->dateend >= $now))) {
+		$datenextrunok = (empty($line->datenextrun) || (int) $line->datenextrun < $now);
+		$datestartok = (empty($line->datestart) || $line->datestart <= $now);
+		$dateendok = (empty($line->dateend) || $line->dateend >= $now);
+		if ($forcequalified || ($datenextrunok && $datestartok && $dateendok)) {
 			echo " - qualified";
 
 			dol_syslog("cron_run_jobs.php line->datenextrun:".dol_print_date($line->datenextrun, 'dayhourrfc')." line->datestart:".dol_print_date($line->datestart, 'dayhourrfc')." line->dateend:".dol_print_date($line->dateend, 'dayhourrfc')." now:".dol_print_date($now, 'dayhourrfc'));
@@ -248,15 +266,15 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 			$cronjob = new Cronjob($db);
 			$result = $cronjob->fetch($line->id);
 			if ($result < 0) {
-				echo "Error cronjobid: ".$line->id." cronjob->fetch: ".$cronjob->error."\n";
+				echo " - Error cronjobid: ".$line->id." cronjob->fetch: ".$cronjob->error."\n";
 				echo "Failed to fetch job ".$line->id."\n";
 				dol_syslog("cron_run_jobs.php::fetch Error ".$cronjob->error, LOG_ERR);
-				exit(-1);
+				exit(1);
 			}
 			// Execute job
 			$result = $cronjob->run_jobs($userlogin);
 			if ($result < 0) {
-				echo "Error cronjobid: ".$line->id." cronjob->run_job: ".$cronjob->error."\n";
+				echo " - Error cronjobid: ".$line->id." cronjob->run_job: ".$cronjob->error."\n";
 				echo "At least one job failed. Go on menu Home-Setup-Admin tools to see result for each job.\n";
 				echo "You can also enable module Log if not yet enabled, run again and take a look into dolibarr.log file\n";
 				dol_syslog("cron_run_jobs.php::run_jobs Error ".$cronjob->error, LOG_ERR);
@@ -267,22 +285,22 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 				$resultstring = 'OK';
 			}
 
-			echo " - run_jobs ".$resultstring." result = ".$result;
+			echo "Result of run_jobs ".$resultstring." result = ".$result;
 
 			// We re-program the next execution and stores the last execution time for this job
 			$result = $cronjob->reprogram_jobs($userlogin, $now);
 			if ($result < 0) {
-				echo "Error cronjobid: ".$line->id." cronjob->reprogram_job: ".$cronjob->error."\n";
+				echo " - Error cronjobid: ".$line->id." cronjob->reprogram_job: ".$cronjob->error."\n";
 				echo "Enable module Log if not yet enabled, run again and take a look into dolibarr.log file\n";
 				dol_syslog("cron_run_jobs.php::reprogram_jobs Error ".$cronjob->error, LOG_ERR);
-				exit(-1);
+				exit(1);
 			}
 
-			echo " - reprogrammed\n";
+			echo "Job re-scheduled\n";
 		} else {
-			echo " - not qualified\n";
+			echo " - not qualified (datenextrunok=".($datenextrunok ?: 0).", datestartok=".($datestartok ?: 0).", dateendok=".($dateendok ?: 0).")\n";
 
-			dol_syslog("cron_run_jobs.php job not qualified line->datenextrun:".dol_print_date($line->datenextrun, 'dayhourrfc')." line->datestart:".dol_print_date($line->datestart, 'dayhourrfc')." line->dateend:".dol_print_date($line->dateend, 'dayhourrfc')." now:".dol_print_date($now, 'dayhourrfc'));
+			dol_syslog("cron_run_jobs.php job ".$line->id." not qualified line->datenextrun:".dol_print_date($line->datenextrun, 'dayhourrfc')." line->datestart:".dol_print_date($line->datestart, 'dayhourrfc')." line->dateend:".dol_print_date($line->dateend, 'dayhourrfc')." now:".dol_print_date($now, 'dayhourrfc'));
 		}
 	}
 
@@ -293,10 +311,13 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 
 $db->close();
 
+print "***** ".$script_file." end - ".dol_print_date($now, 'dayhourrfc', 'gmt')." - ".gethostname()." *****\n";
+
 if ($nbofjobslaunchedko) {
 	exit(1);
 }
 exit(0);
+
 
 /**
  * script cron usage

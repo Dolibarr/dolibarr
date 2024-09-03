@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,16 +32,16 @@ global $conf,$user,$langs,$db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/date.lib.php';
 require_once NUSOAP_PATH.'/nusoap.php';        // Include SOAP
-
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
 	$user->getrights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
-$conf->global->MAIN_UMASK='0666';
+$conf->global->MAIN_UMASK = '0666';
 
 if (!isModEnabled('service')) {
 	print "Error: Module service must be enabled.\n";
@@ -54,88 +55,8 @@ if (!isModEnabled('service')) {
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class WebservicesProductsTest extends PHPUnit\Framework\TestCase
+class WebservicesProductsTest extends CommonClassTest
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
-
-	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @return DateLibTest
-	 */
-	public function __construct()
-	{
-		parent::__construct();
-
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
-
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
-
-	/**
-	 * setUpBeforeClass
-	 *
-	 * @return void
-	 */
-	public static function setUpBeforeClass(): void
-	{
-		global $conf,$user,$langs,$db;
-		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * tearDownAfterClass
-	 *
-	 * @return	void
-	 */
-	public static function tearDownAfterClass(): void
-	{
-		global $conf,$user,$langs,$db;
-		$db->rollback();
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * Init phpunit tests
-	 *
-	 * @return  void
-	 */
-	protected function setUp(): void
-	{
-		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * End phpunit tests
-	 *
-	 * @return  void
-	 */
-	protected function tearDown(): void
-	{
-		print __METHOD__."\n";
-	}
-
-
 	/**
 	 * testWSProductsCreateProductOrService
 	 *
@@ -144,47 +65,47 @@ class WebservicesProductsTest extends PHPUnit\Framework\TestCase
 	public function testWSProductsCreateProductOrService()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$datestring=dol_print_date(dol_now(), 'dayhourlog');
+		$datestring = dol_print_date(dol_now(), 'dayhourlog');
 
 		$WS_DOL_URL = DOL_MAIN_URL_ROOT.'/webservices/server_productorservice.php';
 		$WS_METHOD  = 'createProductOrService';
-		$ns='http://www.dolibarr.org/ns/';
+		$ns = 'http://www.dolibarr.org/ns/';
 
 		// Set the WebService URL
 		print __METHOD__." create nusoap_client for URL=".$WS_DOL_URL."\n";
 		$soapclient = new nusoap_client($WS_DOL_URL);
 		if ($soapclient) {
-			$soapclient->soap_defencoding='UTF-8';
+			$soapclient->soap_defencoding = 'UTF-8';
 			$soapclient->decodeUTF8(false);
 		}
 
 		// Call the WebService method and store its result in $result.
-		$authentication=array(
-			'dolibarrkey'=>$conf->global->WEBSERVICES_KEY,
-			'sourceapplication'=>'DEMO',
-			'login'=>'admin',
-			'password'=>'admin',
-			'entity'=>''
+		$authentication = array(
+			'dolibarrkey' => getDolGlobalString('WEBSERVICES_KEY'),
+			'sourceapplication' => 'DEMO',
+			'login' => 'admin',
+			'password' => 'admin',
+			'entity' => ''
 		);
 
 		// Test URL
-		$result='';
+		$result = '';
 		$parameters = array(
-			'authentication'=>$authentication,'product'=>array(
-				'ref'=>'NewProductFromWS'.$datestring,
-				'label'=>'New Product From WS '.$datestring,
-				'type'=>1,
-				'description'=>'This is a new product created from WS PHPUnit test case',
-				'barcode'=>'123456789012',
-				'barcode_type'=>2,
-				'price_net'=>10,
-				'status_tosell'=>1,
-				'status_tobuy'=>1
+			'authentication' => $authentication,'product' => array(
+				'ref' => 'NewProductFromWS'.$datestring,
+				'label' => 'New Product From WS '.$datestring,
+				'type' => 1,
+				'description' => 'This is a new product created from WS PHPUnit test case',
+				'barcode' => '123456789012',
+				'barcode_type' => 2,
+				'price_net' => 10,
+				'status_tosell' => 1,
+				'status_tobuy' => 1
 			)
 		);
 		print __METHOD__." call method ".$WS_METHOD."\n";
@@ -192,7 +113,7 @@ class WebservicesProductsTest extends PHPUnit\Framework\TestCase
 			$result = $soapclient->call($WS_METHOD, $parameters, $ns, '');
 		} catch (SoapFault $exception) {
 			echo $exception;
-			$result=0;
+			$result = 0;
 		}
 		if (! $result || !empty($result['faultstring']) || $result['result']['result_code'] != 'OK') {
 			//var_dump($soapclient);
@@ -205,7 +126,10 @@ class WebservicesProductsTest extends PHPUnit\Framework\TestCase
 		}
 		print var_export($result, true);
 		print __METHOD__." count(result)=".(is_array($result) ? count($result) : '')."\n";
-		$this->assertEquals('OK', $result['result']['result_code']);
+
+		$resultcode = empty($result['result']['result_code']) ? 'KO' : $result['result']['result_code'];
+
+		$this->assertEquals('OK', $resultcode);
 
 		return $result['id'];
 	}
@@ -221,41 +145,41 @@ class WebservicesProductsTest extends PHPUnit\Framework\TestCase
 	public function testWSProductsGetProductOrService($id)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		$WS_DOL_URL = DOL_MAIN_URL_ROOT.'/webservices/server_productorservice.php';
 		$WS_METHOD  = 'getProductOrService';
-		$ns='http://www.dolibarr.org/ns/';
+		$ns = 'http://www.dolibarr.org/ns/';
 
 		// Set the WebService URL
 		print __METHOD__." create nusoap_client for URL=".$WS_DOL_URL."\n";
 		$soapclient = new nusoap_client($WS_DOL_URL);
 		if ($soapclient) {
-			$soapclient->soap_defencoding='UTF-8';
+			$soapclient->soap_defencoding = 'UTF-8';
 			$soapclient->decodeUTF8(false);
 		}
 
 		// Call the WebService method and store its result in $result.
-		$authentication=array(
-			'dolibarrkey'=>$conf->global->WEBSERVICES_KEY,
-			'sourceapplication'=>'DEMO',
-			'login'=>'admin',
-			'password'=>'admin',
-			'entity'=>''
+		$authentication = array(
+			'dolibarrkey' => getDolGlobalString('WEBSERVICES_KEY'),
+			'sourceapplication' => 'DEMO',
+			'login' => 'admin',
+			'password' => 'admin',
+			'entity' => ''
 		);
 
 		// Test URL
-		$result='';
-		$parameters = array('authentication'=>$authentication,'id'=>$id,'ref'=>'');
+		$result = '';
+		$parameters = array('authentication' => $authentication,'id' => $id,'ref' => '');
 		print __METHOD__." call method ".$WS_METHOD."\n";
 		try {
 			$result = $soapclient->call($WS_METHOD, $parameters, $ns, '');
 		} catch (SoapFault $exception) {
 			echo $exception;
-			$result=0;
+			$result = 0;
 		}
 		if (! $result || !empty($result['faultstring'])) {
 			//var_dump($soapclient);
@@ -284,41 +208,41 @@ class WebservicesProductsTest extends PHPUnit\Framework\TestCase
 	public function testWSProductsDeleteProductOrService($id)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		$WS_DOL_URL = DOL_MAIN_URL_ROOT.'/webservices/server_productorservice.php';
 		$WS_METHOD  = 'deleteProductOrService';
-		$ns='http://www.dolibarr.org/ns/';
+		$ns = 'http://www.dolibarr.org/ns/';
 
 		// Set the WebService URL
 		print __METHOD__." create nusoap_client for URL=".$WS_DOL_URL."\n";
 		$soapclient = new nusoap_client($WS_DOL_URL);
 		if ($soapclient) {
-			$soapclient->soap_defencoding='UTF-8';
+			$soapclient->soap_defencoding = 'UTF-8';
 			$soapclient->decodeUTF8(false);
 		}
 
 		// Call the WebService method and store its result in $result.
-		$authentication=array(
-			'dolibarrkey'=>$conf->global->WEBSERVICES_KEY,
-			'sourceapplication'=>'DEMO',
-			'login'=>'admin',
-			'password'=>'admin',
-			'entity'=>''
+		$authentication = array(
+			'dolibarrkey' => getDolGlobalString('WEBSERVICES_KEY'),
+			'sourceapplication' => 'DEMO',
+			'login' => 'admin',
+			'password' => 'admin',
+			'entity' => ''
 		);
 
 		// Test URL
-		$result='';
-		$parameters = array('authentication'=>$authentication,'listofid'=>$id);
+		$result = '';
+		$parameters = array('authentication' => $authentication,'listofid' => $id);
 		print __METHOD__." call method ".$WS_METHOD."\n";
 		try {
 			$result = $soapclient->call($WS_METHOD, $parameters, $ns, '');
 		} catch (SoapFault $exception) {
 			echo $exception;
-			$result=0;
+			$result = 0;
 		}
 		if (! $result || !empty($result['faultstring']) || $result['result']['result_code'] != 'OK') {
 			//var_dump($soapclient);

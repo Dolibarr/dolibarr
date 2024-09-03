@@ -1,23 +1,23 @@
 # Dolibarr language file - Source file is en_US - help
-CommunitySupport=Forum/Wiki support
-EMailSupport=Emails support
-RemoteControlSupport=Online real-time / remote support
-OtherSupport=Other support
-ToSeeListOfAvailableRessources=To contact/see available resources:
-HelpCenter=Help Center
-DolibarrHelpCenter=Dolibarr Help and Support Center
-ToGoBackToDolibarr=Otherwise, <a href="%s">click here to continue to use Dolibarr</a>.
-TypeOfSupport=Type of support
-TypeSupportCommunauty=Community (free)
-TypeSupportCommercial=Commercial
-TypeOfHelp=Type
-NeedHelpCenter=Need help or support?
-Efficiency=Efficiency
-TypeHelpOnly=Help only
-TypeHelpDev=Help+Development
-TypeHelpDevForm=Help+Development+Training
-BackToHelpCenter=Otherwise, <a href="%s">go back to Help center home page</a>.
-LinkToGoldMember=You can call one of the trainers preselected by Dolibarr for your language (%s) by clicking their Widget (status and maximum price are automatically updated):
-PossibleLanguages=Supported languages
-SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation
-SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>
+CommunitySupport=論壇/維基支持
+EMailSupport=電子郵件支持
+RemoteControlSupport=在線 實時 / 遠程 支持
+OtherSupport=其他支持
+ToSeeListOfAvailableRessources=要 聯絡 / 查看 可用資源：
+HelpCenter=幫助中心
+DolibarrHelpCenter=Dolibarr 幫助和支持中心
+ToGoBackToDolibarr=否則，<a href="%s"> 單擊此處繼續使用 Dolibarr </a> 。
+TypeOfSupport=支持類型
+TypeSupportCommunauty=社區（免費）
+TypeSupportCommercial=交易
+TypeOfHelp=類型
+NeedHelpCenter=需要支持嗎？
+Efficiency=效率
+TypeHelpOnly=僅提供幫助
+TypeHelpDev=幫助+開發
+TypeHelpDevForm=幫助+開發+培訓
+BackToHelpCenter=否則，<a href="%s"> 返回幫助中心主頁 </a> 。
+LinkToGoldMember=您可以致電 Dolibarr 為您的語言預先選擇的一位培訓師 ( %s）通過單擊他們的小部件（狀態和最高價格會自動更新）：
+PossibleLanguages=支持的語言
+SubscribeToFoundation=幫助Dolibarr項目，訂閱基金會
+SeeOfficalSupport=如需您所用語言的 Dolibarr 官方支持：<br>  <b>  <a href="%s" target="_blank" rel="noopener noreferrer"> %s </a>  </b>

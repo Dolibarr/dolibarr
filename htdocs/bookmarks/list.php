@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2005-2022 Laurent Destailleur       <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2022	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,22 +32,23 @@ $langs->loadLangs(array('bookmarks', 'admin'));
 // Get Parameters
 $action 	= GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
-$show_files = GETPOST('show_files', 'int');
+$show_files = GETPOSTINT('show_files');
 $confirm 	= GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'alpha');
 $toselect 	= GETPOST('toselect', 'array');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'bookmarklist'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'bookmarklist'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $optioncss 	= GETPOST('optioncss', 'alpha');
 $mode 		= GETPOST('mode', 'aZ');
 
-$id = GETPOST("id", 'int');
+$id = GETPOSTINT("id");
+$search_title = GETPOST('search_title', 'alpha');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
@@ -165,6 +167,9 @@ $sqlfields = $sql; // $sql fields to remove for count total
 
 $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as b LEFT JOIN ".MAIN_DB_PREFIX."user as u ON b.fk_user=u.rowid";
 $sql .= " WHERE 1=1";
+if ($search_title) {
+	$sql .= natural_search('title', $search_title);
+}
 $sql .= " AND b.entity IN (".getEntity('bookmark').")";
 if (!$user->admin) {
 	$sql .= " AND (b.fk_user = ".((int) $user->id)." OR b.fk_user is NULL OR b.fk_user = 0)";
@@ -172,7 +177,7 @@ if (!$user->admin) {
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
@@ -209,7 +214,7 @@ $num = $db->num_rows($resql);
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title);
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'bodyforlist mod-bookmarks page-list');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -229,7 +234,7 @@ if ($optioncss != '') {
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
-$parameters = array();
+$parameters = array('param' => &$param);
 $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
 
@@ -243,7 +248,7 @@ $arrayofmassactions = array(
 if (!empty($permissiontodelete)) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
-if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) {
+if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete'))) {
 	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
@@ -292,7 +297,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')); // This also change content of $arrayfields
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">';
@@ -313,20 +318,24 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	$totalarray['nbfield']++;
 }
 print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "b.rowid", "", $param, '', $sortfield, $sortorder);
+$totalarray['nbfield']++;
 print_liste_field_titre("Title", $_SERVER["PHP_SELF"], "b.title", "", $param, '', $sortfield, $sortorder);
+$totalarray['nbfield']++;
 print_liste_field_titre("Link", $_SERVER["PHP_SELF"], "b.url", "", $param, '', $sortfield, $sortorder);
+$totalarray['nbfield']++;
 print_liste_field_titre("Target", $_SERVER["PHP_SELF"], "b.target", "", $param, '', $sortfield, $sortorder, 'center ');
+$totalarray['nbfield']++;
 print_liste_field_titre("Visibility", $_SERVER["PHP_SELF"], "u.lastname", "", $param, '', $sortfield, $sortorder, 'center ');
+$totalarray['nbfield']++;
 print_liste_field_titre("DateCreation", $_SERVER["PHP_SELF"], "b.dateb", "", $param, '', $sortfield, $sortorder, 'center ');
+$totalarray['nbfield']++;
 print_liste_field_titre("Position", $_SERVER["PHP_SELF"], "b.position", "", $param, '', $sortfield, $sortorder, 'right ');
+$totalarray['nbfield']++;
 if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print getTitleFieldOfList(($mode != 'kanban' ? $selectedfields : ''), 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
 print '</tr>'."\n";
-
-$totalarray = array();
-$totalarray['nbfield'] = 0;
 
 // Loop on record
 // --------------------------------------------------------------------
@@ -350,7 +359,14 @@ while ($i < $imaxinloop) {
 			print '<div class="box-flex-container">';
 		}
 		// Output Kanban
-		print $object->getKanbanView('');
+		$selected = -1;
+		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($object->id, $arrayofselected)) {
+				$selected = 1;
+			}
+		}
+		print $object->getKanbanView('', array('selected' => $selected));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';
@@ -408,7 +424,7 @@ while ($i < $imaxinloop) {
 		print "</td>\n";
 
 		// Target
-		print '<td class="center">';
+		print '<td class="tdoverflowmax100 center">';
 		if ($obj->target == 0) {
 			print $langs->trans("BookmarkTargetReplaceWindowShort");
 		}
@@ -418,7 +434,7 @@ while ($i < $imaxinloop) {
 		print "</td>\n";
 
 		// Author
-		print '<td class="center">';
+		print '<td class="tdoverflowmax100 center">';
 		if ($obj->fk_user > 0) {
 			if (empty($conf->cache['users'][$obj->fk_user])) {
 				$tmpuser = new User($db);
@@ -475,7 +491,7 @@ if ($num == 0) {
 			$colspan++;
 		}
 	}
-	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+	print '<tr><td colspan="'.$savnbfield.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 }
 
 $db->free($resql);

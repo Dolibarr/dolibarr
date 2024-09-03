@@ -4,6 +4,7 @@
  * Copyright (C) 2005       Marc Barilley / Ocebo   <marc@ocebo.com>
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php'
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
-if (isModEnabled("banque")) {
+if (isModEnabled("bank")) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 }
 
@@ -40,7 +41,7 @@ if (isModEnabled("banque")) {
 $langs->loadLangs(array('bills', 'banks', 'companies'));
 
 // Security check
-$id = GETPOST("id", 'int');
+$id = GETPOSTINT("id");
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'aZ09');
 if ($user->socid) {
@@ -55,7 +56,7 @@ if ($id > 0) {
 	}
 }
 
-$result = restrictedArea($user, 'payment_sc', $id, '');
+$result = restrictedArea($user, 'payment_sc', $object, '');
 
 
 /*
@@ -100,6 +101,7 @@ $form = new Form($db);
 
 $h = 0;
 
+$head = array();
 $head[$h][0] = DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$id;
 $head[$h][1] = $langs->trans("PaymentSocialContribution");
 $hselected = $h;
@@ -130,36 +132,30 @@ print '<div class="underbanner clearboth"></div>';
 
 print '<table class="border centpercent">';
 
-// Ref
-/*print '<tr><td class="titlefield">'.$langs->trans('Ref').'</td>';
-print '<td colspan="3">';
-print $form->showrefnav($object,'id','',1,'rowid','id');
-print '</td></tr>';*/
-
 // Date
-print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">'.dol_print_date($object->datep, 'day').'</td></tr>';
+print '<tr><td>'.$langs->trans('Date').'</td><td>'.dol_print_date($object->datep, 'day').'</td></tr>';
 
 // Mode
-print '<tr><td>'.$langs->trans('Mode').'</td><td colspan="3">'.$langs->trans("PaymentType".$object->type_code).'</td></tr>';
+print '<tr><td>'.$langs->trans('Mode').'</td><td>'.$langs->trans("PaymentType".$object->type_code).'</td></tr>';
 
 // Numero
-print '<tr><td>'.$langs->trans('Numero').'</td><td colspan="3">'.$object->num_payment.'</td></tr>';
+print '<tr><td>'.$langs->trans('Numero').'</td><td>'.dol_escape_htmltag($object->num_payment).'</td></tr>';
 
 // Amount
-print '<tr><td>'.$langs->trans('Amount').'</td><td colspan="3">'.price($object->amount, 0, $langs, 1, -1, -1, $conf->currency).'</td></tr>';
+print '<tr><td>'.$langs->trans('Amount').'</td><td>'.price($object->amount, 0, $langs, 1, -1, -1, $conf->currency).'</td></tr>';
 
 // Note
-print '<tr><td>'.$langs->trans('Note').'</td><td colspan="3">'.nl2br($object->note).'</td></tr>';
+print '<tr><td>'.$langs->trans('Note').'</td><td class="wordbreak sensiblehtmlcontent">'.dol_string_onlythesehtmltags(dol_htmlcleanlastbr($object->note_private)).'</td></tr>';
 
 // Bank account
-if (isModEnabled("banque")) {
+if (isModEnabled("bank")) {
 	if ($object->bank_account) {
 		$bankline = new AccountLine($db);
 		$bankline->fetch($object->bank_line);
 
 		print '<tr>';
 		print '<td>'.$langs->trans('BankTransactionLine').'</td>';
-		print '<td colspan="3">';
+		print '<td>';
 		print $bankline->getNomUrl(1, 0, 'showall');
 		print '</td>';
 		print '</tr>';
@@ -228,7 +224,7 @@ if ($resql) {
 			if ($objp->paye == 1) {	// If at least one invoice is paid, disable delete
 				$disable_delete = 1;
 			}
-			$total = $total + $objp->amount;
+			$total += $objp->amount;
 			$i++;
 		}
 	}
@@ -250,10 +246,9 @@ print '<div class="tabsAction">';
 /*
 if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 {
-	if ($user->socid == 0 && $object->statut == 0 && $_GET['action'] == '')
+	if ($user->socid == 0 && $object->statut == 0 && $action == '')
 	{
-		if ($user->rights->facture->paiement)
-		{
+		if ($user->hasRight('facture', 'paiement')){
 			print '<a class="butAction" href="card.php?id='.GETPOST('id', 'int').'&amp;facid='.$objp->facid.'&amp;action=valide">'.$langs->trans('Valid').'</a>';
 		}
 	}
@@ -261,7 +256,7 @@ if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 */
 
 if ($action == '') {
-	if ($user->rights->tax->charges->supprimer) {
+	if ($user->hasRight('tax', 'charges', 'supprimer')) {
 		if (!$disable_delete) {
 			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 1);
 		} else {

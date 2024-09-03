@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV\Xml\Response;
 
 use Sabre\Xml\Element;
@@ -7,7 +9,7 @@ use Sabre\Xml\Reader;
 use Sabre\Xml\Writer;
 
 /**
- * WebDAV MultiStatus parser
+ * WebDAV MultiStatus parser.
  *
  * This class parses the {DAV:}multistatus response, as defined in:
  * https://tools.ietf.org/html/rfc4918#section-14.16
@@ -19,10 +21,10 @@ use Sabre\Xml\Writer;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class MultiStatus implements Element {
-
+class MultiStatus implements Element
+{
     /**
-     * The responses
+     * The responses.
      *
      * @var \Sabre\DAV\Xml\Element\Response[]
      */
@@ -36,16 +38,15 @@ class MultiStatus implements Element {
     protected $syncToken;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \Sabre\DAV\Xml\Element\Response[] $responses
-     * @param string $syncToken
+     * @param string                            $syncToken
      */
-    function __construct(array $responses, $syncToken = null) {
-
+    public function __construct(array $responses, $syncToken = null)
+    {
         $this->responses = $responses;
         $this->syncToken = $syncToken;
-
     }
 
     /**
@@ -53,10 +54,9 @@ class MultiStatus implements Element {
      *
      * @return \Sabre\DAV\Xml\Element\Response[]
      */
-    function getResponses() {
-
+    public function getResponses()
+    {
         return $this->responses;
-
     }
 
     /**
@@ -64,10 +64,9 @@ class MultiStatus implements Element {
      *
      * @return string|null
      */
-    function getSyncToken() {
-
+    public function getSyncToken()
+    {
         return $this->syncToken;
-
     }
 
     /**
@@ -81,19 +80,15 @@ class MultiStatus implements Element {
      *
      * Important note 2: If you are writing any new elements, you are also
      * responsible for closing them.
-     *
-     * @param Writer $writer
-     * @return void
      */
-    function xmlSerialize(Writer $writer) {
-
+    public function xmlSerialize(Writer $writer)
+    {
         foreach ($this->getResponses() as $response) {
             $writer->writeElement('{DAV:}response', $response);
         }
         if ($syncToken = $this->getSyncToken()) {
             $writer->writeElement('{DAV:}sync-token', $syncToken);
         }
-
     }
 
     /**
@@ -114,11 +109,10 @@ class MultiStatus implements Element {
      * $reader->parseInnerTree() will parse the entire sub-tree, and advance to
      * the next element.
      *
-     * @param Reader $reader
      * @return mixed
      */
-    static function xmlDeserialize(Reader $reader) {
-
+    public static function xmlDeserialize(Reader $reader)
+    {
         $elementMap = $reader->elementMap;
         $elementMap['{DAV:}prop'] = 'Sabre\\DAV\\Xml\\Element\\Prop';
         $elements = $reader->parseInnerTree($elementMap);
@@ -126,17 +120,17 @@ class MultiStatus implements Element {
         $responses = [];
         $syncToken = null;
 
-        if ($elements) foreach ($elements as $elem) {
-            if ($elem['name'] === '{DAV:}response') {
-                $responses[] = $elem['value'];
-            }
-            if ($elem['name'] === '{DAV:}sync-token') {
-                $syncToken = $elem['value'];
+        if ($elements) {
+            foreach ($elements as $elem) {
+                if ('{DAV:}response' === $elem['name']) {
+                    $responses[] = $elem['value'];
+                }
+                if ('{DAV:}sync-token' === $elem['name']) {
+                    $syncToken = $elem['value'];
+                }
             }
         }
 
         return new self($responses, $syncToken);
-
     }
-
 }

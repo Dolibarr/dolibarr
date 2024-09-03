@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - printing
-Module64000Name=One click Printing
-Module64000Desc=Enable One click Printing System
-PrintingSetup=Setup of One click Printing System
-PrintingDesc=This module adds a Print button to various modules to allow documents to be printed directly to a printer with no need to open the document into another application.
-MenuDirectPrinting=One click Printing jobs
-DirectPrint=One click Print
+Module64000Name=Afdrukken met één klik
+Module64000Desc=Afdruksysteem met één klik inschakelen
+PrintingSetup=Installatie van het afdruksysteem met één klik
+PrintingDesc=Deze module voegt een knop Afdrukken toe aan verschillende modules, zodat documenten rechtstreeks naar een printer kunnen worden afgedrukt zonder dat het document in een andere toepassing hoeft te worden geopend.
+MenuDirectPrinting=Eén klik Afdruktaken
+DirectPrint=Afdrukken met één klik
 PrintingDriverDesc=Configuratievariabelen voor printerdriver.
 ListDrivers=Lijst met stuurprogramma's
 PrintTestDesc=Lijst met printers.
@@ -32,6 +32,7 @@ PRINTIPP_HOST=Printserver
 PRINTIPP_PORT=Poort
 PRINTIPP_USER=Login
 PRINTIPP_PASSWORD=Wachtwoord
+PRINTIPP_SSL=Gebruik SSL
 NoDefaultPrinterDefined=Geen standaardprinter gedefinieerd
 DefaultPrinter=Standaard printer
 Printer=Printer
@@ -52,3 +53,4 @@ PrintingDriverDescprintgcp=Configuratievariabelen voor het afdrukken van stuurpr
 PrintingDriverDescprintipp=Configuratievariabelen voor het afdrukken van Driver Cups.
 PrintTestDescprintgcp=Lijst met printers voor Google Cloudprinter.
 PrintTestDescprintipp=Lijst met printers voor Cups.
+Testbbbb

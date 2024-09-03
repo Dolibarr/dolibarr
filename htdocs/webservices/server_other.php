@@ -20,11 +20,29 @@
  *       \brief      File that is entry point to call Dolibarr WebServices
  */
 
-if (!defined("NOCSRFCHECK")) {
-	define("NOCSRFCHECK", '1');
+if (!defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', '1'); // Do not check anti CSRF attack test
+}
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1'); // Do not check anti POST attack test
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1'); // If there is no need to load and show top and left menu
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1'); // Do not load ajax.lib.php library
+}
+if (!defined("NOLOGIN")) {
+	define("NOLOGIN", '1'); // If this page is public (can be called outside logged session)
+}
+if (!defined("NOSESSION")) {
+	define("NOSESSION", '1');
 }
 
-require '../master.inc.php';
+require '../main.inc.php';
 require_once NUSOAP_PATH.'/nusoap.php'; // Include SOAP
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ws.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
@@ -37,7 +55,7 @@ dol_syslog("Call Dolibarr webservices interfaces");
 $langs->load("main");
 
 // Enable and test if module web services is enabled
-if (empty($conf->global->MAIN_MODULE_WEBSERVICES)) {
+if (!getDolGlobalString('MAIN_MODULE_WEBSERVICES')) {
 	$langs->load("admin");
 	dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
 	print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
@@ -156,7 +174,8 @@ function getVersions($authentication)
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
@@ -198,7 +217,8 @@ function getDocument($authentication, $modulepart, $file, $refname = '')
 	}
 
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 
 	// Properties of doc
@@ -218,13 +238,14 @@ function getDocument($authentication, $modulepart, $file, $refname = '')
 	// Check parameters
 	if (!$error && (!$file || !$modulepart)) {
 		$error++;
-		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter file and modulepart must be both provided.";
+		$errorcode = 'BAD_PARAMETERS';
+		$errorlabel = "Parameter file and modulepart must be both provided.";
 	}
 
 	if (!$error) {
-		$fuser->getrights();
+		$fuser->loadRights();
 
-		// Suppression de la chaine de caractere ../ dans $original_file
+		// Suppression de la chaine de character ../ dans $original_file
 		$original_file = str_replace("../", "/", $original_file);
 
 		// find the subdirectory name as the reference
@@ -258,7 +279,7 @@ function getDocument($authentication, $modulepart, $file, $refname = '')
 		}
 
 		// Security:
-		// Limite acces si droits non corrects
+		// Limit access si droits non corrects
 		if (!$accessallowed) {
 			$errorcode = 'NOT_PERMITTED';
 			$errorlabel = 'Access not allowed';

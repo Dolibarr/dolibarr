@@ -1,8 +1,10 @@
 <?php
-/* Copyright (C) 2010-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2010-2015	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2009		Meos
- * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2016		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2012		Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2016		Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("products", "other"));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
 $modulepart = GETPOST('modulepart', 'alpha') ? GETPOST('modulepart', 'alpha') : 'produit|service';
 $original_file = GETPOST("file");
@@ -51,62 +53,62 @@ if (empty($modulepart)) {
 $accessallowed = 0;
 if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'service' || $modulepart == 'produit|service') {
 	$result = restrictedArea($user, 'produit|service', $id, 'product&product');
-	if ($modulepart == 'produit|service' && (!$user->rights->produit->lire && !$user->rights->service->lire)) {
+	if ($modulepart == 'produit|service' && (!$user->hasRight('produit', 'lire') && !$user->hasRight('service', 'lire'))) {
 		accessforbidden();
 	}
 	$accessallowed = 1;
 } elseif ($modulepart == 'project') {
 	$result = restrictedArea($user, 'projet', $id);
-	if (empty($user->rights->projet->lire)) {
+	if (!$user->hasRight('projet', 'lire')) {
 		accessforbidden();
 	}
 	$accessallowed = 1;
 } elseif ($modulepart == 'bom') {
 	$result = restrictedArea($user, $modulepart, $id, 'bom_bom');
-	if (empty($user->rights->bom->read)) {
+	if (!$user->hasRight('bom', 'read')) {
 		accessforbidden();
 	}
 	$accessallowed = 1;
 } elseif ($modulepart == 'member') {
 	$result = restrictedArea($user, 'adherent', $id, '', '', 'fk_soc', 'rowid');
-	if (empty($user->rights->adherent->lire)) {
+	if (!$user->hasRight('adherent', 'lire')) {
 		accessforbidden();
 	}
 	$accessallowed = 1;
 } elseif ($modulepart == 'user') {
 	$result = restrictedArea($user, $modulepart, $id, $modulepart, $modulepart);
-	if (empty($user->rights->user->user->lire)) {
+	if (!$user->hasRight('user', 'user', 'lire')) {
 		accessforbidden();
 	}
 	$accessallowed = 1;
 } elseif ($modulepart == 'tax') {
 	$result = restrictedArea($user, $modulepart, $id, 'chargesociales', 'charges');
-	if (empty($user->rights->tax->charges->lire)) {
+	if (!$user->hasRight('tax', 'charges', 'lire')) {
 		accessforbidden();
 	}
 	$accessallowed = 1;
 } elseif ($modulepart == 'bank') {
 	$result = restrictedArea($user, 'banque', $id, 'bank_account');
-	if (empty($user->rights->banque->lire)) {
+	if (!$user->hasRight('banque', 'lire')) {
 		accessforbidden();
 	}
 	$accessallowed = 1;
 } elseif ($modulepart == 'medias') {
-	$permtoadd = ($user->rights->mailing->creer || $user->rights->website->write);
+	$permtoadd = ($user->hasRight('mailing', 'creer') || $user->hasRight('website', 'write'));
 	if (!$permtoadd) {
 		accessforbidden();
 	}
 	$accessallowed = 1;
 } elseif ($modulepart == 'facture_fourn' || $modulepart == 'facture_fournisseur') {
 	$result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
-	if (empty($user->rights->fournisseur->facture->lire)) {
+	if (!$user->hasRight('fournisseur', 'facture', 'lire')) {
 		accessforbidden();
 	}
 	$accessallowed = 1;
 } else {
 	// ticket, holiday, expensereport, societe...
 	$result = restrictedArea($user, $modulepart, $id, $modulepart);
-	if (empty($user->rights->$modulepart->read) && empty($user->rights->$modulepart->lire)) {
+	if (!$user->hasRight($modulepart, 'read') && !$user->hasRight($modulepart, 'lire')) {
 		accessforbidden();
 	}
 	$accessallowed = 1;
@@ -119,6 +121,7 @@ if (!$accessallowed) {
 }
 
 // Define dir according to modulepart
+$dir = '';
 if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'service' || $modulepart == 'produit|service') {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 	$object = new Product($db);
@@ -237,7 +240,7 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 	}
 } elseif ($modulepart == 'mrp') {
 	require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
-	$object = new MO($db);
+	$object = new Mo($db);
 	if ($id > 0) {
 		$result = $object->fetch($id);
 		if ($result <= 0) {
@@ -337,19 +340,20 @@ if ($cancel) {
 		header("Location: ".$backtourl);
 		exit;
 	} else {
-		dol_print_error('', 'Cancel on photo_resize with a not supported value of modulepart='.$modulepart);
+		dol_print_error(null, 'Cancel on photo_resize with a not supported value of modulepart='.$modulepart);
 		exit;
 	}
 }
 
 if ($action == 'confirm_resize' && GETPOSTISSET("file") && GETPOSTISSET("sizex") && GETPOSTISSET("sizey")) {
 	if (empty($dir)) {
-		print 'Bug: Value for $dir could not be defined.';
+		dol_print_error(null, 'Bug: Value for $dir could not be defined.');
+		exit;
 	}
 
 	$fullpath = $dir."/".$original_file;
 
-	$result = dol_imageResizeOrCrop($fullpath, 0, GETPOST('sizex', 'int'), GETPOST('sizey', 'int'));
+	$result = dol_imageResizeOrCrop($fullpath, 0, GETPOSTINT('sizex'), GETPOSTINT('sizey'));
 
 	if ($result == $fullpath) {
 		// If image is related to a given object, we create also thumbs.
@@ -396,12 +400,11 @@ if ($action == 'confirm_resize' && GETPOSTISSET("file") && GETPOSTISSET("sizex")
 			header("Location: ".$backtourl);
 			exit;
 		} else {
-			dol_print_error('', 'confirm_resize on photo_resize without backtourl defined for modulepart='.$modulepart);
+			dol_print_error(null, 'confirm_resize on photo_resize without backtourl defined for modulepart='.$modulepart);
 			exit;
 		}
 	} else {
 		setEventMessages($result, null, 'errors');
-		$_GET['file'] = $_POST["file"];
 		$action = '';
 	}
 }
@@ -414,7 +417,7 @@ if ($action == 'confirm_crop') {
 
 	$fullpath = $dir."/".$original_file;
 
-	$result = dol_imageResizeOrCrop($fullpath, 1, GETPOST('w', 'int'), GETPOST('h', 'int'), GETPOST('x', 'int'), GETPOST('y', 'int'));
+	$result = dol_imageResizeOrCrop($fullpath, 1, GETPOSTINT('w'), GETPOSTINT('h'), GETPOSTINT('x'), GETPOSTINT('y'));
 
 	if ($result == $fullpath) {
 		if (is_object($object)) {
@@ -459,12 +462,11 @@ if ($action == 'confirm_crop') {
 			header("Location: ".$backtourl);
 			exit;
 		} else {
-			dol_print_error('', 'confirm_crop on photo_resize without backtourl defined for modulepart='.$modulepart);
+			dol_print_error(null, 'confirm_crop on photo_resize without backtourl defined for modulepart='.$modulepart);
 			exit;
 		}
 	} else {
 		setEventMessages($result, null, 'errors');
-		$_GET['file'] = $_POST["file"];
 		$action = '';
 	}
 }
@@ -552,17 +554,17 @@ if (!empty($conf->use_javascript_ajax)) {
 
 	print '<!-- Form to crop -->'."\n";
 	print '<fieldset id="redim_file">';
-	print '<legend>'.$langs->trans("Recenter").'</legend>';
+	print '<legend>'.$langs->trans("Crop").'</legend>';
 	print $langs->trans("DefineNewAreaToPick").'...<br>';
 	print '<br><div class="center">';
 
 	if (empty($conf->dol_no_mouse_hover)) {
 		print '<div style="border: 1px solid #888888; width: '.$widthforcrop.'px;">';
-		print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$object->entity.'&file='.urlencode($original_file).'" alt="" id="cropbox" width="'.$widthforcrop.'px"/>';
+		print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.urlencode($modulepart).'&entity='.((int) $object->entity).'&file='.urlencode($original_file).'" alt="" id="cropbox" width="'.$widthforcrop.'px"/>';
 		print '</div>';
 		print '</div><br>';
 
-		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.((int) $id).($num ? '&num='.$num : '').'" method="POST">';
+		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.((int) $id).($num ? '&num='.urlencode($num) : '').'" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="backtourl" value="'.$backtourl.'">';
 		print '
@@ -579,7 +581,7 @@ if (!empty($conf->use_javascript_ajax)) {
 		      <input type="hidden" id="file" name="file" value="'.dol_escape_htmltag($original_file).'" />
 		      <input type="hidden" id="action" name="action" value="confirm_crop" />
 		      <input type="hidden" id="product" name="product" value="'.dol_escape_htmltag($id).'" />
-		      <input type="hidden" id="dol_screenwidth" name="dol_screenwidth" value="'.$_SESSION['dol_screenwidth'].'" />
+		      <input type="hidden" id="dol_screenwidth" name="dol_screenwidth" value="'.($_SESSION['dol_screenwidth'] ?? 'null').'" />
 		      <input type="hidden" id="refsizeforcrop" name="refsizeforcrop" value="'.$refsizeforcrop.'" />
 		      <input type="hidden" id="ratioforcrop" name="ratioforcrop" value="'.$ratioforcrop.'" /><!-- value in field used by js/lib/lib_photoresize.js -->
 		      <input type="hidden" id="imagewidth" name="imagewidth" value="'.$width.'" /><!-- value in field used by js/lib/lib_photoresize.js -->
@@ -587,7 +589,7 @@ if (!empty($conf->use_javascript_ajax)) {
 	          <input type="hidden" name="modulepart" value="'.dol_escape_htmltag($modulepart).'" />
 		      <input type="hidden" name="id" value="'.dol_escape_htmltag($id).'" />
 		      <br>
-		      <input type="submit" id="submitcrop" name="submitcrop" class="button" value="'.dol_escape_htmltag($langs->trans("Recenter")).'" />
+		      <input type="submit" id="submitcrop" name="submitcrop" class="button" value="'.dol_escape_htmltag($langs->trans("Crop")).'" />
 		      &nbsp;
 		      <input type="submit" id="cancelcrop" name="cancel" class="button button-cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" />
 		   </form>'."\n";
@@ -606,7 +608,7 @@ jQuery(document).ready(function() {
         console.log("We click on submitcrop");
 	    var idClicked = e.target.id;
 	    if (parseInt(jQuery(\'#w\').val())) return true;
-	    alert(\''.dol_escape_js($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Dimension"))).'\');
+	    alert(\''.dol_escape_js($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Size"))).'\');
 	    return false;
 	});
 });

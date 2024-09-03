@@ -24,11 +24,11 @@ FinancialCommitment=Financiële verplichting
 InterestAmount=Rente
 CapitalRemain=Saldo kapitaal
 TermPaidAllreadyPaid = Deze termijn is al betaald
-CantUseScheduleWithLoanStartedToPaid = Can't generate a timeline for a loan with a payment started
+CantUseScheduleWithLoanStartedToPaid = Kan geen tijdlijn genereren voor een lening waarvan de betaling is gestart
 CantModifyInterestIfScheduleIsUsed = U kunt de rente niet wijzigen indien u een schema gebruikt
 # Admin
 ConfigLoan=Configuratie van de module lening
-LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Account (from the Chart Of Account) to be used by default for capital (Loan module)
-LOAN_ACCOUNTING_ACCOUNT_INTEREST=Account (from the Chart Of Account) to be used by default for interest (Loan module)
-LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Account (from the Chart Of Account) to be used by default for insurance (Loan module)
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Rekening (uit het Rekeningschema) standaard te gebruiken voor kapitaal (Module Lening)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Rekening (uit het Rekeningschema) standaard te gebruiken voor rente (Leenmodule)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Rekening (uit het Rekeningschema) standaard te gebruiken voor verzekeringen (Module Lening)
 CreateCalcSchedule=Bewerk financiële betrokkenheid

@@ -65,7 +65,7 @@ if ($action == 'setvalue' && $user->admin) {
 	if (!($result > 0)) {
 		$error++;
 	}
-	$result = dolibarr_set_const($db, "PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS", GETPOST('PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS', 'int'), 'chaine', 0, '', $conf->entity);
+	$result = dolibarr_set_const($db, "PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS", GETPOSTINT('PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS'), 'chaine', 0, '', $conf->entity);
 	if (!($result > 0)) {
 		$error++;
 	}
@@ -119,7 +119,7 @@ if ($action == 'setvalue' && $user->admin) {
 }
 
 if ($action == "setlive") {
-	$liveenable = GETPOST('value', 'int') ? 0 : 1;
+	$liveenable = GETPOSTINT('value') ? 0 : 1;
 	$res = dolibarr_set_const($db, "PAYPAL_API_SANDBOX", $liveenable, 'yesno', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
@@ -138,7 +138,7 @@ if ($action == "setlive") {
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("PaypalSetup"));
+llxHeader('', $langs->trans("PaypalSetup"), '', '', 0, 0, '', '', '', 'mod-paypal page-admin_paypal');
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
@@ -176,7 +176,7 @@ print "</tr>\n";
 print '<tr class="oddeven">';
 print '<td>';
 print $langs->trans("PaypalLiveEnabled").'</td><td>';
-if (empty($conf->global->PAYPAL_API_SANDBOX)) {
+if (!(getDolGlobalInt('PAYPAL_API_SANDBOX'))) {
 	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setlive&token='.newToken().'&value=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
 } else {
@@ -187,27 +187,27 @@ print '</td></tr>';
 
 print '<tr class="oddeven"><td class="fieldrequired">';
 print $langs->trans("PAYPAL_API_USER").'</td><td>';
-print '<input size="32" type="text" name="PAYPAL_API_USER" value="'.$conf->global->PAYPAL_API_USER.'">';
+print '<input size="32" type="text" name="PAYPAL_API_USER" value="'.getDolGlobalString('PAYPAL_API_USER').'">';
 print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': admin-facilitator_api1.example.com, paypal_api1.mywebsite.com</span>';
 print '</td></tr>';
 
 
 print '<tr class="oddeven"><td class="fieldrequired">';
 print $langs->trans("PAYPAL_API_PASSWORD").'</td><td>';
-print '<input size="32" type="text" name="PAYPAL_API_PASSWORD" value="'.$conf->global->PAYPAL_API_PASSWORD.'">';
+print '<input size="32" type="text" name="PAYPAL_API_PASSWORD" value="'.getDolGlobalString('PAYPAL_API_PASSWORD').'">';
 print '</td></tr>';
 
 
 print '<tr class="oddeven"><td class="fieldrequired">';
 print $langs->trans("PAYPAL_API_SIGNATURE").'</td><td>';
-print '<input size="64" type="text" name="PAYPAL_API_SIGNATURE" value="'.$conf->global->PAYPAL_API_SIGNATURE.'">';
+print '<input size="64" type="text" name="PAYPAL_API_SIGNATURE" value="'.getDolGlobalString('PAYPAL_API_SIGNATURE').'">';
 print '<br><span class="opacitymedium">'.$langs->trans("Example").': ASsqXEmw4KzmX-CPChWSVDNCNfd.A3YNR7uz-VncXXAERFDFDFDF</span>';
 print '</td></tr>';
 
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("PAYPAL_SSLVERSION").'</td><td>';
-print $form->selectarray("PAYPAL_SSLVERSION", array('1'=> $langs->trans('TLSv1'), '6'=> $langs->trans('TLSv1.2')), $conf->global->PAYPAL_SSLVERSION);
+print $form->selectarray("PAYPAL_SSLVERSION", array('1'=> $langs->trans('TLSv1'), '6'=> $langs->trans('TLSv1.2')), getDolGlobalString('PAYPAL_SSLVERSION'));
 print '</td></tr>';
 
 print '</table>';
@@ -228,7 +228,7 @@ print "</tr>\n";
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("PAYPAL_API_INTEGRAL_OR_PAYPALONLY").'</td><td>';
-print $form->selectarray("PAYPAL_API_INTEGRAL_OR_PAYPALONLY", array('integral'=> $langs->trans('PaypalModeIntegral'), 'paypalonly'=> $langs->trans('PaypalModeOnlyPaypal')), $conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY);
+print $form->selectarray("PAYPAL_API_INTEGRAL_OR_PAYPALONLY", array('integral'=> $langs->trans('PaypalModeIntegral'), 'paypalonly'=> $langs->trans('PaypalModeOnlyPaypal')), getDolGlobalString('PAYPAL_API_INTEGRAL_OR_PAYPALONLY'));
 print '</td></tr>';
 
 /*
@@ -241,55 +241,55 @@ print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("PublicVendorName").'</td><td>';
-print '<input size="64" type="text" name="ONLINE_PAYMENT_CREDITOR" value="'.$conf->global->ONLINE_PAYMENT_CREDITOR.'">';
+print '<input size="64" type="text" name="ONLINE_PAYMENT_CREDITOR" value="'.getDolGlobalString('ONLINE_PAYMENT_CREDITOR').'">';
 print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': '.$mysoc->name.'</span>';
 print '</td></tr>';
 
-if (isModEnabled("banque")) {
+if (isModEnabled("bank")) {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("BankAccount").'</td><td>';
 	print img_picto('', 'bank_account').' ';
-	$form->select_comptes($conf->global->PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS, 'PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS', 0, '', 1);
+	$form->select_comptes(getDolGlobalString('PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS'), 'PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS', 0, '', 1);
 	print '</td></tr>';
 }
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("CSSUrlForPaymentForm").'</td><td>';
-print '<input size="64" type="text" name="ONLINE_PAYMENT_CSS_URL" value="'.$conf->global->ONLINE_PAYMENT_CSS_URL.'">';
+print '<input size="64" type="text" name="ONLINE_PAYMENT_CSS_URL" value="'.getDolGlobalString('ONLINE_PAYMENT_CSS_URL').'">';
 print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': http://mysite/mycss.css</span>';
 print '</td></tr>';
 
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("PAYPAL_ADD_PAYMENT_URL").'</td><td>';
-print $form->selectyesno("PAYPAL_ADD_PAYMENT_URL", $conf->global->PAYPAL_ADD_PAYMENT_URL, 1);
+print $form->selectyesno("PAYPAL_ADD_PAYMENT_URL", getDolGlobalString('PAYPAL_ADD_PAYMENT_URL'), 1);
 print '</td></tr>';
 
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("MessageForm").'</td><td>';
-$doleditor = new DolEditor('ONLINE_PAYMENT_MESSAGE_FORM', $conf->global->ONLINE_PAYMENT_MESSAGE_FORM, '', 100, 'dolibarr_details', 'In', false, true, true, ROWS_4, '90%');
+$doleditor = new DolEditor('ONLINE_PAYMENT_MESSAGE_FORM', getDolGlobalString('ONLINE_PAYMENT_MESSAGE_FORM'), '', 100, 'dolibarr_details', 'In', false, true, true, ROWS_4, '90%');
 $doleditor->Create();
 print '</td></tr>';
 
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("MessageOK").'</td><td>';
-$doleditor = new DolEditor('ONLINE_PAYMENT_MESSAGE_OK', $conf->global->ONLINE_PAYMENT_MESSAGE_OK, '', 100, 'dolibarr_details', 'In', false, true, true, ROWS_4, '90%');
+$doleditor = new DolEditor('ONLINE_PAYMENT_MESSAGE_OK', getDolGlobalString('ONLINE_PAYMENT_MESSAGE_OK'), '', 100, 'dolibarr_details', 'In', false, true, true, ROWS_4, '90%');
 $doleditor->Create();
 print '</td></tr>';
 
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("MessageKO").'</td><td>';
-$doleditor = new DolEditor('ONLINE_PAYMENT_MESSAGE_KO', $conf->global->ONLINE_PAYMENT_MESSAGE_KO, '', 100, 'dolibarr_details', 'In', false, true, true, ROWS_4, '90%');
+$doleditor = new DolEditor('ONLINE_PAYMENT_MESSAGE_KO', getDolGlobalString('ONLINE_PAYMENT_MESSAGE_KO'), '', 100, 'dolibarr_details', 'In', false, true, true, ROWS_4, '90%');
 $doleditor->Create();
 print '</td></tr>';
 
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("ONLINE_PAYMENT_SENDEMAIL").'</td><td>';
-print '<input class="minwidth200" type="text" name="ONLINE_PAYMENT_SENDEMAIL" value="'.$conf->global->ONLINE_PAYMENT_SENDEMAIL.'">';
+print '<input class="minwidth200" type="text" name="ONLINE_PAYMENT_SENDEMAIL" value="'.getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL').'">';
 print ' &nbsp;  <span class="opacitymedium">'.$langs->trans("Example").': myemail@myserver.com, Payment service &lt;myemail2@myserver2.com&gt;</span>';
 print '</td></tr>';
 
@@ -309,11 +309,11 @@ print "</tr>\n";
 // Payment token for URL
 print '<tr class="oddeven"><td>';
 print $langs->trans("SecurityToken").'</td><td>';
-print '<input class="minwidth300" type="text" id="PAYMENT_SECURITY_TOKEN" name="PAYMENT_SECURITY_TOKEN" value="'.$conf->global->PAYMENT_SECURITY_TOKEN.'">';
+print '<input class="minwidth300" type="text" id="PAYMENT_SECURITY_TOKEN" name="PAYMENT_SECURITY_TOKEN" value="'.getDolGlobalString('PAYMENT_SECURITY_TOKEN').'">';
 if (!empty($conf->use_javascript_ajax)) {
 	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
 }
-if (!empty($conf->global->PAYMENT_SECURITY_ACCEPT_ANY_TOKEN)) {
+if (getDolGlobalString('PAYMENT_SECURITY_ACCEPT_ANY_TOKEN')) {
 	$langs->load("errors");
 	print img_warning($langs->trans("WarningTheHiddenOptionIsOn", 'PAYMENT_SECURITY_ACCEPT_ANY_TOKEN'), '', 'pictowarning marginleftonly');
 }
@@ -325,7 +325,7 @@ if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('PAYMENT_SECURITY_TOKEN_UNIQUE');
 } else {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("PAYMENT_SECURITY_TOKEN_UNIQUE", $arrval, $conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE);
+	print $form->selectarray("PAYMENT_SECURITY_TOKEN_UNIQUE", $arrval, getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE'));
 }
 print '</td></tr>';
 
@@ -334,7 +334,7 @@ print '</div>';
 
 print dol_get_fiche_end();
 
-print $form->buttonsSaveCancel("Modify", '');
+print $form->buttonsSaveCancel("Save", '');
 
 print '</form>';
 
@@ -367,7 +367,7 @@ if (!empty($conf->use_javascript_ajax)) {
 	print '$(document).ready(function () {
 	            $("#apidoc").hide();
 	            $("#apidoca").click(function() {
-					console.log("We click on apidoca show/hide");
+					console.log("We click on apidoca so we show/hide");
 	                $("#apidoc").show();
 	            	$("#apidoca").hide();
 					return false;

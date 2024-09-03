@@ -4,51 +4,42 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see .
 
-#
 # Generic
-#
-
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = Knowledge Management System
+ModuleKnowledgeManagementName = Tiedonhallintajärjestelmä
 # Module description 'ModuleKnowledgeManagementDesc'
-ModuleKnowledgeManagementDesc=Manage a Knowledge Management (KM) or Help-Desk base
-
-#
+ModuleKnowledgeManagementDesc=Hallinnoi Knowledge Management (KM) tai Help-desk-tietokantaa
 # Admin page
-#
-KnowledgeManagementSetup = Knowledge Management System setup
-Settings = Asetukset
-KnowledgeManagementSetupPage = Knowledge Management System setup page
-
-
-#
+KnowledgeManagementSetup = Tiedonhallintajärjestelmän asennus
+KnowledgeManagementSetupPage = Tiedonhallintajärjestelmän asetussivu
 # About page
-#
-About = Yleisesti
-KnowledgeManagementAbout = About Knowledge Management
-KnowledgeManagementAboutPage = Knowledge Management about page
-
-KnowledgeManagementArea = Knowledge Management
-MenuKnowledgeRecord = Knowledge base
-ListKnowledgeRecord = List of articles
-NewKnowledgeRecord = New article
-ValidateReply = Validate solution
-KnowledgeRecords = Articles
+KnowledgeManagementAbout = Tietoja tiedonhallinnasta
+KnowledgeManagementAboutPage = Tiedonhallinta sivusta
+KnowledgeManagementArea = Tietämyksen hallinta
+MenuKnowledgeRecord = Tietopohja
+MenuKnowledgeRecordShort = Tietopohja
+ListKnowledgeRecord = Luettelo artikkeleista
+NewKnowledgeRecord = Uusi artikkeli
+ValidateReply = Vahvista ratkaisu
+KnowledgeRecords = Artikkelit
 KnowledgeRecord = Artikkeli
-KnowledgeRecordExtraFields = Extrafields for Article
-GroupOfTicket=Group of tickets
-YouCanLinkArticleToATicketCategory=You can link an article to a ticket group (so the article will be suggested during qualification of new tickets)
-SuggestedForTicketsInGroup=Suggested for tickets when group is
-
-SetObsolete=Set as obsolete
-ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
-ConfirmReopenKM=Do you want to restore this article to status "Validated" ?
+KnowledgeRecordExtraFields = Artikkelin lisäkentät
+GroupOfTicket=ryhmä lipuista
+YouCanLinkArticleToATicketCategory=Voit linkittää artikkelin lippuun ryhmä (joten artikkeli on korostettu kaikissa lipuissa tässä ryhmä)
+SuggestedForTicketsInGroup=Ehdotettu tiketin luonnissa
+SetObsolete=Aseta vanhentuneeksi
+ConfirmCloseKM=Vahvistatko tämän artikkelin sulkemisen vanhentuneeksi?
+ConfirmReopenKM=Haluatko palauttaa tämän artikkelin tilaan "Validated"?
+BoxLastKnowledgerecordDescription=Viimeiset %s artikkelit
+BoxLastKnowledgerecord=Viimeiset artikkelit
+BoxLastKnowledgerecordContent=Viimeiset artikkelit
+BoxLastKnowledgerecordModifiedContent=Viimeksi muokatut artikkelit
+BoxLastModifiedKnowledgerecordDescription=Viimeisin %s muokattua artikkelia
+BoxLastModifiedKnowledgerecord=Viimeksi muokatut artikkelit

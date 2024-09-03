@@ -153,7 +153,7 @@ if ($action == 'setTICKET_ENABLE_PUBLIC_INTERFACE') {
 	}
 
 	// For compatibility when javascript is not enabled
-	if ($conf->global->MAIN_FEATURES_LEVEL >= 2 && empty($conf->use_javascript_ajax)) {
+	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2 && empty($conf->use_javascript_ajax)) {
 		$param_notification_also_main_addressemail = GETPOST('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS', 'alpha');
 		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS', $param_notification_also_main_addressemail, 'chaine', 0, '', $conf->entity);
 		if (!($res > 0)) {
@@ -163,8 +163,8 @@ if ($action == 'setTICKET_ENABLE_PUBLIC_INTERFACE') {
 	}
 } elseif (preg_match('/set_(.*)/', $action, $reg)) {
 	$code = $reg[1];
-	$value = GETPOSTISSET($code) ? GETPOST($code, 'int') : 1;
-	if ($code == 'TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS' && $conf->global->MAIN_FEATURES_LEVEL >= 2) {
+	$value = GETPOSTISSET($code) ? GETPOSTINT($code) : 1;
+	if ($code == 'TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS' && getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 		$param_notification_also_main_addressemail = GETPOST('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS', 'alpha');
 		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS', $param_notification_also_main_addressemail, 'chaine', 0, '', $conf->entity);
 		if (!($res > 0)) {
@@ -223,7 +223,7 @@ $form = new Form($db);
 
 $help_url = "FR:Module_Ticket";
 $page_name = "TicketSetup";
-llxHeader('', $langs->trans($page_name), $help_url);
+llxHeader('', $langs->trans($page_name), $help_url, '', 0, 0, '', '', '', 'mod-admin page-ticket_public');
 
 // Subheader
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
@@ -240,7 +240,7 @@ $param = '';
 print '<br>';
 
 $enabledisablehtml = $langs->trans("TicketsActivatePublicInterface").' ';
-if (empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
+if (!getDolGlobalInt('TICKET_ENABLE_PUBLIC_INTERFACE')) {
 	// Button off, click to enable
 	$enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setTICKET_ENABLE_PUBLIC_INTERFACE&token='.newToken().'&value=1'.$param.'">';
 	$enabledisablehtml .= img_picto($langs->trans("Disabled"), 'switch_off');
@@ -252,13 +252,13 @@ if (empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
 	$enabledisablehtml .= '</a>';
 }
 print $enabledisablehtml;
-print '<input type="hidden" id="TICKET_ENABLE_PUBLIC_INTERFACE" name="TICKET_ENABLE_PUBLIC_INTERFACE" value="'.(empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE) ? 0 : 1).'">';
+print '<input type="hidden" id="TICKET_ENABLE_PUBLIC_INTERFACE" name="TICKET_ENABLE_PUBLIC_INTERFACE" value="'.(!getDolGlobalInt('TICKET_ENABLE_PUBLIC_INTERFACE') ? 0 : 1).'">';
 
 print dol_get_fiche_end();
 
 
 
-if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
+if (getDolGlobalInt('TICKET_ENABLE_PUBLIC_INTERFACE')) {
 	print '<br>';
 
 
@@ -299,7 +299,7 @@ if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
 		if (!empty($conf->use_javascript_ajax)) {
 			print ajax_constantonoff('MAIN_SECURITY_ENABLECAPTCHA_TICKET');
 		} else {
-			if (empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA_TICKET)) {
+			if (!getDolGlobalInt('MAIN_SECURITY_ENABLECAPTCHA_TICKET')) {
 				print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_MAIN_SECURITY_ENABLECAPTCHA_TICKET&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 			} else {
 				print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MAIN_SECURITY_ENABLECAPTCHA_TICKET&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
@@ -318,7 +318,7 @@ if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
 	// Check if email exists
 	print '<tr class="oddeven"><td>'.$langs->trans("TicketsEmailMustExist").'</td>';
 	print '<td class="left">';
-	if (empty(getDolGlobalInt('TICKET_EMAIL_MUST_EXISTS'))) {
+	if (!getDolGlobalInt('TICKET_EMAIL_MUST_EXISTS')) {
 		print '<a href="' . $_SERVER['PHP_SELF'] . '?action=set_TICKET_EMAIL_MUST_EXISTS&token='.newToken().'">' . img_picto($langs->trans('Disabled'), 'switch_off') . '</a>';
 	} else {
 		print '<a href="' . $_SERVER['PHP_SELF'] . '?action=del_TICKET_EMAIL_MUST_EXISTS&token='.newToken().'">' . img_picto($langs->trans('Enabled'), 'switch_on') . '</a>';
@@ -334,7 +334,7 @@ if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
 	/*
 	print '<tr class="oddeven"><td>'.$langs->trans("TicketCreateThirdPartyWithContactIfNotExist").'</td>';
 	print '<td class="left">';
-	if (empty(getDolGlobalInt('TICKET_CREATE_THIRD_PARTY_WITH_CONTACT_IF_NOT_EXIST'))) {
+	if (!getDolGlobalInt('TICKET_CREATE_THIRD_PARTY_WITH_CONTACT_IF_NOT_EXIST')) {
 		print '<a href="' . $_SERVER['PHP_SELF'] . '?action=set_TICKET_CREATE_THIRD_PARTY_WITH_CONTACT_IF_NOT_EXIST&token='.newToken().'">' . img_picto($langs->trans('Disabled'), 'switch_off') . '</a>';
 	} else {
 		print '<a href="' . $_SERVER['PHP_SELF'] . '?action=del_TICKET_CREATE_THIRD_PARTY_WITH_CONTACT_IF_NOT_EXIST&token='.newToken().'">' . img_picto($langs->trans('Enabled'), 'switch_on') . '</a>';
@@ -346,32 +346,15 @@ if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
 	print '</tr>';
 	*/
 
-	/*if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
-	{
-		// Show logo for module
-		print '<tr class="oddeven"><td>' . $langs->trans("TicketsShowModuleLogo") . '</td>';
-		print '<td class="left">';
-		if ($conf->use_javascript_ajax) {
-			print ajax_constantonoff('TICKET_SHOW_MODULE_LOGO');
-		} else {
-			$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-			print $form->selectarray("TICKET_SHOW_MODULE_LOGO", $arrval, $conf->global->TICKET_SHOW_MODULE_LOGO);
-		}
-		print '</td>';
-		print '<td class="center">';
-		print $form->textwithpicto('', $langs->trans("TicketsShowModuleLogoHelp"), 1, 'help');
-		print '</td>';
-		print '</tr>';
-	}*/
 
 	// Show logo for company
 	print '<tr class="oddeven"><td>'.$langs->trans("TicketsShowCompanyLogo").'</td>';
 	print '<td class="left">';
-	if ($conf->use_javascript_ajax) {
+	if (!empty($conf->use_javascript_ajax)) {
 		print ajax_constantonoff('TICKET_SHOW_COMPANY_LOGO');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("TICKET_SHOW_COMPANY_LOGO", $arrval, $conf->global->TICKET_SHOW_COMPANY_LOGO);
+		print $form->selectarray("TICKET_SHOW_COMPANY_LOGO", $arrval, getDolGlobalInt('TICKET_SHOW_COMPANY_LOGO'));
 	}
 	print '</td>';
 	print '<td class="center width75">';
@@ -379,13 +362,32 @@ if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
 	print '</td>';
 	print '</tr>';
 
+	// show footer for company
+	print '<tr class="oddeven"><td>'.$langs->trans("TicketsShowCompanyFooter").'</td>';
+	print '<td class="left">';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('TICKET_SHOW_COMPANY_FOOTER');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("TICKET_SHOW_COMPANY_FOOTER", $arrval, $conf->global->TICKET_SHOW_COMPANY_FOOTER);
+	}
+	print '</td>';
+	print '<td class="center width75">';
+	print $form->textwithpicto('', $langs->trans("TicketsShowCompanyFooterHelp"), 1, 'help');
+	print '</td>';
+	print '</tr>';
+
 	// Show progression
 	print '<tr class="oddeven"><td>'.$langs->trans("TicketsShowProgression").'</td>';
 	print '<td class="left">';
-	if (empty(getDolGlobalInt('TICKET_SHOW_PROGRESSION'))) {
-		print '<a href="' . $_SERVER['PHP_SELF'] . '?action=set_TICKET_SHOW_PROGRESSION">' . img_picto($langs->trans('Disabled'), 'switch_off') . '</a>';
+	if (!empty($conf->use_javascript_ajax)) {
+		print ajax_constantonoff('TICKET_SHOW_PROGRESSION');
 	} else {
-		print '<a href="' . $_SERVER['PHP_SELF'] . '?action=del_TICKET_SHOW_PROGRESSION">' . img_picto($langs->trans('Enabled'), 'switch_on') . '</a>';
+		if (!getDolGlobalInt('TICKET_SHOW_PROGRESSION')) {
+			print '<a href="' . $_SERVER['PHP_SELF'] . '?action=set_TICKET_SHOW_PROGRESSION&token='.newToken().'">' . img_picto($langs->trans('Disabled'), 'switch_off') . '</a>';
+		} else {
+			print '<a href="' . $_SERVER['PHP_SELF'] . '?action=del_TICKET_SHOW_PROGRESSION&token='.newToken().'">' . img_picto($langs->trans('Enabled'), 'switch_on') . '</a>';
+		}
 	}
 	print '</td>';
 	print '<td class="center width75">';
@@ -394,14 +396,14 @@ if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
 	print '</tr>';
 
 	// Also send to main email address
-	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
+	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 		print '<tr class="oddeven"><td>'.$langs->trans("TicketsEmailAlsoSendToMainAddress").'</td>';
 		print '<td class="left">';
-		if ($conf->use_javascript_ajax) {
+		if (!empty($conf->use_javascript_ajax)) {
 			print ajax_constantonoff('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS');
 		} else {
 			$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-			print $form->selectarray("TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS", $arrval, $conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS);
+			print $form->selectarray("TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS", $arrval, getDolGlobalInt('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS'));
 		}
 		print '</td>';
 		print '<td class="center width75">';
@@ -410,12 +412,12 @@ if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
 		print '</tr>';
 	}
 
-	if (!$conf->use_javascript_ajax) {
+	if (empty($conf->use_javascript_ajax)) {
 		print '<tr class="impair"><td colspan="3" align="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></td>';
 		print '</tr>';
 	}
 
-	if (empty($conf->global->FCKEDITOR_ENABLE_MAIL)) {
+	if (!getDolGlobalInt('FCKEDITOR_ENABLE_MAIL')) {
 		print '<tr>';
 		print '<td colspan="3"><div class="info">'.$langs->trans("TicketCkEditorEmailNotActivated").'</div></td>';
 		print "</tr>\n";
@@ -457,12 +459,12 @@ if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
 
 	// Url public interface
 	$url_interface = getDolGlobalString("TICKET_URL_PUBLIC_INTERFACE");
-	print '<tr><td>'.$langs->trans("TicketUrlPublicInterfaceLabelAdmin").'</label>';
+	print '<tr><td>'.$langs->trans("UrlPublicInterfaceLabelAdmin").'</label>';
 	print '</td><td>';
-	print '<input type="text" class="minwidth500" name="TICKET_URL_PUBLIC_INTERFACE" value="'.$url_interface.'"></td>';
+	print '<input type="text" class="minwidth500" name="TICKET_URL_PUBLIC_INTERFACE" value="'.$url_interface.'" placeholder="https://..."></td>';
 	print '</td>';
 	print '<td class="center">';
-	print $form->textwithpicto('', $langs->trans("TicketUrlPublicInterfaceHelpAdmin"), 1, 'help');
+	print $form->textwithpicto('', $langs->trans("UrlPublicInterfaceHelpAdmin"), 1, 'help');
 	print '</td></tr>';
 
 	print '</table>';
@@ -483,7 +485,7 @@ if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
 		print ajax_constantonoff('TICKET_DISABLE_CUSTOMER_MAILS');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("TICKET_DISABLE_CUSTOMER_MAILS", $arrval, $conf->global->TICKET_DISABLE_CUSTOMER_MAILS);
+		print $form->selectarray("TICKET_DISABLE_CUSTOMER_MAILS", $arrval, getDolGlobalInt('TICKET_DISABLE_CUSTOMER_MAILS'));
 	}
 	print '</td>';
 	print '</tr>';

@@ -23,6 +23,7 @@ ToOfferALinkForOnlinePaymentOnFreeAmount=URL para ofrecer una página de pago en
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL para ofrecer una página de pago en línea %s para una suscripción de miembro
 ToOfferALinkForOnlinePaymentOnDonation=URL para ofrecer una página de pago en línea %s para el pago de una donación
 YouCanAddTagOnUrl=También puede agregar el parámetro url <b>&tag = <i>value</i></b> a cualquiera de esas URL (obligatorio solo para el pago no vinculado a un objeto) para agregar su propia etiqueta de comentario de pago. <br> Para la URL de pagos sin objeto existente, también puede agregar el parámetro <strong>&noidempotency = 1</strong> para que el mismo enlace con la misma etiqueta se pueda usar varias veces (algún modo de pago puede limitar el pago a 1 para cada enlace diferente sin este parámetro)
+YouCanEmbedOnWebsite=Si desea integrar la página de pago en un sitio web de Dolibarr, puede incluir el parámetro: <b>&ws=website_ref</b>.<br>Además, dos páginas llamadas <b>paymentok</b> y <b>paymentko</b> deben ser creadas en el sitio web para recibir la redirección después de un pago en línea exitoso o fallido.
 SetupStripeToHavePaymentCreatedAutomatically=Configure su Stripe con la url <b>%s</b> para crear un pago automáticament al validarse por Stripe.
 AccountParameter=Parámetros de la cuenta
 UsageParameter=Parámetros de uso
@@ -41,7 +42,7 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhook live key
 ONLINE_PAYMENT_WAREHOUSE=Stock para usar para la disminución de stock cuando se realiza el pago en línea <br> (TODO Cuando la opción para disminuir stock se realiza en una acción en la factura y el pago en línea se genera la factura?)
 StripeLiveEnabled=Stripe live activado (de lo contrario en modo test/sandbox)
 StripeImportPayment=Importar pagos Stripe
-ExampleOfTestCreditCard=Ejemplo de tarjeta de crédito para prueba SEPA: %s => válida, %s => error CVC, %s => caducada, %s => fallo en el cargo
+ExampleOfTestCreditCard=Ejemplo de tarjeta de crédito para un pago de prueba: %s => válida, %s => error CVC, %s => caducada, %s => el cargo falla
 ExampleOfTestBankAcountForSEPA=Ejemplo de cuenta bancaria IBAN para prueba de débito directo: %s
 StripeGateways=Pasarelas de Stripe
 OAUTH_STRIPE_TEST_ID=Stripe Connect Client ID (ca _...)
@@ -51,6 +52,7 @@ StripeAccount=Cuenta Stripe
 StripeChargeList=Listado de gastos de Stripe
 StripeTransactionList=Listado de transacciones
 StripeCustomerId=Id de cliente de Stripe
+StripePaymentId=ID de pago de Stripe
 StripePaymentModes=Modos de pago de Stripe
 LocalID=ID local
 StripeID=ID Stripe
@@ -70,9 +72,19 @@ ToOfferALinkForTestWebhook=Enlace para configurar Stripe WebHook para llamar a l
 ToOfferALinkForLiveWebhook=Enlace para configurar Stripe WebHook para llamar a la IPN (modo real)
 PaymentWillBeRecordedForNextPeriod=El pago se registrará para el próximo período.
 ClickHereToTryAgain=<a href="%s">Haga clic aquí para volver a intentarlo ...</a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Debido a las fuertes reglas de autenticación del cliente, la creación de una tarjeta debe hacerse desde la oficina administrativa de Stripe. Puede hacer clic aquí para activar el registro de cliente de Stripe: %s
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Debido a las reglas estrictas de autenticación de clientes, la creación de una tarjeta debe realizarse desde el back office de Stripe. Puede hacer clic aquí para activar el registro de cliente de Stripe: %s
 STRIPE_CARD_PRESENT=Tarjeta Presente para Terminales Stripe
 TERMINAL_LOCATION=Ubicación (dirección) para terminales Stripe
 RequestDirectDebitWithStripe=Solicitar Débito Directo con Stripe
+RequesCreditTransferWithStripe=Solicitar transferencia de crédito con Stripe
 STRIPE_SEPA_DIRECT_DEBIT=Habilitar los pagos de Débito Directo a través de Stripe
-
+STRIPE_KLARNA=Habilite los pagos usando Klarna
+STRIPE_BANCONTACT=Habilite los pagos usando BANCONTACT
+STRIPE_IDEAL=Habilite los pagos usando IDEAL
+STRIPE_GIROPAY=Habilitar los pagos usando GIROPAY
+STRIPE_SOFORT=Habilite los pagos usando SOFORT
+StripeConnect_Mode=Modo de conexión de rayas
+ExampleOnlyForBECustomers=Sólo para clientes de Bélgica
+ExampleOnlyForDECustomers=Sólo para clientes alemanes.
+ExampleOnlyForNLCustomers=Sólo para clientes holandeses.
+ExampleOnlyForATBEDEITNLESCustomers=Sólo para clientes de Austria, Bélgica, Alemania, Italia, Países Bajos, España

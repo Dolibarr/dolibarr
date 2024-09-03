@@ -32,8 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'accountancy')); //"Back" translation is on this accountancy file
 
-$id = GETPOST('id', 'int');
-$eid = GETPOST('eid', 'int');
+$id = GETPOSTINT('id');
+$eid = GETPOSTINT('eid');
 $action = GETPOST('action', 'aZ09');
 $title = GETPOST('expression_title', 'alpha');
 $expression = GETPOST('expression');
@@ -139,7 +139,7 @@ if ($action == 'delete') {
 
 $form = new Form($db);
 
-llxHeader("", "", $langs->trans("CardProduct".$product->type));
+llxHeader("", "", $langs->trans("CardProduct".$product->type), '', 0, 0, '', '', '', 'mod-product page-dynamic_price_editor');
 
 print load_fiche_titre($langs->trans("PriceExpressionEditor"));
 
@@ -163,7 +163,7 @@ print '</td></tr>';
 
 // Title input
 print '<tr><td class="fieldrequired">'.$langs->trans("Name").'</td><td>';
-print '<input class="flat" name="expression_title" size="15" value="'.($price_expression->title ? $price_expression->title : '').'">';
+print '<input class="flat" name="expression_title" size="15" value="'.(GETPOSTISSET('expression_title') ? GETPOST('expression_title') : ($price_expression->title ? $price_expression->title : '')).'">';
 print '</td></tr>';
 
 //Help text

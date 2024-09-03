@@ -4,18 +4,14 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModulePartnershipName=パートナーシップ管理
 PartnershipDescription=モジュールパートナーシップ管理
 PartnershipDescriptionLong= モジュールパートナーシップ管理
@@ -24,38 +20,29 @@ Partnerships=パートナーシップ
 AddPartnership=パートナーシップを追加
 CancelPartnershipForExpiredMembers=パートナーシップ: サブスクリプションの有効期限が切れた構成員のパートナーシップをキャンセル
 PartnershipCheckBacklink=パートナーシップ: 参照元のバックリンクを確認する
-
-#
 # Menu
-#
 NewPartnership=新規パートナーシップ
 NewPartnershipbyWeb=パートナーシップ リクエストが正常に追加された。近日中にご連絡するやも...
 ListOfPartnerships=パートナーシップのリスト
-
-#
 # Admin page
-#
 PartnershipSetup=パートナーシップの設定
 PartnershipAbout=パートナーシップについて
 PartnershipAboutPage=ページについてのパートナーシップ
-partnershipforthirdpartyormember=パートナー 状態は「取引先」または「構成員」に設定する必要がある
+partnershipforthirdpartyormember=パートナー ステータスは「取引先」または「メンバー」に設定する必要がある
 PARTNERSHIP_IS_MANAGED_FOR=パートナーシップ管理は
 PARTNERSHIP_BACKLINKS_TO_CHECK=チェックするバックリンク
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=サブスクリプションの有効期限が切れた場合にパートナーシップの状態をキャンセルするまでの日数
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=サブスクリプションの有効期限が切れたときにパートナーシップのステータスをキャンセルするまでの日数
 ReferingWebsiteCheck=参考ウェブサイトの確認
 ReferingWebsiteCheckDesc=パートナーが独自の ウェブサイトに ウェブサイト ドメインへのバックリンクを追加したことを確認する機能を有効にできる。
 PublicFormRegistrationPartnerDesc=Dolibarrは、外部の訪問者がパートナーシッププログラムへの参加を要求できるように、公開URL/ウェブサイトを提供できる。
-
-#
 # Object
-#
 DeletePartnership=パートナーシップを削除する
 PartnershipDedicatedToThisThirdParty=この取引先専用のパートナーシップ
 PartnershipDedicatedToThisMember=この構成員専用のパートナーシップ
 DatePartnershipStart=開始日
 DatePartnershipEnd=終了日
 ReasonDecline=拒絶理由
-ReasonDeclineOrCancel=断りの理由
+ReasonDeclineOrCancel=拒否またはキャンセルの理由
 PartnershipAlreadyExist=パートナーシップは既に存在する
 ManagePartnership=パートナーシップを管理する
 BacklinkNotFoundOnPartnerWebsite=パートナーのウェブサイトにバックリンクが見つからない
@@ -68,29 +55,22 @@ PartnershipAccepted=承認済
 PartnershipRefused=拒否
 PartnershipCanceled=キャンセル
 PartnershipManagedFor=パートナーは
-
-#
 # Template Mail
-#
 SendingEmailOnPartnershipWillSoonBeCanceled=パートナーシップはまもなくキャンセルされる
 SendingEmailOnPartnershipRefused=パートナーシップは拒否された
 SendingEmailOnPartnershipAccepted=パートナーシップ受諾済
 SendingEmailOnPartnershipCanceled=パートナーシップがキャンセルされた
-
 YourPartnershipWillSoonBeCanceledTopic=パートナーシップはまもなくキャンセルされる
 YourPartnershipRefusedTopic=パートナーシップは拒否された
 YourPartnershipAcceptedTopic=パートナーシップが受け入れられた
 YourPartnershipCanceledTopic=パートナーシップがキャンセルされた
-
-YourPartnershipWillSoonBeCanceledContent=パートナーシップはまもなくキャンセルされる（バックリンクが見つからない）
-YourPartnershipRefusedContent=パートナーシップの要求が拒否されたことをお知らせする。
-YourPartnershipAcceptedContent=パートナーシップの要求が受理されたことをお知らせする。
-YourPartnershipCanceledContent=パートナーシップがキャンセルされたことをお知らせする。
-
+YourPartnershipWillSoonBeCanceledContent=私たちのパートナーシップがまもなくキャンセルされることをお知らせいたする (更新されなかったか、パートナーシップの前提条件が満たされていませんでした)。エラーで届いた場合は連絡を乞う。
+YourPartnershipRefusedContent=あなたのパートナーシップのリクエストが拒否されたことをお知らせする。前提条件が満たされていません。さらに詳しい情報が必要な場合は、連絡を乞う。
+YourPartnershipAcceptedContent=あなたのパートナーシップリクエストが受理されたことをお知らせする。
+YourPartnershipCanceledContent=弊社との提携が解除されたことをお知らせいたする。さらに詳しい情報が必要な場合は、連絡を乞う。
 CountLastUrlCheckError=最後のURLチェックのエラー数
 LastCheckBacklink=最後のURLチェックの日付
-ReasonDeclineOrCancel=断りの理由
-
 NewPartnershipRequest=新しいパートナーシップリクエスト
 NewPartnershipRequestDesc=このフォームでは、パートナーシッププログラムへの参加をリクエストできる。このフォームへの記入についてサポートが必要な場合は、メール<b>%s</b>までご連絡ください。
-
+ThisUrlMustContainsAtLeastOneLinkToWebsite=このページには、次のドメインのいずれかへのリンクが少なくとも 1 つ含まれている必要がある: %s
+IPOfApplicant=申請者のIPアドレス

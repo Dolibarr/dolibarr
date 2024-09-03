@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,12 +17,12 @@
  */
 
 /**
- *		\file       htdocs/core/modules/export/export_csv.modules.php
+ *		\file       htdocs/core/modules/export/exportcsv.class.php
  *		\ingroup    export
  *		\brief      File of class to build exports with CSV format
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/export/exportcsv.modules.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/export/exportcsv.class.php';
 
 // avoid timeout for big export
 set_time_limit(0);
@@ -31,7 +32,6 @@ set_time_limit(0);
  */
 class ExportCsvUtf8 extends ExportCsv
 {
-
 	/**
 	 *	Constructor
 	 *
@@ -43,8 +43,8 @@ class ExportCsvUtf8 extends ExportCsv
 		$this->db = $db;
 
 		$this->separator = ',';
-		if (!empty($conf->global->EXPORT_CSV_SEPARATOR_TO_USE)) {
-			$this->separator = $conf->global->EXPORT_CSV_SEPARATOR_TO_USE;
+		if (getDolGlobalString('EXPORT_CSV_SEPARATOR_TO_USE')) {
+			$this->separator = getDolGlobalString('EXPORT_CSV_SEPARATOR_TO_USE');
 		}
 
 		$this->escape = '"';
@@ -69,14 +69,14 @@ class ExportCsvUtf8 extends ExportCsv
 	 *  @param      array		$array_selected_sorted       	Array with list of field to export
 	 *  @param      Translate	$outputlangs    				Object lang to translate values
 	 *  @param		array		$array_types					Array with types of fields
-	 * 	@return		int											<0 if KO, >0 if OK
+	 * 	@return		int											Return integer <0 if KO, >0 if OK
 	 */
 	public function write_title($array_export_fields_label, $array_selected_sorted, $outputlangs, $array_types)
 	{
 		global $conf;
 		$conf->global->EXPORT_CSV_FORCE_CHARSET = 'UTF-8';
 
-		parent::write_title($array_export_fields_label, $array_selected_sorted, $outputlangs, $array_types);
+		return parent::write_title($array_export_fields_label, $array_selected_sorted, $outputlangs, $array_types);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -84,16 +84,16 @@ class ExportCsvUtf8 extends ExportCsv
 	 *	Output record line into file
 	 *
 	 *  @param     	array		$array_selected_sorted      Array with list of field to export
-	 *  @param     	resource	$objp                       A record from a fetch with all fields from select
+	 *  @param     	Resource	$objp                       A record from a fetch with all fields from select
 	 *  @param     	Translate	$outputlangs    			Object lang to translate values
 	 *  @param		array		$array_types				Array with types of fields
-	 * 	@return		int										<0 if KO, >0 if OK
+	 * 	@return		int										Return integer <0 if KO, >0 if OK
 	 */
 	public function write_record($array_selected_sorted, $objp, $outputlangs, $array_types)
 	{
 		global $conf;
 
 		$conf->global->EXPORT_CSV_FORCE_CHARSET = 'UTF-8';
-		parent::write_record($array_selected_sorted, $objp, $outputlangs, $array_types);
+		return parent::write_record($array_selected_sorted, $objp, $outputlangs, $array_types);
 	}
 }

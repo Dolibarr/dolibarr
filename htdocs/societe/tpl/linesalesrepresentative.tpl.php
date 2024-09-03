@@ -18,14 +18,14 @@
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 print '<!-- linesalesrepresentative.tpl.php -->';
 
 // Sale representative
 print '<tr><td>';
-print '<table class="nobordernopadding" width="100%"><tr><td>';
+print '<table class="nobordernopadding centpercent"><tr><td>';
 print $langs->trans('SalesRepresentatives');
 print '</td>';
 if ($action != 'editsalesrepresentatives' && $user->hasRight('societe', 'creer')) {
@@ -41,16 +41,18 @@ if ($action == 'editsalesrepresentatives') {
 	print '<input type="hidden" name="action" value="set_salesrepresentatives" />';
 	print '<input type="hidden" name="token" value="'.newToken().'" />';
 	print '<input type="hidden" name="socid" value="'.$object->id.'" />';
-	$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, '', 0, '', '', 0, 1);
+	$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 'default', 0, 0, '', 0, '', '', 0, 1);
+
 	$arrayselected = GETPOST('commercial', 'array');
 	if (empty($arrayselected)) {
 		$arrayselected = $object->getSalesRepresentatives($user, 1);
 	}
 	print $form->multiselectarray('commercial', $userlist, $arrayselected, null, null, null, null, "90%");
-	print '<input type="submit" class="button valignmiddle small" value="'.$langs->trans("Modify").'" />';
+	print '<input type="submit" class="button valignmiddle smallpaddingimp" value="'.$langs->trans("Modify").'" />';
 	print '</form>';
 } else {
 	$listsalesrepresentatives = $object->getSalesRepresentatives($user);
+
 	$nbofsalesrepresentative = count($listsalesrepresentatives);
 	if ($nbofsalesrepresentative > 0 && is_array($listsalesrepresentatives)) {
 		$userstatic = new User($db);
@@ -59,14 +61,15 @@ if ($action == 'editsalesrepresentatives') {
 			$userstatic->login = $val['login'];
 			$userstatic->lastname = $val['lastname'];
 			$userstatic->firstname = $val['firstname'];
-			$userstatic->statut = $val['statut'];
+			$userstatic->status = $val['statut'];
 			$userstatic->photo = $val['photo'];
 			$userstatic->email = $val['email'];
-			$userstatic->phone = $val['phone'];
+			$userstatic->office_phone = $val['office_phone'];
+			$userstatic->user_mobile = $val['user_mobile'];
 			$userstatic->job = $val['job'];
 			$userstatic->entity = $val['entity'];
 			$userstatic->gender = $val['gender'];
-			print $userstatic->getNomUrl(-1);
+			print $userstatic->getNomUrl(-1, '', 0, 0, ($nbofsalesrepresentative > 1 ? 16 : (empty($conf->dol_optimize_smallscreen) ? 24 : 20)));
 			print ' ';
 		}
 	} else {
