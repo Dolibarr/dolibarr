@@ -47,7 +47,7 @@ abstract class DoliDB implements Database
 	public $forcecollate = 'utf8_unicode_ci';
 
 	/** @var resource Resultset of last query */
-	private $_results;
+	private $_results; // @phpstan-ignore-line
 
 	/** @var bool true if connected, else false */
 	public $connected;
@@ -201,8 +201,10 @@ abstract class DoliDB implements Database
 				$this->transaction_opened++;
 				dol_syslog("BEGIN Transaction".($textinlog ? ' '.$textinlog : ''), LOG_DEBUG);
 				dol_syslog('', 0, 1);
+				return 1;
+			} else {
+				return 0;
 			}
-			return (int) $ret;
 		} else {
 			$this->transaction_opened++;
 			dol_syslog('', 0, 1);
@@ -355,7 +357,7 @@ abstract class DoliDB implements Database
 	/**
 	 *	Convert (by PHP) a PHP server TZ string date into a Timestamps date (GMT if gm=true)
 	 * 	19700101020000 -> 3600 with server TZ = +1 and $gm='tzserver'
-	 * 	19700101020000 -> 7200 whaterver is server TZ if $gm='gmt'
+	 * 	19700101020000 -> 7200 whatever is server TZ if $gm='gmt'
 	 *
 	 * 	@param	string				$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
 	 *	@param	mixed				$gm			'gmt'=Input information are GMT values, 'tzserver'=Local to server TZ
@@ -419,8 +421,8 @@ abstract class DoliDB implements Database
 	 */
 	public function getRows($sql)
 	{
-		if (! preg_match('/LIMIT \d+$/', $sql)) {
-			return false;
+		if (!preg_match('/LIMIT \d+$/', $sql)) {
+			trigger_error(__CLASS__ .'::'.__FUNCTION__.'() query must have a LIMIT clause', E_USER_ERROR);
 		}
 
 		$resql = $this->query($sql);

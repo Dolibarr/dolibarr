@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2021  Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2022-2024  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2022-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,9 +53,14 @@ class StockTransfer extends CommonObject
 	public $table_element_line = 'stocktransfer_stocktransferline';
 
 	/**
-	 * @var string[] List of child tables. To know object to delete on cascade.
-	 *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
-	 *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
+	 * @var string    Field name which stores ID of parent key if this object has a parent
+	 */
+	public $fk_element = 'fk_stocktransfer';
+
+	/**
+	 * @var string[]    List of child tables. To know object to delete on cascade.
+	 *               	If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
+	 *               	call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
 	 */
 	protected $childtablesoncascade = array('stocktransfer_stocktransferline');
 
@@ -71,16 +76,34 @@ class StockTransfer extends CommonObject
 	 */
 	public $ref_customer;
 
-
 	/**
 	 * @var string String with name of icon for stocktransfer. Must be the part after the 'object_' into object_stocktransfer.png
 	 */
 	public $picto = 'stock';
 
+	/**
+	 * @var null|int|'' outgoing date (sql date)
+	 */
 	public $date_prevue_depart;
+
+	/**
+	 * @var null|int|'' incoming date (sql date)
+	 */
 	public $date_prevue_arrivee;
+
+	/**
+	 * @var null|int|'' effective outgoing date (sql date)
+	 */
 	public $date_reelle_depart;
+
+	/**
+	 * @var null|int|'' effective incoming date (sql date)
+	 */
 	public $date_reelle_arrivee;
+
+	/**
+	 * @var string origin type
+	 */
 	public $origin_type;
 
 
@@ -117,7 +140,7 @@ class StockTransfer extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid'                    => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'comment' => "Id"),
@@ -149,18 +172,19 @@ class StockTransfer extends CommonObject
 	public $rowid;
 	public $ref;
 	public $label;
-	public $socid;
-	public $fk_soc;	// deprecated
-	public $fk_project;
 	public $description;
-	public $note_public;
-	public $note_private;
-	public $date_creation;
+
+	/**
+	 * @var int ID of thirparty
+	 */
+	public $socid;
+
+	/**
+	 * @var int ID of thirparty
+	 * @deprecated
+	 */
+	public $fk_soc;
 	public $lead_time_for_warning;
-	public $fk_user_creat;
-	public $fk_user_modif;
-	public $import_key;
-	public $model_pdf;
 	public $status;
 
 	/**
@@ -168,7 +192,14 @@ class StockTransfer extends CommonObject
 	 */
 	public $lines;
 
+	/**
+	 * @var int ID of warehouse source
+	 */
 	public $fk_warehouse_source;
+
+	/**
+	 * @var int ID of warehouse destination
+	 */
 	public $fk_warehouse_destination;
 	// END MODULEBUILDER PROPERTIES
 
@@ -279,6 +310,7 @@ class StockTransfer extends CommonObject
 
 
 		// Clear fields
+		// @phan-suppress-next-line PhanTypeMismatchProperty
 		$object->ref = empty($this->fields['ref']['default']) ? "copy_of_".$object->ref : $this->fields['ref']['default'];
 		$object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
 		$object->status = self::STATUS_DRAFT;
@@ -300,8 +332,7 @@ class StockTransfer extends CommonObject
 		$result = $object->createCommon($user);
 		if ($result < 0) {
 			$error++;
-			$this->error = $object->error;
-			$this->errors = $object->errors;
+			$this->setErrorsFromObject($object);
 		}
 
 		if (!$error) {
@@ -576,7 +607,7 @@ class StockTransfer extends CommonObject
 			if (!empty($this->fields['date_validation'])) {
 				$sql .= ", date_validation = '".$this->db->idate($now)."',";
 			}
-			if (!empty($this->fields['fk_user_valid'])) {
+			if (!empty($this->fields['fk_user_valid'])) { // @phan-suppress-current-line PhanTypeMismatchProperty
 				$sql .= ", fk_user_valid = ".((int) $user->id);
 			}
 			$sql .= " WHERE rowid = ".((int) $this->id);
@@ -975,7 +1006,7 @@ class StockTransfer extends CommonObject
 				$mybool = ((bool) @include_once $dir.$file) || $mybool;
 			}
 
-			if ($mybool === false) {
+			if (!$mybool) {
 				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}

@@ -204,7 +204,7 @@ if ($action == 'updateMask') {
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-contract');
 
 $form = new Form($db);
 
@@ -246,6 +246,8 @@ foreach ($dirmodels as $reldir) {
 					require_once $dir.$file.'.php';
 					/** @var ModelNumRefContracts $module */
 					$module = new $file($db);
+
+					'@phan-var-force ModelNumRefContracts $module';
 
 					// Show modules according to features level
 					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -383,6 +385,8 @@ foreach ($dirmodels as $reldir) {
 							/** @var ModelePDFContract $module */
 							$module = new $classname($db);
 
+							'@phan-var-force ModelePDFContract $module';
+
 							$modulequalified = 1;
 							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 								$modulequalified = 0;
@@ -396,7 +400,7 @@ foreach ($dirmodels as $reldir) {
 								print(empty($module->name) ? $name : $module->name);
 								print "</td><td>\n";
 								if (method_exists($module, 'info')) {
-									print $module->info($langs);
+									print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
 								} else {
 									print $module->description;
 								}

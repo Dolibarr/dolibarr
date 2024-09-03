@@ -1728,6 +1728,7 @@ class ExpenseReport extends CommonObject
 			}
 
 			$obj = new $classname();
+			'@phan-var-force ModeleNumRefExpenseReport $obj';
 			$numref = $obj->getNextValue($this);
 
 			if ($numref != "") {
@@ -1785,7 +1786,7 @@ class ExpenseReport extends CommonObject
 	}
 
 	/**
-	 *  Return clicable name (with picto eventually)
+	 *  Return clickable name (with picto eventually)
 	 *
 	 *	@param		int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
 	 *  @param  	string 	$option                		Where point the link ('', 'document', ..)
@@ -1947,7 +1948,7 @@ class ExpenseReport extends CommonObject
 				$fk_project = 0;
 			}
 
-			$qty = price2num($qty);
+			$qty = (float) price2num($qty);
 			if (!preg_match('/\s*\((.*)\)/', $vatrate)) {
 				$vatrate = price2num($vatrate); // $txtva can have format '5.0 (XXX)' or '5'
 			}
@@ -1972,7 +1973,7 @@ class ExpenseReport extends CommonObject
 			}
 			$vatrate = preg_replace('/\*/', '', $vatrate);
 
-			$tmp = calcul_price_total($qty, $up, 0, $vatrate, -1, -1, 0, 'TTC', 0, $type, $seller, $localtaxes_type);
+			$tmp = calcul_price_total($qty, $up, 0, (float) price2num($vatrate), -1, -1, 0, 'TTC', 0, $type, $seller, $localtaxes_type);
 
 			$this->line->value_unit = $up;
 
@@ -2238,10 +2239,9 @@ class ExpenseReport extends CommonObject
 			}
 			$vatrate = preg_replace('/\*/', '', $vatrate);
 
-			$tmp = calcul_price_total($qty, $value_unit, 0, $vatrate, -1, -1, 0, 'TTC', 0, $type, $seller, $localtaxes_type);
-			//var_dump($vatrate);var_dump($localtaxes_type);var_dump($tmp);exit;
+			$tmp = calcul_price_total($qty, $value_unit, 0, (float) price2num($vatrate), -1, -1, 0, 'TTC', 0, $type, $seller, $localtaxes_type);
 			// calcul total of line
-			//$total_ttc  = price2num($qty*$value_unit, 'MT');
+			// $total_ttc  = price2num($qty*$value_unit, 'MT');
 
 			$tx_tva = 1 + (float) $vatrate / 100;
 
@@ -2744,7 +2744,7 @@ class ExpenseReport extends CommonObject
 
 		$currentUser = new User($db);
 		$currentUser->fetch($this->fk_user);
-		$currentUser->getrights('expensereport');
+		$currentUser->loadRights('expensereport');
 		//Clean
 		$qty = (float) price2num($qty);
 
@@ -2818,9 +2818,9 @@ class ExpenseReport extends CommonObject
 	/**
 	 *	Return clickable link of object (with optional picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
@@ -2883,6 +2883,10 @@ class ExpenseReportLine extends CommonObjectLine
 	public $rowid;
 
 	public $comments;
+
+	/**
+	 * @var float Quantity
+	 */
 	public $qty;
 	public $value_unit;
 	public $date;
@@ -3054,7 +3058,7 @@ class ExpenseReportLine extends CommonObjectLine
 		if (empty($this->value_unit)) {
 			$this->value_unit = 0;
 		}
-		$this->qty = price2num($this->qty);
+		$this->qty = (float) price2num($this->qty);
 		$this->vatrate = price2num($this->vatrate);
 		if (empty($this->fk_c_exp_tax_cat)) {
 			$this->fk_c_exp_tax_cat = 0;

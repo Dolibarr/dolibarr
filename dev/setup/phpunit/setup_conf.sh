@@ -129,6 +129,14 @@ if [ "$DB" = 'mysql' ] || [ "$DB" = 'mariadb' ] || [ "$DB" = 'postgresql' ]; the
 	${SUDO} "${MYSQL}" -u "$DB_ROOT" -h 127.0.0.1 $PASS_OPT -e 'FLUSH PRIVILEGES;'
 
 	sum=$(find "${TRAVIS_BUILD_DIR}/htdocs/install" -type f -exec md5sum {} + | LC_ALL=C sort | md5sum)
+	cnt=$(find "${TRAVIS_BUILD_DIR}/htdocs/install" -type f -exec md5sum {} + | wc)
+	echo "OLDSUM $sum COUNT:$cnt"
+
+	# shellcheck disable=2046
+	sum=$(md5sum $(find "${TRAVIS_BUILD_DIR}/htdocs/install" -type f) | LC_ALL=C sort | md5sum)
+	# shellcheck disable=2046
+	cnt=$(md5sum $(find "${TRAVIS_BUILD_DIR}/htdocs/install" -type f) | wc)
+	echo "NEWSUM $sum COUNT:$cnt"
 	load_cache=0
 	if [ -r "$DB_CACHE_FILE".md5 ] && [ -r "$DB_CACHE_FILE" ] && [ -x "$(which "${MYSQLDUMP}")" ] ; then
 		cache_sum="$(<"$DB_CACHE_FILE".md5)"
@@ -197,6 +205,7 @@ if [ "$load_cache" != "1" ] ; then
 		VERSIONS+=("5.0.0" "6.0.0" "7.0.0" "8.0.0" "9.0.0")
 		VERSIONS+=("10.0.0" "11.0.0" "12.0.0" "13.0.0" "14.0.0")
 		VERSIONS+=("15.0.0" "16.0.0" "18.0.0" "19.0.0" "20.0.0")
+		VERSIONS+=("21.0.0")
 		pVer=${VERSIONS[0]}
 		for v in "${VERSIONS[@]:1}" ; do
 			LOGNAME="${TRAVIS_BUILD_DIR}/upgrade${pVer//./}${v//./}"

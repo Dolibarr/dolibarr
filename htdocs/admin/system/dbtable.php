@@ -90,7 +90,7 @@ if ($action == 'convertutf8mb4') {
  * View
  */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_dbtable');
 
 
 print load_fiche_titre($langs->trans("Table")." ".$table, '', 'title_setup');

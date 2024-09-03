@@ -612,6 +612,9 @@ DELETE FROM llx_c_departements WHERE fk_region <> 0 AND fk_region IN (select cod
 DELETE from llx_c_regions WHERE fk_pays NOT IN (select rowid from llx_c_country);
 
 
+UPDATE llx_mrp_production SET disable_stock_change = 0 WHERE disable_stock_change IS NULL;
+
+
 -- Drop duplicate indexes not named correctly and create the only one we should have
 alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combination;
 alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_2;

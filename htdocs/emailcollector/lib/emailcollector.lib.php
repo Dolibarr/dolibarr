@@ -113,7 +113,7 @@ function getDParameters($part)
  *
  * @param 	integer $jk 	Number of email
  * @param 	object 	$mbox 	object connection imap
- * @return 	array<array{type:string,filename:string,pos:int}> 	type, filename, pos
+ * @return 	array<array{type:int,filename:string,pos:int}> 	type, filename, pos
  */
 function getAttachments($jk, $mbox)
 {

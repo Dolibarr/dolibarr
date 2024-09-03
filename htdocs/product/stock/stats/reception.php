@@ -50,7 +50,7 @@ if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('batchproductstatsreception'));
 
 $showmessage = GETPOST('showmessage');
@@ -116,7 +116,7 @@ if ($id > 0 || !empty($ref)) {
 	$shortlabel = dol_trunc($object->batch, 16);
 	$title = $langs->trans('Batch')." ".$shortlabel." - ".$langs->trans('Referers');
 
-	llxHeader('', $title, $helpurl);
+	llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-product page-stock-stats_reception');
 
 	if ($result > 0) {
 		$head = productlot_prepare_head($object);

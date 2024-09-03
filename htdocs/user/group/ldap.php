@@ -44,16 +44,16 @@ if ($user->socid > 0) {
 
 $object = new UserGroup($db);
 $object->fetch($id, '', true);
-$object->getrights();
+$object->loadRights();
 
 // Users/Groups management only in master entity if transverse mode
 if (isModEnabled('multicompany') && $conf->entity > 1 && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 	accessforbidden();
 }
 
-$canreadperms = true;
+$permissiontoread = true;
 if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
-	$canreadperms = (!empty($user->admin) || $user->hasRight('user', 'group_advance', 'read'));
+	$permissiontoread = (!empty($user->admin) || $user->hasRight('user', 'group_advance', 'read'));
 }
 
 
@@ -95,7 +95,7 @@ $form = new Form($db);
 
 $title = $object->name." - ".$langs->trans('LDAP');
 $help_url = '';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-user page-group_ldap');
 
 $head = group_prepare_head($object);
 

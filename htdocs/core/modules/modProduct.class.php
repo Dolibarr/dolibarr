@@ -451,9 +451,9 @@ class modProduct extends DolibarrModules
 				$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('p.barcode' => 'virtualproduct'));
 			}
 			$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('pa.qty' => "subproduct", 'pa.incdec' => 'subproduct'));
-			$keyforselect = 'product';  // @phan-suppress-current-line PhanPluginRedundantAssignment
-			$keyforelement = 'product';  // @phan-suppress-current-line PhanPluginRedundantAssignment
-			$keyforaliasextra = 'extra';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$keyforselect = 'product';
+			$keyforelement = 'product';
+			$keyforaliasextra = 'extra';
 			include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 			$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('p2.rowid' => "Id", 'p2.ref' => "Ref", 'p2.label' => "Label", 'p2.description' => "Description"));
 			$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('p2.rowid' => "subproduct", 'p2.ref' => "subproduct", 'p2.label' => "subproduct", 'p2.description' => "subproduct"));

@@ -238,7 +238,7 @@ if ($action == 'update' && $permissiontoadd) {
 
 $form = new Form($db);
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-ecm page-file_card');
 
 $object->section_id = $ecmdir->id;
 $object->label = $urlfile;

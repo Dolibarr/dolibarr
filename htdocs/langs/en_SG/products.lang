@@ -1,2 +1,3 @@
 # Dolibarr language file - Source file is en_US - products
-BarCodePrintsheet=Print barcode
+ProductVatMassChange=Global GST Update
+ProductVatMassChangeDesc=This tool updates the GST rate defined on <b><u>ALL</u></b> products and services!

@@ -584,7 +584,7 @@ class modFournisseur extends DolibarrModules
 		// Add extra fields object
 		$keyforselect = 'commande_fournisseur';
 		$keyforelement = 'order';
-		$keyforaliasextra = 'extra';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		// End add extra fields object
 		// Add extra fields line

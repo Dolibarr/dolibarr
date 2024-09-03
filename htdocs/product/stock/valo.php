@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,7 +89,7 @@ if ($result) {
 	$i = 0;
 
 	$help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
-	llxHeader("", $langs->trans("EnhancedValueOfWarehouses"), $help_url);
+	llxHeader("", $langs->trans("EnhancedValueOfWarehouses"), $help_url, '', 0, 0, '', '', '', 'mod-product page-stock_valo');
 
 	print_barre_liste($langs->trans("EnhancedValueOfWarehouses"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num);
 
@@ -155,7 +156,7 @@ if ($result) {
 		print '<img src="'.$url.'">';
 	}
 
-	$file = 'entrepot-'.($year - 1).'.png';
+	$file = 'entrepot-'.((int) $year - 1).'.png';
 	if (file_exists($conf->stock->dir_temp.'/'.$file)) {
 		$url = DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&amp;file='.$file;
 		print '<br><img src="'.$url.'">';

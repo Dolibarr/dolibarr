@@ -406,7 +406,7 @@ class modPartnership extends DolibarrModules
 		/* END MODULEBUILDER EXPORT PARTNERSHIP */
 
 		// Imports profiles provided by this module
-		$r = 1;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$r = 1;
 		/* BEGIN MODULEBUILDER IMPORT PARTNERSHIP */
 		/*
 		 $langs->load("partnership");
@@ -463,9 +463,6 @@ class modPartnership extends DolibarrModules
 		$myTmpObjects['Partnership'] = array('includerefgeneration' => 0, 'includedocgeneration' => 0);
 
 		foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
-			if ($myTmpObjectKey == 'Partnership') {
-				continue;
-			}
 			if ($myTmpObjectArray['includerefgeneration']) {
 				$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/'.$moduledir.'/template_partnerships.odt';
 				$dirodt = DOL_DATA_ROOT.'/doctemplates/'.$moduledir;

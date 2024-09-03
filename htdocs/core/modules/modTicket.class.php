@@ -121,14 +121,15 @@ class modTicket extends DolibarrModules
 			11 => array('TICKET_MESSAGE_MAIL_SIGNATURE', 'chaine', $default_footer, 'Signature to use by default for messages sent from Dolibarr', 0),
 			12 => array('MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER', 'chaine', "1", 'Disable the rendering of headers in tickets', 0),
 			13 => array('MAIN_SECURITY_ENABLECAPTCHA_TICKET', 'chaine', getDolGlobalInt('MAIN_SECURITY_ENABLECAPTCHA_TICKET'), 'Enable captcha code by default', 0),
-			14 => array('TICKET_SHOW_COMPANY_LOGO', 'chaine', getDolGlobalInt('TICKET_SHOW_COMPANY_LOGO'), 'Enable logo header on ticket public page', 0),
-			15 => array('TICKET_SHOW_COMPANY_FOOTER', 'chaine', getDolGlobalInt('TICKET_SHOW_COMPANY_FOOTER'), 'Enable footer on ticket public page', 0)
+			14 => array('TICKET_SHOW_COMPANY_LOGO', 'chaine', getDolGlobalInt('TICKET_SHOW_COMPANY_LOGO', 1), 'Enable logo header on ticket public page', 0),
+			15 => array('TICKET_SHOW_COMPANY_FOOTER', 'chaine', getDolGlobalInt('TICKET_SHOW_COMPANY_FOOTER', 1), 'Enable footer on ticket public page', 0)
 		);
 
-
+		/*
 		$this->tabs = array(
 			'thirdparty:+ticket:Tickets:ticket:$user->hasRight("ticket","read"):/ticket/list.php?socid=__ID__',
 		);
+		*/
 
 		// Dictionaries
 		if (!isset($conf->ticket->enabled)) {
@@ -148,7 +149,7 @@ class modTicket extends DolibarrModules
 				'fieldinsert' => 'code,label,pos,use_default,entity',
 				'rowid' => 'rowid',
 				'cond' => isModEnabled('ticket'),
-				'help' => array('code' => $langs->trans('EnterAnyCode'), 'use_default' => $langs->trans('Enter0or1'))
+				'help' => array('code' => $langs->trans('EnterAnyCode'), 'use_default' => $langs->trans('EnterYesOrNo'))
 			)
 		);
 
@@ -164,7 +165,7 @@ class modTicket extends DolibarrModules
 				'fieldinsert' => 'code,label,pos,use_default,entity',
 				'rowid' => 'rowid',
 				'cond' => isModEnabled('ticket'),
-				'help' => array('code' => $langs->trans('EnterAnyCode'), 'use_default' => $langs->trans('Enter0or1'))
+				'help' => array('code' => $langs->trans('EnterAnyCode'), 'use_default' => $langs->trans('EnterYesOrNo'))
 			)
 		);
 
@@ -182,14 +183,14 @@ class modTicket extends DolibarrModules
 				'cond' => isModEnabled('ticket'),
 				'help' => array(
 					'code' => $langs->trans('EnterAnyCode'),
-					'use_default' => $langs->trans('Enter0or1'),
+					'use_default' => $langs->trans('EnterYesOrNo'),
 					'public' => $langs->trans('Enter0or1').'<br>'.$langs->trans('TicketGroupIsPublicDesc'),
 					'fk_parent' => $langs->trans('IfThisCategoryIsChildOfAnother')
 				)
 			)
 		);
 
-		// (apparently unused) Dictionary of ticket resolutions
+		// Dictionary of ticket resolutions (apparently unused except if TICKET_ENABLE_RESOLUTION is on)
 		$this->declareNewDictionary(
 			array(
 				'name' => 'c_ticket_resolution',
@@ -302,7 +303,7 @@ class modTicket extends DolibarrModules
 			'type' => 'left',
 			'titre' => 'NewTicket',
 			'mainmenu' => 'ticket',
-			'url' => '/ticket/card.php?action=create',
+			'url' => '/ticket/card.php?action=create&mode=init',
 			'langs' => 'ticket',
 			'position' => 102,
 			'enabled' => 'isModEnabled("ticket")',
@@ -381,7 +382,7 @@ class modTicket extends DolibarrModules
 		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
 		$keyforselect = 'ticket';
 		$keyforaliasextra = 'extra';
-		$keyforelement = 'ticket';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$keyforelement = 'ticket';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'ticket as t';

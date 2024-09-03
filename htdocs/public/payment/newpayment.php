@@ -6,6 +6,8 @@
  * Copyright (C) 2018-2021	Thibault FOUCART	    <support@ptibogxiv.net>
  * Copyright (C) 2021		Waël Almoman	    	<info@almoman.com>
  * Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -113,7 +115,10 @@ if (!$action) {
 	}
 }
 
-if ($source == 'organizedeventregistration') {
+
+// Load data required later for actions and view
+
+if ($source == 'organizedeventregistration') {		// Test on permission not required here (anonymous action protected by mitigation of /public/... urls)
 	// Finding the Attendee
 	$attendee = new ConferenceOrBoothAttendee($db);
 
@@ -164,7 +169,7 @@ if ($source == 'organizedeventregistration') {
 			}
 		}
 	}
-} elseif ($source == 'boothlocation') {
+} elseif ($source == 'boothlocation') {			// Test on permission not required here (anonymous action protected by mitigation of /public/... urls)
 	// Getting the amount to pay, the invoice, finding the thirdparty
 	$invoiceid = GETPOST('ref');
 	$invoice = new Facture($db);
@@ -345,9 +350,9 @@ if (empty($validpaymentmethod)) {
 $creditor = $mysoc->name;
 $paramcreditor = 'ONLINE_PAYMENT_CREDITOR';
 $paramcreditorlong = 'ONLINE_PAYMENT_CREDITOR_'.$suffix;
-if (!empty($conf->global->$paramcreditorlong)) {
+if (getDolGlobalString($paramcreditorlong)) {
 	$creditor = getDolGlobalString($paramcreditorlong);	// use label long of the seller to show
-} elseif (!empty($conf->global->$paramcreditor)) {
+} elseif (getDolGlobalString($paramcreditor)) {
 	$creditor = getDolGlobalString($paramcreditor);		// use label short of the seller to show
 }
 
@@ -359,7 +364,7 @@ $mesg = '';
  */
 
 // Action dopayment is called after clicking/choosing the payment mode
-if ($action == 'dopayment') {
+if ($action == 'dopayment') {	// Test on permission not required here (anonymous action protected by mitigation of /public/... urls)
 	dol_syslog("--- newpayment.php Execute action = ".$action." paymentmethod=".$paymentmethod.' amount='.$amount.' newamount='.GETPOST("newamount", 'alpha'), LOG_DEBUG, 0, '_payment');
 
 	if ($paymentmethod == 'paypal') {
@@ -465,7 +470,7 @@ if ($action == 'dopayment') {
 			dol_syslog("newpayment.php call paybox api and do redirect", LOG_DEBUG);
 
 			include_once DOL_DOCUMENT_ROOT.'/paybox/lib/paybox.lib.php';
-			print_paybox_redirect($PRICE, $conf->currency, $email, $urlok, $urlko, $FULLTAG);
+			print_paybox_redirect((float) $PRICE, $conf->currency, $email, $urlok, $urlko, $FULLTAG);
 
 			session_destroy();
 			exit;
@@ -486,14 +491,14 @@ if ($action == 'dopayment') {
 // Called when choosing Stripe mode.
 // When using the old Charge API architecture, this code is called after clicking the 'dopayment' with the Charge API architecture.
 // When using the PaymentIntent API architecture, the Stripe customer was already created when creating PaymentIntent when showing payment page, and the payment is already ok when action=charge.
-if ($action == 'charge' && isModEnabled('stripe')) {
-	$amountstripe = $amount;
+if ($action == 'charge' && isModEnabled('stripe')) {	// Test on permission not required here (anonymous action protected by mitigation of /public/... urls)
+	$amountstripe = (float) $amount;
 
 	// Correct the amount according to unit of currency
 	// See https://support.stripe.com/questions/which-zero-decimal-currencies-does-stripe-support
 	$arrayzerounitcurrency = array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
 	if (!in_array($currency, $arrayzerounitcurrency)) {
-		$amountstripe = $amountstripe * 100;
+		$amountstripe *= 100;
 	}
 
 	dol_syslog("--- newpayment.php Execute action = ".$action." STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION=".getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION'), LOG_DEBUG, 0, '_payment');
@@ -786,7 +791,7 @@ if ($action == 'charge' && isModEnabled('stripe')) {
 				// See https://support.stripe.com/questions/which-zero-decimal-currencies-does-stripe-support
 				$arrayzerounitcurrency = array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
 				if (!in_array($currency, $arrayzerounitcurrency)) {
-					$amount = $amount / 100;
+					$amount /= 100;
 				}
 			}
 		}
@@ -897,7 +902,7 @@ print "\n";
 $logosmall = $mysoc->logo_small;
 $logo = $mysoc->logo;
 $paramlogo = 'ONLINE_PAYMENT_LOGO_'.$suffix;
-if (!empty($conf->global->$paramlogo)) {
+if (getDolGlobalString($paramlogo)) {
 	$logosmall = getDolGlobalString($paramlogo);
 } elseif (getDolGlobalString('ONLINE_PAYMENT_LOGO')) {
 	$logosmall = getDolGlobalString('ONLINE_PAYMENT_LOGO');
@@ -979,9 +984,9 @@ if (empty($text)) {
 print $text;
 
 // Output payment summary form
-print '<tr><td align="center">';
-print '<table with="100%" id="tablepublicpayment">';
-print '<tr><td align="left" colspan="2" class="opacitymedium">'.$langs->trans("ThisIsInformationOnPayment").' :</td></tr>'."\n";
+print '<tr><td align="center">';	// class=center does not have the payment button centered so we keep align here.
+print '<table class="centpercent left" id="tablepublicpayment">';
+print '<tr class="hideonsmartphone"><td colspan="2" align="left" class="opacitymedium">'.$langs->trans("ThisIsInformationOnPayment").' :</td></tr>'."\n";
 
 $found = false;
 $error = 0;
@@ -1522,6 +1527,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 
 	$member = new Adherent($db);
 	$adht = new AdherentType($db);
+	$subscription = new Subscription($db);
 
 	$result = $member->fetch('', $ref);
 	if ($result <= 0) {
@@ -1529,7 +1535,6 @@ if ($source == 'member' || $source == 'membersubscription') {
 		$error++;
 	} else {
 		$member->fetch_thirdparty();
-		$subscription = new Subscription($db);
 
 		$adht->fetch($member->typeid);
 	}
@@ -1538,7 +1543,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 	if ($action != 'dopayment') { // Do not change amount if we just click on first dopayment
 		$amount = $subscription->total_ttc;
 		if (GETPOST("amount", 'alpha')) {
-			$amount = GETPOST("amount", 'alpha');
+			$amount = price2num(GETPOST("amount", 'alpha'), 'MT', 2);
 		}
 		// If amount still not defined, we take amount of the type of member
 		if (empty($amount)) {
@@ -1618,16 +1623,22 @@ if ($source == 'member' || $source == 'membersubscription') {
 		}
 	}
 
+	$amountbytype = $adht->amountByType(1);
+
+	$typeid = $adht->id;
+	$caneditamount = $adht->caneditamount;
+
 	if ($member->type) {
 		$oldtypeid = $member->typeid;
 		$newtypeid = (int) (GETPOSTISSET("typeid") ? GETPOSTINT("typeid") : $member->typeid);
+		if (getDolGlobalString('MEMBER_ALLOW_CHANGE_OF_TYPE')) {
+			$typeid = $newtypeid;
+			$adht->fetch($typeid);	// Reload with the new type id
+		}
+
+		$caneditamount = $adht->caneditamount;
 
 		if (getDolGlobalString('MEMBER_ALLOW_CHANGE_OF_TYPE')) {
-			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
-			$adht = new AdherentType($db);
-			// Amount by member type
-			$amountbytype = $adht->amountByType(1);
-
 			// Last member type
 			print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("LastMemberType");
 			print '</td><td class="CTableRow2">'.dol_escape_htmltag($member->type);
@@ -1639,7 +1650,8 @@ if ($source == 'member' || $source == 'membersubscription') {
 
 			// list member type
 			if (!$action) {
-				// Set amount for the subscription
+				// Set amount for the subscription.
+				// If we change the type, we use the amount of the new type and not the amount of last subscription.
 				$amount = (!empty($amountbytype[$member->typeid])) ? $amountbytype[$member->typeid] : $member->last_subscription_amount;
 
 				print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("NewSubscription");
@@ -1659,6 +1671,20 @@ if ($source == 'member' || $source == 'membersubscription') {
 		}
 	}
 
+	// Set amount for the subscription from the the type and options:
+	// - First check the amount of the member type if not previous payment.
+	$amount = ($member->last_subscription_amount ? $member->last_subscription_amount : (empty($amountbytype[$typeid]) ? 0 : $amountbytype[$typeid]));
+	// - If not found, take the default amount
+	if (empty($amount) && getDolGlobalString('MEMBER_NEWFORM_AMOUNT')) {
+		$amount = getDolGlobalString('MEMBER_NEWFORM_AMOUNT');
+	}
+	// - If not set, we accept to have amount defined as parameter (for backward compatibility).
+	//if (empty($amount)) {
+	//	$amount = (GETPOST('amount') ? price2num(GETPOST('amount', 'alpha'), 'MT', 2) : '');
+	//}
+	// - If a min is set, we take it into account
+	$amount = max(0, (float) $amount, (float) getDolGlobalInt("MEMBER_MIN_AMOUNT"));
+
 	// Amount
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Amount");
 	// This place no longer allows amount edition
@@ -1666,9 +1692,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 		print ' - <a href="' . getDolGlobalString('MEMBER_EXT_URL_SUBSCRIPTION_INFO').'" rel="external" target="_blank" rel="noopener noreferrer">'.$langs->trans("SeeHere").'</a>';
 	}
 	print '</td><td class="CTableRow2">';
-	if (getDolGlobalString('MEMBER_MIN_AMOUNT') && $amount) {
-		$amount = max(0, getDolGlobalString('MEMBER_MIN_AMOUNT'), $amount);
-	}
+
 	$caneditamount = $adht->caneditamount;
 	$minimumamount = !getDolGlobalString('MEMBER_MIN_AMOUNT') ? $adht->amount : max(getDolGlobalString('MEMBER_MIN_AMOUNT'), $adht->amount, $amount);
 
@@ -2139,24 +2163,35 @@ if ($action != 'dopayment') {
 			}
 
 			if ((empty($paymentmethod) || $paymentmethod == 'stripe') && isModEnabled('stripe')) {
-				print '<div class="button buttonpayment" id="div_dopayment_stripe"><span class="fa fa-credit-card"></span> <input class="" type="submit" id="dopayment_stripe" name="dopayment_stripe" value="'.$langs->trans("StripeDoPayment").'">';
-				print '<input type="hidden" name="noidempotency" value="'.GETPOSTINT('noidempotency').'">';
-				print '<br>';
-				print '<span class="buttonpaymentsmall">'.$langs->trans("CreditOrDebitCard").'</span>';
-				print '</div>';
-				print '<script>
-						$( document ).ready(function() {
-							$("#div_dopayment_stripe").click(function(){
-								$("#dopayment_stripe").click();
+				$showbutton = 1;
+				if (getDolGlobalString(strtoupper($source).'_FORCE_DISABLE_STRIPE')) {	// Example: MEMBER_FORCE_DISABLE_STRIPE
+					$showbutton = 0;
+				}
+
+				if ($showbutton) {
+					// By default noidempotency is set to 1, to avoid the error "Keys for idempotant requests...". It means we can pay several times the same tag/ref.
+					// If STRIPE_USE_IDEMPOTENCY_BY_DEFAULT is set or param noidempotency=0 is added, then with add an idempotent key, so we must use a different tag/ref for each payment (if not we will get an error).
+					$noidempotency_key = (GETPOSTISSET('noidempotency') ? GETPOSTINT('noidempotency') : (getDolGlobalInt('STRIPE_USE_IDEMPOTENCY_BY_DEFAULT') ? 0 : 1));
+
+					print '<div class="button buttonpayment" id="div_dopayment_stripe"><span class="fa fa-credit-card"></span> <input class="" type="submit" id="dopayment_stripe" name="dopayment_stripe" value="'.$langs->trans("StripeDoPayment").'">';
+					print '<input type="hidden" name="noidempotency" value="'.$noidempotency_key.'">';
+					print '<br>';
+					print '<span class="buttonpaymentsmall">'.$langs->trans("CreditOrDebitCard").'</span>';
+					print '</div>';
+					print '<script>
+							$( document ).ready(function() {
+								$("#div_dopayment_stripe").click(function(){
+									$("#dopayment_stripe").click();
+								});
+								$("#dopayment_stripe").click(function(e){
+									$("#div_dopayment_stripe").css( \'cursor\', \'wait\' );
+								    e.stopPropagation();
+									return true;
+								});
 							});
-							$("#dopayment_stripe").click(function(e){
-								$("#div_dopayment_stripe").css( \'cursor\', \'wait\' );
-							    e.stopPropagation();
-								return true;
-							});
-						});
-					  </script>
-				';
+						  </script>
+					';
+				}
 			}
 
 			if ((empty($paymentmethod) || $paymentmethod == 'paypal') && isModEnabled('paypal')) {
@@ -2164,34 +2199,41 @@ if ($action != 'dopayment') {
 					$conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY = 'integral';
 				}
 
-				print '<div class="button buttonpayment" id="div_dopayment_paypal">';
-				if (getDolGlobalString('PAYPAL_API_INTEGRAL_OR_PAYPALONLY') != 'integral') {
-					print '<div style="line-height: 1em">&nbsp;</div>';
+				$showbutton = 1;
+				if (getDolGlobalString(strtoupper($source).'_FORCE_DISABLE_PAYPAL')) {	// Example: MEMBER_FORCE_DISABLE_PAYPAL
+					$showbutton = 0;
 				}
-				print '<span class="fab fa-paypal"></span> <input class="" type="submit" id="dopayment_paypal" name="dopayment_paypal" value="'.$langs->trans("PaypalDoPayment").'">';
-				if (getDolGlobalString('PAYPAL_API_INTEGRAL_OR_PAYPALONLY') == 'integral') {
-					print '<br>';
-					print '<span class="buttonpaymentsmall">'.$langs->trans("CreditOrDebitCard").'</span><span class="buttonpaymentsmall"> - </span>';
-					print '<span class="buttonpaymentsmall">'.$langs->trans("PayPalBalance").'</span>';
-				}
-				if (getDolGlobalString('PAYPAL_API_INTEGRAL_OR_PAYPALONLY') == 'paypalonly') {
-					//print '<br>';
-					//print '<span class="buttonpaymentsmall">'.$langs->trans("PayPalBalance").'"></span>';
-				}
-				print '</div>';
-				print '<script>
-						$( document ).ready(function() {
-							$("#div_dopayment_paypal").click(function(){
-								$("#dopayment_paypal").click();
+
+				if ($showbutton) {
+					print '<div class="button buttonpayment" id="div_dopayment_paypal">';
+					if (getDolGlobalString('PAYPAL_API_INTEGRAL_OR_PAYPALONLY') != 'integral') {
+						print '<div style="line-height: 1em">&nbsp;</div>';
+					}
+					print '<span class="fab fa-paypal"></span> <input class="" type="submit" id="dopayment_paypal" name="dopayment_paypal" value="'.$langs->trans("PaypalDoPayment").'">';
+					if (getDolGlobalString('PAYPAL_API_INTEGRAL_OR_PAYPALONLY') == 'integral') {
+						print '<br>';
+						print '<span class="buttonpaymentsmall">'.$langs->trans("CreditOrDebitCard").'</span><span class="buttonpaymentsmall"> - </span>';
+						print '<span class="buttonpaymentsmall">'.$langs->trans("PayPalBalance").'</span>';
+					}
+					if (getDolGlobalString('PAYPAL_API_INTEGRAL_OR_PAYPALONLY') == 'paypalonly') {
+						//print '<br>';
+						//print '<span class="buttonpaymentsmall">'.$langs->trans("PayPalBalance").'"></span>';
+					}
+					print '</div>';
+					print '<script>
+							$( document ).ready(function() {
+								$("#div_dopayment_paypal").click(function(){
+									$("#dopayment_paypal").click();
+								});
+								$("#dopayment_paypal").click(function(e){
+									$("#div_dopayment_paypal").css( \'cursor\', \'wait\' );
+								    e.stopPropagation();
+									return true;
+								});
 							});
-							$("#dopayment_paypal").click(function(e){
-								$("#div_dopayment_paypal").css( \'cursor\', \'wait\' );
-							    e.stopPropagation();
-								return true;
-							});
-						});
-					  </script>
-				';
+						  </script>
+					';
+				}
 			}
 		}
 	} else {
@@ -2292,7 +2334,10 @@ if (preg_match('/^dopayment/', $action)) {			// If we chose/clicked on the payme
 			}
 
 			if (getDolGlobalString('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION')) {
-				$noidempotency_key = (GETPOSTISSET('noidempotency') ? GETPOSTINT('noidempotency') : 0); // By default noidempotency is unset, so we must use a different tag/ref for each payment. If set, we can pay several times the same tag/ref.
+				// By default noidempotency is set to 1, to avoid the error "Keys for idempotant requests...". It means we can pay several times the same tag/ref.
+				// If STRIPE_USE_IDEMPOTENCY_BY_DEFAULT is set or param noidempotency=0 is added, then with add an idempotent key, so we must use a different tag/ref for each payment (if not we will get an error).
+				$noidempotency_key = (GETPOSTISSET('noidempotency') ? GETPOSTINT('noidempotency') : (getDolGlobalInt('STRIPE_USE_IDEMPOTENCY_BY_DEFAULT') ? 0 : 1));
+
 				$paymentintent = $stripe->getPaymentIntent($amount, $currency, ($tag ? $tag : $fulltag), 'Stripe payment: '.$fulltag.(is_object($object) ? ' ref='.$object->ref : ''), $object, $stripecu, $stripeacc, $servicestatus, 0, 'automatic', false, null, 0, $noidempotency_key);
 				// The paymentintnent has status 'requires_payment_method' (even if paymentintent was already paid)
 				//var_dump($paymentintent);
@@ -2374,7 +2419,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we chose/clicked on the payme
 				// See https://support.stripe.com/questions/which-zero-decimal-currencies-does-stripe-support
 				$arrayzerounitcurrency = array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
 				if (!in_array($currency, $arrayzerounitcurrency)) {
-					$amountstripe = $amountstripe * 100;
+					$amountstripe *= 100;
 				}
 
 				$ipaddress = getUserRemoteIP();

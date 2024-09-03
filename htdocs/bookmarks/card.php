@@ -64,8 +64,8 @@ $permissiontodelete = $user->hasRight('bookmark', 'supprimer');
  * Actions
  */
 
-if ($action == 'add' || $action == 'addproduct' || $action == 'update') {
-	if ($action == 'update') {
+if (($action == 'add' || $action == 'addproduct' || $action == 'update') && $permissiontoadd) {
+	if ($action == 'update') {	// Test on permission already done
 		$invertedaction = 'edit';
 	} else {
 		$invertedaction = 'create';
@@ -81,7 +81,7 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update') {
 		exit;
 	}
 
-	if ($action == 'update') {
+	if ($action == 'update') {	// Test on permission already done
 		$object->fetch(GETPOSTINT("id"));
 	}
 	// Check if null because user not admin can't set an user and send empty value here.
@@ -106,7 +106,7 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update') {
 	if (!$error) {
 		$object->favicon = 'none';
 
-		if ($action == 'update') {
+		if ($action == 'update') {	// Test on permission already done
 			$res = $object->update();
 		} else {
 			$res = $object->create();
@@ -138,7 +138,7 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update') {
  * View
  */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-bookmarks page-card');
 
 $form = new Form($db);
 
@@ -173,7 +173,7 @@ if ($action == 'create') {
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("BookmarkTitle").'</td><td><input id="titlebookmark" class="flat minwidth250" name="title" value="'.dol_escape_htmltag($title).'"></td><td class="hideonsmartphone"><span class="opacitymedium">'.$langs->trans("SetHereATitleForLink").'</span></td></tr>';
 	dol_set_focus('#titlebookmark');
 
-	// Url
+	// URL
 	print '<tr><td class="fieldrequired">'.$langs->trans("UrlOrLink").'</td><td><input class="flat quatrevingtpercent minwidth500" name="url" value="'.dol_escape_htmltag($url).'"></td><td class="hideonsmartphone"><span class="opacitymedium">'.$langs->trans("UseAnExternalHttpLinkOrRelativeDolibarrLink").'</span></td></tr>';
 
 	// Target
@@ -257,7 +257,7 @@ if ($id > 0 && !preg_match('/^add/i', $action)) {
 	if ($action == 'edit') {
 		print '</span>';
 	}
-	print '</td><td class="tdoverflowmax500">';
+	print '</td><td class="wordbreak">';
 	if ($action == 'edit') {
 		print '<input class="flat minwidth500 quatrevingtpercent" name="url" value="'.(GETPOSTISSET("url") ? GETPOST("url") : $object->url).'">';
 	} else {

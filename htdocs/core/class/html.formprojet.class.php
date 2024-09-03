@@ -325,20 +325,20 @@ class FormProjets extends Form
 	/**
 	 *  Output a combo list with tasks qualified for a third party
 	 *
-	 * @param int $socid Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
-	 * @param int $selected Id task preselected
-	 * @param string $htmlname Name of HTML select
-	 * @param int $maxlength Maximum length of label
-	 * @param int $option_only Return only html options lines without the select tag
-	 * @param string $show_empty Add an empty line ('1' or string to show for empty line)
-	 * @param int $discard_closed Discard closed projects (0=Keep, 1=hide completely, 2=Disable)
-	 * @param int $forcefocus Force focus on field (works with javascript only)
-	 * @param int $disabled Disabled
-	 * @param string $morecss More css added to the select component
-	 * @param string $projectsListId ''=Automatic filter on project allowed. List of id=Filter on project ids.
-	 * @param string $showmore 'all' = Show project info, 'progress' = Show task progression, ''=Show nothing more
-	 * @param User $usertofilter User object to use for filtering
-	 * @param int 	$nooutput 		1=Return string, do not send to output
+	 * @param int 		$socid 			Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
+	 * @param int 		$selected 		Id task preselected
+	 * @param string 	$htmlname 		Name of HTML select
+	 * @param int 		$maxlength 		Maximum length of label
+	 * @param int 		$option_only 	Return only html options lines without the select tag
+	 * @param string 	$show_empty 	Add an empty line ('1' or string to show for empty line)
+	 * @param int 		$discard_closed Discard closed projects (0=Keep, 1=hide completely, 2=Disable)
+	 * @param int 		$forcefocus 	Force focus on field (works with javascript only)
+	 * @param int 		$disabled 		Disabled
+	 * @param string 	$morecss 		More css added to the select component
+	 * @param string 	$projectsListId ''=Automatic filter on project allowed. List of id=Filter on project ids.
+	 * @param string 	$showmore 		'all' = Show project info, 'progress' = Show task progression, ''=Show nothing more
+	 * @param User 		$usertofilter 	User object to use for filtering
+	 * @param int 		$nooutput 		1=Return string, do not send to output
 	 *
 	 * @return int|string                   Nbr of tasks if OK, <0 if KO. If nooutput=1: Return a HTML select string.
 	 */
@@ -877,7 +877,7 @@ class FormProjets extends Form
 				}
 				$out .= '</select>';
 			} else {
-				dol_print_error($this->db->lasterror);
+				dol_print_error($this->db, $this->db->lasterror);
 				return '';
 			}
 		}
@@ -929,7 +929,7 @@ class FormProjets extends Form
 				$out .= '</select>';
 			}
 		} else {
-			dol_print_error($this->db->lasterror);
+			dol_print_error($this->db, $this->db->lasterror);
 			return '';
 		}
 

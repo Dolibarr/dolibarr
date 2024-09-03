@@ -360,7 +360,7 @@ class modRecruitment extends DolibarrModules
 		/* END MODULEBUILDER EXPORT RECRUITMENTJOBPOSITION */
 
 		// Imports profiles provided by this module
-		$r = 1;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$r = 1;
 		/* BEGIN MODULEBUILDER IMPORT RECRUITMENTJOBPOSITION */
 		/*
 		 $langs->load("recruitment");
@@ -417,9 +417,6 @@ class modRecruitment extends DolibarrModules
 		$myTmpObjects['RecruitmentJobPosition'] = array('includerefgeneration' => 1, 'includedocgeneration' => 1);
 
 		foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
-			if ($myTmpObjectKey == 'MyObject') {
-				continue;
-			}
 			if ($myTmpObjectArray['includedocgeneration']) {
 				$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/'.$moduledir.'/template_recruitmentjobposition.odt';
 				$dirodt = DOL_DATA_ROOT.'/doctemplates/'.$moduledir;

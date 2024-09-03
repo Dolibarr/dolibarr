@@ -3,7 +3,7 @@ exclude: (?x)^( htdocs/includes/ckeditor/.*|(\.[^/]*/.*))$
 repos:
   # Several miscellaneous checks and fix (on yaml files, end of files fix)
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v4.6.0
     hooks:
       # This hook tests the name of the branch and return an error if the name is
       #  'develop' or an official version 'x.y'
@@ -131,6 +131,7 @@ repos:
             --standard=dev/setup/codesniffer/ruleset.xml,
             --report=emacs,
             --severity=5,
+            --no-colors,
           ]
       - alias: php-cs-with-cache
         id: php-cs
@@ -141,6 +142,7 @@ repos:
             --standard=dev/setup/codesniffer/ruleset.xml,
             --report=emacs,
             --severity=5,
+            --no-colors,
             --cache=.cache/pre-commit/dolibarr-php-cs.cache,
             .,
           ]
@@ -175,7 +177,7 @@ repos:
 
   # Check format of yaml files
   - repo: https://github.com/adrienverge/yamllint.git
-    rev: v1.33.0
+    rev: v1.35.1
     hooks:
       - id: yamllint
         args:
@@ -185,7 +187,7 @@ repos:
 
   # Execute codespell to fix typo errors (setup of codespell into dev/tools/codespell/)
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.2.6
+    rev: v2.3.0
     hooks:
       - id: codespell
         # Due to a current limitation of configuration files,
@@ -228,30 +230,31 @@ repos:
 
   # Check some shell scripts
   - repo: https://github.com/shellcheck-py/shellcheck-py
-    rev: v0.9.0.6
+    rev: v0.10.0.1
     hooks:
       - id: shellcheck
         args: [-W, "100"]
 
+  # Check sql file syntax
   - repo: https://github.com/sqlfluff/sqlfluff
-    rev: 3.0.4
+    rev: 3.1.0
     hooks:
       - id: sqlfluff-lint
         stages: [pre-commit, manual]  # manual needed for ci
         exclude: (?x)^
-          (htdocs/includes/.*
-          |htdocs/install/doctemplates/websites/.*_template
+          (dev/initdemo/mysqldump_.*\.sql
           |htdocs/core/menus/init_menu_auguria\.sql
-          |htdocs/install/doctemplates/websites/website_template-.*\.sql
-          |(htdocs/install/mysql/data/(llx_20_c_departements\.sql
-           |llx_accounting_account_.*\.sql)
-           |(htdocs/install/mysql/migration/3\.[256]\.0-.*\.sql)
-           )
+          |htdocs/includes/.*
+          |htdocs/install/doctemplates/websites/.*_template
+          |htdocs/install/doctemplates/websites/website_template.*\.sql
+          |htdocs/install/mysql/data/llx_20_c_departements\.sql
+          |htdocs/install/mysql/data/llx_accounting_account_.*\.sql
+          |htdocs/install/mysql/migration/3\..*\.sql
           |htdocs/install/mysql/migration/(1[0-5]|[456789])\.0\.0-.*\.sql
-          |htdocs/install/mysql/migration/3\.([0134789])\.0-.*\.sql
           |htdocs/install/mysql/migration/repair\.sql
           |htdocs/install/mysql/tables/llx_bookcal_availabilities-bookcal\.sql
-          |htdocs/install/mysql/tables/llx_categorie(_(account|actioncomm|contact|fournisseur|knowledgemanagement-knowledgemanagement|member|product|project|societe|ticket-ticket|user|warehouse|website_page-website)?\.key\.sql)
+          |htdocs/install/mysql/tables/llx_categorie.*\.key\.sql
           |htdocs/install/mysql/tables/llx_rights_def\.key\.sql
-          |htdocs/install/pgsql/functions/functions(-(don|loan|mailing|opensurvey|partnership|recruitment|website))?\.sql
+          |htdocs/install/pgsql/functions/functions.*\.sql
+          |htdocs/modulebuilder/template/sql/.*\.sql
           )$

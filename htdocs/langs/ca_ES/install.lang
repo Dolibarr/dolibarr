@@ -139,7 +139,7 @@ KeepDefaultValuesDeb=Heu utilitzat l'assistent de configuració Dolibarr des d'u
 KeepDefaultValuesMamp=Heu utilitzat l'assistent de configuració Dolibarr de DoliMamp, de manera que els valors proposats aquí ja estan optimitzats. Canvieu-los només si saps el que estàs fent.
 KeepDefaultValuesProxmox=Heu utilitzat l'assistent de configuració de Dolibarr des d'un dispositiu virtual Proxmox, de manera que els valors proposats aquí ja estan optimitzats. Canvieu-los només si saps el que estàs fent.
 UpgradeExternalModule=Execució del procés d'actualització dedicat de mòdul extern
-SetAtLeastOneOptionAsUrlParameter=Estableix com a mínim una opció com a paràmetre a l'URL. Per exemple: '... repair.php?standard=confirmed'
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL with value 'test' or 'confirmed'. For example:  '...repair.php?standard=confirmed'
 NothingToDelete=Res a netejar/esborrar
 NothingToDo=No hi ha res a fer
 #########
@@ -211,7 +211,7 @@ YouTryInstallDisabledByFileLock=L'aplicació s'ha intentat actualitzar automàti
 YouTryUpgradeDisabledByMissingFileUnLock=L'aplicació ha intentat actualitzar-se, però el procés d'actualització no està permès actualment. <br>
 ClickHereToGoToApp=Fes clic aquí per anar a la teva aplicació
 ClickOnLinkOrRemoveManualy=Si una actualització està en curs, espereu. Si no, feu clic al següent enllaç. Si sempre veieu aquesta mateixa pàgina, heu de suprimir / canviar el nom del fitxer install.lock del directori de documents.
-ClickOnLinkOrCreateUnlockFileManualy=Si hi ha una actualització en curs, espereu... Si no, heu d'eliminar el fitxer install.lock o crear un fitxer upgrade.unlock al directori de documents de Dolibarr.
+ClickOnLinkOrCreateUnlockFileManualy=If an upgrade is in progress, please wait... If not, you must remove the file install.lock (or create a file upgrade.unlock for upgrade) into the Dolibarr documents directory.
 Loaded=Carregat
 FunctionTest=Prova de funció
 NodoUpgradeAfterDB=Cap acció sol·licitada pels mòduls externs després de l'actualització de la base de dades

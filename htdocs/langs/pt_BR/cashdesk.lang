@@ -11,7 +11,6 @@ SendTicket=Enviar ticket
 TotalTicket=Total do tíquite
 NoVAT=Nenhum ICMS para essa venda
 Change=Excesso recebido
-ShowCompany=Mostar empresa
 DeleteArticle=Clique para remover esse artigo
 FilterRefOrLabelOrBC=Procurar (Ref/Rótulo)
 DolibarrReceiptPrinter=Impressão de Recibo Dolibarr

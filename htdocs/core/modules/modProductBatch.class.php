@@ -119,7 +119,7 @@ class modProductBatch extends DolibarrModules
 
 
 		// Exports
-		$r = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$r = 0;
 	}
 
 	/**

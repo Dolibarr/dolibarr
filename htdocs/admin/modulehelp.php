@@ -67,7 +67,7 @@ if (empty($user->admin)) {
 $form = new Form($db);
 
 $help_url = 'EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
-llxHeader('', $langs->trans("Setup"), $help_url);
+llxHeader('', $langs->trans("Setup"), $help_url, '', 0, 0, '', '', '', 'mod-admin page-modulehelp');
 
 print '<!-- Force style container -->'."\n".'<style>
 .id-container {
@@ -85,6 +85,7 @@ $modulesdir = dolGetModulesDirs();
 
 
 $filename = array();
+'@phan-var-force DolibarrModules[] $modules';
 $modules = array();
 $orders = array();
 $categ = array();
@@ -155,7 +156,7 @@ foreach ($modulesdir as $dir) {
 									ksort($arrayofnatures);
 								}
 
-								// Define array $categ with categ with at least one qualified module
+								// Define an array $categ with categ with at least one qualified module
 								if ($modulequalified > 0) {
 									$modules[$i] = $objMod;
 									$filename[$i] = $modName;
@@ -225,10 +226,13 @@ asort($orders);
 //var_dump($modules);
 
 
-unset($objMod);
+$objMod = null;
+$dirofmodule = null;
+$key = -1;
 $i = 0;
 foreach ($orders as $tmpkey => $tmpvalue) {
 	$tmpMod = $modules[$tmpkey];
+	'@phan-var-force DolibarrModules $tmpMod';
 	if ($tmpMod->numero == $id) {
 		$key = $i;
 		$modName = $filename[$tmpkey];
@@ -238,6 +242,12 @@ foreach ($orders as $tmpkey => $tmpvalue) {
 	}
 	$i++;
 }
+if (!is_object($objMod)) {
+	$msg = __FILE__." Module with no found for id:".$id;
+	dol_syslog($msg, LOG_ERR);
+	return;
+}
+
 $value = $orders[$key];
 $tab = explode('_', $value);
 $familyposition = $tab[0];
@@ -346,11 +356,11 @@ if ($mode == 'desc') {
 
 	$textexternal = '';
 	if ($objMod->isCoreOrExternalModule() == 'external') {
-		$tmpdirofmoduletoshow = preg_replace('/^'.preg_quote(DOL_DOCUMENT_ROOT, '/').'/', '', $dirofmodule);
+		$tmpdirofmoduletoshow = preg_replace('/^'.preg_quote(DOL_DOCUMENT_ROOT, '/').'/', '', (string) $dirofmodule);
 		$textexternal .= '<br><span class="opacitymedium">'.$langs->trans("Origin").':</span> '.$langs->trans("ExternalModule").' - '.$langs->trans("InstalledInto", $tmpdirofmoduletoshow);
 
 		global $dolibarr_allow_download_external_modules;
-		if (!empty($dolibarr_allow_download_external_modules) && preg_match('/\/custom\//', $dirofmodule)) {
+		if (!empty($dolibarr_allow_download_external_modules) && preg_match('/\/custom\//', (string) $dirofmodule)) {
 			// Add a link to download a zip of the module
 			$textexternal .= ' <a href="'.DOL_URL_ROOT.'/admin/tools/export_files.php?export_type=externalmodule&what='.urlencode($moduledir).'&compression=zip&zipfilename_template=module_'.$moduledir.'-'.$version.'.notorig" target="_blank" rel="noopener">'.img_picto('', 'download').'</a>';
 		}

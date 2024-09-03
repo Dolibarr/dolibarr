@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		William Mead				<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -84,6 +85,9 @@ if (empty($SECUREKEY) || !dol_verifyHash($securekeyseed . $type . $ref . (!isMod
 	httponly_accessforbidden('Bad value for securitykey. Value provided ' . dol_escape_htmltag($SECUREKEY) . ' does not match expected value for ref=' . dol_escape_htmltag($ref), 403);
 }
 
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('ajaxonlinesign'));
+
 
 /*
  * Actions
@@ -145,78 +149,102 @@ if ($action == "importSignature") {
 					$sourcefile = $upload_dir . $ref . ".pdf";
 
 					if (dol_is_file($sourcefile)) {
-						// We build the new PDF
-						$pdf = pdf_getInstance();
-						if (class_exists('TCPDF')) {
-							$pdf->setPrintHeader(false);
-							$pdf->setPrintFooter(false);
-						}
-						$pdf->SetFont(pdf_getPDFFont($langs));
-
-						if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
-							$pdf->SetCompression(false);
+						$parameters = array('sourcefile' => $sourcefile, 'newpdffilename' => $newpdffilename);
+						$reshook = $hookmanager->executeHooks('AddSignature', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+						if ($reshook < 0) {
+							setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 						}
 
-						//$pdf->Open();
-						$pagecount = $pdf->setSourceFile($sourcefile);        // original PDF
-
-						$param = array();
-						$param['online_sign_name'] = $online_sign_name;
-						$param['pathtoimage'] = $upload_dir . $filename;
-
-						$s = array();    // Array with size of each page. Example array(w'=>210, 'h'=>297);
-						for ($i = 1; $i < ($pagecount + 1); $i++) {
-							try {
-								$tppl = $pdf->importPage($i);
-								$s = $pdf->getTemplatesize($tppl);
-								$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
-								$pdf->useTemplate($tppl);
-
-								if (getDolGlobalString("PROPAL_SIGNATURE_ON_ALL_PAGES") || getDolGlobalInt("PROPAL_SIGNATURE_ON_SPECIFIC_PAGE") == $i) {
-									// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
-									// TODO Get position of box from PDF template
-
-									if (getDolGlobalString("PROPAL_SIGNATURE_XFORIMGSTART")) {
-										$param['xforimgstart'] = getDolGlobalString("PROPAL_SIGNATURE_XFORIMGSTART");
-									} else {
-										$param['xforimgstart'] = (empty($s['w']) ? 120 : round($s['w'] / 2) + 15);
-									}
-									if (getDolGlobalString("PROPAL_SIGNATURE_YFORIMGSTART")) {
-										$param['yforimgstart'] = getDolGlobalString("PROPAL_SIGNATURE_YFORIMGSTART");
-									} else {
-										$param['yforimgstart'] = (empty($s['h']) ? 240 : $s['h'] - 60);
-									}
-									if (getDolGlobalString("PROPAL_SIGNATURE_WFORIMG")) {
-										$param['wforimg'] = getDolGlobalString("PROPAL_SIGNATURE_WFORIMG");
-									} else {
-										$param['wforimg'] = $s['w'] - 20 - $param['xforimgstart'];
-									}
-
-									dolPrintSignatureImage($pdf, $langs, $param);
-								}
-							} catch (Exception $e) {
-								dol_syslog("Error when manipulating the PDF " . $sourcefile . " by onlineSign: " . $e->getMessage(), LOG_ERR);
-								$response = $e->getMessage();
-								$error++;
+						if (empty($reshook)) {
+							// We build the new PDF
+							$pdf = pdf_getInstance();
+							if (class_exists('TCPDF')) {
+								$pdf->setPrintHeader(false);
+								$pdf->setPrintFooter(false);
 							}
+							$pdf->SetFont(pdf_getPDFFont($langs));
+
+							if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
+								$pdf->SetCompression(false);
+							}
+
+							//$pdf->Open();
+							$pagecount = $pdf->setSourceFile($sourcefile);        // original PDF
+
+							$param = array();
+							$param['online_sign_name'] = $online_sign_name;
+							$param['pathtoimage'] = $upload_dir . $filename;
+
+							$s = array();    // Array with size of each page. Example array(w'=>210, 'h'=>297);
+							for ($i = 1; $i < ($pagecount + 1); $i++) {
+								try {
+									$tppl = $pdf->importPage($i);
+									$s = $pdf->getTemplatesize($tppl);
+									$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
+									$pdf->useTemplate($tppl);
+									$propalsignonspecificpage = getDolGlobalInt("PROPAL_SIGNATURE_ON_SPECIFIC_PAGE");
+									if ($propalsignonspecificpage < 0) {
+										$propalsignonspecificpage = $pagecount - abs($propalsignonspecificpage);
+									}
+
+									if (getDolGlobalString("PROPAL_SIGNATURE_ON_ALL_PAGES") || $propalsignonspecificpage == $i) {
+										// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
+										// TODO Get position of box from PDF template
+
+										if (getDolGlobalString("PROPAL_SIGNATURE_XFORIMGSTART")) {
+											$param['xforimgstart'] = getDolGlobalString("PROPAL_SIGNATURE_XFORIMGSTART");
+										} else {
+											$param['xforimgstart'] = (empty($s['w']) ? 120 : round($s['w'] / 2) + 15);
+										}
+										if (getDolGlobalString("PROPAL_SIGNATURE_YFORIMGSTART")) {
+											$param['yforimgstart'] = getDolGlobalString("PROPAL_SIGNATURE_YFORIMGSTART");
+										} else {
+											$param['yforimgstart'] = (empty($s['h']) ? 240 : $s['h'] - 60);
+										}
+										if (getDolGlobalString("PROPAL_SIGNATURE_WFORIMG")) {
+											$param['wforimg'] = getDolGlobalString("PROPAL_SIGNATURE_WFORIMG");
+										} else {
+											$param['wforimg'] = $s['w'] - 20 - $param['xforimgstart'];
+										}
+
+										dolPrintSignatureImage($pdf, $langs, $param);
+									}
+								} catch (Exception $e) {
+									dol_syslog("Error when manipulating the PDF " . $sourcefile . " by onlineSign: " . $e->getMessage(), LOG_ERR);
+									$response = $e->getMessage();
+									$error++;
+								}
+							}
+
+							if (!getDolGlobalString("PROPAL_SIGNATURE_ON_ALL_PAGES") && !getDolGlobalInt("PROPAL_SIGNATURE_ON_SPECIFIC_PAGE")) {
+								// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
+								// TODO Get position of box from PDF template
+
+								if (getDolGlobalString("PROPAL_SIGNATURE_XFORIMGSTART")) {
+											$param['xforimgstart'] = getDolGlobalString("PROPAL_SIGNATURE_XFORIMGSTART");
+								} else {
+									$param['xforimgstart'] = (empty($s['w']) ? 120 : round($s['w'] / 2) + 15);
+								}
+								if (getDolGlobalString("PROPAL_SIGNATURE_YFORIMGSTART")) {
+									$param['yforimgstart'] = getDolGlobalString("PROPAL_SIGNATURE_YFORIMGSTART");
+								} else {
+									$param['yforimgstart'] = (empty($s['h']) ? 240 : $s['h'] - 60);
+								}
+								if (getDolGlobalString("PROPAL_SIGNATURE_WFORIMG")) {
+									$param['wforimg'] = getDolGlobalString("PROPAL_SIGNATURE_WFORIMG");
+								} else {
+									$param['wforimg'] = $s['w'] - 20 - $param['xforimgstart'];
+								}
+
+								dolPrintSignatureImage($pdf, $langs, $param);
+							}
+
+							//$pdf->Close();
+							$pdf->Output($newpdffilename, "F");
+
+							// Index the new file and update the last_main_doc property of object.
+							$object->indexFile($newpdffilename, 1);
 						}
-
-						if (!getDolGlobalString("PROPAL_SIGNATURE_ON_ALL_PAGES") && !getDolGlobalInt("PROPAL_SIGNATURE_ON_SPECIFIC_PAGE")) {
-							// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
-							// TODO Get position of box from PDF template
-
-							$param['xforimgstart'] = (empty($s['w']) ? 120 : round($s['w'] / 2) + 15);
-							$param['yforimgstart'] = (empty($s['h']) ? 240 : $s['h'] - 60);
-							$param['wforimg'] = $s['w'] - 20 - $param['xforimgstart'];
-
-							dolPrintSignatureImage($pdf, $langs, $param);
-						}
-
-						//$pdf->Close();
-						$pdf->Output($newpdffilename, "F");
-
-						// Index the new file and update the last_main_doc property of object.
-						$object->indexFile($newpdffilename, 1);
 					}
 				} elseif (preg_match('/\.odt/i', $last_main_doc_file)) {
 					// Adding signature on .ODT not yet supported
@@ -308,84 +336,93 @@ if ($action == "importSignature") {
 				// Defined modele of doc
 				$last_main_doc_file = $object->last_main_doc;
 				$directdownloadlink = $object->getLastMainDocLink('contrat');    // url to download the $object->last_main_doc
+
 				if (preg_match('/\.pdf/i', $last_main_doc_file)) {
 					// TODO Use the $last_main_doc_file to defined the $newpdffilename and $sourcefile
 					$newpdffilename = $upload_dir . $ref . "_signed-" . $date . ".pdf";
 					$sourcefile = $upload_dir . $ref . ".pdf";
 
 					if (dol_is_file($sourcefile)) {
-						// We build the new PDF
-						$pdf = pdf_getInstance();
-						if (class_exists('TCPDF')) {
-							$pdf->setPrintHeader(false);
-							$pdf->setPrintFooter(false);
-						}
-						$pdf->SetFont(pdf_getPDFFont($langs));
-
-						if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
-							$pdf->SetCompression(false);
+						$parameters = array('sourcefile' => $sourcefile, 'newpdffilename' => $newpdffilename);
+						$reshook = $hookmanager->executeHooks('AddSignature', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+						if ($reshook < 0) {
+							setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 						}
 
-						//$pdf->Open();
-						$pagecount = $pdf->setSourceFile($sourcefile);        // original PDF
-
-						$param = array();
-						$param['online_sign_name'] = $online_sign_name;
-						$param['pathtoimage'] = $upload_dir . $filename;
-
-						$s = array();    // Array with size of each page. Example array(w'=>210, 'h'=>297);
-						for ($i = 1; $i < ($pagecount + 1); $i++) {
-							try {
-								$tppl = $pdf->importPage($i);
-								$s = $pdf->getTemplatesize($tppl);
-								$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
-								$pdf->useTemplate($tppl);
-
-								if (getDolGlobalString("CONTRACT_SIGNATURE_ON_ALL_PAGES")) {
-									// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
-									// TODO Get position of box from PDF template
-
-									if (getDolGlobalString("CONTRACT_SIGNATURE_XFORIMGSTART")) {
-										$param['xforimgstart'] = getDolGlobalString("CONTRACT_SIGNATURE_XFORIMGSTART");
-									} else {
-										$param['xforimgstart'] = 10;
-									}
-									if (getDolGlobalString("CONTRACT_SIGNATURE_YFORIMGSTART")) {
-										$param['yforimgstart'] = getDolGlobalString("CONTRACT_SIGNATURE_YFORIMGSTART");
-									} else {
-										$param['yforimgstart'] = (empty($s['h']) ? 240 : $s['h'] - 65);
-									}
-									if (getDolGlobalString("CONTRACT_SIGNATURE_WFORIMG")) {
-										$param['wforimg'] = getDolGlobalString("CONTRACT_SIGNATURE_WFORIMG");
-									} else {
-										$param['wforimg'] = $s['w'] / 2 - $param['xforimgstart'];
-									}
-
-									dolPrintSignatureImage($pdf, $langs, $param);
-								}
-							} catch (Exception $e) {
-								dol_syslog("Error when manipulating some PDF by onlineSign: " . $e->getMessage(), LOG_ERR);
-								$response = $e->getMessage();
-								$error++;
+						if (empty($reshook)) {
+							// We build the new PDF
+							$pdf = pdf_getInstance();
+							if (class_exists('TCPDF')) {
+								$pdf->setPrintHeader(false);
+								$pdf->setPrintFooter(false);
 							}
+							$pdf->SetFont(pdf_getPDFFont($langs));
+
+							if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
+								$pdf->SetCompression(false);
+							}
+
+							//$pdf->Open();
+							$pagecount = $pdf->setSourceFile($sourcefile);        // original PDF
+
+							$param = array();
+							$param['online_sign_name'] = $online_sign_name;
+							$param['pathtoimage'] = $upload_dir . $filename;
+
+							$s = array();    // Array with size of each page. Example array(w'=>210, 'h'=>297);
+							for ($i = 1; $i < ($pagecount + 1); $i++) {
+								try {
+									$tppl = $pdf->importPage($i);
+									$s = $pdf->getTemplatesize($tppl);
+									$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
+									$pdf->useTemplate($tppl);
+
+									if (getDolGlobalString("CONTRACT_SIGNATURE_ON_ALL_PAGES")) {
+										// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
+										// TODO Get position of box from PDF template
+
+										if (getDolGlobalString("CONTRACT_SIGNATURE_XFORIMGSTART")) {
+											$param['xforimgstart'] = getDolGlobalString("CONTRACT_SIGNATURE_XFORIMGSTART");
+										} else {
+											$param['xforimgstart'] = (empty($s['w']) ? 110 : $s['w'] / 2 - 0);
+										}
+										if (getDolGlobalString("CONTRACT_SIGNATURE_YFORIMGSTART")) {
+											$param['yforimgstart'] = getDolGlobalString("CONTRACT_SIGNATURE_YFORIMGSTART");
+										} else {
+											$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 62);
+										}
+										if (getDolGlobalString("CONTRACT_SIGNATURE_WFORIMG")) {
+											$param['wforimg'] = getDolGlobalString("CONTRACT_SIGNATURE_WFORIMG");
+										} else {
+											$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 16);
+										}
+
+										dolPrintSignatureImage($pdf, $langs, $param);
+									}
+								} catch (Exception $e) {
+									dol_syslog("Error when manipulating some PDF by onlineSign: " . $e->getMessage(), LOG_ERR);
+									$response = $e->getMessage();
+									$error++;
+								}
+							}
+
+							if (!getDolGlobalString("CONTRACT_SIGNATURE_ON_ALL_PAGES")) {
+								// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
+								// TODO Get position of box from PDF template
+
+								$param['xforimgstart'] = (empty($s['w']) ? 110 : $s['w'] / 2 - 0);
+								$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 62);
+								$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 16);
+
+								dolPrintSignatureImage($pdf, $langs, $param);
+							}
+
+							//$pdf->Close();
+							$pdf->Output($newpdffilename, "F");
+
+							// Index the new file and update the last_main_doc property of object.
+							$object->indexFile($newpdffilename, 1);
 						}
-
-						if (!getDolGlobalString("CONTRACT_SIGNATURE_ON_ALL_PAGES")) {
-							// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
-							// TODO Get position of box from PDF template
-
-							$param['xforimgstart'] = 10;
-							$param['yforimgstart'] = (empty($s['h']) ? 240 : $s['h'] - 65);
-							$param['wforimg'] = $s['w'] / 2 - $param['xforimgstart'];
-
-							dolPrintSignatureImage($pdf, $langs, $param);
-						}
-
-						//$pdf->Close();
-						$pdf->Output($newpdffilename, "F");
-
-						// Index the new file and update the last_main_doc property of object.
-						$object->indexFile($newpdffilename, 1);
 					}
 					if (!$error) {
 						$response = "success";
@@ -433,84 +470,93 @@ if ($action == "importSignature") {
 				// Defined modele of doc
 				$last_main_doc_file = $object->last_main_doc;
 				$directdownloadlink = $object->getLastMainDocLink('fichinter');    // url to download the $object->last_main_doc
+
 				if (preg_match('/\.pdf/i', $last_main_doc_file)) {
 					// TODO Use the $last_main_doc_file to defined the $newpdffilename and $sourcefile
 					$newpdffilename = $upload_dir . $ref . "_signed-" . $date . ".pdf";
 					$sourcefile = $upload_dir . $ref . ".pdf";
 
 					if (dol_is_file($sourcefile)) {
-						// We build the new PDF
-						$pdf = pdf_getInstance();
-						if (class_exists('TCPDF')) {
-							$pdf->setPrintHeader(false);
-							$pdf->setPrintFooter(false);
-						}
-						$pdf->SetFont(pdf_getPDFFont($langs));
-
-						if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
-							$pdf->SetCompression(false);
+						$parameters = array('sourcefile' => $sourcefile, 'newpdffilename' => $newpdffilename);
+						$reshook = $hookmanager->executeHooks('AddSignature', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+						if ($reshook < 0) {
+							setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 						}
 
-						//$pdf->Open();
-						$pagecount = $pdf->setSourceFile($sourcefile);        // original PDF
-
-						$param = array();
-						$param['online_sign_name'] = $online_sign_name;
-						$param['pathtoimage'] = $upload_dir . $filename;
-
-						$s = array();    // Array with size of each page. Example array(w'=>210, 'h'=>297);
-						for ($i = 1; $i < ($pagecount + 1); $i++) {
-							try {
-								$tppl = $pdf->importPage($i);
-								$s = $pdf->getTemplatesize($tppl);
-								$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
-								$pdf->useTemplate($tppl);
-
-								if (getDolGlobalString("FICHINTER_SIGNATURE_ON_ALL_PAGES")) {
-									// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
-									// TODO Get position of box from PDF template
-
-									if (getDolGlobalString("FICHINTER_SIGNATURE_XFORIMGSTART")) {
-										$param['xforimgstart'] = getDolGlobalString("FICHINTER_SIGNATURE_XFORIMGSTART");
-									} else {
-										$param['xforimgstart'] = 111;
-									}
-									if (getDolGlobalString("FICHINTER_SIGNATURE_YFORIMGSTART")) {
-										$param['yforimgstart'] = getDolGlobalString("FICHINTER_SIGNATURE_YFORIMGSTART");
-									} else {
-										$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 60);
-									}
-									if (getDolGlobalString("FICHINTER_SIGNATURE_WFORIMG")) {
-										$param['wforimg'] = getDolGlobalString("FICHINTER_SIGNATURE_WFORIMG");
-									} else {
-										$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 16);
-									}
-
-									dolPrintSignatureImage($pdf, $langs, $param);
-								}
-							} catch (Exception $e) {
-								dol_syslog("Error when manipulating some PDF by onlineSign: " . $e->getMessage(), LOG_ERR);
-								$response = $e->getMessage();
-								$error++;
+						if (empty($reshook)) {
+							// We build the new PDF
+							$pdf = pdf_getInstance();
+							if (class_exists('TCPDF')) {
+								$pdf->setPrintHeader(false);
+								$pdf->setPrintFooter(false);
 							}
+							$pdf->SetFont(pdf_getPDFFont($langs));
+
+							if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
+								$pdf->SetCompression(false);
+							}
+
+							//$pdf->Open();
+							$pagecount = $pdf->setSourceFile($sourcefile);        // original PDF
+
+							$param = array();
+							$param['online_sign_name'] = $online_sign_name;
+							$param['pathtoimage'] = $upload_dir . $filename;
+
+							$s = array();    // Array with size of each page. Example array(w'=>210, 'h'=>297);
+							for ($i = 1; $i < ($pagecount + 1); $i++) {
+								try {
+									$tppl = $pdf->importPage($i);
+									$s = $pdf->getTemplatesize($tppl);
+									$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
+									$pdf->useTemplate($tppl);
+
+									if (getDolGlobalString("FICHINTER_SIGNATURE_ON_ALL_PAGES")) {
+										// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
+										// TODO Get position of box from PDF template
+
+										if (getDolGlobalString("FICHINTER_SIGNATURE_XFORIMGSTART")) {
+											$param['xforimgstart'] = getDolGlobalString("FICHINTER_SIGNATURE_XFORIMGSTART");
+										} else {
+											$param['xforimgstart'] = 111;
+										}
+										if (getDolGlobalString("FICHINTER_SIGNATURE_YFORIMGSTART")) {
+											$param['yforimgstart'] = getDolGlobalString("FICHINTER_SIGNATURE_YFORIMGSTART");
+										} else {
+											$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 60);
+										}
+										if (getDolGlobalString("FICHINTER_SIGNATURE_WFORIMG")) {
+											$param['wforimg'] = getDolGlobalString("FICHINTER_SIGNATURE_WFORIMG");
+										} else {
+											$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 16);
+										}
+
+										dolPrintSignatureImage($pdf, $langs, $param);
+									}
+								} catch (Exception $e) {
+									dol_syslog("Error when manipulating some PDF by onlineSign: " . $e->getMessage(), LOG_ERR);
+									$response = $e->getMessage();
+									$error++;
+								}
+							}
+
+							if (!getDolGlobalString("FICHINTER_SIGNATURE_ON_ALL_PAGES")) {
+								// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
+								// TODO Get position of box from PDF template
+
+								$param['xforimgstart'] = 111;
+								$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 60);
+								$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 16);
+
+								dolPrintSignatureImage($pdf, $langs, $param);
+							}
+
+							//$pdf->Close();
+							$pdf->Output($newpdffilename, "F");
+
+							// Index the new file and update the last_main_doc property of object.
+							$object->indexFile($newpdffilename, 1);
 						}
-
-						if (!getDolGlobalString("FICHINTER_SIGNATURE_ON_ALL_PAGES")) {
-							// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
-							// TODO Get position of box from PDF template
-
-							$param['xforimgstart'] = 111;
-							$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 60);
-							$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 16);
-
-							dolPrintSignatureImage($pdf, $langs, $param);
-						}
-
-						//$pdf->Close();
-						$pdf->Output($newpdffilename, "F");
-
-						// Index the new file and update the last_main_doc property of object.
-						$object->indexFile($newpdffilename, 1);
 					}
 					if (!$error) {
 						$response = "success";
@@ -522,6 +568,8 @@ if ($action == "importSignature") {
 					// Document format not supported to insert online signature.
 					// We should just create an image file with the signature.
 				}
+				$user = new User($db);
+				$object->setSignedStatus($user, $object::SIGNED_STATUSES['STATUS_SIGNED_RECEIVER_ONLINE'], 0, 'FICHINTER_MODIFY');
 			}
 		} elseif ($mode == "societe_rib") {
 			$langs->load('withdrawals');
@@ -533,7 +581,6 @@ if ($action == "importSignature") {
 			if (!empty($object->id)) {
 				$object->fetch_thirdparty();
 
-
 				$upload_dir = $conf->societe->multidir_output[$object->thirdparty->entity] . '/' . dol_sanitizeFileName($object->thirdparty->id) . '/';
 
 				$default_font_size = pdf_getPDFFontSize($langs);    // Must be after pdf_getInstance
@@ -542,11 +589,19 @@ if ($action == "importSignature") {
 
 				$date = dol_print_date(dol_now(), "%Y%m%d%H%M%S");
 				$filename = "signatures/" . $date . "_signature.png";
-				if (!is_dir($upload_dir . "signatures/")) {
+				if (!dol_is_dir($upload_dir . "signatures/")) {
 					if (!dol_mkdir($upload_dir . "signatures/")) {
 						$response = "Error mkdir. Failed to create dir " . $upload_dir . "signatures/";
 						$error++;
 					}
+				}
+				if (!dol_is_writable($upload_dir . "signatures/")) {
+					$response = "Error directory " . $upload_dir . "signatures/ is not writable";
+					$error++;
+				}
+				if (!dol_is_writable(DOL_DATA_ROOT.'/admin/temp/')) {	// This is used by TCPDF as working directory
+					$response = "Error directory " . DOL_DATA_ROOT."/admin/temp/ is not writable";
+					$error++;
 				}
 
 				if (!$error) {
@@ -571,96 +626,104 @@ if ($action == "importSignature") {
 							$sourcefile = $upload_dir . $langs->transnoentitiesnoconv("SepaMandateShort") . ' ' . dol_sanitizeFileName($object->ref) . "-" . dol_sanitizeFileName($object->rum) . ".pdf";
 						}
 						if (dol_is_file($sourcefile)) {
-							// We build the new PDF
-							$pdf = pdf_getInstance();
-							if (class_exists('TCPDF')) {
-								$pdf->setPrintHeader(false);
-								$pdf->setPrintFooter(false);
-							}
-							$pdf->SetFont(pdf_getPDFFont($langs));
-
-							if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
-								$pdf->SetCompression(false);
+							$parameters = array('sourcefile' => $sourcefile, 'newpdffilename' => $newpdffilename);
+							$reshook = $hookmanager->executeHooks('AddSignature', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+							if ($reshook < 0) {
+								setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 							}
 
-							//$pdf->Open();
-							$pagecount = $pdf->setSourceFile($sourcefile);        // original PDF
+							if (empty($reshook)) {
+								// We build the new PDF
+								$pdf = pdf_getInstance();
+								if (class_exists('TCPDF')) {
+									$pdf->setPrintHeader(false);
+									$pdf->setPrintFooter(false);
+								}
+								$pdf->SetFont(pdf_getPDFFont($langs));
 
-							$s = array();    // Array with size of each page. Example array(w'=>210, 'h'=>297);
-							for ($i = 1; $i < ($pagecount + 1); $i++) {
-								try {
-									$tppl = $pdf->importPage($i);
-									$s = $pdf->getTemplatesize($tppl);
-									$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
-									$pdf->useTemplate($tppl);
-								} catch (Exception $e) {
-									dol_syslog("Error when manipulating the PDF " . $sourcefile . " by onlineSign: " . $e->getMessage(), LOG_ERR);
-									$response = $e->getMessage();
+								if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
+									$pdf->SetCompression(false);
+								}
+
+								//$pdf->Open();
+								$pagecount = $pdf->setSourceFile($sourcefile);        // original PDF
+
+								$s = array();    // Array with size of each page. Example array(w'=>210, 'h'=>297);
+								for ($i = 1; $i < ($pagecount + 1); $i++) {
+									try {
+										$tppl = $pdf->importPage($i);
+										$s = $pdf->getTemplatesize($tppl);
+										$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
+										$pdf->useTemplate($tppl);
+									} catch (Exception $e) {
+										dol_syslog("Error when manipulating the PDF " . $sourcefile . " by onlineSign: " . $e->getMessage(), LOG_ERR);
+										$response = $e->getMessage();
+										$error++;
+									}
+								}
+
+
+								// Get position of box from PDF template
+								$file = '';
+								$classname = '';
+								$filefound = '';
+								$dirmodels = array('/');
+								if (is_array($conf->modules_parts['models'])) {
+									$dirmodels = array_merge($dirmodels, $conf->modules_parts['models']);
+								}
+								foreach ($dirmodels as $reldir) {
+									$file = "pdf_" . $last_modelpdf . ".modules.php";
+									// On vérifie l'emplacement du modele
+									$file = dol_buildpath($reldir . $modelpath . $file, 0);
+									if (file_exists($file)) {
+										$filefound = $file;
+										$classname = 'pdf_' . $last_modelpdf;
+										break;
+									}
+								}
+
+								if ($filefound === '') {
+									$response = $langs->trans("Error") . ' Failed to load doc generator with modelpaths=' . $modelpath . ' - modele=' . $last_modelpdf;
+									dol_syslog($response, LOG_ERR);
 									$error++;
 								}
-							}
 
+								if (!$error && $classname !== '') {
+									// If PDF template class  was found
+									require_once $file;
 
-							// Get position of box from PDF template
-							$file = '';
-							$classname = '';
-							$filefound = '';
-							$dirmodels = array('/');
-							if (is_array($conf->modules_parts['models'])) {
-								$dirmodels = array_merge($dirmodels, $conf->modules_parts['models']);
-							}
-							foreach ($dirmodels as $reldir) {
-								$file = "pdf_" . $last_modelpdf . ".modules.php";
-								// On vérifie l'emplacement du modele
-								$file = dol_buildpath($reldir . $modelpath . $file, 0);
-								if (file_exists($file)) {
-									$filefound = $file;
-									$classname = 'pdf_' . $last_modelpdf;
-									break;
+									$objPDF = new $classname($db);
+
+									$pdf->SetFont($default_font, '', $default_font_size - 1);
+
+									$xForDate = $objPDF->marge_gauche;
+									$yForDate = $objPDF->page_hauteur - $objPDF->heightforinfotot - $objPDF->heightforfreetext - $objPDF->heightforfooter + 10;
+									$pdf->SetXY($xForDate, $yForDate);
+									$pdf->MultiCell(100, 4, dol_print_date(dol_now(), "daytext", false, $langs, true), 0, 'L');
+
+									$xforimgstart = $objPDF->xPosSignArea;
+									$yforimgstart = $yForDate - 5;
+									$wforimg = $s['w'] - 20 - $xforimgstart;
+
+									$param = array();
+									$param['online_sign_name'] = $online_sign_name;
+									$param['pathtoimage'] = $upload_dir . $filename;
+
+									// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
+									// TODO Get position of box from PDF template
+
+									$param['xforimgstart'] = $xforimgstart;
+									$param['yforimgstart'] = $yforimgstart;
+									$param['wforimg'] = $wforimg;
+
+									dolPrintSignatureImage($pdf, $langs, $param);
 								}
+								//$pdf->Close();
+								$pdf->Output($newpdffilename, "F");
+
+								// Index the new file and update the last_main_doc property of object.
+								$object->indexFile($newpdffilename, 1);
 							}
-
-							if ($filefound === '') {
-								$response = $langs->trans("Error") . ' Failed to load doc generator with modelpaths=' . $modelpath . ' - modele=' . $last_modelpdf;
-								dol_syslog($response, LOG_ERR);
-								$error++;
-							}
-
-							if (!$error && $classname !== '') {
-								// If PDF template class  was found
-								require_once $file;
-
-								$objPDF = new $classname($db);
-
-								$pdf->SetFont($default_font, '', $default_font_size - 1);
-
-								$xForDate = $objPDF->marge_gauche;
-								$yForDate = $objPDF->page_hauteur - $objPDF->heightforinfotot - $objPDF->heightforfreetext - $objPDF->heightforfooter + 10;
-								$pdf->SetXY($xForDate, $yForDate);
-								$pdf->MultiCell(100, 4, dol_print_date(dol_now(), "daytext", false, $langs, true), 0, 'L');
-
-								$xforimgstart = $objPDF->xPosSignArea;
-								$yforimgstart = $yForDate - 5;
-								$wforimg = $s['w'] - 20 - $xforimgstart;
-
-								$param = array();
-								$param['online_sign_name'] = $online_sign_name;
-								$param['pathtoimage'] = $upload_dir . $filename;
-
-								// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
-								// TODO Get position of box from PDF template
-
-								$param['xforimgstart'] = $xforimgstart;
-								$param['yforimgstart'] = $yforimgstart;
-								$param['wforimg'] = $wforimg;
-
-								dolPrintSignatureImage($pdf, $langs, $param);
-							}
-							//$pdf->Close();
-							$pdf->Output($newpdffilename, "F");
-
-							// Index the new file and update the last_main_doc property of object.
-							$object->indexFile($newpdffilename, 1);
 						}
 					} elseif (preg_match('/\.odt/i', $last_main_doc_file)) {
 						// Adding signature on .ODT not yet supported
@@ -757,73 +820,81 @@ if ($action == "importSignature") {
 				}
 				$last_main_doc_file = $object->last_main_doc;
 				$directdownloadlink = $object->getLastMainDocLink('expedition');    // url to download the $object->last_main_doc
+
 				if (preg_match('/\.pdf/i', $last_main_doc_file)) {
 					// TODO Use the $last_main_doc_file to defined the $newpdffilename and $sourcefile
 					$newpdffilename = $upload_dir . $ref . "_signed-" . $date . ".pdf";
 					$sourcefile = $upload_dir . $ref . ".pdf";
 
-
 					if (dol_is_file($sourcefile)) {
-						// We build the new PDF
-						$pdf = pdf_getInstance();
-						if (class_exists('TCPDF')) {
-							$pdf->setPrintHeader(false);
-							$pdf->setPrintFooter(false);
-						}
-						$pdf->SetFont(pdf_getPDFFont($langs));
-
-						if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
-							$pdf->SetCompression(false);
+						$parameters = array('sourcefile' => $sourcefile, 'newpdffilename' => $newpdffilename);
+						$reshook = $hookmanager->executeHooks('AddSignature', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+						if ($reshook < 0) {
+							setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 						}
 
-						//$pdf->Open();
-						$pagecount = $pdf->setSourceFile($sourcefile);        // original PDF
-
-						$param = array();
-						$param['online_sign_name'] = $online_sign_name;
-						$param['pathtoimage'] = $upload_dir . $filename;
-
-						$s = array();    // Array with size of each page. Example array(w'=>210, 'h'=>297);
-						for ($i = 1; $i < ($pagecount + 1); $i++) {
-							try {
-								$tppl = $pdf->importPage($i);
-								$s = $pdf->getTemplatesize($tppl);
-								$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
-								$pdf->useTemplate($tppl);
-
-								if (getDolGlobalString("SHIPMENT_SIGNATURE_ON_ALL_PAGES")) {
-									// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
-									// TODO Get position of box from PDF template
-
-									$param['xforimgstart'] = 111;
-									$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 60);
-									$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 16);
-
-									dolPrintSignatureImage($pdf, $langs, $param);
-								}
-							} catch (Exception $e) {
-								dol_syslog("Error when manipulating some PDF by onlineSign: " . $e->getMessage(), LOG_ERR);
-								$response = $e->getMessage();
-								$error++;
+						if (empty($reshook)) {
+							// We build the new PDF
+							$pdf = pdf_getInstance();
+							if (class_exists('TCPDF')) {
+								$pdf->setPrintHeader(false);
+								$pdf->setPrintFooter(false);
 							}
+							$pdf->SetFont(pdf_getPDFFont($langs));
+
+							if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
+								$pdf->SetCompression(false);
+							}
+
+							//$pdf->Open();
+							$pagecount = $pdf->setSourceFile($sourcefile);        // original PDF
+
+							$param = array();
+							$param['online_sign_name'] = $online_sign_name;
+							$param['pathtoimage'] = $upload_dir . $filename;
+
+							$s = array();    // Array with size of each page. Example array(w'=>210, 'h'=>297);
+							for ($i = 1; $i < ($pagecount + 1); $i++) {
+								try {
+									$tppl = $pdf->importPage($i);
+									$s = $pdf->getTemplatesize($tppl);
+									$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
+									$pdf->useTemplate($tppl);
+
+									if (getDolGlobalString("SHIPMENT_SIGNATURE_ON_ALL_PAGES")) {
+										// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
+										// TODO Get position of box from PDF template
+
+										$param['xforimgstart'] = 111;
+										$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 60);
+										$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 16);
+
+										dolPrintSignatureImage($pdf, $langs, $param);
+									}
+								} catch (Exception $e) {
+									dol_syslog("Error when manipulating some PDF by onlineSign: " . $e->getMessage(), LOG_ERR);
+									$response = $e->getMessage();
+									$error++;
+								}
+							}
+
+							if (!getDolGlobalString("SHIPMENT_SIGNATURE_ON_ALL_PAGES")) {
+								// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
+								// TODO Get position of box from PDF template
+
+								$param['xforimgstart'] = 111;
+								$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 60);
+								$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 16);
+
+								dolPrintSignatureImage($pdf, $langs, $param);
+							}
+
+							//$pdf->Close();
+							$pdf->Output($newpdffilename, "F");
+
+							// Index the new file and update the last_main_doc property of object.
+							$object->indexFile($newpdffilename, 1);
 						}
-
-						if (!getDolGlobalString("SHIPMENT_SIGNATURE_ON_ALL_PAGES")) {
-							// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
-							// TODO Get position of box from PDF template
-
-							$param['xforimgstart'] = 111;
-							$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 60);
-							$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 16);
-
-							dolPrintSignatureImage($pdf, $langs, $param);
-						}
-
-						//$pdf->Close();
-						$pdf->Output($newpdffilename, "F");
-
-						// Index the new file and update the last_main_doc property of object.
-						$object->indexFile($newpdffilename, 1);
 					}
 					if (!$error) {
 						$response = "success";

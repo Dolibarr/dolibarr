@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 $langs->load("companies");
 
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager = new HookManager($db);
 $hookmanager->initHooks(array('thirdpartiesindex'));
 
@@ -335,8 +335,8 @@ if ($result) {
 
 		$lastmodified .= '<tr class="liste_titre"><th colspan="2">';
 		//$lastmodified .= img_picto('', 'company', 'class="pictofixedwidth"');
-		$lastmodified .= $transRecordedType;
-		$lastmodified .= '<a class="marginleftonly" href="'.DOL_URL_ROOT.'/societe/list.php?sortfield=s.tms&sortorder=DESC" title="'.$langs->trans("FullList").'">';
+		$lastmodified .= '<span class="valignmiddle">'.$transRecordedType.'</span>';
+		$lastmodified .= '<a class="marginleftonlyshort" href="'.DOL_URL_ROOT.'/societe/list.php?sortfield=s.tms&sortorder=DESC" title="'.$langs->trans("FullList").'">';
 		$lastmodified .= '<span class="badge marginleftonlyshort">...</span>';
 		$lastmodified .= '</a>';
 		$lastmodified .= '</th>';
@@ -458,8 +458,8 @@ if ($result) {
 
 		$lastmodifiedcontact .= '<tr class="liste_titre"><th colspan="2">';
 		//$lastmodifiedcontact .= img_picto('', 'contact', 'class="pictofixedwidth"');
-		$lastmodifiedcontact .= $transRecordedType;
-		$lastmodifiedcontact .= '<a class="marginleftonly" href="'.DOL_URL_ROOT.'/contact/list.php?sortfield=p.tms&sortorder=DESC" title="'.$langs->trans("FullList").'">';
+		$lastmodifiedcontact .= '<span class="valignmiddle">'.$transRecordedType.'</div>';
+		$lastmodifiedcontact .= '<a class="marginleftonlyshort" href="'.DOL_URL_ROOT.'/contact/list.php?sortfield=p.tms&sortorder=DESC" title="'.$langs->trans("FullList").'">';
 		//$lastmodifiedcontact .= img_picto($langs->trans("FullList"), 'contact');
 		$lastmodifiedcontact .= '<span class="badge marginleftonlyshort">...</span>';
 		$lastmodifiedcontact .= '</th>';

@@ -117,7 +117,7 @@ class modWorkflow extends DolibarrModules
 
 		// Main menu entries
 		$this->menu = array(); // List of menus to add
-		$r = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$r = 0;
 		/*
 		$this->menu[$r]=array('fk_menu'=>0,
 								'type'=>'top',

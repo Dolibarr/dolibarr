@@ -66,7 +66,7 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
 
 $textobject = $langs->transnoentitiesnoconv("Inventory");
 
-llxHeader('', $langs->trans("InventorySetup"));
+llxHeader('', $langs->trans("InventorySetup"), '', '', 0, 0, '', '', '', 'mod-product page-admin_inventory_extrafields');
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';

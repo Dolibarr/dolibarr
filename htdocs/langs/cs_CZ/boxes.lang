@@ -112,10 +112,10 @@ BoxTitleSuspenseAccount=Počet nepřidělených linek
 NumberOfLinesInSuspenseAccount=Číslo řádku na pozastaveném účtu
 SuspenseAccountNotDefined=Účet pozastavení není definován
 BoxLastCustomerShipments=Poslední zásilky zákazníků
-BoxTitleLastCustomerShipments=Nejnovější %s zásilky zákazníků
+BoxTitleLastCustomerShipments=Latest %s modified customer shipments
 BoxTitleLastLeaveRequests=Nejnovější %s upravené žádosti o dovolenou
 NoRecordedShipments=Žádná zaznamenaná zásilka zákazníka
-BoxCustomersOutstandingBillReached=Customers with oustanding limit reached
+BoxCustomersOutstandingBillReached=Customers with outstanding limit reached
 # Pages
 UsersHome=Home users and groups
 MembersHome=Home Membership

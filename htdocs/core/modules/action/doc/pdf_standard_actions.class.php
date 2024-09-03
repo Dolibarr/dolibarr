@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,13 +119,13 @@ class pdf_standard_actions
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *      Write the object to document file to disk
+	 * Write the object to document file to disk
 	 *
-	 *      @param	int			$socid			Thirdparty id
-	 *      @param  Translate	$outputlangs    Lang object for output language
-	 *      @return int             			1=OK, 0=KO
+	 * @param  ?CommonObject	$object			Order/...
+	 * @param  Translate		$outputlangs    Lang object for output language
+	 * @return int<0,1>     			    	1=OK, 0=KO
 	 */
-	public function write_file($socid, $outputlangs)
+	public function write_file($object, $outputlangs)
 	{
 		// phpcs:enable
 		global $user, $conf, $langs, $hookmanager;
@@ -166,7 +167,7 @@ class pdf_standard_actions
 
 			$pdf = pdf_getInstance($this->format);
 			$heightforinfotot = 50; // Height reserved to output the info and total part
-			$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
+			$heightforfreetext = getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT', 5); // Height reserved to output the free text on last page
 			$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
 			$pdf->SetAutoPageBreak(1, 0);
 
@@ -193,7 +194,7 @@ class pdf_standard_actions
 			$nbpage = $this->_pages($pdf, $outputlangs); // Write content
 
 			if (method_exists($pdf, 'AliasNbPages')) {
-				$pdf->AliasNbPages();
+				$pdf->AliasNbPages();  // @phan-suppress-current-line PhanUndeclaredMethod
 			}
 			$pdf->Close();
 

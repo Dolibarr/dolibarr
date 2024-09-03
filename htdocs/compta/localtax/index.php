@@ -148,11 +148,11 @@ function pt($db, $sql, $date)
 
 			if ($obj->mode == 'claimed') {
 				$amountclaimed = $obj->mm;
-				$totalclaimed = $totalclaimed + $amountclaimed;
+				$totalclaimed += $amountclaimed;
 			}
 			if ($obj->mode == 'paid') {
 				$amountpaid = $obj->mm;
-				$totalpaid = $totalpaid + $amountpaid;
+				$totalpaid += $amountpaid;
 			}
 
 			if ($obj->mode == 'paid') {
@@ -441,7 +441,7 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000) {	// $
 	$parameters["month"] = $m;
 	$parameters["type"] = 'localtax'.$localTaxType;
 
-	// Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
+	// Initialize a technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
 	$hookmanager->initHooks(array('externalbalance'));
 	$reshook = $hookmanager->executeHooks('addVatLine', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
@@ -529,11 +529,11 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000) {	// $
 	}
 	print '<td class="nowrap right">'.price(price2num($x_paye_sum, 'MT')).'</td>';
 
-	$subtotalcoll = $subtotalcoll + $x_coll_sum;
-	$subtotalpaid = $subtotalpaid + $x_paye_sum;
+	$subtotalcoll += $x_coll_sum;
+	$subtotalpaid += $x_paye_sum;
 
 	$diff = $x_coll_sum - $x_paye_sum;
-	$total = $total + $diff;
+	$total += $diff;
 	$subtotal = price2num($subtotal + $diff, 'MT');
 
 	print '<td class="nowrap right">'.price(price2num($diff, 'MT')).'</td>'."\n";

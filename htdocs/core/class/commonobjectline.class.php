@@ -34,6 +34,16 @@
 abstract class CommonObjectLine extends CommonObject
 {
 	/**
+	 * @var string ID to identify parent CommonObject type (element name)
+	 */
+	public $parent_element = '';
+
+	/**
+	 * @var string Attribute related to parent CommonObject rowid (many2one)
+	 */
+	public $fk_parent_attribute = '';
+
+	/**
 	 * Id of the line
 	 * @var int
 	 */
@@ -133,6 +143,9 @@ abstract class CommonObjectLine extends CommonObject
 	 */
 	public $fk_product_type;
 
+	/**
+	 * @var float Quantity
+	 */
 	public $qty;
 	public $duree;
 	public $remise_percent;
@@ -149,6 +162,11 @@ abstract class CommonObjectLine extends CommonObject
 	 * @var int special code
 	 */
 	public $special_code;
+
+	/**
+	 * Unit price before taxes
+	 * @var float
+	 */
 	public $subprice;
 	public $tva_tx;
 

@@ -4,37 +4,24 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see .
 
-#
 # Generic
-#
-
 # Module label 'ModuleKnowledgeManagementName'
 ModuleKnowledgeManagementName = የእውቀት አስተዳደር ስርዓት
 # Module description 'ModuleKnowledgeManagementDesc'
 ModuleKnowledgeManagementDesc=የእውቀት አስተዳደር (KM) ወይም የእገዛ ዴስክ መሰረትን አስተዳድር
-
-#
 # Admin page
-#
 KnowledgeManagementSetup = የእውቀት አስተዳደር ስርዓት ማዋቀር
 KnowledgeManagementSetupPage = የእውቀት አስተዳደር ስርዓት ማዋቀር ገጽ
-
-
-#
 # About page
-#
 KnowledgeManagementAbout = ስለ እውቀት አስተዳደር
 KnowledgeManagementAboutPage = ስለ ገጽ እውቀት አስተዳደር
-
 KnowledgeManagementArea = የእውቀት አስተዳደር
 MenuKnowledgeRecord = እውቀት መሰረት
 MenuKnowledgeRecordShort = እውቀት መሰረት
@@ -46,8 +33,7 @@ KnowledgeRecord = አንቀጽ
 KnowledgeRecordExtraFields = ለአንቀጽ ተጨማሪ ቦታዎች
 GroupOfTicket=የቲኬቶች ቡድን
 YouCanLinkArticleToATicketCategory=ጽሑፉን ከቲኬት ቡድን ጋር ማገናኘት ይችላሉ (ስለዚህ ጽሑፉ በዚህ ቡድን ውስጥ ባሉ ማናቸውም ቲኬቶች ላይ ይደምቃል)
-SuggestedForTicketsInGroup=በቲኬት ፈጠራ ላይ የተጠቆመ
-
+SuggestedForTicketsInGroup=Suggested on tickets creation
 SetObsolete=ጊዜ ያለፈበት አድርገው ያዘጋጁ
 ConfirmCloseKM=የዚህ ጽሑፍ መዝጊያ ጊዜ ያለፈበት መሆኑን አረጋግጠዋል?
 ConfirmReopenKM=ይህን ጽሑፍ ወደ "የተረጋገጠ" ሁኔታ መመለስ ይፈልጋሉ?

@@ -153,10 +153,29 @@ sed -n 's@> \(.*\)'"@${REPL_STR}@p" \
 	> "${MISSING_FILE}.grep"
 
 
+exit_code=0
+
+
+if [ -s "${MISSING_FILE}.grep" ] ; then
+	# Report missing translation in recognizable format
+
+	echo "##[group]List missing translations (used by code but not found into lang files) - Generate CTI errors"
+
+	git grep -n --column -r -F -f "${MISSING_FILE}.grep" -- ':*.php' ':*.html' \
+		| sort -t: -k 4 \
+		| sed 's@^\([^:]*:[^:]*:[^:]*:\)\s*@\1 Missing translation; @' > "${MISSING_FILE}.result"
+
+	if [ -s "${MISSING_FILE}.result" ] ; then
+		exit_code=1
+		cat "${MISSING_FILE}.result"
+	fi
+
+	echo "##[endgroup]"
+fi
+
 
 if [ -s "${UNUSED_FILE}.grep" ] ; then
-	#exit_code=1
-    exit_code=0     # We do not consider adding new entries for future use as an error (even if ignore_translation_keys.lst not filled).
+	#exit_code=1	# We do not consider adding new entries for future use as an error (even if ignore_translation_keys is not filled).
 
 	# Report unused translation in recognizable format
 
@@ -175,24 +194,6 @@ if [ -s "${UNUSED_FILE}.grep" ] ; then
 
 	echo "##[endgroup]"
 	echo
-fi
-
-
-if [ -s "${MISSING_FILE}.grep" ] ; then
-	# Report missing translation in recognizable format
-
-	echo "##[group]List missing translations (used by code but not found into lang files) - Generate CTI errors"
-
-	git grep -n --column -r -F -f "${MISSING_FILE}.grep" -- ':*.php' ':*.html' \
-		| sort -t: -k 4 \
-		| sed 's@^\([^:]*:[^:]*:[^:]*:\)\s*@\1 Missing translation; @' > "${MISSING_FILE}.result"
-
-	if [ -s "${MISSING_FILE}.result" ] ; then
-		exit_code=1
-		cat "${MISSING_FILE}.result"
-	fi
-
-	echo "##[endgroup]"
 fi
 
 

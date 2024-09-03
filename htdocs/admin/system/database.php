@@ -41,7 +41,7 @@ if (!$user->admin) {
 
 $form = new Form($db);
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_database');
 
 print load_fiche_titre($langs->trans("InfoDatabase"), '', 'title_setup');
 
@@ -84,7 +84,7 @@ if (!count($listofvars) && !count($listofstatus)) {
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<td width="300">'.$langs->trans("Parameters").'</td>';
-		print '<td>'.$langs->trans("Value").'</td>';
+		print '<td></td>';
 		print '</tr>'."\n";
 
 		// arraytest is an array of test to do

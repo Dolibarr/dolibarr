@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2016  Jean-François FERRY     <hello@librethic.io>
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2021-2024	Frédéric France			<frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2024	Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticketstats.class.php';
 
 $hookmanager = new HookManager($db);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('ticketsindex'));
 
 // Load translation files required by the page
@@ -87,7 +87,8 @@ $max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
 
 $resultboxes = FormOther::getBoxesArea($user, "11"); // Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
 
-llxHeader('', $langs->trans('TicketsIndex'), '');
+$help_url = '';
+llxHeader('', $langs->trans('TicketsIndex'), $help_url, '', 0, 0, '', '', '', 'mod-ticket page-dashboard');
 
 $linkback = '';
 print load_fiche_titre($langs->trans('TicketsIndex'), $resultboxes['selectboxlist'], 'ticket');
@@ -248,7 +249,7 @@ $stringtoshow .= '<input type="hidden" name="token" value="'.newToken().'">';
 $stringtoshow .= '<input type="hidden" name="action" value="refresh">';
 $stringtoshow .= '<input type="hidden" name="DOL_AUTOSET_COOKIE" value="DOLUSERCOOKIE_ticket_by_status:year,shownb,showtot">';
 $stringtoshow .= $langs->trans("Year").' <input class="flat" size="4" type="text" name="'.$param_year.'" value="'.$endyear.'">';
-$stringtoshow .= '<input type="image" alt="'.$langs->trans("Refresh").'" src="'.img_picto($langs->trans("Refresh"), 'refresh.png', '', '', 1).'">';
+$stringtoshow .= '<input type="image" alt="'.$langs->trans("Refresh").'" src="'.img_picto($langs->trans("Refresh"), 'refresh.png', '', 0, 1).'">';
 $stringtoshow .= '</form>';
 $stringtoshow .= '</div>';
 
@@ -401,8 +402,8 @@ if ($user->hasRight('ticket', 'read')) {
 				print "</td>";
 
 				// Subject
-				print '<td class="nowrap">';
-				print '<a href="card.php?track_id='.$objp->track_id.'">'.dol_trunc($objp->subject, 30).'</a>';
+				print '<td class="nowrap tdoverflowmax150">';
+				print '<a href="card.php?track_id='.$objp->track_id.'" title="'.dolPrintHTMLForAttribute($objp->subject).'">'.dol_trunc($objp->subject, 30).'</a>';
 				print "</td>\n";
 
 				// Type
@@ -421,7 +422,7 @@ if ($user->hasRight('ticket', 'read')) {
 				print "</td>";
 
 				// Severity = Priority
-				print '<td class="nowrap">';
+				print '<td class="nowrap" title="'.$langs->trans("Priority").'">';
 				$s = $langs->getLabelFromKey($db, 'TicketSeverityShort'.$objp->severity_code, 'c_ticket_severity', 'code', 'label', $objp->severity_code);
 				print '<span title="'.dol_escape_htmltag($s).'">'.$s.'</span>';
 				//print $objp->severity_label;

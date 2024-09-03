@@ -153,7 +153,7 @@ if (!empty($withproject)) {
 }
 $help_url = '';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-project project-tasks page-task_contact');
 
 
 /* *************************************************************************** */
@@ -504,6 +504,7 @@ if ($id > 0 || !empty($ref)) {
 					$userstatic->photo = $tab[$i]['photo'];
 					$userstatic->login = $tab[$i]['login'];
 					$userstatic->email = $tab[$i]['email'];
+					$userstatic->gender = $tab[$i]['gender'];
 					$userstatic->status = $tab[$i]['statuscontact'];
 
 					print $userstatic->getNomUrl(-1);

@@ -69,7 +69,7 @@ $form = new Form($db);
 
 $wikihelp = 'EN:Setup_Security|FR:Paramétrage_Sécurité|ES:Configuración_Seguridad';
 
-llxHeader('', $langs->trans("DefaultRights"), $wikihelp);
+llxHeader('', $langs->trans("DefaultRights"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-perms');
 
 print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
 
@@ -90,6 +90,8 @@ foreach ($modulesdir as $dir) {
 				if ($modName) {
 					include_once $dir.$file;
 					$objMod = new $modName($db);
+
+					'@phan-var-force DolibarrModules $objMod';
 
 					// Load all lang files of module
 					if (isset($objMod->langfiles) && is_array($objMod->langfiles)) {

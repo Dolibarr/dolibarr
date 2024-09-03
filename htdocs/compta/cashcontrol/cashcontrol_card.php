@@ -86,11 +86,11 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('cashcontrolcard', 'globalcard'));
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 // Security check
 if ($user->socid > 0) {	// Protection if external user
@@ -101,13 +101,14 @@ if (!$user->hasRight("cashdesk", "run") && !$user->hasRight("takepos", "run")) {
 	accessforbidden();
 }
 
+$permissiontoadd = ($user->hasRight("cashdesk", "run") || $user->hasRight("takepos", "run"));
+$permissiontodelete = ($user->hasRight("cashdesk", "run") || $user->hasRight("takepos", "run")) || ($permissiontoadd && $object->status == 0);
+
 
 /*
  * Actions
  */
 
-$permissiontoadd = ($user->hasRight("cashdesk", "run") || $user->hasRight("takepos", "run"));
-$permissiontodelete = ($user->hasRight("cashdesk", "run") || $user->hasRight("takepos", "run")) || ($permissiontoadd && $object->status == 0);
 if (empty($backtopage)) {
 	$backtopage = DOL_URL_ROOT.'/compta/cashcontrol/cashcontrol_card.php?id='.(!empty($id) && $id > 0 ? $id : '__ID__');
 }
@@ -120,14 +121,14 @@ if (!getDolGlobalString('CASHDESK_ID_BANKACCOUNT_CASH') && !getDolGlobalString('
 
 
 if (GETPOST('cancel', 'alpha')) {
-	if ($action == 'valid') {
+	if ($action == 'valid') {	// Test on permission not required here
 		$action = 'view';
 	} else {
 		$action = 'create';
 	}
 }
 
-if ($action == "reopen") {
+if ($action == "reopen" && $permissiontoadd) {
 	$result = $object->setStatut($object::STATUS_DRAFT, null, '', 'CASHFENCE_REOPEN');
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -136,7 +137,7 @@ if ($action == "reopen") {
 	$action = 'view';
 }
 
-if ($action == "start") {
+if ($action == "start" && $permissiontoadd) {
 	$error = 0;
 	if (!GETPOST('posmodule', 'alpha') || GETPOST('posmodule', 'alpha') == '-1') {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Module")), null, 'errors');
@@ -153,7 +154,7 @@ if ($action == "start") {
 		$action = 'create';
 		$error++;
 	}
-} elseif ($action == "add") {
+} elseif ($action == "add" && $permissiontoadd) {
 	if (GETPOST('opening', 'alpha') == '') {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("InitialBankBalance")), null, 'errors');
 		$action = 'start';
@@ -194,7 +195,7 @@ if ($action == "start") {
 	}
 }
 
-if ($action == "valid") {	// validate = close
+if ($action == "valid" && $permissiontoadd) {	// validate = close
 	$object->fetch($id);
 
 	$db->begin();
@@ -416,10 +417,11 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 		print '<td>'.$form->selectarray('posmodule', $arrayofposavailable, GETPOST('posmodule', 'alpha'), (count($arrayofposavailable) > 1 ? 1 : 0)).'</td>';
 		print '<td>';
 
-		$array = array();
+		$arrayofpos = array();
 		$numterminals = max(1, getDolGlobalString('TAKEPOS_NUM_TERMINALS'));
 		for ($i = 1; $i <= $numterminals; $i++) {
-			$array[$i] = $i;
+			$nameofterminal = getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$i);
+			$arrayofpos[$i] = array('id' => $i, 'label' => (($nameofterminal != "TAKEPOS_TERMINAL_NAME_".$i) ? '#'.$i.' '.$nameofterminal : $i), 'data-html' => (($nameofterminal != "TAKEPOS_TERMINAL_NAME_".$i) ? '#'.$i.' - '.$nameofterminal : $i));
 		}
 		$selectedposnumber = 0;
 		$showempty = 1;
@@ -427,7 +429,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 			$selectedposnumber = 1;
 			$showempty = 0;
 		}
-		print $form->selectarray('posnumber', $array, GETPOSTISSET('posnumber') ? GETPOSTINT('posnumber') : $selectedposnumber, $showempty);
+		print $form->selectarray('posnumber', $arrayofpos, GETPOSTISSET('posnumber') ? GETPOSTINT('posnumber') : $selectedposnumber, $showempty);
 		//print '<input name="posnumber" type="text" class="maxwidth50" value="'.(GETPOSTISSET('posnumber')?GETPOST('posnumber', 'alpha'):'0').'">';
 		print '</td>';
 		// Year
@@ -679,7 +681,11 @@ if (empty($action) || $action == "view" || $action == "close") {
 		if ($action != 'close') {
 			print '<div class="tabsAction">';
 
-			print '<div class="inline-block divButAction"><a target="_blank" rel="noopener noreferrer" class="butAction" href="report.php?id='.((int) $id).'">'.$langs->trans('PrintTicket').'</a></div>';
+			// Print ticket
+			print '<div class="inline-block divButAction"><a target="_blank" rel="noopener noreferrer" class="butAction" href="report.php?id='.((int) $id).'">'.$langs->trans('PrintReport').'</a></div>';
+
+			// Print ticket (no detail)
+			print '<div class="inline-block divButAction"><a target="_blank" rel="noopener noreferrer" class="butAction" href="report.php?id='.((int) $id).'&summaryonly=1">'.$langs->trans('PrintReportNoDetail').'</a></div>';
 
 			if ($object->status == CashControl::STATUS_DRAFT) {
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.((int) $id).'&action=close&token='.newToken().'&contextpage='.$contextpage.'">'.$langs->trans('Close').'</a></div>';
@@ -825,7 +831,7 @@ if (empty($action) || $action == "view" || $action == "close") {
 				foreach ($arrayofpaymentmode as $key => $val) {
 					print '<td align="center"'.($i == 0 ? ' class="hide0"' : '').'>';
 					if ($key == 'cash') {
-						$deltaforcash = ($object->opening - $initialbalanceforterminal[$terminalid]['cash']);
+						$deltaforcash = ((float) $object->opening - $initialbalanceforterminal[$terminalid]['cash']);
 						print price($theoricalamountforterminal[$terminalid][$key] + $deltaforcash).'<br>';
 					} else {
 						print price($theoricalamountforterminal[$terminalid][$key]).'<br>';

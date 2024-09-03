@@ -73,7 +73,7 @@ if (!$sortorder) {
 	$sortorder = 'DESC,DESC';
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('productagenda'));
 
 $object = new Product($db);
@@ -144,7 +144,7 @@ $help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|DE:Modul_Terminplanung';
 if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/productnameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
 	$title = $object->name." - ".$title;
 }
-llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-product page-agenda');
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-product page-card_agenda');
 
 if (isModEnabled('notification')) {
 	$langs->load("mails");

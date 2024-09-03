@@ -60,7 +60,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new EmailSenderProfile($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->admin->dir_output.'/temp/massgeneration/'.$user->id;
@@ -110,7 +110,7 @@ foreach ($object->fields as $key => $val) {
 		$arrayfields['t.'.$key] = array(
 			'label' => $val['label'],
 			'checked' => (($visible < 0) ? 0 : 1),
-			'enabled' => (abs($visible) != 3 && (int) dol_eval($val['enabled'], 1)),
+			'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
 			'position' => $val['position'],
 			'help' => isset($val['help']) ? $val['help'] : ''
 		);
@@ -227,7 +227,7 @@ $now = dol_now();
 $help_url = '';
 $title = $langs->trans("EMailsSetup");
 
-llxHeader('', $title);
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-admin page-mails_senderprofile_list');
 
 $linkback = '';
 $titlepicto = 'title_setup';

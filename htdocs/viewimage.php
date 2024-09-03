@@ -2,6 +2,8 @@
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2016 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024      Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024      MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -112,19 +114,35 @@ if (is_numeric($entity)) {
 /**
  * Header empty
  *
- * @ignore
+ * @param 	string 			$head				Optional head lines
+ * @param 	string 			$title				HTML title
+ * @param	string			$help_url			Url links to help page
+ * 		                            			Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage|DE:GermanPage
+ *                                  			For other external page: http://server/url
+ * @param	string			$target				Target to use on links
+ * @param 	int    			$disablejs			More content into html header
+ * @param 	int    			$disablehead		More content into html header
+ * @param 	array|string  	$arrayofjs			Array of complementary js files
+ * @param 	array|string  	$arrayofcss			Array of complementary css files
+ * @param	string			$morequerystring	Query string to add to the link "print" to get same parameters (use only if autodetect fails)
+ * @param   string  		$morecssonbody      More CSS on body tag. For example 'classforhorizontalscrolloftabs'.
+ * @param	string			$replacemainareaby	Replace call to main_area() by a print of this string
+ * @param	int				$disablenofollow	Disable the "nofollow" on meta robot header
+ * @param	int				$disablenoindex		Disable the "noindex" on meta robot header
  * @return	void
  */
-function llxHeader()
+function llxHeader($head = '', $title = '', $help_url = '', $target = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $morequerystring = '', $morecssonbody = '', $replacemainareaby = '', $disablenofollow = 0, $disablenoindex = 0)
 {
 }
 /**
  * Footer empty
  *
- * @ignore
+ * @param	string	$comment    				A text to add as HTML comment into HTML generated page
+ * @param	string	$zone						'private' (for private pages) or 'public' (for public pages)
+ * @param	int		$disabledoutputofmessages	Clear all messages stored into session without displaying them
  * @return	void
  */
-function llxFooter()
+function llxFooter($comment = '', $zone = 'private', $disabledoutputofmessages = 0)
 {
 }
 
@@ -163,14 +181,21 @@ if ($modulepart == 'fckeditor') {
  */
 
 if (GETPOST("cache", 'alpha')) {
-	// Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-	// Add param cache=abcdef
+	// Important: The following code is to avoid a page request by the browser and PHP CPU at each Dolibarr page access.
+	// We are here when param cache=xxx to force a cache policy:
+	//  xxx=1 means cache of 3600s
+	//  xxx=abcdef or 123456789 means a cache of 1 week (the key will be modified to get break cache use)
 	if (empty($dolibarr_nocache)) {
-		header('Cache-Control: max-age=3600, public, must-revalidate');
+		if (GETPOST('cache', 'alpha') != '1') {
+			$delaycache = 3600 * 24 * 7;
+		} else {
+			$delaycache = 3600;
+		}
+		header('Cache-Control: max-age='.$delaycache.', public, must-revalidate');
 		header('Pragma: cache'); // This is to avoid to have Pragma: no-cache set by proxy or web server
-		header('Expires: '.gmdate('D, d M Y H:i:s', time() + 3600).' GMT');	// This is to avoid to have Expires set by proxy or web server
-		//header('Expires: '.strtotime('+1 hour');
+		header('Expires: '.gmdate('D, d M Y H:i:s', time() + $delaycache).' GMT');	// This is to avoid to have Expires set by proxy or web server
 	} else {
+		// If any cache on files were disable by config file (for test purpose)
 		header('Cache-Control: no-cache');
 	}
 	//print $dolibarr_nocache; exit;
@@ -312,6 +337,22 @@ if ($modulepart == 'barcode') {
 	} else {
 		$code = GETPOST("code", 'restricthtml'); // This can be rich content (qrcode, datamatrix, ...)
 	}
+
+	// If $code is virtualcard_xxx_999.vcf, it is a file to read to get code
+	$reg = array();
+	if (preg_match('/^virtualcard_([^_]+)_(\d+)\.vcf$/', $code, $reg)) {
+		$vcffile = '';
+		if ($reg[1] == 'user') {
+			$vcffile = $conf->user->dir_temp.'/'.$code;
+		} elseif ($reg[1] == 'contact') {
+			$vcffile = $conf->contact->dir_temp.'/'.$code;
+		}
+
+		if ($vcffile) {
+			$code = file_get_contents($vcffile);
+		}
+	}
+
 
 	if (empty($generator) || empty($encoding)) {
 		print 'Error: Parameter "generator" or "encoding" not defined';

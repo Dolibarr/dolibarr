@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2011 Laurent Destailleur  <eldy@users.sourceforge.org>
  * Copyright (C) 2011      Regis Houssin  		<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,4 +79,4 @@ $PROXY_HOST = getDolGlobalString('MAIN_PROXY_HOST');
 $PROXY_PORT = getDolGlobalString('MAIN_PROXY_PORT');
 $PROXY_USER = getDolGlobalString('MAIN_PROXY_USER');
 $PROXY_PASS = getDolGlobalString('MAIN_PROXY_PASS');
-$USE_PROXY = !getDolGlobalString('MAIN_PROXY_USE') ? false : true;
+$USE_PROXY = getDolGlobalBool('MAIN_PROXY_USE');

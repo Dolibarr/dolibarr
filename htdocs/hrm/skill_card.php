@@ -4,7 +4,7 @@
  * Copyright (C) 2021 Greg Rastklan <greg.rastklan@atm-consulting.fr>
  * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
- * Copyright (C) 2023       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2023-2024  Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $lineid   = GETPOSTINT('lineid');
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Skill($db);
 $extrafields = new ExtraFields($db);
 //$diroutputmassaction = $conf->hrm->dir_output.'/temp/massgeneration/'.$user->id;
@@ -76,7 +76,7 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 // Permissions
 $permissiontoread   = $user->hasRight('hrm', 'all', 'read');
@@ -136,19 +136,37 @@ if (empty($reshook)) {
 
 	if (!$error) {
 		if (is_array($skilldetArray) && count($skilldetArray) > 0) {
-			foreach ($skilldetArray as $key => $SkValueToUpdate) {
-				$skilldetObj = new Skilldet($object->db);
-				$res = $skilldetObj->fetch($key);
-				if ($res > 0) {
-					$skilldetObj->description = $SkValueToUpdate;
-					$resupd = $skilldetObj->update($user);
-					if ($resupd <= 0) {
-						setEventMessage($langs->trans('errorUpdateSkilldet'));
+			if ($action == 'add') {
+				$arraySkill = $object->fetchLines();
+				$index = 0;
+				foreach ($arraySkill as $skilldet) {
+					if (isset($skilldetArray[$index])) {
+						$SkValueToUpdate = $skilldetArray[$index];
+						$skilldet->description = $SkValueToUpdate;
+						$resupd = $skilldet->update($user);
+						if ($resupd <= 0) {
+							setEventMessage($langs->trans('errorUpdateSkilldet'), 'errors');
+						}
+					}
+					$index++;
+				}
+			} else {
+				foreach ($skilldetArray as $key => $SkValueToUpdate) {
+					$skilldetObj = new Skilldet($object->db);
+					$res = $skilldetObj->fetch($key);
+					if ($res > 0) {
+						$skilldetObj->description = $SkValueToUpdate;
+						$resupd = $skilldetObj->update($user);
+						if ($resupd <= 0) {
+							setEventMessage($langs->trans('errorUpdateSkilldet'), 'errors');
+						}
 					}
 				}
 			}
 		}
 	}
+
+
 
 
 	// Actions when linking object each other
@@ -232,14 +250,21 @@ if ($action == 'create') {
 	//print $object->showInputField($val, $key, $value, '', '['']', '', 0);
 
 	print '</table>' . "\n";
+	print '<hr>';
+
+	print '<table class="border centpercent =">' . "\n";
+	for ($i = 1; $i <= $MaxNumberSkill; $i++) {
+		print '<tr><td class="titlefieldcreate tdtop">'. $langs->trans('Description') . ' ' . $langs->trans('rank') . ' ' . $i . '</td>';
+		print '<td class="valuefieldcreate"><textarea name="descriptionline[]" rows="5"  class="flat minwidth100" style="margin-top: 5px; width: 90%"></textarea></td>';
+	}
+	print '</table>';
 
 	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" name="add" value="' . dol_escape_htmltag($langs->trans("Create")) . '">';
 	print '&nbsp; ';
-
-	print '<input type="' . ($backtopage ? "submit" : "button") . '" class="button button-cancel" name="cancel" value="' . dol_escape_htmltag($langs->trans("Cancel")) . '"' . ($backtopage ? '' : ' onclick="history.go(-1)"') . '>'; // Cancel for create does not post form if we don't know the backtopage
+	print '<input type="' . ($backtopage ? "submit" : "button") . '" class="button button-cancel" name="cancel" value="' . dol_escape_htmltag($langs->trans("Cancel")) . '"' . ($backtopage ? '' : ' onclick="history.go(-1)"') . '>';
 	print '</div>';
 
 	print '</form>';
@@ -526,7 +551,7 @@ if ($action != "create" && $action != "edit") {
 	$pageprev = $page - 1;
 	$pagenext = $page + 1;
 
-	// Initialize technical objects
+	// Initialize a technical objects
 	$objectline = new Skilldet($db);
 	//  $diroutputmassaction = $conf->hrm->dir_output . '/temp/massgeneration/' . $user->id;
 	//  $hookmanager->initHooks(array('skilldetlist')); // Note that conf->hooks_modules contains array
@@ -570,7 +595,7 @@ if ($action != "create" && $action != "edit") {
 			$arrayfields['t.' . $key] = array(
 				'label' => $val['label'],
 				'checked' => (($visible < 0) ? 0 : 1),
-				'enabled' => (abs($visible) != 3 && (int) dol_eval($val['enabled'], 1, 1, '1')),
+				'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
 				'position' => $val['position'],
 				'help' => isset($val['help']) ? $val['help'] : ''
 			);
@@ -632,7 +657,7 @@ if ($action != "create" && $action != "edit") {
 	$massactionbutton = "";
 	//$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', dol_buildpath('/hrm/skilldet_card.php', 1) . '?action=create&backtopage=' . urlencode($_SERVER['PHP_SELF']) . $param_fk . '&backtopage=' . $backtopage, '', $permissiontoadd);
 
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'object_' . $object->picto, 0, "", '', '', 0, 0, 1);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'object_' . $object->picto, 0, '', '', 0, 0, 0, 1);
 
 	// Add code for pre mass action (confirmation or email presend form)
 	$topicmail = "SendSkilldetRef";
