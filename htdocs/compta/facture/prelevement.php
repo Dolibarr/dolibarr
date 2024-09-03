@@ -101,6 +101,7 @@ $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
+
 if (empty($reshook)) {
 	if ($action == "new" && $usercancreate) {
 		if ($object->id > 0) {
@@ -745,7 +746,6 @@ if ($object->id > 0) {
 			if ($user_perms) {
 				$remaintopaylesspendingdebit = $resteapayer - $pending;
 
-				// ------------------- ADDED START
 				print("</div>");
 
 				$title = $langs->trans("NewStandingOrder");
@@ -756,32 +756,13 @@ if ($object->id > 0) {
 				print load_fiche_titre($title);
 				print dol_get_fiche_head();
 				print '<table class="border centpercent tableforfield">';
-				// ------------------- ADDED END
-
 				print '<form method="POST" action="">';
 				print '<input type="hidden" name="token" value="'.newToken().'" />';
 				print '<input type="hidden" name="id" value="'.$object->id.'" />';
 				print '<input type="hidden" name="type" value="'.$type.'" />';
 				print '<input type="hidden" name="action" value="new" />';
-
-				//	-------------------------------------------------------------
-				//	MODIFICATIONS START
-				//	-------------------------------------------------------------
-
-//				print '<tr><td>';
-//				print '<table class="nobordernopadding centpercent"><tr><td>';
 				print '<tr><td class="titlefield">'.$langs->trans('CustomerIBAN').'</td>';
 				print '<td class="nowraponall">';
-
-
-//				$idHtmlIban = "ribList";
-//				print '<label for="'.$idHtmlIban.'">'. $langs->trans('CustomerIBAN').' : </label>';
-//				print '</td>';
-
-
-
-//				print '</tr></table>';
-//				print '</td><td colspan="3">';
 
 				$ribList = $object->thirdparty->get_all_rib();
 				$ribForSelection = array();
@@ -795,13 +776,8 @@ if ($object->id > 0) {
 					}
 				}
 
-
 				$selectedRib= $default_rib;
 				$selectedRib = $form->form_iban($_SERVER['PHP_SELF'].'?id='.$object->id, !empty(GETPOST('ribList')) ? GETPOST('ribList') : $default_rib, 'ribList', $filtertype, 1, 0, $type, 0, $ribForSelection);
-
-//				if ($action != 'editmode' && $user->hasRight('facture', 'creer')) {
-//					print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editrib&token='.newToken().'&id='.$object->id.'&type='.urlencode($type).'">'.img_edit($langs->trans('SetRib'), 1).'</a></td>';
-//				}
 
 				if (!empty($rib->iban)) {
 					if ($rib->verif() <= 0) {
@@ -818,32 +794,18 @@ if ($object->id > 0) {
 				// Bank Transfert Amount
 				print '<tr><td class="nowrap">';
 				print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
-
-				// ORIGINAL
 				print '<label for="withdraw_request_amount">'.$langs->trans('BankTransferAmount').' </label>';
-
 				print '<td>';
 				print '</tr></table>';
 				print '</td><td colspan="3">';
-
-				// ORIGINAL
 				print '<input type="text" id="withdraw_request_amount" name="withdraw_request_amount" value="'.$remaintopaylesspendingdebit.'" size="9" />';
-
 				print '</td>';
-
 				print '</table>';
 				print '</div>';
 
-
 				// Button
-				// ORIGINAL
 				print '<input type="submit" class="butAction" value="'.$buttonlabel.'" />';
-
-				print '<br>';
-				print '<br>';
-				//	-------------------------------------------------------------
-				//	MODIFICATIONS END
-				//	-------------------------------------------------------------
+				print '<br><br>';
 
 				print '</form>';
 
@@ -864,9 +826,7 @@ if ($object->id > 0) {
 					print '</form>';
 				}
 
-				// ------------------------------- ADDED START
 				print '<div class="fichecenter">';
-				// ------------------------------- ADDED END
 
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$buttonlabel.'</a>';
