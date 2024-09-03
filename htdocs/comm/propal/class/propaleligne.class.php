@@ -101,6 +101,7 @@ class PropaleLigne extends CommonObjectLine
 	 * @deprecated
 	 * @see $product_type
 	 */
+
 	public $fk_product_type;
 	/**
 	 * Product type.
@@ -201,10 +202,12 @@ class PropaleLigne extends CommonObjectLine
 	public $total_ttc;
 
 	/**
+	 * @var float|string
 	 * @deprecated
 	 * @see $remise_percent, $fk_remise_except
 	 */
 	public $remise;
+
 	/**
 	 * @var float|string
 	 * @deprecated
@@ -218,34 +221,34 @@ class PropaleLigne extends CommonObjectLine
 	 * @deprecated
 	 * @see $product_ref
 	 */
-
 	public $ref;
+
 	/**
 	 * Product reference
 	 * @var string
 	 */
-
 	public $product_ref;
+
 	/**
 	 * @var string
 	 * @deprecated
 	 * @see $product_label
 	 */
-
 	public $libelle;
+
 	/**
 	 * @var string
 	 * @deprecated
 	 * @see $product_label
 	 */
-
 	public $label;
+
 	/**
-	 *  Product label
+	 * Product label
 	 * @var string
 	 */
-
 	public $product_label;
+
 	/**
 	 * Product description
 	 * @var string
@@ -275,12 +278,12 @@ class PropaleLigne extends CommonObjectLine
 	public $localtax2_tx;
 
 	/**
-	 * @var string Local tax 1 type
+	 * @var int|string Local tax 1 type
 	 */
 	public $localtax1_type;
 
 	/**
-	 * @var string Local tax 2 type
+	 * @var int|string Local tax 2 type
 	 */
 	public $localtax2_type;
 
