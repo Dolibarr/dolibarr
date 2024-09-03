@@ -51,12 +51,17 @@ class HookManager
 	public $contextarray = array();
 
 	/**
-	 * array<string,array<string,null|string|CommonHookActions>> Array with instantiated classes
+	 * array<string,array<string,null|string|CommonHookActions>> 	Array with instantiated classes
 	 */
 	public $hooks = array();
 
 	/**
-	 * @var array<string,array{name:string,contexts:string[],file:string,line:string,count:int}> List of hooks called during this request (key = hash)
+	 * array<string,array<string,null|string|CommonHookActions>> 	Array with instantiated classes sorted by hook priority
+	 */
+	public $hooksSorted = array();
+
+	/**
+	 * @var array<string,array{name:string,contexts:string[],file:string,line:string,count:int}> 	List of hooks called during this request (key = hash)
 	 */
 	public $hooksHistory = [];
 
@@ -95,14 +100,14 @@ class HookManager
 	 *  class found into file /mymodule/class/actions_mymodule.class.php (if module has declared the context as a managed context).
 	 *  Then when a hook executeHooks('aMethod'...) is called, the method aMethod found into class will be executed.
 	 *
-	 *	@param	string[]	$arraycontext	    Array list of searched hooks tab/features. For example: 'thirdpartycard' (for hook methods into page card thirdparty), 'thirdpartydao' (for hook methods into Societe), ...
+	 *	@param	string[]	$arraycontext	    Array list of context hooks to activate. For example: 'thirdpartycard' (for hook methods into page card thirdparty), 'thirdpartydao' (for hook methods into Societe), ...
 	 *	@return	int<0,1>						0 or 1
 	 */
 	public function initHooks($arraycontext)
 	{
 		global $conf;
 
-		// Test if there is hooks to manage
+		// Test if there is at least one hook to manage
 		if (!is_array($conf->modules_parts['hooks']) || empty($conf->modules_parts['hooks'])) {
 			return 0;
 		}
@@ -112,49 +117,66 @@ class HookManager
 			$arraycontext = array($arraycontext);
 		}
 
-		$this->contextarray = array_unique(array_merge($arraycontext, $this->contextarray)); // All contexts are concatenated
+		$this->contextarray = array_unique(array_merge($arraycontext, $this->contextarray)); // All contexts are concatenated but kept unique
 
-		$arraytolog = array();
-		foreach ($conf->modules_parts['hooks'] as $module => $hooks) {	// Loop on each module that brings hooks
-			if (empty($conf->$module->enabled)) {
+		$foundcontextmodule = false;
+
+		// Loop on each module that bring hooks. Add an entry into $arraytolog if we found a module that ask to act in the context $arraycontext
+		foreach ($conf->modules_parts['hooks'] as $module => $hooks) {
+			if (!isModEnabled($module)) {
 				continue;
 			}
 
 			//dol_syslog(get_class($this).'::initHooks module='.$module.' arraycontext='.join(',',$arraycontext));
 			foreach ($arraycontext as $context) {
 				if (is_array($hooks)) {
-					$arrayhooks = $hooks; // New system
+					$arrayhooks = $hooks; // New system = array of hook contexts claimed by the module $module
 				} else {
 					$arrayhooks = explode(':', $hooks); // Old system (for backward compatibility)
 				}
 
-				if (in_array($context, $arrayhooks) || in_array('all', $arrayhooks)) {    // We instantiate action class only if initialized hook is handled by module
+				if (in_array($context, $arrayhooks) || in_array('all', $arrayhooks)) {    // We instantiate action class only if initialized hook is handled by the module
 					// Include actions class overwriting hooks
 					if (empty($this->hooks[$context][$module]) || !is_object($this->hooks[$context][$module])) {	// If set to an object value, class was already loaded so we do nothing.
 						$path = '/'.$module.'/class/';
 						$actionfile = 'actions_'.$module.'.class.php';
 
-						$arraytolog[] = 'context='.$context.'-path='.$path.$actionfile;
 						$resaction = dol_include_once($path.$actionfile);
 						if ($resaction) {
 							$controlclassname = 'Actions'.ucfirst($module);
+
 							$actionInstance = new $controlclassname($this->db);
 							'@phan-var-force CommonHookActions $actionInstance';
+
+
 							$priority = empty($actionInstance->priority) ? 50 : $actionInstance->priority;
-							$this->hooks[$context][$priority.':'.$module] = $actionInstance;
+
+							$this->hooks[$context][$module] = $actionInstance;
+							$this->hooksSorted[$context][$priority.':'.$module] = $actionInstance;
+
+							$foundcontextmodule = true;
+
+							// Hook has been initialized with another couple $context/$module
+							$stringtolog = 'context='.$context.'-path='.$path.$actionfile.'-priority='.$priority;
+							dol_syslog(get_class($this)."::initHooks Loading hooks: ".$stringtolog, LOG_DEBUG);
+						} else {
+							dol_syslog(get_class($this)."::initHooks Failed to load hook in ".$path.$actionfile, LOG_WARNING);
 						}
+					} else {
+						// Hook was already initialized for this context and module
 					}
 				}
 			}
 		}
-		// Log the init of hook but only for hooks there are declared to be managed
-		if (count($arraytolog) > 0) {
-			dol_syslog(get_class($this)."::initHooks Loading hooks: ".implode(', ', $arraytolog), LOG_DEBUG);
-		}
 
-		foreach ($arraycontext as $context) {
-			if (!empty($this->hooks[$context])) {
-				ksort($this->hooks[$context], SORT_NATURAL);
+		// Log the init of hook
+		// dol_syslog(get_class($this)."::initHooks Loading hooks: ".implode(', ', $arraytolog), LOG_DEBUG);
+
+		if ($foundcontextmodule) {
+			foreach ($arraycontext as $context) {
+				if (!empty($this->hooksSorted[$context])) {
+					ksort($this->hooksSorted[$context], SORT_NATURAL);
+				}
 			}
 		}
 
@@ -259,12 +281,12 @@ class HookManager
 		$modulealreadyexecuted = array();
 		$resaction = 0;
 		$error = 0;
-		foreach ($this->hooks as $context => $modules) {    // $this->hooks is an array with context as key and value is an array of modules that handle this context
+		foreach ($this->hooksSorted as $context => $modules) {    // $this->hooks is an array with the context as key and the value is an array of modules that handle this context
 			if (!empty($modules)) {
 				'@phan-var-force array<string,CommonHookActions> $modules';
 				// Loop on each active hooks of module for this context
 				foreach ($modules as $module => $actionclassinstance) {
-					$module = preg_replace('/^\d+:/', '', $module);
+					$module = preg_replace('/^\d+:/', '', $module);		// $module string is 'priority:module'
 					//print "Before hook ".get_class($actionclassinstance)." method=".$method." module=".$module." hooktype=".$hooktype." results=".count($actionclassinstance->results)." resprints=".count($actionclassinstance->resprints)." resaction=".$resaction."<br>\n";
 
 					// test to avoid running twice a hook, when a module implements several active contexts

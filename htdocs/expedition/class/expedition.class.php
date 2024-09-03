@@ -81,7 +81,7 @@ class Expedition extends CommonObject
 
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array();
 
@@ -159,7 +159,7 @@ class Expedition extends CommonObject
 	public $weight;
 
 	/**
-	 * @var integer|string Date delivery planned
+	 * @var int|string Date delivery planned
 	 */
 	public $date_delivery;
 
@@ -177,17 +177,12 @@ class Expedition extends CommonObject
 
 	/**
 	 * Effective delivery date
-	 * @var integer|string
+	 * @var int|string
 	 */
 	public $date_shipping;
 
 	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
-
-	/**
-	 * @var integer|string date_valid
+	 * @var int|string date_valid
 	 */
 	public $date_valid;
 
@@ -339,7 +334,7 @@ class Expedition extends CommonObject
 			}
 
 			$obj = new $classname();
-			$numref = "";
+			'@phan-var-force ModelNumRefExpedition $obj';
 			$numref = $obj->getNextValue($soc, $this);
 
 			if ($numref != "") {
@@ -1627,8 +1622,9 @@ class Expedition extends CommonObject
 
 		$sql = "SELECT cd.rowid, cd.fk_product, cd.label as custom_label, cd.description, cd.qty as qty_asked, cd.product_type, cd.fk_unit";
 		$sql .= ", cd.total_ht, cd.total_localtax1, cd.total_localtax2, cd.total_ttc, cd.total_tva";
+		$sql .= ", cd.fk_remise_except, cd.fk_product_fournisseur_price as fk_fournprice";
 		$sql .= ", cd.vat_src_code, cd.tva_tx, cd.localtax1_tx, cd.localtax2_tx, cd.localtax1_type, cd.localtax2_type, cd.info_bits, cd.price, cd.subprice, cd.remise_percent,cd.buy_price_ht as pa_ht";
-		$sql .= ", cd.fk_multicurrency, cd.multicurrency_code, cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc, cd.rang";
+		$sql .= ", cd.fk_multicurrency, cd.multicurrency_code, cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc, cd.rang, cd.date_start, cd.date_end";
 		$sql .= ", ed.rowid as line_id, ed.qty as qty_shipped, ed.fk_element, ed.fk_elementdet, ed.element_type, ed.fk_entrepot";
 		$sql .= ", p.ref as product_ref, p.label as product_label, p.fk_product_type, p.barcode as product_barcode";
 		$sql .= ", p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units, p.tosell as product_tosell, p.tobuy as product_tobuy, p.tobatch as product_tobatch";
@@ -1705,6 +1701,7 @@ class Expedition extends CommonObject
 				$line->product_tosell = $obj->product_tosell;
 				$line->product_tobuy = $obj->product_tobuy;
 				$line->product_tobatch = $obj->product_tobatch;
+				$line->fk_fournprice = $obj->fk_fournprice;
 				$line->label = $obj->custom_label;
 				$line->description    	= $obj->description;
 				$line->qty_asked      	= $obj->qty_asked;
@@ -1746,6 +1743,7 @@ class Expedition extends CommonObject
 				$line->info_bits = $obj->info_bits;
 				$line->price = $obj->price;
 				$line->subprice = $obj->subprice;
+				$line->fk_remise_except = $obj->fk_remise_except;
 				$line->remise_percent = $obj->remise_percent;
 
 				$this->total_ht += $tabprice[0];
@@ -1753,6 +1751,9 @@ class Expedition extends CommonObject
 				$this->total_ttc += $tabprice[2];
 				$this->total_localtax1 += $tabprice[9];
 				$this->total_localtax2 += $tabprice[10];
+
+				$line->date_start       = $this->db->jdate($obj->date_start);
+				$line->date_end         = $this->db->jdate($obj->date_end);
 
 				// Multicurrency
 				$this->fk_multicurrency = $obj->fk_multicurrency;
@@ -1876,7 +1877,7 @@ class Expedition extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      int			$withpicto      			Add picto into link
 	 *	@param      string		$option         			Where the link point to
@@ -2000,11 +2001,11 @@ class Expedition extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
@@ -2650,6 +2651,15 @@ class ExpeditionLigne extends CommonObjectLine
 	 */
 	public $table_element = 'expeditiondet';
 
+	/**
+	 * @see CommonObjectLine
+	 */
+	public $parent_element = 'expedition';
+
+	/**
+	 * @see CommonObjectLine
+	 */
+	public $fk_parent_attribute = 'fk_expedition';
 
 	/**
 	 * Id of the line. Duplicate of $id.

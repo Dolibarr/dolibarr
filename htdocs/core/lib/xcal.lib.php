@@ -410,13 +410,23 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 				$url		  = empty($event["url"]) ? '' : $event["url"];
 				$author       = $event["author"];
 				$category     = empty($event["category"]) ? null : $event["category"];
+				$image        = '';
 				if (!empty($event["image"])) {
 					$image = $event["image"];
 				} else {
 					$reg = array();
-					if (!empty($event["content"]) && preg_match('/<img\s*src="([^"]+)"/m', $event["content"], $reg)) {
+					// If we found a link into content like <img alt="..." class="..." src="..."
+					if (!empty($event["content"]) && preg_match('/<img\s*(?:alt="[^"]*"\s*)?(?:class="[^"]*"\s*)?src="([^"]+)"/m', $event["content"], $reg)) {
 						if (!empty($reg[0])) {
 							$image = $reg[1];
+						}
+						// Convert image "/medias/...." and "/viewimage.php?modulepart=medias&file=(.*)"
+						if (!empty($GLOBALS['website']->virtualhost)) {
+							if (preg_match('/^\/medias\//', $image)) {
+								$image = $GLOBALS['website']->virtualhost.$image;
+							} elseif (preg_match('/^\/viewimage\.php\?modulepart=medias&[^"]*file=([^&"]+)/', $image, $reg)) {
+								$image = $GLOBALS['website']->virtualhost.'/medias/'.$reg[1];
+							}
 						}
 					}
 				}

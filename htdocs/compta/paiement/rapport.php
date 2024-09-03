@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2020      Maxime DEMAREST      <maxime@indelog.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,12 +55,14 @@ if (!$user->hasRight('facture', 'lire')) {
 	accessforbidden();
 }
 
+$permissiontoread = $user->hasRight('facture', 'lire');
+
 
 /*
  * Actions
  */
 
-if ($action == 'builddoc') {
+if ($action == 'builddoc' && $permissiontoread) {
 	$rap = new pdf_paiement($db);
 
 	$outputlangs = $langs;
@@ -130,7 +133,7 @@ if ($year) {
 		print '<td class="right">'.$langs->trans("Date").'</td>';
 		print '</tr>';
 
-		$files = (dol_dir_list($dir.'/'.$year, 'files', 0, '^payments-[0-9]{4}-[0-9]{2}\.pdf$', '', 'name', 'DESC', 1));
+		$files = (dol_dir_list($dir.'/'.$year, 'files', 0, '^payments-[0-9]{4}-[0-9]{2}\.pdf$', '', 'name', SORT_DESC, 1));
 		foreach ($files as $f) {
 			$relativepath = $f['level1name'].'/'.$f['name'];
 			print '<tr class="oddeven">';

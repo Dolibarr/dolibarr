@@ -156,7 +156,7 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 			$object->$key = '(PROV)';
 		}
 		if ($key == 'pass_crypted') {
-			$object->pass = GETPOST("pass", "none");
+			$object->pass = GETPOST("pass", "password");
 			// TODO Manadatory for password not yet managed
 		} else {
 			if (!empty($val['notnull']) && $val['notnull'] > 0 && $object->$key == '' && !isset($val['default'])) {
@@ -178,7 +178,7 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 
 	// Special field
 	$model_pdf = GETPOST('model');
-	if (!empty($model_pdf) && property_exists($this, 'model_pdf')) {
+	if (!empty($model_pdf) && property_exists($object, 'model_pdf')) {
 		$object->model_pdf = $model_pdf;
 	}
 
@@ -202,7 +202,7 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 			}
 
 			$urltogo = $backtopage ? str_replace('__ID__', $result, $backtopage) : $backurlforlist;
-			$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', (string) $object->id, $urltogo); // New method to autoselect project after a New on another form object creation
+			$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', (string) $object->id, $urltogo); // New method to autoselect field created after a New on another form object creation
 
 			$db->commit();
 

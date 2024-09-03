@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/webhook/lib/webhook.lib.php';
 // Translations
 $langs->loadLangs(array("admin", "webhook"));
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('webhooksetup', 'globalsetup'));
 
 // Access control
@@ -147,7 +147,7 @@ $form = new Form($db);
 $help_url = '';
 $page_name = "WebhookSetup";
 
-llxHeader('', $langs->trans($page_name), $help_url);
+llxHeader('', $langs->trans($page_name), $help_url, '', 0, 0, '', '', '', 'mod-admin page-webhook');
 
 // Subheader
 $linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.$langs->trans("BackToModuleList").'</a>';
@@ -158,8 +158,10 @@ print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 $head = webhookAdminPrepareHead();
 print dol_get_fiche_head($head, 'settings', $langs->trans($page_name), -1, "webhook");
 
+print '<br>';
+
 // Setup page goes here
-echo '<span class="opacitymedium">'.$langs->trans("WebhookSetupPage", $langs->transnoentitiesnoconv("Targets")).'</span><br><br>';
+print '<span class="opacitymedium">'.$langs->trans("WebhookSetupPage", $langs->transnoentitiesnoconv("Targets")).'...</span><br><br>';
 
 
 if ($action == 'edit') {

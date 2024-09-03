@@ -466,7 +466,7 @@ class AccountingAccount extends CommonObject
 	}
 
 	/**
-	 * Return clicable name (with picto eventually)
+	 * Return clickable name (with picto eventually)
 	 *
 	 * @param int $withpicto 0=No picto, 1=Include picto into link, 2=Only picto
 	 * @param int $withlabel 0=No label, 1=Include label of account
@@ -766,7 +766,6 @@ class AccountingAccount extends CommonObject
 			if ($factureDet->product_type == 1) {
 				if ($buyer->country_code == $seller->country_code || empty($buyer->country_code)) {  // If buyer in same country than seller (if not defined, we assume it is same country)
 					$code_l = getDolGlobalString('ACCOUNTING_SERVICE_' . $const_name . '_ACCOUNT');
-					// @phan-suppress-next-line PhanPluginRedundantAssignment
 					$suggestedaccountingaccountbydefaultfor = '';
 				} else {
 					if ($isSellerInEEC && $isBuyerInEEC && $factureDet->tva_tx != 0) {    // European intravat sale, but with a VAT
@@ -785,7 +784,6 @@ class AccountingAccount extends CommonObject
 			} elseif ($factureDet->product_type == 0) {
 				if ($buyer->country_code == $seller->country_code || empty($buyer->country_code)) {  // If buyer in same country than seller (if not defined, we assume it is same country)
 					$code_l = getDolGlobalString('ACCOUNTING_PRODUCT_' . $const_name . '_ACCOUNT');
-					// @phan-suppress-next-line PhanPluginRedundantAssignment
 					$suggestedaccountingaccountbydefaultfor = '';
 				} else {
 					if ($isSellerInEEC && $isBuyerInEEC && $factureDet->tva_tx != 0) {    // European intravat sale, but with a VAT
@@ -876,9 +874,9 @@ class AccountingAccount extends CommonObject
 				if ($factureDet->desc == "(DEPOSIT)" || $facture->type == $facture::TYPE_DEPOSIT) {
 					$accountdeposittoventilated = new self($this->db);
 					if ($type == 'customer') {
-						$result = $accountdeposittoventilated->fetch('', getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT'), 1);
+						$result = $accountdeposittoventilated->fetch(0, getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT'), 1);
 					} elseif ($type == 'supplier') {
-						$result = $accountdeposittoventilated->fetch('', getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT'), 1);
+						$result = $accountdeposittoventilated->fetch(0, getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT'), 1);
 					}
 					if (isset($result) && $result < 0) {
 						return -1;
@@ -899,9 +897,9 @@ class AccountingAccount extends CommonObject
 					if ($facture->type == $facture::TYPE_CREDIT_NOTE && $invoiceSource->type == $facture::TYPE_DEPOSIT) {
 						$accountdeposittoventilated = new self($this->db);
 						if ($type == 'customer') {
-							$accountdeposittoventilated->fetch('', getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT'), 1);
+							$accountdeposittoventilated->fetch(0, getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT'), 1);
 						} elseif ($type == 'supplier') {
-							$accountdeposittoventilated->fetch('', getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT'), 1);
+							$accountdeposittoventilated->fetch(0, getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT'), 1);
 						}
 						$code_l = $accountdeposittoventilated->ref;
 						$code_p = '';

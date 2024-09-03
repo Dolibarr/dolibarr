@@ -33,17 +33,20 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 						$datenotinstring = $db->jdate($datenotinstring);
 					}
 					$value = $datenotinstring;
+				} elseif (in_array($extrafields->attributes[$extrafieldsobjectkey]['type'][$key], array('int'))) {
+					$value = (!empty($obj->$tmpkey) || $obj->$tmpkey === '0'  ? $obj->$tmpkey : '');
 				} else {
-					$value = (isset($obj->$tmpkey) ? $obj->$tmpkey : '');
+					// The key may be in $obj->array_options if not in $obj
+					$value = (isset($obj->$tmpkey) ? $obj->$tmpkey :
+						(isset($obj->array_options[$tmpkey]) ? $obj->array_options[$tmpkey] : '') );
 				}
 				// If field is a computed field, we make computation to get value
 				if ($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key]) {
 					$objectoffield = $object; //For compatibility with the computed formula
-					$value = dol_eval((int) $extrafields->attributes[$extrafieldsobjectkey]['computed'][$key], 1, 1, '2');
+					$value = dol_eval((string) $extrafields->attributes[$extrafieldsobjectkey]['computed'][$key], 1, 1, '2');
 					if (is_numeric(price2num($value)) && $extrafields->attributes[$extrafieldsobjectkey]['totalizable'][$key]) {
 						$obj->$tmpkey = price2num($value);
 					}
-					//var_dump($value);
 				}
 
 				$valuetoshow = $extrafields->showOutputField($key, $value, '', $extrafieldsobjectkey);

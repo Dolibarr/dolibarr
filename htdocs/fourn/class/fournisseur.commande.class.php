@@ -15,6 +15,7 @@
  * Copyright (C) 2022		Gauthier VERDOL			<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		Solution Libre SAS		<contact@solution-libre.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,6 +64,11 @@ class CommandeFournisseur extends CommonOrder
 	 * @var string    Name of subtable line
 	 */
 	public $table_element_line = 'commande_fournisseurdet';
+
+	/**
+	 * @var string Name of class line
+	 */
+	public $class_element_line = 'CommandeFournisseurLigne';
 
 	/**
 	 * @var string Field with ID of parent key if this field has a parent
@@ -134,11 +140,6 @@ class CommandeFournisseur extends CommonOrder
 	public $date;
 
 	/**
-	 * @var int Date of the purchase order creation
-	 */
-	public $date_creation;
-
-	/**
 	 * @var int Date of the purchase order validation
 	 */
 	public $date_valid;
@@ -165,7 +166,7 @@ class CommandeFournisseur extends CommonOrder
 	public $methode_commande;
 
 	/**
-	 *  @var int Expected Delivery Date
+	 *  @var null|int|'' Expected Delivery Date
 	 */
 	public $delivery_date;
 
@@ -607,7 +608,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql = "SELECT l.rowid, l.fk_commande, l.ref as ref_supplier, l.fk_product, l.product_type, l.label, l.description, l.qty,";
 		$sql .= " l.vat_src_code, l.tva_tx, l.remise_percent, l.subprice,";
 		$sql .= " l.localtax1_tx, l. localtax2_tx, l.localtax1_type, l. localtax2_type, l.total_localtax1, l.total_localtax2,";
-		$sql .= " l.total_ht, l.total_tva, l.total_ttc, l.special_code, l.fk_parent_line, l.rang,";
+		$sql .= " l.total_ht, l.total_tva, l.total_ttc, l.info_bits, l.special_code, l.fk_parent_line, l.rang,";
 		$sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.description as product_desc, p.tobatch as product_tobatch, p.barcode as product_barcode,";
 		$sql .= " l.fk_unit,";
 		$sql .= " l.date_start, l.date_end,";
@@ -708,6 +709,7 @@ class CommandeFournisseur extends CommonOrder
 				$line->multicurrency_total_tva = $objp->multicurrency_total_tva;
 				$line->multicurrency_total_ttc = $objp->multicurrency_total_ttc;
 
+				$line->info_bits      	   = $objp->info_bits;
 				$line->special_code        = $objp->special_code;
 				$line->fk_parent_line      = $objp->fk_parent_line;
 
@@ -997,7 +999,7 @@ class CommandeFournisseur extends CommonOrder
 	}
 
 	/**
-	 *	Return clicable name (with picto eventually)
+	 *	Return clickable name (with picto eventually)
 	 *
 	 *	@param		int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@param		string	$option						On what the link points
@@ -1118,12 +1120,13 @@ class CommandeFournisseur extends CommonOrder
 				$mybool = ((bool) @include_once $dir.$file) || $mybool;
 			}
 
-			if ($mybool === false) {
+			if (!$mybool) {
 				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 
 			$obj = new $classname();
+			'@phan-var-force ModeleNumRefSuppliersOrders $obj';
 			$numref = $obj->getNextValue($soc, $this);
 
 			if ($numref != "") {
@@ -1347,7 +1350,7 @@ class CommandeFournisseur extends CommonOrder
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			if ($this->db->query($sql)) {
-				$result = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+				$result = 0;
 
 				if ($error == 0) {
 					// Call trigger
@@ -1399,7 +1402,7 @@ class CommandeFournisseur extends CommonOrder
 			$sql .= " WHERE rowid = ".((int) $this->id);
 			dol_syslog(get_class($this)."::cancel", LOG_DEBUG);
 			if ($this->db->query($sql)) {
-				$result = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+				$result = 0;
 
 				// Call trigger
 				$result = $this->call_trigger('ORDER_SUPPLIER_CANCEL', $user);
@@ -1609,7 +1612,7 @@ class CommandeFournisseur extends CommonOrder
 						0,
 						$line->product_type,
 						$line->info_bits,
-						false,
+						0,
 						$line->date_start,
 						$line->date_end,
 						$line->array_options,
@@ -1851,6 +1854,7 @@ class CommandeFournisseur extends CommonOrder
 		// Clear fields
 		$this->user_author_id     = $user->id;
 		$this->user_validation_id = 0;
+
 		$this->date               = dol_now();
 		$this->date_creation      = 0;
 		$this->date_validation    = 0;
@@ -2052,9 +2056,9 @@ class CommandeFournisseur extends CommonOrder
 					if ($qty < $prod->packaging) {
 						$qty = $prod->packaging;
 					} else {
-						if (!empty($prod->packaging) && ($qty % $prod->packaging) > 0) {
-							$coeff = intval($qty / $prod->packaging) + 1;
-							$qty = $prod->packaging * $coeff;
+						if (!empty($prod->packaging) && (fmod((float) $qty, $prod->packaging)  > 0.000001)) {
+							$coeff = intval((float) $qty / $prod->packaging) + 1;
+							$qty = (float) $prod->packaging * $coeff;
 							setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'mesgs');
 						}
 					}
@@ -3262,6 +3266,7 @@ class CommandeFournisseur extends CommonOrder
 			$response->label = $langs->trans("SuppliersOrdersToProcess");
 			$response->labelShort = $langs->trans("Opened");
 			$response->url = DOL_URL_ROOT.'/fourn/commande/list.php?search_status=1,2&mainmenu=commercial&leftmenu=orders_suppliers';
+			$response->url_late = DOL_URL_ROOT.'/fourn/commande/list.php?mainmenu=commercial&leftmenu=orders_suppliers&search_option=late';
 			$response->img = img_object('', "order");
 
 			if ($mode === 'awaiting') {
@@ -3685,11 +3690,11 @@ class CommandeFournisseur extends CommonOrder
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
@@ -3739,6 +3744,16 @@ class CommandeFournisseurLigne extends CommonOrderLine
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'commande_fournisseurdet';
+
+	/**
+	 * @see CommonObjectLine
+	 */
+	public $parent_element = 'commande_fournisseur';
+
+	/**
+	 * @see CommonObjectLine
+	 */
+	public $fk_parent_attribute = 'fk_commande_fournisseur';
 
 	public $oldline;
 

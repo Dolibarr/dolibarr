@@ -63,7 +63,7 @@ $max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
 $form = new Form($db);
 $formfile = new FormFile($db);
 
-llxHeader("", $langs->trans("BookCalArea"));
+llxHeader("", $langs->trans("BookCalArea"), '', '', 0, 0, '', '', '', 'mod-bookcal page-index');
 
 print load_fiche_titre($langs->trans("BookCalArea"), '', 'fa-calendar-check');
 

@@ -57,7 +57,7 @@ class ChargeSociales extends CommonObject
 	protected $table_ref_field = 'ref';
 
 	/**
-	 * @var integer|string $date_ech
+	 * @var int|string $date_ech
 	 */
 	public $date_ech;
 
@@ -65,6 +65,8 @@ class ChargeSociales extends CommonObject
 	public $label;
 	public $type;
 	public $type_label;
+	public $type_code;
+	public $type_accountancy_code;
 
 	public $amount;
 	public $paye;
@@ -73,21 +75,6 @@ class ChargeSociales extends CommonObject
 	 */
 	public $periode;
 	public $period;
-
-	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
-
-	/**
-	 * @var integer|string $date_modification
-	 */
-	public $date_modification;
-
-	/**
-	 * @var integer|string $date_validation
-	 */
-	public $date_validation;
 
 	/**
 	 * @deprecated Use label instead
@@ -157,7 +144,7 @@ class ChargeSociales extends CommonObject
 		$sql = "SELECT cs.rowid, cs.date_ech";
 		$sql .= ", cs.libelle as label, cs.fk_type, cs.amount, cs.fk_projet as fk_project, cs.paye, cs.periode as period, cs.import_key";
 		$sql .= ", cs.fk_account, cs.fk_mode_reglement, cs.fk_user, note_public, note_private";
-		$sql .= ", c.libelle as type_label";
+		$sql .= ", c.libelle as type_label, c.code as type_code, c.accountancy_code as type_accountancy_code";
 		$sql .= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
 		$sql .= " FROM ".MAIN_DB_PREFIX."chargesociales as cs";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_chargesociales as c ON cs.fk_type = c.id";
@@ -182,6 +169,8 @@ class ChargeSociales extends CommonObject
 				$this->label				= $obj->label;
 				$this->type					= $obj->fk_type;
 				$this->type_label			= $obj->type_label;
+				$this->type_code			= $obj->type_code;
+				$this->type_accountancy_code = $obj->type_accountancy_code;
 				$this->fk_account			= $obj->fk_account;
 				$this->mode_reglement_id = $obj->fk_mode_reglement;
 				$this->mode_reglement_code = $obj->mode_reglement_code;
@@ -588,7 +577,7 @@ class ChargeSociales extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $short = 0, $save_lastsearch_value = -1)
 	{
-		global $langs, $conf, $user, $form, $hookmanager;
+		global $langs, $conf, $user, $hookmanager;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -629,6 +618,9 @@ class ChargeSociales extends CommonObject
 		}
 		if (!empty($this->type_label)) {
 			$label .= '<br><b>'.$langs->trans('Type').':</b> '.$this->type_label;
+			if (!empty($this->type_accountancy_code)) {
+				$label .= ' <span class="opacitymedium">('.$langs->trans('AccountancyCode').': '.$this->type_accountancy_code.')</span>';
+			}
 		}
 
 		$linkclose = '';
@@ -653,6 +645,7 @@ class ChargeSociales extends CommonObject
 			$result .= $this->ref;
 		}
 		$result .= $linkend;
+
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
 		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
@@ -662,6 +655,7 @@ class ChargeSociales extends CommonObject
 		} else {
 			$result .= $hookmanager->resPrint;
 		}
+
 		return $result;
 	}
 
@@ -761,11 +755,11 @@ class ChargeSociales extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{

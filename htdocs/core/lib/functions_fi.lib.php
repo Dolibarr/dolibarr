@@ -76,7 +76,7 @@ function dolFICalculatePaymentReference($invoice_number, $statut, $use_rf)
 function dolFIGenerateInvoiceBarcodeData($recipient_account, $amount, $bank_reference, $due_date)
 {
 	$barcodeData = '0';
-	if (!empty($bank_reference)) {
+	if ($amount >= 0 && !empty($bank_reference)) {
 		if (substr($bank_reference, 0, 2) === "RF") {
 			$recipient_account = preg_replace('/[^0-9]/', '', $recipient_account); // Remove non-numeric characters from account number
 			$recipient_account = str_pad($recipient_account, 16, '0', STR_PAD_LEFT); // Add leading zeros if necessary

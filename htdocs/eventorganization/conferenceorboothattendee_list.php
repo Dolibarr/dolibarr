@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
+/* Copyright (C) 2017-2024	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2021		Florian Henry 				<florian.henry@scopen.fr>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,10 +79,11 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new ConferenceOrBoothAttendee($db);
-$extrafields = new ExtraFields($db);
+$project = new Project($db);
 $projectstatic = new Project($db);
+$extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->eventorganization->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('conferenceorboothattendeelist')); // Note that conf->hooks_modules contains array
 
@@ -130,7 +132,7 @@ foreach ($object->fields as $key => $val) {
 		$arrayfields['t.'.$key] = array(
 			'label' => $val['label'],
 			'checked' => (($visible < 0) ? 0 : 1),
-			'enabled' => (abs($visible) != 3 && (int) dol_eval($val['enabled'], 1)),
+			'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
 			'position' => $val['position'],
 			'help' => isset($val['help']) ? $val['help'] : ''
 		);
@@ -148,8 +150,8 @@ $permissiontoadd = $user->hasRight('eventorganization', 'write');
 $permissiontodelete = $user->hasRight('eventorganization', 'delete');
 
 // Security check
-if (empty($conf->eventorganization->enabled)) {
-	accessforbidden('Module not enabled');
+if (!isModEnabled('eventorganization')) {
+	accessforbidden('Module eventorganization not enabled');
 }
 $socid = 0;
 if ($user->socid > 0) { // Protection if external user
@@ -166,15 +168,15 @@ if (!$permissiontoread) {
  * Actions
  */
 
-if (preg_match('/^set/', $action) && $projectid > 0 && $user->hasRight('eventorganization', 'write')) {
-	$project = new Project($db);
+if (preg_match('/^set/', $action) && ($projectid > 0 || $projectref) && $user->hasRight('eventorganization', 'write')) {
 	//If "set" fields keys is in projects fields
 	$project_attr = preg_replace('/^set/', '', $action);
 	if (array_key_exists($project_attr, $project->fields)) {
-		$result = $project->fetch($projectid);
+		$result = $project->fetch($projectid, $projectref);
 		if ($result < 0) {
 			setEventMessages(null, $project->errors, 'errors');
 		} else {
+			$projectid = $project->id;
 			$project->{$project_attr} = GETPOST($project_attr);
 			$result = $project->update($user);
 			if ($result < 0) {
@@ -236,8 +238,8 @@ if (empty($reshook)) {
 $form = new Form($db);
 $now = dol_now();
 
-//$help_url="EN:Module_ConferenceOrBoothAttendee|FR:Module_ConferenceOrBoothAttendee_FR|ES:Módulo_ConferenceOrBoothAttendee";
-$help_url = '';
+$help_url = "EN:Module_Event_Organization";
+
 $morejs = array();
 $morecss = array();
 
@@ -310,7 +312,7 @@ foreach ($search as $key => $val) {
 			$mode_search = 2;
 		}
 		if ($search[$key] != '') {
-			$sql .= natural_search($key, $search[$key], (($key == 'status') ? 2 : $mode_search));
+			$sql .= natural_search($db->sanitize($key), $search[$key], (($key == 'status') ? 2 : $mode_search));
 		}
 	} else {
 		if (preg_match('/(_dtstart|_dtend)$/', $key) && $search[$key] != '') {
@@ -336,7 +338,6 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
-
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -374,7 +375,7 @@ if (!$resql) {
 $num = $db->num_rows($resql);
 
 // Direct jump if only one record found
-if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
+if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
 	header("Location: ".DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_card.php?id='.((int) $id));
@@ -390,7 +391,7 @@ if ($confOrBooth->id > 0) {
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'classforhorizontalscrolloftabs');
+llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-eventorganization page-attendee-list classforhorizontalscrolloftabs');
 
 
 
@@ -552,17 +553,17 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 		print '<tr><td class="nowrap">';
 		$typeofdata = 'checkbox:'.($projectstatic->accept_conference_suggestions ? ' checked="checked"' : '');
 		$htmltext = $langs->trans("AllowUnknownPeopleSuggestConfHelp");
-		print $form->editfieldkey('AllowUnknownPeopleSuggestConf', 'accept_conference_suggestions', '', $projectstatic, 0, $typeofdata, '', 0, 0, 'projectid', $htmltext);
+		print $form->editfieldkey('AllowUnknownPeopleSuggestConf', 'accept_conference_suggestions', $projectstatic->accept_conference_suggestions ? 1 : 0, $projectstatic, 0, $typeofdata, '', 0, 0, 'projectid', $htmltext);
 		print '</td><td>';
-		print $form->editfieldval('AllowUnknownPeopleSuggestConf', 'accept_conference_suggestions', '1', $projectstatic, 0, $typeofdata, '', null, 0, '', 0, '', 'projectid');
+		print $form->editfieldval('AllowUnknownPeopleSuggestConf', 'accept_conference_suggestions', $projectstatic->accept_conference_suggestions ? 1 : 0, $projectstatic, 0, $typeofdata, '', null, 0, '', 0, '', 'projectid');
 		print "</td></tr>";
 
 		print '<tr><td>';
 		$typeofdata = 'checkbox:'.($projectstatic->accept_booth_suggestions ? ' checked="checked"' : '');
 		$htmltext = $langs->trans("AllowUnknownPeopleSuggestBoothHelp");
-		print $form->editfieldkey('AllowUnknownPeopleSuggestBooth', 'accept_booth_suggestions', '', $projectstatic, 0, $typeofdata, '', 0, 0, 'projectid', $htmltext);
+		print $form->editfieldkey('AllowUnknownPeopleSuggestBooth', 'accept_booth_suggestions', $projectstatic->accept_booth_suggestions ? 1 : 0, $projectstatic, 0, $typeofdata, '', 0, 0, 'projectid', $htmltext);
 		print '</td><td>';
-		print $form->editfieldval('AllowUnknownPeopleSuggestBooth', 'accept_booth_suggestions', '1', $projectstatic, 0, $typeofdata, '', null, 0, '', 0, '', 'projectid');
+		print $form->editfieldval('AllowUnknownPeopleSuggestBooth', 'accept_booth_suggestions', $projectstatic->accept_booth_suggestions ? 1 : 0, $projectstatic, 0, $typeofdata, '', null, 0, '', 0, '', 'projectid');
 		print "</td></tr>";
 
 		print '<tr><td>';
@@ -583,6 +584,19 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 		print $form->editfieldval($form->textwithpicto($langs->trans('MaxNbOfAttendees'), ''), 'max_attendees', $projectstatic->max_attendees, $projectstatic, $permissiontoadd, 'integer:3', '', null, 0, '&withproject=1', 0, '', 'projectid');
 		print "</td></tr>";
 
+			// Link to ICS for the event
+			print '<tr><td class="titlefield valignmiddle">'.$langs->trans("EventOrganizationICSLinkProject").'</td><td class="valuefield">';
+		// Define $urlwithroot
+			$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+			$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT;
+
+			// Show message
+			$message = '<a target="_blank" rel="noopener noreferrer" href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical'.($conf->entity > 1 ? "&entity=".$conf->entity : "");
+			$message .= '&exportkey='.urlencode(getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY', '...'));
+			$message .= "&project=".$projectid.'&module='.urlencode('project@eventorganization').'&output=file">'.$langs->trans('DownloadICSLink').img_picto('', 'download', 'class="paddingleft"').'</a>';
+			print $message;
+			print "</td></tr>";
+
 		print '<tr><td valign="middle">'.$langs->trans("EventOrganizationICSLink").'</td><td>';
 		// Define $urlwithroot
 		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
@@ -591,7 +605,7 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 		// Show message
 		$message = '<a target="_blank" rel="noopener noreferrer" href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical'.($conf->entity > 1 ? "&entity=".$conf->entity : "");
 		$message .= '&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ? urlencode(getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY')) : '...');
-		$message .= "&project=".$projectstatic->id.'&module='.urlencode('@eventorganization').'&status='.ConferenceOrBooth::STATUS_CONFIRMED.'">'.$langs->trans('DownloadICSLink').img_picto('', 'download', 'class="paddingleft"').'</a>';
+		$message .= "&project=".$projectstatic->id.'&module='.urlencode('conforbooth@eventorganization').'&status='.ConferenceOrBooth::STATUS_CONFIRMED.'&output=file">'.$langs->trans('DownloadICSLink').img_picto('', 'download', 'class="paddingleft"').'</a>';
 		print $message;
 		print "</td></tr>";
 
@@ -716,7 +730,7 @@ $param .= $withProjectUrl;
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
-$parameters = array();
+$parameters = array('param' => &$param);
 $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
 
@@ -806,6 +820,7 @@ $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
 $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
+
 
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
@@ -960,7 +975,7 @@ while ($i < $imaxinloop) {
 			print '</td></tr>';
 		}
 	} else {
-		// Show here line of result
+		// Show line of result
 		$j = 0;
 		print '<tr data-rowid="'.$object->id.'" class="oddeven">';
 		// Action column
@@ -992,7 +1007,7 @@ while ($i < $imaxinloop) {
 				$cssforfield .= ($cssforfield ? ' ' : '').'nowraponall';
 			}
 
-			if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && !in_array($key, array('rowid', 'status')) && empty($val['arrayofkeyval'])) {
+			if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && !in_array($key, array('id', 'rowid', 'ref', 'status')) && empty($val['arrayofkeyval'])) {
 				$cssforfield .= ($cssforfield ? ' ' : '').'right';
 			}
 			//if (in_array($key, array('fk_soc', 'fk_user', 'fk_warehouse'))) $cssforfield = 'tdoverflowmax100';

@@ -75,9 +75,9 @@ $dateop = dol_mktime(12, 0, 0, GETPOSTINT("opmonth"), GETPOSTINT("opday"), GETPO
 $search_debit = GETPOST("search_debit", 'alpha');
 $search_credit = GETPOST("search_credit", 'alpha');
 $search_type = GETPOST("search_type", 'alpha');
-$search_account = GETPOST("search_account", 'int') ? GETPOSTINT("search_account", 'int') : GETPOST("account", 'int');
+$search_account = GETPOST("search_account", 'int') ? GETPOST("search_account", 'int') : GETPOST("account", 'int');
 $search_accountancy_code = GETPOST('search_accountancy_code', 'alpha') ? GETPOST('search_accountancy_code', 'alpha') : GETPOST('accountancy_code', 'alpha');
-$search_bid = GETPOST("search_bid", 'int') ? GETPOST("search_bid", 'int') : GETPOST("bid", 'int');
+$search_bid = GETPOST("search_bid", 'int') ? GETPOST("search_bid", 'int') : GETPOST("bid", 'int');		// Category id
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_description = GETPOST("search_description", 'alpha');
 $search_dt_start = dol_mktime(0, 0, 0, GETPOSTINT('search_start_dtmonth'), GETPOSTINT('search_start_dtday'), GETPOSTINT('search_start_dtyear'));
@@ -141,13 +141,15 @@ if (($sortfield == 'b.datev' || $sortfield == 'b.datev,b.dateo,b.rowid')) {
 	}
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('banktransactionlist', $contextpage));
 $extrafields = new ExtraFields($db);
 
+$extrafieldsobjectkey = 'bank';	// Used by extrafields_..._tpl.php
+
 // fetch optionals attributes and labels
-$extrafields->fetch_name_optionals_label('banktransaction');
-$search_array_options = $extrafields->getOptionalsFromPost('banktransaction', '', 'search_');
+$extrafields->fetch_name_optionals_label($extrafieldsobjectkey);
+$search_array_options = $extrafields->getOptionalsFromPost($extrafieldsobjectkey, '', 'search_');
 
 $arrayfields = array(
 	'b.rowid' => array('label' => $langs->trans("Ref"), 'checked' => 1,'position' => 10),
@@ -155,7 +157,8 @@ $arrayfields = array(
 	'b.dateo' => array('label' => $langs->trans("DateOperationShort"), 'checked' => -1,'position' => 30),
 	'b.datev' => array('label' => $langs->trans("DateValueShort"), 'checked' => 1,'position' => 40),
 	'type' => array('label' => $langs->trans("Type"), 'checked' => 1,'position' => 50),
-	'b.num_chq' => array('label' => $langs->trans("Numero"), 'checked' => 1,'position' => 60),
+	'b.num_chq' => array('label' => $langs->trans("Numero"), 'checked' => 0,'position' => 60),
+	'b.fk_bordereau' => array('label' => $langs->trans("ChequeNumber"), 'checked' => 0, 'position' => 65),
 	'bu.label' => array('label' => $langs->trans("ThirdParty").'/'.$langs->trans("User"), 'checked' => 1, 'position' => 70),
 	'ba.ref' => array('label' => $langs->trans("BankAccount"), 'checked' => (($id > 0 || !empty($ref)) ? 0 : 1), 'position' => 80),
 	'b.debit' => array('label' => $langs->trans("Debit"), 'checked' => 1, 'position' => 90),
@@ -164,7 +167,6 @@ $arrayfields = array(
 	'balance' => array('label' => $langs->trans("Balance"), 'checked' => 1, 'position' => 120),
 	'b.num_releve' => array('label' => $langs->trans("AccountStatement"), 'checked' => 1, 'position' => 130),
 	'b.conciliated' => array('label' => $langs->trans("BankLineReconciled"), 'enabled' => $object->rappro, 'checked' => ($action == 'reconcile' ? 1 : 0), 'position' => 140),
-	'b.fk_bordereau' => array('label' => $langs->trans("ChequeNumber"), 'checked' => 0, 'position' => 150),
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
@@ -473,7 +475,7 @@ if (!empty($search_credit)) {
 	$param .= '&search_credit='.urlencode($search_credit);
 }
 if ($search_account > 0) {
-	$param .= '&search_account='.urlencode((string) ($search_account));
+	$param .= '&search_account='.((int) $search_account);
 }
 if (!empty($search_num_releve)) {
 	$param .= '&search_num_releve='.urlencode($search_num_releve);
@@ -484,8 +486,8 @@ if ($search_conciliated != '' && $search_conciliated != '-1') {
 if ($search_fk_bordereau > 0) {
 	$param .= '$&search_fk_bordereau='.urlencode((string) ($search_fk_bordereau));
 }
-if ($search_bid > 0) {
-	$param .= '&search_bid='.urlencode((string) ($search_bid));
+if ($search_bid > 0) {	// Category id
+	$param .= '&search_bid='.((int) $search_bid);
 }
 if (dol_strlen($search_dt_start) > 0) {
 	$param .= '&search_start_dtmonth='.GETPOSTINT('search_start_dtmonth').'&search_start_dtday='.GETPOSTINT('search_start_dtday').'&search_start_dtyear='.GETPOSTINT('search_start_dtyear');
@@ -603,11 +605,11 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 }
 // Add fields from hooks
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql .= " FROM ";
 if ($search_bid > 0) {
-	$sql .= MAIN_DB_PREFIX."bank_class as l,";
+	$sql .= MAIN_DB_PREFIX."category_bankline as l,";
 }
 $sql .= " ".MAIN_DB_PREFIX."bank_account as ba,";
 $sql .= " ".MAIN_DB_PREFIX."bank as b";
@@ -617,7 +619,7 @@ if (!empty($extrafields->attributes[$object->table_element]['label']) && is_arra
 
 // Add fields from hooks
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListJoin', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListJoin', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
 $sql .= " WHERE b.fk_account = ba.rowid";
@@ -659,21 +661,23 @@ if ($search_thirdparty_user) {
 	$sql .= " 	( SELECT bu.fk_bank FROM ".MAIN_DB_PREFIX."bank_url AS bu";
 	$sql .= "	 JOIN ".MAIN_DB_PREFIX."bank AS b2 ON b2.rowid = bu.fk_bank";
 	$sql .= "	 JOIN ".MAIN_DB_PREFIX."user AS subUser ON (bu.type = 'user' AND bu.url_id = subUser.rowid)";
-	$sql .= "	  WHERE ". natural_search(array("subUser.firstname", "subUser.lastname"), $search_thirdparty_user, '', 1).")";
+	$sql .= "	  WHERE ". natural_search(array("subUser.firstname", "subUser.lastname"), $search_thirdparty_user, 0, 1).")";
 
 	$sql .= " OR b.rowid IN ";
 	$sql .= " 	( SELECT bu.fk_bank FROM ".MAIN_DB_PREFIX."bank_url AS bu";
 	$sql .= "	 JOIN ".MAIN_DB_PREFIX."bank AS b2 ON b2.rowid = bu.fk_bank";
 	$sql .= "	 JOIN ".MAIN_DB_PREFIX."societe AS subSoc ON (bu.type = 'company' AND bu.url_id = subSoc.rowid)";
-	$sql .= "	  WHERE ". natural_search(array("subSoc.nom"), $search_thirdparty_user, '', 1);
+	$sql .= "	  WHERE ". natural_search(array("subSoc.nom"), $search_thirdparty_user, 0, 1);
 	$sql .= "))";
 }
 if ($search_description) {
 	$search_description_to_use = $search_description;
 	$arrayoffixedlabels = array(
 		'payment_salary',
-		'CustomerInvoicePayment', 'CustomerInvoicePaymentBack',
-		'SupplierInvoicePayment', 'SupplierInvoicePaymentBack',
+		'CustomerInvoicePayment',
+		'CustomerInvoicePaymentBack',
+		'SupplierInvoicePayment',
+		'SupplierInvoicePaymentBack',
 		'DonationPayment',
 		'ExpenseReportPayment',
 		'SocialContributionPayment',
@@ -709,7 +713,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 
 // Add where from hooks
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
 $sql .= $db->order($sortfield, $sortorder);
@@ -800,7 +804,7 @@ if ($resql) {
 	}
 
 	// Lines of title fields
-	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" name="search_form">'."\n";
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'" name="search_form">'."\n";
 	if ($optioncss != '') {
 		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	}
@@ -815,7 +819,7 @@ if ($resql) {
 	print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="id" value="'.$id.'">';
 	print '<input type="hidden" name="ref" value="'.$ref.'">';
-	if (GETPOST('bid')) {
+	if (GETPOSTINT('bid')) {
 		print '<input type="hidden" name="bid" value="'.GETPOSTINT("bid").'">';
 	}
 
@@ -840,7 +844,7 @@ if ($resql) {
 			print $langs->trans("AccountAccounting");
 			print '</td>';
 		}*/
-		print '<td align="center">&nbsp;</td>';
+		print '<td class="center">&nbsp;</td>';
 		print '</tr>';
 
 		print '<tr>';
@@ -974,20 +978,21 @@ if ($resql) {
 			print Form::selectarray('cat', $options, GETPOST('cat'), 1);
 		}
 		print '<br><div style="margin-top: 5px;"><span class="opacitymedium">'.$langs->trans("ThenCheckLinesAndConciliate").'</span> ';
-		print '<input class="button" name="confirm_savestatement" type="submit" value="'.$langs->trans("SaveStatementOnly").'">';
-		print ' '.$langs->trans("or").' ';
-		print '<input class="button" name="confirm_reconcile" type="submit" value="'.$langs->trans("Conciliate").'">';
-		print ' '.$langs->trans("or").' ';
-		print '<input type="submit" name="cancel" class="button button-cancel" value="'.$langs->trans("Cancel").'">';
+		print '<input type="submit" class="button" name="confirm_reconcile" value="'.$langs->trans("Conciliate").'">';
+		print ' <span class="opacitymedium">'.$langs->trans("otherwise").'</span> ';
+		print '<input type="submit" class="button small" name="confirm_savestatement" value="'.$langs->trans("SaveStatementOnly").'">';
+		print ' <span class="opacitymedium">'.$langs->trans("or").'</span> ';
+		print '<input type="submit" name="cancel" class="button button-cancel small" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
 
 		// Show last bank statements
 		$nbmax = 12; // We show last 12 receipts (so we can have more than one year)
-		$liste = "";
+		$listoflastreceipts = '';
 		$sql = "SELECT DISTINCT num_releve FROM ".MAIN_DB_PREFIX."bank";
 		$sql .= " WHERE fk_account = ".((int) $object->id)." AND num_releve IS NOT NULL";
 		$sql .= $db->order("num_releve", "DESC");
 		$sql .= $db->plimit($nbmax + 1);
+
 		print '<br>';
 		print $langs->trans("LastAccountStatements").' : ';
 		$resqlr = $db->query($sql);
@@ -1002,12 +1007,15 @@ if ($resql) {
 					$last_ok = 1;
 				}
 				$i++;
-				$liste = '<a target="_blank" href="'.DOL_URL_ROOT.'/compta/bank/releve.php?account='.((int) $id).'&num='.urlencode($objr->num_releve).'">'.dol_escape_htmltag($objr->num_releve).'</a> &nbsp; '.$liste;
+				$newentreyinlist = '<a target="_blank" href="'.DOL_URL_ROOT.'/compta/bank/releve.php?account='.((int) $id).'&num='.urlencode($objr->num_releve).'">';
+				$newentreyinlist .= img_picto($objr->num_releve, 'generic', 'class="paddingright"');
+				$newentreyinlist .= dol_escape_htmltag($objr->num_releve).'</a> &nbsp; ';
+				$listoflastreceipts = $newentreyinlist.$listoflastreceipts;
 			}
 			if ($numr >= $nbmax) {
-				$liste = "... &nbsp; ".$liste;
+				$listoflastreceipts = "... &nbsp; ".$listoflastreceipts;
 			}
-			print $liste;
+			print $listoflastreceipts;
 			if ($numr <= 0) {
 				print '<b>'.$langs->trans("None").'</b>';
 			}
@@ -1071,7 +1079,7 @@ if ($resql) {
 	}
 
 	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
+	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) {
 		$moreforfilter .= $hookmanager->resPrint;
 	} else {
@@ -1125,16 +1133,21 @@ if ($resql) {
 	if (!empty($arrayfields['b.datev']['checked'])) {
 		print '<td class="liste_titre">&nbsp;</td>';
 	}
+	// Type
 	if (!empty($arrayfields['type']['checked'])) {
-		print '<td class="liste_titre" align="center">';
+		print '<td class="liste_titre center">';
 		print $form->select_types_paiements(empty($search_type) ? '' : $search_type, 'search_type', '', 2, 1, 1, 0, 1, 'maxwidth100', 1);
 		print '</td>';
 	}
 	// Numero
 	if (!empty($arrayfields['b.num_chq']['checked'])) {
-		print '<td class="liste_titre" align="center"><input type="text" class="flat" name="req_nb" value="'.dol_escape_htmltag($search_req_nb).'" size="2"></td>';
+		print '<td class="liste_titre center"><input type="text" class="flat" name="req_nb" value="'.dol_escape_htmltag($search_req_nb).'" size="2"></td>';
 	}
-	// Checked
+	// Bordereau
+	if (!empty($arrayfields['b.fk_bordereau']['checked'])) {
+		print '<td class="liste_titre center"><input type="text" class="flat width50" name="search_fk_bordereau" value="'.dol_escape_htmltag($search_fk_bordereau).'"></td>';
+	}
+	// Thirdparty
 	if (!empty($arrayfields['bu.label']['checked'])) {
 		print '<td class="liste_titre"><input type="text" class="flat maxwidth75" name="search_thirdparty" value="'.dol_escape_htmltag($search_thirdparty_user).'"></td>';
 	}
@@ -1172,20 +1185,18 @@ if ($resql) {
 	}
 	// Numero statement
 	if (!empty($arrayfields['b.num_releve']['checked'])) {
-		print '<td class="liste_titre" align="center"><input type="text" class="flat" name="search_num_releve" value="'.dol_escape_htmltag($search_num_releve).'" size="3"></td>';
+		print '<td class="liste_titre center"><input type="text" class="flat width50" name="search_num_releve" value="'.dol_escape_htmltag($search_num_releve).'"></td>';
 	}
 	// Conciliated
 	if (!empty($arrayfields['b.conciliated']['checked'])) {
 		print '<td class="liste_titre center parentonrightofpage">';
-		print $form->selectyesno('search_conciliated', $search_conciliated, 1, false, 1, 1, 'search_status onrightofpage maxwidth75');
+		print $form->selectyesno('search_conciliated', $search_conciliated, 1, false, 1, 1, 'search_status onrightofpage width75');
 		print '</td>';
 	}
-	// Bordereau
-	if (!empty($arrayfields['b.fk_bordereau']['checked'])) {
-		print '<td class="liste_titre" align="center"><input type="text" class="flat" name="search_fk_bordereau" value="'.dol_escape_htmltag($search_fk_bordereau).'" size="3"></td>';
-	}
+	// Extra fields
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 	// Action edit/delete and select
-	print '<td class="nowraponall" align="center"></td>';
+	print '<td class="nowraponall center"></td>';
 
 	// Actions and select
 	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -1232,6 +1243,10 @@ if ($resql) {
 		print_liste_field_titre($arrayfields['b.num_chq']['label'], $_SERVER['PHP_SELF'], 'b.num_chq', '', $param, '', $sortfield, $sortorder, "center ");
 		$totalarray['nbfield']++;
 	}
+	if (!empty($arrayfields['b.fk_bordereau']['checked'])) {
+		print_liste_field_titre($arrayfields['b.fk_bordereau']['label'], $_SERVER['PHP_SELF'], 'b.fk_bordereau', '', $param, '', $sortfield, $sortorder, "center ");
+		$totalarray['nbfield']++;
+	}
 	if (!empty($arrayfields['bu.label']['checked'])) {
 		print_liste_field_titre($arrayfields['bu.label']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
 		$totalarray['nbfield']++;
@@ -1264,19 +1279,15 @@ if ($resql) {
 		print_liste_field_titre($arrayfields['b.conciliated']['label'], $_SERVER['PHP_SELF'], 'b.rappro', '', $param, '', $sortfield, $sortorder, "center ");
 		$totalarray['nbfield']++;
 	}
-	if (!empty($arrayfields['b.fk_bordereau']['checked'])) {
-		print_liste_field_titre($arrayfields['b.fk_bordereau']['label'], $_SERVER['PHP_SELF'], 'b.fk_bordereau', '', $param, '', $sortfield, $sortorder, "center ");
-		$totalarray['nbfield']++;
-	}
 
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 	// Hook fields
 	$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
-	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
+	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Action edit/delete and select
-	print '<td class="nowraponall" align="center"></td>';
+	print '<td class="nowraponall center"></td>';
 	$totalarray['nbfield']++;
 	// Actions and select
 	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -1306,7 +1317,6 @@ if ($resql) {
 	while ($i < $imaxinloop) {
 		$objp = $db->fetch_object($resql);
 		$links = $bankaccountstatic->get_url($objp->rowid);
-
 		// If we are in a situation where we need/can show balance, we calculate the start of balance
 		if (!$balancecalculated && (!empty($arrayfields['balancebefore']['checked']) || !empty($arrayfields['balance']['checked'])) && ($mode_balance_ok || $search_conciliated === '0')) {
 			if (!$search_account) {
@@ -1324,8 +1334,10 @@ if ($resql) {
 			$sqlforbalance .= " WHERE b.fk_account = ba.rowid";
 			$sqlforbalance .= " AND ba.entity IN (".getEntity('bank_account').")";
 			$sqlforbalance .= " AND b.fk_account = ".((int) $search_account);
+			// To limit record on the page
 			$sqlforbalance .= " AND (b.datev < '".$db->idate($db->jdate($objp->dv))."' OR (b.datev = '".$db->idate($db->jdate($objp->dv))."' AND (b.dateo < '".$db->idate($db->jdate($objp->do))."' OR (b.dateo = '".$db->idate($db->jdate($objp->do))."' AND b.rowid < ".$objp->rowid."))))";
 			$resqlforbalance = $db->query($sqlforbalance);
+
 			//print $sqlforbalance;
 			if ($resqlforbalance) {
 				$objforbalance = $db->fetch_object($resqlforbalance);
@@ -1362,8 +1374,8 @@ if ($resql) {
 						}
 					}
 				}
-				// Extra fields
-				$element = 'banktransaction';
+				// Extra
+				$element = $extrafieldsobjectkey;
 				if (!empty($extrafields->attributes[$element]['label']) && is_array($extrafields->attributes[$element]['label']) && count($extrafields->attributes[$element]['label'])) {
 					foreach ($extrafields->attributes[$element]['label'] as $key => $val) {
 						if (!empty($arrayfields["ef.".$key]['checked'])) {
@@ -1392,17 +1404,26 @@ if ($resql) {
 				if (!empty($arrayfields['balancebefore']['checked'])) {
 					print '<td class="right">';
 					if ($search_conciliated !== '0') {
-						print price(price2num($balance, 'MT'), 1, $langs);
+						if ($sortfield == 'b.datev,b.dateo,b.rowid' && ($sortorder == 'desc' || $sortorder == 'desc,desc' || $sortorder == 'desc,desc,desc')) {
+							print price(price2num($balancebefore, 'MT'), 1, $langs);
+						} else {
+							print price(price2num($balance, 'MT'), 1, $langs);
+						}
 					}
 					print '</td>';
 				}
 				if (!empty($arrayfields['balance']['checked'])) {
 					print '<td class="right">';
-					if ($search_conciliated !== '0') {
-						print price(price2num($balance, 'MT'), 1, $langs);
+					if ($search_conciliated !== '0') {	// If not filter of filter on "conciliated"
+						if ($sortfield == 'b.datev,b.dateo,b.rowid' && ($sortorder == 'desc' || $sortorder == 'desc,desc' || $sortorder == 'desc,desc,desc')) {
+							print price(price2num($balancebefore, 'MT'), 1, $langs);
+						} else {
+							print price(price2num($balance, 'MT'), 1, $langs);
+						}
 					}
 					print '</td>';
 				}
+
 				if (!empty($arrayfields['b.num_releve']['checked'])) {
 					print '<td></td>';
 				}
@@ -1604,8 +1625,8 @@ if ($resql) {
 
 		// Date ope
 		if (!empty($arrayfields['b.dateo']['checked'])) {
-			print '<td align="center" class="nowrap">';
-			print '<span class="spanforajaxedit" id="dateoperation_'.$objp->rowid.'">'.dol_print_date($db->jdate($objp->do), "day")."</span>";
+			print '<td class="nowraponall center">';
+			print '<span class="spanforajaxedit" id="dateoperation_'.$objp->rowid.'" title="'.dol_print_date($db->jdate($objp->do), "day").'">'.dol_print_date($db->jdate($objp->do), "dayreduceformat")."</span>";
 			print '&nbsp;';
 			print '<span class="inline-block">';
 			print '<a class="ajaxforbankoperationchange" href="'.$_SERVER['PHP_SELF'].'?action=doprev&amp;account='.$objp->bankid.'&amp;rowid='.$objp->rowid.'">';
@@ -1621,8 +1642,8 @@ if ($resql) {
 
 		// Date value
 		if (!empty($arrayfields['b.datev']['checked'])) {
-			print '<td align="center" class="nowrap">';
-			print '<span class="spanforajaxedit" id="datevalue_'.$objp->rowid.'">'.dol_print_date($db->jdate($objp->dv), "day")."</span>";
+			print '<td class="nowraponall center">';
+			print '<span class="spanforajaxedit" id="datevalue_'.$objp->rowid.'" title="'.dol_print_date($db->jdate($objp->dv), "day").'">'.dol_print_date($db->jdate($objp->dv), "dayreduceformat")."</span>";
 			print '&nbsp;';
 			print '<span class="inline-block">';
 			print '<a class="ajaxforbankoperationchange" href="'.$_SERVER['PHP_SELF'].'?action=dvprev&amp;account='.$objp->bankid.'&amp;rowid='.$objp->rowid.'">';
@@ -1638,12 +1659,15 @@ if ($resql) {
 
 		// Payment type
 		if (!empty($arrayfields['type']['checked'])) {
-			print '<td class="tdoverflowmax100">';
-			$labeltype = ($langs->trans("PaymentTypeShort".$objp->fk_type) != "PaymentTypeShort".$objp->fk_type) ? $langs->trans("PaymentTypeShort".$objp->fk_type) : $langs->getLabelFromKey($db, $objp->fk_type, 'c_paiement', 'code', 'libelle', '', 1);
+			$labeltype = ($langs->transnoentitiesnoconv("PaymentTypeShort".$objp->fk_type) != "PaymentTypeShort".$objp->fk_type) ? $langs->transnoentitiesnoconv("PaymentTypeShort".$objp->fk_type) : $langs->getLabelFromKey($db, $objp->fk_type, 'c_paiement', 'code', 'libelle', '', 1);
+			if (empty($arrayfields['b.num_chq']['checked'])) {
+				$labeltype .= ($objp->num_chq ? ' - '.$objp->num_chq : '');
+			}
+			print '<td class="tdoverflowmax100" title="'.dolPrintLabel($labeltype).'">';
 			if ($labeltype == 'SOLD') {
 				print '&nbsp;'; //$langs->trans("InitialBankBalance");
 			} else {
-				print $labeltype;
+				print dolPrintLabel($labeltype);
 			}
 			print "</td>\n";
 			if (!$i) {
@@ -1653,7 +1677,18 @@ if ($resql) {
 
 		// Num cheque
 		if (!empty($arrayfields['b.num_chq']['checked'])) {
-			print '<td class="nowrap" align="center">'.($objp->num_chq ? dol_escape_htmltag($objp->num_chq) : "")."</td>\n";
+			print '<td class="tdoverflowmax100 center" title="'.($objp->num_chq ? dolPrintLabel($objp->num_chq) : "").'">'.($objp->num_chq ? dolPrintLabel($objp->num_chq) : "")."</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// Cheque
+		if (!empty($arrayfields['b.fk_bordereau']['checked'])) {
+			$bordereaustatic->fetch($objp->fk_bordereau);
+			print '<td class="nowraponall center">';
+			print $bordereaustatic->getNomUrl();
+			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1661,11 +1696,12 @@ if ($resql) {
 
 		// Third party
 		if (!empty($arrayfields['bu.label']['checked'])) {
-			print '<td class="tdoverflowmax150">';
+			print '<td class="tdoverflowmax125">';
 
 			$companylinked_id = 0;
 			$userlinked_id = 0;
 			$type_link = "";
+			$thirdstr = "";
 
 			//payment line type to define user display and user or company linked
 			foreach ($links as $key => $value) {
@@ -1674,6 +1710,19 @@ if ($resql) {
 				}
 				if ($links[$key]['type'] == 'payment_salary') {
 					$type_link = 'payment_salary';
+				}
+				if ($links[$key]['type'] == 'payment_donation') {
+					$paymentdonationstatic->fetch($links[$key]['url_id']);
+					$donstatic->fetch($paymentdonationstatic->fk_donation);
+					$companylinked_id = $donstatic->socid;
+					if (!$companylinked_id) {
+						$thirdstr = ($donstatic->societe !== "" ?
+									$donstatic->societe :
+									$donstatic->firstname." ".$donstatic->lastname);
+					}
+				}
+				if ($links[$key]['type'] == 'payment_expensereport') {
+					$type_link = 'payment_expensereport';
 				}
 
 				if ($links[$key]['type'] == 'company') {
@@ -1684,13 +1733,15 @@ if ($resql) {
 				}
 			}
 
+			// Show more information in the column thirdparty.
 			if ($companylinked_id) {
 				// TODO Add a cache of loaded companies here ?
 				$companystatic->fetch($companylinked_id);
 				print $companystatic->getNomUrl(1);
 			} elseif ($userlinked_id &&
 					(($type_link == 'payment_salary' && $user->hasRight('salaries', 'read'))
-						|| ($type_link == 'payment_sc' && $user->hasRight('tax', 'charges', 'lire')))) {
+						|| ($type_link == 'payment_sc' && $user->hasRight('tax', 'charges', 'lire'))
+						|| ($type_link == 'payment_expensereport' && $user->hasRight('expensereport', 'lire')))) {
 				// Get object user from cache or load it
 				if (!empty($conf->cache['user'][$userlinked_id])) {
 					$tmpuser = $conf->cache['user'][$userlinked_id];
@@ -1700,6 +1751,8 @@ if ($resql) {
 					$conf->cache['user'][$userlinked_id] = $tmpuser;
 				}
 				print $tmpuser->getNomUrl(-1);
+			} elseif ($thirdstr) {
+				print $thirdstr;
 			} else {
 				print '&nbsp;';
 			}
@@ -1722,7 +1775,7 @@ if ($resql) {
 
 		// Debit
 		if (!empty($arrayfields['b.debit']['checked'])) {
-			print '<td class="nowrap right"><span class="amount">';
+			print '<td class="nowraponall right"><span class="amount">';
 			if ($objp->amount < 0) {
 				print price($objp->amount * -1);
 				$totalarray['totaldeb'] += $objp->amount;
@@ -1738,7 +1791,7 @@ if ($resql) {
 
 		// Credit
 		if (!empty($arrayfields['b.credit']['checked'])) {
-			print '<td class="nowrap right"><span class="amount">';
+			print '<td class="nowraponall right"><span class="amount">';
 			if ($objp->amount > 0) {
 				print price($objp->amount);
 				$totalarray['totalcred'] += $objp->amount;
@@ -1785,7 +1838,7 @@ if ($resql) {
 		}
 
 		if (!empty($arrayfields['b.num_releve']['checked'])) {
-			print '<td class="nowraponall" align="center">';
+			print '<td class="nowraponall center">';
 			// Transaction reconciliated or edit link
 			if ($bankaccount->canBeConciliated() > 0) {
 				if ($objp->num_releve) {
@@ -1799,8 +1852,9 @@ if ($resql) {
 			}
 		}
 
+		// Conciliated
 		if (!empty($arrayfields['b.conciliated']['checked'])) {
-			print '<td class="nowraponall" align="center">';
+			print '<td class="nowraponall center">';
 			print yn($objp->conciliated);
 			print '</td>';
 			if (!$i) {
@@ -1810,7 +1864,7 @@ if ($resql) {
 
 		if (!empty($arrayfields['b.fk_bordereau']['checked'])) {
 			$bordereaustatic->fetch($objp->fk_bordereau);
-			print '<td class="nowraponall" align="center">';
+			print '<td class="nowraponall center">';
 			print $bordereaustatic->getNomUrl();
 			print '</td>';
 			if (!$i) {
@@ -1818,13 +1872,15 @@ if ($resql) {
 			}
 		}
 
+		// Extra fields
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
-		$parameters = array('arrayfields' => $arrayfields, 'obj' => $objp, 'i' => $i, 'totalarray' => &$totalarray);
-		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $objecttmp);    // Note that $action and $objecttmpect may have been modified by hook
+		$parameters = array('arrayfields' => $arrayfields, 'object'=>$object, 'obj' => $objp, 'i' => $i, 'totalarray' => &$totalarray);
+		$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action);    // Note that $action and $objecttmpect may have been modified by hook
 		print $hookmanager->resPrint;
 
 		// Action edit/delete and select
-		print '<td class="nowraponall" align="center">';
+		print '<td class="nowraponall center">';
 		// Transaction reconciliated or edit link
 		if ($objp->conciliated && $bankaccount->canBeConciliated() > 0) {  // If line not conciliated and account can be conciliated
 			print '<a class="editfielda" href="'.DOL_URL_ROOT.'/compta/bank/line.php?save_lastsearch_values=1&rowid='.$objp->rowid.($object->id > 0 ? '&account='.$object->id : '').'&page='.$page.'">';

@@ -197,7 +197,7 @@ class FormTicket
 			$subject = GETPOSTISSET('subject') ? GETPOST('subject', 'alpha') : '';
 			$email = GETPOSTISSET('email') ? GETPOST('email', 'alpha') : '';
 			$msg = GETPOSTISSET('message') ? GETPOST('message', 'restricthtml') : '';
-			$projectid = GETPOSTISSET('projectid') ? GETPOSTINT('projectid', 'int') : '';
+			$projectid = GETPOSTISSET('projectid') ? GETPOST('projectid', 'int') : '';
 			$user_assign = GETPOSTISSET('fk_user_assign') ? GETPOSTINT('fk_user_assign') : $this->fk_user_create;
 		} else {
 			$ref = GETPOSTISSET("ref") ? GETPOST("ref", 'alpha') : $object->ref;
@@ -207,7 +207,7 @@ class FormTicket
 			$subject = GETPOSTISSET('subject') ? GETPOST('subject', 'alpha') : $object->subject;
 			$email = GETPOSTISSET('email') ? GETPOST('email', 'alpha') : $object->email_from;
 			$msg = GETPOSTISSET('message') ? GETPOST('message', 'restricthtml') : $object->message;
-			$projectid = GETPOSTISSET('projectid') ? GETPOSTINT('projectid', 'int') : $object->fk_project;
+			$projectid = GETPOSTISSET('projectid') ? GETPOST('projectid', 'int') : $object->fk_project;
 			$user_assign = GETPOSTISSET('fk_user_assign') ? GETPOSTINT('fk_user_assign') : $object->fk_user_assign;
 		}
 
@@ -243,8 +243,8 @@ class FormTicket
 
 		print '<table class="border centpercent">';
 
+		// Ref
 		if ($this->withref) {
-			// Ref
 			$defaultref = $ticketstat->getDefaultRef();
 
 			if ($mode == 'edit') {
@@ -255,10 +255,10 @@ class FormTicket
 			print '</td></tr>';
 		}
 
-		// TITLE
+		// Title
 		if ($this->withemail) {
 			print '<tr><td class="titlefield"><label for="email"><span class="fieldrequired">'.$langs->trans("Email").'</span></label></td><td>';
-			print '<input class="text minwidth200" id="email" name="email" value="'.$email.'" autofocus>';
+			print '<input class="text minwidth200" id="email" name="email" value="'.$email.'" autofocus>';	// Do not use "required", it breaks button cancel
 			print '</td></tr>';
 
 			if ($with_contact) {
@@ -382,21 +382,21 @@ class FormTicket
 
 		// Type of Ticket
 		print '<tr><td class="titlefield"><span class="fieldrequired"><label for="selecttype_code">'.$langs->trans("TicketTypeRequest").'</span></label></td><td>';
-		$this->selectTypesTickets($type_code, 'type_code', '', 2, 1, 0, 0, 'minwidth200');
+		$this->selectTypesTickets($type_code, 'type_code', '', 2, 1, 0, 0, 'minwidth200 maxwidth500');
 		print '</td></tr>';
 
 		// Group => Category
 		print '<tr><td><span class="fieldrequired"><label for="selectcategory_code">'.$langs->trans("TicketCategory").'</span></label></td><td>';
 		$filter = '';
 		if ($public) {
-			$filter = 'public=1';
+			$filter = '(public:=:1)';
 		}
-		$this->selectGroupTickets($category_code, 'category_code', $filter, 2, 1, 0, 0, 'minwidth200');
+		$this->selectGroupTickets($category_code, 'category_code', $filter, 2, 1, 0, 0, 'minwidth200 maxwidth500');
 		print '</td></tr>';
 
 		// Severity => Priority
 		print '<tr><td><span class="fieldrequired"><label for="selectseverity_code">'.$langs->trans("TicketSeverity").'</span></label></td><td>';
-		$this->selectSeveritiesTickets($severity_code, 'severity_code', '', 2, 1);
+		$this->selectSeveritiesTickets($severity_code, 'severity_code', '', 2, 1, 0, 0, 'minwidth200 maxwidth500');
 		print '</td></tr>';
 
 		if (isModEnabled('knowledgemanagement')) {
@@ -476,13 +476,13 @@ class FormTicket
 			print '</td></tr>';
 		}
 
-		// MESSAGE
+		// Message
 		print '<tr><td><label for="message"><span class="fieldrequired">'.$langs->trans("Message").'</span></label></td><td>';
 
 		// If public form, display more information
 		$toolbarname = 'dolibarr_notes';
 		if ($this->ispublic) {
-			$toolbarname = 'dolibarr_details';
+			$toolbarname = 'dolibarr_details';	// TODO Allow image so use can do paste of image into content but disallow file manager
 			print '<div class="warning hideonsmartphone">'.(getDolGlobalString("TICKET_PUBLIC_TEXT_HELP_MESSAGE", $langs->trans('TicketPublicPleaseBeAccuratelyDescribe'))).'</div>';
 		}
 		include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -505,14 +505,14 @@ class FormTicket
 		}
 
 		// Categories
-		if (isModEnabled('category')) {
+		if (isModEnabled('category') && !$public) {
 			include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_TICKET, '', 'parent', 64, 0, 3);
 
 			if (count($cate_arbo)) {
 				// Categories
-				print '<tr><td class="wordbreak">'.$langs->trans("Categories").'</td><td>';
-				print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+				print '<tr><td class="wordbreak"></td><td>';
+				print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0, '', '', $langs->transnoentitiesnoconv("Categories"));
 				print "</td></tr>";
 			}
 		}
@@ -536,7 +536,7 @@ class FormTicket
 			}
 
 			$out = '<tr>';
-			$out .= '<td>'.$langs->trans("MailFile").'</td>';
+			$out .= '<td></td>';
 			$out .= '<td>';
 			// TODO Trick to have param removedfile containing nb of image to delete. But this does not works without javascript
 			$out .= '<input type="hidden" class="removedfilehidden" name="removedfile" value="">'."\n";
@@ -556,8 +556,6 @@ class FormTicket
 					}
 					$out .= '<br></div>';
 				}
-			} else {
-				$out .= '<span class="opacitymedium">'.$langs->trans("NoAttachedFiles").'</span><br>';
 			}
 			if ($this->withfile == 2) { // Can add other files
 				$maxfilesizearray = getMaxFileSizeArray();
@@ -821,7 +819,7 @@ class FormTicket
 					print ' selected="selected"';
 				} elseif (in_array($id, $selected)) {
 					print ' selected="selected"';
-				} elseif ($arraytypes['use_default'] == "1" && !$selected && !$empty) {
+				} elseif ($arraytypes['use_default'] == "1" && empty($selected)) {
 					print ' selected="selected"';
 				}
 
@@ -857,7 +855,7 @@ class FormTicket
 	 *      @param  string 		$htmlname   		Name of select component
 	 *      @param  string 		$filtertype 		To filter on some properties in llx_c_ticket_category ('public = 1'). This parameter must not come from input of users.
 	 *      @param  int    		$format     		0 = id+label, 1 = code+code, 2 = code+label, 3 = id+code
-	 *      @param  int    		$empty      		1 = can be empty, 0 = or not
+	 *      @param  int    		$empty      		1 = can be empty, 0 = or can't be empty
 	 *      @param  int    		$noadmininfo		0 = ddd admin info, 1 = disable admin info
 	 *      @param  int    		$maxlength  		Max length of label
 	 *      @param	string		$morecss			More CSS
@@ -929,9 +927,9 @@ class FormTicket
 						print ' selected="selected"';
 					} elseif (isset($selected) && $selected == $id) {
 						print ' selected="selected"';
-					} elseif ($arraycategories['use_default'] == "1" && !$selected && !$empty) {
+					} elseif ($arraycategories['use_default'] == "1" && empty($selected)) {
 						print ' selected="selected"';
-					} elseif (count($ticketstat->cache_category_tickets) == 1) {
+					} elseif (count($ticketstat->cache_category_tickets) == 1) {	// If only 1 choice, we autoselect it
 						print ' selected="selected"';
 					}
 
@@ -1001,7 +999,8 @@ class FormTicket
 			$sql .= $this->db->ifsql("ctc.rowid NOT IN (SELECT ctcfather.rowid FROM ".MAIN_DB_PREFIX."c_ticket_category as ctcfather JOIN ".MAIN_DB_PREFIX."c_ticket_category as ctcjoin ON ctcfather.rowid = ctcjoin.fk_parent WHERE ctcjoin.active > 0)", "'NOTPARENT'", "'PARENT'")." as isparent";
 			$sql .= " FROM ".$this->db->prefix()."c_ticket_category as ctc";
 			$sql .= " WHERE ctc.active > 0 AND ctc.entity = ".((int) $conf->entity);
-			if ($filtertype == 'public=1') {
+			$public = ($filtertype == 'public=1' || $filtertype == '(public:=:1)');
+			if ($public) {
 				$sql .= " AND ctc.public = 1";
 			}
 			$sql .= " AND ctc.fk_parent = 0";
@@ -1063,7 +1062,8 @@ class FormTicket
 				$sql .= " WHERE ctc.active > 0 AND ctc.entity = ".((int) $conf->entity);
 				$sql .= " AND ctc.rowid NOT IN (".$this->db->sanitize(implode(',', $arrayidusedconcat)).")";
 
-				if ($filtertype == 'public=1') {
+				$public = ($filtertype == 'public=1' || $filtertype == '(public:=:1)');
+				if ($public) {
 					$sql .= " AND ctc.public = 1";
 				}
 				// Add a test to take only record that are direct child
@@ -1271,7 +1271,7 @@ class FormTicket
 					print ' selected="selected"';
 				} elseif (isset($selected) && $selected == $id) {
 					print ' selected="selected"';
-				} elseif ($arrayseverities['use_default'] == "1" && !$selected && !$empty) {
+				} elseif ($arrayseverities['use_default'] == "1" && empty($selected)) {
 					print ' selected="selected"';
 				}
 
@@ -1512,7 +1512,7 @@ class FormTicket
 		// External users can't send message email
 		if ($user->hasRight("ticket", "write") && !$user->socid) {
 			$ticketstat = new Ticket($this->db);
-			$res = $ticketstat->fetch('', '', $this->track_id);
+			$res = $ticketstat->fetch(0, '', $this->track_id);
 
 			print '<tr><td></td><td>';
 			$checkbox_selected = (GETPOST('send_email') == "1" ? ' checked' : (getDolGlobalInt('TICKETS_MESSAGE_FORCE_MAIL') ? 'checked' : ''));
@@ -1558,8 +1558,8 @@ class FormTicket
 			// Subject/topic
 			$topic = "";
 			foreach ($formmail->lines_model as $line) {
-				if ($this->param['models_id'] == $line->id) {
-					$topic = $line->topic;
+				if (!empty($this->substit) && $this->param['models_id'] == $line->id) {
+					$topic = make_substitutions($line->topic, $this->substit);
 					break;
 				}
 			}
@@ -1567,7 +1567,7 @@ class FormTicket
 			if (empty($topic)) {
 				print '<td><input type="text" class="text minwidth500" name="subject" value="['.getDolGlobalString('MAIN_INFO_SOCIETE_NOM').' - '.$langs->trans("Ticket").' '.$ticketstat->ref.'] '. $ticketstat->subject .'" />';
 			} else {
-				print '<td><input type="text" class="text minwidth500" name="subject" value="['.getDolGlobalString('MAIN_INFO_SOCIETE_NOM').' - '.$langs->trans("Ticket").' '.$ticketstat->ref.'] '.$topic.'" />';
+				print '<td><input type="text" class="text minwidth500" name="subject" value="'.make_substitutions($topic, $this->substit).'" />';
 			}
 			print '</td></tr>';
 

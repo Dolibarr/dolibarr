@@ -60,7 +60,6 @@ if (!isset($usedbyinclude) || empty($usedbyinclude)) {
 	}
 }
 
-include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 
 $hookmanager->initHooks(array('searchform'));
 
@@ -118,6 +117,9 @@ if (isModEnabled('supplier_proposal') && !getDolGlobalString('MAIN_SEARCHFORM_SU
 }
 if (((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') && $user->hasRight('fournisseur', 'commande', 'lire')) || (isModEnabled('supplier_order') &&  $user->hasRight('supplier_order', 'lire'))) && !getDolGlobalString('MAIN_SEARCHFORM_SUPPLIER_ORDER_DISABLED')) {
 	$arrayresult['searchintosupplierorder'] = array('position' => 110, 'img' => 'object_supplier_order', 'label' => $langs->trans("SearchIntoSupplierOrders", $search_boxvalue), 'text' => img_picto('', 'object_supplier_order', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoSupplierOrders", $search_boxvalue), 'url' => DOL_URL_ROOT.'/fourn/commande/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
+}
+if (isModEnabled('reception') && !getDolGlobalString('MAIN_SEARCHFORM_SUPPLIER_RECEPTION_DISABLED') && $user->hasRight('reception', 'lire')) {
+	$arrayresult['searchintoreception'] = array('position'=>115, 'img'=>'object_reception', 'label'=>$langs->trans("SearchIntoSupplierReceptions", $search_boxvalue), 'text'=>img_picto('', 'object_reception', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoSupplierReceptions", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/reception/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
 }
 if (((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') && $user->hasRight('fournisseur', 'facture', 'lire')) || (isModEnabled('supplier_invoice') && $user->hasRight('supplier_invoice', 'lire'))) && !getDolGlobalString('MAIN_SEARCHFORM_SUPPLIER_INVOICE_DISABLED')) {
 	$arrayresult['searchintosupplierinvoice'] = array('position' => 120, 'img' => 'object_supplier_invoice', 'label' => $langs->trans("SearchIntoSupplierInvoices", $search_boxvalue), 'text' => img_picto('', 'object_supplier_invoice', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoSupplierInvoices", $search_boxvalue), 'url' => DOL_URL_ROOT.'/fourn/facture/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));

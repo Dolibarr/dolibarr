@@ -1,11 +1,12 @@
 <?php
-/* Copyright (C) 2010-2012 	Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
- * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
- * Copyright (C) 2018-2021  Philippe Grand      <philippe.grand@atoo-net.com>
- * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+/* Copyright (C) 2010-2012	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2012		Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2014		Marcos García				<marcosgdf@gmail.com>
+ * Copyright (C) 2016		Charlie Benke				<charlie@patas-monkey.com>
+ * Copyright (C) 2018-2021	Philippe Grand				<philippe.grand@atoo-net.com>
+ * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) ---Replace with your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,7 +55,7 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 	public $phpmin = array(7, 0);
 
 	/**
-	 * @var string Dolibarr version of the loaded document
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental' Dolibarr version of the loaded document
 	 */
 	public $version = 'dolibarr';
 
@@ -62,11 +63,11 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 	/**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$db      Database handler
+	 *	@param	DoliDB	$db      Database handler
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		// Load translation files required by the page
 		$langs->loadLangs(array("main", "companies"));
@@ -154,14 +155,19 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 		$texthelp .= '<br>'.$langs->trans("FollowingSubstitutionKeysCanBeUsed").'<br>';
 		$texthelp .= $langs->transnoentitiesnoconv("FullListOnOnlineDocumentation"); // This contains an url, we don't modify it
 
-		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
-		$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
-		$texte .= '<textarea class="flat" cols="60" name="value1">';
-		$texte .= getDolGlobalString('MYMODULE_MYOBJECT_ADDON_PDF_ODT_PATH');
-		$texte .= '</textarea>';
-		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
-		$texte .= '<input type="submit" class="button smallpaddingimp reposition" name="modify" value="'.dol_escape_htmltag($langs->trans("Modify")).'">';
-		$texte .= '<br></div></div>';
+		if (!getDolGlobalString('MAIN_NO_MULTIDIR_FOR_ODT')) {
+			$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
+			$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
+			$texte .= '<textarea class="flat" cols="60" name="value1">';
+			$texte .= getDolGlobalString('MYMODULE_MYOBJECT_ADDON_PDF_ODT_PATH');
+			$texte .= '</textarea>';
+			$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
+			$texte .= '<input type="submit" class="button smallpaddingimp reposition" name="modify" value="'.dol_escape_htmltag($langs->trans("Modify")).'">';
+			$texte .= '<br></div></div>';
+		} else {
+			$texte .= '<br>';
+			$texte .= '<input type="hidden" name="value1" value="MYMODULE_MYOBJECT_ADDON_PDF_ODT_PATH">';
+		}
 
 		// Scan directories
 		$nbofiles = count($listoffiles);
@@ -210,15 +216,15 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 	/**
 	 *  Function to build a document on disk using the generic odt module.
 	 *
-	 *	@param		MyObject	$object				Object source to build document
-	 *	@param		Translate	$outputlangs		Lang output object
-	 * 	@param		string		$srctemplatepath	Full path of source filename for generator using a template file
-	 *  @param		int			$hidedetails		Do not show line details
-	 *  @param		int			$hidedesc			Do not show desc
-	 *  @param		int			$hideref			Do not show ref
-	 *	@return		int         					1 if OK, <=0 if KO
+	 *  @param	MyObject	$object				Source object to generate document from
+	 *  @param	Translate	$outputlangs		Lang output object
+	 *  @param	string		$srctemplatepath	Full path of source filename for generator using a template file
+	 *  @param	int<0,1>	$hidedetails		Do not show line details
+	 *  @param	int<0,1>	$hidedesc			Do not show desc
+	 *  @param	int<0,1>	$hideref			Do not show ref
+	 *  @return	int<-1,1>						1 if OK, <=0 if KO
 	 */
-	public function write_file($object, $outputlangs, $srctemplatepath, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 		// phpcs:enable
 		global $user, $langs, $conf, $mysoc, $hookmanager;
@@ -417,45 +423,40 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 					}
 				}
 				// Replace tags of lines
+				$foundtagforlines = 1;
 				try {
-					$foundtagforlines = 1;
-					try {
-						$listlines = $odfHandler->setSegment('lines');
-					} catch (OdfExceptionSegmentNotFound $e) {
-						// We may arrive here if tags for lines not present into template
-						$foundtagforlines = 0;
-						dol_syslog($e->getMessage(), LOG_INFO);
-					} catch (OdfException $e) {
-						$foundtagforlines = 0;
-						dol_syslog($e->getMessage(), LOG_INFO);
-					}
+					$listlines = $odfHandler->setSegment('lines');
+				} catch (OdfExceptionSegmentNotFound $e) {
+					// We may arrive here if tags for lines not present into template
+					$foundtagforlines = 0;
+					dol_syslog($e->getMessage(), LOG_INFO);
+				}
 
-					if ($foundtagforlines) {
-						$linenumber = 0;
-						foreach ($object->lines as $line) {
-							$linenumber++;
-							$tmparray = $this->get_substitutionarray_lines($line, $outputlangs, $linenumber);
-							complete_substitutions_array($tmparray, $outputlangs, $object, $line, "completesubstitutionarray_lines");
-							// Call the ODTSubstitutionLine hook
-							$parameters = array('odfHandler' => &$odfHandler, 'file' => $file, 'object' => $object, 'outputlangs' => $outputlangs, 'substitutionarray' => &$tmparray, 'line' => $line);
-							$reshook = $hookmanager->executeHooks('ODTSubstitutionLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-							foreach ($tmparray as $key => $val) {
-								try {
-									$listlines->setVars($key, $val, true, 'UTF-8');
-								} catch (OdfException $e) {
-									dol_syslog($e->getMessage(), LOG_INFO);
-								} catch (SegmentException $e) {
-									dol_syslog($e->getMessage(), LOG_INFO);
-								}
+				if ($foundtagforlines) {
+					$linenumber = 0;
+					foreach ($object->lines as $line) {
+						$linenumber++;
+						$tmparray = $this->get_substitutionarray_lines($line, $outputlangs, $linenumber);
+						complete_substitutions_array($tmparray, $outputlangs, $object, $line, "completesubstitutionarray_lines");
+						// Call the ODTSubstitutionLine hook
+						$parameters = array('odfHandler' => &$odfHandler, 'file' => $file, 'object' => $object, 'outputlangs' => $outputlangs, 'substitutionarray' => &$tmparray, 'line' => $line);
+						$reshook = $hookmanager->executeHooks('ODTSubstitutionLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+						foreach ($tmparray as $key => $val) {
+							try {
+								$listlines->setVars($key, $val, true, 'UTF-8');
+							} catch (SegmentException $e) {
+								dol_syslog($e->getMessage(), LOG_INFO);
 							}
-							$listlines->merge();
 						}
-						$odfHandler->mergeSegment($listlines);
+						$listlines->merge();
 					}
-				} catch (OdfException $e) {
-					$this->error = $e->getMessage();
-					dol_syslog($this->error, LOG_WARNING);
-					return -1;
+					try {
+						$odfHandler->mergeSegment($listlines);
+					} catch (OdfException $e) {
+						$this->error = $e->getMessage();
+						dol_syslog($this->error, LOG_WARNING);
+						return -1;
+					}
 				}
 
 				// Replace labels translated
@@ -474,7 +475,7 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 				$reshook = $hookmanager->executeHooks('beforeODTSave', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
 				// Write new file
-				if (getDolGlobalInt('MAIN_ODT_AS_PDF')) {
+				if (getDolGlobalString('MAIN_ODT_AS_PDF')) {
 					try {
 						$odfHandler->exportAsAttachedPDF($file);
 					} catch (Exception $e) {

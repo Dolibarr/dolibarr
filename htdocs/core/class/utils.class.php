@@ -466,7 +466,7 @@ class Utils
 						$langs->load("errors");
 						dol_syslog("Datadump retval after exec=".$retval, LOG_ERR);
 						$errormsg = 'Error '.$retval;
-						$ok = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+						$ok = 0;
 					} else {
 						$i = 0;
 						if (!empty($output_arr)) {
@@ -560,13 +560,13 @@ class Utils
 				} elseif ($compression == 'zstd') {
 					fclose($handle);
 				}
-				if ($ok && preg_match('/^-- (MySql|MariaDB)/i', $errormsg)) {	// No error
+				if ($ok && preg_match('/^-- (MySql|MariaDB)/i', $errormsg) || preg_match('/^\/\*!999999/', $errormsg)) {	// Start of file is ok, NOT an error
 					$errormsg = '';
 				} else {
-					// Renommer fichier sortie en fichier erreur
+					// Rename file out into a file error
 					//print "$outputfile -> $outputerror";
 					@dol_delete_file($outputerror, 1, 0, 0, null, false, 0);
-					@rename($outputfile, $outputerror);
+					@dol_move($outputfile, $outputerror, '0', 1, 0, 0);
 					// Si safe_mode on et command hors du parameter exec, on a un fichier out vide donc errormsg vide
 					if (!$errormsg) {
 						$langs->load("errors");
@@ -1360,7 +1360,7 @@ class Utils
 			if ($filesize > $sizelimit) {
 				$message .= '<br>'.$langs->trans("BackupIsTooLargeSend");
 				$documenturl =  $dolibarr_main_url_root.'/document.php?modulepart=systemtools&atachement=1&file=backup/'.urlencode($filename[0]);
-				$message .= '<br><a href='.$documenturl.'>Lien de téléchargement</a>';
+				$message .= '<br><a href='.$documenturl.'>Download link</a>';
 				$filepath = '';
 				$mimetype = '';
 				$filename = '';
@@ -1390,7 +1390,7 @@ class Utils
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$this->error = "Error sending backp file ".((string) $error);
+		$this->error = "Error sending backup file ".((string) $error);
 		$this->output = $output;
 
 		if ($result) {

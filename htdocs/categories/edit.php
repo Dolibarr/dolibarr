@@ -54,6 +54,9 @@ if ($id == "") {
 	exit();
 }
 
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('categorycard'));
+
 // Security check
 $result = restrictedArea($user, 'categorie', $id, '&category');
 
@@ -71,9 +74,6 @@ if (is_numeric($type)) {
 
 $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($object->table_element);
-
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('categorycard'));
 
 $error = 0;
 

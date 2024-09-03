@@ -4,37 +4,24 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see .
 
-#
 # Generic
-#
-
 # Module label 'ModuleKnowledgeManagementName'
 ModuleKnowledgeManagementName = Videnstyrings system
 # Module description 'ModuleKnowledgeManagementDesc'
 ModuleKnowledgeManagementDesc=Administrer en Knowledge Management (KM) eller Help-Desk base
-
-#
 # Admin page
-#
 KnowledgeManagementSetup = Opsætning af Videnstyrings systemet
 KnowledgeManagementSetupPage = Opsætningsside for Videnstyrings systemet
-
-
-#
 # About page
-#
 KnowledgeManagementAbout = Om Videnstyrings systemet
 KnowledgeManagementAboutPage = Videnstyring infoside
-
 KnowledgeManagementArea = Videnshåndtering
 MenuKnowledgeRecord = Videnbase
 MenuKnowledgeRecordShort = Videnbase
@@ -46,8 +33,7 @@ KnowledgeRecord = Artikel
 KnowledgeRecordExtraFields = Ekstra felter til artikel
 GroupOfTicket=Gruppe af billetter
 YouCanLinkArticleToATicketCategory=Du kan linke artiklen til en billetgruppe (så artiklen vil blive fremhævet på alle billetter i denne gruppe)
-SuggestedForTicketsInGroup=Foreslået til oprettelse af billet
-
+SuggestedForTicketsInGroup=Foreslået til oprettelse af billetter
 SetObsolete=Angivet som forældet
 ConfirmCloseKM=Bekræfter du lukningen af denne artikel som forældet?
 ConfirmReopenKM=Vil du gendanne denne artikel til status "Valideret"?

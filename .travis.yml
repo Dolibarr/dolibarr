@@ -492,6 +492,9 @@ script:
     php upgrade.php 19.0.0 20.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade19002000.log || cat $TRAVIS_BUILD_DIR/upgrade19002000.log
     php upgrade2.php 19.0.0 20.0.0 > $TRAVIS_BUILD_DIR/upgrade19002000-2.log || cat $TRAVIS_BUILD_DIR/upgrade19002000-2.log
     php step5.php 19.0.0 20.0.0 > $TRAVIS_BUILD_DIR/upgrade19002000-3.log || cat $TRAVIS_BUILD_DIR/upgrade19002000-3.log
+    php upgrade.php 20.0.0 21.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade20002100.log || cat $TRAVIS_BUILD_DIR/upgrade20002100.log
+    php upgrade2.php 20.0.0 21.0.0 > $TRAVIS_BUILD_DIR/upgrade20002100-2.log || cat $TRAVIS_BUILD_DIR/upgrade20002100-2.log
+    php step5.php 20.0.0 21.0.0 > $TRAVIS_BUILD_DIR/upgrade20002100-3.log || cat $TRAVIS_BUILD_DIR/upgrade20002100-3.log
     set +e
     echo
 
@@ -499,6 +502,7 @@ script:
     echo Show some debug info like table content or log
     #echo '\d llx_adherent' | psql 'postgresql://postgres:postgres@127.0.0.1:5432/travis'
     cat $TRAVIS_BUILD_DIR/upgrade18001900.log
+    cat $TRAVIS_BUILD_DIR/upgrade19002000.log
     echo
 
   - |

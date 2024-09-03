@@ -4,7 +4,7 @@
  * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2021		Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2021-2024	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2022       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
@@ -65,7 +65,7 @@ class modFacture extends DolibarrModules
 		$this->dirs = array("/facture/temp");
 
 		// Dependencies
-		$this->depends = array('always'=>"modSociete");
+		$this->depends = array('always' => "modSociete");
 		$this->requiredby = array("modComptabilite", "modAccounting");
 		$this->conflictwith = array();
 		$this->langfiles = array("bills", "companies", "compta", "products");
@@ -103,10 +103,10 @@ class modFacture extends DolibarrModules
 		// Boxes
 		//$this->boxes = array(0=>array(1=>'box_factures_imp.php'),1=>array(1=>'box_factures.php'));
 		$this->boxes = array(
-				0=>array('file'=>'box_factures_imp.php', 'enabledbydefaulton'=>'Home'),
-				1=>array('file'=>'box_factures.php', 'enabledbydefaulton'=>'Home'),
-				2=>array('file'=>'box_graph_invoices_permonth.php', 'enabledbydefaulton'=>'Home'),
-				3=>array('file'=>'box_customers_outstanding_bill_reached.php', 'enabledbydefaulton'=>'Home')
+				0 => array('file' => 'box_factures_imp.php', 'enabledbydefaulton' => 'Home'),
+				1 => array('file' => 'box_factures.php', 'enabledbydefaulton' => 'Home'),
+				2 => array('file' => 'box_graph_invoices_permonth.php', 'enabledbydefaulton' => 'Home'),
+				3 => array('file' => 'box_customers_outstanding_bill_reached.php', 'enabledbydefaulton' => 'Home')
 		);
 
 		// Cronjobs
@@ -114,34 +114,34 @@ class modFacture extends DolibarrModules
 		$datestart = dol_mktime(23, 0, 0, $arraydate['mon'], $arraydate['mday'], $arraydate['year']);
 		$this->cronjobs = array(
 			0 => array(
-				'label'=>'RecurringInvoicesJob',
-				'jobtype'=>'method',
-				'class'=>'compta/facture/class/facture-rec.class.php',
-				'objectname'=>'FactureRec',
-				'method'=>'createRecurringInvoices',
-				'parameters'=>'',
-				'comment'=>'Generate recurring invoices',
-				'frequency'=>1,
-				'unitfrequency'=>3600 * 24,
-				'priority'=>51,
-				'status'=>1,
-				'test'=>'$conf->facture->enabled',
-				'datestart'=>$datestart
+				'label' => 'RecurringInvoicesJob',
+				'jobtype' => 'method',
+				'class' => 'compta/facture/class/facture-rec.class.php',
+				'objectname' => 'FactureRec',
+				'method' => 'createRecurringInvoices',
+				'parameters' => '',
+				'comment' => 'Generate recurring invoices',
+				'frequency' => 1,
+				'unitfrequency' => 3600 * 24,
+				'priority' => 51,
+				'status' => 1,
+				'test' => '$conf->facture->enabled',
+				'datestart' => $datestart
 			),
 			1 => array(
-				'label'=>'SendEmailsRemindersOnInvoiceDueDate',
-				'jobtype'=>'method',
-				'class'=>'compta/facture/class/facture.class.php',
-				'objectname'=>'Facture',
-				'method'=>'sendEmailsRemindersOnInvoiceDueDate',
-				'parameters'=>"10,all,EmailTemplateCode,duedate",
-				'comment'=>'Send an email when we reach the invoice due date (or invoice date) - n days. First param is n, the number of days before due date (or invoice date) to send the remind (or after if value is negative), second parameter is "all" or a payment mode code, third parameter is the code of the email template to use (an email template with the EmailTemplateCode must exists. The version of the email template in the language of the thirdparty will be used in priority. Language of the thirdparty will be also used to update the PDF of the sent invoice). The fourth parameter is the string "duedate" (default) or "invoicedate" to define which date of the invoice to use.',
-				'frequency'=>1,
-				'unitfrequency'=>3600 * 24,
-				'priority'=>50,
-				'status'=>0,
-				'test'=>'$conf->facture->enabled',
-				'datestart'=>$datestart
+				'label' => 'SendEmailsRemindersOnInvoiceDueDate',
+				'jobtype' => 'method',
+				'class' => 'compta/facture/class/facture.class.php',
+				'objectname' => 'Facture',
+				'method' => 'sendEmailsRemindersOnInvoiceDueDate',
+				'parameters' => "10,all,EmailTemplateCode,duedate",
+				'comment' => 'Send an email when we reach the invoice due date (or invoice date) - n days. First param is n, the number of days before due date (or invoice date) to send the remind (or after if value is negative), second parameter is "all" or a payment mode code, third parameter is the code of the email template to use (an email template with the EmailTemplateCode must exists. The version of the email template in the language of the thirdparty will be used in priority. Language of the thirdparty will be also used to update the PDF of the sent invoice). The fourth parameter is the string "duedate" (default) or "invoicedate" to define which date of the invoice to use.',
+				'frequency' => 1,
+				'unitfrequency' => 3600 * 24,
+				'priority' => 50,
+				'status' => 0,
+				'test' => '$conf->facture->enabled',
+				'datestart' => $datestart
 			),
 		);
 
@@ -355,7 +355,7 @@ class modFacture extends DolibarrModules
 		$this->import_fields_array[$r] = array(
 			'fd.fk_facture' => 'InvoiceRef*',
 			'fd.fk_parent_line' => 'FacParentLine',
-			'fd.fk_product' => 'IdProduct',
+			'fd.fk_product' => 'ProductOrService',
 			'fd.label' => 'Label',
 			'fd.description' => 'LineDescription*',
 			'fd.vat_src_code' => 'Vat Source Code',
@@ -414,13 +414,12 @@ class modFacture extends DolibarrModules
 		// End add extra fields
 		$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'facturedet');
 		$this->import_regex_array[$r] = array(
-			'fd.fk_product' => 'rowid@'.MAIN_DB_PREFIX.'product',
 			'fd.multicurrency_code' => 'code@'.MAIN_DB_PREFIX.'multicurrency'
 		);
 		$import_sample = array(
 			'fd.fk_facture' => '(PROV00001)',
 			'fd.fk_parent_line' => '',
-			'fd.fk_product' => '',
+			'fd.fk_product' => 'ref:PRODUCT_REF or id:123456',
 			'fd.label' => '',
 			'fd.description' => 'Test product',
 			'fd.vat_src_code' => '',
@@ -465,7 +464,8 @@ class modFacture extends DolibarrModules
 		$this->import_examplevalues_array[$r] = array_merge($import_sample, $import_extrafield_sample);
 		$this->import_updatekeys_array[$r] = array(
 			'fd.rowid' => 'Row Id',
-			'fd.fk_facture' => 'Invoice Id'
+			'fd.fk_facture' => 'Invoice Id',
+			'fd.fk_product'=> 'ProductRef'
 		);
 		$this->import_convertvalue_array[$r] = array(
 			'fd.fk_facture' => array(
@@ -474,6 +474,13 @@ class modFacture extends DolibarrModules
 				'class' => 'Facture',
 				'method' => 'fetch',
 				'element' => 'facture'
+			),
+			'fd.fk_product' => array(
+				'rule'=>'fetchidfromref',
+				'classfile'=>'/product/class/product.class.php',
+				'class'=>'Product',
+				'method'=>'fetch',
+				'element'=>'Product'
 			),
 			'fd.fk_projet' => array(
 				'rule' => 'fetchidfromref',
@@ -487,6 +494,9 @@ class modFacture extends DolibarrModules
 
 		// Exports
 		//--------
+		$uselocaltax1 = (is_object($mysoc) && $mysoc->localtax1_assuj) ? $mysoc->localtax1_assuj : 0;
+		$uselocaltax2 = (is_object($mysoc) && $mysoc->localtax2_assuj) ? $mysoc->localtax2_assuj : 0;
+
 		$r = 0;
 
 		$langs->loadLangs(array("suppliers", "multicurrency", "bills"));
@@ -503,21 +513,21 @@ class modFacture extends DolibarrModules
 		$this->export_permission[$r] = array(array("facture", "facture", "export", "other"));
 
 		$this->export_fields_array[$r] = array(
-			's.rowid'=>"IdCompany", 's.nom'=>'CompanyName', 'ps.nom' => 'ParentCompany', 's.code_client'=>'CustomerCode', 's.address'=>'Address', 's.zip'=>'Zip', 's.town'=>'Town', 'c.code'=>'CountryCode', 'cd.nom'=>'State',
-			's.phone'=>'Phone',
-			's.siren'=>'ProfId1', 's.siret'=>'ProfId2', 's.ape'=>'ProfId3', 's.idprof4'=>'ProfId4',
-			's.code_compta'=>'CustomerAccountancyCode',
-			's.code_compta_fournisseur'=>'SupplierAccountancyCode',
-			's.tva_intra'=>'VATIntra',
-			't.libelle'=>"ThirdPartyType", // 'ce.code'=>"Staff", "cfj.libelle"=>"JuridicalStatus",
-			'f.rowid'=>"InvoiceId", 'f.ref'=>"InvoiceRef", 'f.ref_client'=>'RefCustomer', 'f.fk_facture_source'=>'SourceInvoiceId',
-			'f.type'=>"Type", 'f.datec'=>"InvoiceDateCreation", 'f.datef'=>"DateInvoice", 'f.date_lim_reglement'=>"DateDue",
-			'f.fk_cond_reglement'=>'IdPaymentTerm', 'f.fk_mode_reglement'=>'IdPaymentMode',
-			'f.total_ht'=>"TotalHT", 'f.total_ttc'=>"TotalTTC", 'f.total_tva'=>"TotalVAT",
-			'f.localtax1'=>"TotalLT1", 'f.localtax2'=>"TotalLT2",
-			'f.paye'=>"InvoicePaidCompletely", 'f.fk_statut'=>'InvoiceStatus', 'f.close_code'=>'EarlyClosingReason', 'f.close_note'=>'EarlyClosingComment',
-			'none.rest'=>'Rest',
-			'f.note_private'=>"NotePrivate", 'f.note_public'=>"NotePublic"
+			's.rowid' => "IdCompany", 's.nom' => 'CompanyName', 'ps.nom' => 'ParentCompany', 's.code_client' => 'CustomerCode', 's.address' => 'Address', 's.zip' => 'Zip', 's.town' => 'Town', 'c.code' => 'CountryCode', 'cd.nom' => 'State',
+			's.phone' => 'Phone',
+			's.siren' => 'ProfId1', 's.siret' => 'ProfId2', 's.ape' => 'ProfId3', 's.idprof4' => 'ProfId4',
+			's.code_compta' => 'CustomerAccountancyCode',
+			's.code_compta_fournisseur' => 'SupplierAccountancyCode',
+			's.tva_intra' => 'VATIntra',
+			't.libelle' => "ThirdPartyType", // 'ce.code'=>"Staff", "cfj.libelle"=>"JuridicalStatus",
+			'f.rowid' => "InvoiceId", 'f.ref' => "InvoiceRef", 'f.ref_client' => 'RefCustomer', 'f.fk_facture_source' => 'SourceInvoiceId',
+			'f.type' => "Type", 'f.datec' => "InvoiceDateCreation", 'f.datef' => "DateInvoice", 'f.date_lim_reglement' => "DateDue",
+			'f.fk_cond_reglement' => 'IdPaymentTerm', 'f.fk_mode_reglement' => 'IdPaymentMode',
+			'f.total_ht' => "TotalHT", 'f.total_ttc' => "TotalTTC", 'f.total_tva' => "TotalVAT",
+			'f.localtax1' => "TotalLT1", 'f.localtax2' => "TotalLT2",
+			'f.paye' => "InvoicePaidCompletely", 'f.fk_statut' => 'InvoiceStatus', 'f.close_code' => 'EarlyClosingReason', 'f.close_note' => 'EarlyClosingComment',
+			'none.rest' => 'Rest',
+			'f.note_private' => "NotePrivate", 'f.note_public' => "NotePublic"
 		);
 		if (!$uselocaltax1) {
 			unset($this->export_fields_array[$r]['f.localtax1']);
@@ -539,10 +549,10 @@ class modFacture extends DolibarrModules
 			$this->export_fields_array[$r]['f.module_source'] = 'Module';
 			$this->export_fields_array[$r]['f.pos_source'] = 'POSTerminal';
 		}
-		$this->export_fields_array[$r] = $this->export_fields_array[$r] + array(
-			'f.fk_user_author'=>'CreatedById', 'uc.login'=>'CreatedByLogin',
-			'f.fk_user_valid'=>'ValidatedById', 'uv.login'=>'ValidatedByLogin',
-			'pj.ref'=>'ProjectRef', 'pj.title'=>'ProjectLabel'
+		$this->export_fields_array[$r] += array(
+			'f.fk_user_author' => 'CreatedById', 'uc.login' => 'CreatedByLogin',
+			'f.fk_user_valid' => 'ValidatedById', 'uv.login' => 'ValidatedByLogin',
+			'pj.ref' => 'ProjectRef', 'pj.title' => 'ProjectLabel'
 		);
 		// Add multicompany field
 		if (getDolGlobalString('MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED')) {
@@ -551,16 +561,16 @@ class modFacture extends DolibarrModules
 				$this->export_fields_array[$r]['f.entity'] = 'Entity';
 			}
 		}
-		$this->export_fields_array[$r] = $this->export_fields_array[$r] + array(
-			'fd.rowid'=>'LineId', 'fd.description'=>"LineDescription",
-			'fd.subprice'=>"LineUnitPrice", 'fd.qty'=>"LineQty",
-			'fd.tva_tx'=>"LineVATRate",
-			'fd.total_ht'=>"LineTotalHT", 'fd.total_tva'=>"LineTotalVAT", 'fd.total_ttc'=>"LineTotalTTC",
-			'fd.localtax1_tx'=>"LineLT1Rate", 'fd.localtax1_type'=>"LineLT1Type", 'fd.total_localtax1'=>"LineTotalLT1",
-			'fd.localtax2_tx'=>"LineLT2Rate", 'fd.localtax2_type'=>"LineLT2Type", 'fd.total_localtax2'=>"LineTotalLT2",
-			'fd.buy_price_ht'=>'BuyingPrice', 'fd.date_start'=>"DateStart", 'fd.date_end'=>"DateEnd", 'fd.special_code'=>'SpecialCode',
-			'fd.product_type'=>"TypeOfLineServiceOrProduct", 'fd.fk_product'=>'ProductId', 'p.ref'=>'ProductRef', 'p.label'=>'ProductLabel',
-			$alias_product_perentity . '.accountancy_code_sell'=>'ProductAccountancySellCode',
+		$this->export_fields_array[$r] += array(
+			'fd.rowid' => 'LineId', 'fd.description' => "LineDescription",
+			'fd.subprice' => "LineUnitPrice", 'fd.qty' => "LineQty",
+			'fd.tva_tx' => "LineVATRate",
+			'fd.total_ht' => "LineTotalHT", 'fd.total_tva' => "LineTotalVAT", 'fd.total_ttc' => "LineTotalTTC",
+			'fd.localtax1_tx' => "LineLT1Rate", 'fd.localtax1_type' => "LineLT1Type", 'fd.total_localtax1' => "LineTotalLT1",
+			'fd.localtax2_tx' => "LineLT2Rate", 'fd.localtax2_type' => "LineLT2Type", 'fd.total_localtax2' => "LineTotalLT2",
+			'fd.buy_price_ht' => 'BuyingPrice', 'fd.date_start' => "DateStart", 'fd.date_end' => "DateEnd", 'fd.special_code' => 'SpecialCode',
+			'fd.product_type' => "TypeOfLineServiceOrProduct", 'fd.fk_product' => 'ProductId', 'p.ref' => 'ProductRef', 'p.label' => 'ProductLabel',
+			$alias_product_perentity . '.accountancy_code_sell' => 'ProductAccountancySellCode',
 			'aa.account_number' => 'AccountingAffectation'
 		);
 		if (!$uselocaltax1) {
@@ -575,44 +585,44 @@ class modFacture extends DolibarrModules
 		}
 
 		$this->export_TypeFields_array[$r] = array(
-			's.rowid'=>'Numeric', 's.nom'=>'Text', 'ps.nom'=>'Text', 's.code_client'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text', 'c.code'=>'Text', 'cd.nom'=>'Text', 's.phone'=>'Text', 's.siren'=>'Text',
-			's.siret'=>'Text', 's.ape'=>'Text', 's.idprof4'=>'Text', 's.code_compta'=>'Text', 's.code_compta_fournisseur'=>'Text', 's.tva_intra'=>'Text',
-			't.libelle'=>"Text", // 'ce.code'=>"List:c_effectif:libelle:code", "cfj.libelle"=>"Text",
-			'f.rowid'=>'Numeric', 'f.ref'=>"Text", 'f.ref_client'=>'Text', 'f.fk_facture_source'=>'Numeric', 'f.type'=>"Numeric", 'f.datec'=>"Date", 'f.datef'=>"Date", 'f.date_lim_reglement'=>"Date",
-			'f.fk_cond_reglement'=>'Numeric', 'f.fk_mode_reglement'=>'Numeric',
-			'f.total_ht'=>"Numeric", 'f.total_ttc'=>"Numeric", 'f.total_tva'=>"Numeric", 'f.localtax1'=>'Numeric', 'f.localtax2'=>'Numeric', 'f.paye'=>"Boolean", 'f.fk_statut'=>'Numeric', 'f.close_code'=>'Text', 'f.close_note'=>'Text',
-			'none.rest'=>"NumericCompute",
-			'f.note_private'=>"Text", 'f.note_public'=>"Text",
+			's.rowid' => 'Numeric', 's.nom' => 'Text', 'ps.nom' => 'Text', 's.code_client' => 'Text', 's.address' => 'Text', 's.zip' => 'Text', 's.town' => 'Text', 'c.code' => 'Text', 'cd.nom' => 'Text', 's.phone' => 'Text', 's.siren' => 'Text',
+			's.siret' => 'Text', 's.ape' => 'Text', 's.idprof4' => 'Text', 's.code_compta' => 'Text', 's.code_compta_fournisseur' => 'Text', 's.tva_intra' => 'Text',
+			't.libelle' => "Text", // 'ce.code'=>"List:c_effectif:libelle:code", "cfj.libelle"=>"Text",
+			'f.rowid' => 'Numeric', 'f.ref' => "Text", 'f.ref_client' => 'Text', 'f.fk_facture_source' => 'Numeric', 'f.type' => "Numeric", 'f.datec' => "Date", 'f.datef' => "Date", 'f.date_lim_reglement' => "Date",
+			'f.fk_cond_reglement' => 'Numeric', 'f.fk_mode_reglement' => 'Numeric',
+			'f.total_ht' => "Numeric", 'f.total_ttc' => "Numeric", 'f.total_tva' => "Numeric", 'f.localtax1' => 'Numeric', 'f.localtax2' => 'Numeric', 'f.paye' => "Boolean", 'f.fk_statut' => 'Numeric', 'f.close_code' => 'Text', 'f.close_note' => 'Text',
+			'none.rest' => "NumericCompute",
+			'f.note_private' => "Text", 'f.note_public' => "Text",
 			'f.module_source' => 'Text',
 			'f.pos_source' => 'Text',
-			'f.entity'=>'List:entity:label:rowid',
-			'f.fk_user_author'=>'Numeric', 'uc.login'=>'Text', 'f.fk_user_valid'=>'Numeric', 'uv.login'=>'Text',
-			'pj.ref'=>'Text', 'pj.title'=>'Text', 'fd.rowid'=>'Numeric', 'fd.description'=>"Text", 'fd.subprice'=>"Numeric", 'fd.tva_tx'=>"Numeric",
-			'fd.qty'=>"Numeric", 'fd.buy_price_ht'=>"Numeric", 'fd.date_start'=>"Date", 'fd.date_end'=>"Date",
-			'fd.total_ht'=>"Numeric", 'fd.total_tva'=>"Numeric", 'fd.total_ttc'=>"Numeric", 'fd.total_localtax1'=>"Numeric", 'fd.total_localtax2'=>"Numeric",
-			'fd.localtax1_tx'=>'Numeric', 'fd.localtax2_tx'=>'Numeric', 'fd.localtax1_type'=>'Numeric', 'fd.localtax2_type'=>'Numeric',
-			'fd.special_code'=>'Numeric', 'fd.product_type'=>"Numeric", 'fd.fk_product'=>'List:product:label', 'p.ref'=>'Text', 'p.label'=>'Text',
-			$alias_product_perentity . '.accountancy_code_sell'=>'Text',
+			'f.entity' => 'List:entity:label:rowid',
+			'f.fk_user_author' => 'Numeric', 'uc.login' => 'Text', 'f.fk_user_valid' => 'Numeric', 'uv.login' => 'Text',
+			'pj.ref' => 'Text', 'pj.title' => 'Text', 'fd.rowid' => 'Numeric', 'fd.description' => "Text", 'fd.subprice' => "Numeric", 'fd.tva_tx' => "Numeric",
+			'fd.qty' => "Numeric", 'fd.buy_price_ht' => "Numeric", 'fd.date_start' => "Date", 'fd.date_end' => "Date",
+			'fd.total_ht' => "Numeric", 'fd.total_tva' => "Numeric", 'fd.total_ttc' => "Numeric", 'fd.total_localtax1' => "Numeric", 'fd.total_localtax2' => "Numeric",
+			'fd.localtax1_tx' => 'Numeric', 'fd.localtax2_tx' => 'Numeric', 'fd.localtax1_type' => 'Numeric', 'fd.localtax2_type' => 'Numeric',
+			'fd.special_code' => 'Numeric', 'fd.product_type' => "Numeric", 'fd.fk_product' => 'List:product:label', 'p.ref' => 'Text', 'p.label' => 'Text',
+			$alias_product_perentity . '.accountancy_code_sell' => 'Text',
 			'aa.account_number' => 'Text',
 			'f.multicurrency_code' => 'Text',
 			'f.multicurrency_tx' => 'Number', 'f.multicurrency_total_ht' => 'Number', 'f.multicurrency_total_tva' => 'Number', 'f.multicurrency_total_ttc' => 'Number'
 		);
 		$this->export_entities_array[$r] = array(
-			's.rowid'=>"company", 's.nom'=>'company', 'ps.nom'=>'company', 's.code_client'=>'company', 's.address'=>'company', 's.zip'=>'company', 's.town'=>'company', 'c.code'=>'company', 'cd.nom'=>'company', 's.phone'=>'company',
-			's.siren'=>'company', 's.siret'=>'company', 's.ape'=>'company', 's.idprof4'=>'company', 's.code_compta'=>'company', 's.code_compta_fournisseur'=>'company', 's.tva_intra'=>'company',
-			't.libelle'=>'company', // 'ce.code'=>'company', 'cfj.libelle'=>'company'
-			'pj.ref'=>'project', 'pj.title'=>'project', 'fd.rowid'=>'invoice_line', 'fd.description'=>"invoice_line",
-			'fd.subprice'=>"invoice_line", 'fd.buy_price_ht'=>'invoice_line',
-			'fd.total_ht'=>"invoice_line", 'fd.total_tva'=>"invoice_line", 'fd.total_ttc'=>"invoice_line", 'fd.total_localtax1'=>"invoice_line", 'fd.total_localtax2'=>"invoice_line",
-			'fd.tva_tx'=>"invoice_line", 'fd.localtax1_tx'=>"invoice_line", 'fd.localtax2_tx'=>"invoice_line", 'fd.localtax1_type'=>"invoice_line", 'fd.localtax2_type'=>"invoice_line",
-			'fd.qty'=>"invoice_line", 'fd.date_start'=>"invoice_line", 'fd.date_end'=>"invoice_line", 'fd.special_code'=>'invoice_line',
-			'fd.product_type'=>'invoice_line', 'fd.fk_product'=>'product', 'p.ref'=>'product', 'p.label'=>'product', $alias_product_perentity . '.accountancy_code_sell'=>'product',
-			'f.fk_user_author'=>'user', 'uc.login'=>'user', 'f.fk_user_valid'=>'user', 'uv.login'=>'user',
+			's.rowid' => "company", 's.nom' => 'company', 'ps.nom' => 'company', 's.code_client' => 'company', 's.address' => 'company', 's.zip' => 'company', 's.town' => 'company', 'c.code' => 'company', 'cd.nom' => 'company', 's.phone' => 'company',
+			's.siren' => 'company', 's.siret' => 'company', 's.ape' => 'company', 's.idprof4' => 'company', 's.code_compta' => 'company', 's.code_compta_fournisseur' => 'company', 's.tva_intra' => 'company',
+			't.libelle' => 'company', // 'ce.code'=>'company', 'cfj.libelle'=>'company'
+			'pj.ref' => 'project', 'pj.title' => 'project', 'fd.rowid' => 'invoice_line', 'fd.description' => "invoice_line",
+			'fd.subprice' => "invoice_line", 'fd.buy_price_ht' => 'invoice_line',
+			'fd.total_ht' => "invoice_line", 'fd.total_tva' => "invoice_line", 'fd.total_ttc' => "invoice_line", 'fd.total_localtax1' => "invoice_line", 'fd.total_localtax2' => "invoice_line",
+			'fd.tva_tx' => "invoice_line", 'fd.localtax1_tx' => "invoice_line", 'fd.localtax2_tx' => "invoice_line", 'fd.localtax1_type' => "invoice_line", 'fd.localtax2_type' => "invoice_line",
+			'fd.qty' => "invoice_line", 'fd.date_start' => "invoice_line", 'fd.date_end' => "invoice_line", 'fd.special_code' => 'invoice_line',
+			'fd.product_type' => 'invoice_line', 'fd.fk_product' => 'product', 'p.ref' => 'product', 'p.label' => 'product', $alias_product_perentity . '.accountancy_code_sell' => 'product',
+			'f.fk_user_author' => 'user', 'uc.login' => 'user', 'f.fk_user_valid' => 'user', 'uv.login' => 'user',
 			'aa.account_number' => "invoice_line",
 		);
-		$this->export_help_array[$r] = array('fd.buy_price_ht'=>'CostPriceUsage');
-		$this->export_special_array[$r] = array('none.rest'=>'getRemainToPay');
-		$this->export_dependencies_array[$r] = array('invoice_line'=>'fd.rowid', 'product'=>'fd.rowid', 'none.rest'=>array('f.rowid', 'f.total_ttc', 'f.close_code')); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
+		$this->export_help_array[$r] = array('fd.buy_price_ht' => 'CostPriceUsage');
+		$this->export_special_array[$r] = array('none.rest' => 'getRemainToPay');
+		$this->export_dependencies_array[$r] = array('invoice_line' => 'fd.rowid', 'product' => 'fd.rowid', 'none.rest' => array('f.rowid', 'f.total_ttc', 'f.close_code')); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
 		$keyforselect = 'facture';
 		$keyforelement = 'invoice';
 		$keyforaliasextra = 'extra';
@@ -665,19 +675,19 @@ class modFacture extends DolibarrModules
 		$this->export_icon[$r] = 'invoice';
 		$this->export_permission[$r] = array(array("facture", "facture", "export"));
 		$this->export_fields_array[$r] = array(
-			's.rowid'=>"IdCompany", 's.nom'=>'CompanyName', 's.code_client'=>'CustomerCode', 's.address'=>'Address', 's.zip'=>'Zip', 's.town'=>'Town', 'c.code'=>'CountryCode', 'cd.nom'=>'State',
-			's.phone'=>'Phone',
-			's.siren'=>'ProfId1', 's.siret'=>'ProfId2', 's.ape'=>'ProfId3', 's.idprof4'=>'ProfId4', 's.code_compta'=>'CustomerAccountancyCode',
-			's.code_compta_fournisseur'=>'SupplierAccountancyCode', 's.tva_intra'=>'VATIntra',
-			'f.rowid'=>"InvoiceId", 'f.ref'=>"InvoiceRef", 'f.ref_client'=>'RefCustomer', 'f.fk_facture_source'=>'SourceInvoiceId',
-			'f.type'=>"Type", 'f.datec'=>"InvoiceDateCreation", 'f.datef'=>"DateInvoice", 'f.date_lim_reglement'=>"DateDue",
-			'f.fk_cond_reglement'=>'IdPaymentTerm', 'f.fk_mode_reglement'=>'IdPaymentMode',
-			'f.total_ht'=>"TotalHT", 'f.total_ttc'=>"TotalTTC", 'f.total_tva'=>"TotalVAT", 'f.localtax1'=>'LT1', 'f.localtax2'=>'LT2', 'f.paye'=>"InvoicePaidCompletely", 'f.fk_statut'=>'InvoiceStatus', 'f.close_code'=>'EarlyClosingReason', 'f.close_note'=>'EarlyClosingComment',
-			'none.rest'=>'Rest',
-			'f.note_private'=>"NotePrivate", 'f.note_public'=>"NotePublic", 'f.fk_user_author'=>'CreatedById', 'uc.login'=>'CreatedByLogin',
-			'f.fk_user_valid'=>'ValidatedById', 'uv.login'=>'ValidatedByLogin', 'pj.ref'=>'ProjectRef', 'pj.title'=>'ProjectLabel', 'p.rowid'=>'PaymentId', 'p.ref'=>'PaymentRef',
-			'p.amount'=>'AmountPayment', 'pf.amount'=>'AmountPaymentDistributedOnInvoice', 'p.datep'=>'DatePayment', 'p.num_paiement'=>'PaymentNumber',
-			'pt.code'=>'CodePaymentMode', 'pt.libelle'=>'LabelPaymentMode', 'p.note'=>'PaymentNote', 'p.fk_bank'=>'IdTransaction', 'ba.ref'=>'AccountRef'
+			's.rowid' => "IdCompany", 's.nom' => 'CompanyName', 's.code_client' => 'CustomerCode', 's.address' => 'Address', 's.zip' => 'Zip', 's.town' => 'Town', 'c.code' => 'CountryCode', 'cd.nom' => 'State',
+			's.phone' => 'Phone',
+			's.siren' => 'ProfId1', 's.siret' => 'ProfId2', 's.ape' => 'ProfId3', 's.idprof4' => 'ProfId4', 's.code_compta' => 'CustomerAccountancyCode',
+			's.code_compta_fournisseur' => 'SupplierAccountancyCode', 's.tva_intra' => 'VATIntra',
+			'f.rowid' => "InvoiceId", 'f.ref' => "InvoiceRef", 'f.ref_client' => 'RefCustomer', 'f.fk_facture_source' => 'SourceInvoiceId',
+			'f.type' => "Type", 'f.datec' => "InvoiceDateCreation", 'f.datef' => "DateInvoice", 'f.date_lim_reglement' => "DateDue",
+			'f.fk_cond_reglement' => 'IdPaymentTerm', 'f.fk_mode_reglement' => 'IdPaymentMode',
+			'f.total_ht' => "TotalHT", 'f.total_ttc' => "TotalTTC", 'f.total_tva' => "TotalVAT", 'f.localtax1' => 'LT1', 'f.localtax2' => 'LT2', 'f.paye' => "InvoicePaidCompletely", 'f.fk_statut' => 'InvoiceStatus', 'f.close_code' => 'EarlyClosingReason', 'f.close_note' => 'EarlyClosingComment',
+			'none.rest' => 'Rest',
+			'f.note_private' => "NotePrivate", 'f.note_public' => "NotePublic", 'f.fk_user_author' => 'CreatedById', 'uc.login' => 'CreatedByLogin',
+			'f.fk_user_valid' => 'ValidatedById', 'uv.login' => 'ValidatedByLogin', 'pj.ref' => 'ProjectRef', 'pj.title' => 'ProjectLabel', 'p.rowid' => 'PaymentId', 'p.ref' => 'PaymentRef',
+			'p.amount' => 'AmountPayment', 'pf.amount' => 'AmountPaymentDistributedOnInvoice', 'p.datep' => 'DatePayment', 'p.num_paiement' => 'PaymentNumber',
+			'pt.code' => 'CodePaymentMode', 'pt.libelle' => 'LabelPaymentMode', 'p.note' => 'PaymentNote', 'p.fk_bank' => 'IdTransaction', 'ba.ref' => 'AccountRef'
 		);
 		if (!$uselocaltax1) {
 			unset($this->export_fields_array[$r]['f.localtax1']);
@@ -686,7 +696,7 @@ class modFacture extends DolibarrModules
 			unset($this->export_fields_array[$r]['f.localtax2']);
 		}
 
-		$this->export_help_array[$r] = array('f.paye'=>'InvoicePaidCompletelyHelp');
+		$this->export_help_array[$r] = array('f.paye' => 'InvoicePaidCompletelyHelp');
 		if (isModEnabled("multicurrency")) {
 			$this->export_fields_array[$r]['f.multicurrency_code'] = 'Currency';
 			$this->export_fields_array[$r]['f.multicurrency_tx'] = 'CurrencyRate';
@@ -700,29 +710,29 @@ class modFacture extends DolibarrModules
 			$this->export_fields_array[$r]['f.pos_source'] = 'POSTerminal';
 		}
 		$this->export_TypeFields_array[$r] = array(
-			's.rowid'=>'Numeric', 's.nom'=>'Text', 's.code_client'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text', 'c.code'=>'Text', 'cd.nom'=>'Text', 's.phone'=>'Text', 's.siren'=>'Text',
-			's.siret'=>'Text', 's.ape'=>'Text', 's.idprof4'=>'Text', 's.code_compta'=>'Text', 's.code_compta_fournisseur'=>'Text', 's.tva_intra'=>'Text',
-			'f.rowid'=>"Numeric", 'f.ref'=>"Text", 'f.ref_client'=>'Text', 'f.fk_facture_source'=>'Numeric', 'f.type'=>"Numeric", 'f.datec'=>"Date", 'f.datef'=>"Date", 'f.date_lim_reglement'=>"Date",
-			'f.fk_cond_reglement'=>'Numeric', 'f.fk_mode_reglement'=>'Numeric',
-			'f.total_ht'=>"Numeric", 'f.total_ttc'=>"Numeric", 'f.total_tva'=>"Numeric", 'f.localtax1'=>'Numeric', 'f.localtax2'=>'Numeric', 'f.paye'=>"Boolean", 'f.fk_statut'=>'Status', 'f.close_code'=>'Text', 'f.close_note'=>'Text',
-			'none.rest'=>'NumericCompute',
-			'f.note_private'=>"Text", 'f.note_public'=>"Text", 'f.fk_user_author'=>'Numeric', 'uc.login'=>'Text', 'f.fk_user_valid'=>'Numeric', 'uv.login'=>'Text',
-			'pj.ref'=>'Text', 'pj.title'=>'Text', 'p.amount'=>'Numeric', 'pf.amount'=>'Numeric', 'p.rowid'=>'Numeric', 'p.ref'=>'Text', 'p.title'=>'Text', 'p.datep'=>'Date', 'p.num_paiement'=>'Numeric',
-			'p.fk_bank'=>'Numeric', 'p.note'=>'Text', 'pt.code'=>'Text', 'pt.libelle'=>'text', 'ba.ref'=>'Text'
+			's.rowid' => 'Numeric', 's.nom' => 'Text', 's.code_client' => 'Text', 's.address' => 'Text', 's.zip' => 'Text', 's.town' => 'Text', 'c.code' => 'Text', 'cd.nom' => 'Text', 's.phone' => 'Text', 's.siren' => 'Text',
+			's.siret' => 'Text', 's.ape' => 'Text', 's.idprof4' => 'Text', 's.code_compta' => 'Text', 's.code_compta_fournisseur' => 'Text', 's.tva_intra' => 'Text',
+			'f.rowid' => "Numeric", 'f.ref' => "Text", 'f.ref_client' => 'Text', 'f.fk_facture_source' => 'Numeric', 'f.type' => "Numeric", 'f.datec' => "Date", 'f.datef' => "Date", 'f.date_lim_reglement' => "Date",
+			'f.fk_cond_reglement' => 'Numeric', 'f.fk_mode_reglement' => 'Numeric',
+			'f.total_ht' => "Numeric", 'f.total_ttc' => "Numeric", 'f.total_tva' => "Numeric", 'f.localtax1' => 'Numeric', 'f.localtax2' => 'Numeric', 'f.paye' => "Boolean", 'f.fk_statut' => 'Status', 'f.close_code' => 'Text', 'f.close_note' => 'Text',
+			'none.rest' => 'NumericCompute',
+			'f.note_private' => "Text", 'f.note_public' => "Text", 'f.fk_user_author' => 'Numeric', 'uc.login' => 'Text', 'f.fk_user_valid' => 'Numeric', 'uv.login' => 'Text',
+			'pj.ref' => 'Text', 'pj.title' => 'Text', 'p.amount' => 'Numeric', 'pf.amount' => 'Numeric', 'p.rowid' => 'Numeric', 'p.ref' => 'Text', 'p.title' => 'Text', 'p.datep' => 'Date', 'p.num_paiement' => 'Numeric',
+			'p.fk_bank' => 'Numeric', 'p.note' => 'Text', 'pt.code' => 'Text', 'pt.libelle' => 'text', 'ba.ref' => 'Text'
 		);
 		if (!empty($conf->cashdesk->enabled) || !empty($conf->takepos->enabled) || getDolGlobalString('INVOICE_SHOW_POS')) {
 			$this->export_fields_array[$r]['f.module_source'] = 'POSModule';
 			$this->export_fields_array[$r]['f.pos_source'] = 'POSTerminal';
 		}
 		$this->export_entities_array[$r] = array(
-			's.rowid'=>"company", 's.nom'=>'company', 's.code_client'=>'company', 's.address'=>'company', 's.zip'=>'company', 's.town'=>'company', 'c.code'=>'company', 'cd.nom'=>'company', 's.phone'=>'company',
-			's.siren'=>'company', 's.siret'=>'company', 's.ape'=>'company', 's.idprof4'=>'company', 's.code_compta'=>'company', 's.code_compta_fournisseur'=>'company',
-			's.tva_intra'=>'company', 'pj.ref'=>'project', 'pj.title'=>'project', 'p.rowid'=>'payment', 'p.ref'=>'payment', 'p.amount'=>'payment', 'pf.amount'=>'payment', 'p.datep'=>'payment',
-			'p.num_paiement'=>'payment', 'pt.code'=>'payment', 'pt.libelle'=>'payment', 'p.note'=>'payment', 'f.fk_user_author'=>'user', 'uc.login'=>'user',
-			'f.fk_user_valid'=>'user', 'uv.login'=>'user', 'p.fk_bank'=>'account', 'ba.ref'=>'account'
+			's.rowid' => "company", 's.nom' => 'company', 's.code_client' => 'company', 's.address' => 'company', 's.zip' => 'company', 's.town' => 'company', 'c.code' => 'company', 'cd.nom' => 'company', 's.phone' => 'company',
+			's.siren' => 'company', 's.siret' => 'company', 's.ape' => 'company', 's.idprof4' => 'company', 's.code_compta' => 'company', 's.code_compta_fournisseur' => 'company',
+			's.tva_intra' => 'company', 'pj.ref' => 'project', 'pj.title' => 'project', 'p.rowid' => 'payment', 'p.ref' => 'payment', 'p.amount' => 'payment', 'pf.amount' => 'payment', 'p.datep' => 'payment',
+			'p.num_paiement' => 'payment', 'pt.code' => 'payment', 'pt.libelle' => 'payment', 'p.note' => 'payment', 'f.fk_user_author' => 'user', 'uc.login' => 'user',
+			'f.fk_user_valid' => 'user', 'uv.login' => 'user', 'p.fk_bank' => 'account', 'ba.ref' => 'account'
 		);
-		$this->export_special_array[$r] = array('none.rest'=>'getRemainToPay');
-		$this->export_dependencies_array[$r] = array('payment'=>'p.rowid', 'none.rest'=>array('f.rowid', 'f.total_ttc', 'f.close_code')); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them, or just to have field we need
+		$this->export_special_array[$r] = array('none.rest' => 'getRemainToPay');
+		$this->export_dependencies_array[$r] = array('payment' => 'p.rowid', 'none.rest' => array('f.rowid', 'f.total_ttc', 'f.close_code')); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them, or just to have field we need
 		$keyforselect = 'facture';
 		$keyforelement = 'invoice';
 		$keyforaliasextra = 'extra';

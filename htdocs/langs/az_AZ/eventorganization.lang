@@ -5,32 +5,22 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModuleEventOrganizationName = Tədbirin təşkili
 EventOrganizationDescription = Modul Layihəsi vasitəsilə Tədbirlərin Təşkili
 EventOrganizationDescriptionLong= Tədbirin təşkilini idarə edin (təklif, səs və ya qeydiyyat üçün açıq səhifələri olan şou, konfranslar, iştirakçılar və ya məruzəçilər)
-#
-# Menu
-#
 EventOrganizationMenuLeft = Təşkil olunan tədbirlər
 EventOrganizationConferenceOrBoothMenuLeft = Konfrans və ya stend
-
 PaymentEvent=Tədbirin ödənilməsi
-
-#
+EventFee=Event fee
 # Admin page
-#
 NewRegistration=Qeydiyyat
 EventOrganizationSetup=Tədbirin təşkili
 EventOrganization=Tədbirin təşkili
@@ -48,13 +38,10 @@ EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Natiqlərə "E-poçt göndər" m
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = İştirakçılar siyahısında "E-poçt göndər" masajından e-poçt göndərərkən istifadə ediləcək e-poçt şablonu
 EVENTORGANIZATION_FILTERATTENDEES_CAT = İştirakçı yaratmaq/əlavə etmək formasında, kateqoriyadakı üçüncü tərəflərin siyahısını məhdudlaşdırır
 EVENTORGANIZATION_FILTERATTENDEES_TYPE = İştirakçı yaratmaq/əlavə etmək formasında üçüncü tərəflərin siyahısını təbiətlə üçüncü tərəflərə məhdudlaşdırır
-
-#
 # Object
-#
 OrganizedEvent=Təşkil olunmuş tədbir
 EventOrganizationConfOrBooth= Konfrans və ya stend
-EventOrganizationConfOrBoothes=Konfranslar və ya stendlər
+EventOrganizationConfOrBoothes=Conferences or Booths
 ManageOrganizeEvent = Tədbirin təşkilini idarə edin
 ConferenceOrBooth = Konfrans və ya stend
 ConferenceOrBoothTab = Konfrans və ya stend
@@ -63,10 +50,7 @@ DateOfRegistration = Qeydiyyat tarixi
 ConferenceOrBoothAttendee = Konfrans və ya Stend İştirakçısı
 ApplicantOrVisitor=Ərizəçi və ya ziyarətçi
 Speaker=Natiq
-
-#
 # Template Mail
-#
 YourOrganizationEventConfRequestWasReceived = Konfrans üçün müraciətiniz qəbul edildi
 YourOrganizationEventBoothRequestWasReceived = Stend üçün müraciətiniz qəbul edildi
 EventOrganizationEmailAskConf = Konfrans üçün müraciət
@@ -76,10 +60,7 @@ EventOrganizationEmailRegistrationPayment = Tədbir üçün qeydiyyat
 EventOrganizationMassEmailAttendees = İştirakçılarla ünsiyyət
 EventOrganizationMassEmailSpeakers = Natiqlərlə ünsiyyət
 ToSpeakers=Natiqlərə
-
-#
 # Event
-#
 AllowUnknownPeopleSuggestConf=İnsanlara konfranslar təklif etməyə icazə verin
 AllowUnknownPeopleSuggestConfHelp=Naməlum insanlara etmək istədikləri konfransı təklif etmələrinə icazə verin
 AllowUnknownPeopleSuggestBooth=İnsanlara stend üçün müraciət etməyə icazə verin
@@ -91,27 +72,26 @@ PriceOfBoothHelp=Bir stenddə dayanmaq üçün abunə qiyməti
 EventOrganizationICSLinkProject=Link ICS for the event
 EventOrganizationICSLink=Konfranslar üçün ICS-i əlaqələndirin
 ConferenceOrBoothInformation=Konfrans və ya Booth məlumatı
+ConferenceOrBoothFormat=Conference or booth mode
+ConferenceOrBoothFormatID=ID of conference or booth mode
+ConferenceOrBoothFormatCode=Code of conference or booth mode
+ConferenceOrBoothFormatLabel=Label of conference or booth mode
 Attendees=İştirakçılar
-ListOfAttendeesOfEvent=Tədbir layihəsinin iştirakçılarının siyahısı
+ListOfAttendeesOfEvent=List of attendees of event projects
+ListOfConfOrBoothOfEvent=List of conferences or booths of event projects
 DownloadICSLink = ICS linkini yükləyin
 EVENTORGANIZATION_SECUREKEY = Konfrans təklif etmək üçün ictimai qeydiyyat səhifəsinin açarını təmin etmək üçün toxum
 SERVICE_BOOTH_LOCATION = Stand yeri haqqında faktura sırası üçün istifadə edilən xidmət
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Tədbirə iştirakçı abunəliyi haqqında faktura sırası üçün istifadə edilən xidmət
 NbVotes=Səslərin sayı
-
-#
 # Status
-#
 EvntOrgDraft = Qaralama
 EvntOrgSuggested = Təklif olunur
 EvntOrgConfirmed = Təsdiq edildi
 EvntOrgNotQualified = İxtisaslı deyil
 EvntOrgDone = Bitdi
 EvntOrgCancelled = Ləğv edildi
-
-#
 # Other
-#
 SuggestForm = Təklif səhifəsi
 SuggestOrVoteForConfOrBooth = Təklif və ya səs vermək üçün səhifə
 EvntOrgRegistrationHelpMessage = Burada siz konfransa səs verə və ya tədbir üçün yenisini təklif edə bilərsiniz. Tədbir zamanı stend sahibi olmaq üçün də müraciət edə bilərsiniz.
@@ -134,6 +114,7 @@ EventType = Hadisə növü
 LabelOfBooth=Stend etiketi
 LabelOfconference=Konfrans etiketi
 ConferenceIsNotConfirmed=Qeydiyyat mövcud deyil, konfrans hələ təsdiqlənməyib
+EventRegistrationAreClosed=Event registrations are closed
 DateMustBeBeforeThan=%s %s-dan əvvəl olmalıdır
 DateMustBeAfterThan=%s %s-dan sonra olmalıdır
 MaxNbOfAttendeesReached=İştirakçıların maksimum sayına çatıldı
@@ -175,6 +156,7 @@ DateEndEvent=Tədbirin bitmə tarixi
 ModifyStatus=Vəziyyəti dəyişdirin
 ConfirmModifyStatus=Status dəyişikliyini təsdiqləyin
 ConfirmModifyStatusQuestion=%s seçilmiş qeydləri dəyişdirmək istədiyinizə əminsiniz?
-RecordsUpdated = %s Qeydlər yeniləndi
-RecordUpdated = Qeyd yeniləndi
-NoRecordUpdated = Heç bir qeyd yenilənmədi
+RecordsUpdated=%s Qeydlər yeniləndi
+RecordUpdated=Qeyd yeniləndi
+NoRecordUpdated=Heç bir qeyd yenilənmədi
+ProfitPerValidatedAttendee=Profit per attendee

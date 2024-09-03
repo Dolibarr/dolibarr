@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2018	   Nicolas ZABOURI 	<info@inovea-conseil.com>
- * Copyright (C) 2019 Maxime Kohlhaas <maxime@atm-consulting.fr>
- * Copyright (C) 2021 Ferran Marcet <fmarcet@2byte.es>
+/* Copyright (C) 2004-2018 	Laurent Destailleur  		<eldy@users.sourceforge.net>
+ * Copyright (C) 2018	   	Nicolas ZABOURI 			<info@inovea-conseil.com>
+ * Copyright (C) 2019 		Maxime Kohlhaas 			<maxime@atm-consulting.fr>
+ * Copyright (C) 2021 		Ferran Marcet 				<fmarcet@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Rafael San José				<rsanjose@alxarafe.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -282,7 +283,7 @@ class modBom extends DolibarrModules
 		$keyforelement = 'bom';
 		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
 		$keyforclass = 'BOMLine';
-		$keyforclassfile = '/bom/class/bom.class.php';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$keyforclassfile = '/bom/class/bom.class.php';
 		$keyforelement = 'bomline';
 		$keyforalias = 'tl';
 		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
@@ -329,7 +330,7 @@ class modBom extends DolibarrModules
 			'b.efficiency'        => 'Efficiency',
 			'b.duration'          => 'Duration',
 			'b.date_creation'     => 'DateCreation',
-			'b.date_valid'        => 'DateValid',
+			'b.date_valid'        => 'DateValidation',
 			'b.fk_user_modif'     => 'ModifiedById',
 			'b.fk_user_valid'     => 'ValidatedById',
 			'b.model_pdf'         => 'Model',
@@ -455,6 +456,8 @@ class modBom extends DolibarrModules
 	{
 		global $conf, $langs;
 
+		$result = $this->_load_tables('/install/mysql/', 'bom');
+
 		// Create extrafields
 		//include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		//$extrafields = new ExtraFields($this->db);
@@ -464,6 +467,10 @@ class modBom extends DolibarrModules
 		//$result4=$extrafields->addExtraField('myattr4', "New Attr 4 label", 'select',  1,  3, 'thirdparty',   0, 1, '', array('options'=>array('code1'=>'Val1','code2'=>'Val2','code3'=>'Val3')), 1,'', 0, 0, '', '', 'mrp', '$conf->bom->enabled');
 		//$result5=$extrafields->addExtraField('myattr5', "New Attr 5 label", 'text',    1, 10, 'user',         0, 0, '', '', 1, '', 0, 0, '', '', 'mrp', '$conf->bom->enabled');
 
+		$result = $this->_load_tables('/install/mysql/', 'bom');
+		if ($result < 0) {
+			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
+		}
 
 		// Permissions
 		$this->remove($options);

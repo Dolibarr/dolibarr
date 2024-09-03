@@ -20,9 +20,9 @@
  */
 
 /**
- * 	\file       htdocs/compta/bank/document.php
+ * 	\file       htdocs/compta/bankaccount_statement_document.php
  * 	\ingroup    banque
- * 	\brief      Page de gestion des documents attaches a un compte bancaire
+ * 	\brief      Page to manage document attached to a bank receipt
  */
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/bank.lib.php";

@@ -152,7 +152,7 @@ if (!empty($action) && empty($cancel)) {
 
 $form = new Form($db);
 
-llxHeader("", "", $langs->trans("DynamicPrice"));
+llxHeader("", "", $langs->trans("DynamicPrice"), '', 0, 0, '', '', '', 'mod-product page-admin_dynamic_prices');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("DynamicPriceConfiguration"), $linkback, 'title_setup');

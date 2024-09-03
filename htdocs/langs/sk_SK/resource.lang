@@ -5,32 +5,34 @@ DeleteResource=Zmazať zdro
 ConfirmDeleteResourceElement=Potvrďte zmazanie zdroja pre túto časť
 NoResourceInDatabase=Žiadne zdroje
 NoResourceLinked=Žiadne zdroje poriradené
-
+ActionsOnResource=Udalosti o tomto zdroji
 ResourcePageIndex=Zoznam zdojov
 ResourceSingular=Zdroj
 ResourceCard=Karta Zdroja
+NewResource=Nový zdroj
 AddResource=Vytvoriť zdroj
 ResourceFormLabel_ref=Meno zdroja
-ResourceType=Typ zdroja
 ResourceFormLabel_description=Popis zdroja
-
+ResourceType=Typ zdroja
+ResourceTypeID=Resource type ID
+ResourceTypeLabel=Resource type label
 ResourcesLinkedToElement=Zdroje priradené pre časť
 
 ShowResource=Zobraziť zdroj
-
 ResourceElementPage=Čiastočné zdroje
 ResourceCreatedWithSuccess=Zdroj úspešne vytvorený
 RessourceLineSuccessfullyDeleted=Riadok zdroja úspešne zmazaný
 RessourceLineSuccessfullyUpdated=Riadok zdroja úspešne aktualizovaný
 ResourceLinkedWithSuccess=Rdroj úspešne priradený
-
 ConfirmDeleteResource=Potvrďte zmazanie zdroja
 RessourceSuccessfullyDeleted=Zdroj úspešne zmazaný
 DictionaryResourceType=Typ zdroja
-
 SelectResource=Vybrať zdroj
-
-IdResource=Id resource
-AssetNumber=Serial number
-ResourceTypeCode=Resource type code
+IdResource=ID zdroja
+AssetNumber=Sériové číslo
+ResourceTypeCode=Kód typu zdroja
 ImportDataset_resource_1=Zdroje
+ErrorResourcesAlreadyInUse=Niektoré zdroje sa používajú
+ErrorResourceUseInEvent=%s použité v udalosti %s
+MaxUsers=Maximálny počet používateľov (miesta, miesta atď.)
+MaxUsersLabel=Maximum users

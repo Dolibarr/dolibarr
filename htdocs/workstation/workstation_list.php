@@ -64,7 +64,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Workstation($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->workstation->dir_output.'/temp/massgeneration/'.$user->id;
@@ -119,7 +119,7 @@ foreach ($object->fields as $key => $val) {
 		$arrayfields['t.'.$key] = array(
 			'label' => $val['label'],
 			'checked' => (($visible < 0) ? 0 : 1),
-			'enabled' => (abs($visible) != 3 && (int) dol_eval($val['enabled'], 1)),
+			'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
 			'position' => $val['position'],
 			'help' => isset($val['help']) ? $val['help'] : ''
 		);
@@ -129,7 +129,7 @@ foreach ($object->fields as $key => $val) {
 $arrayfields['wug.fk_usergroup'] = array(
 	'label' => $langs->trans('UserGroups'),
 	'checked' => (($visible < 0) ? 0 : 1),
-	'enabled' => (abs($visible) != 3 && (int) dol_eval($val['enabled'], 1)),
+	'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
 	'position' => 1000,
 	'help' => empty($val['help']) ? '' : $val['help'],
 	'csslist' => 'minwidth100'
@@ -139,7 +139,7 @@ $arrayfields['wug.fk_usergroup'] = array(
 $arrayfields['wr.fk_resource'] = array(
 	'label'=>$langs->trans('Resources'),
 	'checked'=>(($visible < 0) ? 0 : 1),
-	'enabled'=>(abs($visible) != 3 && (int) dol_eval($val['enabled'], 1, 1, '1')),
+	'enabled'=>(abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
 	'position'=>1001,
 	'help' => empty($val['help']) ? '' : $val['help']
 );
@@ -414,7 +414,7 @@ foreach ($search as $key => $val) {
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
-$parameters = array();
+$parameters = array('param' => &$param);
 $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
 

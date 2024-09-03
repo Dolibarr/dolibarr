@@ -8,7 +8,7 @@
  * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018		Nicolas ZABOURI 		<info@inovea-conseil.com>
- * Copyright (C) 2021-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -112,16 +112,25 @@ if (!GETPOST('buttonreset', 'alpha')) {
 $dirins = DOL_DOCUMENT_ROOT.'/custom';
 $urldolibarrmodules = 'https://www.dolistore.com/';
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('adminmodules', 'globaladmin'));
 
-// Execution Time
-$max_execution_time_for_deploy = (!getDolGlobalString('MODULE_UPLOAD_MAX_EXECUTION_TIME') ? 300 : $conf->global->MODULE_UPLOAD_MAX_EXECUTION_TIME); // 5mn if not defined
+// Increase limit of time. Works only if we are not in safe mode
+$max_execution_time_for_deploy = getDolGlobalInt('MODULE_UPLOAD_MAX_EXECUTION_TIME', 300); // 5mn if not defined
+if (!empty($max_execution_time_for_deploy)) {
+	$err = error_reporting();
+	error_reporting(0); // Disable all errors
+	//error_reporting(E_ALL);
+	@set_time_limit($max_execution_time_for_deploy);
+	error_reporting($err);
+}
+// Other method - TODO is this required ?
 $max_time = @ini_get("max_execution_time");
 if ($max_time && $max_time < $max_execution_time_for_deploy) {
 	dol_syslog("max_execution_time=".$max_time." is lower than max_execution_time_for_deploy=".$max_execution_time_for_deploy.". We try to increase it dynamically.");
 	@ini_set("max_execution_time", $max_execution_time_for_deploy); // This work only if safe mode is off. also web servers has timeout of 300
 }
+
 
 $dolibarrdataroot = preg_replace('/([\\/]+)$/i', '', DOL_DATA_ROOT);
 $allowonlineinstall = true;
@@ -365,7 +374,7 @@ if (!dol_is_dir($dirins)) {
 $dirins_ok = (dol_is_dir($dirins));
 
 $help_url = 'EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
-llxHeader('', $langs->trans("Setup"), $help_url, '', '', '', $morejs, $morecss, 0, 0);
+llxHeader('', $langs->trans("Setup"), $help_url, '', 0, 0, $morejs, $morecss, 0, 'mod-admin page-modules');
 
 
 // Search modules dirs
@@ -455,7 +464,7 @@ foreach ($modulesdir as $dir) {
 								}
 								ksort($arrayofnatures);
 
-								// Define array $categ with categ with at least one qualified module
+								// Define an array $categ with categ with at least one qualified module
 								$filename[$i] = $modName;
 								$modules[$modName] = $objMod;
 
@@ -558,15 +567,13 @@ asort($orders);
 
 $nbofactivatedmodules = count($conf->modules);
 
+// Define $nbmodulesnotautoenabled - TODO This code is at different places
 $nbmodulesnotautoenabled = count($conf->modules);
-if (in_array('fckeditor', $conf->modules)) {
-	$nbmodulesnotautoenabled--;
-}
-if (in_array('export', $conf->modules)) {
-	$nbmodulesnotautoenabled--;
-}
-if (in_array('import', $conf->modules)) {
-	$nbmodulesnotautoenabled--;
+$listofmodulesautoenabled = array('agenda', 'fckeditor', 'export', 'import');
+foreach ($listofmodulesautoenabled as $moduleautoenable) {
+	if (in_array($moduleautoenable, $conf->modules)) {
+		$nbmodulesnotautoenabled--;
+	}
 }
 
 print load_fiche_titre($langs->trans("ModulesSetup"), '', 'title_setup');
@@ -844,19 +851,15 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			$versiontrans .= $objMod->getVersion(1);
 		}
 
-		if ($objMod->isCoreOrExternalModule() == 'external'
-			&& (
-				$action == 'checklastversion'
-				// This is a bad practice to activate a check on an external access during the building of the admin page. 1 external module can hang the application.
-				// Adding a cron job could be a good idea: see DolibarrModules::checkForUpdate()
-				|| getDolGlobalString('CHECKLASTVERSION_EXTERNALMODULE')
-			)
-		) {
+		if ($objMod->isCoreOrExternalModule() == 'external' && ($action == 'checklastversion' || getDolGlobalString('CHECKLASTVERSION_EXTERNALMODULE'))) {
+			// Setting CHECKLASTVERSION_EXTERNALMODULE to on is a bad practice to activate a check on an external access during the building of the admin page.
+			// 1 external module can hang the application.
+			// Adding a cron job could be a good idea: see DolibarrModules::checkForUpdate()
 			$checkRes = $objMod->checkForUpdate();
 			if ($checkRes > 0) {
-				setEventMessage($objMod->getName().' : '.$versiontrans.' -> '.$objMod->lastVersion);
+				setEventMessages($objMod->getName().' : '.$versiontrans.' -> '.$objMod->lastVersion, null, 'warnings');
 			} elseif ($checkRes < 0) {
-				setEventMessage($objMod->getName().' '.$langs->trans('CheckVersionFail'), 'warnings');
+				setEventMessages($objMod->getName().' '.$langs->trans('CheckVersionFail'), null, 'errors');
 			}
 		}
 
@@ -885,7 +888,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			if (!empty($objMod->disabled)) {
 				$codeenabledisable .= $langs->trans("Disabled");
 			} elseif (!empty($objMod->always_enabled) || ((isModEnabled('multicompany') && $objMod->core_enabled) && ($user->entity || $conf->entity != 1))) {
-				// @phan-suppress-next-line PhanUndeclaredMethodCall
+				// @phan-suppress-next-line PhanUndeclaredMethod
 				if (method_exists($objMod, 'alreadyUsed') && $objMod->alreadyUsed()) {
 					$codeenabledisable .= $langs->trans("Used");
 				} else {
@@ -896,7 +899,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 					$disableSetup++;
 				}
 			} else {
-				// @phan-suppress-next-line PhanUndeclaredMethodCall
+				// @phan-suppress-next-line PhanUndeclaredMethod
 				if (!empty($objMod->warnings_unactivation[$mysoc->country_code]) && method_exists($objMod, 'alreadyUsed') && $objMod->alreadyUsed()) {
 					$codeenabledisable .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;token='.newToken().'&amp;module_position='.$module_position.'&amp;action=reset_confirm&amp;confirm_message_code='.urlencode($objMod->warnings_unactivation[$mysoc->country_code]).'&amp;value='.$modName.'&amp;mode='.$mode.$param.'">';
 					$codeenabledisable .= img_picto($langs->trans("Activated").($warningstring ? ' '.$warningstring : ''), 'switch_on');
@@ -1085,7 +1088,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 
 	if ($action == 'checklastversion') {
 		if ($foundoneexternalmodulewithupdate) {
-			setEventMessages($langs->trans("ModuleUpdateAvailable"), null, 'mesgs');
+			setEventMessages($langs->trans("ModuleUpdateAvailable"), null, 'warnings');
 		} else {
 			setEventMessages($langs->trans("NoExternalModuleWithUpdate"), null, 'mesgs');
 		}

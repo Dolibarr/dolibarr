@@ -39,7 +39,7 @@ $langs->loadLangs(array("suppliers", "orders"));
 
 $hookmanager = new HookManager($db);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('orderssuppliersindex'));
 
 $max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
@@ -256,7 +256,7 @@ if ($resql) {
 
 		$userstatic = new User($db);
 		$userstatic->id = $obj->rowid;
-		$userstatic->getrights('fournisseur');
+		$userstatic->loadRights('fournisseur');
 
 		if ($userstatic->hasRight('fournisseur', 'commande', 'approuver')) {
 			print '<tr class="oddeven">';
@@ -309,7 +309,11 @@ if ($resql) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<th colspan="4">'.$langs->trans("LastModifiedOrders", $max).'</th></tr>';
+	print '<th colspan="4">'.$langs->trans("LastModifiedOrders", $max).' ';
+	print '<a href="'.DOL_URL_ROOT.'/fourn/commande/list.php?sortfield=cf.tms&sortorder=DESC">';
+	print '<span class="badge">...</span>';
+	print '</a>';
+	print '</th></tr>';
 
 	$num = $db->num_rows($resql);
 	if ($num) {

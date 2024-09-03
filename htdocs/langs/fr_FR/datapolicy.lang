@@ -39,12 +39,7 @@ DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Ni prospect/Ni client
 DATAPOLICY_CONTACT_FOURNISSEUR = Fournisseur
 DATAPOLICY_ADHERENT = Adhérent
 DATAPOLICY_Tooltip_SETUP = Type de contact - Indiquez vos choix pour chaque type.
-DATAPOLICYMail = Configuration des e-mails
-DATAPOLICYSUBJECTMAIL = Objet du courriel
-DATAPOLICYCONTENTMAIL = Contenu de l'e-mail
 DATAPOLICYSUBSITUTION = Vous pouvez utiliser les variables suivantes dans votre email (LINKACCEPT permet de créer un lien enregistrant l'accord de la personne, LINKREFUSED permet d'enregistrer le refus de la personne) :
-DATAPOLICYACCEPT = Message après accord
-DATAPOLICYREFUSE = Message après désaccord
 SendAgreementText = Vous pouvez envoyer un e-mail RGPD à tous vos contacts concernés (qui n'ont pas encore reçu d'e-mail et pour lesquels vous n'avez rien enregistré concernant leur accord RGPD). Pour ce faire, utilisez le bouton suivant.
 SendAgreement = Envoyer des emails
 AllAgreementSend = Tous les e-mails ont été envoyés
@@ -61,12 +56,6 @@ DATAPOLICY_opposition_traitement = S'oppose au traitement de ses données person
 DATAPOLICY_opposition_prospection = S'oppose au traitement de ses données personnelles à des fins de prospection
 
 #
-# Popup
-#
-DATAPOLICY_POPUP_ANONYME_TITLE = Anonymiser un tiers
-DATAPOLICY_POPUP_ANONYME_TEXTE = Vous ne pouvez pas supprimer ce contact de Dolibarr car il y a des éléments liés. Conformément au RGPD, vous rendrez toutes ces données anonymes pour respecter vos obligations. Voulez-vous continuer ?
-
-#
 # Button for portability
 #
 DATAPOLICY_PORTABILITE = Portabilité RGPD
@@ -80,7 +69,6 @@ ANONYMISER_AT = Anonymisé le %s
 
 DATAPOLICY_date = Date d'accord/désaccord RGPD
 DATAPOLICY_send = Date d'envoi de l'e-mail d'accord
-DATAPOLICY_SEND = Envoyer un e-mail RGPD
 MailSent = L'email a été envoyé
 
 # ERROR

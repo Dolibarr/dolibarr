@@ -420,7 +420,7 @@ class modSociete extends DolibarrModules
 		}
 		$keyforselect = 'socpeople';
 		$keyforelement = 'contact';
-		$keyforaliasextra = 'extra';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		$keyforselect = 'societe';
 		$keyforelement = 'company';
@@ -448,6 +448,88 @@ class modSociete extends DolibarrModules
 			$this->export_sql_end[$r] .= ')';
 		}
 
+		// Export list of third-party payment methods
+		$r++;
+		$this->export_code[$r] = $this->rights_class.'_'.$r;
+		$this->export_label[$r] = 'ExportDataset_company_3';
+		$this->export_icon[$r] = 'account';
+		$this->export_permission[$r] = array(array("societe", "contact", "export"), array("societe", "thirdparty_paymentinformation_advance", "write"));
+		$this->export_fields_array[$r] = array(
+			'b.rowid' => "IdPaymentMode",
+			'b.fk_soc' => "ThirdPartyName",
+			'b.label' => 'Label',
+			'b.bank' => 'Bank',
+			'b.code_banque' => 'Code banque',
+			'b.code_guichet' => 'Code guichet',
+			'b.number' => 'Number',
+			'b.cle_rib' => 'Cle rib',
+			'b.bic' => 'Bic',
+			'b.iban_prefix' => 'Iban prefix',
+			'b.domiciliation' => 'Domiciliation',
+			'b.proprio' => 'Proprio',
+			'b.owner_address' => 'Owner address',
+			'b.default_rib' => 'Default rib',
+			'b.rum' => 'Rum',
+			'b.date_rum' => 'Date rum',
+			'b.frstrecur' => 'Frstrecur',
+			'b.type' => 'Type',
+			'b.status' => "status",
+			'b.datec' => "DateCreation",
+			'b.tms' => "DateLastModification"
+		);
+		// Add multicompany field
+		if (getDolGlobalString('MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED')) {
+			if (isModEnabled('multicompany')) {
+				$nbofallowedentities = count(explode(',', getEntity('societe')));
+				if ($nbofallowedentities > 1) {
+					$this->export_fields_array[$r]['s.entity'] = 'Entity';
+				}
+			}
+		}
+		$this->export_examplevalues_array[$r] = array();
+		$this->export_TypeFields_array[$r] = array(
+			's.nom' => "Text",
+			's.entity' => "List:entity:label:rowid",
+			'b.rowid' => "Numeric",
+			'b.label' => 'Text',
+			'b.bank' => 'Text',
+			'b.code_banque' => 'Text',
+			'b.code_guichet' => 'Text',
+			'b.number' => 'Text',
+			'b.cle_rib' => 'Text',
+			'b.bic' => 'Text',
+			'b.iban_prefix' => 'Text',
+			'b.domiciliation' => 'Text',
+			'b.proprio' => 'Text',
+			'b.owner_address' => 'Text',
+			'b.default_rib' => 'Boolean"',
+			'b.rum' => 'Text',
+			'b.date_rum' => 'Date',
+			'b.frstrecur' => 'Text',
+			'b.type' => 'Text',
+			'b.status' => "Status",
+			'b.datec' => "Date",
+			'b.tms' => "Date"
+		);
+		$this->export_entities_array[$r] = array(
+			's.nom' => "company",
+			's.entity' => 'company'
+		); // We define here only fields that use another picto
+		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
+		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'societe_rib as b';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON b.fk_soc = s.rowid';
+		if (is_object($user) && !$user->hasRight('societe', 'client', 'voir')) {
+			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
+		}
+		$this->export_sql_end[$r] .= ' WHERE s.entity IN ('.getEntity('societe').')';
+		if (is_object($user) && !$user->hasRight('societe', 'client', 'voir')) {
+			$this->export_sql_end[$r] .= ' AND (sc.fk_user = '.((int) $user->id).' ';
+			if (getDolGlobalString('SOCIETE_EXPORT_SUBORDINATES_CHILDS')) {
+				$subordinatesids = $user->getAllChildIds();
+				$this->export_sql_end[$r] .= count($subordinatesids) > 0 ? ' OR (sc.fk_user IN ('.$this->db->sanitize(implode(',', $subordinatesids)).')' : '';
+			}
+			$this->export_sql_end[$r] .= ')';
+		}
 
 		// Imports
 		//--------
@@ -524,10 +606,12 @@ class modSociete extends DolibarrModules
 		if (isModEnabled('socialnetworks')) {
 			$sql = "SELECT code, label FROM ".MAIN_DB_PREFIX."c_socialnetworks WHERE active = 1";
 			$resql = $this->db->query($sql);
-			while ($obj = $this->db->fetch_object($resql)) {
-				$fieldname = 's.socialnetworks_'.$obj->code;
-				$fieldlabel = ucfirst($obj->label);
-				$this->import_fields_array[$r][$fieldname] = $fieldlabel;
+			if ($resql) {
+				while ($obj = $this->db->fetch_object($resql)) {
+					$fieldname = 's.socialnetworks_'.$obj->code;
+					$fieldlabel = ucfirst($obj->label);
+					$this->import_fields_array[$r][$fieldname] = $fieldlabel;
+				}
 			}
 		}
 		// Add extra fields
@@ -696,10 +780,12 @@ class modSociete extends DolibarrModules
 		if (isModEnabled('socialnetworks')) {
 			$sql = "SELECT code, label FROM ".MAIN_DB_PREFIX."c_socialnetworks WHERE active = 1";
 			$resql = $this->db->query($sql);
-			while ($obj = $this->db->fetch_object($resql)) {
-				$fieldname = 's.socialnetworks_'.$obj->code;
-				$fieldlabel = ucfirst($obj->label);
-				$this->import_updatekeys_array[$r][$fieldname] = $fieldlabel;
+			if ($resql) {
+				while ($obj = $this->db->fetch_object($resql)) {
+					$fieldname = 's.socialnetworks_'.$obj->code;
+					$fieldlabel = ucfirst($obj->label);
+					$this->import_updatekeys_array[$r][$fieldname] = $fieldlabel;
+				}
 			}
 		}
 		// Add profids as criteria to search duplicates
@@ -760,10 +846,12 @@ class modSociete extends DolibarrModules
 		if (isModEnabled('socialnetworks')) {
 			$sql = "SELECT code, label FROM ".MAIN_DB_PREFIX."c_socialnetworks WHERE active = 1";
 			$resql = $this->db->query($sql);
-			while ($obj = $this->db->fetch_object($resql)) {
-				$fieldname = 's.socialnetworks_'.$obj->code;
-				$fieldlabel = ucfirst($obj->label);
-				$this->import_fields_array[$r][$fieldname] = $fieldlabel;
+			if ($resql) {
+				while ($obj = $this->db->fetch_object($resql)) {
+					$fieldname = 's.socialnetworks_'.$obj->code;
+					$fieldlabel = ucfirst($obj->label);
+					$this->import_fields_array[$r][$fieldname] = $fieldlabel;
+				}
 			}
 		}
 		// Add extra fields
@@ -838,10 +926,12 @@ class modSociete extends DolibarrModules
 		if (isModEnabled('socialnetworks')) {
 			$sql = "SELECT code, label FROM ".MAIN_DB_PREFIX."c_socialnetworks WHERE active = 1";
 			$resql = $this->db->query($sql);
-			while ($obj = $this->db->fetch_object($resql)) {
-				$fieldname = 's.socialnetworks_'.$obj->code;
-				$fieldlabel = ucfirst($obj->label);
-				$this->import_updatekeys_array[$r][$fieldname] = $fieldlabel;
+			if ($resql) {
+				while ($obj = $this->db->fetch_object($resql)) {
+					$fieldname = 's.socialnetworks_'.$obj->code;
+					$fieldlabel = ucfirst($obj->label);
+					$this->import_updatekeys_array[$r][$fieldname] = $fieldlabel;
+				}
 			}
 		}
 

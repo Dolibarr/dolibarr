@@ -3,7 +3,7 @@
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2013		Florian Henry		<florian.henry@ope-concept.pro>
  * Copyright (C) 2016-2023	Charlene Benke		<charlene@patas-monkey.com>
- * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2023      	Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -80,7 +80,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr';
 
@@ -147,18 +147,18 @@ class doc_generic_project_odt extends ModelePDFProjects
 		}
 
 		$resarray = array(
-			$array_key.'_id'=>$object->id,
-			$array_key.'_ref'=>$object->ref,
-			$array_key.'_title'=>$object->title,
-			$array_key.'_description'=>$object->description,
-			$array_key.'_date_creation'=>dol_print_date($object->date_c, 'day'),
-			$array_key.'_date_modification'=>dol_print_date($object->date_m, 'day'),
-			$array_key.'_date_start'=>dol_print_date($object->date_start, 'day'),
-			$array_key.'_date_end'=>dol_print_date($object->date_end, 'day'),
-			$array_key.'_note_private'=>$object->note_private,
-			$array_key.'_note_public'=>$object->note_public,
-			$array_key.'_public'=>$object->public,
-			$array_key.'_statut'=>$object->getLibStatut()
+			$array_key.'_id' => $object->id,
+			$array_key.'_ref' => $object->ref,
+			$array_key.'_title' => $object->title,
+			$array_key.'_description' => $object->description,
+			$array_key.'_date_creation' => dol_print_date($object->date_c, 'day'),
+			$array_key.'_date_modification' => dol_print_date($object->date_m, 'day'),
+			$array_key.'_date_start' => dol_print_date($object->date_start, 'day'),
+			$array_key.'_date_end' => dol_print_date($object->date_end, 'day'),
+			$array_key.'_note_private' => $object->note_private,
+			$array_key.'_note_public' => $object->note_public,
+			$array_key.'_public' => $object->public,
+			$array_key.'_statut' => $object->getLibStatut()
 		);
 
 		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -183,23 +183,23 @@ class doc_generic_project_odt extends ModelePDFProjects
 	{
 		// phpcs:enable
 		$resarray = array(
-			'task_ref'=>$task->ref,
-			'task_fk_project'=>$task->fk_project,
-			'task_projectref'=>$task->projectref,
-			'task_projectlabel'=>$task->projectlabel,
-			'task_label'=>$task->label,
-			'task_description'=>$task->description,
-			'task_fk_parent'=>$task->fk_task_parent,
-			'task_duration'=>$task->duration,
-			'task_duration_hour'=>convertSecondToTime($task->duration, 'all'),
-			'task_planned_workload'=>$task->planned_workload,
-			'task_planned_workload_hour'=>convertSecondToTime($task->planned_workload, 'all'),
-			'task_progress'=>$task->progress,
-			'task_public'=>$task->public,
-			'task_date_start'=>dol_print_date($task->date_start, 'day'),
-			'task_date_end'=>dol_print_date($task->date_end, 'day'),
-			'task_note_private'=>$task->note_private,
-			'task_note_public'=>$task->note_public
+			'task_ref' => $task->ref,
+			'task_fk_project' => $task->fk_project,
+			'task_projectref' => $task->projectref,
+			'task_projectlabel' => $task->projectlabel,
+			'task_label' => $task->label,
+			'task_description' => $task->description,
+			'task_fk_parent' => $task->fk_task_parent,
+			'task_duration' => $task->duration,
+			'task_duration_hour' => convertSecondToTime($task->duration, 'all'),
+			'task_planned_workload' => $task->planned_workload,
+			'task_planned_workload_hour' => convertSecondToTime($task->planned_workload, 'all'),
+			'task_progress' => $task->progress,
+			'task_public' => $task->public,
+			'task_date_start' => dol_print_date($task->date_start, 'day'),
+			'task_date_end' => dol_print_date($task->date_end, 'day'),
+			'task_note_private' => $task->note_private,
+			'task_note_public' => $task->note_public
 		);
 
 		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -226,15 +226,15 @@ class doc_generic_project_odt extends ModelePDFProjects
 		$pc = 'projcontacts_'; // prefix to avoid typos
 
 		$ret = array(
-			$pc.'id'=>$contact['id'],
-			$pc.'rowid'=>$contact['rowid'],
-			$pc.'role'=>$contact['libelle'],
-			$pc.'lastname'=>$contact['lastname'],
-			$pc.'firstname'=>$contact['firstname'],
-			$pc.'civility'=>$contact['civility'],
-			$pc.'fullcivname'=>$contact['fullname'],
-			$pc.'socname'=>$contact['socname'],
-			$pc.'email'=>$contact['email']
+			$pc.'id' => $contact['id'],
+			$pc.'rowid' => $contact['rowid'],
+			$pc.'role' => $contact['libelle'],
+			$pc.'lastname' => $contact['lastname'],
+			$pc.'firstname' => $contact['firstname'],
+			$pc.'civility' => $contact['civility'],
+			$pc.'fullcivname' => $contact['fullname'],
+			$pc.'socname' => $contact['socname'],
+			$pc.'email' => $contact['email']
 			);
 
 		if ($contact['source'] == 'external') {
@@ -281,9 +281,9 @@ class doc_generic_project_odt extends ModelePDFProjects
 	{
 		// phpcs:enable
 		return array(
-			'projfile_name'=>$file['name'],
-			'projfile_date'=>dol_print_date($file['date'], 'day'),
-			'projfile_size'=>$file['size']
+			'projfile_name' => $file['name'],
+			'projfile_date' => dol_print_date($file['date'], 'day'),
+			'projfile_size' => $file['size']
 		);
 	}
 
@@ -301,13 +301,13 @@ class doc_generic_project_odt extends ModelePDFProjects
 		global $conf;
 
 		return array(
-			'projref_type'=>$refdetail['type'],
-			'projref_ref'=>$refdetail['ref'],
-			'projref_date'=>dol_print_date($refdetail['date'], 'day'),
-			'projref_socname'=>$refdetail['socname'],
-			'projref_amountht'=>price($refdetail['amountht'], 0, $outputlangs),
-			'projref_amountttc'=>price($refdetail['amountttc'], 0, $outputlangs),
-			'projref_status'=>$refdetail['status']
+			'projref_type' => $refdetail['type'],
+			'projref_ref' => $refdetail['ref'],
+			'projref_date' => dol_print_date($refdetail['date'], 'day'),
+			'projref_socname' => $refdetail['socname'],
+			'projref_amountht' => price($refdetail['amountht'], 0, $outputlangs),
+			'projref_amountttc' => price($refdetail['amountttc'], 0, $outputlangs),
+			'projref_status' => $refdetail['status']
 		);
 	}
 
@@ -347,18 +347,18 @@ class doc_generic_project_odt extends ModelePDFProjects
 	{
 		// phpcs:enable
 		return array(
-			'tasktime_rowid'=>$tasktime['rowid'],
-			'tasktime_task_date'=>dol_print_date($tasktime['task_date'], 'day'),
-			'tasktime_task_duration_sec'=>$tasktime['task_duration'],
-			'tasktime_task_duration'=>convertSecondToTime($tasktime['task_duration'], 'all'),
-			'tasktime_note'=>$tasktime['note'],
-			'tasktime_fk_user'=>$tasktime['fk_user'],
-			'tasktime_user_name'=>$tasktime['name'],
-			'tasktime_user_first'=>$tasktime['firstname'],
-			'tasktime_fullcivname'=>$tasktime['fullcivname'],
-			'tasktime_amountht'=>$tasktime['amountht'],
-			'tasktime_amountttc'=>$tasktime['amountttc'],
-			'tasktime_thm'=>$tasktime['thm'],
+			'tasktime_rowid' => $tasktime['rowid'],
+			'tasktime_task_date' => dol_print_date($tasktime['task_date'], 'day'),
+			'tasktime_task_duration_sec' => $tasktime['task_duration'],
+			'tasktime_task_duration' => convertSecondToTime($tasktime['task_duration'], 'all'),
+			'tasktime_note' => $tasktime['note'],
+			'tasktime_fk_user' => $tasktime['fk_user'],
+			'tasktime_user_name' => $tasktime['name'],
+			'tasktime_user_first' => $tasktime['firstname'],
+			'tasktime_fullcivname' => $tasktime['fullcivname'],
+			'tasktime_amountht' => $tasktime['amountht'],
+			'tasktime_amountttc' => $tasktime['amountttc'],
+			'tasktime_thm' => $tasktime['thm'],
 		);
 	}
 
@@ -374,9 +374,9 @@ class doc_generic_project_odt extends ModelePDFProjects
 	{
 		// phpcs:enable
 		return array(
-			'tasksfile_name'=>$file['name'],
-			'tasksfile_date'=>dol_print_date($file['date'], 'day'),
-			'tasksfile_size'=>$file['size']
+			'tasksfile_name' => $file['name'],
+			'tasksfile_date' => dol_print_date($file['date'], 'day'),
+			'tasksfile_size' => $file['size']
 		);
 	}
 
@@ -407,7 +407,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 		// List of directories area
 		$texte .= '<tr><td>';
 		$texttitle = $langs->trans("ListOfDirectories");
-		$listofdir = explode(',', preg_replace('/[\r\n]+/', ',', trim($conf->global->PROJECT_ADDON_PDF_ODT_PATH)));
+		$listofdir = explode(',', preg_replace('/[\r\n]+/', ',', trim(getDolGlobalString('PROJECT_ADDON_PDF_ODT_PATH'))));
 		$listoffiles = array();
 		foreach ($listofdir as $key => $tmpdir) {
 			$tmpdir = trim($tmpdir);
@@ -488,9 +488,9 @@ class doc_generic_project_odt extends ModelePDFProjects
 	 *	@param	Project		$object					Object source to build document
 	 *	@param	Translate	$outputlangs			Lang output object
 	 * 	@param	string		$srctemplatepath	    Full path of source filename for generator using a template file
-	 *	@return	int         						1 if OK, <=0 if KO
+	 *	@return	int<-1,1>      						1 if OK, <=0 if KO
 	 */
-	public function write_file($object, $outputlangs, $srctemplatepath)
+	public function write_file($object, $outputlangs, $srctemplatepath = '')
 	{
 		// phpcs:enable
 		global $user, $langs, $conf, $mysoc, $hookmanager;
@@ -596,12 +596,12 @@ class doc_generic_project_odt extends ModelePDFProjects
 
 				// Make substitution
 				$substitutionarray = array(
-				'__FROM_NAME__' => $this->emetteur->name,
-				'__FROM_EMAIL__' => $this->emetteur->email,
+					'__FROM_NAME__' => $this->emetteur->name,
+					'__FROM_EMAIL__' => $this->emetteur->email,
 				);
 				complete_substitutions_array($substitutionarray, $langs, $object);
 				// Call the ODTSubstitution hook
-				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$substitutionarray);
+				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs, 'substitutionarray' => &$substitutionarray);
 				$reshook = $hookmanager->executeHooks('ODTSubstitution', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
 				// Open and load template
@@ -610,10 +610,10 @@ class doc_generic_project_odt extends ModelePDFProjects
 					$odfHandler = new Odf(
 						$srctemplatepath,
 						array(
-						'PATH_TO_TMP'	  => $conf->project->dir_temp,
-						'ZIP_PROXY'		  => 'PclZipProxy', // PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
-						'DELIMITER_LEFT'  => '{',
-						'DELIMITER_RIGHT' => '}'
+							'PATH_TO_TMP'	  => $conf->project->dir_temp,
+							'ZIP_PROXY'		  => 'PclZipProxy', // PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
+							'DELIMITER_LEFT'  => '{',
+							'DELIMITER_RIGHT' => '}'
 						)
 					);
 				} catch (Exception $e) {
@@ -624,9 +624,6 @@ class doc_generic_project_odt extends ModelePDFProjects
 				// After construction $odfHandler->contentXml contains content and
 				// [!-- BEGIN row.lines --]*[!-- END row.lines --] has been replaced by
 				// [!-- BEGIN lines --]*[!-- END lines --]
-				//print html_entity_decode($odfHandler->__toString());
-				//print exit;
-
 
 				// Define substitution array
 				$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
@@ -646,7 +643,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 				complete_substitutions_array($tmparray, $outputlangs, $object);
 
 				// Call the ODTSubstitution hook
-				$parameters = array('odfHandler'=>&$odfHandler, 'file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$tmparray);
+				$parameters = array('odfHandler' => &$odfHandler, 'file' => $file, 'object' => $object, 'outputlangs' => $outputlangs, 'substitutionarray' => &$tmparray);
 				$reshook = $hookmanager->executeHooks('ODTSubstitution', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
 				foreach ($tmparray as $key => $value) {
@@ -686,8 +683,6 @@ class doc_generic_project_odt extends ModelePDFProjects
 						foreach ($tmparray as $key => $val) {
 							try {
 								$listlines->setVars($key, $val, true, 'UTF-8');
-							} catch (OdfException $e) {
-								dol_syslog($e->getMessage(), LOG_INFO);
 							} catch (SegmentException $e) {
 								dol_syslog($e->getMessage(), LOG_INFO);
 							}
@@ -728,8 +723,6 @@ class doc_generic_project_odt extends ModelePDFProjects
 								foreach ($tmparray as $key => $val) {
 									try {
 										$listlinestaskres->setVars($key, $val, true, 'UTF-8');
-									} catch (OdfException $e) {
-										dol_syslog($e->getMessage(), LOG_INFO);
 									} catch (SegmentException $e) {
 										dol_syslog($e->getMessage(), LOG_INFO);
 									}
@@ -772,8 +765,6 @@ class doc_generic_project_odt extends ModelePDFProjects
 								foreach ($tmparray as $key => $val) {
 									try {
 										$listlinestasktime->setVars($key, $val, true, 'UTF-8');
-									} catch (OdfException $e) {
-										dol_syslog($e->getMessage(), LOG_INFO);
 									} catch (SegmentException $e) {
 										dol_syslog($e->getMessage(), LOG_INFO);
 									}
@@ -805,8 +796,6 @@ class doc_generic_project_odt extends ModelePDFProjects
 								foreach ($tmparray as $key => $val) {
 									try {
 										$listlinestasktime->setVars($key, $val, true, 'UTF-8');
-									} catch (OdfException $e) {
-										dol_syslog($e->getMessage(), LOG_INFO);
 									} catch (SegmentException $e) {
 										dol_syslog($e->getMessage(), LOG_INFO);
 									}
@@ -831,8 +820,6 @@ class doc_generic_project_odt extends ModelePDFProjects
 							foreach ($tmparray as $key => $val) {
 								try {
 									$listtasksfiles->setVars($key, $val, true, 'UTF-8');
-								} catch (OdfException $e) {
-									dol_syslog($e->getMessage(), LOG_INFO);
 								} catch (SegmentException $e) {
 									dol_syslog($e->getMessage(), LOG_INFO);
 								}
@@ -866,8 +853,6 @@ class doc_generic_project_odt extends ModelePDFProjects
 						foreach ($tmparray as $key => $val) {
 							try {
 								$listlines->setVars($key, $val, true, 'UTF-8');
-							} catch (OdfException $e) {
-								dol_syslog($e->getMessage(), LOG_INFO);
 							} catch (SegmentException $e) {
 								dol_syslog($e->getMessage(), LOG_INFO);
 							}
@@ -913,8 +898,6 @@ class doc_generic_project_odt extends ModelePDFProjects
 							foreach ($tmparray as $key => $val) {
 								try {
 									$listlines->setVars($key, $val, true, 'UTF-8');
-								} catch (OdfException $e) {
-									dol_syslog($e->getMessage(), LOG_INFO);
 								} catch (SegmentException $e) {
 									dol_syslog($e->getMessage(), LOG_INFO);
 								}
@@ -1105,8 +1088,6 @@ class doc_generic_project_odt extends ModelePDFProjects
 									foreach ($tmparray as $key => $val) {
 										try {
 											$listlines->setVars($key, $val, true, 'UTF-8');
-										} catch (OdfException $e) {
-											dol_syslog($e->getMessage(), LOG_INFO);
 										} catch (SegmentException $e) {
 											dol_syslog($e->getMessage(), LOG_INFO);
 										}
@@ -1136,7 +1117,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 				}
 
 				// Call the beforeODTSave hook
-				$parameters = array('odfHandler'=>&$odfHandler, 'file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$tmparray);
+				$parameters = array('odfHandler' => &$odfHandler, 'file' => $file, 'object' => $object, 'outputlangs' => $outputlangs, 'substitutionarray' => &$tmparray);
 				$reshook = $hookmanager->executeHooks('beforeODTSave', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
 
@@ -1157,14 +1138,14 @@ class doc_generic_project_odt extends ModelePDFProjects
 						return -1;
 					}
 				}
-				$parameters = array('odfHandler'=>&$odfHandler, 'file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$tmparray);
+				$parameters = array('odfHandler' => &$odfHandler, 'file' => $file, 'object' => $object, 'outputlangs' => $outputlangs, 'substitutionarray' => &$tmparray);
 				$reshook = $hookmanager->executeHooks('afterODTCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
 				dolChmod($file);
 
 				$odfHandler = null; // Destroy object
 
-				$this->result = array('fullpath'=>$file);
+				$this->result = array('fullpath' => $file);
 
 				return 1; // Success
 			} else {

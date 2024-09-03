@@ -3,9 +3,10 @@
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2015 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2018      Charlene Benke       <charlie@patas-monkey.com>
+ * Copyright (C) 2018-2024 Charlene Benke       <charlene@patas-monkey.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
-*
+ * Copyright (C) 2024      Frédéric France      <frederic.france@free.fr>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -122,7 +123,6 @@ function getServerTimeZoneInt($refgmtdate = 'now')
  */
 function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforendofmonth = 0)
 {
-	global $conf;
 	if (empty($duration_value)) {
 		return $time;
 	}
@@ -274,7 +274,7 @@ function convertSecondToTime($iSecond, $format = 'all', $lengthOfDay = 86400, $l
 			if ($sDay) {
 				if ($sDay >= $lengthOfWeek) {
 					$sWeek = (int) (($sDay - $sDay % $lengthOfWeek) / $lengthOfWeek);
-					$sDay = $sDay % $lengthOfWeek;
+					$sDay %= $lengthOfWeek;
 					$weekTranslate = $langs->trans("DurationWeek");
 					if ($sWeek >= 2) {
 						$weekTranslate = $langs->trans("DurationWeeks");
@@ -306,7 +306,7 @@ function convertSecondToTime($iSecond, $format = 'all', $lengthOfDay = 86400, $l
 		$sTime = dol_print_date($iSecond, '%H', true);
 	} elseif ($format == 'fullhour') {
 		if (!empty($iSecond)) {
-			$iSecond = $iSecond / 3600;
+			$iSecond /= 3600;
 		} else {
 			$iSecond = 0;
 		}
@@ -466,7 +466,8 @@ function dol_stringtotime($string, $gm = 1)
 		$gm = 'tzserver';
 	}
 
-	$date = dol_mktime(substr($tmp, 8, 2), substr($tmp, 10, 2), substr($tmp, 12, 2), substr($tmp, 4, 2), substr($tmp, 6, 2), substr($tmp, 0, 4), $gm);
+	$date = dol_mktime((int) substr($tmp, 8, 2), (int) substr($tmp, 10, 2), (int) substr($tmp, 12, 2), (int) substr($tmp, 4, 2), (int) substr($tmp, 6, 2), (int) substr($tmp, 0, 4), $gm);
+
 	return $date;
 }
 
@@ -762,7 +763,7 @@ function getGMTEasterDatetime($year)
  */
 function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', $lastday = 0, $includesaturday = -1, $includesunday = -1, $includefriday = -1, $includemonday = -1)
 {
-	global $db, $conf, $mysoc;
+	global $db, $mysoc;
 
 	$nbFerie = 0;
 
@@ -775,16 +776,16 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 		$country_code = $mysoc->country_code;
 	}
 	if ($includemonday < 0) {
-		$includemonday = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_MONDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_MONDAY : 0);
+		$includemonday = getDolGlobalInt('MAIN_NON_WORKING_DAYS_INCLUDE_MONDAY', 0);
 	}
 	if ($includefriday < 0) {
-		$includefriday = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY : 0);
+		$includefriday = getDolGlobalInt('MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY', 0);
 	}
 	if ($includesaturday < 0) {
-		$includesaturday = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY : 1);
+		$includesaturday = getDolGlobalInt('MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY', 1);
 	}
 	if ($includesunday < 0) {
-		$includesunday = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY : 1);
+		$includesunday = getDolGlobalInt('MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY', 1);
 	}
 
 	$country_id = dol_getIdFromCode($db, $country_code, 'c_country', 'code', 'rowid');
@@ -897,7 +898,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 				// Ascension (thursday)
 			}
 
-			if (in_array('pentecote', $specialdayrule)) {
+			if (in_array('pentecost', $specialdayrule)) {
 				// Calculation of "Pentecote" (49 days after easter day)
 				$date_paques = getGMTEasterDatetime($annee);
 				$date_pentecote = $date_paques + (3600 * 24 * 49);
@@ -1005,7 +1006,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
  *	@param	   int			$timestampEnd       Timestamp end UTC
  *	@param     int			$lastday            Last day is included, 0: no, 1:yes
  *	@return    int								Number of days
- *  @see also num_public_holiday(), num_open_day()
+ *  @see num_public_holiday(), num_open_day()
  */
 function num_between_day($timestampStart, $timestampEnd, $lastday = 0)
 {
@@ -1060,7 +1061,7 @@ function num_open_day($timestampStart, $timestampEnd, $inhour = 0, $lastday = 0,
 		$numholidays = num_public_holiday($timestampStart, $timestampEnd, $country_code, $lastday);
 		$nbOpenDay = ($numdays - $numholidays);
 		if ($inhour == 1 && $nbOpenDay <= 3) {
-			$nbOpenDay = ($nbOpenDay * 24);
+			$nbOpenDay *= 24;
 		}
 		return $nbOpenDay - (($inhour == 1 ? 12 : 0.5) * abs($halfday));
 	} elseif ($timestampStart == $timestampEnd) {
@@ -1075,7 +1076,7 @@ function num_open_day($timestampStart, $timestampEnd, $inhour = 0, $lastday = 0,
 		$nbOpenDay = $lastday;
 
 		if ($inhour == 1) {
-			$nbOpenDay = ($nbOpenDay * 24);
+			$nbOpenDay *= 24;
 		}
 		return $nbOpenDay - (($inhour == 1 ? 12 : 0.5) * abs($halfday));
 	} else {
@@ -1129,6 +1130,7 @@ function monthArray($outputlangs, $short = 0)
 
 	return $montharray;
 }
+
 /**
  *	Return array of week numbers.
  *
@@ -1146,12 +1148,13 @@ function getWeekNumbersOfMonth($month, $year)
 	}
 	return $TWeek;
 }
+
 /**
  *	Return array of first day of weeks.
  *
- *	@param	string[] 	$TWeek			array of week numbers (week 1 must be '01')
+ *	@param	string[] 	$TWeek			array of week numbers we want (week 1 must be '01')
  *  @param	int			$year			Year number
- *	@return string[]					First day of week (day 1 is '01')
+ *	@return string[]					First day of each week in entry (day 1 is '01')
  */
 function getFirstDayOfEachWeek($TWeek, $year)
 {
@@ -1164,6 +1167,7 @@ function getFirstDayOfEachWeek($TWeek, $year)
 	}
 	return $TFirstDayOfWeek;
 }
+
 /**
  *	Return array of last day of weeks.
  *
@@ -1179,6 +1183,7 @@ function getLastDayOfEachWeek($TWeek, $year)
 	}
 	return $TLastDayOfWeek;
 }
+
 /**
  *	Return week number.
  *

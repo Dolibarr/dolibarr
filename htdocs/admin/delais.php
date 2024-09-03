@@ -204,12 +204,13 @@ if ($action == 'update') {
 
 $form = new Form($db);
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-delais');
 
 print load_fiche_titre($langs->trans("DelaysOfToleranceBeforeWarning"), '', 'title_setup');
 
 print '<span class="opacitymedium">'.$langs->transnoentities("DelaysOfToleranceDesc", img_warning('default', '', 'pictowarning nopaddingleft'));
 print " ".$langs->trans("OnlyActiveElementsAreShown", DOL_URL_ROOT.'/admin/modules.php')."</span><br>\n";
+print "<br>\n";
 print "<br>\n";
 
 if ($action == 'edit') {

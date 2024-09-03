@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2019 Frederic France      <frederic.france@free.fr>
  * Copyright (C) 2020      Pierre Ardoin      <mapiolca@me.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +61,7 @@ class box_fournisseurs extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $conf, $user, $langs, $hookmanager;
+		global $user, $langs, $hookmanager;
 		$langs->load("boxes");
 
 		$this->max = $max;
@@ -68,7 +69,9 @@ class box_fournisseurs extends ModeleBoxes
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 		$thirdpartystatic = new Fournisseur($this->db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedSuppliers", $max));
+		$this->info_box_head = array(
+			'text' => $langs->trans("BoxTitleLastModifiedSuppliers", $max).'<a class="paddingleft" href="'.DOL_URL_ROOT.'/societe/list.php?type=f&sortfield=s.tms&sortorder=DESC"><span class="badge">...</span></a>'
+		);
 
 		if ($user->hasRight('societe', 'lire')) {
 			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
@@ -139,7 +142,7 @@ class box_fournisseurs extends ModeleBoxes
 					$langs->load("suppliers");
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center"',
-						'text'=> '<span class="opacitymedium">'.$langs->trans("NoRecordedSuppliers").'</span>'
+						'text' => '<span class="opacitymedium">'.$langs->trans("NoRecordedSuppliers").'</span>'
 					);
 				}
 
@@ -147,7 +150,7 @@ class box_fournisseurs extends ModeleBoxes
 			} else {
 				$this->info_box_contents[0][0] = array(
 					'td' => '',
-					'maxlength'=>500,
+					'maxlength' => 500,
 					'text' => ($this->db->error().' sql='.$sql),
 				);
 			}
@@ -162,9 +165,9 @@ class box_fournisseurs extends ModeleBoxes
 	/**
 	 *	Method to show box
 	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
+	 *	@param	?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}	$head	Array with properties of box title
+	 *	@param	?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>	$contents	Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *	@return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)

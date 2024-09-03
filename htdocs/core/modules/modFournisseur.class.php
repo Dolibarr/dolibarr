@@ -326,8 +326,8 @@ class modFournisseur extends DolibarrModules
 
 		// Exports
 		//--------
-		$uselocaltax1 = $mysoc->localtax1_assuj ?? 0;
-		$uselocaltax2 = $mysoc->localtax2_assuj ?? 0;
+		$uselocaltax1 = (is_object($mysoc) && $mysoc->localtax1_assuj) ? $mysoc->localtax1_assuj : 0;
+		$uselocaltax2 = (is_object($mysoc) && $mysoc->localtax2_assuj) ? $mysoc->localtax2_assuj : 0;
 
 		$r = 0;
 
@@ -584,7 +584,7 @@ class modFournisseur extends DolibarrModules
 		// Add extra fields object
 		$keyforselect = 'commande_fournisseur';
 		$keyforelement = 'order';
-		$keyforaliasextra = 'extra';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		// End add extra fields object
 		// Add extra fields line
@@ -812,7 +812,7 @@ class modFournisseur extends DolibarrModules
 			'c.fk_soc'            => 'ThirdPartyName*',
 			'c.fk_projet'         => 'ProjectId',
 			'c.date_creation'     => 'DateCreation',
-			'c.date_valid'        => 'DateValid',
+			'c.date_valid'        => 'DateValidation',
 			'c.date_approve'      => 'DateApprove',
 			'c.date_commande'     => 'DateOrder',
 			'c.fk_user_modif'     => 'ModifiedById',
@@ -820,7 +820,7 @@ class modFournisseur extends DolibarrModules
 			'c.fk_user_approve'   => 'ApprovedById',
 			'c.source'            => 'Source',
 			'c.fk_statut'         => 'Status*',
-			'c.billed'            => 'Billed(0/1)',
+			'c.billed'            => 'Billed',
 			'c.total_tva'         => 'TotalTVA',
 			'c.total_ht'          => 'TotalHT',
 			'c.total_ttc'         => 'TotalTTC',

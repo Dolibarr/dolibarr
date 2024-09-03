@@ -8,6 +8,7 @@
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2021       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,6 +66,10 @@ $id = (GETPOSTINT('socid') ? GETPOSTINT('socid') : GETPOSTINT('id'));
 if ($user->socid) {
 	$id = $user->socid;
 }
+
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('thirdpartysupplier', 'globalcard'));
+
 $result = restrictedArea($user, 'societe&fournisseur', $id, '&societe', '', 'rowid');
 
 $object = new Fournisseur($db);
@@ -73,8 +78,7 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('thirdpartysupplier', 'globalcard'));
+
 
 // Security check
 $result = restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid', 0);
@@ -90,7 +94,7 @@ if ($object->id > 0) {
  * Action
  */
 
-$parameters = array('id'=>$id);
+$parameters = array('id' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -205,7 +209,7 @@ if ($object->id > 0) {
 		$title = $object->name." - ".$langs->trans('Supplier');
 	}
 	$help_url = '';
-	llxHeader('', $title, $help_url);
+	llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-fourn page-card');
 
 	/*
 	 * Show tabs
@@ -275,13 +279,15 @@ if ($object->id > 0) {
 	}
 
 	// VAT reverse-charge by default on supplier invoice or not
-	print '<tr>';
-	print '<td class="titlefield">';
-	print $form->textwithpicto($langs->trans('VATReverseChargeByDefault'), $langs->trans('VATReverseChargeByDefaultDesc'));
-	print '</td><td>';
-	print '<input type="checkbox" name="vat_reverse_charge" '.($object->vat_reverse_charge == '1' ? ' checked' : '').' disabled>';
-	print '</td>';
-	print '</tr>';
+	if (getDolGlobalString('ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE')) {
+		print '<tr>';
+		print '<td class="titlefield">';
+		print $form->textwithpicto($langs->trans('VATReverseChargeByDefault'), $langs->trans('VATReverseChargeByDefaultDesc'));
+		print '</td><td>';
+		print '<input type="checkbox" name="vat_reverse_charge" ' . ($object->vat_reverse_charge == '1' ? ' checked' : '') . ' disabled>';
+		print '</td>';
+		print '</tr>';
+	}
 
 	// TVA Intra
 	print '<tr><td class="nowrap">';
@@ -289,7 +295,7 @@ if ($object->id > 0) {
 	$vattoshow = ($object->tva_intra ? showValueWithClipboardCPButton(dol_escape_htmltag($object->tva_intra)) : '');
 	print $form->editfieldkey("VATIntra", 'tva_intra', $object->tva_intra, $object, $user->hasRight('societe', 'creer'));
 	print '</td><td>';
-	print $form->editfieldval("VATIntra", 'tva_intra', $vattoshow, $object, $user->hasRight('societe', 'creer'), 'string', $object->tva_intra, null, null, '', 1, '', 'id', 'auto', array('valuealreadyhtmlescaped'=>1));
+	print $form->editfieldval("VATIntra", 'tva_intra', $vattoshow, $object, $user->hasRight('societe', 'creer'), 'string', $object->tva_intra, null, null, '', 1, '', 'id', 'auto', array('valuealreadyhtmlescaped' => 1));
 	print '</td></tr>';
 
 	// Default terms of the settlement
@@ -406,7 +412,7 @@ if ($object->id > 0) {
 	}
 
 	// Other attributes
-	$parameters = array('socid'=>$object->id, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
+	$parameters = array('socid' => $object->id, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 	// Module Adherent
@@ -440,8 +446,8 @@ if ($object->id > 0) {
 	print '<div class="underbanner underbanner-before-box clearboth"></div>';
 	print '<br>';
 
-	// Lien recap
-	$boxstat .= '<div class="box box-halfright">';
+	// Summary link
+	$boxstat .= '<div class="box divboxtable box-halfright">';
 	$boxstat .= '<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="border boxtable boxtablenobottom boxtablenotop" width="100%">';
 	$boxstat .= '<tr class="impair nohover"><td colspan="2" class="tdboxstats nohover">';
 
@@ -560,7 +566,7 @@ if ($object->id > 0) {
 
 
 	/*
-	 * List of products
+	 * List of products prices
 	 */
 	if (isModEnabled("product") || isModEnabled("service")) {
 		$langs->load("products");
@@ -584,7 +590,7 @@ if ($object->id > 0) {
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent lastrecordtable">';
 		print '<tr class="liste_titre'.(($num == 0) ? ' nobottom' : '').'">';
-		print '<td colspan="3">'.$langs->trans("ProductsAndServices").'</td><td class="right">';
+		print '<td colspan="2">'.$langs->trans("ProductsAndServices").'</td><td class="right" colspan="2">';
 		print '<a class="notasortlink" href="'.DOL_URL_ROOT.'/fourn/product/list.php?fourn_id='.$object->id.'"><span class="hideonsmartphone">'.$langs->trans("AllProductReferencesOfSupplier").'</span><span class="badge marginleftonlyshort">'.$object->nbOfProductRefs().'</span>';
 		print '</a></td></tr>';
 
@@ -609,7 +615,7 @@ if ($object->id > 0) {
 				print '<td>';
 				print dol_escape_htmltag($objp->supplier_ref);
 				print '</td>';
-				print '<td class="maxwidthonsmartphone">';
+				print '<td class="tdoverflowmax200">';
 				print dol_trunc(dol_htmlentities($objp->label), 30);
 				print '</td>';
 				//print '<td class="right" class="nowrap">'.dol_print_date($objp->tms, 'day').'</td>';
@@ -625,6 +631,8 @@ if ($object->id > 0) {
 				print '</td>';
 				print '</tr>';
 			}
+		} else {
+			print '<tr><td colspan="4"><span class="opacitymedium">'.$langs->trans("NoProductPriceDefinedForThisSupplier").'</span></td></tr>';
 		}
 
 		print '</table>';

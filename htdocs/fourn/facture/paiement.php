@@ -32,7 +32,7 @@
 /**
  *	\file       htdocs/fourn/facture/paiement.php
  *	\ingroup    fournisseur,facture
- *	\brief      Payment page for supplier invoices
+ *	\brief      Payment page for supplier/purchase invoices
  */
 
 // Load Dolibarr environment
@@ -99,7 +99,7 @@ if ($user->socid > 0) {
 
 $object = new PaiementFourn($db);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('paymentsupplierlist'));
 $extrafields = new ExtraFields($db);
 
@@ -387,7 +387,7 @@ $formother = new FormOther($db);
 $supplierstatic = new Societe($db);
 $invoicesupplierstatic = new FactureFournisseur($db);
 
-llxHeader('', $langs->trans('ListPayment'));
+llxHeader('', $langs->trans('ListPayment'), '', '', 0, 0, '', '', '', 'mod-fourn-facture page-paiement');
 
 if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paiement') {
 	$object = new FactureFournisseur($db);
@@ -833,10 +833,10 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 				print '<br>';
 				if (!empty($totalpayment)) {
-					$text = $langs->trans('ConfirmSupplierPayment', price($totalpayment), $langs->trans("Currency".$conf->currency));
+					$text = $langs->trans('ConfirmSupplierPayment', price($totalpayment), $langs->transnoentitiesnoconv("Currency".$conf->currency));
 				}
 				if (!empty($multicurrency_totalpayment)) {
-					$text .= '<br>'.$langs->trans('ConfirmSupplierPayment', price($multicurrency_totalpayment), $langs->trans("paymentInInvoiceCurrency"));
+					$text .= '<br>'.$langs->trans('ConfirmSupplierPayment', price($multicurrency_totalpayment), $langs->transnoentitiesnoconv("paymentInInvoiceCurrency"));
 				}
 				if (GETPOST('closepaidinvoices')) {
 					$text .= '<br>'.$langs->trans("AllCompletelyPayedInvoiceWillBeClosed");

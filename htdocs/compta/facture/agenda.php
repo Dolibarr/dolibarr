@@ -67,7 +67,7 @@ if (!$sortorder) {
 	$sortorder = 'DESC,DESC';
 }
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Facture($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->facture->multidir_output[$conf->entity].'/temp/massgeneration/'.$user->id;
@@ -76,7 +76,7 @@ $hookmanager->initHooks(array('invoiceagenda', 'globalcard')); // Note that conf
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
 if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->facture->multidir_output[!empty($object->entity) ? $object->entity : $conf->entity]."/".$object->id;
 }
@@ -207,10 +207,10 @@ if ($object->id > 0) {
 
 	$morehtmlright = '';
 
-	//$messagingUrl = DOL_URL_ROOT.'/societe/messaging.php?socid='.$object->id;
-	//$morehtmlright .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 1);
-	//$messagingUrl = DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id;
-	//$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 2);
+	$messagingUrl = DOL_URL_ROOT.'/compta/facture/messaging.php?id='.$object->id;
+	$morehtmlright .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 1);
+	$messagingUrl = DOL_URL_ROOT.'/compta/facture/agenda.php?id='.$object->id;
+	$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 2);
 
 	if (isModEnabled('agenda')) {
 		if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {
@@ -237,9 +237,9 @@ if ($object->id > 0) {
 		$cachekey = 'count_events_facture_'.$object->id;
 		$nbEvent = dol_getcache($cachekey);
 
-		print_barre_liste($langs->trans("ActionsOnBill").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>' : ''), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 1);
+		//print_barre_liste($langs->trans("ActionsOnBill").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>' : ''), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 1);
 		//print_barre_liste($langs->trans("ActionsOnBill"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 1);
-
+		print load_fiche_titre($langs->trans("ActionsOnBill"), $morehtmlright, '');
 		// List of all actions
 		$filters = array();
 		$filters['search_agenda_label'] = $search_agenda_label;

@@ -166,7 +166,7 @@ function get_server_name()
 	$url = $urlwithouturlroot.dol_buildpath('/opensurvey/', 1);
 
 	if (!preg_match("|/$|", $url)) {
-		$url = $url."/";
+		$url .= "/";
 	}
 
 	return $url;
@@ -185,7 +185,7 @@ function issetAndNoEmpty($name, $tableau = null)
 		$tableau = $_POST;
 	}
 
-	return (isset($tableau[$name]) === true && empty($tableau[$name]) === false);
+	return (isset($tableau[$name]) && !empty($tableau[$name]));
 }
 
 

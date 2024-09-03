@@ -193,7 +193,7 @@ function dolDecrypt($chain, $key = '')
 			$key = $conf->file->dolcrypt_key;
 		} else {
 			// We fall back on the instance_unique_id
-			$key = $conf->file->instance_unique_id;
+			$key = !empty($conf->file->instance_unique_id) ? $conf->file->instance_unique_id : "";
 		}
 	}
 
@@ -836,10 +836,10 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
  * This function is also called by restrictedArea() that check before if module is enabled and if permission of user for $action is ok.
  *
  * @param 	User				$user					User to check
- * @param 	array				$featuresarray			Features/modules to check. Example: ('user','service','member','project','task',...)
+ * @param 	string[]			$featuresarray			Features/modules to check. Example: ('user','service','member','project','task',...)
  * @param 	int|string|Object	$object					Full object or object ID or list of object id. For example if we want to check a particular record (optional) is linked to a owned thirdparty (optional).
  * @param 	string				$tableandshare			'TableName&SharedElement' with Tablename is table where object is stored. SharedElement is an optional key to define where to check entity for multicompany modume. Param not used if objectid is null (optional).
- * @param 	array|string		$feature2				Feature to check, second level of permission (optional). Can be or check with 'level1|level2'.
+ * @param 	string[]|string		$feature2				Feature to check, second level of permission (optional). Can be or check with 'level1|level2'.
  * @param 	string				$dbt_keyfield			Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional). Can use '' if NA.
  * @param 	string				$dbt_select				Field name for select if not rowid. Not used if objectid is null (optional).
  * @param 	string				$parenttableforentity  	Parent table for entity. Example 'fk_website@website'
@@ -1170,7 +1170,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
  *
  *	@param	string		$message					Force error message
  *	@param	int			$http_response_code			HTTP response code
- *  @param	int			$stringalreadysanitized		1 if string is already sanitized with HTML entities
+ *  @param	int<0,1>	$stringalreadysanitized		1 if string is already sanitized with HTML entities
  *  @return	void
  *  @see accessforbidden()
  */
@@ -1234,7 +1234,7 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 		if (empty($hookmanager)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 			$hookmanager = new HookManager($db);
-			// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+			// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 			$hookmanager->initHooks(array('main'));
 		}
 
@@ -1265,7 +1265,7 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
  *	Return the max allowed for file upload.
  *  Analyze among: upload_max_filesize, post_max_size, MAIN_UPLOAD_DOC
  *
- *  @return	array		Array with all max size for file upload
+ *	@return array{max:string,maxmin:mixed,maxphptoshow:int|string,maxphptoshowparam:''|'post_max_size'|'upload_max_filesize'}	Array with all max sizes for file upload
  */
 function getMaxFileSizeArray()
 {
@@ -1274,36 +1274,36 @@ function getMaxFileSizeArray()
 	$maxphp = @ini_get('upload_max_filesize'); // In unknown
 	if (preg_match('/k$/i', $maxphp)) {
 		$maxphp = preg_replace('/k$/i', '', $maxphp);
-		$maxphp = $maxphp * 1;
+		$maxphp = (int) ((float) $maxphp * 1);
 	}
 	if (preg_match('/m$/i', $maxphp)) {
 		$maxphp = preg_replace('/m$/i', '', $maxphp);
-		$maxphp = $maxphp * 1024;
+		$maxphp = (int) ((float) $maxphp * 1024);
 	}
 	if (preg_match('/g$/i', $maxphp)) {
 		$maxphp = preg_replace('/g$/i', '', $maxphp);
-		$maxphp = $maxphp * 1024 * 1024;
+		$maxphp = (int) ((float) $maxphp * 1024 * 1024);
 	}
 	if (preg_match('/t$/i', $maxphp)) {
 		$maxphp = preg_replace('/t$/i', '', $maxphp);
-		$maxphp = $maxphp * 1024 * 1024 * 1024;
+		$maxphp = (int) ((float) $maxphp * 1024 * 1024 * 1024);
 	}
 	$maxphp2 = @ini_get('post_max_size'); // In unknown
 	if (preg_match('/k$/i', $maxphp2)) {
 		$maxphp2 = preg_replace('/k$/i', '', $maxphp2);
-		$maxphp2 = $maxphp2 * 1;
+		$maxphp2 = (int) ((float) $maxphp2) * 1;
 	}
 	if (preg_match('/m$/i', $maxphp2)) {
 		$maxphp2 = preg_replace('/m$/i', '', $maxphp2);
-		$maxphp2 = $maxphp2 * 1024;
+		$maxphp2 = (int) ((float) $maxphp2 * 1024);
 	}
 	if (preg_match('/g$/i', $maxphp2)) {
 		$maxphp2 = preg_replace('/g$/i', '', $maxphp2);
-		$maxphp2 = $maxphp2 * 1024 * 1024;
+		$maxphp2 = (int) ((float) $maxphp2 * 1024 * 1024);
 	}
 	if (preg_match('/t$/i', $maxphp2)) {
 		$maxphp2 = preg_replace('/t$/i', '', $maxphp2);
-		$maxphp2 = $maxphp2 * 1024 * 1024 * 1024;
+		$maxphp2 = (int) ((float) $maxphp2 * 1024 * 1024 * 1024);
 	}
 	// Now $max and $maxphp and $maxphp2 are in Kb
 	$maxmin = $max;

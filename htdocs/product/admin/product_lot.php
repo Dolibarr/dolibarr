@@ -130,6 +130,8 @@ if ($action == 'updateMaskLot') {
 
 		$module = new $classname($db);
 
+		'@phan-var-force ModelePDFProductBatch $module';
+
 		if ($module->write_file($product_batch, $langs) > 0) {
 			header("Location: " . DOL_URL_ROOT . "/document.php?modulepart=product_batch&file=SPECIMEN.pdf");
 			return;
@@ -164,7 +166,7 @@ $form = new Form($db);
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-llxHeader("", $langs->trans("ProductLotSetup"));
+llxHeader("", $langs->trans("ProductLotSetup"), '', '', 0, 0, '', '', '', 'mod-product page-admin_product_lot');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("ProductLotSetup"), $linkback, 'title_setup');
@@ -211,6 +213,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 						require_once $dir.$file.'.php';
 
 						$module = new $file($db);
+						'@phan-var-force ModeleNumRefBatch $module';
 
 						// Show modules according to features level
 						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -254,7 +257,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 							$htmltooltip = '';
 							$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
 							$nextval = $module->getNextValue($mysoc, $batch);
-							if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
+							if ((string) $nextval != $langs->trans("NotAvailable")) {  // Keep " on nextval
 								$htmltooltip .= ''.$langs->trans("NextValue").': ';
 								if ($nextval) {
 									if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
@@ -312,6 +315,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 						require_once $dir.$file.'.php';
 
 						$module = new $file($db);
+						'@phan-var-force ModeleNumRefBatch $module';
 
 						// Show modules according to features level
 						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {

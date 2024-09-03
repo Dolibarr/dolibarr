@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2014-2023  Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
- * Copyright (C) 2015       Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2016       Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2014-2024  Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2015		Frederic France				<frederic.france@free.fr>
+ * Copyright (C) 2015		Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2016		Laurent Destailleur			<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Loan($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->loan->dir_output.'/temp/massgeneration/'.$user->id;
@@ -84,7 +84,7 @@ foreach ($object->fields as $key => $val) {
 		$arrayfields['t.'.$key] = array(
 			'label'=>$val['label'],
 			'checked'=>(($visible < 0) ? 0 : 1),
-			'enabled'=>(abs($visible) != 3 && (int) dol_eval($val['enabled'], 1)),
+			'enabled'=>(abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
 			'position'=>$val['position'],
 			'help'=> isset($val['help']) ? $val['help'] : ''
 		);
@@ -145,10 +145,8 @@ if (empty($reshook)) {
 $form = new Form($db);
 $now = dol_now();
 
-$help_url="EN:Module_Loan|FR:Module_Emprunt";
-$help_url = '';
 $title = $langs->trans('Loans');
-
+$help_url = "EN:Module_Loan|FR:Module_Emprunt";
 
 // Build and execute select
 // --------------------------------------------------------------------
@@ -178,6 +176,7 @@ $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+	$sqlforcount = preg_replace('/'.preg_quote($linktopl, '/').'/', '', $sqlforcount);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
 	$resql = $db->query($sqlforcount);
 	if ($resql) {
@@ -222,7 +221,7 @@ if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $sear
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-loan page-list');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -251,7 +250,7 @@ if ($search_amount) {
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
-$parameters = array();
+$parameters = array('param' => &$param);
 $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
 
@@ -386,7 +385,7 @@ print_liste_field_titre("DateStart", $_SERVER["PHP_SELF"], "l.datestart", "", $p
 $totalarray['nbfield']++;
 print_liste_field_titre("DateEnd", $_SERVER["PHP_SELF"], "l.dateend", "", $param, '', $sortfield, $sortorder, 'center ');
 $totalarray['nbfield']++;
-print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "l.paid", "", $param, '', $sortfield, $sortorder, 'right ');
+print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "l.paid", "", $param, '', $sortfield, $sortorder, 'center ');
 $totalarray['nbfield']++;
 if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
@@ -463,7 +462,7 @@ while ($i < $imaxinloop) {
 		// Date end
 		print '<td class="center width100">'.dol_print_date($db->jdate($obj->dateend), 'day').'</td>';
 
-		print '<td class="right nowrap">';
+		print '<td class="center nowrap">';
 		print $object->LibStatut($obj->paid, 5, $obj->alreadypaid);
 		print '</td>';
 

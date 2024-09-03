@@ -50,6 +50,7 @@ create table llx_socpeople
   phone_perso		varchar(30),
   phone_mobile		varchar(30),
   fax				varchar(30),
+  url               varchar(255),                        		-- web site
   email				varchar(255),
 
   socialnetworks    text DEFAULT NULL,                          -- json with socialnetworks

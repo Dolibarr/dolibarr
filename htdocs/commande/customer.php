@@ -68,7 +68,7 @@ if (!$sortfield) {
  * View
  */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-commande page-customer');
 
 $thirdpartystatic = new Societe($db);
 
@@ -76,8 +76,8 @@ $thirdpartystatic = new Societe($db);
  * Mode List
  */
 
-$sql = "SELECT s.rowid, s.nom as name, s.client, s.town, s.datec, s.datea";
-$sql .= ", st.libelle as stcomm, s.prefix_comm, s.code_client, s.code_compta";
+$sql = "SELECT s.rowid, s.nom as name, s.client, s.town, s.datec, s.datea,";
+$sql .= " st.libelle as stcomm, s.prefix_comm, s.code_client, s.code_compta as code_compta_client";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st, ".MAIN_DB_PREFIX."commande as c";
 $sql .= " WHERE s.fk_stcomm = st.id AND c.fk_soc = s.rowid";
 $sql .= " AND s.entity IN (".getEntity('societe').")";
@@ -186,9 +186,9 @@ if ($resql) {
 
 		print $result;
 		print '</td>';
-		print '<td>'.$obj->town.'&nbsp;</td>';
-		print '<td class="left">'.$obj->code_client.'&nbsp;</td>';
-		print '<td class="left">'.$obj->code_compta.'&nbsp;</td>';
+		print '<td>'.dolPrintLabel($obj->town).'</td>';
+		print '<td class="left">'.dolPrintLabel($obj->code_client).'</td>';
+		print '<td class="left">'.dolPrintLabel($obj->code_compta_client).'</td>';
 		print '<td class="right">'.dol_print_date($db->jdate($obj->datec)).'</td>';
 		print "</tr>\n";
 		$i++;

@@ -106,11 +106,11 @@ class AccountingJournal extends CommonObject
 	/**
 	 * Load an object from database
 	 *
-	 * @param	int		$rowid				Id of record to load
-	 * @param 	string 	$journal_code		Journal code
+	 * @param	int			$rowid			Id of record to load
+	 * @param 	string|null $journal_code	Journal code
 	 * @return	int							Return integer <0 if KO, Id of record if OK and found
 	 */
-	public function fetch($rowid = null, $journal_code = null)
+	public function fetch($rowid = 0, $journal_code = null)
 	{
 		global $conf;
 
@@ -582,7 +582,7 @@ class AccountingJournal extends CommonObject
 							}
 
 							$lines = array();
-							$lines[0][$accountancy_code_value_asset_sold] = -($element_static->acquisition_value_ht - $last_cumulative_amount_ht);
+							$lines[0][$accountancy_code_value_asset_sold] = -((float) $element_static->acquisition_value_ht - $last_cumulative_amount_ht);
 							$lines[0][$accountancy_code_depreciation_asset] = -$last_cumulative_amount_ht;
 							$lines[0][$accountancy_code_asset] = $element_static->acquisition_value_ht;
 

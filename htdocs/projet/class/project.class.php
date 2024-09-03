@@ -1,15 +1,16 @@
 <?php
-/* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2013	   Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2014-2017 Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2019      Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2022      Charlene Benke       <charlene@patas-monkey.com>
- * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2002-2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2013	    Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2014-2017  Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2017       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2019       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2022       Charlene Benke          <charlene@patas-monkey.com>
+ * Copyright (C) 2023       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -132,6 +133,10 @@ class Project extends CommonObject
 	public $date_close;
 
 	public $socid; // To store id of thirdparty
+
+	/**
+	 * @var string thirdparty name
+	 */
 	public $thirdparty_name; // To store name of thirdparty (defined only in some cases)
 
 	public $user_author_id; //!< Id of project creator. Not defined if shared project.
@@ -189,19 +194,50 @@ class Project extends CommonObject
 	public $price_booth;
 
 	/**
-	 * @var int|string Max attendees (may be empty/need cast to iint)
+	 * @var int|'' Max attendees (may be empty/need cast to int)
 	 */
 	public $max_attendees;
 
+	/**
+	 * @var int status
+	 * @deprecated
+	 * @see $status
+	 */
 	public $statut; // 0=draft, 1=opened, 2=closed
 
+	/**
+	 * @var int opportunity status
+	 */
 	public $opp_status; // opportunity status, into table llx_c_lead_status
+
+	/**
+	 * @var string opportunity code
+	 */
 	public $opp_status_code;
+
+	/**
+	 * @var int opportunity status
+	 */
 	public $fk_opp_status; // opportunity status, into table llx_c_lead_status
+
+	/**
+	 * @var float|'' opportunity amount
+	 */
 	public $opp_amount; // opportunity amount
+
+	/**
+	 * @var float|'' opportunity percent
+	 */
 	public $opp_percent; // opportunity probability
+
+	/**
+	 * @var float|'' opportunity weighted amount
+	 */
 	public $opp_weighted_amount; // opportunity weighted amount
 
+	/**
+	 * @var string email msgid
+	 */
 	public $email_msgid;
 
 	public $oldcopy;
@@ -254,32 +290,48 @@ class Project extends CommonObject
 	public $lines;
 
 	/**
-	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
-	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *  'type' field format:
+	 *  	'integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]',
+	 *  	'select' (list of values are in 'options'. for integer list of values are in 'arrayofkeyval'),
+	 *  	'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:CategoryIdType[:CategoryIdList[:SortField]]]]]]',
+	 *  	'chkbxlst:...',
+	 *  	'varchar(x)',
+	 *  	'text', 'text:none', 'html',
+	 *   	'double(24,8)', 'real', 'price', 'stock',
+	 *  	'date', 'datetime', 'timestamp', 'duration',
+	 *  	'boolean', 'checkbox', 'radio', 'array',
+	 *  	'mail', 'phone', 'url', 'password', 'ip'
+	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
 	 *  'label' the translation key.
-	 *  'enabled' is a condition when the field must be managed.
+	 *  'alias' the alias used into some old hard coded SQL requests
+	 *  'picto' is code of a picto to show before value in forms
+	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalInt("MY_SETUP_PARAM")' or 'isModEnabled("multicurrency")' ...)
 	 *  'position' is the sort order of field.
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
+	 *  'alwayseditable' says if field can be modified also when status is not draft ('1' or '0')
 	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
-	 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
-	 *  'css' is the CSS style to use on field. For example: 'maxwidth200'
-	 *  'help' is a string visible as a tooltip on field
+	 *  'isameasure' must be set to 1 or 2 if field can be used for measure. Field type must be summable like integer or double(24,8). Use 1 in most cases, or 2 if you don't want to see the column total into list (for example for percentage)
+	 *  'css' and 'cssview' and 'csslist' is the CSS style to use on field. 'css' is used in creation and update. 'cssview' is used in view mode. 'csslist' is used for columns in lists. For example: 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'cssview'=>'wordbreak', 'csslist'=>'tdoverflowmax200'
+	 *  'help' and 'helplist' is a 'TranslationString' to use to show a tooltip on field. You can also use 'TranslationString:keyfortooltiponlick' for a tooltip on click.
 	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
 	 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code.
-	 *  'arrayofkeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
+	 *  'arrayofkeyval' to set a list of values if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel"). Note that type can be 'integer' or 'varchar'
+	 *  'autofocusoncreate' to have field having the focus on a create form. Only 1 field should have this property set to 1.
 	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
+	 *	'validate' is 1 if you need to validate the field with $this->validateField(). Need MAIN_ACTIVATE_VALIDATION_RESULT.
+	 *  'copytoclipboard' is 1 or 2 to allow to add a picto to copy value into clipboard (1=picto after label, 2=picto after value)
 	 *
 	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
 	 */
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'ID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -292,7 +344,7 @@ class Project extends CommonObject
 		'datee' => array('type' => 'date', 'label' => 'DateEnd', 'enabled' => 1, 'visible' => 1, 'position' => 35),
 		'description' => array('type' => 'text', 'label' => 'Description', 'enabled' => 1, 'visible' => 3, 'position' => 55, 'searchall' => 1),
 		'public' => array('type' => 'integer', 'label' => 'Visibility', 'enabled' => 1, 'visible' => -1, 'position' => 65),
-		'fk_opp_status' => array('type' => 'integer', 'label' => 'OpportunityStatusShort', 'enabled' => 'getDolGlobalString("PROJECT_USE_OPPORTUNITIES")', 'visible' => 1, 'position' => 75),
+		'fk_opp_status' => array('type' => 'integer:CLeadStatus:core/class/cleadstatus.class.php', 'label' => 'OpportunityStatusShort', 'enabled' => 'getDolGlobalString("PROJECT_USE_OPPORTUNITIES")', 'visible' => 1, 'position' => 75),
 		'opp_percent' => array('type' => 'double(5,2)', 'label' => 'OpportunityProbabilityShort', 'enabled' => 'getDolGlobalString("PROJECT_USE_OPPORTUNITIES")', 'visible' => 1, 'position' => 80),
 		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 85, 'searchall' => 1),
 		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 90, 'searchall' => 1),
@@ -321,7 +373,7 @@ class Project extends CommonObject
 		'fk_user_modif' => array('type' => 'integer', 'label' => 'UserModification', 'enabled' => 1, 'visible' => 0, 'position' => 415),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -1, 'position' => 420),
 		'email_msgid' => array('type' => 'varchar(255)', 'label' => 'EmailMsgID', 'enabled' => 1, 'visible' => -1, 'position' => 450, 'help' => 'EmailMsgIDWhenSourceisEmail', 'csslist' => 'tdoverflowmax125'),
-		'fk_statut' => array('type' => 'smallint(6)', 'label' => 'Status', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 500),
+		'fk_statut' => array('type' => 'smallint(6)', 'label' => 'Status', 'alias' => 'status', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 500, 'arrayofkeyval' => array(0 => 'Draft', 1 => 'Validated', 2 => 'Closed')),
 	);
 	// END MODULEBUILDER PROPERTIES
 
@@ -459,7 +511,7 @@ class Project extends CommonObject
 		$sql .= ", '".$this->db->escape($this->description)."'";
 		$sql .= ", ".($this->socid > 0 ? $this->socid : "null");
 		$sql .= ", ".((int) $user->id);
-		$sql .= ", ".(is_numeric($this->statut) ? ((int) $this->statut) : '0');
+		$sql .= ", ".(is_numeric($this->status) ? ((int) $this->status) : '0');
 		$sql .= ", ".((is_numeric($this->opp_status) && $this->opp_status > 0) ? ((int) $this->opp_status) : 'NULL');
 		$sql .= ", ".(is_numeric($this->opp_percent) ? ((int) $this->opp_percent) : 'NULL');
 		$sql .= ", ".($this->public ? 1 : 0);
@@ -571,7 +623,7 @@ class Project extends CommonObject
 			$sql .= ", title = '".$this->db->escape($this->title)."'";
 			$sql .= ", description = '".$this->db->escape($this->description)."'";
 			$sql .= ", fk_soc = ".($this->socid > 0 ? $this->socid : "null");
-			$sql .= ", fk_statut = ".((int) $this->statut);
+			$sql .= ", fk_statut = ".((int) $this->status);
 			$sql .= ", fk_opp_status = ".((is_numeric($this->opp_status) && $this->opp_status > 0) ? $this->opp_status : 'null');
 			$sql .= ", opp_percent = ".((is_numeric($this->opp_percent) && $this->opp_percent != '') ? $this->opp_percent : 'null');
 			$sql .= ", public = ".($this->public ? 1 : 0);
@@ -938,14 +990,19 @@ class Project extends CommonObject
 
 		// Set fk_projet into elements to null
 		$listoftables = array(
-			'propal' => 'fk_projet', 'commande' => 'fk_projet', 'facture' => 'fk_projet',
-			'supplier_proposal' => 'fk_projet', 'commande_fournisseur' => 'fk_projet', 'facture_fourn' => 'fk_projet',
-			'expensereport_det' => 'fk_projet', 'contrat' => 'fk_projet',
+			'propal' => 'fk_projet',
+			'commande' => 'fk_projet',
+			'facture' => 'fk_projet',
+			'supplier_proposal' => 'fk_projet',
+			'commande_fournisseur' => 'fk_projet',
+			'facture_fourn' => 'fk_projet',
+			'expensereport_det' => 'fk_projet',
+			'contrat' => 'fk_projet',
 			'fichinter' => 'fk_projet',
 			'don' => array('field' => 'fk_projet', 'module' => 'don'),
 			'actioncomm' => 'fk_project',
 			'mrp_mo' => 'fk_project',
-			'entrepot' => 'fk_project'
+			'entrepot' => 'fk_project',
 		);
 		foreach ($listoftables as $key => $value) {
 			if (is_array($value)) {
@@ -1113,10 +1170,10 @@ class Project extends CommonObject
 	}
 
 	/**
-	 * 		Delete tasks with no children first, then task with children recursively
+	 *  Delete tasks with no children first, then task with children recursively
 	 *
-	 *  	@param     	User		$user		User
-	 *		@return		int				Return integer <0 if KO, 1 if OK
+	 *  @param   User	$user		User
+	 *  @return	 int				Return integer <0 if KO, 1 if OK
 	 */
 	public function deleteTasks($user)
 	{
@@ -1137,7 +1194,7 @@ class Project extends CommonObject
 		$this->getLinesArray($user);
 		if ($deleted && count($this->lines) < $countTasks) {
 			if (count($this->lines)) {
-				$this->deleteTasks($this->lines);
+				$this->deleteTasks($user);
 			}
 		}
 
@@ -1153,7 +1210,7 @@ class Project extends CommonObject
 	 */
 	public function setValid($user, $notrigger = 0)
 	{
-		global $langs, $conf;
+		global $langs;
 
 		$error = 0;
 
@@ -1190,6 +1247,7 @@ class Project extends CommonObject
 
 			if (!$error) {
 				$this->statut = 1;
+				$this->status = 1;
 				$this->db->commit();
 				return 1;
 			} else {
@@ -1217,7 +1275,7 @@ class Project extends CommonObject
 
 		$error = 0;
 
-		if ($this->statut != self::STATUS_CLOSED) {
+		if ($this->status != self::STATUS_CLOSED) {
 			$this->db->begin();
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."projet";
@@ -1240,7 +1298,7 @@ class Project extends CommonObject
 				// End call triggers
 
 				if (!$error) {
-					$this->statut = 2;
+					$this->status = 2;
 					$this->db->commit();
 					return 1;
 				} else {
@@ -1267,7 +1325,7 @@ class Project extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut(isset($this->statut) ? $this->statut : $this->status, $mode);
+		return $this->LibStatut(isset($this->status) ? $this->status : $this->statut, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1578,7 +1636,7 @@ class Project extends CommonObject
 	 * @param 	int		$mode			0=All project I have permission on (assigned to me or public), 1=Projects assigned to me only, 2=Will return list of all projects with no test on contacts
 	 * @param 	int		$list			0=Return array, 1=Return string list
 	 * @param	int		$socid			0=No filter on third party, id of third party
-	 * @param	string	$filter			additional filter on project (statut, ref, ...)
+	 * @param	string	$filter			additional filter on project (statut, ref, ...). TODO Use USF syntax here.
 	 * @return 	array|string			Array of projects id, or string with projects id separated with "," if list is 1
 	 */
 	public function getProjectsAuthorizedForUser($user, $mode = 0, $list = 0, $socid = 0, $filter = '')
@@ -1711,7 +1769,7 @@ class Project extends CommonObject
 		if ($move_date) {
 			$clone_project->date_start = $now;
 			if (!(empty($clone_project->date_end))) {
-				$clone_project->date_end = $clone_project->date_end + ($now - $orign_dt_start);
+				$clone_project->date_end += ($now - $orign_dt_start);
 			}
 		}
 
@@ -1724,7 +1782,7 @@ class Project extends CommonObject
 
 		//Generate next ref
 		$defaultref = '';
-		$obj = !getDolGlobalString('PROJECT_ADDON') ? 'mod_project_simple' : $conf->global->PROJECT_ADDON;
+		$obj = getDolGlobalString('PROJECT_ADDON', 'mod_project_simple');
 		// Search template files
 		$file = '';
 		$classname = '';
@@ -2072,8 +2130,6 @@ class Project extends CommonObject
 	 */
 	public function loadTimeSpent($datestart, $taskid = 0, $userid = 0)
 	{
-		$error = 0;
-
 		$this->weekWorkLoad = array();
 		$this->weekWorkLoadPerTask = array();
 
@@ -2136,8 +2192,6 @@ class Project extends CommonObject
 	 */
 	public function loadTimeSpentMonth($datestart, $taskid = 0, $userid = 0)
 	{
-		$error = 0;
-
 		$this->monthWorkLoad = array();
 		$this->monthWorkLoadPerTask = array();
 
@@ -2171,7 +2225,7 @@ class Project extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 				if (!empty($obj->element_date)) {
 					$date = explode('-', $obj->element_date);
-					$week_number = getWeekNumber($date[2], $date[1], $date[0]);
+					$week_number = getWeekNumber((int) $date[2], (int) $date[1], (int) $date[0]);
 				}
 				'@phan-var-force int $week_number';  // Needed because phan considers it might be null
 				if (empty($weekalreadyfound[$week_number])) {
@@ -2213,6 +2267,7 @@ class Project extends CommonObject
 		$response->label = $langs->trans("OpenedProjects");
 		$response->labelShort = $langs->trans("Opened");
 		$response->url = DOL_URL_ROOT.'/projet/list.php?search_project_user=-1&search_status=1&mainmenu=project';
+		$response->url_late = DOL_URL_ROOT.'/projet/list.php?search_option=late&mainmenu=project';
 		$response->img = img_object('', "projectpub");
 		$response->nbtodo = 0;
 		$response->nbtodolate = 0;
@@ -2254,6 +2309,7 @@ class Project extends CommonObject
 				$response->nbtodo++;
 
 				$project_static->statut = $obj->status;
+				$project_static->status = $obj->status;
 				$project_static->opp_status = $obj->fk_opp_status;
 				$project_static->date_end = $this->db->jdate($obj->datee);
 
@@ -2331,7 +2387,7 @@ class Project extends CommonObject
 	{
 		global $conf;
 
-		if (!($this->statut == self::STATUS_VALIDATED)) {
+		if (!($this->status == self::STATUS_VALIDATED)) {
 			return false;
 		}
 		if (!$this->date_end) {
@@ -2412,7 +2468,8 @@ class Project extends CommonObject
 	}
 
 	/**
-	 *  Function sending an email to the current member with the text supplied in parameter.
+	 *  Function sending an email to the current project with the text supplied in parameter.
+	 *  TODO When this is used ?
 	 *
 	 *  @param	string	$text				Content of message (not html entities encoded)
 	 *  @param	string	$subject			Subject of message
@@ -2430,25 +2487,34 @@ class Project extends CommonObject
 	 */
 	public function sendEmail($text, $subject, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $addr_cc = "", $addr_bcc = "", $deliveryreceipt = 0, $msgishtml = -1, $errors_to = '', $moreinheader = '')
 	{
-		global $conf, $langs;
 		// TODO EMAIL
 
 		return 1;
 	}
+
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string		HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @param		string					$size					Size of thumb (''=auto, 'large'=large, 'small'=small)
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
-	public function getKanbanView($option = '', $arraydata = null)
+	public function getKanbanView($option = '', $arraydata = null, $size = '')
 	{
-		global $langs;
+		global $conf, $langs;
 
 		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
 
-		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		if (empty($size)) {
+			if (empty($conf->dol_optimize_smallscreen)) {
+				$size = 'large';
+			} else {
+				$size = 'small';
+			}
+		}
+
+		$return = '<div class="box-flex-item '.($size == 'small' ? 'box-flex-item-small' : '').' box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
 		$return .= img_picto('', $this->public ? 'projectpub' : $this->picto);
@@ -2476,11 +2542,19 @@ class Project extends CommonObject
 			}
 			$return .= '<span class="info-box-label">'.dol_print_date($this->date_end, 'day').'</span>';
 		}*/
-		if (property_exists($this, 'thirdparty') && is_object($this->thirdparty)) {
-			$return .= '<br><div class="info-box-ref tdoverflowmax150 inline-block valignmiddle">'.$this->thirdparty->getNomUrl(1);
-			$return .= '</div><div class="inline-block valignmiddle">';
-			$return .= dol_print_phone($this->thirdparty->phone, $this->thirdparty->country_code, 0, $this->thirdparty->id, 'tel', 'hidenum', 'phone');
+		if (property_exists($this, 'thirdparty') && !is_null($this->thirdparty) && is_object($this->thirdparty) && $this->thirdparty instanceof Societe) {
+			$return .= '<br><div class="info-box-ref tdoverflowmax125 inline-block valignmiddle">'.$this->thirdparty->getNomUrl(1);
 			$return .= '</div>';
+			if (!empty($this->thirdparty->phone)) {
+				$return .= '<div class="inline-block valignmiddle">';
+				$return .= dol_print_phone($this->thirdparty->phone, $this->thirdparty->country_code, 0, $this->thirdparty->id, 'tel', 'hidenum', 'phone', $this->thirdparty->phone, 0, 'paddingleft paddingright');
+				$return .= '</div>';
+			}
+			if (!empty($this->thirdparty->email)) {
+				$return .= '<div class="inline-block valignmiddle">';
+				$return .= dol_print_email($this->thirdparty->email, 0, $this->thirdparty->id, 'thirdparty', -1, 1, 2, 'paddingleft paddingright');
+				$return .= '</div>';
+			}
 		}
 		if (!empty($arraydata['assignedusers'])) {
 			$return .= '<br>';
@@ -2602,7 +2676,7 @@ class Project extends CommonObject
 				$to = $obj->email;
 				$numHolidays = num_public_holiday($lastWeekStartTS, $lastWeekEndTS, $mysoc->country_code, 1);
 				if (getDolGlobalString('MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY') && getDolGlobalString('MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY')) {
-					$numHolidays = $numHolidays - 2;
+					$numHolidays -= 2;
 					$weekendEnabled = 2;
 				}
 

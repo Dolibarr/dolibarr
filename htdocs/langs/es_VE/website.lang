@@ -1,4 +1,2 @@
 # Dolibarr language file - Source file is en_US - website
-WEBSITE_USE_WEBSITE_ACCOUNTS=Enable the web site account table
-WebPortalPropalListTitle=Presupuestos
-WebPortalInvoiceListTitle=Facturas
+specialPromo=Promotions

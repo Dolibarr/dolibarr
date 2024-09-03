@@ -75,7 +75,7 @@ if ($facid > 0) {
 	$ret = $object->fetch($facid);
 }
 
-// Initialize technical object to manage hooks of paiements. Note that conf->hooks_modules contains array array
+// Initialize a technical object to manage hooks of paiements. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('paiementcard', 'globalcard'));
 
 $formquestion = array();
@@ -361,8 +361,8 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 		}
 
 		// Invoice with Paypal transaction
-		// TODO add hook here
-		if (isModEnabled('paypalplus') && $conf->global->PAYPAL_ENABLE_TRANSACTION_MANAGEMENT && !empty($facture->ref_ext)) {
+		// @TODO add hook here
+		if (isModEnabled('paypalplus') && getDolGlobalString('PAYPAL_ENABLE_TRANSACTION_MANAGEMENT') && !empty($facture->ref_ext)) {
 			if (getDolGlobalString('PAYPAL_BANK_ACCOUNT')) {
 				$accountid = getDolGlobalString('PAYPAL_BANK_ACCOUNT');
 			}
@@ -883,7 +883,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 			}
 
 			print '<br><div class="center">';
-			print '<input type="checkbox" checked name="closepaidinvoices"> '.$checkboxlabel;
+			print '<input type="checkbox" checked name="closepaidinvoices" id="closepaidinvoices"><label for="closepaidinvoices"> '.$checkboxlabel.'</label>';
 			/*if (isModEnabled('prelevement')) {
 				$langs->load("withdrawals");
 				if (!empty($conf->global->WITHDRAW_DISABLE_AUTOCREATE_ONPAYMENTS)) print '<br>'.$langs->trans("IfInvoiceNeedOnWithdrawPaymentWontBeClosed");
@@ -898,10 +898,10 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 			print '<br>';
 			if (!empty($totalpayment)) {
-				$text = $langs->trans('ConfirmCustomerPayment', $totalpayment, $langs->trans("Currency".$conf->currency));
+				$text = $langs->trans('ConfirmCustomerPayment', $totalpayment, $langs->transnoentitiesnoconv("Currency".$conf->currency));
 			}
 			if (!empty($multicurrency_totalpayment)) {
-				$text .= '<br>'.$langs->trans('ConfirmCustomerPayment', $multicurrency_totalpayment, $langs->trans("paymentInInvoiceCurrency"));
+				$text .= '<br>'.$langs->trans('ConfirmCustomerPayment', $multicurrency_totalpayment, $langs->transnoentitiesnoconv("paymentInInvoiceCurrency"));
 			}
 			if (GETPOST('closepaidinvoices')) {
 				$text .= '<br>'.$langs->trans("AllCompletelyPayedInvoiceWillBeClosed");

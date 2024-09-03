@@ -16,7 +16,6 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-
 /**
  * This class help you create setup render
  */
@@ -323,6 +322,9 @@ class FormSetup
 			if ($item->getType() == 'title') {
 				$trClass = 'liste_titre';
 			}
+			if (!empty($item->fieldParams['trClass'])) {
+				$trClass .= ' '.$item->fieldParams['trClass'];
+			}
 
 			$this->setupNotEmpty++;
 			$out .= '<tr class="'.$trClass.'">';
@@ -488,7 +490,7 @@ class FormSetup
 			// calc new rank for each item to make place for new item
 			foreach ($this->items as $fItem) {
 				if ($item->rank <= $fItem->rank) {
-					$fItem->rank = $fItem->rank + 1;
+					$fItem->rank += 1;
 					$this->setItemMaxRank($fItem->rank); // set new max rank if needed
 				}
 			}
@@ -639,6 +641,9 @@ class FormSetupItem
 
 	/** @var array set this var for options on select and multiselect items   */
 	public $fieldOptions = array();
+
+	/** @var array set this var to add more parameters */
+	public $fieldParams = array();
 
 	/** @var callable $saveCallBack  */
 	public $saveCallBack;
@@ -1035,14 +1040,15 @@ class FormSetupItem
 	public function generateInputFieldSecureKey()
 	{
 		global $conf;
-		$out = '<input required="required" type="text" class="flat" id="'.$this->confKey.'" name="'.$this->confKey.'" value="'.(GETPOST($this->confKey, 'alpha') ? GETPOST($this->confKey, 'alpha') : $this->fieldValue).'" size="40">';
-		if (!empty($conf->use_javascript_ajax)) {
-			$out .= '&nbsp;'.img_picto($this->langs->trans('Generate'), 'refresh', 'id="generate_token'.$this->confKey.'" class="linkobject"');
-		}
+		$out = '<input type="text" class="flat minwidth150'.($this->cssClass ? ' '.$this->cssClass : '').'" id="'.$this->confKey.'" name="'.$this->confKey.'" value="'.(GETPOST($this->confKey, 'alpha') ? GETPOST($this->confKey, 'alpha') : $this->fieldValue).'">';
 
-		// Add button to autosuggest a key
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-		$out .= dolJSToSetRandomPassword($this->confKey, 'generate_token'.$this->confKey);
+		if (!empty($conf->use_javascript_ajax) && empty($this->fieldParams['hideGenerateButton'])) {
+			$out .= '&nbsp;'.img_picto($this->langs->trans('Generate'), 'refresh', 'id="generate_token'.$this->confKey.'" class="linkobject"');
+
+			// Add button to autosuggest a key
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+			$out .= dolJSToSetRandomPassword($this->confKey, 'generate_token'.$this->confKey);
+		}
 
 		return $out;
 	}
@@ -1059,7 +1065,7 @@ class FormSetupItem
 	{
 		global $conf, $langs, $user;
 
-		$min = 8;
+		$min = 6;
 		$max = 50;
 		if ($type == 'dolibarr') {
 			$gen = getDolGlobalString('USER_PASSWORD_GENERATED', 'standard');
@@ -1073,7 +1079,14 @@ class FormSetupItem
 			$min = $genhandler->length;
 			$max = $genhandler->length2;
 		}
-		$out = '<input required="required" type="password" class="flat" id="'.$this->confKey.'" name="'.$this->confKey.'" value="'.(GETPOST($this->confKey, 'alpha') ? GETPOST($this->confKey, 'alpha') : $this->fieldValue).'" minlength="' . $min . '" maxlength="' . $max . '">';
+		$out = '<input required="required" type="password" class="flat" id="'.$this->confKey.'" name="'.$this->confKey.'" value="'.(GETPOST($this->confKey, 'alpha') ? GETPOST($this->confKey, 'alpha') : $this->fieldValue).'"';
+		if ($min) {
+			$out .= ' minlength="' . $min . '"';
+		}
+		if ($max) {
+			$out .= ' maxlength="' . $max . '"';
+		}
+		$out .= '>';
 		return $out;
 	}
 
@@ -1106,7 +1119,8 @@ class FormSetupItem
 		if ($this->picto) {
 			$s .= img_picto('', $this->picto, 'class="pictofixedwidth"');
 		}
-		$s .= $this->form->selectarray($this->confKey, $this->fieldOptions, $this->fieldValue);
+
+		$s .= $this->form->selectarray($this->confKey, $this->fieldOptions, $this->fieldValue, 0, 0, 0, '', 0, 0, 0, '', $this->cssClass);
 
 		return $s;
 	}
@@ -1136,9 +1150,9 @@ class FormSetupItem
 	 * because this two class will quickly evolve it's important to not set directly $this->type (will be protected) so this method exist
 	 * to be sure we can manage evolution easily
 	 *
-	 * @param string $type possible values based on old module builder setup : 'string', 'textarea', 'category:'.Categorie::TYPE_CUSTOMER', 'emailtemplate', 'thirdparty_type'
-	 * @deprecated yes this setTypeFromTypeString came deprecated because it exists only for manage setup conversion
-	 * @return bool
+	 * @param 		string 	$type 	Possible values based on old module builder setup : 'string', 'textarea', 'category:'.Categorie::TYPE_CUSTOMER', 'emailtemplate', 'thirdparty_type'
+	 * @deprecated 					this setTypeFromTypeString came deprecated because it exists only for manage setup conversion
+	 * @return 		bool
 	 */
 	public function setTypeFromTypeString($type)
 	{
@@ -1465,8 +1479,8 @@ class FormSetupItem
 	 * Set type of input as a category selector
 	 * TODO add default value
 	 *
-	 * @param	int		$catType		Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
-	 * @return self
+	 * @param	string	$catType		Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
+	 * @return	self
 	 */
 	public function setAsCategory($catType)
 	{

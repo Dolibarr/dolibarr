@@ -3,6 +3,8 @@
  * Copyright (C) 2006-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2006-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2024		Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,7 +59,11 @@ if ($action == 'setMEMBER_ENABLE_PUBLIC') {
 
 if ($action == 'update') {
 	$public = GETPOST('MEMBER_ENABLE_PUBLIC');
-	$amount = price2num(GETPOST('MEMBER_NEWFORM_AMOUNT'), 'MT', 2);
+	if (GETPOST('MEMBER_NEWFORM_AMOUNT') !== '') {
+		$amount = price2num(GETPOST('MEMBER_NEWFORM_AMOUNT'), 'MT', 2);
+	} else {
+		$amount = '';
+	}
 	$minamount = GETPOST('MEMBER_MIN_AMOUNT');
 	$publiccounters = GETPOST('MEMBER_COUNTERS_ARE_PUBLIC');
 	$showtable = GETPOST('MEMBER_SHOW_TABLE');
@@ -70,8 +76,8 @@ if ($action == 'update') {
 	$res = dolibarr_set_const($db, "MEMBER_NEWFORM_AMOUNT", $amount, 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "MEMBER_MIN_AMOUNT", $minamount, 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "MEMBER_COUNTERS_ARE_PUBLIC", $publiccounters, 'chaine', 0, '', $conf->entity);
-	$res = dolibarr_set_const($db, "MEMBER_SKIP_TABLE", !$showtable, 'chaine', 0, '', $conf->entity); // Logic is reversed for retrocompatibility: "skip -> show"
-	$res = dolibarr_set_const($db, "MEMBER_HIDE_VOTE_ALLOWED", !$showvoteallowed, 'chaine', 0, '', $conf->entity); // Logic is reversed for retrocompatibility: "hide -> show"
+	$res = dolibarr_set_const($db, "MEMBER_SKIP_TABLE", (string) !$showtable, 'chaine', 0, '', $conf->entity); // Logic is reversed for retrocompatibility: "skip -> show"
+	$res = dolibarr_set_const($db, "MEMBER_HIDE_VOTE_ALLOWED", (string) !$showvoteallowed, 'chaine', 0, '', $conf->entity); // Logic is reversed for retrocompatibility: "hide -> show"
 	$res = dolibarr_set_const($db, "MEMBER_NEWFORM_PAYONLINE", $payonline, 'chaine', 0, '', $conf->entity);
 	if ($forcetype < 0) {
 		$res = dolibarr_del_const($db, "MEMBER_NEWFORM_FORCETYPE", $conf->entity);
@@ -104,7 +110,8 @@ $form = new Form($db);
 
 $title = $langs->trans("MembersSetup");
 $help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder';
-llxHeader('', $title, $help_url);
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-member page-admin_website');
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
@@ -198,7 +205,7 @@ if (getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
 	print '</div>';
 	print ajax_autoselect('publicurlmember');
 
-	print '<br>';
+	print '<br><br>';
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
@@ -248,7 +255,7 @@ if (getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("MemberCountersArePublic");
 	print '</td><td>';
-	print $form->selectyesno("MEMBER_COUNTERS_ARE_PUBLIC", getDolGlobalInt('MEMBER_COUNTERS_ARE_PUBLIC'), 1);
+	print $form->selectyesno("MEMBER_COUNTERS_ARE_PUBLIC", getDolGlobalInt('MEMBER_COUNTERS_ARE_PUBLIC'), 1, false, 0, 1);
 	print "</td></tr>\n";
 
 	// Show the table of all available membership types. If not, show a form (as the default was for Dolibarr <=16.0)
@@ -256,7 +263,7 @@ if (getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("MembersShowMembershipTypesTable");
 	print '</td><td>';
-	print $form->selectyesno("MEMBER_SHOW_TABLE", !$skiptable, 1); // Reverse the logic "hide -> show" for retrocompatibility
+	print $form->selectyesno("MEMBER_SHOW_TABLE", !$skiptable, 1, false, 0, 1); // Reverse the logic "hide -> show" for retrocompatibility
 	print "</td></tr>\n";
 
 	// Show "vote allowed" setting for membership types
@@ -264,7 +271,7 @@ if (getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("MembersShowVotesAllowed");
 	print '</td><td>';
-	print $form->selectyesno("MEMBER_SHOW_VOTE_ALLOWED", !$hidevoteallowed, 1); // Reverse the logic "hide -> show" for retrocompatibility
+	print $form->selectyesno("MEMBER_SHOW_VOTE_ALLOWED", !$hidevoteallowed, 1, false, 0, 1); // Reverse the logic "hide -> show" for retrocompatibility
 	print "</td></tr>\n";
 
 	// Jump to an online payment page

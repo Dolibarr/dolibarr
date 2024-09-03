@@ -1,6 +1,5 @@
 # Dolibarr language file - en_US - hrm
 
-
 # Admin
 HRM_EMAIL_EXTERNAL_SERVICE=HRM tashqi xizmatining oldini olish uchun elektron pochta
 Establishments=Korxonalar
@@ -24,7 +23,7 @@ SkillsManagement=Ko'nikmalarni boshqarish
 HRM_MAXRANK=Qobiliyatni darajalash uchun maksimal darajalar soni
 HRM_DEFAULT_SKILL_DESCRIPTION=Ko'nikma yaratilganda darajalarning standart tavsifi
 deplacement=Shift
-DateEval=Baholash sanasi
+DateEval=Competency assessment date
 JobCard=Ish kartasi
 NewJobProfile=Yangi ish profili
 JobProfile=Ish profili
@@ -41,12 +40,12 @@ Skill=Malaka
 Skills=Ko'nikmalar
 SkillCard=Malaka kartasi
 EmployeeSkillsUpdated=Xodimlarning malakasi yangilandi (xodimlar kartasining "Ko'nikmalar" yorlig'iga qarang)
-Eval=Baholash
-Evals=Baholar
-NewEval=Yangi baholash
-ValidateEvaluation=Baholashni tasdiqlash
-ConfirmValidateEvaluation=Are you sure you want to validate this evaluation with the reference <b>%s</b>?
-EvaluationCard=Baholash kartasi
+Eval=Competency assessment
+Evals=Competency assessments
+NewEval=New competency assessment
+ValidateEvaluation=Validate competency assessment
+ConfirmValidateEvaluation=Are you sure you want to validate this competency assessment with the reference <b>%s</b>?
+EvaluationCard=Competency assessment
 RequiredRank=Ish profili uchun talab qilinadigan daraja
 RequiredRankShort=Majburiy daraja
 PositionsWithThisProfile=Ushbu ish profillari bilan lavozimlar
@@ -90,8 +89,9 @@ SaveAddSkill = Qo'shilgan malaka(lar).
 SaveLevelSkill = Ko'nikma(lar) darajasi saqlangan
 DeleteSkill = Ko'nikma olib tashlandi
 SkillsExtraFields=Qo'shimcha atributlar (ko'nikmalar)
-JobsExtraFields=Qo'shimcha atributlar (Ish profili)
-EvaluationsExtraFields=Qo'shimcha atributlar (baholar)
+JobsExtraFields=Complementary attributes (Job profiles)
+EvaluationsExtraFields=Complementary attributes (Competency assessments)
 NeedBusinessTravels=Ish safarlari kerak
 NoDescription=Ta'rif yo'q
 TheJobProfileHasNoSkillsDefinedFixBefore=Ushbu xodimning baholangan ish profili unda aniqlangan malakaga ega emas. Iltimos, malaka(lar)ni qo'shing, keyin o'chiring va baholashni qaytadan boshlang.
+PDFStandardHrmEvaluation=Standard template to generate a PDF document for a competency assessment

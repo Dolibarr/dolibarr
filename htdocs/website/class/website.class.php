@@ -85,16 +85,6 @@ class Website extends CommonObject
 	public $status;
 
 	/**
-	 * @var integer date_creation
-	 */
-	public $date_creation;
-
-	/**
-	 * @var integer	date_modification
-	 */
-	public $date_modification;
-
-	/**
 	 * @var integer Default home page
 	 */
 	public $fk_default_home;
@@ -647,6 +637,53 @@ class Website extends CommonObject
 	}
 
 	/**
+	 * Purge website
+	 * Delete website directory content and all pages and medias. Differs from delete() because it does not delete the website entry and no trigger is called.
+	 *
+	 * @param User 	$user      	User that deletes
+	 * @return int 				Return integer <0 if KO, >0 if OK
+	 */
+	public function purge(User $user)
+	{
+		global $conf;
+
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
+		$error = 0;
+
+		$this->db->begin();
+
+		if (!$error) {
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'website_page';
+			$sql .= ' WHERE fk_website = '.((int) $this->id);
+
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$error++;
+				$this->errors[] = 'Error '.$this->db->lasterror();
+				dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+			}
+		}
+
+		if (!$error && !empty($this->ref)) {
+			$pathofwebsite = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/'.$this->ref;
+
+			dol_delete_dir_recursive($pathofwebsite);
+		}
+
+		// Commit or rollback
+		if ($error) {
+			$this->db->rollback();
+
+			return -1 * $error;
+		} else {
+			$this->db->commit();
+
+			return 1;
+		}
+	}
+
+	/**
 	 * Load a website its id and create a new one in database.
 	 * This copy website directories, regenerate all the pages + alias pages and recreate the medias link.
 	 *
@@ -986,7 +1023,7 @@ class Website extends CommonObject
 		$destdir = $conf->website->dir_temp.'/'.$website->ref.'/containers';
 
 		dol_syslog("Copy pages from ".$srcdir." into ".$destdir);
-		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacementinfilename, 2, array('old', 'back'));
+		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacementinfilename, 2, array('old', 'back'), 1);
 
 		// Copy file README.md and LICENSE from directory containers into directory root
 		if (dol_is_file($conf->website->dir_temp.'/'.$website->ref.'/containers/README.md')) {
@@ -1697,7 +1734,7 @@ class Website extends CommonObject
 					return -1;
 				}
 				// if path start with / (absolute path)
-				if (strpos($exportPath, '/') === 0) {
+				if (strpos($exportPath, '/') === 0 || preg_match('/^[a-zA-Z]:/', $exportPath)) {
 					if (!is_dir($exportPath)) {
 						setEventMessages("The specified absolute path does not exist.", null, 'errors');
 						return -1;
@@ -1707,6 +1744,8 @@ class Website extends CommonObject
 						setEventMessages("The specified absolute path is not writable.", null, 'errors');
 						return -1;
 					}
+					$destdirrel = $exportPath;
+					$destdir = $exportPath;
 				} else {
 					// relatif path
 					$destdirrel = 'install/doctemplates/websites/'.$exportPath;

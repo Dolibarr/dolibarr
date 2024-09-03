@@ -1,20 +1,20 @@
 <?php
-/* Copyright (C) 2002-2003	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2002-2003	Jean-Louis Bergamo		<jlb@j1b.org>
- * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
- * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
- * Copyright (C) 2009-2017	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2014-2018	Alexandre Spangaro		<aspangaro@open-dsi.fr>
- * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2015-2024	Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2016		Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2018-2019	Thibault FOUCART		<support@ptibogxiv.net>
- * Copyright (C) 2019		Nicolas ZABOURI 		<info@inovea-conseil.com>
- * Copyright (C) 2020		Josep Lluís Amador 		<joseplluis@lliuretic.cat>
- * Copyright (C) 2021		Waël Almoman            <info@almoman.com>
- * Copyright (C) 2021		Philippe Grand          <philippe.grand@atoo-net.com>
+/* Copyright (C) 2002-2003	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2002-2003	Jean-Louis Bergamo			<jlb@j1b.org>
+ * Copyright (C) 2004-2012	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2004		Sebastien Di Cintio			<sdicintio@ressource-toi.org>
+ * Copyright (C) 2004		Benoit Mortier				<benoit.mortier@opensides.be>
+ * Copyright (C) 2009-2017	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2014-2018	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
+ * Copyright (C) 2015-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2015		Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2016		Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2018-2019	Thibault FOUCART			<support@ptibogxiv.net>
+ * Copyright (C) 2019		Nicolas ZABOURI 			<info@inovea-conseil.com>
+ * Copyright (C) 2020		Josep Lluís Amador 			<joseplluis@lliuretic.cat>
+ * Copyright (C) 2021		Waël Almoman            	<info@almoman.com>
+ * Copyright (C) 2021		Philippe Grand          	<philippe.grand@atoo-net.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -96,7 +96,7 @@ class Adherent extends CommonObject
 
 	/**
 	 * @var string
-	 * @deprecated
+	 * @deprecated Use $civility_code
 	 * @see $civility_code
 	 */
 	public $civility_id;
@@ -106,11 +106,14 @@ class Adherent extends CommonObject
 	 */
 	public $civility_code;
 
+	/**
+	 * @var int
+	 */
 	public $civility;
 
 	/**
 	 * @var string company name
-	 * @deprecated
+	 * @deprecated Use $company
 	 * @see $company
 	 */
 	public $societe;
@@ -122,7 +125,7 @@ class Adherent extends CommonObject
 
 	/**
 	 * @var int Thirdparty ID
-	 * @deprecated
+	 * @deprecated Use $socid
 	 * @see $socid
 	 */
 	public $fk_soc;
@@ -133,7 +136,7 @@ class Adherent extends CommonObject
 	public $socid;
 
 	/**
-	 * @var array array of socialnetworks
+	 * @var array<string,string> array of socialnetworks
 	 */
 	public $socialnetworks;
 
@@ -202,6 +205,9 @@ class Adherent extends CommonObject
 	 */
 	public $datem;
 
+	/**
+	 * @var string|int
+	 */
 	public $datevalid;
 
 	/**
@@ -239,6 +245,9 @@ class Adherent extends CommonObject
 	 */
 	public $user_login;
 
+	/**
+	 * @var string|int
+	 */
 	public $datefin;
 
 
@@ -299,13 +308,13 @@ class Adherent extends CommonObject
 	public $partnerships = array();
 
 	/**
-	 * @var Facture|null		To store the created invoice into subscriptionComplementaryActions()
+	 * @var ?Facture	To store the created invoice into subscriptionComplementaryActions()
 	 */
 	public $invoice;
 
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -795,7 +804,7 @@ class Adherent extends CommonObject
 		$sql .= ", note_private = ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : "null");
 		$sql .= ", note_public = ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : "null");
 		$sql .= ", photo = ".($this->photo ? "'".$this->db->escape($this->photo)."'" : "null");
-		$sql .= ", public = '".$this->db->escape($this->public)."'";
+		$sql .= ", public = ".(int) $this->public;
 		$sql .= ", statut = ".(int) $this->statut;
 		$sql .= ", default_lang = ".(!empty($this->default_lang) ? "'".$this->db->escape($this->default_lang)."'" : "null");
 		$sql .= ", fk_adherent_type = ".(int) $this->typeid;
@@ -848,7 +857,7 @@ class Adherent extends CommonObject
 			if (!$error && $this->pass) {
 				dol_syslog(get_class($this)."::update update password");
 				if ($this->pass != $this->pass_indatabase && $this->pass != $this->pass_indatabase_crypted) {
-					$isencrypted = !getDolGlobalString('DATABASE_PWD_ENCRYPTED') ? 0 : 1;
+					$isencrypted = getDolGlobalString('DATABASE_PWD_ENCRYPTED') ? 1 : 0;
 
 					// If password to set differs from the one found into database
 					$result = $this->setPassword($user, $this->pass, $isencrypted, $notrigger, $nosyncuserpass);
@@ -2291,9 +2300,9 @@ class Adherent extends CommonObject
 	}
 
 	/**
-	 *  Return clicable name (with picto eventually)
+	 *  Return clickable name (with picto eventually)
 	 *
-	 *	@param	int		$withpictoimg				0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo, -3=Only photo very small)
+	 *	@param	int		$withpictoimg				0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo, -3=Only photo very small, -4=???)
 	 *	@param	int		$maxlen						length max label
 	 *	@param	string	$option						Page for link ('card', 'category', 'subscription', ...)
 	 *	@param  string  $mode           			''=Show firstname+lastname as label (using default order), 'firstname'=Show only firstname, 'lastname'=Show only lastname, 'login'=Show login, 'ref'=Show ref
@@ -2362,9 +2371,7 @@ class Adherent extends CommonObject
 		$linkend = '</a>';
 
 		$result .= $linkstart;
-		if ($withpictoimg) {
-			$result .= '<div class="inline-block nopadding valignmiddle">';
-		}
+
 		if ($withpictoimg) {
 			$paddafterimage = '';
 			if (abs($withpictoimg) == 1 || abs($withpictoimg) == 4) {
@@ -2397,9 +2404,7 @@ class Adherent extends CommonObject
 				$result .= '</span>';
 			}
 		}
-		if ($withpictoimg) {
-			$result .= '</div>';
-		}
+
 		$result .= $linkend;
 
 		if ($addlinktonotes) {
@@ -2683,6 +2688,7 @@ class Adherent extends CommonObject
 		$this->photo = '';
 		$this->public = 1;
 		$this->statut = self::STATUS_DRAFT;
+		$this->status = self::STATUS_DRAFT;
 
 		$this->datefin = $now;
 		$this->datevalid = $now;
@@ -3048,7 +3054,7 @@ class Adherent extends CommonObject
 			}
 
 			$tmp = dol_getdate($now);
-			$datetosearchfor = dol_time_plus_duree(dol_mktime(0, 0, 0, $tmp['mon'], $tmp['mday'], $tmp['year'], 'tzserver'), $daysbeforeend, 'd');
+			$datetosearchfor = dol_time_plus_duree(dol_mktime(0, 0, 0, $tmp['mon'], $tmp['mday'], $tmp['year'], 'tzserver'), (int) $daysbeforeend, 'd');
 
 			$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'adherent';
 			$sql .= " WHERE entity = ".((int) $conf->entity); // Do not use getEntity('adherent').")" here, we want the batch to be on its entity only;
@@ -3255,11 +3261,11 @@ class Adherent extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
@@ -3286,7 +3292,9 @@ class Adherent extends CommonObject
 			$return .= '<br><span class="info-box-label">'.$this->getmorphylib('', 2).'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
+			$return .= '<br><div class="info-box-status paddingtop">';
+			$return .= $this->LibStatut($this->status, $this->need_subscription, $this->datefin, 5);
+			$return .= '</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

@@ -280,6 +280,14 @@ class SecurityTest extends CommonClassTest
 		$result = testSqlAndScriptInject($test, 2);
 		//print "test=".$test." result=".$result."\n";
 		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject with a non valid UTF8 char');
+
+		$test = '<img onerror<>=alert(document.domain)';
+		$result = testSqlAndScriptInject($test, 0);
+		$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject with an obfuscated string that bypass the WAF');
+
+		$test = '<img onerror<abc>=alert(document.domain)';
+		$result = testSqlAndScriptInject($test, 0);
+		$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject with an obfuscated string that bypass the WAF');
 	}
 
 	/**
@@ -309,6 +317,7 @@ class SecurityTest extends CommonClassTest
 		$_GET["param3"] = '"&#110;a/b#e(pr)qq-rr\cc';    // Same than param2 + " and &#110;
 		$_GET["param4a"] = '..&#47;../dir';
 		$_GET["param4b"] = '..&#92;..\dirwindows';
+		$_GET["param4c"] = '\a123 \123 \u123 \x123';
 		$_GET["param5"] = "a_1-b";
 		$_POST["param6"] = "&quot;&gt;<svg o&#110;load='console.log(&quot;123&quot;)'&gt;";
 		$_POST["param6b"] = '<<<../>../>../svg><<<../>../>../animate =alert(1)>abc';
@@ -327,8 +336,8 @@ class SecurityTest extends CommonClassTest
 		$_POST["param13b"] = '&#110; &#x6E; &gt; &lt; &quot; <a href=\"j&#x61vascript:alert(document.domain)\">XSS</a>';
 		$_POST["param13c"] = 'aaa:<:bbb';
 		$_POST["param14"] = "Text with ' encoded with the numeric html entity converted into text entity &#39; (like when submitted by CKEditor)";
-		$_POST["param15"] = "<img onerror<=alert(document.domain)> src=>0xbeefed";
-		//$_POST["param15b"]="<html><head><title>Example HTML</title></head><body><div><p>This is a paragraph.</div><ul><li>Item 1</li><li>Item 2</li></ol></body><html>";
+		$_POST["param15"] = "<img onxxxx<=alert(document.domain)> src=>0xbeefed";
+		$_POST["param15b"] = "<img onerror<=alert(document.domain)> src=>0xbeefed";
 		$_POST["param16"] = '<a style="z-index: 1000">abc</a>';
 		$_POST["param17"] = '<span style="background-image: url(logout.php)">abc</span>';
 		$_POST["param18"] = '<span style="background-image: url(...?...action=aaa)">abc</span>';
@@ -358,19 +367,23 @@ class SecurityTest extends CommonClassTest
 
 		$result = GETPOST("param2", 'alpha');
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals($result, 'a/b#e(pr)qq-rr/cc', 'Test on param2');
+		$this->assertEquals('a/b#e(pr)qq-rr\cc', $result, 'Test on param2');
 
 		$result = GETPOST("param3", 'alpha');  // Must return string sanitized from char "
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals($result, 'na/b#e(pr)qq-rr/cc', 'Test on param3');
+		$this->assertEquals('na/b#e(pr)qq-rr\cc', $result, 'Test on param3');
 
 		$result = GETPOST("param4a", 'alpha');  // Must return string sanitized from ../
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals($result, 'dir');
+		$this->assertEquals('dir', $result);
 
 		$result = GETPOST("param4b", 'alpha');  // Must return string sanitized from ../
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals($result, 'dirwindows');
+		$this->assertEquals('dirwindows', $result);
+
+		$result = GETPOST("param4c", 'alpha');  // Must return string sanitized from ../
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('\a123 /123 /u123 /x123', $result);
 
 		// Test with aZ09
 
@@ -501,13 +514,18 @@ class SecurityTest extends CommonClassTest
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals("Text with ' encoded with the numeric html entity converted into text entity &#39; (like when submitted by CKEditor)", $result, 'Test 14');
 
-		$result = GETPOST("param15", 'restricthtml');		// param15 = <img onerror<=alert(document.domain)> src=>0xbeefed that is a dangerous string
+		$result = GETPOST("param15", 'restricthtml');		// param15 = <img onxxxx<=alert(document.domain)> src=>0xbeefed that is a dangerous string
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals("<img onerror=alert(document.domain) src=>0xbeefed", $result, 'Test 15');	// The GETPOST return a harmull string
+		$this->assertEquals("<img onxxxx=alert(document.domain) src=>0xbeefed", $result, 'Test 15');	// The GETPOST return a harmull string
+
+		$result = GETPOST("param15b", 'restricthtml');		// param15b = <img onerror<=alert(document.domain)> src=>0xbeefed that is a dangerous string
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals("<img alert(document.domain) src=>0xbeefed", $result, 'Test 15b');	// The GETPOST return a harmull string
 
 		$result = GETPOST("param19", 'restricthtml');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('<a href="&lpar;alert(document.cookie)&rpar;">XSS</a>', $result, 'Test 19');
+
 
 		// Test with restricthtml + MAIN_RESTRICTHTML_ONLY_VALID_HTML only to test disabling of bad attributes
 
@@ -520,8 +538,8 @@ class SecurityTest extends CommonClassTest
 		print __METHOD__." result for param0=".$result."\n";
 		$this->assertEquals($resultexpected, $result, 'Test on param0');
 
-		$result = GETPOST("param15", 'restricthtml');		// param15 = <img onerror<=alert(document.domain)> src=>0xbeefed that is a dangerous string
-		print __METHOD__." result for param15=".$result."\n";
+		$result = GETPOST("param15b", 'restricthtml');		// param15b = <img onerror<=alert(document.domain)> src=>0xbeefed that is a dangerous string
+		print __METHOD__." result for param15b=".$result."\n";
 		//$this->assertEquals('InvalidHTMLStringCantBeCleaned', $result, 'Test 15b');   // With some PHP and libxml version, we got this result when parsing invalid HTML, but ...
 		//$this->assertEquals('<img onerror> src=&gt;0xbeefed', $result, 'Test 15b');	// ... on other PHP and libxml versions, we got a HTML that has been cleaned
 
@@ -547,15 +565,19 @@ class SecurityTest extends CommonClassTest
 			print __METHOD__." result for param0=".$result."\n";
 			$this->assertEquals($resultexpected, $result, 'Test on param0');
 
-			$result = GETPOST("param15", 'restricthtml');		// param15 = <img onerror<=alert(document.domain)> src=>0xbeefed that is a dangerous string
-			print __METHOD__." result=".$result."\n";
+			$result = GETPOST("param15b", 'restricthtml');		// param15b = <img onerror<=alert(document.domain)> src=>0xbeefed that is a dangerous string
+			print __METHOD__." result for param15b=".$result."\n";
+			//$this->assertEquals('InvalidHTMLStringCantBeCleaned', $result, 'Test 15b');   // With some PHP and libxml version, we got this result when parsing invalid HTML, but ...
+			//$this->assertEquals('<img onerror> src=&gt;0xbeefed', $result, 'Test 15b');	// ... on other PHP and libxml versions, we got a HTML that has been cleaned
 
 			$result = GETPOST("param6", 'restricthtml');
 			print __METHOD__." result for param6=".$result." - before=".$_POST["param6"]."\n";
+			//$this->assertEquals('InvalidHTMLStringCantBeCleaned', $result, 'Test 15b');   // With some PHP and libxml version, we got this result when parsing invalid HTML, but ...
 			$this->assertEquals('"&gt;', $result);
 
 			$result = GETPOST("param7", 'restricthtml');
 			print __METHOD__." result param7 = ".$result."\n";
+			//$this->assertEquals('InvalidHTMLStringCantBeCleaned', $result, 'Test 15b');   // With some PHP and libxml version, we got this result when parsing invalid HTML, but ...
 			$this->assertEquals('"c:\this is a path~1\aaan &amp;#x110;" abcdef', $result);
 		}
 
@@ -571,15 +593,19 @@ class SecurityTest extends CommonClassTest
 			print __METHOD__." result for param0=".$result."\n";
 			$this->assertEquals($resultexpected, $result, 'Test on param0');
 
-			$result = GETPOST("param15", 'restricthtml');		// param15 = <img onerror<=alert(document.domain)> src=>0xbeefed that is a dangerous string
+			$result = GETPOST("param15b", 'restricthtml');		// param15b = <img onerror<=alert(document.domain)> src=>0xbeefed that is a dangerous string
 			print __METHOD__." result=".$result."\n";
+			//$this->assertEquals('InvalidHTMLStringCantBeCleaned', $result, 'Test 15b');   // With some PHP and libxml version, we got this result when parsing invalid HTML, but ...
+			//$this->assertEquals('<img onerror> src=&gt;0xbeefed', $result, 'Test 15b');	// ... on other PHP and libxml versions, we got a HTML that has been cleaned
 
 			$result = GETPOST("param6", 'restricthtml');
 			print __METHOD__." result for param6=".$result." - before=".$_POST["param6"]."\n";
+			//$this->assertEquals('InvalidHTMLStringCantBeCleaned', $result, 'Test 15b');   // With some PHP and libxml version, we got this result when parsing invalid HTML, but ...
 			$this->assertEquals('"&gt;', $result);
 
 			$result = GETPOST("param7", 'restricthtml');
 			print __METHOD__." result param7 = ".$result."\n";
+			//$this->assertEquals('InvalidHTMLStringCantBeCleaned', $result, 'Test 15b');   // With some PHP and libxml version, we got this result when parsing invalid HTML, but ...
 			$this->assertEquals('"c:\this is a path~1\aaan 110;" abcdef', $result);
 		}
 
@@ -1102,14 +1128,21 @@ class SecurityTest extends CommonClassTest
 		$a = 'ab';
 		$result = (string) dol_eval("(\$a.'s')", 1, 0);
 		print "result19 = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', $result);
+		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'Test 19');
 
 		$leftmenu = 'abs';
 		$result = (string) dol_eval('$leftmenu(-5)', 1, 0);
 		print "result20 = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', $result);
-	}
+		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'Test 20');
 
+		$result = (string) dol_eval('str_replace("z","e","zxzc")("whoami");', 1, 0);
+		print "result21 = ".$result."\n";
+		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'Test 21');
+
+		$result = (string) dol_eval('($a = "ex") && ($b = "ec") && ($cmd = "$a$b") && $cmd ("curl localhost:5555")', 1, 0);
+		print "result22 = ".$result."\n";
+		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'Test 22');
+	}
 
 	/**
 	 * testDolPrintHTML.
@@ -1128,7 +1161,6 @@ class SecurityTest extends CommonClassTest
 			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
 		}
 		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;	// disabled, does not work on HTML5 and some libxml versions
-
 
 
 		// For a string that is already HTML (contains HTML tags) with special tags but badly formatted
@@ -1172,11 +1204,144 @@ class SecurityTest extends CommonClassTest
 
 
 		// For a string with no HTML tags
-		$stringtotest = "testC\ntest";
-		$stringfixed = "testC<br>\ntest";
+		$stringtotest = "testwithnewline\nsecond line";
+		$stringfixed = "testwithnewline<br>\nsecond line";
 		$result = dolPrintHTML($stringtotest);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($stringfixed, $result, 'Error');
+
+
+		// For a string with ' and &#39;
+		// With no clean option
+		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 0;
+
+		$stringtotest = "Message<br>with ' and &egrave; and &#39; !";
+		/*
+		var_dump($stringtotest);
+		var_dump(dol_htmlentitiesbr($stringtotest));
+		var_dump(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0));
+		var_dump(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0)));
+		var_dump(dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0)), 1, 1, 'common', 0, 1));
+		*/
+		$result = dolPrintHTML($stringtotest);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($stringtotest, $result, 'Error');
+
+
+		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
+		// Enabled option MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY if possible
+		if (extension_loaded('tidy') && class_exists("tidy")) {
+			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
+		}
+
+		// For a string with ' and &#39;
+		// With cleaning options of HTML TIDY
+		if (extension_loaded('tidy') && class_exists("tidy")) {
+			$stringtotest = "Message<br>with ' and &egrave; and &#39; !";
+			$stringexpected = "Message<br>\nwith ' and &egrave; and ' !";		// The &#39; is modified into ' because html tidy fix it.
+			/*
+			var_dump($stringtotest);
+			var_dump(dol_htmlentitiesbr($stringtotest));
+			var_dump(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0));
+			var_dump(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0)));
+			var_dump(dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0)), 1, 1, 'common', 0, 1));
+			*/
+			$result = dolPrintHTML($stringtotest);
+			print __METHOD__." result=".$result."\n";
+			$this->assertEquals($stringexpected, $result, 'Error');
+		}
+
+		return 0;
+	}
+
+
+	/**
+	 * testRealCharforNumericEntities()
+	 *
+	 * @return int
+	 */
+	public function testRealCharforNumericEntities()
+	{
+		global $conf;
+
+		// Test that testRealCharforNumericEntities return an ascii char when code is inside Ascii range
+		$arraytmp = array(0 => '&#97;', 1 => '97;');
+		$result = realCharForNumericEntities($arraytmp);
+		$this->assertEquals('a', $result);
+
+		// Test that testRealCharforNumericEntities return an emoji utf8 char when code is inside Emoji range
+		$arraytmp = array(0 => '&#9989;', 1 => '9989;');	// Encoded as decimal
+		$result = realCharForNumericEntities($arraytmp);
+		$this->assertEquals('✅', $result);
+
+		$arraytmp = array(0 => '&#x2705;', 1 => 'x2705;');	// Encoded as hexadecimal
+		$result = realCharForNumericEntities($arraytmp);
+		$this->assertEquals('✅', $result);
+
+		return 0;
+	}
+
+
+	/**
+	 * testDolHtmlWithNoJs()
+	 *
+	 * @return int
+	 */
+	public function testDolHtmlWithNoJs()
+	{
+		global $conf;
+
+		$sav1 = getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML');
+		$sav2 = getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY');
+
+		// Test with an emoji
+		$test = 'abc ✅ def';
+
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
+		$result = dol_htmlwithnojs($test);
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = $sav1;
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = $sav2;
+
+		print __METHOD__." result for dol_htmlwithnojs and MAIN_RESTRICTHTML_ONLY_VALID_HTML=0 with emoji = ".$result."\n";
+		$this->assertEquals($test, $result, 'dol_htmlwithnojs failed with an emoji when MAIN_RESTRICTHTML_ONLY_VALID_HTML=0');
+
+
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 1;
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 0;
+		$result = dol_htmlwithnojs($test);
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = $sav1;
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = $sav2;
+
+		print __METHOD__." result for dol_htmlwithnojs and MAIN_RESTRICTHTML_ONLY_VALID_HTML=1 with emoji = ".$result."\n";
+		$this->assertEquals($test, $result, 'dol_htmlwithnojs failed with an emoji when MAIN_RESTRICTHTML_ONLY_VALID_HTML=1');
+
+
+		// For a string with js on attribute
+
+		// Without HTML_TIDY
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 0;
+		$result = dol_htmlwithnojs('<img onerror=alert(document.domain) src=x>', 1, 'restricthtml');
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = $sav1;
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = $sav2;
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('<img alert(document.domain) src=x>', $result, 'Test example');
+
+		// With HTML TIDY
+		if (extension_loaded('tidy') && class_exists("tidy")) {
+			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
+			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
+			$result = dol_htmlwithnojs('<img onerror=alert(document.domain) src=x>', 1, 'restricthtml');
+			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = $sav1;
+			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = $sav2;
+			//$result = dol_string_onlythesehtmltags($aa, 0, 1, 1);
+			print __METHOD__." result=".$result."\n";
+			$this->assertEquals('<img src="x">', $result, 'Test example');
+		}
 
 		return 0;
 	}

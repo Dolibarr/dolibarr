@@ -1,11 +1,12 @@
 <?php
-/* Copyright (C) 2005-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2015       Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2017      	Charlie Benke		<charlie@patas-monkey.com>
- * Copyright (C) 2017       ATM-CONSULTING		<contact@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2005-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
+ * Copyright (C) 2015       Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2017      	Charlie Benke			<charlie@patas-monkey.com>
+ * Copyright (C) 2017       ATM-CONSULTING			<contact@atm-consulting.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -246,7 +247,7 @@ function invoice_admin_prepare_head()
 /**
  * Return array head with list of tabs to view object information.
  *
- * @param   Facture     $object     Invoice object
+ * @param   FactureRec  $object     Invoice model object
  * @return array                    head array with tabs
  */
 function invoice_rec_prepare_head($object)
@@ -363,13 +364,15 @@ function getNumberInvoicesPieChart($mode)
 		date_add($datenowadd30, $interval30days);
 		date_add($datenowadd15, $interval15days);
 
-		$sql = "SELECT";
-		$sql .= " sum(".$db->ifsql("f.date_lim_reglement < '".date_format($datenowsub30, 'Y-m-d')."'", 1, 0).") as nblate30";
-		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement < '".date_format($datenowsub15, 'Y-m-d')."'", 1, 0).") as nblate15";
-		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement < '".date_format($now, 'Y-m-d')."'", 1, 0).") as nblatenow";
-		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement >= '".date_format($now, 'Y-m-d')."' OR f.date_lim_reglement IS NULL", 1, 0).") as nbnotlatenow";
-		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement > '".date_format($datenowadd15, 'Y-m-d')."'", 1, 0).") as nbnotlate15";
-		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement > '".date_format($datenowadd30, 'Y-m-d')."'", 1, 0).") as nbnotlate30";
+		$amount_mode = (getDolGlobalInt('FACTURE_VALIDATED_IN_AMOUNT') == 1);
+
+				$sql = "SELECT";
+		$sql .= " sum(".$db->ifsql("f.date_lim_reglement < '".date_format($datenowsub30, 'Y-m-d')."'", $amount_mode ? "f.total_ht" : 1, 0).") as late30";
+		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement < '".date_format($datenowsub15, 'Y-m-d')."' AND f.date_lim_reglement >= '".date_format($datenowsub30, 'Y-m-d')."'", $amount_mode ? "f.total_ht" : 1, 0).") as late15";
+		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement < '".date_format($now, 'Y-m-d')."' AND f.date_lim_reglement >= '".date_format($datenowsub15, 'Y-m-d')."'", $amount_mode ? "f.total_ht" : 1, 0).") as latenow";
+		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement >= '".date_format($now, 'Y-m-d')."' AND f.date_lim_reglement < '".date_format($datenowadd15, 'Y-m-d')."'", $amount_mode ? "f.total_ht" : 1, 0).") as notlatenow";
+		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement >= '".date_format($datenowadd15, 'Y-m-d')."' AND f.date_lim_reglement < '".date_format($datenowadd30, 'Y-m-d')."'", $amount_mode ? "f.total_ht" : 1, 0).") as notlate15";
+		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement >= '".date_format($datenowadd30, 'Y-m-d')."'", $amount_mode ? "f.total_ht" : 1, 0).") as notlate30";
 		if ($mode == 'customers') {
 			$element = 'invoice';
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
@@ -403,7 +406,7 @@ function getNumberInvoicesPieChart($mode)
 									,array($langs->trans('InvoiceNotLate15Days'), $obj->nbnotlate15 - $obj->nbnotlate30)
 									,array($langs->trans('InvoiceNotLate30Days'), $obj->nbnotlate30));
 				*/
-				$dataseries[$i] = array($langs->transnoentitiesnoconv('NbOfOpenInvoices'), $obj->nblate30, $obj->nblate15 - $obj->nblate30, $obj->nblatenow - $obj->nblate15, $obj->nbnotlatenow - $obj->nbnotlate15, $obj->nbnotlate15 - $obj->nbnotlate30, $obj->nbnotlate30);
+				$dataseries[$i] = array($langs->transnoentitiesnoconv('NbOfOpenInvoices'), $obj->late30, $obj->late15, $obj->latenow, $obj->notlatenow, $obj->notlate15, $obj->notlate30);
 				$i++;
 			}
 			if (!empty($dataseries[0])) {
@@ -531,7 +534,7 @@ function getCustomerInvoiceDraftTable($maxCount = 500, $socid = 0)
 		}
 
 		// Add Group from hooks
-		$parameters = array();  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$parameters = array();
 		$reshook = $hookmanager->executeHooks('printFieldListGroupByCustomerDraft', $parameters);
 		$sql .= $hookmanager->resPrint;
 
@@ -589,6 +592,7 @@ function getCustomerInvoiceDraftTable($maxCount = 500, $socid = 0)
 					$companystatic->code_client = $obj->code_client;
 					$companystatic->code_fournisseur = $obj->code_fournisseur;
 					$companystatic->code_compta = $obj->code_compta;
+					$companystatic->code_compta_client = $obj->code_compta;
 					$companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 
 					$result .= '<tr class="oddeven">';
@@ -710,7 +714,7 @@ function getDraftSupplierTable($maxCount = 500, $socid = 0)
 					$facturesupplierstatic->ref_supplier = $obj->ref_supplier;
 					$facturesupplierstatic->type = $obj->type;
 					$facturesupplierstatic->statut = $obj->status;
-					$facturesupplierstatic->statusi = $obj->status;
+					$facturesupplierstatic->status = $obj->status;
 					$facturesupplierstatic->paye = $obj->paye;
 					$facturesupplierstatic->paid = $obj->paye;
 
@@ -723,6 +727,7 @@ function getDraftSupplierTable($maxCount = 500, $socid = 0)
 					$companystatic->code_client = $obj->code_client;
 					$companystatic->code_fournisseur = $obj->code_fournisseur;
 					$companystatic->code_compta = $obj->code_compta;
+					$companystatic->code_compta_client = $obj->code_compta;
 					$companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 
 					$result .= '<tr class="oddeven">';
@@ -911,7 +916,11 @@ function getPurchaseInvoiceLatestEditTable($maxCount = 5, $socid = 0)
 	$result = '<div class="div-table-responsive-no-min">';
 	$result .= '<table class="noborder centpercent">';
 	$result .= '<tr class="liste_titre">';
-	$result .= '<th colspan="3">'.$langs->trans("BoxTitleLastSupplierBills", $maxCount).'</th>';
+	$result .= '<th colspan="3">'.$langs->trans("BoxTitleLastSupplierBills", $maxCount).' ';
+	$result .= '<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?sortfield=f.tms&sortorder=DESC">';
+	$result .= '<span class="badge">...</span>';
+	$result .= '</a>';
+	$result .= '</th>';
 	$result .= '<th class="right">'.$langs->trans("AmountTTC").'</th>';
 	$result .= '<th class="right"></th>';
 	$result .= '</tr>';
@@ -1089,6 +1098,7 @@ function getCustomerInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 					$societestatic->code_client = $obj->code_client;
 					$societestatic->code_fournisseur = $obj->code_fournisseur;
 					$societestatic->code_compta = $obj->code_compta;
+					$societestatic->code_compta_client = $obj->code_compta;
 					$societestatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 
 					print '<tr class="oddeven">';
@@ -1276,6 +1286,7 @@ function getPurchaseInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 					$societestatic->code_client = $obj->code_client;
 					$societestatic->code_fournisseur = $obj->code_fournisseur;
 					$societestatic->code_compta = $obj->code_compta;
+					$societestatic->code_compta_client = $obj->code_compta;
 					$societestatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 
 					print '<tr class="oddeven">';

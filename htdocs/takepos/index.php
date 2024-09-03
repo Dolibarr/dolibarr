@@ -66,7 +66,7 @@ if (empty($_SESSION["takeposterminal"])) {
 
 if ($setterminal > 0) {
 	$_SESSION["takeposterminal"] = $setterminal;
-	setcookie("takeposterminal", (string) $setterminal, (time() + (86400 * 354)), '/', '', (empty($dolibarr_main_force_https) ? false : true), true); // Permanent takeposterminal var in a cookie
+	setcookie("takeposterminal", (string) $setterminal, (time() + (86400 * 354)), '/', '', !empty($dolibarr_main_force_https), true); // Permanent takeposterminal var in a cookie
 }
 
 if ($setcurrency != "") {
@@ -537,10 +537,12 @@ function ClickProduct(position, qty = 1) {
 		console.log($('#prodiv4').data('rowid'));
 		invoiceid = $("#invoiceid").val();
 		idproduct=$('#prodiv'+position).data('rowid');
-		console.log("Click on product at position "+position+" for idproduct "+idproduct+", qty="+qty+" invoicdeid="+invoiceid);
-		if (idproduct=="") return;
+		console.log("Click on product at position "+position+" for idproduct "+idproduct+", qty="+qty+" invoiceid="+invoiceid);
+		if (idproduct == "") {
+			return;
+		}
 		// Call page invoice.php to generate the section with product lines
-		$("#poslines").load("invoice.php?action=addline&token=<?php echo newToken() ?>&place="+place+"&idproduct="+idproduct+"&qty="+qty+"&invoiceid="+invoiceid, function() {
+		$("#poslines").load("invoice.php?action=addline&token=<?php echo newToken(); ?>&place="+place+"&idproduct="+idproduct+"&qty="+qty+"&invoiceid="+invoiceid, function() {
 			<?php if (getDolGlobalString('TAKEPOS_CUSTOMER_DISPLAY')) {
 				echo "CustomerDisplay();";
 			}?>
@@ -1175,7 +1177,7 @@ if (!getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR')) {
 				$reshook = $hookmanager->executeHooks('takepos_login_block_other');
 				if ($reshook == 0) {  //Search method
 					?>
-					<div class="login_block_other">
+					<div class="login_block_other takepos">
 					<input type="text" id="search" name="search" class="input-nobottom" onkeyup="Search2('<?php echo dol_escape_js($keyCodeForEnter); ?>', null);" placeholder="<?php echo dol_escape_htmltag($langs->trans("Search")); ?>" autofocus>
 					<a onclick="ClearSearch(false);" class="nohover"><span class="fa fa-backspace"></span></a>
 					<a href="<?php echo DOL_URL_ROOT.'/'; ?>" target="backoffice" rel="opener"><!-- we need rel="opener" here, we are on same domain and we need to be able to reuse this tab several times -->
@@ -1374,7 +1376,9 @@ if (! getDolGlobalString('TAKEPOS_HIDE_HISTORY')) {
 $menus[$r++] = array('title' => '<span class="fa fa-cube paddingrightonly"></span><div class="trunc">'.$langs->trans("FreeZone").'</div>', 'action' => 'FreeZone();');
 $menus[$r++] = array('title' => '<span class="fa fa-percent paddingrightonly"></span><div class="trunc">'.$langs->trans("InvoiceDiscountShort").'</div>', 'action' => 'Reduction();');
 
-$menus[$r++] = array('title' => '<span class="fas fa-cut paddingrightonly"></span><div class="trunc">'.$langs->trans("SplitSale").'</div>', 'action' => 'Split();');
+if (!getDolGlobalString('TAKEPOS_NO_SPLIT_SALE')) {
+	$menus[$r++] = array('title' => '<span class="fas fa-cut paddingrightonly"></span><div class="trunc">'.$langs->trans("SplitSale").'</div>', 'action' => 'Split();');
+}
 
 // BAR RESTAURANT specific menu
 if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
@@ -1490,7 +1494,7 @@ if (getDolGlobalString('TAKEPOS_WEIGHING_SCALE')) {
 			}
 		}
 
-		if (getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR')) {
+		if (getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR') && !getDolGlobalString('TAKEPOS_HIDE_SEARCH')) {
 			print '<!-- Show the search input text -->'."\n";
 			print '<div class="margintoponly">';
 			print '<input type="text" id="search" class="input-search-takepos input-nobottom" name="search" onkeyup="Search2(\''.dol_escape_js($keyCodeForEnter).'\', null);" style="width: 80%; width:calc(100% - 51px); font-size: 150%;" placeholder="'.dol_escape_htmltag($langs->trans("Search")).'" autofocus> ';

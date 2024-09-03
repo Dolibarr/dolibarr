@@ -27,6 +27,7 @@
  * $defaulttopic and $defaulttopiclang
  * $diroutput
  * $arrayoffamiliestoexclude=array('system', 'mycompany', 'object', 'objectamount', 'date', 'user', ...);
+ * $file
  */
 
 // Protection to avoid direct call of template
@@ -134,7 +135,7 @@ if ($action == 'presend') {
 	$formmail = new FormMail($db);
 
 	$formmail->param['langsmodels'] = (empty($newlang) ? $langs->defaultlang : $newlang);
-	$formmail->fromtype = (GETPOST('fromtype') ? GETPOST('fromtype') : (getDolGlobalString('MAIN_MAIL_DEFAULT_FROMTYPE') ? $conf->global->MAIN_MAIL_DEFAULT_FROMTYPE : 'user'));
+	$formmail->fromtype = (GETPOST('fromtype') ? GETPOST('fromtype') : getDolGlobalString('MAIN_MAIL_DEFAULT_FROMTYPE', 'user'));
 
 	if ($formmail->fromtype === 'user') {
 		$formmail->fromid = $user->id;
@@ -189,6 +190,8 @@ if ($action == 'presend') {
 	$formmail->trackid = empty($trackid) ? '' : $trackid;
 	$formmail->inreplyto = empty($inreplyto) ? '' : $inreplyto;
 	$formmail->withfrom = 1;
+	$formmail->withlayout = 1;
+	$formmail->withaiprompt = 'html';
 
 	// Define $liste, a list of recipients with email inside <>.
 	$liste = array();
@@ -390,6 +393,8 @@ if ($action == 'presend') {
 	$formmail->param['id'] = $object->id;
 	$formmail->param['returnurl'] = $_SERVER["PHP_SELF"].'?id='.$object->id;
 	$formmail->param['fileinit'] = array($file);
+	$formmail->param['object_entity'] = $object->entity;
+
 	// Show form
 	print $formmail->get_form();
 

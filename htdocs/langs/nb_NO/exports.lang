@@ -46,10 +46,16 @@ LineLabel=Linjeetikett
 LineDescription=Beskrivelse av linje
 LineUnitPrice=Enhetspris på linje
 LineVATRate=MVA-sats på linje
+LineLT1Rate=Skatt 2 sats for linje
+LineLT2Rate=Skatt 3 sats for linje
+LineLT1Type=Skatt 2 type for linje
+LineLT2Type=Skatt 3 type for linje
 LineQty=Kvantum på linje
 LineTotalHT=Beløp eks. MVA for linje
 LineTotalTTC=Beløp med skatt for linje
 LineTotalVAT=MVA-beløp for linje
+LineTotalLT1=Skattebeløp 2 for linje
+LineTotalLT2=Skattebeløp 3 for linje
 TypeOfLineServiceOrProduct=Linjetype (0=vare, 1=tjeneste)
 FileWithDataToImport=Fil med data som skal importeres
 FileToImport=Kildefilen du vil importere

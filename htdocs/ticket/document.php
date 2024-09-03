@@ -70,6 +70,7 @@ if (!$sortfield) {
 	$sortfield = "position_name";
 }
 
+$hookmanager->initHooks(array('documentticketcard', 'globalcard'));
 $object = new Ticket($db);
 $result = $object->fetch($id, $ref, $track_id);
 
@@ -100,6 +101,12 @@ $permissiontoadd = $user->hasRight('ticket', 'write');	// Used by the include of
 
 include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+
 // Set parent company
 if ($action == 'set_thirdparty' && $user->hasRight('ticket', 'write')) {
 	if ($object->fetch(GETPOSTINT('id'), '', GETPOST('track_id', 'alpha')) >= 0) {
@@ -118,7 +125,7 @@ if ($action == 'set_thirdparty' && $user->hasRight('ticket', 'write')) {
 $form = new Form($db);
 
 $help_url = '';
-llxHeader('', $langs->trans("TicketDocumentsLinked").' - '.$langs->trans("Files"), $help_url);
+llxHeader('', $langs->trans("TicketDocumentsLinked").' - '.$langs->trans("Files"), $help_url, '', 0, 0, '', '', '', 'mod-ticket page-card_documents');
 
 if ($object->id) {
 	/*
@@ -215,6 +222,13 @@ if ($object->id) {
 			$upload_msg_dir = $conf->agenda->dir_output.'/'.$db->fetch_row($resql)[0];
 			$file_msg = dol_dir_list($upload_msg_dir, "files", 0, '', '\.meta$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 			if (count($file_msg)) {
+				// add specific module part and user rights for delete
+				foreach ($file_msg as $key => $file) {
+					$file_msg[$key]['modulepart'] = 'actions';
+					$file_msg[$key]['relativepath'] = $file['level1name'].'/'; // directory without file name
+					$file_msg[$key]['permtoedit'] = 0;
+					$file_msg[$key]['permonobject'] = 0;
+				}
 				$file_msg_array = array_merge($file_msg, $file_msg_array);
 			}
 		}
