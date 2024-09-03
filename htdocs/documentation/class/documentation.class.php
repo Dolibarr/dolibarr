@@ -70,6 +70,7 @@ class Documentation
 	 *    Output header + body
 	 *
 	 * @param string $title Title of page
+	 * @return null
 	 */
 	public function docHeader($title = '')
 	{
@@ -93,6 +94,7 @@ class Documentation
 
 	/**
 	 *    Output close body + html
+	 * @return null
 	 */
 	public function docFooter()
 	{
@@ -106,6 +108,7 @@ class Documentation
 
 	/**
 	 *    Output sidebar
+	 * @return null
 	 */
 	public function showSidebar()
 	{
@@ -114,7 +117,8 @@ class Documentation
 		// LOGO
 		print '<div class="sidebar-logo">';
 		if (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.svg')) {
-			//print '<img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg'.'" />';
+			$urllogo = DOL_URL_ROOT.'/theme/dolibarr_logo.svg';
+			print '<img src="'.$urllogo.'" />';
 		}
 		print '</div>';
 
@@ -123,7 +127,7 @@ class Documentation
 		if (!empty($this->menu)) {
 			$this->displayMenu($this->menu);
 		}
-			print '</nav>';
+		print '</nav>';
 
 		print '</div>';
 	}
@@ -133,6 +137,7 @@ class Documentation
 	 *
 	 * @param array $menu  $this->menu or submenus
 	 * @param int   $level level of menu
+	 * @return null
 	 */
 	private function displayMenu($menu, $level = 0)
 	{
@@ -151,7 +156,7 @@ class Documentation
 			print ((!empty($item['submenu'])) ? '<i class="submenu-toggle fas fa-chevron-right" aria-hidden="true"></i>' : '');
 			print '</a>';
 			if (!empty($item['submenu'])) {
-					$this->displayMenu($item['submenu'], $level); // Appel récursif pour afficher les sous-menus
+				$this->displayMenu($item['submenu'], $level); // Appel récursif pour afficher les sous-menus
 			}
 			echo '</li>';
 		}
@@ -160,6 +165,7 @@ class Documentation
 
 	/**
 	 *    Output breadcrumb
+	 * @return null
 	 */
 	public function showBreadcrumb()
 	{
@@ -182,7 +188,7 @@ class Documentation
 		} else {
 			print '<li class="breadcrumb-item">'.$langs->trans('Documentation').'</li>';
 		}
-			print '</ul>';
+		print '</ul>';
 		print '</nav>';
 	}
 
@@ -190,12 +196,15 @@ class Documentation
 	 *    Output a View Code area
 	 *
 	 * @param array $lines Lines of code to show
+	 * @return null
 	 */
 	public function showCode($lines = array())
 	{
 		print '<div class="documentation-code"><pre>';
-		foreach ($lines as $lineofcode) {
-			print dol_htmlentities($lineofcode).'<br/>';
+		if (!empty($lines)) {
+			foreach ($lines as $lineofcode) {
+				print dol_htmlentities($lineofcode).'<br/>';
+			}
 		}
 		print '</pre></div>';
 	}
