@@ -1746,10 +1746,10 @@ if ($dirins && ($action == 'droptable' || $action == 'droptableextrafields') && 
 	$objectname = $tabobj;
 
 	$arrayoftables = array();
-	if ($action == 'droptable') {
+	if ($action == 'droptable') {	// Test on permission already done
 		$arrayoftables[] = MAIN_DB_PREFIX.strtolower($module).'_'.strtolower($tabobj);
 	}
-	if ($action == 'droptableextrafields') {
+	if ($action == 'droptableextrafields') {	// Test on permission already done
 		$arrayoftables[] = MAIN_DB_PREFIX.strtolower($module).'_'.strtolower($tabobj).'_extrafields';
 	}
 
