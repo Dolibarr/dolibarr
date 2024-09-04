@@ -341,7 +341,7 @@ if (empty($reshook)) {
 					$num = count($lines);
 
 					for ($i = 0; $i < $num; $i++) {
-						$desc = ($lines[$i]->product_desc ? $lines[$i]->product_desc : '');
+						$desc = ($lines[$i]->desc ? $lines[$i]->desc : '');
 						// If we build one invoice for several sendings, we must put the ref of sending on the invoice line
 						if (!empty($createbills_onebythird)) {
 							$desc = dol_concatdesc($desc, $langs->trans("Order").': '.$expdCmdSrc->ref. ' - '. $langs->trans("Shipment").': '.$expd->ref.($expd->date_shipping ? ' - '.dol_print_date($expd->date_shipping, 'day'):''));
