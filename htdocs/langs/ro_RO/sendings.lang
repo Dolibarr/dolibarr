@@ -63,7 +63,7 @@ NoProductToShipFoundIntoStock=Nu există niciun produs de livrat în depozitul <
 WeightVolShort=Greutate/Volum.
 ValidateOrderFirstBeforeShipment=Mai întâi trebuie să validezi comanda de vânzare înainte de a putea face livrări.
 NoLineGoOnTabToAddSome=Nicio linie/articol, mergi în fila "%s" pentru adăugare
-CreateInvoiceForThisCustomerFromShippings=Facturare expediții
+CreateInvoiceForThisCustomerFromSendings=Facturare expediții
 IfValidateInvoiceIsNoSendingStayUnbilled=Dacă validarea facturii este 'Nu', expedierea/livrarea va rămâne în starea 'Nefacturată' până când factura este validată.
 OptionToSetSendingBilledNotEnabled= Opțiunea din modulul Flux de lucru, pentru a seta automat trimiterea la 'Facturat' atunci când factura este validată, nu este activată, așa că va trebui să setezi manual starea trimiterilor la 'Facturat' după generarea facturii.
 

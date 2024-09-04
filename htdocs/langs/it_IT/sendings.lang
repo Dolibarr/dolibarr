@@ -63,7 +63,7 @@ NoProductToShipFoundIntoStock=Nessun prodotto da spedire presente all'interno de
 WeightVolShort=Peso/Vol.
 ValidateOrderFirstBeforeShipment=È necessario convalidare l'ordine prima di poterlo spedire
 NoLineGoOnTabToAddSome=No linea, vai sulla scheda "%s" per aggiungere
-CreateInvoiceForThisCustomerFromShippings=Invii di fatture
+CreateInvoiceForThisCustomerFromSendings=Invii di fatture
 IfValidateInvoiceIsNoSendingStayUnbilled=Se la convalida fattura è 'No', l'invio rimarrà nello stato 'Non fatturato' fino alla convalida di fattura.
 OptionToSetSendingBilledNotEnabled=Opzione dal flusso di lavoro modulo, per impostare l'invio a 'fatturato' automaticamente quando fattura è convalidato, non è abilitato, quindi dovrai impostare lo stato degli invii su 'fatturato' manualmente dopo che fattura è stato generato.
 

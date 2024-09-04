@@ -63,7 +63,7 @@ NoProductToShipFoundIntoStock=在倉庫 <b>%s</b> 中未找到可發貨產品。
 WeightVolShort=重量 / 體積
 ValidateOrderFirstBeforeShipment=您必須先驗證訂單才能進行發貨。
 NoLineGoOnTabToAddSome=無行列，請轉到標籤 “%s” 以添加
-CreateInvoiceForThisCustomerFromShippings=發貨開票
+CreateInvoiceForThisCustomerFromSendings=發貨開票
 IfValidateInvoiceIsNoSendingStayUnbilled=如果發票驗證為“否”，則發貨狀態將保持為“未開票”直到發票驗證完成。
 OptionToSetSendingBilledNotEnabled=未啟用於工作流程模組中啟動的發票驗證後自動將發貨設為“已開票”的選項，因此您將需在發票生成後手動設置發貨狀態。
 

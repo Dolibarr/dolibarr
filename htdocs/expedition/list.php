@@ -988,7 +988,7 @@ $arrayofmassactions = array(
 	'presend'  => img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
 if ($user->hasRight('facture', 'creer')) {
-	$arrayofmassactions['createbills'] = img_picto('', 'bill', 'class="pictofixedwidth"').$langs->trans("CreateInvoiceForThisCustomerFromShippings");
+	$arrayofmassactions['createbills'] = img_picto('', 'bill', 'class="pictofixedwidth"').$langs->trans("CreateInvoiceForThisCustomerFromSendings");
 }
 if (in_array($massaction, array('presend', 'createbills'))) {
 	$arrayofmassactions = array();
@@ -1070,7 +1070,7 @@ if ($massaction == 'createbills') {
 
 	print '<br>';
 	print '<div class="center">';
-	print '<input type="submit" class="button" id="createbills" name="createbills" value="'.$langs->trans('CreateInvoiceForThisCustomerFromShippings').'">  ';
+	print '<input type="submit" class="button" id="createbills" name="createbills" value="'.$langs->trans('CreateInvoiceForThisCustomerFromSendings').'">  ';
 	print '<input type="submit" class="button button-cancel" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 	print '<br>';

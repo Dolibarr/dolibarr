@@ -63,7 +63,7 @@ NoProductToShipFoundIntoStock=<b>%s</b>창고에 배송할 제품이 없습니�
 WeightVolShort=무게/부피
 ValidateOrderFirstBeforeShipment=선적을 하려면 먼저 주문를 확인 처리해야 합니다.
 NoLineGoOnTabToAddSome=항목이 없습니다. 추가를 위해 탭 "%s"로 가세요
-CreateInvoiceForThisCustomerFromShippings=청구서 발송물
+CreateInvoiceForThisCustomerFromSendings=청구서 발송물
 IfValidateInvoiceIsNoSendingStayUnbilled=청구서 확인 처리 상태가 '안됨'이라면 발송물은 송장이 확인 처리 되기 전까지 '청구되지 않음'으로 남을 것입니다.
 OptionToSetSendingBilledNotEnabled=모듈 워크플로의 옵션, 송장이 확인 처리되었을 때 발송물을 '청구됨'으로 자동 설정하는 것이 불가합니다. 송장이 생성될 때 수동으로 발송물의 상태를 '청구됨'으로 변경해주세요.
 

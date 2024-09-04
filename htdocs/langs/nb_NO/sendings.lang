@@ -63,7 +63,7 @@ NoProductToShipFoundIntoStock=Ingen varer som skal sendes i lager <b> %s </b>. K
 WeightVolShort=Vekt/volum
 ValidateOrderFirstBeforeShipment=Du må validere ordren før du kan utføre forsendelser
 NoLineGoOnTabToAddSome=Ingen linjer, gå til fanen "%s" for å legge til
-CreateInvoiceForThisCustomerFromShippings=Fakturautsendelser
+CreateInvoiceForThisCustomerFromSendings=Fakturautsendelser
 IfValidateInvoiceIsNoSendingStayUnbilled=Hvis faktura valideringen er 'Nei', vil sendingen forbli til status 'Ufakturert' til faktura er validert.
 OptionToSetSendingBilledNotEnabled=Alternativ fra modul Workflow, for å sette sending til "Fakturert" automatisk når faktura er validert, er ikke aktivert, så du må sette statusen for sendinger til "Fakturert" manuelt etter faktura er generert.
 

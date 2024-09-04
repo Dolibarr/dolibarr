@@ -63,7 +63,7 @@ NoProductToShipFoundIntoStock=Tidak ada produk untuk dikirim ditemukan di gudang
 WeightVolShort=Berat / Vol.
 ValidateOrderFirstBeforeShipment=Anda harus terlebih dahulu memvalidasi pesanan sebelum dapat melakukan pengiriman.
 NoLineGoOnTabToAddSome=Tidak ada baris, buka tab "%s" untuk menambahkan
-CreateInvoiceForThisCustomerFromShippings=Pengiriman tagihan
+CreateInvoiceForThisCustomerFromSendings=Pengiriman tagihan
 IfValidateInvoiceIsNoSendingStayUnbilled=Jika validasi invoice 'Tidak', pengiriman akan tetap berstatus 'Tidak Ditagih' hingga invoice divalidasi.
 OptionToSetSendingBilledNotEnabled=Opsi dari modul Alur Kerja, untuk menyetel pengiriman ke 'Ditagih' secara otomatis saat faktur divalidasi, tidak diaktifkan, jadi Anda harus menyetel status pengiriman ke 'Ditagih' secara manual setelah faktur dibuat.
 
