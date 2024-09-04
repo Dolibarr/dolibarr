@@ -777,7 +777,7 @@ if ($object->id > 0) {
 				}
 
 				$selectedRib= $default_rib;
-				$selectedRib = $form->form_iban(!empty(GETPOST('ribList')) ? GETPOST('ribList') : $default_rib, 'ribList', 0, $type, $ribForSelection);
+				$selectedRib = $form->form_iban($_SERVER['PHP_SELF'].'?id='.$object->id, !empty(GETPOST('ribList')) ? GETPOST('ribList') : $default_rib, 'ribList', $filtertype, 1, 0, $type, 0, $ribForSelection);
 
 				if (!empty($rib->iban)) {
 					if ($rib->verif() <= 0) {
