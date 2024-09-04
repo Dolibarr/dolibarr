@@ -81,6 +81,7 @@ $message = GETPOST('message', 'aZ09');
 $suffix = GETPOST("suffix", 'aZ09');
 $source = GETPOST("source", 'alpha');
 $ref = $REF = GETPOST("ref", 'alpha');
+$signatory_type = GETPOST("signatorytype", 'alpha');
 $urlok = '';
 $urlko = '';
 
@@ -108,6 +109,10 @@ if (!empty($source)) {
 if (!empty($REF)) {
 	$urlok .= 'ref='.urlencode($REF).'&';
 	$urlko .= 'ref='.urlencode($REF).'&';
+}
+if (!empty($signatory_type)) {
+	$urlok .= 'signatorytype='.urlencode($signatory_type).'&';
+	$urlko .= 'signatorytype='.urlencode($signatory_type).'&';
 }
 if (!empty($SECUREKEY)) {
 	$urlok .= 'securekey='.urlencode($SECUREKEY).'&';
@@ -258,6 +263,7 @@ print '<input type="hidden" name="entity" value="'.$entity.'" />';
 print '<input type="hidden" name="page_y" value="" />';
 print '<input type="hidden" name="source" value="'.$source.'" />';
 print '<input type="hidden" name="ref" value="'.$ref.'" />';
+print '<input type="hidden" name="signatorytype" value="'.$signatory_type.'" />';
 print "\n";
 print '<!-- Form to sign -->'."\n";
 
@@ -767,11 +773,12 @@ if ($action == "dosign" && empty($cancel)) {
 						"securekey" : \''.dol_escape_js($SECUREKEY).'\',
 						"mode" : \''.dol_escape_htmltag($source).'\',
 						"entity" : \''.dol_escape_htmltag($entity).'\',
+						"signatorytype" : \''.dol_escape_js($signatory_type).'\',
 					},
 					success: function(response) {
 						if (response == "success"){
 							console.log("Success on saving signature");
-							window.location.replace("'.$_SERVER["PHP_SELF"].'?ref='.urlencode($ref).'&source='.urlencode($source).'&message=signed&securekey='.urlencode($SECUREKEY).(isModEnabled('multicompany') ? '&entity='.(int) $entity : '').'");
+							window.location.replace("'.$_SERVER["PHP_SELF"].'?ref='.urlencode($ref).'&source='.urlencode($source).'&signatorytype='.urlencode($signatory_type).'&message=signed&securekey='.urlencode($SECUREKEY).(isModEnabled('multicompany') ? '&entity='.(int) $entity : '').'");
 						} else {
 							document.body.style.cursor = \'auto\';
 							console.error(response);
