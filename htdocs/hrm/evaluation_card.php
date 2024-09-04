@@ -166,7 +166,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'close') {
+	if ($action == 'close' && $permissiontoadd) {
 		// save evaldet lines to user;
 		$sk = new SkillRank($db);
 		$SkillrecordsForActiveUser = $sk->fetchAll('ASC', 'fk_skill', 0, 0, "(fk_object:=:".((int) $object->fk_user).") AND (objecttype:=:'".$db->escape(SkillRank::SKILLRANK_TYPE_USER)."')", 'AND');
@@ -212,7 +212,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'reopen') {
+	if ($action == 'reopen' && $permissiontoadd) {
 		// no update here we just change the evaluation status
 		$object->setStatut(Evaluation::STATUS_VALIDATED);
 	}
@@ -221,7 +221,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	// action to remove file
-	if ($action == 'remove_file_comfirm') {
+	if ($action == 'remove_file_comfirm' && $permissiontoadd) {
 		// Delete file in doc form
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
