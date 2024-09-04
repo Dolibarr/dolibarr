@@ -132,7 +132,7 @@ class PropaleLigne extends CommonObjectLine
 	public $subprice;
 
 	/**
-	 * @var int|string
+	 * @var int|string|float
 	 */
 	public $remise_percent;
 
