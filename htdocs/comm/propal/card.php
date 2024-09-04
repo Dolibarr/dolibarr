@@ -978,9 +978,14 @@ if (empty($reshook)) {
 			}
 			$result = $object->updateline($line->id, $line->subprice, $line->qty, $remise_percent, $tvatx, $line->localtax1_tx, $line->localtax2_tx, $line->desc, 'HT', $line->info_bits, $line->special_code, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice);
 		}
-	} elseif ($action == 'addline' && GETPOST('submitforallmargins', 'alpha') && GETPOST('marginforalllines') !== '' && $usercancreate) {
+	} elseif ($action == 'addline' && (GETPOST('submitforallmargins', 'alpha')
+		&& GETPOST('marginforalllines') !== '' && $usercancreate) ||
+		(GETPOST('submitforallmark', 'alpha')
+			&& GETPOST('markforalllines') !== '' && $usercancreate)
+	) {
 		// Define margin
 		$margin_rate = (GETPOST('marginforalllines') ? GETPOST('marginforalllines') : 0);
+		$mark_rate = (GETPOST('markforalllines') ? GETPOST('markforalllines') : 0);
 		foreach ($object->lines as &$line) {
 			$subprice = price2num($line->pa_ht * (1 + $margin_rate / 100), 'MU');
 			$prod = new Product($db);
@@ -995,9 +1000,18 @@ if (empty($reshook)) {
 			// Update DB
 			$result = $object->updateline($line->id, $subprice, $line->qty, $line->remise_percent, $line->tva_tx, $line->localtax1_rate, $line->localtax2_rate, $line->desc, 'HT', $line->info_bits, $line->special_code, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $multicurrency_subprice);
 			// Update $object with new margin info
+
+//			$T = getMarginInfos($subprice, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->fk_fournprice, $line->pa_ht);
+//			var_dump($T);
+
 			$line->price = $subprice;
-			$line->marge_tx = $margin_rate;
-			$line->marque_tx = $margin_rate * $line->pa_ht / (float) $subprice;
+			if (!empty(GETPOST('marginforalllines'))) {
+				$line->marge_tx = $margin_rate;
+				$line->marque_tx = $margin_rate * $line->pa_ht / (float) $subprice;
+			}else {
+				$line->marge_tx = 100 * ($line->total_ht - $line->pa_ht) / (float) $subprice;
+				$line->marque_tx = $mark_rate;
+			}
 			$line->total_ht = $line->qty * (float) $subprice;
 			$line->total_tva = $line->tva_tx * $line->qty * (float) $subprice;
 			$line->total_ttc = (1 + $line->tva_tx) * $line->qty * (float) $subprice;
