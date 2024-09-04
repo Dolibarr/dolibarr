@@ -1005,6 +1005,20 @@ class BonPrelevement extends CommonObject
 			$fk_bank_account = ($type == 'bank-transfer' ? getDolGlobalInt('PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT') : getDolGlobalInt('PRELEVEMENT_ID_BANKACCOUNT'));
 		}
 
+//		// Check if there is an iban associated top bank transfer or if we take default
+//		$sql = "SELECT fk_iban FROM  ". MAIN_DB_PREFIX . "prelevement_demande as pd";
+//		$sql .= "LEFT JOIN ". MAIN_DB_PREFIX . "facture as f ON";
+//		$sql .=
+//		if ($sourcetype != 'salary') {
+//			if ($type != 'bank-transfer') {
+//				$sql .= " WHERE f.entity IN (" . getEntity('invoice') . ')';
+//			} else {
+//				$sql .= " WHERE f.entity IN (" . getEntity('supplier_invoice') . ')';
+//			}
+//		} else {
+//			$sql .= " WHERE f.entity IN (" . getEntity('salary') . ')';
+//		}
+
 		$error = 0;
 
 		$datetimeprev = dol_now('gmt');
@@ -1028,6 +1042,13 @@ class BonPrelevement extends CommonObject
 		if (!$error) {
 			dol_syslog(__METHOD__ . " Read invoices for did=" . ((int) $did), LOG_DEBUG);
 
+
+			if ($type != 'bank-transfer') {
+				$factureTable = "facture";
+			} else {
+				$factureTable = "facture_fourn";
+			}
+
 			$sql = "SELECT f.rowid, pd.rowid as pfdrowid";
 			if ($sourcetype != 'salary') {
 				$sql .= ", f.fk_soc";
@@ -1044,13 +1065,8 @@ class BonPrelevement extends CommonObject
 				$sql .= ", f.ref, sr.bic, sr.iban_prefix, 'FRST' as frstrecur";
 			}
 			if ($sourcetype != 'salary') {
-				if ($type != 'bank-transfer') {
-					$sql .= " FROM " . MAIN_DB_PREFIX . "facture as f";
-					$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "prelevement_demande as pd ON f.rowid = pd.fk_facture";
-				} else {
-					$sql .= " FROM " . MAIN_DB_PREFIX . "facture_fourn as f";
-					$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "prelevement_demande as pd ON f.rowid = pd.fk_facture_fourn";
-				}
+				$sql .= " FROM " . MAIN_DB_PREFIX . $factureTable . " as f";
+				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "prelevement_demande as pd ON f.rowid = pd.fk_".$factureTable;
 				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe as s ON s.rowid = f.fk_soc";
 				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_rib as sr ON s.rowid = sr.fk_soc AND sr.default_rib = 1";
 			} else {

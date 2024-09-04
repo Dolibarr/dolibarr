@@ -560,7 +560,7 @@ if ($resql) {
 				}
 			} else {
 				$bac = new UserBankAccount($db);
-				$bac->fetch(0, '', $obj->uid);
+				$bac->fetch($obj->iban ?? 0, '', $obj->uid);
 
 				$salary = new Salary($db);
 				$salary->fetch($obj->rowid);
