@@ -121,6 +121,7 @@ WithdrawMode=Direct debit mode (FRST or RCUR)
 WithdrawRequestAmount=Amount of Direct debit request:
 BankTransferAmount=Amount of Credit Transfer request:
 WithdrawRequestErrorNilAmount=Unable to create direct debit request for empty amount.
+WithdrawRequestErrorNoIban=Unable to create direct debit request for empty iban.
 SepaMandate=SEPA Direct Debit Mandate
 SepaMandateShort=SEPA Mandate
 PleaseReturnMandate=Please return this mandate form by email to %s or by mail to

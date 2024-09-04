@@ -1020,40 +1020,48 @@ abstract class CommonInvoice extends CommonObject
 						$amount = price2num($this->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
 					}
 
-					if (is_numeric($amount) && $amount != 0) {
-						$sql = 'INSERT INTO '.$this->db->prefix().'prelevement_demande(';
-						if ($type == 'bank-transfer') {
-							$sql .= 'fk_facture_fourn, ';
-						} else {
-							$sql .= 'fk_facture, ';
-						}
-						$sql .= ' amount, date_demande, fk_user_demande, code_banque, code_guichet, number, cle_rib, sourcetype, type, entity, fk_iban)';
-						$sql .= " VALUES (".((int) $this->id);
-						$sql .= ", ".((float) price2num($amount));
-						$sql .= ", '".$this->db->idate($now)."'";
-						$sql .= ", ".((int) $fuser->id);
-						$sql .= ", '".$this->db->escape($bac->code_banque)."'";
-						$sql .= ", '".$this->db->escape($bac->code_guichet)."'";
-						$sql .= ", '".$this->db->escape($bac->number)."'";
-						$sql .= ", '".$this->db->escape($bac->cle_rib)."'";
-						$sql .= ", '".$this->db->escape($sourcetype)."'";
-						$sql .= ", 'ban'";
-						$sql .= ", ".((int) $conf->entity);
-						$sql .= ", '".$this->db->escape($bac->id)."'";
-						$sql .= ")";
+					if(empty($bac->id)) {
+						$this->error = 'WithdrawRequestErrorNoIban';
+						dol_syslog(get_class($this).'::demandeprelevement WithdrawRequestErrorNoIban');
+						$error++;
+					} else {
+						if (is_numeric($amount) && $amount != 0) {
+							$sql = 'INSERT INTO '.$this->db->prefix().'prelevement_demande(';
+							if ($type == 'bank-transfer') {
+								$sql .= 'fk_facture_fourn, ';
+							} else {
+								$sql .= 'fk_facture, ';
+							}
+							$sql .= ' amount, date_demande, fk_user_demande, code_banque, code_guichet, number, cle_rib, sourcetype, type, entity, fk_iban)';
+							$sql .= " VALUES (".((int) $this->id);
+							$sql .= ", ".((float) price2num($amount));
+							$sql .= ", '".$this->db->idate($now)."'";
+							$sql .= ", ".((int) $fuser->id);
+							$sql .= ", '".$this->db->escape($bac->code_banque)."'";
+							$sql .= ", '".$this->db->escape($bac->code_guichet)."'";
+							$sql .= ", '".$this->db->escape($bac->number)."'";
+							$sql .= ", '".$this->db->escape($bac->cle_rib)."'";
+							$sql .= ", '".$this->db->escape($sourcetype)."'";
+							$sql .= ", 'ban'";
+							$sql .= ", ".((int) $conf->entity);
+							$sql .= ", '".$this->db->escape($bac->id)."'";
+							$sql .= ")";
 
-						dol_syslog(get_class($this)."::demande_prelevement", LOG_DEBUG);
-						$resql = $this->db->query($sql);
-						if (!$resql) {
-							$this->error = $this->db->lasterror();
-							dol_syslog(get_class($this).'::demandeprelevement Erreur');
+							dol_syslog(get_class($this)."::demande_prelevement", LOG_DEBUG);
+							$resql = $this->db->query($sql);
+							if (!$resql) {
+								$this->error = $this->db->lasterror();
+								dol_syslog(get_class($this).'::demandeprelevement Erreur');
+								$error++;
+							}
+						} else {
+							$this->error = 'WithdrawRequestErrorNilAmount';
+							dol_syslog(get_class($this).'::demandeprelevement WithdrawRequestErrorNilAmount');
 							$error++;
 						}
-					} else {
-						$this->error = 'WithdrawRequestErrorNilAmount';
-						dol_syslog(get_class($this).'::demandeprelevement WithdrawRequestErrorNilAmount');
-						$error++;
 					}
+
+
 
 					if (!$error) {
 						// Force payment mode of invoice to withdraw
