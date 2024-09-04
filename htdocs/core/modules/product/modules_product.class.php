@@ -129,8 +129,6 @@ abstract class ModeleProductCode extends CommonNumRefGenerator
 	 */
 	public function getToolTip($langs, $product, $type)
 	{
-		global $conf;
-
 		$langs->loadLangs(array("admin", "companies"));
 
 		$strikestart = '';
@@ -210,5 +208,5 @@ abstract class ModeleProductCode extends CommonNumRefGenerator
 	 * @param	int<-1,2>		$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
 	 * @return	string						Return string example
 	 */
-	abstract public function getExample($langs = null, $objproduct = '', $type = -1);
+	//abstract public function getExample($langs = null, $objproduct = '', $type = -1);
 }

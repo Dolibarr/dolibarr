@@ -84,7 +84,7 @@ if (!count($listofvars) && !count($listofstatus)) {
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<td width="300">'.$langs->trans("Parameters").'</td>';
-		print '<td>'.$langs->trans("Value").'</td>';
+		print '<td></td>';
 		print '</tr>'."\n";
 
 		// arraytest is an array of test to do
