@@ -63,7 +63,7 @@ NoProductToShipFoundIntoStock=រកមិនឃើញផលិតផលដែ�
 WeightVolShort=ទម្ងន់/វ៉ុល។
 ValidateOrderFirstBeforeShipment=អ្នកត្រូវតែបញ្ជាក់ការបញ្ជាទិញជាមុនសិន មុននឹងអាចធ្វើការដឹកជញ្ជូនបាន។
 NoLineGoOnTabToAddSome=គ្មានបន្ទាត់ សូមចូលទៅកាន់ផ្ទាំង "%s" ដើម្បីបន្ថែម
-CreateInvoiceForThisCustomerFromSendings=ការផ្ញើវិក្កយបត្រ
+CreateInvoiceForThisCustomerFromShippings=ការផ្ញើវិក្កយបត្រ
 IfValidateInvoiceIsNoSendingStayUnbilled=ប្រសិនបើវិក្កយបត្រមានសុពលភាពគឺ 'ទេ' ការផ្ញើនឹងនៅតែស្ថិតក្នុងស្ថានភាព 'មិនទាន់ចេញវិក្កយបត្រ' រហូតដល់វិក្កយបត្រមានសុពលភាព។
 OptionToSetSendingBilledNotEnabled=ជម្រើសពីម៉ូឌុលការងារ ដើម្បីកំណត់ការផ្ញើទៅ 'បានចេញវិក្កយបត្រ' ដោយស្វ័យប្រវត្តិ នៅពេលដែលវិក្កយបត្រត្រូវបានផ្ទៀងផ្ទាត់ មិនត្រូវបានបើកទេ ដូច្នេះអ្នកនឹងត្រូវកំណត់ស្ថានភាពនៃការផ្ញើទៅ 'ចេញវិក្កយបត្រ' ដោយដៃ បន្ទាប់ពីវិក្កយបត្រត្រូវបានបង្កើត។
 

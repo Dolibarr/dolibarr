@@ -63,7 +63,7 @@ NoProductToShipFoundIntoStock=Noliktavā nav atrasts neviens produkts, kas pared
 WeightVolShort=Svars / tilp.
 ValidateOrderFirstBeforeShipment=Vispirms jums ir jāapstiprina pasūtījums, lai varētu veikt sūtījumus.
 NoLineGoOnTabToAddSome=Nav rindiņas, atveriet cilni %s, lai pievienotu
-CreateInvoiceForThisCustomerFromSendings=Rēķinu nosūtīšana
+CreateInvoiceForThisCustomerFromShippings=Rēķinu nosūtīšana
 IfValidateInvoiceIsNoSendingStayUnbilled=Ja rēķina apstiprināšana ir “Nē”, nosūtīšanas statuss būs “Bez rēķina”, līdz rēķins tiks apstiprināts.
 OptionToSetSendingBilledNotEnabled=Nav iespējota opcija no moduļa Workflow, lai pēc rēķina apstiprināšanas automātiski iestatītu sūtīšanu uz 'Rēķins', tāpēc pēc rēķina ģenerēšanas jums būs manuāli jāiestata sūtījumu statuss uz 'Rēķins'.
 

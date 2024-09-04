@@ -268,7 +268,7 @@ if (empty($reshook)) {
 				$objecttmp->fk_project = $expd->fk_project;
 				$objecttmp->multicurrency_code = !empty($expdCmdSrc->multicurrency_code) ? $expdCmdSrc->multicurrency_code : (!empty($objecttmp->thirdparty->multicurrency_code) ? $objecttmp->thirdparty->multicurrency_code : $expd->multicurrency_code);
 				if (empty($createbills_onebythird)) {
-					$objecttmp->ref_client = $expd->ref_client;
+					$objecttmp->ref_customer = $expd->ref_customer;
 				}
 
 				$datefacture = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
@@ -277,7 +277,7 @@ if (empty($reshook)) {
 				}
 
 				$objecttmp->date = $datefacture;
-				$objecttmp->origin    = 'shipping';
+				$objecttmp->origin_type    = 'shipping';
 				$objecttmp->origin_id = $id_sending;
 
 				$objecttmp->array_options = $expd->array_options; // Copy extrafields
@@ -341,16 +341,16 @@ if (empty($reshook)) {
 					$num = count($lines);
 
 					for ($i = 0; $i < $num; $i++) {
-						$desc = ($lines[$i]->desc ? $lines[$i]->desc : '');
+						$desc = ($lines[$i]->product_desc ? $lines[$i]->product_desc : '');
 						// If we build one invoice for several sendings, we must put the ref of sending on the invoice line
 						if (!empty($createbills_onebythird)) {
-							$desc = dol_concatdesc($desc, $langs->trans("Order").' '.$expd->ref.' - '.dol_print_date($expd->date, 'day'));
+							$desc = dol_concatdesc($desc, $langs->trans("Order").': '.$expdCmdSrc->ref. ' - '. $langs->trans("Shipment").': '.$expd->ref.($expd->date_shipping ? ' - '.dol_print_date($expd->date_shipping, 'day'):''));
 						}
 
 						if ($lines[$i]->subprice < 0 && empty($conf->global->INVOICE_KEEP_DISCOUNT_LINES_AS_IN_ORIGIN)) {
 							// Negative line, we create a discount line
 							$discount = new DiscountAbsolute($db);
-							$discount->fk_soc = $objecttmp->socid;
+							$discount->socid = $objecttmp->socid;
 							$discount->amount_ht = abs($lines[$i]->total_ht);
 							$discount->amount_tva = abs($lines[$i]->total_tva);
 							$discount->amount_ttc = abs($lines[$i]->total_ttc);
@@ -988,7 +988,7 @@ $arrayofmassactions = array(
 	'presend'  => img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
 if ($user->hasRight('facture', 'creer')) {
-	$arrayofmassactions['createbills'] = img_picto('', 'bill', 'class="pictofixedwidth"').$langs->trans("CreateInvoiceForThisCustomerFromSendings");
+	$arrayofmassactions['createbills'] = img_picto('', 'bill', 'class="pictofixedwidth"').$langs->trans("CreateInvoiceForThisCustomerFromShippings");
 }
 if (in_array($massaction, array('presend', 'createbills'))) {
 	$arrayofmassactions = array();
@@ -1070,7 +1070,7 @@ if ($massaction == 'createbills') {
 
 	print '<br>';
 	print '<div class="center">';
-	print '<input type="submit" class="button" id="createbills" name="createbills" value="'.$langs->trans('CreateInvoiceForThisCustomerFromSendings').'">  ';
+	print '<input type="submit" class="button" id="createbills" name="createbills" value="'.$langs->trans('CreateInvoiceForThisCustomerFromShippings').'">  ';
 	print '<input type="submit" class="button button-cancel" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 	print '<br>';

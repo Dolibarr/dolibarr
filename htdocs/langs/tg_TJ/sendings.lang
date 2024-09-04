@@ -63,7 +63,7 @@ NoProductToShipFoundIntoStock=Дар анбор <b> %s </b> ягон маҳсу�
 WeightVolShort=Вазн/ҷ.
 ValidateOrderFirstBeforeShipment=Пеш аз он ки шумо интиқол диҳед, шумо бояд аввал фармоишро тасдиқ кунед.
 NoLineGoOnTabToAddSome=Сатр нест, барои илова кардан ба ҷадвали "%s" гузаред
-CreateInvoiceForThisCustomerFromSendings=Bill sendings
+CreateInvoiceForThisCustomerFromShippings=Bill sendings
 IfValidateInvoiceIsNoSendingStayUnbilled=If invoice validation is 'No', the sending will remain to status 'Unbilled' until the invoice is validated.
 OptionToSetSendingBilledNotEnabled=Option from module Workflow, to set sending to 'Billed' automatically when invoice is validated, is not enabled, so you will have to set the status of sendings to 'Billed' manually after the invoice has been generated.
 
