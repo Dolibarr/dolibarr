@@ -1043,18 +1043,19 @@ class BonPrelevement extends CommonObject
 			dol_syslog(__METHOD__ . " Read invoices for did=" . ((int) $did), LOG_DEBUG);
 
 
-			if ($type != 'bank-transfer') {
-				$factureTable = "facture";
+			$type != 'bank-transfer' ? $sqlTable = "facture" :	$sqlTable = "facture_fourn";
+
+			if($sourcetype != 'salary'){
+				$socOrUser = 'soc';
+				$societeOrUser = 'societe';
 			} else {
-				$factureTable = "facture_fourn";
+				$sqlTable = 'salary';
+				$socOrUser = 'user';
+				$societeOrUser = 'user';
 			}
 
 			$sql = "SELECT f.rowid, pd.rowid as pfdrowid";
-			if ($sourcetype != 'salary') {
-				$sql .= ", f.fk_soc";
-			} else {
-				$sql .= ", f.fk_user";
-			}
+			$sql .= ", f.fk_".$socOrUser;
 			$sql .= ", pd.code_banque, pd.code_guichet, pd.number, pd.cle_rib";
 			$sql .= ", pd.amount";
 			if ($sourcetype != 'salary') {
@@ -1064,17 +1065,10 @@ class BonPrelevement extends CommonObject
 				$sql .= ", CONCAT(s.firstname,' ',s.lastname) as name";
 				$sql .= ", f.ref, sr.bic, sr.iban_prefix, 'FRST' as frstrecur";
 			}
-			if ($sourcetype != 'salary') {
-				$sql .= " FROM " . MAIN_DB_PREFIX . $factureTable . " as f";
-				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "prelevement_demande as pd ON f.rowid = pd.fk_".$factureTable;
-				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe as s ON s.rowid = f.fk_soc";
-				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_rib as sr ON s.rowid = sr.fk_soc AND sr.default_rib = 1";
-			} else {
-				$sql .= " FROM " . MAIN_DB_PREFIX . "salary as f";
-				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "prelevement_demande as pd ON f.rowid = pd.fk_salary";
-				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "user as s ON s.rowid = f.fk_user";
-				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "user_rib as sr ON s.rowid = sr.fk_user";	// TODO Add AND sr.default_rib = 1 here
-			}
+			$sql .= " FROM " . MAIN_DB_PREFIX . $sqlTable . " as f";
+			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "prelevement_demande as pd ON f.rowid = pd.fk_".$sqlTable;
+			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . $societeOrUser." as s ON s.rowid = f.fk_".$socOrUser;
+			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . $societeOrUser."_rib as sr ON s.rowid = sr.fk_".$socOrUser." AND sr.default_rib = 1";
 			if ($sourcetype != 'salary') {
 				if ($type != 'bank-transfer') {
 					$sql .= " WHERE f.entity IN (" . getEntity('invoice') . ')';
