@@ -475,7 +475,7 @@ if ($action == "importSignature") {
 				if (preg_match('/\.pdf/i', $last_main_doc_file)) {
 					// TODO Use the $last_main_doc_file to defined the $newpdffilename and $sourcefile
 					$newpdffilename = $upload_dir . $ref . "_signed-" . $date . ".pdf";
-					$sourcefile = $upload_dir . $ref . ".pdf";
+					$sourcefile = DOL_DATA_ROOT . '/' . $last_main_doc_file;
 
 					if (dol_is_file($sourcefile)) {
 						$parameters = array('sourcefile' => $sourcefile, 'newpdffilename' => $newpdffilename);
