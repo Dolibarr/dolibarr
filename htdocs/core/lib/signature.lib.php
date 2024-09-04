@@ -20,13 +20,14 @@
 /**
  * Return string with full online Url to accept and sign a quote
  *
- * @param   string			$type		Type of URL ('proposal', ...)
- * @param	string			$ref		Ref of object
- * @param   CommonObject 	$obj  		object (needed to make multicompany good links)
- * @param	string			$mode		Mode
- * @return	string						Url string
+ * @param	string			$type				Type of URL ('proposal', ...)
+ * @param	string			$ref				Ref of object
+ * @param	CommonObject	$obj				object (needed to make multicompany good links)
+ * @param	string			$mode				Mode
+ * @param	int				$signatory_type		Type of party signing the document. 0 for Internal. 1 for Third party.
+ * @return	string								Url string
  */
-function showOnlineSignatureUrl($type, $ref, $obj = null, $mode = '')
+function showOnlineSignatureUrl($type, $ref, $obj = null, $mode = '', $signatory_type = 1)
 {
 	global $langs;
 
@@ -39,8 +40,12 @@ function showOnlineSignatureUrl($type, $ref, $obj = null, $mode = '')
 	if ($mode != 'short') {
 		$out .= img_picto('', 'globe', 'class="pictofixedwidth"');
 	}
-	$out .= '<span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlineSignature", $servicename).'</span><br>';
-	$url = getOnlineSignatureUrl(0, $type, $ref, 1, $obj);
+	if ($signatory_type == 0) {
+		$out .= '<span class="opacitymedium">'.$langs->trans("ToOfferALinkForInternalOnlineSignature", $servicename).'</span><br>';
+	} else {
+		$out .= '<span class="opacitymedium">'.$langs->trans("ToOfferALinkForThirdpartyOnlineSignature", $servicename).'</span><br>';
+	}
+	$url = getOnlineSignatureUrl(0, $type, $ref, 1, $obj, $signatory_type);
 	$out .= '<div class="urllink">';
 	if ($url == $langs->trans("FeatureOnlineSignDisabled")) {
 		$out .= $url;
@@ -57,14 +62,15 @@ function showOnlineSignatureUrl($type, $ref, $obj = null, $mode = '')
 /**
  * Return string with full Url
  *
- * @param   int				$mode				0=True url, 1=Url formatted with colors
- * @param   string			$type				Type of URL ('proposal', ...)
+ * @param	int				$mode				0=True url, 1=Url formatted with colors
+ * @param	string			$type				Type of URL ('proposal', ...)
  * @param	string			$ref				Ref of object
- * @param   int     		$localorexternal  	0=Url for browser, 1=Url for external access
- * @param   CommonObject  	$obj  				object (needed to make multicompany good links)
+ * @param	int				$localorexternal	0=Url for browser, 1=Url for external access
+ * @param	CommonObject	$obj				object (needed to make multicompany good links)
+ * @param	int				$signatory_type		Type of party signing the document. 0 for Internal. 1 for Third party.
  * @return	string								Url string
  */
-function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $obj = null)
+function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $obj = null, $signatory_type = 1)
 {
 	global $dolibarr_main_url_root;
 
@@ -150,7 +156,7 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $o
 		}
 	} elseif ($type == 'fichinter') {
 		$securekeyseed = getDolGlobalString('FICHINTER_ONLINE_SIGNATURE_SECURITY_TOKEN');
-		$out = $urltouse.'/public/onlinesign/newonlinesign.php?source=fichinter&ref='.($mode ? '<span style="color: #666666">' : '');
+		$out = $urltouse.'/public/onlinesign/newonlinesign.php?source=fichinter&signatorytype='. ($signatory_type == 1 ? 'thirdparty' : 'internal') .'&ref='.($mode ? '<span style="color: #666666">' : '');
 		if ($mode == 1) {
 			$out .= 'fichinter_ref';
 		}
