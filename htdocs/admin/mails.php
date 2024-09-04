@@ -1069,20 +1069,18 @@ if ($action == 'edit') {
 		}
 		// Test SPF default automatic email from
 		$defaultnoreplyemail = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
-		if ($defaultnoreplyemail != $companyemail) {	// We show if email differs
-			$dnsinfo = false;
-			if (!empty($defaultnoreplyemail) && function_exists('dns_get_record') && !getDolGlobalString('MAIN_DISABLE_DNS_GET_RECORD')) {
-				$arrayofemailparts = explode('@', $defaultnoreplyemail);
-				if (count($arrayofemailparts) == 2) {
-					$domain = $arrayofemailparts[1];
-					$dnsinfo = dns_get_record($domain, DNS_TXT);
-				}
+		$dnsinfo = false;
+		if (!empty($defaultnoreplyemail) && function_exists('dns_get_record') && !getDolGlobalString('MAIN_DISABLE_DNS_GET_RECORD')) {
+			$arrayofemailparts = explode('@', $defaultnoreplyemail);
+			if (count($arrayofemailparts) == 2) {
+				$domain = $arrayofemailparts[1];
+				$dnsinfo = dns_get_record($domain, DNS_TXT);
 			}
-			if (!empty($dnsinfo) && is_array($dnsinfo)) {
-				foreach ($dnsinfo as $info) {
-					if (strpos($info['txt'], 'v=spf') !== false) {
-						$text .= ($text ? '<br><br>' : '').$langs->trans("ActualMailSPFRecordFound", $defaultnoreplyemail, $info['txt']);
-					}
+		}
+		if (!empty($dnsinfo) && is_array($dnsinfo)) {
+			foreach ($dnsinfo as $info) {
+				if (strpos($info['txt'], 'v=spf') !== false) {
+					$text .= ($text ? '<br><br>' : '').$langs->trans("ActualMailSPFRecordFound", $defaultnoreplyemail, $info['txt']);
 				}
 			}
 		}
