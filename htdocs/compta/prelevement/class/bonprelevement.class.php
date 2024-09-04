@@ -1005,19 +1005,18 @@ class BonPrelevement extends CommonObject
 			$fk_bank_account = ($type == 'bank-transfer' ? getDolGlobalInt('PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT') : getDolGlobalInt('PRELEVEMENT_ID_BANKACCOUNT'));
 		}
 
+		// Pre-store entity
+		if ($sourcetype != 'salary') {
+			$type != 'bank-transfer' ? $entity = getEntity('invoice') : $entity = getEntity('supplier_invoice');
+		} else {
+			$entity = getEntity('salary');
+		}
+
 //		// Check if there is an iban associated top bank transfer or if we take default
 //		$sql = "SELECT societe_rib FROM  ". MAIN_DB_PREFIX . "prelevement_demande as pd";
 //		$sql .= "LEFT JOIN ". MAIN_DB_PREFIX . "facture as f ON";
-//		$sql .=
-//		if ($sourcetype != 'salary') {
-//			if ($type != 'bank-transfer') {
-//				$sql .= " WHERE f.entity IN (" . getEntity('invoice') . ')';
-//			} else {
-//				$sql .= " WHERE f.entity IN (" . getEntity('supplier_invoice') . ')';
-//			}
-//		} else {
-//			$sql .= " WHERE f.entity IN (" . getEntity('salary') . ')';
-//		}
+//		$sql .= "";
+//		$sql .= " WHERE f.entity IN (" . $entity . ')';
 
 		$error = 0;
 
@@ -1069,15 +1068,7 @@ class BonPrelevement extends CommonObject
 			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "prelevement_demande as pd ON f.rowid = pd.fk_".$sqlTable;
 			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . $societeOrUser." as s ON s.rowid = f.fk_".$socOrUser;
 			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . $societeOrUser."_rib as sr ON s.rowid = sr.fk_".$socOrUser." AND sr.default_rib = 1";
-			if ($sourcetype != 'salary') {
-				if ($type != 'bank-transfer') {
-					$sql .= " WHERE f.entity IN (" . getEntity('invoice') . ')';
-				} else {
-					$sql .= " WHERE f.entity IN (" . getEntity('supplier_invoice') . ')';
-				}
-			} else {
-				$sql .= " WHERE f.entity IN (" . getEntity('salary') . ')';
-			}
+			$sql .= " WHERE f.entity IN (" . $entity . ')';
 			if ($sourcetype != 'salary') {
 				$sql .= " AND f.fk_statut = 1"; // Invoice validated
 				$sql .= " AND f.paye = 0";
