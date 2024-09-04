@@ -49,6 +49,8 @@ create table llx_contrat
   total_ht					double(24,8)     DEFAULT 0,		-- total without tax
   total_ttc					double(24,8)     DEFAULT 0,		-- total with tax
 
+  denormalized_lower_planned_end_date datetime,
+
   signed_status        		smallint DEFAULT NULL,          -- signed status NULL, 0 or 1
   online_sign_ip			varchar(48),
   online_sign_name			varchar(64),
