@@ -1635,6 +1635,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				$sql = "SELECT count(*) as nb FROM " . MAIN_DB_PREFIX . "cronjob";
 				//$sql .= " WHERE module_name = '" . $this->db->escape(empty($this->rights_class) ? strtolower($this->name) : $this->rights_class) . "'";
 				$sql .= " WHERE label = '".$this->db->escape($label)."'";
+				/* unique key is on label,entity so no need for this test
 				if ($classesname) {
 					$sql .= " AND classesname = '" . $this->db->escape($classesname) . "'";
 				}
@@ -1650,6 +1651,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				if ($params) {
 					$sql .= " AND params = '" . $this->db->escape($params) . "'";
 				}
+				*/
 				$sql .= " AND entity = " . ((int) $entity); // Must be exact entity
 
 				$result = $this->db->query($sql);

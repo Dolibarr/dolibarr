@@ -293,6 +293,8 @@ if (file_exists($installlock)) {
 } else {
 	print img_warning().' '.$langs->trans("WarningLockFileDoesNotExists", DOL_DATA_ROOT);
 }
+
+print '<br>';
 print '<br>';
 
 // Is upgrade unlocked
@@ -300,6 +302,7 @@ if (file_exists($installlock)) {	// If install not locked, no need to show this.
 	if (file_exists($upgradeunlock)) {
 		print '<strong>'.$langs->trans("DolibarrUpgrade").'</strong>: ';
 		print img_warning().' '.$langs->trans("WarningUpgradeHasBeenUnlocked", $upgradeunlock);
+		print '<br>';
 		print '<br>';
 	}
 }
