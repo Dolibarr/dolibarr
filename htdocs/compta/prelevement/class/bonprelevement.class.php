@@ -1006,7 +1006,7 @@ class BonPrelevement extends CommonObject
 		}
 
 //		// Check if there is an iban associated top bank transfer or if we take default
-//		$sql = "SELECT fk_iban FROM  ". MAIN_DB_PREFIX . "prelevement_demande as pd";
+//		$sql = "SELECT societe_rib FROM  ". MAIN_DB_PREFIX . "prelevement_demande as pd";
 //		$sql .= "LEFT JOIN ". MAIN_DB_PREFIX . "facture as f ON";
 //		$sql .=
 //		if ($sourcetype != 'salary') {

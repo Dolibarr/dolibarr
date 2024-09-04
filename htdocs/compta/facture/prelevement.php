@@ -902,7 +902,7 @@ if ($object->id > 0) {
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on pfd.fk_user_demande = u.rowid";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."prelevement_bons as pb ON pb.rowid = pfd.fk_prelevement_bons";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_rib as sr ON sr.rowid = pfd.fk_iban";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_rib as sr ON sr.rowid = pfd.fk_societe_rib";
 	if ($type == 'bank-transfer') {
 		$sql .= " WHERE fk_facture_fourn = ".((int) $object->id);
 	} else {
