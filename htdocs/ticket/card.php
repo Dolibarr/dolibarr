@@ -718,10 +718,15 @@ if ($action == 'create' || $action == 'presend') {
 
 	$formticket->withcancel = 1;
 
+	// Init list of files
+	if (GETPOST("mode", "aZ09") == 'init') {
+		$formticket->clear_attached_files();
+	}
+
 	$formticket->showForm(1, 'create', 0, null, $action, $object);
 
 	print dol_get_fiche_end();
-} elseif ($action == 'edit' && $object->status < Ticket::STATUS_CLOSED) {
+} elseif ($action == 'edit' && $user->rights->ticket->write && $object->status < Ticket::STATUS_CLOSED) {
 	if (empty($permissiontoadd)) {
 		accessforbidden('NotEnoughPermissions', 0, 1);
 	}

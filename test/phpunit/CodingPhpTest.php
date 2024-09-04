@@ -658,11 +658,15 @@ class CodingPhpTest extends CommonClassTest
 					&& !preg_match('/done later/i', $val[0])
 					&& !preg_match('/not required/i', $val[0])) {
 						$ok = false;
+
+						//var_dump($file['fullname'].' '.$filecontentaction);exit;
+
 						print "File ".$file['relativename']." - Line: ".$val[0]."\n";
 						break;
 				}
 			}
-			//$this->assertTrue($ok, 'Found a test on action without check on permission and without comment to say this is expected, in file '.$file['relativename'].'.');
+
+			$this->assertTrue($ok, 'Found a test on $action, without check on permission on same line and without the comment "// Test on permission already done", in file '.$file['relativename'].'.');
 		}
 	}
 
