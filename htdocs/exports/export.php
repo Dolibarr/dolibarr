@@ -167,7 +167,7 @@ $result = restrictedArea($user, 'export');
  * Actions
  */
 
-if ($action == 'selectfield' && $user->hasRight('export', 'run')) {     // Selection of field at step 2
+if ($action == 'selectfield' && $user->hasRight('export', 'creer')) {     // Selection of field at step 2
 	$fieldsarray = $objexport->array_export_fields[0];
 	$fieldsentitiesarray = $objexport->array_export_entities[0];
 	$fieldsdependenciesarray = $objexport->array_export_dependencies[0];
@@ -222,7 +222,7 @@ if ($action == 'selectfield' && $user->hasRight('export', 'run')) {     // Selec
 		setEventMessages($warnings, null, 'warnings');
 	}
 }
-if ($action == 'unselectfield' && $user->hasRight('export', 'run')) {
+if ($action == 'unselectfield' && $user->hasRight('export', 'creer')) {
 	if (GETPOST("field") == 'all') {
 		$array_selected = array();
 		$_SESSION["export_selected_fields"] = $array_selected;
@@ -241,12 +241,12 @@ if ($action == 'unselectfield' && $user->hasRight('export', 'run')) {
 	}
 }
 
-if (($action == 'downfield' || $action == 'upfield') && $user->hasRight('export', 'run')) {
+if (($action == 'downfield' || $action == 'upfield') && $user->hasRight('export', 'creer')) {
 	$pos = $array_selected[GETPOST("field")];
-	if ($action == 'downfield') {
+	if ($action == 'downfield') {	// Test on permission already done
 		$newpos = $pos + 1;
 	}
-	if ($action == 'upfield') {
+	if ($action == 'upfield') {		// Test on permission already done
 		$newpos = $pos - 1;
 	}
 	// Recherche code avec qui switcher
@@ -272,7 +272,7 @@ if ($step == 1 || $action == 'cleanselect') {	// Test on permission here not req
 	$array_filtervalue = array();
 }
 
-if ($action == 'builddoc' && $user->hasRight('export', 'run')) {
+if ($action == 'builddoc' && $user->hasRight('export', 'lire')) {
 	// Check permission
 	if (empty($objexport->array_export_perms[0])) {
 		accessforbidden();
@@ -614,7 +614,7 @@ if ($step == 2 && $datatoexport) {
 		$tablename = getablenamefromfield($code, $sqlmaxforexport);
 		$htmltext = '<b>'.$langs->trans("Name").":</b> ".$text.'<br>';
 		if (!empty($objexport->array_export_special[0][$code])) {
-			$htmltext .= '<b>'.$langs->trans("ComputedField")." -> ".$langs->trans("Method")." :</b> ".$objexport->array_export_special[0][$code]['method']."<br>";
+			$htmltext .= '<b>'.$langs->trans("ComputedField")." -> ".$langs->trans("Method")." :</b> ".$objexport->array_export_special[0][$code]."<br>";
 		} else {
 			$htmltext .= '<b>'.$langs->trans("Table")." -> ".$langs->trans("Field").":</b> ".$tablename." -> ".preg_replace('/^.*\./', '', $code)."<br>";
 		}
@@ -724,12 +724,14 @@ if ($step == 3 && $datatoexport) {
 	print $objexport->array_export_label[0];
 	print '</td></tr>';
 
-	// Nbre champs exportes
+	// List of exported fields
 	print '<tr><td>'.$langs->trans("ExportedFields").'</td>';
 	$list = '';
 	foreach ($array_selected as $code => $value) {
-		$list .= (!empty($list) ? ', ' : '');
-		$list .= (isset($objexport->array_export_fields[0][$code]) ? $langs->trans($objexport->array_export_fields[0][$code]) : '');
+		if (isset($objexport->array_export_fields[0][$code])) {
+			$list .= (!empty($list) ? ', ' : '');
+			$list .= $langs->trans($objexport->array_export_fields[0][$code]);
+		}
 	}
 	print '<td>'.$list.'</td></tr>';
 
@@ -908,8 +910,10 @@ if ($step == 4 && $datatoexport) {
 	print '<tr><td>'.$langs->trans("ExportedFields").'</td>';
 	$list = '';
 	foreach ($array_selected as $code => $value) {
-		$list .= (!empty($list) ? ', ' : '');
-		$list .= $langs->trans($objexport->array_export_fields[0][$code]);
+		if (isset($objexport->array_export_fields[0][$code])) {
+			$list .= (!empty($list) ? ', ' : '');
+			$list .= $langs->trans($objexport->array_export_fields[0][$code]);
+		}
 	}
 	print '<td>'.$list.'</td>';
 	print '</tr>';
@@ -961,6 +965,10 @@ if ($step == 4 && $datatoexport) {
 	print '</tr>';
 
 	foreach ($array_selected as $code => $value) {
+		if (!isset($objexport->array_export_fields[0][$code])) {	// For example when field was in predefined filter but not more active (localtax1 disabled by setup of country)
+			continue;
+		}
+
 		print '<tr class="oddeven">';
 
 		$entity = (!empty($objexport->array_export_entities[0][$code]) ? $objexport->array_export_entities[0][$code] : $objexport->array_export_icon[0]);
@@ -1194,8 +1202,10 @@ if ($step == 5 && $datatoexport) {
 	print '<tr><td>'.$langs->trans("ExportedFields").'</td>';
 	$list = '';
 	foreach ($array_selected as $code => $label) {
-		$list .= (!empty($list) ? ', ' : '');
-		$list .= $langs->trans($objexport->array_export_fields[0][$code]);
+		if (isset($objexport->array_export_fields[0][$code])) {
+			$list .= (!empty($list) ? ', ' : '');
+			$list .= $langs->trans($objexport->array_export_fields[0][$code]);
+		}
 	}
 	print '<td>'.$list.'</td></tr>';
 
