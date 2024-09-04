@@ -115,7 +115,7 @@ if ($action == "existbarcode" && !empty($barcode) && $user->hasRight('stock', 'l
 	$response = array('status'=>'error','errorcode'=>'ActionError','message'=>"Error on action");
 }
 
-if ($action == "addnewlineproduct") {
+if ($action == "addnewlineproduct" && $user->hasRight('stock', 'creer')) {
 	require_once DOL_DOCUMENT_ROOT."/product/inventory/class/inventory.class.php";
 	$inventoryline = new InventoryLine($db);
 	if (!empty($fk_inventory)) {

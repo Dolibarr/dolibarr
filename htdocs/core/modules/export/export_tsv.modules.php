@@ -25,6 +25,8 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
 
+// avoid timeout for big export
+set_time_limit(0);
 
 /**
  *	Class to build export files with format TSV
@@ -32,12 +34,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
 class ExportTsv extends ModeleExports
 {
 	/**
-	 * @var string ID
+	 * @var string ID ex: csv, tsv, excel...
 	 */
 	public $id;
 
 	/**
-	 * @var string label
+	 * @var string export files label
 	 */
 	public $label;
 
@@ -206,8 +208,20 @@ class ExportTsv extends ModeleExports
 	public function write_title($array_export_fields_label, $array_selected_sorted, $outputlangs, $array_types)
 	{
 		// phpcs:enable
+		$outputlangs->charset_output = getDolGlobalString('EXPORT_TSV_FORCE_CHARSET');
+
 		$selectlabel = array();
 		foreach ($array_selected_sorted as $code => $value) {
+			if (strpos($code, ' as ') == 0) {
+				$alias = str_replace(array('.', '-', '(', ')'), '_', $code);
+			} else {
+				$alias = substr($code, strpos($code, ' as ') + 4);
+			}
+			if (empty($alias)) {
+				dol_syslog('Bad value for field with code='.$code.'. Try to redefine export.', LOG_WARNING);
+				continue;
+			}
+
 			$newvalue = $outputlangs->transnoentities($array_export_fields_label[$code]); // newvalue is now $outputlangs->charset_output encoded
 			$newvalue = $this->tsv_clean($newvalue, $outputlangs->charset_output);
 
@@ -239,9 +253,12 @@ class ExportTsv extends ModeleExports
 	public function write_record($array_selected_sorted, $objp, $outputlangs, $array_types)
 	{
 		// phpcs:enable
-		global $conf;
+
+		$outputlangs->charset_output = getDolGlobalString('EXPORT_TSV_FORCE_CHARSET');
 
 		$this->col = 0;
+
+		$reg = array();
 		$selectlabelvalues = array();
 		foreach ($array_selected_sorted as $code => $value) {
 			if (strpos($code, ' as ') == 0) {
@@ -250,7 +267,8 @@ class ExportTsv extends ModeleExports
 				$alias = substr($code, strpos($code, ' as ') + 4);
 			}
 			if (empty($alias)) {
-				dol_print_error(null, 'Bad value for field with code='.$code.'. Try to redefine export.');
+				dol_syslog('Bad value for field with code='.$code.'. Try to redefine export.', LOG_WARNING);
+				continue;
 			}
 
 			$newvalue = $outputlangs->convToOutputCharset($objp->$alias); // objp->$alias must be utf8 encoded as any var in memory // newvalue is now $outputlangs->charset_output encoded
@@ -280,6 +298,7 @@ class ExportTsv extends ModeleExports
 			fwrite($this->handle, $value.$this->separator);
 			$this->col++;
 		}
+
 		fwrite($this->handle, "\n");
 		return 0;
 	}
@@ -321,6 +340,7 @@ class ExportTsv extends ModeleExports
 	public function tsv_clean($newvalue, $charset)
 	{
 		// phpcs:enable
+
 		// Rule Dolibarr: No HTML
 		$newvalue = dol_string_nohtmltag($newvalue, 1, $charset);
 

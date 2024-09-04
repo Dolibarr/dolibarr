@@ -114,6 +114,8 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 $permissionnote = $user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"); // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"); // Used by the include of actions_dellink.inc.php
 $permissiontoedit = $user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"); // Used by the include of actions_lineupdonw.inc.php
+$permissiontoadd = $user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer");
+$permissiontodelete = ($user->hasRight("fournisseur", "facture", "supprimer") || $user->hasRight("supplier_invoice", "supprimer"));
 
 $usercanread = $user->hasRight("fournisseur", "facture", "lire") || $user->hasRight("supplier_invoice", "lire");
 $usercancreate = $user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer");
@@ -167,7 +169,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT . '/core/actions_lineupdown.inc.php'; // Must be 'include', not 'include_once'
 
 	// Create predefined invoice
-	if ($action == 'add') {
+	if ($action == 'add' && $permissiontoadd) {
 		if (! GETPOST('title', 'alphanohtml')) {
 			setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->trans("Title")), null, 'errors');
 			$action = "create";
@@ -257,7 +259,7 @@ if (empty($reshook)) {
 
 	// Delete
 	//TODO : Droits
-	if ($action == 'confirm_deleteinvoice' && $confirm == 'yes' && ($user->hasRight("fournisseur", "facture", "supprimer") || $user->hasRight("supplier_invoice", "supprimer"))) {
+	if ($action == 'confirm_deleteinvoice' && $confirm == 'yes' && $permissiontodelete) {
 		$object->delete($user);
 
 		header('Location: ' . DOL_URL_ROOT . '/fourn/facture/list-rec.php');
@@ -286,7 +288,7 @@ if (empty($reshook)) {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
-	} elseif ($action == 'settitle' && $usercancreate) {
+	} elseif ($action == 'settitle' && $permissiontoadd) {
 		$result = $object->setValueFrom('titre', $title, '', null, 'text', '', $user);
 
 		if ($result > 0) {
@@ -302,31 +304,31 @@ if (empty($reshook)) {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
-	} elseif ($action == 'setbankaccount' && $usercancreate) {
+	} elseif ($action == 'setbankaccount' && $permissiontoadd) {
 		// Set bank account
 		$result = $object->setBankAccount(GETPOSTINT('fk_account'));
-	} elseif ($action == 'setfrequency' && $usercancreate) {
+	} elseif ($action == 'setfrequency' && $permissiontoadd) {
 		// Set frequency and unit frequency
 		$object->setFrequencyAndUnit(GETPOST('frequency', 'int'), GETPOST('unit_frequency', 'alpha'));
-	} elseif ($action == 'setdate_when' && $usercancreate) {
+	} elseif ($action == 'setdate_when' && $permissiontoadd) {
 		// Set next date of execution
 		$date = dol_mktime(GETPOST('date_whenhour'), GETPOST('date_whenmin'), 0, GETPOST('date_whenmonth'), GETPOST('date_whenday'), GETPOST('date_whenyear'));
 		if (!empty($date)) {
 			$object->setNextDate($date);
 		}
-	} elseif ($action == 'setnb_gen_max' && $usercancreate) {
+	} elseif ($action == 'setnb_gen_max' && $permissiontoadd) {
 		// Set max period
 		$object->setMaxPeriod(GETPOSTINT('nb_gen_max'));
-	} elseif ($action == 'setauto_validate' && $usercancreate) {
+	} elseif ($action == 'setauto_validate' && $permissiontoadd) {
 		// Set auto validate
 		$object->setAutoValidate(GETPOSTINT('auto_validate'));
-	} elseif ($action == 'setgenerate_pdf' && $usercancreate) {
+	} elseif ($action == 'setgenerate_pdf' && $permissiontoadd) {
 		// Set generate pdf
 		$object->setGeneratepdf(GETPOSTINT('generate_pdf'));
-	} elseif ($action == 'setmodelpdf' && $usercancreate) {
+	} elseif ($action == 'setmodelpdf' && $permissiontoadd) {
 		// Set model pdf
 		$object->setModelpdf(GETPOST('modelpdf', 'alpha'));
-	} elseif ($action == 'disable' && $usercancreate) {
+	} elseif ($action == 'disable' && $permissiontoadd) {
 		// Set status disabled
 		$db->begin();
 
@@ -343,7 +345,7 @@ if (empty($reshook)) {
 			$db->rollback();
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif ($action == 'enable' && $usercancreate) {
+	} elseif ($action == 'enable' && $permissiontoadd) {
 		// Set status enabled
 		$db->begin();
 
@@ -360,13 +362,13 @@ if (empty($reshook)) {
 			$db->rollback();
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif ($action == 'setmulticurrencycode' && $usercancreate) {
+	} elseif ($action == 'setmulticurrencycode' && $permissiontoadd) {
 		// Multicurrency Code
 		$result = $object->setMulticurrencyCode(GETPOST('multicurrency_code', 'alpha'));
-	} elseif ($action == 'setmulticurrencyrate' && $usercancreate) {
+	} elseif ($action == 'setmulticurrencyrate' && $permissiontoadd) {
 		// Multicurrency rate
 		$result = $object->setMulticurrencyRate(price2num(GETPOST('multicurrency_tx')), GETPOSTINT('calculation_mode'));
-	} elseif ($action == 'setlibelle' && $usercancreate) {
+	} elseif ($action == 'setlibelle' && $permissiontoadd) {
 		// Set label
 		$object->fetch($id);
 		$object->libelle = GETPOST('libelle');
@@ -379,7 +381,7 @@ if (empty($reshook)) {
 	}
 
 	// Delete line
-	if ($action == 'confirm_deleteline' && $confirm == 'yes' && $usercancreate) {
+	if ($action == 'confirm_deleteline' && $confirm == 'yes' && $permissiontoadd) {
 		$object->fetch($id);
 		$object->fetch_thirdparty();
 
@@ -404,7 +406,7 @@ if (empty($reshook)) {
 			$db->rollback();
 			setEventMessages($line->error, $line->errors, 'errors');
 		}
-	} elseif ($action == 'update_extras' && $usercancreate) {
+	} elseif ($action == 'update_extras' && $permissiontoadd) {
 		$object->oldcopy = dol_clone($object, 2);
 
 		// Fill array 'array_options' with data from update form
@@ -423,7 +425,7 @@ if (empty($reshook)) {
 	}
 
 	// Add a new line
-	if ($action == 'addline' && $usercancreate) {
+	if ($action == 'addline' && $permissiontoadd) {
 		$langs->load('errors');
 		$error = 0;
 
@@ -729,7 +731,7 @@ if (empty($reshook)) {
 				$action = '';
 			}
 		}
-	} elseif ($action == 'updateline' && $usercancreate && ! GETPOST('cancel', 'alpha')) {
+	} elseif ($action == 'updateline' && $permissiontoadd && ! GETPOST('cancel', 'alpha')) {
 		if (! $object->fetch($id) > 0) {
 			dol_print_error($db);
 		}
@@ -871,8 +873,9 @@ if (empty($reshook)) {
 	}
 }
 
+
 /*
- *	View
+ * View
  */
 
 $help_url = '';
@@ -889,9 +892,8 @@ $invoicerectmp = new FactureFournisseurRec($db);
 $now = dol_now();
 $nowlasthour = dol_get_last_hour($now);
 
-/*
- * Create mode
- */
+// Create mode
+
 if ($action == 'create') {
 	print load_fiche_titre($langs->trans("CreateRepeatableInvoice"), '', 'bill');
 
@@ -1128,9 +1130,7 @@ if ($action == 'create') {
 		dol_print_error(null, "Error, no invoice " . $object->id);
 	}
 } else {
-	/*
-	 * View mode
-	 */
+	// View mode
 	if ($object->id > 0) {
 		$object->fetch($object->id);
 		$object->fetch_thirdparty();
