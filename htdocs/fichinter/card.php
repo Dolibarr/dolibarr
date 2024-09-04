@@ -1861,7 +1861,8 @@ if ($action == 'create') {
 			print '<br><!-- Link to sign -->';
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
 
-			print showOnlineSignatureUrl('fichinter', $object->ref, $object).'<br>';
+			print showOnlineSignatureUrl('fichinter', $object->ref, $object, '', 0).'<br>';
+			print showOnlineSignatureUrl('fichinter', $object->ref, $object, '', 1).'<br>';
 		}
 
 		print '</div><div class="fichehalfright">';
