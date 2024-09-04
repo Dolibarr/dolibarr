@@ -53,7 +53,7 @@ $listofreminderids = GETPOST('listofreminderids', 'aZ09');
  * Actions
  */
 
-if ($action == 'stopreminder') {
+if ($action == 'stopreminder') {	// Test on permission not required here. Endpoint can be called
 	dol_syslog("Clear notification for listofreminderids=".$listofreminderids);
 	$listofreminderid = GETPOST('listofreminderids', 'intcomma');
 

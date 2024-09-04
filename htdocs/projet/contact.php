@@ -181,7 +181,8 @@ if (empty($reshook)) {
 			$usergroup = new UserGroup($db);
 			$result = $usergroup->fetch($groupid);
 			if ($result > 0) {
-				$tmpcontactarray = $usergroup->listUsersForGroup();
+				$excludefilter = 'statut = 1';
+				$tmpcontactarray = $usergroup->listUsersForGroup($excludefilter, 0);
 				if ($contactarray <= 0) {
 					$error++;
 				} else {

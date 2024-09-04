@@ -1118,7 +1118,7 @@ div.urllink, div.urllink a {
 }
 .divsection {
 	padding: 10px;
-	border: 1px solid #DFDFDF;
+	border: 2px solid #DFDFDF;
 	border-radius: 10px;
 	margin-top: 5px;
 	margin-bottom: 20px;
