@@ -243,10 +243,10 @@ if ($action == 'unselectfield' && $user->hasRight('export', 'creer')) {
 
 if (($action == 'downfield' || $action == 'upfield') && $user->hasRight('export', 'creer')) {
 	$pos = $array_selected[GETPOST("field")];
-	if ($action == 'downfield') {
+	if ($action == 'downfield') {	// Test on permission already done
 		$newpos = $pos + 1;
 	}
-	if ($action == 'upfield') {
+	if ($action == 'upfield') {		// Test on permission already done
 		$newpos = $pos - 1;
 	}
 	// Recherche code avec qui switcher

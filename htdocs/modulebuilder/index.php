@@ -496,7 +496,7 @@ if ($dirins && in_array($action, array('initapi', 'initphpunit', 'initpagecontac
 			'---Replace with your own copyright and developer email---' => getLicenceHeader($user, $langs, $now)
 		);
 
-		if ($action == 'initapi') {
+		if ($action == 'initapi') {			// Test on permission already done
 			if (count($objects) >= 1) {
 				addObjectsToApiFile($srcfile, $destfile, $objects, $modulename);
 			}
@@ -1746,10 +1746,10 @@ if ($dirins && ($action == 'droptable' || $action == 'droptableextrafields') && 
 	$objectname = $tabobj;
 
 	$arrayoftables = array();
-	if ($action == 'droptable') {
+	if ($action == 'droptable') {	// Test on permission already done
 		$arrayoftables[] = MAIN_DB_PREFIX.strtolower($module).'_'.strtolower($tabobj);
 	}
-	if ($action == 'droptableextrafields') {
+	if ($action == 'droptableextrafields') {	// Test on permission already done
 		$arrayoftables[] = MAIN_DB_PREFIX.strtolower($module).'_'.strtolower($tabobj).'_extrafields';
 	}
 
