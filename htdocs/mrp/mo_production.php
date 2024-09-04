@@ -352,8 +352,10 @@ if (empty($reshook)) {
 							$stockmove->origin_type = $object->element;
 							$stockmove->origin_id = $object->id;
 							$stockmove->context['mrp_role'] = 'toproduce';
+							$d_sellby = dol_mktime(0, 0, 0, GETPOST('batchtoproduce-date-sellby-'.$line->id.'-'.$i.'month'), GETPOST('batchtoproduce-date-sellby-'.$line->id.'-'.$i.'day'), GETPOST('batchtoproduce-date-sellby-'.$line->id.'-'.$i.'year'));
+							$d_eatby = dol_mktime(0, 0, 0, GETPOST('batchtoproduce-date-eatby-'.$line->id.'-'.$i.'month'), GETPOST('batchtoproduce-date-eatby-'.$line->id.'-'.$i.'day'), GETPOST('batchtoproduce-date-eatby-'.$line->id.'-'.$i.'year'));
 
-							$idstockmove = $stockmove->reception($user, $line->fk_product, GETPOST('idwarehousetoproduce-'.$line->id.'-'.$i), $qtytoprocess, $pricetoprocess, $labelmovement, '', '', GETPOST('batchtoproduce-'.$line->id.'-'.$i), dol_now(), $id_product_batch, $codemovement);
+							$idstockmove = $stockmove->reception($user, $line->fk_product, GETPOST('idwarehousetoproduce-'.$line->id.'-'.$i), $qtytoprocess, $pricetoprocess, $labelmovement, $d_eatby, $d_sellby, GETPOST('batchtoproduce-'.$line->id.'-'.$i), dol_now(), $id_product_batch, $codemovement);
 							if ($idstockmove < 0) {
 								$error++;
 								setEventMessages($stockmove->error, $stockmove->errors, 'errors');
@@ -888,6 +890,20 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
 				print $langs->trans("Batch");
 			}
+			if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+				print '<td>';
+				if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
+					print $langs->trans("SellByDate");
+				}
+				print '</td>';
+			}
+			if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+				print '<td>';
+				if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
+					print $langs->trans("EatByDate");
+				}
+				print '</td>';
+			}
 			print '</td>';
 		}
 		// Action
@@ -934,6 +950,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			// Lot - serial
 			if (isModEnabled('productbatch')) {
 				print '<td></td>';
+				if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+					print '<td></td>';
+				}
+				if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+					print '<td></td>';
+				}
 			}
 			// Action
 			if ($permissiontodelete) {
@@ -973,6 +995,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				}
 			}
 
+			$lessersellbydate = null;
+			$lessereatbydate = null;
 			$nblinetoconsumecursor = 0;
 			foreach ($object->lines as $line) {
 				if ($line->role == 'toconsume') {
@@ -1217,6 +1241,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						// Lot
 						if (isModEnabled('productbatch')) {
 							print '<td></td>';
+							if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+								print '<td></td>';
+							}
+							if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+								print '<td></td>';
+							}
 						}
 
 						// Split
@@ -1227,7 +1257,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 						// Action Edit line
 						if ($object->status == Mo::STATUS_DRAFT) {
-							$href = $_SERVER["PHP_SELF"] . '?id=' . ((int) $object->id) . '&action=editline&token=' . newToken() . '&lineid=' . ((int) $line->id);
+							$href = $_SERVER["PHP_SELF"] . '?id=' . ((int)$object->id) . '&action=editline&token=' . newToken() . '&lineid=' . ((int)$line->id);
 							print '<td class="center">';
 							print '<a class="reposition editfielda" href="' . $href . '">';
 							print img_picto($langs->trans('TooltipEditAndRevertStockMovement'), 'edit');
@@ -1237,7 +1267,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 						// Action delete line
 						if ($permissiontodelete) {
-							$href = $_SERVER["PHP_SELF"] . '?id=' . ((int) $object->id) . '&action=deleteline&token=' . newToken() . '&lineid=' . ((int) $line->id);
+							$href = $_SERVER["PHP_SELF"] . '?id=' . ((int)$object->id) . '&action=deleteline&token=' . newToken() . '&lineid=' . ((int)$line->id);
 							print '<td class="center">';
 							print '<a class="reposition" href="' . $href . '">';
 							print img_picto($langs->trans('TooltipDeleteAndRevertStockMovement'), 'delete');
@@ -1251,7 +1281,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							$line->fetch_optionals();
 							$temps = $line->showOptionals($extrafields, 'view', array(), '', '', 1, 'line');
 							if (!empty($temps)) {
-								print '<td colspan="10"><div id="extrafield_lines_area_'.$line->id.'" name="extrafield_lines_area_'.$line->id.'">';
+								print '<td colspan="10"><div id="extrafield_lines_area_' . $line->id . '" name="extrafield_lines_area_' . $line->id . '">';
 								print $temps;
 								print '</div></td>';
 							}
@@ -1296,12 +1326,28 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 						// Lot Batch
 						if (isModEnabled('productbatch')) {
+							$loaded = $line2['batch'] != '' ? $tmpbatch->fetch(0, $line2['fk_product'], $line2['batch']) : 0;
 							print '<td>';
-							if ($line2['batch'] != '') {
-								$tmpbatch->fetch(0, $line2['fk_product'], $line2['batch']);
+							if ($loaded > 0) {
 								print $tmpbatch->getNomUrl(1);
 							}
 							print '</td>';
+							if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+								print '<td>';
+								if ($loaded > 0) {
+									if (isset($tmpbatch->sellby) && $tmpbatch->sellby !== '') $lessersellbydate = isset($lessersellbydate) ? min($lessersellbydate, $tmpbatch->sellby) : $tmpbatch->sellby;
+									print dol_print_date($tmpbatch->sellby, 'day');
+								}
+								print '</td>';
+							}
+							if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+								print '<td>';
+								if ($loaded > 0) {
+									if (isset($tmpbatch->eatby) && $tmpbatch->eatby !== '') $lessereatbydate = isset($lessereatbydate) ? min($lessereatbydate, $tmpbatch->eatby) : $tmpbatch->eatby;
+									print dol_print_date($tmpbatch->eatby, 'day');
+								}
+								print '</td>';
+							}
 						}
 
 						// Split
@@ -1397,6 +1443,24 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 								print $formproduct->selectLotDataList('batch-'.$line->id.'-'.$i, 0, $line->fk_product, '', '');
 							}
 							print '</td>';
+							if ($tmpproduct->status_batch) {
+								$preselected = (GETPOSTISSET('batch-' . $line->id . '-' . $i) ? GETPOST('batch-' . $line->id . '-' . $i) : '');
+								$loaded = $preselected != '' ? $tmpbatch->fetch(0, $line->fk_product, $preselected) : 0;
+								if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+									print '<td id="batch-sellby-' . $line->id . '-' . $i . '" class="selectedbatchsellby">';
+									if ($loaded > 0) {
+										print dol_print_date($tmpbatch->sellby, 'day');
+									}
+									print '</td>';
+								}
+								if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+									print '<td id="batch-eatby-' . $line->id . '-' . $i . '" class="selectedbatcheatby">';
+									if ($loaded > 0) {
+										print dol_print_date($tmpbatch->eatby, 'day');
+									}
+									print '</td>';
+								}
+							}
 						}
 
 						// Split
@@ -1510,6 +1574,20 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				print $langs->trans("Batch");
 			}
 			print '</td>';
+			if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+				print '<td>';
+				if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
+					print $langs->trans("SellByDate");
+				}
+				print '</td>';
+			}
+			if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+				print '<td>';
+				if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
+					print $langs->trans("EatByDate");
+				}
+				print '</td>';
+			}
 
 			// Split
 			print '<td></td>';
@@ -1551,6 +1629,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			// Lot - serial
 			if (isModEnabled('productbatch')) {
 				print '<td></td>';
+				if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+					print '<td></td>';
+				}
+				if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+					print '<td></td>';
+				}
 
 				// Split
 				print '<td></td>';
@@ -1665,6 +1749,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					// Lot
 					if (isModEnabled('productbatch')) {
 						print '<td></td>';
+						if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+							print '<td></td>';
+						}
+						if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+							print '<td></td>';
+						}
 
 						// Split
 						print '<td></td>';
@@ -1722,12 +1812,26 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						print '</td>';
 						// Lot
 						if (isModEnabled('productbatch')) {
+							$loaded = $line2['batch'] != '' ? $tmpbatch->fetch(0, $line2['fk_product'], $line2['batch']) : 0;
 							print '<td>';
-							if ($line2['batch'] != '') {
-								$tmpbatch->fetch(0, $line2['fk_product'], $line2['batch']);
+							if ($loaded > 0) {
 								print $tmpbatch->getNomUrl(1);
 							}
 							print '</td>';
+							if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+								print '<td>';
+								if ($loaded > 0) {
+									print dol_print_date($tmpbatch->sellby, 'day');
+								}
+								print '</td>';
+							}
+							if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+								print '<td>';
+								if ($loaded > 0) {
+									print dol_print_date($tmpbatch->eatby, 'day');
+								}
+								print '</td>';
+							}
 
 							// Split
 							print '<td></td>';
@@ -1808,6 +1912,30 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							print '</td>';
 							// Batch number in same column than the stock movement picto
 							if ($tmpproduct->status_batch) {
+								if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+									print '<td>';
+									$sellbyselected = dol_mktime(0, 0, 0, GETPOST('batchtoproduce-date-sellby-'.$line->id.'-'.$i.'month'), GETPOST('batchtoproduce-date-sellby-'.$line->id.'-'.$i.'day'), GETPOST('batchtoproduce-date-sellby-'.$line->id.'-'.$i.'year'));
+									if (isset($lessersellbydate) && $sellbyselected === "") $sellbyselected = $lessersellbydate;
+									print $form->selectDate($sellbyselected, 'batchtoproduce-date-sellby-'.$line->id.'-'.$i, '', '', 1);
+									print '</td>';
+								}
+								if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+									print '<td>';
+									$eatbyselected = dol_mktime(0, 0, 0, GETPOST('batchtoproduce-date-eatby-'.$line->id.'-'.$i.'month'), GETPOST('batchtoproduce-date-eatby-'.$line->id.'-'.$i.'day'), GETPOST('batchtoproduce-date-eatby-'.$line->id.'-'.$i.'year'));
+									if (isset($lessereatbydate) && $sellbyselected === "") $eatbyselected = $lessereatbydate;
+									print $form->selectDate($eatbyselected, 'batchtoproduce-date-eatby-'.$line->id.'-'.$i, '', '', 1);
+									print '</td>';
+								}
+								// Needed for duplicate line with datepicker
+								if (empty($conf->global->PRODUCT_DISABLE_SELLBY) || empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+									print "<script  type=\"text/javascript\">";
+									print "  $(document).ready(function() {";
+									print "    var datepicker = $('input#batchtoproduce-date-sellby-" . $line->id . "-" . $i . ", input#batchtoproduce-date-eatby-" . $line->id . "-" . $i . "');";
+									print "    datepicker.removeClass('hasDatepicker');";
+									print "    datepicker.parent().find('.ui-datepicker-trigger:not(\":first\")').remove();";
+									print "  });";
+									print "</script>";
+								}
 								$type = 'batch';
 								print '<td align="right" class="split">';
 								print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine('.$line->id.', \''.$type.'\', \'qtymissing\')"');
@@ -1852,6 +1980,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				updateselectbatchbywarehouse();
 				//Consumption : When a lot/serial number is selected and it is only available in one warehouse, the warehouse is automatically selected
 				updateselectwarehousebybatch();
+				<?php if (empty($conf->global->PRODUCT_DISABLE_SELLBY) || empty($conf->global->PRODUCT_DISABLE_EATBY)) { ?>
+				//Consumption : When a lot/serial number is selected, the sellby and eatby is automatically updated (with the sellby and eatby dates of the produced batch)
+				updatesellbyeatbydatesbybatch();
+				<?php } ?>
 			});
 
 			function updateselectbatchbywarehouse() {
@@ -1912,7 +2044,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 
 			function updateselectwarehousebybatch() {
-				$(document).on('change', 'input[name*=batch]', function(){
+				$(document).on('change', 'input[name*=batch-]', function(){
 					console.log("We change batch so we update the list of possible warehouses");
 
 					var selectbatch = $(this);
@@ -1953,6 +2085,92 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				});
 			}
 
+			function updatesellbyeatbydatesbybatch() {
+				$(document).on('change', 'input[name*=batch-]', function(){
+					console.log("We change batch so we update the sellby and eatby dates");
+
+					var selectbatch = $(this);
+
+					<?php if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) { ?>
+					var tdsellby_id = selectbatch.attr('name').replace('batch', 'batch-sellby');
+					var tdsellby = $("td#" + tdsellby_id);
+					<?php } ?>
+					<?php if (empty($conf->global->PRODUCT_DISABLE_EATBY)) { ?>
+					var tdeatby_id = selectbatch.attr('name').replace('batch', 'batch-eatby');
+					var tdeatby = $("td#" + tdeatby_id);
+					<?php } ?>
+
+					var product_element_name = selectbatch.attr('name').replace('batch', 'product');
+
+					$.ajax({
+						type: "POST",
+						url: "<?php echo DOL_URL_ROOT . '/mrp/ajax/interface.php'; ?>",
+						data: {
+							action: "updatesellbyeatbydatesbybatch",
+							batch: $(this).val(),
+							token: '<?php echo currentToken(); ?>',
+							product_id: $("input[name='" + product_element_name + "']").val()
+						}
+					}).done(function (data) {
+
+						if (typeof data == "object") {
+							console.log("data is already type object, no need to parse it");
+						} else {
+							console.log("data is type "+(typeof data));
+							data = JSON.parse(data);
+						}
+
+						<?php if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) { ?>
+						tdsellby.html(typeof data.sellby != "undefined" ? data.sellby : '');
+						updatelesserbatchdatetoproduce('sellby');
+						<?php } ?>
+						<?php if (empty($conf->global->PRODUCT_DISABLE_EATBY)) { ?>
+						tdeatby.html(typeof data.eatby != "undefined" ? data.eatby : '');
+						updatelesserbatchdatetoproduce('eatby');
+						<?php } ?>
+					});
+				});
+			}
+
+			function updatelesserbatchdatetoproduce(type) {
+				console.log("We change produce batch " + type + " dates with the lesser " + type + " date selected");
+				var lesserdate;
+				var selecteddates;
+				var producedates;
+				if (type == 'sellby') {
+					lesserdate = <?php if (isset($lessersellbydate) && $lessersellbydate !== '') { ?>getDateFromFormat('<?php print dol_print_date($lessersellbydate, 'day') ?>', '<?php print $langs->trans("FormatDateShortJavaInput") ?>')<?php } else { ?>null<?php } ?>;
+					selecteddates = $('.selectedbatchsellby');
+					producedates = $("input[name^='batchtoproduce-date-sellby-']:not([name$='day']):not([name$='month']):not([name$='year'])");
+				} else { // type == 'eatby'
+					lesserdate = <?php if (isset($lessereatbydate) && $lessereatbydate !== '') { ?>getDateFromFormat('<?php print dol_print_date($lessereatbydate, 'day') ?>', '<?php print $langs->trans("FormatDateShortJavaInput") ?>')<?php } else { ?>null<?php } ?>;
+					selecteddates = $('.selectedbatcheatby');
+					producedates = $("input[name^='batchtoproduce-date-eatby-']:not([name$='day']):not([name$='month']):not([name$='year'])");
+				}
+				console.log("Initial lesser date: ", lesserdate);
+
+				selecteddates.map(function (idx, item) {
+					var text = $.trim($(item).html());
+					if (text != '') {
+						var date = getDateFromFormat(text, '<?php print $langs->trans("FormatDateShortJavaInput") ?>');
+
+						console.log("(Consume batch) Define who is the lesser date - lesser date : ", lesserdate, " - current date : ", date);
+						lesserdate = lesserdate == null ? date : (date < lesserdate ? date : lesserdate);
+						console.log("Result lesser date: ", lesserdate);
+					}
+				});
+
+				producedates.map(function (idx, item) {
+					var text = $.trim($(item).val());
+					var date = text != '' ? getDateFromFormat(text, '<?php print $langs->trans("FormatDateShortJavaInput") ?>') : null;
+
+					console.log("(Produce batch) Define who is the lesser date - lesser date : ", lesserdate, " - current date : ", date, date == null);
+					if (lesserdate != null && (date == null || lesserdate != date)) {
+						var newdate = formatDate(lesserdate, '<?php print $langs->trans("FormatDateShortJavaInput") ?>');
+						$(item).val(newdate).change();
+						console.log("Set produce date: ", newdate);
+					}
+				});
+			}
 		</script>
 
 	<?php

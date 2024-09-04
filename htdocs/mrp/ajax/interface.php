@@ -108,4 +108,23 @@ if ($action == 'updateselectbatchbywarehouse' && $permissiontoproduce) {
 	}
 
 	echo json_encode($res);
+} elseif ($action == 'updatesellbyeatbydatesbybatch' && $permissiontoproduce) {
+	$res = array('sellby' => '', 'eatby' => '');
+
+	$sql = "SELECT pl.sellby, pl.eatby";
+	$sql .= " FROM " . MAIN_DB_PREFIX . "product_lot as pl";
+	$sql .= " WHERE pl.fk_product = " .((int) $fk_product);
+	$sql.= " AND pl.batch = '" . $db->escape($batch) . "'";
+
+	$resql = $db->query($sql);
+
+	if ($resql) {
+		if ($db->num_rows($resql) == 1) {
+			$obj = $db->fetch_object($resql);
+			$res['sellby'] = dol_print_date($db->jdate($obj->sellby), 'day');
+			$res['eatby'] = dol_print_date($db->jdate($obj->eatby), 'day');
+		}
+	}
+
+	echo json_encode($res);
 }
