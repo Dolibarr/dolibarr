@@ -1000,25 +1000,48 @@ class BonPrelevement extends CommonObject
 			}
 		}
 
+		$error = 0;
+
 		// Clean params
 		if (empty($fk_bank_account)) {
 			$fk_bank_account = ($type == 'bank-transfer' ? getDolGlobalInt('PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT') : getDolGlobalInt('PRELEVEMENT_ID_BANKACCOUNT'));
 		}
 
-		// Pre-store entity
+		// Pre-store values to simplify sql requests
 		if ($sourcetype != 'salary') {
 			$type != 'bank-transfer' ? $entity = getEntity('invoice') : $entity = getEntity('supplier_invoice');
 		} else {
 			$entity = getEntity('salary');
 		}
+		if($sourcetype != 'salary'){
+			$socOrUser = 'soc';
+			$societeOrUser = 'societe';
+		} else {
+			$sqlTable = 'salary';
+			$socOrUser = 'user';
+			$societeOrUser = 'user';
+		}
+		$type != 'bank-transfer' ? $sqlTable = "facture" :	$sqlTable = "facture_fourn";
 
-//		// Check if there is an iban associated top bank transfer or if we take default
-//		$sql = "SELECT societe_rib FROM  ". MAIN_DB_PREFIX . "prelevement_demande as pd";
-//		$sql .= "LEFT JOIN ". MAIN_DB_PREFIX . "facture as f ON";
-//		$sql .= "";
-//		$sql .= " WHERE f.entity IN (" . $entity . ')';
 
-		$error = 0;
+		// Check if there is an iban associated top bank transfer or if we take default
+		$sql = "SELECT fk_societe_rib";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "prelevement_demande as pd";
+		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . $sqlTable . " as f ON f.rowid = pd.fk_".$sqlTable;
+		$sql .= " WHERE f.entity IN (" . $entity . ')';
+
+		$resql = $this->db->query($sql);
+
+		if ($resql->num_rows) {
+			$obj = $this->db->fetch_object($resql->num_rows);
+			$SocieteRibID = $obj->fk_societe_rib;
+			$this->db->free($resql);
+		} else {
+			$this->error = $this->db->lasterror();
+			dol_syslog(__METHOD__ . " Read fk_societe_rib error " . $this->db->lasterror(), LOG_ERR);
+			return -1;
+		}
+
 
 		$datetimeprev = dol_now('gmt');
 		// Choice the date of the execution direct debit
@@ -1038,20 +1061,9 @@ class BonPrelevement extends CommonObject
 		$factures_result = array();
 		$factures_prev_id = array();
 		$factures_errors = array();
+
 		if (!$error) {
 			dol_syslog(__METHOD__ . " Read invoices for did=" . ((int) $did), LOG_DEBUG);
-
-
-			$type != 'bank-transfer' ? $sqlTable = "facture" :	$sqlTable = "facture_fourn";
-
-			if($sourcetype != 'salary'){
-				$socOrUser = 'soc';
-				$societeOrUser = 'societe';
-			} else {
-				$sqlTable = 'salary';
-				$socOrUser = 'user';
-				$societeOrUser = 'user';
-			}
 
 			$sql = "SELECT f.rowid, pd.rowid as pfdrowid";
 			$sql .= ", f.fk_".$socOrUser;
@@ -1067,7 +1079,12 @@ class BonPrelevement extends CommonObject
 			$sql .= " FROM " . MAIN_DB_PREFIX . $sqlTable . " as f";
 			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "prelevement_demande as pd ON f.rowid = pd.fk_".$sqlTable;
 			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . $societeOrUser." as s ON s.rowid = f.fk_".$socOrUser;
-			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . $societeOrUser."_rib as sr ON s.rowid = sr.fk_".$socOrUser." AND sr.default_rib = 1";
+			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . $societeOrUser."_rib as sr ON s.rowid = sr.fk_".$socOrUser;
+			if (!empty($SocieteRibID)){
+				$sql .= " AND sr.rowid = " . $SocieteRibID;
+			} else {
+				$sql .= " AND sr.default_rib = 1";
+			}
 			$sql .= " WHERE f.entity IN (" . $entity . ')';
 			if ($sourcetype != 'salary') {
 				$sql .= " AND f.fk_statut = 1"; // Invoice validated
@@ -1108,7 +1125,6 @@ class BonPrelevement extends CommonObject
 				$this->db->free($resql);
 				dol_syslog(__METHOD__ . " Read invoices/salary, " . $i . " invoices/salary to withdraw", LOG_DEBUG);
 			} else {
-				$error++;
 				$this->error = $this->db->lasterror();
 				dol_syslog(__METHOD__ . " Read invoices/salary error " . $this->db->lasterror(), LOG_ERR);
 				return -1;
