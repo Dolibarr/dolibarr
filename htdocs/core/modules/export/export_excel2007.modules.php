@@ -272,7 +272,8 @@ class ExportExcel2007 extends ModeleExports
 			$alias = $array_export_fields_label[$code];
 			//print "dd".$alias;
 			if (empty($alias)) {
-				dol_print_error(null, 'Bad value for field with code='.$code.'. Try to redefine export.');
+				dol_syslog('Bad value for field with code='.$code.'. Try to redefine export.', LOG_WARNING);
+				continue;
 			}
 			$typefield = isset($array_types[$code]) ? $array_types[$code] : '';
 
@@ -326,7 +327,8 @@ class ExportExcel2007 extends ModeleExports
 				$alias = substr($code, strpos($code, ' as ') + 4);
 			}
 			if (empty($alias)) {
-				dol_print_error(null, 'Bad value for field with code='.$code.'. Try to redefine export.');
+				dol_syslog('Bad value for field with code='.$code.'. Try to redefine export.', LOG_WARNING);
+				continue;
 			}
 
 			$newvalue = !empty($objp->$alias) ? $objp->$alias : '';

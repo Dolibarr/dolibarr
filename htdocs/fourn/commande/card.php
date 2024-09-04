@@ -340,7 +340,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'reopen') {	// no test on permission here, permission to use will depends on status
+	if ($action == 'reopen' && $permissiontoadd) {	// no test on permission here, permission to use will depends on status
 		if (in_array($object->statut, array(1, 2, 3, 4, 5, 6, 7, 9))) {
 			if ($object->statut == 1) {
 				$newstatus = 0; // Validated->Draft
@@ -1063,7 +1063,7 @@ if (empty($reshook)) {
 	}
 
 	// Force mandatory order method
-	if ($action == 'commande') {	// Not a real action so no permission test
+	if ($action == 'commande') {	// Test on permission not required here
 		$methodecommande = GETPOSTINT('methodecommande');
 
 		if ($cancel) {
@@ -1546,8 +1546,8 @@ if (empty($reshook)) {
 		}
 	}
 
-	if (getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB') && $permissiontoadd) {
-		if ($action == 'addcontact') {
+	if (getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB')) {
+		if ($action == 'addcontact' && $permissiontoadd) {
 			if ($object->id > 0) {
 				$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
 				$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
@@ -1565,10 +1565,10 @@ if (empty($reshook)) {
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
-		} elseif ($action == 'swapstatut' && $object->id > 0) {
+		} elseif ($action == 'swapstatut' && $object->id > 0 && $permissiontoadd) {
 			// bascule du statut d'un contact
 			$result = $object->swapContactStatus(GETPOSTINT('ligne'));
-		} elseif ($action == 'deletecontact' && $object->id > 0) {
+		} elseif ($action == 'deletecontact' && $object->id > 0 && $permissiontoadd) {
 			// Efface un contact
 			$result = $object->delete_contact(GETPOSTINT("lineid"));
 

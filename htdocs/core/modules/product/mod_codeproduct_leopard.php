@@ -110,8 +110,6 @@ class mod_codeproduct_leopard extends ModeleProductCode
 	 */
 	public function verif($db, &$code, $product, $type)
 	{
-		global $conf;
-
 		$result = 0;
 		$code = strtoupper(trim($code));
 

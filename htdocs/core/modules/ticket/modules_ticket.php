@@ -87,4 +87,11 @@ abstract class ModeleNumRefTicket extends CommonNumRefGenerator
 	 *  @return	string|int<-1,0>	Next value if OK, <=-1 if KO
 	 */
 	abstract public function getNextValue($objsoc, $ticket);
+
+	/**
+	 *  Return an example of numbering
+	 *
+	 *  @return     string      Example
+	 */
+	abstract public function getExample();
 }
