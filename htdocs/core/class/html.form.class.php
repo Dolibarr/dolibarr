@@ -4761,9 +4761,34 @@ class Form
 	 * @param 	int 	$nooutput 		1=Return string, do not send to output
 	 * @return  string|void             String for the HTML select component
 	 */
-	public function select_types_iban($selected = '', $htmlname = 'ribList', $empty = 0, $noadmininfo = 0, $maxlength = 0, $active = 1, $morecss = '', $nooutput = 0, $ribForSelection = [])
+	public function select_types_iban($selected = '', $htmlname = 'ribList', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0, $active = 1, $morecss = '', $nooutput = 0, $ribForSelection = [])
 	{
-		$out = '<select id="select' . $htmlname . '" class="flat selectrib' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '">';
+		// phpcs:enable
+		global $langs, $user, $conf;
+
+
+		$out = '';
+
+//		dol_syslog(__METHOD__ . " " . $selected . ", " . $htmlname . ", " . $filtertype . ", " . $format, LOG_DEBUG);
+
+//		$filterarray = array();
+//		if ($filtertype == 'CRDT') {
+//			$filterarray = array(0, 2, 3);
+//		} elseif ($filtertype == 'DBIT') {
+//			$filterarray = array(1, 2, 3);
+//		} elseif ($filtertype != '' && $filtertype != '-1') {
+//			$filterarray = explode(',', $filtertype);
+//		}
+
+//		$this->load_cache_types_paiements();
+
+//		// Set default value if not already set by caller
+//		if (empty($selected) && getDolGlobalString('MAIN_DEFAULT_PAYMENT_TYPE_ID')) {
+//			dol_syslog(__METHOD__ . "Using deprecated option MAIN_DEFAULT_PAYMENT_TYPE_ID", LOG_NOTICE);
+//			$selected = getDolGlobalString('MAIN_DEFAULT_PAYMENT_TYPE_ID');
+//		}
+
+		$out .= '<select id="select' . $htmlname . '" class="flat selectrib' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '">';
 		if ($empty) {
 			$out .= '<option value="">&nbsp;</option>';
 		}
@@ -4780,7 +4805,60 @@ class Form
 			$out .= $rib;
 			$out .= '</option>';
 		}
+//		var_dump($out);
+//		foreach ($this->cache_types_paiements as $id => $arraytypes) {
+//			// If not good status
+//			if ($active >= 0 && $arraytypes['active'] != $active) {
+//				continue;
+//			}
+//
+//			// We skip of the user requested to filter on specific payment methods
+//			if (count($filterarray) && !in_array($arraytypes['type'], $filterarray)) {
+//				continue;
+//			}
+//
+//			// We discard empty lines if showempty is on because an empty line has already been output.
+//			if ($empty && empty($arraytypes['code'])) {
+//				continue;
+//			}
+//
+//			if ($format == 0) {
+//				$out .= '<option value="' . $id . '"';
+//			} elseif ($format == 1) {
+//				$out .= '<option value="' . $arraytypes['code'] . '"';
+//			} elseif ($format == 2) {
+//				$out .= '<option value="' . $arraytypes['code'] . '"';
+//			} elseif ($format == 3) {
+//				$out .= '<option value="' . $id . '"';
+//			}
+//			// Print attribute selected or not
+//			if ($format == 1 || $format == 2) {
+//				if ($selected == $arraytypes['code']) {
+//					$out .= ' selected';
+//				}
+//			} else {
+//				if ($selected == $id) {
+//					$out .= ' selected';
+//				}
+//			}
+//			$out .= '>';
+//			$value = '';
+//			if ($format == 0) {
+//				$value = ($maxlength ? dol_trunc($arraytypes['label'], $maxlength) : $arraytypes['label']);
+//			} elseif ($format == 1) {
+//				$value = $arraytypes['code'];
+//			} elseif ($format == 2) {
+//				$value = ($maxlength ? dol_trunc($arraytypes['label'], $maxlength) : $arraytypes['label']);
+//			} elseif ($format == 3) {
+//				$value = $arraytypes['code'];
+//			}
+//			$out .= $value ? $value : '&nbsp;';
+//			$out .= '</option>';
+//		}
 		$out .= '</select>';
+//		if ($user->admin && !$noadmininfo) {
+//			$out .= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+//		}
 		$out .= ajax_combobox('select' . $htmlname);
 
 		if (empty($nooutput)) {
@@ -4789,6 +4867,10 @@ class Form
 			return $out;
 		}
 	}
+	//	-------------------------------------------------------------
+	//	MODIFICATIONS END
+	//	-------------------------------------------------------------
+
 
 	/**
 	 *  Selection HT or TTC
@@ -6318,25 +6400,38 @@ class Form
 		}
 	}
 
+	// ---------------------------------------------------------------------------------------
+	// MODIFICATIONS START
+	// ---------------------------------------------------------------------------------------
 	/**
 	 *    Show form with IBAN
 	 *
+	 * @param string $page Page
 	 * @param string $selected Id mode pre-selectionne
 	 * @param string $htmlname Name of select html field
+	 * @param string $filtertype To filter on field type in llx_c_paiement ('CRDT' or 'DBIT' or array('code'=>xx,'label'=>zz))
+	 * @param int $active Active or not, -1 = all
 	 * @param int $addempty 1=Add empty entry
 	 * @param string $type Type ('direct-debit' or 'bank-transfer')
+	 * @param int $nooutput 1=Return string, no output
 	 * @return    string                    HTML output or ''
 	 */
-	public function form_iban($selected = '', $htmlname = 'ribList', $addempty = 0, $type = '', $ribForSelection = []): string
+	public function form_iban($page, $selected = '', $htmlname = 'ribList', $filtertype = '', $active = 1, $addempty = 0, $type = '', $nooutput = 0, $ribForSelection = []): string
 	{
-		$out = '';
+		// phpcs:enable
+		global $langs;
 
+		$out = '';
 		if ($htmlname != "none") {
+//			$out .= '<form method="POST" action="' . $page . '">';
+//			$out .= '<input type="hidden" name="action" value="setmode">';
 			$out .= '<input type="hidden" name="token" value="' . newToken() . '">';
 			if ($type) {
 				$out .= '<input type="hidden" name="type" value="' . dol_escape_htmltag($type) . '">';
 			}
-			$out .= $this->select_types_iban($selected, $htmlname, $addempty, '', 1, $ribForSelection);
+			$out .= $this->select_types_iban($selected, $htmlname, $filtertype, 0, $addempty, 0, 0, $active, '', 1, $ribForSelection);
+//			$out .= '<input type="submit" class="button smallpaddingimp valignmiddle" value="' . $langs->trans("Modify") . '">';
+//			$out .= '</form>';
 		} else {
 			if ($selected) {
 				$out .= $selected;
@@ -6345,9 +6440,16 @@ class Form
 			}
 		}
 
+		if ($nooutput) {
+			return $out;
+		}
 		print $out;
 		return array_search($selected, $ribForSelection);
 	}
+	// ---------------------------------------------------------------------------------------
+	// MODIFICATIONS END
+	// ---------------------------------------------------------------------------------------
+
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
