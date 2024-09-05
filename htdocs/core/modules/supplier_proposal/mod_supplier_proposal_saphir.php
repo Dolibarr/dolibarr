@@ -109,7 +109,7 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 	 */
 	public function getExample()
 	{
-		global $conf, $langs, $mysoc;
+		global $mysoc;
 
 		$old_code_client = $mysoc->code_client;
 		$mysoc->code_client = 'CCCCCCCCCC';
