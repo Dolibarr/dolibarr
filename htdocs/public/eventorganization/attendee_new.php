@@ -495,8 +495,8 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 				$errmsg .= $thirdparty->error;
 				$errors = array_merge($errors, $thirdparty->errors);
 			} else {
-				$thirdparty->country_code = getCountry($thirdparty->country_id, 2, $db, $langs);
-				$thirdparty->country      = getCountry($thirdparty->country_code, 0, $db, $langs);
+				$thirdparty->country_code = getCountry($thirdparty->country_id, '2', $db, $langs);
+				$thirdparty->country      = getCountry($thirdparty->country_code, '', $db, $langs);
 
 				// Update attendee country to match country of thirdparty
 				$confattendee->fk_soc     = $thirdparty->id;
@@ -858,20 +858,20 @@ if ((!empty($conference->id) && $conference->status == ConferenceOrBooth::STATUS
 		print img_picto('', 'country', 'class="pictofixedwidth"');
 		$country_id = GETPOST('country_id');
 		if (!$country_id && getDolGlobalString('MEMBER_NEWFORM_FORCECOUNTRYCODE')) {
-			$country_id = getCountry($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE, 2, $db, $langs);
+			$country_id = getCountry($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE, '2', $db, $langs);
 		}
 		if (!$country_id && !empty($conf->geoipmaxmind->enabled)) {
 			$country_code = dol_user_country();
 			//print $country_code;
 			if ($country_code) {
-				$new_country_id = getCountry($country_code, 3, $db, $langs);
+				$new_country_id = getCountry($country_code, '3', $db, $langs);
 				//print 'xxx'.$country_code.' - '.$new_country_id;
 				if ($new_country_id) {
 					$country_id = $new_country_id;
 				}
 			}
 		}
-		$country_code = getCountry($country_id, 2, $db, $langs);
+		$country_code = getCountry($country_id, '2', $db, $langs);
 		print $form->select_country($country_id, 'country_id', '', 0, 'minwidth200 widthcentpercentminusx maxwidth300');
 		print '</td></tr>';
 		// State
