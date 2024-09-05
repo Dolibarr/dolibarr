@@ -81,7 +81,6 @@ parameters:
 		- '#getCountry expects string, int given#'
 		- '#dolCopyDir expects string, int given#'
 		- '#dol_copy expects string, int given#'
-		- '#info_admin expects string, int given#'
 		- '#dol_getIdFromCode expects string, int given#'
 		- '#dol_strlen expects string, int given#'
 		- '#dol_get_fiche_head expects string, int given#'
