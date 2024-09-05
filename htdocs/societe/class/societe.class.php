@@ -3411,14 +3411,14 @@ class Societe extends CommonObject
 	 *	@param	string	$mode	'label' or 'rum' or 'format'
 	 *  @return	string			Bank label or RUM or '' if no bank account found
 	 */
-	public function display_rib($mode = 'label')
+	public function display_rib($id, $mode = 'label')
 	{
 		// phpcs:enable
 		require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 
 		$bac = new CompanyBankAccount($this->db);
 		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-		$bac->fetch(0, '', $this->id);
+		$bac->fetch($id, '', $this->id);
 
 		if ($bac->id > 0) {		// If a bank account has been found for company $this->id
 			if ($mode == 'label') {

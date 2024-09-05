@@ -122,10 +122,10 @@ if (empty($reshook)) {
 			$selectedRib = $object->db->query($sql);
 			if ($selectedRib) {
 				if ($selectedRib->num_rows) {
-					$obj = $object->db->fetch_object($selectedRib);
+					$selectedRibObj = $object->db->fetch_object($selectedRib);
 				}
 			}
-			$result = $object->demande_prelevement($user, price2num(GETPOST('withdraw_request_amount', 'alpha')), $newtype, $sourcetype, 0, $obj->rowid ?? 0);
+			$result = $object->demande_prelevement($user, price2num(GETPOST('withdraw_request_amount', 'alpha')), $newtype, $sourcetype, 0, $selectedRibObj->rowid ?? 0);
 
 			if ($result > 0) {
 				$db->commit();
@@ -1022,10 +1022,12 @@ if ($object->id > 0) {
 
 	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande, pfd.date_traite, pfd.fk_prelevement_bons, pfd.amount,";
 	$sql .= " pb.ref, pb.date_trans, pb.method_trans, pb.credite, pb.date_credit, pb.datec, pb.statut as status, pb.fk_bank_account, pb.amount as pb_amount,";
-	$sql .= " u.rowid as user_id, u.email, u.lastname, u.firstname, u.login, u.statut as user_status, u.photo as user_photo";
+	$sql .= " u.rowid as user_id, u.email, u.lastname, u.firstname, u.login, u.statut as user_status, u.photo as user_photo,";
+	$sql .= " sr.iban_prefix as iban, sr.bic as bic";
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on pfd.fk_user_demande = u.rowid";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."prelevement_bons as pb ON pb.rowid = pfd.fk_prelevement_bons";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_rib as sr ON sr.rowid = pfd.fk_societe_rib";
 	if ($type == 'bank-transfer') {
 		$sql .= " WHERE fk_facture_fourn = ".((int) $object->id);
 	} else {

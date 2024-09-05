@@ -1024,7 +1024,7 @@ class BonPrelevement extends CommonObject
 		$type != 'bank-transfer' ? $sqlTable = "facture" :	$sqlTable = "facture_fourn";
 
 
-		// Check if there is an iban associated top bank transfer or if we take default
+		// Check if there is an iban associated to bank transfer or if we take the default
 		$sql = "SELECT fk_societe_rib";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "prelevement_demande as pd";
 		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . $sqlTable . " as f ON f.rowid = pd.fk_".$sqlTable;
@@ -1034,7 +1034,7 @@ class BonPrelevement extends CommonObject
 
 		if ($resql->num_rows) {
 			$obj = $this->db->fetch_object($resql->num_rows);
-			$SocieteRibID = $obj->fk_societe_rib;
+			$societeRibID = $obj->fk_societe_rib;
 			$this->db->free($resql);
 		} else {
 			$this->error = $this->db->lasterror();
@@ -1080,8 +1080,8 @@ class BonPrelevement extends CommonObject
 			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "prelevement_demande as pd ON f.rowid = pd.fk_".$sqlTable;
 			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . $societeOrUser." as s ON s.rowid = f.fk_".$socOrUser;
 			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . $societeOrUser."_rib as sr ON s.rowid = sr.fk_".$socOrUser;
-			if (!empty($SocieteRibID)){
-				$sql .= " AND sr.rowid = " . $SocieteRibID;
+			if (!empty($societeRibID)){
+				$sql .= " AND sr.rowid = " . $societeRibID;
 			} else {
 				$sql .= " AND sr.default_rib = 1";
 			}
@@ -1402,7 +1402,7 @@ class BonPrelevement extends CommonObject
 					if ($sourcetype == 'salary') {
 						$userid = $this->context['factures_prev'][0][2];
 					}
-					$result = $this->generate($format, $executiondate, $type, $fk_bank_account, $userid);
+					$result = $this->generate($format, $executiondate, $type, $fk_bank_account, $userid, $societeRibID);
 					if ($result < 0) {
 						//var_dump($this->error);
 						//var_dump($this->invoice_in_error);
@@ -1714,7 +1714,7 @@ class BonPrelevement extends CommonObject
 	 * @param   int  	$forsalary          If the SEPA is to pay salaries
 	 * @return	int							>=0 if OK, <0 if KO
 	 */
-	public function generate($format = 'ALL', $executiondate = 0, $type = 'direct-debit', $fk_bank_account = 0, $forsalary = 0)
+	public function generate($format = 'ALL', $executiondate = 0, $type = 'direct-debit', $fk_bank_account = 0, $forsalary = 0, $societeRibID = '')
 	{
 		global $conf, $langs, $mysoc;
 
@@ -1785,7 +1785,11 @@ class BonPrelevement extends CommonObject
 				$sql .= " AND f.fk_soc = soc.rowid";
 				$sql .= " AND soc.fk_pays = c.rowid";
 				$sql .= " AND rib.fk_soc = f.fk_soc";
-				$sql .= " AND rib.default_rib = 1";
+				if (!empty($societeRibID)){
+					$sql .= " AND rib.rowid = " . $societeRibID;
+				} else {
+					$sql .= " AND rib.default_rib = 1";
+				}
 				$sql .= " AND rib.type = 'ban'";
 
 				// Define $fileDebiteurSection. One section DrctDbtTxInf per invoice.
@@ -1923,7 +1927,11 @@ class BonPrelevement extends CommonObject
 					$sql .= " AND p.fk_facture_fourn = f.rowid";
 					$sql .= " AND f.fk_soc = soc.rowid";
 					$sql .= " AND rib.fk_soc = f.fk_soc";
-					$sql .= " AND rib.default_rib = 1";
+					if (!empty($societeRibID)){
+						$sql .= " AND rib.rowid = " . $societeRibID;
+					} else {
+						$sql .= " AND rib.default_rib = 1";
+					}
 					$sql .= " AND rib.type = 'ban'";
 				}
 				// Define $fileCrediteurSection. One section DrctDbtTxInf per invoice.
