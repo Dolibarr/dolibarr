@@ -181,7 +181,7 @@ if ($usemargins && isModEnabled('margin') && empty($user->socid)) {
 	}
 	if (getDolGlobalString('DISPLAY_MARK_RATES') && $user->hasRight('margins', 'liretous')) {
 		print '<th class="linecolmargin2 margininfos right width75">'.$langs->trans('MarkRate');
-		if (in_array($object->element, array('propal', 'commande', 'facture', 'supplier_proposal', 'order_supplier', 'invoice_supplier')) && $object->status == $object::STATUS_DRAFT) {
+		if (in_array($object->element, array('propal', 'commande', 'facture')) && $object->status == $object::STATUS_DRAFT) {
 			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?mode=markforalllines&id='.$object->id.'">'.img_edit($langs->trans("UpdateForAllLines"), 0, 'class="clickmarkforalllines opacitymedium paddingleft cursorpointer"').'</a>';
 			if (GETPOST('mode', 'aZ09') == 'markforalllines') {
 				print '<div class="classmarkforalllines inline-block nowraponall">';
