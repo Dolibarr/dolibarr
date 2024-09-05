@@ -2581,9 +2581,9 @@ if (empty($reshook)) {
 		foreach ($object->lines as &$line) {
 			$subprice_multicurrency = $line->subprice;
 			if (is_numeric($margin_rate) && $margin_rate > 0) {
-				$line->subprice = price2num($line->pa_ht * (1 + $margin_rate / 100), 'MU');
+				$line->subprice = price2num(floatval($line->pa_ht) * (1 + floatval($margin_rate) / 100), 'MU');
 			} elseif (is_numeric($mark_rate) && $mark_rate > 0) {
-				$line->subprice = $line->pa_ht / (1 - ($mark_rate / 100));
+				$line->subprice = $line->pa_ht / (1 - (floatval($mark_rate) / 100));
 			} else {
 				$line->subprice = $line->pa_ht;
 			}
@@ -2600,7 +2600,7 @@ if (empty($reshook)) {
 			// Manage $line->subprice and $line->multicurrency_subprice
 			$multicurrency_subprice = (float) $line->subprice * $line->multicurrency_subprice / $subprice_multicurrency;
 			// Update DB
-			$result = $object->updateline($line->id, $line->desc, $line->subprice,$line->qty, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_rate, $line->localtax2_rate, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->product_ref, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit, $multicurrency_subprice);
+			$result = $object->updateline($line->id, $line->desc, $line->subprice,$line->qty, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->product_ref, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit, $multicurrency_subprice);
 			// Update $object with new margin info
 			if ($result > 0) {
 				if (is_numeric($margin_rate) && empty($mark_rate)) {
