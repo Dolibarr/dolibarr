@@ -276,7 +276,18 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 		$tplcontent .= '</html>'."\n";
 
 		$tplcontent .= '<?php // BEGIN PHP'."\n";
-		$tplcontent .= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "html", '.$objectpage->id.'); dolWebsiteIncrementCounter('.$object->id.', "'.$objectpage->type_container.'", '.$objectpage->id.');'."\n";
+		$tplcontent .= '$tmp = ob_get_contents(); ob_end_clean();'."\n";
+		if (strpos($objectpage->content, '$__PAGE__TITLE__') !== false) {
+			$tplcontent .= '$tmp = preg_replace("/<title>.*?<\/title>/s", "<title>" . dol_escape_htmltag($__PAGE__TITLE__) . "</title>", $tmp);'."\n";
+			$tplcontent .= '$tmp = preg_replace("/<meta name=\"title\" content=\".*?\" \/>/s", "<meta name=\"title\" content=\"" . dol_escape_htmltag($__PAGE__TITLE__) . "\"  />", $tmp);';
+		}
+		if (strpos($objectpage->content, '$__PAGE__KEYWORDS__') !== false) {
+			$tplcontent .= '$tmp = preg_replace("/<meta name=\"keywords\" content=\".*?\" \/>/s", "<meta name=\"keywords\" content=\"" . dol_escape_htmltag($__PAGE__KEYWORDS__) . "\"  />", $tmp);';
+		}
+		if (strpos($objectpage->content, '$__PAGE__DESC__') !== false) {
+			$tplcontent .= '$tmp = preg_replace("/<meta name=\"description\" content=\".*?\" \/>/s", "<meta name=\"description\" content=\"" . dol_escape_htmltag($__PAGE__DESC__) . "\"  />", $tmp);';
+		}
+		$tplcontent .= 'dolWebsiteOutput($tmp, "html", '.$objectpage->id.'); dolWebsiteIncrementCounter('.$object->id.', "'.$objectpage->type_container.'", '.$objectpage->id.');'."\n";
 		$tplcontent .= "// END PHP ?>\n";
 	} else {
 		$tplcontent .= "<?php // BEGIN PHP\n";

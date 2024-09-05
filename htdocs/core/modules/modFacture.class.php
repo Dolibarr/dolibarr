@@ -718,7 +718,7 @@ class modFacture extends DolibarrModules
 			'none.rest' => 'NumericCompute',
 			'f.note_private' => "Text", 'f.note_public' => "Text", 'f.fk_user_author' => 'Numeric', 'uc.login' => 'Text', 'f.fk_user_valid' => 'Numeric', 'uv.login' => 'Text',
 			'pj.ref' => 'Text', 'pj.title' => 'Text', 'p.amount' => 'Numeric', 'pf.amount' => 'Numeric', 'p.rowid' => 'Numeric', 'p.ref' => 'Text', 'p.title' => 'Text', 'p.datep' => 'Date', 'p.num_paiement' => 'Numeric',
-			'p.fk_bank' => 'Numeric', 'p.note' => 'Text', 'pt.code' => 'Text', 'pt.libelle' => 'text', 'ba.ref' => 'Text'
+			'p.fk_bank' => 'Numeric', 'p.note' => 'Text', 'pt.code' => 'Text', 'pt.libelle' => 'Text', 'ba.ref' => 'Text'
 		);
 		if (!empty($conf->cashdesk->enabled) || !empty($conf->takepos->enabled) || getDolGlobalString('INVOICE_SHOW_POS')) {
 			$this->export_fields_array[$r]['f.module_source'] = 'POSModule';

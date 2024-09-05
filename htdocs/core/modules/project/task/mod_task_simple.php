@@ -100,9 +100,9 @@ class mod_task_simple extends ModeleNumRefTask
 		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(task.ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task AS task, ";
-		$sql .= MAIN_DB_PREFIX."projet AS project WHERE task.fk_projet=project.rowid";
+		$sql .= MAIN_DB_PREFIX."projet AS project WHERE task.fk_projet = project.rowid";
 		$sql .= " AND task.ref LIKE '".$db->escape($this->prefix)."____-%'";
-		$sql .= " AND project.entity = ".$conf->entity;
+		$sql .= " AND project.entity = ".((int) $conf->entity);
 		$resql = $db->query($sql);
 		if ($resql) {
 			$row = $db->fetch_row($resql);
@@ -130,7 +130,7 @@ class mod_task_simple extends ModeleNumRefTask
 	 */
 	public function getNextValue($objsoc, $object)
 	{
-		global $db, $conf;
+		global $db;
 
 		// First, we get the max value
 		$posindice = strlen($this->prefix) + 6;

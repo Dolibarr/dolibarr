@@ -409,7 +409,7 @@ if (empty($reshook)) {
 	$uploaddir = $conf->societe->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
-	if ($action == 'setstcomm') {
+	if ($action == 'setstcomm' && $permissiontoadd) {
 		$object = new Contact($db);
 		$result = $object->fetch(GETPOST('stcommcontactid'));
 		$object->stcomm_id = dol_getIdFromCode($db, GETPOST('stcomm', 'alpha'), 'c_stcommcontact');

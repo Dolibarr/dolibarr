@@ -93,6 +93,7 @@ $hookmanager->initHooks(array('ecmautocard', 'globalcard'));
 
 $result = restrictedArea($user, 'ecm', 0);
 
+
 /*
  *	Actions
  */
@@ -101,9 +102,6 @@ $result = restrictedArea($user, 'ecm', 0);
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 	$search_doc_ref = '';
 }
-
-
-
 
 // Add directory
 if ($action == 'add' && $user->hasRight('ecm', 'setup')) {
@@ -124,7 +122,7 @@ if ($action == 'add' && $user->hasRight('ecm', 'setup')) {
 }
 
 // Remove file
-if ($action == 'confirm_deletefile') {
+if ($action == 'confirm_deletefile' && $user->hasRight('ecm', 'upload')) {
 	if (GETPOST('confirm') == 'yes') {
 		$langs->load("other");
 		if ($section) {
@@ -155,7 +153,7 @@ if ($action == 'confirm_deletefile') {
 }
 
 // Remove directory
-if ($action == 'confirm_deletesection' && GETPOST('confirm') == 'yes') {
+if ($action == 'confirm_deletesection' && GETPOST('confirm') == 'yes' && $user->hasRight('ecm', 'setup')) {
 	$result = $ecmdir->delete($user);
 	setEventMessages($langs->trans("ECMSectionWasRemoved", $ecmdir->label), null, 'mesgs');
 
@@ -165,7 +163,7 @@ if ($action == 'confirm_deletesection' && GETPOST('confirm') == 'yes') {
 // Refresh directory view
 // This refresh list of dirs, not list of files (for performance reason). List of files is refresh only if dir was not synchronized.
 // To refresh content of dir with cache, just open the dir in edit mode.
-if ($action == 'refreshmanual') {
+if ($action == 'refreshmanual' && $user->hasRight('ecm', 'read')) {
 	$ecmdirtmp = new EcmDirectory($db);
 
 	// This part of code is same than into file ecm/ajax/ecmdatabase.php TODO Remove duplicate

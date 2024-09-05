@@ -82,6 +82,7 @@ include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be 'inc
 $permissiontoread   = $user->hasRight('hrm', 'all', 'read');
 $permissiontoadd    = $user->hasRight('hrm', 'all', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontodelete = $user->hasRight('hrm', 'all', 'delete');
+
 $upload_dir = $conf->hrm->multidir_output[isset($object->entity) ? $object->entity : 1] . '/skill';
 
 // Security check (enable the most restrictive one)
@@ -136,7 +137,7 @@ if (empty($reshook)) {
 
 	if (!$error) {
 		if (is_array($skilldetArray) && count($skilldetArray) > 0) {
-			if ($action == 'add') {
+			if ($action == 'add' && $permissiontoadd) {
 				$arraySkill = $object->fetchLines();
 				$index = 0;
 				foreach ($arraySkill as $skilldet) {
@@ -150,7 +151,8 @@ if (empty($reshook)) {
 					}
 					$index++;
 				}
-			} else {
+			}
+			if ($action == 'update' && $permissiontoadd) {
 				foreach ($skilldetArray as $key => $SkValueToUpdate) {
 					$skilldetObj = new Skilldet($object->db);
 					$res = $skilldetObj->fetch($key);
@@ -606,9 +608,7 @@ if ($action != "create" && $action != "edit") {
 	$arrayfields = dol_sort_array($arrayfields, 'position');
 
 
-	/*
-	 * View
-	 */
+	// View
 
 	$form = new Form($db);
 

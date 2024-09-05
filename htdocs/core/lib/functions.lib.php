@@ -11561,7 +11561,11 @@ function getImageFileNameForSize($file, $extName, $extImgTarget = '')
 		$dirName = '';
 	}
 
-	$fileName = preg_replace('/(\.gif|\.jpeg|\.jpg|\.png|\.bmp|\.webp)$/i', '', $file); // We remove extension, whatever is its case
+	if (!in_array($extName, array('', '_small', '_mini'))) {
+		return 'Bad parameter extName';
+	}
+
+	$fileName = preg_replace('/(\.gif|\.jpeg|\.jpg|\.png|\.bmp|\.webp)$/i', '', $file); // We remove image extension, whatever is its case
 	$fileName = basename($fileName);
 
 	if (empty($extImgTarget)) {
