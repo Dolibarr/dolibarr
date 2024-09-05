@@ -32,32 +32,37 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 class ModeleExports extends CommonDocGenerator    // This class can't be abstract as there is instance properties loaded by listOfAvailableExportFormat
 {
 	/**
+	 * @var string ID ex: csv, tsv, excel...
+	 */
+	public $id = 'NOT IMPLEMENTED';
+
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
 
 	/**
-	 * @var string[]
+	 * @var array<string,string>
 	 */
 	public $driverlabel = array();
 
 	/**
-	 * @var string[]
+	 * @var array<string,string>
 	 */
 	public $driverdesc = array();
 
 	/**
-	 * @var string[]
+	 * @var array<string,string>
 	 */
 	public $driverversion = array();
 
 	/**
-	 * @var string[]
+	 * @var array<string,string>
 	 */
 	public $liblabel = array();
 
 	/**
-	 * @var string[]
+	 * @var array<string,string>
 	 */
 	public $libversion = array();
 
@@ -65,6 +70,11 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	 * @var string picto
 	 */
 	public $picto;
+
+	/**
+	 * @var array<string,string> Module key/picto pairs
+	 */
+	public $pictos;
 
 	/**
 	 * @var string description
@@ -129,12 +139,14 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 						// var_dump($classname);
 
 						// Picto
-						$this->picto[$module->id] = $module->picto;
+						$this->pictos[$module->id] = $module->picto;
 						// Driver properties
 						$this->driverlabel[$module->id] = $module->getDriverLabel().(empty($module->disabled) ? '' : ' __(Disabled)__'); // '__(Disabled)__' is a key
 						if (method_exists($module, 'getDriverLabelBis')) {
-							if ($module->getDriverLabelBis()) {
-								$this->driverlabel[$module->id] .= ' <span class="opacitymedium">('.$module->getDriverLabelBis().')</span>';
+							// @phan-suppress-next-line PhanUndeclaredMethod
+							$labelBis = $module->getDriverLabelBis();
+							if ($labelBis) {
+								$this->driverlabel[$module->id] .= ' <span class="opacitymedium">('.$labelBis.')</span>';
 							}
 						}
 						$this->driverdesc[$module->id] = $module->getDriverDesc();
@@ -163,7 +175,7 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	 */
 	public function getPictoForKey($key)
 	{
-		return $this->picto[$key];
+		return $this->pictos[$key];
 	}
 
 	/**
@@ -241,6 +253,71 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 		return -1;
 	}
 
+
+	/**
+	 * getDriverLabel
+	 *
+	 * @return 	string			Return driver label
+	 */
+	public function getDriverLabel()
+	{
+		$msg = get_class($this)."::".__FUNCTION__." not implemented";
+		dol_syslog($msg, LOG_ERR);
+		$this->error = $msg;
+		return 'Not implemented';
+	}
+
+	/**
+	 * getDriverDesc
+	 *
+	 * @return string
+	 */
+	public function getDriverDesc()
+	{
+		$msg = get_class($this)."::".__FUNCTION__." not implemented";
+		dol_syslog($msg, LOG_ERR);
+		$this->error = $msg;
+		return 'Not implemented';
+	}
+
+	/**
+	 * getDriverVersion
+	 *
+	 * @return string
+	 */
+	public function getDriverVersion()
+	{
+		$msg = get_class($this)."::".__FUNCTION__." not implemented";
+		dol_syslog($msg, LOG_ERR);
+		$this->error = $msg;
+		return 'Not implemented';
+	}
+
+	/**
+	 * getLibLabel
+	 *
+	 * @return string
+	 */
+	public function getLibLabel()
+	{
+		$msg = get_class($this)."::".__FUNCTION__." not implemented";
+		dol_syslog($msg, LOG_ERR);
+		$this->error = $msg;
+		return 'Not implemented';
+	}
+
+	/**
+	 * getLibVersion
+	 *
+	 * @return string
+	 */
+	public function getLibVersion()
+	{
+		$msg = get_class($this)."::".__FUNCTION__." not implemented";
+		dol_syslog($msg, LOG_ERR);
+		$this->error = $msg;
+		return 'Not implemented';
+	}
 
 	/**
 	 * getDriverExtension
