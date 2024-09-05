@@ -3367,7 +3367,7 @@ class Form
 		}
 		$labeltoshow .= ' - ' . dol_trunc($label, $maxlengtharticle);
 		if ($outorigin && getDolGlobalString('PRODUCT_SHOW_ORIGIN_IN_COMBO')) {
-			$labeltoshow .= ' (' . getCountry($outorigin, 1) . ')';
+			$labeltoshow .= ' (' . getCountry($outorigin, '1') . ')';
 		}
 
 		// Set $labltoshowhtml
@@ -3384,7 +3384,7 @@ class Form
 		}
 		$labeltoshowhtml .= ' - ' . dol_trunc($label, $maxlengtharticle);
 		if ($outorigin && getDolGlobalString('PRODUCT_SHOW_ORIGIN_IN_COMBO')) {
-			$labeltoshowhtml .= ' (' . getCountry($outorigin, 1) . ')';
+			$labeltoshowhtml .= ' (' . getCountry($outorigin, '1') . ')';
 		}
 
 		// Stock

@@ -610,11 +610,11 @@ function getCountry($searchkey, $withcode = '', $dbtouse = null, $outputlangs = 
 					$label = ($obj->code && ($outputlangs->transnoentitiesnoconv("Country".$obj->code) != "Country".$obj->code)) ? $outputlangs->transnoentitiesnoconv("Country".$obj->code) : $label;
 				}
 			}
-			if ($withcode == 1) {
+			if ($withcode == '1') {
 				$result = $label ? "$obj->code - $label" : "$obj->code";
-			} elseif ($withcode == 2) {
+			} elseif ($withcode == '2') {
 				$result = $obj->code;
-			} elseif ($withcode == 3) {
+			} elseif ($withcode == '3') {
 				$result = $obj->rowid;
 			} elseif ($withcode === 'all') {
 				$result = array('id' => $obj->rowid, 'code' => $obj->code, 'label' => $label);
