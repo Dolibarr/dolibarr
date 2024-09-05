@@ -974,7 +974,6 @@ class Propal extends CommonObject
 			$this->line->multicurrency_total_ht 	= $multicurrency_total_ht;
 			$this->line->multicurrency_total_tva 	= $multicurrency_total_tva;
 			$this->line->multicurrency_total_ttc 	= $multicurrency_total_ttc;
-var_dump($pu_ht);
 			$result = $this->line->update($notrigger);
 			if ($result > 0) {
 				// Reorder if child line
