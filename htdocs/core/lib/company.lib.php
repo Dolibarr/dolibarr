@@ -556,7 +556,7 @@ function societe_admin_prepare_head()
  *    Return country label, code or id from an id, code or label
  *
  *    @param	int|string	$searchkey      Id or code of country to search
- *    @param    string		$withcode   	'0'=Return label,
+ *    @param    string		$withcode   	'' or '0' = Return label,
  *    										'1'=Return code + label,
  *    										'2'=Return code from id,
  *    										'3'=Return id from code,
@@ -1528,7 +1528,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 			$contactstatic->fk_soc = $obj->fk_soc;
 			$contactstatic->entity = $obj->entity;
 
-			$country_code = getCountry($obj->country_id, 2);
+			$country_code = getCountry($obj->country_id, '2');
 			$contactstatic->country_code = $country_code;
 
 			$contactstatic->setGenderFromCivility();
