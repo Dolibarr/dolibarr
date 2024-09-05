@@ -1715,8 +1715,8 @@ class Holiday extends CommonObject
 						continue;
 					}
 
-					$startOfMonth = dol_mktime(0, 0, 0, $month, '01', $year, 1);
-					$endOfMonth = dol_mktime(0, 0, 0, $month, dol_print_date($lastUpdate, 't'), $year, 1);
+					$startOfMonth = dol_mktime(0, 0, 0, (int) $month, 1, (int) $year, 1);
+					$endOfMonth = dol_mktime(0, 0, 0, (int) $month, (int) dol_print_date($lastUpdate, 't'), (int) $year, 1);
 
 					foreach ($this->holiday as $obj) {
 						$startDate = $obj['date_debut_gmt'];
@@ -1730,7 +1730,7 @@ class Holiday extends CommonObject
 							$endDate = $endOfMonth;
 						}
 
-						$nbDaysToDeduct = intval(num_open_day($startDate, $endDate, 0, 1, $obj['halfday']));
+						$nbDaysToDeduct = (int) num_open_day($startDate, $endDate, 0, 1, $obj['halfday']);
 
 						if ($nbDaysToDeduct <= 0) {
 							continue;
@@ -1751,8 +1751,8 @@ class Holiday extends CommonObject
 				}
 
 				//updating the date of the last monthly balance update
-				$newMonth = dol_get_next_month(intval(dol_print_date($lastUpdate, '%m')), intval(dol_print_date($lastUpdate, '%Y')));
-				$lastUpdate = dol_mktime(0, 0, 0, $newMonth['month'], 1, $newMonth['year']);
+				$newMonth = dol_get_next_month((int) dol_print_date($lastUpdate, '%m'), (int) dol_print_date($lastUpdate, '%Y'));
+				$lastUpdate = dol_mktime(0, 0, 0, (int) $newMonth['month'], 1, (int) $newMonth['year']);
 				$sql = "UPDATE ".MAIN_DB_PREFIX."holiday_config SET";
 				$sql .= " value = '".$this->db->escape(dol_print_date($lastUpdate, '%Y%m%d%H%M%S'))."'";
 				$sql .= " WHERE name = 'lastUpdate'";
