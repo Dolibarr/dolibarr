@@ -634,7 +634,7 @@ if (empty($reshook)) {
 			}
 
 			// managed_in_stock
-			$object->stockable_product = ($type == 0 || ($type == 1 && !empty($conf->global->STOCK_SUPPORTS_SERVICES))) ? true : false;
+			$object->stockable_product = ($type == 0 || ($type == 1 && !empty($conf->global->STOCK_SUPPORTS_SERVICES)));
 
 			$accountancy_code_sell = GETPOST('accountancy_code_sell', 'alpha');
 			$accountancy_code_sell_intra = GETPOST('accountancy_code_sell_intra', 'alpha');
