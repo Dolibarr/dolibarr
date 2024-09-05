@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,14 +36,29 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	 */
 	public $error = '';
 
+	/**
+	 * @var string[]
+	 */
 	public $driverlabel = array();
 
+	/**
+	 * @var string[]
+	 */
 	public $driverdesc = array();
 
+	/**
+	 * @var string[]
+	 */
 	public $driverversion = array();
 
+	/**
+	 * @var string[]
+	 */
 	public $liblabel = array();
 
+	/**
+	 * @var string[]
+	 */
 	public $libversion = array();
 
 	/**
@@ -71,7 +87,7 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	public $col;
 
 	/**
-	 * @var int disabled
+	 * @var int<0,1> disabled
 	 */
 	public $disabled;
 
@@ -80,7 +96,7 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	 *
 	 *  @param	DoliDB	$db     			Database handler
 	 *  @param  integer	$maxfilenamelength  Max length of value to show
-	 *  @return	array						List of templates (same content than array this->driverlabel)
+	 *  @return	string[]					List of templates (same content as array this->driverlabel)
 	 */
 	public function listOfAvailableExportFormat($db, $maxfilenamelength = 0)
 	{
@@ -109,6 +125,7 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 					require_once $file;
 					if (class_exists($classname)) {
 						$module = new $classname($db);
+						'@phan-var-force ModeleExports $module';
 						// var_dump($classname);
 
 						// Picto
@@ -201,6 +218,121 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	 */
 	public function getLibVersionForKey($key)
 	{
+		// phpcs:enable
 		return $this->libversion[$key];
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Output record line into file
+	 *
+	 *  @param	array<string,string>	$array_selected_sorted	Array with list of field to export
+	 *  @param	Resource				$objp					A record from a fetch with all fields from select
+	 *  @param	Translate				$outputlangs			Object lang to translate values
+	 *  @param	array<string,string>	$array_types			Array with types of fields
+	 * 	@return	int												Return integer <0 if KO, >0 if OK
+	 */
+	public function write_record($array_selected_sorted, $objp, $outputlangs, $array_types)
+	{
+		// phpcs:enable
+		$msg = get_class($this)."::".__FUNCTION__." not implemented";
+		dol_syslog($msg, LOG_ERR);
+		$this->error = $msg;
+		return -1;
+	}
+
+
+	/**
+	 * getDriverExtension
+	 *
+	 * @return string
+	 */
+	public function getDriverExtension()
+	{
+		$msg = get_class($this)."::".__FUNCTION__." not implemented";
+		dol_syslog($msg, LOG_ERR);
+		$this->error = $msg;
+		return 'Not implemented';
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *	Open output file
+	 *
+	 * 	@param		string		$file			File name to generate
+	 *  @param		Translate	$outputlangs	Output language object
+	 *	@return		int							Return integer <0 if KO, >=0 if OK
+	 */
+	public function open_file($file, $outputlangs)
+	{
+		// phpcs:enable
+		$msg = get_class($this)."::".__FUNCTION__." not implemented";
+		dol_syslog($msg, LOG_ERR);
+		$this->error = $msg;
+		return -1;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Write header
+	 *
+	 *  @param      Translate	$outputlangs        Object lang to translate values
+	 * 	@return		int								Return integer <0 if KO, >0 if OK
+	 */
+	public function write_header($outputlangs)
+	{
+		// phpcs:enable
+		$msg = get_class($this)."::".__FUNCTION__." not implemented";
+		dol_syslog($msg, LOG_ERR);
+		$this->error = $msg;
+		return -1;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Output title line into file
+	 *
+	 *  @param	array<string,string>	$array_export_fields_label	Array with list of label of fields
+	 *  @param	array<string,string>	$array_selected_sorted		Array with list of field to export
+	 *  @param	Translate				$outputlangs    			Object lang to translate values
+	 *  @param	array<string,string>	$array_types				Array with types of fields
+	 * 	@return	int													Return integer <0 if KO, >0 if OK
+	 */
+	public function write_title($array_export_fields_label, $array_selected_sorted, $outputlangs, $array_types)
+	{
+		// phpcs:enable
+		$msg = get_class($this)."::".__FUNCTION__." not implemented";
+		dol_syslog($msg, LOG_ERR);
+		$this->error = $msg;
+		return -1;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *	Write footer
+	 *
+	 * 	@param		Translate	$outputlangs	Output language object
+	 * 	@return		int							Return integer <0 if KO, >0 if OK
+	 */
+	public function write_footer($outputlangs)
+	{
+		$msg = get_class($this)."::".__FUNCTION__." not implemented";
+		dol_syslog($msg, LOG_ERR);
+		$this->error = $msg;
+		return -1;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *	Close Excel file
+	 *
+	 * 	@return		int							Return integer <0 if KO, >0 if OK
+	 */
+	public function close_file()
+	{
+		$msg = get_class($this)."::".__FUNCTION__." not implemented";
+		dol_syslog($msg, LOG_ERR);
+		$this->error = $msg;
+		return -1;
 	}
 }
