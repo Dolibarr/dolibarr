@@ -32,6 +32,12 @@
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
 
+-- Clean very old temporary tables (created during v9 migration or repair)
+
+DROP TABLE tmp_llx_accouting_account;
+DROP TABLE tmp_llx_accounting_account;
+
+
 -- Previous version instruction forgotten
 
 -- missing entity field
