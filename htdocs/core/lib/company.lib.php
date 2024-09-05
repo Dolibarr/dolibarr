@@ -2550,7 +2550,7 @@ function addEventTypeSQL(&$sql, $actioncode, $sqlANDOR = "AND")
  *
  *		@param	string		$sql		    $sql modified
  * 		@param	string		$donetodo		donetodo
- * 		@param	string		$now		    now
+ * 		@param	int 		$now		    now
  * 		@param	array		$filters		array
  * 		@return	string      sql request
  */
@@ -2635,7 +2635,7 @@ function htmlPrintOnlineFooter($fromcompany, $langs, $addformmessage = 0, $suffi
 	// Juridical status
 	$line1 = "";
 	if ($fromcompany->forme_juridique_code) {
-		$line1 .= ($line1 ? " - " : "").getFormeJuridiqueLabel($fromcompany->forme_juridique_code);
+		$line1 .= ($line1 ? " - " : "").getFormeJuridiqueLabel((string) $fromcompany->forme_juridique_code);
 	}
 	// Capital
 	if ($fromcompany->capital) {

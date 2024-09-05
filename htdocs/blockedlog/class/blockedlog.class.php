@@ -3,6 +3,7 @@
  * Copyright (C) 2017-2020  Laurent Destailleur <eldy@destailleur.fr>
  * Copyright (C) 2022 		charlene benke		<charlene@patas-monkey.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1151,10 +1152,10 @@ class BlockedLog
 		}
 
 		if ($fk_object) {
-			$sql .= natural_search("rowid", $fk_object, 1);
+			$sql .= natural_search("rowid", (string) $fk_object, 1);
 		}
 		if ($search_fk_user > 0) {
-			$sql .= natural_search("fk_user", $search_fk_user, 2);
+			$sql .= natural_search("fk_user", (string) $search_fk_user, 2);
 		}
 		if ($search_start > 0) {
 			$sql .= " AND date_creation >= '".$this->db->idate($search_start)."'";

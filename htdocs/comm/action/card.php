@@ -1364,11 +1364,11 @@ if ($action == 'create') {
 
 	$datep = ($datep ? $datep : (is_null($object->datep) ? '' : $object->datep));
 	if (GETPOSTINT('datep', 1)) {
-		$datep = dol_stringtotime(GETPOSTINT('datep', 1), 'tzuserrel');
+		$datep = dol_stringtotime((string) GETPOSTINT('datep', 1), 'tzuserrel');
 	}
 	$datef = ($datef ? $datef : $object->datef);
 	if (GETPOSTINT('datef', 1)) {
-		$datef = dol_stringtotime(GETPOSTINT('datef', 1), 'tzuserrel');
+		$datef = dol_stringtotime((string) GETPOSTINT('datef', 1), 'tzuserrel');
 	}
 	if (empty($datef) && !empty($datep)) {
 		if (GETPOST("actioncode", 'aZ09') == 'AC_RDV' || !getDolGlobalString('AGENDA_USE_EVENT_TYPE_DEFAULT')) {
