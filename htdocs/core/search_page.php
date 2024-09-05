@@ -57,7 +57,7 @@ $left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');*/
  * Actions
  */
 
-if ($action == 'redirect') {
+if ($action == 'redirect') {	// Test on permission not required here. Test will be done on the targeted page.
 	global $dolibarr_main_url_root;
 
 	$url = GETPOST('url');

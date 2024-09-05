@@ -2,7 +2,7 @@
 /* Copyright (C) 2013-2018	Jean-François Ferry	<hello+jf@librethic.io>
  * Copyright (C) 2016		Gilles Poirier 		<glgpoirier@gmail.com>
  * Copyright (C) 2019		Josep Lluís Amador	<joseplluis@lliuretic.cat>
- * Copyright (C) 2021		Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2024	Frédéric France		<frederic.france@free.fr>
  * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -96,7 +96,7 @@ if ($element == 'product' || $element == 'service') {	// When RESOURCE_ON_PRODUC
 	$tmpobject = new Product($db);
 	$tmpobject->fetch($element_id);
 	$fieldtype = $tmpobject->type;
-	$result = restrictedArea($user, 'produit|service', $element_id, 'product&product', '', '', $fieldtype);
+	$result = restrictedArea($user, 'produit|service', $element_id, 'product&product', '', '', (string) $fieldtype);
 }
 
 

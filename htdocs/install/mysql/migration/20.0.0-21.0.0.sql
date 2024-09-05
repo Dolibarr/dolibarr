@@ -32,6 +32,12 @@
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
 
+-- Clean very old temporary tables (created during v9 migration or repair)
+
+DROP TABLE tmp_llx_accouting_account;
+DROP TABLE tmp_llx_accounting_account;
+
+
 -- Previous version instruction forgotten
 
 -- missing entity field
@@ -87,6 +93,7 @@ ALTER TABLE llx_c_hrm_public_holiday ADD UNIQUE INDEX uk_c_hrm_public_holiday(en
 ALTER TABLE llx_c_hrm_public_holiday ADD UNIQUE INDEX uk_c_hrm_public_holiday2(entity, fk_country, dayrule, day, month, year);
 
 ALTER TABLE llx_societe_account ADD COLUMN date_last_reset_password datetime after date_previous_login;
+ALTER TABLE llx_prelevement_demande ADD COLUMN fk_societe_rib integer DEFAULT NULL after fk_user_demande;
 
 -- Rename of bank table
 ALTER TABLE llx_bank_categ RENAME TO llx_category_bank;		-- TODO Move content into llx_categorie instead of renaming it
@@ -104,3 +111,9 @@ create table llx_paymentexpensereport_expensereport
   multicurrency_tx		double(24,8) DEFAULT 1,
   multicurrency_amount	double(24,8) DEFAULT 0
 )ENGINE=innodb;
+
+
+ALTER TABLE llx_contrat ADD COLUMN denormalized_lower_planned_end_date datetime;
+
+-- Missing field vat_reverse_charge with constant MAIN_COMPANY_PERENTITY_SHARED
+ALTER TABLE llx_societe_perentity ADD COLUMN vat_reverse_charge tinyint DEFAULT 0;

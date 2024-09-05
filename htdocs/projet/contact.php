@@ -67,6 +67,8 @@ $hookmanager->initHooks(array('projectcontactcard', 'globalcard'));
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
 $result = restrictedArea($user, 'projet', $id, 'projet&project');
 
+$permissiontoadd = $user->hasRight('projet', 'creer');
+
 
 /*
  * Actions
@@ -81,7 +83,7 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	// Test if we can add contact to the tasks at the same times, if not or not required, make a redirect
 	$formconfirmtoaddtasks = '';
-	if ($action == 'addcontact') {
+	if ($action == 'addcontact' && $permissiontoadd) {
 		$form = new Form($db);
 
 		$source = GETPOST("source", 'aZ09');
@@ -161,7 +163,7 @@ if (empty($reshook)) {
 	}
 
 	// Add new contact
-	if ($action == 'addcontact_confirm' && $user->hasRight('projet', 'creer')) {
+	if ($action == 'addcontact_confirm' && $permissiontoadd) {
 		if (GETPOST('confirm', 'alpha') == 'no') {
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 			exit;
@@ -179,7 +181,8 @@ if (empty($reshook)) {
 			$usergroup = new UserGroup($db);
 			$result = $usergroup->fetch($groupid);
 			if ($result > 0) {
-				$tmpcontactarray = $usergroup->listUsersForGroup();
+				$excludefilter = 'statut = 1';
+				$tmpcontactarray = $usergroup->listUsersForGroup($excludefilter, 0);
 				if ($contactarray <= 0) {
 					$error++;
 				} else {
@@ -274,7 +277,7 @@ if (empty($reshook)) {
 	}
 
 	// Change contact's status
-	if ($action == 'swapstatut' && $user->hasRight('projet', 'creer')) {
+	if ($action == 'swapstatut' && $permissiontoadd) {
 		if ($object->fetch($id)) {
 			$result = $object->swapContactStatus(GETPOSTINT('ligne'));
 		} else {
@@ -283,7 +286,7 @@ if (empty($reshook)) {
 	}
 
 	// Delete a contact
-	if (($action == 'deleteline' || $action == 'deletecontact') && $user->hasRight('projet', 'creer')) {
+	if (($action == 'deleteline' || $action == 'deletecontact') && $permissiontoadd) {
 		$object->fetch($id);
 		$result = $object->delete_contact(GETPOSTINT("lineid"));
 

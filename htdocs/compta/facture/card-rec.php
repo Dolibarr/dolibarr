@@ -200,7 +200,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';*/
 
 	// Create predefined invoice
-	if ($action == 'add') {
+	if ($action == 'add' && $usercancreate) {
 		if (!GETPOST('title', 'alphanohtml')) {
 			setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->trans("Title")), null, 'errors');
 			$action = "create";
@@ -456,7 +456,7 @@ if (empty($reshook)) {
 	}
 
 	// Add a new line
-	if ($action == 'addline' && $user->hasRight('facture', 'creer')) {
+	if ($action == 'addline' && $usercancreate) {
 		$langs->load('errors');
 		$error = 0;
 
@@ -684,12 +684,14 @@ if (empty($reshook)) {
 				$info_bits |= 0x01;
 			}
 
+			$fk_parent_line = GETPOST('fk_parent_line', 'int');
+
 			if ($usercanproductignorepricemin && (!empty($price_min) && ((float) price2num($pu_ht) * (1 - (float) price2num($remise_percent) / 100) < (float) price2num($price_min)))) {
-				$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $conf->currency));
+				$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
 				setEventMessages($mesg, null, 'errors');
 			} else {
 				// Insert line
-				$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $info_bits, '', $pu_ttc, $type, -1, $special_code, $label, $fk_unit, 0, $date_start_fill, $date_end_fill, $fournprice, $buyingprice);
+				$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $info_bits, '', $pu_ttc, $type, -1, $special_code, $label, $fk_unit, 0, $date_start_fill, $date_end_fill, $fournprice, $buyingprice, $fk_parent_line);
 
 				if ($result > 0) {
 					// Define output language and generate document
@@ -875,6 +877,7 @@ if (empty($reshook)) {
 
 		$date_start_fill = GETPOSTINT('date_start_fill');
 		$date_end_fill = GETPOSTINT('date_end_fill');
+		$fk_parent_line = GETPOST('fk_parent_line', 'int');
 
 		// Update line
 		if (!$error) {
@@ -902,7 +905,8 @@ if (empty($reshook)) {
 				$date_start_fill,
 				$date_end_fill,
 				$fournprice,
-				$buyingprice
+				$buyingprice,
+				$fk_parent_line
 			);
 
 			if ($result >= 0) {
@@ -989,9 +993,7 @@ $now = dol_now();
 $nowlasthour = dol_get_last_hour($now);
 
 
-/*
- * Create mode
- */
+// Create mode
 if ($action == 'create') {
 	print load_fiche_titre($langs->trans("CreateRepeatableInvoice"), '', 'bill');
 
@@ -1235,9 +1237,7 @@ if ($action == 'create') {
 		dol_print_error(null, "Error, no invoice ".$object->id);
 	}
 } else {
-	/*
-	 * View mode
-	 */
+	// View mode
 	if ($object->id > 0) {
 		$object->fetch_thirdparty();
 
@@ -1252,7 +1252,7 @@ if ($action == 'create') {
 		}
 
 		// Call Hook formConfirm
-		$parameters = array('formConfirm' => $formconfirm);
+		$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
 		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		if (empty($reshook)) {
 			$formconfirm .= $hookmanager->resPrint;

@@ -303,7 +303,7 @@ class modTicket extends DolibarrModules
 			'type' => 'left',
 			'titre' => 'NewTicket',
 			'mainmenu' => 'ticket',
-			'url' => '/ticket/card.php?action=create',
+			'url' => '/ticket/card.php?action=create&mode=init',
 			'langs' => 'ticket',
 			'position' => 102,
 			'enabled' => 'isModEnabled("ticket")',

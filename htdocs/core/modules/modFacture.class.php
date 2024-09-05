@@ -4,10 +4,9 @@
  * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2021		Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2021-2024	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2022       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -356,7 +355,7 @@ class modFacture extends DolibarrModules
 		$this->import_fields_array[$r] = array(
 			'fd.fk_facture' => 'InvoiceRef*',
 			'fd.fk_parent_line' => 'FacParentLine',
-			'fd.fk_product' => 'IdProduct',
+			'fd.fk_product' => 'ProductOrService',
 			'fd.label' => 'Label',
 			'fd.description' => 'LineDescription*',
 			'fd.vat_src_code' => 'Vat Source Code',
@@ -415,13 +414,12 @@ class modFacture extends DolibarrModules
 		// End add extra fields
 		$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'facturedet');
 		$this->import_regex_array[$r] = array(
-			'fd.fk_product' => 'rowid@'.MAIN_DB_PREFIX.'product',
 			'fd.multicurrency_code' => 'code@'.MAIN_DB_PREFIX.'multicurrency'
 		);
 		$import_sample = array(
 			'fd.fk_facture' => '(PROV00001)',
 			'fd.fk_parent_line' => '',
-			'fd.fk_product' => '',
+			'fd.fk_product' => 'ref:PRODUCT_REF or id:123456',
 			'fd.label' => '',
 			'fd.description' => 'Test product',
 			'fd.vat_src_code' => '',
@@ -466,7 +464,8 @@ class modFacture extends DolibarrModules
 		$this->import_examplevalues_array[$r] = array_merge($import_sample, $import_extrafield_sample);
 		$this->import_updatekeys_array[$r] = array(
 			'fd.rowid' => 'Row Id',
-			'fd.fk_facture' => 'Invoice Id'
+			'fd.fk_facture' => 'Invoice Id',
+			'fd.fk_product'=> 'ProductRef'
 		);
 		$this->import_convertvalue_array[$r] = array(
 			'fd.fk_facture' => array(
@@ -475,6 +474,13 @@ class modFacture extends DolibarrModules
 				'class' => 'Facture',
 				'method' => 'fetch',
 				'element' => 'facture'
+			),
+			'fd.fk_product' => array(
+				'rule'=>'fetchidfromref',
+				'classfile'=>'/product/class/product.class.php',
+				'class'=>'Product',
+				'method'=>'fetch',
+				'element'=>'Product'
 			),
 			'fd.fk_projet' => array(
 				'rule' => 'fetchidfromref',
@@ -712,7 +718,7 @@ class modFacture extends DolibarrModules
 			'none.rest' => 'NumericCompute',
 			'f.note_private' => "Text", 'f.note_public' => "Text", 'f.fk_user_author' => 'Numeric', 'uc.login' => 'Text', 'f.fk_user_valid' => 'Numeric', 'uv.login' => 'Text',
 			'pj.ref' => 'Text', 'pj.title' => 'Text', 'p.amount' => 'Numeric', 'pf.amount' => 'Numeric', 'p.rowid' => 'Numeric', 'p.ref' => 'Text', 'p.title' => 'Text', 'p.datep' => 'Date', 'p.num_paiement' => 'Numeric',
-			'p.fk_bank' => 'Numeric', 'p.note' => 'Text', 'pt.code' => 'Text', 'pt.libelle' => 'text', 'ba.ref' => 'Text'
+			'p.fk_bank' => 'Numeric', 'p.note' => 'Text', 'pt.code' => 'Text', 'pt.libelle' => 'Text', 'ba.ref' => 'Text'
 		);
 		if (!empty($conf->cashdesk->enabled) || !empty($conf->takepos->enabled) || getDolGlobalString('INVOICE_SHOW_POS')) {
 			$this->export_fields_array[$r]['f.module_source'] = 'POSModule';

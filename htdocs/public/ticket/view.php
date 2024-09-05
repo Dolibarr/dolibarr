@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2016  Jean-François FERRY     <hello@librethic.io>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023		Benjamin Falière		<benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -370,7 +370,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		// Progression
 		if (getDolGlobalString('TICKET_SHOW_PROGRESSION')) {
 			print '<tr><td>'.$langs->trans("Progression").'</td><td>';
-			print($object->dao->progress > 0 ? dol_escape_htmltag($object->dao->progress) : '0').'%';
+			print($object->dao->progress > 0 ? dol_escape_htmltag((string) $object->dao->progress) : '0').'%';
 			print '</td></tr>';
 		}
 

@@ -133,7 +133,7 @@ if ($action == 'updateMask') {
 } elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		if ($conf->global->FACTURE_ADDON_PDF == "$value") {
+		if (getDolGlobalString('FACTURE_ADDON_PDF') == (string) $value) {
 			dolibarr_del_const($db, 'FACTURE_ADDON_PDF', $conf->entity);
 		}
 	}
@@ -569,7 +569,7 @@ foreach ($dirmodels as $reldir) {
 
 								// Default
 								print '<td class="center">';
-								if ($conf->global->FACTURE_ADDON_PDF == "$name") {
+								if (getDolGlobalString('FACTURE_ADDON_PDF') == (string) $name) {
 									print img_picto($langs->trans("Default"), 'on');
 								} else {
 									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("SetAsDefault"), 'off').'</a>';
@@ -752,7 +752,7 @@ if ($resql) {
 	}
 }
 print "</select>";
-print ajax_combobox("chq", array(), 0, 0, 'resolve', -2);
+print ajax_combobox("chq", array(), 0, 0, 'resolve', '-2');
 
 print "</td></tr>";
 print "</table>";

@@ -534,6 +534,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				'MAIN_MODULE_FOURNISSEUR' => 'newboxdefonly',
 				'MAIN_MODULE_FICHEINTER' => 'newboxdefonly',
 				'MAIN_MODULE_HOLIDAY' => 'newboxdefonly',
+				'MAIN_MODULE_LOAN' => 'newboxdefonly',
 				'MAIN_MODULE_MARGIN' => 'menuonly',
 				'MAIN_MODULE_MRP' => 'menuonly',
 				'MAIN_MODULE_OPENSURVEY' => 'newboxdefonly',
@@ -4198,7 +4199,7 @@ function migrate_delete_old_dir($db, $langs, $conf)
  * @param	DoliDB		$db				Database handler
  * @param	Translate	$langs			Object langs
  * @param	Conf		$conf			Object conf
- * @param	array		$listofmodule	List of modules, like array('MODULE_KEY_NAME'=>', $reloadmode)
+ * @param	array		$listofmodule	List of modules, like array('MODULE_KEY_NAME'=>$reloadmode, ...)
  * @param   int         $force          1=Reload module even if not already loaded
  * @return	int					Return integer <0 if KO, >0 if OK
  */
@@ -4228,22 +4229,24 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 		'MAIN_MODULE_PRODUIT' => array('class' => 'modProduct'),
 		'MAIN_MODULE_SERVICE' => array('class' => 'modService'),
 		'MAIN_MODULE_COMMANDE' => array('class' => 'modCommande'),
+		'MAIN_MODULE_DON' => array('class' => 'modDon'),
 		'MAIN_MODULE_FACTURE' => array('class' => 'modFacture'),
 		'MAIN_MODULE_FICHEINTER' => array('class' => 'modFicheinter'),
 		'MAIN_MODULE_FOURNISSEUR' => array('class' => 'modFournisseur'),
-		'MAIN_MODULE_HOLIDAY' => array('class' => 'modHoliday', 'remove' => 1),
 		'MAIN_MODULE_EXPEDITION' => array('class' => 'modExpedition'),
 		'MAIN_MODULE_EXPENSEREPORT' => array('class' => 'modExpenseReport'),
-		'MAIN_MODULE_DON' => array('class' => 'modDon'),
-		'MAIN_MODULE_ECM' => array('class' => 'modECM', 'remove' => 1),
-		'MAIN_MODULE_KNOWLEDGEMANAGEMENT' => array('class' => 'modKnowledgeManagement', 'remove' => 1),
 		'MAIN_MODULE_EVENTORGANIZATION' => array('class' => 'modEventOrganization', 'remove' => 1),
+		'MAIN_MODULE_ECM' => array('class' => 'modECM', 'remove' => 1),
+		'MAIN_MODULE_HOLIDAY' => array('class' => 'modHoliday', 'remove' => 1),
+		'MAIN_MODULE_KNOWLEDGEMANAGEMENT' => array('class' => 'modKnowledgeManagement', 'remove' => 1),
+		'MAIN_MODULE_LOAN' => array('class' => 'modLoan', 'remove' => 1),
 		'MAIN_MODULE_PAYBOX' => array('class' => 'modPaybox', 'remove' => 1),
 		'MAIN_MODULE_PROPAL' => array('class' => 'modPropale'),
 		'MAIN_MODULE_SUPPLIERPROPOSAL' => array('class' => 'modSupplierProposal', 'remove' => 1),
 		'MAIN_MODULE_OPENSURVEY' => array('class' => 'modOpenSurvey', 'remove' => 1),
 		'MAIN_MODULE_PRODUCTBATCH' => array('class' => 'modProductBatch', 'remove' => 1),
 		'MAIN_MODULE_TAKEPOS' => array('class' => 'modTakePos', 'remove' => 1),
+		'MAIN_MODULE_VARIANTS' => array('class' => 'modVariants', 'remove' => 1),
 		'MAIN_MODULE_EMAILCOLLECTOR' => array('class' => 'modEmailCollector', 'remove' => 1),
 	);
 

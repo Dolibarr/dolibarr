@@ -303,7 +303,7 @@ abstract class CommonDocGenerator
 		global $conf;
 
 		if (empty($mysoc->forme_juridique) && !empty($mysoc->forme_juridique_code)) {
-			$mysoc->forme_juridique = getFormeJuridiqueLabel($mysoc->forme_juridique_code);
+			$mysoc->forme_juridique = getFormeJuridiqueLabel((string) $mysoc->forme_juridique_code);
 		}
 		if (empty($mysoc->country) && !empty($mysoc->country_code)) {
 			$mysoc->country = $outputlangs->transnoentitiesnoconv("Country".$mysoc->country_code);

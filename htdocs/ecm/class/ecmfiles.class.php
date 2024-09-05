@@ -268,7 +268,7 @@ class EcmFiles extends CommonObject
 		// If ref not defined
 		if (empty($this->ref)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
-			$this->ref = dol_hash($this->filepath.'/'.$this->filename, 3);
+			$this->ref = dol_hash($this->filepath.'/'.$this->filename, '3');
 		}
 
 		$maxposition = 0;
@@ -718,7 +718,7 @@ class EcmFiles extends CommonObject
 
 		// Update request
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET';
-		$sql .= " ref = '".$this->db->escape(dol_hash($this->filepath."/".$this->filename, 3))."',";
+		$sql .= " ref = '".$this->db->escape(dol_hash($this->filepath."/".$this->filename, '3'))."',";
 		$sql .= ' label = '.(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").',';
 		$sql .= ' share = '.(!empty($this->share) ? "'".$this->db->escape($this->share)."'" : "null").',';
 		$sql .= ' entity = '.(isset($this->entity) ? $this->entity : $conf->entity).',';

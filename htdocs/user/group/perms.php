@@ -51,15 +51,15 @@ if (!isset($id) || empty($id)) {
 }
 
 // Define if user can read permissions
-$canreadperms = ($user->admin || $user->hasRight("user", "user", "read"));
+$permissiontoread = ($user->admin || $user->hasRight("user", "user", "read"));
 // Define if user can modify group permissions
-$caneditperms = ($user->admin || $user->hasRight("user", "user", "write"));
+$permissiontoedit = ($user->admin || $user->hasRight("user", "user", "write"));
 // Advanced permissions
 $advancedpermsactive = false;
 if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$advancedpermsactive = true;
-	$canreadperms = ($user->admin || ($user->hasRight("user", "group_advance", "read") && $user->hasRight("user", "group_advance", "readperms")));
-	$caneditperms = ($user->admin || $user->hasRight("user", "group_advance", "write"));
+	$permissiontoread = ($user->admin || ($user->hasRight("user", "group_advance", "read") && $user->hasRight("user", "group_advance", "readperms")));
+	$permissiontoedit = ($user->admin || $user->hasRight("user", "group_advance", "write"));
 }
 
 // Security check
@@ -68,7 +68,7 @@ if (isset($user->socid) && $user->socid > 0) {
 	$socid = $user->socid;
 }
 //$result = restrictedArea($user, 'user', $id, 'usergroup', '');
-if (!$canreadperms) {
+if (!$permissiontoread) {
 	accessforbidden();
 }
 
@@ -93,7 +93,7 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	if ($action == 'addrights' && $caneditperms) {
+	if ($action == 'addrights' && $permissiontoedit) {
 		$editgroup = new UserGroup($db);
 		$result = $editgroup->fetch($object->id);
 		if ($result > 0) {
@@ -109,7 +109,7 @@ if (empty($reshook)) {
 		$user->loadRights();
 	}
 
-	if ($action == 'delrights' && $caneditperms) {
+	if ($action == 'delrights' && $permissiontoedit) {
 		$editgroup = new UserGroup($db);
 		$result = $editgroup->fetch($id);
 		if ($result > 0) {
@@ -268,7 +268,7 @@ if ($object->id > 0) {
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Module").'</td>';
-	if ($caneditperms) {
+	if ($permissiontoedit) {
 		print '<td class="center nowrap">';
 		print '<a class="reposition commonlink" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addrights&token='.newToken().'&entity='.$entity.'&module=allmodules&confirm=yes">'.$langs->trans("All")."</a>";
 		print '/';
@@ -352,7 +352,7 @@ if ($object->id > 0) {
 				print '<a name="'.$objMod->getName().'"></a>';
 				print '</td>';
 				// Permission and tick (2 columns)
-				if ($caneditperms) {
+				if ($permissiontoedit) {
 					print '<td class="center wraponsmartphone">';
 					print '<span class="permtohide_'.$obj->module.'" '.(!$isexpanded ? ' style="display:none"' : '').'>';
 					print '<a class="reposition alink addexpandedmodulesinparamlist" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addrights&token='.newToken().'&entity='.$entity.'&module='.$obj->module.'&confirm=yes&updatedmodulename='.$obj->module.'">'.$langs->trans("All")."</a>";
@@ -393,7 +393,7 @@ if ($object->id > 0) {
 			if (!empty($permsgroupbyentity[$entity]) && is_array($permsgroupbyentity[$entity])) {
 				if (in_array($obj->id, $permsgroupbyentity[$entity])) {
 					// Own permission by group
-					if ($caneditperms) {
+					if ($permissiontoedit) {
 						print '<td class="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delrights&token='.newToken().'&entity='.$entity.'&rights='.$obj->id.'&confirm=yes">';
 						//print img_edit_remove($langs->trans("Remove"));
 						print img_picto($langs->trans("Remove"), 'switch_on');
@@ -404,7 +404,7 @@ if ($object->id > 0) {
 					print '</td>';
 				} else {
 					// Do not own permission
-					if ($caneditperms) {
+					if ($permissiontoedit) {
 						print '<td class="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addrights&token='.newToken().'&entity='.$entity.'&rights='.$obj->id.'&confirm=yes">';
 						//print img_edit_add($langs->trans("Add"));
 						print img_picto($langs->trans("Add"), 'switch_off');
@@ -414,7 +414,7 @@ if ($object->id > 0) {
 				}
 			} else {
 				// Do not own permission
-				if ($caneditperms) {
+				if ($permissiontoedit) {
 					print '<td class="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addrights&entity='.$entity.'&rights='.$obj->id.'&confirm=yes&token='.newToken().'">';
 					//print img_edit_add($langs->trans("Add"));
 					print img_picto($langs->trans("Add"), 'switch_off');

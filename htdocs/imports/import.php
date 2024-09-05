@@ -183,7 +183,7 @@ if (empty($array_match_file_to_database)) {
  * Actions
  */
 
-if ($action == 'deleteprof') {
+if ($action == 'deleteprof' && $user->hasRight('import', 'run')) {
 	if (GETPOSTINT("id")) {
 		$objimport->fetch(GETPOSTINT("id"));
 		$result = $objimport->delete($user);
@@ -191,7 +191,7 @@ if ($action == 'deleteprof') {
 }
 
 // Save import config to database
-if ($action == 'add_import_model') {
+if ($action == 'add_import_model' && $user->hasRight('import', 'run')) {
 	if ($import_name) {
 		// Set save string
 		$hexa = '';
@@ -262,7 +262,7 @@ if ($step == 3 && $datatoimport) {
 	}
 }
 
-if ($step == 4 && $action == 'select_model') {
+if ($step == 4 && $action == 'select_model' && $user->hasRight('import', 'run')) {
 	// Reinit match arrays
 	$_SESSION["dol_array_match_file_to_database"] = '';
 	$serialized_array_match_file_to_database = '';
@@ -286,7 +286,7 @@ if ($step == 4 && $action == 'select_model') {
 		$_SESSION['dol_array_match_file_to_database_select'] = $_SESSION["dol_array_match_file_to_database"];
 	}
 }
-if ($action == 'saveselectorder') {
+if ($action == 'saveselectorder' && $user->hasRight('import', 'run')) {
 	// Enregistrement de la position des champs
 	$serialized_array_match_file_to_database = '';
 	dol_syslog("selectorder=".GETPOST('selectorder'), LOG_DEBUG);
@@ -304,14 +304,11 @@ if ($action == 'saveselectorder') {
 }
 
 
-
 /*
  * View
  */
 
-
 $help_url = 'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones';
-
 
 // STEP 1: Page to select dataset to import
 if ($step == 1 || !$datatoimport) {
@@ -1982,7 +1979,7 @@ if ($step == 5 && $datatoimport) {
 					print $langs->trans("TooMuchWarnings", (count($arrayofwarnings) - $nbofwarnings))."<br>";
 					break;
 				}
-				print ' * '.$langs->trans("Line").' '.dol_escape_htmltag($key).'<br>';
+				print ' * '.$langs->trans("Line").' '.dol_escape_htmltag((string) $key).'<br>';
 				foreach ($val as $i => $err) {
 					print ' &nbsp; &nbsp; > '.dol_escape_htmltag($err['lib']).'<br>';
 				}

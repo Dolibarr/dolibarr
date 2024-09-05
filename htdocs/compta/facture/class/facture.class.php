@@ -3204,7 +3204,7 @@ class Facture extends CommonInvoice
 	 * @param   string	$force_number	Reference to force on invoice
 	 * @param	int		$idwarehouse	Id of warehouse to use for stock decrease if option to decrease on stock is on (0=no decrease)
 	 * @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 * @param	int		$batch_rule		0=do not decrement batch, else batch rule to use, 1=take in batches ordered by sellby and eatby dates
+	 * @param	int		$batch_rule		0=do not decrement batch, else batch rule to use: 1=take lot/serial ordered by sellby and eatby dates
 	 * @return	int						Return integer <0 if KO, 0=Nothing done because invoice is not a draft, >0 if OK
 	 */
 	public function validate($user, $force_number = '', $idwarehouse = 0, $notrigger = 0, $batch_rule = 0)
@@ -3321,7 +3321,7 @@ class Facture extends CommonInvoice
 			if (!$vallabel && getDolGlobalString($keymandatory)) {
 				$langs->load("errors");
 				$error++;
-				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val)), null, 'errors');
+				$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val));
 			}
 		}
 
@@ -3393,7 +3393,7 @@ class Facture extends CommonInvoice
 			dol_syslog(get_class($this)."::validate", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
-				dol_print_error($this->db);
+				$this->error = $this->db->lasterror();
 				$error++;
 			}
 
@@ -3408,7 +3408,7 @@ class Facture extends CommonInvoice
 				// Define third party as a customer
 				$result = $this->thirdparty->setAsCustomer();
 
-				// If active we decrement the main product and its components at invoice validation
+				// If active (STOCK_CALCULATE_ON_BILL), we decrement the main product and its components at invoice validation
 				if ($this->type != self::TYPE_DEPOSIT && $result >= 0 && isModEnabled('stock') && getDolGlobalString('STOCK_CALCULATE_ON_BILL') && $idwarehouse > 0) {
 					require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 					$langs->load("agenda");
@@ -3418,20 +3418,23 @@ class Facture extends CommonInvoice
 					for ($i = 0; $i < $cpt; $i++) {
 						if ($this->lines[$i]->fk_product > 0) {
 							$mouvP = new MouvementStock($this->db);
-							$mouvP->origin = &$this;
+							$mouvP->origin = &$this;	// deprecated
 							$mouvP->setOrigin($this->element, $this->id);
-
-							// TODO If warehouseid has been set into invoice line, we should use this value in priority
-							// $idwarehouse = $this->lines[$i]->fk_warehouse;
 
 							// We decrease stock for product
 							if ($this->type == self::TYPE_CREDIT_NOTE) {
-								$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("InvoiceValidatedInDolibarr", $num));
+								// TODO If warehouseid has been set into invoice line, we should use this value in priority
+								// $newidwarehouse = $this->lines[$i]->fk_warehouse ? $this->lines[$i]->fk_warehouse : $idwarehouse;
+								$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("InvoiceValidatedInDolibarr", $num), '', '', $this->lines[$i]->batch);
 								if ($result < 0) {
 									$error++;
 									$this->error = $mouvP->error;
+									$this->errors = array_merge($this->errors, $mouvP->errors);
 								}
 							} else {
+								// TODO If warehouseid has been set into invoice line, we should use this value in priority
+								// $newidwarehouse = $this->lines[$i]->fk_warehouse ? $this->lines[$i]->fk_warehouse : $idwarehouse;
+
 								$is_batch_line = false;
 								if ($batch_rule > 0) {
 									$productStatic->fetch($this->lines[$i]->fk_product);
@@ -3441,7 +3444,7 @@ class Facture extends CommonInvoice
 
 										$sortfield = null;
 										$sortorder = null;
-										// find all batch order by sellby (DLC) and eatby dates (DLUO) first
+										// find lot/serial by sellby (DLC) and eatby dates (DLUO) first
 										if ($batch_rule == Productbatch::BATCH_RULE_SELLBY_EATBY_DATES_FIRST) {
 											$sortfield = 'pl.sellby,pl.eatby,pb.qty,pl.rowid';
 											$sortorder = 'ASC,ASC,ASC,ASC';
@@ -3479,7 +3482,7 @@ class Facture extends CommonInvoice
 												if ($result < 0) {
 													$error++;
 													$this->error = $mouvP->error;
-													$this->errors = $mouvP->errors;
+													$this->errors = array_merge($this->errors, $mouvP->errors);
 													break;
 												}
 
@@ -3498,7 +3501,7 @@ class Facture extends CommonInvoice
 													if ($result < 0) {
 														$error++;
 														$this->error = $mouvP->error;
-														$this->errors = $mouvP->errors;
+														$this->errors = array_merge($this->errors, $mouvP->errors);
 													}
 												} else {
 													$error++;
@@ -3512,12 +3515,12 @@ class Facture extends CommonInvoice
 									}
 								}
 
-								if (!$is_batch_line) {
+								if (!$is_batch_line) {	// If stock move not yet processed
 									$result = $mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarr", $num));
 									if ($result < 0) {
 										$error++;
 										$this->error = $mouvP->error;
-										$this->errors = $mouvP->errors;
+										$this->errors = array_merge($this->errors, $mouvP->errors);
 									}
 								}
 							}
@@ -3540,7 +3543,7 @@ class Facture extends CommonInvoice
 				}
 				if ($result < 0) {
 					$this->error = $invoice_situation->error;
-					$this->errors = $invoice_situation->errors;
+					$this->errors = array_merge($this->errors, $invoice_situation->errors);
 					$error++;
 				}
 			}
@@ -6461,7 +6464,8 @@ class FactureLigne extends CommonInvoiceLine
 		$sql .= ' info_bits, total_ht, total_tva, total_ttc, total_localtax1, total_localtax2,';
 		$sql .= ' situation_percent, fk_prev_id,';
 		$sql .= ' fk_unit, fk_user_author, fk_user_modif,';
-		$sql .= ' fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc';
+		$sql .= ' fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc,';
+		$sql .= ' batch, fk_warehouse';
 		$sql .= ')';
 		$sql .= " VALUES (".$this->fk_facture.",";
 		$sql .= " ".($this->fk_parent_line > 0 ? $this->fk_parent_line : "null").",";
@@ -6504,6 +6508,8 @@ class FactureLigne extends CommonInvoiceLine
 		$sql .= ", ".price2num($this->multicurrency_total_ht);
 		$sql .= ", ".price2num($this->multicurrency_total_tva);
 		$sql .= ", ".price2num($this->multicurrency_total_ttc);
+		$sql .= ", '".$this->db->escape($this->batch)."'";
+		$sql .= ", ".((int) $this->fk_warehouse);
 		$sql .= ')';
 
 		dol_syslog(get_class($this)."::insert", LOG_DEBUG);
@@ -6717,6 +6723,9 @@ class FactureLigne extends CommonInvoiceLine
 		$sql .= ", multicurrency_total_ht=".price2num($this->multicurrency_total_ht);
 		$sql .= ", multicurrency_total_tva=".price2num($this->multicurrency_total_tva);
 		$sql .= ", multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc);
+
+		$sql .= ", batch = '".$this->db->escape($this->batch)."'";
+		$sql .= ", fk_warehouse = ".((int) $this->fk_warehouse);
 
 		$sql .= " WHERE rowid = ".((int) $this->rowid);
 

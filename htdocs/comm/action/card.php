@@ -156,7 +156,7 @@ $TDurationTypes = array('y' => $langs->trans('Years'), 'm' => $langs->trans('Mon
 
 $result = restrictedArea($user, 'agenda', $object, 'actioncomm&societe', 'myactions|allactions', 'fk_soc', 'id');
 
-$usercancreate = $user->hasRight('agenda', 'allactions', 'create') || (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->hasRight('agenda', 'myactions', 'create'));
+$usercancreate = $user->hasRight('agenda', 'allactions', 'create') || ((empty($object->id) || $object->authorid == $user->id || $object->userownerid == $user->id) && $user->hasRight('agenda', 'myactions', 'create'));
 
 
 /*
@@ -185,10 +185,10 @@ if (empty($reshook) && (GETPOST('removedassigned') || GETPOST('removedassigned')
 
 	$_SESSION['assignedtouser'] = json_encode($tmpassigneduserids);
 	$donotclearsession = 1;
-	if ($action == 'add') {
+	if ($action == 'add' && $usercancreate) {
 		$action = 'create';
 	}
-	if ($action == 'update') {
+	if ($action == 'update' && $usercancreate) {
 		$action = 'edit';
 	}
 
@@ -212,10 +212,10 @@ if (empty($reshook) && (GETPOST('removedassignedresource') || GETPOST('removedas
 
 	$_SESSION['assignedtoresource'] = json_encode($tmpassignedresourceids);
 	$donotclearsessionresource = 1;
-	if ($action == 'add') {
+	if ($action == 'add' && $usercancreate) {
 		$action = 'create';
 	}
-	if ($action == 'update') {
+	if ($action == 'update' && $usercancreate) {
 		$action = 'edit';
 	}
 
@@ -234,10 +234,10 @@ if (empty($reshook) && (GETPOST('addassignedtouser') || GETPOST('updateassignedt
 		$_SESSION['assignedtouser'] = json_encode($assignedtouser);
 	}
 	$donotclearsession = 1;
-	if ($action == 'add') {
+	if ($action == 'add' && $usercancreate) {
 		$action = 'create';
 	}
-	if ($action == 'update') {
+	if ($action == 'update' && $usercancreate) {
 		$action = 'edit';
 	}
 
@@ -256,10 +256,10 @@ if (empty($reshook) && (GETPOST('addassignedtoresource') || GETPOST('updateassig
 		$_SESSION['assignedtoresource'] = json_encode($assignedtoresource);
 	}
 	$donotclearsession = 1;
-	if ($action == 'add') {
+	if ($action == 'add' && $usercancreate) {
 		$action = 'create';
 	}
-	if ($action == 'update') {
+	if ($action == 'update' && $usercancreate) {
 		$action = 'edit';
 	}
 
@@ -274,7 +274,7 @@ if (empty($reshook) && $action == 'classin' && ($user->hasRight('agenda', 'allac
 }
 
 // Action clone object
-if (empty($reshook) && $action == 'confirm_clone' && $confirm == 'yes') {
+if (empty($reshook) && $action == 'confirm_clone' && $confirm == 'yes' && $usercancreate) {
 	if (1 == 0 && !GETPOST('clone_content') && !GETPOST('clone_receivers')) {
 		setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 	} else {
@@ -297,7 +297,7 @@ if (empty($reshook) && $action == 'confirm_clone' && $confirm == 'yes') {
 }
 
 // Add event
-if (empty($reshook) && $action == 'add') {
+if (empty($reshook) && $action == 'add' && $usercancreate) {
 	$error = 0;
 
 	if (empty($backtopage)) {
@@ -735,10 +735,8 @@ if (empty($reshook) && $action == 'add') {
 	}
 }
 
-/*
- * Action update event
- */
-if (empty($reshook) && $action == 'update') {
+// Action update event
+if (empty($reshook) && $action == 'update' && $usercancreate) {
 	if (empty($cancel)) {
 		$fulldayevent = GETPOST('fullday');
 		$aphour = GETPOSTINT('aphour');
@@ -1366,11 +1364,11 @@ if ($action == 'create') {
 
 	$datep = ($datep ? $datep : (is_null($object->datep) ? '' : $object->datep));
 	if (GETPOSTINT('datep', 1)) {
-		$datep = dol_stringtotime(GETPOSTINT('datep', 1), 'tzuserrel');
+		$datep = dol_stringtotime((string) GETPOSTINT('datep', 1), 'tzuserrel');
 	}
 	$datef = ($datef ? $datef : $object->datef);
 	if (GETPOSTINT('datef', 1)) {
-		$datef = dol_stringtotime(GETPOSTINT('datef', 1), 'tzuserrel');
+		$datef = dol_stringtotime((string) GETPOSTINT('datef', 1), 'tzuserrel');
 	}
 	if (empty($datef) && !empty($datep)) {
 		if (GETPOST("actioncode", 'aZ09') == 'AC_RDV' || !getDolGlobalString('AGENDA_USE_EVENT_TYPE_DEFAULT')) {
