@@ -251,6 +251,11 @@ class modKnowledgeManagement extends DolibarrModules
 		$this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->knowledgemanagement->level1->level2)
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r + 1; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Validate articles'; // Permission label
+		$this->rights[$r][4] = 'knowledgerecord'; // In php code, permission will be checked by test if ($user->rights->knowledgemanagement->level1->level2)
+		$this->rights[$r][5] = 'validate'; // In php code, permission will be checked by test if ($user->rights->knowledgemanagement->level1->level2)
+		$r++;
+		$this->rights[$r][0] = $this->numero + $r + 1; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Delete articles'; // Permission label
 		$this->rights[$r][4] = 'knowledgerecord'; // In php code, permission will be checked by test if ($user->rights->knowledgemanagement->level1->level2)
 		$this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->knowledgemanagement->level1->level2)
