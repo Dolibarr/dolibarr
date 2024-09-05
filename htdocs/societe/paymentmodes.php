@@ -1284,7 +1284,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 							if ($companypaymentmodetemp->country_code) {
 								$img = picto_from_langcode($companypaymentmodetemp->country_code);
 								print $img ? $img.' ' : '';
-								print getCountry($companypaymentmodetemp->country_code, 1);
+								print getCountry($companypaymentmodetemp->country_code, '1');
 							} else {
 								print img_warning().' <span class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</span>';
 							}
@@ -1391,7 +1391,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 					if ($src->country) {
 						$img = picto_from_langcode($src->country);
 						print $img ? $img.' ' : '';
-						print getCountry($src->country, 1);
+						print getCountry($src->country, '1');
 					} else {
 						print img_warning().' <span class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</span>';
 					}
@@ -1402,7 +1402,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 					if ($src->card->country) {
 						$img = picto_from_langcode($src->card->country);
 						print $img ? $img.' ' : '';
-						print getCountry($src->card->country, 1);
+						print getCountry($src->card->country, '1');
 					} else {
 						print img_warning().' <span class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</span>';
 					}
@@ -1412,7 +1412,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 					if ($src->sepa_debit->country) {
 						$img = picto_from_langcode($src->sepa_debit->country);
 						print $img ? $img.' ' : '';
-						print getCountry($src->sepa_debit->country, 1);
+						print getCountry($src->sepa_debit->country, '1');
 					} else {
 						print img_warning().' <span class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</span>';
 					}
@@ -1423,7 +1423,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 					if ($src->card->country) {
 						$img = picto_from_langcode($src->card->country);
 						print $img ? $img.' ' : '';
-						print getCountry($src->card->country, 1);
+						print getCountry($src->card->country, '1');
 					} else {
 						print img_warning().' <span class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</span>';
 					}
