@@ -217,7 +217,7 @@ class PropaleLigne extends CommonObjectLine
 
 	// From llx_product
 	/**
-	 * @var float
+	 * @var string
 	 * @deprecated
 	 * @see $product_ref
 	 */
