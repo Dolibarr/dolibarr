@@ -1089,7 +1089,7 @@ if ($action == 'edit') {
 
 
 		if ($text) {
-			print info_admin($text);
+			print info_admin($text, 0, 0, '1', '');
 		}
 	}
 
