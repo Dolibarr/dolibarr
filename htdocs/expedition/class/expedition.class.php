@@ -334,7 +334,7 @@ class Expedition extends CommonObject
 			}
 
 			$obj = new $classname();
-			$numref = "";
+			'@phan-var-force ModelNumRefExpedition $obj';
 			$numref = $obj->getNextValue($soc, $this);
 
 			if ($numref != "") {

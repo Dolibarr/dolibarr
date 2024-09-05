@@ -175,8 +175,8 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 	/**
 	 * Return next value
 	 *
-	 * @param	Societe				$objsoc		Object third party
-	 * @param  	FactureFournisseur	$object		Object invoice
+	 * @param	?Societe			$objsoc		Object third party
+	 * @param  	?FactureFournisseur	$object		Object invoice
 	 * @param   string				$mode		'next' for next value or 'last' for last value
 	 * @return 	string|int<-1,0>				Value if OK, -1 if KO
 	 */

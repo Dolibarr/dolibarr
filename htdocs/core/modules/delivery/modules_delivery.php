@@ -88,4 +88,11 @@ abstract class ModeleNumRefDeliveryOrder extends CommonNumRefGenerator
 	 *  @return string|int<-1,0>  		Value if OK, 0 or -1 if KO
 	 */
 	abstract public function getNextValue($objsoc, $object);
+
+	/**
+	 *  Return an example of numbering
+	 *
+	 *  @return     string      Example
+	 */
+	abstract public function getExample();
 }

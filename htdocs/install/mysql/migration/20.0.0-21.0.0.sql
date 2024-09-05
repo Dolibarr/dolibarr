@@ -78,7 +78,7 @@ ALTER TABLE llx_propal ADD COLUMN model_pdf_pos_sign VARCHAR(32) DEFAULT NULL AF
 ALTER TABLE llx_commande ADD COLUMN signed_status smallint DEFAULT NULL AFTER total_ttc;
 
 
--- a dictionary can not have entity = 0
+-- A dictionary can not have entity = 0
 ALTER TABLE llx_c_hrm_public_holiday DROP INDEX uk_c_hrm_public_holiday;
 ALTER TABLE llx_c_hrm_public_holiday DROP INDEX uk_c_hrm_public_holiday2;
 ALTER TABLE llx_c_hrm_public_holiday MODIFY COLUMN entity integer DEFAULT 1 NOT NULL;
@@ -87,9 +87,10 @@ ALTER TABLE llx_c_hrm_public_holiday ADD UNIQUE INDEX uk_c_hrm_public_holiday(en
 ALTER TABLE llx_c_hrm_public_holiday ADD UNIQUE INDEX uk_c_hrm_public_holiday2(entity, fk_country, dayrule, day, month, year);
 
 ALTER TABLE llx_societe_account ADD COLUMN date_last_reset_password datetime after date_previous_login;
+ALTER TABLE llx_prelevement_demande ADD COLUMN fk_societe_rib integer DEFAULT NULL after fk_user_demande;
 
 -- Rename of bank table
-ALTER TABLE llx_bank_categ RENAME TO llx_category_bank;
+ALTER TABLE llx_bank_categ RENAME TO llx_category_bank;		-- TODO Move content into llx_categorie instead of renaming it
 ALTER TABLE llx_bank_class RENAME TO llx_category_bankline;
 
 
@@ -104,3 +105,6 @@ create table llx_paymentexpensereport_expensereport
   multicurrency_tx		double(24,8) DEFAULT 1,
   multicurrency_amount	double(24,8) DEFAULT 0
 )ENGINE=innodb;
+
+
+ALTER TABLE llx_contrat ADD COLUMN denormalized_lower_planned_end_date datetime;

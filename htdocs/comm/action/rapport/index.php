@@ -66,7 +66,7 @@ if (!$user->hasRight("agenda", "allactions", "read")) {
  * Actions
  */
 
-if ($action == 'builddoc') {
+if ($action == 'builddoc' && $user->hasRight("agenda", "allactions", "read")) {
 	require_once DOL_DOCUMENT_ROOT.'/core/modules/action/doc/pdf_standard_actions.class.php';
 
 	$cat = new pdf_standard_actions($db, $month, $year);

@@ -105,7 +105,7 @@ class vCard
 
 
 	/**
-	 *  mise en forme du numero de telephone
+	 *  Format phone number.
 	 *
 	 *  @param	int		$number		numero de telephone
 	 *  @param	string	$type		Type ('cell')
@@ -124,7 +124,7 @@ class vCard
 	}
 
 	/**
-	 *	mise en forme de la photo
+	 *	Format photo.
 	 *  warning NON TESTE !
 	 *
 	 *  @param  string  $type			Type 'image/jpeg' or 'JPEG'
@@ -140,7 +140,7 @@ class vCard
 	}
 
 	/**
-	 *	mise en forme du nom format
+	 *	Format name.
 	 *
 	 *	@param	string	$name			Name
 	 *	@return	void
@@ -151,7 +151,8 @@ class vCard
 	}
 
 	/**
-	 *	mise en forme du nom complete
+	 *	Format the name.
+	 *  Set also the filename to use 'firstname lastname.vcf'
 	 *
 	 *	@param	string	$family			Family name
 	 *	@param	string	$first			First name
@@ -171,7 +172,7 @@ class vCard
 	}
 
 	/**
-	 *	mise en forme de l'anniversaire
+	 *	Format the birth date
 	 *
 	 *	@param	integer	  $date		Date
 	 *	@return	void
@@ -352,7 +353,7 @@ class vCard
 	}
 
 	/**
-	 *  permet d'obtenir une vcard
+	 *  Return string of a vcard
 	 *
 	 *  @return	string
 	 */
@@ -368,11 +369,12 @@ class vCard
 		$text .= "REV:".date("Ymd")."T".date("His")."Z\r\n";
 		//$text .= "MAILER: Dolibarr\r\n";
 		$text .= "END:VCARD\r\n";
+
 		return $text;
 	}
 
 	/**
-	 *  permet d'obtenir le nom de fichier
+	 *  Return name of a file
 	 *
 	 *  @return	string		Filename
 	 */
@@ -386,12 +388,13 @@ class vCard
 	 * See RFC https://datatracker.ietf.org/doc/html/rfc6350
 	 *
 	 * @param	Object			$object		Object (User or Contact)
-	 * @param	Societe|null	$company	Company. May be null
+	 * @param	Societe|null	$company	Company. May be null.
 	 * @param	Translate		$langs		Lang object
 	 * @param	string			$urlphoto	Full public URL of photo
+	 * @param	string			$outdir		Directory where to store the temporary file
 	 * @return	string						String
 	 */
-	public function buildVCardString($object, $company, $langs, $urlphoto = '')
+	public function buildVCardString($object, $company, $langs, $urlphoto = '', $outdir = '')
 	{
 		global $dolibarr_main_instance_unique_id;
 
@@ -541,6 +544,15 @@ class vCard
 			if ($object->birth) {
 				$this->setBirthday($object->birth);
 			}
+		}
+
+		if ($outdir) {
+			$outfilename = $outdir.'/virtualcard_'.$object->element.'_'.$object->id.'.vcf';
+
+			file_put_contents($outfilename, $this->getVCard());
+			dolChmod($outfilename);
+
+			return $outfilename;
 		}
 
 		// Return VCard string

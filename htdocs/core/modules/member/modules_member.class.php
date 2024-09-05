@@ -4,6 +4,7 @@
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,8 +90,6 @@ abstract class ModeleNumRefMembers extends CommonNumRefGenerator
 	 */
 	public function getToolTip($langs, $soc)
 	{
-		global $conf;
-
 		$langs->loadLangs(array("admin", "companies"));
 
 		$strikestart = '';
@@ -117,7 +116,7 @@ abstract class ModeleNumRefMembers extends CommonNumRefGenerator
 		$s .= $langs->trans("CanBeModifiedIfKo").': '.yn($this->code_modifiable_invalide, 1, 2).'<br>';
 		$s .= $langs->trans("AutomaticCode").': '.yn($this->code_auto, 1, 2).'<br>';
 		$s .= '<br>';
-		$nextval = $this->getNextValue($soc, 0);
+		$nextval = $this->getNextValue($soc, null);
 		if (empty($nextval)) {
 			$nextval = $langs->trans("Undefined");
 		}
@@ -130,11 +129,18 @@ abstract class ModeleNumRefMembers extends CommonNumRefGenerator
 	 *  Return next value
 	 *
 	 *  @param  Societe		$objsoc		Object third party
-	 *  @param  Adherent	$object		Object we need next value for
-	 *  @return	string					next value
+	 *  @param  ?Adherent	$object		Object we need next value for
+	 *  @return	string|int<-1,0>		next value
 	 */
 	public function getNextValue($objsoc, $object)
 	{
 		return '';
 	}
+
+	/**
+	 *  Return an example of numbering
+	 *
+	 *  @return     string      Example
+	 */
+	abstract public function getExample();
 }

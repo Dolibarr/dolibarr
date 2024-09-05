@@ -110,8 +110,8 @@ if (!getDolGlobalString($keyforparamsecret)) {
  * Actions
  */
 
-
-if ($action == 'delete') {
+if ($action == 'delete' && (!empty($user->admin) || $user->id == GETPOSTINT('userid'))) {
+	$storage->userid = GETPOSTINT('userid');
 	$storage->clearToken('StripeLive');
 
 	setEventMessages($langs->trans('TokenDeleted'), null, 'mesgs');

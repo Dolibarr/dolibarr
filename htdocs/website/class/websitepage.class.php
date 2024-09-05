@@ -707,7 +707,7 @@ class WebsitePage extends CommonObject
 
 		if ($istranslation) {
 			if (is_null($website)) {
-				$website = new Website($db);
+				$website = new Website($this->db);
 			}
 			$website->fetch($object->fk_website);
 

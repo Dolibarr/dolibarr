@@ -1780,7 +1780,8 @@ if (!$error && ($massaction == 'clonetasks' || ($action == 'clonetasks' && $conf
 		if (getDolGlobalString('PROJECT_TASK_ADDON') && is_readable(DOL_DOCUMENT_ROOT . "/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON') . ".php")) {
 			require_once DOL_DOCUMENT_ROOT . "/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON') . '.php';
 			$modTask = new $obj();
-			$defaultref = $modTask->getNextValue(0, $clone_task);
+			'@phan-var-force ModeleNumRefTask $modTask';
+			$defaultref = $modTask->getNextValue(null, $clone_task);
 		}
 
 		if (!$error) {
