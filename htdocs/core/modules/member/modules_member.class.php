@@ -90,8 +90,6 @@ abstract class ModeleNumRefMembers extends CommonNumRefGenerator
 	 */
 	public function getToolTip($langs, $soc)
 	{
-		global $conf;
-
 		$langs->loadLangs(array("admin", "companies"));
 
 		$strikestart = '';
@@ -138,4 +136,11 @@ abstract class ModeleNumRefMembers extends CommonNumRefGenerator
 	{
 		return '';
 	}
+
+	/**
+	 *  Return an example of numbering
+	 *
+	 *  @return     string      Example
+	 */
+	abstract public function getExample();
 }

@@ -635,7 +635,7 @@ if (!empty($arrayfields['cp.fk_validator']['checked'])) {
 	if ($user->hasRight('holiday', 'readall')) {
 		print '<td class="liste_titre maxwidthonsmartphone left">';
 		$validator = new UserGroup($db);
-		$excludefilter = $user->admin ? '' : 'u.rowid <> '.$user->id;
+		$excludefilter = $user->admin ? '' : 'u.rowid <> '.((int) $user->id);
 		$valideurobjects = $validator->listUsersForGroup($excludefilter, 1);
 		$valideurarray = array();
 		foreach ($valideurobjects as $val) {

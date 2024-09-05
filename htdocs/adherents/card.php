@@ -956,15 +956,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 							jQuery("#tdcompany").removeClass("fieldrequired");
 							jQuery("#tdlastname").removeClass("fieldrequired");
 							jQuery("#tdfirstname").removeClass("fieldrequired");
-							if (jQuery("#morphy").val() == \'mor\') {
+							if (jQuery(\'input[name="morphy"]:checked\').val() == \'mor\') {
 								jQuery("#tdcompany").addClass("fieldrequired");
 							}
-							if (jQuery("#morphy").val() == \'phy\') {
+							if (jQuery(\'input[name="morphy"]:checked\').val() == \'phy\') {
 								jQuery("#tdlastname").addClass("fieldrequired");
 								jQuery("#tdfirstname").addClass("fieldrequired");
 							}
 						}
-						jQuery("#morphy").change(function() {
+						jQuery(\'input[name="morphy"]\').change(function() {
 							initfieldrequired();
 						});
 						initfieldrequired();
@@ -1017,8 +1017,37 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$morphys = array();
 		$morphys["phy"] = $langs->trans("Physical");
 		$morphys["mor"] = $langs->trans("Moral");
+		$checkednature = (GETPOSTISSET("morphy") ? GETPOST("morphy", 'alpha') : $object->morphy);
 		print '<tr><td class="fieldrequired">'.$langs->trans("MemberNature")."</td><td>\n";
-		print $form->selectarray("morphy", $morphys, (GETPOST('morphy', 'alpha') ? GETPOST('morphy', 'alpha') : $object->morphy), 1, 0, 0, '', 0, 0, 0, '', 'minwidth200', 1);
+		print '<span id="spannature1" class="nonature-back spannature paddinglarge marginrightonly"><label for="phisicalinput" class="valignmiddle">'.$morphys["phy"].'<input id="phisicalinput" class="flat checkforselect marginleftonly valignmiddle" type="radio" name="morphy" value="phy"'.($checkednature == "phy" ? ' checked="checked"' : '').'></label></span>';
+		print '<span id="spannature2" class="nonature-back spannature paddinglarge marginrightonly"><label for="moralinput" class="valignmiddle">'.$morphys["mor"].'<input id="moralinput" class="flat checkforselect marginleftonly valignmiddle" type="radio" name="morphy" value="mor"'.($checkednature == "mor" ? ' checked="checked"' : '').'></label></span>';
+
+		// Add js to manage the background of nature
+		if ($conf->use_javascript_ajax) {
+			print '<script>
+				function refreshNatureCss() {
+					jQuery(".spannature").each(function( index ) {
+						console.log(jQuery("#spannature"+(index+1)+" .checkforselect").is(":checked"));
+						if (jQuery("#spannature"+(index+1)+" .checkforselect").is(":checked")) {
+							if (index+1 == 1) {
+								jQuery("#spannature"+(index+1)).addClass("member-individual-back").removeClass("nonature-back");
+							}
+							if (index+1 == 2) {
+								jQuery("#spannature"+(index+1)).addClass("member-company-back").removeClass("nonature-back");
+							}
+						} else {
+							jQuery("#spannature"+(index+1)).removeClass("member-individual-back").removeClass("member-company-back").addClass("nonature-back");
+						}
+					});
+				}
+				jQuery(".spannature").click(function(){
+					console.log("We click on a nature");
+					refreshNatureCss();
+				});
+				refreshNatureCss();
+				</script>';
+		}
+
 		print "</td>\n";
 
 		// Company
@@ -1192,15 +1221,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					jQuery("#tdcompany").removeClass("fieldrequired");
 					jQuery("#tdlastname").removeClass("fieldrequired");
 					jQuery("#tdfirstname").removeClass("fieldrequired");
-					if (jQuery("#morphy").val() == \'mor\') {
+					if (jQuery(\'input[name="morphy"]:checked\').val() == \'mor\') {
 						jQuery("#tdcompany").addClass("fieldrequired");
 					}
-					if (jQuery("#morphy").val() == \'phy\') {
+					if (jQuery(\'input[name="morphy"]:checked\').val() == \'phy\') {
 						jQuery("#tdlastname").addClass("fieldrequired");
 						jQuery("#tdfirstname").addClass("fieldrequired");
 					}
 				}
-				jQuery("#morphy").change(function() {
+				jQuery(\'input[name="morphy"]\').change(function() {
 					initfieldrequired();
 				});
 				initfieldrequired();
@@ -1247,8 +1276,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Morphy
 		$morphys["phy"] = $langs->trans("Physical");
 		$morphys["mor"] = $langs->trans("Moral");
+		$checkednature = (GETPOSTISSET("morphy") ? GETPOST("morphy", 'alpha') : $object->morphy);
 		print '<tr><td><span class="fieldrequired">'.$langs->trans("MemberNature").'</span></td><td>';
-		print $form->selectarray("morphy", $morphys, (GETPOSTISSET("morphy") ? GETPOST("morphy", 'alpha') : $object->morphy), 0, 0, 0, '', 0, 0, 0, '', 'minwidth200', 1);
+		print '<span id="spannature1" class="member-individual-back spannature paddinglarge marginrightonly"><label for="phisicalinput" class="valignmiddle">'.$morphys["phy"].'<input id="phisicalinput" class="flat checkforselect marginleftonly valignmiddle" type="radio" name="morphy" value="phy"'.($checkednature == "phy" ? ' checked="checked"' : '').'></label></span>';
+		print '<span id="spannature1" class="member-company-back spannature paddinglarge marginrightonly"><label for="moralinput" class="valignmiddle">'.$morphys["mor"].'<input id="moralinput" class="flat checkforselect marginleftonly valignmiddle" type="radio" name="morphy" value="mor"'.($checkednature == "mor" ? ' checked="checked"' : '').'></label></span>';
 		print "</td></tr>";
 
 		// Company
