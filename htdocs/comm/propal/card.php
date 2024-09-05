@@ -987,7 +987,14 @@ if (empty($reshook)) {
 		$margin_rate = (GETPOST('marginforalllines') ? GETPOST('marginforalllines') : 0);
 		$mark_rate = (GETPOST('markforalllines') ? GETPOST('markforalllines') : 0);
 		foreach ($object->lines as &$line) {
-			$subprice = price2num($line->pa_ht * (1 + $margin_rate / 100), 'MU');
+			if (GETPOST('marginforalllines') > 0){
+				$margin_rate = GETPOST('marginforalllines');
+				$subprice = price2num($line->pa_ht * (1 + $margin_rate / 100), 'MU');
+			}elseif($mark_rate > 0) {
+				$margin_rate = price2num((( $line->total_ht - $line->pa_ht) / $line->pa_ht) *100, 'MU');
+				$subprice = $line->pa_ht / (1-(GETPOST('markforalllines') /100));
+			}
+
 			$prod = new Product($db);
 			$prod->fetch($line->fk_product);
 			if ($prod->price_min > $subprice) {
