@@ -777,16 +777,14 @@ if ($object->id > 0) {
 				}
 
 				$selectedRib= $default_rib;
-				$selectedRib = $form->form_iban($_SERVER['PHP_SELF'].'?id='.$object->id, !empty(GETPOST('ribList')) ? GETPOST('ribList') : $default_rib, 'ribList', $filtertype, 1, 0, $type, 0, $ribForSelection);
+				$selectedRib = $form->form_iban(!empty(GETPOST('ribList')) ? GETPOST('ribList') : $default_rib, 'ribList', $filtertype, 1, 0, $type, 0, $ribForSelection);
 
 				if (!empty($rib->iban)) {
 					if ($rib->verif() <= 0) {
 						print img_warning('Error on default bank number for IBAN : '.$langs->trans($rib->error));
 					}
-				} else {
-					if ($numopen || ($type != 'bank-transfer' && $object->mode_reglement_code == 'PRE') || ($type == 'bank-transfer' && $object->mode_reglement_code == 'VIR')) {
+				} elseif ($numopen || ($type != 'bank-transfer' && $object->mode_reglement_code == 'PRE') || ($type == 'bank-transfer' && $object->mode_reglement_code == 'VIR')) {
 						print img_warning($langs->trans("NoDefaultIBANFound"));
-					}
 				}
 
 				print '</td></tr>';
@@ -795,8 +793,7 @@ if ($object->id > 0) {
 				print '<tr><td class="nowrap">';
 				print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 				print '<label for="withdraw_request_amount">'.$langs->trans('BankTransferAmount').' </label>';
-				print '<td>';
-				print '</tr></table>';
+				print '</td></tr></table>';
 				print '</td><td colspan="3">';
 				print '<input type="text" id="withdraw_request_amount" name="withdraw_request_amount" value="'.$remaintopaylesspendingdebit.'" size="9" />';
 				print '</td>';
