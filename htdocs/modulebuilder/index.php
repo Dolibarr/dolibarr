@@ -226,8 +226,10 @@ function moduleBuilderShutdownFunction()
 	if ($error && ($error['type'] & (E_ERROR | E_PARSE | E_CORE_ERROR | E_COMPILE_ERROR | E_USER_ERROR))) {
 		// Handle the fatal error
 		echo "Fatal error occurred: {$error['message']} in {$error['file']} on line {$error['line']}";
-		// Optionally, you can log the error or send a notification
-		llxFooter();
+		// If a header was already send, we suppose it is the llx_Header() so we call the llxFooter()
+		if (headers_sent()) {
+			llxFooter();
+		}
 	}
 }
 register_shutdown_function("moduleBuilderShutdownFunction");
@@ -3043,6 +3045,7 @@ if ($dirins && $action == "update_props_module" && !empty(GETPOST('keydescriptio
 		exit;
 	}
 }
+
 
 /*
  * View
