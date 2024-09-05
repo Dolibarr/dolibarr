@@ -114,3 +114,6 @@ create table llx_paymentexpensereport_expensereport
 
 
 ALTER TABLE llx_contrat ADD COLUMN denormalized_lower_planned_end_date datetime;
+
+-- Missing field vat_reverse_charge with constant MAIN_COMPANY_PERENTITY_SHARED
+ALTER TABLE llx_societe_perentity ADD COLUMN vat_reverse_charge tinyint DEFAULT 0;
