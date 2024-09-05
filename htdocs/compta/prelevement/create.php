@@ -425,7 +425,7 @@ if ($sourcetype != 'salary') {
 	}
 } else {
 	$sql = "SELECT s.ref, s.rowid, s.amount, CONCAT(u.lastname, ' ', u.firstname) as name, u.rowid as uid,";
-	$sql .= " pd.rowid as request_row_id, pd.date_demande, pd.amount, pd.societe_rib as soc_rib";
+	$sql .= " pd.rowid as request_row_id, pd.date_demande, pd.amount, pd.fk_societe_rib as soc_rib";
 	$sql .= " FROM ".MAIN_DB_PREFIX."salary as s,";
 	$sql .= " ".MAIN_DB_PREFIX."user as u,";
 	$sql .= " ".MAIN_DB_PREFIX."prelevement_demande as pd";
@@ -633,15 +633,12 @@ if ($resql) {
 			print '</td>';
 
 			// RUM
-
-
-
 			if (empty($type) || $type == 'direct-debit') {
 				print '<td>';
 				if (!empty($bac->rum)){
 					print $bac->rum;
 				} else {
-					$rumtoshow = $thirdpartystatic->display_rib(0, 'rum');
+					$rumtoshow = $thirdpartystatic->display_rib('rum');
 					if ($rumtoshow) {
 						print $rumtoshow;
 						$format = $thirdpartystatic->display_rib('format');

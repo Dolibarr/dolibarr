@@ -973,7 +973,7 @@ abstract class CommonInvoice extends CommonObject
 	 *  @param	int	$checkduplicateamongall		0=Default (check among open requests only to find if request already exists). 1=Check also among requests completely processed and cancel if at least 1 request exists whatever is its status.
 	 *	@return     int         						Return integer <0 if KO, 0 if a request already exists, >0 if OK
 	 */
-	public function demande_prelevement($fuser, $amount = 0, $type = 'direct-debit', $sourcetype = 'facture', $checkduplicateamongall = 0, $ribId = 0): int
+	public function demande_prelevement($fuser, $amount = 0, $type = 'direct-debit', $sourcetype = 'facture', $checkduplicateamongall = 0, $ribId = 0)
 	{
 		// phpcs:enable
 		global $conf;
@@ -1060,8 +1060,6 @@ abstract class CommonInvoice extends CommonObject
 							$error++;
 						}
 					}
-
-
 
 					if (!$error) {
 						// Force payment mode of invoice to withdraw

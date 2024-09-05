@@ -1000,14 +1000,13 @@ class BonPrelevement extends CommonObject
 			}
 		}
 
-		$error = 0;
-
 		// Clean params
 		if (empty($fk_bank_account)) {
 			$fk_bank_account = ($type == 'bank-transfer' ? getDolGlobalInt('PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT') : getDolGlobalInt('PRELEVEMENT_ID_BANKACCOUNT'));
 		}
 
-		// Pre-store values to simplify sql requests
+		$error = 0;
+		// Pre-store some values intop variables to simplify following sql requests
 		if ($sourcetype != 'salary') {
 			$type != 'bank-transfer' ? $entity = getEntity('invoice') : $entity = getEntity('supplier_invoice');
 		} else {

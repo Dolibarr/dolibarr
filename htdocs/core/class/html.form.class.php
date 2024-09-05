@@ -4758,11 +4758,8 @@ class Form
 	 * @param 	int 	$nooutput 		1=Return string, do not send to output
 	 * @return  string|void             String for the HTML select component
 	 */
-	public function select_types_iban($selected = '', $htmlname = 'ribList', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0, $active = 1, $morecss = '', $nooutput = 0, $ribForSelection = [])
+	public function select_types_iban($selected = '', $htmlname = 'ribList', $empty = 0, $morecss = '', $nooutput = 0, $ribForSelection = [])
 	{
-		// phpcs:enable
-		global $langs, $user, $conf;
-
 		$out = '<select id="select' . $htmlname . '" class="flat selectrib' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '">';
 		if ($empty) {
 			$out .= '<option value="">&nbsp;</option>';
@@ -6332,17 +6329,15 @@ class Form
 	 * @param int $nooutput 1=Return string, no output
 	 * @return    string                    HTML output or ''
 	 */
-	public function form_iban($page, $selected = '', $htmlname = 'ribList', $filtertype = '', $active = 1, $addempty = 0, $type = '', $nooutput = 0, $ribForSelection = []): string
+	public function form_iban($selected = '', $htmlname = 'ribList', $filtertype = '', $active = 1, $addempty = 0, $type = '', $nooutput = 0, $ribForSelection = []): string
 	{
-		// phpcs:enable
-
 		$out = '';
 		if ($htmlname != "none") {
 			$out .= '<input type="hidden" name="token" value="' . newToken() . '">';
 			if ($type) {
 				$out .= '<input type="hidden" name="type" value="' . dol_escape_htmltag($type) . '">';
 			}
-			$out .= $this->select_types_iban($selected, $htmlname, $filtertype, 0, $addempty, 0, 0, $active, '', 1, $ribForSelection);
+			$out .= $this->select_types_iban($selected, $htmlname, $addempty, '', 1, $ribForSelection);
 		} else {
 			if ($selected) {
 				$out .= $selected;
