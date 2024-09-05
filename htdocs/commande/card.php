@@ -723,7 +723,7 @@ if (empty($reshook)) {
 			if ($result > 0) {
 				if (is_numeric($margin_rate) && empty($mark_rate)) {
 					$line->marge_tx = $margin_rate;
-				}elseif (is_numeric($mark_rate) && empty($margin_rate)) {
+				} elseif (is_numeric($mark_rate) && empty($margin_rate)) {
 					$line->marque_tx = $mark_rate;
 				}
 				$line->total_ht = $line->qty * (float) $line->subprice;
@@ -735,11 +735,10 @@ if (empty($reshook)) {
 				$line->multicurrency_total_ttc = (1 + $line->tva_tx) * $line->qty * (float) $subprice_multicurrency * $line->multicurrency_subprice / $line->subprice;
 				// Used previous $line->subprice and $line->multicurrency_subprice above, now they can be set to their new values
 				$line->multicurrency_subprice = $multicurrency_subprice;
-			}else{
+			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
-
 	} elseif ($action == 'addline' && !GETPOST('submitforalllines', 'alpha') && $usercancreate) {		// Add a new line
 		$langs->load('errors');
 		$error = 0;
