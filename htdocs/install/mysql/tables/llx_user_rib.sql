@@ -38,5 +38,5 @@ create table llx_user_rib
   state_id          integer,
   fk_country        integer,
   currency_code     varchar(3),
-  default_rib       smallint(6) DEFAULT 1 NOT NULL
+  default_rib       smallint(6) DEFAULT 0 NOT NULL
 )ENGINE=innodb;
