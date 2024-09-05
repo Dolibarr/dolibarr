@@ -56,12 +56,15 @@ if (!$year) {
 	$year = date("Y");
 }
 
+$permissiontoread = ($user->hasRight("fournisseur", "facture", "lire") || $user->hasRight("supplier_invoice", "lire"));
+$permissiontoadd = ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"));
+
 
 /*
  * Actions
  */
 
-if ($action == 'builddoc') {
+if ($action == 'builddoc' && $permissiontoread) {
 	$rap = new pdf_paiement_fourn($db);
 
 	$outputlangs = $langs;

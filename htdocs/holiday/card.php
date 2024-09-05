@@ -95,14 +95,14 @@ if (($id > 0) || $ref) {
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('holidaycard', 'globalcard'));
 
-$cancreate = 0;
-$cancreateall = 0;
+$permissiontoadd = 0;
+$permissiontoaddall = 0;
 if ($user->hasRight('holiday', 'write') && in_array($fuserid, $childids)) {
-	$cancreate = 1;
+	$permissiontoadd = 1;
 }
 if ($user->hasRight('holiday', 'writeall')) {
-	$cancreate = 1;
-	$cancreateall = 1;
+	$permissiontoadd = 1;
+	$permissiontoaddall = 1;
 }
 
 $candelete = 0;
@@ -155,7 +155,7 @@ if (empty($reshook)) {
 	}
 
 	// Add leave request
-	if ($action == 'add' && $cancreate) {
+	if ($action == 'add' && $permissiontoadd) {
 		$object = new Holiday($db);
 
 		$db->begin();
@@ -180,7 +180,7 @@ if (empty($reshook)) {
 		$description = trim(GETPOST('description', 'restricthtml'));
 
 		// Check that leave is for a user inside the hierarchy or advanced permission for all is set
-		if (!$cancreateall) {
+		if (!$permissiontoaddall) {
 			if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 				if (!$user->hasRight('holiday', 'write')) {
 					$error++;
@@ -332,8 +332,8 @@ if (empty($reshook)) {
 		}
 
 		// If no right to modify a request
-		if (!$cancreateall) {
-			if ($cancreate) {
+		if (!$permissiontoaddall) {
+			if ($permissiontoadd) {
 				if (!in_array($fuserid, $childids)) {
 					setEventMessages($langs->trans("UserNotInHierachy"), null, 'errors');
 					header('Location: '.$_SERVER["PHP_SELF"].'?action=create');
@@ -351,7 +351,7 @@ if (empty($reshook)) {
 		// If under validation
 		if ($object->status == Holiday::STATUS_DRAFT) {
 			// If this is the requester or has read/write rights
-			if ($cancreate) {
+			if ($permissiontoadd) {
 				$approverid = GETPOSTINT('valideur');
 				// TODO Check this approver user id has the permission for approval
 
@@ -454,7 +454,7 @@ if (empty($reshook)) {
 		$object->fetch($id);
 
 		// If draft and owner of leave
-		if ($object->status == Holiday::STATUS_DRAFT && $cancreate) {
+		if ($object->status == Holiday::STATUS_DRAFT && $permissiontoadd) {
 			$object->oldcopy = dol_clone($object, 2);
 
 			$object->status = Holiday::STATUS_VALIDATED;
@@ -595,7 +595,7 @@ if (empty($reshook)) {
 		$object->fetch($id);
 
 		// If status is waiting approval and approver is also user
-		if ($object->status == Holiday::STATUS_VALIDATED && ($user->id == $object->fk_validator || $cancreateall) && $user->hasRight('holiday', 'approve')) {
+		if ($object->status == Holiday::STATUS_VALIDATED && ($user->id == $object->fk_validator || $permissiontoaddall) && $user->hasRight('holiday', 'approve')) {
 			$object->oldcopy = dol_clone($object, 2);
 
 			$object->date_approval = dol_now();
@@ -704,7 +704,7 @@ if (empty($reshook)) {
 			$object->fetch($id);
 
 			// If status pending validation and validator = user
-			if ($object->status == Holiday::STATUS_VALIDATED && ($user->id == $object->fk_validator || $cancreateall) && $user->hasRight('holiday', 'approve')) {
+			if ($object->status == Holiday::STATUS_VALIDATED && ($user->id == $object->fk_validator || $permissiontoaddall) && $user->hasRight('holiday', 'approve')) {
 				$object->date_refuse = dol_now();
 				$object->fk_user_refuse = $user->id;
 				$object->statut = Holiday::STATUS_REFUSED;
@@ -825,7 +825,7 @@ if (empty($reshook)) {
 
 		// If status pending validation and validator = validator or user, or rights to do for others
 		if (($object->status == Holiday::STATUS_VALIDATED || $object->status == Holiday::STATUS_APPROVED) &&
-			(!empty($user->admin) || $user->id == $object->fk_validator || $cancreate || $cancreateall)) {
+			(!empty($user->admin) || $user->id == $object->fk_validator || $permissiontoadd || $permissiontoaddall)) {
 			$db->begin();
 
 			$oldstatus = $object->status;
@@ -1065,7 +1065,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		print '<tr>';
 		print '<td class="titlefield fieldrequired tdtop">'.$langs->trans("User").'</td>';
 		print '<td><div class="inline-block">';
-		if ($cancreate && !$cancreateall) {
+		if ($permissiontoadd && !$permissiontoaddall) {
 			print img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers(($fuserid ? $fuserid : $user->id), 'fuserid', 0, '', 0, 'hierarchyme', '', '0,'.$conf->entity, 0, 0, $morefilter, 0, '', 'minwidth200 maxwidth500 inline-block');
 			//print '<input type="hidden" name="fuserid" value="'.($fuserid?$fuserid:$user->id).'">';
 		} else {
@@ -1552,7 +1552,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 
 				if (($action == 'edit' && $object->status == Holiday::STATUS_DRAFT) || ($action == 'editvalidator')) {
 					if ($action == 'edit' && $object->status == Holiday::STATUS_DRAFT) {
-						if ($cancreate && $object->status == Holiday::STATUS_DRAFT) {
+						if ($permissiontoadd && $object->status == Holiday::STATUS_DRAFT) {
 							print $form->buttonsSaveCancel();
 						}
 					}
@@ -1565,17 +1565,17 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 
 					print '<div class="tabsAction">';
 
-					if ($cancreate && $object->status == Holiday::STATUS_DRAFT) {
+					if ($permissiontoadd && $object->status == Holiday::STATUS_DRAFT) {
 						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'" class="butAction">'.$langs->trans("EditCP").'</a>';
 					}
 
-					if ($cancreate && $object->status == Holiday::STATUS_DRAFT) {		// If draft
+					if ($permissiontoadd && $object->status == Holiday::STATUS_DRAFT) {		// If draft
 						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=sendToValidate&token='.newToken().'" class="butAction">'.$langs->trans("Validate").'</a>';
 					}
 
 					if ($object->status == Holiday::STATUS_VALIDATED) {	// If validated
 						// Button Approve / Refuse
-						if (($user->id == $object->fk_validator || $cancreateall) && $user->hasRight('holiday', 'approve')) {
+						if (($user->id == $object->fk_validator || $permissiontoaddall) && $user->hasRight('holiday', 'approve')) {
 							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=valid&token='.newToken().'" class="butAction">'.$langs->trans("Approve").'</a>';
 							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=refuse&token='.newToken().'" class="butAction">'.$langs->trans("ActionRefuseCP").'</a>';
 						} else {
@@ -1583,7 +1583,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 							print '<a href="#" class="butActionRefused classfortooltip" title="'.$langs->trans("NotTheAssignedApprover").'">'.$langs->trans("ActionRefuseCP").'</a>';
 
 							// Button Cancel (because we can't approve)
-							if ($cancreate || $cancreateall) {
+							if ($permissiontoadd || $permissiontoaddall) {
 								if (($object->date_fin > dol_now()) || !empty($user->admin)) {
 									print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=cancel&token='.newToken().'" class="butAction">'.$langs->trans("ActionCancelCP").'</a>';
 								} else {
@@ -1593,7 +1593,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 						}
 					}
 					if ($object->status == Holiday::STATUS_APPROVED) { // If validated and approved
-						if ($user->id == $object->fk_validator || $user->id == $object->fk_user_approve || $cancreate || $cancreateall) {
+						if ($user->id == $object->fk_validator || $user->id == $object->fk_user_approve || $permissiontoadd || $permissiontoaddall) {
 							if (($object->date_fin > dol_now()) || !empty($user->admin) || $user->id == $object->fk_user_approve) {
 								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=cancel&token='.newToken().'" class="butAction">'.$langs->trans("ActionCancelCP").'</a>';
 							} else {
@@ -1608,7 +1608,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 						}
 					}
 
-					if (($cancreate || $cancreateall) && $object->status == Holiday::STATUS_CANCELED) {
+					if (($permissiontoadd || $permissiontoaddall) && $object->status == Holiday::STATUS_CANCELED) {
 						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=backtodraft" class="butAction">'.$langs->trans("SetToDraft").'</a>';
 					}
 					if ($candelete && ($object->status == Holiday::STATUS_DRAFT || $object->status == Holiday::STATUS_CANCELED || $object->status == Holiday::STATUS_REFUSED)) {	// If draft or canceled or refused
