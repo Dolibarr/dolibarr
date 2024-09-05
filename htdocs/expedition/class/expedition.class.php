@@ -2252,7 +2252,7 @@ class Expedition extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET fk_statut = ".self::STATUS_CLOSED.", date_expedition = NOW()";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET fk_statut = ".self::STATUS_CLOSED.", date_expedition = '".$this->db->idate(dol_now())."'";
 		$sql .= " WHERE rowid = ".((int) $this->id)." AND fk_statut > 0";
 
 		$resql = $this->db->query($sql);
