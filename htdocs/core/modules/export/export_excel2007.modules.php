@@ -305,10 +305,10 @@ class ExportExcel2007 extends ModeleExports
 	/**
 	 *  Output record line into file
 	 *
-	 *  @param      array		$array_selected_sorted      Array with list of field to export
+	 *  @param      array<string,string>	$array_selected_sorted      Array with list of field to export
 	 *  @param      Resource	$objp                       A record from a fetch with all fields from select
 	 *  @param      Translate	$outputlangs                Object lang to translate values
-	 *  @param		array		$array_types				Array with types of fields
+	 *  @param		array<string,string>		$array_types				Array with types of fields
 	 * 	@return		int										Return integer <0 if KO, >0 if OK
 	 */
 	public function write_record($array_selected_sorted, $objp, $outputlangs, $array_types)
