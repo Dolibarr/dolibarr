@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2020       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -311,10 +312,10 @@ print '</b>';
 print '</b><br>';
 
 if ($object->status == RecruitmentJobPosition::STATUS_RECRUITED) {
-	print info_admin($langs->trans("JobClosedTextCandidateFound"), 0, 0, 0, 'warning');
+	print info_admin($langs->trans("JobClosedTextCandidateFound"), 0, 0, '0', 'warning');
 }
 if ($object->status == RecruitmentJobPosition::STATUS_CANCELED) {
-	print info_admin($langs->trans("JobClosedTextCanceled"), 0, 0, 0, 'warning');
+	print info_admin($langs->trans("JobClosedTextCanceled"), 0, 0, '0', 'warning');
 }
 
 print '<br>';
