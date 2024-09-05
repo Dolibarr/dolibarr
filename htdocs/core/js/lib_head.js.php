@@ -1323,7 +1323,7 @@ jQuery(document).ready(function() {
 jQuery(document).ready(function() {
 	jQuery(".butAction.dropdown-toggle").on("click", function(event) {
 		console.log("Click on .butAction.dropdown-toggle");
-		var parentholder = jQuery(".butAction.dropdown-toggle").closest(".dropdown");
+		var parentholder = jQuery(event.target).parent();
 		var offset = parentholder.offset();
 		var widthdocument = $(document).width();
 		var left = offset.left;
