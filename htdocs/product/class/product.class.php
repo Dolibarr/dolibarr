@@ -5534,7 +5534,7 @@ class Product extends CommonObject
 		}
 
 		if (!empty($this->entity) && $permissiontoreadproduct) {
-			$tmpphoto = $this->show_photos('product', $conf->product->multidir_output[$this->entity], 1, 1, 0, 0, 0, 80, 0, 0, 0, 0, 1);
+			$tmpphoto = $this->show_photos('product', $conf->product->multidir_output[$this->entity], 1, 1, 0, 0, 0, 80, 0, 0, 0, 0, '1');
 			if ($this->nbphoto > 0) {
 				$datas['photo'] = '<div class="photointooltip floatright">'."\n" . $tmpphoto . '</div>';
 			}
@@ -6753,7 +6753,7 @@ class Product extends CommonObject
 	 * @param  string $price_type Base price type
 	 * @param  float  $price_vat  VAT % tax
 	 * @param  int    $npr        NPR
-	 * @param  string $psq        ¿?
+	 * @param  int<0,1>	$psq	  1 if it has price by quantity
 	 * @return int -1 KO, 1 OK
 	 */
 	public function generateMultiprices(User $user, $baseprice, $price_type, $price_vat, $npr, $psq)

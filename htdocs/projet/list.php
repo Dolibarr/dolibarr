@@ -232,7 +232,7 @@ $arrayfields = array();
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
-		$visible = (int) dol_eval($val['visible'], 1, 1, '1');
+		$visible = (int) dol_eval((string) $val['visible'], 1, 1, '1');
 		$arrayfields['p.'.$key] = array(
 			'label' => $val['label'],
 			'checked' => (($visible < 0) ? 0 : 1),

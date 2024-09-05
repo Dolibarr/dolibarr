@@ -942,7 +942,7 @@ if ($action == 'create') {
 		print '<input type="hidden" name="id" value="'.GETPOSTINT("id").'">'."\n\n";
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-		print dol_get_fiche_head(array(), 0, '', 0);
+		print dol_get_fiche_head(array(), '', '', 0);
 
 		//print '<div class="underbanner clearboth"></div>';
 

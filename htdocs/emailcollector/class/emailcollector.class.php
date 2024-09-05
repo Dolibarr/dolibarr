@@ -1720,7 +1720,7 @@ class EmailCollector extends CommonObject
 				//var_dump($headers);
 				//var_dump($overview);exit;
 
-				$operationslog .= '<br>** Process email #'.dol_escape_htmltag($iforemailloop);
+				$operationslog .= '<br>** Process email #'.dol_escape_htmltag((string) $iforemailloop);
 
 				if (getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')) {
 					/** @var Webklex\PHPIMAP\Message $imapemail */
@@ -2907,7 +2907,7 @@ class EmailCollector extends CommonObject
 							} else {
 								$pj = getAttachments($imapemail, $connection);
 								foreach ($pj as $key => $val) {
-									$data[$val['filename']] = getFileData($imapemail, $val['pos'], $val['type'], $connection);
+									$data[$val['filename']] = getFileData($imapemail, (string) $val['pos'], $val['type'], $connection);
 								}
 							}
 							if (count($data) > 0) {
@@ -3701,7 +3701,7 @@ class EmailCollector extends CommonObject
 
 		if (!$s->parts) {
 			// simple
-			$this->getpart($mbox, $mid, $s, 0); // pass 0 as part-number
+			$this->getpart($mbox, $mid, $s, '0'); // pass '0' as part-number
 		} else {
 			// multipart: cycle through each part
 			foreach ($s->parts as $partno0 => $p) {

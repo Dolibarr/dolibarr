@@ -5,6 +5,7 @@
  * Copyright (C) 2016       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2016-2024  Alexandre Spangaro      <aspangaro@easya.solutions>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -222,7 +223,7 @@ class FormAccounting extends Form
 			}
 		}
 
-		$out .= Form::multiselectarray($htmlname, $options, $selected, $showempty, 0, $morecss, 0, 0, 0, 'code_journal', '', ($disabledajaxcombo ? 0 : 1));
+		$out .= Form::multiselectarray($htmlname, $options, $selected, $showempty, 0, $morecss, 0, 0, '', 'code_journal', '', ($disabledajaxcombo ? 0 : 1));
 
 		return $out;
 	}

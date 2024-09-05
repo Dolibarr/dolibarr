@@ -1979,7 +1979,7 @@ if ($step == 5 && $datatoimport) {
 					print $langs->trans("TooMuchWarnings", (count($arrayofwarnings) - $nbofwarnings))."<br>";
 					break;
 				}
-				print ' * '.$langs->trans("Line").' '.dol_escape_htmltag($key).'<br>';
+				print ' * '.$langs->trans("Line").' '.dol_escape_htmltag((string) $key).'<br>';
 				foreach ($val as $i => $err) {
 					print ' &nbsp; &nbsp; > '.dol_escape_htmltag($err['lib']).'<br>';
 				}

@@ -607,7 +607,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 				$redirection = $dolibarr_main_url_root.'/public/payment/newpayment.php?source='.urlencode((string) ($sourcetouse)).'&ref='.urlencode((string) ($reftouse));
 				if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
 					if (getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
-						$redirection .= '&securekey='.dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $sourcetouse . $reftouse, 2); // Use the source in the hash to avoid duplicates if the references are identical
+						$redirection .= '&securekey='.dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $sourcetouse . $reftouse, '2'); // Use the source in the hash to avoid duplicates if the references are identical
 					} else {
 						$redirection .= '&securekey='.urlencode(getDolGlobalString('PAYMENT_SECURITY_TOKEN'));
 					}
@@ -668,7 +668,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 				dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
 			}
 
-			$securekeyurl = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.$id, 2);
+			$securekeyurl = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.$id, '2');
 			$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?id='.((int) $id).'&securekey='.urlencode($securekeyurl);
 
 			header("Location: ".$redirection);

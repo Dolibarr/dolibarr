@@ -2239,7 +2239,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 		// If adding log inside HTML page is required
 		if ((!empty($_REQUEST['logtohtml']) && getDolGlobalString('MAIN_ENABLE_LOG_TO_HTML'))
 			|| (is_object($user) && $user->hasRight('debugbar', 'read') && is_object($debugbar))) {
-			$ospid = sprintf("%7s", dol_trunc(getmypid(), 7, 'right', 'UTF-8', 1));
+			$ospid = sprintf("%7s", dol_trunc((string) getmypid(), 7, 'right', 'UTF-8', 1));
 			$osuser = " ".sprintf("%6s", dol_trunc(function_exists('posix_getuid') ? posix_getuid() : '', 6, 'right', 'UTF-8', 1));
 
 			$conf->logbuffer[] = dol_print_date(time(), "%Y-%m-%d %H:%M:%S")." ".sprintf("%-7s", $logLevels[$level])." ".$ospid." ".$osuser." ".$message;
@@ -6577,7 +6577,7 @@ function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $be
 				print '</datalist>';
 			} else {
 				print '</select>';
-				print ajax_combobox("limit", array(), 0, 0, 'resolve', -1, 'limit');
+				print ajax_combobox("limit", array(), 0, 0, 'resolve', '-1', 'limit');
 				//print ajax_combobox("limit");
 			}
 
@@ -6967,7 +6967,7 @@ function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs, $round 
 
 	$ret = price($dimension, 0, $outputlangs, 0, 0, $round);
 	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-	$ret .= ' '.measuringUnitString(0, $type, $unit, $use_short_label, $outputlangs);
+	$ret .= ' '.measuringUnitString(0, $type, (string) $unit, $use_short_label, $outputlangs);
 
 	return $ret;
 }
@@ -8548,7 +8548,7 @@ function dol_htmlcleanlastbr($stringtodecode)
  * Replace html_entity_decode functions to manage errors
  *
  * @param   string	$a					Operand a
- * @param   string	$b					Operand b (ENT_QUOTES|ENT_HTML5=convert simple, double quotes, colon, e accent, ...)
+ * @param   int 	$b					Operand b (ENT_QUOTES|ENT_HTML5=convert simple, double quotes, colon, e accent, ...)
  * @param   string	$c					Operand c
  * @param	int 	$keepsomeentities	Entities but &, <, >, " are not converted.
  * @return  string						String decoded
@@ -11541,7 +11541,7 @@ function showDirectDownloadLink($object)
 	$out .= img_picto($langs->trans("PublicDownloadLinkDesc"), 'globe').' <span class="opacitymedium">'.$langs->trans("DirectDownloadLink").'</span><br>';
 	if ($url) {
 		$out .= '<div class="urllink"><input type="text" id="directdownloadlink" class="quatrevingtpercent" value="'.$url.'"></div>';
-		$out .= ajax_autoselect("directdownloadlink", 0);
+		$out .= ajax_autoselect("directdownloadlink", '');
 	} else {
 		$out .= '<div class="urllink">'.$langs->trans("FileNotShared").'</div>';
 	}
