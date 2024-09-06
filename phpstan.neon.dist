@@ -84,7 +84,6 @@ parameters:
 		- '#dol_getIdFromCode expects string, int given#'
 		- '#dol_strlen expects string, int given#'
 		- '#dol_get_fiche_head expects string, int given#'
-		- '#img_warning expects string, int given#'
 		- '#EvalMath::trigger\(\) expects string, int given#'
 		- '#dol_escape_htmltag expects string, int given#'
 		- '#get_next_value expects string, int given#'
