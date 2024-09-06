@@ -7801,18 +7801,18 @@ class Form
 	/**
 	 *  Return list of projects in Ajax if Ajax activated or go to selectTicketsList
 	 *
-	 * @param 	string 	$selected 				Preselected tickets
-	 * @param 	string 	$htmlname 				Name of HTML select field (must be unique in page).
-	 * @param 	string 	$filtertype				To add a filter
-	 * @param 	int 	$limit 					Limit on number of returned lines
-	 * @param 	int 	$status 				Ticket status
-	 * @param 	string 	$selected_input_value 	Value of preselected input text (for use with ajax)
+	 * @param 	string 		$selected 				Preselected tickets
+	 * @param 	string 		$htmlname 				Name of HTML select field (must be unique in page).
+	 * @param 	string 		$filtertype				To add a filter
+	 * @param 	int 		$limit 					Limit on number of returned lines
+	 * @param 	int 		$status 				Not used
+	 * @param 	string 		$selected_input_value 	Value of preselected input text (for use with ajax)
 	 * @param 	int<0,3>	$hidelabel 				Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
-	 * @param 	array<string,string|string[]>	$ajaxoptions 			Options for ajax_autocompleter
-	 * @param 	int 	$socid 					Thirdparty Id (to get also price dedicated to this customer)
-	 * @param 	string|int<0,1>	$showempty 		'' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
+	 * @param 	array<string,string|string[]>		$ajaxoptions 			Options for ajax_autocompleter
+	 * @param 	int 		$socid 					Thirdparty Id (to get also price dedicated to this customer)
+	 * @param 	string|int<0,1>	$showempty 			'' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
 	 * @param 	int<0,1> 	$forcecombo 			Force to use combo box
-	 * @param 	string 	$morecss 				Add more css on select
+	 * @param 	string 		$morecss 				Add more css on select
 	 * @param 	array<string,string> $selected_combinations 	Selected combinations. Format: array([attrid] => attrval, [...])
 	 * @param 	int<0,1>	$nooutput 				No print, return the output into a string
 	 * @return 	string
@@ -7867,20 +7867,20 @@ class Form
 	}
 
 	/**
-	 *    Return list of projects.
+	 *  Return list of projects.
 	 *  Called by selectProjects.
 	 *
-	 * @param string $selected Preselected project
-	 * @param string $htmlname Name of select html
-	 * @param string $filtertype Filter on project type
-	 * @param int $limit Limit on number of returned lines
-	 * @param string $filterkey Filter on project ref or subject
-	 * @param int $status Ticket status
-	 * @param int $outputmode 0=HTML select string, 1=Array
-	 * @param string|int<0,1> $showempty '' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
-	 * @param int $forcecombo Force to use combo box
-	 * @param string $morecss Add more css on select
-	 * @return     array|string                Array of keys for json or HTML component
+	 * @param 	string 		$selected 		Preselected project
+	 * @param 	string 		$htmlname 		Name of select html
+	 * @param 	string 		$filtertype 	Filter on project type
+	 * @param 	int 		$limit 			Limit on number of returned lines
+	 * @param 	string 		$filterkey	 	Filter on project ref or subject
+	 * @param 	int 		$status 		Not used
+	 * @param 	int 		$outputmode 	0=HTML select string, 1=Array
+	 * @param 	string|int<0,1> $showempty '' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
+	 * @param 	int 		$forcecombo 	Force to use combo box
+	 * @param 	string 		$morecss 		Add more css on select
+	 * @return  array|string                Array of keys for json or HTML component
 	 */
 	public function selectProjectsList($selected = '', $htmlname = 'projectid', $filtertype = '', $limit = 20, $filterkey = '', $status = 1, $outputmode = 0, $showempty = '1', $forcecombo = 0, $morecss = '')
 	{
@@ -7935,7 +7935,7 @@ class Form
 
 			if (!$forcecombo) {
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-				$out .= ajax_combobox($htmlname, $events, $conf->global->PROJECT_USE_SEARCH_TO_SELECT);
+				$out .= ajax_combobox($htmlname, $events, getDolGlobalInt('PROJECT_USE_SEARCH_TO_SELECT'));
 			}
 
 			$out .= '<select class="flat' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '" id="' . $htmlname . '">';

@@ -369,7 +369,7 @@ foreach ($dirmodels as $reldir) {
 						$htmltooltip = '';
 						$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
 						$nextval = $module->getNextValue($mysoc, $project);
-						if ("$nextval" != $langs->trans("NotAvailable")) {	// Keep " on nextval
+						if ((string) $nextval != $langs->trans("NotAvailable")) {
 							$htmltooltip .= ''.$langs->trans("NextValue").': ';
 							if ($nextval) {
 								$htmltooltip .= $nextval.'<br>';
