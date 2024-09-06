@@ -78,7 +78,6 @@ parameters:
 		- '#\(\) expects int, string#'
 		- '#run_sql expects int, string#'
 		- '#on array{url: mixed} in empty\(\) does not exist.#'
-		- '#getCountry expects string, int given#'
 		- '#dolCopyDir expects string, int given#'
 		- '#dol_copy expects string, int given#'
 		- '#info_admin expects string, int given#'
