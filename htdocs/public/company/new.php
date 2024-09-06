@@ -190,7 +190,7 @@ if ($reshook < 0) {
 }
 
 // Action called when page is submitted
-if (empty($reshook) && $action == 'add') {
+if (empty($reshook) && $action == 'add') {	// Test on permission not required here. This is a public page. Security is done on constant and mitigation.
 	$error = 0;
 	$urlback = '';
 
@@ -236,6 +236,7 @@ if (empty($reshook) && $action == 'add') {
 		$societe->name_alias = GETPOST('name_alias', 'alphanohtml');
 
 		$societe->note_private = GETPOST('note_private');
+
 		if (!$error) {
 			$result = $societe->create($user);
 			if ($result > 0) {
@@ -272,7 +273,7 @@ if (empty($reshook) && $action == 'add') {
 // If MEMBER_URL_REDIRECT_SUBSCRIPTION is set to an url, we never go here because a redirect was done to this url. Same if we ask to redirect to the payment page.
 // backtopage parameter with an url was set on prospect submit page, we never go here because a redirect was done to this url.
 
-if (empty($reshook) && $action == 'added') {
+if (empty($reshook) && $action == 'added') {	// Test on permission not required here
 	llxHeaderVierge("newSocieteAdded");
 
 	// If we have not been redirected

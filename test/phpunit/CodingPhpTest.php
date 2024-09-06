@@ -662,7 +662,7 @@ class CodingPhpTest extends CommonClassTest
 				$filecontentaction = $filecontent;
 			}
 
-			preg_match_all('/if.*\$action\s*==\s*[\'"][a-z\-]+[\'"].*/', $filecontentaction, $matches, PREG_SET_ORDER);
+			preg_match_all('/if.*\$action\s*==\s*[\'"][a-z\-]+[\'"].*$/', $filecontentaction, $matches, PREG_SET_ORDER);
 			foreach ($matches as $key => $val) {
 				if (!preg_match('/\$user->hasR/', $val[0])
 					&& !preg_match('/\$permission/', $val[0])

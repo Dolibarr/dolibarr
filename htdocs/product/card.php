@@ -1056,7 +1056,7 @@ if (empty($reshook)) {
 
 
 	// Add product into object (when PRODUCT_ADD_FORM_ADD_TO is set)
-	if ($object->id > 0 && $action == 'addin') {	// Test on permission is done just after
+	if ($object->id > 0 && $action == 'addin') {	// Test on permission not required here. it is done later according to object.
 		$thirpdartyid = 0;
 		$permissiontoaddline = false;
 

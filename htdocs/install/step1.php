@@ -159,7 +159,7 @@ $error = 0;
 
 
 /*
- *	View
+ * View
  */
 
 dolibarr_install_syslog("--- step1: entering step1.php page");
@@ -372,7 +372,7 @@ if (!$error && $db->connected) {
 
 
 // Create config file
-if (!$error && $db->connected && $action == "set") {
+if (!$error && $db->connected && $action == "set") {	// Test on permission not required here
 	umask(0);
 	if (is_array($_POST)) {
 		foreach ($_POST as $key => $value) {
@@ -384,7 +384,7 @@ if (!$error && $db->connected && $action == "set") {
 
 	// Show title of step
 	print '<h3><img class="valignmiddle inline-block paddingright" src="../theme/common/octicons/build/svg/gear.svg" width="20" alt="Configuration"> '.$langs->trans("ConfigurationFile").'</h3>';
-	print '<table cellspacing="0" width="100%" cellpadding="1" border="0">';
+	print '<table cellspacing="0" class="centpercent" cellpadding="1">';
 
 	// Check parameter main_dir
 	if (!$error) {

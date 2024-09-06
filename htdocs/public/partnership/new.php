@@ -71,7 +71,7 @@ $action = GETPOST('action', 'aZ09');
 $langs->loadLangs(array("main", "members", "partnership", "companies", "install", "other"));
 
 // Security check
-if (empty($conf->partnership->enabled)) {
+if (!isModEnabled('partnership')) {
 	httponly_accessforbidden('Module Partnership not enabled');
 }
 
@@ -180,7 +180,7 @@ if ($reshook < 0) {
 }
 
 // Action called when page is submitted
-if (empty($reshook) && $action == 'add') {
+if (empty($reshook) && $action == 'add') {	// Test on permission not required here. This is an anonymous form. Check is done on constant to enable and mitigation.
 	$error = 0;
 	$urlback = '';
 
@@ -526,7 +526,7 @@ if (empty($reshook) && $action == 'add') {
 // Action called after a submitted was send and member created successfully
 // If PARTNERSHIP_URL_REDIRECT_SUBSCRIPTION is set to url we never go here because a redirect was done to this url.
 // backtopage parameter with an url was set on member submit page, we never go here because a redirect was done to this url.
-if (empty($reshook) && $action == 'added') {
+if (empty($reshook) && $action == 'added') {	// Test on permission not required here
 	llxHeaderVierge($langs->trans("NewPartnershipForm"));
 
 	// Si on a pas ete redirige
