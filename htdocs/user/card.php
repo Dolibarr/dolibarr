@@ -1171,7 +1171,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 		print $valuetoshow;
 		print "</td></tr>\n";
 	}
-	
+
 	if (isModEnabled('api')) {
 		// API key
 		//$generated_password = getRandomPassword(false);
