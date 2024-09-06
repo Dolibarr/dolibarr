@@ -133,13 +133,13 @@ class ExpeditionLigne extends CommonObjectLine
 	/**
 	 * Detail of lot and qty = array(id in llx_expeditiondet_batch, fk_expeditiondet, batch, qty, fk_origin_stock)
 	 * We can use this to know warehouse planned to be used for each lot.
-	 * @var array
+	 * @var array{ExpeditionLineBatch}
 	 */
 	public $detail_batch;
 
 	/** detail of warehouses and qty
 	 * We can use this to know warehouse when there is no lot.
-	 * @var array
+	 * @var array{stdClass}
 	 */
 	public $details_entrepot;
 
