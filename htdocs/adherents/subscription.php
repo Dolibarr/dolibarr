@@ -112,11 +112,7 @@ if ($id > 0 || !empty($ref)) {
 }
 
 // Define variables to determine what the current user can do on the members
-$canaddmember = $user->hasRight('adherent', 'creer');
-// Define variables to determine what the current user can do on the properties of a member
-if ($id) {
-	$caneditfieldmember = $user->hasRight('adherent', 'creer');
-}
+$permissiontoaddmember = $user->hasRight('adherent', 'creer');
 
 // Security check
 $result = restrictedArea($user, 'adherent', $object->id, '', '', 'socid', 'rowid', 0);
@@ -170,12 +166,12 @@ if (empty($reshook) && $action == 'setuserid' && ($user->hasRight('user', 'self'
 	}
 }
 
-if (empty($reshook) && $action == 'setsocid') {
+if (empty($reshook) && $action == 'setsocid' && $permissiontoaddmember) {
 	$error = 0;
 	if (!$error) {
-		if (GETPOSTINT('socid') != $object->fk_soc) {    // If link differs from currently in database
+		if (GETPOSTINT('socid') != $object->socid) {    // If link differs from currently in database
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."adherent";
-			$sql .= " WHERE fk_soc = '".GETPOSTINT('socid')."'";
+			$sql .= " WHERE fk_soc = ".((int) GETPOSTINT('socid'));
 			$resql = $db->query($sql);
 			if ($resql) {
 				$obj = $db->fetch_object($resql);
@@ -306,7 +302,7 @@ if ($user->hasRight('adherent', 'cotisation', 'creer') && $action == 'subscripti
 	}
 
 	// Record the subscription then complementary actions
-	if (!$error && $action == 'subscription') {
+	if (!$error && $action == 'subscription') {		// Test on permission already done
 		$db->begin();
 
 		// Create subscription
@@ -466,12 +462,6 @@ if (! ($object->id > 0)) {
 	print $langs->trans("ErrorRecordNotFound");
 }
 
-/*$res = $object->fetch($rowid);
-	if ($res < 0) {
-		dol_print_error($db, $object->error);
-		exit;
-	}
-*/
 
 $adht->fetch($object->typeid);
 

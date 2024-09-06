@@ -671,7 +671,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT . '/core/actions_sendmails.inc.php';
 
 	// Set $action to correct value for the case we used presend action to add a message
-	if (GETPOSTISSET('actionbis') && $action == 'presend') {
+	if (GETPOSTISSET('actionbis') && $action == 'presend') {	// Test on permission not required here
 		$action = 'presend_addmessage';
 	}
 }
