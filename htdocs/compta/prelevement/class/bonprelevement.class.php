@@ -1057,7 +1057,9 @@ class BonPrelevement extends CommonObject
 				$sql .= " FROM " . MAIN_DB_PREFIX . "salary as f";
 				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "prelevement_demande as pd ON f.rowid = pd.fk_salary";
 				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "user as s ON s.rowid = f.fk_user";
-				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "user_rib as sr ON s.rowid = sr.fk_user"; // TODO Add AND sr.default_rib = 1 here. UPDATE 5 sep 2024: the column has been created in llx_user_rib and default to 0
+				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "user_rib as sr ON s.rowid = sr.fk_user";
+				// TODO Add 'AND sr.default_rib = 1' here. Note: the column has been created in v21 in llx_user_rib and default to 0
+				// If we add a test on sr.default_rib = 1, we must also check we have a correct error management to stop if no default BAN is found.
 			}
 			if ($sourcetype != 'salary') {
 				if ($type != 'bank-transfer') {
