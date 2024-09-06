@@ -990,11 +990,11 @@ if (empty($reshook)) {
 		foreach ($object->lines as &$line) {
 			$subprice_multicurrency = $line->subprice;
 			if (is_numeric($margin_rate) && $margin_rate > 0) {
-				$line->subprice = price2num($line->pa_ht * (1 + floatval($margin_rate) / 100), 'MU');
+				$line->subprice = floatval(price2num(floatval($line->pa_ht) * (1 + floatval($margin_rate) / 100), 'MU'));
 			} elseif (is_numeric($mark_rate) && $mark_rate > 0) {
-				$line->subprice = $line->pa_ht / (1 - (floatval($mark_rate) / 100));
+				$line->subprice = floatval($line->pa_ht / (1 - (floatval($mark_rate) / 100)));
 			} else {
-				$line->subprice = $line->pa_ht;
+				$line->subprice = floatval($line->pa_ht);
 			}
 			$prod = new Product($db);
 			$res = $prod->fetch($line->fk_product);
