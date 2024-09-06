@@ -766,7 +766,7 @@ if ($action == "dosign" && empty($cancel)) {
 						"ref" : \''.dol_escape_js($REF).'\',
 						"securekey" : \''.dol_escape_js($SECUREKEY).'\',
 						"mode" : \''.dol_escape_htmltag($source).'\',
-						"entity" : \''.dol_escape_htmltag($entity).'\',
+						"entity" : \''.dol_escape_htmltag((string) $entity).'\',
 					},
 					success: function(response) {
 						if (response == "success"){
