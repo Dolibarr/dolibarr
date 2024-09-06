@@ -1079,10 +1079,12 @@ class BonPrelevement extends CommonObject
 			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "prelevement_demande as pd ON f.rowid = pd.fk_".$sqlTable;
 			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . $societeOrUser." as s ON s.rowid = f.fk_".$socOrUser;
 			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . $societeOrUser."_rib as sr ON s.rowid = sr.fk_".$socOrUser;
-			if (!empty($societeRibID)){
-				$sql .= " AND sr.rowid = " . $societeRibID;
-			} else {
-				$sql .= " AND sr.default_rib = 1";
+			if ($sourcetype != 'salary'){
+				if (!empty($societeRibID)){
+					$sql .= " AND sr.rowid = " . $societeRibID;
+				} else {
+					$sql .= " AND sr.default_rib = 1";
+				}
 			}
 			$sql .= " WHERE f.entity IN (" . $entity . ')';
 			if ($sourcetype != 'salary') {
