@@ -6764,23 +6764,27 @@ class FactureLigne extends CommonInvoiceLine
 		// phpcs:enable
 		global $invoicecache;
 
-		if ($invoiceid > 0) {
-			// If invoice is not a situation invoice, this->fk_prev_id is used for something else
-			if (!isset($invoicecache[$invoiceid])) {
-				$invoicecache[$invoiceid] = new Facture($this->db);
-				$result = $invoicecache[$invoiceid]->fetch($invoiceid);
-				if ($result <= 0) {
-					$this->error = $invoicecache[$invoiceid]->errorsToString();
-					$this->errors[] = $this->error;
-					dol_syslog(__METHOD__." Error : ".$this->error, LOG_ERR);
-					return -1;
+		if (empty($this->fk_prev_id)) {
+			return 0;
+		} else {
+			if ($invoiceid > 0) {
+				// If invoice is not a situation invoice, this->fk_prev_id is used for something else
+				if (!isset($invoicecache[$invoiceid])) {
+					$invoicecache[$invoiceid] = new Facture($this->db);
+					$result = $invoicecache[$invoiceid]->fetch($invoiceid);
+					if ($result <= 0) {
+						$this->error = $invoicecache[$invoiceid]->errorsToString();
+						$this->errors[] = $this->error;
+						dol_syslog(__METHOD__." Error : ".$this->error, LOG_ERR);
+						return -1;
+					}
 				}
+
+				return $this->getPrevProgressFromInvoiceCycleRefAndType($invoicecache[$invoiceid]->situation_cycle_ref, $invoicecache[$invoiceid]->type, $include_credit_note);
 			}
 
-			return $this->getPrevProgressFromInvoiceCycleRefAndType($invoicecache[$invoiceid]->situation_cycle_ref, $invoicecache[$invoiceid]->type, $include_credit_note);
+			return 0;
 		}
-
-		return 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -6867,7 +6871,7 @@ class FactureLigne extends CommonInvoiceLine
 	 */
 	public function getPrevProgressFromInvoiceCycleRefAndType($invoiceSituationCycleRef, $invoiceType, $includeCreditNote = true)
 	{
-		if (empty($this->fk_prev_id) || $this->fk_prev_id == "") {
+		if (empty($this->fk_prev_id)) {
 			return 0;
 		} else {
 			if ($invoiceType != Facture::TYPE_SITUATION)	return 0;
