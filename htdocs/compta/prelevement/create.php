@@ -390,7 +390,7 @@ if ($sourcetype != 'salary') {
 	if ($type == 'bank-transfer') {
 		$sql .= " f.ref_supplier,";
 	}
-	$sql .= " pd.rowid as request_row_id, pd.date_demande, pd.amount, pd.fk_societe_rib as soc_rib";
+	$sql .= " pd.rowid as request_row_id, pd.date_demande, pd.amount, pd.fk_societe_rib as soc_rib_id";
 	if ($type == 'bank-transfer') {
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f,";
 	} else {
@@ -417,7 +417,7 @@ if ($sourcetype != 'salary') {
 	}
 } else {
 	$sql = "SELECT s.ref, s.rowid, s.amount, CONCAT(u.lastname, ' ', u.firstname) as name, u.rowid as uid,";
-	$sql .= " pd.rowid as request_row_id, pd.date_demande, pd.amount, pd.fk_societe_rib as soc_rib";
+	$sql .= " pd.rowid as request_row_id, pd.date_demande, pd.amount, pd.fk_societe_rib as soc_rib_id";
 	$sql .= " FROM ".MAIN_DB_PREFIX."salary as s,";
 	$sql .= " ".MAIN_DB_PREFIX."user as u,";
 	$sql .= " ".MAIN_DB_PREFIX."prelevement_demande as pd";
@@ -551,7 +551,7 @@ if ($resql) {
 			$obj = $db->fetch_object($resql);
 			if ($sourcetype != 'salary') {
 				$bac = new CompanyBankAccount($db);	// Must include the new in loop so the fetch is clean
-				$bac->fetch($obj->soc_rib ?? 0, '', $obj->socid);
+				$bac->fetch($obj->soc_rib_id ?? 0, '', $obj->socid);
 
 				$invoicestatic->id = $obj->rowid;
 				$invoicestatic->ref = $obj->ref;
@@ -560,7 +560,7 @@ if ($resql) {
 				}
 			} else {
 				$bac = new UserBankAccount($db);
-				$bac->fetch($obj->soc_rib ?? 0, '', $obj->uid);
+				$bac->fetch($obj->soc_rib_id ?? 0, '', $obj->uid);
 
 				$salary = new Salary($db);
 				$salary->fetch($obj->rowid);
@@ -630,9 +630,9 @@ if ($resql) {
 				if (!empty($bac->rum)){
 					print $bac->rum;
 				} else {
-					$rumtoshow = $thirdpartystatic->display_rib('rum');
-					if ($rumtoshow) {
-						print $rumtoshow;
+					$rumToShow = $thirdpartystatic->display_rib('rum');
+					if ($rumToShow) {
+						print $rumToShow;
 						$format = $thirdpartystatic->display_rib('format');
 						if ($type != 'bank-transfer') {
 							if ($format) {

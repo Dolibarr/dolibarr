@@ -1008,25 +1008,22 @@ class BonPrelevement extends CommonObject
 		$error = 0;
 		// Pre-store some values intop variables to simplify following sql requests
 		if ($sourcetype != 'salary') {
-			$type != 'bank-transfer' ? $entity = getEntity('invoice') : $entity = getEntity('supplier_invoice');
-		} else {
-			$entity = getEntity('salary');
-		}
-		if($sourcetype != 'salary'){
-			$socOrUser = 'soc';
+			$entity = $type != 'bank-transfer' ? getEntity('invoice') : getEntity('supplier_invoice');
+			$socOrUser = 'fk_soc';
 			$societeOrUser = 'societe';
 		} else {
+			$entity = getEntity('salary');
 			$sqlTable = 'salary';
-			$socOrUser = 'user';
+			$socOrUser = 'fk_user';
 			$societeOrUser = 'user';
 		}
-		$type != 'bank-transfer' ? $sqlTable = "facture" :	$sqlTable = "facture_fourn";
 
+		$sqlTable = $type != 'bank-transfer' ? "facture" : "facture_fourn";
 
 		// Check if there is an iban associated to bank transfer or if we take the default
 		$sql = "SELECT fk_societe_rib";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "prelevement_demande as pd";
-		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . $sqlTable . " as f ON f.rowid = pd.fk_".$sqlTable;
+		$sql .= " FROM " . $this->db->prefix() . "prelevement_demande as pd";
+		$sql .= " LEFT JOIN " . $this->db->prefix() . $sqlTable . " as f ON f.rowid = pd.fk_".$sqlTable;
 		$sql .= " WHERE f.entity IN (" . $entity . ')';
 
 		$resql = $this->db->query($sql);
@@ -1065,7 +1062,7 @@ class BonPrelevement extends CommonObject
 			dol_syslog(__METHOD__ . " Read invoices for did=" . ((int) $did), LOG_DEBUG);
 
 			$sql = "SELECT f.rowid, pd.rowid as pfdrowid";
-			$sql .= ", f.fk_".$socOrUser;
+			$sql .= ", f.".$socOrUser;
 			$sql .= ", pd.code_banque, pd.code_guichet, pd.number, pd.cle_rib";
 			$sql .= ", pd.amount";
 			if ($sourcetype != 'salary') {
@@ -1075,10 +1072,10 @@ class BonPrelevement extends CommonObject
 				$sql .= ", CONCAT(s.firstname,' ',s.lastname) as name";
 				$sql .= ", f.ref, sr.bic, sr.iban_prefix, 'FRST' as frstrecur";
 			}
-			$sql .= " FROM " . MAIN_DB_PREFIX . $sqlTable . " as f";
-			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "prelevement_demande as pd ON f.rowid = pd.fk_".$sqlTable;
-			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . $societeOrUser." as s ON s.rowid = f.fk_".$socOrUser;
-			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . $societeOrUser."_rib as sr ON s.rowid = sr.fk_".$socOrUser;
+			$sql .= " FROM " . $this->db->prefix() . $sqlTable . " as f";
+			$sql .= " LEFT JOIN " . $this->db->prefix() . "prelevement_demande as pd ON f.rowid = pd.fk_".$sqlTable;
+			$sql .= " LEFT JOIN " . $this->db->prefix() . $societeOrUser." as s ON s.rowid = f.".$socOrUser;
+			$sql .= " LEFT JOIN " . $this->db->prefix() . $societeOrUser."_rib as sr ON s.rowid = sr.".$socOrUser;
 			if ($sourcetype != 'salary'){
 				if (!empty($societeRibID)){
 					$sql .= " AND sr.rowid = " . $societeRibID;
@@ -1708,14 +1705,15 @@ class BonPrelevement extends CommonObject
 	 * - Others countries: Warning message
 	 * File is generated with name this->filename
 	 *
-	 * @param	string	$format				FRST, RCUR or ALL
+	 * @param   string  $format				FRST, RCUR or ALL
 	 * @param 	int 	$executiondate		Timestamp date to execute transfer
 	 * @param	string	$type				'direct-debit' or 'bank-transfer'
-	 * @param	int		$fk_bank_account	Bank account ID the receipt is generated for. Will use the ID into the setup of module Direct Debit or Credit Transfer if 0.
+	 * @param   int     $fk_bank_account	Bank account ID the receipt is generated for. Will use the ID into the setup of module Direct Debit or Credit Transfer if 0.
 	 * @param   int  	$forsalary          If the SEPA is to pay salaries
+	 * @param   string  $societeRibID		If defined, will use this ID to get the RIB. Otherwise, the default RIB will be taken.
 	 * @return	int							>=0 if OK, <0 if KO
 	 */
-	public function generate($format = 'ALL', $executiondate = 0, $type = 'direct-debit', $fk_bank_account = 0, $forsalary = 0, $societeRibID = '')
+	public function generate(string $format = 'ALL', int $executiondate = 0, string $type = 'direct-debit', int $fk_bank_account = 0, int $forsalary = 0, string $societeRibID = '')
 	{
 		global $conf, $langs, $mysoc;
 
