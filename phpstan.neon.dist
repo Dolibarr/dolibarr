@@ -91,7 +91,6 @@ parameters:
 		- '#pdf_writeLinkedObjects expects string, int given#'
 		- '#dol_print_phone expects string, int given#'
 		- '#load_fiche_titre expects string, int given#'
-		- '#dol_sanitizeFileName expects string, int given#'
 		- '#dol_move expects string, int given#'
 		- '#expects int, float#'
 		- '#expects int, array\|string given.#'
