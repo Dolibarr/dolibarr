@@ -529,7 +529,7 @@ if ($dirins && in_array($action, array('initapi', 'initphpunit', 'initpagecontac
 			$srcfile = $dirins.'/'.strtolower($module).'/lib/'.strtolower($module).'_'.strtolower($objectname).'.lib.php';
 			$arrayreplacement = array('/\$'.preg_quote($varnametoupdate, '/').' = 0;/' => '$'.$varnametoupdate.' = 1;');
 			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-			dolReplaceInFile($srcfile, $arrayreplacement, '', 0, 0, 1);
+			dolReplaceInFile($srcfile, $arrayreplacement, '', '0', 0, 1);
 		}
 	} else {
 		$langs->load("errors");
@@ -591,7 +591,7 @@ if ($dirins && $action == 'initsqlextrafields' && !empty($module) && $user->hasR
 	// Now we update the object file to set $this->isextrafieldmanaged to 1
 	$srcfile = $dirins.'/'.strtolower($module).'/class/'.strtolower($objectname).'.class.php';
 	$arrayreplacement = array('/\$this->isextrafieldmanaged = 0;/' => '$this->isextrafieldmanaged = 1;');
-	dolReplaceInFile($srcfile, $arrayreplacement, '', 0, 0, 1);
+	dolReplaceInFile($srcfile, $arrayreplacement, '', '0', 0, 1);
 }
 
 
@@ -767,7 +767,7 @@ if ($dirins && $action == 'initcss' && !empty($module) && $user->hasRight("modul
 		// Update descriptor file to uncomment file
 		$srcfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
 		$arrayreplacement = array('/\/\/\s*\''.preg_quote('/'.strtolower($module).'/css/'.strtolower($module).'.css.php', '/').'\'/' => '\'/'.strtolower($module).'/css/'.strtolower($module).'.css.php\'');
-		dolReplaceInFile($srcfile, $arrayreplacement, '', 0, 0, 1);
+		dolReplaceInFile($srcfile, $arrayreplacement, '', '0', 0, 1);
 	} else {
 		$langs->load("errors");
 		setEventMessages($langs->trans('ErrorFailToCreateFile', $destfile), null, 'errors');
@@ -807,7 +807,7 @@ if ($dirins && $action == 'initjs' && !empty($module) && $user->hasRight("module
 		// Update descriptor file to uncomment file
 		$srcfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
 		$arrayreplacement = array('/\/\/\s*\''.preg_quote('/'.strtolower($module).'/js/'.strtolower($module).'.js.php', '/').'\'/' => '\'/'.strtolower($module).'/js/'.strtolower($module).'.js.php\'');
-		dolReplaceInFile($srcfile, $arrayreplacement, '', 0, 0, 1);
+		dolReplaceInFile($srcfile, $arrayreplacement, '', '0', 0, 1);
 	} else {
 		$langs->load("errors");
 		setEventMessages($langs->trans('ErrorFailToCreateFile', $destfile), null, 'errors');
@@ -1051,14 +1051,14 @@ if ($dirins && $action == 'confirm_removefile' && !empty($module) && $user->hasR
 			if (in_array($tab, array('css', 'js'))) {
 				$srcfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
 				$arrayreplacement = array('/^\s*\''.preg_quote('/'.$relativefilename, '/').'\',*/m' => '                // \'/'.$relativefilename.'\',');
-				dolReplaceInFile($srcfile, $arrayreplacement, '', 0, 0, 1);
+				dolReplaceInFile($srcfile, $arrayreplacement, '', '0', 0, 1);
 			}
 
 			if (preg_match('/_extrafields/', $relativefilename)) {
 				// Now we update the object file to set $isextrafieldmanaged to 0
 				$srcfile = $dirins.'/'.strtolower($module).'/class/'.strtolower($objectname).'.class.php';
 				$arrayreplacement = array('/\$isextrafieldmanaged = 1;/' => '$isextrafieldmanaged = 0;');
-				dolReplaceInFile($srcfile, $arrayreplacement, '', 0, 0, 1);
+				dolReplaceInFile($srcfile, $arrayreplacement, '', '0', 0, 1);
 			}
 
 			// Now we update the lib file to set $showtabofpagexxx to 0
@@ -1070,7 +1070,7 @@ if ($dirins && $action == 'confirm_removefile' && !empty($module) && $user->hasR
 			if ($varnametoupdate) {
 				$srcfile = $dirins.'/'.strtolower($module).'/lib/'.strtolower($module).'_'.strtolower($objectname).'.lib.php';
 				$arrayreplacement = array('/\$'.preg_quote($varnametoupdate, '/').' = 1;/' => '$'.preg_quote($varnametoupdate, '/').' = 0;');
-				dolReplaceInFile($srcfile, $arrayreplacement, '', 0, 0, 1);
+				dolReplaceInFile($srcfile, $arrayreplacement, '', '0', 0, 1);
 			}
 		}
 	}
@@ -1462,7 +1462,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname && $user->hasRi
 					'/myobject\.lib\.php/' => strtolower($objectname).'.lib.php',
 				);
 
-				dolReplaceInFile($destdir.'/'.$destfile, $arrayreplacement, '', 0, 0, 1);
+				dolReplaceInFile($destdir.'/'.$destfile, $arrayreplacement, '', '0', 0, 1);
 			}
 		}
 
@@ -1473,7 +1473,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname && $user->hasRi
 				'/\/\/ BEGIN MODULEBUILDER PROPERTIES.*\/\/ END MODULEBUILDER PROPERTIES/ims' => $stringforproperties
 			);
 
-			dolReplaceInFile($destdir.'/class/'.strtolower($objectname).'.class.php', $arrayreplacement, '', 0, 0, 1);
+			dolReplaceInFile($destdir.'/class/'.strtolower($objectname).'.class.php', $arrayreplacement, '', '0', 0, 1);
 		}
 
 		// Edit the class 'class/'.strtolower($objectname).'.class.php'
@@ -1484,12 +1484,12 @@ if ($dirins && $action == 'initobject' && $module && $objectname && $user->hasRi
 			);
 			//var_dump($arrayreplacement);exit;
 			//var_dump($destdir.'/class/'.strtolower($objectname).'.class.php');exit;
-			dolReplaceInFile($destdir.'/class/'.strtolower($objectname).'.class.php', $arrayreplacement, '', 0, 0, 1);
+			dolReplaceInFile($destdir.'/class/'.strtolower($objectname).'.class.php', $arrayreplacement, '', '0', 0, 1);
 
 			$arrayreplacement = array(
 				'/\'models\' => 0,/' => '\'models\' => 1,'
 			);
-			dolReplaceInFile($destdir.'/core/modules/mod'.$module.'.class.php', $arrayreplacement, '', 0, 0, 1);
+			dolReplaceInFile($destdir.'/core/modules/mod'.$module.'.class.php', $arrayreplacement, '', '0', 0, 1);
 		}
 
 		// Edit the setup file and the card page
@@ -1498,14 +1498,14 @@ if ($dirins && $action == 'initobject' && $module && $objectname && $user->hasRi
 			$arrayreplacement = array(
 				'/\$includedocgeneration = 0;/' => '$includedocgeneration = 1;'
 			);
-			dolReplaceInFile($destdir.'/class/'.strtolower($objectname).'.class.php', $arrayreplacement, '', 0, 0, 1);
-			dolReplaceInFile($destdir.'/'.strtolower($objectname).'_card.php', $arrayreplacement, '', 0, 0, 1);
+			dolReplaceInFile($destdir.'/class/'.strtolower($objectname).'.class.php', $arrayreplacement, '', '0', 0, 1);
+			dolReplaceInFile($destdir.'/'.strtolower($objectname).'_card.php', $arrayreplacement, '', '0', 0, 1);
 
 			$arrayreplacement = array(
 				'/\'models\' => 0,/' => '\'models\' => 1,'
 			);
 
-			dolReplaceInFile($destdir.'/core/modules/mod'.$module.'.class.php', $arrayreplacement, '', 0, 0, 1);
+			dolReplaceInFile($destdir.'/core/modules/mod'.$module.'.class.php', $arrayreplacement, '', '0', 0, 1);
 		}
 
 		// TODO Update entries '$myTmpObjects['MyObject'] = array('includerefgeneration' => 0, 'includedocgeneration' => 0);'
