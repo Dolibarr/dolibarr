@@ -61,11 +61,11 @@ $select_pricing_rules = array(
 	'PRODUIT_CUSTOMER_PRICES' => $langs->trans('PriceByCustomer'), // Different price for each customer
 );
 $keyforparam = 'PRODUIT_CUSTOMER_PRICES_BY_QTY';
-if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1 || !empty($conf->global->$keyforparam)) {
+if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1 || getDolGlobalString($keyforparam)) {
 	$select_pricing_rules['PRODUIT_CUSTOMER_PRICES_BY_QTY'] = $langs->trans('PriceByQuantity').' ('.$langs->trans("VersionExperimental").')'; // TODO If this is enabled, price must be hidden when price by qty is enabled, also price for quantity must be used when adding product into order/propal/invoice
 }
 $keyforparam = 'PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES';
-if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2 || !empty($conf->global->$keyforparam)) {
+if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2 || getDolGlobalString($keyforparam)) {
 	$select_pricing_rules['PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES'] = $langs->trans('MultiPricesAbility').'+'.$langs->trans('PriceByQuantity').' ('.$langs->trans("VersionExperimental").')';
 }
 
@@ -183,6 +183,8 @@ if ($action == 'specimen') { // For products
 
 		$module = new $classname($db);
 
+		'@phan-var-force ModelePDFProduct $module';
+
 		if ($module->write_file($product, $langs, '') > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=product&file=SPECIMEN.pdf");
 			return;
@@ -280,7 +282,7 @@ if (!isModEnabled("product")) {
 	$tab = $langs->trans('Products');
 }
 
-llxHeader('', $title);
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-product page-admin_product');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($title, $linkback, 'title_setup');
@@ -323,6 +325,7 @@ foreach ($dirproduct as $dirroot) {
 				}
 
 				$modCodeProduct = new $file();
+				'@phan-var-force ModeleProductCode $modCodeProduct';
 
 				// Show modules according to features level
 				if ($modCodeProduct->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -337,13 +340,13 @@ foreach ($dirproduct as $dirroot) {
 				print '<td>'.$modCodeProduct->info($langs).'</td>'."\n";
 				print '<td class="nowrap"><span class="opacitymedium">'.$modCodeProduct->getExample($langs).'</span></td>'."\n";
 
-				if (getDolGlobalString('PRODUCT_CODEPRODUCT_ADDON') && $conf->global->PRODUCT_CODEPRODUCT_ADDON == $file) {
+				if (getDolGlobalString('PRODUCT_CODEPRODUCT_ADDON') == $file) {
 					print '<td class="center">'."\n";
 					print img_picto($langs->trans("Activated"), 'switch_on');
 					print "</td>\n";
 				} else {
 					$disabled = false;
-					if (isModEnabled('multicompany') && (is_object($mc) && !empty($mc->sharings['referent']) && $mc->sharings['referent'] == $conf->entity) ? false : true) {
+					if (!(isModEnabled('multicompany') && ((is_object($mc) && !empty($mc->sharings['referent'])) && ($mc->sharings['referent'] == $conf->entity)))) {
 					}
 					print '<td class="center">';
 					if (!$disabled) {
@@ -357,7 +360,7 @@ foreach ($dirproduct as $dirroot) {
 				}
 
 				print '<td class="center">';
-				$s = $modCodeProduct->getToolTip($langs, null, -1);
+				$s = $modCodeProduct->getToolTip($langs, '', -1);
 				print $form->textwithpicto('', $s, 1);
 				print '</td>';
 

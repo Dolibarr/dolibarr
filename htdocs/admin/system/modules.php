@@ -52,7 +52,7 @@ if (!$sortorder) {
 	$sortorder = "asc";
 }
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
 $hookmanager->initHooks(array('moduleoverview'));
 $form = new Form($db);
 $object = new stdClass();
@@ -207,7 +207,7 @@ foreach ($modules as $key => $module) {
  * View
  */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_modules');
 print $info_admin;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
 if ($optioncss != '') {

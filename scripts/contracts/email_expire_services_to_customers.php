@@ -1,9 +1,11 @@
 #!/usr/bin/env php
 <?php
 /*
- * Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2013 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2013 Juanjo Menent <jmenent@2byte.es>
+ * Copyright (C) 2005       Rodolphe Quiedeville  <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2013  Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2013       Juanjo Menent         <jmenent@2byte.es>
+ * Copyright (C) 2024		    Frédéric France		    <frederic.france@free.fr>
+ * Copyright (C) 2024		    MDW							      <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -97,10 +99,10 @@ $sql .= ", ".MAIN_DB_PREFIX."contratdet AS cd";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product AS p ON p.rowid = cd.fk_product";
 $sql .= " WHERE s.rowid = c.fk_soc AND c.rowid = cd.fk_contrat AND c.statut > 0 AND cd.statut < 5";
 if (is_numeric($duration_value2)) {
-	$sql .= " AND cd.date_fin_validite >= '".$db->idate(dol_time_plus_duree($now, $duration_value2, "d"))."'";
+	$sql .= " AND cd.date_fin_validite >= '".$db->idate(dol_time_plus_duree($now, (int) $duration_value2, "d"))."'";
 }
 if (is_numeric($duration_value)) {
-	$sql .= " AND cd.date_fin_validite < '".$db->idate(dol_time_plus_duree($now, $duration_value, "d"))."'";
+	$sql .= " AND cd.date_fin_validite < '".$db->idate(dol_time_plus_duree($now, (int) $duration_value, "d"))."'";
 }
 if ($targettype == 'contacts') {
 	$sql .= " AND s.rowid = sp.fk_soc";
@@ -152,7 +154,7 @@ if ($resql) {
 			if ($startbreak) {
 				// Break onto sales representative (new email or cid)
 				if (dol_strlen($oldemail) && $oldemail != 'none' && empty($trackthirdpartiessent[$oldsid.'|'.$oldemail])) {
-					sendEmailTo($mode, $oldemail, $message, $total, $oldlang, $oldtarget, $duration_value);
+					sendEmailTo($mode, $oldemail, $message, $total, $oldlang, $oldtarget, (int) $duration_value);
 					$trackthirdpartiessent[$oldsid.'|'.$oldemail] = 'contact id '.$oldcid;
 				} else {
 					if ($oldemail != 'none') {
@@ -203,10 +205,10 @@ if ($resql) {
 			$i++;
 		}
 
-		// Si il reste des envois en buffer
+		// If there are remaining messages to send in the buffer
 		if ($foundtoprocess) {
 			if (dol_strlen($oldemail) && $oldemail != 'none' && empty($trackthirdpartiessent[$oldsid.'|'.$oldemail])) { // Break onto email (new email)
-				sendEmailTo($mode, $oldemail, $message, $total, $oldlang, $oldtarget, $duration_value);
+				sendEmailTo($mode, $oldemail, $message, $total, $oldlang, $oldtarget, (int) $duration_value);
 				$trackthirdpartiessent[$oldsid.'|'.$oldemail] = 'contact id '.$oldcid;
 			} else {
 				if ($oldemail != 'none') {

@@ -93,7 +93,7 @@ if (getDolGlobalString('STRIPE_USER_ACCOUNT_FOR_ACTIONS')) {
 	// We set the user to use for all ipn actions in Dolibarr
 	$user = new User($db);
 	$user->fetch(getDolGlobalString('STRIPE_USER_ACCOUNT_FOR_ACTIONS'));
-	$user->getrights();
+	$user->loadRights();
 } else {
 	httponly_accessforbidden('Error: Setup of module Stripe not complete for mode '.dol_escape_htmltag($service).'. The STRIPE_USER_ACCOUNT_FOR_ACTIONS is not defined.', 400, 1);
 }
@@ -431,10 +431,23 @@ if ($event->type == 'payout.created') {
 				// Not yet supported, so error
 				$error++;
 			}
+
+			// Get ID of payment PRE
 			$paiement->paiementcode = $paymentTypeCode;
+			$sql = "SELECT id FROM ".MAIN_DB_PREFIX."c_paiement";
+			$sql .= " WHERE code = '".$db->escape($paymentTypeCode)."'";
+			$sql .= " AND entity IN (".getEntity('c_paiement').")";
+			$resql = $db->query($sql);
+			if ($resql) {
+				$obj = $db->fetch_object($resql);
+				$paiement->paiementid = $obj->id;
+			} else {
+				$error++;
+			}
+
 			$paiement->num_payment = '';
 			$paiement->note_public = '';
-			$paiement->note_private = 'StripeSepa payment ' . dol_print_date($now, 'standard') . ' using ' . $servicestatus . ($ipaddress ? ' from ip ' . $ipaddress : '') . ' - Transaction ID = ' . $TRANSACTIONID;
+			$paiement->note_private = 'StripeSepa payment received by IPN webhook - ' . dol_print_date($now, 'standard') . ' (TZ server) using servicestatus=' . $servicestatus . ($ipaddress ? ' from ip ' . $ipaddress : '') . ' - Transaction ID = ' . $TRANSACTIONID;
 			$paiement->ext_payment_id = $TRANSACTIONID.':'.$customer_id.'@'.$stripearrayofkeysbyenv[$servicestatus]['publishable_key'];		// May be we should store py_... instead of pi_... but we started with pi_... so we continue.
 			$paiement->ext_payment_site = $service;
 
@@ -453,7 +466,7 @@ if ($event->type == 'payout.created') {
 			$db->begin();
 
 			if (!$error && !$ispaymentdone) {
-				dol_syslog('* Record payment for invoice id ' . $invoice_id . '. It includes closing of invoice and regenerating document');
+				dol_syslog('* Record payment type PRE for invoice id ' . $invoice_id . '. It includes closing of invoice and regenerating document.');
 
 				// This include closing invoices to 'paid' (and trigger including unsuspending) and regenerating document
 				$paiement_id = $paiement->create($user, 1);

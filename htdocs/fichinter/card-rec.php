@@ -67,7 +67,6 @@ $objecttype = 'fichinter_rec';
 if ($action == "create" || $action == "add") {
 	$objecttype = '';
 }
-$result = restrictedArea($user, 'ficheinter', $id, $objecttype);
 
 // Load variable for pagination
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -96,7 +95,6 @@ if ($sortfield == "") {
 $object = new FichinterRec($db);
 $extrafields = new ExtraFields($db);
 
-
 $arrayfields = array(
 	'f.title' => array('label' => "Ref", 'checked' => 1),
 	's.nom' => array('label' => "ThirdParty", 'checked' => 1),
@@ -110,6 +108,11 @@ $arrayfields = array(
 	'f.datec' => array('label' => "DateCreation", 'checked' => 0, 'position' => 500),
 	'f.tms' => array('label' => "DateModificationShort", 'checked' => 0, 'position' => 500),
 );
+
+$result = restrictedArea($user, 'ficheinter', $id, $objecttype);
+
+$permissiontoadd = $user->hasRight('ficheinter', 'creer');
+$permissiontodelete = $user->hasRight('ficheinter', 'supprimer');
 
 
 /*
@@ -129,7 +132,7 @@ if ($cancel) {
 }
 
 // Create predefined intervention
-if ($action == 'add') {
+if ($action == 'add' && $permissiontoadd) {
 	if (!GETPOST('title')) {
 		setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->trans("Title")), null, 'errors');
 		$action = "create";
@@ -149,8 +152,8 @@ if ($action == 'add') {
 	$reday = GETPOST('reday');
 	$rehour = GETPOST('rehour');
 	$remin = GETPOST('remin');
-	$nb_gen_max = (GETPOSTINT('nb_gen_max') ? GETPOSTINT('nb_gen_max') : 0);
-	if (GETPOST('frequency')) {
+	$nb_gen_max = GETPOSTINT('nb_gen_max');
+	if ($frequency) {
 		if (empty($reyear) || empty($remonth) || empty($reday)) {
 			setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->trans("Date")), null, 'errors');
 			$action = "create";
@@ -158,7 +161,7 @@ if ($action == 'add') {
 		} else {
 			$date_next_execution = dol_mktime($rehour, $remin, 0, $remonth, $reday, $reyear);
 		}
-		if ($nb_gen_max === '') {
+		if ($nb_gen_max === 0) {
 			setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->trans("MaxPeriodNumber")), null, 'errors');
 			$action = "create";
 			$error++;
@@ -188,7 +191,7 @@ if ($action == 'add') {
 			$action = "create";
 		}
 	}
-} elseif ($action == 'createfrommodel') {
+} elseif ($action == 'createfrommodel' && $permissiontoadd) {
 	$newinter = new Fichinter($db);
 
 	// Fetch the stored data
@@ -233,25 +236,25 @@ if ($action == 'add') {
 		setEventMessages($newinter->error, $newinter->errors, 'errors');
 		$action = '';
 	}
-} elseif ($action == 'delete' && $user->hasRight('ficheinter', 'supprimer')) {
+} elseif ($action == 'delete' && $permissiontodelete) {
 	// delete modele
 	$object->fetch($id);
 	$object->delete($user);
 	$id = 0;
 	header('Location: '.$_SERVER["PHP_SELF"]);
 	exit;
-} elseif ($action == 'setfrequency' && $user->hasRight('ficheinter', 'creer')) {
+} elseif ($action == 'setfrequency' && $permissiontoadd) {
 	// Set frequency and unit frequency
 	$object->fetch($id);
 	$object->setFrequencyAndUnit(GETPOST('frequency', 'int'), GETPOST('unit_frequency', 'alpha'));
-} elseif ($action == 'setdate_when' && $user->hasRight('ficheinter', 'creer')) {
+} elseif ($action == 'setdate_when' && $permissiontoadd) {
 	// Set next date of execution
 	$object->fetch($id);
 	$date = dol_mktime(GETPOST('date_whenhour'), GETPOST('date_whenmin'), 0, GETPOST('date_whenmonth'), GETPOST('date_whenday'), GETPOST('date_whenyear'));
 	if (!empty($date)) {
 		$object->setNextDate($date);
 	}
-} elseif ($action == 'setnb_gen_max' && $user->hasRight('ficheinter', 'creer')) {
+} elseif ($action == 'setnb_gen_max' && $permissiontoadd) {
 	// Set max period
 	$object->fetch($id);
 	$object->setMaxPeriod(GETPOSTINT('nb_gen_max'));
@@ -259,12 +262,12 @@ if ($action == 'add') {
 
 
 /*
- *	View
+ * View
  */
 
 $help_url = '';
 
-llxHeader('', $langs->trans("RepeatableIntervention"), $help_url);
+llxHeader('', $langs->trans("RepeatableIntervention"), $help_url, '', 0, 0, '', '', '', 'mod-fichinter page-card-rec');
 
 $form = new Form($db);
 $companystatic = new Societe($db);
@@ -281,9 +284,8 @@ $today = dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['
 
 
 
-/*
- * Create mode
- */
+// Create mode
+
 if ($action == 'create') {
 	print load_fiche_titre($langs->trans("CreateRepeatableIntervention"), '', 'intervention');
 
@@ -485,14 +487,13 @@ if ($action == 'create') {
 
 	print '<input type="hidden" name="action" value="createfrommodel">';
 	print '<input type="hidden" name="id" value="'.$id.'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print $form->buttonsSaveCancel("CreateDraftIntervention", '');
 
 	print '</form>';
 } else {
-	/*
-	 * View mode
-	 *
-	 */
+	// View mode
+
 	if ($id > 0) {
 		if ($object->fetch($id) > 0) {
 			$object->fetch_thirdparty();
@@ -576,7 +577,7 @@ if ($action == 'create') {
 				print $langs->trans('Contract');
 				print '</td>';
 				if ($action != 'contrat') {
-					print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=contrat&amp;id='.$object->id.'">';
+					print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=contrat&id='.$object->id.'&token='.newToken().'">';
 					print img_edit($langs->trans('SetContract'), 1);
 					print '</a></td>';
 				}
@@ -754,9 +755,7 @@ if ($action == 'create') {
 			}
 			print '</table>';
 
-			/*
-			 * Action bar
-			 */
+			// Action bar
 			print '<div class="tabsAction">';
 
 			if ($user->hasRight('ficheinter', 'creer')) {
@@ -774,9 +773,8 @@ if ($action == 'create') {
 			print $langs->trans("ErrorRecordNotFound");
 		}
 	} else {
-		/*
-		 *  List mode
-		 */
+		// List mode
+
 		$sql = "SELECT f.rowid as fich_rec, s.nom as name, s.rowid as socid, f.rowid as facid, f.title,";
 		$sql .= " f.duree, f.fk_contrat, f.fk_projet as fk_project, f.frequency, f.nb_gen_done, f.nb_gen_max,";
 		$sql .= " f.date_last_gen, f.date_when, f.datec, f.status";
@@ -910,8 +908,8 @@ if ($action == 'create') {
 						if ($user->hasRight('ficheinter', 'creer')) {
 							if (empty($objp->frequency) || $db->jdate($objp->date_when) <= $today) {
 								print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=createfrommodel';
-								print '&socid='.$objp->socid.'&id='.$objp->fich_rec.'">';
-								print $langs->trans("CreateFichInter").'</a>';
+								print '&socid='.$objp->socid.'&id='.$objp->fich_rec.'&token='.newToken().'">';
+								print $langs->trans("NewIntervention").'</a>';
 							} else {
 								print $langs->trans("DateIsNotEnough");
 							}

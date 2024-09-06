@@ -60,12 +60,10 @@ $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
-// Security check
-$id = GETPOSTINT('id');
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'expedition', $id, 'delivery', 'delivery');
+
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('deliverycard', 'globalcard'));
+
 
 $object = new Delivery($db);
 $extrafields = new ExtraFields($db);
@@ -77,12 +75,23 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $extrafields->fetch_name_optionals_label($object->table_element_line);
 
 // Load object. Make an object->fetch
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once
-
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('deliverycard', 'globalcard'));
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'
 
 $error = 0;
+
+// Security check
+$id = GETPOSTINT('id');
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'expedition', $id, 'delivery', 'delivery');
+
+$permissiontoread = $user->hasRight('expedition', 'delivery', 'read');
+$permissiontoadd = $user->hasRight('expedition', 'delivery', 'creer'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontodelete = $user->hasRight('expedition', 'delivery', 'supprimer') || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
+$permissiontovalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'delivery', 'creer')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'delivery_advance', 'validate')));
+$permissionnote = $user->hasRight('expedition', 'delivery', 'creer'); // Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->hasRight('expedition', 'delivery', 'creer'); // Used by the include of actions_dellink.inc.php
 
 
 /*
@@ -93,9 +102,9 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);       // Note that $action and $object may have been modified by some hooks
 // Delete Link
 $permissiondellink = $user->hasRight('expedition', 'delivery', 'supprimer'); // Used by the include of actions_dellink.inc.php
-include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';     // Must be include, not include_once
+include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';     // Must be 'include', not 'include_once'
 
-if ($action == 'add') {
+if ($action == 'add' && $permissiontoadd) {
 	$db->begin();
 
 	$object->date_delivery = dol_now();
@@ -134,10 +143,7 @@ if ($action == 'add') {
 
 		$action = 'create';
 	}
-} elseif ($action == 'confirm_valid' && $confirm == 'yes' &&
-	((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'delivery', 'creer'))
-	|| (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'delivery_advance', 'validate')))
-) {
+} elseif ($action == 'confirm_valid' && $confirm == 'yes' && $permissiontovalidate) {
 	$result = $object->valid($user);
 
 	// Define output language
@@ -164,7 +170,7 @@ if ($action == 'add') {
 	}
 }
 
-if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('expedition', 'delivery', 'supprimer')) {
+if ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontodelete) {
 	$db->begin();
 	$result = $object->delete($user);
 
@@ -181,7 +187,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('expedit
 	}
 }
 
-if ($action == 'setdate_delivery' && $user->hasRight('expedition', 'delivery', 'creer')) {
+if ($action == 'setdate_delivery' && $permissiontoadd) {
 	$datedelivery = dol_mktime(GETPOSTINT('liv_hour'), GETPOSTINT('liv_min'), 0, GETPOSTINT('liv_month'), GETPOSTINT('liv_day'), GETPOSTINT('liv_year'));
 	$result = $object->setDeliveryDate($user, $datedelivery);
 	if ($result < 0) {
@@ -193,7 +199,7 @@ if ($action == 'setdate_delivery' && $user->hasRight('expedition', 'delivery', '
 }
 
 // Update extrafields
-if ($action == 'update_extras') {
+if ($action == 'update_extras' && $permissiontoadd) {
 	$object->oldcopy = dol_clone($object, 2);
 
 	// Fill array 'array_options' with data from update form
@@ -217,7 +223,7 @@ if ($action == 'update_extras') {
 }
 
 // Extrafields line
-if ($action == 'update_extras_line') {
+if ($action == 'update_extras_line' && $permissiontoadd) {
 	$array_options = array();
 	$num = count($object->lines);
 
@@ -244,7 +250,6 @@ if ($action == 'update_extras_line') {
 
 // Actions to build doc
 $upload_dir = $conf->expedition->dir_output.'/receipt';
-$permissiontoadd = $user->hasRight('expedition', 'creer');
 include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
@@ -256,7 +261,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 $title = $langs->trans('Delivery');
 
-llxHeader('', $title, 'Livraison');
+llxHeader('', $title, 'Livraison', '', 0, 0, '', '', '', 'mod-delivery page-card');
 
 $form = new Form($db);
 $formfile = new FormFile($db);

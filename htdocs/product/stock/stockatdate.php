@@ -39,14 +39,8 @@ require_once './lib/replenishment.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks', 'orders'));
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('stockatdate'));
-
-// Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'produit|service');
 
 //checks if a product has been ordered
 
@@ -118,6 +112,14 @@ if ($mode == 'future') {
 		$dateIsValid = false;
 	}
 }
+
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+
+$result = restrictedArea($user, 'produit|service');	// Must have permission to read product
+$result = restrictedArea($user, 'stock');	// Must have permission to read stock
 
 
 /*
@@ -191,7 +193,7 @@ if ($date && $dateIsValid) {	// Avoid heavy sql if mandatory date is not defined
 		dol_print_error($db);
 	}
 	//var_dump($stock_prod_warehouse);
-} elseif ($action == 'filter') {
+} elseif ($action == 'filter') {	// Test on permissions not required here
 	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
 }
 
@@ -375,7 +377,7 @@ if ($ext == 'csv') {
 		array('"Product Reference"', '"Label"', '"Current Stock"', '"'.$stocklabel.'"', '"Virtual Stock"'):
 		array('"Product Reference"', '"Label"', '"'.$stocklabel.'"', '"Estimated Stock Value"', '"Estimate Sell Value"', '"Movements"', '"Current Stock"'))."\r\n";
 } else {
-	llxHeader('', $title, $helpurl, '');
+	llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-product page-stock_stockatdate');
 
 	$head = array();
 

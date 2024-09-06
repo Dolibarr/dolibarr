@@ -47,13 +47,13 @@ $main_data_dir = GETPOST('main_data_dir') ? GETPOST('main_data_dir') : (empty($a
 $main_url = GETPOST('main_url') ? GETPOST('main_url') : (empty($argv[5]) ? '' : $argv[5]);
 // Database login information
 $userroot = GETPOST('db_user_root', 'alpha') ? GETPOST('db_user_root', 'alpha') : (empty($argv[6]) ? '' : $argv[6]);
-$passroot = GETPOST('db_pass_root', 'none') ? GETPOST('db_pass_root', 'none') : (empty($argv[7]) ? '' : $argv[7]);
+$passroot = GETPOST('db_pass_root', 'password') ? GETPOST('db_pass_root', 'password') : (empty($argv[7]) ? '' : $argv[7]);
 // Database server
 $db_type = GETPOST('db_type', 'aZ09') ? GETPOST('db_type', 'aZ09') : (empty($argv[8]) ? '' : $argv[8]);
 $db_host = GETPOST('db_host', 'alpha') ? GETPOST('db_host', 'alpha') : (empty($argv[9]) ? '' : $argv[9]);
 $db_name = GETPOST('db_name', 'aZ09') ? GETPOST('db_name', 'aZ09') : (empty($argv[10]) ? '' : $argv[10]);
 $db_user = GETPOST('db_user', 'alpha') ? GETPOST('db_user', 'alpha') : (empty($argv[11]) ? '' : $argv[11]);
-$db_pass = GETPOST('db_pass', 'none') ? GETPOST('db_pass', 'none') : (empty($argv[12]) ? '' : $argv[12]);
+$db_pass = GETPOST('db_pass', 'password') ? GETPOST('db_pass', 'password') : (empty($argv[12]) ? '' : $argv[12]);
 $db_port = GETPOSTINT('db_port') ? GETPOSTINT('db_port') : (empty($argv[13]) ? '' : $argv[13]);
 $db_prefix = GETPOST('db_prefix', 'aZ09') ? GETPOST('db_prefix', 'aZ09') : (empty($argv[14]) ? '' : $argv[14]);
 $db_create_database = GETPOST('db_create_database', 'alpha') ? GETPOST('db_create_database', 'alpha') : (empty($argv[15]) ? '' : $argv[15]);
@@ -96,6 +96,8 @@ if (@file_exists($forcedfile)) {
 		if (!empty($argv[4])) {
 			$main_data_dir = $argv[4]; // override when executing the script in command line
 		}
+		// In mode 3 the main_url is custom
+		if ($force_install_noedit != 3)
 		$main_url = detect_dolibarr_main_url_root();
 		if (!empty($argv[5])) {
 			$main_url = $argv[5]; // override when executing the script in command line
@@ -114,7 +116,7 @@ if (@file_exists($forcedfile)) {
 			$passroot = $argv[7]; // override when executing the script in command line
 		}
 	}
-	if ($force_install_noedit == 2) {
+	if (($force_install_noedit == 2) || ($force_install_noedit == 3)) {
 		if (!empty($force_install_type)) {
 			$db_type = $force_install_type;
 		}
@@ -162,7 +164,7 @@ $error = 0;
 
 dolibarr_install_syslog("--- step1: entering step1.php page");
 
-pHeader($langs->trans("ConfigurationFile"), "step2");
+pHeader($langs->trans("DolibarrSetup").' - '.$langs->trans("ConfigurationFile"), "step2");
 
 // Test if we can run a first install process
 if (!is_writable($conffile)) {
@@ -872,7 +874,6 @@ function write_conf_file($conffile)
 		fwrite($fp, '// Take a look at conf.php.example file for an example of '.$conffiletoshowshort.' file'."\n");
 		fwrite($fp, '// and explanations for all possibles parameters.'."\n");
 		fwrite($fp, '//'."\n");
-
 		fwrite($fp, '$dolibarr_main_url_root=\''.dol_escape_php(trim($main_url), 1).'\';');
 		fwrite($fp, "\n");
 
@@ -933,7 +934,7 @@ function write_conf_file($conffile)
 		fwrite($fp, '$dolibarr_main_force_https=\''.dol_escape_php($main_force_https, 1).'\';');
 		fwrite($fp, "\n");
 
-		fwrite($fp, '$dolibarr_main_restrict_os_commands=\'mariadb-dump, mariadb, mysqldump, mysql, pg_dump, pgrestore, clamdscan, clamscan.exe\';');
+		fwrite($fp, '$dolibarr_main_restrict_os_commands=\'mariadb-dump, mariadb, mysqldump, mysql, pg_dump, pg_restore, clamdscan, clamdscan.exe\';');
 		fwrite($fp, "\n");
 
 		fwrite($fp, '$dolibarr_nocsrfcheck=\'0\';');

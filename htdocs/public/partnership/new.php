@@ -79,7 +79,7 @@ if (!getDolGlobalString('PARTNERSHIP_ENABLE_PUBLIC')) {
 	httponly_accessforbidden("Auto subscription form for public visitors has not been enabled");
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('publicnewpartnershipcard', 'globalcard'));
 
 $extrafields = new ExtraFields($db);
@@ -102,7 +102,7 @@ $user->loadDefaultValues();
  */
 function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
 {
-	global $user, $conf, $langs, $mysoc;
+	global $conf, $langs, $mysoc;
 
 	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss); // Show html headers
 
@@ -444,7 +444,7 @@ if (empty($reshook) && $action == 'add') {
 						}
 						if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 							if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-								$urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$partnership->ref, 2));
+								$urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$partnership->ref, '2'));
 							} else {
 								$urlback .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
 							}
@@ -459,7 +459,7 @@ if (empty($reshook) && $action == 'add') {
 						}
 						if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 							if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-								$urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$partnership->ref, 2));
+								$urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$partnership->ref, '2'));
 							} else {
 								$urlback .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
 							}
@@ -474,7 +474,7 @@ if (empty($reshook) && $action == 'add') {
 						}
 						if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 							if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-								$urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$partnership->ref, 2));
+								$urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$partnership->ref, '2'));
 							} else {
 								$urlback .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
 							}
@@ -489,7 +489,7 @@ if (empty($reshook) && $action == 'add') {
 						}
 						if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 							if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-								$urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$partnership->ref, 2));
+								$urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$partnership->ref, '2'));
 							} else {
 								$urlback .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
 							}

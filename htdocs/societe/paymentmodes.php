@@ -77,7 +77,7 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('thirdpartybancard', 'globalcard'));
 
 // Permissions
@@ -136,13 +136,13 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'update') {
+	if ($action == 'update' && $permissiontoaddupdatepaymentinformation) {
 		// Update the bank account
-		if (!GETPOST('label', 'alpha') || !GETPOST('bank', 'alpha')) {
+		if (!GETPOST('label', 'alpha') || !(GETPOST('bank', 'alpha') || (getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC')!=0))) {
 			if (!GETPOST('label', 'alpha')) {
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Label")), null, 'errors');
 			}
-			if (!GETPOST('bank', 'alpha')) {
+			if (!GETPOST('bank', 'alpha') && (getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC')==0)) {
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankName")), null, 'errors');
 			}
 			$action = 'edit';
@@ -155,7 +155,7 @@ if (empty($reshook)) {
 				$action = 'edit';
 				$error++;
 			}
-			if (!GETPOST('bic')) {
+			if (!GETPOST('bic') && (getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC')==0)) {
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BIC")), null, 'errors');
 				$action = 'edit';
 				$error++;
@@ -221,7 +221,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'updatecard') {
+	if ($action == 'updatecard' && $permissiontoaddupdatepaymentinformation) {
 		// Update credit card
 		if (!GETPOST('label', 'alpha') || !GETPOST('proprio', 'alpha') || !GETPOST('exp_date_month', 'alpha') || !GETPOST('exp_date_year', 'alpha')) {
 			if (!GETPOST('label', 'alpha')) {
@@ -284,7 +284,7 @@ if (empty($reshook)) {
 	}
 
 	// Add bank account
-	if ($action == 'add') {
+	if ($action == 'add' && $permissiontoaddupdatepaymentinformation) {
 		$error = 0;
 
 		if (!GETPOST('label', 'alpha')) {
@@ -338,7 +338,7 @@ if (empty($reshook)) {
 					$action = 'create';
 					$error++;
 				}
-				if (!GETPOST('bic')) {
+				if (!GETPOST('bic') && (getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC')==0)) {
 					setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BIC")), null, 'errors');
 					$action = 'create';
 					$error++;
@@ -380,7 +380,7 @@ if (empty($reshook)) {
 	}
 
 	// Add credit card
-	if ($action == 'addcard') {
+	if ($action == 'addcard' && $permissiontoaddupdatepaymentinformation) {
 		$error = 0;
 
 		if (!GETPOST('label', 'alpha') || !GETPOST('proprio', 'alpha') || !GETPOST('exp_date_month', 'alpha') || !GETPOST('exp_date_year', 'alpha')) {
@@ -447,7 +447,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'setasbankdefault' && GETPOSTINT('ribid') > 0) {
+	if ($action == 'setasbankdefault' && GETPOSTINT('ribid') > 0 && $permissiontoaddupdatepaymentinformation) {
 		$companybankaccount = new CompanyBankAccount($db);
 		$res = $companybankaccount->setAsDefault(GETPOSTINT('ribid'));
 		if ($res) {
@@ -459,7 +459,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'confirm_deletecard' && GETPOST('confirm', 'alpha') == 'yes') {
+	if ($action == 'confirm_deletecard' && GETPOST('confirm', 'alpha') == 'yes' && $permissiontoaddupdatepaymentinformation) {
 		// Delete the credi card
 		$companypaymentmode = new CompanyPaymentMode($db);
 		if ($companypaymentmode->fetch($ribid ? $ribid : $id)) {
@@ -486,7 +486,7 @@ if (empty($reshook)) {
 			setEventMessages($companypaymentmode->error, $companypaymentmode->errors, 'errors');
 		}
 	}
-	if ($action == 'confirm_deletebank' && GETPOST('confirm', 'alpha') == 'yes') {
+	if ($action == 'confirm_deletebank' && GETPOST('confirm', 'alpha') == 'yes' && $permissiontoaddupdatepaymentinformation) {
 		// Delete the bank account
 		$companybankaccount = new CompanyBankAccount($db);
 		if ($companybankaccount->fetch($ribid ? $ribid : $id) > 0) {
@@ -518,7 +518,7 @@ if (empty($reshook)) {
 	$savid = $id;
 
 	// Actions to build doc
-	if ($action == 'builddocrib') {
+	if ($action == 'builddocrib' && $permissiontoread) {
 		$action = 'builddoc';
 		$moreparams = array(
 			'use_companybankid' => GETPOST('companybankid'),
@@ -536,12 +536,12 @@ if (empty($reshook)) {
 
 	// Action for stripe
 	if (isModEnabled('stripe') && class_exists('Stripe')) {
-		if ($action == 'synccustomertostripe' || $action == 'synccustomertostripetest') {
+		if (($action == 'synccustomertostripe' || $action == 'synccustomertostripetest') && $permissiontoaddupdatepaymentinformation) {
 			if ($object->client == 0) {
 				$error++;
 				setEventMessages('ThisThirdpartyIsNotACustomer', null, 'errors');
 			} else {
-				if ($action == 'synccustomertostripe') {
+				if ($action == 'synccustomertostripe') {	// Test on permission already done
 					$tmpservicestatus = 1;
 					$tmpservice = 'StripeLive';
 				} else {
@@ -565,7 +565,7 @@ if (empty($reshook)) {
 				}
 			}
 		}
-		if ($action == 'synccardtostripe') {
+		if ($action == 'synccardtostripe' && $permissiontoaddupdatepaymentinformation) {
 			// Create the credit card on current Stripe env
 			$companypaymentmode = new CompanyPaymentMode($db);
 			$companypaymentmode->fetch($id);
@@ -593,7 +593,7 @@ if (empty($reshook)) {
 				}
 			}
 		}
-		if ($action == 'syncsepatostripe') {
+		if ($action == 'syncsepatostripe' && $permissiontoaddupdatepaymentinformation) {
 			// Create the bank account on current Stripe env
 			$companypaymentmode = new CompanyPaymentMode($db);	// Get record in llx_societe_rib
 			$companypaymentmode->fetch($id);
@@ -625,7 +625,7 @@ if (empty($reshook)) {
 		}
 
 		// Set the customer Stripe account (for Live or Test env)
-		if ($action == 'setkey_account' || $action == 'setkey_accounttest') {
+		if (($action == 'setkey_account' || $action == 'setkey_accounttest') && $permissiontoaddupdatepaymentinformation) {
 			$error = 0;
 
 			$tmpservice = 'StripeTest';
@@ -692,7 +692,7 @@ if (empty($reshook)) {
 		}
 
 		// Set the supplier Stripe account (for Live or Test env)
-		if ($action == 'setkey_account_supplier' || $action == 'setkey_account_suppliertest') {
+		if (($action == 'setkey_account_supplier' || $action == 'setkey_account_suppliertest') && $permissiontoaddupdatepaymentinformation) {
 			$error = 0;
 
 			$tmpservice = 'StripeTest';
@@ -762,7 +762,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		if ($action == 'setlocalassourcedefault') {	// Set as default when payment mode defined locally (and may be also remotely)
+		if ($action == 'setlocalassourcedefault' && $permissiontoaddupdatepaymentinformation) {	// Set as default when payment mode defined locally (and may be also remotely)
 			try {
 				$companypaymentmode->setAsDefault($id);
 
@@ -773,7 +773,7 @@ if (empty($reshook)) {
 				$error++;
 				setEventMessages($e->getMessage(), null, 'errors');
 			}
-		} elseif ($action == 'setassourcedefault') {	// Set as default when payment mode defined remotely only
+		} elseif ($action == 'setassourcedefault' && $permissiontoaddupdatepaymentinformation) {	// Set as default when payment mode defined remotely only
 			try {
 				$cu = $stripe->customerStripe($object, $stripeacc, $servicestatus);
 				if (preg_match('/pm_|src_/', $source)) {
@@ -791,7 +791,7 @@ if (empty($reshook)) {
 				$error++;
 				setEventMessages($e->getMessage(), null, 'errors');
 			}
-		} elseif ($action == 'deletecard' && $source) {
+		} elseif ($action == 'deletecard' && $source && $permissiontoaddupdatepaymentinformation) {
 			// Delete the credit card on Stripe side
 			try {
 				if (preg_match('/pm_/', $source)) {
@@ -823,7 +823,7 @@ if (empty($reshook)) {
 				$error++;
 				setEventMessages($e->getMessage(), null, 'errors');
 			}
-		} elseif ($action == 'deletebank' && $source) {
+		} elseif ($action == 'deletebank' && $source && $permissiontoaddupdatepaymentinformation) {
 			// Delete the bank account on Stripe side
 			try {
 				if (preg_match('/pm_/', $source)) {
@@ -1308,7 +1308,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 							print $s;
 							print '</td>';
 							print '<td>';
-							print dol_print_date($companypaymentmodetemp->tms, 'dayhour');
+							print dol_print_date($companypaymentmodetemp->date_modification, 'dayhour', 'tzuserrel');
 							print '</td>';
 							// Fields from hook
 							$parameters = array('arrayfields' => array(), 'obj' => $obj, 'linetype' => 'stripecard');
@@ -1735,7 +1735,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				$useonlinesignature = 1;
 				if ($useonlinesignature) {
 					require_once DOL_DOCUMENT_ROOT . '/core/lib/signature.lib.php';
-					print showOnlineSignatureUrl($companybankaccount->element, $rib->id, $rib, 'short');
+					print showOnlineSignatureUrl($companybankaccount->element, (string) $rib->id, $rib, 'short');
 				}
 				print '</td>';
 			}
@@ -1972,7 +1972,8 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 	print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Label").'</td>';
 	print '<td><input class="minwidth300" type="text" name="label" value="'.$companybankaccount->label.'"></td></tr>';
 
-	print '<tr><td class="fieldrequired">'.$langs->trans("BankName").'</td>';
+	$required = (getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC')==0) ? "fieldrequired" : "";
+	print '<tr><td class="'.$required.'">'.$langs->trans("BankName").'</td>';
 	print '<td><input class="minwidth200" type="text" name="bank" value="'.$companybankaccount->bank.'"></td></tr>';
 
 	// Show fields of bank account
@@ -2009,7 +2010,7 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 			$name = 'bic';
 			$size = 12;
 			$content = $bankaccount->bic;
-			if ($bankaccount->needIBAN()) {
+			if ($bankaccount->needIBAN() && (getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC')==0)) {
 				$require = true;
 			}
 			$tooltip = $langs->trans("Example").': LIABLT2XXXX';
@@ -2181,7 +2182,7 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 			$name = 'bic';
 			$size = 12;
 			$content = $companybankaccount->bic;
-			if ($companybankaccount->needIBAN()) {
+			if ($companybankaccount->needIBAN() && (getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC')==0)) {
 				$require = true;
 			}
 			$tooltip = $langs->trans("Example").': LIABLT2XXXX';

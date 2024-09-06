@@ -94,7 +94,7 @@ if ($action == 'confirm_unlock' && $user->admin) {
 *	View
 */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-tools_listsessions');
 
 $form = new Form($db);
 

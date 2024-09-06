@@ -23,6 +23,7 @@ ToOfferALinkForOnlinePaymentOnFreeAmount=URL para ofrecer una página de pago en
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL para ofrecer una página de pago en línea %s para una suscripción de miembro
 ToOfferALinkForOnlinePaymentOnDonation=URL para ofrecer una página de pago en línea %s para el pago de una donación
 YouCanAddTagOnUrl=También puede agregar el parámetro url <b>&tag = <i>value</i></b> a cualquiera de esas URL (obligatorio solo para el pago no vinculado a un objeto) para agregar su propia etiqueta de comentario de pago. <br> Para la URL de pagos sin objeto existente, también puede agregar el parámetro <strong>&noidempotency = 1</strong> para que el mismo enlace con la misma etiqueta se pueda usar varias veces (algún modo de pago puede limitar el pago a 1 para cada enlace diferente sin este parámetro)
+YouCanEmbedOnWebsite=Si desea integrar la página de pago en un sitio web de Dolibarr, puede incluir el parámetro: <b>&ws=website_ref</b>.<br>Además, dos páginas llamadas <b>paymentok</b> y <b>paymentko</b> deben ser creadas en el sitio web para recibir la redirección después de un pago en línea exitoso o fallido.
 SetupStripeToHavePaymentCreatedAutomatically=Configure su Stripe con la url <b>%s</b> para crear un pago automáticament al validarse por Stripe.
 AccountParameter=Parámetros de la cuenta
 UsageParameter=Parámetros de uso
@@ -77,4 +78,13 @@ TERMINAL_LOCATION=Ubicación (dirección) para terminales Stripe
 RequestDirectDebitWithStripe=Solicitar Débito Directo con Stripe
 RequesCreditTransferWithStripe=Solicitar transferencia de crédito con Stripe
 STRIPE_SEPA_DIRECT_DEBIT=Habilitar los pagos de Débito Directo a través de Stripe
+STRIPE_KLARNA=Habilite los pagos usando Klarna
+STRIPE_BANCONTACT=Habilite los pagos usando BANCONTACT
+STRIPE_IDEAL=Habilite los pagos usando IDEAL
+STRIPE_GIROPAY=Habilitar los pagos usando GIROPAY
+STRIPE_SOFORT=Habilite los pagos usando SOFORT
 StripeConnect_Mode=Modo de conexión de rayas
+ExampleOnlyForBECustomers=Sólo para clientes de Bélgica
+ExampleOnlyForDECustomers=Sólo para clientes alemanes.
+ExampleOnlyForNLCustomers=Sólo para clientes holandeses.
+ExampleOnlyForATBEDEITNLESCustomers=Sólo para clientes de Austria, Bélgica, Alemania, Italia, Países Bajos, España

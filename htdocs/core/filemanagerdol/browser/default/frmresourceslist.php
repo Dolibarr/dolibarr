@@ -131,6 +131,8 @@ oListManager.GetFileRowHtml = function( fileName, fileUrl, fileSize )
 
 function OpenFolder( folderPath )
 {
+	console.log("OpenFolder folderPath="+folderPath);
+
 	// Load the resources list for this folder.
 	window.parent.frames['frmFolders'].LoadFolders( folderPath );
 }

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2016  Jean-François FERRY     <hello@librethic.io>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023		Benjamin Falière		<benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -227,7 +227,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 $form = new Form($db);
 $formticket = new FormTicket($db);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('ticketpublicview', 'globalcard'));
 
 if (!getDolGlobalString('TICKET_ENABLE_PUBLIC_INTERFACE')) {
@@ -237,7 +237,7 @@ if (!getDolGlobalString('TICKET_ENABLE_PUBLIC_INTERFACE')) {
 }
 
 $arrayofjs = array();
-$arrayofcss = array(getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', '/ticket/').'css/styles.css.php');
+$arrayofcss = array(getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', '/public/ticket/').'css/styles.css.php');
 
 llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
 
@@ -370,7 +370,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		// Progression
 		if (getDolGlobalString('TICKET_SHOW_PROGRESSION')) {
 			print '<tr><td>'.$langs->trans("Progression").'</td><td>';
-			print($object->dao->progress > 0 ? dol_escape_htmltag($object->dao->progress) : '0').'%';
+			print($object->dao->progress > 0 ? dol_escape_htmltag((string) $object->dao->progress) : '0').'%';
 			print '</td></tr>';
 		}
 

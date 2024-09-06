@@ -136,6 +136,7 @@ class Notify
 		'PROPAL_CLOSE_SIGNED',
 		'PROPAL_CLOSE_REFUSED',
 		'FICHINTER_VALIDATE',
+		'FICHINTER_MODIFY',
 		'FICHINTER_CLOSE',
 		'FICHINTER_ADD_CONTACT',
 		'ORDER_SUPPLIER_CANCEL',
@@ -461,9 +462,10 @@ class Notify
 		// Subscription per contact
 		if (!$error) {
 			if ($socid >= 0 && in_array('thirdparty', $scope)) {
-				$sql = "SELECT a.code, c.email, c.rowid";
+				$sql = "SELECT a.code, c.email, c.rowid, c.statut as status";
 				$sql .= " FROM ".$this->db->prefix()."notify_def as n,";
 				$sql .= " ".$this->db->prefix()."socpeople as c,";
+
 				$sql .= " ".$this->db->prefix()."c_action_trigger as a,";
 				$sql .= " ".$this->db->prefix()."societe as s";
 				$sql .= " WHERE n.fk_contact = c.rowid";
@@ -483,7 +485,8 @@ class Notify
 					$i = 0;
 					while ($i < $num) {
 						$obj = $this->db->fetch_object($resql);
-						if ($obj) {
+						// we want to notify only if contact is enable
+						if ($obj && $obj->status ==  1) {
 							$newval2 = trim($obj->email);
 							$isvalid = isValidEmail($newval2);
 							if (empty($resarray[$newval2])) {
@@ -809,6 +812,13 @@ class Notify
 								$object_type = 'ficheinter';
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInterventionValidated", $link);
 								break;
+							case 'FICHINTER_MODIFY':
+								$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
+								$context_info = array_key_exists('signature', $object->context) ? $object->getLibSignedStatus() : '';
+								$dir_output = $conf->ficheinter->dir_output;
+								$object_type = 'ficheinter';
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInterventionModified", $link, $context_info);
+								break;
 							case 'FICHINTER_CLOSE':
 								$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$dir_output = $conf->ficheinter->dir_output;
@@ -1102,6 +1112,13 @@ class Notify
 						$dir_output = $conf->facture->dir_output;
 						$object_type = 'ficheinter';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionValidated", $link);
+						break;
+					case 'FICHINTER_MODIFY':
+						$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
+						$context_info = array_key_exists('signature', $object->context) ? $object->getLibSignedStatus() : '';
+						$dir_output = $conf->ficheinter->dir_output;
+						$object_type = 'ficheinter';
+						$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionModified", $link, $context_info);
 						break;
 					case 'FICHINTER_CLOSE':
 						$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';

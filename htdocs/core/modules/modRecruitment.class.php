@@ -417,9 +417,6 @@ class modRecruitment extends DolibarrModules
 		$myTmpObjects['RecruitmentJobPosition'] = array('includerefgeneration' => 1, 'includedocgeneration' => 1);
 
 		foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
-			if ($myTmpObjectKey == 'MyObject') {
-				continue;
-			}
 			if ($myTmpObjectArray['includedocgeneration']) {
 				$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/'.$moduledir.'/template_recruitmentjobposition.odt';
 				$dirodt = DOL_DATA_ROOT.'/doctemplates/'.$moduledir;

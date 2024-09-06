@@ -31,6 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
+$hookmanager->initHooks(array('ticketstats', 'globalcard'));
+
 if (!$user->hasRight('ticket', 'read')) {
 	accessforbidden();
 }
@@ -43,6 +45,12 @@ $socid = GETPOSTINT('socid');
 if ($user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
+}
+
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
 $nowyear = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
@@ -63,8 +71,8 @@ $object = new Ticket($db);
 
 $title = $langs->trans("Statistics");
 $dir = $conf->ticket->dir_temp;
-
-llxHeader('', $title);
+$help_url = '';
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-ticket page-stats');
 
 print load_fiche_titre($title, '', 'ticket');
 

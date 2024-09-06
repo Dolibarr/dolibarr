@@ -69,7 +69,9 @@ $memberstatic = new Adherent($db);
 $form = new Form($db);
 
 $title = $langs->trans("SubscriptionsStatistics");
-llxHeader('', $title);
+$help_url = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios|DE:Modul_Mitglieder';
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-member page-stats');
 
 print load_fiche_titre($title, '', $memberstatic->picto);
 

@@ -106,7 +106,7 @@ $title = $langs->trans('Closure');
 
 $help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-accountancy page-admin_closure');
 
 $linkback = '';
 print load_fiche_titre($langs->trans('MenuClosureAccounts'), $linkback, 'title_accountancy');
@@ -162,7 +162,7 @@ print '</td></tr>';
 
 print "</table>\n";
 
-print '<div class="center"><input type="submit" class="button button-edit" name="button" value="'.$langs->trans('Modify').'"></div>';
+print '<div class="center"><input type="submit" class="button button-edit" name="button" value="'.$langs->trans('Save').'"></div>';
 
 print '</form>';
 

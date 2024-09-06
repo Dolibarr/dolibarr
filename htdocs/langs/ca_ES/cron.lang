@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
-# About page
-# Right
+# Permissions
 Permission23101 = Consulta les tasques programades
 Permission23102 = Crea/modifica la tasca programada
 Permission23103 = Elimina la tasca programada
@@ -30,10 +29,11 @@ CronExecute=Executa ara
 CronConfirmExecute=Esteu segur que voleu executar aquestes tasques programades ara?
 CronInfo=El mòdul de tasques programades permet programar tasques per a executar-les automàticament. Les tasques també es poden iniciar manualment.
 CronTask=Tasca
-CronNone=Cap
+CronNone=Pròxima execució de la tasca programada
+CronNotYetRan=Mai executat
 CronDtStart=No abans
 CronDtEnd=No després
-CronDtNextLaunch=Propera execució
+CronDtNextLaunch=Següent execució
 CronDtLastLaunch=Data d'inici de l'última execució
 CronDtLastResult=Data del final de l'última execució
 CronFrequency=Freqüència
@@ -49,8 +49,8 @@ CronEach=Tota (s)
 JobFinished=Tasques llançades i finalitzades
 Scheduled=Programat
 #Page card
-CronAdd= Afegeix tasques
-CronEvery=Executa cada tasca
+CronAdd=Afegeix tasques
+CronEvery=Executar la feina cada
 CronObject=Instància/Objecte a crear
 CronArgs=Argument
 CronSaveSucess=S'ha desat correctament
@@ -87,7 +87,7 @@ MakeSendLocalDatabaseDump=Envieu una còpia de seguretat de la base de dades loc
 BackupIsTooLargeSend=Ho sentim, l'últim fitxer de còpia de seguretat és massa gran per a enviar-lo per correu electrònic
 CleanUnfinishedCronjobShort=Neteja les tasques programades inacabades
 CleanUnfinishedCronjob=Neteja les tasques programades bloquejades en el processament quan el procés ja no s'executa
-WarningCronDelayed=Atenció, a efectes de rendiment, sigui quina sigui la propera data d'execució de les tasques habilitades, és possible que les vostres tasques es retardin a un màxim de %s hores abans de ser executades.
+WarningCronDelayed=Atenció, a efectes de rendiment, sigui quina sigui la següent data d'execució de les tasques habilitades, les vostres tasques es poden retardar fins a un màxim de %s hores, abans d'executar-se.
 DATAPOLICYJob=Netejador de dades i anonimitzador
 JobXMustBeEnabled=La tasca %s s'ha d'activar
 EmailIfError=Correu electrònic per a advertir d'error
@@ -96,6 +96,6 @@ ErrorInBatch=Error en executar la tasca %s
 
 # Cron Boxes
 LastExecutedScheduledJob=Darrera tasca programada executada
-NextScheduledJobExecute=Propera tasca programada a executar
+NextScheduledJobExecute=Següent tasca programada a executar
 NumberScheduledJobError=Nombre de tasques programades en error
 NumberScheduledJobNeverFinished=Nombre de feines programades mai acabades

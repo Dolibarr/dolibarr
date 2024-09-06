@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2016	    Francis Appels       	<francis.appels@yahoo.com>
  * Copyright (C) 2021		Noé Cendrier			<noe.cendrier@altairis.fr>
- * Copyright (C) 2021		Frédéric France			<frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2024  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2022-2023	Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2023       Christian Foellmann     <christian@foellmann.de>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
@@ -72,12 +72,12 @@ if (!$sortorder) {
 	$sortorder = "DESC";
 }
 
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('warehousecard', 'stocklist', 'globalcard'));
+
 // Security check
 //$result=restrictedArea($user,'stock', $id, 'entrepot&stock');
 $result = restrictedArea($user, 'stock');
-
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('warehousecard', 'stocklist', 'globalcard'));
 
 $object = new Entrepot($db);
 $extrafields = new ExtraFields($db);
@@ -94,9 +94,9 @@ if ($id > 0 || !empty($ref)) {
 	}
 }
 
-$usercanread = (($user->hasRight('stock', 'lire')));
-$usercancreate = (($user->hasRight('stock', 'creer')));
-$usercandelete = (($user->hasRight('stock', 'supprimer')));
+$usercanread = $user->hasRight('stock', 'lire');
+$usercancreate = $user->hasRight('stock', 'creer');
+$usercandelete = $user->hasRight('stock', 'supprimer');
 
 
 /*
@@ -198,8 +198,8 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Modification entrepot
-	if ($action == 'update' && !$cancel) {
+	// Update warehouse
+	if ($action == 'update' && !$cancel && $user->hasRight('stock', 'creer')) {
 		if ($object->fetch($id)) {
 			$object->label = GETPOST("libelle");
 			$object->fk_parent   = GETPOST("fk_parent");
@@ -239,7 +239,7 @@ if (empty($reshook)) {
 			$action = 'edit';
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif ($action == 'update_extras') {
+	} elseif ($action == 'update_extras' && $user->hasRight('stock', 'creer')) {
 		$object->oldcopy = dol_clone($object, 2);
 
 		// Fill array 'array_options' with data from update form
@@ -293,7 +293,7 @@ if ($action == 'create') {
 }
 
 $help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
-llxHeader("", $title, $help_url);
+llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-product page-stock_card');
 
 
 if ($action == 'create') {
@@ -508,7 +508,7 @@ if ($action == 'create') {
 			print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>'.dol_htmlentitiesbr($object->description).'</td></tr>';
 
 			// Warehouse usage
-			if (getDolGlobalInt("MAIN_FEATURES_LEVEL")) {
+			if (getDolGlobalInt("STOCK_USE_WAREHOUSE_USAGE")) {
 				$labelusagestring = $object->fields['warehouse_usage']['arrayofkeyval'][empty($object->warehouse_usage) ? 1 : $object->warehouse_usage];
 				$labelusage = $labelusagestring ? $langs->trans($labelusagestring) : 'Unknown';
 				print '<td class="titlefield tdtop">'.$langs->trans("WarehouseUsage").'</td><td>'.dol_htmlentitiesbr($labelusage).'</td></tr>';
@@ -828,7 +828,7 @@ if ($action == 'create') {
 
 					// Link to transfer
 					if ($user->hasRight('stock', 'mouvement', 'creer')) {
-						print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=transfert&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
+						print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=transfert&token='.newToken().'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
 						print img_picto($langs->trans("TransferStock"), 'add', 'class="hideonsmartphone pictofixedwidth" style="color: #a69944"');
 						print $langs->trans("TransferStock");
 						print "</a></td>";
@@ -836,7 +836,7 @@ if ($action == 'create') {
 
 					// Link to stock
 					if ($user->hasRight('stock', 'creer')) {
-						print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=correction&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
+						print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=correction&token='.newToken().'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
 						print img_picto($langs->trans("CorrectStock"), 'add', 'class="hideonsmartphone pictofixedwidth" style="color: #a69944"');
 						print $langs->trans("CorrectStock");
 						print "</a></td>";

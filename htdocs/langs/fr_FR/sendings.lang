@@ -63,9 +63,9 @@ NoProductToShipFoundIntoStock=Aucun produit à expédier n'a été trouvé dans 
 WeightVolShort=Poids/vol.
 ValidateOrderFirstBeforeShipment=Vous devez d'abord valider la commande pour pouvoir créer une expédition.
 NoLineGoOnTabToAddSome=Aucune ligne, allez sur l'onglet "%s" pour en ajouter
-CreateInvoiceForThisCustomerFromSendings=Facturer expeditions
-IfValidateInvoiceIsNoSendingStayUnbilled=Si la validation de facture est à "Non", l'expedition restera au statut "Non facturé" jusqu'à ce que la facture soit validée.
-OptionToSetSendingBilledNotEnabled=L'option issue du module Workflow, pour définir automatiquement les expeditions à 'Facturé' quand une facture est validée, n'est pas activée, aussi vous devrez donc définir le statut de l'expedition sur 'Facturé' manuellement après que la facture ait été généré.
+CreateInvoiceForThisCustomerFromSendings=Création de factures
+IfValidateInvoiceIsNoSendingStayUnbilled=Si la validation de la facture est "Non", l'envoi restera à l'état "Non facturé" jusqu'à ce que la facture soit validée.
+OptionToSetSendingBilledNotEnabled=L'option du module Workflow, qui permet de définir l'envoi comme "facturé" automatiquement lorsque la facture est validée, n'est pas activée. Vous devrez donc définir manuellement l'état des envois comme "facturé" après que la facture a été générée.
 
 # Sending methods
 # ModelDocument
@@ -74,16 +74,12 @@ DocumentModelStorm=Modèle de document plus complet des fiches expéditions et c
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constante EXPEDITION_ADDON_NUMBER non définie
 SumOfProductVolumes=Somme des volumes des produits
 SumOfProductWeights=Somme des poids des produits
-
 # warehouse details
 DetailWarehouseNumber= Détail de l'entrepôt
 DetailWarehouseFormat= W:%s (Qté : %d)
 SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Afficher la dernière date d'entrée en stock lors de la création de l'expédition pour les numéros de série ou les lots
 CreationOptions=Options disponibles lors de la création de l'expédition
-
 ShipmentDistribution=Répartition des expéditions
-
 ErrorTooManyCombinationBatchcode=Pas de répartition pour la ligne %s car trop de combinaisons entrepôt, produit, code de lot ont été trouvées (%s).
 ErrorNoCombinationBatchcode=Impossible d'enregistrer la ligne %s car aucune combinaison entrepôt, produit, code de lot ( %s, %s, %s) n'a pas été trouvé en stock.
-
 ErrorTooMuchShipped=La quantité expédiée ne doit pas être supérieure à la quantité commandée pour la ligne %s

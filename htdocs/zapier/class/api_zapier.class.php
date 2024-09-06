@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2019-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -312,9 +313,9 @@ class Zapier extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param   array       $data       Array of data to validate
-	 * @param   array       $fields     Array of fields needed
-	 * @return  array
+	 * @param   array<string,mixed>	$data       Array of data to validate
+	 * @param   string[]			$fields     Array of fields needed
+	 * @return  array<string,mixed>
 	 *
 	 * @throws  RestException
 	 */

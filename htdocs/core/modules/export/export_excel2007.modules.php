@@ -3,6 +3,7 @@
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +51,7 @@ class ExportExcel2007 extends ModeleExports
 
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr';
 
@@ -271,7 +272,8 @@ class ExportExcel2007 extends ModeleExports
 			$alias = $array_export_fields_label[$code];
 			//print "dd".$alias;
 			if (empty($alias)) {
-				dol_print_error(null, 'Bad value for field with code='.$code.'. Try to redefine export.');
+				dol_syslog('Bad value for field with code='.$code.'. Try to redefine export.', LOG_WARNING);
+				continue;
 			}
 			$typefield = isset($array_types[$code]) ? $array_types[$code] : '';
 
@@ -325,7 +327,8 @@ class ExportExcel2007 extends ModeleExports
 				$alias = substr($code, strpos($code, ' as ') + 4);
 			}
 			if (empty($alias)) {
-				dol_print_error(null, 'Bad value for field with code='.$code.'. Try to redefine export.');
+				dol_syslog('Bad value for field with code='.$code.'. Try to redefine export.', LOG_WARNING);
+				continue;
 			}
 
 			$newvalue = !empty($objp->$alias) ? $objp->$alias : '';

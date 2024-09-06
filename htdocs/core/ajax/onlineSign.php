@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		William Mead				<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -84,7 +85,7 @@ if (empty($SECUREKEY) || !dol_verifyHash($securekeyseed . $type . $ref . (!isMod
 	httponly_accessforbidden('Bad value for securitykey. Value provided ' . dol_escape_htmltag($SECUREKEY) . ' does not match expected value for ref=' . dol_escape_htmltag($ref), 403);
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('ajaxonlinesign'));
 
 
@@ -181,8 +182,12 @@ if ($action == "importSignature") {
 									$s = $pdf->getTemplatesize($tppl);
 									$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
 									$pdf->useTemplate($tppl);
+									$propalsignonspecificpage = getDolGlobalInt("PROPAL_SIGNATURE_ON_SPECIFIC_PAGE");
+									if ($propalsignonspecificpage < 0) {
+										$propalsignonspecificpage = $pagecount - abs($propalsignonspecificpage);
+									}
 
-									if (getDolGlobalString("PROPAL_SIGNATURE_ON_ALL_PAGES") || getDolGlobalInt("PROPAL_SIGNATURE_ON_SPECIFIC_PAGE") == $i) {
+									if (getDolGlobalString("PROPAL_SIGNATURE_ON_ALL_PAGES") || $propalsignonspecificpage == $i) {
 										// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
 										// TODO Get position of box from PDF template
 
@@ -215,9 +220,21 @@ if ($action == "importSignature") {
 								// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
 								// TODO Get position of box from PDF template
 
-								$param['xforimgstart'] = (empty($s['w']) ? 120 : round($s['w'] / 2) + 15);
-								$param['yforimgstart'] = (empty($s['h']) ? 240 : $s['h'] - 60);
-								$param['wforimg'] = $s['w'] - 20 - $param['xforimgstart'];
+								if (getDolGlobalString("PROPAL_SIGNATURE_XFORIMGSTART")) {
+											$param['xforimgstart'] = getDolGlobalString("PROPAL_SIGNATURE_XFORIMGSTART");
+								} else {
+									$param['xforimgstart'] = (empty($s['w']) ? 120 : round($s['w'] / 2) + 15);
+								}
+								if (getDolGlobalString("PROPAL_SIGNATURE_YFORIMGSTART")) {
+									$param['yforimgstart'] = getDolGlobalString("PROPAL_SIGNATURE_YFORIMGSTART");
+								} else {
+									$param['yforimgstart'] = (empty($s['h']) ? 240 : $s['h'] - 60);
+								}
+								if (getDolGlobalString("PROPAL_SIGNATURE_WFORIMG")) {
+									$param['wforimg'] = getDolGlobalString("PROPAL_SIGNATURE_WFORIMG");
+								} else {
+									$param['wforimg'] = $s['w'] - 20 - $param['xforimgstart'];
+								}
 
 								dolPrintSignatureImage($pdf, $langs, $param);
 							}
@@ -367,17 +384,17 @@ if ($action == "importSignature") {
 										if (getDolGlobalString("CONTRACT_SIGNATURE_XFORIMGSTART")) {
 											$param['xforimgstart'] = getDolGlobalString("CONTRACT_SIGNATURE_XFORIMGSTART");
 										} else {
-											$param['xforimgstart'] = 10;
+											$param['xforimgstart'] = (empty($s['w']) ? 110 : $s['w'] / 2 - 0);
 										}
 										if (getDolGlobalString("CONTRACT_SIGNATURE_YFORIMGSTART")) {
 											$param['yforimgstart'] = getDolGlobalString("CONTRACT_SIGNATURE_YFORIMGSTART");
 										} else {
-											$param['yforimgstart'] = (empty($s['h']) ? 240 : $s['h'] - 65);
+											$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 62);
 										}
 										if (getDolGlobalString("CONTRACT_SIGNATURE_WFORIMG")) {
 											$param['wforimg'] = getDolGlobalString("CONTRACT_SIGNATURE_WFORIMG");
 										} else {
-											$param['wforimg'] = $s['w'] / 2 - $param['xforimgstart'];
+											$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 16);
 										}
 
 										dolPrintSignatureImage($pdf, $langs, $param);
@@ -393,9 +410,9 @@ if ($action == "importSignature") {
 								// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
 								// TODO Get position of box from PDF template
 
-								$param['xforimgstart'] = 10;
-								$param['yforimgstart'] = (empty($s['h']) ? 240 : $s['h'] - 65);
-								$param['wforimg'] = $s['w'] / 2 - $param['xforimgstart'];
+								$param['xforimgstart'] = (empty($s['w']) ? 110 : $s['w'] / 2 - 0);
+								$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 62);
+								$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 16);
 
 								dolPrintSignatureImage($pdf, $langs, $param);
 							}
@@ -551,6 +568,8 @@ if ($action == "importSignature") {
 					// Document format not supported to insert online signature.
 					// We should just create an image file with the signature.
 				}
+				$user = new User($db);
+				$object->setSignedStatus($user, $object::SIGNED_STATUSES['STATUS_SIGNED_RECEIVER_ONLINE'], 0, 'FICHINTER_MODIFY');
 			}
 		} elseif ($mode == "societe_rib") {
 			$langs->load('withdrawals');
@@ -562,7 +581,7 @@ if ($action == "importSignature") {
 			if (!empty($object->id)) {
 				$object->fetch_thirdparty();
 
-				$upload_dir = $conf->societe->multidir_output[$object->thirdparty->entity] . '/' . dol_sanitizeFileName($object->thirdparty->id) . '/';
+				$upload_dir = $conf->societe->multidir_output[$object->thirdparty->entity] . '/' . dol_sanitizeFileName((string) $object->thirdparty->id) . '/';
 
 				$default_font_size = pdf_getPDFFontSize($langs);    // Must be after pdf_getInstance
 				$default_font = pdf_getPDFFont($langs);    // Must be after pdf_getInstance

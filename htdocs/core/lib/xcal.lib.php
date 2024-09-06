@@ -415,7 +415,7 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 					$image = $event["image"];
 				} else {
 					$reg = array();
-					// IF we found a link like <img alt="..." class="..." src="..."
+					// If we found a link into content like <img alt="..." class="..." src="..."
 					if (!empty($event["content"]) && preg_match('/<img\s*(?:alt="[^"]*"\s*)?(?:class="[^"]*"\s*)?src="([^"]+)"/m', $event["content"], $reg)) {
 						if (!empty($reg[0])) {
 							$image = $reg[1];

@@ -351,12 +351,10 @@ class FormAdmin
 
 		ksort($menuarray);
 
-		// Affichage liste deroulante des menus
-		print '<select class="flat maxwidth100" id="'.$htmlname.'" name="'.$htmlname.'">';
-		$oldprefix = '';
+		// Show combo list of menu handlers
+		print '<select class="flat maxwidth150" id="'.$htmlname.'" name="'.$htmlname.'">';
 		foreach ($menuarray as $key => $val) {
 			$tab = explode('_', $key);
-			$newprefix = $tab[0];
 			print '<option value="'.$key.'"';
 			if ($key == $selected) {
 				print '	selected';

@@ -3,6 +3,7 @@
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2020      Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,7 +65,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Workstation($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->workstation->dir_output.'/temp/massgeneration/'.$user->id;
@@ -115,11 +116,11 @@ $arrayfields = array();
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
-		$visible = (int) dol_eval($val['visible'], 1);
+		$visible = (int) dol_eval((string) $val['visible'], 1);
 		$arrayfields['t.'.$key] = array(
 			'label' => $val['label'],
 			'checked' => (($visible < 0) ? 0 : 1),
-			'enabled' => (abs($visible) != 3 && (int) dol_eval($val['enabled'], 1)),
+			'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
 			'position' => $val['position'],
 			'help' => isset($val['help']) ? $val['help'] : ''
 		);
@@ -129,7 +130,7 @@ foreach ($object->fields as $key => $val) {
 $arrayfields['wug.fk_usergroup'] = array(
 	'label' => $langs->trans('UserGroups'),
 	'checked' => (($visible < 0) ? 0 : 1),
-	'enabled' => (abs($visible) != 3 && (int) dol_eval($val['enabled'], 1)),
+	'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
 	'position' => 1000,
 	'help' => empty($val['help']) ? '' : $val['help'],
 	'csslist' => 'minwidth100'
@@ -139,7 +140,7 @@ $arrayfields['wug.fk_usergroup'] = array(
 $arrayfields['wr.fk_resource'] = array(
 	'label'=>$langs->trans('Resources'),
 	'checked'=>(($visible < 0) ? 0 : 1),
-	'enabled'=>(abs($visible) != 3 && (int) dol_eval($val['enabled'], 1, 1, '1')),
+	'enabled'=>(abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
 	'position'=>1001,
 	'help' => empty($val['help']) ? '' : $val['help']
 );

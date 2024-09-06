@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2012 Regis Houssin  <regis.houssin@inodbox.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,11 +36,11 @@ abstract class CommonOrder extends CommonObject
 
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
@@ -69,6 +70,30 @@ abstract class CommonOrder extends CommonObject
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';
+		return $return;
+	}
+
+	/** return nb of fines of order where products or services that can be bought
+	 *
+	 * @param	boolean		$ignoreFree		Ignore free lines
+	 * @return	int							number of products or services on buy in a command
+	 */
+	public function getNbLinesProductOrServiceOnBuy($ignoreFree = false)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+		$product = new Product($this->db);
+		$return = 0;
+		foreach ($this->lines as $line) {
+			if (empty($line->fk_product) && !$ignoreFree) {
+				$return++;
+			} elseif ((int) $line->fk_product > 0) {
+				if ($product->fetch($line->fk_product) > 0) {
+					if ($product->status_buy) {
+						$return++;
+					}
+				}
+			}
+		}
 		return $return;
 	}
 
@@ -121,13 +146,13 @@ abstract class CommonOrderLine extends CommonObjectLine
 	 * Boolean that indicates whether the product is available for sale '1' or not '0'
 	 * @var int
 	 */
-	public $product_tosell=0;
+	public $product_tosell = 0;
 
 	/**
 	 * Boolean that indicates whether the product is available for purchase '1' or not '0'
 	 * @var int
 	 */
-	public $product_tobuy=0;
+	public $product_tobuy = 0;
 
 	/**
 	 * Product description
@@ -180,7 +205,7 @@ abstract class CommonOrderLine extends CommonObjectLine
 
 	/**
 	 * Percent line discount
-	 * @var float
+	 * @var float|string
 	 */
 	public $remise_percent;
 
@@ -192,7 +217,7 @@ abstract class CommonOrderLine extends CommonObjectLine
 
 	/**
 	 * VAT %
-	 * @var float
+	 * @var float|string
 	 */
 	public $tva_tx;
 

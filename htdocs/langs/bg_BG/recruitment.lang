@@ -4,38 +4,25 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
 ModuleRecruitmentName = подбор на персонал
 # Module description 'ModuleRecruitmentDesc'
 ModuleRecruitmentDesc = Управлявайте и следвайте кампании за набиране на нови работни места
-
-#
 # Admin page
-#
 RecruitmentSetup = Настройка за набиране на персонал
 RecruitmentSetupPage = Въведете тук настройката на основните опции за модула за набиране на персонал
 RecruitmentArea=Зона за набиране на персонал
 PublicInterfaceRecruitmentDesc=Публичните страници с работни места са публични URL адреси за показване и отговор на отворени работни места. Има една различна връзка за всяка отворена работа, намираща се във всеки запис на работа.
 EnablePublicRecruitmentPages=Активиране на публични страници с отворени работни места
 
-#
-# About page
-#
-RecruitmentAbout = Относно набирането на персонал
-RecruitmentAboutPage = Страница за набиране на персонал
 NbOfEmployeesExpected=Очакван брой служители
 JobLabel=Етикет на длъжността
 WorkPlace=Работно място
@@ -47,7 +34,6 @@ PositionToBeFilled=Длъжност
 PositionsToBeFilled=Работни позиции
 ListOfPositionsToBeFilled=Списък на работните позиции
 NewPositionToBeFilled=Нови работни позиции
-
 JobOfferToBeFilled=Работна позиция за заемане
 ThisIsInformationOnJobPosition=Информация за длъжността, която трябва да бъде заета
 ContactForRecruitment=Контакт за набиране на персонал
@@ -77,4 +63,4 @@ WeAreRecruiting=Ние набираме персонал. Това е списъ
 NoPositionOpen=В момента няма отворени позиции
 ConfirmClose=Потвърдете анулирането
 ConfirmCloseAsk=Сигурни ли сте, че искате, за да отмените тази кандидатура за набиране на персонал
-recruitment=подбор на персонал
+Recruitment=подбор на персонал

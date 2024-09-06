@@ -117,7 +117,7 @@ class modEventOrganization extends DolibarrModules
 		// A condition to hide module
 		$this->hidden = false;
 		// List of module class names as string that must be enabled if this module is enabled. Example: array('always'=>array('modModuleToEnable1','modModuleToEnable2'), 'FR'=>array('modModuleToEnableFR'...))
-		$this->depends = array('modProjet','modCategorie');
+		$this->depends = array('modProjet', 'modCategorie', 'modAgenda');
 		$this->requiredby = array(); // List of module class names as string to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
 
@@ -354,65 +354,60 @@ class modEventOrganization extends DolibarrModules
 		/* END MODULEBUILDER EXPORT CONFERENCEORBOOTHATTENDEES */
 
 		/* BEGIN MODULEBUILDER EXPORT CONFERENCEORBOOTH */
-		/*
-		$r++;
+		$langs->load("eventorganization");
 		$this->export_code[$r] = $this->rights_class.'_'.$r;
-		$this->export_label[$r] = "ExportDataset_event1";
-		$this->export_permission[$r] = array(array("agenda", "export"));
-		$this->export_fields_array[$r] = array('ac.id'=>"IdAgenda", 'ac.ref_ext'=>"ExternalRef", 'ac.datec'=>"DateCreation", 'ac.datep'=>"DateActionBegin",
-			'ac.datep2'=>"DateActionEnd", 'ac.label'=>"Title", 'ac.note'=>"Note", 'ac.percent'=>"Percent", 'ac.durationp'=>"Duration",
-			'cac.libelle'=>"ActionType",
-			's.rowid'=>"IdCompany", 's.nom'=>'CompanyName', 's.address'=>'Address', 's.zip'=>'Zip', 's.town'=>'Town',
-			'co.code'=>'CountryCode', 's.phone'=>'Phone', 's.siren'=>'ProfId1', 's.siret'=>'ProfId2', 's.ape'=>'ProfId3', 's.idprof4'=>'ProfId4', 's.idprof5'=>'ProfId5', 's.idprof6'=>'ProfId6',
-			's.code_compta'=>'CustomerAccountancyCode', 's.code_compta_fournisseur'=>'SupplierAccountancyCode', 's.tva_intra'=>'VATIntra',
-			'p.ref' => 'ProjectRef',
-		);
-		$this->export_TypeFields_array[$r] = array('ac.ref_ext'=>"Text", 'ac.datec'=>"Date", 'ac.datep'=>"Date",
-			'ac.datep2'=>"Date", 'ac.label'=>"Text", 'ac.note'=>"Text", 'ac.percent'=>"Numeric",
-			'ac.durationp'=>"Duree",
-			'cac.libelle'=>"List:c_actioncomm:libelle:libelle",
-			's.nom'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text',
-			'co.code'=>'Text', 's.phone'=>'Text', 's.siren'=>'Text', 's.siret'=>'Text', 's.ape'=>'Text', 's.idprof4'=>'Text', 's.idprof5'=>'Text', 's.idprof6'=>'Text',
-			's.code_compta'=>'Text', 's.code_compta_fournisseur'=>'Text', 's.tva_intra'=>'Text',
-			'p.ref' => 'Text',
-		);
-		$this->export_entities_array[$r] = array('ac.id'=>"action", 'ac.ref_ext'=>"action", 'ac.datec'=>"action", 'ac.datep'=>"action",
-			'ac.datep2'=>"action", 'ac.label'=>"action", 'ac.note'=>"action", 'ac.percent'=>"action", 'ac.durationp'=>"action",
-			'cac.libelle'=>"action",
-			's.rowid'=>"company", 's.nom'=>'company', 's.address'=>'company', 's.zip'=>'company', 's.town'=>'company',
-			'co.code'=>'company', 's.phone'=>'company', 's.siren'=>'company', 's.siret'=>'company', 's.ape'=>'company', 's.idprof4'=>'company', 's.idprof5'=>'company', 's.idprof6'=>'company',
-			's.code_compta'=>'company', 's.code_compta_fournisseur'=>'company', 's.tva_intra'=>'company',
-			'p.ref' => 'project',
-		);
-
-		$keyforselect = 'actioncomm'; $keyforelement = 'action'; $keyforaliasextra = 'extra';
+		$this->export_label[$r] = 'ListOfConfOrBoothOfEvent';	// Translation key (used only if key ExportDataset_xxx_z not found)
+		$this->export_icon[$r] = 'conferenceorbooth';
+		// Define $this->export_fields_array, $this->export_TypeFields_array and $this->export_entities_array
+		$keyforclass = 'ConferenceOrBooth';
+		$keyforclassfile = '/eventorganization/class/conferenceorbooth.class.php';
+		$keyforelement = 'conferenceorbooth';
+		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
+		unset($this->export_fields_array[$r]['t.fk_action']);	// Remove field so we can add it at end just after
+		unset($this->export_fields_array[$r]['t.fk_project']);	// Remove field so we can add it at end just after
+		unset($this->export_fields_array[$r]['t.fk_soc']);	// Remove field so we can add it at end just after
+		$this->export_fields_array[$r]['t.fk_action'] = 'ConferenceOrBoothFormatID';
+		$this->export_fields_array[$r]['ca.code'] = 'ConferenceOrBoothFormatCode';
+		$this->export_fields_array[$r]['ca.libelle'] = 'ConferenceOrBoothFormatLabel';
+		$this->export_fields_array[$r]['t.fk_project'] = 'ProjectId';
+		$this->export_fields_array[$r]['p.ref'] = 'ProjectRef';
+		$this->export_fields_array[$r]['t.fk_soc'] = 'IdThirdParty';
+		$this->export_fields_array[$r]['s.nom'] = 'ThirdPartyName';
+		$this->export_entities_array[$r]['ca.code'] = 'conferenceorbooth';
+		$this->export_entities_array[$r]['ca.libelle'] = 'conferenceorbooth';
+		$this->export_entities_array[$r]['t.fk_project'] = 'project';
+		$this->export_entities_array[$r]['p.ref'] = 'project';
+		$this->export_entities_array[$r]['t.fk_soc'] = 'company';
+		$this->export_entities_array[$r]['s.nom'] = 'company';
+		$this->export_TypeFields_array[$r]['ca.code'] = 'Text';
+		$this->export_TypeFields_array[$r]['ca.libelle'] = 'Text';
+		$this->export_TypeFields_array[$r]['t.fk_project'] = 'Numeric';
+		$this->export_TypeFields_array[$r]['p.ref'] = 'Text';
+		$this->export_TypeFields_array[$r]['t.fk_soc'] = 'Numeric';
+		$this->export_TypeFields_array[$r]['s.nom'] = 'Text';
+		//$this->export_fields_array[$r]['t.fieldtoadd']='FieldToAdd'; $this->export_TypeFields_array[$r]['t.fieldtoadd']='Text';
+		//unset($this->export_fields_array[$r]['t.fieldtoremove']);
+		$keyforselect = 'conferenceorbooth';
+		$keyforaliasextra = 'extra';
+		$keyforelement = 'conferenceorbooth';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-
+		//$this->export_dependencies_array[$r] = array('aaaline'=>array('tl.rowid','tl.ref')); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
+		//$this->export_special_array[$r] = array('t.field'=>'...');
+		//$this->export_examplevalues_array[$r] = array('t.field'=>'Example');
+		//$this->export_help_array[$r] = array('t.field'=>'FieldDescHelp');
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
-		$this->export_sql_end[$r]  = ' FROM  '.MAIN_DB_PREFIX.'actioncomm as ac';
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'actioncomm_extrafields as extra ON ac.id = extra.fk_object';
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_actioncomm as cac on ac.fk_action = cac.id';
-		if (!empty($user) && empty($user->rights->agenda->allactions->read)) {
-			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'actioncomm_resources acr on ac.id = acr.fk_actioncomm';
-		}
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople as sp on ac.fk_contact = sp.rowid';
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s on ac.fk_soc = s.rowid';
-		if (!empty($user) && empty($user->rights->societe->client->voir)) {
-			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
-		}
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as co on s.fk_pays = co.rowid';
-		$this->export_sql_end[$r] .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = ac.fk_project";
-		$this->export_sql_end[$r] .= " WHERE ac.entity IN (".getEntity('agenda').")";
-		$this->export_sql_end[$r] .= " AND ac.code = 'AC_EO_INDOORCONF'";
-		if (empty($user->rights->societe->client->voir)) {
-			$this->export_sql_end[$r] .= ' AND (sc.fk_user = '.(empty($user) ? 0 : $user->id).' OR ac.fk_soc IS NULL)';
-		}
-		if (!$user->hasRight('agenda', 'allactions', 'read')) {
-			$this->export_sql_end[$r] .= ' AND acr.fk_element = '.(empty($user) ? 0 : $user->id);
-		}
-		$this->export_sql_order[$r] = ' ORDER BY ac.datep';
-		*/
+		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'actioncomm as t';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON t.fk_soc = s.rowid,';
+		$this->export_sql_end[$r] .= ' '.MAIN_DB_PREFIX.'projet as p,';
+		$this->export_sql_end[$r] .= ' '.MAIN_DB_PREFIX.'c_actioncomm as ca';
+		$this->export_sql_end[$r] .= ' WHERE t.fk_project = p.rowid';
+		$this->export_sql_end[$r] .= ' AND ca.id = t.fk_action';
+		$this->export_sql_end[$r] .= " AND t.code LIKE 'AC_EO_%'";
+		$this->export_sql_end[$r] .= ' AND p.usage_organize_event = 1';
+		$this->export_sql_end[$r] .= ' AND p.entity IN ('.getEntity('conferenceorboothattendee').')';
+		$r++;
 		/* END MODULEBUILDER EXPORT CONFERENCEORBOOTH */
+
 
 		// Imports profiles provided by this module
 		$r = 1;
@@ -450,9 +445,6 @@ class modEventOrganization extends DolibarrModules
 		$myTmpObjects['ConferenceOrBooth'] = array('includerefgeneration' => 0, 'includedocgeneration' => 0);
 
 		foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
-			if ($myTmpObjectKey == 'ConferenceOrBooth') {
-				continue;
-			}
 			if ($myTmpObjectArray['includerefgeneration']) {
 				$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/eventorganization/template_conferenceorbooths.odt';
 				$dirodt = DOL_DATA_ROOT.'/doctemplates/eventorganization';

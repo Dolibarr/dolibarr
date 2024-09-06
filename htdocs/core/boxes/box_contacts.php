@@ -5,6 +5,7 @@
  * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
  * Copyright (C) 2018      Josep Lluís Amador   <joseplluis@lliuretic.cat>
  * Copyright (C) 2020      Ferran Marcet	    <fmarcet@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,7 +73,9 @@ class box_contacts extends ModeleBoxes
 		$contactstatic = new Contact($this->db);
 		$societestatic = new Societe($this->db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedContacts", $max));
+		$this->info_box_head = array(
+			'text' => $langs->trans("BoxTitleLastModifiedContacts", $max).'<a class="paddingleft" href="'.DOL_URL_ROOT.'/contact/list.php?sortfield=p.tms&sortorder=DESC"><span class="badge">...</span></a>'
+		);
 
 		if ($user->hasRight('societe', 'lire') && $user->hasRight('societe', 'contact', 'lire')) {
 			$sql = "SELECT sp.rowid as id, sp.lastname, sp.firstname, sp.civility as civility_id, sp.datec, sp.tms, sp.fk_soc, sp.statut as status";
@@ -82,10 +85,10 @@ class box_contacts extends ModeleBoxes
 			$sql .= ", s.code_client, s.client";
 			$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
 			if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
-				$sql .= ", spe.accountancy_code_customer as code_compta";
+				$sql .= ", spe.accountancy_code_customer as code_compta_client";
 				$sql .= ", spe.accountancy_code_supplier as code_compta_fournisseur";
 			} else {
-				$sql .= ", s.code_compta";
+				$sql .= ", s.code_compta as code_compta_client";
 				$sql .= ", s.code_compta_fournisseur";
 			}
 			$sql .= ", s.logo, s.email, s.entity";
@@ -144,7 +147,8 @@ class box_contacts extends ModeleBoxes
 					$societestatic->name = $objp->name;
 					//$societestatic->name_alias = $objp->name_alias;
 					$societestatic->code_client = $objp->code_client;
-					$societestatic->code_compta = $objp->code_compta;
+					$societestatic->code_compta = $objp->code_compta_client;
+					$societestatic->code_compta_client = $objp->code_compta_client;
 					$societestatic->client = $objp->client;
 					$societestatic->code_fournisseur = $objp->code_fournisseur;
 					$societestatic->code_compta_fournisseur = $objp->code_compta_fournisseur;
@@ -173,7 +177,7 @@ class box_contacts extends ModeleBoxes
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="nowrap right" width="18"',
 						'text' => $contactstatic->getLibStatut(3),
-						'asis'=>1,
+						'asis' => 1,
 					);
 
 					$line++;
@@ -182,8 +186,8 @@ class box_contacts extends ModeleBoxes
 				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center"',
-						'text'=> '<span class="opacitymedium">'.$langs->trans("NoRecordedContacts").'</span>',
-						'asis'=> 1
+						'text' => '<span class="opacitymedium">'.$langs->trans("NoRecordedContacts").'</span>',
+						'asis' => 1
 					);
 				}
 
@@ -191,7 +195,7 @@ class box_contacts extends ModeleBoxes
 			} else {
 				$this->info_box_contents[0][0] = array(
 					'td' => '',
-					'maxlength'=>500,
+					'maxlength' => 500,
 					'text' => ($this->db->error().' sql='.$sql),
 				);
 			}
@@ -206,9 +210,9 @@ class box_contacts extends ModeleBoxes
 	/**
 	 *	Method to show box
 	 *
-	 *	@param	array	$head		Array with properties of box title
-	 *	@param  array	$contents	Array with properties of box lines
-	 *	@param	int	$nooutput	No print, only return string
+	 *	@param	?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}	$head	Array with properties of box title
+	 *	@param	?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>	$contents	Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *	@return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)

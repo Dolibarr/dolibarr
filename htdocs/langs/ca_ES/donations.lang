@@ -33,5 +33,6 @@ DONATION_ART978=Mostra l'article 978 de CGI si us preocupa
 DonationPayment=Pagament de la donació
 DonationPayments=Pagaments de donacions
 DonationValidated=Donació %s validada
-DonationUseThirdparties=Utilitzeu l'adreça d'un thirdparty existent com a adreça del donant
+DonationUseThirdparties=Utilitzeu l'adreça d'un tercer existent com a adreça del donant
 DonationsStatistics=Estadístiques de donació
+NbOfDonations=Nombre de donacions

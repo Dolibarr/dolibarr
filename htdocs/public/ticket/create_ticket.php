@@ -2,6 +2,7 @@
 /* Copyright (C) 2013-2016    Jean-François FERRY <hello@librethic.io>
  * Copyright (C) 2016         Christophe Battarel <christophe@altairis.fr>
  * Copyright (C) 2023         Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,7 +80,7 @@ $cancel = GETPOST('cancel', 'aZ09');
 
 $backtopage = '';
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('publicnewticketcard', 'globalcard'));
 
 $object = new Ticket($db);
@@ -149,7 +150,7 @@ if (empty($reshook)) {
 
 	if ($action == 'create_ticket' && GETPOST('save', 'alpha')) {
 		$error = 0;
-		$origin_email = GETPOST('email', 'alpha');
+		$origin_email = GETPOST('email', 'email');
 		if (empty($origin_email)) {
 			$error++;
 			array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("Email")));
@@ -210,7 +211,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		if (!GETPOST("subject", "restricthtml")) {
+		if (!GETPOST("subject", "alphanohtml")) {
 			$error++;
 			array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("Subject")));
 			$action = '';
@@ -231,7 +232,7 @@ if (empty($reshook)) {
 		// Check Captcha code if is enabled
 		if (getDolGlobalInt('MAIN_SECURITY_ENABLECAPTCHA_TICKET')) {
 			$sessionkey = 'dol_antispam_value';
-			$ok = (array_key_exists($sessionkey, $_SESSION) === true && (strtolower($_SESSION[$sessionkey]) === strtolower(GETPOST('code', 'restricthtml'))));
+			$ok = (array_key_exists($sessionkey, $_SESSION) && (strtolower($_SESSION[$sessionkey]) === strtolower(GETPOST('code', 'restricthtml'))));
 			if (!$ok) {
 				$error++;
 				array_push($object->errors, $langs->trans("ErrorBadValueForCode"));
@@ -272,9 +273,10 @@ if (empty($reshook)) {
 
 			$object->db->begin();
 
-			$object->subject = GETPOST("subject", "restricthtml");
+			$object->subject = GETPOST("subject", "alphanohtml");
 			$object->message = GETPOST("message", "restricthtml");
 			$object->origin_email = $origin_email;
+			$object->email_from = $origin_email;
 
 			$object->type_code = GETPOST("type_code", 'aZ09');
 			$object->category_code = GETPOST("category_code", 'aZ09');
@@ -510,7 +512,7 @@ if (!getDolGlobalInt('TICKET_ENABLE_PUBLIC_INTERFACE')) {
 
 $arrayofjs = array();
 
-$arrayofcss = array('/opensurvey/css/style.css', getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', '/ticket/').'css/styles.css.php');
+$arrayofcss = array(getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', '/public/ticket/').'css/styles.css.php');
 
 llxHeaderTicket($langs->trans("CreateTicket"), "", 0, 0, $arrayofjs, $arrayofcss);
 
@@ -541,11 +543,13 @@ if ($action != "infos_success") {
 		print '</div>';
 	} else {
 		//print '<div class="info marginleftonly marginrightonly">'.$langs->trans('TicketPublicInfoCreateTicket').'</div>';
-		$formticket->showForm(0, 'edit', 1, $with_contact);
+		$formticket->showForm(0, ($action ? $action : 'create'), 1, $with_contact, '', $object);
 	}
 }
 
 print '</div>';
+
+print '<br>';
 
 if (getDolGlobalInt('TICKET_SHOW_COMPANY_FOOTER')) {
 	// End of page

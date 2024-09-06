@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2015 Laurent Destailleur  <eldy@users.sourceforge.org>
  * Copyright (C) 2013      Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015      Bahfir Abbes         <contact@dolibarrpar.org>
- * Copyright (C) 2020      Thibault FOUCART     <suport@ptibogxiv.net>
+ * Copyright (C) 2020      Thibault FOUCART     <support@ptibogxiv.net>
  * Copyright (C) 2022      Anthony Berton     	<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -170,7 +170,7 @@ if ($action == 'setfixednotif' && $user->admin) {
 $form = new Form($db);
 $notify = new Notify($db);
 
-llxHeader('', $langs->trans("NotificationSetup"));
+llxHeader('', $langs->trans("NotificationSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-notification');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("NotificationSetup"), $linkback, 'title_setup');
@@ -259,11 +259,12 @@ print '</form>';
 print '<br><br>';
 
 
+// Emails templates for notification
+
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="settemplates">';
 
-// Notification per contacts
 $title = $langs->trans("TemplatesForNotifications");
 
 print load_fiche_titre($title, '', 'email');
@@ -310,7 +311,8 @@ foreach ($listofnotifiedevents as $notifiedevent) {
 		$model = 'expensereport_send';
 	} elseif ($notifiedevent['elementtype'] == 'order_supplier') {
 		$model = 'order_supplier_send';
-		// } elseif ($notifiedevent['elementtype'] == 'invoice_supplier') $model = 'invoice_supplier_send';
+	} elseif ($notifiedevent['elementtype'] == 'invoice_supplier') {
+		$model = 'invoice_supplier_send';
 	} elseif ($notifiedevent['elementtype'] == 'member') {
 		$model = 'member';
 	}
@@ -318,7 +320,7 @@ foreach ($listofnotifiedevents as $notifiedevent) {
 	$constantes[$notifiedevent['code'].'_TEMPLATE'] = array('type'=>'emailtemplate:'.$model, 'label'=>$label);
 }
 
-$helptext = '';
+$helptext = $langs->trans("EmailTemplateHelp", $langs->transnoentitiesnoconv("Tools"), $langs->transnoentitiesnoconv("EMailTemplates"));
 form_constantes($constantes, 3, $helptext, 'EmailTemplate');
 
 print $form->buttonsSaveCancel("Save", '');

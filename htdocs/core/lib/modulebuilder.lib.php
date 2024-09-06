@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2009-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,14 +27,14 @@
 /**
  * 	Regenerate files .class.php
  *
- *  @param	string      $destdir		Directory
- * 	@param	string		$module			Module name
- *  @param	string      $objectname		Name of object
- * 	@param	string		$newmask		New mask
- *  @param	string      $readdir		Directory source (use $destdir when not defined)
+ *  @param	string	$destdir		Directory
+ * 	@param	string	$module			Module name
+ *  @param	string	$objectname		Name of object
+ * 	@param	string	$newmask		New mask
+ *  @param	string	$readdir		Directory source (use $destdir when not defined)
  *  @param	array{}|array{name:string,key:string,type:string,label:string,picot?:string,enabled:int<0,1>,notnull:int<0,1>,position:int,visible:int,noteditable?:int<0,1>,alwayseditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,1>,disabled?:int<0,1>,autofocusoncreate?:int<0,1>,arrayofkeyval?:array<string,string>,validate?:int<0,1>,comment?:string}	$addfieldentry	Array of 1 field entry to add
- *  @param	string		$delfieldentry	Id of field to remove
- * 	@return	int<-7,-1>|CommonObject		Return integer <=0 if KO, Object if OK
+ *  @param	string	$delfieldentry	Id of field to remove
+ * 	@return	int<-7,-1>|CommonObject	Return integer <=0 if KO, Object if OK
  *  @see rebuildObjectSql()
  */
 function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir = '', $addfieldentry = array(), $delfieldentry = '')
@@ -79,7 +80,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 		return -3;
 	}
 
-	//$pathoffiletoedittmp=$destdir.'/class/'.strtolower($objectname).'.class.php.tmp';
+	//$pathoffiletoedittmp = $destdir.'/class/'.strtolower($objectname).'.class.php.tmp';
 	//dol_delete_file($pathoffiletoedittmp, 0, 1, 1);
 
 	try {
@@ -116,67 +117,68 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 		$i = 0;
 		$texttoinsert = '// BEGIN MODULEBUILDER PROPERTIES'."\n";
 		$texttoinsert .= "\t".'/**'."\n";
-		$texttoinsert .= "\t".' * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.'."\n";
+		$texttoinsert .= "\t".' * @inheritdoc'."\n";
+		$texttoinsert .= "\t".' * Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.'."\n";
 		$texttoinsert .= "\t".' */'."\n";
-		$texttoinsert .= "\t".'public $fields=array('."\n";
+		$texttoinsert .= "\t".'public $fields = array('."\n";
 
 		if (count($object->fields)) {
 			foreach ($object->fields as $key => $val) {
 				$i++;
 				$texttoinsert .= "\t\t".'"'.$key.'" => array(';
-				$texttoinsert .= '"type"=>"'.dol_escape_php($val['type']).'",';
-				$texttoinsert .= ' "label"=>"'.dol_escape_php($val['label']).'",';
+				$texttoinsert .= '"type" => "'.dol_escape_php($val['type']).'",';
+				$texttoinsert .= ' "label" => "'.dol_escape_php($val['label']).'",';
 				if (!empty($val['picto'])) {
-					$texttoinsert .= ' "picto"=>"'.dol_escape_php($val['picto']).'",';
+					$texttoinsert .= ' "picto" => "'.dol_escape_php($val['picto']).'",';
 				}
-				$texttoinsert .= ' "enabled"=>"'.($val['enabled'] !== '' ? dol_escape_php($val['enabled']) : 1).'",';
-				$texttoinsert .= " 'position'=>".($val['position'] !== '' ? (int) $val['position'] : 50).",";
-				$texttoinsert .= " 'notnull'=>".(empty($val['notnull']) ? 0 : (int) $val['notnull']).",";
-				$texttoinsert .= ' "visible"=>"'.($val['visible'] !== '' ? dol_escape_js($val['visible']) : -1).'",';
+				$texttoinsert .= ' "enabled" => "'.($val['enabled'] !== '' ? dol_escape_php($val['enabled']) : 1).'",';
+				$texttoinsert .= " 'position' => ".($val['position'] !== '' ? (int) $val['position'] : 50).",";
+				$texttoinsert .= " 'notnull' => ".(empty($val['notnull']) ? 0 : (int) $val['notnull']).",";
+				$texttoinsert .= ' "visible" => "'.($val['visible'] !== '' ? dol_escape_js($val['visible']) : -1).'",';
 				if (!empty($val['noteditable'])) {
-					$texttoinsert .= ' "noteditable"=>"'.dol_escape_php($val['noteditable']).'",';
+					$texttoinsert .= ' "noteditable" => "'.dol_escape_php($val['noteditable']).'",';
 				}
 				if (!empty($val['alwayseditable'])) {
-					$texttoinsert .= ' "alwayseditable"=>"'.dol_escape_php($val['alwayseditable']).'",';
+					$texttoinsert .= ' "alwayseditable" => "'.dol_escape_php($val['alwayseditable']).'",';
 				}
 				if (array_key_exists('default', $val) && (!empty($val['default']) || $val['default'] === '0')) {
-					$texttoinsert .= ' "default"=>"'.dol_escape_php($val['default']).'",';
+					$texttoinsert .= ' "default" => "'.dol_escape_php($val['default']).'",';
 				}
 				if (!empty($val['index'])) {
-					$texttoinsert .= ' "index"=>"'.(int) $val['index'].'",';
+					$texttoinsert .= ' "index" => "'.(int) $val['index'].'",';
 				}
 				if (!empty($val['foreignkey'])) {
-					$texttoinsert .= ' "foreignkey"=>"'.(int) $val['foreignkey'].'",';
+					$texttoinsert .= ' "foreignkey" => "'.(int) $val['foreignkey'].'",';
 				}
 				if (!empty($val['searchall'])) {
-					$texttoinsert .= ' "searchall"=>"'.(int) $val['searchall'].'",';
+					$texttoinsert .= ' "searchall" => "'.(int) $val['searchall'].'",';
 				}
 				if (!empty($val['isameasure'])) {
-					$texttoinsert .= ' "isameasure"=>"'.(int) $val['isameasure'].'",';
+					$texttoinsert .= ' "isameasure" => "'.(int) $val['isameasure'].'",';
 				}
 				if (!empty($val['css'])) {
-					$texttoinsert .= ' "css"=>"'.dol_escape_php($val['css']).'",';
+					$texttoinsert .= ' "css" => "'.dol_escape_php($val['css']).'",';
 				}
 				if (!empty($val['cssview'])) {
-					$texttoinsert .= ' "cssview"=>"'.dol_escape_php($val['cssview']).'",';
+					$texttoinsert .= ' "cssview" => "'.dol_escape_php($val['cssview']).'",';
 				}
 				if (!empty($val['csslist'])) {
-					$texttoinsert .= ' "csslist"=>"'.dol_escape_php($val['csslist']).'",';
+					$texttoinsert .= ' "csslist" => "'.dol_escape_php($val['csslist']).'",';
 				}
 				if (!empty($val['help'])) {
-					$texttoinsert .= ' "help"=>"'.dol_escape_php($val['help']).'",';
+					$texttoinsert .= ' "help" => "'.dol_escape_php($val['help']).'",';
 				}
 				if (!empty($val['showoncombobox'])) {
-					$texttoinsert .= ' "showoncombobox"=>"'.(int) $val['showoncombobox'].'",';
+					$texttoinsert .= ' "showoncombobox" => "'.(int) $val['showoncombobox'].'",';
 				}
 				if (!empty($val['disabled'])) {
-					$texttoinsert .= ' "disabled"=>"'.(int) $val['disabled'].'",';
+					$texttoinsert .= ' "disabled" => "'.(int) $val['disabled'].'",';
 				}
 				if (!empty($val['autofocusoncreate'])) {
-					$texttoinsert .= ' "autofocusoncreate"=>"'.(int) $val['autofocusoncreate'].'",';
+					$texttoinsert .= ' "autofocusoncreate" => "'.(int) $val['autofocusoncreate'].'",';
 				}
 				if (!empty($val['arrayofkeyval'])) {
-					$texttoinsert .= ' "arrayofkeyval"=>array(';
+					$texttoinsert .= ' "arrayofkeyval" => array(';
 					$i = 0;
 					foreach ($val['arrayofkeyval'] as $key2 => $val2) {
 						if ($i) {
@@ -188,10 +190,10 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 					$texttoinsert .= '),';
 				}
 				if (!empty($val['validate'])) {
-					$texttoinsert .= ' "validate"=>"'.(int) $val['validate'].'",';
+					$texttoinsert .= ' "validate" => "'.(int) $val['validate'].'",';
 				}
 				if (!empty($val['comment'])) {
-					$texttoinsert .= ' "comment"=>"'.dol_escape_php($val['comment']).'"';
+					$texttoinsert .= ' "comment" => "'.dol_escape_php($val['comment']).'"';
 				}
 
 				$texttoinsert .= "),\n";
@@ -203,16 +205,16 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 		//print ($texttoinsert);exit;
 
 		if (count($object->fields)) {
-			//$typetotypephp=array('integer'=>'integer', 'duration'=>'integer', 'varchar'=>'string');
+			//$typetotypephp = array('integer' => 'integer', 'duration' => 'integer', 'varchar' => 'string');
 
 			foreach ($object->fields as $key => $val) {
 				$i++;
-				//$typephp=$typetotypephp[$val['type']];
+				//$typephp = $typetotypephp[$val['type']];
 				$texttoinsert .= "\t".'public $'.$key.";";
 				//if ($key == 'rowid')  $texttoinsert.= ' AUTO_INCREMENT PRIMARY KEY';
 				//if ($key == 'entity') $texttoinsert.= ' DEFAULT 1';
 				//$texttoinsert.= ($val['notnull']?' NOT NULL':'');
-				//if ($i < count($object->fields)) $texttoinsert.=";";
+				//if ($i < count($object->fields)) $texttoinsert. = ";";
 				$texttoinsert .= "\n";
 			}
 		}
@@ -245,14 +247,14 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 /**
  * 	Save data into a memory area shared by all users, all sessions on server
  *
- *  @param	string      $destdir		Directory
- * 	@param	string		$module			Module name
- *  @param	string      $objectname		Name of object
- * 	@param	string		$newmask		New mask
- *  @param	string      $readdir		Directory source (use $destdir when not defined)
- *  @param	Object		$object			If object was already loaded/known, it is pass to avoid another include and new.
- *  @param	string		$moduletype		'external' or 'internal'
- * 	@return	int							Return integer <=0 if KO, >0 if OK
+ *  @param	string	$destdir		Directory
+ * 	@param	string	$module			Module name
+ *  @param	string	$objectname		Name of object
+ * 	@param	string	$newmask		New mask
+ *  @param	string	$readdir		Directory source (use $destdir when not defined)
+ *  @param	Object	$object			If object was already loaded/known, it is pass to avoid another include and new.
+ *  @param	string	$moduletype		'external' or 'internal'
+ * 	@return	int						Return integer <=0 if KO, >0 if OK
  *  @see rebuildObjectClass()
  */
 function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '', $object = null, $moduletype = 'external')
@@ -430,8 +432,8 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 /**
  * Get list of existing objects from a directory
  *
- * @param	string      $destdir		Directory
- * @return 	array|int                   Return integer <=0 if KO, array if OK
+ * @param	string	$destdir		Directory
+ * @return	string[]|int			Return integer <=0 if KO, array if OK
  */
 function dolGetListOfObjectClasses($destdir)
 {
@@ -462,9 +464,9 @@ function dolGetListOfObjectClasses($destdir)
 /**
  * Function to check if comment BEGIN and END exists in modMyModule class
  *
- * @param  string  $file    	Filename or path
- * @param  int     $number   	0 = For Menus, 1 = For permissions, 2 = For Dictionaries
- * @return int     				1 if OK , -1 if KO
+ * @param	string		$file    	Filename or path
+ * @param	int<0,2>	$number   	0 = For Menus, 1 = For permissions, 2 = For Dictionaries
+ * @return	int     				1 if OK , -1 if KO
  */
 function checkExistComment($file, $number)
 {
@@ -507,8 +509,8 @@ function checkExistComment($file, $number)
 /**
  * Delete all permissions
  *
- * @param string         $file         file with path
- * @return void
+ * @param	string	$file         file with path
+ * @return	void
  */
 function deletePerms($file)
 {
@@ -538,10 +540,10 @@ function deletePerms($file)
 }
 
 /**
- *  Compare two value
- * @param int|string  $a value 1
- * @param int|string  $b value 2
- * @return int      less 0 if str1 is less than str2; > 0 if str1 is greater than str2, and 0 if they are equal.
+ *  Compare two values
+ * @param	int|string	$a	value 1
+ * @param	int|string	$b	value 2
+ * @return	int<-1,1> 		<=0 if str1 is less than str2; > 0 if str1 is greater than str2, and 0 if they are equal.
 */
 function compareFirstValue($a, $b)
 {
@@ -549,25 +551,25 @@ function compareFirstValue($a, $b)
 }
 /**
  * Rewriting all permissions after any actions
- * @param string      $file            filename or path
- * @param array<int,string[]> $permissions permissions existing in file
- * @param int|null    $key             key for permission needed
- * @param array{0:string,1:string}|null  $right           $right to update or add
- * @param string|null $objectname      name of object
- * @param string|null $module          name of module
- * @param int<-2,2>   $action          0 for delete, 1 for add, 2 for update, -1 when delete object completely, -2 for generate rights after add
- * @return int<-1,1>                   1 if OK,-1 if KO
+ * @param	string		$file			filename or path
+ * @param	array<int,string[]>	$permissions permissions existing in file
+ * @param	?int		$key			key for permission needed
+ * @param	?array{0:string,1:string}	$right           $right to update or add
+ * @param	string		$objectname		name of object
+ * @param	string		$module			name of module
+ * @param	int<-2,2>	$action			0 for delete, 1 for add, 2 for update, -1 when delete object completely, -2 for generate rights after add
+ * @return	int<-1,1>					1 if OK,-1 if KO
  */
 function reWriteAllPermissions($file, $permissions, $key, $right, $objectname, $module, $action)
 {
 	$error = 0;
 	$rights = array();
-	if ($action == 0) {
+	if ($action == 0 && $key !== null) {
 		// delete right from permissions array
 		array_splice($permissions, array_search($permissions[$key], $permissions), 1);
 	} elseif ($action == 1) {
 		array_push($permissions, $right);
-	} elseif ($action == 2 && !empty($right)) {
+	} elseif ($action == 2 && !empty($right) && $key !== null) {
 		// update right from permissions array
 		array_splice($permissions, array_search($permissions[$key], $permissions), 1, $right);
 	} elseif ($action == -1 && !empty($objectname)) {
@@ -624,7 +626,7 @@ function reWriteAllPermissions($file, $permissions, $key, $right, $objectname, $
 		foreach ($permissions as $perms) {
 			$object = $perms[4];
 			if (!isset($perms_grouped[$object])) {
-				$perms_grouped[$object] = [];
+				$perms_grouped[$object] = array();
 			}
 			$perms_grouped[$object][] = $perms;
 		}
@@ -656,11 +658,10 @@ function reWriteAllPermissions($file, $permissions, $key, $right, $objectname, $
 		//convert to string
 		foreach ($permissions as $perms) {
 			foreach ($perms as $per) {
-				$rights[] = implode(";\n\t\t", $per);
-				$rights[] = "\$r++;\n\t\t";
+				$rights[] = implode(";\n\t\t", $per)."\$r++;\n";
 			}
 		}
-		$rights_str = implode("", $rights);
+		$rights_str = implode("\t\t", $rights);
 		// delete all permissions from file
 		deletePerms($file);
 		// rewrite all permissions again
@@ -674,8 +675,8 @@ function reWriteAllPermissions($file, $permissions, $key, $right, $objectname, $
 /**
  * Converts a formatted properties string into an associative array.
  *
- * @param string $string The formatted properties string.
- * @return array<string,bool|int|float|string|mixed[]> The resulting associative array.
+ * @param	string	$string The formatted properties string.
+ * @return	array<string,bool|int|float|string|mixed[]> The resulting associative array.
  */
 function parsePropertyString($string)
 {
@@ -683,7 +684,7 @@ function parsePropertyString($string)
 
 	// Uses a regular expression to capture keys and values
 	preg_match_all('/\s*([^\s=>]+)\s*=>\s*([^,]+),?/', $string, $matches, PREG_SET_ORDER);
-	$propertyArray = [];
+	$propertyArray = array();
 
 	foreach ($matches as $match) {
 		$key = trim($match[1]);
@@ -718,10 +719,10 @@ function parsePropertyString($string)
 
 /**
  * Write all properties of the object in AsciiDoc format
- * @param  string   $file           path of the class
- * @param  string   $objectname     name of the objectClass
- * @param  string   $destfile       file where write table of properties
- * @return int                      1 if OK, -1 if KO
+ * @param	string	$file			path of the class
+ * @param	string	$objectname		name of the objectClass
+ * @param	string	$destfile		file where write table of properties
+ * @return	int						1 if OK, -1 if KO
  */
 function writePropsInAsciiDoc($file, $objectname, $destfile)
 {
@@ -729,7 +730,7 @@ function writePropsInAsciiDoc($file, $objectname, $destfile)
 	// stock all properties in array
 	$attributesUnique = array('type','label', 'enabled', 'position', 'notnull', 'visible', 'noteditable', 'index', 'default' , 'foreignkey', 'arrayofkeyval', 'alwayseditable','validate', 'searchall','comment', 'isameasure', 'css', 'cssview','csslist', 'help', 'showoncombobox','picto' );
 
-	$start = "public \$fields=array(";
+	$start = "public \$fields = array(";
 	$end = ");";
 	$i = 1;
 	$keys = array();
@@ -817,9 +818,9 @@ function writePropsInAsciiDoc($file, $objectname, $destfile)
 /**
  * Delete property and permissions from documentation ascii file if we delete an object
  *
- * @param  string  $file         file or path
- * @param  string  $objectname   name of object wants to deleted
- * @return void
+ * @param	string	$file         file or path
+ * @param	string	$objectname   name of object wants to deleted
+ * @return	void
  */
 function deletePropsAndPermsFromDoc($file, $objectname)
 {
@@ -846,12 +847,12 @@ function deletePropsAndPermsFromDoc($file, $objectname)
 /**
  * Search a string and return all lines needed from file. Does not include line $start nor $end
  *
- * @param  	string  $file    		file for searching
- * @param  	string  $start   		start line if exist
- * @param  	string  $end     		end line if exist
- * @param	string	$excludestart 	Ignore if start line is $excludestart
- * @param	int  	$includese		Include start and end line
- * @return 	string           		Return the lines between first line with $start and $end. "" if not found.
+ * @param	string		$file    		file for searching
+ * @param	string		$start   		start line if it exists
+ * @param	string		$end     		end line if it exists
+ * @param	string		$excludestart 	Ignore if start line is $excludestart
+ * @param	int<0,1>	$includese		Include start and end line
+ * @return	string           		Return the lines between first line with $start and $end. "" if not found.
  */
 function getFromFile($file, $start, $end, $excludestart = '', $includese = 0)
 {
@@ -889,9 +890,9 @@ function getFromFile($file, $start, $end, $excludestart = '', $includese = 0)
 
 /**
  * Write all permissions of each object in AsciiDoc format
- * @param  string   $file           path of the class
- * @param  string   $destfile       file where write table of permissions
- * @return int<-1,1>				1 if OK, -1 if KO
+ * @param	string	$file           path of the class
+ * @param	string	$destfile       file where write table of permissions
+ * @return	int<-1,1>				1 if OK, -1 if KO
  */
 function writePermsInAsciiDoc($file, $destfile)
 {
@@ -939,10 +940,10 @@ function writePermsInAsciiDoc($file, $destfile)
 	array_pop($permsN);
 
 	// Group permissions by Object and add it to string
-	$final_array = [];
+	$final_array = array();
 	$index = 0;
 	while ($index < count($permsN)) {
-		$temp_array = [$permsN[$index], $permsN[$index + 1]];
+		$temp_array = array($permsN[$index], $permsN[$index + 1]);
 		$final_array[] = $temp_array;
 		$index += 2;
 	}
@@ -974,11 +975,11 @@ function writePermsInAsciiDoc($file, $destfile)
 /**
  * Add Object in ModuleApi File
  *
- * @param	string	$srcfile		Source file to use as example
- * @param  	string 	$file           Path of modified file
- * @param  	string[]	$objects	Array of objects in the module
- * @param  	string 	$modulename     Name of module
- * @return 	int<-1,1>              	Return 1 if OK, -1 if KO
+ * @param	string		$srcfile	Source file to use as example
+ * @param	string		$file		Path of modified file
+ * @param	string[]	$objects	Array of objects in the module
+ * @param	string		$modulename	Name of module
+ * @return	int<-1,1>				Return 1 if OK, -1 if KO
  */
 function addObjectsToApiFile($srcfile, $file, $objects, $modulename)
 {
@@ -1007,7 +1008,7 @@ function addObjectsToApiFile($srcfile, $file, $objects, $modulename)
 		} elseif (preg_match('/'.$props.'/', $lineContent)) {
 			$lineContent = '';
 			foreach ($objects as $objectname) {
-				$lineContent .= "\tpublic \$".strtolower($objectname).";". PHP_EOL;
+				$lineContent .= "\t/*".PHP_EOL."\t * @var mixed TODO: set type".PHP_EOL."\t */".PHP_EOL."\tpublic \$".strtolower($objectname).";". PHP_EOL;
 			}
 		} elseif (preg_match('/'.$constructObj.'/', $lineContent)) {
 			$lineContent = '';
@@ -1040,7 +1041,7 @@ function addObjectsToApiFile($srcfile, $file, $objects, $modulename)
 			'myobject' => strtolower($objectname),
 			'MyObject' => $objectname,
 			'MYOBJECT' => strtoupper($objectname),
-			'---Put here your own copyright and developer email---' => dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : '')
+			'---Replace with your own copyright and developer email---' => dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : '')
 		);
 		$contentReplaced = make_substitutions($allContent, $arrayreplacement, null);
 		//$contentReplaced = str_replace(["myobject","MyObject"], [strtolower($object),$object], $allContent);
@@ -1060,10 +1061,10 @@ function addObjectsToApiFile($srcfile, $file, $objects, $modulename)
 /**
  * Remove 	Object variables and methods from API_Module File
  *
- * @param 	string   	$file         	File api module
- * @param  	string[] 	$objects        Array of objects in the module
- * @param 	string   	$objectname   	Name of object want to remove
- * @return 	int<-1,1> 					1 if OK, -1 if KO
+ * @param	string		$file			File api module
+ * @param	string[]	$objects		Array of objects in the module
+ * @param	string		$objectname   	Name of object want to remove
+ * @return	int<-1,1> 					1 if OK, -1 if KO
  */
 function removeObjectFromApiFile($file, $objects, $objectname)
 {
@@ -1108,12 +1109,12 @@ function removeObjectFromApiFile($file, $objects, $objectname)
 
 
 /**
- * @param	string         $file       path of filename
- * @param	array<int,array{commentgroup:string,fk_menu:string,type:string,titre:string,mainmenu:string,leftmenu:string,url:string,langs:string,position:int,enabled:int,perms:string,target:string,user:int}>		$menus      all menus for module
- * @param	mixed|null     $menuWantTo  menu get for do actions
- * @param	int|null       $key        key for the concerned menu
- * @param	int<-1,2>      $action     for specify what action (0 = delete perm, 1 = add perm, 2 = update perm, -1 = when we delete object)
- * @return	int<-1,1>					1 if OK, -1 if KO
+ * @param	string		$file		path of filename
+ * @param	array<int,array{commentgroup:string,fk_menu:string,type:string,titre:string,mainmenu:string,leftmenu:string,url:string,langs:string,position:int,enabled:int,perms:string,target:string,user:int}>	$menus      all menus for module
+ * @param	null|string|array{commentgroup:string,fk_menu:string,type:string,titre:string,mainmenu:string,leftmenu:string,url:string,langs:string,position:int,enabled:int,perms:string,target:string,user:int}	$menuWantTo  menu get for do actions
+ * @param	?int		$key		key for the concerned menu
+ * @param	int<-1,2>	$action		for specify what action (0 = delete perm, 1 = add perm, 2 = update perm, -1 = when we delete object)
+ * @return	int<-1,1>				1 if OK, -1 if KO
  */
 function reWriteAllMenus($file, $menus, $menuWantTo, $key, $action)
 {
@@ -1150,7 +1151,7 @@ function reWriteAllMenus($file, $menus, $menuWantTo, $key, $action)
 		} else {
 			$errors++;
 		}
-	} elseif ($action == -1 && !empty($menuWantTo)) {
+	} elseif ($action == -1 && !empty($menuWantTo) && is_string($menuWantTo)) {
 		// delete menus when delete Object
 		foreach ($menus as $index => $menu) {
 			if ((strpos(strtolower($menu['fk_menu']), strtolower($menuWantTo)) !== false) || (strpos(strtolower($menu['leftmenu']), strtolower($menuWantTo)) !== false)) {
@@ -1184,20 +1185,20 @@ function reWriteAllMenus($file, $menus, $menuWantTo, $key, $action)
 				//var_dump(dol_escape_php($menu['perms'], 1)); exit;
 
 				$str_menu .= $start."\n";
-				$str_menu .= "\t\t\$this->menu[\$r++]=array(\n";
-				$str_menu .= "\t\t\t 'fk_menu' => '".dol_escape_php($menu['fk_menu'], 1)."',\n";
-				$str_menu .= "\t\t\t 'type' => '".dol_escape_php($menu['type'], 1)."',\n";
-				$str_menu .= "\t\t\t 'titre' => '".dol_escape_php($menu['titre'], 1)."',\n";
-				$str_menu .= "\t\t\t 'mainmenu' => '".dol_escape_php($menu['mainmenu'], 1)."',\n";
-				$str_menu .= "\t\t\t 'leftmenu' => '".dol_escape_php($menu['leftmenu'], 1)."',\n";
-				$str_menu .= "\t\t\t 'url' => '".dol_escape_php($menu['url'], 1)."',\n";
-				$str_menu .= "\t\t\t 'langs' => '".dol_escape_php($menu['langs'], 1)."',\n";
-				$str_menu .= "\t\t\t 'position' => ".((int) $menu['position']).",\n";
-				$str_menu .= "\t\t\t 'enabled' => '".dol_escape_php($menu['enabled'], 1)."',\n";
-				$str_menu .= "\t\t\t 'perms' => '".dol_escape_php($menu['perms'], 1)."',\n";
-				$str_menu .= "\t\t\t 'target' => '".dol_escape_php($menu['target'], 1)."',\n";
-				$str_menu .= "\t\t\t 'user' => ".((int) $menu['user']).",\n";
-				$str_menu .= "\t\t\t 'object' => '".dol_escape_php($menu['object'], 1)."',\n";
+				$str_menu .= "\t\t\$this->menu[\$r++] = array(\n";
+				$str_menu .= "\t\t\t'fk_menu' => '".dol_escape_php($menu['fk_menu'], 1)."',\n";
+				$str_menu .= "\t\t\t'type' => '".dol_escape_php($menu['type'], 1)."',\n";
+				$str_menu .= "\t\t\t'titre' => '".dol_escape_php($menu['titre'], 1)."',\n";
+				$str_menu .= "\t\t\t'mainmenu' => '".dol_escape_php($menu['mainmenu'], 1)."',\n";
+				$str_menu .= "\t\t\t'leftmenu' => '".dol_escape_php($menu['leftmenu'], 1)."',\n";
+				$str_menu .= "\t\t\t'url' => '".dol_escape_php($menu['url'], 1)."',\n";
+				$str_menu .= "\t\t\t'langs' => '".dol_escape_php($menu['langs'], 1)."',\n";
+				$str_menu .= "\t\t\t'position' => ".((int) $menu['position']).",\n";
+				$str_menu .= "\t\t\t'enabled' => '".dol_escape_php((string) $menu['enabled'], 1)."',\n";
+				$str_menu .= "\t\t\t'perms' => '".dol_escape_php($menu['perms'], 1)."',\n";
+				$str_menu .= "\t\t\t'target' => '".dol_escape_php($menu['target'], 1)."',\n";
+				$str_menu .= "\t\t\t'user' => ".((int) $menu['user']).",\n";
+				$str_menu .= "\t\t\t'object' => '".dol_escape_php($menu['object'], 1)."',\n";
 				$str_menu .= "\t\t);\n";
 
 				if (is_null($next_val) || $val_actuel['leftmenu'] !== $next_val['leftmenu']) {
@@ -1215,41 +1216,41 @@ function reWriteAllMenus($file, $menus, $menuWantTo, $key, $action)
 /**
  * Updates a dictionary in a module descriptor file.
  *
- * @param string $module The name of the module.
- * @param string $file The path to the module descriptor file.
- * @param array<string,string|array<string,int|string>> $dicts The dictionary data to be updated.
- * @return int Returns the number of replacements made in the file.
+ * @param	string	$module		The name of the module.
+ * @param	string	$file		The path to the module descriptor file.
+ * @param	array{langs:string,tabname:string[],tablib:string[],tabsql:string[],tabsqlsort:string[],tabfield:string[],tabfieldvalue:string[],tabfieldinsert:string[],tabrowid:string[],tabcond:array<string|bool|int>,tabhelp:array<array{code:string,field2:string}>}	$dicts The dictionary data to be updated.
+ * @return	int					Returns the number of replacements made in the file.
  */
 function updateDictionaryInFile($module, $file, $dicts)
 {
 	$isEmpty = false;
-	$dicData = "\t\t\$this->dictionaries=array(\n";
+	$dicData = "\t\t\$this->dictionaries = array(\n";
 	$module = strtolower($module);
 	foreach ($dicts as $key => $value) {
 		if (empty($value)) {
 			$isEmpty = true;
-			$dicData = "\t\t\$this->dictionaries=array();";
+			$dicData = "\t\t\$this->dictionaries = array();";
 			break;
 		}
 
-		$dicData .= "\t\t\t'$key'=>";
+		$dicData .= "\t\t\t'$key' => ";
 
 		if ($key === 'tabcond') {
 			$conditions = array_map(
 				/**
-				 * @param bool|int|string $val
-				 * @return string|int
+				 * @param	bool|string|int	$val
+				 * @return	string|int
 				 */
-				function ($val) use ($module) {
+				static function ($val) use ($module) {
 					return is_bool($val) ? "isModEnabled('$module')" : $val;
 				},
 				$value
 			);
-			$dicData .= "array(" . implode(",", $conditions) . ")";
+			$dicData .= "array(" . implode(", ", $conditions) . ")";
 		} elseif ($key === 'tabhelp') {
 			$helpItems = array();
 			foreach ($value as $helpValue) {
-				$helpItems[] = "array('code'=>\$langs->trans('".$helpValue['code']."'), 'field2' => 'field2tooltip')";
+				$helpItems[] = "array('code' => \$langs->trans('".$helpValue['code']."'), 'field2' => 'field2tooltip')";
 			}
 			$dicData .= "array(" . implode(",", $helpItems) . ")";
 		} else {
@@ -1258,8 +1259,8 @@ function updateDictionaryInFile($module, $file, $dicts)
 					",",
 					array_map(
 						/**
-						 * @param string $val
-						 * @return string
+						 * @param	string	$val
+						 * @return	string
 						 */
 						static function ($val) {
 							return "'$val'";
@@ -1282,16 +1283,16 @@ function updateDictionaryInFile($module, $file, $dicts)
 }
 
 /**
- * Creates a new dictionary table.
+ * Create a new dictionary table.
  *
- * for creating a new dictionary table in Dolibarr. It generates the necessary SQL code to define the table structure,
+ * It generates the necessary SQL code to define the table structure,
  * including columns such as 'rowid', 'code', 'label', 'position', 'use_default', 'active', etc. The table name is constructed based on the provided $namedic parameter.
  *
- * @param string $modulename The lowercase name of the module for which the dictionary table is being created.
- * @param string $file The file path to the Dolibarr module builder file where the dictionaries are defined.
- * @param string $namedic The name of the dictionary, which will also be used as the base for the table name.
- * @param array<string,string|array<string,int|string>>	$dictionnaires An optional array containing pre-existing dictionary data, including 'tabname', 'tablib', 'tabsql', etc.
- * @return int<-1,-1>|void Return int < 0 if error, return nothing on success
+ * @param	string	$modulename 	The lowercase name of the module for which the dictionary table is being created.
+ * @param	string	$file 			The file path to the Dolibarr module builder file where the dictionaries are defined.
+ * @param	string	$namedic 		The name of the dictionary, which will also be used as the base for the table name.
+ * @param	?array{langs:string,tabname:string[],tablib:string[],tabsql:string[],tabsqlsort:string[],tabfield:string[],tabfieldvalue:string[],tabfieldinsert:string[],tabrowid:string[],tabcond:array<string|bool|int>,tabhelp:array<array{code:string,field2:string}>}	$dictionnaires	An optional array containing pre-existing dictionary data, including tabname, tablib, tabsql, etc.
+ * @return	int<-1,-1> 					Return int < 0 if error, return nothing on success
  */
 function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = null)
 {
@@ -1299,7 +1300,7 @@ function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = nul
 
 	if (empty($namedic)) {
 		setEventMessages($langs->trans("ErrorEmptyNameDic"), null, 'errors');
-		return;
+		return -1;
 	}
 	if (!file_exists($file)) {
 		return -1;
@@ -1319,7 +1320,6 @@ function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = nul
 		'active' => array('type' => 'integer', 'value' => 3)
 	);
 
-
 	$primaryKey = 'rowid';
 	foreach ($columns as $key => $value) {
 		if ($key === 'rowid') {
@@ -1336,7 +1336,7 @@ function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = nul
 	$checkTable = $db->DDLDescTable(MAIN_DB_PREFIX.strtolower($namedic));
 	if ($checkTable && $db->num_rows($checkTable) > 0) {
 		setEventMessages($langs->trans("ErrorTableExist", $namedic), null, 'errors');
-		return;
+		return -1;
 	} else {
 		$_results = $db->DDLCreateTable(MAIN_DB_PREFIX.strtolower($namedic), $columns, $primaryKey, "");
 		if ($_results < 0) {
@@ -1364,14 +1364,16 @@ function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = nul
 	if ($writeInfile > 0) {
 		setEventMessages($langs->trans("DictionariesCreated", ucfirst(substr($namedic, 2))), null);
 	}
+
+	return -1;
 }
 
 /**
  * Generate Urls and add them to documentation module
  *
- * @param string $file_api   filename or path of api
- * @param string $file_doc   filename or path of documentation
- * @return int<-1,1>         -1 if KO, 1 if OK, 0 if nothing change
+ * @param	string	$file_api	filename or path of api
+ * @param	string	$file_doc	filename or path of documentation
+ * @return	int<-1,1>			-1 if KO, 1 if OK, 0 if nothing change
  */
 function writeApiUrlsInDoc($file_api, $file_doc)
 {
@@ -1383,7 +1385,7 @@ function writeApiUrlsInDoc($file_api, $file_doc)
 	$extractUrls = explode("\n", $string);
 
 	// extract urls from file
-	$urlValues = [];
+	$urlValues = array();
 	foreach ($extractUrls as $key => $line) {
 		$lineWithoutTabsSpaces = preg_replace('/^[\t\s]+/', '', $line);
 		if (strpos($lineWithoutTabsSpaces, '* @url') === 0) {
@@ -1394,7 +1396,7 @@ function writeApiUrlsInDoc($file_api, $file_doc)
 
 	// get urls by object
 	$str = $_SERVER['HTTP_HOST'].'/api/index.php/';
-	$groupedUrls = [];
+	$groupedUrls = array();
 	foreach ($urlValues as $url) {
 		if (preg_match('/(?:GET|POST|PUT|DELETE) (\w+)s/', $url, $matches)) {
 			$objectName = $matches[1];
@@ -1426,9 +1428,9 @@ function writeApiUrlsInDoc($file_api, $file_doc)
 
 /**
  * count directories or files in modulebuilder folder
- * @param  string $path  path of directory
- * @param  int    $type  type of file 1= file,2=directory
- * @return int|bool
+ * @param	string		$path	path of directory
+ * @param	int<1,2>	$type	type of file 1= file,2=directory
+ * @return	int|false 			False on failure (path is not a directory)
  */
 function countItemsInDirectory($path, $type = 1)
 {

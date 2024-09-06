@@ -124,7 +124,7 @@ $form = new Form($db);
 $formadmin = new FormAdmin($db);
 
 $wikihelp = 'EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
-llxHeader('', $langs->trans("Setup"), $wikihelp);
+llxHeader('', $langs->trans("Setup"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-menus');
 
 print load_fiche_titre($langs->trans("Menus"), '', 'title_setup');
 
@@ -149,14 +149,14 @@ print '<input type="hidden" name="action" value="update">';
 print dol_get_fiche_head($head, 'handler', '', -1);
 
 print '<span class="opacitymedium">'.$langs->trans("MenusDesc")."</span><br>\n";
-print "<br>\n";
+print "<br><br>\n";
 
 
 clearstatcache();
 
 // Gestionnaires de menu
 print '<table class="noborder centpercent">';
-print '<tr class="liste_titre"><td width="35%">'.$langs->trans("Menu").'</td>';
+print '<tr class="liste_titre"><td>'.$langs->trans("Menu").'</td>';
 print '<td>';
 print $form->textwithpicto($langs->trans("InternalUsers"), $langs->trans("InternalExternalDesc"));
 print '</td>';

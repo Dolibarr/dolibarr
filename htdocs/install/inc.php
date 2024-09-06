@@ -256,6 +256,7 @@ if (!defined('DONOTLOADCONF') && file_exists($conffile) && filesize($conffile) >
 		$includeconferror = 'ErrorBadFormatForConfFile';
 	}
 }
+
 $conf->global->MAIN_ENABLE_LOG_TO_HTML = 1;
 
 // Define prefix
@@ -294,7 +295,7 @@ if (empty($conf->db->user)) {
 	$conf->db->user = '';
 }
 
-// Define array of document root directories
+// Define an array of document root directories
 $conf->file->dol_document_root = array(DOL_DOCUMENT_ROOT);
 if (!empty($dolibarr_main_document_root_alt)) {
 	// dolibarr_main_document_root_alt contains several directories
@@ -591,13 +592,15 @@ function pHeader($subtitle, $next, $action = 'set', $param = '', $forcejqueryurl
 	print DOL_VERSION;
 	print '</div><br>';
 
-	print '<span class="titre">'.$langs->trans("DolibarrSetup");
+	print '<span class="titre">';
 	if ($subtitle) {
-		print ' - '.$subtitle;
+		print $subtitle;
+	} else {
+		print $langs->trans("DolibarrSetup");
 	}
 	print '</span>'."\n";
 
-	print '<form name="forminstall" style="width: 100%" action="'.$next.'.php'.($param ? '?'.$param : '').'" method="POST"';
+	print '<form name="forminstall" id="forminstall" class="centpercent" action="'.$next.'.php'.($param ? '?'.$param : '').'" method="POST"';
 	if ($next == 'step5') {
 		print ' autocomplete="off"';
 	}
@@ -605,9 +608,11 @@ function pHeader($subtitle, $next, $action = 'set', $param = '', $forcejqueryurl
 	print '<input type="hidden" name="testpost" value="ok">'."\n";
 	print '<input type="hidden" name="action" value="'.$action.'">'."\n";
 
-	print '<table class="main" width="100%"><tr><td>'."\n";
+	print '<div id="divinstall">';
 
-	print '<table class="'.$csstable.'" width="100%"><tr><td>'."\n";
+	print '<table class="main centpercent"><tr><td>'."\n";
+
+	print '<table class="'.$csstable.' centpercent"><tr><td>'."\n";
 }
 
 /**
@@ -633,6 +638,8 @@ function pFooter($nonext = 0, $setuplang = '', $jscheckfunction = '', $withpleas
 
 	print $morehtml;
 
+	print '</div>';
+
 	if (!$nonext || ($nonext == '2')) {
 		print '<div class="nextbutton" id="nextbutton">';
 		if ($nonext == '2') {
@@ -646,7 +653,8 @@ function pFooter($nonext = 0, $setuplang = '', $jscheckfunction = '', $withpleas
 		if ($jscheckfunction) {
 			print ' onClick="return '.$jscheckfunction.'();"';
 		}
-		print '></div>';
+		print '>';
+		print '</div>';
 		if ($withpleasewait) {
 			print '<div style="visibility: hidden;" class="pleasewait" id="pleasewait"><br>'.$langs->trans("NextStepMightLastALongTime").'<br><br><div class="blinkwait">'.$langs->trans("PleaseBePatient").'</div></div>';
 		}
@@ -720,8 +728,7 @@ function detect_dolibarr_main_document_root()
  */
 function detect_dolibarr_main_data_root($dolibarr_main_document_root)
 {
-	$dolibarr_main_data_root = preg_replace("/\/htdocs$/", "", $dolibarr_main_document_root);
-	$dolibarr_main_data_root .= "/documents";
+	$dolibarr_main_data_root = preg_replace("/\/[^\/]+$/", "/documents", $dolibarr_main_document_root);
 	return $dolibarr_main_data_root;
 }
 
