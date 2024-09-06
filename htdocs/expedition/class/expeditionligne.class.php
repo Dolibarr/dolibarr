@@ -563,8 +563,8 @@ class ExpeditionLigne extends CommonObjectLine
 
 			// fetch remaining lot qty
 			$shipmentlinebatch = new ExpeditionLineBatch($this->db);
-
-			if (!$error && ($lotArray = $shipmentlinebatch->fetchAll($this->id)) < 0) {
+			$lotArray = $shipmentlinebatch->fetchAll($this->id);
+			if (!$error && $lotArray < 0) {
 				$this->errors[] = $this->db->lasterror()." - ExpeditionLineBatch::fetchAll";
 				$error++;
 			} else {
