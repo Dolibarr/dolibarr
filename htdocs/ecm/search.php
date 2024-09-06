@@ -104,7 +104,7 @@ if (!$permissiontoread) {
  * View
  */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-ecm page-search');
 
 $form = new Form($db);
 $ecmdirstatic = new EcmDirectory($db);

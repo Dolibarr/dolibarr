@@ -61,7 +61,7 @@ class mailing_xinputuser extends MailingTargets
 	 *	array of SQL request that returns two field:
 	 *	One called "label", One called "nb".
 	 *
-	 *	@return		array		Array with SQL requests
+	 *	@return		string[]		Array with SQL requests
 	 */
 	public function getSqlArrayForStats()
 	{

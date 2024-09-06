@@ -206,3 +206,4 @@ StatusSupplierOrderReceivedPartially=Recibido parcialmente
 StatusSupplierOrderReceivedAll=Todos los productos recibidos
 NeedAtLeastOneInvoice = Tiene que haber al menos una Factura
 LineAlreadyDispatched = La línea de pedido ya se recibió.
+OrderStatusMakeOperationForbidden = Estado del pedido prohibido para esta operación.

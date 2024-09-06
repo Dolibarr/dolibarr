@@ -102,7 +102,7 @@ $user->loadDefaultValues();
  */
 function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
 {
-	global $user, $conf, $langs, $mysoc;
+	global $conf, $langs, $mysoc;
 
 	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss); // Show html headers
 
@@ -444,7 +444,7 @@ if (empty($reshook) && $action == 'add') {
 						}
 						if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 							if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-								$urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$partnership->ref, 2));
+								$urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$partnership->ref, '2'));
 							} else {
 								$urlback .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
 							}
@@ -459,7 +459,7 @@ if (empty($reshook) && $action == 'add') {
 						}
 						if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 							if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-								$urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$partnership->ref, 2));
+								$urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$partnership->ref, '2'));
 							} else {
 								$urlback .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
 							}
@@ -474,7 +474,7 @@ if (empty($reshook) && $action == 'add') {
 						}
 						if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 							if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-								$urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$partnership->ref, 2));
+								$urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$partnership->ref, '2'));
 							} else {
 								$urlback .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
 							}
@@ -489,7 +489,7 @@ if (empty($reshook) && $action == 'add') {
 						}
 						if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 							if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-								$urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$partnership->ref, 2));
+								$urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$partnership->ref, '2'));
 							} else {
 								$urlback .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
 							}
@@ -655,20 +655,20 @@ print '<tr><td>'.$langs->trans('Country').'</td><td>';
 print img_picto('', 'country', 'class="pictofixedwidth"');
 $country_id = GETPOSTINT('country_id');
 if (!$country_id && getDolGlobalString('PARTNERSHIP_NEWFORM_FORCECOUNTRYCODE')) {
-	$country_id = getCountry($conf->global->PARTNERSHIP_NEWFORM_FORCECOUNTRYCODE, 2, $db, $langs);
+	$country_id = getCountry($conf->global->PARTNERSHIP_NEWFORM_FORCECOUNTRYCODE, '2', $db, $langs);
 }
 if (!$country_id && !empty($conf->geoipmaxmind->enabled)) {
 	$country_code = dol_user_country();
 	//print $country_code;
 	if ($country_code) {
-		$new_country_id = getCountry($country_code, 3, $db, $langs);
+		$new_country_id = getCountry($country_code, '3', $db, $langs);
 		//print 'xxx'.$country_code.' - '.$new_country_id;
 		if ($new_country_id) {
 			$country_id = $new_country_id;
 		}
 	}
 }
-$country_code = getCountry($country_id, 2, $db, $langs);
+$country_code = getCountry($country_id, '2', $db, $langs);
 print $form->select_country($country_id, 'country_id');
 print '</td></tr>';
 // State

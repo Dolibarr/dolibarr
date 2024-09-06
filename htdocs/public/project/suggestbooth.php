@@ -285,8 +285,8 @@ if (empty($reshook) && $action == 'add') {
 				$errmsg .= $thirdparty->error;
 				$errors = array_merge($errors, $thirdparty->errors);
 			} else {
-				$thirdparty->country_code = getCountry($thirdparty->country_id, 2, $db, $langs);
-				$thirdparty->country      = getCountry($thirdparty->country_code, 0, $db, $langs);
+				$thirdparty->country_code = getCountry($thirdparty->country_id, '2', $db, $langs);
+				$thirdparty->country      = getCountry($thirdparty->country_code, '', $db, $langs);
 			}
 		}
 		// From there we have a thirdparty, now looking for the contact
@@ -467,7 +467,7 @@ if (empty($reshook) && $action == 'add') {
 								$redirection = $dolibarr_main_url_root.'/public/payment/newpayment.php?source='.$sourcetouse.'&ref='.$reftouse.'&booth='.$conforbooth->id;
 								if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 									if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-										$redirection .= '&securekey='.dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . $sourcetouse . $reftouse, 2); // Use the source in the hash to avoid duplicates if the references are identical
+										$redirection .= '&securekey='.dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . $sourcetouse . $reftouse, '2'); // Use the source in the hash to avoid duplicates if the references are identical
 									} else {
 										$redirection .= '&securekey='.$conf->global->PAYMENT_SECURITY_TOKEN;
 									}
@@ -533,7 +533,7 @@ if (empty($reshook) && $action == 'add') {
 			dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
 		}
 
-		$securekeyurl = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.$id, 2);
+		$securekeyurl = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.$id, '2');
 		$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?id='.$id.'&securekey='.$securekeyurl;
 		header("Location: ".$redirection);
 		exit;
@@ -662,20 +662,20 @@ print '<span class="star">*</span>';
 print '</td><td>';
 $country_id = GETPOST('country_id');
 if (!$country_id && getDolGlobalString('MEMBER_NEWFORM_FORCECOUNTRYCODE')) {
-	$country_id = getCountry($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE, 2, $db, $langs);
+	$country_id = getCountry($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE, '2', $db, $langs);
 }
 if (!$country_id && !empty($conf->geoipmaxmind->enabled)) {
 	$country_code = dol_user_country();
 	//print $country_code;
 	if ($country_code) {
-		$new_country_id = getCountry($country_code, 3, $db, $langs);
+		$new_country_id = getCountry($country_code, '3', $db, $langs);
 		//print 'xxx'.$country_code.' - '.$new_country_id;
 		if ($new_country_id) {
 			$country_id = $new_country_id;
 		}
 	}
 }
-$country_code = getCountry($country_id, 2, $db, $langs);
+$country_code = getCountry($country_id, '2', $db, $langs);
 print $form->select_country($country_id, 'country_id');
 print '</td></tr>';
 // State

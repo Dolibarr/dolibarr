@@ -327,13 +327,13 @@ if ($action == 'set' && $user->admin) {
 	exit;
 } elseif (getDolGlobalInt("MAIN_FEATURES_LEVEL") > 1 && $action == 'reload' && $user->admin && GETPOST('confirm') == 'yes') {
 	$result = unActivateModule($value, 0);
-	dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1, 'chaine', 0, '', $conf->entity);
 	if ($result) {
 		setEventMessages($result, null, 'errors');
 		header("Location: ".$_SERVER["PHP_SELF"]."?mode=".$mode.$param.($page_y ? '&page_y='.$page_y : ''));
 	}
 	$resarray = activateModule($value, 0, 1);
-	dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1), 'chaine', 0, '', $conf->entity);
 	if (!empty($resarray['errors'])) {
 		setEventMessages('', $resarray['errors'], 'errors');
 	} else {
@@ -374,7 +374,7 @@ if (!dol_is_dir($dirins)) {
 $dirins_ok = (dol_is_dir($dirins));
 
 $help_url = 'EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
-llxHeader('', $langs->trans("Setup"), $help_url, '', 0, 0, $morejs, $morecss, 0, 'mod-admin page-modules');
+llxHeader('', $langs->trans("Setup"), $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-admin page-modules');
 
 
 // Search modules dirs
@@ -888,7 +888,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			if (!empty($objMod->disabled)) {
 				$codeenabledisable .= $langs->trans("Disabled");
 			} elseif (!empty($objMod->always_enabled) || ((isModEnabled('multicompany') && $objMod->core_enabled) && ($user->entity || $conf->entity != 1))) {
-				// @phan-suppress-next-line PhanUndeclaredMethodCall
+				// @phan-suppress-next-line PhanUndeclaredMethod
 				if (method_exists($objMod, 'alreadyUsed') && $objMod->alreadyUsed()) {
 					$codeenabledisable .= $langs->trans("Used");
 				} else {
@@ -899,7 +899,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 					$disableSetup++;
 				}
 			} else {
-				// @phan-suppress-next-line PhanUndeclaredMethodCall
+				// @phan-suppress-next-line PhanUndeclaredMethod
 				if (!empty($objMod->warnings_unactivation[$mysoc->country_code]) && method_exists($objMod, 'alreadyUsed') && $objMod->alreadyUsed()) {
 					$codeenabledisable .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;token='.newToken().'&amp;module_position='.$module_position.'&amp;action=reset_confirm&amp;confirm_message_code='.urlencode($objMod->warnings_unactivation[$mysoc->country_code]).'&amp;value='.$modName.'&amp;mode='.$mode.$param.'">';
 					$codeenabledisable .= img_picto($langs->trans("Activated").($warningstring ? ' '.$warningstring : ''), 'switch_on');

@@ -38,9 +38,9 @@ abstract class CommonOrder extends CommonObject
 	/**
 	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
@@ -205,7 +205,7 @@ abstract class CommonOrderLine extends CommonObjectLine
 
 	/**
 	 * Percent line discount
-	 * @var float
+	 * @var float|string
 	 */
 	public $remise_percent;
 
@@ -217,7 +217,7 @@ abstract class CommonOrderLine extends CommonObjectLine
 
 	/**
 	 * VAT %
-	 * @var float
+	 * @var float|string
 	 */
 	public $tva_tx;
 

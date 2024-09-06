@@ -31,7 +31,10 @@
 // $object = Object fetched;
 // $sendto
 // $withmaindocfilemail
-'@phan-var-force CommonObject $objecttmp';
+'
+@phan-var-force CommonObject $objecttmp
+@phan-var-force int[] $toselect
+';
 
 if (!empty($sall) || !empty($search_all)) {
 	$search_all = empty($sall) ? $search_all : $sall;

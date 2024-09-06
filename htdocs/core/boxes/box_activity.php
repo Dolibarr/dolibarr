@@ -2,6 +2,7 @@
 /* Copyright (C) 2012      Charles-François BENKE <charles.fr@benke.fr>
  * Copyright (C) 2005-2015 Laurent Destailleur    <eldy@users.sourceforge.net>
  * Copyright (C) 2014-2021 Frederic France        <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,7 +89,7 @@ class box_activity extends ModeleBoxes
 		$textHead = $langs->trans("Activity").' - '.$langs->trans("LastXMonthRolling", $nbofperiod);
 		$this->info_box_head = array(
 			'text' => $textHead,
-			'limit'=> dol_strlen($textHead),
+			'limit' => dol_strlen($textHead),
 		);
 
 		// compute the year limit to show
@@ -175,7 +176,7 @@ class box_activity extends ModeleBoxes
 				if (count($data) == 0) {
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center"',
-						'text'=>'<span class="opacitymedium">'.$langs->trans("NoRecordedProposals").'</span>',
+						'text' => '<span class="opacitymedium">'.$langs->trans("NoRecordedProposals").'</span>',
 					);
 					$line++;
 				}
@@ -235,7 +236,7 @@ class box_activity extends ModeleBoxes
 
 					$this->info_box_contents[$line][1] = array(
 						'td' => '',
-						'text' =>$langs->trans("Orders")."&nbsp;".$commandestatic->LibStatut($data[$j]->fk_statut, 0, 0),
+						'text' => $langs->trans("Orders")."&nbsp;".$commandestatic->LibStatut($data[$j]->fk_statut, 0, 0),
 					);
 
 					$this->info_box_contents[$line][2] = array(
@@ -261,7 +262,7 @@ class box_activity extends ModeleBoxes
 				if (count($data) == 0) {
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center"',
-						'text'=>$langs->trans("NoRecordedOrders"),
+						'text' => $langs->trans("NoRecordedOrders"),
 					);
 					$line++;
 				}
@@ -349,7 +350,7 @@ class box_activity extends ModeleBoxes
 				if (count($data) == 0) {
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center"',
-						'text'=>$langs->trans("NoRecordedInvoices"),
+						'text' => $langs->trans("NoRecordedInvoices"),
 					);
 					$line++;
 				}
@@ -418,7 +419,7 @@ class box_activity extends ModeleBoxes
 				if (count($data) == 0) {
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center"',
-						'text'=>$langs->trans("NoRecordedUnpaidInvoices"),
+						'text' => $langs->trans("NoRecordedUnpaidInvoices"),
 					);
 					$line++;
 				}
@@ -439,9 +440,9 @@ class box_activity extends ModeleBoxes
 	/**
 	 *  Method to show box
 	 *
-	 *  @param	array	$head       Array with properties of box title
-	 *  @param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
+	 *	@param	?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}	$head	Array with properties of box title
+	 *	@param	?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>	$contents	Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *  @return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)

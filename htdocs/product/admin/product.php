@@ -183,6 +183,8 @@ if ($action == 'specimen') { // For products
 
 		$module = new $classname($db);
 
+		'@phan-var-force ModelePDFProduct $module';
+
 		if ($module->write_file($product, $langs, '') > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=product&file=SPECIMEN.pdf");
 			return;
@@ -323,6 +325,7 @@ foreach ($dirproduct as $dirroot) {
 				}
 
 				$modCodeProduct = new $file();
+				'@phan-var-force ModeleProductCode $modCodeProduct';
 
 				// Show modules according to features level
 				if ($modCodeProduct->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -337,7 +340,7 @@ foreach ($dirproduct as $dirroot) {
 				print '<td>'.$modCodeProduct->info($langs).'</td>'."\n";
 				print '<td class="nowrap"><span class="opacitymedium">'.$modCodeProduct->getExample($langs).'</span></td>'."\n";
 
-				if (getDolGlobalString('PRODUCT_CODEPRODUCT_ADDON') && $conf->global->PRODUCT_CODEPRODUCT_ADDON == $file) {
+				if (getDolGlobalString('PRODUCT_CODEPRODUCT_ADDON') == $file) {
 					print '<td class="center">'."\n";
 					print img_picto($langs->trans("Activated"), 'switch_on');
 					print "</td>\n";
@@ -357,7 +360,7 @@ foreach ($dirproduct as $dirroot) {
 				}
 
 				print '<td class="center">';
-				$s = $modCodeProduct->getToolTip($langs, null, -1);
+				$s = $modCodeProduct->getToolTip($langs, '', -1);
 				print $form->textwithpicto('', $s, 1);
 				print '</td>';
 

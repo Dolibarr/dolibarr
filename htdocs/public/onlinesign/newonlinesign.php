@@ -497,7 +497,7 @@ if ($source == 'proposal') {
 } elseif ($source == 'fichinter') {
 	// Signature on fichinter
 	$found = true;
-	$langs->load("fichinter");
+	$langs->load("interventions");
 
 	$result = $object->fetch_thirdparty($object->socid);
 
@@ -602,7 +602,7 @@ if ($source == 'proposal') {
 } elseif ($source == 'expedition') {
 	// Signature on expedition
 	$found = true;
-	$langs->load("fichinter");
+	$langs->load("interventions");
 
 	$result = $object->fetch_thirdparty($object->socid);
 
@@ -769,7 +769,7 @@ if ($action == "dosign" && empty($cancel)) {
 						"entity" : \''.dol_escape_htmltag($entity).'\',
 					},
 					success: function(response) {
-						if (response == "success"){
+						if (response.trim() === "success") {
 							console.log("Success on saving signature");
 							window.location.replace("'.$_SERVER["PHP_SELF"].'?ref='.urlencode($ref).'&source='.urlencode($source).'&message=signed&securekey='.urlencode($SECUREKEY).(isModEnabled('multicompany') ? '&entity='.(int) $entity : '').'");
 						} else {

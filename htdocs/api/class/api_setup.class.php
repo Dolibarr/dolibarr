@@ -62,15 +62,17 @@ class Setup extends DolibarrApi
 	 * @param int       $limit      Number of items per page
 	 * @param int       $page       Page number {@min 0}
 	 * @param string    $elementtype       Type of element ('adherent', 'commande', 'thirdparty', 'facture', 'propal', 'product', ...)
+	 * @param string    $lang       Code of the language the label of the type must be translated to
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.label:like:'SO-%')"
 	 * @return array				List of extra fields
+	 * @phan-return Object[]		List of extra fields
 	 *
 	 * @url     GET actiontriggers
 	 *
 	 * @throws	RestException	400		Bad value for sqlfilters
 	 * @throws	RestException	503		Error when retrieving list of action triggers
 	 */
-	public function getListOfActionTriggers($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $elementtype = '', $sqlfilters = '')
+	public function getListOfActionTriggers($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $elementtype = '', $lang = '', $sqlfilters = '')
 	{
 		$list = array();
 
@@ -111,7 +113,9 @@ class Setup extends DolibarrApi
 			$num = $this->db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
 			for ($i = 0; $i < $min; $i++) {
-				$list[] = $this->db->fetch_object($result);
+				$type = $this->db->fetch_object($result);
+				$this->translateLabel($type, $lang, 'Notify_', array('other'));
+				$list[] = $type;
 			}
 		} else {
 			throw new RestException(503, 'Error when retrieving list of action triggers : '.$this->db->lasterror());
@@ -1334,7 +1338,7 @@ class Setup extends DolibarrApi
 
 		$sql = "SELECT t.rowid as id, t.name, t.entity, t.elementtype, t.label, t.type, t.size, t.fieldcomputed, t.fielddefault,";
 		$sql .= " t.fieldunique, t.fieldrequired, t.perms, t.enabled, t.pos, t.alwayseditable, t.param, t.list, t.printable,";
-		$sql .= " t.totalizable, t.langs, t.help, t.css, t.cssview, t.fk_user_author, t.fk_user_modif, t.datec, t.tms";
+		$sql .= " t.totalizable, t.langs, t.help, t.css, t.cssview, t.csslist, t.fk_user_author, t.fk_user_modif, t.datec, t.tms";
 		$sql .= " FROM ".MAIN_DB_PREFIX."extrafields as t";
 		$sql .= " WHERE t.entity IN (".getEntity('extrafields').")";
 		$sql .= " AND t.elementtype = '".$this->db->escape($elementtype)."'";

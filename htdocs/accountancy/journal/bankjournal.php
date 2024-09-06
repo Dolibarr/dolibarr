@@ -137,10 +137,10 @@ $sql  = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.amount_main_c
 $sql .= " ba.courant, ba.ref as baref, ba.account_number, ba.fk_accountancy_journal,";
 $sql .= " soc.rowid as socid, soc.nom as name, soc.email as email, bu1.type as typeop_company,";
 if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
-	$sql .= " spe.accountancy_code_customer as code_compta,";
+	$sql .= " spe.accountancy_code_customer as code_compta_client,";
 	$sql .= " spe.accountancy_code_supplier as code_compta_fournisseur,";
 } else {
-	$sql .= " soc.code_compta,";
+	$sql .= " soc.code_compta as code_compta_client,";
 	$sql .= " soc.code_compta_fournisseur,";
 }
 $sql .= " u.accountancy_code, u.rowid as userid, u.lastname as lastname, u.firstname as firstname, u.email as useremail, u.statut as userstatus,";
@@ -215,7 +215,7 @@ $tabtype = array();
 $tabmoreinfo = array();
 
 '
-@phan-var-force array<array{id:mixed,name:mixed,code_compta:string,email:string}> $tabcompany
+@phan-var-force array<array{id:mixed,name:mixed,code_compta_client:string,email:string}> $tabcompany
 @phan-var-force array<array{id:int,name:string,lastname:string,firstname:string,email:string,accountancy_code:string,status:int> $tabuser
 @phan-var-force array<int,array{date:string,type_payment:string,ref:string,fk_bank:int,ban_account_ref:string,fk_bank_account:int,lib:string,type:string}> $tabpay
 @phan-var-force array<array{lib:string,date?:int|string,type_payment?:string,ref?:string,fk_bank?:int,ban_account_ref?:string,fk_bank_account?:int,type?:string,bank_account_ref?:string,paymentid?:int,paymentsupplierid?:int,soclib?:string,paymentscid?:int,paymentdonationid?:int,paymentsubscriptionid?:int,paymentvatid?:int,paymentsalid?:int,paymentexpensereport?:int,paymentvariousid?:int,account_various?:string,paymentloanid?:int}> $tabtp
@@ -279,7 +279,7 @@ if ($result) {
 			$compta_soc = (($obj->code_compta_fournisseur != "") ? $obj->code_compta_fournisseur : $account_supplier);
 		}
 		if ($lineisasale > 0) {
-			$compta_soc = (!empty($obj->code_compta) ? $obj->code_compta : $account_customer);
+			$compta_soc = (!empty($obj->code_compta_client) ? $obj->code_compta_client : $account_customer);
 		}
 
 		$tabcompany[$obj->rowid] = array(
@@ -611,25 +611,6 @@ if ($result) {
 			$tabtp[$obj->rowid]['NotDefined'] = $tabbq[$obj->rowid][$compta_bank];
 		}
 
-		// Check account number is ok
-		/*if ($action == 'writebookkeeping')		// Make test now in such a case
-		{
-			reset($tabbq[$obj->rowid]);
-			$first_key_tabbq = key($tabbq[$obj->rowid]);
-			if (empty($first_key_tabbq))
-			{
-				$error++;
-				setEventMessages($langs->trans('ErrorAccountancyCodeOnBankAccountNotDefined', $obj->baref), null, 'errors');
-			}
-			reset($tabtp[$obj->rowid]);
-			$first_key_tabtp = key($tabtp[$obj->rowid]);
-			if (empty($first_key_tabtp))
-			{
-				$error++;
-				setEventMessages($langs->trans('ErrorAccountancyCodeOnThirdPartyNotDefined'), null, 'errors');
-			}
-		}*/
-
 		// if($obj->socid)$tabtp[$obj->rowid][$compta_soc] += $amounttouse;
 
 		$i++;
@@ -646,7 +627,7 @@ if ($result) {
 //var_dump($tabtype);
 
 // Write bookkeeping
-if (!$error && $action == 'writebookkeeping') {
+if (!$error && $action == 'writebookkeeping' && $user->hasRight('accounting', 'bind', 'write')) {
 	$now = dol_now();
 
 	$accountingaccountcustomer = new AccountingAccount($db);
@@ -980,7 +961,7 @@ if (!$error && $action == 'writebookkeeping') {
 
 
 // Export
-if ($action == 'exportcsv') {		// ISO and not UTF8 !
+if ($action == 'exportcsv' && $user->hasRight('accounting', 'bind', 'write')) {		// ISO and not UTF8 !
 	$sep = getDolGlobalString('ACCOUNTING_EXPORT_SEPARATORCSV');
 
 	$filename = 'journal';

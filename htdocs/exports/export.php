@@ -167,7 +167,7 @@ $result = restrictedArea($user, 'export');
  * Actions
  */
 
-if ($action == 'selectfield') {     // Selection of field at step 2
+if ($action == 'selectfield' && $user->hasRight('export', 'creer')) {     // Selection of field at step 2
 	$fieldsarray = $objexport->array_export_fields[0];
 	$fieldsentitiesarray = $objexport->array_export_entities[0];
 	$fieldsdependenciesarray = $objexport->array_export_dependencies[0];
@@ -222,7 +222,7 @@ if ($action == 'selectfield') {     // Selection of field at step 2
 		setEventMessages($warnings, null, 'warnings');
 	}
 }
-if ($action == 'unselectfield') {
+if ($action == 'unselectfield' && $user->hasRight('export', 'creer')) {
 	if (GETPOST("field") == 'all') {
 		$array_selected = array();
 		$_SESSION["export_selected_fields"] = $array_selected;
@@ -241,12 +241,12 @@ if ($action == 'unselectfield') {
 	}
 }
 
-if ($action == 'downfield' || $action == 'upfield') {
+if (($action == 'downfield' || $action == 'upfield') && $user->hasRight('export', 'creer')) {
 	$pos = $array_selected[GETPOST("field")];
-	if ($action == 'downfield') {
+	if ($action == 'downfield') {	// Test on permission already done
 		$newpos = $pos + 1;
 	}
-	if ($action == 'upfield') {
+	if ($action == 'upfield') {		// Test on permission already done
 		$newpos = $pos - 1;
 	}
 	// Recherche code avec qui switcher
@@ -265,14 +265,14 @@ if ($action == 'downfield' || $action == 'upfield') {
 	}
 }
 
-if ($step == 1 || $action == 'cleanselect') {
+if ($step == 1 || $action == 'cleanselect') {	// Test on permission here not required
 	$_SESSION["export_selected_fields"] = array();
 	$_SESSION["export_filtered_fields"] = array();
 	$array_selected = array();
 	$array_filtervalue = array();
 }
 
-if ($action == 'builddoc') {
+if ($action == 'builddoc' && $user->hasRight('export', 'lire')) {
 	// Check permission
 	if (empty($objexport->array_export_perms[0])) {
 		accessforbidden();
@@ -298,7 +298,7 @@ if ($action == 'builddoc') {
 }
 
 // Delete file
-if ($step == 5 && $action == 'confirm_deletefile' && $confirm == 'yes') {
+if ($step == 5 && $action == 'confirm_deletefile' && $confirm == 'yes' && $user->hasRight('import', 'run')) {
 	// Check permission
 	if (empty($objexport->array_export_perms[0])) {
 		accessforbidden();
@@ -316,7 +316,7 @@ if ($step == 5 && $action == 'confirm_deletefile' && $confirm == 'yes') {
 	exit;
 }
 
-if ($action == 'deleteprof') {
+if ($action == 'deleteprof' && $user->hasRight('import', 'run')) {
 	// Check permission
 	if (empty($objexport->array_export_perms[0])) {
 		accessforbidden();
@@ -329,7 +329,7 @@ if ($action == 'deleteprof') {
 }
 
 // TODO The export for filter is not yet implemented (old code created conflicts with step 2). We must use same way of working and same combo list of predefined export than step 2.
-if ($action == 'add_export_model') {
+if ($action == 'add_export_model' && $user->hasRight('import', 'run')) {
 	// Check permission
 	if (empty($objexport->array_export_perms[0])) {
 		accessforbidden();
@@ -380,7 +380,7 @@ if ($action == 'add_export_model') {
 }
 
 // Reload a predefined export model
-if ($step == 2 && $action == 'select_model') {
+if ($step == 2 && $action == 'select_model' && $user->hasRight('import', 'run')) {
 	$_SESSION["export_selected_fields"] = array();
 	$_SESSION["export_filtered_fields"] = array();
 
@@ -409,7 +409,7 @@ if ($step == 2 && $action == 'select_model') {
 }
 
 // Get form with filters
-if ($step == 4 && $action == 'submitFormField') {
+if ($step == 4 && $action == 'submitFormField' && $user->hasRight('import', 'run')) {
 	// Check permission
 	if (empty($objexport->array_export_perms[0])) {
 		accessforbidden();
@@ -566,9 +566,9 @@ if ($step == 2 && $datatoexport) {
 	print '<td>'.$langs->trans("Object").'</td>';
 	print '<td>'.$langs->trans("ExportableFields").'</td>';
 	print '<td width="100" class="center">';
-	print '<a class="liste_titre commonlink" title='.$langs->trans("All").' alt='.$langs->trans("All").' href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=selectfield&field=all">'.$langs->trans("All")."</a>";
+	print '<a class="liste_titre commonlink" title='.$langs->trans("All").' alt='.$langs->trans("All").' href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=selectfield&field=all&token='.newToken().'">'.$langs->trans("All")."</a>";
 	print ' / ';
-	print '<a class="liste_titre commonlink" title='.$langs->trans("None").' alt='.$langs->trans("None").' href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=unselectfield&field=all">'.$langs->trans("None")."</a>";
+	print '<a class="liste_titre commonlink" title='.$langs->trans("None").' alt='.$langs->trans("None").' href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=unselectfield&field=all&token='.newToken().'">'.$langs->trans("None")."</a>";
 	print '</td>';
 	print '<td width="44%">'.$langs->trans("ExportedFields").'</td>';
 	print '</tr>';
@@ -614,7 +614,7 @@ if ($step == 2 && $datatoexport) {
 		$tablename = getablenamefromfield($code, $sqlmaxforexport);
 		$htmltext = '<b>'.$langs->trans("Name").":</b> ".$text.'<br>';
 		if (!empty($objexport->array_export_special[0][$code])) {
-			$htmltext .= '<b>'.$langs->trans("ComputedField")." -> ".$langs->trans("Method")." :</b> ".$objexport->array_export_special[0][$code]['method']."<br>";
+			$htmltext .= '<b>'.$langs->trans("ComputedField")." -> ".$langs->trans("Method")." :</b> ".$objexport->array_export_special[0][$code]."<br>";
 		} else {
 			$htmltext .= '<b>'.$langs->trans("Table")." -> ".$langs->trans("Field").":</b> ".$tablename." -> ".preg_replace('/^.*\./', '', $code)."<br>";
 		}
@@ -724,12 +724,14 @@ if ($step == 3 && $datatoexport) {
 	print $objexport->array_export_label[0];
 	print '</td></tr>';
 
-	// Nbre champs exportes
+	// List of exported fields
 	print '<tr><td>'.$langs->trans("ExportedFields").'</td>';
 	$list = '';
 	foreach ($array_selected as $code => $value) {
-		$list .= (!empty($list) ? ', ' : '');
-		$list .= (isset($objexport->array_export_fields[0][$code]) ? $langs->trans($objexport->array_export_fields[0][$code]) : '');
+		if (isset($objexport->array_export_fields[0][$code])) {
+			$list .= (!empty($list) ? ', ' : '');
+			$list .= $langs->trans($objexport->array_export_fields[0][$code]);
+		}
 	}
 	print '<td>'.$list.'</td></tr>';
 
@@ -908,8 +910,10 @@ if ($step == 4 && $datatoexport) {
 	print '<tr><td>'.$langs->trans("ExportedFields").'</td>';
 	$list = '';
 	foreach ($array_selected as $code => $value) {
-		$list .= (!empty($list) ? ', ' : '');
-		$list .= $langs->trans($objexport->array_export_fields[0][$code]);
+		if (isset($objexport->array_export_fields[0][$code])) {
+			$list .= (!empty($list) ? ', ' : '');
+			$list .= $langs->trans($objexport->array_export_fields[0][$code]);
+		}
 	}
 	print '<td>'.$list.'</td>';
 	print '</tr>';
@@ -961,6 +965,10 @@ if ($step == 4 && $datatoexport) {
 	print '</tr>';
 
 	foreach ($array_selected as $code => $value) {
+		if (!isset($objexport->array_export_fields[0][$code])) {	// For example when field was in predefined filter but not more active (localtax1 disabled by setup of country)
+			continue;
+		}
+
 		print '<tr class="oddeven">';
 
 		$entity = (!empty($objexport->array_export_entities[0][$code]) ? $objexport->array_export_entities[0][$code] : $objexport->array_export_icon[0]);
@@ -1194,8 +1202,10 @@ if ($step == 5 && $datatoexport) {
 	print '<tr><td>'.$langs->trans("ExportedFields").'</td>';
 	$list = '';
 	foreach ($array_selected as $code => $label) {
-		$list .= (!empty($list) ? ', ' : '');
-		$list .= $langs->trans($objexport->array_export_fields[0][$code]);
+		if (isset($objexport->array_export_fields[0][$code])) {
+			$list .= (!empty($list) ? ', ' : '');
+			$list .= $langs->trans($objexport->array_export_fields[0][$code]);
+		}
 	}
 	print '<td>'.$list.'</td></tr>';
 

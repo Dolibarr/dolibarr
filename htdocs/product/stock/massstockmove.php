@@ -590,36 +590,36 @@ if (getDolGlobalString('MAIN_UPLOAD_DOC')) {
 	$maxphp = @ini_get('upload_max_filesize'); // In unknown
 	if (preg_match('/k$/i', $maxphp)) {
 		$maxphp = preg_replace('/k$/i', '', $maxphp);
-		$maxphp *= 1;
+		$maxphp = (int) $maxphp * 1;
 	}
 	if (preg_match('/m$/i', $maxphp)) {
 		$maxphp = preg_replace('/m$/i', '', $maxphp);
-		$maxphp *= 1024;
+		$maxphp = (int) $maxphp * 1024;
 	}
 	if (preg_match('/g$/i', $maxphp)) {
 		$maxphp = preg_replace('/g$/i', '', $maxphp);
-		$maxphp *= 1024 * 1024;
+		$maxphp = (int) $maxphp * 1024 * 1024;
 	}
 	if (preg_match('/t$/i', $maxphp)) {
 		$maxphp = preg_replace('/t$/i', '', $maxphp);
-		$maxphp *= 1024 * 1024 * 1024;
+		$maxphp = (int) $maxphp * 1024 * 1024 * 1024;
 	}
 	$maxphp2 = @ini_get('post_max_size'); // In unknown
 	if (preg_match('/k$/i', $maxphp2)) {
 		$maxphp2 = preg_replace('/k$/i', '', $maxphp2);
-		$maxphp2 *= 1;
+		$maxphp2 = (int) $maxphp2 * 1;
 	}
 	if (preg_match('/m$/i', $maxphp2)) {
 		$maxphp2 = preg_replace('/m$/i', '', $maxphp2);
-		$maxphp2 *= 1024;
+		$maxphp2 = (int) $maxphp2 * 1024;
 	}
 	if (preg_match('/g$/i', $maxphp2)) {
 		$maxphp2 = preg_replace('/g$/i', '', $maxphp2);
-		$maxphp2 *= 1024 * 1024;
+		$maxphp2 = (int) $maxphp2 * 1024 * 1024;
 	}
 	if (preg_match('/t$/i', $maxphp2)) {
 		$maxphp2 = preg_replace('/t$/i', '', $maxphp2);
-		$maxphp2 *= 1024 * 1024 * 1024;
+		$maxphp2 = (int) $maxphp2 * 1024 * 1024 * 1024;
 	}
 	// Now $max and $maxphp and $maxphp2 are in Kb
 	$maxmin = $max;
@@ -691,19 +691,18 @@ if (getDolGlobalInt('PRODUIT_LIMIT_SIZE') <= 0) {
 } else {
 	$limit = getDolGlobalString('PRODUIT_LIMIT_SIZE');
 }
-
 print img_picto($langs->trans("Product"), 'product', 'class="paddingright"');
-print $form->select_produits($id_product, 'productid', $filtertype, $limit, 0, -1, 2, '', 1, array(), 0, '1', 0, 'minwidth200imp maxwidth300', 1, '', null, 1);
+print $form->select_produits((isset($id_product)?$id_product:0), 'productid', $filtertype, $limit, 0, -1, 2, '', 1, array(), 0, '1', 0, 'minwidth200imp maxwidth300', 1, '', null, 1);
 print '</td>';
 // Batch number
 if (isModEnabled('productbatch')) {
 	print '<td class="nowraponall">';
 	print img_picto($langs->trans("LotSerial"), 'lot', 'class="paddingright"');
-	print '<input type="text" name="batch" class="flat maxwidth75" value="'.dol_escape_htmltag($batch).'">';
+	print '<input type="text" name="batch" class="flat maxwidth75" value="'.dol_escape_htmltag((isset($batch)?$batch:'')).'">';
 	print '</td>';
 }
 // Qty
-print '<td class="right"><input type="text" class="flat maxwidth50 right" name="qty" value="'.price2num((float) $qty, 'MS').'"></td>';
+print '<td class="right"><input type="text" class="flat maxwidth50 right" name="qty" value="'.price2num((float) (isset($qty)?$qty:0), 'MS').'"></td>';
 // Button to add line
 print '<td class="right"><input type="submit" class="button" name="addline" value="'.dol_escape_htmltag($titletoadd).'"></td>';
 

@@ -1,8 +1,7 @@
 <?php
 /* Copyright (C) 2017       Laurent Destailleur      <eldy@users.sourceforge.net>
  * Copyright (C) 2023-2024  Frédéric France          <frederic.france@free.fr>
- * Copyright (C) 2024		MDW                      <mdeweerd@users.noreply.github.com>
- * Copyright (C) ---Put here your own copyright and developer email---
+ * Copyright (C) ---Replace with your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,30 +106,28 @@ class MyObject extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,length?:int|string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @inheritdoc
+	 * Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		'rowid'         => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'noteditable' => 1, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id', 'css' => 'left'),
-		'entity'        => array('type' => 'integer', 'label' => 'Entity', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'default' => 1, 'index' => 1, 'position' => 10),
-		'ref'           => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'visible' => 1, 'noteditable' => 0, 'default' => '', 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 20, 'searchall' => 1, 'comment' => 'Reference of object', 'validate' => 1),
-		'label'         => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'visible' => 1, 'position' => 30, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'help' => 'Help text', 'showoncombobox' => 2, 'validate' => 1, 'alwayseditable' => 1),
-		'amount'        => array('type' => 'price', 'label' => 'Amount', 'enabled' => 1, 'visible' => 1, 'default' => 'null', 'position' => 40, 'searchall' => 0, 'isameasure' => 1, 'help' => 'Help text for amount', 'validate' => 1),
-		'qty'           => array('type' => 'real', 'label' => 'Qty', 'enabled' => 1, 'visible' => 1, 'default' => '0', 'position' => 45, 'searchall' => 0, 'isameasure' => 1, 'help' => 'Help text for quantity', 'css' => 'maxwidth75imp', 'validate' => 1),
-		'fk_soc' 		=> array('type' => 'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'picto' => 'company', 'label' => 'ThirdParty', 'visible' => 1, 'enabled' => 'isModEnabled("societe")', 'position' => 50, 'notnull' => -1, 'index' => 1, 'help' => 'OrganizationEventLinkToThirdParty', 'validate' => 1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150'),
-		'fk_project'    => array('type' => 'integer:Project:projet/class/project.class.php:1', 'label' => 'Project', 'picto' => 'project', 'enabled' => 'isModEnabled("project")', 'visible' => -1, 'position' => 52, 'notnull' => -1, 'index' => 1, 'validate' => 1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150'),
-		'description'   => array('type' => 'text', 'label' => 'Description', 'enabled' => 1, 'visible' => 3, 'position' => 60, 'validate' => 1),
-		'note_public'   => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 61, 'validate' => 1, 'cssview' => 'wordbreak'),
-		'note_private'  => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 62, 'validate' => 1, 'cssview' => 'wordbreak'),
-		'date_creation' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 500),
-		'tms'           => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -2, 'notnull' => 0, 'position' => 501),
-		//'date_validation '    =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'position'=>502),
-		'fk_user_creat' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'picto' => 'user', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 510, 'foreignkey' => 'user.rowid', 'csslist' => 'tdoverflowmax150'),
-		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'picto' => 'user', 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'position' => 511, 'csslist' => 'tdoverflowmax150'),
-		//'fk_user_valid' => array('type'=>'integer:User:user/class/user.class.php',      'label'=>'UserValidation',        'enabled'=>1, 'visible'=>-1, 'position'=>512),
-		'last_main_doc' => array('type' => 'varchar(255)', 'label' => 'LastMainDoc', 'enabled' => 1, 'visible' => 0, 'notnull' => 0, 'position' => 600),
-		'import_key'    => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'index' => 0, 'position' => 1000),
-		'model_pdf' 	=> array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'visible' => 0, 'notnull' => -1, 'position' => 1010),
-		'status'        => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'default' => 0, 'index' => 1, 'position' => 2000, 'arrayofkeyval' => array(0 => 'Draft', 1 => 'Validated', 9 => 'Canceled'), 'validate' => 1),
+		"rowid" => array("type" => "integer", "label" => "TechnicalID", "enabled" => 1, 'position' => 1, 'notnull' => 1, "visible" => 0, "noteditable" => 1, "index" => 1, "css" => "left", "comment" => "Id"),
+		"ref" => array("type" => "varchar(128)", "label" => "Ref", "enabled" => 1, 'position' => 20, 'notnull' => 1, "visible" => 1, "index" => 1, "searchall" => 1, "showoncombobox" => 1, "validate" => 1, "comment" => "Reference of object"),
+		"label" => array("type" => "varchar(255)", "label" => "Label", "enabled" => 1, 'position' => 30, 'notnull' => 0, "visible" => 1, "alwayseditable" => "1", "searchall" => 1, "css" => "minwidth300", "cssview" => "wordbreak", "help" => "Help text", "showoncombobox" => "2", "validate" => 1,),
+		"amount" => array("type" => "price", "label" => "Amount", "enabled" => 1, 'position' => 40, 'notnull' => 0, "visible" => 1, "default" => "null", "isameasure" => 1, "help" => "Help text for amount", "validate" => 1,),
+		"qty" => array("type" => "real", "label" => "Qty", "enabled" => 1, 'position' => 45, 'notnull' => 0, "visible" => 1, "default" => "0", "isameasure" => 1, "css" => "maxwidth75imp", "help" => "Help text for quantity", "validate" => 1,),
+		"fk_soc" => array("type" => "integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))", "label" => "ThirdParty", "picto" => "company", "enabled" => "isModEnabled('societe')", 'position' => 50, 'notnull' => -1, "visible" => 1, "index" => 1, "css" => "maxwidth500 widthcentpercentminusxx", "csslist" => "tdoverflowmax150", "help" => "OrganizationEventLinkToThirdParty", "validate" => 1,),
+		"fk_project" => array("type" => "integer:Project:projet/class/project.class.php:1", "label" => "Project", "picto" => "project", "enabled" => "isModEnabled('project')", 'position' => 52, 'notnull' => -1, "visible" => "-1", "index" => 1, "css" => "maxwidth500 widthcentpercentminusxx", "csslist" => "tdoverflowmax150", "validate" => 1,),
+		"description" => array("type" => "text", "label" => "Description", "enabled" => 1, 'position' => 60, 'notnull' => 0, "visible" => "3", "validate" => 1,),
+		"note_public" => array("type" => "html", "label" => "NotePublic", "enabled" => 1, 'position' => 61, 'notnull' => 0, "visible" => 0, "cssview" => "wordbreak", "validate" => 1,),
+		"note_private" => array("type" => "html", "label" => "NotePrivate", "enabled" => 1, 'position' => 62, 'notnull' => 0, "visible" => 0, "cssview" => "wordbreak", "validate" => 1,),
+		"date_creation" => array("type" => "datetime", "label" => "DateCreation", "enabled" => 1, 'position' => 500, 'notnull' => 1, "visible" => -2,),
+		"tms" => array("type" => "timestamp", "label" => "DateModification", "enabled" => 1, 'position' => 501, 'notnull' => 0, "visible" => -2,),
+		"fk_user_creat" => array("type" => "integer:User:user/class/user.class.php", "label" => "UserAuthor", "picto" => "user", "enabled" => 1, 'position' => 510, 'notnull' => 1, "visible" => -2, "foreignkey" => "0", "csslist" => "tdoverflowmax150",),
+		"fk_user_modif" => array("type" => "integer:User:user/class/user.class.php", "label" => "UserModif", "picto" => "user", "enabled" => 1, 'position' => 511, 'notnull' => -1, "visible" => -2, "csslist" => "tdoverflowmax150",),
+		"last_main_doc" => array("type" => "varchar(255)", "label" => "LastMainDoc", "enabled" => 1, 'position' => 600, 'notnull' => 0, "visible" => 0,),
+		"import_key" => array("type" => "varchar(14)", "label" => "ImportId", "enabled" => 1, 'position' => 1000, 'notnull' => -1, "visible" => -2,),
+		"model_pdf" => array("type" => "varchar(255)", "label" => "Model pdf", "enabled" => 1, 'position' => 1010, 'notnull' => -1, "visible" => 0,),
+		"status" => array("type" => "integer", "label" => "Status", "enabled" => 1, 'position' => 2000, 'notnull' => 1, "visible" => 1, "index" => 1, "arrayofkeyval" => array("0" => "Draft", "1" => "Validated", "9" => "Canceled"), "validate" => 1,),
 	);
 
 	/**
@@ -162,6 +159,9 @@ class MyObject extends CommonObject
 	 * @var int Thirdparty ID
 	 */
 	public $socid;		// both socid and fk_soc are used
+	/**
+	 * @var int Thirdparty ID
+	 */
 	public $fk_soc;		// both socid and fk_soc are used
 
 	/**
@@ -230,7 +230,7 @@ class MyObject extends CommonObject
 	/**
 	 * Constructor
 	 *
-	 * @param DoliDB $db Database handler
+	 * @param	DoliDB $db Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{
@@ -275,9 +275,9 @@ class MyObject extends CommonObject
 	/**
 	 * Create object into database
 	 *
-	 * @param  User $user      User that creates
-	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
-	 * @return int             Return integer <0 if KO, Id of created object if OK
+	 * @param	User		$user		User that creates
+	 * @param	int<0,1> 	$notrigger	0=launch triggers after, 1=disable triggers
+	 * @return	int<-1,max>				Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = 0)
 	{
@@ -291,9 +291,9 @@ class MyObject extends CommonObject
 	/**
 	 * Clone an object into another one
 	 *
-	 * @param  	User 	$user      	User that creates
-	 * @param  	int 	$fromid     Id of object to clone
-	 * @return 	mixed 				New object created, <0 if KO
+	 * @param	User 	$user		User that creates
+	 * @param	int 	$fromid		Id of object to clone
+	 * @return	self|int<-1,-1>		New object created, <0 if KO
 	 */
 	public function createFromClone(User $user, $fromid)
 	{
@@ -390,11 +390,11 @@ class MyObject extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param 	int    	$id   			Id object
-	 * @param 	string 	$ref  			Ref
-	 * @param	int		$noextrafields	0=Default to load extrafields, 1=No extrafields
-	 * @param	int		$nolines		0=Default to load extrafields, 1=No extrafields
-	 * @return 	int     				Return integer <0 if KO, 0 if not found, >0 if OK
+	 * @param	int    		$id   			Id object
+	 * @param	string 		$ref  			Ref
+	 * @param	int<0,1>	$noextrafields	0=Default to load extrafields, 1=No extrafields
+	 * @param	int<0,1>	$nolines		0=Default to load extrafields, 1=No extrafields
+	 * @return	int<-1,1>					Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null, $noextrafields = 0, $nolines = 0)
 	{
@@ -408,8 +408,8 @@ class MyObject extends CommonObject
 	/**
 	 * Load object lines in memory from the database
 	 *
-	 * @param	int		$noextrafields	0=Default to load extrafields, 1=No extrafields
-	 * @return 	int         			Return integer <0 if KO, 0 if not found, >0 if OK
+	 * @param	int<0,1>	$noextrafields	0=Default to load extrafields, 1=No extrafields
+	 * @return 	int<-1,1>					Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetchLines($noextrafields = 0)
 	{
@@ -425,14 +425,14 @@ class MyObject extends CommonObject
 	 * Using a fetchAll() with limit = 0 is a very bad practice. Instead try to forge yourself an optimized SQL request with
 	 * your own loop with start and stop pagination.
 	 *
-	 * @param  string      	$sortorder    	Sort Order
-	 * @param  string      	$sortfield    	Sort field
-	 * @param  int         	$limit        	Limit the number of lines returned
-	 * @param  int         	$offset       	Offset
-	 * @param  string		$filter       	Filter as an Universal Search string.
-	 * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
-	 * @param  string      	$filtermode   	No more used
-	 * @return array|int                 	int <0 if KO, array of pages if OK
+	 * @param	string		$sortorder	Sort Order
+	 * @param	string		$sortfield	Sort field
+	 * @param	int<0,max>	$limit		Limit the number of lines returned
+	 * @param	int<0,max>	$offset		Offset
+	 * @param	string		$filter		Filter as an Universal Search string.
+	 *                                  Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
+	 * @param	string		$filtermode	No longer used
+	 * @return	array<int,self>|int<-1,-1>	 <0 if KO, array of pages if OK
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 1000, $offset = 0, string $filter = '', $filtermode = 'AND')
 	{
@@ -500,9 +500,9 @@ class MyObject extends CommonObject
 	/**
 	 * Update object into database
 	 *
-	 * @param  User $user      User that modifies
-	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
-	 * @return int             Return integer <0 if KO, >0 if OK
+	 * @param	User		$user		User that modifies
+	 * @param	int<0,1>	$notrigger	0=launch triggers after, 1=disable triggers
+	 * @return	int<-1,1>				Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
@@ -512,9 +512,9 @@ class MyObject extends CommonObject
 	/**
 	 * Delete object in database
 	 *
-	 * @param User $user       	User that deletes
-	 * @param int 	$notrigger  0=launch triggers, 1=disable triggers
-	 * @return int             	Return integer <0 if KO, >0 if OK
+	 * @param	User		$user		User that deletes
+	 * @param	int<0,1> 	$notrigger	0=launch triggers, 1=disable triggers
+	 * @return	int<-1,1>				Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = 0)
 	{
@@ -525,10 +525,10 @@ class MyObject extends CommonObject
 	/**
 	 *  Delete a line of object in database
 	 *
-	 *	@param  User	$user       User that delete
-	 *  @param	int		$idline		Id of line to delete
-	 *  @param 	int 	$notrigger  0=launch triggers after, 1=disable triggers
-	 *  @return int         		>0 if OK, <0 if KO
+	 *	@param	User		$user		User that delete
+	 *  @param	int			$idline		Id of line to delete
+	 *  @param	int<0,1>	$notrigger	0=launch triggers after, 1=disable triggers
+	 *  @return	int<-2,1>				>0 if OK, <0 if KO
 	 */
 	public function deleteLine(User $user, $idline, $notrigger = 0)
 	{
@@ -544,9 +544,9 @@ class MyObject extends CommonObject
 	/**
 	 *	Validate object
 	 *
-	 *	@param		User	$user     		User making status change
-	 *  @param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 *	@return  	int						Return integer <=0 if OK, 0=Nothing done, >0 if KO
+	 *	@param	User		$user		User making status change
+	 *  @param	int<0,1>	$notrigger	1=Does not execute triggers, 0= execute triggers
+	 *	@return	int<-1,1>				Return integer <=0 if OK, 0=Nothing done, >0 if KO
 	 */
 	public function validate($user, $notrigger = 0)
 	{
@@ -680,9 +680,9 @@ class MyObject extends CommonObject
 	/**
 	 *	Set draft status
 	 *
-	 *	@param	User	$user			Object user that modify
-	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						Return integer <0 if KO, >0 if OK
+	 *	@param	User		$user		Object user that modify
+	 *  @param	int<0,1>	$notrigger	1=Does not execute triggers, 0=Execute triggers
+	 *	@return	int<0,1>				Return integer <0 if KO, >0 if OK
 	 */
 	public function setDraft($user, $notrigger = 0)
 	{
@@ -704,9 +704,9 @@ class MyObject extends CommonObject
 	/**
 	 *	Set cancel status
 	 *
-	 *	@param	User	$user			Object user that modify
-	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
+	 *	@param	User		$user		Object user that modify
+	 *  @param	int<0,1>	$notrigger	1=Does not execute triggers, 0=Execute triggers
+	 *	@return	int<-1,1>				Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function cancel($user, $notrigger = 0)
 	{
@@ -728,9 +728,9 @@ class MyObject extends CommonObject
 	/**
 	 *	Set back to validated status
 	 *
-	 *	@param	User	$user			Object user that modify
-	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
+	 *	@param	User		$user			Object user that modify
+	 *  @param	int<0,1>	$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *	@return	int<-1,1>					Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function reopen($user, $notrigger = 0)
 	{
@@ -752,9 +752,9 @@ class MyObject extends CommonObject
 	/**
 	 * getTooltipContentArray
 	 *
-	 * @param 	array 	$params 	Params to construct tooltip data
+	 * @param	array<string,string> 	$params 	Params to construct tooltip data
 	 * @since 	v18
-	 * @return 	array
+	 * @return	array{optimize?:string,picto?:string,ref?:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -782,11 +782,11 @@ class MyObject extends CommonObject
 	/**
 	 *  Return a link to the object card (with optionally the picto)
 	 *
-	 *  @param  int     $withpicto                  Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
-	 *  @param  string  $option                     On what the link point to ('nolink', ...)
-	 *  @param  int     $notooltip                  1=Disable tooltip
-	 *  @param  string  $morecss                    Add more css on link
-	 *  @param  int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *  @param	int     $withpicto                  Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+	 *  @param	string  $option                     On what the link point to ('nolink', ...)
+	 *  @param	int     $notooltip                  1=Disable tooltip
+	 *  @param	string  $morecss                    Add more css on link
+	 *  @param	int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *  @return	string                              String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
@@ -904,9 +904,9 @@ class MyObject extends CommonObject
 	/**
 	 *	Return a thumb for kanban views
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param	string	    			$option		Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param	?array<string,string>	$arraydata	Array of data
+	 *  @return	string								HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
@@ -947,7 +947,7 @@ class MyObject extends CommonObject
 	/**
 	 *  Return the label of the status
 	 *
-	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @param	int<0,6>	$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return	string 			       Label of status
 	 */
 	public function getLabelStatus($mode = 0)
@@ -958,8 +958,8 @@ class MyObject extends CommonObject
 	/**
 	 *  Return the label of the status
 	 *
-	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-	 *  @return	string 			       Label of status
+	 *  @param	int<0,6>	$mode	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return	string				Label of status
 	 */
 	public function getLibStatut($mode = 0)
 	{
@@ -970,9 +970,9 @@ class MyObject extends CommonObject
 	/**
 	 *  Return the label of a given status
 	 *
-	 *  @param	int		$status        Id status
-	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-	 *  @return string 			       Label of status
+	 *  @param	int			$status		Id status
+	 *  @param	int<0,6>	$mode		0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return	string					Label of status
 	 */
 	public function LibStatut($status, $mode = 0)
 	{
@@ -1004,7 +1004,7 @@ class MyObject extends CommonObject
 	/**
 	 *	Load the info information in the object
 	 *
-	 *	@param  int		$id       Id of object
+	 *	@param	int		$id       Id of object
 	 *	@return	void
 	 */
 	public function info($id)
@@ -1056,10 +1056,10 @@ class MyObject extends CommonObject
 	}
 
 	/**
-	 * Initialise object with example values
+	 * Initialize object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @return int
+	 * @return	int
 	 */
 	public function initAsSpecimen()
 	{
@@ -1073,7 +1073,7 @@ class MyObject extends CommonObject
 	/**
 	 * 	Create an array of lines
 	 *
-	 * 	@return array|int		array of lines if OK, <0 if KO
+	 * 	@return	CommonObjectLine[]|int		array of lines if OK, <0 if KO
 	 */
 	public function getLinesArray()
 	{
@@ -1094,7 +1094,7 @@ class MyObject extends CommonObject
 	/**
 	 *  Returns the reference to the following non used object depending on the active numbering module.
 	 *
-	 *  @return string      		Object free reference
+	 *  @return	string      		Object free reference
 	 */
 	public function getNextNumRef()
 	{
@@ -1127,6 +1127,7 @@ class MyObject extends CommonObject
 
 			if (class_exists($classname)) {
 				$obj = new $classname();
+				'@phan-var-force ModeleNumRefMyObject $obj';
 				$numref = $obj->getNextValue($this);
 
 				if ($numref != '' && $numref != '-1') {
@@ -1149,13 +1150,13 @@ class MyObject extends CommonObject
 	/**
 	 *  Create a document onto disk according to template module.
 	 *
-	 *  @param	    string		$modele			Force template to use ('' to not force)
-	 *  @param		Translate	$outputlangs	object lang a utiliser pour traduction
-	 *  @param      int			$hidedetails    Hide details of lines
-	 *  @param      int			$hidedesc       Hide description
-	 *  @param      int			$hideref        Hide ref
-	 *  @param      null|array  $moreparams     Array to provide more information
-	 *  @return     int         				0 if KO, 1 if OK
+	 *  @param	string		$modele			Force template to use ('' to not force)
+	 *  @param	Translate	$outputlangs	object lang a utiliser pour traduction
+	 *  @param	int<0,1>	$hidedetails    Hide details of lines
+	 *  @param	int<0,1>	$hidedesc       Hide description
+	 *  @param	int<0,1>	$hideref        Hide ref
+	 *  @param	?array<string,string>  $moreparams     Array to provide more information
+	 *  @return	int         				0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
@@ -1189,10 +1190,10 @@ class MyObject extends CommonObject
 	 * Return validation test result for a field.
 	 * Need MAIN_ACTIVATE_VALIDATION_RESULT to be called.
 	 *
-	 * @param  array   $fields	       		Array of properties of field to show
-	 * @param  string  $fieldKey            Key of attribute
-	 * @param  string  $fieldValue          value of attribute
-	 * @return bool 						Return false if fail, true on success, set $this->error for error message
+	 * @param   array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  $fields Array of properties of field to show
+	 * @param	string  $fieldKey            Key of attribute
+	 * @param	string  $fieldValue          value of attribute
+	 * @return	bool 						Return false if fail, true on success, set $this->error for error message
 	 */
 	public function validateField($fields, $fieldKey, $fieldValue)
 	{
@@ -1261,7 +1262,7 @@ class MyObjectLine extends CommonObjectLine
 	/**
 	 * Constructor
 	 *
-	 * @param DoliDB $db Database handler
+	 * @param	DoliDB $db Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{

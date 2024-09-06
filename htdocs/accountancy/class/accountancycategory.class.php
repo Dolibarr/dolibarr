@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2016		Jamal Elbaz			<jamelbaz@gmail.pro>
  * Copyright (C) 2016-2017	Alexandre Spangaro	<aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2023  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024	Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -851,7 +851,7 @@ class AccountancyCategory // extends CommonObject
 		}
 
 		$pcgverid = getDolGlobalInt('CHARTOFACCOUNTS');
-		$pcgvercode = dol_getIdFromCode($this->db, $pcgverid, 'accounting_system', 'rowid', 'pcg_version');
+		$pcgvercode = dol_getIdFromCode($this->db, (string) $pcgverid, 'accounting_system', 'rowid', 'pcg_version');
 		if (empty($pcgvercode)) {
 			$pcgvercode = $pcgverid;
 		}

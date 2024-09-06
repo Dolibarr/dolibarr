@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +35,7 @@ class mod_delivery_saphir extends ModeleNumRefDeliveryOrder
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
@@ -126,11 +127,11 @@ class mod_delivery_saphir extends ModeleNumRefDeliveryOrder
 
 
 	/**
-	 *  Return next value
+	 * 	Return next free value
 	 *
-	 *  @param	Societe			$objsoc     	Object third party
-	 *  @param  Delivery		$object			Object delivery
-	 *  @return string|int      				Value if OK, 0 if KO
+	 *  @param	Societe		$objsoc     Object thirdparty
+	 *  @param  Delivery	$object		Object we need next value for
+	 *  @return string|int<-1,0>  		Value if OK, 0 or -1 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{
@@ -157,7 +158,7 @@ class mod_delivery_saphir extends ModeleNumRefDeliveryOrder
 	 *
 	 *  @param	Societe			$objsoc     Object third party
 	 * 	@param	Delivery		$objforref	Object for number to search
-	 *  @return string|int      			Next free value, 0 if KO
+	 *  @return string|int<-1,0>   			Next free value, 0 if KO
 	 *  @deprecated see getNextValue
 	 */
 	public function getNumRef($objsoc, $objforref)

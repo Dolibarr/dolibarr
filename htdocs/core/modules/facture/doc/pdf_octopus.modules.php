@@ -75,7 +75,7 @@ class pdf_octopus extends ModelePDFFactures
 
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'disabled';	// Disabled by default. Enabled in constructor if option INVOICE_USE_SITUATION is 2.
 
@@ -117,7 +117,7 @@ class pdf_octopus extends ModelePDFFactures
 
 
 	/**
-	 * @var array<string,array{rank:int,width:float|int,title:array{textkey:string,label:string,align:string,padding:array{0:float,1:float,2:float,3:float}},content:array{align:string,padding:array{0:float,1:float,2:float,3:float}}}>	Array of columns
+	 * @var array<string,array{rank:int,width:float|int,status:bool,title:array{textkey:string,label:string,align:string,padding:array{0:float,1:float,2:float,3:float}},content:array{align:string,padding:array{0:float,1:float,2:float,3:float}}}>	Array of document table columns
 	 */
 	public $cols;
 
@@ -257,13 +257,13 @@ class pdf_octopus extends ModelePDFFactures
 	/**
 	 *  Function to build pdf onto disk
 	 *
-	 *  @param		Facture		$object				Object to generate
-	 *  @param		Translate	$outputlangs		Lang output object
-	 *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file
-	 *  @param		int			$hidedetails		Do not show line details
-	 *  @param		int			$hidedesc			Do not show desc
-	 *  @param		int			$hideref			Do not show ref
-	 *  @return     int         	    			1=OK, 0=KO
+	 *  @param		Facture			$object				Object to generate
+	 *  @param		Translate		$outputlangs		Lang output object
+	 *  @param		string			$srctemplatepath	Full path of source filename for generator using a template file
+	 *  @param		int<0,1>		$hidedetails		Do not show line details
+	 *  @param		int<0,1>		$hidedesc			Do not show desc
+	 *  @param		int<0,1>		$hideref			Do not show ref
+	 *  @return		int<-1,1>							1=OK, <=0=KO
 	 */
 	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
@@ -463,7 +463,7 @@ class pdf_octopus extends ModelePDFFactures
 				if ($cert) {
 					$info = array(
 						'Name' => $this->emetteur->name,
-						'Location' => getCountry($this->emetteur->country_code, 0),
+						'Location' => getCountry($this->emetteur->country_code, ''),
 						'Reason' => 'INVOICE',
 						'ContactInfo' => $this->emetteur->email
 					);
@@ -1122,7 +1122,7 @@ class pdf_octopus extends ModelePDFFactures
 				// Pagefoot
 				$this->_pagefoot($pdf, $object, $outputlangs);
 				if (method_exists($pdf, 'AliasNbPages')) {
-					$pdf->AliasNbPages();
+					$pdf->AliasNbPages();  // @phan-suppress-current-line PhanUndeclaredMethod
 				}
 
 				$this->resumeLastPage($pdf, $object, 0, $tab_top, $outputlangs, $outputlangsbis);
@@ -1162,7 +1162,7 @@ class pdf_octopus extends ModelePDFFactures
 	/**
 	 *  Show payments table
 	 *
-	 *  @param	TCPDF		$pdf            Object PDF
+	 *  @param	TCPDI|TCPDF	$pdf			Object PDF
 	 *  @param  Facture		$object         Object invoice
 	 *  @param  int			$posy           Position y in PDF
 	 *  @param  Translate	$outputlangs    Object langs for output
@@ -1306,7 +1306,7 @@ class pdf_octopus extends ModelePDFFactures
 	/**
 	 *   Show miscellaneous information (payment mode, payment term, ...)
 	 *
-	 *   @param		TCPDF		$pdf     		Object PDF
+	 *   @param		TCPDI|TCPDF	$pdf			Object PDF
 	 *   @param		Facture		$object			Object to show
 	 *   @param		int			$posy			Y
 	 *   @param		Translate	$outputlangs	Langs object
@@ -1462,7 +1462,7 @@ class pdf_octopus extends ModelePDFFactures
 
 					$langs->loadLangs(array('payment', 'paybox', 'stripe'));
 					$servicename = $langs->transnoentities('Online');
-					$paiement_url = getOnlinePaymentUrl('', 'invoice', $object->ref, 0, '', '');
+					$paiement_url = getOnlinePaymentUrl(0, 'invoice', $object->ref, 0, '', 0);
 					$linktopay = $langs->trans("ToOfferALinkForOnlinePayment", $servicename).' <a href="'.$paiement_url.'">'.$outputlangs->transnoentities("ClickHere").'</a>';
 
 					$pdf->SetXY($this->marge_gauche, $posy);
@@ -1537,7 +1537,7 @@ class pdf_octopus extends ModelePDFFactures
 	/**
 	 *  Show total to pay
 	 *
-	 *  @param	TCPDF		$pdf            Object PDF
+	 *  @param	TCPDI|TCPDF	$pdf			Object PDF
 	 *	@param  Facture		$object         Object invoice
 	 *	@param  int			$deja_regle     Amount already paid (in the currency of invoice)
 	 *	@param	int			$posy			Position depart
@@ -1924,9 +1924,9 @@ class pdf_octopus extends ModelePDFFactures
 	/**
 	 *  Return list of active generation modules
 	 *
-	 *  @param	DoliDB	$db     			Database handler
-	 *  @param  integer	$maxfilenamelength  Max length of value to show
-	 *  @return	array						List of templates
+	 *  @param  DoliDB  	$db                 Database handler
+	 *  @param  int<0,max>	$maxfilenamelength  Max length of value to show
+	 *  @return string[]|int<-1,0>				List of templates
 	 */
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
@@ -1938,7 +1938,7 @@ class pdf_octopus extends ModelePDFFactures
 	/**
 	 *   Show table for lines
 	 *
-	 *   @param		TCPDF		$pdf     		Object PDF
+	 *   @param		TCPDI|TCPDF	$pdf			Object PDF
 	 *   @param		int 		$tab_top		Top position of table
 	 *   @param		int 		$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y (not used)
@@ -2035,7 +2035,7 @@ class pdf_octopus extends ModelePDFFactures
 	/**
 	 *  Show top header of page. This include the logo, ref and address blocks
 	 *
-	 *  @param	TCPDF		$pdf     		Object PDF
+	 *  @param	TCPDI|TCPDF	$pdf			Object PDF
 	 *  @param  Facture		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes (usually set to 1 for first page, and 0 for next pages)
 	 *  @param  Translate	$outputlangs	Object lang for output
@@ -2425,7 +2425,7 @@ class pdf_octopus extends ModelePDFFactures
 	/**
 	 *   	Show footer of page. Need this->emetteur object
 	 *
-	 *   	@param	TCPDF		$pdf     			PDF
+	 *      @param	TCPDI|TCPDF	$pdf				Object PDF
 	 * 		@param	Facture		$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output
 	 *      @param	int			$hidefreetext		1=Hide free text
@@ -2728,7 +2728,7 @@ class pdf_octopus extends ModelePDFFactures
 	/**
 	 *   Show table for lines
 	 *
-	 *   @param		TCPDF		$pdf	 		Object PDF
+	 *   @param		TCPDI|TCPDF	$pdf			Object PDF
 	 *   @param		int  		$tab_top		Top position of table
 	 *   @param		int 		$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y (not used)
@@ -3202,7 +3202,7 @@ class pdf_octopus extends ModelePDFFactures
 	/**
 	 * Rect pdf
 	 *
-	 * @param	TCPDF	$pdf			Object PDF
+	 * @param	TCPDI|TCPDF	$pdf		Object PDF
 	 * @param	float	$x				Abscissa of first point
 	 * @param	float	$y				Ordinate of first point
 	 * @param	float	$l				??
@@ -3306,7 +3306,7 @@ class pdf_octopus extends ModelePDFFactures
 	/**
 	 *  Show last page with a resume of all invoices
 	 *
-	 *  @param	TCPDF		$pdf			Object PDF
+	 *  @param	TCPDI|TCPDF	$pdf			Object PDF
 	 *	@param  Facture		$object         Object invoice
 	 *	@param  int			$deja_regle     Amount already paid (in the currency of invoice)
 	 *	@param	int			$posy           Position depart
@@ -3384,7 +3384,7 @@ class pdf_octopus extends ModelePDFFactures
 		if (count($propals)) {
 			$propal = array_pop($propals);
 
-			$total_ht = ($conf->multicurrency->enabled && $propal->mylticurrency_tx != 1) ? $propal->multicurrency_total_ht : $propal->total_ht;
+			$total_ht = ($conf->multicurrency->enabled && $propal->multicurrency_tx != 1) ? $propal->multicurrency_total_ht : $propal->total_ht;
 			$remain_to_pay = $total_ht;
 
 			$pdf->SetTextColor(0, 0, 60);
@@ -3406,7 +3406,7 @@ class pdf_octopus extends ModelePDFFactures
 		} elseif (count($orders)) {
 			$order = array_pop($orders);
 
-			$total_ht = ($conf->multicurrency->enabled && $order->mylticurrency_tx != 1 ? $order->multicurrency_total_ht : $order->total_ht);
+			$total_ht = ($conf->multicurrency->enabled && $order->multicurrency_tx != 1 ? $order->multicurrency_total_ht : $order->total_ht);
 			$remain_to_pay = $total_ht;
 		}
 
@@ -3474,7 +3474,8 @@ class pdf_octopus extends ModelePDFFactures
 			$pdf->SetXY($posx, $posy);
 			$pdf->MultiCell($width, $height, $outputlangs->transnoentities("TotalHT"), 0, 'L', 1);
 
-			$total_ht = ($conf->multicurrency->enabled && $invoice->mylticurrency_tx != 1 ? $invoice->multicurrency_total_ht : $invoice->total_ht);
+			$total_ht = ($conf->multicurrency->enabled && $invoice->multicurrency_tx != 1 ? $invoice->multicurrency_total_ht : $invoice->total_ht);
+
 			$pdf->SetXY($posx + $width, $posy);
 			$pdf->MultiCell($width2, $height, price($sign * ($total_ht + (!empty($invoice->remise) ? $invoice->remise : 0)), 0, $outputlangs), 0, 'R', 1);
 

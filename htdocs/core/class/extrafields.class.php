@@ -45,7 +45,7 @@ class ExtraFields
 	public $db;
 
 	/**
-	 * @var array<string,array{label:array<string,string>,type:array<string,string>,size:array<string,string>,default:array<string,string>,computed:array<string,string>,unique:array<string,int>,required:array<string,int>,param:array<string,mixed>,perms:array<string,mixed[]>,list:array<string,int|string>,pos:array<string,int>,totalizable:array<string,int>,help:array<string,string>,printable:array<string,int>,enabled:array<string,int>,langfile:array<string,string>,css:array<string,string>,csslist:array<string,string>,hidden:array<string,int>,mandatoryfieldsofotherentities:array<string,string>,loaded?:int,count:int}> New array to store extrafields definition  Note: count set as present to avoid static analysis notices
+	 * @var array<string,array{label:array<string,string>,type:array<string,string>,size:array<string,string>,default:array<string,string>,computed:array<string,string>,unique:array<string,int>,required:array<string,int>,param:array<string,mixed>,perms:array<string,mixed[]>,list:array<string,int|string>,pos:array<string,int>,totalizable:array<string,int>,help:array<string,string>,printable:array<string,int>,enabled:array<string,int>,langfile:array<string,string>,css:array<string,string>,csslist:array<string,string>,cssview:array<string,string>,hidden:array<string,int>,mandatoryfieldsofotherentities:array<string,string>,loaded?:int,count:int}> New array to store extrafields definition  Note: count set as present to avoid static analysis notices
 	 */
 	public $attributes = array();
 
@@ -90,9 +90,9 @@ class ExtraFields
 		'ip' => 'ExtrafieldIP',
 		'icon' => 'Icon',
 		'password' => 'ExtrafieldPassword',
+		'radio' => 'ExtrafieldRadio',
 		'select' => 'ExtrafieldSelect',
 		'sellist' => 'ExtrafieldSelectList',
-		'radio' => 'ExtrafieldRadio',
 		'checkbox' => 'ExtrafieldCheckBox',
 		'chkbxlst' => 'ExtrafieldCheckBoxFromList',
 		'link' => 'ExtrafieldLink',
@@ -564,10 +564,17 @@ class ExtraFields
 							$error++;
 						}
 					}
+				} else {
+					$this->error = $this->db->lasterror();
+					$this->errors[] = $this->db->lasterror();
+					$error++;
 				}
 			}
-
-			return $result;
+			if (empty($error)) {
+				return $result;
+			} else {
+				return $error*-1;
+			}
 		} else {
 			return 0;
 		}
@@ -1619,6 +1626,8 @@ class ExtraFields
 					// print $sql;
 
 					$sql .= $sqlwhere;
+					$sql .= ' ORDER BY '.implode(', ', $fields_label);
+
 					dol_syslog(get_class($this).'::showInputField type=chkbxlst', LOG_DEBUG);
 					$resql = $this->db->query($sql);
 					if ($resql) {
@@ -2093,6 +2102,7 @@ class ExtraFields
 					dol_include_once($InfoFieldList[1]);
 					if ($classname && class_exists($classname)) {
 						$object = new $classname($this->db);
+						'@phan-var-force CommonObject $object';
 						$object->fetch($value);
 						$value = $object->getNomUrl(3);
 					}
@@ -2310,7 +2320,7 @@ class ExtraFields
 
 				$enabled = 1;
 				if (isset($this->attributes[$object->table_element]['enabled'][$key])) {	// 'enabled' is often a condition on module enabled or not
-					$enabled = (int) dol_eval($this->attributes[$object->table_element]['enabled'][$key], 1, 1, '2');
+					$enabled = (int) dol_eval((string) $this->attributes[$object->table_element]['enabled'][$key], 1, 1, '2');
 				}
 
 				$visibility = 1;
@@ -2466,13 +2476,14 @@ class ExtraFields
 				if (in_array($key_type, array('date'))) {
 					$dateparamname_start = $keyprefix . 'options_' . $key . $keysuffix . '_start';
 					$dateparamname_end   = $keyprefix . 'options_' . $key . $keysuffix . '_end';
+
 					if (GETPOST($dateparamname_start . 'year') || GETPOST($dateparamname_end . 'year')) {
 						$value_key = array();
 						// values provided as a component year, month, day, etc.
 						if (GETPOST($dateparamname_start . 'year')) {
 							$value_key['start'] = dol_mktime(0, 0, 0, GETPOSTINT($dateparamname_start . 'month'), GETPOSTINT($dateparamname_start . 'day'), GETPOSTINT($dateparamname_start . 'year'));
 						}
-						if (GETPOST($dateparamname_start . 'year')) {
+						if (GETPOST($dateparamname_end . 'year')) {
 							$value_key['end'] = dol_mktime(23, 59, 59, GETPOSTINT($dateparamname_end . 'month'), GETPOSTINT($dateparamname_end . 'day'), GETPOSTINT($dateparamname_end . 'year'));
 						}
 					} elseif (GETPOST($keyprefix."options_".$key.$keysuffix."year")) {
@@ -2485,20 +2496,23 @@ class ExtraFields
 					$dateparamname_start = $keyprefix . 'options_' . $key . $keysuffix . '_start';
 					$dateparamname_end   = $keyprefix . 'options_' . $key . $keysuffix . '_end';
 
-					if (GETPOST($dateparamname_start . 'year') && GETPOST($dateparamname_end . 'year')) {
+					if (GETPOST($dateparamname_start . 'year') || GETPOST($dateparamname_end . 'year')) {
 						// values provided as a date pair (start date + end date), each date being broken down as year, month, day, etc.
+						$dateparamname_start_hour = GETPOSTINT($dateparamname_start . 'hour') != '-1' ? GETPOSTINT($dateparamname_start . 'hour') : '00';
+						$dateparamname_start_min = GETPOSTINT($dateparamname_start . 'min') != '-1' ? GETPOSTINT($dateparamname_start . 'min') : '00';
+						$dateparamname_start_sec = GETPOSTINT($dateparamname_start . 'sec') != '-1' ? GETPOSTINT($dateparamname_start . 'sec') : '00';
 						$dateparamname_end_hour = GETPOSTINT($dateparamname_end . 'hour') != '-1' ? GETPOSTINT($dateparamname_end . 'hour') : '23';
 						$dateparamname_end_min = GETPOSTINT($dateparamname_end . 'min') != '-1' ? GETPOSTINT($dateparamname_end . 'min') : '59';
 						$dateparamname_end_sec = GETPOSTINT($dateparamname_end . 'sec') != '-1' ? GETPOSTINT($dateparamname_end . 'sec') : '59';
 						if ($key_type == 'datetimegmt') {
 							$value_key = array(
-							'start' => dol_mktime(GETPOSTINT($dateparamname_start . 'hour'), GETPOSTINT($dateparamname_start . 'min'), GETPOSTINT($dateparamname_start . 'sec'), GETPOSTINT($dateparamname_start . 'month'), GETPOSTINT($dateparamname_start . 'day'), GETPOSTINT($dateparamname_start . 'year'), 'gmt'),
-							'end' => dol_mktime($dateparamname_end_hour, $dateparamname_end_min, $dateparamname_end_sec, GETPOSTINT($dateparamname_end . 'month'), GETPOSTINT($dateparamname_end . 'day'), GETPOSTINT($dateparamname_end . 'year'), 'gmt')
+								'start' => dol_mktime($dateparamname_start_hour, $dateparamname_start_min, $dateparamname_start_sec, GETPOSTINT($dateparamname_start . 'month'), GETPOSTINT($dateparamname_start . 'day'), GETPOSTINT($dateparamname_start . 'year'), 'gmt'),
+								'end' => dol_mktime($dateparamname_end_hour, $dateparamname_end_min, $dateparamname_end_sec, GETPOSTINT($dateparamname_end . 'month'), GETPOSTINT($dateparamname_end . 'day'), GETPOSTINT($dateparamname_end . 'year'), 'gmt')
 							);
 						} else {
 							$value_key = array(
-							'start' => dol_mktime(GETPOSTINT($dateparamname_start . 'hour'), GETPOSTINT($dateparamname_start . 'min'), GETPOSTINT($dateparamname_start . 'sec'), GETPOSTINT($dateparamname_start . 'month'), GETPOSTINT($dateparamname_start . 'day'), GETPOSTINT($dateparamname_start . 'year'), 'tzuserrel'),
-							'end' => dol_mktime($dateparamname_end_hour, $dateparamname_end_min, $dateparamname_end_sec, GETPOSTINT($dateparamname_end . 'month'), GETPOSTINT($dateparamname_end . 'day'), GETPOSTINT($dateparamname_end . 'year'), 'tzuserrel')
+								'start' => dol_mktime($dateparamname_start_hour, $dateparamname_start_min, $dateparamname_start_sec, GETPOSTINT($dateparamname_start . 'month'), GETPOSTINT($dateparamname_start . 'day'), GETPOSTINT($dateparamname_start . 'year'), 'tzuserrel'),
+								'end' => dol_mktime($dateparamname_end_hour, $dateparamname_end_min, $dateparamname_end_sec, GETPOSTINT($dateparamname_end . 'month'), GETPOSTINT($dateparamname_end . 'day'), GETPOSTINT($dateparamname_end . 'year'), 'tzuserrel')
 							);
 						}
 					} elseif (GETPOST($keyprefix."options_".$key.$keysuffix."year")) {
@@ -2580,23 +2594,24 @@ class ExtraFields
 	{
 		global $langs;
 
+		$arraytype2label = array('');
+
 		$tmptype2label = ExtraFields::$type2label;
-		$type2label = array('');
 		foreach ($tmptype2label as $key => $val) {
-			$type2label[$key] = $langs->transnoentitiesnoconv($val);
+			$arraytype2label[$key] = $langs->transnoentitiesnoconv($val);
 		}
 
 		if (!getDolGlobalString('MAIN_USE_EXTRAFIELDS_ICON')) {
-			unset($type2label['icon']);
+			unset($arraytype2label['icon']);
 		}
 		if (!getDolGlobalString('MAIN_USE_GEOPHP')) {
-			unset($type2label['point']);
-			unset($type2label['multipts']);
-			unset($type2label['linestrg']);
-			unset($type2label['polygon']);
+			unset($arraytype2label['point']);
+			unset($arraytype2label['multipts']);
+			unset($arraytype2label['linestrg']);
+			unset($arraytype2label['polygon']);
 		}
 
-		return $type2label;
+		return $arraytype2label;
 	}
 
 	/**

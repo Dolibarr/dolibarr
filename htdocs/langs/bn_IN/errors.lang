@@ -303,7 +303,8 @@ ErrorThirpdartyOrMemberidIsMandatory=তৃতীয় পক্ষ বা অ�
 ErrorFailedToWriteInTempDirectory=টেম্প ডিরেক্টরিতে লিখতে ব্যর্থ
 ErrorQuantityIsLimitedTo=পরিমাণ %s এ সীমিত
 ErrorFailedToLoadThirdParty=id=%s, email=%s, name= থেকে তৃতীয় পক্ষ খুঁজে/লোড করতে ব্যর্থ %s
-ErrorThisPaymentModeIsNotSepa=এই পেমেন্ট মোড একটি ব্যাঙ্ক অ্যাকাউন্ট নয়
+ErrorThisPaymentModeIsNotDirectDebit=The payment mode is not direct debit
+ErrorThisPaymentModeIsNotCreditTransfer=The payment mode is not credit transfer
 ErrorStripeCustomerNotFoundCreateFirst=স্ট্রাইপ গ্রাহক এই তৃতীয় পক্ষের জন্য সেট করা নেই (অথবা স্ট্রাইপের পাশে মুছে ফেলা একটি মান সেট)। প্রথমে এটি তৈরি করুন (বা পুনরায় সংযুক্ত করুন)।
 ErrorCharPlusNotSupportedByImapForSearch=IMAP অনুসন্ধান + অক্ষর ধারণকারী একটি স্ট্রিং জন্য প্রেরক বা প্রাপক অনুসন্ধান করতে সক্ষম নয়
 ErrorTableNotFound=টেবিল <b>%s</b> পাওয়া যায়নি
@@ -334,9 +335,9 @@ ErrorDictionaryNotFound=অভিধান <b>%s</b> পাওয়া যা�
 ErrorFailedToCreateSymLinkToMedias=%s-এ নির্দেশ করার জন্য প্রতীকী লিঙ্ক %s তৈরি করতে ব্যর্থ হয়েছে
 ErrorCheckTheCommandInsideTheAdvancedOptions=এক্সপোর্টের অ্যাডভান্সড অপশনে এক্সপোর্টের জন্য ব্যবহৃত কমান্ড চেক করুন
 ErrorEndTimeMustBeGreaterThanStartTime=End time must be greater than start time
-ErrorIncoherentDates=Date start must be less than date end
-ErrorEndHourIsNull=End date cannot be zero
-ErrorStartHourIsNull=Start date cannot be zero
+ErrorIncoherentDates=Start date must be earlier than end date
+ErrorEndHourIsNull=End date field cannot be empty
+ErrorStartHourIsNull=Start date field cannot be empty
 ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter=Too many lines to process. Please use a more selective filter.
 ErrorEmptyValueForQty=Quantity cannot be zero.
 # Warnings

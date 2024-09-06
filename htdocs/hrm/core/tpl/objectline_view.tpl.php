@@ -37,7 +37,6 @@
  * $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
  * $outputalsopricetotalwithtax
  * $usemargins (0 to disable all margins columns, 1 to show according to margin setup)
- * $object_rights->creer initialized from = $object->getRights()
  * $disableedit, $disablemove, $disableremove
  *
  * $text, $description, $line
@@ -107,40 +106,7 @@ print displayRankInfos($line->rankorder, $line->fk_skill, 'TNote', ($this->statu
 	</td>
 
 <?php
-
-if ($this->statut == 0 && !empty($object_rights->creer) && $action != 'selectlines') {
-	print '<td class="linecoledit center">';
-	$coldisplay++;
-	if (($line->info_bits & 2) == 2 || !empty($disableedit)) {
-	} else { ?>
-		<a class="editfielda reposition" href="<?php print $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=editline&amp;lineid='.$line->id.'#line_'.$line->id; ?>">
-		<?php print img_edit().'</a>';
-	}
-	print '</td>';
-
-	/*
-	if ($num > 1 && $conf->browser->layout != 'phone' && ($this->situation_counter == 1 || !$this->situation_cycle_ref) && empty($disablemove)) {
-	print '<td class="linecolmove tdlineupdown center">';
-	$coldisplay++;
-	if ($i > 0) { ?>
-		<a class="lineupdown" href="<?php print $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=up&amp;rowid='.$line->id; ?>">
-		<?php print img_up('default', 0, 'imgupforline'); ?>
-		</a>
-	<?php }
-	if ($i < $num - 1) { ?>
-		<a class="lineupdown" href="<?php print $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=down&amp;rowid='.$line->id; ?>">
-		<?php print img_down('default', 0, 'imgdownforline'); ?>
-		</a>
-	<?php }
-	print '</td>';
-	} else {
-	print '<td '.(($conf->browser->layout != 'phone' && empty($disablemove)) ? ' class="linecolmove tdlineupdown center"' : ' class="linecolmove center"').'></td>';
-	$coldisplay++;
-	}*/
-} else {
-	//print '<td colspan="3"></td>';
-	$coldisplay += 3;
-}
+$coldisplay += 3;
 
 if ($action == 'selectlines') { ?>
 	<td class="linecolcheck center"><input type="checkbox" class="linecheckbox" name="line_checkbox[<?php print $i + 1; ?>]" value="<?php print $line->id; ?>" ></td>

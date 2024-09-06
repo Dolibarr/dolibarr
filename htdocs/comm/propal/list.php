@@ -177,13 +177,13 @@ if (!empty($socid)) {
 	$module = 'societe';
 	$dbtable = '&societe';
 }
+$hookmanager->initHooks(array('propallist'));
 $result = restrictedArea($user, $module, $objectid, $dbtable);
 
 $diroutputmassaction = $conf->propal->multidir_output[$conf->entity].'/temp/massgeneration/'.$user->id;
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Propal($db);
-$hookmanager->initHooks(array('propallist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
@@ -268,7 +268,7 @@ foreach ($object->fields as $key => $val) {
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
-		$visible = (int) dol_eval($val['visible'], 1);
+		$visible = (int) dol_eval((string) $val['visible'], 1);
 		$arrayfields['t.'.$key] = array(
 			'label'=>$val['label'],
 			'checked'=>(($visible < 0) ? 0 : 1),

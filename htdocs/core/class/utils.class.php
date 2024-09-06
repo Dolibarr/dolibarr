@@ -861,8 +861,8 @@ class Utils
 				$arrayreplacement['/^#\s.*/m'] = ''; // Remove first level of title into .md files
 				$arrayreplacement['/^#/m'] = '##'; // Add on # to increase level
 
-				dolReplaceInFile($dirofmoduletmp.'/README.md', $arrayreplacement, '', 0, 0, 1);
-				dolReplaceInFile($dirofmoduletmp.'/ChangeLog.md', $arrayreplacement, '', 0, 0, 1);
+				dolReplaceInFile($dirofmoduletmp.'/README.md', $arrayreplacement, '', '0', 0, 1);
+				dolReplaceInFile($dirofmoduletmp.'/ChangeLog.md', $arrayreplacement, '', '0', 0, 1);
 
 
 				$destfile = $dirofmoduletmp.'/'.$FILENAMEASCII;
@@ -1054,7 +1054,7 @@ class Utils
 					if ($numsave >= $nbSaves) {
 						dol_delete_file($logpath.'/'.$logname.'.'.$numsave.'.gz', 0, 0, 0, null, false, 0);
 					} else {
-						dol_move($logpath.'/'.$logname.'.'.$numsave.'.gz', $logpath.'/'.$logname.'.'.($numsave + 1).'.gz', 0, 1, 0, 0);
+						dol_move($logpath.'/'.$logname.'.'.$numsave.'.gz', $logpath.'/'.$logname.'.'.($numsave + 1).'.gz', '0', 1, 0, 0);
 					}
 				}
 

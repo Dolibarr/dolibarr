@@ -149,7 +149,7 @@ class BonPrelevement extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 10, 'notnull' => 1, 'visible' => 0,),
@@ -515,7 +515,6 @@ class BonPrelevement extends CommonObject
 					$fk_bank_account = ($this->type == 'bank-transfer' ? getDolGlobalInt('PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT') : getDolGlobalInt('PRELEVEMENT_ID_BANKACCOUNT'));
 				}
 
-				$facs = array();
 				$amounts = array();
 				$amountsperthirdparty = array();
 
@@ -634,7 +633,13 @@ class BonPrelevement extends CommonObject
 							$addbankurl = 'direct-debit';	// = 'directdebit'
 						}
 
-						$result = $paiement->addPaymentToBank($user, $modeforaddpayment, $labelforaddpayment, $fk_bank_account, '', '', 0, '', $addbankurl);
+
+						if ($paiement instanceof PaymentSalary) {
+							// Only 6 arguments for PaymentSalary
+							$result = $paiement->addPaymentToBank($user, $modeforaddpayment, $labelforaddpayment, $fk_bank_account, '', '');
+						} else {
+							$result = $paiement->addPaymentToBank($user, $modeforaddpayment, $labelforaddpayment, $fk_bank_account, '', '', 0, '', $addbankurl);
+						}
 
 						if ($result < 0) {
 							$error++;
@@ -744,9 +749,10 @@ class BonPrelevement extends CommonObject
 	/**
 	 *	Get invoice or salary list (with amount or not)
 	 *
-	 *  @param 	int		$amounts 	If you want to get the amount of the order for each invoice or salary
-	 *  @param  string  $type       'salary' for type=salary
-	 *	@return	array 				Array(Id of invoices/salary, Amount to pay)
+	 *  @param	int<0,1>	$amounts 		If you want to get the amount of the order for each invoice or salary
+	 *  @param	'bank-transfer'|'salary'|'' $type	'salary' for type=salary (default = supplier invoice
+	 *	@return	array<array{int,float}>|int[]	Array(Id of invoices/salary, Amount to pay)
+	 *	@phpstan-return	($amounts is 0 ? int[] : array<array{int,float}>)
 	 */
 	private function getListInvoices($amounts = 0, $type = '')
 	{
@@ -821,8 +827,8 @@ class BonPrelevement extends CommonObject
 	 *	Returns amount waiting for direct debit payment or credit transfer payment
 	 *
 	 *	@param	string	$mode		'direct-debit' or 'bank-transfer'
-	 *  @param  string  $type        for type=salary
-	 *	@return	double	 			Return integer <O if KO, Total amount
+	 *  @param  string  $type      	for type=salary
+	 *	@return	float 	 			Return integer <O if KO, Total amount
 	 */
 	public function SommeAPrelever($mode = 'direct-debit', $type = '')
 	{
@@ -1436,7 +1442,7 @@ class BonPrelevement extends CommonObject
 	/**
 	 *  Get object and lines from database
 	 *
-	 *  @param	User	$user		Object user that delete
+	 *  @param	?User	$user		Object user that delete
 	 *  @param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *  @return	int					>0 if OK, <0 if KO
 	 */
@@ -2773,9 +2779,9 @@ class BonPrelevement extends CommonObject
 	/**
 	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		?array{string,mixed}	$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{

@@ -20,6 +20,7 @@
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		Solution Libre SAS		<contact@solution-libre.fr>
+ * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -275,7 +276,7 @@ foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 
 	if (!empty($val['visible'])) {
-		$visible = (int) dol_eval($val['visible'], 1, 1, '1');
+		$visible = (int) dol_eval((string) $val['visible'], 1, 1, '1');
 		$newkey = '';
 		if (array_key_exists($key, $arrayfields)) {
 			$newkey = $key;
@@ -396,10 +397,10 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_datelimit_start = '';
 	$search_datelimit_end = '';
 	$search_fac_rec_source_title = '';
+	$search_option = '';
+	$search_categ_cus = 0;
 	$toselect = array();
 	$search_array_options = array();
-	$search_categ_cus = 0;
-	$search_option = '';
 }
 
 if (empty($reshook)) {

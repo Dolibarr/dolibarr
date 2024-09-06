@@ -476,6 +476,7 @@ function createThirdParty($authentication, $thirdparty)
 		$newobject->code_client = $thirdparty['customer_code'];
 		$newobject->code_fournisseur = $thirdparty['supplier_code'];
 		$newobject->code_compta = $thirdparty['customer_code_accountancy'];
+		$newobject->code_compta_client = $thirdparty['customer_code_accountancy'];
 		$newobject->code_compta_fournisseur = $thirdparty['supplier_code_accountancy'];
 		$newobject->date_creation = $now;
 		$newobject->note_private = $thirdparty['note_private'];
@@ -486,10 +487,10 @@ function createThirdParty($authentication, $thirdparty)
 
 		$newobject->country_id = $thirdparty['country_id'];
 		if ($thirdparty['country_code']) {
-			$newobject->country_id = getCountry($thirdparty['country_code'], 3);
+			$newobject->country_id = getCountry($thirdparty['country_code'], '3');
 		}
 		$newobject->region_code = empty($thirdparty['region_code']) ? '' : $thirdparty['region_code'];
-		//if ($thirdparty['province_code']) $newobject->province_code=getCountry($thirdparty['province_code'],3);
+		//if ($thirdparty['province_code']) $newobject->province_code = getCountry($thirdparty['province_code'], '3');
 
 		$newobject->phone = $thirdparty['phone'];
 		$newobject->fax = $thirdparty['fax'];
@@ -614,6 +615,7 @@ function updateThirdParty($authentication, $thirdparty)
 			$object->code_client = $thirdparty['customer_code'];
 			$object->code_fournisseur = $thirdparty['supplier_code'];
 			$object->code_compta = $thirdparty['customer_code_accountancy'];
+			$object->code_compta_client = $thirdparty['customer_code_accountancy'];
 			$object->code_compta_fournisseur = $thirdparty['supplier_code_accountancy'];
 			$object->date_creation = $now;
 			$object->note_private = $thirdparty['note_private'];
@@ -624,10 +626,10 @@ function updateThirdParty($authentication, $thirdparty)
 
 			$object->country_id = $thirdparty['country_id'];
 			if ($thirdparty['country_code']) {
-				$object->country_id = getCountry($thirdparty['country_code'], 3);
+				$object->country_id = getCountry($thirdparty['country_code'], '3');
 			}
 			$object->region_code = $thirdparty['region_code'];
-			//if ($thirdparty['province_code']) $newobject->province_code=getCountry($thirdparty['province_code'],3);
+			//if ($thirdparty['province_code']) $newobject->province_code = getCountry($thirdparty['province_code'], '3');
 
 			$object->phone = $thirdparty['phone'];
 			$object->fax = $thirdparty['fax'];

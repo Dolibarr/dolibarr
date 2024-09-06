@@ -44,6 +44,10 @@ $socid = GETPOSTINT('socid');
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
+
+// Hook
+$hookmanager->initHooks(array('cabyprodservlist'));
+
 if (isModEnabled('comptabilite')) {
 	$result = restrictedArea($user, 'compta', '', '', 'resultat');
 }
@@ -82,9 +86,6 @@ $selected_type = GETPOST('search_type', 'intcomma');
 if ($selected_type == '') {
 	$selected_type = -1;
 }
-
-// Hook
-$hookmanager->initHooks(array('cabyprodservlist'));
 
 // Date range
 $year = GETPOST("year");

@@ -655,6 +655,49 @@ class Mailing extends CommonObject
 		}
 	}
 
+	/**
+	 *  Reset status of a specific recipient in error
+	 *
+	 *	@param	User	$user      	Object user qui valide
+	 *	@param	int	$id      		Recipient id to reset
+	 *  @return int         		Return integer <0 if KO, >0 if OK
+	 */
+	public function resetTargetErrorStatus($user, $id)
+	{
+		// phpcs:enable
+		global $langs;
+
+		$sql = "SELECT email, statut FROM ".MAIN_DB_PREFIX."mailing_cibles";
+		$sql .= " WHERE fk_mailing = ".((int) $this->id);
+		$sql .= " AND rowid = ".((int) $id);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$nb = $this->db->num_rows($resql);
+			$obj = $this->db->fetch_object($resql);
+			if ($obj->statut != -1) {
+				$langs->load("errors");
+				$this->error = $langs->trans('ErrorIsNotInError', $obj->email);
+				return 0;
+			}
+		} else {
+			$this->error = $this->db->lasterror();
+		}
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
+		$sql .= " SET statut = 0";
+		$sql .= " WHERE fk_mailing = ".((int) $this->id);
+		$sql .= " AND rowid = ".((int) $id);
+		$sql .= " AND statut = -1";
+
+		dol_syslog("Mailing::reset_targets_status", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			return 1;
+		} else {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+	}
 
 	/**
 	 *  Count number of target with status

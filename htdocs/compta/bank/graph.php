@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,8 +34,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories'));
 
-$WIDTH = DolGraph::getDefaultGraphSizeForStats('width', 768);
-$HEIGHT = DolGraph::getDefaultGraphSizeForStats('height', 200);
+$WIDTH = DolGraph::getDefaultGraphSizeForStats('width', '768');
+$HEIGHT = DolGraph::getDefaultGraphSizeForStats('height', '200');
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('bankstats', 'globalcard'));
@@ -190,7 +191,7 @@ if ($result < 0) {
 		$datamin = array();
 
 		$subtotal = 0;
-		$day = dol_mktime(12, 0, 0, $month, 1, $year);
+		$day = dol_mktime(12, 0, 0, (int) $month, 1, (int) $year);
 		//$textdate = strftime("%Y%m%d", $day);
 		$textdate = dol_print_date($day, "%Y%m%d");
 		$xyear = substr($textdate, 0, 4);
@@ -337,7 +338,7 @@ if ($result < 0) {
 
 		$subtotal = 0;
 		$now = time();
-		$day = dol_mktime(12, 0, 0, 1, 1, $year);
+		$day = dol_mktime(12, 0, 0, 1, 1, (int) $year);
 		//$textdate = strftime("%Y%m%d", $day);
 		$textdate = dol_print_date($day, "%Y%m%d");
 		$xyear = substr($textdate, 0, 4);

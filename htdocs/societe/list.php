@@ -11,7 +11,7 @@
  * Copyright (C) 2017       Juanjo Menent      	    <jmenent@2byte.es>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2020       Open-Dsi                <support@open-dsi.fr>
- * Copyright (C) 2021       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Anthony Berton          <anthony.berton@bb2a.fr>
  * Copyright (C) 2023       William Mead            <william.mead@manchenumerique.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
@@ -328,6 +328,7 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'societe', $socid, '');
 
+$permissiontoadd = $user->hasRight('societe', 'lire');
 
 
 /*
@@ -464,7 +465,7 @@ if (empty($reshook)) {
 	$uploaddir = $conf->societe->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
-	if ($action == 'setstcomm') {
+	if ($action == 'setstcomm' && $permissiontoadd) {
 		$object = new Client($db);
 		$result = $object->fetch(GETPOST('stcommsocid'));
 		$object->stcomm_id = dol_getIdFromCode($db, GETPOST('stcomm', 'alpha'), 'c_stcomm');
@@ -2035,7 +2036,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 		if (!empty($arrayfields['s.url']['checked'])) {
-			print "<td>".dol_print_url($obj->url, '', '', 1)."</td>\n";
+			print "<td>".dol_print_url($obj->url, '', 0, 1)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

@@ -10,6 +10,7 @@
  * Copyright (C) 2023       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -330,7 +331,7 @@ class Project extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'ID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -1781,7 +1782,7 @@ class Project extends CommonObject
 
 		//Generate next ref
 		$defaultref = '';
-		$obj = !getDolGlobalString('PROJECT_ADDON') ? 'mod_project_simple' : $conf->global->PROJECT_ADDON;
+		$obj = getDolGlobalString('PROJECT_ADDON', 'mod_project_simple');
 		// Search template files
 		$file = '';
 		$classname = '';
@@ -2224,7 +2225,7 @@ class Project extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 				if (!empty($obj->element_date)) {
 					$date = explode('-', $obj->element_date);
-					$week_number = getWeekNumber($date[2], $date[1], $date[0]);
+					$week_number = getWeekNumber((int) $date[2], (int) $date[1], (int) $date[0]);
 				}
 				'@phan-var-force int $week_number';  // Needed because phan considers it might be null
 				if (empty($weekalreadyfound[$week_number])) {
@@ -2266,6 +2267,7 @@ class Project extends CommonObject
 		$response->label = $langs->trans("OpenedProjects");
 		$response->labelShort = $langs->trans("Opened");
 		$response->url = DOL_URL_ROOT.'/projet/list.php?search_project_user=-1&search_status=1&mainmenu=project';
+		$response->url_late = DOL_URL_ROOT.'/projet/list.php?search_option=late&mainmenu=project';
 		$response->img = img_object('', "projectpub");
 		$response->nbtodo = 0;
 		$response->nbtodolate = 0;
@@ -2493,10 +2495,10 @@ class Project extends CommonObject
 	/**
 	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @param		string		$size					Size of thumb (''=auto, 'large'=large, 'small'=small)
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @param		string					$size					Size of thumb (''=auto, 'large'=large, 'small'=small)
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null, $size = '')
 	{
@@ -2702,7 +2704,7 @@ class Project extends CommonObject
 					$error++;
 				}
 
-				$mail = new CMailFile($subject, $to, $from, $reportContent, array(), array(), array(), '', '', 0, -1, '', '', 0, 'text/html');
+				$mail = new CMailFile($subject, $to, $from, $reportContent, array(), array(), array(), '', '', 0, -1, '', '', '', 'text/html');
 
 				if ($mail->sendfile()) {
 					$nbMailSend++;

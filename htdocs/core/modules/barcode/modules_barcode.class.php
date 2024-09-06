@@ -29,6 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonnumrefgenerator.class.php';
 
 /**
  *	Parent class for barcode document generators (image)
+ *
+ *	@property 'development'|'experimental'|'dolibarr' $version Dolibarr version of loaded document
  */
 abstract class ModeleBarCode
 {
@@ -47,6 +49,16 @@ abstract class ModeleBarCode
 	{
 		return true;
 	}
+
+
+	/**
+	 *  Return description
+	 *
+	 *  @param  Translate   $langs      Lang object to use for output
+	 *  @return string                  Descriptive text
+	 */
+	abstract public function info($langs);
+
 
 	/**
 	 *	Save an image file on disk (with no output)
@@ -67,6 +79,8 @@ abstract class ModeleBarCode
 
 /**
  *	Parent class for barcode numbering models
+ *
+ *	@property string $nom Name for the GeneratorModel
  */
 abstract class ModeleNumRefBarCode extends CommonNumRefGenerator
 {
@@ -87,11 +101,22 @@ abstract class ModeleNumRefBarCode extends CommonNumRefGenerator
 		return $langs->trans("Function_getNextValue_InModuleNotWorking");
 	}
 
+
+	/**
+	 * Return an example of result returned by getNextValue
+	 *
+	 * @param   ?Translate		$langs			Object langs
+	 * @param   ?CommonObject	$object			Object product
+	 * @return  string							Return string example
+	 */
+	abstract public function getExample($langs = null, $object = null);
+
+
 	/**
 	 *      Return description of module parameters
 	 *
 	 *      @param	Translate	$langs      Output language
-	 *		@param	Societe		$soc		Third party object
+	 *		@param	?Societe	$soc		Third party object
 	 *		@param	int			$type		-1=Nothing, 0=Product, 1=Service
 	 *		@return	string					HTML translated description
 	 */
@@ -156,4 +181,22 @@ abstract class ModeleNumRefBarCode extends CommonNumRefGenerator
 
 		return $s;
 	}
+
+
+	/**
+	 * 	Check validity of code according to its rules
+	 *
+	 *	@param	DoliDB		$db					Database handler
+	 *	@param	string		$code				Code to check/correct
+	 *	@param	Product|Societe	$object		Object product or ThirdParty
+	 *  @param  int<0,1>  	$thirdparty_type   	0 = customer/prospect , 1 = supplier
+	 *  @param	string		$type       	    type of barcode (EAN, ISBN, ...)
+	 *  @return int<-7,0>						0 if OK
+	 * 											-1 ErrorBadCustomerCodeSyntax
+	 * 											-2 ErrorCustomerCodeRequired
+	 * 											-3 ErrorCustomerCodeAlreadyUsed
+	 * 											-4 ErrorPrefixRequired
+	 * 											-7 ErrorBadClass
+	 */
+	abstract public function verif($db, &$code, $object, $thirdparty_type, $type);
 }

@@ -86,21 +86,6 @@ class printing_printipp extends PrintingDriver
 	 */
 	public $ssl;
 
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	/**
-	 * @var string[] Error codes (or messages)
-	 */
-	public $errors = array();
-
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
 
 	/**
 	 *  Constructor

@@ -139,13 +139,14 @@ if (!$sortorder) {
 
 // Security check
 $socid = 0;
+
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('projecttaskscard', 'globalcard'));
+
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
 $result = restrictedArea($user, 'projet', $id, 'projet&project');
 
 $diroutputmassaction = $conf->project->dir_output.'/tasks/temp/massgeneration/'.$user->id;
-
-// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-$hookmanager->initHooks(array('projecttaskscard', 'globalcard'));
 
 $progress = GETPOSTINT('progress');
 $budget_amount = GETPOSTFLOAT('budget_amount');
@@ -910,7 +911,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 	$linktotasks .= dolGetButtonTitle($langs->trans('ViewGantt'), '', 'fa fa-stream imgforviewmode', DOL_URL_ROOT.'/projet/ganttview.php?id='.$object->id.'&withproject=1', '', 1, array('morecss' => 'reposition marginleftonly'));
 
 	//print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $totalnboflines, 'generic', 0, '', '', 0, 1);
-	print load_fiche_titre($title, $linktotasks.' &nbsp; '.$linktocreatetask, 'projecttask', '', '', '', $massactionbutton);
+	print load_fiche_titre($title, $linktotasks.' &nbsp; '.$linktocreatetask, 'projecttask', 0, '', '', $massactionbutton);
 
 	$objecttmp = new Task($db);
 	$trackid = 'task'.$taskstatic->id;
@@ -1171,7 +1172,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 		// Show all lines in taskarray (recursive function to go down on tree)
 		$j = 0;
 		$level = 0;
-		$nboftaskshown = projectLinesa($j, 0, $tasksarray, $level, true, 0, $tasksrole, $object->id, 1, $object->id, '', ($object->usage_bill_time ? 1 : 0), $arrayfields, $arrayofselected);
+		$nboftaskshown = projectLinesa($j, 0, $tasksarray, $level, true, 0, $tasksrole, (string) $object->id, 1, $object->id, '', ($object->usage_bill_time ? 1 : 0), $arrayfields, $arrayofselected);
 	} else {
 		$colspan = count($arrayfields);
 		if ($object->usage_bill_time) {

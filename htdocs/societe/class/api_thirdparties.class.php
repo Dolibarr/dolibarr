@@ -1213,7 +1213,7 @@ class Thirdparties extends DolibarrApi
 		$exists_sql .= " AND fk_contact = '".$this->db->escape($contact_id)."'";
 
 		$exists_result = $this->db->query($exists_sql);
-		if ($this->db->num_rows($exists_sql) > 0) {
+		if ($this->db->num_rows($exists_result) > 0) {
 			throw new RestException(403, 'Notification already exists');
 		}
 
@@ -1235,6 +1235,7 @@ class Thirdparties extends DolibarrApi
 	 * @param array $request_data Request data
 	 *
 	 * @return array|mixed  Notification of thirdparty
+	 * @phan-return Notify
 	 *
 	 * @url POST {id}/notificationsbycode/{code}
 	 */
@@ -1279,7 +1280,7 @@ class Thirdparties extends DolibarrApi
 		$exists_sql .= " AND fk_contact = '".$this->db->escape($contact_id)."'";
 
 		$exists_result = $this->db->query($exists_sql);
-		if ($this->db->num_rows($exists_sql) > 0) {
+		if ($this->db->num_rows($exists_result) > 0) {
 			throw new RestException(403, 'Notification already exists');
 		}
 
@@ -1647,7 +1648,7 @@ class Thirdparties extends DolibarrApi
 
 		$moreparams = array(
 			'use_companybankid' => $accounts[0]->id,
-			'force_dir_output' => $conf->societe->multidir_output[$this->company->entity].'/'.dol_sanitizeFileName($this->company->id)
+			'force_dir_output' => $conf->societe->multidir_output[$this->company->entity].'/'.dol_sanitizeFileName((string) $this->company->id)
 		);
 
 		$result = $this->company->generateDocument($model, $outputlangs, 0, 0, 0, $moreparams);

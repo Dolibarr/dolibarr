@@ -41,7 +41,7 @@
  * @param 	int				$pid				Product id
  * @param 	int				$socid				Third party id
  * @param	string			$action				Action string
- * @param	array			$showextcals		Array with list of external calendars (used to show links to select calendar), or -1 to show no legend
+ * @param	array|int		$showextcals		Array with list of external calendars (used to show links to select calendar), or -1 to show no legend
  * @param	string|array	$actioncode			Preselected value(s) of actioncode for filter on event type
  * @param	int				$usergroupid		Id of group to filter on users
  * @param	string			$excludetype		A type to exclude ('systemauto', 'system', '')
@@ -242,6 +242,7 @@ function show_array_actions_to_do($max = 5)
 				//$customerstatic->name_alias = $obj->name_alias;
 				$customerstatic->code_client = $obj->code_client;
 				$customerstatic->code_compta = $obj->code_compta;
+				$customerstatic->code_compta_client = $obj->code_compta;
 				$customerstatic->client = $obj->client;
 				$customerstatic->logo = $obj->logo;
 				$customerstatic->email = $obj->email;
@@ -358,6 +359,7 @@ function show_array_last_actions_done($max = 5)
 				//$customerstatic->name_alias = $obj->name_alias;
 				$customerstatic->code_client = $obj->code_client;
 				$customerstatic->code_compta = $obj->code_compta;
+				$customerstatic->code_compta_client = $obj->code_compta;
 				$customerstatic->client = $obj->client;
 				$customerstatic->logo = $obj->logo;
 				$customerstatic->email = $obj->email;

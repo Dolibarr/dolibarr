@@ -993,16 +993,16 @@ td.wordbreak img, td.wordbreakimp img {
 	padding: 0;
 }
 .nopaddingleft {
-	padding-left: 0;
+	padding-<?php print $left; ?>: 0;
 }
 .nopaddingright {
-	padding-right: 0;
+	padding-<?php print $right; ?>: 0;
 }
 .nopaddingleftimp {
-	padding-left: 0 !important;
+	padding-<?php print $left; ?>: 0 !important;
 }
 .nopaddingrightimp {
-	padding-right: 0 !important;
+	padding-<?php print $right; ?>: 0 !important;
 }
 .paddingleft {
 	padding-<?php print $left; ?>: 4px;
@@ -1118,7 +1118,7 @@ div.urllink, div.urllink a {
 }
 .divsection {
 	padding: 10px;
-	border: 1px solid #DFDFDF;
+	border: 2px solid #DFDFDF;
 	border-radius: 10px;
 	margin-top: 5px;
 	margin-bottom: 20px;
@@ -1961,7 +1961,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	}
 
 	div.divphotoref {
-		padding-right: 10px !important;
+		padding-<?php echo $right; ?>: 10px !important;
 	}
 
 	.hideonsmartphone { display: none; }
@@ -2136,15 +2136,12 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	}
 
 	div.statusref {
-		padding-right: 10px;
+		padding-<?php echo $right; ?>: 10px;
 		max-width: 55%;
 	   }
-	div.statusref img {
-		padding-right: 3px !important;
-	   }
-	div.statusrefbis {
-		padding-right: 3px !important;
-	   }
+	div.statusref img, div.statusrefbis {
+		padding-<?php echo $right; ?>: 3px !important;
+   }
 	/* TODO
 	div.statusref {
 		padding-top: 0px !important;
@@ -2233,7 +2230,7 @@ td.showDragHandle {
 }
 .classforhorizontalscrolloftabs .side-nav {
 	display: block;
-	float: left;
+	float: <?php echo $left; ?>;
 }
 .classforhorizontalscrolloftabs #id-right {
 	width: calc(100% - <?php echo $leftmenuwidth + 20 ?>px);
@@ -2701,7 +2698,7 @@ div.statusref {
 	   border-radius: 6px;
 } */
 div.statusref {
-	float: right;
+	float: <?php echo $right; ?>;
 	padding-left: 12px;
 	margin-top: 8px;
 	margin-bottom: 10px;
@@ -2710,14 +2707,14 @@ div.statusref {
 }
 div.statusref img {
 	padding-left: 8px;
-	   padding-right: 9px;
-	   vertical-align: text-bottom;
-	   width: 18px;
+	padding-right: 9px;
+	vertical-align: text-bottom;
+	width: 18px;
 }
 div.statusrefbis {
 	padding-left: 8px;
-	   padding-right: 9px;
-	   vertical-align: text-bottom;
+	padding-right: 9px;
+	vertical-align: text-bottom;
 }
 img.photoref, div.photoref {
 	/* border: 1px solid #DDD; */
@@ -2793,7 +2790,7 @@ div#tmenu_tooltip {
 <?php if (GETPOST('optioncss', 'aZ09') == 'print') {  ?>
 	display:none;
 <?php } else { ?>
-	padding-<?php echo $right; ?>: <?php echo($maxwidthloginblock - 10); ?>px;
+	padding-<?php echo $right; ?>: <?php echo((float) $maxwidthloginblock - 10); ?>px;
 <?php } ?>
 
   -webkit-touch-callout: none; /* iOS Safari */
@@ -3340,13 +3337,13 @@ div.login_block_other {
 	vertical-align: middle;
 	clear: <?php echo $disableimages ? 'none' : 'both'; ?>;
 	padding-top: 0;
-	text-align: right;
-	margin-right: 8px;
+	text-align: <?php echo $right ?>;
+	margin-<?php echo $right ?>: 8px;
 	max-width: 200px;
 }
 
 .login_block_elem {
-	float: right;
+	float: <?php echo $right ?>;
 	vertical-align: top;
 	padding: 0px 3px 0px 4px !important;
 }
@@ -5210,7 +5207,7 @@ label.radioprivate {
 	margin-top: 2px; */
 }
 div.divphotoref > div > .photowithmargin, div.divphotoref > img.photowithmargin, div.divphotoref > a > .photowithmargin {		/* Margin right for photo not inside a div.photoref frame only */
-	margin-right: 15px;
+	margin-<?php echo $right; ?>: 15px;
 }
 
 .photowithborder {
@@ -6493,8 +6490,8 @@ ul.ecmjqft a:hover {
 div.ecmjqft {
 	vertical-align: middle;
 	display: inline-block !important;
-	text-align: right;
-	float: right;
+	text-align: <?php echo $right; ?>;
+	float: <?php echo $right; ?>;
 	right:4px;
 	clear: both;
 }
@@ -6511,7 +6508,7 @@ div#ecm-layout-west {
 div#ecm-layout-center {
 	width: calc(100% - 405px);
 	vertical-align: top;
-	float: right;
+	float: <?php echo $right; ?>;
 }
 
 .ecmjqft LI.directory { font-weight:normal; background: url(<?php echo dol_buildpath($path.'/theme/common/treemenu/folder2.png', 1); ?>) left top no-repeat; background-position-y: 8px; }
@@ -6731,7 +6728,7 @@ input.select2-input {
 	color: #FFF !important;
 }
 .select2-container .select2-selection--multiple {
-	min-height: 2.2em !important;
+	min-height: 2em !important;
 }
 .tableforfield .select2-container .select2-selection--single {
 	height: 25px;
@@ -6845,7 +6842,7 @@ input.select2-input {
 }
 .select2-container--default .select2-selection--multiple .select2-selection__choice {
 	background-color: #ddd;
-	margin-top: 4px !important;
+	margin-top: 0.25em !important;
 }
 .select2-selection--multiple input.select2-search__field {
 	border-bottom: none !important;
