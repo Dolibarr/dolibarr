@@ -348,8 +348,16 @@ if (empty($reshook)) {
 			$id = $object->create($user);
 			if ($id > 0) {
 				$resPass = 0;
-				if (GETPOST('password', 'password')) {
-					$resPass = $object->setPassword($user, GETPOST('password', 'password'));
+				if (GETPOST('password', 'none')) {
+					if(GETPOST('password', 'none') == GETPOST("confirmpassword", 'none')){
+						$resPass = $object->setPassword($user, GETPOST('password', 'none'));
+					} else {
+						$resPass = -1;
+						$error++;
+						$langs->load("errors");
+						setEventMessages($langs->trans("IncorrectPasswordConfirmation"), null, 'errors');
+						dol_syslog($langs->transnoentities("IncorrectPasswordConfirmation"), LOG_INFO);
+					}	
 				}
 				if (is_int($resPass) && $resPass < 0) {
 					$langs->load("errors");
@@ -542,6 +550,12 @@ if (empty($reshook)) {
 					if (!empty($object->pass)) {
 						if ($object->pass != $object->pass_indatabase && !dol_verifyHash($object->pass, $object->pass_indatabase_crypted)) {
 							$passwordismodified = 1;
+							if($object->pass != GETPOST("confirmpassword", 'none')) {
+								$error++;
+								$langs->load("errors");
+								setEventMessages($langs->trans("IncorrectPasswordConfirmation"), null, 'errors');
+								dol_syslog($langs->transnoentities("IncorrectPasswordConfirmation"), LOG_INFO);
+							}
 						}
 					}
 
@@ -1133,6 +1147,33 @@ if ($action == 'create' || $action == 'adduserldap') {
 	print $valuetoshow;
 	print '</td></tr>';
 
+	// Confirm Pass
+	if (preg_match('/dolibarr/', $dolibarr_main_authentication) || preg_match('/forceuser/', $dolibarr_main_authentication)) {
+			
+		print '<tr><td class="titlefieldcreate">'.$langs->trans("ConfirmPassword").'</td>';
+		print '<td>';
+		$valuetoshow = '';
+		if (!empty($ldap_pass)) {	// For very old system comaptibilty. Now clear password can't be viewed from LDAP read
+			$valuetoshow .= ($valuetoshow ? ' + ' : '').'<input type="hidden" name="confirmpassword" value="'.dol_escape_htmltag($ldap_pass).'">'; // Dolibarr password is preffiled with LDAP known password
+			$valuetoshow .= preg_replace('/./i', '*', $ldap_pass);
+		} else {
+			// We do not use a field password but a field text to show new password to use.
+			$valuetoshow .= ($valuetoshow ? ' + '.$langs->trans("DolibarrPassword") : '').'<input class="minwidth300 maxwidth400 widthcentpercentminusx" maxlength="128" type="text" id="confirmpassword" name="confirmpassword" value="'.dol_escape_htmltag($password).'" autocomplete="new-confirmpassword">';
+			
+		}
+		// Other form for user password
+		$parameters = array('valuetoshow' => $valuetoshow, 'password' => $password);
+		$reshook = $hookmanager->executeHooks('printUserPasswordField', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		if ($reshook > 0) {
+			$valuetoshow = $hookmanager->resPrint; // to replace
+		} else {
+			$valuetoshow .= $hookmanager->resPrint; // to add
+		}
+
+		print $valuetoshow;
+		print "</td></tr>\n";
+	}
+	
 	if (isModEnabled('api')) {
 		// API key
 		//$generated_password = getRandomPassword(false);
@@ -2505,6 +2546,30 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 			// Other form for user password
 			$parameters = array('valuetoshow' => $valuetoshow, 'caneditpasswordandsee' => $permissiontoeditpasswordandsee, 'caneditpasswordandsend' => $permissiontoeditpasswordandsend);
+			$reshook = $hookmanager->executeHooks('printUserPasswordField', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+			if ($reshook > 0) {
+				$valuetoshow = $hookmanager->resPrint; // to replace
+			} else {
+				$valuetoshow .= $hookmanager->resPrint; // to add
+			}
+
+			print $valuetoshow;
+			print "</td></tr>\n";
+
+			// Confirm Pass
+			if (preg_match('/dolibarr/', $dolibarr_main_authentication) || preg_match('/forceuser/', $dolibarr_main_authentication)) {
+			
+			print '<tr><td class="titlefieldcreate">'.$langs->trans("ConfirmPassword").'</td>';
+			print '<td>';
+			$valuetoshow = '';
+				if ($caneditpasswordandsee) {
+					$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').'<input maxlength="128" type="password" class="flat" id="confirmpassword" name="confirmpassword" value="'.dol_escape_htmltag($object->pass).'" autocomplete="new-confirmpassword">';
+				} else {
+					$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').preg_replace('/./i', '*', $object->pass);
+				}
+			
+			// Other form for user password
+			$parameters = array('valuetoshow' => $valuetoshow, 'caneditpasswordandsee' => $caneditpasswordandsee, 'caneditpasswordandsend' => $caneditpasswordandsend);
 			$reshook = $hookmanager->executeHooks('printUserPasswordField', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			if ($reshook > 0) {
 				$valuetoshow = $hookmanager->resPrint; // to replace
