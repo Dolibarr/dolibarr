@@ -769,7 +769,7 @@ if ($action == "dosign" && empty($cancel)) {
 						"entity" : \''.dol_escape_htmltag((string) $entity).'\',
 					},
 					success: function(response) {
-						if (response == "success"){
+						if (response.trim() === "success") {
 							console.log("Success on saving signature");
 							window.location.replace("'.$_SERVER["PHP_SELF"].'?ref='.urlencode($ref).'&source='.urlencode($source).'&message=signed&securekey='.urlencode($SECUREKEY).(isModEnabled('multicompany') ? '&entity='.(int) $entity : '').'");
 						} else {

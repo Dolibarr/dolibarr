@@ -58,7 +58,7 @@ repos:
       # Check that there are no files that have are the same when uppercased (conflict on windows)
       - id: check-case-conflict
 
-  # Beautify shell scripts
+  # Gitleaks is a SAST tool for detecting and preventing hardcoded secrets like passwords, api keys, and tokens in git repos
   - repo: https://github.com/gitleaks/gitleaks.git
     rev: v8.16.1
     hooks:
