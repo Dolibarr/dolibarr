@@ -152,7 +152,6 @@ $listofchoices = array(
  * Actions
  */
 
-
 //$parameters = array('socid' => $id);
 //$reshook = $hookmanager->executeHooks('doActions', $parameters, $object); // Note that $object may have been modified by some hooks
 //if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -162,7 +161,7 @@ $filesarray = array();
 '@phan-var-force array<string,array{id:string,entity:string,date:string,date_due:string,paid:float|int,amount_ht:float|int,amount_ttc:float|int,amount_vat:float|int,amount_localtax1:float|int,amount_localtax2:float|int,amount_revenuestamp:float|int,ref:string,fk:string,item:string,thirdparty_name:string,thirdparty_code:string,country_code:string,vatnum:string,sens:string,currency:string,line?:string,name?:string,files?:mixed}> $filesarray';
 
 $result = false;
-if (($action == 'searchfiles' || $action == 'dl')) {
+if ($action == 'searchfiles' || $action == 'dl') {	// Test on pemrission not required here. Test is done per object type later.
 	if (empty($date_start)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateStart")), null, 'errors');
 		$error++;
