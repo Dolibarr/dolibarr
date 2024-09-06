@@ -1180,10 +1180,6 @@ if ($resql) {
 		$moreforfilter .= img_picto($tmptitle, 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses($search_warehouse, 'search_warehouse', '', $tmptitle, 0, 0, $tmptitle);
 		$moreforfilter .= '</div>';
 	}
-	// alert on late date
-	$moreforfilter .= '<div class="divsearchfield">';
-	$moreforfilter .= $langs->trans('Alert').' <input type="checkbox" name="search_option" value="late"'.($search_option == 'late' ? ' checked' : '').'>';
-	$moreforfilter .= '</div>';
 
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
