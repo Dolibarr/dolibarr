@@ -522,7 +522,7 @@ if (empty($reshook)) {
 		$action = 'builddoc';
 		$moreparams = array(
 			'use_companybankid' => GETPOST('companybankid'),
-			'force_dir_output' => $conf->societe->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->id)
+			'force_dir_output' => $conf->societe->multidir_output[$object->entity].'/'.dol_sanitizeFileName((string) $object->id)
 		);
 		$_POST['lang_id'] = GETPOST('lang_idrib'.GETPOSTINT('companybankid'), 'alphanohtml');	// This is required by core/action_builddoc.inc.php
 		$_POST['model'] = GETPOST('modelrib'.GETPOSTINT('companybankid'), 'alphanohtml'); 		// This is required by core/action_builddoc.inc.php
