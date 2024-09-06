@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2024      MDW	                <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -649,7 +650,7 @@ if ($object->fetch($id) >= 0) {
 		print '<br>';
 
 		if ($sqlmessage && $user->admin) {
-			print info_admin($langs->trans("SQLUsedForExport").':<br> '.$sqlmessage, 0, 0, 1, '', 'TechnicalInformation');
+			print info_admin($langs->trans("SQLUsedForExport").':<br> '.$sqlmessage, 0, 0, '1', '', 'TechnicalInformation');
 			print '<br>';
 		}
 

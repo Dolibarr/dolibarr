@@ -3584,7 +3584,7 @@ function main_area($title = '')
 	print $hookmanager->resPrint;
 
 	if (getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')) {
-		print info_admin($langs->trans("WarningYouAreInMaintenanceMode", getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')), 0, 0, 1, 'warning maintenancemode');
+		print info_admin($langs->trans("WarningYouAreInMaintenanceMode", getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')), 0, 0, '1', 'warning maintenancemode');
 	}
 
 	// Permit to add user company information on each printed document by setting SHOW_SOCINFO_ON_PRINT
