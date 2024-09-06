@@ -470,7 +470,7 @@ class FichinterRec extends Fichinter
 	 *
 	 *  @param		string		$desc				Line description
 	 *  @param		integer		$duration			Duration
-	 *  @param		string		$date				Date
+	 *  @param		int			$date				Date
 	 *  @param		int			$rang				Position of line
 	 *  @param		double		$pu_ht				Unit price without tax (> 0 even for credit note)
 	 *  @param		double		$qty				Quantity

@@ -953,7 +953,7 @@ class FormWebPortal extends Form
 
 			case 'link':
 				$param_list = array_keys($param['options']); // $param_list='ObjectName:classPath[:AddCreateButtonOrNot[:Filter[:Sortfield]]]'
-				$showempty = (($required && $default != '') ? 0 : 1);
+				$showempty = (($required && $default != '') ? '0' : '1');
 
 				$out = $this->selectForForms($param_list[0], $htmlName, $value, $showempty, '', '', $morecss, $moreparam, 0, empty($val['disabled']) ? 0 : 1);
 

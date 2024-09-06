@@ -32,6 +32,12 @@
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
 
+-- Clean very old temporary tables (created during v9 migration or repair)
+
+DROP TABLE tmp_llx_accouting_account;
+DROP TABLE tmp_llx_accounting_account;
+
+
 -- Previous version instruction forgotten
 
 -- missing entity field
@@ -108,3 +114,6 @@ create table llx_paymentexpensereport_expensereport
 
 
 ALTER TABLE llx_contrat ADD COLUMN denormalized_lower_planned_end_date datetime;
+
+-- Missing field vat_reverse_charge with constant MAIN_COMPANY_PERENTITY_SHARED
+ALTER TABLE llx_societe_perentity ADD COLUMN vat_reverse_charge tinyint DEFAULT 0;

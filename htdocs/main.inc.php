@@ -117,7 +117,7 @@ function realCharForNumericEntities($matches)
  * only be guaranteed by escaping data during output.
  *
  * @param		string		$val		Brute value found into $_GET, $_POST or PHP_SELF
- * @param		string		$type		0=POST, 1=GET, 2=PHP_SELF, 3=GET without sql reserved keywords (the less tolerant test)
+ * @param		int<0, 3>	$type		0=POST, 1=GET, 2=PHP_SELF, 3=GET without sql reserved keywords (the less tolerant test)
  * @return		int						>0 if there is an injection, 0 if none
  */
 function testSqlAndScriptInject($val, $type)
@@ -1633,7 +1633,7 @@ if (!function_exists("llxHeader")) {
 		}
 
 		if (getDolGlobalString('MAIN_OPTIMIZEFORCOLORBLIND')) {
-			$tmpcsstouse .= ' colorblind-'.strip_tags($conf->global->MAIN_OPTIMIZEFORCOLORBLIND);
+			$tmpcsstouse .= ' colorblind-'.strip_tags(getDolGlobalString('MAIN_OPTIMIZEFORCOLORBLIND'));
 		}
 
 		print '<body id="mainbody" class="'.$tmpcsstouse.'">'."\n";
@@ -2547,7 +2547,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 			$showprofid = true;
 		}
 		if ($showprofid) {
-			$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId".$idprofcursor, $mysoc->country_code).'</b>: <span>'.dol_print_profids(getDolGlobalString($constkeyforprofid), 1).'</span>';
+			$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId".$idprofcursor, $mysoc->country_code).'</b>: <span>'.dol_print_profids(getDolGlobalString($constkeyforprofid), '1').'</span>';
 		}
 	}
 	$dropdownBody .= '<br><b>'.$langs->trans("VATIntraShort").'</b>: <span>'.dol_print_profids(getDolGlobalString("MAIN_INFO_TVAINTRA"), 'VAT').'</span>';

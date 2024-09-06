@@ -156,7 +156,7 @@ $TDurationTypes = array('y' => $langs->trans('Years'), 'm' => $langs->trans('Mon
 
 $result = restrictedArea($user, 'agenda', $object, 'actioncomm&societe', 'myactions|allactions', 'fk_soc', 'id');
 
-$usercancreate = $user->hasRight('agenda', 'allactions', 'create') || (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->hasRight('agenda', 'myactions', 'create'));
+$usercancreate = $user->hasRight('agenda', 'allactions', 'create') || ((empty($object->id) || $object->authorid == $user->id || $object->userownerid == $user->id) && $user->hasRight('agenda', 'myactions', 'create'));
 
 
 /*
@@ -1269,7 +1269,7 @@ if ($action == 'create') {
 	}
 
 	// Title
-	print '<tr><td'.(!getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? ' class="fieldrequired titlefieldcreate"' : '').'>'.$langs->trans("Label").'</td><td><input type="text" id="label" name="label" class="soixantepercent" value="'.GETPOST('label').'"></td></tr>';
+	print '<tr><td'.(!getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? ' class="fieldrequired titlefieldcreate"' : '').'>'.$langs->trans("Title").'</td><td><input type="text" id="label" name="label" class="soixantepercent" value="'.GETPOST('label').'"></td></tr>';
 
 	// Full day
 	print '<tr><td><span class="fieldrequired">'.$langs->trans("Date").'</span></td>';
@@ -1364,11 +1364,11 @@ if ($action == 'create') {
 
 	$datep = ($datep ? $datep : (is_null($object->datep) ? '' : $object->datep));
 	if (GETPOSTINT('datep', 1)) {
-		$datep = dol_stringtotime(GETPOSTINT('datep', 1), 'tzuserrel');
+		$datep = dol_stringtotime((string) GETPOSTINT('datep', 1), 'tzuserrel');
 	}
 	$datef = ($datef ? $datef : $object->datef);
 	if (GETPOSTINT('datef', 1)) {
-		$datef = dol_stringtotime(GETPOSTINT('datef', 1), 'tzuserrel');
+		$datef = dol_stringtotime((string) GETPOSTINT('datef', 1), 'tzuserrel');
 	}
 	if (empty($datef) && !empty($datep)) {
 		if (GETPOST("actioncode", 'aZ09') == 'AC_RDV' || !getDolGlobalString('AGENDA_USE_EVENT_TYPE_DEFAULT')) {

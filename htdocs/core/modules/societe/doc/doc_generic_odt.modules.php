@@ -235,7 +235,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 
 		if ($conf->societe->multidir_output[$object->entity]) {
 			$dir = $conf->societe->multidir_output[$object->entity];
-			$objectref = dol_sanitizeFileName($object->id);
+			$objectref = dol_sanitizeFileName((string) $object->id);
 			if (!preg_match('/specimen/i', $objectref)) {
 				$dir .= "/".$objectref;
 			}
