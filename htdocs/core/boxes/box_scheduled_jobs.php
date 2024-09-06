@@ -176,7 +176,7 @@ class box_scheduled_jobs extends ModeleBoxes
 					$textnoformat .= '<a class="inline-block paddingleft marginleftonly minwidth25 nounderlineimp" href="'.DOL_URL_ROOT.'/cron/list.php"><div class="center badge badge-status4 nounderline">0</div></a>';
 				}
 				$this->info_box_contents[$line][] = array(
-					'td' => 'class="center"',
+					'td' => 'class="right"',
 					'textnoformat' => $textnoformat
 				);
 			} else {
