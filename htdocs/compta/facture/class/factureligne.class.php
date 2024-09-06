@@ -44,7 +44,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commoninvoice.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonoinvoiceline.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
 
