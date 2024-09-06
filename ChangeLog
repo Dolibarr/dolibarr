@@ -8,7 +8,7 @@ English Dolibarr ChangeLog
 For users:
 ----------
 NEW Add option THEME_STICKY_TOPMENU = 'scrollleftmenu_after_mainpage' (or 'disabled')
-
+NEW option FICHINTER_DISABLE_DETAILS_ON_LIST replaces FICHINTER_DISABLE_DETAILS for intervention list. FICHINTER_DISABLE_DETAILS is still available for intervention cards.
 
 For developers:
 ---------------
