@@ -130,12 +130,17 @@ class ExpeditionLigne extends CommonObjectLine
 	 */
 	public $fk_product;
 
-	// detail of lot and qty = array(id in llx_expeditiondet_batch, fk_expeditiondet, batch, qty, fk_origin_stock)
-	// We can use this to know warehouse planned to be used for each lot.
+	/**
+	 * Detail of lot and qty = array(id in llx_expeditiondet_batch, fk_expeditiondet, batch, qty, fk_origin_stock)
+	 * We can use this to know warehouse planned to be used for each lot.
+	 * @var array
+	 */
 	public $detail_batch;
 
-	// detail of warehouses and qty
-	// We can use this to know warehouse when there is no lot.
+	/** detail of warehouses and qty
+	 * We can use this to know warehouse when there is no lot.
+	 * @var array
+	 */
 	public $details_entrepot;
 
 
@@ -151,6 +156,7 @@ class ExpeditionLigne extends CommonObjectLine
 	public $qty_asked;
 
 	/**
+	 * @var string
 	 * @deprecated
 	 * @see $product_ref
 	 */
@@ -162,6 +168,7 @@ class ExpeditionLigne extends CommonObjectLine
 	public $product_ref;
 
 	/**
+	 * @var string
 	 * @deprecated
 	 * @see $product_label
 	 */
@@ -199,40 +206,70 @@ class ExpeditionLigne extends CommonObjectLine
 	 * @var float weight
 	 */
 	public $weight;
+
+	/**
+	 * @var int
+	 */
 	public $weight_units;
 
 	/**
 	 * @var float length
 	 */
 	public $length;
+
+	/**
+	 * @var int
+	 */
 	public $length_units;
 
 	/**
 	 * @var float width
 	 */
 	public $width;
+
+	/**
+	 * @var int
+	 */
 	public $width_units;
 
 	/**
 	 * @var float height
 	 */
 	public $height;
+
+	/**
+	 * @var int
+	 */
 	public $height_units;
 
 	/**
 	 * @var float surface
 	 */
 	public $surface;
+
+	/**
+	 * @var int
+	 */
 	public $surface_units;
 
 	/**
 	 * @var float volume
 	 */
 	public $volume;
+
+	/**
+	 * @var int
+	 */
 	public $volume_units;
 
-	// Invoicing
+	/**
+	 * @var float|string
+	 */
 	public $remise_percent;
+
+	/**
+	 * @var float|string
+	 */
 	public $tva_tx;
 
 	/**
