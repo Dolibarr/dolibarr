@@ -8146,3 +8146,11 @@ div.flot-text .flot-tick-label .tickLabel, .fa-color-unset {
 	color: unset;
 
 }
+
+datalist.option {
+  padding: 4px;
+  color: blue;
+  margin-bottom: 1px;
+  font-size: 18px;
+  cursor: pointer;
+}
