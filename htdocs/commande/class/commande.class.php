@@ -3182,7 +3182,8 @@ class Commande extends CommonOrder
 
 			// Anciens indicateurs: $price, $subprice (a ne plus utiliser)
 			$price = $pu_ht;
-			if ($price_base_type == 'TTC') {
+			// disabled, because $tabprice returns already the right prices, so subprice should always be equal to $pu_ht
+			if (false && $price_base_type == 'TTC') {
 				$subprice = $pu_ttc;
 			} else {
 				$subprice = $pu_ht;
