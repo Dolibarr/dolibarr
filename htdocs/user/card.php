@@ -1479,8 +1479,8 @@ if ($id > 0) {
 		}
 	}
 
-		// Connection ldap
-		// pour recuperer passDoNotExpire et userChangePassNextLogon
+	// Connection ldap
+	// pour recuperer passDoNotExpire et userChangePassNextLogon
 	if (isModEnabled('ldap') && !empty($object->ldap_sid)) {
 		$ldap = new Ldap();
 		$result = $ldap->connectBind();
@@ -1515,161 +1515,160 @@ if ($id > 0) {
 		}
 	}
 
-		// Show tabs
-		if ($mode == 'employee') { // For HRM module development
-			$title = $langs->trans("Employee");
-			$linkback = '<a href="'.DOL_URL_ROOT.'/hrm/employee/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+	// Show tabs
+	if ($mode == 'employee') { // For HRM module development
+		$title = $langs->trans("Employee");
+		$linkback = '<a href="'.DOL_URL_ROOT.'/hrm/employee/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+	} else {
+		$title = $langs->trans("User");
+		$linkback = '';
+		if ($user->hasRight("user", "user", "read") || $user->admin) {
+			$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+		}
+	}
+
+	$head = user_prepare_head($object);
+
+	/*
+	 * Confirmation reinitialisation password
+	 */
+	if ($action == 'password') {
+		print $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id", $langs->trans("ReinitPassword"), $langs->trans("ConfirmReinitPassword", $object->login), "confirm_password", '', 0, 1);
+	}
+
+	/*
+	 * Confirmation envoi password
+	 */
+	if ($action == 'passwordsend') {
+		print $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id", $langs->trans("SendNewPassword"), $langs->trans("ConfirmSendNewPassword", $object->login), "confirm_passwordsend", '', 0, 1);
+	}
+
+	/*
+	* Confirm deactivation
+	*/
+	if ($action == 'disable') {
+		print $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id", $langs->trans("DisableAUser"), $langs->trans("ConfirmDisableUser", $object->login), "confirm_disable", '', 0, 1);
+	}
+
+	/*
+	 * Confirm activation
+	 */
+	if ($action == 'enable') {
+		print $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id", $langs->trans("EnableAUser"), $langs->trans("ConfirmEnableUser", $object->login), "confirm_enable", '', 0, 1);
+	}
+
+	// Confirmation delete
+	if ($action == 'delete') {
+		print $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id", $langs->trans("DeleteAUser"), $langs->trans("ConfirmDeleteUser", $object->login), "confirm_delete", '', 0, 1);
+	}
+
+	// View mode
+	if ($action != 'edit') {
+		print dol_get_fiche_head($head, 'user', $title, -1, 'user');
+
+		$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid" rel="noopener" rel="noopener">';
+		$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard").' ('.$langs->trans("AddToContacts").')', 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+		$morehtmlref .= '</a>';
+
+		$urltovirtualcard = '/user/virtualcard.php?id='.((int) $object->id);
+		$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->transnoentitiesnoconv("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'nohover');
+
+		dol_banner_tab($object, 'id', $linkback, $user->hasRight("user", "user", "read") || $user->admin, 'rowid', 'ref', $morehtmlref);
+
+		print '<div class="fichecenter">';
+		print '<div class="fichehalfleft">';
+
+		print '<div class="underbanner clearboth"></div>';
+		print '<table class="border tableforfield centpercent">';
+
+		// Login
+		print '<tr><td class="titlefieldmiddle">'.$langs->trans("Login").'</td>';
+		if (!empty($object->ldap_sid) && $object->statut == 0) {
+			print '<td class="error">';
+			print $langs->trans("LoginAccountDisableInDolibarr");
+			print '</td>';
 		} else {
-			$title = $langs->trans("User");
-			$linkback = '';
-
-			if ($user->hasRight("user", "user", "read") || $user->admin) {
-				$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
-			}
-		}
-
-		$head = user_prepare_head($object);
-
-		/*
-		 * Confirmation reinitialisation password
-		 */
-		if ($action == 'password') {
-			print $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id", $langs->trans("ReinitPassword"), $langs->trans("ConfirmReinitPassword", $object->login), "confirm_password", '', 0, 1);
-		}
-
-		/*
-		 * Confirmation envoi password
-		 */
-		if ($action == 'passwordsend') {
-			print $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id", $langs->trans("SendNewPassword"), $langs->trans("ConfirmSendNewPassword", $object->login), "confirm_passwordsend", '', 0, 1);
-		}
-
-		/*
-		 * Confirm deactivation
-		 */
-		if ($action == 'disable') {
-			print $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id", $langs->trans("DisableAUser"), $langs->trans("ConfirmDisableUser", $object->login), "confirm_disable", '', 0, 1);
-		}
-
-		/*
-		 * Confirm activation
-		 */
-		if ($action == 'enable') {
-			print $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id", $langs->trans("EnableAUser"), $langs->trans("ConfirmEnableUser", $object->login), "confirm_enable", '', 0, 1);
-		}
-
-		// Confirmation delete
-		if ($action == 'delete') {
-			print $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id", $langs->trans("DeleteAUser"), $langs->trans("ConfirmDeleteUser", $object->login), "confirm_delete", '', 0, 1);
-		}
-
-		// View mode
-		if ($action != 'edit') {
-			print dol_get_fiche_head($head, 'user', $title, -1, 'user');
-
-			$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid" rel="noopener" rel="noopener">';
-			$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard").' ('.$langs->trans("AddToContacts").')', 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
-			$morehtmlref .= '</a>';
-
-			$urltovirtualcard = '/user/virtualcard.php?id='.((int) $object->id);
-			$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->transnoentitiesnoconv("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'nohover');
-
-			dol_banner_tab($object, 'id', $linkback, $user->hasRight("user", "user", "read") || $user->admin, 'rowid', 'ref', $morehtmlref);
-
-			print '<div class="fichecenter">';
-			print '<div class="fichehalfleft">';
-
-			print '<div class="underbanner clearboth"></div>';
-			print '<table class="border tableforfield centpercent">';
-
-			// Login
-			print '<tr><td class="titlefieldmiddle">'.$langs->trans("Login").'</td>';
-			if (!empty($object->ldap_sid) && $object->statut == 0) {
-				print '<td class="error">';
-				print $langs->trans("LoginAccountDisableInDolibarr");
-				print '</td>';
-			} else {
-				print '<td>';
-				$addadmin = '';
-				if (property_exists($object, 'admin')) {
-					if (isModEnabled('multicompany') && !empty($object->admin) && empty($object->entity)) {
-						$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft"');
-					} elseif (!empty($object->admin)) {
-						$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft"');
-					}
+			print '<td>';
+			$addadmin = '';
+			if (property_exists($object, 'admin')) {
+				if (isModEnabled('multicompany') && !empty($object->admin) && empty($object->entity)) {
+					$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft"');
+				} elseif (!empty($object->admin)) {
+					$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft"');
 				}
-				print showValueWithClipboardCPButton($object->login).$addadmin;
-				print '</td>';
 			}
-			print '</tr>'."\n";
+			print showValueWithClipboardCPButton($object->login).$addadmin;
+			print '</td>';
+		}
+		print '</tr>'."\n";
 
-			// Type
-			print '<tr><td>';
-			$text = $langs->trans("Type");
-			print $form->textwithpicto($text, $langs->trans("InternalExternalDesc"));
-			print '</td><td>';
-			$type = $langs->trans("Internal");
-			if ($object->socid > 0) {
-				$type = $langs->trans("External");
-			}
-			print '<span class="badgeneutral">';
-			print $type;
-			if ($object->ldap_sid) {
-				print ' ('.$langs->trans("DomainUser").')';
-			}
-			print '</span>';
+		// Type
+		print '<tr><td>';
+		$text = $langs->trans("Type");
+		print $form->textwithpicto($text, $langs->trans("InternalExternalDesc"));
+		print '</td><td>';
+		$type = $langs->trans("Internal");
+		if ($object->socid > 0) {
+			$type = $langs->trans("External");
+		}
+		print '<span class="badgeneutral">';
+		print $type;
+		if ($object->ldap_sid) {
+			print ' ('.$langs->trans("DomainUser").')';
+		}
+		print '</span>';
+		print '</td></tr>'."\n";
+
+		// Ldap sid
+		if ($object->ldap_sid) {
+			print '<tr><td>'.$langs->trans("Type").'</td><td>';
+			print $langs->trans("DomainUser", $ldap->domainFQDN);
 			print '</td></tr>'."\n";
+		}
 
-			// Ldap sid
-			if ($object->ldap_sid) {
-				print '<tr><td>'.$langs->trans("Type").'</td><td>';
-				print $langs->trans("DomainUser", $ldap->domainFQDN);
-				print '</td></tr>'."\n";
-			}
+		// Employee
+		print '<tr><td>'.$langs->trans("Employee").'</td><td>';
+		if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2) {
+			print '<input type="checkbox" disabled name="employee" value="1"'.($object->employee ? ' checked="checked"' : '').'>';
+		} else {
+			print yn($object->employee);
+		}
+		print '</td></tr>'."\n";
 
-			// Employee
-			print '<tr><td>'.$langs->trans("Employee").'</td><td>';
-			if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2) {
-				print '<input type="checkbox" disabled name="employee" value="1"'.($object->employee ? ' checked="checked"' : '').'>';
+		// TODO This is also available into the tab RH
+		if ($nbofusers > 1) {
+			// Hierarchy
+			print '<tr><td>'.$langs->trans("HierarchicalResponsible").'</td>';
+			print '<td>';
+			if (empty($object->fk_user)) {
+				print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
 			} else {
-				print yn($object->employee);
-			}
-			print '</td></tr>'."\n";
-
-			// TODO This is also available into the tab RH
-			if ($nbofusers > 1) {
-				// Hierarchy
-				print '<tr><td>'.$langs->trans("HierarchicalResponsible").'</td>';
-				print '<td>';
-				if (empty($object->fk_user)) {
-					print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
+				$huser = new User($db);
+				if ($object->fk_user > 0) {
+					$huser->fetch($object->fk_user);
+					print $huser->getNomUrl(-1);
 				} else {
-					$huser = new User($db);
-					if ($object->fk_user > 0) {
-						$huser->fetch($object->fk_user);
-						print $huser->getNomUrl(-1);
-					} else {
-						print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
-					}
+					print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
+				}
+			}
+			print '</td>';
+			print "</tr>\n";
+
+			// Expense report validator
+			if (isModEnabled('expensereport')) {
+				print '<tr><td>';
+				$text = $langs->trans("ForceUserExpenseValidator");
+				print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
+				print '</td>';
+				print '<td>';
+				if (!empty($object->fk_user_expense_validator)) {
+					$evuser = new User($db);
+					$evuser->fetch($object->fk_user_expense_validator);
+					print $evuser->getNomUrl(-1);
 				}
 				print '</td>';
 				print "</tr>\n";
-
-				// Expense report validator
-				if (isModEnabled('expensereport')) {
-					print '<tr><td>';
-					$text = $langs->trans("ForceUserExpenseValidator");
-					print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
-					print '</td>';
-					print '<td>';
-					if (!empty($object->fk_user_expense_validator)) {
-						$evuser = new User($db);
-						$evuser->fetch($object->fk_user_expense_validator);
-						print $evuser->getNomUrl(-1);
-					}
-					print '</td>';
-					print "</tr>\n";
-				}
+			}
 
 				// Holiday request validator
 				if (isModEnabled('holiday')) {
