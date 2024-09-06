@@ -1463,13 +1463,13 @@ if ($action == 'create' || $action == 'adduserldap') {
 	print "</form>";
 } else {
 	// View and edit mode
-	if ($id > 0) {
-		$res = $object->fetch($id, '', '', 1);
-		if ($res < 0) {
-			dol_print_error($db, $object->error);
-			exit;
-		}
-		$res = $object->fetch_optionals();
+if ($id > 0) {
+	$res = $object->fetch($id, '', '', 1);
+	if ($res < 0) {
+		dol_print_error($db, $object->error);
+		exit;
+	}
+	$res = $object->fetch_optionals();
 
 		// Check if user has rights
 		if (!getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
