@@ -4748,17 +4748,12 @@ class Form
 	 *
 	 * @param 	string 	$selected 		Id or code or preselected payment mode
 	 * @param 	string 	$htmlname 		Name of select field
-	 * @param 	string 	$filtertype 	To filter on field type in llx_c_paiement ('CRDT' or 'DBIT' or array('code'=>xx,'label'=>zz))
-	 * @param 	int 	$format 		0=id+label, 1=code+code, 2=code+label, 3=id+code
 	 * @param 	int 	$empty 			1=can be empty, 0 otherwise
-	 * @param 	int 	$noadmininfo 	0=Add admin info, 1=Disable admin info
-	 * @param 	int 	$maxlength 		Max length of label
-	 * @param 	int 	$active 		Active or not, -1 = all
 	 * @param 	string 	$morecss 		Add more CSS on select tag
 	 * @param 	int 	$nooutput 		1=Return string, do not send to output
 	 * @return  string|void             String for the HTML select component
 	 */
-	public function select_types_iban($selected = '', $htmlname = 'ribList', $empty = 0, $morecss = '', $nooutput = 0, $ribForSelection = [])
+	public function selectTypesIban($selected = '', $htmlname = 'ribList', $empty = 0, $morecss = '', $nooutput = 0, $ribForSelection = [])
 	{
 		$out = '<select id="select' . $htmlname . '" class="flat selectrib' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '">';
 		if ($empty) {
@@ -4767,13 +4762,8 @@ class Form
 
 		foreach ($ribForSelection as $rib){
 
-			$out .= '<option value="' . $rib . '"';
-
-			if ($selected == $rib) {
-				$out .= ' selected';
-			}
-
-			$out .= '>';
+			$selectedAttribute = $selected == $rib ? 'selected' : '';
+			$out .= '<option value="' . $rib . '" '.$selectedAttribute.'>';
 			$out .= $rib;
 			$out .= '</option>';
 		}
@@ -6319,17 +6309,14 @@ class Form
 	/**
 	 *    Show form with IBAN
 	 *
-	 * @param string $page Page
 	 * @param string $selected Id mode pre-selectionne
 	 * @param string $htmlname Name of select html field
-	 * @param string $filtertype To filter on field type in llx_c_paiement ('CRDT' or 'DBIT' or array('code'=>xx,'label'=>zz))
-	 * @param int $active Active or not, -1 = all
-	 * @param int $addempty 1=Add empty entry
+	 * @param int    $addempty 1=Add empty entry
 	 * @param string $type Type ('direct-debit' or 'bank-transfer')
-	 * @param int $nooutput 1=Return string, no output
+	 * @param int    $nooutput 1=Return string, no output
 	 * @return    string                    HTML output or ''
 	 */
-	public function form_iban($selected = '', $htmlname = 'ribList', $filtertype = '', $active = 1, $addempty = 0, $type = '', $nooutput = 0, $ribForSelection = []): string
+	public function formIban(string $selected = '', string $htmlname = 'ribList', int $addempty = 0, string $type = '', int $nooutput = 0, $ribForSelection = [])
 	{
 		$out = '';
 		if ($htmlname != "none") {
@@ -6337,7 +6324,7 @@ class Form
 			if ($type) {
 				$out .= '<input type="hidden" name="type" value="' . dol_escape_htmltag($type) . '">';
 			}
-			$out .= $this->select_types_iban($selected, $htmlname, $addempty, '', 1, $ribForSelection);
+			$out .= $this->selectTypesIban($selected, $htmlname, $addempty, '', 1, $ribForSelection);
 		} else {
 			if ($selected) {
 				$out .= $selected;

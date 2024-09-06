@@ -115,17 +115,17 @@ if (empty($reshook)) {
 			}
 			$paymentservice = GETPOST('paymentservice');
 
-
 			// Get chosen iban id
 			$iban = explode(" / ", GETPOST('ribList'))[0];
-			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_rib WHERE iban_prefix = '".$iban."'" ;
-			$selectedRib = $object->db->query($sql);
-			if ($selectedRib) {
-				if ($selectedRib->num_rows) {
-					$selectedRibObj = $object->db->fetch_object($selectedRib);
+			$sql = "SELECT rowid FROM ".$db->prefix()."societe_rib WHERE iban_prefix = '".$iban."'" ;
+			$resql = $object->db->query($sql);
+			if ($resql) {
+				if ($resql->num_rows) {
+					$selectedRibObj = $object->db->fetch_object($resql);
 				}
 			}
-			$result = $object->demande_prelevement($user, price2num(GETPOST('withdraw_request_amount', 'alpha')), $newtype, $sourcetype, 0, $selectedRibObj->rowid ?? 0);
+			$amount = GETPOST('withdraw_request_amount', 'alpha');
+			$result = $object->demande_prelevement($user, price2num($amount), $newtype, $sourcetype, 0, $selectedRibObj->rowid ?? 0);
 
 			if ($result > 0) {
 				$db->commit();
@@ -765,22 +765,23 @@ if ($object->id > 0) {
 				print '<td class="nowraponall">';
 
 				$ribList = $object->thirdparty->get_all_rib();
-				$ribForSelection = array();
-				$default_rib = '';
+				$ribForSelection = [];
+				$defaultRib = '';
 				foreach($ribList as $rib) {
 					$ribString = $rib->iban . (($rib->iban && $rib->bic) ? ' / ' : '') . $rib->bic;
 
 					$ribForSelection[$rib->id] = $ribString;
 					if($rib->default_rib == 1){
-						$default_rib = $ribString;
+						$defaultRib = $ribString;
 					}
 				}
 
-				$selectedRib= $default_rib;
-				$selectedRib = $form->form_iban(!empty(GETPOST('ribList')) ? GETPOST('ribList') : $default_rib, 'ribList', $filtertype, 1, 0, $type, 0, $ribForSelection);
+				$selectedRib= $defaultRib;
+				$listeOfRibs = GETPOST('ribList');
+				$selectedRib = $form->formIban(!empty($listeOfRibs) ? $listeOfRibs: $defaultRib, 'ribList', 0, $type, 0, $ribForSelection);
 
 				if (!empty($rib->iban)) {
-					if ($rib->verif() <= 0) {
+					if (!$rib->verif()) {
 						print img_warning('Error on default bank number for IBAN : '.$langs->trans($rib->error));
 					}
 				} elseif ($numopen || ($type != 'bank-transfer' && $object->mode_reglement_code == 'PRE') || ($type == 'bank-transfer' && $object->mode_reglement_code == 'VIR')) {
@@ -896,10 +897,10 @@ if ($object->id > 0) {
 	$sql .= " pb.ref, pb.date_trans, pb.method_trans, pb.credite, pb.date_credit, pb.datec, pb.statut as status, pb.amount as pb_amount,";
 	$sql .= " u.rowid as user_id, u.email, u.lastname, u.firstname, u.login, u.statut as user_status,";
 	$sql .= " sr.iban_prefix as iban, sr.bic as bic";
-	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on pfd.fk_user_demande = u.rowid";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."prelevement_bons as pb ON pb.rowid = pfd.fk_prelevement_bons";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_rib as sr ON sr.rowid = pfd.fk_societe_rib";
+	$sql .= " FROM ".$db->prefix()."prelevement_demande as pfd";
+	$sql .= " LEFT JOIN ".$db->prefix()."user as u on pfd.fk_user_demande = u.rowid";
+	$sql .= " LEFT JOIN ".$db->prefix()."prelevement_bons as pb ON pb.rowid = pfd.fk_prelevement_bons";
+	$sql .= " LEFT JOIN ".$db->prefix()."societe_rib as sr ON sr.rowid = pfd.fk_societe_rib";
 	if ($type == 'bank-transfer') {
 		$sql .= " WHERE fk_facture_fourn = ".((int) $object->id);
 	} else {
@@ -1021,10 +1022,10 @@ if ($object->id > 0) {
 	$sql .= " pb.ref, pb.date_trans, pb.method_trans, pb.credite, pb.date_credit, pb.datec, pb.statut as status, pb.fk_bank_account, pb.amount as pb_amount,";
 	$sql .= " u.rowid as user_id, u.email, u.lastname, u.firstname, u.login, u.statut as user_status, u.photo as user_photo,";
 	$sql .= " sr.iban_prefix as iban, sr.bic as bic";
-	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on pfd.fk_user_demande = u.rowid";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."prelevement_bons as pb ON pb.rowid = pfd.fk_prelevement_bons";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_rib as sr ON sr.rowid = pfd.fk_societe_rib";
+	$sql .= " FROM ".$db->prefix()."prelevement_demande as pfd";
+	$sql .= " LEFT JOIN ".$db->prefix()."user as u on pfd.fk_user_demande = u.rowid";
+	$sql .= " LEFT JOIN ".$db->prefix()."prelevement_bons as pb ON pb.rowid = pfd.fk_prelevement_bons";
+	$sql .= " LEFT JOIN ".$db->prefix()."societe_rib as sr ON sr.rowid = pfd.fk_societe_rib";
 	if ($type == 'bank-transfer') {
 		$sql .= " WHERE fk_facture_fourn = ".((int) $object->id);
 	} else {
@@ -1073,11 +1074,11 @@ if ($object->id > 0) {
 			// Amount
 			print '<td class="center"><span class="amount">'.price($obj->amount).'</span></td>';
 
-			// Iban
-			print '<td class="center"><span class="iban">' . $obj->iban." / ".$obj->bic . '</span></td>';
-
 			// Date process
 			print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->date_traite), 'dayhour', 'tzuserrel')."</td>\n";
+
+			// Iban
+			print '<td class="center"><span class="iban">' . $obj->iban." / ".$obj->bic . '</span></td>';
 
 			// Link to payment request done
 			print '<td class="center minwidth75">';

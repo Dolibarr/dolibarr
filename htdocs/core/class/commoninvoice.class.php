@@ -970,10 +970,11 @@ abstract class CommonInvoice extends CommonObject
 	 *  @param	float	$amount						Amount we request direct debit for
 	 *  @param	string	$type						'direct-debit' or 'bank-transfer'
 	 *  @param	string	$sourcetype					Source ('facture' or 'supplier_invoice')
-	 *  @param	int	$checkduplicateamongall		0=Default (check among open requests only to find if request already exists). 1=Check also among requests completely processed and cancel if at least 1 request exists whatever is its status.
-	 *	@return     int         						Return integer <0 if KO, 0 if a request already exists, >0 if OK
+	 *  @param	int	    $checkduplicateamongall		0=Default (check among open requests only to find if request already exists). 1=Check also among requests completely processed and cancel if at least 1 request exists whatever is its status.
+	 *  @param  int     $ribId						If defined, will use this ID to get the RIB. Otherwise, the default RIB will be taken.
+	 *  @return int         						Return integer <0 if KO, 0 if a request already exists, >0 if OK
 	 */
-	public function demande_prelevement($fuser, $amount = 0, $type = 'direct-debit', $sourcetype = 'facture', $checkduplicateamongall = 0, $ribId = 0)
+	public function demande_prelevement(User $fuser, float $amount = 0, string $type = 'direct-debit', string $sourcetype = 'facture', int $checkduplicateamongall = 0, int $ribId = 0)
 	{
 		// phpcs:enable
 		global $conf;
