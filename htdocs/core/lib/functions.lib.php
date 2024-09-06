@@ -10925,7 +10925,8 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
  */
 function printCommonFooter($zone = 'private')
 {
-	global $conf, $hookmanager, $user, $debugbar;
+	global $conf, $hookmanager, $user, $langs;
+	global $debugbar;
 	global $action;
 	global $micro_start_time;
 
@@ -10973,6 +10974,7 @@ function printCommonFooter($zone = 'private')
 				$relativepathstring = preg_replace('/^\//', '', $relativepathstring);
 				$relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
 				//$tmpqueryarraywehave = explode('&', dol_string_nohtmltag($_SERVER['QUERY_STRING']));
+
 				if (!empty($user->default_values[$relativepathstring]['focus'])) {
 					foreach ($user->default_values[$relativepathstring]['focus'] as $defkey => $defval) {
 						$qualified = 0;
@@ -10995,10 +10997,11 @@ function printCommonFooter($zone = 'private')
 						}
 
 						if ($qualified) {
+							print 'console.log("set the focus by executing jQuery(...).focus();")'."\n";
 							foreach ($defval as $paramkey => $paramval) {
 								// Set focus on field
 								print 'jQuery("input[name=\''.$paramkey.'\']").focus();'."\n";
-								print 'jQuery("textarea[name=\''.$paramkey.'\']").focus();'."\n";
+								print 'jQuery("textarea[name=\''.$paramkey.'\']").focus();'."\n";	// TODO KO with ckeditor
 								print 'jQuery("select[name=\''.$paramkey.'\']").focus();'."\n"; // Not really useful, but we keep it in case of.
 							}
 						}
@@ -11026,19 +11029,72 @@ function printCommonFooter($zone = 'private')
 						}
 
 						if ($qualified) {
-							foreach ($defval as $paramkey => $paramval) {
-								// Add property 'required' on input
-								print 'jQuery("input[name=\''.$paramkey.'\']").prop(\'required\',true);'."\n";
-								print 'jQuery("textarea[name=\''.$paramkey.'\']").prop(\'required\',true);'."\n";
-								print '// required on a select works only if key is "", so we add the required attributes but also we reset the key -1 or 0 to an empty string'."\n";
-								print 'jQuery("select[name=\''.$paramkey.'\']").prop(\'required\',true);'."\n";
-								print 'jQuery("select[name=\''.$paramkey.'\'] option[value=\'-1\']").prop(\'value\', \'\');'."\n";
-								print 'jQuery("select[name=\''.$paramkey.'\'] option[value=\'0\']").prop(\'value\', \'\');'."\n";
+							print 'console.log("set the js code to manage fields that are set as mandatory");'."\n";
 
+							foreach ($defval as $paramkey => $paramval) {
+								// Solution 1: Add handler on submit to check if mandatory fields are empty
+								print 'var form = $(\'#'.dol_escape_js($paramkey).'\').closest("form");'."\n";
+								print "form.on('submit', function(event) {
+										var submitter = event.originalEvent.submitter;
+										if (submitter) {
+											var buttonName = $(submitter).attr('name');
+											if (buttonName == 'cancel') {
+												console.log('We click on cancel button so we accept submit with no need to check mandatory fields');
+												return true;
+											}
+										}
+
+										console.log('We did not click on cancel button but on something else, we check that field #".dol_escape_js($paramkey)." is not empty');
+
+										var tmpvalue = jQuery('#".dol_escape_js($paramkey)."').val();
+										let tmptypefield = jQuery('#".dol_escape_js($paramkey)."').prop('nodeName').toLowerCase(); // Get the tag name (div, section, footer...)
+
+										if (tmptypefield == 'textarea') {
+											// We must instead check the content of ckeditor
+											var tmpeditor = CKEDITOR.instances['".dol_escape_js($paramkey)."'];
+										    if (tmpeditor) {
+        										tmpvalue = tmpeditor.getData();
+												console.log('For textarea tmpvalue is '+tmpvalue);
+											}
+										}
+
+										let tmpvalueisempty = false;
+										if (tmpvalue === null || tmpvalue === undefined || tmpvalue === '') {
+											tmpvalueisempty = true;
+										}
+										if (tmpvalue === '0' && tmptypefield == 'select') {
+											tmpvalueisempty = true;
+										}
+										if (tmpvalueisempty) {
+											console.log('field has type '+tmptypefield+' and is empty, we cancel the submit');
+											event.preventDefault(); // Stop submission of form to allow custom code to decide.
+											event.stopPropagation(); // Stop other handlers.
+											alert('".dol_escape_js($langs->trans("ErrorFieldRequired", $paramkey).' ('.$langs->trans("CustomMandatoryFieldRule").')')."');
+											return false;
+										}
+										console.log('field has type '+tmptypefield+' and is defined to '+tmpvalue);
+										return true;
+									});
+								\n";
+
+								// Solution 2: Add property 'required' on input
+								// so browser will check value and try to focus on it when submitting the form.
+								//print 'setTimeout(function() {';	// If we want to wait that ckeditor beuatifier has finished its job.
+								//print 'jQuery("input[name=\''.$paramkey.'\']").prop(\'required\',true);'."\n";
+								//print 'jQuery("textarea[id=\''.$paramkey.'\']").prop(\'required\',true);'."\n";
+								//print 'jQuery("select[name=\''.$paramkey.'\']").prop(\'required\',true);'."\n";*/
+								//print '// required on a select works only if key is "", so we add the required attributes but also we reset the key -1 or 0 to an empty string'."\n";
+								//print 'jQuery("select[name=\''.$paramkey.'\'] option[value=\'-1\']").prop(\'value\', \'\');'."\n";
+								//print 'jQuery("select[name=\''.$paramkey.'\'] option[value=\'0\']").prop(\'value\', \'\');'."\n";
 								// Add 'field required' class on closest td for all input elements : input, textarea and select
-								print 'jQuery(":input[name=\'' . $paramkey . '\']").closest("tr").find("td:first").addClass("fieldrequired");' . "\n";
+								//print '}, 500);'; // 500 milliseconds delay
+
+								// Now set the class "fieldrequired"
+								print 'jQuery(\':input[name="' . dol_escape_js($paramkey) . '"]\').closest("tr").find("td:first").addClass("fieldrequired");'."\n";
 							}
-							// If we submit the cancel button we remove the required attributes
+
+
+							// If we submit using the cancel button, we remove the required attributes
 							print 'jQuery("input[name=\'cancel\']").click(function() {
 								console.log("We click on cancel button so removed all required attribute");
 								jQuery("input, textarea, select").each(function(){this.removeAttribute(\'required\');});
