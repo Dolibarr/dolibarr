@@ -213,6 +213,8 @@ if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 }
 
 $error = 0;
+$result = -1; // For static analysis
+$documentlink = ''; // For static analysis
 
 $permissiontoadd = $user->hasRight('accounting', 'mouvements', 'creer');
 
@@ -1023,6 +1025,10 @@ print "</tr>\n";
 
 $displayed_account_number = null; // Start with undefined to be able to distinguish with empty
 
+$objectstatic = null;  // Init for static analysis
+$objectlink = '';  // Init for static analysis
+$result = -1;  // Init for static analysis
+
 // Loop on record
 // --------------------------------------------------------------------
 $i = 0;
@@ -1035,6 +1041,11 @@ $totalarray['val'] = array();
 $totalarray['val']['totaldebit'] = 0;
 $totalarray['val']['totalcredit'] = 0;
 $totalarray['val']['totalbalance'] = 0;
+
+// Init for static analysis
+$colspan = 0;			// colspan before field 'label of operation'
+$colspanend = 0;		// colspan after debit/credit
+$accountg = '-';
 
 while ($i < min($num, $limit)) {
 	$line = $object->lines[$i];

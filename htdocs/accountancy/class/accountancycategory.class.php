@@ -710,7 +710,7 @@ class AccountancyCategory // extends CommonObject
 	 * Function to get an array of all active custom groups (llx_c_accunting_categories) with their accounts from the chart of account (ll_accounting_acount)
 	 *
 	 * @param	int				$catid		Custom group ID
-	 * @return 	array|integer   		    Result in table (array), -1 if KO
+	 * @return array<string,array<int,array{id:int,code:string,label:string,position:string,category_type:string,formula:string,sens:string,account_number:string,account_label:string}>>|int<-1,-1>   		    Result in table (array), -1 if KO
 	 * @see getCats(), getCptsCat()
 	 */
 	public function getCatsCpts($catid = 0)
@@ -837,7 +837,7 @@ class AccountancyCategory // extends CommonObject
 	 * @param 	string 		$predefinedgroupwhere 	Sql criteria filter to select accounting accounts. This value must be sanitized and not come from an input of a user.
 	 * 												Example: "pcg_type = 'EXPENSE' AND fk_pcg_version = 'xx'"
 	 * 												Example: "fk_accounting_category = 99"
-	 * @return 	array|int							Array of accounting accounts or -1 if error
+	 * @return	array<array{id:int,account_number:string,account_label:string}>|int<-1,-1>		Array of accounting accounts or -1 if error
 	 * @see getCats(), getCatsCpts()
 	 */
 	public function getCptsCat($cat_id, $predefinedgroupwhere = '')
