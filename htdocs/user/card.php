@@ -1471,49 +1471,49 @@ if ($id > 0) {
 	}
 	$res = $object->fetch_optionals();
 
-		// Check if user has rights
-		if (!getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
-			$object->loadRights();
-			if (empty($object->nb_rights) && $object->statut != 0 && empty($object->admin)) {
-				setEventMessages($langs->trans('UserHasNoPermissions'), null, 'warnings');
-			}
+	// Check if user has rights
+	if (!getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
+		$object->loadRights();
+		if (empty($object->nb_rights) && $object->statut != 0 && empty($object->admin)) {
+			setEventMessages($langs->trans('UserHasNoPermissions'), null, 'warnings');
 		}
+	}
 
 		// Connection ldap
 		// pour recuperer passDoNotExpire et userChangePassNextLogon
-		if (isModEnabled('ldap') && !empty($object->ldap_sid)) {
-			$ldap = new Ldap();
-			$result = $ldap->connectBind();
-			if ($result > 0) {
-				$userSearchFilter = '(' . getDolGlobalString('LDAP_FILTER_CONNECTION').'('.$ldap->getUserIdentifier().'='.$object->login.'))';
-				$entries = $ldap->fetch($object->login, $userSearchFilter);
-				if (!$entries) {
-					setEventMessages($ldap->error, $ldap->errors, 'errors');
-				}
+	if (isModEnabled('ldap') && !empty($object->ldap_sid)) {
+		$ldap = new Ldap();
+		$result = $ldap->connectBind();
+		if ($result > 0) {
+			$userSearchFilter = '(' . getDolGlobalString('LDAP_FILTER_CONNECTION').'('.$ldap->getUserIdentifier().'='.$object->login.'))';
+			$entries = $ldap->fetch($object->login, $userSearchFilter);
+			if (!$entries) {
+				setEventMessages($ldap->error, $ldap->errors, 'errors');
+			}
 
-				$passDoNotExpire = 0;
-				$userChangePassNextLogon = 0;
-				$userDisabled = 0;
-				$statutUACF = '';
+			$passDoNotExpire = 0;
+			$userChangePassNextLogon = 0;
+			$userDisabled = 0;
+			$statutUACF = '';
 
-				// Check options of user account
-				if (count($ldap->uacf) > 0) {
-					foreach ($ldap->uacf as $key => $statut) {
-						if ($key == 65536) {
-							$passDoNotExpire = 1;
-							$statutUACF = $statut;
-						}
+			// Check options of user account
+			if (count($ldap->uacf) > 0) {
+				foreach ($ldap->uacf as $key => $statut) {
+					if ($key == 65536) {
+						$passDoNotExpire = 1;
+						$statutUACF = $statut;
 					}
-				} else {
-					$userDisabled = 1;
-					$statutUACF = "ACCOUNTDISABLE";
 				}
+			} else {
+				$userDisabled = 1;
+				$statutUACF = "ACCOUNTDISABLE";
+			}
 
-				if ($ldap->pwdlastset == 0) {
-					$userChangePassNextLogon = 1;
-				}
+			if ($ldap->pwdlastset == 0) {
+				$userChangePassNextLogon = 1;
 			}
 		}
+	}
 
 		// Show tabs
 		if ($mode == 'employee') { // For HRM module development
