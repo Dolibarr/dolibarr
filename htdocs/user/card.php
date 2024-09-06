@@ -349,7 +349,7 @@ if (empty($reshook)) {
 			if ($id > 0) {
 				$resPass = 0;
 				if (GETPOST('password', 'none')) {
-					if(GETPOST('password', 'none') == GETPOST("confirmpassword", 'none')){
+					if (GETPOST('password', 'none') == GETPOST("confirmpassword", 'none')) {
 						$resPass = $object->setPassword($user, GETPOST('password', 'none'));
 					} else {
 						$resPass = -1;
@@ -357,7 +357,7 @@ if (empty($reshook)) {
 						$langs->load("errors");
 						setEventMessages($langs->trans("IncorrectPasswordConfirmation"), null, 'errors');
 						dol_syslog($langs->transnoentities("IncorrectPasswordConfirmation"), LOG_INFO);
-					}	
+					}
 				}
 				if (is_int($resPass) && $resPass < 0) {
 					$langs->load("errors");
@@ -550,7 +550,7 @@ if (empty($reshook)) {
 					if (!empty($object->pass)) {
 						if ($object->pass != $object->pass_indatabase && !dol_verifyHash($object->pass, $object->pass_indatabase_crypted)) {
 							$passwordismodified = 1;
-							if($object->pass != GETPOST("confirmpassword", 'none')) {
+							if ($object->pass != GETPOST("confirmpassword", 'none')) {
 								$error++;
 								$langs->load("errors");
 								setEventMessages($langs->trans("IncorrectPasswordConfirmation"), null, 'errors');
@@ -1149,7 +1149,6 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 	// Confirm Pass
 	if (preg_match('/dolibarr/', $dolibarr_main_authentication) || preg_match('/forceuser/', $dolibarr_main_authentication)) {
-			
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("ConfirmPassword").'</td>';
 		print '<td>';
 		$valuetoshow = '';
@@ -1159,7 +1158,6 @@ if ($action == 'create' || $action == 'adduserldap') {
 		} else {
 			// We do not use a field password but a field text to show new password to use.
 			$valuetoshow .= ($valuetoshow ? ' + '.$langs->trans("DolibarrPassword") : '').'<input class="minwidth300 maxwidth400 widthcentpercentminusx" maxlength="128" type="text" id="confirmpassword" name="confirmpassword" value="'.dol_escape_htmltag($password).'" autocomplete="new-confirmpassword">';
-			
 		}
 		// Other form for user password
 		$parameters = array('valuetoshow' => $valuetoshow, 'password' => $password);
