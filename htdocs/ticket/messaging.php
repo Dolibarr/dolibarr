@@ -76,6 +76,8 @@ if (GETPOST('actioncode', 'array')) {
 $search_rowid = GETPOST('search_rowid');
 $search_agenda_label = GETPOST('search_agenda_label');
 
+
+$hookmanager->initHooks(array('ticketagenda', 'globalcard')); // Note that conf->hooks_modules contains array
 $object = new Ticket($db);
 $object->fetch($id, $ref, $track_id);
 
