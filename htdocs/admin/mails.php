@@ -149,7 +149,6 @@ if ($action == 'presend' && GETPOST('trackid', 'alphanohtml') == 'testhtml') {
 }
 
 
-
 /*
  * View
  */
@@ -686,7 +685,7 @@ if ($action == 'edit') {
 
 		// Note MAIN_HIDE_WARNING_TO_ENCOURAGE_SMTP_SETUP is set to 1 by default if not set
 		if (getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail') == 'mail' && getDolGlobalString('MAIN_HIDE_WARNING_TO_ENCOURAGE_SMTP_SETUP')) {
-			$textwarning = $langs->trans("WarningPHPMail").'<br>'.$langs->trans("WarningPHPMailA").'<br>'.$langs->trans("WarningPHPMailB").'<br>'.$langs->trans("WarningPHPMailC").'<br><br>'.$langs->trans("WarningPHPMailD");
+			$textwarning = $langs->trans("WarningPHPMail", $listofmethods['mail'], $listofmethods['smtps']).'<br>'.$langs->trans("WarningPHPMailA").'<br>'.$langs->trans("WarningPHPMailB").'<br>'.$langs->trans("WarningPHPMailC").'<br><br>'.$langs->trans("WarningPHPMailD");
 			print $form->textwithpicto('', '<span class="small">'.$textwarning.'</span>', 1, 'help', 'nomargintop');
 		}
 
@@ -825,7 +824,7 @@ if ($action == 'edit') {
 		print '</div>';
 
 		if (getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail') == 'mail' && !getDolGlobalString('MAIN_HIDE_WARNING_TO_ENCOURAGE_SMTP_SETUP')) {
-			$messagetoshow = $langs->trans("WarningPHPMail").'<br>'.$langs->trans("WarningPHPMailA").'<br>'.$langs->trans("WarningPHPMailB").'<br>'.$langs->trans("WarningPHPMailC").'<br><br>'.$langs->trans("WarningPHPMailD");
+			$messagetoshow = $langs->trans("WarningPHPMail", $listofmethods['mail'], $listofmethods['smtps']).'<br>'.$langs->trans("WarningPHPMailA").'<br>'.$langs->trans("WarningPHPMailB").'<br>'.$langs->trans("WarningPHPMailC").'<br><br>'.$langs->trans("WarningPHPMailD");
 			$messagetoshow .= ' '.$langs->trans("WarningPHPMailDbis", '{s1}', '{s2}');
 			$linktosetvar1 = '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=disablephpmailwarning&token='.newToken().'">';
 			$linktosetvar2 = '</a>';
@@ -1017,7 +1016,7 @@ if ($action == 'edit') {
 	if (!in_array($action, array('testconnect', 'test', 'testhtml'))) {
 		$text = '';
 		if (getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail') == 'mail') {
-			//$text .= $langs->trans("WarningPHPMail"); // To encourage to use SMTPS
+			//$text .= $langs->trans("WarningPHPMail", $listofmethods['mail'], $listofmethods['smtps']); // To encourage to use SMTPS
 		}
 
 		if (getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail') == 'mail') {
