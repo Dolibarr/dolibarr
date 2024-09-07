@@ -580,8 +580,10 @@ class Documents extends DolibarrApi
 				} elseif (is_array($ecmfile->lines) && count($ecmfile->lines) > 0) {
 					$count = count($filearray);
 					for ($i = 0 ; $i < $count ; $i++) {
-						if ($filearray[$i]['name'] == $ecmfile->lines[$i]->filename) {
-							$filearray[$i] = array_merge($filearray[$i], (array) $ecmfile->lines[0]);
+						foreach ($ecmfile->lines as $line) {
+							if ($filearray[$i]['name'] == $line->filename) {
+								$filearray[$i] = array_merge($filearray[$i], (array) $line);
+							}
 						}
 					}
 				}

@@ -93,10 +93,9 @@ class AccountancyImport
 	public function computeAmount(&$arrayrecord, $listfields, $record_key)
 	{
 		// get fields indexes
-		$field_index_list = array_flip($listfields);
-		if (isset($field_index_list['debit']) && isset($field_index_list['credit'])) {
-			$debit_index = $field_index_list['debit'];
-			$credit_index = $field_index_list['credit'];
+		if (isset($listfields['b.debit']) && isset($listfields['b.credit'])) {
+			$debit_index = $listfields['b.debit'];
+			$credit_index = $listfields['b.credit'];
 
 			$debit  = floatval($arrayrecord[$debit_index]['val']);
 			$credit = floatval($arrayrecord[$credit_index]['val']);
@@ -123,9 +122,8 @@ class AccountancyImport
 	 */
 	public function computeDirection(&$arrayrecord, $listfields, $record_key)
 	{
-		$field_index_list = array_flip($listfields);
-		if (isset($field_index_list['debit'])) {
-			$debit_index = $field_index_list['debit'];
+		if (isset($listfields['b.debit'])) {
+			$debit_index = $listfields['b.debit'];
 
 			$debit = floatval($arrayrecord[$debit_index]['val']);
 			if (!empty($debit)) {

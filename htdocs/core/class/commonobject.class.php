@@ -3127,7 +3127,7 @@ abstract class CommonObject
 				while ($row = $this->db->fetch_row($resql)) {
 					$rows[] = $row[0];
 					if (!empty($includealltree)) {
-						$rows = array_merge($rows, $this->getChildrenOfLine($row[0]), $includealltree);
+						$rows = array_merge($rows, $this->getChildrenOfLine($row[0], $includealltree));
 					}
 				}
 			}
@@ -4541,7 +4541,7 @@ abstract class CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$row = $this->db->fetch_row($resql);
-			return $row[0];
+			return (!empty($row[0]) ? $row[0] : 0);
 		}
 
 		return 0;
@@ -6228,7 +6228,7 @@ abstract class CommonObject
 			foreach ($new_array_options as $key => $value) {
 				$attributeKey      = substr($key, 8); // Remove 'options_' prefix
 				$attributeType     = $extrafields->attributes[$this->table_element]['type'][$attributeKey];
-				$attributeLabel    = $extrafields->attributes[$this->table_element]['label'][$attributeKey];
+				$attributeLabel    = $langs->transnoentities($extrafields->attributes[$this->table_element]['label'][$attributeKey]);
 				$attributeParam    = $extrafields->attributes[$this->table_element]['param'][$attributeKey];
 				$attributeRequired = $extrafields->attributes[$this->table_element]['required'][$attributeKey];
 				$attributeUnique   = $extrafields->attributes[$this->table_element]['unique'][$attributeKey];

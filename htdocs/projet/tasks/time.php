@@ -499,8 +499,9 @@ if ($action == 'confirm_generateinvoice') {
 						if (getDolGlobalInt('PROJECT_USE_REAL_COST_FOR_TIME_INVOICING')) {
 							// We set unit price to 0 to force the use of the rate saved during recording
 							$pu_ht = 0;
-						} else {
+						} elseif ($idprod <= 0) {
 							// We want to sell all the time spent with the last hourly rate of user
+							// -> but what about choice user selected ? add idprod test
 							$pu_ht = $fuser->thm;
 						}
 
@@ -520,7 +521,7 @@ if ($action == 'confirm_generateinvoice') {
 						$localtax2line = $localtax2;
 
 						// If a particular product/service was defined for the task
-						if (!empty($fk_product) && $fk_product !== $idprod) {
+						if (!empty($fk_product) && ($fk_product > 0) && ($fk_product !== $idprod)) {
 							if (!array_key_exists($fk_product, $product_data_cache)) {
 								$result = $tmpproduct->fetch($fk_product);
 								if ($result < 0) {
@@ -661,7 +662,7 @@ if ($action == 'confirm_generateinvoice') {
 
 					// Update lineid into line of timespent
 					$sql = 'UPDATE '.MAIN_DB_PREFIX.'element_time SET invoice_line_id = '.((int) $lineid).', invoice_id = '.((int) $tmpinvoice->id);
-					$sql .= ' WHERE rowid IN ('.$db->sanitize(join(',', $toselect)).') AND fk_user = '.((int) $userid);
+					$sql .= ' WHERE rowid = '.((int) $timespent_id).' AND fk_user = '.((int) $userid);
 					$result = $db->query($sql);
 					if (!$result) {
 						$error++;

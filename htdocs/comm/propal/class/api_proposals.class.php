@@ -278,7 +278,7 @@ class Proposals extends DolibarrApi
 			throw new RestException(500, "Error creating order", array_merge(array($this->propal->error), $this->propal->errors));
 		}
 
-		return $this->propal->id;
+		return ((int) $this->propal->id);
 	}
 
 	/**

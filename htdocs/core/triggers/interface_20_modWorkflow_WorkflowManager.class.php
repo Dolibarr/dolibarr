@@ -116,6 +116,14 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				if ($ret < 0) {
 					$this->error = $newobject->error;
 					$this->errors[] = $newobject->error;
+				} else {
+					if (empty($object->fk_account) && !empty($object->thirdparty->fk_account) && !getDolGlobalInt('BANK_ASK_PAYMENT_BANK_DURING_ORDER')) {
+						$res = $newobject->setBankAccount($object->thirdparty->fk_account, true, $user);
+						if ($ret < 0) {
+							$this->error = $newobject->error;
+							$this->errors[] = $newobject->error;
+						}
+					}
 				}
 
 				$object->clearObjectLinkedCache();

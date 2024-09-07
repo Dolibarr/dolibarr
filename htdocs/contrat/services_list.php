@@ -482,10 +482,10 @@ if ($search_status == "4") {
 	$title = $langs->trans("ListOfRunningServices");
 }
 if ($search_status == "4&filter=notexpired") {
-	$title = $langs->trans("ListOfNotExpiredRunningServices");
+	$title = $langs->trans("ListOfNotExpiredServices");
 }
 if ($search_status == "4&filter=expired") {
-	$title = $langs->trans("ListOfExpiredRunningServices");
+	$title = $langs->trans("ListOfExpiredServices");
 }
 if ($search_status == "5") {
 	$title = $langs->trans("ListOfClosedServices");

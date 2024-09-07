@@ -507,7 +507,9 @@ if (empty($reshook)) {
 	if ($action == 'activate_price_by_qty') {
 		// Activating product price by quantity add a new price line with price_by_qty set to 1
 		$level = GETPOST('level', 'int');
-		$ret = $object->updatePrice(0, $object->price_base_type, $user, $object->tva_tx, 0, $level, $object->tva_npr, 1);
+		$basePrice = ($object->price_base_type == 'HT') ? $object->price : $object->price_ttc;
+		$basePriceMin = ($object->price_base_type == 'HT') ? $object->price_min : $object->price_min_ttc;
+		$ret = $object->updatePrice($basePrice, $object->price_base_type, $user, $object->tva_tx, $basePriceMin, $level, $object->tva_npr, 1);
 
 		if ($ret < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -517,7 +519,9 @@ if (empty($reshook)) {
 	if ($action == 'disable_price_by_qty') {
 		// Disabling product price by quantity add a new price line with price_by_qty set to 0
 		$level = GETPOST('level', 'int');
-		$ret = $object->updatePrice(0, $object->price_base_type, $user, $object->tva_tx, 0, $level, $object->tva_npr, 0);
+		$basePrice = ($object->price_base_type == 'HT') ? $object->price : $object->price_ttc;
+		$basePriceMin = ($object->price_base_type == 'HT') ? $object->price_min : $object->price_min_ttc;
+		$ret = $object->updatePrice($basePrice, $object->price_base_type, $user, $object->tva_tx, $basePriceMin, $level, $object->tva_npr, 0);
 
 		if ($ret < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');

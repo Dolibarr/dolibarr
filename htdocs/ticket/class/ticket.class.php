@@ -2572,10 +2572,9 @@ class Ticket extends CommonObject
 								continue;
 							}
 
-							if ($info_sendto['email'] != '') {
-								if (!empty($info_sendto['email'])) {
-									$sendto[] = dolGetFirstLastname($info_sendto['firstname'], $info_sendto['lastname'])." <".$info_sendto['email'].">";
-								}
+							// We check if the email address is not the assignee's address to prevent notification from being sent twice
+							if (!empty($info_sendto['email']) && $assigned_user->email != $info_sendto['email']) {
+								$sendto[] = dolGetFirstLastname($info_sendto['firstname'], $info_sendto['lastname'])." <".$info_sendto['email'].">";
 							}
 						}
 
@@ -2599,7 +2598,7 @@ class Ticket extends CommonObject
 							$subject = '['.$label_title.'- ticket #'.$object->track_id.'] '.$langs->trans('TicketNewMessage');
 
 							// Message send
-							$message = $langs->trans('TicketMessageMailIntroText');
+							$message = getDolGlobalString('TICKET_MESSAGE_MAIL_INTRO', $langs->trans('TicketMessageMailIntroText'));
 							$message .= '<br><br>';
 							$messagePost = GETPOST('message', 'restricthtml');
 							if (!dol_textishtml($messagePost)) {
@@ -2651,7 +2650,7 @@ class Ticket extends CommonObject
 							$message_intro = $langs->trans('TicketNotificationEmailBody', "#".$object->id);
 							$message_signature = GETPOST('mail_signature') ? GETPOST('mail_signature') : getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE');
 
-							$message = $langs->trans('TicketMessageMailIntroText');
+							$message = getDolGlobalString('TICKET_MESSAGE_MAIL_INTRO', $langs->trans('TicketMessageMailIntroText'));
 							$message .= '<br><br>';
 							$messagePost = GETPOST('message', 'restricthtml');
 							if (!dol_textishtml($messagePost)) {

@@ -2758,7 +2758,7 @@ class EmailCollector extends CommonObject
 									$sql .= ' FROM ' . MAIN_DB_PREFIX . $objectdesc['table'] . ' AS t';
 									$sql .= ' WHERE ';
 									foreach ($objectdesc['fields'] as $field) {
-										$sql .= "'" .$this->db->escape($subject) . "'  LIKE CONCAT('%',  t." . $field . ", '%') OR ";
+										$sql .= "('" .$this->db->escape($subject) . "'  LIKE CONCAT('%',  t." . $field . ", '%') AND t." . $field . "<>'') OR ";
 									}
 									$sql = substr($sql, 0, -4);
 

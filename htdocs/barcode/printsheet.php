@@ -255,10 +255,18 @@ if ($action == 'builddoc') {
 
 			if (!$mesg) {
 				$outputlangs = $langs;
+				$previousConf = getDolGlobalInt('TCPDF_THROW_ERRORS_INSTEAD_OF_DIE');
+				$conf->global->TCPDF_THROW_ERRORS_INSTEAD_OF_DIE = 1;
+
 
 				// This generates and send PDF to output
 				// TODO Move
-				$result = doc_label_pdf_create($db, $arrayofrecords, $modellabel, $outputlangs, $diroutput, $template, dol_sanitizeFileName($outfile));
+				try {
+					$result = doc_label_pdf_create($db, $arrayofrecords, $modellabel, $outputlangs, $diroutput, $template, dol_sanitizeFileName($outfile));
+				} catch (Exception $e) {
+					$mesg = $langs->trans('ErrorGeneratingBarcode');
+				}
+				$conf->global->TCPDF_THROW_ERRORS_INSTEAD_OF_DIE = $previousConf;
 			}
 		}
 
@@ -313,7 +321,7 @@ foreach (array_keys($_Avery_Labels) as $codecards) {
 	$arrayoflabels[$codecards] = $labeltoshow;
 }
 asort($arrayoflabels);
-print $form->selectarray('modellabel', $arrayoflabels, (GETPOST('modellabel') ?GETPOST('modellabel') : $conf->global->ADHERENT_ETIQUETTE_TYPE), 1, 0, 0, '', 0, 0, 0, '', '', 1);
+print $form->selectarray('modellabel', $arrayoflabels, (GETPOST('modellabel') ? GETPOST('modellabel') : getDolGlobalString('ADHERENT_ETIQUETTE_TYPE')), 1, 0, 0, '', 0, 0, 0, '', '', 1);
 print '</div></div>';
 
 // Number of stickers to print

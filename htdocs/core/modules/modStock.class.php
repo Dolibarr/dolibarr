@@ -89,7 +89,7 @@ class modStock extends DolibarrModules
 		$this->const[$r][0] = "MOUVEMENT_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "stdmovement";
-		$this->const[$r][3] = 'Name of PDF model of stock mouvement';
+		$this->const[$r][3] = 'Name of PDF model of stock movement';
 		$this->const[$r][4] = 0;
 
 		$r++;
@@ -113,78 +113,83 @@ class modStock extends DolibarrModules
 		$this->rights = array();
 		$this->rights_class = 'stock';
 
-		$this->rights[0][0] = 1001;
-		$this->rights[0][1] = 'Lire les stocks';
-		$this->rights[0][2] = 'r';
-		$this->rights[0][3] = 0;
-		$this->rights[0][4] = 'lire';
-		$this->rights[0][5] = '';
+		$r = 0;
 
-		$this->rights[1][0] = 1002;
-		$this->rights[1][1] = 'Creer/Modifier les stocks';
-		$this->rights[1][2] = 'w';
-		$this->rights[1][3] = 0;
-		$this->rights[1][4] = 'creer';
-		$this->rights[1][5] = '';
+		$this->rights[$r][0] = 1001;
+		$this->rights[$r][1] = 'Read stocks';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'lire';
+		$this->rights[$r][5] = '';
 
-		$this->rights[2][0] = 1003;
-		$this->rights[2][1] = 'Supprimer les stocks';
-		$this->rights[2][2] = 'd';
-		$this->rights[2][3] = 0;
-		$this->rights[2][4] = 'supprimer';
-		$this->rights[2][5] = '';
+		$r++;
+		$this->rights[$r][0] = 1002;
+		$this->rights[$r][1] = 'Create/Modify stocks';
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'creer';
+		$this->rights[$r][5] = '';
 
-		$this->rights[3][0] = 1004;
-		$this->rights[3][1] = 'Lire mouvements de stocks';
-		$this->rights[3][2] = 'r';
-		$this->rights[3][3] = 0;
-		$this->rights[3][4] = 'mouvement';
-		$this->rights[3][5] = 'lire';
+		$r++;
+		$this->rights[$r][0] = 1003;
+		$this->rights[$r][1] = 'Delete stock';
+		$this->rights[$r][2] = 'd';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'supprimer';
+		$this->rights[$r][5] = '';
 
-		$this->rights[4][0] = 1005;
-		$this->rights[4][1] = 'Creer/modifier mouvements de stocks';
-		$this->rights[4][2] = 'w';
-		$this->rights[4][3] = 0;
-		$this->rights[4][4] = 'mouvement';
-		$this->rights[4][5] = 'creer';
+		$r++;
+		$this->rights[$r][0] = 1004;
+		$this->rights[$r][1] = 'Read stock movements';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'mouvement';
+		$this->rights[$r][5] = 'lire';
 
-		$this->rights[5][0] = 1011;
-		$this->rights[5][1] = 'inventoryReadPermission'; // Permission label
-		$this->rights[5][3] = 0; // Permission by default for new user (0/1)
-		$this->rights[5][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		$this->rights[5][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$r++;
+		$this->rights[$r][0] = 1005;
+		$this->rights[$r][1] = 'Create/modify stock movements';
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'mouvement';
+		$this->rights[$r][5] = 'creer';
 
-		$this->rights[6][0] = 1012;
-		$this->rights[6][1] = 'inventoryCreatePermission'; // Permission label
-		$this->rights[6][3] = 0; // Permission by default for new user (0/1)
-		$this->rights[6][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		$this->rights[6][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$r++;
+		$this->rights[$r][0] = 1011;
+		$this->rights[$r][1] = 'inventoryReadPermission'; // Permission label
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
+		$this->rights[$r][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 
-		$this->rights[6][0] = 1013;
-		$this->rights[6][1] = 'inventoryDeletePermission'; // Permission label
-		$this->rights[6][3] = 0; // Permission by default for new user (0/1)
-		$this->rights[6][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		$this->rights[6][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$r++;
+		$this->rights[$r][0] = 1012;
+		$this->rights[$r][1] = 'inventoryCreatePermission'; // Permission label
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
+		$this->rights[$r][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 
+		$r++;
+		$this->rights[$r][0] = 1013;
+		$this->rights[$r][1] = 'inventoryDeletePermission'; // Permission label
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
+		$this->rights[$r][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 
+		// TODO and if MAIN_FEATURES_LEVEL >= 2 after module is activated ?
 		if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
-			$this->rights[8][0] = 1014;
-			$this->rights[8][1] = 'inventoryValidatePermission'; // Permission label
-			$this->rights[8][3] = 0; // Permission by default for new user (0/1)
-			$this->rights[8][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-			$this->rights[8][5] = 'validate'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+			$r++;
+			$this->rights[$r][0] = 1014;
+			$this->rights[$r][1] = 'inventoryValidatePermission'; // Permission label
+			$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
+			$this->rights[$r][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+			$this->rights[$r][5] = 'validate'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 
-			$this->rights[9][0] = 1015;
-			$this->rights[9][1] = 'inventoryChangePMPPermission'; // Permission label
-			$this->rights[9][3] = 0; // Permission by default for new user (0/1)
-			$this->rights[9][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-			$this->rights[9][5] = 'changePMP'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-
-			$this->rights[10][0] = 1016;
-			$this->rights[10][1] = 'inventoryDeletePermission'; // Permission label
-			$this->rights[10][3] = 0; // Permission by default for new user (0/1)
-			$this->rights[10][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-			$this->rights[10][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+			$r++;
+			$this->rights[$r][0] = 1015;
+			$this->rights[$r][1] = 'inventoryChangePMPPermission'; // Permission label
+			$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
+			$this->rights[$r][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+			$this->rights[$r][5] = 'changePMP'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		}
 
 		// Main menu entries

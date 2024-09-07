@@ -70,7 +70,10 @@ class Product extends CommonObject
 		'facturedet' => array('name' => 'Invoice', 'parent' => 'facture', 'parentkey' => 'fk_facture'),
 		'contratdet' => array('name' => 'Contract', 'parent' => 'contrat', 'parentkey' => 'fk_contrat'),
 		'facture_fourn_det' => array('name' => 'SupplierInvoice', 'parent' => 'facture_fourn', 'parentkey' => 'fk_facture_fourn'),
-		'commande_fournisseurdet' => array('name' => 'SupplierOrder', 'parent' => 'commande_fournisseur', 'parentkey' => 'fk_commande')
+		'commande_fournisseurdet' => array('name' => 'SupplierOrder', 'parent' => 'commande_fournisseur', 'parentkey' => 'fk_commande'),
+		'mrp_production' => array('name' => 'Mo', 'parent' => 'mrp_mo', 'parentkey' => 'fk_mo' ),
+		'bom_bom' => array('name' => 'BOM'),
+		'bom_bomline' => array('name' => 'BOMLine', 'parent' => 'bom_bom', 'parentkey' => 'fk_bom'),
 	);
 
 	/**
@@ -1272,7 +1275,6 @@ class Product extends CommonObject
 				// Multilangs
 				if (getDolGlobalInt('MAIN_MULTILANGS')) {
 					if ($this->setMultiLangs($user) < 0) {
-						$this->error = $langs->trans("Error")." : ".$this->db->error()." - ".$sql;
 						return -2;
 					}
 				}
@@ -2538,7 +2540,7 @@ class Product extends CommonObject
 				$this->fk_default_bom = $obj->fk_default_bom;
 
 				$this->duration = $obj->duration;
-				$this->duration_value = $obj->duration ? substr($obj->duration, 0, dol_strlen($obj->duration) - 1) : null;
+				$this->duration_value = $obj->duration ? (int) (substr($obj->duration, 0, dol_strlen($obj->duration) - 1)) : 0;
 				$this->duration_unit = $obj->duration ? substr($obj->duration, -1) : null;
 				$this->canvas = $obj->canvas;
 				$this->net_measure = $obj->net_measure;

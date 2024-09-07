@@ -822,10 +822,10 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 				print '<br>';
 				if (!empty($totalpayment)) {
-					$text = $langs->trans('ConfirmSupplierPayment', price($totalpayment), $langs->trans("Currency".$conf->currency));
+					$text = $langs->trans('ConfirmSupplierPayment', price($totalpayment), $langs->transnoentitiesnoconv("Currency".$conf->currency));
 				}
 				if (!empty($multicurrency_totalpayment)) {
-					$text .= '<br>'.$langs->trans('ConfirmSupplierPayment', price($multicurrency_totalpayment), $langs->trans("paymentInInvoiceCurrency"));
+					$text .= '<br>'.$langs->trans('ConfirmSupplierPayment', price($multicurrency_totalpayment), $langs->transnoentitiesnoconv("paymentInInvoiceCurrency"));
 				}
 				if (GETPOST('closepaidinvoices')) {
 					$text .= '<br>'.$langs->trans("AllCompletelyPayedInvoiceWillBeClosed");
