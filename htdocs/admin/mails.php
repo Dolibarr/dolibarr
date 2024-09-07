@@ -625,7 +625,7 @@ if ($action == 'edit') {
 	print $langs->trans("MAIN_MAIL_EMAIL_FROM", ini_get('sendmail_from') ? ini_get('sendmail_from') : $langs->transnoentities("Undefined"));
 	print ' '.$help;
 	print '</td>';
-	print '<td><input class="flat minwidth200" name="MAIN_MAIL_EMAIL_FROM" value="'.(getDolGlobalString('MAIN_MAIL_EMAIL_FROM') ? $conf->global->MAIN_MAIL_EMAIL_FROM : '');
+	print '<td><input class="flat minwidth300" name="MAIN_MAIL_EMAIL_FROM" value="'.(getDolGlobalString('MAIN_MAIL_EMAIL_FROM') ? $conf->global->MAIN_MAIL_EMAIL_FROM : '');
 	print '"></td></tr>';
 
 	// Default from type
@@ -895,7 +895,7 @@ if ($action == 'edit') {
 	// Default from type
 	$liste = array();
 	$liste['user'] = $langs->trans('UserEmail');
-	$liste['company'] = $langs->trans('CompanyEmail').' ('.(!getDolGlobalString('MAIN_INFO_SOCIETE_MAIL') ? $langs->trans("NotDefined") : $conf->global->MAIN_INFO_SOCIETE_MAIL).')';
+	$liste['company'] = $langs->trans('CompanyEmail').' ('.getDolGlobalString('MAIN_INFO_SOCIETE_MAIL', $langs->trans("NotDefined")).')';
 	$sql = 'SELECT rowid, label, email FROM '.MAIN_DB_PREFIX.'c_email_senderprofile';
 	$sql .= ' WHERE active = 1 AND (private = 0 OR private = '.((int) $user->id).')';
 	$resql = $db->query($sql);
