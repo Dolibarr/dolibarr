@@ -29,6 +29,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "products", "admin", "mails", "other", "errors"));
@@ -1050,46 +1051,56 @@ if ($action == 'edit') {
 				$text .= ($text ? '<br><br>' : '').$langs->trans("WarningPHPMailSPF", getDolGlobalString('MAIN_EXTERNAL_SMTP_SPF_STRING_TO_ADD'));
 			}
 		}
-		// Test SPF email company
-		$companyemail = getDolGlobalString('MAIN_INFO_SOCIETE_MAIL');
-		$dnsinfo = false;
-		if (!empty($companyemail) && function_exists('dns_get_record') && !getDolGlobalString('MAIN_DISABLE_DNS_GET_RECORD')) {
-			$arrayofemailparts = explode('@', $companyemail);
-			if (count($arrayofemailparts) == 2) {
-				$domain = $arrayofemailparts[1];
-				$dnsinfo = dns_get_record($domain, DNS_TXT);
+
+		// Build list of main email addresses in $emailstotest and their domain to test in $domainstotest
+		$emailstotest = array();
+		if (getDolGlobalString('MAIN_INFO_SOCIETE_MAIL')) {
+			$emailstotest[getDolGlobalString('MAIN_INFO_SOCIETE_MAIL')] = getDomainFromURL(preg_replace('/^.*@/', '', getDolGlobalString('MAIN_INFO_SOCIETE_MAIL')), 1);
+		}
+		if (getDolGlobalString('MAIN_MAIL_EMAIL_FROM')) {
+			$emailstotest[getDolGlobalString('MAIN_MAIL_EMAIL_FROM')] = getDomainFromURL(preg_replace('/^.*@/', '', getDolGlobalString('MAIN_MAIL_EMAIL_FROM')), 1);
+		}
+		if (!empty($user->email)) {
+			$emailstotest[$user->email] = getDomainFromURL(preg_replace('/^.*@/', '', $user->email), 1);
+		}
+		$domainstotest = array();
+		foreach ($emailstotest as $email => $domain) {
+			if (empty($domainstotest[$domain])) {
+				$domainstotest[$domain] = array($email => $email);
+			} else {
+				$domainstotest[$domain][$email] = $email;
 			}
 		}
-		if (!empty($dnsinfo) && is_array($dnsinfo)) {
-			foreach ($dnsinfo as $info) {
-				if (strpos($info['txt'], 'v=spf') !== false) {
-					$text .= ($text ? '<br><br>' : '').$langs->trans("ActualMailSPFRecordFound", $companyemail, $info['txt']);
-				}
-			}
-		}
-		// Test SPF default automatic email from
-		$defaultnoreplyemail = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
-		if ($defaultnoreplyemail != $companyemail) {	// We show if email differs
-			$dnsinfo = false;
-			if (!empty($defaultnoreplyemail) && function_exists('dns_get_record') && !getDolGlobalString('MAIN_DISABLE_DNS_GET_RECORD')) {
-				$arrayofemailparts = explode('@', $defaultnoreplyemail);
-				if (count($arrayofemailparts) == 2) {
-					$domain = $arrayofemailparts[1];
+
+		// Test DNS entry for emails
+		foreach (array('SPF', 'DMARC') as $dnstype) {
+			foreach ($domainstotest as $domaintotest => $listofemails) {
+				$dnsinfo = false;
+				$foundforemail = 0;
+				if (!empty($domaintotest) && function_exists('dns_get_record') && !getDolGlobalString('MAIN_DISABLE_DNS_GET_RECORD')) {
+					$domain = $domaintotest;
+					if ($dnstype == 'DMARC') {
+						$domain = '_dmarc.'.$domain;
+					}
 					$dnsinfo = dns_get_record($domain, DNS_TXT);
 				}
-			}
-			if (!empty($dnsinfo) && is_array($dnsinfo)) {
-				foreach ($dnsinfo as $info) {
-					if (strpos($info['txt'], 'v=spf') !== false) {
-						$text .= ($text ? '<br><br>' : '').$langs->trans("ActualMailSPFRecordFound", $defaultnoreplyemail, $info['txt']);
+				if (!empty($dnsinfo) && is_array($dnsinfo)) {
+					foreach ($dnsinfo as $info) {
+						if (($dnstype == 'SPF' && stripos($info['txt'], 'v=spf') !== false)
+							|| ($dnstype == 'DMARC' && stripos($info['txt'], 'v=dmarc') !== false)) {
+							$foundforemail++;
+							$text .= ($text ? '<br>' : '').$langs->trans("ActualMailDNSRecordFound", $dnstype, implode(', ', $listofemails), $info['txt']);
+						}
 					}
+				}
+				if (!$foundforemail) {
+					$text .= ($text ? '<br>' : '').$langs->trans("ActualMailDNSRecordFound", $dnstype, implode(', ', $listofemails), '<span class="opacitymedium">'.$langs->transnoentitiesnoconv("None").'</span>');
 				}
 			}
 		}
 
-
 		if ($text) {
-			print info_admin($text, 0, 0, '1', '');
+			print info_admin($langs->trans("SPFAndDMARCInformation").' :<br>'.$text, 0, 0, '1', '');
 		}
 	}
 
