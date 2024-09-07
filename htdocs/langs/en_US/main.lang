@@ -45,6 +45,7 @@ NoError=No error
 Error=Error
 Errors=Errors
 ErrorFieldRequired=Field '%s' is required
+CustomMandatoryFieldRule=Custom "Mandatory field" rule
 ErrorFieldFormat=Field '%s' has a bad value
 ErrorFileDoesNotExists=File %s does not exist
 ErrorFailedToOpenFile=Failed to open file %s
