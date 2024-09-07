@@ -1842,7 +1842,7 @@ if (!$error && ($massaction == 'clonetasks' || ($action == 'clonetasks' && $conf
 			exit();
 		}
 	} else {
-		setEventMessages($langs->trans('ErrorNotEnougthPermission'), null, 'errors');
+		setEventMessages($langs->trans('NotEnoughPermissions'), null, 'errors');
 	}
 }
 
