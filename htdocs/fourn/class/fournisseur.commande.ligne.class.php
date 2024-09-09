@@ -65,6 +65,9 @@ class CommandeFournisseurLigne extends CommonOrderLine
 	 */
 	public $fk_parent_attribute = 'fk_commande_fournisseur';
 
+	/**
+	 * @var CommandeFournisseurLigne
+	 */
 	public $oldline;
 
 	/**
@@ -84,6 +87,9 @@ class CommandeFournisseurLigne extends CommonOrderLine
 	 */
 	public $fk_facture;
 
+	/**
+	 * @var int rank
+	 */
 	public $rang = 0;
 
 	/**
@@ -97,10 +103,29 @@ class CommandeFournisseurLigne extends CommonOrderLine
 	 */
 	public $pu_ht;
 
+	/**
+	 * @var int|string|null
+	 */
 	public $date_start;
+
+	/**
+	 * @var int|string|null
+	 */
 	public $date_end;
+
+	/**
+	 * @var int
+	 */
 	public $fk_fournprice;
+
+	/**
+	 * @var float
+	 */
 	public $packaging;
+
+	/**
+	 * @var int
+	 */
 	public $pa_ht;
 
 	// From llx_product_fournisseur_price
@@ -118,6 +143,9 @@ class CommandeFournisseurLigne extends CommonOrderLine
 	 */
 	public $ref_fourn;
 
+	/**
+	 * @var float|string
+	 */
 	public $remise;
 
 
