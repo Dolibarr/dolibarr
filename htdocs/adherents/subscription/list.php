@@ -46,7 +46,7 @@ $mode       = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hier
 
 $statut = (GETPOSTISSET("statut") ? GETPOST("statut", "alpha") : 1);
 $search_ref = GETPOST('search_ref', 'alpha');
-$search_type = GETPOST('search_type', 'alpha');
+$search_type = GETPOSTINT('search_type');
 $search_lastname = GETPOST('search_lastname', 'alpha');
 $search_firstname = GETPOST('search_firstname', 'alpha');
 $search_login = GETPOST('search_login', 'alpha');
@@ -168,6 +168,7 @@ if (empty($reshook)) {
 $form = new Form($db);
 $subscription = new Subscription($db);
 $adherent = new Adherent($db);
+$adht = new AdherentType($db);
 $accountstatic = new Account($db);
 
 $now = dol_now();
@@ -209,7 +210,7 @@ if ($search_ref) {
 		$sql .= " AND 1 = 2"; // Always wrong
 	}
 }
-if ($search_type) {
+if ($search_type > 0) {
 	$sql .= natural_search(array('c.fk_type'), $search_type);
 }
 if ($search_lastname) {
@@ -311,7 +312,7 @@ if ($statut != '') {
 	$param .= "&statut=".urlencode($statut);
 }
 if ($search_type) {
-	$param .= "&search_type=".urlencode($search_type);
+	$param .= "&search_type=".((int) $search_type);
 }
 if ($date_select) {
 	$param .= "&date_select=".urlencode($date_select);
@@ -446,7 +447,7 @@ if (!empty($arrayfields['d.ref']['checked'])) {
 // Type
 if (!empty($arrayfields['d.fk_type']['checked'])) {
 	print '<td class="liste_titre left">';
-	print '<input class="flat maxwidth50" type="text" name="search_type" value="'.dol_escape_htmltag($search_type).'">';
+	print $form->selectarray("search_type", $adht->liste_array(), $search_type, 1);
 	print'</td>';
 }
 

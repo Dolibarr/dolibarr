@@ -169,7 +169,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'add' && !$cancel) {
+	if ($action == 'add' && !$cancel && $permissiontoadd) {
 		$error = 0;
 
 		$object->fk_account = GETPOSTINT("accountid");
@@ -261,7 +261,7 @@ if (empty($reshook)) {
 		$action = 'create';
 	}
 
-	if ($action == 'confirm_delete' && $confirm == 'yes') {
+	if ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontodelete) {
 		$result = $object->fetch($id);
 		$totalpaid = $object->getSommePaiement();
 
@@ -318,11 +318,11 @@ if (empty($reshook)) {
 	}
 
 	// Action clone object
-	if ($action == 'confirm_clone' && $confirm != 'yes') {
+	if ($action == 'confirm_clone' && $confirm != 'yes') {	// Test on permission not required here
 		$action = '';
 	}
 
-	if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->hasRight('tax', 'charges', 'creer'))) {
+	if ($action == 'confirm_clone' && $confirm == 'yes' && $user->hasRight('tax', 'charges', 'creer')) {
 		$db->begin();
 
 		$originalId = $id;

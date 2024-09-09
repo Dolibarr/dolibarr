@@ -246,9 +246,6 @@ class Cronjob extends CommonObject
 		if (isset($this->module_name)) {
 			$this->module_name = trim($this->module_name);
 		}
-		if (isset($this->priority)) {
-			$this->priority = trim($this->priority);
-		}
 		if (isset($this->lastoutput)) {
 			$this->lastoutput = trim($this->lastoutput);
 		}
@@ -351,7 +348,7 @@ class Cronjob extends CommonObject
 		$sql .= "libname,";
 		$sql .= "test";
 		$sql .= ") VALUES (";
-		$sql .= " ".(!isset($this->entity) ? $conf->entity : $this->db->escape($this->entity)).",";
+		$sql .= " ".(!isset($this->entity) ? (int) $conf->entity : (int) $this->entity).",";
 		$sql .= " '".$this->db->idate($now)."',";
 		$sql .= " ".(!isset($this->jobtype) ? 'NULL' : "'".$this->db->escape($this->jobtype)."'").",";
 		$sql .= " ".(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'").",";
@@ -362,7 +359,7 @@ class Cronjob extends CommonObject
 		$sql .= " ".(!isset($this->params) ? 'NULL' : "'".$this->db->escape($this->params)."'").",";
 		$sql .= " ".(!isset($this->md5params) ? 'NULL' : "'".$this->db->escape($this->md5params)."'").",";
 		$sql .= " ".(!isset($this->module_name) ? 'NULL' : "'".$this->db->escape($this->module_name)."'").",";
-		$sql .= " ".(!isset($this->priority) ? '0' : $this->priority).",";
+		$sql .= " ".(is_numeric($this->priority) ? (int) $this->priority : 50).",";
 		$sql .= " ".(!isset($this->datelastrun) || dol_strlen($this->datelastrun) == 0 ? 'NULL' : "'".$this->db->idate($this->datelastrun)."'").",";
 		$sql .= " ".(!isset($this->datenextrun) || dol_strlen($this->datenextrun) == 0 ? 'NULL' : "'".$this->db->idate($this->datenextrun)."'").",";
 		$sql .= " ".(!isset($this->dateend) || dol_strlen($this->dateend) == 0 ? 'NULL' : "'".$this->db->idate($this->dateend)."'").",";
@@ -1408,7 +1405,7 @@ class Cronjob extends CommonObject
 
 					$this->error      = $arrayresult['error'];
 					$this->lastoutput = $arrayresult['output'];
-					$this->lastresult = $arrayresult['result'];
+					$this->lastresult = (string) $arrayresult['result'];
 				}
 			}
 		}

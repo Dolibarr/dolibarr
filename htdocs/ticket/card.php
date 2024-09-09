@@ -189,8 +189,10 @@ if (empty($reshook)) {
 	}
 
 	if (($action == 'add' || ($action == 'update' && $object->status < Ticket::STATUS_CLOSED)) && $permissiontoadd) {
-		$ifErrorAction = $action == 'add' ? 'create' : 'edit';
-		if ($action == 'add') $object->track_id = null;
+		$ifErrorAction = ($action == 'add' ? 'create' : 'edit');	// Test on permission not required here
+		if ($action == 'add') {		// Test on permission already done
+			$object->track_id = null;
+		}
 		$error = 0;
 
 		$fieldsToCheck = [
@@ -223,11 +225,11 @@ if (empty($reshook)) {
 		$style = '';
 
 		if ($isExistingRef) {
-			if ($action == 'update') {
+			if ($action == 'update') {		// Test on permission already done
 				$error++;
 				$action = 'edit';
 				$style = 'errors';
-			} elseif ($action == 'add') {
+			} elseif ($action == 'add') {	// Test on permission already done
 				$object->ref = $object->getDefaultRef();
 				$object->track_id = null;
 				$style = 'warnings';
@@ -254,7 +256,7 @@ if (empty($reshook)) {
 				$object->status = $object::STATUS_ASSIGNED;
 			}
 
-			if ($action == 'add') {
+			if ($action == 'add') {		// Test on permission already done
 				$object->type_code = GETPOST("type_code", 'alpha');
 				$object->type_label = $langs->trans($langs->getLabelFromKey($db, $object->type_code, 'c_ticket_type', 'code', 'label'));
 				$object->category_label = $langs->trans($langs->getLabelFromKey($db, $object->category_code, 'c_ticket_category', 'code', 'label'));
@@ -282,7 +284,7 @@ if (empty($reshook)) {
 				$object->setCategories($categories);
 			}
 
-			if ($action == 'add') {
+			if ($action == 'add') {		// Test on permission already done
 				if (!$error) {
 					// Add contact
 					$contactid = GETPOSTINT('contactid');
@@ -518,11 +520,11 @@ if (empty($reshook)) {
 	// Set Subject
 	if ($action == 'setsubject' && $user->hasRight('ticket', 'write')) {
 		if ($object->fetch(GETPOSTINT('id'))) {
-			if ($action == 'setsubject') {
+			if ($action == 'setsubject') {		// Test on permission already done
 				$object->subject = GETPOST('subject', 'alphanohtml');
 			}
 
-			if ($action == 'setsubject' && empty($object->subject)) {
+			if ($action == 'setsubject' && empty($object->subject)) {	// Test on permission already done
 				$error++;
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Subject")), null, 'errors');
 			}
@@ -544,9 +546,9 @@ if (empty($reshook)) {
 			// prevent browser refresh from reopening ticket several times
 			if ($object->status == Ticket::STATUS_CLOSED || $object->status == Ticket::STATUS_CANCELED) {
 				if ($object->fk_user_assign != null) {
-					$res = $object->setStatut(Ticket::STATUS_ASSIGNED);
+					$res = $object->setStatut(Ticket::STATUS_ASSIGNED, null, '', 'TICKET_MODIFY');
 				} else {
-					$res = $object->setStatut(Ticket::STATUS_NOT_READ);
+					$res = $object->setStatut(Ticket::STATUS_NOT_READ, null, '', 'TICKET_MODIFY');
 				}
 				if ($res) {
 					$url = 'card.php?track_id=' . $object->track_id;
@@ -669,7 +671,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT . '/core/actions_sendmails.inc.php';
 
 	// Set $action to correct value for the case we used presend action to add a message
-	if (GETPOSTISSET('actionbis') && $action == 'presend') {
+	if (GETPOSTISSET('actionbis') && $action == 'presend') {	// Test on permission not required here
 		$action = 'presend_addmessage';
 	}
 }
@@ -716,10 +718,15 @@ if ($action == 'create' || $action == 'presend') {
 
 	$formticket->withcancel = 1;
 
+	// Init list of files
+	if (GETPOST("mode", "aZ09") == 'init') {
+		$formticket->clear_attached_files();
+	}
+
 	$formticket->showForm(1, 'create', 0, null, $action, $object);
 
 	print dol_get_fiche_end();
-} elseif ($action == 'edit' && $object->status < Ticket::STATUS_CLOSED) {
+} elseif ($action == 'edit' && $user->rights->ticket->write && $object->status < Ticket::STATUS_CLOSED) {
 	if (empty($permissiontoadd)) {
 		accessforbidden('NotEnoughPermissions', 0, 1);
 	}
@@ -913,19 +920,29 @@ if ($action == 'create' || $action == 'presend') {
 			$createdbyshown++;
 		}
 
+		$createdfrompublicticket = 0;
+		$createdfromemailcollector = 0;
+		if (!empty($object->origin_email) && (empty($object->email_msgid) || preg_match('/dolibarr\-tic\d+/', $object->email_msgid))) {
+			// If ticket create from public interface - TODO Add a more robust test to know if created by public interface
+			$createdfrompublicticket = 1;
+		} elseif (!empty($object->email_msgid)) {
+			// If ticket create by emailcollector - TODO Add a more robust test to know if created by email collector (using import ky ?)
+			$createdfromemailcollector = 1;
+		}
+
 		//var_dump($object);
-		if (!empty($object->origin_email)) {	// If ticket create from public interface - TODO Add a more robust test to know if created by pubic interface
+		if ($createdfrompublicticket) {
 			$htmltooptip = $langs->trans("OriginEmail").': '.$object->origin_email;
 			$htmltooptip .= '<br>'.$langs->trans("IP").': '.$object->ip;
 			$morehtmlref .= ($createdbyshown ? ' - ' : '<br>');
 			$morehtmlref .= ($createdbyshown ? '' : $langs->trans("CreatedBy").' : ');
 			$morehtmlref .= img_picto('', 'email', 'class="paddingrightonly"');
 			$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">- '.$form->textwithpicto($langs->trans("CreatedByPublicPortal"), $htmltooptip, 1, 'help', '', 0, 3, 'tooltip').'</small>';
-		} elseif (!empty($object->email_msgid)) {	// If ticket create by emailcollector - TODO Add a more robust test to know if created by email collector (using import ky ?)
+		} elseif ($createdfromemailcollector) {
 			$langs->load("mails");
 			$htmltooltip = $langs->trans("EmailMsgID").': '.$object->email_msgid;
 			$htmltooltip .= '<br>'.$langs->trans("EmailDate").': '.dol_print_date($object->email_date, 'dayhour');
-			$htmltooltip .= '<br>'.$langs->trans("MailFrom").': '.$object->email_from;
+			$htmltooltip .= '<br>'.$langs->trans("MailFrom").': '.$object->origin_email;
 			$htmltooltip .= '<br>'.$langs->trans("MailReply").': '.$object->origin_replyto;
 			$htmltooltip .= '<br>'.$langs->trans("MailReferences").': '.$object->origin_references;
 			$morehtmlref .= ($createdbyshown ? ' - ' : '<br>');
@@ -1443,7 +1460,7 @@ if ($action == 'create' || $action == 'presend') {
 				}
 
 				// Close ticket if status is read
-				if (isset($object->status) && $object->status > 0 && $object->status < Ticket::STATUS_CLOSED && $user->hasRight('ticket', 'write')) {
+				if (isset($object->status) && $object->status >= 0 && $object->status < Ticket::STATUS_CLOSED && $user->hasRight('ticket', 'write')) {
 					print dolGetButtonAction('', $langs->trans('CloseTicket'), 'default', $_SERVER["PHP_SELF"].'?action=close&token='.newToken().'&track_id='.$object->track_id, '');
 				}
 

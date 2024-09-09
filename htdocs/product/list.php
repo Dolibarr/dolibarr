@@ -2147,7 +2147,7 @@ while ($i < $imaxinloop) {
 		}
 		// Country
 		if (!empty($arrayfields['p.fk_country']['checked'])) {
-			print '<td>'.getCountry($obj->fk_country, 0, $db).'</td>';
+			print '<td>'.getCountry($obj->fk_country, '', $db).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

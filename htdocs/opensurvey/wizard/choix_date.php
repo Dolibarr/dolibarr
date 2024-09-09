@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2013       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -139,7 +140,7 @@ if (GETPOST('confirmation')) {
 						$erreur = true;
 					}
 
-					if (issetAndNoEmpty('horaires'.$i, $_SESSION) === false || issetAndNoEmpty($j, $_SESSION['horaires'.$i]) === false) {
+					if (issetAndNoEmpty('horaires'.$i, $_SESSION) === false || issetAndNoEmpty((string) $j, $_SESSION['horaires'.$i]) === false) {
 						if (issetAndNoEmpty('horaires'.$i, $_SESSION) === true) {
 							$_SESSION["horaires$i"][$j] = '';
 						} else {
@@ -434,7 +435,7 @@ if (issetAndNoEmpty('choixjourajout')) {
 		for ($i = 0; $i < $cle; $i++) {
 			$horairesi = GETPOST("horaires".$i);
 			for ($j = 0; $j < $_SESSION["nbrecaseshoraires"]; $j++) {
-				if (issetAndNoEmpty('horaires'.$i) === true && issetAndNoEmpty($i, $_POST['horaires'.$i]) === true) {
+				if (issetAndNoEmpty('horaires'.$i) === true && issetAndNoEmpty((string) $i, $_POST['horaires'.$i]) === true) {
 					$_SESSION["horaires$i"][$j] = $horairesi[$j];
 				}
 			}
@@ -443,7 +444,7 @@ if (issetAndNoEmpty('choixjourajout')) {
 		$nbofchoice = count($_SESSION["totalchoixjour"]);
 		for ($i = $cle; $i < $nbofchoice; $i++) {
 			$k = $i + 1;
-			if (issetAndNoEmpty('horaires'.$i) === true && issetAndNoEmpty($i, $_POST['horaires'.$i]) === true) {
+			if (issetAndNoEmpty('horaires'.$i) === true && issetAndNoEmpty((string) $i, $_POST['horaires'.$i]) === true) {
 				for ($j = 0; $j < $_SESSION["nbrecaseshoraires"]; $j++) {
 					$horairesi = GETPOST("horaires".$i, 'array');
 					$_SESSION["horaires$i"][$j] = $horairesi[$j];

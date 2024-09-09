@@ -756,11 +756,12 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 	print '<table class="border centpercent">';
 
 	$defaultref = '';
-	$obj = getDolGlobalString('PROJECT_TASK_ADDON', 'mod_task_simple');
+	$classnamemodtask = getDolGlobalString('PROJECT_TASK_ADDON', 'mod_task_simple');
 	if (getDolGlobalString('PROJECT_TASK_ADDON') && is_readable(DOL_DOCUMENT_ROOT."/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON').".php")) {
 		require_once DOL_DOCUMENT_ROOT."/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON').'.php';
-		$modTask = new $obj();
-		$defaultref = $modTask->getNextValue($object->thirdparty, null);
+		$modTask = new $classnamemodtask();
+		'@phan-var-force ModeleNumRefTask $modTask';
+		$defaultref = $modTask->getNextValue($object->thirdparty, $object);
 	}
 
 	if (is_numeric($defaultref) && $defaultref <= 0) {
@@ -877,9 +878,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 } elseif ($id > 0 || !empty($ref)) {
 	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 
-	/*
-	 * Projet card in view mode
-	 */
+	// Projet card in view mode
 
 	print '<br>';
 
@@ -1172,7 +1171,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 		// Show all lines in taskarray (recursive function to go down on tree)
 		$j = 0;
 		$level = 0;
-		$nboftaskshown = projectLinesa($j, 0, $tasksarray, $level, true, 0, $tasksrole, $object->id, 1, $object->id, '', ($object->usage_bill_time ? 1 : 0), $arrayfields, $arrayofselected);
+		$nboftaskshown = projectLinesa($j, 0, $tasksarray, $level, true, 0, $tasksrole, (string) $object->id, 1, $object->id, '', ($object->usage_bill_time ? 1 : 0), $arrayfields, $arrayofselected);
 	} else {
 		$colspan = count($arrayfields);
 		if ($object->usage_bill_time) {

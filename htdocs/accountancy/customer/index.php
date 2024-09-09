@@ -4,6 +4,7 @@
  * Copyright (C) 2013-2022  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Jean-François Ferry <jfefe@aternatik.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,7 +76,7 @@ $year_current = $year_start;
 // Validate History
 $action = GETPOST('action', 'aZ09');
 
-$chartaccountcode = dol_getIdFromCode($db, getDolGlobalInt('CHARTOFACCOUNTS'), 'accounting_system', 'rowid', 'pcg_version');
+$chartaccountcode = dol_getIdFromCode($db, getDolGlobalString('CHARTOFACCOUNTS'), 'accounting_system', 'rowid', 'pcg_version');
 
 // Security check
 if (!isModEnabled('accounting')) {
@@ -118,7 +119,7 @@ if (($action == 'clean' || $action == 'validatehistory') && $user->hasRight('acc
 	// End clean database
 }
 
-if ($action == 'validatehistory') {
+if ($action == 'validatehistory' && $user->hasRight('accounting', 'bind', 'write')) {
 	$error = 0;
 	$nbbinddone = 0;
 	$nbbindfailed = 0;

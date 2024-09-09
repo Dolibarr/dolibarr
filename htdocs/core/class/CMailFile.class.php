@@ -280,10 +280,10 @@ class CMailFile
 		$this->mixed_boundary = "multipart_x.".time().".x_boundary";
 
 		// On defini related_boundary
-		$this->related_boundary = 'mul_'.dol_hash(uniqid("dolibarr2"), 3); // Force md5 hash (does not contain special chars)
+		$this->related_boundary = 'mul_'.dol_hash(uniqid("dolibarr2"), '3'); // Force md5 hash (does not contain special chars)
 
 		// On defini alternative_boundary
-		$this->alternative_boundary = 'mul_'.dol_hash(uniqid("dolibarr3"), 3); // Force md5 hash (does not contain special chars)
+		$this->alternative_boundary = 'mul_'.dol_hash(uniqid("dolibarr3"), '3'); // Force md5 hash (does not contain special chars)
 
 		if (empty($subject)) {
 			dol_syslog("CMailFile::CMailfile: Try to send an email with empty subject");
@@ -615,7 +615,7 @@ class CMailFile
 			if (!empty($this->atleastonefile)) {
 				foreach ($filename_list as $i => $val) {
 					$content = file_get_contents($filename_list[$i]);
-					$smtps->setAttachment($content, $mimefilename_list[$i], $mimetype_list[$i], $cid_list[$i]);
+					$smtps->setAttachment($content, $mimefilename_list[$i], $mimetype_list[$i], (empty($cid_list[$i]) ? '' : $cid_list[$i]));
 				}
 			}
 
@@ -1534,7 +1534,7 @@ class CMailFile
 			}
 
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-			dol_move($srcfile, $destfile, 0, 1, 0, 0);
+			dol_move($srcfile, $destfile, '0', 1, 0, 0);
 		}
 	}
 

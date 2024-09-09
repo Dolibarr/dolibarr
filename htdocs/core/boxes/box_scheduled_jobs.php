@@ -64,7 +64,7 @@ class box_scheduled_jobs extends ModeleBoxes
 		global $user, $langs, $conf, $form;
 
 		$langs->load("cron");
-		$this->info_box_head = array('text' => $langs->trans("BoxScheduledJobs", $max));
+		$this->info_box_head = array('text' => $langs->trans("BoxScheduledJobs", $max), 'nbcol' => 4);
 
 		if ($user->hasRight('cron', 'read')) {
 			include_once DOL_DOCUMENT_ROOT . '/cron/class/cronjob.class.php';
@@ -154,11 +154,13 @@ class box_scheduled_jobs extends ModeleBoxes
 						'textnoformat' => (empty($resultarray[$line][2]) ? '' : $form->textwithpicto(dol_print_date($resultarray[$line][2], "dayhoursec", 'tzserver'), $langs->trans("CurrentTimeZone")))
 					);
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="center" ',
+						'td' => 'class="right" ',
 						'textnoformat' => $resultarray[$line][4]
 					);
 					$line++;
 				}
+
+				// Line nb job in error
 				$this->info_box_contents[$line][] = array(
 					'td' => 'class="tdoverflowmax300" colspan="3"',
 					'text' => $langs->trans("NumberScheduledJobError")
@@ -171,10 +173,10 @@ class box_scheduled_jobs extends ModeleBoxes
 					$textnoformat .= '<a class="inline-block paddingleft paddingright marginleftonly marginrightonly minwidth25 nounderlineimp" href="'.DOL_URL_ROOT.'/cron/list.php?search_lastresult='.urlencode('<>0').'" title="'.$langs->trans("NumberScheduledJobError").'"><div class="badge badge-danger nounderlineimp"><i class="fa fa-exclamation-triangle"></i> '.$nbjobsinerror.'</div></a>';
 				}
 				if (empty($nbjobsnotfinished) && empty($nbjobsinerror)) {
-					$textnoformat .= '<a class="inline-block paddingleft paddingright marginleftonly marginrightonly minwidth25 nounderlineimp" href="'.DOL_URL_ROOT.'/cron/list.php"><div class="center badge badge-status4 nounderline">0</div></a>';
+					$textnoformat .= '<a class="inline-block paddingleft marginleftonly minwidth25 nounderlineimp" href="'.DOL_URL_ROOT.'/cron/list.php"><div class="center badge badge-status4 nounderline">0</div></a>';
 				}
 				$this->info_box_contents[$line][] = array(
-					'td' => 'class="center"',
+					'td' => 'class="right"',
 					'textnoformat' => $textnoformat
 				);
 			} else {

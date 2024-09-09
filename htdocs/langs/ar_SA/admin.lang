@@ -454,13 +454,13 @@ ExtrafieldPriceWithCurrency=السعر بالعملة
 ExtrafieldMail = Email
 ExtrafieldUrl = عنوان Url
 ExtrafieldIP = الملكية الفكرية
-ExtrafieldSelect = Select list
-ExtrafieldSelectList = Select from table
+ExtrafieldSelect=Select list
+ExtrafieldSelectList=Select from table
 ExtrafieldSeparator=فاصل (ليس حقلاً)
 ExtrafieldPassword=الرمز السري
-ExtrafieldRadio=أزرار اختيار (خيار واحد فقط)
-ExtrafieldCheckBox=مربعات الاختيار
-ExtrafieldCheckBoxFromList=مربعات الاختيار من الجدول
+ExtrafieldRadio=Radio buttons (1 choice only)
+ExtrafieldCheckBox=Select list (n choices)
+ExtrafieldCheckBoxFromList=Select from table (n choices)
 ExtrafieldLink=رابط إلى كائن
 ExtrafieldPointGeo=Geometric Point
 ExtrafieldMultiPointGeo=Geometric Multi Point
@@ -475,7 +475,7 @@ ExtrafieldParamHelpselect=يجب أن تكون قائمة القيم أسطرً�
 ExtrafieldParamHelpcheckbox=يجب أن تكون قائمة القيم أسطرًا تحتوي على مفتاح تنسيق ، القيمة (حيث لا يمكن أن يكون المفتاح "0") <br> <br> على سبيل المثال: <br> 1 ، value1 <br> 2 ، value2 a0342fccfda19bda19b342 ...
 ExtrafieldParamHelpradio=يجب أن تكون قائمة القيم أسطرًا تحتوي على مفتاح تنسيق ، القيمة (حيث لا يمكن أن يكون المفتاح '0') <br> <br> على سبيل المثال: <br> 1 ، value1 <br> 2 ، value2 a0342fccfda19bda19b342 ...
 ExtrafieldParamHelpsellist=List of values comes from a table<br>Syntax: table_name:label_field:id_field::filtersql<br>Example: c_typent:libelle:id::filtersql<br><br>- id_field is necessarily a primary int key<br>- filtersql is a condition. It must use the USF syntax. Example: (active:=:1) to display only active value<br>You can also use $ID$ in filter which is the current id of current object<br>If you want to filter on extrafields use syntax  extra.fieldcode=... (where fieldcode is the code of extrafield)<br><br>In order to have the list depending on another complementary attribute list:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In order to have the list depending on another list:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
-ExtrafieldParamHelpchkbxlst=قائمة القيم تأتي من جدول <br> التركيب: table_name: label_field: id_field :: Filtersql <br> مثال: c_typent: libelle: id :: Filtersql <br> <br> filter يمكن أن يكون عامل التصفية النشط a034b <br> فقط يمكن أيضًا استخدام $ ID $ in filter witch هو المعرف الحالي للكائن الحالي <br> للقيام بتحديد في عامل التصفية ، استخدم $ SEL $ <br> إذا كنت تريد التصفية على الحقول الإضافية ، استخدم بناء الجملة extra.fieldcode = ... (حيث يكون رمز الحقل هو code of extrafield) <br>  <br> In order to have the list depending on another complementary attribute list: <br> c_typent:libelle:id:options_ <i> parent_list_code </i> |parent_column:filter  <br>  <br> In order to have the list depending on another list: <br> c_typent: libelle: id: <i> parent_list_code </i> | parent_column: مرشح
+ExtrafieldParamHelpchkbxlst=List of values comes from a table<br>Syntax: table_name:label_field:id_field::filtersql<br>Example: c_typent:libelle:id::filtersql<br><br>filter can be a simple test (eg active=1 to display only active value)<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another complementary attribute list:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In order to have the list depending on another list:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
 ExtrafieldParamHelplink=يجب أن تكون المعلمات ObjectName: Classpath <br> البنية: اسم الكائن: Classpath
 ExtrafieldParamHelpSeparator=احتفظ به فارغًا لفاصل بسيط <br> اضبط هذا على 1 لفاصل مطوي (يفتح افتراضيًا للجلسة الجديدة ، ثم يتم الاحتفاظ بالحالة لكل جلسة مستخدم) <br> اضبط هذا على 2 لفاصل مطوي (مطوي افتراضيًا لجلسة جديدة ، ثم يتم الاحتفاظ بالحالة قبل كل جلسة مستخدم)
 LibraryToBuildPDF=المكتبة المستخدمة لتوليد ملفات صيغة المستندات المتنقلة
@@ -514,15 +514,17 @@ ModuleCompanyCodeCustomerDigitaria=%s متبوعًا باسم العميل ال�
 ModuleCompanyCodeSupplierDigitaria=%s متبوعًا باسم المورد المقطوع بعدد الأحرف: %s لكود محاسبة المورد.
 Use3StepsApproval=بشكل افتراضي ، يجب إنشاء أوامر الشراء والموافقة عليها من قبل مستخدمين مختلفين (خطوة واحدة / مستخدم للإنشاء وخطوة واحدة / مستخدم للموافقة. لاحظ أنه إذا كان لدى المستخدم إذن للإنشاء والموافقة ، فستكون خطوة واحدة / مستخدم كافية) . يمكنك أن تطلب من خلال هذا الخيار تقديم خطوة ثالثة / موافقة مستخدم ، إذا كان المبلغ أعلى من قيمة مخصصة (لذلك ستكون 3 خطوات ضرورية: 1 = التحقق من الصحة ، 2 = الموافقة الأولى و 3 = الموافقة الثانية إذا كان المبلغ كافياً). <br> اضبط هذا على فارغ إذا كانت موافقة واحدة (خطوتان) كافية ، اضبطه على قيمة منخفضة جدًا (0.1) إذا كانت الموافقة الثانية (3 خطوات) مطلوبة دائمًا.
 UseDoubleApproval=استخدم موافقة من 3 خطوات عندما يكون المبلغ (بدون ضريبة) أعلى من ...
-WarningPHPMail=WARNING: The setup to send emails from the application is using the default generic setup. This choice needs no technical knowledge to complete the setup.<br>However, it is often better to setup outgoing emails to use the email server of your Email Service Provider instead of the default setup for several reasons:
+WarningPHPMail=NOTICE: The setup to send emails from the application is using the default generic setup (called "%s"). This choice needs no technical knowledge and no particular setup.<br>However, it is often better to setup outgoing emails to use the other method (called "%s") to use the email server of your Email Service Provider, instead of the default setup for several reasons:
 WarningPHPMailA=- Using the server of the Email Service Provider increases the trustworthiness of your email, so it increases the deliverability without being flagged as SPAM
-WarningPHPMailB=- لا يسمح لك بعض مزودي خدمة البريد الإلكتروني (مثل Yahoo) بإرسال بريد إلكتروني من خادم آخر غير الخادم الخاص بهم. يستخدم الإعداد الحالي الخاص بك خادم التطبيق لإرسال بريد إلكتروني وليس خادم مزود البريد الإلكتروني الخاص بك ، لذلك سيطلب بعض المستلمين (المتوافق مع بروتوكول DMARC المقيد) ، مزود البريد الإلكتروني الخاص بك ما إذا كان بإمكانهم قبول بريدك الإلكتروني وبعض موفري البريد الإلكتروني (مثل Yahoo) قد تستجيب بـ "لا" لأن الخادم ليس خادمهم ، لذلك قد لا يتم قبول عدد قليل من رسائل البريد الإلكتروني المرسلة للتسليم (كن حذرًا أيضًا من حصة الإرسال لمزود البريد الإلكتروني الخاص بك).
+WarningPHPMailB=- If the domain of your email (the part mymaildomain.com into myname@mymaildomain.com) is protected by a SPF + a DMARC record, your email may be flagged as SPAM because your DMARC rule defined into DNS zone of the domain of the sender (mymaildomain.com) does not allow the sending as a generic sender. In such a case, you must disable the DMARC for the domain (or set it to p=none like done by @gmail.com) or, better, if you have the technical knowledge, use the other method to send emails using the SMTP server of your own email provider.
 WarningPHPMailC=- يعد استخدام خادم SMTP الخاص بموفر خدمة البريد الإلكتروني الخاص بك لإرسال رسائل البريد الإلكتروني أمرًا مثيرًا للاهتمام أيضًا ، لذا سيتم أيضًا حفظ جميع رسائل البريد الإلكتروني المرسلة من التطبيق في دليل "البريد المرسل" الخاص بصندوق البريد الخاص بك.
 WarningPHPMailD=ولذلك يوصى بتغيير طريقة إرسال رسائل البريد الإلكتروني إلى القيمة "SMTP".
 WarningPHPMailDbis=If you really want to keep the default "PHP" method to send emails, just ignore this warning, or remove it by %sclicking here%s.
 WarningPHPMail2=إذا كان موفر البريد الإلكتروني SMTP بحاجة إلى تقييد عميل البريد الإلكتروني لبعض عناوين IP (نادر جدًا) ، فهذا هو عنوان IP الخاص بوكيل مستخدم البريد (MUA) لتطبيق ERP CRM الخاص بك: <strong> %s </strong>.
-WarningPHPMailSPF=إذا كان اسم المجال في عنوان البريد الإلكتروني الخاص بالمرسل محميًا بسجل SPF (اسأل مسجل اسم المجال الخاص بك) ، يجب عليك إضافة عناوين IP التالية في سجل SPF الخاص بـ DNS لمجالك: <strong> %s </strong>.
-ActualMailSPFRecordFound=تم العثور على سجل SPF الفعلي (للبريد الإلكتروني %s): %s
+WarningPHPMailSPF=If the domain name in your sender email address is protected by a SPF record (ask your domain name registar), you must add the following IPs or entry in the SPF record of the DNS of your domain: <strong>%s</strong>.
+WarningPHPMailSPFDMARC=If the domain name in your sender email address is protected by a DMARC record different than p=none (ask your domain name registar), you must remove your DMARC record, or set it to p=none like do @gmail.com) or use sending another method.
+SPFAndDMARCInformation=SPF and DMARC DNS record for main email addresses
+ActualMailDNSRecordFound=Actual %s record found (for email %s) : %s
 ClickToShowDescription=انقر لإظهار الوصف
 DependsOn=تحتاج هذه الوحدة إلى الوحدة (الوحدات)
 RequiredBy=هذه الوحدة مطلوبة من قبل الوحدة (الوحدات)
@@ -867,7 +869,7 @@ Permission255=إنشاء / تعديل بلده معلومات المستخدم
 Permission256=تعديل بنفسه كلمة المرور
 Permission262=Extend access to all third parties AND their objects (not only third parties for which the user is linked as a sale representative).
 Permission262b=Not effective for external users (always limited to themselves for proposals, orders, invoices, contracts, etc.).
-Permission262c=Not effective for projects (only rules on project permissions, visibility and assignment matters).
+Permission262c=Not effective for projects (only rules on project permissions, visibility and users assignment matter).
 Permission263=قم بتوسيع الوصول إلى جميع الأطراف الثالثة بدون كائناتهم (ليس فقط الأطراف الثالثة التي يكون المستخدم ممثل بيع لها). <br> غير فعال للمستخدمين الخارجيين (يقتصر الأمر دائمًا على أنفسهم فيما يتعلق بالعروض والأوامر والفواتير والعقود وما إلى ذلك). <br> غير فعال للمشاريع (فقط القواعد المتعلقة بأذونات المشروع والرؤية ومسائل التعيين).
 Permission271=قراءة في كاليفورنيا
 Permission272=قراءة الفواتير
@@ -944,7 +946,7 @@ Permission776=دفع نفقة تقارير
 Permission777=قراءة جميع تقارير المصاريف (حتى تلك الخاصة بالمستخدم وليس المرؤوسين)
 Permission778=إنشاء / تعديل تقارير المصروفات للجميع
 Permission779=تقارير حساب التصدير
-Permission1001=قراءة مخزونات
+Permission1001=Read warehouses and stocks
 Permission1002=إنشاء / تعديل المستودعات
 Permission1003=حذف المستودعات
 Permission1004=قراءة تحركات الأسهم
@@ -1457,7 +1459,7 @@ HRMSetup=HRM وحدة الإعداد
 CompanySetup=وحدة الإعداد للشركات
 CompanyCodeChecker=خيارات الإنشاء التلقائي لرموز العملاء / البائعين
 AccountCodeManager=خيارات الإنشاء التلقائي لأكواد محاسبة العملاء / البائعين
-NotificationsDesc=يمكن إرسال إشعارات البريد الإلكتروني تلقائيًا لبعض أحداث Dolibarr. <br> يمكن تحديد مستلمي الإخطارات:
+NotificationsDesc=Email notifications can be sent automatically on certain events.<br>Recipients of notifications can be defined:
 NotificationsDescUser=* per user (on the tab "Notifications" of a user)
 NotificationsDescContact=* per third-party contacts (on the tab "Notifications" of a third party)
 NotificationsDescGlobal=* or by setting global email addresses (on the setup page of the module).
@@ -1993,10 +1995,10 @@ ExpenseReportsRulesSetup=إعداد تقارير نفقات الوحدة - ال�
 ExpenseReportNumberingModules=وحدة ترقيم تقارير المصاريف
 NoModueToManageStockIncrease=تم تفعيل أي وحدة قادرة على إدارة زيادة المخزون التلقائي. وسوف يتم زيادة الأسهم على الإدخال اليدوي فقط.
 YouMayFindNotificationsFeaturesIntoModuleNotification=قد تجد خيارات لإشعارات البريد الإلكتروني عن طريق تمكين وتكوين وحدة "الإعلام".
-TemplatesForNotifications=قوالب للإخطارات
+TemplatesForNotifications=Emails templates for notifications
 ListOfNotificationsPerUser=قائمة الإخطارات التلقائية لكل مستخدم *
 ListOfNotificationsPerUserOrContact=قائمة الإخطارات التلقائية الممكنة (في حدث العمل) المتاحة لكل مستخدم * أو لكل جهة اتصال **
-ListOfFixedNotifications=قائمة الإخطارات الثابتة التلقائية
+ListOfFixedNotifications=Global recipients emails for automatic email notifications
 GoOntoUserCardToAddMore=انتقل إلى علامة التبويب "التنبيهات" للمستخدم لإضافة أو إزالة الإشعارات للمستخدمين
 GoOntoContactCardToAddMore=انتقل إلى علامة التبويب "التنبيهات" الخاصة بطرف ثالث لإضافة أو إزالة إشعارات جهات الاتصال / العناوين
 Threshold=عتبة
@@ -2126,7 +2128,7 @@ MAIN_DOCUMENTS_WITH_PICTURE_WIDTH=عرض العمود إذا تم إضافة ص�
 MAIN_GENERATE_DOCUMENTS_SUPPLIER_PROPOSAL_WITHOUT_UNIT_PRICE=إخفاء عمود سعر الوحدة في طلبات عروض الأسعار
 MAIN_GENERATE_DOCUMENTS_SUPPLIER_PROPOSAL_WITHOUT_TOTAL_COLUMN=إخفاء عمود السعر الإجمالي في طلبات عروض الأسعار
 MAIN_GENERATE_DOCUMENTS_PURCHASE_ORDER_WITHOUT_UNIT_PRICE=إخفاء عمود سعر الوحدة في أوامر الشراء
-MAIN_GENERATE_DOCUMENTS_PURCHASE_ORDER_WITHOUT_TOTAL_COLUMN=إخفاء عمود السعر الإجمالي في أوامر الشراء
+MAIN_GENERATE_DOCUMENTS_PURCHASE_ORDER_WITHOUT_TOTAL_COLUMN=Hide the total price column on purchase orders
 MAIN_PDF_NO_SENDER_FRAME=إخفاء الحدود في إطار عنوان المرسل
 MAIN_PDF_NO_RECIPENT_FRAME=إخفاء الحدود في إطار عنوان المستلم
 MAIN_PDF_HIDE_CUSTOMER_CODE=إخفاء رمز العميل
@@ -2218,7 +2220,7 @@ CreateCandidature=إنشاء طلب وظيفة
 FormatZip=الرمز البريدي
 MainMenuCode=رمز دخول القائمة (mainmenu)
 ECMAutoTree=عرض شجرة ECM التلقائية
-OperationParamDesc=Define the rules to use to extract some data or set values to use for operation.<br><br>Example to extract a company name from email subject into a temporary variable:<br>tmp_var=EXTRACT:SUBJECT:Message from company ([^\n]*)<br><br>Examples to set the properties of an object to create:<br>objproperty1=SET:a hard coded value<br>objproperty2=SET:__tmp_var__<br>objproperty3=SETIFEMPTY:a value (value is set only if property is not already defined)<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a new line to extract or set several properties.
+OperationParamDesc=Define the rules to use to extract some data or set values to use for operation.<br><br>Example to extract a string from email header, subject or body into a temporary variable:<br>tmp_var1=EXTRACT:HEADER:My regex ([^\n]*)<br>tmp_var2=EXTRACT:SUBJECT:My refex ([^\n]*)<br>tmp_var3=EXTRACT:BODY:My regex ([^\n]*)<br><br>Examples to set the properties of an object to create:<br>objproperty1=SET:a hard coded value<br>objproperty2=SET:__tmp_var__<br>objproperty3=SETIFEMPTY:a value (value is set only if property is not already defined)<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a new line to extract or set several properties.
 OpeningHours=ساعات الافتتاح
 OpeningHoursDesc=ادخل هنا ساعات الافتتاح لشركتك
 ResourceSetup=تكوين وحدة الموارد
@@ -2264,7 +2266,7 @@ LargerThan=أكبر من
 IfTrackingIDFoundEventWillBeLinked=لاحظ أنه إذا تم العثور على معرف تتبع لكائن ما في البريد الإلكتروني، أو إذا كان البريد الإلكتروني عبارة عن إجابة لرسالة بريد إلكتروني تم جمعها بالفعل و مرتبطة بكائن ما، فسيتم إنشاء الحدث تلقائيًا مرتبطة بالكائن المعروف ذي الصلة.
 WithGMailYouCanCreateADedicatedPassword=باستخدام حساب GMail، إذا قمت بتمكين التحقق بخطوتين، فمن المستحسن إنشاء كلمة مرور ثانية مخصصة للتطبيق بدلاً من استخدام كلمة مرور حسابك الخاص من https://myaccount.google.com/.
 EmailCollectorTargetDir=قد يكون نقل البريد الإلكتروني إلى دليل آخر وسم/دليلًا آخر عندما تمت معالجته بنجاح. ما عليك سوى تعيين اسم الدليل هنا لاستخدام هذه الميزة (لا تستخدم أحرفًا خاصة في الاسم). لاحظ أنه يجب عليك أيضًا استخدام حساب تسجيل الدخول للقراءة/الكتابة.
-EmailCollectorLoadThirdPartyHelp=يمكنك استخدام هذا الإجراء لاستخدام محتوى البريد الإلكتروني للعثور على و وتحميل جهة خارجية موجودة في قاعدة بياناتك (سيتم إجراء البحث على الخاصية المحددة بين 'id' و'name' ، "الاسم المستعار"، "البريد الإلكتروني"). سيتم استخدام الطرف الثالث الذي تم العثور عليه (أو إنشاؤه) لمتابعة الإجراءات التي تحتاج إليه.<br>على سبيل المثال، إذا كنت تريد إنشاء طرف ثالث باسم مستخرج من سلسلة ' الاسم: الاسم المراد العثور عليه موجود في النص، استخدم البريد الإلكتروني للمرسل كبريد إلكتروني، يمكنك تعيين حقل المعلمة مثل هذا:<br>'email=HEADER:^From:(. *);name=EXTRACT:BODY:Name:\\s([^\\s]*);client=SET:2;'<br>
+EmailCollectorLoadThirdPartyHelp=You can use this action to use the email content to find and load an existing third party in your database (search will be done on the defined property among 'id','name','name_alias','email'). The found (or created) third party will be used for following actions that need it.<br>For example, if you want to create a third party with a name extracted from a string 'Name: name to find' present into the body, use the sender email as email, you can set the parameter field like this:<br>'email=EXTRACT:HEADER:^From:(.*);name=EXTRACT:BODY:Name:\\s([^\\s]*);client=SET:2;'<br>
 FilterSearchImapHelp=تحذير: تقوم الكثير من خوادم البريد الإلكتروني (مثل Gmail) بإجراء عمليات بحث كاملة عن الكلمات عند البحث عن سلسلة و لن يعرض نتيجة إذا تم العثور على السلسلة جزئيًا فقط في كلمة. لهذا السبب أيضًا، سيتم تجاهل استخدام الأحرف الخاصة في معايير البحث إذا لم تكن جزءًا من الكلمات الموجودة.<br>لإجراء بحث استبعاد عن كلمة (قم بإرجاع البريد الإلكتروني إذا كانت الكلمة لم يتم العثور عليه)، يمكنك استخدام ! الحرف قبل الكلمة (قد لا يعمل على بعض خوادم البريد).
 EndPointFor=نقطة النهاية لـ %s: %s
 DeleteEmailCollector=حذف مُجمع البريد الإلكتروني
@@ -2279,6 +2281,7 @@ NotAPublicIp=ليس IP عام
 MakeAnonymousPing=قم بعمل Ping مجهول "+1" لخادم مؤسسة Dolibarr (يتم إجراؤه مرة واحدة فقط بعد التثبيت) للسماح للمؤسسة بحساب عدد تثبيت Dolibarr.
 FeatureNotAvailableWithReceptionModule=الميزة غير متاحة عند تمكين استقبال الوحدة
 EmailTemplate=نموذج للبريد الإلكتروني
+EmailTemplateHelp=You can create emails templates from menu %s - %s
 EMailsWillHaveMessageID=Emails will have a 'Message-ID' header matching this syntax
 PDF_SHOW_PROJECT=عرض المشروع في المستند
 ShowProjectLabel=تسمية المشروع
@@ -2539,5 +2542,16 @@ MainAuthenticationOidcLoginClaimName=Login claim
 MainAuthenticationOidcLoginClaimDesc=OpenID Connect claim matching the Dolibarr user login. If not set or empty, defaults to email
 BlackListWords=Black list of words
 AddBlackList=Add to black list
+FediverseSetup=Configuration of fediverse section
+ConfigImportSocialNetwork=Configuration of social networks compatible with Fediverse
+Fediverse=Fediverse
+NewSocialNetwork=New Fediverse social network
+SocialNetworkUrl=Fediverse API URL
+SocialNetworksNote=Each social network definition provides a widget that you must enable to have it available in dashboard
+ConfirmDeleteSocialNetwork= Are you sure want to delete this record ?
 AnOwnerMustBeSetIfEmailTemplateIsPrivate=An owner must be set if the email template is set as private
 ContactsDefaultRoles=For third parties of the "individual" type, a contact can be created simultaneously. Define here the roles that will be systematically assigned to this contact.
+MenuDict=Dictionary
+AddMoreParams=Add more parameters for connection (cookies, tokens, ...)<br> Example: token : value token
+ParamName=Name of parameter
+ParamValue=Value of parameter

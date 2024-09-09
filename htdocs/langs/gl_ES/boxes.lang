@@ -116,6 +116,8 @@ BoxTitleLastCustomerShipments=Últimos envíos de clientes modificados %s
 BoxTitleLastLeaveRequests=Últimas %s solicitudes de días libres modificadas
 NoRecordedShipments=Ningún envío a cliente rexistrado
 BoxCustomersOutstandingBillReached=Alcanzáronse os clientes cun límite pendente
+BoxTitleLastFediverseInfos=Últimas %s publicacións de %s
+BoxLastFediverseInfos=Últimas actualizacións de Fediverse: noticias e tendencias
 # Pages
 UsersHome=Usuarios e grupos internos
 MembersHome=Membros internos

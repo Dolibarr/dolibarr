@@ -170,7 +170,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 }
 
 // Correct stock
-if ($action == "correct_stock") {
+if ($action == "correct_stock" && !$cancel && $usercancreate) {
 	$product = new Product($db);
 	if (!empty($product_id)) {
 		$result = $product->fetch($product_id);
@@ -250,7 +250,7 @@ if ($action == "correct_stock") {
 }
 
 // Transfer stock from a warehouse to another warehouse
-if ($action == "transfert_stock" && !$cancel) {
+if ($action == "transfert_stock" && !$cancel && $usercancreate) {
 	$error = 0;
 	$product = new Product($db);
 	if (!empty($product_id)) {

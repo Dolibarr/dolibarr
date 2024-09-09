@@ -107,7 +107,7 @@ class mod_bom_advanced extends ModeleNumRefBoms
 		$old_code_type = $mysoc->typent_code;
 		$mysoc->code_client = 'CCCCCCCCCC';
 		$mysoc->typent_code = 'TTTTTTTTTT';
-		$numExample = $this->getNextValue($mysoc, '');
+		$numExample = $this->getNextValue($mysoc, null);
 		$mysoc->code_client = $old_code_client;
 		$mysoc->typent_code = $old_code_type;
 
@@ -120,9 +120,9 @@ class mod_bom_advanced extends ModeleNumRefBoms
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param	Product			$objprod    Object product
-	 *  @param  Bom				$object		Object we need next value for
-	 *  @return string|int      			Next value if OK, 0 if KO
+	 *  @param	Product			$objprod	Object product
+	 *  @param  ?Bom			$object		Object we need next value for
+	 *  @return string|int<-1,0>			Next value if OK, 0 if KO
 	 */
 	public function getNextValue($objprod, $object)
 	{

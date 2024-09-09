@@ -152,7 +152,7 @@ class UserGroup extends CommonObject
 
 
 	/**
-	 *  Charge un object group avec toutes ses caracteristiques (except ->members array)
+	 *  Load a group object with all properties (except ->members array that is array of users in group)
 	 *
 	 *	@param      int		$id				Id of group to load
 	 *	@param      string	$groupname		Name of group to load
@@ -161,8 +161,6 @@ class UserGroup extends CommonObject
 	 */
 	public function fetch($id = 0, $groupname = '', $load_members = false)
 	{
-		global $conf;
-
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		if (!empty($groupname)) {
 			$result = $this->fetchCommon(0, '', ' AND nom = \''.$this->db->escape($groupname).'\'');
@@ -174,7 +172,8 @@ class UserGroup extends CommonObject
 
 		if ($result) {
 			if ($load_members) {
-				$this->members = $this->listUsersForGroup();	// This make a lot of subrequests
+				$excludefilter = '';
+				$this->members = $this->listUsersForGroup($excludefilter, 0);	// This make a request to get list of users but may also do subrequest to fetch each users on some versions
 			}
 
 			return 1;
@@ -566,6 +565,20 @@ class UserGroup extends CommonObject
 		}
 	}
 
+	/**
+	 *  Load the list of permissions for the user into the group object
+	 *
+	 *  @param      string	$moduletag	 	Name of module we want permissions ('' means all)
+	 *  @return     int						Return integer <0 if KO, >=0 if OK
+	 *  @deprecated
+	 *  TODO Remove this method. It has a name conflict with getRights() in CommonObject and was replaced in v20 with loadRights()
+	 *
+	 *  @phpstan-ignore-next-line
+	 */
+	public function getrights($moduletag = '')
+	{
+		$this->loadRights($moduletag);
+	}
 
 	/**
 	 *  Load the list of permissions for the user into the group object
@@ -573,7 +586,7 @@ class UserGroup extends CommonObject
 	 *  @param      string	$moduletag	 	Name of module we want permissions ('' means all)
 	 *  @return     int						Return integer <0 if KO, >=0 if OK
 	 */
-	public function getrights($moduletag = '')
+	public function loadRights($moduletag = '')
 	{
 		global $conf;
 
@@ -587,9 +600,7 @@ class UserGroup extends CommonObject
 			return 0;
 		}
 
-		/*
-		 * Recuperation des droits
-		 */
+		// Load permission from group
 		$sql = "SELECT r.module, r.perms, r.subperms ";
 		$sql .= " FROM ".$this->db->prefix()."usergroup_rights as u, ".$this->db->prefix()."rights_def as r";
 		$sql .= " WHERE r.id = u.fk_id";

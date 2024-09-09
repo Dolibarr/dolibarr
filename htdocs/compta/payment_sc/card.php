@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -113,7 +114,7 @@ $h++;
 */
 
 
-print dol_get_fiche_head($head, $hselected, $langs->trans("PaymentSocialContribution"), -1, 'payment');
+print dol_get_fiche_head($head, (string) $hselected, $langs->trans("PaymentSocialContribution"), -1, 'payment');
 
 /*
  * Deletion confirmation of payment
