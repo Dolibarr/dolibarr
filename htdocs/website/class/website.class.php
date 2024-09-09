@@ -637,6 +637,53 @@ class Website extends CommonObject
 	}
 
 	/**
+	 * Purge website
+	 * Delete website directory content and all pages and medias. Differs from delete() because it does not delete the website entry and no trigger is called.
+	 *
+	 * @param User 	$user      	User that deletes
+	 * @return int 				Return integer <0 if KO, >0 if OK
+	 */
+	public function purge(User $user)
+	{
+		global $conf;
+
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
+		$error = 0;
+
+		$this->db->begin();
+
+		if (!$error) {
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'website_page';
+			$sql .= ' WHERE fk_website = '.((int) $this->id);
+
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$error++;
+				$this->errors[] = 'Error '.$this->db->lasterror();
+				dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+			}
+		}
+
+		if (!$error && !empty($this->ref)) {
+			$pathofwebsite = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/'.$this->ref;
+
+			dol_delete_dir_recursive($pathofwebsite);
+		}
+
+		// Commit or rollback
+		if ($error) {
+			$this->db->rollback();
+
+			return -1 * $error;
+		} else {
+			$this->db->commit();
+
+			return 1;
+		}
+	}
+
+	/**
 	 * Load a website its id and create a new one in database.
 	 * This copy website directories, regenerate all the pages + alias pages and recreate the medias link.
 	 *
@@ -659,7 +706,7 @@ class Website extends CommonObject
 		$newref = dol_sanitizeFileName($newref);
 
 		if (empty($newref)) {
-			$this->error = 'ErrorBadParameter';
+			$this->error = 'ErrorBadParameter newref';
 			return -1;
 		}
 
@@ -668,7 +715,7 @@ class Website extends CommonObject
 		// Check no site with ref exists
 		if ($object->fetch(0, $newref) > 0) {
 			$this->error = 'ErrorNewRefIsAlreadyUsed';
-			return -1;
+			return -2;
 		}
 
 		$this->db->begin();
@@ -802,7 +849,7 @@ class Website extends CommonObject
 		} else {
 			$this->db->rollback();
 
-			return -1;
+			return -3;
 		}
 	}
 

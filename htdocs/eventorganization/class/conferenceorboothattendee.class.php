@@ -89,7 +89,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => "Id"),
@@ -397,7 +397,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 * @param  string      	$sortfield    	Sort field
 	 * @param  int         	$limit        	limit
 	 * @param  int         	$offset       	Offset
-	 * @param  string		$filter       	Filter as an Universal Search string.
+	 * @param  string|array	$filter       	Filter as an Universal Search string.
 	 * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
 	 * @param  string      	$filtermode   	No more used
 	 * @return array|int                 	int <0 if KO, array of pages if OK
@@ -416,6 +416,32 @@ class ConferenceOrBoothAttendee extends CommonObject
 			$sql .= ' WHERE t.entity IN ('.getEntity($this->element).')';
 		} else {
 			$sql .= ' WHERE 1 = 1';
+		}
+
+		// Manage filter
+		if (is_array($filter)) {	// deprecated, use $filter = USF syntax
+			dol_syslog("You are using a deprecated use of fetchAll. filter parameter mus be an USF string now.", LOG_WARNING);
+			$sqlwhere = array();
+			if (count($filter) > 0) {
+				foreach ($filter as $key => $value) {
+					if ($key == 't.rowid' || $key == 't.fk_soc' || $key == 't.fk_project' || $key == 't.fk_actioncomm') {
+						$sqlwhere[] = $key.'='.((int) $value);
+					} elseif (in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
+						$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
+					} elseif ($key == 'customsql') {
+						$sqlwhere[] = $value;
+					} elseif (strpos($value, '%') === false) {
+						$sqlwhere[] = $key.' IN ('.$this->db->sanitize($this->db->escape($value)).')';
+					} else {
+						$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
+					}
+				}
+			}
+			if (count($sqlwhere) > 0) {
+				$sql .= ' AND ('.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
+			}
+
+			$filter = '';
 		}
 
 		// Manage filter
@@ -541,10 +567,10 @@ class ConferenceOrBoothAttendee extends CommonObject
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 			$sql .= " SET ref = '".$this->db->escape($num)."',";
 			$sql .= " status = ".self::STATUS_VALIDATED;
-			if (!empty($this->fields['date_validation'])) {
+			if (!empty($this->fields['date_validation'])) {  // @phan-suppress-current-line PhanTypeMismatchProperty
 				$sql .= ", date_validation = '".$this->db->idate($now)."'";
 			}
-			if (!empty($this->fields['fk_user_valid'])) {
+			if (!empty($this->fields['fk_user_valid'])) {  // @phan-suppress-current-line PhanTypeMismatchProperty
 				$sql .= ", fk_user_valid = ".$user->id;
 			}
 			$sql .= " WHERE rowid = ".((int) $this->id);
@@ -963,13 +989,14 @@ class ConferenceOrBoothAttendee extends CommonObject
 				$mybool = ((bool) @include_once $dir.$file) || $mybool;
 			}
 
-			if ($mybool === false) {
+			if (!$mybool) {
 				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 
 			if (class_exists($classname)) {
 				$obj = new $classname();
+				'@phan-var-force CommonNumRefGenerator $obj';
 				$numref = $obj->getNextValue($this);
 
 				if ($numref != '' && $numref != '-1') {

@@ -149,7 +149,7 @@ class modTicket extends DolibarrModules
 				'fieldinsert' => 'code,label,pos,use_default,entity',
 				'rowid' => 'rowid',
 				'cond' => isModEnabled('ticket'),
-				'help' => array('code' => $langs->trans('EnterAnyCode'), 'use_default' => $langs->trans('Enter0or1'))
+				'help' => array('code' => $langs->trans('EnterAnyCode'), 'use_default' => $langs->trans('EnterYesOrNo'))
 			)
 		);
 
@@ -165,7 +165,7 @@ class modTicket extends DolibarrModules
 				'fieldinsert' => 'code,label,pos,use_default,entity',
 				'rowid' => 'rowid',
 				'cond' => isModEnabled('ticket'),
-				'help' => array('code' => $langs->trans('EnterAnyCode'), 'use_default' => $langs->trans('Enter0or1'))
+				'help' => array('code' => $langs->trans('EnterAnyCode'), 'use_default' => $langs->trans('EnterYesOrNo'))
 			)
 		);
 
@@ -183,14 +183,14 @@ class modTicket extends DolibarrModules
 				'cond' => isModEnabled('ticket'),
 				'help' => array(
 					'code' => $langs->trans('EnterAnyCode'),
-					'use_default' => $langs->trans('Enter0or1'),
+					'use_default' => $langs->trans('EnterYesOrNo'),
 					'public' => $langs->trans('Enter0or1').'<br>'.$langs->trans('TicketGroupIsPublicDesc'),
 					'fk_parent' => $langs->trans('IfThisCategoryIsChildOfAnother')
 				)
 			)
 		);
 
-		// (apparently unused) Dictionary of ticket resolutions
+		// Dictionary of ticket resolutions (apparently unused except if TICKET_ENABLE_RESOLUTION is on)
 		$this->declareNewDictionary(
 			array(
 				'name' => 'c_ticket_resolution',
@@ -303,7 +303,7 @@ class modTicket extends DolibarrModules
 			'type' => 'left',
 			'titre' => 'NewTicket',
 			'mainmenu' => 'ticket',
-			'url' => '/ticket/card.php?action=create',
+			'url' => '/ticket/card.php?action=create&mode=init',
 			'langs' => 'ticket',
 			'position' => 102,
 			'enabled' => 'isModEnabled("ticket")',

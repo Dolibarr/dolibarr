@@ -42,7 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("sendings", "deliveries", 'companies', 'bills', 'products'));
+$langs->loadLangs(array("sendings", "deliveries", 'companies', 'bills', 'products', 'orders'));
 
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'shipmentlist'; // To manage different context of search
 
@@ -268,7 +268,7 @@ if (empty($reshook)) {
 				$objecttmp->fk_project = $expd->fk_project;
 				$objecttmp->multicurrency_code = !empty($expdCmdSrc->multicurrency_code) ? $expdCmdSrc->multicurrency_code : (!empty($objecttmp->thirdparty->multicurrency_code) ? $objecttmp->thirdparty->multicurrency_code : $expd->multicurrency_code);
 				if (empty($createbills_onebythird)) {
-					$objecttmp->ref_client = $expd->ref_client;
+					$objecttmp->ref_customer = $expd->ref_customer;
 				}
 
 				$datefacture = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
@@ -277,7 +277,7 @@ if (empty($reshook)) {
 				}
 
 				$objecttmp->date = $datefacture;
-				$objecttmp->origin    = 'shipping';
+				$objecttmp->origin_type    = 'shipping';
 				$objecttmp->origin_id = $id_sending;
 
 				$objecttmp->array_options = $expd->array_options; // Copy extrafields
@@ -344,13 +344,13 @@ if (empty($reshook)) {
 						$desc = ($lines[$i]->desc ? $lines[$i]->desc : '');
 						// If we build one invoice for several sendings, we must put the ref of sending on the invoice line
 						if (!empty($createbills_onebythird)) {
-							$desc = dol_concatdesc($desc, $langs->trans("Order").' '.$expd->ref.' - '.dol_print_date($expd->date, 'day'));
+							$desc = dol_concatdesc($desc, $langs->trans("Order").': '.$expdCmdSrc->ref. ' - '. $langs->trans("Shipment").': '.$expd->ref.($expd->date_shipping ? ' - '.dol_print_date($expd->date_shipping, 'day'):''));
 						}
 
 						if ($lines[$i]->subprice < 0 && empty($conf->global->INVOICE_KEEP_DISCOUNT_LINES_AS_IN_ORIGIN)) {
 							// Negative line, we create a discount line
 							$discount = new DiscountAbsolute($db);
-							$discount->fk_soc = $objecttmp->socid;
+							$discount->socid = $objecttmp->socid;
 							$discount->amount_ht = abs($lines[$i]->total_ht);
 							$discount->amount_tva = abs($lines[$i]->total_tva);
 							$discount->amount_ttc = abs($lines[$i]->total_ttc);
@@ -668,7 +668,7 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 }
 // Add fields from hooks
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
 $sqlfields = $sql; // $sql fields to remove for count total
@@ -700,7 +700,7 @@ if ($search_user > 0) {
 
 // Add table from hooks
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
 $sql .= " WHERE e.entity IN (".getEntity('expedition').")";
@@ -844,12 +844,12 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 
 // Add where from hooks
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
 // Add HAVING from hooks
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
 
 $nbtotalofrecords = '';
@@ -896,8 +896,6 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $
 	header("Location: ".DOL_URL_ROOT.'/expedition/card.php?id='.$id);
 	exit;
 }
-
-llxHeader('', $langs->trans('ListOfSendings'), $helpurl);
 
 $expedition = new Expedition($db);
 
@@ -1134,7 +1132,7 @@ if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 	$moreforfilter .= '</div>';
 }
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 if (empty($reshook)) {
 	$moreforfilter .= $hookmanager->resPrint;
 } else {
@@ -1272,7 +1270,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 // Fields from hook
 $parameters = array('arrayfields' => $arrayfields);
-$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Date creation
 if (!empty($arrayfields['e.datec']['checked'])) {
@@ -1383,7 +1381,7 @@ if (!empty($arrayfields['e.note_private']['checked'])) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
 $parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, '$totalarray' => &$totalarray);
-$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (!empty($arrayfields['e.datec']['checked'])) {
 	print_liste_field_titre($arrayfields['e.datec']['label'], $_SERVER["PHP_SELF"], "e.date_creation", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
@@ -1633,7 +1631,7 @@ while ($i < $imaxinloop) {
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
 		$parameters = array('arrayfields' => $arrayfields, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
-		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
+		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		// Date creation
 		if (!empty($arrayfields['e.datec']['checked'])) {
@@ -1703,7 +1701,7 @@ if ($num == 0) {
 $db->free($resql);
 
 $parameters = array('arrayfields' => $arrayfields, 'totalarray' => $totalarray, 'sql' => $sql);
-$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
 print "</table>";

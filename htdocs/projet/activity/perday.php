@@ -268,12 +268,12 @@ if ($action == 'addtime' && $user->hasRight('projet', 'lire') && GETPOST('formfi
 					if ($id > 0) {
 						// We store HOURS in seconds
 						if ($matches[2] == 'hour') {
-							$timespent_duration[$id] += $time * 60 * 60;
+							$timespent_duration[$id] += (int) $time * 60 * 60;
 						}
 
 						// We store MINUTES in seconds
 						if ($matches[2] == 'min') {
-							$timespent_duration[$id] += $time * 60;
+							$timespent_duration[$id] += (int) $time * 60;
 						}
 					}
 				}

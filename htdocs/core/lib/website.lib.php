@@ -331,9 +331,9 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = 0)
 		// at end we replace the '!~!~!~' only if we are in final parent page.
 		$content = preg_replace('/(href=")\/?([^:\"\!]*)\.php\?([^#\"<>]*)(#[^\"<>]*)?\"/', '\1!~!~!~'.DOL_URL_ROOT.'/public/website/index.php?website='.$website->ref.'&pageref=\2&\3\4"', $content, -1, $nbrep);
 		// Replace occurrence like _service_XXX.php with dolibarr URL
-		$content = preg_replace('/([\'"])_service_([^\'"]+)\.php\1/',	'\1!~!~!~' . DOL_URL_ROOT . '/public/website/index.php?website=' . $website->ref . '&pageref=_service_\2\1', $content, -1, $nbrep);
+		$content = preg_replace('/([\'"])_service_([^\'"]+)\.php\1/', '\1!~!~!~' . DOL_URL_ROOT . '/public/website/index.php?website=' . $website->ref . '&pageref=_service_\2\1', $content, -1, $nbrep);
 		// Replace occurrence like _library_XXX.php with dolibarr URL
-		$content = preg_replace('/([\'"])_library_([^\'"]+)\.php\1/',	'\1!~!~!~' . DOL_URL_ROOT . '/public/website/index.php?website=' . $website->ref . '&pageref=_library_\2\1', $content, -1, $nbrep);
+		$content = preg_replace('/([\'"])_library_([^\'"]+)\.php\1/', '\1!~!~!~' . DOL_URL_ROOT . '/public/website/index.php?website=' . $website->ref . '&pageref=_library_\2\1', $content, -1, $nbrep);
 		// Replace relative link without .php like /xxx#aaa or /xxx with dolibarr URL:  ...href="....php"
 		$content = preg_replace('/(href=")\/?([a-zA-Z0-9\-_#]+)(\"|\?)/', '\1!~!~!~'.DOL_URL_ROOT.'/public/website/index.php?website='.$website->ref.'&pageref=\2\3', $content, -1, $nbrep);
 
@@ -570,7 +570,7 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 		}
 	} else { // When page called from virtual host server
 		$newurl = '/'.$containerref.'.php';
-		$newurl = $newurl.(empty($_SERVER["QUERY_STRING"]) ? '' : '?'.$_SERVER["QUERY_STRING"]);
+		$newurl .= (empty($_SERVER["QUERY_STRING"]) ? '' : '?'.$_SERVER["QUERY_STRING"]);
 	}
 
 	if ($newurl) {
@@ -933,11 +933,12 @@ function getSocialNetworkHeaderCards($params = null)
 /**
  * Return HTML content to add structured data for an article, news or Blog Post.
  *
+ * @param	string	$socialnetworks			'' or list of social networks
  * @return  string							HTML content
  */
-function getSocialNetworkSharingLinks()
+function getSocialNetworkSharingLinks($socialnetworks = '')
 {
-	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running included containers.
+	global $website, $websitepage; // Very important. Required to have var available when running included containers.
 
 	$out = '<!-- section for social network sharing of page -->'."\n";
 
@@ -948,37 +949,30 @@ function getSocialNetworkSharingLinks()
 		$out .= '<div class="dol-social-share">'."\n";
 
 		// Twitter
-		$out .= '<div class="dol-social-share-tw">'."\n";
-		$out .= '<a href="https://twitter.com/share" class="twitter-share-button" data-url="'.$fullurl.'" data-text="'.dol_escape_htmltag($websitepage->description).'" data-lang="'.$websitepage->lang.'" data-size="small" data-related="" data-hashtags="'.preg_replace('/^#/', '', $hashtags).'" data-count="horizontal">Tweet</a>';
-		$out .= '<script nonce="'.getNonce().'">!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?\'http\':\'https\';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+\'://platform.twitter.com/widgets.js\';fjs.parentNode.insertBefore(js,fjs);}}(document, \'script\', \'twitter-wjs\');</script>';
-		$out .= '</div>'."\n";
+		if (empty($socialnetworks) || preg_match('/twitter/', $socialnetworks)) {
+			$out .= '<div class="dol-social-share-tw">'."\n";
+			$out .= '<a href="https://twitter.com/share" class="twitter-share-button" data-url="'.$fullurl.'" data-text="'.dol_escape_htmltag($websitepage->description).'" data-lang="'.$websitepage->lang.'" data-size="small" data-related="" data-hashtags="'.preg_replace('/^#/', '', $hashtags).'" data-count="horizontal">Tweet</a>';
+			$out .= '<script nonce="'.getNonce().'">!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?\'http\':\'https\';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+\'://platform.twitter.com/widgets.js\';fjs.parentNode.insertBefore(js,fjs);}}(document, \'script\', \'twitter-wjs\');</script>';
+			$out .= '</div>'."\n";
+		}
 
 		// Reddit
-		$out .= '<div class="dol-social-share-reddit">'."\n";
-		$out .= '<a href="https://www.reddit.com/submit" target="_blank" rel="noopener noreferrer external" onclick="window.location = \'https://www.reddit.com/submit?url='.$fullurl.'\'; return false">';
-		$out .= '<span class="dol-social-share-reddit-span">Reddit</span>';
-		$out .= '</a>';
-		$out .= '</div>'."\n";
+		if (empty($socialnetworks) || preg_match('/reddit/', $socialnetworks)) {
+			$out .= '<div class="dol-social-share-reddit">'."\n";
+			$out .= '<a href="https://www.reddit.com/submit" target="_blank" rel="noopener noreferrer external" onclick="window.location = \'https://www.reddit.com/submit?url='.urlencode($fullurl).'\'; return false">';
+			$out .= '<span class="dol-social-share-reddit-span">Reddit</span>';
+			$out .= '</a>';
+			$out .= '</div>'."\n";
+		}
 
 		// Facebook
-		$out .= '<div class="dol-social-share-fbl">'."\n";
-		$out .= '<div id="fb-root"></div>'."\n";
-		$out .= '<script nonce="'.getNonce().'">(function(d, s, id) {
-				  var js, fjs = d.getElementsByTagName(s)[0];
-				  if (d.getElementById(id)) return;
-				  js = d.createElement(s); js.id = id;
-				  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.0&amp;appId=dolibarr.org";
-				  fjs.parentNode.insertBefore(js, fjs);
-				}(document, \'script\', \'facebook-jssdk\'));</script>
-				        <fb:like
-				        href="'.$fullurl.'"
-				        layout="button_count"
-				        show_faces="false"
-				        width="90"
-				        colorscheme="light"
-				        share="1"
-				        action="like" ></fb:like>'."\n";
-		$out .= '</div>'."\n";
+		if (empty($socialnetworks) || preg_match('/facebook/', $socialnetworks)) {
+			$out .= '<div class="dol-social-share-fbl">'."\n";
+			$out .= '<a href="https://www.facebook.com/sharer/sharer.php?u='.urlencode($fullurl).'">';
+			$out .= '<span class="dol-social-share-fbl-span">Facebook</span>';
+			$out .= '</a>';
+			$out .= '</div>';
+		}
 
 		$out .= "\n</div>\n";
 	} else {
@@ -1070,8 +1064,8 @@ function getImagePublicURLOfObject($object, $no = 1, $extName = '')
 					} else {
 						$image_path = '/wrapper.php?hashp='.urlencode($obj->share);
 					}
+
 					if ($extName) {
-						//getImageFileNameForSize($dir.$file, '_small')
 						$image_path .= '&extname='.urlencode($extName);
 					}
 				}
@@ -1194,15 +1188,15 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 		$arrayresult['message'] = $weblangs->trans("ErrorSearchCriteriaTooSmall");
 	} else {
 	*/
-		$tmparrayoftype = explode(',', $type);
-		/*foreach ($tmparrayoftype as $tmptype) {
-			if (!in_array($tmptype, array('', 'page', 'blogpost'))) {
-				$error++;
-				$arrayresult['code'] = 'KO';
-				$arrayresult['message'] = 'Bad value for parameter type';
-				break;
-			}
-		}*/
+	$tmparrayoftype = explode(',', $type);
+	/*foreach ($tmparrayoftype as $tmptype) {
+		if (!in_array($tmptype, array('', 'page', 'blogpost'))) {
+			$error++;
+			$arrayresult['code'] = 'KO';
+			$arrayresult['message'] = 'Bad value for parameter type';
+			break;
+		}
+	}*/
 	//}
 
 	$searchdone = 0;

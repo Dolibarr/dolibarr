@@ -18,7 +18,7 @@ Reference=Reference
 NewProduct=Нов производ
 NewService=Нова услуга
 ProductVatMassChange=Глобално ажурирање за ДДВ
-ProductVatMassChangeDesc=Оваа алатка ја ажурира стапката на ДДВ дефинирана на <b><u>ALL</u> class='notranslate'></b> производи и услуги!
+ProductVatMassChangeDesc=This tool updates the VAT rate defined on <b><u>ALL</u></b> products and services!
 MassBarcodeInit=Масовен баркод на почетокот
 MassBarcodeInitDesc=Оваа страница може да се користи за иницијализирање на баркод на објекти кои немаат дефинирано баркод. Проверете пред да заврши поставувањето на бар-кодот на модулот.
 ProductAccountancyBuyCode=Сметководствен код (купување)
@@ -145,6 +145,7 @@ WithoutDiscount=Без попуст
 VATRateForSupplierProduct=Даночна стапка (за овој продавач/производ)
 DiscountQtyMin=Попуст за оваа количина.
 NoPriceDefinedForThisSupplier=Не е дефинирана цена/количина за овој продавач/производ
+NoProductPriceDefinedForThisSupplier=No product price/qty defined for this vendor
 NoSupplierPriceDefinedForThisProduct=Не е дефинирана цена/количина на продавачот за овој производ
 PredefinedItem=Предефинирана ставка
 PredefinedProducts=Предефиниран производ
@@ -158,7 +159,7 @@ ListProductByPopularity=Список на производи по популар
 ListServiceByPopularity=Список на услуги по популарност
 Finished=Произведен производ
 RowMaterial=Необработен матерјал
-ConfirmCloneProduct=Дали сте сигурни дека сакате да клонирате производ или услуга <b>%s<span class='notranslate'>b09a4b739f17f8z?
+ConfirmCloneProduct=Are you sure you want to clone product or service <b>%s</b>?
 CloneContentProduct=Клонирајте ги сите главни информации за производот/услугата
 ClonePricesProduct=Клон цени
 CloneCategoriesProduct=Клонирајте поврзани ознаки/категории
@@ -284,7 +285,7 @@ PriceExpressionSelected=Избран израз на цена
 PriceExpressionEditorHelp1=„цена = 2 + 2“ или „2 + 2“ за одредување на цената. Употреба; да се одделат изрази
 PriceExpressionEditorHelp2=Може да пристапите до ExtraFields со променливи како што се <b>#extrafield_myextrafieldkey#</b> и глобални променливи со <span translate'38> /span>#global_mycode#</b>
 PriceExpressionEditorHelp3=И во цените на производите/услугите и на добавувачите, достапни се овие променливи:<br><b>#tva_tx# #localtax1_tx#_ta тежина# #должина# #површина# #цена_мин#</b>
-PriceExpressionEditorHelp4=Само во цена на производ/услуга: <b>#supplier_min_price#</b>b0349>b0342f само цени на продавачот: <span class='notranslate'><b>#supplier_quantity# и #supplier_tva_tx#</b>
+PriceExpressionEditorHelp4=In product/service price only: <b>#supplier_min_price#</b><br>In vendor prices only: <b>#supplier_quantity# and #supplier_tva_tx#</b>
 PriceExpressionEditorHelp5=Достапни глобални вредности:
 PriceMode=Режим на цена
 PriceNumeric=Број
@@ -354,7 +355,7 @@ ProductAttributeName=Атрибут на варијанта %s
 ProductAttribute=Атрибут на варијанта
 ProductAttributeDeleteDialog=Дали сте сигурни дека сакате да го избришете овој атрибут? Сите вредности ќе бидат избришани
 ProductAttributeValueDeleteDialog=Дали сте сигурни дека сакате да ја избришете вредноста „%s“ со референцата „%s“ на овој атрибут?
-ProductCombinationDeleteDialog=Дали сте сигурни дека сакате да ја избришете варијантата на производот "<strong>%s<span class='notranslate'>b0a65d071f6f6 >"?
+ProductCombinationDeleteDialog=Are you sure want to delete the variant of the product "<strong>%s</strong>"?
 ProductCombinationAlreadyUsed=Настана грешка при бришењето на варијантата. Ве молиме проверете дека не се користи во ниеден објект
 ProductCombinations=Варијанти
 PropagateVariant=Пропагирајте варијанти
@@ -403,7 +404,8 @@ PMPValueShort=WAP
 mandatoryperiod=Задолжителни периоди
 mandatoryPeriodNeedTobeSet=Забелешка: Периодот (датум на почеток и крај) мора да биде дефиниран
 mandatoryPeriodNeedTobeSetMsgValidate=Услугата бара период на почеток и крај
-mandatoryHelper=Проверете го ова ако сакате порака до корисникот кога креирате / потврдувате фактура, комерцијален предлог, нарачка за продажба без да внесувате датум за почеток и крај на линиите со оваа услуга.<br>Забележете дека пораката е предупредување, а не грешка при блокирање.
+mandatoryHelper=Check this if you want a message to the user when creating / validating an invoice, commercial proposal, sales order without entering a start and end date on lines with this service.
+mandatoryHelper2=Note that the message is a warning and not a blocking error.
 DefaultBOM=Стандардна BOM
 DefaultBOMDesc=Стандардниот BOM се препорачува да се користи за производство на овој производ. Ова поле може да се постави само ако природата на производот е „%s“.
 Rank=Ранг

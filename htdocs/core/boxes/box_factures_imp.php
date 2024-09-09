@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2019 Frederic France      <frederic.france@netlogic.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,7 +90,7 @@ class box_factures_imp extends ModeleBoxes
 			}
 			$sql1 .= ", s.logo, s.email, s.entity";
 			$sql1 .= ", s.tva_intra, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6";
-			$sql1 .= ", f.ref, f.date_lim_reglement as datelimite";
+			$sql1 .= ", f.ref, f.date_lim_reglement as datelimit";
 			$sql1 .= ", f.type";
 			$sql1 .= ", f.datef as date";
 			$sql1 .= ", f.total_ht";
@@ -118,13 +119,13 @@ class box_factures_imp extends ModeleBoxes
 			}
 			$sql3 = " GROUP BY s.rowid, s.nom, s.name_alias, s.code_client, s.client, s.logo, s.email, s.entity, s.tva_intra, s.siren, s.siret, s.ape, s.idprof4, s.idprof5, s.idprof6,";
 			if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
-				$sql3 .= " spe.accountancy_code_customer as code_compta,";
+				$sql3 .= " spe.accountancy_code_customer,";
 			} else {
 				$sql3 .= " s.code_compta,";
 			}
 			$sql3 .= " f.rowid, f.ref, f.date_lim_reglement,";
 			$sql3 .= " f.type, f.datef, f.total_ht, f.total_tva, f.total_ttc, f.paye, f.fk_statut";
-			$sql3 .= " ORDER BY datelimite ASC, f.ref ASC";
+			$sql3 .= " ORDER BY date_lim_reglement ASC, f.ref ASC";
 			$sql3 .= $this->db->plimit($this->max + 1, 0);
 
 			$sql = $sql1.$sql2.$sql3;
@@ -139,10 +140,8 @@ class box_factures_imp extends ModeleBoxes
 				while ($line < min($num, $this->max)) {
 					$objp = $this->db->fetch_object($result);
 
-					$datelimite = $this->db->jdate($objp->datelimite);
 					$date = $this->db->jdate($objp->date);
-					$datem = $this->db->jdate($objp->tms);
-					$datelimit = $this->db->jdate(datelimite);
+					$datelimit = $this->db->jdate($objp->datelimit);
 
 					$facturestatic->id = $objp->facid;
 					$facturestatic->ref = $objp->ref;
@@ -182,7 +181,7 @@ class box_factures_imp extends ModeleBoxes
 					$late = '';
 					if ($facturestatic->hasDelay()) {
 						// @phan-suppress-next-line PhanPluginPrintfVariableFormatString
-						$late = img_warning(sprintf($l_due_date, dol_print_date($datelimite, 'day', 'tzuserrel')));
+						$late = img_warning(sprintf($l_due_date, dol_print_date($datelimit, 'day', 'tzuserrel')));
 					}
 
 					$this->info_box_contents[$line][] = array(
@@ -204,8 +203,8 @@ class box_factures_imp extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateDue").': '.dol_print_date($datelimite, 'day', 'tzuserrel')).'"',
-						'text' => dol_print_date($datelimite, 'day', 'tzuserrel'),
+						'td' => 'class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateDue").': '.dol_print_date($datelimit, 'day', 'tzuserrel')).'"',
+						'text' => dol_print_date($datelimit, 'day', 'tzuserrel'),
 					);
 
 					$this->info_box_contents[$line][] = array(
@@ -275,9 +274,9 @@ class box_factures_imp extends ModeleBoxes
 	/**
 	 *	Method to show box
 	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
+	 *	@param	?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}	$head	Array with properties of box title
+	 *	@param	?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>	$contents	Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *	@return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)

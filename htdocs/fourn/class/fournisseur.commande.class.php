@@ -15,6 +15,7 @@
  * Copyright (C) 2022		Gauthier VERDOL			<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		Solution Libre SAS		<contact@solution-libre.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -998,7 +999,7 @@ class CommandeFournisseur extends CommonOrder
 	}
 
 	/**
-	 *	Return clicable name (with picto eventually)
+	 *	Return clickable name (with picto eventually)
 	 *
 	 *	@param		int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@param		string	$option						On what the link points
@@ -1119,12 +1120,13 @@ class CommandeFournisseur extends CommonOrder
 				$mybool = ((bool) @include_once $dir.$file) || $mybool;
 			}
 
-			if ($mybool === false) {
+			if (!$mybool) {
 				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 
 			$obj = new $classname();
+			'@phan-var-force ModeleNumRefSuppliersOrders $obj';
 			$numref = $obj->getNextValue($soc, $this);
 
 			if ($numref != "") {
@@ -2054,9 +2056,9 @@ class CommandeFournisseur extends CommonOrder
 					if ($qty < $prod->packaging) {
 						$qty = $prod->packaging;
 					} else {
-						if (!empty($prod->packaging) && ($qty % $prod->packaging) > 0) {
-							$coeff = intval($qty / $prod->packaging) + 1;
-							$qty = $prod->packaging * $coeff;
+						if (!empty($prod->packaging) && (fmod((float) $qty, $prod->packaging)  > 0.000001)) {
+							$coeff = intval((float) $qty / $prod->packaging) + 1;
+							$qty = (float) $prod->packaging * $coeff;
 							setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'mesgs');
 						}
 					}
@@ -3264,6 +3266,7 @@ class CommandeFournisseur extends CommonOrder
 			$response->label = $langs->trans("SuppliersOrdersToProcess");
 			$response->labelShort = $langs->trans("Opened");
 			$response->url = DOL_URL_ROOT.'/fourn/commande/list.php?search_status=1,2&mainmenu=commercial&leftmenu=orders_suppliers';
+			$response->url_late = DOL_URL_ROOT.'/fourn/commande/list.php?mainmenu=commercial&leftmenu=orders_suppliers&search_option=late';
 			$response->img = img_object('', "order");
 
 			if ($mode === 'awaiting') {
@@ -3687,11 +3690,11 @@ class CommandeFournisseur extends CommonOrder
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{

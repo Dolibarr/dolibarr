@@ -50,7 +50,7 @@ ToDeployYourWebsiteOnLiveYouHave3Solutions=Για να αναπτύξετε αυ
 SetHereVirtualHost= <u> Χρήση με Apache / Nginx / ... </u> <br> Δημιουργήστε στον διακομιστή σας (Apache, Nginx, ...) ένα αποκλειστικό Virtual Host με το PHP ενεργοποιημένο και έναν ριζικό κατάλογο αρχείων στο <br><strong>%s</strong>
 ExampleToUseInApacheVirtualHostConfig=Παράδειγμα χρήσης στη ρύθμιση εικονικού κεντρικού υπολογιστή Apache:
 YouCanAlsoTestWithPHPS=<u>Χρήση με ενσωματωμένο διακομιστή PHP</u><br>Στο δοκιμαστικό περιβάλλον μπορεί να προτιμήσετε να κάνετε δόκιμες χρησιμοποιώντας τον ενσωματωμένο διακομιστή ιστού PHP εκτελώντας
-YouCanAlsoDeployToAnotherWHP=<u>Run your web site inside a Dolibarr web Hosting provider</u><br>If you don't have a web server like Apache or NGinx available on internet, you can export and import your web site onto another Dolibarr instance provided by another Dolibarr hosting provider that provide full integration with the Website module. You can find a list of some Dolibarr hosting providers on <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a>
+YouCanAlsoDeployToAnotherWHP= <u> Δημιουργήστε τον ιστότοπο σας με έναν πάροχο φιλοξενίας Dolibarr </u> <br> Εάν δεν διαθέτετε διακομιστή ιστού όπως ο Apache ή ο NGinx διαθέσιμο στο διαδίκτυο, μπορείτε να εξαγάγετε και να εισαγάγετε τον ιστότοπο σας από ένα πάροχο Dolibarr σε άλλο πάροχο Dolibarr που παρέχει πλήρη ενσωμάτωση με την ενότητα Ιστοσελίδας. Μπορείτε να βρείτε μια λίστα με πάροχους φιλοξενίας Dolibarr στο <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external"> https://saas.dolibarr.org </a>
 CheckVirtualHostPerms=Ελέγξτε επίσης ότι ο χρήστης εικονικού κεντρικού υπολογιστή (για παράδειγμα www-data) έχει <strong> %s </strong> δικαιώματα σε αρχεία στο <br> <strong>%s</strong>
 ReadPerm=Ανάγνωση
 WritePerm=Εγγραφή
@@ -62,7 +62,7 @@ NoPageYet=Δεν υπάρχουν ακόμη σελίδες
 YouCanCreatePageOrImportTemplate=Μπορείτε να δημιουργήσετε μια νέα σελίδα ή να εισάγετε ένα πλήρες πρότυπο ιστότοπου
 SyntaxHelp=Βοήθεια για συγκεκριμένες συμβουλές σύνταξης
 YouCanEditHtmlSourceckeditor=Μπορείτε να επεξεργαστείτε τον πηγαίο κώδικα HTML χρησιμοποιώντας το κουμπί "Πηγή" στο πρόγραμμα επεξεργασίας.
-YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> Μπορείτε να συμπεριλάβετε κώδικα PHP χρησιμοποιώντας tags <strong>&lt;?php ?&gt;</strong>. Οι ακόλουθες καθολικές μεταβλητές είναι διαθέσιμες: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> Μπορείτε επίσης να συμπεριλάβετε περιεχόμενο μιας άλλης σελίδας/κοντέινερ με την ακόλουθη σύνταξη :<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br> <span class="fa fa-bug paddingright"></span>Μπορείτε να κάνετε μια ανακατεύθυνση σε άλλη σελίδα/κοντέινερ με την ακόλουθη σύνταξη (Σημείωση: μην εμφανίζετε περιεχόμενο πριν από μια ανακατεύθυνση):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>Μπορείτε επίσης να κάνετε μια ανακατεύθυνση με GET παραμέτρους<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> Για να προσθέσετε έναν σύνδεσμο σε μια άλλη σελίδα, χρησιμοποιήστε τη σύνταξη:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download paddingright"></span>Για να συμπεριλάβετε έναν σύνδεσμο <strong>για λήψη</strong> ενός αρχείου που είναι αποθηκευμένο στα <strong> documents </strong>χρησιμοποιήστε το <strong>document.php</strong>wrapper:<br>Παράδειγμα για ένα αρχείο στα documents/ecm(πρέπει να έχετε συνδεθεί), η σύνταξη είναι:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>Για ένα αρχείο στα documents/medias (ανοιχτός κατάλογος για δημόσια πρόσβαση), η σύνταξη είναι:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>Για ένα αρχείο με κοινόχρηστο σύνδεσμο (ανοιχτή πρόσβαση χρησιμοποιώντας sharing hash key του αρχείου), η σύνταξη είναι:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
+YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>You can also make a redirection with GET parameters:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><p><span class="fa fa-bug paddingright"></span> You can dynamically set the page title and <strong>SEO meta tags</strong> (title, keywords, description). Simply define the following variables:<br> <code>$__PAGE__TITLE__ = "Title value …";</code><br> <code>$__PAGE__KEYWORDS__ = "keyword1, keyword2, keyword3 …"; // Comma separated</code><br> <code>$__PAGE__DESC__ = "Description …";</code></p><br><span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
 YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span>Για να συμπεριλάβετε <strong>μια εικόνα</strong> που είναι αποθηκευμένη στον κατάλογο <strong>documents</strong>, χρησιμοποιήστε τον wrapper <strong>viewimage.php</strong>. <br>Παράδειγμα, για μια εικόνα στον κατάλογο "documents/medias" (ανοιχτός κατάλογος για δημόσια πρόσβαση), η σύνταξη είναι: <br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
 YouCanEditHtmlSource2=Για τον διαμοιρασμό εικόνας με ένα σύνδεσμο (δώσε πρόσβαση χρησιμοποιώντας το sharing hash key του αρχείου), η σύνταξη είναι: <br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource3=Για να λάβετε το URL της εικόνας ενός αντικειμένου PHP, χρησιμοποιήστε<br><strong>&lt;img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;"&gt;</strong><br>
@@ -249,10 +249,10 @@ MyContainerTitle2=Τίτλος επίπεδο 2
 WEBPAGE_CONTENT=Αυτό είναι ένα περιεχόμενο της σελίδας
 variableNotDefined=Δεν έχει οριστεί %s. Ολοκληρώστε τη ρύθμισή σας.
 noPaymentModuleIsActivated=Καμία ενότητα πληρωμών δεν έχει ενεργοποιηθεί.
-viewMyCustomerAccount=Προβολή του λογαριασμού μου πελάτης
+viewMyCustomerAccount=Προβολή του λογαριασμού μου
 logOut=Αποσύνδεση
-logInToYourCustomerAccount=Συνδεθείτε στον λογαριασμό σας πελάτης
-logOutFromYourCustomerAccount=Αποσυνδεθείτε από τον λογαριασμό σας πελάτης
+logInToYourCustomerAccount=Συνδεθείτε στον λογαριασμό σας
+logOutFromYourCustomerAccount=Αποσυνδεθείτε από τον λογαριασμό σας
 filteredByVersion=Φιλτράρισμα κατά έκδοση
 removeFilter=Αφαίρεση φίλτρου
 viewMyCart=Το καλάθι μου
@@ -270,8 +270,9 @@ totalShippingTaxIncl=Σύνολο αποστολής (με φόρους)
 totalTaxIncl=Σύνολο (με Φ.Π.Α.)
 clickToClose=Κάντε κλικ για να κλείσετε
 sidebarCategories=Κατηγορίες
-noSubCat=NoSubCat
-specialPromo=Ειδικές προσφορές
+noSubCat=Χωρίς υποκατηγορία
+specialPromo=Προσφορές
+allSpecials=Όλες οι προσφορές
 newProducts=Νέα Προϊόντα
 allNewProducts= Όλα τα νέα προϊόντα
 view=Προβολή:
@@ -285,7 +286,7 @@ referenceLowestFirst=Αναφορά φθίνουσα
 referenceHighestFirst=Αναφορά αύξουσα
 perPage=ανά σελίδα
 showAll=Εμφάνιση όλων
-showing= Επίδειξη
+showing= Εμφάνιση
 nbrOfProducts= Υπάρχουν %s προϊόντα .
 noResultsHaveBeenFound=Βρέθηκαν 0 αποτελέσματα.
 noResultsWereFound= Δεν βρέθηκαν αποτελέσματα.

@@ -47,13 +47,13 @@ $main_data_dir = GETPOST('main_data_dir') ? GETPOST('main_data_dir') : (empty($a
 $main_url = GETPOST('main_url') ? GETPOST('main_url') : (empty($argv[5]) ? '' : $argv[5]);
 // Database login information
 $userroot = GETPOST('db_user_root', 'alpha') ? GETPOST('db_user_root', 'alpha') : (empty($argv[6]) ? '' : $argv[6]);
-$passroot = GETPOST('db_pass_root', 'none') ? GETPOST('db_pass_root', 'none') : (empty($argv[7]) ? '' : $argv[7]);
+$passroot = GETPOST('db_pass_root', 'password') ? GETPOST('db_pass_root', 'password') : (empty($argv[7]) ? '' : $argv[7]);
 // Database server
 $db_type = GETPOST('db_type', 'aZ09') ? GETPOST('db_type', 'aZ09') : (empty($argv[8]) ? '' : $argv[8]);
 $db_host = GETPOST('db_host', 'alpha') ? GETPOST('db_host', 'alpha') : (empty($argv[9]) ? '' : $argv[9]);
 $db_name = GETPOST('db_name', 'aZ09') ? GETPOST('db_name', 'aZ09') : (empty($argv[10]) ? '' : $argv[10]);
 $db_user = GETPOST('db_user', 'alpha') ? GETPOST('db_user', 'alpha') : (empty($argv[11]) ? '' : $argv[11]);
-$db_pass = GETPOST('db_pass', 'none') ? GETPOST('db_pass', 'none') : (empty($argv[12]) ? '' : $argv[12]);
+$db_pass = GETPOST('db_pass', 'password') ? GETPOST('db_pass', 'password') : (empty($argv[12]) ? '' : $argv[12]);
 $db_port = GETPOSTINT('db_port') ? GETPOSTINT('db_port') : (empty($argv[13]) ? '' : $argv[13]);
 $db_prefix = GETPOST('db_prefix', 'aZ09') ? GETPOST('db_prefix', 'aZ09') : (empty($argv[14]) ? '' : $argv[14]);
 $db_create_database = GETPOST('db_create_database', 'alpha') ? GETPOST('db_create_database', 'alpha') : (empty($argv[15]) ? '' : $argv[15]);
@@ -159,12 +159,12 @@ $error = 0;
 
 
 /*
- *	View
+ * View
  */
 
 dolibarr_install_syslog("--- step1: entering step1.php page");
 
-pHeader($langs->trans("ConfigurationFile"), "step2");
+pHeader($langs->trans("DolibarrSetup").' - '.$langs->trans("ConfigurationFile"), "step2");
 
 // Test if we can run a first install process
 if (!is_writable($conffile)) {
@@ -372,7 +372,7 @@ if (!$error && $db->connected) {
 
 
 // Create config file
-if (!$error && $db->connected && $action == "set") {
+if (!$error && $db->connected && $action == "set") {	// Test on permission not required here
 	umask(0);
 	if (is_array($_POST)) {
 		foreach ($_POST as $key => $value) {
@@ -384,7 +384,7 @@ if (!$error && $db->connected && $action == "set") {
 
 	// Show title of step
 	print '<h3><img class="valignmiddle inline-block paddingright" src="../theme/common/octicons/build/svg/gear.svg" width="20" alt="Configuration"> '.$langs->trans("ConfigurationFile").'</h3>';
-	print '<table cellspacing="0" width="100%" cellpadding="1" border="0">';
+	print '<table cellspacing="0" class="centpercent" cellpadding="1">';
 
 	// Check parameter main_dir
 	if (!$error) {

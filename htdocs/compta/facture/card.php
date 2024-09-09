@@ -87,7 +87,8 @@ $socid = GETPOSTINT('socid');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
-$backtopage = GETPOST('backtopage', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');					// if not set, a default page will be used
+$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');	// if not set, $backtopage will be used
 $lineid = GETPOSTINT('lineid');
 $userid = GETPOSTINT('userid');
 $search_ref = GETPOST('sf_ref', 'alpha') ? GETPOST('sf_ref', 'alpha') : GETPOST('search_ref', 'alpha');
@@ -152,8 +153,9 @@ if (getDolGlobalString('INVOICE_DISALLOW_REOPEN')) {
 	$usercanreopen = false;
 }
 $usercanunvalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($usercancreate)) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('facture', 'invoice_advance', 'unvalidate')));
-
 $usermustrespectpricemin = ((getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight('produit', 'ignore_price_min_advance')) || !getDolGlobalString('MAIN_USE_ADVANCED_PERMS'));
+
+// Other permissions
 $usercancreatemargin = $user->hasRight('margins', 'creer');
 $usercanreadallmargin = $user->hasRight('margins', 'liretous');
 $usercancreatewithdrarequest = $user->hasRight('prelevement', 'bons', 'creer');
@@ -423,7 +425,7 @@ if (empty($reshook)) {
 		if ($result < 0) {
 			dol_print_error($db, $object->error);
 		}
-	} elseif ($action == 'setretainedwarrantyconditions' && $user->hasRight('facture', 'creer')) {
+	} elseif ($action == 'setretainedwarrantyconditions' && $usercancreate) {
 		$object->fetch($id);
 		$object->retained_warranty_fk_cond_reglement = 0; // To clean property
 		$result = $object->setRetainedWarrantyPaymentTerms(GETPOSTINT('retained_warranty_fk_cond_reglement'));
@@ -443,13 +445,13 @@ if (empty($reshook)) {
 		if ($result < 0) {
 			dol_print_error($db, $object->error);
 		}
-	} elseif ($action == 'setretainedwarranty' && $user->hasRight('facture', 'creer')) {
+	} elseif ($action == 'setretainedwarranty' && $usercancreate) {
 		$object->fetch($id);
 		$result = $object->setRetainedWarranty(GETPOSTFLOAT('retained_warranty'));
 		if ($result < 0) {
 			dol_print_error($db, $object->error);
 		}
-	} elseif ($action == 'setretainedwarrantydatelimit' && $user->hasRight('facture', 'creer')) {
+	} elseif ($action == 'setretainedwarrantydatelimit' && $usercancreate) {
 		$object->fetch($id);
 		$result = $object->setRetainedWarrantyDateLimit(GETPOSTFLOAT('retained_warranty_date_limit'));
 		if ($result < 0) {
@@ -580,7 +582,7 @@ if (empty($reshook)) {
 				}
 			}
 		}
-	} elseif ($action == 'set_incoterms' && isModEnabled('incoterm')) {		// Set incoterm
+	} elseif ($action == 'set_incoterms' && isModEnabled('incoterm') && $usercancreate) {		// Set incoterm
 		$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOSTINT('location_incoterms'));
 	} elseif ($action == 'setbankaccount' && $usercancreate) {	// bank account
 		$result = $object->setBankAccount(GETPOSTINT('fk_account'));
@@ -830,7 +832,7 @@ if (empty($reshook)) {
 		} else {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Reason")), null, 'errors');
 		}
-	} elseif ($action == 'confirm_canceled' && $confirm == 'yes') {
+	} elseif ($action == 'confirm_canceled' && $confirm == 'yes' && $usercancreate) {
 		// Classify "abandoned"
 		$object->fetch($id);
 		$close_code = GETPOST("close_code", 'restricthtml');
@@ -1035,7 +1037,7 @@ if (empty($reshook)) {
 			$object->socid = GETPOSTINT('socid');
 		}
 
-		if (GETPOSTINT('type') === '') {
+		if (GETPOST('type') === '') {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
 		}
 
@@ -1569,7 +1571,7 @@ if (empty($reshook)) {
 						if (GETPOST('type') == Facture::TYPE_DEPOSIT && in_array($typeamount, array('amount', 'variable'))) {
 							// Define the array $amountdeposit
 							$amountdeposit = array();
-							if (getDolGlobalString('MAIN_DEPOSIT_MULTI_TVA')) {
+							if (getDolGlobalString('MAIN_DEPOSIT_MULTI_TVA')) {	// We want to split the discount line into several lines, one per vat rate.
 								if ($typeamount == 'amount') {
 									$amount = (float) $valuedeposit;
 								} else {
@@ -1578,6 +1580,9 @@ if (empty($reshook)) {
 
 								$TTotalByTva = array();
 								foreach ($srcobject->lines as &$line) {
+									if (empty($line->qty)) {
+										continue; // We discard qty=0, it is an option
+									}
 									if (!empty($line->special_code)) {
 										continue;
 									}
@@ -2369,7 +2374,7 @@ if (empty($reshook)) {
 							$tmptxt .= ' - ';
 						}
 						if (!empty($prod->country_code)) {
-							$tmptxt .= $outputlangs->transnoentitiesnoconv("CountryOrigin").': '.getCountry($prod->country_code, 0, $db, $outputlangs, 0);
+							$tmptxt .= $outputlangs->transnoentitiesnoconv("CountryOrigin").': '.getCountry($prod->country_code, '', $db, $outputlangs, 0);
 						}
 					} else {
 						if (!empty($prod->customcode)) {
@@ -2379,7 +2384,7 @@ if (empty($reshook)) {
 							$tmptxt .= ' - ';
 						}
 						if (!empty($prod->country_code)) {
-							$tmptxt .= $langs->transnoentitiesnoconv("CountryOrigin").': '.getCountry($prod->country_code, 0, $db, $langs, 0);
+							$tmptxt .= $langs->transnoentitiesnoconv("CountryOrigin").': '.getCountry($prod->country_code, '', $db, $langs, 0);
 						}
 					}
 					$tmptxt .= ')';
@@ -2983,9 +2988,7 @@ if (empty($reshook)) {
 				setEventMessages($langs->trans('ErrorFindNextSituationInvoice'), array(), 'errors');
 			}
 		}
-	} elseif ($action == 'import_lines_from_object'
-		&& $usercancreate
-		&& $object->status == Facture::STATUS_DRAFT
+	} elseif ($action == 'import_lines_from_object' && $usercancreate && $object->status == Facture::STATUS_DRAFT
 		&& ($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA || $object->type == Facture::TYPE_SITUATION)) {
 		// add lines from objectlinked
 		$fromElement = GETPOST('fromelement');
@@ -3079,7 +3082,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 
-	if ($action == 'update_extras') {
+	if ($action == 'update_extras' && $usercancreate) {
 		$object->oldcopy = dol_clone($object, 2);
 		$attribute_name = GETPOST('attribute', 'restricthtml');
 
@@ -3103,8 +3106,8 @@ if (empty($reshook)) {
 		}
 	}
 
-	if (getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB') && $usercancreate) {
-		if ($action == 'addcontact') {
+	if (getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB')) {
+		if ($action == 'addcontact' && $usercancreate) {
 			$result = $object->fetch($id);
 
 			if ($result > 0 && $id > 0) {
@@ -3124,14 +3127,14 @@ if (empty($reshook)) {
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
-		} elseif ($action == 'swapstatut') {
+		} elseif ($action == 'swapstatut' && $usercancreate) {
 			// toggle the status of a contact
 			if ($object->fetch($id)) {
 				$result = $object->swapContactStatus(GETPOSTINT('ligne'));
 			} else {
 				dol_print_error($db);
 			}
-		} elseif ($action == 'deletecontact') {
+		} elseif ($action == 'deletecontact' && $usercancreate) {
 			// Delete a contact
 			$object->fetch($id);
 			$result = $object->delete_contact($lineid);
@@ -3206,6 +3209,9 @@ if ($action == 'create') {
 			$subelement = $regs[2];
 		}
 
+		$dateinvoice = dol_mktime(0, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'), 'tzserver');	// If we enter the 02 january, we need to save the 02 january for server
+		$date_pointoftax = dol_mktime(0, 0, 0, GETPOSTINT('date_pointoftaxmonth'), GETPOSTINT('date_pointoftaxday'), GETPOSTINT('date_pointoftaxyear'), 'tzserver');
+
 		if ($element == 'project') {
 			$projectid = $originid;
 
@@ -3218,12 +3224,9 @@ if ($action == 'create') {
 			if (empty($fk_account)) {
 				$fk_account = $soc->fk_account;
 			}
-			if (!$remise_percent) {
-				$remise_percent = $soc->remise_percent;
-			}
-			if (!$dateinvoice) {
+			if (empty($dateinvoice)) {
 				// Do not set 0 here (0 for a date is 1970)
-				$dateinvoice = (empty($dateinvoice) ? (!getDolGlobalString('MAIN_AUTOFILL_DATE') ? -1 : '') : $dateinvoice);
+				$dateinvoice = getDolGlobalString('MAIN_AUTOFILL_DATE') ? '' : -1;
 			}
 		} else {
 			// For compatibility
@@ -3275,8 +3278,6 @@ if ($action == 'create') {
 				$cond_reglement_id 	= (!empty($expesrc->cond_reglement_id) ? $expesrc->cond_reglement_id : (!empty($soc->cond_reglement_id) ? $soc->cond_reglement_id : 1));
 				$mode_reglement_id 	= (!empty($expesrc->mode_reglement_id) ? $expesrc->mode_reglement_id : (!empty($soc->mode_reglement_id) ? $soc->mode_reglement_id : 0));
 				$fk_account         = (!empty($expesrc->fk_account) ? $expesrc->fk_account : (!empty($soc->fk_account) ? $soc->fk_account : 0));
-				//$remise_percent 	= (!empty($expesrc->remise_percent) ? $expesrc->remise_percent : (!empty($soc->remise_percent) ? $soc->remise_percent : 0));
-				//$remise_absolue 	= (!empty($expesrc->remise_absolue) ? $expesrc->remise_absolue : (!empty($soc->remise_absolue) ? $soc->remise_absolue : 0));
 
 				if (isModEnabled('multicurrency')) {
 					$currency_code 	= (!empty($expesrc->multicurrency_code) ? $expesrc->multicurrency_code : (!empty($soc->multicurrency_code) ? $soc->multicurrency_code : $objectsrc->multicurrency_code));
@@ -3290,8 +3291,6 @@ if ($action == 'create') {
 				$cond_reglement_id 	= (!empty($objectsrc->cond_reglement_id) ? $objectsrc->cond_reglement_id : (!empty($soc->cond_reglement_id) ? $soc->cond_reglement_id : 0));
 				$mode_reglement_id 	= (!empty($objectsrc->mode_reglement_id) ? $objectsrc->mode_reglement_id : (!empty($soc->mode_reglement_id) ? $soc->mode_reglement_id : 0));
 				$fk_account         = (!empty($objectsrc->fk_account) ? $objectsrc->fk_account : (!empty($soc->fk_account) ? $soc->fk_account : 0));
-				//$remise_percent 	= (!empty($objectsrc->remise_percent) ? $objectsrc->remise_percent : (!empty($soc->remise_percent) ? $soc->remise_percent : 0));
-				//$remise_absolue 	= (!empty($objectsrc->remise_absolue) ? $objectsrc->remise_absolue : (!empty($soc->remise_absolue) ? $soc->remise_absolue : 0));
 
 				if (isModEnabled('multicurrency')) {
 					if (!empty($objectsrc->multicurrency_code)) {
@@ -3311,8 +3310,7 @@ if ($action == 'create') {
 		$cond_reglement_id 	= empty($soc->cond_reglement_id) ? $cond_reglement_id : $soc->cond_reglement_id;
 		$mode_reglement_id  = empty($soc->mode_reglement_id) ? $mode_reglement_id : $soc->mode_reglement_id;
 		$fk_account         = empty($soc->fk_account) ? $fk_account : $soc->fk_account;
-		//$remise_percent 	= $soc->remise_percent;
-		//$remise_absolue 	= 0;
+
 		$dateinvoice = (empty($dateinvoice) ? (!getDolGlobalString('MAIN_AUTOFILL_DATE') ? -1 : '') : $dateinvoice); // Do not set 0 here (0 for a date is 1970)
 
 		if (isModEnabled('multicurrency') && !empty($soc->multicurrency_code)) {
@@ -3370,7 +3368,7 @@ if ($action == 'create') {
 		if (!getDolGlobalString('INVOICE_DISABLE_AUTOMATIC_RECURRING_INVOICE')) {
 			$text .= ' '.$langs->trans("ToCreateARecurringInvoiceGeneAuto", $langs->transnoentitiesnoconv('Module2300Name'));
 		}
-		print info_admin($text, 0, 0, 0, 'opacitymedium').'<br>';
+		print info_admin($text, 0, 0, '0', 'opacitymedium').'<br>';
 	}
 
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="POST" id="formtocreate" name="formtocreate">';
@@ -4042,8 +4040,9 @@ if ($action == 'create') {
 		include_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
 		$liste = ModelePDFFactures::liste_modeles($db);
 		if (getDolGlobalString('INVOICE_USE_DEFAULT_DOCUMENT')) {
+			$type = GETPOSTISSET('type') ? GETPOSTINT('type') : $object->type;
 			// Hidden conf
-			$paramkey = 'FACTURE_ADDON_PDF_'.$object->type;
+			$paramkey = 'FACTURE_ADDON_PDF_'.$type;
 			$preselected = getDolGlobalString($paramkey, getDolGlobalString('FACTURE_ADDON_PDF'));
 		} else {
 			$preselected = getDolGlobalString('FACTURE_ADDON_PDF');
@@ -4118,8 +4117,6 @@ if ($action == 'create') {
 			// TODO for compatibility
 			if ($origin == 'contrat') {
 				// Calcul contrat->price (HT), contrat->total (TTC), contrat->tva
-				//$objectsrc->remise_absolue = $remise_absolue;
-				//$objectsrc->remise_percent = $remise_percent;
 				$objectsrc->update_price(1, 'auto', 1);
 			}
 

@@ -726,11 +726,11 @@ function print_end_menu_array()
  * @param   array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level?:int,prefix:string}>		$menu_array_after   Table of menu entries to show after entries of menu handler (menu->liste filled with menu->add)
  * @param	array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level?:int,prefix:string}> 	$tabMenu       		If array with menu entries already loaded, we put this array here (in most cases, it's empty)
  * @param	Menu		$menu				Object Menu to return back list of menu entries
- * @param	int			$noout				Disable output (Initialise &$menu only).
+ * @param	int<0,1>	$noout				Disable output (Initialise &$menu only).
  * @param	string		$forcemainmenu		'x'=Force mainmenu to mainmenu='x'
  * @param	string		$forceleftmenu		'all'=Force leftmenu to '' (= all). If value come being '', we change it to value in session and 'none' if not defined in session.
- * @param	array		$moredata			An array with more data to output
- * @param 	int			$type_user     		0=Menu for backoffice, 1=Menu for front office
+ * @param	?array<string,string>	$moredata	An array with more data to output
+ * @param 	int<0,1>	$type_user     		0=Menu for backoffice, 1=Menu for front office
  * @return	int								Nb of menu entries
  */
 function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabMenu, &$menu, $noout = 0, $forcemainmenu = '', $forceleftmenu = '', $moredata = null, $type_user = 0)
@@ -744,7 +744,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 	$mainmenu = ($forcemainmenu ? $forcemainmenu : $_SESSION["mainmenu"] ?? '');
 	$leftmenu = ($forceleftmenu ? '' : (empty($_SESSION["leftmenu"]) ? 'none' : $_SESSION["leftmenu"] ?? ''));
 
-	if (is_null($mainmenu)) {
+	if (empty($mainmenu)) {
 		$mainmenu = 'home';
 	}
 
@@ -997,7 +997,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				//$url.="idmenu=".$menu_array[$i]['rowid'];    // Already done by menuLoad
 				$url = dol_buildpath($url, 1).($param ? '?'.$param : '');
 				$shorturlwithoutparam = $shorturl;
-				$shorturl = $shorturl.($param ? '?'.$param : '');
+				$shorturl .= ($param ? '?'.$param : '');
 			}
 
 
@@ -1161,11 +1161,14 @@ function get_left_menu_home($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 			$newmenu->add("/admin/pdf.php?mainmenu=home", $langs->trans("PDF"), 1);
 
 			$warnpicto = '';
+			/* No warning into menu entry, the message in Email setup page is enough
+			A warning will be important if a DMARC record exists and SPF is not aligned.
 			if (getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail') == 'mail' && !getDolGlobalString('MAIN_HIDE_WARNING_TO_ENCOURAGE_SMTP_SETUP')) {
 				$langs->load("errors");
 				$warnpicto = img_warning($langs->trans("WarningPHPMailD"));
 			}
-			if (getDolGlobalString('MAIN_MAIL_SENDMODE') && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps', 'swiftmail')) && !getDolGlobalString('MAIN_MAIL_SMTP_SERVER')) {
+			*/
+			if (getDolGlobalString('MAIN_MAIL_SENDMODE') && in_array(getDolGlobalString('MAIN_MAIL_SENDMODE'), array('smtps', 'swiftmail')) && !getDolGlobalString('MAIN_MAIL_SMTP_SERVER')) {
 				$langs->load("errors");
 				$warnpicto = img_warning($langs->trans("ErrorSetupOfEmailsNotComplete"));
 			}
@@ -1535,7 +1538,7 @@ function get_left_menu_billing($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
 		if (isModEnabled('supplier_invoice')) {
 			if (getDolGlobalString('SUPPLIER_MENU_ORDER_RECEIVED_INTO_INVOICE')) {
 				$langs->load("supplier");
-				$newmenu->add("/fourn/commande/list.php?leftmenu=orders&amp;search_status=5&amp;search_billed=0", $langs->trans("MenuOrdersSupplierToBill"), 0, $user->hasRight('commande',  'lire'), '', $mainmenu, 'orders', 0, '', '', '', img_picto('', 'supplier_order', 'class="paddingright pictofixedwidth"'));
+				$newmenu->add("/fourn/commande/list.php?leftmenu=orders&amp;search_status=5&amp;search_billed=0", $langs->trans("MenuOrdersSupplierToBill"), 0, $user->hasRight('commande', 'lire'), '', $mainmenu, 'orders', 0, '', '', '', img_picto('', 'supplier_order', 'class="paddingright pictofixedwidth"'));
 				//if ($usemenuhider || empty($leftmenu) || $leftmenu=="orders") $newmenu->add("/commande/", $langs->trans("StatusOrderToBill"), 1, $user->hasRight('commande',  'lire'));
 			}
 		}
@@ -1777,6 +1780,7 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 							if ($nature) {
 								$langs->load('accountancy');
 								$journallabel = '';
+								$journallabelwithoutspan = '';
 								if ($objp->label) {
 									$journallabelwithoutspan = $langs->trans($objp->label);
 									$journallabel = '<span class="opacitymedium">('.$langs->trans($objp->label).')</span>'; // Label of bank account in llx_accounting_journal
@@ -2450,7 +2454,7 @@ function get_left_menu_tools($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu 
 		if (isModEnabled('export')) {
 			$langs->load("exports");
 			$newmenu->add("/exports/index.php?leftmenu=export", $langs->trans("FormatedExport"), 0, $user->hasRight('export', 'lire'), '', $mainmenu, 'export', 0, '', '', '', img_picto('', 'technic', 'class="paddingright pictofixedwidth"'));
-			$newmenu->add("/exports/export.php?leftmenu=export", $langs->trans("NewExport"), 1, $user->hasRight('export', 'creer'));
+			$newmenu->add("/exports/export.php?leftmenu=export", $langs->trans("NewExport"), 1, $user->hasRight('export', 'lire'));
 			//$newmenu->add("/exports/export.php?leftmenu=export",$langs->trans("List"),1, $user->hasRight('export',  'lire'));
 		}
 	}

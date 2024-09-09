@@ -12,7 +12,7 @@
  * Copyright (C) 2013-2014	Florian Henry				<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2016		Marcos García				<marcosgdf@gmail.com>
- * Copyright (C) 2018-2024	Frédéric France				<frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2020		Nicolas ZABOURI				<info@inovea-conseil.com>
  * Copyright (C) 2022		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		Lenin Rivas					<lenin.rivas777@gmail.com>
@@ -206,9 +206,9 @@ if (empty($reshook)) {
 							12,
 							0,
 							0,
-							dol_print_date($date_delivery_old, '%m'),
-							dol_print_date($date_delivery_old, '%d'),
-							dol_print_date($date_delivery_old, '%Y')
+							(int) dol_print_date($date_delivery_old, '%m'),
+							(int) dol_print_date($date_delivery_old, '%d'),
+							(int) dol_print_date($date_delivery_old, '%Y')
 						);
 						//Calculate the difference and apply if necessary
 						$difference = $date_delivery - $old_date_delivery;
@@ -216,10 +216,10 @@ if (empty($reshook)) {
 							$object->delivery_date = $date_delivery;
 							foreach ($object->lines as $line) {
 								if (isset($line->date_start)) {
-									$line->date_start = $line->date_start + $difference;
+									$line->date_start +=  $difference;
 								}
 								if (isset($line->date_end)) {
-									$line->date_end = $line->date_end + $difference;
+									$line->date_end += $difference;
 								}
 							}
 						}
@@ -744,7 +744,10 @@ if (empty($reshook)) {
 			if ($object->statut == $object::STATUS_VALIDATED || (getDolGlobalString('PROPAL_SKIP_ACCEPT_REFUSE') && $object->statut == $object::STATUS_DRAFT)) {
 				$db->begin();
 
-				$result = $object->closeProposal($user, GETPOSTINT('statut'), GETPOSTINT('note_private'));
+				$oldstatus = $object->status;
+
+				$result = $object->closeProposal($user, GETPOSTINT('statut'), GETPOST('note_private'));
+
 				if ($result < 0) {
 					setEventMessages($object->error, $object->errors, 'errors');
 					$error++;
@@ -758,7 +761,7 @@ if (empty($reshook)) {
 				$deposit_percent_from_payment_terms = getDictionaryValue('c_payment_term', 'deposit_percent', $object->cond_reglement_id);
 
 				if (
-					!$error && GETPOSTINT('statut') == $object::STATUS_SIGNED && GETPOSTINT('generate_deposit') == 'on'
+					!$error && GETPOSTINT('statut') == $object::STATUS_SIGNED && GETPOST('generate_deposit') == 'on'
 					&& !empty($deposit_percent_from_payment_terms) && isModEnabled('invoice') && $user->hasRight('facture', 'creer')
 				) {
 					require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
@@ -777,7 +780,7 @@ if (empty($reshook)) {
 						$locationTarget = DOL_URL_ROOT . '/compta/facture/card.php?id=' . $deposit->id;
 					} else {
 						$error++;
-						setEventMessages($object->error, $object->errors, 'errors');
+						setEventMessages("Failed to create down payment - ".$object->error, $object->errors, 'errors');
 					}
 				}
 
@@ -806,6 +809,9 @@ if (empty($reshook)) {
 						exit;
 					}
 				} else {
+					$object->status = $oldstatus;
+					$object->statut = $oldstatus;
+
 					$db->rollback();
 					$action = '';
 				}
@@ -833,10 +839,7 @@ if (empty($reshook)) {
 				$db->rollback();
 			}
 		}
-	} elseif ($action == 'import_lines_from_object'
-		&& $user->hasRight('propal', 'creer')
-		&& $object->statut == Propal::STATUS_DRAFT
-	) {
+	} elseif ($action == 'import_lines_from_object' && $usercancreate && $object->statut == Propal::STATUS_DRAFT) {
 		// add lines from objectlinked
 		$fromElement = GETPOST('fromelement');
 		$fromElementid = GETPOST('fromelementid');
@@ -969,7 +972,7 @@ if (empty($reshook)) {
 		$remise_percent = (GETPOST('remiseforalllines') ? GETPOST('remiseforalllines') : 0);
 		$remise_percent = str_replace('*', '', $remise_percent);
 		foreach ($object->lines as $line) {
-			$tvatx= $line->tva_tx;
+			$tvatx = $line->tva_tx;
 			if (!empty($line->vat_src_code)) {
 				$tvatx .= ' ('.$line->vat_src_code.')';
 			}
@@ -1231,9 +1234,9 @@ if (empty($reshook)) {
 				} elseif ($tmpvat != $tmpprodvat) {
 					// Is this still used ?
 					if ($price_base_type != 'HT') {
-						$pu_ht = price2num((float) $pu_ttc / (1 + ($tmpvat / 100)), 'MU');
+						$pu_ht = price2num((float) $pu_ttc / (1 + ((float) $tmpvat / 100)), 'MU');
 					} else {
-						$pu_ttc = price2num((float) $pu_ht * (1 + ($tmpvat / 100)), 'MU');
+						$pu_ttc = price2num((float) $pu_ht * (1 + ((float) $tmpvat / 100)), 'MU');
 					}
 				}
 
@@ -1295,7 +1298,7 @@ if (empty($reshook)) {
 							$tmptxt .= ' - ';
 						}
 						if (!empty($prod->country_code)) {
-							$tmptxt .= $outputlangs->transnoentitiesnoconv("CountryOrigin").': '.getCountry($prod->country_code, 0, $db, $outputlangs, 0);
+							$tmptxt .= $outputlangs->transnoentitiesnoconv("CountryOrigin").': '.getCountry($prod->country_code, '', $db, $outputlangs, 0);
 						}
 					} else {
 						if (!empty($prod->customcode)) {
@@ -1305,7 +1308,7 @@ if (empty($reshook)) {
 							$tmptxt .= ' - ';
 						}
 						if (!empty($prod->country_code)) {
-							$tmptxt .= $langs->transnoentitiesnoconv("CountryOrigin").': '.getCountry($prod->country_code, 0, $db, $langs, 0);
+							$tmptxt .= $langs->transnoentitiesnoconv("CountryOrigin").': '.getCountry($prod->country_code, '', $db, $langs, 0);
 						}
 					}
 					$tmptxt .= ')';
@@ -1687,7 +1690,7 @@ if (empty($reshook)) {
 	} elseif ($action == 'setwarehouse' && $usercancreate) {
 		// warehouse
 		$result = $object->setWarehouse(GETPOSTINT('warehouse_id'));
-	} elseif ($action == 'update_extras') {
+	} elseif ($action == 'update_extras' && $usercancreate) {
 		$object->oldcopy = dol_clone($object, 2);
 		$attribute_name = GETPOST('attribute', 'restricthtml');
 
@@ -1708,8 +1711,8 @@ if (empty($reshook)) {
 		}
 	}
 
-	if (getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB') && $usercancreate) {
-		if ($action == 'addcontact') {
+	if (getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB')) {
+		if ($action == 'addcontact' && $usercancreate) {
 			if ($object->id > 0) {
 				$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
 				$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
@@ -1727,14 +1730,14 @@ if (empty($reshook)) {
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
-		} elseif ($action == 'swapstatut') {
+		} elseif ($action == 'swapstatut' && $usercancreate) {
 			// Toggle the status of a contact
 			if ($object->fetch($id) > 0) {
 				$result = $object->swapContactStatus(GETPOSTINT('ligne'));
 			} else {
 				dol_print_error($db);
 			}
-		} elseif ($action == 'deletecontact') {
+		} elseif ($action == 'deletecontact' && $usercancreate) {
 			// Delete a contact
 			$object->fetch($id);
 			$result = $object->delete_contact($lineid);
@@ -1894,7 +1897,7 @@ if ($action == 'create') {
 		if (empty($object->warehouse_id) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE')) {
 			$warehouse_id = getDolGlobalString('MAIN_DEFAULT_WAREHOUSE');
 		}
-		if (empty($object->warehouse_id) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER')) {
+		if (empty($object->warehouse_id) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER') && !empty($user->warehouse_id)) {
 			$warehouse_id = $user->fk_warehouse;
 		}
 	}
@@ -2520,7 +2523,7 @@ if ($action == 'create') {
 	$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $usercancreate, 'string', '', 0, 1);
 	$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $usercancreate, 'string'.(isset($conf->global->THIRDPARTY_REF_INPUT_SIZE) ? ':' . getDolGlobalString('THIRDPARTY_REF_INPUT_SIZE') : ''), '', null, null, '', 1);
 	// Thirdparty
-	$morehtmlref .= '<br><span class="hideonsmartphone">'.$langs->trans('ThirdParty').' : </span>'.$soc->getNomUrl(1, 'customer');
+	$morehtmlref .= '<br>'.$soc->getNomUrl(1, 'customer');
 	if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $soc->id > 0) {
 		$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/comm/propal/list.php?socid='.$soc->id.'&search_societe='.urlencode($soc->name).'">'.$langs->trans("OtherProposals").'</a>)';
 	}

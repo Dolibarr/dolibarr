@@ -136,7 +136,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'update') {
+	if ($action == 'update' && $permissiontoaddupdatepaymentinformation) {
 		// Update the bank account
 		if (!GETPOST('label', 'alpha') || !(GETPOST('bank', 'alpha') || (getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC')!=0))) {
 			if (!GETPOST('label', 'alpha')) {
@@ -221,7 +221,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'updatecard') {
+	if ($action == 'updatecard' && $permissiontoaddupdatepaymentinformation) {
 		// Update credit card
 		if (!GETPOST('label', 'alpha') || !GETPOST('proprio', 'alpha') || !GETPOST('exp_date_month', 'alpha') || !GETPOST('exp_date_year', 'alpha')) {
 			if (!GETPOST('label', 'alpha')) {
@@ -284,7 +284,7 @@ if (empty($reshook)) {
 	}
 
 	// Add bank account
-	if ($action == 'add') {
+	if ($action == 'add' && $permissiontoaddupdatepaymentinformation) {
 		$error = 0;
 
 		if (!GETPOST('label', 'alpha')) {
@@ -380,7 +380,7 @@ if (empty($reshook)) {
 	}
 
 	// Add credit card
-	if ($action == 'addcard') {
+	if ($action == 'addcard' && $permissiontoaddupdatepaymentinformation) {
 		$error = 0;
 
 		if (!GETPOST('label', 'alpha') || !GETPOST('proprio', 'alpha') || !GETPOST('exp_date_month', 'alpha') || !GETPOST('exp_date_year', 'alpha')) {
@@ -447,7 +447,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'setasbankdefault' && GETPOSTINT('ribid') > 0) {
+	if ($action == 'setasbankdefault' && GETPOSTINT('ribid') > 0 && $permissiontoaddupdatepaymentinformation) {
 		$companybankaccount = new CompanyBankAccount($db);
 		$res = $companybankaccount->setAsDefault(GETPOSTINT('ribid'));
 		if ($res) {
@@ -459,7 +459,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'confirm_deletecard' && GETPOST('confirm', 'alpha') == 'yes') {
+	if ($action == 'confirm_deletecard' && GETPOST('confirm', 'alpha') == 'yes' && $permissiontoaddupdatepaymentinformation) {
 		// Delete the credi card
 		$companypaymentmode = new CompanyPaymentMode($db);
 		if ($companypaymentmode->fetch($ribid ? $ribid : $id)) {
@@ -486,7 +486,7 @@ if (empty($reshook)) {
 			setEventMessages($companypaymentmode->error, $companypaymentmode->errors, 'errors');
 		}
 	}
-	if ($action == 'confirm_deletebank' && GETPOST('confirm', 'alpha') == 'yes') {
+	if ($action == 'confirm_deletebank' && GETPOST('confirm', 'alpha') == 'yes' && $permissiontoaddupdatepaymentinformation) {
 		// Delete the bank account
 		$companybankaccount = new CompanyBankAccount($db);
 		if ($companybankaccount->fetch($ribid ? $ribid : $id) > 0) {
@@ -518,11 +518,11 @@ if (empty($reshook)) {
 	$savid = $id;
 
 	// Actions to build doc
-	if ($action == 'builddocrib') {
+	if ($action == 'builddocrib' && $permissiontoread) {
 		$action = 'builddoc';
 		$moreparams = array(
 			'use_companybankid' => GETPOST('companybankid'),
-			'force_dir_output' => $conf->societe->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->id)
+			'force_dir_output' => $conf->societe->multidir_output[$object->entity].'/'.dol_sanitizeFileName((string) $object->id)
 		);
 		$_POST['lang_id'] = GETPOST('lang_idrib'.GETPOSTINT('companybankid'), 'alphanohtml');	// This is required by core/action_builddoc.inc.php
 		$_POST['model'] = GETPOST('modelrib'.GETPOSTINT('companybankid'), 'alphanohtml'); 		// This is required by core/action_builddoc.inc.php
@@ -536,12 +536,12 @@ if (empty($reshook)) {
 
 	// Action for stripe
 	if (isModEnabled('stripe') && class_exists('Stripe')) {
-		if ($action == 'synccustomertostripe' || $action == 'synccustomertostripetest') {
+		if (($action == 'synccustomertostripe' || $action == 'synccustomertostripetest') && $permissiontoaddupdatepaymentinformation) {
 			if ($object->client == 0) {
 				$error++;
 				setEventMessages('ThisThirdpartyIsNotACustomer', null, 'errors');
 			} else {
-				if ($action == 'synccustomertostripe') {
+				if ($action == 'synccustomertostripe') {	// Test on permission already done
 					$tmpservicestatus = 1;
 					$tmpservice = 'StripeLive';
 				} else {
@@ -565,7 +565,7 @@ if (empty($reshook)) {
 				}
 			}
 		}
-		if ($action == 'synccardtostripe') {
+		if ($action == 'synccardtostripe' && $permissiontoaddupdatepaymentinformation) {
 			// Create the credit card on current Stripe env
 			$companypaymentmode = new CompanyPaymentMode($db);
 			$companypaymentmode->fetch($id);
@@ -593,7 +593,7 @@ if (empty($reshook)) {
 				}
 			}
 		}
-		if ($action == 'syncsepatostripe') {
+		if ($action == 'syncsepatostripe' && $permissiontoaddupdatepaymentinformation) {
 			// Create the bank account on current Stripe env
 			$companypaymentmode = new CompanyPaymentMode($db);	// Get record in llx_societe_rib
 			$companypaymentmode->fetch($id);
@@ -625,7 +625,7 @@ if (empty($reshook)) {
 		}
 
 		// Set the customer Stripe account (for Live or Test env)
-		if ($action == 'setkey_account' || $action == 'setkey_accounttest') {
+		if (($action == 'setkey_account' || $action == 'setkey_accounttest') && $permissiontoaddupdatepaymentinformation) {
 			$error = 0;
 
 			$tmpservice = 'StripeTest';
@@ -692,7 +692,7 @@ if (empty($reshook)) {
 		}
 
 		// Set the supplier Stripe account (for Live or Test env)
-		if ($action == 'setkey_account_supplier' || $action == 'setkey_account_suppliertest') {
+		if (($action == 'setkey_account_supplier' || $action == 'setkey_account_suppliertest') && $permissiontoaddupdatepaymentinformation) {
 			$error = 0;
 
 			$tmpservice = 'StripeTest';
@@ -762,7 +762,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		if ($action == 'setlocalassourcedefault') {	// Set as default when payment mode defined locally (and may be also remotely)
+		if ($action == 'setlocalassourcedefault' && $permissiontoaddupdatepaymentinformation) {	// Set as default when payment mode defined locally (and may be also remotely)
 			try {
 				$companypaymentmode->setAsDefault($id);
 
@@ -773,7 +773,7 @@ if (empty($reshook)) {
 				$error++;
 				setEventMessages($e->getMessage(), null, 'errors');
 			}
-		} elseif ($action == 'setassourcedefault') {	// Set as default when payment mode defined remotely only
+		} elseif ($action == 'setassourcedefault' && $permissiontoaddupdatepaymentinformation) {	// Set as default when payment mode defined remotely only
 			try {
 				$cu = $stripe->customerStripe($object, $stripeacc, $servicestatus);
 				if (preg_match('/pm_|src_/', $source)) {
@@ -791,7 +791,7 @@ if (empty($reshook)) {
 				$error++;
 				setEventMessages($e->getMessage(), null, 'errors');
 			}
-		} elseif ($action == 'deletecard' && $source) {
+		} elseif ($action == 'deletecard' && $source && $permissiontoaddupdatepaymentinformation) {
 			// Delete the credit card on Stripe side
 			try {
 				if (preg_match('/pm_/', $source)) {
@@ -823,7 +823,7 @@ if (empty($reshook)) {
 				$error++;
 				setEventMessages($e->getMessage(), null, 'errors');
 			}
-		} elseif ($action == 'deletebank' && $source) {
+		} elseif ($action == 'deletebank' && $source && $permissiontoaddupdatepaymentinformation) {
 			// Delete the bank account on Stripe side
 			try {
 				if (preg_match('/pm_/', $source)) {
@@ -1284,7 +1284,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 							if ($companypaymentmodetemp->country_code) {
 								$img = picto_from_langcode($companypaymentmodetemp->country_code);
 								print $img ? $img.' ' : '';
-								print getCountry($companypaymentmodetemp->country_code, 1);
+								print getCountry($companypaymentmodetemp->country_code, '1');
 							} else {
 								print img_warning().' <span class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</span>';
 							}
@@ -1391,7 +1391,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 					if ($src->country) {
 						$img = picto_from_langcode($src->country);
 						print $img ? $img.' ' : '';
-						print getCountry($src->country, 1);
+						print getCountry($src->country, '1');
 					} else {
 						print img_warning().' <span class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</span>';
 					}
@@ -1402,7 +1402,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 					if ($src->card->country) {
 						$img = picto_from_langcode($src->card->country);
 						print $img ? $img.' ' : '';
-						print getCountry($src->card->country, 1);
+						print getCountry($src->card->country, '1');
 					} else {
 						print img_warning().' <span class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</span>';
 					}
@@ -1412,7 +1412,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 					if ($src->sepa_debit->country) {
 						$img = picto_from_langcode($src->sepa_debit->country);
 						print $img ? $img.' ' : '';
-						print getCountry($src->sepa_debit->country, 1);
+						print getCountry($src->sepa_debit->country, '1');
 					} else {
 						print img_warning().' <span class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</span>';
 					}
@@ -1423,7 +1423,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 					if ($src->card->country) {
 						$img = picto_from_langcode($src->card->country);
 						print $img ? $img.' ' : '';
-						print getCountry($src->card->country, 1);
+						print getCountry($src->card->country, '1');
 					} else {
 						print img_warning().' <span class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</span>';
 					}
@@ -1433,7 +1433,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 					if ($src->sepa_debit->country) {
 						$img = picto_from_langcode($src->sepa_debit->country);
 						print $img ? $img.' ' : '';
-						print getCountry($src->sepa_debit->country, 1);
+						print getCountry($src->sepa_debit->country, '1');
 					} else {
 						print img_warning().' <span class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</span>';
 					}
@@ -1735,7 +1735,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				$useonlinesignature = 1;
 				if ($useonlinesignature) {
 					require_once DOL_DOCUMENT_ROOT . '/core/lib/signature.lib.php';
-					print showOnlineSignatureUrl($companybankaccount->element, $rib->id, $rib, 'short');
+					print showOnlineSignatureUrl($companybankaccount->element, (string) $rib->id, $rib, 'short');
 				}
 				print '</td>';
 			}

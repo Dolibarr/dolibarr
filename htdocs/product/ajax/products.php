@@ -59,9 +59,16 @@ $finished = GETPOSTINT('finished');
 $alsoproductwithnosupplierprice = GETPOSTINT('alsoproductwithnosupplierprice');
 $warehouseStatus = GETPOST('warehousestatus', 'alpha');
 $hidepriceinlabel = GETPOSTINT('hidepriceinlabel');
+$warehouseId = GETPOST('warehouseid', 'int');
 
 // Security check
 restrictedArea($user, 'produit|service|commande|propal|facture', 0, 'product&product');
+
+/*
+ * Actions
+ */
+
+// None
 
 
 /*
@@ -308,7 +315,7 @@ if ($action == 'fetch' && !empty($id)) {
 	}
 
 	if (empty($mode) || $mode == 1) {  // mode=1: customer
-		$arrayresult = $form->select_produits_list("", $htmlname, $type, 0, $price_level, $searchkey, $status, $finished, $outjson, $socid, '1', 0, '', $hidepriceinlabel, $warehouseStatus, $status_purchase);
+		$arrayresult = $form->select_produits_list("", $htmlname, $type, 0, $price_level, $searchkey, $status, $finished, $outjson, $socid, '1', 0, '', $hidepriceinlabel, $warehouseStatus, $status_purchase, $warehouseId);
 	} elseif ($mode == 2) {            // mode=2: supplier
 		$arrayresult = $form->select_produits_fournisseurs_list($socid, "", $htmlname, $type, "", $searchkey, $status, $outjson, 0, $alsoproductwithnosupplierprice);
 	}

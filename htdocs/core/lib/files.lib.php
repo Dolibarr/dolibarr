@@ -668,7 +668,7 @@ function dol_fileperm($pathoffile)
  * @param	string					$srcfile			       Source file (can't be a directory)
  * @param	array<string,string>	$arrayreplacement	       Array with strings to replace. Example: array('valuebefore'=>'valueafter', ...)
  * @param	string					$destfile			       Destination file (can't be a directory). If empty, will be same than source file.
- * @param	string					$newmask			       Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0666'
+ * @param	string					$newmask			       Mask for new file. '0' by default means getDolGlobalString('MAIN_UMASK'). Example: '0666'.
  * @param	int						$indexdatabase		       1=index new file into database.
  * @param   int     				$arrayreplacementisregex   1=Array of replacement is already an array with key that is a regex. Warning: the key must be escaped with preg_quote for '/'
  * @return	int											       Return integer <0 if error, 0 if nothing done (dest file already exists), >0 if OK
@@ -1109,7 +1109,11 @@ function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
 					$ecmfile->filename = $filename;
 					$ecmfile->label = md5_file(dol_osencode($destfile)); // $destfile is a full path to file
 					$ecmfile->fullpath_orig = basename($srcfile);
-					$ecmfile->gen_or_uploaded = 'uploaded';
+					if (!empty($moreinfo) && !empty($moreinfo['gen_or_uploaded'])) {
+						$ecmfile->gen_or_uploaded = $moreinfo['gen_or_uploaded'];
+					} else {
+						$ecmfile->gen_or_uploaded = 'uploaded';
+					}
 					if (!empty($moreinfo) && !empty($moreinfo['description'])) {
 						$ecmfile->description = $moreinfo['description']; // indexed content
 					} else {
@@ -1136,6 +1140,14 @@ function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
 					$resultecm = $ecmfile->create($user);
 					if ($resultecm < 0) {
 						setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
+					} else {
+						if (!empty($moreinfo) && !empty($moreinfo['array_options']) && is_array($moreinfo['array_options'])) {
+							$ecmfile->array_options = $moreinfo['array_options'];
+							$resultecm = $ecmfile->insertExtraFields();
+							if ($resultecm < 0) {
+								setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
+							}
+						}
 					}
 				} elseif ($resultecm < 0) {
 					setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
@@ -1221,7 +1233,7 @@ function dol_move_dir($srcdir, $destdir, $overwriteifexists = 1, $indexdatabase 
 							if ($file["type"] == "dir") {
 								$res = dol_move_dir($filepath.'/'.$oldname, $filepath.'/'.$newname, $overwriteifexists, $indexdatabase, $renamedircontent);
 							} else {
-								$res = dol_move($filepath.'/'.$oldname, $filepath.'/'.$newname, 0, $overwriteifexists, 0, $indexdatabase);
+								$res = dol_move($filepath.'/'.$oldname, $filepath.'/'.$newname, '0', $overwriteifexists, 0, $indexdatabase);
 							}
 							if (!$res) {
 								return $result;
@@ -2723,7 +2735,7 @@ function dol_most_recent_file($dir, $regexfilter = '', $excludefilter = array('(
  *
  * @param	string		$modulepart			Module of document ('module', 'module_user_temp', 'module_user' or 'module_temp'). Example: 'medias', 'invoice', 'logs', 'tax-vat', ...
  * @param	string		$original_file		Relative path with filename, relative to modulepart.
- * @param	string		$entity				Restrict onto entity (0=no restriction)
+ * @param	int 		$entity				Restrict onto entity (0=no restriction)
  * @param  	User|null	$fuser				User object (forced)
  * @param	string		$refname			Ref of object to check permission for external users (autodetect if not provided by taking the dirname of $original_file) or for hierarchy
  * @param   string  	$mode               Check permission for 'read' or 'write'
@@ -2922,7 +2934,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			if ($refname && !$fuser->hasRight('holiday', 'readall') && !preg_match('/^specimen/i', $original_file)) {
 				include_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 				$tmpholiday = new Holiday($db);
-				$tmpholiday->fetch('', $refname);
+				$tmpholiday->fetch(0, $refname);
 				$accessallowed = checkUserAccessToObject($user, array('holiday'), $tmpholiday, 'holiday', '', '', 'rowid', '');
 			}
 		}
@@ -2934,7 +2946,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			if ($refname && !$fuser->hasRight('expensereport', 'readall') && !preg_match('/^specimen/i', $original_file)) {
 				include_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 				$tmpexpensereport = new ExpenseReport($db);
-				$tmpexpensereport->fetch('', $refname);
+				$tmpexpensereport->fetch(0, $refname);
 				$accessallowed = checkUserAccessToObject($user, array('expensereport'), $tmpexpensereport, 'expensereport', '', '', 'rowid', '');
 			}
 		}
@@ -3193,7 +3205,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			if ($refname && !preg_match('/^specimen/i', $original_file)) {
 				include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 				$tmpproject = new Project($db);
-				$tmpproject->fetch('', $refname);
+				$tmpproject->fetch(0, $refname);
 				$accessallowed = checkUserAccessToObject($user, array('projet'), $tmpproject->id, 'projet&project', '', '', 'rowid', '');
 			}
 		}
@@ -3206,7 +3218,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			if ($refname && !preg_match('/^specimen/i', $original_file)) {
 				include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 				$tmptask = new Task($db);
-				$tmptask->fetch('', $refname);
+				$tmptask->fetch(0, $refname);
 				$accessallowed = checkUserAccessToObject($user, array('projet_task'), $tmptask->id, 'projet_task&project', '', '', 'rowid', '');
 			}
 		}

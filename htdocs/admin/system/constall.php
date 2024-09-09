@@ -140,7 +140,7 @@ $configfilelib = array(
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td width="280">'.$langs->trans("Label").'</td>';
 print '<td>'.$langs->trans("Parameter").'</td>';
-print '<td>'.$langs->trans("Value").'</td>';
+print '<td></td>';
 print '</tr>'."\n";
 $i = 0;
 foreach ($configfileparameters as $key) {
@@ -203,7 +203,7 @@ print load_fiche_titre($langs->trans("Database"));
 print '<table class="noborder">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
-print '<td>'.$langs->trans("Value").'</td>';
+print '<td></td>';
 if (!isModEnabled('multicompany') || !$user->entity) {
 	print '<td>'.$langs->trans("Entity").'</td>'; // If superadmin or multicompany disabled
 }

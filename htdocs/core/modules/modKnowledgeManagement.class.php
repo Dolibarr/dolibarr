@@ -447,9 +447,6 @@ class modKnowledgeManagement extends DolibarrModules
 		$myTmpObjects['KnowledgeRecord'] = array('includerefgeneration' => 0, 'includedocgeneration' => 0);
 
 		foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
-			if ($myTmpObjectKey == 'KnowledgeRecord') {
-				continue;
-			}
 			if ($myTmpObjectArray['includerefgeneration']) {
 				$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/knowledgemanagement/template_knowledgerecords.odt';
 				$dirodt = DOL_DATA_ROOT.'/doctemplates/knowledgemanagement';

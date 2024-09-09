@@ -2,6 +2,7 @@
 /* Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2021 Gaëtan MAISON <gm@ilad.org>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -202,7 +203,7 @@ class DolEditor
 
 				$htmlencode_force = preg_match('/_encoded$/', $this->toolbarname) ? 'true' : 'false';
 
-				$out .= '<!-- Output ckeditor disallowAnyContent='.dol_escape_htmltag($disallowAnyContent).' toolbarname='.dol_escape_htmltag($this->toolbarname).' -->'."\n";
+				$out .= '<!-- Output ckeditor disallowAnyContent='.dol_escape_htmltag((string) $disallowAnyContent).' toolbarname='.dol_escape_htmltag($this->toolbarname).' -->'."\n";
 				$out .= '<script nonce="'.getNonce().'" type="text/javascript">
             			$(document).ready(function () {
 							/* console.log("Run ckeditor"); */
@@ -230,7 +231,12 @@ class DolEditor
                                     textDirection: \''.dol_escape_js($langs->trans("DIRECTION")).'\',
                                     on : {
                                                 instanceReady : function(ev) {
-													console.log("ckeditor instanceReady");
+													console.log(\'ckeditor '.dol_escape_js($this->htmlname).' instanceReady\');
+
+													/* If we found the attribute required on source div, we remove it (not compatible with ckeditor) */
+													/* Disabled, because attribute required should never be used on fields for doleditor */
+													/* jQuery("#'.dol_escape_js($this->htmlname).'").attr("required", false); */
+
                                                     // Output paragraphs as <p>Text</p>.
                                                     this.dataProcessor.writer.setRules( \'p\', {
                                                         indent : false,
@@ -241,17 +247,15 @@ class DolEditor
                                                     });
                                                 },
 												/* This is to remove the tab Link on image popup. Does not work, so commented */
-												/*
-												dialogDefinition: function (event) {
+												/* dialogDefinition: function (event) {
 										            var dialogName = event.data.name;
 										            var dialogDefinition = event.data.definition;
 										            if (dialogName == \'image\') {
 										                dialogDefinition.removeContents(\'Link\');
 										            }
-										        }
-												*/
+										        } */
 										},
-									disableNativeSpellChecker: '.(!getDolGlobalString('CKEDITOR_NATIVE_SPELLCHECKER') ? 'true' : 'false');
+									disableNativeSpellChecker: '.(getDolGlobalString('CKEDITOR_NATIVE_SPELLCHECKER') ? 'false' : 'true');
 
 				if ($this->uselocalbrowser) {
 					$out .= ','."\n";

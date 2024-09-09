@@ -15,15 +15,15 @@ ErrorGroupAlreadyExists=Групата %s веќе постои.
 ErrorEmailAlreadyExists=Е-пошта %s веќе постои.
 ErrorRecordNotFound=Записот не е пронајден.
 ErrorRecordNotFoundShort=Не е најдено
-ErrorFailToCopyFile=Не успеа да се копира датотеката '<b>%s</b> во '<span>' ='notranslate'><b>%s</b>'.
-ErrorFailToCopyDir=Не успеа да се копира директориумот '<b>%s</b> во '<span>' ='notranslate'><b>%s</b>'.
-ErrorFailToRenameFile=Не успеа да се преименува датотеката '<b>%s</b> во '<span>' ='notranslate'><b>%s</b>'.
+ErrorFailToCopyFile=Failed to copy file '<b>%s</b>' into '<b>%s</b>'.
+ErrorFailToCopyDir=Failed to copy directory '<b>%s</b>' into '<b>%s</b>'.
+ErrorFailToRenameFile=Failed to rename file '<b>%s</b>' into '<b>%s</b>'.
 ErrorFailToDeleteFile=Не успеа да се отстрани датотеката '<b>%s</b>'.
 ErrorFailToCreateFile=Не успеа да се создаде датотеката '<b>%s</b>'.
-ErrorFailToRenameDir=Не успеа да се преименува директориумот '<b>%s</b> во '<span>' ='notranslate'><b>%s</b>'.
+ErrorFailToRenameDir=Failed to rename directory '<b>%s</b>' into '<b>%s</b>'.
 ErrorFailToCreateDir=Не успеа да се создаде директориумот '<b>%s</b>'.
 ErrorFailToDeleteDir=Не успеа да се избрише директориумот '<b>%s</b>'.
-ErrorFailToMakeReplacementInto=Не успеа да се замени во датотеката '<b>%s<span class='notranslate'></b>.</s
+ErrorFailToMakeReplacementInto=Failed to make replacement into file '<b>%s</b>'.
 ErrorFailToGenerateFile=Не успеа да се генерира датотеката '<b>%s</b>'.
 ErrorThisContactIsAlreadyDefinedAsThisType=Овој контакт е веќе дефиниран како контакт за овој тип.
 ErrorCashAccountAcceptsOnlyCashMoney=Оваа банкарска сметка е готовинска сметка, затоа прифаќа само плаќања од типот готовина.
@@ -51,7 +51,7 @@ ErrorBadDateFormat=Вредноста „%s“ има погрешен форм�
 ErrorWrongDate=Датумот не е точен!
 ErrorFailedToWriteInDir=Не успеа да се напише во директориумот %s
 ErrorFailedToBuildArchive=Не успеа да се изгради архивска датотека %s
-ErrorFoundBadEmailInFile=Пронајдена е неточна синтакса на е-пошта за линиите %s во датотеката (пример линија %s со е-пошта=<span class='notranslate'>b0f0292 /span>)
+ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=%s)
 ErrorUserCannotBeDelete=Корисникот не може да се избрише. Можеби е поврзан со Dolibarr ентитетите.
 ErrorFieldsRequired=Некои задолжителни полиња се оставени празни.
 ErrorSubjectIsRequired=Предметот на е-поштата е задолжителен
@@ -97,10 +97,10 @@ ErrorModuleRequireJavascript=JavaScript не смее да биде оневоз
 ErrorPasswordsMustMatch=Двете внесени лозинки мора да се совпаѓаат една со друга
 ErrorContactEMail=Настана техничка грешка. Ве молиме, контактирајте со администраторот на следната е-пошта <b>%s</b> код <b>%s</b> на екранот на вашата порака или додајте копија од оваа страница.
 ErrorWrongValueForField=Поле <b>%s</b>: 'no<span'> <b></span>%s</b>' не се совпаѓа со правилото за регекс <span class='058</0epanslate'38> %s</b>
-ErrorHtmlInjectionForField=Поле <b>%s</b>: вредноста '<span> class'notranslate '><b></span>%s</b>' содржи малициозни податоци кои не се дозволени
+ErrorHtmlInjectionForField=Field <b>%s</b>: The value '<b>%s</b>' contains a malicious data not allowed
 ErrorFieldValueNotIn=Поле <b>%s</b>: 'no<span'> <b></span>%s</b>' не е вредност пронајдена во полето <span class='058e</37e' span>%s</b> од <b></spanno><span' class='> %s</b>
-ErrorFieldRefNotIn=Поле <b>%s</b>: 'notranslate'> <b></span>%s</b>' не е <span class='notranslate'83pan68/b05 class='notranslate'>%s</span></b> постоечки ref
-ErrorMultipleRecordFoundFromRef=Пронајдени се неколку записи при пребарувањето од ref <b>%s<span class='notranslate'></b>. Нема начин да се знае која лична карта да се користи.
+ErrorFieldRefNotIn=Field <b>%s</b>: '<b>%s</b>' is not a <b>%s</b> existing ref
+ErrorMultipleRecordFoundFromRef=Several record found when searching from ref <b>%s</b>. No way to know which ID to use.
 ErrorsOnXLines=Најдени се %s грешки
 ErrorFileIsInfectedWithAVirus=Антивирусната програма не можеше да ја потврди датотеката (датотеката можеби е заразена од вирус)
 ErrorFileIsAnInfectedPDFWithJSInside=Датотеката е PDF инфициран со некој Javascript внатре
@@ -157,7 +157,7 @@ ErrorDateMustBeBeforeToday=Датумот мора да биде помал од
 ErrorDateMustBeInFuture=Датумот мора да биде поголем од денешниот
 ErrorStartDateGreaterEnd=Почетниот датум е поголем од датумот на завршување
 ErrorPaymentModeDefinedToWithoutSetup=Режимот на плаќање беше поставен на тип %s но поставувањето на модулот Фактура не беше завршено за да се дефинираат информациите што треба да се прикажуваат за овој начин на плаќање.
-ErrorPHPNeedModule=Грешка, вашиот PHP мора да има модул <b>%s<span class='notranslate'></b> инсталиран за да го користи ова</s карактеристика.
+ErrorPHPNeedModule=Error, your PHP must have module <b>%s</b> installed to use this feature.
 ErrorOpenIDSetupNotComplete=Ја поставивте конфигурациската датотека Dolibarr за да дозволите автентикација на OpenID, но URL-то на услугата OpenID не е дефинирана во константна %s
 ErrorWarehouseMustDiffers=Изворните и целните магацини мора да се разликуваат
 ErrorBadFormat=Лош формат!
@@ -221,8 +221,8 @@ ErrorPhpMailDelivery=Проверете дали не користите пре�
 ErrorUserNotAssignedToTask=Корисникот мора да биде доделен на задача за да може да внесе потрошено време.
 ErrorTaskAlreadyAssigned=Задачата е веќе доделена на корисникот
 ErrorModuleFileSeemsToHaveAWrongFormat=Се чини дека пакетот со модули има погрешен формат.
-ErrorModuleFileSeemsToHaveAWrongFormat2=Најмалку еден задолжителен директориум мора да постои во zip-от на модулот: <strong>%sb0a65d07z0spansc > или <span class='notranslate'><strong>%s</strong>
-ErrorFilenameDosNotMatchDolibarrPackageRules=Името на пакетот модул (<strong>%s</strong> не се совпаѓа) очекувана синтакса на името: <strong>%s</strong>
+ErrorModuleFileSeemsToHaveAWrongFormat2=At least one mandatory directory must exists into zip of module: <strong>%s</strong> or <strong>%s</strong>
+ErrorFilenameDosNotMatchDolibarrPackageRules=The file name of the module package (<strong>%s</strong>) does not match the expected name syntax: <strong>%s</strong>
 ErrorDuplicateTrigger=Грешка, дупликат име на активирањето %s. Веќе е вчитан од %s.
 ErrorNoWarehouseDefined=Грешка, нема дефинирани магацини.
 ErrorBadLinkSourceSetButBadValueForRef=Врската што ја користите не е валидна. Дефиниран е „извор“ за плаќање, но вредноста за „реф“ не е валидна.
@@ -260,14 +260,14 @@ ErrorLanguageOfTranslatedPageIsSameThanThisPage=Грешка, јазикот н�
 ErrorBatchNoFoundForProductInWarehouse=Не е пронајдено многу/серија за производот „%s" во магацинот „%s".
 ErrorBatchNoFoundEnoughQuantityForProductInWarehouse=Нема доволно количество за оваа серија/серија за производот „%s“ во магацинот „%s“.
 ErrorOnlyOneFieldForGroupByIsPossible=Можно е само 1 поле за „Групи по“ (другите се отфрлени)
-ErrorTooManyDifferentValueForSelectedGroupBy=Пронајдени се премногу различни вредности (повеќе од <b>%s</b></s>) полето '<span class='notranslate'><b>%s</b>', за да можеме да го користиме' како „Group by“ за графика. Полето „Група според“ е отстрането. Можеби сакавте да го користите како X-оска?
+ErrorTooManyDifferentValueForSelectedGroupBy=Found too many different value (more than <b>%s</b>) for the field '<b>%s</b>', so we can't use it as a 'Group by' for graphics. The field 'Group By' has been removed. May be you wanted to use it as an X-Axis ?
 ErrorReplaceStringEmpty=Грешка, низата во која треба да се замени е празна
 ErrorProductNeedBatchNumber=Грешка, производот '<b>%s</b>' треба многу/span>'
 ErrorProductDoesNotNeedBatchNumber=Грешка, производот '<b>%s</b> не прифаќа многу/ сериски број
-ErrorFailedToReadObject=Грешка, не успеа да се прочита објектот од типот <b>%s<span class='notranslate'></b></s>
-ErrorParameterMustBeEnabledToAllwoThisFeature=Грешка, параметар <b>%s</b> мора да биде <span= class='notranslate'> 'notranslate'><b></span>conf/conf.php</b> за да се дозволи употреба на интерфејсот на командната линија од внатрешниот распоредувач на задачи
+ErrorFailedToReadObject=Error, failed to read object of type <b>%s</b>
+ErrorParameterMustBeEnabledToAllwoThisFeature=Error, parameter <b>%s</b> must be enabled into <b>conf/conf.php</b> to allow use of Command Line Interface by the internal job scheduler
 ErrorLoginDateValidity=Грешка, ова најавување е надвор од опсегот на датуми на важност
-ErrorValueLength=Должина на полето '<b>%s</b> мора да биде повисоко од '<span>' span class='notranslate'><b></span>%s</b>'
+ErrorValueLength=Length of field '<b>%s</b>' must be higher than '<b>%s</b>'
 ErrorReservedKeyword=Зборот „<b>%s</b>“ е резервиран клучен збор
 ErrorFilenameReserved=Името на датотеката <b>%s</b> не може да се користи резервирана и заштитена команда.
 ErrorNotAvailableWithThisDistribution=Не е достапно со оваа дистрибуција
@@ -303,7 +303,8 @@ ErrorThirpdartyOrMemberidIsMandatory=Трето лице или член на п
 ErrorFailedToWriteInTempDirectory=Не успеа да се запише во директориумот за време
 ErrorQuantityIsLimitedTo=Количината е ограничена на %s
 ErrorFailedToLoadThirdParty=Не успеа да се најде/вчита трета страна од id=%s, email=%s, name= %s
-ErrorThisPaymentModeIsNotSepa=Овој начин на плаќање не е банкарска сметка
+ErrorThisPaymentModeIsNotDirectDebit=The payment mode is not direct debit
+ErrorThisPaymentModeIsNotCreditTransfer=The payment mode is not credit transfer
 ErrorStripeCustomerNotFoundCreateFirst=Клиентот Stripe не е поставен за оваа трета страна (или е поставен на вредност избришана од страната на Stripe). Прво креирајте го (или повторно прикачете го).
 ErrorCharPlusNotSupportedByImapForSearch=IMAP пребарувањето не може да бара низ испраќачот или примачот низа што го содржи знакот +
 ErrorTableNotFound=Табелата <b>%s</b> не е пронајдена
@@ -313,7 +314,7 @@ ErrorValueCantBeNull=Вредноста за <b>%s</b> не може да бид
 ErrorDateOfMovementLowerThanDateOfFileTransmission=Датумот на банкарската трансакција не може да биде помал од датумот на пренос на датотеката
 ErrorTooMuchFileInForm=Премногу датотеки во форма, максималниот број е %s датотека(и)
 ErrorSessionInvalidatedAfterPasswordChange=Сесијата беше поништена по промената на лозинката, е-поштата, статусот или датумите на важност. Ве молиме повторно најавете се.
-ErrorExistingPermission = Дозвола <b>%s</b> за објект <span'notranslate'> <b></span>%s</b> веќе постои
+ErrorExistingPermission = Permission <b>%s</b> for object <b>%s</b> already exists
 ErrorFieldExist=Вредноста за <b>%s</b> веќе постои
 ErrorEqualModule=Модулот е неважечки во <b>%s</b>
 ErrorFieldValue=Вредноста за <b>%s</b> е неточна
@@ -334,9 +335,9 @@ ErrorDictionaryNotFound=Речник <b>%s</b> не е пронајден
 ErrorFailedToCreateSymLinkToMedias=Не успеа да се создаде симболична врска %s за да укаже на %s
 ErrorCheckTheCommandInsideTheAdvancedOptions=Проверете ја командата што се користи за извоз во Напредните опции на извозот
 ErrorEndTimeMustBeGreaterThanStartTime=Времето на завршување мора да биде поголемо од времето на почеток
-ErrorIncoherentDates=Датумот на почеток мора да биде помал од крајот на датумот
-ErrorEndHourIsNull=Крајниот датум не може да биде нула
-ErrorStartHourIsNull=Датумот на почеток не може да биде нула
+ErrorIncoherentDates=Start date must be earlier than end date
+ErrorEndHourIsNull=End date field cannot be empty
+ErrorStartHourIsNull=Start date field cannot be empty
 ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter=Премногу линии за обработка. Користете поселективен филтер.
 ErrorEmptyValueForQty=Количината не може да биде нула.
 # Warnings
@@ -357,13 +358,13 @@ WarningCloseAlways=Предупредување, затворањето се в�
 WarningUsingThisBoxSlowDown=Предупредување, користењето на ова поле сериозно ги успорува сите страници што го прикажуваат полето.
 WarningClickToDialUserSetupNotComplete=Поставувањето на информациите за ClickToDial за вашиот корисник не е завршено (видете ја картичката ClickToDial на вашата корисничка картичка).
 WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Функцијата е оневозможена кога поставувањето на екранот е оптимизирано за слепи лица или текстуални прелистувачи.
-WarningPaymentDateLowerThanInvoiceDate=Датумот на плаќање (%s) е порано од датумот на фактурата (%s) за фактура <span class='notranslate'>b0ecb2fz874 распон>.
+WarningPaymentDateLowerThanInvoiceDate=Payment date (%s) is earlier than invoice date (%s) for invoice %s.
 WarningTooManyDataPleaseUseMoreFilters=Премногу податоци (повеќе од линии %s). Користете повеќе филтри или поставете ја константата %s на повисока граница.
 WarningSomeLinesWithNullHourlyRate=Некои времиња беа снимени од некои корисници, додека нивната саатница не беше дефинирана. Се користеше вредност од 0 %s на час, но тоа може да резултира со погрешно вреднување на потрошеното време.
 WarningYourLoginWasModifiedPleaseLogin=Вашето најавување е изменето. За безбедносни цели, ќе мора да се најавите со вашето ново најавување пред следната акција.
 WarningYourPasswordWasModifiedPleaseLogin=Вашата лозинка е изменета. За безбедносни цели, ќе мора да се најавите сега со вашата нова лозинка.
 WarningAnEntryAlreadyExistForTransKey=Веќе постои запис за клучот за превод за овој јазик
-WarningNumberOfRecipientIsRestrictedInMassAction=Предупредување, бројот на различни примачи е ограничен на <b>%s<span class='notranslate'>b09a4b739f17f8z кога се користи масовните акции на списоците
+WarningNumberOfRecipientIsRestrictedInMassAction=Warning, number of different recipient is limited to <b>%s</b> when using the mass actions on lists
 WarningDateOfLineMustBeInExpenseReportRange=Предупредување, датумот на редот не е во опсегот на извештајот за трошоци
 WarningProjectDraft=Проектот сè уште е во режим на нацрт. Не заборавајте да го потврдите ако планирате да користите задачи.
 WarningProjectClosed=Проектот е затворен. Прво мора повторно да го отворите.
@@ -379,9 +380,9 @@ WarningPagesWillBeDeleted=Предупредување, ова ќе ги изб�
 WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=Автоматската валидација е оневозможена кога опцијата за намалување на залихите е поставена на „Потврда на фактурата“.
 WarningModuleNeedRefresh = Модулот <b>%s</b> е оневозможен. Не заборавајте да го овозможите
 WarningPermissionAlreadyExist=Постојни дозволи за овој објект
-WarningGoOnAccountancySetupToAddAccounts=Ако оваа листа е празна, одете во менито %s - %s - <span class='notranslate'>%s</s> за да вчитате или креирате сметки за вашиот сметководствен план.
+WarningGoOnAccountancySetupToAddAccounts=If this list is empty, go into menu %s - %s - %s to load or create accounts for your chart of account.
 WarningCorrectedInvoiceNotFound=Поправената фактура не е пронајдена
-WarningCommentNotFound=Предупредување: не можам да ги најдам почетните и/или завршните коментари за делот <b>%s </b> во податотеката <b>%s<span class='notranslate'>7zpanf14>b09f14
+WarningCommentNotFound=Warning: Can't find the start and/or end comments for the section <b>%s</b> into the file <b>%s</b>
 WarningAlreadyReverse=Движењето на акциите е веќе обратно
 WarningParentIDDoesNotExistAnymore=Овој родителски ID веќе не постои
 WarningReadBankAlsoAllowedIfUserHasPermission=Предупредување, читањето банкарска сметка е дозволено и со дозвола за управување со сметководствен план
@@ -421,3 +422,4 @@ OperNotDefined=Начинот на плаќање не е дефиниран
 ErrorThisContactXIsAlreadyDefinedAsThisType=%s е веќе дефиниран како контакт за овој тип.
 ErrorThisGroupIsAlreadyDefinedAsThisType=Контактите со оваа група се веќе дефинирани како контакт за овој тип.
 EmptyMessageNotAllowedError=Празна порака не е дозволена
+ErrorIsNotInError=%s is not in error

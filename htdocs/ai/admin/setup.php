@@ -81,11 +81,13 @@ foreach ($arrayofia as $ia => $ialabel) {
 	$item->nameText = $langs->trans("AI_API_KEY").' ('.$ialabel.')';
 	$item->defaultFieldValue = '';
 	$item->fieldParams['hideGenerateButton'] = 1;
+	$item->fieldParams['trClass'] = $ia;
 	$item->cssClass = 'minwidth500 text-security';
 
 	$item = $formSetup->newItem('AI_API_'.strtoupper($ia).'_URL');	// Name of constant must end with _KEY so it is encrypted when saved into database.
 	$item->nameText = $langs->trans("AI_API_URL").' ('.$ialabel.')';
 	$item->defaultFieldValue = '';
+	$item->fieldParams['trClass'] = $ia;
 	$item->cssClass = 'minwidth500';
 }
 

@@ -2,6 +2,7 @@
 /* Copyright (C) 2013-2014	Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2023-2024	William Mead		<william.mead@manchenumerique.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,6 +69,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
+$hookmanager->initHooks(array('resource', 'resource_card', 'globalcard'));
 
 $result = restrictedArea($user, 'resource', $object->id, 'resource');
 
@@ -79,7 +81,6 @@ $permissiontodelete = $user->hasRight('resource', 'delete');
  * Actions
  */
 
-$hookmanager->initHooks(array('resource', 'resource_card', 'globalcard'));
 $parameters = array('resource_id' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
@@ -92,14 +93,14 @@ if (empty($reshook)) {
 			header("Location: ".$backtopage);
 			exit;
 		}
-		if ($action == 'add') {
+		if ($action == 'add') {	// Test on permission not required here
 			header("Location: ".DOL_URL_ROOT.'/resource/list.php');
 			exit;
 		}
 		$action = '';
 	}
 
-	if ($action == 'add' && $user->hasRight('resource', 'write')) {
+	if ($action == 'add' && $permissiontoadd) {
 		if (!$cancel) {
 			$error = '';
 
@@ -144,7 +145,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'update' && !$cancel && $user->hasRight('resource', 'write')) {
+	if ($action == 'update' && !$cancel && $permissiontoadd) {
 		$error = 0;
 
 		if (empty($ref)) {
@@ -193,7 +194,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'confirm_delete_resource' && $user->hasRight('resource', 'delete') && $confirm === 'yes') {
+	if ($action == 'confirm_delete_resource' && $permissiontodelete && $confirm === 'yes') {
 		$res = $object->fetch($id);
 		if ($res > 0) {
 			$result = $object->delete($user);
@@ -304,7 +305,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
 		print '<td>';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor = new DolEditor('description', ($description ?: $object->description), '', '200', 'dolibarr_notes', false);
+		$doleditor = new DolEditor('description', ($description ?: $object->description), '', 200, 'dolibarr_notes', false);
 		$doleditor->Create();
 		print '</td></tr>';
 
@@ -374,9 +375,6 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		print '<div class="fichecenter">';
 		print '<div class="underbanner clearboth"></div>';
 
-		/*---------------------------------------
-		 * View object
-		 */
 		print '<table class="border tableforfield centpercent">';
 
 		// Resource type

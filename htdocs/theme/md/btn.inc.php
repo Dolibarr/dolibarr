@@ -222,8 +222,8 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 }
 
 .butAction:hover   {
-	-webkit-box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
-	box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
+	-webkit-box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), inset 0px 0px 200px rgba(60,60,60,0.1);
+	box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), inset 0px 0px 200px rgba(60,60,60,0.1);
 }
 .butActionNew:hover   {
 	text-decoration: underline;
@@ -317,7 +317,7 @@ div.pagination li:first-child a.btnTitle {
 	margin: 0 0 0 10px;
 	min-width: 80px;
 	text-align: center;
-	color: rgb(<?php print $colortextlink; ?>);
+	color: var(--btncolortext);
 	border: none;
 	font-size: 12px;
 	font-weight: 300;
@@ -368,12 +368,14 @@ div.pagination .btnTitle:hover .btnTitle-label{
 }
 
 .btnTitle>.fa {
-	font-size: 20px;
+	font-size: 2em;
 	display: block;
 }
 
 .paginationafterarrows a.btnTitlePlus, .titre_right a.btnTitlePlus {
-	border: 1px solid var(--btncolorborder);
+	/* border: 1px solid var(--btncolorborder); */
+	border: unset;
+	background-color: unset;
 }
 .paginationafterarrows a.btnTitlePlus:hover, .titre_right a.btnTitlePlus:hover {
 	border-color: #ddd;
@@ -440,4 +442,3 @@ div.pagination .btnTitle:hover .btnTitle-label{
 	background-color: #ddd;
 	border: 1px solid #ddd;
 }
-

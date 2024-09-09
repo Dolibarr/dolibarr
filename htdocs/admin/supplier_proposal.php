@@ -96,7 +96,7 @@ if ($action == 'specimen') {
 		require_once $file;
 
 		$module = new $classname($db);
-		'@phan-var-force CommonDocGenerator $module';
+		'@phan-var-force ModelePDFSupplierProposal $module';
 
 		if ($module->write_file($supplier_proposal, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=supplier_proposal&file=SPECIMEN.pdf");
@@ -274,7 +274,7 @@ foreach ($dirmodels as $reldir) {
 					}
 
 					if ($module->isEnabled()) {
-						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
+						print '<tr class="oddeven"><td>'.$module->getName($langs)."</td><td>\n";
 						print $module->info($langs);
 						print '</td>';
 
@@ -413,7 +413,7 @@ foreach ($dirmodels as $reldir) {
 								print(empty($module->name) ? $name : $module->name);
 								print "</td><td>\n";
 								if (method_exists($module, 'info')) {
-									print $module->info($langs);
+									print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
 								} else {
 									print $module->description;
 								}

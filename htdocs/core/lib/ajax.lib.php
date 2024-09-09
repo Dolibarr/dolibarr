@@ -3,6 +3,7 @@
  * Copyright (C) 2007-2015 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -295,7 +296,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
  *  This use the jQuery "autocomplete" function.
  *
  *	@param	string	$htmlname           HTML name of input field
- *	@param	array	$fields				Array of key of fields to autocomplete
+ *	@param	string[]	$fields				Array of key of fields to autocomplete
  *	@param	string	$url                URL for ajax request : /chemin/fichier.php
  *	@param	string	$option				More parameters on URL request
  *	@param	int		$minLength			Minimum number of chars to trigger that Ajax search
@@ -313,11 +314,11 @@ function ajax_multiautocompleter($htmlname, $fields, $url, $option = '', $minLen
 					//alert(fields + " " + nboffields);
 
 					// Activate the autocomplete to execute the GET
-    				jQuery("input#'.$htmlname.'").autocomplete({
-    					dataType: "json",
-    					minLength: '.$minLength.',
-    					source: function( request, response ) {
-    						jQuery.getJSON( "'.$url.($option ? '?'.$option : '').'", { '.$htmlname.': request.term }, function(data){
+					jQuery("input#'.$htmlname.'").autocomplete({
+						dataType: "json",
+						minLength: '.$minLength.',
+						source: function( request, response ) {
+							jQuery.getJSON( "'.$url.($option ? '?'.$option : '').'", { '.$htmlname.': request.term }, function(data){
 								response( jQuery.map( data, function( item ) {
 									if (autoselect == 1 && data.length == 1) {
 										jQuery("#'.$htmlname.'").val(item.value);
@@ -327,7 +328,7 @@ function ajax_multiautocompleter($htmlname, $fields, $url, $option = '', $minLen
 										}
 										for (i=0;i<nboffields;i++) {
 											if (item[fields[i]]) {   // If defined
-                                            	//alert(item[fields[i]]);
+												//alert(item[fields[i]]);
 												jQuery("#" + fields[i]).val(item[fields[i]]);
 											}
 										}
@@ -335,52 +336,52 @@ function ajax_multiautocompleter($htmlname, $fields, $url, $option = '', $minLen
 									return item
 								}));
 							});
-    					},
-    					select: function( event, ui ) {
-    					    needtotrigger = "";
-    						for (i=0;i<nboffields;i++) {
-    							//alert(fields[i] + " = " + ui.item[fields[i]]);
+						},
+						select: function( event, ui ) {
+							needtotrigger = "";
+							for (i=0;i<nboffields;i++) {
+								//alert(fields[i] + " = " + ui.item[fields[i]]);
 								if (fields[i]=="selectcountry_id")
 								{
-								    if (ui.item[fields[i]] > 0)     // Do not erase country if unknown
-								    {
-								    	oldvalue=jQuery("#" + fields[i]).val();
-								        newvalue=ui.item[fields[i]];
-								    	//alert(oldvalue+" "+newvalue);
-								        jQuery("#" + fields[i]).val(ui.item[fields[i]]);
-								        if (oldvalue != newvalue)	// To force select2 to refresh visible content
-								        {
-									    	needtotrigger="#" + fields[i];
+									if (ui.item[fields[i]] > 0)	 // Do not erase country if unknown
+									{
+										oldvalue=jQuery("#" + fields[i]).val();
+										newvalue=ui.item[fields[i]];
+										//alert(oldvalue+" "+newvalue);
+										jQuery("#" + fields[i]).val(ui.item[fields[i]]);
+										if (oldvalue != newvalue)	// To force select2 to refresh visible content
+										{
+											needtotrigger="#" + fields[i];
 										}
 
-								        // If we set new country and new state, we need to set a new list of state to allow change
-                                        if (ui.item.states && ui.item["state_id"] != jQuery("#state_id").value) {
-                                            jQuery("#state_id").html(ui.item.states);
-                                        }
-								    }
-								}
-                                else if (fields[i]=="state_id" || fields[i]=="state_id")
-                                {
-                                    if (ui.item[fields[i]] > 0)     // Do not erase state if unknown
-                                    {
-								    	oldvalue=jQuery("#" + fields[i]).val();
-								        newvalue=ui.item[fields[i]];
-								    	//alert(oldvalue+" "+newvalue);
-                                        jQuery("#" + fields[i]).val(ui.item[fields[i]]);    // This may fails if not correct country
-								        if (oldvalue != newvalue)	// To force select2 to refresh visible content
-								        {
-									    	needtotrigger="#" + fields[i];
+										// If we set new country and new state, we need to set a new list of state to allow change
+										if (ui.item.states && ui.item["state_id"] != jQuery("#state_id").value) {
+											jQuery("#state_id").html(ui.item.states);
 										}
-                                    }
-                                }
+									}
+								}
+								else if (fields[i]=="state_id" || fields[i]=="state_id")
+								{
+									if (ui.item[fields[i]] > 0)	 // Do not erase state if unknown
+									{
+										oldvalue=jQuery("#" + fields[i]).val();
+										newvalue=ui.item[fields[i]];
+										//alert(oldvalue+" "+newvalue);
+										jQuery("#" + fields[i]).val(ui.item[fields[i]]);	// This may fails if not correct country
+										if (oldvalue != newvalue)	// To force select2 to refresh visible content
+										{
+											needtotrigger="#" + fields[i];
+										}
+									}
+								}
 								else if (ui.item[fields[i]]) {   // If defined
-							    	oldvalue=jQuery("#" + fields[i]).val();
-							        newvalue=ui.item[fields[i]];
-							    	//alert(oldvalue+" "+newvalue);
-							        jQuery("#" + fields[i]).val(ui.item[fields[i]]);
-							        if (oldvalue != newvalue)	// To force select2 to refresh visible content
-							        {
-								    	needtotrigger="#" + fields[i];
+									oldvalue=jQuery("#" + fields[i]).val();
+									newvalue=ui.item[fields[i]];
+									//alert(oldvalue+" "+newvalue);
+									jQuery("#" + fields[i]).val(ui.item[fields[i]]);
+									if (oldvalue != newvalue)	// To force select2 to refresh visible content
+									{
+										needtotrigger="#" + fields[i];
 									}
 								}
 
@@ -389,11 +390,11 @@ function ajax_multiautocompleter($htmlname, $fields, $url, $option = '', $minLen
 									// We introduce a delay so hand is back to js and all other js change can be done before the trigger that may execute a submit is done
 									// This is required for example when changing zip with autocomplete that change the country
 									jQuery(needtotrigger).delay(500).queue(function() {
-	    								jQuery(this).trigger("change");
+										jQuery(this).trigger("change");
 									});
 								}
 							}
-    					}
+						}
 					});
   				});';
 	$script .= '</script>';
@@ -662,8 +663,8 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 				var url = \''.DOL_URL_ROOT.'/core/ajax/constantonoff.php\';
 				var code = \''.dol_escape_js($code).'\';
 				var entity = \''.dol_escape_js($entity).'\';
-				var strict = \''.dol_escape_js($strict).'\';
-				var userid = \''.dol_escape_js($user->id).'\';
+				var strict = \''.dol_escape_js((string) $strict).'\';
+				var userid = \''.dol_escape_js((string) $user->id).'\';
 				var yesButton = \''.dol_escape_js($langs->transnoentities("Yes")).'\';
 				var noButton = \''.dol_escape_js($langs->transnoentities("No")).'\';
 				var token = \''.currentToken().'\';
@@ -718,10 +719,11 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
  *  @param	string	$morecss	More CSS
  *  @param	string	$htmlname	Name of HTML component. Keep '' or use a different value if you need to use this component several time on the same page for the same field.
  *  @param	int		$forcenojs	Force the component to work as link post (without javascript) instead of ajax call
+ *  @param	string	$moreparam	When $forcenojs=1 then we can add more parameters to the backtopage URL. String must url encoded. Example: 'abc=def&fgh=ijk'
  *  @return string              html for button on/off
  *  @see ajax_constantonoff() to update that value of a constant
  */
-function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input = array(), $morecss = '', $htmlname = '', $forcenojs = 0)
+function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input = array(), $morecss = '', $htmlname = '', $forcenojs = 0, $moreparam = '')
 {
 	global $conf, $langs;
 
@@ -826,8 +828,8 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
 	}
 
 	if (empty($conf->use_javascript_ajax) || $forcenojs) {
-		$out .= '<a id="set_'.$htmlname.'_'.$object->id.'" class="linkobject '.($object->$code == 1 ? 'hideobject' : '').($morecss ? ' '.$morecss : '').'" href="'.DOL_URL_ROOT.'/core/ajax/objectonoff.php?action=set&token='.newToken().'&id='.((int) $object->id).'&element='.urlencode($object->element).'&field='.urlencode($field).'&value=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'">'.img_picto($langs->trans($text_off), $switchoff, '', false, 0, 0, '', $cssswitchoff).'</a>';
-		$out .= '<a id="del_'.$htmlname.'_'.$object->id.'" class="linkobject '.($object->$code == 1 ? '' : 'hideobject').($morecss ? ' '.$morecss : '').'" href="'.DOL_URL_ROOT.'/core/ajax/objectonoff.php?action=set&token='.newToken().'&id='.((int) $object->id).'&element='.urlencode($object->element).'&field='.urlencode($field).'&value=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'">'.img_picto($langs->trans($text_on), $switchon, '', false, 0, 0, '', $cssswitchon).'</a>';
+		$out .= '<a id="set_'.$htmlname.'_'.$object->id.'" class="linkobject '.($object->$code == 1 ? 'hideobject' : '').($morecss ? ' '.$morecss : '').'" href="'.DOL_URL_ROOT.'/core/ajax/objectonoff.php?action=set&token='.newToken().'&id='.((int) $object->id).'&element='.urlencode($object->element).'&field='.urlencode($field).'&value=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.($moreparam ? '&'.$moreparam : '')).'">'.img_picto($langs->trans($text_off), $switchoff, '', false, 0, 0, '', $cssswitchoff).'</a>';
+		$out .= '<a id="del_'.$htmlname.'_'.$object->id.'" class="linkobject '.($object->$code == 1 ? '' : 'hideobject').($morecss ? ' '.$morecss : '').'" href="'.DOL_URL_ROOT.'/core/ajax/objectonoff.php?action=set&token='.newToken().'&id='.((int) $object->id).'&element='.urlencode($object->element).'&field='.urlencode($field).'&value=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.($moreparam ? '&'.$moreparam : '')).'">'.img_picto($langs->trans($text_on), $switchon, '', false, 0, 0, '', $cssswitchon).'</a>';
 	} else {
 		$out .= '<span id="set_'.$htmlname.'_'.$object->id.'" class="linkobject '.($object->$code == 1 ? 'hideobject' : '').($morecss ? ' '.$morecss : '').'">'.img_picto($langs->trans($text_off), $switchoff, '', false, 0, 0, '', $cssswitchoff).'</span>';
 		$out .= '<span id="del_'.$htmlname.'_'.$object->id.'" class="linkobject '.($object->$code == 1 ? '' : 'hideobject').($morecss ? ' '.$morecss : '').'">'.img_picto($langs->trans($text_on), $switchon, '', false, 0, 0, '', $cssswitchon).'</span>';

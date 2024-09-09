@@ -112,11 +112,7 @@ if ($id > 0 || !empty($ref)) {
 }
 
 // Define variables to determine what the current user can do on the members
-$canaddmember = $user->hasRight('adherent', 'creer');
-// Define variables to determine what the current user can do on the properties of a member
-if ($id) {
-	$caneditfieldmember = $user->hasRight('adherent', 'creer');
-}
+$permissiontoaddmember = $user->hasRight('adherent', 'creer');
 
 // Security check
 $result = restrictedArea($user, 'adherent', $object->id, '', '', 'socid', 'rowid', 0);
@@ -170,12 +166,12 @@ if (empty($reshook) && $action == 'setuserid' && ($user->hasRight('user', 'self'
 	}
 }
 
-if (empty($reshook) && $action == 'setsocid') {
+if (empty($reshook) && $action == 'setsocid' && $permissiontoaddmember) {
 	$error = 0;
 	if (!$error) {
-		if (GETPOSTINT('socid') != $object->fk_soc) {    // If link differs from currently in database
+		if (GETPOSTINT('socid') != $object->socid) {    // If link differs from currently in database
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."adherent";
-			$sql .= " WHERE fk_soc = '".GETPOSTINT('socid')."'";
+			$sql .= " WHERE fk_soc = ".((int) GETPOSTINT('socid'));
 			$resql = $db->query($sql);
 			if ($resql) {
 				$obj = $db->fetch_object($resql);
@@ -306,7 +302,7 @@ if ($user->hasRight('adherent', 'cotisation', 'creer') && $action == 'subscripti
 	}
 
 	// Record the subscription then complementary actions
-	if (!$error && $action == 'subscription') {
+	if (!$error && $action == 'subscription') {		// Test on permission already done
 		$db->begin();
 
 		// Create subscription
@@ -466,12 +462,6 @@ if (! ($object->id > 0)) {
 	print $langs->trans("ErrorRecordNotFound");
 }
 
-/*$res = $object->fetch($rowid);
-	if ($res < 0) {
-		dol_print_error($db, $object->error);
-		exit;
-	}
-*/
 
 $adht->fetch($object->typeid);
 
@@ -977,17 +967,18 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 		$datefrom = dol_mktime(0, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 	}
 	if (!$datefrom) {
-		$datefrom = $object->datevalid;
+		// Guess the subscription start date
+		$datefrom = $object->datevalid; 	// By default, the subscription start date is the payment date
 		if (getDolGlobalString('MEMBER_SUBSCRIPTION_START_AFTER')) {
 			$datefrom = dol_time_plus_duree($now, (int) substr(getDolGlobalString('MEMBER_SUBSCRIPTION_START_AFTER'), 0, -1), substr(getDolGlobalString('MEMBER_SUBSCRIPTION_START_AFTER'), -1));
 		} elseif ($object->datefin > 0 && dol_time_plus_duree($object->datefin, $defaultdelay, $defaultdelayunit) > $now) {
 			$datefrom = dol_time_plus_duree($object->datefin, 1, 'd');
 		}
-
+		// Now do a correction of the suggested date
 		if (getDolGlobalString('MEMBER_SUBSCRIPTION_START_FIRST_DAY_OF') === "m") {
-			$datefrom = dol_get_first_day(dol_print_date($datefrom, "%Y"), dol_print_date($datefrom, "%m"));
+			$datefrom = dol_get_first_day((int) dol_print_date($datefrom, "%Y"), (int) dol_print_date($datefrom, "%m"));
 		} elseif (getDolGlobalString('MEMBER_SUBSCRIPTION_START_FIRST_DAY_OF') === "Y") {
-			$datefrom = dol_get_first_day(dol_print_date($datefrom, "%Y"));
+			$datefrom = dol_get_first_day((int) dol_print_date($datefrom, "%Y"));
 		}
 	}
 	print $form->selectDate($datefrom, '', 0, 0, 0, "subscription", 1, 1);
@@ -999,9 +990,9 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 	}
 	if (!$dateto) {
 		if (getDolGlobalInt('MEMBER_SUBSCRIPTION_SUGGEST_END_OF_MONTH')) {
-			$dateto = dol_get_last_day(dol_print_date($datefrom, "%Y"), dol_print_date($datefrom, "%m"));
+			$dateto = dol_get_last_day((int) dol_print_date($datefrom, "%Y"), (int) dol_print_date($datefrom, "%m"));
 		} elseif (getDolGlobalInt('MEMBER_SUBSCRIPTION_SUGGEST_END_OF_YEAR')) {
-			$dateto = dol_get_last_day(dol_print_date($datefrom, "%Y"));
+			$dateto = dol_get_last_day((int) dol_print_date($datefrom, "%Y"));
 		} else {
 			$dateto = -1; // By default, no date is suggested
 		}

@@ -58,11 +58,12 @@ $socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
+$hookmanager->initHooks(array('loancard', 'globalcard'));
 $result = restrictedArea($user, 'loan', $id, '', '');
 
 $object = new Loan($db);
 
-$hookmanager->initHooks(array('loancard', 'globalcard'));
+$permissiontoadd = $user->hasRight('loan', 'write');
 
 $error = 0;
 
@@ -78,7 +79,7 @@ if ($reshook < 0) {
 }
 if (empty($reshook)) {
 	// Classify paid
-	if ($action == 'confirm_paid' && $confirm == 'yes' && $user->hasRight('loan', 'write')) {
+	if ($action == 'confirm_paid' && $confirm == 'yes' && $permissiontoadd) {
 		$object->fetch($id);
 		$result = $object->setPaid($user);
 		if ($result > 0) {
@@ -89,7 +90,7 @@ if (empty($reshook)) {
 	}
 
 	// Delete loan
-	if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('loan', 'write')) {
+	if ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontoadd) {
 		$object->fetch($id);
 		$result = $object->delete($user);
 		if ($result > 0) {
@@ -102,7 +103,7 @@ if (empty($reshook)) {
 	}
 
 	// Add loan
-	if ($action == 'add' && $user->hasRight('loan', 'write')) {
+	if ($action == 'add' && $permissiontoadd) {
 		if (!$cancel) {
 			$datestart = dol_mktime(12, 0, 0, GETPOSTINT('startmonth'), GETPOSTINT('startday'), GETPOSTINT('startyear'));
 			$dateend = dol_mktime(12, 0, 0, GETPOSTINT('endmonth'), GETPOSTINT('endday'), GETPOSTINT('endyear'));
@@ -174,7 +175,7 @@ if (empty($reshook)) {
 			header("Location: list.php");
 			exit();
 		}
-	} elseif ($action == 'update' && $user->hasRight('loan', 'write')) {
+	} elseif ($action == 'update' && $permissiontoadd) {
 		// Update record
 		if (!$cancel) {
 			$result = $object->fetch($id);
@@ -231,7 +232,7 @@ if (empty($reshook)) {
 	}
 
 	// Link to a project
-	if ($action == 'classin' && $user->hasRight('loan', 'write')) {
+	if ($action == 'classin' && $permissiontoadd) {
 		$object->fetch($id);
 		$result = $object->setProject($projectid);
 		if ($result < 0) {
@@ -239,7 +240,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'setlabel' && $user->hasRight('loan', 'write')) {
+	if ($action == 'setlabel' && $permissiontoadd) {
 		$object->fetch($id);
 		$result = $object->setValueFrom('label', GETPOST('label'), '', '', 'text', '', $user, 'LOAN_MODIFY');
 		if ($result < 0) {

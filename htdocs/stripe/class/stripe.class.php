@@ -344,7 +344,7 @@ class Stripe extends CommonObject
 	/**
 	 * Get the Stripe payment intent. Create it with confirmnow=false
 	 * Warning. If a payment was tried and failed, a payment intent was created.
-	 * But if we change something on object to pay (amount or other), reusing same payment intent is not allowed by Stripe.
+	 * But if we change something on object to pay (amount or other), reusing same payment intent, is not allowed by Stripe.
 	 * Recommended solution is to recreate a new payment intent each time we need one (old one will be automatically closed after a delay),
 	 * that's why i comment the part of code to retrieve a payment intent with object id (never mind if we cumulate payment intent with old ones that will not be used)
 	 * Note: This is used when option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION is on when making a payment from the public/payment/newpayment.php page
@@ -371,7 +371,7 @@ class Stripe extends CommonObject
 	{
 		global $conf, $user;
 
-		dol_syslog(get_class($this)."::getPaymentIntent", LOG_INFO, 1);
+		dol_syslog(get_class($this)."::getPaymentIntent description=".$description, LOG_INFO, 1);
 
 		$error = 0;
 
@@ -407,7 +407,7 @@ class Stripe extends CommonObject
 
 		if (is_object($object) && getDolGlobalInt('STRIPE_REUSE_EXISTING_INTENT_IF_FOUND') && !getDolGlobalInt('STRIPE_CARD_PRESENT')) {
 			// Warning. If a payment was tried and failed, a payment intent was created.
-			// But if we change something on object to pay (amount or other that does not change the idempotency key), reusing same payment intent is not allowed by Stripe.
+			// But if we change something on object to pay (amount or other that does not change the idempotency key), reusing same payment intent, is not allowed by Stripe.
 			// Recommended solution is to recreate a new payment intent each time we need one (old one will be automatically closed by Stripe after a delay), Stripe will
 			// automatically return the existing payment intent if idempotency is provided when we try to create the new one.
 			// That's why we can comment the part of code to retrieve a payment intent with object id (never mind if we cumulate payment intent with old ones that will not be used)
@@ -450,7 +450,7 @@ class Stripe extends CommonObject
 		if (empty($paymentintent)) {
 			// Try to create intent. See https://stripe.com/docs/api/payment_intents/create
 			$ipaddress = getUserRemoteIP();
-			$metadata = array('dol_version' => DOL_VERSION, 'dol_entity' => $conf->entity, 'ipaddress' => $ipaddress);
+			$metadata = array('dol_version' => DOL_VERSION, 'dol_entity' => $conf->entity, 'ipaddress' => $ipaddress, 'dol_noidempotency' => (int) $noidempotency_key);
 			if (is_object($object)) {
 				$metadata['dol_type'] = $object->element;
 				$metadata['dol_id'] = $object->id;
@@ -487,6 +487,8 @@ class Stripe extends CommonObject
 
 			global $dolibarr_main_url_root;
 
+			$descriptioninpaymentintent = $description;
+
 			$dataforintent = array(
 				"confirm" => $confirmnow, // try to confirm immediately after create (if conditions are ok)
 				"confirmation_method" => $mode,
@@ -500,7 +502,7 @@ class Stripe extends CommonObject
 					'allow_redirects' => 'never',
 				),
 				*/
-				"description" => $description,
+				"description" => $descriptioninpaymentintent,
 				//"save_payment_method" => true,
 				"setup_future_usage" => "on_session",
 				"metadata" => $metadata
@@ -552,14 +554,15 @@ class Stripe extends CommonObject
 
 				$arrayofoptions = array();
 				if (empty($noidempotency_key)) {
-					$arrayofoptions["idempotency_key"] = $description;
+					$arrayofoptions["idempotency_key"] = $descriptioninpaymentintent;
 				}
 				// Note: If all data for payment intent are same than a previous on, even if we use 'create', Stripe will return ID of the old existing payment intent.
 				if (!empty($key)) {				// If the Stripe connect account not set, we use common API usage
 					$arrayofoptions["stripe_account"] = $key;
 				}
 
-				dol_syslog("dataforintent to create paymentintent = ".var_export($dataforintent, true));
+				dol_syslog(get_class($this)."::getPaymentIntent ".$stripearrayofkeysbyenv[$status]['publishable_key'], LOG_DEBUG);
+				dol_syslog(get_class($this)."::getPaymentIntent dataforintent to create paymentintent = ".var_export($dataforintent, true));
 
 				$paymentintent = \Stripe\PaymentIntent::create($dataforintent, $arrayofoptions);
 
@@ -673,6 +676,8 @@ class Stripe extends CommonObject
 	{
 		global $conf;
 
+		$noidempotency_key = 1;
+
 		dol_syslog("getSetupIntent description=".$description.' confirmnow='.json_encode($confirmnow), LOG_INFO, 1);
 
 		$error = 0;
@@ -687,7 +692,7 @@ class Stripe extends CommonObject
 
 		if (empty($setupintent)) {
 			$ipaddress = getUserRemoteIP();
-			$metadata = array('dol_version' => DOL_VERSION, 'dol_entity' => $conf->entity, 'ipaddress' => $ipaddress);
+			$metadata = array('dol_version' => DOL_VERSION, 'dol_entity' => $conf->entity, 'ipaddress' => $ipaddress, 'dol_noidempotency' => (int) $noidempotency_key);
 			if (is_object($object)) {
 				$metadata['dol_type'] = $object->element;
 				$metadata['dol_id'] = $object->id;
@@ -714,6 +719,8 @@ class Stripe extends CommonObject
 
 			global $dolibarr_main_url_root;
 
+			$descriptioninsetupintent = $description;
+
 			$dataforintent = array(
 				"confirm" => $confirmnow, // Do not confirm immediately during creation of intent
 				"payment_method_types" => $paymentmethodtypes,	// When payment_method_types is set, return_url is not required but payment mode can't be managed from dashboard
@@ -731,7 +738,7 @@ class Stripe extends CommonObject
 				$dataforintent["customer"] = $customer;
 			}
 			if (!is_null($description)) {
-				$dataforintent["description"] = $description;
+				$dataforintent["description"] = $descriptioninsetupintent;
 			}
 			// payment_method =
 			// payment_method_types = array('card')
@@ -746,7 +753,8 @@ class Stripe extends CommonObject
 				global $stripearrayofkeysbyenv;
 				\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$status]['secret_key']);
 
-				dol_syslog("getSetupIntent ".$stripearrayofkeysbyenv[$status]['publishable_key'], LOG_DEBUG);
+				dol_syslog(get_class($this)."::getSetupIntent ".$stripearrayofkeysbyenv[$status]['publishable_key'], LOG_DEBUG);
+				dol_syslog(get_class($this)."::getSetupIntent dataforintent to create setupintent = ".var_export($dataforintent, true));
 
 				// Note: If all data for payment intent are same than a previous one, even if we use 'create', Stripe will return ID of the old existing payment intent.
 				if (empty($key)) {				// If the Stripe connect account not set, we use common API usage
