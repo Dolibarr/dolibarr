@@ -1,6 +1,5 @@
 # Dolibarr language file - en_US - hrm
 
-
 # Admin
 HRM_EMAIL_EXTERNAL_SERVICE=HRM外部サービスを防止するためのメール
 Establishments=事業所
@@ -24,7 +23,7 @@ SkillsManagement=スキル管理
 HRM_MAXRANK=スキルをランク付けするためのレベルの最大数
 HRM_DEFAULT_SKILL_DESCRIPTION=スキル作成時のランクのデフォルトの説明
 deplacement=シフト
-DateEval=評価日
+DateEval=能力評価日
 JobCard=仕事カード
 NewJobProfile=新しい職務プロフィール
 JobProfile=仕事内容
@@ -41,12 +40,12 @@ Skill=スキル
 Skills=スキル
 SkillCard=スキルカード
 EmployeeSkillsUpdated=従業員のスキルは更新済（従業員カードの「スキル」タブを参照）
-Eval=評価
-Evals=評価
-NewEval=新しい評価
-ValidateEvaluation=評価を検証
-ConfirmValidateEvaluation=意思確認： この評価を検証したいか？参照番号 <b>%s</b>
-EvaluationCard=評価カード
+Eval=能力評価
+Evals=能力評価
+NewEval=新しい能力評価
+ValidateEvaluation=能力評価を検証する
+ConfirmValidateEvaluation=この能力評価を参照 <b>%s</b> で検証してもよろしい か?
+EvaluationCard=能力評価
 RequiredRank=ジョブ プロファイルの必須ランク
 RequiredRankShort=必要ランク
 PositionsWithThisProfile=この求人プロフィールを持つポジション
@@ -73,6 +72,9 @@ AddSkill=職務プロフィールにスキルを追加する
 RequiredSkills=この職務プロファイルに必要なスキル
 UserRank=ユーザランク
 SkillList=スキルリスト
+SkillCreated=%s 個のスキルが作成された
+SkillRank=スキルランク
+ShowSkillRank=スキルランクを表示
 SaveRank=ランクを保存
 TypeKnowHow=ノウハウ
 TypeHowToBe=あるべき姿
@@ -90,8 +92,9 @@ SaveAddSkill = 追加されたスキル(s)
 SaveLevelSkill = 保存されたスキル(s)レベル
 DeleteSkill = スキルが削除された
 SkillsExtraFields=補完的属性（スキル）
-JobsExtraFields=補完的属性 (ジョブ プロファイル)
-EvaluationsExtraFields=補完的属性（評価）
+JobsExtraFields=補完的な属性（職務プロファイル）
+EvaluationsExtraFields=補完的な属性（能力評価）
 NeedBusinessTravels=出張が必要
 NoDescription=説明なし
 TheJobProfileHasNoSkillsDefinedFixBefore=この従業員の評価された職務プロファイルにはスキル(s)が定義されていない。スキルを追加し、削除して評価を再開すること。
+PDFStandardHrmEvaluation=能力評価用の PDF ドキュメント を生成するための標準テンプレート

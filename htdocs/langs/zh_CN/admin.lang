@@ -514,15 +514,17 @@ ModuleCompanyCodeCustomerDigitaria=%s 后跟按字符数截断的客户名称：
 ModuleCompanyCodeSupplierDigitaria=%s 后跟按字符数截断的供应商名称：%s 作为供应商科目代码。
 Use3StepsApproval=默认情况下，需要由2个不同的用户创建和审批采购订单（一个步骤/用户创建和一个步骤/用户审批。请注意，如果用户同时拥有创建和审批权限，则一个步骤/用户就足够了） 。如果金额高于特定值，您可以要求使用此选项引入第三个步骤/用户审批（因此需要3个步骤：1 =确认，2 =首次审批，3 =如果金额足够则二次审批）。 <br>如果一次审批（2个步骤）足够，则将其设置为空，如果始终需要二次审批（3个步骤），则将其设置为非常低的值（0.1）。
 UseDoubleApproval=当金额（不含税）高于...时，使用 3 步审批
-WarningPHPMail=WARNING: The setup to send emails from the application is using the default generic setup. This choice needs no technical knowledge to complete the setup.<br>However, it is often better to setup outgoing emails to use the email server of your Email Service Provider instead of the default setup for several reasons:
+WarningPHPMail=NOTICE: The setup to send emails from the application is using the default generic setup (called "%s"). This choice needs no technical knowledge and no particular setup.<br>However, it is often better to setup outgoing emails to use the other method (called "%s") to use the email server of your Email Service Provider, instead of the default setup for several reasons:
 WarningPHPMailA=- Using the server of the Email Service Provider increases the trustworthiness of your email, so it increases the deliverability without being flagged as SPAM
-WarningPHPMailB=- 一些电子邮件服务提供商（如雅虎）不允许您从其他服务器而不是他们自己的服务器发送电子邮件。您当前的设置使用应用程序的服务器而不是您的电子邮件提供商的服务器来发送电子邮件，因此某些收件人（与限制性 DMARC 协议兼容的）会询问您的电子邮件提供商他们是否可以接受您的电子邮件，某些电子邮件提供商（如雅虎）可能会回答“不”，因为发送服务器不是他们的，所以您发送的电子邮件中有少数可能不被接受（还要注意您的电子邮件提供商的发送配额）。
+WarningPHPMailB=- If the domain of your email (the part mymaildomain.com into myname@mymaildomain.com) is protected by a SPF + a DMARC record, your email may be flagged as SPAM because your DMARC rule defined into DNS zone of the domain of the sender (mymaildomain.com) does not allow the sending as a generic sender. In such a case, you must disable the DMARC for the domain (or set it to p=none like done by @gmail.com) or, better, if you have the technical knowledge, use the other method to send emails using the SMTP server of your own email provider.
 WarningPHPMailC=- 使用您自己的电子邮件服务提供商的 SMTP 服务器发送电子邮件也很有趣，因为从应用程序发送的所有电子邮件也将保存到您邮箱的“已发送”目录中。
 WarningPHPMailD=因此，建议将电子邮件的发送方式更改为"SMTP"值。
 WarningPHPMailDbis=如果您确实想保持默认的“PHP”方式发送电子邮件，请忽略此警告，或%s点击这里%s将其移除。
 WarningPHPMail2=如果您的电子邮件SMTP提供商需要将电子邮件客户端限制为某些IP地址（非常罕见），则这是您的ERP CRM应用程序的邮件用户代理（MUA）的IP地址：<strong> %s</strong>。
-WarningPHPMailSPF=如果您的发件人电子邮件地址域受 SPF 记录保护（询问您的域名注册商），您必须在您域名的 DNS 记录中添加以下 IP的 SPF 记录： <strong> %s </strong> 。
-ActualMailSPFRecordFound=实际找到的 SPF 记录（对于电子邮件 %s）：%s
+WarningPHPMailSPF=If the domain name in your sender email address is protected by a SPF record (ask your domain name registar), you must add the following IPs or entry in the SPF record of the DNS of your domain: <strong>%s</strong>.
+WarningPHPMailSPFDMARC=If the domain name in your sender email address is protected by a DMARC record different than p=none (ask your domain name registar), you must remove your DMARC record, or set it to p=none like do @gmail.com) or use sending another method.
+SPFAndDMARCInformation=SPF and DMARC DNS record for main email addresses
+ActualMailDNSRecordFound=Actual %s record found (for email %s) : %s
 ClickToShowDescription=点击以显示描述
 DependsOn=该模块需要模块(集)
 RequiredBy=本模块被以下模块(集)需要
@@ -867,7 +869,7 @@ Permission255=修改其他用户密码
 Permission256=删除或禁用其他用户
 Permission262=访问权限扩展至所有合作方及其对象（不仅限于与用户关联为销售代表的合作方）。
 Permission262b=对于外部用户无效（他们始终仅限于报价、订单、发票、合同等）。
-Permission262c=对项目无效（规则仅限于项目权限、可见性和分配事宜）。
+Permission262c=Not effective for projects (only rules on project permissions, visibility and users assignment matter).
 Permission263=将访问权限扩展到所有没有对象的合作方（不仅是用户作为销售代表的合作方）。 <br> 对外部用户无效（对于报价单、订单、发票、合同等，始终仅限于他们自己）。 <br> 对项目无效（仅关于项目权限、可见性和分配事项的规则）。
 Permission271=查看 CA
 Permission272=查看发票
@@ -944,7 +946,7 @@ Permission776=支付费用报销单
 Permission777=读取所有费用报销单（包括非下属用户的）
 Permission778=创建/变更每个人的费用报销单
 Permission779=导出费用报销单
-Permission1001=读取库存
+Permission1001=Read warehouses and stocks
 Permission1002=创建/变更仓库
 Permission1003=删除仓库
 Permission1004=读取库存调拨
@@ -2218,7 +2220,7 @@ CreateCandidature=创建工作申请
 FormatZip=Zip
 MainMenuCode=菜单入口代码（主菜单）
 ECMAutoTree=显示自动 ECM 树
-OperationParamDesc=定义用于提取某些数据或设置用于操作的值的规则。 <br> <br> 将电子邮件主题中的公司名称提取到临时变量中的示例：<br> tmp_var=EXTRACT:SUBJECT:来自公司的消息 ([^\n]*) <br> <br> 设置要创建的对象的属性的示例：<br> objproperty1=SET：硬编码值 <br> objproperty2=SET:__tmp_var__ <br> objproperty3=SETIFEMPTY:一个值（值仅当属性尚未定义时才设置） <br> objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*) <br> options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*) <br> object.objproperty5=EXTRACT:BODY:我的公司名称是\\ s([^\\s]*) <br> <br> 使用新行提取或设置多个属性。
+OperationParamDesc=Define the rules to use to extract some data or set values to use for operation.<br><br>Example to extract a string from email header, subject or body into a temporary variable:<br>tmp_var1=EXTRACT:HEADER:My regex ([^\n]*)<br>tmp_var2=EXTRACT:SUBJECT:My refex ([^\n]*)<br>tmp_var3=EXTRACT:BODY:My regex ([^\n]*)<br><br>Examples to set the properties of an object to create:<br>objproperty1=SET:a hard coded value<br>objproperty2=SET:__tmp_var__<br>objproperty3=SETIFEMPTY:a value (value is set only if property is not already defined)<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a new line to extract or set several properties.
 OpeningHours=营业时间
 OpeningHoursDesc=在此处输入贵公司的正常营业时间。
 ResourceSetup=资源模块的配置
@@ -2264,7 +2266,7 @@ LargerThan=大于
 IfTrackingIDFoundEventWillBeLinked=请注意，如果在电子邮件中找到对象的跟踪 ID，或者如果电子邮件是收集到的并链接到对象的电子邮件区域的答复，则创建的事件将自动链接到已知的相关对象。
 WithGMailYouCanCreateADedicatedPassword=如果您启用了 GMail 帐户的两步验证，需要为Dolibarr创建一个专用的应用密码，而不是使用您自己的来自 https://myaccount.google.com/ 的帐户密码。
 EmailCollectorTargetDir=成功处理电子邮件后，将其移动到另一个标签/目录可能是一种期望中的行为。只需在此处设置目录名称即可使用此功能（请勿在名称中使用特殊字符）。请注意，您还必须使用可以读/写的登录帐户。
-EmailCollectorLoadThirdPartyHelp=您可以使用此操作来使用电子邮件内容来查找并加载数据库中现有的合作方（搜索将在“id”、“name”、“name_alias”、“email”之间定义的属性上完成）。找到（或创建）的合作方将用于以下需要它的操作。 <br> 例如，如果您想要创建一个合作方，其名称是从正文中的字符串“Name: name to find”中提取的，请使用发件人邮箱作为email，您可以这样设置参数字段： <br> 'email=HEADER:^From:(.*);name=EXTRACT:BODY:Name:\\s([^\\s] *);client=SET:2;' <br>
+EmailCollectorLoadThirdPartyHelp=You can use this action to use the email content to find and load an existing third party in your database (search will be done on the defined property among 'id','name','name_alias','email'). The found (or created) third party will be used for following actions that need it.<br>For example, if you want to create a third party with a name extracted from a string 'Name: name to find' present into the body, use the sender email as email, you can set the parameter field like this:<br>'email=EXTRACT:HEADER:^From:(.*);name=EXTRACT:BODY:Name:\\s([^\\s]*);client=SET:2;'<br>
 FilterSearchImapHelp=警告：许多电子邮件服务器（例如 Gmail）在搜索字符串时会进行完整单词搜索，如果仅在单词中找到字符串的一部分，则不会返回结果。也出于这个原因，在搜索条件中使用特殊字符将被忽略，因为它们不是现有单词的一部分。 <br> 要对某个单词进行排除搜索（如果未找到该单词，则返回电子邮件），您可以使用 !单词之前的字符（可能不适用于某些邮件服务器）。
 EndPointFor=%s 的终点：%s
 DeleteEmailCollector=删除电子邮件收集器
