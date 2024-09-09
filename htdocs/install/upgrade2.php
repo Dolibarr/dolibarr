@@ -646,7 +646,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 		// Copy directory medias
 		$srcroot = DOL_DOCUMENT_ROOT.'/install/medias';
 		$destroot = DOL_DATA_ROOT.'/medias';
-		dolCopyDir($srcroot, $destroot, 0, 0);
+		dolCopyDir($srcroot, $destroot, '0', 0);
 
 
 		// Actions for all versions (no database change but delete some files and directories)
