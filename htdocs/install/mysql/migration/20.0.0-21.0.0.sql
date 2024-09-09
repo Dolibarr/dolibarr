@@ -93,6 +93,7 @@ ALTER TABLE llx_c_hrm_public_holiday ADD UNIQUE INDEX uk_c_hrm_public_holiday(en
 ALTER TABLE llx_c_hrm_public_holiday ADD UNIQUE INDEX uk_c_hrm_public_holiday2(entity, fk_country, dayrule, day, month, year);
 
 ALTER TABLE llx_societe_account ADD COLUMN date_last_reset_password datetime after date_previous_login;
+ALTER TABLE llx_user_rib ADD COLUMN default_rib smallint NOT NULL DEFAULT 0;
 ALTER TABLE llx_prelevement_demande ADD COLUMN fk_societe_rib integer DEFAULT NULL after fk_user_demande;
 
 -- Rename of bank table
