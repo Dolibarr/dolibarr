@@ -863,9 +863,9 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 		) {
 			$checkRes = $objMod->checkForUpdate();
 			if ($checkRes > 0) {
-				setEventMessage($objMod->getName().' : '.$versiontrans.' -> '.$objMod->lastVersion);
+				setEventMessages($objMod->getName().' : '.preg_replace('/[^a-z0-9_\.\-\s]/i', '', $versiontrans).' -> '.preg_replace('/[^a-z0-9_\.\-\s]/i', '', $objMod->lastVersion), null, 'mesgs');
 			} elseif ($checkRes < 0) {
-				setEventMessage($objMod->getName().' '.$langs->trans('CheckVersionFail'), 'warnings');
+				setEventMessages($objMod->getName().' '.$langs->trans('CheckVersionFail'), null, 'warnings');
 			}
 		}
 
