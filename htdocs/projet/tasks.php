@@ -756,11 +756,12 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 	print '<table class="border centpercent">';
 
 	$defaultref = '';
-	$obj = getDolGlobalString('PROJECT_TASK_ADDON', 'mod_task_simple');
+	$classnamemodtask = getDolGlobalString('PROJECT_TASK_ADDON', 'mod_task_simple');
 	if (getDolGlobalString('PROJECT_TASK_ADDON') && is_readable(DOL_DOCUMENT_ROOT."/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON').".php")) {
 		require_once DOL_DOCUMENT_ROOT."/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON').'.php';
-		$modTask = new $obj();
-		$defaultref = $modTask->getNextValue($object->thirdparty, null);
+		$modTask = new $classnamemodtask();
+		'@phan-var-force ModeleNumRefTask $modTask';
+		$defaultref = $modTask->getNextValue($object->thirdparty, $object);
 	}
 
 	if (is_numeric($defaultref) && $defaultref <= 0) {
@@ -877,9 +878,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 } elseif ($id > 0 || !empty($ref)) {
 	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 
-	/*
-	 * Projet card in view mode
-	 */
+	// Projet card in view mode
 
 	print '<br>';
 

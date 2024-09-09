@@ -4667,8 +4667,8 @@ abstract class CommonObject
 			$fieldstatus = 'status';
 		}
 
-		$sql = "UPDATE ".$this->db->prefix().$elementTable;
-		$sql .= " SET ".$fieldstatus." = ".((int) $status);
+		$sql = "UPDATE ".$this->db->prefix().$this->db->sanitize($elementTable);
+		$sql .= " SET ".$this->db->sanitize($fieldstatus)." = ".((int) $status);
 		// If status = 1 = validated, update also fk_user_valid
 		// TODO Replace the test on $elementTable by doing a test on existence of the field in $this->fields
 		if ($status == 1 && in_array($elementTable, array('expensereport', 'inventory'))) {
@@ -4712,6 +4712,8 @@ abstract class CommonObject
 						$trigkey = 'FICHINTER_CLASSIFY_UNBILLED';
 					}
 				}
+
+				$this->context = array_merge($this->context, array('newstatus' => $status));
 
 				if ($trigkey) {
 					// Call trigger

@@ -2700,7 +2700,7 @@ class EmailCollector extends CommonObject
 											// Search country by name or code
 											if (!empty($contactstatic->country)) {
 												require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
-												$result = getCountry('', 3, $this->db, null, 1, $contactstatic->country);
+												$result = getCountry('', '3', $this->db, null, 1, $contactstatic->country);
 												if ($result == 'NotDefined') {
 													$errorforactions++;
 													$this->error = "Error country not found by this name '" . $contactstatic->country . "'";
@@ -2714,7 +2714,7 @@ class EmailCollector extends CommonObject
 												}
 											} elseif (!empty($contactstatic->country_code)) {
 												require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
-												$result = getCountry($contactstatic->country_code, 3, $this->db);
+												$result = getCountry($contactstatic->country_code, '3', $this->db);
 												if ($result == 'NotDefined') {
 													$errorforactions++;
 													$this->error = "Error country not found by this code '" . $contactstatic->country_code . "'";
