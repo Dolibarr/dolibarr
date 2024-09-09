@@ -1732,10 +1732,10 @@ class EmailCollector extends CommonObject
 					$msgid = str_replace(array('<', '>'), '', $overview[0]->message_id);
 				}
 				$operationslog .= " - MsgId: ".$msgid;
-				$operationslog .= " - Date: ".($headers['Date'] ?? '');
-				$operationslog .= " - References: ".dol_escape_htmltag($headers['References'] ?? '')." - Subject: ".dol_escape_htmltag($headers['Subject']);
+				$operationslog .= " - Date: ".($headers['Date'] ?? $langs->transnoentitiesnoconv("NotFound"));
+				$operationslog .= " - References: ".dol_escape_htmltag($headers['References'] ?? $langs->transnoentitiesnoconv("NotFound"))." - Subject: ".dol_escape_htmltag($headers['Subject']);
 
-				dol_syslog("-- Process email #".$iforemailloop." MsgId: ".$msgid." Date: ".($headers['Date'] ?? '')." References: ".($headers['References'] ?? '')." Subject: ".$headers['Subject']);
+				dol_syslog("-- Process email #".$iforemailloop.", MsgId: ".$msgid.", Date: ".($headers['Date'] ?? '').", References: ".($headers['References'] ?? '').", Subject: ".$headers['Subject']);
 
 
 				$trackidfoundintorecipienttype = '';
