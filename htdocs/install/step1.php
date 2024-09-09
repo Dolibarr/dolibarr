@@ -6,6 +6,7 @@
  * Copyright (C) 2005-2011  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -472,7 +473,7 @@ if (!$error && $db->connected && $action == "set") {	// Test on permission not r
 			// Copy directory medias
 			$srcroot = $main_dir.'/install/medias';
 			$destroot = $main_data_dir.'/medias';
-			dolCopyDir($srcroot, $destroot, 0, 0);
+			dolCopyDir($srcroot, $destroot, '0', 0);
 
 			if ($error) {
 				print "<tr><td>".$langs->trans("ErrorDirDoesNotExists", $main_data_dir);
