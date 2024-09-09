@@ -521,7 +521,8 @@ WarningPHPMailC=- Using the SMTP server of your own Email Service Provider to se
 WarningPHPMailD=It is therefore recommended to change the sending method of e-mails to the value "SMTP".
 WarningPHPMailDbis=If you really want to keep the default "PHP" method to send emails, just ignore this warning, or remove it by %sclicking here%s.
 WarningPHPMail2=If your email SMTP provider need to restrict email client to some IP addresses (very rare), this is the IP address of the mail user agent (MUA) for your ERP CRM application: <strong>%s</strong>.
-WarningPHPMailSPFDMARC=If the domain name in your sender email address is protected by a DMARC record different than p=none (ask your domain name registar), you must add the following IPs in the SPF record of the DNS of the domain: <strong>%s</strong>.
+WarningPHPMailSPF=If the domain name in your sender email address is protected by a SPF record (ask your domain name registar), you must add the following IPs or entry in the SPF record of the DNS of your domain: <strong>%s</strong>.
+WarningPHPMailSPFDMARC=If the domain name in your sender email address is protected by a DMARC record different than p=none (ask your domain name registar), you must remove your DMARC record, or set it to p=none like do @gmail.com) or use sending another method.
 SPFAndDMARCInformation=SPF and DMARC DNS record for main email addresses
 ActualMailDNSRecordFound=Actual %s record found (for email %s) : %s
 ClickToShowDescription=Click to show description
