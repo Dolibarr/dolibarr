@@ -582,7 +582,7 @@ class ExpeditionLigne extends CommonObjectLine
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 				$lot = new Productlot($this->db);
 				if ($lot->fetch(0, $this->fk_product, $batch) < 0) {
-					$this->errors[] = $lot->errors;
+					$this->errors = array_merge($this->errors, $lot->errors);
 					$error++;
 				}
 				if (!$error && !empty($expedition_batch_id)) {
