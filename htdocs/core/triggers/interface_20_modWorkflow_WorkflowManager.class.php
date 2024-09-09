@@ -472,10 +472,6 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					if (!is_array($list) || empty($list)) {
 						continue;
 					}
-					$number_contracts_found = count($list);
-					if ($number_contracts_found == 0) {
-						continue;
-					}
 
 					foreach ($list as $linked_contract) {
 						$object->setContract($linked_contract->id);
@@ -497,7 +493,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				$fichinter->fk_project = (int) $object->fk_project;
 				$fichinter->fk_contrat = (int) $object->fk_contract;
 				$fichinter->author = $user->id;
-				$fichinter->model_pdf = (getDolGlobalString('FICHEINTER_ADDON_PDF')) ? getDolGlobalString('FICHEINTER_ADDON_PDF') : 'soleil';
+				$fichinter->model_pdf = getDolGlobalString('FICHEINTER_ADDON_PDF', 'soleil');
 				$fichinter->origin = $object->element;
 				$fichinter->origin_id = $object->id;
 
