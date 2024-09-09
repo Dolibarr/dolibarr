@@ -22,7 +22,8 @@ ToOfferALinkForOnlinePaymentOnContractLine=URL để cung cấp trang thanh toá
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL để cung cấp trang thanh toán trực tuyến %s với bất kỳ số tiền nào không có đối tượng hiện có
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL để cung cấp trang thanh toán trực tuyến %s cho đăng ký thành viên
 ToOfferALinkForOnlinePaymentOnDonation=URL để cung cấp trang thanh toán trực tuyến %s để thanh toán một khoản đóng góp
-YouCanAddTagOnUrl=Bạn cũng có thể thêm tham số url <b>&tag=<i>value</i></b> vào bất kỳ URL nào (chỉ bắt buộc đối với thanh toán không được liên kết với một đối tượng) để thêm thẻ nhận xét thanh toán của riêng bạn. <br> Đối với URL thanh toán không có đối tượng hiện tại, bạn cũng có thể thêm tham số <strong>&noidempotency=1</strong> để có thể sử dụng cùng một liên kết với cùng một thẻ (một số chế độ thanh toán có thể giới hạn thanh toán là 1 cho mỗi liên kết khác nhau mà không có tham số này)
+YouCanAddTagOnUrl=You can also add url parameter <b>&tag=value</b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
+YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful of failed online payment.
 SetupStripeToHavePaymentCreatedAutomatically=Thiết lập Stripe của bạn với url <b>%s</b> để thanh toán được tạo tự động khi được xác thực bởi Stripe.
 AccountParameter=Thông số tài khoản
 UsageParameter=Thông số sử dụng
@@ -77,4 +78,13 @@ TERMINAL_LOCATION=Vị trí (địa chỉ) của Stripe Terminals
 RequestDirectDebitWithStripe=Yêu cầu ghi nợ trực tiếp với Stripe
 RequesCreditTransferWithStripe=Yêu cầu chuyển khoản tín dụng với Stripe
 STRIPE_SEPA_DIRECT_DEBIT=Cho phép thanh toán Ghi nợ trực tiếp thông qua Stripe
+STRIPE_KLARNA=Enable the payments using Klarna
+STRIPE_BANCONTACT=Enable the payments using BANCONTACT
+STRIPE_IDEAL=Enable the payments using IDEAL
+STRIPE_GIROPAY=Enable the payments using GIROPAY
+STRIPE_SOFORT=Enable the payments using SOFORT
 StripeConnect_Mode=Chế độ kết nối sọc
+ExampleOnlyForBECustomers=Only for belgium customers
+ExampleOnlyForDECustomers=Only for german customers
+ExampleOnlyForNLCustomers=Only for dutch customers
+ExampleOnlyForATBEDEITNLESCustomers=Only for customers from Austria, Belgium, Germany, Italy, Netherlands, Spain

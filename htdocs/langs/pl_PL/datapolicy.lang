@@ -4,12 +4,10 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
@@ -17,10 +15,7 @@
 Module4100Name = Polityka prywatności danych
 # Module description 'ModuledatapolicyDesc'
 Module4100Desc = Moduł do zarządzania Prywatnością Danych (Zgodność z RODO)
-
-#
 # Administration page
-#
 datapolicySetup = Konfiguracja polityki prywatności danych modułu
 Deletion = Usuwanie danych
 datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without events (the duration which you will have indicated below).
@@ -38,51 +33,19 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = Potencjalny klient/Klient
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Ani Potencjalny klient, ani klient
 DATAPOLICY_CONTACT_FOURNISSEUR = Dostawca
 DATAPOLICY_ADHERENT = Członek
-DATAPOLICY_Tooltip_SETUP = Typ kontaktu — wskaż swój wybór dla każdego rodzaju kontaktu.
-DATAPOLICYMail = Konfiguracja e-maili
-DATAPOLICYSUBJECTMAIL = Subject of the email
-DATAPOLICYCONTENTMAIL = Treść wiadomości e-mail
-DATAPOLICYSUBSITUTION = W swoim e-mailu możesz wykorzystać następujące zmienne (LINKACCEPT pozwala na utworzenie linku rejestrującego zgodę danej osoby, LINKREFUSED pozwala na zarejestrowanie odmowy danej osoby):
-DATAPOLICYACCEPT = Wiadomość po zaakceptowaniu umowy
-DATAPOLICYREFUSE = Message after disagreement
+DATAPOLICY_Tooltip_SETUP=Define the delay with no interaction after which you want the record to be automatically purged.
 SendAgreementText = Możesz wysłać wiadomość e-mail dotyczącą RODO do wszystkich odpowiednich kontaktów (które nie otrzymały jeszcze wiadomości e-mail i dla których nie zarejestrowałeś niczego na temat ich umowy dotyczącej RODO). Aby to zrobić, użyj poniższego przycisku.
 SendAgreement = Wyślij wiadomość email
 AllAgreementSend = Wszystkie e-maile zostały wysłane
 TXTLINKDATAPOLICYACCEPT = Tekst linku „umowa”
 TXTLINKDATAPOLICYREFUSE = Text for the link "disagreement"
-
-
-#
 # Extrafields
-#
 DATAPOLICY_BLOCKCHECKBOX = RODO: Przetwarzanie danych osobowych
 DATAPOLICY_consentement = Uzyskana zgoda na przetwarzanie danych osobowych
 DATAPOLICY_opposition_traitement = Opposes to the processing of his personal data
 DATAPOLICY_opposition_prospection = Opposes to the processing of his personal data for the purposes of prospecting
-
-#
-# Popup
-#
-DATAPOLICY_POPUP_ANONYME_TITLE = Anonimizuj osobę trzecią
-DATAPOLICY_POPUP_ANONYME_TEXTE = Nie możesz usunąć tego kontaktu z Dolibarr, ponieważ istnieją powiązane elementy. Zgodnie z RODO, w celu wywiązania się ze swoich obowiązków, zanonimizujesz wszystkie te dane. Czy chciałbyś kontynuować ?
-
-#
-# Button for portability
-#
-DATAPOLICY_PORTABILITE = Przenośność RODO
-DATAPOLICY_PORTABILITE_TITLE = Eksport danych osobowych
-DATAPOLICY_PORTABILITE_CONFIRMATION = Chcesz wyeksportować dane osobowe tego kontaktu. Jesteś pewny ?
-
-#
 # Notes added during an anonymization
-#
-ANONYMISER_AT = Zanonimizowano %s
-
 DATAPOLICY_date = Date of agreement/disagreement GDPR
 DATAPOLICY_send = Date agreement email sent
-DATAPOLICY_SEND = Wyślij e-mail dotyczący RODO
 MailSent = Email został wysłany
-
-# ERROR
-=Due to a technical problem, we were unable to register your choice. We apologize for that. Contact us to notify us your choice.
 NUMBER_MONTH_BEFORE_DELETION = Number of months before deletion
