@@ -457,7 +457,7 @@ $extrafields->fetch_name_optionals_label($object->table_element); // fetch optio
 llxHeaderVierge($langs->trans("NewContact"));
 
 
-print load_fiche_titre($langs->trans("NewContact"), '', '', 0, 0, 'center');
+print load_fiche_titre($langs->trans("NewContact"), '', '', 0, '', 'center');
 
 
 print '<div align="center">';

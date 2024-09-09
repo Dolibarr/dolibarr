@@ -4,7 +4,8 @@
  * Copyright (C) 2012		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2012		Charles-Fr BENKE	<charles.fr@benke.fr>
  * Copyright (C) 2015       Juanjo Menent       <jmenent@2byte.es>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,9 +39,9 @@ $langs->loadlangs(array('admin', 'exports', 'other', 'users', 'companies', 'proj
 
 // Everybody should be able to go on this page
 //if (! $user->admin)
-	//  accessforbidden();
+//  accessforbidden();
 
-	// Map icons, array duplicated in import.php, was not synchronized, TODO put it somewhere only once
+// Map icons, array duplicated in import.php, was not synchronized, TODO put it somewhere only once
 $entitytoicon = array(
 	'invoice'      => 'bill',
 	'invoice_line' => 'bill',
@@ -220,7 +221,7 @@ if ($action == 'selectfield' && $user->hasRight('export', 'creer')) {     // Sel
 		//print_r($array_selected);
 		$_SESSION["export_selected_fields"] = $array_selected;
 
-		setEventMessages($warnings, null, 'warnings');
+		setEventMessages(null, $warnings, 'warnings');
 	}
 }
 if ($action == 'unselectfield' && $user->hasRight('export', 'creer')) {
@@ -242,6 +243,7 @@ if ($action == 'unselectfield' && $user->hasRight('export', 'creer')) {
 	}
 }
 
+$newpos = -1;
 if (($action == 'downfield' || $action == 'upfield') && $user->hasRight('export', 'creer')) {
 	$pos = $array_selected[GETPOST("field")];
 	if ($action == 'downfield') {	// Test on permission already done
@@ -250,7 +252,7 @@ if (($action == 'downfield' || $action == 'upfield') && $user->hasRight('export'
 	if ($action == 'upfield') {		// Test on permission already done
 		$newpos = $pos - 1;
 	}
-	// Recherche code avec qui switcher
+	// Lookup code to switch with
 	$newcode = "";
 	foreach ($array_selected as $code => $value) {
 		if ($value == $newpos) {
@@ -280,7 +282,7 @@ if ($action == 'builddoc' && $user->hasRight('export', 'lire')) {
 	}
 
 	$separator = GETPOST('delimiter', 'alpha');
-	$max_execution_time_for_importexport = (!getDolGlobalString('EXPORT_MAX_EXECUTION_TIME') ? 300 : $conf->global->EXPORT_MAX_EXECUTION_TIME); // 5mn if not defined
+	$max_execution_time_for_importexport = getDolGlobalInt('EXPORT_MAX_EXECUTION_TIME', 300); // 5mn if not defined
 	$max_time = @ini_get("max_execution_time");
 	if ($max_time && $max_time < $max_execution_time_for_importexport) {
 		dol_syslog("max_execution_time=".$max_time." is lower than max_execution_time_for_importexport=".$max_execution_time_for_importexport.". We try to increase it dynamically.");
@@ -299,7 +301,7 @@ if ($action == 'builddoc' && $user->hasRight('export', 'lire')) {
 }
 
 // Delete file
-if ($step == 5 && $action == 'confirm_deletefile' && $confirm == 'yes' && $user->hasRight('import', 'run')) {
+if ($step == 5 && $action == 'confirm_deletefile' && $confirm == 'yes' && $user->hasRight('export', 'lire')) {
 	// Check permission
 	if (empty($objexport->array_export_perms[0])) {
 		accessforbidden();
@@ -317,7 +319,7 @@ if ($step == 5 && $action == 'confirm_deletefile' && $confirm == 'yes' && $user-
 	exit;
 }
 
-if ($action == 'deleteprof' && $user->hasRight('import', 'run')) {
+if ($action == 'deleteprof' && $user->hasRight('export', 'lire')) {
 	// Check permission
 	if (empty($objexport->array_export_perms[0])) {
 		accessforbidden();
@@ -330,7 +332,7 @@ if ($action == 'deleteprof' && $user->hasRight('import', 'run')) {
 }
 
 // TODO The export for filter is not yet implemented (old code created conflicts with step 2). We must use same way of working and same combo list of predefined export than step 2.
-if ($action == 'add_export_model' && $user->hasRight('import', 'run')) {
+if ($action == 'add_export_model' && $user->hasRight('export', 'lire')) {
 	// Check permission
 	if (empty($objexport->array_export_perms[0])) {
 		accessforbidden();
@@ -381,7 +383,7 @@ if ($action == 'add_export_model' && $user->hasRight('import', 'run')) {
 }
 
 // Reload a predefined export model
-if ($step == 2 && $action == 'select_model' && $user->hasRight('import', 'run')) {
+if ($step == 2 && $action == 'select_model' && $user->hasRight('export', 'lire')) {
 	$_SESSION["export_selected_fields"] = array();
 	$_SESSION["export_filtered_fields"] = array();
 
@@ -410,7 +412,7 @@ if ($step == 2 && $action == 'select_model' && $user->hasRight('import', 'run'))
 }
 
 // Get form with filters
-if ($step == 4 && $action == 'submitFormField' && $user->hasRight('import', 'run')) {
+if ($step == 4 && $action == 'submitFormField' && $user->hasRight('export', 'lire')) {
 	// Check permission
 	if (empty($objexport->array_export_perms[0])) {
 		accessforbidden();

@@ -739,6 +739,7 @@ if ($action == "dosign" && empty($cancel)) {
 	print '</div>';
 
 	// Add js code managed into the div #signature
+	$urltogo = $_SERVER["PHP_SELF"].'?ref='.urlencode($ref).'&source='.urlencode($source).'&message=signed&securekey='.urlencode($SECUREKEY).(isModEnabled('multicompany') ? '&entity='.(int) $entity : '');
 	print '<script language="JavaScript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jSignature/jSignature.js"></script>
 	<script type="text/javascript">
 	$(document).ready(function() {
@@ -756,22 +757,22 @@ if ($action == "dosign" && empty($cancel)) {
 				var name = document.getElementById("name").value;
 				$.ajax({
 					type: "POST",
-					url: "'.DOL_URL_ROOT.'/core/ajax/onlineSign.php",
+					url: \''.DOL_URL_ROOT.'/core/ajax/onlineSign.php\',
 					dataType: "text",
 					data: {
-						"action" : "importSignature",
+						"action" : \'importSignature\',
 						"token" : \''.newToken().'\',
 						"signaturebase64" : signature,
 						"onlinesignname" : name,
 						"ref" : \''.dol_escape_js($REF).'\',
 						"securekey" : \''.dol_escape_js($SECUREKEY).'\',
-						"mode" : \''.dol_escape_htmltag($source).'\',
-						"entity" : \''.dol_escape_htmltag($entity).'\',
+						"mode" : \''.dol_escape_js($source).'\',
+						"entity" : \''.dol_escape_js((string) $entity).'\',
 					},
 					success: function(response) {
 						if (response.trim() === "success") {
 							console.log("Success on saving signature");
-							window.location.replace("'.$_SERVER["PHP_SELF"].'?ref='.urlencode($ref).'&source='.urlencode($source).'&message=signed&securekey='.urlencode($SECUREKEY).(isModEnabled('multicompany') ? '&entity='.(int) $entity : '').'");
+							window.location.replace(\''.dol_escape_js($urltogo).'\');
 						} else {
 							document.body.style.cursor = \'auto\';
 							console.error(response);

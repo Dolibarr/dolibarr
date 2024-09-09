@@ -514,15 +514,17 @@ ModuleCompanyCodeCustomerDigitaria=%s nakon čega slijedi skraćeno ime kupca po
 ModuleCompanyCodeSupplierDigitaria=%s nakon čega slijedi skraćeno ime dobavljača po broju znakova: %s za obračunski kod dobavljača.
 Use3StepsApproval=Prema zadanim postavkama, narudžbenice moraju biti izrađene i odobrene od strane 2 različita korisnika (jedan korak po korisniku do izradi i jedan korak po korisniku za odobrenje. Imajte na umu da ako korisnik ima oba dopuštenja za izradi i odobri, jedan korak/korisnik će biti dovoljan). Ovom opcijom možete zatražiti uvođenje trećeg koraka/korisničkog odobrenja, ako je iznos veći od namjenske vrijednosti (pa će biti potrebna 3 koraka: 1=potvrda, 2=prvo odobrenje i 3=drugo odobrenje ako je iznos dovoljan).<br>Postavite ovo na prazno ako je jedno odobrenje (2 koraka) dovoljno, postavite ga na vrlo nisku vrijednost (0,1) ako uvijek je potrebno drugo odobrenje (3 koraka).
 UseDoubleApproval=Koristi 3 koraka odobravanja kada je iznos (bez poreza) veći od...
-WarningPHPMail=WARNING: The setup to send emails from the application is using the default generic setup. This choice needs no technical knowledge to complete the setup.<br>However, it is often better to setup outgoing emails to use the email server of your Email Service Provider instead of the default setup for several reasons:
+WarningPHPMail=NOTICE: The setup to send emails from the application is using the default generic setup (called "%s"). This choice needs no technical knowledge and no particular setup.<br>However, it is often better to setup outgoing emails to use the other method (called "%s") to use the email server of your Email Service Provider, instead of the default setup for several reasons:
 WarningPHPMailA=- Using the server of the Email Service Provider increases the trustworthiness of your email, so it increases the deliverability without being flagged as SPAM
-WarningPHPMailB=- Neki davatelji usluga e-pošte (kao što je Yahoo) ne dopuštaju vam slanje e-pošte s drugog poslužitelja osim s njihovog vlastitog poslužitelja. Vaša trenutna postavka koristi poslužitelj aplikacije za slanje e-pošte, a ne poslužitelj vašeg davatelja e-pošte, tako da će neki primatelji (onaj koji je kompatibilan s restriktivnim DMARC protokolom) pitati vašeg davatelja e-pošte može li prihvatiti vašu e-poštu, a neki davatelji e-pošte (poput Yahooa) može odgovoriti "ne" jer poslužitelj nije njihov, tako da nekoliko vaših poslanih e-poruka možda neće biti prihvaćeno za isporuku (pazite i na kvotu slanja vašeg davatelja e-pošte).
+WarningPHPMailB=- If the domain of your email (the part mymaildomain.com into myname@mymaildomain.com) is protected by a SPF + a DMARC record, your email may be flagged as SPAM because your DMARC rule defined into DNS zone of the domain of the sender (mymaildomain.com) does not allow the sending as a generic sender. In such a case, you must disable the DMARC for the domain (or set it to p=none like done by @gmail.com) or, better, if you have the technical knowledge, use the other method to send emails using the SMTP server of your own email provider.
 WarningPHPMailC=- Korištenje SMTP poslužitelja vašeg vlastitog davatelja usluga e-pošte za slanje e-pošte također je zanimljivo tako da će sve e-poruke poslane iz aplikacije također biti spremljene u vaš direktorij "Poslano" vašeg poštanskog sandučića.
 WarningPHPMailD=Stoga se preporuča promijeniti način slanja e-pošte na vrijednost "SMTP".
 WarningPHPMailDbis=Ako stvarno želite zadržati zadanu "PHP" metodu za slanje e-pošte, samo zanemarite ovo upozorenje ili je uklonite %sklikom ovdje%s.
 WarningPHPMail2=Ako vaš SMTP davatelj usluge e-pošte treba ograničiti klijenta e-pošte na neke IP adrese (vrlo rijetko), ovo je IP adresa korisničkog agenta e-pošte (MUA) za vašu ERP CRM aplikaciju: <strong> %s </strong> .
-WarningPHPMailSPF=Ako je naziv domene u adresi e-pošte pošiljatelja zaštićen SPF zapisom (pitajte svoj registar imena domene), morate dodati sljedeće IP adrese u SPF zapis DNS-a vaše domene: <strong> %s </strong> .
-ActualMailSPFRecordFound=Pronađen stvarni SPF zapis (za e-pošta %s): %s
+WarningPHPMailSPF=If the domain name in your sender email address is protected by a SPF record (ask your domain name registar), you must add the following IPs or entry in the SPF record of the DNS of your domain: <strong>%s</strong>.
+WarningPHPMailSPFDMARC=If the domain name in your sender email address is protected by a DMARC record different than p=none (ask your domain name registar), you must remove your DMARC record, or set it to p=none like do @gmail.com) or use sending another method.
+SPFAndDMARCInformation=SPF and DMARC DNS record for main email addresses
+ActualMailDNSRecordFound=Actual %s record found (for email %s) : %s
 ClickToShowDescription=Kliknite za prikaz opisa
 DependsOn=Ovaj modul treba modul(e)
 RequiredBy=Ovaj modul je potreban za modul(i)
@@ -867,7 +869,7 @@ Permission255=Izmjeni lozinku ostalih korisnika
 Permission256=Obriši ili isključi ostale korisnike
 Permission262=Extend access to all third parties AND their objects (not only third parties for which the user is linked as a sale representative).
 Permission262b=Not effective for external users (always limited to themselves for proposals, orders, invoices, contracts, etc.).
-Permission262c=Not effective for projects (only rules on project permissions, visibility and assignment matters).
+Permission262c=Not effective for projects (only rules on project permissions, visibility and users assignment matter).
 Permission263=Proširiti pristup svim trećim stranama BEZ njihovih objekata (ne samo trećim osobama za koje je korisnik prodajni zastupnik). <br> Nije učinkovito za vanjske korisnike (uvijek ograničeni na sebe za prijedloge, narudžbe, fakture, ugovore itd.). <br> Nije učinkovito za projekte (važna su samo pravila o projektnim dozvolama, vidljivosti i dodjeli).
 Permission271=Čitaj CA
 Permission272=Čitaj račune
@@ -944,7 +946,7 @@ Permission776=Isplati izvještaje troškova
 Permission777=Pročitajte sva izvješća o troškovima (čak i ona korisnika koji nisu podređeni)
 Permission778=Izradite/izmijenite izvješća o troškovima svih
 Permission779=Izvezi izvještaje troškova
-Permission1001=Čitaj zalihe
+Permission1001=Read warehouses and stocks
 Permission1002=Izradi/izmjeni skladišta
 Permission1003=Obriši skladišta
 Permission1004=Čitaj kretanja zaliha
@@ -2218,7 +2220,7 @@ CreateCandidature=Napravite prijavu za posao
 FormatZip=PBR
 MainMenuCode=Kôd za unos izbornika (glavni izbornik)
 ECMAutoTree=Prikaži automatsko ECM stablo
-OperationParamDesc=Define the rules to use to extract some data or set values to use for operation.<br><br>Example to extract a company name from email subject into a temporary variable:<br>tmp_var=EXTRACT:SUBJECT:Message from company ([^\n]*)<br><br>Examples to set the properties of an object to create:<br>objproperty1=SET:a hard coded value<br>objproperty2=SET:__tmp_var__<br>objproperty3=SETIFEMPTY:a value (value is set only if property is not already defined)<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a new line to extract or set several properties.
+OperationParamDesc=Define the rules to use to extract some data or set values to use for operation.<br><br>Example to extract a string from email header, subject or body into a temporary variable:<br>tmp_var1=EXTRACT:HEADER:My regex ([^\n]*)<br>tmp_var2=EXTRACT:SUBJECT:My refex ([^\n]*)<br>tmp_var3=EXTRACT:BODY:My regex ([^\n]*)<br><br>Examples to set the properties of an object to create:<br>objproperty1=SET:a hard coded value<br>objproperty2=SET:__tmp_var__<br>objproperty3=SETIFEMPTY:a value (value is set only if property is not already defined)<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a new line to extract or set several properties.
 OpeningHours=Radno vrijeme
 OpeningHoursDesc=Ovdje unesite redovno radno vrijeme Vaše tvrtke.
 ResourceSetup=Konfiguracija modula resursa
@@ -2264,7 +2266,7 @@ LargerThan=Veće od
 IfTrackingIDFoundEventWillBeLinked=Note that If a tracking ID of an object is found into email, or if the email is an answer of an email already collected and linked to an object, the created event will be automatically linked to the known related object.
 WithGMailYouCanCreateADedicatedPassword=S GMail računom, ako ste omogućili provjeru valjanosti u 2 koraka, preporučuje se izradi namjenska druga lozinka za aplikaciju umjesto korištenja vlastite lozinke računa s https://myaccount .google.com/.
 EmailCollectorTargetDir=Možda bi bilo poželjno premjestiti e-pošta u drugi oznaka/direktorij nakon što je uspješno obrađen. Ovdje samo postavite ime direktorija da biste koristili ovu značajku (NEMOJTE koristiti posebne znakove u imenu). Imajte na umu da također morate koristiti račun za prijavu za čitanje/pisanje.
-EmailCollectorLoadThirdPartyHelp=Ovu radnju možete upotrijebiti za korištenje sadržaja e-pošta za pronalaženje i učitavanja postojeće treće strane u vašoj bazi podataka (pretražit će se na definiranom svojstvu između 'id','name','name_alias','e-pošta'). Pronađena (ili stvorena) treća strana koristit će se za sljedeće radnje koje to trebaju.<br>Na primjer, ako želite izradi treća strana s imenom izdvojenim iz niza 'Ime: ime za pronalaženje' prisutna u tijelu, koristite pošiljatelja e-pošta kao e-pošta, polje parametra možete postaviti ovako:<br>'e-pošta=HEADER:^From:(.*) ;name=EXTRACT:BODY:Name:\\s([^\\s]*);client=SET:2;'<br>
+EmailCollectorLoadThirdPartyHelp=You can use this action to use the email content to find and load an existing third party in your database (search will be done on the defined property among 'id','name','name_alias','email'). The found (or created) third party will be used for following actions that need it.<br>For example, if you want to create a third party with a name extracted from a string 'Name: name to find' present into the body, use the sender email as email, you can set the parameter field like this:<br>'email=EXTRACT:HEADER:^From:(.*);name=EXTRACT:BODY:Name:\\s([^\\s]*);client=SET:2;'<br>
 FilterSearchImapHelp=Upozorenje: mnogi e-pošta poslužitelji (poput Gmaila) traže punu riječ kada pretraživanje niza i neće vratiti rezultat ako se niz nalazi samo djelomično u riječi. Iz tog razloga također, upotreba posebnih znakova u kriteriju pretraživanja bit će zanemarena ako nisu dio postojećih riječi.<br>Da biste izvršili izuzimanje pretraživanja riječi (vrati e-pošta ako riječ nije pronađena), možete koristiti ! znak prije riječi (možda neće raditi na nekim poslužiteljima e-pošte).
 EndPointFor=Krajnja točka za %s : %s
 DeleteEmailCollector=Izbriši sakupljač e-pošte

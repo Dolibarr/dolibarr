@@ -926,6 +926,7 @@ ConfirmMassDeletionQuestion=Are you sure you want to delete the %s selected reco
 ConfirmMassClone=Bulk clone confirmation
 ConfirmMassCloneQuestion=Select project to clone to
 ConfirmMassCloneToOneProject=Clone to project %s
+ObjectClonedSuccessfuly=Object cloned successfully
 RelatedObjects=Related Objects
 ClassifyBilled=Classify Billed
 ClassifyUnbilled=Classify Unbilled
