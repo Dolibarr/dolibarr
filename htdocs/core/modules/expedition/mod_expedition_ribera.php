@@ -106,7 +106,7 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 		$mysoc->typent_code = 'TTTTTTTTTT';
 
 
-		if(!class_exists('Expedition')){
+		if (!class_exists('Expedition')) {
 			require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 		}
 
