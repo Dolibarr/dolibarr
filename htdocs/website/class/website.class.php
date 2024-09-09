@@ -1023,7 +1023,7 @@ class Website extends CommonObject
 		$destdir = $conf->website->dir_temp.'/'.$website->ref.'/containers';
 
 		dol_syslog("Copy pages from ".$srcdir." into ".$destdir);
-		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacementinfilename, 2, array('old', 'back'), 1);
+		dolCopyDir($srcdir, $destdir, '0', 1, $arrayreplacementinfilename, 2, array('old', 'back'), 1);
 
 		// Copy file README.md and LICENSE from directory containers into directory root
 		if (dol_is_file($conf->website->dir_temp.'/'.$website->ref.'/containers/README.md')) {
@@ -1038,14 +1038,14 @@ class Website extends CommonObject
 		$destdir = $conf->website->dir_temp.'/'.$website->ref.'/medias/image/websitekey';
 
 		dol_syslog("Copy content from ".$srcdir." into ".$destdir);
-		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacementinfilename);
+		dolCopyDir($srcdir, $destdir, '0', 1, $arrayreplacementinfilename);
 
 		// Copy files into medias/js
 		$srcdir = DOL_DATA_ROOT.'/medias/js/'.$website->ref;
 		$destdir = $conf->website->dir_temp.'/'.$website->ref.'/medias/js/websitekey';
 
 		dol_syslog("Copy content from ".$srcdir." into ".$destdir);
-		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacementinfilename);
+		dolCopyDir($srcdir, $destdir, '0', 1, $arrayreplacementinfilename);
 
 		// Make some replacement into some files
 		$cssindestdir = $conf->website->dir_temp.'/'.$website->ref.'/containers/styles.css.php';
@@ -1264,7 +1264,7 @@ class Website extends CommonObject
 
 
 		// Copy containers directory
-		dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/containers', $conf->website->dir_output.'/'.$object->ref, 0, 1); // Overwrite if exists
+		dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/containers', $conf->website->dir_output.'/'.$object->ref, '0', 1); // Overwrite if exists
 
 		// Make replacement into css and htmlheader file
 		$cssindestdir = $conf->website->dir_output.'/'.$object->ref.'/styles.css.php';
@@ -1283,7 +1283,7 @@ class Website extends CommonObject
 
 		// Copy dir medias/image/websitekey
 		if (dol_is_dir($conf->website->dir_temp.'/'.$object->ref.'/medias/image/websitekey')) {
-			$result = dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/medias/image/websitekey', $conf->website->dir_output.'/'.$object->ref.'/medias/image/'.$object->ref, 0, 1);
+			$result = dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/medias/image/websitekey', $conf->website->dir_output.'/'.$object->ref.'/medias/image/'.$object->ref, '0', 1);
 			if ($result < 0) {
 				$this->error = 'Failed to copy files into '.$conf->website->dir_output.'/'.$object->ref.'/medias/image/'.$object->ref.'.';
 				dol_syslog($this->error, LOG_WARNING);
@@ -1294,7 +1294,7 @@ class Website extends CommonObject
 
 		// Copy dir medias/js/websitekey
 		if (dol_is_dir($conf->website->dir_temp.'/'.$object->ref.'/medias/js/websitekey')) {
-			$result = dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/medias/js/websitekey', $conf->website->dir_output.'/'.$object->ref.'/medias/js/'.$object->ref, 0, 1);
+			$result = dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/medias/js/websitekey', $conf->website->dir_output.'/'.$object->ref.'/medias/js/'.$object->ref, '0', 1);
 			if ($result < 0) {
 				$this->error = 'Failed to copy files into '.$conf->website->dir_output.'/'.$object->ref.'/medias/js/'.$object->ref.'.';
 				dol_syslog($this->error, LOG_WARNING);
