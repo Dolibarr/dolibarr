@@ -301,7 +301,7 @@ if ($action == 'builddoc' && $user->hasRight('export', 'lire')) {
 }
 
 // Delete file
-if ($step == 5 && $action == 'confirm_deletefile' && $confirm == 'yes' && $user->hasRight('import', 'run')) {
+if ($step == 5 && $action == 'confirm_deletefile' && $confirm == 'yes' && $user->hasRight('export', 'run')) {
 	// Check permission
 	if (empty($objexport->array_export_perms[0])) {
 		accessforbidden();
@@ -319,7 +319,7 @@ if ($step == 5 && $action == 'confirm_deletefile' && $confirm == 'yes' && $user-
 	exit;
 }
 
-if ($action == 'deleteprof' && $user->hasRight('import', 'run')) {
+if ($action == 'deleteprof' && $user->hasRight('export', 'run')) {
 	// Check permission
 	if (empty($objexport->array_export_perms[0])) {
 		accessforbidden();
@@ -332,7 +332,7 @@ if ($action == 'deleteprof' && $user->hasRight('import', 'run')) {
 }
 
 // TODO The export for filter is not yet implemented (old code created conflicts with step 2). We must use same way of working and same combo list of predefined export than step 2.
-if ($action == 'add_export_model' && $user->hasRight('import', 'run')) {
+if ($action == 'add_export_model' && $user->hasRight('export', 'run')) {
 	// Check permission
 	if (empty($objexport->array_export_perms[0])) {
 		accessforbidden();
@@ -383,7 +383,7 @@ if ($action == 'add_export_model' && $user->hasRight('import', 'run')) {
 }
 
 // Reload a predefined export model
-if ($step == 2 && $action == 'select_model' && $user->hasRight('import', 'run')) {
+if ($step == 2 && $action == 'select_model' && $user->hasRight('export', 'run')) {
 	$_SESSION["export_selected_fields"] = array();
 	$_SESSION["export_filtered_fields"] = array();
 
@@ -412,7 +412,7 @@ if ($step == 2 && $action == 'select_model' && $user->hasRight('import', 'run'))
 }
 
 // Get form with filters
-if ($step == 4 && $action == 'submitFormField' && $user->hasRight('import', 'run')) {
+if ($step == 4 && $action == 'submitFormField' && $user->hasRight('export', 'run')) {
 	// Check permission
 	if (empty($objexport->array_export_perms[0])) {
 		accessforbidden();
