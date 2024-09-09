@@ -35,6 +35,7 @@
 // $uploaddir may be defined (example to $conf->project->dir_output."/";)
 // $toselect may be defined
 // $diroutputmassaction may be defined
+// $confirm
 
 
 // Protection
@@ -1761,63 +1762,87 @@ if (!$error && ($massaction == 'increaseholiday' || ($action == 'increaseholiday
 	}
 }
 
-//if (!$error && $massaction == 'clonetasks' && $user->rights->projet->creer) {
-if (!$error && ($massaction == 'clonetasks' || ($action == 'clonetasks' && $confirm == 'yes'))) {
+
+if (!$error && ($massaction == 'clonetasks' || ($action == 'clonetasks' && $confirm == 'yes'))) {	// Test on permission not required here, done later
 	$num = 0;
 
-	dol_include_once('/projet/class/task.class.php');
+	include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 
 	$origin_task = new Task($db);
 	$clone_task = new Task($db);
+	$newproject = new Project($db);
+	$newproject->fetch(GETPOSTINT('projectid'));
 
-	foreach (GETPOST('selected') as $task) {
-		$origin_task->fetch($task, $ref = '', $loadparentdata = 0);
-
-		$defaultref = '';
-		$obj = !getDolGlobalString('PROJECT_TASK_ADDON') ? 'mod_task_simple' : $conf->global->PROJECT_TASK_ADDON;
-		if (getDolGlobalString('PROJECT_TASK_ADDON') && is_readable(DOL_DOCUMENT_ROOT . "/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON') . ".php")) {
-			require_once DOL_DOCUMENT_ROOT . "/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON') . '.php';
-			$modTask = new $obj();
-			$defaultref = $modTask->getNextValue(0, $clone_task);
-		}
-
-		if (!$error) {
-			$clone_task->fk_project = GETPOSTINT('projectid');
-			$clone_task->ref = $defaultref;
-			$clone_task->label = $origin_task->label;
-			$clone_task->description = $origin_task->description;
-			$clone_task->planned_workload = $origin_task->planned_workload;
-			$clone_task->fk_task_parent = $origin_task->fk_task_parent;
-			$clone_task->date_c = dol_now();
-			$clone_task->date_start = $origin_task->date_start;
-			$clone_task->date_end = $origin_task->date_end;
-			$clone_task->progress = $origin_task->progress;
-
-			// Fill array 'array_options' with data from add form
-			$ret = $extrafields->setOptionalsFromPost(null, $clone_task);
-
-			$taskid = $clone_task->create($user);
-
-			if ($taskid > 0) {
-				$result = $clone_task->add_contact(GETPOSTINT("userid"), 'TASKEXECUTIVE', 'internal');
-				$num++;
-			} else {
-				if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-					$langs->load("projects");
-					setEventMessages($langs->trans('NewTaskRefSuggested'), '', 'warnings');
-					$duplicate_code_error = true;
-				} else {
-					setEventMessages($clone_task->error, $clone_task->errors, 'errors');
-				}
-				$action = 'list';
-				$error++;
-			}
+	// Check if current user is contact of the new project (necessary only if project is not public)
+	$iscontactofnewproject = 0;
+	if (empty($newproject->public)) {
+		$tmps = $newproject->getProjectsAuthorizedForUser($user, 0, 1, 0, '(fk_statut:=:1)');	// We check only open project (cloning on closed is not allowed
+		$tmparray = explode(',', $tmps);
+		if (!in_array($newproject->id, $tmparray)) {
+			$iscontactofnewproject = 1;
 		}
 	}
 
-	if (!$error) {
-		setEventMessage($langs->trans('NumberOfTasksCloned', $num));
-		header("Refresh: 1;URL=".DOL_URL_ROOT.'/projet/tasks.php?id=' . GETPOSTINT('projectid'));
+	// Check permission on new project
+	$permisstiontoadd = false;
+	if ($user->hasRight('project', 'all', 'creer') || ($user->hasRight('project', 'creer') && ($newproject->public || $iscontactofnewproject))) {
+		$permisstiontoadd = true;
+	}
+
+	if ($permisstiontoadd) {
+		foreach (GETPOST('selected') as $task) {
+			$origin_task->fetch($task, '', 0);
+
+			$defaultref = '';
+			$classnamemodtask = getDolGlobalString('PROJECT_TASK_ADDON', 'mod_task_simple');
+			if (getDolGlobalString('PROJECT_TASK_ADDON') && is_readable(DOL_DOCUMENT_ROOT . "/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON') . ".php")) {
+				require_once DOL_DOCUMENT_ROOT . "/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON') . '.php';
+				$modTask = new $classnamemodtask();
+				'@phan-var-force ModeleNumRefTask $modTask';
+				$defaultref = $modTask->getNextValue(null, $newproject);
+			}
+
+			if (!$error) {
+				$clone_task->fk_project = GETPOSTINT('projectid');
+				$clone_task->ref = $defaultref;
+				$clone_task->label = $origin_task->label;
+				$clone_task->description = $origin_task->description;
+				$clone_task->planned_workload = $origin_task->planned_workload;
+				$clone_task->fk_task_parent = $origin_task->fk_task_parent;
+				$clone_task->date_c = dol_now();
+				$clone_task->date_start = $origin_task->date_start;
+				$clone_task->date_end = $origin_task->date_end;
+				$clone_task->progress = $origin_task->progress;
+
+				// Fill array 'array_options' with data from add form
+				$ret = $extrafields->setOptionalsFromPost(null, $clone_task);
+
+				$taskid = $clone_task->create($user);
+
+				if ($taskid > 0) {
+					$result = $clone_task->add_contact(GETPOSTINT("userid"), 'TASKEXECUTIVE', 'internal');
+					$num++;
+				} else {
+					if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+						$langs->load("projects");
+						setEventMessages($langs->trans('NewTaskRefSuggested'), '', 'warnings');
+						$duplicate_code_error = true;
+					} else {
+						setEventMessages($clone_task->error, $clone_task->errors, 'errors');
+					}
+					$action = 'list';
+					$error++;
+				}
+			}
+		}
+
+		if (!$error) {
+			setEventMessages($langs->trans('NumberOfTasksCloned', $num), null, 'mesgs');
+			header("Location: ".DOL_URL_ROOT.'/projet/tasks.php?id='.GETPOSTINT('projectid'));
+			exit();
+		}
+	} else {
+		setEventMessages($langs->trans('NotEnoughPermissions'), null, 'errors');
 	}
 }
 

@@ -8233,7 +8233,24 @@ class Form
 	{
 		global $conf, $extrafields, $user;
 
-		//var_dump($objectdesc); debug_print_backtrace();
+		// Example of common usage for a link to a thirdparty
+
+		// We got this in a modulebuilder form of "MyObject" of module "mymodule".
+		// ->fields is array( ... "fk_soc" => array("type"=>"integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))" ...)
+		// $objectdesc = 'Societe'
+		// $objectfield = 'myobject@mymodule:fk_soc'  ('fk_soc' is code to retrieve myobject->fields['fk_soc'])
+
+		// We got this when showing an extrafields on resource that is a link to societe
+		// extrafields 'link_to_societe' of Resource is 'link' to 'Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))" ...)'
+		// $objectdesc = 'Societe'
+		// $objectfield = 'resource:options_link_to_societe'
+
+		// With old usage:
+		// $objectdesc = 'Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))'
+		// $objectfield = ''
+
+		//var_dump($objectdesc.' '.$objectfield);
+		//debug_print_backtrace();
 
 		$objectdescorig = $objectdesc;
 		$objecttmp = null;

@@ -215,6 +215,25 @@ foreach ($dirsrootforscan as $tmpdirread) {
 	$i++;
 }
 
+/**
+ * Add management to catch fatal errors - shutdown handler
+ *
+ * @return	void
+ */
+function moduleBuilderShutdownFunction()
+{
+	$error = error_get_last();
+	if ($error && ($error['type'] & (E_ERROR | E_PARSE | E_CORE_ERROR | E_COMPILE_ERROR | E_USER_ERROR))) {
+		// Handle the fatal error
+		echo "Fatal error occurred: {$error['message']} in {$error['file']} on line {$error['line']}";
+		// If a header was already send, we suppose it is the llx_Header() so we call the llxFooter()
+		if (headers_sent()) {
+			llxFooter();
+		}
+	}
+}
+register_shutdown_function("moduleBuilderShutdownFunction");
+
 
 /*
  * Actions
@@ -3027,6 +3046,7 @@ if ($dirins && $action == "update_props_module" && !empty(GETPOST('keydescriptio
 	}
 }
 
+
 /*
  * View
  */
@@ -4106,9 +4126,10 @@ if ($module == 'initmodule') {
 							$result = dol_include_once($pathtoclass);
 							$stringofinclude = "dol_include_once(".$pathtoclass.")";
 						} else {
-							$result = @include_once $dirread.'/'.$pathtoclass;
+							$result = include_once $dirread.'/'.$pathtoclass;
 							$stringofinclude = "@include_once ".$dirread.'/'.$pathtoclass;
 						}
+
 						if (class_exists($tabobj)) {
 							try {
 								$tmpobject = @new $tabobj($db);
@@ -4680,7 +4701,9 @@ if ($module == 'initmodule') {
 							print '<span class="warning">'.$langs->trans('Failed to init the object with the new %s (%s)', $tabobj, (string) $db).'</warning>';
 						}
 					} catch (Exception $e) {
+						print 'ee';
 						print $e->getMessage();
+						print 'ff';
 					}
 				} else {
 					if (empty($forceddirread)) {
