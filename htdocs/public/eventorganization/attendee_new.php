@@ -697,7 +697,7 @@ print '<div id="divsubscribe">';
 
 // Sub banner
 print '<div class="center subscriptionformbanner subbanner justify margintoponly paddingtop marginbottomonly padingbottom">';
-print load_fiche_titre($langs->trans("NewRegistration"), '', '', 0, 0, 'center');
+print load_fiche_titre($langs->trans("NewRegistration"), '', '', 0, '', 'center');
 // Welcome message
 print '<span class="opacitymedium">'.$langs->trans("EvntOrgWelcomeMessage").'</span>';
 print '<br>';
