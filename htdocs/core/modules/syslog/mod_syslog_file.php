@@ -66,7 +66,7 @@ class mod_syslog_file extends LogHandler
 	/**
 	 * 	Return array of configuration data
 	 *
-	 * 	@return	array<array{name:string,constant:string,default:string,css:string}>	Return array of configuration data
+	 * 	@return	array<array{name:string,constant:string,default:string,css?:string}>	Return array of configuration data
 	 */
 	public function configure()
 	{
