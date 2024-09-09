@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -219,7 +220,7 @@ print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 print '<input type="hidden" name="action" value="dopayment">'."\n";
 print '<input type="hidden" name="tag" value="'.GETPOST("tag", 'alpha').'">'."\n";
 //print '<input type="hidden" name="suffix" value="'.dol_escape_htmltag($suffix).'">'."\n";
-print '<input type="hidden" name="id" value="'.dol_escape_htmltag($id).'">'."\n";
+print '<input type="hidden" name="id" value="'.dol_escape_htmltag((string) $id).'">'."\n";
 print '<input type="hidden" name="securekey" value="'.dol_escape_htmltag($securekeyreceived).'">'."\n";
 print '<input type="hidden" name="e" value="'.$entity.'" />';
 print '<input type="hidden" name="forcesandbox" value="'.GETPOSTINT('forcesandbox').'" />';
