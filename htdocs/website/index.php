@@ -2197,7 +2197,7 @@ if ((($action == 'updatesource' || $action == 'updatecontent' || $action == 'con
 		$db->begin();
 
 		$objectnew = new Website($db);
-		$result = $objectnew->createFromClone($user, GETPOSTINT('id'), GETPOSTINT('siteref'), (GETPOSTINT('newlang') ? GETPOSTINT('newlang') : ''));
+		$result = $objectnew->createFromClone($user, GETPOSTINT('id'), GETPOST('siteref'), (GETPOSTINT('newlang') ? GETPOSTINT('newlang') : ''));
 
 		if ($result < 0) {
 			$error++;
@@ -2206,6 +2206,7 @@ if ((($action == 'updatesource' || $action == 'updatecontent' || $action == 'con
 
 			$db->rollback();
 		} else {
+			setEventMessages("ObjectClonedSuccessfuly", null, 'mesgs');
 			$object = $objectnew;
 			$id = $object->id;
 			$pageid = $object->fk_default_home;
