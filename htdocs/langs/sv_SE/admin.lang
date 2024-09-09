@@ -514,15 +514,17 @@ ModuleCompanyCodeCustomerDigitaria=%s följt av det trunkerade kundnamnet med an
 ModuleCompanyCodeSupplierDigitaria=%s följt av det trunkerade leverantörsnamnet med antalet tecken: %s för leverantörsspecifik bokföringskod.
 Use3StepsApproval=Som standard måste inköpsorder skapas och godkännas av 2 olika användare (ett steg/användare att skapa och ett steg/användare att godkänna. Observera att om användaren har båda tillstånd att skapa och godkänna, är ett steg/användaren tillräckligt). Du kan genom detta alternativ fråga om att införa ett tredje steg/användare för godkännande, om beloppet är högre än ett angivet värde (så 3 steg kommer att behövas: 1=godkännande, 2=första godkännande och 3=andra godkännande om beloppet är tillräckligt högt). <br>Låt detta fält vara tomt om ett godkännande (2 steg) räcker. Ange ett mycket lågt värde (0.1) om ett andra godkännande (3 steg) alltid krävs.
 UseDoubleApproval=Använd ett 3-stegs godkännande när beloppet (utan moms) är högre än ...
-WarningPHPMail=WARNING: The setup to send emails from the application is using the default generic setup. This choice needs no technical knowledge to complete the setup.<br>However, it is often better to setup outgoing emails to use the email server of your Email Service Provider instead of the default setup for several reasons:
+WarningPHPMail=NOTICE: The setup to send emails from the application is using the default generic setup (called "%s"). This choice needs no technical knowledge and no particular setup.<br>However, it is often better to setup outgoing emails to use the other method (called "%s") to use the email server of your Email Service Provider, instead of the default setup for several reasons:
 WarningPHPMailA=- Using the server of the Email Service Provider increases the trustworthiness of your email, so it increases the deliverability without being flagged as SPAM
-WarningPHPMailB=- Vissa leverantörer (exempelvis Yahoo) tillåter inte att du skickar e-post från en annan server än sin egen server. Din nuvarande inställning använder programmets server för att skicka e-post och inte din leverantörs server, så vissa mottagare (den som är kompatibel med det begränsande DMARC-protokollet) frågar din leverantör om de kan acceptera din e-post och vissa leverantörer (som Yahoo) kan svara "nej" eftersom servern inte tillhör dem, så några av dina skickade meddelanden kanske inte accepteras för leverans (se också upp med din leverantörs sändningskvot).
+WarningPHPMailB=- If the domain of your email (the part mymaildomain.com into myname@mymaildomain.com) is protected by a SPF + a DMARC record, your email may be flagged as SPAM because your DMARC rule defined into DNS zone of the domain of the sender (mymaildomain.com) does not allow the sending as a generic sender. In such a case, you must disable the DMARC for the domain (or set it to p=none like done by @gmail.com) or, better, if you have the technical knowledge, use the other method to send emails using the SMTP server of your own email provider.
 WarningPHPMailC=- Att använda din egen leverantörs SMTP-server för att skicka e-post gör också att alla meddelanden som skickas också sparas i din skickat-mapp.
 WarningPHPMailD=Det rekommenderas därför att ändra sändningsmetoden för e-post till värdet "SMTP".
 WarningPHPMailDbis=Om du verkligen vill behålla standardmetoden "PHP" för att skicka e-post, ignorera bara denna varning eller ta bort den genom att %sklicka här%s.
 WarningPHPMail2=Om din leverantör behöver begränsa epostklienten till vissa IP-adresser (mycket sällsynt), är detta IP-adressen för ditt ERP/CRM: <strong>%s</strong>.
-WarningPHPMailSPF=Om domännamnet du skickar från är skyddat av SPF (fråga din domännamns registrar), måste du lägga till följande IP-adress i SPF för din domän: <strong>%s</strong>
-ActualMailSPFRecordFound=SPF hittat (för e-post %s): %s
+WarningPHPMailSPF=If the domain name in your sender email address is protected by a SPF record (ask your domain name registar), you must add the following IPs or entry in the SPF record of the DNS of your domain: <strong>%s</strong>.
+WarningPHPMailSPFDMARC=If the domain name in your sender email address is protected by a DMARC record different than p=none (ask your domain name registar), you must remove your DMARC record, or set it to p=none like do @gmail.com) or use sending another method.
+SPFAndDMARCInformation=SPF and DMARC DNS record for main email addresses
+ActualMailDNSRecordFound=Actual %s record found (for email %s) : %s
 ClickToShowDescription=Klicka för att visa beskrivning
 DependsOn=Denna modul är beroende av modul(erna)
 RequiredBy=Denna modul krävs enligt modul(er)
@@ -867,7 +869,7 @@ Permission255=Ändra andra användares lösenord
 Permission256=Radera eller inaktivera andra användare
 Permission262=Extend access to all third parties AND their objects (not only third parties for which the user is linked as a sale representative).
 Permission262b=Not effective for external users (always limited to themselves for proposals, orders, invoices, contracts, etc.).
-Permission262c=Not effective for projects (only rules on project permissions, visibility and assignment matters).
+Permission262c=Not effective for projects (only rules on project permissions, visibility and users assignment matter).
 Permission263=Utöka åtkomst till alla tredjeparter UTAN deras objekt (inte bara tredjeparter för vilka användaren är representant). <br>Gäller inte externa användare (alltid begränsade till sig själva för offerter, order, fakturor, kontrakt etc.). <br> Gäller inte heller projekt (endast regler om projektbehörigheter, synlighet och uppdragsfrågor).
 Permission271=Se CA
 Permission272=Se fakturor
@@ -944,7 +946,7 @@ Permission776=Betala utgiftsrapporter
 Permission777=Se alla utläggsrapporter (även för användare som inte är dina underordnade)
 Permission778=Skapa/ändra utgiftsrapporter för alla
 Permission779=Exportera utgiftsrapporter
-Permission1001=Se lager
+Permission1001=Read warehouses and stocks
 Permission1002=Skapa/ändra lager
 Permission1003=Radera lager
 Permission1004=Se lagerrörelser
@@ -2218,7 +2220,7 @@ CreateCandidature=Skapa jobbansökan
 FormatZip=Zip
 MainMenuCode=Menyinmatningskod (huvudmeny)
 ECMAutoTree=Visa automatiskt ECM-träd
-OperationParamDesc=Definiera reglerna som ska användas för att extrahera vissa data eller ange värden som ska användas för drift.<br><br>Exempel att extrahera ett företagsnamn från e-postämne till en temporär variabel:<br>tmp_var=EXTRACT:SUBJECT:Meddelande från företaget ([^\n]*)<br><br>Exempel för att ställa in egenskaperna för ett objekt som ska skapas:<br>objproperty1=SET:ett hårdkodat värde<br>objproperty2=SET:__tmp_var__<br>objproperty3=aSETIFEMPTY (värde anges endast om egenskapen inte redan är definierad)<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:Mitt företagsnamn är\\ s([^\\s]*)<br><br>Använd en ny rad för att extrahera eller ställa in flera egenskaper.
+OperationParamDesc=Define the rules to use to extract some data or set values to use for operation.<br><br>Example to extract a string from email header, subject or body into a temporary variable:<br>tmp_var1=EXTRACT:HEADER:My regex ([^\n]*)<br>tmp_var2=EXTRACT:SUBJECT:My refex ([^\n]*)<br>tmp_var3=EXTRACT:BODY:My regex ([^\n]*)<br><br>Examples to set the properties of an object to create:<br>objproperty1=SET:a hard coded value<br>objproperty2=SET:__tmp_var__<br>objproperty3=SETIFEMPTY:a value (value is set only if property is not already defined)<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a new line to extract or set several properties.
 OpeningHours=Öppettider
 OpeningHoursDesc=Ange här företagets vanliga öppettider.
 ResourceSetup=Konfiguration av resursmodulen
@@ -2264,7 +2266,7 @@ LargerThan=Större än
 IfTrackingIDFoundEventWillBeLinked=Observera att om ett spårnings-ID för ett objekt hittas i e-post, eller om e-postmeddelandet är ett svar på ett e-postmeddelande som redan samlats in och länkats till ett objekt, kommer den skapade händelsen automatiskt att länkas till det kända relaterade objektet.
 WithGMailYouCanCreateADedicatedPassword=Med ett Gmail-konto, om du aktiverade 2-stegsvalideringen, rekommenderas det att skapa ett dedikerat andra lösenord för applikationen istället för att använda ditt eget kontolösenord från https://myaccount.google.com/.
 EmailCollectorTargetDir=Det kan vara ett önskat beteende att flytta e-postmeddelandet till en annan tagg/katalog när det bearbetades framgångsrikt. Ange bara namnet på katalogen här för att använda den här funktionen (Använd INTE specialtecken i namnet). Observera att du också måste använda ett läs-/skrivinloggningskonto.
-EmailCollectorLoadThirdPartyHelp=Du kan använda den här åtgärden för att använda e-postinnehållet för att hitta och ladda en befintlig tredje part i din databas (sökning kommer att göras på den definierade egenskapen bland 'id','name','name_alias','email'). Den hittade (eller skapade) tredje parten kommer att användas för följande åtgärder som behöver det.<br>Till exempel, om du vill skapa en tredje part med ett namn extraherat från en sträng ' Namn: namn att hitta' finns i brödtexten, använd avsändarens e-postmeddelande som e-post, du kan ställa in parameterfältet så här:<br>'email=HEADER:^Från:(. *);name=EXTRACT:BODY:Name:\\s([^\\s]*);client=SET:2;'<br>
+EmailCollectorLoadThirdPartyHelp=You can use this action to use the email content to find and load an existing third party in your database (search will be done on the defined property among 'id','name','name_alias','email'). The found (or created) third party will be used for following actions that need it.<br>For example, if you want to create a third party with a name extracted from a string 'Name: name to find' present into the body, use the sender email as email, you can set the parameter field like this:<br>'email=EXTRACT:HEADER:^From:(.*);name=EXTRACT:BODY:Name:\\s([^\\s]*);client=SET:2;'<br>
 FilterSearchImapHelp=Varning: många e-postservrar (som Gmail) gör helordssökningar när de söker på en sträng och kommer inte att returnera ett resultat om strängen bara hittas delvis i ett ord. Av denna anledning kommer användning av specialtecken i ett sökkriterium att ignoreras om de inte är en del av befintliga ord.<br>För att göra en exkluderingssökning på ett ord (retur e-post om ord inte hittas), kan du använda ! tecken före ordet (fungerar kanske inte på vissa e-postservrar).
 EndPointFor=Slutpunkt för %s: %s
 DeleteEmailCollector=Ta bort e-postsamlare
