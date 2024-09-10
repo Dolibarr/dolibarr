@@ -983,7 +983,7 @@ if ($action == 'create') {
 					print "</td></tr>\n";
 				}
 			}
-			
+
 			print "</table>";
 
 			print dol_get_fiche_end();
