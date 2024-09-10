@@ -88,6 +88,10 @@ class Contrat extends CommonObject
 	 * @var string
 	 */
 	public $ref_customer;
+
+	/**
+	 * @var string Partial SQL query: 'FROM ' expression
+	 */
 	public $from;
 
 	/**
@@ -132,6 +136,9 @@ class Contrat extends CommonObject
 	 */
 	public $status = 0;
 
+	/**
+	 * @var void TODO: set correct type
+	 */
 	public $product;
 
 	/**
@@ -169,9 +176,21 @@ class Contrat extends CommonObject
 	 */
 	public $signed_status = 0;
 
+	/**
+	 * @var int
+	 */
 	public $commercial_signature_id;
+	/**
+	 * @var int|string
+	 */
 	public $fk_commercial_signature;
+	/**
+	 * @var int
+	 */
 	public $commercial_suivi_id;
+	/**
+	 * @var int|string
+	 */
 	public $fk_commercial_suivi;
 
 	/**
@@ -188,10 +207,25 @@ class Contrat extends CommonObject
 	 */
 	public $lines = array();
 
+	/**
+	 * @var int
+	 */
 	public $nbofservices;
+	/**
+	 * @var int
+	 */
 	public $nbofserviceswait;
+	/**
+	 * @var int
+	 */
 	public $nbofservicesopened;
+	/**
+	 * @var int
+	 */
 	public $nbofservicesexpired;
+	/**
+	 * @var int
+	 */
 	public $nbofservicesclosed;
 	//public $lower_planned_end_date;
 	//public $higher_planner_end_date;
@@ -676,16 +710,18 @@ class Contrat extends CommonObject
 	/**
 	 *  Load a contract from database
 	 *
-	 *  @param	int		$id     		Id of contract to load
-	 *  @param	string	$ref			Ref
-	 *  @param	string	$ref_customer	Customer ref
-	 *  @param	string	$ref_supplier	Supplier ref
-	 *  @param	int		$noextrafields	0=Default to load extrafields, 1=No extrafields
-	 *  @param	int		$nolines		0=Default to load lines, 1=No lines
+	 *  @param	int			$id     		Id of contract to load
+	 *  @param	string		$ref			Ref
+	 *  @param	string		$ref_customer	Customer ref
+	 *  @param	string		$ref_supplier	Supplier ref
+	 *  @param	int<0,1>	$noextrafields	0=Default to load extrafields, 1=No extrafields
+	 *  @param	int<0,1>	$nolines		0=Default to load lines, 1=No lines
 	 *  @return int     				Return integer <0 if KO, 0 if not found or if two records found for same ref, Id of contract if OK
 	 */
 	public function fetch($id, $ref = '', $ref_customer = '', $ref_supplier = '', $noextrafields = 0, $nolines = 0)
 	{
+		$result = -10;
+
 		$sql = "SELECT rowid, statut as status, ref, fk_soc as thirdpartyid,";
 		$sql .= " ref_supplier, ref_customer,";
 		$sql .= " ref_ext,";
@@ -1443,7 +1479,7 @@ class Contrat extends CommonObject
 	 * 	@param  int			$info_bits			Bits of type of lines
 	 * 	@param  int			$fk_fournprice		Fourn price id
 	 *  @param  int			$pa_ht				Buying price HT
-	 *  @param	array		$array_options		extrafields array
+	 *  @param	array<string,mixed>		$array_options		extrafields array
 	 * 	@param 	string		$fk_unit 			Code of the unit to use. Null to use the default one
 	 * 	@param 	int			$rang 				Position
 	 *  @return int             				Return integer <0 if KO, >0 if OK
@@ -1678,7 +1714,7 @@ class Contrat extends CommonObject
 	 * 	@param  int			$info_bits			Bits of type of lines
 	 * 	@param  int			$fk_fournprice		Fourn price id
 	 *  @param  int			$pa_ht				Buying price HT
-	 *  @param	array		$array_options		extrafields array
+	 *  @param	array<string,mixed>		$array_options		extrafields array
 	 * 	@param 	string		$fk_unit 			Code of the unit to use. Null to use the default one
 	 * 	@param 	int			$rang 				Position
 	 *  @return int              				Return integer <0 if KO, >0 if OK
@@ -2006,9 +2042,9 @@ class Contrat extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 * @param array $params params to construct tooltip data
+	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
-	 * @return array
+	 * @return array{picto:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -2210,11 +2246,11 @@ class Contrat extends CommonObject
 	/**
 	 *  Return list of other contracts for the same company than current contract
 	 *
-	 *	@param	string		$option					'all' or 'others'
-	 *	@param	array		$status					sort contracts having these status
-	 *	@param  array		$product_categories		sort contracts containing these product categories
-	 *	@param	array		$line_status			sort contracts where lines have these status
-	 *  @return array|int   						Array of contracts id or <0 if error
+	 *	@param	'all'|'others'	$option				'all' or 'others'
+	 *	@param	int[]		$status					sort contracts having these status
+	 *	@param  string[]	$product_categories		sort contracts containing these product categories
+	 *	@param	int[]		$line_status			sort contracts where lines have these status
+	 *  @return array<int,Contrat>|int<min,-1>					Array of contracts id or <0 if error
 	 */
 	public function getListOfContracts($option = 'all', $status = [], $product_categories = [], $line_status = [])
 	{
@@ -2394,7 +2430,7 @@ class Contrat extends CommonObject
 	/**
 	 *  Return id des contacts clients de facturation
 	 *
-	 *  @return     array       Liste des id contacts facturation
+	 *  @return     int[]       Liste des id contacts facturation
 	 */
 	public function getIdBillingContact()
 	{
@@ -2404,7 +2440,7 @@ class Contrat extends CommonObject
 	/**
 	 *  Return id des contacts clients de prestation
 	 *
-	 *  @return     array       Liste des id contacts prestation
+	 *  @return     int[]       Liste des id contacts prestation
 	 */
 	public function getIdServiceContact()
 	{
@@ -2499,14 +2535,14 @@ class Contrat extends CommonObject
 	/**
 	 * 	Create an array of associated tickets
 	 *
-	 * 	@return array|int		Array o tickets or <0 if KO
+	 * 	@return Ticket[]|int<min,-1>		Array o tickets or <0 if KO
 	 */
 	public function getTicketsArray()
 	{
 		global $user;
 
 		$ticket = new Ticket($this->db);
-		$nbTicket =  $ticket->fetchAll($user, 'ASC', 't.datec', '', 0, '', array('t.fk_contract' => $this->id));
+		$nbTicket =  $ticket->fetchAll($user, 'ASC', 't.datec', 0, 0, 0, array('t.fk_contract' => $this->id));
 
 		return ($nbTicket < 0 ? $nbTicket : $ticket->lines);
 	}
@@ -2520,7 +2556,7 @@ class Contrat extends CommonObject
 	 *  @param      int			$hidedetails    Hide details of lines
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
-	 *  @param   	null|array  $moreparams     Array to provide more information
+	 *  @param   	?array<string,mixed>  $moreparams     Array to provide more information
 	 * 	@return     int         				Return integer < 0 if KO, 0 = no doc generated, > 0 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
@@ -2635,7 +2671,7 @@ class Contrat extends CommonObject
 		require_once DOL_DOCUMENT_ROOT."/core/modules/contract/" . getDolGlobalString('CONTRACT_ADDON').'.php';
 		$obj = getDolGlobalString('CONTRACT_ADDON');
 		$modContract = new $obj();
-		'@phan-var-force ModelNumRefContracts $modContrat';
+		'@phan-var-force ModelNumRefContracts $modContract';
 		$clonedObj->ref = $modContract->getNextValue($objsoc, $clonedObj);
 
 		// get extrafields so they will be clone
@@ -2916,6 +2952,7 @@ class Contrat extends CommonObject
 		}
 		if (!empty($arraydata['thirdparty'])) {
 			$tmpthirdparty = $arraydata['thirdparty'];
+			'@phan-var-force Societe $tmpthirdparty';
 			$return .= '<br><div class="info-box-label inline-block valignmiddle">'.$tmpthirdparty->getNomUrl(1).'</div>';
 		}
 		if (property_exists($this, 'date_contrat')) {
