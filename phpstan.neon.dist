@@ -85,7 +85,6 @@ parameters:
 		- '#EvalMath::trigger\(\) expects string, int given#'
 		- '#get_next_value expects string, int given#'
 		- '#pdf_writeLinkedObjects expects string, int given#'
-		- '#dol_print_phone expects string, int given#'
 		- '#dol_move expects string, int given#'
 		- '#expects int, float#'
 		- '#expects int, array\|string given.#'
