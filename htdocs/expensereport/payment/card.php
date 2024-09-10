@@ -164,7 +164,7 @@ $sql = 'SELECT er.rowid as eid, er.paid, er.total_ttc, per.amount, er.fk_user_au
 $sql .= ' FROM '.MAIN_DB_PREFIX.'paymentexpensereport_expensereport as per,'.MAIN_DB_PREFIX.'expensereport as er';
 $sql .= ' WHERE per.fk_expensereport = er.rowid';
 $sql .= ' AND er.entity IN ('.getEntity('expensereport').')';
-$sql .= ' AND per.fk_paiementuser = '.((int) $id);
+$sql .= ' AND per.fk_payment = '.((int) $id);
 
 dol_syslog("expensereport/payment/card.php", LOG_DEBUG);
 $resql = $db->query($sql);

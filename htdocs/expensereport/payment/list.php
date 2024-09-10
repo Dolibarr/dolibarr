@@ -197,7 +197,7 @@ $sql = preg_replace('/,\s*$/', '', $sql);
 $sqlfields = $sql; // $sql fields to remove for count total
 
 $sql .= ' FROM '.MAIN_DB_PREFIX.'payment_expensereport AS pndf';
-$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paymentexpensereport_expensereport AS pexp ON (pndf.rowid = pexp.fk_paiementuser)';
+$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paymentexpensereport_expensereport AS pexp ON (pndf.rowid = pexp.fk_payment)';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'expensereport AS ndf ON (ndf.rowid=pexp.fk_expensereport)';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement AS c ON pndf.fk_typepayment = c.id';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user AS u ON u.rowid = ndf.fk_user_author';

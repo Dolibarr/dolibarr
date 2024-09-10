@@ -220,7 +220,7 @@ class PaymentExpenseReport extends CommonObject
 				foreach ($this->amounts as $key => $amount) {
 					$expid = $key;
 					$amount = price2num($amount);
-					$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_expensereport (fk_expensereport, fk_paiementuser, amount)";
+					$sql = "INSERT INTO ".$this->db->prefix()."paymentexpensereport_expensereport (fk_expensereport, fk_payment, amount)";
 					// TODO Add multicurrency_code and multicurrency_tx
 					$sql .= " VALUES (".((int) $expid).", ".((int) $this->id).", ".((float) $amount).")";
 
@@ -459,7 +459,7 @@ class PaymentExpenseReport extends CommonObject
 
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."paymentexpensereport_expensereport";
-			$sql .= " WHERE fk_paiementuser=".((int) $this->id);
+			$sql .= " WHERE fk_payment=".((int) $this->id);
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql) {
