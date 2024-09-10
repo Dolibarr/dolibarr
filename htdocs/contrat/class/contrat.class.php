@@ -137,7 +137,7 @@ class Contrat extends CommonObject
 	public $status = 0;
 
 	/**
-	 * @var void TODO: set correct type
+	 * @var Product
 	 */
 	public $product;
 
@@ -200,6 +200,9 @@ class Contrat extends CommonObject
 	 */
 	public $fk_projet;
 
+	/**
+	 * @var array<string,string>  (Encoded as JSON in database)
+	 */
 	public $extraparams = array();
 
 	/**
@@ -836,10 +839,10 @@ class Contrat extends CommonObject
 	 *  Load lines array into this->lines.
 	 *  This set also nbofserviceswait, nbofservicesopened, nbofservicesexpired and nbofservicesclosed
 	 *
-	 *	@param		int				$only_services			0=Default for all, 1=Force only services (depending on setup, we may also have physical products in a contract)
-	 *	@param		int				$loadalsotranslation	0=Default to not load translations, 1=Load also translations of product descriptions
-	 *  @param		int				$noextrafields			0=Default to load extrafields, 1=Do not load the extrafields of lines
-	 *  @return 	array|int  								Return array of contract lines
+	 *	@param		int<0,1>		$only_services			0=Default for all, 1=Force only services (depending on setup, we may also have physical products in a contract)
+	 *	@param		int<0,1>		$loadalsotranslation	0=Default to not load translations, 1=Load also translations of product descriptions
+	 *  @param		int<0,1>		$noextrafields			0=Default to load extrafields, 1=Do not load the extrafields of lines
+	 *  @return 	array<int,ContratLigne>|int<min,-1>		Return array of contract lines
 	 */
 	public function fetch_lines($only_services = 0, $loadalsotranslation = 0, $noextrafields = 0)
 	{
@@ -2211,8 +2214,8 @@ class Contrat extends CommonObject
 	/**
 	 *  Return list of line rowid
 	 *
-	 *  @param	int		$status     Status of lines to get
-	 *  @return array|int       	Array of line's rowid or <0 if error
+	 *  @param	int		$status			Status of lines to get
+	 *  @return int[]|int<min,-1>		Array of line's rowid or <0 if error
 	 */
 	public function array_detail($status = -1)
 	{
