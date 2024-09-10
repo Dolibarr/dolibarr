@@ -517,7 +517,7 @@ if ($action == 'create') {
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setjournal">';
 			print '<input type="hidden" name="mode" value="'.$mode.'">';
-			print $formaccounting->select_journal($object->code_journal, 'code_journal', 0, 0, array(), 1, 1);
+			print $formaccounting->select_journal($object->code_journal, 'code_journal', 0, 0, 0, 1, 1);
 			print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		} else {
@@ -780,7 +780,7 @@ if ($action == 'create') {
 					} else {
 						print '<tr class="oddeven" data-lineid="'.((int) $line->id).'">';
 						print '<!-- td columns in display mode -->';
-						$resultfetch = $accountingaccount->fetch(null, $line->numero_compte, true);
+						$resultfetch = $accountingaccount->fetch(0, $line->numero_compte, true);
 						print '<td>';
 						if ($resultfetch > 0) {
 							print $accountingaccount->getNomUrl(0, 1, 1, '', 0);

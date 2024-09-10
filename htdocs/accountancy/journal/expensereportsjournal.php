@@ -8,6 +8,7 @@
  * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2018		Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018		Eric Seigne             <eric.seigne@cap-rel.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,6 +61,13 @@ $now = dol_now();
 $hookmanager->initHooks(array('expensereportsjournal'));
 $parameters = array();
 
+$taber = array();  // Initialise for static analysis
+$tabht = array();
+$tabtva = array();
+$tabttc = array();
+$tablocaltax1 = array();
+$tablocaltax2 = array();
+
 // Security check
 if (!isModEnabled('accounting')) {
 	accessforbidden();
@@ -89,6 +97,9 @@ $journal_label = $accountingjournalstatic->label;
 
 $date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
 $date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
+
+$pastmonth = null;  // Initialise (could be unset)
+$pastmonthyear = null;  // Initialise (could be unset)
 
 if (empty($date_startmonth)) {
 	// Period by default on transfer
@@ -251,7 +262,7 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 	$error = 0;
 
 	$accountingaccountexpense = new AccountingAccount($db);
-	$accountingaccountexpense->fetch(null, getDolGlobalString('ACCOUNTING_ACCOUNT_EXPENSEREPORT'), true);
+	$accountingaccountexpense->fetch(0, getDolGlobalString('ACCOUNTING_ACCOUNT_EXPENSEREPORT'), true);
 
 	foreach ($taber as $key => $val) {		// Loop on each expense report
 		$errorforline = 0;
@@ -322,7 +333,7 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 			foreach ($tabht[$key] as $k => $mt) {
 				if ($mt) {
 					// get compte id and label
-					if ($accountingaccount->fetch(null, $k, true)) {
+					if ($accountingaccount->fetch(0, $k, true)) {
 						$bookkeeping = new BookKeeping($db);
 						$bookkeeping->doc_date = $val["date"];
 						$bookkeeping->doc_ref = $val["ref"];
@@ -523,7 +534,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 		// Fees
 		foreach ($tabht[$key] as $k => $mt) {
 			$accountingaccount = new AccountingAccount($db);
-			$accountingaccount->fetch(null, $k, true);
+			$accountingaccount->fetch(0, $k, true);
 			if ($mt) {
 				print '"'.$date.'"'.$sep;
 				print '"'.$val["ref"].'"'.$sep;
@@ -563,7 +574,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 
 if (empty($action) || $action == 'view') {
 	$title = $langs->trans("GenerationOfAccountingEntries").' - '.$accountingjournalstatic->getNomUrl(0, 2, 1, '', 1);
-	$help_url ='EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#G&eacute;n&eacute;ration_des_&eacute;critures_en_comptabilit&eacute;';
+	$help_url = 'EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#G&eacute;n&eacute;ration_des_&eacute;critures_en_comptabilit&eacute;';
 	llxHeader('', dol_string_nohtmltag($title), $help_url, '', 0, 0, '', '', '', 'mod-accountancy accountancy-generation page-expensereportsjournal');
 
 	$nom = $title;
@@ -573,7 +584,7 @@ if (empty($action) || $action == 'view') {
 	$builddate = dol_now();
 	$description = $langs->trans("DescJournalOnlyBindedVisible").'<br>';
 
-	$listofchoices = array('notyet'=>$langs->trans("NotYetInGeneralLedger"), 'already'=>$langs->trans("AlreadyInGeneralLedger"));
+	$listofchoices = array('notyet' => $langs->trans("NotYetInGeneralLedger"), 'already' => $langs->trans("AlreadyInGeneralLedger"));
 	$period = $form->selectDate($date_start ? $date_start : -1, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end ? $date_end : -1, 'date_end', 0, 0, 0, '', 1, 0);
 	$period .= ' -  '.$langs->trans("JournalizationInLedgerStatus").' '.$form->selectarray('in_bookkeeping', $listofchoices, $in_bookkeeping, 1);
 
