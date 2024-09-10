@@ -2245,7 +2245,7 @@ class Adherent extends CommonObject
 	 * getTooltipContentArray
 	 * @param array $params params to construct tooltip data
 	 * @since v18
-	 * @return array
+	 * @return array{optimize?:string,photo?:string,divopen?:string,picto?:string,ref?:string,login?:string,name?:string,company?:string,email?:string,address?:string,categories?:string,divclose?:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
