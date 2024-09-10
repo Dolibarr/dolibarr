@@ -23,13 +23,13 @@
 
 /**
  * Trait for common signed business objects
- * @property DoliDB db
- * @property static oldcopy
- * @property int id
- * @property string error
- * @property string table_element
- * @property array<string,mixed> context
- * @method int call_trigger(string $triggerName, User $user)
+ * @property	DoliDB				db
+ * @property	static				oldcopy
+ * @property	int					id
+ * @property	string				error
+ * @property	string				table_element
+ * @property	array<string,mixed>	context
+ * @method		int					call_trigger(string $triggerName, User $user)
  */
 trait CommonSignedObject
 {
