@@ -109,7 +109,7 @@ $extralabelslines = $extrafields->fetch_name_optionals_label($object->table_elem
 
 $permissionnote = $user->hasRight('contrat', 'creer'); // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->hasRight('contrat', 'creer'); // Used by the include of actions_dellink.inc.php
-$permissiontodelete = ($user->hasRight('contrat', 'creer') && $object->statut == $object::STATUS_DRAFT) || $user->hasRight('contrat', 'supprimer');
+$permissiontodelete = ($user->hasRight('contrat', 'creer') && $object->status == $object::STATUS_DRAFT) || $user->hasRight('contrat', 'supprimer');
 $permissiontoadd   = $user->hasRight('contrat', 'creer');     //  Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontoedit = $permissiontoadd;
 $permissiontoactivate = $user->hasRight('contrat', 'activer');
@@ -1345,7 +1345,7 @@ if ($action == 'create') {
 
 		$head = contract_prepare_head($object);
 
-		$hselected = 0;
+		$hselected = '0';
 		$formconfirm = '';
 
 		print dol_get_fiche_head($head, $hselected, $langs->trans("Contract"), -1, 'contract');
