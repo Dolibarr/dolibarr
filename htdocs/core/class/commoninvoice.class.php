@@ -1021,7 +1021,7 @@ abstract class CommonInvoice extends CommonObject
 						$amount = price2num($this->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
 					}
 
-					if(empty($bac->id)) {
+					if (empty($bac->id)) {
 						$this->error = 'WithdrawRequestErrorNoIban';
 						dol_syslog(get_class($this).'::demandeprelevement WithdrawRequestErrorNoIban');
 						$error++;

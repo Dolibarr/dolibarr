@@ -4746,12 +4746,13 @@ class Form
 	 * Return list of payment methods
 	 * Constant MAIN_DEFAULT_PAYMENT_TYPE_ID can used to set default value but scope is all application, probably not what you want.
 	 *
-	 * @param 	string 	$selected 		Id or code or preselected payment mode
-	 * @param 	string 	$htmlname 		Name of select field
-	 * @param 	int 	$empty 			1=can be empty, 0 otherwise
-	 * @param 	string 	$morecss 		Add more CSS on select tag
-	 * @param 	int 	$nooutput 		1=Return string, do not send to output
-	 * @return  string|void             String for the HTML select component
+	 * @param 	string 	 $selected 		    Id or code or preselected payment mode
+	 * @param 	string 	 $htmlname 		    Name of select field
+	 * @param 	int 	 $empty 			1=can be empty, 0 otherwise
+	 * @param 	string 	 $morecss 		    Add more CSS on select tag
+	 * @param 	int 	 $nooutput 		    1=Return string, do not send to output
+	 * @param   string[] $ribForSelection   Array of RIBs (IBAN / BIC))
+	 * @return  string|void                 String for the HTML select component
 	 */
 	public function selectTypesIban($selected = '', $htmlname = 'ribList', $empty = 0, $morecss = '', $nooutput = 0, $ribForSelection = [])
 	{
@@ -4760,8 +4761,7 @@ class Form
 			$out .= '<option value="">&nbsp;</option>';
 		}
 
-		foreach ($ribForSelection as $rib){
-
+		foreach ($ribForSelection as $rib) {
 			$selectedAttribute = $selected == $rib ? 'selected' : '';
 			$out .= '<option value="' . $rib . '" '.$selectedAttribute.'>';
 			$out .= $rib;
@@ -6309,12 +6309,13 @@ class Form
 	/**
 	 *    Show form with IBAN
 	 *
-	 * @param string $selected Id mode pre-selectionne
-	 * @param string $htmlname Name of select html field
-	 * @param int    $addempty 1=Add empty entry
-	 * @param string $type Type ('direct-debit' or 'bank-transfer')
-	 * @param int    $nooutput 1=Return string, no output
-	 * @return    string                    HTML output or ''
+	 * @param   string   $selected Id mode pre-selectionne
+	 * @param   string   $htmlname Name of select html field
+	 * @param   int      $addempty 1=Add empty entry
+	 * @param   string   $type Type ('direct-debit' or 'bank-transfer')
+	 * @param   int      $nooutput 1=Return string, no output
+	 * @param   string[] $ribForSelection Array of RIBs (IBAN / BIC))
+	 * @return  string   HTML output or ''
 	 */
 	public function formIban(string $selected = '', string $htmlname = 'ribList', int $addempty = 0, string $type = '', int $nooutput = 0, $ribForSelection = [])
 	{
