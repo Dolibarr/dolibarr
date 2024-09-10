@@ -13106,12 +13106,47 @@ function getElementProperties($elementType)
  * @param	string     	$element_ref 		Element ref (Use this or element_id but not both. If id and ref are empty, object with no fetch is returned)
  * @param	int<0,2>	$useCache 			If you want to store object in cache or get it from cache 0 => no use cache , 1 use cache, 2 force reload  cache
  * @param	int			$maxCacheByType 	Number of object in cache for this element type
- * @return 	int<-1,0>|object 				object || 0 || <0 if error
+ * @param	string		$errMsgCode			Error message
+ * @return 	int<-1,0>|object 				object || 0 not found || <0 if error
+ * @see getElementProperties()
+ * @see loadObjectByElement()
+ * @see newObjectByElement()
+ */
+function fetchObjectByElement($element_id, $element_type, $element_ref = '', $useCache = 0, $maxCacheByType = 10, &$errMsgCode = '')
+{
+	global $db;
+
+	$ret = 0;
+
+	if ($element_id > 0 || !empty($element_ref)) {
+		$objecttmp = loadObjectByElement($element_id, $element_type, $element_ref, $useCache, $maxCacheByType, $errMsgCode);
+		if (!$objecttmp && $errMsgCode === 'ObjectNotFound') {
+			return 0;
+		} elseif (!$objecttmp) {
+			return -1;
+		}
+	} else {
+		$objecttmp = newObjectByElement($element_type, $errMsgCode);
+		if (!$objecttmp) {
+			return -1;
+		}
+	}
+
+	return $objecttmp;
+}
+
+/**
+ * Create a new instance of an object from its element_type
+ * Inclusion of classes is automatic
+ *
+ * @param	string  	$element_type 		Element type ('module' or 'myobject@mymodule' or 'mymodule_myobject')
+ * @param 	string		$errMsgCode			Error message
+ * @return false|object
  * @see getElementProperties()
  */
-function fetchObjectByElement($element_id, $element_type, $element_ref = '', $useCache = 0, $maxCacheByType = 10)
+function newObjectByElement($element_type, &$errMsgCode = '')
 {
-	global $db, $globalCacheForGetObjectFromCache;
+	global $db;
 
 	$ret = 0;
 
@@ -13128,56 +13163,96 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
 	} else {
 		$ismodenabled = isModEnabled($element_prop['module']);
 	}
-	//var_dump('element_type='.$element_type);
-	//var_dump($element_prop);
-	//var_dump($element_prop['module'].' '.$ismodenabled);
-	if (is_array($element_prop) && (empty($element_prop['module']) || $ismodenabled)) {
-		if ($useCache === 1
-			&& !empty($globalCacheForGetObjectFromCache[$element_type])
-			&& !empty($globalCacheForGetObjectFromCache[$element_type][$element_id])
-			&& is_object($globalCacheForGetObjectFromCache[$element_type][$element_id])
-		) {
-			return $globalCacheForGetObjectFromCache[$element_type][$element_id];
-		}
 
-		dol_include_once('/'.$element_prop['classpath'].'/'.$element_prop['classfile'].'.class.php');
-
-		if (class_exists($element_prop['classname'])) {
-			$className = $element_prop['classname'];
-			$objecttmp = new $className($db);
-			'@phan-var-force CommonObject $objecttmp';
-
-			if ($element_id > 0 || !empty($element_ref)) {
-				$ret = $objecttmp->fetch($element_id, $element_ref);
-				if ($ret >= 0) {
-					if (empty($objecttmp->module)) {
-						$objecttmp->module = $element_prop['module'];
-					}
-
-					if ($useCache > 0) {
-						if (!isset($globalCacheForGetObjectFromCache[$element_type])) {
-							$globalCacheForGetObjectFromCache[$element_type] = [];
-						}
-
-						// Manage cache limit
-						if (! empty($globalCacheForGetObjectFromCache[$element_type]) && is_array($globalCacheForGetObjectFromCache[$element_type]) && count($globalCacheForGetObjectFromCache[$element_type]) >= $maxCacheByType) {
-							array_shift($globalCacheForGetObjectFromCache[$element_type]);
-						}
-
-						$globalCacheForGetObjectFromCache[$element_type][$element_id] = $objecttmp;
-					}
-
-					return $objecttmp;
-				}
-			} else {
-				return $objecttmp;	// returned an object without fetch
-			}
-		} else {
-			return -1;
-		}
+	if (!is_array($element_prop) || (!empty($element_prop['module']) && !$ismodenabled)) {
+		$errMsgCode = 'ElementHasNoPropertyORModuleNotEnabled';
+		return false;
 	}
 
-	return $ret;
+	dol_include_once('/'.$element_prop['classpath'].'/'.$element_prop['classfile'].'.class.php');
+	if (!class_exists($element_prop['classname'])) {
+		$errMsgCode = 'ElementClassNotExist';
+		return false;
+	}
+
+	$className = $element_prop['classname'];
+	$objecttmp = new $className($db);
+	'@phan-var-force CommonObject $objecttmp';
+
+	if (property_exists($objecttmp, 'module') && empty($className->module)) {
+		$objecttmp->module = $element_prop['module'];
+	}
+
+	return $objecttmp;
+}
+
+
+/**
+ * Load and Fetch an object from its id and element_type
+ * Inclusion of classes is automatic
+ *
+ * @param	int     	$element_id 		Element id (Use this or element_ref but not both. If id and ref are empty, object with no fetch is returned)
+ * @param	string  	$element_type 		Element type ('module' or 'myobject@mymodule' or 'mymodule_myobject')
+ * @param	string     	$element_ref 		Element ref (Use this or element_id but not both. If id and ref are empty, object with no fetch is returned)
+ * @param	int<0,2>	$useCache 			If you want to store object in cache or get it from cache 0 => no use cache , 1 use cache, 2 force reload  cache
+ * @param	int			$maxCacheByType 	Number of object in cache for this element type
+ * @param	string		$errMsgCode 		Error message
+ * @return null|false|object 				object || null on not found || false if error
+ * @see getElementProperties()
+ * @see newObjectByElement()
+ */
+function loadObjectByElement($element_id, $element_type, $element_ref = '', $useCache = 0, $maxCacheByType = 10, &$errMsgCode = '')
+{
+	global $db, $conf;
+
+	$ret = 0;
+
+	if ($element_id <= 0 && empty($element_ref)) {
+		$errMsgCode = 'MissingIdOrRef';
+		return false;
+	}
+
+
+	$element_prop = getElementProperties($element_type);
+	$objecttmp = newObjectByElement($element_type, $errMsgCode);
+	'@phan-var-force CommonObject $objecttmp';
+	if ($objecttmp === false) {
+		return false;
+	}
+
+	if ($useCache === 1
+		&& !empty($conf->cache['CacheForGetObjectFromCache'][$element_type])
+		&& !empty($conf->cache['CacheForGetObjectFromCache'][$element_type][$element_id])
+		&& is_object($conf->cache['CacheForGetObjectFromCache'][$element_type][$element_id])
+	) {
+		return $conf->cache['CacheForGetObjectFromCache'][$element_type][$element_id];
+	}
+
+	$ret = $objecttmp->fetch($element_id, $element_ref);
+	if ($ret == 0) {
+		$errMsgCode = 'ObjectNotFound';
+		return null;
+	}
+
+	if ($ret <= 0) {
+		$errMsgCode = 'ObjectFecthError';
+		return false;
+	}
+
+	if ($useCache > 0) {
+		if (!isset($conf->cache['CacheForGetObjectFromCache'][$element_type])) {
+			$conf->cache['CacheForGetObjectFromCache'][$element_type] = [];
+		}
+
+		// Manage cache limit
+		if (! empty($conf->cache['CacheForGetObjectFromCache'][$element_type]) && is_array($conf->cache['CacheForGetObjectFromCache'][$element_type]) && count($conf->cache['CacheForGetObjectFromCache'][$element_type]) >= $maxCacheByType) {
+			array_shift($conf->cache['CacheForGetObjectFromCache'][$element_type]);
+		}
+
+		$conf->cache['CacheForGetObjectFromCache'][$element_type][$element_id] = $objecttmp;
+	}
+
+	return $objecttmp;
 }
 
 /**
