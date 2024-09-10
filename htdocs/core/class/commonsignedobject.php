@@ -23,16 +23,40 @@
 
 /**
  * Trait for common signed business objects
- * @property	DoliDB				db
- * @property	static				oldcopy
- * @property	int					id
- * @property	string				error
- * @property	string				table_element
- * @property	array<string,mixed>	context
- * @method		int					call_trigger(string $triggerName, User $user)
+ * @method int call_trigger(string $triggerName, User $user)
  */
 trait CommonSignedObject
 {
+	/**
+	 * @var DoliDB		Database handler (result of a new DoliDB)
+	 */
+	public $db;
+
+	/**
+	 * @var int			The object identifier
+	 */
+	public $id;
+
+	/**
+	 * @var string		Error string
+	 */
+	public $error;
+
+	/**
+	 * @var string 		Name of table without prefix where object is stored
+	 */
+	public $table_element;
+
+	/**
+	 * @var ?static		To store a cloned copy of the object before editing it (to keep track of its former properties)
+	 */
+	public $oldcopy;
+
+	/**
+	 * @var array<string,mixed>		Can be used to pass information when only the object is provided to the method
+	 */
+	public $context = array();
+
 	/**
 	 * Status of the contract (0=NoSignature, 1=SignedBySender, 2=SignedByReceiver, 9=SignedByAll)
 	 * @var int
