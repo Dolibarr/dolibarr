@@ -56,7 +56,7 @@ if (isModEnabled('project')) {
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("contracts", "orders", "companies", "bills", "products", 'compta'));
+$langs->loadLangs(array("contracts", "orders", "companies", "bills", "products", 'compta', 'propal'));
 
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
@@ -174,6 +174,22 @@ if (empty($reshook)) {
 			exit;
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	} elseif ($action == 'confirm_sign' && $confirm == 'yes' && $user->hasRight('contract', 'creer')) {
+		$result = $object->setSignedStatus($user, GETPOSTINT('signed_status'), 0, 'CONTRACT_MODIFY');
+		if ($result >= 0) {
+			header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
+			exit;
+		} else {
+			$mesg = $object->error;
+		}
+	} elseif ($action == 'confirm_unsign' && $confirm == 'yes' && $user->hasRight('contract', 'creer')) {
+		$result = $object->setSignedStatus($user, $object::SIGNED_STATUSES['STATUS_NO_SIGNATURE'], 0, 'CONTRACT_MODIFY');
+		if ($result >= 0) {
+			header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
+			exit;
+		} else {
+			$mesg = $object->error;
 		}
 	} elseif ($action == 'confirm_closeline' && $confirm == 'yes' && $permissiontoactivate) {
 		$date_end = '';
@@ -1363,6 +1379,31 @@ if ($action == 'create') {
 			// Clone confirmation
 			$formquestion = array(array('type' => 'other', 'name' => 'socid', 'label' => $langs->trans("SelectThirdParty"), 'value' => $form->select_company(GETPOSTINT('socid'), 'socid', $filter)));
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneContract', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
+		} elseif ($action == 'sign') {
+			$text = $langs->trans('ConfirmSignContract');
+			if (isModEnabled('notification')) {
+				require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
+				$notify = new Notify($db);
+				$text .= '<br>';
+				$text .= $notify->confirmMessage('CONTRACT_MODIFY', $object->socid, $object);
+			}
+			$formquestion = [];
+			$formquestion[] = [
+				'type' 		=> 'select',
+				'name' 		=> 'signed_status',
+				'label'		=> '<span class="fieldrequired">'.$langs->trans('SignStatus').'</span>',
+				'values'	=> $object->getSignedStatusLocalisedArray()
+			];
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('SignContract'), $text, 'confirm_sign', $formquestion, 0, 1);
+		} elseif ($action == 'unsign') {
+			$text = $langs->trans('ConfirmUnsignContract');
+			if (isModEnabled('notification')) {
+				require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
+				$notify = new Notify($db);
+				$text .= '<br>';
+				$text .= $notify->confirmMessage('CONTRACT_MODIFY', $object->socid, $object);
+			}
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('UnsignContract'), $text, 'confirm_unsign', '', 0, 1);
 		}
 
 
@@ -2243,6 +2284,15 @@ if ($action == 'create') {
 						print '<div class="inline-block divButAction"><a class="butAction" id="btnhideclosedlines" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=hideclosedlines">'.$langs->trans("HideClosedServices").'</a></div>';
 					} else {
 						print '<div class="inline-block divButAction"><a class="butAction" id="btnshowclosedlines" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=showclosedlines">'.$langs->trans("ShowClosedServices").'</a></div>';
+					}
+				}
+
+				// Sign
+				if ($object->status > Contrat::STATUS_DRAFT) {
+					if ($object->signed_status != Contrat::SIGNED_STATUSES['STATUS_SIGNED_ALL']) {
+						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=sign&token=' . newToken() . '">' . $langs->trans("ContractSign") . '</a></div>';
+					} else {
+						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=unsign&token=' . newToken() . '">' . $langs->trans("ContractUnsign") . '</a></div>';
 					}
 				}
 
