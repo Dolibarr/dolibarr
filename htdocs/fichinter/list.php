@@ -125,7 +125,7 @@ $fieldstosearchall = array(
 if (empty($user->socid)) {
 	$fieldstosearchall["f.note_private"] = "NotePrivate";
 }
-if (getDolGlobalString('FICHINTER_DISABLE_DETAILS_ON_LIST')) {
+if (getDolGlobalString('FICHINTER_DISABLE_DETAILS')) {
 	unset($fieldstosearchall['fd.description']);
 }
 
@@ -143,9 +143,9 @@ $arrayfields = array(
 	'f.note_private' => array('label' => 'NotePrivate', 'checked' => 0, 'position' => 511, 'enabled' => (!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES'))),
 	'f.fk_statut' => array('label' => 'Status', 'checked' => 1, 'position' => 1000),
 	'f.signed_status' =>array('label' => 'SignedStatus', 'checked' => 0, 'position' => 1001),
-	'fd.description' => array('label' => "DescriptionOfLine", 'checked' => 1, 'enabled' => !getDolGlobalString('FICHINTER_DISABLE_DETAILS_ON_LIST') ? 1 : 0),
-	'fd.date' => array('label' => 'DateOfLine', 'checked' => 1, 'enabled' => !getDolGlobalString('FICHINTER_DISABLE_DETAILS_ON_LIST') ? 1 : 0),
-	'fd.duree' => array('label' => 'DurationOfLine', 'type' => 'duration', 'checked' => 1, 'enabled' => !getDolGlobalString('FICHINTER_DISABLE_DETAILS_ON_LIST') ? 1 : 0), //type duration is here because in database, column 'duree' is double
+	'fd.description' => array('label' => "DescriptionOfLine", 'checked' => 1, 'enabled' => getDolGlobalString('FICHINTER_DISABLE_DETAILS') != '1' ? 1 : 0),
+	'fd.date' => array('label' => 'DateOfLine', 'checked' => 1, 'enabled' => getDolGlobalString('FICHINTER_DISABLE_DETAILS') != '1' ? 1 : 0),
+	'fd.duree' => array('label' => 'DurationOfLine', 'type' => 'duration', 'checked' => 1, 'enabled' => !getDolGlobalString('FICHINTER_DISABLE_DETAILS') ? 1 : 0), //type duration is here because in database, column 'duree' is double
 );
 '@phan-var-force array{label:string,type?:string,checked:int,position?:int,enabled?:int,langfile?:string,help:string} $arrayfields';
 // Extra fields
@@ -257,7 +257,7 @@ foreach ($arrayfields as $tmpkey => $tmpval) {
 
 $sql = "SELECT";
 $sql .= " f.ref, f.ref_client, f.rowid, f.fk_statut as status, f.signed_status as signed_status, f.description, f.datec as date_creation, f.tms as date_modification, f.note_public, f.note_private,";
-if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS_ON_LIST') && $atleastonefieldinlines) {
+if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS') && $atleastonefieldinlines) {
 	$sql .= " fd.rowid as lineid, fd.description as descriptiondetail, fd.date as dp, fd.duree,";
 }
 $sql .= " s.nom as name, s.rowid as socid, s.client, s.fournisseur, s.email, s.status as thirdpartystatus";
@@ -290,7 +290,7 @@ if (isModEnabled('contract')) {
 if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (f.rowid = ef.fk_object)";
 }
-if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS_ON_LIST') && $atleastonefieldinlines) {
+if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS') && $atleastonefieldinlines) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."fichinterdet as fd ON fd.fk_fichinter = f.rowid";
 }
 
@@ -321,7 +321,7 @@ if ($search_contrat_ref) {
 	$sql .= natural_search('c.ref', $search_contrat_ref);
 }
 if ($search_desc) {
-	if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS_ON_LIST') && $atleastonefieldinlines) {
+	if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS') && $atleastonefieldinlines) {
 		$sql .= natural_search(array('f.description', 'fd.description'), $search_desc);
 	} else {
 		$sql .= natural_search(array('f.description'), $search_desc);
@@ -333,7 +333,7 @@ if ($search_status != '' && $search_status >= 0) {
 if ($search_signed_status != '' && $search_signed_status >= 0) {
 	$sql .= ' AND f.signed_status = '.urlencode($search_signed_status);
 }
-if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS_ON_LIST') && $atleastonefieldinlines) {
+if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS') && $atleastonefieldinlines) {
 	if ($search_date_start) {
 		$sql .= " AND fd.date >= '".$db->idate($search_date_start)."'";
 	}
