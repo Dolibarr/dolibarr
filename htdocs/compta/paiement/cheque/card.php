@@ -321,7 +321,7 @@ if ($action == 'new') {
 	$h = 0;
 	$head[$h][0] = $_SERVER["PHP_SELF"].'?action=new';
 	$head[$h][1] = $langs->trans("MenuChequeDeposits");
-	$hselected = $h;
+	$hselected = (string) $h;
 	$h++;
 
 	print load_fiche_titre($title, '', 'bank_account');
@@ -336,13 +336,13 @@ if ($action == 'new') {
 	$head = array();
 	$head[$h][0] = $_SERVER["PHP_SELF"].'?id='.$object->id;
 	$head[$h][1] = $langs->trans("CheckReceipt");
-	$hselected = $h;
+	$hselected = (string) $h;
 	$h++;
 	//  $head[$h][0] = DOL_URL_ROOT.'/compta/paiement/cheque/info.php?id='.$object->id;
 	//  $head[$h][1] = $langs->trans("Info");
 	//  $h++;
 
-	print dol_get_fiche_head($head, (string) $hselected, $langs->trans("Cheques"), -1, 'payment');
+	print dol_get_fiche_head($head, $hselected, $langs->trans("Cheques"), -1, 'payment');
 
 	/*
 	 * Confirmation of slip's delete
