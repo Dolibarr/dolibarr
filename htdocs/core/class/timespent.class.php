@@ -188,7 +188,7 @@ class TimeSpent extends CommonObject
 	 */
 	public $datec;
 	/**
-	 * @var ?string
+	 * @var string
 	 */
 	public $note;
 	// END MODULEBUILDER PROPERTIES

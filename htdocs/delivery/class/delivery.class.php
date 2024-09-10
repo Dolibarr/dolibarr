@@ -1244,7 +1244,7 @@ class DeliveryLine extends CommonObjectLine
 	 */
 	public $product_desc;
 	/**
-	 * @var string
+	 * @var int
 	 */
 	public $product_type;
 	/**
