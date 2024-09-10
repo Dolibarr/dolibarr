@@ -22,7 +22,8 @@
  */
 
 /**
- *	Trait for common signed business objects
+ * Trait for common signed business objects
+ * @method int call_trigger(string $triggerName, User $user)
  */
 trait CommonSignedObject
 {
@@ -148,39 +149,42 @@ trait CommonSignedObject
 	{
 		$error = 0;
 
-		$this->db->begin();
+		if ($this instanceof CommonObject) {
+			$this->db->begin();
+			$statusfield = 'signed_status';
 
-		$statusfield = 'signed_status';
+			$sql = "UPDATE ".$this->db->prefix().$this->table_element;
+			$sql .= " SET ".$statusfield." = ".((int) $status);
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
-		$sql = "UPDATE ".$this->db->prefix().$this->table_element;
-		$sql .= " SET ".$statusfield." = ".((int) $status);
-		$sql .= " WHERE rowid = ".((int) $this->id);
-
-		if ($this->db->query($sql)) {
-			if (!$error) {
-				$this->oldcopy = clone $this;
-			}
-
-			if (!$error && !$notrigger) {
-				// Call trigger
-				$result = $this->call_trigger($triggercode, $user);
-				if ($result < 0) {
-					$error++;
+			if ($this->db->query($sql)) {
+				if (!$error) {
+					$this->oldcopy = clone $this;
 				}
-			}
 
-			if (!$error) {
-				$this->signed_status = $status;
-				$this->db->commit();
-				return 1;
+				if (!$error && !$notrigger) {
+					// Call trigger
+					$result = $this->call_trigger($triggercode, $user);
+					if ($result < 0) {
+						$error++;
+					}
+				}
+
+				if (!$error) {
+					$this->signed_status = $status;
+					$this->db->commit();
+					return 1;
+				} else {
+					$this->db->rollback();
+					return -1;
+				}
 			} else {
+				$this->error = $this->db->error();
 				$this->db->rollback();
 				return -1;
 			}
 		} else {
-			$this->error = $this->db->error();
-			$this->db->rollback();
-			return -1;
+			return $error;
 		}
 	}
 
