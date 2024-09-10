@@ -1295,7 +1295,13 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 		<?php } ?>
 		/* jQuery("#tva_tx, #title_vat").hide(); */
 		/* jQuery("#title_fourn_ref").hide(); */
-		jQuery("#np_marginRate, #np_markRate, .np_marginRate, .np_markRate, #units, #title_units").hide();
+		<?php if (!getDolGlobalString('DISPLAY_MARGIN_RATES')) { ?>
+			jQuery("#np_marginRate, .np_marginRate").hide();
+		<?php } ?>
+		<?php if (!getDolGlobalString('DISPLAY_MARK_RATES')) { ?>
+			jQuery("#np_markRate, .np_markRate").hide();
+		<?php } ?>
+		jQuery(#units, #title_units").hide();
 		jQuery("#buying_price").show();
 		jQuery('#trlinefordates, .divlinefordates').show();
 	}
