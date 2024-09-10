@@ -128,7 +128,7 @@ abstract class ModeleNumRefMembers extends CommonNumRefGenerator
 	/**
 	 *  Return next value
 	 *
-	 *  @param  Societe		$objsoc		Object third party
+	 *  @param  ?Societe	$objsoc		Object third party
 	 *  @param  ?Adherent	$object		Object we need next value for
 	 *  @return	string|int<-1,0>		next value
 	 */
