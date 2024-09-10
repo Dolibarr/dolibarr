@@ -9,21 +9,21 @@
  */
 return [
     // # Issue statistics:
-    // PhanPluginUnknownPropertyType : 1790+ occurrences
-    // PhanPossiblyUndeclaredGlobalVariable : 1310+ occurrences
-    // PhanTypeMismatchArgumentProbablyReal : 1090+ occurrences
-    // PhanUndeclaredProperty : 810+ occurrences
-    // PhanPluginUnknownObjectMethodCall : 750+ occurrences
-    // PhanUndeclaredGlobalVariable : 720+ occurrences
-    // PhanPluginUnknownArrayMethodParamType : 610+ occurrences
-    // PhanPluginUnknownArrayMethodReturnType : 530+ occurrences
-    // PhanPossiblyUndeclaredVariable : 360+ occurrences
+    // PhanPluginUnknownPropertyType : 1620+ occurrences
+    // PhanPossiblyUndeclaredGlobalVariable : 1160+ occurrences
+    // PhanTypeMismatchArgumentProbablyReal : 1050+ occurrences
+    // PhanUndeclaredProperty : 780+ occurrences
+    // PhanUndeclaredGlobalVariable : 700+ occurrences
+    // PhanPluginUnknownObjectMethodCall : 550+ occurrences
+    // PhanPluginUnknownArrayMethodReturnType : 510+ occurrences
+    // PhanPluginUnknownArrayMethodParamType : 470+ occurrences
+    // PhanPossiblyUndeclaredVariable : 350+ occurrences
     // PhanPluginUnknownArrayFunctionReturnType : 230+ occurrences
-    // PhanTypeMismatchProperty : 220+ occurrences
+    // PhanTypeMismatchProperty : 210+ occurrences
     // PhanPluginUnknownArrayFunctionParamType : 170+ occurrences
     // PhanTypeExpectedObjectPropAccess : 150+ occurrences
-    // PhanTypeMismatchArgumentNullableInternal : 150+ occurrences
-    // PhanPluginUnknownArrayPropertyType : 110+ occurrences
+    // PhanTypeMismatchArgumentNullableInternal : 120+ occurrences
+    // PhanPluginUnknownArrayPropertyType : 85+ occurrences
     // PhanPluginUndeclaredVariableIsset : 70+ occurrences
     // PhanPluginEmptyStatementIf : 65+ occurrences
     // PhanRedefineFunction : 55+ occurrences
@@ -39,32 +39,17 @@ return [
     // PhanPluginDuplicateExpressionBinaryOp : 10+ occurrences
     // PhanPluginSuspiciousParamPosition : 10+ occurrences
     // PhanTypeMismatchDimFetchNullable : 10+ occurrences
+    // PhanPluginDuplicateArrayKey : 8 occurrences
+    // PhanUndeclaredMethod : 5 occurrences
     // PhanInvalidFQSENInClasslike : 4 occurrences
-    // PhanPluginDuplicateArrayKey : 4 occurrences
     // PhanEmptyFQSENInClasslike : 3 occurrences
-    // PhanUndeclaredMethod : 3 occurrences
     // PhanParamTooMany : 2 occurrences
     // PhanAccessMethodProtected : 1 occurrence
 
     // Currently, file_suppressions and directory_suppressions are the only supported suppressions
     'file_suppressions' => [
-        'htdocs/accountancy/admin/productaccount.php' => ['PhanTypeMismatchArgumentNullableInternal'],
-        'htdocs/accountancy/bookkeeping/card.php' => ['PhanTypeMismatchArgumentProbablyReal'],
-        'htdocs/accountancy/bookkeeping/listbyaccount.php' => ['PhanPossiblyUndeclaredGlobalVariable'],
-        'htdocs/accountancy/class/accountancycategory.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayPropertyType', 'PhanPossiblyUndeclaredVariable'],
-        'htdocs/accountancy/class/accountancyexport.class.php' => ['PhanTypeMismatchReturn', 'PhanUndeclaredProperty'],
-        'htdocs/accountancy/class/accountancyimport.class.php' => ['PhanPluginUnknownArrayMethodParamType'],
-        'htdocs/accountancy/class/accountingaccount.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayPropertyType', 'PhanPossiblyUndeclaredVariable'],
-        'htdocs/accountancy/class/api_accountancy.class.php' => ['PhanPluginUnknownArrayPropertyType'],
-        'htdocs/accountancy/class/bookkeeping.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPossiblyUndeclaredVariable', 'PhanTypeMismatchArgumentProbablyReal'],
-        'htdocs/accountancy/class/lettering.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType', 'PhanPossiblyUndeclaredVariable'],
-        'htdocs/accountancy/customer/list.php' => ['PhanPossiblyUndeclaredGlobalVariable'],
-        'htdocs/accountancy/journal/bankjournal.php' => ['PhanPluginUnknownArrayFunctionParamType', 'PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentProbablyReal'],
-        'htdocs/accountancy/journal/expensereportsjournal.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentNullableInternal', 'PhanTypeMismatchArgumentProbablyReal'],
-        'htdocs/accountancy/journal/purchasesjournal.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentNullableInternal', 'PhanTypeMismatchArgumentProbablyReal'],
-        'htdocs/accountancy/journal/sellsjournal.php' => ['PhanPluginUndeclaredVariableIsset', 'PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentNullableInternal', 'PhanTypeMismatchArgumentProbablyReal'],
-        'htdocs/accountancy/journal/variousjournal.php' => ['PhanPossiblyUndeclaredGlobalVariable'],
-        'htdocs/accountancy/supplier/list.php' => ['PhanPossiblyUndeclaredGlobalVariable'],
+        'htdocs/accountancy/class/accountancycategory.class.php' => ['PhanPluginUnknownArrayPropertyType'],
+        'htdocs/accountancy/class/accountancyexport.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/adherents/admin/member.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/adherents/canvas/actions_adherentcard_common.class.php' => [/* Traverses Adherent as array, ignore */ 'PhanTypeSuspiciousNonTraversableForeach'],
         'htdocs/adherents/card.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentProbablyReal'],
@@ -772,7 +757,7 @@ return [
         'htdocs/fichinter/card.php' => ['PhanPluginBothLiteralsBinaryOp', 'PhanPluginUnknownObjectMethodCall', 'PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/fichinter/class/api_interventions.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType', 'PhanUndeclaredProperty'],
         'htdocs/fichinter/class/fichinter.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType', 'PhanPluginUnknownArrayPropertyType', 'PhanPluginUnknownObjectMethodCall'],
-        'htdocs/fichinter/class/fichinterrec.class.php' => ['PhanPluginUnknownPropertyType', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredProperty'],
+        'htdocs/fichinter/class/fichinterrec.class.php' => ['PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredProperty'],
         'htdocs/fichinter/class/fichinterstats.class.php' => ['PhanPluginUnknownArrayMethodReturnType', 'PhanPluginUnknownPropertyType'],
         'htdocs/fichinter/list.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/fichinter/tpl/linkedobjectblock.tpl.php' => ['PhanPluginUnknownObjectMethodCall'],
@@ -996,7 +981,7 @@ return [
         'htdocs/projet/index.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/projet/list.php' => ['PhanPluginEmptyStatementIf', 'PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/projet/stats/index.php' => ['PhanPossiblyUndeclaredGlobalVariable'],
-        'htdocs/projet/tasks.php' => ['PhanPluginUnknownObjectMethodCall', 'PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentProbablyReal'],
+        'htdocs/projet/tasks.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/projet/tasks/comment.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/projet/tasks/contact.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/projet/tasks/document.php' => ['PhanTypeMismatchArgumentProbablyReal'],
