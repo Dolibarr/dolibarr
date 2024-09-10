@@ -627,7 +627,7 @@ if ($resql) {
 			// RUM
 			if (empty($type) || $type == 'direct-debit') {
 				print '<td>';
-				if (!empty($bac->rum)){
+				if (!empty($bac->rum)) {
 					print $bac->rum;
 				} else {
 					$rumToShow = $thirdpartystatic->display_rib('rum');

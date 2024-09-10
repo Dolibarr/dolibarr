@@ -1006,7 +1006,7 @@ class BonPrelevement extends CommonObject
 		}
 
 		$error = 0;
-		// Pre-store some values intop variables to simplify following sql requests
+		// Pre-store some values into variables to simplify following sql requests
 		if ($sourcetype != 'salary') {
 			$entity = $type != 'bank-transfer' ? getEntity('invoice') : getEntity('supplier_invoice');
 			$socOrUser = 'fk_soc';
@@ -1029,7 +1029,7 @@ class BonPrelevement extends CommonObject
 		$resql = $this->db->query($sql);
 
 		if ($resql->num_rows) {
-			$obj = $this->db->fetch_object($resql->num_rows);
+			$obj = $this->db->fetch_object($resql);
 			$societeRibID = $obj->fk_societe_rib;
 			$this->db->free($resql);
 		} else {
@@ -1040,7 +1040,7 @@ class BonPrelevement extends CommonObject
 
 
 		$datetimeprev = dol_now('gmt');
-		// Choice the date of the execution direct debit
+		// Choice of the date of the execution direct debit
 		if (!empty($executiondate)) {
 			$datetimeprev = $executiondate;
 		}
@@ -1076,8 +1076,8 @@ class BonPrelevement extends CommonObject
 			$sql .= " LEFT JOIN " . $this->db->prefix() . "prelevement_demande as pd ON f.rowid = pd.fk_".$sqlTable;
 			$sql .= " LEFT JOIN " . $this->db->prefix() . $societeOrUser." as s ON s.rowid = f.".$socOrUser;
 			$sql .= " LEFT JOIN " . $this->db->prefix() . $societeOrUser."_rib as sr ON s.rowid = sr.".$socOrUser;
-			if ($sourcetype != 'salary'){
-				if (!empty($societeRibID)){
+			if ($sourcetype != 'salary') {
+				if (!empty($societeRibID)) {
 					$sql .= " AND sr.rowid = " . $societeRibID;
 				} else {
 					$sql .= " AND sr.default_rib = 1";
@@ -1786,7 +1786,7 @@ class BonPrelevement extends CommonObject
 				$sql .= " AND f.fk_soc = soc.rowid";
 				$sql .= " AND soc.fk_pays = c.rowid";
 				$sql .= " AND rib.fk_soc = f.fk_soc";
-				if (!empty($societeRibID)){
+				if (!empty($societeRibID)) {
 					$sql .= " AND rib.rowid = " . $societeRibID;
 				} else {
 					$sql .= " AND rib.default_rib = 1";
@@ -1928,7 +1928,7 @@ class BonPrelevement extends CommonObject
 					$sql .= " AND p.fk_facture_fourn = f.rowid";
 					$sql .= " AND f.fk_soc = soc.rowid";
 					$sql .= " AND rib.fk_soc = f.fk_soc";
-					if (!empty($societeRibID)){
+					if (!empty($societeRibID)) {
 						$sql .= " AND rib.rowid = " . $societeRibID;
 					} else {
 						$sql .= " AND rib.default_rib = 1";

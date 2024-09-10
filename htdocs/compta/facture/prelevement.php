@@ -767,11 +767,10 @@ if ($object->id > 0) {
 				$ribList = $object->thirdparty->get_all_rib();
 				$ribForSelection = [];
 				$defaultRib = '';
-				foreach($ribList as $rib) {
+				foreach ($ribList as $rib) {
 					$ribString = $rib->iban . (($rib->iban && $rib->bic) ? ' / ' : '') . $rib->bic;
-
 					$ribForSelection[$rib->id] = $ribString;
-					if($rib->default_rib == 1){
+					if ($rib->default_rib == 1) {
 						$defaultRib = $ribString;
 					}
 				}
@@ -790,7 +789,7 @@ if ($object->id > 0) {
 
 				print '</td></tr>';
 
-				// Bank Transfert Amount
+				// Bank Transfer Amount
 				print '<tr><td class="nowrap">';
 				print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 				print '<label for="withdraw_request_amount">'.$langs->trans('BankTransferAmount').' </label>';
@@ -823,9 +822,7 @@ if ($object->id > 0) {
 					print '<input type="submit" class="butAction" value="'.$buttonlabel.'" />';
 					print '</form>';
 				}
-
 				print '<div class="fichecenter">';
-
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$buttonlabel.'</a>';
 			}
