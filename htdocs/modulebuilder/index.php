@@ -3582,8 +3582,17 @@ if ($module == 'initmodule') {
 						print '<input class="reposition button smallpaddingimp" type="submit" name="modifydesc" value="'.$langs->trans("Modify").'"/>';
 						print '<input class="reposition button button-cancel smallpaddingimp" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"/>';
 					} else {
-						print $moduleobj->getDesc();
+						print $moduleobj->description;
 						print '<a class="editfielda reposition marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=edit_moduledescription&token='.newToken().'&tab='.urlencode($tab).'&module='.urlencode($module).'&keydescription=desc">'.img_edit().'</a>';
+
+						$moduledescritpionautotrans = $moduleobj->getDesc();
+						if ($moduledescritpionautotrans != "Module".$moduleobj->name."Desc") {
+							// $moduledescritpionautotrans has been found into a translation file
+							print ' '.$form->textwithpicto('', $langs->trans("ModuleTranslatedIntoLangForKeyInto", "Module".$moduleobj->name."Desc", $moduledescritpionautotrans));
+						} elseif ($moduledescritpionautotrans != "Module".$moduleobj->numeroc."Desc") {
+							// $moduledescritpionautotrans has been found into a translation file
+							print ' '.$form->textwithpicto('', $langs->trans("ModuleTranslatedIntoLangForKeyInto", "Module".$moduleobj->numero."Desc", $moduledescritpionautotrans));
+						}
 					}
 					print '</td></tr>';
 
