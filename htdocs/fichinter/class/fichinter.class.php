@@ -31,7 +31,7 @@
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinterligne.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonsignedobject.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonsignedobject.class.php';
 
 /**
  *	Class to manage interventions

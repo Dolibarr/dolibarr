@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contrat/class/contratligne.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonsignedobject.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonsignedobject.class.php';
 
 /**
  *	Class to manage contracts
