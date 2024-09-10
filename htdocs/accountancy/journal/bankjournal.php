@@ -338,6 +338,7 @@ if ($result) {
 		if (is_array($links) && count($links) > 0) {
 			// Test if entry is for a social contribution, salary or expense report.
 			// In such a case, we will ignore the bank url line for user
+			$is_exp = false;
 			$is_sc = false;
 			$is_salary = false;
 			$is_expensereport = false;
@@ -358,7 +359,7 @@ if ($result) {
 
 			// Now loop on each link of record in bank (code similar to bankentries_list.php)
 			foreach ($links as $key => $val) {
-				if ($links[$key]['type'] == 'user' && !$is_sc && !$is_salary && !$is_expensereport) {
+				if ($links[$key]['type'] == 'user' && !$is_sc && !$is_salary && !$is_exp) {
 					// We must avoid as much as possible this "continue". If we want to jump to next loop, it means we don't want to process
 					// the case the link is user (often because managed by hard coded code into another link), and we must avoid this.
 					continue;
@@ -1535,7 +1536,7 @@ function getSourceDocRef($val, $typerecord)
 	} elseif ($typerecord == 'payment_expensereport') {
 		$sqlmid = 'SELECT e.rowid as id, e.ref';
 		$sqlmid .= " FROM ".MAIN_DB_PREFIX."payment_expensereport as pe, ".MAIN_DB_PREFIX."expensereport as e";
-		$sqlmid .= " WHERE pe.rowid=".((int) $val["paymentexpensereport"])." AND pe.fk_expensereport = e.rowid";
+		$sqlmid .= " WHERE pe.fk_paiementuser=".((int) $val["paymentexpensereport"])." AND pe.fk_expensereport = e.rowid";
 		$ref = $langs->transnoentitiesnoconv("ExpenseReport");
 	} elseif ($typerecord == 'payment_salary') {
 		$sqlmid = 'SELECT s.rowid as ref';

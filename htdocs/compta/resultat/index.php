@@ -694,15 +694,16 @@ if (isModEnabled('expensereport') && ($modecompta == 'CREANCES-DETTES' || $modec
 			$sql .= " AND ".$column." >= '".$db->idate($date_start)."' AND ".$column." <= '".$db->idate($date_end)."'";
 		}
 	} elseif ($modecompta == 'RECETTES-DEPENSES') {
-		$sql = "SELECT date_format(pe.datep,'%Y-%m') as dm, sum(p.total_ht) as amount_ht,sum(p.total_ttc) as amount_ttc";
+		$sql = "SELECT date_format(pu.datep,'%Y-%m') as dm, sum(p.total_ht) as amount_ht,sum(p.total_ttc) as amount_ttc";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as p";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=p.fk_user_author";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."payment_expensereport as pe ON pe.fk_expensereport = p.rowid";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."payment_expensereport as pu ON pe.fk_paiementuser = pu.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON pe.fk_typepayment = c.id";
 		$sql .= " WHERE p.entity IN (".getEntity('expensereport').")";
 		$sql .= " AND p.fk_statut>=5";
 
-		$column = 'pe.datep';
+		$column = 'pu.datep';
 		if (!empty($date_start) && !empty($date_end)) {
 			$sql .= " AND ".$column." >= '".$db->idate($date_start)."' AND ".$column." <= '".$db->idate($date_end)."'";
 		}
