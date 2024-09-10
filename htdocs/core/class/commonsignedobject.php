@@ -27,6 +27,16 @@
 trait CommonSignedObject
 {
 	/**
+	 * @var DoliDB		Database handler (result of a new DoliDB)
+	 */
+	public $db;
+
+	/**
+	 * @var array<string,mixed>		Can be used to pass information when only the object is provided to the method
+	 */
+	public $context = array();
+
+	/**
 	 * Status of the contract (0=NoSignature, 1=SignedBySender, 2=SignedByReceiver, 9=SignedByAll)
 	 * @var int
 	 */
@@ -48,7 +58,7 @@ trait CommonSignedObject
 	/**
 	 *	Returns an array of signed statuses with associated localized labels
 	 *
-	 *	@return array
+	 *	@return array<string>
 	 */
 	public function getSignedStatusLocalisedArray(): array
 	{
