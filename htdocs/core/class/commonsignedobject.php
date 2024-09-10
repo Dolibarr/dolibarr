@@ -34,7 +34,7 @@ trait CommonSignedObject
 
 	/**
 	 * Signed statuses dictionary. Label used as key for string localizations.
-	 * When min. required PHP is 8.2 update to constant
+	 * When min. required PHP is 8.2 this can be updated to a constant
 	 * @var array<string,int>
 	 */
 	public static $SIGNED_STATUSES = [
@@ -58,7 +58,7 @@ trait CommonSignedObject
 		$l10n_signed_status_labels = [
 			self::$SIGNED_STATUSES['STATUS_NO_SIGNATURE']			=> 'NoSignature',
 			self::$SIGNED_STATUSES['STATUS_SIGNED_SENDER']			=> 'SignedSender',
-			self::$SIGNED_STATUSES['STATUS_SIGNED_RECEIVER']			=> 'SignedReceiver',
+			self::$SIGNED_STATUSES['STATUS_SIGNED_RECEIVER']		=> 'SignedReceiver',
 			self::$SIGNED_STATUSES['STATUS_SIGNED_RECEIVER_ONLINE']	=> 'SignedReceiverOnline',
 			self::$SIGNED_STATUSES['STATUS_SIGNED_ALL']				=> 'SignedAll'
 		];
