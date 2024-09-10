@@ -992,7 +992,7 @@ if (empty($reshook)) {
 			// Manage $line->subprice and $line->multicurrency_subprice
 			$multicurrency_subprice = (float) $subprice * $line->multicurrency_subprice / $line->subprice;
 			// Update DB
-			$result = $object->updateline($line->id, $subprice, $line->qty, $line->remise_percent, $line->tva_tx, $line->localtax1_rate, $line->localtax2_rate, $line->desc, 'HT', $line->info_bits, $line->special_code, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $multicurrency_subprice);
+			$result = $object->updateline($line->id, $subprice, $line->qty, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->desc, 'HT', $line->info_bits, $line->special_code, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $multicurrency_subprice);
 			// Update $object with new margin info
 			$line->price = $subprice;
 			$line->marge_tx = $margin_rate;
