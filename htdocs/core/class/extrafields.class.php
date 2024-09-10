@@ -650,6 +650,8 @@ class ExtraFields
 	{
 		global $action, $hookmanager;
 
+		$result = 0;
+
 		if ($elementtype == 'thirdparty') {
 			$elementtype = 'societe';
 		}
