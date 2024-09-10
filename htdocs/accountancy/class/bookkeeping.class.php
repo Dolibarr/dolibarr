@@ -408,7 +408,7 @@ class BookKeeping extends CommonObject
 				$sql .= ', entity';
 				$sql .= ") VALUES (";
 				$sql .= "'".$this->db->idate($this->doc_date)."'";
-				$sql .= ", ".(isDolTms($this->date_lim_reglement) ? "'".$this->db->idate($this->date_lim_reglement)."'" :  'NULL');
+				$sql .= ", ".(isDolTms($this->date_lim_reglement) ? "'".$this->db->idate($this->date_lim_reglement)."'" : 'NULL');
 				$sql .= ", '".$this->db->escape($this->doc_type)."'";
 				$sql .= ", '".$this->db->escape($this->doc_ref)."'";
 				$sql .= ", ".((int) $this->fk_doc);
@@ -839,7 +839,7 @@ class BookKeeping extends CommonObject
 	 * @param 	string 	$sortfield 		Sort field
 	 * @param 	int 	$limit 			limit
 	 * @param 	int 	$offset 		offset limit
-	 * @param 	array 	$filter 		filter array
+	 * @param 	array<string,string> 	$filter 		filter array
 	 * @param 	string 	$filtermode 	filter mode (AND or OR)
 	 * @param 	int 	$option 		option (0: general account or 1: subaccount)
 	 * @param	int		$countonly		Do not fill the $object->lines, return only the count.
@@ -1040,7 +1040,7 @@ class BookKeeping extends CommonObject
 	 * @param string 		$sortfield                      Sort field
 	 * @param int 			$limit                          Limit
 	 * @param int 			$offset                         Offset limit
-	 * @param string|array 	$filter                         Filter array
+	 * @param string|array<string,string> 	$filter			Filter array
 	 * @param string 		$filtermode                     Filter mode (AND or OR)
 	 * @param int           $showAlreadyExportMovements     Show movements when field 'date_export' is not empty (0:No / 1:Yes (Default))
 	 * @return int                                          Return integer <0 if KO, >0 if OK
@@ -1228,7 +1228,7 @@ class BookKeeping extends CommonObject
 	 * @param 	string 			$sortfield 		Sort field
 	 * @param 	int 			$limit 			Limit
 	 * @param 	int 			$offset 		Offset limit
-	 * @param 	string|array 	$filter 		Filter
+	 * @param 	string|array<string,string> $filter 	Filter
 	 * @param 	string 			$filtermode 	Filter mode (AND or OR)
 	 * @param 	int 			$option 		option (0: aggregate by general account or 1: aggreegate by subaccount)
 	 * @return 	int 							Return integer <0 if KO, >0 if OK
@@ -2180,11 +2180,11 @@ class BookKeeping extends CommonObject
 	 *
 	 * @param string     $selectid   Preselected chart of accounts
 	 * @param string     $htmlname	Name of field in html form
-	 * @param int		$showempty	Add an empty field
-	 * @param array		$event		Event options
+	 * @param int<0,1>		$showempty	Add an empty field
+	 * @param array<array{method:string,url:string,htmlname:string,params:array<string,string>}>	$event		Event options
 	 * @param int		$select_in	Value is a aa.rowid (0 default) or aa.account_number (1)
 	 * @param int		$select_out	Set value returned by select 0=rowid (default), 1=account_number
-	 * @param string	$aabase		Set accounting_account base class to display empty=all or from 1 to 8 will display only account beginning by this number
+	 * @param string	$aabase		Set accounting_account base class to display empty=all or from 1 to 8 will display only account starting from this number
 	 * @return string|int	String with HTML select or -1 if KO
 	 */
 	public function select_account($selectid, $htmlname = 'account', $showempty = 0, $event = array(), $select_in = 0, $select_out = 0, $aabase = '')
@@ -2251,7 +2251,7 @@ class BookKeeping extends CommonObject
 	 * FIXME: This function takes the parent of parent to get the root account !
 	 *
 	 * @param 	string 	$account	Accounting account
-	 * @return 	array|int 			Array with root account information (max 2 upper level), <0 if KO
+	 * @return  array{id:int,account_number:string,label:string}|int<-1,-1>	Array with root account information (max 2 upper level), <0 if KO
 	 */
 	public function getRootAccount($account = null)
 	{
@@ -2565,7 +2565,7 @@ class BookKeeping extends CommonObject
 	 *
 	 * @param 	int			$date_start		Date start
 	 * @param 	int			$date_end		Date end
-	 * @return 	array|int					Return integer <0 if KO, Fiscal periods : [[id, date_start, date_end, label], ...]
+	 * @return	array{total:int,list:array<array{year:int,count:array<int<1,12>,int>,total:int}>}|int<-1,-1>		Return integer <0 if KO, Fiscal periods : [[id, date_start, date_end, label], ...]
 	 */
 	public function getCountByMonthForFiscalPeriod($date_start, $date_end)
 	{
@@ -2790,9 +2790,11 @@ class BookKeeping extends CommonObject
 					$this->errors[] = $langs->trans('ErrorRecordNotFound') . ' - ' . $langs->trans('Codejournal') . ' (' . $langs->trans('AccountingJournalType9') . ')';
 					$error++;
 				}
+			} else {
+				$journal = null;
 			}
 
-			if (!$error) {
+			if (!$error && is_object($journal)) {
 				$accounting_groups_used_for_balance_sheet_account = array_filter(array_map('trim', explode(',', getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT'))), 'strlen');
 				$accounting_groups_used_for_income_statement = array_filter(array_map('trim', explode(',', getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT'))), 'strlen');
 
@@ -2886,7 +2888,7 @@ class BookKeeping extends CommonObject
 					if (!$error && $income_statement_amount != 0) {
 						$mt = $income_statement_amount;
 						$accountingaccount = new AccountingAccount($this->db);
-						$accountingaccount->fetch(null, getDolGlobalString($income_statement_amount < 0 ? 'ACCOUNTING_RESULT_LOSS' : 'ACCOUNTING_RESULT_PROFIT'), true);
+						$accountingaccount->fetch(0, getDolGlobalString($income_statement_amount < 0 ? 'ACCOUNTING_RESULT_LOSS' : 'ACCOUNTING_RESULT_PROFIT'), true);
 
 						$bookkeeping = new BookKeeping($this->db);
 						$bookkeeping->doc_date = $new_fiscal_period->date_start;

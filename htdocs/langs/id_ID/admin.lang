@@ -514,15 +514,17 @@ ModuleCompanyCodeCustomerDigitaria=%s diikuti oleh nama pelanggan terpotong deng
 ModuleCompanyCodeSupplierDigitaria=%s diikuti oleh nama pemasok terpotong dengan jumlah karakter: %s untuk kode akuntansi pemasok.
 Use3StepsApproval=Secara default, Pesanan Pembelian harus dibuat dan disetujui oleh 2 pengguna yang berbeda (satu langkah / pengguna untuk membuat dan satu langkah / pengguna untuk menyetujui. Perhatikan bahwa jika pengguna memiliki izin untuk membuat dan menyetujui, satu langkah / pengguna akan cukup) . Anda dapat bertanya dengan opsi ini untuk memperkenalkan langkah ketiga / persetujuan pengguna, jika jumlahnya lebih tinggi dari nilai yang ditentukan (jadi 3 langkah diperlukan: 1 = validasi, 2 = persetujuan pertama dan 3 = persetujuan kedua jika jumlahnya cukup). <br> Set ini menjadi kosong jika satu persetujuan (2 langkah) sudah cukup, setel ke nilai yang sangat rendah (0,1) jika persetujuan kedua (3 langkah) selalu diperlukan.
 UseDoubleApproval=Gunakan persetujuan 3 langkah saat jumlah (tanpa pajak) lebih tinggi dari ...
-WarningPHPMail=PERINGATAN: Pengaturan untuk mengirim email dari aplikasi menggunakan pengaturan umum default. Pilihan ini tidak memerlukan pengetahuan teknis untuk menyelesaikan penyiapan.<br>Namun, seringkali lebih baik menyiapkan email keluar untuk menggunakan server email Penyedia Layanan Email Anda daripada penyiapan default untuk beberapa alasan:
+WarningPHPMail=NOTICE: The setup to send emails from the application is using the default generic setup (called "%s"). This choice needs no technical knowledge and no particular setup.<br>However, it is often better to setup outgoing emails to use the other method (called "%s") to use the email server of your Email Service Provider, instead of the default setup for several reasons:
 WarningPHPMailA=- Menggunakan server Penyedia Layanan Email meningkatkan kepercayaan email Anda, sehingga meningkatkan kemampuan pengiriman tanpa ditandai sebagai SPAM
-WarningPHPMailB=- Beberapa Penyedia Layanan Email (seperti Yahoo) tidak mengizinkan Anda mengirim email dari server lain selain dari server mereka sendiri. Pengaturan Anda saat ini menggunakan server aplikasi untuk mengirim email dan bukan server penyedia email Anda, jadi beberapa penerima (yang kompatibel dengan protokol DMARC terbatas), akan menanyakan penyedia email Anda apakah mereka dapat menerima email Anda dan beberapa penyedia email (seperti Yahoo) mungkin menjawab "tidak" karena server tersebut bukan milik mereka, jadi beberapa Email yang Anda kirim mungkin tidak dapat diterima untuk pengiriman (hati-hati juga dengan kuota pengiriman penyedia email Anda).
+WarningPHPMailB=- If the domain of your email (the part mymaildomain.com into myname@mymaildomain.com) is protected by a SPF + a DMARC record, your email may be flagged as SPAM because your DMARC rule defined into DNS zone of the domain of the sender (mymaildomain.com) does not allow the sending as a generic sender. In such a case, you must disable the DMARC for the domain (or set it to p=none like done by @gmail.com) or, better, if you have the technical knowledge, use the other method to send emails using the SMTP server of your own email provider.
 WarningPHPMailC=- Menggunakan server SMTP milik Penyedia Layanan Email Anda sendiri untuk mengirim email juga menarik sehingga semua email yang dikirim dari aplikasi juga akan disimpan ke direktori "Terkirim" di kotak surat Anda.
 WarningPHPMailD=Oleh karena itu disarankan untuk mengubah metode pengiriman email ke nilai "SMTP".
 WarningPHPMailDbis=Jika Anda benar-benar ingin tetap menggunakan metode "PHP" default untuk mengirim email, abaikan saja peringatan ini, atau hapus dengan %smengklik di sini%s.
 WarningPHPMail2=Jika penyedia SMTP email Anda perlu membatasi klien email ke beberapa alamat IP (sangat jarang), ini adalah alamat IP dari agen pengguna email (MUA) untuk aplikasi ERP CRM Anda:<strong>%s </strong>.
-WarningPHPMailSPF=Jika nama domain di alamat email pengirim Anda dilindungi oleh data SPF (tanyakan kepada pendaftar nama domain Anda), Anda harus menambahkan IP berikut di data SPF DNS domain Anda: <strong>%s</strong>.
-ActualMailSPFRecordFound=Catatan SPF aktual ditemukan (untuk email %s) : %s
+WarningPHPMailSPF=If the domain name in your sender email address is protected by a SPF record (ask your domain name registar), you must add the following IPs or entry in the SPF record of the DNS of your domain: <strong>%s</strong>.
+WarningPHPMailSPFDMARC=If the domain name in your sender email address is protected by a DMARC record different than p=none (ask your domain name registar), you must remove your DMARC record, or set it to p=none like do @gmail.com) or use sending another method.
+SPFAndDMARCInformation=SPF and DMARC DNS record for main email addresses
+ActualMailDNSRecordFound=Actual %s record found (for email %s) : %s
 ClickToShowDescription=Klik untuk menampilkan deskripsi
 DependsOn=Modul ini membutuhkan modul
 RequiredBy=Modul ini diperlukan oleh modul
@@ -867,7 +869,7 @@ Permission255=Merubah Kata Sandi Pengguna Lain
 Permission256=Hapus atau nonaktifkan pengguna lain
 Permission262=Perluas akses ke semua pihak ketiga DAN objeknya (tidak hanya pihak ketiga yang penggunanya ditautkan sebagai perwakilan penjualan).
 Permission262b=Tidak efektif untuk pengguna eksternal (selalu terbatas pada proposal, pesanan, invoice, kontrak, dll).
-Permission262c=Tidak efektif untuk proyek (hanya aturan tentang izin proyek, visibilitas, dan penugasan yang penting).
+Permission262c=Not effective for projects (only rules on project permissions, visibility and users assignment matter).
 Permission263=Memperluas akses ke semua pihak ketiga TANPA objek mereka (tidak hanya pihak ketiga yang pengguna sebagai perwakilan penjualannya). <br> Tidak efektif untuk pengguna eksternal (selalu terbatas pada diri mereka sendiri untuk proposal, pesanan, faktur, kontrak, dll.). <br> Tidak efektif untuk proyek (hanya aturan tentang izin proyek, visibilitas, dan masalah penugasan).
 Permission271=Baca CA
 Permission272=Membaca Nota
@@ -944,7 +946,7 @@ Permission776=Membayar laporan pengeluaran
 Permission777=Baca semua laporan pengeluaran (bahkan laporan pengguna bukan bawahan)
 Permission778=Buat / ubah laporan pengeluaran semua orang
 Permission779=Laporan pengeluaran ekspor
-Permission1001=Membaca Stok
+Permission1001=Read warehouses and stocks
 Permission1002=Membuat/Merubah Gudang
 Permission1003=Menghapus Gudang
 Permission1004=Membaca pergerakan stok
@@ -2218,7 +2220,7 @@ CreateCandidature=Buat lamaran kerja
 FormatZip=Kode Pos
 MainMenuCode=Kode entri menu (mainmenu)
 ECMAutoTree=Tampilkan pohon ECM otomatis
-OperationParamDesc=Tentukan aturan yang akan digunakan untuk mengekstrak beberapa data atau tetapkan nilai yang akan digunakan untuk operasi.<br><br>Contoh untuk mengekstrak nama perusahaan subjek email ke dalam variabel sementara:<br>tmp_var=EXTRACT:SUBJECT:Pesan dari perusahaan ([^\n]*)<br><br>Contoh untuk menyetel properti objek yang akan dibuat:<br>objproperty1=SET:nilai kode keras<br>objproperty2=SET:__tmp_var__<br>objproperty3=SETIFEMPTY:nilai (nilai disetel hanya jika properti belum ditentukan)<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EKSTRAK:SUBJEK:([^&#92;n]*)<br>object.objproperty5=EKSTRAK:BODY:Nama perusahaan saya adalah\\ s([^\\s]*)<br><br>Gunakan baris baru untuk mengekstrak atau menyetel beberapa properti.
+OperationParamDesc=Define the rules to use to extract some data or set values to use for operation.<br><br>Example to extract a string from email header, subject or body into a temporary variable:<br>tmp_var1=EXTRACT:HEADER:My regex ([^\n]*)<br>tmp_var2=EXTRACT:SUBJECT:My refex ([^\n]*)<br>tmp_var3=EXTRACT:BODY:My regex ([^\n]*)<br><br>Examples to set the properties of an object to create:<br>objproperty1=SET:a hard coded value<br>objproperty2=SET:__tmp_var__<br>objproperty3=SETIFEMPTY:a value (value is set only if property is not already defined)<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a new line to extract or set several properties.
 OpeningHours=Jam buka
 OpeningHoursDesc=Masukkan di sini jam buka reguler perusahaan Anda.
 ResourceSetup=Modul Konfigurasi Sumber Daya
@@ -2264,7 +2266,7 @@ LargerThan=lebih besar dari
 IfTrackingIDFoundEventWillBeLinked=Perhatikan bahwa jika ID pelacakan suatu objek ditemukan di email, atau jika email tersebut merupakan jawaban dari email yang telah dikumpulkan dan ditautkan ke suatu objek, peristiwa yang dibuat akan secara otomatis ditautkan ke objek terkait yang diketahui.
 WithGMailYouCanCreateADedicatedPassword=Dengan akun GMail, jika Anda mengaktifkan validasi 2 langkah, disarankan untuk membuat kata sandi kedua khusus untuk aplikasi tersebut daripada menggunakan kata sandi akun Anda sendiri dari https://myaccount.google.com/.
 EmailCollectorTargetDir=Mungkin merupakan perilaku yang diinginkan untuk memindahkan email ke tag/direktori lain ketika berhasil diproses. Cukup tetapkan nama direktori di sini untuk menggunakan fitur ini (JANGAN gunakan karakter khusus pada nama). Perhatikan bahwa Anda juga harus menggunakan akun login baca/tulis.
-EmailCollectorLoadThirdPartyHelp=Anda dapat menggunakan tindakan ini untuk menggunakan konten email untuk menemukan dan memuat pihak ketiga yang ada di database Anda (pencarian akan dilakukan pada properti yang ditentukan di antara 'id','name','name_alias','email'). Pihak ketiga yang ditemukan (atau dibuat) akan digunakan untuk tindakan berikut yang memerlukannya.<br>Misalnya, jika Anda ingin membuat pihak ketiga dengan nama yang diambil dari string ' Nama: nama yang akan ditemukan' ada di badan, gunakan email pengirim sebagai email, Anda dapat menyetel kolom parameter seperti ini:<br>'email=HEADER:^From:(. *);nama=EKSTRAK:BODY:Nama:\\s([^\\s]*);client=SET:2;'<br>
+EmailCollectorLoadThirdPartyHelp=You can use this action to use the email content to find and load an existing third party in your database (search will be done on the defined property among 'id','name','name_alias','email'). The found (or created) third party will be used for following actions that need it.<br>For example, if you want to create a third party with a name extracted from a string 'Name: name to find' present into the body, use the sender email as email, you can set the parameter field like this:<br>'email=EXTRACT:HEADER:^From:(.*);name=EXTRACT:BODY:Name:\\s([^\\s]*);client=SET:2;'<br>
 FilterSearchImapHelp=Peringatan: banyak server email (seperti Gmail) melakukan pencarian kata penuh ketika mencari sebuah string dan tidak akan memberikan hasil jika string hanya ditemukan sebagian menjadi sebuah kata. Karena alasan ini juga, penggunaan karakter khusus ke dalam kriteria pencarian akan diabaikan jika karakter tersebut bukan bagian dari kata yang ada.<br>Untuk membuat pencarian pengecualian pada sebuah kata (kembalikan email jika ada kata tidak ditemukan), Anda dapat menggunakan ! karakter sebelum kata (mungkin tidak berfungsi pada beberapa server email).
 EndPointFor=Titik akhir untuk %s: %s
 DeleteEmailCollector=Hapus pengumpul email

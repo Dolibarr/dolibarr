@@ -60,16 +60,10 @@ class FichinterRec extends Fichinter
 	 */
 	public $picto = 'intervention';
 
-
 	/**
 	 * @var string title
 	 */
 	public $title;
-	public $number;
-	public $date;
-	public $amount;
-	public $tva;
-	public $total;
 
 	/**
 	 * @var int
@@ -81,6 +75,9 @@ class FichinterRec extends Fichinter
 	 */
 	public $frequency;
 
+	/**
+	 * @var int
+	 */
 	public $id_origin;
 
 	/**
@@ -93,7 +90,14 @@ class FichinterRec extends Fichinter
 	 */
 	public $propalid;
 
+	/**
+	 * @var int|string
+	 */
 	public $date_last_gen;
+
+	/**
+	 * @var datetime|string
+	 */
 	public $date_when;
 
 	/**
@@ -107,7 +111,7 @@ class FichinterRec extends Fichinter
 	public $nb_gen_max;
 
 	/**
-	 * int rank
+	 * @var int rank
 	 */
 	public $rang;
 
@@ -116,6 +120,9 @@ class FichinterRec extends Fichinter
 	 */
 	public $special_code;
 
+	/**
+	 * @var int
+	 */
 	public $usenewprice = 0;
 
 	/**

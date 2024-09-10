@@ -1778,7 +1778,7 @@ if (!$error && ($massaction == 'clonetasks' || ($action == 'clonetasks' && $conf
 	// Check if current user is contact of the new project (necessary only if project is not public)
 	$iscontactofnewproject = 0;
 	if (empty($newproject->public)) {
-		$tmps = $newproject->getProjectsAuthorizedForUser($user, 0, 1, 0, '(fk_statut:=:1)');	// We check only open project (cloning on closed is not allowed
+		$tmps = $newproject->getProjectsAuthorizedForUser($user, 0, 1, 0, '(fk_statut:=:1)');	// We check only open project (cloning on closed is not allowed)
 		$tmparray = explode(',', $tmps);
 		if (!in_array($newproject->id, $tmparray)) {
 			$iscontactofnewproject = 1;
@@ -1801,7 +1801,7 @@ if (!$error && ($massaction == 'clonetasks' || ($action == 'clonetasks' && $conf
 				require_once DOL_DOCUMENT_ROOT . "/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON') . '.php';
 				$modTask = new $classnamemodtask();
 				'@phan-var-force ModeleNumRefTask $modTask';
-				$defaultref = $modTask->getNextValue(null, $newproject);
+				$defaultref = $modTask->getNextValue(null, $clone_task);
 			}
 
 			if (!$error) {

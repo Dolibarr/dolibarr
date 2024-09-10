@@ -2038,7 +2038,7 @@ if ($action == 'updatemeta' && $usercanedit) {
 		$objectpage->image = GETPOST('WEBSITE_IMAGE', 'alpha');
 		$objectpage->keywords = str_replace(array('<', '>'), '', GETPOST('WEBSITE_KEYWORDS', 'alphanohtml'));
 		$objectpage->allowed_in_frames = GETPOST('WEBSITE_ALLOWED_IN_FRAMES', 'aZ09');
-		$objectpage->htmlheader = trim(GETPOST('htmlheader', 'none'));		// Must accept tags like '<script>' and '<link>'
+		$objectpage->htmlheader = trim(GETPOST('htmlheader', 'restricthtmlallowlinkscript'));		// Must accept tags like '<script>' and '<link>'
 		$objectpage->fk_page = (GETPOSTINT('pageidfortranslation') > 0 ? GETPOSTINT('pageidfortranslation') : 0);
 		$objectpage->author_alias = trim(GETPOST('WEBSITE_AUTHORALIAS', 'alphanohtml'));
 		$objectpage->object_type = GETPOST('WEBSITE_OBJECTCLASS', 'alpha');
@@ -2197,7 +2197,7 @@ if ((($action == 'updatesource' || $action == 'updatecontent' || $action == 'con
 		$db->begin();
 
 		$objectnew = new Website($db);
-		$result = $objectnew->createFromClone($user, GETPOSTINT('id'), GETPOSTINT('siteref'), (GETPOSTINT('newlang') ? GETPOSTINT('newlang') : ''));
+		$result = $objectnew->createFromClone($user, GETPOSTINT('id'), GETPOST('siteref'), (GETPOSTINT('newlang') ? GETPOSTINT('newlang') : ''));
 
 		if ($result < 0) {
 			$error++;
@@ -2206,6 +2206,7 @@ if ((($action == 'updatesource' || $action == 'updatecontent' || $action == 'con
 
 			$db->rollback();
 		} else {
+			setEventMessages("ObjectClonedSuccessfuly", null, 'mesgs');
 			$object = $objectnew;
 			$id = $object->id;
 			$pageid = $object->fk_default_home;

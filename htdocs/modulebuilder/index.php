@@ -275,7 +275,7 @@ if ($dirins && $action == 'initmodule' && $modulename && $user->hasRight("module
 			'mymodule' => strtolower($modulename),
 			'MyModule' => $modulename
 		);
-		$result = dolCopyDir($srcdir, $destdir, 0, 0, $arrayreplacement);
+		$result = dolCopyDir($srcdir, $destdir, '0', 0, $arrayreplacement);
 		//dol_mkdir($destfile);
 		if ($result <= 0) {
 			if ($result < 0) {
@@ -980,7 +980,7 @@ if ($dirins && $action == 'addlanguage' && !empty($module) && $user->hasRight("m
 				$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template/langs/en_US';
 				$arrayofreplacement = array('mymodule' => $modulelowercase);
 			}
-			$result = dolCopyDir($srcdir, $destdir, 0, 0, $arrayofreplacement);
+			$result = dolCopyDir($srcdir, $destdir, '0', 0, $arrayofreplacement);
 		}
 	} else {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Language")), null, 'errors');

@@ -577,7 +577,7 @@ class UserGroup extends CommonObject
 	 */
 	public function getrights($moduletag = '')
 	{
-		$this->loadRights($moduletag);
+		return $this->loadRights($moduletag);
 	}
 
 	/**
