@@ -669,7 +669,7 @@ return [
         'htdocs/debugbar/class/DataCollector/DolibarrCollector.php' => ['PhanPluginUnknownArrayMethodReturnType'],
         'htdocs/debugbar/class/TraceableDB.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType', 'PhanPluginUnknownArrayPropertyType'],
         'htdocs/delivery/card.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredGlobalVariable'],
-        'htdocs/delivery/class/delivery.class.php' => ['PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredProperty'],
+        'htdocs/delivery/class/delivery.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/delivery/tpl/linkedobjectblock.tpl.php' => ['PhanPluginUnknownObjectMethodCall'],
         'htdocs/document.php' => ['PhanRedefineFunction', 'PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/don/admin/donation.php' => ['PhanPluginUnknownObjectMethodCall', 'PhanTypeMismatchArgumentProbablyReal'],
