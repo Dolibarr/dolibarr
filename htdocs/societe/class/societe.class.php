@@ -862,6 +862,9 @@ class Societe extends CommonObject
 
 	// Fields loaded by fetchPartnerships()
 
+	/**
+	 * @var array<array<mixed>>
+	 */
 	public $partnerships = array();
 
 
