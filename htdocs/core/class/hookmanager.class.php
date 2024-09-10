@@ -208,6 +208,7 @@ class HookManager
 
 		// Init return properties
 		$localResPrint = '';
+		$localResArray = array();
 		$this->resArray = array();
 		$this->resNbOfHooks = 0;
 
@@ -263,9 +264,9 @@ class HookManager
 
 						if (isset($actionclassinstance->results) && is_array($actionclassinstance->results)) {
 							if ($resactiontmp > 0) {
-								$this->resArray = $actionclassinstance->results;
+								$localResArray = $actionclassinstance->results;
 							} else {
-								$this->resArray = array_merge($this->resArray, $actionclassinstance->results);
+								$localResArray = array_merge($localResArray, $actionclassinstance->results);
 							}
 						}
 						if (!empty($actionclassinstance->resprints)) {
@@ -291,7 +292,7 @@ class HookManager
 						$resaction += $resactiontmp;
 
 						if (!empty($actionclassinstance->results) && is_array($actionclassinstance->results)) {
-							$this->resArray = array_merge($this->resArray, $actionclassinstance->results);
+							$localResArray = array_merge($localResArray, $actionclassinstance->results);
 						}
 						if (!empty($actionclassinstance->resprints)) {
 							$localResPrint .= $actionclassinstance->resprints;
@@ -321,6 +322,7 @@ class HookManager
 		}
 
 		$this->resPrint = $localResPrint;
+		$this->resArray = $localResArray;
 
 		return ($error ? -1 : $resaction);
 	}
