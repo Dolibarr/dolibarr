@@ -452,7 +452,7 @@ if ($step == 1 || !$datatoexport) {
 
 	$head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=1';
 	$head[$h][1] = $langs->trans("Step")." 1";
-	$hselected = $h;
+	$hselected = (string) $h;
 	$h++;
 
 	print dol_get_fiche_head($head, $hselected, '', -1);
@@ -516,7 +516,7 @@ if ($step == 2 && $datatoexport) {
 
 	$head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=2&datatoexport='.$datatoexport;
 	$head[$h][1] = $langs->trans("Step")." 2";
-	$hselected = $h;
+	$hselected = (string) $h;
 	$h++;
 
 	print dol_get_fiche_head($head, $hselected, '', -2);
@@ -702,7 +702,7 @@ if ($step == 3 && $datatoexport) {
 
 	$head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=3&datatoexport='.$datatoexport;
 	$head[$h][1] = $langs->trans("Step")." 3";
-	$hselected = $h;
+	$hselected = (string) $h;
 	$h++;
 
 	print dol_get_fiche_head($head, $hselected, '', -2);
@@ -884,7 +884,7 @@ if ($step == 4 && $datatoexport) {
 
 	$head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=4&datatoexport='.$datatoexport;
 	$head[$h][1] = $langs->trans("Step")." ".(3 + $stepoffset);
-	$hselected = $h;
+	$hselected = (string) $h;
 	$h++;
 
 	print dol_get_fiche_head($head, $hselected, '', -2);
@@ -1168,7 +1168,7 @@ if ($step == 5 && $datatoexport) {
 
 	$head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=5&datatoexport='.$datatoexport;
 	$head[$h][1] = $langs->trans("Step")." ".(4 + $stepoffset);
-	$hselected = $h;
+	$hselected = (string) $h;
 	$h++;
 
 	print dol_get_fiche_head($head, $hselected, '', -2);
