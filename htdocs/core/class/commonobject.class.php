@@ -10726,56 +10726,6 @@ abstract class CommonObject
 	}
 
 	/**
-	 * Set signed status & call trigger with context message
-	 *
-	 * @param	User	$user			Object user that modify
-	 * @param	int		$status			New signed status to set (often a constant like self::STATUS_XXX)
-	 * @param	int		$notrigger		1 = Does not execute triggers, 0 = Execute triggers
-	 * @param	string	$triggercode	Trigger code to use
-	 * @return	int						0 < if KO, > 0 if OK
-	 */
-	public function setSignedStatusCommon(User $user, int $status, int $notrigger = 0, string $triggercode = '')
-	{
-		$error = 0;
-
-		$this->db->begin();
-
-		$statusfield = 'signed_status';
-
-		$sql = "UPDATE ".$this->db->prefix().$this->table_element;
-		$sql .= " SET ".$statusfield." = ".((int) $status);
-		$sql .= " WHERE rowid = ".((int) $this->id);
-
-		if ($this->db->query($sql)) {
-			if (!$error) {
-				$this->oldcopy = clone $this;
-			}
-
-			if (!$error && !$notrigger) {
-				// Call trigger
-				$result = $this->call_trigger($triggercode, $user);
-				if ($result < 0) {
-					$error++;
-				}
-			}
-
-			if (!$error) {
-				$this->signed_status = $status;
-				$this->db->commit();
-				return 1;
-			} else {
-				$this->db->rollback();
-				return -1;
-			}
-		} else {
-			$this->error = $this->db->error();
-			$this->db->rollback();
-			return -1;
-		}
-	}
-
-
-	/**
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
