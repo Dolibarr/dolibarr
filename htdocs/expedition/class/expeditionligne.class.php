@@ -208,7 +208,7 @@ class ExpeditionLigne extends CommonObjectLine
 	public $weight;
 
 	/**
-	 * @var int
+	 * @var string|int
 	 */
 	public $weight_units;
 
@@ -218,7 +218,7 @@ class ExpeditionLigne extends CommonObjectLine
 	public $length;
 
 	/**
-	 * @var int
+	 * @var string|int
 	 */
 	public $length_units;
 
@@ -228,7 +228,7 @@ class ExpeditionLigne extends CommonObjectLine
 	public $width;
 
 	/**
-	 * @var int
+	 * @var string|int
 	 */
 	public $width_units;
 
@@ -238,7 +238,7 @@ class ExpeditionLigne extends CommonObjectLine
 	public $height;
 
 	/**
-	 * @var int
+	 * @var string|int
 	 */
 	public $height_units;
 
@@ -248,7 +248,7 @@ class ExpeditionLigne extends CommonObjectLine
 	public $surface;
 
 	/**
-	 * @var int
+	 * @var string|int
 	 */
 	public $surface_units;
 
@@ -258,7 +258,7 @@ class ExpeditionLigne extends CommonObjectLine
 	public $volume;
 
 	/**
-	 * @var int
+	 * @var string|int
 	 */
 	public $volume_units;
 
