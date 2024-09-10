@@ -136,6 +136,7 @@ $arrayfields = array(
 	'e.fk_shipping_method' => array('label' => $langs->trans('SendingMethod'), 'checked' => 1, 'position' => 10),
 	'e.tracking_number' => array('label' => $langs->trans("TrackingNumber"), 'checked' => 1, 'position' => 11),
 	'e.weight' => array('label' => $langs->trans("Weight"), 'checked' => 0, 'position' => 12),
+	'e.volume' => array('label' => $langs->trans("Volume"), 'checked' => 0, 'position' => 13),
 	'e.datec' => array('label' => $langs->trans("DateCreation"), 'checked' => 0, 'position' => 500),
 	'e.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => 0, 'position' => 500),
 	'e.fk_statut' => array('label' => $langs->trans("Status"), 'checked' => 1, 'position' => 1000),
@@ -1214,6 +1215,12 @@ if (!empty($arrayfields['e.weight']['checked'])) {
 
 	print '</td>';
 }
+// Volume
+if (!empty($arrayfields['e.volume']['checked'])) {
+	print '<td class="liste_titre maxwidthonsmartphone center">';
+
+	print '</td>';
+}
 // Date delivery planned
 if (!empty($arrayfields['e.date_delivery']['checked'])) {
 	print '<td class="liste_titre center">';
@@ -1348,6 +1355,10 @@ if (!empty($arrayfields['typent.code']['checked'])) {
 }
 if (!empty($arrayfields['e.weight']['checked'])) {
 	print_liste_field_titre($arrayfields['e.weight']['label'], $_SERVER["PHP_SELF"], "e.weight", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['e.volume']['checked'])) {
+	print_liste_field_titre($arrayfields['e.volume']['label'], $_SERVER["PHP_SELF"], "e.size", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['e.date_delivery']['checked'])) {
@@ -1542,17 +1553,30 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
+		
+		if ((!empty($arrayfields['e.weight']['checked']) && empty($object->trueWeight)) || !empty($arrayfields['e.volume']['checked'])) {
+			$tmparray = $object->getTotalWeightVolume();
+		}
+		
 		// Weight
 		if (!empty($arrayfields['e.weight']['checked'])) {
 			print '<td class="center">';
 			if (empty($object->trueWeight)) {
-				$tmparray = $object->getTotalWeightVolume();
-				print showDimensionInBestUnit($tmparray['weight'], 0, "weight", $langs, isset($conf->global->MAIN_WEIGHT_DEFAULT_ROUND) ? $conf->global->MAIN_WEIGHT_DEFAULT_ROUND : -1, isset($conf->global->MAIN_WEIGHT_DEFAULT_UNIT) ? $conf->global->MAIN_WEIGHT_DEFAULT_UNIT : 'no');
+				print showDimensionInBestUnit($tmparray['weight'], 0, "weight", $langs, getDolGlobalInt('MAIN_WEIGHT_DEFAULT_ROUND', -1), getDolGlobalString('MAIN_WEIGHT_DEFAULT_UNIT', 'no'));
 				print $form->textwithpicto('', $langs->trans('EstimatedWeight'), 1);
 			} else {
 				print $object->trueWeight;
 				print ($object->trueWeight && $object->weight_units != '') ? ' '.measuringUnitString(0, "weight", $object->weight_units) : '';
 			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Volume
+		if (!empty($arrayfields['e.volume']['checked'])) {
+			print '<td class="center">';
+			print showDimensionInBestUnit($tmparray['volume'], 0, "volume", $langs, getDolGlobalString('MAIN_MAX_DECIMALS_SHOWN'), 'no');
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
