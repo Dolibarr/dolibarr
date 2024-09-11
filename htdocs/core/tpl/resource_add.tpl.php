@@ -4,7 +4,7 @@
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 
@@ -17,7 +17,7 @@ $out = '';
 
 $out .= '<div class="centpercent allwidth nohover">';
 
-$out .= '<form class="nohover '.($var == true ? 'pair' : 'impair').'" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+$out .= '<form class="nohover '.(!empty($var) && $var == true ? 'pair' : 'impair').'" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 $out .= '<input type="hidden" name="token" value="'.newToken().'">';
 $out .= '<input type="hidden" name="action" value="add_element_resource">';
 $out .= '<input type="hidden" name="element" value="'.$element.'">';
@@ -32,7 +32,7 @@ $out .= '<div class="divsearchfield paddingtop paddingbottom valignmiddle inline
 $out .= '<div class="divsearchfield paddingtop paddingbottom valignmiddle inline-block">';
 $events = array();
 $out .= img_picto('', 'resource', 'class="pictofixedwidth"');
-$out .= $formresources->select_resource_list('', 'fk_resource', '', 1, 1, 0, $events, '', 2, null);
+$out .= $formresources->select_resource_list(0, 'fk_resource', [], 1, 1, 0, $events, '', 2, 0);
 $out .= '</div>';
 
 $out .= '<div class="divsearchfield paddingtop paddingbottom valignmiddle inline-block marginleftonly"><label for="resbusy">'.$langs->trans('Busy').'</label> ';

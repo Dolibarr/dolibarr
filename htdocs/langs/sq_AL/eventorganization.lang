@@ -5,38 +5,28 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModuleEventOrganizationName = Organizimi i eventit
 EventOrganizationDescription = Organizimi i ngjarjes përmes projektit të modulit
 EventOrganizationDescriptionLong= Menaxhoni organizimin e një ngjarjeje (shfaqje, konferenca, pjesëmarrës ose folës, me faqe publike për sugjerim, votim ose regjistrim)
-#
-# Menu
-#
 EventOrganizationMenuLeft = Ngjarje të organizuara
 EventOrganizationConferenceOrBoothMenuLeft = Konferencë Ose Kabinë
-
 PaymentEvent=Pagesa e ngjarjes
-
-#
+EventFee=Tarifa e ngjarjes
 # Admin page
-#
 NewRegistration=Regjistrimi
 EventOrganizationSetup=Konfigurimi i organizimit të ngjarjeve
 EventOrganization=Organizimi i eventit
 EventOrganizationSetupPage = Faqja e konfigurimit të organizimit të ngjarjeve
 EVENTORGANIZATION_TASK_LABEL = Etiketa e detyrave për t'u krijuar automatikisht kur projekti të vërtetohet
-EVENTORGANIZATION_TASK_LABELTooltip = Kur vërtetoni një ngjarje për të organizuar, disa detyra mund të krijohen automatikisht në projekt<br><br>Për shembull: <br>Dërgo thirrje për konferenca<br>Dërgo thirrje për kabinatb0342fccfda19bzit sugjerime të klasave të konferencave</span ='notranslate'><br>Vërteto aplikacionin për Booths<br>Hap abonimet në ngjarje për të pranishmitb0342fccfda19>b0342fccfda1 i ngjarjes folësve<span class='notranslate'><br>Dërgo një kujtim të ngjarjes te mbajtësit e Booth<br>Dërgo një kujtim të ngjarjes për të pranishmit
+EVENTORGANIZATION_TASK_LABELTooltip = When you validate an event to organize, some tasks can be automatically created in the project<br><br>For example: <br>Send Call for Conferences<br>Send Call for Booths<br>Validate suggestions of Conferences<br>Validate application for Booths<br>Open subscriptions to the event for attendees<br>Send a remind of the event to speakers<br>Send a remind of the event to Booth hosters<br>Send a remind of the event to attendees
 EVENTORGANIZATION_TASK_LABELTooltip2=Mbajeni bosh nëse nuk keni nevojë të krijoni detyra automatikisht.
 EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Kategoria për t'u shtuar palëve të treta krijohet automatikisht kur dikush sugjeron një konferencë
 EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Kategoria për t'u shtuar palëve të treta krijohet automatikisht kur ata sugjerojnë një kabinë
@@ -48,13 +38,10 @@ EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Modeli i postës elektronike pë
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Modeli i emailit për t'u përdorur kur dërgoni email nga masakcioni "Dërgo email" në listën e pjesëmarrësve
 EVENTORGANIZATION_FILTERATTENDEES_CAT = Në formën për të krijuar/shtuar një pjesëmarrës, e kufizon listën e palëve të treta tek palët e treta në kategori
 EVENTORGANIZATION_FILTERATTENDEES_TYPE = Në formën për të krijuar/shtuar një pjesëmarrës, e kufizon listën e palëve të treta tek palët e treta me natyrën
-
-#
 # Object
-#
 OrganizedEvent=Ngjarje e organizuar
 EventOrganizationConfOrBooth= Konferencë Ose Kabinë
-EventOrganizationConfOrBoothes=Konferenca apo Kabina
+EventOrganizationConfOrBoothes=Conferences or Booths
 ManageOrganizeEvent = Menaxhoni organizimin e një ngjarjeje
 ConferenceOrBooth = Konferencë Ose Kabinë
 ConferenceOrBoothTab = Konferencë Ose Kabinë
@@ -63,10 +50,7 @@ DateOfRegistration = Data e regjistrimit
 ConferenceOrBoothAttendee = Pjesëmarrës në Konferencë ose Booth
 ApplicantOrVisitor=Aplikanti ose vizitori
 Speaker=Folësi
-
-#
 # Template Mail
-#
 YourOrganizationEventConfRequestWasReceived = Kërkesa juaj për konferencë u mor
 YourOrganizationEventBoothRequestWasReceived = Kërkesa juaj për kabinë u mor
 EventOrganizationEmailAskConf = Kërkesa për konferencë
@@ -76,10 +60,7 @@ EventOrganizationEmailRegistrationPayment = Regjistrimi për një ngjarje
 EventOrganizationMassEmailAttendees = Komunikimi me të pranishmit
 EventOrganizationMassEmailSpeakers = Komunikimi me folësit
 ToSpeakers=Tek folësit
-
-#
 # Event
-#
 AllowUnknownPeopleSuggestConf=Lejoni njerëzit të sugjerojnë konferenca
 AllowUnknownPeopleSuggestConfHelp=Lejoni njerëz të panjohur të sugjerojnë një konferencë që duan të bëjnë
 AllowUnknownPeopleSuggestBooth=Lejoni njerëzit të aplikojnë për një kabinë
@@ -88,29 +69,29 @@ PriceOfRegistration=Çmimi i regjistrimit
 PriceOfRegistrationHelp=Çmimi që duhet paguar për t'u regjistruar ose për të marrë pjesë në ngjarje
 PriceOfBooth=Çmimi i abonimit për të qëndruar në një kabinë
 PriceOfBoothHelp=Çmimi i abonimit për të qëndruar në një kabinë
+EventOrganizationICSLinkProject=Lidhni ICS për ngjarjen
 EventOrganizationICSLink=Lidhni ICS për konferenca
 ConferenceOrBoothInformation=Informacione për Konferencën ose Bothin
+ConferenceOrBoothFormat=Conference or booth mode
+ConferenceOrBoothFormatID=ID of conference or booth mode
+ConferenceOrBoothFormatCode=Code of conference or booth mode
+ConferenceOrBoothFormatLabel=Label of conference or booth mode
 Attendees=Të pranishmit
-ListOfAttendeesOfEvent=Lista e pjesëmarrësve të projektit të ngjarjes
+ListOfAttendeesOfEvent=List of attendees of event projects
+ListOfConfOrBoothOfEvent=List of conferences or booths of event projects
 DownloadICSLink = Shkarko lidhjen ICS
 EVENTORGANIZATION_SECUREKEY = Seed për të siguruar çelësin për faqen e regjistrimit publik për të sugjeruar një konferencë
 SERVICE_BOOTH_LOCATION = Shërbimi i përdorur për rreshtin e faturës për vendndodhjen e kabinës
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Shërbimi i përdorur për rreshtin e faturës në lidhje me një abonim pjesëmarrës në një ngjarje
 NbVotes=Numri i votave
-
-#
 # Status
-#
 EvntOrgDraft = Draft
 EvntOrgSuggested = Sugjeruar
 EvntOrgConfirmed = E konfirmuar
 EvntOrgNotQualified = I pakualifikuar
 EvntOrgDone = U krye
 EvntOrgCancelled = Anulluar
-
-#
 # Other
-#
 SuggestForm = Faqja e sugjerimeve
 SuggestOrVoteForConfOrBooth = Faqe për sugjerim ose votim
 EvntOrgRegistrationHelpMessage = Këtu mund të votoni për një konferencë ose të sugjeroni një të re për ngjarjen. Ju gjithashtu mund të aplikoni për të pasur një stendë gjatë ngjarjes.
@@ -127,12 +108,13 @@ PublicAttendeeSubscriptionPage = Lidhje publike vetëm për regjistrim në kët�
 MissingOrBadSecureKey = Çelësi i sigurisë është i pavlefshëm ose mungon
 EvntOrgWelcomeMessage = Ky formular ju lejon të regjistroheni si një pjesëmarrës i ri në ngjarje
 EvntOrgDuration = Kjo konferencë fillon në %s dhe përfundon në %s.
-ConferenceAttendeeFee = Tarifa e pjesëmarrësve në konferencë për ngjarjen : '%s' ndodh nga %s në <span class='notranslate'>b0ecb2fz874 >.
-BoothLocationFee = Vendndodhja e kabinës për ngjarjen : '%s' që ndodh nga %s në <span class='notranslate'>b0ecb2ec87f49>f
+ConferenceAttendeeFee = Conference attendee fee for the event : '%s' occurring from %s to %s.
+BoothLocationFee = Booth location for the event : '%s' occurring from %s to %s
 EventType = Lloji i ngjarjes
 LabelOfBooth=Etiketa e kabinës
 LabelOfconference=Etiketa e konferencës
 ConferenceIsNotConfirmed=Regjistrimi nuk ofrohet, konferenca nuk është konfirmuar ende
+EventRegistrationAreClosed=Event registrations are closed
 DateMustBeBeforeThan=%s duhet të jetë përpara %s
 DateMustBeAfterThan=%s duhet të jetë pas %s
 MaxNbOfAttendeesReached=Është arritur numri maksimal i pjesëmarrësve
@@ -161,7 +143,7 @@ Attendee = Pjesëmarrësit
 PaymentConferenceAttendee = Pagesa e pjesëmarrësve në konferencë
 PaymentBoothLocation = Pagesa e vendndodhjes së kabinës
 DeleteConferenceOrBoothAttendee=Hiq pjesëmarrësin
-RegistrationAndPaymentWereAlreadyRecorder=Një regjistrim dhe një pagesë janë regjistruar tashmë për emailin <b>%s<span class='notranslate'>b09a4b739f17f8z
+RegistrationAndPaymentWereAlreadyRecorder=A registration and a payment were already recorded for the email <b>%s</b>
 EmailAttendee=Email i pjesëmarrësit
 EmailCompany=Email i kompanisë
 EmailCompanyForInvoice=Email-i i kompanisë (për faturë, nëse është i ndryshëm nga email-i i pjesëmarrësit)
@@ -174,6 +156,7 @@ DateEndEvent=Data e përfundimit të ngjarjes
 ModifyStatus=Ndrysho statusin
 ConfirmModifyStatus=Konfirmo modifikimin e statusit
 ConfirmModifyStatusQuestion=Jeni i sigurt që dëshironi të modifikoni %s rekordet e zgjedhura?
-RecordsUpdated = %s Regjistrimet u përditësuan
-RecordUpdated = Regjistri u përditësua
-NoRecordUpdated = Asnjë regjistrim nuk u përditësua
+RecordsUpdated=%s Regjistrimet u përditësuan
+RecordUpdated=Regjistri u përditësua
+NoRecordUpdated=Asnjë regjistrim nuk u përditësua
+ProfitPerValidatedAttendee=Fitimi për pjesëmarrës

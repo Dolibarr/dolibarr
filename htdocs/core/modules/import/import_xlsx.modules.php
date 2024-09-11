@@ -3,6 +3,8 @@
  * Copyright (C) 2009-2012 Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2012-2016 Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +30,7 @@
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 require_once DOL_DOCUMENT_ROOT . '/core/modules/import/modules_import.php';
 
@@ -48,15 +51,8 @@ class ImportXlsx extends ModeleImports
 	public $id;
 
 	/**
-	 * @var string label
-	 */
-	public $label;
-
-	public $extension; // Extension of files imported by driver
-
-	/**
 	 * Dolibarr version of driver
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr';
 
@@ -70,7 +66,7 @@ class ImportXlsx extends ModeleImports
 
 	public $handle; // Handle fichier
 
-	public $cacheconvert = array(); // Array to cache list of value found after a convertion
+	public $cacheconvert = array(); // Array to cache list of value found after a conversion
 
 	public $cachefieldtable = array(); // Array to cache list of value found into fields@tables
 
@@ -93,7 +89,7 @@ class ImportXlsx extends ModeleImports
 	 */
 	public function __construct($db, $datatoimport)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		parent::__construct();
 		$this->db = $db;
@@ -105,6 +101,14 @@ class ImportXlsx extends ModeleImports
 		$this->extension = 'xlsx'; // Extension for generated file by this driver
 		$this->picto = 'mime/xls'; // Picto (This is not used by the example file code as Mime type, too bad ...)
 		$this->version = '1.0'; // Driver version
+		$this->phpmin = array(7, 1); // Minimum version of PHP required by module
+
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+		if (versioncompare($this->phpmin, versionphparray()) > 0) {
+			dol_syslog("Module need a higher PHP version");
+			$this->error = "Module need a higher PHP version";
+			return;
+		}
 
 		// If driver use an external library, put its name here
 		require_once DOL_DOCUMENT_ROOT.'/includes/phpoffice/phpspreadsheet/src/autoloader.php';
@@ -299,22 +303,34 @@ class ImportXlsx extends ModeleImports
 	public function import_read_record()
 	{
 		// phpcs:enable
-		global $conf;
-
 		$rowcount = $this->workbook->getActiveSheet()->getHighestDataRow();
 		if ($this->record > $rowcount) {
 			return false;
 		}
 		$array = array();
+
 		$xlsx = new Xlsx();
 		$info = $xlsx->listWorksheetinfo($this->file);
 		$countcolumns = $info[0]['totalColumns'];
+
 		for ($col = 1; $col <= $countcolumns; $col++) {
-			$val = $this->workbook->getActiveSheet()->getCellByColumnAndRow($col, $this->record)->getValue();
+			$tmpcell = $this->workbook->getActiveSheet()->getCellByColumnAndRow($col, $this->record);
+
+			$val = $tmpcell->getValue();
+
+			if (Date::isDateTime($tmpcell)) {
+				// For date field, we use the standard date format string.
+				$dateValue = Date::excelToDateTimeObject($val);
+				$val = $dateValue->format('Y-m-d H:i:s');
+			}
+
 			$array[$col]['val'] = $val;
 			$array[$col]['type'] = (dol_strlen($val) ? 1 : -1); // If empty we consider it null
 		}
 		$this->record++;
+
+		unset($xlsx);
+
 		return $array;
 	}
 
@@ -405,7 +421,7 @@ class ImportXlsx extends ModeleImports
 					//dol_syslog("Table ".$tablename." check for entity into cache is ".$tablewithentity_cache[$tablename]);
 				}
 
-				// Define array to convert fields ('c.ref', ...) into column index (1, ...)
+				// Define an array to convert fields ('c.ref', ...) into column index (1, ...)
 				$arrayfield = array();
 				foreach ($sort_array_match_file_to_database as $key => $val) {
 					$arrayfield[$val] = ($key);
@@ -467,7 +483,7 @@ class ImportXlsx extends ModeleImports
 										} else {
 											$resultload = dol_include_once($file);
 											if (empty($resultload)) {
-												dol_print_error('', 'Error trying to call file=' . $file . ', class=' . $class . ', method=' . $method);
+												dol_print_error(null, 'Error trying to call file=' . $file . ', class=' . $class . ', method=' . $method);
 												break;
 											}
 											$classinstance = new $class($this->db);
@@ -516,8 +532,10 @@ class ImportXlsx extends ModeleImports
 												$newval = $classinstance->id;
 											} elseif (! $error) {
 												if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) {
+													// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 													$this->errors[$error]['lib'] = $langs->trans('ErrorFieldValueNotIn', $key, $newval, 'code', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
 												} elseif (!empty($objimport->array_import_convertvalue[0][$val]['element'])) {
+													// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 													$this->errors[$error]['lib'] = $langs->trans('ErrorFieldRefNotIn', $key, $newval, $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['element']));
 												} else {
 													$this->errors[$error]['lib'] = 'ErrorBadDefinitionOfImportProfile';
@@ -546,7 +564,7 @@ class ImportXlsx extends ModeleImports
 										} else {
 											$resultload = dol_include_once($file);
 											if (empty($resultload)) {
-												dol_print_error('', 'Error trying to call file=' . $file . ', class=' . $class . ', method=' . $method . ', code=' . $code);
+												dol_print_error(null, 'Error trying to call file=' . $file . ', class=' . $class . ', method=' . $method . ', code=' . $code);
 												break;
 											}
 											$classinstance = new $class($this->db);
@@ -558,6 +576,7 @@ class ImportXlsx extends ModeleImports
 												$newval = $classinstance->id;
 											} else {
 												if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) {
+													// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 													$this->errors[$error]['lib'] = $langs->trans('ErrorFieldValueNotIn', $key, $newval, 'scale', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
 												} else {
 													$this->errors[$error]['lib'] = 'ErrorFieldValueNotIn';
@@ -582,7 +601,7 @@ class ImportXlsx extends ModeleImports
 									} else {
 										$resultload = dol_include_once($file);
 										if (empty($resultload)) {
-											dol_print_error('', 'Error trying to call file=' . $file . ', class=' . $class . ', method=' . $method . ', units=' . $units);
+											dol_print_error(null, 'Error trying to call file=' . $file . ', class=' . $class . ', method=' . $method . ', units=' . $units);
 											break;
 										}
 										$classinstance = new $class($this->db);
@@ -595,6 +614,7 @@ class ImportXlsx extends ModeleImports
 											$newval = $scaleorid ? $scaleorid : 0;
 										} else {
 											if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) {
+												// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 												$this->errors[$error]['lib'] = $langs->trans('ErrorFieldValueNotIn', $key, $newval, 'scale', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
 											} else {
 												$this->errors[$error]['lib'] = 'ErrorFieldValueNotIn';
@@ -625,7 +645,7 @@ class ImportXlsx extends ModeleImports
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getcustomeraccountancycodeifauto') {
 									if (strtolower($newval) == 'auto') {
 										$this->thirdpartyobject->get_codecompta('customer');
-										$newval = $this->thirdpartyobject->code_compta;
+										$newval = $this->thirdpartyobject->code_compta_client;
 										//print 'code_compta='.$newval;
 									}
 									if (empty($newval)) {
@@ -653,6 +673,7 @@ class ImportXlsx extends ModeleImports
 										if (!empty($classModForNumber) && !empty($pathModForNumber) && is_readable(DOL_DOCUMENT_ROOT.$pathModForNumber)) {
 											require_once DOL_DOCUMENT_ROOT.$pathModForNumber;
 											$modForNumber = new $classModForNumber();
+											'@phan-var-force ModeleNumRefMembers|ModeleNumRefCommandes|ModeleNumRefSuppliersInvoices|ModeleNumRefSuppliersOrders|ModeleNumRefProjects|ModeleNumRefTask|ModeleNumRefPropales $modForNumber';
 
 											$tmpobject = null;
 											// Set the object with the date property when we can
@@ -681,7 +702,7 @@ class ImportXlsx extends ModeleImports
 									$method = $objimport->array_import_convertvalue[0][$val]['method'];
 									$resultload = dol_include_once($file);
 									if (empty($resultload)) {
-										dol_print_error('', 'Error trying to call file=' . $file . ', class=' . $class . ', method=' . $method);
+										dol_print_error(null, 'Error trying to call file=' . $file . ', class=' . $class . ', method=' . $method);
 										break;
 									}
 									$classinstance = new $class($this->db);
@@ -753,6 +774,7 @@ class ImportXlsx extends ModeleImports
 										if (!empty($filter)) {
 											$tableforerror .= ':' . $filter;
 										}
+										// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 										$this->errors[$error]['lib'] = $langs->transnoentitiesnoconv('ErrorFieldValueNotIn', $key, $newval, $field, $tableforerror);
 										$this->errors[$error]['type'] = 'FOREIGNKEY';
 										$errorforthistable++;
@@ -761,6 +783,7 @@ class ImportXlsx extends ModeleImports
 								} elseif (!preg_match('/' . $objimport->array_import_regex[0][$val] . '/i', $newval)) {
 									// If test is just a static regex
 									//if ($key == 19) print "xxx".$newval."zzz".$objimport->array_import_regex[0][$val]."<br>";
+									// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 									$this->errors[$error]['lib'] = $langs->transnoentitiesnoconv('ErrorWrongValueForField', $key, $newval, $objimport->array_import_regex[0][$val]);
 									$this->errors[$error]['type'] = 'REGEX';
 									$errorforthistable++;
@@ -771,6 +794,7 @@ class ImportXlsx extends ModeleImports
 							// Check HTML injection
 							$inj = testSqlAndScriptInject($newval, 0);
 							if ($inj) {
+								// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 								$this->errors[$error]['lib'] = $langs->transnoentitiesnoconv('ErrorHtmlInjectionForField', $key, dol_trunc($newval, 100));
 								$this->errors[$error]['type'] = 'HTMLINJECTION';
 								$errorforthistable++;
@@ -824,22 +848,25 @@ class ImportXlsx extends ModeleImports
 				if (!empty($listfields) && is_array($objimport->array_import_fieldshidden[0])) {
 					// Loop on each hidden fields to add them into listfields/listvalues
 					foreach ($objimport->array_import_fieldshidden[0] as $key => $val) {
-						if (!preg_match('/^'.preg_quote($alias, '/').'\./', $key)) {
+						if (!preg_match('/^' . preg_quote($alias, '/') . '\./', $key)) {
 							continue; // Not a field of current table
 						}
-						if ($val == 'user->id') {
-							$listfields[] = preg_replace('/^' . preg_quote($alias, '/') . '\./', '', $key);
+						$keyfield = preg_replace('/^' . preg_quote($alias, '/') . '\./', '', $key);
+
+						if (in_array($keyfield, $listfields)) {	// avoid duplicates in insert
+							continue;
+						} elseif ($val == 'user->id') {
+							$listfields[] = $keyfield;
 							$listvalues[] = ((int) $user->id);
 						} elseif (preg_match('/^lastrowid-/', $val)) {
 							$tmp = explode('-', $val);
 							$lastinsertid = (isset($last_insert_id_array[$tmp[1]])) ? $last_insert_id_array[$tmp[1]] : 0;
-							$keyfield = preg_replace('/^' . preg_quote($alias, '/') . '\./', '', $key);
 							$listfields[] = $keyfield;
 							$listvalues[] = (int) $lastinsertid;
 							//print $key."-".$val."-".$listfields."-".$listvalues."<br>";exit;
 						} elseif (preg_match('/^const-/', $val)) {
 							$tmp = explode('-', $val, 2);
-							$listfields[] = preg_replace('/^' . preg_quote($alias, '/') . '\./', '', $key);
+							$listfields[] = $keyfield;
 							$listvalues[] = "'".$this->db->escape($tmp[1])."'";
 						} elseif (preg_match('/^rule-/', $val)) {
 							$fieldname = $key;
@@ -851,7 +878,7 @@ class ImportXlsx extends ModeleImports
 									$type = $objimport->array_import_convertvalue[0][$fieldname]['type'];
 									$resultload = dol_include_once($file);
 									if (empty($resultload)) {
-										dol_print_error('', 'Error trying to call file=' . $file . ', class=' . $class . ', method=' . $method);
+										dol_print_error(null, 'Error trying to call file=' . $file . ', class=' . $class . ', method=' . $method);
 										break;
 									}
 									$classinstance = new $class($this->db);
@@ -901,7 +928,7 @@ class ImportXlsx extends ModeleImports
 						$fname = 'rowid';
 						if (strpos($tablename, '_categorie_') !== false) {
 							$is_table_category_link = true;
-							$fname='*';
+							$fname = '*';
 						}
 
 						if (!empty($updatekeys)) {
@@ -913,6 +940,8 @@ class ImportXlsx extends ModeleImports
 								$data = array_combine($listfields, $listvalues);
 
 								$where = array();	// filters to forge SQL request
+								// @phpstan-ignore-next-line
+								'@phan-var string[] $where';
 								$filters = array();	// filters to forge output error message
 								foreach ($updatekeys as $key) {
 									$col = $objimport->array_import_updatekeys[0][$key];
@@ -968,7 +997,7 @@ class ImportXlsx extends ModeleImports
 								// This is required when updating table with some extrafields. When inserting a record in parent table, we can make
 								// a direct insert into subtable extrafields, but when me wake an update, the insertid is defined and the child record
 								// may already exists. So we rescan the extrafield table to know if record exists or not for the rowid.
-								// Note: For extrafield tablename, we have in importfieldshidden_array an enty 'extra.fk_object'=>'lastrowid-tableparent' so $keyfield is 'fk_object'
+								// Note: For extrafield tablename, we have in importfieldshidden_array an entry 'extra.fk_object'=>'lastrowid-tableparent' so $keyfield is 'fk_object'
 								$sqlSelect = "SELECT rowid FROM " . $tablename;
 
 
@@ -1023,6 +1052,7 @@ class ImportXlsx extends ModeleImports
 								$sqlend = " WHERE " . $keyfield . " = ".((int) $lastinsertid);
 
 								if ($is_table_category_link) {
+									'@phan-var-force string[] $where';
 									$sqlend = " WHERE " . implode(' AND ', $where);
 								}
 
@@ -1088,7 +1118,7 @@ class ImportXlsx extends ModeleImports
 					}
 					/*else
 					{
-						dol_print_error('','ErrorFieldListEmptyFor '.$alias."/".$tablename);
+						dol_print_error(null,'ErrorFieldListEmptyFor '.$alias."/".$tablename);
 					}*/
 				}
 

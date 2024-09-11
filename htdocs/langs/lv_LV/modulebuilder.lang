@@ -148,7 +148,7 @@ CSSListClass=CSS sarakstam
 NotEditable=Nav rediģējams
 ForeignKey=Sveša atslēga
 ForeignKeyDesc=Ja šī lauka vērtībai ir jāgarantē, ka tā pastāv citā tabulā. Ievadiet šeit vērtību, kas atbilst sintakse: tablename.parentfieldtocheck
-TypeOfFieldsHelp=Piemērs:<br>varchar(99)<br>e-pasts<br>tālrunis<br>ip<br>url<br>parole0</9bfccf3 span>double(24,8)<span class='notranslate'><br>real<br>text<br>html <br>datums<br>datetime<br>laika zīmogs <br>vesels skaitlis<br>integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]b0342bccfda<99bcc0 /span><span class='notranslate'><br>“1” nozīmē, ka aiz kombinācijas tiek pievienota poga +, lai izveidotu ierakstu.<br>“filtrs” ir Universālā filtra sintakses nosacījums, piemērs: '((statuss:=:1) UN (fk_user:=:__USER_ID__) AND (entity:IN:(__SHARED_ENTITIES__))'
+TypeOfFieldsHelp=Example:<br>varchar(99)<br>email<br>phone<br>ip<br>url<br>password<br>double(24,8)<br>real<br>text<br>html<br>date<br>datetime<br>timestamp<br>integer<br>integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br><br>'1' means we add a + button after the combo to create the record<br>'filter' is an Universal Filter syntax condition, example: '((status:=:1) AND (fk_user:=:__USER_ID__) AND (entity:IN:(__SHARED_ENTITIES__))'
 TypeOfFieldsHelpIntro=Šis ir lauka/atribūta veids.
 AsciiToHtmlConverter=Ascii uz HTML pārveidotāju
 AsciiToPdfConverter=Ascii uz PDF pārveidotāju
@@ -173,6 +173,7 @@ PermissionAddedSuccesfuly=Atļauja ir veiksmīgi pievienota
 MenuDeletedSuccessfuly=Izvēlne ir veiksmīgi izdzēsta
 MenuAddedSuccessfuly=Izvēlne ir veiksmīgi pievienota
 MenuUpdatedSuccessfuly=Izvēlne ir veiksmīgi atjaunināta
+AddAPIsForThisObject=Pievienojiet šim objektam API
 ApiObjectDeleted=API objektam %s ir veiksmīgi izdzēsts
 CRUDRead=Lasīt
 CRUDCreateWrite=Izveidot vai atjaunināt
@@ -180,7 +181,7 @@ FailedToAddCodeIntoDescriptor=Neizdevās pievienot kodu deskriptoram. Pārbaudie
 DictionariesCreated=Vārdnīca <b>%s</b> ir veiksmīgi izveidota
 DictionaryDeleted=Vārdnīca <b>%s</b> veiksmīgi noņemta
 PropertyModuleUpdated=Īpašums <b>%s</b> ir veiksmīgi atjaunināts
-InfoForApiFile=* Katram objektam ģenerējot failu pirmo reizi, visas metodes tiks izveidotas <strong>.</strong><br>* Noklikšķinot uz <strong>noņemt</strong>, jūs vienkārši noņemat visas <span klases metodes. ='notranslate'><strong></span>atlasīts objekts</strong>.
+InfoForApiFile=* When you generate file for the first time then all methods will be created <strong>for each object.</strong><br>* When you click in <strong>remove</strong> you just remove all methods for the <strong>selected object</strong>.
 SetupFile=Lapa moduļa iestatīšanai
 EmailingSelectors=E-pasta atlasītāji
 EmailingSelectorDesc=Šeit varat ģenerēt un rediģēt klases failus, lai nodrošinātu jaunus e-pasta mērķa atlasītājus masveida e-pasta sūtīšanas modulim

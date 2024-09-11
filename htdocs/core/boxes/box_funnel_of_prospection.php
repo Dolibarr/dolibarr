@@ -4,6 +4,7 @@
  * Copyright (C) 2015      Frederic France        <frederic.france@free.fr>
  * Copyright (C) 2016      Juan José Menent       <jmenent@2byte.es>
  * Copyright (C) 2020      Pierre Ardoin          <mapiolca@me.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,16 +41,6 @@ class box_funnel_of_prospection extends ModeleBoxes
 	public $version = 'development';
 
 	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
-	/**
 	 *  Constructor
 	 *
 	 *  @param  DoliDB  $db         Database handler
@@ -67,7 +58,7 @@ class box_funnel_of_prospection extends ModeleBoxes
 		$this->enabled = (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1 ? 1 : 0); // Not enabled by default, still need some work
 		//$this->enabled = 1;
 
-		$this->hidden = empty($user->rights->projet->lire);
+		$this->hidden = !$user->hasRight('projet', 'lire');
 	}
 
 	/**
@@ -102,7 +93,7 @@ class box_funnel_of_prospection extends ModeleBoxes
 		$colorseriesstat = array();
 		$sql = "SELECT cls.rowid, cls.code, cls.percent, cls.label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_lead_status as cls";
-		$sql .= " WHERE active=1";
+		$sql .= " WHERE active = 1";
 		$sql .= " AND cls.code <> 'LOST'";
 		$sql .= " AND cls.code <> 'WON'";
 		$sql .= $this->db->order('cls.rowid', 'ASC');
@@ -187,7 +178,7 @@ class box_funnel_of_prospection extends ModeleBoxes
 					$i++;
 				}
 				$this->db->free($resql);
-				$ponderated_opp_amount = $ponderated_opp_amount / 100;
+				$ponderated_opp_amount /= 100;
 
 				$stringtoprint = '';
 				$stringtoprint .= '<div class="div-table-responsive-no-min ">';
@@ -196,6 +187,7 @@ class box_funnel_of_prospection extends ModeleBoxes
 				$data = array('');
 				$customlabels = array();
 				$total = 0;
+				$maxamount = 0;
 				foreach ($listofstatus as $status) {
 					$customlabel = '';
 					$labelStatus = '';
@@ -208,8 +200,9 @@ class box_funnel_of_prospection extends ModeleBoxes
 							$labelStatus = $listofopplabel[$status];
 						}
 						$amount = (isset($valsamount[$status]) ? (float) $valsamount[$status] : 0);
+						$customlabel = $amount."€";
+
 						$data[] = $amount;
-						$customlabel = $amount;
 						$liststatus[] = $labelStatus;
 						if (!$conf->use_javascript_ajax) {
 							$stringtoprint .= '<tr class="oddeven">';
@@ -217,9 +210,21 @@ class box_funnel_of_prospection extends ModeleBoxes
 							$stringtoprint .= '<td class="nowraponall right amount"><a href="list.php?statut='.$status.'">'.price((isset($valsamount[$status]) ? (float) $valsamount[$status] : 0), 0, '', 1, -1, -1, $conf->currency).'</a></td>';
 							$stringtoprint .= "</tr>\n";
 						}
+						$customlabels[] = $customlabel;
+						if ($maxamount < $amount) {
+							$maxamount = $amount;
+						}
 					}
-					$customlabels[] = $customlabel;
 				}
+
+				// Permit to have a bar if value inferior to a certain value
+				$valuetoaddtomindata = $maxamount / 100;
+				foreach ($data as $key => $value) {
+					if ($value != "") {
+						$data[$key] = $valuetoaddtomindata + $value;
+					}
+				}
+
 				$dataseries[] = $data;
 				if ($conf->use_javascript_ajax) {
 					include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
@@ -307,9 +312,9 @@ class box_funnel_of_prospection extends ModeleBoxes
 	/**
 	 *	Method to show box
 	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No $stringtoprint .=, only return string
+	 *	@param	?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}	$head	Array with properties of box title
+	 *	@param	?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>	$contents	Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No $stringtoprint .=, only return string
 	 *	@return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)

@@ -65,9 +65,8 @@ LT2SupplierES=Blerjet IRPF
 LT2CustomerIN=Shitjet SGST
 LT2SupplierIN=Blerjet SGST
 VATCollected=TVSH e mbledhur
-StatusToPay=Te paguash
 SpecialExpensesArea=Zona për të gjitha pagesat speciale
-VATExpensesArea=Zona për të gjitha pagesat e TVA
+VATExpensesArea=Area for all VAT payments
 SocialContribution=Taksa sociale ose fiskale
 SocialContributions=Taksat sociale ose fiskale
 SocialContributionsDeductibles=Taksat sociale ose fiskale të zbritshme
@@ -158,26 +157,27 @@ ConfirmDeleteVAT=Jeni i sigurt që dëshironi të fshini këtë deklaratë të T
 ConfirmDeleteSalary=Je i sigurt që dëshiron ta fshish këtë pagë?
 ConfirmDeleteVariousPayment=Jeni i sigurt që dëshironi ta fshini këtë pagesë të ndryshme?
 ExportDataset_tax_1=Taksat dhe pagesat sociale dhe fiskale
-CalcModeVATDebt=Modaliteti <b>%sTVSH në kontabilitetin e angazhimit%s class='notranslate<span '></b></span>.
-CalcModeVATEngagement=Modaliteti <b>%sTVSH-ja mbi të ardhurat-shpenzimetb0ecb2ec87f49><panfz0</span notranslate'></b>.
+CalcModeVATDebt=Mode <b>%sVAT on commitment accounting%s</b>.
+CalcModeVATEngagement=Mode <b>%sVAT on incomes-expenses%s</b>.
 CalcModeDebt=Analiza e dokumenteve të njohura të regjistruara
 CalcModeEngagement=Analiza e pagesave të njohura të regjistruara
+CalcModePayment=Analiza e pagesave të njohura të regjistruara
 CalcModeBookkeeping=Analiza e të dhënave të regjistruara në tabelën e librit të kontabilitetit.
 CalcModeNoBookKeeping=Edhe nëse ato ende nuk janë llogaritur në Ledger
-CalcModeLT1= Modaliteti <b>%sRE në faturat e klientëve - faturat e furnitorëveb0ecb2ec87f49f ='notranslate'></b>
-CalcModeLT1Debt=Modaliteti <b>%sRE në faturat e klientitb0ecb2ec87f49fzpan class='notranslate'spannotranslate '></b>
-CalcModeLT1Rec= Modaliteti <b>%sRE në faturat e furnitorëve%s</spannotranslate '></b>
-CalcModeLT2= Modaliteti <b>%sIRPF në faturat e klientëve - faturat e furnitorëveb0><4panf9spanz80f ='notranslate'></b>
+CalcModeLT1= Mode <b>%sRE on customer invoices - suppliers invoices%s</b>
+CalcModeLT1Debt=Mode <b>%sRE on customer invoices%s</b>
+CalcModeLT1Rec= Mode <b>%sRE on suppliers invoices%s</b>
+CalcModeLT2= Mode <b>%sIRPF on customer invoices - suppliers invoices%s</b>
 CalcModeLT2Debt=Modaliteti <b>%sIRPF në faturat e klientitb0ecb2ec87f49f49fz0</span' '></b>
 CalcModeLT2Rec= Modaliteti <b>%sIRPF në faturat e furnitorëveb0ecb2ec87f49fzlate<span'fz0 '></b></span>
 AnnualSummaryDueDebtMode=Bilanci i të ardhurave dhe shpenzimeve, përmbledhje vjetore
 AnnualSummaryInputOutputMode=Bilanci i të ardhurave dhe shpenzimeve, përmbledhje vjetore
 AnnualByCompanies=Bilanci i të ardhurave dhe shpenzimeve, sipas grupeve të paracaktuara të llogarive
-AnnualByCompaniesDueDebtMode=Bilanci i të ardhurave dhe shpenzimeve, detaje sipas grupeve të paracaktuara, modaliteti <b>%sKërkesat-Borxhet<span class='notranslate'0z00 </span></b> tha <b>Kontabiliteti i zotimit<span class='notranslate'>b09a4b739f17f.
-AnnualByCompaniesInputOutputMode=Bilanci i të ardhurave dhe shpenzimeve, detaje sipas grupeve të paracaktuara, modaliteti <b>%sTë ardhura-Shpenzime<span class='notranslate'0000 </span></b> tha <b>kontabiliteti i parave<span class='notranslate'>b09a4b739f17f8>z.
-SeeReportInInputOutputMode=Shiko <b>%sanalizën e pagesave%s<slate class='notranslate's ></b></span> për një llogaritje të bazuar në <b>pagesat e regjistruara</b>, edhe nëse ato nuk janë bërë ende në Llogaria
-SeeReportInDueDebtMode=Shiko <b>%sanalizën e dokumenteve të regjistruara%s class='notranslate'span '></b> për një llogaritje të bazuar në <b>dokumentet e regjistruara të njohura</b>, edhe nëse nuk janë llogaritur ende në L
-SeeReportInBookkeepingMode=Shiko <b>%sanalizën e tabelës së kontabilitetit%s notranslate'></b> për një raport të bazuar në <b>Tabela e librit të kontabilitetit<span class='notranslate'>b09a4b739f17f8z
+AnnualByCompaniesDueDebtMode=Balance of income and expenses, detail by predefined groups, mode <b>%sClaims-Debts%s</b> said <b>Commitment accounting</b>.
+AnnualByCompaniesInputOutputMode=Balance of income and expenses, detail by predefined groups, mode <b>%sIncomes-Expenses%s</b> said <b>cash accounting</b>.
+SeeReportInInputOutputMode=See <b>%sanalysis of payments%s</b> for a calculation based on <b>recorded payments</b> made even if they are not yet accounted in Ledger
+SeeReportInDueDebtMode=See <b>%sanalysis of recorded documents%s</b> for a calculation based on known <b>recorded documents</b> even if they are not yet accounted in Ledger
+SeeReportInBookkeepingMode=See <b>%sanalysis of bookkeeping ledger table%s</b> for a report based on <b>Bookkeeping Ledger table</b>
 RulesAmountWithTaxIncluded=- Shumat e paraqitura janë me të gjitha taksat e përfshira
 RulesAmountWithTaxExcluded=- Shumat e faturave të paraqitura janë të përjashtuara nga të gjitha taksat
 RulesResultDue=- Ai përfshin të gjitha faturat, shpenzimet, TVSH-në, donacionet, pagat, pavarësisht nëse paguhen apo jo.<br>- Bazohet në datën e faturimit të faturave dhe në datën e duhur për shpenzimet apo pagesat e taksave. Për pagat përdoret data e përfundimit të periudhës.
@@ -211,8 +211,8 @@ LT1ReportByQuarters=Raporto taksën 2 sipas normës
 LT2ReportByQuarters=Raporto taksën 3 sipas normës
 LT1ReportByQuartersES=Raporti sipas normës së RE
 LT2ReportByQuartersES=Raporti sipas normës së IRPF
-SeeVATReportInInputOutputMode=Shiko raportin <b>%smbledhjen e TVSH-së%s</spannotranslate' class=' ></b> për një llogaritje standarde
-SeeVATReportInDueDebtMode=Shiko raportin <b>%sTVSH në debit%s</spannotranslate '></b> për një llogaritje me një opsion në faturim
+SeeVATReportInInputOutputMode=See report <b>%sVAT collection%s</b> for a standard calculation
+SeeVATReportInDueDebtMode=See report <b>%sVAT on debit%s</b> for a calculation with an option on the invoicing
 RulesVATInServices=- Për shërbimet, raporti përfshin TVSH-në e pagesave të pranuara ose të paguara faktikisht në bazë të datës së pagesës.
 RulesVATInProducts=- Për pasuritë materiale raporti përfshin TVSH-në në bazë të datës së pagesës.
 RulesVATDueServices=- Për shërbimet, raporti përfshin TVSH-në e faturave të paguara ose jo, bazuar në datën e faturës.
@@ -274,7 +274,7 @@ SameCountryCustomersWithVAT=Raporti i klientëve kombëtarë
 BasedOnTwoFirstLettersOfVATNumberBeingTheSameAsYourCompanyCountry=Bazuar në faktin se dy shkronjat e para të numrit të TVSH-së janë të njëjta me kodin e shtetit të kompanisë suaj
 LinkedFichinter=Lidhja me një ndërhyrje
 ImportDataset_tax_contrib=Taksat sociale/fiskale
-ImportDataset_tax_vat=Pagesat e TVSH-së
+ImportDataset_tax_vat=VAT payments
 ErrorBankAccountNotFound=Gabim: Llogaria bankare nuk u gjet
 FiscalPeriod=Periudha kontabël
 ListSocialContributionAssociatedProject=Lista e kontributeve sociale që lidhen me projektin

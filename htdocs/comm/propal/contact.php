@@ -22,7 +22,7 @@
 /**
  *       \file       htdocs/comm/propal/contact.php
  *       \ingroup    propal
- *       \brief      Tab to manage contacts/adresses of proposal
+ *       \brief      Tab to manage contacts/addresses of proposal
  */
 
 // Load Dolibarr environment
@@ -37,9 +37,9 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('facture', 'propal', 'orders', 'sendings', 'companies'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
-$lineid = GETPOST('lineid', 'int');
+$lineid = GETPOSTINT('lineid');
 $action = GETPOST('action', 'aZ09');
 
 $object = new Propal($db);
@@ -68,8 +68,8 @@ $socid = '';
 if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'propal', $object->id);
 $hookmanager->initHooks(array('proposalcontactcard', 'globalcard'));
+$result = restrictedArea($user, 'propal', $object->id);
 
 $usercancreate = $user->hasRight("propal", "creer");
 
@@ -87,7 +87,7 @@ if (empty($reshook)) {
 	// Add new contact
 	if ($action == 'addcontact' && $user->hasRight('propal', 'creer')) {
 		if ($object->id > 0) {
-			$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
+			$contactid = (GETPOSTINT('userid') ? GETPOSTINT('userid') : GETPOSTINT('contactid'));
 			$typeid    = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
 			$result    = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 		}
@@ -106,7 +106,7 @@ if (empty($reshook)) {
 	} elseif ($action == 'swapstatut' && $user->hasRight('propal', 'creer')) {
 		// Toggle the status of a contact
 		if ($object->id > 0) {
-			$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
+			$result = $object->swapContactStatus(GETPOSTINT('ligne'));
 		}
 	} elseif ($action == 'deletecontact' && $user->hasRight('propal', 'creer')) {
 		// Delete contact

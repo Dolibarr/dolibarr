@@ -35,17 +35,18 @@ $action = GETPOST('action', 'aZ09');
 
 
 // Security check
-// if (! $user->rights->bookcal->myobject->read) {
+// if (! $user->hasRight('bookcal', 'myobject', 'read')) {
 // 	accessforbidden();
 // }
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if (isset($user->socid) && $user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
 }
 
-$max = 5;
 $now = dol_now();
+$NBMAX = getDolGlobalString('MAIN_SIZE_SHORTLIST_LIMIT');
+$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
 
 
 /*
@@ -62,9 +63,9 @@ $now = dol_now();
 $form = new Form($db);
 $formfile = new FormFile($db);
 
-llxHeader("", $langs->trans("BookCalArea"));
+llxHeader("", $langs->trans("BookCalArea"), '', '', 0, 0, '', '', '', 'mod-bookcal page-index');
 
-print load_fiche_titre($langs->trans("BookCalArea"), '', 'bookcal.png@bookcal');
+print load_fiche_titre($langs->trans("BookCalArea"), '', 'fa-calendar-check');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
@@ -136,9 +137,6 @@ if ($user->hasRight('bookcal', 'availabilities', 'read') && isModEnabled('bookca
 
 print '</div><div class="fichetwothirdright">';
 
-
-$NBMAX = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
-$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT');
 
 /* BEGIN MODULEBUILDER LASTMODIFIED MYOBJECT
 // Last modified myobject

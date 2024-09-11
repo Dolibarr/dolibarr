@@ -64,18 +64,15 @@ MainAccountForVatPaymentNotDefined=Account (from the Chart of Account) for VAT p
 MainAccountForSubscriptionPaymentNotDefined=Account (from the Chart of Account) for membership payment not defined in setup
 MainAccountForRetainedWarrantyNotDefined=Account (from the Chart of Account) for the retained warranty not defined in setup
 UserAccountNotDefined=Accounting account for user not defined in setup
-
 AccountancyArea=Accounting area
 AccountancyAreaDescIntro=Usage of the accountancy module is done in several step:
 AccountancyAreaDescActionOnce=The following actions are usually executed one time only, or once per year...
 AccountancyAreaDescActionOnceBis=Next steps should be done to save you time in future by suggesting you automatically the correct default accounting account when transferring data in accounting
 AccountancyAreaDescActionFreq=The following actions are usually executed every month, week or day for very large companies...
-
 AccountancyAreaDescJournalSetup=STEP %s: Check content of your journal list from menu %s
 AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists or create one from menu %s
 AccountancyAreaDescChart=STEP %s: Select and|or complete your chart of account from menu %s
-
-AccountancyAreaDescFiscalPeriod=STEP %s: Define a fiscal year by default on which to integrate your accounting entries. For this, use the menu entry %s.
+AccountancyAreaDescFiscalPeriod=STEP %s: Define a fiscal year by default on which to integrate your accounting entries, from menu %s.
 AccountancyAreaDescVat=STEP %s: Define accounting accounts for each VAT Rates. For this, use the menu entry %s.
 AccountancyAreaDescDefault=STEP %s: Define default accounting accounts. For this, use the menu entry %s.
 AccountancyAreaDescExpenseReport=STEP %s: Define default accounting accounts for each type of Expense report. For this, use the menu entry %s.
@@ -87,12 +84,10 @@ AccountancyAreaDescMisc=STEP %s: Define mandatory default accounts and default a
 AccountancyAreaDescLoan=STEP %s: Define default accounting accounts for loans. For this, use the menu entry %s.
 AccountancyAreaDescBank=STEP %s: Define accounting accounts and journal code for each bank and financial accounts. For this, use the menu entry %s.
 AccountancyAreaDescProd=STEP %s: Define accounting accounts on your Products/Services. For this, use the menu entry %s.
-
 AccountancyAreaDescBind=STEP %s: Check the binding between existing %s lines and accounting account is done, so application will be able to journalize transactions in Ledger in one click. Complete missing bindings. For this, use the menu entry %s.
 AccountancyAreaDescWriteRecords=STEP %s: Write transactions into the Ledger. For this, go into menu <strong>%s</strong>, and click into button <strong>%s</strong>.
 AccountancyAreaDescAnalyze=STEP %s: Read reportings or generate export files for other bookkeepers.
 AccountancyAreaDescClosePeriod=STEP %s: Close period so we can't transfer anymore data in the same period in a future.
-
 TheFiscalPeriodIsNotDefined=A mandatory step in setup has not been completed (Fiscal period is not defined)
 TheJournalCodeIsNotDefinedOnSomeBankAccount=A mandatory step in setup has not been completed (accounting code journal not defined for all bank accounts)
 Selectchartofaccounts=Select active chart of accounts
@@ -111,7 +106,7 @@ DataUsedToSuggestAccount=Data used to suggest account
 AccountAccountingSuggest=Account suggested
 MenuDefaultAccounts=Default accounts
 MenuBankAccounts=Bank accounts
-MenuVatAccounts=Vat accounts
+MenuVatAccounts=VAT accounts
 MenuTaxAccounts=Tax accounts
 MenuExpenseReportAccounts=Expense report accounts
 MenuLoanAccounts=Loan accounts
@@ -144,8 +139,6 @@ ExpenseReportLines=Lines of expense reports to bind
 ExpenseReportLinesDone=Bound lines of expense reports
 IntoAccount=Bind line with the accounting account
 TotalForAccount=Total accounting account
-
-
 Ventilate=Bind
 LineId=Id line
 Processing=Processing
@@ -158,22 +151,21 @@ VentilatedinAccount=Binded successfully to the accounting account
 NotVentilatedinAccount=Not bound to the accounting account
 XLineSuccessfullyBinded=%s products/services successfully bound to an accounting account
 XLineFailedToBeBinded=%s products/services were not bound to any accounting account
-
 ACCOUNTING_LIMIT_LIST_VENTILATION=Maximum number of lines on list and bind page (recommended: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the page "Binding to do" by the most recent elements
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the page "Binding done" by the most recent elements
-
 ACCOUNTING_LENGTH_DESCRIPTION=Truncate product & services description in listings after x chars (Best = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Truncate product & services account description form in listings after x chars (Best = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Length of the general accounting accounts (If you set value to 6 here, the account '706' will appear like '706000' on screen)
 ACCOUNTING_LENGTH_AACCOUNT=Length of the third-party accounting accounts (If you set value to 6 here, the account '401' will appear like '401000' on screen)
 ACCOUNTING_MANAGE_ZERO=Allow to manage different number of zeros at the end of an accounting account. Needed by some countries (like Switzerland). If set to off (default), you can set the following two parameters to ask the application to add virtual zeros.
+ACCOUNTING_BANK_CONCILIATED=Transfer into accounting only the lines reconciliated in bank statements (by default, could be unchecked on each transfer)
 BANK_DISABLE_DIRECT_INPUT=Disable direct recording of transaction in bank account
+ACCOUNTANCY_ER_DATE_RECORD=Use the end date of the period of an expense report as the date for the transfer to accounting, instead of the date of the expense
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Enable draft export on journal
 ACCOUNTANCY_COMBO_FOR_AUX=Enable combo list for subsidiary account (may be slow if you have a lot of third parties, break ability to search on a part of value)
 ACCOUNTING_DATE_START_BINDING=Disable binding & transfer in accountancy when date is below this date (the transactions before this date will be excluded by default)
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On the page to transfer data into accountancy, what is the period selected by default
-
 ACCOUNTING_SELL_JOURNAL=Sales journal - sales and returns
 ACCOUNTING_PURCHASE_JOURNAL=Purchase journal - purchase and returns
 ACCOUNTING_BANK_JOURNAL=Cash journal - receipts and disbursements
@@ -182,40 +174,33 @@ ACCOUNTING_MISCELLANEOUS_JOURNAL=General journal
 ACCOUNTING_HAS_NEW_JOURNAL=Has new Journal
 ACCOUNTING_INVENTORY_JOURNAL=Inventory journal
 ACCOUNTING_SOCIAL_JOURNAL=Social journal
-
 ACCOUNTING_RESULT_PROFIT=Result accounting account (Profit)
 ACCOUNTING_RESULT_LOSS=Result accounting account (Loss)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Journal of closure
 ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT=Accounting groups used for the balance sheet account (separate by comma)
 ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT=Accounting groups used for the income statement (separate by comma)
-
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Account (from the Chart Of Account) to be used as the account for transitional bank transfers
 TransitionalAccount=Transitional bank transfer account
-
 ACCOUNTING_ACCOUNT_SUSPENSE=Account (from the Chart Of Account) to be used as the account for unallocated funds either received or paid i.e. funds in "wait[ing]"
 DONATION_ACCOUNTINGACCOUNT=Account (from the Chart Of Account) to be used to register donations (Donation module)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Account (from the Chart Of Account) to be used to register memberships subscriptions (Membership module - if membership recorded without invoice)
-
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register customer deposit
 UseAuxiliaryAccountOnCustomerDeposit=Store customer account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
-ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default 
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default
 UseAuxiliaryAccountOnSupplierDeposit=Store supplier account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Accounting account by default to register customer retained warranty
-
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased within same country (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased from EEC to another EEC country (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased and imported from any other foreign country (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the sold products (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products sold from EEC to another EEC country (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products sold and exported to any other foreign country (used if not defined in the product sheet)
-
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the services purchased within same country (used if not defined in the service sheet)
 ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the services purchased from EEC to another EEC country (used if not defined in the service sheet)
 ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the services purchased and imported from other foreign country (used if not defined in the service sheet)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the sold services (used if not defined in the service sheet)
 ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the services sold from EEC to another EEC country (used if not defined in the service sheet)
 ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the services sold and exported to any other foreign country (used if not defined in the service sheet)
-
 Doctype=Type of document
 Docdate=Date
 Docref=Reference
@@ -237,7 +222,6 @@ AccountingAccountGroupsDesc=You can define here some groups of accounting accoun
 ByAccounts=By accounts
 ByPredefinedAccountGroups=By predefined groups
 ByPersonalizedAccountGroups=By personalized groups
-ByYear=By year
 NotMatch=Not Set
 DeleteMvt=Delete some lines from accounting
 DelMonth=Month to delete
@@ -276,16 +260,12 @@ OpeningBalance=Opening balance
 ShowOpeningBalance=Show opening balance
 HideOpeningBalance=Hide opening balance
 ShowSubtotalByGroup=Show subtotal by level
-
 Pcgtype=Group of account
 PcgtypeDesc=Group of account are used as predefined 'filter' and 'grouping' criteria for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
 AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease filter use or building of custom reports.
-
 Reconcilable=Reconcilable
-
 TotalVente=Total turnover before tax
 TotalMarge=Total sales margin
-
 DescVentilCustomer=Consult here the list of customer invoice lines bound (or not) to a product account from chart of account
 DescVentilMore=In most cases, if you use predefined products or services and you set the account (from chart of account) on the product/service card, the application will be able to make all the binding between your invoice lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on product/service cards or if you still have some lines not bound to an account, you will have to make a manual binding from the menu "<strong>%s</strong>".
 DescVentilDoneCustomer=Consult here the list of the lines of invoices customers and their product account from chart of account
@@ -298,7 +278,6 @@ DescVentilTodoExpenseReport=Bind expense report lines not already bound with a f
 DescVentilExpenseReport=Consult here the list of expense report lines bound (or not) to a fee accounting account
 DescVentilExpenseReportMore=If you setup accounting account on type of expense report lines, the application will be able to make all the binding between your expense report lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on fees dictionary or if you still have some lines not bound to any account, you will have to make a manual binding from the menu "<strong>%s</strong>".
 DescVentilDoneExpenseReport=Consult here the list of the lines of expenses reports and their fees accounting account
-
 Closure=Annual closure
 AccountancyClosureStep1Desc=Consult here the number of movements by month not yet validated & locked
 OverviewOfMovementsNotValidated=Overview of movements not validated and locked
@@ -306,11 +285,9 @@ AllMovementsWereRecordedAsValidated=All movements were recorded as validated and
 NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated and locked
 ValidateMovements=Validate and lock movements
 DescValidateMovements=Any modification or deletion of writing, lettering and deletes will be prohibited. All entries for an exercise must be validated otherwise closing will not be possible
-
 ValidateHistory=Bind Automatically
 AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
 DoManualBindingForFailedRecord=You have to do a manual link for the %s row(s) not linked automatically.
-
 ErrorAccountancyCodeIsAlreadyUse=Error, you cannot remove or disable this account of chart of account because it is used
 MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s & Credit = %s
 Balancing=Balancing
@@ -323,12 +300,12 @@ ChangeBinding=Change the binding
 Accounted=Accounted in ledger
 NotYetAccounted=Not yet transferred to accounting
 ShowTutorial=Show Tutorial
+ClickOnUseTutorialForHelp=Welcome on the section to generate your accountancy. Click on the link "%s" to get advices on how to use it.
 NotReconciled=Not reconciled
 WarningRecordWithoutSubledgerAreExcluded=Warning, all lines without subledger account defined are filtered and excluded from this view
 AccountRemovedFromCurrentChartOfAccount=Accounting account that does not exist in the current chart of accounts
-
 ## Admin
-BindingOptions=Binding options
+BindingOptions=Options for the transfer in accountancy
 ApplyMassCategories=Apply mass categories
 AddAccountFromBookKeepingWithNoCategories=Available account not yet in the personalized group
 CategoryDeleted=Category for the accounting account has been removed
@@ -353,15 +330,14 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Disable binding & transfer in accountanc
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Disable binding & transfer in accountancy on expense reports (expense reports will not be taken into account in accounting)
 ACCOUNTING_ENABLE_LETTERING=Enable the lettering function in the accounting
 ACCOUNTING_ENABLE_LETTERING_DESC=When this options is enabled, you can define, on each accounting entry, a code so you can group different accounting movements together. In the past, when different journals was managed independently, this feature was necessary to group movement lines of different journals together. However, with Dolibarr accountancy, such a tracking code, called "<b>%s</b>" is already saved automatically, so an automatic lettering is already done, with no risk of error so this feature has become useless for a common usage. Manual lettering feature is provided for end users that really don't trust the computer engine making the transfer of data in accountancy.
-EnablingThisFeatureIsNotNecessary=Enabling this feature is no more necessary for a rigorous accounting management.   
+EnablingThisFeatureIsNotNecessary=Enabling this feature is no more necessary for a rigorous accounting management.
 ACCOUNTING_ENABLE_AUTOLETTERING=Enable the automatic lettering when transferring to accounting
 ACCOUNTING_ENABLE_AUTOLETTERING_DESC=The code for the lettering is automatically generated and incremented and not chosen by the end user
 ACCOUNTING_LETTERING_NBLETTERS=Number of letters when generating lettering code (default 3)
 ACCOUNTING_LETTERING_NBLETTERS_DESC=Some accounting software only accepts a two-letter code. This parameter allows you to set this aspect. The default number of letters is three.
 OptionsAdvanced=Advanced options
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Activate the management of VAT reverse charge on supplier purchases
-ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=When this option is enabled, you can define that a supplier or a given vendor invoice must be transferred into accountancy differently: A additional debit and a credit line will generated into the accounting on 2 given accounts from the chart of account defined into the "%s" setup page. 
-
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=When this option is enabled, you can define that a supplier or a given vendor invoice must be transferred into accountancy differently: A additional debit and a credit line will generated into the accounting on 2 given accounts from the chart of account defined into the "%s" setup page.
 ## Export
 NotExportLettering=Do not export the lettering when generating the file
 NotifiedExportDate=Flag not yet exported lines as Exported <span class="warning">(to modify a line flagged as exported, you will need to delete the whole transaction and re-transfert it into accounting)</span>
@@ -371,7 +347,7 @@ DateValidationAndLock=Date validation and lock
 ConfirmExportFile=Confirmation of the generation of the accounting export file ?
 ExportDraftJournal=Export draft journal
 Modelcsv=Model of export
-Selectmodelcsv=Select a model of export
+Selectmodelcsv=Select the default format for export
 Modelcsv_normal=Classic export
 Modelcsv_CEGID=Export for CEGID Expert Comptabilité
 Modelcsv_COALA=Export for Sage Coala
@@ -393,7 +369,6 @@ Modelcsv_Gestinumv3=Export for Gestinum (v3)
 Modelcsv_Gestinumv5=Export for Gestinum (v5)
 Modelcsv_charlemagne=Export for Aplim Charlemagne
 ChartofaccountsId=Chart of accounts Id
-
 ## Tools - Init accounting account on product / service
 InitAccountancy=Init accountancy
 InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accounting account defined for sales and purchases.
@@ -426,14 +401,15 @@ SaleEECWithVAT=Sale in EEC with a VAT not null, so we suppose this is NOT an int
 SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of third party is not defined. We fall back on the account for standard sales. You can fix the VAT ID of the third party, or change the product account suggested for binding if needed.
 ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
 ForbiddenTransactionAlreadyValidated=Forbidden: The transaction has been validated.
+DataMustHaveBeenTransferredInAccounting=The transfer of data in accounting must have been done
 ## Dictionary
 Range=Range of accounting account
 Calculated=Calculated
 Formula=Formula
-
 ## Reconcile
 LetteringAuto=Reconcile auto
 LetteringManual=Reconcile manual
+LetteringPartial=Reconcile partial
 Unlettering=Unreconcile
 UnletteringAuto=Unreconcile auto
 UnletteringManual=Unreconcile manual
@@ -443,10 +419,9 @@ AccountancyLetteringModifiedSuccessfully=%s reconcile successfully modified
 AccountancyNoUnletteringModified=No unreconcile modified
 AccountancyOneUnletteringModifiedSuccessfully=One unreconcile successfully modified
 AccountancyUnletteringModifiedSuccessfully=%s unreconcile successfully modified
-
 ## Closure
-AccountancyClosureStep1=Step 1 : Validate and lock movements
-AccountancyClosureStep2=Step 2 : Close fiscal period
+AccountancyClosureStep1=Step 1 : Validate and lock the movements
+AccountancyClosureStep2=Step 2 : Close the fiscal period
 AccountancyClosureStep3=Step 3 : Extract entries (Optional)
 AccountancyClosureClose=Close fiscal period
 AccountancyClosureAccountingReversal=Extract and record "Retained earnings" entries
@@ -455,7 +430,6 @@ AccountancyClosureGenerateClosureBookkeepingRecords=Generate "Retained earnings"
 AccountancyClosureSeparateAuxiliaryAccounts=When generating the "Retained earnings" entries, detail the sub-ledger accounts
 AccountancyClosureCloseSuccessfully=Fiscal period has been closed successfully
 AccountancyClosureInsertAccountingReversalSuccessfully=Bookkeeping entries for "Retained earnings" has been inserted successfully
-
 ## Confirm box
 ConfirmMassUnletteringAuto=Bulk auto unreconcile confirmation
 ConfirmMassUnletteringManual=Bulk manual unreconcile confirmation
@@ -464,7 +438,6 @@ ConfirmMassDeleteBookkeepingWriting=Bulk Delete confirmation
 ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all line entries related to the same transaction will be deleted). Are you sure you want to delete the %s selected entries?
 AccountancyClosureConfirmClose=Are you sure you want to close the current fiscal period ? <span class="warning">You understand that closing the fiscal period is an irreversible action and will permanently block any modification or deletion of entries over this period</span>.
 AccountancyClosureConfirmAccountingReversal=Are you sure you want to record entries for the "Retained earnings" ?
-
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Some mandatory steps of setup was not done, please complete them
 ErrorNoAccountingCategoryForThisCountry=No accounting account group available for country %s (See %s - %s - %s)
@@ -482,10 +455,9 @@ AccountancyErrorMismatchBalanceAmount=The balance (%s) is not equal to 0
 AccountancyErrorLetteringBookkeeping=Errors have occurred concerning the transactions: %s
 ErrorAccountNumberAlreadyExists=The accounting number %s already exists
 ErrorArchiveAddFile=Can't put "%s" file in archive
-ErrorNoFiscalPeriodActiveFound=No active fiscal period found
+ErrorNoFiscalPeriodActiveFound=No active fiscal period found. You can create one from menu %s - %s - %s.
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=The bookkeeping doc date is not inside the active fiscal period
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=The bookkeeping doc date is inside a closed fiscal period
-
 ## Import
 ImportAccountingEntries=Accounting entries
 ImportAccountingEntriesFECFormat=Accounting entries - FEC format
@@ -507,11 +479,9 @@ FECFormatReconcilableDate=Reconcilable date (DateLet)
 FECFormatValidateDate=Piece date validated (ValidDate)
 FECFormatMulticurrencyAmount=Multicurrency amount (Montantdevise)
 FECFormatMulticurrencyCode=Multicurrency code (Idevise)
-
 DateExport=Date export
 WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contain transactions modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
 ExpenseReportJournal=Expense Report Journal
 DocsAlreadyExportedAreIncluded=Docs already exported are included
 ClickToShowAlreadyExportedLines=Click to show already exported lines
-
 NAccounts=%s accounts

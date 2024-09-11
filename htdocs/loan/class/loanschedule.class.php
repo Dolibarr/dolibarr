@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017       Florian HENRY           <florian.henry@atm-consulting.fr>
- * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,14 +48,14 @@ class LoanSchedule extends CommonObject
 
 	public $bank_account;
 	public $bank_line;
-	/**
-	 * @var string Create date
-	 */
-	public $datec;
-	public $tms;
 
 	/**
-	 * @var string Payment date
+	 * @var int|string Creation date
+	 */
+	public $datec;
+
+	/**
+	 * @var int|string Payment date
 	 */
 	public $datep;
 
@@ -69,7 +70,8 @@ class LoanSchedule extends CommonObject
 	public $fk_typepayment;
 
 	/**
-	 * @var int Payment ID
+	 * @var string      Payment reference
+	 *                  (Cheque or bank transfer reference. Can be "ABC123")
 	 */
 	public $num_payment;
 
@@ -166,7 +168,7 @@ class LoanSchedule extends CommonObject
 			$this->fk_user_modif = (int) $this->fk_user_modif;
 		}
 
-		$totalamount = $this->amount_capital + $this->amount_insurance + $this->amount_interest;
+		$totalamount = (float) $this->amount_capital + (float) $this->amount_insurance + (float) $this->amount_interest;
 		$totalamount = price2num($totalamount);
 
 		// Check parameters
@@ -288,11 +290,11 @@ class LoanSchedule extends CommonObject
 	/**
 	 *  Update database
 	 *
-	 *  @param	User	$user        	User that modify
-	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *  @return int         			Return integer <0 if KO, >0 if OK
+	 *  @param	User|null	$user        	User that modify
+	 *  @param  int			$notrigger	    0=launch triggers after, 1=disable triggers
+	 *  @return int         				Return integer <0 if KO, >0 if OK
 	 */
-	public function update($user = 0, $notrigger = 0)
+	public function update($user = null, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error = 0;
@@ -317,7 +319,7 @@ class LoanSchedule extends CommonObject
 			$this->note_public = trim($this->note_public);
 		}
 		if (isset($this->fk_bank)) {
-			$this->fk_bank = trim($this->fk_bank);
+			$this->fk_bank = (int) $this->fk_bank;
 		}
 		if (isset($this->fk_payment_loan)) {
 			$this->fk_payment_loan = (int) $this->fk_payment_loan;
@@ -439,8 +441,6 @@ class LoanSchedule extends CommonObject
 	 */
 	public function fetchAll($loanid)
 	{
-		global $langs;
-
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
 		$sql .= " t.fk_loan,";
@@ -501,7 +501,7 @@ class LoanSchedule extends CommonObject
 	 *
 	 *  @return void
 	 */
-	private function transPayment()
+	private function transPayment() // @phpstan-ignore-line
 	{
 		require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';

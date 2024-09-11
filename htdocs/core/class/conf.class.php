@@ -19,6 +19,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+
 /**
  *	\file       	htdocs/core/class/conf.class.php
  *	\ingroup		core
@@ -41,9 +42,14 @@ class Conf extends stdClass
 	 */
 	public $db;
 
-	//! To store properties found into database
+	/**
+	 * @var Object To store global setup found into database
+	 */
 	public $global;
-	//! To store browser info (->name, ->os, ->version, ->ua, ->layout, ...)
+
+	/**
+	 * @var Object To store browser info (->name, ->os, ->version, ->ua, ->layout, ...)
+	 */
 	public $browser;
 
 	//! To store some setup of generic modules
@@ -65,19 +71,33 @@ class Conf extends stdClass
 	//! Used to store current currency (ISO code like 'USD', 'EUR', ...). To get the currency symbol: $langs->getCurrencySymbol($this->currency)
 	public $currency;
 
-	//! Used to store current css (from theme)
+	/**
+	 * @var string
+	 */
 	public $theme; // Contains current theme ("eldy", "auguria", ...)
+	//! Used to store current css (from theme)
+	/**
+	 * @var string
+	 */
 	public $css; // Contains full path of css page ("/theme/eldy/style.css.php", ...)
 
 	public $email_from;
 
 	//! Used to store current menu handler
 	public $standard_menu;
-	// List of activated modules
+
+	/**
+	 * @var array<string,string>  List of activated modules
+	 */
 	public $modules;
+	/**
+	 * @var array<string,array<string,string|array>>  List of activated modules
+	 */
 	public $modules_parts;
 
-	// An array to store cache results ->cache['nameofcache']=...
+	/**
+	 * @var array<string,mixed> An array to store cache results ->cache['nameofcache']=...
+	 */
 	public $cache;
 
 	/**
@@ -91,13 +111,17 @@ class Conf extends stdClass
 	public $logbuffer = array();
 
 	/**
-	 * @var LogHandlerInterface[]
+	 * @var LogHandler[]
 	 */
 	public $loghandlers = array();
 
-	//! Used to store running instance for multi-company (default 1)
+	/**
+	 * @var int Used to store running instance for multi-company (default 1)
+	 */
 	public $entity = 1;
-	//! Used to store list of entities to use for each element
+	/**
+	 * @var int[] Used to store list of entities to use for each element
+	 */
 	public $entities = array();
 
 	public $dol_hide_topmenu; // Set if we force param dol_hide_topmenu into login url
@@ -118,13 +142,23 @@ class Conf extends stdClass
 	public $format_date_hour_text;
 
 	public $liste_limit;
+	public $main_checkbox_left_column;
 
 	public $tzuserinputkey = 'tzserver';		// Use 'tzuserrel' to always store date in GMT and show date in time zone of user.
 
 
 	// TODO Remove this part.
+
+	/**
+	 * @var stdClass  	Supplier
+	 */
 	public $fournisseur;
+
+	/**
+	 * @var stdClass	Product
+	 */
 	public $product;
+
 	/**
 	 * @deprecated Use product
 	 */
@@ -137,8 +171,11 @@ class Conf extends stdClass
 	public $contract;
 	public $actions;
 	public $agenda;
-	public $commande;
 	public $propal;
+	/**
+	 * @deprecated Use order
+	 */
+	public $commande;
 	public $order;
 	/**
 	 * @deprecated Use invoice
@@ -206,7 +243,8 @@ class Conf extends stdClass
 			'member' => array(),
 			'hooks' => array(),
 			'dir' => array(),
-			'syslog' => array()
+			'syslog' => array(),
+			'websitetemplates' => array()
 		);
 
 		// First level object that are modules.
@@ -228,6 +266,7 @@ class Conf extends stdClass
 		$this->expensereport = new stdClass();
 		$this->productbatch = new stdClass();
 	}
+
 
 	/**
 	 * Load setup values into conf object (read llx_const) for a specified entity
@@ -280,6 +319,7 @@ class Conf extends stdClass
 		// First level object
 		// TODO Remove this part.
 		$this->fournisseur = new stdClass();
+		$this->compta = new stdClass();
 		$this->product = new stdClass();
 		$this->service = new stdClass();
 		$this->contrat = new stdClass();
@@ -316,6 +356,7 @@ class Conf extends stdClass
 			'hooks' => array(),
 			'dir' => array(),
 			'syslog' => array(),
+			'websitetemplates' => array(),
 		);
 
 		if (!is_null($db) && is_object($db)) {
@@ -357,7 +398,7 @@ class Conf extends stdClass
 								}
 								$this->modules_parts[$partname][$params[0]][] = $value; // $value may be a string or an array
 							} elseif (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)_([A-Z]+)$/i', $key, $reg)) {
-								// If this is constant for all generic part activated by a module. It initializes
+								// If this is a constant for all generic part activated by a module. It initializes
 								// modules_parts['login'], modules_parts['menus'], modules_parts['substitutions'], modules_parts['triggers'], modules_parts['tpl'],
 								// modules_parts['models'], modules_parts['theme']
 								// modules_parts['sms'],
@@ -369,13 +410,15 @@ class Conf extends stdClass
 									$this->modules_parts[$partname] = array();
 								}
 
+								//$arrValue = json_decode($value, true, null, JSON_BIGINT_AS_STRING|JSON_THROW_ON_ERROR);
 								$arrValue = json_decode($value, true);
+								//var_dump($key); var_dump($value); var_dump($arrValue);
 
 								if (is_array($arrValue)) {
 									$newvalue = $arrValue;
 								} elseif (in_array($partname, array('login', 'menus', 'substitutions', 'triggers', 'tpl'))) {
 									$newvalue = '/'.$modulename.'/core/'.$partname.'/';
-								} elseif (in_array($partname, array('models', 'theme'))) {
+								} elseif (in_array($partname, array('models', 'theme', 'websitetemplates'))) {
 									$newvalue = '/'.$modulename.'/';
 								} elseif ($value == 1) {
 									$newvalue = '/'.$modulename.'/core/modules/'.$partname.'/'; // ex: partname = societe
@@ -403,7 +446,20 @@ class Conf extends stdClass
 									$this->$modulename = new stdClass();	// We need this to use the ->enabled and the ->multidir, ->dir...
 								}
 								$this->$modulename->enabled = true;	// TODO Remove this
-								//}
+
+								// Duplicate entry with the new name
+								/*
+								$mapping = $this->deprecatedProperties();
+								if (array_key_exists($modulename, $mapping)) {
+									$newmodulename = $mapping[$modulename];
+									$this->modules[$newmodulename] = $newmodulename;
+
+									if (!isset($this->$newmodulename) || !is_object($this->$newmodulename)) {
+										$this->$newmodulename = new stdClass();	// We need this to use the ->enabled and the ->multidir, ->dir...
+									}
+									$this->$newmodulename->enabled = true;	// TODO Remove this
+								}
+								*/
 							}
 						}
 					}
@@ -564,8 +620,8 @@ class Conf extends stdClass
 
 			// Exception: Some dir are not the name of module. So we keep exception here for backward compatibility.
 
-			// Module fournisseur
-			if (!empty($this->fournisseur)) {
+			// Module supplier is on
+			if (isModEnabled('fournisseur')) {
 				$this->fournisseur->commande = new stdClass();
 				$this->fournisseur->commande->multidir_output = array($this->entity => $rootfordata."/fournisseur/commande");
 				$this->fournisseur->commande->multidir_temp = array($this->entity => $rootfortemp."/fournisseur/commande/temp");
@@ -590,8 +646,8 @@ class Conf extends stdClass
 				$this->fournisseur->payment->dir_output = $rootfordata."/fournisseur/payment"; // For backward compatibility
 				$this->fournisseur->payment->dir_temp = $rootfortemp."/fournisseur/payment/temp"; // For backward compatibility
 
-				// To prepare split of module fournisseur into module 'fournisseur' + supplier_order + supplier_invoice
-				if (!empty($this->fournisseur->enabled) && empty($this->global->MAIN_USE_NEW_SUPPLIERMOD)) {  // By default, if module supplier is on, and we don't use yet the new modules, we set artificially the module properties
+				// To prepare split of module supplier into module 'supplier' + 'supplier_order' + 'supplier_invoice'
+				if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {  // By default, if module supplier is on, and we don't use yet the new modules, we set artificially the module properties
 					$this->supplier_order = new stdClass();
 					$this->supplier_order->enabled = 1;
 					$this->supplier_order->multidir_output = array($this->entity => $rootfordata."/fournisseur/commande");
@@ -607,6 +663,11 @@ class Conf extends stdClass
 					$this->supplier_invoice->dir_temp = $rootfortemp."/fournisseur/facture/temp"; // For backward compatibility
 				}
 			}
+
+			// Module compta
+			$this->compta->payment = new stdClass();
+			$this->compta->payment->dir_output				= $rootfordata."/compta/payment";
+			$this->compta->payment->dir_temp					= $rootfortemp."/compta/payment/temp";
 
 			// Module product/service
 			$this->product->multidir_output 		= array($this->entity => $rootfordata."/produit");
@@ -664,12 +725,12 @@ class Conf extends stdClass
 				$this->global->MAIN_UMASK = '0660'; // Default mask
 			} else {
 				// We remove the execute bits on the file umask
-				$tmpumask = (octdec($this->global->MAIN_UMASK) & 0666);
+				$tmpumask = (octdec(getDolGlobalString('MAIN_UMASK')) & 0666);
 				$tmpumask = decoct($tmpumask);
-				if (!preg_match('/^0/', $tmpumask)) {
+				if (!preg_match('/^0/', $tmpumask)) {	// Convert string '123' into octal representation '0123'
 					$tmpumask = '0'.$tmpumask;
 				}
-				if (empty($tmpumask) || $tmpumask === '0') {
+				if (empty($tmpumask)) {		// when $tmpmask is null, '', or '0'
 					$tmpumask = '0664';
 				}
 				$this->global->MAIN_UMASK = $tmpumask;
@@ -747,23 +808,33 @@ class Conf extends stdClass
 
 			// MAIN_HTML_TITLE
 			if (!isset($this->global->MAIN_HTML_TITLE)) {
-				$this->global->MAIN_HTML_TITLE = 'noapp,thirdpartynameonly,contactnameonly,projectnameonly';
+				$this->global->MAIN_HTML_TITLE = 'thirdpartynameonly,contactnameonly,projectnameonly';
 			}
 
-			// conf->liste_limit = constante de taille maximale des listes
-			if (empty($this->global->MAIN_SIZE_LISTE_LIMIT)) {
-				$this->global->MAIN_SIZE_LISTE_LIMIT = 15;
+			// conf->liste_limit = constant to limit size of lists
+			$this->liste_limit = getDolGlobalInt('MAIN_SIZE_LISTE_LIMIT', 15);
+			if ((int) $this->liste_limit <= 0) {
+				// Mode automatic.
+				$this->liste_limit = 15;
+				if (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] < 910) {
+					$this->liste_limit = 10;
+				} elseif (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] > 1130) {
+					$this->liste_limit = 20;
+				}
 			}
-			$this->liste_limit = $this->global->MAIN_SIZE_LISTE_LIMIT;
 
-			// conf->product->limit_size = constante de taille maximale des select de produit
+			// conf->main_checkbox_left_column = constant to set checkbox list to left
+			if (!isset($this->main_checkbox_left_column)) {
+				$this->main_checkbox_left_column = getDolGlobalInt("MAIN_CHECKBOX_LEFT_COLUMN");
+			}
+
+			// Set PRODUIT_LIMIT_SIZE if never defined
 			if (!isset($this->global->PRODUIT_LIMIT_SIZE)) {
 				$this->global->PRODUIT_LIMIT_SIZE = 1000;
 			}
-			$this->product->limit_size = $this->global->PRODUIT_LIMIT_SIZE;
 
 			// Set PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE, may be modified later according to browser
-			$this->global->PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE = (isset($this->global->PRODUIT_DESC_IN_FORM) ? $this->global->PRODUIT_DESC_IN_FORM : 0);
+			$this->global->PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE = getDolGlobalInt('PRODUIT_DESC_IN_FORM');
 
 			// conf->theme et $this->css
 			if (empty($this->global->MAIN_THEME)) {
@@ -832,6 +903,9 @@ class Conf extends stdClass
 			if (!isset($this->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
 				$this->global->PDF_ALLOW_HTML_FOR_FREE_TEXT = 1; // allow html content into free footer text
 			}
+			if (!isset($this->global->MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING)) {
+				$this->global->MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING = 1;
+			}
 
 			// Default max file size for upload (deprecated)
 			//$this->maxfilesize = (empty($this->global->MAIN_UPLOAD_DOC) ? 0 : (int) $this->global->MAIN_UPLOAD_DOC * 1024);
@@ -873,7 +947,7 @@ class Conf extends stdClass
 
 			// Define list of limited modules (value must be key found for "name" property of module, so for example 'supplierproposal' for Module "Supplier Proposal"
 			if (!isset($this->global->MAIN_MODULES_FOR_EXTERNAL)) {
-				$this->global->MAIN_MODULES_FOR_EXTERNAL = 'user,societe,propal,commande,facture,categorie,supplierproposal,fournisseur,contact,projet,contrat,ficheinter,expedition,reception,agenda,resource,adherent,blockedlog'; // '' means 'all'. Note that contact is added here as it should be a module later.
+				$this->global->MAIN_MODULES_FOR_EXTERNAL = 'user,societe,propal,commande,facture,categorie,supplierproposal,fournisseur,contact,projet,contrat,ficheinter,expedition,reception,agenda,resource,adherent,blockedlog,ticket'; // '' means 'all'. Note that contact is added here as it should be a module later.
 			}
 			if (!empty($this->modules_parts['moduleforexternal'])) {		// Module part to include an external module into the MAIN_MODULES_FOR_EXTERNAL list
 				foreach ($this->modules_parts['moduleforexternal'] as $key => $value) {
@@ -969,6 +1043,10 @@ class Conf extends stdClass
 				$this->global->PRODUIT_MULTIPRICES_LIMIT = 5;
 			}
 
+			if (!isset($this->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+				$this->global->MAIN_CHECKBOX_LEFT_COLUMN = 1;
+			}
+
 			// For modules that want to disable top or left menu
 			if (!empty($this->global->MAIN_HIDE_TOP_MENU)) {
 				$this->dol_hide_topmenu = $this->global->MAIN_HIDE_TOP_MENU;
@@ -1001,7 +1079,7 @@ class Conf extends stdClass
 			if (!isset($this->global->MAIN_SECURITY_CSRF_WITH_TOKEN)) {
 				// Value 1 makes CSRF check for all POST parameters only
 				// Value 2 makes also CSRF check for GET requests with action = a sensitive requests like action=del, action=remove...
-				// Value 3 makes also CSRF check for all GET requests with a param action or massaction (except some sensitive values)
+				// Value 3 makes also CSRF check for all GET requests with a param action or massaction (except some non sensitive values)
 				$this->global->MAIN_SECURITY_CSRF_WITH_TOKEN = 2; // TODO Switch value to 3
 				// Note: Set MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL=1 to have a renewal of token at each page call instead of each session (not recommended)
 			}
@@ -1049,6 +1127,9 @@ class Conf extends stdClass
 			} else {
 				unset($this->global->MAIN_NO_CONCAT_DESCRIPTION);
 			}
+
+
+			// Simple deprecation management. We do not use DolDeprecationHandlet for $conf.
 
 			// product is new use
 			if (isset($this->product)) {
@@ -1120,8 +1201,8 @@ class Conf extends stdClass
 
 					require_once $handler_file_found;
 					$loghandlerinstance = new $handler();
-					if (!$loghandlerinstance instanceof LogHandlerInterface) {
-						throw new Exception('Log handler does not extend LogHandlerInterface');
+					if (!$loghandlerinstance instanceof LogHandler) {
+						throw new Exception('Log handler does not extend LogHandler');
 					}
 
 					if (empty($this->loghandlers[$handler])) {

@@ -43,13 +43,13 @@ if (!$user->admin) {
  * View
  */
 
-llxHeader('', $langs->trans("InfoWebServer"));
+llxHeader('', $langs->trans("InfoWebServer"), '', '', 0, 0, '', '', '', 'mod-admin page-system_web');
 
 print load_fiche_titre($langs->trans("InfoWebServer"), '', 'title_setup');
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
-print '<tr class="liste_titre"><td>'.$langs->trans("Parameter")."</td><td>".$langs->trans("Value")."</td></tr>\n";
+print '<tr class="liste_titre"><td>'.$langs->trans("Parameter")."</td><td></td></tr>\n";
 print '<tr class="oddeven"><td>'.$langs->trans("Version")."</td><td>".$_SERVER["SERVER_SOFTWARE"]."</td></tr>\n";
 print '<tr class="oddeven"><td>'.$langs->trans("VirtualServerName")."</td><td>".$_SERVER["SERVER_NAME"]."</td></tr>\n";
 print '<tr class="oddeven"><td>'.$langs->trans("IP")."</td><td>".$_SERVER["SERVER_ADDR"]."</td></tr>\n";
@@ -74,7 +74,7 @@ if (function_exists('exec')) {
 	exec('id', $arrayout, $varout);
 	print '<tr><td>'.$langs->trans("WebUserGroup")." (real, 'id' command)</td><td>";
 	if (empty($varout)) {	// Test command is ok. Work only on Linux OS.
-		print join(',', $arrayout);
+		print implode(',', $arrayout);
 	} else {
 		$langs->load("errors");
 		print '<span class="opacitymedium">'.$langs->trans("ErrorExecIdFailed").'</span>';

@@ -156,9 +156,9 @@ class Broker
      * people. If the user was an attendee, we need to make sure that the
      * organizer gets the 'declined' message.
      *
-     * @param VCalendar|string $calendar
-     * @param string|array     $userHref
-     * @param VCalendar|string $oldCalendar
+     * @param VCalendar|string      $calendar
+     * @param string|array          $userHref
+     * @param VCalendar|string|null $oldCalendar
      *
      * @return array
      */

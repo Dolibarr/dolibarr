@@ -2,7 +2,7 @@
 /* Copyright (C) 2008-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2022       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022-2024	Frédéric France				<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,30 +28,49 @@
 /**
  * Show filter form in agenda view
  *
- * @param	Form	$form			Form object
- * @param	int		$canedit		Can edit filter fields
- * @param	int		$status			Status
- * @param 	int		$year			Year
- * @param 	int		$month			Month
- * @param 	int		$day			Day
- * @param 	int		$showbirthday	Show birthday
- * @param 	string	$filtera		Filter on create by user
- * @param 	string	$filtert		Filter on assigned to user
- * @param 	string	$filterd		Filter of done by user
- * @param 	int		$pid			Product id
- * @param 	int		$socid			Third party id
- * @param	string	$action			Action string
- * @param	array	$showextcals	Array with list of external calendars (used to show links to select calendar), or -1 to show no legend
- * @param	string|array	$actioncode		Preselected value(s) of actioncode for filter on event type
- * @param	int		$usergroupid	Id of group to filter on users
- * @param	string	$excludetype	A type to exclude ('systemauto', 'system', '')
- * @param	int   	$resourceid	    Preselected value of resource for filter on resource
+ * @param	Form			$form				Form object
+ * @param	int				$canedit			Can edit filter fields
+ * @param	int				$status				Status
+ * @param 	int				$year				Year
+ * @param 	int				$month				Month
+ * @param 	int				$day				Day
+ * @param 	int				$showbirthday		Show birthday
+ * @param 	string			$filtera			Filter on create by user
+ * @param 	string			$filtert			Filter on assigned to user
+ * @param 	string			$filtered			Filter of done by user
+ * @param 	int				$pid				Product id
+ * @param 	int				$socid				Third party id
+ * @param	string			$action				Action string
+ * @param	array|int		$showextcals		Array with list of external calendars (used to show links to select calendar), or -1 to show no legend
+ * @param	string|array	$actioncode			Preselected value(s) of actioncode for filter on event type
+ * @param	int				$usergroupid		Id of group to filter on users
+ * @param	string			$excludetype		A type to exclude ('systemauto', 'system', '')
+ * @param	int   			$resourceid			Preselected value of resource for filter on resource
+ * @param	int     		$search_categ_cus	Tag id
  * @return	void
  */
-function print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, $filtera, $filtert, $filterd, $pid, $socid, $action, $showextcals = array(), $actioncode = '', $usergroupid = '', $excludetype = '', $resourceid = 0)
-{
-	global $conf, $user, $langs, $db, $hookmanager;
-	global $begin_h, $end_h, $begin_d, $end_d;
+function print_actions_filter(
+	$form,
+	$canedit,
+	$status,
+	$year,
+	$month,
+	$day,
+	$showbirthday,
+	$filtera,
+	$filtert,
+	$filtered,
+	$pid,
+	$socid,
+	$action,
+	$showextcals = array(),
+	$actioncode = '',
+	$usergroupid = 0,
+	$excludetype = '',
+	$resourceid = 0,
+	$search_categ_cus = 0
+) {
+	global $user, $langs, $db, $hookmanager;
 	global $massaction;
 
 	$langs->load("companies");
@@ -77,20 +96,20 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		$multiselect = (getDolGlobalString('AGENDA_USE_EVENT_TYPE'));
 	}
 	print img_picto($langs->trans("ActionType"), 'square', 'class="pictofixedwidth inline-block" style="color: #ddd;"');
-	print $formactions->select_type_actions($actioncode, "search_actioncode", $excludetype, (!getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? 1 : -1), 0, $multiselect, 0, 'maxwidth500 widthcentpercentminusx');
+	print $formactions->select_type_actions($actioncode, "search_actioncode", $excludetype, (!getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? 1 : -1), 0, $multiselect, 0, 'minwidth200 maxwidth250 widthcentpercentminusx');
 	print '</div>';
 
 	if ($canedit) {
 		// Assigned to user
 		print '<div class="divsearchfield">';
 		print img_picto($langs->trans("ActionsToDoBy"), 'user', 'class="pictofixedwidth inline-block"');
-		print $form->select_dolusers($filtert, 'search_filtert', 1, '', !$canedit, '', '', 0, 0, 0, '', 0, '', 'minwidth150 maxwidth500 widthcentpercentminusxx');
+		print $form->select_dolusers($filtert, 'search_filtert', 1, '', !$canedit, '', '', 0, 0, 0, '', 0, '', 'minwidth100 maxwidth250 widthcentpercentminusx');
 		print '</div>';
 
 		// Assigned to user group
 		print '<div class="divsearchfield">';
 		print img_picto($langs->trans("ToUserOfGroup"), 'object_group', 'class="pictofixedwidth inline-block"');
-		print $form->select_dolgroups($usergroupid, 'usergroup', 1, '', !$canedit, '', '', '0', false, 'minwidth100 maxwidth500 widthcentpercentminusxx');
+		print $form->select_dolgroups($usergroupid, 'usergroup', 1, '', !$canedit, '', '', '0', false, 'minwidth100 maxwidth250 widthcentpercentminusx');
 		print '</div>';
 
 		if (isModEnabled('resource')) {
@@ -100,7 +119,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 			// Resource
 			print '<div class="divsearchfield">';
 			print img_picto($langs->trans("Resource"), 'object_resource', 'class="pictofixedwidth inline-block"');
-			print $formresource->select_resource_list($resourceid, "search_resourceid", '', 1, 0, 0, null, '', 2, 0, 'maxwidth500');
+			print $formresource->select_resource_list($resourceid, "search_resourceid", [], 1, 0, 0, [], [], 2, 0, 'minwidth100 maxwidth250 widthcentpercentminusx');
 			print '</div>';
 		}
 	}
@@ -108,24 +127,36 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	if (isModEnabled('societe') && $user->hasRight('societe', 'lire')) {
 		print '<div class="divsearchfield">';
 		print img_picto($langs->trans("ThirdParty"), 'company', 'class="pictofixedwidth inline-block"');
-		print $form->select_company($socid, 'search_socid', '', '&nbsp;', 0, 0, null, 0, 'minwidth100 maxwidth500');
+		print $form->select_company($socid, 'search_socid', '', '&nbsp;', 0, 0, null, 0, 'minwidth100 maxwidth250 widthcentpercentminusx');
 		print '</div>';
 	}
 
-	if (isModEnabled('projet') && $user->hasRight('projet', 'lire')) {
+	if (isModEnabled('project') && $user->hasRight('projet', 'lire')) {
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 		$formproject = new FormProjets($db);
 
 		print '<div class="divsearchfield">';
 		print img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth inline-block"');
-		print $formproject->select_projects($socid ? $socid : -1, $pid, 'search_projectid', 0, 0, 1, 0, 0, 0, 0, '', 1, 0, 'maxwidth500');
+		print $formproject->select_projects($socid ? $socid : -1, $pid, 'search_projectid', 0, 0, 1, 0, 0, 0, 0, '', 1, 0, 'minwidth100 maxwidth250 widthcentpercentminusx');
+		print '</div>';
+	}
+
+	if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
+		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+		$formother = new FormOther($db);
+		$langs->load('categories');
+
+		print '<div class="divsearchfield">';
+		print img_picto($langs->trans('Categories'), 'category', 'class="pictofixedwidth"');
+		print $formother->select_categories('actioncomm', $search_categ_cus, 'search_categ_cus', 1, $langs->trans('ActionCommCategoriesArea'), 'minwidth100 maxwidth250 widthcentpercentminusx');
 		print '</div>';
 	}
 
 	if ($canedit && !preg_match('/list/', $_SERVER["PHP_SELF"])) {
 		// Status
 		print '<div class="divsearchfield">';
-		print img_picto($langs->trans("Status"), 'setup', 'class="pictofixedwidth inline-block"');
+		print img_picto($langs->trans("Status"), 'status', 'class="pictofixedwidth inline-block"');
 		$formactions->form_select_status_action('formaction', $status, 1, 'search_status', 1, 2, 'minwidth100');
 		print '</div>';
 	}
@@ -162,12 +193,12 @@ function show_array_actions_to_do($max = 5)
 	$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a LEFT JOIN ";
 	$sql .= " ".MAIN_DB_PREFIX."c_actioncomm as c ON c.id = a.fk_action";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
-	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
 	$sql .= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep2 > '".$db->idate($now)."'))";
-	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
@@ -211,6 +242,7 @@ function show_array_actions_to_do($max = 5)
 				//$customerstatic->name_alias = $obj->name_alias;
 				$customerstatic->code_client = $obj->code_client;
 				$customerstatic->code_compta = $obj->code_compta;
+				$customerstatic->code_compta_client = $obj->code_compta;
 				$customerstatic->client = $obj->client;
 				$customerstatic->logo = $obj->logo;
 				$customerstatic->email = $obj->email;
@@ -278,12 +310,12 @@ function show_array_last_actions_done($max = 5)
 	$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a LEFT JOIN ";
 	$sql .= " ".MAIN_DB_PREFIX."c_actioncomm as c ON c.id = a.fk_action ";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
-	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
 	$sql .= " AND (a.percent >= 100 OR (a.percent = -1 AND a.datep2 <= '".$db->idate($now)."'))";
-	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
@@ -327,6 +359,7 @@ function show_array_last_actions_done($max = 5)
 				//$customerstatic->name_alias = $obj->name_alias;
 				$customerstatic->code_client = $obj->code_client;
 				$customerstatic->code_compta = $obj->code_compta;
+				$customerstatic->code_compta_client = $obj->code_compta;
 				$customerstatic->client = $obj->client;
 				$customerstatic->logo = $obj->logo;
 				$customerstatic->email = $obj->email;

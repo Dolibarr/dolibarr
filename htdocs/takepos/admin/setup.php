@@ -3,6 +3,7 @@
  * Copyright (C) 2011-2017  Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2021       Nicolas ZABOURI     <info@inovea-conseil.com>
  * Copyright (C) 2022       Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/takepos.lib.php";
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 // If socid provided by ajax company selector
-if (!empty($_REQUEST['CASHDESK_ID_THIRDPARTY_id'])) {
+if (GETPOST('CASHDESK_ID_THIRDPARTY_id', 'alpha')) {
 	$_GET['CASHDESK_ID_THIRDPARTY'] = GETPOST('CASHDESK_ID_THIRDPARTY_id', 'alpha');
 	$_POST['CASHDESK_ID_THIRDPARTY'] = GETPOST('CASHDESK_ID_THIRDPARTY_id', 'alpha');
 	$_REQUEST['CASHDESK_ID_THIRDPARTY'] = GETPOST('CASHDESK_ID_THIRDPARTY_id', 'alpha');
@@ -131,7 +132,7 @@ $formproduct = new FormProduct($db);
 
 $help_url = 'EN:Module_Point_of_sale_(TakePOS)';
 
-llxHeader('', $langs->trans("CashDeskSetup"), $help_url);
+llxHeader('', $langs->trans("CashDeskSetup"), $help_url, '', 0, 0, '', '', '', 'mod-takepos page-admin_setup');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("CashDeskSetup").' (TakePOS)', $linkback, 'title_setup');
@@ -144,7 +145,7 @@ $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 print load_fiche_titre($langs->trans('CashDeskRefNumberingModules'), '', '');
 
-print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name")."</td>\n";
@@ -171,6 +172,7 @@ foreach ($dirmodels as $reldir) {
 					require_once $dir.$file.'.php';
 
 					$module = new $file();
+					'@phan-var-force ModeleNumRefTakepos $module';
 
 					// Show modules according to features level
 					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -181,7 +183,7 @@ foreach ($dirmodels as $reldir) {
 					}
 
 					if ($module->isEnabled()) {
-						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
+						print '<tr class="oddeven"><td>'.$module->getName($langs)."</td><td>\n";
 						print $module->info($langs);
 						print '</td>';
 
@@ -248,6 +250,9 @@ print "\n";
 
 print '<br>';
 
+
+print load_fiche_titre($langs->trans('Options'), '', '');
+
 // Mode
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -257,7 +262,7 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
-print '<td class="notitlefield">'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
+print '<td class="notitlefield">'.$langs->trans("Parameters").'</td><td></td>';
 print "</tr>\n";
 
 // Terminals
@@ -312,7 +317,7 @@ $htmltext .= '</i>';
 print '<tr class="oddeven"><td>';
 print $langs->trans("Paymentnumpad");
 print '<td>';
-$array = array(0=>$langs->trans("Numberspad"), 1=>$langs->trans("BillsCoinsPad"));
+$array = array(0 => $langs->trans("Numberspad"), 1 => $langs->trans("BillsCoinsPad"));
 print $form->selectarray('TAKEPOS_NUMPAD', $array, (!getDolGlobalString('TAKEPOS_NUMPAD') ? '0' : $conf->global->TAKEPOS_NUMPAD), 0);
 print "</td></tr>\n";
 
@@ -477,7 +482,7 @@ if (getDolGlobalInt('TAKEPOS_ENABLE_SUMUP')) {
 	print '<table class="noborder centpercent">';
 
 	print '<tr class="liste_titre">';
-	print '<td class="titlefield">'.$langs->trans("Sumup").'</td><td>'.$langs->trans("Value").'</td>';
+	print '<td class="titlefield">'.$langs->trans("Sumup").'</td><td></td>';
 	print "</tr>\n";
 
 	print '<tr class="oddeven"><td>';
@@ -494,8 +499,6 @@ if (getDolGlobalInt('TAKEPOS_ENABLE_SUMUP')) {
 	print '</table>';
 	print '</div>';
 }
-
-print '<br>';
 
 print $form->buttonsSaveCancel("Save", '');
 

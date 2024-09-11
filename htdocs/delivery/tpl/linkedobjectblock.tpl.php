@@ -2,6 +2,7 @@
 /* Copyright (C) 2010-2011	Regis Houssin <regis.houssin@inodbox.com>
  * Copyright (C) 2013		Juanjo Menent <jmenent@2byte.es>
  * Copyright (C) 2014       Marcos García <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +21,7 @@
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 print "<!-- BEGIN PHP TEMPLATE delivery/tpl/linkedobjectblock.tpl.php -->\n";
@@ -57,7 +58,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	echo '<td class="linkedcol-date center">'.dol_print_date($objectlink->date_delivery, 'day').'</td>';
 	echo '<td class="linkedcol-amount right">';
 	if ($user->hasRight('delivery', 'read')) {
-		$total = $total + $objectlink->total_ht;
+		$total += $objectlink->total_ht;
 		echo price($objectlink->total_ht);
 	}
 	echo '</td>';

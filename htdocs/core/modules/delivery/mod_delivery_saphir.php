@@ -2,6 +2,8 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,19 +23,19 @@
 /**
  *	\file       htdocs/core/modules/delivery/mod_delivery_saphir.php
  *	\ingroup    expedition
- *	\brief      Fichier contenant la classe du modele de numerotation de reference de livraison Saphir
+ *	\brief      Fichier contenant la class du modele de numerotation de reference de livraison Saphir
  */
 require_once DOL_DOCUMENT_ROOT.'/core/modules/delivery/modules_delivery.php';
 
 /**
  *	\class      mod_delivery_saphir
- *	\brief      Classe du modele de numerotation de reference de livraison Saphir
+ *	\brief      Class du modele de numerotation de reference de livraison Saphir
  */
 class mod_delivery_saphir extends ModeleNumRefDeliveryOrder
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
@@ -81,6 +83,7 @@ class mod_delivery_saphir extends ModeleNumRefDeliveryOrder
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Delivery"), $langs->transnoentities("Delivery"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
+		$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
@@ -103,30 +106,36 @@ class mod_delivery_saphir extends ModeleNumRefDeliveryOrder
 	 */
 	public function getExample()
 	{
-		global $conf, $langs, $mysoc;
+		global $db, $langs;
 
-		$old_code_client = $mysoc->code_client;
-		$mysoc->code_client = 'CCCCCCCCCC';
-		$numExample = $this->getNextValue($mysoc, '');
-		$mysoc->code_client = $old_code_client;
+		require_once DOL_DOCUMENT_ROOT . '/delivery/class/delivery.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
+
+		$delivery = new Delivery($db);
+		$delivery->initAsSpecimen();
+		$thirdparty = new Societe($db);
+		$thirdparty->initAsSpecimen();
+
+		$numExample = $this->getNextValue($thirdparty, $delivery);
 
 		if (!$numExample) {
 			$numExample = $langs->trans('NotConfigured');
 		}
+
 		return $numExample;
 	}
 
 
 	/**
-	 *  Return next value
+	 * 	Return next free value
 	 *
-	 *  @param	Societe		$objsoc     	Object third party
-	 *  @param  Object		$object			Object delivery
-	 *  @return string      				Value if OK, 0 if KO
+	 *  @param	Societe		$objsoc     Object thirdparty
+	 *  @param  Delivery	$object		Object we need next value for
+	 *  @return string|int<-1,0>  		Value if OK, 0 or -1 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{
-		global $db, $conf;
+		global $db;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
@@ -147,27 +156,13 @@ class mod_delivery_saphir extends ModeleNumRefDeliveryOrder
 	/**
 	 *  Return next free value
 	 *
-	 *  @param	Societe		$objsoc     Object third party
-	 * 	@param	string		$objforref	Object for number to search
-	 *  @return string      			Next free value
+	 *  @param	Societe			$objsoc     Object third party
+	 * 	@param	Delivery		$objforref	Object for number to search
+	 *  @return string|int<-1,0>   			Next free value, 0 if KO
+	 *  @deprecated see getNextValue
 	 */
 	public function getNumRef($objsoc, $objforref)
 	{
 		return $this->getNextValue($objsoc, $objforref);
-	}
-
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *  Return next free ref
-	 *
-	 *  @param	Societe		$objsoc      	Object thirdparty
-	 *  @param  Object		$object			Objet livraison
-	 *  @return string      				Descriptive text
-	 */
-	public function delivery_get_num($objsoc = 0, $object = '')
-	{
-		// phpcs:enable
-		return $this->getNextValue($objsoc, $object);
 	}
 }

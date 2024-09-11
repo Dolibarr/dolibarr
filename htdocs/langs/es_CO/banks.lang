@@ -99,7 +99,6 @@ BankTransactionLine=Entrada bancaria
 AllAccounts=Todas las cuentas bancarias y en efectivo
 FutureTransaction=Transacción futura. Incapaz de conciliarse.
 SelectChequeTransactionAndGenerate=Seleccione / filtre los cheques que se incluirán en el recibo de depósito de cheques. Luego, haga clic en "Crear".
-EventualyAddCategory=Eventualmente, especifique una categoría en la que clasificar los registros
 ToConciliate=¿Para conciliar?
 ThenCheckLinesAndConciliate=Luego, verifique las líneas presentes en el extracto bancario y haga clic
 DefaultRIB=BAN predeterminado

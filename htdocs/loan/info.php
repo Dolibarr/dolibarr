@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2014-2023  Alexandre Spangaro  <aspangaro@easya.solutions>
- * Copyright (C) 2017       Ferran Marcet       <fmarcet@2byte.es>
+/* Copyright (C) 2014-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2017		Ferran Marcet				<fmarcet@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,15 +35,22 @@ if (isModEnabled('project')) {
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "loan"));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'loan', $id, '', '');
+
+
+/*
+ * Actions
+ */
+
+// None
 
 
 /*
@@ -53,7 +61,8 @@ $form = new Form($db);
 
 $title = $langs->trans("Loan").' - '.$langs->trans("Info");
 $help_url = 'EN:Module_Loan|FR:Module_Emprunt';
-llxHeader("", $title, $help_url);
+
+llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-loan page-card_info');
 
 $object = new Loan($db);
 $object->fetch($id);
@@ -102,7 +111,8 @@ $morehtmlref .= '</div>';
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/loan/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
+$morehtmlstatus = $morehtmlright;
+dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlstatus);
 
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';

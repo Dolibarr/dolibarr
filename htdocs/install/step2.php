@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Cedric GROSS            <c.gross@kreiz-it.fr>
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,7 +70,7 @@ if ($dolibarr_main_db_type == "sqlite") {
 if ($dolibarr_main_db_type == "sqlite3") {
 	$choix = 5;
 }
-//if (empty($choix)) dol_print_error('','Database type '.$dolibarr_main_db_type.' not supported into step2.php page');
+//if (empty($choix)) dol_print_error(null,'Database type '.$dolibarr_main_db_type.' not supported into step2.php page');
 
 
 // Now we load forced values from install.forced.php file.
@@ -90,12 +91,21 @@ if (@file_exists($forcedfile)) {
 
 dolibarr_install_syslog("--- step2: entering step2.php page");
 
+'@phan-var-force string $dolibarr_main_db_prefix';  // From configuraiotn file or install/inc.php
+
+
+/*
+ * Actions
+ */
+
+// None
+
 
 /*
  *	View
  */
 
-pHeader($langs->trans("CreateDatabaseObjects"), "step4");
+pHeader($langs->trans("DolibarrSetup").' - '.$langs->trans("CreateDatabaseObjects"), "step4");
 
 // Test if we can run a first install process
 if (!is_writable($conffile)) {
@@ -104,7 +114,7 @@ if (!is_writable($conffile)) {
 	exit;
 }
 
-if ($action == "set") {
+if ($action == "set") {		// Test on permission not required. Already managed by test in inc.php
 	print '<h3><img class="valignmiddle inline-block paddingright" src="../theme/common/octicons/build/svg/database.svg" width="20" alt="Database"> '.$langs->trans("Database").'</h3>';
 
 	print '<table cellspacing="0" style="padding: 4px 4px 4px 0" border="0" width="100%">';
@@ -171,7 +181,7 @@ if ($action == "set") {
 
 		$ok = 0;
 		$handle = opendir($dir);
-		dolibarr_install_syslog("step2: open tables directory ".$dir." handle=".$handle);
+		dolibarr_install_syslog("step2: open tables directory ".$dir." handle=".(is_bool($handle) ? json_encode($handle) : $handle));
 		$tablefound = 0;
 		$tabledata = array();
 		if (is_resource($handle)) {
@@ -269,7 +279,7 @@ if ($action == "set") {
 
 		$okkeys = 0;
 		$handle = opendir($dir);
-		dolibarr_install_syslog("step2: open keys directory ".$dir." handle=".$handle);
+		dolibarr_install_syslog("step2: open keys directory ".$dir." handle=".(is_bool($handle) ? json_encode($handle) : $handle));
 		$tablefound = 0;
 		$tabledata = array();
 		if (is_resource($handle)) {
@@ -400,7 +410,7 @@ if ($action == "set") {
 		$file = "functions.sql";
 		if (file_exists($dir.$file)) {
 			$fp = fopen($dir.$file, "r");
-			dolibarr_install_syslog("step2: open function file ".$dir.$file." handle=".$fp);
+			dolibarr_install_syslog("step2: open function file ".$dir.$file." handle=".(is_bool($fp) ? json_encode($fp) : $fp));
 			if ($fp) {
 				$buffer = '';
 				while (!feof($fp)) {
@@ -467,7 +477,7 @@ if ($action == "set") {
 
 		// Insert data
 		$handle = opendir($dir);
-		dolibarr_install_syslog("step2: open directory data ".$dir." handle=".$handle);
+		dolibarr_install_syslog("step2: open directory data ".$dir." handle=".(is_bool($handle) ? json_encode($handle) : $handle));
 		$tablefound = 0;
 		$tabledata = array();
 		if (is_resource($handle)) {
@@ -492,7 +502,7 @@ if ($action == "set") {
 		foreach ($tabledata as $file) {
 			$name = substr($file, 0, dol_strlen($file) - 4);
 			$fp = fopen($dir.$file, "r");
-			dolibarr_install_syslog("step2: open data file ".$dir.$file." handle=".$fp);
+			dolibarr_install_syslog("step2: open data file ".$dir.$file." handle=".(is_bool($fp) ? json_encode($fp) : $fp));
 			if ($fp) {
 				$arrayofrequests = array();
 				$linefound = 0;
@@ -533,6 +543,9 @@ if ($action == "set") {
 					if ($dolibarr_main_db_prefix != 'llx_') {
 						$buffer = preg_replace('/llx_/i', $dolibarr_main_db_prefix, $buffer);
 					}
+
+					// Replace __ENTITY__ tag with 1 (master entity), this is only for dictionaries.
+					$buffer = preg_replace('/__ENTITY__/i', '1', $buffer);
 
 					//dolibarr_install_syslog("step2: request: " . $buffer);
 					$resql = $db->query($buffer, 1);

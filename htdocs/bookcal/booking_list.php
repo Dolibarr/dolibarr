@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2012  Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2010-2014  Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2017       Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2023-2024  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 /**
  *	\file       htdocs/bookcal/booking_list.php
  *	\ingroup    bookcal
- *	\brief      Management of direct debit order or credit tranfer of invoices
+ *	\brief      Management of direct debit order or credit transfer of invoices
  */
 
 // Load Dolibarr environment
@@ -34,17 +34,17 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-dol_include_once('/bookcal/lib/bookcal_calendar.lib.php');
+require_once DOL_DOCUMENT_ROOT.'/bookcal/lib/bookcal_calendar.lib.php';
 
 // load module libraries
 require_once __DIR__.'/class/calendar.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("bookcal@bookcal", "other"));
+$langs->loadLangs(array("agenda", "other"));
 
-$id = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
+$id = (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('facid')); // For backward compatibility
 $ref = GETPOST('ref', 'alpha');
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 $action = GETPOST('action', 'aZ09');
 $type = GETPOST('type', 'aZ09');
 
@@ -110,7 +110,7 @@ $form = new Form($db);
 $now = dol_now();
 $title = $langs->trans('Calendar')." - ".$langs->trans('Bookings');
 
-llxHeader('', $title, $helpurl);
+llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-bookcal page-list');
 
 
 if ($object->id > 0) {

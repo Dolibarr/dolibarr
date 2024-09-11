@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2020 Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +19,7 @@
  */
 
 /**
- * \file        class/workstationresource.class.php
+ * \file        htdocs/workstation/class/workstationresource.class.php
  * \ingroup     workstation
  * \brief       This file is a CRUD class file for WorkstationResource (Create/Read/Update/Delete)
  */
@@ -35,11 +37,11 @@ class WorkstationResource extends CommonObject
 	public $element = 'workstationresource';
 
 	/**
-	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		'fk_workstation' => array('type' => 'integer'),
-		'fk_resource' => array('type' => 'integer')
+		'fk_workstation' => array('type' => 'integer', 'label' => 'Workstation', 'enabled' => 1, 'position' => 10, 'visible' => 1),
+		'fk_resource' => array('type' => 'integer', 'label' => 'UserGroup', 'enabled' => 1, 'position' => 20, 'visible' => 1),
 	);
 
 	/**

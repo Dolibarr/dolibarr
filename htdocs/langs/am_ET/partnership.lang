@@ -91,8 +91,7 @@ CountLastUrlCheckError=ለመጨረሻው የዩአርኤል ፍተሻ የስህ
 LastCheckBacklink=የመጨረሻው የዩአርኤል ፍተሻ ቀን
 
 NewPartnershipRequest=አዲስ የአጋርነት ጥያቄ
-NewPartnershipRequestDesc=ይህ ፎርም የአንዱ አጋርነት ፕሮግራማችን አካል ለመሆን እንዲጠይቁ ያስችልዎታል። ይህን ቅጽ ለመሙላት እርዳታ ከፈለጉ፣ እባክዎን በኢሜል ያነጋግሩ <b>%s<span class='notranslate'>b09a4b739f17f80 span>
+NewPartnershipRequestDesc=This form allows you to request to be part of one of our partnership program. If you need help to fill this form, please contact by email <b>%s</b>.
 ThisUrlMustContainsAtLeastOneLinkToWebsite=ይህ ገጽ ከሚከተሉት ጎራዎች ወደ አንዱ ቢያንስ አንድ አገናኝ መያዝ አለበት፡ %s
 
 IPOfApplicant=የአመልካች አይፒ
-

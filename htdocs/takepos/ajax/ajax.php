@@ -46,15 +46,15 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 $category = GETPOST('category', 'alphanohtml');	// Can be id of category or 'supplements'
 $action = GETPOST('action', 'aZ09');
 $term = GETPOST('term', 'alpha');
-$id = GETPOST('id', 'int');
-$search_start = GETPOST('search_start', 'int');
-$search_limit = GETPOST('search_limit', 'int');
+$id = GETPOSTINT('id');
+$search_start = GETPOSTINT('search_start');
+$search_limit = GETPOSTINT('search_limit');
 
 if (!$user->hasRight('takepos', 'run')) {
 	accessforbidden();
 }
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
 $hookmanager->initHooks(array('takeposproductsearch')); // new context for product search hooks
 
 $pricelevel = 1;	// default price level if PRODUIT_MULTIPRICES. TODO Get price level from thirdparty.
@@ -67,10 +67,10 @@ $pricelevel = 1;	// default price level if PRODUIT_MULTIPRICES. TODO Get price l
 
 $thirdparty = new Societe($db);
 
-if ($action == 'getProducts') {
-	$tosell = GETPOSTISSET('tosell') ? GETPOST('tosell', 'int') : '';
-	$limit = GETPOSTISSET('limit') ? GETPOST('limit', 'int') : 0;
-	$offset = GETPOSTISSET('offset') ? GETPOST('offset', 'int') : 0;
+if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
+	$tosell = GETPOSTISSET('tosell') ? GETPOSTINT('tosell') : '';
+	$limit = GETPOSTISSET('limit') ? GETPOSTINT('limit') : 0;
+	$offset = GETPOSTISSET('offset') ? GETPOSTINT('offset') : 0;
 
 	top_httphead('application/json');
 
@@ -93,9 +93,9 @@ if ($action == 'getProducts') {
 
 	$result = $object->fetch($category);
 	if ($result > 0) {
-		$filter = array();
+		$filter = '';
 		if ($tosell != '') {
-			$filter = array('customsql' => 'o.tosell = '.((int) $tosell));
+			$filter = '(o.tosell:=:'.((int) $tosell).')';
 		}
 		$prods = $object->getObjectsInCateg("product", 0, $limit, $offset, getDolGlobalString('TAKEPOS_SORTPRODUCTFIELD'), 'ASC', $filter);
 		// Removed properties we don't need
@@ -122,7 +122,7 @@ if ($action == 'getProducts') {
 	} else {
 		echo 'Failed to load category with id='.dol_escape_htmltag($category);
 	}
-} elseif ($action == 'search' && $term != '') {
+} elseif ($action == 'search' && $term != '' && $user->hasRight('takepos', 'run')) {
 	top_httphead('application/json');
 
 	// Search barcode into thirdparties. If found, it means we want to change thirdparties.
@@ -153,7 +153,7 @@ if ($action == 'getProducts') {
 	if (getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID') > 0) {	// A root category is defined, we must filter on products inside this category tree
 		$object = new Categorie($db);
 		//$result = $object->fetch($conf->global->TAKEPOS_ROOT_CATEGORY_ID);
-		$arrayofcateg = $object->get_full_arbo('product', $conf->global->TAKEPOS_ROOT_CATEGORY_ID, 1);
+		$arrayofcateg = $object->get_full_arbo('product', getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID'), 1);
 		if (is_array($arrayofcateg) && count($arrayofcateg) > 0) {
 			foreach ($arrayofcateg as $val) {
 				$filteroncategids .= ($filteroncategids ? ', ' : '').$val['id'];
@@ -395,17 +395,24 @@ if ($action == 'getProducts') {
 	} else {
 		echo 'Failed to search product : '.$db->lasterror();
 	}
-} elseif ($action == "opendrawer" && $term != '') {
+} elseif ($action == "opendrawer" && $term != '' && $user->hasRight('takepos', 'run')) {
+	top_httphead('application/html');
 	require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
 	$printer = new dolReceiptPrinter($db);
 	// check printer for terminal
 	if (getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term) > 0) {
 		$printer->initPrinter(getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term));
 		// open cashdrawer
-		$printer->pulse();
-		$printer->close();
+		if ($printer->getPrintConnector()) {
+			$printer->pulse();
+			$printer->close();
+		} else {
+			print 'Failed to init printer with ID='.getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term);
+		}
 	}
-} elseif ($action == "printinvoiceticket" && $term != '' && $id > 0 && $user->hasRight('facture', 'lire')) {
+} elseif ($action == "printinvoiceticket" && $term != '' && $id > 0 && $user->hasRight('takepos', 'run') && $user->hasRight('facture', 'lire')) {
+	top_httphead('application/html');
+
 	require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 	$printer = new dolReceiptPrinter($db);
@@ -415,7 +422,7 @@ if ($action == 'getProducts') {
 		$object->fetch($id);
 		$ret = $printer->sendToPrinter($object, getDolGlobalString('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$term), getDolGlobalString('TAKEPOS_PRINTER_TO_USE'.$term));
 	}
-} elseif ($action == 'getInvoice') {
+} elseif ($action == 'getInvoice' && $user->hasRight('takepos', 'run')) {
 	top_httphead('application/json');
 
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -426,7 +433,9 @@ if ($action == 'getProducts') {
 	}
 
 	echo json_encode($object);
-} elseif ($action == 'thecheck') {
+} elseif ($action == 'thecheck' && $user->hasRight('takepos', 'run')) {
+	top_httphead('application/html');
+
 	$place = GETPOST('place', 'alpha');
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';

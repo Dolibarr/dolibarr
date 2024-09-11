@@ -13,8 +13,8 @@ PHPSupportPOSTGETOk=Ky PHP mbështet variablat POST dhe GET.
 PHPSupportPOSTGETKo=Është e mundur që konfigurimi juaj i PHP nuk i mbështet variablat POST dhe/ose GET. Kontrolloni parametrin <b>variables_order</b> në php.ini.
 PHPSupportSessions=Ky PHP mbështet seancat.
 PHPSupport=Ky PHP mbështet funksionet %s.
-PHPMemoryOK=Memoria juaj maksimale e sesionit PHP është caktuar në <b>%s<span class='notranslate'>b09a4b739f17f8z></s0. Kjo duhet të jetë e mjaftueshme.
-PHPMemoryTooLow=Memoria juaj maksimale e sesionit PHP është caktuar në <b>%sb09a4b739f17panf8z0</s0. Kjo është shumë e ulët. Ndrysho <span class='notranslate'><b>php.ini</b> për të vendosur b0aee83365837fm<0aee8336583737f ='notranslate'></b> parametër për të paktën <b>%s<span class='notranslate'8 /span> bajt.
+PHPMemoryOK=Your PHP max session memory is set to <b>%s</b>. This should be enough.
+PHPMemoryTooLow=Your PHP max session memory is set to <b>%s</b> bytes. This is too low. Change your <b>php.ini</b> to set <b>memory_limit</b> parameter to at least <b>%s</b> bytes.
 Recheck=Klikoni këtu për një test më të detajuar
 ErrorPHPDoesNotSupportSessions=Instalimi juaj i PHP nuk i mbështet seancat. Kjo veçori kërkohet për të lejuar funksionimin e Dolibarr. Kontrolloni konfigurimin tuaj të PHP dhe lejet e drejtorisë së sesioneve.
 ErrorPHPDoesNotSupport=Instalimi juaj PHP nuk mbështet funksionet %s.
@@ -77,7 +77,7 @@ SetupEnd=Fundi i konfigurimit
 SystemIsInstalled=Ky instalim ka përfunduar.
 SystemIsUpgraded=Dolibarr është përmirësuar me sukses.
 YouNeedToPersonalizeSetup=Ju duhet të konfiguroni Dolibarr për t'iu përshtatur nevojave tuaja (pamja, veçoritë, ...). Për ta bërë këtë, ju lutemi ndiqni lidhjen e mëposhtme:
-AdminLoginCreatedSuccessfuly=Identifikimi i administratorit të Dolibarr '<b>%s<span class='notranslate'>b09a4b739f17f80'z0 u krijua me sukses.
+AdminLoginCreatedSuccessfuly=Dolibarr administrator login '<b>%s</b>' created successfully.
 GoToDolibarr=Shkoni në Dolibarr
 GoToSetupArea=Shkoni te Dolibarr (zona e konfigurimit)
 MigrationNotFinished=Versioni i bazës së të dhënave nuk është plotësisht i përditësuar: ekzekutoni përsëri procesin e përmirësimit.
@@ -86,7 +86,7 @@ WithNoSlashAtTheEnd=Pa të pjerrët "/" në fund
 DirectoryRecommendation=<span class="warning">E RËNDËSISHME</span>: Duhet të përdorni një direktori që është jashtë faqeve të internetit (kështu që mos përdorni një nëndrejtori të parametrit të mëparshëm ).
 LoginAlreadyExists=Tashmë ekziston
 DolibarrAdminLogin=Identifikimi i administratorit të Dolibarr
-AdminLoginAlreadyExists=Llogaria e administratorit të Dolibarr '<b>%s<span class='notranslate'></b> tashmë ekziston. Kthehuni nëse dëshironi të krijoni një tjetër.
+AdminLoginAlreadyExists=Dolibarr administrator account '<b>%s</b>' already exists. Go back if you want to create another one.
 FailedToCreateAdminLogin=Krijimi i llogarisë së administratorit të Dolibarr dështoi.
 WarningRemoveInstallDir=Paralajmërim, për arsye sigurie, pasi të përfundojë procesi i instalimit, duhet të shtoni një skedar të quajtur <b>install.lock</b> në Drejtoria e dokumenteve Dolibarr për të parandaluar përsëri përdorimin aksidental/me qëllim të keq të veglave të instalimit.
 FunctionNotAvailableInThisPHP=Nuk disponohet në këtë PHP
@@ -108,15 +108,15 @@ DatabaseVersion=Versioni i bazës së të dhënave
 ServerVersion=Versioni i serverit të bazës së të dhënave
 YouMustCreateItAndAllowServerToWrite=Ju duhet të krijoni këtë direktori dhe të lejoni që serveri në internet të shkruajë në të.
 DBSortingCollation=Rendi i renditjes së karaktereve
-YouAskDatabaseCreationSoDolibarrNeedToConnect=Ju zgjodhët krijimin e bazës së të dhënave <b>%s</b></spanli>, por ka nevojë për këtë, porr për t'u lidhur me serverin <span class='notranslate'><b>%s</b> me super përdorues <span> class= 'notranslate'><b></span>%s</b>.
-YouAskLoginCreationSoDolibarrNeedToConnect=Ju zgjodhët krijimin e përdoruesit të bazës së të dhënave <b>%s</b></spanli>, porr duhet të lidhet me serverin <span class='notranslate'><b>%s</b> <span class me super përdorues ='notranslate'><b></span>%s</b> lejet.
+YouAskDatabaseCreationSoDolibarrNeedToConnect=You selected create database <b>%s</b>, but for this, Dolibarr needs to connect to server <b>%s</b> with super user <b>%s</b> permissions.
+YouAskLoginCreationSoDolibarrNeedToConnect=You selected create database user <b>%s</b>, but for this, Dolibarr needs to connect to server <b>%s</b> with super user <b>%s</b> permissions.
 BecauseConnectionFailedParametersMayBeWrong=Lidhja e bazës së të dhënave dështoi: parametrat e hostit ose të superpërdoruesit duhet të jenë të gabuara.
 OrphelinsPaymentsDetectedByMethod=Pagesa për jetimët u zbulua me metodën %s
 RemoveItManuallyAndPressF5ToContinue=Hiqeni manualisht dhe shtypni F5 për të vazhduar.
 FieldRenamed=Fusha u riemërua
 IfLoginDoesNotExistsCheckCreateUser=Nëse përdoruesi nuk ekziston ende, duhet të kontrolloni opsionin "Krijo përdorues"
-ErrorConnection=Serveri "<b>%s</b>", emri i klasës së bazës së të dhënave "<span> 'notranslate'><b></span>%s</b>", login "<span class33f4'05 span>%s</b>", ose fjalëkalimi i bazës së të dhënave mund të jetë i gabuar ose versioni i klientit PHP mund të jetë shumë i vjetër në krahasim me versionin e bazës së të dhënave .
-InstallChoiceRecommanded=Zgjedhja e rekomanduar për të instaluar versionin <b>%s</b> nga versioni juaj aktual <span> class='notranslate'><b>%s</b>
+ErrorConnection=Server "<b>%s</b>", database name "<b>%s</b>", login "<b>%s</b>", or database password may be wrong or the PHP client version may be too old compared to the database version.
+InstallChoiceRecommanded=Recommended choice to install version <b>%s</b> from your current version <b>%s</b>
 InstallChoiceSuggested=<b>Zgjedhja e instalimit e sugjeruar nga instaluesi</b>.
 MigrateIsDoneStepByStep=Versioni i synuar (%s) ka një boshllëk prej disa versionesh. Magjistari i instalimit do të kthehet për të sugjeruar një migrim të mëtejshëm pasi ky të përfundojë.
 CheckThatDatabasenameIsCorrect=Kontrollo që emri i bazës së të dhënave "<b>%s</b>" është i saktë.
@@ -139,7 +139,7 @@ KeepDefaultValuesDeb=Ju keni përdorur magjistarin e konfigurimit të Dolibarr n
 KeepDefaultValuesMamp=Ju keni përdorur magjistarin e konfigurimit të Dolibarr nga DoliMamp, kështu që vlerat e propozuara këtu janë optimizuar tashmë. Ndryshoni ato vetëm nëse e dini se çfarë po bëni.
 KeepDefaultValuesProxmox=Ju keni përdorur magjistarin e konfigurimit të Dolibarr nga një pajisje virtuale Proxmox, kështu që vlerat e propozuara këtu janë tashmë të optimizuara. Ndryshoni ato vetëm nëse e dini se çfarë po bëni.
 UpgradeExternalModule=Drejtoni procesin e dedikuar të përmirësimit të modulit të jashtëm
-SetAtLeastOneOptionAsUrlParameter=Vendosni të paktën një opsion si parametër në URL. Për shembull: '...repair.php?standard=confirmed'
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL with value 'test' or 'confirmed'. For example:  '...repair.php?standard=confirmed'
 NothingToDelete=Asgjë për të pastruar/fshirë
 NothingToDo=Asgje per te bere
 #########
@@ -168,7 +168,7 @@ MigrationContractsEmptyDatesUpdateSuccess=Korrigjimi i datës së kontratës bos
 MigrationContractsEmptyDatesNothingToUpdate=Asnjë datë e zbrazët e kontratës për t'u korrigjuar
 MigrationContractsEmptyCreationDatesNothingToUpdate=Asnjë datë e krijimit të kontratës për t'u korrigjuar
 MigrationContractsInvalidDatesUpdate=Korrigjimi i kontratës me datë të keqe
-MigrationContractsInvalidDateFix=Kontrata e saktë %s (Data e kontratës=%s, data e fillimit të shërbimit min=<span class='notranslate'>b0ecb2ec80</spansf >)
+MigrationContractsInvalidDateFix=Correct contract %s (Contract date=%s, Starting service date min=%s)
 MigrationContractsInvalidDatesNumber=%s kontratat u modifikuan
 MigrationContractsInvalidDatesNothingToUpdate=Asnjë datë me vlerë të keqe për t'u korrigjuar
 MigrationContractsIncoherentCreationDateUpdate=Korrigjimi i datës së krijimit të kontratës me vlerë të keqe
@@ -211,7 +211,7 @@ YouTryInstallDisabledByFileLock=Aplikacioni u përpoq të përmirësohej vetë, 
 YouTryUpgradeDisabledByMissingFileUnLock=Aplikacioni u përpoq të përmirësohej vetë, por procesi i përmirësimit aktualisht nuk lejohet.<br>
 ClickHereToGoToApp=Klikoni këtu për të shkuar te aplikacioni juaj
 ClickOnLinkOrRemoveManualy=Nëse një përmirësim është në proces, ju lutemi prisni. Nëse jo, klikoni në lidhjen e mëposhtme. Nëse e shihni gjithmonë të njëjtën faqe, duhet të hiqni/riemërtoni skedarin install.lock në drejtorinë e dokumenteve.
-ClickOnLinkOrCreateUnlockFileManualy=Nëse një përmirësim është në progres, ju lutemi prisni... Nëse jo, duhet të hiqni skedarin install.lock ose të krijoni një skedar upgrade.unlock në direktorinë e dokumenteve Dolibarr.
+ClickOnLinkOrCreateUnlockFileManualy=If an upgrade is in progress, please wait... If not, you must remove the file install.lock (or create a file upgrade.unlock for upgrade) into the Dolibarr documents directory.
 Loaded=I ngarkuar
 FunctionTest=Testi i funksionit
 NodoUpgradeAfterDB=Asnjë veprim nuk kërkohet nga modulet e jashtme pas përmirësimit të bazës së të dhënave

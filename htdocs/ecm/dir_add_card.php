@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2008-2017	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2008-2012	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2015-2016	Alexandre Spangaro	<aspangaro@open-dsi.fr>
+/* Copyright (C) 2008-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2008-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2015-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 $langs->loadLangs(array("ecm", "companies", "other", "users", "orders", "propal", "bills", "contracts", "categories"));
 
 // Get parameters
-$socid      = GETPOST('socid', 'int');
+$socid      = GETPOSTINT('socid');
 $action     = GETPOST('action', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
@@ -45,7 +46,7 @@ $confirm    = GETPOST('confirm', 'alpha');
 
 $module  = GETPOST('module', 'alpha');
 $website = GETPOST('website', 'alpha');
-$pageid  = GETPOST('pageid', 'int');
+$pageid  = GETPOSTINT('pageid');
 if (empty($module)) {
 	$module = 'ecm';
 }
@@ -67,10 +68,10 @@ if ($module == 'ecm') {
 	$upload_dir = $conf->medias->multidir_output[$conf->entity];
 }
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -98,14 +99,14 @@ $permissiontoadd = 0;
 $permissiontodelete = 0;
 $permissiontoupload = 0;
 if ($module == 'ecm') {
-	$permissiontoadd = $user->rights->ecm->setup;
-	$permissiontodelete = $user->rights->ecm->setup;
-	$permissiontoupload = $user->rights->ecm->upload;
+	$permissiontoadd = $user->hasRight('ecm', 'setup');
+	$permissiontodelete = $user->hasRight('ecm', 'setup');
+	$permissiontoupload = $user->hasRight('ecm', 'upload');
 }
 if ($module == 'medias') {
-	$permissiontoadd = ($user->rights->mailing->creer || $user->rights->website->write);
-	$permissiontodelete = ($user->rights->mailing->creer || $user->rights->website->write);
-	$permissiontoupload = ($user->rights->mailing->creer || $user->rights->website->write);
+	$permissiontoadd = ($user->hasRight('mailing', 'creer') || $user->hasRight('website', 'write'));
+	$permissiontodelete = ($user->hasRight('mailing', 'creer') || $user->hasRight('website', 'write'));
+	$permissiontoupload = ($user->hasRight('mailing', 'creer') || $user->hasRight('website', 'write'));
 }
 
 if (!$permissiontoadd) {
@@ -167,7 +168,7 @@ if ($action == 'add' && $permissiontoadd) {
 			}
 			if (empty($dirfornewdir)) {
 				$error++;
-				dol_print_error('', 'Bad value for module. Not supported.');
+				dol_print_error(null, 'Bad value for module. Not supported.');
 			}
 
 			if (!$error) {
@@ -206,7 +207,7 @@ if ($action == 'add' && $permissiontoadd) {
  * View
  */
 
-llxHeader('', $langs->trans("ECMNewSection"));
+llxHeader('', $langs->trans("ECMNewSection"), '', '', 0, 0, '', '', '', 'mod-ecm page-dir_add_card');
 
 $form = new Form($db);
 $formecm = new FormEcm($db);
@@ -224,7 +225,7 @@ if ($action == 'create') {
 		print '<input type="hidden" name="website" value="'.dol_escape_htmltag($website).'">';
 	}
 	if ($pageid) {
-		print '<input type="hidden" name="pageid" value="'.dol_escape_htmltag($pageid).'">';
+		print '<input type="hidden" name="pageid" value="'.dol_escape_htmltag((string) $pageid).'">';
 	}
 
 	$title = $langs->trans("ECMNewSection");

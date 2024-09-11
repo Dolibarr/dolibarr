@@ -2,6 +2,8 @@
 /*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
  * Copyright (C) 2003-2010 Frederico Caldeira Knabben
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * == BEGIN LICENSE ==
  *
@@ -90,7 +92,7 @@ function CreateXmlFooter()
 function SendError($number, $text)
 {
 	if ($_GET['Command'] == 'FileUpload') {
-		SendUploadResults($number, "", "", $text);
+		SendUploadResults((string) $number, "", "", $text);
 	}
 
 	if (isset($GLOBALS['HeaderSent']) && $GLOBALS['HeaderSent']) {
@@ -242,14 +244,11 @@ function GetFoldersAndFiles($resourceType, $currentFolder)
  */
 function CreateFolder($resourceType, $currentFolder)
 {
-	if (!isset($_GET)) {
-		global $_GET;
-	}
 	$sErrorNumber = '0';
 	$sErrorMsg = '';
 
 	if (isset($_GET['NewFolderName'])) {
-		$sNewFolderName = $_GET['NewFolderName'];
+		$sNewFolderName = GETPOST('NewFolderName');
 		$sNewFolderName = SanitizeFolderName($sNewFolderName);
 
 		if (strpos($sNewFolderName, '..') !== false) {
@@ -345,7 +344,7 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 		//var_dump($sFileName); var_dump(image_format_supported($sFileName));exit;
 		$imgsupported = image_format_supported($sFileName);
-		$isImageValid = ($imgsupported >= 0 ? true : false);
+		$isImageValid = ($imgsupported >= 0);
 		if (!$isImageValid) {
 			$sErrorNumber = '202';
 		}
@@ -393,10 +392,14 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 						dol_syslog("connector.lib.php IsImageValid is ko");
 						@unlink($sFilePath);
 						$sErrorNumber = '202';
-					} elseif (isset($detectHtml) && $detectHtml === -1 && DetectHtml($sFilePath) === true) {
-						dol_syslog("connector.lib.php DetectHtml is ko");
-						@unlink($sFilePath);
-						$sErrorNumber = '202';
+					} else {
+						$detectHtml = DetectHtml($sFilePath);
+						if ($detectHtml === true || $detectHtml == -1) {
+							// Note that is is a simple test and not reliable. Security does not rely on this.
+							dol_syslog("connector.lib.php DetectHtml is ko");
+							@unlink($sFilePath);
+							$sErrorNumber = '202';
+						}
 					}
 				}
 			} else {
@@ -550,8 +553,8 @@ function GetParentFolder($folderPath)
 /**
  * CreateServerFolder
  *
- * @param 	string	$folderPath		Folder
- * @param 	string	$lastFolder		Folder
+ * @param 	string	$folderPath		Folder - Folder to create (recursively)
+ * @param 	?string	$lastFolder		Internal - Child Folder we are creating, prevents recursion
  * @return	string					''=success, error message otherwise
  */
 function CreateServerFolder($folderPath, $lastFolder = null)
@@ -579,11 +582,12 @@ function CreateServerFolder($folderPath, $lastFolder = null)
 
 	// Check if the parent exists, or create it.
 	if (!empty($sParent) && !file_exists($sParent)) {
-		//prevents agains infinite loop when we can't create root folder
+		//prevents against infinite loop when we can't create root folder
 		if (!is_null($lastFolder) && $lastFolder === $sParent) {
 			return "Can't create $folderPath directory";
 		}
 
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		$sErrorMsg = CreateServerFolder($sParent, $folderPath);
 		if ($sErrorMsg != '') {
 			return $sErrorMsg;
@@ -678,7 +682,7 @@ function Server_MapPath($path)
  * Is Allowed Extension
  *
  * @param   string $sExtension      File extension
- * @param   string $resourceType    ressource type
+ * @param   string $resourceType    resource type
  * @return  boolean                 true or false
  */
 function IsAllowedExt($sExtension, $resourceType)
@@ -702,7 +706,7 @@ function IsAllowedExt($sExtension, $resourceType)
 /**
  * Is Allowed Type
  *
- * @param   string $resourceType    ressource type
+ * @param   string $resourceType    resource type
  * @return  boolean                 true or false
  */
 function IsAllowedType($resourceType)
@@ -739,10 +743,7 @@ function IsAllowedCommand($sCommand)
  */
 function GetCurrentFolder()
 {
-	if (!isset($_GET)) {
-		global $_GET;
-	}
-	$sCurrentFolder = isset($_GET['CurrentFolder']) ? GETPOST('CurrentFolder', '', 1) : '/';
+	$sCurrentFolder = isset($_GET['CurrentFolder']) ? GETPOST('CurrentFolder', 'alphanohtml', 1) : '/';
 
 	// Check the current folder syntax (must begin and start with a slash).
 	if (!preg_match('|/$|', $sCurrentFolder)) {
@@ -811,7 +812,7 @@ function SanitizeFileName($sNewFileName)
 /**
  * This is the function that sends the results of the uploading process.
  *
- * @param	string		$errorNumber	errorNumber
+ * @param	string 		$errorNumber	errorNumber
  * @param	string		$fileUrl		fileUrl
  * @param	string		$fileName		fileName
  * @param	string		$customMsg		customMsg
@@ -826,7 +827,7 @@ function SendUploadResults($errorNumber, $fileUrl = '', $fileName = '', $customM
 (function(){var d=document.domain;while (true){try{var A=window.parent.document.domain;break;}catch(e) {};d=d.replace(/.*?(?:\.|$)/,'');if (d.length==0) break;try{document.domain=d;}catch (e){break;}}})();
 EOF;
 
-	if ($errorNumber && $errorNumber != 201) {
+	if ($errorNumber && $errorNumber != '201') {
 		$fileUrl = "";
 		$fileName = "";
 	}
@@ -933,7 +934,7 @@ function ConvertToXmlAttribute($value)
 }
 
 /**
- * Check whether given extension is in html etensions list
+ * Check whether given extension is in html extensions list
  *
  * @param 	string 		$ext				Extension
  * @param 	array 		$formExtensions		Array of extensions
@@ -954,10 +955,9 @@ function IsHtmlExtension($ext, $formExtensions)
 /**
  * Detect HTML in the first KB to prevent against potential security issue with
  * IE/Safari/Opera file type auto detection bug.
- * Returns true if file contain insecure HTML code at the beginning.
  *
- * @param string $filePath absolute path to file
- * @return boolean
+ * @param 	string 	$filePath 	Absolute path to file
+ * @return 	bool|-1				Returns true if the file contains insecure HTML code at the beginning or false, or -1 if error
  */
 function DetectHtml($filePath)
 {
@@ -1015,11 +1015,10 @@ function DetectHtml($filePath)
 /**
  * Check file content.
  * Currently this function validates only image files.
- * Returns false if file is invalid.
  *
  * @param 	string 	$filePath 		Absolute path to file
  * @param 	string 	$extension 		File extension
- * @return 	boolean					True or false
+ * @return 	bool|-1					Returns true if the file is valid, false if the file is invalid, -1 if error.
  */
 function IsImageValid($filePath, $extension)
 {

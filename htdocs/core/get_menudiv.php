@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2005-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This file is a modified version of datepicker.php from phpBSM to fix some
  * bugs, to add new features and to dramatically increase speed.
@@ -82,10 +83,10 @@ $left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');
  */
 
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-if (empty($dolibarr_nocache) && GETPOST('cache', 'int')) {
-	header('Cache-Control: max-age='.GETPOST('cache', 'int').', public, must-revalidate');
+if (empty($dolibarr_nocache) && GETPOSTINT('cache')) {
+	header('Cache-Control: max-age='.GETPOSTINT('cache').', public, must-revalidate');
 	// For a .php, we must set an Expires to avoid to have it forced to an expired value by the web server
-	header('Expires: '.gmdate('D, d M Y H:i:s', dol_now('gmt') + GETPOST('cache', 'int')).' GMT');
+	header('Expires: '.gmdate('D, d M Y H:i:s', dol_now('gmt') + GETPOSTINT('cache')).' GMT');
 	// HTTP/1.0
 	header('Pragma: token=public');
 } else {
@@ -103,10 +104,10 @@ top_htmlhead($head, $title, 0, 0, $arrayofjs, $arrayofcss);
 
 print '<body class="getmenudiv">'."\n";
 
-// Javascript to make menu active like Jmobile did.
+// JavaScript to make menu active like Jmobile did.
 print '
 <style>
-    /*Lets hide the non active LIs by default*/
+    /* Hide the non active LIs by default*/
     body {
         font-size: 16px;
     }
@@ -155,7 +156,7 @@ if ($langs->trans("DIRECTION") == 'rtl') {
 } else {
 	print 'background-position-x: 10px;';
 }
-	print '
+print '
         background-position-y: 18px;
         padding: 1em 15px 1em 40px;
 		display: block;
@@ -191,9 +192,9 @@ if ($langs->trans("DIRECTION") == 'rtl') {
 } else {
 	print 'background-position-x: 10px;';
 }
-	print 'background-position-y: 1px;';
-	print 'padding-left: 20px;';
-	print '
+print 'background-position-y: 1px;';
+print 'padding-left: 20px;';
+print '
 	}
     li.lilevel1 a, li.lilevel1 {
         color: #000;
@@ -284,9 +285,12 @@ if (!class_exists('MenuManager')) {
 		include_once DOL_DOCUMENT_ROOT."/core/menus/standard/".$file_menu;
 	}
 }
+// @phan-suppress-next-line PhanRedefinedClassReference
 $menumanager = new MenuManager($db, empty($user->socid) ? 0 : 1);
+// @phan-suppress-next-line PhanRedefinedClassReference
 $menumanager->loadMenu('all', 'all'); // Load this->tabMenu with sql menu entries
 //var_dump($menumanager);exit;
+// @phan-suppress-next-line PhanRedefinedClassReference
 $menumanager->showmenu('jmobile');
 
 print '</body>';

@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2015       Alexandre Spangaro	  	<aspangaro@open-dsi.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,8 +58,6 @@ class PaymentDonation extends CommonObject
 
 	public $datec = '';
 
-	public $tms = '';
-
 	public $datep = '';
 
 	public $amount; // Total amount of payment
@@ -67,6 +67,10 @@ class PaymentDonation extends CommonObject
 	public $fk_typepayment;	// Payment mode ID
 	public $paymenttype;	// Payment mode ID or Code. TODO Use only the code in this field.
 
+	/**
+	 * @var string      Payment reference
+	 *                  (Cheque or bank transfer reference. Can be "ABC123")
+	 */
 	public $num_payment;
 
 	/**
@@ -122,13 +126,11 @@ class PaymentDonation extends CommonObject
 	 *  Use this->amounts to have list of lines for the payment
 	 *
 	 *  @param      User		$user			User making payment
-	 *  @param      bool 		$notrigger 		false=launch triggers after, true=disable triggers
+	 *  @param      int 		$notrigger 		0=launch triggers after, 1=disable triggers
 	 *  @return     int     					Return integer <0 if KO, id of payment if OK
 	 */
-	public function create($user, $notrigger = false)
+	public function create($user, $notrigger = 0)
 	{
-		global $conf, $langs;
-
 		$error = 0;
 
 		$now = dol_now();
@@ -203,7 +205,7 @@ class PaymentDonation extends CommonObject
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_donation");
-				$this->ref = $this->id;
+				$this->ref = (string) $this->id;
 			} else {
 				$error++;
 			}
@@ -540,24 +542,26 @@ class PaymentDonation extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
 		$this->id = 0;
 
-		$this->fk_donation = '';
+		$this->fk_donation = 0;
 		$this->datec = '';
-		$this->tms = '';
+		$this->tms = dol_now();
 		$this->datep = '';
 		$this->amount = '';
 		$this->fk_typepayment = '';
 		$this->paymenttype = '';
 		$this->num_payment = '';
 		$this->note_public = '';
-		$this->fk_bank = '';
-		$this->fk_user_creat = '';
-		$this->fk_user_modif = '';
+		$this->fk_bank = 0;
+		$this->fk_user_creat = dol_now();
+		$this->fk_user_modif = dol_now();
+
+		return 1;
 	}
 
 
@@ -579,7 +583,7 @@ class PaymentDonation extends CommonObject
 
 		$error = 0;
 
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 			$acc = new Account($this->db);
@@ -660,7 +664,7 @@ class PaymentDonation extends CommonObject
 	}
 
 	/**
-	 *  Return clicable name (with picto eventually)
+	 *  Return clickable name (with picto eventually)
 	 *
 	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 * 	@param	int		$maxlen			Max length
@@ -693,7 +697,7 @@ class PaymentDonation extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;

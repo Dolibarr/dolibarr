@@ -5,32 +5,22 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModuleEventOrganizationName = تنظيم الأحداث
 EventOrganizationDescription = تنظيم الحدث من خلال مشروع الوحدة النمطية
 EventOrganizationDescriptionLong= إدارة تنظيم حدث (عرض أو مؤتمرات أو حضور أو متحدثين ، مع صفحات عامة للاقتراح أو التصويت أو التسجيل)
-#
-# Menu
-#
 EventOrganizationMenuLeft = الأحداث المنظمة
 EventOrganizationConferenceOrBoothMenuLeft = مؤتمر أو كشك
-
 PaymentEvent=دفع الحدث
-
-#
+EventFee=Event fee
 # Admin page
-#
 NewRegistration=تسجيل
 EventOrganizationSetup=إعداد تنظيم الحدث
 EventOrganization=تنظيم الأحداث
@@ -48,13 +38,10 @@ EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = نموذج بريد إلكترو
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = نموذج بريد إلكتروني لاستخدامه عند إرسال رسائل بريد إلكتروني من رسالة "إرسال رسائل بريد إلكتروني" في قائمة الحضور
 EVENTORGANIZATION_FILTERATTENDEES_CAT = في نموذج إنشاء / إضافة أحد الحاضرين ، يقصر قائمة الأطراف الثالثة على الأطراف الثالثة في الفئة
 EVENTORGANIZATION_FILTERATTENDEES_TYPE = في نموذج إنشاء / إضافة أحد الحاضرين ، يقصر قائمة الأطراف الثالثة على الأطراف الثالثة ذات الطبيعة
-
-#
 # Object
-#
 OrganizedEvent=حدث منظم
 EventOrganizationConfOrBooth= مؤتمر أو كشك
-EventOrganizationConfOrBoothes=المؤتمرات أو الأكشاك
+EventOrganizationConfOrBoothes=Conferences or Booths
 ManageOrganizeEvent = إدارة تنظيم الحدث
 ConferenceOrBooth = مؤتمر أو كشك
 ConferenceOrBoothTab = مؤتمر أو كشك
@@ -63,10 +50,7 @@ DateOfRegistration = تاريخ التسجيل
 ConferenceOrBoothAttendee = حضور المؤتمر أو الكابينة
 ApplicantOrVisitor=مقدم الطلب أو الزائر
 Speaker=مكبر الصوت
-
-#
 # Template Mail
-#
 YourOrganizationEventConfRequestWasReceived = تم استلام طلبك لعقد المؤتمر
 YourOrganizationEventBoothRequestWasReceived = تم استلام طلبك للكشك
 EventOrganizationEmailAskConf = طلب مؤتمر
@@ -76,10 +60,7 @@ EventOrganizationEmailRegistrationPayment = التسجيل لحدث
 EventOrganizationMassEmailAttendees = التواصل مع الحاضرين
 EventOrganizationMassEmailSpeakers = التواصل مع المتحدثين
 ToSpeakers=إلى مكبرات الصوت
-
-#
 # Event
-#
 AllowUnknownPeopleSuggestConf=السماح للناس باقتراح المؤتمرات
 AllowUnknownPeopleSuggestConfHelp=اسمح لأشخاص غير معروفين باقتراح مؤتمر يريدون القيام به
 AllowUnknownPeopleSuggestBooth=اسمح للناس بالتقدم بطلب للحصول على كشك
@@ -88,29 +69,29 @@ PriceOfRegistration=سعر التسجيل
 PriceOfRegistrationHelp=السعر الواجب دفعه للتسجيل أو المشاركة في الحدث
 PriceOfBooth=سعر الاشتراك لوقوف كشك
 PriceOfBoothHelp=سعر الاشتراك لوقوف كشك
+EventOrganizationICSLinkProject=ربط ICS لهذا الحدث
 EventOrganizationICSLink=رابط ICS للمؤتمرات
 ConferenceOrBoothInformation=معلومات المؤتمر أو كشك
+ConferenceOrBoothFormat=Conference or booth mode
+ConferenceOrBoothFormatID=ID of conference or booth mode
+ConferenceOrBoothFormatCode=Code of conference or booth mode
+ConferenceOrBoothFormatLabel=Label of conference or booth mode
 Attendees=الحاضرين
-ListOfAttendeesOfEvent=قائمة الحاضرين لمشروع الحدث
+ListOfAttendeesOfEvent=List of attendees of event projects
+ListOfConfOrBoothOfEvent=List of conferences or booths of event projects
 DownloadICSLink = رابط تحميل ICS
 EVENTORGANIZATION_SECUREKEY = أنشئ لتأمين المفتاح لصفحة التسجيل العامة لاقتراح مؤتمر
 SERVICE_BOOTH_LOCATION = الخدمة المستخدمة لصف الفاتورة حول موقع الكشك
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = الخدمة المستخدمة لصف الفاتورة حول اشتراك حاضر في حدث
 NbVotes=عدد الأصوات
-
-#
 # Status
-#
 EvntOrgDraft = حوالة مصرفية
 EvntOrgSuggested = مقترح
 EvntOrgConfirmed = مؤكد
 EvntOrgNotQualified = غير مؤهل
 EvntOrgDone = منتهي
 EvntOrgCancelled = ملغي
-
-#
 # Other
-#
 SuggestForm = صفحة الاقتراح
 SuggestOrVoteForConfOrBooth = صفحة للاقتراح أو التصويت
 EvntOrgRegistrationHelpMessage = هنا ، يمكنك التصويت لعقد مؤتمر أو اقتراح مؤتمر جديد لهذا الحدث. يمكنك أيضًا تقديم طلب للحصول على كشك أثناء الحدث.
@@ -133,6 +114,7 @@ EventType = نوع الحدث
 LabelOfBooth=تسمية كشك
 LabelOfconference=تسمية المؤتمر
 ConferenceIsNotConfirmed=التسجيل غير متاح ، لم يتم تأكيد المؤتمر بعد
+EventRegistrationAreClosed=Event registrations are closed
 DateMustBeBeforeThan=يجب أن يكون %s قبل %s
 DateMustBeAfterThan=يجب أن يكون %s بعد %s
 MaxNbOfAttendeesReached=تم الوصول إلى الحد الأقصى لعدد المشاركين
@@ -174,6 +156,7 @@ DateEndEvent=تاريخ انتهاء الحدث
 ModifyStatus=تعديل حالة
 ConfirmModifyStatus=تأكيد تعديل حالة
 ConfirmModifyStatusQuestion=هل أنت متأكد أنك تريد تعديل %s السجل (السجلات) المحدد؟
-RecordsUpdated = %s تم تحديث السجلات
-RecordUpdated = تم تحديث السجل
-NoRecordUpdated = لم يتم تحديث أي سجل
+RecordsUpdated=%s تم تحديث السجلات
+RecordUpdated=تم تحديث السجل
+NoRecordUpdated=لم يتم تحديث أي سجل
+ProfitPerValidatedAttendee=Profit per attendee

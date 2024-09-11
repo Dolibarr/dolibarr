@@ -6,6 +6,7 @@
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012-2014 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2022      Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -123,11 +124,11 @@ class modSociete extends DolibarrModules
 
 		// Boxes
 		$this->boxes = array(
-			0=>array('file'=>'box_clients.php', 'enabledbydefaulton'=>'Home'),
-			1=>array('file'=>'box_prospect.php', 'enabledbydefaulton'=>'Home'),
-			2=>array('file'=>'box_contacts.php', 'enabledbydefaulton'=>'Home'),
-			3=>array('file'=>'box_activity.php', 'enabledbydefaulton'=>'Home', 'note'=>'(WarningUsingThisBoxSlowDown)'),
-			4=>array('file'=>'box_goodcustomers.php', 'enabledbydefaulton'=>'Home', 'note'=>'(WarningUsingThisBoxSlowDown)'),
+			0 => array('file' => 'box_clients.php', 'enabledbydefaulton' => 'Home'),
+			1 => array('file' => 'box_prospect.php', 'enabledbydefaulton' => 'Home'),
+			2 => array('file' => 'box_contacts.php', 'enabledbydefaulton' => 'Home'),
+			3 => array('file' => 'box_activity.php', 'enabledbydefaulton' => 'Home', 'note' => '(WarningUsingThisBoxSlowDown)'),
+			4 => array('file' => 'box_goodcustomers.php', 'enabledbydefaulton' => 'Home', 'note' => '(WarningUsingThisBoxSlowDown)'),
 		);
 
 		// Permissions
@@ -138,8 +139,8 @@ class modSociete extends DolibarrModules
 		$r++;
 		$this->rights[$r][0] = 121; // id de la permission
 		$this->rights[$r][1] = 'Read third parties'; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'lire';
 
 		/*$r++;
@@ -162,8 +163,8 @@ class modSociete extends DolibarrModules
 		$r++;
 		$this->rights[$r][0] = 122; // id de la permission
 		$this->rights[$r][1] = 'Create and update third parties'; // libelle de la permission
-		$this->rights[$r][2] = 'w'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'creer';
 
 		/* $r++;
@@ -186,15 +187,15 @@ class modSociete extends DolibarrModules
 		$r++;
 		$this->rights[$r][0] = 125; // id de la permission
 		$this->rights[$r][1] = 'Delete third parties'; // libelle de la permission
-		$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'supprimer';
 
 		$r++;
 		$this->rights[$r][0] = 126; // id de la permission
 		$this->rights[$r][1] = 'Export third parties'; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'export';
 
 		$r++;
@@ -226,32 +227,32 @@ class modSociete extends DolibarrModules
 		$r++;
 		$this->rights[$r][0] = 281; // id de la permission
 		$this->rights[$r][1] = 'Read contacts'; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'contact';
 		$this->rights[$r][5] = 'lire';
 
 		$r++;
 		$this->rights[$r][0] = 282; // id de la permission
 		$this->rights[$r][1] = 'Create and update contact'; // libelle de la permission
-		$this->rights[$r][2] = 'w'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'contact';
 		$this->rights[$r][5] = 'creer';
 
 		$r++;
 		$this->rights[$r][0] = 283; // id de la permission
 		$this->rights[$r][1] = 'Delete contacts'; // libelle de la permission
-		$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'contact';
 		$this->rights[$r][5] = 'supprimer';
 
 		$r++;
 		$this->rights[$r][0] = 286; // id de la permission
 		$this->rights[$r][1] = 'Export contacts'; // libelle de la permission
-		$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'contact';
 		$this->rights[$r][5] = 'export';
 
@@ -272,15 +273,15 @@ class modSociete extends DolibarrModules
 		$this->export_icon[$r] = 'company';
 		$this->export_permission[$r] = array(array("societe", "export"));
 		$this->export_fields_array[$r] = array(
-			's.rowid'=>"Id", 's.nom'=>"Name", 's.name_alias'=>"AliasNameShort", 'ps.nom'=>"ParentCompany",
-			's.status'=>"Status", 's.client'=>"Customer", 's.fournisseur'=>"Supplier", 's.datec'=>"DateCreation", 's.tms'=>"DateLastModification",
-			's.code_client'=>"CustomerCode", 's.code_fournisseur'=>"SupplierCode", 's.code_compta'=>"AccountancyCode", 's.code_compta_fournisseur'=>"SupplierAccountancyCode",
-			's.address'=>"Address", 's.zip'=>"Zip", 's.town'=>"Town", 'd.nom'=>'State', 'r.nom'=>'Region', 'c.label'=>"Country", 'c.code'=>"CountryCode", 's.phone'=>"Phone", 's.fax'=>"Fax",
-			's.url'=>"Url", 's.email'=>"Email", 's.default_lang'=>"DefaultLang", 's.canvas' => "Canvas", 's.siren'=>"ProfId1", 's.siret'=>"ProfId2", 's.ape'=>"ProfId3", 's.idprof4'=>"ProfId4",
-			's.idprof5'=>"ProfId5", 's.idprof6'=>"ProfId6", 's.tva_intra'=>"VATIntraShort", 's.capital'=>"Capital", 's.note_private'=>"NotePrivate", 's.note_public'=>"NotePublic",
-			't.code'=>"ThirdPartyType", 'ce.code'=>"DictionaryStaff", "cfj.libelle"=>"JuridicalStatus", 's.fk_prospectlevel'=>'ProspectLevel',
-			'st.code'=>'ProspectStatus', 'payterm.libelle'=>'PaymentConditions', 'paymode.libelle'=>'PaymentMode',
-			's.outstanding_limit'=>'OutstandingBill', 'pbacc.ref'=>'PaymentBankAccount', 'incoterm.code'=>'IncotermLabel'
+			's.rowid' => "Id", 's.nom' => "Name", 's.name_alias' => "AliasNameShort", 'ps.nom' => "ParentCompany",
+			's.status' => "Status", 's.client' => "Customer", 's.fournisseur' => "Supplier", 's.datec' => "DateCreation", 's.tms' => "DateLastModification",
+			's.code_client' => "CustomerCode", 's.code_fournisseur' => "SupplierCode", 's.code_compta' => "AccountancyCode", 's.code_compta_fournisseur' => "SupplierAccountancyCode",
+			's.address' => "Address", 's.zip' => "Zip", 's.town' => "Town", 'd.nom' => 'State', 'r.nom' => 'Region', 'c.label' => "Country", 'c.code' => "CountryCode", 's.phone' => "Phone", 's.fax' => "Fax",
+			's.url' => "Url", 's.email' => "Email", 's.default_lang' => "DefaultLang", 's.canvas' => "Canvas", 's.siren' => "ProfId1", 's.siret' => "ProfId2", 's.ape' => "ProfId3", 's.idprof4' => "ProfId4",
+			's.idprof5' => "ProfId5", 's.idprof6' => "ProfId6", 's.tva_intra' => "VATIntraShort", 's.capital' => "Capital", 's.note_private' => "NotePrivate", 's.note_public' => "NotePublic",
+			't.code' => "ThirdPartyType", 'ce.code' => "DictionaryStaff", "cfj.libelle" => "JuridicalStatus", 's.fk_prospectlevel' => 'ProspectLevel',
+			'st.code' => 'ProspectStatus', 'payterm.libelle' => 'PaymentConditions', 'paymode.libelle' => 'PaymentMode',
+			's.outstanding_limit' => 'OutstandingBill', 'pbacc.ref' => 'PaymentBankAccount', 'incoterm.code' => 'IncotermLabel'
 		);
 		if (getDolGlobalString('SOCIETE_USEPREFIX')) {
 			$this->export_fields_array[$r]['s.prefix'] = 'Prefix';
@@ -289,49 +290,49 @@ class modSociete extends DolibarrModules
 			$this->export_fields_array[$r]['s.price_level'] = 'PriceLevel';
 		}
 		if (getDolGlobalString('ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY')) {
-			$this->export_fields_array[$r] += array('s.accountancy_code_sell'=>'ProductAccountancySellCode', 's.accountancy_code_buy'=>'ProductAccountancyBuyCode');
+			$this->export_fields_array[$r] += array('s.accountancy_code_sell' => 'ProductAccountancySellCode', 's.accountancy_code_buy' => 'ProductAccountancyBuyCode');
 		}
 		// Add multicompany field
 		if (getDolGlobalString('MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED')) {
 			$nbofallowedentities = count(explode(',', getEntity('societe'))); // If project are shared, nb will be > 1
 			if (isModEnabled('multicompany') && $nbofallowedentities > 1) {
-				$this->export_fields_array[$r] += array('s.entity'=>'Entity');
+				$this->export_fields_array[$r] += array('s.entity' => 'Entity');
 			}
 		}
 		$keyforselect = 'societe';
 		$keyforelement = 'company';
 		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		$this->export_fields_array[$r] += array('u.login'=>'SaleRepresentativeLogin', 'u.firstname'=>'SaleRepresentativeFirstname', 'u.lastname'=>'SaleRepresentativeLastname');
+		$this->export_fields_array[$r] += array('u.login' => 'SaleRepresentativeLogin', 'u.firstname' => 'SaleRepresentativeFirstname', 'u.lastname' => 'SaleRepresentativeLastname');
 
 		$this->export_TypeFields_array[$r] = array(
-			's.rowid'=>"Numeric", 's.nom'=>"Text", 's.name_alias'=>"Text", 'ps.nom'=>"Text",
-			's.status'=>"Numeric", 's.client'=>"Numeric", 's.fournisseur'=>"Boolean", 's.datec'=>"Date", 's.tms'=>"Date",
-			's.code_client'=>"Text", 's.code_fournisseur'=>"Text", 's.code_compta'=>"Text", 's.code_compta_fournisseur'=>"Text",
-			's.address'=>"Text", 's.zip'=>"Text", 's.town'=>"Text",
-			'd.nom'=>'Text', 'r.nom'=>'Text', 'c.label'=>'List:c_country:label:label', 'c.code'=>'Text',
-			's.phone'=>"Text", 's.fax'=>"Text",
-			's.url'=>"Text", 's.email'=>"Text", 's.default_lang'=>"Text", 's.canvas' => "Text",
-			's.siret'=>"Text", 's.siren'=>"Text", 's.ape'=>"Text", 's.idprof4'=>"Text", 's.idprof5'=>"Text", 's.idprof6'=>"Text",
-			's.tva_intra'=>"Text", 's.capital'=>"Numeric",
-			's.note_private'=>"Text", 's.note_public'=>"Text",
-			't.code'=>"List:c_typent:libelle:code",
-			'ce.code'=>"List:c_effectif:libelle:code",
-			"cfj.libelle"=>"Text",
-			's.fk_prospectlevel'=>'List:c_prospectlevel:label:code',
-			'st.code'=>'List:c_stcomm:libelle:code',
-			'payterm.libelle'=>'Text', 'paymode.libelle'=>'Text',
-			's.outstanding_limit'=>'Numeric', 'pbacc.ref'=>'Text', 'incoterm.code'=>'Text',
-			'u.login'=>'Text', 'u.firstname'=>'Text', 'u.lastname'=>'Text',
-			's.entity'=>'List:entity:label:rowid', 's.price_level'=>'Numeric',
-			's.accountancy_code_sell'=>'Text', 's.accountancy_code_buy'=>'Text'
+			's.rowid' => "Numeric", 's.nom' => "Text", 's.name_alias' => "Text", 'ps.nom' => "Text",
+			's.status' => "Numeric", 's.client' => "Numeric", 's.fournisseur' => "Boolean", 's.datec' => "Date", 's.tms' => "Date",
+			's.code_client' => "Text", 's.code_fournisseur' => "Text", 's.code_compta' => "Text", 's.code_compta_fournisseur' => "Text",
+			's.address' => "Text", 's.zip' => "Text", 's.town' => "Text",
+			'd.nom' => 'Text', 'r.nom' => 'Text', 'c.label' => 'List:c_country:label:label', 'c.code' => 'Text',
+			's.phone' => "Text", 's.fax' => "Text",
+			's.url' => "Text", 's.email' => "Text", 's.default_lang' => "Text", 's.canvas' => "Text",
+			's.siret' => "Text", 's.siren' => "Text", 's.ape' => "Text", 's.idprof4' => "Text", 's.idprof5' => "Text", 's.idprof6' => "Text",
+			's.tva_intra' => "Text", 's.capital' => "Numeric",
+			's.note_private' => "Text", 's.note_public' => "Text",
+			't.code' => "List:c_typent:libelle:code",
+			'ce.code' => "List:c_effectif:libelle:code",
+			"cfj.libelle" => "Text",
+			's.fk_prospectlevel' => 'List:c_prospectlevel:label:code',
+			'st.code' => 'List:c_stcomm:libelle:code',
+			'payterm.libelle' => 'Text', 'paymode.libelle' => 'Text',
+			's.outstanding_limit' => 'Numeric', 'pbacc.ref' => 'Text', 'incoterm.code' => 'Text',
+			'u.login' => 'Text', 'u.firstname' => 'Text', 'u.lastname' => 'Text',
+			's.entity' => 'List:entity:label:rowid', 's.price_level' => 'Numeric',
+			's.accountancy_code_sell' => 'Text', 's.accountancy_code_buy' => 'Text'
 		);
 
 		$this->export_entities_array[$r] = array(	// We define here only fields that use another picto
-			'u.login'=>'user',
-			'u.firstname'=>'user',
-			'u.lastname'=>'user');
-		$this->export_examplevalues_array[$r] = array('s.client'=>'0 (no customer no prospect)/1 (customer)/2 (prospect)/3 (customer and prospect)', 's.fournisseur'=>'0 (not a supplier) or 1 (supplier)');
+			'u.login' => 'user',
+			'u.firstname' => 'user',
+			'u.lastname' => 'user');
+		$this->export_examplevalues_array[$r] = array('s.client' => '0 (no customer no prospect)/1 (customer)/2 (prospect)/3 (customer and prospect)', 's.fournisseur' => '0 (not a supplier) or 1 (supplier)');
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'societe as s';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_extrafields as extra ON s.rowid = extra.fk_object';
@@ -365,17 +366,17 @@ class modSociete extends DolibarrModules
 		$this->export_icon[$r] = 'contact';
 		$this->export_permission[$r] = array(array("societe", "contact", "export"));
 		$this->export_fields_array[$r] = array(
-			'c.rowid'=>"IdContact", 'c.civility'=>"CivilityCode", 'c.lastname'=>'Lastname', 'c.firstname'=>'Firstname', 'c.poste'=>'PostOrFunction',
-			'c.datec'=>"DateCreation", 'c.tms'=>"DateLastModification", 'c.priv'=>"ContactPrivate", 'c.address'=>"Address", 'c.zip'=>"Zip", 'c.town'=>"Town",
-			'd.nom'=>'State', 'r.nom'=>'Region', 'co.label'=>"Country", 'co.code'=>"CountryCode", 'c.phone'=>"Phone", 'c.fax'=>"Fax", 'c.phone_mobile'=>"Mobile", 'c.email'=>"EMail",
-			'c.note_private'=>'NotePrivate', 'c.note_public'=>"NotePublic",
-			'c.statut'=>"Status",
-			's.rowid'=>"IdCompany", 's.nom'=>"CompanyName", 's.status'=>"Status", 's.code_client'=>"CustomerCode", 's.code_fournisseur'=>"SupplierCode",
-			's.code_compta'=>"AccountancyCode", 's.code_compta_fournisseur'=>"SupplierAccountancyCode",
-			's.client'=>'Customer', 's.fournisseur'=>'Supplier',
-			's.address'=>'Address', 's.zip'=>"Zip", 's.town'=>"Town", 's.phone'=>'Phone', 's.email'=>"Email",
-			's.note_private'=>'NotePrivate', 's.note_public'=>"NotePublic",
-			't.code'=>"ThirdPartyType"
+			'c.rowid' => "IdContact", 'c.civility' => "CivilityCode", 'c.lastname' => 'Lastname', 'c.firstname' => 'Firstname', 'c.poste' => 'PostOrFunction',
+			'c.datec' => "DateCreation", 'c.tms' => "DateLastModification", 'c.priv' => "ContactPrivate", 'c.address' => "Address", 'c.zip' => "Zip", 'c.town' => "Town",
+			'd.nom' => 'State', 'r.nom' => 'Region', 'co.label' => "Country", 'co.code' => "CountryCode", 'c.phone' => "Phone", 'c.fax' => "Fax", 'c.phone_mobile' => "Mobile", 'c.email' => "EMail",
+			'c.note_private' => 'NotePrivate', 'c.note_public' => "NotePublic",
+			'c.statut' => "Status",
+			's.rowid' => "IdCompany", 's.nom' => "CompanyName", 's.status' => "Status", 's.code_client' => "CustomerCode", 's.code_fournisseur' => "SupplierCode",
+			's.code_compta' => "AccountancyCode", 's.code_compta_fournisseur' => "SupplierAccountancyCode",
+			's.client' => 'Customer', 's.fournisseur' => 'Supplier',
+			's.address' => 'Address', 's.zip' => "Zip", 's.town' => "Town", 's.phone' => 'Phone', 's.email' => "Email",
+			's.note_private' => 'NotePrivate', 's.note_public' => "NotePublic",
+			't.code' => "ThirdPartyType"
 		);
 		// Add multicompany field
 		if (getDolGlobalString('MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED')) {
@@ -391,27 +392,27 @@ class modSociete extends DolibarrModules
 				}
 			}
 		}
-		$this->export_examplevalues_array[$r] = array('s.client'=>'0 (no customer no prospect)/1 (customer)/2 (prospect)/3 (customer and prospect)', 's.fournisseur'=>'0 (not a supplier) or 1 (supplier)');
+		$this->export_examplevalues_array[$r] = array('s.client' => '0 (no customer no prospect)/1 (customer)/2 (prospect)/3 (customer and prospect)', 's.fournisseur' => '0 (not a supplier) or 1 (supplier)');
 		$this->export_TypeFields_array[$r] = array(
-			'c.civility'=>"List:c_civility:label:code", 'c.lastname'=>'Text', 'c.firstname'=>'Text', 'c.poste'=>'Text', 'c.datec'=>"Date", 'c.priv'=>"Boolean",
-			'c.address'=>"Text", 'c.zip'=>"Text", 'c.town'=>"Text", 'd.nom'=>'Text', 'r.nom'=>'Text', 'co.label'=>"List:c_country:label:rowid", 'co.code'=>"Text", 'c.phone'=>"Text",
-			'c.fax'=>"Text", 'c.email'=>"Text",
-			'c.statut'=>"Status",
-			's.rowid'=>"Numeric", 's.nom'=>"Text", 's.status'=>"Status", 's.code_client'=>"Text", 's.code_fournisseur'=>"Text",
-			's.code_compta'=>"Text", 's.code_compta_fournisseur'=>"Text",
-			's.client'=>"Numeric", 's.fournisseur'=>"Numeric",
-			's.address'=>"Text", 's.zip'=>"Text", 's.town'=>"Text", 's.phone'=>"Text", 's.email'=>"Text",
-			't.code'=>"List:c_stcomm:libelle:code",
-			'c.entity'=>'List:entity:label:rowid',
-			's.entity'=>'List:entity:label:rowid',
+			'c.civility' => "List:c_civility:label:code", 'c.lastname' => 'Text', 'c.firstname' => 'Text', 'c.poste' => 'Text', 'c.datec' => "Date", 'c.priv' => "Boolean",
+			'c.address' => "Text", 'c.zip' => "Text", 'c.town' => "Text", 'd.nom' => 'Text', 'r.nom' => 'Text', 'co.label' => "List:c_country:label:rowid", 'co.code' => "Text", 'c.phone' => "Text",
+			'c.fax' => "Text", 'c.email' => "Text",
+			'c.statut' => "Status",
+			's.rowid' => "Numeric", 's.nom' => "Text", 's.status' => "Status", 's.code_client' => "Text", 's.code_fournisseur' => "Text",
+			's.code_compta' => "Text", 's.code_compta_fournisseur' => "Text",
+			's.client' => "Numeric", 's.fournisseur' => "Numeric",
+			's.address' => "Text", 's.zip' => "Text", 's.town' => "Text", 's.phone' => "Text", 's.email' => "Text",
+			't.code' => "List:c_stcomm:libelle:code",
+			'c.entity' => 'List:entity:label:rowid',
+			's.entity' => 'List:entity:label:rowid',
 		);
 		$this->export_entities_array[$r] = array(	// We define here only fields that use another picto
-			's.rowid'=>"company", 's.nom'=>"company", 's.status'=>'company', 's.code_client'=>"company", 's.code_fournisseur'=>"company",
-			's.code_compta'=>"company", 's.code_compta_fournisseur'=>"company",
-			's.client'=>"company", 's.fournisseur'=>"company",
-			's.address'=>"company", 's.zip'=>"company", 's.town'=>"company", 's.phone'=>"company", 's.email'=>"company",
-			't.code'=>"company",
-			's.entity'=>'company',
+			's.rowid' => "company", 's.nom' => "company", 's.status' => 'company', 's.code_client' => "company", 's.code_fournisseur' => "company",
+			's.code_compta' => "company", 's.code_compta_fournisseur' => "company",
+			's.client' => "company", 's.fournisseur' => "company",
+			's.address' => "company", 's.zip' => "company", 's.town' => "company", 's.phone' => "company", 's.email' => "company",
+			't.code' => "company",
+			's.entity' => 'company',
 		); // We define here only fields that use another picto
 		if (!isModEnabled("supplier_order") && !isModEnabled("supplier_invoice")) {
 			unset($this->export_fields_array[$r]['s.code_fournisseur']);
@@ -447,6 +448,92 @@ class modSociete extends DolibarrModules
 			$this->export_sql_end[$r] .= ')';
 		}
 
+		// Export list of third-party and bank/payment methods
+		$r++;
+		$this->export_code[$r] = $this->rights_class.'_'.$r;
+		$this->export_label[$r] = 'ExportDataset_company_3';
+		$this->export_icon[$r] = 'account';
+		if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
+			$this->export_permission[$r] = array(array("societe", "export"), array("societe", "thirdparty_paymentinformation_advance", "write"));
+		} else {
+			$this->export_permission[$r] = array(array("societe", "export"));
+		}
+		$this->export_fields_array[$r] = array(
+			'b.rowid' => "IdPaymentMode",
+			'b.fk_soc' => "ThirdPartyName",
+			'b.label' => 'Label',
+			'b.bank' => 'Bank',
+			'b.code_banque' => 'Code banque',
+			'b.code_guichet' => 'Code guichet',
+			'b.number' => 'Number',
+			'b.cle_rib' => 'Cle rib',
+			'b.bic' => 'Bic',
+			'b.iban_prefix' => 'Iban prefix',
+			'b.domiciliation' => 'Domiciliation',
+			'b.proprio' => 'Proprio',
+			'b.owner_address' => 'Owner address',
+			'b.default_rib' => 'Default rib',
+			'b.rum' => 'Rum',
+			'b.date_rum' => 'Date rum',
+			'b.frstrecur' => 'Frstrecur',
+			'b.type' => 'Type',
+			'b.status' => "status",
+			'b.datec' => "DateCreation",
+			'b.tms' => "DateLastModification"
+		);
+		// Add multicompany field
+		if (getDolGlobalString('MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED')) {
+			if (isModEnabled('multicompany')) {
+				$nbofallowedentities = count(explode(',', getEntity('societe')));
+				if ($nbofallowedentities > 1) {
+					$this->export_fields_array[$r]['s.entity'] = 'Entity';
+				}
+			}
+		}
+		$this->export_examplevalues_array[$r] = array();
+		$this->export_TypeFields_array[$r] = array(
+			's.nom' => "Text",
+			's.entity' => "List:entity:label:rowid",
+			'b.rowid' => "Numeric",
+			'b.label' => 'Text',
+			'b.bank' => 'Text',
+			'b.code_banque' => 'Text',
+			'b.code_guichet' => 'Text',
+			'b.number' => 'Text',
+			'b.cle_rib' => 'Text',
+			'b.bic' => 'Text',
+			'b.iban_prefix' => 'Text',
+			'b.domiciliation' => 'Text',
+			'b.proprio' => 'Text',
+			'b.owner_address' => 'Text',
+			'b.default_rib' => 'Boolean"',
+			'b.rum' => 'Text',
+			'b.date_rum' => 'Date',
+			'b.frstrecur' => 'Text',
+			'b.type' => 'Text',
+			'b.status' => "Status",
+			'b.datec' => "Date",
+			'b.tms' => "Date"
+		);
+		$this->export_entities_array[$r] = array(
+			's.nom' => "company",
+			's.entity' => 'company'
+		); // We define here only fields that use another picto
+		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
+		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'societe_rib as b';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON b.fk_soc = s.rowid';
+		if (is_object($user) && !$user->hasRight('societe', 'client', 'voir')) {
+			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
+		}
+		$this->export_sql_end[$r] .= ' WHERE s.entity IN ('.getEntity('societe').')';
+		if (is_object($user) && !$user->hasRight('societe', 'client', 'voir')) {
+			$this->export_sql_end[$r] .= ' AND (sc.fk_user = '.((int) $user->id).' ';
+			if (getDolGlobalString('SOCIETE_EXPORT_SUBORDINATES_CHILDS')) {
+				$subordinatesids = $user->getAllChildIds();
+				$this->export_sql_end[$r] .= count($subordinatesids) > 0 ? ' OR (sc.fk_user IN ('.$this->db->sanitize(implode(',', $subordinatesids)).')' : '';
+			}
+			$this->export_sql_end[$r] .= ')';
+		}
 
 		// Imports
 		//--------
@@ -502,9 +589,9 @@ class modSociete extends DolibarrModules
 			's.cond_reglement' => "PaymentTermsCustomer",
 			's.mode_reglement_supplier' => 'PaymentTypeSupplier',
 			's.cond_reglement_supplier' => "PaymentTermsSupplier",
-			's.outstanding_limit'=>'OutstandingBill',
-			's.fk_account'=>'PaymentBankAccount',
-			's.fk_incoterms'=>'IncotermLabel',
+			's.outstanding_limit' => 'OutstandingBill',
+			's.fk_account' => 'PaymentBankAccount',
+			's.fk_incoterms' => 'IncotermLabel',
 			's.tva_assuj' => 'VATIsUsed',
 			's.barcode' => 'BarCode',
 			's.default_lang' => 'DefaultLanguage',
@@ -517,7 +604,7 @@ class modSociete extends DolibarrModules
 			$this->import_fields_array[$r]['s.price_level'] = 'PriceLevel';
 		}
 		if (getDolGlobalString('ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY')) {
-			$this->import_fields_array[$r] += array('s.accountancy_code_sell'=>'ProductAccountancySellCode', 's.accountancy_code_buy'=>'ProductAccountancyBuyCode');
+			$this->import_fields_array[$r] += array('s.accountancy_code_sell' => 'ProductAccountancySellCode', 's.accountancy_code_buy' => 'ProductAccountancyBuyCode');
 		}
 		// Add social networks fields
 		if (isModEnabled('socialnetworks')) {
@@ -707,7 +794,7 @@ class modSociete extends DolibarrModules
 		}
 		// Add profids as criteria to search duplicates
 		$langs->load("companies");
-		$i=1;
+		$i = 1;
 		while ($i <= 6) {
 			if ($i == 1) {
 				$this->import_updatekeys_array[$r]['s.siren'] = 'ProfId1'.(empty($mysoc->country_code) ? '' : $mysoc->country_code);
@@ -876,7 +963,7 @@ class modSociete extends DolibarrModules
 			'sr.default_rib' => 'Default',
 			'sr.rum' => 'RUM',
 			'sr.frstrecur' => "WithdrawMode",
-			'sr.type' => "Type ban is defaut",
+			'sr.type' => "Type ban is default",
 		);
 
 		$this->import_convertvalue_array[$r] = array(
@@ -916,15 +1003,15 @@ class modSociete extends DolibarrModules
 		$this->import_code[$r] = $this->rights_class.'_'.$r;
 		$this->import_label[$r] = "ImportDataset_company_4"; // Translation key
 		$this->import_icon[$r] = 'company';
-		$this->import_entities_array[$r] = array('sr.fk_user'=>'user'); // We define here only fields that use another icon that the one defined into import_icon
-		$this->import_tables_array[$r] = array('sr'=>MAIN_DB_PREFIX.'societe_commerciaux');
-		$this->import_fields_array[$r] = array('sr.fk_soc'=>"ThirdPartyName*", 'sr.fk_user'=>"User*");
+		$this->import_entities_array[$r] = array('sr.fk_user' => 'user'); // We define here only fields that use another icon that the one defined into import_icon
+		$this->import_tables_array[$r] = array('sr' => MAIN_DB_PREFIX.'societe_commerciaux');
+		$this->import_fields_array[$r] = array('sr.fk_soc' => "ThirdPartyName*", 'sr.fk_user' => "User*");
 
 		$this->import_convertvalue_array[$r] = array(
-				'sr.fk_soc'=>array('rule'=>'fetchidfromref', 'classfile'=>'/societe/class/societe.class.php', 'class'=>'Societe', 'method'=>'fetch', 'element'=>'ThirdParty'),
-				'sr.fk_user'=>array('rule'=>'fetchidfromref', 'classfile'=>'/user/class/user.class.php', 'class'=>'User', 'method'=>'fetch', 'element'=>'User')
+				'sr.fk_soc' => array('rule' => 'fetchidfromref', 'classfile' => '/societe/class/societe.class.php', 'class' => 'Societe', 'method' => 'fetch', 'element' => 'ThirdParty'),
+				'sr.fk_user' => array('rule' => 'fetchidfromref', 'classfile' => '/user/class/user.class.php', 'class' => 'User', 'method' => 'fetch', 'element' => 'User')
 		);
-		$this->import_examplevalues_array[$r] = array('sr.fk_soc'=>"MyBigCompany", 'sr.fk_user'=>"login");
+		$this->import_examplevalues_array[$r] = array('sr.fk_soc' => "MyBigCompany", 'sr.fk_user' => "login");
 	}
 
 

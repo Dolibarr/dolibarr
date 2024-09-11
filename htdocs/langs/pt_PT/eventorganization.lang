@@ -5,32 +5,22 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModuleEventOrganizationName = Organização de eventos
 EventOrganizationDescription = Organização de eventos através do projeto módulo
 EventOrganizationDescriptionLong= Gerenciar a organização de um evento (show, conferências, participantes ou palestrantes, com páginas públicas para sugestão, votação ou inscrição)
-#
-# Menu
-#
 EventOrganizationMenuLeft = Eventos organizados
 EventOrganizationConferenceOrBoothMenuLeft = Conferência ou estande
-
 PaymentEvent=Pagamento do evento
-
-#
+EventFee=Event fee
 # Admin page
-#
 NewRegistration=Cadastro
 EventOrganizationSetup=Configuração da organização do evento
 EventOrganization=Organização de eventos
@@ -48,13 +38,10 @@ EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Modelo de e-mail para usar ao en
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Modelo de e-mail a ser usado ao enviar e-mails da ação "Enviar e-mails" na lista de participantes
 EVENTORGANIZATION_FILTERATTENDEES_CAT = No formulário para criar/adicionar um participante, restringe a lista de terceiros a terceiros no Categoria
 EVENTORGANIZATION_FILTERATTENDEES_TYPE = No formulário para criar/adicionar um participante, restringe a lista de terceiros a terceiros com a natureza
-
-#
 # Object
-#
 OrganizedEvent=Evento organizado
 EventOrganizationConfOrBooth= Conferência ou estande
-EventOrganizationConfOrBoothes=Conferências ou Stands
+EventOrganizationConfOrBoothes=Conferences or Booths
 ManageOrganizeEvent = Gerenciar a organização de um evento
 ConferenceOrBooth = Conferência ou estande
 ConferenceOrBoothTab = Conferência ou estande
@@ -63,10 +50,7 @@ DateOfRegistration = data do registro
 ConferenceOrBoothAttendee = Participante da conferência ou estande
 ApplicantOrVisitor=Candidato ou visitante
 Speaker=Palestrante
-
-#
 # Template Mail
-#
 YourOrganizationEventConfRequestWasReceived = Sua solicitação de conferência foi recebida
 YourOrganizationEventBoothRequestWasReceived = Sua solicitação de estande foi recebida
 EventOrganizationEmailAskConf = Solicitação de conferência
@@ -76,10 +60,7 @@ EventOrganizationEmailRegistrationPayment = Inscrições para um evento
 EventOrganizationMassEmailAttendees = Comunicação aos participantes
 EventOrganizationMassEmailSpeakers = Comunicação aos palestrantes
 ToSpeakers=Para alto-falantes
-
-#
 # Event
-#
 AllowUnknownPeopleSuggestConf=Permitir que as pessoas sugiram conferências
 AllowUnknownPeopleSuggestConfHelp=Permitir que pessoas desconhecidas sugiram uma conferência que desejam realizar
 AllowUnknownPeopleSuggestBooth=Permitir que as pessoas se inscrevam para um estande
@@ -88,29 +69,29 @@ PriceOfRegistration=Preço da inscrição
 PriceOfRegistrationHelp=Preço a pagar para se inscrever ou participar do evento
 PriceOfBooth=Preço da assinatura para ficar em um estande
 PriceOfBoothHelp=Preço da assinatura para ficar em um estande
+EventOrganizationICSLinkProject=Link ICS for the event
 EventOrganizationICSLink=hiperligação, conexão ICS para conferências
 ConferenceOrBoothInformation=Informações sobre conferência ou estande
+ConferenceOrBoothFormat=Conference or booth mode
+ConferenceOrBoothFormatID=ID of conference or booth mode
+ConferenceOrBoothFormatCode=Code of conference or booth mode
+ConferenceOrBoothFormatLabel=Label of conference or booth mode
 Attendees=Participantes
-ListOfAttendeesOfEvent=Lista de participantes do projeto do evento
+ListOfAttendeesOfEvent=List of attendees of event projects
+ListOfConfOrBoothOfEvent=List of conferences or booths of event projects
 DownloadICSLink = Baixar ICS hiperligação, conexão
 EVENTORGANIZATION_SECUREKEY = Semente para garantir a chave da página de registro público para sugerir uma conferência
 SERVICE_BOOTH_LOCATION = Serviço usado para a linha fatura sobre o local de um estande
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Serviço usado para a linha fatura sobre a assinatura de um participante em um evento
 NbVotes=Número de votos
-
-#
 # Status
-#
 EvntOrgDraft = Esboço, projeto
 EvntOrgSuggested = Sugerido
 EvntOrgConfirmed = Confirmado
 EvntOrgNotQualified = Não qualificado
 EvntOrgDone = Realizadas
 EvntOrgCancelled = Cancelada
-
-#
 # Other
-#
 SuggestForm = Página de sugestões
 SuggestOrVoteForConfOrBooth = Página para sugestão ou voto
 EvntOrgRegistrationHelpMessage = Aqui você pode votar em uma conferência ou sugerir uma nova para o evento. Você também pode se inscrever para ter um estande durante o evento.
@@ -133,6 +114,7 @@ EventType = Tipo de evento
 LabelOfBooth=Etiqueta do estande
 LabelOfconference=Etiqueta de conferência
 ConferenceIsNotConfirmed=Inscrições não disponíveis, conferência ainda não confirmada
+EventRegistrationAreClosed=Event registrations are closed
 DateMustBeBeforeThan=%s deve ser anterior a %s
 DateMustBeAfterThan=%s deve ser posterior a %s
 MaxNbOfAttendeesReached=O número máximo de participantes foi atingido
@@ -174,6 +156,7 @@ DateEndEvent=Fim do evento data
 ModifyStatus=modificar status
 ConfirmModifyStatus=Confirmar modificação de status
 ConfirmModifyStatusQuestion=Tem a certeza que pretende para modificar o(s) %s registro(s) selecionado(s)?
-RecordsUpdated = %s Registros atualizados
-RecordUpdated = Registro atualizado
-NoRecordUpdated = Nenhum registro atualizado
+RecordsUpdated=%s Registros atualizados
+RecordUpdated=Registro atualizado
+NoRecordUpdated=Nenhum registro atualizado
+ProfitPerValidatedAttendee=Profit per attendee

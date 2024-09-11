@@ -4,12 +4,10 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
@@ -17,13 +15,10 @@
 Module4100Name = Politique de confidentialité des données
 # Module description 'ModuledatapolicyDesc'
 Module4100Desc = Module de gestion de la confidentialité des données (conformité avec le RGPD)
-
-#
 # Administration page
-#
 datapolicySetup = Configuration de la politique de confidentialité des données du module
 Deletion = Suppression de données
-datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without events (the duration which you will have indicated below).
+datapolicySetupPage = En fonction des législations de vos pays (Exemple <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external"> Article 5 </a> du RGPD), les données personnelles doivent être conservées pendant une durée n'excédant pas celle nécessaire aux finalités pour lesquelles elles ont été collectées, sauf à des fins d'archivage. <br> La suppression se fera automatiquement après une certaine durée sans événement (la durée que vous aurez indiquée ci-dessous).
 NB_MONTHS = %s mois
 ONE_YEAR = 1 an
 NB_YEARS = %s ans
@@ -38,51 +33,19 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = Prospect/Client
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Ni prospect/Ni client
 DATAPOLICY_CONTACT_FOURNISSEUR = Fournisseur
 DATAPOLICY_ADHERENT = Adhérent
-DATAPOLICY_Tooltip_SETUP = Type de contact - Indiquez vos choix pour chaque type.
-DATAPOLICYMail = Configuration des e-mails
-DATAPOLICYSUBJECTMAIL = Subject of the email
-DATAPOLICYCONTENTMAIL = Contenu de l'e-mail
-DATAPOLICYSUBSITUTION = Vous pouvez utiliser les variables suivantes dans votre email (LINKACCEPT permet de créer un lien enregistrant l'accord de la personne, LINKREFUSED permet d'enregistrer le refus de la personne) :
-DATAPOLICYACCEPT = Message après accord
-DATAPOLICYREFUSE = Message after disagreement
+DATAPOLICY_Tooltip_SETUP=Définissez le délai sans interaction après lequel vous souhaitez que l'enregistrement soit automatiquement purgé.
 SendAgreementText = Vous pouvez envoyer un e-mail RGPD à tous vos contacts concernés (qui n'ont pas encore reçu d'e-mail et pour lesquels vous n'avez rien enregistré concernant leur accord RGPD). Pour ce faire, utilisez le bouton suivant.
 SendAgreement = Envoyer des emails
 AllAgreementSend = Tous les e-mails ont été envoyés
 TXTLINKDATAPOLICYACCEPT = Texte pour le lien "accord"
-TXTLINKDATAPOLICYREFUSE = Text for the link "disagreement"
-
-
-#
+TXTLINKDATAPOLICYREFUSE = Texte pour le lien "désaccord"
 # Extrafields
-#
 DATAPOLICY_BLOCKCHECKBOX = RGPD : Traitement des données personnelles
 DATAPOLICY_consentement = Consentement obtenu pour le traitement des données personnelles
-DATAPOLICY_opposition_traitement = Opposes to the processing of his personal data
-DATAPOLICY_opposition_prospection = Opposes to the processing of his personal data for the purposes of prospecting
-
-#
-# Popup
-#
-DATAPOLICY_POPUP_ANONYME_TITLE = Anonymiser un tiers
-DATAPOLICY_POPUP_ANONYME_TEXTE = Vous ne pouvez pas supprimer ce contact de Dolibarr car il y a des éléments liés. Conformément au RGPD, vous rendrez toutes ces données anonymes pour respecter vos obligations. Voulez-vous continuer ?
-
-#
-# Button for portability
-#
-DATAPOLICY_PORTABILITE = Portabilité RGPD
-DATAPOLICY_PORTABILITE_TITLE = Exportation de données personnelles
-DATAPOLICY_PORTABILITE_CONFIRMATION = Vous souhaitez exporter les données personnelles de ce contact. Êtes-vous sûr ?
-
-#
+DATAPOLICY_opposition_traitement = S'oppose au traitement de ses données personnelles
+DATAPOLICY_opposition_prospection = S'oppose au traitement de ses données personnelles à des fins de prospection
 # Notes added during an anonymization
-#
-ANONYMISER_AT = Anonymisé le %s
-
-DATAPOLICY_date = Date of agreement/disagreement GDPR
-DATAPOLICY_send = Date agreement email sent
-DATAPOLICY_SEND = Envoyer un e-mail RGPD
+DATAPOLICY_date = Date d'accord/désaccord RGPD
+DATAPOLICY_send = Date d'envoi de l'e-mail d'accord
 MailSent = L'email a été envoyé
-
-# ERROR
-=Due to a technical problem, we were unable to register your choice. We apologize for that. Contact us to notify us your choice.
-NUMBER_MONTH_BEFORE_DELETION = Number of months before deletion
+NUMBER_MONTH_BEFORE_DELETION = Nombre de mois avant la suppression

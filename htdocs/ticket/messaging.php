@@ -40,19 +40,19 @@ if (isModEnabled('project')) {
 $langs->loadLangs(array('companies', 'other', 'ticket'));
 
 // Get parameters
-$id       = GETPOST('id', 'int');
+$id       = GETPOSTINT('id');
 $ref      = GETPOST('ref', 'alpha');
 $track_id = GETPOST('track_id', 'alpha', 3);
-$socid    = GETPOST('socid', 'int');
+$socid    = GETPOSTINT('socid');
 $action   = GETPOST('action', 'aZ09');
 
 // Store current page url
 $url_page_current = DOL_URL_ROOT.'/ticket/messaging.php';
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", "aZ09comma");
 $sortorder = GETPOST("sortorder", 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 $page = is_numeric($page) ? $page : 0;
 $page = $page == -1 ? 0 : $page;
 if (!$sortfield) {
@@ -76,6 +76,8 @@ if (GETPOST('actioncode', 'array')) {
 $search_rowid = GETPOST('search_rowid');
 $search_agenda_label = GETPOST('search_agenda_label');
 
+
+$hookmanager->initHooks(array('ticketmessaging', 'globalcard')); // Note that conf->hooks_modules contains array
 $object = new Ticket($db);
 $object->fetch($id, $ref, $track_id);
 
@@ -87,7 +89,7 @@ if (!$action) {
 }
 
 // Security check
-$id = GETPOST("id", 'int');
+$id = GETPOSTINT("id");
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
@@ -102,7 +104,7 @@ if (!$user->socid && (getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY') && $
 	accessforbidden();
 }
 
-$permissiontoadd = $user->rights->ticket->write;
+$permissiontoadd = $user->hasRight('ticket', 'write');
 
 
 /*
@@ -128,8 +130,8 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 
 // Set parent company
 if ($action == 'set_thirdparty' && $user->hasRight('ticket', 'write')) {
-	if ($object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
-		$result = $object->setCustomer(GETPOST('editcustomer', 'int'));
+	if ($object->fetch(GETPOSTINT('id'), '', GETPOST('track_id', 'alpha')) >= 0) {
+		$result = $object->setCustomer(GETPOSTINT('editcustomer'));
 		$url = $_SERVER["PHP_SELF"].'?track_id='.GETPOST('track_id', 'alpha');
 		header("Location: ".$url);
 		exit();
@@ -150,7 +152,7 @@ if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/ticketnameonly/', getD
 	$title = $object->ref.' '.$object->name.' - '.$langs->trans("Info");
 }
 $help_url = 'FR:DocumentationModuleTicket';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-ticket page-card_messaging');
 
 if ($socid > 0) {
 	$object->fetch_thirdparty();

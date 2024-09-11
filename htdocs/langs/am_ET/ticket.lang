@@ -5,35 +5,27 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 Module56000Name=ቲኬቶች
 Module56000Desc=ለጉዳዩ ወይም ለጥያቄ አስተዳደር የቲኬት ስርዓት
-
 Permission56001=ቲኬቶችን ይመልከቱ
 Permission56002=ቲኬቶችን ቀይር
 Permission56003=ቲኬቶችን ሰርዝ
 Permission56004=ቲኬቶችን ያስተዳድሩ
 Permission56005=የሁሉንም የሶስተኛ ወገኖች ትኬቶችን ይመልከቱ (ለውጭ ተጠቃሚዎች ውጤታማ አይደለም፣ ሁልጊዜም እነሱ በሚተማመኑበት የሶስተኛ ወገን ብቻ የተገደቡ)
 Permission56006=ቲኬቶችን ወደ ውጪ ላክ
-
 Tickets=ቲኬቶች
 TicketDictType=ቲኬት - ዓይነቶች
 TicketDictCategory=ቲኬት - ቡድኖች
 TicketDictSeverity=ቲኬት - ከባድነት
 TicketDictResolution=ቲኬት - ጥራት
-
 TicketTypeShortCOM=የንግድ ጥያቄ
 TicketTypeShortHELP=የተግባር እርዳታ ጥያቄ
 TicketTypeShortISSUE=ችግር ወይም ስህተት
@@ -41,51 +33,39 @@ TicketTypeShortPROBLEM=ችግር
 TicketTypeShortREQUEST=ለውጥ ወይም ማሻሻል ጥያቄ
 TicketTypeShortPROJET=ፕሮጀክት
 TicketTypeShortOTHER=ሌላ
-
 TicketSeverityShortLOW=ዝቅተኛ
 TicketSeverityShortNORMAL=መደበኛ
 TicketSeverityShortHIGH=ከፍተኛ
 TicketSeverityShortBLOCKING=ወሳኝ ፣ ማገድ
-
 TicketCategoryShortOTHER=ሌላ
-
 ErrorBadEmailAddress=መስክ '%s ትክክል አይደለም
 MenuTicketMyAssign=የእኔ ትኬቶች
 MenuTicketMyAssignNonClosed=የእኔ ክፍት ትኬቶች
 MenuListNonClosed=ትኬቶችን ክፈት
-
 TypeContact_ticket_internal_CONTRIBUTOR=አበርካች
 TypeContact_ticket_internal_SUPPORTTEC=የተመደበ ተጠቃሚ
 TypeContact_ticket_external_SUPPORTCLI=የደንበኛ ግንኙነት / ክስተት መከታተል
 TypeContact_ticket_external_CONTRIBUTOR=የውጭ አበርካች
-
 OriginEmail=ሪፖርተር ኢሜል
+EmailReplyto=Reply to in Email
+EmailReferences=References in Emails
 Notify_TICKET_SENTBYMAIL=የቲኬት መልእክት በኢሜል ይላኩ።
-
 ExportDataset_ticket_1=ቲኬቶች
-
 # Status
 Read=አንብብ
 Assigned=ተመድቧል
 NeedMoreInformation=የሪፖርተር አስተያየት በመጠበቅ ላይ
 NeedMoreInformationShort=ግብረ መልስ በመጠበቅ ላይ
-TicketAnswered=Answered
 Waiting=በመጠበቅ ላይ
 SolvedClosed=ተፈቷል
 Deleted=ተሰርዟል።
-
 # Dict
-Type=ዓይነት
 Severity=ከባድነት
 TicketGroupIsPublic=ቡድን የህዝብ ነው።
 TicketGroupIsPublicDesc=የቲኬት ቡድን ይፋዊ ከሆነ ከህዝብ መገናኛ ትኬት ሲፈጥሩ በቅጹ ላይ ይታያል
-
 # Email templates
 MailToSendTicketMessage=ከቲኬት መልእክት ኢሜይል ለመላክ
-
-#
 # Admin page
-#
 TicketSetup=የቲኬት ሞጁል ማዋቀር
 TicketSettings=ቅንብሮች
 TicketPublicAccess=ምንም መለያ የማይፈልግ ይፋዊ በይነገጽ በሚከተለው ዩአርኤል ይገኛል።
@@ -157,10 +137,7 @@ TicketUseCaptchaCode=ቲኬት ሲፈጥሩ ግራፊክ ኮድ (CAPTCHA) ይጠ
 TicketUseCaptchaCodeHelp=አዲስ ትኬት ሲፈጥሩ CAPTCHA ማረጋገጫን ይጨምራል።
 TicketsAllowClassificationModificationIfClosed=የተዘጉ ቲኬቶችን ምደባ ለማሻሻል ይፍቀዱ
 TicketsAllowClassificationModificationIfClosedHelp=ቲኬቶች ቢዘጉም ምደባን (አይነት፣ የቲኬት ቡድን፣ ክብደት) ለማሻሻል ይፍቀዱ።
-
-#
 # Index & list page
-#
 TicketsIndex=የቲኬቶች አካባቢ
 TicketList=የቲኬቶች ዝርዝር
 TicketAssignedToMeInfos=የዚህ ገጽ ማሳያ ትኬት ዝርዝር ለአሁኑ ተጠቃሚ የተፈጠረ ወይም ተመድቧል
@@ -175,10 +152,7 @@ ShowAsConversation=እንደ የውይይት ዝርዝር አሳይ
 MessageListViewType=እንደ ሰንጠረዥ ዝርዝር አሳይ
 ConfirmMassTicketClosingSendEmail=ቲኬቶችን በሚዘጉበት ጊዜ ኢሜይሎችን በራስ-ሰር ይላኩ።
 ConfirmMassTicketClosingSendEmailQuestion=እነዚህን ትኬቶች ሲዘጉ ለሶስተኛ ወገኖች ማሳወቅ ይፈልጋሉ?
-
-#
 # Ticket card
-#
 Ticket=ትኬት
 TicketCard=የቲኬት ካርድ
 CreateTicket=ቲኬት ይፍጠሩ
@@ -278,20 +252,14 @@ TicketsDelayFromLastResponseTooLong=በዚህ ቲኬት ላይ ከመጨረሻ�
 TicketNoContractFoundToLink=ከዚህ ቲኬት ጋር በቀጥታ የተገናኘ ምንም ውል አልተገኘም። እባክህ ውልን በእጅ አገናኝ።
 TicketManyContractsLinked=ብዙ ኮንትራቶች ከዚህ ቲኬት ጋር በቀጥታ ተያይዘዋል። የትኛው መምረጥ እንዳለበት ማረጋገጥዎን ያረጋግጡ.
 TicketRefAlreadyUsed=ማጣቀሻው [%s] አስቀድሞ ጥቅም ላይ ውሏል፣ አዲሱ ማጣቀሻህ [%s] ነው።
-
-#
 # Logs
-#
 TicketLogMesgReadBy=ትኬት %s በ%s የተነበበ
 NoLogForThisTicket=ለዚህ ትኬት እስካሁን ምንም መዝገብ የለም።
 TicketLogAssignedTo=ትኬት %s ለ%s ተመድቧል
 TicketLogPropertyChanged=ትኬት %s ተቀይሯል፡ ምደባ ከ%s ወደ %s
 TicketLogClosedBy=ትኬት %s በ%s ተዘግቷል
 TicketLogReopen=ትኬት %s እንደገና ይከፈታል
-
-#
 # Public pages
-#
 TicketSystem=የቲኬት ስርዓት
 ShowListTicketWithTrackId=የቲኬት ዝርዝርን ከትራክ መታወቂያ አሳይ
 ShowTicketWithTrackId=ትኬት ከትራክ መታወቂያ አሳይ
@@ -306,13 +274,13 @@ TicketNewEmailBodyCustomer=ይህ አዲስ ቲኬት ወደ መለያዎ መፈ
 TicketNewEmailBodyInfosTicket=ቲኬቱን ለመቆጣጠር መረጃ
 TicketNewEmailBodyInfosTrackId=የቲኬት መከታተያ ቁጥር፡ %s
 TicketNewEmailBodyInfosTrackUrl=የሚከተለውን ሊንክ በመጫን የቲኬቱን ሂደት ማየት ይችላሉ።
-TicketNewEmailBodyInfosTrackUrlCustomer=የሚከተለውን ሊንክ በመጫን የቲኬቱን ሂደት በልዩ በይነገጽ ማየት ይችላሉ።
+TicketNewEmailBodyInfosTrackUrlCustomer=You can view the progress of the ticket in the public ticket portal by clicking the following link
 TicketCloseEmailBodyInfosTrackUrlCustomer=የሚከተለውን ሊንክ በመጫን የዚህን ቲኬት ታሪክ ማየት ይችላሉ።
 TicketEmailPleaseDoNotReplyToThisEmail=እባክዎ ለዚህ ኢሜይል በቀጥታ ምላሽ አይስጡ! በይነገጹ ላይ ምላሽ ለመስጠት አገናኙን ይጠቀሙ።
 TicketPublicInfoCreateTicket=ይህ ቅጽ በአስተዳደር ስርዓታችን ውስጥ የድጋፍ ትኬት እንዲመዘግቡ ያስችልዎታል።
 TicketPublicPleaseBeAccuratelyDescribe=እባክዎን ጥያቄዎን በትክክል ይግለጹ። ጥያቄዎን በትክክል እንድንለይ የሚቻለውን መረጃ ያቅርቡ።
 TicketPublicMsgViewLogIn=እባክዎ የቲኬት መከታተያ መታወቂያ ያስገቡ
-TicketTrackId=የህዝብ መከታተያ መታወቂያ
+TicketTrackId=Tracking ID
 OneOfTicketTrackId=የመከታተያ መታወቂያዎ አንዱ
 ErrorTicketNotFound=የመከታተያ መታወቂያ %s ያለው ትኬት አልተገኘም!
 Subject=ርዕሰ ጉዳይ
@@ -320,7 +288,7 @@ ViewTicket=ትኬት ይመልከቱ
 ViewMyTicketList=የቲኬቴን ዝርዝር ይመልከቱ
 ErrorEmailMustExistToCreateTicket=ስህተት፡ የኢሜል አድራሻችን በውሂብ ጎታችን ውስጥ አልተገኘም።
 TicketNewEmailSubjectAdmin=አዲስ ቲኬት ተፈጥሯል - Ref %s (የህዝብ ትኬት መታወቂያ %s)
-TicketNewEmailBodyAdmin=<p>ትኬት አሁን የተፈጠረው በመታወቂያ #%s ነው፡ መረጃውን ይመልከቱ፡<span class='notranslate'>b0679c9a6a6a6d43 >
+TicketNewEmailBodyAdmin=<p>Ticket has just been created with ID #%s, see information:</p>
 SeeThisTicketIntomanagementInterface=በአስተዳደር በይነገጽ ውስጥ ትኬት ይመልከቱ
 TicketPublicInterfaceForbidden=የቲኬቶቹ ይፋዊ በይነገጽ አልነቃም።
 ErrorEmailOrTrackingInvalid=መታወቂያ ወይም ኢሜይል ለመከታተል መጥፎ ዋጋ
@@ -330,7 +298,6 @@ NumberOfTicketsByMonth=በወር የቲኬቶች ብዛት
 NbOfTickets=የቲኬቶች ብዛት
 ExternalContributors=የውጭ አስተዋፅዖ አበርካቾች
 AddContributor=የውጪ አስተዋፅዖ አክል
-
 # notifications
 TicketCloseEmailSubjectCustomer=ቲኬቱ ተዘግቷል።
 TicketCloseEmailBodyCustomer=ትኬት %s መዘጋቱን ለማሳወቅ ይህ አውቶማቲክ መልእክት ነው።
@@ -342,12 +309,8 @@ TicketNotificationRecipient=የማሳወቂያ ተቀባይ
 TicketNotificationLogMessage=የምዝግብ ማስታወሻ መልእክት
 TicketNotificationEmailBodyInfosTrackUrlinternal=ትኬቱን ወደ በይነገጽ ይመልከቱ
 TicketNotificationNumberEmailSent=የማሳወቂያ ኢሜይል ተልኳል፡ %s
-
 ActionsOnTicket=በቲኬት ላይ ያሉ ክስተቶች
-
-#
 # Boxes
-#
 BoxLastTicket=የቅርብ ጊዜ የተፈጠሩ ቲኬቶች
 BoxLastTicketDescription=የቅርብ ጊዜ %s የተፈጠሩ ቲኬቶች
 BoxLastTicketContent=

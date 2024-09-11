@@ -1,32 +1,64 @@
 ---
-exclude: (?x)^( htdocs/includes/ckeditor/.* )
+exclude: (?x)^( htdocs/includes/ckeditor/.*|(\.[^/]*/.*))$
 repos:
   # Several miscellaneous checks and fix (on yaml files, end of files fix)
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v4.6.0
     hooks:
+      # This hook tests the name of the branch and return an error if the name is
+      #  'develop' or an official version 'x.y'
+      # So you can't commit if your branch name is not a custom branch name.
+      # Using a custom branch name is good practice that makes it easier to manage PRs.
+      # You can skip this:
+      #  - Permanently:
+      #      export SKIP=no-commit-to-branch   # In your .bashrc or session.
+      #  - Only this for one commit:
+      #      SKIP=no-commit-to-branch git commit -a -m "My message"
+      #  - Skipping all checks for a commit:
+      #      git commit -a -m "My message" --no-verify
+      #      (Recommendation: run git commit -a .. once, then with `--no-verify`)
       - id: no-commit-to-branch
         args: [--branch, develop, --pattern, \d+.0]
+      # This checks that xml files are correct
+      - id: check-xml
+        exclude: |
+          (?x)^(htdocs/includes/.*)$
+      # This checks that yaml files are correct
       - id: check-yaml
         args: [--unsafe]
+      # This checks that json files are correct
       - id: check-json
+      # Fixes Fix files that have DOS end of line endings
       - id: mixed-line-ending
-        exclude: (?x)^(htdocs/includes/tecnickcom/tcpdf/fonts/.*)$
+        # alternative for dev/tools/fixdosfiles.sh
+        exclude: |
+          (?x)^(htdocs/includes/tecnickcom/tcpdf/fonts/.*
+               |.*/CRLF.*.php  # Files in swiftmailer
+               )$
+        args: [--fix=lf]
+      # Remove trailing whitespace
       - id: trailing-whitespace
         exclude_types: [markdown]
+      # Fix the end of file
       - id: end-of-file-fixer
+      # Check that there are no completely merged file conflicts
       - id: check-merge-conflict
+        stages: [pre-commit, pre-rebase, pre-commit, pre-merge-commit]
+      # Check that files with shebangs have the executable bit set (in git)
       - id: check-executables-have-shebangs
+      # Check that shell files are executables
       - id: check-shebang-scripts-are-executable
         exclude:
           (?x)^( dev/tools/dolibarr-postgres2mysql.php |test/other/test_serialize.php
           |test/phpunit/textutf8.txt |test/phpunit/textiso.txt |htdocs/includes/.*
           |htdocs/modulebuilder/template/.* |build/debian/dolibarr.postrm |build/debian/dolibarr.postinst
           |build/debian/dolibarr.config )$
+      # Fix the first UTF8 byte
       - id: fix-byte-order-marker
+      # Check that there are no files that have are the same when uppercased (conflict on windows)
       - id: check-case-conflict
 
-  # Beautify shell scripts
+  # Gitleaks is a SAST tool for detecting and preventing hardcoded secrets like passwords, api keys, and tokens in git repos
   - repo: https://github.com/gitleaks/gitleaks.git
     rev: v8.16.1
     hooks:
@@ -37,30 +69,63 @@ repos:
     rev: v6.2.1
     hooks:
       - id: beautysh
-        exclude: (?x)^(dev/setup/git/hooks/pre-commit)$
+        exclude: |
+          (?x)^(dev/setup/git/hooks/pre-commit
+               )$
         args: [--tab]
 
   # Run local script
   #
-  # For instance to update the license in edited files, you could add to local.sh:
+  # For example, to update the license in edited files, you could add to local.sh:
   #
   #   ```shell
-  #  #!/bin/bash
+  #   #!/bin/bash
   #   MYDIR=$(dirname "$0")
-  #   CHANGED_INTERNALS=$(git diff --name-only | grep -v includes)
-  #   "$MYDIR/dev/tools/updatelicense.php" $CHANGED_INTERNALS
+  #   git diff HEAD --name-only | grep -v includes | \
+  #       xargs "$MYDIR/dev/tools/updatelicense.php"
   #   ```
   - repo: local
     hooks:
+      - name: Find missing/unused/duplicate language keys
+        id: check-translations
+        files: (?x)^(htdocs/langs/en_US/.*\.lang)
+        language: script
+        entry: ./dev/translation/sanity_check_trans_missing_unused.sh
+        pass_filenames: false
+        args: [list]
       - id: local-precommit-script
         name: Run local script before commit if it exists
         language: system
         entry: bash -c '[ ! -x local.sh ] || ./local.sh'
         pass_filenames: false
+      - id: duplicate-lang-lines
+        stages: [manual]
+        name: Find duplicate language lines
+        files: (?x)^(htdocs/langs/en_US/.*\.lang)
+        language: script
+        entry: ./dev/tools/fixduplicatelanglines.sh
+        pass_filenames: false
+        args: [list]
+      - id: duplicate-lang-keys
+        stages: [manual]
+        name: Find duplicate language keys
+        files: (?x)^(htdocs/langs/en_US/.*\.lang)
+        language: script
+        entry: ./dev/tools/fixduplicatelangkey.sh
+        pass_filenames: false
+        args: [list]
+      - id: fix-alt-languages
+        stages: [manual]
+        name: Fix alt languages
+        # Selection: see fixaltlanguages.sh script
+        files: (?x)^(htdocs/langs/(e[lnstu]|k[akmno]|s[lqrv]|b[nrs]|c[asy]|n[bel]|[ip]t|a[mr]|d[ae]|f[ar]|h[ei]|m[sy]|t[ag]|u[kr]|gl|ja|lo|ru|vi|zh)_[^/]*/.*\.lang)
+        language: script
+        entry: ./dev/tools/fixaltlanguages_pre-commit.sh
+        pass_filenames: true
 
   # Check PHP syntax
   - repo: https://github.com/mdeweerd/pre-commit-php
-    rev: v1.6.5
+    rev: v1.6.8
     hooks:
       - id: php-cbf
         files: \.(php)$
@@ -72,6 +137,7 @@ repos:
             --standard=dev/setup/codesniffer/ruleset.xml,
             --report=emacs,
             --severity=5,
+            --no-colors,
           ]
       - alias: php-cs-with-cache
         id: php-cs
@@ -82,6 +148,7 @@ repos:
             --standard=dev/setup/codesniffer/ruleset.xml,
             --report=emacs,
             --severity=5,
+            --no-colors,
             --cache=.cache/pre-commit/dolibarr-php-cs.cache,
             .,
           ]
@@ -116,7 +183,7 @@ repos:
 
   # Check format of yaml files
   - repo: https://github.com/adrienverge/yamllint.git
-    rev: v1.33.0
+    rev: v1.35.1
     hooks:
       - id: yamllint
         args:
@@ -126,7 +193,7 @@ repos:
 
   # Execute codespell to fix typo errors (setup of codespell into dev/tools/codespell/)
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.2.6
+    rev: v2.3.0
     hooks:
       - id: codespell
         # Due to a current limitation of configuration files,
@@ -142,8 +209,6 @@ repos:
           - dev/tools/codespell/codespell-ignore.txt
           - -x
           - dev/tools/codespell/codespell-lines-ignore.txt
-          - --uri-ignore-words-list
-          - ned
         exclude_types: [image]
         exclude: (?x)^(.phan/stubs/.*)$
         additional_dependencies: [tomli]
@@ -171,7 +236,31 @@ repos:
 
   # Check some shell scripts
   - repo: https://github.com/shellcheck-py/shellcheck-py
-    rev: v0.9.0.6
+    rev: v0.10.0.1
     hooks:
       - id: shellcheck
         args: [-W, "100"]
+
+  # Check sql file syntax
+  - repo: https://github.com/sqlfluff/sqlfluff
+    rev: 3.1.0
+    hooks:
+      - id: sqlfluff-lint
+        stages: [pre-commit, manual]  # manual needed for ci
+        exclude: (?x)^
+          (dev/initdemo/mysqldump_.*\.sql
+          |htdocs/core/menus/init_menu_auguria\.sql
+          |htdocs/includes/.*
+          |htdocs/install/doctemplates/websites/.*_template
+          |htdocs/install/doctemplates/websites/website_template.*\.sql
+          |htdocs/install/mysql/data/llx_20_c_departements\.sql
+          |htdocs/install/mysql/data/llx_accounting_account_.*\.sql
+          |htdocs/install/mysql/migration/3\..*\.sql
+          |htdocs/install/mysql/migration/(1[0-5]|[456789])\.0\.0-.*\.sql
+          |htdocs/install/mysql/migration/repair\.sql
+          |htdocs/install/mysql/tables/llx_bookcal_availabilities-bookcal\.sql
+          |htdocs/install/mysql/tables/llx_categorie.*\.key\.sql
+          |htdocs/install/mysql/tables/llx_rights_def\.key\.sql
+          |htdocs/install/pgsql/functions/functions.*\.sql
+          |htdocs/modulebuilder/template/sql/.*\.sql
+          )$

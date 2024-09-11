@@ -2,6 +2,7 @@
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,13 +21,13 @@
 /**
  *       \file       htdocs/expensereport/class/expensereportstats.class.php
  *       \ingroup    expensereport
- *       \brief      Fichier de la classe de gestion des stats des expensereport et notes de frais
+ *       \brief      File of lass to manage the statistics of the expensereports et expense notes
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/stats.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 
 /**
- *  Classe permettant la gestion des stats des expensereports et notes de frais
+ *  Class to manage the statistics of the expensereports and expense notes
  */
 class ExpenseReportStats extends Stats
 {
@@ -35,13 +36,34 @@ class ExpenseReportStats extends Stats
 	 */
 	public $table_element;
 
+	/**
+	 * @var int ID
+	 */
 	public $socid;
+
+	/**
+	 * @var int ID
+	 */
 	public $userid;
 
+	/**
+	 * @var string
+	 */
 	public $from;
+
+	/**
+	 * @var string
+	 */
 	public $field;
+
+	/**
+	 * @var string
+	 */
 	public $where;
 
+	/**
+	 * @var string
+	 */
 	private $datetouse = 'date_valid';
 
 
@@ -78,7 +100,7 @@ class ExpenseReportStats extends Stats
 		if (!$user->hasRight('expensereport', 'readall') && !$user->hasRight('expensereport', 'lire_tous')) {
 			$childids = $user->getAllChildIds();
 			$childids[] = $user->id;
-			$this->where .= " AND e.fk_user_author IN (".$this->db->sanitize(join(',', $childids)).")";
+			$this->where .= " AND e.fk_user_author IN (".$this->db->sanitize(implode(',', $childids)).")";
 		}
 
 		if ($this->userid > 0) {
@@ -104,9 +126,9 @@ class ExpenseReportStats extends Stats
 
 
 	/**
-	 * 	Renvoie le nombre de facture par mois pour une annee donnee
+	 * 	Return the quantity of invoices per month for a given year
 	 *
-	 *	@param	string	$year		Year to scan
+	 *	@param	int		$year		Year to scan
 	 *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
 	 *	@return	array				Array of values
 	 */
@@ -120,7 +142,7 @@ class ExpenseReportStats extends Stats
 		$sql .= $this->db->order('dm', 'DESC');
 
 		$res = $this->_getNbByMonth($year, $sql, $format);
-		//var_dump($res);print '<br>';
+
 		return $res;
 	}
 
@@ -142,7 +164,7 @@ class ExpenseReportStats extends Stats
 		$sql .= $this->db->order('dm', 'DESC');
 
 		$res = $this->_getAmountByMonth($year, $sql, $format);
-		//var_dump($res);print '<br>';
+
 		return $res;
 	}
 

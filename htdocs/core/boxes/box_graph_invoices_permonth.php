@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +19,7 @@
 
 /**
  *	\file       htdocs/core/boxes/box_graph_invoices_permonth.php
- *	\ingroup    factures
+ *	\ingroup    invoices
  *	\brief      Box to show graph of invoices per month
  */
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
@@ -32,14 +34,6 @@ class box_graph_invoices_permonth extends ModeleBoxes
 	public $boximg   = "object_bill";
 	public $boxlabel = "BoxCustomersInvoicesPerMonth";
 	public $depends  = array("facture");
-
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
 
 	public $widgettype = 'graph';
 
@@ -76,7 +70,7 @@ class box_graph_invoices_permonth extends ModeleBoxes
 		//include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		//$facturestatic=new Facture($this->db);
 
-		$startmonth = $conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1;
+		$startmonth = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
 		if (!getDolGlobalString('GRAPH_USE_FISCAL_YEAR')) {
 			$startmonth = 1;
 		}
@@ -84,13 +78,13 @@ class box_graph_invoices_permonth extends ModeleBoxes
 		$text = $langs->trans("BoxCustomersInvoicesPerMonth", $max);
 		$this->info_box_head = array(
 			'text' => $text,
-			'limit'=> dol_strlen($text),
-			'graph'=> 1,
-			'sublink'=>'',
-			'subtext'=>$langs->trans("Filter"),
-			'subpicto'=>'filter.png',
-			'subclass'=>'linkobject boxfilter',
-			'target'=>'none'	// Set '' to get target="_blank"
+			'limit' => dol_strlen($text),
+			'graph' => 1,
+			'sublink' => '',
+			'subtext' => $langs->trans("Filter"),
+			'subpicto' => 'filter.png',
+			'subclass' => 'linkobject boxfilter',
+			'target' => 'none'	// Set '' to get target="_blank"
 		);
 
 		$dir = ''; // We don't need a path because image file will not be saved into disk
@@ -99,7 +93,7 @@ class box_graph_invoices_permonth extends ModeleBoxes
 		if ($user->socid) {
 			$socid = $user->socid;
 		}
-		if (!$user->hasRight('societe', 'client', 'voir') || $socid) {
+		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$prefix .= 'private-'.$user->id.'-'; // If user has no permission to see all, output dir is specific to user
 		}
 
@@ -114,7 +108,7 @@ class box_graph_invoices_permonth extends ModeleBoxes
 			include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facturestats.class.php';
 			$autosetarray = preg_split("/[,;:]+/", GETPOST('DOL_AUTOSET_COOKIE'));
 			if (in_array('DOLUSERCOOKIE_box_'.$this->boxcode, $autosetarray)) {
-				$endyear = GETPOST($param_year, 'int');
+				$endyear = GETPOSTINT($param_year);
 				$shownb = GETPOST($param_shownb, 'alpha');
 				$showtot = GETPOST($param_showtot, 'alpha');
 			} else {
@@ -131,13 +125,14 @@ class box_graph_invoices_permonth extends ModeleBoxes
 			if (empty($endyear)) {
 				$endyear = $nowarray['year'];
 			}
-			$startyear = $endyear - (getDolGlobalString('MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH') ? ($conf->global->MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH - 1) : 2);	// Default is 3 years
+			$startyear = $endyear - getDolGlobalInt('MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH', 3) + 1;	// Default is 3 years
 
 			$mode = 'customer';
 			$WIDTH = (($shownb && $showtot) || !empty($conf->dol_optimize_smallscreen)) ? '256' : '320';
 			$HEIGHT = '192';
 
 			$stats = new FactureStats($this->db, $socid, $mode, 0);
+			$stats->where = "f.fk_statut > 0";
 
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($shownb) {
@@ -266,9 +261,9 @@ class box_graph_invoices_permonth extends ModeleBoxes
 					$stringtoshow .= '</div>';
 					$stringtoshow .= '</div>';
 				}
-				$this->info_box_contents[0][0] = array('tr'=>'class="oddeven nohover"', 'td' => 'class="nohover center"', 'textnoformat'=>$stringtoshow);
+				$this->info_box_contents[0][0] = array('tr' => 'class="oddeven nohover"', 'td' => 'class="nohover center"', 'textnoformat' => $stringtoshow);
 			} else {
-				$this->info_box_contents[0][0] = array('tr'=>'class="oddeven nohover"', 'td' => 'class="nohover left"', 'maxlength'=>500, 'text' => $mesg);
+				$this->info_box_contents[0][0] = array('tr' => 'class="oddeven nohover"', 'td' => 'class="nohover left"', 'maxlength' => 500, 'text' => $mesg);
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
@@ -281,9 +276,9 @@ class box_graph_invoices_permonth extends ModeleBoxes
 	/**
 	 *	Method to show box
 	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
+	 *	@param	?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}	$head	Array with properties of box title
+	 *	@param	?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>	$contents	Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *	@return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)

@@ -39,7 +39,6 @@ WithdrawalsSetup=Tiešā debeta maksājuma iestatīšana
 CreditTransferSetup=Kredīta pārveduma iestatīšana
 WithdrawStatistics=Tiešā debeta maksājumu statistika
 CreditTransferStatistics=Kredīta pārvedumu statistika
-Rejects=Atteikumi
 LastWithdrawalReceipt=Jaunākie %s tiešā debeta ieņēmumi
 MakeWithdrawRequest=Izveidojiet tiešā debeta maksājumu pieprasījumu
 MakeWithdrawRequestStripe=Veiciet tiešā debeta maksājuma pieprasījumu, izmantojot Stripe
@@ -47,7 +46,7 @@ MakeBankTransferOrder=Veiciet kredīta pārveduma pieprasījumu
 WithdrawRequestsDone=%s reģistrēti tiešā debeta maksājumu pieprasījumi
 BankTransferRequestsDone=%s reģistrēti kredīta pārveduma pieprasījumi
 ThirdPartyBankCode=Trešās puses bankas kods
-NoInvoiceCouldBeWithdrawed=Neviens rēķins nav veiksmīgi apstrādāts. Pārbaudiet, vai rēķini ir no uzņēmumiem ar derīgu IBAN un vai IBAN ir UMR (unikālā mandāta atsauce) ar režīmu <strong>%s<. span class='notranslate'></strong></span>.
+NoInvoiceCouldBeWithdrawed=No invoice processed successfully. Check that invoices are on companies with a valid IBAN and that IBAN has a UMR (Unique Mandate Reference) with mode <strong>%s</strong>.
 NoInvoiceCouldBeWithdrawedSupplier=Neviens rēķins nav veiksmīgi apstrādāts. Pārbaudiet, vai rēķini ir no uzņēmumiem ar derīgu IBAN.
 NoSalariesCouldBeWithdrawed=Neviena alga nav veiksmīgi apstrādāta. Pārbaudiet, vai alga ir lietotājiem ar derīgu IBAN.
 WithdrawalCantBeCreditedTwice=Šī izņemšanas kvīts jau ir atzīmēta kā ieskaitīta; to nevar izdarīt divreiz, jo tas potenciāli radītu maksājumu un bankas ierakstu dublikātus.
@@ -171,4 +170,3 @@ SalaryWaitingWithdraw=Algas gaida samaksu ar pārskaitījumu
 RefSalary=Alga
 NoSalaryInvoiceToWithdraw=Nav algas, kas gaida “%s”. Lai iesniegtu pieprasījumu, atveriet algas kartes cilni %s.
 SalaryInvoiceWaitingWithdraw=Algas gaida samaksu ar pārskaitījumu
-

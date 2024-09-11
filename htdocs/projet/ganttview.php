@@ -2,6 +2,7 @@
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +21,7 @@
 /**
  *	\file       htdocs/projet/ganttview.php
  *	\ingroup    projet
- *	\brief      Gantt diagramm of a project
+ *	\brief      Gantt diagram of a project
  */
 
 require "../main.inc.php";
@@ -42,14 +43,14 @@ $mine = ($mode == 'mine' ? 1 : 0);
 
 $object = new Project($db);
 
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'
 if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && method_exists($object, 'fetchComments') && empty($object->comments)) {
 	$object->fetchComments();
 }
 
 // Security check
 $socid = 0;
-//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
 $result = restrictedArea($user, 'projet', $id, 'projet&project');
 
 // Load translation files required by the page
@@ -85,12 +86,12 @@ if (!empty($conf->use_javascript_ajax)) {
 
 //$title=$langs->trans("Gantt").($object->ref?' - '.$object->ref.' '.$object->name:'');
 $title = $langs->trans("Gantt");
-if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/projectnameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
 	$title = ($object->ref ? $object->ref.' '.$object->name.' - ' : '').$langs->trans("Gantt");
 }
 $help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 
-llxHeader("", $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss);
+llxHeader("", $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', 'mod-project page-card_ganttview');
 
 if (($id > 0 && is_numeric($id)) || !empty($ref)) {
 	// To verify role of users
@@ -112,7 +113,7 @@ if (($id > 0 && is_numeric($id)) || !empty($ref)) {
 
 	if (!empty($_SESSION['pageforbacktolist']) && !empty($_SESSION['pageforbacktolist']['project'])) {
 		$tmpurl = $_SESSION['pageforbacktolist']['project'];
-		$tmpurl = preg_replace('/__SOCID__/', $object->socid, $tmpurl);
+		$tmpurl = preg_replace('/__SOCID__/', (string) $object->socid, $tmpurl);
 		$linkback = '<a href="'.$tmpurl.(preg_match('/\?/', $tmpurl) ? '&' : '?'). 'restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 	} else {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
@@ -130,7 +131,7 @@ if (($id > 0 && is_numeric($id)) || !empty($ref)) {
 	// Define a complementary filter for search of next/prev ref.
 	if (!$user->hasRight('projet', 'all', 'lire')) {
 		$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
-		$object->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0').")";
+		$object->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0').")";
 	}
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -188,7 +189,7 @@ if (($id > 0 && is_numeric($id)) || !empty($ref)) {
 	// Budget
 	print '<tr><td>'.$langs->trans("Budget").'</td><td>';
 	if (!is_null($object->budget_amount) && strcmp($object->budget_amount, '')) {
-		print price($object->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
+		print price($object->budget_amount, 0, $langs, 1, 0, 0, $conf->currency);
 	}
 	print '</td></tr>';
 
@@ -222,7 +223,7 @@ if (($id > 0 && is_numeric($id)) || !empty($ref)) {
 	print '</td></tr>';
 
 	// Categories
-	if (isModEnabled('categorie')) {
+	if (isModEnabled('category')) {
 		print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 		print $form->showCategories($object->id, Categorie::TYPE_PROJECT, 1);
 		print "</td></tr>";
@@ -253,8 +254,8 @@ if ($user->hasRight('projet', 'all', 'creer') || $user->hasRight('projet', 'cree
 
 $linktocreatetask = dolGetButtonTitle($langs->trans('AddTask'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id.'&action=create'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id), '', $linktocreatetaskUserRight, $linktocreatetaskParam);
 
-$linktotasks = dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars paddingleft imgforviewmode', DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id, '', 1, array('morecss'=>'reposition'));
-$linktotasks .= dolGetButtonTitle($langs->trans('ViewGantt'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/projet/ganttview.php?id='.$object->id.'&withproject=1', '', 1, array('morecss'=>'reposition marginleftonly btnTitleSelected'));
+$linktotasks = dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars paddingleft imgforviewmode', DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id, '', 1, array('morecss' => 'reposition'));
+$linktotasks .= dolGetButtonTitle($langs->trans('ViewGantt'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/projet/ganttview.php?id='.$object->id.'&withproject=1', '', 1, array('morecss' => 'reposition marginleftonly btnTitleSelected'));
 
 //print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $totalnboflines, 'generic', 0, '', '', 0, 1);
 print load_fiche_titre($title, $linktotasks.' &nbsp; '.$linktocreatetask, 'projecttask');
@@ -355,14 +356,14 @@ if (count($tasksarray) > 0) {
 		//if ($s) $tasks[$taskcursor]['task_resources']=implode(',',$idofusers);
 		$tasks[$taskcursor]['task_resources'] = $s;
 		if ($s) {
-			$tasks[$taskcursor]['task_resources'] = '<a href="'.DOL_URL_ROOT.'/projet/tasks/contact.php?id='.$val->id.'&withproject=1" title="'.dol_escape_htmltag($s).'">'.$langs->trans("List").'</a>';
+			$tasks[$taskcursor]['task_resources'] = '<a href="'.DOL_URL_ROOT.'/projet/tasks/contact.php?id='.$val->id.'&withproject=1" title="'.dol_escape_htmltag($s).'">'.$langs->trans("Contacts").'</a>';
 		}
 		//print "xxx".$val->id.$tasks[$taskcursor]['task_resources'];
 		$tasks[$taskcursor]['note'] = $task->note_public;
 		$taskcursor++;
 	}
 
-	// Search parent to set task_parent_alternate_id (requird by ganttchart)
+	// Search parent to set task_parent_alternate_id (required by ganttchart)
 	foreach ($tasks as $tmpkey => $tmptask) {
 		foreach ($tasks as $tmptask2) {
 			if ($tmptask2['task_id'] == $tmptask['task_parent']) {
@@ -380,9 +381,9 @@ if (count($tasksarray) > 0) {
 	if (!empty($conf->use_javascript_ajax)) {
 		//var_dump($_SESSION);
 
-		// How the date for data are formated (format used bu jsgantt)
+		// How the date for data are formatted (format used bu jsgantt)
 		$dateformatinput = 'yyyy-mm-dd';
-		// How the date for data are formated (format used by dol_print_date)
+		// How the date for data are formatted (format used by dol_print_date)
 		$dateformatinput2 = 'standard';
 		//var_dump($dateformatinput);
 		//var_dump($dateformatinput2);

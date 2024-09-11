@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2023       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +24,35 @@
 
 
 /**
- *      Superclass for thirdparties, contacts, members or users
+ *      Support class for third parties, contacts, members, users or resources
+ *
+ *
+ * Properties expected in the class the trait is attached to.
+ *
+ * @property int 	$id
+ * @property int 	$contact_id
+ * @property int 	$fk_soc
+ * @property string $civility_code
+ * @property DoliDB	$db
+ * @property string $element
+ * @property string $name
+ * @property string $name_alias
+ * @property string $nom
+ * @property string $company
+ * @property string $firstname
+ * @property string $lastname
+ * @property string $personal_email
+ * @property array<string,string> $socialnetworks
+ * @property string $fax
+ * @property string $office_fax
+ * @property string $office_phone
+ * @property string $phone
+ * @property string $phone_perso
+ * @property string $phone_pro
+ * @property string $phone_mobile
+ * @property string $user_mobile
+ * @property string $country_code
+ * @property string $region
  */
 trait CommonPeople
 {
@@ -43,10 +72,16 @@ trait CommonPeople
 	public $town;
 
 	/**
-	 * @var int		$state_id
+	 * @var int	The state/department
 	 */
-	public $state_id; // The state/department
+	public $state_id;
+	/**
+	 * @var string
+	 */
 	public $state_code;
+	/**
+	 * @var string
+	 */
 	public $state;
 
 	/**
@@ -75,7 +110,7 @@ trait CommonPeople
 		$lastname = $this->lastname;
 		$firstname = $this->firstname;
 		if (empty($lastname)) {
-			$lastname = (isset($this->lastname) ? $this->lastname : (isset($this->name) ? $this->name : (isset($this->nom) ? $this->nom : (isset($this->societe) ? $this->societe : (isset($this->company) ? $this->company : '')))));
+			$lastname = (isset($this->lastname) ? $this->lastname : (isset($this->name) ? $this->name : (property_exists($this, 'nom') && isset($this->nom) ? $this->nom : (property_exists($this, 'societe') && isset($this->societe) ? $this->societe : (property_exists($this, 'company') && isset($this->company) ? $this->company : '')))));
 		}
 
 		$ret = '';
@@ -150,7 +185,7 @@ trait CommonPeople
 			// List of extra languages
 			$arrayoflangcode = array();
 			if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE')) {
-				$arrayoflangcode[] = $conf->global->PDF_USE_ALSO_LANGUAGE_CODE;
+				$arrayoflangcode[] = getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE');
 			}
 
 			if (is_array($arrayoflangcode) && count($arrayoflangcode)) {
@@ -161,7 +196,7 @@ trait CommonPeople
 				$extralanguages->fetch_name_extralanguages($elementforaltlanguage);
 
 				if (!empty($extralanguages->attributes[$elementforaltlanguage]['address']) || !empty($extralanguages->attributes[$elementforaltlanguage]['town'])) {
-					$out .= "<!-- alternatelanguage for '".$elementforaltlanguage."' set to fields '".join(',', $extralanguages->attributes[$elementforaltlanguage])."' -->\n";
+					$out .= "<!-- alternatelanguage for '".$elementforaltlanguage."' set to fields '".implode(',', $extralanguages->attributes[$elementforaltlanguage])."' -->\n";
 					$this->fetchValuesForExtraLanguages();
 					if (!is_object($form)) {
 						$form = new Form($this->db);
@@ -305,4 +340,29 @@ trait CommonPeople
 			$this->personal_email = dol_strtolower($this->personal_email);
 		}
 	}
+
+
+	// Methods used by this Trait that must be implemented in the parent class.
+	// Note: this helps static type checking
+
+	/**
+	 *  Return full address of contact
+	 *
+	 *  @param      int<0,1>    $withcountry        1=Add country into address string
+	 *  @param      string      $sep                Separator to use to build string
+	 *  @param      int<0,1>    $withregion         1=Add region into address string
+	 *  @param      string      $extralangcode      User extralanguages as value
+	 *  @return     string                          Full address string
+	 */
+	abstract public function getFullAddress($withcountry = 0, $sep = "\n", $withregion = 0, $extralangcode = '');
+
+
+	/**
+	 *  Function to get alternative languages of a data into $this->array_languages
+	 *  This method is NOT called by method fetch of objects but must be called separately.
+	 *
+	 *  @return int<-1,1>                   Return integer <0 if error, 0 if no values of alternative languages to find nor found, 1 if a value was found and loaded
+	 *  @see fetch_optionnals()
+	 */
+	abstract public function fetchValuesForExtraLanguages();
 }

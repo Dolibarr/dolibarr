@@ -10,5 +10,4 @@ MaxlevelGreaterThanShort=Nivel superior al esperado
 TypeKnowHow=Saber - Como
 SaveAddSkill =Habilidade(s) agregadas
 SaveLevelSkill =Nivel de habilidade(s) guardadas
-JobsExtraFields=Atributos complementarios (Perfil de trabajo)
 TheJobProfileHasNoSkillsDefinedFixBefore=El perfil de trabajo evaluado de este empleado no tiene la habilidad definida en él.  Por favor agregar habilidade(s), luego eliminar y reiniciar la evaluación

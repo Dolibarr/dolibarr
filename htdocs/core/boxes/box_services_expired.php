@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,17 +34,6 @@ class box_services_expired extends ModeleBoxes
 	public $boximg = "object_contract";
 	public $boxlabel = "BoxOldestExpiredServices";
 	public $depends = array("contrat"); // conf->propal->enabled
-
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 
 	/**
 	 *  Constructor
@@ -85,7 +75,7 @@ class box_services_expired extends ModeleBoxes
 			$sql .= " s.nom as name, s.rowid as socid, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
 			$sql .= " MIN(cd.date_fin_validite) as date_line, COUNT(cd.rowid) as nb_services";
 			$sql .= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe s, ".MAIN_DB_PREFIX."contratdet as cd";
-			if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= " WHERE cd.statut = 4 AND cd.date_fin_validite <= '".$this->db->idate($now)."'";
@@ -94,7 +84,7 @@ class box_services_expired extends ModeleBoxes
 			if ($user->socid) {
 				$sql .= ' AND c.fk_soc = '.((int) $user->socid);
 			}
-			if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			$sql .= " GROUP BY c.rowid, c.ref, c.statut, c.date_contrat, c.ref_customer, c.ref_supplier, s.nom, s.rowid";
@@ -124,6 +114,7 @@ class box_services_expired extends ModeleBoxes
 					$thirdpartytmp->code_client = $objp->code_client;
 					$thirdpartytmp->code_fournisseur = $objp->code_fournisseur;
 					$thirdpartytmp->code_compta = $objp->code_compta;
+					$thirdpartytmp->code_compta_client = $objp->code_compta;
 					$thirdpartytmp->code_compta_fournisseur = $objp->code_compta_fournisseur;
 
 					$contract->id = $objp->rowid;
@@ -152,7 +143,7 @@ class box_services_expired extends ModeleBoxes
 					$this->info_box_contents[$i][] = array(
 						'td' => 'class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateEndPlanned").': '.dol_print_date($dateline, 'dayhour', 'tzuserrel')).'"',
 						'text' => dol_print_date($dateline, 'day', 'tzuserrel'),
-						'text2'=> $late,
+						'text2' => $late,
 					);
 
 					$this->info_box_contents[$i][] = array(
@@ -176,7 +167,7 @@ class box_services_expired extends ModeleBoxes
 			} else {
 				$this->info_box_contents[0][] = array(
 					'td' => '',
-					'maxlength'=>500,
+					'maxlength' => 500,
 					'text' => ($this->db->error().' sql='.$sql),
 				);
 			}
@@ -191,9 +182,9 @@ class box_services_expired extends ModeleBoxes
 	/**
 	 *  Method to show box
 	 *
-	 *  @param	array	$head       Array with properties of box title
-	 *  @param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
+	 *	@param	?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}	$head	Array with properties of box title
+	 *	@param	?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>	$contents	Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *  @return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)

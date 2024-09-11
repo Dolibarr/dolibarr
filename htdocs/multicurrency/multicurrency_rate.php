@@ -12,6 +12,8 @@
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016       Ferran Marcet		    <fmarcet@2byte.es>
  * Copyright (C) 2023       Lenin Rivas		    	<lenin.rivas777@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,31 +47,31 @@ $langs->loadLangs(array('admin', 'multicurrency'));
 // Get Parameters
 $action				= GETPOST('action', 'alpha');
 $massaction			= GETPOST('massaction', 'alpha');
-$show_files			= GETPOST('show_files', 'int');
+$show_files			= GETPOSTINT('show_files');
 $confirm			= GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
-$id_rate_selected = GETPOST('id_rate', 'int');
+$id_rate_selected = GETPOSTINT('id_rate');
 $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
-$search_date_sync = dol_mktime(0, 0, 0, GETPOST('search_date_syncmonth', 'int'), GETPOST('search_date_syncday', 'int'), GETPOST('search_date_syncyear', 'int'));
-$search_date_sync_end	= dol_mktime(0, 0, 0, GETPOST('search_date_sync_endmonth', 'int'), GETPOST('search_date_sync_endday', 'int'), GETPOST('search_date_sync_endyear', 'int'));
+$search_date_sync = dol_mktime(0, 0, 0, GETPOSTINT('search_date_syncmonth'), GETPOSTINT('search_date_syncday'), GETPOSTINT('search_date_syncyear'));
+$search_date_sync_end	= dol_mktime(0, 0, 0, GETPOSTINT('search_date_sync_endmonth'), GETPOSTINT('search_date_sync_endday'), GETPOSTINT('search_date_sync_endyear'));
 $search_rate		= GETPOST('search_rate', 'alpha');
 $search_rate_indirect	= GETPOST('search_rate_indirect', 'alpha');
 $search_code		= GETPOST('search_code', 'alpha');
 $multicurrency_code = GETPOST('multicurrency_code', 'alpha');
-$dateinput 			= dol_mktime(0, 0, 0, GETPOST('dateinputmonth', 'int'), GETPOST('dateinputday', 'int'), GETPOST('dateinputyear', 'int'));
-$rateinput 			= price2num(GETPOST('rateinput', 'alpha'));
-$rateindirectinput 	= price2num(GETPOST('rateinidirectinput', 'alpha'));
+$dateinput 			= dol_mktime(0, 0, 0, GETPOSTINT('dateinputmonth'), GETPOSTINT('dateinputday'), GETPOSTINT('dateinputyear'));
+$rateinput 			= (float) price2num(GETPOST('rateinput', 'alpha'));
+$rateindirectinput 	= (float) price2num(GETPOST('rateinidirectinput', 'alpha'));
 $optioncss 			= GETPOST('optioncss', 'alpha');
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield 			= GETPOST('sortfield', 'aZ09comma');
-$sortorder 			= GETPOST('sortorder', 'aZ09comma');
-$page = (GETPOST("page", 'int') ? GETPOST("page", 'int') : 0);
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
+$page = GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
+$sortfield 			= GETPOST('sortfield', 'aZ09comma');
+$sortorder 			= GETPOST('sortorder', 'aZ09comma');
 if (!$sortfield) {
 	$sortfield = "cr.date_sync";
 }
@@ -80,13 +82,13 @@ $type = '';
 $texte = '';
 $newcardbutton = '';
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new CurrencyRate($db);
 $form = new Form($db);
 $extrafields = new ExtraFields($db);
 
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
 $hookmanager->initHooks(array('EditorRatelist', 'globallist'));
 
 if (empty($action)) {
@@ -95,23 +97,24 @@ if (empty($action)) {
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
-	'cr.date_sync'=>"date_sync",
-	'cr.rate'=>"rate",
-	'cr.rate_indirect'=>"rate_indirect",
-	'm.code'=>"code",
+	'cr.date_sync' => "date_sync",
+	'cr.rate' => "rate",
+	'cr.rate_indirect' => "rate_indirect",
+	'm.code' => "code",
 );
 
 // Definition of fields for lists
 $arrayfields = array(
-	'cr.date_sync'=>array('label'=>'Date', 'checked'=>1),
-	'cr.rate'=>array('label'=>'Rate', 'checked'=>1),
-	'cr.rate_indirect'=>array('label'=>'RateIndirect', 'checked'=>0, 'enabled'=>(!getDolGlobalString('MULTICURRENCY_USE_RATE_INDIRECT') ? 0 : 1)),
-	'm.code'=>array('label'=>'Code', 'checked'=>1),
+	'cr.date_sync' => array('label' => 'Date', 'checked' => 1),
+	'cr.rate' => array('label' => 'Rate', 'checked' => 1),
+	'cr.rate_indirect' => array('label' => 'RateIndirect', 'checked' => 0, 'enabled' => (!getDolGlobalString('MULTICURRENCY_USE_RATE_INDIRECT') ? 0 : 1)),
+	'm.code' => array('label' => 'Code', 'checked' => 1),
 );
 
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
+'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 // Access control
 // TODO Open this page to a given permission so a sale representative can modify change rates. Permission should be added into module multicurrency.
@@ -127,12 +130,12 @@ $error = 0;
  * Actions
  */
 
-if ($action == "create") {
+if ($action == "create" && $user->hasRight('multicurrency', 'currency', 'read')) {
 	if (empty($multicurrency_code) || $multicurrency_code == '-1') {
 		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Currency")), null, "errors");
 		$error++;
 	}
-	if ($rateinput === '0') {
+	if ($rateinput == 0) {
 		setEventMessages($langs->trans('NoEmptyRate'), null, "errors");
 		$error++;
 	} elseif (empty($rateinput)) {
@@ -151,7 +154,7 @@ if ($action == "create") {
 		$currencyRate_static->rate = $rateinput;
 		$currencyRate_static->rate_indirect = $rateindirectinput;
 
-		$result = $currencyRate_static->create(intval($fk_currency));
+		$result = $currencyRate_static->create($user, intval($fk_currency));
 		if ($result > 0) {
 			setEventMessages($langs->trans('successRateCreate', $multicurrency_code), null);
 		} else {
@@ -161,7 +164,7 @@ if ($action == "create") {
 	}
 }
 
-if ($action == 'update') {
+if ($action == 'update' && $user->hasRight('multicurrency', 'currency', 'read')) {
 	$currencyRate = new CurrencyRate($db);
 	$result = $currencyRate->fetch($id_rate_selected);
 	if ($result > 0) {
@@ -170,7 +173,7 @@ if ($action == 'update') {
 		$currencyRate->date_sync = $dateinput;
 		$currencyRate->fk_multicurrency = $fk_currency;
 		$currencyRate->rate = $rateinput;
-		$res = $currencyRate->update();
+		$res = $currencyRate->update($user);
 		if ($res) {
 			setEventMessages($langs->trans('successUpdateRate'), null);
 		} else {
@@ -181,9 +184,9 @@ if ($action == 'update') {
 	}
 }
 
-if ($action == "deleteRate") {
+if ($action == "deleteRate" && $user->hasRight('multicurrency', 'currency', 'read')) {
 	$current_rate = new CurrencyRate($db);
-	$current_rate->fetch(intval($id_rate_selected));
+	$current_rate->fetch((int) $id_rate_selected);
 
 	if ($current_rate) {
 		$current_currency = new MultiCurrency($db);
@@ -206,9 +209,9 @@ if ($action == "deleteRate") {
 	}
 }
 
-if ($action == "confirm_delete") {
+if ($action == "confirm_delete" && $user->hasRight('multicurrency', 'currency', 'read')) {
 	$current_rate = new CurrencyRate($db);
-	$current_rate->fetch(intval($id_rate_selected));
+	$current_rate->fetch((int) $id_rate_selected);
 	if ($current_rate) {
 		$result = $current_rate->delete($user);
 		if ($result) {
@@ -244,7 +247,7 @@ if (empty($reshook)) {
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 		$sall = "";
 		$search_date_sync = "";
-		$search_date_sync_end="";
+		$search_date_sync_end = "";
 		$search_rate = "";
 		$search_code = "";
 		$search_array_options = array();
@@ -405,13 +408,13 @@ if ($resql) {
 		$param = "&search_date_sync=".$search_date_sync;
 	}
 	if ($search_date_sync_end) {
-		$param="&search_date_sync_end=".$search_date_sync_end;
+		$param = "&search_date_sync_end=".$search_date_sync_end;
 	}
 	if ($search_rate) {
 		$param = "&search_rate=".urlencode($search_rate);
 	}
 	if ($search_code != '') {
-		$param.="&search_code=".urlencode($search_code);
+		$param .= "&search_code=".urlencode($search_code);
 	}
 
 	// Add $param from extra fields
@@ -445,7 +448,7 @@ if ($resql) {
 		foreach ($fieldstosearchall as $key => $val) {
 			$fieldstosearchall[$key] = $langs->trans($val);
 		}
-		print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall).join(', ', $fieldstosearchall).'</div>';
+		print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall).implode(', ', $fieldstosearchall).'</div>';
 	}
 
 	// Filter on categories
@@ -506,7 +509,7 @@ if ($resql) {
 	}
 
 	// Fields from hook
-	$parameters = array('arrayfields'=>$arrayfields);
+	$parameters = array('arrayfields' => $arrayfields);
 	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 
@@ -535,7 +538,7 @@ if ($resql) {
 	}
 
 	// Hook fields
-	$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+	$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Action column
@@ -546,7 +549,7 @@ if ($resql) {
 
 	$i = 0;
 	$totalarray = array();
-	$totalarray['nbfield']=0;
+	$totalarray['nbfield'] = 0;
 	while ($i < min($num, $limit)) {
 		$obj = $db->fetch_object($resql);
 
@@ -561,7 +564,7 @@ if ($resql) {
 			print '<td><input class="minwidth200" name="dateinput" value="'. date('Y-m-d', dol_stringtotime($obj->date_sync)) .'" type="date"></td>';
 			print '<td>' . $form->selectMultiCurrency($obj->code, 'multicurrency_code', 1, " code != '".$conf->currency."'", true) . '</td>';
 			print '<td><input type="text" min="0" step="any" class="maxwidth100" name="rateinput" value="' . dol_escape_htmltag($obj->rate) . '">';
-			print '<input type="hidden" name="page" value="'.dol_escape_htmltag($page).'">';
+			print '<input type="hidden" name="page" value="'.dol_escape_htmltag((string) $page).'">';
 			print '<input type="hidden" name="id_rate" value="'.dol_escape_htmltag($obj->rowid).'">';
 			print '<button type="submit" class="button small reposition" name="action" value="update">'.$langs->trans("Modify").'</button>';
 			print '<button type="submit" class="button small reposition" name="action" value="cancel">'.$langs->trans("Cancel").'</button>';
@@ -671,5 +674,5 @@ if ($resql) {
 }
 
 
-	llxFooter();
-	$db->close();
+llxFooter();
+$db->close();

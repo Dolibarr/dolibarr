@@ -6,6 +6,7 @@
  * Copyright (C) 2011-2012  Alexandre spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2013       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,13 +50,16 @@ $date_endyear = GETPOST('date_endyear');
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
+
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(['purchasejournallist']);
+
 if (isModEnabled('comptabilite')) {
 	$result = restrictedArea($user, 'compta', '', '', 'resultat');
 }
 if (isModEnabled('accounting')) {
 	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
 }
-$hookmanager->initHooks(['purchasejournallist']);
 
 /*
  * Actions
@@ -74,9 +78,9 @@ llxHeader('', $langs->trans("PurchasesJournal"), '', '', 0, 0, '', '', $morequer
 
 $form = new Form($db);
 
-$year_current = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
+$year_current = (int) dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 //$pastmonth = strftime("%m", dol_now()) - 1;
-$pastmonth = dol_print_date(dol_now(), "%m") - 1;
+$pastmonth = (int) dol_print_date(dol_now(), "%m") - 1;
 $pastmonthyear = $year_current;
 if ($pastmonth == 0) {
 	$pastmonth = 12;
@@ -182,7 +186,7 @@ if ($result) {
 		}
 		$tablocaltax1[$obj->rowid][$compta_localtax1] += $obj->total_localtax1;
 		$tablocaltax2[$obj->rowid][$compta_localtax2] += $obj->total_localtax2;
-		$tabcompany[$obj->rowid] = array('id'=>$obj->socid, 'name'=>$obj->name);
+		$tabcompany[$obj->rowid] = array('id' => $obj->socid, 'name' => $obj->name);
 
 		$i++;
 	}
@@ -247,7 +251,8 @@ foreach ($tabfac as $key => $val) {
 				print '<tr class="oddeven">';
 				print "<td>".dol_print_date($db->jdate($val["date"]))."</td>";
 				print "<td>".$invoicestatic->getNomUrl(1)."</td>";
-				print "<td>".$k."</td><td>".$line['label']."</td>";
+				print "<td>".$k."</td>";
+				print "<td>".$line['label']."</td>";
 
 				if (isset($line['inv'])) {
 					print '<td class="right">'.($mt < 0 ? price(-$mt) : '')."</td>";

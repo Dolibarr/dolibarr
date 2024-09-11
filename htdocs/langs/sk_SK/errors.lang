@@ -8,7 +8,7 @@ ErrorBadEMail=E-mailová adresa %s je nesprávna
 ErrorBadMXDomain=E-mail %s sa zdá byť nesprávny (doména nemá platný záznam MX)
 ErrorBadUrl=Adresa URL %s je nesprávna
 ErrorBadValueForParamNotAString=Zlá hodnota vášho parametra. Zvyčajne sa pripája, keď chýba preklad.
-ErrorRefAlreadyExists=Reference <b>%s</b> used for creation already exists.
+ErrorRefAlreadyExists=Referencia <b>%s</b> použitá na vytvorenie už existuje.
 ErrorTitleAlreadyExists=Názov <b>%s</b> už existuje.
 ErrorLoginAlreadyExists=Prihlásenie %s už existuje.
 ErrorGroupAlreadyExists=Skupina %s už existuje.
@@ -16,7 +16,7 @@ ErrorEmailAlreadyExists=E-mail %s už existuje.
 ErrorRecordNotFound=Záznam nie je nájdený.
 ErrorRecordNotFoundShort=Nenájdené
 ErrorFailToCopyFile=Nepodarilo sa skopírovať súbor <b>&quot;%s&quot;</b> na <b>&quot;%s&quot;.</b>
-ErrorFailToCopyDir=Nepodarilo sa skopírovať adresár '<b>%s</b> do '<' ='notranslate'><b></span>%s</b>'.
+ErrorFailToCopyDir=Failed to copy directory '<b>%s</b>' into '<b>%s</b>'.
 ErrorFailToRenameFile=Nepodarilo sa premenovať súbor <b>&quot;%s&quot;</b> na <b>&quot;%s&quot;.</b>
 ErrorFailToDeleteFile=Nepodarilo sa odstrániť súbor <b>&quot;%s&quot;.</b>
 ErrorFailToCreateFile=Nepodarilo sa vytvoriť súbor <b>&quot;%s&quot;.</b>
@@ -55,6 +55,8 @@ ErrorFoundBadEmailInFile=Našiel nesprávne email syntaxe %s riadkov v súbore (
 ErrorUserCannotBeDelete=Používateľa nie je možné vymazať. Možno je to spojené s entitami Dolibarr.
 ErrorFieldsRequired=Niektoré povinné polia zostali prázdne.
 ErrorSubjectIsRequired=Predmet e-mailu je povinný
+ErrorInAddAttachmentsImageBaseOnMedia=Error in creating image files into media directory for attachment
+ErrorInAddAttachmentsImageBaseIsSrcData=Error in creating image files (found as data:) into temp directory for attachment
 ErrorFailedToCreateDir=Nepodarilo sa vytvoriť adresár. Uistite sa, že webový server má užívateľ oprávnenie na zápis do adresára dokumentov Dolibarr. Ak je parameter <b>safe_mode</b> je povolené na tomto PHP, skontrolujte, či Dolibarr php súbory, vlastné pre užívateľa webového servera (alebo skupina).
 ErrorNoMailDefinedForThisUser=Žiadna pošta definované pre tohto používateľa
 ErrorSetupOfEmailsNotComplete=Nastavenie e-mailov nie je dokončené
@@ -94,10 +96,10 @@ ErrorRecordIsUsedCantDelete=Záznam sa nedá vymazať. Je už použitý alebo za
 ErrorModuleRequireJavascript=Aby táto funkcia fungovala, nesmie byť zakázaný JavaScript. Ak chcete povoliť/zakázať JavaScript, prejdite do ponuky Domov->Nastavenie->Zobrazenie.
 ErrorPasswordsMustMatch=Obaja napísaný hesla sa musia zhodovať sa navzájom
 ErrorContactEMail=Vyskytla sa technická chyba. Obráťte sa na správcu na nasledujúci e-mail <b>%s</b> a uveďte chybu kód <b>%s</b> do správy alebo pridajte kópiu táto strana.
-ErrorWrongValueForField=Pole <b>%s</b>: '<span class'>'notrans <b></span>%s</b>' nezodpovedá pravidlu regulárneho výrazu <span class='notranslatee8</span>3f36 %s</b>
+ErrorWrongValueForField=Field <b>%s</b>: '<b>%s</b>' does not match regex rule <b>%s</b>
 ErrorHtmlInjectionForField=Pole <b>%s</b>: hodnota '<span class=' '><b></span>%s</b>' obsahuje škodlivé údaje, ktoré nie sú povolené
-ErrorFieldValueNotIn=Pole <b>%s</b>: '<span class'>'notrans <b></span>%s</b>' nie je hodnota nájdená v poli 38365 span><span class='notranslate'>%s</b> z <b><span class='notranslate %s</span></b>
-ErrorFieldRefNotIn=Pole <b>%s</b>: '<span class'>'notrans <b></span>%s</b>' nie je 350aee83 class='notranslate'>%s</b> existujúci ref.
+ErrorFieldValueNotIn=Field <b>%s</b>: '<b>%s</b>' is not a value found in field <b>%s</b> of <b>%s</b>
+ErrorFieldRefNotIn=Field <b>%s</b>: '<b>%s</b>' is not a <b>%s</b> existing ref
 ErrorMultipleRecordFoundFromRef=Pri vyhľadávaní z ref <b>%s</b> sa našlo niekoľko záznamov. Žiadny spôsob, ako zistiť, ktoré ID použiť.
 ErrorsOnXLines=Našli sa %s chyby
 ErrorFileIsInfectedWithAVirus=Antivírusový program nebol schopný overiť súbor (súbor môže byť napadnutý vírusom)
@@ -219,8 +221,8 @@ ErrorPhpMailDelivery=Skontrolujte, či nepoužívate príliš vysoký počet pr�
 ErrorUserNotAssignedToTask=Používateľ musí byť priradený k úlohe, aby mohol zadať spotrebovaný čas.
 ErrorTaskAlreadyAssigned=Úloha je už priradená používateľovi
 ErrorModuleFileSeemsToHaveAWrongFormat=Zdá sa, že balík modulov má nesprávny formát.
-ErrorModuleFileSeemsToHaveAWrongFormat2=V súbore zip modulu musí existovať aspoň jeden povinný adresár: <strong>%s</strong> > alebo <span class='notranslate'><strong>%s</strong>
-ErrorFilenameDosNotMatchDolibarrPackageRules=Názov balíka modulu (<strong>%s</strong>) sa nezhoduje očakávaná syntax názvu: <strong>%s</strong>
+ErrorModuleFileSeemsToHaveAWrongFormat2=At least one mandatory directory must exists into zip of module: <strong>%s</strong> or <strong>%s</strong>
+ErrorFilenameDosNotMatchDolibarrPackageRules=The file name of the module package (<strong>%s</strong>) does not match the expected name syntax: <strong>%s</strong>
 ErrorDuplicateTrigger=Chyba, duplicitný názov spúšťača %s. Už načítané z %s.
 ErrorNoWarehouseDefined=Chyba, nie sú definované žiadne sklady.
 ErrorBadLinkSourceSetButBadValueForRef=Odkaz, ktorý používate, nie je platný. Je definovaný 'zdroj' pre platbu, ale hodnota 'ref' nie je platná.
@@ -260,12 +262,12 @@ ErrorBatchNoFoundEnoughQuantityForProductInWarehouse=Pre túto šaržu/sériu ni
 ErrorOnlyOneFieldForGroupByIsPossible=Je možné len 1 pole pre „Zoskupiť podľa“ (ostatné sú vyradené)
 ErrorTooManyDifferentValueForSelectedGroupBy=Našlo sa príliš veľa rôznych hodnôt (viac ako <b>%s</b>) pole '<b>%s</b>', takže ho nemôžeme použiť ako „Skupina podľa“ pre grafiku. Pole „Skupina podľa“ bolo odstránené. Možno by ste ho chceli použiť ako os X?
 ErrorReplaceStringEmpty=Chyba, reťazec, do ktorého sa má nahradiť, je prázdny
-ErrorProductNeedBatchNumber=Chyba, produkt '<b>%s<span class='notranslate'></b>/serial>' vyžaduje číslo šarže
+ErrorProductNeedBatchNumber=Error, product '<b>%s</b>' need a lot/serial number
 ErrorProductDoesNotNeedBatchNumber=Chyba, produkt '<b>%s</b>' neprijíma sériové číslo
 ErrorFailedToReadObject=Chyba, nepodarilo sa prečítať objekt typu <b>%s</b>
-ErrorParameterMustBeEnabledToAllwoThisFeature=Chyba, parameter <b>%s</b> musí byť povolený v triede <span> 'notranslate'><b></span>conf/conf.php<> na umožnenie použitia rozhrania príkazového riadka interným plánovačom úloh
+ErrorParameterMustBeEnabledToAllwoThisFeature=Chyba, parameter <b>%s</b> musí byť povolený v triede <b>conf/conf.php</b> na umožnenie použitia rozhrania príkazového riadka interným plánovačom úloh
 ErrorLoginDateValidity=Chyba, toto prihlásenie je mimo rozsahu dátumov platnosti
-ErrorValueLength=Dĺžka poľa '<b>%s</b>' musí byť väčšia ako span class='notranslate'><b></span>%s</b>'
+ErrorValueLength=Length of field '<b>%s</b>' must be higher than '<b>%s</b>'
 ErrorReservedKeyword=Slovo '<b>%s</b>' je vyhradené kľúčové slovo
 ErrorFilenameReserved=Názov súboru <b>%s</b> nie je možné použiť tak, ako je vyhradený a chránený príkaz.
 ErrorNotAvailableWithThisDistribution=Nie je k dispozícii s touto distribúciou
@@ -301,7 +303,8 @@ ErrorThirpdartyOrMemberidIsMandatory=Tretia strana alebo člen partnerstva je po
 ErrorFailedToWriteInTempDirectory=Zápis do dočasného adresára zlyhal
 ErrorQuantityIsLimitedTo=Množstvo je obmedzené na %s
 ErrorFailedToLoadThirdParty=Nepodarilo sa nájsť/načítať tretiu stranu z id=%s, email=%s, name= %s
-ErrorThisPaymentModeIsNotSepa=Tento spôsob platby nie je bankový účet
+ErrorThisPaymentModeIsNotDirectDebit=The payment mode is not direct debit
+ErrorThisPaymentModeIsNotCreditTransfer=The payment mode is not credit transfer
 ErrorStripeCustomerNotFoundCreateFirst=Stripe zákazník nie je nastavený pre túto tretiu stranu (alebo nastavený na hodnotu vymazanú na Stripe strane). Najprv ho vytvorte (alebo znova pripojte).
 ErrorCharPlusNotSupportedByImapForSearch=Vyhľadávanie IMAP nedokáže vyhľadať v odosielateľovi alebo príjemcovi reťazec obsahujúci znak +
 ErrorTableNotFound=Tabuľka <b>%s</b> sa nenašla
@@ -315,23 +318,28 @@ ErrorExistingPermission = Povolenie <b>%s</b> pre objekt <span class'>notrans <b
 ErrorFieldExist=Hodnota pre <b>%s</b> už existuje
 ErrorEqualModule=Modul je neplatný v <b>%s</b>
 ErrorFieldValue=Hodnota pre <b>%s</b> je nesprávna
-ErrorCoherenceMenu=<b>%s</b>, keď sa vyžaduje <span class='notranslate <b></span>%s</b> je vľavo
+ErrorCoherenceMenu=<b>%s</b> is required when <b>%s</b> is 'left'
 ErrorUploadFileDragDrop=Pri nahrávaní súboru (súborov) sa vyskytla chyba
 ErrorUploadFileDragDropPermissionDenied=Pri nahrávaní súboru (súborov) sa vyskytla chyba: Povolenie odmietnuté
 ErrorFixThisHere=<a href="%s">Opravte to tu</a>
 ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=Chyba: Adresa URL vašej aktuálnej inštancie (%s) sa nezhoduje s adresou URL definovanou vo vašom prihlasovacom nastavení OAuth2 (%s). Prihlásenie OAuth2 v takejto konfigurácii nie je povolené.
 ErrorMenuExistValue=Ponuka s týmto názvom alebo adresou URL už existuje
 ErrorSVGFilesNotAllowedAsLinksWithout=Súbory SVG nie sú povolené ako externé odkazy bez možnosti %s
-ErrorTypeMenu=Nie je možné pridať ďalšie menu pre rovnaký modul na navigačnú lištu, zatiaľ nie je možné spracovať
+ErrorTypeMenu=Impossible to add another menu for the same module on the navbar, not handled yet
+ErrorGeneratingBarcode=Error while generating the barcode (probably invalid code shape)
 ErrorObjectNotFound = Objekt <b>%s</b> sa nenašiel, skontrolujte svoju adresu URL
 ErrorCountryCodeMustBe2Char=Kód krajiny musí byť 2-znakový reťazec
-ErrorABatchShouldNotContainsSpaces=A lot or serial number should not contains spaces
-
+ErrorABatchShouldNotContainsSpaces=Číslo šarže alebo sériové číslo by nemalo obsahovať medzery
 ErrorTableExist=Tabuľka <b>%s</b> už existuje
 ErrorDictionaryNotFound=Slovník <b>%s</b> sa nenašiel
 ErrorFailedToCreateSymLinkToMedias=Nepodarilo sa vytvoriť symbolický odkaz %s smerujúci na %s
 ErrorCheckTheCommandInsideTheAdvancedOptions=V rozšírených možnostiach exportu skontrolujte príkaz použitý na export
-
+ErrorEndTimeMustBeGreaterThanStartTime=End time must be greater than start time
+ErrorIncoherentDates=Start date must be earlier than end date
+ErrorEndHourIsNull=End date field cannot be empty
+ErrorStartHourIsNull=Start date field cannot be empty
+ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter=Too many lines to process. Please use a more selective filter.
+ErrorEmptyValueForQty=Quantity cannot be zero.
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Váš parameter PHP upload_max_filesize (%s) je vyšší ako parameter PHP post_max_size (%s). Toto nie je konzistentné nastavenie.
 WarningPasswordSetWithNoAccount=Pre tohto člena bolo nastavené heslo. Nebol však vytvorený žiadny používateľský účet. Takže toto heslo je uložené, ale nedá sa použiť na prihlásenie do Dolibarr. Môže byť použitý externým modulom/rozhraním, ale ak nepotrebujete definovať žiadne prihlasovacie meno ani heslo pre člena, môžete vypnúť možnosť „Spravovať prihlásenie pre každého člena“ v nastaveniach modulu člena. Ak potrebujete spravovať prihlásenie, ale nepotrebujete žiadne heslo, môžete toto pole ponechať prázdne, aby ste sa vyhli tomuto varovaniu. Poznámka: E-mail možno použiť aj ako prihlasovacie meno, ak je člen prepojený s používateľom.
@@ -344,6 +352,7 @@ WarningConfFileMustBeReadOnly=Pozor, môže váš konfiguračný súbor <b>(htdo
 WarningsOnXLines=Upozornenie na <b>%s</b> zdrojovom zázname (s)
 WarningNoDocumentModelActivated=Nebol aktivovaný žiadny model na generovanie dokumentov. Predvolene sa vyberie model, kým neskontrolujete nastavenie modulu.
 WarningLockFileDoesNotExists=Upozornenie, po dokončení inštalácie musíte vypnúť inštalačné/migračné nástroje pridaním súboru <b>install.lock</b> do adresára <b>%s</b>. Vynechanie vytvorenia tohto súboru predstavuje vážne bezpečnostné riziko.
+WarningUpgradeHasBeenUnlocked=Warning, upgrade process has been unlocked for everybody
 WarningUntilDirRemoved=Toto bezpečnostné varovanie zostane aktívne, kým bude prítomná zraniteľnosť.
 WarningCloseAlways=Pozor, zatváranie sa vykonáva, aj keď suma líši zdrojových a cieľových prvkov. Povoľte túto funkciu so zvýšenou opatrnosťou.
 WarningUsingThisBoxSlowDown=Upozornenie Pri použití tohto políčka spomaliť vážne všetky stránky zobrazujúce krabici.
@@ -366,23 +375,25 @@ WarningCreateSubAccounts=Upozornenie, podúčet nemôžete vytvoriť priamo, mus
 WarningAvailableOnlyForHTTPSServers=Dostupné iba pri použití zabezpečeného pripojenia HTTPS.
 WarningModuleXDisabledSoYouMayMissEventHere=Modul %s nebol povolený. Takže tu môžete zmeškať veľa udalostí.
 WarningPaypalPaymentNotCompatibleWithStrict=Hodnota 'Strict' spôsobuje, že funkcie online platieb nefungujú správne. Namiesto toho použite „Lax“.
-WarningThemeForcedTo=Upozornenie, motív bol vynútený <b>%s<span class='notranslate'></b> MAIN_FORHEC skrytými konštantami MAIN_FORHEC
+WarningThemeForcedTo=Warning, theme has been forced to <b>%s</b> by hidden constant MAIN_FORCETHEME
 WarningPagesWillBeDeleted=Upozornenie, týmto sa odstránia aj všetky existujúce stránky/kontajnery webovej lokality. Svoju webovú stránku by ste mali exportovať predtým, aby ste mali zálohu, ktorú môžete neskôr znova importovať.
 WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=Automatická validácia je vypnutá, keď je možnosť zníženia zásob nastavená na "Overenie faktúry".
 WarningModuleNeedRefresh = Modul <b>%s</b> bol zakázaný. Nezabudnite ho povoliť
 WarningPermissionAlreadyExist=Existujúce povolenia pre tento objekt
 WarningGoOnAccountancySetupToAddAccounts=Ak je tento zoznam prázdny, prejdite do ponuky %s - %s - %s na načítanie alebo vytvorenie účtov pre vašu účtovú osnovu.
 WarningCorrectedInvoiceNotFound=Opravená faktúra sa nenašla
-WarningCommentNotFound=Skontrolujte umiestnenie úvodných a koncových komentárov pre sekciu <b>%s</b> v súbor <b>%s</b> pred odoslaním akcie
+WarningCommentNotFound=Warning: Can't find the start and/or end comments for the section <b>%s</b> into the file <b>%s</b>
 WarningAlreadyReverse=Pohyb zásob je už obrátený
-
+WarningParentIDDoesNotExistAnymore=This parent ID does not exists anymore
+WarningReadBankAlsoAllowedIfUserHasPermission=Warning, reading bank account is also allowed with the permission to Manage chart of account
+WarningNoDataTransferedInAccountancyYet=Please note, there is no data in the accounting table. Please transfer your data recorded in the application to the accounting section or change the calculation mode to analyze the data recorded outside of accounting.
+WarningChangingThisMayBreakStopTaskScheduler=Warning, changing this value may disable the scheduler
 SwissQrOnlyVIR = Faktúru SwissQR je možné pridať iba na faktúry nastavené na úhradu prevodom.
 SwissQrCreditorAddressInvalid = Adresa veriteľa je neplatná (je nastavené PSČ a mesto? (%s)
 SwissQrCreditorInformationInvalid = Informácie o veriteľovi sú neplatné pre IBAN (%s): %s
 SwissQrIbanNotImplementedYet = QR-IBAN zatiaľ nie je implementovaný
 SwissQrPaymentInformationInvalid = Platobné informácie boli neplatné pre celkovú sumu %s : %s
 SwissQrDebitorAddressInvalid = Informácie o dlžníkovi boli neplatné (%s)
-
 # Validate
 RequireValidValue = Hodnota nie je platná
 RequireAtLeastXString = Vyžaduje sa aspoň %s znakov
@@ -404,10 +415,11 @@ BadSetupOfFieldClassNotFoundForValidation = Chyba zlého nastavenia poľa: Tried
 BadSetupOfFieldFileNotFound = Chyba zlého nastavenia poľa: nenašiel sa súbor na zahrnutie
 BadSetupOfFieldFetchNotCallable = Chyba zlého nastavenia poľa: Načítanie v triede nie je možné zavolať
 ErrorTooManyAttempts= Príliš veľa pokusov, skúste to znova neskôr
-
-TotalAmountEmpty=Total Amount Empty
-FailedToFoundTheConversionRateForInvoice=Failed to found the conversion rate for invoice
-ThisIdNotDefined=Id not defined
-OperNotDefined=Payment method not defined
-ErrorThisContactXIsAlreadyDefinedAsThisType=%s is already defined as contact for this type.
-ErrorThisGroupIsAlreadyDefinedAsThisType=The contacts with this group are already defined as contact for this type.
+TotalAmountEmpty=Celková suma Prázdna
+FailedToFoundTheConversionRateForInvoice=Konverzný kurz pre faktúru sa nepodarilo nájsť
+ThisIdNotDefined=Id nie je definované
+OperNotDefined=Spôsob platby nie je definovaný
+ErrorThisContactXIsAlreadyDefinedAsThisType=%s je už definovaný ako kontakt pre tento typ.
+ErrorThisGroupIsAlreadyDefinedAsThisType=Kontakty s touto skupinou sú už definované ako kontakt pre tento typ.
+EmptyMessageNotAllowedError=Empty message is not allowed
+ErrorIsNotInError=%s is not in error

@@ -243,9 +243,9 @@ function getDocument($authentication, $modulepart, $file, $refname = '')
 	}
 
 	if (!$error) {
-		$fuser->getrights();
+		$fuser->loadRights();
 
-		// Suppression de la chaine de caractere ../ dans $original_file
+		// Suppression de la chaine de character ../ dans $original_file
 		$original_file = str_replace("../", "/", $original_file);
 
 		// find the subdirectory name as the reference
@@ -279,7 +279,7 @@ function getDocument($authentication, $modulepart, $file, $refname = '')
 		}
 
 		// Security:
-		// Limite acces si droits non corrects
+		// Limit access si droits non corrects
 		if (!$accessallowed) {
 			$errorcode = 'NOT_PERMITTED';
 			$errorlabel = 'Access not allowed';

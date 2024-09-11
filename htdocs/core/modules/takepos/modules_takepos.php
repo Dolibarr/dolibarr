@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2012 Philippe Grand	    <philippe.grand@atoo-net.com>
  * Copyright (C) 2020      Open-DSI	            <support@open-dsi.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,9 +31,24 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonnumrefgenerator.class.php';
 
 
 /**
- *  Classe mere des modeles de numerotation des tickets de caisse
+ *  Parent Class of the models to number the cash register receipts
  */
 abstract class ModeleNumRefTakepos extends CommonNumRefGenerator
 {
-	// No overload code
+	/**
+	 * Return next free value
+	 *
+	 * @param	?Societe	$objsoc		Object third party
+	 * @param	?Facture	$invoice	Object invoice
+	 * @param	string		$mode		'next' for next value or 'last' for last value
+	 * @return	string|int<-1,0>		Next ref value or last ref if $mode is 'last'
+	 */
+	abstract public function getNextValue($objsoc = null, $invoice = null, $mode = 'next');
+
+	/**
+	 *  Return an example of numbering
+	 *
+	 *  @return     string      Example
+	 */
+	abstract public function getExample();
 }

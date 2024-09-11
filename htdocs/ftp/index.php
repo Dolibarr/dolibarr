@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2008-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2009  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,12 +33,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ftp.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'other'));
 
-// Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'ftp', '');
-
 // Get parameters
 $action = GETPOST('action', 'aZ09');
 $section = GETPOST('section');
@@ -54,10 +48,10 @@ $confirm = GETPOST('confirm');
 $upload_dir = $conf->ftp->dir_temp;
 $download_dir = $conf->ftp->dir_temp;
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -85,20 +79,25 @@ if (empty($ftp_port)) {
 }
 $ftp_user = getDolGlobalString($s_ftp_user);
 $ftp_password = getDolGlobalString($s_ftp_password);
-$ftp_passive = getDolGlobalString($s_ftp_passive);
+$ftp_passive = getDolGlobalInt($s_ftp_passive);
 
 // For result on connection
 $ok = 0;
 $conn_id = null; // FTP connection ID
 $mesg = '';
 
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'ftp', '');
 
 
 /*
  * ACTIONS
  */
 
-if ($action == 'uploadfile') {
+if ($action == 'uploadfile' && $user->hasRight('ftp', 'write')) {
 	// set up a connection or die
 	if (!$conn_id) {
 		$newsectioniso = mb_convert_encoding($section, 'ISO-8859-1');
@@ -124,11 +123,11 @@ if ($action == 'uploadfile') {
 		}
 		$action = '';
 	} else {
-		dol_print_error('', $mesg);
+		dol_print_error(null, $mesg);
 	}
 }
 
-if ($action == 'addfolder') {
+if ($action == 'addfolder' && $user->hasRight('ftp', 'write')) {
 	// set up a connection or die
 	if (!$conn_id) {
 		$newsectioniso = mb_convert_encoding($section, 'ISO-8859-1');
@@ -148,12 +147,12 @@ if ($action == 'addfolder') {
 		}
 		$action = '';
 	} else {
-		dol_print_error('', $mesg);
+		dol_print_error(null, $mesg);
 	}
 }
 
 // Action ajout d'un rep
-if ($action == 'add' && $user->hasRight('ftp', 'setup')) {
+if ($action == 'add' && $user->hasRight('ftp', 'write')) {
 	$ecmdir = new EcmDirectory($db);
 	$ecmdir->ref                = GETPOST("ref");
 	$ecmdir->label              = GETPOST("label");
@@ -170,7 +169,7 @@ if ($action == 'add' && $user->hasRight('ftp', 'setup')) {
 }
 
 // Remove 1 file
-if ($action == 'confirm_deletefile' && GETPOST('confirm') == 'yes') {
+if ($action == 'confirm_deletefile' && GETPOST('confirm') == 'yes' && $user->hasRight('ftp', 'write')) {
 	// set up a connection or die
 	if (!$conn_id) {
 		$newsectioniso = mb_convert_encoding($section, 'ISO-8859-1');
@@ -193,12 +192,12 @@ if ($action == 'confirm_deletefile' && GETPOST('confirm') == 'yes') {
 
 		$action = '';
 	} else {
-		dol_print_error('', $mesg);
+		dol_print_error(null, $mesg);
 	}
 }
 
 // Delete several lines at once
-if (GETPOST("const", 'array') && GETPOST("delete") && GETPOST("delete") == $langs->trans("Delete")) {
+if (GETPOST("const", 'array') && GETPOST("delete") && GETPOST("delete") == $langs->trans("Delete") && $user->hasRight('ftp', 'write')) {
 	// set up a connection or die
 	if (!$conn_id) {
 		$newsectioniso = mb_convert_encoding($section, 'ISO-8859-1');
@@ -232,12 +231,12 @@ if (GETPOST("const", 'array') && GETPOST("delete") && GETPOST("delete") == $lang
 			}
 		}
 	} else {
-		dol_print_error('', $mesg);
+		dol_print_error(null, $mesg);
 	}
 }
 
 // Remove directory
-if ($action == 'confirm_deletesection' && $confirm == 'yes') {
+if ($action == 'confirm_deletesection' && $confirm == 'yes' && $user->hasRight('ftp', 'write')) {
 	// set up a connection or die
 	if (!$conn_id) {
 		$newsectioniso = mb_convert_encoding($section, 'ISO-8859-1');
@@ -262,12 +261,12 @@ if ($action == 'confirm_deletesection' && $confirm == 'yes') {
 
 		$action = '';
 	} else {
-		dol_print_error('', $mesg);
+		dol_print_error(null, $mesg);
 	}
 }
 
 // Download directory
-if ($action == 'download') {
+if ($action == 'download' && $user->hasRight('ftp', 'read')) {
 	// set up a connection or die
 	if (!$conn_id) {
 		$newsectioniso = mb_convert_encoding($section, 'ISO-8859-1');
@@ -321,13 +320,11 @@ if ($action == 'download') {
 			setEventMessages($langs->transnoentitiesnoconv('FailedToGetFile', $file), null, 'errors');
 		}
 	} else {
-		dol_print_error('', $mesg);
+		dol_print_error(null, $mesg);
 	}
 
 	//ftp_close($conn_id);	Close later
 }
-
-
 
 
 /*
@@ -390,8 +387,8 @@ if (!function_exists('ftp_connect')) {
 		print $langs->trans("Server").': <b>'.$ftp_server.'</b><br>';
 		print $langs->trans("Port").': <b>'.$ftp_port.'</b> '.($ftp_passive ? "(Passive)" : "(Active)").'<br>';
 		print $langs->trans("User").': <b>'.$ftp_user.'</b><br>';
-		print $langs->trans("FTPs (FTP over SSH)").': <b>'.yn($conf->global->FTP_CONNECT_WITH_SSL).'</b><br>';
-		print $langs->trans("SFTP (FTP as a subsytem of SSH)").': <b>'.yn($conf->global->FTP_CONNECT_WITH_SFTP).'</b><br>';
+		print $langs->trans("FTPs (FTP over SSH)").': <b>'.yn(getDolGlobalString('FTP_CONNECT_WITH_SSL')).'</b><br>';
+		print $langs->trans("SFTP (FTP as a subsystem of SSH)").': <b>'.yn(getDolGlobalString('FTP_CONNECT_WITH_SFTP')).'</b><br>';
 		print $langs->trans("Directory").': ';
 		$sectionarray = preg_split('|[\/]|', $section);
 		// For /
@@ -611,13 +608,6 @@ if (!function_exists('ftp_connect')) {
 
 
 		// Actions
-		/*
-		if ($user->rights->ftp->write && !empty($section))
-		{
-		$formfile->form_attach_new_file(DOL_URL_ROOT.'/ftp/index.php','',0,$section,1);
-		}
-		else print '&nbsp;';
-		*/
 
 		print '<br>';
 		print '<div id="delconst" class="right">';

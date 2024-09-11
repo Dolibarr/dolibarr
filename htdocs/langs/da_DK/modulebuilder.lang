@@ -148,7 +148,7 @@ CSSListClass=CSS til liste
 NotEditable=Ikke redigerbar
 ForeignKey=Fremmed nøgle
 ForeignKeyDesc=Hvis værdien af dette felt skal garanteres at eksistere i en anden tabel. Indtast her en værdi, der matcher syntaks: tablename.parentfieldtocheck
-TypeOfFieldsHelp=Eksempel:<br>varchar(99)<br>e-mail<br>telefon<br>ip<br>url<br>adgangskodefzcc</03492 span>double(24,8)<span class='notranslate'><br>real<br>text<br>html <br>date<br>datetime<br>tidsstempel <br>integer<br>integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]b0342fccfda19b /span><span class='notranslate'><br>'1' betyder, at vi tilføjer en +-knap efter kombinationen for at oprette posten<br>'filter' er et Universal Filter-syntaksbetingelse, eksempel: '((status:=:1) AND (fk_user:=:__USER_ID__) AND (entity:IN:(__SHARED_ENTITIES__))'
+TypeOfFieldsHelp=Example:<br>varchar(99)<br>email<br>phone<br>ip<br>url<br>password<br>double(24,8)<br>real<br>text<br>html<br>date<br>datetime<br>timestamp<br>integer<br>integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br><br>'1' means we add a + button after the combo to create the record<br>'filter' is an Universal Filter syntax condition, example: '((status:=:1) AND (fk_user:=:__USER_ID__) AND (entity:IN:(__SHARED_ENTITIES__))'
 TypeOfFieldsHelpIntro=Dette er typen af feltet/attributten.
 AsciiToHtmlConverter=Ascii til HTML-konverter
 AsciiToPdfConverter=Ascii til PDF konverter
@@ -173,6 +173,7 @@ PermissionAddedSuccesfuly=Tilladelsen er blevet tilføjet
 MenuDeletedSuccessfuly=Menuen er blevet slettet
 MenuAddedSuccessfuly=Menuen er blevet tilføjet
 MenuUpdatedSuccessfuly=Menuen er blevet opdateret
+AddAPIsForThisObject=Tilføj API'er for dette objekt
 ApiObjectDeleted=API for objekt %s er blevet slettet
 CRUDRead=Læs
 CRUDCreateWrite=Opret eller opdater
@@ -180,7 +181,7 @@ FailedToAddCodeIntoDescriptor=Kunne ikke tilføje kode i beskrivelsen. Tjek, at 
 DictionariesCreated=Ordbog <b> %s </b> oprettet med succes
 DictionaryDeleted=Ordbog <b> %s </b> fjernet med succes
 PropertyModuleUpdated=Ejendommen <b> %s </b> er blevet opdateret.
-InfoForApiFile=* Når du genererer fil for første gang, vil alle metoder blive oprettet <strong>for hvert objekt.</strong><br>* Når du klikker i <strong>remove</strong> fjerner du bare alle klassemetoder for <span ='notranslate'><strong></span>valgt objekt</strong>.
+InfoForApiFile=* When you generate file for the first time then all methods will be created <strong>for each object.</strong><br>* When you click in <strong>remove</strong> you just remove all methods for the <strong>selected object</strong>.
 SetupFile=Side for modulopsætning
 EmailingSelectors=E-mail-vælgere
 EmailingSelectorDesc=Du kan generere og redigere klassefilerne her for at give nye e-mail-målvælgere til masse-e-mail-modulet

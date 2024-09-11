@@ -1,10 +1,13 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2018      Ferran Marcet		<fmarcet@2byte.es>
- * Copyright (C) 2020      Tobias Sekan			<tobias.sekan@startmail.com>
+/* Copyright (C) 2001-2005	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2019	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
+ * Copyright (C) 2018		Ferran Marcet				<fmarcet@2byte.es>
+ * Copyright (C) 2020		Tobias Sekan				<tobias.sekan@startmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,18 +31,18 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
 if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 }
 if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 }
-if (isModEnabled('categorie')) {
+if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
@@ -48,7 +51,7 @@ $langs->loadLangs(array('banks', 'categories', 'accountancy', 'compta'));
 
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
-$show_files = GETPOST('show_files', 'int');
+$show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'bankaccountlist'; // To manage different context of search
@@ -57,11 +60,11 @@ $mode = GETPOST('mode', 'aZ');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
 $search_number = GETPOST('search_number', 'alpha');
-$search_status = GETPOST('search_status') ? GETPOST('search_status', 'alpha') : 'opened'; // 'all' or ''='opened'
+$search_status = GETPOST('search_status', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 
-$search_category_list ="";
-if (isModEnabled('categorie')) {
+$search_category_list = "";
+if (isModEnabled('category')) {
 	$search_category_list = GETPOST("search_category_".Categorie::TYPE_ACCOUNT."_list", "array");
 }
 
@@ -73,10 +76,10 @@ if ($user->socid) {
 
 $diroutputmassaction = $conf->bank->dir_output.'/temp/massgeneration/'.$user->id;
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -90,7 +93,7 @@ if (!$sortorder) {
 	$sortorder = 'ASC';
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Account($db);
 $extrafields = new ExtraFields($db);
 $hookmanager->initHooks(array('bankaccountlist'));
@@ -101,33 +104,34 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
-	'b.ref'=>'Ref',
-	'b.label'=>'Label',
+	'b.ref' => 'Ref',
+	'b.label' => 'Label',
 );
 
 $checkedtypetiers = 0;
 $arrayfields = array(
-	'b.ref'=>array('label'=>$langs->trans("BankAccounts"), 'checked'=>1, 'position'=>10),
-	'b.label'=>array('label'=>$langs->trans("Label"), 'checked'=>1, 'position'=>12),
-	'accountype'=>array('label'=>$langs->trans("Type"), 'checked'=>1, 'position'=>14),
-	'b.number'=>array('label'=>$langs->trans("AccountIdShort"), 'checked'=>1, 'position'=>16),
-	'b.account_number'=>array('label'=>$langs->trans("AccountAccounting"), 'checked'=>(isModEnabled('accounting')), 'position'=>18),
-	'b.fk_accountancy_journal'=>array('label'=>$langs->trans("AccountancyJournal"), 'checked'=>(isModEnabled('accounting')), 'position'=>20),
-	'toreconcile'=>array('label'=>$langs->trans("TransactionsToConciliate"), 'checked'=>1, 'position'=>50),
-	'b.currency_code'=>array('label'=>$langs->trans("Currency"), 'checked'=>0, 'position'=>22),
-	'b.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
-	'b.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
-	'b.clos'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
-	'balance'=>array('label'=>$langs->trans("Balance"), 'checked'=>1, 'position'=>1010),
+	'b.ref' => array('label' => $langs->trans("BankAccounts"), 'checked' => 1, 'position' => 10),
+	'b.label' => array('label' => $langs->trans("Label"), 'checked' => 1, 'position' => 12),
+	'accountype' => array('label' => $langs->trans("Type"), 'checked' => 1, 'position' => 14),
+	'b.number' => array('label' => $langs->trans("AccountIdShort"), 'checked' => 1, 'position' => 16),
+	'b.account_number' => array('label' => $langs->trans("AccountAccounting"), 'checked' => (isModEnabled('accounting')), 'position' => 18),
+	'b.fk_accountancy_journal' => array('label' => $langs->trans("AccountancyJournal"), 'checked' => (isModEnabled('accounting')), 'position' => 20),
+	'toreconcile' => array('label' => $langs->trans("TransactionsToConciliate"), 'checked' => 1, 'position' => 50),
+	'b.currency_code' => array('label' => $langs->trans("Currency"), 'checked' => 0, 'position' => 22),
+	'b.datec' => array('label' => $langs->trans("DateCreation"), 'checked' => 0, 'position' => 500),
+	'b.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => 0, 'position' => 500),
+	'b.clos' => array('label' => $langs->trans("Status"), 'checked' => 1, 'position' => 1000),
+	'balance' => array('label' => $langs->trans("Balance"), 'checked' => 1, 'position' => 1010),
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
+'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
-$permissiontoadd = $user->rights->banque->modifier;
-$permissiontodelete = $user->rights->banque->configurer;
+$permissiontoadd = $user->hasRight('banque', 'modifier');
+$permissiontodelete = $user->hasRight('banque', 'configurer');
 
 $allowed = 0;
 if ($user->hasRight('accounting', 'chartofaccount')) {
@@ -150,7 +154,7 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
-$parameters = array('socid'=>$socid);
+$parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -190,7 +194,7 @@ $accounts = array();
 
 // Build and execute select
 // --------------------------------------------------------------------
-$sql = "SELECT b.rowid, b.label, b.courant, b.rappro, b.account_number, b.fk_accountancy_journal, b.currency_code, b.datec as date_creation, b.tms as date_update";
+$sql = "SELECT b.rowid, b.label, b.courant, b.rappro, b.account_number, b.fk_accountancy_journal, b.currency_code, b.datec as date_creation, b.tms as date_modification";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -210,10 +214,10 @@ if (!empty($extrafields->attributes[$object->table_element]['label']) && is_arra
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (b.rowid = ef.fk_object)";
 }
 $sql .= " WHERE b.entity IN (".getEntity('bank_account').")";
-if ($search_status == 'opened') {
+if ($search_status === 'opened') {
 	$sql .= " AND clos = 0";
 }
-if ($search_status == 'closed') {
+if ($search_status === 'closed') {
 	$sql .= " AND clos = 1";
 }
 if ($search_ref != '') {
@@ -305,7 +309,7 @@ if ($resql) {
 
 
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
 
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
@@ -332,11 +336,11 @@ if ($search_label != '') {
 if ($search_number != '') {
 	$param .= '&search_number='.urlencode($search_number);
 }
-if ($search_status != '') {
+if ($search_status != '' && $search_status != '-1') {
 	$param .= '&search_status='.urlencode($search_status);
 }
 if ($show_files) {
-	$param .= '&show_files='.urlencode($show_files);
+	$param .= '&show_files='.urlencode((string) ($show_files));
 }
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -378,8 +382,8 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 
 $newcardbutton  = '';
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewFinancialAccount'), '', 'fa fa-plus-circle', 'card.php?action=create', '', $user->hasRight('banque', 'configurer'));
 
@@ -400,7 +404,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 $moreforfilter = '';
 
-if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
+if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 	$moreforfilter .= $form->getFilterBox(Categorie::TYPE_ACCOUNT, $search_category_list);
 }
 
@@ -423,10 +427,11 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')) : ''); // This also change content of $arrayfields
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
-print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 // Fields title search
@@ -486,7 +491,7 @@ if (!empty($arrayfields['b.currency_code']['checked'])) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 // Fields from hook
-$parameters = array('arrayfields'=>$arrayfields);
+$parameters = array('arrayfields' => $arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Date creation
@@ -503,8 +508,8 @@ if (!empty($arrayfields['b.tms']['checked'])) {
 if (!empty($arrayfields['b.clos']['checked'])) {
 	print '<td class="liste_titre center parentonrightofpage">';
 	$array = array(
-		'opened'=>$langs->trans("Opened"),
-		'closed'=>$langs->trans("Closed")
+		'opened' => $langs->trans("Opened"),
+		'closed' => $langs->trans("Closed")
 	);
 	print $form->selectarray("search_status", $array, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'search_status minwidth75 maxwidth125 onrightofpage', 1);
 	print '</td>';
@@ -568,7 +573,7 @@ if (!empty($arrayfields['toreconcile']['checked'])) {
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
-$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (!empty($arrayfields['b.datec']['checked'])) {
@@ -601,7 +606,7 @@ $i = 0;
 $savnbfield = $totalarray['nbfield'];
 $totalarray = array();
 $totalarray['nbfield'] = 0;
-$totalarray['val'] = array('balance'=>0);
+$totalarray['val'] = array('balance' => 0);
 $total = array();
 $found = 0;
 $lastcurrencycode = '';
@@ -703,7 +708,7 @@ foreach ($accounts as $key => $type) {
 			print '<td class="tdoverflowmax250">';
 			if (isModEnabled('accounting') && !empty($objecttmp->account_number)) {
 				$accountingaccount = new AccountingAccount($db);
-				$accountingaccount->fetch('', $objecttmp->account_number, 1);
+				$accountingaccount->fetch(0, $objecttmp->account_number, 1);
 				print '<span title="'.dol_escape_htmltag($accountingaccount->account_number.' - '.$accountingaccount->label).'">';
 				print $accountingaccount->getNomUrl(0, 1, 1, '', 0);
 				print '</span>';
@@ -796,10 +801,12 @@ foreach ($accounts as $key => $type) {
 			foreach ($objecttmp->array_options as $k => $v) {
 				$obj->$k = $v;
 			}
+		} else {
+			$obj = null;
 		}
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
-		$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
+		$parameters = array('arrayfields' => $arrayfields, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $objecttmp, $action); // Note that $action and $objecttmpect may have been modified by hook
 		print $hookmanager->resPrint;
 		// Date creation
@@ -814,7 +821,7 @@ foreach ($accounts as $key => $type) {
 		// Date modification
 		if (!empty($arrayfields['b.tms']['checked'])) {
 			print '<td class="center nowraponall">';
-			print dol_print_date($objecttmp->date_update, 'dayhour');
+			print dol_print_date($objecttmp->date_modification, 'dayhour');
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

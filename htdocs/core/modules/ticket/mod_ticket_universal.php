@@ -1,5 +1,7 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin  <regis.houssin@inodbox.com>
+/* Copyright (C) 2010       Regis Houssin               <regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +33,7 @@ class mod_ticket_universal extends ModeleNumRefTicket
 {
 	/**
 	 *  Dolibarr version of the loaded document
-	 *  @var string
+	 *  @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr';  // 'development', 'experimental', 'dolibarr'
 
@@ -67,31 +69,32 @@ class mod_ticket_universal extends ModeleNumRefTicket
 
 		$form = new Form($db);
 
-		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
-		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
-		$texte .= '<input type="hidden" name="action" value="updateMask">';
-		$texte .= '<input type="hidden" name="maskconstticket" value="TICKET_UNIVERSAL_MASK">';
-		$texte .= '<table class="nobordernopadding" width="100%">';
+		$text = $langs->trans('GenericNumRefModelDesc')."<br>\n";
+		$text .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+		$text .= '<input type="hidden" name="token" value="'.newToken().'">';
+		$text .= '<input type="hidden" name="action" value="updateMask">';
+		$text .= '<input type="hidden" name="maskconstticket" value="TICKET_UNIVERSAL_MASK">';
+		$text .= '<table class="nobordernopadding" width="100%">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Ticket"), $langs->transnoentities("Ticket"));
 		$tooltip .= $langs->trans("GenericMaskCodes2");
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Ticket"), $langs->transnoentities("Ticket"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
+		//$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
 		// Prefix settings
-		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskticket" value="'.getDolGlobalString("TICKET_UNIVERSAL_MASK").'">', $tooltip, 1, 1).'</td>';
+		$text .= '<tr><td>'.$langs->trans("Mask").':</td>';
+		$text .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskticket" value="'.getDolGlobalString("TICKET_UNIVERSAL_MASK").'">', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="'.$langs->trans("Modify").'"></td>';
+		$text .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
-		$texte .= '</tr>';
+		$text .= '</tr>';
 
-		$texte .= '</table>';
-		$texte .= '</form>';
+		$text .= '</table>';
+		$text .= '</form>';
 
-		return $texte;
+		return $text;
 	}
 
 	/**
@@ -101,29 +104,35 @@ class mod_ticket_universal extends ModeleNumRefTicket
 	 */
 	public function getExample()
 	{
-		global $conf, $langs, $mysoc;
+		global $db, $langs;
 
-		$old_code_client = $mysoc->code_client;
-		$mysoc->code_client = 'CCCCCCCCCC';
-		$numExample = $this->getNextValue($mysoc, '');
-		$mysoc->code_client = $old_code_client;
+		require_once DOL_DOCUMENT_ROOT . '/ticket/class/ticket.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
+
+		$ticket = new Ticket($db);
+		$ticket->initAsSpecimen();
+		$thirdparty = new Societe($db);
+		$thirdparty->initAsSpecimen();
+
+		$numExample = $this->getNextValue($thirdparty, $ticket);
 
 		if (!$numExample) {
 			$numExample = $langs->trans('NotConfigured');
 		}
+
 		return $numExample;
 	}
 
 	/**
 	 *  Return next value
 	 *
-	 *  @param  Societe $objsoc     Object third party
-	 *  @param  Ticket  $ticket 	Object ticket
-	 *  @return string              Value if OK, 0 if KO
+	 *  @param	Societe	$objsoc		Object third party
+	 *  @param	Ticket	$ticket 	Object ticket
+	 *  @return	string|int<-1,0>	Next value if OK, <=-1 if KO
 	 */
 	public function getNextValue($objsoc, $ticket)
 	{
-		global $db, $conf;
+		global $db, $langs;
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
@@ -131,7 +140,7 @@ class mod_ticket_universal extends ModeleNumRefTicket
 		$mask = getDolGlobalString("TICKET_UNIVERSAL_MASK");
 
 		if (!$mask) {
-			$this->error = 'NotConfigured';
+			$this->error = $langs->trans('NotConfigured');
 			return 0;
 		}
 

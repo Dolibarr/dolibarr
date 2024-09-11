@@ -5,8 +5,6 @@ RefReception=Ref. pritje
 Reception=Pritja
 Receptions=Pritje
 AllReceptions=Të gjitha pritjet
-Reception=Pritja
-Receptions=Pritje
 ShowReception=Shfaq pritjet
 ReceptionsArea=Zona e pritjes
 ListOfReceptions=Lista e pritjeve
@@ -34,7 +32,7 @@ StatusReceptionProcessedShort=Të përpunuara
 ReceptionSheet=Fletë pritjeje
 ValidateReception=Vërtetoni pritjen
 ConfirmDeleteReception=Je i sigurt që dëshiron ta fshish këtë pritje?
-ConfirmValidateReception=Jeni i sigurt që dëshironi ta vërtetoni këtë pritje me referencën <b>%s<span class='notranslate'>b09a4b739f178 >?
+ConfirmValidateReception=Are you sure you want to validate this reception with the reference <b>%s</b>?
 ConfirmCancelReception=Je i sigurt që dëshiron ta anulosh këtë pritje?
 StatsOnReceptionsOnlyValidated=Statistikat e kryera vetëm në pritje të vërtetuara. Data e përdorur është data e vërtetimit të marrjes (data e planifikuar e dorëzimit nuk dihet gjithmonë).
 SendReceptionByEMail=Dërgo pritjen me email

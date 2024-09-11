@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +37,7 @@ if (!defined('NOBROWSERNOTIF')) {
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and get of entity must be done before including main.inc.php
+// Because 2 entities can have the same ref.
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : (!empty($_GET['e']) ? (int) $_GET['e'] : (!empty($_POST['e']) ? (int) $_POST['e'] : 1))));
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
@@ -59,8 +61,9 @@ $langs->loadLangs(array("other", "dict", "bills", "companies", "errors", "paybox
 // Security check
 // No check on module enabled. Done later according to $validpaymentmethod
 
+$errmsg = '';
 $action = GETPOST('action', 'aZ09');
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $securekeyreceived = GETPOST("securekey", 'alpha');
 $securekeytocompare = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY').'conferenceorbooth'.((int) $id), 'md5');
 
@@ -217,10 +220,10 @@ print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 print '<input type="hidden" name="action" value="dopayment">'."\n";
 print '<input type="hidden" name="tag" value="'.GETPOST("tag", 'alpha').'">'."\n";
 //print '<input type="hidden" name="suffix" value="'.dol_escape_htmltag($suffix).'">'."\n";
-print '<input type="hidden" name="id" value="'.dol_escape_htmltag($id).'">'."\n";
+print '<input type="hidden" name="id" value="'.dol_escape_htmltag((string) $id).'">'."\n";
 print '<input type="hidden" name="securekey" value="'.dol_escape_htmltag($securekeyreceived).'">'."\n";
 print '<input type="hidden" name="e" value="'.$entity.'" />';
-print '<input type="hidden" name="forcesandbox" value="'.GETPOST('forcesandbox', 'int').'" />';
+print '<input type="hidden" name="forcesandbox" value="'.GETPOSTINT('forcesandbox').'" />';
 print "\n";
 
 
@@ -230,7 +233,7 @@ print '<div id="divsubscribe">';
 
 // Sub banner
 print '<div class="center subscriptionformbanner subbanner justify margintoponly paddingtop marginbottomonly padingbottom">';
-print load_fiche_titre($langs->trans("NewRegistration"), '', '', 0, 0, 'center');
+print load_fiche_titre($langs->trans("NewRegistration"), '', '', 0, '', 'center');
 // Welcome message
 print '<span class="opacitymedium">'.$langs->trans("EvntOrgRegistrationWelcomeMessage").'</span>';
 print '<br>';

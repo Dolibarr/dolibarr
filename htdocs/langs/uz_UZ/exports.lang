@@ -46,10 +46,16 @@ LineLabel=Chiziq yorlig'i
 LineDescription=Chiziq tavsifi
 LineUnitPrice=Chiziqning birlik narxi
 LineVATRate=QQS stavkasi stavkasi
+LineLT1Rate=Tax 2 rate for line
+LineLT2Rate=Tax 3 rate for line
+LineLT1Type=Tax 2 type for line
+LineLT2Type=Tax 3 type for line
 LineQty=Chiziq uchun miqdor
 LineTotalHT=Miqdorisiz chiziq uchun soliq
 LineTotalTTC=Chiziq uchun soliq miqdori
 LineTotalVAT=Qator uchun QQS miqdori
+LineTotalLT1=Amount of tax 2 for line
+LineTotalLT2=Amount of tax 3 for line
 TypeOfLineServiceOrProduct=Qator turi (0 = mahsulot, 1 = xizmat)
 FileWithDataToImport=Import qilish uchun ma'lumotlar bilan fayl
 FileToImport=Import qilish uchun manba fayl
@@ -95,7 +101,7 @@ NbOfLinesImported=Muvaffaqiyatli import qilingan qatorlar soni: <b> %s </b>.
 DataComeFromNoWhere=Qo'shish uchun qiymat manba faylida yo'q.
 DataComeFromFileFieldNb=Qo'shiladigan qiymat manba faylidagi <b>%s</b> ustunidan olinadi.
 DataComeFromIdFoundFromRef=Manba faylidan keladigan qiymat foydalaniladigan asosiy ob'ektning identifikatorini topish uchun ishlatiladi (shuning uchun ob'ekt <b>%s</b> manba faylidan olingan koʻrsatma maʼlumotlar bazasida boʻlishi kerak).
-DataComeFromIdFoundFromCodeId=Manba faylidan keladigan kod qiymati foydalaniladigan asosiy ob'ekt identifikatorini topish uchun ishlatiladi (shuning uchun manba fayldagi kod <b><span sinf lug'atida mavjud bo'lishi kerak. ='notranslate'>%s</span></b>). E'tibor bering, agar siz identifikatorni bilsangiz, uni kod o'rniga manba faylida ham ishlatishingiz mumkin. Import ikkala holatda ham ishlashi kerak.
+DataComeFromIdFoundFromCodeId=The value of code that comes from source file will be used to find the id of the parent object to use (so the code from source file must exist in the dictionary <b>%s</b>). Note that if you know the id, you can also use it in the source file instead of the code. Import should work in both cases.
 DataIsInsertedInto=Dastlabki fayldan olingan ma'lumotlar quyidagi maydonga kiritiladi:
 DataIDSourceIsInsertedInto=Manba faylidagi ma'lumotlar yordamida topilgan asosiy ob'ektning identifikatori quyidagi maydonga kiritiladi:
 DataCodeIDSourceIsInsertedInto=Koddan topilgan ota -onaning identifikatori quyidagi maydonga kiritiladi:

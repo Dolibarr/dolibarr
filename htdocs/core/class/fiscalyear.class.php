@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2014-2020  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2020       OScss-Shop          <support@oscss-shop.fr>
- * Copyright (C) 2023       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2023-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,12 +55,6 @@ class Fiscalyear extends CommonObject
 	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = '';
-
-	/**
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 * @var int
-	 */
-	public $ismultientitymanaged = 1;
 
 	/**
 	 * @var int ID
@@ -123,6 +118,7 @@ class Fiscalyear extends CommonObject
 	{
 		$this->db = $db;
 
+		$this->ismultientitymanaged = 1;
 		$this->labelStatusShort = array(self::STATUS_OPEN => 'Opened', self::STATUS_CLOSED => 'Closed');
 		$this->labelStatus = array(self::STATUS_OPEN => 'Opened', self::STATUS_CLOSED => 'Closed');
 	}
@@ -254,16 +250,16 @@ class Fiscalyear extends CommonObject
 	/**
 	 *	Delete record
 	 *
-	 *	@param	int		$id		Id of record to delete
+	 *	@param	User	$user	User that delete
 	 *	@return	int				Return integer <0 if KO, >0 if OK
 	 */
-	public function delete($id)
+	public function delete($user)
 	{
 		$this->db->begin();
 
-		$sql = "DELETE FROM ".$this->db->prefix()."accounting_fiscalyear WHERE rowid = ".((int) $id);
+		$sql = "DELETE FROM ".$this->db->prefix()."accounting_fiscalyear";
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
-		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
 			$this->db->commit();
@@ -305,7 +301,7 @@ class Fiscalyear extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      int			$withpicto                Add picto into link
 	 *  @param	    int   	    $notooltip		          1=Disable tooltip
@@ -317,7 +313,7 @@ class Fiscalyear extends CommonObject
 		global $conf, $langs, $user;
 
 		if (empty($this->ref)) {
-			$this->ref = $this->id;
+			$this->ref = (string) $this->id;
 		}
 
 		if (!empty($conf->dol_no_mouse_hover)) {
@@ -331,7 +327,7 @@ class Fiscalyear extends CommonObject
 		$params = [
 			'id' => $this->id,
 			'objecttype' => $this->element,
-			'option', $option,
+			'option' => $option,
 			'nofetch' => 1,
 		];
 		$classfortooltip = 'classfortooltip';
@@ -359,7 +355,7 @@ class Fiscalyear extends CommonObject
 		$linkclose = '';
 		if (empty($notooltip) && $user->hasRight('accounting', 'fiscalyear', 'write')) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
-				$label = $langs->trans("FiscalYear");
+				$label = $langs->trans("FiscalPeriod");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';

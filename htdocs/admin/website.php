@@ -49,10 +49,10 @@ $actl[0] = img_picto($langs->trans("Disabled"), 'switch_off', 'class="size15x"')
 $actl[1] = img_picto($langs->trans("Activated"), 'switch_on', 'class="size15x"');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -67,7 +67,7 @@ if (empty($sortorder)) {
 	$sortorder = 'ASC';
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('website'));
 
 // Name of SQL tables of dictionaries
@@ -238,7 +238,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		$db->begin();
 
 		$website = new Website($db);
-		$rowid = GETPOST('rowid', 'int');
+		$rowid = GETPOSTINT('rowid');
 		$website->fetch($rowid);
 
 		// Modify entry
@@ -257,7 +257,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 				$sql .= ",";
 			}
 			$sql .= $field."=";
-			if ($_POST[$listfieldvalue[$i]] == '') {
+			if (GETPOST($listfieldvalue[$i]) == '') {
 				$sql .= "null";
 			} else {
 				$sql .= "'".$db->escape(GETPOST($listfieldvalue[$i]))."'";
@@ -300,11 +300,6 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 			$db->rollback();
 		}
 	}
-	//$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
-}
-
-if (GETPOST('actioncancel', 'alpha')) {
-	//$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
 }
 
 if ($action == 'confirm_delete' && $confirm == 'yes') {       // delete
@@ -390,7 +385,7 @@ if ($action == $acts[1]) {
 $form = new Form($db);
 $formadmin = new FormAdmin($db);
 
-llxHeader('', $langs->trans("WebsiteSetup"));
+llxHeader('', $langs->trans("WebsiteSetup"),  '', '', 0, 0, '', '', '', 'mod-admin page-website');
 
 $titre = $langs->trans("WebsiteSetup");
 $linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php').'">'.$langs->trans("BackToModuleList").'</a>';
@@ -450,7 +445,7 @@ if ($id) {
 
 			// Determine le nom du champ par rapport aux noms possibles
 			// dans les dictionnaires de donnees
-			$valuetoshow = ucfirst($fieldlist[$field]); // Par defaut
+			$valuetoshow = ucfirst($fieldlist[$field]); // By default
 			$valuetoshow = $langs->trans($valuetoshow); // try to translate
 			$align = '';
 			if ($fieldlist[$field] == 'lang') {
@@ -528,7 +523,7 @@ if ($id) {
 			foreach ($fieldlist as $field => $value) {
 				// Determine le nom du champ par rapport aux noms possibles
 				// dans les dictionnaires de donnees
-				$showfield = 1; // Par defaut
+				$showfield = 1; // By default
 				$align = "left";
 				$sortable = 1;
 				$valuetoshow = '';
@@ -543,7 +538,7 @@ if ($id) {
 				$align=$tmp['align'];
 				$sortable=$tmp['sortable'];
 				*/
-				$valuetoshow = ucfirst($fieldlist[$field]); // Par defaut
+				$valuetoshow = ucfirst($fieldlist[$field]); // By default
 				$valuetoshow = $langs->trans($valuetoshow); // try to translate
 				if ($fieldlist[$field] == 'lang') {
 					$valuetoshow = $langs->trans("Language");
@@ -678,7 +673,7 @@ $db->close();
  * 	@param		array	$fieldlist		Array of fields
  * 	@param		Object	$obj			If we show a particular record, obj is filled with record fields
  *  @param		string	$tabname		Name of SQL table
- *  @param		string	$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we dont want it to be rendered
+ *  @param		string	$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we don't want it to be rendered
  *	@return		void
  */
 function fieldListWebsites($fieldlist, $obj = null, $tabname = '', $context = '')
@@ -700,7 +695,7 @@ function fieldListWebsites($fieldlist, $obj = null, $tabname = '', $context = ''
 
 		if ($fieldlist[$field] == 'lang') {
 			print '<td>';
-			print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT, 'lang');
+			print $formadmin->select_language(getDolGlobalString('MAIN_LANG_DEFAULT'), 'lang');
 			print '</td>';
 		} elseif ($fieldlist[$field] == 'code' && isset($obj->$fieldname)) {
 			print '<td><input type="text" class="flat" value="'.(!empty($obj->$fieldname) ? $obj->$fieldname : '').'" size="10" name="'.$fieldlist[$field].'"></td>';

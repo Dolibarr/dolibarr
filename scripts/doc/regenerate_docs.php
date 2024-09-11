@@ -20,7 +20,7 @@
 /**
  * \file 	scripts/doc/regenerate_docs.php
  * \ingroup scripts
- * \brief 	Regenerated main documents into documents directory
+ * \brief 	Massive re-generation of the main documents into one sub-directory of the documents directory
  */
 
 if (!defined('NOSESSION')) {
@@ -34,7 +34,7 @@ $path = __DIR__.'/';
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+	exit(1);
 }
 
 @set_time_limit(0); // No timeout for this script
@@ -56,13 +56,20 @@ $version = DOL_VERSION;
 $error = 0;
 $forcecommit = 0;
 
+$hookmanager->initHooks(array('cli'));
+
+
+/*
+ * Main
+ */
+
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." - dir=".DOL_DATA_ROOT." *****\n";
 dol_syslog($script_file." launched with arg ".join(',', $argv));
 
 if (empty($argv[1])) {
 	print "Usage:    $script_file  subdirtoscan (test|confirm)\n";
 	print "Example:  $script_file  propale test\n";
-	exit(-1);
+	exit(1);
 }
 
 print '--- start'."\n";
@@ -70,7 +77,7 @@ print '--- start'."\n";
 $dir = DOL_DATA_ROOT;
 $subdir = $argv[1];
 if (empty($dir) || empty($subdir)) {
-	dol_print_error('', 'dir not defined');
+	dol_print_error(null, 'dir not defined');
 	exit(1);
 }
 if (!dol_is_dir($dir.'/'.$subdir)) {

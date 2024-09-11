@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2020       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,15 +51,15 @@ $langs->loadLangs(array("companies", "other", "recruitment"));
 $action   = GETPOST('action', 'aZ09');
 $cancel   = GETPOST('cancel', 'alpha');
 $SECUREKEY = GETPOST("securekey");
-$entity = GETPOST('entity', 'int') ? GETPOST('entity', 'int') : $conf->entity;
+$entity = GETPOSTINT('entity') ? GETPOSTINT('entity') : $conf->entity;
 $backtopage = '';
 $suffix = "";
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1 or if we click on clear filters
@@ -135,10 +137,10 @@ print '<!-- Form to view jobs -->'."\n";
 $logosmall = $mysoc->logo_small;
 $logo = $mysoc->logo;
 $paramlogo = 'ONLINE_RECRUITMENT_LOGO_'.$suffix;
-if (!empty($conf->global->$paramlogo)) {
-	$logosmall = $conf->global->$paramlogo;
+if (getDolGlobalString($paramlogo)) {
+	$logosmall = getDolGlobalString($paramlogo);
 } elseif (getDolGlobalString('ONLINE_RECRUITMENT_LOGO')) {
-	$logosmall = $conf->global->ONLINE_RECRUITMENT_LOGO_;
+	$logosmall = getDolGlobalString('ONLINE_RECRUITMENT_LOGO_');
 }
 //print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
 // Define urllogo
@@ -170,7 +172,7 @@ if (getDolGlobalString('RECRUITMENT_IMAGE_PUBLIC_INTERFACE')) {
 }
 
 
-$results = $object->fetchAll($sortfield, $sortorder, 0, 0, array('status' => 1));
+$results = $object->fetchAll($sortorder, $sortfield, 0, 0, '(status:=:1)');
 $now = dol_now();
 
 if (is_array($results)) {
@@ -258,10 +260,10 @@ if (is_array($results)) {
 			print '</b><br>';
 
 			if ($object->status == RecruitmentJobPosition::STATUS_RECRUITED) {
-				print info_admin($langs->trans("JobClosedTextCandidateFound"), 0, 0, 0, 'warning');
+				print info_admin($langs->trans("JobClosedTextCandidateFound"), 0, 0, '0', 'warning');
 			}
 			if ($object->status == RecruitmentJobPosition::STATUS_CANCELED) {
-				print info_admin($langs->trans("JobClosedTextCanceled"), 0, 0, 0, 'warning');
+				print info_admin($langs->trans("JobClosedTextCanceled"), 0, 0, '0', 'warning');
 			}
 
 			print '<br>';

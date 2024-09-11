@@ -2,6 +2,7 @@
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,7 +68,7 @@ class mailing_contacts1 extends MailingTargets
 	 */
 	public function getSqlArrayForStats()
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$langs->load("commercial");
 
@@ -317,10 +318,10 @@ class mailing_contacts1 extends MailingTargets
 
 
 	/**
-	 *  Renvoie url lien vers fiche de la source du destinataire du mailing
+	 *  Provide the URL to the car of the source information of the recipient for the mailing
 	 *
 	 *  @param	int		$id		ID
-	 *  @return string      	Url lien
+	 *  @return string      	URL link
 	 */
 	public function url($id)
 	{
@@ -391,7 +392,7 @@ class mailing_contacts1 extends MailingTargets
 		if (empty($this->evenunsubscribe)) {
 			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = sp.email and mu.entity = ".((int) $conf->entity).")";
 		}
-		// Exclude unsubscribed email adresses
+		// Exclude unsubscribed email addresses
 		$sql .= " AND sp.statut = 1";
 		$sql .= " AND sp.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".((int) $mailing_id).")";
 

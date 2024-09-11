@@ -47,7 +47,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 if (!isModEnabled('incoterm')) {
 	httponly_accessforbidden("Module incoterm not enabled");	// This includes the exit.
 }
-// There is no other permission on this component. Everybody connected can read content of the incoterm table
+
+// There is no other permission on this component. Everybody connected can read content of the incoterm dictionary table
 
 
 /*
@@ -63,8 +64,7 @@ top_httphead();
 
 //print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
-dol_syslog('location_incoterms call with MAIN_USE_LOCATION_INCOTERMS_DICTIONNARY='.(!getDolGlobalString('MAIN_USE_LOCATION_INCOTERMS_DICTIONNARY') ? '' : $conf->global->MAIN_USE_LOCATION_INCOTERMS_DICTIONNARY));
-//var_dump($_GET);
+dol_syslog('location_incoterms call with MAIN_USE_LOCATION_INCOTERMS_DICTIONNARY='.getDolGlobalString('MAIN_USE_LOCATION_INCOTERMS_DICTIONNARY', ''));
 
 // Generation of list of zip-town
 if (GETPOST('location_incoterms')) {
@@ -78,7 +78,7 @@ if (GETPOST('location_incoterms')) {
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_location_incoterms as z";
 		$sql .= " WHERE z.active = 1 AND z.location LIKE '%".$db->escape($db->escapeforlike($location_incoterms))."%'";
 		$sql .= " ORDER BY z.location";
-		$sql .= $db->plimit(100); // Avoid pb with bad criteria
+		$sql .= $db->plimit(1000); // Avoid pb with bad criteria
 	} else { // Use table of sale orders
 		$sql = "SELECT DISTINCT s.location_incoterms FROM ".MAIN_DB_PREFIX.'commande as s';
 		$sql .= " WHERE s.location_incoterms LIKE '%".$db->escape($db->escapeforlike($location_incoterms))."%'";
@@ -96,6 +96,7 @@ if (GETPOST('location_incoterms')) {
 	$resql = $db->query($sql);
 	//var_dump($db);
 	if ($resql) {
+		$row_array = array();
 		while ($row = $db->fetch_array($resql)) {
 			$row_array['label'] = $row['location_incoterms'].($row['label'] ? ' - '.$row['label'] : '');
 			if ($location_incoterms) {

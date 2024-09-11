@@ -5,6 +5,7 @@
  * Copyright (C) 2006-2007 Yannick Warnier      <ywarnier@beeznest.org>
  * Copyright (C) 2014-2016 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,9 +46,9 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.
 // Load translation files required by the page
 $langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "product", "trips", "admin"));
 
-$local = GETPOST('localTaxType', 'int');
+$local = GETPOSTINT('localTaxType');
 // Date range
-$year = GETPOST("year", "int");
+$year = GETPOSTINT("year");
 if (empty($year)) {
 	$year_current = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 	$year_start = $year_current;
@@ -59,11 +60,11 @@ $date_start = dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_star
 $date_end = dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"));
 // Quarter
 if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
-	$q = GETPOST("q", "int");
+	$q = GETPOSTINT("q");
 	if (empty($q)) {
-		if (GETPOST("month", "int")) {
-			$date_start = dol_get_first_day($year_start, GETPOST("month", "int"), false);
-			$date_end = dol_get_last_day($year_start, GETPOST("month", "int"), false);
+		if (GETPOSTINT("month")) {
+			$date_start = dol_get_first_day($year_start, GETPOSTINT("month"), false);
+			$date_end = dol_get_last_day($year_start, GETPOSTINT("month"), false);
 		} else {
 			$date_start = dol_get_first_day($year_start, !getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START, false);
 			if (!getDolGlobalString('MAIN_INFO_VAT_RETURN') || getDolGlobalInt('MAIN_INFO_VAT_RETURN') == 2) {
@@ -105,14 +106,14 @@ if (empty($min)) {
 $calc = getDolGlobalString('MAIN_INFO_LOCALTAX_CALC').$local;
 $modetax = getDolGlobalInt('TAX_MODE');
 if (GETPOSTISSET("modetax")) {
-	$modetax = GETPOST("modetax", 'int');
+	$modetax = GETPOSTINT("modetax");
 }
 if (empty($modetax)) {
 	$modetax = 0;
 }
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -169,7 +170,7 @@ $calcmode .= ' <span class="opacitymedium">('.$langs->trans("TaxModuleSetupToMod
 // Set period
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 $prevyear = $year_start;
-$q=0;
+$q = 0;
 $prevquarter = $q;
 if ($prevquarter > 1) {
 	$prevquarter--;
@@ -277,26 +278,26 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 			$invoice_customer->type = $x_coll[$my_coll_rate]['type'][$id];
 			$company_static->fetch($x_coll[$my_coll_rate]['company_id'][$id]);
 			$x_both[$my_coll_rate]['coll']['detail'][] = array(
-				'id'        =>$x_coll[$my_coll_rate]['facid'][$id],
-				'descr'     =>$x_coll[$my_coll_rate]['descr'][$id],
-				'pid'       =>$x_coll[$my_coll_rate]['pid'][$id],
-				'pref'      =>$x_coll[$my_coll_rate]['pref'][$id],
-				'ptype'     =>$x_coll[$my_coll_rate]['ptype'][$id],
-				'payment_id'=>$x_coll[$my_coll_rate]['payment_id'][$id],
-				'payment_amount'=>$x_coll[$my_coll_rate]['payment_amount'][$id],
-				'ftotal_ttc'=>$x_coll[$my_coll_rate]['ftotal_ttc'][$id],
-				'dtotal_ttc'=>$x_coll[$my_coll_rate]['dtotal_ttc'][$id],
-				'dtype'     =>$x_coll[$my_coll_rate]['dtype'][$id],
-				'datef'     =>$x_coll[$my_coll_rate]['datef'][$id],
-				'datep'     =>$x_coll[$my_coll_rate]['datep'][$id],
-				'company_link'=>$company_static->getNomUrl(1, '', 20),
-				'ddate_start'=>$x_coll[$my_coll_rate]['ddate_start'][$id],
-				'ddate_end'  =>$x_coll[$my_coll_rate]['ddate_end'][$id],
-				'totalht'   =>$x_coll[$my_coll_rate]['totalht_list'][$id],
-				'localtax1'=> $x_coll[$my_coll_rate]['localtax1_list'][$id],
-				'localtax2'=> $x_coll[$my_coll_rate]['localtax2_list'][$id],
-				'vat'       =>$x_coll[$my_coll_rate]['vat_list'][$id],
-				'link'      =>$invoice_customer->getNomUrl(1, '', 12)
+				'id'        => $x_coll[$my_coll_rate]['facid'][$id],
+				'descr'     => $x_coll[$my_coll_rate]['descr'][$id],
+				'pid'       => $x_coll[$my_coll_rate]['pid'][$id],
+				'pref'      => $x_coll[$my_coll_rate]['pref'][$id],
+				'ptype'     => $x_coll[$my_coll_rate]['ptype'][$id],
+				'payment_id' => $x_coll[$my_coll_rate]['payment_id'][$id],
+				'payment_amount' => $x_coll[$my_coll_rate]['payment_amount'][$id],
+				'ftotal_ttc' => $x_coll[$my_coll_rate]['ftotal_ttc'][$id],
+				'dtotal_ttc' => $x_coll[$my_coll_rate]['dtotal_ttc'][$id],
+				'dtype'     => $x_coll[$my_coll_rate]['dtype'][$id],
+				'datef'     => $x_coll[$my_coll_rate]['datef'][$id],
+				'datep'     => $x_coll[$my_coll_rate]['datep'][$id],
+				'company_link' => $company_static->getNomUrl(1, '', 20),
+				'ddate_start' => $x_coll[$my_coll_rate]['ddate_start'][$id],
+				'ddate_end'  => $x_coll[$my_coll_rate]['ddate_end'][$id],
+				'totalht'   => $x_coll[$my_coll_rate]['totalht_list'][$id],
+				'localtax1' => $x_coll[$my_coll_rate]['localtax1_list'][$id],
+				'localtax2' => $x_coll[$my_coll_rate]['localtax2_list'][$id],
+				'vat'       => $x_coll[$my_coll_rate]['vat_list'][$id],
+				'link'      => $invoice_customer->getNomUrl(1, '', 12)
 			);
 		}
 	}
@@ -316,26 +317,26 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 			$invoice_supplier->ref = $x_paye[$my_paye_rate]['facnum'][$id];
 			$invoice_supplier->type = $x_paye[$my_paye_rate]['type'][$id];
 			$x_both[$my_paye_rate]['paye']['detail'][] = array(
-				'id'        =>$x_paye[$my_paye_rate]['facid'][$id],
-				'descr'     =>$x_paye[$my_paye_rate]['descr'][$id],
-				'pid'       =>$x_paye[$my_paye_rate]['pid'][$id],
-				'pref'      =>$x_paye[$my_paye_rate]['pref'][$id],
-				'ptype'     =>$x_paye[$my_paye_rate]['ptype'][$id],
-				'payment_id'=>$x_paye[$my_paye_rate]['payment_id'][$id],
-				'payment_amount'=>$x_paye[$my_paye_rate]['payment_amount'][$id],
-				'ftotal_ttc'=>price2num($x_paye[$my_paye_rate]['ftotal_ttc'][$id]),
-				'dtotal_ttc'=>price2num($x_paye[$my_paye_rate]['dtotal_ttc'][$id]),
-				'dtype'     =>$x_paye[$my_paye_rate]['dtype'][$id],
-				'datef'     =>$x_paye[$my_paye_rate]['datef'][$id],
-				'datep'     =>$x_paye[$my_paye_rate]['datep'][$id],
-				'company_link'=>$company_static->getNomUrl(1, '', 20),
-				'ddate_start'=>$x_paye[$my_paye_rate]['ddate_start'][$id],
-				'ddate_end'  =>$x_paye[$my_paye_rate]['ddate_end'][$id],
-				'totalht'   =>price2num($x_paye[$my_paye_rate]['totalht_list'][$id]),
-				'localtax1'=> $x_paye[$my_paye_rate]['localtax1_list'][$id],
-				'localtax2'=> $x_paye[$my_paye_rate]['localtax2_list'][$id],
-				'vat'       =>$x_paye[$my_paye_rate]['vat_list'][$id],
-				'link'      =>$invoice_supplier->getNomUrl(1, '', 12)
+				'id'        => $x_paye[$my_paye_rate]['facid'][$id],
+				'descr'     => $x_paye[$my_paye_rate]['descr'][$id],
+				'pid'       => $x_paye[$my_paye_rate]['pid'][$id],
+				'pref'      => $x_paye[$my_paye_rate]['pref'][$id],
+				'ptype'     => $x_paye[$my_paye_rate]['ptype'][$id],
+				'payment_id' => $x_paye[$my_paye_rate]['payment_id'][$id],
+				'payment_amount' => $x_paye[$my_paye_rate]['payment_amount'][$id],
+				'ftotal_ttc' => price2num($x_paye[$my_paye_rate]['ftotal_ttc'][$id]),
+				'dtotal_ttc' => price2num($x_paye[$my_paye_rate]['dtotal_ttc'][$id]),
+				'dtype'     => $x_paye[$my_paye_rate]['dtype'][$id],
+				'datef'     => $x_paye[$my_paye_rate]['datef'][$id],
+				'datep'     => $x_paye[$my_paye_rate]['datep'][$id],
+				'company_link' => $company_static->getNomUrl(1, '', 20),
+				'ddate_start' => $x_paye[$my_paye_rate]['ddate_start'][$id],
+				'ddate_end'  => $x_paye[$my_paye_rate]['ddate_end'][$id],
+				'totalht'   => price2num($x_paye[$my_paye_rate]['totalht_list'][$id]),
+				'localtax1' => $x_paye[$my_paye_rate]['localtax1_list'][$id],
+				'localtax2' => $x_paye[$my_paye_rate]['localtax2_list'][$id],
+				'vat'       => $x_paye[$my_paye_rate]['vat_list'][$id],
+				'link'      => $invoice_supplier->getNomUrl(1, '', 12)
 			);
 		}
 	}
@@ -504,7 +505,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 		print '</tr>';
 	}
 
-	if (count($x_coll) == 0) {   // Show a total ine if nothing shown
+	if (count($x_coll) == 0) {   // Show a total line if nothing shown
 		print '<tr class="liste_total">';
 		print '<td>&nbsp;</td>';
 		print '<td class="right">'.$langs->trans("Total").':</td>';
@@ -593,7 +594,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 						print price($fields['totalht']);
 						if (price2num($fields['ftotal_ttc'])) {
 							//print $fields['dtotal_ttc']."/".$fields['ftotal_ttc']." - ";
-							$ratiolineinvoice = ($fields['dtotal_ttc'] / $fields['ftotal_ttc']);
+							$ratiolineinvoice = ((float) $fields['dtotal_ttc'] / (float) $fields['ftotal_ttc']);
 							//print ' ('.round($ratiolineinvoice*100,2).'%)';
 						}
 						print '</td>';
@@ -604,7 +605,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 					if ($modetax != 1) {
 						print '<td class="nowrap right">';
 						if (isset($fields['payment_amount']) && $fields['ftotal_ttc']) {
-							$ratiopaymentinvoice = ($fields['payment_amount'] / $fields['ftotal_ttc']);
+							$ratiopaymentinvoice = ($fields['payment_amount'] / (float) $fields['ftotal_ttc']);
 						}
 						if ($fields['payment_amount'] && $fields['ftotal_ttc']) {
 							$paymentfourn_static->id = $fields['payment_id'];
@@ -623,7 +624,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 
 					// VAT paid
 					print '<td class="nowrap right">';
-					$temp_ht = $fields['totalht'] * $ratiopaymentinvoice;
+					$temp_ht = (float) $fields['totalht'] * $ratiopaymentinvoice;
 					print price(price2num($temp_ht, 'MT'), 1);
 					print '</td>';
 

@@ -65,9 +65,8 @@ LT2SupplierES=רכישות IRPF
 LT2CustomerIN=מכירות SGST
 LT2SupplierIN=רכישות SGST
 VATCollected=מע"מ נגבה
-StatusToPay=לשלם
 SpecialExpensesArea=אזור לכל התשלומים המיוחדים
-VATExpensesArea=אזור לכל תשלומי TVA
+VATExpensesArea=Area for all VAT payments
 SocialContribution=מס חברתי או מיסוי
 SocialContributions=מסים חברתיים או פיסקליים
 SocialContributionsDeductibles=מסים סוציאליים או פיסקליים בניכוי
@@ -165,10 +164,10 @@ CalcModeEngagement=ניתוח תשלומים רשומים ידועים
 CalcModePayment=ניתוח תשלומים רשומים ידועים
 CalcModeBookkeeping=ניתוח נתונים מתועדים בטבלת הנהלת חשבונות.
 CalcModeNoBookKeeping=גם אם הם עדיין לא מטופלים בלדג'ר
-CalcModeLT1= מצב <b>%sRE בחשבוניות לקוחות - חשבוניות ספקים%s</span ='notranslate'></b>
+CalcModeLT1= Mode <b>%sRE on customer invoices - suppliers invoices%s</b>
 CalcModeLT1Debt=מצב <b>%sRE בחשבוניות לקוחות%s</b>
 CalcModeLT1Rec= מצב <b>%sRE בחשבוניות ספקים%s</b>
-CalcModeLT2= מצב <b>%sIRPF בחשבוניות לקוחות - חשבוניות ספקים%s</span ='notranslate'></b>
+CalcModeLT2= Mode <b>%sIRPF on customer invoices - suppliers invoices%s</b>
 CalcModeLT2Debt=מצב <b>%sIRPF בחשבוניות לקוחות%s</b>
 CalcModeLT2Rec= מצב <b>%sIRPF על חשבוניות ספקים%s</spanlate><span class='no '></b>
 AnnualSummaryDueDebtMode=מאזן הכנסות והוצאות, סיכום שנתי
@@ -275,7 +274,7 @@ SameCountryCustomersWithVAT=לקוחות לאומיים מדווחים
 BasedOnTwoFirstLettersOfVATNumberBeingTheSameAsYourCompanyCountry=מבוסס על ששתי האותיות הראשונות של מספר המע"מ זהות לקוד המדינה של החברה שלך
 LinkedFichinter=קישור להתערבות
 ImportDataset_tax_contrib=מסים חברתיים/פיסקליים
-ImportDataset_tax_vat=תשלומי מע"מ
+ImportDataset_tax_vat=VAT payments
 ErrorBankAccountNotFound=שגיאה: חשבון הבנק לא נמצא
 FiscalPeriod=תקופת חשבונאות
 ListSocialContributionAssociatedProject=רשימת תרומות חברתיות הקשורות לפרויקט

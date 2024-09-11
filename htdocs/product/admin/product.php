@@ -9,6 +9,7 @@
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2016      Charlie Benke		<charlie@patas-monkey.com>
  * Copyright (C) 2016	   Ferran Marcet		<fmarcet@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,16 +56,16 @@ $type = 'product';
 
 // Pricing Rules
 $select_pricing_rules = array(
-	'PRODUCT_PRICE_UNIQ'=>$langs->trans('PriceCatalogue'), // Unique price
-	'PRODUIT_MULTIPRICES'=>$langs->trans('MultiPricesAbility'), // Several prices according to a customer level
-	'PRODUIT_CUSTOMER_PRICES'=>$langs->trans('PriceByCustomer'), // Different price for each customer
+	'PRODUCT_PRICE_UNIQ' => $langs->trans('PriceCatalogue'), // Unique price
+	'PRODUIT_MULTIPRICES' => $langs->trans('MultiPricesAbility'), // Several prices according to a customer level
+	'PRODUIT_CUSTOMER_PRICES' => $langs->trans('PriceByCustomer'), // Different price for each customer
 );
 $keyforparam = 'PRODUIT_CUSTOMER_PRICES_BY_QTY';
-if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1 || !empty($conf->global->$keyforparam)) {
+if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1 || getDolGlobalString($keyforparam)) {
 	$select_pricing_rules['PRODUIT_CUSTOMER_PRICES_BY_QTY'] = $langs->trans('PriceByQuantity').' ('.$langs->trans("VersionExperimental").')'; // TODO If this is enabled, price must be hidden when price by qty is enabled, also price for quantity must be used when adding product into order/propal/invoice
 }
 $keyforparam = 'PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES';
-if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2 || !empty($conf->global->$keyforparam)) {
+if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2 || getDolGlobalString($keyforparam)) {
 	$select_pricing_rules['PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES'] = $langs->trans('MultiPricesAbility').'+'.$langs->trans('PriceByQuantity').' ('.$langs->trans("VersionExperimental").')';
 }
 
@@ -168,21 +169,21 @@ if ($action == 'specimen') { // For products
 	// Search template files
 	$file = '';
 	$classname = '';
-	$filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/product/doc/pdf_".$modele.".modules.php", 0);
 		if (file_exists($file)) {
-			$filefound = 1;
 			$classname = "pdf_".$modele;
 			break;
 		}
 	}
 
-	if ($filefound) {
+	if ($classname !== '') {
 		require_once $file;
 
 		$module = new $classname($db);
+
+		'@phan-var-force ModelePDFProduct $module';
 
 		if ($module->write_file($product, $langs, '') > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=product&file=SPECIMEN.pdf");
@@ -240,7 +241,7 @@ if ($action == 'set') {
 	}
 }
 
-// To enable a constant whithout javascript
+// To enable a constant without javascript
 if (preg_match('/set_(.+)/', $action, $reg)) {
 	$keyforvar = $reg[1];
 	if ($keyforvar) {
@@ -249,7 +250,7 @@ if (preg_match('/set_(.+)/', $action, $reg)) {
 	}
 }
 
-// To disable a constant whithout javascript
+// To disable a constant without javascript
 if (preg_match('/del_(.+)/', $action, $reg)) {
 	$keyforvar = $reg[1];
 	if ($keyforvar) {
@@ -281,7 +282,7 @@ if (!isModEnabled("product")) {
 	$tab = $langs->trans('Products');
 }
 
-llxHeader('', $title);
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-product page-admin_product');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($title, $linkback, 'title_setup');
@@ -324,6 +325,7 @@ foreach ($dirproduct as $dirroot) {
 				}
 
 				$modCodeProduct = new $file();
+				'@phan-var-force ModeleProductCode $modCodeProduct';
 
 				// Show modules according to features level
 				if ($modCodeProduct->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -338,13 +340,13 @@ foreach ($dirproduct as $dirroot) {
 				print '<td>'.$modCodeProduct->info($langs).'</td>'."\n";
 				print '<td class="nowrap"><span class="opacitymedium">'.$modCodeProduct->getExample($langs).'</span></td>'."\n";
 
-				if (getDolGlobalString('PRODUCT_CODEPRODUCT_ADDON') && $conf->global->PRODUCT_CODEPRODUCT_ADDON == $file) {
+				if (getDolGlobalString('PRODUCT_CODEPRODUCT_ADDON') == $file) {
 					print '<td class="center">'."\n";
 					print img_picto($langs->trans("Activated"), 'switch_on');
 					print "</td>\n";
 				} else {
 					$disabled = false;
-					if (isModEnabled('multicompany') && (is_object($mc) && !empty($mc->sharings['referent']) && $mc->sharings['referent'] == $conf->entity) ? false : true) {
+					if (!(isModEnabled('multicompany') && ((is_object($mc) && !empty($mc->sharings['referent'])) && ($mc->sharings['referent'] == $conf->entity)))) {
 					}
 					print '<td class="center">';
 					if (!$disabled) {
@@ -358,7 +360,7 @@ foreach ($dirproduct as $dirroot) {
 				}
 
 				print '<td class="center">';
-				$s = $modCodeProduct->getToolTip($langs, null, -1);
+				$s = $modCodeProduct->getToolTip($langs, '', -1);
 				print $form->textwithpicto('', $s, 1);
 				print '</td>';
 
@@ -383,7 +385,9 @@ if ($resql) {
 	$num_rows = $db->num_rows($resql);
 	while ($i < $num_rows) {
 		$array = $db->fetch_array($resql);
-		array_push($def, $array[0]);
+		if (is_array($array)) {
+			array_push($def, $array[0]);
+		}
 		$i++;
 	}
 } else {
@@ -407,6 +411,7 @@ print "</tr>\n";
 
 clearstatcache();
 
+$filelist = array();
 foreach ($dirmodels as $reldir) {
 	foreach (array('', '/doc') as $valdir) {
 		$dir = dol_buildpath($reldir."core/modules/product".$valdir);
@@ -460,7 +465,7 @@ foreach ($dirmodels as $reldir) {
 									print "</td>";
 								}
 
-								// Defaut
+								// Default
 								print '<td class="center">';
 								if (getDolGlobalString('PRODUCT_ADDON_PDF') == $name) {
 									print img_picto($langs->trans("Default"), 'on');
@@ -650,10 +655,10 @@ if (empty($conf->use_javascript_ajax)) {
 } else {
 	print '<td class="right">';
 	$arrval = array(
-		'0'=>$langs->trans("No"),
-		'1'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')',
-		'2'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')',
-		'3'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')',
+		'0' => $langs->trans("No"),
+		'1' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')',
+		'2' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')',
+		'3' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')',
 	);
 	print $form->selectarray("activate_usesearchtoselectproduct", $arrval, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT);
 	print '</td>';
@@ -674,7 +679,7 @@ print '<td class="right">';
 print '<!-- PRODUIT_AUTOFILL_DESC -->';
 print $form->selectarray(
 	"activate_FillProductDescAuto",
-	array(0=>'DoNotAutofillButAutoConcat', 1=>'AutoFillFormFieldBeforeSubmit', 2=>'DoNotUseDescriptionOfProdut'),
+	array(0 => 'DoNotAutofillButAutoConcat', 1 => 'AutoFillFormFieldBeforeSubmit', 2 => 'DoNotUseDescriptionOfProdut'),
 	!getDolGlobalString('PRODUIT_AUTOFILL_DESC') ? 0 : $conf->global->PRODUIT_AUTOFILL_DESC,
 	0,
 	0,
@@ -690,7 +695,7 @@ print $form->selectarray(
 print '</td>';
 print '</tr>';
 
-// Visualiser description produit dans les formulaires activation/desactivation
+// Visualiser description produit dans les formulaires activation/deactivation
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ViewProductDescInFormAbility").'</td>';
 print '<td class="right">';

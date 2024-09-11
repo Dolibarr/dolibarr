@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014 	   Charles-Fr BENKE        <charles.fr@benke.fr>
  * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +23,7 @@
 /**
  *	\file       htdocs/core/boxes/box_actions.php
  *	\ingroup    actions
- *	\brief      Module to build boxe for events
+ *	\brief      Module to build box for events
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
@@ -37,16 +38,7 @@ class box_actions extends ModeleBoxes
 	public $boxlabel = "BoxOldestActions";
 	public $depends = array("agenda");
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
 	public $enabled = 1;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 
 	/**
 	 *  Constructor
@@ -89,17 +81,17 @@ class box_actions extends ModeleBoxes
 			$sql .= ", ta.code";
 			$sql .= ", ta.libelle as type_label";
 			$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
-			$sql .= ", s.code_client, s.code_compta, s.client";
+			$sql .= ", s.code_client, s.code_compta as code_compta_client, s.client";
 			$sql .= ", s.logo, s.email, s.entity";
 			$sql .= " FROM ".MAIN_DB_PREFIX."c_actioncomm AS ta, ".MAIN_DB_PREFIX."actioncomm AS a";
-			if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
 			}
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
 			$sql .= " WHERE a.fk_action = ta.id";
 			$sql .= " AND a.entity IN (".getEntity('actioncomm').")";
 			$sql .= " AND a.percent >= 0 AND a.percent < 100";
-			if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".((int) $user->id).")";
 			}
 			if ($user->socid) {
@@ -115,7 +107,7 @@ class box_actions extends ModeleBoxes
 			$result = $this->db->query($sql);
 			if ($result) {
 				$now = dol_now();
-				$delay_warning = $conf->global->MAIN_DELAY_ACTIONS_TODO * 24 * 60 * 60;
+				$delay_warning = getDolGlobalInt('MAIN_DELAY_ACTIONS_TODO') * 24 * 60 * 60;
 
 				$num = $this->db->num_rows($result);
 
@@ -135,6 +127,7 @@ class box_actions extends ModeleBoxes
 					//$societestatic->name_alias = $objp->name_alias;
 					$societestatic->code_client = $objp->code_client;
 					$societestatic->code_compta = $objp->code_compta;
+					$societestatic->code_compta_client = $objp->code_compta_client;
 					$societestatic->client = $objp->client;
 					$societestatic->logo = $objp->logo;
 					$societestatic->email = $objp->email;
@@ -150,7 +143,7 @@ class box_actions extends ModeleBoxes
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="tdoverflowmax200"',
 						'text' => $actionstatic->getNomUrl(1),
-						'text2'=> $late,
+						'text2' => $late,
 						'asis' => 1
 					);
 
@@ -184,7 +177,7 @@ class box_actions extends ModeleBoxes
 				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center"',
-						'text'=> '<span class="opacitymedium">'.$langs->trans("NoActionsToDo").'</span>'
+						'text' => '<span class="opacitymedium">'.$langs->trans("NoActionsToDo").'</span>'
 					);
 				}
 
@@ -192,7 +185,7 @@ class box_actions extends ModeleBoxes
 			} else {
 				$this->info_box_contents[0][0] = array(
 					'td' => '',
-					'maxlength'=>500,
+					'maxlength' => 500,
 					'text' => ($this->db->error().' sql='.$sql)
 				);
 			}
@@ -207,9 +200,9 @@ class box_actions extends ModeleBoxes
 	/**
 	 *	Method to show box
 	 *
-	 *	@param  array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
+	 *	@param	?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}	$head	Array with properties of box title
+	 *	@param	?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>	$contents	Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *	@return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)

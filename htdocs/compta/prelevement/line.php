@@ -3,7 +3,8 @@
  * Copyright (C) 2005-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2013  Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,15 +39,15 @@ $langs->loadlangs(array('banks', 'categories', 'bills', 'companies', 'withdrawal
 
 // Get supervariables
 $action = GETPOST('action', 'aZ09');
-$id = GETPOST('id', 'int');
-$socid = GETPOST('socid', 'int');
+$id = GETPOSTINT('id');
+$socid = GETPOSTINT('socid');
 
 $type = GETPOST('type', 'aZ09');
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $sortfield = GETPOST('sortfield', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
@@ -84,8 +85,9 @@ $error = 0;
 
 if ($action == 'confirm_rejet' && $permissiontoadd) {
 	if (GETPOST("confirm") == 'yes') {
-		if (GETPOST('remonth', 'int')) {
-			$daterej = dol_mktime(0, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+		$datarej = null;
+		if (GETPOSTINT('remonth')) {
+			$daterej = dol_mktime(0, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 		}
 
 		if (empty($daterej)) {
@@ -108,10 +110,10 @@ if ($action == 'confirm_rejet' && $permissiontoadd) {
 			if ($lipre->fetch($id) == 0) {
 				$rej = new RejetPrelevement($db, $user, $type);
 
-				$result = $rej->create($user, $id, GETPOST('motif', 'alpha'), $daterej, $lipre->bon_rowid, GETPOST('facturer', 'int'));
+				$result = $rej->create($user, $id, GETPOSTINT('motif'), $daterej, $lipre->bon_rowid, GETPOSTINT('facturer'));
 
 				if ($result > 0) {
-					header("Location: line.php?id=".urlencode($id).'&type='.urlencode($type));
+					header("Location: line.php?id=".urlencode((string) ($id)).'&type='.urlencode((string) ($type)));
 					exit;
 				}
 			}
@@ -119,7 +121,7 @@ if ($action == 'confirm_rejet' && $permissiontoadd) {
 			$action = "rejet";
 		}
 	} else {
-		header("Location: line.php?id=".urlencode($id).'&type='.urlencode($type));
+		header("Location: line.php?id=".urlencode((string) ($id)).'&type='.urlencode((string) ($type)));
 		exit;
 	}
 }
@@ -151,11 +153,12 @@ $head = array();
 $h = 0;
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/line.php?id='.((int) $id).'&type='.urlencode($type);
 $head[$h][1] = $title;
-$hselected = $h;
+$hselected = (string) $h;
 $h++;
 
 if ($id) {
 	$lipre = new LignePrelevement($db);
+	$bon = null;
 
 	if ($lipre->fetch($id) >= 0) {
 		$bon = new BonPrelevement($db);
@@ -216,7 +219,7 @@ if ($id) {
 		print '<input type="hidden" name="action" value="confirm_rejet">';
 		print '<input type="hidden" name="type" value="'.$type.'">';
 
-		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 		print '<table class="noborder centpercent">';
 
 		print '<tr class="liste_titre">';
@@ -233,13 +236,13 @@ if ($id) {
 		//Date
 		print '<tr><td class="fieldrequired valid">'.$langs->trans("RefusedData").'</td>';
 		print '<td class="valid">';
-		print $form->selectDate('', '', '', '', '', "confirm_rejet");
+		print $form->selectDate('', '', 0, 0, 0, "confirm_rejet");
 		print '</td></tr>';
 
 		//Reason
 		print '<tr><td class="fieldrequired valid">'.$langs->trans("RefusedReason").'</td>';
 		print '<td class="valid">';
-		print $form->selectarray("motif", $rej->motifs, GETPOSTISSET('motif') ? GETPOST('motif', 'int') : '');
+		print $form->selectarray("motif", $rej->motifs, GETPOSTISSET('motif') ? GETPOSTINT('motif') : '');
 		print '</td></tr>';
 
 		//Facturer
@@ -247,7 +250,7 @@ if ($id) {
 		print $form->textwithpicto($langs->trans("RefusedInvoicing"), $langs->trans("DirectDebitRefusedInvoicingDesc"));
 		print '</td>';
 		print '<td class="valid">';
-		print $form->selectarray("facturer", $rej->labelsofinvoicing, GETPOSTISSET('facturer') ? GETPOST('facturer', 'int') : '', 0);
+		print $form->selectarray("facturer", $rej->labelsofinvoicing, GETPOSTISSET('facturer') ? GETPOSTINT('facturer') : '', 0);
 		print '</td></tr>';
 
 		print '</table>';
@@ -264,7 +267,7 @@ if ($id) {
 	print '<div class="tabsAction">';
 
 	if ($action == '') {
-		if ($bon->statut == BonPrelevement::STATUS_CREDITED) {
+		if (is_object($bon) && $bon->statut == BonPrelevement::STATUS_CREDITED) {
 			if ($lipre->statut == 2) {
 				if ($user->hasRight('prelevement', 'bons', 'credit')) {
 					print '<a class="butActionDelete" href="line.php?action=rejet&type='.$type.'&id='.$lipre->id.'">'.$langs->trans("StandingOrderReject").'</a>';
@@ -343,7 +346,7 @@ if ($id) {
 		$num = $db->num_rows($result);
 		$i = 0;
 
-		$urladd = "&id=".urlencode($id);
+		$urladd = "&id=".urlencode((string) ($id));
 		$title = $langs->trans("Bills");
 		if ($type == 'bank-transfer') {
 			$title = $langs->trans("SupplierInvoices");

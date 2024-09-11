@@ -4,6 +4,8 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2016       Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2020       Tobias Sekan			<tobias.sekan@startmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +42,7 @@ if (!$user->admin) {
  * View
  */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_phpinfo');
 
 $title = 'InfoPHP';
 
@@ -53,46 +55,46 @@ if (isset($title)) {
 $maxphp = @ini_get('upload_max_filesize'); // In unknown
 if (preg_match('/k$/i', $maxphp)) {
 	$maxphp = preg_replace('/k$/i', '', $maxphp);
-	$maxphp = $maxphp * 1;
+	$maxphp *= 1;
 }
 if (preg_match('/m$/i', $maxphp)) {
 	$maxphp = preg_replace('/m$/i', '', $maxphp);
-	$maxphp = $maxphp * 1024;
+	$maxphp *= 1024;
 }
 if (preg_match('/g$/i', $maxphp)) {
 	$maxphp = preg_replace('/g$/i', '', $maxphp);
-	$maxphp = $maxphp * 1024 * 1024;
+	$maxphp *= 1024 * 1024;
 }
 if (preg_match('/t$/i', $maxphp)) {
 	$maxphp = preg_replace('/t$/i', '', $maxphp);
-	$maxphp = $maxphp * 1024 * 1024 * 1024;
+	$maxphp *= 1024 * 1024 * 1024;
 }
 $maxphp2 = @ini_get('post_max_size'); // In unknown
 if (preg_match('/k$/i', $maxphp2)) {
 	$maxphp2 = preg_replace('/k$/i', '', $maxphp2);
-	$maxphp2 = $maxphp2 * 1;
+	$maxphp2 *= 1;
 }
 if (preg_match('/m$/i', $maxphp2)) {
 	$maxphp2 = preg_replace('/m$/i', '', $maxphp2);
-	$maxphp2 = $maxphp2 * 1024;
+	$maxphp2 *= 1024;
 }
 if (preg_match('/g$/i', $maxphp2)) {
 	$maxphp2 = preg_replace('/g$/i', '', $maxphp2);
-	$maxphp2 = $maxphp2 * 1024 * 1024;
+	$maxphp2 *= 1024 * 1024;
 }
 if (preg_match('/t$/i', $maxphp2)) {
 	$maxphp2 = preg_replace('/t$/i', '', $maxphp2);
-	$maxphp2 = $maxphp2 * 1024 * 1024 * 1024;
+	$maxphp2 *= 1024 * 1024 * 1024;
 }
 if ($maxphp > 0 && $maxphp2 > 0 && $maxphp > $maxphp2) {
 	$langs->load("errors");
-	print info_admin($langs->trans("WarningParamUploadMaxFileSizeHigherThanPostMaxSize", @ini_get('upload_max_filesize'), @ini_get('post_max_size')), 0, 0, 0, 'warning');
+	print info_admin($langs->trans("WarningParamUploadMaxFileSizeHigherThanPostMaxSize", @ini_get('upload_max_filesize'), @ini_get('post_max_size')), 0, 0, '0', 'warning');
 	print '<br>';
 }
 
 
 print '<table class="noborder centpercent">';
-print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td></td></tr>';
 
 $ErrorPicturePath = "../../theme/eldy/img/error.png";
 $WarningPicturePath = "../../theme/eldy/img/warning.png";
@@ -104,37 +106,37 @@ $arrayphpminversionerror = array(5, 5, 0);
 $arrayphpminversionwarning = array(5, 6, 0);
 
 if (versioncompare(versionphparray(), $arrayphpminversionerror) < 0) {
-	print '<img src="'.$ErrorPicturePath.'" alt="Error"> '.$langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionerror));
+	print img_picto('Error', 'error').' '.$langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionerror));
 } elseif (versioncompare(versionphparray(), $arrayphpminversionwarning) < 0) {
-	print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionwarning));
+	print img_picto('Warning', 'warning').' '.$langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionwarning));
 } else {
-	print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.versiontostring(versionphparray());
+	print img_picto('Ok', 'tick').' '.versiontostring(versionphparray());
 }
 
 print '</td></tr>';
 print '<tr><td>GET and POST support</td><td>';
 
-if (!isset($_GET["testget"]) && !isset($_POST["testpost"]) && !isset($_GET["mainmenu"])) {	// We must keep $_GET and $_POST here
-	print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("PHPSupportPOSTGETKo");
+if (!isset($_GET["testget"]) && !isset($_POST["testpost"]) && !isset($_GET["mainmenu"])) {	// We must keep $_GET and $_POST here. This is a specific test.
+	print img_picto('Warning', 'warning').' '.$langs->trans("PHPSupportPOSTGETKo");
 	print ' (<a href="'.$_SERVER["PHP_SELF"].'?testget=ok">'.$langs->trans("Recheck").'</a>)';
 } else {
-	print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.$langs->trans("PHPSupportPOSTGETOk");
+	print img_picto('Ok', 'tick').' '.$langs->trans("PHPSupportPOSTGETOk");
 }
 
 print '</td></tr>';
 print '<tr><td>Sessions support</td><td>';
 if (!function_exists("session_id")) {
-	print '<img src="'.$ErrorPicturePath.'" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportSessions");
+	print img_picto('Error', 'error').' '.$langs->trans("ErrorPHPDoesNotSupportSessions");
 } else {
-	print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.$langs->trans("PHPSupportSessions");
+	print img_picto('Ok', 'tick').' '.$langs->trans("PHPSupportSessions");
 }
 print '</td></tr>';
 
 print '<tr><td>UTF-8 support</td><td>';
 if (!function_exists("utf8_encode")) {
-	print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("ErrorPHPDoesNotSupport", "UTF8");
+	print img_picto('Warning', 'warning').' '.$langs->trans("ErrorPHPDoesNotSupport", "UTF8");
 } else {
-	print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.$langs->trans("PHPSupport", "UTF8");
+	print img_picto('Ok', 'tick').' '.$langs->trans("PHPSupport", "UTF8");
 }
 print '</td></tr>';
 
@@ -244,7 +246,7 @@ foreach ($phparray as $key => $value) {
 	print '<table class="noborder">';
 	print '<tr class="liste_titre">';
 	print '<td class="titlefield">'.$key.'</td>';
-	print '<td colspan="2">'.$langs->trans("Value").'</td>';
+	print '<td colspan="2"></td>';
 	print "</tr>\n";
 
 	//var_dump($value);

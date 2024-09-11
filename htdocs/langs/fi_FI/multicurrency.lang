@@ -12,7 +12,7 @@ multicurrency_appId=API-avain
 multicurrency_appCurrencySource=Lähdevaluutta
 multicurrency_alternateCurrencySource=Vaihtoehtoinen lähdevaluutta
 CurrenciesUsed=Käytetyt valuutat
-CurrenciesUsed_help_to_add=Lisää eri valuuttojen ja kurssit, joita sinun tulee käyttää <b>ehdotuksissasib09a4b739f17 >, <span class='notranslate'><b>tilaukset</b> jne.
+CurrenciesUsed_help_to_add=Add the different currencies and rates you need to use on your <b>proposals</b>, <b>orders</b> etc.
 rate=korko
 MulticurrencyReceived=Vastaanotettu, alkuperäinen valuutta
 MulticurrencyRemainderToTake=Jäljellä oleva summa, alkuperäinen valuutta

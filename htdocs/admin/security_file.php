@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2017	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2017	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2013		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,7 +87,7 @@ if ($action == 'updateform') {
 		if (!preg_match('/^0/', $tmpumask)) {
 			$tmpumask = '0'.$tmpumask;
 		}
-		if (empty($tmpumask) || $tmpumask === '0') {
+		if (empty($tmpumask)) {  // Also matches '0'
 			$tmpumask = '0664';
 		}
 
@@ -118,7 +119,7 @@ if ($action == 'updateform') {
 $form = new Form($db);
 
 $wikihelp = 'EN:Setup_Security|FR:Paramétrage_Sécurité|ES:Configuración_Seguridad';
-llxHeader('', $langs->trans("Files"), $wikihelp);
+llxHeader('', $langs->trans("Files"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-security_file');
 
 print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
 

@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2004-2013  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012  Regis Houssin       <regis.houssin@inodbox.com>
- * Copyright (C) 2014       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2015       Frederic France     <frederic.france@free.fr>
+/* Copyright (C) 2004-2013	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2014		Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2015		Frederic France				<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +32,7 @@
  *
  * Boxes parent class
  */
-class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" boxes
+class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" boxes
 {
 	/**
 	 * @var DoliDB Database handler
@@ -39,17 +40,39 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 	public $db;
 
 	/**
+	 * Must be defined in the box class
+	 *
+	 * @var ''|'development'|'experimental'|'dolibarr'
+	 */
+	public $version;
+
+	/**
+	 * @var string param
+	 */
+	public $param;
+
+	/**
+	 * @var array box info heads. Example: array('text' => $langs->trans("BoxScheduledJobs", $max), 'nbcol' => 4);
+	 */
+	public $info_box_head = array();
+
+	/**
+	 * @var array box info content
+	 */
+	public $info_box_contents = array();
+
+	/**
 	 * @var string Error message
 	 */
 	public $error = '';
 
 	/**
-	 * @var int Maximum lines
+	 * @var int<0,max> Maximum lines
 	 */
 	public $max = 5;
 
 	/**
-	 * @var int Condition to have widget enabled
+	 * @var bool|int Condition to have widget enabled
 	 */
 	public $enabled = 1;
 
@@ -115,6 +138,24 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 	public $widgettype = '';
 
 
+	//! Must be provided in child classes
+	/**
+	 * Note $picto is deprecated
+	 *
+	 * @var string  Example "accountancy"
+	 */
+	public $boximg;
+	/**
+	 * @var string  Example "BoxLastManualEntries"
+	 */
+	public $boxlabel;
+	/**
+	 * @var string[]  Example  array("accounting")
+	 */
+	public $depends;
+
+
+
 	/**
 	 * Constructor
 	 *
@@ -140,9 +181,9 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 	/**
 	 * Load a box line from its rowid
 	 *
-	 * @param   int $rowid  Row id to load
+	 * @param   int	$rowid	Row id to load
 	 *
-	 * @return  int         Return integer <0 if KO, >0 if OK
+	 * @return  int<-1,1>	Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($rowid)
 	{
@@ -153,7 +194,8 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 		$sql .= " FROM ".MAIN_DB_PREFIX."boxes as b";
 		$sql .= " WHERE b.entity = ".$conf->entity;
 		$sql .= " AND b.rowid = ".((int) $rowid);
-		dol_syslog(get_class($this)."::fetch rowid=".$rowid);
+
+		dol_syslog(get_class($this)."::fetch rowid=".((int) $rowid));
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -177,9 +219,9 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 	/**
 	 * Standard method to show a box (usage by boxes not mandatory, a box can still use its own showBox function)
 	 *
-	 * @param   array   $head       Array with properties of box title
-	 * @param   array   $contents   Array with properties of box lines
-	 * @param	int		$nooutput	No print, only return string
+	 * @param   ?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}   $head       Array with properties of box title
+	 * @param   ?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>   $contents   Array with properties of box lines
+	 * @param	int<0,1>	$nooutput	No print, only return string
 	 * @return  string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)
@@ -187,19 +229,23 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 		global $langs, $user, $conf;
 
 		if (!empty($this->hidden)) {
-			return '\n<!-- Box ".get_class($this)." hidden -->\n'; // Nothing done if hidden (for example when user has no permission)
+			return "\n<!-- Box ".get_class($this)." hidden -->\n"; // Nothing done if hidden (for example when user has no permission)
 		}
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-		$MAXLENGTHBOX = 60; // Mettre 0 pour pas de limite
+		$MAXLENGTHBOX = 60; // When set to 0: no length limit
 
 		$cachetime = 900; // 900 : 15mn
-		$cachedir = DOL_DATA_ROOT.'/boxes/temp';
+		$cachedir = DOL_DATA_ROOT.'/users/temp/widgets';
 		$fileid = get_class($this).'id-'.$this->box_id.'-e'.$conf->entity.'-u'.$user->id.'-s'.$user->socid.'.cache';
 		$filename = '/box-'.$fileid;
 		$refresh = dol_cache_refresh($cachedir, $filename, $cachetime);
 		$out = '';
+
+		if ($contents === null) {
+			$contents = array();
+		}
 
 		if ($refresh) {
 			dol_syslog(get_class($this).'::showBox');
@@ -214,9 +260,8 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 			$out .= "\n<!-- Box ".get_class($this)." start -->\n";
 
 			$out .= '<div class="box divboxtable boxdraggable" id="boxto_'.$this->box_id.'">'."\n";
-
 			if (!empty($head['text']) || !empty($head['sublink']) || !empty($head['subpicto']) || $nblines) {
-				$out .= '<table summary="boxtable'.$this->box_id.'" width="100%" class="noborder boxtable">'."\n";
+				$out .= '<table summary="boxtable'.$this->box_id.'" class="noborder boxtable centpercent">'."\n";
 			}
 
 			// Show box title
@@ -258,7 +303,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 					//$out.= '<td class="nocellnopadd boxclose right nowraponall">';
 					$out .= '<div class="nocellnopadd boxclose floatright nowraponall">';
 					$out .= $sublink;
-					// The image must have the class 'boxhandle' beause it's value used in DOM draggable objects to define the area used to catch the full object
+					// The image must have the class 'boxhandle' because it's value used in DOM draggable objects to define the area used to catch the full object
 					$out .= img_picto($langs->trans("MoveBox", $this->box_id), 'grip_title', 'class="opacitymedium boxhandle hideonsmartphone cursormove marginleftonly"');
 					$out .= img_picto($langs->trans("CloseBox", $this->box_id), 'close_title', 'class="opacitymedium boxclose cursorpointer marginleftonly" rel="x:y" id="imgclose'.$this->box_id.'"');
 					$label = $head['text'];
@@ -278,8 +323,8 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 			// Show box lines
 			if ($nblines) {
 				// Loop on each record
-				for ($i = 0, $n = $nblines; $i < $n; $i++) {
-					if (isset($contents[$i])) {
+				foreach (array_keys($contents) as $i) {
+					if (isset($contents[$i]) && is_array($contents[$i])) {
 						// TR
 						if (isset($contents[$i][0]['tr'])) {
 							$out .= '<tr '.$contents[$i][0]['tr'].'>';
@@ -289,7 +334,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 
 						// Loop on each TD
 						$nbcolthisline = count($contents[$i]);
-						for ($j = 0; $j < $nbcolthisline; $j++) {
+						foreach (array_keys($contents[$i]) as $j) {
 							// Define tdparam
 							$tdparam = '';
 							if (!empty($contents[$i][$j]['td'])) {
@@ -400,12 +445,13 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 	 *  Return list of widget. Function used by admin page htdoc/admin/widget.
 	 *  List is sorted by widget filename so by priority to run.
 	 *
-	 *  @param	array	$forcedirwidget		null=All default directories. This parameter is used by modulebuilder module only.
-	 * 	@return	array						Array list of widget
+	 *  @param	?string[]	$forcedirwidget		null=All default directories. This parameter is used by modulebuilder module only.
+	 *	@return	array<array{picto:string,file:string,fullpath:string,relpath:string,iscoreorexternal:'external'|'internal',version:string,status:string,info:string}>	Array list of widgets
+	 *
 	 */
 	public static function getWidgetsList($forcedirwidget = null)
 	{
-		global $conf, $langs, $db;
+		global $langs, $db;
 
 		$files = array();
 		$fullpath = array();
@@ -487,6 +533,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 			}
 
 			$objMod = new $modName($db);
+			'@phan-var-force ModeleBoxes $objMod';
 			if (is_object($objMod)) {
 				// Define disabledbyname and disabledbymodule
 				$disabledbyname = 0;
@@ -498,8 +545,8 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 					$disabledbyname = 1;
 				}
 
-				// We set info of modules
-				$widget[$j]['picto'] = (empty($objMod->picto) ? (empty($objMod->boximg) ? img_object('', 'generic') : $objMod->boximg) : img_object('', $objMod->picto));
+				// We set info of modules  @phan-suppress-next-line PhanUndeclaredProperty
+				$widget[$j]['picto'] = ((!property_exists($objMod, 'picto') || empty($objMod->picto)) ? (empty($objMod->boximg) ? img_object('', 'generic') : $objMod->boximg) : img_object('', $objMod->picto));
 				$widget[$j]['file'] = $files[$key];
 				$widget[$j]['fullpath'] = $fullpath[$key];
 				$widget[$j]['relpath'] = $relpath[$key];
@@ -521,6 +568,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 			}
 			$j++;
 		}
+
 		return $widget;
 	}
 }

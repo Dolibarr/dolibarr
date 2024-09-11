@@ -49,12 +49,31 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 $action = GETPOST('action', 'aZ09'); // set or del
 $name = GETPOST('name', 'alpha');
-$entity = GETPOST('entity', 'int');
+$entity = GETPOSTINT('entity');
 $value = (GETPOST('value', 'aZ09') != '' ? GETPOST('value', 'aZ09') : 1);
 
 // Security check
 if (empty($user->admin)) {
 	httponly_accessforbidden('This ajax component can be called by admin user only');
+}
+
+
+/*
+ * Actions
+ */
+
+// Registering the new value of constant
+if (!empty($action) && !empty($name)) {
+	if ($action == 'set') {			// Test on permission not required here. Already done into test on user->admin in header.
+		dolibarr_set_const($db, $name, $value, 'chaine', 0, '', $entity);
+	} elseif ($action == 'del') {	// Test on permission not required here. Already done into test on user->admin in header.
+		dolibarr_del_const($db, $name, $entity);
+		if ($entity == 1) {	// Sometimes the param was saved in both entity 0 and 1. When we work on master entity, we should clean also if entity is 0
+			dolibarr_del_const($db, $name, 0);
+		}
+	}
+} else {
+	httponly_accessforbidden('Param action and name is required', 403);
 }
 
 
@@ -65,14 +84,3 @@ if (empty($user->admin)) {
 top_httphead();
 
 //print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
-
-// Registering the new value of constant
-if (!empty($action) && !empty($name)) {
-	if ($action == 'set') {
-		dolibarr_set_const($db, $name, $value, 'chaine', 0, '', $entity);
-	} elseif ($action == 'del') {
-		dolibarr_del_const($db, $name, $entity);
-	}
-} else {
-	http_response_code(403);
-}

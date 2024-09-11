@@ -22,7 +22,8 @@ ToOfferALinkForOnlinePaymentOnContractLine=Adresa URL, ktorá ponúka %s stránk
 ToOfferALinkForOnlinePaymentOnFreeAmount=Adresa URL, ktorá ponúka %s stránku online platieb v ľubovoľnej výške bez existujúceho objektu
 ToOfferALinkForOnlinePaymentOnMemberSubscription=Adresa URL, ktorá ponúka %s online platobnú stránku pre členské predplatné
 ToOfferALinkForOnlinePaymentOnDonation=Adresa URL, ktorá ponúka %s stránku online platieb na platbu daru
-YouCanAddTagOnUrl=Môžete tiež pridať parameter adresy URL <b>&tag=<i>valueb0ae64758</spanc><span> class='notranslate'></b> na ktorúkoľvek z týchto adries URL (povinné iba pri platbe, ktorá nie je prepojená s objektom), aby ste pridali svoju vlastnú značku komentára k platbe.<br>Pre URL platieb bez existujúceho objektu, môžete pridať aj parameter <strong>&noidempotency=1</strong>, takže rovnaký odkaz s rovnakou značkou možno použiť niekoľkokrát (niektoré spôsoby platby môžu obmedziť platbu na 1 za každý iný odkaz bez tohto parametra)
+YouCanAddTagOnUrl=You can also add url parameter <b>&tag=value</b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
+YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful of failed online payment.
 SetupStripeToHavePaymentCreatedAutomatically=Nastavte svoj Stripe pomocou adresy URL <b>%s</b>, kedy sa platba vytvorí automaticky potvrdené spoločnosťou Stripe.
 AccountParameter=Parametre účtu
 UsageParameter=Používanie parametrov
@@ -77,4 +78,13 @@ TERMINAL_LOCATION=Miesto (adresa) pre Stripe Terminals
 RequestDirectDebitWithStripe=Požiadajte o inkaso s Stripe
 RequesCreditTransferWithStripe=Požiadajte o prevod kreditu pomocou služby Stripe
 STRIPE_SEPA_DIRECT_DEBIT=Povoľte platby inkasom cez Stripe
+STRIPE_KLARNA=Enable the payments using Klarna
+STRIPE_BANCONTACT=Enable the payments using BANCONTACT
+STRIPE_IDEAL=Enable the payments using IDEAL
+STRIPE_GIROPAY=Enable the payments using GIROPAY
+STRIPE_SOFORT=Enable the payments using SOFORT
 StripeConnect_Mode=Režim Stripe Connect
+ExampleOnlyForBECustomers=Only for belgium customers
+ExampleOnlyForDECustomers=Only for german customers
+ExampleOnlyForNLCustomers=Only for dutch customers
+ExampleOnlyForATBEDEITNLESCustomers=Only for customers from Austria, Belgium, Germany, Italy, Netherlands, Spain

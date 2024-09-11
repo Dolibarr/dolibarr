@@ -3,6 +3,7 @@
  * Copyright (C) 2013-2016  Jean-François FERRY     <hello@librethic.io>
  *               2016       Christophe Battarel     <christophe@altairis.fr>
  * Copyright (C) 2019-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,12 +36,7 @@ class box_graph_new_vs_close_ticket extends ModeleBoxes
 	public $boxlabel;
 	public $depends = array("ticket");
 
-	public $param;
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 	public $widgettype = 'graph';
-
 
 	/**
 	 * Constructor
@@ -133,7 +129,7 @@ class box_graph_new_vs_close_ticket extends ModeleBoxes
 				$px1 = new DolGraph();
 				$mesg = $px1->isGraphKo();
 				if (!$mesg) {
-					$px1->SetDataColor(array_values($colorseries));
+					$px1->SetDataColor($colorseries);
 					$px1->SetData($data);
 					$px1->setShowLegend(2);
 					if (!empty($conf->dol_optimize_smallscreen)) {
@@ -171,9 +167,9 @@ class box_graph_new_vs_close_ticket extends ModeleBoxes
 	/**
 	 *     Method to show box
 	 *
-	 *     @param  array $head     Array with properties of box title
-	 *     @param  array $contents Array with properties of box lines
-	 *     @param  int   $nooutput No print, only return string
+	 *	@param	?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}	$head	Array with properties of box title
+	 *	@param	?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>	$contents	Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *     @return string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)

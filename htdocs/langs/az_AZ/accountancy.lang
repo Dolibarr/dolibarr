@@ -64,18 +64,15 @@ MainAccountForVatPaymentNotDefined=Quraşdırmada müəyyən edilməyən ƏDV ö
 MainAccountForSubscriptionPaymentNotDefined=Quraşdırmada müəyyən edilməyən üzvlük ödənişi üçün hesab (Hesab Planından).
 MainAccountForRetainedWarrantyNotDefined=Quraşdırmada müəyyən edilməyən saxlanılan zəmanət üçün hesab (Hesab Planından).
 UserAccountNotDefined=İstifadəçi üçün mühasibat hesabı quraşdırmada müəyyən edilməyib
-
 AccountancyArea=Mühasibat sahəsi
 AccountancyAreaDescIntro=Mühasibat uçotu modulunun istifadəsi bir neçə mərhələdə həyata keçirilir:
 AccountancyAreaDescActionOnce=Aşağıdakı hərəkətlər adətən yalnız bir dəfə və ya ildə bir dəfə həyata keçirilir...
 AccountancyAreaDescActionOnceBis=Mühasibat uçotunda məlumatların ötürülməsi zamanı avtomatik olaraq düzgün standart mühasibat hesabını təklif etməklə gələcəkdə vaxtınıza qənaət etmək üçün növbəti addımlar atılmalıdır.
 AccountancyAreaDescActionFreq=Aşağıdakı hərəkətlər adətən çox böyük şirkətlər üçün hər ay, həftə və ya gün yerinə yetirilir...
-
 AccountancyAreaDescJournalSetup=ADDIM %s: %s menyusundan jurnal siyahınızın məzmununu yoxlayın
 AccountancyAreaDescChartModel=ADDIM %s: Hesab planı modelinin mövcud olduğunu yoxlayın və ya %s menyusundan birini yaradın.
 AccountancyAreaDescChart=ADDIM %s: %s menyusundan hesab cədvəlinizi seçin və|və ya tamamlayın
-
-AccountancyAreaDescFiscalPeriod=ADDIM %s: Defolt olaraq mühasibat qeydlərinizi birləşdirəcək maliyyə ili təyin edin. Bunun üçün %s menyu girişindən istifadə edin.
+AccountancyAreaDescFiscalPeriod=STEP %s: Define a fiscal year by default on which to integrate your accounting entries, from menu %s.
 AccountancyAreaDescVat=ADDIM %s: Hər ƏDV dərəcələri üçün mühasibat hesablarını müəyyənləşdirin. Bunun üçün %s menyu girişindən istifadə edin.
 AccountancyAreaDescDefault=ADDIM %s: Defolt mühasibat hesablarını müəyyənləşdirin. Bunun üçün %s menyu girişindən istifadə edin.
 AccountancyAreaDescExpenseReport=ADDIM %s: Xərc hesabatının hər növü üçün defolt mühasibat hesablarını müəyyənləşdirin. Bunun üçün %s menyu girişindən istifadə edin.
@@ -87,12 +84,10 @@ AccountancyAreaDescMisc=ADDIM %s: Müxtəlif əməliyyatlar üçün məcburi def
 AccountancyAreaDescLoan=ADDIM %s: Kreditlər üçün defolt mühasibat hesablarını müəyyənləşdirin. Bunun üçün %s menyu girişindən istifadə edin.
 AccountancyAreaDescBank=ADDIM %s: Hər bir bank və maliyyə hesabı üçün mühasibat hesablarını və jurnal kodunu müəyyənləşdirin. Bunun üçün %s menyu girişindən istifadə edin.
 AccountancyAreaDescProd=ADDIM %s: Məhsul/Xidmətlərinizdə mühasibat hesablarını müəyyənləşdirin. Bunun üçün %s menyu girişindən istifadə edin.
-
 AccountancyAreaDescBind=ADDIM %s: Mövcud %s xətləri və mühasibat hesabı arasındakı əlaqəni yoxlayın, beləliklə, proqram Mühasibat Kitabında əməliyyatları jurnallaşdıra biləcək bir kliklə. Çatışmayan bağlamaları tamamlayın. Bunun üçün %s menyu girişindən istifadə edin.
 AccountancyAreaDescWriteRecords=ADDIM %s: Əməliyyatları Mühasibat Kitabına yazın. Bunun üçün <strong>%s</strong> menyusuna daxil olun və düyməni klikləyin <strong>%s</strong>.
 AccountancyAreaDescAnalyze=ADDIM %s: Hesabatları oxuyun və ya digər mühasiblər üçün ixrac faylları yaradın.
 AccountancyAreaDescClosePeriod=ADDIM %s: Gələcəkdə eyni dövrdə daha data ötürə bilməyəcəyimiz üçün dövrü bağlayın.
-
 TheFiscalPeriodIsNotDefined=Quraşdırmada məcburi addım tamamlanmayıb (maliyyə dövrü müəyyən edilməyib)
 TheJournalCodeIsNotDefinedOnSomeBankAccount=Quraşdırmada məcburi addım tamamlanmayıb (bütün bank hesabları üçün mühasibat kodu jurnalı müəyyən edilməyib)
 Selectchartofaccounts=Aktiv hesablar planını seçin
@@ -111,7 +106,7 @@ DataUsedToSuggestAccount=Hesab təklif etmək üçün istifadə edilən data
 AccountAccountingSuggest=Hesab təklif edildi
 MenuDefaultAccounts=Defolt hesablar
 MenuBankAccounts=Bank hesabları
-MenuVatAccounts=ƏDV hesabları
+MenuVatAccounts=VAT accounts
 MenuTaxAccounts=Vergi hesabları
 MenuExpenseReportAccounts=Xərc hesabatı hesabları
 MenuLoanAccounts=Kredit hesabları
@@ -144,8 +139,6 @@ ExpenseReportLines=Xərc hesabatlarının xətləri bağlanmalıdır
 ExpenseReportLinesDone=Xərc hesabatlarının bağlı xətləri
 IntoAccount=Mühasibat hesabı ilə xətti bağlayın
 TotalForAccount=Ümumi mühasibat hesabı
-
-
 Ventilate=Bağlamaq
 LineId=İd xətti
 Processing=Emal edilir
@@ -158,22 +151,21 @@ VentilatedinAccount=Mühasibat hesabına uğurla bağlandı
 NotVentilatedinAccount=Mühasibat hesabına bağlı deyil
 XLineSuccessfullyBinded=%s məhsul/xidmət mühasibat hesabına uğurla bağlandı
 XLineFailedToBeBinded=%s məhsul/xidmətlər heç bir mühasibat hesabına bağlı deyildi
-
 ACCOUNTING_LIMIT_LIST_VENTILATION=Siyahıda və bağlama səhifəsində maksimum sətir sayı (tövsiyə olunur: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Ən son elementlər üzrə "Binding to" səhifəsinin çeşidlənməsinə başlayın
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Ən son elementlər üzrə "Binding tamamlandı" səhifəsinin çeşidlənməsinə başlayın
-
 ACCOUNTING_LENGTH_DESCRIPTION=Məhsul və xidmətlərin təsvirini x simvoldan sonra siyahıda kəsin (Ən yaxşı = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Məhsul və xidmətlərin hesab təsviri formasını siyahılarda x simvoldan sonra kəsin (Ən yaxşı = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Ümumi mühasibat hesablarının uzunluğu (Burada dəyəri 6-ya təyin etsəniz, ekranda '706' hesabı '706000' kimi görünəcək)
 ACCOUNTING_LENGTH_AACCOUNT=Üçüncü tərəf mühasibat hesablarının uzunluğu (Burada dəyəri 6-ya təyin etsəniz, "401" hesabı ekranda "401000" kimi görünəcək)
 ACCOUNTING_MANAGE_ZERO=Mühasibat hesabının sonunda fərqli sayda sıfırları idarə etməyə icazə verin. Bəzi ölkələrə (İsveçrə kimi) ehtiyac var. Söndürülmüşdürsə (defolt), siz proqramdan virtual sıfırlar əlavə etməyi xahiş etmək üçün aşağıdakı iki parametri təyin edə bilərsiniz.
+ACCOUNTING_BANK_CONCILIATED=Transfer into accounting only the lines reconciliated in bank statements (by default, could be unchecked on each transfer)
 BANK_DISABLE_DIRECT_INPUT=Bank hesabında əməliyyatın birbaşa qeydini deaktiv edin
+ACCOUNTANCY_ER_DATE_RECORD=Use the end date of the period of an expense report as the date for the transfer to accounting, instead of the date of the expense
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Jurnalda qaralama ixracını aktivləşdirin
 ACCOUNTANCY_COMBO_FOR_AUX=Yardımçı hesab üçün kombinasiya siyahısını aktivləşdirin (çoxlu üçüncü tərəfiniz varsa, yavaş ola bilər, dəyərin bir hissəsi üzrə axtarış imkanını poza bilərsiniz)
 ACCOUNTING_DATE_START_BINDING=Tarix bu tarixdən aşağı olduqda mühasibatlıqda məcburi və köçürməni deaktiv edin (bu tarixdən əvvəlki əməliyyatlar defolt olaraq istisna ediləcək)
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Məlumatları mühasibat uçotuna köçürmək üçün səhifədə, standart olaraq seçilmiş müddət nədir
-
 ACCOUNTING_SELL_JOURNAL=Satış jurnalı - satış və geri qaytarmalar
 ACCOUNTING_PURCHASE_JOURNAL=Alış jurnalı - satınalma və geri qaytarma
 ACCOUNTING_BANK_JOURNAL=Kassa jurnalı - mədaxil və məxaric
@@ -182,40 +174,33 @@ ACCOUNTING_MISCELLANEOUS_JOURNAL=Ümumi jurnal
 ACCOUNTING_HAS_NEW_JOURNAL=Yeni Jurnalı var
 ACCOUNTING_INVENTORY_JOURNAL=İnventar jurnalı
 ACCOUNTING_SOCIAL_JOURNAL=Sosial jurnal
-
 ACCOUNTING_RESULT_PROFIT=Nəticə mühasibat hesabı (mənfəət)
 ACCOUNTING_RESULT_LOSS=Nəticə uçotu hesabı (zərər)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Bağlanma jurnalı
 ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT=Balans hesabı üçün istifadə olunan mühasibat qrupları (vergüllə ayrılır)
 ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT=Mənfəət hesabatı üçün istifadə olunan mühasibat qrupları (vergüllə ayrılır)
-
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Keçid bank köçürmələri üçün hesab kimi istifadə ediləcək hesab (Hesab Planından).
 TransitionalAccount=Keçid bank köçürmə hesabı
-
 ACCOUNTING_ACCOUNT_SUSPENSE=Alınmış və ya ödənilmiş bölüşdürülməmiş vəsaitlər üçün hesab kimi istifadə ediləcək hesab (Hesab Planından), yəni "gözləyin"
 DONATION_ACCOUNTINGACCOUNT=İanələrin qeydiyyatı üçün istifadə ediləcək hesab (Hesab Planından) (İanə modulu)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Üzvlük abunəliklərinin qeydiyyatı üçün istifadə ediləcək hesab (Hesab Planından) (Üzvlük modulu - əgər üzvlük fakturasız qeydə alınıbsa)
-
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Müştəri depozitini qeydiyyata almaq üçün standart hesab kimi istifadə ediləcək hesab (Hesab Planından).
 UseAuxiliaryAccountOnCustomerDeposit=Müştəri hesabını ilkin ödəniş xətləri üçün köməkçi mühasibat kitabçasında fərdi hesab kimi saxlayın (deaktiv edilərsə, ilkin ödəniş xətləri üçün fərdi hesab boş qalacaq)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Defolt olaraq istifadə ediləcək hesab (Hesab Planından).
 UseAuxiliaryAccountOnSupplierDeposit=Təchizatçı hesabını ilkin ödəniş xətləri üçün köməkçi mühasibat kitabçasında fərdi hesab kimi saxlayın (əgər deaktiv edilərsə, ilkin ödəniş xətləri üçün fərdi hesab boş qalacaq)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Müştərilərin saxlanmış zəmanətini qeyd etmək üçün standart olaraq mühasibat hesabı
-
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Eyni ölkə daxilində satın alınan məhsullar üçün standart hesab kimi istifadə ediləcək hesab (Hesab Planından) (məhsul vərəqində müəyyən edilmədikdə istifadə olunur)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=AET-dən başqa bir AET ölkəsinə alınmış məhsullar üçün standart hesab kimi istifadə ediləcək hesab (Hesab Planından) (məhsul vərəqində müəyyən edilmədikdə istifadə olunur)
 ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=Hər hansı digər xarici ölkədən alınmış və idxal edilən məhsullar üçün standart hesab kimi istifadə ediləcək hesab (Hesab Planından) (məhsul vərəqində göstərilmədikdə istifadə olunur)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Satılan məhsullar üçün standart hesab kimi istifadə ediləcək hesab (Hesab Planından) (məhsul vərəqində müəyyən edilmədikdə istifadə olunur)
 ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=AET-dən başqa bir AET ölkəsinə satılan məhsullar üçün standart hesab kimi istifadə ediləcək hesab (Hesab Planından) (məhsul vərəqində müəyyən edilmədikdə istifadə olunur)
 ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Hər hansı digər xarici ölkəyə satılan və ixrac edilən məhsullar üçün standart hesab kimi istifadə ediləcək hesab (Hesab Planından) (məhsul vərəqində göstərilmədikdə istifadə olunur)
-
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Eyni ölkə daxilində satın alınan xidmətlər üçün standart hesab kimi istifadə ediləcək hesab (Hesab Planından) (xidmət vərəqində müəyyən edilmədikdə istifadə olunur)
 ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=AET-dən başqa bir EEC ölkəsinə alınmış xidmətlər üçün standart hesab kimi istifadə ediləcək hesab (Hesab Planından) (xidmət vərəqində müəyyən edilmədikdə istifadə olunur)
 ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=Digər xarici ölkədən alınmış və idxal edilmiş xidmətlər üçün standart hesab kimi istifadə ediləcək hesab (Hesab Planından) (xidmət vərəqində müəyyən edilmədikdə istifadə olunur)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Satılan xidmətlər üçün standart hesab kimi istifadə ediləcək hesab (Hesab Planından) (xidmət vərəqində müəyyən edilmədikdə istifadə olunur)
 ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=AET-dən başqa bir EEC ölkəsinə satılan xidmətlər üçün standart hesab kimi istifadə ediləcək hesab (Hesab Planından) (xidmət vərəqində müəyyən edilmədikdə istifadə olunur)
 ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Hər hansı digər xarici ölkəyə satılan və ixrac edilən xidmətlər üçün standart hesab kimi istifadə ediləcək hesab (Hesab Planından) (xidmət vərəqində müəyyən edilmədikdə istifadə olunur)
-
 Doctype=Sənədin növü
 Docdate=Tarix
 Docref=İstinad
@@ -237,7 +222,6 @@ AccountingAccountGroupsDesc=Burada bəzi mühasibat hesabı qruplarını müəyy
 ByAccounts=Hesablara görə
 ByPredefinedAccountGroups=Əvvəlcədən təyin edilmiş qruplar tərəfindən
 ByPersonalizedAccountGroups=Fərdi qruplar tərəfindən
-ByYear=İllə
 NotMatch=Qurulmayıb
 DeleteMvt=Mühasibat uçotundan bəzi sətirləri silin
 DelMonth=Silmək üçün ay
@@ -276,18 +260,14 @@ OpeningBalance=Açılış balansı
 ShowOpeningBalance=Açılış balansını göstərin
 HideOpeningBalance=Açılış balansını gizlədin
 ShowSubtotalByGroup=Səviyyəyə görə ara cəmi göstərin
-
 Pcgtype=Hesab qrupu
 PcgtypeDesc=Hesab qrupu bəzi mühasibat hesabatları üçün əvvəlcədən müəyyən edilmiş “filtr” və “qruplaşdırma” meyarları kimi istifadə olunur. Məsələn, "GƏLİR" və ya "XƏRÇ" məsrəf/gəlir hesabatını yaratmaq üçün məhsulların mühasibat uçotu üçün qruplar kimi istifadə olunur.
 AccountingCategoriesDesc=Fərdi hesablar qrupu filtrdən istifadəni və ya xüsusi hesabatların qurulmasını asanlaşdırmaq üçün mühasibat hesablarını bir adda qruplaşdırmaq üçün istifadə edilə bilər.
-
 Reconcilable=Barışıq
-
 TotalVente=Vergidən əvvəl ümumi dövriyyə
 TotalMarge=Ümumi satış marjası
-
 DescVentilCustomer=Hesab planından məhsul hesabına bağlı (və ya olmayan) müştəri hesab-faktura xətlərinin siyahısına burada müraciət edin
-DescVentilMore=Əksər hallarda, siz əvvəlcədən təyin edilmiş məhsul və ya xidmətlərdən istifadə edirsinizsə və məhsul/xidmət kartında hesabı (hesab planından) təyin edirsinizsə, proqram faktura xətlərinizlə qrafikinizin mühasibat hesabı arasında bütün bəndləri həyata keçirə biləcək. yalnız bir kliklə <strong>"%s"b0a65d071f6spanfc90z >. Hesab məhsul/xidmət kartlarında qurulmayıbsa və ya hələ də hesaba bağlı olmayan bəzi xətləriniz varsa, "<span class='notranslate'><strong><span menyusundan əl ilə bağlama etməli olacaqsınız. class='notranslate'>%s</span></strong>".
+DescVentilMore=In most cases, if you use predefined products or services and you set the account (from chart of account) on the product/service card, the application will be able to make all the binding between your invoice lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on product/service cards or if you still have some lines not bound to an account, you will have to make a manual binding from the menu "<strong>%s</strong>".
 DescVentilDoneCustomer=Müştərilərin hesab-faktura sətirlərinin siyahısı və onların hesab planından məhsul hesabı ilə buradan tanış olun
 DescVentilTodoCustomer=Hesab cədvəlindən məhsul hesabı ilə artıq bağlı olmayan faktura xətlərini bağlayın
 ChangeAccount=Seçilmiş xətlər üçün məhsul/xidmət hesabını (hesab planından) aşağıdakı hesabla dəyişdirin:
@@ -296,9 +276,8 @@ DescVentilSupplier=Hesab planından məhsul hesabına bağlı və ya hələ bağ
 DescVentilDoneSupplier=Burada satıcı hesab-fakturalarının sətirlərinin siyahısı və onların mühasibat hesabı ilə tanış olun
 DescVentilTodoExpenseReport=Artıq ödəniş mühasibat hesabı ilə əlaqələndirilməyən xərc hesabatı xətlərini birləşdirin
 DescVentilExpenseReport=Bir haqq mühasibat hesabına bağlı (və ya olmayan) xərc hesabatı xətlərinin siyahısına burada müraciət edin
-DescVentilExpenseReportMore=Xərc hesabatı sətirlərinin növü üzrə mühasibat hesabı qurarsanız, proqram <span class='notranslate düyməsi ilə bir kliklə xərc hesabatı xətləri ilə hesablar planınızın mühasibat hesabı arasında bütün əlaqəni həyata keçirə biləcək. '><strong></span>"%s"</strong>. Əgər haqq-hesab rüsumlar lüğətində qurulmayıbsa və ya hələ də hər hansı hesaba bağlı olmayan bəzi sətirləriniz varsa, "<strong><span class=" menyusundan əl ilə bağlama etməli olacaqsınız. 'notranslate'>%s</span></strong>".
+DescVentilExpenseReportMore=If you setup accounting account on type of expense report lines, the application will be able to make all the binding between your expense report lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on fees dictionary or if you still have some lines not bound to any account, you will have to make a manual binding from the menu "<strong>%s</strong>".
 DescVentilDoneExpenseReport=Xərc hesabatlarının sətirlərinin siyahısı və onların haqlarının uçotu hesabı ilə buradan tanış olun
-
 Closure=İllik bağlanma
 AccountancyClosureStep1Desc=Hələ təsdiqlənməmiş və kilidlənməmiş aya görə hərəkətlərin sayına buradan baxın
 OverviewOfMovementsNotValidated=Təsdiqlənməmiş və kilidlənməmiş hərəkətlərin icmalı
@@ -306,11 +285,9 @@ AllMovementsWereRecordedAsValidated=Bütün hərəkətlər təsdiqlənmiş və k
 NotAllMovementsCouldBeRecordedAsValidated=Bütün hərəkətlər təsdiqlənmiş və kilidlənmiş kimi qeydə alına bilməz
 ValidateMovements=Hərəkətləri təsdiqləyin və kilidləyin
 DescValidateMovements=Yazıların, hərflərin və silinmələrin hər hansı dəyişdirilməsi və ya silinməsi qadağan ediləcək. Məşq üçün bütün qeydlər təsdiqlənməlidir, əks halda bağlanmaq mümkün olmayacaq
-
 ValidateHistory=Avtomatik Bağlayın
 AutomaticBindingDone=Avtomatik bağlamalar tamamlandı (%s) - Bəzi qeydlər üçün avtomatik bağlama mümkün deyil (%s)
 DoManualBindingForFailedRecord=Avtomatik olaraq əlaqələndirilməyən %s cərgə(lər) üçün əllə keçid etməlisiniz.
-
 ErrorAccountancyCodeIsAlreadyUse=Xəta, istifadə edildiyi üçün bu hesab planının hesabını silə və ya deaktiv edə bilməzsiniz
 MvtNotCorrectlyBalanced=Hərəkət düzgün balanslaşdırılmamışdır. Debet = %s & Kredit = %s
 Balancing=Balanslaşdırma
@@ -323,12 +300,12 @@ ChangeBinding=Bağlamanı dəyişdirin
 Accounted=Mühasibat dəftərində qeyd olunur
 NotYetAccounted=Hələ mühasibatlığa keçməyib
 ShowTutorial=Təlimatı göstərin
+ClickOnUseTutorialForHelp=Welcome on the section to generate your accountancy. Click on the link "%s" to get advices on how to use it.
 NotReconciled=Barışmadı
 WarningRecordWithoutSubledgerAreExcluded=Xəbərdarlıq, subledger hesabı müəyyən edilməmiş bütün xətlər süzülür və bu görünüşdən xaric edilir
 AccountRemovedFromCurrentChartOfAccount=Cari hesablar planında olmayan mühasibat hesabı
-
 ## Admin
-BindingOptions=Bağlama seçimləri
+BindingOptions=Options for the transfer in accountancy
 ApplyMassCategories=Kütləvi kateqoriyalar tətbiq edin
 AddAccountFromBookKeepingWithNoCategories=Mövcud hesab hələ fərdiləşdirilmiş qrupda deyil
 CategoryDeleted=Mühasibat hesabı üçün kateqoriya silindi
@@ -352,7 +329,7 @@ ACCOUNTING_DISABLE_BINDING_ON_SALES=Satış üzrə mühasibatlıqda məcburi və
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Satınalmalar üzrə mühasibatlıqda məcburi və köçürməni aradan buraxın (satıcı fakturaları mühasibat uçotunda nəzərə alınmayacaq)
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Xərc hesabatlarında mühasibatlıqda məcburi və köçürməni aradan buraxın (xərc hesabatları mühasibat uçotunda nəzərə alınmayacaq)
 ACCOUNTING_ENABLE_LETTERING=Mühasibat uçotunda yazı funksiyasını aktivləşdirin
-ACCOUNTING_ENABLE_LETTERING_DESC=Bu seçimlər aktiv olduqda, siz hər bir mühasibat qeydində kod təyin edə bilərsiniz ki, müxtəlif uçot hərəkətlərini birlikdə qruplaşdıra biləsiniz. Keçmişdə müxtəlif jurnallar müstəqil idarə olunanda bu xüsusiyyət müxtəlif jurnalların hərəkət xətlərini bir yerdə qruplaşdırmaq üçün lazım idi. Bununla belə, Dolibarr mühasibatlığı ilə belə bir izləmə kodu "<b>%s<span class='notranslate'>b09a4b739fz01f adlanır. span>" artıq avtomatik olaraq yadda saxlanılır, ona görə də avtomatik hərf artıq yerinə yetirilib, xəta riski olmadan bu funksiya ümumi istifadə üçün yararsız hala düşüb. Əl ilə yazı funksiyası mühasibatlıqda məlumatların ötürülməsini həyata keçirən kompüter mühərrikinə həqiqətən etibar etməyən son istifadəçilər üçün nəzərdə tutulub.
+ACCOUNTING_ENABLE_LETTERING_DESC=When this options is enabled, you can define, on each accounting entry, a code so you can group different accounting movements together. In the past, when different journals was managed independently, this feature was necessary to group movement lines of different journals together. However, with Dolibarr accountancy, such a tracking code, called "<b>%s</b>" is already saved automatically, so an automatic lettering is already done, with no risk of error so this feature has become useless for a common usage. Manual lettering feature is provided for end users that really don't trust the computer engine making the transfer of data in accountancy.
 EnablingThisFeatureIsNotNecessary=Bu funksiyanı aktivləşdirmək daha ciddi mühasibat uçotu idarəçiliyi üçün lazım deyil.
 ACCOUNTING_ENABLE_AUTOLETTERING=Mühasibat uçotuna köçürərkən avtomatik hərfləri aktivləşdirin
 ACCOUNTING_ENABLE_AUTOLETTERING_DESC=Yazı üçün kod avtomatik olaraq yaradılır və artırılır və son istifadəçi tərəfindən seçilmir
@@ -360,8 +337,7 @@ ACCOUNTING_LETTERING_NBLETTERS=Hərf kodu yaradan zaman hərflərin sayı (stand
 ACCOUNTING_LETTERING_NBLETTERS_DESC=Bəzi mühasibat proqramları yalnız iki hərfli kodu qəbul edir. Bu parametr bu aspekti təyin etməyə imkan verir. Hərflərin standart sayı üçdür.
 OptionsAdvanced=Təkmilləşmiş Seçimlər
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Təchizatçı alışlarında ƏDV-nin əks ödənişinin idarə edilməsini aktivləşdirin
-ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Bu seçim aktiv olduqda, tədarükçünün və ya verilmiş satıcı hesab-fakturasının fərqli şəkildə mühasibat uçotuna köçürülməli olduğunu müəyyən edə bilərsiniz: "<"-də müəyyən edilmiş hesab planından 2 verilmiş hesab üzrə mühasibat uçotuna əlavə debet və kredit xətti yaradılacaq. span class='notranslate'>%s</span>" quraşdırma səhifəsi.
-
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=When this option is enabled, you can define that a supplier or a given vendor invoice must be transferred into accountancy differently: A additional debit and a credit line will generated into the accounting on 2 given accounts from the chart of account defined into the "%s" setup page.
 ## Export
 NotExportLettering=Fayl yaradarkən hərfləri ixrac etməyin
 NotifiedExportDate=Hələ ixrac edilməmiş sətirləri İxrac edilmiş kimi qeyd edin <span class="warning">(eksport edilmiş kimi qeyd olunan xətti dəyişmək üçün bütün tranzaksiyanı silməli və yenidən mühasibat uçotuna köçürməlisiniz)</span>
@@ -371,7 +347,7 @@ DateValidationAndLock=Tarixin doğrulanması və kilidi
 ConfirmExportFile=Mühasibat uçotu ixrac faylının yaradılmasının təsdiqi ?
 ExportDraftJournal=Qaralama jurnalını ixrac edin
 Modelcsv=İxrac modeli
-Selectmodelcsv=İxrac modelini seçin
+Selectmodelcsv=Select the default format for export
 Modelcsv_normal=Klassik ixrac
 Modelcsv_CEGID=CEGID Expert Comptabilité üçün ixrac edin
 Modelcsv_COALA=Sage Coala üçün ixrac
@@ -393,7 +369,6 @@ Modelcsv_Gestinumv3=Gestinum üçün ixrac (v3)
 Modelcsv_Gestinumv5=Gestinum üçün ixrac (v5)
 Modelcsv_charlemagne=Aplim Charlemagne üçün ixrac
 ChartofaccountsId=Hesablar planı İd
-
 ## Tools - Init accounting account on product / service
 InitAccountancy=Mühasibatlığa başlayın
 InitAccountancyDesc=Bu səhifə satış və alışlar üçün müəyyən edilmiş mühasibat hesabı olmayan məhsul və xidmətlər üzrə mühasibat hesabını işə salmaq üçün istifadə edilə bilər.
@@ -426,14 +401,15 @@ SaleEECWithVAT=AET-də ƏDV ilə satış sıfır deyil, ona görə də güman ed
 SaleEECWithoutVATNumber=AET-də ƏDV olmadan satış, lakin üçüncü tərəfin ƏDV ID-si müəyyən edilməyib. Biz standart satış hesabına geri düşürük. Siz üçüncü tərəfin ƏDV ID-sini düzəldə və ya lazım gələrsə, məcburi olaraq təklif olunan məhsul hesabını dəyişə bilərsiniz.
 ForbiddenTransactionAlreadyExported=Qadağan edilib: Əməliyyat təsdiq edilib və/yaxud ixrac edilib.
 ForbiddenTransactionAlreadyValidated=Qadağan edilib: Əməliyyat təsdiq edilib.
+DataMustHaveBeenTransferredInAccounting=The transfer of data in accounting must have been done
 ## Dictionary
 Range=Mühasibat uçotunun əhatə dairəsi
 Calculated=Hesablanmış
 Formula=Düstur
-
 ## Reconcile
 LetteringAuto=Avtomatik barışdırın
 LetteringManual=Razılaşma təlimatı
+LetteringPartial=Reconcile partial
 Unlettering=Barışdırmaq
 UnletteringAuto=Avtomatik barışdırın
 UnletteringManual=Razılaşma təlimatı
@@ -443,7 +419,6 @@ AccountancyLetteringModifiedSuccessfully=%s barışdırmaq uğurla dəyişdirild
 AccountancyNoUnletteringModified=Heç bir uzlaşma dəyişdirilməyib
 AccountancyOneUnletteringModifiedSuccessfully=Bir barışdırılma uğurla dəyişdirildi
 AccountancyUnletteringModifiedSuccessfully=%s barışdırmaq uğurla dəyişdirildi
-
 ## Closure
 AccountancyClosureStep1=Addım 1: Hərəkətləri təsdiqləyin və kilidləyin
 AccountancyClosureStep2=Addım 2: Maliyyə dövrünü bağlayın
@@ -455,7 +430,6 @@ AccountancyClosureGenerateClosureBookkeepingRecords=Növbəti maliyyə dövründ
 AccountancyClosureSeparateAuxiliaryAccounts="Bölüşdürülməmiş mənfəət" qeydlərini yaradarkən, alt mühasibat uçotu hesablarını təfərrüatlandırın
 AccountancyClosureCloseSuccessfully=Maliyyə dövrü uğurla bağlandı
 AccountancyClosureInsertAccountingReversalSuccessfully="Bölüşdürülməmiş mənfəət" üçün mühasibat qeydləri uğurla daxil edildi
-
 ## Confirm box
 ConfirmMassUnletteringAuto=Toplu avtomatik uzlaşmanın təsdiqi
 ConfirmMassUnletteringManual=Kütləvi əl ilə uzlaşmanın təsdiqi
@@ -464,7 +438,6 @@ ConfirmMassDeleteBookkeepingWriting=Toplu silmə təsdiqi
 ConfirmMassDeleteBookkeepingWritingQuestion=Bu, əməliyyatı mühasibat uçotundan siləcək (eyni əməliyyatla bağlı bütün sətir qeydləri silinəcək). %s seçilmiş qeydləri silmək istədiyinizə əminsiniz?
 AccountancyClosureConfirmClose=Cari maliyyə dövrünü bağlamaq istədiyinizə əminsiniz? <span class="warning">Siz başa düşürsünüz ki, maliyyə dövrünün bağlanması geri dönməz bir əməliyyatdır və bu müddət ərzində hər hansı dəyişiklik və ya daxilolmaların silinməsini həmişəlik blok edəcək</span> .
 AccountancyClosureConfirmAccountingReversal="Bölüşdürülməmiş mənfəət" üçün qeydləri qeyd etmək istədiyinizə əminsiniz?
-
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Quraşdırmanın bəzi məcburi addımları yerinə yetirilmədi, lütfən, onları tamamlayın
 ErrorNoAccountingCategoryForThisCountry=%s ölkəsi üçün heç bir mühasibat hesabı qrupu mövcud deyil (Bax: %s - %s - %s)
@@ -482,10 +455,9 @@ AccountancyErrorMismatchBalanceAmount=Balans (%s) 0-a bərabər deyil
 AccountancyErrorLetteringBookkeeping=Əməliyyatlarla bağlı xətalar baş verdi: %s
 ErrorAccountNumberAlreadyExists=%s mühasibat nömrəsi artıq mövcuddur
 ErrorArchiveAddFile="%s" faylını arxivə qoymaq mümkün deyil
-ErrorNoFiscalPeriodActiveFound=Aktiv maliyyə dövrü tapılmadı
+ErrorNoFiscalPeriodActiveFound=No active fiscal period found. You can create one from menu %s - %s - %s.
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=Mühasibat sənədinin tarixi aktiv maliyyə dövründə deyil
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=Mühasibat sənədinin tarixi qapalı maliyyə dövründədir
-
 ## Import
 ImportAccountingEntries=Mühasibat qeydləri
 ImportAccountingEntriesFECFormat=Mühasibat qeydləri - FEC formatı
@@ -507,11 +479,9 @@ FECFormatReconcilableDate=Razılaşdırıla bilən tarix (DateLet)
 FECFormatValidateDate=Parçanın tarixi təsdiqləndi (ValidDate)
 FECFormatMulticurrencyAmount=Multivalyuta məbləği (Montantdevise)
 FECFormatMulticurrencyCode=Çoxvalyuta kodu (Idevise)
-
 DateExport=Tarix ixracı
 WarningReportNotReliable=Xəbərdarlıq, bu hesabat Mühasibat Kitabına əsaslanmır, ona görə də Kitabda əl ilə dəyişdirilmiş əməliyyatları ehtiva etmir. Jurnalizasiyanız yenidirsə, mühasibat görünüşü daha dəqiqdir.
 ExpenseReportJournal=Xərc Hesabatı Jurnalı
 DocsAlreadyExportedAreIncluded=Artıq ixrac edilmiş sənədlər daxil edilib
 ClickToShowAlreadyExportedLines=Artıq ixrac edilmiş xətləri göstərmək üçün klikləyin
-
 NAccounts=%s hesab

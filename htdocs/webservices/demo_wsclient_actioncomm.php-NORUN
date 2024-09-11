@@ -34,7 +34,7 @@ $WS_METHOD_CREATE = 'createActionComm';
 $WS_METHOD_GET_C_LIST = 'getListActionCommType';
 $ns='http://www.dolibarr.org/ns/';
 
-//Chosse action to do
+//Chose action to do
 //$action='get';
 //$action='getlist';
 $action='create';

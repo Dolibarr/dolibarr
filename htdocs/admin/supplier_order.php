@@ -1,25 +1,27 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville    <rodolphe@quiedeville.org>
-* Copyright (C) 2004-2011 Laurent Destailleur     <eldy@users.sourceforge.net>
-* Copyright (C) 2005-2011 Regis Houssin           <regis.houssin@inodbox.com>
-* Copyright (C) 2004      Sebastien Di Cintio     <sdicintio@ressource-toi.org>
-* Copyright (C) 2004      Benoit Mortier          <benoit.mortier@opensides.be>
-* Copyright (C) 2010-2013 Juanjo Menent           <jmenent@2byte.es>
-* Copyright (C) 2011-2018 Philippe Grand          <philippe.grand@atoo-net.com>
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <https://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2004-2011 Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2011 Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2004      Sebastien Di Cintio     <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004      Benoit Mortier          <benoit.mortier@opensides.be>
+ * Copyright (C) 2010-2013 Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2011-2018 Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
 
 /**
  *  \file       htdocs/admin/supplier_order.php
@@ -92,21 +94,20 @@ if ($action == 'specimen') {  // For orders
 	// Search template files
 	$file = '';
 	$classname = '';
-	$filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/supplier_order/doc/pdf_".$modele.".modules.php", 0);
 		if (file_exists($file)) {
-			$filefound = 1;
 			$classname = "pdf_".$modele;
 			break;
 		}
 	}
 
-	if ($filefound) {
+	if ($classname !== '') {
 		require_once $file;
 
 		$module = new $classname($db, $commande);
+		'@phan-var-force ModelePDFSuppliersOrders $module';
 
 		if ($module->write_file($commande, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=commande_fournisseur&file=SPECIMEN.pdf");
@@ -145,8 +146,8 @@ if ($action == 'specimen') {  // For orders
 } elseif ($action == 'unsetdoc') {
 	dolibarr_del_const($db, "COMMANDE_SUPPLIER_ADDON_PDF", $conf->entity);
 } elseif ($action == 'setmod') {
-	// TODO Verifier si module numerotation choisi peut etre active
-	// par appel methode canBeActivated
+	// TODO Verify if the chosen numbering module can be activated
+	// by calling method canBeActivated
 
 	dolibarr_set_const($db, "COMMANDE_SUPPLIER_ADDON_NUMBER", $value, 'chaine', 0, '', $conf->entity);
 } elseif ($action == 'addcat') {
@@ -209,7 +210,7 @@ $form = new Form($db);
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-llxHeader("", "");
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-supplier_order');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("SuppliersSetup"), $linkback, 'title_setup');
@@ -251,6 +252,8 @@ foreach ($dirmodels as $reldir) {
 
 					$module = new $file();
 
+					'@phan-var-force ModeleNumRefSuppliersOrders $module';
+
 					if ($module->isEnabled()) {
 						// Show modules according to features level
 						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -261,7 +264,7 @@ foreach ($dirmodels as $reldir) {
 						}
 
 
-						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
+						print '<tr class="oddeven"><td>'.$module->getName($langs)."</td><td>\n";
 						print $module->info($langs);
 						print '</td>';
 
@@ -341,7 +344,9 @@ if ($resql) {
 	$num_rows = $db->num_rows($resql);
 	while ($i < $num_rows) {
 		$array = $db->fetch_array($resql);
-		array_push($def, $array[0]);
+		if (is_array($array)) {
+			array_push($def, $array[0]);
+		}
 		$i++;
 	}
 } else {
@@ -376,6 +381,8 @@ foreach ($dirmodels as $reldir) {
 					require_once $dir.'/'.$file;
 					$module = new $classname($db, new CommandeFournisseur($db));
 
+					'@phan-var-force ModeleNumRefSuppliersOrders $module';
+
 
 					print "<tr class=\"oddeven\">\n";
 					print "<td>";
@@ -385,7 +392,7 @@ foreach ($dirmodels as $reldir) {
 					require_once $dir.'/'.$file;
 					$module = new $classname($db, $specimenthirdparty);
 					if (method_exists($module, 'info')) {
-						print $module->info($langs);
+						print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
 					} else {
 						print $module->description;
 					}
@@ -543,6 +550,14 @@ if (isModEnabled('reception')) {
 }
 print "</td>\n";
 print "</tr>\n";
+
+
+// Disallow to classify billed a supplier order without invoice
+print '<tr class="oddeven"><td>'.$langs->trans("SupplierOrderClassifyBilledWithoutInvoice"). '&nbsp;' ;
+print $form->textwithpicto('', $langs->trans("SupplierOrderClassifyBilledWithoutInvoiceHelp"), 1, 'help') . '</td>';
+print '<td class="left" colspan="2">';
+print ajax_constantonoff('SUPPLIER_ORDER_DISABLE_CLASSIFY_BILLED_FROM_SUPPLIER_ORDER');
+print '</td></tr>';
 
 print '</table></div><br>';
 

@@ -20,7 +20,7 @@
 
 /**
  *	\file       htdocs/core/lib/prelevement.lib.php
- *	\brief      Ensemble de fonctions de base pour le module prelevement
+ *	\brief      Ensemble de functions de base pour le module prelevement
  *	\ingroup    propal
  */
 
@@ -117,7 +117,7 @@ function prelevement_check_config($type = 'direct-debit')
 }
 
 	/**
- *  Return array head with list of tabs to view object informations
+ *  Return array head with list of tabs to view object information
  *
  *  @param	BonPrelevement	$object         	Member
  *  @param  int     		$nbOfInvoices   	No of invoices

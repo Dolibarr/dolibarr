@@ -3,6 +3,7 @@
  * Copyright (C) 2021 Greg Rastklan <greg.rastklan@atm-consulting.fr>
  * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +29,7 @@
  * Prepare array of tabs for Evaluation
  *
  * @param	Evaluation	$object		Evaluation
- * @return 	array					Array of tabs
+ * @return 	array<array<int,string>>	Array of tabs
  */
 function evaluationPrepareHead($object)
 {
@@ -129,12 +130,13 @@ function GetLegendSkills()
 }
 
 /**
- * @param  $obj  object  object need to handle
+ * @param  Object $obj Object needed to be represented
  * @return string
  */
 function getRankOrderResults($obj)
 {
 	global $langs;
+
 	$results = array(
 		'greater' => array(
 			'title' => $langs->trans('MaxlevelGreaterThanShort'),
@@ -157,13 +159,14 @@ function getRankOrderResults($obj)
 	} elseif ($obj->rankorder < $obj->required_rank) {
 		$key = 'lesser';
 	}
-	return '<span title="'.strtoupper($obj->label).': ' .$results[$key]['title']. '" class="radio_js_bloc_number TNote_1" style="' . htmlspecialchars($results[$key]['style'], ENT_QUOTES) . '">' . strtoupper(substr($obj->label, 0, 3)) .(strlen($obj->label) > 3 ? '..' : '').'</span>';
+	return '<span title="'.dol_escape_htmltag($obj->label).': ' .$results[$key]['title']. '" class="radio_js_bloc_number TNote_1" style="' . dol_escape_htmltag($results[$key]['style']) . '">' . dol_trunc($obj->label, 4).'</span>';
 }
 
 /**
  * Grouped rows with same ref in array
- * @param   array  $objects   all rows getted by sql
- * @return array |int
+ *
+ * @param   Object[]		$objects	All rows retrieved from sql query
+ * @return	array<string|int,Object|Object[]>|int<-1,-1>	Object by group, -1 if error (empty or bad argument)
  */
 function getGroupedEval($objects)
 {

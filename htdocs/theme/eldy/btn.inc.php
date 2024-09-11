@@ -57,6 +57,10 @@ div.tabsAction > div.divButAction > a.butActionRefused {
 	margin-bottom: 1.4em !important;
 	margin-right: 0px !important;
 }
+.divButAction {
+	padding: 0 !important;
+	margin: 0 !important;
+}
 div.tabsActionNoBottom > a.butAction, div.tabsActionNoBottom > a.butActionRefused {
 	margin-bottom: 0 !important;
 }
@@ -78,7 +82,9 @@ span.butAction, span.butActionDelete {
 :not(.center) > .butActionRefused:last-child, :not(.center) > .butAction:last-child, :not(.center) > .butActionDelete:last-child {
 	margin-<?php echo $right; ?>: 0px !important;
 }
-.butActionRefused, .butAction, .butAction:link, .butAction:visited, .butAction:hover, .butAction:active, .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
+.butActionRefused, .butAction, .butAction:link, .butAction:visited, .butAction:hover, .butAction:active, .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active,
+.divButAction
+ {
 	text-decoration: none;
 	text-transform: uppercase;
 	font-weight: bold;
@@ -137,9 +143,10 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 	box-shadow: none; webkit-box-shadow: none;
 }
 
-.butAction:hover   {
-	-webkit-box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
-	box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
+.butAction:hover, .dropdown-holder.open > .butAction   {
+	/** TODO use css var with hsl from --colortextlink to allow create darken or lighten color */
+	-webkit-box-shadow: 0px 0px 6px rgba(50,50,50,0.4), inset 0px 0px 200px rgba(0,0,0,0.3); /* fix hover feedback : use "inset" background to easily darken background */
+	box-shadow: 0px 0px 6px rgba(50,50,50,0.4), inset 0px 0px 200px rgba(0,0,0,0.3); /* fix hover feedback : use "inset" background to easily darken background */
 }
 .butActionNew:hover   {
 	text-decoration: underline;
@@ -255,24 +262,28 @@ a.btnTitle.btnTitleSelected {
 	text-decoration: none;
 	box-shadow: none;
 }
-/* The buttonplus isgrowing on hover (dont know why). This is to avoid to have the cellegrowing too */
+/* The buttonplus isgrowing on hover (don't know why). This is to avoid to have the cellegrowing too */
 .btnTitlePlus:hover {
 	max-width: 24px;
 	max-height: 40px;
 }
 
 .btnTitle.refused, a.btnTitle.refused, .btnTitle.refused:hover, a.btnTitle.refused:hover {
-		color: #8a8a8a;
-		cursor: not-allowed;
-		background-color: #fbfbfb;
-		background: repeating-linear-gradient( 45deg, #ffffff, #f1f1f1 4px, #f1f1f1 4px, #f1f1f1 4px );
+	color: #8a8a8a;
+	cursor: not-allowed;
+	background-color: #fbfbfb;
+	background: repeating-linear-gradient( 45deg, #ffffff, #f1f1f1 4px, #f1f1f1 4px, #f1f1f1 4px );
 }
 
-.btnTitle:hover .btnTitle-label{
-	 color: var(--btncolorborderhover);
+.btnTitle:hover .btnTitle-label {
+	color: var(--btncolorborderhover);
+}
+.btnTitle.reposition:not(.btnTitleSelected) {
+	background-color: unset;
+	border: unset;
 }
 
-.btnTitle.refused .btnTitle-label, .btnTitle.refused:hover .btnTitle-label{
+.btnTitle.refused .btnTitle-label, .btnTitle.refused:hover .btnTitle-label {
 	color: #8a8a8a;
 }
 

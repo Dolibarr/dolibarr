@@ -21,8 +21,8 @@
 
 /**
  *  \file       htdocs/core/lib/order.lib.php
- *  \brief      Ensemble de fonctions de base pour le module commande
- *  \ingroup    commande
+ *  \brief      Ensemble de functions de base pour le module commande
+ *  \ingroup    order
  */
 
 /**
@@ -34,7 +34,7 @@
 function commande_prepare_head(Commande $object)
 {
 	global $db, $langs, $conf, $user;
-	if (isModEnabled("expedition")) {
+	if (isModEnabled("shipping")) {
 		$langs->load("sendings");
 	}
 	$langs->load("orders");
@@ -42,7 +42,7 @@ function commande_prepare_head(Commande $object)
 	$h = 0;
 	$head = array();
 
-	if (isModEnabled('commande') && $user->hasRight('commande', 'lire')) {
+	if (isModEnabled('order') && $user->hasRight('commande', 'lire')) {
 		$head[$h][0] = DOL_URL_ROOT.'/commande/card.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("CustomerOrder");
 		$head[$h][2] = 'order';
@@ -171,7 +171,7 @@ function commande_prepare_head(Commande $object)
 }
 
 /**
- *  Return array head with list of tabs to view object informations.
+ *  Return array head with list of tabs to view object information.
  *
  *  @return	array   	    		    head array with tabs
  */
@@ -186,7 +186,7 @@ function order_admin_prepare_head()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/admin/commande.php';
+	$head[$h][0] = DOL_URL_ROOT.'/admin/order.php';
 	$head[$h][1] = $langs->trans("Miscellaneous");
 	$head[$h][2] = 'general';
 	$h++;
@@ -230,7 +230,7 @@ function getCustomerOrderPieChart($socid = 0)
 
 	$result = '';
 
-	if (!isModEnabled('commande') || !$user->hasRight('commande', 'lire')) {
+	if (!isModEnabled('order') || !$user->hasRight('commande', 'lire')) {
 		return '';
 	}
 
@@ -243,7 +243,7 @@ function getCustomerOrderPieChart($socid = 0)
 	$sql = "SELECT count(c.rowid) as nb, c.fk_statut as status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql .= ", ".MAIN_DB_PREFIX."commande as c";
-	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE c.fk_soc = s.rowid";
@@ -251,7 +251,7 @@ function getCustomerOrderPieChart($socid = 0)
 	if ($user->socid) {
 		$sql .= ' AND c.fk_soc = '.((int) $user->socid);
 	}
-	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	$sql .= " GROUP BY c.fk_statut";

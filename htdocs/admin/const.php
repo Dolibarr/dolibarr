@@ -32,19 +32,19 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 // Load translation files required by the page
 $langs->load("admin");
 
-$rowid = GETPOST('rowid', 'int');
-$entity = GETPOST('entity', 'int');
+$rowid = GETPOSTINT('rowid');
+$entity = GETPOSTINT('entity');
 $action = GETPOST('action', 'aZ09');
-$debug = GETPOST('debug', 'int');
+$debug = GETPOSTINT('debug');
 $consts = GETPOST('const', 'array');
 $constname = GETPOST('constname', 'alphanohtml');
 $constvalue = GETPOST('constvalue', 'restricthtml'); // We should be able to send everything here
 $constnote = GETPOST('constnote', 'alpha');
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
@@ -159,7 +159,7 @@ if ($action == 'delete') {
 $form = new Form($db);
 
 $wikihelp = 'EN:Setup_Other|FR:Paramétrage_Divers|ES:Configuración_Varios';
-llxHeader('', $langs->trans("Setup"), $wikihelp);
+llxHeader('', $langs->trans("Setup"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-const');
 
 // Add logic to show/hide buttons
 if ($conf->use_javascript_ajax) {
@@ -186,6 +186,7 @@ jQuery(document).ready(function() {
 print load_fiche_titre($langs->trans("OtherSetup"), '', 'title_setup');
 
 print '<span class="opacitymedium">'.$langs->trans("ConstDesc")."</span><br>\n";
+print "<br>\n";
 print "<br>\n";
 
 $param = '';

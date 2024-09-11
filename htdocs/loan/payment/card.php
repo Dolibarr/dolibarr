@@ -1,5 +1,7 @@
 <?php
-/* Copyright (C) 2014-2018  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+/* Copyright (C) 2014-2024	Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +27,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/paymentloan.class.php';
-if (isModEnabled("banque")) {
+if (isModEnabled("bank")) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 }
 
@@ -33,13 +35,13 @@ if (isModEnabled("banque")) {
 $langs->loadLangs(array("bills", "banks", "companies", "loan"));
 
 // Security check
-$id = GETPOST("id", 'int');
+$id = GETPOSTINT("id");
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-// TODO ajouter regle pour restreindre acces paiement
+// TODO ajouter regle pour restreindre access paiement
 //$result = restrictedArea($user, 'facture', $id,'');
 
 $payment = new PaymentLoan($db);
@@ -67,7 +69,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('loan', 
 	$result = $payment->delete($user);
 	if ($result > 0) {
 		$db->commit();
-		header("Location: ".DOL_URL_ROOT."/loan/card.php?id=".urlencode($fk_loan));
+		header("Location: ".DOL_URL_ROOT."/loan/card.php?id=".urlencode((string) ($fk_loan)));
 		exit;
 	} else {
 		setEventMessages($payment->error, $payment->errors, 'errors');
@@ -79,17 +81,19 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('loan', 
 /*
  * View
  */
-
-llxHeader();
-
 $loan = new Loan($db);
 $form = new Form($db);
+
+$title = $langs->trans('Loans');
+$help_url = "EN:Module_Loan|FR:Module_Emprunt";
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-loan page-payment-card');
 
 $h = 0;
 
 $head[$h][0] = DOL_URL_ROOT.'/loan/payment/card.php?id='.$id;
 $head[$h][1] = $langs->trans("PaymentLoan");
-$hselected = $h;
+$hselected = (string) $h;
 $h++;
 
 print dol_get_fiche_head($head, $hselected, $langs->trans("PaymentLoan"), -1, 'payment');
@@ -103,9 +107,9 @@ if ($action == 'delete') {
 
 $linkback = '';
 $morehtmlref = '';
-$morehtmlright = '';
+$morehtmlstatus = '';
 
-dol_banner_tab($payment, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
+dol_banner_tab($payment, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlstatus);
 
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
@@ -119,9 +123,9 @@ print '<tr><td>'.$langs->trans('Date').'</td><td>'.dol_print_date($payment->date
 print '<tr><td>'.$langs->trans('Mode').'</td><td>'.$langs->trans("PaymentType".$payment->type_code).'</td></tr>';
 
 // Amount
-print '<tr><td>'.$langs->trans('LoanCapital').'</td><td>'.price($payment->amount_capital, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
-print '<tr><td>'.$langs->trans('Insurance').'</td><td>'.price($payment->amount_insurance, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
-print '<tr><td>'.$langs->trans('Interest').'</td><td>'.price($payment->amount_interest, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
+print '<tr><td>'.$langs->trans('LoanCapital').'</td><td>'.price($payment->amount_capital, 0, $langs, 1, -1, -1, $conf->currency).'</td></tr>';
+print '<tr><td>'.$langs->trans('Insurance').'</td><td>'.price($payment->amount_insurance, 0, $langs, 1, -1, -1, $conf->currency).'</td></tr>';
+print '<tr><td>'.$langs->trans('Interest').'</td><td>'.price($payment->amount_interest, 0, $langs, 1, -1, -1, $conf->currency).'</td></tr>';
 
 // Note Private
 print '<tr><td>'.$langs->trans('NotePrivate').'</td><td>'.nl2br($payment->note_private).'</td></tr>';
@@ -130,7 +134,7 @@ print '<tr><td>'.$langs->trans('NotePrivate').'</td><td>'.nl2br($payment->note_p
 print '<tr><td>'.$langs->trans('NotePublic').'</td><td>'.nl2br($payment->note_public).'</td></tr>';
 
 // Bank account
-if (isModEnabled("banque")) {
+if (isModEnabled("bank")) {
 	if ($payment->bank_account) {
 		$bankline = new AccountLine($db);
 		$bankline->fetch($payment->bank_line);
@@ -200,7 +204,7 @@ if ($resql) {
 			if ($objp->paid == 1) {	// If at least one invoice is paid, disable delete
 				$disable_delete = 1;
 			}
-			$total = $total + $objp->amount_capital;
+			$total += $objp->amount_capital;
 			$i++;
 		}
 	}

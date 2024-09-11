@@ -5,7 +5,7 @@
  * Copyright (C) 2011-2016	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013 		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2015-2016	Alexandre Spangaro		<aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'bills', 'companies', 'compta'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
@@ -51,7 +51,7 @@ $object = new RemiseCheque($db);
 
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (!$sortorder) {
 	$sortorder = "ASC";
 }
@@ -61,21 +61,21 @@ if (!$sortfield) {
 if (empty($page) || $page == -1) {
 	$page = 0;
 }
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $offset = $limit * $page;
 
 $upload_dir = $conf->bank->multidir_output[$object->entity ? $object->entity : $conf->entity]."/checkdeposits";
 
 // filter by dates from / to
-$search_date_start_day = GETPOST('search_date_start_day', 'int');
-$search_date_start_month = GETPOST('search_date_start_month', 'int');
-$search_date_start_year = GETPOST('search_date_start_year', 'int');
-$search_date_end_day = GETPOST('search_date_end_day', 'int');
-$search_date_end_month = GETPOST('search_date_end_month', 'int');
-$search_date_end_year = GETPOST('search_date_end_year', 'int');
+$search_date_start_day = GETPOSTINT('search_date_start_day');
+$search_date_start_month = GETPOSTINT('search_date_start_month');
+$search_date_start_year = GETPOSTINT('search_date_start_year');
+$search_date_end_day = GETPOSTINT('search_date_end_day');
+$search_date_end_month = GETPOSTINT('search_date_end_month');
+$search_date_end_year = GETPOSTINT('search_date_end_year');
 $search_date_start = dol_mktime(0, 0, 0, $search_date_start_month, $search_date_start_day, $search_date_start_year);
 $search_date_end = dol_mktime(23, 59, 59, $search_date_end_month, $search_date_end_day, $search_date_end_year);
-$filteraccountid = GETPOST('accountid', 'int');
+$filteraccountid = GETPOSTINT('accountid');
 
 // Security check
 $fieldname = (!empty($ref) ? 'ref' : 'rowid');
@@ -84,11 +84,11 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'cheque', $id, 'bordereau_cheque', '', 'fk_user_author', $fieldname);
 
-$usercanread = $user->rights->banque->cheque;
-$usercancreate = $user->rights->banque->cheque;
-$usercandelete = $user->rights->banque->cheque;
+$usercanread = $user->hasRight('banque', 'cheque');
+$usercancreate = $user->hasRight('banque', 'cheque');
+$usercandelete = $user->hasRight('banque', 'cheque');
 
-$permissiontodelete = $user->rights->banque->cheque;
+$permissiontodelete = $user->hasRight('banque', 'cheque');
 
 // List of payment mode to support
 // Example: BANK_PAYMENT_MODES_FOR_DEPOSIT_MANAGEMENT = 'CHQ','TRA'
@@ -100,9 +100,9 @@ $arrayofpaymentmodetomanage = explode(',', getDolGlobalString('BANK_PAYMENT_MODE
  */
 
 if ($action == 'setdate' && $user->hasRight('banque', 'cheque')) {
-	$result = $object->fetch(GETPOST('id', 'int'));
+	$result = $object->fetch(GETPOSTINT('id'));
 	if ($result > 0) {
-		$date = dol_mktime(0, 0, 0, GETPOST('datecreate_month', 'int'), GETPOST('datecreate_day', 'int'), GETPOST('datecreate_year', 'int'));
+		$date = dol_mktime(0, 0, 0, GETPOSTINT('datecreate_month'), GETPOSTINT('datecreate_day'), GETPOSTINT('datecreate_year'));
 
 		$result = $object->set_date($user, $date);
 		if ($result < 0) {
@@ -114,7 +114,7 @@ if ($action == 'setdate' && $user->hasRight('banque', 'cheque')) {
 }
 
 if ($action == 'setrefext' && $user->hasRight('banque', 'cheque')) {
-	$result = $object->fetch(GETPOST('id', 'int'));
+	$result = $object->fetch(GETPOSTINT('id'));
 	if ($result > 0) {
 		$ref_ext = GETPOST('ref_ext');
 
@@ -128,7 +128,7 @@ if ($action == 'setrefext' && $user->hasRight('banque', 'cheque')) {
 }
 
 if ($action == 'setref' && $user->hasRight('banque', 'cheque')) {
-	$result = $object->fetch(GETPOST('id', 'int'));
+	$result = $object->fetch(GETPOSTINT('id'));
 	if ($result > 0) {
 		$ref = GETPOST('ref');
 
@@ -141,12 +141,12 @@ if ($action == 'setref' && $user->hasRight('banque', 'cheque')) {
 	}
 }
 
-if ($action == 'create' && GETPOST("accountid", "int") > 0 && $user->hasRight('banque', 'cheque')) {
+if ($action == 'create' && GETPOSTINT("accountid") > 0 && $user->hasRight('banque', 'cheque')) {
 	if (GETPOSTISARRAY('toRemise')) {
 		$object->type = $type;
 		$arrayofid = GETPOST('toRemise', 'array:int');
 
-		$result = $object->create($user, GETPOST("accountid", "int"), 0, $arrayofid);
+		$result = $object->create($user, GETPOSTINT("accountid"), 0, $arrayofid);
 		if ($result > 0) {
 			if ($object->statut == 1) {     // If statut is validated, we build doc
 				$object->fetch($object->id); // To force to reload all properties in correct property name
@@ -175,9 +175,9 @@ if ($action == 'create' && GETPOST("accountid", "int") > 0 && $user->hasRight('b
 	}
 }
 
-if ($action == 'remove' && $id > 0 && GETPOST("lineid", 'int') > 0 && $user->hasRight('banque', 'cheque')) {
+if ($action == 'remove' && $id > 0 && GETPOSTINT("lineid") > 0 && $user->hasRight('banque', 'cheque')) {
 	$object->id = $id;
-	$result = $object->removeCheck(GETPOST("lineid", "int"));
+	$result = $object->removeCheck(GETPOSTINT("lineid"));
 	if ($result === 0) {
 		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
 		exit;
@@ -223,7 +223,7 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $user->hasRight('banqu
 
 if ($action == 'confirm_reject_check' && $confirm == 'yes' && $user->hasRight('banque', 'cheque')) {
 	$reject_date = dol_mktime(0, 0, 0, GETPOST('rejectdate_month'), GETPOST('rejectdate_day'), GETPOST('rejectdate_year'));
-	$rejected_check = GETPOST('bankid', 'int');
+	$rejected_check = GETPOSTINT('bankid');
 
 	$object->fetch($id);
 	$paiement_id = $object->rejectCheck($rejected_check, $reject_date);
@@ -321,7 +321,7 @@ if ($action == 'new') {
 	$h = 0;
 	$head[$h][0] = $_SERVER["PHP_SELF"].'?action=new';
 	$head[$h][1] = $langs->trans("MenuChequeDeposits");
-	$hselected = $h;
+	$hselected = (string) $h;
 	$h++;
 
 	print load_fiche_titre($title, '', 'bank_account');
@@ -333,9 +333,10 @@ if ($action == 'new') {
 	}
 
 	$h = 0;
+	$head = array();
 	$head[$h][0] = $_SERVER["PHP_SELF"].'?id='.$object->id;
 	$head[$h][1] = $langs->trans("CheckReceipt");
-	$hselected = $h;
+	$hselected = (string) $h;
 	$h++;
 	//  $head[$h][0] = DOL_URL_ROOT.'/compta/paiement/cheque/info.php?id='.$object->id;
 	//  $head[$h][1] = $langs->trans("Info");
@@ -362,7 +363,7 @@ if ($action == 'new') {
 	 */
 	if ($action == 'reject_check') {
 		$formquestion = array(
-			array('type' => 'hidden', 'name' => 'bankid', 'value' => GETPOST('lineid', 'int')),
+			array('type' => 'hidden', 'name' => 'bankid', 'value' => GETPOSTINT('lineid')),
 			array('type' => 'date', 'name' => 'rejectdate_', 'label' => $langs->trans("RejectCheckDate"), 'value' => dol_now())
 		);
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans("RejectCheck"), $langs->trans("ConfirmRejectCheck"), 'confirm_reject_check', $formquestion, '', 1);
@@ -628,7 +629,7 @@ if ($action == 'new') {
 		print '<form name="setdate" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="setdate">';
-		print $form->selectDate($object->date_bordereau, 'datecreate_', '', '', '', "setdate");
+		print $form->selectDate($object->date_bordereau, 'datecreate_', 0, 0, 0, "setdate");
 		print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 		print '</form>';
 	} else {

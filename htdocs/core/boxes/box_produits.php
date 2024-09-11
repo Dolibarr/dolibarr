@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2023 Frederic France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,17 +40,6 @@ class box_produits extends ModeleBoxes
 	public $depends = array("produit");
 
 	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
-
-	/**
 	 *  Constructor
 	 *
 	 *  @param  DoliDB  $db         Database handler
@@ -57,12 +47,12 @@ class box_produits extends ModeleBoxes
 	 */
 	public function __construct($db, $param)
 	{
-		global $conf, $user;
+		global $user;
 
 		$this->db = $db;
 
 		$listofmodulesforexternal = explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL'));
-		$tmpentry = array('enabled'=>(isModEnabled("product") || isModEnabled("service")), 'perms'=>($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire')), 'module'=>'product|service');
+		$tmpentry = array('enabled' => (isModEnabled("product") || isModEnabled("service")), 'perms' => ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire')), 'module' => 'product|service');
 		$showmode = isVisibleToUserType(($user->socid > 0 ? 1 : 0), $tmpentry, $listofmodulesforexternal);
 		$this->hidden = ($showmode != 1);
 	}
@@ -82,7 +72,9 @@ class box_produits extends ModeleBoxes
 		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 		$productstatic = new Product($this->db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastProducts", $max));
+		$this->info_box_head = array(
+			'text' => $langs->trans("BoxTitleLastProducts", $max).'<a class="paddingleft" href="'.DOL_URL_ROOT.'/product/list.php?sortfield=p.tms&sortorder=DESC"><span class="badge">...</span></a>',
+		);
 
 		if ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire')) {
 			$sql = "SELECT p.rowid, p.label, p.ref, p.price, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.fk_price_expression, p.entity";
@@ -182,7 +174,7 @@ class box_produits extends ModeleBoxes
 								if ($objp->price_base_type == 'HT') {
 									$price_base_type = $langs->trans("HT");
 								} else {
-									$price_result = $price_result * (1 + ($productstatic->tva_tx / 100));
+									$price_result *= (1 + ($productstatic->tva_tx / 100));
 									$price_base_type = $langs->trans("TTC");
 								}
 								$price = price($price_result);
@@ -221,7 +213,7 @@ class box_produits extends ModeleBoxes
 				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center"',
-						'text'=>$langs->trans("NoRecordedProducts"),
+						'text' => $langs->trans("NoRecordedProducts"),
 					);
 				}
 
@@ -229,7 +221,7 @@ class box_produits extends ModeleBoxes
 			} else {
 				$this->info_box_contents[0][0] = array(
 					'td' => '',
-					'maxlength'=>500,
+					'maxlength' => 500,
 					'text' => ($this->db->error().' sql='.$sql),
 				);
 			}
@@ -244,9 +236,9 @@ class box_produits extends ModeleBoxes
 	/**
 	 *  Method to show box
 	 *
-	 *  @param	array	$head       Array with properties of box title
-	 *  @param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
+	 *	@param	?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}	$head	Array with properties of box title
+	 *	@param	?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>	$contents	Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *  @return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)

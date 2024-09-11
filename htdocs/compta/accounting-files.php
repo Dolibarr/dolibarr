@@ -1,10 +1,11 @@
 <?php
-/* Copyright (C) 2001-2006  Rodolphe Quiedeville        <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2019  Laurent Destailleur         <eldy@users.sourceforge.net>
- * Copyright (C) 2017       Pierre-Henry Favre          <support@atm-consulting.fr>
- * Copyright (C) 2020       Maxime DEMAREST             <maxime@indelog.fr>
- * Copyright (C) 2021       Gauthier VERDOL             <gauthier.verdol@atm-consulting.fr>
+/* Copyright (C) 2001-2006  Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2019  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2017       Pierre-Henry Favre   <support@atm-consulting.fr>
+ * Copyright (C) 2020       Maxime DEMAREST      <maxime@indelog.fr>
+ * Copyright (C) 2021       Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2022-2024  Alexandre Spangaro          <alexandre@inovea-conseil.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +27,7 @@
  *  \brief      Page to show portoflio and files of a thirdparty and download it
  */
 
-if ((array_key_exists('action', $_GET) && $_GET['action'] == 'dl') || (array_key_exists('action', $_POST) && $_POST['action'] == 'dl')) {	// To not replace token when downloading file
+if ((array_key_exists('action', $_GET) && $_GET['action'] == 'dl') || (array_key_exists('action', $_POST) && $_POST['action'] == 'dl')) {	// To not replace token when downloading file. Keep $_GET and $_POST here
 	if (!defined('NOTOKENRENEWAL')) {
 		define('NOTOKENRENEWAL', '1');
 	}
@@ -61,26 +62,26 @@ const PAY_CREDIT = 1;
 $langs->loadLangs(array("accountancy", "bills", "companies", "salaries", "compta", "trips", "banks", "loan"));
 
 $date_start = GETPOST('date_start', 'alpha');
-$date_startDay = GETPOST('date_startday', 'int');
-$date_startMonth = GETPOST('date_startmonth', 'int');
-$date_startYear = GETPOST('date_startyear', 'int');
+$date_startDay = GETPOSTINT('date_startday');
+$date_startMonth = GETPOSTINT('date_startmonth');
+$date_startYear = GETPOSTINT('date_startyear');
 $date_start = dol_mktime(0, 0, 0, $date_startMonth, $date_startDay, $date_startYear, 'tzuserrel');
 $date_stop = GETPOST('date_stop', 'alpha');
-$date_stopDay = GETPOST('date_stopday', 'int');
-$date_stopMonth = GETPOST('date_stopmonth', 'int');
-$date_stopYear = GETPOST('date_stopyear', 'int');
+$date_stopDay = GETPOSTINT('date_stopday');
+$date_stopMonth = GETPOSTINT('date_stopmonth');
+$date_stopYear = GETPOSTINT('date_stopyear');
 $date_stop = dol_mktime(23, 59, 59, $date_stopMonth, $date_stopDay, $date_stopYear, 'tzuserrel');
 $action = GETPOST('action', 'aZ09');
-$projectid = (GETPOST('projectid', 'int') ? GETPOST('projectid', 'int') : 0);
+$projectid = GETPOSTINT('projectid');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('comptafileslist', 'globallist'));
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -96,15 +97,15 @@ if (!$sortorder) {
 
 
 $arrayfields = array(
-	'type'=>array('label'=>"Type", 'checked'=>1),
-	'date'=>array('label'=>"Date", 'checked'=>1),
-	'date_due'=>array('label'=>"DateDue", 'checked'=>1),
-	'ref'=>array('label'=>"Ref", 'checked'=>1),
-	'documents'=>array('label'=>"Documents", 'checked'=>1),
-	'paid'=>array('label'=>"Paid", 'checked'=>1),
-	'total_ht'=>array('label'=>"TotalHT", 'checked'=>1),
-	'total_ttc'=>array('label'=>"TotalTTC", 'checked'=>1),
-	'total_vat'=>array('label'=>"TotalVAT", 'checked'=>1),
+	'type' => array('label' => "Type", 'checked' => 1),
+	'date' => array('label' => "Date", 'checked' => 1),
+	'date_due' => array('label' => "DateDue", 'checked' => 1),
+	'ref' => array('label' => "Ref", 'checked' => 1),
+	'documents' => array('label' => "Documents", 'checked' => 1),
+	'paid' => array('label' => "Paid", 'checked' => 1),
+	'total_ht' => array('label' => "TotalHT", 'checked' => 1),
+	'total_ttc' => array('label' => "TotalTTC", 'checked' => 1),
+	'total_vat' => array('label' => "TotalVAT", 'checked' => 1),
 	//...
 );
 
@@ -122,10 +123,10 @@ if (isModEnabled('multicompany') && is_object($mc)) {
 	$arrayofentities = $mc->getEntitiesList();
 }
 
-$entity = (GETPOSTISSET('entity') ? GETPOST('entity', 'int') : (GETPOSTISSET('search_entity') ? GETPOST('search_entity', 'int') : $conf->entity));
+$entity = (GETPOSTISSET('entity') ? GETPOSTINT('entity') : (GETPOSTISSET('search_entity') ? GETPOSTINT('search_entity') : $conf->entity));
 if (isModEnabled('multicompany') && is_object($mc)) {
 	if (empty($entity) && getDolGlobalString('MULTICOMPANY_ALLOW_EXPORT_ACCOUNTING_DOC_FOR_ALL_ENTITIES')) {
-		$entity = '0,'.join(',', array_keys($arrayofentities));
+		$entity = '0,'.implode(',', array_keys($arrayofentities));
 	}
 }
 if (empty($entity)) {
@@ -135,14 +136,14 @@ if (empty($entity)) {
 $error = 0;
 
 $listofchoices = array(
-	'selectinvoices'=>array('label'=>'Invoices', 'picto'=>'bill', 'lang'=>'bills', 'enabled' => isModEnabled('facture'), 'perms' => $user->hasRight('facture', 'lire')),
-	'selectsupplierinvoices'=>array('label'=>'BillsSuppliers', 'picto'=>'supplier_invoice', 'lang'=>'bills', 'enabled' => isModEnabled('supplier_invoice'), 'perms' => !empty($user->rights->fournisseur->facture->lire)),
-	'selectexpensereports'=>array('label'=>'ExpenseReports', 'picto'=>'expensereport', 'lang'=>'trips', 'enabled' => isModEnabled('expensereport'), 'perms' => !empty($user->rights->expensereport->lire)),
-	'selectdonations'=>array('label'=>'Donations', 'picto'=>'donation', 'lang'=>'donation', 'enabled' => isModEnabled('don'), 'perms' => !empty($user->rights->don->lire)),
-	'selectsocialcontributions'=>array('label'=>'SocialContributions', 'picto'=>'bill', 'enabled' => isModEnabled('tax'), 'perms' => !empty($user->rights->tax->charges->lire)),
-	'selectpaymentsofsalaries'=>array('label'=>'SalariesPayments', 'picto'=>'salary', 'lang'=>'salaries', 'enabled' => isModEnabled('salaries'), 'perms' => !empty($user->rights->salaries->read)),
-	'selectvariouspayment'=>array('label'=>'VariousPayment', 'picto'=>'payment', 'enabled' => isModEnabled('banque'), 'perms' => !empty($user->rights->banque->lire)),
-	'selectloanspayment'=>array('label'=>'PaymentLoan','picto'=>'loan', 'enabled' => isModEnabled('don'), 'perms' => !empty($user->rights->loan->read)),
+	'selectinvoices' => array('label' => 'Invoices', 'picto' => 'bill', 'lang' => 'bills', 'enabled' => isModEnabled('invoice'), 'perms' => $user->hasRight('facture', 'lire')),
+	'selectsupplierinvoices' => array('label' => 'BillsSuppliers', 'picto' => 'supplier_invoice', 'lang' => 'bills', 'enabled' => isModEnabled('supplier_invoice'), 'perms' => $user->hasRight('fournisseur', 'facture', 'lire')),
+	'selectexpensereports' => array('label' => 'ExpenseReports', 'picto' => 'expensereport', 'lang' => 'trips', 'enabled' => isModEnabled('expensereport'), 'perms' => $user->hasRight('expensereport', 'lire')),
+	'selectdonations' => array('label' => 'Donations', 'picto' => 'donation', 'lang' => 'donation', 'enabled' => isModEnabled('don'), 'perms' => $user->hasRight('don', 'lire')),
+	'selectsocialcontributions' => array('label' => 'SocialContributions', 'picto' => 'bill', 'enabled' => isModEnabled('tax'), 'perms' => $user->hasRight('tax', 'charges', 'lire')),
+	'selectpaymentsofsalaries' => array('label' => 'SalariesPayments', 'picto' => 'salary', 'lang' => 'salaries', 'enabled' => isModEnabled('salaries'), 'perms' => $user->hasRight('salaries', 'read')),
+	'selectvariouspayment' => array('label' => 'VariousPayment', 'picto' => 'payment', 'enabled' => isModEnabled('bank'), 'perms' => $user->hasRight('banque', 'lire')),
+	'selectloanspayment' => array('label' => 'PaymentLoan','picto' => 'loan', 'enabled' => isModEnabled('don'), 'perms' => $user->hasRight('loan', 'read')),
 );
 
 
@@ -151,14 +152,16 @@ $listofchoices = array(
  * Actions
  */
 
-
 //$parameters = array('socid' => $id);
 //$reshook = $hookmanager->executeHooks('doActions', $parameters, $object); // Note that $object may have been modified by some hooks
 //if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 $filesarray = array();
+
+'@phan-var-force array<string,array{id:string,entity:string,date:string,date_due:string,paid:float|int,amount_ht:float|int,amount_ttc:float|int,amount_vat:float|int,amount_localtax1:float|int,amount_localtax2:float|int,amount_revenuestamp:float|int,ref:string,fk:string,item:string,thirdparty_name:string,thirdparty_code:string,country_code:string,vatnum:string,sens:string,currency:string,line?:string,name?:string,files?:mixed}> $filesarray';
+
 $result = false;
-if (($action == 'searchfiles' || $action == 'dl')) {
+if ($action == 'searchfiles' || $action == 'dl') {	// Test on permission not required here. Test is done per object type later.
 	if (empty($date_start)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateStart")), null, 'errors');
 		$error++;
@@ -277,7 +280,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 			$sql .= " FROM ".MAIN_DB_PREFIX."chargesociales as t";
 			$sql .= " WHERE t.date_ech between ".$wheretail;
 			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
-			//$sql.=" AND fk_statut <> ".ChargeSociales::STATUS_DRAFT;
+			//$sql.=" AND fk_statut <> ".ChargeSociales::STATUS_UNPAID;
 			if (!empty($projectid)) {
 				$sql .= " AND fk_projet = ".((int) $projectid);
 			}
@@ -427,6 +430,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 							$nofile['link'] = '';
 							$nofile['name'] = '';
 
+
 							$filesarray[$nofile['item'].'_'.$nofile['id']] = $nofile;
 						} else {
 							foreach ($files as $key => $file) {
@@ -462,8 +466,8 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 								}
 								$filesarray[$file['item'].'_'.$file['id']]['files'][] = array(
 									'link' => $link.urlencode($file['name']),
-									'name'=>$file['name'],
-									'ref'=>$file['ref'],
+									'name' => $file['name'],
+									'ref' => $file['ref'],
 									'fullname' => $file['fullname'],
 									'relpath' => '/'.$file['name'],
 									'relpathnamelang' => $langs->trans($file['item']).'/'.$file['name'],
@@ -491,10 +495,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 	}
 }
 
-
-/*
- *ZIP creation
- */
+// zip creation
 
 $dirfortmpfile = (!empty($conf->accounting->dir_temp) ? $conf->accounting->dir_temp : $conf->comptabilite->dir_temp);
 if (empty($dirfortmpfile)) {
@@ -502,8 +503,7 @@ if (empty($dirfortmpfile)) {
 	$error++;
 }
 
-
-if ($result && $action == "dl" && !$error) {
+if ($result && $action == "dl" && !$error) {	// Test on permission not required here. Test is done per object type later.
 	if (!extension_loaded('zip')) {
 		setEventMessages('PHPZIPExtentionNotLoaded', null, 'errors');
 	} else {
@@ -538,7 +538,7 @@ if ($result && $action == "dl" && !$error) {
 				$zipname .= '_'.$project->ref;
 			}
 		}
-		$zipname .='_export.zip';
+		$zipname .= '_export.zip';
 
 		dol_delete_file($zipname);
 
@@ -649,7 +649,7 @@ if (isModEnabled('multicompany') && is_object($mc)) {
 	print ' &nbsp; <span class="marginleftonly marginrightonly'.(!getDolGlobalString('MULTICOMPANY_ALLOW_EXPORT_ACCOUNTING_DOC_FOR_ALL_ENTITIES') ? ' opacitymedium' : '').'">'.$langs->trans("Entity").' : ';
 	if (getDolGlobalString('MULTICOMPANY_ALLOW_EXPORT_ACCOUNTING_DOC_FOR_ALL_ENTITIES')) {
 		$socid = $mc->id;
-		print $mc->select_entities(GETPOSTISSET('search_entity') ? GETPOST('search_entity', 'int') : $mc->id, 'search_entity', '', false, false, false, false, true);
+		print $mc->select_entities(GETPOSTISSET('search_entity') ? GETPOSTINT('search_entity') : $mc->id, 'search_entity', '', false, false, false, false, true);
 	} else {
 		print $mc->label;
 	}
@@ -659,7 +659,7 @@ if (isModEnabled('multicompany') && is_object($mc)) {
 print '<br>';
 
 // Project filter
-if (isModEnabled('projet')) {
+if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 	$langs->load('projects');
 	print '<span class="marginrightonly">'.$langs->trans('Project').":</span>";
@@ -678,7 +678,7 @@ foreach ($listofchoices as $choice => $val) {
 		$disabled = ' disabled';
 	}
 	$checked = (((!GETPOSTISSET('search') && $action != 'searchfiles') || GETPOST($choice)) ? ' checked="checked"' : '');
-	print '<div class="'.($i > 0 ? 'paddingleft marginleftonly' : '').' inline-block marginrightonly paddingright"><input type="checkbox" id="'.$choice.'" name="'.$choice.'" value="1"'.$checked.$disabled.'><label for="'.$choice.'"> ';
+	print '<div class="inline-block marginrightonlylarge paddingright margintoponly"><input type="checkbox" id="'.$choice.'" name="'.$choice.'" value="1"'.$checked.$disabled.'><label for="'.$choice.'"> ';
 	print img_picto($langs->trans($val['label']), $val['picto'], 'class=""').' '.$langs->trans($val['label']);
 	print '</label></div>';
 	$i++;
@@ -692,26 +692,27 @@ print dol_get_fiche_end();
 
 $param = '';
 if (!empty($date_start) && !empty($date_stop)) {
-	$param .= '&date_startday='.GETPOST('date_startday', 'int');
-	$param .= '&date_startmonth='.GETPOST('date_startmonth', 'int');
-	$param .= '&date_startyear='.GETPOST('date_startyear', 'int');
-	$param .= '&date_stopday='.GETPOST('date_stopday', 'int');
-	$param .= '&date_stopmonth='.GETPOST('date_stopmonth', 'int');
-	$param .= '&date_stopyear='.GETPOST('date_stopyear', 'int');
+	$param .= '&date_startday='.GETPOSTINT('date_startday');
+	$param .= '&date_startmonth='.GETPOSTINT('date_startmonth');
+	$param .= '&date_startyear='.GETPOSTINT('date_startyear');
+	$param .= '&date_stopday='.GETPOSTINT('date_stopday');
+	$param .= '&date_stopmonth='.GETPOSTINT('date_stopmonth');
+	$param .= '&date_stopyear='.GETPOSTINT('date_stopyear');
 	foreach ($listofchoices as $choice => $val) {
-		if (GETPOST($choice, 'int')) {
+		if (GETPOSTINT($choice)) {
 			$param .= '&'.$choice.'=1';
 		}
 	}
 
 	$TData = dol_sort_array($filesarray, $sortfield, $sortorder);
+	'@phan-var-force array<string,array{id:string,entity:string,date:string,date_due:string,paid:float|int,amount_ht:float|int,amount_ttc:float|int,amount_vat:float|int,amount_localtax1:float|int,amount_localtax2:float|int,amount_revenuestamp:float|int,ref:string,fk:string,item:string,thirdparty_name:string,thirdparty_code:string,country_code:string,vatnum:string,sens:string,currency:string,line?:string,name?:string,files?:mixed}> $TData';
 
 
 	$filename = dol_print_date($date_start, 'dayrfc', 'tzuserrel')."-".dol_print_date($date_stop, 'dayrfc', 'tzuserrel').'_export.zip';
 
 	echo dol_print_date($date_start, 'day', 'tzuserrel')." - ".dol_print_date($date_stop, 'day', 'tzuserrel');
 
-	print '<a class="marginleftonly small'.(empty($TData) ? ' butActionRefused' : ' butAction').'" href="'.$_SERVER["PHP_SELF"].'?action=dl&token='.currentToken().'&projectid='.$projectid.'&output=file&file='.urlencode($filename).$param.'"';
+	print '<a class="marginleftonly small'.(empty($TData) ? ' butActionRefused' : ' butAction').'" href="'.$_SERVER["PHP_SELF"].'?action=dl&token='.currentToken().'&projectid='.((int) $projectid).'&output=file&file='.urlencode($filename).$param.'"';
 	if (empty($TData)) {
 		print " disabled";
 	}
@@ -743,7 +744,7 @@ if (!empty($date_start) && !empty($date_stop)) {
 
 	print '<br>';
 
-	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($arrayfields['type']['label'], $_SERVER["PHP_SELF"], "item", "", $param, '', $sortfield, $sortorder, 'nowrap ');

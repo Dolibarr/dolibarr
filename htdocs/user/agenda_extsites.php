@@ -45,13 +45,13 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'us
 if (!getDolGlobalString('AGENDA_EXT_NB')) {
 	$conf->global->AGENDA_EXT_NB = 5;
 }
-$MAXAGENDA = $conf->global->AGENDA_EXT_NB;
+$MAXAGENDA = getDolGlobalString('AGENDA_EXT_NB');
 
 // List of available colors
 $colorlist = array('BECEDD', 'DDBECE', 'BFDDBE', 'F598B4', 'F68654', 'CBF654', 'A4A4A5');
 
 // Security check
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 
 if (!isset($id) || empty($id)) {
 	accessforbidden();
@@ -59,7 +59,7 @@ if (!isset($id) || empty($id)) {
 
 $object = new User($db);
 $object->fetch($id, '', '', 1);
-$object->getrights();
+$object->loadRights();
 
 // Security check
 $socid = 0;
@@ -68,6 +68,9 @@ if ($user->socid > 0) {
 }
 $feature2 = (($socid && $user->hasRight('user', 'self', 'creer')) ? '' : 'user');
 
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('usercard', 'useragenda', 'globalcard'));
+
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
 // If user is not user that read and no permission to read other users, we stop
@@ -75,14 +78,11 @@ if (($object->id != $user->id) && (!$user->hasRight('user', 'user', 'lire'))) {
 	accessforbidden();
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('usercard', 'useragenda', 'globalcard'));
-
 /*
  * Actions
  */
 
-$parameters = array('id'=>$socid);
+$parameters = array('id' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -158,7 +158,7 @@ $person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firs
 $title = $person_name." - ".$langs->trans('ExtSites');
 $help_url = '';
 
-llxHeader('', $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss);
+llxHeader('', $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', 'mod-user page-agenda_extsites');
 
 
 print '<form name="extsitesconfig" action="'.$_SERVER["PHP_SELF"].'" method="post">';
@@ -229,7 +229,7 @@ if ($selectedvalue == 1) {
 }
 
 
-print '<div class="div-table-responsive">';
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 
 print "<tr class=\"liste_titre\">";
@@ -249,7 +249,7 @@ while ($i <= $MAXAGENDA) {
 	$color = 'AGENDA_EXT_COLOR_'.$id.'_'.$key;
 
 	print '<tr class="oddeven">';
-	// Nb
+	// Nb @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 	print '<td class="maxwidth50onsmartphone">'.$langs->trans("AgendaExtNb", $key)."</td>";
 	// Name
 	$name_value = (GETPOST('AGENDA_EXT_NAME_'.$id.'_'.$key) ? GETPOST('AGENDA_EXT_NAME_'.$id.'_'.$key) : (empty($object->conf->$name) ? '' : $object->conf->$name));

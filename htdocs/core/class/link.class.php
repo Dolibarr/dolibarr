@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2013 Cédric Salvador <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,7 +73,7 @@ class Link extends CommonObject
 	 *    @param	User	$user       Object of user that ask creation
 	 *    @return   int         		>= 0 if OK, < 0 if KO
 	 */
-	public function create($user = '')
+	public function create(User $user)
 	{
 		global $langs, $conf;
 
@@ -91,7 +92,7 @@ class Link extends CommonObject
 
 		// Check parameters
 		if (empty($this->url)) {
-			$this->error = $langs->trans("NoUrl");
+			$this->error = $langs->trans("NoURL");
 			return -1;
 		}
 
@@ -149,7 +150,7 @@ class Link extends CommonObject
 	 *  @param  int		$call_trigger    			0=no, 1=yes
 	 *  @return int  			           			Return integer <0 if KO, >=0 if OK
 	 */
-	public function update($user = '', $call_trigger = 1)
+	public function update(User $user, $call_trigger = 1)
 	{
 		global $langs, $conf;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -207,11 +208,11 @@ class Link extends CommonObject
 			}
 		} else {
 			if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-				// Doublon
+				// Duplicate
 				$this->error = $langs->trans("ErrorDuplicateField");
 				$result = -1;
 			} else {
-				$this->error = $langs->trans("Error sql = ".$sql);
+				$this->error = $langs->trans("Error sql")."= $sql";
 				$result = -2;
 			}
 			$this->db->rollback();
@@ -236,7 +237,7 @@ class Link extends CommonObject
 		$sql = "SELECT rowid, entity, datea, url, label, objecttype, objectid FROM ".$this->db->prefix()."links";
 		$sql .= " WHERE objecttype = '".$this->db->escape($objecttype)."' AND objectid = ".((int) $objectid);
 		if ($conf->entity != 0) {
-			$sql .= " AND entity = ".$conf->entity;
+			$sql .= " AND entity = ".((int) $conf->entity);
 		}
 		if ($sortfield) {
 			if (empty($sortorder)) {
@@ -274,7 +275,7 @@ class Link extends CommonObject
 	/**
 	 *  Return nb of links
 	 *
-	 *  @param  DoliDb  $dbs		Database handler
+	 *  @param  DoliDB  $dbs		Database handler
 	 *  @param  string  $objecttype Type of the associated object in dolibarr
 	 *  @param  int     $objectid   Id of the associated object in dolibarr
 	 *  @return int                 Nb of links, -1 if error

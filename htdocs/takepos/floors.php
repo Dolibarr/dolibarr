@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2018	Andreu Bisquerra	<jove@bisquerra.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,11 +42,11 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 $langs->loadLangs(array("bills", "orders", "commercial", "cashdesk"));
 
-$floor = GETPOST('floor', 'int');
+$floor = GETPOSTINT('floor');
 if ($floor == "") {
 	$floor = 1;
 }
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
 $left = GETPOST('left', 'alpha');
 $top = GETPOST('top', 'alpha');
@@ -64,7 +65,7 @@ if (!$user->hasRight('takepos', 'run')) {
  * Actions
  */
 
-if ($action == "getTables") {
+if ($action == "getTables" && $user->hasRight('takepos', 'run')) {
 	$sql = "SELECT rowid, entity, label, leftpos, toppos, floor FROM ".MAIN_DB_PREFIX."takepos_floor_tables WHERE floor = ".((int) $floor)." AND entity IN (".getEntity('takepos').")";
 	$resql = $db->query($sql);
 	$rows = array();
@@ -82,7 +83,7 @@ if ($action == "getTables") {
 	exit;
 }
 
-if ($action == "update") {
+if ($action == "update" && $user->hasRight('takepos', 'run')) {
 	if ($left > 95) {
 		$left = 95;
 	}
@@ -96,7 +97,7 @@ if ($action == "update") {
 	}
 }
 
-if ($action == "updatename") {
+if ($action == "updatename" && $user->hasRight('takepos', 'run')) {
 	$newname = preg_replace("/[^a-zA-Z0-9\s]/", "", $newname); // Only English chars
 	if (strlen($newname) > 3) {
 		$newname = substr($newname, 0, 3); // Only 3 chars
@@ -104,7 +105,7 @@ if ($action == "updatename") {
 	$resql = $db->query("UPDATE ".MAIN_DB_PREFIX."takepos_floor_tables SET label='".$db->escape($newname)."' WHERE rowid = ".((int) $place));
 }
 
-if ($action == "add") {
+if ($action == "add" && $user->hasRight('takepos', 'run')) {
 	$sql = "INSERT INTO ".MAIN_DB_PREFIX."takepos_floor_tables(entity, label, leftpos, toppos, floor) VALUES (".$conf->entity.", '', '45', '45', ".((int) $floor).")";
 	$asdf = $db->query($sql);
 	$db->query("UPDATE ".MAIN_DB_PREFIX."takepos_floor_tables SET label = rowid WHERE label = ''"); // No empty table names
@@ -123,7 +124,7 @@ if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 }
 $arrayofcss = array('/takepos/css/pos.css.php?a=xxx');
 
-top_htmlhead($head, $title, 0, 0, '', $arrayofcss);
+top_htmlhead($head, $title, 0, 0, array(), $arrayofcss);
 
 ?>
 <body style="overflow: hidden">
@@ -157,7 +158,7 @@ function updateplace(idplace, left, top) {
 		url: "<?php echo DOL_URL_ROOT.'/takepos/floors.php'; ?>",
 		data: { action: "update", left: left, top: top, place: idplace, token: '<?php echo currentToken(); ?>' }
 	}).done(function( msg ) {
-		window.location.href='floors.php?mode=edit&floor=<?php echo urlencode($floor); ?>';
+		window.location.href='floors.php?mode=edit&floor=<?php echo urlencode((string) ($floor)); ?>';
 	});
 }
 
@@ -169,7 +170,7 @@ function updatename(rowid) {
 		url: "<?php echo DOL_URL_ROOT.'/takepos/floors.php'; ?>",
 		data: { action: "updatename", place: rowid, newname: after, token: '<?php echo currentToken(); ?>' }
 	}).done(function( msg ) {
-		window.location.href='floors.php?mode=edit&floor=<?php echo urlencode($floor); ?>';
+		window.location.href='floors.php?mode=edit&floor=<?php echo urlencode((string) ($floor)); ?>';
 	});
 }
 
@@ -232,7 +233,8 @@ $( document ).ready(function() {
 																											 } ?>';">
 	<?php } ?>
 	<span class="valignmiddle"><?php echo $langs->trans("Floor")." ".$floor; ?></span>
-	<img src="./img/arrow-next.png" class="valignmiddle" width="5%" onclick="location.href='floors.php?floor=<?php $floor++; echo $floor; ?>';">
+	<img src="./img/arrow-next.png" class="valignmiddle" width="5%" onclick="location.href='floors.php?floor=<?php $floor++;
+	echo $floor; ?>';">
 	</h1>
 	</center>
 </div>

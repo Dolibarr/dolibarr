@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2020 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +29,7 @@
 // - create table ll_session from the llx_session-disabled.sql file
 // - uncomment the include DOL_DOCUMENT_ROOT.'/core/lib/phpsessionindb.inc.php into main.inc.php
 // - in your PHP.ini, set:  session.save_handler = user
-// The session_set_save_handler() at end of this fille will replace default session management.
+// The session_set_save_handler() at end of this file will replace default session management.
 
 
 /**
@@ -244,4 +245,4 @@ function dolSessionGC($max_lifetime)
 }
 
 // Call to register user call back functions.
-session_set_save_handler("dolSessionOpen", "dolSessionClose", "dolSessionRead", "dolSessionWrite", "dolSessionDestroy", "dolSessionGC");
+session_set_save_handler("dolSessionOpen", "dolSessionClose", "dolSessionRead", "dolSessionWrite", "dolSessionDestroy", "dolSessionGC"); // @phpstan-ignore-line

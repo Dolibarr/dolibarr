@@ -1,13 +1,14 @@
 <?php
-/* Copyright (C) 2007-2010	Laurent Destailleur			<eldy@users.sourceforge.net>
- * Copyright (C) 2007-2010	Jean Heimburger				<jean@tiaris.info>
- * Copyright (C) 2011		Juanjo Menent				<jmenent@2byte.es>
- * Copyright (C) 2012		Regis Houssin				<regis.houssin@inodbox.com>
- * Copyright (C) 2013-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2013-2016	Olivier Geffroy				<jeff@jeffinfo.com>
- * Copyright (C) 2013-2016	Florian Henry				<florian.henry@open-concept.pro>
- * Copyright (C) 2018		Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2018		Eric Seigne					<eric.seigne@cap-rel.fr>
+/* Copyright (C) 2007-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2007-2010  Jean Heimburger         <jean@tiaris.info>
+ * Copyright (C) 2011       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2013-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
+ * Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
+ * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2018		Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018		Eric Seigne             <eric.seigne@cap-rel.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("commercial", "compta", "bills", "other", "accountancy", "trips", "errors"));
 
-$id_journal = GETPOST('id_journal', 'int');
+$id_journal = GETPOSTINT('id_journal');
 $action = GETPOST('action', 'aZ09');
 
 $date_startmonth = GETPOST('date_startmonth');
@@ -60,6 +61,13 @@ $now = dol_now();
 $hookmanager->initHooks(array('expensereportsjournal'));
 $parameters = array();
 
+$taber = array();  // Initialise for static analysis
+$tabht = array();
+$tabtva = array();
+$tabttc = array();
+$tablocaltax1 = array();
+$tablocaltax2 = array();
+
 // Security check
 if (!isModEnabled('accounting')) {
 	accessforbidden();
@@ -67,7 +75,7 @@ if (!isModEnabled('accounting')) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
+if (!$user->hasRight('accounting', 'bind', 'write')) {
 	accessforbidden();
 }
 
@@ -81,7 +89,7 @@ $errorforinvoice = array();
 
 $accountingaccount = new AccountingAccount($db);
 
-// Get informations of journal
+// Get information of a journal
 $accountingjournalstatic = new AccountingJournal($db);
 $accountingjournalstatic->fetch($id_journal);
 $journal = $accountingjournalstatic->code;
@@ -89,6 +97,9 @@ $journal_label = $accountingjournalstatic->label;
 
 $date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
 $date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
+
+$pastmonth = null;  // Initialise (could be unset)
+$pastmonthyear = null;  // Initialise (could be unset)
 
 if (empty($date_startmonth)) {
 	// Period by default on transfer
@@ -110,7 +121,7 @@ if (!GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end))
 	$date_end = dol_get_last_day($pastmonthyear, $pastmonth, false);
 }
 
-$sql = "SELECT er.rowid, er.ref, er.date_debut as de,";
+$sql = "SELECT er.rowid, er.ref, er.date_debut as de, er.date_fin as df,";
 $sql .= " erd.rowid as erdid, erd.comments, erd.total_ht, erd.total_tva, erd.total_localtax1, erd.total_localtax2, erd.tva_tx, erd.total_ttc, erd.fk_code_ventilation, erd.vat_src_code, ";
 $sql .= " u.rowid as uid, u.firstname, u.lastname, u.accountancy_code as user_accountancy_account,";
 $sql .= " f.accountancy_code, aa.rowid as fk_compte, aa.account_number as compte, aa.label as label_compte";
@@ -162,7 +173,7 @@ if ($result) {
 	$num = $db->num_rows($result);
 
 	// Variables
-	$account_salary = getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT', 'NotDefined');
+	$account_salary = getDolGlobalString('ACCOUNTING_ACCOUNT_EXPENSEREPORT', 'NotDefined');
 	$account_vat = getDolGlobalString('ACCOUNTING_VAT_BUY_ACCOUNT', 'NotDefined');
 
 	$i = 0;
@@ -178,12 +189,16 @@ if ($result) {
 		$compta_localtax1 = (!empty($vatdata['accountancy_code_buy']) ? $vatdata['accountancy_code_buy'] : $account_vat);
 		$compta_localtax2 = (!empty($vatdata['accountancy_code_buy']) ? $vatdata['accountancy_code_buy'] : $account_vat);
 
-		// Define array to display all VAT rates that use this accounting account $compta_tva
+		// Define an array to display all VAT rates that use this accounting account $compta_tva
 		if (price2num($obj->tva_tx) || !empty($obj->vat_src_code)) {
 			$def_tva[$obj->rowid][$compta_tva][vatrate($obj->tva_tx).($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : '')] = (vatrate($obj->tva_tx).($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''));
 		}
 
-		$taber[$obj->rowid]["date"] = $db->jdate($obj->de);
+		if (getDolGlobalInt('ACCOUNTANCY_ER_DATE_RECORD')) {
+			$taber[$obj->rowid]["date"] = $db->jdate($obj->df);
+		} else {
+			$taber[$obj->rowid]["date"] = $db->jdate($obj->de);
+		}
 		$taber[$obj->rowid]["ref"] = $obj->ref;
 		$taber[$obj->rowid]["comments"] = $obj->comments;
 		$taber[$obj->rowid]["fk_expensereportdet"] = $obj->erdid;
@@ -227,7 +242,7 @@ $sql = "SELECT fk_expensereport, COUNT(erd.rowid) as nb";
 $sql .= " FROM ".MAIN_DB_PREFIX."expensereport_det as erd";
 $sql .= " WHERE erd.fk_code_ventilation <= 0";
 $sql .= " AND erd.total_ttc <> 0";
-$sql .= " AND fk_expensereport IN (".$db->sanitize(join(",", array_keys($taber))).")";
+$sql .= " AND fk_expensereport IN (".$db->sanitize(implode(",", array_keys($taber))).")";
 $sql .= " GROUP BY fk_expensereport";
 $resql = $db->query($sql);
 
@@ -242,12 +257,12 @@ while ($i < $num) {
 }
 
 // Bookkeeping Write
-if ($action == 'writebookkeeping' && !$error) {
+if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'bind', 'write')) {
 	$now = dol_now();
 	$error = 0;
 
 	$accountingaccountexpense = new AccountingAccount($db);
-	$accountingaccountexpense->fetch(null, getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT'), true);
+	$accountingaccountexpense->fetch(0, getDolGlobalString('ACCOUNTING_ACCOUNT_EXPENSEREPORT'), true);
 
 	foreach ($taber as $key => $val) {		// Loop on each expense report
 		$errorforline = 0;
@@ -279,7 +294,7 @@ if ($action == 'writebookkeeping' && !$error) {
 					$bookkeeping->subledger_account = $tabuser[$key]['user_accountancy_code'];
 					$bookkeeping->subledger_label = $tabuser[$key]['name'];
 
-					$bookkeeping->numero_compte = getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT');
+					$bookkeeping->numero_compte = getDolGlobalString('ACCOUNTING_ACCOUNT_EXPENSEREPORT');
 					$bookkeeping->label_compte = $accountingaccountexpense->label;
 
 					$bookkeeping->label_operation = $tabuser[$key]['name'];
@@ -318,7 +333,7 @@ if ($action == 'writebookkeeping' && !$error) {
 			foreach ($tabht[$key] as $k => $mt) {
 				if ($mt) {
 					// get compte id and label
-					if ($accountingaccount->fetch(null, $k, true)) {
+					if ($accountingaccount->fetch(0, $k, true)) {
 						$bookkeeping = new BookKeeping($db);
 						$bookkeeping->doc_date = $val["date"];
 						$bookkeeping->doc_ref = $val["ref"];
@@ -379,7 +394,14 @@ if ($action == 'writebookkeeping' && !$error) {
 
 				foreach ($arrayofvat[$key] as $k => $mt) {
 					if ($mt) {
-						$accountingaccount->fetch(null, $k, true);	// TODO Use a cache for label
+						if (empty($conf->cache['accountingaccountincurrententity'][$k])) {
+							$accountingaccount = new AccountingAccount($db);
+							$accountingaccount->fetch(0, $k, true);
+							$conf->cache['accountingaccountincurrententity'][$k] = $accountingaccount;
+						} else {
+							$accountingaccount = $conf->cache['accountingaccountincurrententity'][$k];
+						}
+
 						$account_label = $accountingaccount->label;
 
 						// get compte id and label
@@ -397,7 +419,7 @@ if ($action == 'writebookkeeping' && !$error) {
 						$bookkeeping->numero_compte = $k;
 						$bookkeeping->label_compte = $account_label;
 
-						$bookkeeping->label_operation = $langs->trans("VAT").' '.join(', ', $def_tva[$key][$k]).' %';
+						$bookkeeping->label_operation = $langs->trans("VAT").' '.implode(', ', $def_tva[$key][$k]).' %';
 						$bookkeeping->montant = $mt;
 						$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
 						$bookkeeping->debit = ($mt > 0) ? $mt : 0;
@@ -488,7 +510,7 @@ $userstatic = new User($db);
 
 // Export
 if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
-	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
+	$sep = getDolGlobalString('ACCOUNTING_EXPORT_SEPARATORCSV');
 
 	$filename = 'journal';
 	$type_export = 'journal';
@@ -512,7 +534,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 		// Fees
 		foreach ($tabht[$key] as $k => $mt) {
 			$accountingaccount = new AccountingAccount($db);
-			$accountingaccount->fetch(null, $k, true);
+			$accountingaccount->fetch(0, $k, true);
 			if ($mt) {
 				print '"'.$date.'"'.$sep;
 				print '"'.$val["ref"].'"'.$sep;
@@ -552,8 +574,8 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 
 if (empty($action) || $action == 'view') {
 	$title = $langs->trans("GenerationOfAccountingEntries").' - '.$accountingjournalstatic->getNomUrl(0, 2, 1, '', 1);
-
-	llxHeader('', dol_string_nohtmltag($title));
+	$help_url = 'EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#G&eacute;n&eacute;ration_des_&eacute;critures_en_comptabilit&eacute;';
+	llxHeader('', dol_string_nohtmltag($title), $help_url, '', 0, 0, '', '', '', 'mod-accountancy accountancy-generation page-expensereportsjournal');
 
 	$nom = $title;
 	$nomlink = '';
@@ -562,7 +584,7 @@ if (empty($action) || $action == 'view') {
 	$builddate = dol_now();
 	$description = $langs->trans("DescJournalOnlyBindedVisible").'<br>';
 
-	$listofchoices = array('notyet'=>$langs->trans("NotYetInGeneralLedger"), 'already'=>$langs->trans("AlreadyInGeneralLedger"));
+	$listofchoices = array('notyet' => $langs->trans("NotYetInGeneralLedger"), 'already' => $langs->trans("AlreadyInGeneralLedger"));
 	$period = $form->selectDate($date_start ? $date_start : -1, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end ? $date_end : -1, 'date_end', 0, 0, 0, '', 1, 0);
 	$period .= ' -  '.$langs->trans("JournalizationInLedgerStatus").' '.$form->selectarray('in_bookkeeping', $listofchoices, $in_bookkeeping, 1);
 
@@ -590,7 +612,7 @@ if (empty($action) || $action == 'view') {
 	}
 
 	// Button to write into Ledger
-	if (!getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') || getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') == '-1') {
+	if (!getDolGlobalString('ACCOUNTING_ACCOUNT_EXPENSEREPORT') || getDolGlobalString('ACCOUNTING_ACCOUNT_EXPENSEREPORT') == '-1') {
 		print '<br><div class="warning">'.img_warning().' '.$langs->trans("SomeMandatoryStepsOfSetupWereNotDone");
 		$desc = ' : '.$langs->trans("AccountancyAreaDescMisc", 4, '{link}');
 		$desc = str_replace('{link}', '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>', $desc);
@@ -602,7 +624,7 @@ if (empty($action) || $action == 'view') {
 	if (getDolGlobalString('ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL') && $in_bookkeeping == 'notyet') {
 		print '<input type="button" class="butAction" name="exportcsv" value="'.$langs->trans("ExportDraftJournal").'" onclick="launch_export();" />';
 	}
-	if (!getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') || getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') == '-1') {
+	if (!getDolGlobalString('ACCOUNTING_ACCOUNT_EXPENSEREPORT') || getDolGlobalString('ACCOUNTING_ACCOUNT_EXPENSEREPORT') == '-1') {
 		print '<input type="button" class="butActionRefused classfortooltip" title="'.dol_escape_htmltag($langs->trans("SomeMandatoryStepsOfSetupWereNotDone")).'" value="'.$langs->trans("WriteBookKeeping").'" />';
 	} else {
 		if ($in_bookkeeping == 'notyet') {
@@ -682,8 +704,13 @@ if (empty($action) || $action == 'view') {
 
 		// Fees
 		foreach ($tabht[$key] as $k => $mt) {
-			$accountingaccount = new AccountingAccount($db);
-			$accountingaccount->fetch(null, $k, true);
+			if (empty($conf->cache['accountingaccountincurrententity'][$k])) {
+				$accountingaccount = new AccountingAccount($db);
+				$accountingaccount->fetch(0, $k, true);
+				$conf->cache['accountingaccountincurrententity'][$k] = $accountingaccount;
+			} else {
+				$accountingaccount = $conf->cache['accountingaccountincurrententity'][$k];
+			}
 
 			if ($mt) {
 				print '<tr class="oddeven">';
@@ -726,7 +753,7 @@ if (empty($action) || $action == 'view') {
 			print "<td>".$expensereportstatic->getNomUrl(1)."</td>";
 			// Account
 			print "<td>";
-			$accountoshow = length_accountg(getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT'));
+			$accountoshow = length_accountg(getDolGlobalString('ACCOUNTING_ACCOUNT_EXPENSEREPORT'));
 			if (($accountoshow == "") || $accountoshow == 'NotDefined') {
 				print '<span class="error">'.$langs->trans("MainAccountForUsersNotDefined").'</span>';
 			} else {
@@ -779,7 +806,7 @@ if (empty($action) || $action == 'view') {
 					// Subledger account
 					print "<td>";
 					print '</td>';
-					print "<td>".$userstatic->getNomUrl(0, 'user', 16).' - '.$langs->trans("VAT").' '.join(', ', $def_tva[$key][$k]).' %'.($numtax ? ' - Localtax '.$numtax : '');
+					print "<td>".$userstatic->getNomUrl(0, 'user', 16).' - '.$langs->trans("VAT").' '.implode(', ', $def_tva[$key][$k]).' %'.($numtax ? ' - Localtax '.$numtax : '');
 					print "</td>";
 					print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";
 					print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";

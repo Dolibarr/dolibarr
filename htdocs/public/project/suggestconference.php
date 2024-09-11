@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +39,7 @@ if (!defined('NOBROWSERNOTIF')) {
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
-// TODO This should be useless. Because entity must be retrieve from object ref and not from url.
+// Because 2 entities can have the same ref.
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
@@ -70,8 +72,8 @@ $email = GETPOST("email");
 $societe = GETPOST("societe");
 $label = GETPOST("label");
 $note = GETPOST("note");
-$datestart = dol_mktime(0, 0, 0, GETPOST('datestartmonth', 'int'), GETPOST('datestartday', 'int'), GETPOST('datestartyear', 'int'));
-$dateend = dol_mktime(23, 59, 59, GETPOST('dateendmonth', 'int'), GETPOST('dateendday', 'int'), GETPOST('dateendyear', 'int'));
+$datestart = dol_mktime(0, 0, 0, GETPOSTINT('datestartmonth'), GETPOSTINT('datestartday'), GETPOSTINT('datestartyear'));
+$dateend = dol_mktime(23, 59, 59, GETPOSTINT('dateendmonth'), GETPOSTINT('dateendday'), GETPOSTINT('dateendyear'));
 
 $id = GETPOST('id');
 
@@ -94,7 +96,7 @@ if ($securekeytocompare != $securekeyreceived) {
 // Load translation files
 $langs->loadLangs(array("main", "companies", "install", "other", "eventorganization"));
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('publicnewmembercard', 'globalcard'));
 
 $extrafields = new ExtraFields($db);
@@ -123,7 +125,7 @@ if (empty($conf->eventorganization->enabled)) {
  */
 function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
 {
-	global $user, $conf, $langs, $mysoc;
+	global $conf, $langs, $mysoc;
 
 	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss); // Show html headers
 
@@ -195,7 +197,7 @@ if ($reshook < 0) {
 }
 
 // Action called when page is submitted
-if (empty($reshook) && $action == 'add') {
+if (empty($reshook) && $action == 'add') {	// Test on permission not required here. This is an anonymous public ssubmission. Check is done on the secureket + mitigation.
 	$error = 0;
 
 	$urlback = '';
@@ -256,12 +258,12 @@ if (empty($reshook) && $action == 'add') {
 			$thirdparty->town         = GETPOST("town");
 			$thirdparty->client       = $thirdparty::PROSPECT;
 			$thirdparty->fournisseur  = 0;
-			$thirdparty->country_id   = GETPOST("country_id", 'int');
-			$thirdparty->state_id     = GETPOST("state_id", 'int');
+			$thirdparty->country_id   = GETPOSTINT("country_id");
+			$thirdparty->state_id     = GETPOSTINT("state_id");
 			$thirdparty->email        = ($emailcompany ? $emailcompany : $email);
 
 			// Load object modCodeTiers
-			$module = (getDolGlobalString('SOCIETE_CODECLIENT_ADDON') ? $conf->global->SOCIETE_CODECLIENT_ADDON : 'mod_codeclient_leopard');
+			$module = getDolGlobalString('SOCIETE_CODECLIENT_ADDON', 'mod_codeclient_leopard');
 			if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php') {
 				$module = substr($module, 0, dol_strlen($module) - 4);
 			}
@@ -279,20 +281,20 @@ if (empty($reshook) && $action == 'add') {
 			}
 			$thirdparty->code_client = $tmpcode;
 			$readythirdparty = $thirdparty->create($user);
-			if ($readythirdparty <0) {
+			if ($readythirdparty < 0) {
 				$error++;
 				$errmsg .= $thirdparty->error;
 				$errors = array_merge($errors, $thirdparty->errors);
 			} else {
-				$thirdparty->country_code = getCountry($thirdparty->country_id, 2, $db, $langs);
-				$thirdparty->country      = getCountry($thirdparty->country_code, 0, $db, $langs);
+				$thirdparty->country_code = getCountry($thirdparty->country_id, '2', $db, $langs);
+				$thirdparty->country      = getCountry($thirdparty->country_code, '', $db, $langs);
 			}
 		}
 		// From there we have a thirdparty, now looking for the contact
 		if (!$error) {
 			$contact = new Contact($db);
 			$resultcontact = $contact->fetch('', '', '', $email);
-			if ($resultcontact<=0) {
+			if ($resultcontact <= 0) {
 				// Need to create a contact
 				$contact->socid = $thirdparty->id;
 				$contact->lastname = (string) GETPOST("lastname", 'alpha');
@@ -300,12 +302,12 @@ if (empty($reshook) && $action == 'add') {
 				$contact->address = (string) GETPOST("address", 'alpha');
 				$contact->zip = (string) GETPOST("zipcode", 'alpha');
 				$contact->town = (string) GETPOST("town", 'alpha');
-				$contact->country_id = (int) GETPOST("country_id", 'int');
-				$contact->state_id = (int) GETPOST("state_id", 'int');
+				$contact->country_id = GETPOSTINT("country_id");
+				$contact->state_id = GETPOSTINT("state_id");
 				$contact->email = $email;
 				$contact->statut = 1; //Default status to Actif
 				$resultcreatecontact = $contact->create($user);
-				if ($resultcreatecontact<0) {
+				if ($resultcreatecontact < 0) {
 					$error++;
 					$errmsg .= $contact->error;
 				}
@@ -316,9 +318,9 @@ if (empty($reshook) && $action == 'add') {
 			// Adding supplier tag and tag from setup to thirdparty
 			$category = new Categorie($db);
 
-			$resultcategory = $category->fetch($conf->global->EVENTORGANIZATION_CATEG_THIRDPARTY_CONF);
+			$resultcategory = $category->fetch(getDolGlobalString('EVENTORGANIZATION_CATEG_THIRDPARTY_CONF'));
 
-			if ($resultcategory<=0) {
+			if ($resultcategory <= 0) {
 				$error++;
 				$errmsg .= $category->error;
 			} else {
@@ -330,7 +332,7 @@ if (empty($reshook) && $action == 'add') {
 					$thirdparty->fournisseur = 1;
 
 					// Load object modCodeFournisseur
-					$module = (getDolGlobalString('SOCIETE_CODECLIENT_ADDON') ? $conf->global->SOCIETE_CODECLIENT_ADDON : 'mod_codeclient_leopard');
+					$module = getDolGlobalString('SOCIETE_CODECLIENT_ADDON', 'mod_codeclient_leopard');
 					if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php') {
 						$module = substr($module, 0, dol_strlen($module) - 4);
 					}
@@ -341,7 +343,7 @@ if (empty($reshook) && $action == 'add') {
 							break;
 						}
 					}
-					$modCodeFournisseur = new $module();
+					$modCodeFournisseur = new $module($db);
 					if (empty($tmpcode) && !empty($modCodeFournisseur->code_auto)) {
 						$tmpcode = $modCodeFournisseur->getNextValue($thirdparty, 1);
 					}
@@ -364,7 +366,7 @@ if (empty($reshook) && $action == 'add') {
 			$conforbooth->fk_project = $project->id;
 			$conforbooth->note = $note;
 			$conforbooth->fk_action = $eventtype;
-			$conforbooth->datep =$datestart;
+			$conforbooth->datep = $datestart;
 			$conforbooth->datep2 = $dateend;
 			$conforbooth->datec = dol_now();
 			$conforbooth->tms = dol_now();
@@ -405,13 +407,13 @@ if (empty($reshook) && $action == 'add') {
 			} else {
 				$resultconforbooth = $conforbooth->create($user);
 			}
-			if ($resultconforbooth<=0) {
+			if ($resultconforbooth <= 0) {
 				$error++;
 				$errmsg .= $conforbooth->error;
 			} else {
 				// Adding the contact to the project
 				$resultaddcontact = $conforbooth->add_contact($contact->id, 'SPEAKER');
-				if ($resultaddcontact<0) {
+				if ($resultaddcontact < 0) {
 					$error++;
 					$errmsg .= $conforbooth->error;
 				} else {
@@ -447,13 +449,13 @@ if (empty($reshook) && $action == 'add') {
 					$texttosend = make_substitutions($msg, $substitutionarray, $outputlangs);
 
 					$sendto = $thirdparty->email;
-					$from = $conf->global->MAILING_EMAIL_FROM;
+					$from = getDolGlobalString('MAILING_EMAIL_FROM');
 					$urlback = $_SERVER["REQUEST_URI"];
 					$trackid = 'proj'.$project->id;
 
 					$ishtml = dol_textishtml($texttosend); // May contain urls
 
-					$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, array(), array(), array(), '', '', 0, $ishtml, '', '', $trackid);
+					$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, array(), array(), array(), '', '', 0, $ishtml ? 1 : 0, '', '', $trackid);
 
 					$result = $mailfile->sendfile();
 					if ($result) {
@@ -468,9 +470,9 @@ if (empty($reshook) && $action == 'add') {
 
 	if (!$error) {
 		$db->commit();
-		$securekeyurl = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.$id, 2);
+		$securekeyurl = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.$id, '2');
 		$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?id='.((int) $id).'&securekey='.urlencode($securekeyurl);
-		Header("Location: ".$redirection);
+		header("Location: ".$redirection);
 		exit;
 	} else {
 		$db->rollback();
@@ -495,7 +497,7 @@ print '<br>';
 
 // Sub banner
 print '<div class="center subscriptionformbanner subbanner justify margintoponly paddingtop marginbottomonly padingbottom">';
-print load_fiche_titre($langs->trans("NewSuggestionOfConference"), '', '', 0, 0, 'center');
+print load_fiche_titre($langs->trans("NewSuggestionOfConference"), '', '', 0, '', 'center');
 // Welcome message
 print '<span class="opacitymedium">'.$langs->trans("EvntOrgRegistrationWelcomeMessage").'</span>';
 print '<br>';
@@ -535,7 +537,7 @@ if ($project->location) {
 	print '<span class="fa fa-map-marked-alt pictofixedwidth opacitymedium"></span>'.dol_escape_htmltag($project->location).'<br>';
 }
 if ($project->note_public) {
-	print '<br><span class="opacitymedium">'.dol_htmlentitiesbr($project->note_public).'</span><br>';
+	print '<br><!-- note public --><span class="opacitymedium">'.dol_htmlentitiesbr($project->note_public).'</span><br>';
 }
 
 print '</div>';
@@ -556,7 +558,7 @@ print '<input type="hidden" name="securekey" value="'.$securekeyreceived.'" />';
 print '<br><span class="opacitymedium">'.$langs->trans("FieldsWithAreMandatory", '*').'</span><br>';
 //print $langs->trans("FieldsWithIsForPublic",'**').'<br>';
 
-print dol_get_fiche_head('');
+print dol_get_fiche_head();
 
 print '<script type="text/javascript">
 jQuery(document).ready(function () {
@@ -597,20 +599,20 @@ print '</td></tr>';
 print '<tr><td>'.$langs->trans('Country').'</td><td>';
 $country_id = GETPOST('country_id');
 if (!$country_id && getDolGlobalString('MEMBER_NEWFORM_FORCECOUNTRYCODE')) {
-	$country_id = getCountry($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE, 2, $db, $langs);
+	$country_id = getCountry($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE, '2', $db, $langs);
 }
 if (!$country_id && !empty($conf->geoipmaxmind->enabled)) {
 	$country_code = dol_user_country();
 	//print $country_code;
 	if ($country_code) {
-		$new_country_id = getCountry($country_code, 3, $db, $langs);
+		$new_country_id = getCountry($country_code, '3', $db, $langs);
 		//print 'xxx'.$country_code.' - '.$new_country_id;
 		if ($new_country_id) {
 			$country_id = $new_country_id;
 		}
 	}
 }
-$country_code = getCountry($country_id, 2, $db, $langs);
+$country_code = getCountry($country_id, '2', $db, $langs);
 print $form->select_country($country_id, 'country_id');
 print '</td></tr>';
 // State

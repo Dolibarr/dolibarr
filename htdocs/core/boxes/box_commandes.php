@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +21,7 @@
 
 /**
  *		\file       htdocs/core/boxes/box_commandes.php
- *		\ingroup    commande
+ *		\ingroup    order
  *		\brief      Widget for latest sale orders
  */
 
@@ -38,17 +39,6 @@ class box_commandes extends ModeleBoxes
 	public $depends  = array("commande");
 
 	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
-
-	/**
 	 *  Constructor
 	 *
 	 *  @param  DoliDB  $db         Database handler
@@ -60,7 +50,7 @@ class box_commandes extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = empty($user->rights->commande->lire);
+		$this->hidden = !$user->hasRight('commande', 'lire');
 	}
 
 	/**
@@ -83,11 +73,14 @@ class box_commandes extends ModeleBoxes
 		$societestatic = new Societe($this->db);
 		$userstatic = new User($this->db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLast".(getDolGlobalString('MAIN_LASTBOX_ON_OBJECT_DATE') ? "" : "Modified")."CustomerOrders", $max));
+		$text = $langs->trans("BoxTitleLast".(getDolGlobalString('MAIN_LASTBOX_ON_OBJECT_DATE') ? "" : "Modified")."CustomerOrders", $max);
+		$this->info_box_head = array(
+			'text' => $text.'<a class="paddingleft" href="'.DOL_URL_ROOT.'/commande/list.php?sortfield=c.tms&sortorder=DESC"><span class="badge">...</span></a>'
+		);
 
 		if ($user->hasRight('commande', 'lire')) {
 			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
-			$sql .= ", s.code_client, s.code_compta, s.client";
+			$sql .= ", s.code_client, s.code_compta as code_compta_client, s.client";
 			$sql .= ", s.logo, s.email, s.entity";
 			$sql .= ", c.ref, c.tms";
 			$sql .= ", c.rowid";
@@ -100,7 +93,7 @@ class box_commandes extends ModeleBoxes
 			$sql .= ", c.total_tva";
 			$sql .= ", c.total_ttc";
 			$sql .= " FROM ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
-			if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= " WHERE c.fk_soc = s.rowid";
@@ -108,7 +101,7 @@ class box_commandes extends ModeleBoxes
 			if (getDolGlobalString('ORDER_BOX_LAST_ORDERS_VALIDATED_ONLY')) {
 				$sql .= " AND c.fk_statut = 1";
 			}
-			if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($user->socid) {
@@ -145,7 +138,8 @@ class box_commandes extends ModeleBoxes
 					$societestatic->name = $objp->name;
 					//$societestatic->name_alias = $objp->name_alias;
 					$societestatic->code_client = $objp->code_client;
-					$societestatic->code_compta = $objp->code_compta;
+					$societestatic->code_compta = $objp->code_compta_client;
+					$societestatic->code_compta_client = $objp->code_compta_client;
 					$societestatic->client = $objp->client;
 					$societestatic->logo = $objp->logo;
 					$societestatic->email = $objp->email;
@@ -195,7 +189,7 @@ class box_commandes extends ModeleBoxes
 				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
 					'td' => 'class="center"',
-					'text'=> '<span class="opacitymedium">'.$langs->trans("NoRecordedOrders").'</span>'
+					'text' => '<span class="opacitymedium">'.$langs->trans("NoRecordedOrders").'</span>'
 					);
 				}
 
@@ -203,7 +197,7 @@ class box_commandes extends ModeleBoxes
 			} else {
 				$this->info_box_contents[0][0] = array(
 					'td' => '',
-					'maxlength'=>500,
+					'maxlength' => 500,
 					'text' => ($this->db->error().' sql='.$sql),
 				);
 			}
@@ -218,9 +212,9 @@ class box_commandes extends ModeleBoxes
 	/**
 	 *	Method to show box
 	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
+	 *	@param	?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}	$head	Array with properties of box title
+	 *	@param	?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>	$contents	Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *	@return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)

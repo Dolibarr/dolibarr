@@ -31,16 +31,23 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-$search_project_user = GETPOST('search_project_user', 'int');
-$mine = GETPOST('mode', 'aZ09') == 'mine' ? 1 : 0;
-if ($search_project_user == $user->id) {
-	$mine = 1;
-}
+// Load translation files required by the page
+$langs->loadLangs(array('projects', 'companies'));
 
 $hookmanager = new HookManager($db);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('activityindex'));
+
+$action = GETPOST('action', 'aZ09');
+$search_project_user = GETPOST('search_project_user');
+$mine = (GETPOST('mode', 'aZ09') == 'mine' || $search_project_user == $user->id) ? 1 : 0;
+if ($mine == 0 && $search_project_user === '') {
+	$search_project_user = getDolGlobalString('MAIN_SEARCH_PROJECT_USER_PROJECTSINDEX');
+}
+if ($search_project_user == $user->id) {
+	$mine = 1;
+}
 
 // Security check
 $socid = 0;
@@ -52,8 +59,25 @@ if (!$user->hasRight('projet', 'lire')) {
 	accessforbidden();
 }
 
-// Load translation files required by the page
-$langs->load("projects");
+
+/*
+ * Actions
+ */
+
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+if (empty($reshook)) {
+	if ($action == 'refresh_search_project_user') {
+		$search_project_user = GETPOSTINT('search_project_user');
+		$tabparam = array("MAIN_SEARCH_PROJECT_USER_PROJECTSINDEX" => $search_project_user);
+
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+		$result = dol_set_user_param($db, $conf, $user, $tabparam);
+	}
+}
 
 
 /*
@@ -66,6 +90,7 @@ $day = $tmp['mday'];
 $month = $tmp['mon'];
 $year = $tmp['year'];
 
+$form = new Form($db);
 $projectstatic = new Project($db);
 $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1); // Return all projects I have permission on because I want my tasks and some of my task may be on a public projet that is not my project
 $taskstatic = new Task($db);
@@ -74,7 +99,7 @@ $tasktmp = new Task($db);
 $title = $langs->trans("Activities");
 //if ($mine) $title=$langs->trans("MyActivities");
 
-llxHeader("", $title);
+llxHeader("", $title, '', '', 0, 0, '', '', '', 'mod-project project-activity page-dashboard');
 
 
 // Title for combo list see all projects
@@ -87,12 +112,16 @@ if ($user->hasRight('projet', 'all', 'lire') && !$socid) {
 
 
 $morehtml = '';
-$morehtml .= '<form name="projectform">';
-$morehtml .= '<SELECT name="mode">';
-$morehtml .= '<option name="all" value="all"'.($mine ? '' : ' selected').'>'.$titleall.'</option>';
+$morehtml .= '<form name="projectform" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+$morehtml .= '<input type="hidden" name="token" value="'.newToken().'">';
+$morehtml .= '<input type="hidden" name="action" value="refresh_search_project_user">';
+
+$morehtml .= '<SELECT name="search_project_user" id="search_project_user">';
+$morehtml .= '<option name="all" value="0"'.($mine ? '' : ' selected').'>'.$titleall.'</option>';
 $morehtml .= '<option name="mine" value="'.$user->id.'"'.(($search_project_user == $user->id) ? ' selected' : '').'>'.$langs->trans("ProjectsImContactFor").'</option>';
 $morehtml .= '</SELECT>';
-$morehtml .= '<input type="submit" class="button" name="refresh" value="'.$langs->trans("Refresh").'">';
+$morehtml .= ajax_combobox("search_project_user", array(), 0, 0, 'resolve', '-1', 'small');
+$morehtml .= '<input type="submit" class="button smallpaddingimp" name="refresh" value="'.$langs->trans("Refresh").'">';
 
 if ($mine) {
 	$tooltiphelp = $langs->trans("MyTasksDesc");
@@ -163,7 +192,7 @@ print '</div>';
 print '</div><div class="fichetwothirdright">';
 
 
-/* Affichage de la liste des projets d'hier */
+/* Show list of yesterday's projects */
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
@@ -220,7 +249,7 @@ if ($db->type != 'pgsql')
 {
 	print '<br>';
 
-	// Affichage de la liste des projets de la semaine
+	// Show list of projects active this week
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
@@ -275,7 +304,7 @@ if ($db->type != 'pgsql')
 }
 */
 
-/* Affichage de la liste des projets du mois */
+/* Show list of projects active this month */
 if (getDolGlobalString('PROJECT_TASK_TIME_MONTH')) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
@@ -322,12 +351,12 @@ if (getDolGlobalString('PROJECT_TASK_TIME_MONTH')) {
 	print '</div>';
 }
 
-/* Affichage de la liste des projets de l'annee */
+/* Show list of projects that were active this year */
 if (getDolGlobalString('PROJECT_TASK_TIME_YEAR')) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<br><table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("ActivityOnProjectThisYear").': '.strftime("%Y", $now).'</td>';
+	print '<td>'.$langs->trans("ActivityOnProjectThisYear").': '.dol_print_date($now, "%Y").'</td>';
 	print '<td class="right">'.$langs->trans("Time").'</td>';
 	print "</tr>\n";
 
@@ -340,7 +369,7 @@ if (getDolGlobalString('PROJECT_TASK_TIME_YEAR')) {
 	$sql .= " AND tt.fk_element = t.rowid";
 	$sql .= " AND tt.elementtype = 'task'";
 	$sql .= " AND tt.fk_user = ".((int) $user->id);
-	$sql .= " AND YEAR(element_date) = '".strftime("%Y", $now)."'";
+	$sql .= " AND YEAR(element_date) = '".dol_print_date($now, "%Y")."'";
 	$sql .= " AND p.rowid in (".$db->sanitize($projectsListId).")";
 	$sql .= " GROUP BY p.rowid, p.ref, p.title, p.public";
 
@@ -409,10 +438,10 @@ if (!getDolGlobalString('PROJECT_HIDE_TASKS') && getDolGlobalString('PROJECT_SHO
 	// This list can be very long, so we don't show it by default on task area. We prefer to use the list page.
 	// Add constant PROJECT_SHOW_TASK_LIST_ON_PROJECT_AREA to show this list
 
-	$max = (!getDolGlobalString('PROJECT_LIMIT_TASK_PROJECT_AREA') ? 1000 : $conf->global->PROJECT_LIMIT_TASK_PROJECT_AREA);
+	$max = getDolGlobalInt('PROJECT_LIMIT_TASK_PROJECT_AREA', 1000);
 
-	$sql = "SELECT p.ref, p.title, p.rowid as projectid, p.fk_statut as status, p.fk_opp_status as opp_status, p.public, p.dateo as projdateo, p.datee as projdatee,";
-	$sql .= " t.label, t.rowid as taskid, t.planned_workload, t.duration_effective, t.progress, t.dateo, t.datee, SUM(tasktime.element_duration) as timespent";
+	$sql = "SELECT p.ref, p.title, p.rowid as projectid, p.fk_statut as status, p.fk_opp_status as opp_status, p.public, p.dateo as projdate_start, p.datee as projdate_end,";
+	$sql .= " t.label, t.rowid as taskid, t.planned_workload, t.duration_effective, t.progress, t.dateo as date_start, t.datee as date_end, SUM(tasktime.element_duration) as timespent";
 	$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t on t.fk_projet = p.rowid";
@@ -426,14 +455,14 @@ if (!getDolGlobalString('PROJECT_HIDE_TASKS') && getDolGlobalString('PROJECT_SHO
 		$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId).")"; // project i have permission on
 	}
 	if ($mine) {     // this may duplicate record if we are contact twice
-		$sql .= " AND ect.fk_c_type_contact IN (".$db->sanitize(join(',', array_keys($listoftaskcontacttype))).") AND ect.element_id = t.rowid AND ect.fk_socpeople = ".((int) $user->id);
+		$sql .= " AND ect.fk_c_type_contact IN (".$db->sanitize(implode(',', array_keys($listoftaskcontacttype))).") AND ect.element_id = t.rowid AND ect.fk_socpeople = ".((int) $user->id);
 	}
 	if ($socid) {
 		$sql .= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
 	}
 	$sql .= " AND p.fk_statut=1";
-	$sql .= " GROUP BY p.ref, p.title, p.rowid, p.fk_statut, p.fk_opp_status, p.public, t.label, t.rowid, t.planned_workload, t.duration_effective, t.progress, t.dateo, t.datee";
-	$sql .= " ORDER BY t.dateo desc, t.rowid desc, t.datee";
+	$sql .= " GROUP BY p.ref, p.title, p.rowid, p.fk_statut, p.fk_opp_status, p.public, p.dateo, p.datee, t.label, t.rowid, t.planned_workload, t.duration_effective, t.progress, t.dateo, t.datee";
+	$sql .= " ORDER BY t.dateo DESC, t.rowid DESC, t.datee DESC";
 	$sql .= $db->plimit($max + 1); // We want more to know if we have more than limit
 
 	dol_syslog('projet:index.php: affectationpercent', LOG_DEBUG);
@@ -469,14 +498,17 @@ if (!getDolGlobalString('PROJECT_HIDE_TASKS') && getDolGlobalString('PROJECT_SHO
 			$projectstatic->title = $obj->title;
 			$projectstatic->statut = $obj->status;
 			$projectstatic->public = $obj->public;
-			$projectstatic->dateo = $db->jdate($obj->projdateo);
-			$projectstatic->datee = $db->jdate($obj->projdatee);
+			$projectstatic->date_start = $db->jdate($obj->projdate_start);
+			$projectstatic->date_end = $db->jdate($obj->projdate_end);
 
 			$taskstatic->projectstatus = $obj->projectstatus;
 			$taskstatic->progress = $obj->progress;
 			$taskstatic->fk_statut = $obj->status;
-			$taskstatic->dateo = $db->jdate($obj->dateo);
-			$taskstatic->datee = $db->jdate($obj->datee);
+			$taskstatic->status = $obj->status;
+			$taskstatic->date_start = $db->jdate($obj->date_start);
+			$taskstatic->date_end = $db->jdate($obj->date_end);
+			$taskstatic->dateo = $db->jdate($obj->date_start);
+			$taskstatic->datee = $db->jdate($obj->date_end);
 
 			$username = '';
 			if ($obj->userid && $userstatic->id != $obj->userid) {	// We have a user and it is not last loaded user
@@ -512,8 +544,8 @@ if (!getDolGlobalString('PROJECT_HIDE_TASKS') && getDolGlobalString('PROJECT_SHO
 				print $langs->trans("NoTasks");
 			}
 			print '</td>';
-			print '<td class="center">'.dol_print_date($db->jdate($obj->dateo), 'day').'</td>';
-			print '<td class="center">'.dol_print_date($db->jdate($obj->datee), 'day');
+			print '<td class="center">'.dol_print_date($db->jdate($obj->date_start), 'day').'</td>';
+			print '<td class="center">'.dol_print_date($db->jdate($obj->date_end), 'day');
 			if ($taskstatic->hasDelay()) {
 				print img_warning($langs->trans("Late"));
 			}

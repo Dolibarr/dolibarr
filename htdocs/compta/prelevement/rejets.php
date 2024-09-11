@@ -40,10 +40,10 @@ $langs->loadLangs(array('banks', 'categories', 'withdrawals', 'companies'));
 $type = GETPOST('type', 'aZ09');
 
 // Get supervariables
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $sortfield = GETPOST('sortfield', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -52,10 +52,14 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
+
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('withdrawalsreceiptsrejectedlist'));
+
 if ($type == 'bank-transfer') {
 	$result = restrictedArea($user, 'paymentbybanktransfer', '', '', '');
 } else {
@@ -87,9 +91,6 @@ $rej = new RejetPrelevement($db, $user, $type);
 $line = new LignePrelevement($db);
 $thirdpartystatic = new Societe($db);
 $userstatic = new User($db);
-
-$hookmanager->initHooks(array('withdrawalsreceiptsrejectedlist'));
-
 
 // List of invoices
 

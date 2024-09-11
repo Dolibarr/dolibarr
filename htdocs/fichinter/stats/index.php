@@ -35,8 +35,8 @@ if (!$user->hasRight('ficheinter', 'lire')) {
 	accessforbidden();
 }
 
-$userid = GETPOST('userid', 'int');
-$socid = GETPOST('socid', 'int');
+$userid = GETPOSTINT('userid');
+$socid = GETPOSTINT('socid');
 // Security check
 if ($user->socid > 0) {
 	$action = '';
@@ -44,7 +44,7 @@ if ($user->socid > 0) {
 }
 
 $nowyear = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
-$year = GETPOST('year') > 0 ? GETPOST('year', 'int') : $nowyear;
+$year = GETPOST('year') > 0 ? GETPOSTINT('year') : $nowyear;
 $startyear = $year - (!getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS') ? 2 : max(1, min(10, getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS'))));
 $endyear = $year;
 
@@ -64,7 +64,7 @@ $objectstatic = new Fichinter($db);
 $title = $langs->trans("InterventionStatistics");
 $dir = $conf->ficheinter->dir_temp;
 
-llxHeader('', $title);
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-fichinter page-stats_index');
 
 print load_fiche_titre($title, '', 'intervention');
 
@@ -80,7 +80,7 @@ $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 // $data = array(array('Lib',val1,val2,val3),...)
 
 
-if (!$user->hasRight('societe', 'client', 'voir') || $user->socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$filenamenb = $dir.'/interventionsnbinyear-'.$user->id.'-'.$year.'.png';
 	$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsnbinyear-'.$user->id.'-'.$year.'.png';
 } else {
@@ -116,7 +116,7 @@ if (!$mesg) {
 $data = $stats->getAmountByMonthWithPrevYear($endyear, $startyear);
 // $data = array(array('Lib',val1,val2,val3),...)
 
-if (!$user->hasRight('societe', 'client', 'voir') || $user->socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$filenameamount = $dir.'/interventionsamountinyear-'.$user->id.'-'.$year.'.png';
 	$fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsamountinyear-'.$user->id.'-'.$year.'.png';
 } else {
@@ -151,7 +151,7 @@ if (!$mesg) {
 
 $data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 
-if (!$user->hasRight('societe', 'client', 'voir') || $user->socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$filename_avg = $dir.'/interventionsaverage-'.$user->id.'-'.$year.'.png';
 	$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsaverage-'.$user->id.'-'.$year.'.png';
 } else {
@@ -208,7 +208,7 @@ $type = 'fichinter_stats';
 
 complete_head_from_modules($conf, $langs, null, $head, $h, $type);
 
-print dol_get_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1);
+print dol_get_fiche_head($head, 'byyear', '', -1);
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';

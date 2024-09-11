@@ -23,6 +23,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
 /**
  *	Class to manage HTML output components for orders
@@ -31,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 class FormOrder extends Form
 {
 	/**
-	 *  Return combo list of differents status of a orders
+	 *  Return combo list of different statuses of orders
 	 *
 	 *  @param	string	$selected   Preselected value
 	 *  @param	int		$short		Use short labels
@@ -68,7 +69,43 @@ class FormOrder extends Form
 			$selectedarray = explode(',', $selected);
 		}
 
-		print Form::multiselectarray($hmlname, $options, $selectedarray, 0, 0, $morecss);
+		print Form::multiselectarray($hmlname, $options, $selectedarray, 0, 0, $morecss, 0, 150);
+	}
+
+	/**
+	 *  Return combo list of different status of orders
+	 *
+	 *  @param	string	$selected   Preselected value
+	 *  @param	int		$short		Use short labels
+	 *  @param	string	$hmlname	Name of HTML select element
+	 *  @return	void
+	 */
+	public function selectOrderStatus($selected = '', $short = 0, $hmlname = 'order_status')
+	{
+		$options = array();
+
+		$statustohow = array(
+			Commande::STATUS_DRAFT,
+			Commande::STATUS_VALIDATED,
+			Commande::STATUS_SHIPMENTONPROCESS,
+			Commande::STATUS_CLOSED,
+			Commande::STATUS_CANCELED
+		);
+
+		$tmpsupplierorder = new Commande($this->db);
+
+		foreach ($statustohow as $value) {
+			$tmpsupplierorder->statut = $value;
+			$options[$value] = $tmpsupplierorder->getLibStatut($short);
+		}
+
+		if (is_array($selected)) {
+			$selectedarray = $selected;
+		} else {
+			$selectedarray = explode(',', $selected);
+		}
+
+		print Form::multiselectarray($hmlname, $options, $selectedarray, 0, 0, '', 0, 150);
 	}
 
 	/**

@@ -9,27 +9,28 @@ descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Shartnoma tasdiqlangandan so'ng mijozni
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Savdo buyurtmasi yopilgandan so'ng avtomatik ravishda mijozning hisob-fakturasini yarating (yangi hisob-faktura buyurtma bilan bir xil miqdorda bo'ladi)
 descWORKFLOW_TICKET_CREATE_INTERVENTION=Chipta yaratishda avtomatik ravishda intervensiya yarating.
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposals as billed when a sales order is set to billed (and if the amount of the order is the same as the total amount of the signed linked proposals)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposals as billed when a customer invoice is validated (and if the amount of the invoice is the same as the total amount of the signed linked proposals)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source sales order as billed when a customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked sales orders). If you have 1 invoice validated for n orders, this may set all orders to billed too.
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source sales orders as billed when a customer invoice is set to paid (and if the amount of the invoice is the same as the total amount of the linked sales orders). If you have 1 invoice set billed for n orders, this may set all orders to billed too.
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Bog'langan manba savdo buyurtmalarini jo'natish tasdiqlanganda jo'natilgan deb tasniflang (va barcha jo'natmalar tomonidan jo'natilgan miqdor yangilash tartibidagi bilan bir xil bo'lsa)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Bog'langan manbalarni sotish buyurtmasini yuk yopilganda yuborilgan deb tasniflang (va agar barcha yuklar jo'natilgan miqdori yangilash tartibidagi kabi bo'lsa).
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=When a sales order is set to billed, classify linked source proposals as billed (and if the amount of the order is the same as the total amount of the signed linked proposals)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=When a customer invoice is validated, classify linked source proposals as billed (and if the amount of the invoice is the same as the total amount of the signed linked proposals)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=When a customer invoice is set to paid, classify linked source sales orders as billed (and if the amount of the invoice is the same as the total amount of the linked sales orders). If you generate 1 invoice for n orders, this may set all orders to billed too.
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=When a customer invoice is validated, classify all the linked source sales orders as billed (and if the amount of the invoice is the same as the total amount of the linked source sales orders). If you generate 1 common invoice for n orders, this may set all source orders to billed.
+descWORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER=When a customer invoice is validated, classify the linked sales order (if there is only one) as billed, if the total amount of the linked sale order is equal to the total amount of all invoices issued from it. If you generate n invoices for 1 order, this allow to set the order to billed as soon as all invoices are validated.
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=When a shipment is validated, classify linked source sales orders as shipped (and if the quantity shipped by all shipments is the same as in the order to update)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=When a shipment is closed, classify linked source sales order as shipped (and if the quantity shipped by all shipments is the same as in the order to update)
 # Autoclassify purchase proposal
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source vendor proposal as billed when vendor invoice is validated (and if the amount of the invoice is the same as the total amount of the linked proposals)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=When a vendor invoice is validated, classify linked source vendor proposal as billed (and if the amount of the invoice is the same as the total amount of the linked proposals)
 # Autoclassify purchase order
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classify linked source purchase order as billed when vendor invoice is validated (and if the amount of the invoice is the same as the total amount of the linked orders)
-descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Bog'langan manba sotib olish buyurtmasini qabul qilish tasdiqlanganda olingan deb tasniflang (va barcha qabullar tomonidan qabul qilingan miqdor yangilash uchun xarid buyurtmasi bilan bir xil bo'lsa)
-descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Bog'langan manba buyurtmasini qabulxona yopilganda olingan deb tasniflang (va barcha qabulxonalar tomonidan qabul qilingan miqdor yangilash uchun xarid buyurtmasidagi bilan bir xil bo'lsa)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=When a vendor invoice is validated, classify linked source purchase order as billed (and if the amount of the invoice is the same as the total amount of the linked orders)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=When a reception is validated, classify linked source purchase order as received (and if the quantity received by all receptions is the same as in the purchase order to update)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=When a reception is closed, classify linked source purchase orders as received (and if the quantity received by all receptions issued from the purchase order is the same as in the purchase order to update)
 # Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Mijoz hisob-fakturasi tasdiqlanganda (va agar schyot-faktura miqdori bog‘langan jo‘natmalarning umumiy miqdori bilan bir xil bo‘lsa) bog‘langan manba jo‘natmasini yopiq deb tasniflang.
-descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=Mijoz hisob-fakturasi tasdiqlanganda (va agar schyot-faktura miqdori bog‘langan jo‘natmalarning umumiy miqdori bilan bir xil bo‘lsa) bog‘langan manba jo‘natmasini hisob-kitob sifatida tasniflang.
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=When a customer invoice is validated, classify the linked source shipment as closed (and if the amount of the invoice is the same as the total amount of the linked shipments)
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=When a customer invoice is validated, classify the linked source shipment as billed (and if the amount of the invoice is the same as the total amount of the linked shipments)
 # Autoclassify receptions
-descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Bog'langan manba qabullarini xarid hisob-fakturasi tasdiqlanganda hisoblangan deb tasniflang (va agar schyot-faktura miqdori bog'langan qabullarning umumiy miqdori bilan bir xil bo'lsa)
-descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=Bog'langan manba qabullarini xarid hisob-fakturasi tasdiqlanganda hisoblangan deb tasniflang (va agar schyot-faktura miqdori bog'langan qabullarning umumiy miqdori bilan bir xil bo'lsa)
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=When a purchase invoice is validated, classify linked source receptions as closed (and if the amount of the invoice is the same as the total amount of the linked receptions)
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=When a purchase invoice is validated, classify linked source receptions as billed (and if the amount of the invoice is the same as the total amount of the linked receptions)
 # Automatically link ticket to contract
-descWORKFLOW_TICKET_LINK_CONTRACT=Chipta yaratishda, mos keladigan uchinchi tomonlarning barcha mavjud shartnomalarini bog'lang
-descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Shartnomalarni ulashda, ota-onalar kompaniyalari orasidan qidiring
+descWORKFLOW_TICKET_LINK_CONTRACT=When a ticket is created, link it with available contracts, matching the same third party than the ticket
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=When linking automatically a ticket with contracts, search contracts among those of the parents companies
 # Autoclose intervention
 descWORKFLOW_TICKET_CLOSE_INTERVENTION=Chipta yopilganda chipta bilan bog'liq barcha aralashuvlarni yoping
 AutomaticCreation=Avtomatik yaratish

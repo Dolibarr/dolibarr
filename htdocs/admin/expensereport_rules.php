@@ -3,6 +3,7 @@
  * Copyright (C) 2017       ATM Consulting          <contact@atm-consulting.fr>
  * Copyright (C) 2017       Pierre-Henry Favre      <phf@atm-consulting.fr>
  * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport_rule.class.ph
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "other", "trips", "errors", "dict"));
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('admin', 'dictionaryadmin','expensereport_rules'));
 
 $object = new ExpenseReportRule($db);
@@ -60,22 +61,22 @@ if (empty($reshook)) {
 	$error = false;
 
 	$action = GETPOST('action', 'aZ09');
-	$id = GETPOST('id', 'int');
+	$id = GETPOSTINT('id');
 
 	$apply_to = GETPOST('apply_to');
-	$fk_user = GETPOST('fk_user', 'int');
-	$fk_usergroup = GETPOST('fk_usergroup', 'int');
-	$restrictive = GETPOST('restrictive', 'int');
-	$fk_c_type_fees = GETPOST('fk_c_type_fees', 'int');
+	$fk_user = GETPOSTINT('fk_user');
+	$fk_usergroup = GETPOSTINT('fk_usergroup');
+	$restrictive = GETPOSTINT('restrictive');
+	$fk_c_type_fees = GETPOSTINT('fk_c_type_fees');
 	$code_expense_rules_type = GETPOST('code_expense_rules_type');
 	$dates = dol_mktime(12, 0, 0, GETPOST('startmonth'), GETPOST('startday'), GETPOST('startyear'));
 	$datee = dol_mktime(12, 0, 0, GETPOST('endmonth'), GETPOST('endday'), GETPOST('endyear'));
-	$amount = price2num(GETPOST('amount'), 'MT', 2);
+	$amount = (float) price2num(GETPOST('amount'), 'MT', 2);
 
 	if (!empty($id)) {
 		$result = $object->fetch($id);
 		if ($result < 0) {
-			dol_print_error('', $object->error, $object->errors);
+			dol_print_error(null, $object->error, $object->errors);
 		}
 	}
 
@@ -182,7 +183,7 @@ if (empty($reshook)) {
  * View
  */
 
-llxHeader('', $langs->trans("ExpenseReportsSetup"));
+llxHeader('', $langs->trans("ExpenseReportsSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-expensereport_rules');
 
 $form = new Form($db);
 
@@ -222,8 +223,8 @@ if ($action != 'edit') {
 
 	echo '<td class="linecoltype">' . $form->selectExpense('', 'fk_c_type_fees', 0, 1, 1) . '</td>';
 	echo '<td class="linecoltyperule">' . $form->selectarray('code_expense_rules_type', $tab_rules_type, '', 0) . '</td>';
-	echo '<td class="linecoldatestart">' . $form->selectDate(strtotime(date('Y-m-01', dol_now())), 'start', '', '', 0, '', 1, 0) . '</td>';
-	echo '<td class="linecoldateend">' . $form->selectDate(strtotime(date('Y-m-t', dol_now())), 'end', '', '', 0, '', 1, 0) . '</td>';
+	echo '<td class="linecoldatestart">' . $form->selectDate(strtotime(date('Y-m-01', dol_now())), 'start', 0, 0, 0, '', 1, 0) . '</td>';
+	echo '<td class="linecoldateend">' . $form->selectDate(strtotime(date('Y-m-t', dol_now())), 'end', 0, 0, 0, '', 1, 0) . '</td>';
 	echo '<td class="linecolamount"><input type="text" value="" class="maxwidth100" name="amount" class="amount right" /></td>';
 	echo '<td class="linecolrestrictive">' . $form->selectyesno('restrictive', 0, 1) . '</td>';
 	echo '<td class="right linecolbutton"><input type="submit" class="button button-add" value="' . $langs->trans('Add') . '" /></td>';
@@ -308,7 +309,7 @@ foreach ($rules as $rule) {
 
 	echo '<td class="linecoldatestart">';
 	if ($action == 'edit' && $object->id == $rule->id) {
-		print $form->selectDate(strtotime(date('Y-m-d', $object->dates)), 'start', '', '', 0, '', 1, 0);
+		print $form->selectDate(strtotime(date('Y-m-d', $object->dates)), 'start', 0, 0, 0, '', 1, 0);
 	} else {
 		echo dol_print_date($rule->dates, 'day');
 	}
@@ -317,7 +318,7 @@ foreach ($rules as $rule) {
 
 	echo '<td class="linecoldateend">';
 	if ($action == 'edit' && $object->id == $rule->id) {
-		print $form->selectDate(strtotime(date('Y-m-d', $object->datee)), 'end', '', '', 0, '', 1, 0);
+		print $form->selectDate(strtotime(date('Y-m-d', $object->datee)), 'end', 0, 0, 0, '', 1, 0);
 	} else {
 		echo dol_print_date($rule->datee, 'day');
 	}
@@ -355,7 +356,7 @@ foreach ($rules as $rule) {
 	echo '</tr>';
 }
 
-if (count($rules) == 0) {
+if (!is_array($rules) || count($rules) == 0) {
 	print '<tr class="none"><td colspan="8"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 }
 

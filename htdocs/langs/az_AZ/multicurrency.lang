@@ -7,7 +7,7 @@ multicurrency_syncronize_error=Sinxronizasiya xətası: %s
 MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE=Ən son məlum məzənnədən istifadə etmək əvəzinə, valyuta məzənnəsini tapmaq üçün sənədin tarixindən istifadə edin
 multicurrency_useOriginTx=Bir obyekt digərindən yaradıldıqda, mənbə obyektindən orijinal sürəti saxlayın (əks halda ən son məlum sürətdən istifadə edin)
 CurrencyLayerAccount=CurrencyLayer API
-CurrencyLayerAccount_help_to_synchronize=Bu funksiyadan istifadə etmək üçün %s saytında hesab yaratmalısınız.<br>b0aee83365837z əldə edin /span>API açarı<span class='notranslate'></b>.<br>Pulsuz hesab istifadə edirsinizsə, <span class='ı dəyişə bilməzsiniz. notranslate'><b></span>mənbə valyutası</b> (standart olaraq ABŞ dolları).<br>Əsas valyutanız ABŞ dolları deyilsə, proqram onu avtomatik olaraq yenidən hesablayacaq.<br><br>Siz ayda 1000 sinxronizasiya ilə məhdudlaşırsınız.
+CurrencyLayerAccount_help_to_synchronize=You must create an account on website %s to use this functionality.<br>Get your <b>API key</b>.<br>If you use a free account, you can't change the <b>source currency</b> (USD by default).<br>If your main currency is not USD, the application will automatically recalculate it.<br><br>You are limited to 1000 synchronizations per month.
 multicurrency_appId=API açarı
 multicurrency_appCurrencySource=Mənbə valyutası
 multicurrency_alternateCurrencySource=Alternativ mənbə valyutası
@@ -25,7 +25,7 @@ CreateRate=Dərəcə yaradın
 FormCreateRate=Qiymətləndirmənin yaradılması
 FormUpdateRate=Dərəcənin dəyişdirilməsi
 successRateCreate=%s valyuta məzənnəsi verilənlər bazasına əlavə edildi
-ConfirmDeleteLineRate=%s</span saytında <span class='notranslate'>%s valyutası üçün %s məzənnəsini silmək istədiyinizə əminsiniz > tarix?
+ConfirmDeleteLineRate=Are you sure you want to remove the %s rate for currency %s on %s date?
 DeleteLineRate=Təmiz məzənnə
 successRateDelete=Qiymət silindi
 errorRateDelete=Qiyməti silərkən xəta

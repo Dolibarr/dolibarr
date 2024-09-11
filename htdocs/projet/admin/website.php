@@ -62,7 +62,7 @@ if ($action == 'setPROJECT_ENABLE_PUBLIC') {
 
 if ($action == 'update') {
 	$public = GETPOST('PROJECT_ENABLE_PUBLIC');
-	$defaultoppstatus = GETPOST('PROJECT_DEFAULT_OPPORTUNITY_STATUS_FOR_ONLINE_LEAD', 'int');
+	$defaultoppstatus = GETPOSTINT('PROJECT_DEFAULT_OPPORTUNITY_STATUS_FOR_ONLINE_LEAD');
 	$res = dolibarr_set_const($db, "PROJET_VISIBILITY", $visibility, 'chaine', 0, '', $conf->entity);
 
 	$res = dolibarr_set_const($db, "PROJECT_ENABLE_PUBLIC", $public, 'chaine', 0, '', $conf->entity);
@@ -89,7 +89,7 @@ $formproject = new FormProjets($db);
 
 $title = $langs->trans("ProjectsSetup");
 $help_url = '';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-project page-admin_website');
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
@@ -142,7 +142,7 @@ if (getDolGlobalString('PROJECT_ENABLE_PUBLIC')) {
 	print '<tr class="oddeven drag" id="trforcetype"><td>';
 	print $langs->trans("DefaultOpportunityStatus");
 	print '</td><td class="right">';
-	print $formproject->selectOpportunityStatus('PROJECT_DEFAULT_OPPORTUNITY_STATUS_FOR_ONLINE_LEAD', GETPOSTISSET('PROJECT_DEFAULT_OPPORTUNITY_STATUS_FOR_ONLINE_LEAD') ? GETPOST('PROJECT_DEFAULT_OPPORTUNITY_STATUS_FOR_ONLINE_LEAD', 'int') : $defaultoppstatus, 1, 0, 0, 0, '', 0, 1);
+	print $formproject->selectOpportunityStatus('PROJECT_DEFAULT_OPPORTUNITY_STATUS_FOR_ONLINE_LEAD', GETPOSTISSET('PROJECT_DEFAULT_OPPORTUNITY_STATUS_FOR_ONLINE_LEAD') ? GETPOSTINT('PROJECT_DEFAULT_OPPORTUNITY_STATUS_FOR_ONLINE_LEAD') : $defaultoppstatus, 1, 0, 0, 0, '', 0, 1);
 	print "</td></tr>\n";
 
 

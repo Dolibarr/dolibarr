@@ -1,26 +1,12 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=Thiết lập mô-đun PayBox
 PayBoxDesc=Mô-đun này cung cấp các trang cho phép thanh toán trên <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">Paybox</a> của khách hàng. Điều này có thể được sử dụng cho thanh toán miễn phí hoặc cho thanh toán trên một đối tượng Dolibarr cụ thể (hóa đơn, đơn đặt hàng, ...)
-FollowingUrlAreAvailableToMakePayments=Các URL sau có sẵn để cung cấp một trang cho khách hàng để thanh toán trên các đối tượng Dolibarr
-PaymentForm=Hình thức thanh toán
-WelcomeOnPaymentPage=Chào mừng bạn đến với dịch vụ thanh toán trực tuyến của chúng tôi
-ThisScreenAllowsYouToPay=Màn hình này cho phép bạn thực hiện thanh toán trực tuyến tới %s.
-ThisIsInformationOnPayment=Đây là thông tin về thanh toán để làm
-ToComplete=Hoàn thành
-YourEMail=Email để nhận xác nhận thanh toán
-Creditor=Chủ nợ
-PaymentCode=Mã thanh toán
 PayBoxDoPayment=Thanh toán bằng Paybox
 YouWillBeRedirectedOnPayBox=Bạn sẽ được chuyển hướng trên trang Paybox được bảo mật để nhập thông tin thẻ tín dụng của bạn
-Continue=Tiếp theo
 SetupPayBoxToHavePaymentCreatedAutomatically=Thiết lập Paybox của bạn với url <b>%s</b> để thanh toán được tạo tự động khi được xác thực bởi Paybox.
 YourPaymentHasBeenRecorded=Trang này xác nhận rằng thanh toán của bạn đã được ghi lại. Cảm ơn bạn.
 YourPaymentHasNotBeenRecorded=Thanh toán của bạn KHÔNG được ghi lại và giao dịch đã bị hủy. Cảm ơn bạn.
-AccountParameter=Thông số tài khoản
-UsageParameter=Thông số sử dụng
-InformationToFindParameters=Trợ giúp tìm thông tin tài khoản %s của bạn
 PAYBOX_CGI_URL_V2=Url của mô-đun Paybox CGI để thanh toán
-CSSUrlForPaymentForm=CSS style sheet Url cho hình thức thanh toán
 NewPayboxPaymentReceived=Thanh toán Paybox mới nhận được
 NewPayboxPaymentFailed=Thanh toán Paybox mới đã thử nhưng không thành công
 PAYBOX_PAYONLINE_SENDEMAIL=Thông báo qua email sau khi cố gắng thanh toán (thành công hay thất bại)

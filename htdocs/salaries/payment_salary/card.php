@@ -1,10 +1,12 @@
 <?php
-/* Copyright (C) 2004		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2014	Laurent Destailleur			<eldy@users.sourceforge.net>
- * Copyright (C) 2005		Marc Barilley / Ocebo		<marc@ocebo.com>
- * Copyright (C) 2005-2009	Regis Houssin				<regis.houssin@inodbox.com>
- * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		Alexandre SPANGARO			<alexandre@inovea-conseil.com>
+/* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005       Marc Barilley / Ocebo   <marc@ocebo.com>
+ * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Alexandre SPANGARO		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 $langs->loadLangs(array('bills', 'banks', 'companies', 'salaries'));
 
 // Security check
-$id = GETPOST("id", 'int');
+$id = GETPOSTINT("id");
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm');
 if ($user->socid) {
@@ -78,7 +80,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('salarie
 }
 
 if ($action == 'setdatep' && GETPOST('datepday') && $user->hasRight('salaries', 'write')) {
-	$datepaye = dol_mktime(GETPOST('datephour', 'int'), GETPOST('datepmin', 'int'), GETPOST('datepsec', 'int'), GETPOST('datepmonth', 'int'), GETPOST('datepday', 'int'), GETPOST('datepyear', 'int'), 'tzuserrel');
+	$datepaye = dol_mktime(GETPOSTINT('datephour'), GETPOSTINT('datepmin'), GETPOSTINT('datepsec'), GETPOSTINT('datepmonth'), GETPOSTINT('datepday'), GETPOSTINT('datepyear'), 'tzuserrel');
 	$res = $object->updatePaymentDate($datepaye);
 	if ($res === 0) {
 		setEventMessages($langs->trans('PaymentDateUpdateSucceeded'), null, 'mesgs');
@@ -102,7 +104,7 @@ $head = array();
 
 $head[$h][0] = DOL_URL_ROOT.'/salaries/payment_salary/card.php?id='.$id;
 $head[$h][1] = $langs->trans("SalaryPayment");
-$hselected = $h;
+$hselected = (string) $h;
 $h++;
 
 /*
@@ -152,9 +154,9 @@ print '</td></tr>';*/
 
 // Date
 print '<tr><td>';
-print $form->editfieldkey("Date", 'datep', $object->datepaye, $object, 1, 'datehourpicker');
+print $form->editfieldkey("Date", 'datep', $object->datep, $object, 1, 'datehourpicker');
 print '</td><td>';
-print $form->editfieldval("Date", 'datep', $object->datepaye, $object, 1, 'datehourpicker', '', null, null, '', 0, '', 'id', 'tzuserrel', array('addnowlink'=>1));
+print $form->editfieldval("Date", 'datep', $object->datep, $object, 1, 'datehourpicker', '', null, null, '', 0, '', 'id', 'tzuserrel', array('addnowlink' => 1));
 print "</td>";
 print '</tr>';
 
@@ -173,7 +175,7 @@ print '<tr><td>'.$langs->trans('Amount').'</td><td>'.price($object->amount, 0, $
 print '<tr><td>'.$langs->trans('Note').'</td><td class="valeur sensiblehtmlcontent">'.dol_string_onlythesehtmltags(dol_htmlcleanlastbr($object->note_private)).'</td></tr>';
 
 // Bank account
-if (isModEnabled("banque")) {
+if (isModEnabled("bank")) {
 	if ($object->bank_account) {
 		$bankline = new AccountLine($db);
 		$bankline->fetch($object->bank_line);
@@ -195,7 +197,7 @@ print dol_get_fiche_end();
 
 
 /*
- * List of salaries payed
+ * List of salaries paid
  */
 
 $disable_delete = 0;
@@ -214,7 +216,7 @@ if ($resql) {
 	$total = 0;
 	print '<br>';
 
-	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans('Salary').'</td>';
@@ -240,14 +242,14 @@ if ($resql) {
 			print '<td class="right">'.price($objp->sc_amount).'</td>';
 			// Status
 			print '<td class="center">'.$salary->getLibStatut(4, $objp->amount).'</td>';
-			// Amount payed
+			// Amount paid
 			print '<td class="right">'.price($objp->amount).'</td>';
 			print "</tr>\n";
 			if ($objp->paye == 1) {
 				// If at least one invoice is paid, disable delete
 				$disable_delete = 1;
 			}
-			$total = $total + $objp->amount;
+			$total += $objp->amount;
 			$i++;
 		}
 	}

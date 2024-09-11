@@ -1,26 +1,12 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=Usanidi wa moduli ya PayBox
 PayBoxDesc=Sehemu hii inatoa kurasa za kuruhusu malipo kwenye <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external"> Paybox </a>  na wateja. Hii inaweza kutumika kwa malipo ya bure au kwa malipo ya kitu fulani cha Dolibarr (ankara, agizo, ...)
-FollowingUrlAreAvailableToMakePayments=URL zifuatazo zinapatikana ili kutoa ukurasa kwa mteja kufanya malipo kwenye vitu vya Dolibarr
-PaymentForm=Fomu ya malipo
-WelcomeOnPaymentPage=Karibu kwenye huduma yetu ya malipo ya mtandaoni
-ThisScreenAllowsYouToPay=Skrini hii hukuruhusu kufanya malipo ya mtandaoni kwa %s.
-ThisIsInformationOnPayment=Hii ni habari juu ya malipo ya kufanya
-ToComplete=Ili kukamilisha
-YourEMail=Barua pepe ili kupokea uthibitisho wa malipo
-Creditor=Mkopeshaji
-PaymentCode=Nambari ya malipo
 PayBoxDoPayment=Lipa kwa Paybox
 YouWillBeRedirectedOnPayBox=Utaelekezwa kwingine kwenye ukurasa wa Paybox uliolindwa ili kuingiza maelezo ya kadi ya mkopo
-Continue=Inayofuata
 SetupPayBoxToHavePaymentCreatedAutomatically=Sanidi Paybox yako kwa url <b> %s </b>  ili malipo yaundwe kiotomatiki yakithibitishwa na Paybox.
 YourPaymentHasBeenRecorded=Ukurasa huu unathibitisha kuwa malipo yako yamerekodiwa. Asante.
 YourPaymentHasNotBeenRecorded=Malipo yako HAYAJAREKODIWA na muamala umeghairiwa. Asante.
-AccountParameter=Vigezo vya akaunti
-UsageParameter=Vigezo vya matumizi
-InformationToFindParameters=Usaidizi wa kupata <span class='notranslate'>%s</span> yako\n maelezo ya akaunti
 PAYBOX_CGI_URL_V2=Url ya moduli ya Paybox CGI kwa malipo
-CSSUrlForPaymentForm=Url ya mtindo wa CSS ya fomu ya malipo
 NewPayboxPaymentReceived=Malipo mapya ya Paybox yamepokelewa
 NewPayboxPaymentFailed=Malipo mapya ya Paybox yalijaribiwa lakini yameshindwa
 PAYBOX_PAYONLINE_SENDEMAIL=Arifa ya barua pepe baada ya jaribio la malipo (imefaulu au kutofaulu)

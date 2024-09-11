@@ -1,13 +1,22 @@
 <?php
+/* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/syslog/logHandler.php';
 
 /**
  * Class to manage logging to a file
  */
-class mod_syslog_file extends LogHandler implements LogHandlerInterface
+class mod_syslog_file extends LogHandler
 {
+	/**
+	 * @var string
+	 */
 	public $code = 'file';
+	/**
+	 * @var float|int Last log time, used to compute delay
+	 */
 	public $lastTime = 0;
 
 	/**
@@ -45,20 +54,19 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 	}
 
 	/**
-	 * Is the module active ?
+	 * Is the logger active ?
 	 *
-	 * @return int
+	 * @return int<0,1>		If logger enabled
 	 */
 	public function isActive()
 	{
-		global $conf;
 		return !getDolGlobalString('SYSLOG_DISABLE_LOGHANDLER_FILE') ? 1 : 0; // Set SYSLOG_DISABLE_LOGHANDLER_FILE to 1 to disable this loghandler
 	}
 
 	/**
 	 * 	Return array of configuration data
 	 *
-	 * 	@return	array		Return array of configuration data
+	 * 	@return	array<array{name:string,constant:string,default:string,css?:string}>	Return array of configuration data
 	 */
 	public function configure()
 	{
@@ -77,23 +85,21 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 	/**
 	 * 	Return if configuration is valid
 	 *
-	 * 	@return	array		Array of errors. Empty array if ok.
+	 * 	@return	bool		true if ok
 	 */
 	public function checkConfiguration()
 	{
 		global $langs;
 
-		$errors = array();
-
 		$filename = $this->getFilename();
 
 		if (file_exists($filename) && is_writable($filename)) {
 			dol_syslog('admin/syslog: file '.$filename);
+			return true;
 		} else {
-			$errors[] = $langs->trans("ErrorFailedToOpenFile", $filename);
+			$this->errors[] = $langs->trans("ErrorFailedToOpenFile", $filename);
+			return false;
 		}
-
-		return $errors;
 	}
 
 	/**
@@ -113,7 +119,7 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 		}
 
 		if (getDolGlobalString('SYSLOG_FILE_ONEPERSESSION')) {
-			if (is_numeric($conf->global->SYSLOG_FILE_ONEPERSESSION)) {
+			if (is_numeric(getDolGlobalString('SYSLOG_FILE_ONEPERSESSION'))) {
 				if (getDolGlobalInt('SYSLOG_FILE_ONEPERSESSION') == 1) {	// file depend on instance session key name (Note that session name is same for the instance so for all users and is not a per user value)
 					$suffixinfilename .= '_'.session_name();
 				}
@@ -128,59 +134,71 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 		return $suffixinfilename ? preg_replace('/\.log$/i', $suffixinfilename.'.log', $tmp) : $tmp;
 	}
 
+
+	// @phan-suppress-next-line PhanPluginDuplicateArrayKey
+	const DOL_LOG_LEVELS = array(
+		LOG_EMERG => 'EMERG',
+		LOG_ALERT => 'ALERT',
+		LOG_CRIT => 'CRIT',
+		LOG_ERR => 'ERR',
+		LOG_WARNING => 'WARNING',
+		LOG_NOTICE => 'NOTICE',
+		LOG_INFO => 'INFO',
+		LOG_DEBUG => 'DEBUG'
+	);
+
 	/**
 	 * Export the message
 	 *
-	 * @param  	array 	$content 			Array containing the info about the message
+	 * @param	array{level:int,ip:string,ospid:string,osuser:string,message:string}	$content 	Array containing the info about the message
 	 * @param	string	$suffixinfilename	When output is a file, append this suffix into default log filename.
 	 * @return	void
+	 * @phan-suppress PhanPluginDuplicateArrayKey
 	 */
 	public function export($content, $suffixinfilename = '')
 	{
-		global $conf, $dolibarr_main_prod;
-
 		if (getDolGlobalString('MAIN_SYSLOG_DISABLE_FILE')) {
 			return; // Global option to disable output of this handler
 		}
 
+
+		// Prepare log message
+
+		$delay = "";
+		if (getDolGlobalString('MAIN_SYSLOG_SHOW_DELAY')) {
+			$now = microtime(true);
+			$delay = " ".sprintf("%05.3f", $this->lastTime != 0 ? $now - $this->lastTime : 0);
+			$this->lastTime = $now;
+		}
+		$message = dol_print_date(dol_now('gmt'), 'standard', 'gmt').$delay." ".sprintf("%-7s", self::DOL_LOG_LEVELS[$content['level']])." ".sprintf("%-15s", $content['ip']);
+		$message .= " ".sprintf("%7s", dol_trunc($content['ospid'], 7, 'right', 'UTF-8', 1));
+		$message .= " ".sprintf("%6s", dol_trunc($content['osuser'], 6, 'right', 'UTF-8', 1));
+		// @phan-suppress-next-line PhanParamSuspiciousOrder
+		$message .= " ".($this->ident > 0 ? str_pad('', ((int) $this->ident), ' ') : '').$content['message'];
+		$message .= "\n";
+
+
+		// Write log message
+
 		$logfile = $this->getFilename($suffixinfilename);
 
-		// Test constant SYSLOG_FILE_NO_ERROR (should stay a constant defined with define('SYSLOG_FILE_NO_ERROR',1);
+		$result = false;
 		if (defined('SYSLOG_FILE_NO_ERROR')) {
-			$filefd = @fopen($logfile, 'a+');
+			$filefd = @fopen($logfile, "a");
 		} else {
-			$filefd = fopen($logfile, 'a+');
+			$filefd = fopen($logfile, "a");
 		}
 
-		if (!$filefd) {
-			if (!defined('SYSLOG_FILE_NO_ERROR') || !constant('SYSLOG_FILE_NO_ERROR')) {
-				// Do not break dolibarr usage if log fails
-				//throw new Exception('Failed to open log file '.basename($logfile));
-				print 'Failed to open log file '.($dolibarr_main_prod ? basename($logfile) : $logfile);
-			}
-		} else {
-			$logLevels = array(
-				LOG_EMERG => 'EMERG',
-				LOG_ALERT => 'ALERT',
-				LOG_CRIT => 'CRIT',
-				LOG_ERR => 'ERR',
-				LOG_WARNING => 'WARNING',
-				LOG_NOTICE => 'NOTICE',
-				LOG_INFO => 'INFO',
-				LOG_DEBUG => 'DEBUG'
-			);
-
-			$delay = "";
-			if (getDolGlobalString('MAIN_SYSLOG_SHOW_DELAY')) {
-				$now = microtime(true);
-				$delay = " ".sprintf("%05.3f", $this->lastTime != 0 ? $now - $this->lastTime : 0);
-				$this->lastTime = $now;
-			}
-
-			$message = dol_print_date(dol_now('gmt'), 'standard', 'gmt').$delay." ".sprintf("%-7s", $logLevels[$content['level']])." ".sprintf("%-15s", $content['ip'])." ".($this->ident > 0 ? str_pad('', $this->ident, ' ') : '').$content['message'];
-			fwrite($filefd, $message."\n");
+		if ($filefd !== false) {
+			$result = fwrite($filefd, $message);
 			fclose($filefd);
 			dolChmod($logfile);
+		}
+		if ($result === false && (!defined('SYSLOG_FILE_NO_ERROR') || !constant('SYSLOG_FILE_NO_ERROR'))) {
+			global $dolibarr_main_prod;
+			// Do not break dolibarr usage if log fails
+			//throw new Exception('Failed to open log file '.basename($logfile));
+			print 'Failed to write to log file '.($dolibarr_main_prod ? basename($logfile) : $logfile);
 		}
 	}
 }

@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2022   Open-Dsi		<support@open-dsi.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,19 +16,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Need to have following variables defined:
+ * Need to have the following variables defined:
  * $object (invoice, order, ...)
  * $conf
  * $langs
  * $dateSelector
  * $forceall (0 by default, 1 for supplier invoices/orders)
- * $element     (used to test $user->rights->$element->creer)
- * $permtoedit  (used to replace test $user->rights->$element->creer)
+ * $element     (used to test $user->hasRight($element, 'creer'))
  * $senderissupplier (0 by default, 1 for supplier invoices/orders)
  * $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
  * $outputalsopricetotalwithtax
  * $usemargins (0 to disable all margins columns, 1 to show according to margin setup)
- * $object_rights->creer initialized from = $object->getRights()
  * $disableedit, $disablemove, $disableremove
  *
  * $text, $description, $line
@@ -35,8 +35,12 @@
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
+
+'@phan-var-force CommonObject $this
+ @phan-var-force CommonObject $object
+ @phan-var-force int $num';
 
 // add html5 elements
 $domData  = ' data-element="'.$line->element.'"';
@@ -53,13 +57,14 @@ $coldisplay = 0;
 		<?php print $line->ref ?>
 	</td>
 
-	<td class="linecolvalue nowrap"><?php $coldisplay++; print $line->value ?></td>
+	<td class="linecolvalue nowrap"><?php $coldisplay++;
+	print $line->value ?></td>
 <?php
-if (!empty($object_rights->write) && $action != 'selectlines') {
+if ($user->hasRight('variants', 'write') && $action != 'selectlines') {
 	print '<td class="linecoledit center width25">';
 	$coldisplay++;
 	if (empty($disableedit)) { ?>
-		<a class="editfielda reposition" href="<?php print $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=editline&amp;lineid='.$line->id.'#line_'.$line->id; ?>">
+		<a class="editfielda reposition" href="<?php print $_SERVER["PHP_SELF"].'?id='.$this->id.'&action=editline&token='.newToken().'&lineid='.$line->id.'#line_'.$line->id; ?>">
 		<?php print img_edit().'</a>';
 	}
 	print '</td>';
@@ -67,7 +72,7 @@ if (!empty($object_rights->write) && $action != 'selectlines') {
 	print '<td class="linecoldelete center width25">';
 	$coldisplay++;
 	if (empty($disableremove)) { // For situation invoice, deletion is not possible if there is a parent company.
-		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=ask_deleteline&amp;lineid='.$line->id.'">';
+		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=ask_deleteline&token='.newToken().'&lineid='.$line->id.'">';
 		print img_delete();
 		print '</a>';
 	}
@@ -93,7 +98,7 @@ if (!empty($object_rights->write) && $action != 'selectlines') {
 	}
 } else {
 	print '<td colspan="3"></td>';
-	$coldisplay = $coldisplay + 3;
+	$coldisplay += 3;
 }
 
 if ($action == 'selectlines') { ?>

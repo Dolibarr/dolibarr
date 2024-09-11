@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,29 +33,39 @@ set_time_limit(0);
 class ExportCsv extends ModeleExports
 {
 	/**
-	 * @var string ID ex: csv, tsv, excel...
-	 */
-	public $id;
-
-	/**
 	 * @var string export files label
 	 */
 	public $label;
 
+	/**
+	 * @var string
+	 */
 	public $extension;
 
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr';
 
+	/**
+	 * @var string
+	 */
 	public $label_lib;
 
+	/**
+	 * @var string
+	 */
 	public $version_lib;
 
+	/**
+	 * @var string
+	 */
 	public $separator;
 
+	/**
+	 * @var false|resource
+	 */
 	public $handle; // Handle fichier
 
 	/**
@@ -108,7 +119,7 @@ class ExportCsv extends ModeleExports
 	}
 
 	/**
-	 * getLabelLabel
+	 * getLibLabel
 	 *
 	 * @return string
 	 */
@@ -172,24 +183,31 @@ class ExportCsv extends ModeleExports
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * 	Output title line into file
+	 *  Output title line into file
 	 *
-	 *  @param      array		$array_export_fields_label   	Array with list of label of fields
-	 *  @param      array		$array_selected_sorted       	Array with list of field to export
-	 *  @param      Translate	$outputlangs    				Object lang to translate values
-	 *  @param		array		$array_types					Array with types of fields
-	 * 	@return		int											Return integer <0 if KO, >0 if OK
+	 *  @param	array<string,string>	$array_export_fields_label	Array with list of label of fields
+	 *  @param	array<string,string>	$array_selected_sorted		Array with list of field to export
+	 *  @param	Translate				$outputlangs    			Object lang to translate values
+	 *  @param	array<string,string>	$array_types				Array with types of fields
+	 * 	@return	int													Return integer <0 if KO, >0 if OK
 	 */
 	public function write_title($array_export_fields_label, $array_selected_sorted, $outputlangs, $array_types)
 	{
 		// phpcs:enable
-		global $conf;
-
-		$outputlangs->charset_output = $conf->global->EXPORT_CSV_FORCE_CHARSET;
+		$outputlangs->charset_output = getDolGlobalString('EXPORT_CSV_FORCE_CHARSET');
 
 		$selectlabel = array();
-
 		foreach ($array_selected_sorted as $code => $value) {
+			if (strpos($code, ' as ') == 0) {
+				$alias = str_replace(array('.', '-', '(', ')'), '_', $code);
+			} else {
+				$alias = substr($code, strpos($code, ' as ') + 4);
+			}
+			if (empty($alias)) {
+				dol_syslog('Bad value for field with code='.$code.'. Try to redefine export.', LOG_WARNING);
+				continue;
+			}
+
 			$newvalue = $outputlangs->transnoentities($array_export_fields_label[$code]); // newvalue is now $outputlangs->charset_output encoded
 			$newvalue = $this->csvClean($newvalue, $outputlangs->charset_output);
 
@@ -200,6 +218,7 @@ class ExportCsv extends ModeleExports
 				$selectlabel[$code."_label"] = $newvalue."_label";
 			}
 		}
+
 		foreach ($selectlabel as $key => $value) {
 			fwrite($this->handle, $value.$this->separator);
 		}
@@ -210,20 +229,19 @@ class ExportCsv extends ModeleExports
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Output record line into file
+	 *  Output record line into file
 	 *
-	 *  @param     	array		$array_selected_sorted      Array with list of field to export
-	 *  @param     	Resource	$objp                       A record from a fetch with all fields from select
-	 *  @param     	Translate	$outputlangs    			Object lang to translate values
-	 *  @param		array		$array_types				Array with types of fields
-	 * 	@return		int										Return integer <0 if KO, >0 if OK
+	 *  @param	array<string,string>	$array_selected_sorted	Array with list of field to export
+	 *  @param	Resource				$objp					A record from a fetch with all fields from select
+	 *  @param	Translate				$outputlangs			Object lang to translate values
+	 *  @param	array<string,string>	$array_types			Array with types of fields
+	 * 	@return	int												Return integer <0 if KO, >0 if OK
 	 */
 	public function write_record($array_selected_sorted, $objp, $outputlangs, $array_types)
 	{
 		// phpcs:enable
-		global $conf;
 
-		$outputlangs->charset_output = $conf->global->EXPORT_CSV_FORCE_CHARSET;
+		$outputlangs->charset_output = getDolGlobalString('EXPORT_CSV_FORCE_CHARSET');
 
 		$this->col = 0;
 
@@ -236,7 +254,8 @@ class ExportCsv extends ModeleExports
 				$alias = substr($code, strpos($code, ' as ') + 4);
 			}
 			if (empty($alias)) {
-				dol_print_error('', 'Bad value for field with key='.$code.'. Try to redefine export.');
+				dol_syslog('Bad value for field with code='.$code.'. Try to redefine export.', LOG_WARNING);
+				continue;
 			}
 
 			$newvalue = $outputlangs->convToOutputCharset($objp->$alias); // objp->$alias must be utf8 encoded as any var in memory	// newvalue is now $outputlangs->charset_output encoded
@@ -310,7 +329,6 @@ class ExportCsv extends ModeleExports
 	 */
 	public function csvClean($newvalue, $charset)
 	{
-		global $conf;
 		$addquote = 0;
 
 		// Rule Dolibarr: No HTML

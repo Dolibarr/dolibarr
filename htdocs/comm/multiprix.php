@@ -34,19 +34,20 @@ $langs->loadLangs(array('orders', 'companies'));
 $action = GETPOST('action', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 
-$id = GETPOST('id', 'int');
-$_socid = GETPOST("id", 'int');
+$id = GETPOSTINT('id');
+$_socid = GETPOSTINT("id");
 // Security check
 if ($user->socid > 0) {
 	$_socid = $user->socid;
 }
 
 // Security check
-$socid = GETPOST("socid", 'int');
+$socid = GETPOSTINT("socid");
 if ($user->socid > 0) {
 	$action = '';
 	$id = $user->socid;
 }
+$hookmanager->initHooks(array('thirdpartyprice', 'globalcard'));
 $result = restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid', 0);
 
 

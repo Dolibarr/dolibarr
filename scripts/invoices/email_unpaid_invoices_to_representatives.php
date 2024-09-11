@@ -1,9 +1,11 @@
 #!/usr/bin/env php
 <?php
 /*
- * Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2013 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2013 Juanjo Menent <jmenent@2byte.es>
+ * Copyright (C) 2005       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2013       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +39,7 @@ $path = __DIR__.'/';
 $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+	exit(1);
 }
 
 if (!isset($argv[1]) || !$argv[1] || !in_array($argv[1], array('test', 'confirm'))) {
@@ -46,7 +48,7 @@ if (!isset($argv[1]) || !$argv[1] || !in_array($argv[1], array('test', 'confirm'
 	print "Send an email to users to remind all unpaid customer invoices user is sale representative for.\n";
 	print "If you choose 'test' mode, no emails are sent.\n";
 	print "If you add a delay (nb of days), only invoice with due date < today + delay are included.\n";
-	exit(-1);
+	exit(1);
 }
 $mode = $argv[1];
 
@@ -58,6 +60,9 @@ $langs->load('main');
 // Global variables
 $version = DOL_VERSION;
 $error = 0;
+
+$hookmanager->initHooks(array('cli'));
+
 
 /*
  * Main
@@ -78,7 +83,7 @@ if ($mode != 'confirm') {
 
 if (!empty($dolibarr_main_db_readonly)) {
 	print "Error: instance in read-onyl mode\n";
-	exit(-1);
+	exit(1);
 }
 
 $sql = "SELECT f.ref, f.total_ttc, f.date_lim_reglement as due_date, s.nom as name, s.email, s.default_lang,";
@@ -90,7 +95,7 @@ $sql .= " , ".MAIN_DB_PREFIX."user as u";
 $sql .= " WHERE f.fk_statut = 1 AND f.paye = 0";
 $sql .= " AND f.fk_soc = s.rowid";
 if (is_numeric($duration_value)) {
-	$sql .= " AND f.date_lim_reglement < '".$db->idate(dol_time_plus_duree($now, $duration_value, "d"))."'";
+	$sql .= " AND f.date_lim_reglement < '".$db->idate(dol_time_plus_duree($now, (int) $duration_value, "d"))."'";
 }
 $sql .= " AND sc.fk_soc = s.rowid";
 $sql .= " AND sc.fk_user = u.rowid";
@@ -164,7 +169,7 @@ if ($resql) {
 			$i++;
 		}
 
-		// Si il reste des envois en buffer
+		// If there are remaining messages to send in the buffer
 		if ($foundtoprocess) {
 			if (dol_strlen($oldemail) && $oldemail != 'none') { // Break onto email (new email)
 				envoi_mail($mode, $oldemail, $message, $total, $oldlang, $oldsalerepresentative);
@@ -183,7 +188,7 @@ if ($resql) {
 	dol_print_error($db);
 	dol_syslog("email_unpaid_invoices_to_representatives.php: Error");
 
-	exit(-1);
+	exit(1);
 }
 
 /**

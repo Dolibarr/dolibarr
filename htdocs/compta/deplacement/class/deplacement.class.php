@@ -3,7 +3,8 @@
  * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,13 +53,6 @@ class Deplacement extends CommonObject
 	 */
 	public $fk_element = '';
 
-	/**
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 * @var int
-	 */
-	public $ismultientitymanaged = 0;
-
-
 	public $fk_soc;
 	public $date;
 	public $type;
@@ -88,7 +82,7 @@ class Deplacement extends CommonObject
 	public $fk_user;
 
 	/**
-	 * @var string km value formatted
+	 * @var float km value formatted
 	 */
 	public $km;
 
@@ -127,6 +121,8 @@ class Deplacement extends CommonObject
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 0;
 	}
 
 	/**
@@ -215,7 +211,7 @@ class Deplacement extends CommonObject
 	public function update($user)
 	{
 		// Clean parameters
-		$this->km = price2num($this->km);
+		$this->km = (float) price2num($this->km);
 
 		// Check parameters
 		if (!is_numeric($this->km)) {
@@ -367,14 +363,14 @@ class Deplacement extends CommonObject
 			$this->labelStatusShort[self::STATUS_REFUNDED] = $langs->transnoentitiesnoconv('Refunded');
 		}
 
-		$status_logo = array(0 => 'status0', 1=>'status4', 2 => 'status1', 4 => 'status6', 5 => 'status4', 6 => 'status6', 99 => 'status5');
+		$status_logo = array(0 => 'status0', 1 => 'status4', 2 => 'status1', 4 => 'status6', 5 => 'status4', 6 => 'status6', 99 => 'status5');
 		$statusType = $status_logo[$status];
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
 
 	/**
-	 *	Return clicable name (with picto eventually)
+	 *	Return clickable name (with picto eventually)
 	 *
 	 *	@param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@return		string					Chaine avec URL

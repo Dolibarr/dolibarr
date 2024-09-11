@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2006		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2007-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2014		Alexandre Spangaro		<aspangaro@open-dsi.fr>
- * Copyright (C) 2016		Juanjo Menent   		<jmenent@2byte.es>
+/* Copyright (C) 2006		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2007-2016	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2009-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2014-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2016		Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,29 +36,23 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'bills'));
 
-// Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'banque', '', '');
-
 $search_ref = GETPOST('search_ref', 'alpha');
-$search_date_startday = GETPOST('search_date_startday', 'int');
-$search_date_startmonth = GETPOST('search_date_startmonth', 'int');
-$search_date_startyear = GETPOST('search_date_startyear', 'int');
-$search_date_endday = GETPOST('search_date_endday', 'int');
-$search_date_endmonth = GETPOST('search_date_endmonth', 'int');
-$search_date_endyear = GETPOST('search_date_endyear', 'int');
+$search_date_startday = GETPOSTINT('search_date_startday');
+$search_date_startmonth = GETPOSTINT('search_date_startmonth');
+$search_date_startyear = GETPOSTINT('search_date_startyear');
+$search_date_endday = GETPOSTINT('search_date_endday');
+$search_date_endmonth = GETPOSTINT('search_date_endmonth');
+$search_date_endyear = GETPOSTINT('search_date_endyear');
 $search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);	// Use tzserver
 $search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
-$search_account = GETPOST('search_account', 'int');
+$search_account = GETPOST('search_account', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
 $mode = GETPOST('mode', 'alpha');
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -90,25 +85,30 @@ foreach ($arrayofpaymentmodetomanage as $key => $val) {
 }
 
 $arrayfields = array(
-	'bc.ref'            => array('label'=>"Ref", 'checked'=>1, 'position'=>10),
-	'bc.type'			=> array('label'=>"Type", 'checked'=>1, 'position'=>20),
-	'bc.date_bordereau' => array('label'=>"DateCreation", 'checked'=>1, 'position'=>30),
-	'ba.label'			=> array('label'=>"Account", 'checked'=>1, 'position'=>40),
-	'bc.nbcheque'		=> array('label'=>"NbOfCheques", 'checked'=>1, 'position'=>50),
-	'bc.amount'			=> array('label'=>"Amount", 'checked'=>1, 'position'=>60),
-	'bc.statut'			=> array('label'=>"Status", 'checked'=>1, 'position'=>70)
+	'bc.ref'            => array('label' => "Ref", 'checked' => 1, 'position' => 10),
+	'bc.type'			=> array('label' => "Type", 'checked' => 1, 'position' => 20),
+	'bc.date_bordereau' => array('label' => "DateCreation", 'checked' => 1, 'position' => 30),
+	'ba.label'			=> array('label' => "BankAccount", 'checked' => 1, 'position' => 40),
+	'bc.nbcheque'		=> array('label' => "NbOfCheques", 'checked' => 1, 'position' => 50),
+	'bc.amount'			=> array('label' => "Amount", 'checked' => 1, 'position' => 60),
+	'bc.statut'			=> array('label' => "Status", 'checked' => 1, 'position' => 70)
 );
 $arrayfields = dol_sort_array($arrayfields, 'position');
+'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('chequelist'));
 $object = new RemiseCheque($db);
+
+// Security check
+$result = restrictedArea($user, 'banque', '', '');
+
 
 /*
  * Actions
  */
 
-$parameters = array('socid'=>$socid);
+$parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -141,7 +141,9 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("ChequeDeposits"));
+$title = $langs->trans("ChequeDeposits");
+
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'bodyforlist');
 
 $sql = "SELECT bc.rowid, bc.ref, bc.date_bordereau,";
 $sql .= " bc.nbcheque, bc.amount, bc.statut, bc.type,";
@@ -221,22 +223,22 @@ if ($resql) {
 		$param .= '&contextpage='.$contextpage;
 	}
 	if ($search_date_startday) {
-		$param .= '&search_date_startday='.urlencode($search_date_startday);
+		$param .= '&search_date_startday='.urlencode((string) ($search_date_startday));
 	}
 	if ($search_date_startmonth) {
-		$param .= '&search_date_startmonth='.urlencode($search_date_startmonth);
+		$param .= '&search_date_startmonth='.urlencode((string) ($search_date_startmonth));
 	}
 	if ($search_date_startyear) {
-		$param .= '&search_date_startyear='.urlencode($search_date_startyear);
+		$param .= '&search_date_startyear='.urlencode((string) ($search_date_startyear));
 	}
 	if ($search_date_endday) {
-		$param .= '&search_date_endday='.urlencode($search_date_endday);
+		$param .= '&search_date_endday='.urlencode((string) ($search_date_endday));
 	}
 	if ($search_date_endmonth) {
-		$param .= '&search_date_endmonth='.urlencode($search_date_endmonth);
+		$param .= '&search_date_endmonth='.urlencode((string) ($search_date_endmonth));
 	}
 	if ($search_date_endyear) {
-		$param .= '&search_date_endyear='.urlencode($search_date_endyear);
+		$param .= '&search_date_endyear='.urlencode((string) ($search_date_endyear));
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
 		$param .= '&limit='.$limit;
@@ -245,16 +247,14 @@ if ($resql) {
 		$param .= '&search_amount='.urlencode($search_amount);
 	}
 	if ($search_account > 0) {
-		$param .= '&search_account='.urlencode($search_account);
+		$param .= '&search_account='.urlencode((string) ($search_account));
 	}
 
 	$url = DOL_URL_ROOT.'/compta/paiement/cheque/card.php?action=new';
-	if (!empty($socid)) {
-		$url .= '&socid='.$socid;
-	}
+
 	$newcardbutton  = '';
-	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
-	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
 	$newcardbutton .= dolGetButtonTitleSeparator();
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewCheckDeposit'), '', 'fa fa-plus-circle', $url, '', $user->hasRight('banque', 'cheque'));
 
@@ -271,10 +271,11 @@ if ($resql) {
 	print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 
+	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 	print_barre_liste($langs->trans("MenuChequeDeposits"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'bank_account', 0, $newcardbutton, '', $limit);
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')); // This also change content of $arrayfields
+	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
 	$massactionbutton = '';
 	if ($massactionbutton) {
 		$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
@@ -346,7 +347,7 @@ if ($resql) {
 	}
 
 	// Fields from hook
-	$parameters = array('arrayfields'=>$arrayfields);
+	$parameters = array('arrayfields' => $arrayfields);
 	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 
@@ -400,7 +401,7 @@ if ($resql) {
 	}
 
 	// Hook fields
-	$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+	$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 

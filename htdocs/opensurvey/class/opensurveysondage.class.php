@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2013-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García	    <marcosgdf@gmail.com>
- * Copyright (C) 2020		Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2020-2024  Frédéric France		<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +22,7 @@
  *  \file       htdocs/opensurvey/class/opensurveysondage.class.php
  *  \ingroup    opensurvey
  *  \brief      This file is an example for a CRUD class file (Create/Read/Update/Delete)
- *				Initialy built by build_class_from_table on 2013-03-10 00:32
+ *				Initially built by build_class_from_table on 2013-03-10 00:32
  */
 
 // Put here all includes required by your class file
@@ -47,7 +48,6 @@ class Opensurveysondage extends CommonObject
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'poll';
-
 
 	/**
 	 * @var string Description
@@ -83,7 +83,7 @@ class Opensurveysondage extends CommonObject
 	 *  'alwayseditable' says if field can be modified also when status is not draft ('1' or '0')
 	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
-	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
 	 *  'isameasure' must be set to 1 or 2 if field can be used for measure. Field type must be summable like integer or double(24,8). Use 1 in most cases, or 2 if you don't want to see the column total into list (for example for percentage)
 	 *  'css' and 'cssview' and 'csslist' is the CSS style to use on field. 'css' is used in creation and update. 'cssview' is used in view mode. 'csslist' is used for columns in lists. For example: 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'cssview'=>'wordbreak', 'csslist'=>'tdoverflowmax200'
@@ -101,26 +101,30 @@ class Opensurveysondage extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields=array(
-		'id_sondage' => array('type'=>'varchar(16)', 'label'=>'Idsondage', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>-1,),
-		'commentaires' => array('type'=>'mediumtext', 'label'=>'Commentaires', 'enabled'=>'1', 'position'=>15, 'notnull'=>0, 'visible'=>-1,),
-		'mail_admin' => array('type'=>'varchar(128)', 'label'=>'Mailadmin', 'enabled'=>'1', 'position'=>20, 'notnull'=>0, 'visible'=>-1,),
-		'nom_admin' => array('type'=>'varchar(64)', 'label'=>'Nomadmin', 'enabled'=>'1', 'position'=>25, 'notnull'=>0, 'visible'=>-1,),
-		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>-2, 'css'=>'maxwidth500 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax150',),
-		'title' => array('type'=>'mediumtext', 'label'=>'Titre', 'enabled'=>'1', 'position'=>35, 'notnull'=>1, 'visible'=>-1,),
-		'date_fin' => array('type'=>'datetime', 'label'=>'Datefin', 'enabled'=>'1', 'position'=>40, 'notnull'=>1, 'visible'=>-1,),
-		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>'1', 'position'=>500, 'notnull'=>0, 'visible'=>-1,),
-		'format' => array('type'=>'varchar(2)', 'label'=>'Format', 'enabled'=>'1', 'position'=>50, 'notnull'=>1, 'visible'=>-1,),
-		'mailsonde' => array('type'=>'integer', 'label'=>'Mailsonde', 'enabled'=>'1', 'position'=>55, 'notnull'=>1, 'visible'=>-1,),
-		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>'1', 'position'=>60, 'notnull'=>1, 'visible'=>-1,),
-		'entity' => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>'1', 'position'=>65, 'notnull'=>1, 'visible'=>-2, 'default'=>'1', 'index'=>1,),
-		'allow_comments' => array('type'=>'integer', 'label'=>'Allowcomments', 'enabled'=>'1', 'position'=>70, 'notnull'=>1, 'visible'=>-1,),
-		'allow_spy' => array('type'=>'integer', 'label'=>'Allowspy', 'enabled'=>'1', 'position'=>75, 'notnull'=>1, 'visible'=>-1,),
-		'sujet' => array('type'=>'mediumtext', 'label'=>'Sujet', 'enabled'=>'1', 'position'=>80, 'notnull'=>0, 'visible'=>-1,),
-		'id_sondage_admin' => array('type'=>'char(24)', 'label'=>'Idsondageadmin', 'enabled'=>'1', 'position'=>85, 'notnull'=>0, 'visible'=>-1,),
+	public $fields = array(
+		'id_sondage' => array('type' => 'varchar(16)', 'label' => 'Idsondage', 'enabled' => '1', 'position' => 10, 'notnull' => 1, 'visible' => -1,),
+		'commentaires' => array('type' => 'mediumtext', 'label' => 'Comments', 'enabled' => '1', 'position' => 15, 'notnull' => 0, 'visible' => -1,),
+		'mail_admin' => array('type' => 'varchar(128)', 'label' => 'Mailadmin', 'enabled' => '1', 'position' => 20, 'notnull' => 0, 'visible' => -1,),
+		'nom_admin' => array('type' => 'varchar(64)', 'label' => 'Nomadmin', 'enabled' => '1', 'position' => 25, 'notnull' => 0, 'visible' => -1,),
+		'fk_user_creat' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => '1', 'position' => 30, 'notnull' => 1, 'visible' => -2, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150',),
+		'titre' => array('type' => 'mediumtext', 'label' => 'Title', 'enabled' => '1', 'position' => 35, 'notnull' => 1, 'visible' => -1,),
+		'date_fin' => array('type' => 'datetime', 'label' => 'DateEnd', 'enabled' => '1', 'position' => 40, 'notnull' => 1, 'visible' => -1,),
+		'status' => array('type' => 'integer', 'label' => 'Status', 'enabled' => '1', 'position' => 500, 'notnull' => 0, 'visible' => -1,),
+		'format' => array('type' => 'varchar(2)', 'label' => 'Format', 'enabled' => '1', 'position' => 50, 'notnull' => 1, 'visible' => -1,),
+		'mailsonde' => array('type' => 'integer', 'label' => 'Mailsonde', 'enabled' => '1', 'position' => 55, 'notnull' => 1, 'visible' => -1,),
+		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => '1', 'position' => 60, 'notnull' => 1, 'visible' => -1,),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'enabled' => '1', 'position' => 65, 'notnull' => 1, 'visible' => -2, 'default' => '1', 'index' => 1,),
+		'allow_comments' => array('type' => 'integer', 'label' => 'Allowcomments', 'enabled' => '1', 'position' => 70, 'notnull' => 1, 'visible' => -1,),
+		'allow_spy' => array('type' => 'integer', 'label' => 'Allowspy', 'enabled' => '1', 'position' => 75, 'notnull' => 1, 'visible' => -1,),
+		'sujet' => array('type' => 'mediumtext', 'label' => 'Sujet', 'enabled' => '1', 'position' => 80, 'notnull' => 0, 'visible' => -1,),
+		'id_sondage_admin' => array('type' => 'char(24)', 'label' => 'Idsondageadmin', 'enabled' => '1', 'position' => 85, 'notnull' => 0, 'visible' => -1,),
 	);
+
+	/**
+	 * @var string Id sondage not an int
+	 */
 	public $id_sondage;
 	/**
 	 * @var string		Description
@@ -135,7 +139,6 @@ class Opensurveysondage extends CommonObject
 	public $status;
 	public $format;
 	public $mailsonde;
-	public $tms;
 	public $entity;
 	/**
 	 * @var int		Allow comments on this poll
@@ -146,10 +149,17 @@ class Opensurveysondage extends CommonObject
 	 * @var int		Allow users see others vote
 	 */
 	public $allow_spy;
+
+	/**
+	 * @var string Subject
+	 */
 	public $sujet;
+
+	/**
+	 * @var string Id sondage admin not an int
+	 */
 	public $id_sondage_admin;
 	// END MODULEBUILDER PROPERTIES
-
 
 	/**
 	 * Draft status (not used)
@@ -168,7 +178,7 @@ class Opensurveysondage extends CommonObject
 	/**
 	 *  Constructor
 	 *
-	 *  @param	DoliDb		$db      Database handler
+	 *  @param	DoliDB		$db      Database handler
 	 */
 	public function __construct($db)
 	{
@@ -469,14 +479,26 @@ class Opensurveysondage extends CommonObject
 
 		$datas = [];
 		$datas['picto'] = img_picto('', $this->picto).' <u>'.$langs->trans("ShowSurvey").'</u>';
+		if (isset($this->status)) {
+			$datas['picto'] .= ' '.$this->getLibStatut(5);
+		}
 		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		if (!empty($this->date_fin)) {
+			$datas['expire_date'] = '<br><b>'.$langs->trans('ExpireDate').':</b> '.dol_print_date($this->date_fin, 'day');
+			if ($this->date_fin && $this->date_fin < dol_now() && $this->status == Opensurveysondage::STATUS_VALIDATED) {
+				$datas['expire_date'] .= img_warning($langs->trans("Expired"));
+			}
+		}
 		$datas['title'] = '<br><b>'.$langs->trans('Title').':</b> '.$this->title;
+		if (!empty($this->description)) {
+			$datas['description'] = '<br><b>'.$langs->trans('Description').':</b> '.$this->description;
+		}
 
 		return $datas;
 	}
 
 	/**
-	 *  Return a link to the object card (with optionaly the picto)
+	 *  Return a link to the object card (with optionally the picto)
 	 *
 	 *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
 	 *  @param	int  	$notooltip					1=Disable tooltip
@@ -486,7 +508,7 @@ class Opensurveysondage extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
-		global $conf, $langs;
+		global $conf, $hookmanager, $langs;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -543,6 +565,16 @@ class Opensurveysondage extends CommonObject
 		}
 		$result .= $linkend;
 
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
+
 		return $result;
 	}
 
@@ -568,7 +600,7 @@ class Opensurveysondage extends CommonObject
 			$i = 0;
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
-				$tmp = array('id_users'=>$obj->id_users, 'nom'=>$obj->name, 'reponses'=>$obj->reponses);
+				$tmp = array('id_users' => $obj->id_users, 'nom' => $obj->name, 'reponses' => $obj->reponses);
 
 				$this->lines[] = $tmp;
 				$i++;
@@ -584,7 +616,7 @@ class Opensurveysondage extends CommonObject
 	 *	Initialise object with example values
 	 *	Id must be 0 if object instance is a specimen
 	 *
-	 *	@return	void
+	 *	@return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -599,6 +631,8 @@ class Opensurveysondage extends CommonObject
 		$this->status = 1;
 		$this->format = 'classic';
 		$this->mailsonde = 0;
+
+		return 1;
 	}
 
 	/**
@@ -770,15 +804,16 @@ class Opensurveysondage extends CommonObject
 	/**
 	 * Load list of objects in memory from the database.
 	 *
-	 * @param  string      $sortorder    Sort Order
-	 * @param  string      $sortfield    Sort field
-	 * @param  int         $limit        limit
-	 * @param  int         $offset       Offset
-	 * @param  array       $filter       Filter array. Example array('field'=>'valueforlike', 'customurl'=>...)
-	 * @param  string      $filtermode   Filter mode (AND or OR)
-	 * @return array|int                 int <0 if KO, array of pages if OK
+	 * @param  string      	$sortorder    	Sort Order
+	 * @param  string      	$sortfield    	Sort field
+	 * @param  int         	$limit        	limit
+	 * @param  int         	$offset       	Offset
+	 * @param  string		$filter       	Filter as an Universal Search string.
+	 * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
+	 * @param  string      	$filtermode   	No more used
+	 * @return array|int                 	int <0 if KO, array of pages if OK
 	 */
-	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -792,25 +827,14 @@ class Opensurveysondage extends CommonObject
 		} else {
 			$sql .= ' WHERE 1 = 1';
 		}
+
 		// Manage filter
-		$sqlwhere = array();
-		if (count($filter) > 0) {
-			foreach ($filter as $key => $value) {
-				if ($key == 't.rowid') {
-					$sqlwhere[] = $key." = ".((int) $value);
-				} elseif (array_key_exists($key, $this->fields) && in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
-					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
-				} elseif ($key == 'customsql') {
-					$sqlwhere[] = $value;
-				} elseif (strpos($value, '%') === false) {
-					$sqlwhere[] = $key." IN (".$this->db->sanitize($this->db->escape($value)).")";
-				} else {
-					$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
-				}
-			}
-		}
-		if (count($sqlwhere) > 0) {
-			$sql .= ' AND ('.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
+		$errormessage = '';
+		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+		if ($errormessage) {
+			$this->errors[] = $errormessage;
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+			return -1;
 		}
 
 		if (!empty($sortfield)) {
@@ -839,7 +863,7 @@ class Opensurveysondage extends CommonObject
 			return $records;
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}

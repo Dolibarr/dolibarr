@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 if (isModEnabled("product") || isModEnabled("service")) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 }
-if (isModEnabled('expedition')) {
+if (isModEnabled('shipping')) {
 	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 }
 if (isModEnabled('stock')) {
@@ -60,12 +60,10 @@ $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
-// Security check
-$id = GETPOST('id', 'int');
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'expedition', $id, 'delivery', 'delivery');
+
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('deliverycard', 'globalcard'));
+
 
 $object = new Delivery($db);
 $extrafields = new ExtraFields($db);
@@ -77,12 +75,23 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $extrafields->fetch_name_optionals_label($object->table_element_line);
 
 // Load object. Make an object->fetch
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once
-
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('deliverycard', 'globalcard'));
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'
 
 $error = 0;
+
+// Security check
+$id = GETPOSTINT('id');
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'expedition', $id, 'delivery', 'delivery');
+
+$permissiontoread = $user->hasRight('expedition', 'delivery', 'read');
+$permissiontoadd = $user->hasRight('expedition', 'delivery', 'creer'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontodelete = $user->hasRight('expedition', 'delivery', 'supprimer') || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
+$permissiontovalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'delivery', 'creer')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'delivery_advance', 'validate')));
+$permissionnote = $user->hasRight('expedition', 'delivery', 'creer'); // Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->hasRight('expedition', 'delivery', 'creer'); // Used by the include of actions_dellink.inc.php
 
 
 /*
@@ -92,17 +101,17 @@ $error = 0;
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);       // Note that $action and $object may have been modified by some hooks
 // Delete Link
-$permissiondellink = $user->rights->expedition->delivery->supprimer; // Used by the include of actions_dellink.inc.php
-include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';     // Must be include, not include_once
+$permissiondellink = $user->hasRight('expedition', 'delivery', 'supprimer'); // Used by the include of actions_dellink.inc.php
+include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';     // Must be 'include', not 'include_once'
 
-if ($action == 'add') {
+if ($action == 'add' && $permissiontoadd) {
 	$db->begin();
 
 	$object->date_delivery = dol_now();
 	$object->note          = GETPOST("note", 'restricthtml');
 	$object->note_private  = GETPOST("note", 'restricthtml');
-	$object->commande_id   = GETPOST("commande_id", 'int');
-	$object->fk_incoterms  = GETPOST('incoterm_id', 'int');
+	$object->commande_id   = GETPOSTINT("commande_id");
+	$object->fk_incoterms  = GETPOSTINT('incoterm_id');
 
 	/* ->entrepot_id seems to not exists
 	if (!getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION') && isModEnabled('stock')) {
@@ -134,10 +143,7 @@ if ($action == 'add') {
 
 		$action = 'create';
 	}
-} elseif ($action == 'confirm_valid' && $confirm == 'yes' &&
-	((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'delivery', 'creer'))
-	|| (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'delivery_advance', 'validate')))
-) {
+} elseif ($action == 'confirm_valid' && $confirm == 'yes' && $permissiontovalidate) {
 	$result = $object->valid($user);
 
 	// Define output language
@@ -164,7 +170,7 @@ if ($action == 'add') {
 	}
 }
 
-if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('expedition', 'delivery', 'supprimer')) {
+if ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontodelete) {
 	$db->begin();
 	$result = $object->delete($user);
 
@@ -181,19 +187,19 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('expedit
 	}
 }
 
-if ($action == 'setdate_delivery' && $user->hasRight('expedition', 'delivery', 'creer')) {
-	$datedelivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
+if ($action == 'setdate_delivery' && $permissiontoadd) {
+	$datedelivery = dol_mktime(GETPOSTINT('liv_hour'), GETPOSTINT('liv_min'), 0, GETPOSTINT('liv_month'), GETPOSTINT('liv_day'), GETPOSTINT('liv_year'));
 	$result = $object->setDeliveryDate($user, $datedelivery);
 	if ($result < 0) {
 		$mesg = '<div class="error">'.$object->error.'</div>';
 	}
 } elseif ($action == 'set_incoterms' && isModEnabled('incoterm')) {
 	// Set incoterm
-	$result = $object->setIncoterms((int) GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
+	$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOSTINT('location_incoterms'));
 }
 
 // Update extrafields
-if ($action == 'update_extras') {
+if ($action == 'update_extras' && $permissiontoadd) {
 	$object->oldcopy = dol_clone($object, 2);
 
 	// Fill array 'array_options' with data from update form
@@ -217,7 +223,7 @@ if ($action == 'update_extras') {
 }
 
 // Extrafields line
-if ($action == 'update_extras_line') {
+if ($action == 'update_extras_line' && $permissiontoadd) {
 	$array_options = array();
 	$num = count($object->lines);
 
@@ -244,7 +250,6 @@ if ($action == 'update_extras_line') {
 
 // Actions to build doc
 $upload_dir = $conf->expedition->dir_output.'/receipt';
-$permissiontoadd = $user->rights->expedition->creer;
 include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
@@ -256,7 +261,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 $title = $langs->trans('Delivery');
 
-llxHeader('', $title, 'Livraison');
+llxHeader('', $title, 'Livraison', '', 0, 0, '', '', '', 'mod-delivery page-card');
 
 $form = new Form($db);
 $formfile = new FormFile($db);
@@ -311,7 +316,7 @@ if ($action == 'create') {
 			 *   Delivery
 			 */
 
-			if ($typeobject == 'commande' && $expedition->origin_id > 0 && isModEnabled('commande')) {
+			if ($typeobject == 'commande' && $expedition->origin_id > 0 && isModEnabled('order')) {
 				$objectsrc = new Commande($db);
 				$objectsrc->fetch($expedition->origin_id);
 			}
@@ -326,7 +331,7 @@ if ($action == 'create') {
 			$morehtmlref = '<div class="refidno">';
 			// Ref customer shipment
 			$morehtmlref .= $form->editfieldkey("RefCustomer", '', $expedition->ref_customer, $expedition, $user->hasRight('expedition', 'creer'), 'string', '', 0, 1);
-			$morehtmlref .= $form->editfieldval("RefCustomer", '', $expedition->ref_customer, $expedition, $user->hasRight('expedition', 'creer'), 'string'.(isset($conf->global->THIRDPARTY_REF_INPUT_SIZE) ? ':' . getDolGlobalString('THIRDPARTY_REF_INPUT_SIZE') : ''), '', null, null, '', 1);
+			$morehtmlref .= $form->editfieldval("RefCustomer", '', $expedition->ref_customer, $expedition, $user->hasRight('expedition', 'creer'), 'string'.(getDolGlobalString('THIRDPARTY_REF_INPUT_SIZE') ? ':' . getDolGlobalString('THIRDPARTY_REF_INPUT_SIZE') : ''), '', null, null, '', 1);
 			$morehtmlref .= '<br>'.$langs->trans("RefDeliveryReceipt").' : '.$object->ref;
 			// Thirdparty
 			$morehtmlref .= '<br>'.$expedition->thirdparty->getNomUrl(1);
@@ -391,7 +396,7 @@ if ($action == 'create') {
 			*/
 
 			// Document origine
-			if ($typeobject == 'commande' && $expedition->origin_id && isModEnabled('commande')) {
+			if ($typeobject == 'commande' && $expedition->origin_id && isModEnabled('order')) {
 				print '<tr><td class="titlefield">'.$langs->trans("RefOrder").'</td>';
 				$order = new Commande($db);
 				$order->fetch($expedition->origin_id);
@@ -430,7 +435,7 @@ if ($action == 'create') {
 				print '<form name="setdate_delivery" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="setdate_delivery">';
-				print $form->selectDate($object->date_delivery ? $object->date_delivery : -1, 'liv_', 1, 1, '', "setdate_delivery", 1, 1);
+				print $form->selectDate($object->date_delivery ? $object->date_delivery : -1, 'liv_', 1, 1, 0, "setdate_delivery", 1, 1);
 				print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 				print '</form>';
 			} else {
@@ -671,8 +676,8 @@ if ($action == 'create') {
 			$filedir = $conf->expedition->dir_output."/receipt/".$objectref;
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 
-			$genallowed = $user->rights->expedition->delivery->lire;
-			$delallowed = $user->rights->expedition->delivery->creer;
+			$genallowed = $user->hasRight('expedition', 'delivery', 'lire');
+			$delallowed = $user->hasRight('expedition', 'delivery', 'creer');
 
 			print $formfile->showdocuments('delivery', $objectref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 
@@ -696,11 +701,11 @@ if ($action == 'create') {
 			print '</div></div>';
 		} else {
 			/* Expedition non trouvee */
-			print "Expedition inexistante ou acces refuse";
+			print "Expedition inexistante ou access refuse";
 		}
 	} else {
 		/* Expedition non trouvee */
-		print "Expedition inexistante ou acces refuse";
+		print "Expedition inexistante ou access refuse";
 	}
 }
 

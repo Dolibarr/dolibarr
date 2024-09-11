@@ -24,7 +24,6 @@
 use DebugBar\DataCollector\AssetProvider;
 use DebugBar\DataCollector\DataCollector;
 use DebugBar\DataCollector\Renderable;
-use DebugBar\DebugBarException;
 
 dol_include_once('/debugbar/class/TraceableDB.php');
 
@@ -54,7 +53,7 @@ class DolQueryCollector extends DataCollector implements Renderable, AssetProvid
 	/**
 	 * Return collected data
 	 *
-	 * @return array  Array
+	 * @return array  Array of collected data
 	 */
 	public function collect()
 	{

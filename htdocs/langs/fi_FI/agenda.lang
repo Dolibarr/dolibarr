@@ -7,7 +7,7 @@ Agendas=Esityslistat
 LocalAgenda=oletus kalenteri
 ActionsOwnedBy=Tapahtuman omistaa
 ActionsOwnedByShort=Omistaja
-AffectedTo=Vaikuttaa
+AffectedTo=Vastuuhenkilö
 EventsNb=Tapahtumien määrä
 ListOfActions=Luettelo tapahtumista
 EventReports=Tapahtumaraportit
@@ -20,9 +20,8 @@ MenuToDoMyActions=Oma puutteellisia toimia
 MenuDoneMyActions=Oma irtisanotaan toimia
 ListOfEvents=Tapahtumaluettelo (oletus kalenteri)
 ActionsAskedBy=Toimet kirjattava
-ActionsToDoBy=Toimet vaikuttaa
-ActionsDoneBy=Toimet tehdään
-ActionAssignedTo=Toiminta vaikuttaa
+ActionsToDoBy=Vastuuhenkilö
+ActionAssignedTo=Vastuuhenkilö
 ViewCal=Näytä kalenteri
 ViewDay=Päivä näkymä
 ViewWeek=Viikkonäkymä
@@ -135,12 +134,14 @@ AgendaModelModule=Tapahtuman asiakirjamallit
 DateActionStart=Aloituspäivämäärä
 DateActionEnd=Lopetuspäivä
 AgendaUrlOptions1=Voit myös lisätä seuraavat parametrit suodattaa output:
-AgendaUrlOptions3=<b>logina=%s</b> rajoittaaksesi ulostulon käyttäjän omistamiin toimiin <b>%s</b>.
-AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> rajoittaaksesi tulostuksen toimiin, jotka eivät ole muiden omistamia käyttäjä <b>%s</b>.
-AgendaUrlOptions4=<b>logint=%s</b> tulostuksen rajoittamiseksi < käyttäjälle määritettyihin toimintoihin span class='notranslate'><b></span> /span> muut).
-AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> rajoittaaksesi tuotos toimiin, jotka on linkitetty projektiin b0aee83fz365</8> __PROJECT_ID__<span class='notranslate'></b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> automaattisten tapahtumien sulkemiseksi pois.
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
+AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
+AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
+AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
+AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> sisällyttääksesi lomatapahtumat.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
 AgendaShowBirthdayEvents=Yhteyshenkilöiden syntymäpäivät
 AgendaHideBirthdayEvents=Piilota yhteyshenkilöiden syntymäpäivät
 Busy=Kiireinen
@@ -201,4 +202,6 @@ AppointmentDuration = Tapaamisen kesto: %s
 BookingSuccessfullyBooked=Varauksesi on tallennettu
 BookingReservationHourAfter=Vahvistamme varauksen kokouksellemme osoitteessa päiväys %s
 BookcalBookingTitle=Online ajanvaraus
-Transparency = Transparency
+Transparency = Läpinäkyvyys
+ReadMore = Lue lisää
+ReadLess = Näytä vähemmän

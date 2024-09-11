@@ -1,21 +1,26 @@
 <?php
-/* Copyright (C) 2002-2006 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2016 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2015 Regis Houssin         <regis.houssin@inodbox.com>
- * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
- * Copyright (C) 2010-2020 Juanjo Menent         <jmenent@2byte.es>
- * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
- * Copyright (C) 2013      Florian Henry         <florian.henry@open-concept.pro>
- * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
- * Copyright (C) 2015      Jean-François Ferry   <jfefe@aternatik.fr>
- * Copyright (C) 2015-2022 Ferran Marcet         <fmarcet@2byte.es>
- * Copyright (C) 2017      Josep Lluís Amador    <joseplluis@lliuretic.cat>
- * Copyright (C) 2018      Charlene Benke        <charlie@patas-monkey.com>
- * Copyright (C) 2019-2021 Alexandre Spangaro    <aspangaro@open-dsi.fr>
+/* Copyright (C) 2002-2006	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
+ * Copyright (C) 2004-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005		Marc Barilley / Ocebo	<marc@ocebo.com>
+ * Copyright (C) 2005-2015	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
+ * Copyright (C) 2010-2020	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2012		Christophe Battarel		<christophe.battarel@altairis.fr>
+ * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
+ * Copyright (C) 2013		Cédric Salvador			<csalvador@gpcsolutions.fr>
+ * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
+ * Copyright (C) 2015-2022	Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2017		Josep Lluís Amador		<joseplluis@lliuretic.cat>
+ * Copyright (C) 2018		Charlene Benke			<charlie@patas-monkey.com>
+ * Copyright (C) 2019-2024	Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2021-2024	Anthony Berton			<anthony.berton@bb2a.fr>
  * Copyright (C) 2023		Nick Fragoulis
- * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
+ * Copyright (C) 2023		Joachim Kueter			<git-jk@bloxera.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		Solution Libre SAS		<contact@solution-libre.fr>
+ * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +38,7 @@
 
 /**
  *	\file       htdocs/compta/facture/list.php
- *	\ingroup    facture
+ *	\ingroup    invoice
  *	\brief      List of customer invoices
  */
 
@@ -56,23 +61,22 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-if (isModEnabled('commande')) {
+if (isModEnabled('order')) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
 
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'companies', 'products', 'categories'));
 
-$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
-$projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
+$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 
-$id = (GETPOST('id', 'int') ? GETPOSTINT('id') : GETPOSTINT('facid')); // For backward compatibility
+$id = (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('facid')); // For backward compatibility
 $ref = GETPOST('ref', 'alpha');
 $socid = GETPOSTINT('socid');
 
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
-$show_files = GETPOST('show_files', 'int');
+$show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $optioncss = GETPOST('optioncss', 'alpha');
@@ -83,11 +87,11 @@ if ($contextpage == 'poslist') {
 	$optioncss = 'print';
 }
 
-$userid = GETPOST('userid', 'int');
+$userid = GETPOSTINT('userid');
 $search_ref = GETPOST('sf_ref') ? GETPOST('sf_ref', 'alpha') : GETPOST('search_ref', 'alpha');
 $search_refcustomer = GETPOST('search_refcustomer', 'alpha');
-$search_type = GETPOST('search_type', 'int');
-$search_subtype = GETPOST('search_subtype', 'int');
+$search_type = GETPOST('search_type', 'intcomma');
+$search_subtype = GETPOST('search_subtype', 'intcomma');
 $search_project_ref = GETPOST('search_project_ref', 'alpha');
 $search_project = GETPOST('search_project', 'alpha');
 $search_company = GETPOST('search_company', 'alpha');
@@ -105,64 +109,61 @@ $search_multicurrency_montant_ht = GETPOST('search_multicurrency_montant_ht', 'a
 $search_multicurrency_montant_vat = GETPOST('search_multicurrency_montant_vat', 'alpha');
 $search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 'alpha');
 $search_status = GETPOST('search_status', 'intcomma');
-$search_paymentmode = GETPOST('search_paymentmode', 'int');
-$search_paymentterms = GETPOST('search_paymentterms', 'int');
+$search_paymentmode = GETPOST('search_paymentmode', 'intcomma');
+$search_paymentterms = GETPOST('search_paymentterms', 'intcomma');
 $search_module_source = GETPOST('search_module_source', 'alpha');
 $search_pos_source = GETPOST('search_pos_source', 'alpha');
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
 $search_state = GETPOST("search_state");
-$search_country = GETPOST("search_country", 'alpha');
+$search_country = GETPOST("search_country", 'aZ09');
 $search_customer_code = GETPOST("search_customer_code", 'alphanohtml');
-$search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
-$search_user = GETPOST('search_user', 'int');
-$search_sale = GETPOST('search_sale', 'int');
-$search_date_startday = GETPOST('search_date_startday', 'int');
-$search_date_startmonth = GETPOST('search_date_startmonth', 'int');
-$search_date_startyear = GETPOST('search_date_startyear', 'int');
-$search_date_endday = GETPOST('search_date_endday', 'int');
-$search_date_endmonth = GETPOST('search_date_endmonth', 'int');
-$search_date_endyear = GETPOST('search_date_endyear', 'int');
+$search_type_thirdparty = GETPOST("search_type_thirdparty", 'intcomma');
+$search_user = GETPOST('search_user', 'intcomma');
+$search_sale = GETPOST('search_sale', 'intcomma');
+$search_date_startday = GETPOSTINT('search_date_startday');
+$search_date_startmonth = GETPOSTINT('search_date_startmonth');
+$search_date_startyear = GETPOSTINT('search_date_startyear');
+$search_date_endday = GETPOSTINT('search_date_endday');
+$search_date_endmonth = GETPOSTINT('search_date_endmonth');
+$search_date_endyear = GETPOSTINT('search_date_endyear');
 $search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear); // Use tzserver
 $search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
-$search_date_valid_startday = GETPOST('search_date_valid_startday', 'int');
-$search_date_valid_startmonth = GETPOST('search_date_valid_startmonth', 'int');
-$search_date_valid_startyear = GETPOST('search_date_valid_startyear', 'int');
-$search_date_valid_endday = GETPOST('search_date_valid_endday', 'int');
-$search_date_valid_endmonth = GETPOST('search_date_valid_endmonth', 'int');
-$search_date_valid_endyear = GETPOST('search_date_valid_endyear', 'int');
+$search_date_valid_startday = GETPOSTINT('search_date_valid_startday');
+$search_date_valid_startmonth = GETPOSTINT('search_date_valid_startmonth');
+$search_date_valid_startyear = GETPOSTINT('search_date_valid_startyear');
+$search_date_valid_endday = GETPOSTINT('search_date_valid_endday');
+$search_date_valid_endmonth = GETPOSTINT('search_date_valid_endmonth');
+$search_date_valid_endyear = GETPOSTINT('search_date_valid_endyear');
 $search_date_valid_start = dol_mktime(0, 0, 0, $search_date_valid_startmonth, $search_date_valid_startday, $search_date_valid_startyear); // Use tzserver
 $search_date_valid_end = dol_mktime(23, 59, 59, $search_date_valid_endmonth, $search_date_valid_endday, $search_date_valid_endyear);
-$search_datelimit_startday = GETPOST('search_datelimit_startday', 'int');
-$search_datelimit_startmonth = GETPOST('search_datelimit_startmonth', 'int');
-$search_datelimit_startyear = GETPOST('search_datelimit_startyear', 'int');
-$search_datelimit_endday = GETPOST('search_datelimit_endday', 'int');
-$search_datelimit_endmonth = GETPOST('search_datelimit_endmonth', 'int');
-$search_datelimit_endyear = GETPOST('search_datelimit_endyear', 'int');
+$search_datelimit_startday = GETPOSTINT('search_datelimit_startday');
+$search_datelimit_startmonth = GETPOSTINT('search_datelimit_startmonth');
+$search_datelimit_startyear = GETPOSTINT('search_datelimit_startyear');
+$search_datelimit_endday = GETPOSTINT('search_datelimit_endday');
+$search_datelimit_endmonth = GETPOSTINT('search_datelimit_endmonth');
+$search_datelimit_endyear = GETPOSTINT('search_datelimit_endyear');
 $search_datelimit_start = dol_mktime(0, 0, 0, $search_datelimit_startmonth, $search_datelimit_startday, $search_datelimit_startyear);
 $search_datelimit_end = dol_mktime(23, 59, 59, $search_datelimit_endmonth, $search_datelimit_endday, $search_datelimit_endyear);
-$search_categ_cus = GETPOST("search_categ_cus", 'int');
-$search_product_category = GETPOST('search_product_category', 'int');
+$search_categ_cus = GETPOST("search_categ_cus", 'intcomma');
+$search_product_category = GETPOST('search_product_category', 'intcomma');
 $search_fac_rec_source_title = GETPOST("search_fac_rec_source_title", 'alpha');
-$search_btn = GETPOST('button_search', 'alpha');
-$search_remove_btn = GETPOST('button_removefilter', 'alpha');
 
 $search_option = GETPOST('search_option');
 if ($search_option == 'late') {
 	$search_status = '1';
 }
-$filtre = GETPOST('filtre', 'alpha');
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1 or if we click on clear filters
 $offset = $limit * $page;
 if (!$sortorder && getDolGlobalString('INVOICE_DEFAULT_UNPAYED_SORT_ORDER') && $search_status == '1') {
-	$sortorder = $conf->global->INVOICE_DEFAULT_UNPAYED_SORT_ORDER;
+	$sortorder = getDolGlobalString('INVOICE_DEFAULT_UNPAYED_SORT_ORDER');
 }
 if (!$sortorder) {
 	$sortorder = 'DESC';
@@ -178,7 +179,7 @@ $diroutputmassaction = $conf->facture->dir_output.'/temp/massgeneration/'.$user-
 $now = dol_now();
 $error = 0;
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Facture($db);
 $hookmanager->initHooks(array($contextpage));
 $extrafields = new ExtraFields($db);
@@ -190,15 +191,15 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
-	'f.ref'=>'Ref',
-	'f.ref_client'=>'RefCustomer',
-	'f.note_public'=>'NotePublic',
-	's.nom'=>"ThirdParty",
-	's.code_client'=>"CustomerCodeShort",
-	's.name_alias'=>"AliasNameShort",
-	's.zip'=>"Zip",
-	's.town'=>"Town",
-	'pd.description'=>'Description',
+	'f.ref' => 'Ref',
+	'f.ref_client' => 'RefCustomer',
+	'f.note_public' => 'NotePublic',
+	's.nom' => "ThirdParty",
+	's.code_client' => "CustomerCodeShort",
+	's.name_alias' => "AliasNameShort",
+	's.zip' => "Zip",
+	's.town' => "Town",
+	'pd.description' => 'Description',
 );
 if (empty($user->socid)) {
 	$fieldstosearchall["f.note_private"] = "NotePrivate";
@@ -206,75 +207,79 @@ if (empty($user->socid)) {
 
 $checkedtypetiers = 0;
 $arrayfields = array(
-	'f.ref'=>array('label'=>"Ref", 'checked'=>1, 'position'=>5),
-	'f.ref_client'=>array('label'=>"RefCustomer", 'checked'=>-1, 'position'=>10),
-	'f.type'=>array('label'=>"Type", 'checked'=>0, 'position'=>15),
-	'f.datef'=>array('label'=>"DateInvoice", 'checked'=>1, 'position'=>20),
-	'f.date_valid'=>array('label'=>"DateValidation", 'checked'=>0, 'position'=>22),
-	'f.subtype'=>array('label'=>"InvoiceSubtype", 'checked'=>0, 'position'=>17),
-	'f.date_lim_reglement'=>array('label'=>"DateDue", 'checked'=>1, 'position'=>25),
-	'f.date_closing'=>array('label'=>"DateClosing", 'checked'=>0, 'position'=>30),
-	'p.ref'=>array('label'=>"ProjectRef", 'langs'=>'projects', 'checked'=>1, 'enabled'=>(!isModEnabled('project') ? 0 : 1), 'position'=>40),
-	'p.title'=>array('label'=>"ProjectLabel", 'checked'=>0, 'enabled'=>(!isModEnabled('project') ? 0 : 1), 'position'=>41),
-	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1, 'position'=>50),
-	's.name_alias'=>array('label'=>"AliasNameShort", 'checked'=>1, 'position'=>51),
-	's.code_client'=>array('label'=>"CustomerCodeShort", 'checked'=>-1, 'position'=>52),
-	's2.nom'=>array('label'=>'ParentCompany', 'position'=>32, 'checked'=>0),
-	's.town'=>array('label'=>"Town", 'checked'=>-1, 'position'=>55),
-	's.zip'=>array('label'=>"Zip", 'checked'=>1, 'position'=>60),
-	'state.nom'=>array('label'=>"StateShort", 'checked'=>0, 'position'=>65),
-	'country.code_iso'=>array('label'=>"Country", 'checked'=>0, 'position'=>70),
-	'typent.code'=>array('label'=>"ThirdPartyType", 'checked'=>$checkedtypetiers, 'position'=>75),
-	'f.fk_mode_reglement'=>array('label'=>"PaymentMode", 'checked'=>1, 'position'=>80),
-	'f.fk_cond_reglement'=>array('label'=>"PaymentConditionsShort", 'checked'=>1, 'position'=>85),
-	'f.module_source'=>array('label'=>"POSModule", 'langs'=>'cashdesk', 'checked'=>($contextpage == 'poslist' ? 1 : 0), 'enabled'=>"(isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalInt('INVOICE_SHOW_POS'))", 'position'=>90),
-	'f.pos_source'=>array('label'=>"POSTerminal", 'langs'=>'cashdesk', 'checked'=>($contextpage == 'poslist' ? 1 : 0), 'enabled'=>"(isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalInt('INVOICE_SHOW_POS'))", 'position'=>91),
-	'f.total_ht'=>array('label'=>"AmountHT", 'checked'=>1, 'position'=>95),
-	'f.total_tva'=>array('label'=>"AmountVAT", 'checked'=>0, 'position'=>100),
-	'f.total_localtax1'=>array('label'=>$langs->transcountry("AmountLT1", $mysoc->country_code), 'checked'=>0, 'enabled'=>($mysoc->localtax1_assuj == "1"), 'position'=>110),
-	'f.total_localtax2'=>array('label'=>$langs->transcountry("AmountLT2", $mysoc->country_code), 'checked'=>0, 'enabled'=>($mysoc->localtax2_assuj == "1"), 'position'=>120),
-	'f.total_ttc'=>array('label'=>"AmountTTC", 'checked'=>0, 'position'=>130),
-	'dynamount_payed'=>array('label'=>"Received", 'checked'=>0, 'position'=>140),
-	'rtp'=>array('label'=>"Rest", 'checked'=>0, 'position'=>150), // Not enabled by default because slow
-	'f.multicurrency_code'=>array('label'=>'Currency', 'checked'=>0, 'enabled'=>(!isModEnabled('multicurrency') ? 0 : 1), 'position'=>280),
-	'f.multicurrency_tx'=>array('label'=>'CurrencyRate', 'checked'=>0, 'enabled'=>(!isModEnabled('multicurrency') ? 0 : 1), 'position'=>285),
-	'f.multicurrency_total_ht'=>array('label'=>'MulticurrencyAmountHT', 'checked'=>0, 'enabled'=>(!isModEnabled('multicurrency') ? 0 : 1), 'position'=>290),
-	'f.multicurrency_total_vat'=>array('label'=>'MulticurrencyAmountVAT', 'checked'=>0, 'enabled'=>(!isModEnabled('multicurrency') ? 0 : 1), 'position'=>291),
-	'f.multicurrency_total_ttc'=>array('label'=>'MulticurrencyAmountTTC', 'checked'=>0, 'enabled'=>(!isModEnabled('multicurrency') ? 0 : 1), 'position'=>292),
-	'multicurrency_dynamount_payed'=>array('label'=>'MulticurrencyAlreadyPaid', 'checked'=>0, 'enabled'=>(!isModEnabled('multicurrency') ? 0 : 1), 'position'=>295),
-	'multicurrency_rtp'=>array('label'=>'MulticurrencyRemainderToPay', 'checked'=>0, 'enabled'=>(!isModEnabled('multicurrency') ? 0 : 1), 'position'=>296), // Not enabled by default because slow
-	'total_pa' => array('label' => ((getDolGlobalString('MARGIN_TYPE') == '1') ? 'BuyingPrice' : 'CostPrice'), 'checked' => 0, 'position' => 300, 'enabled' => (!isModEnabled('margin') || empty($user->rights->margins->liretous) ? 0 : 1)),
-	'total_margin' => array('label' => 'Margin', 'checked' => 0, 'position' => 301, 'enabled' => (!isModEnabled('margin') || empty($user->rights->margins->liretous) ? 0 : 1)),
-	'total_margin_rate' => array('label' => 'MarginRate', 'checked' => 0, 'position' => 302, 'enabled' => (!isModEnabled('margin') || empty($user->rights->margins->liretous) || !getDolGlobalString('DISPLAY_MARGIN_RATES') ? 0 : 1)),
-	'total_mark_rate' => array('label' => 'MarkRate', 'checked' => 0, 'position' => 303, 'enabled' => (!isModEnabled('margin') || empty($user->rights->margins->liretous) || !getDolGlobalString('DISPLAY_MARK_RATES') ? 0 : 1)),
-	'f.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
-	'f.tms' =>array('type'=>'timestamp', 'label'=>'DateModificationShort', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>502),
-	'u.login'=>array('label'=>"UserAuthor", 'checked'=>1, 'position'=>504),
-	'sale_representative'=>array('label'=>"SaleRepresentativesOfThirdParty", 'checked'=>0, 'position'=>506),
+	'f.ref' => array('label' => "Ref", 'checked' => 1, 'position' => 5),
+	'f.ref_client' => array('label' => "RefCustomer", 'checked' => -1, 'position' => 10),
+	'f.type' => array('label' => "Type", 'checked' => 0, 'position' => 15),
+	'f.subtype' => array('label' => "InvoiceSubtype", 'checked' => 0, 'position' => 17),
+	'f.datef' => array('label' => "DateInvoice", 'checked' => 1, 'position' => 20),
+	'f.date_valid' => array('label' => "DateValidation", 'checked' => 0, 'position' => 22),
+	'f.date_lim_reglement' => array('label' => "DateDue", 'checked' => 1, 'position' => 25),
+	'f.date_closing' => array('label' => "DateClosing", 'checked' => 0, 'position' => 30),
+	'p.ref' => array('label' => "ProjectRef", 'langs' => 'projects', 'checked' => 1, 'enabled' => (!isModEnabled('project') ? 0 : 1), 'position' => 40),
+	'p.title' => array('label' => "ProjectLabel", 'checked' => 0, 'enabled' => (!isModEnabled('project') ? 0 : 1), 'position' => 41),
+	's.nom' => array('label' => "ThirdParty", 'checked' => 1, 'position' => 50),
+	's.name_alias' => array('label' => "AliasNameShort", 'checked' => -1, 'position' => 51),
+	's.code_client' => array('label' => "CustomerCodeShort", 'checked' => -1, 'position' => 52),
+	's2.nom' => array('label' => 'ParentCompany', 'position' => 32, 'checked' => 0),
+	's.town' => array('label' => "Town", 'checked' => -1, 'position' => 55),
+	's.zip' => array('label' => "Zip", 'checked' => -1, 'position' => 60),
+	'state.nom' => array('label' => "StateShort", 'checked' => 0, 'position' => 65),
+	'country.code_iso' => array('label' => "Country", 'checked' => 0, 'position' => 70),
+	'typent.code' => array('label' => "ThirdPartyType", 'checked' => $checkedtypetiers, 'position' => 75),
+	'f.fk_mode_reglement' => array('label' => "PaymentMode", 'checked' => 1, 'position' => 80),
+	'f.fk_cond_reglement' => array('label' => "PaymentConditionsShort", 'checked' => 1, 'position' => 85),
+	'f.module_source' => array('label' => "POSModule", 'langs' => 'cashdesk', 'checked' => ($contextpage == 'poslist' ? 1 : 0), 'enabled' => "(isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalInt('INVOICE_SHOW_POS'))", 'position' => 90),
+	'f.pos_source' => array('label' => "POSTerminal", 'langs' => 'cashdesk', 'checked' => ($contextpage == 'poslist' ? 1 : 0), 'enabled' => "(isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalInt('INVOICE_SHOW_POS'))", 'position' => 91),
+	'f.total_ht' => array('label' => "AmountHT", 'checked' => 1, 'position' => 95),
+	'f.total_tva' => array('label' => "AmountVAT", 'checked' => 0, 'position' => 100),
+	'f.total_localtax1' => array('label' => $langs->transcountry("AmountLT1", $mysoc->country_code), 'checked' => 0, 'enabled' => ($mysoc->localtax1_assuj == "1"), 'position' => 110),
+	'f.total_localtax2' => array('label' => $langs->transcountry("AmountLT2", $mysoc->country_code), 'checked' => 0, 'enabled' => ($mysoc->localtax2_assuj == "1"), 'position' => 120),
+	'f.total_ttc' => array('label' => "AmountTTC", 'checked' => 0, 'position' => 130),
+	'dynamount_payed' => array('label' => "Received", 'checked' => 0, 'position' => 140),
+	'rtp' => array('label' => "Rest", 'checked' => 0, 'position' => 150), // Not enabled by default because slow
+	'f.multicurrency_code' => array('label' => 'Currency', 'checked' => 0, 'enabled' => (!isModEnabled('multicurrency') ? 0 : 1), 'position' => 280),
+	'f.multicurrency_tx' => array('label' => 'CurrencyRate', 'checked' => 0, 'enabled' => (!isModEnabled('multicurrency') ? 0 : 1), 'position' => 285),
+	'f.multicurrency_total_ht' => array('label' => 'MulticurrencyAmountHT', 'checked' => 0, 'enabled' => (!isModEnabled('multicurrency') ? 0 : 1), 'position' => 290),
+	'f.multicurrency_total_vat' => array('label' => 'MulticurrencyAmountVAT', 'checked' => 0, 'enabled' => (!isModEnabled('multicurrency') ? 0 : 1), 'position' => 291),
+	'f.multicurrency_total_ttc' => array('label' => 'MulticurrencyAmountTTC', 'checked' => 0, 'enabled' => (!isModEnabled('multicurrency') ? 0 : 1), 'position' => 292),
+	'multicurrency_dynamount_payed' => array('label' => 'MulticurrencyAlreadyPaid', 'checked' => 0, 'enabled' => (!isModEnabled('multicurrency') ? 0 : 1), 'position' => 295),
+	'multicurrency_rtp' => array('label' => 'MulticurrencyRemainderToPay', 'checked' => 0, 'enabled' => (!isModEnabled('multicurrency') ? 0 : 1), 'position' => 296), // Not enabled by default because slow
+	'total_pa' => array('label' => ((getDolGlobalString('MARGIN_TYPE') == '1') ? 'BuyingPrice' : 'CostPrice'), 'checked' => 0, 'position' => 300, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') ? 0 : 1)),
+	'total_margin' => array('label' => 'Margin', 'checked' => 0, 'position' => 301, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') ? 0 : 1)),
+	'total_margin_rate' => array('label' => 'MarginRate', 'checked' => 0, 'position' => 302, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') || !getDolGlobalString('DISPLAY_MARGIN_RATES') ? 0 : 1)),
+	'total_mark_rate' => array('label' => 'MarkRate', 'checked' => 0, 'position' => 303, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') || !getDolGlobalString('DISPLAY_MARK_RATES') ? 0 : 1)),
+	'f.datec' => array('label' => "DateCreation", 'checked' => 0, 'position' => 500),
+	'f.tms' => array('type' => 'timestamp', 'label' => 'DateModificationShort', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 502),
+	'u.login' => array('label' => "UserAuthor", 'checked' => 1, 'visible' => -1, 'position' => 504),
+	'sale_representative' => array('label' => "SaleRepresentativesOfThirdParty", 'checked' => 0, 'position' => 506),
 	//'f.fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-1, 'position'=>506),
 	//'f.fk_user_modif' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-1, 'notnull'=>-1, 'position'=>508),
 	//'f.fk_user_valid' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>510),
 	//'f.fk_user_closing' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserClosing', 'enabled'=>1, 'visible'=>-1, 'position'=>512),
-	'f.note_public'=>array('label'=>'NotePublic', 'checked'=>0, 'position'=>520, 'enabled'=>(!getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES'))),
-	'f.note_private'=>array('label'=>'NotePrivate', 'checked'=>0, 'position'=>521, 'enabled'=>(!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES'))),
-	'f.fk_fac_rec_source'=>array('label'=>'GeneratedFromTemplate', 'checked'=>0, 'position'=>530, 'enabled'=>'1'),
-	'f.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
+	'f.note_public' => array('label' => 'NotePublic', 'checked' => 0, 'position' => 520, 'enabled' => (!getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES'))),
+	'f.note_private' => array('label' => 'NotePrivate', 'checked' => 0, 'position' => 521, 'enabled' => (!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES'))),
+	'f.fk_fac_rec_source' => array('label' => 'GeneratedFromTemplate', 'checked' => 0, 'position' => 530, 'enabled' => '1'),
+	'f.fk_statut' => array('label' => "Status", 'checked' => 1, 'position' => 1000),
 );
 
 if (getDolGlobalString("INVOICE_USE_SITUATION") && getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')) {
-	$arrayfields['f.retained_warranty'] = array('label'=>$langs->trans("RetainedWarranty"), 'checked'=>0, 'position'=>86);
+	$arrayfields['f.retained_warranty'] = array('label' => $langs->trans("RetainedWarranty"), 'checked' => 0, 'position' => 86);
 }
+
+$subtypearray = $object->getArrayOfInvoiceSubtypes(0);
+if (empty($subtypearray)) {
+	unset($arrayfields['f.subtype']);
+}
+
 // Overwrite $arrayfields from columns into ->fields (transition before removal of $arrayoffields)
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 
 	if (!empty($val['visible'])) {
-		$visible = (int) dol_eval($val['visible'], 1, 1, '1');
+		$visible = (int) dol_eval((string) $val['visible'], 1, 1, '1');
 		$newkey = '';
 		if (array_key_exists($key, $arrayfields)) {
 			$newkey = $key;
-		} elseif (array_key_exists('f.'.$key, $arrayfields)) {
-			$newkey = 'f.'.$key;
 		} elseif (array_key_exists('f.'.$key, $arrayfields)) {
 			$newkey = 'f.'.$key;
 		} elseif (array_key_exists('s.'.$key, $arrayfields)) {
@@ -282,10 +287,10 @@ foreach ($object->fields as $key => $val) {
 		}
 		if ($newkey) {
 			$arrayfields[$newkey] = array(
-				'label'=>$val['label'],
-				'checked'=>(($visible < 0) ? 0 : 1),
-				'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1, 1, '1')),
-				'position'=>$val['position'],
+				'label' => $val['label'],
+				'checked' => (($visible < 0) ? 0 : 1),
+				'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
+				'position' => $val['position'],
 				'help' => empty($val['help']) ? '' : $val['help'],
 			);
 		}
@@ -294,10 +299,12 @@ foreach ($object->fields as $key => $val) {
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
+
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
+'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
-if (!$user->hasRight('societe', 'client', 'voir') || $user->socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$search_sale = $user->id;
 }
 
@@ -321,7 +328,7 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
-$parameters = array('socid'=>$socid, 'arrayfields'=>&$arrayfields);
+$parameters = array('socid' => $socid, 'arrayfields' => &$arrayfields);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -390,11 +397,10 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_datelimit_start = '';
 	$search_datelimit_end = '';
 	$search_fac_rec_source_title = '';
+	$search_option = '';
+	$search_categ_cus = 0;
 	$toselect = array();
 	$search_array_options = array();
-	$search_categ_cus = 0;
-	$search_option = '';
-	$socid = 0;
 }
 
 if (empty($reshook)) {
@@ -411,9 +417,9 @@ if ($action == 'makepayment_confirm' && $user->hasRight('facture', 'paiement')) 
 	require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 	$arrayofselected = is_array($toselect) ? $toselect : array();
 	if (!empty($arrayofselected)) {
-		$bankid = GETPOST('bankid', 'int');
-		$paiementid = GETPOST('paiementid', 'int');
-		$paiementdate = dol_mktime(12, 0, 0, GETPOST('datepaimentmonth', 'int'), GETPOST('datepaimentday', 'int'), GETPOST('datepaimentyear', 'year'));
+		$bankid = GETPOSTINT('bankid');
+		$paiementid = GETPOSTINT('paiementid');
+		$paiementdate = dol_mktime(12, 0, 0, GETPOSTINT('datepaimentmonth'), GETPOSTINT('datepaimentday'), GETPOSTINT('datepaimentyear'));
 		if (empty($paiementdate)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
 			$error++;
@@ -438,6 +444,19 @@ if ($action == 'makepayment_confirm' && $user->hasRight('facture', 'paiement')) 
 						$totaldeposits = $facture->getSumDepositsUsed();
 						$totalpay = $paiementAmount + $totalcreditnotes + $totaldeposits;
 						$remaintopay = price2num($facture->total_ttc - $totalpay);
+
+						// hook to finalize the remaining amount, considering e.g. cash discount agreements
+						$parameters = array('remaintopay' => $remaintopay);
+						$reshook = $hookmanager->executeHooks('finalizeAmountOfInvoice', $parameters, $facture, $action); // Note that $action and $object may have been modified by some hooks
+						if ($reshook > 0) {
+							if (!empty($remain = $hookmanager->resArray['remaintopay'])) {
+								$remaintopay = $remain;
+							}
+						} elseif ($reshook < 0) {
+							$error++;
+							setEventMessages($facture->ref.' '.$langs->trans("ProcessingError"), $hookmanager->errors, 'errors');
+						}
+
 						if ($remaintopay != 0) {
 							$resultBank = $facture->setBankAccount($bankid);
 							if ($resultBank < 0) {
@@ -502,7 +521,20 @@ if ($action == 'makepayment_confirm' && $user->hasRight('facture', 'paiement')) 
 				$totalcreditnotes = $objecttmp->getSumCreditNotesUsed();
 				$totaldeposits = $objecttmp->getSumDepositsUsed();
 				$objecttmp->resteapayer = price2num($objecttmp->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
-				if ($objecttmp->status == Facture::STATUS_DRAFT) {
+
+				// hook to finalize the remaining amount, considering e.g. cash discount agreements
+				$parameters = array('remaintopay' => $objecttmp->resteapayer);
+				$reshook = $hookmanager->executeHooks('finalizeAmountOfInvoice', $parameters, $objecttmp, $action); // Note that $action and $object may have been modified by some hooks
+				if ($reshook > 0) {
+					if (!empty($remaintopay = $hookmanager->resArray['remaintopay'])) {
+						$objecttmp->resteapayer = $remaintopay;
+					}
+				} elseif ($reshook < 0) {
+					$error++;
+					setEventMessages($objecttmp->ref.' '.$langs->trans("ProcessingError"), $hookmanager->errors, 'errors');
+				}
+
+				if ($objecttmp->statut == Facture::STATUS_DRAFT) {
 					$error++;
 					setEventMessages($objecttmp->ref.' '.$langs->trans("Draft"), $objecttmp->errors, 'errors');
 				} elseif ($objecttmp->paye || $objecttmp->resteapayer == 0) {
@@ -533,8 +565,9 @@ if ($action == 'makepayment_confirm' && $user->hasRight('facture', 'paiement')) 
 					$error++;
 					setEventMessages($objecttmp->ref.' '.$langs->trans("RequestAlreadyDone"), $objecttmp->errors, 'warnings');
 				} elseif (!empty($objecttmp->mode_reglement_code) && $objecttmp->mode_reglement_code != 'PRE') {
+					$langs->load("errors");
 					$error++;
-					setEventMessages($objecttmp->ref.' '.$langs->trans("BadPaymentMethod"), $objecttmp->errors, 'errors');
+					setEventMessages($objecttmp->ref.' '.$langs->trans("ErrorThisPaymentModeIsNotDirectDebit"), $objecttmp->errors, 'errors');
 				} else {
 					$listofbills[] = $objecttmp; // $listofbills will only contains invoices with good payment method and no request already done
 				}
@@ -582,7 +615,6 @@ $companystatic = new Societe($db);
 $companyparent = new Societe($db);
 
 $company_url_list = array();
-$subtypearray = $object->getArrayOfInvoiceSubtypes(0);
 
 if ($socid > 0) {
 	$soc = new Societe($db);
@@ -601,7 +633,7 @@ $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfi
 // Build and execute select
 // --------------------------------------------------------------------
 $sql = 'SELECT';
-if ($sall || $search_user > 0) {
+if ($search_all) {
 	$sql = 'SELECT DISTINCT';
 }
 $sql .= ' f.rowid as id, f.ref, f.ref_client, f.fk_soc, f.type, f.subtype, f.note_private, f.note_public, f.increment, f.fk_mode_reglement, f.fk_cond_reglement, f.total_ht, f.total_tva, f.total_ttc,';
@@ -610,7 +642,7 @@ $sql .= ' f.fk_user_author,';
 $sql .= ' f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva as multicurrency_total_vat, f.multicurrency_total_ttc,';
 $sql .= ' f.datef, f.date_valid, f.date_lim_reglement as datelimite, f.module_source, f.pos_source,';
 $sql .= ' f.paye as paye, f.fk_statut, f.close_code,';
-$sql .= ' f.datec as date_creation, f.tms as date_update, f.date_closing as date_closing,';
+$sql .= ' f.datec as date_creation, f.tms as date_modification, f.date_closing as date_closing,';
 $sql .= ' f.retained_warranty, f.retained_warranty_date_limit, f.situation_final, f.situation_cycle_ref, f.situation_counter,';
 $sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.phone, s.fax, s.address, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur,';
 $sql .= " s.parent as fk_parent,";
@@ -622,10 +654,10 @@ $sql .= ' f.fk_fac_rec_source,';
 $sql .= ' p.rowid as project_id, p.ref as project_ref, p.title as project_label,';
 $sql .= ' u.login, u.lastname, u.firstname, u.email as user_email, u.statut as user_statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender';
 // We need dynamount_payed to be able to sort on status (value is surely wrong because we can count several lines several times due to other left join or link with contacts. But what we need is just 0 or > 0).
-// A Better solution to be able to sort on already payed or remain to pay is to store amount_payed in a denormalized field.
-// We disable this. It create a bug when searching with sall and sorting on status. Also it create performance troubles.
+// A Better solution to be able to sort on already paid or remain to pay is to store amount_payed in a denormalized field.
+// We disable this. It create a bug when searching with search_all and sorting on status. Also it create performance troubles.
 /*
-if (!$sall) {
+if (!$search_all) {
 	$sql .= ', SUM(pf.amount) as dynamount_payed, SUM(pf.multicurrency_amount) as multicurrency_dynamount_payed';
 }
 */
@@ -655,7 +687,7 @@ if ($sortfield == "f.datef") {
 if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (f.rowid = ef.fk_object)";
 }
-if ($sall) {
+if ($search_all) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facturedet as pd ON f.rowid = pd.fk_facture';
 }
 if (!empty($search_fac_rec_source_title)) {
@@ -663,10 +695,6 @@ if (!empty($search_fac_rec_source_title)) {
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = f.fk_projet";
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user AS u ON f.fk_user_author = u.rowid';
-if ($search_user > 0) {
-	$sql .= ", ".MAIN_DB_PREFIX."element_contact as ec";
-	$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as tc";
-}
 // Add table from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
@@ -793,10 +821,10 @@ if ($search_status != '-1' && $search_status != '') {
 			$sql .= " AND f.fk_statut = 1"; // unpayed
 		}
 		if ($search_status == '2') {
-			$sql .= " AND f.fk_statut = 2"; // payed     Not that some corrupted data may contains f.fk_statut = 1 AND f.paye = 1 (it means payed too but should not happend. If yes, reopen and reclassify billed)
+			$sql .= " AND f.fk_statut = 2"; // paid     Not that some corrupted data may contains f.fk_statut = 1 AND f.paye = 1 (it means paid too but should not happen. If yes, reopen and reclassify billed)
 		}
 		if ($search_status == '3') {
-			$sql .= " AND f.fk_statut = 3"; // abandonned
+			$sql .= " AND f.fk_statut = 3"; // abandoned
 		}
 	} else {
 		$sql .= " AND f.fk_statut IN (".$db->sanitize($db->escape($search_status)).")"; // When search_status is '1,2' for example
@@ -839,11 +867,17 @@ if ($search_option == 'late') {
 /*if ($search_sale > 0) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $search_sale);
 }*/
-if ($search_user > 0) {
-	$sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='facture' AND tc.source='internal' AND ec.element_id = f.rowid AND ec.fk_socpeople = ".((int) $search_user);
-}
 if (!empty($search_fac_rec_source_title)) {
 	$sql .= natural_search('facrec.titre', $search_fac_rec_source_title);
+}
+// Search on user
+if ($search_user > 0) {
+	$sql .= " AND EXISTS (";
+	$sql .= " SELECT ec.fk_c_type_contact, ec.element_id, ec.fk_socpeople";
+	$sql .= " FROM llx_element_contact as ec";
+	$sql .= " INNER JOIN llx_c_type_contact as tc";
+	$sql .= " ON ec.fk_c_type_contact = tc.rowid AND tc.element='facture' AND tc.source='internal'";
+	$sql .= " WHERE ec.element_id = f.rowid AND ec.fk_socpeople = ".((int) $search_user).")";
 }
 // Search on sale representative
 if ($search_sale && $search_sale != '-1') {
@@ -920,8 +954,8 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
-if ($sall) {
-	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
+if ($search_all) {
+	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
 
 // Add HAVING from hooks
@@ -967,20 +1001,20 @@ $num = $db->num_rows($resql);
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
-if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $sall) {
+if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->id;
 
-	header("Location: ".DOL_URL_ROOT.'/compta/facture/card.php?facid='.$id);
+	header("Location: ".DOL_URL_ROOT.'/compta/facture/card.php?id='.$id);
 	exit;
 }
 
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
 
-$param = '&socid='.urlencode($socid);
+$param = '&socid='.urlencode((string) ($socid));
 if (!empty($mode)) {
 	$param .= '&mode='.urlencode($mode);
 }
@@ -990,62 +1024,62 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.((int) $limit);
 }
-if ($sall) {
-	$param .= '&sall='.urlencode($sall);
+if ($search_all) {
+	$param .= '&search_all='.urlencode($search_all);
 }
 if ($search_date_startday) {
-	$param .= '&search_date_startday='.urlencode($search_date_startday);
+	$param .= '&search_date_startday='.urlencode((string) ($search_date_startday));
 }
 if ($search_date_startmonth) {
-	$param .= '&search_date_startmonth='.urlencode($search_date_startmonth);
+	$param .= '&search_date_startmonth='.urlencode((string) ($search_date_startmonth));
 }
 if ($search_date_startyear) {
-	$param .= '&search_date_startyear='.urlencode($search_date_startyear);
+	$param .= '&search_date_startyear='.urlencode((string) ($search_date_startyear));
 }
 if ($search_date_endday) {
-	$param .= '&search_date_endday='.urlencode($search_date_endday);
+	$param .= '&search_date_endday='.urlencode((string) ($search_date_endday));
 }
 if ($search_date_endmonth) {
-	$param .= '&search_date_endmonth='.urlencode($search_date_endmonth);
+	$param .= '&search_date_endmonth='.urlencode((string) ($search_date_endmonth));
 }
 if ($search_date_endyear) {
-	$param .= '&search_date_endyear='.urlencode($search_date_endyear);
+	$param .= '&search_date_endyear='.urlencode((string) ($search_date_endyear));
 }
 if ($search_date_valid_startday) {
-	$param .= '&search_date_valid_startday='.urlencode($search_date_valid_startday);
+	$param .= '&search_date_valid_startday='.urlencode((string) ($search_date_valid_startday));
 }
 if ($search_date_valid_startmonth) {
-	$param .= '&search_date_valid_startmonth='.urlencode($search_date_valid_startmonth);
+	$param .= '&search_date_valid_startmonth='.urlencode((string) ($search_date_valid_startmonth));
 }
 if ($search_date_valid_startyear) {
-	$param .= '&search_date_valid_startyear='.urlencode($search_date_valid_startyear);
+	$param .= '&search_date_valid_startyear='.urlencode((string) ($search_date_valid_startyear));
 }
 if ($search_date_valid_endday) {
-	$param .= '&search_date_valid_endday='.urlencode($search_date_valid_endday);
+	$param .= '&search_date_valid_endday='.urlencode((string) ($search_date_valid_endday));
 }
 if ($search_date_valid_endmonth) {
-	$param .= '&search_date_valid_endmonth='.urlencode($search_date_valid_endmonth);
+	$param .= '&search_date_valid_endmonth='.urlencode((string) ($search_date_valid_endmonth));
 }
 if ($search_date_valid_endyear) {
-	$param .= '&search_date_valid_endyear='.urlencode($search_date_valid_endyear);
+	$param .= '&search_date_valid_endyear='.urlencode((string) ($search_date_valid_endyear));
 }
 if ($search_datelimit_startday) {
-	$param .= '&search_datelimit_startday='.urlencode($search_datelimit_startday);
+	$param .= '&search_datelimit_startday='.urlencode((string) ($search_datelimit_startday));
 }
 if ($search_datelimit_startmonth) {
-	$param .= '&search_datelimit_startmonth='.urlencode($search_datelimit_startmonth);
+	$param .= '&search_datelimit_startmonth='.urlencode((string) ($search_datelimit_startmonth));
 }
 if ($search_datelimit_startyear) {
-	$param .= '&search_datelimit_startyear='.urlencode($search_datelimit_startyear);
+	$param .= '&search_datelimit_startyear='.urlencode((string) ($search_datelimit_startyear));
 }
 if ($search_datelimit_endday) {
-	$param .= '&search_datelimit_endday='.urlencode($search_datelimit_endday);
+	$param .= '&search_datelimit_endday='.urlencode((string) ($search_datelimit_endday));
 }
 if ($search_datelimit_endmonth) {
-	$param .= '&search_datelimit_endmonth='.urlencode($search_datelimit_endmonth);
+	$param .= '&search_datelimit_endmonth='.urlencode((string) ($search_datelimit_endmonth));
 }
 if ($search_datelimit_endyear) {
-	$param .= '&search_datelimit_endyear='.urlencode($search_datelimit_endyear);
+	$param .= '&search_datelimit_endyear='.urlencode((string) ($search_datelimit_endyear));
 }
 if ($search_ref) {
 	$param .= '&search_ref='.urlencode($search_ref);
@@ -1090,16 +1124,16 @@ if ($search_customer_code) {
 	$param .= '&search_customer_code='.urlencode($search_customer_code);
 }
 if ($search_sale > 0) {
-	$param .= '&search_sale='.urlencode($search_sale);
+	$param .= '&search_sale='.urlencode((string) $search_sale);
 }
 if ($search_user > 0) {
-	$param .= '&search_user='.urlencode($search_user);
+	$param .= '&search_user='.urlencode((string) $search_user);
 }
 if ($search_login) {
 	$param .= '&search_login='.urlencode($search_login);
 }
 if ($search_product_category > 0) {
-	$param .= '&search_product_category='.urlencode($search_product_category);
+	$param .= '&search_product_category='.urlencode((string) $search_product_category);
 }
 if ($search_montant_ht != '') {
 	$param .= '&search_montant_ht='.urlencode($search_montant_ht);
@@ -1135,10 +1169,10 @@ if ($search_status != '') {
 	$param .= '&search_status='.urlencode($search_status);
 }
 if ($search_paymentmode > 0) {
-	$param .= '&search_paymentmode='.urlencode($search_paymentmode);
+	$param .= '&search_paymentmode='.urlencode((string) ($search_paymentmode));
 }
 if ($search_paymentterms > 0) {
-	$param .= '&search_paymentterms='.urlencode($search_paymentterms);
+	$param .= '&search_paymentterms='.urlencode((string) ($search_paymentterms));
 }
 if ($search_module_source) {
 	$param .= '&search_module_source='.urlencode($search_module_source);
@@ -1147,7 +1181,7 @@ if ($search_pos_source) {
 	$param .= '&search_pos_source='.urlencode($search_pos_source);
 }
 if ($show_files) {
-	$param .= '&show_files='.urlencode($show_files);
+	$param .= '&show_files='.urlencode((string) ($show_files));
 }
 if ($search_option) {
 	$param .= "&search_option=".urlencode($search_option);
@@ -1156,7 +1190,7 @@ if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
 if ($search_categ_cus > 0) {
-	$param .= '&search_categ_cus='.urlencode($search_categ_cus);
+	$param .= '&search_categ_cus='.urlencode((string) ($search_categ_cus));
 }
 if (!empty($search_fac_rec_source_title)) {
 	$param .= '&search_fac_rec_source_title='.urlencode($search_fac_rec_source_title);
@@ -1170,10 +1204,10 @@ $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, 
 $param .= $hookmanager->resPrint;
 
 $arrayofmassactions = array(
-	'validate'=>img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate"),
-	'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
-	'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
-	'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
+	'validate' => img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate"),
+	'generate_doc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
+	'builddoc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
+	'presend' => img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
 
 if ($user->hasRight('facture', 'paiement')) {
@@ -1203,8 +1237,8 @@ if ($contextpage != 'poslist') {
 		$url .= '&socid='.$socid;
 	}
 	$newcardbutton  = '';
-	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
-	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
 	$newcardbutton .= dolGetButtonTitleSeparator();
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewBill'), '', 'fa fa-plus-circle', $url, '', $user->hasRight("facture", "creer"));
 }
@@ -1242,18 +1276,18 @@ if ($massaction == 'makepayment') {
 		// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
 		array('type' => 'date', 'name' => 'datepaiment', 'label' => $langs->trans("Date"), 'datenow' => 1),
 		array('type' => 'other', 'name' => 'paiementid', 'label' => $langs->trans("PaymentMode"), 'value' => $form->select_types_paiements(GETPOST('search_paymentmode'), 'paiementid', '', 0, 0, 1, 0, 1, '', 1)),
-		array('type' => 'other', 'name' => 'bankid', 'label' => $langs->trans("BankAccount"), 'value'=>$form->select_comptes('', 'bankid', 0, '', 0, '', 0, '', 1)),
+		array('type' => 'other', 'name' => 'bankid', 'label' => $langs->trans("BankAccount"), 'value' => $form->select_comptes('', 'bankid', 0, '', 0, '', 0, '', 1)),
 		//array('type' => 'other', 'name' => 'invoicesid', 'label' => '', 'value'=>'<input type="hidden" id="invoicesid" name="invoicesid" value="'.implode('#',GETPOST('toselect','array')).'">'),
 	);
 	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans('MakePaymentAndClassifyPayed'), $langs->trans('EnterPaymentReceivedFromCustomer'), 'makepayment_confirm', $formquestion, 1, 0, 200, 500, 1);
 	print $formconfirm;
 }
 
-if ($sall) {
+if ($search_all) {
 	foreach ($fieldstosearchall as $key => $val) {
 		$fieldstosearchall[$key] = $langs->trans($val);
 	}
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall).join(', ', $fieldstosearchall).'</div>';
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>';
 }
 
 // If the user can view prospects other than his'
@@ -1273,7 +1307,7 @@ if ($user->hasRight("user", "user", "lire")) {
 	$moreforfilter .= '</div>';
 }
 // Filter on product tags
-if (isModEnabled('categorie') && $user->hasRight("categorie", "lire") && ($user->hasRight("produit", "lire") || $user->hasRight("service", "lire"))) {
+if (isModEnabled('category') && $user->hasRight("categorie", "lire") && ($user->hasRight("produit", "lire") || $user->hasRight("service", "lire"))) {
 	include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('IncludingProductWithTag');
@@ -1281,7 +1315,7 @@ if (isModEnabled('categorie') && $user->hasRight("categorie", "lire") && ($user-
 	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, 0, 'maxwidth300 widthcentpercentminusx', 1);
 	$moreforfilter .= '</div>';
 }
-if (isModEnabled('categorie') && $user->hasRight("categorie", "lire")) {
+if (isModEnabled('category') && $user->hasRight("categorie", "lire")) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('CustomersProspectsCategoriesShort');
@@ -1290,7 +1324,7 @@ if (isModEnabled('categorie') && $user->hasRight("categorie", "lire")) {
 }
 // alert on due date
 $moreforfilter .= '<div class="divsearchfield">';
-$moreforfilter .= $langs->trans('Alert').' <input type="checkbox" name="search_option" value="late"'.($search_option == 'late' ? ' checked' : '').'>';
+$moreforfilter .= '<label for="search_option">'.$langs->trans('Alert').' </label><input type="checkbox" name="search_option" id="search_option" value="late"'.($search_option == 'late' ? ' checked' : '').'>';
 $moreforfilter .= '</div>';
 
 $parameters = array();
@@ -1308,7 +1342,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')); // This also change content of $arrayfields
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
 
 // Show the massaction checkboxes only when this page is not opend from the Extended POS
 if ($massactionbutton && $contextpage != 'poslist') {
@@ -1350,15 +1384,16 @@ if (!empty($arrayfields['f.ref_client']['checked'])) {
 if (!empty($arrayfields['f.type']['checked'])) {
 	print '<td class="liste_titre maxwidthonsmartphone">';
 	$listtype = array(
-		Facture::TYPE_STANDARD=>$langs->trans("InvoiceStandard"),
-		Facture::TYPE_DEPOSIT=>$langs->trans("InvoiceDeposit"),
-		Facture::TYPE_CREDIT_NOTE=>$langs->trans("InvoiceAvoir"),
-		Facture::TYPE_REPLACEMENT=>$langs->trans("InvoiceReplacement"),
+		Facture::TYPE_STANDARD => $langs->trans("InvoiceStandard"),
+		Facture::TYPE_DEPOSIT => $langs->trans("InvoiceDeposit"),
+		Facture::TYPE_CREDIT_NOTE => $langs->trans("InvoiceAvoir"),
+		Facture::TYPE_REPLACEMENT => $langs->trans("InvoiceReplacement"),
 	);
 	if (getDolGlobalString('INVOICE_USE_SITUATION')) {
 		$listtype[Facture::TYPE_SITUATION] = $langs->trans("InvoiceSituation");
 	}
 	//$listtype[Facture::TYPE_PROFORMA]=$langs->trans("InvoiceProForma");     // A proformat invoice is not an invoice but must be an order.
+	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 	print $form->selectarray('search_type', $listtype, $search_type, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100');
 	print '</td>';
 }
@@ -1587,7 +1622,7 @@ if (!empty($arrayfields['total_mark_rate']['checked'])) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 // Fields from hook
-$parameters = array('arrayfields'=>$arrayfields);
+$parameters = array('arrayfields' => $arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Date creation
@@ -1624,7 +1659,8 @@ if (!empty($arrayfields['f.fk_fac_rec_source']['checked'])) {
 // Status
 if (!empty($arrayfields['f.fk_statut']['checked'])) {
 	print '<td class="liste_titre center parentonrightofpage">';
-	$liststatus = array('0'=>$langs->trans("BillShortStatusDraft"), '0,1'=>$langs->trans("BillShortStatusDraft").'+'.$langs->trans("BillShortStatusNotPaid"), '1'=>$langs->trans("BillShortStatusNotPaid"), '1,2'=>$langs->trans("BillShortStatusNotPaid").'+'.$langs->trans("BillShortStatusPaid"), '2'=>$langs->trans("BillShortStatusPaid"), '3'=>$langs->trans("BillShortStatusCanceled"));
+	$liststatus = array('0' => $langs->trans("BillShortStatusDraft"), '0,1' => $langs->trans("BillShortStatusDraft").'+'.$langs->trans("BillShortStatusNotPaid"), '1' => $langs->trans("BillShortStatusNotPaid"), '1,2' => $langs->trans("BillShortStatusNotPaid").'+'.$langs->trans("BillShortStatusPaid"), '2' => $langs->trans("BillShortStatusPaid"), '3' => $langs->trans("BillShortStatusCanceled"));
+	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 	print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage', 1);
 	print '</td>';
 }
@@ -1826,7 +1862,7 @@ if (!empty($arrayfields['total_mark_rate']['checked'])) {
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
-$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder, 'totalarray'=>$totalarray);
+$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => $totalarray);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (!empty($arrayfields['f.datec']['checked'])) {
@@ -1878,8 +1914,8 @@ if ($num > 0) {
 	$totalarray['val'] = array();
 	$totalarray['val']['f.total_ht'] = 0;
 	$totalarray['val']['f.total_tva'] = 0;
-	$totalarray['val']['f.total_localtax1']=0;
-	$totalarray['val']['f.total_localtax1']=0;
+	$totalarray['val']['f.total_localtax1'] = 0;
+	$totalarray['val']['f.total_localtax1'] = 0;
 	$totalarray['val']['f.total_ttc'] = 0;
 	$totalarray['val']['totalam'] = 0;
 	$totalarray['val']['rtp'] = 0;
@@ -1993,9 +2029,10 @@ if ($num > 0) {
 		}
 
 		$facturestatic->alreadypaid = $paiement;
+		$facturestatic->totalpaid = $paiement;
 
 		$marginInfo = array();
-		if ($with_margin_info === true) {
+		if ($with_margin_info) {
 			$facturestatic->fetch_lines();
 			$marginInfo = $formmargin->getMarginInfosArray($facturestatic);
 			$total_ht += $obj->total_ht;
@@ -2017,7 +2054,7 @@ if ($num > 0) {
 				}
 			}
 
-			$arraydata = array('alreadypaid' => $paiement, 'thirdparty' => $companystatic->getNomUrl(1, '', 12), 'userauthor'=>$userstatic->getNomUrl(1), 'selected' => in_array($object->id, $arrayofselected));
+			$arraydata = array('alreadypaid' => $paiement, 'thirdparty' => $companystatic->getNomUrl(1, '', 12), 'userauthor' => $userstatic->getNomUrl(1), 'selected' => in_array($object->id, $arrayofselected));
 			print $facturestatic->getKanbanView('', $arraydata);
 			if ($i == ($imaxinloop - 1)) {
 				print '</div>';
@@ -2032,7 +2069,7 @@ if ($num > 0) {
 				if (strpos($obj->ref, 'PROV') !== false) {
 					//If is a draft invoice, load var to be able to add products
 					$place = str_replace(")", "", str_replace("(PROV-POS".$_SESSION["takeposterminal"]."-", "", $obj->ref));
-					print 'parent.place=\''.$place.'\'';
+					print 'parent.place=\''.dol_escape_js($place).'\'';
 				}
 				print '});"';
 			}
@@ -2181,7 +2218,7 @@ if ($num > 0) {
 
 			// Third party
 			if (!empty($arrayfields['s.nom']['checked'])) {
-				print '<td class="tdoverflowmax200">';
+				print '<td class="tdoverflowmax150">';
 				if ($contextpage == 'poslist') {
 					print dol_escape_htmltag($companystatic->name);
 				} else {
@@ -2395,7 +2432,6 @@ if ($num > 0) {
 			$userstatic->lastname = $obj->lastname;
 			$userstatic->firstname = $obj->firstname;
 			$userstatic->email = $obj->user_email;
-			$userstatic->statut = $obj->user_statut;	// deprecated
 			$userstatic->status = $obj->user_statut;
 			$userstatic->entity = $obj->entity;
 			$userstatic->photo = $obj->photo;
@@ -2438,7 +2474,6 @@ if ($num > 0) {
 							$userstatic->lastname = $val['lastname'];
 							$userstatic->firstname = $val['firstname'];
 							$userstatic->email = $val['email'];
-							$userstatic->statut = $val['statut'];	// deprecated
 							$userstatic->status = $val['statut'];
 							$userstatic->entity = $val['entity'];
 							$userstatic->photo = $val['photo'];
@@ -2588,14 +2623,14 @@ if ($num > 0) {
 			}
 			// Total margin rate
 			if (!empty($arrayfields['total_margin_rate']['checked'])) {
-				print '<td class="right nowrap">'.(($marginInfo['total_margin_rate'] == '') ? '' : price($marginInfo['total_margin_rate'], null, null, null, null, 2).'%').'</td>';
+				print '<td class="right nowrap">'.(($marginInfo['total_margin_rate'] == '') ? '' : price($marginInfo['total_margin_rate'], 0, '', 0, 0, 2).'%').'</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
 			}
 			// Total mark rate
 			if (!empty($arrayfields['total_mark_rate']['checked'])) {
-				print '<td class="right nowrap">'.(($marginInfo['total_mark_rate'] == '') ? '' : price($marginInfo['total_mark_rate'], null, null, null, null, 2).'%').'</td>';
+				print '<td class="right nowrap">'.(($marginInfo['total_mark_rate'] == '') ? '' : price($marginInfo['total_mark_rate'], 0, '', 0, 0, 2).'%').'</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
 					$totalarray['pos'][$totalarray['nbfield']] = 'total_mark_rate';
@@ -2612,7 +2647,7 @@ if ($num > 0) {
 			// Extra fields
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 			// Fields from hook
-			$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
+			$parameters = array('arrayfields' => $arrayfields, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
 			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 			// Date creation
@@ -2627,7 +2662,7 @@ if ($num > 0) {
 			// Date modification
 			if (!empty($arrayfields['f.tms']['checked'])) {
 				print '<td class="nowraponall center">';
-				print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
+				print dol_print_date($db->jdate($obj->date_modification), 'dayhour', 'tzuser');
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -2644,8 +2679,8 @@ if ($num > 0) {
 			}
 			// Note public
 			if (!empty($arrayfields['f.note_public']['checked'])) {
-				print '<td class="center">';
-				print dol_string_nohtmltag($obj->note_public);
+				print '<td class="sensiblehtmlcontent center">';
+				print dolPrintHTML($obj->note_public);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -2654,7 +2689,7 @@ if ($num > 0) {
 			// Note private
 			if (!empty($arrayfields['f.note_private']['checked'])) {
 				print '<td class="center">';
-				print dol_string_nohtmltag($obj->note_private);
+				print dolPrintHTML($obj->note_private);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -2731,7 +2766,7 @@ if ($num == 0) {
 
 $db->free($resql);
 
-$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
 $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 

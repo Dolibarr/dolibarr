@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
-# About page
-# Right
+# Permissions
 Permission23101 = Lexoni punën e planifikuar
 Permission23102 = Krijo/përditëso punë të planifikuar
 Permission23103 = Fshi punën e planifikuar
@@ -30,7 +29,8 @@ CronExecute=Niseni tani
 CronConfirmExecute=Je i sigurt që dëshiron t'i ekzekutosh këto punë të planifikuara tani?
 CronInfo=Moduli i punës së planifikuar ju lejon të planifikoni punë për t'i ekzekutuar ato automatikisht. Punët mund të fillojnë edhe me dorë.
 CronTask=Punë
-CronNone=Asnje
+CronNone=Next run of scheduled task
+CronNotYetRan=Never executed
 CronDtStart=Jo më parë
 CronDtEnd=Jo pas
 CronDtNextLaunch=Ekzekutimi i radhës
@@ -49,8 +49,8 @@ CronEach=Çdo
 JobFinished=Puna filloi dhe mbaroi
 Scheduled=I planifikuar
 #Page card
-CronAdd= Shto vende pune
-CronEvery=Kryeni punë secilin
+CronAdd=Shto vende pune
+CronEvery=Run job every
 CronObject=Shembull/Objekt për të krijuar
 CronArgs=Parametrat
 CronSaveSucess=Ruaje me sukses
@@ -63,8 +63,8 @@ CronStatusInactiveBtn=Çaktivizo
 CronTaskInactive=Kjo punë është e çaktivizuar (jo e planifikuar)
 CronId=Id
 CronClassFile=Emri i skedarit me klasën
-CronModuleHelp=Emri i drejtorisë së modulit Dolibarr (punoni edhe me modulin e jashtëm Dolibarr). <BR> Për shembull, për të thirrur metodën e marrjes së Dolibarr Produkt objekt /htdocs/<u>produkt<span class='notranslate'87z7z4b0cada </span>/class/product.class.php, vlera për modulin është<br><i>produkt</i>
-CronClassFileHelp=Rruga relative dhe emri i skedarit për t'u ngarkuar (rruga është në lidhje me direktorinë rrënjë të serverit të uebit). <BR> Për shembull, për të thirrur metodën e marrjes së Dolibarr Produkt objekt htdocs/product/class/<u>product.class.php<s class='notranslate'></u></span>, vlera për emrin e skedarit të klasës është<br><i>produkt/class .class.php</i>
+CronModuleHelp=Name of Dolibarr module directory (also work with external Dolibarr module). <BR> For example to call the fetch method of Dolibarr Product object /htdocs/<u>product</u>/class/product.class.php, the value for module is<br><i>product</i>
+CronClassFileHelp=The relative path and file name to load (path is relative to web server root directory). <BR> For example to call the fetch method of Dolibarr Product object htdocs/product/class/<u>product.class.php</u>, the value for class file name is<br><i>product/class/product.class.php</i>
 CronObjectHelp=Emri i objektit për t'u ngarkuar. <BR> Për shembull për të thirrur metodën e marrjes së Dolibarr Produkt objekt /htdocs/product/class/product.class.php, vlera për emrin e skedarit të klasës është <br><i>Produkt</i>
 CronMethodHelp=Metoda e objektit për të nisur. <BR> Për shembull, për të thirrur metodën e marrjes së Dolibarr Produkt objekt /htdocs/product/class/product.class.php, vlera për metodën është  <br><i>marr</i>
 CronArgsHelp=Argumentet e metodës. <BR> Për shembull, për të thirrur metodën e marrjes së Dolibarr Produkt objekt /htdocs/product/class/product.class.php, vlera për parametrat mund të jetë <br><i>0, ProductRef</i>

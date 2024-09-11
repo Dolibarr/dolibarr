@@ -1,0 +1,181 @@
+parameters:
+	tmpDir: ./.github/tmp
+	parallel:
+		# Commented some of the settings, reminding the defaults:
+		#   should adapt better to target machines
+		# jobSize: 8  # default is 20
+		processTimeout: 600.0
+		# maximumNumberOfProcesses: 20  # default is 32
+		# minimumNumberOfJobsPerProcess: 2  # default is 2
+		# buffer: 134217728 # 128 MB  # Not documented
+	customRulesetUsed: true
+	level: 5
+	fileExtensions:
+		- php
+	paths:
+		- htdocs
+		- scripts
+	excludePaths:
+		analyseAndScan:
+		- htdocs/custom/*
+		- htdocs/documents/*
+		- htdocs/install/doctemplates/*
+		- htdocs/langs/*
+		- htdocs/modulebuilder/template/test/*
+		- htdocs/support/*
+		analyse:
+		- htdocs/includes/*
+	checkAlwaysTrueCheckTypeFunctionCall: false
+	checkAlwaysTrueInstanceof: false
+	checkAlwaysTrueStrictComparison: false
+	checkClassCaseSensitivity: true
+	checkFunctionArgumentTypes: true
+	checkFunctionNameCase: true
+	checkArgumentsPassedByReference: false
+	checkMaybeUndefinedVariables: false
+	checkNullables: false
+	checkThisOnly: true
+	checkUnionTypes: false
+	checkExplicitMixedMissingReturn: true
+	reportMaybes: false
+	reportMaybesInMethodSignatures: false
+	reportStaticMethodSignatures: false
+	polluteScopeWithLoopInitialAssignments: true
+	polluteScopeWithAlwaysIterableForeach: true
+	reportMagicMethods: false
+	reportMagicProperties: false
+	treatPhpDocTypesAsCertain: false
+	ignoreErrors:
+		- '#Result of function fieldList#'
+		- '#Caught class Stripe#'
+		- '#Function llxHeaderVierge invoked with#'
+		- '#always exists and is not falsy#'
+		- '#always exists and is not nullable#'
+		- '#Call to function is_resource\(\) with#'
+		- '#is always fal#'
+		- '#is always true#'
+		- '#is_object\(\) with mixed will always evaluate to false#'
+		- '#Empty array passed to foreach#'
+		- '#in empty\(\) is not falsy#'
+		- '#in isset\(\) is not nullable#'
+		- '#(\$force_dolibarr_lib|\$dolibarr_main_db).*in empty\(\) is never defined.#'
+		- '#Sprain\\SwissQrBill\\#'
+		- '#Constructor of class .* has an unused parameter #'
+		- '#Dead catch - Exception is never thrown in the try block#'
+		- '#.*phan-var#'
+		- '#\$httpStatusCode of class Luracast\\Restler\\RestException constructor expects string, int given.#'
+		- '#expects \(callable#'
+		- '#expects bool\|string#'
+		- '#expects bool, int#'
+		- '#expects bool, string given.#'
+		- '#expects int\|string#'
+		- '#expects int\|null#'
+		- '#expects int<-2, 2>, bool given.#'
+		- '#expects int<0, 1>#'
+		- '#color.* expects int, string#'
+		- '#imap.* expects int, string#'
+		- '#convert.* expects int, string#'
+		- '#\(\) expects int, string#'
+		- '#run_sql expects int, string#'
+		- '#on array{url: mixed} in empty\(\) does not exist.#'
+		- '#dol_copy expects string, int given#'
+		- '#dol_getIdFromCode expects string, int given#'
+		- '#dol_strlen expects string, int given#'
+		- '#EvalMath::trigger\(\) expects string, int given#'
+		- '#get_next_value expects string, int given#'
+		- '#pdf_writeLinkedObjects expects string, int given#'
+		- '#dol_move expects string, int given#'
+		- '#expects int, float#'
+		- '#expects int, array\|string given.#'
+		- '#expects int<0, 1>, '''' given.#'
+		- '#expects float\|string#'
+		- '#expects float\|null#'
+		- '#expects float, string given.#'
+		- '#expects string\|null,#'
+		- '#expects string, \(float\|int\) given.#'
+		- '#expects string, array#'
+		- '#expects string, float#'
+		- '#expects string, true given.#'
+		- '#expects string, false given.#'
+		- '#expects string, null given.#'
+		- '#expects string, int<0, 10> given.#'
+		- '#expects string, DateTime given.#'
+		- '#expects string, bool\|mysqli_result\|resource given.#'
+		- '#expects array\{#'
+		- '#expects array<array\{#'
+		- '#expects array\|LDAP#'
+		- '#expects array<int#'
+		- '#expects array\|string#'
+		- '#expects array\|null#'
+		- '#expects array<string#'
+		- '#expects array, string given.#'
+		- '#expects array, null given.#'
+		- '#expects array<string>, null given.#'
+		- '#expects array<string>, string given.#'
+		- '#expects array<string>\|string#'
+		- '#expects resource#'
+		- '#expects resource, object given.#'
+		- '#expects object#'
+		- '#expects Adherent#'
+		- '#expects BOM#'
+		- '#expects FTP\\Connection#'
+		- '#expects LDAP\\Connection#'
+		- '#expects MultiCurrency#'
+		- '#expects Productlot#'
+		- '#expects Facture#'
+		- '#expects FactureFournisseur#'
+		- '#expects Paiement#'
+		- '#expects PgSql\\Result#'
+		- '#expects Societe#'
+		- '#expects ''''\|Societe#'
+		- '#expects SupplierProposal#'
+		- '#expects CommonObjectLine#'
+		- '#check_authentication expects#'
+		- '#colorHexToHsl expects#'
+	internalErrorsCountLimit: 50
+	cache:
+		nodesByFileCountMax: 512
+		nodesByStringCountMax: 512
+	reportUnmatchedIgnoredErrors: false
+	universalObjectCratesClasses:
+		- stdClass
+		- SimpleXMLElement
+	earlyTerminatingMethodCalls: []
+	dynamicConstantNames:
+		- ICONV_IMPL
+		- PHP_VERSION
+		- PHP_MAJOR_VERSION
+		- PHP_MINOR_VERSION
+		- PHP_RELEASE_VERSION
+		- PHP_VERSION_ID
+		- PHP_EXTRA_VERSION
+		- PHP_ZTS
+		- PHP_DEBUG
+		- PHP_MAXPATHLEN
+		- PHP_OS
+		- PHP_OS_FAMILY
+		- PHP_SAPI
+		- PHP_EOL
+		- PHP_INT_MAX
+		- PHP_INT_MIN
+		- PHP_INT_SIZE
+		- PHP_FLOAT_DIG
+		- PHP_FLOAT_EPSILON
+		- PHP_FLOAT_MIN
+		- PHP_FLOAT_MAX
+		- DEFAULT_INCLUDE_PATH
+		- PEAR_INSTALL_DIR
+		- PEAR_EXTENSION_DIR
+		- PHP_EXTENSION_DIR
+		- PHP_PREFIX
+		- PHP_BINDIR
+		- PHP_BINARY
+		- PHP_MANDIR
+		- PHP_LIBDIR
+		- PHP_DATADIR
+		- PHP_SYSCONFDIR
+		- PHP_LOCALSTATEDIR
+		- PHP_CONFIG_FILE_PATH
+		- PHP_CONFIG_FILE_SCAN_DIR
+		- PHP_SHLIB_SUFFIX
+		- PHP_FD_SETSIZE

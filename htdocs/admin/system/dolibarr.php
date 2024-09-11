@@ -43,7 +43,6 @@ $sfurl = '';
 $version = '0.0';
 
 
-
 /*
  *	Actions
  */
@@ -55,6 +54,7 @@ if ($action == 'getlastversion') {
 		if (LIBXML_VERSION < 20900) {
 			// Avoid load of external entities (security problem).
 			// Required only if LIBXML_VERSION < 20900
+			// @phan-suppress-next-line PhanDeprecatedFunctionInternal
 			libxml_disable_entity_loader(true);
 		}
 
@@ -74,25 +74,25 @@ $form = new Form($db);
 $help_url = '';
 $title = $langs->trans("InfoDolibarr");
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-admin page-system_dolibarr');
 
 print load_fiche_titre($title, '', 'title_setup');
 
 // Version
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
-print '<tr class="liste_titre"><td class="titlefieldcreate">'.$langs->trans("Version").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
-print '<tr class="oddeven"><td>'.$langs->trans("CurrentVersion").' ('.$langs->trans("Programs").')</td><td>'.DOL_VERSION;
+print '<tr class="liste_titre"><td class="titlefieldcreate">'.$langs->trans("Version").'</td><td></td></tr>'."\n";
+print '<tr class="oddeven"><td>'.$langs->trans("CurrentVersion").'<br><span class="opacitymedium">('.$langs->trans("Programs").')</span></td><td>'.DOL_VERSION;
 // If current version differs from last upgrade
 if (!getDolGlobalString('MAIN_VERSION_LAST_UPGRADE')) {
-	// Compare version with last install database version (upgrades never occured)
+	// Compare version with last install database version (upgrades never occurred)
 	if (DOL_VERSION != $conf->global->MAIN_VERSION_LAST_INSTALL) {
-		print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired", DOL_VERSION, $conf->global->MAIN_VERSION_LAST_INSTALL));
+		print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired", DOL_VERSION, getDolGlobalString('MAIN_VERSION_LAST_INSTALL')));
 	}
 } else {
 	// Compare version with last upgrade database version
 	if (DOL_VERSION != $conf->global->MAIN_VERSION_LAST_UPGRADE) {
-		print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired", DOL_VERSION, $conf->global->MAIN_VERSION_LAST_UPGRADE));
+		print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired", DOL_VERSION, getDolGlobalString('MAIN_VERSION_LAST_UPGRADE')));
 	}
 }
 
@@ -146,8 +146,8 @@ if (preg_match('/[a-z]+/i', $version)) {
 }
 
 print '</td></tr>'."\n";
-print '<tr class="oddeven"><td>'.$langs->trans("VersionLastUpgrade").' ('.$langs->trans("Database").')</td><td>'.getDolGlobalString('MAIN_VERSION_LAST_UPGRADE').'</td></tr>'."\n";
-print '<tr class="oddeven"><td>'.$langs->trans("VersionLastInstall").'</td><td>'.getDolGlobalString('MAIN_VERSION_LAST_INSTALL').'</td></tr>'."\n";
+print '<tr class="oddeven"><td>'.$langs->trans("VersionLastUpgrade").'<br><span class="opacitymedium">('.$langs->trans("Database").')</span></td><td>'.getDolGlobalString('MAIN_VERSION_LAST_UPGRADE').'</td></tr>'."\n";
+print '<tr class="oddeven"><td>'.$langs->trans("VersionLastInstall").'<br><span class="opacitymedium">('.$langs->trans("Database").')</span></td><td>'.getDolGlobalString('MAIN_VERSION_LAST_INSTALL').'</td></tr>'."\n";
 print '</table>';
 print '</div>';
 print '<br>';
@@ -155,17 +155,19 @@ print '<br>';
 // Session
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
-print '<tr class="liste_titre"><td class="titlefieldcreate">'.$langs->trans("Session").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
+print '<tr class="liste_titre"><td class="titlefieldcreate">'.$langs->trans("Session").'</td><td></td></tr>'."\n";
 print '<tr class="oddeven"><td>'.$langs->trans("SessionSavePath").'</td><td>'.session_save_path().'</td></tr>'."\n";
 print '<tr class="oddeven"><td>'.$langs->trans("SessionName").'</td><td>'.session_name().'</td></tr>'."\n";
 print '<tr class="oddeven"><td>'.$langs->trans("SessionId").'</td><td>'.session_id().'</td></tr>'."\n";
-print '<tr class="oddeven"><td>'.$langs->trans("CurrentSessionTimeOut").' (session.gc_maxlifetime)</td>';
+print '<tr class="oddeven"><td>';
+print $langs->trans("CurrentSessionTimeOut");
+print '</td>';
 print '<td>';
 print ini_get('session.gc_maxlifetime').' '.$langs->trans("seconds");
 print '<!-- session.gc_maxlifetime = '.ini_get("session.gc_maxlifetime").' -->'."\n";
 print '<!-- session.gc_probability = '.ini_get("session.gc_probability").' -->'."\n";
 print '<!-- session.gc_divisor = '.ini_get("session.gc_divisor").' -->'."\n";
-print $form->textwithpicto('', $langs->trans("SessionExplanation", ini_get("session.gc_probability"), ini_get("session.gc_divisor")));
+print $form->textwithpicto('', $langs->trans("Parameter").' <b>php.ini</b>: <b>session.gc_maxlifetime</b><br>'.$langs->trans("SessionExplanation", ini_get("session.gc_probability"), ini_get("session.gc_divisor")));
 print "</td></tr>\n";
 print '<tr class="oddeven"><td>'.$langs->trans("CurrentTheme").'</td><td>'.$conf->theme.'</td></tr>'."\n";
 print '<tr class="oddeven"><td>'.$langs->trans("CurrentMenuHandler").'</td><td>';
@@ -194,7 +196,7 @@ print '<br>';
 
 
 // Shmop
-if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02)) {
+if (getDolGlobalInt('MAIN_OPTIMIZE_SPEED') & 0x02) {
 	$shmoparray = dol_listshmop();
 
 	print '<div class="div-table-responsive-no-min">';
@@ -221,7 +223,7 @@ if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_S
 // Localisation
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
-print '<tr class="liste_titre"><td class="titlefieldcreate">'.$langs->trans("LocalisationDolibarrParameters").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
+print '<tr class="liste_titre"><td class="titlefieldcreate">'.$langs->trans("LocalisationDolibarrParameters").'</td><td></td></tr>'."\n";
 print '<tr class="oddeven"><td>'.$langs->trans("LanguageBrowserParameter", "HTTP_ACCEPT_LANGUAGE").'</td><td>'.$_SERVER["HTTP_ACCEPT_LANGUAGE"].'</td></tr>'."\n";
 print '<tr class="oddeven"><td>'.$langs->trans("CurrentUserLanguage").'</td><td>'.$langs->getDefaultLang().'</td></tr>'."\n";
 // Thousands
@@ -260,7 +262,7 @@ if ($conf->db->type == 'mysql' || $conf->db->type == 'mysqli') {
 }
 $txt = $langs->trans("OSTZ").' (variable system TZ): '.(!empty($_ENV["TZ"]) ? $_ENV["TZ"] : $langs->trans("NotDefined")).'<br>'."\n";
 $txt .= $langs->trans("PHPTZ").' (date_default_timezone_get() / php.ini date.timezone): '.(getServerTimeZoneString()." / ".(ini_get("date.timezone") ? ini_get("date.timezone") : $langs->trans("NotDefined")))."<br>\n"; // date.timezone must be in valued defined in http://fr3.php.net/manual/en/timezones.europe.php
-$txt .= $langs->trans("Dolibarr constant MAIN_SERVER_TZ").': '.(!getDolGlobalString('MAIN_SERVER_TZ') ? $langs->trans("NotDefined") : $conf->global->MAIN_SERVER_TZ);
+$txt .= $langs->trans("Dolibarr constant MAIN_SERVER_TZ").': '.getDolGlobalString('MAIN_SERVER_TZ', $langs->trans("NotDefined"));
 print '<tr class="oddeven"><td>'.$langs->trans("CurrentTimeZone").'</td><td>'; // Timezone server PHP
 $a = getServerTimeZoneInt('now');
 $b = getServerTimeZoneInt('winter');
@@ -270,7 +272,7 @@ $daylight = round($c - $b);
 $val = ($a >= 0 ? '+' : '').$a;
 $val .= ' ('.($a == 'unknown' ? 'unknown' : ($a >= 0 ? '+' : '').($a * 3600)).')';
 $val .= ' &nbsp; &nbsp; &nbsp; '.getServerTimeZoneString();
-$val .= ' &nbsp; &nbsp; &nbsp; '.$langs->trans("DaylingSavingTime").': '.(is_null($daylight) ? 'unknown' : ($a == $c ? yn($daylight) : yn(0).($daylight ? '  &nbsp; &nbsp; ('.$langs->trans('YesInSummer').')' : '')));
+$val .= ' &nbsp; &nbsp; &nbsp; '.$langs->trans("DaylingSavingTime").': '.((is_null($b) || is_null($c)) ? 'unknown' : ($a == $c ? yn($daylight) : yn(0).($daylight ? '  &nbsp; &nbsp; ('.$langs->trans('YesInSummer').')' : '')));
 print $form->textwithtooltip($val, $txt, 2, 1, img_info(''));
 print '</td></tr>'."\n"; // value defined in http://fr3.php.net/manual/en/timezones.europe.php
 print '<tr class="oddeven"><td>&nbsp; => '.$langs->trans("CurrentHour").'</td><td>'.dol_print_date(dol_now('gmt'), 'dayhour', 'tzserver').'</td></tr>'."\n";
@@ -305,7 +307,7 @@ if (empty($tmp)) {
 	$tmp = 'utf-8'; // By default for other
 }
 if (getDolGlobalString('MAIN_FILESYSTEM_ENCODING')) {
-	$tmp = $conf->global->MAIN_FILESYSTEM_ENCODING;
+	$tmp = getDolGlobalString('MAIN_FILESYSTEM_ENCODING');
 }
 print '<tr class="oddeven"><td>&nbsp; => '.$langs->trans("File encoding").'</td><td>'.$tmp.'</td></tr>'."\n"; // date.timezone must be in valued defined in http://fr3.php.net/manual/en/timezones.europe.php
 
@@ -378,8 +380,8 @@ print '<tr class="liste_titre">';
 print '<td class="titlefieldcreate">'.$langs->trans("Parameters").' ';
 print $langs->trans("ConfigurationFile").' ('.$conffiletoshowshort.')';
 print '</td>';
-print '<td>'.$langs->trans("Parameter").'</td>';
-print '<td>'.$langs->trans("Value").'</td>';
+print '<td>'.$langs->trans("Name").'</td>';
+print '<td></td>';
 print '</tr>'."\n";
 
 foreach ($configfileparameters as $key => $value) {
@@ -491,7 +493,7 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder">';
 print '<tr class="liste_titre">';
 print '<td class="titlefield">'.$langs->trans("Parameters").' '.$langs->trans("Database").'</td>';
-print '<td>'.$langs->trans("Value").'</td>';
+print '<td></td>';
 if (!isModEnabled('multicompany') || !$user->entity) {
 	print '<td class="center width="80px"">'.$langs->trans("Entity").'</td>'; // If superadmin or multicompany disabled
 }

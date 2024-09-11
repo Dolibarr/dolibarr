@@ -2,7 +2,6 @@
 NoErrorCommitIsDone=No hay error, nos comprometemos
 ErrorButCommitIsDone=Errores encontrados pero validamos a pesar de esto
 ErrorBadValueForParamNotAString=Mal valor para su parámetro. Se agrega generalmente cuando falta la traducción.
-ErrorRefAlreadyExists=Reference <b>%s</b> used for creation already exists.
 ErrorLoginAlreadyExists=El inicio de sesión %s ya existe.
 ErrorRecordNotFound=Registro no encontrado.
 ErrorRecordNotFoundShort=Extraviado
@@ -167,7 +166,6 @@ ErrorPhpMailDelivery=Compruebe que no utiliza un número demasiado alto de desti
 ErrorUserNotAssignedToTask=El usuario debe estar asignado a la tarea para poder ingresar el tiempo consumido.
 ErrorModuleFileSeemsToHaveAWrongFormat=El paquete del módulo parece tener un formato incorrecto.
 ErrorModuleFileSeemsToHaveAWrongFormat2=Debe existir al menos un directorio obligatorio en el zip del módulo: <strong> %s </strong> o <strong> %s </strong>
-ErrorFilenameDosNotMatchDolibarrPackageRules=El nombre del paquete del módulo ( <strong> %s </strong> ) no coincide con la sintaxis del nombre esperado: <strong> %s </strong>
 ErrorDuplicateTrigger=Error, nombre de activador duplicado %s. Ya cargado desde %s.
 ErrorNoWarehouseDefined=Error, no hay almacenes definidos.
 ErrorBadLinkSourceSetButBadValueForRef=El enlace que utiliza no es válido. Se define una 'fuente' para el pago, pero el valor de 'ref' no es válido.

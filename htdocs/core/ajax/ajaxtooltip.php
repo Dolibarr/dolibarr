@@ -34,6 +34,10 @@ if (!defined('NOREQUIREHTML')) {
 if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', '1');
 }
+if (!defined('NOHEADERNOFOOTER')) {
+	define('NOHEADERNOFOOTER', '1');
+}
+
 include '../../main.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
@@ -43,7 +47,7 @@ $objecttype = GETPOST('objecttype', 'aZ09arobase');	// 'module' or 'myobject@mym
 
 $params = array('fromajaxtooltip' => 1);
 if (GETPOSTISSET('infologin')) {
-	$params['infologin'] = GETPOST('infologin', 'int');
+	$params['infologin'] = GETPOSTINT('infologin');
 }
 if (GETPOSTISSET('option')) {
 	$params['option'] = GETPOST('option', 'restricthtml');
@@ -81,7 +85,7 @@ if (is_object($object)) {
 	if ($object->id > 0 || !empty($object->ref)) {
 		/** @var CommonObject $object */
 		$html = $object->getTooltipContent($params);
-	} elseif ($res == 0) {
+	} elseif ($id > 0) {
 		$html = $langs->trans('Deleted');
 	}
 	unset($object);

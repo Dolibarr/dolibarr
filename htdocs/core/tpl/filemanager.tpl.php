@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,7 +62,7 @@ if (!isset($section)) {
 // Confirm remove file (for non javascript users)
 if (($action == 'delete' || $action == 'file_manager_delete') && empty($conf->use_javascript_ajax)) {
 	// TODO Add website, pageid, filemanager if defined
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section.'&urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', '', 1);
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section.'&urlfile='.urlencode(GETPOST("urlfile")), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', '', 1);
 }
 
 // Start container of all panels
@@ -76,7 +77,7 @@ print '<div class="inline-block toolbarbutton centpercent">';
 
 // Toolbar
 if ($permtoadd) {
-	$websitekeyandpageid = (!empty($websitekey) ? '&website='.urlencode($websitekey) : '').(!empty($pageid) ? '&pageid='.urlencode($pageid) : '');
+	$websitekeyandpageid = (!empty($websitekey) ? '&website='.urlencode($websitekey) : '').(!empty($pageid) ? '&pageid='.urlencode((string) $pageid) : '');
 	print '<a id="acreatedir" href="'.DOL_URL_ROOT.'/ecm/dir_add_card.php?action=create&module='.urlencode($module).$websitekeyandpageid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?file_manager=1'.$websitekeyandpageid).'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans('ECMAddSection')).'">';
 	print img_picto('', 'folder-plus', '', false, 0, 0, '', 'size15x marginrightonly');
 	print '</a>';
@@ -149,7 +150,7 @@ $nameforformuserfile = 'formuserfileecm';
 
 print '<div class="inline-block valignmiddle floatright">';
 
-// For to attach a new file
+// Zone to attach a new file
 if ((!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_ECM_DISABLE_JS')) || !empty($section)) {
 	if ((empty($section) || $section == -1) && ($module != 'medias')) {
 		?>
@@ -195,15 +196,16 @@ if ($action == 'delete_section') {
 if ($action == 'confirmconvertimgwebp') {
 	$langs->load("ecm");
 
-	$section_dir=GETPOST('section_dir', 'alpha');
-	$section=GETPOST('section', 'alpha');
-	$file=GETPOST('filetoregenerate', 'alpha');
+	$section_dir = GETPOST('section_dir', 'alpha');
+	$section = GETPOST('section', 'alpha');
+	$file = GETPOST('filetoregenerate', 'alpha');
 	$form = new Form($db);
-	$formquestion['section_dir']=array('type'=>'hidden', 'value'=>$section_dir, 'name'=>'section_dir');
-	$formquestion['section']=array('type'=>'hidden', 'value'=>$section, 'name'=>'section');
-	$formquestion['filetoregenerate']=array('type'=>'hidden', 'value'=>$file, 'name'=>'filetoregenerate');
+	$formquestion = array();
+	$formquestion['section_dir'] = array('type' => 'hidden', 'value' => $section_dir, 'name' => 'section_dir');
+	$formquestion['section'] = array('type' => 'hidden', 'value' => $section, 'name' => 'section');
+	$formquestion['filetoregenerate'] = array('type' => 'hidden', 'value' => $file, 'name' => 'filetoregenerate');
 	if ($module == 'medias') {
-		$formquestion['website']=array('type'=>'hidden', 'value'=>$website->ref, 'name'=>'website');
+		$formquestion['website'] = array('type' => 'hidden', 'value' => $website->ref, 'name' => 'website');
 	}
 	$param = '';
 	if (!empty($sortfield)) {
@@ -289,7 +291,7 @@ if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg
 	if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_ECM_DISABLE_JS')) {
 		// Show the link to "Root"
 		if ($showroot) {
-			print '<tr class="nooddeven"><td><div style="padding-left: 5px; padding-right: 5px;"><a href="'.$_SERVER["PHP_SELF"].'?file_manager=1'.(!empty($websitekey) ? '&website='.urlencode($websitekey) : '').'&pageid='.urlencode($pageid).'">';
+			print '<tr class="oddeven nohover"><td><div style="padding-left: 5px; padding-right: 5px;"><a href="'.$_SERVER["PHP_SELF"].'?file_manager=1'.(!empty($websitekey) ? '&website='.urlencode($websitekey) : '').'&pageid='.urlencode((string) $pageid).'">';
 			if ($module == 'medias') {
 				print $langs->trans("RootOfMedias");
 			} else {
@@ -298,7 +300,7 @@ if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg
 			print '</a></div></td></tr>';
 		}
 
-		print '<tr class="nooddeven"><td>';
+		print '<tr class="oddeven nohover"><td>';
 
 		// Show filemanager tree (will be filled by a call of ajax /ecm/tpl/enablefiletreeajax.tpl.php, later, that executes ajaxdirtree.php)
 		print '<div id="filetree" class="ecmfiletree"></div>';
@@ -314,7 +316,7 @@ if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg
 
 		$_POST['modulepart'] = $module;
 		$_POST['openeddir'] = GETPOST('openeddir');
-		$_POST['dir'] = empty($_POST['dir']) ? '/' : $_POST['dir'];
+		$_POST['dir'] = empty($_POST['dir']) ? '/' : GETPOST('dir');
 
 		// Show filemanager tree (will be filled by direct include of ajaxdirtree.php in mode noajax, this will return all dir - all levels - to show)
 		print '<div id="filetree" class="ecmfiletree">';

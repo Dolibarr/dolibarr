@@ -15,6 +15,10 @@ ListOfBOMs=Материалдық вексельдер – БОМ
 ListOfManufacturingOrders=Өндірістік тапсырыстар
 NewBOM=Жаңа материалдық шот
 ProductBOMHelp=Осы БОМ көмегімен жасауға (немесе бөлшектеуге) арналған өнім. <br> Ескертпе: 'Өнімнің табиғаты' = 'Шикізат' қасиеті бар өнімдер бұл тізімде көрінбейді.
+CloneDefBomProduct=Өнімді өндіру үшін пайдалану үшін әдепкі BOM клондаңыз
+CloneOtherBomsProduct=Өнімді өндіру үшін пайдалануға болатын барлық БОМдарды клондаңыз
+BOMofRef=%s БОМ
+ErrorProductCloneBom=Қате: БОМ клондау сәтсіз аяқталды
 BOMsNumberingModules=БОМ нөмірлеу үлгілері
 BOMsModelModule=БОМ құжат үлгілері
 MOsNumberingModules=MO нөмірлеу шаблондары
@@ -100,6 +104,7 @@ WorkstationSetup = Жұмыс станцияларын баптау
 WorkstationSetupPage = Жұмыс станцияларын орнату беті
 WorkstationList=Жұмыс станцияларының тізімі
 WorkstationCreate=Жаңа жұмыс станциясын қосыңыз
+NewWorkstation=Жаңа жұмыс станциясы
 ConfirmEnableWorkstation=<b> %s </b> жұмыс станциясын қосқыңыз келетініне сенімдісіз бе?
 EnableAWorkstation=Жұмыс станциясын қосыңыз
 ConfirmDisableWorkstation=<b> %s </b> жұмыс станциясын шынымен өшіргіңіз келе ме?
@@ -130,10 +135,8 @@ Manufacturing=Өндіріс
 Disassemble=Бөлшектеу
 ProducedBy=Өндірілген
 QtyTot=Жалпы саны
-
+MOIsClosed=Өндірістік тапсырыс жабылды
 QtyCantBeSplit= Саны бөлуге болмайды
 NoRemainQtyToDispatch=Бөлінетін сан қалмады
-
 THMOperatorEstimatedHelp=Оператордың сағатына болжамды құны. Бұл жұмыс станциясы арқылы БОМ құнын бағалау үшін пайдаланылады.
 THMMachineEstimatedHelp=Машинаның бір сағаттағы болжамды құны. Бұл жұмыс станциясы арқылы БОМ құнын бағалау үшін пайдаланылады.
-

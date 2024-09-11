@@ -6,10 +6,12 @@
  * Copyright (C) 2014      Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2014      Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2016      Ferran Marcet		<fmarcet@2byte.es>
- * Copyright (C) 2018-2021 Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France		<frederic.france@free.fr>
  * Copyright (C) 2018-2022 Charlene Benke		<charlene@patas-monkey.com>
  * Copyright (C) 2019      Nicolas Zabouri		<info@inovea-conseil.com>
  * Copyright (C) 2021-2023 Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formorder.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
@@ -46,58 +49,59 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
+
 // Load translation files required by the page
 $langs->loadLangs(array("orders", "sendings", 'deliveries', 'companies', 'compta', 'bills', 'projects', 'suppliers', 'products'));
 
 // Get Parameters
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
-$show_files = GETPOST('show_files', 'int');
+$show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'supplierorderlist';
 $mode = GETPOST('mode', 'alpha');
 
 // Search Criteria
-$search_date_order_startday = GETPOST('search_date_order_startday', 'int');
-$search_date_order_startmonth = GETPOST('search_date_order_startmonth', 'int');
-$search_date_order_startyear = GETPOST('search_date_order_startyear', 'int');
-$search_date_order_endday = GETPOST('search_date_order_endday', 'int');
-$search_date_order_endmonth = GETPOST('search_date_order_endmonth', 'int');
-$search_date_order_endyear = GETPOST('search_date_order_endyear', 'int');
+$search_date_order_startday = GETPOSTINT('search_date_order_startday');
+$search_date_order_startmonth = GETPOSTINT('search_date_order_startmonth');
+$search_date_order_startyear = GETPOSTINT('search_date_order_startyear');
+$search_date_order_endday = GETPOSTINT('search_date_order_endday');
+$search_date_order_endmonth = GETPOSTINT('search_date_order_endmonth');
+$search_date_order_endyear = GETPOSTINT('search_date_order_endyear');
 $search_date_order_start = dol_mktime(0, 0, 0, $search_date_order_startmonth, $search_date_order_startday, $search_date_order_startyear);	// Use tzserver
 $search_date_order_end = dol_mktime(23, 59, 59, $search_date_order_endmonth, $search_date_order_endday, $search_date_order_endyear);
 
-$search_date_delivery_startday = GETPOST('search_date_delivery_startday', 'int');
-$search_date_delivery_startmonth = GETPOST('search_date_delivery_startmonth', 'int');
-$search_date_delivery_startyear = GETPOST('search_date_delivery_startyear', 'int');
-$search_date_delivery_endday = GETPOST('search_date_delivery_endday', 'int');
-$search_date_delivery_endmonth = GETPOST('search_date_delivery_endmonth', 'int');
-$search_date_delivery_endyear = GETPOST('search_date_delivery_endyear', 'int');
+$search_date_delivery_startday = GETPOSTINT('search_date_delivery_startday');
+$search_date_delivery_startmonth = GETPOSTINT('search_date_delivery_startmonth');
+$search_date_delivery_startyear = GETPOSTINT('search_date_delivery_startyear');
+$search_date_delivery_endday = GETPOSTINT('search_date_delivery_endday');
+$search_date_delivery_endmonth = GETPOSTINT('search_date_delivery_endmonth');
+$search_date_delivery_endyear = GETPOSTINT('search_date_delivery_endyear');
 $search_date_delivery_start = dol_mktime(0, 0, 0, $search_date_delivery_startmonth, $search_date_delivery_startday, $search_date_delivery_startyear);	// Use tzserver
 $search_date_delivery_end = dol_mktime(23, 59, 59, $search_date_delivery_endmonth, $search_date_delivery_endday, $search_date_delivery_endyear);
 
-$search_date_valid_startday = GETPOST('search_date_valid_startday', 'int');
-$search_date_valid_startmonth = GETPOST('search_date_valid_startmonth', 'int');
-$search_date_valid_startyear = GETPOST('search_date_valid_startyear', 'int');
-$search_date_valid_endday = GETPOST('search_date_valid_endday', 'int');
-$search_date_valid_endmonth = GETPOST('search_date_valid_endmonth', 'int');
-$search_date_valid_endyear = GETPOST('search_date_valid_endyear', 'int');
+$search_date_valid_startday = GETPOSTINT('search_date_valid_startday');
+$search_date_valid_startmonth = GETPOSTINT('search_date_valid_startmonth');
+$search_date_valid_startyear = GETPOSTINT('search_date_valid_startyear');
+$search_date_valid_endday = GETPOSTINT('search_date_valid_endday');
+$search_date_valid_endmonth = GETPOSTINT('search_date_valid_endmonth');
+$search_date_valid_endyear = GETPOSTINT('search_date_valid_endyear');
 $search_date_valid_start = dol_mktime(0, 0, 0, $search_date_valid_startmonth, $search_date_valid_startday, $search_date_valid_startyear);	// Use tzserver
 $search_date_valid_end = dol_mktime(23, 59, 59, $search_date_valid_endmonth, $search_date_valid_endday, $search_date_valid_endyear);
 
-$search_date_approve_startday = GETPOST('search_date_approve_startday', 'int');
-$search_date_approve_startmonth = GETPOST('search_date_approve_startmonth', 'int');
-$search_date_approve_startyear = GETPOST('search_date_approve_startyear', 'int');
-$search_date_approve_endday = GETPOST('search_date_approve_endday', 'int');
-$search_date_approve_endmonth = GETPOST('search_date_approve_endmonth', 'int');
-$search_date_approve_endyear = GETPOST('search_date_approve_endyear', 'int');
+$search_date_approve_startday = GETPOSTINT('search_date_approve_startday');
+$search_date_approve_startmonth = GETPOSTINT('search_date_approve_startmonth');
+$search_date_approve_startyear = GETPOSTINT('search_date_approve_startyear');
+$search_date_approve_endday = GETPOSTINT('search_date_approve_endday');
+$search_date_approve_endmonth = GETPOSTINT('search_date_approve_endmonth');
+$search_date_approve_endyear = GETPOSTINT('search_date_approve_endyear');
 $search_date_approve_start = dol_mktime(0, 0, 0, $search_date_approve_startmonth, $search_date_approve_startday, $search_date_approve_startyear);	// Use tzserver
 $search_date_approve_end = dol_mktime(23, 59, 59, $search_date_approve_endmonth, $search_date_approve_endday, $search_date_approve_endyear);
 
-$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 
-$search_product_category = GETPOST('search_product_category', 'int');
+$search_product_category = GETPOSTINT('search_product_category');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_refsupp = GETPOST('search_refsupp', 'alpha');
 $search_company = GETPOST('search_company', 'alpha');
@@ -105,15 +109,13 @@ $search_company_alias = GETPOST('search_company_alias', 'alpha');
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
 $search_state = GETPOST("search_state", 'alpha');
-$search_country = GETPOST("search_country", 'int');
-$search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
-$search_user = GETPOST('search_user', 'int');
+$search_country = GETPOST("search_country", 'aZ09');
+$search_type_thirdparty = GETPOST("search_type_thirdparty", 'intcomma');
+$search_user = GETPOST('search_user', 'intcomma');
 $search_request_author = GETPOST('search_request_author', 'alpha');
-$search_ht = GETPOST('search_ht', 'alpha');
-$search_ttc = GETPOST('search_ttc', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
-$socid = GETPOST('socid', 'int');
-$search_sale = GETPOST('search_sale', 'int');
+$socid = GETPOSTINT('socid');
+$search_sale = GETPOST('search_sale', 'intcomma');
 $search_total_ht = GETPOST('search_total_ht', 'alpha');
 $search_total_tva = GETPOST('search_total_tva', 'alpha');
 $search_total_ttc = GETPOST('search_total_ttc', 'alpha');
@@ -123,23 +125,27 @@ $search_multicurrency_montant_ht = GETPOST('search_multicurrency_montant_ht', 'a
 $search_multicurrency_montant_tva = GETPOST('search_multicurrency_montant_tva', 'alpha');
 $search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
-$search_billed = GETPOST('search_billed', 'int');
+$search_billed = GETPOST('search_billed', 'intcomma');
 $search_project_ref = GETPOST('search_project_ref', 'alpha');
 $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
 
 if (GETPOSTISARRAY('search_status')) {
-	$search_status = join(',', GETPOST('search_status', 'array:intcomma'));
+	$search_status = implode(',', GETPOST('search_status', 'array:intcomma'));
 } else {
 	$search_status = (GETPOST('search_status', 'intcomma') != '' ? GETPOST('search_status', 'intcomma') : GETPOST('statut', 'intcomma'));
+}
+$search_option = GETPOST('search_option', 'alpha');
+if ($search_option == 'late') {
+	$search_status = '1,2';
 }
 
 $diroutputmassaction = $conf->fournisseur->commande->dir_output.'/temp/massgeneration/'.$user->id;
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1 || !empty($search_btn) || !empty($search_remove_btn) || (empty($toselect) && $massaction === '0')) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -153,7 +159,7 @@ if (!$sortorder) {
 	$sortorder = 'DESC';
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new CommandeFournisseur($db);
 $hookmanager->initHooks(array('supplierorderlist'));
 $extrafields = new ExtraFields($db);
@@ -183,28 +189,28 @@ $checkedtypetiers = 0;
 
 // Definition of array of fields for columns
 $arrayfields = array(
-	'u.login'=>array('label'=>"AuthorRequest", 'enabled'=>1, 'position'=>41),
-	's.name_alias'=>array('label'=>"AliasNameShort", 'position'=>51, 'checked'=>0),
-	's.town'=>array('label'=>"Town", 'enabled'=>1, 'position'=>55, 'checked'=>1),
-	's.zip'=>array('label'=>"Zip", 'enabled'=>1, 'position'=>56, 'checked'=>1),
-	'state.nom'=>array('label'=>"StateShort", 'enabled'=>1, 'position'=>57),
-	'country.code_iso'=>array('label'=>"Country", 'enabled'=>1, 'position'=>58),
-	'typent.code'=>array('label'=>"ThirdPartyType", 'enabled'=>$checkedtypetiers, 'position'=>59),
-	'cf.total_localtax1'=>array('label'=>$langs->transcountry("AmountLT1", $mysoc->country_code), 'checked'=>0, 'enabled'=>($mysoc->localtax1_assuj == "1"), 'position'=>140),
-	'cf.total_localtax2'=>array('label'=>$langs->transcountry("AmountLT2", $mysoc->country_code), 'checked'=>0, 'enabled'=>($mysoc->localtax2_assuj == "1"), 'position'=>145),
-	'cf.note_public'=>array('label'=>'NotePublic', 'checked'=>0, 'enabled'=>(!getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES')), 'position'=>750),
-	'cf.note_private'=>array('label'=>'NotePrivate', 'checked'=>0, 'enabled'=>(!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES')), 'position'=>760),
+	'u.login' => array('label' => "AuthorRequest", 'enabled' => 1, 'position' => 41),
+	's.name_alias' => array('label' => "AliasNameShort", 'position' => 51, 'checked' => 0),
+	's.town' => array('label' => "Town", 'enabled' => 1, 'position' => 55, 'checked' => 1),
+	's.zip' => array('label' => "Zip", 'enabled' => 1, 'position' => 56, 'checked' => 1),
+	'state.nom' => array('label' => "StateShort", 'enabled' => 1, 'position' => 57),
+	'country.code_iso' => array('label' => "Country", 'enabled' => 1, 'position' => 58),
+	'typent.code' => array('label' => "ThirdPartyType", 'enabled' => $checkedtypetiers, 'position' => 59),
+	'cf.total_localtax1' => array('label' => $langs->transcountry("AmountLT1", $mysoc->country_code), 'checked' => 0, 'enabled' => ($mysoc->localtax1_assuj == "1"), 'position' => 140),
+	'cf.total_localtax2' => array('label' => $langs->transcountry("AmountLT2", $mysoc->country_code), 'checked' => 0, 'enabled' => ($mysoc->localtax2_assuj == "1"), 'position' => 145),
+	'cf.note_public' => array('label' => 'NotePublic', 'checked' => 0, 'enabled' => (!getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES')), 'position' => 750),
+	'cf.note_private' => array('label' => 'NotePrivate', 'checked' => 0, 'enabled' => (!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES')), 'position' => 760),
 );
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
-		$visible = (int) dol_eval($val['visible'], 1);
+		$visible = (int) dol_eval((string) $val['visible'], 1);
 		$arrayfields['cf.'.$key] = array(
-			'label'=>$val['label'],
-			'checked'=>(($visible < 0) ? 0 : 1),
-			'enabled'=>(abs($visible) != 3 && dol_eval($val['enabled'], 1)),
-			'position'=>$val['position'],
-			'help'=> isset($val['help']) ? $val['help'] : ''
+			'label' => $val['label'],
+			'checked' => (($visible < 0) ? 0 : 1),
+			'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
+			'position' => $val['position'],
+			'help' => isset($val['help']) ? $val['help'] : ''
 		);
 	}
 }
@@ -213,6 +219,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
+'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 $error = 0;
 
@@ -221,7 +228,7 @@ if (!$user->hasRight('societe', 'client', 'voir')) {
 }
 
 // Security check
-$orderid = GETPOST('orderid', 'int');
+$orderid = GETPOSTINT('orderid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -246,7 +253,7 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
-$parameters = array('socid'=>$socid, 'arrayfields'=>&$arrayfields);
+$parameters = array('socid' => $socid, 'arrayfields' => &$arrayfields);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -283,6 +290,7 @@ if (empty($reshook)) {
 		$search_multicurrency_montant_ttc = '';
 		$search_project_ref = '';
 		$search_status = '';
+		$search_option = '';
 		$search_date_order_startday = '';
 		$search_date_order_startmonth = '';
 		$search_date_order_startyear = '';
@@ -369,8 +377,8 @@ if (empty($reshook)) {
 	// Mass action to generate vendor bills
 	if ($massaction == 'confirm_createsupplierbills') {
 		$orders = GETPOST('toselect', 'array');
-		$createbills_onebythird = GETPOST('createbills_onebythird', 'int');
-		$validate_invoices = GETPOST('validate_invoices', 'int');
+		$createbills_onebythird = GETPOSTINT('createbills_onebythird');
+		$validate_invoices = GETPOSTINT('validate_invoices');
 
 		$TFact = array();
 		/** @var FactureFournisseur[] $TFactThird */
@@ -382,8 +390,8 @@ if (empty($reshook)) {
 
 		$db->begin();
 
-		$default_ref_supplier=dol_print_date(dol_now(), '%Y%m%d%H%M%S');
-
+		$default_ref_supplier = dol_print_date(dol_now(), '%Y%m%d%H%M%S');
+		$currentIndex = 0;
 		foreach ($orders as $id_order) {
 			$cmd = new CommandeFournisseur($db);
 			if ($cmd->fetch($id_order) <= 0) {
@@ -392,6 +400,7 @@ if (empty($reshook)) {
 
 			$objecttmp = new FactureFournisseur($db);
 			if (!empty($createbills_onebythird) && !empty($TFactThird[$cmd->socid])) {
+				$currentIndex++;
 				$objecttmp = $TFactThird[$cmd->socid]; // If option "one bill per third" is set, we use already created supplier invoice.
 			} else {
 				// Search if the VAT reverse-charge is activated by default in supplier card to resume the information
@@ -407,9 +416,9 @@ if (empty($reshook)) {
 				$objecttmp->fk_project = $cmd->fk_project;
 				$objecttmp->multicurrency_code = $cmd->multicurrency_code;
 				$objecttmp->ref_supplier = !empty($cmd->ref_supplier) ? $cmd->ref_supplier : $default_ref_supplier;
-				$default_ref_supplier+=1;
+				$default_ref_supplier += 1;
 
-				$datefacture = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+				$datefacture = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 				if (empty($datefacture)) {
 					$datefacture = dol_now();
 				}
@@ -428,6 +437,10 @@ if (empty($reshook)) {
 			}
 
 			if ($objecttmp->id > 0) {
+				if (empty($objecttmp->note_public)) {
+					$objecttmp->note_public =  $langs->transnoentities("Orders");
+				}
+
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."element_element (";
 				$sql .= "fk_source";
 				$sql .= ", sourcetype";
@@ -441,7 +454,7 @@ if (empty($reshook)) {
 				$sql .= ")";
 
 				if (!$db->query($sql)) {
-					$erorr++;
+					$error++;
 				}
 
 				if (!$error) {
@@ -457,9 +470,12 @@ if (empty($reshook)) {
 					for ($i = 0; $i < $num; $i++) {
 						$desc = ($lines[$i]->desc ? $lines[$i]->desc : $lines[$i]->libelle);
 						if ($lines[$i]->subprice < 0) {
+							require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
+
 							// Negative line, we create a discount line
 							$discount = new DiscountAbsolute($db);
 							$discount->fk_soc = $objecttmp->socid;
+							$discount->socid = $objecttmp->socid;
 							$discount->amount_ht = abs($lines[$i]->total_ht);
 							$discount->amount_tva = abs($lines[$i]->total_tva);
 							$discount->amount_ttc = abs($lines[$i]->total_ttc);
@@ -519,7 +535,7 @@ if (empty($reshook)) {
 								$lines[$i]->info_bits,
 								'HT',
 								$product_type,
-								// we dont use the rank from orderline because we may have lines from several orders
+								// we don't use the rank from orderline because we may have lines from several orders
 								-1,
 								false,
 								$lines[$i]->array_options,
@@ -545,6 +561,11 @@ if (empty($reshook)) {
 						}
 					}
 				}
+			}
+
+			if ($currentIndex <= (getDolGlobalInt("MAXREFONDOC") ? getDolGlobalInt("MAXREFONDOC") : 10)) {
+				$objecttmp->note_public = dol_concatdesc($objecttmp->note_public, $langs->transnoentities($cmd->ref).(empty($cmd->ref_supplier) ? '' : ' ('.$cmd->ref_supplier.')'));
+				$objecttmp->update($user);
 			}
 
 			$cmd->classifyBilled($user); // TODO Move this in workflow like done for sales orders
@@ -588,7 +609,7 @@ if (empty($reshook)) {
 
 			if ($nb_bills_created == 1) {
 				$texttoshow = $langs->trans('BillXCreated', '{s1}');
-				$texttoshow = str_replace('{s1}', '<a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?id='.urlencode($lastid).'">'.$lastref.'</a>', $texttoshow);
+				$texttoshow = str_replace('{s1}', '<a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?id='.urlencode((string) ($lastid)).'">'.$lastref.'</a>', $texttoshow);
 				setEventMessages($texttoshow, null, 'mesgs');
 			} else {
 				setEventMessages($langs->trans('BillCreated', $nb_bills_created), null, 'mesgs');
@@ -605,86 +626,89 @@ if (empty($reshook)) {
 			if ($limit > 0 && $limit != $conf->liste_limit) {
 				$param .= '&limit='.((int) $limit);
 			}
-			if ($sall) {
-				$param .= '&sall='.urlencode($sall);
+			if ($search_all) {
+				$param .= '&search_all='.urlencode($search_all);
 			}
 			if ($socid > 0) {
-				$param .= '&socid='.urlencode($socid);
+				$param .= '&socid='.urlencode((string) ($socid));
 			}
 			if ($search_status != '') {
 				$param .= '&search_status='.urlencode($search_status);
 			}
+			if ($search_option) {
+				$param .= '&search_option='.urlencode($search_option);
+			}
 			if ($search_date_order_startday) {
-				$param .= '&search_date_order_startday='.urlencode($search_date_order_startday);
+				$param .= '&search_date_order_startday='.urlencode((string) ($search_date_order_startday));
 			}
 			if ($search_date_order_startmonth) {
-				$param .= '&search_date_order_startmonth='.urlencode($search_date_order_startmonth);
+				$param .= '&search_date_order_startmonth='.urlencode((string) ($search_date_order_startmonth));
 			}
 			if ($search_date_order_startyear) {
-				$param .= '&search_date_order_startyear='.urlencode($search_date_order_startyear);
+				$param .= '&search_date_order_startyear='.urlencode((string) ($search_date_order_startyear));
 			}
 			if ($search_date_order_endday) {
-				$param .= '&search_date_order_endday='.urlencode($search_date_order_endday);
+				$param .= '&search_date_order_endday='.urlencode((string) ($search_date_order_endday));
 			}
 			if ($search_date_order_endmonth) {
-				$param .= '&search_date_order_endmonth='.urlencode($search_date_order_endmonth);
+				$param .= '&search_date_order_endmonth='.urlencode((string) ($search_date_order_endmonth));
 			}
 			if ($search_date_order_endyear) {
-				$param .= '&search_date_order_endyear='.urlencode($search_date_order_endyear);
+				$param .= '&search_date_order_endyear='.urlencode((string) ($search_date_order_endyear));
 			}
 			if ($search_date_delivery_startday) {
-				$param .= '&search_date_delivery_startday='.urlencode($search_date_delivery_startday);
+				$param .= '&search_date_delivery_startday='.urlencode((string) ($search_date_delivery_startday));
 			}
 			if ($search_date_delivery_startmonth) {
-				$param .= '&search_date_delivery_startmonth='.urlencode($search_date_delivery_startmonth);
+				$param .= '&search_date_delivery_startmonth='.urlencode((string) ($search_date_delivery_startmonth));
 			}
 			if ($search_date_delivery_startyear) {
-				$param .= '&search_date_delivery_startyear='.urlencode($search_date_delivery_startyear);
+				$param .= '&search_date_delivery_startyear='.urlencode((string) ($search_date_delivery_startyear));
 			}
 			if ($search_date_delivery_endday) {
-				$param .= '&search_date_delivery_endday='.urlencode($search_date_delivery_endday);
+				$param .= '&search_date_delivery_endday='.urlencode((string) ($search_date_delivery_endday));
 			}
 			if ($search_date_delivery_endmonth) {
-				$param .= '&search_date_delivery_endmonth='.urlencode($search_date_delivery_endmonth);
+				$param .= '&search_date_delivery_endmonth='.urlencode((string) ($search_date_delivery_endmonth));
 			}
 			if ($search_date_delivery_endyear) {
-				$param .= '&search_date_delivery_endyear='.urlencode($search_date_delivery_endyear);
+				$param .= '&search_date_delivery_endyear='.urlencode((string) ($search_date_delivery_endyear));
 			}
 			if ($search_date_valid_startday) {
-				$param .= '&search_date_valid_startday='.urlencode($search_date_valid_startday);
+				$param .= '&search_date_valid_startday='.urlencode((string) ($search_date_valid_startday));
 			}
 			if ($search_date_valid_startmonth) {
-				$param .= '&search_date_valid_startmonth='.urlencode($search_date_valid_startmonth);
+				$param .= '&search_date_valid_startmonth='.urlencode((string) ($search_date_valid_startmonth));
 			}
 			if ($search_date_valid_startyear) {
-				$param .= '&search_date_valid_startyear='.urlencode($search_date_valid_startyear);
+				$param .= '&search_date_valid_startyear='.urlencode((string) ($search_date_valid_startyear));
 			}
 			if ($search_date_valid_endday) {
-				$param .= '&search_date_valid_endday='.urlencode($search_date_valid_endday);
+				$param .= '&search_date_valid_endday='.urlencode((string) ($search_date_valid_endday));
 			}
 			if ($search_date_valid_endmonth) {
-				$param .= '&search_date_valid_endmonth='.urlencode($search_date_valid_endmonth);
+				$param .= '&search_date_valid_endmonth='.urlencode((string) ($search_date_valid_endmonth));
 			}
 			if ($search_date_valid_endyear) {
-				$param .= '&search_date_valid_endyear='.urlencode($search_date_valid_endyear);
+				$param .= '&search_date_valid_endyear='.urlencode((string) ($search_date_valid_endyear));
 			}
 			if ($search_date_approve_startday) {
-				$param .= '&search_date_approve_startday='.urlencode($search_date_approve_startday);
+				$param .= '&search_date_approve_startday='.urlencode((string) ($search_date_approve_startday));
 			}
 			if ($search_date_approve_startmonth) {
-				$param .= '&search_date_approve_startmonth='.urlencode($search_date_approve_startmonth);
+				$param .= '&search_date_approve_startmonth='.urlencode((string) ($search_date_approve_startmonth));
 			}
 			if ($search_date_approve_startyear) {
-				$param .= '&search_date_approve_startyear='.urlencode($search_date_approve_startyear);
+				$param .= '&search_date_approve_startyear='.urlencode((string) ($search_date_approve_startyear));
 			}
 			if ($search_date_approve_endday) {
-				$param .= '&search_date_approve_endday='.urlencode($search_date_approve_endday);
+				$param .= '&search_date_approve_endday='.urlencode((string) ($search_date_approve_endday));
 			}
 			if ($search_date_approve_endmonth) {
-				$param .= '&search_date_approve_endmonth='.urlencode($search_date_approve_endmonth);
+				$param .= '&search_date_approve_endmonth='.urlencode((string) ($search_date_approve_endmonth));
 			}
 			if ($search_date_approve_endyear) {
-				$param .= '&search_date_approve_endyear='.urlencode($search_date_approve_endyear);
+				$param .= '&search_date_approve_endyear='.urlencode((string) ($search_date_approve_endyear));
 			}
 			if ($search_ref) {
 				$param .= '&search_ref='.urlencode($search_ref);
@@ -697,7 +721,7 @@ if (empty($reshook)) {
 			}
 			//if ($search_ref_customer)	$param .= '&search_ref_customer='.urlencode($search_ref_customer);
 			if ($search_user > 0) {
-				$param .= '&search_user='.urlencode($search_user);
+				$param .= '&search_user='.urlencode((string) ($search_user));
 			}
 			if ($search_sale > 0) {
 				$param .= '&search_sale='.urlencode($search_sale);
@@ -715,7 +739,7 @@ if (empty($reshook)) {
 				$param .= "&search_project_ref=".urlencode($search_project_ref);
 			}
 			if ($show_files) {
-				$param .= '&show_files='.urlencode($show_files);
+				$param .= '&show_files='.urlencode((string) ($show_files));
 			}
 			if ($optioncss != '') {
 				$param .= '&optioncss='.urlencode($optioncss);
@@ -729,8 +753,8 @@ if (empty($reshook)) {
 		} else {
 			$db->rollback();
 			$action = 'create';
-			$_GET["origin"] = $_POST["origin"];
-			$_GET["originid"] = $_POST["originid"];
+			$_GET["origin"] = $_POST["origin"];		// Keep this ?
+			$_GET["originid"] = $_POST["originid"];	// Keep this ?
 			setEventMessages("Error", null, 'errors');
 			$error++;
 		}
@@ -778,7 +802,7 @@ $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 
 $sql = 'SELECT';
-if ($sall) {
+if ($search_all) {
 	$sql = 'SELECT DISTINCT';
 }
 $sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.email,';
@@ -787,7 +811,7 @@ $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= " cf.rowid, cf.ref, cf.ref_supplier, cf.fk_statut, cf.billed, cf.total_ht, cf.total_tva, cf.total_ttc, cf.fk_user_author, cf.date_commande as date_commande, cf.date_livraison as delivery_date, cf.date_valid, cf.date_approve,";
 $sql .= ' cf.localtax1 as total_localtax1, cf.localtax2 as total_localtax2,';
 $sql .= ' cf.fk_multicurrency, cf.multicurrency_code, cf.multicurrency_tx, cf.multicurrency_total_ht, cf.multicurrency_total_tva, cf.multicurrency_total_ttc,';
-$sql .= ' cf.date_creation as date_creation, cf.tms as date_update,';
+$sql .= ' cf.date_creation as date_creation, cf.tms as date_modification,';
 $sql .= ' cf.note_public, cf.note_private,';
 $sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_title,";
 $sql .= " u.firstname, u.lastname, u.photo, u.login, u.email as user_email, u.statut as user_status";
@@ -812,7 +836,7 @@ $sql .= ", ".MAIN_DB_PREFIX."commande_fournisseur as cf";
 if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (cf.rowid = ef.fk_object)";
 }
-if ($sall) {
+if ($search_all) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'commande_fournisseurdet as pd ON cf.rowid=pd.fk_commande';
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON cf.fk_user_author = u.rowid";
@@ -831,8 +855,8 @@ if ($search_ref) {
 if ($search_refsupp) {
 	$sql .= natural_search("cf.ref_supplier", $search_refsupp);
 }
-if ($sall) {
-	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
+if ($search_all) {
+	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
 if (empty($arrayfields['s.name_alias']['checked']) && $search_company) {
 	$sql .= natural_search(array("s.nom", "s.name_alias"), $search_company);
@@ -856,6 +880,9 @@ if (GETPOST('statut', 'intcomma') !== '') {
 }
 if ($search_status != '' && $search_status != '-1') {
 	$sql .= " AND cf.fk_statut IN (".$db->sanitize($db->escape($search_status)).")";
+}
+if ($search_option == 'late') {
+	$sql .= " AND cf.date_commande < '".$db->idate(dol_now() - $conf->order->fournisseur->warning_delay)."'";
 }
 if ($search_date_order_start) {
 	$sql .= " AND cf.date_commande >= '".$db->idate($search_date_order_start)."'";
@@ -1013,14 +1040,14 @@ if ($resql) {
 
 	$arrayofselected = is_array($toselect) ? $toselect : array();
 
-	if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $sall) {
+	if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all) {
 		$obj = $db->fetch_object($resql);
 		$id = $obj->rowid;
 		header("Location: ".DOL_URL_ROOT.'/fourn/commande/card.php?id='.$id);
 		exit;
 	}
 
-	llxHeader('', $title, $help_url);
+	llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-supplier-order page-list');
 
 	$param = '';
 	if (!empty($mode)) {
@@ -1032,86 +1059,86 @@ if ($resql) {
 	if ($limit > 0 && $limit != $conf->liste_limit) {
 		$param .= '&limit='.((int) $limit);
 	}
-	if ($sall) {
-		$param .= '&sall='.urlencode($sall);
+	if ($search_all) {
+		$param .= '&search_all='.urlencode($search_all);
 	}
 	if ($socid > 0) {
-		$param .= '&socid='.urlencode($socid);
+		$param .= '&socid='.urlencode((string) ($socid));
 	}
-	if ($sall) {
-		$param .= "&search_all=".urlencode($sall);
+	if ($search_all) {
+		$param .= "&search_all=".urlencode($search_all);
 	}
 	if ($search_date_order_startday) {
-		$param .= '&search_date_order_startday='.urlencode($search_date_order_startday);
+		$param .= '&search_date_order_startday='.urlencode((string) ($search_date_order_startday));
 	}
 	if ($search_date_order_startmonth) {
-		$param .= '&search_date_order_startmonth='.urlencode($search_date_order_startmonth);
+		$param .= '&search_date_order_startmonth='.urlencode((string) ($search_date_order_startmonth));
 	}
 	if ($search_date_order_startyear) {
-		$param .= '&search_date_order_startyear='.urlencode($search_date_order_startyear);
+		$param .= '&search_date_order_startyear='.urlencode((string) ($search_date_order_startyear));
 	}
 	if ($search_date_order_endday) {
-		$param .= '&search_date_order_endday='.urlencode($search_date_order_endday);
+		$param .= '&search_date_order_endday='.urlencode((string) ($search_date_order_endday));
 	}
 	if ($search_date_order_endmonth) {
-		$param .= '&search_date_order_endmonth='.urlencode($search_date_order_endmonth);
+		$param .= '&search_date_order_endmonth='.urlencode((string) ($search_date_order_endmonth));
 	}
 	if ($search_date_order_endyear) {
-		$param .= '&search_date_order_endyear='.urlencode($search_date_order_endyear);
+		$param .= '&search_date_order_endyear='.urlencode((string) ($search_date_order_endyear));
 	}
 	if ($search_date_delivery_startday) {
-		$param .= '&search_date_delivery_startday='.urlencode($search_date_delivery_startday);
+		$param .= '&search_date_delivery_startday='.urlencode((string) ($search_date_delivery_startday));
 	}
 	if ($search_date_delivery_startmonth) {
-		$param .= '&search_date_delivery_startmonth='.urlencode($search_date_delivery_startmonth);
+		$param .= '&search_date_delivery_startmonth='.urlencode((string) ($search_date_delivery_startmonth));
 	}
 	if ($search_date_delivery_startyear) {
-		$param .= '&search_date_delivery_startyear='.urlencode($search_date_delivery_startyear);
+		$param .= '&search_date_delivery_startyear='.urlencode((string) ($search_date_delivery_startyear));
 	}
 	if ($search_date_delivery_endday) {
-		$param .= '&search_date_delivery_endday='.urlencode($search_date_delivery_endday);
+		$param .= '&search_date_delivery_endday='.urlencode((string) ($search_date_delivery_endday));
 	}
 	if ($search_date_delivery_endmonth) {
-		$param .= '&search_date_delivery_endmonth='.urlencode($search_date_delivery_endmonth);
+		$param .= '&search_date_delivery_endmonth='.urlencode((string) ($search_date_delivery_endmonth));
 	}
 	if ($search_date_delivery_endyear) {
-		$param .= '&search_date_delivery_endyear='.urlencode($search_date_delivery_endyear);
+		$param .= '&search_date_delivery_endyear='.urlencode((string) ($search_date_delivery_endyear));
 	}
 	if ($search_date_valid_startday) {
-		$param .= '&search_date_valid_startday='.urlencode($search_date_valid_startday);
+		$param .= '&search_date_valid_startday='.urlencode((string) ($search_date_valid_startday));
 	}
 	if ($search_date_valid_startmonth) {
-		$param .= '&search_date_valid_startmonth='.urlencode($search_date_valid_startmonth);
+		$param .= '&search_date_valid_startmonth='.urlencode((string) ($search_date_valid_startmonth));
 	}
 	if ($search_date_valid_startyear) {
-		$param .= '&search_date_valid_startyear='.urlencode($search_date_valid_startyear);
+		$param .= '&search_date_valid_startyear='.urlencode((string) ($search_date_valid_startyear));
 	}
 	if ($search_date_valid_endday) {
-		$param .= '&search_date_valid_endday='.urlencode($search_date_valid_endday);
+		$param .= '&search_date_valid_endday='.urlencode((string) ($search_date_valid_endday));
 	}
 	if ($search_date_valid_endmonth) {
-		$param .= '&search_date_valid_endmonth='.urlencode($search_date_valid_endmonth);
+		$param .= '&search_date_valid_endmonth='.urlencode((string) ($search_date_valid_endmonth));
 	}
 	if ($search_date_valid_endyear) {
-		$param .= '&search_date_valid_endyear='.urlencode($search_date_valid_endyear);
+		$param .= '&search_date_valid_endyear='.urlencode((string) ($search_date_valid_endyear));
 	}
 	if ($search_date_approve_startday) {
-		$param .= '&search_date_approve_startday='.urlencode($search_date_approve_startday);
+		$param .= '&search_date_approve_startday='.urlencode((string) ($search_date_approve_startday));
 	}
 	if ($search_date_approve_startmonth) {
-		$param .= '&search_date_approve_startmonth='.urlencode($search_date_approve_startmonth);
+		$param .= '&search_date_approve_startmonth='.urlencode((string) ($search_date_approve_startmonth));
 	}
 	if ($search_date_approve_startyear) {
-		$param .= '&search_date_approve_startyear='.urlencode($search_date_approve_startyear);
+		$param .= '&search_date_approve_startyear='.urlencode((string) ($search_date_approve_startyear));
 	}
 	if ($search_date_approve_endday) {
-		$param .= '&search_date_approve_endday='.urlencode($search_date_approve_endday);
+		$param .= '&search_date_approve_endday='.urlencode((string) ($search_date_approve_endday));
 	}
 	if ($search_date_approve_endmonth) {
-		$param .= '&search_date_approve_endmonth='.urlencode($search_date_approve_endmonth);
+		$param .= '&search_date_approve_endmonth='.urlencode((string) ($search_date_approve_endmonth));
 	}
 	if ($search_date_approve_endyear) {
-		$param .= '&search_date_approve_endyear='.urlencode($search_date_approve_endyear);
+		$param .= '&search_date_approve_endyear='.urlencode((string) ($search_date_approve_endyear));
 	}
 	if ($search_ref) {
 		$param .= '&search_ref='.urlencode($search_ref);
@@ -1123,7 +1150,7 @@ if ($resql) {
 		$param .= '&search_company_alias='.urlencode($search_company_alias);
 	}
 	if ($search_user > 0) {
-		$param .= '&search_user='.urlencode($search_user);
+		$param .= '&search_user='.urlencode((string) ($search_user));
 	}
 	if ($search_request_author) {
 		$param .= '&search_request_author='.urlencode($search_request_author);
@@ -1158,6 +1185,9 @@ if ($resql) {
 	if ($search_status != '' && $search_status != '-1') {
 		$param .= "&search_status=".urlencode($search_status);
 	}
+	if ($search_option) {
+		$param .= "&search_option=".urlencode($search_option);
+	}
 	if ($search_project_ref >= 0) {
 		$param .= "&search_project_ref=".urlencode($search_project_ref);
 	}
@@ -1165,13 +1195,13 @@ if ($resql) {
 		$param .= "&search_billed=".urlencode($search_billed);
 	}
 	if ($show_files) {
-		$param .= '&show_files='.urlencode($show_files);
+		$param .= '&show_files='.urlencode((string) ($show_files));
 	}
 	if ($optioncss != '') {
 		$param .= '&optioncss='.urlencode($optioncss);
 	}
 	if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
-		$param .= '&search_type_thirdparty='.urlencode($search_type_thirdparty);
+		$param .= '&search_type_thirdparty='.urlencode((string) ($search_type_thirdparty));
 	}
 
 	// Add $param from extra fields
@@ -1183,9 +1213,9 @@ if ($resql) {
 
 	// List of mass actions available
 	$arrayofmassactions = array(
-		'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
-		'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
-		'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
+		'generate_doc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
+		'builddoc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
+		'presend' => img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 	);
 
 	if ($permissiontovalidate) {
@@ -1197,7 +1227,7 @@ if ($resql) {
 	}
 
 	if ($user->hasRight('fournisseur', 'facture', 'creer') || $user->hasRight("supplier_invoice", "creer")) {
-		$arrayofmassactions['createbills'] = img_picto('', 'bill', 'class="pictofixedwidth"').$langs->trans("CreateInvoiceForThisSupplier");
+		$arrayofmassactions['createbills'] = img_picto('', 'supplier_invoice', 'class="pictofixedwidth"').$langs->trans("CreateInvoiceForThisSupplier");
 	}
 	if ($permissiontodelete) {
 		$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
@@ -1213,8 +1243,8 @@ if ($resql) {
 		$url .= '&backtopage='.urlencode(DOL_URL_ROOT.'/fourn/commande/list.php?socid='.((int) $socid));
 	}
 	$newcardbutton = '';
-	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
-	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
 	$newcardbutton .= dolGetButtonTitleSeparator();
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewSupplierOrderShort'), '', 'fa fa-plus-circle', $url, '', $permissiontoadd);
 
@@ -1254,7 +1284,7 @@ if ($resql) {
 		print $langs->trans('DateInvoice');
 		print '</td>';
 		print '<td>';
-		print $form->selectDate('', '', '', '', '', '', 1, 1);
+		print $form->selectDate('', '', 0, 0, 0, '', 1, 1);
 		print '</td>';
 		print '</tr>';
 		print '<tr>';
@@ -1283,11 +1313,11 @@ if ($resql) {
 		print '<br>';
 	}
 
-	if ($sall) {
+	if ($search_all) {
 		foreach ($fieldstosearchall as $key => $val) {
 			$fieldstosearchall[$key] = $langs->trans($val);
 		}
-		print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall).join(', ', $fieldstosearchall).'</div>';
+		print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>';
 	}
 
 	$moreforfilter = '';
@@ -1308,7 +1338,7 @@ if ($resql) {
 		$moreforfilter .= '</div>';
 	}
 	// If the user can view prospects other than his'
-	if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire') && ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire'))) {
+	if (isModEnabled('category') && $user->hasRight('categorie', 'lire') && ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire'))) {
 		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('IncludingProductWithTag');
@@ -1316,6 +1346,10 @@ if ($resql) {
 		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, 0, 'maxwidth300 widthcentpercentminusx', 1);
 		$moreforfilter .= '</div>';
 	}
+	// alert on late date
+	$moreforfilter .= '<div class="divsearchfield">';
+	$moreforfilter .= $langs->trans('Alert').' <input type="checkbox" name="search_option" value="late"'.($search_option == 'late' ? ' checked' : '').'>';
+	$moreforfilter .= '</div>';
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) {
@@ -1334,7 +1368,7 @@ if ($resql) {
 	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 
-	if (GETPOST('autoselectall', 'int')) {
+	if (GETPOSTINT('autoselectall')) {
 		$selectedfields .= '<script>';
 		$selectedfields .= '   $(document).ready(function() {';
 		$selectedfields .= '        console.log("Autoclick on checkforselects");';
@@ -1481,7 +1515,7 @@ if ($resql) {
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 	// Fields from hook
-	$parameters = array('arrayfields'=>$arrayfields);
+	$parameters = array('arrayfields' => $arrayfields);
 	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Date creation
@@ -1648,7 +1682,7 @@ if ($resql) {
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 	// Hook fields
-	$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+	$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	if (!empty($arrayfields['cf.date_creation']['checked'])) {
@@ -1740,13 +1774,13 @@ if ($resql) {
 			$thirdpartytmp->client = $obj->client;
 			$thirdpartytmp->fournisseur = $obj->fournisseur;
 			// Output Kanban
-			print $objectstatic->getKanbanView('', array('thirdparty'=>$thirdpartytmp->getNomUrl('supplier', 0, 0, -1), 'selected' => in_array($objectstatic->id, $arrayofselected)));
+			print $objectstatic->getKanbanView('', array('thirdparty' => $thirdpartytmp->getNomUrl('supplier', 0, 0, -1), 'selected' => in_array($objectstatic->id, $arrayofselected)));
 			if ($i == ($imaxinloop - 1)) {
 				print '</div>';
 				print '</td></tr>';
 			}
 		} else {
-			print '<tr class="oddeven">';
+			print '<tr class="oddeven '.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->billed == 1) ? 'opacitymedium' : '').'">';
 			// Action column
 			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 				print '<td class="nowrap center">';
@@ -1803,7 +1837,7 @@ if ($resql) {
 			$userstatic->login = $obj->login;
 			$userstatic->photo = $obj->photo;
 			$userstatic->email = $obj->user_email;
-			$userstatic->statut = $obj->user_status;
+			$userstatic->status = $obj->user_status;
 			if (!empty($arrayfields['u.login']['checked'])) {
 				print '<td class="tdoverflowmax150">';
 				if ($userstatic->id) {
@@ -1990,7 +2024,7 @@ if ($resql) {
 			// Extra fields
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 			// Fields from hook
-			$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
+			$parameters = array('arrayfields' => $arrayfields, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
 			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 			// Date creation
@@ -2005,7 +2039,7 @@ if ($resql) {
 			// Date modification
 			if (!empty($arrayfields['cf.tms']['checked'])) {
 				print '<td class="center nowraponall">';
-				print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
+				print dol_print_date($db->jdate($obj->date_modification), 'dayhour', 'tzuser');
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -2046,8 +2080,8 @@ if ($resql) {
 			}
 			// Note public
 			if (!empty($arrayfields['cf.note_public']['checked'])) {
-				print '<td class="center">';
-				print dol_string_nohtmltag($obj->note_public);
+				print '<td class="sensiblehtmlcontent center">';
+				print dolPrintHTML($obj->note_public);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -2056,8 +2090,8 @@ if ($resql) {
 
 			// Note private
 			if (!empty($arrayfields['cf.note_private']['checked'])) {
-				print '<td class="center">';
-				print dol_string_nohtmltag($obj->note_private);
+				print '<td class="sensiblehtmlcontent center">';
+				print dolPrintHTML($obj->note_private);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -2104,7 +2138,7 @@ if ($resql) {
 
 	$db->free($resql);
 
-	$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+	$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
 	$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 
