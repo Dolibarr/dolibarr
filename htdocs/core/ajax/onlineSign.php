@@ -910,7 +910,7 @@ if ($action == "importSignature") {
 				}
 			}
 			$user = new User($db);
-			$object->setSignedStatus($user, $object->SIGNED_STATUSES['STATUS_SIGNED_RECEIVER_ONLINE'], 0, 'SHIPPING_MODIFY');
+			$object->setSignedStatus($user, CommonSignedObject::$SIGNED_STATUSES['STATUS_SIGNED_RECEIVER_ONLINE'], 0, 'SHIPPING_MODIFY');
 		}
 	} else {
 		$error++;
