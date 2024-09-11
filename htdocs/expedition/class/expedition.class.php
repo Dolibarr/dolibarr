@@ -45,14 +45,17 @@ if (isModEnabled('order')) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionlinebatch.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonsignedobject.class.php';
 
 
 /**
  *	Class to manage shipments
+ * @property	array<int>	SIGNED_STATUSES
  */
 class Expedition extends CommonObject
 {
 	use CommonIncoterm;
+	use CommonSignedObject;
 
 	/**
 	 * @var string ID to identify managed object
@@ -258,19 +261,6 @@ class Expedition extends CommonObject
 	 * next status : closed
 	 */
 	const STATUS_SHIPMENT_IN_PROGRESS = 3;
-
-
-	/**
-	 * No signature
-	 */
-	const STATUS_NO_SIGNATURE    = 0;
-
-	/**
-	 * Signed status
-	 */
-	const STATUS_SIGNED = 1;
-
-
 
 	/**
 	 *	Constructor
@@ -1997,7 +1987,11 @@ class Expedition extends CommonObject
 			$statusType = 'status9';
 		}
 
-		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode);
+		$signed_label = ' (' . $this->getLibSignedStatus() . ')';
+		$status_label = $this->signed_status ? $labelStatus . $signed_label : $labelStatus;
+		$status_label_short = $this->signed_status ? $labelStatusShort . $signed_label : $labelStatusShort;
+
+		return dolGetStatus($status_label, $status_label_short, '', $statusType, $mode);
 	}
 
 	/**
