@@ -149,6 +149,7 @@ trait CommonSignedObject
 				if (!$error) {
 					$this->signed_status = $status;
 					$this->db->commit();
+					setEventMessages("Document Signed", null, 'warnings');
 					return 1;
 				} else {
 					$this->db->rollback();
