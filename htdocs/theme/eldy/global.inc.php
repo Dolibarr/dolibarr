@@ -4225,6 +4225,9 @@ table.liste tr, table.noborder tr, div.noborder form {
 table.liste th, table.noborder th, table.noborder tr.liste_titre td, table.noborder tr.box_titre td {
 	padding: 6px 10px 6px 12px;			/* t r b l */
 }
+table.tableforfield td, .tagtr.table-border-row .tagtd {
+	padding: 2px 4px 2px 10px;			/* t r b l */
+}
 table.liste td, table.noborder td, div.noborder form div, table.tableforservicepart1 td, table.tableforservicepart2 td {
 	padding: 6px 10px 6px 12px;			/* t r b l */
 	/* line-height: 22px; This create trouble on cell login on list of last events of a contract*/
