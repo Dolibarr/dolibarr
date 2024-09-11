@@ -872,15 +872,10 @@ class Notify
 								break;
 							case 'SHIPPING_MODIFY':
 								$link = '<a href="'.$urlwithroot.'/expedition/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
+								$context_info = array_key_exists('signature', $object->context) ? $object->getLibSignedStatus() : '';
 								$dir_output = $conf->expedition->dir_output."/sending/".get_exdir(0, 0, 0, 1, $object, 'shipment');
 								$object_type = 'shipping';
-								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextExpeditionModified", $link);
-								break;
-							case 'SHIPPING_MODIFY':
-								$link = '<a href="'.$urlwithroot.'/expedition/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
-								$dir_output = $conf->expedition->dir_output."/sending/".get_exdir(0, 0, 0, 1, $object, 'shipment');
-								$object_type = 'shipping';
-								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextExpeditionModified", $link);
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextExpeditionModified", $link, $context_info);
 								break;
 							case 'SHIPPING_VALIDATE':
 								$link = '<a href="'.$urlwithroot.'/expedition/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
@@ -1186,6 +1181,13 @@ class Notify
 						$mesg = $langs->transnoentitiesnoconv("Hello").",\n\n";
 						$mesg .= $langs->transnoentitiesnoconv("EMailTextSupplierOrderRefusedBy", $link, $user->getFullName($langs));
 						$mesg .= "\n\n".$langs->transnoentitiesnoconv("Sincerely").".\n\n";
+						break;
+					case 'SHIPPING_MODIFY':
+						$link = '<a href="'.$urlwithroot.'/expedition/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
+						$context_info = array_key_exists('signature', $object->context) ? $object->getLibSignedStatus() : '';
+						$dir_output = $conf->expedition->dir_output."/sending/".get_exdir(0, 0, 0, 1, $object, 'shipment');
+						$object_type = 'order_supplier';
+						$mesg = $langs->transnoentitiesnoconv("EMailTextExpeditionModified", $link, $context_info);
 						break;
 					case 'SHIPPING_VALIDATE':
 						$link = '<a href="'.$urlwithroot.'/expedition/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
