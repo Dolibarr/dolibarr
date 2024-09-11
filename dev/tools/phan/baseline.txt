@@ -22,6 +22,7 @@ return [
     // PhanTypeMismatchProperty : 210+ occurrences
     // PhanPluginUnknownArrayFunctionParamType : 170+ occurrences
     // PhanTypeMismatchArgumentNullableInternal : 120+ occurrences
+    // PhanTypeExpectedObjectPropAccess : 85+ occurrences
     // PhanPluginUnknownArrayPropertyType : 80+ occurrences
     // PhanPluginUndeclaredVariableIsset : 70+ occurrences
     // PhanPluginEmptyStatementIf : 65+ occurrences
