@@ -57,8 +57,16 @@ print '<tr class="oddeven"><td width="300">'.$langs->trans("DriverType").'</td><
 // @phan-suppress-next-line PhanTypeSuspiciousStringExpression  (user is defined in the stdClass)
 print '<tr class="oddeven"><td width="300">'.$langs->trans("User").'</td><td>'.$conf->db->user.'</td></tr>'."\n";
 print '<tr class="oddeven"><td width="300">'.$langs->trans("Password").'</td><td>'.preg_replace('/./i', '*', $dolibarr_main_db_pass).'</td></tr>'."\n";
-print '<tr class="oddeven"><td width="300">'.$langs->trans("DBStoringCharset").'</td><td>'.$db->getDefaultCharacterSetDatabase().'</td></tr>'."\n";
-print '<tr class="oddeven"><td width="300">'.$langs->trans("DBSortingCharset").'</td><td>'.$db->getDefaultCollationDatabase().'</td></tr>'."\n";
+print '<tr class="oddeven"><td width="300">'.$langs->trans("DBStoringCharset").'</td><td>'.$db->getDefaultCharacterSetDatabase();
+if ($db->type == 'mysqli') {
+	print ' '.$form->textwithpicto('', $langs->transnoentitiesnoconv("HelpMariaDBToGetPossibleValues", "SHOW CHARACTER SET"));
+}
+print '</td></tr>'."\n";
+print '<tr class="oddeven"><td width="300">'.$langs->trans("DBSortingCharset").'</td><td>'.$db->getDefaultCollationDatabase();
+if ($db->type == 'mysqli') {
+	print ' '.$form->textwithpicto('', $langs->transnoentitiesnoconv("HelpMariaDBToGetPossibleValues", "SHOW COLLATION"));
+}
+print '</td></tr>'."\n";
 print '</table>';
 print '</div>';
 
