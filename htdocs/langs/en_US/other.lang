@@ -77,6 +77,7 @@ Notify_FICHINTER_MODIFY=Intervention modified
 Notify_FICHINTER_CLOSE=Intervention closed
 Notify_FICHINTER_ADD_CONTACT=Added contact to Intervention
 Notify_FICHINTER_SENTBYMAIL=Intervention sent by mail
+Notify_SHIPPING_MODIFY=Shipping modified
 Notify_SHIPPING_VALIDATE=Shipping validated
 Notify_SHIPPING_SENTBYMAIL=Shipping sent by mail
 Notify_MEMBER_VALIDATE=Member validated
