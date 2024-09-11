@@ -14,6 +14,7 @@
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Lenin Rivas         	<lenin@leninrivas.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +51,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonsignedobject.class.php';
 
 /**
  *	Class to manage shipments
- * @property	array<int>	SIGNED_STATUSES
+ * @property	int				$signed_status
+ * @property	array<int>		$SIGNED_STATUSES
  */
 class Expedition extends CommonObject
 {
@@ -223,11 +225,6 @@ class Expedition extends CommonObject
 	public $multicurrency_total_ttc;
 
 	/**
-	 * @var int
-	 */
-	public $signed_status = 0;
-
-	/**
 	 * Draft status
 	 */
 	const STATUS_DRAFT = 0;
@@ -392,6 +389,7 @@ class Expedition extends CommonObject
 		$sql .= ", note_public";
 		$sql .= ", model_pdf";
 		$sql .= ", fk_incoterms, location_incoterms";
+		$sql .= ", signed_status";
 		$sql .= ") VALUES (";
 		$sql .= "'(PROV)'";
 		$sql .= ", ".((int) $conf->entity);
@@ -417,6 +415,7 @@ class Expedition extends CommonObject
 		$sql .= ", ".(!empty($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null");
 		$sql .= ", ".(int) $this->fk_incoterms;
 		$sql .= ", '".$this->db->escape($this->location_incoterms)."'";
+		$sql .= ", ".($this->signed_status);
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
