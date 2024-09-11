@@ -229,6 +229,7 @@ EMailTextSupplierOrderCanceledBy=Purchase order %s has been canceled by %s.
 EMailTextSupplierOrderValidatedBy=Purchase order %s has been recorded by %s.
 EMailTextSupplierOrderSubmittedBy=Purchase order %s has been submitted by %s.
 EMailTextSupplierOrderRefusedBy=Purchase order %s has been refused by %s.
+EMailTextExpeditionModified=Shipping %s has been validated. %s
 EMailTextExpeditionValidated=Shipping %s has been validated.
 EMailTextExpenseReportValidated=Expense report %s has been validated.
 EMailTextExpenseReportApproved=Expense report %s has been approved.
