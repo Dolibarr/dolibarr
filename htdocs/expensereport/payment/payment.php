@@ -166,8 +166,6 @@ if ($action == 'create' || $action == 'add_payment') {
 	$expensereport = new ExpenseReport($db);
 	$expensereport->fetch($id, $ref);
 
-//	$total = $expensereport->total_ttc;
-
 	// autofill remainder amount
 	if (!empty($conf->use_javascript_ajax)) {
 		print "\n".'<script type="text/javascript">';

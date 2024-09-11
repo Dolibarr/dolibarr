@@ -141,10 +141,12 @@ class PaymentExpenseReport extends CommonObject
 	 *  Create payment of expense report into database.
 	 *  Use this->amounts to have list of lines for the payment
 	 *
-	 *  @param      User		$user   User making payment
-	 *  @return     int     			Return integer <0 if KO, id of payment if OK
+	 * @param User $user User making payment
+	 * @param int $closepaidexpensereports true if you want to close paid expensereports
+	 * @return     int                Return integer <0 if KO, id of payment if OK
+	 * @throws Exception
 	 */
-	public function create($user, $closepaidexpensereports=0)
+	public function create($user, $closepaidexpensereports = 0)
 	{
 		$error = 0;
 
@@ -227,19 +229,15 @@ class PaymentExpenseReport extends CommonObject
 					dol_syslog(get_class($this).'::create Amount line '.$key.' insert paiement_facture', LOG_DEBUG);
 					$resql = $this->db->query($sql);
 					if ($resql) {
-						if(!empty($closepaidexpensereports)) {
+						if (!empty($closepaidexpensereports)) {
 							$exp = new ExpenseReport($this->db);
 							$exp->fetch($expid);
 							$paiements = $exp->getSumPayments();
-
 							$remaintopay = $exp->total_ttc - $paiements;
 							if (empty($remaintopay)) {
-
 								$exp->setPaid($exp->id, $user->id);
-
 							}
 						}
-
 					} else {
 						$error++;
 					}
@@ -270,7 +268,7 @@ class PaymentExpenseReport extends CommonObject
 	{
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
-//		$sql .= " t.fk_expensereport,";
+		//$sql .= " t.fk_expensereport,";
 		$sql .= " t.datec,";
 		$sql .= " t.tms,";
 		$sql .= " t.datep,";
@@ -339,9 +337,9 @@ class PaymentExpenseReport extends CommonObject
 
 		// Clean parameters
 
-//		if (isset($this->fk_expensereport)) {
-//			$this->fk_expensereport = (int) $this->fk_expensereport;
-//		}
+		//if (isset($this->fk_expensereport)) {
+		//	$this->fk_expensereport = (int) $this->fk_expensereport;
+		//}
 		if (isset($this->amount)) {
 			$this->amount = (float) $this->amount;
 		}
@@ -366,7 +364,7 @@ class PaymentExpenseReport extends CommonObject
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_expensereport SET";
-//		$sql .= " fk_expensereport=".(isset($this->fk_expensereport) ? $this->fk_expensereport : "null").",";
+		//$sql .= " fk_expensereport=".(isset($this->fk_expensereport) ? $this->fk_expensereport : "null").",";
 		$sql .= " datec=".(dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
 		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
 		$sql .= " datep=".(dol_strlen($this->datep) != 0 ? "'".$this->db->idate($this->datep)."'" : 'null').",";
@@ -434,21 +432,18 @@ class PaymentExpenseReport extends CommonObject
 				$error++;
 				$this->errors[] = $accline->error;
 			} else {
-
 				// Delete bank account lines linked to payment
 				$result = $accline->delete($user);
 				if ($result < 0) {
 					$error++;
 					$this->errors[] = $accline->error;
 				}
-
 			}
 		}
 
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_url";
 			$sql .= " WHERE type='payment_expensereport' AND url_id=".((int) $this->id);
-
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -463,7 +458,6 @@ class PaymentExpenseReport extends CommonObject
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql) {
-
 				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'payment_expensereport';
 				$sql .= " WHERE rowid = ".((int) $this->id);
 				dol_syslog($sql);
@@ -480,7 +474,7 @@ class PaymentExpenseReport extends CommonObject
 
 		// Commit or rollback
 		if ($error) {
-			if(!empty($this->db->lasterror)) $this->errors[] = $this->db->lasterror;
+			if (!empty($this->db->lasterror)) $this->errors[] = $this->db->lasterror;
 			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
@@ -675,7 +669,6 @@ class PaymentExpenseReport extends CommonObject
 							$fuser->fetch($exp->fk_user_author);
 
 							if (!in_array($fuser->id, $linkaddedforuser)) { // Not yet done for this thirdparty
-
 								$result = $acc->add_url_line(
 									$bank_line_id,
 									$fuser->id,
