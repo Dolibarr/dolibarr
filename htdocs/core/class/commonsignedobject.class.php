@@ -123,6 +123,9 @@ trait CommonSignedObject
 	 */
 	public function setSignedStatusCommon(User $user, int $status, int $notrigger = 0, string $triggercode = ''): int
 	{
+		global $langs;
+		$langs->loadLangs(array('commercial'));
+
 		$error = 0;
 
 		if ($this instanceof CommonObject) {
@@ -149,7 +152,7 @@ trait CommonSignedObject
 				if (!$error) {
 					$this->signed_status = $status;
 					$this->db->commit();
-					setEventMessages("Document Signed", null, 'warnings');
+					setEventMessages($langs->transnoentitiesnoconv('DocumentSigned'), null, 'warnings');
 					return 1;
 				} else {
 					$this->db->rollback();
