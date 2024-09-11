@@ -835,7 +835,7 @@ if ($action == "dosign" && empty($cancel)) {
 			print '<input type="submit" class="butAction small wraponsmartphone marginbottomonly marginleftonly marginrightonly reposition" value="'.$langs->trans("SignFichinter").'">';
 		}
 	} elseif ($source == 'expedition') {
-		if ($message == 'signed' || $object->signed_status == CommonSignedObject::$SIGNED_STATUSES['STATUS_SIGNED_SENDER']) {
+		if ($message == 'signed' || $object->signed_status == Expedition::$SIGNED_STATUSES['STATUS_SIGNED_SENDER']) {
 			print '<span class="ok">'.$langs->trans("ExpeditionSigned").'</span>';
 		} else {
 			print '<input type="submit" class="butAction small wraponsmartphone marginbottomonly marginleftonly marginrightonly reposition" value="'.$langs->trans("SignExpedition").'">';
