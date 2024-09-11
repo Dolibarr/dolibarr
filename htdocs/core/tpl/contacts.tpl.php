@@ -208,7 +208,7 @@ if ($permission) {
 
 // Prepare list
 
-// TODO: replace this with direct SQL string to use $db->sort($sortfield, $sortorder)
+// TODO: replace this with 1 single direct SQL (for both eyernal and external string to use $db->sort($sortfield, $sortorder)
 $list = array();
 foreach (array('internal', 'external') as $source) {
 	if (($object->element == 'shipping' || $object->element == 'reception') && is_object($objectsrc)) {
