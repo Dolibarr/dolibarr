@@ -2492,6 +2492,8 @@ class Societe extends CommonObject
 			if (preg_match('/\((.*)\)/', $vatrate, $reg)) {
 				$vat_src_code = $reg[1];
 				$vatrate = preg_replace('/\s*\(.*\)/', '', $vatrate); // Remove code into vatrate.
+			} else {
+				$vatrate = 0;
 			}
 
 			require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
