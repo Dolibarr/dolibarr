@@ -229,6 +229,9 @@ class Commande extends CommonOrder
 	 */
 	public $warehouse_id;
 
+	/**
+	 * @var array<string,string>  (Encoded as JSON in database)
+	 */
 	public $extraparams = array();
 
 	public $linked_objects = array();
