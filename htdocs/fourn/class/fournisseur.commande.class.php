@@ -261,6 +261,9 @@ class CommandeFournisseur extends CommonOrder
 
 	public $refuse_note;
 
+	/**
+	 * @var array<string,string>  (Encoded as JSON in database)
+	 */
 	public $extraparams = array();
 
 	/**

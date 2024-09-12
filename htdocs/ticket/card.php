@@ -249,7 +249,7 @@ if (empty($reshook)) {
 			$object->fk_soc = GETPOSTINT('socid');
 			$fk_user_assign = GETPOSTINT('fk_user_assign');
 			$object->fk_project = GETPOSTINT('projectid');
-			$object->fk_contract = GETPOSTINT('fk_contract');
+			$object->fk_contract = GETPOSTISSET('contractid') ? GETPOSTINT('contractid') : GETPOSTINT('contratid');
 
 			if ($fk_user_assign > 0) {
 				$object->fk_user_assign = $fk_user_assign;

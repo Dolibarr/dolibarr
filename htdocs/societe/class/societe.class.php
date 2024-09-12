@@ -862,6 +862,9 @@ class Societe extends CommonObject
 
 	// Fields loaded by fetchPartnerships()
 
+	/**
+	 * @var array<array<mixed>>
+	 */
 	public $partnerships = array();
 
 
@@ -2172,7 +2175,7 @@ class Societe extends CommonObject
 		// TODO Replace this with step by step search
 		// Then search on barcode if we have it (+ restriction on is_client and is_supplier)
 		// Then search on profids with a OR (+ restriction on is_client and is_supplier)
-		// Then search on email with a OR (+ restriction on is_client and is_supplier)
+		// Then search on email (+ restriction on is_client and is_supplier)
 		// Then search ref, ref_ext or alias with a OR (+ restriction on is_client and is_supplier)
 		$tmpthirdparty = new Societe($this->db);
 		$result = $tmpthirdparty->fetch($rowid, $ref, $ref_ext, $barcode, $idprof1, $idprof2, $idprof3, $idprof4, $idprof5, $idprof6, $email, $ref_alias, $is_client, $is_supplier);
