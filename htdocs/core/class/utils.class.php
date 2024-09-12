@@ -172,6 +172,7 @@ class Utils
 						$tmpcountdeleted = 0;
 
 						$result = dol_delete_dir_recursive($filesarray[$key]['fullname'], $startcount, 1, 0, $tmpcountdeleted);
+
 						$excluded = [
 							$conf->user->dir_temp,
 						];
