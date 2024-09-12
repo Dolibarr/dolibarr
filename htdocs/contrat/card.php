@@ -89,6 +89,7 @@ $hookmanager->initHooks(array('contractcard', 'globalcard'));
 
 $object = new Contrat($db);
 $extrafields = new ExtraFields($db);
+$ret = 0;
 
 // Load object
 if ($id > 0 || !empty($ref) && $action != 'add') {
@@ -1592,6 +1593,7 @@ if ($action == 'create') {
 			$sql .= " WHERE cd.rowid = ".((int) $object->lines[$cursorline - 1]->id);
 
 			$result = $db->query($sql);
+			$objp = null;
 			if ($result) {
 				$total = 0;
 
@@ -1950,7 +1952,7 @@ if ($action == 'create') {
 				print '<td><span class="valignmiddle hideonsmartphone">'.$langs->trans("ServiceStatus").':</span> '.$object->lines[$cursorline - 1]->getLibStatut(4).'</td>';
 				print '<td width="30" class="right">';
 				if ($user->socid == 0) {
-					if ($object->statut > 0 && $action != 'activateline' && $action != 'unactivateline') {
+					if ($object->statut > 0 && $action != 'activateline' && $action != 'unactivateline' && is_object($objp)) {
 						$tmpaction = 'activateline';
 						$tmpactionpicto = 'play';
 						$tmpactiontext = $langs->trans("Activate");
@@ -2006,7 +2008,7 @@ if ($action == 'create') {
 			}
 
 			// Form to activate line
-			if ($user->hasRight('contrat', 'activer') && $action == 'activateline' && $object->lines[$cursorline - 1]->id == GETPOSTINT('ligne')) {
+			if ($user->hasRight('contrat', 'activer') && $action == 'activateline' && $object->lines[$cursorline - 1]->id == GETPOSTINT('ligne') && is_object($objp)) {
 				print '<form name="active" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="confirm_active">';
@@ -2061,7 +2063,7 @@ if ($action == 'create') {
 				print '</form>';
 			}
 
-			if ($user->hasRight('contrat', 'activer') && $action == 'unactivateline' && $object->lines[$cursorline - 1]->id == GETPOSTINT('ligne')) {
+			if ($user->hasRight('contrat', 'activer') && $action == 'unactivateline' && $object->lines[$cursorline - 1]->id == GETPOSTINT('ligne') && is_object($objp)) {
 				/**
 				 * Disable a contract line
 				 */
@@ -2327,7 +2329,7 @@ if ($action == 'create') {
 
 
 			// Show links to link elements
-			$linktoelem = $form->showLinkToObjectBlock($object, null, array('contrat'));
+			$linktoelem = $form->showLinkToObjectBlock($object, array(), array('contrat'));
 			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 			// Show online signature link

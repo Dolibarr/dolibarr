@@ -229,6 +229,10 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
+$permissiontoread = 0;
+$permissiontodelete = 0;
+$permissiontoadd = 0;
+
 $parameters = array('socid' => isset($socid) ? $socid : null, 'arrayfields' => &$arrayfields);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
@@ -1238,12 +1242,15 @@ while ($i < $imaxinloop) {
 		if ($memberstatic->thirdparty->id > 0) {
 			$companyname = $memberstatic->thirdparty->name;
 			$companynametoshow = $memberstatic->thirdparty->getNomUrl(1);
+		} else {
+			$companyname = null;
+			$companynametoshow = null;
 		}
 	} else {
 		$companyname = $obj->company;
 		$companynametoshow = $obj->company;
 	}
-	$memberstatic->company = $companyname;
+	$memberstatic->company = (string) $companyname;
 
 	$object = $memberstatic;
 
