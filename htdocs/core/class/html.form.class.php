@@ -2670,7 +2670,7 @@ class Form
 			if ((int) $warehouseId>0) {
 				$urloption .= '&warehouseid=' . (int) $warehouseId;
 			}
-			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT . '/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 1, $ajaxoptions);
+			$out .= ajax_autocompleter((string) $selected, $htmlname, DOL_URL_ROOT . '/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 1, $ajaxoptions);
 
 			if (isModEnabled('variants') && is_array($selected_combinations)) {
 				// Code to automatically insert with javascript the select of attributes under the select of product
@@ -3367,7 +3367,7 @@ class Form
 		}
 		$labeltoshow .= ' - ' . dol_trunc($label, $maxlengtharticle);
 		if ($outorigin && getDolGlobalString('PRODUCT_SHOW_ORIGIN_IN_COMBO')) {
-			$labeltoshow .= ' (' . getCountry($outorigin, 1) . ')';
+			$labeltoshow .= ' (' . getCountry($outorigin, '1') . ')';
 		}
 
 		// Set $labltoshowhtml
@@ -3384,7 +3384,7 @@ class Form
 		}
 		$labeltoshowhtml .= ' - ' . dol_trunc($label, $maxlengtharticle);
 		if ($outorigin && getDolGlobalString('PRODUCT_SHOW_ORIGIN_IN_COMBO')) {
-			$labeltoshowhtml .= ' (' . getCountry($outorigin, 1) . ')';
+			$labeltoshowhtml .= ' (' . getCountry($outorigin, '1') . ')';
 		}
 
 		// Stock
@@ -5991,7 +5991,7 @@ class Form
 			print '<form method="post" action="' . $page . '">';
 			print '<input type="hidden" name="action" value="setavailability">';
 			print '<input type="hidden" name="token" value="' . newToken() . '">';
-			$this->selectAvailabilityDelay($selected, $htmlname, -1, $addempty);
+			$this->selectAvailabilityDelay($selected, $htmlname, '', $addempty);
 			print '<input type="submit" name="modify" class="button smallpaddingimp" value="' . $langs->trans("Modify") . '">';
 			print '<input type="submit" name="cancel" class="button smallpaddingimp" value="' . $langs->trans("Cancel") . '">';
 			print '</form>';
@@ -6022,7 +6022,7 @@ class Form
 			print '<form method="post" action="' . $page . '">';
 			print '<input type="hidden" name="action" value="setdemandreason">';
 			print '<input type="hidden" name="token" value="' . newToken() . '">';
-			$this->selectInputReason($selected, $htmlname, -1, $addempty);
+			$this->selectInputReason($selected, $htmlname, '-1', $addempty);
 			print '<input type="submit" class="button smallpaddingimp" value="' . $langs->trans("Modify") . '">';
 			print '</form>';
 		} else {
@@ -6344,7 +6344,7 @@ class Form
 					$newfilter .= ' AND (' . $filter . ')';
 				}
 				// output the combo of discounts
-				$nbqualifiedlines = $this->select_remises($selected, $htmlname, $newfilter, $socid, $maxvalue);
+				$nbqualifiedlines = $this->select_remises((string) $selected, $htmlname, $newfilter, $socid, $maxvalue);
 				if ($nbqualifiedlines > 0) {
 					print ' &nbsp; <input type="submit" class="button smallpaddingimp" value="' . dol_escape_htmltag($langs->trans("UseLine")) . '"';
 					if (!empty($discount_type) && $filter && $filter != "fk_invoice_supplier_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS PAID)%')") {
@@ -7801,18 +7801,18 @@ class Form
 	/**
 	 *  Return list of projects in Ajax if Ajax activated or go to selectTicketsList
 	 *
-	 * @param 	string 	$selected 				Preselected tickets
-	 * @param 	string 	$htmlname 				Name of HTML select field (must be unique in page).
-	 * @param 	string 	$filtertype				To add a filter
-	 * @param 	int 	$limit 					Limit on number of returned lines
-	 * @param 	int 	$status 				Ticket status
-	 * @param 	string 	$selected_input_value 	Value of preselected input text (for use with ajax)
+	 * @param 	string 		$selected 				Preselected tickets
+	 * @param 	string 		$htmlname 				Name of HTML select field (must be unique in page).
+	 * @param 	string 		$filtertype				To add a filter
+	 * @param 	int 		$limit 					Limit on number of returned lines
+	 * @param 	int 		$status 				Not used
+	 * @param 	string 		$selected_input_value 	Value of preselected input text (for use with ajax)
 	 * @param 	int<0,3>	$hidelabel 				Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
-	 * @param 	array<string,string|string[]>	$ajaxoptions 			Options for ajax_autocompleter
-	 * @param 	int 	$socid 					Thirdparty Id (to get also price dedicated to this customer)
-	 * @param 	string|int<0,1>	$showempty 		'' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
+	 * @param 	array<string,string|string[]>		$ajaxoptions 			Options for ajax_autocompleter
+	 * @param 	int 		$socid 					Thirdparty Id (to get also price dedicated to this customer)
+	 * @param 	string|int<0,1>	$showempty 			'' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
 	 * @param 	int<0,1> 	$forcecombo 			Force to use combo box
-	 * @param 	string 	$morecss 				Add more css on select
+	 * @param 	string 		$morecss 				Add more css on select
 	 * @param 	array<string,string> $selected_combinations 	Selected combinations. Format: array([attrid] => attrval, [...])
 	 * @param 	int<0,1>	$nooutput 				No print, return the output into a string
 	 * @return 	string
@@ -7867,20 +7867,20 @@ class Form
 	}
 
 	/**
-	 *    Return list of projects.
+	 *  Return list of projects.
 	 *  Called by selectProjects.
 	 *
-	 * @param string $selected Preselected project
-	 * @param string $htmlname Name of select html
-	 * @param string $filtertype Filter on project type
-	 * @param int $limit Limit on number of returned lines
-	 * @param string $filterkey Filter on project ref or subject
-	 * @param int $status Ticket status
-	 * @param int $outputmode 0=HTML select string, 1=Array
-	 * @param string|int<0,1> $showempty '' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
-	 * @param int $forcecombo Force to use combo box
-	 * @param string $morecss Add more css on select
-	 * @return     array|string                Array of keys for json or HTML component
+	 * @param 	string 		$selected 		Preselected project
+	 * @param 	string 		$htmlname 		Name of select html
+	 * @param 	string 		$filtertype 	Filter on project type
+	 * @param 	int 		$limit 			Limit on number of returned lines
+	 * @param 	string 		$filterkey	 	Filter on project ref or subject
+	 * @param 	int 		$status 		Not used
+	 * @param 	int 		$outputmode 	0=HTML select string, 1=Array
+	 * @param 	string|int<0,1> $showempty '' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
+	 * @param 	int 		$forcecombo 	Force to use combo box
+	 * @param 	string 		$morecss 		Add more css on select
+	 * @return  array|string                Array of keys for json or HTML component
 	 */
 	public function selectProjectsList($selected = '', $htmlname = 'projectid', $filtertype = '', $limit = 20, $filterkey = '', $status = 1, $outputmode = 0, $showempty = '1', $forcecombo = 0, $morecss = '')
 	{
@@ -7935,7 +7935,7 @@ class Form
 
 			if (!$forcecombo) {
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-				$out .= ajax_combobox($htmlname, $events, $conf->global->PROJECT_USE_SEARCH_TO_SELECT);
+				$out .= ajax_combobox($htmlname, $events, getDolGlobalInt('PROJECT_USE_SEARCH_TO_SELECT'));
 			}
 
 			$out .= '<select class="flat' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '" id="' . $htmlname . '">';
@@ -8281,7 +8281,24 @@ class Form
 	{
 		global $conf, $extrafields, $user;
 
-		//var_dump($objectdesc); debug_print_backtrace();
+		// Example of common usage for a link to a thirdparty
+
+		// We got this in a modulebuilder form of "MyObject" of module "mymodule".
+		// ->fields is array( ... "fk_soc" => array("type"=>"integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))" ...)
+		// $objectdesc = 'Societe'
+		// $objectfield = 'myobject@mymodule:fk_soc'  ('fk_soc' is code to retrieve myobject->fields['fk_soc'])
+
+		// We got this when showing an extrafields on resource that is a link to societe
+		// extrafields 'link_to_societe' of Resource is 'link' to 'Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))" ...)'
+		// $objectdesc = 'Societe'
+		// $objectfield = 'resource:options_link_to_societe'
+
+		// With old usage:
+		// $objectdesc = 'Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))'
+		// $objectfield = ''
+
+		//var_dump($objectdesc.' '.$objectfield);
+		//debug_print_backtrace();
 
 		$objectdescorig = $objectdesc;
 		$objecttmp = null;
@@ -8413,7 +8430,7 @@ class Form
 			$urloption = 'htmlname=' . urlencode($htmlname) . '&outjson=1&objectdesc=' . urlencode($objectdescorig) . '&objectfield='.urlencode($objectfield) . ($sortfield ? '&sortfield=' . urlencode($sortfield) : '');
 
 			// Activate the auto complete using ajax call.
-			$out .= ajax_autocompleter($preSelectedValue, $htmlname, $urlforajaxcall, $urloption, getDolGlobalInt($confkeyforautocompletemode), 0);
+			$out .= ajax_autocompleter((string) $preSelectedValue, $htmlname, $urlforajaxcall, $urloption, getDolGlobalInt($confkeyforautocompletemode), 0);
 			$out .= '<!-- force css to be higher than dialog popup --><style type="text/css">.ui-autocomplete { z-index: 1010; }</style>';
 			$out .= '<input type="text" class="' . $morecss . '"' . ($disabled ? ' disabled="disabled"' : '') . ' name="search_' . $htmlname . '" id="search_' . $htmlname . '" value="' . $selected_input_value . '"' . ($placeholder ? ' placeholder="' . dol_escape_htmltag($placeholder) . '"' : '') . ' />';
 		} else {
@@ -9364,7 +9381,7 @@ class Form
 
 		if (empty($reshook)) {
 			print '<!-- showLinkedObjectBlock -->';
-			print load_fiche_titre($langs->trans($title), $morehtmlright, '', 0, 0, 'showlinkedobjectblock');
+			print load_fiche_titre($langs->trans($title), $morehtmlright, '', 0, '', 'showlinkedobjectblock');
 
 
 			print '<div class="div-table-responsive-no-min">';

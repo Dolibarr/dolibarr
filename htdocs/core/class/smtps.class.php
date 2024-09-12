@@ -1599,7 +1599,7 @@ class SMTPs
 		$this->_msgContent[$strType]['dataText'] = $strContentAltText;
 
 		if ($this->getMD5flag()) {
-			$this->_msgContent[$strType]['md5'] = dol_hash($strContent, 3);
+			$this->_msgContent[$strType]['md5'] = dol_hash($strContent, '3');
 		}
 		//}
 	}
@@ -1779,7 +1779,7 @@ class SMTPs
 			$this->_msgContent['attachment'][$strFileName]['cid']      = $strCid;		// If defined, it means this attachment must be shown inline
 
 			if ($this->getMD5flag()) {
-				$this->_msgContent['attachment'][$strFileName]['md5'] = dol_hash($strContent, 3);
+				$this->_msgContent['attachment'][$strFileName]['md5'] = dol_hash($strContent, '3');
 			}
 		}
 	}
@@ -1806,7 +1806,7 @@ class SMTPs
 			$this->_msgContent['image'][$strImageName]['data']     = $strContent;
 
 			if ($this->getMD5flag()) {
-				$this->_msgContent['image'][$strImageName]['md5'] = dol_hash($strContent, 3);
+				$this->_msgContent['image'][$strImageName]['md5'] = dol_hash($strContent, '3');
 			}
 		}
 	}
@@ -1941,8 +1941,8 @@ class SMTPs
 	private function _setBoundary()
 	{
 		$this->_smtpsBoundary = "multipart_x.".time().".x_boundary";
-		$this->_smtpsRelatedBoundary = 'mul_'.dol_hash(uniqid("dolibarr2"), 3);
-		$this->_smtpsAlternativeBoundary = 'mul_'.dol_hash(uniqid("dolibarr3"), 3);
+		$this->_smtpsRelatedBoundary = 'mul_'.dol_hash(uniqid("dolibarr2"), '3');
+		$this->_smtpsAlternativeBoundary = 'mul_'.dol_hash(uniqid("dolibarr3"), '3');
 	}
 
 	/**

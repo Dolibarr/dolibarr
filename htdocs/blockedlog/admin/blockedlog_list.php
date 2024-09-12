@@ -560,7 +560,7 @@ if (is_array($blocks)) {
 			}
 
 			// ID
-			print '<td>'.dol_escape_htmltag($block->id).'</td>';
+			print '<td>'.dol_escape_htmltag((string) $block->id).'</td>';
 
 			// Date
 			print '<td class="nowraponall">'.dol_print_date($block->date_creation, 'dayhour').'</td>';

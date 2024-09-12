@@ -2,6 +2,7 @@
 /* Copyright (C) 2016 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2020 Josep Lluís Amador  <joseplluis@lliuretic.cat>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -479,8 +480,8 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 *   Show table for lines
 	 *
 	 *   @param		TCPDF		$pdf     		Object PDF
-	 *   @param		string		$tab_top		Top position of table
-	 *   @param		string		$tab_height		Height of table (rectangle)
+	 *   @param		int 		$tab_top		Top position of table
+	 *   @param		int 		$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @param		int			$hidetop		Hide top bar of array

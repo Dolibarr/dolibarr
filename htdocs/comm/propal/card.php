@@ -1318,7 +1318,7 @@ if (empty($reshook)) {
 							$tmptxt .= ' - ';
 						}
 						if (!empty($prod->country_code)) {
-							$tmptxt .= $outputlangs->transnoentitiesnoconv("CountryOrigin").': '.getCountry($prod->country_code, 0, $db, $outputlangs, 0);
+							$tmptxt .= $outputlangs->transnoentitiesnoconv("CountryOrigin").': '.getCountry($prod->country_code, '', $db, $outputlangs, 0);
 						}
 					} else {
 						if (!empty($prod->customcode)) {
@@ -1328,7 +1328,7 @@ if (empty($reshook)) {
 							$tmptxt .= ' - ';
 						}
 						if (!empty($prod->country_code)) {
-							$tmptxt .= $langs->transnoentitiesnoconv("CountryOrigin").': '.getCountry($prod->country_code, 0, $db, $langs, 0);
+							$tmptxt .= $langs->transnoentitiesnoconv("CountryOrigin").': '.getCountry($prod->country_code, '', $db, $langs, 0);
 						}
 					}
 					$tmptxt .= ')';
@@ -2593,7 +2593,7 @@ if ($action == 'create') {
 			$filtercreditnote = "fk_facture_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS RECEIVED)%')";
 		}
 
-		print '<tr><td class="titlefield">'.$langs->trans('Discounts').'</td><td>';
+		print '<tr><td>'.$langs->trans('Discounts').'</td><td>';
 
 		$absolute_discount = $soc->getAvailableDiscounts('', $filterabsolutediscount);
 		$absolute_creditnote = $soc->getAvailableDiscounts('', $filtercreditnote);
@@ -3067,6 +3067,7 @@ if ($action == 'create') {
 	 */
 
 	if ($action != 'presend') {
+		$numlines = count($object->lines);
 		print '<div class="tabsAction">';
 
 		$parameters = array();
@@ -3106,45 +3107,65 @@ if ($action == 'create') {
 					}
 				}
 
+				$arrayforbutaction = array();
+
 				// Create a sale order
-				if (isModEnabled('order') && $object->statut == Propal::STATUS_SIGNED) {
+				$arrayforbutaction[] = array('lang' => 'orders', 'enabled' => (isModEnabled('order') && $object->statut == Propal::STATUS_SIGNED), 'perm' => $usercancreateorder, 'label' => 'AddOrder', 'url' => '/commande/card.php?action=create&origin='.urlencode($object->element).'&originid='.((int) $object->id).'&socid='.((int) $object->socid));
+				/*if (isModEnabled('order') && $object->statut == Propal::STATUS_SIGNED) {
 					if ($usercancreateorder) {
 						print '<a class="butAction" href="'.DOL_URL_ROOT.'/commande/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddOrder").'</a>';
 					}
-				}
+				}*/
 
 				// Create a purchase order
 				if (getDolGlobalString('WORKFLOW_CAN_CREATE_PURCHASE_ORDER_FROM_PROPOSAL')) {
-					if ($object->statut == Propal::STATUS_SIGNED && isModEnabled("supplier_order")) {
+					$arrayforbutaction[] = array('lang' => 'orders', 'enabled' => ($object->statut == Propal::STATUS_SIGNED && isModEnabled("supplier_order")), 'perm' => $usercancreatepurchaseorder, 'label' => 'AddPurchaseOrder', 'url' => '/fourn/commande/card.php?action=create&origin='.urlencode($object->element).'&originid='.((int) $object->id).'&socid='.((int) $object->socid));
+					/*if ($object->statut == Propal::STATUS_SIGNED && isModEnabled("supplier_order")) {
 						if ($usercancreatepurchaseorder) {
 							print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddPurchaseOrder").'</a>';
 						}
-					}
+					}*/
 				}
 
 				// Create an intervention
-				if (isModEnabled("service") && isModEnabled('intervention') && $object->statut == Propal::STATUS_SIGNED) {
+				$arrayforbutaction[] = array('lang' => 'interventions', 'enabled' => (isModEnabled("service") && isModEnabled('intervention') && $object->statut == Propal::STATUS_SIGNED), 'perm' => $usercancreateintervention, 'label' => 'AddIntervention', 'url' => '/fichinter/card.php?action=create&origin='.urlencode($object->element).'&originid='.((int) $object->id).'&socid='.((int) $object->socid));
+				/*if (isModEnabled("service") && isModEnabled('intervention') && $object->statut == Propal::STATUS_SIGNED) {
 					if ($usercancreateintervention) {
 						$langs->load("interventions");
 						print '<a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddIntervention").'</a>';
 					}
-				}
+				}*/
 
 				// Create contract
-				if (isModEnabled('contract') && $object->statut == Propal::STATUS_SIGNED) {
+				$arrayforbutaction[] = array('lang' => 'contracts', 'enabled' => (isModEnabled('contract') && $object->statut == Propal::STATUS_SIGNED), 'perm' => $usercancreatecontract, 'label' => 'AddContract', 'url' => '/contrat/card.php?action=create&origin='.urlencode($object->element).'&originid='.((int) $object->id).'&socid='.((int) $object->socid));
+				/*if (isModEnabled('contract') && $object->statut == Propal::STATUS_SIGNED) {
 					$langs->load("contracts");
 
 					if ($usercancreatecontract) {
 						print '<a class="butAction" href="'.DOL_URL_ROOT.'/contrat/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans('AddContract').'</a>';
 					}
-				}
+				}*/
 
 				// Create an invoice and classify billed
 				if ($object->statut == Propal::STATUS_SIGNED && !getDolGlobalString('PROPOSAL_ARE_NOT_BILLABLE')) {
-					if (isModEnabled('invoice') && $usercancreateinvoice) {
+					$arrayforbutaction[] = array('lang' => 'invoice', 'enabled' => isModEnabled('invoice'), 'perm' => $usercancreateinvoice, 'label' => 'CreateBill', 'url' => '/compta/facture/card.php?action=create&origin='.urlencode($object->element).'&originid='.((int) $object->id).'&socid='.((int) $object->socid));
+					/*if (isModEnabled('invoice') && $usercancreateinvoice) {
 						print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
-					}
+					}*/
+				}
 
+				$actionButtonsParameters = [
+					"areDropdownButtons"	=> !getDolGlobalInt("MAIN_REMOVE_DROPDOWN_CREATE_BUTTONS_ON_ORDER"),
+					"backtopage" => $_SERVER["PHP_SELF"]."?id=".((int) $id)
+				];
+
+				if ($numlines > 0) {
+					print dolGetButtonAction('', $langs->trans("Create"), 'default', $arrayforbutaction, $object->id, 1, $actionButtonsParameters);
+				} else {
+					print dolGetButtonAction($langs->trans("ErrorObjectMustHaveLinesToBeValidated", $object->ref), $langs->trans("Create"), 'default', $arrayforbutaction, $object->id, 0, $actionButtonsParameters);
+				}
+
+				if ($object->statut == Propal::STATUS_SIGNED && !getDolGlobalString('PROPOSAL_ARE_NOT_BILLABLE')) {
 					$arrayofinvoiceforpropal = $object->getInvoiceArrayList();
 					if ((is_array($arrayofinvoiceforpropal) && count($arrayofinvoiceforpropal) > 0) || !getDolGlobalString('WORKFLOW_PROPAL_NEED_INVOICE_TO_BE_CLASSIFIED_BILLED')) {
 						if ($usercanclose) {

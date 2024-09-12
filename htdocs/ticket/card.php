@@ -189,7 +189,7 @@ if (empty($reshook)) {
 	}
 
 	if (($action == 'add' || ($action == 'update' && $object->status < Ticket::STATUS_CLOSED)) && $permissiontoadd) {
-		$ifErrorAction = ($action == 'add' ? 'create' : 'edit');
+		$ifErrorAction = ($action == 'add' ? 'create' : 'edit');	// Test on permission not required here
 		if ($action == 'add') {		// Test on permission already done
 			$object->track_id = null;
 		}
@@ -546,9 +546,9 @@ if (empty($reshook)) {
 			// prevent browser refresh from reopening ticket several times
 			if ($object->status == Ticket::STATUS_CLOSED || $object->status == Ticket::STATUS_CANCELED) {
 				if ($object->fk_user_assign != null) {
-					$res = $object->setStatut(Ticket::STATUS_ASSIGNED);
+					$res = $object->setStatut(Ticket::STATUS_ASSIGNED, null, '', 'TICKET_MODIFY');
 				} else {
-					$res = $object->setStatut(Ticket::STATUS_NOT_READ);
+					$res = $object->setStatut(Ticket::STATUS_NOT_READ, null, '', 'TICKET_MODIFY');
 				}
 				if ($res) {
 					$url = 'card.php?track_id=' . $object->track_id;
@@ -671,7 +671,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT . '/core/actions_sendmails.inc.php';
 
 	// Set $action to correct value for the case we used presend action to add a message
-	if (GETPOSTISSET('actionbis') && $action == 'presend') {
+	if (GETPOSTISSET('actionbis') && $action == 'presend') {	// Test on permission not required here
 		$action = 'presend_addmessage';
 	}
 }
@@ -1174,9 +1174,6 @@ if ($action == 'create' || $action == 'presend') {
 		print '</div><div class="fichehalfright">';
 
 
-
-
-
 		print '<form method="post" name="formticketproperties" action="'.$url_page_current.'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="change_property">';
@@ -1460,7 +1457,7 @@ if ($action == 'create' || $action == 'presend') {
 				}
 
 				// Close ticket if status is read
-				if (isset($object->status) && $object->status > 0 && $object->status < Ticket::STATUS_CLOSED && $user->hasRight('ticket', 'write')) {
+				if (isset($object->status) && $object->status >= 0 && $object->status < Ticket::STATUS_CLOSED && $user->hasRight('ticket', 'write')) {
 					print dolGetButtonAction('', $langs->trans('CloseTicket'), 'default', $_SERVER["PHP_SELF"].'?action=close&token='.newToken().'&track_id='.$object->track_id, '');
 				}
 

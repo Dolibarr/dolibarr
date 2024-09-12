@@ -38,12 +38,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contrat/class/contratligne.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonsignedobject.class.php';
 
 /**
  *	Class to manage contracts
  */
 class Contrat extends CommonObject
 {
+	use CommonSignedObject;
+
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -238,7 +241,7 @@ class Contrat extends CommonObject
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 35),
 		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'position' => 40),
 		'date_contrat' => array('type' => 'datetime', 'label' => 'Date contrat', 'enabled' => 1, 'visible' => -1, 'position' => 45),
-		'signed_status' => array('type' => 'smallint(6)', 'label' => 'SignedStatus', 'enabled' => 1, 'visible' => -1, 'position' => 50, 'arrayofkeyval' => array(0 => 'NoSignature', 1 => 'SignedSender', 2 => 'SignedReceiver', 9 => 'SignedAll')),
+		'signed_status' => array('type' => 'smallint(6)', 'label' => 'SignedStatus', 'enabled' => 1, 'visible' => -1, 'position' => 50, 'arrayofkeyval' => array(0 => 'NoSignature', 1 => 'SignedSender', 2 => 'SignedReceiver', 3 => 'SignedReceiverOnline', 9 => 'SignedAll')),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'enabled' => 'isModEnabled("societe")', 'visible' => -1, 'notnull' => 1, 'position' => 70),
 		'fk_projet' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Project', 'enabled' => "isModEnabled('project')", 'visible' => -1, 'position' => 75),
 		'fk_commercial_signature' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'SaleRepresentative Signature', 'enabled' => 1, 'visible' => -1, 'position' => 80),
@@ -259,26 +262,16 @@ class Contrat extends CommonObject
 	const STATUS_VALIDATED = 1;
 	const STATUS_CLOSED = 2;
 
-	/*
-	 * No signature
+	/**
+	 * Signed statuses dictionary. Label used as key for string localizations.
 	 */
-	const STATUS_NO_SIGNATURE    = 0;
-
-	/*
-	 * Signed by sender
-	 */
-	const STATUS_SIGNED_SENDER   = 1;
-
-	/*
-	 * Signed by receiver
-	 */
-	const STATUS_SIGNED_RECEIVER = 2;
-
-	/*
-	 * Signed by all
-	 */
-	const STATUS_SIGNED_ALL      = 9; // To handle future kind of signature (ex: tripartite contract)
-
+	const SIGNED_STATUSES = [
+		'STATUS_NO_SIGNATURE' => 0,
+		'STATUS_SIGNED_SENDER' => 1,
+		'STATUS_SIGNED_RECEIVER' => 2,
+		'STATUS_SIGNED_RECEIVER_ONLINE' => 3,
+		'STATUS_SIGNED_ALL' => 9 // To handle future kind of signature (ex: tripartite contract)
+	];
 
 	/**
 	 *	Constructor
@@ -697,6 +690,7 @@ class Contrat extends CommonObject
 		$sql .= " ref_supplier, ref_customer,";
 		$sql .= " ref_ext,";
 		$sql .= " entity,";
+		$sql .= " signed_status,";
 		$sql .= " date_contrat as datecontrat,";
 		$sql .= " fk_user_author,";
 		$sql .= " fk_projet as fk_project,";
@@ -738,6 +732,7 @@ class Contrat extends CommonObject
 					$this->entity = $obj->entity;
 					$this->statut = $obj->status;
 					$this->status = $obj->status;
+					$this->signed_status = $obj->signed_status;
 
 					$this->date_contrat = $this->db->jdate($obj->datecontrat);
 					$this->date_creation = $this->db->jdate($obj->datecontrat);
@@ -1017,7 +1012,7 @@ class Contrat extends CommonObject
 		// Insert contract
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."contrat (datec, fk_soc, fk_user_author, date_contrat,";
 		$sql .= " fk_commercial_signature, fk_commercial_suivi, fk_projet,";
-		$sql .= " ref, entity, note_private, note_public, ref_customer, ref_supplier, ref_ext)";
+		$sql .= " ref, entity, signed_status, note_private, note_public, ref_customer, ref_supplier, ref_ext)";
 		$sql .= " VALUES ('".$this->db->idate($now)."', ".((int) $this->socid).", ".((int) $user->id);
 		$sql .= ", ".(dol_strlen($this->date_contrat) != 0 ? "'".$this->db->idate($this->date_contrat)."'" : "NULL");
 		$sql .= ",".($this->commercial_signature_id > 0 ? ((int) $this->commercial_signature_id) : "NULL");
@@ -1025,6 +1020,7 @@ class Contrat extends CommonObject
 		$sql .= ",".($this->fk_project > 0 ? ((int) $this->fk_project) : "NULL");
 		$sql .= ", ".(dol_strlen($this->ref) <= 0 ? "null" : "'".$this->db->escape($this->ref)."'");
 		$sql .= ", ".((int) $conf->entity);
+		$sql .= ", ".((int) $this->signed_status);
 		$sql .= ", ".(!empty($this->note_private) ? ("'".$this->db->escape($this->note_private)."'") : "NULL");
 		$sql .= ", ".(!empty($this->note_public) ? ("'".$this->db->escape($this->note_public)."'") : "NULL");
 		$sql .= ", ".(!empty($this->ref_customer) ? ("'".$this->db->escape($this->ref_customer)."'") : "NULL");
@@ -2001,6 +1997,7 @@ class Contrat extends CommonObject
 			$text .= ($mode == 7 ? '</span><span class="nowraponall">' : '');
 			$text .= ($mode != 7 || $this->nbofservicesclosed > 0) ? ($this->nbofservicesclosed.ContratLigne::LibStatut(5, 3, -1, 'class="marginleft2"')) : '';
 			$text .= ($mode == 7 ? '</span>' : '');
+			$text .= $this->signed_status != '' ? ' '.$this->getLibSignedStatus(5) : '';
 			return $text;
 		} else {
 			return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
@@ -2932,21 +2929,5 @@ class Contrat extends CommonObject
 		$return .= '</div>';
 
 		return $return;
-	}
-
-	// @Todo getLibSignedStatus, LibSignedStatus
-
-	/**
-	 * Set signed status
-	 *
-	 * @param  User   $user        Object user that modify
-	 * @param  int    $status      Newsigned  status to set (often a constant like self::STATUS_XXX)
-	 * @param  int    $notrigger   1 = Does not execute triggers, 0 = Execute triggers
-	 * @param  string $triggercode Trigger code to use
-	 * @return int                 0 < if KO, > 0 if OK
-	 */
-	public function setSignedStatus(User $user, int $status = 0, int $notrigger = 0, $triggercode = ''): int
-	{
-		return $this->setSignedStatusCommon($user, $status, $notrigger, $triggercode);
 	}
 }

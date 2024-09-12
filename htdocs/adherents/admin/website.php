@@ -76,8 +76,8 @@ if ($action == 'update') {
 	$res = dolibarr_set_const($db, "MEMBER_NEWFORM_AMOUNT", $amount, 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "MEMBER_MIN_AMOUNT", $minamount, 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "MEMBER_COUNTERS_ARE_PUBLIC", $publiccounters, 'chaine', 0, '', $conf->entity);
-	$res = dolibarr_set_const($db, "MEMBER_SKIP_TABLE", (string) !$showtable, 'chaine', 0, '', $conf->entity); // Logic is reversed for retrocompatibility: "skip -> show"
-	$res = dolibarr_set_const($db, "MEMBER_HIDE_VOTE_ALLOWED", (string) !$showvoteallowed, 'chaine', 0, '', $conf->entity); // Logic is reversed for retrocompatibility: "hide -> show"
+	$res = dolibarr_set_const($db, "MEMBER_SKIP_TABLE", !$showtable, 'chaine', 0, '', $conf->entity); // Logic is reversed for retrocompatibility: "skip -> show"
+	$res = dolibarr_set_const($db, "MEMBER_HIDE_VOTE_ALLOWED", !$showvoteallowed, 'chaine', 0, '', $conf->entity); // Logic is reversed for retrocompatibility: "hide -> show"
 	$res = dolibarr_set_const($db, "MEMBER_NEWFORM_PAYONLINE", $payonline, 'chaine', 0, '', $conf->entity);
 	if ($forcetype < 0) {
 		$res = dolibarr_del_const($db, "MEMBER_NEWFORM_FORCETYPE", $conf->entity);

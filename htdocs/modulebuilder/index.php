@@ -216,6 +216,25 @@ foreach ($dirsrootforscan as $tmpdirread) {
 	$i++;
 }
 
+/**
+ * Add management to catch fatal errors - shutdown handler
+ *
+ * @return	void
+ */
+function moduleBuilderShutdownFunction()
+{
+	$error = error_get_last();
+	if ($error && ($error['type'] & (E_ERROR | E_PARSE | E_CORE_ERROR | E_COMPILE_ERROR | E_USER_ERROR))) {
+		// Handle the fatal error
+		echo "Fatal error occurred: {$error['message']} in {$error['file']} on line {$error['line']}";
+		// If a header was already send, we suppose it is the llx_Header() so we call the llxFooter()
+		if (headers_sent()) {
+			llxFooter();
+		}
+	}
+}
+register_shutdown_function("moduleBuilderShutdownFunction");
+
 
 /**
  * Produce copyright replacement string for user
@@ -256,7 +275,7 @@ if ($dirins && $action == 'initmodule' && $modulename && $user->hasRight("module
 			'mymodule' => strtolower($modulename),
 			'MyModule' => $modulename
 		);
-		$result = dolCopyDir($srcdir, $destdir, 0, 0, $arrayreplacement);
+		$result = dolCopyDir($srcdir, $destdir, '0', 0, $arrayreplacement);
 		//dol_mkdir($destfile);
 		if ($result <= 0) {
 			if ($result < 0) {
@@ -510,7 +529,7 @@ if ($dirins && in_array($action, array('initapi', 'initphpunit', 'initpagecontac
 			$srcfile = $dirins.'/'.strtolower($module).'/lib/'.strtolower($module).'_'.strtolower($objectname).'.lib.php';
 			$arrayreplacement = array('/\$'.preg_quote($varnametoupdate, '/').' = 0;/' => '$'.$varnametoupdate.' = 1;');
 			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-			dolReplaceInFile($srcfile, $arrayreplacement, '', 0, 0, 1);
+			dolReplaceInFile($srcfile, $arrayreplacement, '', '0', 0, 1);
 		}
 	} else {
 		$langs->load("errors");
@@ -572,7 +591,7 @@ if ($dirins && $action == 'initsqlextrafields' && !empty($module) && $user->hasR
 	// Now we update the object file to set $this->isextrafieldmanaged to 1
 	$srcfile = $dirins.'/'.strtolower($module).'/class/'.strtolower($objectname).'.class.php';
 	$arrayreplacement = array('/\$this->isextrafieldmanaged = 0;/' => '$this->isextrafieldmanaged = 1;');
-	dolReplaceInFile($srcfile, $arrayreplacement, '', 0, 0, 1);
+	dolReplaceInFile($srcfile, $arrayreplacement, '', '0', 0, 1);
 }
 
 
@@ -748,7 +767,7 @@ if ($dirins && $action == 'initcss' && !empty($module) && $user->hasRight("modul
 		// Update descriptor file to uncomment file
 		$srcfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
 		$arrayreplacement = array('/\/\/\s*\''.preg_quote('/'.strtolower($module).'/css/'.strtolower($module).'.css.php', '/').'\'/' => '\'/'.strtolower($module).'/css/'.strtolower($module).'.css.php\'');
-		dolReplaceInFile($srcfile, $arrayreplacement, '', 0, 0, 1);
+		dolReplaceInFile($srcfile, $arrayreplacement, '', '0', 0, 1);
 	} else {
 		$langs->load("errors");
 		setEventMessages($langs->trans('ErrorFailToCreateFile', $destfile), null, 'errors');
@@ -788,7 +807,7 @@ if ($dirins && $action == 'initjs' && !empty($module) && $user->hasRight("module
 		// Update descriptor file to uncomment file
 		$srcfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
 		$arrayreplacement = array('/\/\/\s*\''.preg_quote('/'.strtolower($module).'/js/'.strtolower($module).'.js.php', '/').'\'/' => '\'/'.strtolower($module).'/js/'.strtolower($module).'.js.php\'');
-		dolReplaceInFile($srcfile, $arrayreplacement, '', 0, 0, 1);
+		dolReplaceInFile($srcfile, $arrayreplacement, '', '0', 0, 1);
 	} else {
 		$langs->load("errors");
 		setEventMessages($langs->trans('ErrorFailToCreateFile', $destfile), null, 'errors');
@@ -961,7 +980,7 @@ if ($dirins && $action == 'addlanguage' && !empty($module) && $user->hasRight("m
 				$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template/langs/en_US';
 				$arrayofreplacement = array('mymodule' => $modulelowercase);
 			}
-			$result = dolCopyDir($srcdir, $destdir, 0, 0, $arrayofreplacement);
+			$result = dolCopyDir($srcdir, $destdir, '0', 0, $arrayofreplacement);
 		}
 	} else {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Language")), null, 'errors');
@@ -1032,14 +1051,14 @@ if ($dirins && $action == 'confirm_removefile' && !empty($module) && $user->hasR
 			if (in_array($tab, array('css', 'js'))) {
 				$srcfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
 				$arrayreplacement = array('/^\s*\''.preg_quote('/'.$relativefilename, '/').'\',*/m' => '                // \'/'.$relativefilename.'\',');
-				dolReplaceInFile($srcfile, $arrayreplacement, '', 0, 0, 1);
+				dolReplaceInFile($srcfile, $arrayreplacement, '', '0', 0, 1);
 			}
 
 			if (preg_match('/_extrafields/', $relativefilename)) {
 				// Now we update the object file to set $isextrafieldmanaged to 0
 				$srcfile = $dirins.'/'.strtolower($module).'/class/'.strtolower($objectname).'.class.php';
 				$arrayreplacement = array('/\$isextrafieldmanaged = 1;/' => '$isextrafieldmanaged = 0;');
-				dolReplaceInFile($srcfile, $arrayreplacement, '', 0, 0, 1);
+				dolReplaceInFile($srcfile, $arrayreplacement, '', '0', 0, 1);
 			}
 
 			// Now we update the lib file to set $showtabofpagexxx to 0
@@ -1051,7 +1070,7 @@ if ($dirins && $action == 'confirm_removefile' && !empty($module) && $user->hasR
 			if ($varnametoupdate) {
 				$srcfile = $dirins.'/'.strtolower($module).'/lib/'.strtolower($module).'_'.strtolower($objectname).'.lib.php';
 				$arrayreplacement = array('/\$'.preg_quote($varnametoupdate, '/').' = 1;/' => '$'.preg_quote($varnametoupdate, '/').' = 0;');
-				dolReplaceInFile($srcfile, $arrayreplacement, '', 0, 0, 1);
+				dolReplaceInFile($srcfile, $arrayreplacement, '', '0', 0, 1);
 			}
 		}
 	}
@@ -1443,7 +1462,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname && $user->hasRi
 					'/myobject\.lib\.php/' => strtolower($objectname).'.lib.php',
 				);
 
-				dolReplaceInFile($destdir.'/'.$destfile, $arrayreplacement, '', 0, 0, 1);
+				dolReplaceInFile($destdir.'/'.$destfile, $arrayreplacement, '', '0', 0, 1);
 			}
 		}
 
@@ -1454,7 +1473,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname && $user->hasRi
 				'/\/\/ BEGIN MODULEBUILDER PROPERTIES.*\/\/ END MODULEBUILDER PROPERTIES/ims' => $stringforproperties
 			);
 
-			dolReplaceInFile($destdir.'/class/'.strtolower($objectname).'.class.php', $arrayreplacement, '', 0, 0, 1);
+			dolReplaceInFile($destdir.'/class/'.strtolower($objectname).'.class.php', $arrayreplacement, '', '0', 0, 1);
 		}
 
 		// Edit the class 'class/'.strtolower($objectname).'.class.php'
@@ -1465,12 +1484,12 @@ if ($dirins && $action == 'initobject' && $module && $objectname && $user->hasRi
 			);
 			//var_dump($arrayreplacement);exit;
 			//var_dump($destdir.'/class/'.strtolower($objectname).'.class.php');exit;
-			dolReplaceInFile($destdir.'/class/'.strtolower($objectname).'.class.php', $arrayreplacement, '', 0, 0, 1);
+			dolReplaceInFile($destdir.'/class/'.strtolower($objectname).'.class.php', $arrayreplacement, '', '0', 0, 1);
 
 			$arrayreplacement = array(
 				'/\'models\' => 0,/' => '\'models\' => 1,'
 			);
-			dolReplaceInFile($destdir.'/core/modules/mod'.$module.'.class.php', $arrayreplacement, '', 0, 0, 1);
+			dolReplaceInFile($destdir.'/core/modules/mod'.$module.'.class.php', $arrayreplacement, '', '0', 0, 1);
 		}
 
 		// Edit the setup file and the card page
@@ -1479,14 +1498,14 @@ if ($dirins && $action == 'initobject' && $module && $objectname && $user->hasRi
 			$arrayreplacement = array(
 				'/\$includedocgeneration = 0;/' => '$includedocgeneration = 1;'
 			);
-			dolReplaceInFile($destdir.'/class/'.strtolower($objectname).'.class.php', $arrayreplacement, '', 0, 0, 1);
-			dolReplaceInFile($destdir.'/'.strtolower($objectname).'_card.php', $arrayreplacement, '', 0, 0, 1);
+			dolReplaceInFile($destdir.'/class/'.strtolower($objectname).'.class.php', $arrayreplacement, '', '0', 0, 1);
+			dolReplaceInFile($destdir.'/'.strtolower($objectname).'_card.php', $arrayreplacement, '', '0', 0, 1);
 
 			$arrayreplacement = array(
 				'/\'models\' => 0,/' => '\'models\' => 1,'
 			);
 
-			dolReplaceInFile($destdir.'/core/modules/mod'.$module.'.class.php', $arrayreplacement, '', 0, 0, 1);
+			dolReplaceInFile($destdir.'/core/modules/mod'.$module.'.class.php', $arrayreplacement, '', '0', 0, 1);
 		}
 
 		// TODO Update entries '$myTmpObjects['MyObject'] = array('includerefgeneration' => 0, 'includedocgeneration' => 0);'
@@ -2110,7 +2129,7 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname && $user->hasRig
 	// check if module is enabled
 	if (isModEnabled(strtolower($module))) {
 		$result = unActivateModule(strtolower($module));
-		dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1, 'chaine', 0, '', $conf->entity);
 		if ($result) {
 			setEventMessages($result, null, 'errors');
 		}
@@ -2419,7 +2438,7 @@ if ($dirins && $action == 'addright' && !empty($module) && empty($cancel) && $us
 
 		if (isModEnabled(strtolower($module))) {
 			$result = unActivateModule(strtolower($module));
-			dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
+			dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1, 'chaine', 0, '', $conf->entity);
 			if ($result) {
 				setEventMessages($result, null, 'errors');
 			}
@@ -2538,7 +2557,7 @@ if ($dirins && GETPOST('action') == 'update_right' && GETPOST('modifyright') && 
 	if (!$error) {
 		if (isModEnabled(strtolower($module))) {
 			$result = unActivateModule(strtolower($module));
-			dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
+			dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1, 'chaine', 0, '', $conf->entity);
 			if ($result) {
 				setEventMessages($result, null, 'errors');
 			}
@@ -2588,7 +2607,7 @@ if ($dirins && $action == 'confirm_deleteright' && !empty($module) && GETPOSTINT
 		// check if module is enabled
 		if (isModEnabled(strtolower($module))) {
 			$result = unActivateModule(strtolower($module));
-			dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
+			dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1, 'chaine', 0, '', $conf->entity);
 			if ($result) {
 				setEventMessages($result, null, 'errors');
 			}
@@ -2732,7 +2751,7 @@ if ($dirins && $action == 'confirm_deletemenu' && GETPOSTINT('menukey') && $user
 	// check if module is enabled
 	if (isModEnabled(strtolower($module))) {
 		$result = unActivateModule(strtolower($module));
-		dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1, 'chaine', 0, '', $conf->entity);
 		if ($result) {
 			setEventMessages($result, null, 'errors');
 		}
@@ -2794,7 +2813,7 @@ if ($dirins && $action == 'addmenu' && empty($cancel) && $user->hasRight("module
 	// check if module is enabled
 	if (isModEnabled(strtolower($module))) {
 		$result = unActivateModule(strtolower($module));
-		dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1, 'chaine', 0, '', $conf->entity);
 		if ($result) {
 			setEventMessages($result, null, 'errors');
 		}
@@ -2953,7 +2972,7 @@ if ($dirins && $action == "update_menu" && GETPOSTINT('menukey') && GETPOST('tab
 	if (empty($cancel)) {
 		if (isModEnabled(strtolower($module))) {
 			$result = unActivateModule(strtolower($module));
-			dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
+			dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1, 'chaine', 0, '', $conf->entity);
 			if ($result) {
 				setEventMessages($result, null, 'errors');
 			}
@@ -3054,7 +3073,7 @@ if ($dirins && $action == "update_menu" && GETPOSTINT('menukey') && GETPOST('tab
 if ($dirins && $action == "update_props_module" && !empty(GETPOST('keydescription', 'alpha')) && empty($cancel) && $user->hasRight("modulebuilder", "run")) {
 	if (isModEnabled(strtolower($module))) {
 		$result = unActivateModule(strtolower($module));
-		dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1, 'chaine', 0, '', $conf->entity);
 		if ($result) {
 			setEventMessages($result, null, 'errors');
 		}
@@ -3124,6 +3143,7 @@ if ($dirins && $action == "update_props_module" && !empty(GETPOST('keydescriptio
 		exit;
 	}
 }
+
 
 /*
  * View
@@ -3198,7 +3218,7 @@ if (empty($allowonlineinstall)) {
 		$message = info_admin($langs->trans('InstallModuleFromWebHasBeenDisabledContactUs'));
 	} else {
 		// Show technical message
-		$message = info_admin($langs->trans("InstallModuleFromWebHasBeenDisabledByFile", $dolibarrdataroot.'/installmodules.lock'), 0, 0, 1, 'warning');
+		$message = info_admin($langs->trans("InstallModuleFromWebHasBeenDisabledByFile", $dolibarrdataroot.'/installmodules.lock'), 0, 0, '1', 'warning');
 	}
 
 	print $message;
@@ -3662,8 +3682,17 @@ if ($module == 'initmodule') {
 						print '<input class="reposition button smallpaddingimp" type="submit" name="modifydesc" value="'.$langs->trans("Modify").'"/>';
 						print '<input class="reposition button button-cancel smallpaddingimp" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"/>';
 					} else {
-						print $moduleobj->getDesc();
+						print $moduleobj->description;
 						print '<a class="editfielda reposition marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=edit_moduledescription&token='.newToken().'&tab='.urlencode($tab).'&module='.urlencode($module).'&keydescription=desc">'.img_edit().'</a>';
+
+						$moduledescritpionautotrans = $moduleobj->getDesc();
+						if ($moduledescritpionautotrans != "Module".$moduleobj->name."Desc") {
+							// $moduledescritpionautotrans has been found into a translation file
+							print ' '.$form->textwithpicto('', $langs->trans("ModuleTranslatedIntoLangForKeyInto", "Module".$moduleobj->name."Desc", $moduledescritpionautotrans));
+						} elseif ($moduledescritpionautotrans != "Module".$moduleobj->numeroc."Desc") {
+							// $moduledescritpionautotrans has been found into a translation file
+							print ' '.$form->textwithpicto('', $langs->trans("ModuleTranslatedIntoLangForKeyInto", "Module".$moduleobj->numero."Desc", $moduledescritpionautotrans));
+						}
 					}
 					print '</td></tr>';
 
@@ -4206,9 +4235,10 @@ if ($module == 'initmodule') {
 							$result = dol_include_once($pathtoclass);
 							$stringofinclude = "dol_include_once(".$pathtoclass.")";
 						} else {
-							$result = @include_once $dirread.'/'.$pathtoclass;
+							$result = include_once $dirread.'/'.$pathtoclass;
 							$stringofinclude = "@include_once ".$dirread.'/'.$pathtoclass;
 						}
+
 						if (class_exists($tabobj)) {
 							try {
 								$tmpobject = @new $tabobj($db);
@@ -4780,7 +4810,9 @@ if ($module == 'initmodule') {
 							print '<span class="warning">'.$langs->trans('Failed to init the object with the new %s (%s)', $tabobj, (string) $db).'</warning>';
 						}
 					} catch (Exception $e) {
+						print 'ee';
 						print $e->getMessage();
+						print 'ff';
 					}
 				} else {
 					if (empty($forceddirread)) {

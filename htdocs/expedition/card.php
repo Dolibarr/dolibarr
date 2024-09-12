@@ -760,11 +760,11 @@ if (empty($reshook)) {
 					if ($lines[$i]->fk_product > 0) {
 						// line without lot
 						if ($lines[$i]->entrepot_id == 0) {
-							// single warehouse shipment line
-							$stockLocation = 0;
+							// single warehouse shipment line or line in several warehouses context but with warehouse not defined
+							$stockLocation = "entl".$line_id;
 							$qty = "qtyl".$line_id;
 							$line->id = $line_id;
-							$line->entrepot_id = GETPOSTINT($stockLocation);
+							$line->entrepot_id = GETPOSTINT((string) $stockLocation);
 							$line->qty = GETPOSTFLOAT($qty);
 							if ($line->update($user) < 0) {
 								setEventMessages($line->error, $line->errors, 'errors');
@@ -1108,7 +1108,7 @@ if ($action == 'create') {
 			// Document model
 			include_once DOL_DOCUMENT_ROOT.'/core/modules/expedition/modules_expedition.php';
 			$list = ModelePdfExpedition::liste_modeles($db);
-			if (count($list) > 1) {
+			if (is_countable($list) && count($list) > 1) {
 				print "<tr><td>".$langs->trans("DefaultModel")."</td>";
 				print '<td colspan="3">';
 				print img_picto('', 'pdf', 'class="pictofixedwidth"');

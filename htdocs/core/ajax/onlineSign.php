@@ -434,6 +434,8 @@ if ($action == "importSignature") {
 					// Document format not supported to insert online signature.
 					// We should just create an image file with the signature.
 				}
+				$user = new User($db);
+				$object->setSignedStatus($user, $object::SIGNED_STATUSES['STATUS_SIGNED_RECEIVER_ONLINE'], 0, 'CONTRACT_MODIFY');
 			}
 		} elseif ($mode == 'fichinter') {
 			require_once DOL_DOCUMENT_ROOT . '/fichinter/class/fichinter.class.php';
@@ -581,7 +583,7 @@ if ($action == "importSignature") {
 			if (!empty($object->id)) {
 				$object->fetch_thirdparty();
 
-				$upload_dir = $conf->societe->multidir_output[$object->thirdparty->entity] . '/' . dol_sanitizeFileName($object->thirdparty->id) . '/';
+				$upload_dir = $conf->societe->multidir_output[$object->thirdparty->entity] . '/' . dol_sanitizeFileName((string) $object->thirdparty->id) . '/';
 
 				$default_font_size = pdf_getPDFFontSize($langs);    // Must be after pdf_getInstance
 				$default_font = pdf_getPDFFont($langs);    // Must be after pdf_getInstance

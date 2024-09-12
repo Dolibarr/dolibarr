@@ -1004,7 +1004,7 @@ abstract class CommonObject
 				}
 				$enabled = 1;
 				if ($enabled && isset($extrafields->attributes[$this->table_element]['enabled'][$key])) {
-					$enabled = (int) dol_eval($extrafields->attributes[$this->table_element]['enabled'][$key], 1, 1, '2');
+					$enabled = (int) dol_eval((string) $extrafields->attributes[$this->table_element]['enabled'][$key], 1, 1, '2');
 				}
 				if ($enabled && isset($extrafields->attributes[$this->table_element]['list'][$key])) {
 					$enabled = (int) dol_eval($extrafields->attributes[$this->table_element]['list'][$key], 1, 1, '2');
@@ -1486,7 +1486,7 @@ abstract class CommonObject
 	 *    @param	int<0,1>	$list       	0:Returned array contains all properties, 1:Return array contains just id
 	 *    @param    string      $code       	Filter on this code of contact type ('SHIPPING', 'BILLING', ...)
 	 *    @param	int			$status			Status of user or company
-	 *    @param	int[]		$arrayoftcids	Array with ID of type of contacts. If we provide this, we can make a ec.fk_c_type_contact in ($arrayoftcids) to avoid link on tc table. TODO Not implemented.
+	 *    @param	int[]		$arrayoftcids	Array with ID of type of contacts. If we provide this, we can filter on ec.fk_c_type_contact IN ($arrayoftcids) to avoid a link on c_type_contact table (faster).
 	 *    @return array<int,array{parentId:int,source:string,socid:int,id:int,nom:string,civility:string,lastname:string,firstname:string,email:string,login:string,photo:string,gender:string,statuscontact:int,rowid:int,code:string,libelle:string,status:string,fk_c_type_contact:int}>|int<-1,-1>        	Array of contacts, -1 if error
 	 */
 	public function liste_contact($statusoflink = -1, $source = 'external', $list = 0, $code = '', $status = -1, $arrayoftcids = array())
@@ -1504,34 +1504,40 @@ abstract class CommonObject
 			$sql .= ", t.fk_soc as socid, t.statut as statuscontact";
 		}
 		$sql .= ", t.civility as civility, t.lastname as lastname, t.firstname, t.email";
-		$sql .= ", tc.source, tc.element, tc.code, tc.libelle as type_label";
-		$sql .= " FROM ".$this->db->prefix()."c_type_contact tc,";
-		$sql .= " ".$this->db->prefix()."element_contact ec";
+		if (empty($arrayoftcids)) {
+			$sql .= ", tc.source, tc.element, tc.code, tc.libelle as type_label";
+		}
+		$sql .= " FROM";
+		if (empty($arrayoftcids)) {
+			$sql .= " ".$this->db->prefix()."c_type_contact as tc,";
+		}
+		$sql .= " ".$this->db->prefix()."element_contact as ec";
 		if ($source == 'internal') {	// internal contact (user)
-			$sql .= " LEFT JOIN ".$this->db->prefix()."user t on ec.fk_socpeople = t.rowid";
+			$sql .= " LEFT JOIN ".$this->db->prefix()."user as t on ec.fk_socpeople = t.rowid";
 		}
 		if ($source == 'external' || $source == 'thirdparty') {	// external contact (socpeople)
-			$sql .= " LEFT JOIN ".$this->db->prefix()."socpeople t on ec.fk_socpeople = t.rowid";
+			$sql .= " LEFT JOIN ".$this->db->prefix()."socpeople as t on ec.fk_socpeople = t.rowid";
 		}
 		$sql .= " WHERE ec.element_id = ".((int) $this->id);
-		$sql .= " AND ec.fk_c_type_contact = tc.rowid";
-		$sql .= " AND tc.element = '".$this->db->escape($this->element)."'";
-		if ($code) {
-			$sql .= " AND tc.code = '".$this->db->escape($code)."'";
-		}
-		if ($source == 'internal') {
-			$sql .= " AND tc.source = 'internal'";
-			if ($status >= 0) {
-				$sql .= " AND t.statut = ".((int) $status);
+		if (empty($arrayoftcids)) {
+			$sql .= " AND ec.fk_c_type_contact = tc.rowid";
+			$sql .= " AND tc.element = '".$this->db->escape($this->element)."'";
+			if ($code) {
+				$sql .= " AND tc.code = '".$this->db->escape($code)."'";
 			}
-		}
-		if ($source == 'external' || $source == 'thirdparty') {
-			$sql .= " AND tc.source = 'external'";
-			if ($status >= 0) {
-				$sql .= " AND t.statut = ".((int) $status);	// t is llx_socpeople
+			if ($source == 'internal') {
+				$sql .= " AND tc.source = 'internal'";
 			}
+			if ($source == 'external' || $source == 'thirdparty') {
+				$sql .= " AND tc.source = 'external'";
+			}
+			$sql .= " AND tc.active = 1";
+		} else {
+			$sql .= " AND ec.fk_c_type_contact IN (".$this->db->sanitize(implode(',', $arrayoftcids)).")";
 		}
-		$sql .= " AND tc.active = 1";
+		if ($status >= 0) {
+			$sql .= " AND t.statut = ".((int) $status);	// t is llx_user or llx_socpeople
+		}
 		if ($statusoflink >= 0) {
 			$sql .= " AND ec.statut = ".((int) $statusoflink);
 		}
@@ -4667,8 +4673,8 @@ abstract class CommonObject
 			$fieldstatus = 'status';
 		}
 
-		$sql = "UPDATE ".$this->db->prefix().$elementTable;
-		$sql .= " SET ".$fieldstatus." = ".((int) $status);
+		$sql = "UPDATE ".$this->db->prefix().$this->db->sanitize($elementTable);
+		$sql .= " SET ".$this->db->sanitize($fieldstatus)." = ".((int) $status);
 		// If status = 1 = validated, update also fk_user_valid
 		// TODO Replace the test on $elementTable by doing a test on existence of the field in $this->fields
 		if ($status == 1 && in_array($elementTable, array('expensereport', 'inventory'))) {
@@ -4712,6 +4718,8 @@ abstract class CommonObject
 						$trigkey = 'FICHINTER_CLASSIFY_UNBILLED';
 					}
 				}
+
+				$this->context = array_merge($this->context, array('newstatus' => $status));
 
 				if ($trigkey) {
 					// Call trigger
@@ -8866,7 +8874,7 @@ abstract class CommonObject
 					// Test on 'enabled' ('enabled' is different than 'list' = 'visibility')
 					$enabled = 1;
 					if ($enabled && isset($extrafields->attributes[$this->table_element]['enabled'][$key])) {
-						$enabled = (int) dol_eval($extrafields->attributes[$this->table_element]['enabled'][$key], 1, 1, '2');
+						$enabled = (int) dol_eval((string) $extrafields->attributes[$this->table_element]['enabled'][$key], 1, 1, '2');
 					}
 					if (empty($enabled)) {
 						continue;
@@ -10722,56 +10730,6 @@ abstract class CommonObject
 			return -1;
 		}
 	}
-
-	/**
-	 * Set signed status & call trigger with context message
-	 *
-	 * @param	User	$user			Object user that modify
-	 * @param	int		$status			New signed status to set (often a constant like self::STATUS_XXX)
-	 * @param	int		$notrigger		1 = Does not execute triggers, 0 = Execute triggers
-	 * @param	string	$triggercode	Trigger code to use
-	 * @return	int						0 < if KO, > 0 if OK
-	 */
-	public function setSignedStatusCommon(User $user, int $status, int $notrigger = 0, string $triggercode = '')
-	{
-		$error = 0;
-
-		$this->db->begin();
-
-		$statusfield = 'signed_status';
-
-		$sql = "UPDATE ".$this->db->prefix().$this->table_element;
-		$sql .= " SET ".$statusfield." = ".((int) $status);
-		$sql .= " WHERE rowid = ".((int) $this->id);
-
-		if ($this->db->query($sql)) {
-			if (!$error) {
-				$this->oldcopy = clone $this;
-			}
-
-			if (!$error && !$notrigger) {
-				// Call trigger
-				$result = $this->call_trigger($triggercode, $user);
-				if ($result < 0) {
-					$error++;
-				}
-			}
-
-			if (!$error) {
-				$this->signed_status = $status;
-				$this->db->commit();
-				return 1;
-			} else {
-				$this->db->rollback();
-				return -1;
-			}
-		} else {
-			$this->error = $this->db->error();
-			$this->db->rollback();
-			return -1;
-		}
-	}
-
 
 	/**
 	 * Initialise object with example values

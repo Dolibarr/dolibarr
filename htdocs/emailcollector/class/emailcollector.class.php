@@ -1676,7 +1676,7 @@ class EmailCollector extends CommonObject
 				$header = preg_replace('/\r\n\s+/m', ' ', $header); // When a header line is on several lines, merge lines
 
 				$matches = array();
-				preg_match_all('/([^: ]+): (.+?(?:\r\n\s(?:.+?))*)\r\n/m', $header, $matches);
+				preg_match_all('/([^: ]+): (.+?(?:\r\n\s(?:.+?))*)(\r\n|\s$)/m', $header, $matches);
 				$headers = array_combine($matches[1], $matches[2]);
 
 
@@ -1720,7 +1720,7 @@ class EmailCollector extends CommonObject
 				//var_dump($headers);
 				//var_dump($overview);exit;
 
-				$operationslog .= '<br>** Process email #'.dol_escape_htmltag($iforemailloop);
+				$operationslog .= '<br>** Process email #'.dol_escape_htmltag((string) $iforemailloop);
 
 				if (getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')) {
 					/** @var Webklex\PHPIMAP\Message $imapemail */
@@ -1732,10 +1732,10 @@ class EmailCollector extends CommonObject
 					$msgid = str_replace(array('<', '>'), '', $overview[0]->message_id);
 				}
 				$operationslog .= " - MsgId: ".$msgid;
-				$operationslog .= " - Date: ".($headers['Date'] ?? '');
-				$operationslog .= " - References: ".dol_escape_htmltag($headers['References'] ?? '')." - Subject: ".dol_escape_htmltag($headers['Subject']);
+				$operationslog .= " - Date: ".($headers['Date'] ?? $langs->transnoentitiesnoconv("NotFound"));
+				$operationslog .= " - References: ".dol_escape_htmltag($headers['References'] ?? $langs->transnoentitiesnoconv("NotFound"))." - Subject: ".dol_escape_htmltag($headers['Subject']);
 
-				dol_syslog("-- Process email #".$iforemailloop." MsgId: ".$msgid." Date: ".($headers['Date'] ?? '')." References: ".($headers['References'] ?? '')." Subject: ".$headers['Subject']);
+				dol_syslog("-- Process email #".$iforemailloop.", MsgId: ".$msgid.", Date: ".($headers['Date'] ?? '').", References: ".($headers['References'] ?? '').", Subject: ".$headers['Subject']);
 
 
 				$trackidfoundintorecipienttype = '';
@@ -2700,7 +2700,7 @@ class EmailCollector extends CommonObject
 											// Search country by name or code
 											if (!empty($contactstatic->country)) {
 												require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
-												$result = getCountry('', 3, $this->db, null, 1, $contactstatic->country);
+												$result = getCountry('', '3', $this->db, null, 1, $contactstatic->country);
 												if ($result == 'NotDefined') {
 													$errorforactions++;
 													$this->error = "Error country not found by this name '" . $contactstatic->country . "'";
@@ -2714,7 +2714,7 @@ class EmailCollector extends CommonObject
 												}
 											} elseif (!empty($contactstatic->country_code)) {
 												require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
-												$result = getCountry($contactstatic->country_code, 3, $this->db);
+												$result = getCountry($contactstatic->country_code, '3', $this->db);
 												if ($result == 'NotDefined') {
 													$errorforactions++;
 													$this->error = "Error country not found by this code '" . $contactstatic->country_code . "'";
@@ -2907,7 +2907,7 @@ class EmailCollector extends CommonObject
 							} else {
 								$pj = getAttachments($imapemail, $connection);
 								foreach ($pj as $key => $val) {
-									$data[$val['filename']] = getFileData($imapemail, $val['pos'], $val['type'], $connection);
+									$data[$val['filename']] = getFileData($imapemail, (string) $val['pos'], $val['type'], $connection);
 								}
 							}
 							if (count($data) > 0) {
@@ -3701,7 +3701,7 @@ class EmailCollector extends CommonObject
 
 		if (!$s->parts) {
 			// simple
-			$this->getpart($mbox, $mid, $s, 0); // pass 0 as part-number
+			$this->getpart($mbox, $mid, $s, '0'); // pass '0' as part-number
 		} else {
 			// multipart: cycle through each part
 			foreach ($s->parts as $partno0 => $p) {

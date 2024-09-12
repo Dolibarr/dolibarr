@@ -9,7 +9,7 @@
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
  * Copyright (C) 2018		Nicolas ZABOURI				<info@inovea-conseil.com>
  * Copyright (C) 2018		Juanjo Menent				<jmenent@2byte.es>
- * Copyright (C) 2019		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2019-2024	Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2019		Josep Lluís Amador			<joseplluis@lliuretic.cat>
  * Copyright (C) 2020		Open-Dsi					<support@open-dsi.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
@@ -229,7 +229,7 @@ $arrayfields = array();
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
-		$visible = (int) dol_eval($val['visible'], 1);
+		$visible = (int) dol_eval((string) $val['visible'], 1);
 		$arrayfields['p.'.$key] = array(
 			'label' => $val['label'],
 			'checked' => (($visible < 0) ? 0 : 1),
@@ -1044,7 +1044,7 @@ if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 }
 
 $moreforfilter .= '<div class="divsearchfield">';
-$moreforfilter .= $formcompany->showRoles("search_roles", $objecttmp, 'edit', $search_roles, 'minwidth500', $langs->trans('ContactRoles'));
+$moreforfilter .= $formcompany->showRoles("search_roles", $objecttmp, 'edit', $search_roles, 'minwidth500', $langs->transnoentitiesnoconv('ContactRoles'));
 $moreforfilter .= '</div>';
 
 print '<div class="liste_titre liste_titre_bydiv centpercent">';

@@ -522,7 +522,7 @@ if (empty($reshook)) {
 		$action = 'builddoc';
 		$moreparams = array(
 			'use_companybankid' => GETPOST('companybankid'),
-			'force_dir_output' => $conf->societe->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->id)
+			'force_dir_output' => $conf->societe->multidir_output[$object->entity].'/'.dol_sanitizeFileName((string) $object->id)
 		);
 		$_POST['lang_id'] = GETPOST('lang_idrib'.GETPOSTINT('companybankid'), 'alphanohtml');	// This is required by core/action_builddoc.inc.php
 		$_POST['model'] = GETPOST('modelrib'.GETPOSTINT('companybankid'), 'alphanohtml'); 		// This is required by core/action_builddoc.inc.php
@@ -1193,7 +1193,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 		print '<!-- List of card payments -->'."\n";
 		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-		print '<table class="liste centpercent">'."\n";
+		print '<table class="liste centpercent noborder">'."\n";
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans('Label').'</td>';
 		print '<td>'.$form->textwithpicto($langs->trans('ExternalSystemID'), $langs->trans("IDOfPaymentInAnExternalSystem")).'</td>';	// external system ID
@@ -1284,7 +1284,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 							if ($companypaymentmodetemp->country_code) {
 								$img = picto_from_langcode($companypaymentmodetemp->country_code);
 								print $img ? $img.' ' : '';
-								print getCountry($companypaymentmodetemp->country_code, 1);
+								print getCountry($companypaymentmodetemp->country_code, '1');
 							} else {
 								print img_warning().' <span class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</span>';
 							}
@@ -1391,7 +1391,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 					if ($src->country) {
 						$img = picto_from_langcode($src->country);
 						print $img ? $img.' ' : '';
-						print getCountry($src->country, 1);
+						print getCountry($src->country, '1');
 					} else {
 						print img_warning().' <span class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</span>';
 					}
@@ -1402,7 +1402,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 					if ($src->card->country) {
 						$img = picto_from_langcode($src->card->country);
 						print $img ? $img.' ' : '';
-						print getCountry($src->card->country, 1);
+						print getCountry($src->card->country, '1');
 					} else {
 						print img_warning().' <span class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</span>';
 					}
@@ -1412,7 +1412,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 					if ($src->sepa_debit->country) {
 						$img = picto_from_langcode($src->sepa_debit->country);
 						print $img ? $img.' ' : '';
-						print getCountry($src->sepa_debit->country, 1);
+						print getCountry($src->sepa_debit->country, '1');
 					} else {
 						print img_warning().' <span class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</span>';
 					}
@@ -1423,7 +1423,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 					if ($src->card->country) {
 						$img = picto_from_langcode($src->card->country);
 						print $img ? $img.' ' : '';
-						print getCountry($src->card->country, 1);
+						print getCountry($src->card->country, '1');
 					} else {
 						print img_warning().' <span class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</span>';
 					}
@@ -1433,7 +1433,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 					if ($src->sepa_debit->country) {
 						$img = picto_from_langcode($src->sepa_debit->country);
 						print $img ? $img.' ' : '';
-						print getCountry($src->sepa_debit->country, 1);
+						print getCountry($src->sepa_debit->country, '1');
 					} else {
 						print img_warning().' <span class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</span>';
 					}
@@ -1492,7 +1492,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 	if (isModEnabled('stripe') && !empty($conf->stripeconnect->enabled) && !empty($stripesupplieracc)) {
 		print load_fiche_titre($langs->trans('StripeBalance').($stripesupplieracc ? ' (Stripe connection with StripeConnect account '.$stripesupplieracc.')' : ' (Stripe connection with keys from Stripe module setup)'), $morehtmlright, 'stripe-s');
 		$balance = \Stripe\Balance::retrieve(array("stripe_account" => $stripesupplieracc));
-		print '<table class="liste centpercent">'."\n";
+		print '<table class="liste centpercent noborder">'."\n";
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans('Currency').'</td>';
 		print '<td>'.$langs->trans('Available').'</td>';
@@ -1534,6 +1534,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		print '<br>';
 	}
 
+
 	// List of bank accounts
 	if ($permissiontoaddupdatepaymentinformation) {
 		$morehtmlright = dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"] . '?socid=' . $object->id . '&amp;action=create');
@@ -1549,7 +1550,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 	if (is_array($rib_list)) {
 		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-		print '<table class="liste centpercent">';
+		print '<table class="liste centpercent noborder">';
 
 		print '<tr class="liste_titre">';
 		print_liste_field_titre("Label");
@@ -1729,13 +1730,13 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 
+			// Show online signature link
 			if (!getDolGlobalInt('SOCIETE_DISABLE_BANKACCOUNT') && getDolGlobalInt("SOCIETE_RIB_ALLOW_ONLINESIGN")) {
-				// Show online signature link
 				print '<td class="width200">';
 				$useonlinesignature = 1;
 				if ($useonlinesignature) {
 					require_once DOL_DOCUMENT_ROOT . '/core/lib/signature.lib.php';
-					print showOnlineSignatureUrl($companybankaccount->element, $rib->id, $rib, 'short');
+					print showOnlineSignatureUrl($companybankaccount->element, (string) $rib->id, $rib, 'short');
 				}
 				print '</td>';
 			}
@@ -1848,15 +1849,16 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				print img_picto($langs->trans("Default"), 'on');
 			}
 			print '</td>';
-			/*
-			print '<td>';
-			print $langs->trans("Remote");
-			//if ($src->cvc_check == 'fail') print ' - CVC check fail';
-			print '</td>';
-			*/
 
+			// Doc gen
 			print '<td>';
 			print '</td>';
+
+			// Online sign
+			if (!getDolGlobalInt('SOCIETE_DISABLE_BANKACCOUNT') && getDolGlobalInt("SOCIETE_RIB_ALLOW_ONLINESIGN")) {
+				print '<td>';
+				print '</td>';
+			}
 
 			// Fields from hook
 			$parameters = array('arrayfields' => array(), 'stripe_card_ref' => $rib->stripe_card_ref, 'stripe_account' => $rib->stripe_account, 'linetype' => 'stripebanremoteonly');

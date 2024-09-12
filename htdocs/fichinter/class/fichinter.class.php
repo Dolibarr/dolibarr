@@ -31,12 +31,15 @@
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinterligne.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonsignedobject.class.php';
 
 /**
  *	Class to manage interventions
  */
 class Fichinter extends CommonObject
 {
+	use CommonSignedObject;
+
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'enabled' => 'isModEnabled("societe")', 'visible' => -1, 'notnull' => 1, 'position' => 15),
@@ -880,48 +883,6 @@ class Fichinter extends CommonObject
 	}
 
 	/**
-	 *	Returns the label for signed status
-	 *
-	 *	@param		int		$mode	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-	 *	@return		string			Label
-	 */
-	public function getLibSignedStatus(int $mode = 0): string
-	{
-		global $langs;
-		$langs->load("commercial");
-		$list_signed_status = $this->getSignedStatusLocalisedArray();
-		$signed_status_label = $this->signed_status != '' ? $list_signed_status[$this->signed_status] : '';
-		$signed_status_label_short = $this->signed_status != '' ? $list_signed_status[$this->signed_status] : '';
-		$signed_status_code = 'status'.$this->signed_status;
-		return dolGetStatus($signed_status_label, $signed_status_label_short, '', $signed_status_code, $mode);
-	}
-
-	/**
-	 *	Returns an array of signed statuses with associated localized labels
-	 *
-	 *	@return array
-	 */
-	public function getSignedStatusLocalisedArray(): array
-	{
-		global $langs;
-		$langs->load("commercial");
-
-		$l10n_signed_status_labels = [
-			self::SIGNED_STATUSES['STATUS_NO_SIGNATURE']			=> 'NoSignature',
-			self::SIGNED_STATUSES['STATUS_SIGNED_SENDER']			=> 'SignedSender',
-			self::SIGNED_STATUSES['STATUS_SIGNED_RECEIVER']			=> 'SignedReceiver',
-			self::SIGNED_STATUSES['STATUS_SIGNED_RECEIVER_ONLINE']	=> 'SignedReceiverOnline',
-			self::SIGNED_STATUSES['STATUS_SIGNED_ALL']				=> 'SignedAll'
-		];
-
-		$l10n_signed_status = [];
-		foreach (self::SIGNED_STATUSES as $signed_status_code) {
-			$l10n_signed_status[$signed_status_code] = $langs->transnoentitiesnoconv($l10n_signed_status_labels[$signed_status_code]);
-		}
-		return $l10n_signed_status;
-	}
-
-	/**
 	 * getTooltipContentArray
 	 *
 	 * @param array $params ex option, infologin
@@ -1682,40 +1643,5 @@ class Fichinter extends CommonObject
 		$return .= '</div>';
 		$return .= '</div>';
 		return $return;
-	}
-
-	/**
-	 * Set signed status & object context. Call sign action trigger.
-	 *
-	 * @param	User	$user			Object user that modify
-	 * @param	int		$status			New signed status to set (often a constant like self::STATUS_XXX)
-	 * @param	int		$notrigger		1 = Does not execute triggers, 0 = Execute triggers
-	 * @param	string	$triggercode	Trigger code to use
-	 * @return	int						0 < if KO, > 0 if OK
-	 */
-	public function setSignedStatus(User $user, int $status = 0, int $notrigger = 0, string $triggercode = ''): int
-	{
-		global $langs;
-		$langs->loadLangs(array('interventions', 'commercial'));
-		$this->signed_status = $status;
-		$this->context['signature'] = $status;
-		switch ($status) {
-			case 0:
-				$this->context['actionmsg2'] = $langs->transnoentitiesnoconv('InterventionUnsignedInDolibarr');
-				break;
-			case 1:
-				$this->context['actionmsg2'] = $langs->transnoentitiesnoconv('SignedSender');
-				break;
-			case 2:
-				$this->context['actionmsg2'] = $langs->transnoentitiesnoconv('SignedReceiver');
-				break;
-			case 3:
-				$this->context['actionmsg2'] = $langs->transnoentitiesnoconv('SignedReceiverOnline');
-				break;
-			case 9:
-				$this->context['actionmsg2'] = $langs->transnoentitiesnoconv('SignedAll');
-				break;
-		}
-		return $this->setSignedStatusCommon($user, $status, $notrigger, $triggercode);
 	}
 }

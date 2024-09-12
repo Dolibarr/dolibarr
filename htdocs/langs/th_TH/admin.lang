@@ -514,15 +514,17 @@ ModuleCompanyCodeCustomerDigitaria=%s ตามด้วยชื่อลูก
 ModuleCompanyCodeSupplierDigitaria=%s ตามด้วยชื่อซัพพลายเออร์ที่ถูกตัดทอนด้วยจำนวนอักขระ: %s สำหรับรหัสการบัญชีของซัพพลายเออร์
 Use3StepsApproval=ตามค่าเริ่มต้น ใบสั่งซื้อจะต้องถูกสร้างและอนุมัติโดยผู้ใช้ 2 คนที่แตกต่างกัน (หนึ่งขั้นตอน/ผู้ใช้ที่จะสร้าง และหนึ่งขั้นตอน/ผู้ใช้ที่จะอนุมัติ โปรดทราบว่าหากผู้ใช้มีทั้งสิทธิ์ในการสร้างและอนุมัติ หนึ่งขั้นตอน/ผู้ใช้ก็เพียงพอแล้ว) . คุณสามารถขอด้วยตัวเลือกนี้เพื่อแนะนำขั้นตอนที่สาม/การอนุมัติผู้ใช้ หากจำนวนเงินสูงกว่าค่าที่กำหนด (ดังนั้นจึงจำเป็นต้องมี 3 ขั้นตอน: 1=การตรวจสอบความถูกต้อง 2=การอนุมัติครั้งแรก และ 3=การอนุมัติครั้งที่สอง หากจำนวนเงินเพียงพอ) <br>ตั้งค่านี้เป็นว่างหากการอนุมัติเพียงครั้งเดียว (2 ขั้นตอน) เพียงพอ ให้ตั้งค่าเป็นค่าที่ต่ำมาก (0.1) หากจำเป็นต้องมีการอนุมัติครั้งที่สอง (3 ขั้นตอน) เสมอ
 UseDoubleApproval=ใช้การอนุมัติ 3 ขั้นตอน เมื่อยอด (ไม่รวมภาษี) สูงกว่า...
-WarningPHPMail=WARNING: The setup to send emails from the application is using the default generic setup. This choice needs no technical knowledge to complete the setup.<br>However, it is often better to setup outgoing emails to use the email server of your Email Service Provider instead of the default setup for several reasons:
+WarningPHPMail=NOTICE: The setup to send emails from the application is using the default generic setup (called "%s"). This choice needs no technical knowledge and no particular setup.<br>However, it is often better to setup outgoing emails to use the other method (called "%s") to use the email server of your Email Service Provider, instead of the default setup for several reasons:
 WarningPHPMailA=- Using the server of the Email Service Provider increases the trustworthiness of your email, so it increases the deliverability without being flagged as SPAM
-WarningPHPMailB=- ผู้ให้บริการอีเมลบางราย (เช่น Yahoo) ไม่อนุญาตให้คุณส่งอีเมลจากเซิร์ฟเวอร์อื่นที่ไม่ใช่เซิร์ฟเวอร์ของตนเอง การตั้งค่าปัจจุบันของคุณใช้เซิร์ฟเวอร์ของแอปพลิเคชันในการส่งอีเมล ไม่ใช่เซิร์ฟเวอร์ของผู้ให้บริการอีเมลของคุณ ดังนั้นผู้รับบางราย (ที่เข้ากันได้กับโปรโตคอล DMARC ที่มีข้อจำกัด) จะถามผู้ให้บริการอีเมลของคุณว่าสามารถรับอีเมลของคุณและผู้ให้บริการอีเมลบางรายได้หรือไม่ (เช่น Yahoo) อาจตอบว่า "ไม่" เนื่องจากเซิร์ฟเวอร์ไม่ใช่ของพวกเขา ดังนั้นอีเมลที่คุณส่งบางส่วนอาจไม่ได้รับการยอมรับสำหรับการจัดส่ง (โปรดระวังโควต้าการส่งของผู้ให้บริการอีเมลของคุณด้วย)
+WarningPHPMailB=- If the domain of your email (the part mymaildomain.com into myname@mymaildomain.com) is protected by a SPF + a DMARC record, your email may be flagged as SPAM because your DMARC rule defined into DNS zone of the domain of the sender (mymaildomain.com) does not allow the sending as a generic sender. In such a case, you must disable the DMARC for the domain (or set it to p=none like done by @gmail.com) or, better, if you have the technical knowledge, use the other method to send emails using the SMTP server of your own email provider.
 WarningPHPMailC=- การใช้เซิร์ฟเวอร์ SMTP ของผู้ให้บริการอีเมลของคุณเองในการส่งอีเมลก็น่าสนใจเช่นกัน ดังนั้นอีเมลทั้งหมดที่ส่งจากแอปพลิเคชันจะถูกบันทึกลงในไดเร็กทอรี "ส่ง" ของกล่องจดหมายของคุณด้วย
 WarningPHPMailD=ดังนั้นจึงแนะนำให้เปลี่ยนวิธีการส่งอีเมลเป็นค่า "SMTP"
 WarningPHPMailDbis=If you really want to keep the default "PHP" method to send emails, just ignore this warning, or remove it by %sclicking here%s.
 WarningPHPMail2=หากผู้ให้บริการอีเมล SMTP ของคุณจำเป็นต้องจำกัดโปรแกรมรับส่งอีเมลไว้เฉพาะที่อยู่ IP บางส่วน (ซึ่งพบได้ยากมาก) นี่คือที่อยู่ IP ของตัวแทนผู้ใช้อีเมล (MUA) สำหรับแอปพลิเคชัน ERP CRM ของคุณ: <strong>%s</strong>
-WarningPHPMailSPF=หากชื่อโดเมนในที่อยู่อีเมลของผู้ส่งของคุณได้รับการปกป้องโดยบันทึก SPF (สอบถามผู้รับจดทะเบียนชื่อโดเมนของคุณ) คุณต้องเพิ่ม IP ต่อไปนี้ในบันทึก SPF ของ DNS ของโดเมนของคุณ: <strong>%s</strong>
-ActualMailSPFRecordFound=พบบันทึก SPF จริง (สำหรับอีเมล %s) : %s
+WarningPHPMailSPF=If the domain name in your sender email address is protected by a SPF record (ask your domain name registar), you must add the following IPs or entry in the SPF record of the DNS of your domain: <strong>%s</strong>.
+WarningPHPMailSPFDMARC=If the domain name in your sender email address is protected by a DMARC record different than p=none (ask your domain name registar), you must remove your DMARC record, or set it to p=none like do @gmail.com) or use sending another method.
+SPFAndDMARCInformation=SPF and DMARC DNS record for main email addresses
+ActualMailDNSRecordFound=Actual %s record found (for email %s) : %s
 ClickToShowDescription=คลิกเพื่อแสดงคำอธิบาย
 DependsOn=โมดูลนี้ต้องการโมดูล
 RequiredBy=โมดูลนี้จำเป็นสำหรับโมดูล
@@ -867,7 +869,7 @@ Permission255=แก้ไขรหัสผ่านผู้ใช้อื่
 Permission256=ลบหรือปิดการใช้งานผู้ใช้อื่น ๆ
 Permission262=Extend access to all third parties AND their objects (not only third parties for which the user is linked as a sale representative).
 Permission262b=Not effective for external users (always limited to themselves for proposals, orders, invoices, contracts, etc.).
-Permission262c=Not effective for projects (only rules on project permissions, visibility and assignment matters).
+Permission262c=Not effective for projects (only rules on project permissions, visibility and users assignment matter).
 Permission263=ขยายการเข้าถึงไปยังบุคคลที่สามทั้งหมดโดยไม่ต้องมีวัตถุของพวกเขา (ไม่ใช่เฉพาะบุคคลที่สามที่ผู้ใช้เป็นตัวแทนการขาย)<br>ไม่มีผลกับผู้ใช้ภายนอก (จำกัดเฉพาะตัวเองสำหรับข้อเสนอเสมอ คำสั่งซื้อ ใบแจ้งหนี้ สัญญา ฯลฯ)<br>ไม่มีผลกับโครงการ (เฉพาะกฎเกี่ยวกับการอนุญาตโครงการ การเปิดเผย และการมอบหมาย)
 Permission271=อ่าน CA
 Permission272=ดูใบแจ้งหนี้
@@ -944,7 +946,7 @@ Permission776=จ่ายรายงานค่าใช้จ่าย
 Permission777=อ่านรายงานค่าใช้จ่ายทั้งหมด (แม้แต่ผู้ใช้ที่ไม่ใช่ผู้ใต้บังคับบัญชา)
 Permission778=สร้าง/แก้ไขรายงานค่าใช้จ่ายของทุกคน
 Permission779=รายงานค่าใช้จ่ายส่งออก
-Permission1001=อ่านหุ้น
+Permission1001=Read warehouses and stocks
 Permission1002=สร้าง / แก้ไขคลังสินค้า
 Permission1003=ลบคลังสินค้า
 Permission1004=อ่านการเคลื่อนไหวของหุ้น
@@ -2218,7 +2220,7 @@ CreateCandidature=สร้างการสมัครงาน
 FormatZip=รหัสไปรษณีย์
 MainMenuCode=รหัสรายการเมนู (เมนูหลัก)
 ECMAutoTree=แสดงแผนผัง ECM อัตโนมัติ
-OperationParamDesc=กำหนดกฎเพื่อใช้แยกข้อมูลบางส่วนหรือตั้งค่าเพื่อใช้สำหรับการดำเนินการ<br><br>ตัวอย่างในการแยกชื่อบริษัทจาก หัวเรื่องอีเมลเป็นตัวแปรชั่วคราว:<br>tmp_var=EXTRACT:SUBJECT:ข้อความจากบริษัท ([^\n]*)<br><br>ตัวอย่างการตั้งค่าคุณสมบัติของออบเจ็กต์ที่จะสร้าง:<br>objproperty1=SET:ค่าฮาร์ดโค้ด<br>objproperty2=SET:__tmp_var__<br>objproperty3=SETIFEMPTY:a value (ค่า ถูกตั้งค่าเฉพาะเมื่อคุณสมบัติไม่ได้ถูกกำหนดไว้แล้ว)<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:ชื่อบริษัทของฉันคือ\\ s([^\\s]*)<br><br>ใช้บรรทัดใหม่เพื่อแยกหรือตั้งค่าคุณสมบัติหลายรายการ
+OperationParamDesc=Define the rules to use to extract some data or set values to use for operation.<br><br>Example to extract a string from email header, subject or body into a temporary variable:<br>tmp_var1=EXTRACT:HEADER:My regex ([^\n]*)<br>tmp_var2=EXTRACT:SUBJECT:My refex ([^\n]*)<br>tmp_var3=EXTRACT:BODY:My regex ([^\n]*)<br><br>Examples to set the properties of an object to create:<br>objproperty1=SET:a hard coded value<br>objproperty2=SET:__tmp_var__<br>objproperty3=SETIFEMPTY:a value (value is set only if property is not already defined)<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a new line to extract or set several properties.
 OpeningHours=เวลาเปิดทำการ
 OpeningHoursDesc=ป้อนเวลาทำการปกติของบริษัทของคุณที่นี่
 ResourceSetup=การกำหนดค่าโมดูลทรัพยากร
@@ -2264,7 +2266,7 @@ LargerThan=ใหญ่กว่า
 IfTrackingIDFoundEventWillBeLinked=โปรดทราบว่าหากพบ ID ติดตามของออบเจ็กต์ในอีเมล หรือหากอีเมลเป็นคำตอบของอีเมลที่รวบรวมและเชื่อมโยงกับออบเจ็กต์แล้ว เหตุการณ์ที่สร้างขึ้นจะเชื่อมโยงกับออบเจ็กต์ที่เกี่ยวข้องที่ทราบโดยอัตโนมัติ
 WithGMailYouCanCreateADedicatedPassword=ด้วยบัญชี GMail หากคุณเปิดใช้งานการตรวจสอบความถูกต้อง 2 ขั้นตอน ขอแนะนำให้สร้างรหัสผ่านที่สองเฉพาะสำหรับแอปพลิเคชัน แทนที่จะใช้รหัสผ่านบัญชีของคุณเองจาก https://myaccount.google.com/
 EmailCollectorTargetDir=อาจเป็นพฤติกรรมที่ต้องการในการย้ายอีเมลไปยังแท็ก/ไดเรกทอรีอื่นเมื่อประมวลผลสำเร็จ เพียงตั้งชื่อไดเรกทอรีที่นี่เพื่อใช้คุณสมบัตินี้ (อย่าใช้อักขระพิเศษในชื่อ) โปรดทราบว่าคุณต้องใช้บัญชีเข้าสู่ระบบแบบอ่าน/เขียนด้วย
-EmailCollectorLoadThirdPartyHelp=คุณสามารถใช้การกระทำนี้เพื่อใช้เนื้อหาอีเมลเพื่อค้นหาและโหลดบุคคลที่สามที่มีอยู่ในฐานข้อมูลของคุณ (การค้นหาจะดำเนินการในคุณสมบัติที่กำหนดไว้ระหว่าง 'id', 'name', 'name_alias', 'email') บุคคลที่สามที่พบ (หรือสร้าง) จะถูกนำมาใช้เพื่อดำเนินการต่อไปนี้ที่จำเป็น<br>ตัวอย่างเช่น หากคุณต้องการสร้างบุคคลที่สามด้วยชื่อที่ดึงมาจากสตริง ' ชื่อ: ชื่อที่จะค้นหา' แสดงอยู่ในเนื้อหา ใช้อีเมลของผู้ส่งเป็นอีเมล คุณสามารถตั้งค่าฟิลด์พารามิเตอร์ดังนี้:<br>'email=HEADER:^From:(. *);name=EXTRACT:BODY:Name:\\s([^\\s]*);client=SET:2;'<br>
+EmailCollectorLoadThirdPartyHelp=You can use this action to use the email content to find and load an existing third party in your database (search will be done on the defined property among 'id','name','name_alias','email'). The found (or created) third party will be used for following actions that need it.<br>For example, if you want to create a third party with a name extracted from a string 'Name: name to find' present into the body, use the sender email as email, you can set the parameter field like this:<br>'email=EXTRACT:HEADER:^From:(.*);name=EXTRACT:BODY:Name:\\s([^\\s]*);client=SET:2;'<br>
 FilterSearchImapHelp=คำเตือน: เซิร์ฟเวอร์อีเมลจำนวนมาก (เช่น Gmail) กำลังค้นหาคำแบบเต็มเมื่อค้นหาสตริง และจะไม่ส่งคืนผลลัพธ์หากพบสตริงเป็นคำเพียงบางส่วนเท่านั้น ด้วยเหตุนี้ การใช้อักขระพิเศษในเกณฑ์การค้นหาจะถูกละเว้น หากอักขระเหล่านั้นไม่ได้เป็นส่วนหนึ่งของคำที่มีอยู่<br>หากต้องการยกเว้นการค้นหาคำ (ส่งคืนอีเมลหากเป็นคำ ไม่พบ) คุณสามารถใช้ ! อักขระหน้าคำ (อาจใช้ไม่ได้กับเมลเซิร์ฟเวอร์บางตัว)
 EndPointFor=จุดสิ้นสุดสำหรับ %s : %s
 DeleteEmailCollector=ลบตัวรวบรวมอีเมล

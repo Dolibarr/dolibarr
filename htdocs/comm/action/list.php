@@ -664,7 +664,7 @@ if ($showbirthday) {
 print $nav;
 
 //print dol_get_fiche_head($head, $tabactive, $langs->trans('Agenda'), 0, 'action');
-//print_actions_filter($form, $canedit, $search_status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
+//print_actions_filter($form, $canedit, $search_status, $year, $month, $day, $showbirthday, '', $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
 //print dol_get_fiche_end();
 
 
@@ -758,7 +758,7 @@ if ($massactionbutton) {
 $i = 0;
 
 print '<div class="liste_titre liste_titre_bydiv centpercent">';
-print_actions_filter($form, $canedit, $search_status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid, $search_categ_cus);
+print_actions_filter($form, $canedit, $search_status, $year, $month, $day, $showbirthday, '', $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid, $search_categ_cus);
 print '</div>';
 
 print '<div class="div-table-responsive">';
@@ -923,7 +923,7 @@ if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 print "</tr>\n";
 
 $now = dol_now();
-$delay_warning = $conf->global->MAIN_DELAY_ACTIONS_TODO * 24 * 60 * 60;
+$delay_warning = getDolGlobalInt('MAIN_DELAY_ACTIONS_TODO') * 24 * 60 * 60;
 $today_start_time = dol_mktime(0, 0, 0, (int) date('m', $now), (int) date('d', $now), (int) date('Y', $now));
 
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';

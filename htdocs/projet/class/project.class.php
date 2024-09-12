@@ -1636,7 +1636,7 @@ class Project extends CommonObject
 	 * @param 	int		$mode			0=All project I have permission on (assigned to me or public), 1=Projects assigned to me only, 2=Will return list of all projects with no test on contacts
 	 * @param 	int		$list			0=Return array, 1=Return string list
 	 * @param	int		$socid			0=No filter on third party, id of third party
-	 * @param	string	$filter			additional filter on project (statut, ref, ...). TODO Use USF syntax here.
+	 * @param	string	$filter			Additional filter on project (statut, ref, ...). TODO Use USF syntax here.
 	 * @return 	array|string			Array of projects id, or string with projects id separated with "," if list is 1
 	 */
 	public function getProjectsAuthorizedForUser($user, $mode = 0, $list = 0, $socid = 0, $filter = '')
@@ -1692,7 +1692,15 @@ class Project extends CommonObject
 			// No filter. Use this if user has permission to see all project
 		}
 
-		$sql .= $filter;
+		// Manage filter
+		$errormessage = '';
+		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+		if ($errormessage) {
+			$this->errors[] = $errormessage;
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+			$sql .= $filter;
+		}
+
 		//print $sql;
 
 		$resql = $this->db->query($sql);
@@ -2704,7 +2712,7 @@ class Project extends CommonObject
 					$error++;
 				}
 
-				$mail = new CMailFile($subject, $to, $from, $reportContent, array(), array(), array(), '', '', 0, -1, '', '', 0, 'text/html');
+				$mail = new CMailFile($subject, $to, $from, $reportContent, array(), array(), array(), '', '', 0, -1, '', '', '', 'text/html');
 
 				if ($mail->sendfile()) {
 					$nbMailSend++;

@@ -5,6 +5,7 @@
  * Copyright (C) 2016		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -580,14 +581,14 @@ if (!empty($conf->use_javascript_ajax)) {
 
 		      <input type="hidden" id="file" name="file" value="'.dol_escape_htmltag($original_file).'" />
 		      <input type="hidden" id="action" name="action" value="confirm_crop" />
-		      <input type="hidden" id="product" name="product" value="'.dol_escape_htmltag($id).'" />
+		      <input type="hidden" id="product" name="product" value="'.dol_escape_htmltag((string) $id).'" />
 		      <input type="hidden" id="dol_screenwidth" name="dol_screenwidth" value="'.($_SESSION['dol_screenwidth'] ?? 'null').'" />
 		      <input type="hidden" id="refsizeforcrop" name="refsizeforcrop" value="'.$refsizeforcrop.'" />
 		      <input type="hidden" id="ratioforcrop" name="ratioforcrop" value="'.$ratioforcrop.'" /><!-- value in field used by js/lib/lib_photoresize.js -->
 		      <input type="hidden" id="imagewidth" name="imagewidth" value="'.$width.'" /><!-- value in field used by js/lib/lib_photoresize.js -->
 		      <input type="hidden" id="imageheight" name="imageheight" value="'.$height.'" /><!-- value in field used by js/lib/lib_photoresize.js -->
 	          <input type="hidden" name="modulepart" value="'.dol_escape_htmltag($modulepart).'" />
-		      <input type="hidden" name="id" value="'.dol_escape_htmltag($id).'" />
+		      <input type="hidden" name="id" value="'.dol_escape_htmltag((string) $id).'" />
 		      <br>
 		      <input type="submit" id="submitcrop" name="submitcrop" class="button" value="'.dol_escape_htmltag($langs->trans("Crop")).'" />
 		      &nbsp;

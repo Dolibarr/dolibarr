@@ -682,7 +682,7 @@ if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 		// Add measure from extrafields
 		if ($object->isextrafieldmanaged) {
 			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-				if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key]) && (!isset($extrafields->attributes[$object->table_element]['enabled'][$key]) || dol_eval($extrafields->attributes[$object->table_element]['enabled'][$key], 1, 1, '1'))) {
+				if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key]) && (!isset($extrafields->attributes[$object->table_element]['enabled'][$key]) || dol_eval((string) $extrafields->attributes[$object->table_element]['enabled'][$key], 1, 1, '1'))) {
 					$arrayofyaxis['te.'.$key] = array(
 						'label' => $extrafields->attributes[$object->table_element]['label'][$key],
 						'position' => (int) $extrafields->attributes[$object->table_element]['pos'][$key],
@@ -1150,7 +1150,7 @@ if ($mode == 'graph') {
 
 if ($sql && !defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 	// Show admin info
-	print '<br>'.info_admin($langs->trans("SQLUsedForExport").':<br> '.$sql, 0, 0, 1, '', 'TechnicalInformation');
+	print '<br>'.info_admin($langs->trans("SQLUsedForExport").':<br> '.$sql, 0, 0, '1', '', 'TechnicalInformation');
 }
 
 print '<div>';

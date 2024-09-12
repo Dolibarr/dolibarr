@@ -105,7 +105,7 @@ dolibarr_install_syslog("--- step2: entering step2.php page");
  *	View
  */
 
-pHeader($langs->trans("CreateDatabaseObjects"), "step4");
+pHeader($langs->trans("DolibarrSetup").' - '.$langs->trans("CreateDatabaseObjects"), "step4");
 
 // Test if we can run a first install process
 if (!is_writable($conffile)) {

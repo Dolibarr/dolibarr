@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
+/* Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  * Copyright (C) ---Replace with your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
@@ -225,7 +226,7 @@ class MyModuleApi extends DolibarrApi
 				continue;
 			}
 
-			$this->myobject->$field = $this->_checkValForAPI($field, $value, $this->myobject);
+			$this->myobject->$field = $this->_checkValForAPI((string) $field, $value, $this->myobject);
 		}
 
 		// Clean data
