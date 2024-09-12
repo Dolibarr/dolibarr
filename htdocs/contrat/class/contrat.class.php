@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonsignedobject.class.php';
 /**
  *	Class to manage contracts
  * @property	int				$signed_status
- * @property	array<int>		$SIGNED_STATUSES
+ * @static		array<int>		$SIGNED_STATUSES
  */
 class Contrat extends CommonObject
 {

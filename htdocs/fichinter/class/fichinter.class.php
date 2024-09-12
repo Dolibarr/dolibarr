@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonsignedobject.class.php';
 /**
  *	Class to manage interventions
  * @property	int				$signed_status
- * @property	array<int>		$SIGNED_STATUSES
+ * @static		array<int>		$SIGNED_STATUSES
  */
 class Fichinter extends CommonObject
 {
