@@ -510,7 +510,7 @@ class WebsitePage extends CommonObject
 	 * @param  string      	$filtermode   	Filter mode (AND or OR)
 	 * @return int         		         	int <0 if KO, array of pages if OK
 	 */
-	public function countAll($websiteid, string $filter = '', $filtermode = 'AND')
+	public function countAll($websiteid, $filter = '', $filtermode = 'AND')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
