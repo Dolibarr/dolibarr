@@ -698,7 +698,7 @@ class FormTicket
 			}
 		}
 
-		if ($subelement != 'contract') {
+		if ($subelement != 'contract' && $subelement != 'contrat') {
 			if (isModEnabled('contract') && !$this->ispublic) {
 				$langs->load('contracts');
 				$formcontract = new FormContract($this->db);
