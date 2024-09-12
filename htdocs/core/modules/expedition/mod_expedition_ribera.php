@@ -98,13 +98,21 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 	 */
 	public function getExample()
 	{
-		global $langs, $mysoc;
+		global $langs, $mysoc, $db;
 
 		$old_code_client = $mysoc->code_client;
 		$old_code_type = $mysoc->typent_code;
 		$mysoc->code_client = 'CCCCCCCCCC';
 		$mysoc->typent_code = 'TTTTTTTTTT';
-		$numExample = $this->getNextValue($mysoc, '');
+
+
+		if (!class_exists('Expedition')) {
+			require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
+		}
+
+		$expedition = new Expedition($db);
+
+		$numExample = $this->getNextValue($mysoc, $expedition);
 		$mysoc->code_client = $old_code_client;
 		$mysoc->typent_code = $old_code_type;
 
@@ -134,7 +142,7 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 			return 0;
 		}
 
-		$date = $shipment->date_expedition;
+		$date = $shipment->date_shipping;
 
 		$numFinal = get_next_value($db, $mask, 'expedition', 'ref', '', $objsoc, $date);
 
