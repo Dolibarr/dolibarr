@@ -2565,7 +2565,7 @@ class EmailCollector extends CommonObject
 
 								if (!$errorforactions && ($idtouseforthirdparty || $emailtouseforthirdparty || $nametouseforthirdparty || $namealiastouseforthirdparty)) {
 									// We make another search on thirdparty
-									$operationslog .= '<br>We have this data to search thirdparty: id='.$idtouseforthirdparty.', email='.$emailtouseforthirdparty.', name='.$nametouseforthirdparty.', name_alias='.$namealiastouseforthirdparty;
+									$operationslog .= '<br>We have this initial main data to search thirdparty: id='.$idtouseforthirdparty.', email='.$emailtouseforthirdparty.', name='.$nametouseforthirdparty.', name_alias='.$namealiastouseforthirdparty.'.';
 
 									$tmpobject = new stdClass();
 									$tmpobject->element = 'generic';
@@ -2581,7 +2581,7 @@ class EmailCollector extends CommonObject
 									$namealiastouseforthirdparty = $tmpobject->name_alias;
 									$emailtouseforthirdparty = $tmpobject->email;
 
-									$operationslog .= '<br>We try to search existing thirdparty with '.$idtouseforthirdparty.' '.$emailtouseforthirdparty.' '.$nametouseforthirdparty.' '.$namealiastouseforthirdparty;
+									$operationslog .= '<br>We try to search existing thirdparty with idtouseforthirdparty='.$idtouseforthirdparty.' emailtouseforthirdparty='.$emailtouseforthirdparty.' nametouseforthirdparty='.$nametouseforthirdparty.' namealiastouseforthirdparty='.$namealiastouseforthirdparty;
 
 									// Try to find the thirdparty that match the most the information we have
 									$result = $thirdpartystatic->findNearest($idtouseforthirdparty, $nametouseforthirdparty, '', '', '', '', '', '', '', '', $emailtouseforthirdparty, $namealiastouseforthirdparty);
@@ -2595,8 +2595,8 @@ class EmailCollector extends CommonObject
 										if ($operation['type'] == 'loadthirdparty') {
 											dol_syslog("Third party with id=".$idtouseforthirdparty." email=".$emailtouseforthirdparty." name=".$nametouseforthirdparty." name_alias=".$namealiastouseforthirdparty." was not found");
 
-											//search into contacts of thirdparty
-											$resultContact = $contactstatic->fetch(0, '', '', $emailtouseforthirdparty);
+											// Search into contacts of thirdparties to try to guess the thirdparty to use
+											$resultContact = $contactstatic->findNearest(0, '', '', '', $emailtouseforthirdparty, '', 0);
 											if ($resultContact > 0) {
 												$idtouseforthirdparty = $contactstatic->socid;
 												$result = $thirdpartystatic->fetch($idtouseforthirdparty);
