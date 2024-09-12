@@ -3981,7 +3981,7 @@ if ($action == 'editcss') {
 	print '<tr><td class="tdtop">';
 	print $langs->trans('WEBSITE_HTML_HEADER');
 	$htmlhelp = $langs->trans("Example").' :<br>';
-	$htmlhelp .= dol_htmlentitiesbr($htmlheadercontentdefault);
+	$htmlhelp .= dol_nl2br(dol_htmlentities($htmlheadercontentdefault));	// do not use dol_htmlentitiesbr here, $htmlheadercontentdefault is HTML with content like <link> and <script> that we want to be html encode as they must be show as doc content not executable instruction.
 	$textwithhelp = $form->textwithpicto('', $htmlhelp, 1, 'help', '', 0, 2, 'htmlheadertooltip');
 	$htmlhelp2 = $langs->trans("LinkAndScriptsHereAreNotLoadedInEditor").'<br>';
 	print $form->textwithpicto($textwithhelp, $htmlhelp2, 1, 'warning', '', 0, 2, 'htmlheadertooltip2');
@@ -4385,6 +4385,9 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 						jQuery(".spanprefix").hide();
 					}
 				});
+
+				// Force at init execution a first time of the handler change
+				jQuery("#selectWEBSITE_TYPE_CONTAINER").trigger(\'change\');
 			});
 			</script>
 		';
@@ -4715,8 +4718,8 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	print '<tr><td class="tdhtmlheader tdtop">';
 	$htmlhelp = $langs->trans("EditTheWebSiteForACommonHeader").'<br><br>';
 	$htmlhelp .= $langs->trans("Example").' :<br>';
-	$htmlhelp .= dol_htmlentitiesbr($htmlheadercontentdefault);
-	print $form->textwithpicto($langs->trans('HtmlHeaderPage'), $htmlhelp, 1, 'help', '', 0, 2, 'htmlheadertooltip');
+	$htmlhelp .= dol_nl2br(dol_htmlentities($htmlheadercontentdefault));	// do not use dol_htmlentitiesbr here, $htmlheadercontentdefault is HTML with content like <link> and <script> that we want to be html encode as they must be show as doc content not executable instruction.
+	print $form->textwithpicto($langs->transnoentitiesnoconv('HtmlHeaderPage'), $htmlhelp, 1, 'help', '', 0, 2, 'htmlheadertooltip');
 	print '</td><td>';
 	$poscursor = array('x' => GETPOST('htmlheader_x'), 'y' => GETPOST('htmlheader_y'));
 	$doleditor = new DolEditor('htmlheader', $pagehtmlheader, '', '120', 'ace', 'In', true, false, 'ace', ROWS_3, '100%', '', $poscursor);
