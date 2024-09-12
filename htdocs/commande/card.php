@@ -3153,6 +3153,11 @@ if ($action == 'create' && $usercancreate) {
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 				print showOnlinePaymentUrl('order', $object->ref).'<br>';
 			}
+			if ($object->statut != Commande::STATUS_DRAFT) {
+				print '<br><!-- Link to sign -->';
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
+				print showOnlineSignatureUrl('commande', $object->ref).'<br>';
+			}
 
 			print '</div><div class="fichehalfright">';
 

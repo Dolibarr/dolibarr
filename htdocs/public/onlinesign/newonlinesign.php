@@ -164,6 +164,10 @@ if ($source == 'proposal') {
 	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 	$object = new Expedition($db);
 	$result = $object->fetch(0, $ref);
+} elseif ($source == 'commande') {
+	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+	$object = new Commande($db);
+	$result = $object->fetch(0, $ref);
 } else {
 	httponly_accessforbidden($langs->trans('ErrorBadParameters')." - Bad value for source. Value not supported.", 400, 1);
 }
@@ -802,11 +806,10 @@ if ($action == "dosign" && empty($cancel)) {
 	if ($source == 'proposal') {
 		if ($object->status == $object::STATUS_SIGNED) {
 			print '<br>';
+			print img_picto('', 'check', '', false, 0, 0, '', 'size2x').'<br>';
 			if ($message == 'signed') {
-				print img_picto('', 'check', '', false, 0, 0, '', 'size2x').'<br>';
 				print '<span class="ok">'.$langs->trans("PropalSigned").'</span>';
 			} else {
-				print img_picto('', 'check', '', false, 0, 0, '', 'size2x').'<br>';
 				print '<span class="ok">'.$langs->trans("PropalAlreadySigned").'</span>';
 			}
 		} elseif ($object->status == $object::STATUS_NOTSIGNED) {
@@ -839,6 +842,18 @@ if ($action == "dosign" && empty($cancel)) {
 			print '<span class="ok">'.$langs->trans("ExpeditionSigned").'</span>';
 		} else {
 			print '<input type="submit" class="butAction small wraponsmartphone marginbottomonly marginleftonly marginrightonly reposition" value="'.$langs->trans("SignExpedition").'">';
+		}
+	} elseif ($source == 'commande') {
+		if ($object->signed_status == Commande::STATUS_SIGNED_SENDER) {
+			print '<br>';
+			print img_picto('', 'check', '', false, 0, 0, '', 'size2x') . '<br>';
+			if ($message == 'signed') {
+				print '<span class="ok">' . $langs->trans("OrderSigned") . '</span>';
+			} else {
+				print '<span class="ok">' . $langs->trans("OrderAlreadySigned") . '</span>';
+			}
+		} else {
+			print '<input type="submit" class="butAction small wraponsmartphone marginbottomonly marginleftonly marginrightonly reposition" value="'.$langs->trans("SignOrder").'">';
 		}
 	} else {
 		if ($message == 'signed') {
