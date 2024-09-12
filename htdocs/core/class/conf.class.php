@@ -161,6 +161,7 @@ class Conf
 		$this->mailing = new stdClass();
 		$this->expensereport	= new stdClass();
 		$this->productbatch		= new stdClass();
+		$this->api = new stdClass();
 	}
 
 	/**
