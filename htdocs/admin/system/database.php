@@ -59,12 +59,14 @@ print '<tr class="oddeven"><td width="300">'.$langs->trans("User").'</td><td>'.$
 print '<tr class="oddeven"><td width="300">'.$langs->trans("Password").'</td><td>'.preg_replace('/./i', '*', $dolibarr_main_db_pass).'</td></tr>'."\n";
 print '<tr class="oddeven"><td width="300">'.$langs->trans("DBStoringCharset").'</td><td>'.$db->getDefaultCharacterSetDatabase();
 if ($db->type == 'mysqli') {
-	print ' '.$form->textwithpicto('', $langs->transnoentitiesnoconv("HelpMariaDBToGetPossibleValues", "SHOW CHARACTER SET"));
+	print ' '.$form->textwithpicto('', $langs->transnoentitiesnoconv("HelpMariaDBToGetPossibleValues", "SHOW CHARSET"));
+	// We can use $db->getDefaultCharacterSetDatabase(),  $db->getListOfCharacterSet(),
 }
 print '</td></tr>'."\n";
 print '<tr class="oddeven"><td width="300">'.$langs->trans("DBSortingCharset").'</td><td>'.$db->getDefaultCollationDatabase();
 if ($db->type == 'mysqli') {
 	print ' '.$form->textwithpicto('', $langs->transnoentitiesnoconv("HelpMariaDBToGetPossibleValues", "SHOW COLLATION"));
+	// We can use $db->getDefaultCollationDatabase(), $db->getListOfCollation();
 }
 print '</td></tr>'."\n";
 print '</table>';
