@@ -161,6 +161,9 @@ class SupplierProposal extends CommonObject
 	 */
 	public $mode_reglement;
 
+	/**
+	 * @var array<string,string>  (Encoded as JSON in database)
+	 */
 	public $extraparams = array();
 	public $lines = array();
 	public $line;
