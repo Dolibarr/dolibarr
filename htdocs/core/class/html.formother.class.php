@@ -397,7 +397,7 @@ class FormOther
 	/**
 	 * Return select list for categories (to use in form search selectors)
 	 *
-	 * @param	int			$type			Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
+	 * @param	string		$type			Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
 	 * @param   integer		$selected     	Preselected value
 	 * @param   string		$htmlname      	Name of combo list
 	 * @param	int			$nocateg		Show also an entry "Not categorized"
