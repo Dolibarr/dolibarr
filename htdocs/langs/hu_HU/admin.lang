@@ -514,15 +514,17 @@ ModuleCompanyCodeCustomerDigitaria=%s, majd az ügyfél rövidített neve és a 
 ModuleCompanyCodeSupplierDigitaria=%s, majd a szállító rövidített neve és a karakterek száma: %s a beszállítói könyvelési kódhoz.
 Use3StepsApproval=Alapértelmezés szerint a beszerzési rendeléseket 2 különböző felhasználónak kell létrehoznia és jóváhagynia (egy lépés/felhasználó létrehozása és egy lépés/felhasználó jóváhagyása. Ne feledje, hogy ha a felhasználó rendelkezik mind a létrehozási, mind a jóváhagyási engedéllyel, akkor egy lépés/felhasználó elegendő) . Ezzel az opcióval kérheti egy harmadik lépés/felhasználói jóváhagyás bevezetését, ha az összeg nagyobb, mint egy dedikált érték (tehát 3 lépésre lesz szükség: 1=érvényesítés, 2=első jóváhagyás és 3=második jóváhagyás, ha az összeg elegendő). <br>Állítsa üresre, ha egy jóváhagyás (2 lépés) elegendő, állítsa nagyon alacsony értékre (0,1), ha mindig szükség van egy második jóváhagyásra (3 lépés).
 UseDoubleApproval=Használjon 3 lépéses jóváhagyást, ha az összeg (adó nélkül) nagyobb, mint ...
-WarningPHPMail=FIGYELMEZTETÉS: Az alkalmazásból az e-mailek küldésének beállítása az alapértelmezett általános beállítást használja. Ez a választás nem igényel műszaki ismereteket a beállítás befejezéséhez.<br>Azonban gyakran jobb, ha a kimenő e-maileket úgy állítja be, hogy az e-mail szolgáltató e-mail szerverét használja az alapértelmezett beállítás helyett. néhány ok:
+WarningPHPMail=NOTICE: The setup to send emails from the application is using the default generic setup (called "%s"). This choice needs no technical knowledge and no particular setup.<br>However, it is often better to setup outgoing emails to use the other method (called "%s") to use the email server of your Email Service Provider, instead of the default setup for several reasons:
 WarningPHPMailA=- Az e-mail szolgáltató szerverének használata növeli az e-mailek megbízhatóságát, így növeli a kézbesíthetőséget anélkül, hogy SPAM-ként jelölnék meg
-WarningPHPMailB=- Egyes e-mail szolgáltatók (például a Yahoo) nem engedélyezik, hogy e-mailt küldjön a saját szerverüktől eltérő szerverről. A jelenlegi beállítás az alkalmazás szerverét használja az e-mailek küldésére, nem pedig az e-mail szolgáltató szerverét, így néhány címzett (amely kompatibilis a korlátozó DMARC protokollal) megkérdezi az e-mail szolgáltatóját, hogy elfogadják-e az Ön e-mailjeit, és néhány e-mail szolgáltató. (mint a Yahoo) nemmel válaszolhat, mert a szerver nem az övék, így előfordulhat, hogy néhány elküldött e-mailt nem fogadunk el kézbesítésre (vigyázzon az e-mail szolgáltatója küldési kvótájára is).
+WarningPHPMailB=- If the domain of your email (the part mymaildomain.com into myname@mymaildomain.com) is protected by a SPF + a DMARC record, your email may be flagged as SPAM because your DMARC rule defined into DNS zone of the domain of the sender (mymaildomain.com) does not allow the sending as a generic sender. In such a case, you must disable the DMARC for the domain (or set it to p=none like done by @gmail.com) or, better, if you have the technical knowledge, use the other method to send emails using the SMTP server of your own email provider.
 WarningPHPMailC=- A saját e-mail szolgáltatója SMTP szerverének használata e-mailek küldésére is megfelelő, így az alkalmazásból küldött összes e-mailt a postafiók "Elküldött" könyvtárába is elmentjük.
 WarningPHPMailD=Ezért javasolt az e-mailek küldési módját "SMTP" értékre módosítani.
 WarningPHPMailDbis=Ha valóban meg szeretné tartani az alapértelmezett „PHP” módszert az e-mailek küldésére, hagyja figyelmen kívül ezt a figyelmeztetést, vagy távolítsa el %side kattintva%s.
 WarningPHPMail2=Ha az e-mail SMTP-szolgáltatójának bizonyos IP-címekre kell korlátoznia az e-mail klienst (nagyon ritka), akkor ez az ERP CRM-alkalmazás mail felhasználói ügynökének (MUA) IP-címe: <strong>%s</strong>.
-WarningPHPMailSPF=Ha a küldő e-mail címében szereplő domain nevet SPF rekord védi (kérdezze meg a domain név regisztrátorát), akkor a következő IP-címeket kell hozzáadnia a domain DNS SPF rekordjához: <strong>%s</strong>.
-ActualMailSPFRecordFound=A tényleges SPF rekord található (a %s e-mailhez): %s
+WarningPHPMailSPF=If the domain name in your sender email address is protected by a SPF record (ask your domain name registar), you must add the following IPs or entry in the SPF record of the DNS of your domain: <strong>%s</strong>.
+WarningPHPMailSPFDMARC=If the domain name in your sender email address is protected by a DMARC record different than p=none (ask your domain name registar), you must remove your DMARC record, or set it to p=none like do @gmail.com) or use sending another method.
+SPFAndDMARCInformation=SPF and DMARC DNS record for main email addresses
+ActualMailDNSRecordFound=Actual %s record found (for email %s) : %s
 ClickToShowDescription=Kattintson a leírás megjelenítéséhez
 DependsOn=Ehhez a modulhoz szükséges modul(ok)
 RequiredBy=Ezt a modult más modulok igénylik
@@ -867,7 +869,7 @@ Permission255=Módosíthat más felhasználó jelszavát
 Permission256=Törlése vagy tiltsa le más felhasználók
 Permission262=A hozzáférés kiterjesztése minden harmadik félre ÉS tárgyaikra (nem csak azokra a harmadik felekre, amelyekhez a felhasználó értékesítési képviselőként kapcsolódik).
 Permission262b=Nem hatékony külső felhasználók számára (mindig magukra korlátozódnak az ajánlatok, megrendelések, számlák, szerződések stb. esetében).
-Permission262c=Projekteknél nem hatékony (csak a projektengedélyekre, a láthatóságra és a hozzárendelésre vonatkozó szabályok vonatkoznak).
+Permission262c=Not effective for projects (only rules on project permissions, visibility and users assignment matter).
 Permission263=A hozzáférés kiterjesztése minden harmadik félre, tárgyaik NÉLKÜL (nem csak olyan harmadik felekre, akiknek a felhasználó értékesítési képviselője).<br>Külső felhasználók számára nem hatékony (mindig saját magukra korlátozódnak az ajánlatok, rendelések, számlák, szerződések stb. esetében). <br>Nem hatékony projekteknél (csak a projektengedélyekre, a láthatóságra és a hozzárendelésre vonatkozó szabályok számítanak).
 Permission271=Olvassa CA
 Permission272=Olvassa számlák
@@ -944,7 +946,7 @@ Permission776=Fizetési költségjelentések
 Permission777=Minden költségjelentés olvasása (még a felhasználó nem beosztottjaét is)
 Permission778=Költségjelentések létrehozása/módosítása mindenkiről
 Permission779=Költségjelentések exportálása
-Permission1001=Olvassa készletek
+Permission1001=Read warehouses and stocks
 Permission1002=Raktárak létrehozása/módosítása
 Permission1003=Raktárak törlése
 Permission1004=Olvassa állomány mozgását
@@ -2218,7 +2220,7 @@ CreateCandidature=Állással kapcsolatos jelentkezés létrehozása
 FormatZip=Zip
 MainMenuCode=Menü belépési kód (főmenü)
 ECMAutoTree=Automatikus ECM fa megjelenítése
-OperationParamDesc=Határozza meg azokat a szabályokat, amelyek alapján bizonyos adatokat kinyerhet, vagy állítson be értékeket a működéshez.<br><br>Példa a cégnév kinyerésére e-mail tárgya ideiglenes változóba:<br>tmp_var=EXTRACT:SUBJECT:Üzenet a cégtől ([^\n]*)<br><br>Példák egy létrehozandó objektum tulajdonságainak beállítására:<br>objproperty1=SET:a keményen kódolt érték<br>objproperty2=SET:__tmp_var__<br>objproperty3=aIFEMPe csak akkor van beállítva, ha a tulajdonság még nincs megadva)<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=KIVONAT:BODY:My cég neve\\ s([^\\s]*)<br><br>Használjon új sort több tulajdonság kibontásához vagy beállításához.
+OperationParamDesc=Define the rules to use to extract some data or set values to use for operation.<br><br>Example to extract a string from email header, subject or body into a temporary variable:<br>tmp_var1=EXTRACT:HEADER:My regex ([^\n]*)<br>tmp_var2=EXTRACT:SUBJECT:My refex ([^\n]*)<br>tmp_var3=EXTRACT:BODY:My regex ([^\n]*)<br><br>Examples to set the properties of an object to create:<br>objproperty1=SET:a hard coded value<br>objproperty2=SET:__tmp_var__<br>objproperty3=SETIFEMPTY:a value (value is set only if property is not already defined)<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a new line to extract or set several properties.
 OpeningHours=Nyitvatartási idő
 OpeningHoursDesc=Írja be a cége szokásos nyitvatartási idejét.
 ResourceSetup=Az erőforrás modul beállítása
@@ -2264,7 +2266,7 @@ LargerThan=Nagyobb mint
 IfTrackingIDFoundEventWillBeLinked=Vegye figyelembe, hogy ha egy objektum nyomkövetési azonosítója található az e-mailben, vagy ha az e-mail egy már összegyűjtött és egy objektumhoz kapcsolt e-mail válasza, akkor a létrehozott esemény automatikusan összekapcsolódik az ismert kapcsolódó objektummal.
 WithGMailYouCanCreateADedicatedPassword=GMail-fiók esetén, ha engedélyezte a 2 lépésből álló ellenőrzést, javasoljuk, hogy hozzon létre egy dedikált második jelszót az alkalmazás számára ahelyett, hogy saját fiókja jelszavát használná a https://myaccount.google.com/ webhelyről.
 EmailCollectorTargetDir=Előfordulhat, hogy az e-mail sikeres feldolgozása után egy másik címke/könyvtárba helyezi át az e-mailt. Csak állítsa be itt a könyvtár nevét a funkció használatához (NE használjon speciális karaktereket a névben). Vegye figyelembe, hogy olvasási/írási bejelentkezési fiókot is kell használnia.
-EmailCollectorLoadThirdPartyHelp=Ezzel a művelettel az e-mail tartalmát használhatja egy létező partner megkeresésére és betöltésére az adatbázisban (a keresés a megadott tulajdonságon történik az „id”, „name”, "név_álnév", "e-mail"). A talált (vagy létrehozott) partner a következő műveletekhez lesz használva, amelyeknek szüksége van rá.<br>Ha például létre szeretne hozni a partner egy „Név: keresendő név” karakterláncból kivont név szerepel a törzsben, használja a feladó e-mail-címét e-mailként, a paramétermezőt így állíthatja be:<br>'email=HEADER:^From:(.*);name=EXTRACT:BODY:Név:\\s([^\\s]*);client=SET:2; '<br>
+EmailCollectorLoadThirdPartyHelp=You can use this action to use the email content to find and load an existing third party in your database (search will be done on the defined property among 'id','name','name_alias','email'). The found (or created) third party will be used for following actions that need it.<br>For example, if you want to create a third party with a name extracted from a string 'Name: name to find' present into the body, use the sender email as email, you can set the parameter field like this:<br>'email=EXTRACT:HEADER:^From:(.*);name=EXTRACT:BODY:Name:\\s([^\\s]*);client=SET:2;'<br>
 FilterSearchImapHelp=Figyelmeztetés: sok e-mail szerver (például a Gmail) teljes szó keresést végez, amikor egy karakterláncon keres, és nem ad eredményt, ha a karakterlánc csak részben található meg a szóban. Emiatt is figyelmen kívül hagyja a speciális karakterek használatát a keresési feltételekben, ha azok nem részei a meglévő szavaknak.<br>Szó kizárása érdekében (szó esetén küldje vissza az e-mailt nem található), használhatja a ! karakter a szó előtt (egyes levelezőszervereken nem működik).
 EndPointFor=%s végpontja: %s
 DeleteEmailCollector=E-mail gyűjtő törlése
