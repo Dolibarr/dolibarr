@@ -118,3 +118,9 @@ ALTER TABLE llx_contrat ADD COLUMN denormalized_lower_planned_end_date datetime;
 
 -- Missing field vat_reverse_charge with constant MAIN_COMPANY_PERENTITY_SHARED
 ALTER TABLE llx_societe_perentity ADD COLUMN vat_reverse_charge tinyint DEFAULT 0;
+
+
+-- Product attribut combination2val
+ALTER TABLE llx_product_attribute_combination2val ADD INDEX idx_product_att_com2v_prod_combination (fk_prod_combination);
+ALTER TABLE llx_product_attribute_combination2val ADD INDEX idx_product_att_com2v_prod_attr (fk_prod_attr);
+ALTER TABLE llx_product_attribute_combination2val ADD INDEX idx_product_att_com2v_prod_attr_val (fk_prod_attr_val);

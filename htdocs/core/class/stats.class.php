@@ -395,7 +395,7 @@ abstract class Stats
 	 * 	Return nb of elements by year
 	 *
 	 *	@param	string	$sql		SQL request
-	 * 	@return	array
+	 * @return	array<array{0:int,1:int}>				Array of nb each year
 	 */
 	protected function _getNbByYear($sql)
 	{

@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -144,7 +145,7 @@ class Mailing extends CommonObject
 	public $date_envoi;
 
 	/**
-	 * @var array extraparams
+	 * @var array<string,string>  (Encoded as JSON in database)
 	 */
 	public $extraparams = array();
 
@@ -498,14 +499,14 @@ class Mailing extends CommonObject
 					if ($this->db->num_rows($result)) {
 						while ($obj = $this->db->fetch_object($result)) {
 							$target_array[] = array(
-								'fk_contact'=>$obj->fk_contact,
-								'lastname'=>$obj->lastname,
-								'firstname'=>$obj->firstname,
-								'email'=>$obj->email,
-								'other'=>$obj->other,
-								'source_url'=>$obj->source_url,
-								'source_id'=>$obj->source_id,
-								'source_type'=>$obj->source_type
+								'fk_contact' => $obj->fk_contact,
+								'lastname' => $obj->lastname,
+								'firstname' => $obj->firstname,
+								'email' => $obj->email,
+								'other' => $obj->other,
+								'source_url' => $obj->source_url,
+								'source_id' => $obj->source_id,
+								'source_type' => $obj->source_type
 							);
 						}
 					}
@@ -876,7 +877,7 @@ class Mailing extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array('emailingdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
