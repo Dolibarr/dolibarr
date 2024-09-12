@@ -117,7 +117,7 @@ if (empty($reshook)) {
 
 			// Get chosen iban id
 			$iban = explode(" / ", GETPOST('ribList'))[0];
-			$sql = "SELECT rowid FROM ".$db->prefix()."societe_rib WHERE iban_prefix = '".$iban."'" ;
+			$sql = "SELECT rowid FROM ".$db->prefix()."societe_rib WHERE iban_prefix = '".$db->escape($iban)."'" ;
 			$resql = $object->db->query($sql);
 			if ($resql) {
 				if ($resql->num_rows) {
