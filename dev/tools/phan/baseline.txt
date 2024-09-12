@@ -12,9 +12,9 @@ return [
     // PhanPluginUnknownPropertyType : 1550+ occurrences
     // PhanPossiblyUndeclaredGlobalVariable : 1070+ occurrences
     // PhanTypeMismatchArgumentProbablyReal : 1000+ occurrences
-    // PhanUndeclaredProperty : 770+ occurrences
+    // PhanUndeclaredProperty : 750+ occurrences
     // PhanUndeclaredGlobalVariable : 690+ occurrences
-    // PhanPluginUnknownObjectMethodCall : 540+ occurrences
+    // PhanPluginUnknownObjectMethodCall : 520+ occurrences
     // PhanPluginUnknownArrayMethodReturnType : 480+ occurrences
     // PhanPluginUnknownArrayMethodParamType : 420+ occurrences
     // PhanPossiblyUndeclaredVariable : 350+ occurrences
@@ -376,7 +376,6 @@ return [
         'htdocs/core/class/cgenericdic.class.php' => ['PhanPluginUnknownPropertyType', 'PhanUndeclaredProperty'],
         'htdocs/core/class/commondocgenerator.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType', 'PhanPluginUnknownArrayPropertyType', 'PhanPluginUnknownPropertyType', 'PhanTypeSuspiciousNonTraversableForeach', 'PhanUndeclaredProperty'],
         'htdocs/core/class/commonhookactions.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayPropertyType'],
-        'htdocs/core/class/commonincoterm.class.php' => ['PhanPluginUnknownObjectMethodCall', 'PhanUndeclaredProperty'],
         'htdocs/core/class/commoninvoice.class.php' => ['PhanPluginUnknownArrayMethodReturnType', 'PhanPluginUnknownPropertyType', 'PhanPossiblyUndeclaredVariable'],
         'htdocs/core/class/commonobject.class.php' => ['PhanPluginUnknownObjectMethodCall', 'PhanTypeComparisonFromArray', 'PhanTypeMismatchDimFetch', 'PhanUndeclaredProperty'],
         'htdocs/core/class/commonobjectline.class.php' => ['PhanPluginUnknownPropertyType'],
