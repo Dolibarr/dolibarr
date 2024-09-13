@@ -360,7 +360,7 @@ class FichinterLigne extends CommonObjectLine
 					$sql .= "   GROUP BY " . $this->db->ifsql("ee.targettype = 'ticket'", "ee.fk_target", "ee.fk_source");
 					$sql .= " ) AS t2 ON t1.rowid = t2.rowid";
 					$sql .= " SET t1.duration = t2.duration";
-					$sql .= " WHERE t1.rowid IN (" . implode(',', $intervention->linkedObjectsIds["ticket"]) . ")";
+					$sql .= " WHERE t1.rowid IN (" . $this->db->sanitize(implode(',', $intervention->linkedObjectsIds["ticket"])) . ")";
 
 					dol_syslog("FichinterLigne::update_total update ticket duration", LOG_DEBUG);
 					$resql = $this->db->query($sql);
