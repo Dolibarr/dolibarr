@@ -77,7 +77,6 @@ parameters:
 		- '#on array{url: mixed} in empty\(\) does not exist.#'
 		- '#dol_copy expects string, int given#'
 		- '#dol_getIdFromCode expects string, int given#'
-		- '#dol_strlen expects string, int given#'
 		- '#EvalMath::trigger\(\) expects string, int given#'
 		- '#get_next_value expects string, int given#'
 		- '#pdf_writeLinkedObjects expects string, int given#'
