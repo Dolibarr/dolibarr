@@ -14,6 +14,7 @@
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Lenin Rivas         	<lenin@leninrivas.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,14 +46,18 @@ if (isModEnabled('order')) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionlinebatch.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonsignedobject.class.php';
 
 
 /**
  *	Class to manage shipments
+ * @property	int				$signed_status
+ * @static		array<int>		$SIGNED_STATUSES
  */
 class Expedition extends CommonObject
 {
 	use CommonIncoterm;
+	use CommonSignedObject;
 
 	/**
 	 * @var string ID to identify managed object
@@ -220,11 +225,6 @@ class Expedition extends CommonObject
 	public $multicurrency_total_ttc;
 
 	/**
-	 * @var int
-	 */
-	public $signed_status = 0;
-
-	/**
 	 * Draft status
 	 */
 	const STATUS_DRAFT = 0;
@@ -258,19 +258,6 @@ class Expedition extends CommonObject
 	 * next status : closed
 	 */
 	const STATUS_SHIPMENT_IN_PROGRESS = 3;
-
-
-	/**
-	 * No signature
-	 */
-	const STATUS_NO_SIGNATURE    = 0;
-
-	/**
-	 * Signed status
-	 */
-	const STATUS_SIGNED = 1;
-
-
 
 	/**
 	 *	Constructor
@@ -402,6 +389,7 @@ class Expedition extends CommonObject
 		$sql .= ", note_public";
 		$sql .= ", model_pdf";
 		$sql .= ", fk_incoterms, location_incoterms";
+		$sql .= ", signed_status";
 		$sql .= ") VALUES (";
 		$sql .= "'(PROV)'";
 		$sql .= ", ".((int) $conf->entity);
@@ -427,6 +415,7 @@ class Expedition extends CommonObject
 		$sql .= ", ".(!empty($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null");
 		$sql .= ", ".(int) $this->fk_incoterms;
 		$sql .= ", '".$this->db->escape($this->location_incoterms)."'";
+		$sql .= ", ".($this->signed_status);
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -608,7 +597,7 @@ class Expedition extends CommonObject
 			return -1;
 		}
 
-		$sql = "SELECT e.rowid, e.entity, e.ref, e.fk_soc as socid, e.date_creation, e.ref_customer, e.ref_ext, e.fk_user_author, e.fk_statut, e.fk_projet as fk_project, e.billed";
+		$sql = "SELECT e.rowid, e.entity, e.ref, e.fk_soc as socid, e.date_creation, e.ref_customer, e.ref_ext, e.fk_user_author, e.fk_statut, e.signed_status, e.fk_projet as fk_project, e.billed";
 		$sql .= ", e.date_valid";
 		$sql .= ", e.weight, e.weight_units, e.size, e.size_units, e.width, e.height";
 		$sql .= ", e.date_expedition as date_expedition, e.model_pdf, e.fk_address, e.date_delivery";
@@ -648,6 +637,7 @@ class Expedition extends CommonObject
 				$this->ref_ext		    = $obj->ref_ext;
 				$this->status               = $obj->fk_statut;
 				$this->statut               = $this->status; // Deprecated
+				$this->signed_status		= $obj->signed_status;
 				$this->user_author_id       = $obj->fk_user_author;
 				$this->fk_user_author       = $obj->fk_user_author;
 				$this->date_creation        = $this->db->jdate($obj->date_creation);
@@ -1997,7 +1987,11 @@ class Expedition extends CommonObject
 			$statusType = 'status9';
 		}
 
-		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode);
+		$signed_label = ' (' . $this->getLibSignedStatus() . ')';
+		$status_label = $this->signed_status ? $labelStatus . $signed_label : $labelStatus;
+		$status_label_short = $this->signed_status ? $labelStatusShort . $signed_label : $labelStatusShort;
+
+		return dolGetStatus($status_label, $status_label_short, '', $statusType, $mode);
 	}
 
 	/**
