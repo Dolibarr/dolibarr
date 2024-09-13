@@ -72,7 +72,7 @@ class ExpenseReportLine extends CommonObjectLine
 	public $value_unit;
 
 	/**
-	 * @var int
+	 * @var int|string
 	 */
 	public $date;
 
