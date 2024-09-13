@@ -199,7 +199,6 @@ class FormHelper
 	 * @param string $class          The CSS class for the input field (default is '').
 	 * @return string The HTML input field as a string.
 	 */
-
 	public function createInputField($name, $value = '', $type = 'text', $id = '', $class = '')
 	{
 		$out = '<input type="' . $type . '" id="' . $id . '" name="' . $name . '" value="' . dol_escape_htmltag($value) . '" class="' . $class . '">';
