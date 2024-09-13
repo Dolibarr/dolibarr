@@ -12963,7 +12963,7 @@ function getElementProperties($elementType)
  */
 function fetchObjectByElement($element_id, $element_type, $element_ref = '', $useCache = 0, $maxCacheByType = 10)
 {
-	global $db, $globalCacheForGetObjectFromCache;
+	global $db, $conf;
 
 	$ret = 0;
 
@@ -12985,11 +12985,11 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
 	//var_dump($element_prop['module'].' '.$ismodenabled);
 	if (is_array($element_prop) && (empty($element_prop['module']) || $ismodenabled)) {
 		if ($useCache === 1
-			&& !empty($globalCacheForGetObjectFromCache[$element_type])
-			&& !empty($globalCacheForGetObjectFromCache[$element_type][$element_id])
-			&& is_object($globalCacheForGetObjectFromCache[$element_type][$element_id])
+			&& !empty($conf->cache['fetchObjectByElement'][$element_type])
+			&& !empty($conf->cache['fetchObjectByElement'][$element_type][$element_id])
+			&& is_object($conf->cache['fetchObjectByElement'][$element_type][$element_id])
 		) {
-			return $globalCacheForGetObjectFromCache[$element_type][$element_id];
+			return $conf->cache['fetchObjectByElement'][$element_type][$element_id];
 		}
 
 		dol_include_once('/'.$element_prop['classpath'].'/'.$element_prop['classfile'].'.class.php');
@@ -13007,16 +13007,16 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
 					}
 
 					if ($useCache > 0) {
-						if (!isset($globalCacheForGetObjectFromCache[$element_type])) {
-							$globalCacheForGetObjectFromCache[$element_type] = [];
+						if (!isset($conf->cache['fetchObjectByElement'][$element_type])) {
+							$conf->cache['fetchObjectByElement'][$element_type] = [];
 						}
 
 						// Manage cache limit
-						if (! empty($globalCacheForGetObjectFromCache[$element_type]) && is_array($globalCacheForGetObjectFromCache[$element_type]) && count($globalCacheForGetObjectFromCache[$element_type]) >= $maxCacheByType) {
-							array_shift($globalCacheForGetObjectFromCache[$element_type]);
+						if (! empty($conf->cache['fetchObjectByElement'][$element_type]) && is_array($conf->cache['fetchObjectByElement'][$element_type]) && count($conf->cache['fetchObjectByElement'][$element_type]) >= $maxCacheByType) {
+							array_shift($conf->cache['fetchObjectByElement'][$element_type]);
 						}
 
-						$globalCacheForGetObjectFromCache[$element_type][$element_id] = $objecttmp;
+						$conf->cache['fetchObjectByElement'][$element_type][$element_id] = $objecttmp;
 					}
 
 					return $objecttmp;
