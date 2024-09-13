@@ -190,13 +190,15 @@ class FormHelper
 		return '</td>';
 	}
 
+
 	/**
 	 * Returns the HTML input field for the given field name and value.
 	 *
 	 * @param string $name          The name of the input field.
 	 * @param string $value         The value to populate the input field with.
 	 * @param string $type          The type of input field (default is 'text').
-	 * @param string $class          The CSS class for the input field (default is '').
+	 * @param string $id            The ID of the input field (optional).
+	 * @param string $class         The CSS class for the input field (optional).
 	 * @return string The HTML input field as a string.
 	 */
 	public function createInputField($name, $value = '', $type = 'text', $id = '', $class = '')
@@ -204,7 +206,6 @@ class FormHelper
 		$out = '<input type="' . $type . '" id="' . $id . '" name="' . $name . '" value="' . dol_escape_htmltag($value) . '" class="' . $class . '">';
 		return $out;
 	}
-
 
 	/**
 	 * Closes the form by returning the closing form tag.
