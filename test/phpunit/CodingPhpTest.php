@@ -654,7 +654,7 @@ class CodingPhpTest extends CommonClassTest
 			$ok = true;
 			$matches = array();
 
-			// Get to part of string to use for analysis
+			// Get the part of string to use for analysis
 			$reg = array();
 			if (preg_match('/\*\s+Action(.*)\*\s+View/ims', $filecontentorigin, $reg)) {
 				$filecontentaction = $reg[1];
