@@ -35,6 +35,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonsignedobject.class.php';
 
 /**
  *	Class to manage interventions
+ * @property	int				$signed_status
+ * @static		array<int>		$SIGNED_STATUSES
  */
 class Fichinter extends CommonObject
 {
@@ -152,12 +154,6 @@ class Fichinter extends CommonObject
 	public $statut = 0; // 0=draft, 1=validated, 2=invoiced, 3=Terminate
 
 	/**
-	 * Signed Status of the intervention (0=NoSignature, 1=SignedBySender, 2=SignedByReceiver, 9=SignedByAll)
-	 * @var int
-	 */
-	public $signed_status = 0;
-
-	/**
 	 * @var string description
 	 */
 	public $description;
@@ -207,17 +203,6 @@ class Fichinter extends CommonObject
 	 * Closed
 	 */
 	const STATUS_CLOSED = 3;
-
-	/**
-	 * Signed statuses dictionary. Label used as key for string localizations.
-	 */
-	const SIGNED_STATUSES = [
-		'STATUS_NO_SIGNATURE' => 0,
-		'STATUS_SIGNED_SENDER' => 1,
-		'STATUS_SIGNED_RECEIVER' => 2,
-		'STATUS_SIGNED_RECEIVER_ONLINE' => 3,
-		'STATUS_SIGNED_ALL' => 9 // To handle future kind of signature (ex: tripartite contract)
-	];
 
 	/**
 	 * Date delivery
