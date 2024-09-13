@@ -251,20 +251,21 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 
 		// Address
 		print '<tr><td class="tdtop">'.$form->editfieldkey('Address', 'address', '', $object, 0).'</td>';
-		print '<td colspan="3"><textarea name="address" id="address" class="quatrevingtpercent" rows="3" wrap="soft">';
+		print '<td><textarea name="address" id="address" class="quatrevingtpercent" rows="3" wrap="soft">';
 		print dol_escape_htmltag($object->address, 0, 1);
 		print '</textarea>';
 		print $form->widgetForTranslation("address", $object, $permissiontoadd, 'textarea', 'alphanohtml', 'quatrevingtpercent');
 		print '</td></tr>';
 
-		// Zip / Town
-		print '<tr><td>'.$form->editfieldkey('Zip', 'zipcode', '', $object, 0).'</td><td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>';
+		// Zip
+		print '<tr><td>'.$form->editfieldkey('Zip', 'zipcode', '', $object, 0).'</td><td>';
 		print $formresource->select_ziptown($object->zip, 'zipcode', array('town', 'selectcountry_id', 'state_id'), 0, 0, '', 'maxwidth100');
 		print '</td>';
-		if ($conf->browser->layout == 'phone') {
-			print '</tr><tr>';
-		}
-		print '<td>'.$form->editfieldkey('Town', 'town', '', $object, 0).'</td><td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>';
+		print '</tr>';
+
+		// Town
+		print '<tr>';
+		print '<td>'.$form->editfieldkey('Town', 'town', '', $object, 0).'</td><td>';
 		print $formresource->select_ziptown($object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'));
 		print $form->widgetForTranslation("town", $object, $permissiontoadd, 'string', 'alphanohtml', 'maxwidth100 quatrevingtpercent');
 		print '</td></tr>';
@@ -280,9 +281,9 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		// State
 		if (!getDolGlobalString('SOCIETE_DISABLE_STATE')) {
 			if ((getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 1 || getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 2)) {
-				print '<tr><td>'.$form->editfieldkey('Region-State', 'state_id', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">';
+				print '<tr><td>'.$form->editfieldkey('Region-State', 'state_id', '', $object, 0).'</td><td class="maxwidthonsmartphone">';
 			} else {
-				print '<tr><td>'.$form->editfieldkey('State', 'state_id', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">';
+				print '<tr><td>'.$form->editfieldkey('State', 'state_id', '', $object, 0).'</td><td class="maxwidthonsmartphone">';
 			}
 
 			if ($object->country_id) {
