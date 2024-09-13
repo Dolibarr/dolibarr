@@ -752,7 +752,7 @@ class Dolresource extends CommonObject
 		$sql .= " element_type = ".(isset($this->element_type) ? "'".$this->db->escape($this->element_type)."'" : "null").",";
 		$sql .= " busy = ".(isset($this->busy) ? (int) $this->busy : "null").",";
 		$sql .= " mandatory = ".(isset($this->mandatory) ? (int) $this->mandatory : "null").",";
-		$sql .= " tms = ".(dol_strlen($this->date_modification) != 0 ? "'".$this->db->idate($this->date_modification)."'" : 'null');
+		$sql .= " tms = ".(dol_strlen((string) $this->date_modification) != 0 ? "'".$this->db->idate($this->date_modification)."'" : 'null');
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();

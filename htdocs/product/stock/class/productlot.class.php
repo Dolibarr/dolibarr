@@ -306,7 +306,7 @@ class Productlot extends CommonObject
 		}
 
 		if ($checkSellByMandatory) {
-			if (!isset($sellBy) || dol_strlen($sellBy) == 0) {
+			if (!isset($sellBy) || dol_strlen((string) $sellBy) == 0) {
 				// error : sell by is mandatory
 				$errorMsgArr[] = $langs->trans('ErrorFieldRequired', $langs->transnoentities('SellByDate'));
 			}
