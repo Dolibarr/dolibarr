@@ -27,7 +27,7 @@
  *      Support class for third parties, contacts, members, users or resources
  *
  *
- * Properties expected in the class the trait is attached to.
+ * Properties expected in the host class receiving this trait.
  *
  * @property int 	$id
  * @property int 	$contact_id
@@ -110,6 +110,7 @@ trait CommonPeople
 		$lastname = $this->lastname;
 		$firstname = $this->firstname;
 		if (empty($lastname)) {
+			// societe is deprecated - @suppress-next-line PhanUndeclaredProperty
 			$lastname = (isset($this->lastname) ? $this->lastname : (isset($this->name) ? $this->name : (property_exists($this, 'nom') && isset($this->nom) ? $this->nom : (property_exists($this, 'societe') && isset($this->societe) ? $this->societe : (property_exists($this, 'company') && isset($this->company) ? $this->company : '')))));
 		}
 

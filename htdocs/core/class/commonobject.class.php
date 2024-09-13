@@ -3366,7 +3366,7 @@ abstract class CommonObject
 	 * 	Get children of line
 	 *
 	 * 	@param	int			$id				Id of parent line
-	 * 	@param	int<0,1>	$includealltree	0 = 1st level child, 1 = All level child
+	 * 	@param	int<0,1001>	$includealltree	0 = 1st level child, 1 = All level child, 2-1001: internal use
 	 * 	@return	int[]						Array with list of children lines id
 	 */
 	public function getChildrenOfLine($id, $includealltree = 0)
