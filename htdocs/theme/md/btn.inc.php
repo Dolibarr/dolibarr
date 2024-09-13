@@ -479,7 +479,7 @@ button.btn-low-emphasis{
 
 
 	transition: background 0.8s;/* used for hover ripple effect */
-	background: transparent radial-gradient(circle, transparent 1%, rgba(0, 0, 0, 0.1) 1%, transparent 10%) center/15000%;
+	background: transparent radial-gradient(circle, transparent 1%, hsla(var(--colortextlink-h),var(--colortextlink-s) ,var(--colortextlink-l) , 0.1) 1%, transparent 10%) center/15000%;
 }
 
 button.btn-low-emphasis.--btn-icon{
