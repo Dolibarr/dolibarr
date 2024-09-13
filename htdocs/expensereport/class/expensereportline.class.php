@@ -56,13 +56,24 @@ class ExpenseReportLine extends CommonObjectLine
 	 */
 	public $rowid;
 
+	/**
+	 * @var string
+	 */
 	public $comments;
 
 	/**
 	 * @var float Quantity
 	 */
 	public $qty;
+
+	/**
+	 * @var string|float|int
+	 */
 	public $value_unit;
+
+	/**
+	 * @var int
+	 */
 	public $date;
 
 	/**
@@ -90,26 +101,94 @@ class ExpenseReportLine extends CommonObjectLine
 	 */
 	public $fk_expensereport;
 
+	/**
+	 * @var string
+	 */
 	public $type_fees_code;
+
+	/**
+	 * @var string
+	 */
 	public $type_fees_libelle;
+
+	/**
+	 * @var string
+	 */
 	public $type_fees_accountancy_code;
 
+	/**
+	 * @var string
+	 */
 	public $projet_ref;
+
+	/**
+	 * @var string
+	 */
 	public $projet_title;
+
+	/**
+	 * @var int
+	 */
 	public $rang;
 
+	/**
+	 * @var int|string
+	 */
 	public $vatrate;
+
+	/**
+	 * @var string
+	 */
 	public $vat_src_code;
+
+	/**
+	 * @var float
+	 */
 	public $tva_tx;
+
+	/**
+	 * @var int|string
+	 */
 	public $localtax1_tx;
+
+	/**
+	 * @var int|string
+	 */
 	public $localtax2_tx;
+
+	/**
+	 * @var string
+	 */
 	public $localtax1_type;
+
+	/**
+	 * @var string
+	 */
 	public $localtax2_type;
 
+	/**
+	 * @var float
+	 */
 	public $total_ht;
+
+	/**
+	 * @var float
+	 */
 	public $total_tva;
+
+	/**
+	 * @var float
+	 */
 	public $total_ttc;
+
+	/**
+	 * @var float
+	 */
 	public $total_localtax1;
+
+	/**
+	 * @var float
+	 */
 	public $total_localtax2;
 
 	// Multicurrency
@@ -122,9 +201,25 @@ class ExpenseReportLine extends CommonObjectLine
 	 * @var string multicurrency code
 	 */
 	public $multicurrency_code;
+
+	/**
+	 * @var float
+	 */
 	public $multicurrency_tx;
+
+	/**
+	 * @var float
+	 */
 	public $multicurrency_total_ht;
+
+	/**
+	 * @var float
+	 */
 	public $multicurrency_total_tva;
+
+	/**
+	 * @var float
+	 */
 	public $multicurrency_total_ttc;
 
 	/**
@@ -132,6 +227,9 @@ class ExpenseReportLine extends CommonObjectLine
 	 */
 	public $fk_ecm_files;
 
+	/**
+	 * @var string
+	 */
 	public $rule_warning_message;
 
 
