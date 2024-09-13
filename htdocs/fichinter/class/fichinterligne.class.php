@@ -356,7 +356,7 @@ class FichinterLigne extends CommonObjectLine
 					$sql .= "   FROM llx_element_element AS ee";
 					$sql .= "   LEFT JOIN llx_fichinterdet AS fd ON " . $this->db->ifsql("ee.targettype = 'fichinter'", "ee.fk_target", "ee.fk_source") . " = fd.fk_fichinter";
 					$sql .= "   WHERE (ee.sourcetype = 'fichinter' AND ee.targettype = 'ticket') OR (ee.targettype = 'fichinter' AND ee.sourcetype = 'ticket')";
-					$sql .= "   AND " . $this->db->ifsql("ee.targettype = 'ticket'", "ee.fk_target", "ee.fk_source") . " IN (" . implode(',', $intervention->linkedObjectsIds["ticket"]) . ")";
+					$sql .= "   AND " . $this->db->ifsql("ee.targettype = 'ticket'", "ee.fk_target", "ee.fk_source") . " IN (" . $this->db->sanitize(implode(',', $intervention->linkedObjectsIds["ticket"])) . ")";
 					$sql .= "   GROUP BY " . $this->db->ifsql("ee.targettype = 'ticket'", "ee.fk_target", "ee.fk_source");
 					$sql .= " ) AS t2 ON t1.rowid = t2.rowid";
 					$sql .= " SET t1.duration = t2.duration";
