@@ -374,6 +374,13 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 			print '</td></tr>';
 		}
 
+		// Duration (Sum of linked fichinter)
+		if (getDolGlobalString('TICKET_SHOW_DURATION')) {
+			print '<tr><td>'.$langs->trans("TicketDurationAuto").'</td><td>';
+			print (isset($object->dao->duration) ? convertSecondToTime($object->dao->duration, 'all', getDolGlobalString('MAIN_DURATION_OF_WORKDAY')) : '');
+			print '</td></tr>';
+		}
+
 		// Other attributes
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 

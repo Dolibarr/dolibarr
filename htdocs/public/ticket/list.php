@@ -250,6 +250,7 @@ if ($action == "view_ticketlist") {
 			'category.code' => array('label' => $langs->trans("Category"), 'checked' => 1),
 			'severity.code' => array('label' => $langs->trans("Severity"), 'checked' => 1),
 			't.progress' => array('label' => $langs->trans("Progression"), 'checked' => 0),
+			't.duration' => array('label' => $langs->trans("TicketDurationAuto"), 'checked' => 0),
 			//'t.fk_contract' => array('label' => $langs->trans("Contract"), 'checked' => 0),
 			't.fk_user_create' => array('label' => $langs->trans("Author"), 'checked' => 1),
 			't.fk_user_assign' => array('label' => $langs->trans("AssignedTo"), 'checked' => 0),
@@ -262,6 +263,9 @@ if ($action == "view_ticketlist") {
 
 		if (!getDolGlobalString('TICKET_SHOW_PROGRESSION')) {
 			unset($arrayfields['t.progress']);
+		}
+		if (!getDolGlobalString('TICKET_SHOW_DURATION')) {
+			unset($arrayfields['t.duration']);
 		}
 
 		// Extra fields
@@ -351,6 +355,9 @@ if ($action == "view_ticketlist") {
 		$sql .= " t.resolution,";
 		if (getDolGlobalString('TICKET_SHOW_PROGRESSION')) {
 			$sql .= " t.progress,";
+		}
+		if (getDolGlobalString('TICKET_SHOW_DURATION')) {
+			$sql .= " t.duration,";
 		}
 		$sql .= " t.timing,";
 		$sql .= " t.type_code,";
@@ -490,6 +497,10 @@ if ($action == "view_ticketlist") {
 					print '<td class="liste_titre"></td>';
 				}
 
+				if (getDolGlobalString('TICKET_SHOW_DURATION') && !empty($arrayfields['t.duration']['checked'])) {
+					print '<td class="liste_titre"></td>';
+				}
+
 				if (!empty($arrayfields['t.fk_user_create']['checked'])) {
 					print '<td class="liste_titre"></td>';
 				}
@@ -553,6 +564,9 @@ if ($action == "view_ticketlist") {
 				}
 				if (getDolGlobalString('TICKET_SHOW_PROGRESSION') && !empty($arrayfields['t.progress']['checked'])) {
 					print_liste_field_titre($arrayfields['t.progress']['label'], $url_page_current, 't.progress', '', $param, '', $sortfield, $sortorder);
+				}
+				if (getDolGlobalString('TICKET_SHOW_DURATION') && !empty($arrayfields['t.duration']['checked'])) {
+					print_liste_field_titre($arrayfields['t.duration']['label'], $url_page_current, 't.duration', '', $param, '', $sortfield, $sortorder);
 				}
 				if (!empty($arrayfields['t.fk_user_create']['checked'])) {
 					print_liste_field_titre($arrayfields['t.fk_user_create']['label'], $url_page_current, 't.fk_user_create', '', $param, '', $sortfield, $sortorder);
@@ -646,6 +660,13 @@ if ($action == "view_ticketlist") {
 					if (getDolGlobalString('TICKET_SHOW_PROGRESSION') && !empty($arrayfields['t.progress']['checked'])) {
 						print '<td>';
 						print $obj->progress;
+						print '</td>';
+					}
+
+					// Duration (Sum of linked fichinter)
+					if (getDolGlobalString('TICKET_SHOW_DURATION') && !empty($arrayfields['t.duration']['checked'])) {
+						print '<td>';
+						print (isset($obj->duration) ? convertSecondToTime($obj->duration, 'all', getDolGlobalString('MAIN_DURATION_OF_WORKDAY')) : '');
 						print '</td>';
 					}
 

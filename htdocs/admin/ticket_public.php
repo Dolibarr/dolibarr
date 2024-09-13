@@ -396,6 +396,24 @@ if (getDolGlobalInt('TICKET_ENABLE_PUBLIC_INTERFACE')) {
 	print '</td>';
 	print '</tr>';
 
+	// Show duration sum of linked fichinter
+	print '<tr class="oddeven"><td>'.$langs->trans("TicketsShowDurationAuto").'</td>';
+	print '<td class="left">';
+	if (!empty($conf->use_javascript_ajax)) {
+		print ajax_constantonoff('TICKET_SHOW_DURATION');
+	} else {
+		if (!getDolGlobalInt('TICKET_SHOW_DURATION')) {
+			print '<a href="' . $_SERVER['PHP_SELF'] . '?action=set_TICKET_SHOW_DURATION&token='.newToken().'">' . img_picto($langs->trans('Disabled'), 'switch_off') . '</a>';
+		} else {
+			print '<a href="' . $_SERVER['PHP_SELF'] . '?action=del_TICKET_SHOW_DURATION&token='.newToken().'">' . img_picto($langs->trans('Enabled'), 'switch_on') . '</a>';
+		}
+	}
+	print '</td>';
+	print '<td class="center width75">';
+	print $form->textwithpicto('', $langs->trans("TicketsShowDurationAutoHelp"), 1, 'help');
+	print '</td>';
+	print '</tr>';
+
 	// Also send to main email address
 	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 		print '<tr class="oddeven"><td>'.$langs->trans("TicketsEmailAlsoSendToMainAddress").'</td>';
