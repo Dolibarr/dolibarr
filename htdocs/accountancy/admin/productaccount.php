@@ -274,6 +274,7 @@ if ($action == 'update' && $permissiontobind) {
  */
 
 $form = new FormAccounting($db);
+'@phan-var-force string[] $toselect';  // For some reason typing is lost at this point
 
 // Default AccountingAccount RowId Product / Service
 // at this time ACCOUNTING_SERVICE_SOLD_ACCOUNT & ACCOUNTING_PRODUCT_SOLD_ACCOUNT are account number not accountingacount rowid
@@ -517,7 +518,7 @@ if ($resql) {
 
 	$massactionbutton = '';
 
-	$nbselected = is_array($toselect) ? count($toselect) : 0;
+	$nbselected = count($toselect);
 	if ($massaction == 'set_default_account') {
 		if ($nbselected <= 0) {
 			$langs->load("errors");
@@ -726,10 +727,8 @@ if ($resql) {
 		}
 
 		$selected = 0;
-		if (!empty($toselect)) {
-			if (in_array($product_static->id, $toselect)) {
-				$selected = 1;
-			}
+		if (in_array($product_static->id, $toselect)) {
+			$selected = 1;
 		}
 
 		print '<tr class="oddeven">';

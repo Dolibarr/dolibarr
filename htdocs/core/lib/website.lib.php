@@ -1064,8 +1064,8 @@ function getImagePublicURLOfObject($object, $no = 1, $extName = '')
 					} else {
 						$image_path = '/wrapper.php?hashp='.urlencode($obj->share);
 					}
+
 					if ($extName) {
-						//getImageFileNameForSize($dir.$file, '_small')
 						$image_path .= '&extname='.urlencode($extName);
 					}
 				}

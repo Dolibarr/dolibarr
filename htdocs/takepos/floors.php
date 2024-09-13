@@ -65,7 +65,7 @@ if (!$user->hasRight('takepos', 'run')) {
  * Actions
  */
 
-if ($action == "getTables") {
+if ($action == "getTables" && $user->hasRight('takepos', 'run')) {
 	$sql = "SELECT rowid, entity, label, leftpos, toppos, floor FROM ".MAIN_DB_PREFIX."takepos_floor_tables WHERE floor = ".((int) $floor)." AND entity IN (".getEntity('takepos').")";
 	$resql = $db->query($sql);
 	$rows = array();
@@ -83,7 +83,7 @@ if ($action == "getTables") {
 	exit;
 }
 
-if ($action == "update") {
+if ($action == "update" && $user->hasRight('takepos', 'run')) {
 	if ($left > 95) {
 		$left = 95;
 	}
@@ -97,7 +97,7 @@ if ($action == "update") {
 	}
 }
 
-if ($action == "updatename") {
+if ($action == "updatename" && $user->hasRight('takepos', 'run')) {
 	$newname = preg_replace("/[^a-zA-Z0-9\s]/", "", $newname); // Only English chars
 	if (strlen($newname) > 3) {
 		$newname = substr($newname, 0, 3); // Only 3 chars
@@ -105,7 +105,7 @@ if ($action == "updatename") {
 	$resql = $db->query("UPDATE ".MAIN_DB_PREFIX."takepos_floor_tables SET label='".$db->escape($newname)."' WHERE rowid = ".((int) $place));
 }
 
-if ($action == "add") {
+if ($action == "add" && $user->hasRight('takepos', 'run')) {
 	$sql = "INSERT INTO ".MAIN_DB_PREFIX."takepos_floor_tables(entity, label, leftpos, toppos, floor) VALUES (".$conf->entity.", '', '45', '45', ".((int) $floor).")";
 	$asdf = $db->query($sql);
 	$db->query("UPDATE ".MAIN_DB_PREFIX."takepos_floor_tables SET label = rowid WHERE label = ''"); // No empty table names

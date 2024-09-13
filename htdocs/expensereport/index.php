@@ -137,7 +137,7 @@ foreach ($listoftype as $code => $label) {
 }
 
 // Sort array with most important first
-$dataseries = dol_sort_array($dataseries, 1, 'desc');
+$dataseries = dol_sort_array($dataseries, '1', 'desc');
 
 // Merge all entries after the $KEEPNFIRST one into one entry called "Other..." (to avoid to have too much entries in graphic).
 $KEEPNFIRST = 7;	// Keep first $KEEPNFIRST one + 1 with the remain

@@ -258,7 +258,7 @@ class pdf_standard_asset extends ModelePDFAsset
 				if ($cert) {
 					$info = array(
 						'Name' => $this->emetteur->name,
-						'Location' => getCountry($this->emetteur->country_code, 0),
+						'Location' => getCountry($this->emetteur->country_code, ''),
 						'Reason' => 'ASSET',
 						'ContactInfo' => $this->emetteur->email
 					);

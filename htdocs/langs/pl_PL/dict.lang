@@ -295,8 +295,8 @@ CurrencyXPF=Franków CFP
 CurrencySingXPF=Frank CFP
 CurrencyCentEUR=centy
 CurrencyCentSingEUR=cent
-CurrencyCentINR=Paisa
-CurrencyCentSingINR=Paise
+CurrencyCentINR=Paise
+CurrencyCentSingINR=Paisa
 CurrencyThousandthSingTND=tysięczny
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=Internet

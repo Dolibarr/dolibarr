@@ -106,7 +106,7 @@ class mod_task_universal extends ModeleNumRefTask
 	 */
 	public function getExample()
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		$old_code_client = $mysoc->code_client;
 		$mysoc->code_client = 'CCCCCCCCCC';
@@ -123,12 +123,12 @@ class mod_task_universal extends ModeleNumRefTask
 	 *  Return next value
 	 *
 	 *  @param	null|Societe|string	$objsoc	Object third party
-	 *  @param	null|Project|string	$object	Object Project
+	 *  @param	null|Task|string	$object	Object Task
 	 *  @return	string|int<-1,0>			Value if OK, <=0 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{
-		global $db, $conf;
+		global $db;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 

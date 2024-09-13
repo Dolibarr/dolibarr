@@ -514,15 +514,17 @@ ModuleCompanyCodeCustomerDigitaria=%s តាមពីក្រោយដោយឈ
 ModuleCompanyCodeSupplierDigitaria=%s តាមពីក្រោយដោយឈ្មោះអ្នកផ្គត់ផ្គង់ដែលត្រូវបានកាត់ឱ្យខ្លីតាមចំនួនតួអក្សរ៖ %s សម្រាប់លេខកូដគណនេយ្យអ្នកផ្គត់ផ្គង់។
 Use3StepsApproval=តាមលំនាំដើម ការបញ្ជាទិញត្រូវតែត្រូវបានបង្កើត និងអនុម័តដោយអ្នកប្រើប្រាស់ 2 ផ្សេងគ្នា (មួយជំហាន/អ្នកប្រើប្រាស់ដើម្បីបង្កើត និងមួយជំហាន/អ្នកប្រើប្រាស់ដើម្បីអនុម័ត។ ចំណាំថាប្រសិនបើអ្នកប្រើមានទាំងការអនុញ្ញាតដើម្បីបង្កើត និងអនុម័ត មួយជំហាន/អ្នកប្រើប្រាស់នឹងគ្រប់គ្រាន់) . អ្នកអាចសួរដោយប្រើជម្រើសនេះ ដើម្បីណែនាំជំហានទីបី/ការយល់ព្រមពីអ្នកប្រើប្រាស់ ប្រសិនបើចំនួនទឹកប្រាក់ខ្ពស់ជាងតម្លៃដែលបានកំណត់ (ដូច្នេះ 3 ជំហាននឹងចាំបាច់៖ 1=សុពលភាព, 2=ការអនុម័តដំបូង និង 3=ការអនុម័តទីពីរ ប្រសិនបើចំនួនគ្រប់គ្រាន់)។ <br>កំណត់វាឱ្យទទេ ប្រសិនបើការយល់ព្រមមួយ (2 ជំហាន) គឺគ្រប់គ្រាន់ សូមកំណត់វាទៅតម្លៃទាបបំផុត (0.1) ប្រសិនបើការអនុម័តទីពីរ (3 ជំហាន) តែងតែត្រូវបានទាមទារ។
 UseDoubleApproval=ប្រើការអនុម័ត 3 ជំហាន នៅពេលដែលចំនួនទឹកប្រាក់ (ដោយគ្មានពន្ធ) ខ្ពស់ជាង...
-WarningPHPMail=ការព្រមាន៖ ការដំឡើងដើម្បីផ្ញើអ៊ីមែលពីកម្មវិធីកំពុងប្រើការកំណត់ទូទៅលំនាំដើម។ ជម្រើសនេះមិនត្រូវការចំណេះដឹងបច្ចេកទេសដើម្បីបញ្ចប់ការដំឡើងនោះទេ។<br>ទោះជាយ៉ាងណាក៏ដោយ ជាញឹកញាប់វាជាការប្រសើរក្នុងការដំឡើងអ៊ីមែលដែលចេញដើម្បីប្រើម៉ាស៊ីនមេអ៊ីមែលរបស់អ្នកផ្តល់សេវាអ៊ីមែលរបស់អ្នក ជំនួសឱ្យការដំឡើងលំនាំដើមសម្រាប់ ហេតុផលជាច្រើន៖
+WarningPHPMail=NOTICE: The setup to send emails from the application is using the default generic setup (called "%s"). This choice needs no technical knowledge and no particular setup.<br>However, it is often better to setup outgoing emails to use the other method (called "%s") to use the email server of your Email Service Provider, instead of the default setup for several reasons:
 WarningPHPMailA=- ការប្រើប្រាស់ម៉ាស៊ីនមេរបស់អ្នកផ្តល់សេវាអ៊ីមែលបង្កើនភាពជឿជាក់នៃអ៊ីមែលរបស់អ្នក ដូច្នេះវាបង្កើនលទ្ធភាពនៃការចែកចាយដោយមិនត្រូវបានដាក់ទង់ថាជា SPAM
-WarningPHPMailB=- អ្នកផ្តល់សេវាអ៊ីមែលមួយចំនួន (ដូចជា Yahoo) មិនអនុញ្ញាតឱ្យអ្នកផ្ញើអ៊ីមែលពីម៉ាស៊ីនមេផ្សេងជាងម៉ាស៊ីនមេរបស់ពួកគេទេ។ ការដំឡើងបច្ចុប្បន្នរបស់អ្នកប្រើម៉ាស៊ីនមេនៃកម្មវិធីដើម្បីផ្ញើអ៊ីមែល ហើយមិនមែនម៉ាស៊ីនមេរបស់អ្នកផ្តល់អ៊ីមែលរបស់អ្នកទេ ដូច្នេះអ្នកទទួលមួយចំនួន (ដែលត្រូវគ្នាជាមួយពិធីការ DMARC រឹតបន្តឹង) នឹងសួរអ្នកផ្តល់អ៊ីមែលរបស់អ្នកថាតើពួកគេអាចទទួលយកអ៊ីមែលរបស់អ្នក និងអ្នកផ្តល់អ៊ីមែលមួយចំនួនដែរឬទេ។ (ដូចជា Yahoo) អាចនឹងឆ្លើយតបថា "ទេ" ដោយសារតែម៉ាស៊ីនមេមិនមែនជារបស់ពួកគេ ដូច្នេះអ៊ីមែលមួយចំនួនដែលអ្នកបានផ្ញើប្រហែលជាមិនត្រូវបានទទួលយកសម្រាប់ការចែកចាយទេ (សូមប្រយ័ត្នចំពោះកូតាផ្ញើរបស់អ្នកផ្តល់សេវាអ៊ីមែលរបស់អ្នកផងដែរ)។
+WarningPHPMailB=- If the domain of your email (the part mymaildomain.com into myname@mymaildomain.com) is protected by a SPF + a DMARC record, your email may be flagged as SPAM because your DMARC rule defined into DNS zone of the domain of the sender (mymaildomain.com) does not allow the sending as a generic sender. In such a case, you must disable the DMARC for the domain (or set it to p=none like done by @gmail.com) or, better, if you have the technical knowledge, use the other method to send emails using the SMTP server of your own email provider.
 WarningPHPMailC=- ការប្រើប្រាស់ម៉ាស៊ីនមេ SMTP របស់អ្នកផ្តល់សេវាអ៊ីមែលផ្ទាល់ខ្លួនរបស់អ្នកដើម្បីផ្ញើអ៊ីមែលក៏គួរឱ្យចាប់អារម្មណ៍ផងដែរ ដូច្នេះអ៊ីមែលទាំងអស់ដែលបានផ្ញើពីកម្មវិធីក៏នឹងត្រូវបានរក្សាទុកទៅក្នុងថត "ផ្ញើ" នៃប្រអប់សំបុត្ររបស់អ្នក។
 WarningPHPMailD=ដូច្នេះវាត្រូវបានផ្ដល់អនុសាសន៍ឱ្យផ្លាស់ប្តូរវិធីសាស្រ្តនៃការផ្ញើអ៊ីមែលទៅតម្លៃ "SMTP" ។
 WarningPHPMailDbis=ប្រសិនបើអ្នកពិតជាចង់រក្សាវិធីសាស្ត្រ "PHP" លំនាំដើមដើម្បីផ្ញើអ៊ីមែល គ្រាន់តែមិនអើពើនឹងការព្រមាននេះ ឬលុបវាចេញដោយ %sចុចទីនេះ%s ។
 WarningPHPMail2=ប្រសិនបើអ្នកផ្តល់សេវា SMTP អ៊ីមែលរបស់អ្នកត្រូវដាក់កម្រិតកម្មវិធីអ៊ីមែលទៅអាសយដ្ឋាន IP មួយចំនួន (កម្រណាស់) នេះគឺជាអាសយដ្ឋាន IP របស់ភ្នាក់ងារអ្នកប្រើប្រាស់សំបុត្រ (MUA) សម្រាប់កម្មវិធី ERP CRM របស់អ្នក៖ <strong>%s</strong>។
-WarningPHPMailSPF=ប្រសិនបើឈ្មោះដែននៅក្នុងអាសយដ្ឋានអ៊ីមែលអ្នកផ្ញើរបស់អ្នកត្រូវបានការពារដោយកំណត់ត្រា SPF (សួរឈ្មោះដែនរបស់អ្នកចុះឈ្មោះ) អ្នកត្រូវតែបន្ថែម IPs ខាងក្រោមនៅក្នុងកំណត់ត្រា SPF នៃ DNS នៃដែនរបស់អ្នក៖ <strong>%s</strong>។
-ActualMailSPFRecordFound=បានរកឃើញកំណត់ត្រា SPF ពិតប្រាកដ (សម្រាប់អ៊ីមែល %s): %s
+WarningPHPMailSPF=If the domain name in your sender email address is protected by a SPF record (ask your domain name registar), you must add the following IPs or entry in the SPF record of the DNS of your domain: <strong>%s</strong>.
+WarningPHPMailSPFDMARC=If the domain name in your sender email address is protected by a DMARC record different than p=none (ask your domain name registar), you must remove your DMARC record, or set it to p=none like do @gmail.com) or use sending another method.
+SPFAndDMARCInformation=SPF and DMARC DNS record for main email addresses
+ActualMailDNSRecordFound=Actual %s record found (for email %s) : %s
 ClickToShowDescription=ចុចដើម្បីបង្ហាញការពិពណ៌នា
 DependsOn=ម៉ូឌុលនេះត្រូវការម៉ូឌុល
 RequiredBy=ម៉ូឌុលនេះត្រូវបានទាមទារដោយម៉ូឌុល
@@ -867,7 +869,7 @@ Permission255=កែប្រែពាក្យសម្ងាត់អ្នក
 Permission256=លុប ឬបិទអ្នកប្រើប្រាស់ផ្សេងទៀត។
 Permission262=ពង្រីកការចូលប្រើទៅកាន់ភាគីទីបីទាំងអស់ និងវត្ថុរបស់ពួកគេ (មិនត្រឹមតែភាគីទីបីដែលអ្នកប្រើប្រាស់ត្រូវបានភ្ជាប់ជាអ្នកតំណាងលក់ប៉ុណ្ណោះទេ)។
 Permission262b=មិនមានប្រសិទ្ធភាពសម្រាប់អ្នកប្រើប្រាស់ខាងក្រៅ (តែងតែកំណត់ចំពោះពួកគេសម្រាប់សំណើ ការបញ្ជាទិញ វិក្កយបត្រ កិច្ចសន្យា។ល។)។
-Permission262c=មិនមានប្រសិទ្ធភាពសម្រាប់គម្រោង (មានតែច្បាប់ស្តីពីការអនុញ្ញាតគម្រោង ភាពមើលឃើញ និងបញ្ហានៃការចាត់តាំងប៉ុណ្ណោះ)។
+Permission262c=Not effective for projects (only rules on project permissions, visibility and users assignment matter).
 Permission263=ពង្រីកការចូលប្រើទៅកាន់ភាគីទីបីទាំងអស់ដោយគ្មានវត្ថុរបស់ពួកគេ (មិនត្រឹមតែភាគីទីបីដែលអ្នកប្រើប្រាស់ជាអ្នកតំណាងផ្នែកលក់ប៉ុណ្ណោះទេ)។ ការបញ្ជាទិញ វិក្កយបត្រ កិច្ចសន្យា។ល។)។<br>មិនមានប្រសិទ្ធភាពសម្រាប់គម្រោងទេ (មានតែច្បាប់ស្តីពីការអនុញ្ញាតគម្រោង លទ្ធភាពមើលឃើញ និងបញ្ហាការងារ)។
 Permission271=អាន CA
 Permission272=អានវិក្កយបត្រ
@@ -944,7 +946,7 @@ Permission776=បង់របាយការណ៍ចំណាយ
 Permission777=អានរបាយការណ៍ចំណាយទាំងអស់ (សូម្បីតែអ្នកប្រើប្រាស់មិនមែនជាអ្នកក្រោមបង្គាប់)
 Permission778=បង្កើត/កែប្រែរបាយការណ៍ចំណាយរបស់អ្នកគ្រប់គ្នា
 Permission779=របាយការណ៍ចំណាយនាំចេញ
-Permission1001=អានភាគហ៊ុន
+Permission1001=Read warehouses and stocks
 Permission1002=បង្កើត/កែប្រែឃ្លាំង
 Permission1003=លុបឃ្លាំង
 Permission1004=អានចលនាភាគហ៊ុន
@@ -2218,7 +2220,7 @@ CreateCandidature=បង្កើតកម្មវិធីការងារ
 FormatZip=Zip
 MainMenuCode=លេខកូដធាតុម៉ឺនុយ (ម៉ឺនុយមេ)
 ECMAutoTree=បង្ហាញមែកធាង ECM ដោយស្វ័យប្រវត្តិ
-OperationParamDesc=កំណត់ច្បាប់ដែលត្រូវប្រើដើម្បីស្រង់ទិន្នន័យមួយចំនួន ឬកំណត់តម្លៃដែលត្រូវប្រើសម្រាប់ប្រតិបត្តិការ។<br><br>ឧទាហរណ៍ដើម្បីស្រង់ឈ្មោះក្រុមហ៊ុនចេញពី ប្រធានបទអ៊ីមែលចូលទៅក្នុងអថេរបណ្តោះអាសន្ន៖<br>tmp_var=EXTRACT:SUBJECT:សារពីក្រុមហ៊ុន ([^\n]*)<br><br>ឧទាហរណ៍ដើម្បីកំណត់លក្ខណសម្បត្តិរបស់វត្ថុដើម្បីបង្កើត៖<br>objproperty1=SET:តម្លៃកូដរឹង<br>objproperty2=SET:__tmp_var__<br>objproperty3=aSETIF ត្រូវ​បាន​កំណត់​លុះត្រា​តែ​លក្ខណសម្បត្តិ​មិន​ត្រូវ​បាន​កំណត់​រួច​ទេ)<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY: ឈ្មោះក្រុមហ៊ុនរបស់ខ្ញុំ s([^\\s]*)<br><br>ប្រើបន្ទាត់ថ្មីដើម្បីស្រង់ចេញ ឬកំណត់លក្ខណៈសម្បត្តិជាច្រើន។
+OperationParamDesc=Define the rules to use to extract some data or set values to use for operation.<br><br>Example to extract a string from email header, subject or body into a temporary variable:<br>tmp_var1=EXTRACT:HEADER:My regex ([^\n]*)<br>tmp_var2=EXTRACT:SUBJECT:My refex ([^\n]*)<br>tmp_var3=EXTRACT:BODY:My regex ([^\n]*)<br><br>Examples to set the properties of an object to create:<br>objproperty1=SET:a hard coded value<br>objproperty2=SET:__tmp_var__<br>objproperty3=SETIFEMPTY:a value (value is set only if property is not already defined)<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a new line to extract or set several properties.
 OpeningHours=ម៉ោងបើក
 OpeningHoursDesc=បញ្ចូលនៅទីនេះម៉ោងបើកធម្មតារបស់ក្រុមហ៊ុនរបស់អ្នក។
 ResourceSetup=ការកំណត់រចនាសម្ព័ន្ធម៉ូឌុលធនធាន
@@ -2264,7 +2266,7 @@ LargerThan=ធំជាង
 IfTrackingIDFoundEventWillBeLinked=ចំណាំថាប្រសិនបើលេខសម្គាល់តាមដានវត្ថុមួយត្រូវបានរកឃើញនៅក្នុងអ៊ីមែល ឬប្រសិនបើអ៊ីមែលគឺជាចម្លើយរបស់អ៊ីមែលដែលបានប្រមូល និងភ្ជាប់ទៅវត្ថុរួចហើយ ព្រឹត្តិការណ៍ដែលបានបង្កើតនឹងត្រូវបានភ្ជាប់ដោយស្វ័យប្រវត្តិទៅវត្ថុដែលពាក់ព័ន្ធ។
 WithGMailYouCanCreateADedicatedPassword=ជាមួយនឹងគណនី GMail ប្រសិនបើអ្នកបើកដំណើរការសុពលភាព 2 ជំហាន វាត្រូវបានណែនាំឱ្យបង្កើតពាក្យសម្ងាត់ទីពីរសម្រាប់កម្មវិធីជំនួសឱ្យការប្រើពាក្យសម្ងាត់គណនីផ្ទាល់ខ្លួនរបស់អ្នកពី https://myaccount.google.com/ ។
 EmailCollectorTargetDir=វាអាចជាអាកប្បកិរិយាដែលចង់ផ្លាស់ទីអ៊ីមែលទៅក្នុងស្លាក/ថតផ្សេងទៀត នៅពេលដែលវាត្រូវបានដំណើរការដោយជោគជ័យ។ គ្រាន់តែកំណត់ឈ្មោះថតនៅទីនេះ ដើម្បីប្រើមុខងារនេះ (កុំប្រើតួអក្សរពិសេសក្នុងឈ្មោះ)។ ចំណាំថាអ្នកក៏ត្រូវប្រើគណនីចូលអាន/សរសេរផងដែរ។
-EmailCollectorLoadThirdPartyHelp=អ្នកអាចប្រើសកម្មភាពនេះ ដើម្បីប្រើប្រាស់ខ្លឹមសារអ៊ីមែល ដើម្បីស្វែងរក និងផ្ទុកភាគីទីបីដែលមានស្រាប់នៅក្នុងមូលដ្ឋានទិន្នន័យរបស់អ្នក (ការស្វែងរកនឹងធ្វើឡើងនៅលើលក្ខណៈសម្បត្តិដែលបានកំណត់ក្នុងចំណោម 'id','name','name_alias','email')។ ភាគីទីបីដែលបានរកឃើញ (ឬបង្កើត) នឹងត្រូវបានប្រើសម្រាប់ការធ្វើតាមសកម្មភាពដែលត្រូវការវា។<br>ឧទាហរណ៍ ប្រសិនបើអ្នកចង់បង្កើតភាគីទីបីដែលមានឈ្មោះដកស្រង់ចេញពីខ្សែអក្សរ ' ឈ្មោះ៖ ឈ្មោះដើម្បីស្វែងរក' មានវត្តមាននៅក្នុងរាងកាយ ប្រើអ៊ីមែលអ្នកផ្ញើជាអ៊ីមែល អ្នកអាចកំណត់វាលប៉ារ៉ាម៉ែត្រដូចនេះ៖<br>'email=HEADER:^ ពី៖ (។ *);name=EXTRACT:BODY:Name:\\s([^\\s]*); client=SET:2;'<br>
+EmailCollectorLoadThirdPartyHelp=You can use this action to use the email content to find and load an existing third party in your database (search will be done on the defined property among 'id','name','name_alias','email'). The found (or created) third party will be used for following actions that need it.<br>For example, if you want to create a third party with a name extracted from a string 'Name: name to find' present into the body, use the sender email as email, you can set the parameter field like this:<br>'email=EXTRACT:HEADER:^From:(.*);name=EXTRACT:BODY:Name:\\s([^\\s]*);client=SET:2;'<br>
 FilterSearchImapHelp=ការព្រមាន៖ ម៉ាស៊ីនមេអ៊ីមែលជាច្រើន (ដូចជា Gmail) កំពុងធ្វើការស្វែងរកពាក្យពេញ នៅពេលស្វែងរកនៅលើខ្សែអក្សរ ហើយនឹងមិនផ្តល់លទ្ធផលមកវិញទេ ប្រសិនបើខ្សែអក្សរត្រូវបានរកឃើញតែផ្នែកខ្លះនៃពាក្យមួយ។ សម្រាប់ហេតុផលនេះផងដែរ ការប្រើតួអក្សរពិសេសទៅក្នុងលក្ខណៈវិនិច្ឆ័យស្វែងរកនឹងត្រូវមិនអើពើ ថាតើវាមិនមែនជាផ្នែកនៃពាក្យដែលមានស្រាប់នោះទេ។<br>ដើម្បីធ្វើការដកចេញការស្វែងរកលើពាក្យមួយ (ត្រឡប់អ៊ីមែលប្រសិនបើពាក្យ រកមិនឃើញទេ) អ្នកអាចប្រើ ! តួអក្សរនៅពីមុខពាក្យ (ប្រហែលជាមិនដំណើរការលើម៉ាស៊ីនមេសំបុត្រមួយចំនួន)។
 EndPointFor=ចំណុចបញ្ចប់សម្រាប់ %s : %s
 DeleteEmailCollector=លុបអ្នកប្រមូលអ៊ីមែល

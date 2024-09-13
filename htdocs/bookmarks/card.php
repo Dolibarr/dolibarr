@@ -64,8 +64,8 @@ $permissiontodelete = $user->hasRight('bookmark', 'supprimer');
  * Actions
  */
 
-if ($action == 'add' || $action == 'addproduct' || $action == 'update') {
-	if ($action == 'update') {
+if (($action == 'add' || $action == 'addproduct' || $action == 'update') && $permissiontoadd) {
+	if ($action == 'update') {	// Test on permission already done
 		$invertedaction = 'edit';
 	} else {
 		$invertedaction = 'create';
@@ -81,7 +81,7 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update') {
 		exit;
 	}
 
-	if ($action == 'update') {
+	if ($action == 'update') {	// Test on permission already done
 		$object->fetch(GETPOSTINT("id"));
 	}
 	// Check if null because user not admin can't set an user and send empty value here.
@@ -106,7 +106,7 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update') {
 	if (!$error) {
 		$object->favicon = 'none';
 
-		if ($action == 'update') {
+		if ($action == 'update') {	// Test on permission already done
 			$res = $object->update();
 		} else {
 			$res = $object->create();

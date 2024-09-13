@@ -5,6 +5,7 @@
  * Copyright (C) 2016       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2016-2024  Alexandre Spangaro      <aspangaro@easya.solutions>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,15 +73,15 @@ class FormAccounting extends Form
 	/**
 	 * Return list of journals with label by nature
 	 *
-	 * @param	string	$selectid	Preselected journal code
-	 * @param	string	$htmlname	Name of field in html form
-	 * @param	int		$nature		Limit the list to a particular type of journals (1:various operations / 2:sale / 3:purchase / 4:bank / 9: has-new)
-	 * @param	int		$showempty	Add an empty field
-	 * @param	int		$select_in	0=selectid value is the journal rowid (default) or 1=selectid is journal code
-	 * @param	int		$select_out	Set value returned by select. 0=rowid (default), 1=code
-	 * @param	string	$morecss	More css non HTML object
-	 * @param	string	$usecache	Key to use to store result into a cache. Next call with same key will reuse the cache.
-	 * @param   int     $disabledajaxcombo Disable ajax combo box.
+	 * @param	string		$selectid	Preselected journal code
+	 * @param	string		$htmlname	Name of field in html form
+	 * @param	int<0,9>	$nature		Limit the list to a particular type of journals (1:various operations / 2:sale / 3:purchase / 4:bank / 9: has-new)
+	 * @param	int<0,1>	$showempty	Add an empty field
+	 * @param	int<0,1>	$select_in	0=selectid value is the journal rowid (default) or 1=selectid is journal code
+	 * @param	int<0,1>	$select_out	Set value returned by select. 0=rowid (default), 1=code
+	 * @param	string		$morecss	More css non HTML object
+	 * @param	string		$usecache	Key to use to store result into a cache. Next call with same key will reuse the cache.
+	 * @param   int<0,1>	$disabledajaxcombo Disable ajax combo box.
 	 * @return	string|int				String with HTML select, or -1 if error
 	 */
 	public function select_journal($selectid, $htmlname = 'journal', $nature = 0, $showempty = 0, $select_in = 0, $select_out = 0, $morecss = 'maxwidth300 maxwidthonsmartphone', $usecache = '', $disabledajaxcombo = 0)
@@ -222,7 +223,7 @@ class FormAccounting extends Form
 			}
 		}
 
-		$out .= Form::multiselectarray($htmlname, $options, $selected, $showempty, 0, $morecss, 0, 0, 0, 'code_journal', '', ($disabledajaxcombo ? 0 : 1));
+		$out .= Form::multiselectarray($htmlname, $options, $selected, $showempty, 0, $morecss, 0, 0, '', 'code_journal', '', ($disabledajaxcombo ? 0 : 1));
 
 		return $out;
 	}

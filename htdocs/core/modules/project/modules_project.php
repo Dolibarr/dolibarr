@@ -80,7 +80,7 @@ abstract class ModelePDFProjects extends CommonDocGenerator
 
 
 /**
- *  Class mere des modeles de numerotation des references de projects
+ *  Class parent for numbering modules of tasks
  */
 abstract class ModeleNumRefProjects extends CommonNumRefGenerator
 {
@@ -92,4 +92,11 @@ abstract class ModeleNumRefProjects extends CommonNumRefGenerator
 	 *  @return  string|int<-1,0>			Value if OK, 0 if KO
 	 */
 	abstract public function getNextValue($objsoc, $project);
+
+	/**
+	 *  Return an example of numbering
+	 *
+	 *  @return     string      Example
+	 */
+	abstract public function getExample();
 }
