@@ -1362,6 +1362,7 @@ class Stripe extends CommonObject
 					$charge = \Stripe\Charge::create($paymentarray, array("idempotency_key" => "$description", "stripe_account" => "$account"));
 				}
 			}
+			'@phan-var-force stdclass|\Stripe\Charge $charge';
 			if (isset($charge->id)) {
 			}
 

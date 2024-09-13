@@ -516,7 +516,7 @@ class Fichinter extends CommonObject
 
 				$this->user_creation_id = $obj->fk_user_author;
 
-				$this->extraparams = (array) json_decode($obj->extraparams, true);
+				$this->extraparams = is_null($obj->extraparams) ? [] : (array) json_decode($obj->extraparams, true);
 
 				$this->last_main_doc = $obj->last_main_doc;
 
