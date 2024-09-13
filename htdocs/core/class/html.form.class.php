@@ -11305,6 +11305,164 @@ class Form
 	}
 
 	/**
+	 * Opens the table element.
+	 *
+	 * @param string $class Optional CSS class for the table.
+	 *
+	 * @return string
+	 */
+	public function openTable($class = 'noborder centpercent')
+	{
+		return '<table class="' . $class . '">';
+	}
+
+	/**
+	 * Closes the table element.
+	 *
+	 * @return string
+	 */
+	public function closeTable()
+	{
+		return '</table>';
+	}
+
+	/**
+	 * Creates a table row (tr) element with support for individual column classes.
+	 *
+	 * @param array  $columns  Array of columns. Each column can be a string (content) or an array with 'content' and 'class'.
+	 * @param string $rowClass Optional CSS class for the row.
+	 *
+	 * @return string
+	 */
+	public function addRow($columns = array(), $rowClass = '')
+	{
+		$out = '<tr' . ($rowClass ? ' class="' . $rowClass . '"' : '') . '>';
+		foreach ($columns as $column) {
+			// Check if column is an array with content and class or just content
+			if (is_array($column)) {
+				$content = isset($column['content']) ? $column['content'] : '';
+				$class = isset($column['class']) ? ' class="' . $column['class'] . '"' : '';
+			} else {
+				$content = $column;
+				$class = '';
+			}
+			$out .= '<td' . $class . '>' . $content . '</td>';
+		}
+		$out .= '</tr>';
+		return $out;
+	}
+	/**
+	 * Creates a header row (th) element.
+	 *
+	 * @param array  $headers  Array of headers to display.
+	 * @param string $class    Optional CSS class for the row.
+	 * @param int    $rowspan  Rowspan attribute (optional).
+	 * @param int    $colspan  Colspan attribute (optional).
+	 *
+	 * @return string
+	 */
+	public function addHeaderRow($headers = array(), $class = 'liste_titre', $rowspan = 1, $colspan = 1)
+	{
+		$out = '<tr' . ($class ? ' class="' . $class . '"' : '') . '>';
+		foreach ($headers as $header) {
+			$out .= '<th'
+				. ($rowspan > 1 ? ' rowspan="' . $rowspan . '"' : '')
+				. ($colspan > 1 ? ' colspan="' . $colspan . '"' : '') . '>';
+			$out .= $header;
+			$out .= '</th>';
+		}
+		$out .= '</tr>';
+		return $out;
+	}
+	/**
+	 * Creates a single column (td) inside a row.
+	 *
+	 * @param string $content  Content for the column (string or HTML).
+	 * @param string $class    Optional CSS class for the column.
+	 * @param int    $rowspan  Rowspan attribute (optional).
+	 * @param int    $colspan  Colspan attribute (optional).
+	 *
+	 * @return string
+	 */
+	public function addColumn($content = '', $class = '', $rowspan = 1, $colspan = 1)
+	{
+		$out = '<td'
+			. ($class ? ' class="' . $class . '"' : '')
+			. ($rowspan > 1 ? ' rowspan="' . $rowspan . '"' : '')
+			. ($colspan > 1 ? ' colspan="' . $colspan . '"' : '') . '>';
+		$out .= $content;
+		$out .= '</td>';
+		return $out;
+	}
+
+	/**
+	 * Opens a row (tr) element.
+	 *
+	 * @param string $class Optional CSS class for the row.
+	 *
+	 * @return string
+	 */
+	public function openRow($class = '')
+	{
+		return '<tr' . ($class ? ' class="' . $class . '"' : '') . '>';
+	}
+
+	/**
+	 * Closes a row (tr) element.
+	 *
+	 * @return string
+	 */
+	public function closeRow()
+	{
+		return '</tr>';
+	}
+
+	/**
+	 * Opens a column (td) element.
+	 *
+	 * @param string $class   Optional CSS class for the column.
+	 * @param int    $rowspan Rowspan attribute (optional).
+	 * @param int    $colspan Colspan attribute (optional).
+	 *
+	 * @return string
+	 */
+	public function openColumn($class = '', $rowspan = 1, $colspan = 1)
+	{
+		$out = '<td'
+			. ($class ? ' class="' . $class . '"' : '')
+			. ($rowspan > 1 ? ' rowspan="' . $rowspan . '"' : '')
+			. ($colspan > 1 ? ' colspan="' . $colspan . '"' : '') . '>';
+		return $out;
+	}
+
+	/**
+	 * Closes a column (td) element.
+	 *
+	 * @return string
+	 */
+	public function closeColumn()
+	{
+		return '</td>';
+	}
+
+	/**
+	 * Returns the HTML input field for the given field name and value.
+	 *
+	 * @param string $name          The name of the input field.
+	 * @param string $value         The value to populate the input field with.
+	 * @param string $type          The type of input field (default is 'text').
+	 * @param string $class          The CSS class for the input field (default is '').
+	 * @return string The HTML input field as a string.
+	 */
+
+	public function createInputField($name, $value = '', $type = 'text', $class = '')
+	{
+		$out = '<input type="' . $type . '" name="' . $name . '" value="' . dol_escape_htmltag($value) . '" class="' . $class . '">';
+		return $out;
+	}
+
+
+	/**
 	 * Closes the form by returning the closing form tag.
 	 *
 	 * @return string The HTML closing form tag.
@@ -11341,5 +11499,4 @@ class Form
 
 		return $out;
 	}
-
 }
