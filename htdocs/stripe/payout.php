@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2018-2023  Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -120,12 +121,14 @@ if (!$rowid) {
 
 	try {
 		if ($stripeacc) {
-			$payout = \Stripe\Payout::all(array("limit" => $limit), array("stripe_account" => $stripeacc));
+			$payout_all = \Stripe\Payout::all(array("limit" => $limit), array("stripe_account" => $stripeacc));
 		} else {
-			$payout = \Stripe\Payout::all(array("limit" => $limit));
+			$payout_all = \Stripe\Payout::all(array("limit" => $limit));
 		}
+		'@phan-var-force \Stripe\Payout $payout_all';  // TStripeObject suggested, but is a template
 
-		foreach ($payout->data as $payout) {
+		foreach ($payout_all->data as $payout) {
+			'@phan-var-force \Stripe\Payout $payout';  // TStripeObject suggested, but is a template
 			print '<tr class="oddeven">';
 
 			// Ref

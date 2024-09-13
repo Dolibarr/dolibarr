@@ -177,9 +177,9 @@ if ($action == 'install' && $allowonlineinstall) {
 			setEventMessages($langs->trans("ErrorFileMustBeADolibarrPackage", $original_file), null, 'errors');
 			$error++;
 		}
-		if (!$error && !preg_match('/^(module[a-zA-Z0-9]*|theme)_.*\-([0-9][0-9\.]*)\.zip$/i', $original_file)) {
+		if (!$error && !preg_match('/^(module[a-zA-Z0-9]*_|theme_|).*\-([0-9][0-9\.]*)(\s\(\d+\)\s)?\.zip$/i', $original_file)) {
 			$langs->load("errors");
-			setEventMessages($langs->trans("ErrorFilenameDosNotMatchDolibarrPackageRules", $original_file, 'module_*-x.y*.zip'), null, 'errors');
+			setEventMessages($langs->trans("ErrorFilenameDosNotMatchDolibarrPackageRules", $original_file, 'modulename-x[.y.z].zip'), null, 'errors');
 			$error++;
 		}
 		if (empty($_FILES['fileinstall']['tmp_name'])) {
@@ -286,6 +286,7 @@ if ($action == 'install' && $allowonlineinstall) {
 }
 
 if ($action == 'set' && $user->admin) {
+	// We made some check against evil eternal modules that try to low security options.
 	$checkOldValue = getDolGlobalInt('CHECKLASTVERSION_EXTERNALMODULE');
 	$csrfCheckOldValue = getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN');
 	$resarray = activateModule($value);
@@ -295,6 +296,7 @@ if ($action == 'set' && $user->admin) {
 	if ($csrfCheckOldValue != getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN')) {
 		setEventMessage($langs->trans('WarningModuleHasChangedSecurityCsrfParameter', $value), 'warnings');
 	}
+
 	dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1, 'chaine', 0, '', $conf->entity);
 	if (!empty($resarray['errors'])) {
 		setEventMessages('', $resarray['errors'], 'errors');
@@ -857,7 +859,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			// Adding a cron job could be a good idea: see DolibarrModules::checkForUpdate()
 			$checkRes = $objMod->checkForUpdate();
 			if ($checkRes > 0) {
-				setEventMessages($objMod->getName().' : '.$versiontrans.' -> '.$objMod->lastVersion, null, 'warnings');
+				setEventMessages($objMod->getName().' : '.preg_replace('/[^a-z0-9_\.\-\s]/i', '', $versiontrans).' -> '.preg_replace('/[^a-z0-9_\.\-\s]/i', '', $objMod->lastVersion), null, 'warnings');
 			} elseif ($checkRes < 0) {
 				setEventMessages($objMod->getName().' '.$langs->trans('CheckVersionFail'), null, 'errors');
 			}

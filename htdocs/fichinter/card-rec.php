@@ -336,7 +336,7 @@ if ($action == 'create') {
 		// Author
 		print "<tr><td>".$langs->trans("Author")."</td><td>".$user->getFullName($langs)."</td></tr>";
 
-		if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS')) {
+		if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS') || getDolGlobalString('FICHINTER_DISABLE_DETAILS') == '2') {
 			// Duration
 			print '<tr><td>'.$langs->trans("TotalDuration").'</td>';
 			print '<td colspan="3">'.convertSecondToTime($object->duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
@@ -557,7 +557,7 @@ if ($action == 'create') {
 
 			print "<tr><td>".$langs->trans("Author").'</td><td colspan="3">'.$author->getFullName($langs)."</td></tr>";
 
-			if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS')) {
+			if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS') || getDolGlobalString('FICHINTER_DISABLE_DETAILS') == '2') {
 				// Duration
 				print '<tr><td class="titlefield">'.$langs->trans("TotalDuration").'</td>';
 				print '<td colspan="3">';

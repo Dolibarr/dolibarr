@@ -514,15 +514,17 @@ ModuleCompanyCodeCustomerDigitaria=%s seguito dal nome del cliente troncato dal 
 ModuleCompanyCodeSupplierDigitaria=%s seguito dal nome del fornitore troncato dal numero di caratteri: %s per il codice contabile del fornitore.
 Use3StepsApproval=By default, Purchase Orders need to be created and approved by 2 different users (one step/user to create and one step/user to approve. Note that if user has both permission to create and approve, one step/user will be enough). You can ask with this option to introduce a third step/user approval, if amount is higher than a dedicated value (so 3 steps will be necessary: 1=validation, 2=first approval and 3=second approval if amount is enough).<br>Set this to empty if one approval (2 steps) is enough, set it to a very low value (0.1) if a second approval (3 steps) is always required.
 UseDoubleApproval=Utilizzare un'approvazione in 3 passaggi quando l'importo (senza tasse) è superiore a ...
-WarningPHPMail=ATTENZIONE: la configurazione per inviare e-mail da Applicazione utilizza la configurazione generica default. Questa scelta non richiede conoscenze tecniche per completare la configurazione.<br>Tuttavia, spesso è meglio impostare le email in uscita per utilizzare email server del tuo fornitore di servizi email invece della configurazione default per diversi motivi:
+WarningPHPMail=NOTICE: The setup to send emails from the application is using the default generic setup (called "%s"). This choice needs no technical knowledge and no particular setup.<br>However, it is often better to setup outgoing emails to use the other method (called "%s") to use the email server of your Email Service Provider, instead of the default setup for several reasons:
 WarningPHPMailA=- L'utilizzo del server del fornitore di servizi email aumenta l'affidabilità del tuo email, quindi aumenta la consegna senza essere contrassegnato come SPAM
-WarningPHPMailB=- Alcuni provider di servizi di posta elettronica (come Yahoo) non consentono di inviare un'e-mail da un server diverso dal proprio server. La tua configurazione attuale utilizza il server dell'applicazione per inviare e-mail e non il server del tuo provider di posta elettronica, quindi alcuni destinatari (quello compatibile con il protocollo restrittivo DMARC), chiederanno al tuo provider di posta elettronica se possono accettare la tua posta e alcuni provider di posta elettronica (come Yahoo) potrebbe rispondere "no" perché il server non è il loro, quindi alcune delle tue email inviate potrebbero non essere accettate per la consegna (attenzione anche alla quota di invio del tuo provider di posta elettronica).
+WarningPHPMailB=- If the domain of your email (the part mymaildomain.com into myname@mymaildomain.com) is protected by a SPF + a DMARC record, your email may be flagged as SPAM because your DMARC rule defined into DNS zone of the domain of the sender (mymaildomain.com) does not allow the sending as a generic sender. In such a case, you must disable the DMARC for the domain (or set it to p=none like done by @gmail.com) or, better, if you have the technical knowledge, use the other method to send emails using the SMTP server of your own email provider.
 WarningPHPMailC=- Anche l'utilizzo del server SMTP del tuo provider di servizi di posta elettronica per inviare e-mail è interessante, quindi tutte le e-mail inviate dall'applicazione verranno salvate anche nella directory "Inviati" della tua casella di posta.
 WarningPHPMailD=Si consiglia pertanto di modificare il metodo di invio delle email al valore "SMTP".
 WarningPHPMailDbis=Se vuoi davvero mantenere il metodo "PHP" predefinito per inviare e-mail, ignora questo avviso o rimuovilo con %s cliccando qui %s.
 WarningPHPMail2=If your email SMTP provider need to restrict email client to some IP addresses (very rare), this is the IP address of the mail user agent (MUA) for your ERP CRM application: <strong>%s</strong>.
-WarningPHPMailSPF=Se il nome a dominio dell'indirizzo email del tuo mittente è protetto da un record SPF (chiedi al tuo registar del nome a dominio), devi aggiungere i seguenti IP nel record SPF del DNS del tuo dominio: <strong> %s </strong> .
-ActualMailSPFRecordFound=Trovato record SPF effettivo (per e-mail %s): %s
+WarningPHPMailSPF=If the domain name in your sender email address is protected by a SPF record (ask your domain name registar), you must add the following IPs or entry in the SPF record of the DNS of your domain: <strong>%s</strong>.
+WarningPHPMailSPFDMARC=If the domain name in your sender email address is protected by a DMARC record different than p=none (ask your domain name registar), you must remove your DMARC record, or set it to p=none like do @gmail.com) or use sending another method.
+SPFAndDMARCInformation=SPF and DMARC DNS record for main email addresses
+ActualMailDNSRecordFound=Actual %s record found (for email %s) : %s
 ClickToShowDescription=Clicca per mostrare la descrizione
 DependsOn=This module needs the module(s)
 RequiredBy=Questo modulo è richiesto dal modulo
@@ -867,7 +869,7 @@ Permission255=Cambiare le password di altri utenti
 Permission256=Eliminare o disabilitare altri utenti
 Permission262=Estendi l'accesso a tutte le terze parti e ai loro oggetti (non solo alle terze parti per le quali utente è collegato come vendere rappresentante).
 Permission262b=Non efficace per gli utenti esterni (sempre limitati a se stessi per Proposte, ordini, fatture, contratti, ecc.).
-Permission262c=Non efficace per i progetti (solo le regole sulle autorizzazioni progetto, la visibilità e assegnazione sono importanti).
+Permission262c=Not effective for projects (only rules on project permissions, visibility and users assignment matter).
 Permission263=Estendere l'accesso a tutte le terze parti SENZA i loro oggetti (non solo a terze parti per le quali l'utente è un rappresentante di vendita). <br> Non efficace per gli utenti esterni (sempre limitato a se stesso per proposte, ordini, fatture, contratti, ecc.). <br> Non efficace per i progetti (solo regole su autorizzazioni di progetto, visibilità e questioni di assegnazione).
 Permission271=Vedere CA
 Permission272=Vedere fatture
@@ -944,7 +946,7 @@ Permission776=Pagare le note spese
 Permission777=Leggi tutte le note spese (anche quelle di utenti non subordinati)
 Permission778=Crea/modifica note spese di tutti
 Permission779=Esporta note spese
-Permission1001=Vedere magazzino
+Permission1001=Read warehouses and stocks
 Permission1002=Crea/modifica magazzini
 Permission1003=Elimina magazzini
 Permission1004=Vedere movimenti magazzino
@@ -2218,7 +2220,7 @@ CreateCandidature=Crea domanda di lavoro
 FormatZip=CAP
 MainMenuCode=Menu entry code (mainmenu)
 ECMAutoTree=Show automatic ECM tree
-OperationParamDesc=Definire le regole da utilizzare per estrarre alcuni dati o impostare valori da utilizzare per l'operazione.<br><br>Esempio per estrarre una azienda nome da email soggetto in una variabile temporanea:<br>tmp_var=EXTRACT:OGGETTO:Messaggio da azienda ([^\n]*)<br><br>Esempi per impostare le proprietà di un oggetto su creare:<br>objproperty1=SET :un valore codificato<br>objproperty2=SET:__tmp_var__<br> span>objproperty3=SETIFEMPTY:un valore (il valore viene impostato solo se la proprietà non è già definita)<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT :BODY:Il mio nome azienda è\\s([^\\s ]*)<br><br>Utilizza un nuovo linea per estrarre o impostare diversi proprietà.
+OperationParamDesc=Define the rules to use to extract some data or set values to use for operation.<br><br>Example to extract a string from email header, subject or body into a temporary variable:<br>tmp_var1=EXTRACT:HEADER:My regex ([^\n]*)<br>tmp_var2=EXTRACT:SUBJECT:My refex ([^\n]*)<br>tmp_var3=EXTRACT:BODY:My regex ([^\n]*)<br><br>Examples to set the properties of an object to create:<br>objproperty1=SET:a hard coded value<br>objproperty2=SET:__tmp_var__<br>objproperty3=SETIFEMPTY:a value (value is set only if property is not already defined)<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a new line to extract or set several properties.
 OpeningHours=Orari di apertura
 OpeningHoursDesc=Inserisci gli orari di apertura regolare della tua azienda.
 ResourceSetup=Configurazione del modulo Risorse
@@ -2264,7 +2266,7 @@ LargerThan=Larger than
 IfTrackingIDFoundEventWillBeLinked=Note that If a tracking ID of an object is found into email, or if the email is an answer of an email already collected and linked to an object, the created event will be automatically linked to the known related object.
 WithGMailYouCanCreateADedicatedPassword=Con una GMail conto, se hai abilitato la convalida in 2 passaggi, si consiglia di creare una seconda password dedicata per Applicazione invece di utilizzare la tua password conto da https://myaccount.google.com/.
 EmailCollectorTargetDir=Potrebbe essere un comportamento desiderato spostare email in un altro tag/directory quando è stato elaborato correttamente. Basta impostare il nome di directory qui per utilizzare questo funzionalità (NON utilizzare caratteri speciali nel nome). Nota che devi utilizzare anche un leggere/write login conto.
-EmailCollectorLoadThirdPartyHelp=Puoi utilizzare questa azione per utilizzare il contenuto email per trovare e caricare una terza parte esistente nel tuo database (la ricerca verrà effettuata sulla proprietà definita tra 'id','name','name_alias','email'). La terza parte trovata (o creata) verrà utilizzata per le azioni seguire che la richiedono.<br>Per Esempio, se vuoi creare una terza parte con un nome estratto da una stringa 'Nome: nome da trovare' presente nel corpo, usa il mittente email come email, puoi impostare il parametro campo in questo modo:<br>'email=HEADER:^From:(.*);nome =EXTRACT:CORPO:Nome:\\s([^\\s]*);client=SET:2;'<br>
+EmailCollectorLoadThirdPartyHelp=You can use this action to use the email content to find and load an existing third party in your database (search will be done on the defined property among 'id','name','name_alias','email'). The found (or created) third party will be used for following actions that need it.<br>For example, if you want to create a third party with a name extracted from a string 'Name: name to find' present into the body, use the sender email as email, you can set the parameter field like this:<br>'email=EXTRACT:HEADER:^From:(.*);name=EXTRACT:BODY:Name:\\s([^\\s]*);client=SET:2;'<br>
 FilterSearchImapHelp=Attenzione: molti server email (come Gmail) eseguono ricerche di parole complete quando la ricerca su una stringa e non restituirà un risultato se la stringa si trova solo parzialmente in una parola. Anche per questo motivo, l'utilizzo di caratteri speciali in un criterio di ricerca verrà ignorato se non fanno parte di parole esistenti.<br>Per effettuare una ricerca di esclusione su una parola (return email se la parola non viene trovata), puoi usare il ! carattere prima della parola (potrebbe non funzionare su alcuni server di posta).
 EndPointFor=End point for %s : %s
 DeleteEmailCollector=Delete email collector

@@ -463,7 +463,7 @@ class pdf_octopus extends ModelePDFFactures
 				if ($cert) {
 					$info = array(
 						'Name' => $this->emetteur->name,
-						'Location' => getCountry($this->emetteur->country_code, 0),
+						'Location' => getCountry($this->emetteur->country_code, ''),
 						'Reason' => 'INVOICE',
 						'ContactInfo' => $this->emetteur->email
 					);

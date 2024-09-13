@@ -2521,7 +2521,7 @@ function dol_fiche_head($links = array(), $active = '0', $title = '', $notab = 0
  *  Show tabs of a record
  *
  *	@param	array<int,array<int<0,5>,string>>	$links	Array of tabs (0=>url, 1=>label, 2=>code, 3=>not used, 4=>text after link, 5=>morecssonlink). Currently initialized by calling a function xxx_admin_prepare_head. Note that label into $links[$i][1] must be already HTML escaped.
- *	@param	string	$active     		Active tab name
+ *	@param	string	$active     		Active tab name (using the old numeric int is deprecated)
  *	@param  string	$title      		Title
  *	@param  int		$notab				-1 or 0=Add tab header, 1=no tab header (if you set this to 1, using print dol_get_fiche_end() to close tab is not required), -2=Add tab header with no separation under tab (to start a tab just after), -3=-2+'noborderbottom'
  * 	@param	string	$picto				Add a picto on tab title
@@ -4022,7 +4022,7 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
 
 	if ($hookmanager) {
 		$parameters = array(
-			'value'=> $value,
+			'value' => $value,
 			'cid' => $cid,
 			'socid' => $socid,
 			'type' => $type,
@@ -8333,7 +8333,9 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 				}
 			}
 
-			if (!empty($out) && getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY') && $check != 'restricthtmlallowunvalid') {
+			if (!empty($out) && getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY') && !in_array($check, array('restricthtmlallowunvalid', 'restricthtmlallowlinkscript'))) {
+				// Tidy can't be used for restricthtmlallowunvalid and restricthtmlallowlinkscript
+				// TODO Try to implement a hack for restricthtmlallowlinkscript by renaming tag <link> and <script> ?
 				try {
 					// Try cleaning using tidy
 					if (extension_loaded('tidy') && class_exists("tidy")) {
@@ -8696,7 +8698,7 @@ function dol_textishtml($msg, $option = 0)
 	}
 
 	if ($option == 1) {
-		if (preg_match('/<html/i', $msg)) {
+		if (preg_match('/<(html|link|script)/i', $msg)) {
 			return true;
 		} elseif (preg_match('/<body/i', $msg)) {
 			return true;
@@ -8711,9 +8713,7 @@ function dol_textishtml($msg, $option = 0)
 	} else {
 		// Remove all urls because 'http://aa?param1=abc&amp;param2=def' must not be used inside detection
 		$msg = preg_replace('/https?:\/\/[^"\'\s]+/i', '', $msg);
-		if (preg_match('/<html/i', $msg)) {
-			return true;
-		} elseif (preg_match('/<body/i', $msg)) {
+		if (preg_match('/<(html|link|script|body)/i', $msg)) {
 			return true;
 		} elseif (preg_match('/<\/textarea/i', $msg)) {
 			return true;
@@ -10094,7 +10094,7 @@ function dol_htmloutput_errors($mesgstring = '', $mesgarray = array(), $keepembe
  *  @param	array<string|int,mixed>	$array 	Array to sort (array of array('key1'=>val1,'key2'=>val2,'key3'...) or array of objects)
  *  @param	string		$index				Key in array to use for sorting criteria
  *  @param	string		$order				Sort order ('asc' or 'desc')
- *  @param	int<0,1>	$natsort			If values are strings (I said value not type): 0=Use alphabetical order, 1=use "natural" sort (natsort)
+ *  @param	int<-1,1>	$natsort			If values are strings (I said value not type): 0=Use alphabetical order, 1=use "natural" sort (natsort), -1=Force alpha order
  *                                          If values are numeric (I said value not type): 0=Use numeric order (even if type is string) so use a "natural" sort, 1=use "natural" sort too (same than 0), -1=Force alphabetical order
  *  @param	int<0,1>	$case_sensitive		1=sort is case sensitive, 0=not case sensitive
  *  @param	int<0,1>	$keepindex			If 0 and index key of array to sort is a numeric, then index will be rewritten. If 1 or index key is not numeric, key for index is kept after sorting.
@@ -11062,7 +11062,8 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
  */
 function printCommonFooter($zone = 'private')
 {
-	global $conf, $hookmanager, $user, $debugbar;
+	global $conf, $hookmanager, $user, $langs;
+	global $debugbar;
 	global $action;
 	global $micro_start_time;
 
@@ -11110,6 +11111,7 @@ function printCommonFooter($zone = 'private')
 				$relativepathstring = preg_replace('/^\//', '', $relativepathstring);
 				$relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
 				//$tmpqueryarraywehave = explode('&', dol_string_nohtmltag($_SERVER['QUERY_STRING']));
+
 				if (!empty($user->default_values[$relativepathstring]['focus'])) {
 					foreach ($user->default_values[$relativepathstring]['focus'] as $defkey => $defval) {
 						$qualified = 0;
@@ -11132,10 +11134,11 @@ function printCommonFooter($zone = 'private')
 						}
 
 						if ($qualified) {
+							print 'console.log("set the focus by executing jQuery(...).focus();")'."\n";
 							foreach ($defval as $paramkey => $paramval) {
 								// Set focus on field
 								print 'jQuery("input[name=\''.$paramkey.'\']").focus();'."\n";
-								print 'jQuery("textarea[name=\''.$paramkey.'\']").focus();'."\n";
+								print 'jQuery("textarea[name=\''.$paramkey.'\']").focus();'."\n";	// TODO KO with ckeditor
 								print 'jQuery("select[name=\''.$paramkey.'\']").focus();'."\n"; // Not really useful, but we keep it in case of.
 							}
 						}
@@ -11163,19 +11166,72 @@ function printCommonFooter($zone = 'private')
 						}
 
 						if ($qualified) {
-							foreach ($defval as $paramkey => $paramval) {
-								// Add property 'required' on input
-								print 'jQuery("input[name=\''.$paramkey.'\']").prop(\'required\',true);'."\n";
-								print 'jQuery("textarea[name=\''.$paramkey.'\']").prop(\'required\',true);'."\n";
-								print '// required on a select works only if key is "", so we add the required attributes but also we reset the key -1 or 0 to an empty string'."\n";
-								print 'jQuery("select[name=\''.$paramkey.'\']").prop(\'required\',true);'."\n";
-								print 'jQuery("select[name=\''.$paramkey.'\'] option[value=\'-1\']").prop(\'value\', \'\');'."\n";
-								print 'jQuery("select[name=\''.$paramkey.'\'] option[value=\'0\']").prop(\'value\', \'\');'."\n";
+							print 'console.log("set the js code to manage fields that are set as mandatory");'."\n";
 
+							foreach ($defval as $paramkey => $paramval) {
+								// Solution 1: Add handler on submit to check if mandatory fields are empty
+								print 'var form = $(\'#'.dol_escape_js($paramkey).'\').closest("form");'."\n";
+								print "form.on('submit', function(event) {
+										var submitter = event.originalEvent.submitter;
+										if (submitter) {
+											var buttonName = $(submitter).attr('name');
+											if (buttonName == 'cancel') {
+												console.log('We click on cancel button so we accept submit with no need to check mandatory fields');
+												return true;
+											}
+										}
+
+										console.log('We did not click on cancel button but on something else, we check that field #".dol_escape_js($paramkey)." is not empty');
+
+										var tmpvalue = jQuery('#".dol_escape_js($paramkey)."').val();
+										let tmptypefield = jQuery('#".dol_escape_js($paramkey)."').prop('nodeName').toLowerCase(); // Get the tag name (div, section, footer...)
+
+										if (tmptypefield == 'textarea') {
+											// We must instead check the content of ckeditor
+											var tmpeditor = CKEDITOR.instances['".dol_escape_js($paramkey)."'];
+										    if (tmpeditor) {
+        										tmpvalue = tmpeditor.getData();
+												console.log('For textarea tmpvalue is '+tmpvalue);
+											}
+										}
+
+										let tmpvalueisempty = false;
+										if (tmpvalue === null || tmpvalue === undefined || tmpvalue === '') {
+											tmpvalueisempty = true;
+										}
+										if (tmpvalue === '0' && tmptypefield == 'select') {
+											tmpvalueisempty = true;
+										}
+										if (tmpvalueisempty) {
+											console.log('field has type '+tmptypefield+' and is empty, we cancel the submit');
+											event.preventDefault(); // Stop submission of form to allow custom code to decide.
+											event.stopPropagation(); // Stop other handlers.
+											alert('".dol_escape_js($langs->trans("ErrorFieldRequired", $paramkey).' ('.$langs->trans("CustomMandatoryFieldRule").')')."');
+											return false;
+										}
+										console.log('field has type '+tmptypefield+' and is defined to '+tmpvalue);
+										return true;
+									});
+								\n";
+
+								// Solution 2: Add property 'required' on input
+								// so browser will check value and try to focus on it when submitting the form.
+								//print 'setTimeout(function() {';	// If we want to wait that ckeditor beuatifier has finished its job.
+								//print 'jQuery("input[name=\''.$paramkey.'\']").prop(\'required\',true);'."\n";
+								//print 'jQuery("textarea[id=\''.$paramkey.'\']").prop(\'required\',true);'."\n";
+								//print 'jQuery("select[name=\''.$paramkey.'\']").prop(\'required\',true);'."\n";*/
+								//print '// required on a select works only if key is "", so we add the required attributes but also we reset the key -1 or 0 to an empty string'."\n";
+								//print 'jQuery("select[name=\''.$paramkey.'\'] option[value=\'-1\']").prop(\'value\', \'\');'."\n";
+								//print 'jQuery("select[name=\''.$paramkey.'\'] option[value=\'0\']").prop(\'value\', \'\');'."\n";
 								// Add 'field required' class on closest td for all input elements : input, textarea and select
-								print 'jQuery(":input[name=\'' . $paramkey . '\']").closest("tr").find("td:first").addClass("fieldrequired");' . "\n";
+								//print '}, 500);'; // 500 milliseconds delay
+
+								// Now set the class "fieldrequired"
+								print 'jQuery(\':input[name="' . dol_escape_js($paramkey) . '"]\').closest("tr").find("td:first").addClass("fieldrequired");'."\n";
 							}
-							// If we submit the cancel button we remove the required attributes
+
+
+							// If we submit using the cancel button, we remove the required attributes
 							print 'jQuery("input[name=\'cancel\']").click(function() {
 								console.log("We click on cancel button so removed all required attribute");
 								jQuery("input, textarea, select").each(function(){this.removeAttribute(\'required\');});
@@ -12583,7 +12639,7 @@ function getFieldErrorIcon($fieldValidationErrorMsg)
  * @param string    $url        the url for link
  * @param string    $id         attribute id of button
  * @param int<-2,2>	$status     0 no user rights, 1 active, 2 current action or selected, -1 Feature Disabled, -2 disable Other reason use param $helpText as tooltip help
- * @param array<string,mixed>	$params		various params for future : recommended rather than adding more function arguments
+ * @param array<string,mixed>	$params		various parameters for future : recommended rather than adding more function arguments
  * @return string               html button
  */
 function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $url = '', $id = '', $status = 1, $params = array())
@@ -14133,7 +14189,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 	}
 
 	if (isModEnabled('agenda') || (isModEnabled('mailing') && !empty($objcon->email))) {
-		$delay_warning = $conf->global->MAIN_DELAY_ACTIONS_TODO * 24 * 60 * 60;
+		$delay_warning = getDolGlobalInt('MAIN_DELAY_ACTIONS_TODO') * 24 * 60 * 60;
 
 		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';

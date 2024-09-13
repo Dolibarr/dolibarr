@@ -565,6 +565,20 @@ class UserGroup extends CommonObject
 		}
 	}
 
+	/**
+	 *  Load the list of permissions for the user into the group object
+	 *
+	 *  @param      string	$moduletag	 	Name of module we want permissions ('' means all)
+	 *  @return     int						Return integer <0 if KO, >=0 if OK
+	 *  @deprecated
+	 *  TODO Remove this method. It has a name conflict with getRights() in CommonObject and was replaced in v20 with loadRights()
+	 *
+	 *  @phpstan-ignore-next-line
+	 */
+	public function getrights($moduletag = '')
+	{
+		return $this->loadRights($moduletag);
+	}
 
 	/**
 	 *  Load the list of permissions for the user into the group object
@@ -572,7 +586,7 @@ class UserGroup extends CommonObject
 	 *  @param      string	$moduletag	 	Name of module we want permissions ('' means all)
 	 *  @return     int						Return integer <0 if KO, >=0 if OK
 	 */
-	public function getrights($moduletag = '')
+	public function loadRights($moduletag = '')
 	{
 		global $conf;
 
@@ -586,9 +600,7 @@ class UserGroup extends CommonObject
 			return 0;
 		}
 
-		/*
-		 * Recuperation des droits
-		 */
+		// Load permission from group
 		$sql = "SELECT r.module, r.perms, r.subperms ";
 		$sql .= " FROM ".$this->db->prefix()."usergroup_rights as u, ".$this->db->prefix()."rights_def as r";
 		$sql .= " WHERE r.id = u.fk_id";

@@ -7,6 +7,7 @@
  * Copyright (C) 2016		Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -550,6 +551,8 @@ if ($result) {
 
 
 	$accountingaccount_codetotid_cache = array();
+	$suggestedaccountingaccountfor = '';  // Initialise (for static analysis)
+	$suggestedaccountingaccountbydefaultfor = '';
 
 	while ($i < min($num_lines, $limit)) {
 		$objp = $db->fetch_object($result);

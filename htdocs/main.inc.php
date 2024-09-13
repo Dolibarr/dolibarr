@@ -1633,7 +1633,7 @@ if (!function_exists("llxHeader")) {
 		}
 
 		if (getDolGlobalString('MAIN_OPTIMIZEFORCOLORBLIND')) {
-			$tmpcsstouse .= ' colorblind-'.strip_tags($conf->global->MAIN_OPTIMIZEFORCOLORBLIND);
+			$tmpcsstouse .= ' colorblind-'.strip_tags(getDolGlobalString('MAIN_OPTIMIZEFORCOLORBLIND'));
 		}
 
 		print '<body id="mainbody" class="'.$tmpcsstouse.'">'."\n";
@@ -2432,7 +2432,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 			}
 		}
 
-		if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+		if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') && getDolGlobalInt('MAIN_HIDE_VERSION') == 0) {
 			$text = '<span class="aversion"><span class="hideonsmartphone small">'.DOL_VERSION.'</span></span>';
 			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			$toprightmenu .= $form->textwithtooltip('', $appli, 2, 1, $text, 'login_block_elem', 2);
@@ -3584,7 +3584,7 @@ function main_area($title = '')
 	print $hookmanager->resPrint;
 
 	if (getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')) {
-		print info_admin($langs->trans("WarningYouAreInMaintenanceMode", getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')), 0, 0, 1, 'warning maintenancemode');
+		print info_admin($langs->trans("WarningYouAreInMaintenanceMode", getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')), 0, 0, '1', 'warning maintenancemode');
 	}
 
 	// Permit to add user company information on each printed document by setting SHOW_SOCINFO_ON_PRINT

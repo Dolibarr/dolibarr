@@ -231,7 +231,12 @@ class DolEditor
                                     textDirection: \''.dol_escape_js($langs->trans("DIRECTION")).'\',
                                     on : {
                                                 instanceReady : function(ev) {
-													console.log("ckeditor instanceReady");
+													console.log(\'ckeditor '.dol_escape_js($this->htmlname).' instanceReady\');
+
+													/* If we found the attribute required on source div, we remove it (not compatible with ckeditor) */
+													/* Disabled, because attribute required should never be used on fields for doleditor */
+													/* jQuery("#'.dol_escape_js($this->htmlname).'").attr("required", false); */
+
                                                     // Output paragraphs as <p>Text</p>.
                                                     this.dataProcessor.writer.setRules( \'p\', {
                                                         indent : false,
@@ -242,15 +247,13 @@ class DolEditor
                                                     });
                                                 },
 												/* This is to remove the tab Link on image popup. Does not work, so commented */
-												/*
-												dialogDefinition: function (event) {
+												/* dialogDefinition: function (event) {
 										            var dialogName = event.data.name;
 										            var dialogDefinition = event.data.definition;
 										            if (dialogName == \'image\') {
 										                dialogDefinition.removeContents(\'Link\');
 										            }
-										        }
-												*/
+										        } */
 										},
 									disableNativeSpellChecker: '.(getDolGlobalString('CKEDITOR_NATIVE_SPELLCHECKER') ? 'false' : 'true');
 

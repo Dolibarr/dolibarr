@@ -150,8 +150,8 @@ $arrayfields = array(
 );
 
 if (getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 0) {
-	$arrayfields['u.datelastlogin'] = array('label'=>"LastConnexion", 'checked'=>1, 'position'=>100);
-	$arrayfields['u.datepreviouslogin'] = array('label'=>"PreviousConnexion", 'checked'=>0, 'position'=>110);
+	$arrayfields['u.datelastlogin'] = array('label' => "LastConnexion", 'checked' => 1, 'position' => 100);
+	$arrayfields['u.datepreviouslogin'] = array('label' => "PreviousConnexion", 'checked' => 0, 'position' => 110);
 }
 
 // Extra fields
@@ -679,7 +679,7 @@ $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars p
 $newcardbutton .= dolGetButtonTitle($langs->trans('HierarchicView'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/user/hierarchy.php?mode=hierarchy'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', (($mode == 'hierarchy') ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
-$newcardbutton .= dolGetButtonTitle($langs->trans('NewUser'), '', 'fa fa-plus-circle', $url, '', $permissiontoadd);
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewUser'), '', 'fa fa-plus-circle', $url, '', (int) $permissiontoadd);
 
 /*$moreparam = array('morecss'=>'btnTitleSelected');
 $morehtmlright = dolGetButtonTitle($langs->trans("List"), '', 'fa fa-list paddingleft imgforviewmode', DOL_URL_ROOT.'/user/list.php'.(($search_status != '' && $search_status >= 0) ? '?search_status='.$search_status : ''), '', 1, $moreparam);

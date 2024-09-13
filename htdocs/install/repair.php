@@ -1324,7 +1324,7 @@ if ($ok && GETPOST('force_utf8_on_tables', 'alpha')) {
 			foreach ($arrayofforeignkey as $tmptable => $foreignkeyname) {
 				if ($table[0] == $tmptable) {
 					print '<tr><td colspan="2">';
-					$sqltmp = 'ALTER TABLE '.$db->sanitize($table[0]).' DROP FOREIGN KEY '.$db->sanitize($foreignkeyname);
+					$sqltmp = "ALTER TABLE ".$db->sanitize($table[0])." DROP FOREIGN KEY ".$db->sanitize($foreignkeyname);
 					print $sqltmp;
 					if ($force_utf8_on_tables == 'confirmed') {
 						$resqltmp = $db->query($sqltmp);
@@ -1371,7 +1371,7 @@ if ($ok && GETPOST('force_utf8_on_tables', 'alpha')) {
 
 		// Restore dropped foreign keys
 		foreach ($foreignkeystorestore as $tmptable => $foreignkeyname) {
-			$stringtofindinline = 'ALTER TABLE .* ADD CONSTRAINT '.$db->sanitize($foreignkeyname);
+			$stringtofindinline = "ALTER TABLE .* ADD CONSTRAINT ".$db->sanitize($foreignkeyname);
 			$fileforkeys = DOL_DOCUMENT_ROOT.'/install/mysql/tables/'.$tmptable.'.key.sql';
 			//print 'Search in '.$fileforkeys.' to get '.$stringtofindinline."<br>\n";
 
@@ -1448,7 +1448,7 @@ if ($ok && GETPOST('force_utf8mb4_on_tables', 'alpha')) {
 			foreach ($arrayofforeignkey as $tmptable => $foreignkeyname) {
 				if ($table[0] == $tmptable) {
 					print '<tr><td colspan="2">';
-					$sqltmp = 'ALTER TABLE '.$db->sanitize($table[0]).' DROP FOREIGN KEY '.$db->sanitize($foreignkeyname);
+					$sqltmp = "ALTER TABLE ".$db->sanitize($table[0])." DROP FOREIGN KEY ".$db->sanitize($foreignkeyname);
 					print $sqltmp;
 					if ($force_utf8mb4_on_tables == 'confirmed') {
 						$resqltmp = $db->query($sqltmp);
@@ -1495,7 +1495,7 @@ if ($ok && GETPOST('force_utf8mb4_on_tables', 'alpha')) {
 
 		// Restore dropped foreign keys
 		foreach ($foreignkeystorestore as $tmptable => $foreignkeyname) {
-			$stringtofindinline = 'ALTER TABLE .* ADD CONSTRAINT '.$db->sanitize($foreignkeyname);
+			$stringtofindinline = "ALTER TABLE .* ADD CONSTRAINT ".$db->sanitize($foreignkeyname);
 			$fileforkeys = DOL_DOCUMENT_ROOT.'/install/mysql/tables/'.$tmptable.'.key.sql';
 			//print 'Search in '.$fileforkeys.' to get '.$stringtofindinline."<br>\n";
 

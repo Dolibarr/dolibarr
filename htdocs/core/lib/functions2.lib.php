@@ -838,7 +838,7 @@ function dolObfuscateEmail($mail, $replace = "*", $nbreplace = 8, $nbdisplaymail
  * 	Return lines of an html table from an array
  * 	Used by array2table function only
  *
- * 	@param	array	$data		Array of data
+ * 	@param	array<null|int|float|string>	$data		Array of data
  * 	@param	string	$troptions	Options for tr
  * 	@param	string	$tdoptions	Options for td
  * 	@return	string
@@ -847,7 +847,7 @@ function array2tr($data, $troptions = '', $tdoptions = '')
 {
 	$text = '<tr '.$troptions.'>';
 	foreach ($data as $key => $item) {
-		$text .= '<td '.$tdoptions.'>'.$item.'</td>';
+		$text .= '<td '.$tdoptions.'>'.((string) $item).'</td>';
 	}
 	$text .= '</tr>';
 	return $text;
@@ -856,7 +856,7 @@ function array2tr($data, $troptions = '', $tdoptions = '')
 /**
  * 	Return an html table from an array
  *
- * 	@param	array	$data			Array of data
+ * 	@param	array<int|string,null|string|int|float>	$data	Array of data
  * 	@param	int		$tableMarkup	Table markup
  * 	@param	string	$tableoptions	Options for table
  * 	@param	string	$troptions		Options for tr
@@ -874,8 +874,8 @@ function array2table($data, $tableMarkup = 1, $tableoptions = '', $troptions = '
 			$text .= array2tr($item, $troptions, $tdoptions);
 		} else {
 			$text .= '<tr '.$troptions.'>';
-			$text .= '<td '.$tdoptions.'>'.$key.'</td>';
-			$text .= '<td '.$tdoptions.'>'.$item.'</td>';
+			$text .= '<td '.$tdoptions.'>'.((string) $key).'</td>';
+			$text .= '<td '.$tdoptions.'>'.((string) $item).'</td>';
 			$text .= '</tr>';
 		}
 	}
@@ -1000,12 +1000,12 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		$maskuser_value = '';
 	}
 
-	// Personalized field {XXX-1} à {XXX-9}
+	// Personalized field {XXX-1} à {XXX-99}
 	$maskperso = array();
 	$maskpersonew = array();
 	$tmpmask = $mask;
 	$regKey = array();
-	while (preg_match('/\{([A-Z]+)\-([1-9])\}/', $tmpmask, $regKey)) {
+	while (preg_match('/\{([A-Z]+)\-([0-9]+)\}/', $tmpmask, $regKey)) {
 		$maskperso[$regKey[1]] = '{'.$regKey[1].'-'.$regKey[2].'}';
 		// @phan-suppress-next-line PhanParamSuspiciousOrder
 		$maskpersonew[$regKey[1]] = str_pad('', (int) $regKey[2], '_', STR_PAD_RIGHT);
@@ -1406,7 +1406,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			$maskrefclient_maskbefore = '{'.$maskrefclient.'}';
 			$maskrefclient_maskafter = $maskrefclient_clientcode;
 			if (dol_strlen($maskrefclient_maskcounter) > 0) {
-				$maskrefclient_maskafter .= str_pad($maskrefclient_counter, dol_strlen($maskrefclient_maskcounter), "0", STR_PAD_LEFT);
+				$maskrefclient_maskafter .= str_pad((string) $maskrefclient_counter, dol_strlen($maskrefclient_maskcounter), "0", STR_PAD_LEFT);
 			}
 			$numFinal = str_replace($maskrefclient_maskbefore, $maskrefclient_maskafter, $numFinal);
 		}
