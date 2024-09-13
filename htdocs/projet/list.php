@@ -268,6 +268,13 @@ if (GETPOST('search_usage_event_organization')) {
 }
 $arrayfields['p.fk_project']['enabled'] = 0;
 
+// Force this field to be visible
+if ($contextpage == 'lead') {
+	$arrayfields['p.fk_opp_status']['enabled'] = 1;
+	$arrayfields['p.fk_opp_status']['visible'] = 1;
+}
+
+
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 '@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan

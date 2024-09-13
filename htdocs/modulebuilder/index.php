@@ -3689,7 +3689,7 @@ if ($module == 'initmodule') {
 						if ($moduledescritpionautotrans != "Module".$moduleobj->name."Desc") {
 							// $moduledescritpionautotrans has been found into a translation file
 							print ' '.$form->textwithpicto('', $langs->trans("ModuleTranslatedIntoLangForKeyInto", "Module".$moduleobj->name."Desc", $moduledescritpionautotrans));
-						} elseif ($moduledescritpionautotrans != "Module".$moduleobj->numeroc."Desc") {
+						} elseif ($moduledescritpionautotrans != "Module".$moduleobj->numero."Desc") {
 							// $moduledescritpionautotrans has been found into a translation file
 							print ' '.$form->textwithpicto('', $langs->trans("ModuleTranslatedIntoLangForKeyInto", "Module".$moduleobj->numero."Desc", $moduledescritpionautotrans));
 						}

@@ -2567,7 +2567,7 @@ class Ticket extends CommonObject
 			}
 
 			$moreinfo = array('description' => 'File saved by copyFilesForTicket', 'src_object_type' => $this->element, 'src_object_id' => $this->id);
-			$res = dol_move($filepath[$i], $destfile, 0, 1, 0, 1, $moreinfo);
+			$res = dol_move($filepath[$i], $destfile, '0', 1, 0, 1, $moreinfo);
 			if (!$res) {
 				// Move has failed
 				$this->error = "Failed to move file ".dirbasename($filepath[$i])." into ".dirbasename($destfile);
