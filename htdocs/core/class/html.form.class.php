@@ -11307,13 +11307,16 @@ class Form
 	/**
 	 * Opens the table element.
 	 *
-	 * @param string $class Optional CSS class for the table.
+	 * @param string $class       Optional CSS class for the table.
+	 * @param string $id          Optional ID for the table.
+	 * @param array  $attributes  Additional attributes for the table (optional).
 	 *
 	 * @return string
 	 */
-	public function openTable($class = 'noborder centpercent')
+	public function openTable($class = 'noborder centpercent', $id = '', $attributes = array())
 	{
-		return '<table class="' . $class . '">';
+		$attrString = $this->buildAttributes($attributes);
+		return '<table' . ($class ? ' class="' . $class . '"' : '') . ($id ? ' id="' . $id . '"' : '') . ' ' . $attrString . '>';
 	}
 
 	/**
@@ -11327,112 +11330,122 @@ class Form
 	}
 
 	/**
-	 * Creates a table row (tr) element with support for individual column classes.
+	 * Creates a table row (tr) element with support for individual column classes and attributes.
 	 *
-	 * @param array  $columns  Array of columns. Each column can be a string (content) or an array with 'content' and 'class'.
-	 * @param string $rowClass Optional CSS class for the row.
+	 * @param array  $columns    Array of columns. Each column can be a string (content) or an array with 'content', 'class', 'id', and additional attributes.
+	 * @param string $rowClass   Optional CSS class for the row.
+	 * @param string $rowId      Optional ID for the row.
+	 * @param array  $attributes Additional attributes for the row (optional).
 	 *
 	 * @return string
 	 */
-	public function addRow($columns = array(), $rowClass = '')
+	public function addRow($columns = array(), $rowClass = '', $rowId = '', $attributes = array())
 	{
-		$out = '<tr' . ($rowClass ? ' class="' . $rowClass . '"' : '') . '>';
+		$attrString = $this->buildAttributes($attributes);
+		$out = '<tr' . ($rowClass ? ' class="' . $rowClass . '"' : '') . ($rowId ? ' id="' . $rowId . '"' : '') . ' ' . $attrString . '>';
 		foreach ($columns as $column) {
-			// Check if column is an array with content and class or just content
+			// Check if column is an array with content, class, id, and other attributes
 			if (is_array($column)) {
 				$content = isset($column['content']) ? $column['content'] : '';
 				$class = isset($column['class']) ? ' class="' . $column['class'] . '"' : '';
+				$id = isset($column['id']) ? ' id="' . $column['id'] . '"' : '';
+				$colAttributes = isset($column['attributes']) ? $this->buildAttributes($column['attributes']) : '';
 			} else {
 				$content = $column;
 				$class = '';
+				$id = '';
+				$colAttributes = '';
 			}
-			$out .= '<td' . $class . '>' . $content . '</td>';
+			$out .= '<td' . $class . $id . ' ' . $colAttributes . '>' . $content . '</td>';
 		}
 		$out .= '</tr>';
 		return $out;
 	}
+
 	/**
-	 * Creates a header row (th) element.
+	 * Creates a header row (th) element with support for additional attributes.
 	 *
-	 * @param array  $headers  Array of headers to display.
-	 * @param string $class    Optional CSS class for the row.
-	 * @param int    $rowspan  Rowspan attribute (optional).
-	 * @param int    $colspan  Colspan attribute (optional).
+	 * @param array  $headers    Array of headers to display. Each header can be a string or an array with 'content', 'class', 'id', and additional attributes.
+	 * @param string $class      Optional CSS class for the row.
+	 * @param int    $rowspan    Rowspan attribute (optional).
+	 * @param int    $colspan    Colspan attribute (optional).
+	 * @param string $id         Optional ID for the row.
+	 * @param array  $attributes Additional attributes for the row (optional).
 	 *
 	 * @return string
 	 */
-	public function addHeaderRow($headers = array(), $class = 'liste_titre', $rowspan = 1, $colspan = 1)
+	public function addHeaderRow($headers = array(), $class = 'liste_titre', $rowspan = 1, $colspan = 1, $id = '', $attributes = array())
 	{
-		$out = '<tr' . ($class ? ' class="' . $class . '"' : '') . '>';
+		$attrString = $this->buildAttributes($attributes);
+		$out = '<tr' . ($class ? ' class="' . $class . '"' : '') . ($id ? ' id="' . $id . '"' : '') . ' ' . $attrString . '>';
 		foreach ($headers as $header) {
+			if (is_array($header)) {
+				$content = isset($header['content']) ? $header['content'] : '';
+				$headerClass = isset($header['class']) ? ' class="' . $header['class'] . '"' : '';
+				$headerId = isset($header['id']) ? ' id="' . $header['id'] . '"' : '';
+				$headerAttributes = isset($header['attributes']) ? $this->buildAttributes($header['attributes']) : '';
+			} else {
+				$content = $header;
+				$headerClass = '';
+				$headerId = '';
+				$headerAttributes = '';
+			}
 			$out .= '<th'
 				. ($rowspan > 1 ? ' rowspan="' . $rowspan . '"' : '')
-				. ($colspan > 1 ? ' colspan="' . $colspan . '"' : '') . '>';
-			$out .= $header;
+				. ($colspan > 1 ? ' colspan="' . $colspan . '"' : '')
+				. $headerClass . $headerId . ' ' . $headerAttributes . '>';
+			$out .= $content;
 			$out .= '</th>';
 		}
 		$out .= '</tr>';
 		return $out;
 	}
+
 	/**
-	 * Creates a single column (td) inside a row.
+	 * Creates a single column (td) inside a row with support for additional attributes.
 	 *
-	 * @param string $content  Content for the column (string or HTML).
-	 * @param string $class    Optional CSS class for the column.
-	 * @param int    $rowspan  Rowspan attribute (optional).
-	 * @param int    $colspan  Colspan attribute (optional).
+	 * @param string $content    Content for the column (string or HTML).
+	 * @param string $class      Optional CSS class for the column.
+	 * @param int    $rowspan    Rowspan attribute (optional).
+	 * @param int    $colspan    Colspan attribute (optional).
+	 * @param string $id         Optional ID for the column.
+	 * @param array  $attributes Additional attributes for the column (optional).
 	 *
 	 * @return string
 	 */
-	public function addColumn($content = '', $class = '', $rowspan = 1, $colspan = 1)
+	public function addColumn($content = '', $class = '', $rowspan = 1, $colspan = 1, $id = '', $attributes = array())
 	{
+		$attrString = $this->buildAttributes($attributes);
 		$out = '<td'
 			. ($class ? ' class="' . $class . '"' : '')
+			. ($id ? ' id="' . $id . '"' : '')
 			. ($rowspan > 1 ? ' rowspan="' . $rowspan . '"' : '')
-			. ($colspan > 1 ? ' colspan="' . $colspan . '"' : '') . '>';
+			. ($colspan > 1 ? ' colspan="' . $colspan . '"' : '')
+			. ' ' . $attrString . '>';
 		$out .= $content;
 		$out .= '</td>';
 		return $out;
 	}
 
 	/**
-	 * Opens a row (tr) element.
+	 * Helper function to build custom attributes string from an array.
 	 *
-	 * @param string $class Optional CSS class for the row.
+	 * @param array|null $attributes Array of custom attributes (optional).
 	 *
 	 * @return string
 	 */
-	public function openRow($class = '')
+	private function buildAttributes($attributes = array())
 	{
-		return '<tr' . ($class ? ' class="' . $class . '"' : '') . '>';
-	}
+		// Asegurarse de que $attributes sea un array
+		if (!is_array($attributes)) {
+			$attributes = array();
+		}
 
-	/**
-	 * Closes a row (tr) element.
-	 *
-	 * @return string
-	 */
-	public function closeRow()
-	{
-		return '</tr>';
-	}
-
-	/**
-	 * Opens a column (td) element.
-	 *
-	 * @param string $class   Optional CSS class for the column.
-	 * @param int    $rowspan Rowspan attribute (optional).
-	 * @param int    $colspan Colspan attribute (optional).
-	 *
-	 * @return string
-	 */
-	public function openColumn($class = '', $rowspan = 1, $colspan = 1)
-	{
-		$out = '<td'
-			. ($class ? ' class="' . $class . '"' : '')
-			. ($rowspan > 1 ? ' rowspan="' . $rowspan . '"' : '')
-			. ($colspan > 1 ? ' colspan="' . $colspan . '"' : '') . '>';
-		return $out;
+		$attrString = '';
+		foreach ($attributes as $key => $value) {
+			$attrString .= ' ' . $key . '="' . htmlspecialchars($value, ENT_QUOTES) . '"';
+		}
+		return $attrString;
 	}
 
 	/**
@@ -11455,9 +11468,9 @@ class Form
 	 * @return string The HTML input field as a string.
 	 */
 
-	public function createInputField($name, $value = '', $type = 'text', $class = '')
+	public function createInputField($name, $value = '', $type = 'text', $id = '', $class = '')
 	{
-		$out = '<input type="' . $type . '" name="' . $name . '" value="' . dol_escape_htmltag($value) . '" class="' . $class . '">';
+		$out = '<input type="' . $type . '" id="' . $id . '" name="' . $name . '" value="' . dol_escape_htmltag($value) . '" class="' . $class . '">';
 		return $out;
 	}
 
