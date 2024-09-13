@@ -985,7 +985,7 @@ function getSocialNetworkSharingLinks($socialnetworks = '')
 
 
 /**
- * Return HTML content to add structured data for an article, news or Blog Post.
+ * Return nb of images known into inde files for an object;
  *
  * @param	Object	$object		Object
  * @return  int					HTML img content or '' if no image found
@@ -1020,13 +1020,14 @@ function getNbOfImagePublicURLOfObject($object)
 }
 
 /**
- * Return HTML content to add structured data for an article, news or Blog Post.
+ * Return the public image URL of an object.
+ * For example, you can get the public image URL of a product (image that is shared).
  *
  * @param	Object	$object			Object
  * @param	int		$no				Numero of image (if there is several images. 1st one by default)
  * @param   string  $extName        Extension to differentiate thumb file name ('', '_small', '_mini')
  * @return  string					HTML img content or '' if no image found
- * @see getNbOfImagePublicURLOfObject()
+ * @see getNbOfImagePublicURLOfObject(), getPublicFilesOfObject()
  */
 function getImagePublicURLOfObject($object, $no = 1, $extName = '')
 {
@@ -1096,10 +1097,11 @@ function getImagePublicURLOfObject($object, $no = 1, $extName = '')
 }
 
 /**
- * Return list of public files of a given object.
+ * Return array with list of all public files of a given object.
  *
  * @param	Object	$object			Object
  * @return  array					List of public files of object
+ * @see getImagePublicURLOfObject()
  */
 function getPublicFilesOfObject($object)
 {
@@ -1319,12 +1321,55 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 }
 
 /**
- * Download all images found into page content $tmp.
+ * Return the URL of an image found into a HTML content.
+ * To get image from an external URL to download first, see getAllImages()
+ *
+ * @param	string		$htmlContent	HTML content
+ * @param	string		$imageNumber	The position of image. 1 by default = first image found
+ * @return	string						URL of image or '' if not foud
+ */
+function getImageFromHtmlContent($htmlContent, $imageNumber = 1)
+{
+	$dom = new DOMDocument();
+
+	libxml_use_internal_errors(false);	// Avoid to fill memory with xml errors
+	if (LIBXML_VERSION < 20900) {
+		// Avoid load of external entities (security problem).
+		// Required only if LIBXML_VERSION < 20900
+		// @phan-suppress-next-line PhanDeprecatedFunctionInternal
+		libxml_disable_entity_loader(true);
+	}
+
+	// Load HTML content into object
+	$dom->loadHTML($htmlContent);
+
+	// Re-enable HTML load errors
+	libxml_clear_errors();
+
+	// Load all img tags
+	$images = $dom->getElementsByTagName('img');
+
+	// Check if nb of image is valid
+	if ($imageNumber > 0 && $imageNumber <= $images->length) {
+		// Récupère l'image correspondante (index - 1 car $imageNumber est 1-based)
+		$img = $images->item($imageNumber - 1);
+		if ($img) {
+			return $img->getAttribute('src');
+		}
+	}
+
+	return '';
+}
+
+/**
+ * Download all images found into an external URL.
+ * It using a text regex parsing solution, not a DOM analysis.
  * If $modifylinks is set, links to images will be replace with a link to viewimage wrapper.
+ * To extract an URL from a HTML text content, see instead getImageFromHtmlContent().
  *
  * @param 	Website	 	$object			Object website
  * @param 	WebsitePage	$objectpage		Object website page
- * @param 	string		$urltograb		URL to grab (example: http://www.nltechno.com/ or http://www.nltechno.com/dir1/ or http://www.nltechno.com/dir1/mapage1)
+ * @param 	string		$urltograb		URL to grab (example: https://www.nltechno.com/ or s://www.nltechno.com/dir1/ or https://www.nltechno.com/dir1/mapage1)
  * @param 	string		$tmp			Content to parse
  * @param 	string		$action			Var $action
  * @param	int 		$modifylinks	0=Do not modify content, 1=Replace links with a link to viewimage
