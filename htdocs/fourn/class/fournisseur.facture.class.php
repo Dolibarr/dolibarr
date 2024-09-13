@@ -237,6 +237,9 @@ class FactureFournisseur extends CommonInvoice
 	 */
 	public $vat_reverse_charge;
 
+	/**
+	 * @var array<string,string>  (Encoded as JSON in database)
+	 */
 	public $extraparams = array();
 
 	/**

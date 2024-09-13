@@ -4022,7 +4022,7 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
 
 	if ($hookmanager) {
 		$parameters = array(
-			'value'=> $value,
+			'value' => $value,
 			'cid' => $cid,
 			'socid' => $socid,
 			'type' => $type,
@@ -10094,7 +10094,7 @@ function dol_htmloutput_errors($mesgstring = '', $mesgarray = array(), $keepembe
  *  @param	array<string|int,mixed>	$array 	Array to sort (array of array('key1'=>val1,'key2'=>val2,'key3'...) or array of objects)
  *  @param	string		$index				Key in array to use for sorting criteria
  *  @param	string		$order				Sort order ('asc' or 'desc')
- *  @param	int<0,1>	$natsort			If values are strings (I said value not type): 0=Use alphabetical order, 1=use "natural" sort (natsort)
+ *  @param	int<-1,1>	$natsort			If values are strings (I said value not type): 0=Use alphabetical order, 1=use "natural" sort (natsort), -1=Force alpha order
  *                                          If values are numeric (I said value not type): 0=Use numeric order (even if type is string) so use a "natural" sort, 1=use "natural" sort too (same than 0), -1=Force alphabetical order
  *  @param	int<0,1>	$case_sensitive		1=sort is case sensitive, 0=not case sensitive
  *  @param	int<0,1>	$keepindex			If 0 and index key of array to sort is a numeric, then index will be rewritten. If 1 or index key is not numeric, key for index is kept after sorting.

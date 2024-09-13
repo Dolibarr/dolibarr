@@ -123,22 +123,73 @@ class TimeSpent extends CommonObject
 		'datec' => array('type' => 'datetime', 'label' => 'datec', 'enabled' => 1, 'position' => 16, 'notnull' => 0, 'visible' => -1,),
 		'note' => array('type' => 'text', 'label' => 'note', 'enabled' => 1, 'position' => 18, 'notnull' => 0, 'visible' => -1,),
 	);
+	/**
+	 * @var int
+	 */
 	public $rowid;
+	/**
+	 * @var string
+	 */
 	public $import_key;
+	/**
+	 * @var int
+	 */
 	public $fk_element;
+	/**
+	 * @var string
+	 */
 	public $elementtype;
+	/**
+	 * @var int|string
+	 */
 	public $element_date;
+	/**
+	 * @var int
+	 */
 	public $element_datehour;
+	/**
+	 * @var int
+	 */
 	public $element_date_withhour;
+	/**
+	 * @var float
+	 */
 	public $element_duration;
+	/**
+	 * @var int
+	 */
 	public $fk_product;
+	/**
+	 * @var int
+	 */
 	public $fk_user;
+	/**
+	 * @var float
+	 */
 	public $thm;
+	/**
+	 * @var int
+	 */
 	public $invoice_id;
+	/**
+	 * @var int
+	 */
 	public $invoice_line_id;
+	/**
+	 * @var int
+	 */
 	public $intervention_id;
+	/**
+	 * @var int
+	 */
 	public $intervention_line_id;
+	/**
+	 * @var string
+	 */
 	public $datec;
+	/**
+	 * @var string
+	 */
 	public $note;
 	// END MODULEBUILDER PROPERTIES
 
@@ -235,6 +286,7 @@ class TimeSpent extends CommonObject
 			$object->ref = empty($this->fields['ref']['default']) ? "Copy_Of_".$object->ref : $this->fields['ref']['default'];
 		}
 		if (property_exists($object, 'label')) {
+			// @phan-suppress-next-line PhanUndeclaredProperty
 			$object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
 		}
 		if (property_exists($object, 'status')) {
@@ -277,7 +329,7 @@ class TimeSpent extends CommonObject
 		}
 
 		if (!$error) {
-			// copy external contacts if same company
+			// copy external contacts if same company  @phan-suppress-next-line PHanUndeclaredProperty
 			if (!empty($object->socid) && property_exists($this, 'fk_soc') && $this->fk_soc == $object->socid) {
 				if ($this->copy_linked_contact($object, 'external') < 0) {
 					$error++;
@@ -321,7 +373,7 @@ class TimeSpent extends CommonObject
 	 * @param  string		$filter       	Filter as an Universal Search string.
 	 * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
 	 * @param  string      	$filtermode   	No more used
-	 * @return array|int                 	int <0 if KO, array of pages if OK
+	 * @return self[]|int<min,-1>			int <0 if KO, array of pages if OK
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
@@ -632,9 +684,9 @@ class TimeSpent extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 * @param array $params params to construct tooltip data
+	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
-	 * @return array
+	 * @return array{picto:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -804,6 +856,7 @@ class TimeSpent extends CommonObject
 		}
 		if (property_exists($this, 'amount')) {
 			$return .= '<br>';
+			// @phan-suppress-next-line PhanUndeclaredProperty
 			$return .= '<span class="info-box-label amount">'.price($this->amount, 0, $langs, 1, -1, -1, $conf->currency).'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
@@ -981,7 +1034,7 @@ class TimeSpent extends CommonObject
 	 *  @param      int			$hidedetails    Hide details of lines
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
-	 *  @param      null|array  $moreparams     Array to provide more information
+	 *  @param      ?array<string,mixed>  $moreparams	Array to provide more information
 	 *  @return     int         				0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)

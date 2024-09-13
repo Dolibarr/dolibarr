@@ -817,7 +817,7 @@ abstract class CommonObject
 	public $output;
 
 	/**
-	 * @var array|string	extra parameters. Try to store here the array of parameters. Old code is sometimes storing a string.
+	 * @var array<string,string>|string	extra parameters. Try to store here the array of parameters. Old code is sometimes storing a string.
 	 */
 	public $extraparams = array();
 
@@ -3366,7 +3366,7 @@ abstract class CommonObject
 	 * 	Get children of line
 	 *
 	 * 	@param	int			$id				Id of parent line
-	 * 	@param	int<0,1>	$includealltree	0 = 1st level child, 1 = All level child
+	 * 	@param	int<0,1001>	$includealltree	0 = 1st level child, 1 = All level child, 2-1001: internal use
 	 * 	@return	int[]						Array with list of children lines id
 	 */
 	public function getChildrenOfLine($id, $includealltree = 0)
