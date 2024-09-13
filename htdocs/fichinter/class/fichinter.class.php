@@ -429,7 +429,7 @@ class Fichinter extends CommonObject
 		if (!is_numeric($this->duration)) {
 			$this->duration = 0;
 		}
-		if (!dol_strlen($this->fk_project)) {
+		if (!dol_strlen((string) $this->fk_project)) {
 			$this->fk_project = 0;
 		}
 		if (isset($this->ref_client)) {
