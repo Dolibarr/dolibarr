@@ -528,7 +528,7 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 		// TODO add alternative status
-		//} elseif ($action == 'reopen' && (!empty($user->rights->expedition->creer) || !empty($user->rights->expedition->shipping_advance->validate)))
+		//} elseif ($action == 'reopen' && ($user->hasRight('expedition', 'creer') || $user->hasRight('expedition', 'shipping_advance', 'validate')))
 		//{
 		//	$result = $object->setStatut(0);
 		//	if ($result < 0)
@@ -544,15 +544,7 @@ if (empty($reshook)) {
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif (($action == 'settracking_number'
-		|| $action == 'settracking_url'
-		|| $action == 'settrueWeight'
-		|| $action == 'settrueWidth'
-		|| $action == 'settrueHeight'
-		|| $action == 'settrueDepth'
-		|| $action == 'setshipping_method_id')
-		&& $user->hasRight('expedition', 'creer')
-	) {
+	} elseif (in_array($action, array('settracking_number', 'settracking_url', 'settrueWeight', 'settrueWidth', 'settrueHeight', 'settrueDepth', 'setshipping_method_id')) && $user->hasRight('expedition', 'creer')) {
 		// Action update
 		$error = 0;
 
@@ -589,7 +581,7 @@ if (empty($reshook)) {
 		}
 
 		$action = "";
-	} elseif ($action == 'classifybilled') {
+	} elseif ($action == 'classifybilled' && $permissiontoadd) {
 		$object->fetch($id);
 		$result = $object->setBilled();
 		if ($result >= 0) {
@@ -597,7 +589,7 @@ if (empty($reshook)) {
 			exit();
 		}
 		setEventMessages($object->error, $object->errors, 'errors');
-	} elseif ($action == 'classifyclosed') {
+	} elseif ($action == 'classifyclosed' && $permissiontoadd) {
 		$object->fetch($id);
 		$result = $object->setClosed();
 		if ($result >= 0) {
@@ -605,7 +597,7 @@ if (empty($reshook)) {
 			exit();
 		}
 		setEventMessages($object->error, $object->errors, 'errors');
-	} elseif ($action == 'deleteline' && !empty($line_id)) {
+	} elseif ($action == 'deleteline' && !empty($line_id) && $permissiontoadd) {
 		// delete a line
 		$object->fetch($id);
 		$lines = $object->lines;
@@ -640,7 +632,7 @@ if (empty($reshook)) {
 		} else {
 			setEventMessages($line->error, $line->errors, 'errors');
 		}
-	} elseif ($action == 'updateline' && $user->hasRight('expedition', 'creer') && GETPOST('save')) {
+	} elseif ($action == 'updateline' && $permissiontoadd && GETPOST('save')) {
 		// Update a line
 		// Clean parameters
 		$qty = 0;
@@ -768,11 +760,11 @@ if (empty($reshook)) {
 					if ($lines[$i]->fk_product > 0) {
 						// line without lot
 						if ($lines[$i]->entrepot_id == 0) {
-							// single warehouse shipment line
-							$stockLocation = 0;
+							// single warehouse shipment line or line in several warehouses context but with warehouse not defined
+							$stockLocation = "entl".$line_id;
 							$qty = "qtyl".$line_id;
 							$line->id = $line_id;
-							$line->entrepot_id = GETPOSTINT($stockLocation);
+							$line->entrepot_id = GETPOSTINT((string) $stockLocation);
 							$line->qty = GETPOSTFLOAT($qty);
 							if ($line->update($user) < 0) {
 								setEventMessages($line->error, $line->errors, 'errors');
@@ -876,7 +868,7 @@ if (empty($reshook)) {
 			header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); // To redisplay the form being edited
 			exit();
 		}
-	} elseif ($action == 'updateline' && $user->hasRight('expedition', 'creer') && GETPOST('cancel', 'alpha') == $langs->trans("Cancel")) {
+	} elseif ($action == 'updateline' && $permissiontoadd && GETPOST('cancel', 'alpha') == $langs->trans("Cancel")) {
 		header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); // To redisplay the form being edited
 		exit();
 	}
@@ -1116,7 +1108,7 @@ if ($action == 'create') {
 			// Document model
 			include_once DOL_DOCUMENT_ROOT.'/core/modules/expedition/modules_expedition.php';
 			$list = ModelePdfExpedition::liste_modeles($db);
-			if (count($list) > 1) {
+			if (is_countable($list) && count($list) > 1) {
 				print "<tr><td>".$langs->trans("DefaultModel")."</td>";
 				print '<td colspan="3">';
 				print img_picto('', 'pdf', 'class="pictofixedwidth"');
@@ -1745,7 +1737,7 @@ if ($action == 'create') {
 							print '<!-- line not shown yet, we show it -->';
 							print '<tr class="oddeven"><td colspan="3"></td><td class="center">';
 
-							if ($line->product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES') || getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
+							if ($line->product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 								$disabled = '';
 								if (isModEnabled('productbatch') && $product->hasbatch()) {
 									$disabled = 'disabled="disabled"';
@@ -1754,6 +1746,18 @@ if ($action == 'create') {
 									$disabled = 'disabled="disabled"';
 								}
 								print '<input class="qtyl right" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="0"'.($disabled ? ' '.$disabled : '').'> ';
+								if (empty($disabled) && getDolGlobalString('STOCK_ALLOW_NEGATIVE_TRANSFER')) {
+									print '<input name="ent1' . $indiceAsked . '_' . $subj . '" type="hidden" value="' . $warehouse_selected_id . '">';
+								}
+							} elseif ($line->product_type == Product::TYPE_SERVICE && getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
+								$disabled = '';
+								if (isModEnabled('productbatch') && $product->hasbatch()) {
+									$disabled = 'disabled="disabled"';
+								}
+								if ($warehouse_selected_id <= 0) {		// We did not force a given warehouse, so we won't have no warehouse to change qty.
+									$disabled = 'disabled="disabled"';
+								}
+								print '<input class="qtyl right" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="'.$quantityToBeDelivered.'"'.($disabled ? ' '.$disabled : '').'> ';
 								if (empty($disabled) && getDolGlobalString('STOCK_ALLOW_NEGATIVE_TRANSFER')) {
 									print '<input name="ent1' . $indiceAsked . '_' . $subj . '" type="hidden" value="' . $warehouse_selected_id . '">';
 								}

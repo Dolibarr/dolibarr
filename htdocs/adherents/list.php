@@ -199,7 +199,7 @@ foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 
 	if (!empty($val['visible'])) {
-		$visible = (int) dol_eval($val['visible'], 1);
+		$visible = (int) dol_eval((string) $val['visible'], 1);
 		$arrayfields[$tableprefix.'.'.$key] = array(
 			'label' => $val['label'],
 			'checked' => (($visible < 0) ? 0 : 1),
@@ -228,6 +228,10 @@ if (GETPOST('cancel', 'alpha')) {
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
 }
+
+$permissiontoread = 0;
+$permissiontodelete = 0;
+$permissiontoadd = 0;
 
 $parameters = array('socid' => isset($socid) ? $socid : null, 'arrayfields' => &$arrayfields);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -1238,12 +1242,15 @@ while ($i < $imaxinloop) {
 		if ($memberstatic->thirdparty->id > 0) {
 			$companyname = $memberstatic->thirdparty->name;
 			$companynametoshow = $memberstatic->thirdparty->getNomUrl(1);
+		} else {
+			$companyname = null;
+			$companynametoshow = null;
 		}
 	} else {
 		$companyname = $obj->company;
 		$companynametoshow = $obj->company;
 	}
-	$memberstatic->company = $companyname;
+	$memberstatic->company = (string) $companyname;
 
 	$object = $memberstatic;
 

@@ -946,8 +946,8 @@ if (!empty($id) && $action != 'edit') {
 	/*
 	 * Generated documents
 	 */
-	$filename = dol_sanitizeFileName($object->id);
-	$filedir = $conf->don->dir_output."/".dol_sanitizeFileName($object->id);
+	$filename = dol_sanitizeFileName((string) $object->id);
+	$filedir = $conf->don->dir_output."/".dol_sanitizeFileName((string) $object->id);
 	$urlsource = $_SERVER['PHP_SELF'].'?rowid='.$object->id;
 	$genallowed	= (($object->paid == 0 || $user->admin) && $user->hasRight('don', 'lire'));
 	$delallowed	= $user->hasRight('don', 'creer');

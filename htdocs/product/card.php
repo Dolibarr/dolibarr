@@ -1056,7 +1056,7 @@ if (empty($reshook)) {
 
 
 	// Add product into object (when PRODUCT_ADD_FORM_ADD_TO is set)
-	if ($object->id > 0 && $action == 'addin') {	// Test on permission is done just after
+	if ($object->id > 0 && $action == 'addin') {	// Test on permission not required here. it is done later according to object.
 		$thirpdartyid = 0;
 		$permissiontoaddline = false;
 
@@ -1437,7 +1437,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			}
 
 			// Label
-			print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" class="minwidth300 maxwidth400onsmartphone" maxlength="255" value="'.dol_escape_htmltag(GETPOST('label', $label_security_check)).'"></td></tr>';
+			print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input id="label" name="label" class="minwidth300 maxwidth400onsmartphone" maxlength="255" value="'.dol_escape_htmltag(GETPOST('label', $label_security_check)).'"></td></tr>';
 
 			// On sell
 			print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td>';
@@ -2866,7 +2866,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '<tr><td>'.$langs->trans("CustomCode").'</td><td>'.$object->customcode.'</td></tr>';
 
 					// Origin country code
-					print '<tr><td>'.$langs->trans("Origin").'</td><td>'.getCountry($object->country_id, 0, $db);
+					print '<tr><td>'.$langs->trans("Origin").'</td><td>'.getCountry($object->country_id, '', $db);
 					if (!empty($object->state_id)) {
 						print ' - '.getState($object->state_id, '0', $db);
 					}
@@ -3111,7 +3111,7 @@ if (getDolGlobalString('PRODUCT_ADD_FORM_ADD_TO') && $object->id && ($action == 
 		$html .= '<input type="text" class="flat" name="remise_percent" size="1" value="0">';
 		$html .= '</td></tr>';
 
-		print '<table width="100%" class="border">';
+		print '<table class="centpercent border">';
 		print $html;
 		print '</table>';
 

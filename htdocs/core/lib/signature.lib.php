@@ -1,6 +1,7 @@
 <?php
 /**
  * Copyright (C) 2013	Marcos García	<marcosgdf@gmail.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,7 +55,7 @@ function showOnlineSignatureUrl($type, $ref, $obj = null, $mode = '', $signatory
 	}
 	$out .= '<a class="" href="'.$url.'" target="_blank" rel="noopener noreferrer">'.img_picto('', 'globe', 'class="paddingleft"').'</a>';
 	$out .= '</div>';
-	$out .= ajax_autoselect("onlinesignatureurl", 0);
+	$out .= ajax_autoselect("onlinesignatureurl", '');
 	return $out;
 }
 

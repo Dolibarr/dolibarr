@@ -152,6 +152,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 $action = GETPOST('action', 'aZ09');
 $original_file = GETPOST('file', 'alphanohtml');
 $hashp = GETPOST('hashp', 'aZ09', 1);
+$extname = GETPOST('extname', 'alpha', 1);
 $modulepart = GETPOST('modulepart', 'alpha', 1);
 $urlsource = GETPOST('urlsource', 'alpha');
 $entity = (GETPOSTINT('entity') ? GETPOSTINT('entity') : $conf->entity);
@@ -204,6 +205,7 @@ if (GETPOST("cache", 'alpha')) {
 // If we have a hash public (hashp), we guess the original_file.
 if (!empty($hashp)) {
 	include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 	$ecmfile = new EcmFiles($db);
 	$result = $ecmfile->fetch(0, '', '', '', $hashp);
 	if ($result > 0) {
@@ -225,6 +227,10 @@ if (!empty($hashp)) {
 		} else {
 			$modulepart = $moduleparttocheck;
 			$original_file = (($tmp[1] ? $tmp[1].'/' : '').$ecmfile->filename); // this is relative to module dir
+		}
+
+		if ($extname) {
+			$original_file = getImageFileNameForSize($original_file, $extname);
 		}
 	} else {
 		httponly_accessforbidden("ErrorFileNotFoundWithSharedLink", 403, 1);

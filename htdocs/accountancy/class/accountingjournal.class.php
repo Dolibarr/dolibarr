@@ -74,12 +74,12 @@ class AccountingJournal extends CommonObject
 	public $active;
 
 	/**
-	 * @var array 		Accounting account cached
+	 * @var array<string,array{found:bool,label:string,code_formatted1:string,label_formatted_1:string,label_formatted_2:string}> 	Accounting account cached
 	 */
 	public static $accounting_account_cached = array();
 
 	/**
-	 * @var array 		Nature mapping
+	 * @var array<int,string>	Nature mapping
 	 */
 	public static $nature_maps = array(
 		1 => 'variousoperations',
@@ -107,7 +107,7 @@ class AccountingJournal extends CommonObject
 	 * Load an object from database
 	 *
 	 * @param	int			$rowid			Id of record to load
-	 * @param 	string|null $journal_code	Journal code
+	 * @param 	?string		$journal_code	Journal code
 	 * @return	int							Return integer <0 if KO, Id of record if OK and found
 	 */
 	public function fetch($rowid = 0, $journal_code = null)
@@ -239,8 +239,8 @@ class AccountingJournal extends CommonObject
 	/**
 	 *  Return the label of the status
 	 *
-	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-	 *  @return	string 			       Label of status
+	 *  @param  int<0,6>	$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return	string 				       Label of status
 	 */
 	public function getLibType($mode = 0)
 	{
@@ -251,8 +251,8 @@ class AccountingJournal extends CommonObject
 	/**
 	 *  Return type of an accounting journal
 	 *
-	 *  @param	int		$nature			Id type
-	 *  @param  int		$mode		  	0=label long, 1=label short
+	 *  @param	int			$nature		Id type
+	 *  @param  int<0,1>	$mode	  	0=label long, 1=label short
 	 *  @return string 				   	Label of type
 	 */
 	public function LibType($nature, $mode = 0)
@@ -304,7 +304,7 @@ class AccountingJournal extends CommonObject
 	 * @param 	int				$date_start			Filter 'start date'
 	 * @param 	int				$date_end			Filter 'end date'
 	 * @param 	string			$in_bookkeeping		Filter 'in bookkeeping' ('already', 'notyet')
-	 * @return 	array|int							Return integer <0 if KO, >0 if OK
+	 * @return	int<-1,-1>|array<int,array{ref:string,error:?string,blocks:array<array<array{date:string,piece:string,account_accounting:string,subledger_account:string,label_operation:string,debit:string,credit:string}|array{doc_date:string,date_lim_reglement:string,doc_ref:string,date_creation:string,doc_type:string,fk_doc:string,fk_docdet:string,thirdparty_code:string,subledger_account:string,subledger_label:string,numero_compte:string,label_compte:string,label_operation:string,montant:string,sens:string,debit:string,credit:string,code_journal:string,journal_label:string,piece_num:string,import_key:string,fk_user_author:string,entity:string}>>}>	Return integer <0 if KO, array
 	 */
 	public function getData(User $user, $type = 'view', $date_start = null, $date_end = null, $in_bookkeeping = 'notyet')
 	{
@@ -348,11 +348,11 @@ class AccountingJournal extends CommonObject
 	 *  Get asset data for various journal
 	 *
 	 * @param 	User			$user				User who get infos
-	 * @param 	string			$type				Type data returned ('view', 'bookkeeping', 'csv')
-	 * @param 	int				$date_start			Filter 'start date'
-	 * @param 	int				$date_end			Filter 'end date'
-	 * @param 	string			$in_bookkeeping		Filter 'in bookkeeping' ('already', 'notyet')
-	 * @return 	array|int							Return integer <0 if KO, >0 if OK
+	 * @param 	'view'|'bookkeeping'|'csv'	$type	Type data returned ('view', 'bookkeeping', 'csv')
+	 * @param 	?int			$date_start			Filter 'start date'
+	 * @param 	?int			$date_end			Filter 'end date'
+	 * @param 	'already'|'notyet'	$in_bookkeeping		Filter 'in bookkeeping' ('already', 'notyet')
+	 * @return	int<-1,-1>|array<int,array{ref:string,error:?string,blocks:array<array<array{date:string,piece:string,account_accounting:string,subledger_account:string,label_operation:string,debit:string,credit:string}|array{doc_date:''|int,date_lim_reglement:string,doc_ref:string,date_creation:int,doc_type:string,fk_doc:int|string,fk_docdet:int|string,thirdparty_code:string,subledger_account:string,subledger_label:string,numero_compte:string,label_compte:string,label_operation:string,montant:string,sens:string,debit:int|float|string,credit:int|float|string,code_journal:string,journal_label:string,piece_num:string,import_key:string,fk_user_author:string,entity:string}>>}>	Return integer <0 if KO, array
 	 */
 	public function getAssetData(User $user, $type = 'view', $date_start = null, $date_end = null, $in_bookkeeping = 'notyet')
 	{
@@ -670,43 +670,43 @@ class AccountingJournal extends CommonObject
 	 *  Write bookkeeping
 	 *
 	 * @param	User		$user				User who write in the bookkeeping
-	 * @param	array		$journal_data		Journal data to write in the bookkeeping
-	 * 											$journal_data = array(
-	 *                                          id_element => array(
-	 *                                          'ref' => 'ref',
-	 *                                          'error' => '',
-	 *                                          'blocks' => array(
-	 *                                          pos_block => array(
-	 *                                          num_line => array(
-	 *                                          'doc_date' => '',
-	 *                                          'date_lim_reglement' => '',
-	 *                                          'doc_ref' => '',
-	 *                                          'date_creation' => '',
-	 *                                          'doc_type' => '',
-	 *                                          'fk_doc' => '',
-	 *                                          'fk_docdet' => '',
-	 *                                          'thirdparty_code' => '',
-	 *                                          'subledger_account' => '',
-	 *                                          'subledger_label' => '',
-	 *                                          'numero_compte' => '',
-	 *                                          'label_compte' => '',
-	 *                                          'label_operation' => '',
-	 *                                          'montant' => '',
-	 *                                          'sens' => '',
-	 *                                          'debit' => '',
-	 *                                          'credit' => '',
-	 *                                          'code_journal' => '',
-	 *                                          'journal_label' => '',
-	 *                                          'piece_num' => '',
-	 *                                          'import_key' => '',
-	 *                                          'fk_user_author' => '',
-	 *                                          'entity' => '',
-	 *                                          ),
-	 *                                          ),
-	 *                                          ),
-	 *                                          ),
-	 * 											);
-	 * @param	int		$max_nb_errors			Nb error authorized before stop the process
+	 * @param	array<int,array{ref?:string,error?:string,blocks:array<array<array{doc_date:int|string,date_lim_reglement:int|string,doc_ref:string,date_creation:int,doc_type:string,fk_doc:int|string,fk_docdet:int|string,thirdparty_code:string,subledger_account:string,subledger_label:string,numero_compte:string,label_compte:string,label_operation:string,montant:float|string,sens:string,debit:int|float|string,credit:int|float|string,code_journal:string,journal_label:string,piece_num:int|string,import_key:string,fk_user_author:string,entity:string}>>}>	$journal_data		Journal data to write in the bookkeeping
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              $journal_data = array(
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              .	id_element => array(
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              .		'ref' => 'ref',
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              .		'error' => '',
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              .		'blocks' => array(
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              .		pos_block => array(
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              .		num_line => array(
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              .		'doc_date' => '',
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              .		'date_lim_reglement' => '',
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              .		'doc_ref' => '',
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              .		'date_creation' => '',
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              .		'doc_type' => '',
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              .		'fk_doc' => '',
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              .		'fk_docdet' => '',
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              .		'thirdparty_code' => '',
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              . 		'subledger_account' => '',
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              .		'subledger_label' => '',
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              .		'numero_compte' => '',
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              .		'label_compte' => '',
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              .		'label_operation' => '',
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              .		'montant' => '',
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              .		'sens' => '',
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              .		'debit' => '',
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              .		'credit' => '',
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              .		'code_journal' => '',
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              .		'journal_label' => '',
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              .		'piece_num' => '',
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              .		'import_key' => '',
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              .		'fk_user_author' => '',
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              .		'entity' => '',
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              .	),
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              .	),
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              .	),
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              .	),
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              );
+	 * @param	int		$max_nb_errors			Nb errors authorized before stopping the process
 	 * @return 	int								Return integer <0 if KO, >0 if OK
 	 */
 	public function writeIntoBookkeeping(User $user, &$journal_data = array(), $max_nb_errors = 10)
@@ -725,7 +725,9 @@ class AccountingJournal extends CommonObject
 			return -1;
 		} elseif (empty($reshook)) {
 			// Clean parameters
-			$journal_data = is_array($journal_data) ? $journal_data : array();
+			if (!is_array($journal_data)) {
+				$journal_data = array();
+			}
 
 			foreach ($journal_data as $element_id => $element) {
 				$error_for_line = 0;
@@ -744,8 +746,8 @@ class AccountingJournal extends CommonObject
 					foreach ($element['blocks'] as $lines) {
 						foreach ($lines as $line) {
 							$bookkeeping = new BookKeeping($this->db);
-							$bookkeeping->doc_date = $line['doc_date'];
-							$bookkeeping->date_lim_reglement = $line['date_lim_reglement'];
+							$bookkeeping->doc_date = (int) $line['doc_date'];
+							$bookkeeping->date_lim_reglement = (int) $line['date_lim_reglement'];
 							$bookkeeping->doc_ref = $line['doc_ref'];
 							$bookkeeping->date_creation = $line['date_creation']; // not used
 							$bookkeeping->doc_type = $line['doc_type'];
@@ -757,13 +759,13 @@ class AccountingJournal extends CommonObject
 							$bookkeeping->numero_compte = $line['numero_compte'];
 							$bookkeeping->label_compte = $line['label_compte'];
 							$bookkeeping->label_operation = $line['label_operation'];
-							$bookkeeping->montant = $line['montant'];
+							$bookkeeping->montant = $line['montant']; // Deprecated: sens/debit/credit (and deprecated amount...)
 							$bookkeeping->sens = $line['sens'];
-							$bookkeeping->debit = $line['debit'];
-							$bookkeeping->credit = $line['credit'];
+							$bookkeeping->debit = (float) $line['debit'];
+							$bookkeeping->credit = (float) $line['credit'];
 							$bookkeeping->code_journal = $line['code_journal'];
 							$bookkeeping->journal_label = $line['journal_label'];
-							$bookkeeping->piece_num = $line['piece_num'];
+							$bookkeeping->piece_num = (int) $line['piece_num'];
 							$bookkeeping->import_key = $line['import_key'];
 							$bookkeeping->fk_user_author = $user->id;
 							$bookkeeping->entity = $conf->entity;
@@ -810,7 +812,7 @@ class AccountingJournal extends CommonObject
 					$error++;
 					$error_for_line++;
 					$journal_data[$element_id]['error'] = 'amountsnotbalanced';
-					$this->errors[] = 'Try to insert a non balanced transaction in book for ' . $element['blocks'] . '. Canceled. Surely a bug.';
+					$this->errors[] = 'Try to insert a non balanced transaction in book for ' . json_encode($element['blocks']) . '. Canceled. Surely a bug.';
 				}
 
 				if (!$error_for_line) {
@@ -833,19 +835,19 @@ class AccountingJournal extends CommonObject
 	 *	Export journal CSV
 	 * 	ISO and not UTF8 !
 	 *
-	 * @param	array			$journal_data			Journal data to write in the bookkeeping
-	 * 													$journal_data = array(
-	 *                                                  id_element => array(
-	 *                                                  'continue' => false,
-	 *                                                  'blocks' => array(
-	 *                                                  pos_block => array(
-	 *                                                  num_line => array(
-	 *                                                  data to write in the CSV line
-	 *                                                  ),
-	 *                                                  ),
-	 *                                                  ),
-	 *                                                  ),
-	 * 													);
+	 * @param	array<int,array{blocks:array<array<array<string>>>}>	$journal_data			Journal data to write in the bookkeeping
+	 *                                                                                          $journal_data = array(
+	 *                                                                                          id_element => array(
+	 *                                                                                          'continue' => false,
+	 *                                                                                          'blocks' => array(
+	 *                                                                                          pos_block => array(
+	 *                                                                                          num_line => array(
+	 *                                                                                          data to write in the CSV line
+	 *                                                                                          ),
+	 *                                                                                          ),
+	 *                                                                                          ),
+	 *                                                                                          ),
+	 *                                                                                          );
 	 * @param	int				$search_date_end		Search date end
 	 * @param	string			$sep					CSV separator
 	 * @return 	int|string								Return integer <0 if KO, >0 if OK
@@ -923,10 +925,10 @@ class AccountingJournal extends CommonObject
 	}
 
 	/**
-	 *  Get accounting account infos
+	 *  Get accounting account info
 	 *
-	 * @param string	$account	Accounting account number
-	 * @return array				Accounting account infos
+	 * @param	string	$account	Accounting account number
+	 * @return	array{found:bool,label:string,code_formatted1:string,label_formatted_1:string,label_formatted_2:string}		Accounting account info
 	 */
 	public function getAccountingAccountInfos($account)
 	{
@@ -934,7 +936,7 @@ class AccountingJournal extends CommonObject
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 			require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
 			$accountingaccount = new AccountingAccount($this->db);
-			$result = $accountingaccount->fetch(null, $account, true);
+			$result = $accountingaccount->fetch(0, $account, true);
 			if ($result > 0) {
 				self::$accounting_account_cached[$account] = array(
 					'found' => true,

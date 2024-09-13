@@ -435,6 +435,8 @@ if ($action == "importSignature") {
 					// Document format not supported to insert online signature.
 					// We should just create an image file with the signature.
 				}
+				$user = new User($db);
+				$object->setSignedStatus($user, $object::SIGNED_STATUSES['STATUS_SIGNED_RECEIVER_ONLINE'], 0, 'CONTRACT_MODIFY');
 			}
 		} elseif ($mode == 'fichinter') {
 			require_once DOL_DOCUMENT_ROOT . '/fichinter/class/fichinter.class.php';
@@ -519,7 +521,7 @@ if ($action == "importSignature") {
 										if (getDolGlobalString("FICHINTER_SIGNATURE_XFORIMGSTART")) {
 											$param['xforimgstart'] = getDolGlobalString("FICHINTER_SIGNATURE_XFORIMGSTART");
 										} else {
-											$param['xforimgstart'] = (empty($s['w']) ? 110 : $s['w'] / 2 - 4);
+											$param['xforimgstart'] = (empty($s['w']) ? 110 : $s['w'] / 2 - 2);
 										}
 										if (getDolGlobalString("FICHINTER_SIGNATURE_YFORIMGSTART")) {
 											$param['yforimgstart'] = getDolGlobalString("FICHINTER_SIGNATURE_YFORIMGSTART");
@@ -550,11 +552,11 @@ if ($action == "importSignature") {
 									$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 38);
 									$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 110);
 								} elseif ($signatory_type == 'thirdparty') {
-									$param['xforimgstart'] = (empty($s['w']) ? 110 : $s['w'] / 2 - 4);
+									$param['xforimgstart'] = (empty($s['w']) ? 110 : $s['w'] / 2 - 2);
 									$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 38);
 									$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 20);
 								} else {
-									$param['xforimgstart'] = (empty($s['w']) ? 110 : $s['w'] / 2 - 4);
+									$param['xforimgstart'] = (empty($s['w']) ? 110 : $s['w'] / 2 - 2);
 									$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 38);
 									$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 20);
 								}
@@ -591,7 +593,7 @@ if ($action == "importSignature") {
 			if (!empty($object->id)) {
 				$object->fetch_thirdparty();
 
-				$upload_dir = $conf->societe->multidir_output[$object->thirdparty->entity] . '/' . dol_sanitizeFileName($object->thirdparty->id) . '/';
+				$upload_dir = $conf->societe->multidir_output[$object->thirdparty->entity] . '/' . dol_sanitizeFileName((string) $object->thirdparty->id) . '/';
 
 				$default_font_size = pdf_getPDFFontSize($langs);    // Must be after pdf_getInstance
 				$default_font = pdf_getPDFFont($langs);    // Must be after pdf_getInstance
@@ -917,30 +919,8 @@ if ($action == "importSignature") {
 					// We should just create an image file with the signature.
 				}
 			}
-
-			if (!$error) {
-				$db->begin();
-
-				$sql = "UPDATE " . MAIN_DB_PREFIX . "expedition";
-				$sql .= " SET signed_status = " . ((int) $object::STATUS_SIGNED) ;
-				$sql .= " WHERE rowid = " . ((int) $object->id);
-
-				dol_syslog(__FILE__, LOG_DEBUG);
-				$resql = $db->query($sql);
-				if (!$resql) {
-					$error++;
-				} else {
-					$num = $db->affected_rows($resql);
-				}
-
-				if (!$error) {
-					$db->commit();
-					$response = "success";
-					setEventMessages("ExpeditionSigned", null, 'warnings');
-				} else {
-					$db->rollback();
-				}
-			}
+			$user = new User($db);
+			$object->setSignedStatus($user, Expedition::$SIGNED_STATUSES['STATUS_SIGNED_RECEIVER_ONLINE'], 0, 'SHIPPING_MODIFY');
 		}
 	} else {
 		$error++;

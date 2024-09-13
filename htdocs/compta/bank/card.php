@@ -449,7 +449,7 @@ if ($action == 'create') {
 	} elseif (empty($selectedcode)) {
 		$selectedcode = $mysoc->country_code;
 	}
-	$object->country_code = getCountry($selectedcode, 2); // Force country code on account to have following field on bank fields matching country rules
+	$object->country_code = getCountry($selectedcode, '2'); // Force country code on account to have following field on bank fields matching country rules
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("BankAccountCountry").'</td>';
 	print '<td>';
@@ -942,7 +942,7 @@ if ($action == 'create') {
 		print '<input type="hidden" name="id" value="'.GETPOSTINT("id").'">'."\n\n";
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-		print dol_get_fiche_head(array(), 0, '', 0);
+		print dol_get_fiche_head(array(), '', '', 0);
 
 		//print '<div class="underbanner clearboth"></div>';
 
@@ -991,7 +991,7 @@ if ($action == 'create') {
 		} elseif (empty($selectedcode)) {
 			$selectedcode = $mysoc->country_code;
 		}
-		$object->country_code = getCountry($selectedcode, 2); // Force country code on account to have following field on bank fields matching country rules
+		$object->country_code = getCountry($selectedcode, '2'); // Force country code on account to have following field on bank fields matching country rules
 
 		print '<tr><td class="fieldrequired">'.$langs->trans("Country").'</td>';
 		print '<td class="maxwidth200onsmartphone">';

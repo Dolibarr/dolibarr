@@ -514,15 +514,17 @@ ModuleCompanyCodeCustomerDigitaria=%s, za ktorým nasleduje skrátené meno zák
 ModuleCompanyCodeSupplierDigitaria=%s, za ktorým nasleduje skrátený názov dodávateľa s počtom znakov: %s pre účtovný kód dodávateľa.
 Use3StepsApproval=V predvolenom nastavení musia byť objednávky vytvorené a schválené 2 rôznymi používateľmi (jeden krok/používateľ na vytvorenie a jeden krok/používateľ na schválenie. Upozorňujeme, že ak má používateľ oprávnenie na vytváranie aj schvaľovanie, bude stačiť jeden krok/používateľ) . Pomocou tejto možnosti môžete požiadať o zavedenie tretieho kroku/schválenia používateľa, ak je suma vyššia ako vyhradená hodnota (takže budú potrebné 3 kroky: 1=overenie, 2=prvé schválenie a 3=druhé schválenie, ak je množstvo dostatočné). <br>Ak stačí jedno schválenie (2 kroky), nastavte ho na prázdne. Ak sa vždy vyžaduje druhé schválenie (3 kroky), nastavte ho na veľmi nízku hodnotu (0,1).
 UseDoubleApproval=Použiť 3 krokové povolenie ked cena ( bez DPH ) je väčšia ako...
-WarningPHPMail=WARNING: The setup to send emails from the application is using the default generic setup. This choice needs no technical knowledge to complete the setup.<br>However, it is often better to setup outgoing emails to use the email server of your Email Service Provider instead of the default setup for several reasons:
+WarningPHPMail=NOTICE: The setup to send emails from the application is using the default generic setup (called "%s"). This choice needs no technical knowledge and no particular setup.<br>However, it is often better to setup outgoing emails to use the other method (called "%s") to use the email server of your Email Service Provider, instead of the default setup for several reasons:
 WarningPHPMailA=- Using the server of the Email Service Provider increases the trustworthiness of your email, so it increases the deliverability without being flagged as SPAM
-WarningPHPMailB=- Niektorí poskytovatelia e-mailových služieb (napríklad Yahoo) vám neumožňujú odosielať e-maily z iného servera, než je ich vlastný server. Vaše aktuálne nastavenie používa na odosielanie e-mailov server aplikácie a nie server vášho poskytovateľa e-mailu, takže niektorí príjemcovia (ten, ktorý je kompatibilný s reštriktívnym protokolom DMARC), požiadajú vášho poskytovateľa e-mailu, či môžu prijať váš e-mail a niektorí poskytovatelia e-mailu (ako Yahoo) môže odpovedať „nie“, pretože server nie je ich, takže málo z vašich odoslaných e-mailov nemusí byť prijatých na doručenie (pozor aj na kvótu odosielania vášho poskytovateľa e-mailov).
+WarningPHPMailB=- If the domain of your email (the part mymaildomain.com into myname@mymaildomain.com) is protected by a SPF + a DMARC record, your email may be flagged as SPAM because your DMARC rule defined into DNS zone of the domain of the sender (mymaildomain.com) does not allow the sending as a generic sender. In such a case, you must disable the DMARC for the domain (or set it to p=none like done by @gmail.com) or, better, if you have the technical knowledge, use the other method to send emails using the SMTP server of your own email provider.
 WarningPHPMailC=- Použitie SMTP servera vášho vlastného poskytovateľa e-mailových služieb na odosielanie e-mailov je tiež zaujímavé, takže všetky e-maily odoslané z aplikácie sa tiež uložia do vášho adresára "Odoslané" vašej poštovej schránky.
 WarningPHPMailD=Preto sa odporúča zmeniť spôsob odosielania e-mailov na hodnotu „SMTP“.
 WarningPHPMailDbis=Ak naozaj chcete ponechať predvolenú metódu „PHP“ na odosielanie e-mailov, jednoducho toto upozornenie ignorujte alebo ho odstráňte %skliknutím sem%s.
 WarningPHPMail2=Ak váš poskytovateľ e-mailového SMTP potrebuje obmedziť e-mailového klienta na niektoré IP adresy (veľmi zriedkavé), toto je IP adresa poštového používateľského agenta (MUA) pre vašu aplikáciu ERP CRM: <strong>%s</strong>.
-WarningPHPMailSPF=Ak je názov domény vo vašej e-mailovej adrese odosielateľa chránený záznamom SPF (opýtajte sa svojho registrátora názvu domény), musíte do záznamu SPF DNS vašej domény pridať nasledujúce adresy IP: <strong>%s</strong>.
-ActualMailSPFRecordFound=Našiel sa skutočný záznam SPF (pre e-mail %s): %s
+WarningPHPMailSPF=If the domain name in your sender email address is protected by a SPF record (ask your domain name registar), you must add the following IPs or entry in the SPF record of the DNS of your domain: <strong>%s</strong>.
+WarningPHPMailSPFDMARC=If the domain name in your sender email address is protected by a DMARC record different than p=none (ask your domain name registar), you must remove your DMARC record, or set it to p=none like do @gmail.com) or use sending another method.
+SPFAndDMARCInformation=SPF and DMARC DNS record for main email addresses
+ActualMailDNSRecordFound=Actual %s record found (for email %s) : %s
 ClickToShowDescription=Kliknutím zobrazíte popis
 DependsOn=Tento modul potrebuje modul(y)
 RequiredBy=Tento modul vyžadujú moduly
@@ -867,7 +869,7 @@ Permission255=Upraviť ostatným používateľom heslo
 Permission256=Odstrániť alebo zakázať ostatným užívateľom
 Permission262=Extend access to all third parties AND their objects (not only third parties for which the user is linked as a sale representative).
 Permission262b=Not effective for external users (always limited to themselves for proposals, orders, invoices, contracts, etc.).
-Permission262c=Not effective for projects (only rules on project permissions, visibility and assignment matters).
+Permission262c=Not effective for projects (only rules on project permissions, visibility and users assignment matter).
 Permission263=Rozšírte prístup všetkým tretím stranám BEZ ich objektov (nielen tretím stranám, pre ktoré je používateľ obchodným zástupcom).<br>Neúčinné pre externých používateľov (v prípade návrhov vždy obmedzené na seba, objednávky, faktúry, zmluvy atď.).<br>Neúčinné pre projekty (len pravidlá týkajúce sa povolení projektu, viditeľnosti a priradenia).
 Permission271=Prečítajte CA
 Permission272=Prečítajte si faktúry
@@ -944,7 +946,7 @@ Permission776=Platiť prehľady výdavkov
 Permission777=Prečítajte si všetky správy o výdavkoch (aj od používateľov, ktorí nie sú podriadení)
 Permission778=Vytvárajte/upravujte správy o výdavkoch každého
 Permission779=Exportujte správy o výdavkoch
-Permission1001=Prečítajte si zásoby
+Permission1001=Read warehouses and stocks
 Permission1002=Vytvoriť / upraviť sklady
 Permission1003=Odstrániť sklady
 Permission1004=Prečítajte skladové pohyby
@@ -2218,7 +2220,7 @@ CreateCandidature=Vytvorte žiadosť o prácu
 FormatZip=Zips
 MainMenuCode=Vstupný kód menu (hlavné menu)
 ECMAutoTree=Zobraziť automatický strom ECM
-OperationParamDesc=Definujte pravidlá, ktoré sa majú použiť na extrahovanie niektorých údajov, alebo nastavte hodnoty, ktoré sa majú použiť na prevádzku.<br><br>Príklad na extrahovanie názvu spoločnosti z predmet e-mailu do dočasnej premennej:<br>tmp_var=EXTRACT:SUBJECT:Správa od spoločnosti ([^\n]*)<br><br>Príklady nastavenia vlastností objektu na vytvorenie:<br>objproperty1=SET:pevne zakódovaná hodnota<br>objproperty2=SET:__tmp_var__<br>objpropertya value3: je nastavené iba vtedy, ak vlastnosť ešte nie je definovaná)<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:Názov mojej spoločnosti je\\BODY: s([^\\s]*)<br><br>Na extrahovanie alebo nastavenie niekoľkých vlastností použite nový riadok.
+OperationParamDesc=Define the rules to use to extract some data or set values to use for operation.<br><br>Example to extract a string from email header, subject or body into a temporary variable:<br>tmp_var1=EXTRACT:HEADER:My regex ([^\n]*)<br>tmp_var2=EXTRACT:SUBJECT:My refex ([^\n]*)<br>tmp_var3=EXTRACT:BODY:My regex ([^\n]*)<br><br>Examples to set the properties of an object to create:<br>objproperty1=SET:a hard coded value<br>objproperty2=SET:__tmp_var__<br>objproperty3=SETIFEMPTY:a value (value is set only if property is not already defined)<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a new line to extract or set several properties.
 OpeningHours=OTVÁRACIE HODINY
 OpeningHoursDesc=Tu zadajte bežné otváracie hodiny vašej spoločnosti.
 ResourceSetup=Konfigurácia modulu zdrojov
@@ -2264,7 +2266,7 @@ LargerThan=Väčšie ako
 IfTrackingIDFoundEventWillBeLinked=Upozorňujeme, že ak sa v e-maile nájde ID sledovania objektu alebo ak je e-mail odpoveďou na e-mail, ktorý už bol zhromaždený a prepojený s objektom, vytvorená udalosť sa automaticky prepojí so známym súvisiacim objektom.
 WithGMailYouCanCreateADedicatedPassword=Ak ste v prípade účtu GMail povolili overenie v dvoch krokoch, odporúča sa namiesto použitia vlastného hesla účtu z adresy https://myaccount.google.com/ vytvoriť vyhradené druhé heslo pre aplikáciu.
 EmailCollectorTargetDir=Môže byť želaným správaním presunúť e-mail do inej značky/adresára, keď bol úspešne spracovaný. Pre použitie tejto funkcie stačí nastaviť názov adresára (NEPOUŽÍVAJTE špeciálne znaky v názve). Upozorňujeme, že musíte použiť aj prihlasovací účet na čítanie/zápis.
-EmailCollectorLoadThirdPartyHelp=Túto akciu môžete použiť na použitie obsahu e-mailu na nájdenie a načítanie existujúcej tretej strany vo vašej databáze (hľadanie sa vykoná na definovanej vlastnosti medzi 'id', 'name', 'name_alias', 'email'). Nájdená (alebo vytvorená) tretia strana sa použije na nasledujúce akcie, ktoré ju potrebujú.<br>Ak napríklad chcete vytvoriť tretiu stranu s názvom extrahovaným z reťazca ' Name: name to find' prítomné do tela, použite e-mail odosielateľa ako e-mail, pole parametra môžete nastaviť takto:<br>'email=HEADER:^From:(. *);name=EXTRACT:BODY:Name:\\s([^\\s]*);client=SET:2;'<br>
+EmailCollectorLoadThirdPartyHelp=You can use this action to use the email content to find and load an existing third party in your database (search will be done on the defined property among 'id','name','name_alias','email'). The found (or created) third party will be used for following actions that need it.<br>For example, if you want to create a third party with a name extracted from a string 'Name: name to find' present into the body, use the sender email as email, you can set the parameter field like this:<br>'email=EXTRACT:HEADER:^From:(.*);name=EXTRACT:BODY:Name:\\s([^\\s]*);client=SET:2;'<br>
 FilterSearchImapHelp=Upozornenie: Mnoho e-mailových serverov (napríklad Gmail) vyhľadáva pri vyhľadávaní v reťazci celé slovo a nevráti výsledok, ak sa reťazec nachádza len čiastočne v slove. Aj z tohto dôvodu bude použitie špeciálnych znakov vo vyhľadávacích kritériách ignorované, ak nie sú súčasťou existujúcich slov.<br>Ak chcete vykonať vylúčenie vyhľadávania pre slovo (vráťte e-mail, ak slovo sa nenájde), môžete použiť ! znak pred slovom (nemusí fungovať na niektorých poštových serveroch).
 EndPointFor=Koncový bod pre %s : %s
 DeleteEmailCollector=Odstrániť zberač e-mailov

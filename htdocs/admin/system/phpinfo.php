@@ -5,6 +5,7 @@
  * Copyright (C) 2016       Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2020       Tobias Sekan			<tobias.sekan@startmail.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,13 +88,13 @@ if (preg_match('/t$/i', $maxphp2)) {
 }
 if ($maxphp > 0 && $maxphp2 > 0 && $maxphp > $maxphp2) {
 	$langs->load("errors");
-	print info_admin($langs->trans("WarningParamUploadMaxFileSizeHigherThanPostMaxSize", @ini_get('upload_max_filesize'), @ini_get('post_max_size')), 0, 0, 0, 'warning');
+	print info_admin($langs->trans("WarningParamUploadMaxFileSizeHigherThanPostMaxSize", @ini_get('upload_max_filesize'), @ini_get('post_max_size')), 0, 0, '0', 'warning');
 	print '<br>';
 }
 
 
 print '<table class="noborder centpercent">';
-print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td></td></tr>';
 
 $ErrorPicturePath = "../../theme/eldy/img/error.png";
 $WarningPicturePath = "../../theme/eldy/img/warning.png";
@@ -245,7 +246,7 @@ foreach ($phparray as $key => $value) {
 	print '<table class="noborder">';
 	print '<tr class="liste_titre">';
 	print '<td class="titlefield">'.$key.'</td>';
-	print '<td colspan="2">'.$langs->trans("Value").'</td>';
+	print '<td colspan="2"></td>';
 	print "</tr>\n";
 
 	//var_dump($value);

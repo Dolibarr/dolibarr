@@ -92,7 +92,7 @@ $comment = GETPOST("comment", 'restricthtml');
 $mail_valid = GETPOST("mail_valid", 'restricthtml');
 $caneditamount = GETPOSTINT("caneditamount");
 
-// Initialize a technical objects
+// Initialize a technical object
 $object = new AdherentType($db);
 $extrafields = new ExtraFields($db);
 $hookmanager->initHooks(array('membertypecard', 'globalcard'));
@@ -108,7 +108,7 @@ $result = restrictedArea($user, 'adherent', $rowid, 'adherent_type');
  *	Actions
  */
 
-if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 	$search_ref = "";
 	$search_lastname = "";
 	$search_login = "";
@@ -168,7 +168,7 @@ if ($action == 'add' && $user->hasRight('adherent', 'configurer')) {
 		if ($num) {
 			$error++;
 			$langs->load("errors");
-			setEventMessages($langs->trans("ErrorLabelAlreadyExists", $login), null, 'errors');
+			setEventMessages($langs->trans("ErrorLabelAlreadyExists", $object->label), null, 'errors');
 		}
 	}
 
@@ -443,8 +443,6 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 
 // Creation
 if ($action == 'create') {
-	$object = new AdherentType($db);
-
 	print load_fiche_titre($langs->trans("NewMemberType"), '', 'members');
 
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
@@ -452,7 +450,7 @@ if ($action == 'create') {
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-	print dol_get_fiche_head('');
+	print dol_get_fiche_head(array());
 
 	print '<table class="border centpercent">';
 	print '<tbody>';

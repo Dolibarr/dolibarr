@@ -61,7 +61,7 @@ class mod_mo_advanced extends ModeleNumRefMos
 	 */
 	public function info($langs)
 	{
-		global $conf, $langs, $db;
+		global $langs, $db;
 
 		$langs->load("bills");
 

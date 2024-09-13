@@ -71,6 +71,7 @@ $search_ref_customer = GETPOST('search_ref_customer', 'alpha');
 $search_ref_supplier = GETPOST('search_ref_supplier', 'alpha');
 $search_all = (GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml');
 $search_status = GETPOST('search_status', 'alpha');
+$search_signed_status = GETPOST('search_signed_status', 'alpha');
 $search_user = GETPOST('search_user', 'intcomma');
 $search_sale = GETPOST('search_sale', 'intcomma');
 $search_product_category = GETPOST('search_product_category', 'intcomma');
@@ -194,6 +195,7 @@ $arrayfields = array(
 	'c.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => 0, 'position' => 500),
 	'lower_planned_end_date' => array('label' => $langs->trans("LowerDateEndPlannedShort"), 'checked' => 1, 'position' => 900, 'help' => $langs->trans("LowerDateEndPlannedShort")),
 	'status' => array('label' => $langs->trans("Status"), 'checked' => 1, 'position' => 1000),
+	'c.signed_status' =>array('label' => $langs->trans('SignedStatus'), 'checked' => 0, 'position' => 1001),
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
@@ -277,6 +279,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_date_modif_endday = "";
 	$search_date_modif_end = "";
 	$search_status = "";
+	$search_signed_status = '';
 	$toselect = array();
 	$search_type_thirdparty = '';
 	$searchCategoryCustomerList = array();
@@ -307,11 +310,11 @@ $now = dol_now();
 $title = "";
 
 $sql = 'SELECT';
-$sql .= " c.rowid, c.ref, c.datec as date_creation, c.tms as date_modification, c.date_contrat, c.statut, c.ref_customer, c.ref_supplier, c.note_private, c.note_public, c.entity,";
+$sql .= " c.rowid, c.ref, c.datec as date_creation, c.tms as date_modification, c.date_contrat, c.statut, c.ref_customer, c.ref_supplier, c.note_private, c.note_public, c.entity, c.signed_status,";
 $sql .= ' s.rowid as socid, s.nom as name, s.name_alias, s.email, s.town, s.zip, s.fk_pays as country_id, s.client, s.code_client, s.status as company_status, s.logo as company_logo,';
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
-// TODO Add a denormalized field "perf_lower_planned_end_date" so we can remove the HAVING and then,
+// TODO Add a denormalized field "denormalized_lower_planned_end_date" so we can remove the HAVING and then,
 // remove completely the SUM and GROUP BY (faster). Status of each service can be read into the loop that build the list.
 $sql .= " MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") as lower_planned_end_date,";	// lowest expiration date among open service lines
 $sql .= " SUM(".$db->ifsql("cd.statut=0", 1, 0).') as nb_initial,';
@@ -489,6 +492,9 @@ if ($search_date_modif_start) {
 if ($search_date_modif_end) {
 	$sql .= " AND c.tms <= '".$db->idate($search_date_modif_end)."'";
 }
+if ($search_signed_status != '' && $search_signed_status >= 0) {
+	$sql .= ' AND c.signed_status = '.urlencode($search_signed_status);
+}
 
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -549,7 +555,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		$sqlforcount = str_replace('LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as typent on (typent.id = s.fk_typent)', '', $sqlforcount);
 		$sqlforcount = str_replace('LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as state on (state.rowid = s.fk_departement)', '', $sqlforcount);
 		$sqlforcount = str_replace('LEFT JOIN '.MAIN_DB_PREFIX.'contratdet as cd ON c.rowid = cd.fk_contrat', '', $sqlforcount);
-		$sqlforcount = str_replace('LEFT JOIN '.MAIN_DB_PREFIX.'contrat_extrafields as ef on (c.rowid = ef.fk_object)', '', $sqlforcount);
+		//$sqlforcount = str_replace('LEFT JOIN '.MAIN_DB_PREFIX.'contrat_extrafields as ef on (c.rowid = ef.fk_object)', '', $sqlforcount);	// We my need this if there is filters on extrafields
 		$sqlforcount = preg_replace('/GROUP BY.*$/', '', $sqlforcount);
 
 		$resql = $db->query($sqlforcount);
@@ -712,6 +718,9 @@ if ($search_dfyear > 0) {
 }
 if ($search_dfmonth > 0) {
 	$param .= '&search_dfmonth='.urlencode((string) ($search_dfmonth));
+}
+if ($search_signed_status != '' && $search_signed_status >= 0) {
+	$param .= '&search_signed_status='.urlencode($search_signed_status);
 }
 if ($search_sale > 0) {
 	$param .= '&search_sale='.urlencode($search_sale);
@@ -933,6 +942,13 @@ if (!empty($arrayfields['c.date_contrat']['checked'])) {
 	print '</div>';
 	print '</td>';
 }
+// Signed status
+if (!empty($arrayfields['c.signed_status']['checked'])) {
+	print '<td class="liste_titre center">';
+	$list_signed_status = $object->getSignedStatusLocalisedArray();
+	print $form->selectarray('search_signed_status', $list_signed_status, $search_signed_status, 1, 0, 0, '', 1, 0, 0, '', 'search_status');
+	print '</td>';
+}
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
@@ -1045,6 +1061,10 @@ if (!empty($arrayfields['c.date_contrat']['checked'])) {
 	print_liste_field_titre($arrayfields['c.date_contrat']['label'], $_SERVER["PHP_SELF"], "c.date_contrat", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;	// For the column action
 }
+if (!empty($arrayfields['c.signed_status']['checked'])) {
+	print_liste_field_titre($arrayfields['c.signed_status']['label'], $_SERVER["PHP_SELF"], "c.signed_status", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
@@ -1103,6 +1123,7 @@ while ($i < $imaxinloop) {
 	$contracttmp->nbofservicesopened = $obj->nb_running;
 	$contracttmp->nbofservicesexpired = $obj->nb_expired;
 	$contracttmp->nbofservicesclosed = $obj->nb_closed;
+	$contracttmp->signed_status = $obj->signed_status;
 
 	$socstatic->id = $obj->socid;
 	$socstatic->name = $obj->name;
@@ -1295,6 +1316,13 @@ while ($i < $imaxinloop) {
 		// Date
 		if (!empty($arrayfields['c.date_contrat']['checked'])) {
 			print '<td class="center">'.dol_print_date($db->jdate($obj->date_contrat), 'day', 'tzserver').'</td>';
+		}
+		// Signed Status
+		if (!empty($arrayfields['c.signed_status']['checked'])) {
+			print '<td class="center">'.$contracttmp->getLibSignedStatus(5).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';

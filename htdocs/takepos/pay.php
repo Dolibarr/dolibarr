@@ -83,6 +83,8 @@ top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 <?php
 
 $usestripeterminals = 0;
+$keyforstripeterminalbank = '';
+$stripe = null;
 
 if (isModEnabled('stripe')) {
 	$service = 'StripeTest';
@@ -222,8 +224,8 @@ if ($usestripeterminals && $invoice->type != $invoice::TYPE_CREDIT_NOTE) {
 </script>
 <?php
 
-		// Define list of possible payments
-		$arrayOfValidPaymentModes = array();
+					// Define list of possible payments
+					$arrayOfValidPaymentModes = array();
 $arrayOfValidBankAccount = array();
 
 $sql = "SELECT code, libelle as label FROM ".MAIN_DB_PREFIX."c_paiement";

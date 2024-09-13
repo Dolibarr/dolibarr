@@ -674,6 +674,7 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
 
 	// Clean parameters
 	$name = trim($name);
+	$value = (string) $value;
 
 	// Check parameters
 	if (empty($name)) {
