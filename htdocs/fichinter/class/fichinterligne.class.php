@@ -354,11 +354,11 @@ class FichinterLigne extends CommonObjectLine
 					$sql .= " LEFT JOIN (";
 					$sql .= "   SELECT " . $this->db->ifsql("ee.targettype = 'ticket'", "ee.fk_target", "ee.fk_source") . " AS rowid, SUM(fd.duree) as duration";
 					$sql .= "   FROM llx_element_element AS ee";
-					$sql .= "   LEFT JOIN llx_fichinterdet AS fd ON fd.fk_fichinter = " . $this->db->ifsql("ee.targettype = 'fichinter'", "ee.fk_target", "ee.fk_source");
+					$sql .= "   LEFT JOIN llx_fichinterdet AS fd ON " . $this->db->ifsql("ee.targettype = 'fichinter'", "ee.fk_target", "ee.fk_source") . " = fd.fk_fichinter";
 					$sql .= "   WHERE (ee.sourcetype = 'fichinter' AND ee.targettype = 'ticket') OR (ee.targettype = 'fichinter' AND ee.sourcetype = 'ticket')";
 					$sql .= "   AND " . $this->db->ifsql("ee.targettype = 'ticket'", "ee.fk_target", "ee.fk_source") . " IN (" . implode(',', $intervention->linkedObjectsIds["ticket"]) . ")";
 					$sql .= "   GROUP BY " . $this->db->ifsql("ee.targettype = 'ticket'", "ee.fk_target", "ee.fk_source");
-					$sql .= " ) AS t2 ON t2.rowid = t1.rowid";
+					$sql .= " ) AS t2 ON t1.rowid = t2.rowid";
 					$sql .= " SET t1.duration = t2.duration";
 					$sql .= " WHERE t1.rowid IN (" . implode(',', $intervention->linkedObjectsIds["ticket"]) . ")";
 
