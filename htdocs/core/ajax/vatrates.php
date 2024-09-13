@@ -44,6 +44,13 @@ $result = restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid
 
 
 /*
+ * Actions
+ */
+
+// None
+
+
+/*
  * View
  */
 
