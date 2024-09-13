@@ -312,7 +312,7 @@ class Productlot extends CommonObject
 			}
 		}
 		if ($checkEatByMandatory) {
-			if (!isset($eatBy) || dol_strlen($eatBy) == 0) {
+			if (!isset($eatBy) || dol_strlen((string) $eatBy) == 0) {
 				// error : eat by is mandatory
 				$errorMsgArr[] = $langs->trans('ErrorFieldRequired', $langs->transnoentities('EatByDate'));
 			}
