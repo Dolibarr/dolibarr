@@ -384,6 +384,7 @@ DolibarrLogin=Dolibarr-Benutzername
 NoDolibarrAccess=Kein Dolibarr-Zugang
 ExportDataset_company_1=Geschäftspartner (Firmen/Stiftungen/Natürliche Personen) und ihre Eigenschaften
 ExportDataset_company_2=Kontakte und ihre Eigenschaften
+ExportDataset_company_3=Bankkonten der Geschäftspartner
 ImportDataset_company_1=Geschäftspartner und ihre Eigenschaften
 ImportDataset_company_2=Kontakte/Adressen und Attribute
 ImportDataset_company_3=Bankkonten der Geschäftspartner

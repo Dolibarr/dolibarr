@@ -544,9 +544,9 @@ if (empty($reshook)) {
 			// prevent browser refresh from reopening ticket several times
 			if ($object->status == Ticket::STATUS_CLOSED || $object->status == Ticket::STATUS_CANCELED) {
 				if ($object->fk_user_assign != null) {
-					$res = $object->setStatut(Ticket::STATUS_ASSIGNED);
+					$res = $object->setStatut(Ticket::STATUS_ASSIGNED, null, '', 'TICKET_MODIFY');
 				} else {
-					$res = $object->setStatut(Ticket::STATUS_NOT_READ);
+					$res = $object->setStatut(Ticket::STATUS_NOT_READ, null, '', 'TICKET_MODIFY');
 				}
 				if ($res) {
 					$url = 'card.php?track_id=' . $object->track_id;
@@ -716,10 +716,15 @@ if ($action == 'create' || $action == 'presend') {
 
 	$formticket->withcancel = 1;
 
+	// Init list of files
+	if (GETPOST("mode", "aZ09") == 'init') {
+		$formticket->clear_attached_files();
+	}
+
 	$formticket->showForm(1, 'create', 0, null, $action, $object);
 
 	print dol_get_fiche_end();
-} elseif ($action == 'edit' && $object->status < Ticket::STATUS_CLOSED) {
+} elseif ($action == 'edit' && $user->rights->ticket->write && $object->status < Ticket::STATUS_CLOSED) {
 	if (empty($permissiontoadd)) {
 		accessforbidden('NotEnoughPermissions', 0, 1);
 	}
@@ -1149,9 +1154,6 @@ if ($action == 'create' || $action == 'presend') {
 		print '</div><div class="fichehalfright">';
 
 
-
-
-
 		print '<form method="post" name="formticketproperties" action="'.$url_page_current.'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="change_property">';
@@ -1435,7 +1437,7 @@ if ($action == 'create' || $action == 'presend') {
 				}
 
 				// Close ticket if status is read
-				if (isset($object->status) && $object->status > 0 && $object->status < Ticket::STATUS_CLOSED && $user->hasRight('ticket', 'write')) {
+				if (isset($object->status) && $object->status >= 0 && $object->status < Ticket::STATUS_CLOSED && $user->hasRight('ticket', 'write')) {
 					print dolGetButtonAction('', $langs->trans('CloseTicket'), 'default', $_SERVER["PHP_SELF"].'?action=close&token='.newToken().'&track_id='.$object->track_id, '');
 				}
 

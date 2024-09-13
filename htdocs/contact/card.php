@@ -178,7 +178,7 @@ if (empty($reshook)) {
 
 
 	// Confirmation deactivation
-	if ($action == 'disable' && !empty($permissiontoadd)) {
+	if ($action == 'disable' && $permissiontoadd) {
 		$object->fetch($id);
 		if ($object->setstatus(0) < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -189,7 +189,7 @@ if (empty($reshook)) {
 	}
 
 	// Confirmation activation
-	if ($action == 'enable' && !empty($permissiontoadd)) {
+	if ($action == 'enable' && $permissiontoadd) {
 		$object->fetch($id);
 		if ($object->setstatus(1) < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -200,7 +200,7 @@ if (empty($reshook)) {
 	}
 
 	// Add contact
-	if ($action == 'add' && !empty($permissiontoadd)) {
+	if ($action == 'add' && $permissiontoadd) {
 		$db->begin();
 
 		if ($canvas) {
@@ -337,7 +337,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'update' && empty($cancel) && !empty($permissiontoadd)) {
+	if ($action == 'update' && empty($cancel) && $permissiontoadd) {
 		if (!GETPOST("lastname", 'alpha')) {
 			$error++;
 			$errors = array($langs->trans("ErrorFieldRequired", $langs->transnoentities("Name").' / '.$langs->transnoentities("Label")));
@@ -482,7 +482,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'setprospectcontactlevel' && !empty($permissiontoadd)) {
+	if ($action == 'setprospectcontactlevel' && $permissiontoadd) {
 		$object->fetch($id);
 		$object->fk_prospectlevel = GETPOST('prospect_contact_level_id', 'alpha');
 		$result = $object->update($object->id, $user);
@@ -492,7 +492,7 @@ if (empty($reshook)) {
 	}
 
 	// set communication status
-	if ($action == 'setstcomm' && !empty($permissiontoadd)) {
+	if ($action == 'setstcomm' && $permissiontoadd) {
 		$object->fetch($id);
 		$object->stcomm_id = dol_getIdFromCode($db, GETPOST('stcomm', 'alpha'), 'c_stcommcontact');
 		$result = $object->update($object->id, $user);
@@ -502,7 +502,7 @@ if (empty($reshook)) {
 	}
 
 	// Update extrafields
-	if ($action == "update_extras" && !empty($permissiontoadd)) {
+	if ($action == "update_extras" && $permissiontoadd) {
 		$object->fetch(GETPOSTINT('id'));
 
 		$attributekey = GETPOST('attribute', 'alpha');

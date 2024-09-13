@@ -4,12 +4,10 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
@@ -17,10 +15,7 @@
 Module4100Name = ນະໂຍບາຍຄວາມເປັນສ່ວນຕົວຂອງຂໍ້ມູນ
 # Module description 'ModuledatapolicyDesc'
 Module4100Desc = ໂມດູນເພື່ອຈັດການຄວາມເປັນສ່ວນຕົວຂອງຂໍ້ມູນ (ສອດຄ່ອງກັບ GDPR)
-
-#
 # Administration page
-#
 datapolicySetup = ການຕັ້ງຄ່ານະໂຍບາຍຄວາມເປັນສ່ວນຕົວຂອງຂໍ້ມູນໂມດູນ
 Deletion = ການລຶບຂໍ້ມູນ
 datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without events (the duration which you will have indicated below).
@@ -38,51 +33,19 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = ຄວາມສົດໃສດ້ານ/ລ
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = ບໍ່ແມ່ນຄວາມສົດໃສດ້ານ / ຫຼືລູກຄ້າ
 DATAPOLICY_CONTACT_FOURNISSEUR = ຜູ້ສະຫນອງ
 DATAPOLICY_ADHERENT = ສະມາຊິກ
-DATAPOLICY_Tooltip_SETUP = ປະເພດຂອງການຕິດຕໍ່ - ຊີ້ບອກການເລືອກຂອງທ່ານສໍາລັບແຕ່ລະປະເພດ.
-DATAPOLICYMail = ການຕັ້ງຄ່າອີເມວ
-DATAPOLICYSUBJECTMAIL = Subject of the email
-DATAPOLICYCONTENTMAIL = ເນື້ອໃນຂອງອີເມວ
-DATAPOLICYSUBSITUTION = ທ່ານສາມາດນໍາໃຊ້ຕົວແປຕໍ່ໄປນີ້ໃນອີເມວຂອງທ່ານ (LINKACCEPT ອະນຸຍາດໃຫ້ສ້າງການເຊື່ອມຕໍ່ບັນທຶກຂໍ້ຕົກລົງຂອງບຸກຄົນ, LINKREFUSED ເຮັດໃຫ້ມັນເປັນໄປໄດ້ທີ່ຈະບັນທຶກການປະຕິເສດຂອງບຸກຄົນ):
-DATAPOLICYACCEPT = ຂໍ້ຄວາມຫຼັງຈາກຂໍ້ຕົກລົງ
-DATAPOLICYREFUSE = Message after disagreement
+DATAPOLICY_Tooltip_SETUP=Define the delay with no interaction after which you want the record to be automatically purged.
 SendAgreementText = ທ່ານສາມາດສົ່ງອີເມວ GDPR ໄປຫາຜູ້ຕິດຕໍ່ທີ່ກ່ຽວຂ້ອງທັງຫມົດຂອງທ່ານ (ຜູ້ທີ່ຍັງບໍ່ທັນໄດ້ຮັບອີເມລ໌ແລະທີ່ທ່ານບໍ່ໄດ້ລົງທະບຽນຫຍັງກ່ຽວກັບຂໍ້ຕົກລົງ GDPR ຂອງພວກເຂົາ). ເພື່ອເຮັດສິ່ງນີ້, ໃຊ້ປຸ່ມຕໍ່ໄປນີ້.
 SendAgreement = ສົ່ງອີເມວ
 AllAgreementSend = ອີເມວທັງໝົດຖືກສົ່ງໄປແລ້ວ
 TXTLINKDATAPOLICYACCEPT = ຂໍ້ຄວາມສໍາລັບການເຊື່ອມຕໍ່ "ຂໍ້ຕົກລົງ"
 TXTLINKDATAPOLICYREFUSE = Text for the link "disagreement"
-
-
-#
 # Extrafields
-#
 DATAPOLICY_BLOCKCHECKBOX = GDPR : ການປະມວນຜົນຂໍ້ມູນສ່ວນຕົວ
 DATAPOLICY_consentement = ການຍິນຍອມທີ່ໄດ້ຮັບສຳລັບການປະມວນຜົນຂໍ້ມູນສ່ວນຕົວ
 DATAPOLICY_opposition_traitement = Opposes to the processing of his personal data
 DATAPOLICY_opposition_prospection = Opposes to the processing of his personal data for the purposes of prospecting
-
-#
-# Popup
-#
-DATAPOLICY_POPUP_ANONYME_TITLE = ເປີດເຜີຍຊື່ບຸກຄົນທີສາມ
-DATAPOLICY_POPUP_ANONYME_TEXTE = ທ່ານບໍ່ສາມາດລຶບລາຍຊື່ນີ້ອອກຈາກ Dolibarr ເພາະວ່າມີລາຍການທີ່ກ່ຽວຂ້ອງ. ອີງຕາມ GDPR, ທ່ານຈະເຮັດໃຫ້ຂໍ້ມູນທັງຫມົດນີ້ບໍ່ເປີດເຜີຍຊື່ເພື່ອເຄົາລົບພັນທະຂອງທ່ານ. ທ່ານຕ້ອງການສືບຕໍ່ບໍ?
-
-#
-# Button for portability
-#
-DATAPOLICY_PORTABILITE = GDPR ແບບພົກພາ
-DATAPOLICY_PORTABILITE_TITLE = ສົ່ງອອກຂໍ້ມູນສ່ວນຕົວ
-DATAPOLICY_PORTABILITE_CONFIRMATION = ທ່ານຕ້ອງການສົ່ງອອກຂໍ້ມູນສ່ວນຕົວຂອງຜູ້ຕິດຕໍ່ນີ້. ເຈົ້າ​ແນ່​ໃຈ​ບໍ່ ?
-
-#
 # Notes added during an anonymization
-#
-ANONYMISER_AT = ບໍ່ໄດ້ລະບຸຊື່ %s
-
 DATAPOLICY_date = Date of agreement/disagreement GDPR
 DATAPOLICY_send = Date agreement email sent
-DATAPOLICY_SEND = ສົ່ງອີເມວ GDPR
 MailSent = ອີ​ເມວ​ໄດ້​ຖືກ​ສົ່ງ​ໄປ​ແລ້ວ
-
-# ERROR
-=Due to a technical problem, we were unable to register your choice. We apologize for that. Contact us to notify us your choice.
 NUMBER_MONTH_BEFORE_DELETION = Number of months before deletion

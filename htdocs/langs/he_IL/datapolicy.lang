@@ -4,12 +4,10 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
@@ -17,10 +15,7 @@
 Module4100Name = מדיניות פרטיות נתונים
 # Module description 'ModuledatapolicyDesc'
 Module4100Desc = מודול לניהול פרטיות נתונים (תאימות ל-GDPR)
-
-#
 # Administration page
-#
 datapolicySetup = הגדרת מדיניות פרטיות של נתוני מודול
 Deletion = מחיקת נתונים
 datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without events (the duration which you will have indicated below).
@@ -38,51 +33,19 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = פרוספקט/לקוח
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = גם לא לקוח פוטנציאלי/לא לקוח
 DATAPOLICY_CONTACT_FOURNISSEUR = ספק
 DATAPOLICY_ADHERENT = חבר
-DATAPOLICY_Tooltip_SETUP = סוג איש קשר - ציין את הבחירות שלך עבור כל סוג.
-DATAPOLICYMail = הגדרת מיילים
-DATAPOLICYSUBJECTMAIL = Subject of the email
-DATAPOLICYCONTENTMAIL = תוכן המייל
-DATAPOLICYSUBSITUTION = אתה יכול להשתמש במשתנים הבאים במייל שלך (LINKACCEPT מאפשר ליצור קישור המתעד את הסכמת האדם, LINKREFUSED מאפשר לרשום את הסירוב של האדם):
-DATAPOLICYACCEPT = הודעה לאחר הסכם
-DATAPOLICYREFUSE = Message after disagreement
+DATAPOLICY_Tooltip_SETUP=Define the delay with no interaction after which you want the record to be automatically purged.
 SendAgreementText = אתה יכול לשלוח דוא"ל GDPR לכל אנשי הקשר הרלוונטיים שלך (שעדיין לא קיבלו דוא"ל ועבורם לא רשמת שום דבר על הסכם ה-GDPR שלהם). לשם כך, השתמש בכפתור הבא.
 SendAgreement = לשלוח מיילים
 AllAgreementSend = כל המיילים נשלחו
 TXTLINKDATAPOLICYACCEPT = טקסט לקישור "הסכם"
 TXTLINKDATAPOLICYREFUSE = Text for the link "disagreement"
-
-
-#
 # Extrafields
-#
 DATAPOLICY_BLOCKCHECKBOX = GDPR: עיבוד נתונים אישיים
 DATAPOLICY_consentement = הסכמה שהתקבלה לעיבוד נתונים אישיים
 DATAPOLICY_opposition_traitement = Opposes to the processing of his personal data
 DATAPOLICY_opposition_prospection = Opposes to the processing of his personal data for the purposes of prospecting
-
-#
-# Popup
-#
-DATAPOLICY_POPUP_ANONYME_TITLE = הפוך צד שלישי לאנונימי
-DATAPOLICY_POPUP_ANONYME_TEXTE = אינך יכול למחוק איש קשר זה מ-Dolibarr מכיוון שיש פריטים קשורים. בהתאם ל-GDPR, אתה תהפוך את כל הנתונים הללו לאנונימיים כדי לכבד את ההתחייבויות שלך. תרצה להמשיך ?
-
-#
-# Button for portability
-#
-DATAPOLICY_PORTABILITE = ניידות GDPR
-DATAPOLICY_PORTABILITE_TITLE = ייצוא נתונים אישיים
-DATAPOLICY_PORTABILITE_CONFIRMATION = אתה רוצה לייצא את הנתונים האישיים של איש קשר זה. האם אתה בטוח ?
-
-#
 # Notes added during an anonymization
-#
-ANONYMISER_AT = עשה אנונימי את %s
-
 DATAPOLICY_date = Date of agreement/disagreement GDPR
 DATAPOLICY_send = Date agreement email sent
-DATAPOLICY_SEND = שלח דוא"ל GDPR
 MailSent = דוא"ל נשלח
-
-# ERROR
-=Due to a technical problem, we were unable to register your choice. We apologize for that. Contact us to notify us your choice.
 NUMBER_MONTH_BEFORE_DELETION = Number of months before deletion
