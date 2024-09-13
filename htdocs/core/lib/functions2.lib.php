@@ -2712,6 +2712,8 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'salaries';
 	} elseif ($moduleobject == 'paymentexpensereports') {
 		$moduledirforclass = 'expensereport';
+	} elseif ($moduleobject == 'dolresources') {
+		$moduledirforclass = 'resource';
 	}
 
 	return $moduledirforclass;

@@ -70,7 +70,7 @@ if (!$sortfield) {
 }
 
 
-$object = new Dolresource($db);
+$object = new DolResource($db);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
@@ -123,6 +123,8 @@ if ($object->id > 0) {
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
+	$object->loadTypeLabel();
+
 
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
@@ -145,7 +147,7 @@ if ($object->id > 0) {
 
 	print dol_get_fiche_end();
 
-	$modulepart = 'dolresource';
+	$modulepart = 'resource';
 	$permissiontoadd = $user->hasRight('resource', 'write');
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';

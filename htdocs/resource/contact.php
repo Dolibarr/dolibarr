@@ -41,7 +41,7 @@ $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
-$object = new Dolresource($db);
+$object = new DolResource($db);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';     // Must be 'include', not 'include_once'

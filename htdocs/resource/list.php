@@ -53,7 +53,7 @@ $optioncss		= GETPOST('optioncss', 'alpha');
 $contextpage 	= GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'resourcelist';
 
 // Initialize a technical objects
-$object = new Dolresource($db);
+$object = new DolResource($db);
 $extrafields = new ExtraFields($db);
 
 // Fetch optionals attributes and labels
@@ -187,7 +187,7 @@ if (!$permissiontoread) {
 }
 
 // Mass actions
-$objectclass = 'Dolresource';
+$objectclass = 'Resource';
 $objectlabel = 'Resources';
 $uploaddir = $conf->resource->dir_output;
 include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
@@ -215,7 +215,7 @@ if ($reshook < 0) {
  */
 
 $form = new Form($db);
-$objectstatic = new Dolresource($db);
+$objectstatic = new DolResource($db);
 
 $help_url = '';
 $title = $langs->trans('Resources');
@@ -438,7 +438,7 @@ $newcardbutton = dolGetButtonTitle($langs->trans('NewResource'), '', 'fa fa-plus
 
 print_barre_liste($title, $page, $_SERVER['PHP_SELF'], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'object_'.$object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
-$objecttmp = new Dolresource($db);
+$objecttmp = new DolResource($db);
 $trackid = 'int'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 

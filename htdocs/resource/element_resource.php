@@ -48,10 +48,10 @@ $sortfield                      = GETPOST('sortfield','alpha');
 $page                           = GETPOST('page','int');
 */
 
-$object = new Dolresource($db);
+$object = new DolResource($db);
 
 $hookmanager->initHooks(array('element_resource'));
-$object->available_resources = array('dolresource');
+$object->available_resources = array('resource');
 
 // Get parameters
 $id                     = GETPOSTINT('id'); // resource id
@@ -125,7 +125,7 @@ if (empty($reshook)) {
 
 			// TODO : add this check at update_linked_resource and when modifying event start or end date
 			// check if an event resource is already in use
-			if (getDolGlobalString('RESOURCE_USED_IN_EVENT_CHECK') && $objstat->element == 'action' && $resource_type == 'dolresource' && intval($busy) == 1) {
+			if (getDolGlobalString('RESOURCE_USED_IN_EVENT_CHECK') && $objstat->element == 'action' && $resource_type == 'resource' && intval($busy) == 1) {
 				$eventDateStart = $objstat->datep;
 				$eventDateEnd   = $objstat->datef;
 				$isFullDayEvent = $objstat->fulldayevent;
@@ -200,7 +200,7 @@ if (empty($reshook)) {
 			$object->busy = $busy;
 			$object->mandatory = $mandatory;
 
-			if (getDolGlobalString('RESOURCE_USED_IN_EVENT_CHECK') && $object->element_type == 'action' && $object->resource_type == 'dolresource' && intval($object->busy) == 1) {
+			if (getDolGlobalString('RESOURCE_USED_IN_EVENT_CHECK') && $object->element_type == 'action' && $object->resource_type == 'resource' && intval($object->busy) == 1) {
 				$eventDateStart = $object->objelement->datep;
 				$eventDateEnd   = $object->objelement->datef;
 				$isFullDayEvent = $objstat->fulldayevent;

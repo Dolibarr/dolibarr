@@ -60,7 +60,7 @@ if ($user->socid > 0) {
 	accessforbidden();
 }
 
-$object = new Dolresource($db);
+$object = new DolResource($db);
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
@@ -112,8 +112,8 @@ if (empty($reshook)) {
 				$object->address				= $address;
 				$object->zip					= $zip;
 				$object->town					= $town;
-				$object->country_id				= $country_id;
-				$object->state_id				= $state_id;
+				$object->fk_country				= $country_id;
+				$object->fk_state				= $state_id;
 				$object->description			= $description;
 				$object->phone					= $phone;
 				$object->email					= $email;
@@ -160,14 +160,15 @@ if (empty($reshook)) {
 				$object->address				= $address;
 				$object->zip					= $zip;
 				$object->town					= $town;
-				$object->country_id             = $country_id;
-				$object->state_id				= $state_id;
+				$object->fk_country				= $country_id;
+				$object->fk_state				= $state_id;
 				$object->description  			= $description;
 				$object->phone					= $phone;
 				$object->email					= $email;
 				$object->max_users				= $max_users;
 				$object->url					= $url;
 				$object->fk_code_type_resource  = $fk_code_type_resource;
+
 
 				// Fill array 'array_options' with data from add form
 				$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
@@ -272,7 +273,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 
 		// Origin country
 		print '<tr><td>'.$langs->trans("CountryOrigin").'</td><td>';
-		print $form->select_country($object->country_id);
+		print $form->select_country($object->fk_country);
 		if ($user->admin) {
 			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
@@ -288,7 +289,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 
 			if ($object->country_id) {
 				print img_picto('', 'state', 'class="pictofixedwidth"');
-				print $formresource->select_state($object->state_id, $object->country_code);
+				print $formresource->select_state($object->fk_state, $object->country_code);
 			} else {
 				print $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 			}
@@ -366,6 +367,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		// Print form confirm
 		print $formconfirm;
 
+		$object->loadTypeLabel();
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/resource/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&id='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
