@@ -492,6 +492,8 @@ if ($action == 'dopayment') {	// Test on permission not required here (anonymous
 // When using the old Charge API architecture, this code is called after clicking the 'dopayment' with the Charge API architecture.
 // When using the PaymentIntent API architecture, the Stripe customer was already created when creating PaymentIntent when showing payment page, and the payment is already ok when action=charge.
 if ($action == 'charge' && isModEnabled('stripe')) {	// Test on permission not required here (anonymous action protected by mitigation of /public/... urls)
+	$stripecu = null;
+
 	$amountstripe = (float) $amount;
 
 	// Correct the amount according to unit of currency
@@ -2328,7 +2330,6 @@ if (preg_match('/^dopayment/', $action)) {			// If we chose/clicked on the payme
 
 			$stripe = new Stripe($db);
 			$stripeacc = $stripe->getStripeAccount($service);
-			$stripecu = null;
 			if (is_object($object) && is_object($object->thirdparty)) {
 				$stripecu = $stripe->customerStripe($object->thirdparty, $stripeacc, $servicestatus, 1);
 			}
