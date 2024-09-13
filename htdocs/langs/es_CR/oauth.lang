@@ -11,9 +11,7 @@ SeePreviousTab=Ver pestaña anterior
 OAuthIDSecret=OAuth ID y secreto
 TOKEN_EXPIRED=Token caducado
 TOKEN_EXPIRE_AT=El token expiró en
-OAUTH_GOOGLE_NAME=Servicio de Google OAuth
 OAUTH_GOOGLE_ID=ID de Google OAuth
-OAUTH_GITHUB_NAME=Servicio OAuth GitHub
 OAUTH_GITHUB_ID=Id OAuth GitHub
 OAUTH_URL_FOR_CREDENTIAL=Vaya a <a class="notasortlink" href="%s" target="_blank" rel="noopener noreferrer external">esta página<span class="fas fa-external-link-alt paddingleft"></span></a> para crear u obtener su ID y secreto de OAuth
 TokenExpired=Expirado

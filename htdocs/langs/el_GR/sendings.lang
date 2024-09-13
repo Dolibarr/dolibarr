@@ -63,7 +63,7 @@ NoProductToShipFoundIntoStock=Δεν βρέθηκε προϊόν προς απο
 WeightVolShort=Βάρος/Όγκος
 ValidateOrderFirstBeforeShipment=Θα πρέπει πρώτα να επικυρώσετε την παραγγελία πριν να μπορέσετε να πραγματοποιήσετε αποστολές.
 NoLineGoOnTabToAddSome=Χωρίς γραμμή, μεταβείτε στην καρτέλα "%s" για προσθήκη
-CreateInvoiceForThisCustomerFromSendings=Τιμολόγηση αποστολών
+CreateInvoiceForThisCustomerFromSendings=Create Bills
 IfValidateInvoiceIsNoSendingStayUnbilled=Εάν η επικύρωση τιμολογίου είναι «Όχι», η αποστολή θα παραμείνει στην κατάσταση «Μη τιμολογημένη» μέχρι να επικυρωθεί το τιμολόγιο.
 OptionToSetSendingBilledNotEnabled=Η επιλογή από την ενότητα Ροή εργασιών, για να ορίσετε την αποστολή σε "Τιμολογημένη" αυτόματα όταν επικυρώνεται το τιμολόγιο, δεν είναι ενεργοποιημένη, επομένως θα πρέπει να ορίσετε την κατάσταση των αποστολών σε "Τιμολογημένες" με μη αυτόματο τρόπο μετά τη δημιουργία του τιμολόγιου.
 

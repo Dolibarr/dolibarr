@@ -62,6 +62,15 @@ if (!$sortorder) {
 	$sortorder = "ASC";
 }
 
+/*
+ * Action
+ */
+
+if ($action == 'note' && $user->hasRight('societe', 'lire')) {
+	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET note = '".$db->escape($note)."' WHERE rowid=".((int) $socid);
+	$result = $db->query($sql);
+}
+
 
 /*
  * View
@@ -70,11 +79,6 @@ if (!$sortorder) {
 llxHeader();
 
 $thirdpartystatic = new Societe($db);
-
-if ($action == 'note') {
-	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET note='".$db->escape($note)."' WHERE rowid=".((int) $socid);
-	$result = $db->query($sql);
-}
 
 if ($mode == 'search') {
 	$resql = $db->query($sql);
@@ -86,7 +90,6 @@ if ($mode == 'search') {
 		$db->free($resql);
 	}
 }
-
 
 
 // Mode List

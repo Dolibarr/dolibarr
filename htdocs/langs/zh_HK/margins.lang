@@ -1,8 +1,8 @@
 # Dolibarr language file - Source file is en_US - marges
 
 Margin=利潤
-Margins=邊距
-TotalMargin=總保利潤
+Margins=利潤
+TotalMargin=總利潤
 MarginOnProducts= 利潤 / 產品
 MarginOnServices=利潤 / 服務
 MarginRate=利潤率
@@ -17,30 +17,30 @@ MarginDetails=利潤明細
 ProductMargins=產品利潤
 CustomerMargins=客戶利潤
 SalesRepresentativeMargins=銷售代表利潤
-ContactOfInvoice=發票聯繫人
+ContactOfInvoice=發票聯絡人
 UserMargins=用戶利潤
 ProductService=產品或服務
 AllProducts=所有產品和服務
 ChooseProduct/Service=選擇產品或服務
 ForceBuyingPriceIfNull=如果未定義，則強制購買/成本價格到銷售價格
-ForceBuyingPriceIfNullDetails=如果添加新行時未提供購買/成本價，並且此選項為“ON”，則保證金將為 0%% 在新線上（買入/成本價=賣出價）。如果此選項為“關閉”（推薦），邊距將等於默認建議的值（可能為 100%% 如果找不到默認值）。
+ForceBuyingPriceIfNullDetails=如果添加新行時未提供購買/成本價，並且此選項為“ON”，則利潤將為 0%% 在新線上（買入 / 成本價 = 賣出價）。如果此選項為“關閉”（推薦），利潤將等於默認建議的值（可能為 100%% 如果找不到默認值）。
 MARGIN_METHODE_FOR_DISCOUNT=全局折扣的利潤方法
 UseDiscountAsProduct=作為產品
 UseDiscountAsService=作為一項服務
 UseDiscountOnTotal=關於小計
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=定義全局折扣是否被視為產品、服務或僅作為利潤計算的小計。
-MARGIN_TYPE=保證金計算默認建議的買入/成本價
+MARGIN_TYPE=利潤計算默認建議的買入/成本價
 MargeType1=最佳供應商價格的利潤
 MargeType2=加權平均價格（WAP）的利潤
 MargeType3=成本價格的利潤
-MarginTypeDesc=* 最佳購買價格保證金 = 銷售價格 - 產品卡上定義的最佳供應商價格<br>* 加權平均價格 (WAP) 保證金 = 銷售價格 - 產品加權平均價格 (WAP) 或最佳供應商價格, 如果 WAP 尚未定義<br>* 成本價利潤 = 銷售價格 - 產品卡或 WAP 上定義的成本價 , 如果未定義成本價 或最佳供應商價格 ,如果尚未定義 WAP '
+MarginTypeDesc=* 最佳購買價格利潤 = 銷售價格 - 產品卡上定義的最佳供應商價格<br>* 加權平均價格 (WAP) 利潤 = 銷售價格 - 產品加權平均價格 (WAP) 或最佳供應商價格, 如果 WAP 尚未定義<br>* 成本價利潤 = 銷售價格 - 產品卡或 WAP 上定義的成本價 , 如果未定義成本價 或最佳供應商價格 ,如果尚未定義 WAP '
 CostPrice=成本價
 UnitCharges=單位收費
 Charges=收費
-AgentContactType=商業代理聯繫方式
-AgentContactTypeDetails=定義將用於每個聯絡人/地址利潤報告的聯絡人類型（關聯到發票上）。請注意，讀取聯絡人的統計數據不可靠，因為在大多數情況下，聯絡人可能不會在發票上明確定義。
+AgentContactType=商業代理聯絡方式
+AgentContactTypeDetails=定義將用於每個聯絡人/地址利潤報告的聯絡人類型（連接到發票上）。請注意，讀取聯絡人的統計數據不可靠，因為在大多數情況下，聯絡人可能不會在發票上明確定義。
 rateMustBeNumeric=利率必須是數字值
 markRateShouldBeLesserThan100=標記利率應低於100
 ShowMarginInfos=顯示利潤信息
 CheckMargins=利潤詳細信息
-MarginPerSaleRepresentativeWarning=每位用戶的利潤報告利用第三方與銷售代表之間的連結來計算個別銷售代表的利潤。由於某些第三方可能沒有專屬的銷售代表，而其他第三方可能與多個銷售代表相關聯，故此報告中可能不會包括某些金額（假如沒有銷售代表），而某些項目可能會出現在不同的行（每個銷售代表都有）。
+MarginPerSaleRepresentativeWarning=每位用戶的利潤報告利用第三方與銷售代表之間的連結來計算個別銷售代表的利潤。由於某些第三方可能沒有專屬的銷售代表，而其他第三方可能與多個銷售代表相連結，故此報告中可能不會包括某些金額（假如沒有銷售代表），而某些項目可能會出現在不同的行（每個銷售代表都有）。

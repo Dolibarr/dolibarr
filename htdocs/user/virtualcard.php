@@ -61,11 +61,14 @@ if (($object->id != $user->id) && !$user->hasRight('user', 'user', 'lire')) {
 	accessforbidden();
 }
 
+$permissiontoedit = ((($object->id == $user->id) && $user->hasRight('user', 'self', 'creer')) || $user->hasRight('user', 'user', 'creer'));
+
+
 /*
  * Actions
  */
 
-if ($action == 'update') {
+if ($action == 'update' && $permissiontoedit) {
 	$tmparray = array();
 	$tmparray['USER_PUBLIC_HIDE_PHOTO'] = (GETPOST('USER_PUBLIC_HIDE_PHOTO') ? 1 : 0);
 	$tmparray['USER_PUBLIC_HIDE_JOBPOSITION'] = (GETPOST('USER_PUBLIC_HIDE_JOBPOSITION') ? 1 : 0);
@@ -82,7 +85,7 @@ if ($action == 'update') {
 	dol_set_user_param($db, $conf, $object, $tmparray);
 }
 
-if ($action == 'setUSER_ENABLE_PUBLIC') {
+if ($action == 'setUSER_ENABLE_PUBLIC' && $permissiontoedit) {
 	if (GETPOST('value')) {
 		$tmparray = array('USER_ENABLE_PUBLIC' => 1);
 	} else {

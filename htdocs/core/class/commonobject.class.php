@@ -18,6 +18,7 @@
  * Copyright (C) 2021      Grégory Blémand      <gregory.blemand@atm-consulting.fr>
  * Copyright (C) 2023      Lenin Rivas      	<lenin.rivas777@gmail.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -816,7 +817,7 @@ abstract class CommonObject
 	public $output;
 
 	/**
-	 * @var array|string	extra parameters. Try to store here the array of parameters. Old code is sometimes storing a string.
+	 * @var array<string,string>|string	extra parameters. Try to store here the array of parameters. Old code is sometimes storing a string.
 	 */
 	public $extraparams = array();
 
@@ -1003,7 +1004,7 @@ abstract class CommonObject
 				}
 				$enabled = 1;
 				if ($enabled && isset($extrafields->attributes[$this->table_element]['enabled'][$key])) {
-					$enabled = (int) dol_eval($extrafields->attributes[$this->table_element]['enabled'][$key], 1, 1, '2');
+					$enabled = (int) dol_eval((string) $extrafields->attributes[$this->table_element]['enabled'][$key], 1, 1, '2');
 				}
 				if ($enabled && isset($extrafields->attributes[$this->table_element]['list'][$key])) {
 					$enabled = (int) dol_eval($extrafields->attributes[$this->table_element]['list'][$key], 1, 1, '2');
@@ -1485,7 +1486,7 @@ abstract class CommonObject
 	 *    @param	int<0,1>	$list       	0:Returned array contains all properties, 1:Return array contains just id
 	 *    @param    string      $code       	Filter on this code of contact type ('SHIPPING', 'BILLING', ...)
 	 *    @param	int			$status			Status of user or company
-	 *    @param	int[]		$arrayoftcids	Array with ID of type of contacts. If we provide this, we can make a ec.fk_c_type_contact in ($arrayoftcids) to avoid link on tc table. TODO Not implemented.
+	 *    @param	int[]		$arrayoftcids	Array with ID of type of contacts. If we provide this, we can filter on ec.fk_c_type_contact IN ($arrayoftcids) to avoid a link on c_type_contact table (faster).
 	 *    @return array<int,array{parentId:int,source:string,socid:int,id:int,nom:string,civility:string,lastname:string,firstname:string,email:string,login:string,photo:string,gender:string,statuscontact:int,rowid:int,code:string,libelle:string,status:string,fk_c_type_contact:int}>|int<-1,-1>        	Array of contacts, -1 if error
 	 */
 	public function liste_contact($statusoflink = -1, $source = 'external', $list = 0, $code = '', $status = -1, $arrayoftcids = array())
@@ -1503,34 +1504,40 @@ abstract class CommonObject
 			$sql .= ", t.fk_soc as socid, t.statut as statuscontact";
 		}
 		$sql .= ", t.civility as civility, t.lastname as lastname, t.firstname, t.email";
-		$sql .= ", tc.source, tc.element, tc.code, tc.libelle as type_label";
-		$sql .= " FROM ".$this->db->prefix()."c_type_contact tc,";
-		$sql .= " ".$this->db->prefix()."element_contact ec";
+		if (empty($arrayoftcids)) {
+			$sql .= ", tc.source, tc.element, tc.code, tc.libelle as type_label";
+		}
+		$sql .= " FROM";
+		if (empty($arrayoftcids)) {
+			$sql .= " ".$this->db->prefix()."c_type_contact as tc,";
+		}
+		$sql .= " ".$this->db->prefix()."element_contact as ec";
 		if ($source == 'internal') {	// internal contact (user)
-			$sql .= " LEFT JOIN ".$this->db->prefix()."user t on ec.fk_socpeople = t.rowid";
+			$sql .= " LEFT JOIN ".$this->db->prefix()."user as t on ec.fk_socpeople = t.rowid";
 		}
 		if ($source == 'external' || $source == 'thirdparty') {	// external contact (socpeople)
-			$sql .= " LEFT JOIN ".$this->db->prefix()."socpeople t on ec.fk_socpeople = t.rowid";
+			$sql .= " LEFT JOIN ".$this->db->prefix()."socpeople as t on ec.fk_socpeople = t.rowid";
 		}
 		$sql .= " WHERE ec.element_id = ".((int) $this->id);
-		$sql .= " AND ec.fk_c_type_contact = tc.rowid";
-		$sql .= " AND tc.element = '".$this->db->escape($this->element)."'";
-		if ($code) {
-			$sql .= " AND tc.code = '".$this->db->escape($code)."'";
-		}
-		if ($source == 'internal') {
-			$sql .= " AND tc.source = 'internal'";
-			if ($status >= 0) {
-				$sql .= " AND t.statut = ".((int) $status);
+		if (empty($arrayoftcids)) {
+			$sql .= " AND ec.fk_c_type_contact = tc.rowid";
+			$sql .= " AND tc.element = '".$this->db->escape($this->element)."'";
+			if ($code) {
+				$sql .= " AND tc.code = '".$this->db->escape($code)."'";
 			}
-		}
-		if ($source == 'external' || $source == 'thirdparty') {
-			$sql .= " AND tc.source = 'external'";
-			if ($status >= 0) {
-				$sql .= " AND t.statut = ".((int) $status);	// t is llx_socpeople
+			if ($source == 'internal') {
+				$sql .= " AND tc.source = 'internal'";
 			}
+			if ($source == 'external' || $source == 'thirdparty') {
+				$sql .= " AND tc.source = 'external'";
+			}
+			$sql .= " AND tc.active = 1";
+		} else {
+			$sql .= " AND ec.fk_c_type_contact IN (".$this->db->sanitize(implode(',', $arrayoftcids)).")";
 		}
-		$sql .= " AND tc.active = 1";
+		if ($status >= 0) {
+			$sql .= " AND t.statut = ".((int) $status);	// t is llx_user or llx_socpeople
+		}
 		if ($statusoflink >= 0) {
 			$sql .= " AND ec.statut = ".((int) $statusoflink);
 		}
@@ -3359,7 +3366,7 @@ abstract class CommonObject
 	 * 	Get children of line
 	 *
 	 * 	@param	int			$id				Id of parent line
-	 * 	@param	int<0,1>	$includealltree	0 = 1st level child, 1 = All level child
+	 * 	@param	int<0,1001>	$includealltree	0 = 1st level child, 1 = All level child, 2-1001: internal use
 	 * 	@return	int[]						Array with list of children lines id
 	 */
 	public function getChildrenOfLine($id, $includealltree = 0)
@@ -4666,8 +4673,8 @@ abstract class CommonObject
 			$fieldstatus = 'status';
 		}
 
-		$sql = "UPDATE ".$this->db->prefix().$elementTable;
-		$sql .= " SET ".$fieldstatus." = ".((int) $status);
+		$sql = "UPDATE ".$this->db->prefix().$this->db->sanitize($elementTable);
+		$sql .= " SET ".$this->db->sanitize($fieldstatus)." = ".((int) $status);
 		// If status = 1 = validated, update also fk_user_valid
 		// TODO Replace the test on $elementTable by doing a test on existence of the field in $this->fields
 		if ($status == 1 && in_array($elementTable, array('expensereport', 'inventory'))) {
@@ -4711,6 +4718,8 @@ abstract class CommonObject
 						$trigkey = 'FICHINTER_CLASSIFY_UNBILLED';
 					}
 				}
+
+				$this->context = array_merge($this->context, array('newstatus' => $status));
 
 				if ($trigkey) {
 					// Call trigger
@@ -4992,25 +5001,19 @@ abstract class CommonObject
 		$totalWeight = 0;
 		$totalVolume = 0;
 		// defined for shipment only
-		$totalOrdered = '';
+		$totalOrdered = 0;
 		// defined for shipment only
-		$totalToShip = '';
+		$totalToShip = 0;
 
 		if (empty($this->lines)) {
-			return array();
+			return array('weight' => $totalWeight, 'volume' => $totalVolume, 'ordered' => $totalOrdered, 'toship' => $totalToShip);
 		}
 
 		foreach ($this->lines as $line) {
 			if (isset($line->qty_asked)) {
-				if (empty($totalOrdered)) {
-					$totalOrdered = 0; // Avoid warning because $totalOrdered is ''
-				}
 				$totalOrdered += $line->qty_asked; // defined for shipment only
 			}
 			if (isset($line->qty_shipped)) {
-				if (empty($totalToShip)) {
-					$totalToShip = 0; // Avoid warning because $totalToShip is ''
-				}
 				$totalToShip += $line->qty_shipped; // defined for shipment only
 			} elseif ($line->element == 'commandefournisseurdispatch' && isset($line->qty)) {
 				if (empty($totalToShip)) {
@@ -5274,9 +5277,7 @@ abstract class CommonObject
 	{
 		global $conf, $langs, $user, $object, $hookmanager;
 		global $form;
-		global $object_rights, $disableedit, $disablemove, $disableremove; // TODO We should not use global var for this !
-
-		$object_rights = $this->getRights();
+		global $disableedit, $disablemove, $disableremove; // TODO We should not use global var for this !
 
 		// var used into tpl
 		$text = '';
@@ -7512,6 +7513,7 @@ abstract class CommonObject
 					// If the textarea field has a list of arrayofkeyval into its definition, we suggest a combo with possible values to fill the textarea.
 					//var_dump($param['options']);
 					$out .= $form->selectarray($keyprefix.$key.$keysuffix."_multiinput", $param['options'], '', 1, 0, 0, "flat maxwidthonphone".$morecss);
+					$out .= '<input id="'.$keyprefix.$key.$keysuffix.'_multiinputadd" type="button" class="button" value="'.$langs->trans("Add").'">';
 					$out .= "<script>";
 					$out .= '
 					function handlemultiinputdisabling(htmlname){
@@ -7519,7 +7521,7 @@ abstract class CommonObject
 						multiinput = $("#"+htmlname+"_multiinput");
 						multiinput.find("option").each(function(){
 							tmpval = $("#"+htmlname).val();
-							tmpvalarray = tmpval.split(",");
+							tmpvalarray = tmpval.split("\n");
 							valtotest = $(this).val();
 							if(tmpvalarray.includes(valtotest)){
 								$(this).prop("disabled",true);
@@ -7533,27 +7535,31 @@ abstract class CommonObject
 					}
 
 					$(document).ready(function () {
-						$("#'.$keyprefix.$key.$keysuffix.'_multiinput").on("change",function() {
-							console.log("We add the selected value to the text area '.$keyprefix.$key.$keysuffix.'");
+						$("#'.$keyprefix.$key.$keysuffix.'_multiinputadd").on("click",function() {
 							tmpval = $("#'.$keyprefix.$key.$keysuffix.'").val();
 							tmpvalarray = tmpval.split(",");
-							valtotest = $(this).val();
+							valtotest = $("#'.$keyprefix.$key.$keysuffix.'_multiinput").val();
 							if(valtotest != -1 && !tmpvalarray.includes(valtotest)){
+								console.log("We add the selected value to the text area '.$keyprefix.$key.$keysuffix.'");
 								if(tmpval == ""){
 									tmpval = valtotest;
 								} else {
-									tmpval = tmpval + "," + valtotest;
+									tmpval = tmpval + "\n" + valtotest;
 								}
 								$("#'.$keyprefix.$key.$keysuffix.'").val(tmpval);
 								handlemultiinputdisabling("'.$keyprefix.$key.$keysuffix.'");
+								$("#'.$keyprefix.$key.$keysuffix.'_multiinput").val(-1);
+							} else {
+								console.log("We add nothing the text area '.$keyprefix.$key.$keysuffix.'");
 							}
 						});
 						$("#'.$keyprefix.$key.$keysuffix.'").on("change",function(){
-							handlemultiinputdisabling($(this).attr("id"));
+							handlemultiinputdisabling("'.$keyprefix.$key.$keysuffix.'");
 						});
 						handlemultiinputdisabling("'.$keyprefix.$key.$keysuffix.'");
 					})';
 					$out .= "</script>";
+					$value = str_replace(',', "\n", $value);
 				}
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 				$doleditor = new DolEditor($keyprefix.$key.$keysuffix, $value, '', 200, 'dolibarr_notes', 'In', false, false, false, ROWS_5, '90%');
@@ -8543,6 +8549,9 @@ abstract class CommonObject
 				return 'Error unexpected result from code evaluation';
 			}
 		} else {	// text|html|varchar
+			if (!empty($value) && preg_match('/^text/', (string) $type) && !preg_match('/search_/', $keyprefix) && !empty($param['options'])) {
+				$value = str_replace(',', "\n", $value);
+			}
 			$value = dol_htmlentitiesbr($value);
 		}
 
@@ -8865,7 +8874,7 @@ abstract class CommonObject
 					// Test on 'enabled' ('enabled' is different than 'list' = 'visibility')
 					$enabled = 1;
 					if ($enabled && isset($extrafields->attributes[$this->table_element]['enabled'][$key])) {
-						$enabled = (int) dol_eval($extrafields->attributes[$this->table_element]['enabled'][$key], 1, 1, '2');
+						$enabled = (int) dol_eval((string) $extrafields->attributes[$this->table_element]['enabled'][$key], 1, 1, '2');
 					}
 					if (empty($enabled)) {
 						continue;
@@ -10335,6 +10344,11 @@ abstract class CommonObject
 			$value = $this->fields[$k];
 			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			$values[$k] = $this->quote($v, $value);
+			if (($value["type"] == "text") && !empty($value['arrayofkeyval']) && is_array($value['arrayofkeyval'])) {
+				// Clean values for text with selectbox
+				$v = preg_replace('/\s/', ',', $v);
+				$v = preg_replace('/,+/', ',', $v);
+			}
 			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			$tmp[] = $k.'='.$this->quote($v, $this->fields[$k]);
 		}
@@ -10716,56 +10730,6 @@ abstract class CommonObject
 			return -1;
 		}
 	}
-
-	/**
-	 *	Set to a signed status
-	 *
-	 *	@param	User	$user			Object user that modify
-	 *  @param	int		$status			New status to set (often a constant like self::STATUS_XXX)
-	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *  @param  string  $triggercode    Trigger code to use
-	 *	@return	int						Return integer <0 if KO, >0 if OK
-	 */
-	public function setSignedStatusCommon($user, $status, $notrigger = 0, $triggercode = '')
-	{
-		$error = 0;
-
-		$this->db->begin();
-
-		$statusfield = 'signed_status';
-
-		$sql = "UPDATE ".$this->db->prefix().$this->table_element;
-		$sql .= " SET ".$statusfield." = ".((int) $status);
-		$sql .= " WHERE rowid = ".((int) $this->id);
-
-		if ($this->db->query($sql)) {
-			if (!$error) {
-				$this->oldcopy = clone $this;
-			}
-
-			if (!$error && !$notrigger) {
-				// Call trigger
-				$result = $this->call_trigger($triggercode, $user);
-				if ($result < 0) {
-					$error++;
-				}
-			}
-
-			if (!$error) {
-				$this->status = $status;
-				$this->db->commit();
-				return 1;
-			} else {
-				$this->db->rollback();
-				return -1;
-			}
-		} else {
-			$this->error = $this->db->error();
-			$this->db->rollback();
-			return -1;
-		}
-	}
-
 
 	/**
 	 * Initialise object with example values

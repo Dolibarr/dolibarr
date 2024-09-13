@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2009-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1193,7 +1194,7 @@ function reWriteAllMenus($file, $menus, $menuWantTo, $key, $action)
 				$str_menu .= "\t\t\t'url' => '".dol_escape_php($menu['url'], 1)."',\n";
 				$str_menu .= "\t\t\t'langs' => '".dol_escape_php($menu['langs'], 1)."',\n";
 				$str_menu .= "\t\t\t'position' => ".((int) $menu['position']).",\n";
-				$str_menu .= "\t\t\t'enabled' => '".dol_escape_php($menu['enabled'], 1)."',\n";
+				$str_menu .= "\t\t\t'enabled' => '".dol_escape_php((string) $menu['enabled'], 1)."',\n";
 				$str_menu .= "\t\t\t'perms' => '".dol_escape_php($menu['perms'], 1)."',\n";
 				$str_menu .= "\t\t\t'target' => '".dol_escape_php($menu['target'], 1)."',\n";
 				$str_menu .= "\t\t\t'user' => ".((int) $menu['user']).",\n";

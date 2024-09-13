@@ -243,7 +243,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	// For exports
 
 	/**
-	 * @var string Module export code
+	 * @var string[] Module export code
 	 */
 	public $export_code;
 
@@ -252,23 +252,68 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 */
 	public $export_label;
 
+	/**
+	 * @var string[]
+	 */
 	public $export_icon;
 
 	/**
-	 * @var array export enabled
+	 * @var string[] export enabled (list of php expressions, '1' or "isModEnabled('xxx')...")
 	 */
 	public $export_enabled;
+	/**
+	 * @var array<array<array{string,string}>>
+	 */
 	public $export_permission;
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $export_fields_array;
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $export_TypeFields_array; // Array of key=>type where type can be 'Numeric', 'Date', 'Text', 'Boolean', 'Status', 'List:xxx:fieldlabel:rowid'
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $export_entities_array;
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $export_aggregate_array;
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $export_examplevalues_array;
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $export_help_array;
+	/**
+	 * @var array<array<array{rule:string,file:string,classfile:string,class:string,method:string,method_params:string[]}>>|array<array<string,string>>
+	 *
+	 * Other example:
+	 * modBanque: [<int>]=array('-b.amount'=>'NULLIFNEG', 'b.amount'=>'NULLIFNEG')
+	 */
 	public $export_special_array; // special or computed field
+	/**
+	 * @var array<int,array<string,string|string[]>>
+	 *
+	 * Note: example from modAdherent: [<int]= array('subscription'=>'c.rowid');
+	 *       example from modResource: [<int]= array('resource' => array('r.rowid'));
+	 */
 	public $export_dependencies_array;
+	/**
+	 * @var string[]
+	 */
 	public $export_sql_start;
+	/**
+	 * @var string[]
+	 */
 	public $export_sql_end;
+	/**
+	 * @var string[]
+	 */
 	public $export_sql_order;
 
 
@@ -284,18 +329,57 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 */
 	public $import_label;
 
+	/**
+	 * @var string[]
+	 */
 	public $import_icon;
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $import_entities_array;
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $import_tables_array;
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $import_tables_creator_array;
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $import_fields_array;
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $import_fieldshidden_array;
+	/**
+	 * @var array<array<array{rule:string,file:string,class:string,method:string}>>
+	 */
 	public $import_convertvalue_array;
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $import_regex_array;
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $import_examplevalues_array;
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $import_updatekeys_array;
+	/**
+	 * @var array<int,array<int,string>>
+	 */
 	public $import_run_sql_after_array;
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $import_TypeFields_array;
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $import_help_array;
 
 	/**
@@ -336,8 +420,11 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 
 	/**
-	 * @var array 	List of module class names that must be enabled if this module is enabled. e.g.: array('modAnotherModule', 'FR'=>'modYetAnotherModule')
+	 * @var string[]|array<string,string[]> 	List of module class names that must be enabled if this module is enabled. e.g.: array('modAnotherModule', 'FR'=>'modYetAnotherModule')
 	 * 				Another example : array('always'=>array("modBanque", "modFacture", "modProduct", "modCategorie"), 'FR'=>array('modBlockedLog'));
+	 * Note: Example in modTakePos:  array('always'=>array("modBanque", "modFacture", "modProduct", "modCategorie"), 'FR'=>array('modBlockedLog'));
+	 *       Example in modAccounting: array("modFacture", "modBanque", "modTax");
+
 	 * @see $requiredby
 	 */
 	public $depends;
@@ -381,15 +468,18 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $warnings_unactivation;
 
 	/**
-	 * @var array Minimum version of PHP required by module.
+	 * @var int[] Minimum version of PHP required by module.
 	 * e.g.: PHP ≥ 7.0 = array(7, 0)
 	 */
 	public $phpmin;
 
+	/**
+	 * @var int[] Maximum version of PHP ensured compatible with module.
+	 */
 	public $phpmax;
 
 	/**
-	 * @var array Minimum version of Dolibarr required by module.
+	 * @var int[] Minimum version of Dolibarr required by module.
 	 * e.g.: Dolibarr ≥ 3.6 = array(3, 6)
 	 */
 	public $need_dolibarr_version;
@@ -1506,7 +1596,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 */
 	public function insert_cronjobs()
 	{
-        // phpcs:enable
+		// phpcs:enable
 		include_once DOL_DOCUMENT_ROOT . '/core/class/infobox.class.php';
 		include_once DOL_DOCUMENT_ROOT . '/cron/class/cronjob.class.php';
 
@@ -1545,6 +1635,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				$sql = "SELECT count(*) as nb FROM " . MAIN_DB_PREFIX . "cronjob";
 				//$sql .= " WHERE module_name = '" . $this->db->escape(empty($this->rights_class) ? strtolower($this->name) : $this->rights_class) . "'";
 				$sql .= " WHERE label = '".$this->db->escape($label)."'";
+				/* unique key is on label,entity so no need for this test
 				if ($classesname) {
 					$sql .= " AND classesname = '" . $this->db->escape($classesname) . "'";
 				}
@@ -1560,6 +1651,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				if ($params) {
 					$sql .= " AND params = '" . $this->db->escape($params) . "'";
 				}
+				*/
 				$sql .= " AND entity = " . ((int) $entity); // Must be exact entity
 
 				$result = $this->db->query($sql);
@@ -1611,7 +1703,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		return $err;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Removes boxes
 	 *
@@ -1945,7 +2037,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 							$sql .= ", '".$this->db->escape($r_perms)."'";
 							$sql .= ", '".$this->db->escape($r_subperms)."'";
 							$sql .= ", '".$this->db->escape($r_enabled)."'";
-							$sql.= ")";
+							$sql .= ")";
 
 							$resqlinsert = $this->db->query($sql, 1);
 

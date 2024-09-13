@@ -631,7 +631,7 @@ if (empty($reshook)) {
 				$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 		}
-	} elseif ($action == 'set_incoterms' && isModEnabled('incoterm')) {
+	} elseif ($action == 'set_incoterms' && isModEnabled('incoterm') && $usercancreate) {
 		// Set incoterm
 		$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOSTFLOAT('location_incoterms'));
 		if ($result < 0) {
@@ -983,7 +983,7 @@ if (empty($reshook)) {
 							$tmptxt .= ' - ';
 						}
 						if (!empty($prod->country_code)) {
-							$tmptxt .= $outputlangs->transnoentitiesnoconv("CountryOrigin").': '.getCountry($prod->country_code, 0, $db, $outputlangs, 0);
+							$tmptxt .= $outputlangs->transnoentitiesnoconv("CountryOrigin").': '.getCountry($prod->country_code, '', $db, $outputlangs, 0);
 						}
 					} else {
 						if (!empty($prod->customcode)) {
@@ -993,7 +993,7 @@ if (empty($reshook)) {
 							$tmptxt .= ' - ';
 						}
 						if (!empty($prod->country_code)) {
-							$tmptxt .= $langs->transnoentitiesnoconv("CountryOrigin").': '.getCountry($prod->country_code, 0, $db, $langs, 0);
+							$tmptxt .= $langs->transnoentitiesnoconv("CountryOrigin").': '.getCountry($prod->country_code, '', $db, $langs, 0);
 						}
 					}
 					$tmptxt .= ')';
@@ -1511,7 +1511,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'update_extras') {
+	if ($action == 'update_extras' && $usercancreate) {
 		$object->oldcopy = dol_clone($object, 2);
 		$attribute_name = GETPOST('attribute', 'restricthtml');
 
@@ -1628,7 +1628,7 @@ if (empty($reshook)) {
 
 
 	if (!$error && getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB') && $usercancreate) {
-		if ($action == 'addcontact') {
+		if ($action == 'addcontact' && $usercancreate) {
 			if ($object->id > 0) {
 				$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
 				$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
@@ -1646,14 +1646,14 @@ if (empty($reshook)) {
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
-		} elseif ($action == 'swapstatut') {
+		} elseif ($action == 'swapstatut' && $usercancreate) {
 			// bascule du statut d'un contact
 			if ($object->id > 0) {
 				$result = $object->swapContactStatus(GETPOSTINT('ligne'));
 			} else {
 				dol_print_error($db);
 			}
-		} elseif ($action == 'deletecontact') {
+		} elseif ($action == 'deletecontact' && $usercancreate) {
 			// Efface un contact
 			$result = $object->delete_contact($lineid);
 

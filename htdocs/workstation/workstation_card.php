@@ -52,7 +52,7 @@ $dol_openinpopup = GETPOST('dol_openinpopup', 'aZ09');
 
 if (!empty($backtopagejsfields)) {
 	$tmpbacktopagejsfields = explode(':', $backtopagejsfields);
-	$dol_openinpopup = $tmpbacktopagejsfields[0];
+	$dol_openinpopup = preg_replace('/[^a-z0-9_]/i', '', $tmpbacktopagejsfields[0]);
 }
 
 $groups	    = GETPOST('groups', 'array:int');

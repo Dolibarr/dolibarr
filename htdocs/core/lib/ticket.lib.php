@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2018	Jean-François FERRY	<hello@librethic.io>
  * Copyright (C) 2016		Christophe Battarel	<christophe@altairis.fr>
- * Copyright (C) 2019-2024  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -184,10 +184,10 @@ function showDirectPublicLink($object)
 		$out .= img_picto('', 'object_globe.png').' <span class="opacitymedium">'.$langs->trans("TicketPublicAccess").'</span><br>';
 		if ($url) {
 			$out .= '<div class="urllink">';
-			$out .= '<input type="text" id="directpubliclink" class="quatrevingtpercentminusx" value="'.$url.'">';
+			$out .= '<input type="text" id="directpubliclink" class="quatrevingtpercentminusx" spellcheck="false" value="'.$url.'">';
 			$out .= '<a href="'.$url.'" target="_blank" rel="noopener noreferrer">'.img_picto('', 'object_globe.png', 'class="paddingleft"').'</a>';
 			$out .= '</div>';
-			$out .= ajax_autoselect("directpubliclink", 0);
+			$out .= ajax_autoselect("directpubliclink", '');
 		} else {
 			$out .= '<span class="opacitymedium">'.$langs->trans("TicketNotCreatedFromPublicInterface").'</span>';
 		}

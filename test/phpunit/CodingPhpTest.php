@@ -91,27 +91,25 @@ class CodingPhpTest extends CommonClassTest
 		// File functions are needed
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-
-		$excludeRegexList
-			= array(
-				'\/includes\/',
-				'\/install\/doctemplates\/websites\/',
-				'\/custom\/',
-				'\/dolimed',
-				'\/nltechno',
-				'\/teclib',
-			);
+		$excludeRegexList = array(
+			'\/includes\/',
+			'\/install\/doctemplates\/websites\/',
+			'\/custom\/',
+			'\/dolimed',
+			'\/nltechno',
+			'\/teclib',
+		);
 		$fullRegex = '(?:'.implode('|', $excludeRegexList).')';
 		$filesarray = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, '\.php', [$fullRegex], 'fullname', SORT_ASC, 0, 1, '', 1);
 
 		/*
-		$filteredArray =  array_filter(
-			$filesarray,
-			static function($file) use (&$fullRegex) {
-				return !preg_match($fullRegex, $file['relativename']);
-			}
-		));
-		*/
+		 $filteredArray =  array_filter(
+		 $filesarray,
+		 static function($file) use (&$fullRegex) {
+		 return !preg_match($fullRegex, $file['relativename']);
+		 }
+		 ));
+		 */
 		return array_map(function ($value) {
 			return array($value);
 		}, $filesarray);
@@ -129,10 +127,10 @@ class CodingPhpTest extends CommonClassTest
 	{
 		$this->nbLinesToShow = 1;
 		//print 'Check php file '.$file['relativename']."\n";
-		$filecontent = file_get_contents($file['fullname']);
+		$filecontentorigin = file_get_contents($file['fullname']);
 
 		// We are not interested in the comments
-		$filecontent = $this->removePhpComments(file_get_contents($file['fullname']));
+		$filecontent = $this->removePhpComments($filecontentorigin);
 
 		// File path for reports
 		$report_filepath = "htdocs/{$file['relativename']}";
@@ -146,15 +144,15 @@ class CodingPhpTest extends CommonClassTest
 			|| in_array($file['name'], array('modules_boxes.php', 'TraceableDB.php'))) {
 			// Check Class files
 			if (! in_array($file['name'], array(
-				'api.class.php',
-				'commonobject.class.php',
-				'conf.class.php',
-				'html.form.class.php',
-				'translate.class.php',
-				'utils.class.php',
-				'TraceableDB.php',
-				'multicurrency.class.php'
-			))) {
+					'api.class.php',
+					'commonobject.class.php',
+					'conf.class.php',
+					'html.form.class.php',
+					'translate.class.php',
+					'utils.class.php',
+					'TraceableDB.php',
+					'multicurrency.class.php'
+				))) {
 				// Must not find $db->
 				$ok = true;
 				$matches = array();
@@ -170,32 +168,32 @@ class CodingPhpTest extends CommonClassTest
 			}
 
 			if (preg_match('/\.class\.php$/', $file['relativename']) && ! in_array($file['relativename'], array(
-				'adherents/class/adherent.class.php',
-				'adherents/canvas/actions_adherentcard_common.class.php',
-				'contact/canvas/actions_contactcard_common.class.php',
-				'compta/facture/class/facture.class.php',
-				'core/class/commonobject.class.php',
-				'core/class/extrafields.class.php',
-				'core/class/html.form.class.php',
-				'core/class/html.formfile.class.php',
-				'core/class/html.formcategory.class.php',
-				'core/class/html.formmail.class.php',
-				'core/class/html.formother.class.php',
-				'core/class/html.formsms.class.php',
-				'core/class/html.formticket.class.php',
-				'core/class/utils.class.php',
-				'core/class/openid.class.php',
-				'fourn/class/fournisseur.facture.class.php',
-				'societe/canvas/actions_card_common.class.php',
-				'societe/canvas/individual/actions_card_individual.class.php',
-				'ticket/class/actions_ticket.class.php',
-				'ticket/class/ticket.class.php',
-				'webportal/class/context.class.php',
-				'webportal/class/html.formcardwebportal.class.php',
-				'webportal/class/html.formlistwebportal.class.php',
-				'webportal/controllers/document.controller.class.php',
-				'workstation/class/workstation.class.php',
-			))) {
+					'adherents/class/adherent.class.php',
+					'adherents/canvas/actions_adherentcard_common.class.php',
+					'contact/canvas/actions_contactcard_common.class.php',
+					'compta/facture/class/facture.class.php',
+					'core/class/commonobject.class.php',
+					'core/class/extrafields.class.php',
+					'core/class/html.form.class.php',
+					'core/class/html.formfile.class.php',
+					'core/class/html.formcategory.class.php',
+					'core/class/html.formmail.class.php',
+					'core/class/html.formother.class.php',
+					'core/class/html.formsms.class.php',
+					'core/class/html.formticket.class.php',
+					'core/class/utils.class.php',
+					'core/class/openid.class.php',
+					'fourn/class/fournisseur.facture.class.php',
+					'societe/canvas/actions_card_common.class.php',
+					'societe/canvas/individual/actions_card_individual.class.php',
+					'ticket/class/actions_ticket.class.php',
+					'ticket/class/ticket.class.php',
+					'webportal/class/context.class.php',
+					'webportal/class/html.formcardwebportal.class.php',
+					'webportal/class/html.formlistwebportal.class.php',
+					'webportal/controllers/document.controller.class.php',
+					'workstation/class/workstation.class.php',
+				))) {
 				// Must not find GETPOST
 				$ok = true;
 				$matches = array();
@@ -306,6 +304,22 @@ class CodingPhpTest extends CommonClassTest
 		$this->assertTrue($ok, 'Found non quoted or not casted var in sql request '.$file['relativename'].' - Bad.');
 		//exit;
 
+		// Check that forged sql string is not using NOW() inside SQL
+		$ok = true;
+		$matches = array();
+		preg_match_all('/NOW\(\)/', $filecontent, $matches, PREG_SET_ORDER);
+		foreach ($matches as $key => $val) {
+			//if ($val[1] != '\'"' && $val[1] != '\'\'') {
+			var_dump($matches);
+			$ok = false;
+			break;
+			//}
+			//if ($reg[0] != 'db') $ok=false;
+		}
+		//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
+		$this->assertTrue($ok, 'Found a forged SQL string that contains the function NOW() in file '.$file['relativename'].' Using this SQL function is forbidden. See https://wiki.dolibarr.org/index.php?title=Language_and_development_rules#SQL_Coding_rules');
+		//exit;
+
 		// Check that forged sql string is using ' instead of " as string PHP quotes
 		$ok = true;
 		$matches = array();
@@ -410,44 +424,44 @@ class CodingPhpTest extends CommonClassTest
 		// $sql .= " field = ".(isset($this->field) ? $this->escape($this->field) : "null")... is KO
 		// $sql .= " field = ".(isset($this->field) ? "'".$this->escape($this->field)."'" : "null")... is OK
 		/*
-		preg_match_all('/(\$sql|VALUES\()[^\'\n]*[^\'\n]"\s*\.\s*([^\n]+)\n/m', $filecontent, $matches, PREG_SET_ORDER);
-		foreach ($matches as $key => $val) {
-			if (! preg_match('/^(implode\(\' OR \', \$search|implode\(\' AND \', \$search|MAIN_DB_PREFIX|accountancy_code|\w+::|\$key|\$db->prefix|\$this->db->prefix|\$predefinedgroupwhere|\$db->sanitize|\$this->db->sanitize|\$db->ifsql|\$db->decrypt|\(int\)|\(float\)|\(\(int\)|\(\(float\)|\$conf->entity|getEntity|\$this->from)/', $val[2])) {
-				//print "Found a suspicious string: ".$val[2]."\n";
-				if (preg_match('/.+\?.+:.+/', $val[2])) {
-					// We found a string that follow the " in $sql .= " "..... and does not contains simple quote for escapement nor casting
-					// May be it is later, into the b or c in case of  a ? b : c
-					// Example:
-					// $val[2] is (isset($this->field) ? $this->escape($this->field) : "null")... is KO
-					// $val[2] is (isset($this->field) ? "'".$this->escape($this->field)."'" : "null")... is OK
-					$tmps = $val[2];
-					$tmps = preg_replace('/^[^\?]+\?/', '', $tmps);
-					$tmps2 = explode(':', $tmps, 2);
-					$tmps2a = trim($tmps2[0]);
-					if (!empty($tmps2[1])) {
-						$tmps2b = trim($tmps2[1]);
-					} else {
-						$tmps2b = '';
-					}
-				} else {
-					$tmps2a = $val[2];
-					$tmps2b = '';
-				}
-				if (preg_match('/^(\(*["\']|\(+int\)|\(+float\)|\(*\d|GETPOSTINT|getDolGlobalInt|dolSqlDateFilter|\$user->id|\$conf->entity|\$this->entity|\$this->where|\(?\$this->societe|str_pad\(\(int)/', $tmps2a)
-					&& (empty($tmps2b) || preg_match('/^(\(*["\']|\(+int\)|\(+float\)|\(*\d|GETPOSTINT|getDolGlobalInt|dolSqlDateFilter|\$user->id|\$conf->entity|\$this->entity|\$this->where|\(?\$this->societe|str_pad\(\(int)/', $tmps2b))) {
-					continue;	// No problem
-				}
+			 preg_match_all('/(\$sql|VALUES\()[^\'\n]*[^\'\n]"\s*\.\s*([^\n]+)\n/m', $filecontent, $matches, PREG_SET_ORDER);
+			 foreach ($matches as $key => $val) {
+			 if (! preg_match('/^(implode\(\' OR \', \$search|implode\(\' AND \', \$search|MAIN_DB_PREFIX|accountancy_code|\w+::|\$key|\$db->prefix|\$this->db->prefix|\$predefinedgroupwhere|\$db->sanitize|\$this->db->sanitize|\$db->ifsql|\$db->decrypt|\(int\)|\(float\)|\(\(int\)|\(\(float\)|\$conf->entity|getEntity|\$this->from)/', $val[2])) {
+			 //print "Found a suspicious string: ".$val[2]."\n";
+			 if (preg_match('/.+\?.+:.+/', $val[2])) {
+			 // We found a string that follow the " in $sql .= " "..... and does not contains simple quote for escapement nor casting
+			 // May be it is later, into the b or c in case of  a ? b : c
+			 // Example:
+			 // $val[2] is (isset($this->field) ? $this->escape($this->field) : "null")... is KO
+			 // $val[2] is (isset($this->field) ? "'".$this->escape($this->field)."'" : "null")... is OK
+			 $tmps = $val[2];
+			 $tmps = preg_replace('/^[^\?]+\?/', '', $tmps);
+			 $tmps2 = explode(':', $tmps, 2);
+			 $tmps2a = trim($tmps2[0]);
+			 if (!empty($tmps2[1])) {
+			 $tmps2b = trim($tmps2[1]);
+			 } else {
+			 $tmps2b = '';
+			 }
+			 } else {
+			 $tmps2a = $val[2];
+			 $tmps2b = '';
+			 }
+			 if (preg_match('/^(\(*["\']|\(+int\)|\(+float\)|\(*\d|GETPOSTINT|getDolGlobalInt|dolSqlDateFilter|\$user->id|\$conf->entity|\$this->entity|\$this->where|\(?\$this->societe|str_pad\(\(int)/', $tmps2a)
+			 && (empty($tmps2b) || preg_match('/^(\(*["\']|\(+int\)|\(+float\)|\(*\d|GETPOSTINT|getDolGlobalInt|dolSqlDateFilter|\$user->id|\$conf->entity|\$this->entity|\$this->where|\(?\$this->societe|str_pad\(\(int)/', $tmps2b))) {
+			 continue;	// No problem
+			 }
 
-				var_dump($val);
+			 var_dump($val);
 
-				$found = $val[0];
-				$ok = false;
-				break;
-			}
-		}
-		//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
-		$this->assertTrue($ok, 'Found non escaped or non casted string in building of a sql request (case 4) in '.$file['relativename'].': '.$found.' - Bad.');
-		*/
+			 $found = $val[0];
+			 $ok = false;
+			 break;
+			 }
+			 }
+			 //print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
+			 $this->assertTrue($ok, 'Found non escaped or non casted string in building of a sql request (case 4) in '.$file['relativename'].': '.$found.' - Bad.');
+		 */
 
 		// Checks with IN
 
@@ -483,129 +497,129 @@ class CodingPhpTest extends CommonClassTest
 		$this->assertTrue($ok, 'Found non sanitized string in building of a IN or NOT IN sql request '.$file['relativename'].' - Bad.');
 		//exit;
 
-		// Test that output of $_SERVER\[\'QUERY_STRING\'\] is escaped.
-		$ok = true;
-		$matches = array();
-		preg_match_all('/(..............)\$_SERVER\[\'QUERY_STRING\'\]/', $filecontent, $matches, PREG_SET_ORDER);
+			// Test that output of $_SERVER\[\'QUERY_STRING\'\] is escaped.
+			$ok = true;
+			$matches = array();
+			preg_match_all('/(..............)\$_SERVER\[\'QUERY_STRING\'\]/', $filecontent, $matches, PREG_SET_ORDER);
 		foreach ($matches as $key => $val) {
 			if ($val[1] != 'scape_htmltag(' && $val[1] != 'ing_nohtmltag(' && $val[1] != 'dol_escape_js(') {
 				$ok = false;
 				break;
 			}
 		}
-		$this->assertTrue($ok, 'Found a $_SERVER[\'QUERY_STRING\'] without dol_escape_htmltag neither dol_string_nohtmltag around it, in file '.$file['relativename'].'. Bad.');
+			$this->assertTrue($ok, 'Found a $_SERVER[\'QUERY_STRING\'] without dol_escape_htmltag neither dol_string_nohtmltag around it, in file '.$file['relativename'].'. Bad.');
 
 
-		// Check GETPOST(... 'none');
-		$ok = true;
-		$matches = array();
-		preg_match_all('/GETPOST\s*\(([^\)]+),\s*["\']none["\']/i', $filecontent, $matches, PREG_SET_ORDER);
+			// Check GETPOST(... 'none');
+			$ok = true;
+			$matches = array();
+			preg_match_all('/GETPOST\s*\(([^\)]+),\s*["\']none["\']/i', $filecontent, $matches, PREG_SET_ORDER);
 		foreach ($matches as $key => $val) {
 			//var_dump($val);
 			if (!in_array($val[1], array(
 				"'content'", "'replacestring'", "'htmlheader'", "'WEBSITE_HTML_HEADER'", "'WEBSITE_CSS_INLINE'", "'WEBSITE_JS_INLINE'", "'WEBSITE_MANIFEST_JSON'", "'PAGE_CONTENT'", "'WEBSITE_README'", "'WEBSITE_LICENSE'",
-					'"mysqldump"', '"postgresqldump"',
-					"'db_pass_root'", "'db_pass'", '"pass"', '"pass1"', '"pass2"', '"password"', "'password'"))) {
+				'"mysqldump"', '"postgresqldump"',
+				"'db_pass_root'", "'db_pass'", '"pass"', '"pass1"', '"pass2"', '"password"', "'password'"))) {
 				$ok = false;
 				break;
 			}
 			//if ($reg[0] != 'db') $ok=false;
 		}
-		//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
-		$this->assertTrue($ok, 'Found a GETPOST that use \'none\' as a parameter in file '.$file['relativename'].' and param is not an allowed parameter for using none - Bad.');
-		//exit;
+			//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
+			$this->assertTrue($ok, 'Found a GETPOST that use \'none\' as a parameter in file '.$file['relativename'].' and param is not an allowed parameter for using none - Bad.');
+			//exit;
 
 
-		// Test that first param of print_liste_field_titre is a translation key and not the translated value
-		$ok = true;
-		$matches = array();
-		// Check string ='print_liste_field_titre\(\$langs'.
-		preg_match_all('/print_liste_field_titre\(\$langs/', $filecontent, $matches, PREG_SET_ORDER);
+			// Test that first param of print_liste_field_titre is a translation key and not the translated value
+			$ok = true;
+			$matches = array();
+			// Check string ='print_liste_field_titre\(\$langs'.
+			preg_match_all('/print_liste_field_titre\(\$langs/', $filecontent, $matches, PREG_SET_ORDER);
 		foreach ($matches as $key => $val) {
 			$ok = false;
 			break;
 		}
-		$this->assertTrue($ok, 'Found a use of print_liste_field_titre with first parameter that is a translated value instead of just the translation key in file '.$file['relativename'].'. Bad.');
+			$this->assertTrue($ok, 'Found a use of print_liste_field_titre with first parameter that is a translated value instead of just the translation key in file '.$file['relativename'].'. Bad.');
 
 
-		// Test we don't have <br />
-		$ok = true;
-		$matches = array();
-		preg_match_all('/<br\s+\/>/', $filecontent, $matches, PREG_SET_ORDER);
+			// Test we don't have <br />
+			$ok = true;
+			$matches = array();
+			preg_match_all('/<br\s+\/>/', $filecontent, $matches, PREG_SET_ORDER);
 		foreach ($matches as $key => $val) {
 			if ($file['name'] != 'functions.lib.php') {
 				$ok = false;
 				break;
 			}
 		}
-		$this->assertTrue($ok, 'Found a tag <br /> that is for xml in file '.$file['relativename'].'. You must use html syntax <br> instead.');
+			$this->assertTrue($ok, 'Found a tag <br /> that is for xml in file '.$file['relativename'].'. You must use html syntax <br> instead.');
 
 
-		// Test we don't have name="token" value="'.$_SESSION['newtoken'], we must use name="token" value="'.newToken() instead.
-		$ok = true;
-		$matches = array();
-		preg_match_all('/name="token" value="\'\s*\.\s*\$_SESSION/', $filecontent, $matches, PREG_SET_ORDER);
+			// Test we don't have name="token" value="'.$_SESSION['newtoken'], we must use name="token" value="'.newToken() instead.
+			$ok = true;
+			$matches = array();
+			preg_match_all('/name="token" value="\'\s*\.\s*\$_SESSION/', $filecontent, $matches, PREG_SET_ORDER);
 		foreach ($matches as $key => $val) {
 			if ($file['name'] != 'excludefile.php') {
 				$ok = false;
 				break;
 			}
 		}
-		$this->assertTrue($ok, 'Found a forbidden string sequence in '.$file['relativename'].' : name="token" value="\'.$_SESSION[..., you must use a newToken() instead of $_SESSION[\'newtoken\'].');
+			$this->assertTrue($ok, 'Found a forbidden string sequence in '.$file['relativename'].' : name="token" value="\'.$_SESSION[..., you must use a newToken() instead of $_SESSION[\'newtoken\'].');
 
 
-		// Test we don't have preg_grep with a param without preg_quote
-		$ok = true;
-		$matches = array();
-		preg_match_all('/preg_grep\(.*\$/', $filecontent, $matches, PREG_SET_ORDER);
+			// Test we don't have preg_grep with a param without preg_quote
+			$ok = true;
+			$matches = array();
+			preg_match_all('/preg_grep\(.*\$/', $filecontent, $matches, PREG_SET_ORDER);
 		foreach ($matches as $key => $val) {
 			if (strpos($val[0], 'preg_quote') === false) {
 				$ok = false;
 				break;
 			}
 		}
-		$this->assertTrue($ok, 'Found a preg_grep with a param that is a $var but without preg_quote in file '.$file['relativename'].'.');
+			$this->assertTrue($ok, 'Found a preg_grep with a param that is a $var but without preg_quote in file '.$file['relativename'].'.');
 
 
-		// Test we don't have "if ($resql >"
-		$ok = true;
-		$matches = array();
-		preg_match_all('/if \(\$resql >/', $filecontent, $matches, PREG_SET_ORDER);
+			// Test we don't have "if ($resql >"
+			$ok = true;
+			$matches = array();
+			preg_match_all('/if \(\$resql >/', $filecontent, $matches, PREG_SET_ORDER);
 		foreach ($matches as $key => $val) {
 			$ok = false;
 			break;
 		}
-		$this->assertTrue($ok, 'Found a if $resql with a > operator (when $resql is a boolean or resource) in file '.$file['relativename'].'. Please remove the > ... part.');
+			$this->assertTrue($ok, 'Found a if $resql with a > operator (when $resql is a boolean or resource) in file '.$file['relativename'].'. Please remove the > ... part.');
 
-		// Test we don't have empty($user->hasRight
-		$ok = true;
-		$matches = array();
-		preg_match_all('/empty\(\$user->hasRight/', $filecontent, $matches, PREG_SET_ORDER);
+			// Test we don't have empty($user->hasRight
+			$ok = true;
+			$matches = array();
+			preg_match_all('/empty\(\$user->hasRight/', $filecontent, $matches, PREG_SET_ORDER);
 		foreach ($matches as $key => $val) {
 			$ok = false;
 			break;
 		}
-		$this->assertTrue($ok, 'Found code empty($user->hasRight in file '.$file['relativename'].'. empty() must not be used on a var not on a function.');
+			$this->assertTrue($ok, 'Found code empty($user->hasRight in file '.$file['relativename'].'. empty() must not be used on a var not on a function.');
 
-		// Test we don't have empty(DolibarrApiAccess::$user->hasRight
-		$ok = true;
-		$matches = array();
-		preg_match_all('/empty\(DolibarrApiAccess::\$user->hasRight/', $filecontent, $matches, PREG_SET_ORDER);
+			// Test we don't have empty(DolibarrApiAccess::$user->hasRight
+			$ok = true;
+			$matches = array();
+			preg_match_all('/empty\(DolibarrApiAccess::\$user->hasRight/', $filecontent, $matches, PREG_SET_ORDER);
 		foreach ($matches as $key => $val) {
 			$ok = false;
 			break;
 		}
-		$this->assertTrue($ok, 'Found code empty(DolibarrApiAccess::$user->hasRight in file '.$file['relativename'].'. empty() must not be used on a var not on a function.');
+			$this->assertTrue($ok, 'Found code empty(DolibarrApiAccess::$user->hasRight in file '.$file['relativename'].'. empty() must not be used on a var not on a function.');
 
-		// Test we don't have empty($user->hasRight
-		$ok = true;
-		$matches = array();
-		preg_match_all('/empty\(getDolGlobal/', $filecontent, $matches, PREG_SET_ORDER);
+			// Test we don't have empty($user->hasRight
+			$ok = true;
+			$matches = array();
+			preg_match_all('/empty\(getDolGlobal/', $filecontent, $matches, PREG_SET_ORDER);
 		foreach ($matches as $key => $val) {
 			$ok = false;
 			break;
 		}
-		$this->assertTrue($ok, 'Found code empty(getDolGlobal... in file '.$file['relativename'].'. empty() must be used on a var not on a function.');
+			$this->assertTrue($ok, 'Found code empty(getDolGlobal... in file '.$file['relativename'].'. empty() must be used on a var not on a function.');
 
 		// Test we don't have @var array(
 		$ok = true;
@@ -627,6 +641,49 @@ class CodingPhpTest extends CommonClassTest
 			break;
 		}
 		$this->assertTrue($ok, 'Found a CURDATE\(\) in code. Do not use this SQL method in file '.$file['relativename'].'. You must use the PHP function dol_now() instead.');
+
+
+		// Test we don't have if ($action == 'xxx'... without test on permission
+		// We do not test on file into admin, protection is done on page on user->admin
+		if (!preg_match('/admin\//', $file['fullname'])
+				&& !preg_match('/\.tpl\.php/', $file['fullname'])
+				&& !preg_match('/\.lib\.php/', $file['fullname'])
+				&& !preg_match('/\.inc\.php/', $file['fullname'])
+				&& !preg_match('/\.class\.php/', $file['fullname'])
+				&& !preg_match('/NORUN$/', $file['fullname'])) {
+			$ok = true;
+			$matches = array();
+
+			// Get to part of string to use for analysis
+			$reg = array();
+			if (preg_match('/\*\s+Action(.*)\*\s+View/ims', $filecontentorigin, $reg)) {
+				$filecontentaction = $reg[1];
+			} else {
+				$filecontentaction = $filecontent;
+			}
+
+			preg_match_all('/if.*\$action\s*==\s*[\'"][a-z\-]+[\'"].*$/', $filecontentaction, $matches, PREG_SET_ORDER);
+			foreach ($matches as $key => $val) {
+				if (!preg_match('/\$user->hasR/', $val[0])
+					&& !preg_match('/\$permission/', $val[0])
+					&& !preg_match('/\$permto/', $val[0])
+					&& !preg_match('/\$usercan/', $val[0])
+					&& !preg_match('/\$canedit/', $val[0])
+					&& !preg_match('/\$user->admin/', $val[0])
+					&& !preg_match('/already done/i', $val[0])
+					&& !preg_match('/done later/i', $val[0])
+					&& !preg_match('/not required/i', $val[0])) {
+						$ok = false;
+
+						//var_dump($file['fullname'].' '.$filecontentaction);exit;
+
+						print "File ".$file['relativename']." - Line: ".$val[0]."\n";
+						break;
+				}
+			}
+
+			$this->assertTrue($ok, 'Found a test on $action, without check on permission on same line and without the comment "// Test on permission already done", in file '.$file['relativename'].'.');
+		}
 	}
 
 
@@ -670,13 +727,13 @@ class CodingPhpTest extends CommonClassTest
 	public function vardumpTesterProvider()
 	{
 		return [
-			 'var_dump at start of file' => ["var_dump(\$help)\n", true],
-			 'var_dump at start of line' => ["\nvar_dump(\$help)\n", true],
-			 'var_dump after comment next line' => ["/* Hello */\nvar_dump(\$help)\n", true],
-			 'var_dump with space' => [" var_dump(\$help)\n", true],
-			 'var_dump after comment' => [" // var_dump(\$help)\n", false],
-			 '2 var_dumps after comment' => [" // var_dump(\$help); var_dump(\$help)\n", false],
-			 'var_dump before and after comment' => [" var_dump(\$help); // var_dump(\$help)\n", true],
+			'var_dump at start of file' => ["var_dump(\$help)\n", true],
+			'var_dump at start of line' => ["\nvar_dump(\$help)\n", true],
+			'var_dump after comment next line' => ["/* Hello */\nvar_dump(\$help)\n", true],
+			'var_dump with space' => [" var_dump(\$help)\n", true],
+			'var_dump after comment' => [" // var_dump(\$help)\n", false],
+			'2 var_dumps after comment' => [" // var_dump(\$help); var_dump(\$help)\n", false],
+			'var_dump before and after comment' => [" var_dump(\$help); // var_dump(\$help)\n", true],
 		];
 	}
 
@@ -724,6 +781,7 @@ class CodingPhpTest extends CommonClassTest
 	private function verifyIsModuleEnabledOk(&$filecontent, $filename)
 	{
 		// Verify that only known modules are used
+		$matches = array();
 		preg_match_all("/isModEnabled\\(\s*[\"']([^\$\"']+)[\"']\\s*\\)/", $filecontent, $matches, PREG_SET_ORDER);
 
 		foreach ($matches as $key => $val) {
@@ -753,7 +811,7 @@ class CodingPhpTest extends CommonClassTest
 				array_key_exists($module_name, self::VALID_MODULE_MAPPING)
 				|| array_key_exists($module_name, self::DEPRECATED_MODULE_MAPPING),
 				"Unknown module: $message"
-			);
+				);
 		}
 	}
 
@@ -787,7 +845,7 @@ class CodingPhpTest extends CommonClassTest
 				}
 			},
 			$string
-		);
+			);
 	}
 
 	/**
@@ -798,13 +856,13 @@ class CodingPhpTest extends CommonClassTest
 	public function commentRemovalTestProvider()
 	{
 		return [
-			 'complete line 1' => ["/*Comment complete line*/", " "],
-			 'complete line 2' => ["// Comment complete line", ""],
-			 'partial line 1' => ["a/*Comment complete line*/b", "a b"],
-			 'partial line 2' => ["a// Comment complete line", "a"],
-			 'multi line full 1' => ["/*Comment\ncomplete line*/", "\n"],
-			 'multi line full 2' => ["/*Comment\ncomplete line*/\n", "\n\n"],
-			 'multi line partials 1' => ["a/*Comment\ncomplete line*/b", "a\nb"],
+			'complete line 1' => ["/*Comment complete line*/", " "],
+			'complete line 2' => ["// Comment complete line", ""],
+			'partial line 1' => ["a/*Comment complete line*/b", "a b"],
+			'partial line 2' => ["a// Comment complete line", "a"],
+			'multi line full 1' => ["/*Comment\ncomplete line*/", "\n"],
+			'multi line full 2' => ["/*Comment\ncomplete line*/\n", "\n\n"],
+			'multi line partials 1' => ["a/*Comment\ncomplete line*/b", "a\nb"],
 		];
 	}
 

@@ -668,7 +668,7 @@ function dol_fileperm($pathoffile)
  * @param	string					$srcfile			       Source file (can't be a directory)
  * @param	array<string,string>	$arrayreplacement	       Array with strings to replace. Example: array('valuebefore'=>'valueafter', ...)
  * @param	string					$destfile			       Destination file (can't be a directory). If empty, will be same than source file.
- * @param	string					$newmask			       Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0666'
+ * @param	string					$newmask			       Mask for new file. '0' by default means getDolGlobalString('MAIN_UMASK'). Example: '0666'.
  * @param	int						$indexdatabase		       1=index new file into database.
  * @param   int     				$arrayreplacementisregex   1=Array of replacement is already an array with key that is a regex. Warning: the key must be escaped with preg_quote for '/'
  * @return	int											       Return integer <0 if error, 0 if nothing done (dest file already exists), >0 if OK
@@ -1233,7 +1233,7 @@ function dol_move_dir($srcdir, $destdir, $overwriteifexists = 1, $indexdatabase 
 							if ($file["type"] == "dir") {
 								$res = dol_move_dir($filepath.'/'.$oldname, $filepath.'/'.$newname, $overwriteifexists, $indexdatabase, $renamedircontent);
 							} else {
-								$res = dol_move($filepath.'/'.$oldname, $filepath.'/'.$newname, 0, $overwriteifexists, 0, $indexdatabase);
+								$res = dol_move($filepath.'/'.$oldname, $filepath.'/'.$newname, '0', $overwriteifexists, 0, $indexdatabase);
 							}
 							if (!$res) {
 								return $result;
@@ -2735,7 +2735,7 @@ function dol_most_recent_file($dir, $regexfilter = '', $excludefilter = array('(
  *
  * @param	string		$modulepart			Module of document ('module', 'module_user_temp', 'module_user' or 'module_temp'). Example: 'medias', 'invoice', 'logs', 'tax-vat', ...
  * @param	string		$original_file		Relative path with filename, relative to modulepart.
- * @param	string		$entity				Restrict onto entity (0=no restriction)
+ * @param	int 		$entity				Restrict onto entity (0=no restriction)
  * @param  	User|null	$fuser				User object (forced)
  * @param	string		$refname			Ref of object to check permission for external users (autodetect if not provided by taking the dirname of $original_file) or for hierarchy
  * @param   string  	$mode               Check permission for 'read' or 'write'

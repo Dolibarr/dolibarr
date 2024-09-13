@@ -30,8 +30,14 @@
  */
 abstract class Stats
 {
+	/**
+	 * @var DoliDB
+	 */
 	protected $db;
-	protected $lastfetchdate = array(); // Dates of cache file read by methods
+	/**
+	 * @var array<string,int>	Dates of cache file read by methods
+	 */
+	protected $lastfetchdate = array();
 	public $cachefilesuffix = ''; // Suffix to add to name of cache file (to avoid file name conflicts)
 
 	/**
@@ -389,7 +395,7 @@ abstract class Stats
 	 * 	Return nb of elements by year
 	 *
 	 *	@param	string	$sql		SQL request
-	 * 	@return	array
+	 * @return	array<array{0:int,1:int}>				Array of nb each year
 	 */
 	protected function _getNbByYear($sql)
 	{

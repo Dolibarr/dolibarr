@@ -993,16 +993,16 @@ td.wordbreak img, td.wordbreakimp img {
 	padding: 0;
 }
 .nopaddingleft {
-	padding-left: 0;
+	padding-<?php print $left; ?>: 0;
 }
 .nopaddingright {
-	padding-right: 0;
+	padding-<?php print $right; ?>: 0;
 }
 .nopaddingleftimp {
-	padding-left: 0 !important;
+	padding-<?php print $left; ?>: 0 !important;
 }
 .nopaddingrightimp {
-	padding-right: 0 !important;
+	padding-<?php print $right; ?>: 0 !important;
 }
 .paddingleft {
 	padding-<?php print $left; ?>: 4px;
@@ -1116,9 +1116,12 @@ div.urllink {
 div.urllink, div.urllink a {
 	color: #339 !important;
 }
+div.urllink input {
+	min-width: 30px !important;
+}
 .divsection {
 	padding: 10px;
-	border: 1px solid #DFDFDF;
+	border: 2px solid #DFDFDF;
 	border-radius: 10px;
 	margin-top: 5px;
 	margin-bottom: 20px;
@@ -1948,6 +1951,22 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	min-width: 100px;
 }
 
+/* Disabled: Has no effect, even on chrome
+datalist option {
+			width: 300px;
+		}
+datalist {
+			position: absolute;
+			width: 200px;
+			max-height: 150px;
+			overflow-y: auto;
+			background-color: white;
+			border: 1px solid #ccc;
+			border-radius: 4px;
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+*/
+
 
 /* Force values for small screen 768 */
 @media only screen and (max-width: 768px)
@@ -1961,7 +1980,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	}
 
 	div.divphotoref {
-		padding-right: 10px !important;
+		padding-<?php echo $right; ?>: 10px !important;
 	}
 
 	.hideonsmartphone { display: none; }
@@ -2136,15 +2155,12 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	}
 
 	div.statusref {
-		padding-right: 10px;
+		padding-<?php echo $right; ?>: 10px;
 		max-width: 55%;
 	   }
-	div.statusref img {
-		padding-right: 3px !important;
-	   }
-	div.statusrefbis {
-		padding-right: 3px !important;
-	   }
+	div.statusref img, div.statusrefbis {
+		padding-<?php echo $right; ?>: 3px !important;
+   }
 	/* TODO
 	div.statusref {
 		padding-top: 0px !important;
@@ -2233,7 +2249,7 @@ td.showDragHandle {
 }
 .classforhorizontalscrolloftabs .side-nav {
 	display: block;
-	float: left;
+	float: <?php echo $left; ?>;
 }
 .classforhorizontalscrolloftabs #id-right {
 	width: calc(100% - <?php echo $leftmenuwidth + 20 ?>px);
@@ -2437,7 +2453,7 @@ div.vmenu, td.vmenu {
 
 
 div.fiche {
-	margin-<?php print $left; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '42' : '6')); ?>px;
+	margin-<?php print $left; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '44' : '6')); ?>px;
 	margin-<?php print $right; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '38' : '6')); ?>px;
 	<?php if (!empty($dol_hide_leftmenu)) {
 		print 'margin-bottom: 12px;'."\n";
@@ -2467,7 +2483,7 @@ div.fichethirdleft {
 		print "float: ".$left.";\n";
 	} ?>
 	<?php if ($conf->browser->layout != 'phone') {
-		print "width: calc(50% - 16px);\n";
+		print "width: calc(50% - 20px);\n";
 	} ?>
 	<?php if ($conf->browser->layout == 'phone') {
 		print "padding-bottom: 6px;\n";
@@ -2478,7 +2494,7 @@ div.fichetwothirdright {
 		print "float: ".$right.";\n";
 	} ?>
 	<?php if ($conf->browser->layout != 'phone') {
-		print "width: calc(50% - 16px);\n";
+		print "width: calc(50% - 20px);\n";
 	} ?>
 	<?php if ($conf->browser->layout == 'phone') {
 		print "padding-bottom: 6px\n";
@@ -2489,7 +2505,7 @@ div.fichehalfleft {
 		print "float: ".$left.";\n";
 	} ?>
 	<?php if ($conf->browser->layout != 'phone') {
-		print "width: calc(50% - 16px);\n";
+		print "width: calc(50% - 20px);\n";
 	} ?>
 }
 div.fichehalfright {
@@ -2497,7 +2513,7 @@ div.fichehalfright {
 		print "float: ".$right.";\n";
 	} ?>
 	<?php if ($conf->browser->layout != 'phone') {
-		print "width: calc(50% - 16px);\n";
+		print "width: calc(50% - 20px);\n";
 	} ?>
 }
 div.fichehalfright {
@@ -2701,7 +2717,7 @@ div.statusref {
 	   border-radius: 6px;
 } */
 div.statusref {
-	float: right;
+	float: <?php echo $right; ?>;
 	padding-left: 12px;
 	margin-top: 8px;
 	margin-bottom: 10px;
@@ -2710,14 +2726,14 @@ div.statusref {
 }
 div.statusref img {
 	padding-left: 8px;
-	   padding-right: 9px;
-	   vertical-align: text-bottom;
-	   width: 18px;
+	padding-right: 9px;
+	vertical-align: text-bottom;
+	width: 18px;
 }
 div.statusrefbis {
 	padding-left: 8px;
-	   padding-right: 9px;
-	   vertical-align: text-bottom;
+	padding-right: 9px;
+	vertical-align: text-bottom;
 }
 img.photoref, div.photoref {
 	/* border: 1px solid #DDD; */
@@ -3340,13 +3356,13 @@ div.login_block_other {
 	vertical-align: middle;
 	clear: <?php echo $disableimages ? 'none' : 'both'; ?>;
 	padding-top: 0;
-	text-align: right;
-	margin-right: 8px;
+	text-align: <?php echo $right ?>;
+	margin-<?php echo $right ?>: 8px;
 	max-width: 200px;
 }
 
 .login_block_elem {
-	float: right;
+	float: <?php echo $right ?>;
 	vertical-align: top;
 	padding: 0px 3px 0px 4px !important;
 }
@@ -4234,6 +4250,9 @@ table.liste tr, table.noborder tr, div.noborder form {
 table.liste th, table.noborder th, table.noborder tr.liste_titre td, table.noborder tr.box_titre td {
 	padding: 6px 10px 6px 12px;			/* t r b l */
 }
+table.tableforfield td, .tagtr.table-border-row .tagtd {
+	padding: 2px 4px 2px 10px;			/* t r b l */
+}
 table.liste td, table.noborder td, div.noborder form div, table.tableforservicepart1 td, table.tableforservicepart2 td {
 	padding: 6px 10px 6px 12px;			/* t r b l */
 	/* line-height: 22px; This create trouble on cell login on list of last events of a contract*/
@@ -4747,9 +4766,6 @@ div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) > .border > tbody
 div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nth-of-type(even):not(.liste_titre):not(.nooddeven)
 {
 	background: linear-gradient(bottom, var(----colorbacklineimpair2) 0%, var(--colorbacklineimpair2) 100%);
-	background: -o-linear-gradient(bottom, var(--colorbacklineimpair2) 0%, var(--colorbacklineimpair2) 100%);
-	background: -moz-linear-gradient(bottom, var(--colorbacklineimpair2) 0%, var(--colorbacklineimpair2) 100%);
-	background: -webkit-linear-gradient(bottom, var(--colorbacklineimpair2) 0%, var(--colorbacklineimpair2) 100%);
 }
 .noborder > tbody > tr:nth-child(even):not(:last-of-type) td:not(.liste_titre), .liste > tbody > tr:nth-child(even):not(:last-of-type) td:not(.liste_titre),
 .noborder .oddeven.tagtr:nth-child(even):not(:last-of-type) .tagtd:not(.liste_titre)
@@ -4762,9 +4778,6 @@ div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) > .border > tbody
 div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nth-of-type(odd):not(.liste_titre):not(.nooddeven)
 {
 	background: linear-gradient(bottom, var(--colorbacklinepair2) 0%, var(--colorbacklinepair2) 100%);
-	background: -o-linear-gradient(bottom, var(--colorbacklinepair2) 0%, var(--colorbacklinepair2) 100%);
-	background: -moz-linear-gradient(bottom, var(--colorbacklinepair2) 0%, var(--colorbacklinepair2) 100%);
-	background: -webkit-linear-gradient(bottom, var(--colorbacklinepair2) 0%, var(--colorbacklinepair2) 100%);
 }
 .noborder > tbody > tr:nth-child(odd):not(:last-child) td:not(.liste_titre), .liste > tbody > tr:nth-child(odd):not(:last-child) td:not(.liste_titre),
 .noborder .oddeven.tagtr:nth-child(odd):not(:last-child) .tagtd:not(.liste_titre)
@@ -4991,11 +5004,23 @@ span.dashboardlineko {
 .divboxtable {
 	margin-bottom: 25px !important;
 }
+
+
+.fichecenter .tableforfield tr td, .tagtr.table-border-row {
+	background: var(--colorbacklineimpair2) !important;
+}
+
 .boxtable {
 	border-bottom-width: 1px;
 	background: var(--colorbackbody);
 	border-top: <?php echo $borderwidth ?>px solid var(--colortopbordertitle1);
 	/* border-top: 2px solid var(--colorbackhmenu1) !important; */
+}
+.boxtable tr td.tdboxstats {
+	background: var(--colorbackbody) !important;
+}
+.boxtable tr td.tdboxstats div.boxstats {
+	background: var(--colorbacklineimpair2) !important;
 }
 
 table.noborder.boxtable tr td {
@@ -5210,7 +5235,7 @@ label.radioprivate {
 	margin-top: 2px; */
 }
 div.divphotoref > div > .photowithmargin, div.divphotoref > img.photowithmargin, div.divphotoref > a > .photowithmargin {		/* Margin right for photo not inside a div.photoref frame only */
-	margin-right: 15px;
+	margin-<?php echo $right; ?>: 15px;
 }
 
 .photowithborder {
@@ -5803,12 +5828,7 @@ table.cal_month td { padding-left: 1px !important; padding-right: 1px !important
 .cal_today_peruser_peruserleft { background: #FDFDF0; border-left: solid 2px #6C7C7B; border-right: solid 1px #E0E0E0; border-bottom: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_past          { }
 .cal_peruser       { padding-top: 0 !important; padding-bottom: 0 !important; padding-<?php print $left; ?>: 1px !important; padding-<?php print $right; ?>: 1px !important; }
-.cal_impair        {
-	background: linear-gradient(bottom, var(--colorbacklinepair2) 85%, var(--colorbacklinepair2) 100%);
-	background: -o-linear-gradient(bottom, var(--colorbacklinepair2) 85%, var(--colorbacklinepair2) 100%);
-	background: -moz-linear-gradient(bottom, var(--colorbacklinepair2) 85%, var(--colorbacklinepair2) 100%);
-	background: -webkit-linear-gradient(bottom, var(--colorbacklinepair2) 85%, var(--colorbacklinepair2) 100%);
-}
+.cal_impair        { ackground: linear-gradient(bottom, var(--colorbacklinepair2) 85%, var(--colorbacklinepair2) 100%); }
 .cal_today_peruser_impair { background: #F8F8F0; }
 .peruser_busy      { }
 .peruser_notbusy   { opacity: 0.5; }
@@ -6493,8 +6513,8 @@ ul.ecmjqft a:hover {
 div.ecmjqft {
 	vertical-align: middle;
 	display: inline-block !important;
-	text-align: right;
-	float: right;
+	text-align: <?php echo $right; ?>;
+	float: <?php echo $right; ?>;
 	right:4px;
 	clear: both;
 }
@@ -6511,7 +6531,7 @@ div#ecm-layout-west {
 div#ecm-layout-center {
 	width: calc(100% - 405px);
 	vertical-align: top;
-	float: right;
+	float: <?php echo $right; ?>;
 }
 
 .ecmjqft LI.directory { font-weight:normal; background: url(<?php echo dol_buildpath($path.'/theme/common/treemenu/folder2.png', 1); ?>) left top no-repeat; background-position-y: 8px; }
@@ -7824,9 +7844,6 @@ div.tabsElem a.tab {
   background: white;
   border-radius: 0.25em;
   padding: 1em;
-  background-image: -o-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(230,230,230,0.4) 100%);
-  background-image: -moz-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(230,230,230,0.4) 100%);
-  background-image: -webkit-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(230,230,230,0.4) 100%);
   background-image: linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(230,230,230,0.4) 100%);
 }
 .cd-timeline-content:after {

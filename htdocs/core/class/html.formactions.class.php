@@ -2,6 +2,7 @@
 /* Copyright (c) 2008-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2018 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -216,6 +217,14 @@ class FormActions
 				$url .= ($projectid > 0 ? '&projectid='.((int) $projectid) : '').($taskid > 0 ? '&taskid='.((int) $taskid) : '');
 				$url .= ($assignedtouser > 0 ? '&assignedtouser='.((int) $assignedtouser) : '');
 				$url .= '&backtopage='.urlencode($urlbacktopage);
+
+				if ($typeelement == 'invoice_supplier') {
+					$messagingUrl = DOL_URL_ROOT.'/fourn/facture/messaging.php?id='.$object->id;
+					$morehtmlright .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 1);
+					$messagingUrl = DOL_URL_ROOT.'/fourn/facture/agenda.php?id='.$object->id;
+					$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 2);
+				}
+
 				$morehtmlright .= dolGetButtonTitle($langs->trans("AddEvent"), '', 'fa fa-plus-circle', $url);
 			}
 
@@ -241,7 +250,7 @@ class FormActions
 			$error = 0;
 			if (empty($reshook)) {
 				print '<!-- formactions->showactions -->' . "\n";
-				print load_fiche_titre($title, $morehtmlright, '', 0, 0, '', $morehtmlcenter);
+				print load_fiche_titre($title, $morehtmlright, '', 0, '', '', $morehtmlcenter);
 			}
 
 			$page = 0;
@@ -250,12 +259,12 @@ class FormActions
 			print '<div class="div-table-responsive-no-min">';
 			print '<table class="centpercent noborder'.($morecss ? ' '.$morecss : '').'">';
 			print '<tr class="liste_titre">';
-			print getTitleFieldOfList('Ref', 0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
-			print getTitleFieldOfList('Date', 0, $_SERVER["PHP_SELF"], 'a.datep', $page, $param, '', $sortfield, $sortorder, 'center ', 1);
-			print getTitleFieldOfList('By', 0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
-			print getTitleFieldOfList('Type', 0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
-			print getTitleFieldOfList('Title', 0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
-			print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, 'right ', 1);
+			print getTitleFieldOfList('Ref', 0, $_SERVER["PHP_SELF"], '', (string) $page, $param, '', $sortfield, $sortorder, '', 1);
+			print getTitleFieldOfList('Date', 0, $_SERVER["PHP_SELF"], 'a.datep', (string) $page, $param, '', $sortfield, $sortorder, 'center ', 1);
+			print getTitleFieldOfList('By', 0, $_SERVER["PHP_SELF"], '', (string) $page, $param, '', $sortfield, $sortorder, '', 1);
+			print getTitleFieldOfList('Type', 0, $_SERVER["PHP_SELF"], '', (string) $page, $param, '', $sortfield, $sortorder, '', 1);
+			print getTitleFieldOfList('Title', 0, $_SERVER["PHP_SELF"], '', (string) $page, $param, '', $sortfield, $sortorder, '', 1);
+			print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', (string) $page, $param, '', $sortfield, $sortorder, 'right ', 1);
 			print '</tr>';
 			print "\n";
 

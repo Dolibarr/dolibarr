@@ -250,6 +250,9 @@ print "\n";
 
 print '<br>';
 
+
+print load_fiche_titre($langs->trans('Options'), '', '');
+
 // Mode
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -259,7 +262,7 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
-print '<td class="notitlefield">'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
+print '<td class="notitlefield">'.$langs->trans("Parameters").'</td><td></td>';
 print "</tr>\n";
 
 // Terminals
@@ -479,7 +482,7 @@ if (getDolGlobalInt('TAKEPOS_ENABLE_SUMUP')) {
 	print '<table class="noborder centpercent">';
 
 	print '<tr class="liste_titre">';
-	print '<td class="titlefield">'.$langs->trans("Sumup").'</td><td>'.$langs->trans("Value").'</td>';
+	print '<td class="titlefield">'.$langs->trans("Sumup").'</td><td></td>';
 	print "</tr>\n";
 
 	print '<tr class="oddeven"><td>';
@@ -496,8 +499,6 @@ if (getDolGlobalInt('TAKEPOS_ENABLE_SUMUP')) {
 	print '</table>';
 	print '</div>';
 }
-
-print '<br>';
 
 print $form->buttonsSaveCancel("Save", '');
 

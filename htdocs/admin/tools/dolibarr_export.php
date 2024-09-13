@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2006-2018	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2006-2021	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -583,7 +584,7 @@ if (!empty($_SESSION["commandbackuplastdone"])) {
 if (!empty($_SESSION["commandbackuptorun"])) {
 	print '<br><span class="warning">'.$langs->trans("YouMustRunCommandFromCommandLineAfterLoginToUser", $dolibarr_main_db_user, $dolibarr_main_db_user).':</span><br>'."\n";
 	print '<textarea id="commandbackuptoruntext" rows="'.ROWS_2.'" class="centpercent">'.$_SESSION["commandbackuptorun"].'</textarea><br>'."\n";
-	print ajax_autoselect("commandbackuptoruntext", 0);
+	print ajax_autoselect("commandbackuptoruntext", '');
 	print '<br>';
 
 	//print $paramclear;

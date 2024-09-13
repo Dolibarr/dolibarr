@@ -302,7 +302,7 @@ class User extends CommonObject
 	public $all_permissions_are_loaded;
 
 	/**
-	 * @var int Number of rights granted to the user. Value loaded after a getrights().
+	 * @var int Number of rights granted to the user. Value loaded after a loadRights().
 	 */
 	public $nb_rights;
 
@@ -971,7 +971,7 @@ class User extends CommonObject
 			if (!empty($subperms)) {
 				$whereforadd .= " OR (module='".$this->db->escape($module)."' AND perms='".$this->db->escape($perms)."' AND (subperms='lire' OR subperms='read'))";
 			} elseif (!empty($perms)) {
-				$whereforadd .= " OR (module='".$this->db->escape($module)."' AND (perms='lire' OR perms='read') AND subperms IS NULL)";
+				$whereforadd .= " OR (module='".$this->db->escape($module)."' AND (perms='lire' OR perms='read') AND (subperms IS NULL or subperms = ''))";
 			}
 		} else {
 			// A list of permission was requested (not a single specific permission)
@@ -1456,7 +1456,7 @@ class User extends CommonObject
 	 *	@param  string	$moduletag		Limit permission for a particular module ('' by default means load all permissions)
 	 *  @param	int		$forcereload	Force reload of permissions even if they were already loaded (ignore cache)
 	 *	@return	void
-	 *  @deprecated Use getRights
+	 *  @deprecated Use loadRights
 	 *
 	 *  @see	clearrights(), delrights(), addrights(), hasRight()
 	 *  @phpstan-ignore-next-line
@@ -2700,6 +2700,7 @@ class User extends CommonObject
 		$sql .= " WHERE fk_user = ".((int) $this->id);
 
 		dol_syslog(get_class($this).'::update_clicktodial', LOG_DEBUG);
+
 		$result = $this->db->query($sql);
 
 		$sql = "INSERT INTO ".$this->db->prefix()."user_clicktodial";
@@ -2711,6 +2712,7 @@ class User extends CommonObject
 		$sql .= ", '".$this->db->escape($this->clicktodial_poste)."')";
 
 		dol_syslog(get_class($this).'::update_clicktodial', LOG_DEBUG);
+
 		$result = $this->db->query($sql);
 		if ($result) {
 			$this->db->commit();

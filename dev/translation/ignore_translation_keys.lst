@@ -806,7 +806,6 @@ ShowRecruitmentCandidature
 ShowRecruitmentJobPosition
 ShowSearchFields
 ShowSkill
-ShowSkillRank
 ShowSkilldet
 ShowStockTransfer
 ShowStockTransferLine
@@ -819,8 +818,6 @@ SignatureOK
 Siren
 Situation
 SizeUnit
-SkillCreated
-SkillRank
 SmsTestSubstitutionReplacedByGenericValues
 SomeShipmentExists
 SourceType

@@ -222,7 +222,7 @@ if (empty($conf->use_javascript_ajax)) {
 	if ($mode != 'Full_inline') {
 		$uselocalbrowser = true;
 		$readonly = ($mode == 'dolibarr_readonly' ? 1 : 0);
-		$editor = new DolEditor('formtestfield', getDolGlobalString('FCKEDITOR_TEST', 'Test'), '', 200, $mode, 'In', true, $uselocalbrowser, 1, 120, 8, $readonly);
+		$editor = new DolEditor('formtestfield', getDolGlobalString('FCKEDITOR_TEST', 'Test'), '', 200, $mode, 'In', true, $uselocalbrowser, 1, 120, '8', $readonly);
 		$editor->Create();
 	} else {
 		// CKEditor inline enabled with the contenteditable="true"

@@ -74,4 +74,11 @@ abstract class ModeleNumRefRecruitmentCandidature extends CommonNumRefGenerator
 	 *  @return	string|int<-1,0>					Next value if OK, <=0 if KO
 	 */
 	abstract public function getNextValue($object);
+
+	/**
+	 *  Return an example of numbering
+	 *
+	 *  @return     string      Example
+	 */
+	abstract public function getExample();
 }
