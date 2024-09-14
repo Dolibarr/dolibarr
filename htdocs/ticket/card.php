@@ -1163,7 +1163,7 @@ if ($action == 'create' || $action == 'presend') {
 			print '<tr><td>';
 			print $form->textwithpicto($langs->trans("TicketDurationAuto"), $langs->trans("TicketDurationAutoInfos"), 1);
 			print '</td><td>';
-			print $foundinter ? convertSecondToTime($timing, 'all', getDolGlobalString('MAIN_DURATION_OF_WORKDAY')) : '';
+			print $foundinter ? convertSecondToTime($timing, 'all', getDolGlobalInt('MAIN_DURATION_OF_WORKDAY')) : '';
 			print '</td></tr>';
 		}
 

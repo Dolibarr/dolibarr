@@ -1096,7 +1096,7 @@ class FormWebPortal extends Form
 		} elseif ($type == 'duration') {
 			include_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 			if (!is_null($value) && $value !== '') {
-				$value = convertSecondToTime($value, 'allhourmin');
+				$value = convertSecondToTime((int) $value, 'allhourmin');
 			}
 		} elseif ($type == 'double' || $type == 'real') {
 			if (!is_null($value) && $value !== '') {
