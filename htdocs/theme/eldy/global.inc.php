@@ -78,6 +78,7 @@ $leftmenuwidth = 240;
 @phan-var-force string $toolTipFontColor
 @phan-var-force int<0,1> $useboldtitle
 @phan-var-force int $userborderontable
+@phan-var-force array{h:int,l:int,s:int,a:int} $colortextlinkHsla
 ';
 
 ?>
@@ -313,7 +314,7 @@ div.tabBar input, div.tabBar input.flat, div.tabBar textarea, div.tabBar textare
 		background-color: #f8f8fa;
 		border-bottom-left-radius: 0;
 		border-bottom-right-radius: 0;
-				<?php
+						<?php
 	}
 	?>
 }
