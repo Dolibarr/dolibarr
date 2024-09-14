@@ -162,7 +162,7 @@ class FormHelper
 	/**
 	 * Helper function to build custom attributes string from an array.
 	 *
-	 * @param array|null $attributes Array of custom attributes (optional).
+	 * @param array<string,string> $attributes Array of custom attributes (optional).
 	 *
 	 * @return string
 	 */
