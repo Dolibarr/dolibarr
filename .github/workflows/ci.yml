@@ -10,6 +10,7 @@ jobs:
   phan:
     uses: ./.github/workflows/phan.yml
     secrets: inherit
+    needs: [pre-commit]
     with:
       gh_event: ${{ github.event_name }}
   phpstan:
@@ -19,7 +20,7 @@ jobs:
     with:
       gh_event: ${{ github.event_name }}
   windows-ci:
-    needs: [pre-commit, phan]
+    needs: [pre-commit, phpstan, phan]
     secrets: inherit
     uses: ./.github/workflows/windows-ci.yml
     with:
