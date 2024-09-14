@@ -41,7 +41,7 @@ class FormHelper
 	 *
 	 * @param string $class       Optional CSS class for the table.
 	 * @param string $id          Optional ID for the table.
-	 * @param array  $attributes  Additional attributes for the table (optional).
+	 * @param array<string, string> $attributes Additional attributes for the table (optional).
 	 *
 	 * @return string
 	 */
@@ -67,7 +67,7 @@ class FormHelper
 	 * @param array  $columns    Array of columns. Each column can be a string (content) or an array with 'content', 'class', 'id', and additional attributes.
 	 * @param string $rowClass   Optional CSS class for the row.
 	 * @param string $rowId      Optional ID for the row.
-	 * @param array  $attributes Additional attributes for the row (optional).
+	 * @param array<string, string> $attributes Attributes for the row.
 	 *
 	 * @return string
 	 */
@@ -102,7 +102,7 @@ class FormHelper
 	 * @param int    $rowspan    Rowspan attribute (optional).
 	 * @param int    $colspan    Colspan attribute (optional).
 	 * @param string $id         Optional ID for the row.
-	 * @param array  $attributes Additional attributes for the row (optional).
+	 * @param array<string, string> $attributes Attributes for the header row.
 	 *
 	 * @return string
 	 */
@@ -141,7 +141,7 @@ class FormHelper
 	 * @param int    $rowspan    Rowspan attribute (optional).
 	 * @param int    $colspan    Colspan attribute (optional).
 	 * @param string $id         Optional ID for the column.
-	 * @param array  $attributes Additional attributes for the column (optional).
+	 * @param array<string, string> $attributes Attributes for the header row.
 	 *
 	 * @return string
 	 */
