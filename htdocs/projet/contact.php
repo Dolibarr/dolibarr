@@ -430,7 +430,7 @@ if ($id > 0 || !empty($ref)) {
 	if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') && !empty($object->usage_opportunity)) {
 		// Opportunity status
 		print '<tr><td>'.$langs->trans("OpportunityStatus").'</td><td>';
-		$code = dol_getIdFromCode($db, $object->opp_status, 'c_lead_status', 'rowid', 'code');
+		$code = dol_getIdFromCode($db, (string) $object->opp_status, 'c_lead_status', 'rowid', 'code');
 		if ($code) {
 			print $langs->trans("OppStatus".$code);
 		}

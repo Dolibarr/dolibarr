@@ -309,7 +309,7 @@ class CProductNature extends CommonDict
 	 * Get unit from code
 	 * @param string $code code of unit
 	 * @param string $mode 0= id , short_label=Use short label as value, code=use code
-	 * @return int            Return integer <0 if KO, Id of code if OK
+	 * @return int<-1,max>|string Return integer <0 if KO, Id of code if OK
 	 */
 	public function getProductNatureFromCode($code, $mode = 'code')
 	{

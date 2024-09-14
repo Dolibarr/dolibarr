@@ -304,7 +304,7 @@ print '</td></tr>';
 if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 	// Opportunity status
 	print '<tr><td>'.$langs->trans("OpportunityStatus").'</td><td>';
-	$code = dol_getIdFromCode($db, $object->opp_status, 'c_lead_status', 'rowid', 'code');
+	$code = dol_getIdFromCode($db, (string) $object->opp_status, 'c_lead_status', 'rowid', 'code');
 	if ($code) {
 		print $langs->trans("OppStatus".$code);
 	}

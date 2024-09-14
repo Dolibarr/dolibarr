@@ -1648,7 +1648,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 
 			// Set the new member type
 			$member->typeid = $newtypeid;
-			$member->type = (string) dol_getIdFromCode($db, $newtypeid, 'adherent_type', 'rowid', 'libelle');
+			$member->type = (string) dol_getIdFromCode($db, (string) $newtypeid, 'adherent_type', 'rowid', 'libelle');
 
 			// list member type
 			if (!$action) {

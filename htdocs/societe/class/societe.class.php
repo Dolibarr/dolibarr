@@ -5179,7 +5179,7 @@ class Societe extends CommonObject
 
 			if ($result > 0) {
 				$this->typent_id = $typent_id;
-				$this->typent_code = dol_getIdFromCode($this->db, $this->typent_id, 'c_typent', 'id', 'code');
+				$this->typent_code = dol_getIdFromCode($this->db, (string) $this->typent_id, 'c_typent', 'id', 'code');
 				return 1;
 			} else {
 				return -1;
