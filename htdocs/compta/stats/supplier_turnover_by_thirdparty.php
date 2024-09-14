@@ -244,7 +244,7 @@ if (isModEnabled('accounting')) {
 		print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, '1');
 	} else {
 		// Test if there is at least one line in bookkeeping
-		$pcgverid = getDolGlobalInt('CHARTOFACCOUNTS');
+		$pcgverid = getDolGlobalString('CHARTOFACCOUNTS');
 		$pcgvercode = dol_getIdFromCode($db, $pcgverid, 'accounting_system', 'rowid', 'pcg_version');
 		if (empty($pcgvercode)) {
 			$pcgvercode = $pcgverid;
@@ -256,7 +256,7 @@ if (isModEnabled('accounting')) {
 		$sql .= " WHERE b.entity = ".$conf->entity; // In module double party accounting, we never share entities
 		$sql .= " AND b.numero_compte = aa.account_number";
 		$sql .= " AND aa.entity = ".$conf->entity;
-		$sql .= " AND aa.fk_pcg_version = '".$db->escape($pcgvercode)."'";
+		$sql .= " AND aa.fk_pcg_version = '".$db->escape($pcgvercode)."'"; // fk_pcg_version is varchar(32)
 		$sql .= $db->plimit(1);
 
 		$resql = $db->query($sql);
