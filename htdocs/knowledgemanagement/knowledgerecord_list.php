@@ -138,7 +138,7 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 $permissiontoread = $user->hasRight('knowledgemanagement', 'knowledgerecord', 'read');
 $permissiontoadd = $user->hasRight('knowledgemanagement', 'knowledgerecord', 'write');
 $permissiontodelete = $user->hasRight('knowledgemanagement', 'knowledgerecord', 'delete');
-$permissiontovalidate =  ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $permissiontoadd) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('knowledgemanagement', 'knowledgerecord', 'validate')));
+$permissiontovalidate =  ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $permissiontoadd) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('knowledgemanagement', 'knowledgerecord_advance', 'validate')));
 
 
 // Security check

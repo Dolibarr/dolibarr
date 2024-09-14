@@ -77,7 +77,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'inclu
 $permissiontoread = $user->hasRight('knowledgemanagement', 'knowledgerecord', 'read');
 $permissiontoadd = $user->hasRight('knowledgemanagement', 'knowledgerecord', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontodelete = $user->hasRight('knowledgemanagement', 'knowledgerecord', 'delete') || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
-$permissiontovalidate =  ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $permissiontoadd) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('knowledgemanagement', 'knowledgerecord', 'validate')));
+$permissiontovalidate =  ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $permissiontoadd) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('knowledgemanagement', 'knowledgerecord_advance', 'validate')));
 $permissionnote = $user->hasRight('knowledgemanagement', 'knowledgerecord', 'write'); // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->hasRight('knowledgemanagement', 'knowledgerecord', 'write'); // Used by the include of actions_dellink.inc.php
 $upload_dir = $conf->knowledgemanagement->multidir_output[isset($object->entity) ? $object->entity : 1];
