@@ -69,6 +69,8 @@ if ($action == 'updateMask') {
 	$maskconstorder = GETPOST('maskconstorder', 'aZ09');
 	$maskvalue = GETPOST('maskorder', 'alpha');
 
+	$res = 0;
+
 	if ($maskconstorder && preg_match('/_MASK$/', $maskconstorder)) {
 		$res = dolibarr_set_const($db, $maskconstorder, $maskvalue, 'chaine', 0, '', $conf->entity);
 	}

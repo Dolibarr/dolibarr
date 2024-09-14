@@ -57,6 +57,9 @@ if (!getDolGlobalString('CHEQUERECEIPTS_ADDON')) {
 if ($action == 'updateMask') {
 	$maskconstchequereceipts = GETPOST('maskconstchequereceipts', 'aZ09');
 	$maskchequereceipts = GETPOST('maskchequereceipts', 'alpha');
+
+	$res = 0;
+
 	if ($maskconstchequereceipts && preg_match('/_MASK$/', $maskconstchequereceipts)) {
 		$res = dolibarr_set_const($db, $maskconstchequereceipts, $maskchequereceipts, 'chaine', 0, '', $conf->entity);
 	}

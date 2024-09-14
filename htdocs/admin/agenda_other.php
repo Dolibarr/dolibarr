@@ -120,6 +120,8 @@ if ($action == 'set') {
 
 	$commande = new CommandeFournisseur($db);
 	$commande->initAsSpecimen();
+	$specimenthirdparty = new Societe($db);
+	$specimenthirdparty->initAsSpecimen();
 	$commande->thirdparty = $specimenthirdparty;
 
 	// Search template files
@@ -241,6 +243,9 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 	print '</tr>'."\n";
 
 	clearstatcache();
+
+	$specimenthirdparty = new Societe($db);
+	$specimenthirdparty->initAsSpecimen();
 
 	foreach ($dirmodels as $reldir) {
 		$dir = dol_buildpath($reldir."core/modules/action/doc");
