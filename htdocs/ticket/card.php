@@ -1154,6 +1154,7 @@ if ($action == 'create' || $action == 'presend') {
 					if ($objecttype == "fichinter") {
 						foreach ($objects as $fichinter) {
 							$foundinter++;
+							/** @var Fichinter $fichinter */
 							$timing += $fichinter->duration;
 						}
 					}
