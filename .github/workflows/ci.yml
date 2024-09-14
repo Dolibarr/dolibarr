@@ -15,7 +15,7 @@ jobs:
   phpstan:
     uses: ./.github/workflows/phpstan.yml
     secrets: inherit
-    needs: [pre-commit, phan]
+    needs: [pre-commit]
     with:
       gh_event: ${{ github.event_name }}
   windows-ci:
