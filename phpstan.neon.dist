@@ -71,7 +71,6 @@ parameters:
 		- '#expects int\|null#'
 		- '#color.* expects int, string#'
 		- '#imap.* expects int, string#'
-		- '#convert.* expects int, string#'
 		- '#\(\) expects int, string#'
 		- '#run_sql expects int, string#'
 		- '#on array{url: mixed} in empty\(\) does not exist.#'
