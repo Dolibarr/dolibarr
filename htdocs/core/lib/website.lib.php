@@ -1325,7 +1325,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
  * To get image from an external URL to download first, see getAllImages()
  *
  * @param	string		$htmlContent	HTML content
- * @param	string		$imageNumber	The position of image. 1 by default = first image found
+ * @param	int			$imageNumber	The position of image. 1 by default = first image found
  * @return	string						URL of image or '' if not foud
  */
 function getImageFromHtmlContent($htmlContent, $imageNumber = 1)
