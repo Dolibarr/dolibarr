@@ -64,14 +64,14 @@ class FormHelper
 	/**
 	 * Creates a table row (tr) element with support for individual column classes and attributes.
 	 *
-	 * @param array  $columns    Array of columns. Each column can be a string (content) or an array with 'content', 'class', 'id', and additional attributes.
+	 * @param array<int, array<string, mixed>> $columns Array of columns where each column is an array with string keys like 'content', 'class', etc.
 	 * @param string $rowClass   Optional CSS class for the row.
 	 * @param string $rowId      Optional ID for the row.
 	 * @param array<string, string> $attributes Attributes for the row.
 	 *
 	 * @return string
 	 */
-	public function addRow($columns = array(), $rowClass = '', $rowId = '', array $attributes = array())
+	public function addRow(array $columns = array(), $rowClass = '', $rowId = '', array $attributes = array())
 	{
 		$attrString = $this->buildAttributes($attributes);
 		$out = '<tr' . ($rowClass ? ' class="' . $rowClass . '"' : '') . ($rowId ? ' id="' . $rowId . '"' : '') . ' ' . $attrString . '>';
@@ -97,7 +97,7 @@ class FormHelper
 	/**
 	 * Creates a header row (th) element with support for additional attributes.
 	 *
-	 * @param array  $headers    Array of headers to display. Each header can be a string or an array with 'content', 'class', 'id', and additional attributes.
+	 * @param array<int, string> $headers Array of header labels, where each entry is a string representing the column header.
 	 * @param string $class      Optional CSS class for the row.
 	 * @param int    $rowspan    Rowspan attribute (optional).
 	 * @param int    $colspan    Colspan attribute (optional).
@@ -106,7 +106,7 @@ class FormHelper
 	 *
 	 * @return string
 	 */
-	public function addHeaderRow($headers = array(), $class = 'liste_titre', $rowspan = 1, $colspan = 1, $id = '', array $attributes = array())
+	public function addHeaderRow(array $headers = array(), $class = 'liste_titre', $rowspan = 1, $colspan = 1, $id = '', array $attributes = array())
 	{
 		$attrString = $this->buildAttributes($attributes);
 		$out = '<tr' . ($class ? ' class="' . $class . '"' : '') . ($id ? ' id="' . $id . '"' : '') . ' ' . $attrString . '>';
