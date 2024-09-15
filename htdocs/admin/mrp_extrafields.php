@@ -45,7 +45,7 @@ $action = GETPOST('action', 'aZ09');
 $attrname = GETPOST('attrname', 'alpha');
 $elementtype = 'mrp_mo';
 
-$help_url = null;
+$help_url = '';
 
 if (!$user->admin) {
 	accessforbidden();
