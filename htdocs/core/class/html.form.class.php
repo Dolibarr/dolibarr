@@ -4054,7 +4054,7 @@ class Form
 					'optlabel' => &$optlabel,
 					'outvallabel' => &$outvallabel,
 					'outarrayentry' => &$outarrayentry
-				);	
+				);
 				if (is_null($objp->fk_soc)) {
 					$objp->fk_soc = $socid;
 				}
