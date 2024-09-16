@@ -423,9 +423,8 @@ class FormListWebPortal
 					}
 				}
 			} elseif (preg_match('/(_dtstart|_dtend)$/', $key) && !empty($val)) {
-				$param .= '&search_' . $key . 'month=' . (GETPOSTINT('search_' . $key . 'month'));
-				$param .= '&search_' . $key . 'day=' . (GETPOSTINT('search_' . $key . 'day'));
-				$param .= '&search_' . $key . 'year=' . (GETPOSTINT('search_' . $key . 'year'));
+				$postDate = GETPOST('search_' . $key, 'alphanohtml');
+				$param .= '&search_' . $key . '=' . urlencode($postDate);
 			} elseif ($search[$key] != '') {
 				$param .= '&search_' . $key . '=' . urlencode($search[$key]);
 			}
@@ -487,14 +486,14 @@ class FormListWebPortal
 				if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
 					$html .= $this->form->selectarray('search_' . $key, $val['arrayofkeyval'], (isset($search[$key]) ? $search[$key] : ''), $val['notnull'], 0, 0, '', 1, 0, 0, '', '');
 				} elseif (preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
-					$postDateStart = GETPOST('search_' . $key . '_dtstart', 'alphanohtml');
-					$postDateEnd = GETPOST('search_' . $key . '_dtend', 'alphanohtml');
+					$postDateStart = empty($search[$key.'_dtstart']) ? '' : GETPOST('search_' . $key . '_dtstart', 'alphanohtml'); // remove search date if empty
+					$postDateEnd = empty($search[$key.'_dtend']) ? '' : GETPOST('search_' . $key . '_dtend', 'alphanohtml'); // remove search date if empty
 
 					$html .= '<div class="grid">';
-					$html .= $this->form->inputDate('search_' . $key . '_dtstart', $postDateStart ? $postDateStart : '', $langs->trans('From'));
+					$html .= $this->form->inputDate('search_' . $key . '_dtstart', $postDateStart, $langs->trans('From'));
 					$html .= '</div>';
 					$html .= '<div class="grid">';
-					$html .= $this->form->inputDate('search_' . $key . '_dtend', $postDateEnd ? $postDateEnd : '', $langs->trans('to'));
+					$html .= $this->form->inputDate('search_' . $key . '_dtend', $postDateEnd, $langs->trans('to'));
 					$html .= '</div>';
 				} else {
 					$html .= '<input type="text" name="search_' . $key . '" value="' . dol_escape_htmltag(isset($search[$key]) ? $search[$key] : '') . '">';
