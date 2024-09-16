@@ -522,6 +522,7 @@ class FormAdmin
 			// Set $valhtml with the picto for the type
 			$valhtml = ($key ? getPictoForType($key) : '').$val;
 
+			// @phpstan-ignore-next-line
 			if (empty($typewecanchangeinto) || in_array($key, $typewecanchangeinto[$type])) {
 				$out .= '<option value="'.$key.'"'.$selected.' data-html="'.dol_escape_htmltag($valhtml).'">'.($val ? $val : '&nbsp;').'</option>';
 			} else {
