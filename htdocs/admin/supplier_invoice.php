@@ -380,6 +380,7 @@ foreach ($dirmodels as $reldir) {
 					print "<td>\n";
 					require_once $dir.'/'.$file;
 					$module = new $classname($db, $specimenthirdparty);
+					'@phan-var-force ModelePDFSuppliersInvoices $module';
 					if (method_exists($module, 'info')) {
 						print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
 					} else {

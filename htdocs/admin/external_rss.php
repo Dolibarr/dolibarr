@@ -214,7 +214,7 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans('RSSUrl').'</td>';
 print '<td><input type="text" class="flat minwidth300" name="external_rss_urlrss_'.($lastexternalrss + 1).'" value=""></td>';
-print '<td>http://news.google.com/news?ned=us&topic=h&output=rss<br>http://www.dolibarr.org/rss</td>';
+print '<td>https://news.google.com/news?ned=us&topic=h&output=rss<br>https://www.dolibarr.org/rss</td>';
 print '</tr>';
 print '</table>';
 
@@ -300,7 +300,7 @@ if ($resql) {
 		print '</tr>'."\n";
 
 		// Logo
-		if ($result > 0 && empty($rss->error)) {
+		if ($result > 0 && empty($rssparser->error)) {
 			print '<tr class="oddeven">';
 			print "<td>".$langs->trans("Logo")."</td>";
 			print '<td>';
@@ -350,9 +350,9 @@ $db->close();
 /**
  * Check if the given RSS feed if inside the list of boxes/widgets
  *
- * @param	int		$idrss		The id of the RSS feed
- * @param	array	$boxlist	A list with boxes/widgets
- * @return	bool				true if the rss feed is inside the box/widget list, otherwise false
+ * @param	int				$idrss		The id of the RSS feed
+ * @param	ModeleBoxes[]	$boxlist	A list with boxes/widgets
+ * @return	bool						true if the rss feed is inside the box/widget list, otherwise false
  */
 function _isInBoxList($idrss, array $boxlist)
 {

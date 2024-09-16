@@ -302,7 +302,7 @@ foreach ($dirmodels as $reldir) {
 
 							if (getDolGlobalString("PAYMENT_ADDON").'.php' == $file) {  // If module is the one used, we show existing errors
 								if (!empty($module->error)) {
-									dol_htmloutput_mesg($module->error, '', 'error', 1);
+									dol_htmloutput_mesg($module->error, array(), 'error', 1);
 								}
 							}
 

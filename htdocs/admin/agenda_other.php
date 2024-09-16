@@ -270,8 +270,9 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 						print "<td>\n";
 						require_once $dir.'/'.$file;
 						$module = new $classname($db, $specimenthirdparty);
+						'@phan-var-force ModeleAction $module';
 						if (method_exists($module, 'info')) {
-							print $module->info($langs);
+							print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
 						} else {
 							print $module->description;
 						}

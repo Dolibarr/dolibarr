@@ -383,8 +383,7 @@ foreach ($dirmodels as $reldir) {
 					require_once $dir.'/'.$file;
 					$module = new $classname($db, new CommandeFournisseur($db));
 
-					'@phan-var-force ModeleNumRefSuppliersOrders $module';
-
+					'@phan-var-force ModelePDFSuppliersOrders $module';
 
 					print "<tr class=\"oddeven\">\n";
 					print "<td>";
@@ -393,6 +392,7 @@ foreach ($dirmodels as $reldir) {
 					print "<td>\n";
 					require_once $dir.'/'.$file;
 					$module = new $classname($db, $specimenthirdparty);
+					'@phan-var-force ModelePDFSuppliersOrders $module';
 					if (method_exists($module, 'info')) {
 						print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
 					} else {

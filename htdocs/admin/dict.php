@@ -2675,10 +2675,10 @@ $db->close();
 /**
  *	Show fields in insert/edit mode
  *
- * 	@param		array		$fieldlist		Array of fields
- * 	@param		Object		$obj			If we show a particular record, obj is filled with record fields
+ * 	@param		string[]	$fieldlist		Array of fields
+ * 	@param		?Object		$obj			If we show a particular record, obj is filled with record fields
  *  @param		string		$tabname		Name of SQL table
- *  @param		string		$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we don't want it to be rendered
+ *  @param		''|'add'|'edit'|'hide'	$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we don't want it to be rendered
  *	@return		string						'' or value of entity into table
  */
 function fieldList($fieldlist, $obj = null, $tabname = '', $context = '')
@@ -2814,7 +2814,7 @@ function fieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 				print '<input type="hidden" name="'. $value .'" value="'.$transkey.'">';
 			}
 			print '</td>';
-		} elseif ($value == 'price' || preg_match('/^amount/i', $value)) {
+		} elseif ($value == 'price' || preg_match('/^amount/i', (string) $value)) {
 			print '<td><input type="text" class="flat minwidth75" value="'.price((!empty($obj->{$value}) ? $obj->{$value} : '')).'" name="'. $value .'"></td>';
 		} elseif ($value == 'code' && isset($obj->{$value})) {
 			print '<td>';
@@ -2851,7 +2851,7 @@ function fieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 			if (isModEnabled('accounting')) {
 				$fieldname = $value;
 				$accountancy_account = (!empty($obj->$fieldname) ? $obj->$fieldname : 0);
-				print $formaccounting->select_account($accountancy_account, '.'. $value, 1, '', 1, 1, 'maxwidth200 maxwidthonsmartphone');
+				print $formaccounting->select_account($accountancy_account, '.'. $value, 1, array(), 1, 1, 'maxwidth200 maxwidthonsmartphone');
 			} else {
 				$fieldname = $value;
 				print '<input type="text" size="10" class="flat" value="'.(isset($obj->$fieldname) ? $obj->$fieldname : '').'" name="'. $value .'">';

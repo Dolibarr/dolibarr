@@ -279,7 +279,7 @@ if ($action == 'edit') {
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("MAIN_DISABLE_METEO").'</td><td class="center">';
-	print $labelmeteo[getDolGlobalString('MAIN_DISABLE_METEO')];
+	print $labelmeteo[getDolGlobalInt('MAIN_DISABLE_METEO')];
 	print '</td></tr>';
 
 	print '</table>';

@@ -109,7 +109,7 @@ foreach ($list as $key) {
 	// Value
 	print '<td>';
 	if ($formaccounting instanceof FormAccounting) {
-		print $formaccounting->select_account(getDolGlobalString($key), $key, 1, '', 1, 1);
+		print $formaccounting->select_account(getDolGlobalString($key), $key, 1, array(), 1, 1);
 	} else {
 		print '<input type="text" size="20" id="' . $key . '" name="' . $key . '" value="' . getDolGlobalString($key) . '">';
 	}
