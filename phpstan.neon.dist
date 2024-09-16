@@ -50,7 +50,6 @@ parameters:
 		- '#Function llxHeaderVierge invoked with#'
 		- '#always exists and is not falsy#'
 		- '#always exists and is not nullable#'
-		- '#Call to function is_resource\(\) with#'
 		- '#is always fal#'
 		- '#is always true#'
 		- '#is_object\(\) with mixed will always evaluate to false#'
@@ -143,7 +142,7 @@ parameters:
 	cache:
 		nodesByFileCountMax: 512
 		nodesByStringCountMax: 512
-	reportUnmatchedIgnoredErrors: true
+	reportUnmatchedIgnoredErrors: false
 	universalObjectCratesClasses:
 		- stdClass
 		- SimpleXMLElement
