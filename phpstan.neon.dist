@@ -114,7 +114,6 @@ parameters:
 		- '# (dol_print_error|get_htmloutput_mesg|dolGetButtonTitle|dol_htmloutput_errors|dol_htmloutput_mesg) expects array<string#'
 		- '# getNav expects array#'
 		- '# getCommonSubstitutionArray expects array#'
-		- '# llxHeader expects array#'
 		- '# ajax_constantonoff expects array, null given.#'
 		- '# ldap_search expects array\|LDAP#'
 		- '# ajax_combobox expects array#'
