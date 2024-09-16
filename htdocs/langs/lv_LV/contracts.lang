@@ -47,6 +47,7 @@ DateContract=Līguma datums
 DateServiceActivate=Pakalpojuma aktivizēšanas datums
 ListOfServices=Pakalpojumu saraksts
 ListOfInactiveServices=Saraksts neaktīviem pakalpojumiem
+ListOfNotExpiredServices=To aktīvo pakalpojumu saraksts, kuriem nav beidzies derīguma termiņš
 ListOfExpiredServices=Saraksts ar beigušies aktīviem pakalpojumiem
 ListOfClosedServices=Saraksts slēgtiem pakalpojumiem
 ListOfRunningServices=Saraksts ar aktīvajiem pakalpojumiem

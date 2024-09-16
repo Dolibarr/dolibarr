@@ -5,6 +5,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -571,7 +572,7 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
  *	Delete a constant
  *
  *	@param	    DoliDB		$db         Database handler
- *	@param	    string|int	$name		Name of constant or rowid of line
+ *	@param	    int|string	$name		Name of constant or rowid of line
  *	@param	    int			$entity		Multi company id, -1 for all entities
  *	@return     int         			Return integer <0 if KO, >0 if OK
  *
@@ -579,16 +580,30 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
  */
 function dolibarr_del_const($db, $name, $entity = 1)
 {
-	global $conf;
+	global $conf, $hookmanager;
 
 	if (empty($name)) {
 		dol_print_error(null, 'Error call dolibar_del_const with parameter name empty');
 		return -1;
 	}
+	if (! is_object($hookmanager)) {
+		require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+		$hookmanager = new HookManager($db);
+	}
+
+	$parameters = array(
+		'name' => $name,
+		'entity' => $entity,
+	);
+
+	$reshook = $hookmanager->executeHooks('dolibarrDelConst', $parameters); // Note that $action and $object may have been modified by some hooks
+	if ($reshook != 0) {
+		return $reshook;
+	}
 
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
-	$sql .= " WHERE (".$db->decrypt('name')." = '".$db->escape($name)."'";
-	if (is_numeric($name)) {
+	$sql .= " WHERE (".$db->decrypt('name')." = '".$db->escape((string) $name)."'";
+	if (is_numeric($name)) {	// This case seems used in the setup of constant page only, to delete a line.
 		$sql .= " OR rowid = ".((int) $name);
 	}
 	$sql .= ")";
@@ -644,7 +659,7 @@ function dolibarr_get_const($db, $name, $entity = 1)
  *
  *	@param	    DoliDB		$db         Database handler
  *	@param	    string		$name		Name of constant
- *	@param	    string		$value		Value of constant
+ *	@param	    int|string	$value		Value of constant
  *	@param	    string		$type		Type of constant. Deprecated, only strings are allowed for $value. Caller must json encode/decode to store other type of data.
  *	@param	    int			$visible	Is constant visible in Setup->Other page (0 by default)
  *	@param	    string		$note		Note on parameter
@@ -655,15 +670,36 @@ function dolibarr_get_const($db, $name, $entity = 1)
  */
 function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, $note = '', $entity = 1)
 {
-	global $conf;
+	global $conf, $hookmanager;
 
 	// Clean parameters
 	$name = trim($name);
+	$value = (string) $value;
 
 	// Check parameters
 	if (empty($name)) {
 		dol_print_error($db, "Error: Call to function dolibarr_set_const with wrong parameters");
 		exit;
+	}
+	if (! is_object($hookmanager)) {
+		require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+		$hookmanager = new HookManager($db);
+	}
+
+	$value = (string) $value;	// We force type string (may be int)
+
+	$parameters = array(
+		'name' => $name,
+		'value' => $value,
+		'type' => $type,
+		'visible' => $visible,
+		'note' => $note,
+		'entity' => $entity,
+	);
+
+	$reshook = $hookmanager->executeHooks('dolibarrSetConst', $parameters); // Note that $action and $object may have been modified by some hooks
+	if ($reshook != 0) {
+		return $reshook;
 	}
 
 	//dol_syslog("dolibarr_set_const name=$name, value=$value type=$type, visible=$visible, note=$note entity=$entity");
@@ -708,7 +744,6 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
 		$conf->global->$name = $value;
 		return 1;
 	} else {
-		$error = $db->lasterror();
 		$db->rollback();
 		return -1;
 	}
@@ -890,8 +925,8 @@ function security_prepare_head()
 /**
  * Prepare array with list of tabs
  *
- * @param 	object 	$object 	Descriptor class
- * @return  array				Array of tabs to show
+ * @param 	DolibarrModules		$object 	Descriptor class
+ * @return  array<array<int,string>>		Array of tabs to show
  */
 function modulehelp_prepare_head($object)
 {
@@ -1066,7 +1101,7 @@ function listOfSessions()
 /**
  * 	Purge existing sessions
  *
- * 	@param		int		$mysessionid		To avoid to try to delete my own session
+ * 	@param		string	$mysessionid		To avoid to try to delete my own session
  * 	@return		int							>0 if OK, <0 if KO
  */
 function purgeSessions($mysessionid)
@@ -1153,6 +1188,7 @@ function activateModule($value, $withdeps = 1, $noconfverification = 0)
 	}
 
 	$objMod = new $modName($db);
+	'@phan-var-force DolibarrModules $objMod';
 
 	// Test if PHP version ok
 	$verphp = versionphparray();
@@ -1294,6 +1330,7 @@ function unActivateModule($value, $requiredby = 1)
 
 	if ($found) {
 		$objMod = new $modName($db);
+		'@phan-var-force DolibarrModules $objMod';
 		$result = $objMod->remove();
 		if ($result <= 0) {
 			$ret = $objMod->error;
@@ -1343,7 +1380,7 @@ function unActivateModule($value, $requiredby = 1)
  */
 function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tabsql, &$tabsqlsort, &$tabfield, &$tabfieldvalue, &$tabfieldinsert, &$tabrowid, &$tabcond, &$tabhelp, &$tabcomplete)
 {
-	global $db, $modules, $conf, $langs;
+	global $db, $langs;
 
 	dol_syslog("complete_dictionary_with_modules Search external modules to complete the list of dictionary tables", LOG_DEBUG, 1);
 
@@ -1366,6 +1403,7 @@ function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tab
 					if ($modName) {
 						include_once $dir.$file;
 						$objMod = new $modName($db);
+						'@phan-var-force DolibarrModules $objMod';
 
 						if ($objMod->numero > 0) {
 							$j = $objMod->numero;
@@ -1398,7 +1436,9 @@ function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tab
 
 							// phpcs:disable
 							// Complete the arrays &$tabname,&$tablib,&$tabsql,&$tabsqlsort,&$tabfield,&$tabfieldvalue,&$tabfieldinsert,&$tabrowid,&$tabcond
+							// @phan-suppress-next-line PhanUndeclaredProperty
 							if (empty($objMod->dictionaries) && !empty($objMod->{"dictionnaries"})) {
+								// @phan-suppress-next-line PhanUndeclaredProperty
 								$objMod->dictionaries = $objMod->{"dictionnaries"}; // For backward compatibility
 							}
 							// phpcs:enable
@@ -1461,7 +1501,7 @@ function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tab
 									$tmptablename = preg_replace('/'.MAIN_DB_PREFIX.'/', '', $tabnamerelwithkey[$key]);
 									$nbtabcond++;
 									$tabcond[] = $val;
-									$tabcomplete[$tmptablename]['rowid'] = $val;
+									$tabcomplete[$tmptablename]['cond'] = $val;
 								}
 								if (!empty($objMod->dictionaries['tabhelp'])) {
 									foreach ($objMod->dictionaries['tabhelp'] as $key => $val) {
@@ -1530,6 +1570,7 @@ function activateModulesRequiredByCountry($country_code)
 					if ($modName) {
 						include_once $dir.$file;
 						$objMod = new $modName($db);
+						'@phan-var-force DolibarrModules $objMod';
 
 						$modulequalified = 1;
 
@@ -1548,7 +1589,7 @@ function activateModulesRequiredByCountry($country_code)
 
 						if ($modulequalified) {
 							// Load languages files of module
-							if (isset($objMod->automatic_activation) && is_array($objMod->automatic_activation) && isset($objMod->automatic_activation[$country_code])) {
+							if (property_exists($objMod, 'automatic_activation') && isset($objMod->automatic_activation) && is_array($objMod->automatic_activation) && isset($objMod->automatic_activation[$country_code])) {
 								activateModule($modName);
 
 								setEventMessages($objMod->automatic_activation[$country_code], null, 'warnings');
@@ -1689,7 +1730,7 @@ function form_constantes($tableau, $strictw3c = 2, $helptext = '', $text = 'Valu
 	$form = new Form($db);
 
 	if (empty($strictw3c)) {
-		dol_syslog("Warning: Function 'form_constantes' was called with parameter strictw3c = 0, this is deprecated. Value must be 2 now.", LOG_DEBUG);
+		dol_syslog("Warning: Function 'form_constantes' was called with parameter strictw3c = 0, this is deprecated. Value must be 2 now.", LOG_WARNING);
 	}
 	if (!empty($strictw3c) && $strictw3c == 1) {
 		print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -1740,6 +1781,7 @@ function form_constantes($tableau, $strictw3c = 2, $helptext = '', $text = 'Valu
 		$result = $db->query($sql);
 
 		dol_syslog("List params", LOG_DEBUG);
+
 		if ($result) {
 			$obj = $db->fetch_object($result); // Take first result of select
 
@@ -1747,23 +1789,29 @@ function form_constantes($tableau, $strictw3c = 2, $helptext = '', $text = 'Valu
 				$obj = (object) array('rowid' => '', 'name' => $const, 'value' => '', 'type' => $type, 'note' => '');
 			}
 
-			if (empty($strictw3c)) {
+			if (empty($strictw3c)) {	// deprecated. must be always true.
 				print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="page_y" value="'.newToken().'">';
+				print '<input type="hidden" name="action" value="update">';
 			}
 
 			print '<tr class="oddeven">';
 
 			// Show label of parameter
 			print '<td>';
-			if (empty($strictw3c)) {
-				print '<input type="hidden" name="action" value="update">';
-			}
 			print '<input type="hidden" name="rowid'.(empty($strictw3c) ? '' : '[]').'" value="'.$obj->rowid.'">';
 			print '<input type="hidden" name="constname'.(empty($strictw3c) ? '' : '[]').'" value="'.$const.'">';
 			print '<input type="hidden" name="constnote_'.$obj->name.'" value="'.nl2br(dol_escape_htmltag($obj->note)).'">';
 			print '<input type="hidden" name="consttype_'.$obj->name.'" value="'.($obj->type ? $obj->type : 'string').'">';
+
+			$picto = 'generic';
+			$tmparray = explode(':', $obj->type);
+			if (!empty($tmparray[1])) {
+				$picto = preg_replace('/_send$/', '', $tmparray[1]);
+			}
+			print img_picto('', $picto, 'class="pictofixedwidth"');
+
 			if (!empty($tableau[$key]['tooltip'])) {
 				print $form->textwithpicto($label ? $label : $langs->trans('Desc'.$const), $tableau[$key]['tooltip']);
 			} else {
@@ -1857,8 +1905,8 @@ function form_constantes($tableau, $strictw3c = 2, $helptext = '', $text = 'Valu
 				print '</td>';
 			}
 
-			// Submit
-			if (empty($strictw3c)) {
+			// Submit button
+			if (empty($strictw3c)) {	// deprecated. must be always true.
 				print '<td class="center">';
 				print '<input type="submit" class="button small reposition" value="'.$langs->trans("Update").'" name="update">';
 				print "</td>";
@@ -2091,9 +2139,16 @@ function email_admin_prepare_head()
 			$head[$h][2] = 'common_ticket';
 			$h++;
 		}
+
+		if (getDolGlobalString('MAIN_MAIL_ALLOW_CUSTOM_SENDING_METHOD_FOR_PASSWORD_RESET')) {
+			$head[$h][0] = DOL_URL_ROOT."/admin/mails_passwordreset.php";
+			$head[$h][1] = $langs->trans("OutGoingEmailSetupForEmailing", $langs->transnoentitiesnoconv("PasswordReset"));
+			$head[$h][2] = 'common_passwordreset';
+			$h++;
+		}
 	}
 
-	// admin and non admin can view this menu entry, but it is not shown yet when we on user menu "Email templates"
+	// Admin and non admin can view this menu entry, but it is not shown yet when we on user menu "Email templates"
 	if (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates') {
 		$head[$h][0] = DOL_URL_ROOT."/admin/mails_senderprofile_list.php";
 		$head[$h][1] = $langs->trans("EmailSenderProfiles");

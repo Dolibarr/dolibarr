@@ -1,6 +1,6 @@
 <?php
-/*
- * Copyright (C) 2021		VIAL--GOUTEYRON Quentin		<quentin.vial-gouteyron@atm-consulting.fr>
+/* Copyright (C) 2021		VIAL-GOUTEYRON Quentin		<quentin.vial-gouteyron@atm-consulting.fr>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,10 +30,11 @@ $langs->loadLangs(array("contacts", "companies", "projects"));
 
 // Security check
 $id = GETPOSTINT('id');
-$result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('projectcontact'));
+
+$result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
 
 /*
  *	Actions
@@ -66,7 +67,9 @@ if ($id) {
 	if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
 		$title = $object->name." - ".$title;
 	}
-	llxHeader('', $title);
+	$help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+
+	llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-societe page-contact-card_project');
 
 	if (isModEnabled('notification')) {
 		$langs->load("mails");

@@ -56,7 +56,7 @@ if (!$user->hasRight('takepos', 'run')) {
  * Actions
  */
 
-if ($action=="split") {
+if ($action=="split" && $user->hasRight('takepos', 'run')) {
 	$line = GETPOSTINT('line');
 	$split = GETPOSTINT('split');
 	if ($split==1) { // Split line

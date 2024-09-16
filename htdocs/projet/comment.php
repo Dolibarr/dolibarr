@@ -84,7 +84,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_comments.inc.php';
 
 $title = $langs->trans('CommentPage');
 
-llxHeader('', $title, '');
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-project page-card_comment');
 
 $form = new Form($db);
 $formother = new FormOther($db);

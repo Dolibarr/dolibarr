@@ -222,8 +222,8 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 }
 
 .butAction:hover   {
-	-webkit-box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
-	box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
+	-webkit-box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), inset 0px 0px 200px rgba(60,60,60,0.1);
+	box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), inset 0px 0px 200px rgba(60,60,60,0.1);
 }
 .butActionNew:hover   {
 	text-decoration: underline;
@@ -317,7 +317,7 @@ div.pagination li:first-child a.btnTitle {
 	margin: 0 0 0 10px;
 	min-width: 80px;
 	text-align: center;
-	color: rgb(<?php print $colortextlink; ?>);
+	color: var(--btncolortext);
 	border: none;
 	font-size: 12px;
 	font-weight: 300;
@@ -368,12 +368,14 @@ div.pagination .btnTitle:hover .btnTitle-label{
 }
 
 .btnTitle>.fa {
-	font-size: 20px;
+	font-size: 2em;
 	display: block;
 }
 
 .paginationafterarrows a.btnTitlePlus, .titre_right a.btnTitlePlus {
-	border: 1px solid var(--btncolorborder);
+	/* border: 1px solid var(--btncolorborder); */
+	border: unset;
+	background-color: unset;
 }
 .paginationafterarrows a.btnTitlePlus:hover, .titre_right a.btnTitlePlus:hover {
 	border-color: #ddd;
@@ -441,3 +443,60 @@ div.pagination .btnTitle:hover .btnTitle-label{
 	border: 1px solid #ddd;
 }
 
+
+
+/*
+ * BUTTON With Low emphasis
+ */
+
+button.btn-low-emphasis{
+	text-align: center;
+	display: inline-block;
+	border: none;
+	outline: none;
+	cursor: pointer;
+	margin: 0;
+	padding: 0;
+	width: auto;
+	min-width: 1.5em;
+	min-height: 1.5em;
+	line-height: 1.5em;
+
+	overflow: visible;
+	background: transparent;
+	background-position: center; /* used for hover ripple effect */
+	background-size: 0%;
+	color: var(--colortextlink, inherit);
+	font: inherit;
+	line-height: normal;
+
+	/* Corrects font smoothing for webkit */
+	-webkit-font-smoothing: inherit;
+	-moz-osx-font-smoothing: inherit;
+
+	/* Corrects inability to style clickable input types in iOS */
+	-webkit-appearance: none;
+
+
+	transition: background 0.8s;/* used for hover ripple effect */
+	background: transparent radial-gradient(circle, transparent 1%, hsla(var(--colortextlink-h),var(--colortextlink-s) ,var(--colortextlink-l) , 0.1) 1%, transparent 10%) center/15000%;
+}
+
+button.btn-low-emphasis.--btn-icon{
+	border-radius: 100%;
+}
+
+button.btn-low-emphasis :is(.fa, .fas){
+	color: var(--colortextlink, inherit);
+	opacity: 0.4;
+}
+
+button.btn-low-emphasis:is(:focus,:hover) :is(.fa, .fas){
+	opacity: 0.8;
+}
+
+button.btn-low-emphasis.--btn-icon:active {
+	background-color:  hsla(var(--colortextlink-h),var(--colortextlink-s) ,var(--colortextlink-l) , 0.1);
+	background-size: 100%;
+	transition: background 0s;/* used for hover ripple effect */
+}

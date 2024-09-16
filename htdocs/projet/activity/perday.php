@@ -268,12 +268,12 @@ if ($action == 'addtime' && $user->hasRight('projet', 'lire') && GETPOST('formfi
 					if ($id > 0) {
 						// We store HOURS in seconds
 						if ($matches[2] == 'hour') {
-							$timespent_duration[$id] += $time * 60 * 60;
+							$timespent_duration[$id] += (int) $time * 60 * 60;
 						}
 
 						// We store MINUTES in seconds
 						if ($matches[2] == 'min') {
-							$timespent_duration[$id] += $time * 60;
+							$timespent_duration[$id] += (int) $time * 60;
 						}
 					}
 				}
@@ -404,11 +404,8 @@ if ($morewherefilter) {	// Get all task without any filter, so we can show total
 }
 $projectsrole = $taskstatic->getUserRolesForProjectsOrTasks($usertoprocess, null, ($project->id ? $project->id : 0), 0, $onlyopenedproject);
 $tasksrole = $taskstatic->getUserRolesForProjectsOrTasks(null, $usertoprocess, ($project->id ? $project->id : 0), 0, $onlyopenedproject);
-//var_dump($usertoprocess);
-//var_dump($projectsrole);
-//var_dump($taskrole);
 
-llxHeader("", $title, "", '', '', '', array('/core/js/timesheet.js'));
+llxHeader('', $title, '', '', 0, 0, array('/core/js/timesheet.js'), '', '', 'mod-project project-activity page-activity_perday');
 
 //print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num, '', 'project');
 

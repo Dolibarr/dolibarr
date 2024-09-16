@@ -1,12 +1,14 @@
 <?php
-/* Copyright (C) 2005       Matthieu Valleton	<mv@seeschloss.org>
- * Copyright (C) 2006-2020  Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007       Patrick Raguin		<patrick.raguin@gmail.com>
- * Copyright (C) 2005-2012  Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2020		Tobias Sekan		<tobias.sekan@startmail.com>
- * Copyright (C) 2020		Josep Lluís Amador  <joseplluis@lliuretic.cat>
+/* Copyright (C) 2005		Matthieu Valleton			<mv@seeschloss.org>
+ * Copyright (C) 2006-2024	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2007		Patrick Raguin				<patrick.raguin@gmail.com>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2015		Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2020		Tobias Sekan				<tobias.sekan@startmail.com>
+ * Copyright (C) 2020		Josep Lluís Amador			<joseplluis@lliuretic.cat>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,6 +73,9 @@ if ($id == "" && $label == "") {
 	exit();
 }
 
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('categorycard', 'globalcard'));
+
 // Security check
 $result = restrictedArea($user, 'categorie', $id, '&category');
 
@@ -89,9 +94,6 @@ if (is_numeric($type)) {
 $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('categorycard', 'globalcard'));
-
 /*
  *	Actions
  */
@@ -106,7 +108,7 @@ if ($confirm == 'no') {
 $parameters = array('type' => $type, 'id' => $id, 'label' => $label);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 // Remove element from category
-if ($id > 0 && $removeelem > 0 && $action == 'unlink') {
+if ($id > 0 && $removeelem > 0 && $action == 'unlink') {	// Test on permission not required here. Done later according to type of object.
 	if ($type == Categorie::TYPE_PRODUCT && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 		$tmpobject = new Product($db);
@@ -172,9 +174,8 @@ if ($user->hasRight('categorie', 'supprimer') && $action == 'confirm_delete' && 
 	}
 }
 
-if ($elemid && $action == 'addintocategory' &&
-	(
-		($type == Categorie::TYPE_PRODUCT && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) ||
+if ($elemid && $action == 'addintocategory') {	// Test on permission not required here. Done just after depending on object type
+	if (($type == Categorie::TYPE_PRODUCT && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) ||
 	 ($type == Categorie::TYPE_CUSTOMER && $user->hasRight('societe', 'creer')) ||
 	 ($type == Categorie::TYPE_SUPPLIER && $user->hasRight('societe', 'creer')) ||
 	 ($type == Categorie::TYPE_TICKET && $user->hasRight('ticket', 'write')) ||
@@ -183,57 +184,58 @@ if ($elemid && $action == 'addintocategory' &&
 	 ($type == Categorie::TYPE_CONTACT && $user->hasRight('societe', 'creer')) ||
 	 ($type == Categorie::TYPE_USER && $user->hasRight('user', 'user', 'creer')) ||
 	 ($type == Categorie::TYPE_ACCOUNT && $user->hasRight('banque', 'configurer'))
-	)) {
-	if ($type == Categorie::TYPE_PRODUCT) {
-		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-		$newobject = new Product($db);
-		$elementtype = 'product';
-	} elseif ($type == Categorie::TYPE_CUSTOMER) {
-		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-		$newobject = new Societe($db);
-		$elementtype = 'customer';
-	} elseif ($type == Categorie::TYPE_SUPPLIER) {
-		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-		$newobject = new Societe($db);
-		$elementtype = 'supplier';
-	} elseif ($type == Categorie::TYPE_TICKET) {
-		require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
-		$newobject = new Ticket($db);
-		$elementtype = 'ticket';
-	} elseif ($type == Categorie::TYPE_PROJECT) {
-		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-		$newobject = new Project($db);
-		$elementtype = 'project';
-	} elseif ($type == Categorie::TYPE_MEMBER) {
-		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-		$newobject = new Adherent($db);
-		$elementtype = 'member';
-	} elseif ($type == Categorie::TYPE_CONTACT) {
-		require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-		$newobject = new Contact($db);
-		$elementtype = 'contact';
-	} elseif ($type == Categorie::TYPE_USER) {
-		require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-		$newobject = new User($db);
-		$elementtype = 'user';
-	} elseif ($type == Categorie::TYPE_ACCOUNT) {
-		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-		$newobject = new Account($db);
-		$elementtype = 'bank_account';
-	} else {
-		dol_print_error(null, "Not supported value of type = ".$type);
-	}
-	$result = $newobject->fetch($elemid);
-
-	// Add into category
-	$result = $object->add_type($newobject, $elementtype);
-	if ($result >= 0) {
-		setEventMessages($langs->trans("WasAddedSuccessfully", $newobject->ref), null, 'mesgs');
-	} else {
-		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-			setEventMessages($langs->trans("ObjectAlreadyLinkedToCategory"), null, 'warnings');
+	) {
+		if ($type == Categorie::TYPE_PRODUCT) {
+			require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+			$newobject = new Product($db);
+			$elementtype = 'product';
+		} elseif ($type == Categorie::TYPE_CUSTOMER) {
+			require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+			$newobject = new Societe($db);
+			$elementtype = 'customer';
+		} elseif ($type == Categorie::TYPE_SUPPLIER) {
+			require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+			$newobject = new Societe($db);
+			$elementtype = 'supplier';
+		} elseif ($type == Categorie::TYPE_TICKET) {
+			require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
+			$newobject = new Ticket($db);
+			$elementtype = 'ticket';
+		} elseif ($type == Categorie::TYPE_PROJECT) {
+			require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+			$newobject = new Project($db);
+			$elementtype = 'project';
+		} elseif ($type == Categorie::TYPE_MEMBER) {
+			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+			$newobject = new Adherent($db);
+			$elementtype = 'member';
+		} elseif ($type == Categorie::TYPE_CONTACT) {
+			require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+			$newobject = new Contact($db);
+			$elementtype = 'contact';
+		} elseif ($type == Categorie::TYPE_USER) {
+			require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+			$newobject = new User($db);
+			$elementtype = 'user';
+		} elseif ($type == Categorie::TYPE_ACCOUNT) {
+			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+			$newobject = new Account($db);
+			$elementtype = 'bank_account';
 		} else {
-			setEventMessages($object->error, $object->errors, 'errors');
+			dol_print_error(null, "Not supported value of type = ".$type);
+		}
+		$result = $newobject->fetch($elemid);
+
+		// Add into category
+		$result = $object->add_type($newobject, $elementtype);
+		if ($result >= 0) {
+			setEventMessages($langs->trans("WasAddedSuccessfully", $newobject->ref), null, 'mesgs');
+		} else {
+			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				setEventMessages($langs->trans("ObjectAlreadyLinkedToCategory"), null, 'warnings');
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
 		}
 	}
 }
@@ -539,7 +541,7 @@ if ($type == Categorie::TYPE_PRODUCT) {
 			$param = '&limit='.$limit.'&id='.$id.'&type='.$type;
 			$num = count($prods);
 			$nbtotalofrecords = '';
-			$newcardbutton = dolGetButtonTitle($langs->trans("AddProduct"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&categories[]='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $user->rights->societe->creer);
+			$newcardbutton = dolGetButtonTitle($langs->trans("AddProduct"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&categories[]='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $user->hasRight('societe', 'creer'));
 
 			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			print_barre_liste($langs->trans("ProductsAndServices"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'products', 0, $newcardbutton, '', $limit);
@@ -580,7 +582,7 @@ if ($type == Categorie::TYPE_PRODUCT) {
 			print '</form>'."\n";
 		}
 	} else {
-		print_barre_liste($langs->trans("ProductsAndServices"), null, $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'products');
+		print_barre_liste($langs->trans("ProductsAndServices"), null, $_SERVER["PHP_SELF"], '', '', '', '', 0, '', 'products');
 		accessforbidden("NotEnoughPermissions", 0, 0);
 	}
 }
@@ -628,7 +630,7 @@ if ($type == Categorie::TYPE_CUSTOMER) {
 			$param = '&limit='.$limit.'&id='.$id.'&type='.$type;
 			$num = count($socs);
 			$nbtotalofrecords = '';
-			$newcardbutton = dolGetButtonTitle($langs->trans("AddThirdParty"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/societe/card.php?action=create&client=3&custcats[]='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $user->rights->societe->creer);
+			$newcardbutton = dolGetButtonTitle($langs->trans("AddThirdParty"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/societe/card.php?action=create&client=3&custcats[]='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $user->hasRight('societe', 'creer'));
 
 			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			print_barre_liste($langs->trans("Customers"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'companies', 0, $newcardbutton, '', $limit);
@@ -667,7 +669,7 @@ if ($type == Categorie::TYPE_CUSTOMER) {
 			print '</form>'."\n";
 		}
 	} else {
-		print_barre_liste($langs->trans("Customers"), null, $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'companies');
+		print_barre_liste($langs->trans("Customers"), null, $_SERVER["PHP_SELF"], '', '', '', '', 0, '', 'companies');
 		accessforbidden("NotEnoughPermissions", 0, 0);
 	}
 }
@@ -716,7 +718,7 @@ if ($type == Categorie::TYPE_SUPPLIER) {
 			$param = '&limit='.$limit.'&id='.$id.'&type='.$type;
 			$num = count($socs);
 			$nbtotalofrecords = '';
-			$newcardbutton = dolGetButtonTitle($langs->trans("AddSupplier"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/societe/card.php?action=create&fournisseur=1&suppcats[]='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $user->rights->societe->creer);
+			$newcardbutton = dolGetButtonTitle($langs->trans("AddSupplier"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/societe/card.php?action=create&fournisseur=1&suppcats[]='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $user->hasRight('societe', 'creer'));
 
 			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			print_barre_liste($langs->trans("Suppliers"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'companies', 0, $newcardbutton, '', $limit);
@@ -756,7 +758,7 @@ if ($type == Categorie::TYPE_SUPPLIER) {
 			print '</form>'."\n";
 		}
 	} else {
-		print_barre_liste($langs->trans("Suppliers"), null, $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'companies');
+		print_barre_liste($langs->trans("Suppliers"), null, $_SERVER["PHP_SELF"], '', '', '', '', 0, '', 'companies');
 		accessforbidden("NotEnoughPermissions", 0, 0);
 	}
 }
@@ -847,7 +849,7 @@ if ($type == Categorie::TYPE_MEMBER) {
 			print '</form>'."\n";
 		}
 	} else {
-		print_barre_liste($langs->trans("Member"), null, $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'members');
+		print_barre_liste($langs->trans("Member"), null, $_SERVER["PHP_SELF"], '', '', '', '', 0, '', 'members');
 		accessforbidden("NotEnoughPermissions", 0, 0);
 	}
 }
@@ -894,7 +896,7 @@ if ($type == Categorie::TYPE_CONTACT) {
 			$param = '&limit='.$limit.'&id='.$id.'&type='.$type;
 			$num = count($contacts);
 			$nbtotalofrecords = '';
-			$newcardbutton = dolGetButtonTitle($langs->trans("AddContact"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/contact/card.php?action=create&contcats[]='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $user->rights->societe->creer);
+			$newcardbutton = dolGetButtonTitle($langs->trans("AddContact"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/contact/card.php?action=create&contcats[]='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $user->hasRight('societe', 'creer'));
 
 			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			print_barre_liste($langs->trans("Contact"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'contact', 0, $newcardbutton, '', $limit);
@@ -940,7 +942,7 @@ if ($type == Categorie::TYPE_CONTACT) {
 			print '</form>'."\n";
 		}
 	} else {
-		print_barre_liste($langs->trans("Contact"), null, $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'contact');
+		print_barre_liste($langs->trans("Contact"), null, $_SERVER["PHP_SELF"], '', '', '', '', 0, '', 'contact');
 		accessforbidden("NotEnoughPermissions", 0, 0);
 	}
 }
@@ -1030,7 +1032,7 @@ if ($type == Categorie::TYPE_ACCOUNT) {
 			print '</form>'."\n";
 		}
 	} else {
-		print_barre_liste($langs->trans("Banque"), null, $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'bank');
+		print_barre_liste($langs->trans("Banque"), null, $_SERVER["PHP_SELF"], '', '', '', '', 0, '', 'bank');
 		accessforbidden("NotEnoughPermissions", 0, 0);
 	}
 }
@@ -1120,7 +1122,7 @@ if ($type == Categorie::TYPE_PROJECT) {
 			print '</form>'."\n";
 		}
 	} else {
-		print_barre_liste($langs->trans("Project"), null, $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'project');
+		print_barre_liste($langs->trans("Project"), null, $_SERVER["PHP_SELF"], '', '', '', '', 0, '', 'project');
 		accessforbidden("NotEnoughPermissions", 0, 0);
 	}
 }
@@ -1204,7 +1206,7 @@ if ($type == Categorie::TYPE_USER) {
 			print '</form>'."\n";
 		}
 	} else {
-		print_barre_liste($langs->trans("Users"), null, $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'user');
+		print_barre_liste($langs->trans("Users"), null, $_SERVER["PHP_SELF"], '', '', '', '', 0, '', 'user');
 		accessforbidden("NotEnoughPermissions", 0, 0);
 	}
 }
@@ -1275,7 +1277,7 @@ if ($type == Categorie::TYPE_WAREHOUSE) {
 			print '</form>'."\n";
 		}
 	} else {
-		print_barre_liste($langs->trans("Warehouse"), null, $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'stock');
+		print_barre_liste($langs->trans("Warehouse"), null, $_SERVER["PHP_SELF"], '', '', '', '', 0, '', 'stock');
 		accessforbidden("NotEnoughPermissions", 0, 0);
 	}
 }
@@ -1283,7 +1285,7 @@ if ($type == Categorie::TYPE_WAREHOUSE) {
 // List of tickets
 if ($type == Categorie::TYPE_TICKET) {
 	if ($user->hasRight("ticket", "read")) {
-		$permission = ($user->rights->categorie->creer || $user->rights->categorie->creer);
+		$permission = $user->hasRight('categorie', 'creer');
 
 		$tickets = $object->getObjectsInCateg($type, 0, $limit, $offset);
 		if ($tickets < 0) {
@@ -1363,7 +1365,7 @@ if ($type == Categorie::TYPE_TICKET) {
 			print '</form>'."\n";
 		}
 	} else {
-		print_barre_liste($langs->trans("Ticket"), null, $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'ticket');
+		print_barre_liste($langs->trans("Ticket"), null, $_SERVER["PHP_SELF"], '', '', '', '', 0, '', 'ticket');
 		accessforbidden("NotEnoughPermissions", 0, 0);
 	}
 }

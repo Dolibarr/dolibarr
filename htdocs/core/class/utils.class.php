@@ -172,6 +172,7 @@ class Utils
 						$tmpcountdeleted = 0;
 
 						$result = dol_delete_dir_recursive($filesarray[$key]['fullname'], $startcount, 1, 0, $tmpcountdeleted);
+
 						$excluded = [
 							$conf->user->dir_temp,
 						];
@@ -705,15 +706,15 @@ class Utils
 	/**
 	 * Execute a CLI command.
 	 *
-	 * @param 	string	$command			Command line to execute.
-	 * 										Warning: The command line is sanitize by escapeshellcmd(), except if $noescapecommand set, so can't contains any redirection char '>'. Use param $redirectionfile if you need it.
-	 * @param 	string	$outputfile			A path for an output file (used only when method is 2). For example: $conf->admin->dir_temp.'/out.tmp';
-	 * @param	int		$execmethod			0=Use default method (that is 1 by default), 1=Use the PHP 'exec', 2=Use the 'popen' method
-	 * @param	string	$redirectionfile	If defined, a redirection of output to this file is added.
-	 * @param	int		$noescapecommand	1=Do not escape command. Warning: Using this parameter needs you already have sanitized the $command parameter. If not, it will lead to security vulnerability.
-	 * 										This parameter is provided for backward compatibility with external modules. Always use 0 in core.
-	 * @param	string	$redirectionfileerr	If defined, a redirection of error is added to this file instead of to channel 1.
-	 * @return	array						array('result'=>...,'output'=>...,'error'=>...). result = 0 means OK.
+	 * @param 	string		$command			Command line to execute.
+	 * 											Warning: The command line is sanitize by escapeshellcmd(), except if $noescapecommand set, so can't contains any redirection char '>'. Use param $redirectionfile if you need it.
+	 * @param 	string		$outputfile			A path for an output file (used only when method is 2). For example: $conf->admin->dir_temp.'/out.tmp';
+	 * @param	int<0,2>	$execmethod			0=Use default method (that is 1 by default), 1=Use the PHP 'exec', 2=Use the 'popen' method
+	 * @param	?string		$redirectionfile	If defined, a redirection of output to this file is added.
+	 * @param	int<0,1>	$noescapecommand	1=Do not escape command. Warning: Using this parameter needs you already have sanitized the $command parameter. If not, it will lead to security vulnerability.
+	 * 											This parameter is provided for backward compatibility with external modules. Always use 0 in core.
+	 * @param	?string		$redirectionfileerr	If defined, a redirection of error is added to this file instead of to channel 1.
+	 * @return	array{result:int,output:string,error:string}	array('result'=>...,'output'=>...,'error'=>...). result = 0 means OK.
 	 */
 	public function executeCLI($command, $outputfile, $execmethod = 0, $redirectionfile = null, $noescapecommand = 0, $redirectionfileerr = null)
 	{
@@ -861,8 +862,8 @@ class Utils
 				$arrayreplacement['/^#\s.*/m'] = ''; // Remove first level of title into .md files
 				$arrayreplacement['/^#/m'] = '##'; // Add on # to increase level
 
-				dolReplaceInFile($dirofmoduletmp.'/README.md', $arrayreplacement, '', 0, 0, 1);
-				dolReplaceInFile($dirofmoduletmp.'/ChangeLog.md', $arrayreplacement, '', 0, 0, 1);
+				dolReplaceInFile($dirofmoduletmp.'/README.md', $arrayreplacement, '', '0', 0, 1);
+				dolReplaceInFile($dirofmoduletmp.'/ChangeLog.md', $arrayreplacement, '', '0', 0, 1);
 
 
 				$destfile = $dirofmoduletmp.'/'.$FILENAMEASCII;
@@ -1054,7 +1055,7 @@ class Utils
 					if ($numsave >= $nbSaves) {
 						dol_delete_file($logpath.'/'.$logname.'.'.$numsave.'.gz', 0, 0, 0, null, false, 0);
 					} else {
-						dol_move($logpath.'/'.$logname.'.'.$numsave.'.gz', $logpath.'/'.$logname.'.'.($numsave + 1).'.gz', 0, 1, 0, 0);
+						dol_move($logpath.'/'.$logname.'.'.$numsave.'.gz', $logpath.'/'.$logname.'.'.($numsave + 1).'.gz', '0', 1, 0, 0);
 					}
 				}
 
@@ -1360,7 +1361,7 @@ class Utils
 			if ($filesize > $sizelimit) {
 				$message .= '<br>'.$langs->trans("BackupIsTooLargeSend");
 				$documenturl =  $dolibarr_main_url_root.'/document.php?modulepart=systemtools&atachement=1&file=backup/'.urlencode($filename[0]);
-				$message .= '<br><a href='.$documenturl.'>Lien de téléchargement</a>';
+				$message .= '<br><a href='.$documenturl.'>Download link</a>';
 				$filepath = '';
 				$mimetype = '';
 				$filename = '';
@@ -1390,7 +1391,7 @@ class Utils
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$this->error = "Error sending backp file ".((string) $error);
+		$this->error = "Error sending backup file ".((string) $error);
 		$this->output = $output;
 
 		if ($result) {

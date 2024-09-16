@@ -5,9 +5,9 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014      Cedric GROSS         <c.gross@kreiz-it.fr>
- * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2023 Florian HENRY <florian.henry@scopen.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2023       Florian HENRY           <florian.henry@scopen.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -116,7 +116,7 @@ if (GETPOST('search_actioncode', 'array:aZ09')) {
 		$actioncode = '0';
 	}
 } else {
-	$actioncode = GETPOST("search_actioncode", "alpha", 3) ? GETPOST("search_actioncode", "alpha", 3) : (GETPOST("search_actioncode", "alpha") == '0' ? '0' : ((!getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE') || $disabledefaultvalues) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE));
+	$actioncode = GETPOST("search_actioncode", "alpha", 3) ? GETPOST("search_actioncode", "alpha", 3) : (GETPOST("search_actioncode", "alpha") == '0' ? '0' : ((!getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE') || $disabledefaultvalues) ? '' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE')));
 }
 
 $dateselect = dol_mktime(0, 0, 0, GETPOSTINT('dateselectmonth'), GETPOSTINT('dateselectday'), GETPOSTINT('dateselectyear'));
@@ -161,7 +161,7 @@ if ($status == '' && !GETPOSTISSET('search_status')) {
 }
 
 if (empty($mode) && !GETPOSTISSET('mode')) {
-	$mode = (!getDolGlobalString('AGENDA_DEFAULT_VIEW') ? 'show_month' : $conf->global->AGENDA_DEFAULT_VIEW);
+	$mode = getDolGlobalString('AGENDA_DEFAULT_VIEW', 'show_peruser');
 }
 
 if (GETPOST('viewcal', 'alpha') && $mode != 'show_day' && $mode != 'show_week' && $mode != 'show_peruser') {
@@ -310,7 +310,7 @@ if ($type) {
 	$param .= "&search_type=".urlencode($type);
 }
 if ($mode != 'show_peruser') {
-	$param .= '&mode='.urlencode($mode);
+	$param .= '&mode='.urlencode((string) $mode);
 }
 if ($begin_h != '') {
 	$param .= '&begin_h='.((int) $begin_h);
@@ -508,7 +508,7 @@ if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda'
 	$newcardbutton .= dolGetButtonTitle($langs->trans("AddAction"), '', 'fa fa-plus-circle', $urltocreateaction);
 }
 
-$num = '';
+$num = 0;
 
 print_barre_liste($langs->trans("Agenda"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, -1, 'object_action', 0, $nav.'<span class="marginleftonly"></span>'.$newcardbutton, '', $limit, 1, 0, 1, $viewmode);
 
@@ -540,7 +540,7 @@ $s .= "\n".'<!-- End div to calendars selectors -->'."\n";
 print $s;
 
 print '<div class="liste_titre liste_titre_bydiv centpercent">';
-print_actions_filter($form, $canedit, $search_status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid, $search_categ_cus);
+print_actions_filter($form, $canedit, $search_status, $year, $month, $day, $showbirthday, '', $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid, $search_categ_cus);
 print '</div>';
 
 
@@ -762,9 +762,9 @@ if ($resql) {
 
 			// Add an entry in actionarray for each day
 			$daycursor = $event->date_start_in_calendar;
-			$annee = dol_print_date($daycursor, '%Y', 'tzuserrel');
-			$mois = dol_print_date($daycursor, '%m', 'tzuserrel');
-			$jour = dol_print_date($daycursor, '%d', 'tzuserrel');
+			$annee = (int) dol_print_date($daycursor, '%Y', 'tzuserrel');
+			$mois = (int) dol_print_date($daycursor, '%m', 'tzuserrel');
+			$jour = (int) dol_print_date($daycursor, '%d', 'tzuserrel');
 			//print $daycursor.' '.dol_print_date($daycursor, 'dayhour', 'gmt').' '.$event->id.' -> '.$annee.'-'.$mois.'-'.$jour.'<br>';
 
 			// Loop on each day covered by action to prepare an index to show on calendar
@@ -1026,9 +1026,9 @@ while ($currentdaytoshow < $lastdaytoshow) {
 			// Show days of the current week
 			$curtime = dol_time_plus_duree($currentdaytoshow, $iter_day, 'd');
 			// $curtime is a gmt time, but we want the day, month, year in user TZ
-			$tmpday = dol_print_date($curtime, "%d", "tzuserrel");
-			$tmpmonth = dol_print_date($curtime, "%m", "tzuserrel");
-			$tmpyear = dol_print_date($curtime, "%Y", "tzuserrel");
+			$tmpday = (int) dol_print_date($curtime, "%d", "tzuserrel");
+			$tmpmonth = (int) dol_print_date($curtime, "%m", "tzuserrel");
+			$tmpyear = (int) dol_print_date($curtime, "%Y", "tzuserrel");
 			//var_dump($curtime.' '.$tmpday.' '.$tmpmonth.' '.$tmpyear);
 
 			$style = 'cal_current_month';

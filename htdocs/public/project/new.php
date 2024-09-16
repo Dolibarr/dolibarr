@@ -53,7 +53,6 @@ if (is_numeric($entity)) {
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -101,7 +100,7 @@ if (empty($conf->project->enabled)) {
  */
 function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
 {
-	global $user, $conf, $langs, $mysoc;
+	global $conf, $langs, $mysoc;
 
 	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss); // Show html headers
 
@@ -173,7 +172,7 @@ if ($reshook < 0) {
 }
 
 // Action called when page is submitted
-if (empty($reshook) && $action == 'add') {
+if (empty($reshook) && $action == 'add') {	// Test on permission not required here. This is an anonymous public submission form. Check is done on the constant to enable feature + mitigation.
 	$error = 0;
 	$urlback = '';
 
@@ -215,7 +214,7 @@ if (empty($reshook) && $action == 'add') {
 
 	if (!$error) {
 		// Search thirdparty and set it if found to the new created project
-		$result = $thirdparty->fetch(0, '', '', '', '', '', '', '', '', '', $object->email);
+		$result = $thirdparty->fetch(0, '', '', '', '', '', '', '', '', '', GETPOST('email'));
 		if ($result > 0) {
 			$proj->socid = $thirdparty->id;
 		} else {
@@ -259,7 +258,7 @@ if (empty($reshook) && $action == 'add') {
 	if (!$error) {
 		// Defined the ref into $defaultref
 		$defaultref = '';
-		$modele = !getDolGlobalString('PROJECT_ADDON') ? 'mod_project_simple' : $conf->global->PROJECT_ADDON;
+		$modele = getDolGlobalString('PROJECT_ADDON', 'mod_project_simple');
 
 		// Search template files
 		$file = '';
@@ -275,11 +274,13 @@ if (empty($reshook) && $action == 'add') {
 			}
 		}
 
-		if ($filefound) {
+		if ($filefound && !empty($classname)) {
 			$result = dol_include_once($reldir."core/modules/project/".$modele.'.php');
-			$modProject = new $classname();
+			if (class_exists($classname)) {
+				$modProject = new $classname();
 
-			$defaultref = $modProject->getNextValue($thirdparty, $object);
+				$defaultref = $modProject->getNextValue($thirdparty, $object);
+			}
 		}
 
 		if (is_numeric($defaultref) && $defaultref <= 0) {
@@ -429,7 +430,7 @@ if (empty($reshook) && $action == 'add') {
 
 // Action called after a submitted was send and member created successfully
 // backtopage parameter with an url was set on member submit page, we never go here because a redirect was done to this url.
-if (empty($reshook) && $action == 'added') {
+if (empty($reshook) && $action == 'added') {	// Test on permission not required here
 	llxHeaderVierge($langs->trans("NewLeadForm"));
 
 	// Si on a pas ete redirige
@@ -456,7 +457,7 @@ $extrafields->fetch_name_optionals_label($object->table_element); // fetch optio
 llxHeaderVierge($langs->trans("NewContact"));
 
 
-print load_fiche_titre($langs->trans("NewContact"), '', '', 0, 0, 'center');
+print load_fiche_titre($langs->trans("NewContact"), '', '', 0, '', 'center');
 
 
 print '<div align="center">';
@@ -520,20 +521,20 @@ print '</td></tr>';
 print '<tr><td>'.$langs->trans('Country').'</td><td>';
 $country_id = GETPOST('country_id');
 if (!$country_id && getDolGlobalString('PROJECT_NEWFORM_FORCECOUNTRYCODE')) {
-	$country_id = getCountry($conf->global->PROJECT_NEWFORM_FORCECOUNTRYCODE, 2, $db, $langs);
+	$country_id = getCountry($conf->global->PROJECT_NEWFORM_FORCECOUNTRYCODE, '2', $db, $langs);
 }
 if (!$country_id && !empty($conf->geoipmaxmind->enabled)) {
 	$country_code = dol_user_country();
 	//print $country_code;
 	if ($country_code) {
-		$new_country_id = getCountry($country_code, 3, $db, $langs);
+		$new_country_id = getCountry($country_code, '3', $db, $langs);
 		//print 'xxx'.$country_code.' - '.$new_country_id;
 		if ($new_country_id) {
 			$country_id = $new_country_id;
 		}
 	}
 }
-$country_code = getCountry($country_id, 2, $db, $langs);
+$country_code = getCountry($country_id, '2', $db, $langs);
 print $form->select_country($country_id, 'country_id');
 print '</td></tr>';
 // State

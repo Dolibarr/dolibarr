@@ -52,6 +52,8 @@ if ($id > 0 || !empty($ref)) {
 
 $permissionnote = ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer')); // Used by the include of actions_setnotes.inc.php
 
+$hookmanager->initHooks(array('productnote'));
+
 if ($object->id > 0) {
 	if ($object->type == $object::TYPE_PRODUCT) {
 		restrictedArea($user, 'product', $object->id, 'product&product', '', '');
@@ -62,10 +64,6 @@ if ($object->id > 0) {
 } else {
 	restrictedArea($user, 'product|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 }
-
-
-$hookmanager->initHooks(array('productnote'));
-
 
 /*
  * Actions

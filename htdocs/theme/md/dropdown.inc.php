@@ -156,6 +156,7 @@ div#topmenu-global-search-dropdown a::after, div#topmenu-quickadd-dropdown a::af
 	/* font part */
 	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_FAMILY', 'Font Awesome 5 Free'); ?>";
 	font-size: 0.7em;
+	line-height: 1.7em;
 	font-weight: 900;
 	font-style: normal;
 	font-variant: normal;
@@ -583,6 +584,21 @@ dropdown-holder {
 	display: block;
 }
 
+
+/** dropdown arrow used to clearly identify parent button of dropdown*/
+.dropdown-holder.open .dropdown-content::before {
+	--triangleBorderSize : 5px;
+	position: absolute;
+	content: "";
+	top: calc(var(--triangleBorderSize) * -1);
+	right: 12px;
+	width: 0px;
+	height: 0px;
+	border-style: solid;
+	border-width: 0 var(--triangleBorderSize) var(--triangleBorderSize) var(--triangleBorderSize);
+	border-color: transparent transparent #ffff transparent;
+	transform: rotate(0deg);
+}
 
 /* smartphone */
 @media only screen and (max-width: 767px)

@@ -173,7 +173,7 @@ class LoanSchedule extends CommonObject
 
 		// Check parameters
 		if ($totalamount == 0) {
-			$this->errors[] = 'step1';
+			$this->errors[] = 'Amount must not be "0".';
 			return -1; // Negative amounts are accepted for reject prelevement but not null
 		}
 
@@ -333,7 +333,7 @@ class LoanSchedule extends CommonObject
 
 		$sql .= " fk_loan=".(isset($this->fk_loan) ? $this->fk_loan : "null").",";
 		$sql .= " datec=".(dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
-		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
+		$sql .= " tms=".(dol_strlen((string) $this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
 		$sql .= " datep=".(dol_strlen($this->datep) != 0 ? "'".$this->db->idate($this->datep)."'" : 'null').",";
 		$sql .= " amount_capital=".(isset($this->amount_capital) ? $this->amount_capital : "null").",";
 		$sql .= " amount_insurance=".(isset($this->amount_insurance) ? $this->amount_insurance : "null").",";
@@ -421,8 +421,12 @@ class LoanSchedule extends CommonObject
 	{
 		$result = '';
 
-		if (!empty($capital) && !empty($rate) && !empty($nbterm)) {
-			$result = ($capital * ($rate / 12)) / (1 - pow((1 + ($rate / 12)), ($nbterm * -1)));
+		if (!empty($capital) && !empty($nbterm)) {
+			if (!empty($rate)) {
+				$result = ($capital * ($rate / 12)) / (1 - pow((1 + ($rate / 12)), ($nbterm * -1)));
+			} else {
+				$result = $capital / $nbterm;
+			}
 		}
 
 		return $result;

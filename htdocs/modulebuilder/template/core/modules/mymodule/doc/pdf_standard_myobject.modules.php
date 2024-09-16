@@ -1,15 +1,16 @@
 <?php
-/* Copyright (C) 2004-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2008       Raphael Bertrand        <raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2014  Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2012       Christophe Battarel     <christophe.battarel@altairis.fr>
- * Copyright (C) 2012       Cédric Salvador         <csalvador@gpcsolutions.fr>
- * Copyright (C) 2012-2014  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2017       Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2004-2014	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2008		Raphael Bertrand			<raphael.bertrand@resultic.fr>
+ * Copyright (C) 2010-2014	Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2012		Christophe Battarel			<christophe.battarel@altairis.fr>
+ * Copyright (C) 2012		Cédric Salvador				<csalvador@gpcsolutions.fr>
+ * Copyright (C) 2012-2014	Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
+ * Copyright (C) 2017		Ferran Marcet				<fmarcet@2byte.es>
+ * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) ---Replace with your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,7 +83,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr';
 
@@ -93,7 +94,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 	public $emetteur;
 
 	/**
-	 * @var array<string,array{rank:int,width:float|int,title:array{textkey:string,label:string,align:string,padding:array{0:float,1:float,2:float,3:float}},content:array{align:string,padding:array{0:float,1:float,2:float,3:float}}}>	Array of columns
+	 * @var array<string,array{rank:int,width:float|int,status:bool,title:array{textkey:string,label:string,align:string,padding:array{0:float,1:float,2:float,3:float}},content:array{align:string,padding:array{0:float,1:float,2:float,3:float}}}>	Array of document table columns
 	 */
 	public $cols;
 
@@ -101,7 +102,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 	/**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$db      Database handler
+	 *	@param	DoliDB	$db      Database handler
 	 */
 	public function __construct($db)
 	{
@@ -151,15 +152,15 @@ class pdf_standard_myobject extends ModelePDFMyObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Function to build pdf onto disk
+	 *  Function to build and write pdf to disk
 	 *
-	 *  @param		MyObject	$object				Object to generate
-	 *  @param		Translate	$outputlangs		Lang output object
-	 *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file
-	 *  @param		int			$hidedetails		Do not show line details
-	 *  @param		int			$hidedesc			Do not show desc
-	 *  @param		int			$hideref			Do not show ref
-	 *  @return     int         	    			1=OK, 0=KO
+	 *  @param	MyObject	$object				Source object to generate document from
+	 *  @param	Translate	$outputlangs		Lang output object
+	 *  @param	string		$srctemplatepath	Full path of source filename for generator using a template file
+	 *  @param	int<0,1>	$hidedetails		Do not show line details
+	 *  @param	int<0,1>	$hidedesc			Do not show desc
+	 *  @param	int<0,1>	$hideref			Do not show ref
+	 *  @return	int<-1,1>						1 if OK, <=0 if KO
 	 */
 	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
@@ -260,6 +261,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 		if (getMultidirOutput($object)) {
 			$object->fetch_thirdparty();
 
+			$dir = null;
 			// Definition of $dir and $file
 			if ($object->specimen) {
 				$dir = getMultidirOutput($object);
@@ -268,6 +270,9 @@ class pdf_standard_myobject extends ModelePDFMyObject
 				$objectref = dol_sanitizeFileName($object->ref);
 				$dir = getMultidirOutput($object)."/".$objectref;
 				$file = $dir."/".$objectref.".pdf";
+			}
+			if ($dir === null) {
+				return 0;
 			}
 			if (!file_exists($dir)) {
 				if (dol_mkdir($dir) < 0) {
@@ -292,6 +297,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 
 				// Create pdf instance
 				$pdf = pdf_getInstance($this->format);
+				'@phan-var-force TCPDI|TCPDF $pdf';
 				$default_font_size = pdf_getPDFFontSize($outputlangs); // Must be after pdf_getInstance
 				$pdf->SetAutoPageBreak(1, 0);
 
@@ -338,13 +344,14 @@ class pdf_standard_myobject extends ModelePDFMyObject
 				if ($cert) {
 					$info = array(
 						'Name' => $this->emetteur->name,
-						'Location' => getCountry($this->emetteur->country_code, 0),
+						'Location' => getCountry($this->emetteur->country_code, ''),
 						'Reason' => 'MYOBJECT',
 						'ContactInfo' => $this->emetteur->email
 					);
 					$pdf->setSignature($cert, $cert, $this->emetteur->name, '', 2, $info);
 				}
 
+				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 
@@ -498,7 +505,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 						}
 					}
 
-					$tab_height = $tab_height - $height_note;
+					$tab_height -= $height_note;
 					$tab_top = $posyafter + 6;
 				} else {
 					$height_note = 0;
@@ -790,7 +797,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 				// Pagefoot
 				$this->_pagefoot($pdf, $object, $outputlangs);
 				if (method_exists($pdf, 'AliasNbPages')) {
-					$pdf->AliasNbPages();
+					$pdf->AliasNbPages();  // @phan-suppress-current-line PhanUndeclaredMethod
 				}
 
 				$pdf->Close();
@@ -826,9 +833,9 @@ class pdf_standard_myobject extends ModelePDFMyObject
 	/**
 	 *  Return list of active generation modules
 	 *
-	 *  @param	DoliDB	$db     			Database handler
-	 *  @param  integer	$maxfilenamelength  Max length of value to show
-	 *  @return	array						List of templates
+	 *  @param  DoliDB  	$db					Database handler
+	 *  @param  int<0,max>	$maxfilenamelength	Max length of value to show
+	 *  @return string[]|int<-1,0>				List of templates
 	 */
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
@@ -838,18 +845,18 @@ class pdf_standard_myobject extends ModelePDFMyObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 *   Show table for lines
+	 *	Show table for lines
 	 *
-	 *   @param		tcpdf		$pdf     		Object PDF
-	 *   @param		string		$tab_top		Top position of table
-	 *   @param		string		$tab_height		Height of table (rectangle)
-	 *   @param		int			$nexY			Y (not used)
-	 *   @param		Translate	$outputlangs	Langs object
-	 *   @param		int			$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
-	 *   @param		int			$hidebottom		Hide bottom bar of array
-	 *   @param		string		$currency		Currency code
-	 *   @param		Translate	$outputlangsbis	Langs object bis
-	 *   @return	void
+	 *	@param	TCPDF|TCPDI	$pdf     		Object PDF
+	 *	@param	int			$tab_top		Top position of table
+	 *	@param	int			$tab_height		Height of table (rectangle)
+	 *	@param	int			$nexY			Y (not used)
+	 *	@param	Translate	$outputlangs	Langs object
+	 *	@param	int<-1,1>	$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
+	 *	@param	int<0,1>	$hidebottom		Hide bottom bar of array
+	 *	@param	string		$currency		Currency code
+	 *	@param	?Translate	$outputlangsbis	Langs object bis
+	 *	@return	void
 	 */
 	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '', $outputlangsbis = null)
 	{
@@ -879,7 +886,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 
 			//$conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR='230,230,230';
 			if (getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')) {
-				$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, $this->tabTitleHeight, 'F', null, explode(',', getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')));
+				$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, $this->tabTitleHeight, 'F', array(), explode(',', getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')));
 			}
 		}
 
@@ -901,12 +908,12 @@ class pdf_standard_myobject extends ModelePDFMyObject
 	/**
 	 *  Show top header of page.
 	 *
-	 *  @param	TCPDF		$pdf     		Object PDF
-	 *  @param  MyObject	$object     	Object to show
-	 *  @param  int	    	$showaddress    0=no, 1=yes
-	 *  @param  Translate	$outputlangs	Object lang for output
-	 *  @param  Translate	$outputlangsbis	Object lang for output bis
-	 *  @return	float|int                   Return topshift value
+	 *	@param	TCPDF|TCPDI	$pdf     		Object PDF
+	 *	@param	MyObject	$object     	Object to show
+	 *	@param	int<0,1>	$showaddress    0=no, 1=yes
+	 *	@param	Translate	$outputlangs	Object lang for output
+	 *	@param	?Translate	$outputlangsbis	Object lang for output bis
+	 *	@return	float|int                   Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $outputlangsbis = null)
 	{
@@ -992,10 +999,12 @@ class pdf_standard_myobject extends ModelePDFMyObject
 		$posy += 1;
 		$pdf->SetFont('', '', $default_font_size - 2);
 
-		if ($object->ref_client) {
+		// @phan-suppress-next-line PhanUndeclaredProperty
+		if (property_exists($object, 'ref_client') && $object->ref_client) {
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
+			// @phan-suppress-next-line PhanUndeclaredProperty
 			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("RefCustomer")." : ".dol_trunc($outputlangs->convToOutputCharset($object->ref_client), 65), '', 'R');
 		}
 
@@ -1028,7 +1037,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 		if (getDolGlobalInt('PDF_USE_ALSO_LANGUAGE_CODE') && is_object($outputlangsbis)) {
 			$title .= ' - '.$outputlangsbis->transnoentities("Date");
 		}
-		$pdf->MultiCell($w, 3, $title." : ".dol_print_date($object->date, "day", false, $outputlangs, true), '', 'R');
+		$pdf->MultiCell($w, 3, $title." : ".dol_print_date($object->date_creation, "day", false, $outputlangs, true), '', 'R');
 
 		if (!getDolGlobalString('MAIN_PDF_HIDE_CUSTOMER_CODE') && !empty($object->thirdparty->code_client)) {
 			$posy += 3;
@@ -1046,7 +1055,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 				$posy += 4;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell($w, 3, $langs->transnoentities("SalesRepresentative")." : ".$usertmp->getFullName($langs), '', 'R');
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("SalesRepresentative")." : ".$usertmp->getFullName($langs), '', 'R');
 			}
 		}
 
@@ -1118,10 +1127,12 @@ class pdf_standard_myobject extends ModelePDFMyObject
 
 			if (is_object($thirdparty)) {
 				$carac_client_name = pdfBuildThirdpartyName($thirdparty, $outputlangs);
+			} else {
+				$carac_client_name = null;
 			}
 
 			$mode = 'target';
-			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ($usecontact ? $object->contact : ''), $usecontact, $mode, $object);
+			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ($usecontact ? $object->contact : ''), ($usecontact ? 1 : 0), $mode, $object);
 
 			// Show recipient
 			$widthrecbox = getDolGlobalInt('MAIN_PDF_USE_ISO_LOCATION') ? 92 : 100;
@@ -1147,6 +1158,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 			// Show recipient name
 			$pdf->SetXY($posx + 2, $posy + 3);
 			$pdf->SetFont('', 'B', $default_font_size);
+			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			$pdf->MultiCell($widthrecbox, 2, $carac_client_name, 0, $ltrdirection);
 
 			$posy = $pdf->getY();
@@ -1154,6 +1166,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 			// Show recipient information
 			$pdf->SetFont('', '', $default_font_size - 1);
 			$pdf->SetXY($posx + 2, $posy);
+			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			$pdf->MultiCell($widthrecbox, 4, $carac_client, 0, $ltrdirection);
 		}
 
@@ -1163,13 +1176,13 @@ class pdf_standard_myobject extends ModelePDFMyObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 *   	Show footer of page. Need this->emetteur object
+	 *	Show footer of page. Need this->emetteur object
 	 *
-	 *   	@param	TCPDF		$pdf     			PDF
-	 * 		@param	Object		$object				Object to show
-	 *      @param	Translate	$outputlangs		Object lang for output
-	 *      @param	int			$hidefreetext		1=Hide free text
-	 *      @return	int								Return height of bottom margin including footer text
+	 *	@param	TCPDI|TCPDF		$pdf     		PDF
+	 *	@param	CommonObject	$object			Object to show
+	 *	@param	Translate		$outputlangs	Object lang for output
+	 *	@param	int<0,1>		$hidefreetext	1=Hide free text
+	 *	@return	int<0,1>						Return height of bottom margin including footer text
 	 */
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
@@ -1179,14 +1192,14 @@ class pdf_standard_myobject extends ModelePDFMyObject
 	}
 
 	/**
-	 *  Define Array Column Field
+	 *	Define Array Column Field
 	 *
-	 *  @param	object			$object    		common object
-	 *  @param	Translate		$outputlangs    langs
-	 *  @param	int			   $hidedetails		Do not show line details
-	 *  @param	int			   $hidedesc		Do not show desc
-	 *  @param	int			   $hideref			Do not show ref
-	 *  @return	void
+	 *	@param	CommonObject	$object    		common object
+	 *	@param	Translate		$outputlangs    langs
+	 *	@param	int<0,1>		$hidedetails	Do not show line details
+	 *	@param	int<0,1>		$hidedesc		Do not show desc
+	 *	@param	int<0,1>		$hideref		Do not show ref
+	 *	@return	void
 	 */
 	public function defineColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
@@ -1241,7 +1254,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 		);
 
 		// PHOTO
-		// $rank = $rank + 10;
+		// $rank += 10;
 		// $this->cols['photo'] = array(
 		// 	'rank' => $rank,
 		// 	'width' => (!getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH') ? 20 : getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH')), // in mm
@@ -1261,7 +1274,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 		// }
 
 
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['vat'] = array(
 			'rank' => $rank,
 			'status' => false,
@@ -1276,7 +1289,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 			$this->cols['vat']['status'] = true;
 		}
 
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['subprice'] = array(
 			'rank' => $rank,
 			'width' => 19, // in mm
@@ -1287,7 +1300,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 			'border-left' => true, // add left line separator
 		);
 
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['qty'] = array(
 			'rank' => $rank,
 			'width' => 16, // in mm
@@ -1298,7 +1311,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 			'border-left' => true, // add left line separator
 		);
 
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['unit'] = array(
 			'rank' => $rank,
 			'width' => 11, // in mm
@@ -1312,7 +1325,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 			$this->cols['unit']['status'] = true;
 		}
 
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['discount'] = array(
 			'rank' => $rank,
 			'width' => 13, // in mm
@@ -1326,7 +1339,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 			$this->cols['discount']['status'] = true;
 		}
 
-		$rank = $rank + 1000; // add a big offset to be sure is the last col because default extrafield rank is 100
+		$rank += 1000; // add a big offset to be sure is the last col because default extrafield rank is 100
 		$this->cols['totalexcltax'] = array(
 			'rank' => $rank,
 			'width' => 26, // in mm
@@ -1355,6 +1368,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 		if ($reshook < 0) {
 			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 		} elseif (empty($reshook)) {
+			// @phan-suppress-next-line PhanPluginSuspiciousParamOrderInternal
 			$this->cols = array_replace($this->cols, $hookmanager->resArray); // array_replace is used to preserve keys
 		} else {
 			$this->cols = $hookmanager->resArray;

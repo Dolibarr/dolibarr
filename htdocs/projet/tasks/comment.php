@@ -84,12 +84,18 @@ $socid = 0;
 restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
 
 
+/*
+ * Actions
+ */
+
+// None
+
 
 /*
  * View
  */
 
-llxHeader('', $langs->trans("CommentPage"));
+llxHeader('', $langs->trans("CommentPage"), '', '', 0, 0, '', '', '', 'mod-project project-tasks page-task_comment');
 
 $form = new Form($db);
 $formother = new FormOther($db);

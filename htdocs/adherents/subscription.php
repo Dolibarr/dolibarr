@@ -1,12 +1,13 @@
 <?php
-/* Copyright (C) 2001-2004  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2002-2003  Jean-Louis Bergamo      <jlb@j1b.org>
- * Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2012-2017  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2016  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2019       Thibault FOUCART        <support@ptibogxiv.net>
- * Copyright (C) 2023		Waël Almoman			<info@almoman.com>
+/* Copyright (C) 2001-2004	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2002-2003	Jean-Louis Bergamo			<jlb@j1b.org>
+ * Copyright (C) 2004-2018	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2012-2017	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2015-2024	Alexandre Spangaro			<aspangaro@open-dsi.fr>
+ * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2019		Thibault FOUCART			<support@ptibogxiv.net>
+ * Copyright (C) 2023		Waël Almoman				<info@almoman.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -112,11 +113,7 @@ if ($id > 0 || !empty($ref)) {
 }
 
 // Define variables to determine what the current user can do on the members
-$canaddmember = $user->hasRight('adherent', 'creer');
-// Define variables to determine what the current user can do on the properties of a member
-if ($id) {
-	$caneditfieldmember = $user->hasRight('adherent', 'creer');
-}
+$permissiontoaddmember = $user->hasRight('adherent', 'creer');
 
 // Security check
 $result = restrictedArea($user, 'adherent', $object->id, '', '', 'socid', 'rowid', 0);
@@ -170,12 +167,12 @@ if (empty($reshook) && $action == 'setuserid' && ($user->hasRight('user', 'self'
 	}
 }
 
-if (empty($reshook) && $action == 'setsocid') {
+if (empty($reshook) && $action == 'setsocid' && $permissiontoaddmember) {
 	$error = 0;
 	if (!$error) {
-		if (GETPOSTINT('socid') != $object->fk_soc) {    // If link differs from currently in database
+		if (GETPOSTINT('socid') != $object->socid) {    // If link differs from currently in database
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."adherent";
-			$sql .= " WHERE fk_soc = '".GETPOSTINT('socid')."'";
+			$sql .= " WHERE fk_soc = ".((int) GETPOSTINT('socid'));
 			$resql = $db->query($sql);
 			if ($resql) {
 				$obj = $db->fetch_object($resql);
@@ -306,7 +303,7 @@ if ($user->hasRight('adherent', 'cotisation', 'creer') && $action == 'subscripti
 	}
 
 	// Record the subscription then complementary actions
-	if (!$error && $action == 'subscription') {
+	if (!$error && $action == 'subscription') {		// Test on permission already done
 		$db->begin();
 
 		// Create subscription
@@ -441,10 +438,9 @@ $form = new Form($db);
 $now = dol_now();
 
 $title = $langs->trans("Member")." - ".$langs->trans("Subscriptions");
-
 $help_url = "EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder";
 
-llxHeader("", $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-member page-card_subscription');
 
 
 $param = '';
@@ -467,12 +463,6 @@ if (! ($object->id > 0)) {
 	print $langs->trans("ErrorRecordNotFound");
 }
 
-/*$res = $object->fetch($rowid);
-	if ($res < 0) {
-		dol_print_error($db, $object->error);
-		exit;
-	}
-*/
 
 $adht->fetch($object->typeid);
 
@@ -672,7 +662,7 @@ if ($action != 'editlogin' && $user->hasRight('adherent', 'creer')) {
 print '</tr></table>';
 print '</td><td colspan="2" class="valeur">';
 if ($action == 'editlogin') {
-	$form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id, $object->user_id, 'userid', '');
+	$form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id, $object->user_id, 'userid', array());
 } else {
 	if ($object->user_id) {
 		$linkeduser = new User($db);
@@ -958,7 +948,7 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 	print '<input type="hidden" name="memberlabel" id="memberlabel" value="'.dol_escape_htmltag($object->getFullName($langs)).'">';
 	print '<input type="hidden" name="thirdpartylabel" id="thirdpartylabel" value="'.dol_escape_htmltag($object->company).'">';
 
-	print dol_get_fiche_head('');
+	print dol_get_fiche_head(array());
 
 	print '<div class="div-table-responsive">';
 	print '<table class="border centpercent">'."\n";
@@ -978,17 +968,18 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 		$datefrom = dol_mktime(0, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 	}
 	if (!$datefrom) {
-		$datefrom = $object->datevalid;
+		// Guess the subscription start date
+		$datefrom = $object->datevalid; 	// By default, the subscription start date is the payment date
 		if (getDolGlobalString('MEMBER_SUBSCRIPTION_START_AFTER')) {
 			$datefrom = dol_time_plus_duree($now, (int) substr(getDolGlobalString('MEMBER_SUBSCRIPTION_START_AFTER'), 0, -1), substr(getDolGlobalString('MEMBER_SUBSCRIPTION_START_AFTER'), -1));
 		} elseif ($object->datefin > 0 && dol_time_plus_duree($object->datefin, $defaultdelay, $defaultdelayunit) > $now) {
 			$datefrom = dol_time_plus_duree($object->datefin, 1, 'd');
 		}
-
+		// Now do a correction of the suggested date
 		if (getDolGlobalString('MEMBER_SUBSCRIPTION_START_FIRST_DAY_OF') === "m") {
-			$datefrom = dol_get_first_day(dol_print_date($datefrom, "%Y"), dol_print_date($datefrom, "%m"));
+			$datefrom = dol_get_first_day((int) dol_print_date($datefrom, "%Y"), (int) dol_print_date($datefrom, "%m"));
 		} elseif (getDolGlobalString('MEMBER_SUBSCRIPTION_START_FIRST_DAY_OF') === "Y") {
-			$datefrom = dol_get_first_day(dol_print_date($datefrom, "%Y"));
+			$datefrom = dol_get_first_day((int) dol_print_date($datefrom, "%Y"));
 		}
 	}
 	print $form->selectDate($datefrom, '', 0, 0, 0, "subscription", 1, 1);
@@ -1000,9 +991,9 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 	}
 	if (!$dateto) {
 		if (getDolGlobalInt('MEMBER_SUBSCRIPTION_SUGGEST_END_OF_MONTH')) {
-			$dateto = dol_get_last_day(dol_print_date($datefrom, "%Y"), dol_print_date($datefrom, "%m"));
+			$dateto = dol_get_last_day((int) dol_print_date($datefrom, "%Y"), (int) dol_print_date($datefrom, "%m"));
 		} elseif (getDolGlobalInt('MEMBER_SUBSCRIPTION_SUGGEST_END_OF_YEAR')) {
-			$dateto = dol_get_last_day(dol_print_date($datefrom, "%Y"));
+			$dateto = dol_get_last_day((int) dol_print_date($datefrom, "%Y"));
 		} else {
 			$dateto = -1; // By default, no date is suggested
 		}

@@ -101,7 +101,7 @@ $title = $langs->trans('ProjectsArea');
 
 $help_url = 'EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos|DE:Modul_Projekte';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-project page-dashboard');
 
 
 //if ($mine) $title=$langs->trans("MyProjectsArea");
@@ -374,6 +374,7 @@ if ($resql) {
 			$companystatic->name_alias = $obj->name_alias;
 			$companystatic->code_client = $obj->code_client;
 			$companystatic->code_compta = $obj->code_compta;
+			$companystatic->code_compta_client = $obj->code_compta;
 			$companystatic->client = $obj->client;
 			$companystatic->code_fournisseur = $obj->code_fournisseur;
 			$companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;

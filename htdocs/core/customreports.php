@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2020-2024 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,7 +81,7 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	// $search_measures, $search_xaxis or $search_yaxis may have been defined by the parent.
 
 	if (empty($user) || empty($user->id)) {
-		print 'Page is called as an include but $user and its permission loaded with getrights() are not defined. We stop here.';
+		print 'Page is called as an include but $user and its permission loaded with loadRights() are not defined. We stop here.';
 		exit(-1);
 	}
 	if (empty($object)) {
@@ -313,7 +314,7 @@ $features = $object->element;
 if (!empty($object->element_for_permission)) {
 	$features = $object->element_for_permission;
 } else {
-	$features = $features.(empty($object->module) ? '' : '@'.$object->module);
+	$features .= (empty($object->module) ? '' : '@'.$object->module);
 }
 
 restrictedArea($user, $features, 0, '');
@@ -681,7 +682,7 @@ if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 		// Add measure from extrafields
 		if ($object->isextrafieldmanaged) {
 			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-				if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key]) && (!isset($extrafields->attributes[$object->table_element]['enabled'][$key]) || dol_eval($extrafields->attributes[$object->table_element]['enabled'][$key], 1, 1, '1'))) {
+				if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key]) && (!isset($extrafields->attributes[$object->table_element]['enabled'][$key]) || dol_eval((string) $extrafields->attributes[$object->table_element]['enabled'][$key], 1, 1, '1'))) {
 					$arrayofyaxis['te.'.$key] = array(
 						'label' => $extrafields->attributes[$object->table_element]['label'][$key],
 						'position' => (int) $extrafields->attributes[$object->table_element]['pos'][$key],
@@ -1149,7 +1150,7 @@ if ($mode == 'graph') {
 
 if ($sql && !defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 	// Show admin info
-	print '<br>'.info_admin($langs->trans("SQLUsedForExport").':<br> '.$sql, 0, 0, 1, '', 'TechnicalInformation');
+	print '<br>'.info_admin($langs->trans("SQLUsedForExport").':<br> '.$sql, 0, 0, '1', '', 'TechnicalInformation');
 }
 
 print '<div>';

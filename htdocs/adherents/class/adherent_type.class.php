@@ -6,6 +6,7 @@
  * Copyright (C) 2018-2019  Thibault Foucart		<support@ptibogxiv.net>
  * Copyright (C) 2021     	Waël Almoman            <info@almoman.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,20 +68,23 @@ class AdherentType extends CommonObject
 	 */
 	public $morphy;
 
+	/**
+	 * @var string
+	 */
 	public $duration;
 
 	/**
-	 * type expiration
+	 * @var int type expiration
 	 */
 	public $duration_value;
 
 	/**
-	 * Expiration unit
+	 * @var string Expiration unit
 	 */
 	public $duration_unit;
 
 	/**
-	 * @var int Subscription required (0 or 1)
+	 * @var int<0,1> Subscription required (0 or 1)
 	 */
 	public $subscription;
 
@@ -118,7 +122,7 @@ class AdherentType extends CommonObject
 	/** @var string Email sent after exclude */
 	public $mail_exclude = '';
 
-	/** @var array Array of members */
+	/** @var Adherent[] Array of members */
 	public $members = array();
 
 	/**
@@ -132,7 +136,7 @@ class AdherentType extends CommonObject
 	public $email;
 
 	/**
-	 * @var array multilangs
+	 * @var array<string,array{label:string,description:string,email:string}>	multilangs
 	 */
 	public $multilangs = array();
 
@@ -174,9 +178,9 @@ class AdherentType extends CommonObject
 					$this->description = $obj->description;
 					$this->email        = $obj->email;
 				}
-				$this->multilangs["$obj->lang"]["label"] = $obj->label;
-				$this->multilangs["$obj->lang"]["description"] = $obj->description;
-				$this->multilangs["$obj->lang"]["email"] = $obj->email;
+				$this->multilangs[(string) $obj->lang]["label"] = $obj->label;
+				$this->multilangs[(string) $obj->lang]["description"] = $obj->description;
+				$this->multilangs[(string) $obj->lang]["email"] = $obj->email;
 			}
 			return 1;
 		} else {
@@ -501,7 +505,7 @@ class AdherentType extends CommonObject
 				$this->morphy         = $obj->morphy;
 				$this->status         = $obj->status;
 				$this->duration       = $obj->duration;
-				$this->duration_value = substr($obj->duration, 0, dol_strlen($obj->duration) - 1);
+				$this->duration_value = (int) substr($obj->duration, 0, dol_strlen($obj->duration) - 1);
 				$this->duration_unit  = substr($obj->duration, -1);
 				$this->subscription   = $obj->subscription;
 				$this->amount         = $obj->amount;
@@ -533,7 +537,7 @@ class AdherentType extends CommonObject
 	 *  Return list of members' type
 	 *
 	 *  @param	int		$status			Filter on status of type
-	 *  @return array					List of types of members
+	 *  @return array<int,string>		List of types of members
 	 */
 	public function liste_array($status = -1)
 	{
@@ -572,7 +576,7 @@ class AdherentType extends CommonObject
 	 *  Return the array of all amounts per membership type id
 	 *
 	 *  @param	int		$status			Filter on status of type
-	 *  @return array					Array of membership type
+	 *  @return array<int,string>		Array of membership type
 	 */
 	public function amountByType($status = null)
 	{
@@ -608,11 +612,11 @@ class AdherentType extends CommonObject
 	/**
 	 * 	Return array of Member objects for member type this->id (or all if this->id not defined)
 	 *
-	 * 	@param	string	$excludefilter		Filter to exclude. This value must not come from a user input.
-	 *  @param	int		$mode				0=Return array of member instance
+	 * 	@param	string		$excludefilter	Filter to exclude. This value must not come from a user input.
+	 *  @param	int<0,2>	$mode			0=Return array of member instance
 	 *  									1=Return array of member instance without extra data
 	 *  									2=Return array of members id only
-	 * 	@return	mixed						Array of members or -1 on error
+	 * 	@return	Adherent[]|int<-1,-1>		Array of members or -1 on error
 	 */
 	public function listMembersForMemberType($excludefilter = '', $mode = 0)
 	{
@@ -634,7 +638,7 @@ class AdherentType extends CommonObject
 					if ($mode < 2) {
 						$memberstatic = new Adherent($this->db);
 						if ($mode == 1) {
-							$memberstatic->fetch($obj->rowid, '', '', '', false, false);
+							$memberstatic->fetch($obj->rowid, '', 0, '', false, false);
 						} else {
 							$memberstatic->fetch($obj->rowid);
 						}
@@ -677,9 +681,9 @@ class AdherentType extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 * @param array $params params to construct tooltip data
+	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
-	 * @return array
+	 * @return array{picto:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -699,9 +703,9 @@ class AdherentType extends CommonObject
 		if (isset($this->duration)) {
 			$datas['duration'] = '<br>'.$langs->trans("Duration").': '.$this->duration_value;
 			if ($this->duration_value > 1) {
-				$dur = array("i"=>$langs->trans("Minutes"), "h"=>$langs->trans("Hours"), "d"=>$langs->trans("Days"), "w"=>$langs->trans("Weeks"), "m"=>$langs->trans("Months"), "y"=>$langs->trans("Years"));
+				$dur = array("i" => $langs->trans("Minutes"), "h" => $langs->trans("Hours"), "d" => $langs->trans("Days"), "w" => $langs->trans("Weeks"), "m" => $langs->trans("Months"), "y" => $langs->trans("Years"));
 			} elseif ($this->duration_value > 0) {
-				$dur = array("i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hour"), "d"=>$langs->trans("Day"), "w"=>$langs->trans("Week"), "m"=>$langs->trans("Month"), "y"=>$langs->trans("Year"));
+				$dur = array("i" => $langs->trans("Minute"), "h" => $langs->trans("Hour"), "d" => $langs->trans("Day"), "w" => $langs->trans("Week"), "m" => $langs->trans("Month"), "y" => $langs->trans("Year"));
 			}
 			$datas['duration'] .= "&nbsp;" . (!empty($this->duration_unit) && isset($dur[$this->duration_unit]) ? $langs->trans($dur[$this->duration_unit]) : '');
 		}
@@ -710,14 +714,14 @@ class AdherentType extends CommonObject
 	}
 
 	/**
-	 *  Return clicable name (with picto eventually)
+	 *  Return clickable name (with picto eventually)
 	 *
-	 *  @param		int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
-	 *  @param		int		$maxlen						length max label
-	 *  @param		int  	$notooltip					1=Disable tooltip
-	 *  @param  	string  $morecss                    Add more css on link
-	 *  @param  	int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *  @return		string								String with URL
+	 *  @param	int<0,2>	$withpicto				0=No picto, 1=Include picto into link, 2=Only picto
+	 *  @param	int			$maxlen					length max label
+	 *  @param	int<0,1>	$notooltip				1=Disable tooltip
+	 *  @param 	string		$morecss				Add more css on link
+	 *  @param 	int<-1,1>	$save_lastsearch_value	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *  @return	string								String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $maxlen = 0, $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
@@ -772,8 +776,8 @@ class AdherentType extends CommonObject
 	/**
 	 *    Return label of status (activity, closed)
 	 *
-	 *    @param  	int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-	 *    @return   string     	   		Label of status
+	 *    @param	int<0,6>	$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *    @return	string     		   		Label of status
 	 */
 	public function getLibStatut($mode = 0)
 	{
@@ -784,9 +788,9 @@ class AdherentType extends CommonObject
 	/**
 	 *  Return the label of a given status
 	 *
-	 *  @param	int		$status         Status id
-	 *  @param	int		$mode           0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto, 6=Long label + Picto
-	 *  @return	string          		Status label
+	 *  @param	int			$status		Status id
+	 *  @param	int<0,6>	$mode		0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return	string					Status label
 	 */
 	public function LibStatut($status, $mode = 0)
 	{
@@ -814,11 +818,11 @@ class AdherentType extends CommonObject
 	/**
 	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
 	 *
-	 *	@param		array	$info		Info array loaded by _load_ldap_info
-	 *	@param		int		$mode		0=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
-	 *									1=Return DN without key inside (ou=xxx,dc=aaa,dc=bbb)
-	 *									2=Return key only (uid=qqq)
-	 *	@return		string				DN
+	 *	@param	array<string,mixed>	$info	Info array loaded by _load_ldap_info
+	 *	@param	int<0,2>	$mode	0=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
+	 *								1=Return DN without key inside (ou=xxx,dc=aaa,dc=bbb)
+	 *								2=Return key only (uid=qqq)
+	 *	@return	string				DN
 	 */
 	public function _load_ldap_dn($info, $mode = 0)
 	{
@@ -842,7 +846,7 @@ class AdherentType extends CommonObject
 	/**
 	 *	Initialize the info array (array of LDAP values) that will be used to call LDAP functions
 	 *
-	 *	@return		array		Tableau info des attributes
+	 *	@return		array<string,mixed>	Info table with attributes
 	 */
 	public function _load_ldap_info()
 	{
@@ -867,7 +871,7 @@ class AdherentType extends CommonObject
 			$valueofldapfield = array();
 			foreach ($this->members as $key => $val) {    // This is array of users for group into dolibarr database.
 				$member = new Adherent($this->db);
-				$member->fetch($val->id, '', '', '', false, false);
+				$member->fetch($val->id, '', 0, '', false, false);
 				$info2 = $member->_load_ldap_info();
 				$valueofldapfield[] = $member->_load_ldap_dn($info2);
 			}
@@ -970,11 +974,11 @@ class AdherentType extends CommonObject
 
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{

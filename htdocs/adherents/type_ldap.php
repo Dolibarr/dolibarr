@@ -36,14 +36,14 @@ $langs->loadLangs(array("admin", "members", "ldap"));
 $id = GETPOSTINT('rowid');
 $action = GETPOST('action', 'aZ09');
 
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('membertypeldapcard', 'globalcard'));
+
 // Security check
 $result = restrictedArea($user, 'adherent', $id, 'adherent_type');
 
 $object = new AdherentType($db);
 $object->fetch($id);
-
-// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-$hookmanager->initHooks(array('membertypeldapcard', 'globalcard'));
 
 /*
  * Actions
@@ -83,7 +83,10 @@ if (empty($reshook)) {
  * View
  */
 
-llxHeader();
+$title = $langs->trans("MembersTypeSetup");
+$help_url = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios|DE:Modul_Mitglieder';
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-member page-type_ldap');
 
 $form = new Form($db);
 

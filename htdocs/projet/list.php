@@ -11,6 +11,7 @@
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		Benjamin Falière	<benjamin.faliere@altairis.fr>
+ * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -100,6 +101,7 @@ $search_ref = GETPOST("search_ref", 'alpha');
 $search_label = GETPOST("search_label", 'alpha');
 $search_societe = GETPOST("search_societe", 'alpha');
 $search_societe_alias = GETPOST("search_societe_alias", 'alpha');
+$search_societe_country = GETPOST("search_societe_country", 'alpha');
 $search_opp_status = GETPOST("search_opp_status", 'alpha');
 $search_opp_percent = GETPOST("search_opp_percent", 'alpha');
 $search_opp_amount = GETPOST("search_opp_amount", 'alpha');
@@ -191,6 +193,10 @@ if (GETPOSTISARRAY('search_status') || GETPOST('search_status_multiselect')) {
 	$search_status = (GETPOST('search_status', 'intcomma') != '' ? GETPOST('search_status', 'intcomma') : '0,1');
 }
 
+$search_option = GETPOST('search_option', 'alpha');
+if ($search_option == 'late') {
+	$search_status = '1';
+}
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Project($db);
 $hookmanager->initHooks(array('projectlist'));
@@ -226,11 +232,11 @@ $arrayfields = array();
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
-		$visible = (int) dol_eval($val['visible'], 1, 1, '1');
+		$visible = (int) dol_eval((string) $val['visible'], 1, 1, '1');
 		$arrayfields['p.'.$key] = array(
 			'label' => $val['label'],
 			'checked' => (($visible < 0) ? 0 : 1),
-			'enabled' => (abs($visible) != 3 && (int) dol_eval($val['enabled'], 1, 1, '1')),
+			'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
 			'position' => $val['position'],
 			'help' => isset($val['help']) ? $val['help'] : ''
 		);
@@ -242,7 +248,8 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 // Add non object fields to fields for list
 $arrayfields['s.nom'] = array('label' => $langs->trans("ThirdParty"), 'checked' => 1, 'position' => 21, 'enabled' => (!isModEnabled('societe') ? 0 : 1));
 $arrayfields['s.name_alias'] = array('label' => "AliasNameShort", 'checked' => 0, 'position' => 22);
-$arrayfields['commercial'] = array('label' => $langs->trans("SaleRepresentativesOfThirdParty"), 'checked' => 0, 'position' => 23);
+$arrayfields['co.country_code'] = array('label' => "Country", 'checked' => -1, 'position' => 23);
+$arrayfields['commercial'] = array('label' => $langs->trans("SaleRepresentativesOfThirdParty"), 'checked' => 0, 'position' => 25);
 $arrayfields['c.assigned'] = array('label' => $langs->trans("AssignedTo"), 'checked' => 1, 'position' => 120);
 $arrayfields['opp_weighted_amount'] = array('label' => $langs->trans('OpportunityWeightedAmountShort'), 'checked' => 0, 'enabled' => (!getDolGlobalString('PROJECT_USE_OPPORTUNITIES') ? 0 : 1), 'position' => 106);
 $arrayfields['u.login'] = array('label' => "Author", 'checked' => -1, 'position' => 165);
@@ -260,6 +267,13 @@ if (GETPOST('search_usage_event_organization')) {
 	$arrayfields['p.usage_organize_event']['checked'] = 1;
 }
 $arrayfields['p.fk_project']['enabled'] = 0;
+
+// Force this field to be visible
+if ($contextpage == 'lead') {
+	$arrayfields['p.fk_opp_status']['enabled'] = 1;
+	$arrayfields['p.fk_opp_status']['visible'] = 1;
+}
+
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -348,7 +362,9 @@ if (empty($reshook)) {
 		$search_label = "";
 		$search_societe = "";
 		$search_societe_alias = '';
+		$search_societe_country = '';
 		$search_status = -1;
+		$search_option = '';
 		$search_opp_status = -1;
 		$search_opp_amount = '';
 		$search_opp_percent = '';
@@ -524,7 +540,7 @@ $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 
 $sql = "SELECT p.rowid as id, p.ref, p.title, p.fk_statut as status, p.fk_opp_status, p.public, p.fk_user_creat,";
-$sql .= " p.datec as date_creation, p.dateo as date_start, p.datee as date_end, p.opp_amount, p.opp_percent, (p.opp_amount*p.opp_percent/100) as opp_weighted_amount, p.tms as date_modification, p.budget_amount,";
+$sql .= " p.datec as date_creation, p.dateo as date_start, p.datee as date_end, p.opp_amount, p.opp_percent, (p.opp_amount * p.opp_percent / 100) as opp_weighted_amount, p.tms as date_modification, p.budget_amount,";
 $sql .= " p.usage_opportunity, p.usage_task, p.usage_bill_time, p.usage_organize_event,";
 $sql .= " p.email_msgid, p.import_key,";
 $sql .= " p.accept_conference_suggestions, p.accept_booth_suggestions, p.price_registration, p.price_booth,";
@@ -585,6 +601,9 @@ if (empty($arrayfields['s.name_alias']['checked']) && $search_societe) {
 		$sql .= natural_search('s.name_alias', $search_societe_alias);
 	}
 }
+if ($search_societe_country) {
+	$sql .= natural_search('country.code', $search_societe_country);
+}
 if ($search_opp_amount) {
 	$sql .= natural_search('p.opp_amount', $search_opp_amount, 1);
 }
@@ -631,6 +650,9 @@ if ($search_status != '' && $search_status != '-1') {
 	} else {
 		$sql .= " AND p.fk_statut IN (".$db->sanitize($db->escape($search_status)).")";
 	}
+}
+if ($search_option == 'late') {
+	$sql .= " AND p.datee < '".$db->idate(dol_now() - $conf->project->warning_delay)."'";
 }
 if ($search_opp_status) {
 	if (is_numeric($search_opp_status) && $search_opp_status > 0) {
@@ -839,7 +861,7 @@ if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $s
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-project page-list');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -997,8 +1019,14 @@ if ($search_societe != '') {
 if ($search_societe_alias != '') {
 	$param .= '&search_societe_alias='.urlencode($search_societe_alias);
 }
+if ($search_societe_country != '') {
+	$param .= '&search_societe_country='.urlencode($search_societe_country);
+}
 if ($search_status != '' && $search_status != '-1') {
 	$param .= "&search_status=".urlencode($search_status);
+}
+if ($search_option) {
+	$param .= "&search_option=".urlencode($search_option);
 }
 if ((is_numeric($search_opp_status) && $search_opp_status >= 0) || in_array($search_opp_status, array('all', 'openedopp', 'notopenedopp', 'none'))) {
 	$param .= '&search_opp_status='.urlencode($search_opp_status);
@@ -1184,6 +1212,11 @@ if (getDolGlobalString('MAIN_SEARCH_CATEGORY_CUSTOMER_ON_PROJECT_LIST') && isMod
 	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_CUSTOMER, $searchCategoryCustomerList, 'minwidth300', $searchCategoryCustomerList ? $searchCategoryCustomerList : 0);
 }
 
+// alert on late date
+$moreforfilter .= '<div class="divsearchfield">';
+$moreforfilter .= $langs->trans('Alert').' <input type="checkbox" name="search_option" value="late"'.($search_option == 'late' ? ' checked' : '').'>';
+$moreforfilter .= '</div>';
+
 if (getDolGlobalInt('PROJECT_ENABLE_SUB_PROJECT')) {
 	//Checkbox for omitting child projects filter
 	$moreforfilter .= '<p style="display: inline-block; margin-left: 5px;">'.$langs->trans("Omit sub-projects").' </p><input type="checkbox" style="margin-left: 10px" class="valignmiddle" id="search_omitChildren" name="search_omitChildren"'.($search_omitChildren ? ' checked="checked"' : '').'"> ';
@@ -1252,18 +1285,19 @@ if (!empty($arrayfields['s.name_alias']['checked'])) {
 	print '<input type="text" class="flat" name="search_societe_alias" size="8" value="'.dol_escape_htmltag($search_societe_alias).'">';
 	print '</td>';
 }
+// Country of thirdparty
+if (!empty($arrayfields['co.country_code']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat width50" name="search_societe_country" value="'.dol_escape_htmltag($search_societe_country).'">';
+	print '</td>';
+}
 // Sale representative
 if (!empty($arrayfields['commercial']['checked'])) {
 	print '<td class="liste_titre">&nbsp;</td>';
 }
 // Start date
 if (!empty($arrayfields['p.dateo']['checked'])) {
-	print '<td class="liste_titre center nowraponall">';
-	/*if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
-	 print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_sday" value="'.dol_escape_htmltag($search_sday).'">';
-	 }
-	 print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_smonth" value="'.dol_escape_htmltag($search_smonth).'">';
-	 print $formother->selectyear($search_syear ? $search_syear : -1, 'search_syear', 1, 20, 5, 0, 0, '', 'widthauto valignmiddle');*/
+	print '<td class="liste_titre center">';
 	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_start_start ? $search_date_start_start : -1, 'search_date_start_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
@@ -1274,12 +1308,7 @@ if (!empty($arrayfields['p.dateo']['checked'])) {
 }
 // End date
 if (!empty($arrayfields['p.datee']['checked'])) {
-	print '<td class="liste_titre center nowraponall">';
-	/*if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
-	 print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_eday" value="'.dol_escape_htmltag($search_eday).'">';
-	 }
-	 print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_emonth" value="'.dol_escape_htmltag($search_emonth).'">';
-	 print $formother->selectyear($search_eyear ? $search_eyear : -1, 'search_eyear', 1, 20, 5, 0, 0, '', 'widthauto valignmiddle');*/
+	print '<td class="liste_titre center">';
 	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_end_start ? $search_date_end_start : -1, 'search_date_end_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
@@ -1380,7 +1409,7 @@ $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // N
 print $hookmanager->resPrint;
 // Creation date
 if (!empty($arrayfields['p.datec']['checked'])) {
-	print '<td class="liste_titre center nowraponall">';
+	print '<td class="liste_titre center">';
 	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_creation_start ? $search_date_creation_start : -1, 'search_date_creation_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
@@ -1391,7 +1420,7 @@ if (!empty($arrayfields['p.datec']['checked'])) {
 }
 // Modification date
 if (!empty($arrayfields['p.tms']['checked'])) {
-	print '<td class="liste_titre center nowraponall">';
+	print '<td class="liste_titre center">';
 	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_modif_start ? $search_date_modif_start : -1, 'search_date_modif_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
@@ -1449,6 +1478,10 @@ if (!empty($arrayfields['s.nom']['checked'])) {
 }
 if (!empty($arrayfields['s.name_alias']['checked'])) {
 	print_liste_field_titre($arrayfields['s.name_alias']['label'], $_SERVER["PHP_SELF"], "s.name_alias", "", $param, "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['co.country_code']['checked'])) {
+	print_liste_field_titre($arrayfields['co.country_code']['label'], $_SERVER["PHP_SELF"], "co.country_code", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['commercial']['checked'])) {
@@ -1805,6 +1838,15 @@ while ($i < $imaxinloop) {
 			} else {
 				print '&nbsp;';
 			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Country code
+		if (!empty($arrayfields['co.country_code']['checked'])) {
+			print '<td class="tdoverflowmax125">';
+			print $obj->country_code;
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

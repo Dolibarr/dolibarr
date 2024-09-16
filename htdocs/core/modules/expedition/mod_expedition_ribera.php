@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2011       Juanjo Menent	        <jmenent@2byte.es>
  * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +33,7 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr';
 
@@ -79,6 +80,7 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Shipment"), $langs->transnoentities("Shipment"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
+		$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskexpedition" value="'.getDolGlobalString('EXPEDITION_RIBERA_MASK').'">', $tooltip, 1, 1).'</td>';
@@ -93,7 +95,7 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 	/**
 	 *	Return numbering example
 	 *
-	 *	@return     string      Example
+	 *	@return     string|int<0,0>      Example
 	 */
 	public function getExample()
 	{
@@ -119,13 +121,13 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 	/**
 	 *	Return next value
 	 *
-	 *	@param	Societe		$objsoc     Third party object
-	 *	@param	Expedition	$shipment	Shipment object
-	 *	@return string|0      			Value if OK, 0 if KO
+	 *	@param	Societe			$objsoc     Third party object
+	 *	@param	Expedition		$shipment	Shipment object
+	 *	@return string|int<-1,0> 			Value if OK, 0 or -1 if KO
 	 */
 	public function getNextValue($objsoc, $shipment)
 	{
-		global $db, $conf;
+		global $db;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
@@ -136,7 +138,7 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 			return 0;
 		}
 
-		$date = $shipment->date_expedition;
+		$date = $shipment->date_shipping;
 
 		$numFinal = get_next_value($db, $mask, 'expedition', 'ref', '', $objsoc, $date);
 

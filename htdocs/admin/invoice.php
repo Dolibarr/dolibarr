@@ -114,7 +114,7 @@ if ($action == 'updateMask') {
 		require_once $file;
 
 		$module = new $classname($db);
-		'@phan-var-force CommonDocGenerator $module';
+		'@phan-var-force ModelePDFFactures $module';
 
 		if ($module->write_file($facture, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=facture&file=SPECIMEN.pdf");
@@ -133,7 +133,7 @@ if ($action == 'updateMask') {
 } elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		if ($conf->global->FACTURE_ADDON_PDF == "$value") {
+		if (getDolGlobalString('FACTURE_ADDON_PDF') == (string) $value) {
 			dolibarr_del_const($db, 'FACTURE_ADDON_PDF', $conf->entity);
 		}
 	}
@@ -333,6 +333,8 @@ foreach ($dirmodels as $reldir) {
 
 						$module = new $classname($db);
 
+						'@phan-var-force ModeleNumRefFactures $module';
+
 						// Show modules according to features level
 						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 							continue;
@@ -375,8 +377,9 @@ foreach ($dirmodels as $reldir) {
 							$facture = new Facture($db);
 							$facture->initAsSpecimen();
 
-							// Example for standard invoice
 							$htmltooltip = '';
+
+							// Example for standard invoice
 							$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
 							$facture->type = 0;
 							$nextval = $module->getNextValue($mysoc, $facture);
@@ -391,21 +394,22 @@ foreach ($dirmodels as $reldir) {
 									$htmltooltip .= $langs->trans($module->error).'<br>';
 								}
 							}
-							// Example for replacement
-							$facture->type = 1;
-							$nextval = $module->getNextValue($mysoc, $facture);
-							if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
-								$htmltooltip .= $langs->trans("NextValueForReplacements").': ';
-								if ($nextval) {
-									if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
-										$nextval = $langs->trans($nextval);
+							// Example for replacement invoice
+							if (!getDolGlobalString('INVOICE_DISABLE_REPLACEMENT')) {
+								$facture->type = 1;
+								$nextval = $module->getNextValue($mysoc, $facture);
+								if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
+									$htmltooltip .= $langs->trans("NextValueForReplacements").': ';
+									if ($nextval) {
+										if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
+											$nextval = $langs->trans($nextval);
+										}
+										$htmltooltip .= $nextval.'<br>';
+									} else {
+										$htmltooltip .= $langs->trans($module->error).'<br>';
 									}
-									$htmltooltip .= $nextval.'<br>';
-								} else {
-									$htmltooltip .= $langs->trans($module->error).'<br>';
 								}
 							}
-
 							// Example for credit invoice
 							$facture->type = 2;
 							$nextval = $module->getNextValue($mysoc, $facture);
@@ -528,6 +532,8 @@ foreach ($dirmodels as $reldir) {
 							require_once $dir.'/'.$file;
 							$module = new $classname($db);
 
+							'@phan-var-force ModelePDFFactures $module';
+
 							$modulequalified = 1;
 							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 								$modulequalified = 0;
@@ -544,7 +550,7 @@ foreach ($dirmodels as $reldir) {
 								print(empty($module->name) ? $name : $module->name);
 								print "</td><td>\n";
 								if (method_exists($module, 'info')) {
-									print $module->info($langs);
+									print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
 								} else {
 									print $module->description;
 								}
@@ -565,7 +571,7 @@ foreach ($dirmodels as $reldir) {
 
 								// Default
 								print '<td class="center">';
-								if ($conf->global->FACTURE_ADDON_PDF == "$name") {
+								if (getDolGlobalString('FACTURE_ADDON_PDF') == (string) $name) {
 									print img_picto($langs->trans("Default"), 'on');
 								} else {
 									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("SetAsDefault"), 'off').'</a>';
@@ -748,7 +754,7 @@ if ($resql) {
 	}
 }
 print "</select>";
-print ajax_combobox("chq", array(), 0, 0, 'resolve', -2);
+print ajax_combobox("chq", array(), 0, 0, 'resolve', '-2');
 
 print "</td></tr>";
 print "</table>";

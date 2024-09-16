@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2012 Maxime Kohlhaas      <mko@atm-consulting.fr>
  * Copyright (C) 2015-2021 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2015      Juanjo Menent	    <jmenent@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +54,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 		$this->db = $db;
 
 		$listofmodulesforexternal = explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL'));
-		$tmpentry = array('enabled'=>((isModEnabled("product") || isModEnabled("service")) && isModEnabled('stock')), 'perms'=>$user->hasRight('stock', 'lire'), 'module'=>'product|service|stock');
+		$tmpentry = array('enabled' => ((isModEnabled("product") || isModEnabled("service")) && isModEnabled('stock')), 'perms' => $user->hasRight('stock', 'lire'), 'module' => 'product|service|stock');
 		$showmode = isVisibleToUserType(($user->socid > 0 ? 1 : 0), $tmpentry, $listofmodulesforexternal);
 		$this->hidden = ($showmode != 1);
 	}
@@ -169,7 +170,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 							if ($objp->price_base_type == 'HT') {
 								$price_base_type = $langs->trans("HT");
 							} else {
-								$price_result = $price_result * (1 + ($productstatic->tva_tx / 100));
+								$price_result *= (1 + ($productstatic->tva_tx / 100));
 								$price_base_type = $langs->trans("TTC");
 							}
 							$price = price($price_result);
@@ -184,7 +185,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="center nowraponall"',
 						'text' => price2num($objp->total_stock, 'MS').' / '.$objp->seuil_stock_alerte,
-						'text2'=>img_warning($langs->transnoentitiesnoconv("StockLowerThanLimit", $objp->seuil_stock_alerte)),
+						'text2' => img_warning($langs->transnoentitiesnoconv("StockLowerThanLimit", $objp->seuil_stock_alerte)),
 					);
 
 					$this->info_box_contents[$line][] = array(
@@ -204,7 +205,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center"',
-						'text'=>$langs->trans("NoTooLowStockProducts"),
+						'text' => $langs->trans("NoTooLowStockProducts"),
 					);
 				}
 
@@ -212,7 +213,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 			} else {
 				$this->info_box_contents[0][0] = array(
 					'td' => '',
-					'maxlength'=>500,
+					'maxlength' => 500,
 					'text' => ($this->db->error().' sql='.$sql),
 				);
 			}
@@ -227,9 +228,9 @@ class box_produits_alerte_stock extends ModeleBoxes
 	/**
 	 *	Method to show box
 	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
+	 *	@param	?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}	$head	Array with properties of box title
+	 *	@param	?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>	$contents	Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *	@return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)

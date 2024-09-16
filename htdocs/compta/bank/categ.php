@@ -77,7 +77,7 @@ if ($categid) {
 			$bankcateg->update($user);
 		}
 		//Delete category
-		if ($action == 'delete') {
+		if ($action == 'delete' && $user->hasRight('banque', 'configurer')) {
 			$bankcateg->delete($user);
 		}
 	}
@@ -128,7 +128,7 @@ if ($action != 'edit') {
 
 
 $sql = "SELECT rowid, label";
-$sql .= " FROM ".MAIN_DB_PREFIX."bank_categ";
+$sql .= " FROM ".MAIN_DB_PREFIX."category_bank";
 $sql .= " WHERE entity = ".$conf->entity;
 $sql .= " ORDER BY rowid";
 

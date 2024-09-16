@@ -60,16 +60,10 @@ class FichinterRec extends Fichinter
 	 */
 	public $picto = 'intervention';
 
-
 	/**
 	 * @var string title
 	 */
 	public $title;
-	public $number;
-	public $date;
-	public $amount;
-	public $tva;
-	public $total;
 
 	/**
 	 * @var int
@@ -81,6 +75,9 @@ class FichinterRec extends Fichinter
 	 */
 	public $frequency;
 
+	/**
+	 * @var int
+	 */
 	public $id_origin;
 
 	/**
@@ -93,7 +90,14 @@ class FichinterRec extends Fichinter
 	 */
 	public $propalid;
 
+	/**
+	 * @var int|string
+	 */
 	public $date_last_gen;
+
+	/**
+	 * @var datetime|string
+	 */
 	public $date_when;
 
 	/**
@@ -107,7 +111,7 @@ class FichinterRec extends Fichinter
 	public $nb_gen_max;
 
 	/**
-	 * int rank
+	 * @var int rank
 	 */
 	public $rang;
 
@@ -116,6 +120,9 @@ class FichinterRec extends Fichinter
 	 */
 	public $special_code;
 
+	/**
+	 * @var int
+	 */
 	public $usenewprice = 0;
 
 	/**
@@ -207,7 +214,7 @@ class FichinterRec extends Fichinter
 			$sql .= ", ".(!empty($fichintsrc->note_private) ? ("'".$this->db->escape($fichintsrc->note_private)."'") : "null");
 			$sql .= ", ".(!empty($fichintsrc->note_public) ? ("'".$this->db->escape($fichintsrc->note_public)."'") : "null");
 			$sql .= ", ".((int) $user->id);
-			// si c'est la même société on conserve les liens vers le projet et le contrat
+			// If the company is the same, keep the links to the project and the contract
 			if ($this->socid == $fichintsrc->socid) {
 				$sql .= ", ".(!empty($fichintsrc->fk_project) ? ((int) $fichintsrc->fk_project) : "null");
 				$sql .= ", ".(!empty($fichintsrc->fk_contrat) ? ((int) $fichintsrc->fk_contrat) : "null");
@@ -470,7 +477,7 @@ class FichinterRec extends Fichinter
 	 *
 	 *  @param		string		$desc				Line description
 	 *  @param		integer		$duration			Duration
-	 *  @param		string		$date				Date
+	 *  @param		int			$date				Date
 	 *  @param		int			$rang				Position of line
 	 *  @param		double		$pu_ht				Unit price without tax (> 0 even for credit note)
 	 *  @param		double		$qty				Quantity
@@ -627,7 +634,7 @@ class FichinterRec extends Fichinter
 	}
 
 	/**
-	 *  Return clicable name (with picto eventually)
+	 *  Return clickable name (with picto eventually)
 	 *
 	 *  @param	int		$withpicto      Add picto into link
 	 *  @param  string	$option		    Where point the link
@@ -882,8 +889,9 @@ class FichinterRec extends Fichinter
 
 		dol_syslog(get_class($this)."::setAutoValidate", LOG_DEBUG);
 		if ($this->db->query($sql)) {
-			$this->nb_gen_done = $this->nb_gen_done + 1;
-			$this->nb_gen_done = dol_now();
+			$this->nb_gen_done++;
+			$this->date_last_gen = dol_now();
+			//$this->date_when = ...
 			return 1;
 		} else {
 			dol_print_error($this->db);

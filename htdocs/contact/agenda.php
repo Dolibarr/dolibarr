@@ -1,13 +1,14 @@
 <?php
-/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
- * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2016 Alexandre Spangaro 	<aspangaro@open-dsi.fr>
- * Copyright (C) 2014      Juanjo Menent	 	<jmenent@2byte.es>
- * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+/* Copyright (C) 2004-2005	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2018	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2004		Benoit Mortier				<benoit.mortier@opensides.be>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2007		Franky Van Liedekerke		<franky.van.liedekerke@telenet.be>
+ * Copyright (C) 2013		Florian Henry				<florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2014		Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,9 +25,9 @@
  */
 
 /**
- *       \file       htdocs/contact/card.php
+ *       \file       htdocs/contact/agenda.php
  *       \ingroup    societe
- *       \brief      Card of a contact
+ *       \brief      Card agenda of a contact
  */
 
 
@@ -90,6 +91,10 @@ $search_agenda_label = GETPOST('search_agenda_label');
 if ($user->socid) {
 	$socid = $user->socid;
 }
+
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('contactagenda', 'globalcard'));
+
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', 'rowid', 0); // If we create a contact with no company (shared contacts), no check on write permission
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -108,9 +113,6 @@ if (!$sortfield) {
 if (!$sortorder) {
 	$sortorder = 'DESC';
 }
-
-// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-$hookmanager->initHooks(array('contactagenda', 'globalcard'));
 
 
 /*
@@ -149,7 +151,8 @@ if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/contactnameonly/', get
 	$title = $object->lastname;
 }
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas|DE:Modul_Partner';
-llxHeader('', $title, $help_url);
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-societe page-contact-card_agenda');
 
 
 if ($socid > 0) {
@@ -213,7 +216,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		 * Card in view mode
 		 */
 
-		dol_htmloutput_errors($error, $errors);
+		dol_htmloutput_errors((string) $error, $errors);
 
 		print dol_get_fiche_head($head, 'agenda', $title, -1, 'contact');
 
@@ -258,6 +261,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		$out = '';
 		$newcardbutton = '';
+		$messagingUrl = DOL_URL_ROOT.'/contact/messaging.php?id='.$object->id;
+		$newcardbutton .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 1);
+		$messagingUrl = DOL_URL_ROOT.'/contact/agenda.php?id='.$object->id;
+		$newcardbutton .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 2);
+
 		if (isModEnabled('agenda')) {
 			$permok = $user->hasRight('agenda', 'myactions', 'create');
 			if ((!empty($objthirdparty->id) || !empty($objcon->id)) && $permok) {

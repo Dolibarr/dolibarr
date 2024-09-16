@@ -8,6 +8,7 @@
  * Copyright (C) 2018       Charlene Benke       <charlie@patas-monkey.com>
  * Copyright (C) 2019       Juanjo Menent		 <jmenent@2byte.es>
  * Copyright (C) 2019-2021  Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,12 +55,6 @@ $mode        = GETPOST('mode', 'alpha');
 
 $childids = $user->getAllChildIds(1);
 
-// Security check
-$socid = GETPOSTINT('socid');
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'expensereport', '', '');
 $id = GETPOSTINT('id');
 // If we are on the view of a specific user
 if ($id > 0) {
@@ -85,7 +80,7 @@ $diroutputmassaction = $conf->expensereport->dir_output.'/temp/massgeneration/'.
 $limit 		= GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield	= GETPOST('sortfield', 'aZ09comma');
 $sortorder	= GETPOST('sortorder', 'aZ09comma');
-$page 		= GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
+$page 		= GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -136,9 +131,16 @@ if ($search_user == '') {
 	$search_user = -1;
 }
 
+// Security check
+$socid = GETPOSTINT('socid');
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$hookmanager->initHooks(array('expensereportlist'));
+$result = restrictedArea($user, 'expensereport', '', '');
+
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new ExpenseReport($db);
-$hookmanager->initHooks(array('expensereportlist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
@@ -167,7 +169,7 @@ $arrayfields = array(
 	'd.date_valid' => array('label' => $langs->trans("DateValidation"), 'checked' => 1),
 	'd.date_approve' => array('label' => $langs->trans("DateApprove"), 'checked' => 1),
 	'd.total_ht' => array('label' => $langs->trans("AmountHT"), 'checked' => 1),
-	'd.total_vat' => array('label' => $langs->trans("AmountVAT"), 'checked' => 1),
+	'd.total_vat' => array('label' => $langs->trans("AmountVAT"), 'checked' => -1),
 	'd.total_ttc' => array('label' => $langs->trans("AmountTTC"), 'checked' => 1),
 	'd.date_create' => array('label' => $langs->trans("DateCreation"), 'checked' => 0, 'position' => 500),
 	'd.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => 0, 'position' => 500),
@@ -271,7 +273,7 @@ $user_id = $user->id;
 if ($id > 0) {
 	// Charge utilisateur edite
 	$fuser->fetch($id, '', '', 1);
-	$fuser->getrights();
+	$fuser->loadRights();
 	$user_id = $fuser->id;
 
 	$search_user = $user_id;
@@ -391,7 +393,7 @@ $num = $db->num_rows($resql);
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '');
+llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -744,7 +746,7 @@ if (!empty($arrayfields['d.total_ttc']['checked'])) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
 $parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
-$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (!empty($arrayfields['d.date_create']['checked'])) {
 	print_liste_field_titre($arrayfields['d.date_create']['label'], $_SERVER["PHP_SELF"], "d.date_create", "", $param, '', $sortfield, $sortorder, 'nowraponall center');
@@ -961,7 +963,7 @@ if ($num > 0) {
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 			// Fields from hook
 			$parameters = array('arrayfields' => $arrayfields, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
-			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
+			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 
 			// Date creation
@@ -1008,9 +1010,9 @@ if ($num > 0) {
 			print '</tr>'."\n";
 		}
 
-		$total_total_ht = $total_total_ht + $obj->total_ht;
-		$total_total_tva = $total_total_tva + $obj->total_tva;
-		$total_total_ttc = $total_total_ttc + $obj->total_ttc;
+		$total_total_ht += $obj->total_ht;
+		$total_total_tva += $obj->total_tva;
+		$total_total_ttc += $obj->total_ttc;
 
 		$i++;
 	}

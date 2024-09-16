@@ -139,17 +139,18 @@ if (!$sortorder) {
 
 // Security check
 $socid = 0;
+
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('projecttaskscard', 'globalcard'));
+
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
 $result = restrictedArea($user, 'projet', $id, 'projet&project');
 
 $diroutputmassaction = $conf->project->dir_output.'/tasks/temp/massgeneration/'.$user->id;
 
-// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-$hookmanager->initHooks(array('projecttaskscard', 'globalcard'));
-
 $progress = GETPOSTINT('progress');
 $budget_amount = GETPOSTFLOAT('budget_amount');
-$billable = (GETPOST('billable', 'aZ') == 'yes'? 1 : 0);
+$billable = (GETPOST('billable', 'aZ') == 'yes' ? 1 : 0);
 $label = GETPOST('label', 'alpha');
 $description = GETPOST('description', 'restricthtml');
 $planned_workloadhour = (GETPOSTISSET('planned_workloadhour') ? GETPOSTINT('planned_workloadhour') : '');
@@ -437,7 +438,7 @@ if ($action == 'create') {
 }
 $help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 
-llxHeader("", $title, $help_url);
+llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-project page-card_tasks');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -755,11 +756,12 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 	print '<table class="border centpercent">';
 
 	$defaultref = '';
-	$obj = getDolGlobalString('PROJECT_TASK_ADDON', 'mod_task_simple');
+	$classnamemodtask = getDolGlobalString('PROJECT_TASK_ADDON', 'mod_task_simple');
 	if (getDolGlobalString('PROJECT_TASK_ADDON') && is_readable(DOL_DOCUMENT_ROOT."/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON').".php")) {
 		require_once DOL_DOCUMENT_ROOT."/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON').'.php';
-		$modTask = new $obj();
-		$defaultref = $modTask->getNextValue($object->thirdparty, null);
+		$modTask = new $classnamemodtask();
+		'@phan-var-force ModeleNumRefTask $modTask';
+		$defaultref = $modTask->getNextValue($object->thirdparty, $object);
 	}
 
 	if (is_numeric($defaultref) && $defaultref <= 0) {
@@ -876,9 +878,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 } elseif ($id > 0 || !empty($ref)) {
 	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 
-	/*
-	 * Projet card in view mode
-	 */
+	// Projet card in view mode
 
 	print '<br>';
 
@@ -893,7 +893,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 		}
 	}
 
-	$linktocreatetask = dolGetButtonTitle($langs->trans('AddTask'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/tasks.php?action=create'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id), '', $linktocreatetaskUserRight, $linktocreatetaskParam);
+	$linktocreatetask = dolGetButtonTitle($langs->trans('AddTask'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/tasks.php?action=create'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id), '', (int) $linktocreatetaskUserRight, $linktocreatetaskParam);
 
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -910,7 +910,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 	$linktotasks .= dolGetButtonTitle($langs->trans('ViewGantt'), '', 'fa fa-stream imgforviewmode', DOL_URL_ROOT.'/projet/ganttview.php?id='.$object->id.'&withproject=1', '', 1, array('morecss' => 'reposition marginleftonly'));
 
 	//print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $totalnboflines, 'generic', 0, '', '', 0, 1);
-	print load_fiche_titre($title, $linktotasks.' &nbsp; '.$linktocreatetask, 'projecttask', '', '', '', $massactionbutton);
+	print load_fiche_titre($title, $linktotasks.' &nbsp; '.$linktocreatetask, 'projecttask', 0, '', '', $massactionbutton);
 
 	$objecttmp = new Task($db);
 	$trackid = 'task'.$taskstatic->id;
@@ -1171,7 +1171,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 		// Show all lines in taskarray (recursive function to go down on tree)
 		$j = 0;
 		$level = 0;
-		$nboftaskshown = projectLinesa($j, 0, $tasksarray, $level, true, 0, $tasksrole, $object->id, 1, $object->id, '', ($object->usage_bill_time ? 1 : 0), $arrayfields, $arrayofselected);
+		$nboftaskshown = projectLinesa($j, 0, $tasksarray, $level, true, 0, $tasksrole, (string) $object->id, 1, $object->id, '', ($object->usage_bill_time ? 1 : 0), $arrayfields, $arrayofselected);
 	} else {
 		$colspan = count($arrayfields);
 		if ($object->usage_bill_time) {

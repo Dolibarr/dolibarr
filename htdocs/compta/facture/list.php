@@ -13,12 +13,14 @@
  * Copyright (C) 2015-2022	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2017		Josep Lluís Amador		<joseplluis@lliuretic.cat>
  * Copyright (C) 2018		Charlene Benke			<charlie@patas-monkey.com>
- * Copyright (C) 2019-2021	Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2019-2024	Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2021-2024	Anthony Berton			<anthony.berton@bb2a.fr>
  * Copyright (C) 2023		Nick Fragoulis
  * Copyright (C) 2023		Joachim Kueter			<git-jk@bloxera.com>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2021-2024 	Anthony Berton			<anthony.berton@bb2a.fr>
+ * Copyright (C) 2024		Solution Libre SAS		<contact@solution-libre.fr>
+ * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -274,7 +276,7 @@ foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 
 	if (!empty($val['visible'])) {
-		$visible = (int) dol_eval($val['visible'], 1, 1, '1');
+		$visible = (int) dol_eval((string) $val['visible'], 1, 1, '1');
 		$newkey = '';
 		if (array_key_exists($key, $arrayfields)) {
 			$newkey = $key;
@@ -287,7 +289,7 @@ foreach ($object->fields as $key => $val) {
 			$arrayfields[$newkey] = array(
 				'label' => $val['label'],
 				'checked' => (($visible < 0) ? 0 : 1),
-				'enabled' => (abs($visible) != 3 && (int) dol_eval($val['enabled'], 1, 1, '1')),
+				'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
 				'position' => $val['position'],
 				'help' => empty($val['help']) ? '' : $val['help'],
 			);
@@ -395,11 +397,10 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_datelimit_start = '';
 	$search_datelimit_end = '';
 	$search_fac_rec_source_title = '';
+	$search_option = '';
+	$search_categ_cus = 0;
 	$toselect = array();
 	$search_array_options = array();
-	$search_categ_cus = 0;
-	$search_option = '';
-	$socid = 0;
 }
 
 if (empty($reshook)) {
@@ -564,8 +565,9 @@ if ($action == 'makepayment_confirm' && $user->hasRight('facture', 'paiement')) 
 					$error++;
 					setEventMessages($objecttmp->ref.' '.$langs->trans("RequestAlreadyDone"), $objecttmp->errors, 'warnings');
 				} elseif (!empty($objecttmp->mode_reglement_code) && $objecttmp->mode_reglement_code != 'PRE') {
+					$langs->load("errors");
 					$error++;
-					setEventMessages($objecttmp->ref.' '.$langs->trans("BadPaymentMethod"), $objecttmp->errors, 'errors');
+					setEventMessages($objecttmp->ref.' '.$langs->trans("ErrorThisPaymentModeIsNotDirectDebit"), $objecttmp->errors, 'errors');
 				} else {
 					$listofbills[] = $objecttmp; // $listofbills will only contains invoices with good payment method and no request already done
 				}
@@ -1010,7 +1012,7 @@ if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $s
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
 
 $param = '&socid='.urlencode((string) ($socid));
 if (!empty($mode)) {
@@ -2030,7 +2032,7 @@ if ($num > 0) {
 		$facturestatic->totalpaid = $paiement;
 
 		$marginInfo = array();
-		if ($with_margin_info === true) {
+		if ($with_margin_info) {
 			$facturestatic->fetch_lines();
 			$marginInfo = $formmargin->getMarginInfosArray($facturestatic);
 			$total_ht += $obj->total_ht;

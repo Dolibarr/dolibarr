@@ -2,6 +2,7 @@
 /* Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
  * Copyright (C) 2023		Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -236,7 +237,7 @@ if ($reshook < 0) {
 }
 
 // Action called when page is submitted
-if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conference->status == 2  || !empty($project->id) && $project->status == Project::STATUS_VALIDATED)) {
+if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conference->status == 2  || !empty($project->id) && $project->status == Project::STATUS_VALIDATED)) {	// Test on permission not required. Check are done on securitykey and mitigation
 	$error = 0;
 
 	$urlback = '';
@@ -494,8 +495,8 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 				$errmsg .= $thirdparty->error;
 				$errors = array_merge($errors, $thirdparty->errors);
 			} else {
-				$thirdparty->country_code = getCountry($thirdparty->country_id, 2, $db, $langs);
-				$thirdparty->country      = getCountry($thirdparty->country_code, 0, $db, $langs);
+				$thirdparty->country_code = getCountry($thirdparty->country_id, '2', $db, $langs);
+				$thirdparty->country      = getCountry($thirdparty->country_code, '', $db, $langs);
 
 				// Update attendee country to match country of thirdparty
 				$confattendee->fk_soc     = $thirdparty->id;
@@ -606,7 +607,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 				$redirection = $dolibarr_main_url_root.'/public/payment/newpayment.php?source='.urlencode((string) ($sourcetouse)).'&ref='.urlencode((string) ($reftouse));
 				if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
 					if (getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
-						$redirection .= '&securekey='.dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $sourcetouse . $reftouse, 2); // Use the source in the hash to avoid duplicates if the references are identical
+						$redirection .= '&securekey='.dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $sourcetouse . $reftouse, '2'); // Use the source in the hash to avoid duplicates if the references are identical
 					} else {
 						$redirection .= '&securekey='.urlencode(getDolGlobalString('PAYMENT_SECURITY_TOKEN'));
 					}
@@ -658,7 +659,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 
 			$ishtml = dol_textishtml($texttosend); // May contain urls
 
-			$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, array(), array(), array(), '', '', 0, $ishtml);
+			$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, array(), array(), array(), '', '', 0, ($ishtml ? 1 : 0));
 
 			$result = $mailfile->sendfile();
 			if ($result) {
@@ -667,7 +668,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 				dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
 			}
 
-			$securekeyurl = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.$id, 2);
+			$securekeyurl = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.$id, '2');
 			$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?id='.((int) $id).'&securekey='.urlencode($securekeyurl);
 
 			header("Location: ".$redirection);
@@ -696,7 +697,7 @@ print '<div id="divsubscribe">';
 
 // Sub banner
 print '<div class="center subscriptionformbanner subbanner justify margintoponly paddingtop marginbottomonly padingbottom">';
-print load_fiche_titre($langs->trans("NewRegistration"), '', '', 0, 0, 'center');
+print load_fiche_titre($langs->trans("NewRegistration"), '', '', 0, '', 'center');
 // Welcome message
 print '<span class="opacitymedium">'.$langs->trans("EvntOrgWelcomeMessage").'</span>';
 print '<br>';
@@ -857,20 +858,20 @@ if ((!empty($conference->id) && $conference->status == ConferenceOrBooth::STATUS
 		print img_picto('', 'country', 'class="pictofixedwidth"');
 		$country_id = GETPOST('country_id');
 		if (!$country_id && getDolGlobalString('MEMBER_NEWFORM_FORCECOUNTRYCODE')) {
-			$country_id = getCountry($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE, 2, $db, $langs);
+			$country_id = getCountry($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE, '2', $db, $langs);
 		}
 		if (!$country_id && !empty($conf->geoipmaxmind->enabled)) {
 			$country_code = dol_user_country();
 			//print $country_code;
 			if ($country_code) {
-				$new_country_id = getCountry($country_code, 3, $db, $langs);
+				$new_country_id = getCountry($country_code, '3', $db, $langs);
 				//print 'xxx'.$country_code.' - '.$new_country_id;
 				if ($new_country_id) {
 					$country_id = $new_country_id;
 				}
 			}
 		}
-		$country_code = getCountry($country_id, 2, $db, $langs);
+		$country_code = getCountry($country_id, '2', $db, $langs);
 		print $form->select_country($country_id, 'country_id', '', 0, 'minwidth200 widthcentpercentminusx maxwidth300');
 		print '</td></tr>';
 		// State

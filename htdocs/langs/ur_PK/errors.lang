@@ -55,6 +55,8 @@ ErrorFoundBadEmailInFile=فائل میں %s لائنوں کے لیے غلط ای
 ErrorUserCannotBeDelete=صارف کو حذف نہیں کیا جا سکتا۔ ہوسکتا ہے کہ اس کا تعلق Dolibarr اداروں سے ہو۔
 ErrorFieldsRequired=کچھ مطلوبہ فیلڈز کو خالی چھوڑ دیا گیا ہے۔
 ErrorSubjectIsRequired=ای میل کا مضمون درکار ہے۔
+ErrorInAddAttachmentsImageBaseOnMedia=Error in creating image files into media directory for attachment
+ErrorInAddAttachmentsImageBaseIsSrcData=Error in creating image files (found as data:) into temp directory for attachment
 ErrorFailedToCreateDir=ڈائریکٹری بنانے میں ناکام۔ چیک کریں کہ ویب سرور صارف کو Dolibarr دستاویزات کی ڈائرکٹری میں لکھنے کی اجازت ہے۔ اگر اس پی ایچ پی پر پیرامیٹر <b> safe_mode </b> فعال ہے تو چیک کریں کہ Dolibarr php فائلیں ویب سرور صارف (یا گروپ) کی ملکیت ہیں۔
 ErrorNoMailDefinedForThisUser=اس صارف کے لیے کوئی میل متعین نہیں ہے۔
 ErrorSetupOfEmailsNotComplete=ای میلز کا سیٹ اپ مکمل نہیں ہے۔
@@ -220,7 +222,7 @@ ErrorUserNotAssignedToTask=استعمال شدہ وقت میں داخل ہونے
 ErrorTaskAlreadyAssigned=کام پہلے ہی صارف کو تفویض کیا گیا ہے۔
 ErrorModuleFileSeemsToHaveAWrongFormat=ایسا لگتا ہے کہ ماڈیول پیکیج کا فارمیٹ غلط ہے۔
 ErrorModuleFileSeemsToHaveAWrongFormat2=ماڈیول کی زپ میں کم از کم ایک لازمی ڈائرکٹری کا ہونا ضروری ہے: <strong> %s </strong> یا <strong> a0ecb2ec87f49fzfz506010
-ErrorFilenameDosNotMatchDolibarrPackageRules=ماڈیول پیکج کا نام ( <strong> %s </strong> ) متوقع نام کے نحو سے مماثل نہیں ہے: <strong> a0ecb2ec87f49fza606019fz
+ErrorFilenameDosNotMatchDolibarrPackageRules=The file name of the module package (<strong>%s</strong>) does not match the expected name syntax: <strong>%s</strong>
 ErrorDuplicateTrigger=خرابی، ڈپلیکیٹ ٹرگر کا نام %s۔ پہلے سے ہی %s سے بھری ہوئی ہے۔
 ErrorNoWarehouseDefined=خرابی، کسی گودام کی وضاحت نہیں کی گئی۔
 ErrorBadLinkSourceSetButBadValueForRef=آپ جو لنک استعمال کرتے ہیں وہ درست نہیں ہے۔ ادائیگی کے لیے 'ذریعہ' کی وضاحت کی گئی ہے، لیکن 'ریف' کے لیے قدر درست نہیں ہے۔
@@ -263,7 +265,7 @@ ErrorReplaceStringEmpty=خرابی، جس سٹرنگ کو تبدیل کرنا ہ
 ErrorProductNeedBatchNumber=خرابی، پروڈکٹ '<b> %s </b>' بہت زیادہ/سیریل نمبر کی ضرورت ہے
 ErrorProductDoesNotNeedBatchNumber=خرابی، پروڈکٹ '<b> %s </b>' لاٹ/سیریل نمبر قبول نہیں کرتا
 ErrorFailedToReadObject=خرابی، <b> %s </b> قسم کے آبجیکٹ کو پڑھنے میں ناکام
-ErrorParameterMustBeEnabledToAllwoThisFeature=Error, parameter <b>%s</b> must be enabled into <b>conf/conf.php<> to allow use of Command Line Interface by the internal job scheduler
+ErrorParameterMustBeEnabledToAllwoThisFeature=Error, parameter <b>%s</b> must be enabled into <b>conf/conf.php</b> to allow use of Command Line Interface by the internal job scheduler
 ErrorLoginDateValidity=خرابی، یہ لاگ ان درست تاریخ کی حد سے باہر ہے۔
 ErrorValueLength=فیلڈ کی لمبائی '<b> %s </b>' '<b> %s a09a4b739f' سے زیادہ ہونی چاہیے۔
 ErrorReservedKeyword=لفظ '<b> %s </b>' ایک محفوظ مطلوبہ لفظ ہے۔
@@ -301,7 +303,8 @@ ErrorThirpdartyOrMemberidIsMandatory=تیسری پارٹی یا شراکت دا�
 ErrorFailedToWriteInTempDirectory=عارضی ڈائریکٹری میں لکھنے میں ناکام
 ErrorQuantityIsLimitedTo=مقدار %s تک محدود ہے
 ErrorFailedToLoadThirdParty=id=%s، email=%s، name= سے فریق ثالث کو تلاش کرنے/لوڈ کرنے میں ناکام %s
-ErrorThisPaymentModeIsNotSepa=یہ ادائیگی کا طریقہ بینک اکاؤنٹ نہیں ہے۔
+ErrorThisPaymentModeIsNotDirectDebit=The payment mode is not direct debit
+ErrorThisPaymentModeIsNotCreditTransfer=The payment mode is not credit transfer
 ErrorStripeCustomerNotFoundCreateFirst=اس تھرڈ پارٹی کے لیے اسٹرائپ کسٹمر سیٹ نہیں کیا گیا ہے (یا اسٹرائپ سائیڈ پر ڈیلیٹ کی گئی ویلیو پر سیٹ ہے)۔ پہلے اسے بنائیں (یا دوبارہ منسلک کریں)۔
 ErrorCharPlusNotSupportedByImapForSearch=IMAP تلاش مرسل یا وصول کنندہ کو + کیریکٹر پر مشتمل اسٹرنگ کے لیے تلاش کرنے کے قابل نہیں ہے۔
 ErrorTableNotFound=ٹیبل <b>%s</b> نہیں ملا
@@ -322,16 +325,21 @@ ErrorFixThisHere=<a href="%s">اسے یہاں ٹھیک کریں</a>
 ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=خرابی: آپ کی موجودہ مثال کا URL (%s) آپ کے OAuth2 لاگ ان سیٹ اپ (%s) میں بیان کردہ URL سے مماثل نہیں ہے۔ ایسی ترتیب میں OAuth2 لاگ ان کرنے کی اجازت نہیں ہے۔
 ErrorMenuExistValue=اس عنوان یا URL کے ساتھ ایک مینو پہلے سے موجود ہے۔
 ErrorSVGFilesNotAllowedAsLinksWithout=SVG فائلوں کو آپشن %s کے بغیر بیرونی لنکس کے طور پر اجازت نہیں دی جاتی ہے۔
-ErrorTypeMenu=navbar پر اسی ماڈیول کے لیے دوسرا مینو شامل کرنا ناممکن ہے، ابھی تک ہینڈل نہیں ہے۔
+ErrorTypeMenu=Impossible to add another menu for the same module on the navbar, not handled yet
+ErrorGeneratingBarcode=Error while generating the barcode (probably invalid code shape)
 ErrorObjectNotFound = آبجیکٹ <b>%s</b> نہیں ملا، براہ کرم اپنا یو آر ایل چیک کریں۔
 ErrorCountryCodeMustBe2Char=ملک کا کوڈ 2 حروف کا ہونا ضروری ہے۔
 ErrorABatchShouldNotContainsSpaces=A lot or serial number should not contains spaces
-
 ErrorTableExist=جدول <b>%s</b> پہلے سے موجود ہے
 ErrorDictionaryNotFound=ڈکشنری <b>%s</b> نہیں ملی
 ErrorFailedToCreateSymLinkToMedias=%s کی طرف اشارہ کرنے کے لیے علامتی لنک %s بنانے میں ناکام
 ErrorCheckTheCommandInsideTheAdvancedOptions=ایکسپورٹ کے ایڈوانسڈ آپشنز میں ایکسپورٹ کے لیے استعمال ہونے والی کمانڈ کو چیک کریں۔
-
+ErrorEndTimeMustBeGreaterThanStartTime=End time must be greater than start time
+ErrorIncoherentDates=Start date must be earlier than end date
+ErrorEndHourIsNull=End date field cannot be empty
+ErrorStartHourIsNull=Start date field cannot be empty
+ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter=Too many lines to process. Please use a more selective filter.
+ErrorEmptyValueForQty=Quantity cannot be zero.
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=آپ کا پی ایچ پی پیرامیٹر upload_max_filesize (%s) PHP پیرامیٹر post_max_size (%s) سے زیادہ ہے۔ یہ ایک مستقل سیٹ اپ نہیں ہے۔
 WarningPasswordSetWithNoAccount=اس ممبر کے لیے پاس ورڈ سیٹ کیا گیا تھا۔ تاہم، کوئی صارف اکاؤنٹ نہیں بنایا گیا تھا۔ لہذا یہ پاس ورڈ محفوظ ہے لیکن اسے Dolibarr میں لاگ ان کرنے کے لیے استعمال نہیں کیا جا سکتا۔ اسے کسی بیرونی ماڈیول/انٹرفیس کے ذریعے استعمال کیا جا سکتا ہے لیکن اگر آپ کو کسی رکن کے لیے کوئی لاگ ان یا پاس ورڈ متعین کرنے کی ضرورت نہیں ہے، تو آپ ممبر ماڈیول سیٹ اپ سے "ہر ممبر کے لیے لاگ ان کا انتظام کریں" کے آپشن کو غیر فعال کر سکتے ہیں۔ اگر آپ کو لاگ ان کا انتظام کرنے کی ضرورت ہے لیکن کسی پاس ورڈ کی ضرورت نہیں ہے، تو آپ اس انتباہ سے بچنے کے لیے اس فیلڈ کو خالی رکھ سکتے ہیں۔ نوٹ: اگر ممبر کسی صارف سے منسلک ہے تو ای میل کو لاگ ان کے طور پر بھی استعمال کیا جا سکتا ہے۔
@@ -344,6 +352,7 @@ WarningConfFileMustBeReadOnly=وارننگ، آپ کی کنفگ فائل ( <b> h
 WarningsOnXLines=<b> %s </b> سورس ریکارڈ (ز) پر وارننگ
 WarningNoDocumentModelActivated=دستاویز بنانے کے لیے کوئی ماڈل فعال نہیں کیا گیا ہے۔ ایک ماڈل کو بطور ڈیفالٹ منتخب کیا جائے گا جب تک کہ آپ اپنے ماڈیول سیٹ اپ کو چیک نہیں کر لیتے۔
 WarningLockFileDoesNotExists=تنبیہ، سیٹ اپ مکمل ہونے کے بعد، آپ کو ایک فائل <b> install.lock </b> ڈائرکٹری <b> %s a049fz0a49fz7f8z0 میں شامل کرکے انسٹالیشن/مائیگریشن ٹولز کو غیر فعال کرنا ہوگا۔ اس فائل کی تخلیق کو چھوڑنا ایک سنگین سیکیورٹی رسک ہے۔
+WarningUpgradeHasBeenUnlocked=Warning, upgrade process has been unlocked for everybody
 WarningUntilDirRemoved=یہ حفاظتی انتباہ اس وقت تک فعال رہے گا جب تک خطرہ موجود ہے۔
 WarningCloseAlways=انتباہ، بند کیا جاتا ہے یہاں تک کہ اگر رقم ماخذ اور ہدف کے عناصر کے درمیان مختلف ہو۔ احتیاط کے ساتھ اس فیچر کو فعال کریں۔
 WarningUsingThisBoxSlowDown=انتباہ، اس باکس کا استعمال کرتے ہوئے باکس کو ظاہر کرنے والے تمام صفحات کو سنجیدگی سے سست کر دیں۔
@@ -373,16 +382,18 @@ WarningModuleNeedRefresh = ماڈیول <b>%s</b> کو غیر فعال کر دی
 WarningPermissionAlreadyExist=اس اعتراض کے لیے موجودہ اجازتیں۔
 WarningGoOnAccountancySetupToAddAccounts=اگر یہ فہرست خالی ہے تو مینو میں جائیں %s - %s - %s اپنے اکاؤنٹ کے چارٹ کے لیے اکاؤنٹس لوڈ کرنے یا بنانے کے لیے۔
 WarningCorrectedInvoiceNotFound=درست رسید نہیں ملی
-WarningCommentNotFound=براہ کرم <b>%s</b> سیکشن کے لیے شروع اور اختتامی تبصروں کی جگہ کا تعین کریں۔ اپنی کارروائی جمع کرانے سے پہلے فائل <b>%s</b>
+WarningCommentNotFound=Warning: Can't find the start and/or end comments for the section <b>%s</b> into the file <b>%s</b>
 WarningAlreadyReverse=اسٹاک کی نقل و حرکت پہلے ہی الٹ چکی ہے۔
-
+WarningParentIDDoesNotExistAnymore=This parent ID does not exists anymore
+WarningReadBankAlsoAllowedIfUserHasPermission=Warning, reading bank account is also allowed with the permission to Manage chart of account
+WarningNoDataTransferedInAccountancyYet=Please note, there is no data in the accounting table. Please transfer your data recorded in the application to the accounting section or change the calculation mode to analyze the data recorded outside of accounting.
+WarningChangingThisMayBreakStopTaskScheduler=Warning, changing this value may disable the scheduler
 SwissQrOnlyVIR = سوئس کیو آر انوائس کو صرف ان انوائسز پر شامل کیا جا سکتا ہے جن کی ادائیگی کریڈٹ ٹرانسفر ادائیگیوں کے ساتھ کی جائے گی۔
 SwissQrCreditorAddressInvalid = کریڈٹر کا پتہ غلط ہے (کیا زپ اور سٹی سیٹ ہیں؟ (%s)
 SwissQrCreditorInformationInvalid = کریڈٹر کی معلومات IBAN (%s): %s کے لیے غلط ہے
 SwissQrIbanNotImplementedYet = QR-IBAN ابھی لاگو نہیں ہوا۔
 SwissQrPaymentInformationInvalid = ادائیگی کی معلومات کل %s کے لیے غلط تھی : %s
 SwissQrDebitorAddressInvalid = ڈیبیٹر کی معلومات غلط تھی (%s)
-
 # Validate
 RequireValidValue = قدر درست نہیں ہے۔
 RequireAtLeastXString = کم از کم %s حروف کی ضرورت ہے
@@ -404,10 +415,11 @@ BadSetupOfFieldClassNotFoundForValidation = فیلڈ کے سیٹ اپ میں خ�
 BadSetupOfFieldFileNotFound = فیلڈ کے خراب سیٹ اپ میں خرابی: شمولیت کے لیے فائل نہیں ملی
 BadSetupOfFieldFetchNotCallable = فیلڈ کے خراب سیٹ اپ میں خرابی: کلاس پر کال کے قابل نہیں بازیافت کریں۔
 ErrorTooManyAttempts= بہت زیادہ کوششیں، براہ کرم بعد میں دوبارہ کوشش کریں۔
-
 TotalAmountEmpty=Total Amount Empty
 FailedToFoundTheConversionRateForInvoice=Failed to found the conversion rate for invoice
 ThisIdNotDefined=Id not defined
 OperNotDefined=Payment method not defined
 ErrorThisContactXIsAlreadyDefinedAsThisType=%s is already defined as contact for this type.
 ErrorThisGroupIsAlreadyDefinedAsThisType=The contacts with this group are already defined as contact for this type.
+EmptyMessageNotAllowedError=Empty message is not allowed
+ErrorIsNotInError=%s is not in error

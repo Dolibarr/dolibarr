@@ -1,20 +1,22 @@
 <?php
-/* Copyright (C) 2001-2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005       Marc Barilley / Ocebo   <marc@ocebo.com>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2012       Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
- * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
- * Copyright (C) 2015-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2016-2023  Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2018-2023  Charlene Benke	        <charlene@patas-monkey.com>
- * Copyright (C) 2021-2024 	Anthony Berton			<anthony.berton@bb2a.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Noé Cendrier			<noe.cendrier@altairis.fr>
- * Copyright (C) 2024		Benjamin Falière		<benjamin.faliere@altairis.fr>
+/* Copyright (C) 2001-2005	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2019	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005		Marc Barilley / Ocebo		<marc@ocebo.com>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2012		Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2013		Christophe Battarel			<christophe.battarel@altairis.fr>
+ * Copyright (C) 2013		Cédric Salvado				<csalvador@gpcsolutions.fr>
+ * Copyright (C) 2015-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
+ * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
+ * Copyright (C) 2016-2023	Ferran Marcet				<fmarcet@2byte.es>
+ * Copyright (C) 2018-2023	Charlene Benke				<charlene@patas-monkey.com>
+ * Copyright (C) 2021-2024	Anthony Berton				<anthony.berton@bb2a.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Noé Cendrier				<noe.cendrier@altairis.fr>
+ * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024		William Mead			    <william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -125,6 +127,11 @@ $search_fk_shipping_method = GETPOST('search_fk_shipping_method', 'intcomma');
 $search_fk_mode_reglement = GETPOST('search_fk_mode_reglement', 'intcomma');
 $search_fk_input_reason = GETPOST('search_fk_input_reason', 'intcomma');
 
+$search_option = GETPOST('search_option', 'alpha');
+if ($search_option == 'late') {
+	$search_status = '-2';
+}
+
 $diroutputmassaction = $conf->commande->multidir_output[$conf->entity].'/temp/massgeneration/'.$user->id;
 
 // Load variable for pagination
@@ -192,7 +199,7 @@ $arrayfields = array(
 	'c.fk_shipping_method' => array('label' => "SendingMethod", 'checked' => -1, 'position' => 66 , 'enabled' => isModEnabled("shipping")),
 	'c.fk_cond_reglement' => array('label' => "PaymentConditionsShort", 'checked' => -1, 'position' => 67),
 	'c.fk_mode_reglement' => array('label' => "PaymentMode", 'checked' => -1, 'position' => 68),
-	'c.fk_input_reason' => array('label' => "Channel", 'checked' => -1, 'position' => 69),
+	'c.fk_input_reason' => array('label' => "Origin", 'checked' => -1, 'position' => 69),
 	'c.total_ht' => array('label' => "AmountHT", 'checked' => 1, 'position' => 75),
 	'c.total_vat' => array('label' => "AmountVAT", 'checked' => 0, 'position' => 80),
 	'c.total_ttc' => array('label' => "AmountTTC", 'checked' => 0, 'position' => 85),
@@ -315,6 +322,7 @@ if (empty($reshook)) {
 		$search_fk_shipping_method = '';
 		$search_fk_mode_reglement = '';
 		$search_fk_input_reason = '';
+		$search_option = '';
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
 		|| GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha')) {
@@ -652,6 +660,9 @@ if (empty($reshook)) {
 			if ($search_status != '') {
 				$param .= '&search_status='.urlencode($search_status);
 			}
+			if ($search_option) {
+				$param .= "&search_option=".urlencode($search_option);
+			}
 			if ($search_orderday) {
 				$param .= '&search_orderday='.urlencode($search_orderday);
 			}
@@ -949,7 +960,9 @@ if ($search_status != '') {
 		$sql .= ' AND (c.fk_statut IN (1,2,3))'; // validated, in process or closed
 	}
 }
-
+if ($search_option == 'late') {
+	$sql .= " AND c.date_commande < '".$db->idate(dol_now() - $conf->commande->client->warning_delay)."'";
+}
 if ($search_datecloture_start) {
 	$sql .= " AND c.date_cloture >= '".$db->idate($search_datecloture_start)."'";
 }
@@ -1216,7 +1229,7 @@ if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $s
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-order page-list');
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-order page-list');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -1238,6 +1251,9 @@ if ($socid > 0) {
 }
 if ($search_status != '') {
 	$param .= '&search_status='.urlencode($search_status);
+}
+if ($search_option) {
+	$param .= "&search_option=".urlencode($search_option);
 }
 if ($search_datecloture_start) {
 	$param .= '&search_datecloture_startday='.dol_print_date($search_datecloture_start, '%d').'&search_datecloture_startmonth='.dol_print_date($search_datecloture_start, '%m').'&search_datecloture_startyear='.dol_print_date($search_datecloture_start, '%Y');
@@ -1374,7 +1390,7 @@ if ($permissiontovalidate) {
 	$arrayofmassactions['prevalidate'] = img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate");
 }
 if ($permissiontoclose) {
-	$arrayofmassactions['preshipped'] = img_picto('', 'dollyrevert', 'class="pictofixedwidth"').$langs->trans("ClassifyShipped");
+	$arrayofmassactions['preshipped'] = img_picto('', 'dolly', 'class="pictofixedwidth"').$langs->trans("ClassifyShipped");
 }
 if (isModEnabled('invoice') && $user->hasRight("facture", "creer")) {
 	$arrayofmassactions['createbills'] = img_picto('', 'bill', 'class="pictofixedwidth"').$langs->trans("CreateInvoiceForThisCustomer");
@@ -1404,7 +1420,7 @@ $newcardbutton = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
-$newcardbutton .= dolGetButtonTitle($langs->trans('NewOrder'), '', 'fa fa-plus-circle', $url, '', ($contextpage == 'orderlist' || $contextpage == 'billableorders') && $permissiontoadd);
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewOrder'), '', 'fa fa-plus-circle', $url, '', (int) (($contextpage == 'orderlist' || $contextpage == 'billableorders') && $permissiontoadd));
 
 // Lines of title fields
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
@@ -1540,6 +1556,7 @@ if (isModEnabled('stock') && getDolGlobalString('WAREHOUSE_ASK_WAREHOUSE_DURING_
 	$moreforfilter .= img_picto($tmptitle, 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses($search_warehouse, 'search_warehouse', '', 1, 0, 0, $tmptitle, 0, 0, array(), 'maxwidth250 widthcentpercentminusx');
 	$moreforfilter .= '</div>';
 }
+
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 if (empty($reshook)) {
@@ -2148,7 +2165,7 @@ while ($i < $imaxinloop) {
 	$projectstatic->title = $obj->project_label;
 
 	$marginInfo = array();
-	if ($with_margin_info === true) {
+	if ($with_margin_info) {
 		$generic_commande->fetch_lines();
 		$marginInfo = $formmargin->getMarginInfosArray($generic_commande);
 		$total_ht += $obj->total_ht;
@@ -2279,8 +2296,8 @@ while ($i < $imaxinloop) {
 
 		// Alias name
 		if (!empty($arrayfields['s.name_alias']['checked'])) {
-			print '<td class="nocellnopadd">';
-			print $obj->alias;
+			print '<td class="nocellnopadd tdoverflowmax125" title="'.dolPrintHTMLForTextArea($obj->alias).'">';
+			print dolPrintLabel($obj->alias);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2310,8 +2327,8 @@ while ($i < $imaxinloop) {
 
 		// Town
 		if (!empty($arrayfields['s.town']['checked'])) {
-			print '<td class="nocellnopadd">';
-			print $obj->town;
+			print '<td class="tdoverflowmax100">';
+			print dolPrintLabel($obj->town);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2321,7 +2338,7 @@ while ($i < $imaxinloop) {
 		// Zip
 		if (!empty($arrayfields['s.zip']['checked'])) {
 			print '<td class="nocellnopadd">';
-			print $obj->zip;
+			print dolPrintLabel($obj->zip);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2330,7 +2347,7 @@ while ($i < $imaxinloop) {
 
 		// State
 		if (!empty($arrayfields['state.nom']['checked'])) {
-			print "<td>".$obj->state_name."</td>\n";
+			print "<td>".dolPrintLabel($obj->state_name)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -2353,7 +2370,7 @@ while ($i < $imaxinloop) {
 			if (empty($typenArray)) {
 				$typenArray = $formcompany->typent_array(1);
 			}
-			print $typenArray[$obj->typent_code];
+			print $typenArray[$obj->typent_code] ?? '';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2604,6 +2621,11 @@ while ($i < $imaxinloop) {
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'total_margin';
 			}
+
+			if (!isset($totalarray['val']['total_margin'])) {
+				$totalarray['val']['total_margin'] = 0;
+			}
+
 			$totalarray['val']['total_margin'] += $marginInfo['total_margin'];
 		}
 

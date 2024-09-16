@@ -107,7 +107,7 @@ $sql.= " ba.rowid as bankid, ba.ref as bankref,";
 $sql.= " bu.url_id,";
 $sql.= " f.module_source, f.ref as ref";
 $sql.= " FROM ";
-//if ($bid) $sql.= MAIN_DB_PREFIX."bank_class as l,";
+//if ($bid) $sql.= MAIN_DB_PREFIX."category_bankline as l,";
 $sql.= " ".MAIN_DB_PREFIX."bank_account as ba,";
 $sql.= " ".MAIN_DB_PREFIX."bank as b";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu ON bu.fk_bank = b.rowid AND type = 'payment'";

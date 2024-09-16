@@ -8,7 +8,7 @@
  * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018		Nicolas ZABOURI 		<info@inovea-conseil.com>
- * Copyright (C) 2021-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -177,9 +177,9 @@ if ($action == 'install' && $allowonlineinstall) {
 			setEventMessages($langs->trans("ErrorFileMustBeADolibarrPackage", $original_file), null, 'errors');
 			$error++;
 		}
-		if (!$error && !preg_match('/^(module[a-zA-Z0-9]*|theme)_.*\-([0-9][0-9\.]*)\.zip$/i', $original_file)) {
+		if (!$error && !preg_match('/^(module[a-zA-Z0-9]*_|theme_|).*\-([0-9][0-9\.]*)(\s\(\d+\)\s)?\.zip$/i', $original_file)) {
 			$langs->load("errors");
-			setEventMessages($langs->trans("ErrorFilenameDosNotMatchDolibarrPackageRules", $original_file, 'module_*-x.y*.zip'), null, 'errors');
+			setEventMessages($langs->trans("ErrorFilenameDosNotMatchDolibarrPackageRules", $original_file, 'modulename-x[.y.z].zip'), null, 'errors');
 			$error++;
 		}
 		if (empty($_FILES['fileinstall']['tmp_name'])) {
@@ -286,6 +286,7 @@ if ($action == 'install' && $allowonlineinstall) {
 }
 
 if ($action == 'set' && $user->admin) {
+	// We made some check against evil eternal modules that try to low security options.
 	$checkOldValue = getDolGlobalInt('CHECKLASTVERSION_EXTERNALMODULE');
 	$csrfCheckOldValue = getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN');
 	$resarray = activateModule($value);
@@ -295,6 +296,7 @@ if ($action == 'set' && $user->admin) {
 	if ($csrfCheckOldValue != getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN')) {
 		setEventMessage($langs->trans('WarningModuleHasChangedSecurityCsrfParameter', $value), 'warnings');
 	}
+
 	dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1, 'chaine', 0, '', $conf->entity);
 	if (!empty($resarray['errors'])) {
 		setEventMessages('', $resarray['errors'], 'errors');
@@ -327,13 +329,13 @@ if ($action == 'set' && $user->admin) {
 	exit;
 } elseif (getDolGlobalInt("MAIN_FEATURES_LEVEL") > 1 && $action == 'reload' && $user->admin && GETPOST('confirm') == 'yes') {
 	$result = unActivateModule($value, 0);
-	dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1, 'chaine', 0, '', $conf->entity);
 	if ($result) {
 		setEventMessages($result, null, 'errors');
 		header("Location: ".$_SERVER["PHP_SELF"]."?mode=".$mode.$param.($page_y ? '&page_y='.$page_y : ''));
 	}
 	$resarray = activateModule($value, 0, 1);
-	dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1), 'chaine', 0, '', $conf->entity);
 	if (!empty($resarray['errors'])) {
 		setEventMessages('', $resarray['errors'], 'errors');
 	} else {
@@ -374,7 +376,7 @@ if (!dol_is_dir($dirins)) {
 $dirins_ok = (dol_is_dir($dirins));
 
 $help_url = 'EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
-llxHeader('', $langs->trans("Setup"), $help_url, '', '', '', $morejs, $morecss, 0, 'mod-admin page-modules');
+llxHeader('', $langs->trans("Setup"), $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-admin page-modules');
 
 
 // Search modules dirs
@@ -851,19 +853,15 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			$versiontrans .= $objMod->getVersion(1);
 		}
 
-		if ($objMod->isCoreOrExternalModule() == 'external'
-			&& (
-				$action == 'checklastversion'
-				// This is a bad practice to activate a check on an external access during the building of the admin page. 1 external module can hang the application.
-				// Adding a cron job could be a good idea: see DolibarrModules::checkForUpdate()
-				|| getDolGlobalString('CHECKLASTVERSION_EXTERNALMODULE')
-			)
-		) {
+		if ($objMod->isCoreOrExternalModule() == 'external' && ($action == 'checklastversion' || getDolGlobalString('CHECKLASTVERSION_EXTERNALMODULE'))) {
+			// Setting CHECKLASTVERSION_EXTERNALMODULE to on is a bad practice to activate a check on an external access during the building of the admin page.
+			// 1 external module can hang the application.
+			// Adding a cron job could be a good idea: see DolibarrModules::checkForUpdate()
 			$checkRes = $objMod->checkForUpdate();
 			if ($checkRes > 0) {
-				setEventMessage($objMod->getName().' : '.$versiontrans.' -> '.$objMod->lastVersion);
+				setEventMessages($objMod->getName().' : '.preg_replace('/[^a-z0-9_\.\-\s]/i', '', $versiontrans).' -> '.preg_replace('/[^a-z0-9_\.\-\s]/i', '', $objMod->lastVersion), null, 'warnings');
 			} elseif ($checkRes < 0) {
-				setEventMessage($objMod->getName().' '.$langs->trans('CheckVersionFail'), 'warnings');
+				setEventMessages($objMod->getName().' '.$langs->trans('CheckVersionFail'), null, 'errors');
 			}
 		}
 
@@ -892,7 +890,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			if (!empty($objMod->disabled)) {
 				$codeenabledisable .= $langs->trans("Disabled");
 			} elseif (!empty($objMod->always_enabled) || ((isModEnabled('multicompany') && $objMod->core_enabled) && ($user->entity || $conf->entity != 1))) {
-				// @phan-suppress-next-line PhanUndeclaredMethodCall
+				// @phan-suppress-next-line PhanUndeclaredMethod
 				if (method_exists($objMod, 'alreadyUsed') && $objMod->alreadyUsed()) {
 					$codeenabledisable .= $langs->trans("Used");
 				} else {
@@ -903,7 +901,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 					$disableSetup++;
 				}
 			} else {
-				// @phan-suppress-next-line PhanUndeclaredMethodCall
+				// @phan-suppress-next-line PhanUndeclaredMethod
 				if (!empty($objMod->warnings_unactivation[$mysoc->country_code]) && method_exists($objMod, 'alreadyUsed') && $objMod->alreadyUsed()) {
 					$codeenabledisable .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;token='.newToken().'&amp;module_position='.$module_position.'&amp;action=reset_confirm&amp;confirm_message_code='.urlencode($objMod->warnings_unactivation[$mysoc->country_code]).'&amp;value='.$modName.'&amp;mode='.$mode.$param.'">';
 					$codeenabledisable .= img_picto($langs->trans("Activated").($warningstring ? ' '.$warningstring : ''), 'switch_on');
@@ -1092,7 +1090,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 
 	if ($action == 'checklastversion') {
 		if ($foundoneexternalmodulewithupdate) {
-			setEventMessages($langs->trans("ModuleUpdateAvailable"), null, 'mesgs');
+			setEventMessages($langs->trans("ModuleUpdateAvailable"), null, 'warnings');
 		} else {
 			setEventMessages($langs->trans("NoExternalModuleWithUpdate"), null, 'mesgs');
 		}

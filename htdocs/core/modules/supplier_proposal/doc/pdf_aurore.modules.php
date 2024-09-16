@@ -67,7 +67,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr';
 
@@ -156,13 +156,13 @@ class pdf_aurore extends ModelePDFSupplierProposal
 	/**
 	 *  Function to build pdf onto disk
 	 *
-	 *  @param		SupplierProposal		$object				Object to generate
-	 *  @param		Translate	$outputlangs		Lang output object
-	 *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file
-	 *  @param		int			$hidedetails		Do not show line details
-	 *  @param		int			$hidedesc			Do not show desc
-	 *  @param		int			$hideref			Do not show ref
-	 *  @return     int             				1=OK, 0=KO
+	 *	@param	SupplierProposal	$object				Object source to build document
+	 *	@param	Translate			$outputlangs		Lang output object
+	 *	@param	string				$srctemplatepath	Full path of source filename for generator using a template file
+	 *	@param	int<0,1>			$hidedetails		Do not show line details
+	 *	@param	int<0,1>			$hidedesc			Do not show desc
+	 *	@param	int<0,1>			$hideref			Do not show ref
+	 *	@return	int<-1,1>								1 if OK, <=0 if KO
 	 */
 	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
@@ -658,7 +658,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 				// Pied de page
 				$this->_pagefoot($pdf, $object, $outputlangs);
 				if (method_exists($pdf, 'AliasNbPages')) {
-					$pdf->AliasNbPages();
+					$pdf->AliasNbPages();  // @phan-suppress-current-line PhanUndeclaredMethod
 				}
 
 				$pdf->Close();
@@ -909,7 +909,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 
 		$this->atleastoneratenotnull = 0;
 		if (!getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT')) {
-			$tvaisnull = ((!empty($this->tva) && count($this->tva) == 1 && isset($this->tva['0.000']) && is_float($this->tva['0.000'])) ? true : false);
+			$tvaisnull = (!empty($this->tva) && count($this->tva) == 1 && isset($this->tva['0.000']) && is_float($this->tva['0.000']));
 			if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_IFNULL') && $tvaisnull) {
 				// Nothing to do
 			} else {
@@ -1200,11 +1200,11 @@ class pdf_aurore extends ModelePDFSupplierProposal
 	/**
 	 *  Show top header of page.
 	 *
-	 *  @param	TCPDF		$pdf     		Object PDF
-	 *  @param  Object		$object     	Object to show
-	 *  @param  int	    	$showaddress    0=no, 1=yes
-	 *  @param  Translate	$outputlangs	Object lang for output
-	 *  @return	float|int                   Return topshift value
+	 *  @param	TCPDF			$pdf     		Object PDF
+	 *  @param  CommonObject	$object     	Object to show
+	 *  @param  int<0,1>		$showaddress    0=no, 1=yes
+	 *  @param  Translate		$outputlangs	Object lang for output
+	 *  @return	float|int						Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
@@ -1354,10 +1354,14 @@ class pdf_aurore extends ModelePDFSupplierProposal
 			$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
 
 
-			// If CUSTOMER contact defined, we use it
+			// If CUSTOMER contact defined on proposal, we use it. Note: Even if this is a supplier object, the code for external contact that follow order is 'CUSTOMER'
 			$usecontact = false;
-			$arrayidcontact = $object->getIdContact('external', 'CUSTOMER');
-			if (count($arrayidcontact) > 0) {
+			if (!getDolGlobalInt('SUPPLIER_PROPOSAL_ADD_BILLING_CONTACT')) {
+				$arrayidcontact = $object->getIdContact('external', 'CUSTOMER');
+			} else {
+				$arrayidcontact = array_merge($object->getIdContact('external', 'CUSTOMER'), $object->getIdContact('external', 'BILLING'));
+			}
+			if (is_array($arrayidcontact) && count($arrayidcontact) > 0) {
 				$usecontact = true;
 				$result = $object->fetch_contact($arrayidcontact[0]);
 			}
@@ -1375,7 +1379,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 
 			$carac_client_name = pdfBuildThirdpartyName($socname, $outputlangs);
 
-			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ($usecontact ? $object->contact : ''), $usecontact, 'target', $object);
+			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ($usecontact ? $object->contact : ''), ($usecontact ? 1 : 0), 'target', $object);
 
 			// Show recipient
 			$widthrecbox = 100;

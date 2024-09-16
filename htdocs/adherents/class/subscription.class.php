@@ -98,7 +98,7 @@ class Subscription extends CommonObject
 	public $fk_bank;
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -344,9 +344,9 @@ class Subscription extends CommonObject
 	/**
 	 *	Delete a subscription
 	 *
-	 *	@param	User	$user		User that delete
-	 *	@param 	int 	$notrigger  0=launch triggers after, 1=disable triggers
-	 *	@return	int					Return integer <0 if KO, 0 if not found, >0 if OK
+	 *	@param	User		$user		User that delete
+	 *	@param 	int<0,1>	$notrigger  0=launch triggers after, 1=disable triggers
+	 *	@return	int						Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -357,6 +357,8 @@ class Subscription extends CommonObject
 			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 			$accountline = new AccountLine($this->db);
 			$result = $accountline->fetch($this->fk_bank);
+		} else {
+			$accountline = null;
 		}
 
 		$this->db->begin();
@@ -420,7 +422,7 @@ class Subscription extends CommonObject
 
 
 	/**
-	 *  Return clicable name (with picto eventually)
+	 *  Return clickable name (with picto eventually)
 	 *
 	 *	@param	int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
 	 *  @param	int  	$notooltip					1=Disable tooltip
@@ -536,10 +538,10 @@ class Subscription extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
+	 *  @param		array{selected:?int,member:?Adherent,bank:?Account}	$arraydata	Array of data
 	 *  @return		string								HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)

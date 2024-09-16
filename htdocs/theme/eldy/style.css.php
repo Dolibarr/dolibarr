@@ -69,10 +69,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 // and permission, so we can later calculate number of top menu ($nbtopmenuentries) according to user profile.
 if (empty($user->id) && !empty($_SESSION['dol_login'])) {
 	$user->fetch('', $_SESSION['dol_login'], '', 1);
-	$user->getrights();
+	$user->loadRights();
 
 	// Reload menu now we have the good user (and we need the good menu to have ->showmenu('topnb') correct.
+	// @phan-suppress-next-line PhanRedefinedClassReference
 	$menumanager = new MenuManager($db, empty($user->socid) ? 0 : 1);
+	// @phan-suppress-next-line PhanRedefinedClassReference
 	$menumanager->loadMenu();
 }
 
@@ -193,6 +195,8 @@ $colortexttitle       = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!g
 $colortexttitlelink   = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_TEXTTITLELINK') ? $colortexttitlelink : $conf->global->THEME_ELDY_TEXTTITLELINK) : (empty($user->conf->THEME_ELDY_TEXTTITLELINK) ? $colortexttitlelink : $user->conf->THEME_ELDY_TEXTTITLELINK);
 $colortext            = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_TEXT') ? $colortext : $conf->global->THEME_ELDY_TEXT) : (empty($user->conf->THEME_ELDY_TEXT) ? $colortext : $user->conf->THEME_ELDY_TEXT);
 $colortextlink        = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_TEXTLINK') ? $colortextlink : $conf->global->THEME_ELDY_TEXTLINK) : (empty($user->conf->THEME_ELDY_TEXTLINK) ? $colortextlink : $user->conf->THEME_ELDY_TEXTLINK);
+$colortextlinkHsla    = colorHexToHsl($colortextlink, false, true);
+
 $butactionbg       	  = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_BTNACTION') ? $butactionbg : $conf->global->THEME_ELDY_BTNACTION) : (empty($user->conf->THEME_ELDY_BTNACTION) ? $butactionbg : $user->conf->THEME_ELDY_BTNACTION);
 $textbutaction        = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_TEXTBTNACTION') ? $textbutaction : $conf->global->THEME_ELDY_TEXTBTNACTION) : (empty($user->conf->THEME_ELDY_TEXTBTNACTION) ? $textbutaction : $user->conf->THEME_ELDY_TEXTBTNACTION);
 $fontsize             = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_FONT_SIZE1') ? $fontsize : $conf->global->THEME_ELDY_FONT_SIZE1) : (empty($user->conf->THEME_ELDY_FONT_SIZE1) ? $fontsize : $user->conf->THEME_ELDY_FONT_SIZE1);
@@ -275,6 +279,7 @@ $colortexttitle = implode(',', colorStringToArray($colortexttitle));
 $colortext = implode(',', colorStringToArray($colortext));
 $colortextlink = implode(',', colorStringToArray($colortextlink));
 
+// @phan-suppress-next-line PhanRedefinedClassReference
 $nbtopmenuentries = $menumanager->showmenu('topnb');
 $nbtopmenuentriesreal = $nbtopmenuentries;
 if ($conf->browser->layout == 'phone') {
@@ -288,18 +293,18 @@ $disableimages = 0;
 $maxwidthloginblock = 180;
 if (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 1 || !empty($user->conf->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 	$disableimages = 1;
-	$maxwidthloginblock = $maxwidthloginblock + 50;
+	$maxwidthloginblock += 50;
 	$minwidthtmenu = 0;
 }
 
 if (getDolGlobalString('MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN')) {
-	$maxwidthloginblock = $maxwidthloginblock + 55;
+	$maxwidthloginblock += 55;
 }
 if (getDolGlobalString('MAIN_USE_TOP_MENU_SEARCH_DROPDOWN')) {
-	$maxwidthloginblock = $maxwidthloginblock + 55;
+	$maxwidthloginblock += 55;
 }
 if (!empty($conf->bookmark->enabled)) {
-	$maxwidthloginblock = $maxwidthloginblock + 55;
+	$maxwidthloginblock += 55;
 }
 
 

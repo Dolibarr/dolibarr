@@ -976,8 +976,8 @@ function newpopup(url, title) {
 	var h = (argc > 3) ? argv[3] : 400;
 	var left = (screen.width - l)/2;
 	var top = (screen.height - h)/2;
-	var wfeatures = "directories=0,menubar=0,status=0,resizable=0,scrollbars=1,toolbar=0,width=" + l +",height=" + h + ",left=" + left + ",top=" + top;
-	fen=window.open(tmp,title,wfeatures);
+	var wfeatures = "directories=0,menubar=0,status=0,resizable=0,scrollbars=1,toolbar=0,location=0,width=" + l +",height=" + h + ",left=" + left + ",top=" + top;
+	fen = window.open(tmp, title, wfeatures);
 
 	return false;
 }
@@ -1323,8 +1323,8 @@ jQuery(document).ready(function() {
 jQuery(document).ready(function() {
 	jQuery(".butAction.dropdown-toggle").on("click", function(event) {
 		console.log("Click on .butAction.dropdown-toggle");
-		var parentholder = jQuery(".butAction.dropdown-toggle").closest(".dropdown");
-			 var offset = parentholder.offset();
+		var parentholder = jQuery(event.target).parent();
+		var offset = parentholder.offset();
 		var widthdocument = $(document).width();
 		var left = offset.left;
 		var right = widthdocument - offset.left - parentholder.width();
@@ -1335,6 +1335,18 @@ jQuery(document).ready(function() {
 		}
 		parentholder.toggleClass("open");
 		parentholder.children(".dropdown-content").css({"right": right+"px", "left": "auto"});
+	});
+
+	// Close drop down
+	jQuery(document).on("click", function(event) {
+		// search if click was outside drop down
+		if (!$(event.target).closest('.dropdown-toggle').length) {
+			let parentholder = jQuery(".dropdown-toggle").closest(".dropdown.open");
+			if(parentholder){
+				// Hide the menus.
+				parentholder.removeClass("open");
+			}
+		}
 	});
 });
 

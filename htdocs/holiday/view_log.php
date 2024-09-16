@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2007-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2011      Dimitri Mouillard    <dmouillard@teclib.com>
- * Copyright (C) 2020      Tobias Sekan         <tobias.sekan@startmail.com>
+/* Copyright (C) 2007-2016	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2011		Dimitri Mouillard			<dmouillard@teclib.com>
+ * Copyright (C) 2020		Tobias Sekan				<tobias.sekan@startmail.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -180,7 +181,9 @@ $holidaylogstatic = new stdClass();
 $alltypeleaves = $object->getTypes(1, -1); // To have labels
 
 $title = $langs->trans('CPTitreMenu');
-llxHeader('', $title);
+$help_url = 'EN:Module_Holiday';
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-holiday page-view_log');
 
 $sqlwhere = '';
 
@@ -286,7 +289,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-$newcardbutton = dolGetButtonTitle($langs->trans('MenuAddCP'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/holiday/card.php?action=create', '', $user->rights->holiday->write);
+$newcardbutton = dolGetButtonTitle($langs->trans('MenuAddCP'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/holiday/card.php?action=create', '', $user->hasRight('holiday', 'write'));
 // @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 print_barre_liste($langs->trans('LogCP'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_hrm', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
@@ -344,7 +347,7 @@ if (!empty($arrayfields['cpl.date_action']['checked'])) {
 // Filter: Validator
 if (!empty($arrayfields['cpl.fk_user_action']['checked'])) {
 	$validator = new UserGroup($db);
-	$excludefilter = $user->admin ? '' : 'u.rowid <> '.$user->id;
+	$excludefilter = $user->admin ? '' : 'u.rowid <> '.((int) $user->id);
 	$valideurobjects = $validator->listUsersForGroup($excludefilter, 1);
 	$valideurarray = array();
 	foreach ($valideurobjects as $val) {

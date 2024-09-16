@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2017-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2017-2020	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,7 +109,7 @@ $result = restrictedArea($user, 'mrp', $object->id, 'mrp_mo', '', 'fk_soc', 'row
 $permissionnote = $user->hasRight('mrp', 'write'); // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->hasRight('mrp', 'write'); // Used by the include of actions_dellink.inc.php
 $permissiontoadd = $user->hasRight('mrp', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete = $user->rights->mrp->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
+$permissiontodelete = $user->hasRight('mrp', 'delete') || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
 $upload_dir = $conf->mrp->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 
@@ -144,7 +145,7 @@ if (empty($reshook)) {
 	$triggermodname = 'MO_MODIFY'; // Name of trigger action code to execute when we modify record
 
 	// Create MO with Children
-	if ($action == 'add' && empty($id) && !empty($TBomLineId)) {
+	if ($action == 'add' && empty($id) && !empty($TBomLineId) && $permissiontoadd) {
 		$noback = 1;
 		include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 
@@ -325,8 +326,9 @@ $formfile = new FormFile($db);
 $formproject = new FormProjets($db);
 
 $title = $langs->trans('ManufacturingOrder')." - ".$langs->trans("Card");
+$help_url = 'EN:Module_Manufacturing_Orders|FR:Module_Ordres_de_Fabrication|DE:Modul_Fertigungsauftrag';
 
-llxHeader('', $title, '');
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-mrp page-card');
 
 
 

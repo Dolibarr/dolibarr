@@ -408,7 +408,7 @@ $formadmin = new FormAdmin($db);
 
 $help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
 
-llxHeader('', $langs->trans('DictionaryAccountancyCategory'), $help_url);
+llxHeader('', $langs->trans('DictionaryAccountancyCategory'), $help_url, '', 0, 0, '', '', '', 'mod-accountancy page-admin_categories_list');
 
 $titre = $langs->trans($tablib[$id]);
 $linkback = '';
@@ -617,7 +617,7 @@ if ($resql) {
 	// There is several pages
 	if ($num > $listlimit) {
 		print '<tr class="none"><td class="right" colspan="'.(2 + count($fieldlist)).'">';
-		print_fleche_navigation($page, $_SERVER["PHP_SELF"], $paramwithsearch, ($num > $listlimit), '<li class="pagination"><span>'.$langs->trans("Page").' '.($page + 1).'</span></li>');
+		print_fleche_navigation($page, $_SERVER["PHP_SELF"], $paramwithsearch, ($num > $listlimit ? 1 : 0), '<li class="pagination"><span>'.$langs->trans("Page").' '.($page + 1).'</span></li>');
 		print '</td></tr>';
 	}
 

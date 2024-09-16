@@ -11,7 +11,7 @@
  * Copyright (C) 2011-2023	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2016		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2019-2022  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020-2022  Open-Dsi                <support@open-dsi.fr>
  * Copyright (C) 2024       Charlene Benke          <charlene@patas-monkey.com>
  *
@@ -44,6 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/socialnetwork.lib.php';
 
 // constants for IDs of core dictionaries
 const DICT_FORME_JURIDIQUE = 1;
@@ -99,7 +100,7 @@ $confirm = GETPOST('confirm', 'alpha');
 
 $id = GETPOSTINT('id');
 $rowid = GETPOST('rowid', 'alpha');
-$entity = GETPOSTINT('entity');
+$entity = GETPOST('entity', 'alpha');	// Do not use GETPOSTINT here. Should be '', 0 or >0.
 $code = GETPOST('code', 'alpha');
 $from = GETPOST('from', 'alpha');
 
@@ -282,11 +283,11 @@ $tabsql[DICT_TYPE_RESOURCE] = "SELECT t.rowid as rowid, t.code, t.label, t.activ
 $tabsql[DICT_TYPE_CONTAINER] = "SELECT t.rowid as rowid, t.code, t.label, t.active, t.module FROM ".MAIN_DB_PREFIX."c_type_container as t WHERE t.entity IN (".getEntity($tabname[DICT_TYPE_CONTAINER]).")";
 //$tabsql[DICT_UNITS]= "SELECT t.rowid as rowid, t.code, t.label, t.short_label, t.active FROM ".MAIN_DB_PREFIX."c_units as t";
 $tabsql[DICT_STCOMM] = "SELECT t.id    as rowid, t.code, t.libelle, t.picto, t.active FROM ".MAIN_DB_PREFIX."c_stcomm as t";
-$tabsql[DICT_HOLIDAY_TYPES] = "SELECT h.rowid as rowid, h.code, h.label, h.affect, h.delay, h.newbymonth, h.fk_country as country_id, c.code as country_code, c.label as country, h.block_if_negative, h.sortorder, h.active FROM ".MAIN_DB_PREFIX."c_holiday_types as h LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON h.fk_country=c.rowid";
+$tabsql[DICT_HOLIDAY_TYPES] = "SELECT h.rowid as rowid, h.code, h.label, h.affect, h.delay, h.newbymonth, h.fk_country as country_id, c.code as country_code, c.label as country, h.block_if_negative, h.sortorder, h.active FROM ".MAIN_DB_PREFIX."c_holiday_types as h LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON h.fk_country=c.rowid WHERE h.entity IN (".getEntity($tabname[DICT_HOLIDAY_TYPES]).")";
 $tabsql[DICT_LEAD_STATUS] = "SELECT t.rowid as rowid, t.code, t.label, percent, t.position, t.active FROM ".MAIN_DB_PREFIX."c_lead_status as t";
 $tabsql[DICT_FORMAT_CARDS] = "SELECT t.rowid, t.code, t.name, t.paper_size, t.orientation, t.metric, t.leftmargin, t.topmargin, t.nx, t.ny, t.spacex, t.spacey, t.width, t.height, t.font_size, t.custom_x, t.custom_y, t.active FROM ".MAIN_DB_PREFIX."c_format_cards as t";
 $tabsql[DICT_INVOICE_SUBTYPE] = "SELECT t.rowid, t.code, t.label, c.label as country, c.code as country_code, t.fk_country as country_id, t.active FROM ".MAIN_DB_PREFIX."c_invoice_subtype as t, ".MAIN_DB_PREFIX."c_country as c WHERE t.fk_country = c.rowid";
-$tabsql[DICT_HRM_PUBLIC_HOLIDAY] = "SELECT a.id    as rowid, a.entity, a.code, a.fk_country as country_id, c.code as country_code, c.label as country, a.dayrule, a.day, a.month, a.year, a.active FROM ".MAIN_DB_PREFIX."c_hrm_public_holiday as a LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON a.fk_country=c.rowid AND c.active=1";
+$tabsql[DICT_HRM_PUBLIC_HOLIDAY] = "SELECT a.id    as rowid, a.entity, a.code, a.fk_country as country_id, c.code as country_code, c.label as country, a.dayrule, a.day, a.month, a.year, a.active FROM ".MAIN_DB_PREFIX."c_hrm_public_holiday as a LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON a.fk_country=c.rowid AND c.active=1 WHERE a.entity IN (".getEntity($tabname[DICT_HRM_PUBLIC_HOLIDAY]).")";
 $tabsql[DICT_HRM_DEPARTMENT] = "SELECT t.rowid, t.pos, t.code, t.label, t.active FROM ".MAIN_DB_PREFIX."c_hrm_department as t";
 $tabsql[DICT_HRM_FUNCTION] = "SELECT t.rowid, t.pos, t.code, t.label, t.c_level, t.active FROM ".MAIN_DB_PREFIX."c_hrm_function as t";
 $tabsql[DICT_EXP_TAX_CAT] = "SELECT c.rowid, c.label, c.active, c.entity FROM ".MAIN_DB_PREFIX."c_exp_tax_cat as c";
@@ -470,11 +471,11 @@ $tabfieldinsert[DICT_TYPE_RESOURCE] = "code,label";
 $tabfieldinsert[DICT_TYPE_CONTAINER] = "code,label,entity";
 //$tabfieldinsert[DICT_UNITS]= "code,label,short_label";
 $tabfieldinsert[DICT_STCOMM] = "code,libelle,picto";
-$tabfieldinsert[DICT_HOLIDAY_TYPES] = "code,label,affect,delay,newbymonth,fk_country,block_if_negative,sortorder";
+$tabfieldinsert[DICT_HOLIDAY_TYPES] = "code,label,affect,delay,newbymonth,fk_country,block_if_negative,sortorder,entity";
 $tabfieldinsert[DICT_LEAD_STATUS] = "code,label,percent,position";
 $tabfieldinsert[DICT_FORMAT_CARDS] = "code,name,paper_size,orientation,metric,leftmargin,topmargin,nx,ny,spacex,spacey,width,height,font_size,custom_x,custom_y";
 $tabfieldinsert[DICT_INVOICE_SUBTYPE] = "fk_country,code,label";
-$tabfieldinsert[DICT_HRM_PUBLIC_HOLIDAY] = "code,dayrule,day,month,year,fk_country";
+$tabfieldinsert[DICT_HRM_PUBLIC_HOLIDAY] = "code,dayrule,day,month,year,fk_country,entity";
 $tabfieldinsert[DICT_HRM_DEPARTMENT] = "code,label";
 $tabfieldinsert[DICT_HRM_FUNCTION] = "code,label";
 $tabfieldinsert[DICT_EXP_TAX_CAT] = "label";
@@ -656,7 +657,7 @@ foreach ($tabcomplete as $key => $value) {
 		continue;
 	}
 	$tabcomplete[$key]['id'] = $i;
-	// TODO Comment the line when data is stored into the tabcomplete array
+	// TODO Comment this lines when data is stored into the tabcomplete array
 	$tabcomplete[$key]['cond'] = $tabcond[$i];
 	$tabcomplete[$key]['rowid'] = $tabrowid[$i];
 	$tabcomplete[$key]['fieldinsert'] = $tabfieldinsert[$i];
@@ -1260,6 +1261,12 @@ $form = new Form($db);
 $title = $langs->trans("DictionarySetup");
 
 llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-admin page-dict');
+
+if (GETPOSTINT('id') == DICT_SOCIALNETWORKS && $from == 'socialnetworksetup') {
+	$head = socialnetwork_prepare_head();
+	print dol_get_fiche_head($head, 'dict', $langs->trans('MenuDict'), -1, 'user');
+}
+
 
 $linkback = '';
 if ($id && empty($from)) {
@@ -2242,13 +2249,13 @@ if ($id > 0) {
 
 					print '<td colspan="3" class="center">';
 					print '<div name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'"></div>';
-					print '<input type="hidden" name="page" value="'.dol_escape_htmltag($page).'">';
+					print '<input type="hidden" name="page" value="'.dol_escape_htmltag((string) $page).'">';
 					print '<input type="hidden" name="rowid" value="'.dol_escape_htmltag($rowid).'">';
 					if (!is_null($withentity)) {
 						print '<input type="hidden" name="entity" value="'.$withentity.'">';
 					}
-					print '<input type="submit" class="button button-edit small" name="actionmodify" value="'.$langs->trans("Modify").'">';
-					print '<input type="submit" class="button button-cancel small" name="actioncancel" value="'.$langs->trans("Cancel").'">';
+					print '<input type="submit" class="button button-edit smallpaddingimp" name="actionmodify" value="'.$langs->trans("Modify").'">';
+					print '<input type="submit" class="button button-cancel smallpaddingimp" name="actioncancel" value="'.$langs->trans("Cancel").'">';
 					print '</td>';
 				} else {
 					$tmpaction = 'view';
@@ -2303,8 +2310,10 @@ if ($id > 0) {
 							} elseif ($value == 'price' || preg_match('/^amount/i', $value)) {
 								$valuetoshow = price($valuetoshow);
 							}
-							if ($value == 'private') {
-								$valuetoshow = yn($valuetoshow);
+							if (in_array($value, array('private', 'joinfile', 'use_default'))) {
+								if ($valuetoshow) {
+									$valuetoshow = yn($valuetoshow);
+								}
 							} elseif ($value == 'libelle_facture') {
 								$key = $langs->trans("PaymentCondition".strtoupper($obj->code));
 								$valuetoshow = ($obj->code && $key != "PaymentCondition".strtoupper($obj->code) ? $key : $obj->$value);
@@ -2618,7 +2627,9 @@ if ($id > 0) {
 }
 
 print '<br>';
-
+if (GETPOST('id') && GETPOST('id') == DICT_SOCIALNETWORKS) {
+	print dol_get_fiche_end();
+}
 // End of page
 llxFooter();
 $db->close();

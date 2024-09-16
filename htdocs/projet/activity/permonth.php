@@ -271,13 +271,13 @@ if ($action == 'addtime' && $user->hasRight('projet', 'lire') && GETPOST('formfi
 					$tmpduration = explode(':', $amountoadd);
 					$newduration = 0;
 					if (!empty($tmpduration[0])) {
-						$newduration += ($tmpduration[0] * 3600);
+						$newduration += (int) ((float) $tmpduration[0] * 3600);
 					}
 					if (!empty($tmpduration[1])) {
-						$newduration += ($tmpduration[1] * 60);
+						$newduration += (int) ((float) $tmpduration[1] * 60);
 					}
 					if (!empty($tmpduration[2])) {
-						$newduration += ($tmpduration[2]);
+						$newduration += ((int) $tmpduration[2]);
 					}
 
 					if ($newduration > 0) {
@@ -423,7 +423,7 @@ $tasksrole = $taskstatic->getUserRolesForProjectsOrTasks(null, $usertoprocess, (
 //var_dump($taskrole);
 
 
-llxHeader("", $title, "", '', '', '', array('/core/js/timesheet.js'));
+llxHeader('', $title, '', '', 0, 0, array('/core/js/timesheet.js'), '', '', 'mod-project project-activity page-activity_permonth');
 
 //print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num, '', 'project');
 
