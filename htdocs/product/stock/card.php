@@ -648,7 +648,7 @@ if ($action == 'create') {
 			print_liste_field_titre($form->textwithpicto($langs->trans("AverageUnitPricePMPShort"), $langs->trans("AverageUnitPricePMPDesc")), "", "p.pmp", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
 			$totalarray['nbfield']++;
 
-			print_liste_field_titre("EstimatedStockValueShort", "", "sValue", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+			print_liste_field_titre("EstimatedStockValueShort", "", "svalue", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
 			$totalarray['nbfield']++;
 			$totalarray['pos'][$totalarray['nbfield']] = 'totalvalue';
 			$totalarray['type'][$totalarray['nbfield']] = '';
