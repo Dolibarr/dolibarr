@@ -287,6 +287,7 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = 0)
 	global $dolibarr_main_url_root, $dolibarr_main_data_root;
 	global $website;
 	global $includehtmlcontentopened;
+	'@phan-var-force WebSite $website';
 
 	$nbrep = 0;
 
@@ -518,6 +519,7 @@ function dolWebsiteSaveContent($content)
 function redirectToContainer($containerref, $containeraliasalt = '', $containerid = 0, $permanent = 0, $parameters = array())
 {
 	global $db, $website;
+	'@phan-var-force WebSite $website';
 
 	$newurl = '';
 	$result = 0;
@@ -602,6 +604,7 @@ function includeContainer($containerref)
 	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running included containers.
 	global $includehtmlcontentopened;
 	global $websitekey, $websitepagefile;
+	'@phan-var-force WebSite $website';
 
 	$MAXLEVEL = 20;
 
@@ -657,6 +660,7 @@ function includeContainer($containerref)
 function getStructuredData($type, $data = array())
 {
 	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs; // Very important. Required to have var available when running included containers.
+	'@phan-var-force WebSite $website';
 
 	$type = strtolower($type);
 
@@ -864,6 +868,7 @@ function getStructuredData($type, $data = array())
 function getSocialNetworkHeaderCards($params = null)
 {
 	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running included containers.
+	'@phan-var-force WebSite $website';
 
 	$out = '';
 
@@ -939,6 +944,7 @@ function getSocialNetworkHeaderCards($params = null)
 function getSocialNetworkSharingLinks($socialnetworks = '')
 {
 	global $website, $websitepage; // Very important. Required to have var available when running included containers.
+	'@phan-var-force WebSite $website';
 
 	$out = '<!-- section for social network sharing of page -->'."\n";
 
@@ -1166,6 +1172,7 @@ function getPublicFilesOfObject($object)
 function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $sortfield = 'date_creation', $sortorder = 'DESC', $langcode = '', $otherfilters = [], $status = 1)
 {
 	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running included containers.
+	'@phan-var-force WebSite $website';
 
 	$error = 0;
 	$arrayresult = array('code' => '', 'list' => array());
@@ -1353,7 +1360,7 @@ function getImageFromHtmlContent($htmlContent, $imageNumber = 1)
 	if ($imageNumber > 0 && $imageNumber <= $images->length) {
 		// Récupère l'image correspondante (index - 1 car $imageNumber est 1-based)
 		$img = $images->item($imageNumber - 1);
-		if ($img) {
+		if ($img instanceof DOMElement) {
 			return $img->getAttribute('src');
 		}
 	}
@@ -1372,9 +1379,9 @@ function getImageFromHtmlContent($htmlContent, $imageNumber = 1)
  * @param 	string		$urltograb		URL to grab (example: https://www.nltechno.com/ or s://www.nltechno.com/dir1/ or https://www.nltechno.com/dir1/mapage1)
  * @param 	string		$tmp			Content to parse
  * @param 	string		$action			Var $action
- * @param	int 		$modifylinks	0=Do not modify content, 1=Replace links with a link to viewimage
- * @param	int			$grabimages		0=Do not grab images, 1=Grab images
- * @param	string		$grabimagesinto	'root' or 'subpage'
+ * @param	int<0,1>	$modifylinks	0=Do not modify content, 1=Replace links with a link to viewimage
+ * @param	int<0,1>	$grabimages		0=Do not grab images, 1=Grab images
+ * @param	'root'|'subpage'	$grabimagesinto	'root' or 'subpage'
  * @return	void
  */
 function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modifylinks = 0, $grabimages = 1, $grabimagesinto = 'subpage')
