@@ -33,7 +33,7 @@ function showOnlineSignatureUrl($type, $ref, $obj = null, $mode = '', $signatory
 	global $langs;
 
 	// Load translation files required by the page
-	$langs->loadLangs(array("payment", "paybox", "stripe"));
+	$langs->loadLangs(array("payment", "paybox", "stripe", "commercial"));
 
 	$servicename = 'Online';
 
