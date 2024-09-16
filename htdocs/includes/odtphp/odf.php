@@ -923,9 +923,14 @@ IMG;
 				}
 
 				if (!empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+					if (preg_match('/[^\/]+\.od(x|t)$/', $name, $matches)) {
+						$fname = $matches[0];
+						$fname = preg_replace('/\.od(x|t)/i', '', $fname);
+					}
 					$name=preg_replace('/\.od(x|t)/i', '', $name);
+					if( $fname == "" ) $fname = $name;
 					header('Content-type: application/pdf');
-					header('Content-Disposition: attachment; filename="'.$name.'.pdf"');
+					header('Content-Disposition: attachment; filename="'.$fname.'.pdf"');
 					readfile($name.".pdf");
 				}
 			}
