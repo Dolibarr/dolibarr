@@ -56,6 +56,7 @@ $object = fetchObjectByElement($id, $element);
 if (!is_object($object)) {
 	httponly_accessforbidden("Bad value for combination of parameters element/field: Object not found.");	// This includes the exit.
 }
+'@phan-var-force CommonObject $object';
 
 $object->fields[$field] = array('type' => $format, 'enabled' => 1);
 
