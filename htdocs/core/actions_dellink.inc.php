@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,6 +47,7 @@ if ($action == 'addlinkbyref' && !empty($permissiondellink) && !$cancellink && $
 		dol_include_once('/' . $element_prop['classpath'] . '/' . $element_prop['classfile'] . '.class.php');
 
 		$objecttmp = new $element_prop['classname']($db);
+		'@phan-var-force CommonObject $objecttmp';
 		$ret = $objecttmp->fetch(0, $addlinkref);
 		if ($ret > 0) {
 			$object->fetch($id);
