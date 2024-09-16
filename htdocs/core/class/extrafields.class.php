@@ -1361,7 +1361,7 @@ class ExtraFields
 
 					// Fix better compatibility with some old extrafield syntax filter "(field=123)"
 					$reg = array();
-					if (preg_match('/$\(([a-z0-9]+)([=<>]+)(\d+)\)$/i', $InfoFieldList[4], $reg)) {
+					if (preg_match('/^\(?([a-z0-9]+)([=<>]+)(\d+)\)?$/i', $InfoFieldList[4], $reg)) {
 						$InfoFieldList[4] = '('.$reg[1].':'.$reg[2].':'.$reg[3].')';
 					}
 
@@ -1586,7 +1586,7 @@ class ExtraFields
 
 					// Fix better compatibility with some old extrafield syntax filter "(field=123)"
 					$reg = array();
-					if (preg_match('/$\(([a-z0-9]+)([=<>]+)(\d+)\)$/i', $InfoFieldList[4], $reg)) {
+					if (preg_match('/^\(?([a-z0-9]+)([=<>]+)(\d+)\)?$/i', $InfoFieldList[4], $reg)) {
 						$InfoFieldList[4] = '('.$reg[1].':'.$reg[2].':'.$reg[3].')';
 					}
 
