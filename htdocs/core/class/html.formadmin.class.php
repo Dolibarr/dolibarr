@@ -503,7 +503,7 @@ class FormAdmin
 	 *
 	 * @param	string		$htmlname				Name of HTML select component
 	 * @param	string		$type					Type preselected
-	 * @param	string[]	$typewecanchangeinto	Array of possible switch combination from 1 type to another one. This will grey not possible combinations.
+	 * @param	array<string,string[]>	$typewecanchangeinto	Array of possible switch combination from 1 type to another one. This will grey not possible combinations.
 	 * @return 	string							The combo HTML select component
 	 */
 	public function selectTypeOfFields($htmlname, $type, $typewecanchangeinto = array())

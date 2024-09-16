@@ -102,7 +102,7 @@ parameters:
 		- '# dol_escape_htmltag expects string, float given.#'
 		- '#create_line\(\) expects string, float given.#'
 		- '# dol_stringtotime expects string, DateTime given.#'
-		- '# (load_fiche_titre|llxHeader|dol_add_file_process|setEventMessages) expects string, null given.#'
+		- '# (load_fiche_titre|dol_add_file_process|setEventMessages) expects string, null given.#'
 		- '# (show_ldap_content|projectLinesa) expects string, true given.#'
 		- '# DolEditor constructor expects string, false given.#'
 		- '# dol_eval expects string, array given.#'
