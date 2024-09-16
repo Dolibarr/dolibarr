@@ -118,7 +118,6 @@ parameters:
 		- '# ajax_constantonoff expects array, null given.#'
 		- '# ldap_search expects array\|LDAP#'
 		- '# ajax_combobox expects array#'
-		- '# setlocale expects array#'
 		- '# setEventMessages expects array#'
 		- '# Context::setError\(\) expects array, string#'
 		- '# Form::formconfirm\(\) expects array#'
