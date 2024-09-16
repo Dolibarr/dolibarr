@@ -103,6 +103,19 @@ $permissiontoupdatecost = $user->hasRight('bom', 'read'); // User who can define
 
 $upload_dir = $conf->mrp->multidir_output[isset($object->entity) ? $object->entity : 1];
 
+// Define output language
+$outputlangs = $langs;
+$newlang = '';
+if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+	$newlang = GETPOST('lang_id', 'aZ09');
+}
+if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+	$newlang = $object->thirdparty->default_lang;
+}
+if (!empty($newlang)) {
+	$outputlangs = new Translate("", $conf);
+	$outputlangs->setDefaultLang($newlang);
+}
 
 /*
  * Actions
@@ -182,30 +195,27 @@ if (empty($reshook)) {
 
 	if (($action == 'confirm_addconsumeline' && GETPOST('addconsumelinebutton') && $permissiontoadd)
 	|| ($action == 'confirm_addproduceline' && GETPOST('addproducelinebutton') && $permissiontoadd)) {
-		$moline = new MoLine($db);
-
 		// Line to produce
-		$moline->fk_mo = $object->id;
-		$moline->qty = GETPOST('qtytoadd', 'int');
-		$moline->fk_product = GETPOST('productidtoadd', 'int');
+		$molineData['qty'] = GETPOST('qtytoadd', 'int');
+		$molineData['fk_product'] = GETPOST('productidtoadd', 'int');
 		if (GETPOST('addconsumelinebutton')) {
-			$moline->role = 'toconsume';
+			$molineData['role'] = 'toconsume';
 		} else {
-			$moline->role = 'toproduce';
+			$molineData['role'] = 'toproduce';
 		}
-		$moline->origin_type = 'free'; // free consume line
-		$moline->position = 0;
+		$molineData['origin_type'] = 'free'; // free consume line
+		$molineData['pos'] = 0;
 
 		// Is it a product or a service ?
-		if (!empty($moline->fk_product)) {
+		if (!empty($molineData['fk_product'])) {
 			$tmpproduct = new Product($db);
-			$tmpproduct->fetch($moline->fk_product);
+			$tmpproduct->fetch($molineData['fk_product']);
 			if ($tmpproduct->type == Product::TYPE_SERVICE) {
-				$moline->fk_default_workstation = $tmpproduct->fk_default_workstation;
+				$molineData['fk_default_workstation'] = $tmpproduct->fk_default_workstation;
 			}
-			$moline->disable_stock_change = ($tmpproduct->type == Product::TYPE_SERVICE ? 1 : 0);
+			$molineData['disable_stock_change'] = ($tmpproduct->type == Product::TYPE_SERVICE ? 1 : 0);
 			if ($conf->global->PRODUCT_USE_UNITS) {
-				$moline->fk_unit = $tmpproduct->fk_unit;
+				$molineData['fk_unit'] = $tmpproduct->fk_unit;
 			}
 		}
 		// Extrafields
@@ -219,13 +229,13 @@ if (empty($reshook)) {
 			}
 		}
 		if (is_array($array_options) && count($array_options) > 0) {
-			$moline->array_options = $array_options;
+			$molineData['array_options'] = $array_options;
 		}
+		$result = $object->addLine($user, $molineData['origin_type'], $molineData['role'], $molineData['fk_product'], $molineData['fk_unit'], $molineData['qty'], $molineData['pos'], $molineData['disable_stock_change'], $molineData['fk_default_workstation'], $molineData['array_options'], false); // Never use triggers here
 
-		$resultline = $moline->create($user, false); // Never use triggers here
-		if ($resultline <= 0) {
+		if ($result <= 0) {
 			$error++;
-			setEventMessages($moline->error, $moline->errors, 'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 
 		$action = '';
@@ -245,70 +255,21 @@ if (empty($reshook)) {
 		// Process line to consume
 		foreach ($object->lines as $line) {
 			if ($line->role == 'toconsume') {
-				$tmpproduct = new Product($db);
-				$tmpproduct->fetch($line->fk_product);
-
 				$i = 1;
 				while (GETPOSTISSET('qty-'.$line->id.'-'.$i)) {
 					$qtytoprocess = price2num(GETPOST('qty-'.$line->id.'-'.$i));
 
 					if ($qtytoprocess != 0) {
-						// Check warehouse is set if we should have to
-						if (GETPOSTISSET('idwarehouse-'.$line->id.'-'.$i)) {	// If there is a warehouse to set
-							if (!(GETPOST('idwarehouse-'.$line->id.'-'.$i) > 0)) {	// If there is no warehouse set.
-								$langs->load("errors");
-								setEventMessages($langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Warehouse"), $tmpproduct->ref), null, 'errors');
-								$error++;
-							}
-							if ($tmpproduct->status_batch && (!GETPOST('batch-'.$line->id.'-'.$i))) {
-								$langs->load("errors");
-								setEventMessages($langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), $tmpproduct->ref), null, 'errors');
-								$error++;
-							}
-						}
+						$idwarehouse = GETPOSTISSET('idwarehouse-' . $line->id . '-' . $i) ? GETPOST('idwarehouse-' . $line->id . '-' . $i) : null;
+						$batch = GETPOST('batch-' . $line->id . '-' . $i);
+						$id_product_batch = 0;
 
-						$idstockmove = 0;
-						if (!$error && GETPOST('idwarehouse-'.$line->id.'-'.$i) > 0) {
-							// Record stock movement
-							$id_product_batch = 0;
-							$stockmove->setOrigin($object->element, $object->id);
-							$stockmove->context['mrp_role'] = 'toconsume';
-
-							if ($qtytoprocess >= 0) {
-								$idstockmove = $stockmove->livraison($user, $line->fk_product, GETPOST('idwarehouse-'.$line->id.'-'.$i), $qtytoprocess, 0, $labelmovement, dol_now(), '', '', GETPOST('batch-'.$line->id.'-'.$i), $id_product_batch, $codemovement);
-							} else {
-								$idstockmove = $stockmove->reception($user, $line->fk_product, GETPOST('idwarehouse-'.$line->id.'-'.$i), $qtytoprocess * -1, 0, $labelmovement, dol_now(), '', '', GETPOST('batch-'.$line->id.'-'.$i), $id_product_batch, $codemovement);
-							}
-							if ($idstockmove < 0) {
-								$error++;
-								setEventMessages($stockmove->error, $stockmove->errors, 'errors');
-							}
-						}
-
-						if (!$error) {
-							// Record consumption
-							$moline = new MoLine($db);
-							$moline->fk_mo = $object->id;
-							$moline->position = $pos;
-							$moline->fk_product = $line->fk_product;
-							$moline->fk_warehouse = GETPOST('idwarehouse-'.$line->id.'-'.$i);
-							$moline->qty = $qtytoprocess;
-							$moline->batch = GETPOST('batch-'.$line->id.'-'.$i);
-							$moline->role = 'consumed';
-							$moline->fk_mrp_production = $line->id;
-							$moline->fk_stock_movement = $idstockmove == 0 ? null : $idstockmove;
-							$moline->fk_user_creat = $user->id;
-
-							$resultmoline = $moline->create($user);
-							if ($resultmoline <= 0) {
-								$error++;
-								setEventMessages($moline->error, $moline->errors, 'errors');
-							}
-
-							$pos++;
+						$result = $line->consumeOrProduce($user, false, $qtytoprocess, $idwarehouse, $labelmovement, $codemovement, 0, $batch, $id_product_batch, $outputlangs);
+						if ($result <= 0) {
+							setEventMessages($line->error, $line->errors, 'errors');
+							$error++;
 						}
 					}
-
 					$i++;
 				}
 			}
@@ -319,112 +280,31 @@ if (empty($reshook)) {
 
 		foreach ($object->lines as $line) {
 			if ($line->role == 'toproduce') {
-				$tmpproduct = new Product($db);
-				$tmpproduct->fetch($line->fk_product);
-
 				$i = 1;
 				while (GETPOSTISSET('qtytoproduce-'.$line->id.'-'.$i)) {
 					$qtytoprocess = price2num(GETPOST('qtytoproduce-'.$line->id.'-'.$i));
-					$pricetoprocess = GETPOST('pricetoproduce-'.$line->id.'-'.$i) ? price2num(GETPOST('pricetoproduce-'.$line->id.'-'.$i)) : 0;
 
 					if ($qtytoprocess != 0) {
-						// Check warehouse is set if we should have to
-						if (GETPOSTISSET('idwarehousetoproduce-'.$line->id.'-'.$i)) {	// If there is a warehouse to set
-							if (!(GETPOST('idwarehousetoproduce-'.$line->id.'-'.$i) > 0)) {	// If there is no warehouse set.
-								$langs->load("errors");
-								setEventMessages($langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Warehouse"), $tmpproduct->ref), null, 'errors');
-								$error++;
-							}
-							if (isModEnabled('productbatch') && $tmpproduct->status_batch && (!GETPOST('batchtoproduce-'.$line->id.'-'.$i))) {
-								$langs->load("errors");
-								setEventMessages($langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), $tmpproduct->ref), null, 'errors');
-								$error++;
-							}
-						}
+						$idwarehouse = GETPOSTISSET('idwarehousetoproduce-' . $line->id . '-' . $i) ? GETPOST('idwarehousetoproduce-' . $line->id . '-' . $i) : null;
+						$pricetoprocess = GETPOST('pricetoproduce-' . $line->id . '-' . $i) ? price2num(GETPOST('pricetoproduce-' . $line->id . '-' . $i)) : 0;
+						$batch = GETPOST('batch-' . $line->id . '-' . $i);
+						$id_product_batch = 0;
 
-						$idstockmove = 0;
-						if (!$error && GETPOST('idwarehousetoproduce-'.$line->id.'-'.$i) > 0) {
-							// Record stock movement
-							$id_product_batch = 0;
-							$stockmove->origin_type = $object->element;
-							$stockmove->origin_id = $object->id;
-							$stockmove->context['mrp_role'] = 'toproduce';
-
-							$idstockmove = $stockmove->reception($user, $line->fk_product, GETPOST('idwarehousetoproduce-'.$line->id.'-'.$i), $qtytoprocess, $pricetoprocess, $labelmovement, '', '', GETPOST('batchtoproduce-'.$line->id.'-'.$i), dol_now(), $id_product_batch, $codemovement);
-							if ($idstockmove < 0) {
-								$error++;
-								setEventMessages($stockmove->error, $stockmove->errors, 'errors');
-							}
-						}
-
-						if (!$error) {
-							// Record production
-							$moline = new MoLine($db);
-							$moline->fk_mo = $object->id;
-							$moline->position = $pos;
-							$moline->fk_product = $line->fk_product;
-							$moline->fk_warehouse = GETPOST('idwarehousetoproduce-'.$line->id.'-'.$i);
-							$moline->qty = $qtytoprocess;
-							$moline->batch = GETPOST('batchtoproduce-'.$line->id.'-'.$i);
-							$moline->role = 'produced';
-							$moline->fk_mrp_production = $line->id;
-							$moline->fk_stock_movement = $idstockmove;
-							$moline->fk_user_creat = $user->id;
-
-							$resultmoline = $moline->create($user);
-							if ($resultmoline <= 0) {
-								$error++;
-								setEventMessages($moline->error, $moline->errors, 'errors');
-							}
-
-							$pos++;
+						$result = $line->consumeOrProduce($user, false, $qtytoprocess, $idwarehouse, $labelmovement, $codemovement, $pricetoprocess, $batch, $id_product_batch, $outputlangs);
+						if ($result <= 0) {
+							setEventMessages($line->error, $line->errors, 'errors');
+							$error++;
 						}
 					}
-
 					$i++;
 				}
 			}
 		}
 
 		if (!$error) {
-			$consumptioncomplete = true;
-			$productioncomplete = true;
-
-			if (GETPOST('autoclose', 'int')) {
-				foreach ($object->lines as $line) {
-					if ($line->role == 'toconsume') {
-						$arrayoflines = $object->fetchLinesLinked('consumed', $line->id);
-						$alreadyconsumed = 0;
-						foreach ($arrayoflines as $line2) {
-							$alreadyconsumed += $line2['qty'];
-						}
-
-						if ($alreadyconsumed < $line->qty) {
-							$consumptioncomplete = false;
-						}
-					}
-					if ($line->role == 'toproduce') {
-						$arrayoflines = $object->fetchLinesLinked('produced', $line->id);
-						$alreadyproduced = 0;
-						foreach ($arrayoflines as $line2) {
-							$alreadyproduced += $line2['qty'];
-						}
-
-						if ($alreadyproduced < $line->qty) {
-							$productioncomplete = false;
-						}
-					}
-				}
-			} else {
-				$consumptioncomplete = false;
-				$productioncomplete = false;
-			}
-
-			// Update status of MO
-			dol_syslog("consumptioncomplete = ".$consumptioncomplete." productioncomplete = ".$productioncomplete);
-			//var_dump("consumptioncomplete = ".$consumptioncomplete." productioncomplete = ".$productioncomplete);
-			if ($consumptioncomplete && $productioncomplete) {
-				$result = $object->setStatut($object::STATUS_PRODUCED, 0, '', 'MRP_MO_PRODUCED');
+			// Update status of MO if 'autoclose' is set
+			if ($object->hasAllConsumedAndProduced() && GETPOST('autoclose', 'int')) {
+				$result = $object->setStatusAsProduced(-1, $outputlangs);
 			} else {
 				$result = $object->setStatut($object::STATUS_INPROGRESS, 0, '', 'MRP_MO_PRODUCED');
 			}
@@ -448,30 +328,9 @@ if (empty($reshook)) {
 
 	// Action close produced
 	if ($action == 'confirm_produced' && $confirm == 'yes' && $permissiontoadd) {
-		$result = $object->setStatut($object::STATUS_PRODUCED, 0, '', 'MRP_MO_PRODUCED');
-		if ($result >= 0) {
-			// Define output language
-			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
-				$outputlangs = $langs;
-				$newlang = '';
-				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
-					$newlang = GETPOST('lang_id', 'aZ09');
-				}
-				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-					$newlang = $object->thirdparty->default_lang;
-				}
-				if (!empty($newlang)) {
-					$outputlangs = new Translate("", $conf);
-					$outputlangs->setDefaultLang($newlang);
-				}
-				$model = $object->model_pdf;
-				$ret = $object->fetch($id); // Reload to get new records
-
-				$object->generateDocument($model, $outputlangs, 0, 0, 0);
-			}
-		} else {
+		$result = $object->setStatusAsProduced(-1, $outputlangs);
+	} else {
 			setEventMessages($object->error, $object->errors, 'errors');
-		}
 	}
 
 	if ($action == 'confirm_editline' && $permissiontoadd) {
@@ -821,7 +680,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<div class="clearboth"></div>';
 
 		$url = $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addconsumeline&token='.newToken();
-		$permissiontoaddaconsumeline = $object->status != $object::STATUS_PRODUCED && $object->status != $object::STATUS_CANCELED;
+		$permissiontoaddaconsumeline = $object->getAddLineIsAllowedByStatus();
 		$parameters = array('morecss'=>'reposition');
 
 		$newcardbutton = '';
@@ -1288,7 +1147,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 						// Action delete line
 						if ($permissiontodelete) {
-							$href = $_SERVER["PHP_SELF"].'?id='.((int) $object->id).'&action=deleteline&token='.newToken().'&lineid='.((int) $line2['rowid']).'&fk_movement='.((int) $line2['fk_stock_movement']);
+							$href = $_SERVER["PHP_SELF"].'?id='.((int) $object->id).'&action=deleteline&token='.newToken().'&lineid='.((int) $line2['rowid']);
 							print '<td class="center">';
 							print '<a class="reposition" href="'.$href.'">';
 							print img_picto($langs->trans('TooltipDeleteAndRevertStockMovement'), 'delete');

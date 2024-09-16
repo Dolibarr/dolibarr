@@ -79,6 +79,36 @@ class Mos extends DolibarrApi
 		return $this->_cleanObjectDatas($this->mo);
 	}
 
+	/**
+	 * Get lines of an MO
+	 *
+	 * @param int   $id             Id of MO
+	 *
+	 * @url	GET {id}/lines
+	 *
+	 * @return array
+	 */
+	public function getLines($id)
+	{
+		if (!DolibarrApiAccess::$user->rights->mrp->read) {
+			throw new RestException(401);
+		}
+
+		$result = $this->mo->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'MO not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('mrp', $this->mo->id, 'mrp_mo')) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+		$this->mo->getLinesArray();
+		$result = array();
+		foreach ($this->mo->lines as $line) {
+			array_push($result, $this->_cleanObjectDatas($line));
+		}
+		return $result;
+	}
 
 	/**
 	 * List Mos
@@ -217,6 +247,134 @@ class Mos extends DolibarrApi
 	}
 
 	/**
+	 * Add a line to given MO
+	 *
+	 * Example:
+	 * {
+	 *   "role": "toconsume" ('toconsume' or 'toproduce'),
+	 *   "fk_product": 123456,
+	 *   "qty": 15,
+	 *   "pos": 0,
+	 *   "disable_stock_change": 0,
+	 *   "fk_default_workstation": 0,
+	 *   "array_options": {
+	 *       "options_YourExtrafield": "MoLine from the API!"
+	 *   }
+	 * }
+	 *
+	 * @param int   $id             Id of MO to update
+	 * @param array $request_data   MoLine data {}
+	 *
+	 * @url	POST {id}/lines
+	 *
+	 * @return int
+	 */
+	public function postLine($id, $request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->rights->mrp->write) {
+			throw new RestException(401);
+		}
+
+		$tmpmo = $this->mo->fetch($id);
+		if (!$tmpmo) {
+			throw new RestException(404, 'MO not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('mrp', $this->mo->id, 'mrp_mo')) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$request_data = (object) $request_data;
+		$tmpproduct = new Product($this->db);
+		$tmpproduct->fetch($request_data->fk_product);
+
+		$updateRes = $this->mo->addLine(
+			DolibarrApiAccess::$user,
+			'free',
+			$request_data->role,
+			$request_data->fk_product,
+			$tmpproduct->fk_unit,
+			$request_data->qty,
+			$request_data->pos,
+			$request_data->disable_stock_change,
+			$request_data->fk_default_workstation,
+			$request_data->array_options
+		);
+
+		if ($updateRes > 0) {
+			return $updateRes;
+		} else {
+			throw new RestException(400, $this->mo->errors);
+		}
+	}
+
+	/**
+	 * consume or produce for given MoLine
+	 *
+	 * Example:
+	 * {
+	 *   "autoclose_mo": 1,
+	 *   "qty": 3,
+	 *   "fk_warehouse": 15,
+	 *   "labelmovement": "what you want or empty for autofill",
+	 *   "codemovement": "what you want or empty for autofill",
+	 *   "pricetoprocess": 12.5,
+	 *   "batch": "batchnumber",
+	 *   "fk_product_batch": 0
+	 * }
+	 *
+	 * @param int   $id             Id of MO to update
+	 * @param int   $lineid         Id of MoLine to consume or produce
+	 * @param array $request_data   consume or produce data {}
+	 *
+	 * @url	POST {id}/lines/{lineid}/consumeorproduce
+	 *
+	 * @return int
+	 */
+	public function consumeOrProduce($id, $lineid, $request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->rights->mrp->write) {
+			throw new RestException(401);
+		}
+
+		$tmpmo = $this->mo->fetch($id);
+		if (!$tmpmo) {
+			throw new RestException(404, 'MO not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('mrp', $this->mo->id, 'mrp_mo')) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		//Check the rowid is a line of current bom object
+		$tmpmoline = new MoLine($this->db);
+		$tmpmoline->fetch($lineid);
+
+		if ($tmpmoline->fk_mo != $this->mo->id) {
+			throw new RestException(500, 'Line to consume or produce (rowid: '.$lineid.') is not a line of MO (id: '.$this->mo->id.')');
+		}
+
+		$request_data = (object) $request_data;
+		$result = $tmpmoline->consumeOrProduce(
+			DolibarrApiAccess::$user,
+			$request_data->autoclose_mo,
+			$request_data->qty,
+			$request_data->fk_warehouse,
+			$request_data->labelmovement,
+			$request_data->codemovement,
+			$request_data->pricetoprocess,
+			$request_data->batch,
+			$request_data->fk_product_batch
+		);
+
+		if ($result > 0) {
+			return $result;
+		} else {
+			throw new RestException(400, $tmpmoline->errors);
+		}
+	}
+
+	/**
 	 * Update MO
 	 *
 	 * @param int   $id             Id of MO to update
@@ -291,6 +449,56 @@ class Mos extends DolibarrApi
 				'message' => 'MO deleted'
 			)
 		);
+	}
+
+	/**
+	 * Delete a line to given MO
+	 *
+	 *
+	 * @param int   $id             Id of MO to update
+	 * @param int   $lineid         Id of line to delete
+	 *
+	 * @url	DELETE {id}/lines/{lineid}
+	 *
+	 * @return int
+	 *
+	 * @throws RestException 401
+	 * @throws RestException 404
+	 * @throws RestException 500
+	 */
+	public function deleteLine($id, $lineid)
+	{
+		if (!DolibarrApiAccess::$user->rights->mrp->write) {
+			throw new RestException(401);
+		}
+
+		$result = $this->mo->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'MO not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('mrp', $this->mo->id, 'mrp_mo')) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		//Check the rowid is a line of current bom object
+		$lineIdIsFromObject = false;
+		foreach ($this->mo->lines as $bl) {
+			if ($bl->id == $lineid) {
+				$lineIdIsFromObject = true;
+				break;
+			}
+		}
+		if (!$lineIdIsFromObject) {
+			throw new RestException(500, 'Line to delete (rowid: '.$lineid.') is not a line of MO (id: '.$this->mo->id.')');
+		}
+
+		$updateRes = $this->mo->deleteline(DolibarrApiAccess::$user, $lineid);
+		if ($updateRes > 0) {
+			return $this->get($id);
+		} else {
+			throw new RestException(405, $this->mo->error);
+		}
 	}
 
 
