@@ -125,7 +125,6 @@ parameters:
 		- '# FormWebPortal::selectForForms\(\) expects int, array#'
 		- '# Lettering::getBankLinesFromFkDocAndDocType\(\) expects array#'
 		- '# form_constantes expects array#'
-		- '# dolGetButtonAction expects array#'
 		- '# (Odf) constructor expects #'
 		- '# Stripe[^ ]+::all\(\) expects #'
 		- '#expects resource#'
