@@ -546,16 +546,11 @@ if ($action == "importSignature") {
 							if (!getDolGlobalString("FICHINTER_SIGNATURE_ON_ALL_PAGES")) {
 								// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
 								// TODO Get position of box from PDF template
-
 								if ($signatory_type == 'internal') {
 									$param['xforimgstart'] = 16;
 									$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 38);
 									$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 110);
 								} elseif ($signatory_type == 'thirdparty') {
-									$param['xforimgstart'] = (empty($s['w']) ? 110 : $s['w'] / 2 - 2);
-									$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 38);
-									$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 20);
-								} else {
 									$param['xforimgstart'] = (empty($s['w']) ? 110 : $s['w'] / 2 - 2);
 									$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 38);
 									$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 20);
