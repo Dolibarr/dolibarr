@@ -424,7 +424,7 @@ return [
 		'PhanTypePossiblyInvalidDimOffset',			// a lot of false positive, in most cases, we want to keep the code as it is
 		// 'PhanPluginUnknownArrayFunctionReturnType',	// a lot of false positive, in most cases, we want to keep the code as it is
 
-		'PhanPluginWhitespaceTab',		// Dolibarr used tabs
+		'PhanPluginWhitespaceTab',		// Dolibarr uses tabs
 		'PhanPluginCanUsePHP71Void',	// Dolibarr is maintaining 7.0 compatibility
 		'PhanPluginShortArray',			// Dolibarr uses array()
 		'PhanPluginShortArrayList',		// Dolibarr uses array()
@@ -436,7 +436,7 @@ return [
 
 		'PhanPluginNonBoolBranch',			// Not essential - 31240+ occurrences
 		'PhanPluginNumericalComparison',	// Not essential - 19870+ occurrences
-		'PhanTypeMismatchArgument',			// Not essential - 12300+ occurrences
+		'PhanTypeMismatchArgument',			// Also reported by phpstan < lvl6 - 12300+ occurrences
 		'PhanPluginNonBoolInLogicalArith',	// Not essential - 11040+ occurrences
 		'PhanPluginConstantVariableScalar',	// Not essential - 5180+ occurrences
 		'PhanPluginDuplicateAdjacentStatement',
@@ -448,7 +448,7 @@ return [
 
 		// 'PhanPluginUnknownArrayMethodParamType',	// Too many troubles to manage. Is enabled in config_extended only.
 		// 'PhanPluginUnknownArrayMethodReturnType',	// Too many troubles to manage. Is enabled in config_extended only.
-		'PhanUndeclaredGlobalVariable',			// Too many false positives on .tpl.php files. Is enabled into config_extended only.
+		// 'PhanUndeclaredGlobalVariable',			// Helps identify variables that are not set/defined - add '@phan-var-force TYPE $varname' in tpl or includes to help type the variable
 		// 'PhanPluginUnknownObjectMethodCall',	// False positive for some class. Is enabled in config_extended only.
 	],
 	// You can put relative paths to internal stubs in this config option.
