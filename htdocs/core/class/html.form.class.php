@@ -4054,7 +4054,7 @@ class Form
 					'optlabel' => &$optlabel,
 					'outvallabel' => &$outvallabel,
 					'outarrayentry' => &$outarrayentry,
-					'fk_soc- => $socid
+					'fk_soc' => $socid
 				);
 				$reshook = $hookmanager->executeHooks('selectProduitsFournisseurListOption', $parameters, $this);
 
