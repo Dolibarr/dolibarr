@@ -312,18 +312,6 @@ print '<a href="'.DOL_URL_ROOT.'/admin/boxes.php?backtopage='.urlencode($_SERVER
 print '<br><br>';
 
 
-if ($action == 'deletesocialnetwork') {
-	$formconfirm = $form->formconfirm(
-		$_SERVER["PHP_SELF"].'?key='.urlencode(GETPOST('key', 'alpha')),
-		$langs->trans('Delete'),
-		$langs->trans('ConfirmDeleteSocialNetwork', GETPOST('key', 'alpha')),
-		'confirm_delete',
-		'',
-		0,
-		1
-	);
-	print $formconfirm;
-}
 // delete params of social network
 if ($action == 'editsocialnetwork' && GETPOST('paramkey', 'alpha')) {
 	$paramKey = GETPOST('paramkey', 'alpha');
