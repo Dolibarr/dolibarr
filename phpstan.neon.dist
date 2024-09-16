@@ -143,7 +143,7 @@ parameters:
 	cache:
 		nodesByFileCountMax: 512
 		nodesByStringCountMax: 512
-	reportUnmatchedIgnoredErrors: false
+	reportUnmatchedIgnoredErrors: true
 	universalObjectCratesClasses:
 		- stdClass
 		- SimpleXMLElement
