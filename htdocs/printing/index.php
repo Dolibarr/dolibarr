@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2014-2018  Frederic France         <frederic.france@netlogic.fr>
  * Copyright (C) 2016       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,6 +60,7 @@ foreach ($result as $driver) {
 	$classname = 'printing_'.$driver;
 	$langs->load($driver);
 	$printer = new $classname($db);
+	'@phan-var-force PrintingDriver $printer';
 	$keyforprinteractive = $printer->active;
 	if ($keyforprinteractive && getDolGlobalString($keyforprinteractive)) {
 		//$printer->listJobs('commande');

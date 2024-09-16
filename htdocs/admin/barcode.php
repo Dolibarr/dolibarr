@@ -391,6 +391,7 @@ if ($resql) {
 				$classname = "mod".ucfirst($obj->coder);
 				if (class_exists($classname)) {
 					$module = new $classname($db);
+					'@phan-var-force ModeleBarCode $module';
 					if ($module->encodingIsSupported($obj->encoding)) {
 						// Build barcode on disk (not used, this is done to make debug easier)
 						$result = $module->writeBarCode($obj->example, $obj->encoding, 'Y');
