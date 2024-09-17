@@ -2,6 +2,7 @@
 /* Copyright (C) 2010      Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2012-2015 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,17 +54,20 @@ $mine   = GETPOST('mode') == 'mine' ? 1 : 0;
 
 $object = new Project($db);
 
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'
 if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && method_exists($object, 'fetchComments') && empty($object->comments)) {
 	$object->fetchComments();
 }
 
 // Security check
 $socid = 0;
+
+$hookmanager->initHooks(array('projectcontactcard', 'globalcard'));
+
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
 $result = restrictedArea($user, 'projet', $id, 'projet&project');
 
-$hookmanager->initHooks(array('projectcontactcard', 'globalcard'));
+$permissiontoadd = $user->hasRight('projet', 'creer');
 
 
 /*
@@ -79,7 +83,7 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	// Test if we can add contact to the tasks at the same times, if not or not required, make a redirect
 	$formconfirmtoaddtasks = '';
-	if ($action == 'addcontact') {
+	if ($action == 'addcontact' && $permissiontoadd) {
 		$form = new Form($db);
 
 		$source = GETPOST("source", 'aZ09');
@@ -103,7 +107,8 @@ if (empty($reshook)) {
 			foreach ($task_array as $task) {
 				$task_already_affected = false;
 				$personsLinked = $task->liste_contact(-1, $source);
-				if (!is_array($personsLinked) && count($personsLinked) < 0) {
+				if (!is_array($personsLinked)) {
+					// When liste_contact() does not return an array, it's an error.
 					setEventMessage($object->error, 'errors');
 				} else {
 					foreach ($personsLinked as $person) {
@@ -158,7 +163,7 @@ if (empty($reshook)) {
 	}
 
 	// Add new contact
-	if ($action == 'addcontact_confirm' && $user->hasRight('projet', 'creer')) {
+	if ($action == 'addcontact_confirm' && $permissiontoadd) {
 		if (GETPOST('confirm', 'alpha') == 'no') {
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 			exit;
@@ -176,7 +181,8 @@ if (empty($reshook)) {
 			$usergroup = new UserGroup($db);
 			$result = $usergroup->fetch($groupid);
 			if ($result > 0) {
-				$tmpcontactarray = $usergroup->listUsersForGroup();
+				$excludefilter = 'statut = 1';
+				$tmpcontactarray = $usergroup->listUsersForGroup($excludefilter, 0);
 				if ($contactarray <= 0) {
 					$error++;
 				} else {
@@ -271,7 +277,7 @@ if (empty($reshook)) {
 	}
 
 	// Change contact's status
-	if ($action == 'swapstatut' && $user->hasRight('projet', 'creer')) {
+	if ($action == 'swapstatut' && $permissiontoadd) {
 		if ($object->fetch($id)) {
 			$result = $object->swapContactStatus(GETPOSTINT('ligne'));
 		} else {
@@ -280,7 +286,7 @@ if (empty($reshook)) {
 	}
 
 	// Delete a contact
-	if (($action == 'deleteline' || $action == 'deletecontact') && $user->hasRight('projet', 'creer')) {
+	if (($action == 'deleteline' || $action == 'deletecontact') && $permissiontoadd) {
 		$object->fetch($id);
 		$result = $object->delete_contact(GETPOSTINT("lineid"));
 
@@ -309,7 +315,7 @@ if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/projectnameonly/', get
 
 $help_url = 'EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos|DE:Modul_Projekte';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-project page-card_contact');
 
 
 
@@ -441,7 +447,7 @@ if ($id > 0 || !empty($ref)) {
 		if (strcmp($object->opp_amount, '')) {
 			print '<span class="amount">'.price($object->opp_amount, 0, $langs, 1, 0, -1, $conf->currency).'</span>';
 			if (strcmp($object->opp_percent, '')) {
-				print ' &nbsp; &nbsp; &nbsp; <span title="'.dol_escape_htmltag($langs->trans('OpportunityWeightedAmount')).'"><span class="opacitymedium">'.$langs->trans("Weighted").'</span>: <span class="amount">'.price($object->opp_amount * $object->opp_percent / 100, 0, $langs, 1, 0, -1, $conf->currency).'</span></span>';
+				print ' &nbsp; &nbsp; &nbsp; <span title="'.dol_escape_htmltag($langs->trans('OpportunityWeightedAmount')).'"><span class="opacitymedium">'.$langs->trans("OpportunityWeightedAmountShort").'</span>: <span class="amount">'.price($object->opp_amount * $object->opp_percent / 100, 0, $langs, 1, 0, -1, $conf->currency).'</span></span>';
 			}
 		}
 		print '</td></tr>';

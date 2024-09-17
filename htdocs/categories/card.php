@@ -91,7 +91,7 @@ $object = new Categorie($db);
 $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('categorycard'));
 
 $error = 0;
@@ -100,6 +100,7 @@ $error = 0;
 /*
  *	Actions
  */
+
 $parameters = array('socid' => $socid, 'origin' => $origin, 'catorigin' => $catorigin, 'type' => $type, 'urlfrom' => $urlfrom, 'backtopage' => $backtopage, 'label' => $label, 'description' => $description, 'color' => $color, 'position' => $position, 'visible' => $visible, 'parent' => $parent);
 // Note that $action and $object may be modified by some hooks
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
@@ -174,41 +175,39 @@ if (empty($reshook)) {
 			}
 		}
 	}
-	// Confirm action
-	if (($action == 'add' || $action == 'confirmed') && $user->hasRight('categorie', 'creer')) {
-		// Action confirmation of creation category
-		if ($action == 'confirmed') {
-			if ($urlfrom) {
-				header("Location: ".$urlfrom);
-				exit;
-			} elseif ($backtopage) {
-				header("Location: ".$backtopage);
-				exit;
-			} elseif ($idProdOrigin) {
-				header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idProdOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
-				exit;
-			} elseif ($idCompanyOrigin) {
-				header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idCompanyOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
-				exit;
-			} elseif ($idSupplierOrigin) {
-				header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idSupplierOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
-				exit;
-			} elseif ($idMemberOrigin) {
-				header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idMemberOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
-				exit;
-			} elseif ($idContactOrigin) {
-				header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idContactOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
-				exit;
-			} elseif ($idProjectOrigin) {
-				header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idProjectOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
-				exit;
-			}
-
-			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$result.'&type='.$type);
+	// Action confirmation of creation category
+	if ($action == 'confirmed' && $user->hasRight('categorie', 'creer')) {
+		if ($urlfrom) {
+			header("Location: ".$urlfrom);
+			exit;
+		} elseif ($backtopage) {
+			header("Location: ".$backtopage);
+			exit;
+		} elseif ($idProdOrigin) {
+			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idProdOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
+			exit;
+		} elseif ($idCompanyOrigin) {
+			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idCompanyOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
+			exit;
+		} elseif ($idSupplierOrigin) {
+			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idSupplierOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
+			exit;
+		} elseif ($idMemberOrigin) {
+			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idMemberOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
+			exit;
+		} elseif ($idContactOrigin) {
+			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idContactOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
+			exit;
+		} elseif ($idProjectOrigin) {
+			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idProjectOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
 		}
+
+		header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$result.'&type='.$type);
+		exit;
 	}
 }
+
 
 /*
  * View

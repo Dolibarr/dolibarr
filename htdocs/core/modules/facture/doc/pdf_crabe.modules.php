@@ -11,7 +11,7 @@
  * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2022		Anthony Berton		<anthony.berton@bb2a.fr>
  * Copyright (C) 2022		Charlene Benke		<charlene@patas-monkey.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,7 +73,7 @@ class pdf_crabe extends ModelePDFFactures
 
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr';
 
@@ -184,13 +184,13 @@ class pdf_crabe extends ModelePDFFactures
 	/**
 	 *  Function to build pdf onto disk
 	 *
-	 *  @param		Facture		$object				Object to generate
-	 *  @param		Translate	$outputlangs		Lang output object
-	 *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file
-	 *  @param		int			$hidedetails		Do not show line details
-	 *  @param		int			$hidedesc			Do not show desc
-	 *  @param		int			$hideref			Do not show ref
-	 *  @return     int         	    			1=OK, 0=KO
+	 *  @param		Facture			$object				Object to generate
+	 *  @param		Translate		$outputlangs		Lang output object
+	 *  @param		string			$srctemplatepath	Full path of source filename for generator using a template file
+	 *  @param		int<0,1>		$hidedetails		Do not show line details
+	 *  @param		int<0,1>		$hidedesc			Do not show desc
+	 *  @param		int<0,1>		$hideref			Do not show ref
+	 *  @return		int<-1,1>							1=OK, <=0=KO
 	 */
 	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
@@ -211,7 +211,7 @@ class pdf_crabe extends ModelePDFFactures
 		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies"));
 
 		// Show Draft Watermark
-		if ($object->statut == $object::STATUS_DRAFT && (getDolGlobalString('FACTURE_DRAFT_WATERMARK'))) {
+		if ($object->status == $object::STATUS_DRAFT && (getDolGlobalString('FACTURE_DRAFT_WATERMARK'))) {
 			$this->watermark = getDolGlobalString('FACTURE_DRAFT_WATERMARK');
 		}
 
@@ -303,7 +303,7 @@ class pdf_crabe extends ModelePDFFactures
 				if ($heightforinfotot > 220) {
 					$heightforinfotot = 220;
 				}
-				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
+				$heightforfreetext = getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT', 5); // Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
 				if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS')) {
 					$heightforfooter += 6;
@@ -361,7 +361,7 @@ class pdf_crabe extends ModelePDFFactures
 				if ($cert) {
 					$info = array(
 						'Name' => $this->emetteur->name,
-						'Location' => getCountry($this->emetteur->country_code, 0),
+						'Location' => getCountry($this->emetteur->country_code, ''),
 						'Reason' => 'INVOICE',
 						'ContactInfo' => $this->emetteur->email
 					);
@@ -873,7 +873,7 @@ class pdf_crabe extends ModelePDFFactures
 				// Pagefoot
 				$this->_pagefoot($pdf, $object, $outputlangs, 0, $this->getHeightForQRInvoice($pdf->getPage(), $object, $langs));
 				if (method_exists($pdf, 'AliasNbPages')) {
-					$pdf->AliasNbPages();
+					$pdf->AliasNbPages();  // @phan-suppress-current-line PhanUndeclaredMethod
 				}
 
 				if (getDolGlobalString('INVOICE_ADD_SWISS_QR_CODE') == 'bottom') {
@@ -1254,13 +1254,13 @@ class pdf_crabe extends ModelePDFFactures
 					$useonlinepayment = count($validpaymentmethod);
 				}
 
-				if ($object->statut != Facture::STATUS_DRAFT && $useonlinepayment) {
+				if ($object->status != Facture::STATUS_DRAFT && $useonlinepayment) {
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 					global $langs;
 
 					$langs->loadLangs(array('payment', 'paybox', 'stripe'));
 					$servicename = $langs->transnoentities('Online');
-					$paiement_url = getOnlinePaymentUrl('', 'invoice', $object->ref, '', '', '');
+					$paiement_url = getOnlinePaymentUrl(0, 'invoice', $object->ref, 0, '', 0);
 					$linktopay = $langs->trans("ToOfferALinkForOnlinePayment", $servicename).' <a href="'.$paiement_url.'">'.$outputlangs->transnoentities("ClickHere").'</a>';
 
 					$pdf->SetXY($this->marge_gauche, $posy);
@@ -1397,13 +1397,11 @@ class pdf_crabe extends ModelePDFFactures
 
 		$this->atleastoneratenotnull = 0;
 		if (!getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT')) {
-			$tvaisnull = ((!empty($this->tva) && count($this->tva) == 1 && isset($this->tva['0.000']) && is_float($this->tva['0.000'])) ? true : false);
+			$tvaisnull = (!empty($this->tva) && count($this->tva) == 1 && isset($this->tva['0.000']) && is_float($this->tva['0.000']));
 			if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_IFNULL') && $tvaisnull) {
 				// Nothing to do
 			} else {
 				//Local tax 1 before VAT
-				//if (!empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
-				//{
 				foreach ($this->localtax1 as $localtax_type => $localtax_rate) {
 					if (in_array((string) $localtax_type, array('1', '3', '5'))) {
 						continue;
@@ -1424,7 +1422,13 @@ class pdf_crabe extends ModelePDFFactures
 
 							$totalvat = $outputlangs->transcountrynoentities("TotalLT1", $mysoc->country_code).(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transcountrynoentities("TotalLT1", $mysoc->country_code) : '');
 							$totalvat .= ' ';
-							$totalvat .= vatrate(abs($tvakey), 1).$tvacompl;
+
+							if (getDolGlobalString('PDF_LOCALTAX1_LABEL_IS_CODE_OR_RATE') == 'nocodenorate') {
+								$totalvat .= $tvacompl;
+							} else {
+								$totalvat .= vatrate(abs($tvakey), 1).$tvacompl;
+							}
+
 							$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
 							$total_localtax = ((isModEnabled("multicurrency") && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? price2num($tvaval * $object->multicurrency_tx, 'MT') : $tvaval);
@@ -1434,10 +1438,8 @@ class pdf_crabe extends ModelePDFFactures
 						}
 					}
 				}
-				//}
+
 				//Local tax 2 before VAT
-				//if (!empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')
-				//{
 				foreach ($this->localtax2 as $localtax_type => $localtax_rate) {
 					if (in_array((string) $localtax_type, array('1', '3', '5'))) {
 						continue;
@@ -1457,7 +1459,13 @@ class pdf_crabe extends ModelePDFFactures
 							}
 							$totalvat = $outputlangs->transcountrynoentities("TotalLT2", $mysoc->country_code).(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transcountrynoentities("TotalLT2", $mysoc->country_code) : '');
 							$totalvat .= ' ';
-							$totalvat .= vatrate(abs($tvakey), 1).$tvacompl;
+
+							if (getDolGlobalString('PDF_LOCALTAX2_LABEL_IS_CODE_OR_RATE') == 'nocodenorate') {
+								$totalvat .= $tvacompl;
+							} else {
+								$totalvat .= vatrate(abs($tvakey), 1).$tvacompl;
+							}
+
 							$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
 							$total_localtax = ((isModEnabled("multicurrency") && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? price2num($tvaval * $object->multicurrency_tx, 'MT') : $tvaval);
@@ -1467,8 +1475,6 @@ class pdf_crabe extends ModelePDFFactures
 						}
 					}
 				}
-
-				//}
 
 				// VAT
 				foreach ($this->tva_array as $tvakey => $tvaval) {
@@ -1489,6 +1495,8 @@ class pdf_crabe extends ModelePDFFactures
 							$totalvat .= vatrate($tvaval['vatrate'], 1).$tvacompl;
 						} elseif (getDolGlobalString('PDF_VAT_LABEL_IS_CODE_OR_RATE') == 'codeonly') {
 							$totalvat .= $tvaval['vatcode'].$tvacompl;
+						} elseif (getDolGlobalString('PDF_VAT_LABEL_IS_CODE_OR_RATE') == 'nocodenorate') {
+							$totalvat .= $tvacompl;
 						} else {
 							$totalvat .= vatrate($tvaval['vatrate'], 1).($tvaval['vatcode'] ? ' ('.$tvaval['vatcode'].')' : '').$tvacompl;
 						}
@@ -1500,8 +1508,6 @@ class pdf_crabe extends ModelePDFFactures
 				}
 
 				//Local tax 1 after VAT
-				//if (!empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
-				//{
 				foreach ($this->localtax1 as $localtax_type => $localtax_rate) {
 					if (in_array((string) $localtax_type, array('2', '4', '6'))) {
 						continue;
@@ -1520,7 +1526,12 @@ class pdf_crabe extends ModelePDFFactures
 								$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 							}
 							$totalvat = $outputlangs->transcountrynoentities("TotalLT1", $mysoc->country_code).' ';
-							$totalvat .= vatrate(abs($tvakey), 1).$tvacompl;
+
+							if (getDolGlobalString('PDF_LOCALTAX1_LABEL_IS_CODE_OR_RATE') == 'nocodenorate') {
+								$totalvat .= $tvacompl;
+							} else {
+								$totalvat .= vatrate(abs($tvakey), 1).$tvacompl;
+							}
 
 							$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
@@ -1531,10 +1542,8 @@ class pdf_crabe extends ModelePDFFactures
 						}
 					}
 				}
-				//}
+
 				//Local tax 2 after VAT
-				//if (!empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')
-				//{
 				foreach ($this->localtax2 as $localtax_type => $localtax_rate) {
 					if (in_array((string) $localtax_type, array('2', '4', '6'))) {
 						continue;
@@ -1553,7 +1562,12 @@ class pdf_crabe extends ModelePDFFactures
 						}
 						$totalvat = $outputlangs->transcountrynoentities("TotalLT2", $mysoc->country_code).' ';
 
-						$totalvat .= vatrate(abs($tvakey), 1).$tvacompl;
+						if (getDolGlobalString('PDF_LOCALTAX2_LABEL_IS_CODE_OR_RATE') == 'nocodenorate') {
+							$totalvat .= $tvacompl;
+						} else {
+							$totalvat .= vatrate(abs($tvakey), 1).$tvacompl;
+						}
+
 						$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
 						$total_localtax = ((isModEnabled("multicurrency") && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? price2num($tvaval * $object->multicurrency_tx, 'MT') : $tvaval);
@@ -1562,10 +1576,9 @@ class pdf_crabe extends ModelePDFFactures
 						$pdf->MultiCell($largcol2, $tab2_hl, price($total_localtax, 0, $outputlangs), 0, 'R', 1);
 					}
 				}
-				//}
 
 				// Revenue stamp
-				if (price2num($object->revenuestamp) != 0) {
+				if (price2num($object->revenuestamp, 'MT') != 0) {
 					$index++;
 					$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 					$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("RevenueStamp"), $useborder, 'L', 1);
@@ -1902,7 +1915,7 @@ class pdf_crabe extends ModelePDFFactures
 			}
 		}
 		$title .= ' '.$outputlangs->convToOutputCharset($object->ref);
-		if ($object->statut == $object::STATUS_DRAFT) {
+		if ($object->status == $object::STATUS_DRAFT) {
 			$pdf->SetTextColor(128, 0, 0);
 			$title .= ' - '.$outputlangs->transnoentities("NotValidated");
 		}
@@ -1916,7 +1929,7 @@ class pdf_crabe extends ModelePDFFactures
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
 		$textref = $outputlangs->transnoentities("Ref")." : ".$outputlangs->convToOutputCharset($object->ref);
-		if ($object->statut == $object::STATUS_DRAFT) {
+		if ($object->status == $object::STATUS_DRAFT) {
 			$pdf->SetTextColor(128, 0, 0);
 			$textref .= ' - '.$outputlangs->transnoentities("NotValidated");
 		}
@@ -2025,7 +2038,7 @@ class pdf_crabe extends ModelePDFFactures
 				$posy += 4;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell($w, 3, $langs->transnoentities("SalesRepresentative")." : ".$usertmp->getFullName($langs), '', 'R');
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("SalesRepresentative")." : ".$usertmp->getFullName($langs), '', 'R');
 			}
 		}
 
@@ -2109,7 +2122,7 @@ class pdf_crabe extends ModelePDFFactures
 			$carac_client_name = pdfBuildThirdpartyName($thirdparty, $outputlangs);
 
 			$mode =  'target';
-			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ($usecontact ? $object->contact : ''), $usecontact, $mode, $object);
+			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ($usecontact ? $object->contact : ''), ($usecontact ? 1 : 0), $mode, $object);
 
 			// Show recipient
 			$widthrecbox = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 92 : 100;
@@ -2155,7 +2168,7 @@ class pdf_crabe extends ModelePDFFactures
 					$companystatic = new Societe($this->db);
 					$companystatic->fetch($object->contact->fk_soc);
 					$carac_client_name_shipping = pdfBuildThirdpartyName($object->contact, $outputlangs);
-					$carac_client_shipping = pdf_build_address($outputlangs, $this->emetteur, $companystatic, $object->contact, $usecontact, 'target', $object);
+					$carac_client_shipping = pdf_build_address($outputlangs, $this->emetteur, $companystatic, $object->contact, ($usecontact ? 1 : 0), 'target', $object);
 				} else {
 					$carac_client_name_shipping = pdfBuildThirdpartyName($object->thirdparty, $outputlangs);
 					$carac_client_shipping = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'target', $object);

@@ -8,8 +8,9 @@
  * Copyright (C) 2013-2018 Juanjo Menent	       <jmenent@2byte.es>
  * Copyright (C) 2014-2015 Cédric Gross            <c.gross@kreiz-it.fr>
  * Copyright (C) 2015      Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2018-2019 Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021	   Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,8 +68,8 @@ $cancel = GETPOST('cancel', 'alpha');
 
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
-$stocklimit = (float) GETPOST('seuil_stock_alerte');
-$desiredstock = GETPOST('desiredstock');
+$stocklimit = GETPOSTFLOAT('seuil_stock_alerte');
+$desiredstock = GETPOSTFLOAT('desiredstock');
 $cancel = GETPOST('cancel', 'alpha');
 $fieldid = GETPOSTISSET("ref") ? 'ref' : 'rowid';
 $d_eatby = dol_mktime(0, 0, 0, GETPOSTINT('eatbymonth'), GETPOSTINT('eatbyday'), GETPOSTINT('eatbyyear'));
@@ -110,7 +111,7 @@ if (!empty($canvas)) {
 	$objcanvas->getCanvas('stockproduct', 'card', $canvas);
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('stockproductcard', 'globalcard'));
 
 $error = 0;
@@ -118,6 +119,7 @@ $error = 0;
 $usercanread = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'lire')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'lire')));
 $usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'creer')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'creer')));
 $usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('product', 'product_advance', 'read_prices') : $user->hasRight('product', 'lire');
+$usercanupdatestock = $user->hasRight('stock', 'mouvement', 'creer');
 
 if ($object->isService()) {
 	$label = $langs->trans('Service');
@@ -150,7 +152,7 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
-if ($action == 'setcost_price') {
+if ($action == 'setcost_price' && $usercancreate) {
 	if ($id) {
 		$result = $object->fetch($id);
 		$object->cost_price = (float) price2num($cost_price);
@@ -165,7 +167,7 @@ if ($action == 'setcost_price') {
 	}
 }
 
-if ($action == 'addlimitstockwarehouse' && $user->hasRight('produit', 'creer')) {
+if ($action == 'addlimitstockwarehouse' && $usercancreate) {
 	$seuil_stock_alerte = GETPOST('seuil_stock_alerte');
 	$desiredstock = GETPOST('desiredstock');
 
@@ -174,10 +176,12 @@ if ($action == 'addlimitstockwarehouse' && $user->hasRight('produit', 'creer')) 
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("StockLimit")), null, 'errors');
 		$maj_ok = false;
 	}
-	if ($desiredstock == '') {
+	if ($desiredstock == '' || is_array($desiredstock)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DesiredStock")), null, 'errors');
 		$maj_ok = false;
 	}
+
+	$desiredstock = (float) $desiredstock;
 
 	if ($maj_ok) {
 		$pse = new ProductStockEntrepot($db);
@@ -194,7 +198,7 @@ if ($action == 'addlimitstockwarehouse' && $user->hasRight('produit', 'creer')) 
 			$pse->fk_entrepot = GETPOSTINT('fk_entrepot');
 			$pse->fk_product  	 	 = $id;
 			$pse->seuil_stock_alerte = GETPOST('seuil_stock_alerte');
-			$pse->desiredstock  	 = GETPOST('desiredstock');
+			$pse->desiredstock  	 = GETPOSTFLOAT('desiredstock');
 			if ($pse->create($user) > 0) {
 				setEventMessages($langs->trans('ProductStockWarehouseCreated'), null, 'mesgs');
 			}
@@ -205,7 +209,7 @@ if ($action == 'addlimitstockwarehouse' && $user->hasRight('produit', 'creer')) 
 	exit;
 }
 
-if ($action == 'delete_productstockwarehouse' && $user->hasRight('produit', 'creer')) {
+if ($action == 'delete_productstockwarehouse' && $usercancreate) {
 	$pse = new ProductStockEntrepot($db);
 
 	$pse->fetch(GETPOSTINT('fk_productstockwarehouse'));
@@ -217,7 +221,7 @@ if ($action == 'delete_productstockwarehouse' && $user->hasRight('produit', 'cre
 }
 
 // Set stock limit
-if ($action == 'setseuil_stock_alerte' && $user->hasRight('produit', 'creer')) {
+if ($action == 'setseuil_stock_alerte' && $usercancreate) {
 	$object = new Product($db);
 	$result = $object->fetch($id);
 	$object->seuil_stock_alerte = $stocklimit;
@@ -231,7 +235,7 @@ if ($action == 'setseuil_stock_alerte' && $user->hasRight('produit', 'creer')) {
 }
 
 // Set desired stock
-if ($action == 'setdesiredstock' && $user->hasRight('produit', 'creer')) {
+if ($action == 'setdesiredstock' && $usercancreate) {
 	$object = new Product($db);
 	$result = $object->fetch($id);
 	$object->desiredstock = $desiredstock;
@@ -244,7 +248,7 @@ if ($action == 'setdesiredstock' && $user->hasRight('produit', 'creer')) {
 
 
 // Correct stock
-if ($action == "correct_stock" && !$cancel) {
+if ($action == "correct_stock" && !$cancel && $usercanupdatestock) {
 	if (!(GETPOSTINT("id_entrepot") > 0)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
 		$error++;
@@ -337,7 +341,7 @@ if ($action == "correct_stock" && !$cancel) {
 }
 
 // Transfer stock from a warehouse to another warehouse
-if ($action == "transfert_stock" && !$cancel) {
+if ($action == "transfert_stock" && !$cancel && $usercanupdatestock) {
 	if (!(GETPOSTINT("id_entrepot") > 0) || !(GETPOSTINT("id_entrepot_destination") > 0)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
 		$error++;
@@ -495,7 +499,7 @@ if ($action == "transfert_stock" && !$cancel) {
 }
 
 // Update batch information
-if ($action == 'updateline' && GETPOST('save') == $langs->trans("Save")) {
+if ($action == 'updateline' && GETPOST('save') == $langs->trans("Save") && $usercancreate) {
 	$pdluo = new Productbatch($db);
 	$result = $pdluo->fetch(GETPOSTINT('pdluoid'));
 
@@ -523,7 +527,6 @@ if ($action == 'updateline' && GETPOST('save') == $langs->trans("Save")) {
 	header("Location: product.php?id=".$id);
 	exit;
 }
-
 
 
 /*
@@ -556,7 +559,7 @@ if ($id > 0 || $ref) {
 		$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 	}
 
-	llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-product page-card_stock');
+	llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-product page-card_stock_product');
 
 	if (!empty($conf->use_javascript_ajax)) {
 		?>
@@ -937,17 +940,17 @@ if (empty($reshook)) {
 
 		if ($user->hasRight('stock', 'mouvement', 'creer')) {
 			if (!$variants || getDolGlobalString('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT')) {
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=transfert">'.$langs->trans("TransferStock").'</a>';
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=transfert&token='.newToken().'">'.$langs->trans("TransferStock").'</a>';
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("ActionAvailableOnVariantProductOnly").'">'.$langs->trans("TransferStock").'</a>';
 			}
 		} else {
-			print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("CorrectStock").'</a>';
+			print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("TransferStock").'</a>';
 		}
 
 		if ($user->hasRight('stock', 'mouvement', 'creer')) {
 			if (!$variants || getDolGlobalString('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT')) {
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=correction">'.$langs->trans("CorrectStock").'</a>';
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=correction&token='.newToken().'">'.$langs->trans("CorrectStock").'</a>';
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("ActionAvailableOnVariantProductOnly").'">'.$langs->trans("CorrectStock").'</a>';
 			}
@@ -1124,8 +1127,8 @@ if (!$variants || getDolGlobalString('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PA
 			if (price2num($object->pmp)) {
 				$totalwithpmp += $obj->reel;
 			}
-			$totalvalue = $totalvalue + ($object->pmp * $obj->reel);
-			$totalvaluesell = $totalvaluesell + ($object->price * $obj->reel);
+			$totalvalue += ($object->pmp * $obj->reel);
+			$totalvaluesell += ($object->price * $obj->reel);
 			// Batch Detail
 			if ((isModEnabled('productbatch')) && $object->hasbatch()) {
 				$details = Productbatch::findAll($db, $obj->product_stock_id, 0, $object->id);
@@ -1187,7 +1190,7 @@ if (!$variants || getDolGlobalString('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PA
 						print '<td colspan="4"></td>';
 						print '<td class="center tdoverflowmax125" title="'.dol_escape_htmltag($langs->trans("TransferStock")).'">';
 						if ($entrepotstatic->status != $entrepotstatic::STATUS_CLOSED) {
-							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;id_entrepot='.$entrepotstatic->id.'&amp;action=transfert&amp;pdluoid='.$pdluo->id.'">';
+							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&id_entrepot='.$entrepotstatic->id.'&action=transfert&pdluoid='.$pdluo->id.'&token='.newToken().'">';
 							print img_picto($langs->trans("TransferStock"), 'add', 'class="hideonsmartphone paddingright" style="color: #a69944"');
 							print $langs->trans("TransferStock");
 							print '</a>';
@@ -1199,7 +1202,7 @@ if (!$variants || getDolGlobalString('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PA
 						print '</td>';
 						print '<td class="center tdoverflowmax125" title="'.dol_escape_htmltag($langs->trans("CorrectStock")).'">';
 						if ($entrepotstatic->status != $entrepotstatic::STATUS_CLOSED) {
-							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;id_entrepot='.$entrepotstatic->id.'&amp;action=correction&amp;pdluoid='.$pdluo->id.'">';
+							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&id_entrepot='.$entrepotstatic->id.'&action=correction&pdluoid='.$pdluo->id.'&token='.newToken().'">';
 							print img_picto($langs->trans("CorrectStock"), 'add', 'class="hideonsmartphone paddingright" style="color: #a69944"');
 							print $langs->trans("CorrectStock");
 							print '</a>';

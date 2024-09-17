@@ -6,6 +6,7 @@
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2023	    Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,13 +60,14 @@ $socid = GETPOSTINT('socid') ? GETPOSTINT('socid') : GETPOSTINT('id');
 if ($user->socid) {
 	$socid = $user->socid;
 }
+
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('thirdpartycustomerprice', 'globalcard'));
+
 $result = restrictedArea($user, 'societe', $socid, '&societe');
 
 // Initialize objects
 $object = new Societe($db);
-
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('thirdpartycustomerprice', 'globalcard'));
 
 $error = 0;
 
@@ -543,11 +545,11 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 		foreach ($prodcustprice->fields as $key => $val) {
 			// If $val['visible']==0, then we never show the field
 			if (!empty($val['visible'])) {
-				$visible = (int) dol_eval($val['visible'], 1, 1, '1');
+				$visible = (int) dol_eval((string) $val['visible'], 1, 1, '1');
 				$arrayfields['t.'.$key] = array(
 					'label' => $val['label'],
 					'checked' => (($visible < 0) ? 0 : 1),
-					'enabled' => (abs($visible) != 3 && (int) dol_eval($val['enabled'], 1, 1, '1')),
+					'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
 					'position' => $val['position'],
 					'help' => isset($val['help']) ? $val['help'] : ''
 				);

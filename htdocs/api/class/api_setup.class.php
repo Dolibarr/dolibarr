@@ -6,6 +6,7 @@
  * Copyright (C) 2018-2021   Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018-2022   Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2024        Jon Bendtsen            <jon.bendtsen.github@jonb.dk>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  *
  * This program is free software; you can redistribute it and/or modify
@@ -39,6 +40,9 @@ require_once DOL_DOCUMENT_ROOT.'/hrm/class/establishment.class.php';
  */
 class Setup extends DolibarrApi
 {
+	/**
+	 * @var ?Translate
+	 */
 	private $translations = null;
 
 	/**
@@ -48,6 +52,76 @@ class Setup extends DolibarrApi
 	{
 		global $db;
 		$this->db = $db;
+	}
+
+	/**
+	 * Get the list of Action Triggers.
+	 *
+	 * @param string	$sortfield	Sort field
+	 * @param string	$sortorder	Sort order
+	 * @param int       $limit      Number of items per page
+	 * @param int       $page       Page number {@min 0}
+	 * @param string    $elementtype       Type of element ('adherent', 'commande', 'thirdparty', 'facture', 'propal', 'product', ...)
+	 * @param string    $lang       Code of the language the label of the type must be translated to
+	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.label:like:'SO-%')"
+	 * @return array				List of extra fields
+	 * @phan-return Object[]		List of extra fields
+	 *
+	 * @url     GET actiontriggers
+	 *
+	 * @throws	RestException	400		Bad value for sqlfilters
+	 * @throws	RestException	503		Error when retrieving list of action triggers
+	 */
+	public function getListOfActionTriggers($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $elementtype = '', $lang = '', $sqlfilters = '')
+	{
+		$list = array();
+
+		if ($elementtype == 'thirdparty') {
+			$elementtype = 'societe';
+		}
+		if ($elementtype == 'contact') {
+			$elementtype = 'socpeople';
+		}
+
+		$sql = "SELECT t.rowid as id, t.elementtype, t.code, t.contexts, t.label, t.description, t.rang";
+		$sql .= " FROM ".MAIN_DB_PREFIX."c_action_trigger as t";
+		if (!empty($elementtype)) {
+			$sql .= " WHERE t.elementtype = '".$this->db->escape($elementtype)."'";
+		}
+		// Add sql filters
+		if ($sqlfilters) {
+			$errormessage = '';
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			}
+		}
+
+		$sql .= $this->db->order($sortfield, $sortorder);
+
+		if ($limit) {
+			if ($page < 0) {
+				$page = 0;
+			}
+			$offset = $limit * $page;
+
+			$sql .= $this->db->plimit($limit, $offset);
+		}
+
+		$result = $this->db->query($sql);
+		if ($result) {
+			$num = $this->db->num_rows($result);
+			$min = min($num, ($limit <= 0 ? $num : $limit));
+			for ($i = 0; $i < $min; $i++) {
+				$type = $this->db->fetch_object($result);
+				$this->translateLabel($type, $lang, 'Notify_', array('other'));
+				$list[] = $type;
+			}
+		} else {
+			throw new RestException(503, 'Error when retrieving list of action triggers : '.$this->db->lasterror());
+		}
+
+		return $list;
 	}
 
 	/**
@@ -1129,8 +1203,9 @@ class Setup extends DolibarrApi
 	{
 		$list = array();
 
-		if (!DolibarrApiAccess::$user->admin) {
-			throw new RestException(403, 'Only an admin user can get list of extrafields');
+		if (!DolibarrApiAccess::$user->admin
+			&& (!getDolGlobalString('API_LOGINS_ALLOWED_FOR_GET_EXTRAFIELDS') || DolibarrApiAccess::$user->login != getDolGlobalString('API_LOGINS_ALLOWED_FOR_GET_EXTRAFIELDS'))) {
+			throw new RestException(403, 'Error API open to admin users only or to the users with logins defined into constant API_LOGINS_ALLOWED_FOR_GET_EXTRAFIELDS');
 		}
 
 		if ($elementtype == 'thirdparty') {
@@ -1142,7 +1217,7 @@ class Setup extends DolibarrApi
 
 		$sql = "SELECT t.rowid as id, t.name, t.entity, t.elementtype, t.label, t.type, t.size, t.fieldcomputed, t.fielddefault,";
 		$sql .= " t.fieldunique, t.fieldrequired, t.perms, t.enabled, t.pos, t.alwayseditable, t.param, t.list, t.printable,";
-		$sql .= " t.totalizable, t.langs, t.help, t.css, t.cssview, t.fk_user_author, t.fk_user_modif, t.datec, t.tms";
+		$sql .= " t.totalizable, t.langs, t.help, t.css, t.cssview, t.csslist, t.fk_user_author, t.fk_user_modif, t.datec, t.tms";
 		$sql .= " FROM ".MAIN_DB_PREFIX."extrafields as t";
 		$sql .= " WHERE t.entity IN (".getEntity('extrafields').")";
 		if (!empty($elementtype)) {
@@ -1263,7 +1338,7 @@ class Setup extends DolibarrApi
 
 		$sql = "SELECT t.rowid as id, t.name, t.entity, t.elementtype, t.label, t.type, t.size, t.fieldcomputed, t.fielddefault,";
 		$sql .= " t.fieldunique, t.fieldrequired, t.perms, t.enabled, t.pos, t.alwayseditable, t.param, t.list, t.printable,";
-		$sql .= " t.totalizable, t.langs, t.help, t.css, t.cssview, t.fk_user_author, t.fk_user_modif, t.datec, t.tms";
+		$sql .= " t.totalizable, t.langs, t.help, t.css, t.cssview, t.csslist, t.fk_user_author, t.fk_user_modif, t.datec, t.tms";
 		$sql .= " FROM ".MAIN_DB_PREFIX."extrafields as t";
 		$sql .= " WHERE t.entity IN (".getEntity('extrafields').")";
 		$sql .= " AND t.elementtype = '".$this->db->escape($elementtype)."'";
@@ -1374,7 +1449,7 @@ class Setup extends DolibarrApi
 		$pos = $request_data['pos'];
 		$moreparams = array();
 
-		if ( 0 > $extrafields->addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $default_value, $param, $alwayseditable, $perms, $list, $help, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams)) {
+		if (0 > $extrafields->addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $default_value, $param, $alwayseditable, $perms, $list, $help, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams)) {
 			throw new RestException(500, 'Error creating extrafield', array_merge(array($extrafields->errno), $extrafields->errors));
 		}
 
@@ -1460,7 +1535,7 @@ class Setup extends DolibarrApi
 		$moreparams = array();
 
 		dol_syslog(get_class($this).'::updateExtraField', LOG_DEBUG);
-		if ( 0 > $extrafields->updateExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $default_value, $param, $alwayseditable, $perms, $list, $help, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams)) {
+		if (0 > $extrafields->updateExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $default_value, $param, $alwayseditable, $perms, $list, $help, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams)) {
 			throw new RestException(500, 'Error updating extrafield', array_merge(array($extrafields->errno), $extrafields->errors));
 		}
 
@@ -2105,7 +2180,7 @@ class Setup extends DolibarrApi
 			$num = $this->db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
 			for ($i = 0; $i < $min; $i++) {
-				$type =$this->db->fetch_object($result);
+				$type = $this->db->fetch_object($result);
 				$this->translateLabel($type, $lang, 'TicketTypeShort', array('ticket'));
 				$list[] = $type;
 			}
@@ -2168,7 +2243,7 @@ class Setup extends DolibarrApi
 			$num = $this->db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
 			for ($i = 0; $i < $min; $i++) {
-				$type =$this->db->fetch_object($result);
+				$type = $this->db->fetch_object($result);
 				$list[] = $type;
 			}
 		} else {
@@ -2192,7 +2267,7 @@ class Setup extends DolibarrApi
 		global $conf, $mysoc;
 
 		if (!DolibarrApiAccess::$user->admin
-			&& (!getDolGlobalString('API_LOGINS_ALLOWED_FOR_GET_COMPANY') || DolibarrApiAccess::$user->login != $conf->global->API_LOGINS_ALLOWED_FOR_GET_COMPANY)) {
+			&& (!getDolGlobalString('API_LOGINS_ALLOWED_FOR_GET_COMPANY') || DolibarrApiAccess::$user->login != getDolGlobalString('API_LOGINS_ALLOWED_FOR_GET_COMPANY'))) {
 			throw new RestException(403, 'Error API open to admin users only or to the users with logins defined into constant API_LOGINS_ALLOWED_FOR_GET_COMPANY');
 		}
 
@@ -2344,7 +2419,7 @@ class Setup extends DolibarrApi
 		global $langs, $conf;
 
 		if (!DolibarrApiAccess::$user->admin
-			&& (!getDolGlobalString('API_LOGINS_ALLOWED_FOR_INTEGRITY_CHECK') || DolibarrApiAccess::$user->login != $conf->global->API_LOGINS_ALLOWED_FOR_INTEGRITY_CHECK)) {
+			&& (!getDolGlobalString('API_LOGINS_ALLOWED_FOR_INTEGRITY_CHECK') || DolibarrApiAccess::$user->login != getDolGlobalString('API_LOGINS_ALLOWED_FOR_INTEGRITY_CHECK'))) {
 			throw new RestException(403, 'Error API open to admin users only or to the users with logins defined into constant API_LOGINS_ALLOWED_FOR_INTEGRITY_CHECK');
 		}
 
@@ -2364,7 +2439,7 @@ class Setup extends DolibarrApi
 
 		$xmlfile = DOL_DOCUMENT_ROOT.'/install/'.$xmlshortfile;
 		if (!preg_match('/\.zip$/i', $xmlfile) && dol_is_file($xmlfile.'.zip')) {
-			$xmlfile = $xmlfile.'.zip';
+			$xmlfile .= '.zip';
 		}
 
 		// Remote file to compare to
@@ -2408,7 +2483,7 @@ class Setup extends DolibarrApi
 			if (!$xmlarray['curl_error_no'] && $xmlarray['http_code'] != '400' && $xmlarray['http_code'] != '404') {
 				$xmlfile = $xmlarray['content'];
 				//print "xmlfilestart".$xmlfile."endxmlfile";
-				$xml = simplexml_load_string($xmlfile, 'SimpleXMLElement', LIBXML_NOCDATA|LIBXML_NONET);
+				$xml = simplexml_load_string($xmlfile, 'SimpleXMLElement', LIBXML_NOCDATA | LIBXML_NONET);
 			} else {
 				$errormsg = $langs->trans('XmlNotFound').': '.$xmlremote.' - '.$xmlarray['http_code'].(($xmlarray['http_code'] == 400 && $xmlarray['content']) ? ' '.$xmlarray['content'] : '').' '.$xmlarray['curl_error_no'].' '.$xmlarray['curl_error_msg'];
 				throw new RestException(500, $errormsg);
@@ -2481,7 +2556,7 @@ class Setup extends DolibarrApi
 					$tmprelativefilename = preg_replace('/^'.preg_quote(DOL_DOCUMENT_ROOT, '/').'/', '', $valfile['fullname']);
 					if (!in_array($tmprelativefilename, $file_list['insignature'])) {
 						$md5newfile = @md5_file($valfile['fullname']); // Can fails if we don't have permission to open/read file
-						$file_list['added'][] = array('filename'=>$tmprelativefilename, 'md5'=>$md5newfile);
+						$file_list['added'][] = array('filename' => $tmprelativefilename, 'md5' => $md5newfile);
 					}
 				}
 
@@ -2644,7 +2719,7 @@ class Setup extends DolibarrApi
 			throw new RestException(404, 'No signature file known');
 		}
 
-		return array('resultcode'=>$resultcode, 'resultcomment'=>$resultcomment, 'expectedchecksum'=> $outexpectedchecksum, 'currentchecksum'=> $outcurrentchecksum, 'out'=>$out);
+		return array('resultcode' => $resultcode, 'resultcomment' => $resultcomment, 'expectedchecksum' => $outexpectedchecksum, 'currentchecksum' => $outcurrentchecksum, 'out' => $out);
 	}
 
 
@@ -2662,7 +2737,7 @@ class Setup extends DolibarrApi
 		global $conf;
 
 		if (!DolibarrApiAccess::$user->admin
-			&& (!getDolGlobalString('API_LOGINS_ALLOWED_FOR_GET_MODULES') || DolibarrApiAccess::$user->login != $conf->global->API_LOGINS_ALLOWED_FOR_GET_MODULES)) {
+			&& (!getDolGlobalString('API_LOGINS_ALLOWED_FOR_GET_MODULES') || DolibarrApiAccess::$user->login != getDolGlobalString('API_LOGINS_ALLOWED_FOR_GET_MODULES'))) {
 			throw new RestException(403, 'Error API open to admin users only or to the users with logins defined into constant API_LOGINS_ALLOWED_FOR_GET_MODULES');
 		}
 

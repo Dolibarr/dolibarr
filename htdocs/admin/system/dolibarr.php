@@ -74,14 +74,14 @@ $form = new Form($db);
 $help_url = '';
 $title = $langs->trans("InfoDolibarr");
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-admin page-system_dolibarr');
 
 print load_fiche_titre($title, '', 'title_setup');
 
 // Version
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
-print '<tr class="liste_titre"><td class="titlefieldcreate">'.$langs->trans("Version").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
+print '<tr class="liste_titre"><td class="titlefieldcreate">'.$langs->trans("Version").'</td><td></td></tr>'."\n";
 print '<tr class="oddeven"><td>'.$langs->trans("CurrentVersion").'<br><span class="opacitymedium">('.$langs->trans("Programs").')</span></td><td>'.DOL_VERSION;
 // If current version differs from last upgrade
 if (!getDolGlobalString('MAIN_VERSION_LAST_UPGRADE')) {
@@ -155,7 +155,7 @@ print '<br>';
 // Session
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
-print '<tr class="liste_titre"><td class="titlefieldcreate">'.$langs->trans("Session").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
+print '<tr class="liste_titre"><td class="titlefieldcreate">'.$langs->trans("Session").'</td><td></td></tr>'."\n";
 print '<tr class="oddeven"><td>'.$langs->trans("SessionSavePath").'</td><td>'.session_save_path().'</td></tr>'."\n";
 print '<tr class="oddeven"><td>'.$langs->trans("SessionName").'</td><td>'.session_name().'</td></tr>'."\n";
 print '<tr class="oddeven"><td>'.$langs->trans("SessionId").'</td><td>'.session_id().'</td></tr>'."\n";
@@ -223,7 +223,7 @@ if (getDolGlobalInt('MAIN_OPTIMIZE_SPEED') & 0x02) {
 // Localisation
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
-print '<tr class="liste_titre"><td class="titlefieldcreate">'.$langs->trans("LocalisationDolibarrParameters").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
+print '<tr class="liste_titre"><td class="titlefieldcreate">'.$langs->trans("LocalisationDolibarrParameters").'</td><td></td></tr>'."\n";
 print '<tr class="oddeven"><td>'.$langs->trans("LanguageBrowserParameter", "HTTP_ACCEPT_LANGUAGE").'</td><td>'.$_SERVER["HTTP_ACCEPT_LANGUAGE"].'</td></tr>'."\n";
 print '<tr class="oddeven"><td>'.$langs->trans("CurrentUserLanguage").'</td><td>'.$langs->getDefaultLang().'</td></tr>'."\n";
 // Thousands
@@ -380,8 +380,8 @@ print '<tr class="liste_titre">';
 print '<td class="titlefieldcreate">'.$langs->trans("Parameters").' ';
 print $langs->trans("ConfigurationFile").' ('.$conffiletoshowshort.')';
 print '</td>';
-print '<td>'.$langs->trans("Parameter").'</td>';
-print '<td>'.$langs->trans("Value").'</td>';
+print '<td>'.$langs->trans("Name").'</td>';
+print '<td></td>';
 print '</tr>'."\n";
 
 foreach ($configfileparameters as $key => $value) {
@@ -493,7 +493,7 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder">';
 print '<tr class="liste_titre">';
 print '<td class="titlefield">'.$langs->trans("Parameters").' '.$langs->trans("Database").'</td>';
-print '<td>'.$langs->trans("Value").'</td>';
+print '<td></td>';
 if (!isModEnabled('multicompany') || !$user->entity) {
 	print '<td class="center width="80px"">'.$langs->trans("Entity").'</td>'; // If superadmin or multicompany disabled
 }

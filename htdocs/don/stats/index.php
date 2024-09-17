@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,9 +49,9 @@ if ($user->socid > 0) {
 }
 
 $status = GETPOSTINT('status');
-$nowyear = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
+$nowyear = (int) dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 $typent_id = GETPOSTINT('typent_id');
-$year = GETPOST('year') > 0 ? GETPOST('year') : $nowyear;
+$year = GETPOSTINT('year') > 0 ? GETPOSTINT('year') : $nowyear;
 $startyear = $year - (!getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS') ? 2 : max(1, min(10, getDolGlobalInt('MAIN_STATS_GRAPHS_SHOW_N_YEARS'))));
 $endyear = $year;
 $mode = GETPOST("mode") ? GETPOST("mode") : 'customer';
@@ -65,7 +66,7 @@ $result = restrictedArea($user, 'don');
 $form = new Form($db);
 $formcompany = new FormCompany($db);
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-don page-stats_index');
 
 $dir = $conf->don->dir_temp;
 
@@ -73,7 +74,7 @@ print load_fiche_titre($langs->trans("DonationsStatistics"), '', 'donation');
 
 dol_mkdir($dir);
 
-$stats = new DonationStats($db, $socid, '',  ($userid > 0 ? $userid : 0), ($typent_id > 0 ? $typent_id : 0), ($status > 0 ? $status : 4));
+$stats = new DonationStats($db, $socid, '', ($userid > 0 ? $userid : 0), ($typent_id > 0 ? $typent_id : 0), ($status > 0 ? $status : 4));
 
 if (is_array($custcats) && !empty($custcats)) {
 	$stats->from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_societe as cat ON (d.fk_soc = cat.fk_soc)';
@@ -119,9 +120,10 @@ $px2 = new DolGraph();
 $mesg = $px2->isGraphKo();
 if (!$mesg) {
 	$px2->SetData($data);
-	$i=$startyear;$legend=array();
+	$i = $startyear;
+	$legend = array();
 	while ($i <= $endyear) {
-		$legend[]=$i;
+		$legend[] = $i;
 		$i++;
 	}
 	$px2->SetLegend($legend);
@@ -132,7 +134,7 @@ if (!$mesg) {
 	$px2->SetYLabel($langs->trans("Amount"));
 	$px2->SetShading(3);
 	$px2->SetHorizTickIncrement(1);
-	$px2->mode='depth';
+	$px2->mode = 'depth';
 	$px2->SetTitle($langs->trans("AmountTotal"));
 
 	$px2->draw($filenameamount, $fileurlamount);
@@ -295,7 +297,7 @@ foreach ($data as $val) {
 	print '<td class="right">'.$val['nb'].'</td>';
 	print '<td class="right opacitylow" style="'.($greennb ? 'color: green;' : 'color: red;').'">'.(!empty($val['nb_diff']) && $val['nb_diff'] < 0 ? '' : '+').round(!empty($val['nb_diff']) ? $val['nb_diff'] : 0).'%</td>';
 	print '<td class="right"><span class="amount">'.price(price2num($val['total'], 'MT'), 1).'</span></td>';
-	print '<td class="right opacitylow" style="'.($greentotal ? 'color: green;' : 'color: red;').'">'.( !empty($val['total_diff']) && $val['total_diff'] < 0 ? '' : '+').round(!empty($val['total_diff']) ? $val['total_diff'] : 0).'%</td>';
+	print '<td class="right opacitylow" style="'.($greentotal ? 'color: green;' : 'color: red;').'">'.(!empty($val['total_diff']) && $val['total_diff'] < 0 ? '' : '+').round(!empty($val['total_diff']) ? $val['total_diff'] : 0).'%</td>';
 	print '<td class="right"><span class="amount">'.price(price2num($val['avg'], 'MT'), 1).'</span></td>';
 	print '<td class="right opacitylow" style="'.($greenavg ? 'color: green;' : 'color: red;').'">'.(!empty($val['avg_diff']) && $val['avg_diff'] < 0 ? '' : '+').round(!empty($val['avg_diff']) ? $val['avg_diff'] : 0).'%</td>';
 	print '</tr>';

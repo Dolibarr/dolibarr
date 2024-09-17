@@ -222,7 +222,7 @@ ErrorUserNotAssignedToTask=L'utilisateur doit être assigné à une tâche pour 
 ErrorTaskAlreadyAssigned=Tâche déjà assignée à l'utilisateur
 ErrorModuleFileSeemsToHaveAWrongFormat=Le package du module semble avoir un mauvais format.
 ErrorModuleFileSeemsToHaveAWrongFormat2=Au moins un dossier obligatoire doit être présent dans l'archive zip du module : <strong>%s</strong> ou <strong>%s</strong>
-ErrorFilenameDosNotMatchDolibarrPackageRules=Le nom du package du module (<strong>%s</strong>)  ne correspond pas à la syntaxe attendue: <strong>%s</strong>
+ErrorFilenameDosNotMatchDolibarrPackageRules=Le nom de fichier du package du module (<strong>%s</strong>) ne correspond pas à la syntaxe de nom attendue : <strong>%s</strong>
 ErrorDuplicateTrigger=Erreur, doublon du trigger nommé %s. Déjà chargé à partir de %s.
 ErrorNoWarehouseDefined=Erreur, aucun entrepôts défini.
 ErrorBadLinkSourceSetButBadValueForRef=Le lien que vous utilisez n'est pas valide. Une 'source' pour le paiement est définie, mais la valeur pour 'ref' n'est pas valide.
@@ -303,7 +303,8 @@ ErrorThirpdartyOrMemberidIsMandatory=Définir un tiers ou un adhérent dans le p
 ErrorFailedToWriteInTempDirectory=Impossible d'écrire dans le répertoire temporaire
 ErrorQuantityIsLimitedTo=La quantité est limitée à %s
 ErrorFailedToLoadThirdParty=Impossible de trouver/charger un tiers à partir de id=%s, email=%s, name=%s
-ErrorThisPaymentModeIsNotSepa=Ce mode de paiement n'est pas un compte bancaire
+ErrorThisPaymentModeIsNotDirectDebit=Le mode de paiement n'est pas le prélèvement automatique
+ErrorThisPaymentModeIsNotCreditTransfer=Le mode de paiement n'est pas le virement bancaire
 ErrorStripeCustomerNotFoundCreateFirst=Le client Stripe n'est pas défini pour ce tiers (ou défini sur une valeur supprimée du côté Stripe). Créez (ou rattachez) d'abord.
 ErrorCharPlusNotSupportedByImapForSearch=La recherche IMAP n'est pas en mesure de rechercher dans l'expéditeur ou le destinataire une chaîne contenant le caractère +
 ErrorTableNotFound=Table <b>%s</b> introuvable
@@ -329,14 +330,16 @@ ErrorGeneratingBarcode=Erreur lors de la génération du code-barre (forme de co
 ErrorObjectNotFound = L'objet <b>%s</b> n'est pas trouvé, veuillez vérifier votre url
 ErrorCountryCodeMustBe2Char=Le code pays doit être une chaîne de 2 caractères
 ErrorABatchShouldNotContainsSpaces=Un numéro de lot ou de série ne doit pas contenir d'espaces
-
 ErrorTableExist=Le tableau <b> %s </b> existe déjà
 ErrorDictionaryNotFound=Dictionnaire <b> %s </b> introuvable
 ErrorFailedToCreateSymLinkToMedias=Échec de la création du lien symbolique %s pour pointer vers %s
 ErrorCheckTheCommandInsideTheAdvancedOptions=Vérifier la commande utilisée pour l'exportation dans les options avancées de l'export
-
 ErrorEndTimeMustBeGreaterThanStartTime=L'heure de fin doit être supérieure à l'heure de début
-ErrorIncoherentDates=La date de début doit être inférieure à la date de fin
+ErrorIncoherentDates=La date de début doit être antérieure à la date de fin
+ErrorEndHourIsNull=Le champ de date de fin ne peut pas être vide
+ErrorStartHourIsNull=Le champ de date de début ne peut pas être vide
+ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter=Trop de lignes à traiter. Veuillez utiliser un filtre plus sélectif.
+ErrorEmptyValueForQty=La quantité ne peut pas être nulle.
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Votre paramètre PHP upload_max_filesize (%s) est supérieur au paramètre PHP post_max_size (%s). Ceci n'est pas une configuration cohérente.
 WarningPasswordSetWithNoAccount=Un mot de passe a été fixé pour cet adhérent. Cependant, aucun compte d'utilisateur n'a été créé. Donc, ce mot de passe est stocké, mais ne peut être utilisé pour accéder à Dolibarr. Il peut être utilisé par un module/interface externe, mais si vous n'avez pas besoin de définir ni login ni mot de passe pour un adhérent, vous pouvez désactiver l'option «Gérer un login pour chaque adhérent" depuis la configuration du module Adhérents. Si vous avez besoin de gérer un login, mais pas de mot de passe, vous pouvez laisser ce champ vide pour éviter cet avertissement. Remarque: L'email peut également être utilisé comme login si l'adhérent est lié à un utilisateur.
@@ -383,13 +386,14 @@ WarningCommentNotFound=Attention : Impossible de trouver les commentaires de dé
 WarningAlreadyReverse=Mouvement de stock déjà annulé
 WarningParentIDDoesNotExistAnymore=Cet ID parent n'existe plus
 WarningReadBankAlsoAllowedIfUserHasPermission=Attention, la lecture des comptes bancaires est également permise avec l'autorisation de Gérer le plan comptable
+WarningNoDataTransferedInAccountancyYet=Attention, il n'y a pas de données dans la comptabilité. Veuillez transférer en comptabilité vos données enregistrées depuis le module Comptabilité ou changer le mode de calcul pour analyser les données enregistrées en dehors de la comptabilité.
+WarningChangingThisMayBreakStopTaskScheduler=Attention, changer cette valeur peut désactiver le planificateur des tâches planifiées
 SwissQrOnlyVIR = La facture SwissQR ne peut être ajoutée que sur les factures définies pour être payées avec des paiements par virement.
 SwissQrCreditorAddressInvalid = L'adresse du créancier n'est pas valide (le code postal et la ville sont-ils définis ? (%s)
 SwissQrCreditorInformationInvalid = Les informations sur le créancier ne sont pas valides pour l'IBAN (%s) : %s
 SwissQrIbanNotImplementedYet = QR-IBAN pas encore implémenté
 SwissQrPaymentInformationInvalid = Les informations de paiement étaient invalides pour le total %s : %s
 SwissQrDebitorAddressInvalid = Les informations sur le débiteur étaient invalides (%s)
-
 # Validate
 RequireValidValue = Valeur non valide
 RequireAtLeastXString = Requiert au moins %s caractère(s)
@@ -411,7 +415,6 @@ BadSetupOfFieldClassNotFoundForValidation = Erreur mauvaise configuration du cha
 BadSetupOfFieldFileNotFound = Erreur mauvaise configuration du champ : Fichier introuvable pour l'inclusion
 BadSetupOfFieldFetchNotCallable = Erreur mauvaise configuration du champ : Fetch non appelable sur la classe
 ErrorTooManyAttempts= Trop de tentatives, veuillez réessayer plus tard
-
 TotalAmountEmpty=Montant total vide
 FailedToFoundTheConversionRateForInvoice=Le taux de conversion de la facture n'a pas été trouvé
 ThisIdNotDefined=Identifiant non défini
@@ -419,3 +422,4 @@ OperNotDefined=Méthode de paiement non définie
 ErrorThisContactXIsAlreadyDefinedAsThisType=%s est déjà défini comme contact pour ce type.
 ErrorThisGroupIsAlreadyDefinedAsThisType=Les contacts avec ce groupe sont déjà définis comme contact pour ce type.
 EmptyMessageNotAllowedError=Les messages vides ne sont pas autorisés
+ErrorIsNotInError=%s n'est pas en erreur

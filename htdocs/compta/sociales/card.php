@@ -65,10 +65,10 @@ $label = GETPOST('label', 'alpha');
 $actioncode = GETPOST('actioncode');
 $fk_user = GETPOSTINT('userid') > 0 ? GETPOSTINT('userid') : 0;
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('taxcard', 'globalcard'));
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new ChargeSociales($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->tax->dir_output.'/temp/massgeneration/'.$user->id;
@@ -96,7 +96,6 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'tax', $object->id, 'chargesociales', 'charges');
-
 
 
 /*
@@ -249,7 +248,7 @@ if (empty($reshook)) {
 	}
 
 	// Action clone object
-	if ($action == 'confirm_clone' && $confirm != 'yes') {
+	if ($action == 'confirm_clone' && $confirm != 'yes') {	// Test on permission not required here
 		$action = '';
 	}
 
@@ -498,9 +497,7 @@ if ($id > 0) {
 			$formconfirm = $hookmanager->resPrint;
 		}
 
-		/*
-		 *	View card
-		 */
+
 		print dol_get_fiche_head($head, 'card', $langs->trans("SocialContribution"), -1, 'bill', 0, '', '', 0, '', 1);
 
 		// Print form confirm

@@ -4,7 +4,7 @@
  * Copyright (C) 2005       Simon Tosser            <simon@kornog-computing.com>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2022       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022-2024	Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -204,12 +204,13 @@ if ($action == 'update') {
 
 $form = new Form($db);
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-delais');
 
 print load_fiche_titre($langs->trans("DelaysOfToleranceBeforeWarning"), '', 'title_setup');
 
 print '<span class="opacitymedium">'.$langs->transnoentities("DelaysOfToleranceDesc", img_warning('default', '', 'pictowarning nopaddingleft'));
 print " ".$langs->trans("OnlyActiveElementsAreShown", DOL_URL_ROOT.'/admin/modules.php')."</span><br>\n";
+print "<br>\n";
 print "<br>\n";
 
 if ($action == 'edit') {

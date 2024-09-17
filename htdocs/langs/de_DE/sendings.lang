@@ -21,7 +21,7 @@ QtyShipped=Liefermenge
 QtyShippedShort=Gelieferte Menge
 QtyPreparedOrShipped=Menge vorbereitet oder versendet
 QtyToShip=Liefermenge
-QtyToReceive=Menge hinzugekommen
+QtyToReceive=Menge erhalten
 QtyReceived=Erhaltene Menge
 QtyInOtherShipments=Menge in anderen Lieferungen
 KeepToShip=Noch zu versenden
@@ -63,6 +63,9 @@ NoProductToShipFoundIntoStock=Im Lager <b>%s</b> sind keine Artikel für den Ver
 WeightVolShort=Gew./Vol.
 ValidateOrderFirstBeforeShipment=Sie müssen den Auftrag erst bestätigen bevor Sie eine Lieferung machen können.
 NoLineGoOnTabToAddSome=Keine Zeile, gehen Sie zum Hinzufügen auf die Registerkarte "%s".
+CreateInvoiceForThisCustomerFromSendings=Create Bills
+IfValidateInvoiceIsNoSendingStayUnbilled=Wenn die Rechnung nicht freigegeben ist, bleibt die Lieferung im Status 'nicht fakturiert', bis die Rechnung freigegeben wird.
+OptionToSetSendingBilledNotEnabled=Option aus dem Modul-Workflow, um eine Lieferung automatisch auf 'fakturiert' zu setzen, wenn die Rechnung freigegeben ist, ist nicht aktiviert. Daher müssen Sie den Status von Lieferungen manuell auf 'fakturiert' setzen, nachdem die Rechnung erstellt wurde.
 
 # Sending methods
 # ModelDocument
@@ -71,16 +74,12 @@ DocumentModelStorm=Vollständige Dokumentenvorlage für Zustellbestätigungen, k
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Konstante EXPEDITION_ADDON_NUMBER nicht definiert
 SumOfProductVolumes=Summe der Produktvolumen
 SumOfProductWeights=Summe der Produktgewichte
-
 # warehouse details
 DetailWarehouseNumber= Warenlagerdetails
-DetailWarehouseFormat= W: %s (Menge: %d) 
+DetailWarehouseFormat= W: %s (Menge: %d)
 SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Das letzte Zugangsdatum im Lagerbestand während der Sendungserstellung für Seriennummer oder Batch anzeigen.
 CreationOptions=Verfügbare Optionen während der Sendungserstellung
-
-ShipmentDistribution=Lieferung für den Versand 
-
+ShipmentDistribution=Lieferung für den Versand
 ErrorTooManyCombinationBatchcode=Kein Versand für Position %s, da zu viele Kombinationen aus Lager, Produkt und Chargencode gefunden wurden (%s).
 ErrorNoCombinationBatchcode=Konnte die Zeile %s nicht speichern, da keine Kombination aus Lager, Produkt und Chargencode (%s, %s, %s) gefunden wurde.
-
 ErrorTooMuchShipped=Die versendete Menge sollte nicht größer sein als die bestellte Menge für Zeile %s

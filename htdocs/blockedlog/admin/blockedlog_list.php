@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2017       ATM Consulting          <contact@atm-consulting.fr>
- * Copyright (C) 2017-2018  Laurent Destailleur     <eldy@destailleur.fr>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+/* Copyright (C) 2017		ATM Consulting				<contact@atm-consulting.fr>
+ * Copyright (C) 2017-2018	Laurent Destailleur			<eldy@destailleur.fr>
+ * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,7 +75,7 @@ $search_ref = GETPOST('search_ref', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
 
 if (($search_start == -1 || empty($search_start)) && !GETPOSTISSET('search_startmonth') && !GETPOSTISSET('begin')) {
-	$search_start = dol_time_plus_duree(dol_now(), '-1', 'w');
+	$search_start = dol_time_plus_duree(dol_now(), -1, 'w');
 	$tmparray = dol_getdate($search_start);
 	$search_startday = $tmparray['mday'];
 	$search_startmonth = $tmparray['mon'];
@@ -306,7 +307,7 @@ if (GETPOST('withtab', 'alpha')) {
 }
 $help_url = "EN:Module_Unalterable_Archives_-_Logs|FR:Module_Archives_-_Logs_Inaltérable";
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-blockedlog page-admin_blockedlog_list');
 
 $MAXLINES = 10000;
 
@@ -559,7 +560,7 @@ if (is_array($blocks)) {
 			}
 
 			// ID
-			print '<td>'.dol_escape_htmltag($block->id).'</td>';
+			print '<td>'.dol_escape_htmltag((string) $block->id).'</td>';
 
 			// Date
 			print '<td class="nowraponall">'.dol_print_date($block->date_creation, 'dayhour').'</td>';
@@ -596,7 +597,7 @@ if (is_array($blocks)) {
 			$texttoshow .= '<br><br>'.$langs->trans("Fingerprint").' - Recalculated sha256(previoushash * data):<br>'.$checkdetail[$block->id]['calculatedsignature'];
 			$texttoshow .= '<br><span class="opacitymedium">'.$langs->trans("PreviousHash").'='.$checkdetail[$block->id]['previoushash'].'</span>';
 			//$texttoshow .= '<br>keyforsignature='.$checkdetail[$block->id]['keyforsignature'];
-			print $form->textwithpicto(dol_trunc($block->signature, '8'), $texttoshow, 1, 'help', '', 0, 2, 'fingerprint'.$block->id);
+			print $form->textwithpicto(dol_trunc($block->signature, 8), $texttoshow, 1, 'help', '', 0, 2, 'fingerprint'.$block->id);
 			print '</td>';
 
 			// Status

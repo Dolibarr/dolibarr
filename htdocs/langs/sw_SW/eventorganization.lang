@@ -5,32 +5,22 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModuleEventOrganizationName = Shirika la Tukio
 EventOrganizationDescription = Shirika la Tukio kupitia Mradi wa Moduli
 EventOrganizationDescriptionLong= Dhibiti mpangilio wa tukio (onyesho, makongamano, waliohudhuria au wazungumzaji, na kurasa za umma za mapendekezo, kura au usajili)
-#
-# Menu
-#
 EventOrganizationMenuLeft = Matukio yaliyopangwa
 EventOrganizationConferenceOrBoothMenuLeft = Mkutano Au Kibanda
-
 PaymentEvent=Malipo ya tukio
-
-#
+EventFee=Event fee
 # Admin page
-#
 NewRegistration=Usajili
 EventOrganizationSetup=Mpangilio wa Shirika la Tukio
 EventOrganization=Shirika la tukio
@@ -48,13 +38,10 @@ EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Kiolezo cha barua pepe cha kutum
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Kiolezo cha barua pepe cha kutumia wakati wa kutuma barua pepe kutoka kwa mauaji "Tuma barua pepe" kwenye orodha ya waliohudhuria
 EVENTORGANIZATION_FILTERATTENDEES_CAT = Katika fomu ya kuunda/kuongeza mhudhuriaji, inaweka vikwazo kwenye orodha ya wahusika wengine kwa wahusika wengine katika kategoria.
 EVENTORGANIZATION_FILTERATTENDEES_TYPE = Katika fomu ya kuunda/kuongeza mhudhuriaji, inaweka vikwazo kwenye orodha ya wahusika wengine kwa wahusika wengine wenye asili.
-
-#
 # Object
-#
 OrganizedEvent=Tukio lililoandaliwa
 EventOrganizationConfOrBooth= Mkutano Au Kibanda
-EventOrganizationConfOrBoothes=Mikutano au Vibanda
+EventOrganizationConfOrBoothes=Conferences or Booths
 ManageOrganizeEvent = Dhibiti mpangilio wa tukio
 ConferenceOrBooth = Mkutano Au Kibanda
 ConferenceOrBoothTab = Mkutano Au Kibanda
@@ -63,10 +50,7 @@ DateOfRegistration = Tarehe ya usajili
 ConferenceOrBoothAttendee = Mhudhuriaji wa Mkutano au Kibanda
 ApplicantOrVisitor=Mwombaji au mgeni
 Speaker=Spika
-
-#
 # Template Mail
-#
 YourOrganizationEventConfRequestWasReceived = Ombi lako la mkutano lilipokelewa
 YourOrganizationEventBoothRequestWasReceived = Ombi lako la kibanda limepokelewa
 EventOrganizationEmailAskConf = Ombi la mkutano
@@ -76,10 +60,7 @@ EventOrganizationEmailRegistrationPayment = Usajili wa tukio
 EventOrganizationMassEmailAttendees = Mawasiliano kwa waliohudhuria
 EventOrganizationMassEmailSpeakers = Mawasiliano kwa wazungumzaji
 ToSpeakers=Kwa wazungumzaji
-
-#
 # Event
-#
 AllowUnknownPeopleSuggestConf=Ruhusu watu kupendekeza mikutano
 AllowUnknownPeopleSuggestConfHelp=Ruhusu watu wasiojulikana kupendekeza mkutano wanaotaka kufanya
 AllowUnknownPeopleSuggestBooth=Ruhusu watu kutuma maombi ya kibanda
@@ -91,27 +72,26 @@ PriceOfBoothHelp=Bei ya usajili ili kusimama kibanda
 EventOrganizationICSLinkProject=Link ICS for the event
 EventOrganizationICSLink=Unganisha ICS kwa mikutano
 ConferenceOrBoothInformation=Conference Or Booth information
+ConferenceOrBoothFormat=Conference or booth mode
+ConferenceOrBoothFormatID=ID of conference or booth mode
+ConferenceOrBoothFormatCode=Code of conference or booth mode
+ConferenceOrBoothFormatLabel=Label of conference or booth mode
 Attendees=Waliohudhuria
-ListOfAttendeesOfEvent=Orodha ya waliohudhuria mradi wa tukio
+ListOfAttendeesOfEvent=List of attendees of event projects
+ListOfConfOrBoothOfEvent=List of conferences or booths of event projects
 DownloadICSLink = Pakua kiungo cha ICS
 EVENTORGANIZATION_SECUREKEY = Mbegu ili kupata ufunguo wa ukurasa wa usajili wa umma ili kupendekeza mkutano
 SERVICE_BOOTH_LOCATION = Huduma inayotumika kwa safu mlalo ya ankara kuhusu eneo la kibanda
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Huduma inayotumika kwa safu mlalo ya ankara kuhusu usajili wa mhudhuriaji kwa tukio
 NbVotes=Idadi ya kura
-
-#
 # Status
-#
 EvntOrgDraft = Rasimu
 EvntOrgSuggested = Imependekezwa
 EvntOrgConfirmed = Imethibitishwa
 EvntOrgNotQualified = Hajahitimu
 EvntOrgDone = Imekamilika
 EvntOrgCancelled = Canceled
-
-#
 # Other
-#
 SuggestForm = Ukurasa wa pendekezo
 SuggestOrVoteForConfOrBooth = Ukurasa wa pendekezo au kura
 EvntOrgRegistrationHelpMessage = Hapa, unaweza kupiga kura kwa ajili ya mkutano au kupendekeza mpya kwa ajili ya tukio. Unaweza pia kutuma maombi ya kuwa na kibanda wakati wa tukio.
@@ -134,6 +114,7 @@ EventType = Aina ya tukio
 LabelOfBooth=Lebo ya kibanda
 LabelOfconference=Lebo ya mkutano
 ConferenceIsNotConfirmed=Usajili haupatikani, mkutano bado haujathibitishwa
+EventRegistrationAreClosed=Event registrations are closed
 DateMustBeBeforeThan=%s lazima iwe kabla ya %s
 DateMustBeAfterThan=%s lazima iwe baada ya %s
 MaxNbOfAttendeesReached=Idadi ya juu zaidi ya washiriki imefikiwa
@@ -162,7 +143,7 @@ Attendee = Mhudhuriaji
 PaymentConferenceAttendee = Malipo ya waliohudhuria mkutano
 PaymentBoothLocation = Malipo ya eneo la kibanda
 DeleteConferenceOrBoothAttendee=Ondoa mshiriki
-RegistrationAndPaymentWereAlreadyRecorder=Usajili na malipo tayari yamerekodiwa kwa barua pepe <b> %s </b>
+RegistrationAndPaymentWereAlreadyRecorder=Usajili na malipo tayari yamerekodiwa kwa barua pepe <b> %s </b> 
 EmailAttendee=Barua pepe ya mshiriki
 EmailCompany=Barua pepe ya kampuni
 EmailCompanyForInvoice=Barua pepe ya kampuni (kwa ankara, ikiwa tofauti na barua pepe ya mhudhuriaji)
@@ -175,6 +156,7 @@ DateEndEvent=Tarehe ya mwisho ya tukio
 ModifyStatus=Rekebisha hali
 ConfirmModifyStatus=Thibitisha urekebishaji wa hali
 ConfirmModifyStatusQuestion=Je, una uhakika unataka kurekebisha %s rekodi zilizochaguliwa?
-RecordsUpdated = %s Rekodi zimesasishwa
-RecordUpdated = Rekodi imesasishwa
-NoRecordUpdated = Hakuna Rekodi iliyosasishwa
+RecordsUpdated=%s Rekodi zimesasishwa
+RecordUpdated=Rekodi imesasishwa
+NoRecordUpdated=Hakuna Rekodi iliyosasishwa
+ProfitPerValidatedAttendee=Profit per attendee

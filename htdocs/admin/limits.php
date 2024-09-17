@@ -124,7 +124,7 @@ $form = new Form($db);
 $title = $langs->trans("LimitsSetup");
 $help_url = '';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-admin page-limits');
 
 print load_fiche_titre($title, '', 'title_setup');
 

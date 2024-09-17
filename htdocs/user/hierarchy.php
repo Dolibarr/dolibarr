@@ -5,6 +5,7 @@
  * Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2019-2024  Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,7 +69,7 @@ if ($contextpage == 'employeelist') {
 $userstatic = new User($db);
 
 // Define value to know what current user can do on users
-$canadduser = (!empty($user->admin) || $user->hasRight("user", "user", "write"));
+$permissiontoadd = (!empty($user->admin) || $user->hasRight("user", "user", "write"));
 
 // Permission to list
 if (isModEnabled('salaries') && $contextpage == 'employeelist' && $search_employee == 1) {
@@ -103,7 +104,7 @@ $arrayofjs = array(
 );
 $arrayofcss = array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
 
-llxHeader('', $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', 'bodyforlist');
+llxHeader('', $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', 'bodyforlist mod-user page-hierarchy');
 
 $filters = [];
 if (($search_status != '' && $search_status >= 0)) {
@@ -112,7 +113,7 @@ if (($search_status != '' && $search_status >= 0)) {
 if (($search_employee != '' && $search_employee >= 0)) {
 	$filters[] = "employee = ".((int) $search_employee);
 }
-$sqlfilter= '';
+$sqlfilter = '';
 if (!empty($filters)) {
 	$sqlfilter = implode(' AND ', $filters);
 }
@@ -136,7 +137,7 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 	//var_dump($fulltree);
 	// Define data (format for treeview)
 	$data = array();
-	$data[0] = array('rowid'=>0, 'fk_menu'=>-1, 'title'=>"racine", 'mainmenu'=>'', 'leftmenu'=>'', 'fk_mainmenu'=>'', 'fk_leftmenu'=>'');
+	$data[0] = array('rowid' => 0, 'fk_menu' => -1, 'title' => "racine", 'mainmenu' => '', 'leftmenu' => '', 'fk_mainmenu' => '', 'fk_leftmenu' => '');
 
 	foreach ($fulltree as $key => $val) {
 		$userstatic->id = $val['id'];
@@ -176,10 +177,10 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 		$entry = '<table class="nobordernopadding centpercent"><tr class="trtree"><td class="'.($val['statut'] ? 'usertdenabled' : 'usertddisabled').'">'.$li.'</td><td align="right" class="'.($val['statut'] ? 'usertdenabled' : 'usertddisabled').'">'.$userstatic->getLibStatut(2).'</td></tr></table>';
 
 		$data[$val['rowid']] = array(
-			'rowid'=>$val['rowid'],
-			'fk_menu'=>$val['fk_user'],	// TODO Replace fk_menu with fk_parent
-			'statut'=>$val['statut'],
-			'entry'=>$entry
+			'rowid' => $val['rowid'],
+			'fk_menu' => $val['fk_user'],	// TODO Replace fk_menu with fk_parent
+			'statut' => $val['statut'],
+			'entry' => $entry
 		);
 	}
 
@@ -254,10 +255,10 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 						$li = '<span class="opacitymedium">'.$langs->trans("WarningParentIDDoesNotExistAnymore").'</span>';
 						$entry = '<table class="nobordernopadding centpercent"><tr class="trtree"><td class="usertddisabled">'.$li.'</td><td align="right" class="usertddisabled"></td></tr></table>';
 						$data[-2] = array(
-							'rowid'=>'-2',
-							'fk_menu'=>null,
-							'statut'=>'1',
-							'entry'=>$entry
+							'rowid' => '-2',
+							'fk_menu' => null,
+							'statut' => '1',
+							'entry' => $entry
 						);
 					}
 					$parentfound = 1;
@@ -273,11 +274,11 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 	$param = "&contextpage=".urlencode($contextpage);
 
 	$newcardbutton = '';
-	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars paddingleft imgforviewmode', DOL_URL_ROOT.'/user/list.php?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
-	$newcardbutton .= dolGetButtonTitle($langs->trans('HierarchicView'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/user/hierarchy.php?mode=hierarchy'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', (($mode == 'hierarchy') ? 2 : 1), array('morecss'=>'reposition'));
-	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', DOL_URL_ROOT.'/user/list.php?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars paddingleft imgforviewmode', DOL_URL_ROOT.'/user/list.php?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('HierarchicView'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/user/hierarchy.php?mode=hierarchy'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', (($mode == 'hierarchy') ? 2 : 1), array('morecss' => 'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', DOL_URL_ROOT.'/user/list.php?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
 	$newcardbutton .= dolGetButtonTitleSeparator();
-	$newcardbutton .= dolGetButtonTitle($langs->trans('NewUser'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/user/card.php?action=create'.($mode == 'employee' ? '&employee=1' : '').'&leftmenu=', '', $canadduser);
+	$newcardbutton .= dolGetButtonTitle($langs->trans('NewUser'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/user/card.php?action=create'.($mode == 'employee' ? '&employee=1' : '').'&leftmenu=', '', (int) $permissiontoadd);
 
 	$massactionbutton = '';
 	$num = 0;
@@ -312,7 +313,7 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 	print '<td class="liste_titre">&nbsp;</td>';
 	// Status
 	print '<td class="liste_titre right parentonrightofpage">';
-	print $form->selectarray('search_status', array('-1'=>'', '0'=>$langs->trans('Disabled'), '1'=>$langs->trans('Enabled')), $search_status, 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp onrightofpage width100');
+	print $form->selectarray('search_status', array('-1' => '', '0' => $langs->trans('Disabled'), '1' => $langs->trans('Enabled')), $search_status, 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp onrightofpage width100');
 	print '</td>';
 	// Action column
 	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {

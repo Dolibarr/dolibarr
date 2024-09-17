@@ -121,12 +121,6 @@ class ActionComm extends CommonObject
 	public $label;
 
 	/**
-	 * @var string Agenda event label
-	 * @deprecated Use $label
-	 */
-	private $libelle;
-
-	/**
 	 * @var int Date creation record (datec)
 	 */
 	public $datec;
@@ -407,20 +401,6 @@ class ActionComm extends CommonObject
 
 
 	public $fields = array();
-
-
-	/**
-	 * Provide list of deprecated properties and replacements
-	 *
-	 * @return array<string,string>  Old property to new property mapping
-	 */
-	protected function deprecatedProperties()
-	{
-		return array(
-			'libelle' => 'label',
-		) + parent::deprecatedProperties();
-	}
-
 
 	/**
 	 *      Constructor
@@ -865,9 +845,6 @@ class ActionComm extends CommonObject
 				$this->type_color = $obj->type_color;
 				$this->type_picto = $obj->type_picto;
 				$this->type       = $obj->type_type;
-				/*$transcode = $langs->trans("Action".$obj->type_code);
-				$this->type       = (($transcode != "Action".$obj->type_code) ? $transcode : $obj->type_label); */
-				$transcode = $langs->trans("Action".$obj->type_code.'Short');
 
 				$this->code = $obj->code;
 				$this->label = $obj->label;
@@ -1274,7 +1251,7 @@ class ActionComm extends CommonObject
 
 				if (!empty($this->socpeopleassigned)) {
 					$already_inserted = array();
-					foreach (array_keys($this->socpeopleassigned) as $key => $val) {
+					foreach ($this->socpeopleassigned as $val) {
 						if (!is_array($val)) {	// For backward compatibility when val=id
 							$val = array('id' => $val);
 						}
@@ -1322,7 +1299,7 @@ class ActionComm extends CommonObject
 
 	/**
 	 *  Load all objects with filters.
-	 *  @TODO WARNING: This make a fetch on all records instead of making one request with a join.
+	 *  @TODO WARNING: This make a fetch on all records instead of making one request with a join, like done into show_actions_done.
 	 *
 	 *  @param		int		$socid			Filter by thirdparty
 	 *  @param		int		$fk_element		Id of element action is linked to
@@ -1341,7 +1318,7 @@ class ActionComm extends CommonObject
 
 		dol_syslog(get_class()."::getActions", LOG_DEBUG);
 
-		// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+		// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 		if (!is_object($hookmanager)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 			$hookmanager = new HookManager($this->db);
@@ -1364,9 +1341,14 @@ class ActionComm extends CommonObject
 			if ($elementtype == 'project') {
 				$sql .= ' AND a.fk_project = '.((int) $fk_element);
 			} elseif ($elementtype == 'contact') {
-				$sql .= ' AND a.id IN';
-				$sql .= " (SELECT fk_actioncomm FROM ".MAIN_DB_PREFIX."actioncomm_resources WHERE";
-				$sql .= " element_type = 'socpeople' AND fk_element = ".((int) $fk_element).')';
+				$sql .= ' AND EXISTS';
+				$sql .= " (SELECT r.rowid FROM ".MAIN_DB_PREFIX."actioncomm_resources as r WHERE";
+				$sql .= " r.element_type = 'socpeople' AND r.fk_element = ".((int) $fk_element).' AND r.fk_actioncomm = a.id)';
+			} elseif ($elementtype == 'user') {
+				$sql .= " AND (a.fk_user_action = ".((int) $fk_element)." OR EXISTS";
+				$sql .= " (SELECT r.rowid FROM ".MAIN_DB_PREFIX."actioncomm_resources as r WHERE";
+				$sql .= " r.element_type = 'user' AND r.fk_element = ".((int) $fk_element).' AND r.fk_actioncomm = a.id)';
+				$sql .= ")";
 			} else {
 				$sql .= " AND a.fk_element = ".((int) $fk_element)." AND a.elementtype = '".$this->db->escape($elementtype)."'";
 			}
@@ -1606,7 +1588,8 @@ class ActionComm extends CommonObject
 	 */
 	public function getTooltipContentArray($params)
 	{
-		global $conf, $langs, $user;
+		global $langs, $form;
+
 		$langs->load('agenda');
 
 		$datas = array();
@@ -1655,7 +1638,7 @@ class ActionComm extends CommonObject
 			} */
 		}
 		if (!empty($this->note_private)) {
-			$datas['description'] = '<br><b>'.$langs->trans('Description').':</b><br>';
+			$datas['description'] = '<br><hr>';
 			// Try to limit length of content
 			$texttoshow = dolGetFirstLineOfText($this->note_private, 10);
 			// Restrict height of content into the tooltip
@@ -1666,8 +1649,14 @@ class ActionComm extends CommonObject
 		// show categories for this record only in ajax to not overload lists
 		if (isModEnabled('category') && !$nofetch) {
 			require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
-			$form = new Form($this->db);
-			$datas['categories'] = '<br>' . $form->showCategories($this->id, Categorie::TYPE_ACTIONCOMM, 1);
+			if (empty($form)) {
+				include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+				$form = new Form($this->db);
+			}
+			$tmpcategstring = $form->showCategories($this->id, Categorie::TYPE_ACTIONCOMM, 1);
+			if ($tmpcategstring) {
+				$datas['categories'] = '<br>'.$tmpcategstring;
+			}
 		}
 
 		return $datas;
@@ -1713,31 +1702,35 @@ class ActionComm extends CommonObject
 		$result = '';
 
 		// Set label of type
-		$labeltype = '';
-		if ($this->type_code) {
-			$langs->load("commercial");
-			$labeltype = ($langs->transnoentities("Action".$this->type_code) != "Action".$this->type_code) ? $langs->transnoentities("Action".$this->type_code) : $this->type_label;
-		}
-		if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
-			if ($this->type_code != 'AC_OTH_AUTO') {
-				$labeltype = $langs->trans('ActionAC_MANUAL');
-			}
-		}
+		$labeltype = $this->getTypeLabel(1);
 
 		$tooltip = img_picto('', $this->picto).' <u>'.$langs->trans('Action').'</u>';
+
+		$tooltip .= ' &nbsp; - &nbsp; '.$this->getTypePicto('pictofixedwidth paddingright valignmiddle').$labeltype;
 		if (!empty($this->ref)) {
 			$tooltip .= '<br><b>'.$langs->trans('Ref').':</b> '.dol_escape_htmltag($this->ref);
 		}
 		if (!empty($label)) {
 			$tooltip .= '<br><b>'.$langs->trans('Title').':</b> '.dol_escape_htmltag($label);
 		}
-		if (!empty($labeltype)) {
-			$tooltip .= '<br><b>'.$langs->trans('Type').':</b> '.dol_escape_htmltag($labeltype);
-		}
 		if (!empty($this->location)) {
 			$tooltip .= '<br><b>'.$langs->trans('Location').':</b> '.dol_escape_htmltag($this->location);
 		}
-		if (isset($this->transparency)) {
+
+		$tooltip .= '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->datep, 'dayhourreduceformat', 'tzuserrel');
+		if ($this->datef) {
+			$tmpa = dol_getdate($this->datep);
+			$tmpb = dol_getdate($this->datef);
+			if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) {
+				if ($tmpa['hours'] != $tmpb['hours'] || $tmpa['minutes'] != $tmpb['minutes']) {
+					$tooltip .= '-'.dol_print_date($this->datef, 'hour', 'tzuserrel');
+				}
+			} else {
+				$tooltip .= '-'.dol_print_date($this->datef, 'dayhourreduceformat', 'tzuserrel');
+			}
+		}
+
+		if ($this->datef && $this->datep != $this->datef && isset($this->transparency)) {
 			$tooltip .= '<br><b>'.$langs->trans('Busy').':</b> '.yn($this->transparency);
 		}
 		if (!empty($this->email_msgid)) {
@@ -1756,7 +1749,7 @@ class ActionComm extends CommonObject
 			} */
 		}
 		if (!empty($this->note_private)) {
-			$tooltip .= '<br><br><b>'.$langs->trans('Description').':</b><br>';
+			$tooltip .= '<br><hr>';
 			$texttoshow = dolGetFirstLineOfText($this->note_private, 8);	// Try to limit length of content
 			$tooltip .= '<div class="tenlinesmax">';						// Restrict height of content into the tooltip
 			$tooltip .= (dol_textishtml($texttoshow) ? str_replace(array("\r", "\n"), "", $texttoshow) : str_replace(array("\r", "\n"), '<br>', $texttoshow));
@@ -1867,10 +1860,8 @@ class ActionComm extends CommonObject
 	 *  @param	string		$titlealt			Title alt
 	 *  @return	string							HTML String
 	 */
-	public function getTypePicto($morecss = 'pictofixedwidth paddingright', $titlealt = '')
+	public function getTypePicto($morecss = 'pictofixedwidth paddingright valignmiddle', $titlealt = '')
 	{
-		global $conf;
-
 		$imgpicto = '';
 		if (getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
 			$color = '';
@@ -1910,6 +1901,49 @@ class ActionComm extends CommonObject
 		return $imgpicto;
 	}
 
+
+	/**
+	 *  Return label of type of event
+	 *
+	 *  @param	int		$mode			0=Mode short, 1=Mode long
+	 *  @return	string					HTML String
+	 */
+	public function getTypeLabel($mode = 0)
+	{
+		global $conf, $langs;
+
+		// If cache for array of types unknown, we load it
+		if (!empty($conf->cache['actioncommgetypelabel'])) {
+			$arraylist = $conf->cache['actioncommgetypelabel'];
+		} else {
+			require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
+			$caction = new CActionComm($this->db);
+			$arraylist = $caction->liste_array(1, 'code', '', (getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? 0 : 1), '', 1);
+			$conf->cache['actioncommgetypelabel'] = $arraylist;
+		}
+
+		$labeltype = $this->type_code;
+		if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE') && empty($arraylist[$labeltype])) {
+			$labeltype = 'AC_OTH';
+		}
+		if (preg_match('/^TICKET_MSG/', $this->code)) {
+			$labeltype = $langs->trans("Message");
+		} else {
+			if (!empty($arraylist[$labeltype])) {
+				$labeltype = $arraylist[$labeltype];
+			}
+			if ($this->type_code == 'AC_OTH_AUTO' && ($this->type_code != $this->code) && $labeltype && !empty($arraylist[$this->code])) {
+				$labeltype .= ' - '.$arraylist[$this->code]; // Use code in priority over type_code
+			}
+		}
+
+		if ($this->type == 'systemauto' && $mode == 1) {
+			$labeltype .= ' ('.$langs->trans("auto").')';
+		}
+
+
+		return $labeltype;
+	}
 
 	/**
 	 * Sets object to supplied categories.
@@ -2027,14 +2061,14 @@ class ActionComm extends CommonObject
 				$sql .= " p.date_start_event as datep,"; // Start
 				$sql .= " p.date_end_event as datep2,"; // End
 				$sql .= " p.datec, p.tms as datem,";
-				$sql .= " p.title as label, '' as code, p.note_private, p.note_public, 0 as type_id,";
+				$sql .= " p.title as label, '' as code, p.note_public, p.note_private, 0 as type_id,";
 				$sql .= " p.fk_soc,";
 				$sql .= " p.fk_user_creat as fk_user_author, p.fk_user_modif as fk_user_mod,";
 				$sql .= " 0 as fk_user_action,";
 				$sql .= " 0 as fk_contact, 100 as percentage,";
 				$sql .= " 0 as fk_element, '' as elementtype,";
 				$sql .= " 1 as priority, 0 as fulldayevent, p.location, 0 as transparency,";
-				$sql .= " u.firstname, u.lastname, u.email,";
+				$sql .= " u.firstname, u.lastname, '".$this->db->escape(getDolGlobalString("MAIN_INFO_SOCIETE_MAIL"))."' as email,";
 				$sql .= " s.nom as socname,";
 				$sql .= " 0 as type_id, '' as type_code, '' as type_label";
 				$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
@@ -2080,7 +2114,7 @@ class ActionComm extends CommonObject
 				$sql .= " a.datep,"; // Start
 				$sql .= " a.datep2,"; // End
 				$sql .= " a.datec, a.tms as datem,";
-				$sql .= " a.label, a.code, a.note as note_private, '' as note_public, a.fk_action as type_id,";
+				$sql .= " a.label, a.code, '' as note_public, a.note as note_private, a.fk_action as type_id,";
 				$sql .= " a.fk_soc,";
 				$sql .= " a.fk_user_author, a.fk_user_mod,";
 				$sql .= " a.fk_user_action,";
@@ -2238,11 +2272,11 @@ class ActionComm extends CommonObject
 					$event['uid'] = 'dolibarragenda-'.$this->db->database_name.'-'.$obj->id."@".$_SERVER["SERVER_NAME"];
 					$event['type'] = $type;
 
-					$datestart = $this->db->jdate($obj->datep) - (!getDolGlobalString('AGENDA_EXPORT_FIX_TZ') ? 0 : ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600));
+					$datestart = (int) $this->db->jdate($obj->datep) - (getDolGlobalInt('AGENDA_EXPORT_FIX_TZ') * 3600);
 
 					// fix for -> Warning: A non-numeric value encountered
 					if (is_numeric($this->db->jdate($obj->datep2))) {
-						$dateend = $this->db->jdate($obj->datep2) - (!getDolGlobalString('AGENDA_EXPORT_FIX_TZ') ? 0 : ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600));
+						$dateend = (int) $this->db->jdate($obj->datep2) - (getDolGlobalInt('AGENDA_EXPORT_FIX_TZ') * 3600);
 					} else {
 						// use start date as fall-back to avoid pb with empty end date on ICS readers
 						$dateend = $datestart;
@@ -2251,7 +2285,11 @@ class ActionComm extends CommonObject
 					$duration = ($datestart && $dateend) ? ($dateend - $datestart) : 0;
 					$event['summary'] = $obj->label.($obj->socname ? " (".$obj->socname.")" : "");
 
-					$event['desc'] = $obj->note_private;
+					if (!empty($filters['module']) && $filters['module'] == 'project@eventorganization') {
+						$event['desc'] = $obj->note_public;
+					} else {
+						$event['desc'] = $obj->note_private;
+					}
 					$event['startdate'] = $datestart;
 					$event['enddate'] = $dateend; // Not required with type 'journal'
 					$event['duration'] = $duration; // Not required with type 'journal'
@@ -2263,17 +2301,17 @@ class ActionComm extends CommonObject
 					$event['category'] = $obj->type_label;
 					$event['email'] = $obj->email;
 
+					// Public URL of event
 					if ($eventorganization != '') {
-						// Define $urlwithroot
-						$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
-						$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
-						//$urlwithroot=DOL_MAIN_URL_ROOT;						// This is to use same domain name than current
-						$url = $urlwithroot.'/comm/action/card.php?id='.$obj->id;
-						$event['url'] = $url;
+						$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_new.php?id='.((int) $obj->id).'&type=global&noregistration=1';
+						$encodedsecurekey = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY').'conferenceorbooth'.((int) $obj->id), 'md5');
+						$link_subscription .= '&securekey='.urlencode($encodedsecurekey);
+
+						$event['url'] = $link_subscription;
 					}
 
-					$event['created'] = $this->db->jdate($obj->datec) - (!getDolGlobalString('AGENDA_EXPORT_FIX_TZ') ? 0 : ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600));
-					$event['modified'] = $this->db->jdate($obj->datem) - (!getDolGlobalString('AGENDA_EXPORT_FIX_TZ') ? 0 : ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600));
+					$event['created'] = (int) $this->db->jdate($obj->datec) - (getDolGlobalInt('AGENDA_EXPORT_FIX_TZ') * 3600);
+					$event['modified'] = (int) $this->db->jdate($obj->datem) - (getDolGlobalInt('AGENDA_EXPORT_FIX_TZ') * 3600);
 					$event['num_vote'] = $this->num_vote;
 					$event['event_paid'] = $this->event_paid;
 					$event['status'] = $this->status;
@@ -2291,7 +2329,9 @@ class ActionComm extends CommonObject
 						$assignedUserArray[$key] = $assignedUser;
 					}
 
-					$event['assignedUsers'] = $assignedUserArray;
+					if ($filters['module'] != 'project@eventorganization') {
+						$event['assignedUsers'] = $assignedUserArray;
+					}
 
 					if ($qualified && $datestart) {
 						$eventarray[] = $event;
@@ -2429,7 +2469,7 @@ class ActionComm extends CommonObject
 			}
 
 			if ($result >= 0) {
-				if (dol_move($outputfiletmp, $outputfile, 0, 1, 0, 0)) {
+				if (dol_move($outputfiletmp, $outputfile, '0', 1, 0, 0)) {
 					$result = 1;
 				} else {
 					$this->error = 'Failed to rename '.$outputfiletmp.' into '.$outputfile;
@@ -2667,7 +2707,7 @@ class ActionComm extends CommonObject
 						$errormesg = '';
 
 						// Make substitution in email content
-						$substitutionarray = getCommonSubstitutionArray($langs, 0, '', $this);
+						$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $this);
 
 						complete_substitutions_array($substitutionarray, $langs, $this);
 

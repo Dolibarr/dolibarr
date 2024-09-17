@@ -7,8 +7,8 @@
  * Copyright (C) 2014      Cedric GROSS         <c.gross@kreiz-it.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2017      Open-DSI             <support@open-dsi.fr>
- * Copyright (C) 2018-2021 Frédéric France      <frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2021-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -134,7 +134,7 @@ if (GETPOST('search_actioncode', 'array:aZ09')) {
 		$actioncode = '0';
 	}
 } else {
-	$actioncode = GETPOST("search_actioncode", "alpha", 3) ? GETPOST("search_actioncode", "alpha", 3) : (GETPOST("search_actioncode") == '0' ? '0' : ((!getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE') || $disabledefaultvalues) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE));
+	$actioncode = GETPOST("search_actioncode", "alpha", 3) ? GETPOST("search_actioncode", "alpha", 3) : (GETPOST("search_actioncode") == '0' ? '0' : ((!getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE') || $disabledefaultvalues) ? '' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE')));
 }
 
 if ($status == '' && !GETPOSTISSET('search_status')) {
@@ -168,7 +168,7 @@ $object = new ActionComm($db);
 // Load translation files required by the page
 $langs->loadLangs(array('agenda', 'other', 'commercial'));
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('agenda'));
 
 $result = restrictedArea($user, 'agenda', 0, 'actioncomm&societe', 'myactions|allactions', 'fk_soc', 'id');
@@ -495,35 +495,35 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 $viewmode = '<div class="navmode inline-block">';
 
-$viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&restore_lastsearch_values=1'.$paramnoactionodate.'">';
+$viewmode .= '<a class="btnTitle'.($mode == 'list' ? ' btnTitleSelected' : '').' reposition" href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&restore_lastsearch_values=1'.$paramnoactionodate.'">';
 //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
 $viewmode .= img_picto($langs->trans("List"), 'object_calendarlist', 'class="imgforviewmode pictoactionview block"');
 //$viewmode .= '</span>';
-$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewList").'</span></a>';
+$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone inline-block width75 divoverflow">'.$langs->trans("ViewList").'</span></a>';
 
 $viewmode .= '<a class="btnTitle'.($mode == 'show_month' ? ' btnTitleSelected' : '').' reposition" href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_month&year='.(isset($object->datep) ? dol_print_date($object->datep, '%Y') : $year).'&month='.(isset($object->datep) ? dol_print_date($object->datep, '%m') : $month).'&day='.(isset($object->datep) ? dol_print_date($object->datep, '%d') : $day).$paramnoactionodate.'">';
 //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
 $viewmode .= img_picto($langs->trans("ViewCal"), 'object_calendarmonth', 'class="pictoactionview block"');
 //$viewmode .= '</span>';
-$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewCal").'</span></a>';
+$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone inline-block width75 divoverflow">'.$langs->trans("ViewCal").'</span></a>';
 
 $viewmode .= '<a class="btnTitle'.($mode == 'show_week' ? ' btnTitleSelected' : '').' reposition" href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_week&year='.(isset($object->datep) ? dol_print_date($object->datep, '%Y') : $year).'&month='.(isset($object->datep) ? dol_print_date($object->datep, '%m') : $month).'&day='.(isset($object->datep) ? dol_print_date($object->datep, '%d') : $day).$paramnoactionodate.'">';
 //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
 $viewmode .= img_picto($langs->trans("ViewWeek"), 'object_calendarweek', 'class="pictoactionview block"');
 //$viewmode .= '</span>';
-$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewWeek").'</span></a>';
+$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone inline-block width75 divoverflow">'.$langs->trans("ViewWeek").'</span></a>';
 
 $viewmode .= '<a class="btnTitle'.($mode == 'show_day' ? ' btnTitleSelected' : '').' reposition" href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&year='.(isset($object->datep) ? dol_print_date($object->datep, '%Y') : $year).'&month='.(isset($object->datep) ? dol_print_date($object->datep, '%m') : $month).'&day='.(isset($object->datep) ? dol_print_date($object->datep, '%d') : $day).$paramnoactionodate.'">';
 //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
 $viewmode .= img_picto($langs->trans("ViewDay"), 'object_calendarday', 'class="pictoactionview block"');
 //$viewmode .= '</span>';
-$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewDay").'</span></a>';
+$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone inline-block width75 divoverflow">'.$langs->trans("ViewDay").'</span></a>';
 
-$viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/peruser.php?mode=show_peruser&year='.(isset($object->datep) ? dol_print_date($object->datep, '%Y') : $year).'&month='.(isset($object->datep) ? dol_print_date($object->datep, '%m') : $month).'&day='.(isset($object->datep) ? dol_print_date($object->datep, '%d') : $day).$paramnoactionodate.'">';
+$viewmode .= '<a class="btnTitle'.($mode == 'show_peruser' ? ' btnTitleSelected' : '').' reposition" href="'.DOL_URL_ROOT.'/comm/action/peruser.php?mode=show_peruser&year='.(isset($object->datep) ? dol_print_date($object->datep, '%Y') : $year).'&month='.(isset($object->datep) ? dol_print_date($object->datep, '%m') : $month).'&day='.(isset($object->datep) ? dol_print_date($object->datep, '%d') : $day).$paramnoactionodate.'">';
 //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
 $viewmode .= img_picto($langs->trans("ViewPerUser"), 'object_calendarperuser', 'class="pictoactionview block"');
 //$viewmode .= '</span>';
-$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewPerUser").'</span></a>';
+$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone inline-block width75 divoverflow" title="'.dolPrintHTML($langs->trans("ViewPerUser")).'">'.$langs->trans("ViewPerUser").'</span></a>';
 
 // Add more views from hooks
 $parameters = array();
@@ -540,8 +540,8 @@ $viewmode .= '</div>';
 $viewmode .= '<span class="marginrightonly"></span>';	// To add a space before the navigation tools
 
 
-$newcardbutton = '';
 $newparam = '';
+$newcardbutton = '';
 if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {
 	$tmpforcreatebutton = dol_getdate(dol_now(), true);
 
@@ -594,6 +594,7 @@ if (isModEnabled("bookcal")) {
 
 if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 	$s .= "\n".'<!-- Div to calendars selectors -->'."\n";
+
 	$s .= '<script type="text/javascript">'."\n";
 	$s .= 'jQuery(document).ready(function () {'."\n";
 	$s .= 'jQuery(".check_birthday").click(function() { console.log("Toggle birthdays"); jQuery(".family_birthday").toggle(); });'."\n";
@@ -621,14 +622,14 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 	$s .= '</script>'."\n";
 
 	// Local calendar
-	$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_mytasks" name="check_mytasks" value="1" checked disabled> '.$langs->trans("LocalAgenda").' &nbsp; </div>';
+	$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_mytasks" name="check_mytasks" value="1" checked disabled><label class="labelcalendar"><span class="check_holiday_text"> '.$langs->trans("LocalAgenda").' &nbsp; </span></label></div>';
 
+	// Holiday calendar
 	if ($user->hasRight("holiday", "read")) {
-		// Holiday calendar
 		$s .= '
             <div class="nowrap inline-block minheight30"><input type="checkbox" id="check_holiday" name="check_holiday" value="1" class="check_holiday"' . ($check_holiday
 					? ' checked' : '') . '>
-                <label for="check_holiday">
+                <label for="check_holiday" class="labelcalendar">
                     <span class="check_holiday_text">' . $langs->trans("Holidays") . '</span>
                 </label> &nbsp;
             </div>';
@@ -665,19 +666,19 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 
 			$tooltip = $langs->trans("Cache").' '.round($DELAYFORCACHE / 60).'mn';
 
-			$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_ext'.$htmlname.'" name="check_ext'.$htmlname.'" value="1" '.$default.'> <label for="check_ext'.$htmlname.'" title="'.dol_escape_htmltag($tooltip).'">'.dol_escape_htmltag($val['name']).'</label> &nbsp; </div>';
+			$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_ext'.$htmlname.'" name="check_ext'.$htmlname.'" value="1" '.$default.'><label for="check_ext'.$htmlname.'" title="'.dol_escape_htmltag($tooltip).'" class="labelcalendar">'.dol_escape_htmltag($val['name']).'</label> &nbsp; </div>';
 		}
 	}
 
 	// Birthdays
-	$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_birthday" name="check_birthday" class="check_birthday"><label for="check_birthday"> <span class="check_birthday_text">'.$langs->trans("AgendaShowBirthdayEvents").'</span></label> &nbsp; </div>';
+	$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_birthday" name="check_birthday" class="check_birthday"><label for="check_birthday" class="labelcalendar"> <span class="check_birthday_text">'.$langs->trans("AgendaShowBirthdayEvents").'</span></label> &nbsp; </div>';
 
 	// Bookcal Calendar
 	if (isModEnabled("bookcal")) {
 		if (!empty($bookcalcalendars["calendars"])) {
 			foreach ($bookcalcalendars["calendars"] as $key => $value) {
 				$label = $value['label'];
-				$s .= '<div class="nowrap inline-block minheight30"><input '.(GETPOST('check_bookcal_calendar_'.$value['id']) ? "checked" : "").' type="checkbox" id="check_bookcal_calendar_'.$value['id'].'" name="check_bookcal_calendar_'.$value['id'].'" class="check_bookcal_calendar_'.$value['id'].'"><label for="check_bookcal_calendar_'.$value['id'].'"> <span class="check_bookcal_calendar_'.$value['id'].'_text">'.$langs->trans("AgendaShowBookcalCalendar", $label).'</span></label> &nbsp; </div>';
+				$s .= '<div class="nowrap inline-block minheight30"><input '.(GETPOST('check_bookcal_calendar_'.$value['id']) ? "checked" : "").' type="checkbox" id="check_bookcal_calendar_'.$value['id'].'" name="check_bookcal_calendar_'.$value['id'].'" class="check_bookcal_calendar_'.$value['id'].'"><label for="check_bookcal_calendar_'.$value['id'].'" class="labelcalendar"> <span class="check_bookcal_calendar_'.$value['id'].'_text">'.$langs->trans("AgendaShowBookcalCalendar", $label).'</span></label> &nbsp; </div>';
 			}
 		}
 	}
@@ -961,14 +962,14 @@ if ($resql) {
 
 			// Add an entry in actionarray for each day
 			$daycursor = $event->date_start_in_calendar;
-			$annee = dol_print_date($daycursor, '%Y', 'tzuserrel');
-			$mois = dol_print_date($daycursor, '%m', 'tzuserrel');
-			$jour = dol_print_date($daycursor, '%d', 'tzuserrel');
+			$annee = (int) dol_print_date($daycursor, '%Y', 'tzuserrel');
+			$mois = (int) dol_print_date($daycursor, '%m', 'tzuserrel');
+			$jour = (int) dol_print_date($daycursor, '%d', 'tzuserrel');
 
 			$daycursorend = $event->date_end_in_calendar;
-			$anneeend = dol_print_date($daycursorend, '%Y', 'tzuserrel');
-			$moisend = dol_print_date($daycursorend, '%m', 'tzuserrel');
-			$jourend = dol_print_date($daycursorend, '%d', 'tzuserrel');
+			$anneeend = (int) dol_print_date($daycursorend, '%Y', 'tzuserrel');
+			$moisend = (int) dol_print_date($daycursorend, '%m', 'tzuserrel');
+			$jourend = (int) dol_print_date($daycursorend, '%d', 'tzuserrel');
 
 			//var_dump(dol_print_date($event->date_start_in_calendar, 'dayhour', 'gmt'));	// Hour at greenwich
 			//var_dump($annee.'-'.$mois.'-'.$jour);
@@ -1073,9 +1074,9 @@ if ($showbirthday) {
 
 			// Add an entry in eventarray for each day
 			$daycursor = $event->datep;
-			$annee = dol_print_date($daycursor, '%Y', 'tzuserrel');
-			$mois = dol_print_date($daycursor, '%m', 'tzuserrel');
-			$jour = dol_print_date($daycursor, '%d', 'tzuserrel');
+			$annee = (int) dol_print_date($daycursor, '%Y', 'tzuserrel');
+			$mois = (int) dol_print_date($daycursor, '%m', 'tzuserrel');
+			$jour = (int) dol_print_date($daycursor, '%d', 'tzuserrel');
 
 			$daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee, 'gmt');
 
@@ -1159,9 +1160,9 @@ if ($user->hasRight("holiday", "read")) {
 			}
 
 			$daycursor = $event->date_start_in_calendar;
-			$annee = dol_print_date($daycursor, '%Y', 'tzuserrel');
-			$mois = dol_print_date($daycursor, '%m', 'tzuserrel');
-			$jour = dol_print_date($daycursor, '%d', 'tzuserrel');
+			$annee = (int) dol_print_date($daycursor, '%Y', 'tzuserrel');
+			$mois = (int) dol_print_date($daycursor, '%m', 'tzuserrel');
+			$jour = (int) dol_print_date($daycursor, '%d', 'tzuserrel');
 
 			$daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee, 'gmt');
 			do {
@@ -1195,7 +1196,7 @@ if (count($listofextcals)) {
 		if ($ical->error) {
 			// Save error message for extcal
 			$listofextcals[$key]['error'] = $ical->error;
-			$s .= '<br><font class="warning">'.dol_escape_htmltag($listofextcals[$key]['name']).': '.$url.'<br>Error message: '.dol_escape_htmltag($ical->error).'</font>';
+			$s .= '<br><div class="warning">'.dol_escape_htmltag($listofextcals[$key]['name']).': '.$url.'<br>Error message: '.dol_escape_htmltag($ical->error).'</div>';
 		}
 
 		// After this $ical->cal['VEVENT'] contains array of events, $ical->cal['DAYLIGHT'] contains daylight info, $ical->cal['STANDARD'] contains non daylight info, ...
@@ -1444,9 +1445,9 @@ if (count($listofextcals)) {
 
 						// Add an entry in actionarray for each day
 						$daycursor = $event->date_start_in_calendar;
-						$annee = dol_print_date($daycursor, '%Y', 'tzuserrel');
-						$mois = dol_print_date($daycursor, '%m', 'tzuserrel');
-						$jour = dol_print_date($daycursor, '%d', 'tzuserrel');
+						$annee = (int) dol_print_date($daycursor, '%Y', 'tzuserrel');
+						$mois = (int) dol_print_date($daycursor, '%m', 'tzuserrel');
+						$jour = (int) dol_print_date($daycursor, '%d', 'tzuserrel');
 
 						// Loop on each day covered by action to prepare an index to show on calendar
 						$loop = true;
@@ -1524,7 +1525,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	$newparam .= '&viewcal=1';
 
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
-	print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid, $search_categ_cus);
+	print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, '', $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid, $search_categ_cus);
 	print '</div>';
 
 	print '<div class="div-table-responsive-no-min sectioncalendarbymonth maxscreenheightless300">';
@@ -1635,7 +1636,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	$newparam .= '&viewweek=1';
 
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
-	print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
+	print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, '', $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
 	print '</div>';
 
 	print '<div class="div-table-responsive-no-min sectioncalendarbyweek maxscreenheightless300">';
@@ -1653,9 +1654,9 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	for ($iter_day = 0; $iter_day < 7; $iter_day++) {
 		// Show days of the current week
 		$curtime = dol_time_plus_duree($firstdaytoshow, $iter_day, 'd');		// $firstdaytoshow is in timezone of server
-		$tmpday = dol_print_date($curtime, '%d', 'tzuserrel');
-		$tmpmonth = dol_print_date($curtime, '%m', 'tzuserrel');
-		$tmpyear = dol_print_date($curtime, '%Y', 'tzuserrel');
+		$tmpday = (int) dol_print_date($curtime, '%d', 'tzuserrel');
+		$tmpmonth = (int) dol_print_date($curtime, '%m', 'tzuserrel');
+		$tmpyear = (int) dol_print_date($curtime, '%Y', 'tzuserrel');
 
 		$style = 'cal_current_month';
 		if ($iter_day == 6) {
@@ -1703,7 +1704,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	$arraytimestamp = dol_getdate($timestamp);
 
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
-	print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
+	print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, '', $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
 	print '</div>';
 
 	print '<div class="div-table-responsive-no-min sectioncalendarbyday maxscreenheightless300">';
@@ -1882,9 +1883,9 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 	$tmpholiday = new Holiday($db);
 
 	foreach ($eventarray as $daykey => $notused) {		// daykey is the 'YYYYMMDD' to show according to user
-		$annee = dol_print_date($daykey, '%Y', 'gmt');	// We use gmt because we want the value represented by string 'YYYYMMDD'
-		$mois =  dol_print_date($daykey, '%m', 'gmt');	// We use gmt because we want the value represented by string 'YYYYMMDD'
-		$jour =  dol_print_date($daykey, '%d', 'gmt');	// We use gmt because we want the value represented by string 'YYYYMMDD'
+		$annee = (int) dol_print_date($daykey, '%Y', 'gmt');	// We use gmt because we want the value represented by string 'YYYYMMDD'
+		$mois =  (int) dol_print_date($daykey, '%m', 'gmt');	// We use gmt because we want the value represented by string 'YYYYMMDD'
+		$jour =  (int) dol_print_date($daykey, '%d', 'gmt');	// We use gmt because we want the value represented by string 'YYYYMMDD'
 
 		//print 'event daykey='.$daykey.' dol_print_date(daykey)='.dol_print_date($daykey, 'dayhour', 'gmt').' jour='.$jour.' mois='.$mois.' annee='.$annee."<br>\n";
 		//print 'event daykey='.$daykey.' dol_print_date(daykey)='.dol_print_date($daykey, 'dayhour', 'gmt').' day='.$day.' month='.$month.' year='.$year."<br>\n";
@@ -2070,13 +2071,14 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 					//print 'border: 1px solid #ccc" width="100%"';
 					print '">';
 					print '<tr>';
-					print '<td class="tdoverflow nobottom centpercent '.($nowrapontd ? 'nowrap ' : '').'cal_event'.($event->type_code == 'BIRTHDAY' ? ' cal_event_birthday' : '').'">';
+					print '<td class="tdoverflow nobottom small centpercent '.($nowrapontd ? 'nowrap ' : '').'cal_event'.($event->type_code == 'BIRTHDAY' ? ' cal_event_birthday' : '').'">';
+					print '<!-- left section of event -->';
 
 					$daterange = '';
 
 					if ($event->type_code == 'BIRTHDAY') {
 						// It's birthday calendar
-						$picb = '<i class="fas fa-birthday-cake inline-block"></i>';
+						$picb = '<i class="fas fa-birthday-cake inline-block valignmiddle"></i>';
 						//$pice = '<i class="fas fa-briefcase inline-block"></i>';
 						//$typea = ($objp->typea == 'birth') ? $picb : $pice;
 						//var_dump($event);

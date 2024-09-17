@@ -540,7 +540,9 @@ dropdown-holder {
 	right:10px;	/* will be set with js */
 	background: #fff;
 	border: 1px solid #bbb;
-	text-align: <?php echo $left; ?>
+	text-align: <?php echo $left; ?>;
+	-webkit-box-shadow: 5px 5px 0px rgba(0,0,0,0.1);
+	box-shadow: 5px 5px 0px rgba(0,0,0,0.1);
 }
 
 .dropdown-content a {
@@ -568,6 +570,20 @@ dropdown-holder {
 	display: block;
 }
 
+/** dropdown arrow used to clearly identify parent button of dropdown*/
+.dropdown-holder.open .dropdown-content::before {
+	--triangleBorderSize : 5px;
+	position: absolute;
+	content: "";
+	top: calc(var(--triangleBorderSize) * -1);
+	right: 12px;
+	width: 0px;
+	height: 0px;
+	border-style: solid;
+	border-width: 0 var(--triangleBorderSize) var(--triangleBorderSize) var(--triangleBorderSize);
+	border-color: transparent transparent #ffff transparent;
+	transform: rotate(0deg);
+}
 
 
 /* smartphone */
@@ -578,13 +594,13 @@ dropdown-holder {
 	}
 
 	.tmenu .dropdown-menu, .login_block .dropdown-menu, .topnav .dropdown-menu {
-		margin-left: 5px;
+		margin-left: 8px;
 		right: 0;
 	}
 
 	#topmenu-quickadd-dropdown .dropdown-menu {
 		min-width: 220px;
-		max-width: 235px;
+		max-width: 270px;
 	}
 	#topmenu-bookmark-dropdown .dropdown-menu {
 		min-width: 220px;

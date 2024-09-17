@@ -170,7 +170,7 @@ $form = new Form($db);
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-llxHeader("", $langs->trans("BOMsSetup"));
+llxHeader("", $langs->trans("BOMsSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-bom');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("BOMsSetup"), $linkback, 'title_setup');
@@ -211,6 +211,8 @@ foreach ($dirmodels as $reldir) {
 					require_once $dir.$file.'.php';
 
 					$module = new $classname($db);
+
+					'@phan-var-force ModeleNumRefBoms $module';
 
 					// Show modules according to features level
 					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {

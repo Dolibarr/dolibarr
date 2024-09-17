@@ -63,7 +63,7 @@ $categories = $categorie->get_full_arbo('product', ((getDolGlobalInt('TAKEPOS_RO
 $levelofrootcategory = 0;
 if (getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID') > 0) {
 	foreach ($categories as $key => $categorycursor) {
-		if ($categorycursor['id'] == $conf->global->TAKEPOS_ROOT_CATEGORY_ID) {
+		if ($categorycursor['id'] == getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID')) {
 			$levelofrootcategory = $categorycursor['level'];
 			break;
 		}

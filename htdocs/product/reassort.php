@@ -6,6 +6,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2019       Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2023 		Vincent de Grandpré  	<vincent@de-grandpre.quebec>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,7 +97,7 @@ if (getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT')
 	$virtualdiffersfromphysical = 1; // According to increase/decrease stock options, virtual and physical stock may differs.
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('productreassortlist'));
 
 if ($user->socid) {
@@ -227,7 +228,7 @@ if ($sall) {
 	$sql .= natural_search(array('p.ref', 'p.label', 'p.description', 'p.note'), $sall);
 }
 // if the type is not 1, we show all products (type = 0,2,3)
-if (dol_strlen($type)) {
+if (dol_strlen((string) $type)) {
 	if ($type == 1) {
 		$sql .= " AND p.fk_product_type = '1'";
 	} else {
@@ -389,7 +390,7 @@ if ($resql) {
 		$param .= '&search_stock_physique=' . urlencode($search_stock_physique);
 	}
 
-	llxHeader("", $texte, $helpurl);
+	llxHeader("", $texte, $helpurl, '', 0, 0, '', '', '', 'mod-product page-reassort');
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';

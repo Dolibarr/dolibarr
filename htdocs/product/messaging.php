@@ -6,6 +6,7 @@
  * Copyright (C) 2007      Patrick Raguin  		<patrick.raguin@gmail.com>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,17 +73,17 @@ if (!$sortorder) {
 	$sortorder = 'DESC,DESC';
 }
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Product($db);
 if ($id > 0 || !empty($ref)) {
 	$object->fetch($id, $ref);
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('agendathirdparty', 'globalcard'));
 
 // Security check
-$socid =0;
+$socid = 0;
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -148,7 +149,7 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-product page-messagi
 if (isModEnabled('notification')) {
 	$langs->load("mails");
 }
-	$type = $langs->trans('Product');
+$type = $langs->trans('Product');
 if ($object->isService()) {
 	$type = $langs->trans('Service');
 }
@@ -224,7 +225,7 @@ if (isModEnabled('agenda')) {
 	}
 
 	$linktocreatetimeBtnStatus = $user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create');
-	$morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out, '', $linktocreatetimeBtnStatus);
+	$morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out, '', (int) $linktocreatetimeBtnStatus);
 }
 
 if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {

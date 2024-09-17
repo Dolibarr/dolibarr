@@ -128,7 +128,7 @@ class Paiement extends CommonObject
 	public $author;
 
 	/**
-	 * @var int								ID of mode of payment. Is saved into fields fk_paiement on llx_paiement = id of llx_c_paiement
+	 * @var int								ID of mode of payment. Is saved into fields fk_paiement on llx_paiement = id of llx_c_paiement. Can get value from code using ...
 	 */
 	public $paiementid;
 
@@ -467,7 +467,7 @@ class Paiement extends CommonObject
 
 									// Insert one discount by VAT rate category
 									$discount = new DiscountAbsolute($this->db);
-									$discount->fetch('', $invoice->id);
+									$discount->fetch(0, $invoice->id);
 									if (empty($discount->id)) {	// If the invoice was not yet converted into a discount (this may have been done manually before we come here)
 										$discount->description = '(DEPOSIT)';
 										$discount->fk_soc = $invoice->socid;
@@ -514,6 +514,8 @@ class Paiement extends CommonObject
 
 								// Set invoice to paid
 								if (!$error) {
+									$invoice->context['actionmsgmore'] = 'Invoice set to paid by the payment->create() of payment '.$this->ref.' because the remain to pay is 0';
+
 									$result = $invoice->setPaid($user, '', '');
 									if ($result < 0) {
 										$this->error = $invoice->error;
@@ -889,7 +891,7 @@ class Paiement extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *      Mise a jour du lien entre le paiement et la ligne generee dans llx_bank
+	 *      Update the link between the Payment and the line generated in llx_bank
 	 *
 	 *      @param	int		$id_bank    Id compte bancaire
 	 *      @return	int					Return integer <0 if KO, >0 if OK
@@ -1210,7 +1212,8 @@ class Paiement extends CommonObject
 			}
 
 			$obj = new $classname();
-			$numref = "";
+			'@phan-var-force ModeleNumRefPayments $obj';
+
 			$numref = $obj->getNextValue($soc, $this);
 
 			/**
@@ -1280,10 +1283,10 @@ class Paiement extends CommonObject
 
 
 	/**
-	 *  Return clicable name (with picto eventually)
+	 *  Return clickable name (with picto eventually)
 	 *
 	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-	 *	@param	string	$option			Sur quoi pointe le lien
+	 *	@param	string	$option			What the link points to
 	 *  @param  string  $mode           'withlistofinvoices'=Include list of invoices into tooltip
 	 *  @param	int  	$notooltip		1=Disable tooltip
 	 *  @param	string	$morecss		Add more CSS

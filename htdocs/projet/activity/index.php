@@ -31,16 +31,23 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-$search_project_user = GETPOSTINT('search_project_user');
-$mine = GETPOST('mode', 'aZ09') == 'mine' ? 1 : 0;
-if ($search_project_user == $user->id) {
-	$mine = 1;
-}
+// Load translation files required by the page
+$langs->loadLangs(array('projects', 'companies'));
 
 $hookmanager = new HookManager($db);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('activityindex'));
+
+$action = GETPOST('action', 'aZ09');
+$search_project_user = GETPOST('search_project_user');
+$mine = (GETPOST('mode', 'aZ09') == 'mine' || $search_project_user == $user->id) ? 1 : 0;
+if ($mine == 0 && $search_project_user === '') {
+	$search_project_user = getDolGlobalString('MAIN_SEARCH_PROJECT_USER_PROJECTSINDEX');
+}
+if ($search_project_user == $user->id) {
+	$mine = 1;
+}
 
 // Security check
 $socid = 0;
@@ -52,8 +59,25 @@ if (!$user->hasRight('projet', 'lire')) {
 	accessforbidden();
 }
 
-// Load translation files required by the page
-$langs->load("projects");
+
+/*
+ * Actions
+ */
+
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+if (empty($reshook)) {
+	if ($action == 'refresh_search_project_user') {
+		$search_project_user = GETPOSTINT('search_project_user');
+		$tabparam = array("MAIN_SEARCH_PROJECT_USER_PROJECTSINDEX" => $search_project_user);
+
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+		$result = dol_set_user_param($db, $conf, $user, $tabparam);
+	}
+}
 
 
 /*
@@ -66,6 +90,7 @@ $day = $tmp['mday'];
 $month = $tmp['mon'];
 $year = $tmp['year'];
 
+$form = new Form($db);
 $projectstatic = new Project($db);
 $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1); // Return all projects I have permission on because I want my tasks and some of my task may be on a public projet that is not my project
 $taskstatic = new Task($db);
@@ -74,7 +99,7 @@ $tasktmp = new Task($db);
 $title = $langs->trans("Activities");
 //if ($mine) $title=$langs->trans("MyActivities");
 
-llxHeader("", $title);
+llxHeader("", $title, '', '', 0, 0, '', '', '', 'mod-project project-activity page-dashboard');
 
 
 // Title for combo list see all projects
@@ -87,9 +112,12 @@ if ($user->hasRight('projet', 'all', 'lire') && !$socid) {
 
 
 $morehtml = '';
-$morehtml .= '<form name="projectform" method="POST">';
-$morehtml .= '<SELECT name="mode" id="search_project_user">';
-$morehtml .= '<option name="all" value="all"'.($mine ? '' : ' selected').'>'.$titleall.'</option>';
+$morehtml .= '<form name="projectform" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+$morehtml .= '<input type="hidden" name="token" value="'.newToken().'">';
+$morehtml .= '<input type="hidden" name="action" value="refresh_search_project_user">';
+
+$morehtml .= '<SELECT name="search_project_user" id="search_project_user">';
+$morehtml .= '<option name="all" value="0"'.($mine ? '' : ' selected').'>'.$titleall.'</option>';
 $morehtml .= '<option name="mine" value="'.$user->id.'"'.(($search_project_user == $user->id) ? ' selected' : '').'>'.$langs->trans("ProjectsImContactFor").'</option>';
 $morehtml .= '</SELECT>';
 $morehtml .= ajax_combobox("search_project_user", array(), 0, 0, 'resolve', '-1', 'small');

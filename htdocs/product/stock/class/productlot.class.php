@@ -57,8 +57,22 @@ class Productlot extends CommonObject
 	public $stats_contrat;
 	public $stats_facture;
 	public $stats_commande_fournisseur;
+
+	/**
+	 * @var array{customers:int,nb:int,rows:int,qty:int} stats_expedition
+	 */
 	public $stats_expedition;
+
+	/**
+	 * @var array{customers:int,nb:int,rows:int,qty:int} stats_expedition
+	 */
 	public $stats_reception;
+
+	/**
+	 * @var array{customers:int,nb:int,rows:int,qty:int} stats_expedition
+	 */
+	public $stats_supplier_order;
+
 	public $stats_mo;
 	public $stats_bom;
 	public $stats_mrptoconsume;
@@ -93,7 +107,7 @@ class Productlot extends CommonObject
 	 */
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid'         => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'noteditable' => 1, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id', 'css' => 'left'),
@@ -131,10 +145,30 @@ class Productlot extends CommonObject
 	 * @var string batch ref
 	 */
 	public $batch;
+
+	/**
+	 * @var int|string eatby
+	 */
 	public $eatby = '';
+
+	/**
+	 * @var int|string sellby
+	 */
 	public $sellby = '';
+
+	/**
+	 * @var int|string eal_date
+	 */
 	public $eol_date = '';
+
+	/**
+	 * @var int|string manufacturing_date
+	 */
 	public $manufacturing_date = '';
+
+	/**
+	 * @var int|string scrapping_date
+	 */
 	public $scrapping_date = '';
 	//public $commissionning_date = '';
 	public $qc_frequency = '';
@@ -155,8 +189,6 @@ class Productlot extends CommonObject
 	 * @var string import key
 	 */
 	public $import_key;
-
-	public $stats_supplier_order = array();
 
 
 	/**
@@ -273,14 +305,14 @@ class Productlot extends CommonObject
 			}
 		}
 
-		if ($checkSellByMandatory === true) {
-			if (!isset($sellBy) || dol_strlen($sellBy) == 0) {
+		if ($checkSellByMandatory) {
+			if (!isset($sellBy) || dol_strlen((string) $sellBy) == 0) {
 				// error : sell by is mandatory
 				$errorMsgArr[] = $langs->trans('ErrorFieldRequired', $langs->transnoentities('SellByDate'));
 			}
 		}
-		if ($checkEatByMandatory === true) {
-			if (!isset($eatBy) || dol_strlen($eatBy) == 0) {
+		if ($checkEatByMandatory) {
+			if (!isset($eatBy) || dol_strlen((string) $eatBy) == 0) {
 				// error : eat by is mandatory
 				$errorMsgArr[] = $langs->trans('ErrorFieldRequired', $langs->transnoentities('EatByDate'));
 			}
@@ -574,7 +606,7 @@ class Productlot extends CommonObject
 			$sql .= ' qc_frequency = '.(!empty($this->qc_frequency) ? (int) $this->qc_frequency : 'null').',';
 			$sql .= ' lifetime = '.(!empty($this->lifetime) ? (int) $this->lifetime : 'null').',';
 			$sql .= ' datec = ' . (!isset($this->datec) || dol_strlen($this->datec) != 0 ? "'" . $this->db->idate($this->datec) . "'" : 'null') . ',';
-			$sql .= ' tms = ' . (dol_strlen($this->tms) != 0 ? "'" . $this->db->idate($this->tms) . "'" : "'" . $this->db->idate(dol_now()) . "'") . ',';
+			$sql .= ' tms = ' . (dol_strlen((string) $this->tms) != 0 ? "'" . $this->db->idate($this->tms) . "'" : "'" . $this->db->idate(dol_now()) . "'") . ',';
 			$sql .= ' fk_user_creat = ' . (isset($this->fk_user_creat) ? $this->fk_user_creat : "null") . ',';
 			$sql .= ' fk_user_modif = ' . (isset($this->fk_user_modif) ? $this->fk_user_modif : "null") . ',';
 			$sql .= ' import_key = ' . (isset($this->import_key) ? $this->import_key : "null");
@@ -1085,7 +1117,7 @@ class Productlot extends CommonObject
 	 */
 	public function getTooltipContentArray($params)
 	{
-		global $langs, $user;
+		global $langs;
 
 		$langs->loadLangs(['stocks', 'productbatch']);
 
@@ -1095,11 +1127,11 @@ class Productlot extends CommonObject
 		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Batch").'</u>';
 		//$datas['divopen'] = '<div width="100%">';
 		$datas['batch'] = '<br><b>'.$langs->trans('Batch').':</b> '.$this->batch;
-		if ($this->eatby && !getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
-			$datas['eatby'] = '<br><b>'.$langs->trans('EatByDate').':</b> '.dol_print_date($this->db->jdate($this->eatby), 'day');
+		if (isDolTms($this->eatby) && !getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
+			$datas['eatby'] = '<br><b>'.$langs->trans('EatByDate').':</b> '.dol_print_date($this->eatby, 'day');
 		}
-		if ($this->sellby && !getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
-			$datas['sellby'] = '<br><b>'.$langs->trans('SellByDate').':</b> '.dol_print_date($this->db->jdate($this->sellby), 'day');
+		if (isDolTms($this->sellby) && !getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
+			$datas['sellby'] = '<br><b>'.$langs->trans('SellByDate').':</b> '.dol_print_date($this->sellby, 'day');
 		}
 		//$datas['divclose'] = '</div>';
 
@@ -1217,7 +1249,7 @@ class Productlot extends CommonObject
 
 		$this->entity = $conf->entity;
 		$this->fk_product = 0;
-		$this->batch = '';
+		$this->batch = 'ABCD123456';
 		$this->eatby = $now - 100000;
 		$this->sellby = $now - 100000;
 		$this->datec = $now - 3600;
@@ -1265,7 +1297,7 @@ class Productlot extends CommonObject
 	/**
 	 * Return validation test result for a field
 	 *
-	 * @param  array   $fields	       		Array of properties of field to show
+	 * @param array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>	$fields	Array of properties of field to show
 	 * @param  string  $fieldKey            Key of attribute
 	 * @param  string  $fieldValue          value of attribute
 	 * @return bool 						Return false if fail, true on success, set $this->error for error message

@@ -203,7 +203,7 @@ if ($action == 'setmod') {
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-llxHeader("", "");
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-delivery');
 
 $form = new Form($db);
 
@@ -258,6 +258,8 @@ if (getDolGlobalString('MAIN_SUBMODULE_DELIVERY')) {
 						require_once $dir.$file.'.php';
 
 						$module = new $file();
+
+						'@phan-var-force ModeleNumRefDeliveryOrder $module';
 
 						if ($module->isEnabled()) {
 							// Show modules according to features level
@@ -392,6 +394,8 @@ if (getDolGlobalString('MAIN_SUBMODULE_DELIVERY')) {
 							require_once $dir.'/'.$file;
 							$module = new $classname($db);
 
+							'@phan-var-force ModelePDFDeliveryOrder $module';
+
 							$modulequalified = 1;
 							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 								$modulequalified = 0;
@@ -405,7 +409,7 @@ if (getDolGlobalString('MAIN_SUBMODULE_DELIVERY')) {
 								print(empty($module->name) ? $name : $module->name);
 								print "</td><td>\n";
 								if (method_exists($module, 'info')) {
-									print $module->info($langs);
+									print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
 								} else {
 									print $module->description;
 								}

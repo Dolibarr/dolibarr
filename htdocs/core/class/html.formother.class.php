@@ -397,7 +397,7 @@ class FormOther
 	/**
 	 * Return select list for categories (to use in form search selectors)
 	 *
-	 * @param	int			$type			Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
+	 * @param	string		$type			Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
 	 * @param   integer		$selected     	Preselected value
 	 * @param   string		$htmlname      	Name of combo list
 	 * @param	int			$nocateg		Show also an entry "Not categorized"
@@ -1251,7 +1251,7 @@ class FormOther
 				$label = $langs->transnoentitiesnoconv($box->boxlabel);
 				//if (preg_match('/graph/',$box->class)) $label.=' ('.$langs->trans("Graph").')';
 				if (preg_match('/graph/', $box->class) && $conf->browser->layout != 'phone') {
-					$label = $label.' <span class="fas fa-chart-bar"></span>';
+					$label .= ' <span class="fas fa-chart-bar"></span>';
 				}
 				$arrayboxtoactivatelabel[$box->id] = array('label' => $label, 'data-html' => img_picto('', $box->boximg, 'class="pictofixedwidth"').$langs->trans($label)); // We keep only boxes not shown for user, to show into combo list
 			}

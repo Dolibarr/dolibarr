@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,15 +56,14 @@ if ($result <= 0) {
 	exit;
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('surveycard', 'globalcard'));
 
 $expiredate = dol_mktime(0, 0, 0, GETPOST('expiremonth'), GETPOST('expireday'), GETPOST('expireyear'));
 
 $permissiontoread = $user->hasRight('opensurvey', 'read');
 $permissiontoadd = $user->hasRight('opensurvey', 'write');
-// permission delete doesn't exists
-$permissiontodelete = $user->hasRight('opensurvey', 'write');
+$permissiontodelete = $user->hasRight('opensurvey', 'write');	// permission delete doesn't exists
 
 
 /*
@@ -83,7 +82,7 @@ if (empty($reshook)) {
 	}
 
 	// Delete
-	if ($action == 'delete_confirm') {
+	if ($action == 'delete_confirm' && $permissiontodelete) {
 		// Security check
 		if (!$user->hasRight('opensurvey', 'write')) {
 			accessforbidden();
@@ -96,19 +95,19 @@ if (empty($reshook)) {
 	}
 
 	// Close
-	if ($action == 'close') {
+	if ($action == 'close' && $permissiontoadd) {
 		$object->status = Opensurveysondage::STATUS_CLOSED;
 		$object->update($user);
 	}
 
-	// Reopend
-	if ($action == 'reopen') {
+	// Valid or Reopend
+	if (($action == 'reopen' || $action == 'validate') && $permissiontoadd) {
 		$object->status = Opensurveysondage::STATUS_VALIDATED;
 		$object->update($user);
 	}
 
 	// Update
-	if ($action == 'update') {
+	if ($action == 'update' && $permissiontoadd) {
 		// Security check
 		if (!$user->hasRight('opensurvey', 'write')) {
 			accessforbidden();
@@ -140,7 +139,7 @@ if (empty($reshook)) {
 	}
 
 	// Add comment
-	if (GETPOST('ajoutcomment')) {
+	if (GETPOST('ajoutcomment') && $permissiontoadd) {
 		$error = 0;
 
 		if (!GETPOST('comment', "alphanohtml")) {
@@ -165,7 +164,7 @@ if (empty($reshook)) {
 	}
 
 	// Delete comment
-	if ($action == 'deletecomment') {
+	if ($action == 'deletecomment' && $permissiontoadd) {
 		$idcomment = GETPOSTINT('idcomment');
 		if ($idcomment > 0) {
 			// Security check
@@ -177,7 +176,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'edit') {
+	if ($action == 'edit' && $permissiontoadd) {
 		// Security check
 		if (!$user->hasRight('opensurvey', 'write')) {
 			accessforbidden();
@@ -201,7 +200,7 @@ $title = $object->title." - ".$langs->trans('Card');
 $helpurl = '';
 $arrayofjs = array();
 $arrayofcss = array('/opensurvey/css/style.css');
-llxHeader('', $title, $helpurl, 0, 0, 0, $arrayofjs, $arrayofcss);
+llxHeader('', $title, $helpurl, '', 0, 0, $arrayofjs, $arrayofcss);
 
 
 // Define format of choices
@@ -341,9 +340,9 @@ $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domai
 
 $url = $urlwithroot.'/public/opensurvey/studs.php?sondage='.$object->id_sondage;
 print '<input type="text" class="quatrevingtpercent" '.($action == 'edit' ? 'disabled' : '').' id="opensurveyurl" name="opensurveyurl" value="'.$url.'">';
-if ($action != 'edit') {
+//if ($action != 'edit') {
 	print ajax_autoselect("opensurveyurl", $url, 'image');
-}
+//}
 
 print '</td></tr>';
 
@@ -375,6 +374,11 @@ print '<div class="tabsAction">';
 if ($action != 'edit' && $user->hasRight('opensurvey', 'write')) {
 	// Modify button
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.urlencode($numsondage).'">'.$langs->trans("Modify").'</a>';
+
+	if ($object->status == Opensurveysondage::STATUS_DRAFT) {
+		// Validate button
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=validate&token='.newToken().'&id='.urlencode($numsondage).'">'.$langs->trans("Valid").'</a>';
+	}
 
 	if ($object->status == Opensurveysondage::STATUS_VALIDATED) {
 		// Close button

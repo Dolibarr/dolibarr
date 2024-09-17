@@ -90,7 +90,14 @@ class ReceptionLineBatch extends CommonObjectLine
 	 */
 	public $fk_product;
 
+	/**
+	 * @var float Quantity
+	 */
 	public $qty;
+
+	/**
+	 * @var float Quantity asked
+	 */
 	public $qty_asked;
 
 	public $libelle;
@@ -167,7 +174,7 @@ class ReceptionLineBatch extends CommonObjectLine
 			$this->fk_elementdet = (int) $this->fk_elementdet;
 		}
 		if (isset($this->qty)) {
-			$this->qty = trim($this->qty);
+			$this->qty = (float) $this->qty;
 		}
 		if (isset($this->fk_entrepot)) {
 			$this->fk_entrepot = (int) $this->fk_entrepot;
@@ -374,7 +381,7 @@ class ReceptionLineBatch extends CommonObjectLine
 			$this->fk_elementdet = (int) $this->fk_elementdet;
 		}
 		if (isset($this->qty)) {
-			$this->qty = trim($this->qty);
+			$this->qty = (float) $this->qty;
 		}
 		if (isset($this->fk_entrepot)) {
 			$this->fk_entrepot = (int) $this->fk_entrepot;
@@ -408,7 +415,7 @@ class ReceptionLineBatch extends CommonObjectLine
 		$sql .= " datec=".(dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
 		$sql .= " comment=".(isset($this->comment) ? "'".$this->db->escape($this->comment)."'" : "null").",";
 		$sql .= " status=".(isset($this->status) ? $this->status : "null").",";
-		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
+		$sql .= " tms=".(dol_strlen((string) $this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
 		$sql .= " batch=".(isset($this->batch) ? "'".$this->db->escape($this->batch)."'" : "null").",";
 		$sql .= " eatby=".(dol_strlen($this->eatby) != 0 ? "'".$this->db->idate($this->eatby)."'" : 'null').",";
 		$sql .= " sellby=".(dol_strlen($this->sellby) != 0 ? "'".$this->db->idate($this->sellby)."'" : 'null');
@@ -640,7 +647,7 @@ class ReceptionLineBatch extends CommonObjectLine
 		$this->fk_element = 0;
 		$this->fk_product = 0;
 		$this->fk_elementdet = 0;
-		$this->qty = '';
+		$this->qty = 0;
 		$this->fk_entrepot = 0;
 		$this->fk_user = 0;
 		$this->datec = '';

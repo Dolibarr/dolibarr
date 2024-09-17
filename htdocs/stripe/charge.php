@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2018-2022  Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -132,6 +133,7 @@ if (!$rowid) {
 			$list = \Stripe\Charge::all($option);
 		}
 
+		'@phan-var-force \Stripe\Charge $list';  // TStripeObject suggested, but is a template
 		$num = count($list->data);
 
 
@@ -149,6 +151,7 @@ if (!$rowid) {
 	$i = 0;
 	if (!empty($list)) {
 		foreach ($list->data as $charge) {
+			'@phan-var-force \Stripe\Charge $charge';  // TStripeObject suggested, but is a template
 			if ($i >= $limit) {
 				break;
 			}

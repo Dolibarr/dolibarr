@@ -74,6 +74,9 @@ if ($user->id == $id && (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user
 	accessforbidden();
 }
 
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('usercard', 'userperms', 'globalcard'));
+
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 if ($user->id != $id && !$canreaduser) {
 	accessforbidden();
@@ -81,13 +84,9 @@ if ($user->id != $id && !$canreaduser) {
 
 $object = new User($db);
 $object->fetch($id, '', '', 1);
-$object->getrights();
+$object->loadRights();
 
 $entity = $conf->entity;
-
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('usercard', 'userperms', 'globalcard'));
-
 
 /*
  * Actions
@@ -111,12 +110,13 @@ if (empty($reshook)) {
 		// If we are changing our own permissions, we reload permissions and menu
 		if ($object->id == $user->id) {
 			$user->clearrights();
-			$user->getrights();
+			$user->loadRights();
+			// @phan-suppress-next-line PhanRedefinedClassReference
 			$menumanager->loadMenu();
 		}
 
 		$object->clearrights();
-		$object->getrights();
+		$object->loadRights();
 	}
 
 	if ($action == 'delrights' && $caneditperms && $confirm == 'yes') {
@@ -130,12 +130,13 @@ if (empty($reshook)) {
 		// If we are changing our own permissions, we reload permissions and menu
 		if ($object->id == $user->id) {
 			$user->clearrights();
-			$user->getrights();
+			$user->loadRights();
+			// @phan-suppress-next-line PhanRedefinedClassReference
 			$menumanager->loadMenu();
 		}
 
 		$object->clearrights();
-		$object->getrights();
+		$object->loadRights();
 	}
 }
 
@@ -149,7 +150,7 @@ $form = new Form($db);
 $person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firstname : $object->lastname;
 $title = $person_name." - ".$langs->trans('Permissions');
 $help_url = '';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-user page-card_perms');
 
 $head = user_prepare_head($object);
 
@@ -173,6 +174,7 @@ foreach ($modulesdir as $dir) {
 				if ($modName) {
 					include_once $dir.$file;
 					$objMod = new $modName($db);
+					'@phan-var-force DolibarrModules $objMod';
 
 					// Load all lang files of module
 					if (isset($objMod->langfiles) && is_array($objMod->langfiles)) {

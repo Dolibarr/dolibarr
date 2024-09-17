@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2020       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -136,7 +137,7 @@ print '<!-- Form to view jobs -->'."\n";
 $logosmall = $mysoc->logo_small;
 $logo = $mysoc->logo;
 $paramlogo = 'ONLINE_RECRUITMENT_LOGO_'.$suffix;
-if (!empty($conf->global->$paramlogo)) {
+if (getDolGlobalString($paramlogo)) {
 	$logosmall = getDolGlobalString($paramlogo);
 } elseif (getDolGlobalString('ONLINE_RECRUITMENT_LOGO')) {
 	$logosmall = getDolGlobalString('ONLINE_RECRUITMENT_LOGO_');
@@ -259,10 +260,10 @@ if (is_array($results)) {
 			print '</b><br>';
 
 			if ($object->status == RecruitmentJobPosition::STATUS_RECRUITED) {
-				print info_admin($langs->trans("JobClosedTextCandidateFound"), 0, 0, 0, 'warning');
+				print info_admin($langs->trans("JobClosedTextCandidateFound"), 0, 0, '0', 'warning');
 			}
 			if ($object->status == RecruitmentJobPosition::STATUS_CANCELED) {
-				print info_admin($langs->trans("JobClosedTextCanceled"), 0, 0, 0, 'warning');
+				print info_admin($langs->trans("JobClosedTextCanceled"), 0, 0, '0', 'warning');
 			}
 
 			print '<br>';

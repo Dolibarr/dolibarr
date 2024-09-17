@@ -61,6 +61,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 if ($action == 'updateMask') {
 	$maskconst = GETPOST('maskconstholiday', 'aZ09');
 	$maskvalue = GETPOST('maskholiday', 'alpha');
+	$res = 0;
 	if ($maskconst && preg_match('/_MASK$/', $maskconst)) {
 		$res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
 	}
@@ -96,14 +97,14 @@ if ($action == 'updateMask') {
 		require_once $file;
 
 		$module = new $classname($db);
-		'@phan-var-force CommonDocGenerator $module';
+		'@phan-var-force ModelePDFHoliday $module';
 
 		if ($module->write_file($holiday, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=holiday&file=SPECIMEN.pdf");
 			return;
 		} else {
-			setEventMessages($obj->error, $obj->errors, 'errors');
-			dol_syslog($obj->error, LOG_ERR);
+			setEventMessages($module->error, $module->errors, 'errors');
+			dol_syslog($module->error, LOG_ERR);
 		}
 	} else {
 		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
@@ -162,7 +163,7 @@ if ($action == 'updateMask') {
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-holiday');
 
 $form = new Form($db);
 
@@ -204,6 +205,8 @@ foreach ($dirmodels as $reldir) {
 					require_once $dir.$file.'.php';
 
 					$module = new $file($db);
+
+					'@phan-var-force ModelNumRefHolidays $module';
 
 					// Show modules according to features level
 					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -345,6 +348,9 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 								require_once $dir.'/'.$file;
 								$module = new $classname($db);
 
+
+								'@phan-var-force ModelePDFHoliday $module';
+
 								$modulequalified = 1;
 								if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 									$modulequalified = 0;
@@ -358,7 +364,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 									print(empty($module->name) ? $name : $module->name);
 									print "</td><td>\n";
 									if (method_exists($module, 'info')) {
-										print $module->info($langs);
+										print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
 									} else {
 										print $module->description;
 									}

@@ -4,12 +4,12 @@
  * Copyright (C) 2011       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
- * Copyright (C) 2013-2023  Alexandre Spangaro      <aspangaro@easya.solutions>
+ * Copyright (C) 2013-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2014       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,6 +77,14 @@ if (!$user->hasRight('accounting', 'bind', 'write')) {
 
 $error = 0;
 
+$tabfac = array();
+$tabht = array();
+$tabtva = array();
+$tabwarranty = array();
+$tabttc = array();
+$tablocaltax1 = array();
+$tablocaltax2 = array();
+
 
 /*
  * Actions
@@ -86,7 +94,7 @@ $reshook = $hookmanager->executeHooks('doActions', $parameters, $user, $action);
 
 $accountingaccount = new AccountingAccount($db);
 
-// Get information of journal
+// Get information of a journal
 $accountingjournalstatic = new AccountingJournal($db);
 $accountingjournalstatic->fetch($id_journal);
 $journal = $accountingjournalstatic->code;
@@ -94,6 +102,9 @@ $journal_label = $accountingjournalstatic->label;
 
 $date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
 $date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
+
+$pastmonth = null;  // Initialise, could be unset
+$pastmonthyear = null;  // Initialise, could be unset
 
 if (empty($date_startmonth)) {
 	// Period by default on transfer
@@ -122,10 +133,10 @@ $sql = "SELECT f.rowid, f.ref, f.type, f.situation_cycle_ref, f.datef as df, f.r
 $sql .= " fd.rowid as fdid, fd.description, fd.product_type, fd.total_ht, fd.total_tva, fd.total_localtax1, fd.total_localtax2, fd.tva_tx, fd.total_ttc, fd.situation_percent, fd.vat_src_code, fd.info_bits,";
 $sql .= " s.rowid as socid, s.nom as name, s.code_client, s.code_fournisseur,";
 if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
-	$sql .= " spe.accountancy_code_customer as code_compta,";
+	$sql .= " spe.accountancy_code_customer as code_compta_client,";
 	$sql .= " spe.accountancy_code_supplier as code_compta_fournisseur,";
 } else {
-	$sql .= " s.code_compta as code_compta,";
+	$sql .= " s.code_compta as code_compta_client,";
 	$sql .= " s.code_compta_fournisseur,";
 }
 $sql .= " p.rowid as pid, p.ref as pref, aa.rowid as fk_compte, aa.account_number as compte, aa.label as label_compte,";
@@ -208,7 +219,7 @@ if ($result) {
 		$obj = $db->fetch_object($result);
 
 		// Controls
-		$compta_soc = (!empty($obj->code_compta)) ? $obj->code_compta : $cptcli;
+		$compta_soc = (!empty($obj->code_compta_client)) ? $obj->code_compta_client : $cptcli;
 
 		$compta_prod = $obj->compte;
 		if (empty($compta_prod)) {
@@ -307,10 +318,16 @@ if ($result) {
 		$tabht[$obj->rowid][$compta_prod] += $obj->total_ht * $situation_ratio;
 		$tva_npr = ((($obj->info_bits & 1) == 1) ? 1 : 0);
 		if (!$tva_npr) { // We ignore line if VAT is a NPR
-			$tabtva[$obj->rowid][$compta_tva] += $obj->total_tva * $situation_ratio;
+			if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+				$tabtva[$obj->rowid][$compta_tva] += $obj->total_tva;
+				$tablocaltax1[$obj->rowid][$compta_localtax1] += $obj->total_localtax1;
+				$tablocaltax2[$obj->rowid][$compta_localtax2] += $obj->total_localtax2;
+			} else {
+				$tabtva[$obj->rowid][$compta_tva] += $obj->total_tva * $situation_ratio;
+				$tablocaltax1[$obj->rowid][$compta_localtax1] += $obj->total_localtax1 * $situation_ratio;
+				$tablocaltax2[$obj->rowid][$compta_localtax2] += $obj->total_localtax2 * $situation_ratio;
+			}
 		}
-		$tablocaltax1[$obj->rowid][$compta_localtax1] += $obj->total_localtax1 * $situation_ratio;
-		$tablocaltax2[$obj->rowid][$compta_localtax2] += $obj->total_localtax2 * $situation_ratio;
 
 		$compta_revenuestamp = 'NotDefined';
 		if (!empty($revenuestamp)) {
@@ -347,6 +364,13 @@ if ($result) {
 		);
 
 		$i++;
+
+		// Check for too many lines.
+		if ($i > getDolGlobalInt('ACCOUNTANCY_MAX_TOO_MANY_LINES_TO_PROCESS', 10000)) {
+			$error++;
+			setEventMessages("ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter", null, 'errors');
+			break;
+		}
 	}
 
 	// After the loop on each line
@@ -354,11 +378,6 @@ if ($result) {
 	dol_print_error($db);
 }
 
-// Check for too many invoices first.
-if (count($tabfac) > 10000) {
-	$error++;
-	setEventMessages("TooManyInvoicesToProcessPleaseUseAMoreSelectiveFilter", null, 'errors');
-}
 
 $errorforinvoice = array();
 
@@ -397,32 +416,32 @@ WHERE
 GROUP BY fk_facture
 ";
 $resql = $db->query($sql);
-
-$num = $db->num_rows($resql);
-$i = 0;
-while ($i < $num) {
-	$obj = $db->fetch_object($resql);
-	if ($obj->nb > 0) {
-		$errorforinvoice[$obj->fk_facture_fourn] = 'somelinesarenotbound';
+if ($resql) {
+	$num = $db->num_rows($resql);
+	$i = 0;
+	while ($i < $num) {
+		$obj = $db->fetch_object($resql);
+		if ($obj->nb > 0) {
+			$errorforinvoice[$obj->fk_facture_fourn] = 'somelinesarenotbound';
+		}
+		$i++;
 	}
-	$i++;
 }
 //var_dump($errorforinvoice);exit;
 
 // Bookkeeping Write
-if ($action == 'writebookkeeping' && !$error) {
+if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'bind', 'write')) {
 	$now = dol_now();
 	$error = 0;
 
 	$companystatic = new Societe($db);
 	$invoicestatic = new Facture($db);
-	$accountingaccountcustomer = new AccountingAccount($db);
 
-	$accountingaccountcustomer->fetch(null, getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER'), true);
+	$accountingaccountcustomer = new AccountingAccount($db);
+	$accountingaccountcustomer->fetch(0, getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER'), true);
 
 	$accountingaccountcustomerwarranty = new AccountingAccount($db);
-
-	$accountingaccountcustomerwarranty->fetch(null, getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY'), true);
+	$accountingaccountcustomerwarranty->fetch(0, getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY'), true);
 
 	foreach ($tabfac as $key => $val) {		// Loop on each invoice
 		$errorforline = 0;
@@ -430,7 +449,7 @@ if ($action == 'writebookkeeping' && !$error) {
 		$totalcredit = 0;
 		$totaldebit = 0;
 
-		$db->begin();
+		$db->begin();		// We accept transaction into loop, so if we hang, we can continue transfer from the last error
 
 		$companystatic->id = $tabcompany[$key]['id'];
 		$companystatic->name = $tabcompany[$key]['name'];
@@ -446,7 +465,7 @@ if ($action == 'writebookkeeping' && !$error) {
 
 		$date = dol_print_date($val["date"], 'day');
 
-		// Is it a replaced invoice ? 0=not a replaced invoice, 1=replaced invoice not yet dispatched, 2=replaced invoice dispatched
+		// Is it a replaced invoice? 0=not a replaced invoice, 1=replaced invoice not yet dispatched, 2=replaced invoice dispatched
 		$replacedinvoice = 0;
 		if ($invoicestatic->close_code == Facture::CLOSECODE_REPLACED) {
 			$replacedinvoice = 1;
@@ -456,7 +475,7 @@ if ($action == 'writebookkeeping' && !$error) {
 			}
 		}
 
-		// If not already into bookkeeping, we won't add it. If yes, do nothing (should not happen because creating replacement not possible if invoice is accounted)
+		// If not already into bookkeeping, we won't add it. If yes, do nothing (should not happen because creating a replacement is not possible if invoice is accounted)
 		if ($replacedinvoice == 1) {
 			$db->rollback();
 			continue;
@@ -471,7 +490,7 @@ if ($action == 'writebookkeeping' && !$error) {
 
 		// Warranty
 		if (!$errorforline && getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')) {
-			if (isset($tabwaranty[$key]) && is_array($tabwarranty[$key])) {
+			if (isset($tabwarranty[$key]) && is_array($tabwarranty[$key])) {
 				foreach ($tabwarranty[$key] as $k => $mt) {
 					$bookkeeping = new BookKeeping($db);
 					$bookkeeping->doc_date = $val["date"];
@@ -480,7 +499,7 @@ if ($action == 'writebookkeeping' && !$error) {
 					$bookkeeping->date_creation = $now;
 					$bookkeeping->doc_type = 'customer_invoice';
 					$bookkeeping->fk_doc = $key;
-					$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
+					$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are the source of this record to add
 					$bookkeeping->thirdparty_code = $companystatic->code_client;
 
 					$bookkeeping->subledger_account = $tabcompany[$key]['code_compta'];
@@ -489,7 +508,7 @@ if ($action == 'writebookkeeping' && !$error) {
 					$bookkeeping->numero_compte = getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY');
 					$bookkeeping->label_compte = $accountingaccountcustomerwarranty->label;
 
-					$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("Retainedwarranty");
+					$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("RetainedWarranty");
 					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt >= 0) ? 'D' : 'C';
 					$bookkeeping->debit = ($mt >= 0) ? $mt : 0;
@@ -579,11 +598,18 @@ if ($action == 'writebookkeeping' && !$error) {
 		// Product / Service
 		if (!$errorforline) {
 			foreach ($tabht[$key] as $k => $mt) {
-				$resultfetch = $accountingaccount->fetch(null, $k, true);	// TODO Use a cache
+				if (empty($conf->cache['accountingaccountincurrententity'][$k])) {
+					$accountingaccount = new AccountingAccount($db);
+					$accountingaccount->fetch(0, $k, true);
+					$conf->cache['accountingaccountincurrententity'][$k] = $accountingaccount;
+				} else {
+					$accountingaccount = $conf->cache['accountingaccountincurrententity'][$k];
+				}
+
 				$label_account = $accountingaccount->label;
 
 				// get compte id and label
-				if ($resultfetch > 0) {
+				if ($accountingaccount->id > 0) {
 					$bookkeeping = new BookKeeping($db);
 					$bookkeeping->doc_date = $val["date"];
 					$bookkeeping->date_lim_reglement = $val["datereg"];
@@ -655,7 +681,7 @@ if ($action == 'writebookkeeping' && !$error) {
 
 				foreach ($arrayofvat[$key] as $k => $mt) {
 					if ($mt) {
-						$accountingaccount->fetch(null, $k, true);	// TODO Use a cache for label
+						$accountingaccount->fetch(0, $k, true);	// TODO Use a cache for label
 						$label_account = $accountingaccount->label;
 
 						$bookkeeping = new BookKeeping($db);
@@ -716,7 +742,7 @@ if ($action == 'writebookkeeping' && !$error) {
 			if (isset($tabrevenuestamp[$key]) && is_array($tabrevenuestamp[$key])) {
 				foreach ($tabrevenuestamp[$key] as $k => $mt) {
 					if ($mt) {
-						$accountingaccount->fetch(null, $k, true);    // TODO Use a cache for label
+						$accountingaccount->fetch(0, $k, true);    // TODO Use a cache for label
 						$label_account = $accountingaccount->label;
 
 						$bookkeeping = new BookKeeping($db);
@@ -849,7 +875,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 
 		$date = dol_print_date($val["date"], 'day');
 
-		// Is it a replaced invoice ? 0=not a replaced invoice, 1=replaced invoice not yet dispatched, 2=replaced invoice dispatched
+		// Is it a replaced invoice? 0=not a replaced invoice, 1=replaced invoice not yet dispatched, 2=replaced invoice dispatched
 		$replacedinvoice = 0;
 		if ($invoicestatic->close_code == Facture::CLOSECODE_REPLACED) {
 			$replacedinvoice = 1;
@@ -876,7 +902,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 				print '"'.length_accountg(getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY')).'"'.$sep;
 				print '"'.length_accounta(html_entity_decode($k)).'"'.$sep;
 				print '"'.$langs->trans("Thirdparty").'"'.$sep;
-				print '"'.mb_convert_encoding(dol_trunc($companystatic->name, 16), 'ISO-8859-1').' - '.$invoicestatic->ref.' - '.$langs->trans("Retainedwarranty").'"'.$sep;
+				print '"'.mb_convert_encoding(dol_trunc($companystatic->name, 16), 'ISO-8859-1').' - '.$invoicestatic->ref.' - '.$langs->trans("RetainedWarranty").'"'.$sep;
 				print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;
 				print '"'.($mt < 0 ? price(-$mt) : '').'"'.$sep;
 				print '"'.$journal.'"';
@@ -907,7 +933,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 		// Product / Service
 		foreach ($tabht[$key] as $k => $mt) {
 			$accountingaccount = new AccountingAccount($db);
-			$accountingaccount->fetch(null, $k, true);
+			$accountingaccount->fetch(0, $k, true);
 			//if ($mt) {
 			print '"'.$key.'"'.$sep;
 			print '"'.$date.'"'.$sep;
@@ -982,8 +1008,8 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 
 if (empty($action) || $action == 'view') {
 	$title = $langs->trans("GenerationOfAccountingEntries").' - '.$accountingjournalstatic->getNomUrl(0, 2, 1, '', 1);
-
-	llxHeader('', dol_string_nohtmltag($title));
+	$help_url = 'EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#G&eacute;n&eacute;ration_des_&eacute;critures_en_comptabilit&eacute;';
+	llxHeader('', dol_string_nohtmltag($title), $help_url, '', 0, 0, '', '', '', 'mod-accountancy accountancy-generation page-sellsjournal');
 
 	$nom = $title;
 	$nomlink = '';
@@ -1101,7 +1127,7 @@ if (empty($action) || $action == 'view') {
 
 		$date = dol_print_date($val["date"], 'day');
 
-		// Is it a replaced invoice ? 0=not a replaced invoice, 1=replaced invoice not yet dispatched, 2=replaced invoice dispatched
+		// Is it a replaced invoice? 0=not a replaced invoice, 1=replaced invoice not yet dispatched, 2=replaced invoice dispatched
 		$replacedinvoice = 0;
 		if ($invoicestatic->close_code == Facture::CLOSECODE_REPLACED) {
 			$replacedinvoice = 1;
@@ -1179,7 +1205,7 @@ if (empty($action) || $action == 'view') {
 					print $accountoshow;
 				}
 				print '</td>';
-				print "<td>" . $companystatic->getNomUrl(0, 'customer', 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("Retainedwarranty") . "</td>";
+				print "<td>" . $companystatic->getNomUrl(0, 'customer', 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("RetainedWarranty") . "</td>";
 				print '<td class="right nowraponall amount">' . ($mt >= 0 ? price($mt) : '') . "</td>";
 				print '<td class="right nowraponall amount">' . ($mt < 0 ? price(-$mt) : '') . "</td>";
 				print "</tr>";
@@ -1220,8 +1246,13 @@ if (empty($action) || $action == 'view') {
 
 		// Product / Service
 		foreach ($tabht[$key] as $k => $mt) {
-			$accountingaccount = new AccountingAccount($db);
-			$accountingaccount->fetch(null, $k, true);
+			if (empty($conf->cache['accountingaccountincurrententity'][$k])) {
+				$accountingaccount = new AccountingAccount($db);
+				$accountingaccount->fetch(0, $k, true);
+				$conf->cache['accountingaccountincurrententity'][$k] = $accountingaccount;
+			} else {
+				$accountingaccount = $conf->cache['accountingaccountincurrententity'][$k];
+			}
 
 			print '<tr class="oddeven">';
 			print "<!-- Product -->";

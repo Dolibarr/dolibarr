@@ -1,11 +1,13 @@
 <?php
-/* Copyright (C) 2013-2014	Olivier Geffroy			<jeff@jeffinfo.com>
- * Copyright (C) 2013-2024	Alexandre Spangaro		<aspangaro@easya.solutions>
- * Copyright (C) 2014-2015	Ari Elbaz (elarifr)		<github@accedinfo.com>
- * Copyright (C) 2013-2021	Florian Henry			<florian.henry@open-concept.pro>
- * Copyright (C) 2021      	Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>s
- * Copyright (C) 2016       Laurent Destailleur     <eldy@users.sourceforge.net>
+/* Copyright (C) 2013-2014	Olivier Geffroy				<jeff@jeffinfo.com>
+ * Copyright (C) 2013-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2014-2015	Ari Elbaz (elarifr)			<github@accedinfo.com>
+ * Copyright (C) 2013-2021	Florian Henry				<florian.henry@open-concept.pro>
+ * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2014		Juanjo Menent				<jmenent@2byte.es>s
+ * Copyright (C) 2016		Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,13 +100,13 @@ if (!$sortorder) {
 	}
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('accountancysupplierlist'));
 
 $formaccounting = new FormAccounting($db);
 $accountingAccount = new AccountingAccount($db);
 
-$chartaccountcode = dol_getIdFromCode($db, getDolGlobalInt('CHARTOFACCOUNTS'), 'accounting_system', 'rowid', 'pcg_version');
+$chartaccountcode = dol_getIdFromCode($db, getDolGlobalString('CHARTOFACCOUNTS'), 'accounting_system', 'rowid', 'pcg_version');
 
 // Security check
 if (!isModEnabled('accounting')) {
@@ -234,7 +236,7 @@ $formother = new FormOther($db);
 
 $help_url = 'EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#Liaisons_comptables';
 
-llxHeader('', $langs->trans("SuppliersVentilation"), $help_url);
+llxHeader('', $langs->trans("SuppliersVentilation"), $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-accountancy accountancy-supplier page-list');
 
 if (empty($chartaccountcode)) {
 	print $langs->trans("ErrorChartOfAccountSystemNotSelected");
@@ -452,8 +454,8 @@ if ($result) {
 	}
 
 	$arrayofmassactions = array(
-		'ventil' => img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Ventilate"),
-		'set_default_account' => img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("ConfirmPreselectAccount")
+		'set_default_account' => img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("ConfirmPreselectAccount"),
+		'ventil' => img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Ventilate")
 		//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 		//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	);
@@ -560,6 +562,8 @@ if ($result) {
 
 
 	$accountingaccount_codetotid_cache = array();
+	$suggestedaccountingaccountfor = '';
+	$suggestedaccountingaccountbydefaultfor = '';
 
 	while ($i < min($num_lines, $limit)) {
 		$objp = $db->fetch_object($result);
@@ -691,9 +695,9 @@ if ($result) {
 
 		// Description of line
 		$text = dolGetFirstLineOfText(dol_string_nohtmltag($facturefourn_static_det->desc, 1));
-		print '<td class="tdoverflowmax200 small" title="'.dol_escape_htmltag($text).'">';
-		$trunclength = getDolGlobalInt('ACCOUNTING_LENGTH_DESCRIPTION', 32);
-		print $form->textwithtooltip(dol_trunc($text, $trunclength), $facturefourn_static_det->desc);
+		print '<td class="tdoverflowmax150 small classfortooltip" title="'.dol_escape_htmltag($text).'">';
+		$trunclength = getDolGlobalInt('ACCOUNTING_LENGTH_DESCRIPTION');
+		print dol_trunc($text, $trunclength);
 		print '</td>';
 
 		print '<td class="right nowraponall amount">';

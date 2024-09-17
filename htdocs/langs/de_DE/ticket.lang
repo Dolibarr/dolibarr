@@ -5,35 +5,27 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 Module56000Name=Tickets
 Module56000Desc=Ticketsystem für das Issue- und Anfrage-Management
-
 Permission56001=Tickets einsehen
 Permission56002=Tickets ändern
 Permission56003=Tickets löschen
 Permission56004=Tickets bearbeiten
 Permission56005=Tickets aller Geschäftspartner anzeigen (nicht gültig für externe Benutzer, diese sehen immer nur die Tickets des eigenen Geschäftspartners)
 Permission56006=Tickets exportieren
-
 Tickets=Tickets
 TicketDictType=Ticket-Anfragearten
 TicketDictCategory=Ticket-Themengruppen
 TicketDictSeverity=Ticket-Dringlichkeiten
 TicketDictResolution=Ticket-Auflösung
-
 TicketTypeShortCOM=Anfrage an Verkauf
 TicketTypeShortHELP=Anfrage für Hilfe zur Bedienung
 TicketTypeShortISSUE=Problem oder Fehler
@@ -41,51 +33,39 @@ TicketTypeShortPROBLEM=Problem
 TicketTypeShortREQUEST=Änderungs- oder Erweiterungsanforderung
 TicketTypeShortPROJET=Projekt
 TicketTypeShortOTHER=Sonstige
-
 TicketSeverityShortLOW=Niedrig
 TicketSeverityShortNORMAL=Normal
 TicketSeverityShortHIGH=Hoch
 TicketSeverityShortBLOCKING=Kritisch, blockierend
-
 TicketCategoryShortOTHER=Sonstige
-
 ErrorBadEmailAddress=Feld '%s' ungültig
 MenuTicketMyAssign=Meine Tickets
 MenuTicketMyAssignNonClosed=Meine offenen Tickets
 MenuListNonClosed=Offene Tickets
-
 TypeContact_ticket_internal_CONTRIBUTOR=Mitwirkender
 TypeContact_ticket_internal_SUPPORTTEC=Zugewiesener Benutzer
 TypeContact_ticket_external_SUPPORTCLI=Kundenkontakt / Tracking
 TypeContact_ticket_external_CONTRIBUTOR=Externer Mitarbeiter
-
 OriginEmail=Ersteller E-Mail
+EmailReplyto='Reply to' der E-Mail
+EmailReferences=Referenzen in E-Mails
 Notify_TICKET_SENTBYMAIL=Ticket Nachricht per E-Mail versenden
-
 ExportDataset_ticket_1=Tickets
-
 # Status
 Read=Gelesen
 Assigned=Zugewiesen
 NeedMoreInformation=Warten auf Feedback des Erstellers
 NeedMoreInformationShort=Warten auf Feedback
-TicketAnswered=Beantwortet
 Waiting=Wartend
 SolvedClosed=Gelöst
 Deleted=Gelöscht
-
 # Dict
-Type=Typ
 Severity=Dringlichkeit
 TicketGroupIsPublic=Gruppe ist öffentlich
 TicketGroupIsPublicDesc=Falls eine Ticket-Themengruppe öffentlich ist, wird sie in der öffentlichen Oberfläche zum erstellen eines Tickets sichtbar sein
-
 # Email templates
 MailToSendTicketMessage=Um eine E-Mail mit der Ticketmeldung zu senden
-
-#
 # Admin page
-#
 TicketSetup=Einrichtung des Ticketmoduls
 TicketSettings=Einstellungen
 TicketPublicAccess=Ein öffentliches Interface (Nutzung ohne Identifizierung) ist unter dieser URL abrufbar:
@@ -134,6 +114,8 @@ TicketsActivatePublicInterface=Öffentliches Interface aktivieren
 TicketsActivatePublicInterfaceHelp=Mit dem öffentlichen Interface können alle Besucher Tickets eröffnen.
 TicketsAutoAssignTicket=Den Ersteller automatisch dem Ticket zuweisen
 TicketsAutoAssignTicketHelp=Wenn ein Ticket erstellt wird, kann der Ersteller automatisch dem Ticket zugewiesen werden.
+TicketAutoChangeStatusOnAnswer=Beim Beantworten einer Ticket-Anfrage automatisch einen Status zuweisen
+TicketAutoChangeStatusOnAnswerHelp=Wenn ein Benutzer auf ein Ticket antwortet, wird der Status dem Ticket automatisch zugewiesen
 TicketNumberingModules=Ticketnummerierungsmodul
 TicketsModelModule=Dokumentvorlagen für Tickets
 TicketNotifyTiersAtCreation=Geschäftspartner über Ticketerstellung informieren
@@ -157,10 +139,11 @@ TicketUseCaptchaCode=Verwenden Sie beim Erstellen eines Tickets einen grafischen
 TicketUseCaptchaCodeHelp=Fügt eine CAPTCHA-Überprüfung beim Erstellen eines neuen Tickets hinzu.
 TicketsAllowClassificationModificationIfClosed=Änderung der Klassifizierung geschlossener Tickets erlauben
 TicketsAllowClassificationModificationIfClosedHelp=Bearbeitung der Klassifizierung (Typ, Ticket Gruppe, Schweregrad) auch bei geschlossenen Tickets zulassen.
-
-#
+TicketAutoCheckNotifyThirdParty=Bei der Erstellung eines Tickets die Checkbox „Geschäftspartner über Ticket-Erstellung informieren“  automatisch aktivieren
+TicketAutoCheckNotifyThirdPartyHelp=Beim Erstellen eines Tickets wird die Option „Geschäftspartner über Ticket-Erstellung informieren“ automatisch aktiviert.
+TicketAssignContactToMessage=Einer Nachricht einen externen Kontakt zuweisen
+TicketAssignContactToMessageHelp=Wenn ein bekannter Kontakt auf eine Nachricht antwortet, wird sein Name in der Liste der Ticket-Nachrichten angezeigt.
 # Index & list page
-#
 TicketsIndex=Ticketübersicht
 TicketList=Liste der Tickets
 TicketAssignedToMeInfos=Diese Seite zeigt Tickets, welche vom aktuellen Benutzer erstellt wurden oder diesem zugeordnet sind.
@@ -175,10 +158,7 @@ ShowAsConversation=Als Konversationsliste anzeigen
 MessageListViewType=Als Tabellenliste anzeigen
 ConfirmMassTicketClosingSendEmail=Senden Sie automatisch E-Mails, wenn Sie Tickets schließen
 ConfirmMassTicketClosingSendEmailQuestion=Möchten Sie Geschäftspartner benachrichtigen, wenn Sie diese Tickets schließen?
-
-#
 # Ticket card
-#
 Ticket=Ticket
 TicketCard=Ticketkarte
 CreateTicket=Ticket erstellen
@@ -220,8 +200,8 @@ ConfirmAbandonTicket=Bestätigen Sie das Schließen des Tickets mit dem Status '
 ConfirmDeleteTicket=Soll dieses Ticket wirklich gelöscht werden?
 TicketDeletedSuccess=Ticket wurde gelöscht
 TicketMarkedAsClosed=Ticket als geschlossen markiert
-TicketDurationAuto=Dauer berechnen
-TicketDurationAutoInfos=Die Dauer wird automatisch aus dem Serviceauftrag ermittelt
+TicketDurationAuto=Dauer der Serviceaufträge
+TicketDurationAutoInfos=Dauer wird automatisch aus verbundenen Serviceaufträgen berechnet
 TicketUpdated=Ticket aktualisiert
 SendMessageByEmail=Mitteilung via E-Mail senden
 TicketNewMessage=Neue Mitteilung
@@ -250,7 +230,7 @@ TicketAssignedEmailBody=Das Ticket #%s wurde Ihnen durch %s zugewiesen
 TicketAssignedCustomerEmail=Ihr Ticket wurde zur Bearbeitung zugewiesen.
 TicketAssignedCustomerBody=Dies ist eine automatische E-Mail zur Bestätigung, dass Ihr Ticket zur Bearbeitung zugewiesen wurde.
 MarkMessageAsPrivate=Mitteilung als 'privat' kennzeichnen
-TicketMessageSendEmailHelp=Eine E-Mail wird an alle zugewiesenen Kontakte gesendet 
+TicketMessageSendEmailHelp=Eine E-Mail wird an alle zugewiesenen Kontakte gesendet
 TicketMessageSendEmailHelp2a=(interne Kontakte, aber auch externe Kontakte, außer wenn die Option „%s" ausgewählt ist)
 TicketMessageSendEmailHelp2b=(interne Kontakte, aber auch externe Kontakte)
 TicketMessagePrivateHelp=Diese Nachricht ist für externe Benutzer nicht sichtbar
@@ -278,20 +258,14 @@ TicketsDelayFromLastResponseTooLong=Seit der letzten Antwort auf dieses Ticket i
 TicketNoContractFoundToLink=Es wurde kein Vertrag gefunden, der automatisch mit diesem Ticket verknüpft werden könnte. Bitte verknüpfen Sie einen Vertrag manuell.
 TicketManyContractsLinked=Mehrere Verträge wurden automatisch mit diesem Ticket verknüpft. Vergewissern Sie sich, welche ausgewählt werden soll.
 TicketRefAlreadyUsed=Die Referenz [%s] wird bereits verwendet, Ihre neue Referenz ist [%s]
-
-#
 # Logs
-#
 TicketLogMesgReadBy=Ticket %s durch %s gelesen
 NoLogForThisTicket=Noch kein Log für dieses Ticket
 TicketLogAssignedTo=Ticket %s an %s zugewiesen
 TicketLogPropertyChanged=Ticket %s bearbeitet: Klassifizierung von %s auf %s geändert
 TicketLogClosedBy=Ticket %s geschlossen durch %s
 TicketLogReopen=Ticket %s erneut öffnen
-
-#
 # Public pages
-#
 TicketSystem=Ticketingsystem
 ShowListTicketWithTrackId=Zeige Ticketliste für Tracking ID
 ShowTicketWithTrackId=Zeige Ticket für Tracking ID
@@ -306,13 +280,13 @@ TicketNewEmailBodyCustomer=Automatische Bestätigung: Ihr Ticket wurde erfolgrei
 TicketNewEmailBodyInfosTicket=Informationen um das Ticket zu überwachen
 TicketNewEmailBodyInfosTrackId=Ticket-Trackingnummer: %s
 TicketNewEmailBodyInfosTrackUrl=Sie können den Fortschritt des Tickets anzeigen, indem Sie auf den folgenden Link klicken
-TicketNewEmailBodyInfosTrackUrlCustomer=Sie können den Fortschritt der Tickets im jeweiligen Interface mit dem folgenden Link anschauen
+TicketNewEmailBodyInfosTrackUrlCustomer=Sie können den Fortschritt des Tickets im öffentlichen Ticket-Portal verfolgen, indem Sie auf folgenden Link klicken
 TicketCloseEmailBodyInfosTrackUrlCustomer=Sie können den Verlauf dieses Tickets einsehen, indem Sie auf den folgenden Link klicken
 TicketEmailPleaseDoNotReplyToThisEmail=Bitte nicht via E-Mail Antworten, sondern den Link zum Interface verwenden.
 TicketPublicInfoCreateTicket=Mit diesem Formular können Sie ein Ticket in unserem Ticketingtool eröffnen.
 TicketPublicPleaseBeAccuratelyDescribe=Bitte Beschreiben Sie Ihr Anliegen möglichst genau. Je mehr Informationen Sie uns mitteilen, desto besser können wir die Anfrage bearbeiten.
 TicketPublicMsgViewLogIn=Bitte geben Sie die Ticket Tracking ID ein
-TicketTrackId=Öffentliche Tracking-ID
+TicketTrackId=Tracking-ID
 OneOfTicketTrackId=Eine der Tracking-IDs
 ErrorTicketNotFound=Ticket mit Tracking ID %s nicht gefunden!
 Subject=Thema
@@ -330,7 +304,6 @@ NumberOfTicketsByMonth=Anzahl der Tickets pro Monat
 NbOfTickets=Anzahl der Tickets
 ExternalContributors=Externe Mitwirkende
 AddContributor=Externen Mitwirkenden hinzufügen
-
 # notifications
 TicketCloseEmailSubjectCustomer=Ticket geschlossen
 TicketCloseEmailBodyCustomer=Dies ist eine automatische Nachricht, die Sie darüber informiert, dass das Ticket %s gerade geschlossen wurde.
@@ -342,12 +315,8 @@ TicketNotificationRecipient=Empfänger benachrirchtigen
 TicketNotificationLogMessage=Log Mitteilung
 TicketNotificationEmailBodyInfosTrackUrlinternal=Ticket im Interface anschauen
 TicketNotificationNumberEmailSent=E-Mail-Benachrichtigung an %s gesendet
-
 ActionsOnTicket=Ereignisse zu diesem Ticket
-
-#
 # Boxes
-#
 BoxLastTicket=Zuletzt erstellte Tickets
 BoxLastTicketDescription=Neueste Tickets (maximal %s)
 BoxLastTicketContent=
@@ -367,3 +336,4 @@ BoxNewTicketVSClose=Anzahl Tickets gegenüber geschlossenen Tickets (heute)
 TicketCreatedToday=Ticket heute erstellt
 TicketClosedToday=Ticket heute geschlossen
 KMFoundForTicketGroup=Wir haben Themen und FAQs gefunden, die Ihre Frage beantworten könnten. Wir bitte vor dem Absenden des Tickets darum, dort nachzusehen.
+SetTitle=Titel festlegen
