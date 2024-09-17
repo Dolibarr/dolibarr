@@ -35,7 +35,7 @@ NEW: Font param Look and Feel THEME_FONT_FAMILY (#29302)
 NEW: Param to show main menu logo in color (#29305)
 NEW: #27048 add form to globally set "VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT" variable (#27049)
 NEW: #29274 Add possibility to have different mail for autocopy for holiday (#29275)
-NEW: WebPortal module
+NEW: Module WebPortal experimental
 NEW: Module Bookcal is now experimental (TimeZone not yet supported)
 NEW: #24031 add option MAIN_GRANDTOTAL_LIST_SHOW to always show grand total to lists (#27247)
 NEW: #28070 Adding mobile phone to thirdparty
@@ -294,15 +294,18 @@ WARNING:
 --------
 
 The following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
-* Ldap class methods connect_bind() & dump_content() have been renamed
-* More class properties (with old name in french) are now deprecated in favor of the property name in english.
+* If a filter is defined into and extrafields "Select from a table", this filter MUST use the Universai Search Filter syntax (field:=:value) instead of field=value.
+  See https://wiki.dolibarr.org/index.php?title=Universal_Search_Filter_Syntax
+* The parameter $filter of methods fetchAll() does not accept array of SQL commands but must be a string of an Universal Search Filter syntax.
+  See https://wiki.dolibarr.org/index.php?title=Universal_Search_Filter_Syntax
+* The use of 'customurl' into $filter has been removed. Must use the USF syntax.
 * Some API HTTP return code were moved from 401 to 403 to better follow REST specification.
+* More class properties (with old name in french) are now deprecated in favor of the property name in english.
 * dolibarrtriggers class VERSION_XXX constants have been deprecated. Please use array dictionary VERSIONS['XXX'].
 * Properties ->date_update and ->date_modification were merged into date_modification.
 * All CLI tools (into /scripts) return a positive value to the shell if error (0 remains success) for a better
   cross platform compatibility. On linux the exit(-1) was caught as 255, it may be now exit(1) so will be caught as 1.
-* The parameter $filter of method fetchAll does not accept array of SQL but must be a string of an Universal Search Filter syntax.
-* Remove use of customurl into $filter. Must use the USF syntax.
+* Ldap class methods connect_bind() & dump_content() have been renamed
 * Use of dol_eval with parameter $returnvalue=0 is deprecated.
 * The signature for all ->delete() method has been modified to match the modulebuilder template (so first param is now always $user), except
   the delete for thirdparty (still accept the id of thirdparty to delete as first parameter). Will probably be modified into another version.
@@ -314,7 +317,7 @@ The following changes may create regressions for some external modules, but were
 * Removed trigger BILLREC_CREATEBILL. This trigger was not a CRUD event. If you used it, you can already use the trigger BILL_CREATE and
   test that ($object->fac_rec > 0) to know if creation trigger is from a recurring invoice or not. Also this old trigger was never enabled
   into table llx_c_action_trigger.
-* Renamings in expedition line table and class, fk_origin_line is now fk_elementdet in table and class.
+* Renaming into expedition line table and class: fk_origin_line is now fk_elementdet in table and class.
 * The signature of method fetch() of class CompanyBankAccount has been modified to match the signature of method Account->fetch()
 
 

@@ -329,7 +329,7 @@ llxHeader('', $title);
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
-$param = '';
+$param = 'id='.$object->id;
 if (!empty($mode)) {
 	$param .= '&mode='.urlencode($mode);
 }
