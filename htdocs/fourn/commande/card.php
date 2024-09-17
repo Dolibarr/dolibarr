@@ -371,13 +371,6 @@ if (empty($reshook)) {
 
 			$result = $object->setStatus($user, $newstatus);
 			if ($result > 0) {
-				// Currently the "Re-open" also remove the billed flag because there is no button "Set unpaid" yet.
-				$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur';
-				$sql .= ' SET billed = 0';
-				$sql .= ' WHERE rowid = '.((int) $object->id);
-
-				$resql = $db->query($sql);
-
 				if ($newstatus == 0) {
 					$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur';
 					$sql .= ' SET fk_user_approve = null, fk_user_approve2 = null, date_approve = null, date_approve2 = null';
@@ -403,6 +396,13 @@ if (empty($reshook)) {
 	 */
 	if ($action == 'classifybilled' && $usercancreate) {
 		$ret = $object->classifyBilled($user);
+		if ($ret < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
+
+	if ($action == 'classifyunbilled' && $usercancreate) {
+		$ret = $object->classifyUnBilled($user);
 		if ($ret < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -2708,6 +2708,11 @@ if ($action == 'create') {
 							print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NeedAtLeastOneInvoice")).'">'.$langs->trans("ClassifyBilled").'</a>';
 						}
 					}
+				}
+
+				// Classify unbilled manually
+				if ($usercancreate && $object->billed > 0 && $object->statut > $object::STATUS_DRAFT) {
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=classifyunbilled&token='.newToken().'">'.$langs->trans("ClassifyUnbilled").'</a>';
 				}
 
 				// Create a remote order using WebService only if module is activated
