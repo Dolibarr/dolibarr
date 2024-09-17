@@ -856,7 +856,6 @@ if (empty($reshook)) {
 				$clone->fournisseur = 0;
 				$clone->client = 0;
 
-
 				$db->begin();
 
 				$clone->context['createfromclone'] = 'createfromclone';
@@ -864,11 +863,10 @@ if (empty($reshook)) {
 				if ($id > 0) {
 					$clone->id = $id;
 				} else {
-					if ($clone->error == 'ErrorProductAlreadyExists') {
-						$refalreadyexists++;
+					if ($clone->error == 'ErrorThirdpartyAlreadyExists') {
 						$action = "";
 
-						$mesg = $langs->trans("ErrorProductAlreadyExists", $clone->ref);
+						$mesg = $langs->trans("ErrorThirdpartyAlreadyExists", $clone->ref);
 						$mesg .= ' <a href="' . $_SERVER["PHP_SELF"] . '?ref=' . $clone->ref . '">' . $langs->trans("ShowCardHere") . '</a>.';
 						setEventMessages($mesg, null, 'errors');
 					} else {
