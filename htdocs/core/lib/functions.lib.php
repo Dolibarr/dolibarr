@@ -10124,7 +10124,7 @@ function dol_osencode($str)
  *      Store also Code-Id into a cache to speed up next request on same table and key.
  *
  * 		@param	DoliDB				$db				Database handler
- * 		@param	string				$key			Code or Id to get Id or Code
+ * 		@param	string|int			$key			Code (string) or Id (int) to get Id or Code
  * 		@param	string				$tablename		Table name without prefix
  * 		@param	string				$fieldkey		Field to search the key into
  * 		@param	string				$fieldid		Field to get
