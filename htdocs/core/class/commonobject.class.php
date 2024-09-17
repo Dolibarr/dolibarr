@@ -7669,6 +7669,14 @@ abstract class CommonObject
 						$InfoFieldList = array_merge($InfoFieldList, explode(':', $tmpafter));
 					}
 					//var_dump($InfoFieldList);
+
+					// Fix better compatibility with some old extrafield syntax filter "(field=123)"
+					$reg = array();
+					if (preg_match('/^\(?([a-z0-9]+)([=<>]+)(\d+)\)?$/i', $InfoFieldList[4], $reg)) {
+						$InfoFieldList[4] = '('.$reg[1].':'.$reg[2].':'.$reg[3].')';
+					}
+
+					//var_dump($InfoFieldList);
 				}
 
 				//$Usf = empty($paramoptions[1]) ? '' :$paramoptions[1];
@@ -7724,8 +7732,8 @@ abstract class CommonObject
 						// We have to join on extrafield table
 						$errstr = '';
 						if (strpos($InfoFieldList[4], 'extra') !== false) {
-							$sql .= " as main, " . $this->db->prefix() . $InfoFieldList[0] . "_extrafields as extra";
-							$sqlwhere .= " WHERE extra.fk_object = main." . $InfoFieldList[2];
+							$sql .= " as main, " . $this->db->sanitize($this->db->prefix() . $InfoFieldList[0]) . "_extrafields as extra";
+							$sqlwhere .= " WHERE extra.fk_object = main." . $this->db->sanitize($InfoFieldList[2]);
 							$sqlwhere .= " AND " . forgeSQLFromUniversalSearchCriteria($InfoFieldList[4], $errstr, 1);
 						} else {
 							$sqlwhere .= " WHERE " . forgeSQLFromUniversalSearchCriteria($InfoFieldList[4], $errstr, 1);
@@ -7734,7 +7742,7 @@ abstract class CommonObject
 						$sqlwhere .= ' WHERE 1=1';
 					}
 
-					// Add Usf filter
+					// Add Usf filter on second line
 					/*
 					 if ($Usf) {
 					 $errorstr = '';
@@ -7893,6 +7901,13 @@ abstract class CommonObject
 					if ($tmpafter !== '') {
 						$InfoFieldList = array_merge($InfoFieldList, explode(':', $tmpafter));
 					}
+
+					// Fix better compatibility with some old extrafield syntax filter "(field=123)"
+					$reg = array();
+					if (preg_match('/^\(?([a-z0-9]+)([=<>]+)(\d+)\)?$/i', $InfoFieldList[4], $reg)) {
+						$InfoFieldList[4] = '('.$reg[1].':'.$reg[2].':'.$reg[3].')';
+					}
+
 					//var_dump($InfoFieldList);
 				}
 
@@ -7950,9 +7965,11 @@ abstract class CommonObject
 						}
 
 						// We have to join on extrafield table
+						$errstr = '';
 						if (strpos($InfoFieldList[4], 'extra') !== false) {
-							$sql .= ' as main, ' . $this->db->prefix() . $InfoFieldList[0] . '_extrafields as extra';
-							$sqlwhere .= " WHERE extra.fk_object = main." . $InfoFieldList[2] . " AND " . $InfoFieldList[4];
+							$sql .= ' as main, ' . $this->db->sanitize($this->db->prefix() . $InfoFieldList[0]) . '_extrafields as extra';
+							$sqlwhere .= " WHERE extra.fk_object = main." . $this->db->sanitize($InfoFieldList[2]);
+							$sqlwhere .= " AND " . $InfoFieldList[4];
 						} else {
 							$sqlwhere .= " WHERE " . $InfoFieldList[4];
 						}

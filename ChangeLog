@@ -35,7 +35,7 @@ NEW: Font param Look and Feel THEME_FONT_FAMILY (#29302)
 NEW: Param to show main menu logo in color (#29305)
 NEW: #27048 add form to globally set "VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT" variable (#27049)
 NEW: #29274 Add possibility to have different mail for autocopy for holiday (#29275)
-NEW: WebPortal module
+NEW: Module WebPortal experimental
 NEW: Module Bookcal is now experimental (TimeZone not yet supported)
 NEW: #24031 add option MAIN_GRANDTOTAL_LIST_SHOW to always show grand total to lists (#27247)
 NEW: #28070 Adding mobile phone to thirdparty
