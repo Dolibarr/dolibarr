@@ -215,6 +215,9 @@ if (empty($reshook) && $action == 'add') {
 	if (!$error) {
 		$societe = new Societe($db);
 
+		// TODO Support MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS
+
+
 		$societe->name = GETPOST('name', 'alphanohtml');
 
 		$societe->client = GETPOSTINT('client') ? GETPOSTINT('client') : $societe->client;
