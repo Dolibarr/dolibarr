@@ -8267,7 +8267,11 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 			$out = preg_replace('/&#x?[0-9]+/i', '', $out);	// For example if we have j&#x61vascript with an entities without the ; to hide the 'a' of 'javascript'.
 
 			// Keep only some html tags and remove also some 'javascript:' strings
-			$out = dol_string_onlythesehtmltags($out, 0, ($check == 'restricthtmlallowclass' ? 0 : 1), 1);
+			if ($check == 'restricthtmlallowclass' || $check == 'restricthtmlallowunvalid') {
+				$out = dol_string_onlythesehtmltags($out, 0, 0, 1);
+			} else {
+				$out = dol_string_onlythesehtmltags($out, 0, 1, 1);
+			}
 
 			// Keep only some html attributes and exclude non expected HTML attributes and clean content of some attributes (keep only alt=, title=...).
 			if (getDolGlobalString('MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES')) {

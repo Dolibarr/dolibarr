@@ -342,7 +342,7 @@ if (empty($sortfield)) {
 	}
 }
 
-$searchkey = GETPOST('searchstring', 'restricthtml');
+$searchkey = GETPOST('searchstring', 'restricthtmlallowunvalid');	// or 'none', must be same then $searchstring
 
 if ($action == 'replacesite' || $mode == 'replacesite') {	// Test on permission not required
 	$containertype = GETPOST('optioncontainertype', 'aZ09') != '-1' ? GETPOST('optioncontainertype', 'aZ09') : '';
@@ -584,7 +584,7 @@ if ($massaction == 'delcategory' && GETPOST('confirmmassaction', 'alpha') && $us
 
 // Replacement of string into pages
 if ($massaction == 'replace' && GETPOST('confirmmassaction', 'alpha') && $usercanedit) {
-	$replacestring = GETPOST('replacestring', 'none');
+	$replacestring = GETPOST('replacestring', 'restricthtmlallowunvalid');	// or 'none', must be same then $searchstring
 
 	$dolibarrdataroot = preg_replace('/([\\/]+)$/i', '', DOL_DATA_ROOT);
 	$allowimportsite = true;

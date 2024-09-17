@@ -660,7 +660,7 @@ if (getDolGlobalInt('MAIN_ACTIVATE_FILECACHE')) {
 } else {
 	print img_picto('', 'minus', 'class="pictofixedwidth"');
 }
-print ' '.$form->textwithpicto($langs->trans("EnableFileCache").' ('.$langs->trans("Widgets").')', $langs->trans("Option").' MAIN_ACTIVATE_FILECACHE');
+print $form->textwithpicto($langs->trans("EnableFileCache").' ('.$langs->trans("Widgets").')', $langs->trans("Option").' MAIN_ACTIVATE_FILECACHE');
 print ': '.yn(getDolGlobalInt('MAIN_ACTIVATE_FILECACHE'));
 print '<br>';
 
@@ -669,7 +669,7 @@ if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 } else {
 	print img_picto('', 'minus', 'class="pictofixedwidth"');
 }
-print ' MAIN_ENABLE_AJAX_TOOLTIP : ';
+print 'MAIN_ENABLE_AJAX_TOOLTIP : ';
 print yn(getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP'));
 print '<br>';
 
