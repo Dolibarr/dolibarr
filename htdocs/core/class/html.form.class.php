@@ -2261,9 +2261,27 @@ class Form
 						$textforempty = $show_empty;
 					}
 					$out .= '<option class="optiongrey" value="' . ($show_empty < 0 ? $show_empty : -1) . '"' . ((empty($selected) || in_array(-1, $selected)) ? ' selected' : '') . '>' . $textforempty . '</option>' . "\n";
+
+					$outarray[($show_empty < 0 ? $show_empty : -1)] = $textforempty;
+					$outarray2[($show_empty < 0 ? $show_empty : -1)] = array(
+						'id' => ($show_empty < 0 ? $show_empty : -1),
+						'label' => $textforempty,
+						'labelhtml' => $textforempty,
+						'color' => '',
+						'picto' => ''
+					);
 				}
 				if ($show_every) {
 					$out .= '<option value="-2"' . ((in_array(-2, $selected)) ? ' selected' : '') . '>-- ' . $langs->trans("Everybody") . ' --</option>' . "\n";
+
+					$outarray[-2] = '-- ' . $langs->trans("Everybody") . ' --';
+					$outarray2[-2] = array(
+						'id' => -2,
+						'label' => '-- ' . $langs->trans("Everybody") . ' --',
+						'labelhtml' => '-- ' . $langs->trans("Everybody") . ' --',
+						'color' => '',
+						'picto' => ''
+					);
 				}
 
 				$userstatic = new User($this->db);
@@ -4053,7 +4071,8 @@ class Form
 					'optstart' => &$optstart,
 					'optlabel' => &$optlabel,
 					'outvallabel' => &$outvallabel,
-					'outarrayentry' => &$outarrayentry
+					'outarrayentry' => &$outarrayentry,
+					'fk_soc' => $socid
 				);
 				$reshook = $hookmanager->executeHooks('selectProduitsFournisseurListOption', $parameters, $this);
 
@@ -6999,7 +7018,7 @@ class Form
 	 * @param int<0,1> 				$disabled 		Disable input fields
 	 * @param int|string			$fullday 		When a checkbox with id #fullday is checked, hours are set with 00:00 (if value if 'fulldaystart') or 23:59 (if value is 'fulldayend')
 	 * @param string 				$addplusone 	Add a link "+1 hour". Value must be name of another selectDate field.
-	 * @param int|string|array      $adddateof 		Add a link "Date of ..." using the following date. Must be array(array('adddateof'=>..., 'labeladddateof'=>...))
+	 * @param int|string|array      $adddateof 		Add a link "Date of ..." using the following date. Must be array(array('adddateof' => ..., 'labeladddateof' => ...))
 	 * @param string 				$openinghours 	Specify hour start and hour end for the select ex 8,20
 	 * @param int 					$stepminutes 	Specify step for minutes between 1 and 30
 	 * @param string 				$labeladddateof Label to use for the $adddateof parameter. Deprecated. Used only when $adddateof is not an array.
