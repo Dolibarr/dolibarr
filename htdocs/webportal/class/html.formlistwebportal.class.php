@@ -530,7 +530,6 @@ class FormListWebPortal
 			$html .= '<td data-label="' . $arrayfields['download_link']['label'] . '">';
 			$html .= '</td>';
 		}
-		$html .= '</tr>';
 		// Signature link
 		if ($elementEn == "propal" && getDolGlobalString("PROPOSAL_ALLOW_ONLINESIGN") != 0) {
 			if (!empty($arrayfields['signature_link']['checked'])) {
@@ -538,6 +537,7 @@ class FormListWebPortal
 				$html .= '</td>';
 			}
 		}
+		$html .= '</tr>';
 
 		$totalarray = array();
 		$totalarray['nbfield'] = 0;
