@@ -69,6 +69,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
+$hookmanager->initHooks(array('resource', 'resource_card', 'globalcard'));
 
 $result = restrictedArea($user, 'resource', $object->id, 'resource');
 
@@ -80,7 +81,6 @@ $permissiontodelete = $user->hasRight('resource', 'delete');
  * Actions
  */
 
-$hookmanager->initHooks(array('resource', 'resource_card', 'globalcard'));
 $parameters = array('resource_id' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
@@ -93,14 +93,14 @@ if (empty($reshook)) {
 			header("Location: ".$backtopage);
 			exit;
 		}
-		if ($action == 'add') {
+		if ($action == 'add') {	// Test on permission not required here
 			header("Location: ".DOL_URL_ROOT.'/resource/list.php');
 			exit;
 		}
 		$action = '';
 	}
 
-	if ($action == 'add' && $user->hasRight('resource', 'write')) {
+	if ($action == 'add' && $permissiontoadd) {
 		if (!$cancel) {
 			$error = '';
 
@@ -145,7 +145,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'update' && !$cancel && $user->hasRight('resource', 'write')) {
+	if ($action == 'update' && !$cancel && $permissiontoadd) {
 		$error = 0;
 
 		if (empty($ref)) {
@@ -194,7 +194,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'confirm_delete_resource' && $user->hasRight('resource', 'delete') && $confirm === 'yes') {
+	if ($action == 'confirm_delete_resource' && $permissiontodelete && $confirm === 'yes') {
 		$res = $object->fetch($id);
 		if ($res > 0) {
 			$result = $object->delete($user);
@@ -252,20 +252,21 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 
 		// Address
 		print '<tr><td class="tdtop">'.$form->editfieldkey('Address', 'address', '', $object, 0).'</td>';
-		print '<td colspan="3"><textarea name="address" id="address" class="quatrevingtpercent" rows="3" wrap="soft">';
+		print '<td><textarea name="address" id="address" class="quatrevingtpercent" rows="3" wrap="soft">';
 		print dol_escape_htmltag($object->address, 0, 1);
 		print '</textarea>';
 		print $form->widgetForTranslation("address", $object, $permissiontoadd, 'textarea', 'alphanohtml', 'quatrevingtpercent');
 		print '</td></tr>';
 
-		// Zip / Town
-		print '<tr><td>'.$form->editfieldkey('Zip', 'zipcode', '', $object, 0).'</td><td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>';
+		// Zip
+		print '<tr><td>'.$form->editfieldkey('Zip', 'zipcode', '', $object, 0).'</td><td>';
 		print $formresource->select_ziptown($object->zip, 'zipcode', array('town', 'selectcountry_id', 'state_id'), 0, 0, '', 'maxwidth100');
 		print '</td>';
-		if ($conf->browser->layout == 'phone') {
-			print '</tr><tr>';
-		}
-		print '<td>'.$form->editfieldkey('Town', 'town', '', $object, 0).'</td><td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>';
+		print '</tr>';
+
+		// Town
+		print '<tr>';
+		print '<td>'.$form->editfieldkey('Town', 'town', '', $object, 0).'</td><td>';
 		print $formresource->select_ziptown($object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'));
 		print $form->widgetForTranslation("town", $object, $permissiontoadd, 'string', 'alphanohtml', 'maxwidth100 quatrevingtpercent');
 		print '</td></tr>';
@@ -281,9 +282,9 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		// State
 		if (!getDolGlobalString('SOCIETE_DISABLE_STATE')) {
 			if ((getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 1 || getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 2)) {
-				print '<tr><td>'.$form->editfieldkey('Region-State', 'state_id', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">';
+				print '<tr><td>'.$form->editfieldkey('Region-State', 'state_id', '', $object, 0).'</td><td class="maxwidthonsmartphone">';
 			} else {
-				print '<tr><td>'.$form->editfieldkey('State', 'state_id', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">';
+				print '<tr><td>'.$form->editfieldkey('State', 'state_id', '', $object, 0).'</td><td class="maxwidthonsmartphone">';
 			}
 
 			if ($object->country_id) {
@@ -375,9 +376,6 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		print '<div class="fichecenter">';
 		print '<div class="underbanner clearboth"></div>';
 
-		/*---------------------------------------
-		 * View object
-		 */
 		print '<table class="border tableforfield centpercent">';
 
 		// Resource type

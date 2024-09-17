@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2017      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,7 +69,7 @@ function html_print_stripe_footer($fromcompany, $langs)
 	// Juridical status
 	$line1 = "";
 	if ($fromcompany->forme_juridique_code) {
-		$line1 .= ($line1 ? " - " : "").getFormeJuridiqueLabel($fromcompany->forme_juridique_code);
+		$line1 .= ($line1 ? " - " : "").getFormeJuridiqueLabel((string) $fromcompany->forme_juridique_code);
 	}
 	// Capital
 	if ($fromcompany->capital) {

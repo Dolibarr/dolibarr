@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2016		Jamal Elbaz			<jamelbaz@gmail.pro>
  * Copyright (C) 2016-2017	Alexandre Spangaro	<aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2023  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024	Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -113,12 +114,12 @@ class AccountancyCategory // extends CommonObject
 	public $active;
 
 	/**
-	 * @var array Lines cptbk
+	 * @var Object[] Lines cptbk
 	 */
 	public $lines_cptbk;
 
 	/**
-	 * @var array Lines display
+	 * @var Object[] Lines display
 	 */
 	public $lines_display;
 
@@ -133,7 +134,7 @@ class AccountancyCategory // extends CommonObject
 	public $sdcpermonth;
 
 	/**
-	 * @var array Sum debit credit per account
+	 * @var array<string,float> Sum debit credit per account
 	 */
 	public $sdcperaccount;
 
@@ -508,8 +509,8 @@ class AccountancyCategory // extends CommonObject
 	/**
 	 * Function to add an accounting account in an accounting category
 	 *
-	 * @param int $id_cat Id category
-	 * @param array $cpts list of accounts array
+	 * @param int					$id_cat		Id category
+	 * @param array<string,?string> $cpts		list of accounts array
 	 *
 	 * @return int Return integer <0 if KO, >0 if OK
 	 */
@@ -619,11 +620,11 @@ class AccountancyCategory // extends CommonObject
 	/**
 	 * Function to show result of an accounting account from the ledger with a direction and a period
 	 *
-	 * @param int|array	$cpt 				Accounting account or array of accounting account
+	 * @param int|array<?string>	$cpt 	Accounting account or array of accounting account
 	 * @param string 	$date_start			Date start
 	 * @param string 	$date_end			Date end
-	 * @param int 		$sens 				Sens of the account:  0: credit - debit (use this by default), 1: debit - credit
-	 * @param string	$thirdparty_code	Thirdparty code
+	 * @param int<0,1>	$sens 				Sens of the account:  0: credit - debit (use this by default), 1: debit - credit
+	 * @param string	$thirdparty_code	Third party code
 	 * @param int       $month 				Specific month - Can be empty
 	 * @param int       $year 				Specific year - Can be empty
 	 * @return integer 						Return integer <0 if KO, >= 0 if OK
@@ -635,8 +636,9 @@ class AccountancyCategory // extends CommonObject
 		$this->sdc = 0;
 		$this->sdcpermonth = array();
 
+		$listofaccount = '';
+
 		if (is_array($cpt)) {
-			$listofaccount = '';
 			foreach ($cpt as $cptcursor) {
 				if (! is_null($cptcursor)) {
 					if ($listofaccount) {
@@ -710,7 +712,7 @@ class AccountancyCategory // extends CommonObject
 	 * Function to get an array of all active custom groups (llx_c_accunting_categories) with their accounts from the chart of account (ll_accounting_acount)
 	 *
 	 * @param	int				$catid		Custom group ID
-	 * @return 	array|integer   		    Result in table (array), -1 if KO
+	 * @return array<string,array<int,array{id:int,code:string,label:string,position:string,category_type:string,formula:string,sens:string,account_number:string,account_label:string}>>|int<-1,-1>   		    Result in table (array), -1 if KO
 	 * @see getCats(), getCptsCat()
 	 */
 	public function getCatsCpts($catid = 0)
@@ -837,7 +839,7 @@ class AccountancyCategory // extends CommonObject
 	 * @param 	string 		$predefinedgroupwhere 	Sql criteria filter to select accounting accounts. This value must be sanitized and not come from an input of a user.
 	 * 												Example: "pcg_type = 'EXPENSE' AND fk_pcg_version = 'xx'"
 	 * 												Example: "fk_accounting_category = 99"
-	 * @return 	array|int							Array of accounting accounts or -1 if error
+	 * @return	array<array{id:int,account_number:string,account_label:string}>|int<-1,-1>		Array of accounting accounts or -1 if error
 	 * @see getCats(), getCatsCpts()
 	 */
 	public function getCptsCat($cat_id, $predefinedgroupwhere = '')
@@ -851,7 +853,7 @@ class AccountancyCategory // extends CommonObject
 		}
 
 		$pcgverid = getDolGlobalInt('CHARTOFACCOUNTS');
-		$pcgvercode = dol_getIdFromCode($this->db, $pcgverid, 'accounting_system', 'rowid', 'pcg_version');
+		$pcgvercode = dol_getIdFromCode($this->db, (string) $pcgverid, 'accounting_system', 'rowid', 'pcg_version');
 		if (empty($pcgvercode)) {
 			$pcgvercode = $pcgverid;
 		}

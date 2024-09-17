@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2022       Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -124,6 +125,7 @@ $storage = new DoliStorage($db, $conf, $keyforprovider);
 // $requestedpermissionsarray contains list of scopes.
 // Conversion into URL is done by Reflection on constant with name SCOPE_scope_in_uppercase
 $apiService = $serviceFactory->createService('Google', $credentials, $storage, $requestedpermissionsarray);
+'@phan-var-force  OAuth\OAuth2\Service\Google $apiService'; // createService is only ServiceInterface
 
 // access type needed to have oauth provider refreshing token
 // also note that a refresh token is sent only after a prompt
@@ -142,7 +144,8 @@ if (!getDolGlobalString($keyforparamsecret)) {
  * Actions
  */
 
-if ($action == 'delete') {
+if ($action == 'delete' && (!empty($user->admin) || $user->id == GETPOSTINT('userid'))) {
+	$storage->userid = GETPOSTINT('userid');
 	$storage->clearToken('Google');
 
 	setEventMessages($langs->trans('TokenDeleted'), null, 'mesgs');
@@ -183,7 +186,7 @@ if (!GETPOST('code')) {
 	// The redirect_uri is included into this $url
 
 	// Add more param
-	$url .= '&nonce='.bin2hex(random_bytes(64/8));
+	$url .= '&nonce='.bin2hex(random_bytes(64 / 8));
 
 	if ($forlogin) {
 		// TODO Add param hd. What is it for ?

@@ -409,6 +409,7 @@ foreach ($dirsociete as $dirroot) {
 
 				/** @var ModeleThirdPartyCode $modCodeTiers */
 				$modCodeTiers = new $file($db);
+				'@phan-var-force ModeleThirdPartyCode $modCodeTiers';
 
 				// Show modules according to features level
 				if ($modCodeTiers->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -426,6 +427,7 @@ foreach ($dirsociete as $dirroot) {
 }
 
 $arrayofmodules = dol_sort_array($arrayofmodules, 'position');
+'@phan-var-force array<string,ModeleThirdPartyCode> $arrayofmodules';  // Repeat type because of dol_sort_array
 
 foreach ($arrayofmodules as $file => $modCodeTiers) {
 	print '<tr class="oddeven">'."\n";
@@ -438,7 +440,7 @@ foreach ($arrayofmodules as $file => $modCodeTiers) {
 		print img_picto($langs->trans("Activated"), 'switch_on');
 		print "</td>\n";
 	} else {
-		$disabled = (isModEnabled('multicompany') && (is_object($mc) && !empty($mc->sharings['referent']) && $mc->sharings['referent'] != $conf->entity) ? true : false);
+		$disabled = (isModEnabled('multicompany') && ((is_object($mc) && !empty($mc->sharings['referent'])) && ($mc->sharings['referent'] != $conf->entity)));
 		print '<td class="center">';
 		if (!$disabled) {
 			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setcodeclient&token='.newToken().'&value='.urlencode($file).'">';
@@ -495,6 +497,7 @@ foreach ($dirsociete as $dirroot) {
 				}
 
 				$modCodeCompta = new $file();
+				'@phan-var-force ModeleAccountancyCode $modCodeTiers';
 
 				$arrayofmodules[$file] = $modCodeCompta;
 			}
@@ -504,6 +507,7 @@ foreach ($dirsociete as $dirroot) {
 }
 
 $arrayofmodules = dol_sort_array($arrayofmodules, 'position');
+'@phan-var-force array<string,ModeleAccountancyCode> $arrayofmodules';
 
 
 foreach ($arrayofmodules as $file => $modCodeCompta) {
@@ -586,6 +590,7 @@ foreach ($dirsociete as $dirroot) {
 				}
 
 				$module = new $classname($db);
+				'@phan-var-force ModeleThirdPartyDoc $module';
 
 				$modulequalified = 1;
 				if (!empty($module->version)) {
@@ -601,7 +606,7 @@ foreach ($dirsociete as $dirroot) {
 					print dol_escape_htmltag($module->name);
 					print "</td><td>\n";
 					if (method_exists($module, 'info')) {
-						print $module->info($langs);
+						print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
 					} else {
 						print $module->description;
 					}
@@ -717,9 +722,9 @@ foreach ($profid as $key => $val) {
 		$idprof_mandatory = 'SOCIETE_'.$key.'_MANDATORY';
 		$idprof_invoice_mandatory = 'SOCIETE_'.$key.'_INVOICE_MANDATORY';
 
-		$verif = (empty($conf->global->$idprof_unique) ? false : true);
-		$mandatory = (empty($conf->global->$idprof_mandatory) ? false : true);
-		$invoice_mandatory = (empty($conf->global->$idprof_invoice_mandatory) ? false : true);
+		$verif = !empty($conf->global->$idprof_unique);
+		$mandatory = !empty($conf->global->$idprof_mandatory);
+		$invoice_mandatory = !empty($conf->global->$idprof_invoice_mandatory);
 
 		if ($verif) {
 			print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofid&token='.newToken().'&value='.$key.'&status=0">';

@@ -122,9 +122,14 @@ class DoliDBMysqli extends DoliDB
 				$disableforcecharset = 0;	// Set to 1 to test without charset forcing
 				if (empty($disableforcecharset) && $this->db->character_set_name() != $clientmustbe) {
 					try {
-						//print "You should set the \$dolibarr_main_db_character_set and \$dolibarr_main_db_collation for the PHP to the one of the database ".$this->db->character_set_name();
-						dol_syslog(get_class($this)."::DoliDBMysqli You should set the \$dolibarr_main_db_character_set and \$dolibarr_main_db_collation for the PHP to the one of the database ".$this->db->character_set_name(), LOG_WARNING);
-						$this->db->set_charset($clientmustbe); // This set charset, but with a bad collation
+						dol_syslog(get_class($this)."::DoliDBMysqli You should set the \$dolibarr_main_db_character_set and \$dolibarr_main_db_collation for the PHP to the same as the database default, so to ".$this->db->character_set_name(). " or upgrade database default to ".$clientmustbe.".", LOG_WARNING);
+						// To get current charset:   USE databasename; SHOW VARIABLES LIKE 'character_set_database'
+						//                     or:   USE databasename; SELECT schema_name, default_character_set_name FROM information_schema.SCHEMATA;
+						// To get current collation: USE databasename; SHOW VARIABLES LIKE 'collation_database'
+						//                       or: USE databasename; SELECT schema_name, default_character_set_name FROM information_schema.SCHEMATA;
+						// To upgrade database default, you can do: ALTER DATABASE databasename CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+						$this->db->set_charset($clientmustbe); // This set charset, but with a bad collation (colllation is forced later)
 					} catch (Exception $e) {
 						print 'Failed to force character_set_client to '.$clientmustbe." (according to setup) to match the one of the server database.<br>\n";
 						print $e->getMessage();
@@ -816,7 +821,7 @@ class DoliDBMysqli extends DoliDB
 	 *	Create a table into database
 	 *
 	 *	@param	    string	$table 			Name of table
-	 *	@param	    array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>	$fields 		Tableau associatif [nom champ][tableau des descriptions]
+	 *	@param	    array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>	$fields 		Tableau associatif [nom champ][tableau des descriptions]
 	 *	@param	    string	$primary_key 	Nom du champ qui sera la clef primaire
 	 *	@param	    string	$type 			Type de la table
 	 *	@param	    array	$unique_keys 	Tableau associatifs Nom de champs qui seront clef unique => valeur

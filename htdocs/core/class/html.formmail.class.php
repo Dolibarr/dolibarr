@@ -1518,25 +1518,30 @@ class FormMail extends Form
 	 */
 	public function getModelEmailTemplate($htmlContent = 'message')
 	{
+		global $langs;
+
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/emaillayout.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$out = '<div id="template-selector" class="template-container hidden">';
 		$templates = array(
 			'empty' => 'empty',
-			'basic' => 'basic',
 		);
-		//if (getDolGlobalInt('MAIN_FEATURES_LEVEL') > 1) {
-			$templates['news'] = 'news';
-			$templates['commerce'] = 'commerce';
-			//$templates['text'] = 'text';
+
+		$arrayoflayoutemplates = dol_dir_list(DOL_DOCUMENT_ROOT.'/install/doctemplates/maillayout/', 'files', 0, '\.html$');
+		foreach ($arrayoflayoutemplates as $layouttemplatefile) {
+			$layoutname = preg_replace('/\.html$/i', '', $layouttemplatefile['name']);
+			$templates[$layoutname] = ucfirst($layoutname);
+		}
 		//}
+		// TODO Add a hook to allow to complete the list
 
 		foreach ($templates as $template => $templateFunction) {
 			$contentHtml = getHtmlOfLayout($template);
 
 			$out .= '<div class="template-option" data-template="'.$template.'" data-content="'.htmlentities($contentHtml).'">';
 			$out .= '<img class="maillayout" alt="'.$template.'" src="'.DOL_URL_ROOT.'/theme/common/maillayout/'.$template.'.png" />';
-			$out .= '<span class="template-option-text">'.ucfirst($template).'</span>';
+			$out .= '<span class="template-option-text">'.$langs->trans($templateFunction).'</span>';
 			$out .= '</div>';
 		}
 		$out .= '</div>';
@@ -1545,8 +1550,13 @@ class FormMail extends Form
 			$(document).ready(function() {
 				$(".template-option").click(function() {
 					var template = $(this).data("template");
+					var subject = jQuery("#subject").val();
+					var fromtype = jQuery("#fromtype").val();
+					var sendto = jQuery("#sendto").val();
+					var sendtocc = jQuery("#sendtocc").val();
+					var sendtoccc = jQuery("#sendtoccc").val();
 
-					console.log("We choose a layout for email template " + template);
+					console.log("We choose a layout for email template=" + template + ", subject="+subject);
 
 					$(".template-option").removeClass("selected");
 					$(this).addClass("selected");
@@ -1554,20 +1564,17 @@ class FormMail extends Form
 					var contentHtml = $(this).data("content");
 					var csrfToken = "'.newToken().'";
 
-
 					// get value of sujet input
 					var subject = $("#sujet").val();
 
 					// Remplacer la variable de substitution dans le contenu HTML
 					contentHtml = contentHtml.replace(/__SUBJECT__/g, subject);
-
-
-
+          
 					// Envoyer le contenu HTML à process_template.php pour traitement PHP
 					$.ajax({
 						type: "POST",
-						url: "/core/ajax/mailtemplate.php",
-						data: { content: contentHtml, token: csrfToken },
+						url: "'.DOL_URL_ROOT.'/core/ajax/mailtemplate.php",
+						data: { template: template, subject: subject, fromtype: fromtype, sendto: sendto, sendtocc: sendtocc, sendtoccc: sendtoccc, content: contentHtml, token: csrfToken },
 						success: function(response) {
 							jQuery("#'.dol_sanitizeKeyCode($htmlContent).'").val(response);
 							var editorInstance = CKEDITOR.instances["'.dol_sanitizeKeyCode($htmlContent).'"];
@@ -1772,14 +1779,14 @@ class FormMail extends Form
 	}
 
 	/**
-	 *      Find if template exists and are available for current user, then set them into $this->lines_model.
-	 *      Search into table c_email_templates
+	 *	Find if template exists and are available for current user, then set them into $this->lines_model.
+	 *	Search in table c_email_templates
 	 *
-	 * 		@param	string		$type_template		Get message for key module
-	 *      @param	User		$user				Use template public or limited to this user
-	 *      @param	Translate	$outputlangs		Output lang object
-	 *      @param  int         $active         	1=Only active template, 0=Only disabled, -1=All
-	 *      @return	int		                    	Return integer <0 if KO, nb of records found if OK
+	 *	@param	string		$type_template	Get message for key module
+	 *	@param	User		$user			Use template public or limited to this user
+	 *	@param	?Translate	$outputlangs	Output lang object
+	 *	@param  int<-1,1>	$active			1=Only active template, 0=Only disabled, -1=All
+	 *	@return	int<-1,max>					Return integer <0 if KO, nb of records found if OK
 	 */
 	public function fetchAllEMailTemplate($type_template, $user, $outputlangs, $active = 1)
 	{
@@ -2030,30 +2037,30 @@ class ModelMail extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields=array(
-		"rowid" => array("type"=>"integer", "label"=>"TechnicalID", "enabled"=>"1", 'position'=>10, 'notnull'=>1, "visible"=>"-1",),
-		"module" => array("type"=>"varchar(32)", "label"=>"Module", "enabled"=>"1", 'position'=>20, 'notnull'=>0, "visible"=>"-1",),
-		"type_template" => array("type"=>"varchar(32)", "label"=>"Typetemplate", "enabled"=>"1", 'position'=>25, 'notnull'=>0, "visible"=>"-1",),
-		"lang" => array("type"=>"varchar(6)", "label"=>"Lang", "enabled"=>"1", 'position'=>30, 'notnull'=>0, "visible"=>"-1",),
-		"private" => array("type"=>"smallint(6)", "label"=>"Private", "enabled"=>"1", 'position'=>35, 'notnull'=>1, "visible"=>"-1",),
-		"fk_user" => array("type"=>"integer:User:user/class/user.class.php", "label"=>"Fkuser", "enabled"=>"1", 'position'=>40, 'notnull'=>0, "visible"=>"-1", "css"=>"maxwidth500 widthcentpercentminusxx", "csslist"=>"tdoverflowmax150",),
-		"datec" => array("type"=>"datetime", "label"=>"DateCreation", "enabled"=>"1", 'position'=>45, 'notnull'=>0, "visible"=>"-1",),
-		"tms" => array("type"=>"timestamp", "label"=>"DateModification", "enabled"=>"1", 'position'=>50, 'notnull'=>1, "visible"=>"-1",),
-		"label" => array("type"=>"varchar(255)", "label"=>"Label", "enabled"=>"1", 'position'=>55, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1", "css"=>"minwidth300", "cssview"=>"wordbreak", "csslist"=>"tdoverflowmax150",),
-		"position" => array("type"=>"smallint(6)", "label"=>"Position", "enabled"=>"1", 'position'=>60, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
-		"active" => array("type"=>"integer", "label"=>"Active", "enabled"=>"1", 'position'=>65, 'notnull'=>1, "visible"=>"-1", "alwayseditable"=>"1",),
-		"topic" => array("type"=>"text", "label"=>"Topic", "enabled"=>"1", 'position'=>70, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
-		"content" => array("type"=>"mediumtext", "label"=>"Content", "enabled"=>"1", 'position'=>75, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
-		"content_lines" => array("type"=>"text", "label"=>"Contentlines", "enabled"=>"1", 'position'=>80, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
-		"enabled" => array("type"=>"varchar(255)", "label"=>"Enabled", "enabled"=>"1", 'position'=>85, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
-		"joinfiles" => array("type"=>"varchar(255)", "label"=>"Joinfiles", "enabled"=>"1", 'position'=>90, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
-		"email_from" => array("type"=>"varchar(255)", "label"=>"Emailfrom", "enabled"=>"1", 'position'=>95, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
-		"email_to" => array("type"=>"varchar(255)", "label"=>"Emailto", "enabled"=>"1", 'position'=>100, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
-		"email_tocc" => array("type"=>"varchar(255)", "label"=>"Emailtocc", "enabled"=>"1", 'position'=>105, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
-		"email_tobcc" => array("type"=>"varchar(255)", "label"=>"Emailtobcc", "enabled"=>"1", 'position'=>110, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
-		"defaultfortype" => array("type"=>"smallint(6)", "label"=>"Defaultfortype", "enabled"=>"1", 'position'=>115, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
+	public $fields = array(
+		"rowid" => array("type" => "integer", "label" => "TechnicalID", "enabled" => "1", 'position' => 10, 'notnull' => 1, "visible" => "-1",),
+		"module" => array("type" => "varchar(32)", "label" => "Module", "enabled" => "1", 'position' => 20, 'notnull' => 0, "visible" => "-1",),
+		"type_template" => array("type" => "varchar(32)", "label" => "Typetemplate", "enabled" => "1", 'position' => 25, 'notnull' => 0, "visible" => "-1",),
+		"lang" => array("type" => "varchar(6)", "label" => "Lang", "enabled" => "1", 'position' => 30, 'notnull' => 0, "visible" => "-1",),
+		"private" => array("type" => "smallint(6)", "label" => "Private", "enabled" => "1", 'position' => 35, 'notnull' => 1, "visible" => "-1",),
+		"fk_user" => array("type" => "integer:User:user/class/user.class.php", "label" => "Fkuser", "enabled" => "1", 'position' => 40, 'notnull' => 0, "visible" => "-1", "css" => "maxwidth500 widthcentpercentminusxx", "csslist" => "tdoverflowmax150",),
+		"datec" => array("type" => "datetime", "label" => "DateCreation", "enabled" => "1", 'position' => 45, 'notnull' => 0, "visible" => "-1",),
+		"tms" => array("type" => "timestamp", "label" => "DateModification", "enabled" => "1", 'position' => 50, 'notnull' => 1, "visible" => "-1",),
+		"label" => array("type" => "varchar(255)", "label" => "Label", "enabled" => "1", 'position' => 55, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1", "css" => "minwidth300", "cssview" => "wordbreak", "csslist" => "tdoverflowmax150",),
+		"position" => array("type" => "smallint(6)", "label" => "Position", "enabled" => "1", 'position' => 60, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
+		"active" => array("type" => "integer", "label" => "Active", "enabled" => "1", 'position' => 65, 'notnull' => 1, "visible" => "-1", "alwayseditable" => "1",),
+		"topic" => array("type" => "text", "label" => "Topic", "enabled" => "1", 'position' => 70, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
+		"content" => array("type" => "mediumtext", "label" => "Content", "enabled" => "1", 'position' => 75, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
+		"content_lines" => array("type" => "text", "label" => "Contentlines", "enabled" => "1", 'position' => 80, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
+		"enabled" => array("type" => "varchar(255)", "label" => "Enabled", "enabled" => "1", 'position' => 85, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
+		"joinfiles" => array("type" => "varchar(255)", "label" => "Joinfiles", "enabled" => "1", 'position' => 90, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
+		"email_from" => array("type" => "varchar(255)", "label" => "Emailfrom", "enabled" => "1", 'position' => 95, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
+		"email_to" => array("type" => "varchar(255)", "label" => "Emailto", "enabled" => "1", 'position' => 100, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
+		"email_tocc" => array("type" => "varchar(255)", "label" => "Emailtocc", "enabled" => "1", 'position' => 105, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
+		"email_tobcc" => array("type" => "varchar(255)", "label" => "Emailtobcc", "enabled" => "1", 'position' => 110, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
+		"defaultfortype" => array("type" => "smallint(6)", "label" => "Defaultfortype", "enabled" => "1", 'position' => 115, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
 	);
 	public $rowid;
 	public $type_template;
@@ -2127,6 +2134,7 @@ class ModelMail extends CommonObject
 		$this->ismultientitymanaged = 0;
 		$this->isextrafieldmanaged = 1;
 
+		// @phan-suppress-next-line PhanTypeMismatchProperty
 		if (!getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid']) && !empty($this->fields['ref'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}

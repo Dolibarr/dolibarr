@@ -340,7 +340,7 @@ $formadmin = new FormAdmin($db);
 
 $help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
 
-llxHeader('', $langs->trans("Pcg_version"), $help_url);
+llxHeader('', $langs->trans("Pcg_version"), $help_url, '', 0, 0, '', '', '', 'mod-accountancy page-admin_accountmodel');
 
 $titre = $langs->trans($tablib[$id]);
 $linkback = '';

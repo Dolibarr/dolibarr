@@ -1,3 +1,6 @@
+IntraCommReport=Intracomm report
+IntraCommReports=Intracomm reports
+
 Module68000Name = Intracomm report
 Module68000Desc = Intracomm report management (Support for French DEB/DES format)
 IntracommReportSetup = Intracommreport module setup
@@ -32,3 +35,4 @@ IntracommReportTypeDeclaration=Type of declaration
 IntracommReportDownload=download XML file
 # Invoice
 IntracommReportTransportMode=Transport mode
+DeleteIntraCommReport=Delete IntraComm report

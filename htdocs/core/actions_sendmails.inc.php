@@ -289,10 +289,10 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 				$from = dol_string_nospecial($conf->global->MAIN_INFO_SOCIETE_NOM, ' ', array(",")).' <' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL').'>';
 			} elseif (preg_match('/user_aliases_(\d+)/', $fromtype, $reg)) {
 				$tmp = explode(',', $user->email_aliases);
-				$from = trim($tmp[($reg[1] - 1)]);
+				$from = trim($tmp[((int) $reg[1] - 1)]);
 			} elseif (preg_match('/global_aliases_(\d+)/', $fromtype, $reg)) {
 				$tmp = explode(',', getDolGlobalString('MAIN_INFO_SOCIETE_MAIL_ALIASES'));
-				$from = trim($tmp[($reg[1] - 1)]);
+				$from = trim($tmp[((int) $reg[1] - 1)]);
 			} elseif (preg_match('/senderprofile_(\d+)_(\d+)/', $fromtype, $reg)) {
 				$sql = 'SELECT rowid, label, email FROM '.MAIN_DB_PREFIX.'c_email_senderprofile';
 				$sql .= ' WHERE rowid = '.(int) $reg[1];
@@ -331,7 +331,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 				$sendtobcc .= (getDolGlobalString($autocopy) ? (($sendtobcc ? ", " : "") . getDolGlobalString($autocopy)) : '');
 			}
 
-			$deliveryreceipt = GETPOST('deliveryreceipt');
+			$deliveryreceipt = GETPOSTINT('deliveryreceipt') ? 1 : 0;
 
 			if ($action == 'send' || $action == 'relance') {
 				$actionmsg2 = $langs->transnoentities('MailSentByTo', CMailFile::getValidAddress($from, 4, 0, 1), CMailFile::getValidAddress($sendto, 4, 0, 1));

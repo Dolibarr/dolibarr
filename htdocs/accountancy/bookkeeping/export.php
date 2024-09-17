@@ -4,7 +4,7 @@
  * Copyright (C) 2013-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2022       Lionel Vessiller        <lvessiller@open-dsi.fr>
  * Copyright (C) 2016-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Progiseize              <a.bisotti@progiseize.fr>
  * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
  *
@@ -172,7 +172,7 @@ if (!in_array($action, array('export_file', 'delmouv', 'delmouvconfirm')) && !GE
 			$search_date_end = strtotime($fiscalYear->date_end);
 		} else {
 			$month_start = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
-			$year_start = dol_print_date(dol_now(), '%Y');
+			$year_start = (int) dol_print_date(dol_now(), '%Y');
 			if (dol_print_date(dol_now(), '%m') < $month_start) {
 				$year_start--; // If current month is lower that starting fiscal month, we start last year
 			}
@@ -459,7 +459,7 @@ if (empty($reshook)) {
 		$param .= '&search_import_key='.urlencode($search_import_key);
 	}
 
-	if ($action == 'setreexport') {
+	if ($action == 'setreexport' && $user->hasRight('accounting', 'mouvements', 'export')) {
 		$setreexport = GETPOSTINT('value');
 		if (!dolibarr_set_const($db, "ACCOUNTING_REEXPORT", $setreexport, 'yesno', 0, '', $conf->entity)) {
 			$error++;
@@ -912,7 +912,7 @@ print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, 
 
 // Not display message when all the list of docs are included
 if (!getDolGlobalString('ACCOUNTING_REEXPORT')) {
-	print info_admin($langs->trans("WarningDataDisappearsWhenDataIsExported"), 0, 0, 0, 'hideonsmartphone info');
+	print info_admin($langs->trans("WarningDataDisappearsWhenDataIsExported"), 0, 0, '0', 'hideonsmartphone info');
 }
 
 //$topicmail = "Information";

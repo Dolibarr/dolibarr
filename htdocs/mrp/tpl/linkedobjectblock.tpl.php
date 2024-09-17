@@ -3,6 +3,7 @@
  * Copyright (C) 2013		Juanjo Menent   <jmenent@2byte.es>
  * Copyright (C) 2014       Marcos García   <marcosgdf@gmail.com>
  * Copyright (C) 2013-2020	Charlene BENKE	<charlie@patas-monkey.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,7 @@ global $user, $db, $hookmanager;
 global $noMoreLinkedObjectBlockAfter;
 
 $langs = $GLOBALS['langs'];
+'@phan-var-force Translate $langs';
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 $object = $GLOBALS['object'];
 

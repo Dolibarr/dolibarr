@@ -54,7 +54,7 @@ print '<span class="opacitymedium">'.$langs->trans("FileCheckDesc").'</span><br>
 // Version
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
-print '<tr class="liste_titre"><td>'.$langs->trans("Version").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
+print '<tr class="liste_titre"><td>'.$langs->trans("Version").'</td><td></td></tr>'."\n";
 print '<tr class="oddeven"><td width="300">'.$langs->trans("VersionLastInstall").'</td><td>'.getDolGlobalString('MAIN_VERSION_LAST_INSTALL').'</td></tr>'."\n";
 print '<tr class="oddeven"><td width="300">'.$langs->trans("VersionLastUpgrade").'</td><td>'.getDolGlobalString('MAIN_VERSION_LAST_UPGRADE').'</td></tr>'."\n";
 print '<tr class="oddeven"><td width="300">'.$langs->trans("VersionProgram").'</td><td>'.DOL_VERSION;
@@ -119,6 +119,8 @@ $enableremotecheck = true;
 print '<form name="check" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print $langs->trans("MakeIntegrityAnalysisFrom").':<br>';
+
+print '<div class="divsection">';
 print '<!-- for a local check target=local&xmlshortfile=... -->'."\n";
 if (dol_is_file($xmlfile)) {
 	print '<input type="radio" name="target" id="checkboxlocal" value="local"'.((!GETPOST('target') || GETPOST('target') == 'local') ? 'checked="checked"' : '').'"> <label for="checkboxlocal">'.$langs->trans("LocalSignature").'</label> = ';
@@ -141,7 +143,9 @@ if ($enableremotecheck) {
 	}
 	print '<br>';
 }
-print '<br><div class="center"><input type="submit" name="check" class="button" value="'.$langs->trans("Check").'"></div>';
+print '</div>';
+
+print '<div class="center"><input type="submit" name="check" class="button" value="'.$langs->trans("Check").'"></div>';
 print '</form>';
 print '<br>';
 print '<br>';
@@ -235,7 +239,7 @@ if (empty($error) && !empty($xml)) {
 		}
 
 		if ($i == 0) {
-			$out .= '<tr class="oddeven"><td colspan="4" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+			$out .= '<tr class="oddeven"><td colspan="4"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 		}
 		$out .= '</table>';
 		$out .= '</div>';
@@ -292,7 +296,7 @@ if (empty($error) && !empty($xml)) {
 				$out .= "</tr>\n";
 			}
 		} else {
-			$out .= '<tr class="oddeven"><td colspan="4" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+			$out .= '<tr class="oddeven"><td colspan="4"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 		}
 		$out .= '</table>';
 		$out .= '</div>';
@@ -345,7 +349,7 @@ if (empty($error) && !empty($xml)) {
 			$out .= '<td class="right"></td>'."\n";
 			$out .= "</tr>\n";
 		} else {
-			$out .= '<tr class="oddeven"><td colspan="7" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+			$out .= '<tr class="oddeven"><td colspan="7"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 		}
 		$out .= '</table>';
 		$out .= '</div>';
@@ -384,7 +388,7 @@ if (empty($error) && !empty($xml)) {
 				$size = dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename']);
 				$totalsize += $size;
 				$out .= '<td class="right">'.dol_print_size($size).'</td>'."\n";
-				$out .= '<td class="right">'.dol_print_date(dol_filemtime(DOL_DOCUMENT_ROOT.'/'.$file['filename']), 'dayhour').'</td>'."\n";
+				$out .= '<td class="right nowraponall">'.dol_print_date(dol_filemtime(DOL_DOCUMENT_ROOT.'/'.$file['filename']), 'dayhour').'</td>'."\n";
 				$out .= "</tr>\n";
 			}
 			$out .= '<tr class="liste_total">';
@@ -396,7 +400,7 @@ if (empty($error) && !empty($xml)) {
 			$out .= '<td class="right"></td>'."\n";
 			$out .= "</tr>\n";
 		} else {
-			$out .= '<tr class="oddeven"><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+			$out .= '<tr class="oddeven"><td colspan="6"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 		}
 		$out .= '</table>';
 		$out .= '</div>';

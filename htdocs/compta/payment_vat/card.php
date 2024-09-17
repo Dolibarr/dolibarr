@@ -4,6 +4,8 @@
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2009 Regis Houssin         <regis.houssin@inodbox.com>
  * Copyright (C) 2021      Gauthier VERDOL       <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -132,7 +134,7 @@ $h = 0;
 $head = array();
 $head[$h][0] = DOL_URL_ROOT.'/compta/payment_vat/card.php?id='.$id;
 $head[$h][1] = $langs->trans("VATPayment");
-$hselected = $h;
+$hselected = (string) $h;
 $h++;
 
 /*$head[$h][0] = DOL_URL_ROOT.'/compta/payment_sc/info.php?id='.$id;
@@ -253,7 +255,7 @@ if ($resql) {
 			if ($objp->paye == 1) {	// If at least one invoice is paid, disable delete
 				$disable_delete = 1;
 			}
-			$total = $total + $objp->amount;
+			$total += $objp->amount;
 			$i++;
 		}
 	}

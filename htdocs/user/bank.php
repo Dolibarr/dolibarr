@@ -87,12 +87,12 @@ if (empty($account->userid)) {
 
 // Define value to know what current user can do on users
 $selfpermission = ($user->id == $id && $user->hasRight('user', 'self', 'creer'));
-$canadduser = (!empty($user->admin) || $user->hasRight('user', 'user', 'creer') || $user->hasRight('hrm', 'write_personal_information', 'write') );
-$canreaduser = (!empty($user->admin) || $user->hasRight('user', 'user', 'lire') || $user->hasRight('hrm', 'read_personal_information', 'read') );
+$usercanadd = (!empty($user->admin) || $user->hasRight('user', 'user', 'creer') || $user->hasRight('hrm', 'write_personal_information', 'write') );
+$usercanread = (!empty($user->admin) || $user->hasRight('user', 'user', 'lire') || $user->hasRight('hrm', 'read_personal_information', 'read') );
 $permissiontoaddbankaccount = ($user->hasRight('salaries', 'write') || $user->hasRight('hrm', 'employee', 'write') || $user->hasRight('user', 'user', 'creer') || $selfpermission);
 $permissiontoreadhr = $user->hasRight('hrm', 'read_personal_information', 'read') || $user->hasRight('hrm', 'write_personal_information', 'write');
 $permissiontowritehr = $user->hasRight('hrm', 'write_personal_information', 'write');
-$permissiontosimpleedit = ($selfpermission || $canadduser);
+$permissiontosimpleedit = ($selfpermission || $usercanadd);
 
 // Ok if user->hasRight('salaries', 'readall') or user->hasRight('hrm', 'read')
 //$result = restrictedArea($user, 'salaries|hrm', $object->id, 'user&user', $feature2);
@@ -196,7 +196,7 @@ if ($action == 'delete_confirmed' && !$cancel && $permissiontoaddbankaccount) {
 }
 
 // update birth
-if ($action == 'setbirth' && $canadduser && !$cancel) {
+if ($action == 'setbirth' && $usercanadd && !$cancel) {
 	$object->birth = dol_mktime(0, 0, 0, GETPOSTINT('birthmonth'), GETPOSTINT('birthday'), GETPOSTINT('birthyear'));
 	$result = $object->update($user);
 	if ($result < 0) {
@@ -223,7 +223,7 @@ if ($action == 'setpersonal_mobile' && $permissiontosimpleedit && !$cancel) {
 }
 
 // update accountancy_code
-if ($action == 'setaccountancy_code' && $canadduser && !$cancel) {
+if ($action == 'setaccountancy_code' && $usercanadd && !$cancel) {
 	$object->accountancy_code = (string) GETPOST('accountancy_code', 'alphanohtml');
 	$result = $object->update($user);
 	if ($result < 0) {
@@ -232,7 +232,7 @@ if ($action == 'setaccountancy_code' && $canadduser && !$cancel) {
 }
 
 // update ref_employee
-if ($action == 'setref_employee' && $canadduser && !$cancel) {
+if ($action == 'setref_employee' && $usercanadd && !$cancel) {
 	$object->ref_employee = (string) GETPOST('ref_employee', 'alphanohtml');
 	$result = $object->update($user);
 	if ($result < 0) {
@@ -241,7 +241,7 @@ if ($action == 'setref_employee' && $canadduser && !$cancel) {
 }
 
 // update national_registration_number
-if ($action == 'setnational_registration_number' && $canadduser && !$cancel) {
+if ($action == 'setnational_registration_number' && $usercanadd && !$cancel) {
 	$object->national_registration_number = (string) GETPOST('national_registration_number', 'alphanohtml');
 	$result = $object->update($user);
 	if ($result < 0) {
@@ -251,7 +251,7 @@ if ($action == 'setnational_registration_number' && $canadduser && !$cancel) {
 
 if (getDolGlobalString('MAIN_USE_EXPENSE_IK')) {
 	// update default_c_exp_tax_cat
-	if ($action == 'setdefault_c_exp_tax_cat' && $canadduser) {
+	if ($action == 'setdefault_c_exp_tax_cat' && $usercanadd) {
 		$object->default_c_exp_tax_cat = GETPOSTINT('default_c_exp_tax_cat');
 		$result = $object->update($user);
 		if ($result < 0) {
@@ -260,7 +260,7 @@ if (getDolGlobalString('MAIN_USE_EXPENSE_IK')) {
 	}
 
 	// update default range
-	if ($action == 'setdefault_range' && $canadduser) {
+	if ($action == 'setdefault_range' && $usercanadd) {
 		$object->default_range = GETPOSTINT('default_range');
 		$result = $object->update($user);
 		if ($result < 0) {
@@ -939,7 +939,7 @@ if ($id && ($action == 'edit' || $action == 'create') && $permissiontoaddbankacc
 	} elseif (empty($selectedcode)) {
 		$selectedcode = $mysoc->country_code;
 	}
-	$account->country_code = getCountry($selectedcode, 2); // Force country code on account to have following field on bank fields matching country rules
+	$account->country_code = getCountry($selectedcode, '2'); // Force country code on account to have following field on bank fields matching country rules
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("Country").'</td>';
 	print '<td class="maxwidth200onsmartphone">';

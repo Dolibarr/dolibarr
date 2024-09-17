@@ -123,7 +123,7 @@ if (getDolGlobalInt('TAKEPOS_BAR_RESTAURANT')) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("Parameters").'</td><td class="">'.$langs->trans("Value").'</td>';
+	print '<td>'.$langs->trans("Parameters").'</td><td class=""></td>';
 	print "</tr>\n";
 
 	print '<tr class="oddeven value"><td>';

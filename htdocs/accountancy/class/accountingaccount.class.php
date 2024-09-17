@@ -145,7 +145,7 @@ class AccountingAccount extends CommonObject
 	public $reconcilable;
 
 	/**
-	 * @var array cache array
+	 * @var array<string,int> cache array
 	 */
 	private $accountingaccount_codetotid_cache = array();
 
@@ -466,7 +466,7 @@ class AccountingAccount extends CommonObject
 	}
 
 	/**
-	 * Return clicable name (with picto eventually)
+	 * Return clickable name (with picto eventually)
 	 *
 	 * @param int $withpicto 0=No picto, 1=Include picto into link, 2=Only picto
 	 * @param int $withlabel 0=No label, 1=Include label of account
@@ -729,9 +729,9 @@ class AccountingAccount extends CommonObject
 	 * @param 	Product 							$product 			Product object sell or buy
 	 * @param 	Facture|FactureFournisseur 			$facture 			Facture
 	 * @param 	FactureLigne|SupplierInvoiceLine	$factureDet 		Facture Det
-	 * @param 	array 								$accountingAccount 	Array of Accounting account
+	 * @param 	array<string,int>					$accountingAccount 	Array of Accounting account
 	 * @param 	string 								$type 				Customer / Supplier
-	 * @return	array|int      											Array of accounting accounts suggested or < 0 if technical error.
+	 * @return	array{suggestedaccountingaccountbydefaultfor:string,suggestedaccountingaccountfor:string,suggestedid:?int,code_l:string,code_p:string,code_t:string}|int<-1,-1>	Array of accounting accounts suggested or < 0 if technical error.
 	 * 																	'suggestedaccountingaccountbydefaultfor'=>Will be used for the label to show on tooltip for account by default on any product
 	 * 																	'suggestedaccountingaccountfor'=>Is the account suggested for this product
 	 */
@@ -745,6 +745,7 @@ class AccountingAccount extends CommonObject
 		$parameters = array('buyer' => $buyer, 'seller' => $seller, 'product' => $product, 'facture' => $facture, 'factureDet' => $factureDet ,'accountingAccount' => $accountingAccount, 0 => $type);
 		$reshook = $hookmanager->executeHooks('accountancyBindingCalculation', $parameters); // Note that $action and $object may have been modified by some hooks
 
+		$result = -1;  // Init for static analysis
 		if (empty($reshook)) {
 			$const_name = '';
 			if ($type == 'customer') {

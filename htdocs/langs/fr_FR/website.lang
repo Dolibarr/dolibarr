@@ -49,8 +49,8 @@ VirtualhostDesc=Le nom de l'hôte virtuel ou du domaine (par exemple : www.myweb
 ToDeployYourWebsiteOnLiveYouHave3Solutions=Pour déployer ce site en live, vous avez 3 solutions...
 SetHereVirtualHost=<u> Utilisation avec Apache/NGinx/...</u> <br> Créez sur votre serveur Web (Apache, Nginx, ...) un hôte virtuel dédié avec PHP activé et un répertoire racine sur <br> <strong> %s </strong>
 ExampleToUseInApacheVirtualHostConfig=Exemple à utiliser dans la configuration de l'hôte virtuel Apache:
-YouCanAlsoTestWithPHPS=<u>Utiliser avec le serveur PHP intégré</u><br>Dans l'environnement de développement, vous pouvez préférez tester le site avec le serveur web embarqué PHP en exécutant
-YouCanAlsoDeployToAnotherWHP=<u>Gérez votre site Web dans un fournisseur d'hébergement Web Dolibarr</u><br>Si vous n'avez pas de serveur web comme Apache ou NGinx disponible sur internet, vous pouvez exporter et importer votre site web sur une autre instance Dolibarr fournie par un autre hébergeur Dolibarr qui offre une intégration complète avec le module Site Internet. Vous pouvez trouver une liste de certains hébergeurs Dolibarr sur <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a>
+YouCanAlsoTestWithPHPS=<u>Utiliser avec le serveur PHP intégré</u><br>Dans l'environnement de développement, vous pouvez préférer tester le site avec le serveur web embarqué PHP en exécutant
+YouCanAlsoDeployToAnotherWHP=<u>Gérez votre site Web chez un fournisseur d'hébergement Web Dolibarr</u><br>Si vous n'avez pas de serveur web comme Apache ou NGinx disponible sur internet, vous pouvez exporter et importer votre site web sur une autre instance Dolibarr fournie par un autre hébergeur Dolibarr qui offre une intégration complète avec le module Site Web. Vous pouvez trouver une liste de certains hébergeurs Dolibarr sur <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a>
 CheckVirtualHostPerms=Vérifiez également que l'utilisateur du virtual host (par exemple www-data) a la permission <strong> %s </strong> sur les fichiers dans<br><strong> %s </strong>
 ReadPerm=Lire
 WritePerm=Écrire
@@ -271,7 +271,8 @@ totalTaxIncl=Total (TTC)
 clickToClose=Cliquez pour fermer
 sidebarCategories=Catégories
 noSubCat=Pas de sous-catégorie
-specialPromo=Promotions spéciales
+specialPromo=Promotions
+allSpecials=Toutes les promotions
 newProducts=Nouveau produits
 allNewProducts= Tous les nouveaux produits
 view=Voir :

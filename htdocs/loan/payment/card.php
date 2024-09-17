@@ -1,5 +1,7 @@
 <?php
-/* Copyright (C) 2014-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+/* Copyright (C) 2014-2024	Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,7 +93,7 @@ $h = 0;
 
 $head[$h][0] = DOL_URL_ROOT.'/loan/payment/card.php?id='.$id;
 $head[$h][1] = $langs->trans("PaymentLoan");
-$hselected = $h;
+$hselected = (string) $h;
 $h++;
 
 print dol_get_fiche_head($head, $hselected, $langs->trans("PaymentLoan"), -1, 'payment');
@@ -202,7 +204,7 @@ if ($resql) {
 			if ($objp->paid == 1) {	// If at least one invoice is paid, disable delete
 				$disable_delete = 1;
 			}
-			$total = $total + $objp->amount_capital;
+			$total += $objp->amount_capital;
 			$i++;
 		}
 	}

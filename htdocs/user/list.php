@@ -6,6 +6,7 @@
  * Copyright (C) 2016		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière		<benjamin.faliere@altairis.fr>
+ * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -111,6 +112,7 @@ $fieldstosearchall = array(
 	'u.office_phone' => "PhonePro",
 	'u.user_mobile' => "PhoneMobile",
 	'u.email' => "EMail",
+	'co.label' => "Country",
 	'u.note_public' => "NotePublic",
 	'u.note_private' => "NotePrivate"
 );
@@ -135,6 +137,7 @@ $arrayfields = array(
 	'u.office_phone' => array('label' => "PhonePro", 'checked' => 1, 'position' => 31),
 	'u.user_mobile' => array('label' => "PhoneMobile", 'checked' => 1, 'position' => 32),
 	'u.email' => array('label' => "EMail", 'checked' => 1, 'position' => 35),
+	'co.label' => array('label' => "Country", 'checked' => 0, 'position' => 37),
 	'u.api_key' => array('label' => "ApiKey", 'checked' => 0, 'position' => 40, "enabled" => (isModEnabled('api') && $user->admin)),
 	'u.fk_soc' => array('label' => "Company", 'checked' => ($contextpage == 'employeelist' ? 0 : 1), 'position' => 45),
 	'u.ref_employee' => array('label' => "RefEmployee", 'checked' => -1, 'position' => 50, 'enabled' => (isModEnabled('hrm') && $permissiontoreadhr)),
@@ -147,8 +150,8 @@ $arrayfields = array(
 );
 
 if (getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 0) {
-	$arrayfields['u.datelastlogin'] = array('label'=>"LastConnexion", 'checked'=>1, 'position'=>100);
-	$arrayfields['u.datepreviouslogin'] = array('label'=>"PreviousConnexion", 'checked'=>0, 'position'=>110);
+	$arrayfields['u.datelastlogin'] = array('label' => "LastConnexion", 'checked' => 1, 'position' => 100);
+	$arrayfields['u.datepreviouslogin'] = array('label' => "PreviousConnexion", 'checked' => 0, 'position' => 110);
 }
 
 // Extra fields
@@ -171,6 +174,7 @@ $search_accountancy_code = GETPOST('search_accountancy_code', 'alpha');
 $search_phonepro = GETPOST('search_phonepro', 'alpha');
 $search_phonemobile = GETPOST('search_phonemobile', 'alpha');
 $search_email = GETPOST('search_email', 'alpha');
+$search_country = GETPOST('search_country', 'alpha');
 $search_api_key = GETPOST('search_api_key', 'alphanohtml');
 $search_status = GETPOST('search_status', 'intcomma');
 $search_thirdparty = GETPOST('search_thirdparty', 'alpha');
@@ -265,6 +269,7 @@ if (empty($reshook)) {
 		$search_phonepro = "";
 		$search_phonemobile = "";
 		$search_email = "";
+		$search_country = "";
 		$search_status = "";
 		$search_thirdparty = "";
 		$search_job = "";
@@ -379,7 +384,8 @@ $sql .= " u.datestartvalidity, u.dateendvalidity,";
 $sql .= " u.ldap_sid, u.statut as status, u.entity,";
 $sql .= " u.tms as date_modification, u.datec as date_creation,";
 $sql .= " u2.rowid as id2, u2.login as login2, u2.firstname as firstname2, u2.lastname as lastname2, u2.admin as admin2, u2.fk_soc as fk_soc2, u2.office_phone as ofice_phone2, u2.user_mobile as user_mobile2, u2.email as email2, u2.gender as gender2, u2.photo as photo2, u2.entity as entity2, u2.statut as status2,";
-$sql .= " s.nom as name, s.canvas";
+$sql .= " s.nom as name, s.canvas,";
+$sql .= " co.code as country_code, co.label as country_label";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -400,6 +406,7 @@ if (isset($extrafields->attributes[$object->table_element]['label']) && is_array
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_soc = s.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u2 ON u.fk_user = u2.rowid";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON u.fk_country = co.rowid";
 // Add table from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
@@ -450,6 +457,9 @@ if ($search_phonemobile != '') {
 }
 if ($search_email != '') {
 	$sql .= natural_search("u.email", $search_email);
+}
+if ($search_country != '') {
+	$sql .= " AND u.fk_country IN (".$db->sanitize($search_country).')';
 }
 if ($search_api_key != '') {
 	$sql .= natural_search("u.api_key", $search_api_key);
@@ -604,6 +614,9 @@ if ($search_phonemobile != '') {
 if ($search_email != '') {
 	$param .= "&amp;search_email=".urlencode($search_email);
 }
+if ($search_country != '') {
+	$param .= "&amp;search_country=".urlencode($search_country);
+}
 if ($search_api_key != '') {
 	$param .= "&amp;search_api_key=".urlencode($search_api_key);
 }
@@ -666,7 +679,7 @@ $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars p
 $newcardbutton .= dolGetButtonTitle($langs->trans('HierarchicView'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/user/hierarchy.php?mode=hierarchy'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', (($mode == 'hierarchy') ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
-$newcardbutton .= dolGetButtonTitle($langs->trans('NewUser'), '', 'fa fa-plus-circle', $url, '', $permissiontoadd);
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewUser'), '', 'fa fa-plus-circle', $url, '', (int) $permissiontoadd);
 
 /*$moreparam = array('morecss'=>'btnTitleSelected');
 $morehtmlright = dolGetButtonTitle($langs->trans("List"), '', 'fa fa-list paddingleft imgforviewmode', DOL_URL_ROOT.'/user/list.php'.(($search_status != '' && $search_status >= 0) ? '?search_status='.$search_status : ''), '', 1, $moreparam);
@@ -797,6 +810,11 @@ if (!empty($arrayfields['u.user_mobile']['checked'])) {
 if (!empty($arrayfields['u.email']['checked'])) {
 	print '<td class="liste_titre"><input type="text" name="search_email" class="maxwidth75" value="'.$search_email.'"></td>';
 }
+if (!empty($arrayfields['co.label']['checked'])) {
+	print '<td class="liste_titre">';
+	print $form->select_country($search_country, 'search_country', '', 0, 'minwidth100imp maxwidth100');
+	print '</td>';
+}
 if (!empty($arrayfields['u.api_key']['checked'])) {
 	print '<td class="liste_titre"><input type="text" name="search_api_key" class="maxwidth50" value="'.$search_api_key.'"></td>';
 }
@@ -909,6 +927,10 @@ if (!empty($arrayfields['u.email']['checked'])) {
 	print_liste_field_titre("EMail", $_SERVER['PHP_SELF'], "u.email", $param, "", "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
+if (!empty($arrayfields['co.label']['checked'])) {
+	print_liste_field_titre("Country", $_SERVER['PHP_SELF'], "co.label", $param, "", "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
 if (!empty($arrayfields['u.api_key']['checked'])) {
 	print_liste_field_titre("ApiKey", $_SERVER['PHP_SELF'], "u.api_key", $param, "", "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
@@ -995,10 +1017,6 @@ while ($i < $imaxinloop) {
 		break; // Should not happen
 	}
 
-	if (empty($obj->country_code)) {
-		$obj->country_code = '';		// TODO Add join in select with country table to get country_code
-	}
-
 	// Store properties in $object
 	$object->setVarsFromFetchObj($obj);
 
@@ -1020,6 +1038,8 @@ while ($i < $imaxinloop) {
 	$object->photo = $obj->photo;
 	$object->datestartvalidity = $db->jdate($obj->datestartvalidity);
 	$object->dateendvalidity = $db->jdate($obj->dateendvalidity);
+	$object->country_code = $obj->country_code;
+	$object->country = $obj->country_label;
 
 	$li = $object->getNomUrl(-1, '', 0, 0, 24, 1, 'login', '', 1);
 
@@ -1191,6 +1211,13 @@ while ($i < $imaxinloop) {
 		// Email
 		if (!empty($arrayfields['u.email']['checked'])) {
 			print '<td class="tdoverflowmax150">'.dol_print_email($obj->email, $obj->rowid, $obj->fk_soc, 1, 0, 0, 1)."</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Country
+		if (!empty($arrayfields['co.label']['checked'])) {
+			print '<td class="tdoverflowmax150">'.$obj->country_label."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

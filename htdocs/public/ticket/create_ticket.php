@@ -2,6 +2,8 @@
 /* Copyright (C) 2013-2016    Jean-François FERRY <hello@librethic.io>
  * Copyright (C) 2016         Christophe Battarel <christophe@altairis.fr>
  * Copyright (C) 2023         Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -231,7 +233,7 @@ if (empty($reshook)) {
 		// Check Captcha code if is enabled
 		if (getDolGlobalInt('MAIN_SECURITY_ENABLECAPTCHA_TICKET')) {
 			$sessionkey = 'dol_antispam_value';
-			$ok = (array_key_exists($sessionkey, $_SESSION) === true && (strtolower($_SESSION[$sessionkey]) === strtolower(GETPOST('code', 'restricthtml'))));
+			$ok = (array_key_exists($sessionkey, $_SESSION) && (strtolower($_SESSION[$sessionkey]) === strtolower(GETPOST('code', 'restricthtml'))));
 			if (!$ok) {
 				$error++;
 				array_push($object->errors, $langs->trans("ErrorBadValueForCode"));
@@ -532,7 +534,7 @@ if ($action != "infos_success") {
 
 	$formticket->param = array('returnurl' => $_SERVER['PHP_SELF'].($conf->entity > 1 ? '?entity='.$conf->entity : ''));
 
-	print load_fiche_titre($langs->trans('NewTicket'), '', '', 0, 0, 'marginleftonly');
+	print load_fiche_titre($langs->trans('NewTicket'), '', '', 0, '', 'marginleftonly');
 
 	if (!getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM')) {
 		$langs->load("errors");

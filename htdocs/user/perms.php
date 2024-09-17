@@ -74,6 +74,9 @@ if ($user->id == $id && (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user
 	accessforbidden();
 }
 
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('usercard', 'userperms', 'globalcard'));
+
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 if ($user->id != $id && !$canreaduser) {
 	accessforbidden();
@@ -84,10 +87,6 @@ $object->fetch($id, '', '', 1);
 $object->loadRights();
 
 $entity = $conf->entity;
-
-// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-$hookmanager->initHooks(array('usercard', 'userperms', 'globalcard'));
-
 
 /*
  * Actions
@@ -112,6 +111,7 @@ if (empty($reshook)) {
 		if ($object->id == $user->id) {
 			$user->clearrights();
 			$user->loadRights();
+			// @phan-suppress-next-line PhanRedefinedClassReference
 			$menumanager->loadMenu();
 		}
 
@@ -131,6 +131,7 @@ if (empty($reshook)) {
 		if ($object->id == $user->id) {
 			$user->clearrights();
 			$user->loadRights();
+			// @phan-suppress-next-line PhanRedefinedClassReference
 			$menumanager->loadMenu();
 		}
 
@@ -173,6 +174,7 @@ foreach ($modulesdir as $dir) {
 				if ($modName) {
 					include_once $dir.$file;
 					$objMod = new $modName($db);
+					'@phan-var-force DolibarrModules $objMod';
 
 					// Load all lang files of module
 					if (isset($objMod->langfiles) && is_array($objMod->langfiles)) {

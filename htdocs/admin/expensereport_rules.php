@@ -3,6 +3,7 @@
  * Copyright (C) 2017       ATM Consulting          <contact@atm-consulting.fr>
  * Copyright (C) 2017       Pierre-Henry Favre      <phf@atm-consulting.fr>
  * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -355,7 +356,7 @@ foreach ($rules as $rule) {
 	echo '</tr>';
 }
 
-if (count($rules) == 0) {
+if (!is_array($rules) || count($rules) == 0) {
 	print '<tr class="none"><td colspan="8"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 }
 

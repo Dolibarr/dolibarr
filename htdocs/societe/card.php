@@ -109,7 +109,7 @@ $confirm 	= GETPOST('confirm', 'alpha');
 $dol_openinpopup = '';
 if (!empty($backtopagejsfields)) {
 	$tmpbacktopagejsfields = explode(':', $backtopagejsfields);
-	$dol_openinpopup = $tmpbacktopagejsfields[0];
+	$dol_openinpopup = preg_replace('/[^a-z0-9_]/i', '', $tmpbacktopagejsfields[0]);
 }
 
 $socid = GETPOSTINT('socid') ? GETPOSTINT('socid') : GETPOSTINT('id');
@@ -201,7 +201,7 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
-	if ($action == 'confirm_merge' && $confirm == 'yes' && $user->hasRight('societe', 'creer')) {
+	if ($action == 'confirm_merge' && $confirm == 'yes' && $permissiontoadd) {
 		$soc_origin_id = GETPOSTINT('soc_origin');
 		$soc_origin = new Societe($db);		// The thirdparty that we will delete
 
@@ -235,20 +235,20 @@ if (empty($reshook)) {
 		$_POST["supplier_code"] = "Acompleter";
 	}
 
-	if ($action == 'set_localtax1') {
+	if ($action == 'set_localtax1' && $permissiontoadd) {
 		//get selected from combobox
 		$value = GETPOST('lt1');
 		$object->fetch($socid);
 		$res = $object->setValueFrom('localtax1_value', $value, '', null, 'text', '', $user, 'COMPANY_MODIFY');
 	}
-	if ($action == 'set_localtax2') {
+	if ($action == 'set_localtax2' && $permissiontoadd) {
 		//get selected from combobox
 		$value = GETPOST('lt2');
 		$object->fetch($socid);
 		$res = $object->setValueFrom('localtax2_value', $value, '', null, 'text', '', $user, 'COMPANY_MODIFY');
 	}
 
-	if ($action == 'update_extras') {
+	if ($action == 'update_extras' && $permissiontoadd) {
 		$object->fetch($socid);
 
 		$object->oldcopy = dol_clone($object, 2);
@@ -275,8 +275,7 @@ if (empty($reshook)) {
 	}
 
 	// Add new or update third party
-	if ((!GETPOST('getcustomercode') && !GETPOST('getsuppliercode'))
-	&& ($action == 'add' || $action == 'update') && $user->hasRight('societe', 'creer')) {
+	if ((!GETPOST('getcustomercode') && !GETPOST('getsuppliercode')) && ($action == 'add' || $action == 'update') && $permissiontoadd) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		if (!GETPOST('name')) {
@@ -307,7 +306,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			if ($action == 'update') {
+			if ($action == 'update') {	// Test on permission not required here
 				$ret = $object->fetch($socid);
 				$object->oldcopy = clone $object;
 			} else {
@@ -325,7 +324,7 @@ if (empty($reshook)) {
 			} else {
 				$object->name				= GETPOST('name', 'alphanohtml');
 			}
-			$object->entity					= (GETPOSTISSET('entity') ? GETPOSTINT('entity') : $conf->entity);
+			$object->entity					= ((GETPOSTISSET('entity') && GETPOST('entity') != '') ? GETPOSTINT('entity') : $conf->entity);
 			$object->name_alias				= GETPOST('name_alias', 'alphanohtml');
 			$object->parent					= GETPOSTISSET('parent_company_id') ? GETPOSTINT('parent_company_id') : $object->parent;
 			$object->address				= GETPOST('address', 'alphanohtml');
@@ -481,7 +480,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			if ($action == 'add') {
+			if ($action == 'add' && $permissiontoadd) {
 				$error = 0;
 
 				$db->begin();
@@ -635,7 +634,7 @@ if (empty($reshook)) {
 				}
 			}
 
-			if ($action == 'update') {
+			if ($action == 'update' && $permissiontoadd) {
 				$error = 0;
 
 				if (GETPOST('cancel', 'alpha')) {
@@ -812,32 +811,89 @@ if (empty($reshook)) {
 	}
 
 	// Set third-party type
-	if ($action == 'set_thirdpartytype' && $user->hasRight('societe', 'creer')) {
+	if ($action == 'set_thirdpartytype' && $permissiontoadd) {
 		$object->fetch($socid);
 		$result = $object->setThirdpartyType(GETPOSTINT('typent_id'));
 	}
 
 	// Set incoterm
-	if ($action == 'set_incoterms' && $user->hasRight('societe', 'creer') && isModEnabled('incoterm')) {
+	if ($action == 'set_incoterms' && $permissiontoadd && isModEnabled('incoterm')) {
 		$object->fetch($socid);
 		$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOSTINT('location_incoterms'));
 	}
 
 	// Set parent company
-	if ($action == 'set_thirdparty' && $user->hasRight('societe', 'creer')) {
+	if ($action == 'set_thirdparty' && $permissiontoadd) {
 		$object->fetch($socid);
 		$result = $object->setParent(GETPOSTINT('parent_id'));
 	}
 
 	// Set sales representatives
-	if ($action == 'set_salesrepresentatives' && $user->hasRight('societe', 'creer')) {
+	if ($action == 'set_salesrepresentatives' && $permissiontoadd) {
 		$object->fetch($socid);
 		$result = $object->setSalesRep(GETPOST('commercial', 'array'));
 	}
 
 	// warehouse
-	if ($action == 'setwarehouse' && $user->hasRight('societe', 'creer')) {
+	if ($action == 'setwarehouse' && $permissiontoadd) {
 		$result = $object->setWarehouse(GETPOSTINT('fk_warehouse'));
+	}
+
+	if ($action == 'confirm_clone' && $confirm != 'yes') {
+		$action = '';
+	}
+	//clone company essential info
+	if ($action == 'confirm_clone' && $confirm == 'yes' && $user->hasRight('societe', 'creer')) {
+		if ($object->id > 0) {
+			$error = 0;
+
+			$clone = dol_clone($object, 1);
+
+			if (!empty(GETPOST('clone_name'))) {
+				$clone->id = 0;
+				$clone->name = GETPOST('clone_name', 'alphanohtml');
+				$clone->status = 1;
+				$clone->fournisseur = 0;
+				$clone->client = 0;
+
+
+				$db->begin();
+
+				$clone->context['createfromclone'] = 'createfromclone';
+				$id = $clone->create($user);
+				if ($id > 0) {
+					$clone->id = $id;
+				} else {
+					if ($clone->error == 'ErrorProductAlreadyExists') {
+						$refalreadyexists++;
+						$action = "";
+
+						$mesg = $langs->trans("ErrorProductAlreadyExists", $clone->ref);
+						$mesg .= ' <a href="' . $_SERVER["PHP_SELF"] . '?ref=' . $clone->ref . '">' . $langs->trans("ShowCardHere") . '</a>.';
+						setEventMessages($mesg, null, 'errors');
+					} else {
+						setEventMessages(empty($clone->error) ? '' : $langs->trans($clone->error), $clone->errors, 'errors');
+					}
+					$error++;
+				}
+
+				unset($clone->context['createfromclone']);
+
+				if ($error) {
+					$db->rollback();
+				} else {
+					$db->commit();
+					$db->close();
+					header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
+					exit;
+				}
+			} else {
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NewRefForClone")), null, 'errors');
+			}
+		} else {
+			dol_print_error($db, $object->error, $object->errors);
+		}
+		$action = 'clone';
 	}
 
 	$id = $socid;
@@ -864,7 +920,7 @@ if (empty($reshook)) {
 
 
 /*
- *  View
+ * View
  */
 
 $form = new Form($db);
@@ -2608,14 +2664,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '</td></tr>';
 				}
 
-				// Webservices url/key
-				if (isModEnabled('webservicesclient')) {
-					print '<tr><td>'.$form->editfieldkey('WebServiceURL', 'webservices_url', '', $object, 0).'</td>';
-					print '<td><input type="text" name="webservices_url" id="webservices_url" value="'.$object->webservices_url.'"></td>';
-					print '<td>'.$form->editfieldkey('WebServiceKey', 'webservices_key', '', $object, 0).'</td>';
-					print '<td><input type="text" name="webservices_key" id="webservices_key" value="'.$object->webservices_key.'"></td></tr>';
-				}
-
 				// Logo
 				print '<tr class="hideonsmartphone">';
 				print '<td>'.$form->editfieldkey('Logo', 'photoinput', '', $object, 0).'</td>';
@@ -2666,7 +2714,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 					if (isModEnabled('accounting')) {
 						// Accountancy_code_sell
-						print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellCode").'</td>';
+						print '<tr><td>'.$langs->trans("ProductAccountancySellCode").'</td>';
 						print '<td>';
 						print $formaccounting->select_account($object->accountancy_code_sell, 'accountancy_code_sell', 1, '', 1, 1);
 						print '</td></tr>';
@@ -2678,7 +2726,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						print '</td></tr>';
 					} else { // For external software
 						// Accountancy_code_sell
-						print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellCode").'</td>';
+						print '<tr><td>'.$langs->trans("ProductAccountancySellCode").'</td>';
 						print '<td><input name="accountancy_code_sell" class="maxwidth200" value="'.$object->accountancy_code_sell.'">';
 						print '</td></tr>';
 
@@ -2700,10 +2748,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '</form>';
 		}
 	} else {
-		/*
-		 * View
-		 */
-
+		// View
 		if (!empty($object->id)) {
 			$res = $object->fetch_optionals();
 		}
@@ -2732,6 +2777,17 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			);
 
 			$formconfirm .= $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id, $langs->trans("MergeThirdparties"), $langs->trans("ConfirmMergeThirdparties"), "confirm_merge", $formquestion, 'no', 1, 250);
+		}
+
+		// Clone confirmation
+		if (($action == 'clone' && (empty($conf->use_javascript_ajax) || !empty($conf->dol_use_jmobile)))		// Output when action = clone if jmobile or no js
+		|| (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile))) {							// Always output when not jmobile nor js
+			// Define confirmation messages
+			$formquestionclone = array(
+			'text' => $langs->trans("ConfirmClone"),
+			0 => array('type' => 'text', 'name' => 'clone_name', 'label' => $langs->trans("NewSocNameForClone"), 'value' => empty($tmpcode) ? $langs->trans("CopyOf").' '.$object->nom : $tmpcode, 'morecss' => 'width250'),
+			);
+			$formconfirm .= $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneThirdparties', $object->name), 'confirm_clone', $formquestionclone, 'yes', 'action-clone', 350, 600);
 		}
 
 		// Call Hook formConfirm
@@ -3015,7 +3071,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 				// Customer
 				if ($object->prospect || $object->client || getDolGlobalString('THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT')) {
-					print '<tr><td>'.$langs->trans("CustomersCategoriesShort").'</td>';
+					print '<tr><td class="titlefieldmiddle">'.$langs->trans("CustomersCategoriesShort").'</td>';
 					print '<td>';
 					print $form->showCategories($object->id, Categorie::TYPE_CUSTOMER, 1);
 					print "</td></tr>";
@@ -3023,7 +3079,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				// Supplier
 				if (((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) && $object->fournisseur) {
-					print '<tr><td>'.$langs->trans("SuppliersCategoriesShort").'</td>';
+					print '<tr><td class="titlefieldmiddle">'.$langs->trans("SuppliersCategoriesShort").'</td>';
 					print '<td>';
 					print $form->showCategories($object->id, Categorie::TYPE_SUPPLIER, 1);
 					print "</td></tr>";
@@ -3032,7 +3088,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 
 			// Third-Party Type
-			print '<tr><td>';
+			print '<tr><td class="titlefieldmiddle">';
 			print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans('ThirdPartyType').'</td>';
 			if ($action != 'editthirdpartytype' && $user->hasRight('societe', 'creer')) {
 				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editthirdpartytype&token='.newToken().'&socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
@@ -3049,7 +3105,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			}
 
 			// Legal
-			print '<tr><td class="titlefield">'.$langs->trans('JuridicalStatus').'</td><td>'.$object->forme_juridique.'</td></tr>';
+			print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td>'.dolPrintHTML($object->forme_juridique).'</td></tr>';
 
 			// Capital
 			print '<tr><td>'.$langs->trans('Capital').'</td><td>';
@@ -3210,12 +3266,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '</td></tr>';
 			*/
 
-			// Webservices url/key
-			if (isModEnabled('webservicesclient')) {
-				print '<tr><td>'.$langs->trans("WebServiceURL").'</td><td>'.dol_print_url($object->webservices_url).'</td></tr>';
-				print '<tr><td class="nowrap">'.$langs->trans('WebServiceKey').'</td><td>'.$object->webservices_key.'</td></tr>';
-			}
-
 			print '</table>';
 			print '</div>';
 
@@ -3255,6 +3305,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=edit&token='.newToken(), '', $permissiontoadd);
 
+				if (!isset($object->no_button_copy) || $object->no_button_copy != 1) {
+					if (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)) {
+						$cloneSocietetUrl = '';
+						$cloneButtonId = 'action-clone';
+					}
+					print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $cloneSocietetUrl, $cloneButtonId, $user->hasRight('societe', 'creer'));
+				}
+
 				if (isModEnabled('member')) {
 					$adh = new Adherent($db);
 					$result = $adh->fetch('', '', $object->id);
@@ -3265,15 +3323,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				print dolGetButtonAction($langs->trans('MergeThirdparties'), $langs->trans('Merge'), 'danger', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=merge&token='.newToken(), '', $permissiontodelete);
 
-				if ($user->hasRight('societe', 'supprimer')) {
-					$deleteUrl = $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=delete&token='.newToken();
-					$buttonId = 'action-delete-no-ajax';
-					if ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile)) {	// We can't use preloaded confirm form with jmobile
-						$deleteUrl = '';
-						$buttonId = 'action-delete';
-					}
-					print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $deleteUrl, $buttonId, $permissiontodelete);
+				$deleteUrl = $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=delete&token='.newToken();
+				$buttonId = 'action-delete-no-ajax';
+				if ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile)) {	// We can't use preloaded confirm form with jmobile
+					$deleteUrl = '';
+					$buttonId = 'action-delete';
 				}
+				print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $deleteUrl, $buttonId, $permissiontodelete);
 			}
 
 			print '</div>'."\n";
