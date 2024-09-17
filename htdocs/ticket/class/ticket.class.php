@@ -571,8 +571,8 @@ class Ticket extends CommonObject
 			$sql .= " ".(empty($this->category_code) || $this->category_code == '-1' ? 'NULL' : "'".$this->db->escape($this->category_code)."'").",";
 			$sql .= " ".(!isset($this->severity_code) ? 'NULL' : "'".$this->db->escape($this->severity_code)."'").",";
 			$sql .= " ".(!isDolTms($this->datec) ? 'NULL' : "'".$this->db->idate($this->datec)."'").",";
-			$sql .= " ".(!isset($this->date_read) || dol_strlen($this->date_read) == 0 ? 'NULL' : "'".$this->db->idate($this->date_read)."'").",";
-			$sql .= " ".(!isset($this->date_close) || dol_strlen($this->date_close) == 0 ? 'NULL' : "'".$this->db->idate($this->date_close)."'");
+			$sql .= " ".(!isset($this->date_read) || dol_strlen((string) $this->date_read) == 0 ? 'NULL' : "'".$this->db->idate($this->date_read)."'").",";
+			$sql .= " ".(!isset($this->date_close) || dol_strlen((string) $this->date_close) == 0 ? 'NULL' : "'".$this->db->idate($this->date_close)."'");
 			$sql .= ", ".((int) $this->entity);
 			$sql .= ", ".(!isset($this->notify_tiers_at_create) ? 1 : ((int) $this->notify_tiers_at_create));
 			$sql .= ", '".$this->db->escape($this->model_pdf)."'";
@@ -1108,10 +1108,10 @@ class Ticket extends CommonObject
 		$sql .= " category_code=".(isset($this->category_code) ? "'".$this->db->escape($this->category_code)."'" : "null").",";
 		$sql .= " severity_code=".(isset($this->severity_code) ? "'".$this->db->escape($this->severity_code)."'" : "null").",";
 		$sql .= " datec=".(isDolTms($this->datec) ? "'".$this->db->idate($this->datec)."'" : 'null').",";
-		$sql .= " date_read=".(dol_strlen($this->date_read) != 0 ? "'".$this->db->idate($this->date_read)."'" : 'null').",";
-		$sql .= " date_last_msg_sent=".(dol_strlen($this->date_last_msg_sent) != 0 ? "'".$this->db->idate($this->date_last_msg_sent)."'" : 'null').",";
+		$sql .= " date_read=".(dol_strlen((string) $this->date_read) != 0 ? "'".$this->db->idate($this->date_read)."'" : 'null').",";
+		$sql .= " date_last_msg_sent=".(dol_strlen((string) $this->date_last_msg_sent) != 0 ? "'".$this->db->idate($this->date_last_msg_sent)."'" : 'null').",";
 		$sql .= " model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
-		$sql .= " date_close=".(dol_strlen($this->date_close) != 0 ? "'".$this->db->idate($this->date_close)."'" : 'null');
+		$sql .= " date_close=".(dol_strlen((string) $this->date_close) != 0 ? "'".$this->db->idate($this->date_close)."'" : 'null');
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -1494,7 +1494,7 @@ class Ticket extends CommonObject
 	/**
 	 * Return status label of object
 	 *
-	 * @param	string		$status			Id status
+	 * @param	int			$status			Id status
 	 * @param	int			$mode			0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 * @param	int			$notooltip		1=No tooltip
 	 * @param	int			$progress		Progression (0 to 100)
@@ -2567,7 +2567,7 @@ class Ticket extends CommonObject
 			}
 
 			$moreinfo = array('description' => 'File saved by copyFilesForTicket', 'src_object_type' => $this->element, 'src_object_id' => $this->id);
-			$res = dol_move($filepath[$i], $destfile, 0, 1, 0, 1, $moreinfo);
+			$res = dol_move($filepath[$i], $destfile, '0', 1, 0, 1, $moreinfo);
 			if (!$res) {
 				// Move has failed
 				$this->error = "Failed to move file ".dirbasename($filepath[$i])." into ".dirbasename($destfile);

@@ -340,7 +340,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'reopen') {	// no test on permission here, permission to use will depends on status
+	if ($action == 'reopen' && $permissiontoadd) {	// no test on permission here, permission to use will depends on status
 		if (in_array($object->statut, array(1, 2, 3, 4, 5, 6, 7, 9))) {
 			if ($object->statut == 1) {
 				$newstatus = 0; // Validated->Draft
@@ -628,7 +628,7 @@ if (empty($reshook)) {
 					($price_base_type == 'TTC' ? $pu : 0),
 					$type,
 					$tva_npr,
-					'',
+					0,
 					$date_start,
 					$date_end,
 					$array_options,
@@ -671,6 +671,7 @@ if (empty($reshook)) {
 
 			if (GETPOST('price_ht') != '' || GETPOST('multicurrency_price_ht') != '') {
 				$pu_ht = price2num($price_ht, 'MU'); // $pu_ht must be rounded according to settings
+				$pu_ttc = '';
 			} else {
 				$pu_ttc = price2num(GETPOST('price_ttc'), 'MU');
 				$pu_ht = price2num((float) $pu_ttc / (1 + ((float) $tva_tx / 100)), 'MU'); // $pu_ht must be rounded according to settings
@@ -678,7 +679,7 @@ if (empty($reshook)) {
 			$price_base_type = 'HT';
 			$pu_ht_devise = price2num($price_ht_devise, 'CU');
 
-			$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, $ref_supplier, $remise_percent, $price_base_type, $pu_ttc, $type, '', '', $date_start, $date_end, $array_options, $fk_unit, $pu_ht_devise);
+			$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, $ref_supplier, $remise_percent, $price_base_type, $pu_ttc, $type, 0, 0, $date_start, $date_end, $array_options, $fk_unit, $pu_ht_devise);
 		}
 
 		//print "xx".$tva_tx; exit;
@@ -1063,7 +1064,7 @@ if (empty($reshook)) {
 	}
 
 	// Force mandatory order method
-	if ($action == 'commande') {	// Not a real action so no permission test
+	if ($action == 'commande') {	// Test on permission not required here
 		$methodecommande = GETPOSTINT('methodecommande');
 
 		if ($cancel) {
@@ -1123,6 +1124,7 @@ if (empty($reshook)) {
 
 	// Action clone object
 	if ($action == 'confirm_clone' && $confirm == 'yes' && $usercancreate) {
+		// @phan-suppress-next-line PhanPluginBothLiteralsBinaryOp
 		if (1 == 0 && !GETPOST('clone_content') && !GETPOST('clone_receivers')) {
 			setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 		} else {
@@ -1398,8 +1400,8 @@ if (empty($reshook)) {
 									'HT',
 									0,
 									$lines[$i]->product_type,
-									'',
-									'',
+									0,
+									0,
 									null,
 									null,
 									$array_option,
@@ -1463,91 +1465,8 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'webservice' && $permissiontoadd && GETPOST('mode', 'alpha') == "send" && !GETPOST('cancel', 'alpha')) {
-		$ws_url         = $object->thirdparty->webservices_url;
-		$ws_key         = $object->thirdparty->webservices_key;
-		$ws_user        = GETPOST('ws_user', 'alpha');
-		$ws_password    = GETPOST('ws_password', 'alpha');
-		$ws_entity      = GETPOSTINT('ws_entity');
-		$ws_thirdparty  = GETPOSTINT('ws_thirdparty');
-
-		// NS and Authentication parameters
-		$ws_ns = 'http://www.dolibarr.org/ns/';
-		$ws_authentication = array(
-			'dolibarrkey' => $ws_key,
-			'sourceapplication' => 'DolibarrWebServiceClient',
-			'login' => $ws_user,
-			'password' => $ws_password,
-			'entity' => $ws_entity
-		);
-
-		// Is sync supplier web services module activated? and everything filled?
-		if (isModEnabled('webservicesclient')) {
-			setEventMessages($langs->trans("WarningModuleNotActive", $langs->transnoentities("Module2660Name")), null, 'mesgs');
-		} elseif (empty($ws_url) || empty($ws_key)) {
-			setEventMessages($langs->trans("ErrorWebServicesFieldsRequired"), null, 'errors');
-		} elseif (empty($ws_user) || empty($ws_password) || empty($ws_thirdparty)) {
-			setEventMessages($langs->trans("ErrorFieldsRequired"), null, 'errors');
-		} else {
-			//Create SOAP client and connect it to order
-			$soapclient_order = new nusoap_client($ws_url."/webservices/server_order.php");
-			$soapclient_order->soap_defencoding = 'UTF-8';
-			$soapclient_order->decodeUTF8(false);
-
-			//Create SOAP client and connect it to product/service
-			$soapclient_product = new nusoap_client($ws_url."/webservices/server_productorservice.php");
-			$soapclient_product->soap_defencoding = 'UTF-8';
-			$soapclient_product->decodeUTF8(false);
-
-			//Prepare the order lines from order
-			$order_lines = array();
-			foreach ($object->lines as $line) {
-				$ws_parameters = array('authentication' => $ws_authentication, 'id' => '', 'ref' => $line->ref_supplier);
-				$result_product = $soapclient_product->call("getProductOrService", $ws_parameters, $ws_ns, '');
-
-				if ($result_product["result"]["result_code"] == "OK") {
-					$order_lines[] = array(
-						'desc'          => $line->product_desc,
-						'type'          => $line->product_type,
-						'product_id'    => $result_product["product"]["id"],
-						'vat_rate'      => $line->tva_tx,
-						'qty'           => $line->qty,
-						'price'         => $line->price,
-						'unitprice'     => $line->subprice,
-						'total_net'     => $line->total_ht,
-						'total_vat'     => $line->total_tva,
-						'total'         => $line->total_ttc,
-						'date_start'    => $line->date_start,
-						'date_end'      => $line->date_end,
-					);
-				}
-			}
-
-			//Prepare the order header
-			$order = array(
-				'thirdparty_id' => $ws_thirdparty,
-				'date'          => dol_print_date(dol_now(), 'dayrfc'),
-				'total_net'     => $object->total_ht,
-				'total_var'     => $object->total_tva,
-				'total'         => $object->total_ttc,
-				'lines'         => $order_lines
-			);
-
-			$ws_parameters = array('authentication' => $ws_authentication, 'order' => $order);
-			$result_order = $soapclient_order->call("createOrder", $ws_parameters, $ws_ns, '');
-
-			if (empty($result_order["result"]["result_code"])) { //No result, check error str
-				setEventMessages($langs->trans("Error")." '".$soapclient_order->error_str."'", null, 'errors');
-			} elseif ($result_order["result"]["result_code"] != "OK") { //Something went wrong
-				setEventMessages($langs->trans("Error")." '".$result_order["result"]["result_code"]."' - '".$result_order["result"]["result_label"]."'", null, 'errors');
-			} else {
-				setEventMessages($langs->trans("RemoteOrderRef")." ".$result_order["ref"], null, 'mesgs');
-			}
-		}
-	}
-
-	if (getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB') && $permissiontoadd) {
-		if ($action == 'addcontact') {
+	if (getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB')) {
+		if ($action == 'addcontact' && $permissiontoadd) {
 			if ($object->id > 0) {
 				$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
 				$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
@@ -1565,10 +1484,10 @@ if (empty($reshook)) {
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
-		} elseif ($action == 'swapstatut' && $object->id > 0) {
+		} elseif ($action == 'swapstatut' && $object->id > 0 && $permissiontoadd) {
 			// bascule du statut d'un contact
 			$result = $object->swapContactStatus(GETPOSTINT('ligne'));
-		} elseif ($action == 'deletecontact' && $object->id > 0) {
+		} elseif ($action == 'deletecontact' && $object->id > 0 && $permissiontoadd) {
 			// Efface un contact
 			$result = $object->delete_contact(GETPOSTINT("lineid"));
 
@@ -1612,6 +1531,8 @@ if ($action == 'create') {
 	$currency_code = $conf->currency;
 
 	$societe = '';
+	$objectsrc = null;
+
 	if ($socid > 0) {
 		$societe = new Societe($db);
 		$societe->fetch($socid);
@@ -1658,6 +1579,7 @@ if ($action == 'create') {
 
 		$projectid = (!empty($objectsrc->fk_project) ? $objectsrc->fk_project : '');
 		$ref_client = (!empty($objectsrc->ref_client) ? $objectsrc->ref_client : '');
+		$fk_account = 0;
 		if ($origin == "commande") {
 			$cond_reglement_id = 0;
 			$mode_reglement_id = 0;
@@ -1741,7 +1663,7 @@ if ($action == 'create') {
 		print '<input type="hidden" name="originmulticurrency_tx" value="'.$currency_tx.'">';
 	}
 
-	print dol_get_fiche_head('');
+	print dol_get_fiche_head(array());
 
 	// Call Hook tabContentCreateSupplierOrder
 	$parameters = array();
@@ -1762,7 +1684,7 @@ if ($action == 'create') {
 			print '<input type="hidden" name="socid" value="'.$societe->id.'">';
 		} else {
 			$filter = '((s.fournisseur:=:1) AND (s.status:=:1))';
-			print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company((empty($socid) ? '' : $socid), 'socid', $filter, 'SelectThirdParty', 1, 0, null, 0, 'minwidth175 maxwidth500 widthcentpercentminusxx');
+			print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company((empty($socid) ? '' : $socid), 'socid', $filter, 'SelectThirdParty', 1, 0, array(), 0, 'minwidth175 maxwidth500 widthcentpercentminusxx');
 			// reload page to retrieve customer information
 			if (!getDolGlobalString('RELOAD_PAGE_ON_SUPPLIER_CHANGE_DISABLED')) {
 				print '<script>
@@ -1784,7 +1706,7 @@ if ($action == 'create') {
 			// Discounts for third party
 			print '<tr><td>'.$langs->trans('Discounts').'</td><td>';
 
-			$absolute_discount = $societe->getAvailableDiscounts('', '', 0, 1);
+			$absolute_discount = $societe->getAvailableDiscounts(null, '', 0, 1);
 
 			$thirdparty = $societe;
 			$discount_type = 1;
@@ -2201,8 +2123,8 @@ if ($action == 'create') {
 			$filtercreditnote = "fk_invoice_supplier_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS PAID)%')";
 		}
 
-		$absolute_discount = $societe->getAvailableDiscounts('', $filterabsolutediscount, 0, 1);
-		$absolute_creditnote = $societe->getAvailableDiscounts('', $filtercreditnote, 0, 1);
+		$absolute_discount = $societe->getAvailableDiscounts(null, $filterabsolutediscount, 0, 1);
+		$absolute_creditnote = $societe->getAvailableDiscounts(null, $filtercreditnote, 0, 1);
 		$absolute_discount = price2num($absolute_discount, 'MT');
 		$absolute_creditnote = price2num($absolute_creditnote, 'MT');
 
@@ -2710,11 +2632,6 @@ if ($action == 'create') {
 					}
 				}
 
-				// Create a remote order using WebService only if module is activated
-				if (isModEnabled('webservicesclient') && $object->statut >= 2) { // 2 means accepted
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=webservice&token='.newToken().'&mode=init">'.$langs->trans('CreateRemoteOrder').'</a>';
-				}
-
 				// Clone
 				if ($usercancreate) {
 					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$object->socid.'&amp;action=clone&amp;token='.newToken().'&amp;object=order">'.$langs->trans("ToClone").'</a>';
@@ -2795,7 +2712,7 @@ if ($action == 'create') {
 			$somethingshown = $formfile->numoffiles;
 
 			// Show links to link elements
-			$linktoelem = $form->showLinkToObjectBlock($object, null, array('supplier_order', 'order_supplier'));
+			$linktoelem = $form->showLinkToObjectBlock($object, array(), array('supplier_order', 'order_supplier'));
 			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 			print '</div><div class="fichehalfright">';
@@ -2856,15 +2773,16 @@ if ($action == 'create') {
 			$ws_key      = $object->thirdparty->webservices_key;
 			$ws_user     = GETPOST('ws_user', 'alpha');
 			$ws_password = GETPOST('ws_password', 'alpha');
+			$error_occurred = false;
 
 			// NS and Authentication parameters
 			$ws_ns = 'http://www.dolibarr.org/ns/';
 			$ws_authentication = array(
-			'dolibarrkey' => $ws_key,
-			'sourceapplication' => 'DolibarrWebServiceClient',
-			'login' => $ws_user,
-			'password' => $ws_password,
-			'entity' => ''
+				'dolibarrkey' => $ws_key,
+				'sourceapplication' => 'DolibarrWebServiceClient',
+				'login' => $ws_user,
+				'password' => $ws_password,
+				'entity' => ''
 			);
 
 			print load_fiche_titre($langs->trans('CreateRemoteOrder'), '');
@@ -2958,7 +2876,7 @@ if ($action == 'create') {
 							// Check the result code
 							$status_code = $result_product["result"]["result_code"];
 							if (empty($status_code)) { //No result, check error str
-								setEventMessages($langs->trans("Error")." SOAP '".$soapclient_order->error_str."'", null, 'errors');
+								setEventMessages($langs->trans("Error")." SOAP '".$soapclient_product->error_str."'", null, 'errors');
 							} elseif ($status_code != "OK") { //Something went wrong
 								if ($status_code == "NOT_FOUND") {
 									setEventMessages($line_id.$langs->trans("SupplierMissingRef")." '".$ref_supplier."'", null, 'warnings');

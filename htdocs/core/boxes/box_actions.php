@@ -107,7 +107,7 @@ class box_actions extends ModeleBoxes
 			$result = $this->db->query($sql);
 			if ($result) {
 				$now = dol_now();
-				$delay_warning = $conf->global->MAIN_DELAY_ACTIONS_TODO * 24 * 60 * 60;
+				$delay_warning = getDolGlobalInt('MAIN_DELAY_ACTIONS_TODO') * 24 * 60 * 60;
 
 				$num = $this->db->num_rows($result);
 

@@ -46,6 +46,13 @@ abstract class ModeleNumRefChequeReceipts extends CommonNumRefGenerator
 	 *  @return	string|int<-1,0>			Next value if OK, 0 if KO
 	 */
 	abstract public function getNextValue($objsoc, $object);
+
+	/**
+	 *  Return an example of numbering
+	 *
+	 *  @return     string      Example
+	 */
+	abstract public function getExample();
 }
 
 /**
@@ -143,6 +150,7 @@ function chequereceipt_pdf_create($db, $id, $message, $modele, $outputlangs)
 		require_once $dir.$file;
 
 		$obj = new $classname($db);
+		'@phan-var-force ModeleChequeReceipts $obj';
 
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.

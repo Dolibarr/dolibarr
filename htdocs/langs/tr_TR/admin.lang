@@ -514,15 +514,17 @@ ModuleCompanyCodeCustomerDigitaria=%s ve ardından karakter sayısı ile kesilmi
 ModuleCompanyCodeSupplierDigitaria=%s ve ardından karakter sayısı ile kesilmiş tedarikçi adı:%s tedarikçi muhasebe kodu için.
 Use3StepsApproval=Varsayılan olarak, Tedarikçi Siparişlerinin 2 farklı kullanıcı tarafından oluşturulması ve onaylanması gerekir (bir adım/kullanıcı oluşturacak ve bir adım/kullanıcı onaylayacak. Kullanıcının hem oluşturma hem de onaylama izni varsa, bir adım/kullanıcı yeterli olacaktır). Miktar belirli bir değerin üzerindeyse bu seçenekle üçüncü bir adım/kullanıcı onayı vermeyi isteyebilirsiniz (böylece 3 adım zorunlu olacaktır: 1=doğrulama, 2=ilk onay ve 3=miktar yeterli ise ikinci onay).<br>Tek onay (2 adım) yeterli ise bunu boş olarak ayarlayın, ikinci bir onay (3 adım) her zaman gerekiyorsa çok düşük bir değere ayarlayın (0.1).
 UseDoubleApproval=Tutar (vergi öncesi) bu tutardan yüksekse 3 aşamalı bir onaylama kullanın...
-WarningPHPMail=WARNING: The setup to send emails from the application is using the default generic setup. This choice needs no technical knowledge to complete the setup.<br>However, it is often better to setup outgoing emails to use the email server of your Email Service Provider instead of the default setup for several reasons:
+WarningPHPMail=NOTICE: The setup to send emails from the application is using the default generic setup (called "%s"). This choice needs no technical knowledge and no particular setup.<br>However, it is often better to setup outgoing emails to use the other method (called "%s") to use the email server of your Email Service Provider, instead of the default setup for several reasons:
 WarningPHPMailA=- Using the server of the Email Service Provider increases the trustworthiness of your email, so it increases the deliverability without being flagged as SPAM
-WarningPHPMailB=- Bazı E-posta Servis Sağlayıcıları kendi sunucularından başka bir sunucudan e-posta göndermenize izin vermez. Mevcut kurulumunuz e-posta göndermek için uygulama sunucusunu kullanıyor, e-posta sağlayıcınızın sunucusunu değil, bu nedenle bazı alıcılar (kısıtlayıcı DMARC protokolüyle uyumlu olan) e-posta sağlayıcınıza e-postanızı ve bazı e-posta sağlayıcılarını kabul edip edemeyeceklerini soracaktır. (Yahoo gibi), sunucu kendilerine ait olmadığı için "hayır" yanıtını verebilir, bu nedenle, gönderdiğiniz E-postaların çok azı teslim için kabul edilmeyebilir (e-posta sağlayıcınızın gönderme kotasına da dikkat edin).
+WarningPHPMailB=- If the domain of your email (the part mymaildomain.com into myname@mymaildomain.com) is protected by a SPF + a DMARC record, your email may be flagged as SPAM because your DMARC rule defined into DNS zone of the domain of the sender (mymaildomain.com) does not allow the sending as a generic sender. In such a case, you must disable the DMARC for the domain (or set it to p=none like done by @gmail.com) or, better, if you have the technical knowledge, use the other method to send emails using the SMTP server of your own email provider.
 WarningPHPMailC=- E-posta göndermek için kendi E-posta Servis Sağlayıcınızın SMTP sunucusunu kullanmak da ilginçtir, bu nedenle uygulamadan gönderilen tüm e-postalar ayrıca posta kutunuzun "Gönderilen" dizinine kaydedilecektir.
 WarningPHPMailD=Bu nedenle e-postaların gönderim yönteminin "SMTP" değerine değiştirilmesi tavsiye edilir.
 WarningPHPMailDbis=If you really want to keep the default "PHP" method to send emails, just ignore this warning, or remove it by %sclicking here%s.
 WarningPHPMail2=E-posta SMTP sağlayıcınızın e-posta istemcisini bazı IP adresleriyle kısıtlaması gerekiyorsa (çok nadir), bu, ERP CRM uygulamanız için posta kullanıcı aracısının (MUA) IP adresidir: <strong>%s</strong>.
-WarningPHPMailSPF=Gönderen e-posta adresinizdeki alan adı bir SPF kaydı tarafından korunuyorsa (alan adı kayıt kuruluşunuzdan isteyin), alan adınızın DNS'sinin SPF kaydına aşağıdaki IP'leri eklemeniz gerekir: <strong>%s</strong>.
-ActualMailSPFRecordFound=Gerçek SPF kaydı bulundu (e-posta için %s): %s
+WarningPHPMailSPF=If the domain name in your sender email address is protected by a SPF record (ask your domain name registar), you must add the following IPs or entry in the SPF record of the DNS of your domain: <strong>%s</strong>.
+WarningPHPMailSPFDMARC=If the domain name in your sender email address is protected by a DMARC record different than p=none (ask your domain name registar), you must remove your DMARC record, or set it to p=none like do @gmail.com) or use sending another method.
+SPFAndDMARCInformation=SPF and DMARC DNS record for main email addresses
+ActualMailDNSRecordFound=Actual %s record found (for email %s) : %s
 ClickToShowDescription=Açıklamayı görmek için tıkla
 DependsOn=Bu modülün gerektirdiği modül(ler)
 RequiredBy=Bu modül, modül(ler) için zorunludur
@@ -867,7 +869,7 @@ Permission255=Diğer kullanıcıların şifrelerini değiştir
 Permission256=Diğer kullanıcıları sil ya da engelle
 Permission262=Erişimi tüm üçüncü taraflara VE onların nesnelerine (yalnızca kullanıcının satış temsilcisi olarak bağlı olduğu üçüncü taraflara değil) genişletin.
 Permission262b=Harici kullanıcılar için etkili değildir (teklifler, siparişler, faturalar, sözleşmeler vb. için her zaman kendileriyle sınırlıdır).
-Permission262c=Projeler için etkili değildir (yalnızca proje izinleri, görünürlük ve atamayla ilgili kurallar).
+Permission262c=Not effective for projects (only rules on project permissions, visibility and users assignment matter).
 Permission263=Nesneleri OLMADAN tüm Cari erişimi genişletin (yalnızca kullanıcının satış temsilcisi olduğu cariler değil).<br>Harici kullanıcılar için etkili değildir (teklifler, siparişler, faturalar, sözleşmeler vb. İçin her zaman kendileriyle sınırlıdır).<br>Projeler için etkili değildir (yalnızca proje izinleri, görünürlük ve atama konularıyla ilgili kurallar).
 Permission271=CA oku
 Permission272=Fatura oku
@@ -944,7 +946,7 @@ Permission776=Ödeme gider raporu
 Permission777=Tüm gider raporlarını okuyun (ast olmayan kullanıcılara ait olanlar bile)
 Permission778=Herkesin gider raporlarını oluşturun/değiştirin
 Permission779=Gider raporlarını dışa aktar
-Permission1001=Stok oku
+Permission1001=Read warehouses and stocks
 Permission1002=Depo oluştur/değiştir
 Permission1003=Depo sil
 Permission1004=Stok hareketlerini oku
@@ -2218,7 +2220,7 @@ CreateCandidature=İş başvurusu oluştur
 FormatZip=Posta Kodu
 MainMenuCode=Menü giriş kodu (ana menü)
 ECMAutoTree=Otomatik ECM ağacını göster
-OperationParamDesc=Bazı verileri ayıklamak veya işlem için kullanılacak değerleri ayarlamak için kullanılacak kuralları tanımlayın.<br><br>Şirket adını ayıklama örneği e-posta konusunu geçici bir değişkene ekleyin:<br>tmp_var=EXTRACT:SUBJECT:Şirketten mesaj ([^\n]*)<br><br>Oluşturulacak bir nesnenin özelliklerini ayarlamaya yönelik örnekler:<br>objproperty1=SET:sabit kodlanmış bir değer<br>objproperty2=SET:__tmp_var__<br>objproperty3=SETIFEMPTY:bir değer (değer yalnızca özellik önceden tanımlanmamışsa ayarlanır)<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:Şirketimin adı\\ s([^\\s]*)<br><br>Birkaç özelliği çıkarmak veya ayarlamak için yeni bir satır kullanın.
+OperationParamDesc=Define the rules to use to extract some data or set values to use for operation.<br><br>Example to extract a string from email header, subject or body into a temporary variable:<br>tmp_var1=EXTRACT:HEADER:My regex ([^\n]*)<br>tmp_var2=EXTRACT:SUBJECT:My refex ([^\n]*)<br>tmp_var3=EXTRACT:BODY:My regex ([^\n]*)<br><br>Examples to set the properties of an object to create:<br>objproperty1=SET:a hard coded value<br>objproperty2=SET:__tmp_var__<br>objproperty3=SETIFEMPTY:a value (value is set only if property is not already defined)<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a new line to extract or set several properties.
 OpeningHours=Açılış saatleri
 OpeningHoursDesc=Buraya firmanızın normal çalışma saatlerini girin.
 ResourceSetup=Kaynak modülünün yapılandırılması
@@ -2264,7 +2266,7 @@ LargerThan=Şundan daha büyük
 IfTrackingIDFoundEventWillBeLinked=E-postada bir nesnenin izleme kimliği bulunursa veya e-posta, önceden toplanmış ve bir nesneye bağlanmış bir e-postanın yanıtıysa, oluşturulan olayın otomatik olarak bilinen ilgili nesneye bağlanacağını unutmayın.
 WithGMailYouCanCreateADedicatedPassword=GMail hesabıyla, 2 adımlı doğrulamayı etkinleştirdiyseniz https://myaccount.google.com/ adresinden kendi hesap şifrenizi kullanmak yerine uygulamaya özel ikinci bir şifre oluşturmanız önerilir.
 EmailCollectorTargetDir=Başarılı bir şekilde işlendiğinde e-postayı başka bir etiket/dizinine taşımak istenen bir davranış olabilir. Bu özelliği kullanmak için burada dizinin adını ayarlamanız yeterlidir (Adda özel karakterler KULLANMAYIN). Ayrıca okuma/yazma oturum açma hesabı kullanmanız gerektiğini unutmayın.
-EmailCollectorLoadThirdPartyHelp=Veritabanınızda mevcut bir üçüncü tarafı bulmak ve yüklemek amacıyla e-posta içeriğini kullanmak için bu eylemi kullanabilirsiniz (arama, 'id','name','name_alias','email' arasında tanımlanan özellik üzerinde yapılacaktır). Bulunan (veya oluşturulan) üçüncü taraf, gerektiren aşağıdaki işlemler için kullanılacaktır.<br>Örneğin, ' dizesinden alınan bir adla üçüncü taraf oluşturmak istiyorsanız Ad: bulunacak ad' gövdede mevcut, gönderenin e-postasını e-posta olarak kullanın, parametre alanını şu şekilde ayarlayabilirsiniz:<br>'email=HEADER:^From:(. *);name=EXTRACT:BODY:Name:\\s([^\\s]*);client=SET:2;'<br>
+EmailCollectorLoadThirdPartyHelp=You can use this action to use the email content to find and load an existing third party in your database (search will be done on the defined property among 'id','name','name_alias','email'). The found (or created) third party will be used for following actions that need it.<br>For example, if you want to create a third party with a name extracted from a string 'Name: name to find' present into the body, use the sender email as email, you can set the parameter field like this:<br>'email=EXTRACT:HEADER:^From:(.*);name=EXTRACT:BODY:Name:\\s([^\\s]*);client=SET:2;'<br>
 FilterSearchImapHelp=Uyarı: Pek çok e-posta sunucusu (Gmail gibi) bir dizede arama yaparken tam sözcük araması yapar ve dize yalnızca bir sözcükte kısmen bulunursa sonuç döndürmez. Bu nedenle, arama kriterlerinde özel karakterlerin kullanılması, mevcut kelimelerin parçası olmadıkları sürece göz ardı edilecektir.<br>Bir kelime üzerinde hariç tutma araması yapmak için (kelime varsa e-postayı döndürün) bulunamadı), ! kelimeden önce karakter (bazı posta sunucularında çalışmayabilir).
 EndPointFor=%s için bitiş noktası: %s
 DeleteEmailCollector=E-posta toplayıcıyı sil

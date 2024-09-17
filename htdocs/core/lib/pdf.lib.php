@@ -658,7 +658,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 
 			// Legal form
 			if (getDolGlobalString('MAIN_LEGALFORM_IN_ADDRESS') && !empty($targetcompany->forme_juridique_code)) {
-				$tmp = getFormeJuridiqueLabel($targetcompany->forme_juridique_code);
+				$tmp = getFormeJuridiqueLabel((string) $targetcompany->forme_juridique_code);
 				$stringaddress .= ($stringaddress ? "\n" : '').$tmp;
 			}
 
@@ -1102,7 +1102,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 	// Line 3 of company infos
 	// Juridical status
 	if (!empty($fromcompany->forme_juridique_code) && $fromcompany->forme_juridique_code) {
-		$line3 .= ($line3 ? " - " : "").$outputlangs->convToOutputCharset(getFormeJuridiqueLabel($fromcompany->forme_juridique_code));
+		$line3 .= ($line3 ? " - " : "").$outputlangs->convToOutputCharset(getFormeJuridiqueLabel((string) $fromcompany->forme_juridique_code));
 	}
 	// Capital
 	if (!empty($fromcompany->capital)) {
@@ -1389,7 +1389,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
  *	@param	float		$w					Width of cells. If 0, they extend up to the right margin of the page.
  *	@param	float		$h					Cell minimum height. The cell extends automatically if needed.
  *	@param	string		$align				Align
- *	@param	string		$default_font_size	Font size
+ *	@param	float		$default_font_size	Font size
  *	@return	float                           The Y PDF position
  */
 function pdf_writeLinkedObjects(&$pdf, $object, $outputlangs, $posx, $posy, $w, $h, $align, $default_font_size)

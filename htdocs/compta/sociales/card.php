@@ -98,7 +98,6 @@ if ($user->socid) {
 $result = restrictedArea($user, 'tax', $object->id, 'chargesociales', 'charges');
 
 
-
 /*
  * Actions
  */
@@ -498,9 +497,7 @@ if ($id > 0) {
 			$formconfirm = $hookmanager->resPrint;
 		}
 
-		/*
-		 *	View card
-		 */
+
 		print dol_get_fiche_head($head, 'card', $langs->trans("SocialContribution"), -1, 'bill', 0, '', '', 0, '', 1);
 
 		// Print form confirm

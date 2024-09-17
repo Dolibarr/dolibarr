@@ -32,6 +32,8 @@ NewMailing=مراسلة جديدة
 NewSMSing=الرسائل القصيرة الجديدة
 EditMailing=تحرير مراسلة
 ResetMailing=إعادة إرساله عبر البريد الإلكتروني
+ConfirmResetMailingTargetMassaction=Confirmation of the reset of targets status
+ResetMailingTargetMassaction=Reset targets status
 DeleteMailing=حذف البريد الإلكتروني
 PreviewMailing=معاينة مراسلة
 CreateMailing=إنشاء مراسلة
@@ -53,6 +55,7 @@ ErrorMailRecipientIsEmpty=البريد الإلكتروني المتلقي فا�
 WarningNoEMailsAdded=بريد الكتروني جديدة تضاف الى قائمة المتلقي.
 ConfirmValidMailing=Are you sure you want to validate this emailing?
 ConfirmResetMailing=تحذير ، من خلال إعادة تهيئة البريد الإلكتروني <b> %s </b> ، ستسمح بإعادة إرسال هذا البريد الإلكتروني في بريد مجمع. هل انت متأكد من أنك تريد أن تفعل هذا؟
+ConfirmResetMailingTargetMassactionQuestion=Are you sure you want to reset the status of the selected recipients (this may means that email will be resent if you use the Send email feature of the emailing) ?
 ConfirmDeleteMailing=هل أنت متأكد أنك تريد حذف هذا البريد الإلكتروني؟
 NbOfUniqueEMails=عدد رسائل البريد الإلكتروني الفريدة
 NbOfUniquePhones=عدد الهواتف الفريدة
@@ -190,11 +193,12 @@ NoMoreRecipientToSendTo=لم يعد هناك مستلم لإرسال البري�
 EmailOptedOut=لقد طلب مالك البريد الإلكتروني عدم الاتصال به عبر هذا البريد الإلكتروني بعد الآن
 EvenUnsubscribe=قم بتضمين رسائل البريد الإلكتروني الخاصة بإلغاء الاشتراك
 EvenUnsubscribeDesc=قم بتضمين رسائل البريد الإلكتروني الخاصة بإلغاء الاشتراك عند تحديد رسائل البريد الإلكتروني كأهداف. مفيد لرسائل البريد الإلكتروني الخاصة بالخدمة الإلزامية على سبيل المثال.
-XEmailsDoneYActionsDone=%s رسائل البريد الإلكتروني المؤهلة مسبقًا، %s تمت معالجة رسائل البريد الإلكتروني بنجاح (لسجل %s / تم تنفيذ الإجراءات)
+XEmailsDoneYActionsDone=%s emails pre-qualified, %s emails successfully processed (for %s operations done)
 YouCanMakeSomeInstructionForEmail=يمكنك عمل بعض التعليمات لبريدك الإلكتروني (على سبيل المثال: إنشاء صورة في قالب البريد الإلكتروني...)
 ModelTemplate=قالب البريد الإلكتروني
 YouCanChooseAModelForYouMailContent= يمكنك اختيار أحد نماذج القوالب أو إنشاء نموذج باستخدام الذكاء الاصطناعي
 TitleOfMailHolder=Title of the e-mail goes here
 ContentOfMailHolder=Content of email goes here...
 LastNews=Last News
+ListProducts= List of products
 PasswordReset=Password reset

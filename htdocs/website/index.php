@@ -342,7 +342,7 @@ if (empty($sortfield)) {
 	}
 }
 
-$searchkey = GETPOST('searchstring', 'restricthtml');
+$searchkey = GETPOST('searchstring', 'restricthtmlallowclass');
 
 if ($action == 'replacesite' || $mode == 'replacesite') {	// Test on permission not required
 	$containertype = GETPOST('optioncontainertype', 'aZ09') != '-1' ? GETPOST('optioncontainertype', 'aZ09') : '';
@@ -416,7 +416,7 @@ if ($cancel) {
 }
 
 $savbacktopage = $backtopage;
-$backtopage = $_SERVER["PHP_SELF"].'?file_manager=1&website='.urlencode($websitekey).'&pageid='.urlencode($pageid).(GETPOST('section_dir', 'alpha') ? '&section_dir='.urlencode(GETPOST('section_dir', 'alpha')) : ''); // used after a confirm_deletefile into actions_linkedfiles.inc.php
+$backtopage = $_SERVER["PHP_SELF"].'?file_manager=1&website='.urlencode($websitekey).'&pageid='.urlencode((string) $pageid).(GETPOST('section_dir', 'alpha') ? '&section_dir='.urlencode(GETPOST('section_dir', 'alpha')) : ''); // used after a confirm_deletefile into actions_linkedfiles.inc.php
 if ($sortfield) {
 	$backtopage .= '&sortfield='.urlencode($sortfield);
 }
@@ -764,7 +764,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 
 	if (GETPOSTISSET('fetchexternalurl')) {	// Fetch from external url
 		$urltograb = GETPOST('externalurl', 'alpha');
-		$grabimages = GETPOST('grabimages', 'alpha');
+		$grabimages = GETPOSTINT('grabimages') ? 1 : 0;
 		$grabimagesinto = GETPOST('grabimagesinto', 'alpha');
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
@@ -2038,7 +2038,7 @@ if ($action == 'updatemeta' && $usercanedit) {
 		$objectpage->image = GETPOST('WEBSITE_IMAGE', 'alpha');
 		$objectpage->keywords = str_replace(array('<', '>'), '', GETPOST('WEBSITE_KEYWORDS', 'alphanohtml'));
 		$objectpage->allowed_in_frames = GETPOST('WEBSITE_ALLOWED_IN_FRAMES', 'aZ09');
-		$objectpage->htmlheader = trim(GETPOST('htmlheader', 'none'));		// Must accept tags like '<script>' and '<link>'
+		$objectpage->htmlheader = trim(GETPOST('htmlheader', 'restricthtmlallowlinkscript'));		// Must accept tags like '<script>' and '<link>'
 		$objectpage->fk_page = (GETPOSTINT('pageidfortranslation') > 0 ? GETPOSTINT('pageidfortranslation') : 0);
 		$objectpage->author_alias = trim(GETPOST('WEBSITE_AUTHORALIAS', 'alphanohtml'));
 		$objectpage->object_type = GETPOST('WEBSITE_OBJECTCLASS', 'alpha');
@@ -2197,7 +2197,7 @@ if ((($action == 'updatesource' || $action == 'updatecontent' || $action == 'con
 		$db->begin();
 
 		$objectnew = new Website($db);
-		$result = $objectnew->createFromClone($user, GETPOSTINT('id'), GETPOSTINT('siteref'), (GETPOSTINT('newlang') ? GETPOSTINT('newlang') : ''));
+		$result = $objectnew->createFromClone($user, GETPOSTINT('id'), GETPOST('siteref'), (GETPOSTINT('newlang') ? GETPOSTINT('newlang') : ''));
 
 		if ($result < 0) {
 			$error++;
@@ -2206,6 +2206,7 @@ if ((($action == 'updatesource' || $action == 'updatecontent' || $action == 'con
 
 			$db->rollback();
 		} else {
+			setEventMessages("ObjectClonedSuccessfuly", null, 'mesgs');
 			$object = $objectnew;
 			$id = $object->id;
 			$pageid = $object->fk_default_home;
@@ -3112,7 +3113,7 @@ if (!GETPOST('hide_websitemenu')) {
 			print '<a href="'.$_SERVER["PHP_SELF"].'?action=confirmgeneratesitemaps&token='.newToken().'&website='.urlencode($website->ref).'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("GenerateSitemaps")).'"><span class="fa fa-sitemap"></span></a>';
 
 			// Find / replace tool
-			print '<a href="'.$_SERVER["PHP_SELF"].'?action=replacesite&website='.urlencode($website->ref).'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("ReplaceWebsiteContent")).'"><span class="fa fa-search"></span></a>';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?action=replacesite&token='.newToken().'&website='.urlencode($website->ref).'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("ReplaceWebsiteContent")).'"><span class="fa fa-search"></span></a>';
 		}
 
 		print '</span>';
@@ -3998,7 +3999,7 @@ if ($action == 'editcss') {
 	print '<tr><td class="tdtop">';
 	print $langs->trans('WEBSITE_HTML_HEADER');
 	$htmlhelp = $langs->trans("Example").' :<br>';
-	$htmlhelp .= dol_htmlentitiesbr($htmlheadercontentdefault);
+	$htmlhelp .= dol_nl2br(dol_htmlentities($htmlheadercontentdefault));	// do not use dol_htmlentitiesbr here, $htmlheadercontentdefault is HTML with content like <link> and <script> that we want to be html encode as they must be show as doc content not executable instruction.
 	$textwithhelp = $form->textwithpicto('', $htmlhelp, 1, 'help', '', 0, 2, 'htmlheadertooltip');
 	$htmlhelp2 = $langs->trans("LinkAndScriptsHereAreNotLoadedInEditor").'<br>';
 	print $form->textwithpicto($textwithhelp, $htmlhelp2, 1, 'warning', '', 0, 2, 'htmlheadertooltip2');
@@ -4402,6 +4403,9 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 						jQuery(".spanprefix").hide();
 					}
 				});
+
+				// Force at init execution a first time of the handler change
+				jQuery("#selectWEBSITE_TYPE_CONTAINER").trigger(\'change\');
 			});
 			</script>
 		';
@@ -4730,8 +4734,8 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	print '<tr><td class="tdhtmlheader tdtop">';
 	$htmlhelp = $langs->trans("EditTheWebSiteForACommonHeader").'<br><br>';
 	$htmlhelp .= $langs->trans("Example").' :<br>';
-	$htmlhelp .= dol_htmlentitiesbr($htmlheadercontentdefault);
-	print $form->textwithpicto($langs->trans('HtmlHeaderPage'), $htmlhelp, 1, 'help', '', 0, 2, 'htmlheadertooltip');
+	$htmlhelp .= dol_nl2br(dol_htmlentities($htmlheadercontentdefault));	// do not use dol_htmlentitiesbr here, $htmlheadercontentdefault is HTML with content like <link> and <script> that we want to be html encode as they must be show as doc content not executable instruction.
+	print $form->textwithpicto($langs->transnoentitiesnoconv('HtmlHeaderPage'), $htmlhelp, 1, 'help', '', 0, 2, 'htmlheadertooltip');
 	print '</td><td>';
 	$poscursor = array('x' => GETPOST('htmlheader_x'), 'y' => GETPOST('htmlheader_y'));
 	$doleditor = new DolEditor('htmlheader', $pagehtmlheader, '', 120, 'ace', 'In', true, false, 'ace', ROWS_3, '100%', 0, $poscursor);

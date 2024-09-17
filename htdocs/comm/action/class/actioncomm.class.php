@@ -2469,7 +2469,7 @@ class ActionComm extends CommonObject
 			}
 
 			if ($result >= 0) {
-				if (dol_move($outputfiletmp, $outputfile, 0, 1, 0, 0)) {
+				if (dol_move($outputfiletmp, $outputfile, '0', 1, 0, 0)) {
 					$result = 1;
 				} else {
 					$this->error = 'Failed to rename '.$outputfiletmp.' into '.$outputfile;

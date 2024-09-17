@@ -279,8 +279,8 @@ class pdf_ban extends ModeleBankAccountDoc
 	 *   Show table for lines
 	 *
 	 *   @param		TCPDF		$pdf     		Object PDF
-	 *   @param		string		$tab_top		Top position of table
-	 *   @param		string		$tab_height		Height of table (rectangle)
+	 *   @param		int 		$tab_top		Top position of table
+	 *   @param		int 		$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @param		int			$hidetop		Hide top bar of array
@@ -359,15 +359,11 @@ class pdf_ban extends ModeleBankAccountDoc
 		/* Removed: A project can have more than thousands linked objects (orders, invoices, proposals, etc....
 		$object->fetchObjectLinked();
 
-		foreach($object->linkedObjects as $objecttype => $objects)
-		{
-			//var_dump($objects);exit;
-			if ($objecttype == 'commande')
-			{
+		foreach($object->linkedObjects as $objecttype => $objects) {
+			if ($objecttype == 'commande') {
 				$outputlangs->load('orders');
 				$num=count($objects);
-				for ($i=0;$i<$num;$i++)
-				{
+				for ($i=0;$i<$num;$i++) {
 					$posy+=4;
 					$pdf->SetXY($posx,$posy);
 					$pdf->SetFont('','', $default_font_size - 1);

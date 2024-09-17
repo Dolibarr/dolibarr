@@ -817,7 +817,7 @@ abstract class CommonObject
 	public $output;
 
 	/**
-	 * @var array|string	extra parameters. Try to store here the array of parameters. Old code is sometimes storing a string.
+	 * @var array<string,string>|string	extra parameters. Try to store here the array of parameters. Old code is sometimes storing a string.
 	 */
 	public $extraparams = array();
 
@@ -1004,7 +1004,7 @@ abstract class CommonObject
 				}
 				$enabled = 1;
 				if ($enabled && isset($extrafields->attributes[$this->table_element]['enabled'][$key])) {
-					$enabled = (int) dol_eval($extrafields->attributes[$this->table_element]['enabled'][$key], 1, 1, '2');
+					$enabled = (int) dol_eval((string) $extrafields->attributes[$this->table_element]['enabled'][$key], 1, 1, '2');
 				}
 				if ($enabled && isset($extrafields->attributes[$this->table_element]['list'][$key])) {
 					$enabled = (int) dol_eval($extrafields->attributes[$this->table_element]['list'][$key], 1, 1, '2');
@@ -1164,21 +1164,21 @@ abstract class CommonObject
 
 				// TODO We can't, we don't have full path of file, only last_main_doc and ->element, so we must first rebuild full path $destfull
 				/*
-				$ecmfile->filepath = $rel_dir;
-				$ecmfile->filename = $filename;
-				$ecmfile->label = md5_file(dol_osencode($destfull));    // hash of file content
-				$ecmfile->fullpath_orig = '';
-				$ecmfile->gen_or_uploaded = 'generated';
-				$ecmfile->description = '';    // indexed content
-				$ecmfile->keywords = '';        // keyword content
-				$ecmfile->share = getRandomPassword(true);
-				$result = $ecmfile->create($user);
-				if ($result < 0)
-				{
-					$this->error = $ecmfile->error;
-					$this->errors = $ecmfile->errors;
-				}
-				*/
+				 $ecmfile->filepath = $rel_dir;
+				 $ecmfile->filename = $filename;
+				 $ecmfile->label = md5_file(dol_osencode($destfull));    // hash of file content
+				 $ecmfile->fullpath_orig = '';
+				 $ecmfile->gen_or_uploaded = 'generated';
+				 $ecmfile->description = '';    // indexed content
+				 $ecmfile->keywords = '';        // keyword content
+				 $ecmfile->share = getRandomPassword(true);
+				 $result = $ecmfile->create($user);
+				 if ($result < 0)
+				 {
+				 $this->error = $ecmfile->error;
+				 $this->errors = $ecmfile->errors;
+				 }
+				 */
 			} else {
 				return '';
 			}
@@ -1486,7 +1486,7 @@ abstract class CommonObject
 	 *    @param	int<0,1>	$list       	0:Returned array contains all properties, 1:Return array contains just id
 	 *    @param    string      $code       	Filter on this code of contact type ('SHIPPING', 'BILLING', ...)
 	 *    @param	int			$status			Status of user or company
-	 *    @param	int[]		$arrayoftcids	Array with ID of type of contacts. If we provide this, we can make a ec.fk_c_type_contact in ($arrayoftcids) to avoid link on tc table. TODO Not implemented.
+	 *    @param	int[]		$arrayoftcids	Array with ID of type of contacts. If we provide this, we can filter on ec.fk_c_type_contact IN ($arrayoftcids) to avoid a link on c_type_contact table (faster).
 	 *    @return array<int,array{parentId:int,source:string,socid:int,id:int,nom:string,civility:string,lastname:string,firstname:string,email:string,login:string,photo:string,gender:string,statuscontact:int,rowid:int,code:string,libelle:string,status:string,fk_c_type_contact:int}>|int<-1,-1>        	Array of contacts, -1 if error
 	 */
 	public function liste_contact($statusoflink = -1, $source = 'external', $list = 0, $code = '', $status = -1, $arrayoftcids = array())
@@ -1504,34 +1504,40 @@ abstract class CommonObject
 			$sql .= ", t.fk_soc as socid, t.statut as statuscontact";
 		}
 		$sql .= ", t.civility as civility, t.lastname as lastname, t.firstname, t.email";
-		$sql .= ", tc.source, tc.element, tc.code, tc.libelle as type_label";
-		$sql .= " FROM ".$this->db->prefix()."c_type_contact tc,";
-		$sql .= " ".$this->db->prefix()."element_contact ec";
+		if (empty($arrayoftcids)) {
+			$sql .= ", tc.source, tc.element, tc.code, tc.libelle as type_label";
+		}
+		$sql .= " FROM";
+		if (empty($arrayoftcids)) {
+			$sql .= " ".$this->db->prefix()."c_type_contact as tc,";
+		}
+		$sql .= " ".$this->db->prefix()."element_contact as ec";
 		if ($source == 'internal') {	// internal contact (user)
-			$sql .= " LEFT JOIN ".$this->db->prefix()."user t on ec.fk_socpeople = t.rowid";
+			$sql .= " LEFT JOIN ".$this->db->prefix()."user as t on ec.fk_socpeople = t.rowid";
 		}
 		if ($source == 'external' || $source == 'thirdparty') {	// external contact (socpeople)
-			$sql .= " LEFT JOIN ".$this->db->prefix()."socpeople t on ec.fk_socpeople = t.rowid";
+			$sql .= " LEFT JOIN ".$this->db->prefix()."socpeople as t on ec.fk_socpeople = t.rowid";
 		}
 		$sql .= " WHERE ec.element_id = ".((int) $this->id);
-		$sql .= " AND ec.fk_c_type_contact = tc.rowid";
-		$sql .= " AND tc.element = '".$this->db->escape($this->element)."'";
-		if ($code) {
-			$sql .= " AND tc.code = '".$this->db->escape($code)."'";
-		}
-		if ($source == 'internal') {
-			$sql .= " AND tc.source = 'internal'";
-			if ($status >= 0) {
-				$sql .= " AND t.statut = ".((int) $status);
+		if (empty($arrayoftcids)) {
+			$sql .= " AND ec.fk_c_type_contact = tc.rowid";
+			$sql .= " AND tc.element = '".$this->db->escape($this->element)."'";
+			if ($code) {
+				$sql .= " AND tc.code = '".$this->db->escape($code)."'";
 			}
-		}
-		if ($source == 'external' || $source == 'thirdparty') {
-			$sql .= " AND tc.source = 'external'";
-			if ($status >= 0) {
-				$sql .= " AND t.statut = ".((int) $status);	// t is llx_socpeople
+			if ($source == 'internal') {
+				$sql .= " AND tc.source = 'internal'";
 			}
+			if ($source == 'external' || $source == 'thirdparty') {
+				$sql .= " AND tc.source = 'external'";
+			}
+			$sql .= " AND tc.active = 1";
+		} else {
+			$sql .= " AND ec.fk_c_type_contact IN (".$this->db->sanitize(implode(',', $arrayoftcids)).")";
 		}
-		$sql .= " AND tc.active = 1";
+		if ($status >= 0) {
+			$sql .= " AND t.statut = ".((int) $status);	// t is llx_user or llx_socpeople
+		}
 		if ($statusoflink >= 0) {
 			$sql .= " AND ec.statut = ".((int) $statusoflink);
 		}
@@ -2745,111 +2751,111 @@ abstract class CommonObject
 								/** @var Propal $this */
 								/** @var PropaleLigne $line */
 								$this->updateline(
-									$line->id,
-									$line->subprice,
-									$line->qty,
-									$line->remise_percent,
-									$line->tva_tx,
-									$line->localtax1_tx,
-									$line->localtax2_tx,
-									($line->description ? $line->description : $line->desc),
-									'HT',
-									$line->info_bits,
-									$line->special_code,
-									$line->fk_parent_line,
-									$line->skip_update_total,
-									$line->fk_fournprice,
-									$line->pa_ht,
-									$line->label,
-									$line->product_type,
-									$line->date_start,
-									$line->date_end,
-									$line->array_options,
-									$line->fk_unit,
-									$line->multicurrency_subprice
+								$line->id,
+								$line->subprice,
+								$line->qty,
+								$line->remise_percent,
+								$line->tva_tx,
+								$line->localtax1_tx,
+								$line->localtax2_tx,
+								($line->description ? $line->description : $line->desc),
+								'HT',
+								$line->info_bits,
+								$line->special_code,
+								$line->fk_parent_line,
+								$line->skip_update_total,
+								$line->fk_fournprice,
+								$line->pa_ht,
+								$line->label,
+								$line->product_type,
+								$line->date_start,
+								$line->date_end,
+								$line->array_options,
+								$line->fk_unit,
+								$line->multicurrency_subprice
 								);
 								break;
 							case 'commande':
 								/** @var Commande $this */
 								/** @var OrderLine $line */
 								$this->updateline(
-									$line->id,
-									($line->description ? $line->description : $line->desc),
-									$line->subprice,
-									$line->qty,
-									$line->remise_percent,
-									$line->tva_tx,
-									$line->localtax1_tx,
-									$line->localtax2_tx,
-									'HT',
-									$line->info_bits,
-									$line->date_start,
-									$line->date_end,
-									$line->product_type,
-									$line->fk_parent_line,
-									$line->skip_update_total,
-									$line->fk_fournprice,
-									$line->pa_ht,
-									$line->label,
-									$line->special_code,
-									$line->array_options,
-									$line->fk_unit,
-									$line->multicurrency_subprice
+								$line->id,
+								($line->description ? $line->description : $line->desc),
+								$line->subprice,
+								$line->qty,
+								$line->remise_percent,
+								$line->tva_tx,
+								$line->localtax1_tx,
+								$line->localtax2_tx,
+								'HT',
+								$line->info_bits,
+								$line->date_start,
+								$line->date_end,
+								$line->product_type,
+								$line->fk_parent_line,
+								$line->skip_update_total,
+								$line->fk_fournprice,
+								$line->pa_ht,
+								$line->label,
+								$line->special_code,
+								$line->array_options,
+								$line->fk_unit,
+								$line->multicurrency_subprice
 								);
 								break;
 							case 'facture':
 								/** @var Facture $this */
 								/** @var FactureLigne $line */
 								$this->updateline(
-									$line->id,
-									($line->description ? $line->description : $line->desc),
-									$line->subprice,
-									$line->qty,
-									$line->remise_percent,
-									$line->date_start,
-									$line->date_end,
-									$line->tva_tx,
-									$line->localtax1_tx,
-									$line->localtax2_tx,
-									'HT',
-									$line->info_bits,
-									$line->product_type,
-									$line->fk_parent_line,
-									$line->skip_update_total,
-									$line->fk_fournprice,
-									$line->pa_ht,
-									$line->label,
-									$line->special_code,
-									$line->array_options,
-									$line->situation_percent,
-									$line->fk_unit,
-									$line->multicurrency_subprice
+								$line->id,
+								($line->description ? $line->description : $line->desc),
+								$line->subprice,
+								$line->qty,
+								$line->remise_percent,
+								$line->date_start,
+								$line->date_end,
+								$line->tva_tx,
+								$line->localtax1_tx,
+								$line->localtax2_tx,
+								'HT',
+								$line->info_bits,
+								$line->product_type,
+								$line->fk_parent_line,
+								$line->skip_update_total,
+								$line->fk_fournprice,
+								$line->pa_ht,
+								$line->label,
+								$line->special_code,
+								$line->array_options,
+								$line->situation_percent,
+								$line->fk_unit,
+								$line->multicurrency_subprice
 								);
 								break;
 							case 'supplier_proposal':
 								/** @var SupplierProposal $this */
 								/** @var SupplierProposalLine $line */
 								$this->updateline(
-									$line->id,
-									$line->subprice,
-									$line->qty,
-									$line->remise_percent,
-									$line->tva_tx,
-									$line->localtax1_tx,
-									$line->localtax2_tx,
-									($line->description ? $line->description : $line->desc),
-									'HT',
-									$line->info_bits,
-									$line->special_code,
-									$line->fk_parent_line,
-									$line->skip_update_total,
-									$line->fk_fournprice,
-									$line->pa_ht,
-									$line->label,
-									$line->product_type,
-									$line->array_options,
-									$line->ref_fourn,
-									$line->multicurrency_subprice
+								$line->id,
+								$line->subprice,
+								$line->qty,
+								$line->remise_percent,
+								$line->tva_tx,
+								$line->localtax1_tx,
+								$line->localtax2_tx,
+								($line->description ? $line->description : $line->desc),
+								'HT',
+								$line->info_bits,
+								$line->special_code,
+								$line->fk_parent_line,
+								$line->skip_update_total,
+								$line->fk_fournprice,
+								$line->pa_ht,
+								$line->label,
+								$line->product_type,
+								$line->array_options,
+								$line->ref_fourn,
+								$line->multicurrency_subprice
 								);
 								break;
 							case 'order_supplier':
@@ -3360,7 +3366,7 @@ abstract class CommonObject
 	 * 	Get children of line
 	 *
 	 * 	@param	int			$id				Id of parent line
-	 * 	@param	int<0,1>	$includealltree	0 = 1st level child, 1 = All level child
+	 * 	@param	int<0,1001>	$includealltree	0 = 1st level child, 1 = All level child, 2-1001: internal use
 	 * 	@return	int[]						Array with list of children lines id
 	 */
 	public function getChildrenOfLine($id, $includealltree = 0)
@@ -4667,8 +4673,8 @@ abstract class CommonObject
 			$fieldstatus = 'status';
 		}
 
-		$sql = "UPDATE ".$this->db->prefix().$elementTable;
-		$sql .= " SET ".$fieldstatus." = ".((int) $status);
+		$sql = "UPDATE ".$this->db->prefix().$this->db->sanitize($elementTable);
+		$sql .= " SET ".$this->db->sanitize($fieldstatus)." = ".((int) $status);
 		// If status = 1 = validated, update also fk_user_valid
 		// TODO Replace the test on $elementTable by doing a test on existence of the field in $this->fields
 		if ($status == 1 && in_array($elementTable, array('expensereport', 'inventory'))) {
@@ -4712,6 +4718,8 @@ abstract class CommonObject
 						$trigkey = 'FICHINTER_CLASSIFY_UNBILLED';
 					}
 				}
+
+				$this->context = array_merge($this->context, array('newstatus' => $status));
 
 				if ($trigkey) {
 					// Call trigger
@@ -6260,10 +6268,10 @@ abstract class CommonObject
 				$enabled = (int) dol_eval($this->fields[$key]['enabled'], 1, 1, '1');
 			}
 			/*$perms = 1;
-			if (isset($this->fields[$key]['perms']))
-			{
-				$perms = (int) dol_eval($this->fields[$key]['perms'], 1, 1, '1');
-			}*/
+			 if (isset($this->fields[$key]['perms']))
+			 {
+			 $perms = (int) dol_eval($this->fields[$key]['perms'], 1, 1, '1');
+			 }*/
 			if (empty($enabled)) {
 				continue;
 			}
@@ -6297,10 +6305,10 @@ abstract class CommonObject
 			$this->array_languages[$key][$codelang] = $value_key;
 
 			/*if ($nofillrequired) {
-				$langs->load('errors');
-				setEventMessages($langs->trans('ErrorFieldsRequired').' : '.implode(', ', $error_field_required), null, 'errors');
-				return -1;
-			}*/
+			 $langs->load('errors');
+			 setEventMessages($langs->trans('ErrorFieldsRequired').' : '.implode(', ', $error_field_required), null, 'errors');
+			 return -1;
+			 }*/
 		}
 
 		return 1;
@@ -6432,8 +6440,8 @@ abstract class CommonObject
 					}
 				} else {
 					/**
-					We are in a situation where the current object has no values in its extra fields.
-					We want to initialize all the values to null so that the array_option is accessible in other contexts (especially in document generation).
+					 We are in a situation where the current object has no values in its extra fields.
+					 We want to initialize all the values to null so that the array_option is accessible in other contexts (especially in document generation).
 					 **/
 					if (is_array($extrafields->attributes[$this->table_element]['label'])) {
 						foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
@@ -6611,11 +6619,11 @@ abstract class CommonObject
 						$new_array_options[$key] = $value;
 						break;
 						/*case 'select':	// Not required, we chose value='0' for undefined values
-							 if ($value=='-1')
-							 {
-								 $this->array_options[$key] = null;
-							 }
-							 break;*/
+						 if ($value=='-1')
+						 {
+						 $this->array_options[$key] = null;
+						 }
+						 break;*/
 					case 'password':
 						$algo = '';
 						if ($this->array_options[$key] != '' && is_array($extrafields->attributes[$this->table_element]['param'][$attributeKey]['options'])) {
@@ -7057,13 +7065,13 @@ abstract class CommonObject
 					$this->array_options["options_".$key] = $new_array_options["options_".$key];
 					break;
 					/*case 'select':	// Not required, we chose value='0' for undefined values
-						 if ($value=='-1')
-						 {
-							$new_array_options["options_".$key] = $value;
+					 if ($value=='-1')
+					 {
+					 $new_array_options["options_".$key] = $value;
 
-							$this->array_options["options_".$key] = $new_array_options["options_".$key];
-						 }
-						 break;*/
+					 $this->array_options["options_".$key] = $new_array_options["options_".$key];
+					 }
+					 break;*/
 				case 'password':
 					$algo = '';
 					if ($this->array_options["options_".$key] != '' && is_array($extrafields->attributes[$this->table_element]['param'][$attributeKey]['options'])) {
@@ -7165,18 +7173,18 @@ abstract class CommonObject
 								if (is_numeric($value)) $res = $object->fetch($value);	// Common case
 								else $res = $object->fetch(0, $value);					// For compatibility
 
-								if ($res > 0) $new_array_options[$key] = $object->id;
-								else {
-									$this->error = "Id/Ref '".$value."' for object '".$object->element."' not found";
-									$this->db->rollback();
-									return -1;
-								}
-							}
-						} else {
-							dol_syslog('Error bad setup of extrafield', LOG_WARNING);
-						}
-						break;
-					*/
+					 if ($res > 0) $new_array_options[$key] = $object->id;
+					 else {
+					 $this->error = "Id/Ref '".$value."' for object '".$object->element."' not found";
+					 $this->db->rollback();
+					 return -1;
+					 }
+					 }
+					 } else {
+					 dol_syslog('Error bad setup of extrafield', LOG_WARNING);
+					 }
+					 break;
+					 */
 				case 'checkbox':
 				case 'chkbxlst':
 					$new_array_options = array();
@@ -7626,8 +7634,21 @@ abstract class CommonObject
 
 			$out .= '<select class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '').'>';
 			if (is_array($param['options'])) {
-				$param_list = array_keys($param['options']);
-				$InfoFieldList = explode(":", $param_list[0], 5);
+				$tmpparamoptions = array_keys($param['options']);
+				$paramoptions = preg_split('/[\r\n]+/', $tmpparamoptions[0]);
+
+				$InfoFieldList = explode(":", $paramoptions[0], 5);
+				// 0 : tableName
+				// 1 : label field name
+				// 2 : key fields name (if different of rowid)
+				// optional parameters...
+				// 3 : key field parent (for dependent lists). How this is used ?
+				// 4 : where clause filter on column or table extrafield, syntax field='value' or extra.field=value. Or use USF on a second line separated by "\n".
+				// 5 : string category type. This replace the filter.
+				// 6 : ids categories list separated by comma for category root. This replace the filter.
+				// 7 : sort field
+
+				// If there is filter
 				if (! empty($InfoFieldList[4])) {
 					$pos = 0;
 					$parenthesisopen = 0;
@@ -7648,18 +7669,21 @@ abstract class CommonObject
 						$InfoFieldList = array_merge($InfoFieldList, explode(':', $tmpafter));
 					}
 					//var_dump($InfoFieldList);
+
+					// Fix better compatibility with some old extrafield syntax filter "(field=123)"
+					$reg = array();
+					if (preg_match('/^\(?([a-z0-9]+)([=<>]+)(\d+)\)?$/i', $InfoFieldList[4], $reg)) {
+						$InfoFieldList[4] = '('.$reg[1].':'.$reg[2].':'.$reg[3].')';
+					}
+
+					//var_dump($InfoFieldList);
 				}
+
+				//$Usf = empty($paramoptions[1]) ? '' :$paramoptions[1];
+
 				$parentName = '';
 				$parentField = '';
 
-				// 0 : tableName
-				// 1 : label field name
-				// 2 : key fields name (if differ of rowid)
-				// 3 : key field parent (for dependent lists)
-				// 4 : where clause filter on column or table extrafield, syntax field='value' or extra.field=value
-				// 5 : id category type
-				// 6 : ids categories list separated by comma for category root
-				// 7 : sort field
 				$keyList = (empty($InfoFieldList[2]) ? 'rowid' : $InfoFieldList[2].' as rowid');
 
 				if (count($InfoFieldList) > 4 && !empty($InfoFieldList[4])) {
@@ -7691,6 +7715,7 @@ abstract class CommonObject
 					$sqlwhere = '';
 					$sql = "SELECT " . $keyList;
 					$sql .= " FROM " . $this->db->prefix() . $InfoFieldList[0];
+
 					if (!empty($InfoFieldList[4])) {
 						// can use SELECT request
 						if (strpos($InfoFieldList[4], '$SEL$') !== false) {
@@ -7707,8 +7732,8 @@ abstract class CommonObject
 						// We have to join on extrafield table
 						$errstr = '';
 						if (strpos($InfoFieldList[4], 'extra') !== false) {
-							$sql .= " as main, " . $this->db->prefix() . $InfoFieldList[0] . "_extrafields as extra";
-							$sqlwhere .= " WHERE extra.fk_object=main." . $InfoFieldList[2];
+							$sql .= " as main, " . $this->db->sanitize($this->db->prefix() . $InfoFieldList[0]) . "_extrafields as extra";
+							$sqlwhere .= " WHERE extra.fk_object = main." . $this->db->sanitize($InfoFieldList[2]);
 							$sqlwhere .= " AND " . forgeSQLFromUniversalSearchCriteria($InfoFieldList[4], $errstr, 1);
 						} else {
 							$sqlwhere .= " WHERE " . forgeSQLFromUniversalSearchCriteria($InfoFieldList[4], $errstr, 1);
@@ -7716,6 +7741,20 @@ abstract class CommonObject
 					} else {
 						$sqlwhere .= ' WHERE 1=1';
 					}
+
+					// Add Usf filter on second line
+					/*
+					 if ($Usf) {
+					 $errorstr = '';
+					 $sqlusf .= forgeSQLFromUniversalSearchCriteria($Usf, $errorstr);
+					 if (!$errorstr) {
+					 $sqlwhere .= $sqlusf;
+					 } else {
+					 $sqlwhere .= " AND invalid_usf_filter_of_extrafield";
+					 }
+					 }
+					 */
+
 					// Some tables may have field, some other not. For the moment we disable it.
 					if (in_array($InfoFieldList[0], array('tablewithentity'))) {
 						$sqlwhere .= " AND entity = " . ((int) $conf->entity);
@@ -7828,18 +7867,56 @@ abstract class CommonObject
 			}
 
 			if (is_array($param['options'])) {
-				$param_list = array_keys($param['options']);
-				$InfoFieldList = explode(":", $param_list[0]);
-				$parentName = '';
-				$parentField = '';
+				$tmpparamoptions = array_keys($param['options']);
+				$paramoptions = preg_split('/[\r\n]+/', $tmpparamoptions[0]);
+
+				$InfoFieldList = explode(":", $paramoptions[0], 5);
 				// 0 : tableName
 				// 1 : label field name
-				// 2 : key fields name (if differ of rowid)
-				// 3 : key field parent (for dependent lists)
-				// 4 : where clause filter on column or table extrafield, syntax field='value' or extra.field=value
-				// 5 : id category type
-				// 6 : ids categories list separated by comma for category root
+				// 2 : key fields name (if different of rowid)
+				// optional parameters...
+				// 3 : key field parent (for dependent lists). How this is used ?
+				// 4 : where clause filter on column or table extrafield, syntax field='value' or extra.field=value. Or use USF on a second line separated by "\n".
+				// 5 : string category type. This replace the filter.
+				// 6 : ids categories list separated by comma for category root. This replace the filter.
+				// 7 : sort field
+
+				// If there is a filter
+				if (! empty($InfoFieldList[4])) {
+					$pos = 0;
+					$parenthesisopen = 0;
+					while (substr($InfoFieldList[4], $pos, 1) !== '' && ($parenthesisopen || $pos == 0 || substr($InfoFieldList[4], $pos, 1) != ':')) {
+						if (substr($InfoFieldList[4], $pos, 1) == '(') {
+							$parenthesisopen++;
+						}
+						if (substr($InfoFieldList[4], $pos, 1) == ')') {
+							$parenthesisopen--;
+						}
+						$pos++;
+					}
+					$tmpbefore = substr($InfoFieldList[4], 0, $pos);
+					$tmpafter = substr($InfoFieldList[4], $pos + 1);
+					//var_dump($InfoFieldList[4].' -> '.$pos); var_dump($tmpafter);
+					$InfoFieldList[4] = $tmpbefore;
+					if ($tmpafter !== '') {
+						$InfoFieldList = array_merge($InfoFieldList, explode(':', $tmpafter));
+					}
+
+					// Fix better compatibility with some old extrafield syntax filter "(field=123)"
+					$reg = array();
+					if (preg_match('/^\(?([a-z0-9]+)([=<>]+)(\d+)\)?$/i', $InfoFieldList[4], $reg)) {
+						$InfoFieldList[4] = '('.$reg[1].':'.$reg[2].':'.$reg[3].')';
+					}
+
+					//var_dump($InfoFieldList);
+				}
+
+				//$Usf = empty($paramoptions[1]) ? '' :$paramoptions[1];
+
 				'@phan-var-force array{0:string,1:string,2:string,3:string,3:string,5:string,6:string} $InfoFieldList';
+
+				$parentName = '';
+				$parentField = '';
 
 				$keyList = (empty($InfoFieldList[2]) ? 'rowid' : $InfoFieldList[2].' as rowid');
 
@@ -7862,6 +7939,7 @@ abstract class CommonObject
 					}
 				}
 
+				// Common filter
 				if (!$filter_categorie) {
 					$fields_label = explode('|', $InfoFieldList[1]);
 					if (is_array($fields_label)) {
@@ -7872,6 +7950,7 @@ abstract class CommonObject
 					$sqlwhere = '';
 					$sql = "SELECT " . $keyList;
 					$sql .= ' FROM ' . $this->db->prefix() . $InfoFieldList[0];
+
 					if (!empty($InfoFieldList[4])) {
 						// can use SELECT request
 						if (strpos($InfoFieldList[4], '$SEL$') !== false) {
@@ -7886,15 +7965,31 @@ abstract class CommonObject
 						}
 
 						// We have to join on extrafield table
+						$errstr = '';
 						if (strpos($InfoFieldList[4], 'extra') !== false) {
-							$sql .= ' as main, ' . $this->db->prefix() . $InfoFieldList[0] . '_extrafields as extra';
-							$sqlwhere .= " WHERE extra.fk_object=main." . $InfoFieldList[2] . " AND " . $InfoFieldList[4];
+							$sql .= ' as main, ' . $this->db->sanitize($this->db->prefix() . $InfoFieldList[0]) . '_extrafields as extra';
+							$sqlwhere .= " WHERE extra.fk_object = main." . $this->db->sanitize($InfoFieldList[2]);
+							$sqlwhere .= " AND " . $InfoFieldList[4];
 						} else {
 							$sqlwhere .= " WHERE " . $InfoFieldList[4];
 						}
 					} else {
 						$sqlwhere .= ' WHERE 1=1';
 					}
+
+					// Add Usf filter on second line
+					/*
+					 if ($Usf) {
+					 $errorstr = '';
+					 $sqlusf .= forgeSQLFromUniversalSearchCriteria($Usf, $errorstr);
+					 if (!$errorstr) {
+					 $sqlwhere .= $sqlusf;
+					 } else {
+					 $sqlwhere .= " AND invalid_usf_filter_of_extrafield";
+					 }
+					 }
+					 */
+
 					// Some tables may have field, some other not. For the moment we disable it.
 					if (in_array($InfoFieldList[0], array('tablewithentity'))) {
 						$sqlwhere .= " AND entity = " . ((int) $conf->entity);
@@ -7903,7 +7998,9 @@ abstract class CommonObject
 					// print $sql;
 
 					$sql .= $sqlwhere;
+
 					dol_syslog(get_class($this) . '::showInputField type=chkbxlst', LOG_DEBUG);
+
 					$resql = $this->db->query($sql);
 					if ($resql) {
 						$num = $this->db->num_rows($resql);
@@ -8007,20 +8104,20 @@ abstract class CommonObject
 			if (!empty($param_list_array[2])) {		// If the entry into $fields is set, we must add a create button
 				if ((!GETPOSTISSET('backtopage') || strpos(GETPOST('backtopage'), $_SERVER['PHP_SELF']) === 0)	// // To avoid to open several times the 'Plus' button (we accept only one level)
 					&& empty($val['disabled']) && empty($nonewbutton)) {	// and to avoid to show the button if the field is protected by a "disabled".
-					list($class, $classfile) = explode(':', $param_list[0]);
+						list($class, $classfile) = explode(':', $param_list[0]);
 					if (file_exists(dol_buildpath(dirname(dirname($classfile)).'/card.php'))) {
 						$url_path = dol_buildpath(dirname(dirname($classfile)).'/card.php', 1);
 					} else {
 						$url_path = dol_buildpath(dirname(dirname($classfile)).'/'.strtolower($class).'_card.php', 1);
 					}
-					$paramforthenewlink = '';
-					$paramforthenewlink .= (GETPOSTISSET('action') ? '&action='.GETPOST('action', 'aZ09') : '');
-					$paramforthenewlink .= (GETPOSTISSET('id') ? '&id='.GETPOSTINT('id') : '');
-					$paramforthenewlink .= (GETPOSTISSET('origin') ? '&origin='.GETPOST('origin', 'aZ09') : '');
-					$paramforthenewlink .= (GETPOSTISSET('originid') ? '&originid='.GETPOSTINT('originid') : '');
-					$paramforthenewlink .= '&fk_'.strtolower($class).'=--IDFORBACKTOPAGE--';
-					// TODO Add JavaScript code to add input fields already filled into $paramforthenewlink so we won't loose them when going back to main page
-					$out .= '<a class="butActionNew" title="'.$langs->trans("New").'" href="'.$url_path.'?action=create&backtopage='.urlencode($_SERVER['PHP_SELF'].($paramforthenewlink ? '?'.$paramforthenewlink : '')).'"><span class="fa fa-plus-circle valignmiddle"></span></a>';
+						$paramforthenewlink = '';
+						$paramforthenewlink .= (GETPOSTISSET('action') ? '&action='.GETPOST('action', 'aZ09') : '');
+						$paramforthenewlink .= (GETPOSTISSET('id') ? '&id='.GETPOSTINT('id') : '');
+						$paramforthenewlink .= (GETPOSTISSET('origin') ? '&origin='.GETPOST('origin', 'aZ09') : '');
+						$paramforthenewlink .= (GETPOSTISSET('originid') ? '&originid='.GETPOSTINT('originid') : '');
+						$paramforthenewlink .= '&fk_'.strtolower($class).'=--IDFORBACKTOPAGE--';
+						// TODO Add JavaScript code to add input fields already filled into $paramforthenewlink so we won't loose them when going back to main page
+						$out .= '<a class="butActionNew" title="'.$langs->trans("New").'" href="'.$url_path.'?action=create&backtopage='.urlencode($_SERVER['PHP_SELF'].($paramforthenewlink ? '?'.$paramforthenewlink : '')).'"><span class="fa fa-plus-circle valignmiddle"></span></a>';
 				}
 			}
 		} elseif ($type == 'password') {
@@ -8219,7 +8316,7 @@ abstract class CommonObject
 		} elseif ($type == 'duration') {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 			if (!is_null($value) && $value !== '') {
-				$value = convertSecondToTime($value, 'allhourmin');
+				$value = convertSecondToTime((int) $value, 'allhourmin');
 			}
 		} elseif ($type == 'double' || $type == 'real') {
 			if (!is_null($value) && $value !== '') {
@@ -8866,7 +8963,7 @@ abstract class CommonObject
 					// Test on 'enabled' ('enabled' is different than 'list' = 'visibility')
 					$enabled = 1;
 					if ($enabled && isset($extrafields->attributes[$this->table_element]['enabled'][$key])) {
-						$enabled = (int) dol_eval($extrafields->attributes[$this->table_element]['enabled'][$key], 1, 1, '2');
+						$enabled = (int) dol_eval((string) $extrafields->attributes[$this->table_element]['enabled'][$key], 1, 1, '2');
 					}
 					if (empty($enabled)) {
 						continue;
@@ -8950,20 +9047,20 @@ abstract class CommonObject
 					if ($extrafields->attributes[$this->table_element]['type'][$key] == 'separate') {
 						$extrafields_collapse_num = $key;
 						/*
-						$extrafield_param = $extrafields->attributes[$this->table_element]['param'][$key];
-						if (!empty($extrafield_param) && is_array($extrafield_param)) {
-							$extrafield_param_list = array_keys($extrafield_param['options']);
+						 $extrafield_param = $extrafields->attributes[$this->table_element]['param'][$key];
+						 if (!empty($extrafield_param) && is_array($extrafield_param)) {
+						 $extrafield_param_list = array_keys($extrafield_param['options']);
 
-							if (count($extrafield_param_list) > 0) {
-								$extrafield_collapse_display_value = intval($extrafield_param_list[0]);
+						 if (count($extrafield_param_list) > 0) {
+						 $extrafield_collapse_display_value = intval($extrafield_param_list[0]);
 
-								if ($extrafield_collapse_display_value == 1 || $extrafield_collapse_display_value == 2) {
-									//$extrafields_collapse_num = $extrafields->attributes[$this->table_element]['pos'][$key];
-									$extrafields_collapse_num = $key;
-								}
-							}
-						}
-						*/
+						 if ($extrafield_collapse_display_value == 1 || $extrafield_collapse_display_value == 2) {
+						 //$extrafields_collapse_num = $extrafields->attributes[$this->table_element]['pos'][$key];
+						 $extrafields_collapse_num = $key;
+						 }
+						 }
+						 }
+						 */
 
 						// if colspan=0 or 1, the second column is not extended, so the separator must be on 2 columns
 						$out .= $extrafields->showSeparator($key, $this, ($colspan ? $colspan + 1 : 2), $display_type, $mode);
@@ -10270,9 +10367,9 @@ abstract class CommonObject
 
 					// Note: extrafields load of line not yet supported
 					/*
-					if (empty($noextrafields)) {
-						// Load extrafields of line
-					}*/
+					 if (empty($noextrafields)) {
+					 // Load extrafields of line
+					 }*/
 
 					$this->lines[] = $newline;
 				}
@@ -10356,11 +10453,11 @@ abstract class CommonObject
 
 			//var_dump($key.'-'.$values[$key].'-'.($this->fields[$key]['notnull'] == 1));
 			/*
-			if ($this->fields[$key]['notnull'] == 1 && empty($values[$key]))
-			{
-				$error++;
-				$this->errors[]=$langs->trans("ErrorFieldRequired", $this->fields[$key]['label']);
-			}*/
+			 if ($this->fields[$key]['notnull'] == 1 && empty($values[$key]))
+			 {
+			 $error++;
+			 $this->errors[]=$langs->trans("ErrorFieldRequired", $this->fields[$key]['label']);
+			 }*/
 		}
 
 		$sql = 'UPDATE '.$this->db->prefix().$this->table_element.' SET '.implode(', ', $tmp).' WHERE rowid='.((int) $this->id);
@@ -10722,56 +10819,6 @@ abstract class CommonObject
 			return -1;
 		}
 	}
-
-	/**
-	 * Set signed status & call trigger with context message
-	 *
-	 * @param	User	$user			Object user that modify
-	 * @param	int		$status			New signed status to set (often a constant like self::STATUS_XXX)
-	 * @param	int		$notrigger		1 = Does not execute triggers, 0 = Execute triggers
-	 * @param	string	$triggercode	Trigger code to use
-	 * @return	int						0 < if KO, > 0 if OK
-	 */
-	public function setSignedStatusCommon(User $user, int $status, int $notrigger = 0, string $triggercode = '')
-	{
-		$error = 0;
-
-		$this->db->begin();
-
-		$statusfield = 'signed_status';
-
-		$sql = "UPDATE ".$this->db->prefix().$this->table_element;
-		$sql .= " SET ".$statusfield." = ".((int) $status);
-		$sql .= " WHERE rowid = ".((int) $this->id);
-
-		if ($this->db->query($sql)) {
-			if (!$error) {
-				$this->oldcopy = clone $this;
-			}
-
-			if (!$error && !$notrigger) {
-				// Call trigger
-				$result = $this->call_trigger($triggercode, $user);
-				if ($result < 0) {
-					$error++;
-				}
-			}
-
-			if (!$error) {
-				$this->signed_status = $status;
-				$this->db->commit();
-				return 1;
-			} else {
-				$this->db->rollback();
-				return -1;
-			}
-		} else {
-			$this->error = $this->db->error();
-			$this->db->rollback();
-			return -1;
-		}
-	}
-
 
 	/**
 	 * Initialise object with example values

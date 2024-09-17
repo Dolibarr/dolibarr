@@ -98,7 +98,7 @@ if (!GETPOST("currency", 'alpha')) {
 }
 $source = GETPOST("s", 'aZ09') ? GETPOST("s", 'aZ09') : GETPOST("source", 'aZ09');
 $getpostlang = GETPOST('lang', 'aZ09');
-$ws = GETPOSTINT("ws"); // Website reference where the newpayment page is embedded
+$ws = GETPOST("ws"); // Website reference where the newpayment page is embedded
 
 if (!$action) {
 	if (!GETPOST("amount", 'alpha') && !$source) {
@@ -492,6 +492,8 @@ if ($action == 'dopayment') {	// Test on permission not required here (anonymous
 // When using the old Charge API architecture, this code is called after clicking the 'dopayment' with the Charge API architecture.
 // When using the PaymentIntent API architecture, the Stripe customer was already created when creating PaymentIntent when showing payment page, and the payment is already ok when action=charge.
 if ($action == 'charge' && isModEnabled('stripe')) {	// Test on permission not required here (anonymous action protected by mitigation of /public/... urls)
+	$stripecu = null;
+
 	$amountstripe = (float) $amount;
 
 	// Correct the amount according to unit of currency
@@ -1104,7 +1106,7 @@ if ($source == 'order') {
 	print '</td><td class="CTableRow2">'.$text;
 	print '<input type="hidden" name="s" value="'.dol_escape_htmltag($source).'">';
 	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($order->ref).'">';
-	print '<input type="hidden" name="dol_id" value="'.dol_escape_htmltag($order->id).'">';
+	print '<input type="hidden" name="dol_id" value="'.dol_escape_htmltag((string) $order->id).'">';
 	$directdownloadlink = $order->getLastMainDocLink('commande');
 	if ($directdownloadlink) {
 		print '<br><a href="'.$directdownloadlink.'" rel="nofollow noopener">';
@@ -1234,7 +1236,7 @@ if ($source == 'invoice') {
 	print '</td><td class="CTableRow2">'.$text;
 	print '<input type="hidden" name="s" value="'.dol_escape_htmltag($source).'">';
 	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($invoice->ref).'">';
-	print '<input type="hidden" name="dol_id" value="'.dol_escape_htmltag($invoice->id).'">';
+	print '<input type="hidden" name="dol_id" value="'.dol_escape_htmltag((string) $invoice->id).'">';
 	$directdownloadlink = $invoice->getLastMainDocLink('facture');
 	if ($directdownloadlink) {
 		print '<br><a href="'.$directdownloadlink.'">';
@@ -1423,7 +1425,7 @@ if ($source == 'contractline') {
 	print '</td><td class="CTableRow2">'.$text;
 	print '<input type="hidden" name="source" value="'.dol_escape_htmltag($source).'">';
 	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($contractline->ref).'">';
-	print '<input type="hidden" name="dol_id" value="'.dol_escape_htmltag($contractline->id).'">';
+	print '<input type="hidden" name="dol_id" value="'.dol_escape_htmltag((string) $contractline->id).'">';
 	$directdownloadlink = $contract->getLastMainDocLink('contract');
 	if ($directdownloadlink) {
 		print '<br><a href="'.$directdownloadlink.'">';
@@ -1451,7 +1453,7 @@ if ($source == 'contractline') {
 	}
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$label.'</td>';
 	print '<td class="CTableRow2"><b>'.($duration ? $duration : $qty).'</b>';
-	print '<input type="hidden" name="newqty" value="'.dol_escape_htmltag($qty).'">';
+	print '<input type="hidden" name="newqty" value="'.dol_escape_htmltag((string) $qty).'">';
 	print '</b></td></tr>'."\n";
 
 	// Amount
@@ -2169,8 +2171,12 @@ if ($action != 'dopayment') {
 				}
 
 				if ($showbutton) {
+					// By default noidempotency is set to 1, to avoid the error "Keys for idempotant requests...". It means we can pay several times the same tag/ref.
+					// If STRIPE_USE_IDEMPOTENCY_BY_DEFAULT is set or param noidempotency=0 is added, then with add an idempotent key, so we must use a different tag/ref for each payment (if not we will get an error).
+					$noidempotency_key = (GETPOSTISSET('noidempotency') ? GETPOSTINT('noidempotency') : (getDolGlobalInt('STRIPE_USE_IDEMPOTENCY_BY_DEFAULT') ? 0 : 1));
+
 					print '<div class="button buttonpayment" id="div_dopayment_stripe"><span class="fa fa-credit-card"></span> <input class="" type="submit" id="dopayment_stripe" name="dopayment_stripe" value="'.$langs->trans("StripeDoPayment").'">';
-					print '<input type="hidden" name="noidempotency" value="'.GETPOSTINT('noidempotency').'">';
+					print '<input type="hidden" name="noidempotency" value="'.$noidempotency_key.'">';
 					print '<br>';
 					print '<span class="buttonpaymentsmall">'.$langs->trans("CreditOrDebitCard").'</span>';
 					print '</div>';
@@ -2324,13 +2330,15 @@ if (preg_match('/^dopayment/', $action)) {			// If we chose/clicked on the payme
 
 			$stripe = new Stripe($db);
 			$stripeacc = $stripe->getStripeAccount($service);
-			$stripecu = null;
 			if (is_object($object) && is_object($object->thirdparty)) {
 				$stripecu = $stripe->customerStripe($object->thirdparty, $stripeacc, $servicestatus, 1);
 			}
 
 			if (getDolGlobalString('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION')) {
-				$noidempotency_key = (GETPOSTISSET('noidempotency') ? GETPOSTINT('noidempotency') : 0); // By default noidempotency is unset, so we must use a different tag/ref for each payment. If set, we can pay several times the same tag/ref.
+				// By default noidempotency is set to 1, to avoid the error "Keys for idempotant requests...". It means we can pay several times the same tag/ref.
+				// If STRIPE_USE_IDEMPOTENCY_BY_DEFAULT is set or param noidempotency=0 is added, then with add an idempotent key, so we must use a different tag/ref for each payment (if not we will get an error).
+				$noidempotency_key = (GETPOSTISSET('noidempotency') ? GETPOSTINT('noidempotency') : (getDolGlobalInt('STRIPE_USE_IDEMPOTENCY_BY_DEFAULT') ? 0 : 1));
+
 				$paymentintent = $stripe->getPaymentIntent($amount, $currency, ($tag ? $tag : $fulltag), 'Stripe payment: '.$fulltag.(is_object($object) ? ' ref='.$object->ref : ''), $object, $stripecu, $stripeacc, $servicestatus, 0, 'automatic', false, null, 0, $noidempotency_key);
 				// The paymentintnent has status 'requires_payment_method' (even if paymentintent was already paid)
 				//var_dump($paymentintent);
