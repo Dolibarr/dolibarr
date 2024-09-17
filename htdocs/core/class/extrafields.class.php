@@ -1347,7 +1347,7 @@ class ExtraFields
 
 				// If there is a filter, we extract it by taking all content inside parenthesis.
 				if (! empty($InfoFieldList[4])) {
-					$pos = 0;
+					$pos = 0;	// $pos will be position of ending filter
 					$parenthesisopen = 0;
 					while (substr($InfoFieldList[4], $pos, 1) !== '' && ($parenthesisopen || $pos == 0 || substr($InfoFieldList[4], $pos, 1) != ':')) {
 						if (substr($InfoFieldList[4], $pos, 1) == '(') {
@@ -1365,6 +1365,13 @@ class ExtraFields
 					if ($tmpafter !== '') {
 						$InfoFieldList = array_merge($InfoFieldList, explode(':', $tmpafter));
 					}
+
+					// Fix better compatibility with some old extrafield syntax filter "(field=123)"
+					$reg = array();
+					if (preg_match('/^\(?([a-z0-9]+)([=<>]+)(\d+)\)?$/i', $InfoFieldList[4], $reg)) {
+						$InfoFieldList[4] = '('.$reg[1].':'.$reg[2].':'.$reg[3].')';
+					}
+
 					//var_dump($InfoFieldList);
 				}
 
@@ -1421,14 +1428,15 @@ class ExtraFields
 						} else {
 							$InfoFieldList[4] = str_replace('$ID$', '0', $InfoFieldList[4]);
 						}
-						//We have to join on extrafield table
+
+						// We have to join on extrafield table
 						$errstr = '';
 						if (strpos($InfoFieldList[4], 'extra.') !== false) {
-							$sql .= ' as main, '.$this->db->prefix().$InfoFieldList[0].'_extrafields as extra';
-							$sqlwhere .= " WHERE extra.fk_object = main.".$InfoFieldList[2]." AND ".$InfoFieldList[4];
+							$sql .= ' as main, '.$this->db->sanitize($this->db->prefix().$InfoFieldList[0]).'_extrafields as extra';
+							$sqlwhere .= " WHERE extra.fk_object = main.".$this->db->sanitize($InfoFieldList[2]);
 							$sqlwhere .= " AND " . forgeSQLFromUniversalSearchCriteria($InfoFieldList[4], $errstr, 1);
 						} else {
-							$sqlwhere .= " AND " . forgeSQLFromUniversalSearchCriteria($InfoFieldList[4], $errstr, 1);
+							$sqlwhere .= " WHERE " . forgeSQLFromUniversalSearchCriteria($InfoFieldList[4], $errstr, 1);
 						}
 					} else {
 						$sqlwhere .= ' WHERE 1=1';
@@ -1582,6 +1590,13 @@ class ExtraFields
 					if ($tmpafter !== '') {
 						$InfoFieldList = array_merge($InfoFieldList, explode(':', $tmpafter));
 					}
+
+					// Fix better compatibility with some old extrafield syntax filter "(field=123)"
+					$reg = array();
+					if (preg_match('/^\(?([a-z0-9]+)([=<>]+)(\d+)\)?$/i', $InfoFieldList[4], $reg)) {
+						$InfoFieldList[4] = '('.$reg[1].':'.$reg[2].':'.$reg[3].')';
+					}
+
 					//var_dump($InfoFieldList);
 				}
 
@@ -1690,8 +1705,8 @@ class ExtraFields
 						// We have to join on extrafield table
 						$errstr = '';
 						if (strpos($InfoFieldList[4], 'extra.') !== false) {
-							$sql .= ' as main, '.$this->db->prefix().$InfoFieldList[0].'_extrafields as extra';
-							$sqlwhere .= " WHERE extra.fk_object = main.".$InfoFieldList[2];
+							$sql .= ' as main, '.$this->db->sanitize($this->db->prefix().$InfoFieldList[0]).'_extrafields as extra';
+							$sqlwhere .= " WHERE extra.fk_object = main.".$this->db->sanitize($InfoFieldList[2]);
 							$sqlwhere .= " AND " . forgeSQLFromUniversalSearchCriteria($InfoFieldList[4], $errstr, 1);
 						} else {
 							$sqlwhere .= " WHERE " . forgeSQLFromUniversalSearchCriteria($InfoFieldList[4], $errstr, 1);

@@ -316,7 +316,7 @@ class FormAdvTargetEmailing extends Form
 				// We have to join on extrafield table
 				if (strpos($InfoFieldList[3], 'extra') !== false) {
 					$sql .= ' as main, '.$this->db->sanitize(MAIN_DB_PREFIX.$InfoFieldList[0]).'_extrafields as extra';
-					$sql .= " WHERE extra.fk_object=main.".$this->db->sanitize(empty($InfoFieldList[2]) ? 'rowid' : $InfoFieldList[2]);
+					$sql .= " WHERE extra.fk_object = main.".$this->db->sanitize(empty($InfoFieldList[2]) ? 'rowid' : $InfoFieldList[2]);
 					$sql .= " AND ".forgeSQLFromUniversalSearchCriteria($InfoFieldList[3], $errorstr, 1);
 				} else {
 					$sql .= " WHERE ".forgeSQLFromUniversalSearchCriteria($InfoFieldList[3], $errorstr, 1);
