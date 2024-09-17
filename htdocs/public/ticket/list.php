@@ -250,7 +250,7 @@ if ($action == "view_ticketlist") {
 			'category.code' => array('label' => $langs->trans("Category"), 'checked' => 1),
 			'severity.code' => array('label' => $langs->trans("Severity"), 'checked' => 1),
 			't.progress' => array('label' => $langs->trans("Progression"), 'checked' => 0),
-			't.duration' => array('label' => $langs->trans("TicketDurationAuto"), 'checked' => 0),
+			't.duration' => array('label' => $langs->trans("TicketDurationAuto"), 'checked' => 1),
 			//'t.fk_contract' => array('label' => $langs->trans("Contract"), 'checked' => 0),
 			't.fk_user_create' => array('label' => $langs->trans("Author"), 'checked' => 1),
 			't.fk_user_assign' => array('label' => $langs->trans("AssignedTo"), 'checked' => 0),
