@@ -907,7 +907,7 @@ class EcmFiles extends CommonObject
 	 *  Return a link to the object card (with optionally the picto)
 	 *
 	 *	@param	int		$withpicto			Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
-	 *	@param	string	$option				On what the link point to
+	 *	@param	string	$option				On what the link point to (propal, etc) module name
 	 *  @param	int  	$notooltip			1=Disable tooltip
 	 *  @param	int		$maxlen				Max length of visible user name
 	 *  @param  string  $morecss            Add more css on link
@@ -929,7 +929,11 @@ class EcmFiles extends CommonObject
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
 
-		$url = DOL_URL_ROOT.'/ecm/file_card.php?id='.$this->id;
+		if ($option) {
+			$url = DOL_URL_ROOT.'/document.php?modulepart='.$option.'&file='.urlencode(preg_replace('/[a-zA-Z]+\//', '', $this->filepath).'/'.$this->filename).'&entity='.$this->entity;
+		} else {
+			$url = DOL_URL_ROOT.'/ecm/file_card.php?id='.$this->id;
+		}
 
 		$linkclose = '';
 		if (empty($notooltip)) {
