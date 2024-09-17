@@ -137,6 +137,7 @@ if (GETPOST('code')) {     // We are coming from oauth provider page
 	if ($apiService === null) {
 		dol_syslog("No API Service", LOG_ERR);
 	} else {
+		'@phan-var-force OAuth\OAuth2\Service\AbstractService|OAuth\OAuth1\Service\AbstractService $apiService';
 		try {
 			//var_dump($state);
 			//var_dump($apiService);      // OAuth\OAuth2\Service\Stripe

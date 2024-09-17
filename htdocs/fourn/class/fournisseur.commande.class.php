@@ -1919,10 +1919,10 @@ class CommandeFournisseur extends CommonOrder
 	 *	@param		int			$type					Type of line (0=product, 1=service)
 	 *	@param		int			$info_bits				More information
 	 *	@param		int			$notrigger				Disable triggers
-	 *	@param		int			$date_start				Date start of service
-	 *	@param		int			$date_end				Date end of service
-	 *	@param		array		$array_options			extrafields array
-	 *	@param 		int|null	$fk_unit 				Code of the unit to use. Null to use the default one
+	 *	@param		?int		$date_start				Date start of service
+	 *	@param		?int		$date_end				Date end of service
+	 *	@param		array<string,null|int|float|string>	$array_options	extrafields array
+	 *	@param 		?int		$fk_unit 				Code of the unit to use. Null to use the default one
 	 *	@param 		int|string		$pu_ht_devise			Amount in currency
 	 *	@param		string		$origin					'order', ...
 	 *	@param		int			$origin_id				Id of origin object

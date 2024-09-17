@@ -287,6 +287,7 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = 0)
 	global $dolibarr_main_url_root, $dolibarr_main_data_root;
 	global $website;
 	global $includehtmlcontentopened;
+	'@phan-var-force WebSite $website';
 
 	$nbrep = 0;
 
@@ -518,6 +519,7 @@ function dolWebsiteSaveContent($content)
 function redirectToContainer($containerref, $containeraliasalt = '', $containerid = 0, $permanent = 0, $parameters = array())
 {
 	global $db, $website;
+	'@phan-var-force WebSite $website';
 
 	$newurl = '';
 	$result = 0;
@@ -602,6 +604,7 @@ function includeContainer($containerref)
 	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running included containers.
 	global $includehtmlcontentopened;
 	global $websitekey, $websitepagefile;
+	'@phan-var-force WebSite $website';
 
 	$MAXLEVEL = 20;
 
@@ -657,6 +660,7 @@ function includeContainer($containerref)
 function getStructuredData($type, $data = array())
 {
 	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs; // Very important. Required to have var available when running included containers.
+	'@phan-var-force WebSite $website';
 
 	$type = strtolower($type);
 
@@ -864,6 +868,7 @@ function getStructuredData($type, $data = array())
 function getSocialNetworkHeaderCards($params = null)
 {
 	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running included containers.
+	'@phan-var-force WebSite $website';
 
 	$out = '';
 
@@ -939,6 +944,7 @@ function getSocialNetworkHeaderCards($params = null)
 function getSocialNetworkSharingLinks($socialnetworks = '')
 {
 	global $website, $websitepage; // Very important. Required to have var available when running included containers.
+	'@phan-var-force WebSite $website';
 
 	$out = '<!-- section for social network sharing of page -->'."\n";
 
@@ -985,7 +991,7 @@ function getSocialNetworkSharingLinks($socialnetworks = '')
 
 
 /**
- * Return HTML content to add structured data for an article, news or Blog Post.
+ * Return nb of images known into inde files for an object;
  *
  * @param	Object	$object		Object
  * @return  int					HTML img content or '' if no image found
@@ -1020,13 +1026,14 @@ function getNbOfImagePublicURLOfObject($object)
 }
 
 /**
- * Return HTML content to add structured data for an article, news or Blog Post.
+ * Return the public image URL of an object.
+ * For example, you can get the public image URL of a product (image that is shared).
  *
  * @param	Object	$object			Object
  * @param	int		$no				Numero of image (if there is several images. 1st one by default)
  * @param   string  $extName        Extension to differentiate thumb file name ('', '_small', '_mini')
  * @return  string					HTML img content or '' if no image found
- * @see getNbOfImagePublicURLOfObject()
+ * @see getNbOfImagePublicURLOfObject(), getPublicFilesOfObject()
  */
 function getImagePublicURLOfObject($object, $no = 1, $extName = '')
 {
@@ -1096,10 +1103,11 @@ function getImagePublicURLOfObject($object, $no = 1, $extName = '')
 }
 
 /**
- * Return list of public files of a given object.
+ * Return array with list of all public files of a given object.
  *
  * @param	Object	$object			Object
  * @return  array					List of public files of object
+ * @see getImagePublicURLOfObject()
  */
 function getPublicFilesOfObject($object)
 {
@@ -1164,6 +1172,7 @@ function getPublicFilesOfObject($object)
 function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $sortfield = 'date_creation', $sortorder = 'DESC', $langcode = '', $otherfilters = [], $status = 1)
 {
 	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running included containers.
+	'@phan-var-force WebSite $website';
 
 	$error = 0;
 	$arrayresult = array('code' => '', 'list' => array());
@@ -1319,17 +1328,60 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 }
 
 /**
- * Download all images found into page content $tmp.
+ * Return the URL of an image found into a HTML content.
+ * To get image from an external URL to download first, see getAllImages()
+ *
+ * @param	string		$htmlContent	HTML content
+ * @param	int			$imageNumber	The position of image. 1 by default = first image found
+ * @return	string						URL of image or '' if not foud
+ */
+function getImageFromHtmlContent($htmlContent, $imageNumber = 1)
+{
+	$dom = new DOMDocument();
+
+	libxml_use_internal_errors(false);	// Avoid to fill memory with xml errors
+	if (LIBXML_VERSION < 20900) {
+		// Avoid load of external entities (security problem).
+		// Required only if LIBXML_VERSION < 20900
+		// @phan-suppress-next-line PhanDeprecatedFunctionInternal
+		libxml_disable_entity_loader(true);
+	}
+
+	// Load HTML content into object
+	$dom->loadHTML($htmlContent);
+
+	// Re-enable HTML load errors
+	libxml_clear_errors();
+
+	// Load all img tags
+	$images = $dom->getElementsByTagName('img');
+
+	// Check if nb of image is valid
+	if ($imageNumber > 0 && $imageNumber <= $images->length) {
+		// Récupère l'image correspondante (index - 1 car $imageNumber est 1-based)
+		$img = $images->item($imageNumber - 1);
+		if ($img instanceof DOMElement) {
+			return $img->getAttribute('src');
+		}
+	}
+
+	return '';
+}
+
+/**
+ * Download all images found into an external URL.
+ * It using a text regex parsing solution, not a DOM analysis.
  * If $modifylinks is set, links to images will be replace with a link to viewimage wrapper.
+ * To extract an URL from a HTML text content, see instead getImageFromHtmlContent().
  *
  * @param 	Website	 	$object			Object website
  * @param 	WebsitePage	$objectpage		Object website page
- * @param 	string		$urltograb		URL to grab (example: http://www.nltechno.com/ or http://www.nltechno.com/dir1/ or http://www.nltechno.com/dir1/mapage1)
+ * @param 	string		$urltograb		URL to grab (example: https://www.nltechno.com/ or s://www.nltechno.com/dir1/ or https://www.nltechno.com/dir1/mapage1)
  * @param 	string		$tmp			Content to parse
  * @param 	string		$action			Var $action
- * @param	int 		$modifylinks	0=Do not modify content, 1=Replace links with a link to viewimage
- * @param	int			$grabimages		0=Do not grab images, 1=Grab images
- * @param	string		$grabimagesinto	'root' or 'subpage'
+ * @param	int<0,1>	$modifylinks	0=Do not modify content, 1=Replace links with a link to viewimage
+ * @param	int<0,1>	$grabimages		0=Do not grab images, 1=Grab images
+ * @param	'root'|'subpage'	$grabimagesinto	'root' or 'subpage'
  * @return	void
  */
 function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modifylinks = 0, $grabimages = 1, $grabimagesinto = 'subpage')
