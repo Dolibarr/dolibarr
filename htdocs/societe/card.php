@@ -3295,13 +3295,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=edit&token='.newToken(), '', $permissiontoadd);
 
-				if (!isset($object->no_button_copy) || $object->no_button_copy != 1) {
-					if (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)) {
-						$cloneSocietetUrl = '';
-						$cloneButtonId = 'action-clone';
-					}
-					print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $cloneSocietetUrl, $cloneButtonId, $user->hasRight('societe', 'creer'));
+				if (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)) {
+					$cloneSocietetUrl = '';
+					$cloneButtonId = 'action-clone';
 				}
+				print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $cloneSocietetUrl, $cloneButtonId, $user->hasRight('societe', 'creer'));
 
 				if (isModEnabled('member')) {
 					$adh = new Adherent($db);
