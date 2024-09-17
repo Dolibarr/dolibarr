@@ -448,12 +448,16 @@ class modSociete extends DolibarrModules
 			$this->export_sql_end[$r] .= ')';
 		}
 
-		// Export list of third-party payment methods
+		// Export list of third-party and bank/payment methods
 		$r++;
 		$this->export_code[$r] = $this->rights_class.'_'.$r;
 		$this->export_label[$r] = 'ExportDataset_company_3';
 		$this->export_icon[$r] = 'account';
-		$this->export_permission[$r] = array(array("societe", "contact", "export"), array("societe", "thirdparty_paymentinformation_advance", "write"));
+		if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
+			$this->export_permission[$r] = array(array("societe", "export"), array("societe", "thirdparty_paymentinformation_advance", "write"));
+		} else {
+			$this->export_permission[$r] = array(array("societe", "export"));
+		}
 		$this->export_fields_array[$r] = array(
 			'b.rowid' => "IdPaymentMode",
 			'b.fk_soc' => "ThirdPartyName",

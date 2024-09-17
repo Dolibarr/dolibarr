@@ -377,8 +377,9 @@ foreach ($dirmodels as $reldir) {
 							$facture = new Facture($db);
 							$facture->initAsSpecimen();
 
-							// Example for standard invoice
 							$htmltooltip = '';
+
+							// Example for standard invoice
 							$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
 							$facture->type = 0;
 							$nextval = $module->getNextValue($mysoc, $facture);
@@ -393,21 +394,22 @@ foreach ($dirmodels as $reldir) {
 									$htmltooltip .= $langs->trans($module->error).'<br>';
 								}
 							}
-							// Example for replacement
-							$facture->type = 1;
-							$nextval = $module->getNextValue($mysoc, $facture);
-							if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
-								$htmltooltip .= $langs->trans("NextValueForReplacements").': ';
-								if ($nextval) {
-									if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
-										$nextval = $langs->trans($nextval);
+							// Example for replacement invoice
+							if (!getDolGlobalString('INVOICE_DISABLE_REPLACEMENT')) {
+								$facture->type = 1;
+								$nextval = $module->getNextValue($mysoc, $facture);
+								if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
+									$htmltooltip .= $langs->trans("NextValueForReplacements").': ';
+									if ($nextval) {
+										if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
+											$nextval = $langs->trans($nextval);
+										}
+										$htmltooltip .= $nextval.'<br>';
+									} else {
+										$htmltooltip .= $langs->trans($module->error).'<br>';
 									}
-									$htmltooltip .= $nextval.'<br>';
-								} else {
-									$htmltooltip .= $langs->trans($module->error).'<br>';
 								}
 							}
-
 							// Example for credit invoice
 							$facture->type = 2;
 							$nextval = $module->getNextValue($mysoc, $facture);
@@ -752,7 +754,7 @@ if ($resql) {
 	}
 }
 print "</select>";
-print ajax_combobox("chq", array(), 0, 0, 'resolve', -2);
+print ajax_combobox("chq", array(), 0, 0, 'resolve', '-2');
 
 print "</td></tr>";
 print "</table>";

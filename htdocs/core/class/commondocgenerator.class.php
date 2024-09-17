@@ -303,7 +303,7 @@ abstract class CommonDocGenerator
 		global $conf;
 
 		if (empty($mysoc->forme_juridique) && !empty($mysoc->forme_juridique_code)) {
-			$mysoc->forme_juridique = getFormeJuridiqueLabel($mysoc->forme_juridique_code);
+			$mysoc->forme_juridique = getFormeJuridiqueLabel((string) $mysoc->forme_juridique_code);
 		}
 		if (empty($mysoc->country) && !empty($mysoc->country_code)) {
 			$mysoc->country = $outputlangs->transnoentitiesnoconv("Country".$mysoc->country_code);
@@ -536,6 +536,7 @@ abstract class CommonDocGenerator
 
 		if ($object->element == 'facture') {
 			/** @var Facture $object */
+			'@phan-var-force Facture $object';
 			$invoice_source = new Facture($this->db);
 			if ($object->fk_facture_source > 0) {
 				$invoice_source->fetch($object->fk_facture_source);
@@ -546,10 +547,10 @@ abstract class CommonDocGenerator
 			$already_payed_all = $sumpayed + $sumdeposit + $sumcreditnote;
 		}
 
+		// Ignore notice for deprecated date - @phan-suppress-next-line PhanUndeclaredProperty
 		$date = (isset($object->element) && $object->element == 'contrat' && isset($object->date_contrat)) ? $object->date_contrat : (isset($object->date) ? $object->date : null);
 
-		if (get_class($object) == 'CommandeFournisseur') {
-			/** @var CommandeFournisseur $object*/
+		if ($object instanceof CommandeFournisseur) {
 			$object->date_validation =  $object->date_valid;
 			$object->date_commande = $object->date;
 		}

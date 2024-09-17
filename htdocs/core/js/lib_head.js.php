@@ -1323,7 +1323,7 @@ jQuery(document).ready(function() {
 jQuery(document).ready(function() {
 	jQuery(".butAction.dropdown-toggle").on("click", function(event) {
 		console.log("Click on .butAction.dropdown-toggle");
-		var parentholder = jQuery(".butAction.dropdown-toggle").closest(".dropdown");
+		var parentholder = jQuery(event.target).parent();
 		var offset = parentholder.offset();
 		var widthdocument = $(document).width();
 		var left = offset.left;
@@ -1340,8 +1340,8 @@ jQuery(document).ready(function() {
 	// Close drop down
 	jQuery(document).on("click", function(event) {
 		// search if click was outside drop down
-		if (!$(event.target).closest('.butAction.dropdown-toggle').length) {
-			let parentholder = jQuery(".butAction.dropdown-toggle").closest(".dropdown.open");
+		if (!$(event.target).closest('.dropdown-toggle').length) {
+			let parentholder = jQuery(".dropdown-toggle").closest(".dropdown.open");
 			if(parentholder){
 				// Hide the menus.
 				parentholder.removeClass("open");

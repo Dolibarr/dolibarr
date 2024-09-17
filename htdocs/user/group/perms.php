@@ -5,6 +5,7 @@
  * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -158,6 +159,7 @@ if ($object->id > 0) {
 					if ($modName) {
 						include_once $dir.$file;
 						$objMod = new $modName($db);
+						'@phan-var-force DolibarrModules $objMod';
 						// Load all lang files of module
 						if (isset($objMod->langfiles) && is_array($objMod->langfiles)) {
 							foreach ($objMod->langfiles as $domain) {

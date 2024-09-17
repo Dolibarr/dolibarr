@@ -387,7 +387,7 @@ class pdf_sponge extends ModelePDFFactures
 				if ($cert) {
 					$info = array(
 						'Name' => $this->emetteur->name,
-						'Location' => getCountry($this->emetteur->country_code, 0),
+						'Location' => getCountry($this->emetteur->country_code, ''),
 						'Reason' => 'INVOICE',
 						'ContactInfo' => $this->emetteur->email
 					);
@@ -715,7 +715,7 @@ class pdf_sponge extends ModelePDFFactures
 					$posYAfterDescription = 0;
 
 					if ($this->getColumnStatus('position')) {
-						$this->printStdColumnContent($pdf, $curY, 'position', $i + 1);
+						$this->printStdColumnContent($pdf, $curY, 'position', (string) ($i + 1));
 					}
 
 					if ($this->getColumnStatus('photo')) {

@@ -98,7 +98,7 @@ if (!GETPOST("currency", 'alpha')) {
 }
 $source = GETPOST("s", 'aZ09') ? GETPOST("s", 'aZ09') : GETPOST("source", 'aZ09');
 $getpostlang = GETPOST('lang', 'aZ09');
-$ws = GETPOSTINT("ws"); // Website reference where the newpayment page is embedded
+$ws = GETPOST("ws"); // Website reference where the newpayment page is embedded
 
 if (!$action) {
 	if (!GETPOST("amount", 'alpha') && !$source) {
@@ -492,6 +492,8 @@ if ($action == 'dopayment') {	// Test on permission not required here (anonymous
 // When using the old Charge API architecture, this code is called after clicking the 'dopayment' with the Charge API architecture.
 // When using the PaymentIntent API architecture, the Stripe customer was already created when creating PaymentIntent when showing payment page, and the payment is already ok when action=charge.
 if ($action == 'charge' && isModEnabled('stripe')) {	// Test on permission not required here (anonymous action protected by mitigation of /public/... urls)
+	$stripecu = null;
+
 	$amountstripe = (float) $amount;
 
 	// Correct the amount according to unit of currency
@@ -1104,7 +1106,7 @@ if ($source == 'order') {
 	print '</td><td class="CTableRow2">'.$text;
 	print '<input type="hidden" name="s" value="'.dol_escape_htmltag($source).'">';
 	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($order->ref).'">';
-	print '<input type="hidden" name="dol_id" value="'.dol_escape_htmltag($order->id).'">';
+	print '<input type="hidden" name="dol_id" value="'.dol_escape_htmltag((string) $order->id).'">';
 	$directdownloadlink = $order->getLastMainDocLink('commande');
 	if ($directdownloadlink) {
 		print '<br><a href="'.$directdownloadlink.'" rel="nofollow noopener">';
@@ -1234,7 +1236,7 @@ if ($source == 'invoice') {
 	print '</td><td class="CTableRow2">'.$text;
 	print '<input type="hidden" name="s" value="'.dol_escape_htmltag($source).'">';
 	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($invoice->ref).'">';
-	print '<input type="hidden" name="dol_id" value="'.dol_escape_htmltag($invoice->id).'">';
+	print '<input type="hidden" name="dol_id" value="'.dol_escape_htmltag((string) $invoice->id).'">';
 	$directdownloadlink = $invoice->getLastMainDocLink('facture');
 	if ($directdownloadlink) {
 		print '<br><a href="'.$directdownloadlink.'">';
@@ -1423,7 +1425,7 @@ if ($source == 'contractline') {
 	print '</td><td class="CTableRow2">'.$text;
 	print '<input type="hidden" name="source" value="'.dol_escape_htmltag($source).'">';
 	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($contractline->ref).'">';
-	print '<input type="hidden" name="dol_id" value="'.dol_escape_htmltag($contractline->id).'">';
+	print '<input type="hidden" name="dol_id" value="'.dol_escape_htmltag((string) $contractline->id).'">';
 	$directdownloadlink = $contract->getLastMainDocLink('contract');
 	if ($directdownloadlink) {
 		print '<br><a href="'.$directdownloadlink.'">';
@@ -1451,7 +1453,7 @@ if ($source == 'contractline') {
 	}
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$label.'</td>';
 	print '<td class="CTableRow2"><b>'.($duration ? $duration : $qty).'</b>';
-	print '<input type="hidden" name="newqty" value="'.dol_escape_htmltag($qty).'">';
+	print '<input type="hidden" name="newqty" value="'.dol_escape_htmltag((string) $qty).'">';
 	print '</b></td></tr>'."\n";
 
 	// Amount
@@ -2328,7 +2330,6 @@ if (preg_match('/^dopayment/', $action)) {			// If we chose/clicked on the payme
 
 			$stripe = new Stripe($db);
 			$stripeacc = $stripe->getStripeAccount($service);
-			$stripecu = null;
 			if (is_object($object) && is_object($object->thirdparty)) {
 				$stripecu = $stripe->customerStripe($object->thirdparty, $stripeacc, $servicestatus, 1);
 			}

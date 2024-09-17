@@ -2,6 +2,7 @@
 /* Copyright (C) 2008-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2008-2012	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2015-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -224,7 +225,7 @@ if ($action == 'create') {
 		print '<input type="hidden" name="website" value="'.dol_escape_htmltag($website).'">';
 	}
 	if ($pageid) {
-		print '<input type="hidden" name="pageid" value="'.dol_escape_htmltag($pageid).'">';
+		print '<input type="hidden" name="pageid" value="'.dol_escape_htmltag((string) $pageid).'">';
 	}
 
 	$title = $langs->trans("ECMNewSection");

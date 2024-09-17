@@ -4,7 +4,7 @@
  * Copyright (C) 2006-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
- * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
  * Copyright (C) 2022       Udo Tamm                <dev@dolibit.de>
@@ -190,7 +190,7 @@ if ($reshook < 0) {
 }
 
 // Action called when page is submitted
-if (empty($reshook) && $action == 'add') {
+if (empty($reshook) && $action == 'add') {	// Test on permission not required here. This is a public page. Security is done on constant and mitigation.
 	$error = 0;
 	$urlback = '';
 
@@ -236,6 +236,7 @@ if (empty($reshook) && $action == 'add') {
 		$societe->name_alias = GETPOST('name_alias', 'alphanohtml');
 
 		$societe->note_private = GETPOST('note_private');
+
 		if (!$error) {
 			$result = $societe->create($user);
 			if ($result > 0) {
@@ -272,7 +273,7 @@ if (empty($reshook) && $action == 'add') {
 // If MEMBER_URL_REDIRECT_SUBSCRIPTION is set to an url, we never go here because a redirect was done to this url. Same if we ask to redirect to the payment page.
 // backtopage parameter with an url was set on prospect submit page, we never go here because a redirect was done to this url.
 
-if (empty($reshook) && $action == 'added') {
+if (empty($reshook) && $action == 'added') {	// Test on permission not required here
 	llxHeaderVierge("newSocieteAdded");
 
 	// If we have not been redirected
@@ -301,7 +302,7 @@ $extrafields->fetch_name_optionals_label($objectsoc->table_element); // fetch op
 llxHeaderVierge($langs->trans("ContactUs"));
 
 print '<br>';
-print load_fiche_titre(img_picto('', 'member_nocolor', 'class="pictofixedwidth"') . ' &nbsp; ' . $langs->trans("ContactUs"), '', '', 0, 0, 'center');
+print load_fiche_titre(img_picto('', 'member_nocolor', 'class="pictofixedwidth"') . ' &nbsp; ' . $langs->trans("ContactUs"), '', '', 0, '', 'center');
 
 
 print '<div align="center">';

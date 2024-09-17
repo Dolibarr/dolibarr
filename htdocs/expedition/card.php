@@ -760,11 +760,11 @@ if (empty($reshook)) {
 					if ($lines[$i]->fk_product > 0) {
 						// line without lot
 						if ($lines[$i]->entrepot_id == 0) {
-							// single warehouse shipment line
-							$stockLocation = 0;
+							// single warehouse shipment line or line in several warehouses context but with warehouse not defined
+							$stockLocation = "entl".$line_id;
 							$qty = "qtyl".$line_id;
 							$line->id = $line_id;
-							$line->entrepot_id = GETPOSTINT($stockLocation);
+							$line->entrepot_id = GETPOSTINT((string) $stockLocation);
 							$line->qty = GETPOSTFLOAT($qty);
 							if ($line->update($user) < 0) {
 								setEventMessages($line->error, $line->errors, 'errors');
@@ -1737,7 +1737,7 @@ if ($action == 'create') {
 							print '<!-- line not shown yet, we show it -->';
 							print '<tr class="oddeven"><td colspan="3"></td><td class="center">';
 
-							if ($line->product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES') || getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
+							if ($line->product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 								$disabled = '';
 								if (isModEnabled('productbatch') && $product->hasbatch()) {
 									$disabled = 'disabled="disabled"';
@@ -1746,6 +1746,18 @@ if ($action == 'create') {
 									$disabled = 'disabled="disabled"';
 								}
 								print '<input class="qtyl right" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="0"'.($disabled ? ' '.$disabled : '').'> ';
+								if (empty($disabled) && getDolGlobalString('STOCK_ALLOW_NEGATIVE_TRANSFER')) {
+									print '<input name="ent1' . $indiceAsked . '_' . $subj . '" type="hidden" value="' . $warehouse_selected_id . '">';
+								}
+							} elseif ($line->product_type == Product::TYPE_SERVICE && getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
+								$disabled = '';
+								if (isModEnabled('productbatch') && $product->hasbatch()) {
+									$disabled = 'disabled="disabled"';
+								}
+								if ($warehouse_selected_id <= 0) {		// We did not force a given warehouse, so we won't have no warehouse to change qty.
+									$disabled = 'disabled="disabled"';
+								}
+								print '<input class="qtyl right" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="'.$quantityToBeDelivered.'"'.($disabled ? ' '.$disabled : '').'> ';
 								if (empty($disabled) && getDolGlobalString('STOCK_ALLOW_NEGATIVE_TRANSFER')) {
 									print '<input name="ent1' . $indiceAsked . '_' . $subj . '" type="hidden" value="' . $warehouse_selected_id . '">';
 								}

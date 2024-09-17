@@ -228,7 +228,7 @@ if (empty($reshook)) {
 			$mesg = $object->error;
 		}
 	} elseif ($action == 'confirm_unsign' && $confirm == 'yes' && $permissiontoadd) {
-		$result = $object->setSignedStatus($user, $object::SIGNED_STATUSES['STATUS_NO_SIGNATURE'], 0, 'FICHINTER_MODIFY');
+		$result = $object->setSignedStatus($user, Fichinter::$SIGNED_STATUSES['STATUS_NO_SIGNATURE'], 0, 'FICHINTER_MODIFY');
 		if ($result >= 0) {
 			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				// Define output language
@@ -954,7 +954,7 @@ if ($action == 'create') {
 		exit;
 	}
 
-	$object->date = dol_now();
+	$object->datec = dol_now();
 
 	$obj = getDolGlobalString('FICHEINTER_ADDON');
 	$obj = "mod_".$obj;
@@ -1401,7 +1401,7 @@ if ($action == 'create') {
 
 	print '<table class="border tableforfield centpercent">';
 
-	if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS')) {
+	if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS') || getDolGlobalString('FICHINTER_DISABLE_DETAILS') == '2') {
 		// Duration in time
 		print '<tr><td class="titlefield">'.$langs->trans("TotalDuration").'</td>';
 		print '<td>'.convertSecondToTime($object->duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).' ('.convertDurationtoHour($object->duration, "s").' '.$langs->trans("h").')</td>';
@@ -1429,7 +1429,7 @@ if ($action == 'create') {
 	}
 
 	// Line of interventions
-	if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS')) {
+	if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS') || getDolGlobalString('FICHINTER_DISABLE_DETAILS') == '2') {
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" name="addinter" method="post">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
@@ -1610,7 +1610,7 @@ if ($action == 'create') {
 			$db->free($resql);
 
 			// Add new line
-			if ($object->statut == 0 && $user->hasRight('ficheinter', 'creer') && $action != 'editline' && !getDolGlobalString('FICHINTER_DISABLE_DETAILS')) {
+			if ($object->statut == 0 && $user->hasRight('ficheinter', 'creer') && $action != 'editline' && (!getDolGlobalString('FICHINTER_DISABLE_DETAILS') || getDolGlobalString('FICHINTER_DISABLE_DETAILS') == '2')) {
 				if (!$num) {
 					print '<br>';
 					print '<table class="noborder centpercent">';
@@ -1727,7 +1727,7 @@ if ($action == 'create') {
 		if ($user->socid == 0) {
 			if ($action != 'editdescription' && ($action != 'presend')) {
 				// Validate
-				if ($object->statut == Fichinter::STATUS_DRAFT && (count($object->lines) > 0 || getDolGlobalString('FICHINTER_DISABLE_DETAILS'))) {
+				if ($object->statut == Fichinter::STATUS_DRAFT && (count($object->lines) > 0 || getDolGlobalString('FICHINTER_DISABLE_DETAILS') == '1')) {
 					if ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ficheinter', 'creer')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ficheinter', 'ficheinter_advance', 'validate'))) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&action=validate&token='.newToken().'">'.$langs->trans("Validate").'</a></div>';
 					} else {
@@ -1738,7 +1738,7 @@ if ($action == 'create') {
 				// Modify
 				if ($object->statut == Fichinter::STATUS_VALIDATED && ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ficheinter', 'creer')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ficheinter', 'ficheinter_advance', 'unvalidate')))) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&action=modify&token='.newToken().'">';
-					if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS')) {
+					if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS') || getDolGlobalString('FICHINTER_DISABLE_DETAILS') == '2') {
 						print $langs->trans("Modify");
 					} else {
 						print $langs->trans("SetToDraft");
@@ -1807,7 +1807,7 @@ if ($action == 'create') {
 
 				// Sign
 				if ($object->statut > Fichinter::STATUS_DRAFT) {
-					if ($object->signed_status != Fichinter::SIGNED_STATUSES['STATUS_SIGNED_ALL']) {
+					if ($object->signed_status != Fichinter::$SIGNED_STATUSES['STATUS_SIGNED_ALL']) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=sign&token=' . newToken() . '">' . $langs->trans("InterventionSign") . '</a></div>';
 					} else {
 						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=unsign&token=' . newToken() . '">' . $langs->trans("InterventionUnsign") . '</a></div>';

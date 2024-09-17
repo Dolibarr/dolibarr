@@ -266,7 +266,7 @@ if ($sourcetype == 'salary') {
 
 print '<tr><td class="titlefield">'.$labeltoshow.'</td>';
 print '<td class="nowraponall">';
-print dol_escape_htmltag($nb);
+print dol_escape_htmltag((string) $nb);
 print '</td></tr>';
 
 print '<tr><td>'.$langs->trans("AmountTotal").'</td>';

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2024 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -141,7 +142,7 @@ class RedditHandler
 			return false;
 		}
 
-		$cacheFile = $cacheDir . '/' . dol_hash($urlAPI, 3);
+		$cacheFile = $cacheDir . '/' . dol_hash($urlAPI, '3');
 		$foundInCache = false;
 		$data = null;
 

@@ -1549,7 +1549,6 @@ class Product extends CommonObject
 				// Multilangs
 				if (getDolGlobalInt('MAIN_MULTILANGS')) {
 					if ($this->setMultiLangs($user) < 0) {
-						$this->error = $langs->trans("Error")." : ".$this->db->error()." - ".$sql;
 						$this->db->rollback();
 						return -2;
 					}
@@ -2893,7 +2892,7 @@ class Product extends CommonObject
 
 				$this->customcode = $obj->customcode;
 				$this->country_id = $obj->fk_country;
-				$this->country_code = getCountry($this->country_id, 2, $this->db);
+				$this->country_code = getCountry($this->country_id, '2', $this->db);
 				$this->state_id = $obj->fk_state;
 				$this->lifetime = $obj->lifetime;
 				$this->qc_frequency = $obj->qc_frequency;
@@ -5534,7 +5533,7 @@ class Product extends CommonObject
 		}
 
 		if (!empty($this->entity) && $permissiontoreadproduct) {
-			$tmpphoto = $this->show_photos('product', $conf->product->multidir_output[$this->entity], 1, 1, 0, 0, 0, 80, 0, 0, 0, 0, 1);
+			$tmpphoto = $this->show_photos('product', $conf->product->multidir_output[$this->entity], 1, 1, 0, 0, 0, 80, 0, 0, 0, 0, '1');
 			if ($this->nbphoto > 0) {
 				$datas['photo'] = '<div class="photointooltip floatright">'."\n" . $tmpphoto . '</div>';
 			}
@@ -6753,7 +6752,7 @@ class Product extends CommonObject
 	 * @param  string $price_type Base price type
 	 * @param  float  $price_vat  VAT % tax
 	 * @param  int    $npr        NPR
-	 * @param  string $psq        ¿?
+	 * @param  int<0,1>	$psq	  1 if it has price by quantity
 	 * @return int -1 KO, 1 OK
 	 */
 	public function generateMultiprices(User $user, $baseprice, $price_type, $price_vat, $npr, $psq)

@@ -2374,7 +2374,7 @@ if (empty($reshook)) {
 							$tmptxt .= ' - ';
 						}
 						if (!empty($prod->country_code)) {
-							$tmptxt .= $outputlangs->transnoentitiesnoconv("CountryOrigin").': '.getCountry($prod->country_code, 0, $db, $outputlangs, 0);
+							$tmptxt .= $outputlangs->transnoentitiesnoconv("CountryOrigin").': '.getCountry($prod->country_code, '', $db, $outputlangs, 0);
 						}
 					} else {
 						if (!empty($prod->customcode)) {
@@ -2384,7 +2384,7 @@ if (empty($reshook)) {
 							$tmptxt .= ' - ';
 						}
 						if (!empty($prod->country_code)) {
-							$tmptxt .= $langs->transnoentitiesnoconv("CountryOrigin").': '.getCountry($prod->country_code, 0, $db, $langs, 0);
+							$tmptxt .= $langs->transnoentitiesnoconv("CountryOrigin").': '.getCountry($prod->country_code, '', $db, $langs, 0);
 						}
 					}
 					$tmptxt .= ')';
@@ -3368,7 +3368,7 @@ if ($action == 'create') {
 		if (!getDolGlobalString('INVOICE_DISABLE_AUTOMATIC_RECURRING_INVOICE')) {
 			$text .= ' '.$langs->trans("ToCreateARecurringInvoiceGeneAuto", $langs->transnoentitiesnoconv('Module2300Name'));
 		}
-		print info_admin($text, 0, 0, 0, 'opacitymedium').'<br>';
+		print info_admin($text, 0, 0, '0', 'opacitymedium').'<br>';
 	}
 
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="POST" id="formtocreate" name="formtocreate">';
@@ -4040,8 +4040,9 @@ if ($action == 'create') {
 		include_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
 		$liste = ModelePDFFactures::liste_modeles($db);
 		if (getDolGlobalString('INVOICE_USE_DEFAULT_DOCUMENT')) {
+			$type = GETPOSTISSET('type') ? GETPOSTINT('type') : $object->type;
 			// Hidden conf
-			$paramkey = 'FACTURE_ADDON_PDF_'.$object->type;
+			$paramkey = 'FACTURE_ADDON_PDF_'.$type;
 			$preselected = getDolGlobalString($paramkey, getDolGlobalString('FACTURE_ADDON_PDF'));
 		} else {
 			$preselected = getDolGlobalString('FACTURE_ADDON_PDF');
@@ -4672,7 +4673,7 @@ if ($action == 'create') {
 		print '<table class="border centpercent tableforfield">';
 
 		// Type
-		print '<tr><td class="titlefield fieldname_type">'.$langs->trans('Type').'</td><td class="valuefield fieldname_type">';
+		print '<tr><td class="fieldname_type">'.$langs->trans('Type').'</td><td class="valuefield fieldname_type">';
 		print $object->getLibType(2);
 		if ($object->subtype > 0) {
 			print ' '.$object->getSubtypeLabel('facture');

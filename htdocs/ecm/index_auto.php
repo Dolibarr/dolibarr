@@ -303,7 +303,7 @@ $moreheadjs .= '<script type="text/javascript">'."\n";
 $moreheadjs .= 'var indicatorBlockUI = \''.DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif".'\';'."\n";
 $moreheadjs .= '</script>'."\n";
 
-llxHeader($moreheadcss.$moreheadjs, $langs->trans("ECMArea"), '', '', 0, 0, $morejs, '', 0, 'mod-ecm page-index_auto');
+llxHeader($moreheadcss.$moreheadjs, $langs->trans("ECMArea"), '', '', 0, 0, $morejs, '', '', 'mod-ecm page-index_auto');
 
 
 // Add sections to manage
@@ -467,7 +467,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i', $act
 		$htmltooltip = $langs->trans("ECMAreaDesc2");
 		$htmltooltip .= '<br>'.$langs->trans("ECMAreaDesc2b");
 
-		$sectionauto = dol_sort_array($sectionauto, 'label', 'ASC', true, false);
+		$sectionauto = dol_sort_array($sectionauto, 'label', 'ASC', 1, 0);
 
 		print '<tr>';
 		print '<td colspan="6">';
