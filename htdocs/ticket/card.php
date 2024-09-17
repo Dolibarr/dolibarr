@@ -1148,7 +1148,7 @@ if ($action == 'create' || $action == 'presend') {
 			print '<tr><td>';
 			print $form->textwithpicto($langs->trans("TicketDurationAuto"), $langs->trans("TicketDurationAutoInfos"), 1);
 			print '</td><td>';
-			print (isset($object->duration) ? convertSecondToTime($object->duration, 'all', getDolGlobalString('MAIN_DURATION_OF_WORKDAY')) : '');
+			print isset($object->duration) ? convertSecondToTime($object->duration, 'all', getDolGlobalInt('MAIN_DURATION_OF_WORKDAY')) : '';
 			print '</td></tr>';
 		}
 
