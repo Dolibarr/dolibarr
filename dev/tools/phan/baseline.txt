@@ -1055,6 +1055,7 @@ return [
         'htdocs/societe/class/companybankaccount.class.php' => ['PhanPluginUnknownPropertyType'],
         'htdocs/societe/class/companypaymentmode.class.php' => ['PhanPluginUnknownPropertyType'],
         'htdocs/societe/class/societeaccount.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType', 'PhanPluginUnknownPropertyType'],
+        'htdocs/societe/card.php' => ['PhanUndeclaredProperty'],
         'htdocs/societe/consumption.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/societe/list.php' => ['PhanPluginUndeclaredVariableIsset', 'PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/societe/paymentmodes.php' => ['PhanPossiblyNullTypeMismatchProperty', 'PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeExpectedObjectPropAccess', 'PhanTypeMismatchArgumentProbablyReal', 'PhanTypeMismatchProperty', 'PhanUndeclaredGlobalVariable'],
