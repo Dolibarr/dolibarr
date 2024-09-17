@@ -79,7 +79,6 @@ parameters:
 		- '#run_sql expects int, string#'
 		- '#on array{url: mixed} in empty\(\) does not exist.#'
 		- '#dol_copy expects string, int given#'
-		- '#dol_getIdFromCode expects string, int given#'
 		- '#EvalMath::trigger\(\) expects string, int given#'
 		- '#get_next_value expects string, int given#'
 		- '# Diff::generatePartialDiff\(\) expects array#'
