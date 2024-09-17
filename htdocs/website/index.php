@@ -342,7 +342,7 @@ if (empty($sortfield)) {
 	}
 }
 
-$searchkey = GETPOST('searchstring', 'restricthtml');
+$searchkey = GETPOST('searchstring', 'restricthtmlallowclass');
 
 if ($action == 'replacesite' || $mode == 'replacesite') {	// Test on permission not required
 	$containertype = GETPOST('optioncontainertype', 'aZ09') != '-1' ? GETPOST('optioncontainertype', 'aZ09') : '';
