@@ -199,19 +199,24 @@ class ActionsTicket extends CommonHookActions
 
 		// Initial message
 		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-		print '<table class="border centpercent margintable bordertopimp">';
+		print '<table class="border centpercent margintable">';
 		print '<tr class="liste_titre trforfield"><td class="nowrap titlefield">';
 		print $langs->trans("InitialMessage");
 		print '</td><td>';
 		if ($user->hasRight("ticket", "manage")) {
-			print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=edit_message_init&token='.newToken().'&track_id='.$object->track_id.'">'.img_edit($langs->trans('Modify')).'</a>';
+			if ($action != 'edit_message_init') {
+				print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=edit_message_init&token='.newToken().'&track_id='.$object->track_id.'">'.img_edit($langs->trans('Modify')).'</a>';
+			} else {
+				print '<input type="submit" class="button button-edit smallpaddingimp" value="'.$langs->trans('Modify').'">';
+				print ' <input type="submit" class="button button-cancel smallpaddingimp" name="cancel" value="'.$langs->trans("Cancel").'">';
+			}
 		}
 		print '</td></tr>';
 
 		print '<tr>';
 		print '<td colspan="2">';
 		if ($user->hasRight('ticket', 'manage') && $action == 'edit_message_init') {
-			// MESSAGE
+			// Message
 			$msg = GETPOSTISSET('message_initial') ? GETPOST('message_initial', 'restricthtml') : $object->message;
 			include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 			$uselocalbrowser = true;
@@ -222,21 +227,14 @@ class ActionsTicket extends CommonHookActions
 			$doleditor = new DolEditor('message_initial', $msg, '100%', 250, 'dolibarr_details', 'In', true, $uselocalbrowser, $ckeditorenabledforticket, ROWS_9, '95%');
 			$doleditor->Create();
 		} else {
-			print '<div class="longmessagecut">';
-			//print dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->message), 1, 1, 1, 0)), 1, 1, 'common', 0, 1);
-			print nl2br($object->message);
+			print '<div class="longmessagecut small">';
+			print dolPrintHTML($object->message);
 			print '</div>';
 			/*print '<div class="clear center">';
 			print $langs->trans("More").'...';
 			print '</div>';*/
 
 			//print '<div>' . $object->message . '</div>';
-		}
-		if ($user->hasRight('ticket', 'manage') && $action == 'edit_message_init') {
-			print '<div class="center">';
-			print ' <input type="submit" class="button button-edit small" value="'.$langs->trans('Modify').'">';
-			print ' <input type="submit" class="button button-cancel small" name="cancel" value="'.$langs->trans("Cancel").'">';
-			print '</div>';
 		}
 		print '</td>';
 		print '</tr>';
@@ -297,7 +295,7 @@ class ActionsTicket extends CommonHookActions
 					|| ($arraymsgs['private'] == "1" && $show_private)
 				) {
 					//print '<tr>';
-					print '<tr class="oddeven">';
+					print '<tr class="oddeven nohover">';
 					print '<td><strong>';
 					print img_picto('', 'object_action', 'class="paddingright"').dol_print_date($arraymsgs['datep'], 'dayhour');
 					print '<strong></td>';
@@ -318,13 +316,14 @@ class ActionsTicket extends CommonHookActions
 								print $arraymsgs['fk_contact_author'];
 							}
 						} else {
-							print $langs->trans('Customer');
+							print '<span class="opacitymedium">'.$langs->trans('Unknown').'</span>';
 						}
 						print '</td>';
 					}
-					print '</td>';
-					print '<tr class="oddeven">';
-					print '<td colspan="2">';
+					print '</tr>';
+
+					print '<tr class="oddeven nohover">';
+					print '<td'.($show_user ? ' colspan="2"' : '').'>';
 					print $arraymsgs['message'];
 
 					//attachment

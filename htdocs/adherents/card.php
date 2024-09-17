@@ -57,6 +57,7 @@ $langs->loadLangs(array("companies", "bills", "members", "users", "other", "payp
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
+$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');	// if not set, $backtopage will be used
 $confirm = GETPOST('confirm', 'alpha');
 $rowid = GETPOSTINT('rowid');
 $id = GETPOST('id') ? GETPOSTINT('id') : $rowid;
@@ -71,6 +72,8 @@ if (isModEnabled('mailmanspip')) {
 	$langs->load('mailmanspip');
 
 	$mailmanspip = new MailmanSpip($db);
+} else {
+	$mailmanspip = null;
 }
 
 $object = new Adherent($db);
@@ -113,6 +116,7 @@ if ($id > 0 || !empty($ref)) {
 
 // Define variables to determine what the current user can do on the members
 $canaddmember = $user->hasRight('adherent', 'creer');
+$caneditfieldmember = false;
 // Define variables to determine what the current user can do on the properties of a member
 if ($id) {
 	$caneditfieldmember = $user->hasRight('adherent', 'creer');
@@ -182,7 +186,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'setsocid') {
+	if ($action == 'setsocid' && $caneditfieldmember) {
 		$error = 0;
 		if (!$error) {
 			if ($socid != $object->socid) {	// If link differs from currently in database
@@ -300,7 +304,7 @@ if (empty($reshook)) {
 			$object->gender      = trim(GETPOST("gender", 'alphanohtml'));
 			$object->login       = trim(GETPOST("login", 'alphanohtml'));
 			if (GETPOSTISSET('pass')) {
-				$object->pass        = trim(GETPOST("pass", 'none'));	// For password, we must use 'none'
+				$object->pass        = trim(GETPOST("pass", 'password'));	// For password, we must use 'none'
 			}
 
 			$object->societe     = trim(GETPOST("societe", 'alphanohtml')); // deprecated
@@ -465,13 +469,13 @@ if (empty($reshook)) {
 		$phone = GETPOST("phone", 'alpha');
 		$phone_perso = GETPOST("phone_perso", 'alpha');
 		$phone_mobile = GETPOST("phone_mobile", 'alpha');
-		$email = preg_replace('/\s+/', '', GETPOST("member_email", 'alpha'));
+		$email = preg_replace('/\s+/', '', GETPOST("member_email", 'aZ09arobase'));
 		$url = trim(GETPOST('url', 'custom', 0, FILTER_SANITIZE_URL));
 		$login = GETPOST("member_login", 'alphanohtml');
-		$pass = GETPOST("password", 'none');	// For password, we use 'none'
+		$pass = GETPOST("password", 'password');	// For password, we use 'none'
 		$photo = GETPOST("photo", 'alphanohtml');
 		$morphy = GETPOST("morphy", 'alphanohtml');
-		$public = GETPOST("public", 'alphanohtml');
+		$public = GETPOSTINT("public");
 
 		$userid = GETPOSTINT("userid");
 		$socid = GETPOSTINT("socid");
@@ -532,6 +536,7 @@ if (empty($reshook)) {
 			} else {
 				$sql = "SELECT login FROM ".MAIN_DB_PREFIX."adherent WHERE login='".$db->escape($login)."'";
 				$result = $db->query($sql);
+				$num = 0;
 				if ($result) {
 					$num = $db->num_rows($result);
 				}
@@ -847,18 +852,20 @@ if (empty($reshook)) {
 	}
 
 	// SPIP Management
-	if ($user->hasRight('adherent', 'supprimer') && $action == 'confirm_del_spip' && $confirm == 'yes') {
-		if (!count($object->errors)) {
-			if (!$mailmanspip->del_to_spip($object)) {
-				setEventMessages($langs->trans('DeleteIntoSpipError').': '.$mailmanspip->error, null, 'errors');
+	if (is_object($mailmanspip)) {
+		if ($user->hasRight('adherent', 'supprimer') && $action == 'confirm_del_spip' && $confirm == 'yes') {
+			if (!count($object->errors)) {
+				if (!$mailmanspip->del_to_spip($object)) {
+					setEventMessages($langs->trans('DeleteIntoSpipError').': '.$mailmanspip->error, null, 'errors');
+				}
 			}
 		}
-	}
 
-	if ($user->hasRight('adherent', 'creer') && $action == 'confirm_add_spip' && $confirm == 'yes') {
-		if (!count($object->errors)) {
-			if (!$mailmanspip->add_to_spip($object)) {
-				setEventMessages($langs->trans('AddIntoSpipError').': '.$mailmanspip->error, null, 'errors');
+		if ($user->hasRight('adherent', 'creer') && $action == 'confirm_add_spip' && $confirm == 'yes') {
+			if (!count($object->errors)) {
+				if (!$mailmanspip->add_to_spip($object)) {
+					setEventMessages($langs->trans('AddIntoSpipError').': '.$mailmanspip->error, null, 'errors');
+				}
 			}
 		}
 	}
@@ -955,15 +962,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 							jQuery("#tdcompany").removeClass("fieldrequired");
 							jQuery("#tdlastname").removeClass("fieldrequired");
 							jQuery("#tdfirstname").removeClass("fieldrequired");
-							if (jQuery("#morphy").val() == \'mor\') {
+							if (jQuery(\'input[name="morphy"]:checked\').val() == \'mor\') {
 								jQuery("#tdcompany").addClass("fieldrequired");
 							}
-							if (jQuery("#morphy").val() == \'phy\') {
+							if (jQuery(\'input[name="morphy"]:checked\').val() == \'phy\') {
 								jQuery("#tdlastname").addClass("fieldrequired");
 								jQuery("#tdfirstname").addClass("fieldrequired");
 							}
 						}
-						jQuery("#morphy").change(function() {
+						jQuery(\'input[name="morphy"]\').change(function() {
 							initfieldrequired();
 						});
 						initfieldrequired();
@@ -979,7 +986,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<input type="hidden" name="backtopage" value="'.($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]).'">';
 		}
 
-		print dol_get_fiche_head('');
+		print dol_get_fiche_head(array());
 
 		print '<table class="border centpercent">';
 		print '<tbody>';
@@ -1016,8 +1023,37 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$morphys = array();
 		$morphys["phy"] = $langs->trans("Physical");
 		$morphys["mor"] = $langs->trans("Moral");
+		$checkednature = (GETPOSTISSET("morphy") ? GETPOST("morphy", 'alpha') : $object->morphy);
 		print '<tr><td class="fieldrequired">'.$langs->trans("MemberNature")."</td><td>\n";
-		print $form->selectarray("morphy", $morphys, (GETPOST('morphy', 'alpha') ? GETPOST('morphy', 'alpha') : $object->morphy), 1, 0, 0, '', 0, 0, 0, '', 'minwidth200', 1);
+		print '<span id="spannature1" class="nonature-back spannature paddinglarge marginrightonly"><label for="phisicalinput" class="valignmiddle">'.$morphys["phy"].'<input id="phisicalinput" class="flat checkforselect marginleftonly valignmiddle" type="radio" name="morphy" value="phy"'.($checkednature == "phy" ? ' checked="checked"' : '').'></label></span>';
+		print '<span id="spannature2" class="nonature-back spannature paddinglarge marginrightonly"><label for="moralinput" class="valignmiddle">'.$morphys["mor"].'<input id="moralinput" class="flat checkforselect marginleftonly valignmiddle" type="radio" name="morphy" value="mor"'.($checkednature == "mor" ? ' checked="checked"' : '').'></label></span>';
+
+		// Add js to manage the background of nature
+		if ($conf->use_javascript_ajax) {
+			print '<script>
+				function refreshNatureCss() {
+					jQuery(".spannature").each(function( index ) {
+						console.log(jQuery("#spannature"+(index+1)+" .checkforselect").is(":checked"));
+						if (jQuery("#spannature"+(index+1)+" .checkforselect").is(":checked")) {
+							if (index+1 == 1) {
+								jQuery("#spannature"+(index+1)).addClass("member-individual-back").removeClass("nonature-back");
+							}
+							if (index+1 == 2) {
+								jQuery("#spannature"+(index+1)).addClass("member-company-back").removeClass("nonature-back");
+							}
+						} else {
+							jQuery("#spannature"+(index+1)).removeClass("member-individual-back").removeClass("member-company-back").addClass("nonature-back");
+						}
+					});
+				}
+				jQuery(".spannature").click(function(){
+					console.log("We click on a nature");
+					refreshNatureCss();
+				});
+				refreshNatureCss();
+				</script>';
+		}
+
 		print "</td>\n";
 
 		// Company
@@ -1171,10 +1207,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$obj = $db->fetch_object($resql);
 			} else {
 				dol_print_error($db);
+				$obj = null;
 			}
-			$object->country_id = $obj->rowid;
-			$object->country_code = $obj->code;
-			$object->country = $langs->trans("Country".$obj->code) ? $langs->trans("Country".$obj->code) : $obj->label;
+			if (is_object($obj)) {
+				$object->country_id = $obj->rowid;
+				$object->country_code = $obj->code;
+				$object->country = $langs->trans("Country".$obj->code) ? $langs->trans("Country".$obj->code) : $obj->label;
+			}
 		}
 
 		$head = member_prepare_head($object);
@@ -1191,15 +1230,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					jQuery("#tdcompany").removeClass("fieldrequired");
 					jQuery("#tdlastname").removeClass("fieldrequired");
 					jQuery("#tdfirstname").removeClass("fieldrequired");
-					if (jQuery("#morphy").val() == \'mor\') {
+					if (jQuery(\'input[name="morphy"]:checked\').val() == \'mor\') {
 						jQuery("#tdcompany").addClass("fieldrequired");
 					}
-					if (jQuery("#morphy").val() == \'phy\') {
+					if (jQuery(\'input[name="morphy"]:checked\').val() == \'phy\') {
 						jQuery("#tdlastname").addClass("fieldrequired");
 						jQuery("#tdfirstname").addClass("fieldrequired");
 					}
 				}
-				jQuery("#morphy").change(function() {
+				jQuery(\'input[name="morphy"]\').change(function() {
 					initfieldrequired();
 				});
 				initfieldrequired();
@@ -1230,7 +1269,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Password
 		if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
-			print '<tr><td class="fieldrequired">'.$langs->trans("Password").'</td><td><input type="password" name="pass" class="minwidth300" maxlength="50" value="'.dol_escape_htmltag(GETPOSTISSET("pass") ? GETPOST("pass", 'none', 2) : '').'"></td></tr>';
+			print '<tr><td class="fieldrequired">'.$langs->trans("Password").'</td><td><input type="password" name="pass" class="minwidth300" maxlength="50" value="'.dol_escape_htmltag(GETPOSTISSET("pass") ? GETPOST("pass", 'password', 2) : '').'"></td></tr>';
 		}
 
 		// Type
@@ -1246,8 +1285,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Morphy
 		$morphys["phy"] = $langs->trans("Physical");
 		$morphys["mor"] = $langs->trans("Moral");
+		$checkednature = (GETPOSTISSET("morphy") ? GETPOST("morphy", 'alpha') : $object->morphy);
 		print '<tr><td><span class="fieldrequired">'.$langs->trans("MemberNature").'</span></td><td>';
-		print $form->selectarray("morphy", $morphys, (GETPOSTISSET("morphy") ? GETPOST("morphy", 'alpha') : $object->morphy), 0, 0, 0, '', 0, 0, 0, '', 'minwidth200', 1);
+		print '<span id="spannature1" class="member-individual-back spannature paddinglarge marginrightonly"><label for="phisicalinput" class="valignmiddle">'.$morphys["phy"].'<input id="phisicalinput" class="flat checkforselect marginleftonly valignmiddle" type="radio" name="morphy" value="phy"'.($checkednature == "phy" ? ' checked="checked"' : '').'></label></span>';
+		print '<span id="spannature1" class="member-company-back spannature paddinglarge marginrightonly"><label for="moralinput" class="valignmiddle">'.$morphys["mor"].'<input id="moralinput" class="flat checkforselect marginleftonly valignmiddle" type="radio" name="morphy" value="mor"'.($checkednature == "mor" ? ' checked="checked"' : '').'></label></span>';
 		print "</td></tr>";
 
 		// Company
@@ -1365,7 +1406,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Default language
 		if (getDolGlobalInt('MAIN_MULTILANGS')) {
 			print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3">'."\n";
-			print img_picto('', 'language', 'class="pictofixedwidth"').$formadmin->select_language($object->default_lang, 'default_lang', 0, 0, 1);
+			print img_picto('', 'language', 'class="pictofixedwidth"').$formadmin->select_language($object->default_lang, 'default_lang', 0, array(), 1);
 			print '</td>';
 			print '</tr>';
 		}
@@ -1419,7 +1460,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '</td></tr>';
 
 		// Other attributes. Fields from hook formObjectOptions and Extrafields.
-		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';
 
 		print '</table>';
 		print dol_get_fiche_end();
@@ -1888,7 +1929,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print $form->editfieldkey('LinkedToDolibarrUser', 'login', '', $object, $editenable);
 		print '</td><td colspan="2" class="valeur">';
 		if ($action == 'editlogin') {
-			$form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id, $object->user_id, 'userid', '');
+			$form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id, $object->user_id, 'userid', array());
 		} else {
 			if ($object->user_id) {
 				$linkeduser = new User($db);
@@ -2085,7 +2126,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			print '</div><div class="fichehalfright">';
 
-			$MAX = 10;
+			$MAXEVENT = 10;
 
 			$morehtmlcenter = '';
 			$messagingUrl = DOL_URL_ROOT.'/adherents/messaging.php?rowid='.$object->id;
@@ -2095,7 +2136,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 			$formactions = new FormActions($db);
-			$somethingshown = $formactions->showactions($object, $object->element, $socid, 1, 'listactions', $MAX, '', $morehtmlcenter);
+			$somethingshown = $formactions->showactions($object, $object->element, $socid, 1, 'listactions', $MAXEVENT, '', $morehtmlcenter);
 
 			print '</div></div>';
 		}

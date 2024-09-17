@@ -117,7 +117,7 @@ if ($action == 'specimen') {  // For invoices
 		require_once $file;
 
 		$module = new $classname($db, $facture);
-		'@phan-var-force CommonDocGenerator $module';
+		'@phan-var-force ModelePDFSuppliersInvoices $module';
 
 		if ($module->write_file($facture, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=facture_fournisseur&file=SPECIMEN.pdf");
@@ -236,6 +236,8 @@ foreach ($dirmodels as $reldir) {
 
 					$module = new $file();
 
+					'@phan-var-force ModeleNumRefSuppliersInvoices $module';
+
 					if ($module->isEnabled()) {
 						// Show modules according to features level
 						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -246,7 +248,7 @@ foreach ($dirmodels as $reldir) {
 						}
 
 
-						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
+						print '<tr class="oddeven"><td>'.$module->getName($langs)."</td><td>\n";
 						print $module->info($langs);
 						print '</td>';
 
@@ -367,6 +369,8 @@ foreach ($dirmodels as $reldir) {
 					require_once $dir.'/'.$file;
 					$module = new $classname($db, new FactureFournisseur($db));
 
+					'@phan-var-force ModelePDFSuppliersInvoices $module';
+
 
 					print "<tr class=\"oddeven\">\n";
 					print "<td>";
@@ -376,7 +380,7 @@ foreach ($dirmodels as $reldir) {
 					require_once $dir.'/'.$file;
 					$module = new $classname($db, $specimenthirdparty);
 					if (method_exists($module, 'info')) {
-						print $module->info($langs);
+						print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
 					} else {
 						print $module->description;
 					}

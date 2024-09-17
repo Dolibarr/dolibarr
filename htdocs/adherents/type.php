@@ -92,7 +92,7 @@ $comment = GETPOST("comment", 'restricthtml');
 $mail_valid = GETPOST("mail_valid", 'restricthtml');
 $caneditamount = GETPOSTINT("caneditamount");
 
-// Initialize a technical objects
+// Initialize a technical object
 $object = new AdherentType($db);
 $extrafields = new ExtraFields($db);
 $hookmanager->initHooks(array('membertypecard', 'globalcard'));
@@ -108,7 +108,7 @@ $result = restrictedArea($user, 'adherent', $rowid, 'adherent_type');
  *	Actions
  */
 
-if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 	$search_ref = "";
 	$search_lastname = "";
 	$search_login = "";
@@ -168,7 +168,7 @@ if ($action == 'add' && $user->hasRight('adherent', 'configurer')) {
 		if ($num) {
 			$error++;
 			$langs->load("errors");
-			setEventMessages($langs->trans("ErrorLabelAlreadyExists", $login), null, 'errors');
+			setEventMessages($langs->trans("ErrorLabelAlreadyExists", $object->label), null, 'errors');
 		}
 	}
 
@@ -332,7 +332,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 		$membertype = new AdherentType($db);
 
 		$i = 0;
-		$savnbfield = 9;
+		$savnbfield = 10;
 		/*$savnbfield = $totalarray['nbfield'];
 		$totalarray = array();
 		$totalarray['nbfield'] = 0;*/
@@ -363,16 +363,20 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 				}
 			} else {
 				print '<tr class="oddeven">';
+
 				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 					if ($user->hasRight('adherent', 'configurer')) {
 						print '<td class="center"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
 					}
 				}
+
 				print '<td class="nowraponall">';
 				print $membertype->getNomUrl(1);
 				//<a href="'.$_SERVER["PHP_SELF"].'?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowType"),'group').' '.$objp->rowid.'</a>
 				print '</td>';
+
 				print '<td>'.dol_escape_htmltag($objp->label).'</td>';
+
 				print '<td class="center">';
 				if ($objp->morphy == 'phy') {
 					print $langs->trans("Physical");
@@ -382,6 +386,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 					print $langs->trans("MorAndPhy");
 				}
 				print '</td>';
+
 				print '<td class="center nowrap">';
 				if ($objp->duration) {
 					$duration_value = intval($objp->duration);
@@ -394,11 +399,17 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 					print max(1, $duration_value).' '.$dur[$unit];
 				}
 				print '</td>';
+
 				print '<td class="center">'.yn($objp->subscription).'</td>';
+
 				print '<td class="center"><span class="amount">'.(is_null($objp->amount) || $objp->amount === '' ? '' : price($objp->amount)).'</span></td>';
+
 				print '<td class="center">'.yn($objp->caneditamount).'</td>';
+
 				print '<td class="center">'.yn($objp->vote).'</td>';
+
 				print '<td class="center">'.$membertype->getLibStatut(5).'</td>';
+
 				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 					if ($user->hasRight('adherent', 'configurer')) {
 						print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
@@ -432,8 +443,6 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 
 // Creation
 if ($action == 'create') {
-	$object = new AdherentType($db);
-
 	print load_fiche_titre($langs->trans("NewMemberType"), '', 'members');
 
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
@@ -441,7 +450,7 @@ if ($action == 'create') {
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-	print dol_get_fiche_head('');
+	print dol_get_fiche_head(array());
 
 	print '<table class="border centpercent">';
 	print '<tbody>';
@@ -554,6 +563,7 @@ if ($rowid > 0) {
 		print yn($object->vote);
 		print '</tr>';
 
+		// Duration
 		print '<tr><td class="titlefield">'.$langs->trans("Duration").'</td><td colspan="2">'.$object->duration_value.'&nbsp;';
 		if ($object->duration_value > 1) {
 			$dur = array("i" => $langs->trans("Minutes"), "h" => $langs->trans("Hours"), "d" => $langs->trans("Days"), "w" => $langs->trans("Weeks"), "m" => $langs->trans("Months"), "y" => $langs->trans("Years"));
@@ -563,13 +573,15 @@ if ($rowid > 0) {
 		print(!empty($object->duration_unit) && isset($dur[$object->duration_unit]) ? $langs->trans($dur[$object->duration_unit]) : '')."&nbsp;";
 		print '</td></tr>';
 
-		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
-		print dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->note_private));
-		print "</td></tr>";
+		// Description
+		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td><div class="longmessagecut">';
+		print dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->note_public));
+		print "</div></td></tr>";
 
-		print '<tr><td class="tdtop">'.$langs->trans("WelcomeEMail").'</td><td>';
+		// Welcome email content
+		print '<tr><td class="tdtop">'.$langs->trans("WelcomeEMail").'</td><td><div class="longmessagecut">';
 		print dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->mail_valid));
-		print "</td></tr>";
+		print "</div></td></tr>";
 
 		// Other attributes
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
@@ -739,9 +751,6 @@ if ($rowid > 0) {
 			if (!empty($search_lastname)) {
 				$param .= "&search_lastname=".urlencode($search_lastname);
 			}
-			if (!empty($search_firstname)) {
-				$param .= "&search_firstname=".urlencode($search_firstname);
-			}
 			if (!empty($search_login)) {
 				$param .= "&search_login=".urlencode($search_login);
 			}
@@ -759,6 +768,7 @@ if ($rowid > 0) {
 			print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'" name="formfilter" autocomplete="off">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input class="flat" type="hidden" name="rowid" value="'.$object->id.'"></td>';
+			print '<input class="flat" type="hidden" name="page_y" value=""></td>';
 
 			print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'generic', 0, '', '', $limit);
 
@@ -837,6 +847,7 @@ if ($rowid > 0) {
 				$adh->datefin = $datefin;
 				$adh->need_subscription = $objp->subscription;
 				$adh->statut = $objp->status;
+				$adh->status = $objp->status;
 				$adh->email = $objp->email;
 				$adh->photo = $objp->photo;
 

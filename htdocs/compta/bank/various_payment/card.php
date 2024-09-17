@@ -67,14 +67,16 @@ $socid = GETPOSTINT("socid");
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'banque', '', '', '');
-
-$object = new PaymentVarious($db);
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('variouscard', 'globalcard'));
 
+$result = restrictedArea($user, 'banque', '', '', '');
+
+$object = new PaymentVarious($db);
+
 $permissiontoadd = $user->hasRight('banque', 'modifier');
+$permissiontodelete = $user->hasRight('banque', 'modifier');
 
 
 /**
@@ -106,7 +108,7 @@ if (empty($reshook)) {
 		$object->setProject(GETPOSTINT('projectid'));
 	}
 
-	if ($action == 'add') {
+	if ($action == 'add' && $permissiontoadd) {
 		$error = 0;
 
 		$datep = dol_mktime(12, 0, 0, GETPOSTINT("datepmonth"), GETPOSTINT("datepday"), GETPOSTINT("datepyear"));
@@ -185,7 +187,7 @@ if (empty($reshook)) {
 		$action = 'create';
 	}
 
-	if ($action == 'confirm_delete' && $confirm == 'yes') {
+	if ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontodelete) {
 		$result = $object->fetch($id);
 
 		if ($object->rappro == 0) {
@@ -219,7 +221,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'setaccountancy_code') {
+	if ($action == 'setaccountancy_code' && $permissiontodelete) {
 		$db->begin();
 
 		$result = $object->fetch($id);
@@ -235,7 +237,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'setsubledger_account') {
+	if ($action == 'setsubledger_account' && $permissiontodelete) {
 		$db->begin();
 
 		$result = $object->fetch($id);
@@ -253,7 +255,7 @@ if (empty($reshook)) {
 }
 
 // Action clone object
-if ($action == 'confirm_clone' && $confirm != 'yes') {
+if ($action == 'confirm_clone' && $confirm != 'yes') {	// Test on permission not required
 	$action = '';
 }
 
@@ -325,6 +327,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
 /*
  *	View
  */
+
 $form = new Form($db);
 if (isModEnabled('accounting')) {
 	$formaccounting = new FormAccounting($db);
@@ -541,13 +544,7 @@ if ($action == 'create') {
 	print '</form>';
 }
 
-
-/* ************************************************************************** */
-/*                                                                            */
-/* View mode                                                                  */
-/*                                                                            */
-/* ************************************************************************** */
-
+// View in read or edit mode
 if ($id) {
 	$alreadyaccounted = $object->getVentilExportCompta();
 
@@ -658,7 +655,7 @@ if ($id) {
 			print $formaccounting->formAccountingAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->accountancy_code, 'accountancy_code', 0, 1, '', 1);
 		} else {
 			$accountingaccount = new AccountingAccount($db);
-			$accountingaccount->fetch('', $object->accountancy_code, 1);
+			$accountingaccount->fetch(0, $object->accountancy_code, 1);
 
 			print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
 		}

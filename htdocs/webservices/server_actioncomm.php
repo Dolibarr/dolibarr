@@ -297,7 +297,7 @@ function getActionComm($authentication, $id)
 	}
 
 	if (!$error) {
-		$fuser->getrights();
+		$fuser->loadRights();
 
 		if ($fuser->hasRight('agenda', 'allactions', 'read')) {
 			$actioncomm = new ActionComm($db);
@@ -393,7 +393,7 @@ function getListActionCommType($authentication)
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 
 	if (!$error) {
-		$fuser->getrights();
+		$fuser->loadRights();
 
 		if ($fuser->hasRight('agenda', 'myactions', 'read')) {
 			$cactioncomm = new CActionComm($db);

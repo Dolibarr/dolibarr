@@ -20,7 +20,7 @@
 
 /**
  *       \file       htdocs/contact/ajax/contact.php
- *       \brief      File to return Ajax response on contact list request. Used by the combo list of contacts.
+ *       \brief      File to return Ajax response on contact list request. Used by the combo list of contacts, for example into page list of projects
  *       			 Search done on name, firstname...
  */
 
@@ -66,6 +66,8 @@ if ($user->socid > 0) {
 }
 restrictedArea($user, 'societe', $object->id, '&societe');
 
+$permissiontoread = $user->hasRight('societe', 'lire');
+
 
 /*
  * View
@@ -75,7 +77,7 @@ top_httphead('application/json');
 
 //print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
-if (!empty($action) && $action == 'fetch' && !empty($id)) {
+if ($action == 'fetch' && !empty($id) && $permissiontoread) {
 	require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
 	$outjson = array();
@@ -90,11 +92,11 @@ if (!empty($action) && $action == 'fetch' && !empty($id)) {
 	}
 
 	echo json_encode($outjson);
-} else {
+} elseif ($permissiontoread) {		// $action can be 'getContacts'
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 	if (empty($htmlname)) {
-		return;
+		return 'Error value for parameter htmlname';
 	}
 
 	// The filter on the company to search for can be:
@@ -128,17 +130,27 @@ if (!empty($action) && $action == 'fetch' && !empty($id)) {
 
 	$prefix = getDolGlobalString('CONTACT_DONOTSEARCH_ANYWHERE') ? '' : '%'; // Can use index if CONTACT_DONOTSEARCH_ANYWHERE is on
 
-	$filter = "(lastname:like:'".$prefix.$searchkey."%') OR (firstname:like:'".$prefix.$searchkey."%')";
-	if ($showsoc) {
-		$filter .= " OR (s.nom:like:'".$prefix.$searchkey."%')";
+	$nbchar = 0;
+	$filter = '';
+	$listofsearchkey = preg_split('/\s+/', $searchkey);
+	foreach ($listofsearchkey as $searchkey) {
+		$nbchar += strlen($searchkey);
+
+		$filter .= ($filter ? ' AND ' : '');
+		$filter .= '(';
+		$filter .= "(lastname:like:'".$prefix.$searchkey."%') OR (firstname:like:'".$prefix.$searchkey."%')";
+		if ($showsoc) {
+			$filter .= " OR (s.nom:like:'".$prefix.$searchkey."%')";
+		}
+		$filter .= ')';
 	}
 
-	// FIXME
 	// If CONTACT_USE_SEARCH_TO_SELECT is set, check that nb of chars in $filter is >= to avoid DOS attack
+	if (getDolGlobalInt('CONTACT_USE_SEARCH_TO_SELECT') && $nbchar < getDolGlobalInt('CONTACT_USE_SEARCH_TO_SELECT')) {
+		print json_encode(array());
+	} else {
+		$arrayresult = $form->selectcontacts($socid, array(), $htmlname, 1, $exclude, $limitto, $showfunction, $morecss, $options_only, $showsoc, $forcecombo, $events, $moreparam, $htmlid, $multiple, $disableifempty, $filter);
 
-	$arrayresult = $form->selectcontacts($socid, array(), $htmlname, 1, $exclude, $limitto, $showfunction, $morecss, $options_only, $showsoc, $forcecombo, $events, $moreparam, $htmlid, $multiple, $disableifempty, $filter);
-
-	if ($outjson) {
 		print json_encode($arrayresult);
 	}
 }

@@ -187,3 +187,4 @@ EmailingSelectors=Emails selectors
 EmailingSelectorDesc=You can generate and edit here the class files to provide new email target selectors for the mass emailing module
 EmailingSelectorFile=Emails selector file
 NoEmailingSelector=No emails selector file
+ModuleTranslatedIntoLangForKeyInto=Translated into a .lang file for key %s into "%s"

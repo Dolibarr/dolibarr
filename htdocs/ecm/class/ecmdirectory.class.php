@@ -2,6 +2,7 @@
 /* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -469,7 +470,7 @@ class EcmDirectory extends CommonObject
 	 *  Return directory name you can click (and picto)
 	 *
 	 *  @param	int		$withpicto		0=Pas de picto, 1=Include picto into link, 2=Only picto
-	 *  @param	string	$option			Sur quoi pointe le lien
+	 *  @param	string	$option			What is the link pointing to
 	 *  @param	int		$max			Max length
 	 *  @param	string	$more			Add more param on a link
 	 *  @param	int		$notooltip		1=Disable tooltip
@@ -511,7 +512,7 @@ class EcmDirectory extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -707,7 +708,7 @@ class EcmDirectory extends CommonObject
 			$this->buildPathFromId($key, 0);
 		}
 
-		$this->cats = dol_sort_array($this->cats, 'fulllabel', 'asc', true, false);
+		$this->cats = dol_sort_array($this->cats, 'fulllabel', 'asc', 1, 0);
 		$this->full_arbo_loaded = 1;
 
 		return $this->cats;

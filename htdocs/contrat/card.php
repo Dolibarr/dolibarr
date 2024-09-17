@@ -9,7 +9,7 @@
  * Copyright (C) 2014-2020	Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2014-2016	Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
- * Copyright (C) 2018-2021	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2023		Charlene Benke				<charlene@patas-monkey.com>
  * Copyright (C) 2023		Nick Fragoulis
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
@@ -56,7 +56,7 @@ if (isModEnabled('project')) {
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("contracts", "orders", "companies", "bills", "products", 'compta'));
+$langs->loadLangs(array("contracts", "orders", "companies", "bills", "products", 'compta', 'propal'));
 
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
@@ -89,6 +89,7 @@ $hookmanager->initHooks(array('contractcard', 'globalcard'));
 
 $object = new Contrat($db);
 $extrafields = new ExtraFields($db);
+$ret = 0;
 
 // Load object
 if ($id > 0 || !empty($ref) && $action != 'add') {
@@ -109,7 +110,7 @@ $extralabelslines = $extrafields->fetch_name_optionals_label($object->table_elem
 
 $permissionnote = $user->hasRight('contrat', 'creer'); // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->hasRight('contrat', 'creer'); // Used by the include of actions_dellink.inc.php
-$permissiontodelete = ($user->hasRight('contrat', 'creer') && $object->statut == $object::STATUS_DRAFT) || $user->hasRight('contrat', 'supprimer');
+$permissiontodelete = ($user->hasRight('contrat', 'creer') && $object->status == $object::STATUS_DRAFT) || $user->hasRight('contrat', 'supprimer');
 $permissiontoadd   = $user->hasRight('contrat', 'creer');     //  Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontoedit = $permissiontoadd;
 $permissiontoactivate = $user->hasRight('contrat', 'activer');
@@ -174,6 +175,22 @@ if (empty($reshook)) {
 			exit;
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	} elseif ($action == 'confirm_sign' && $confirm == 'yes' && $user->hasRight('contract', 'creer')) {
+		$result = $object->setSignedStatus($user, GETPOSTINT('signed_status'), 0, 'CONTRACT_MODIFY');
+		if ($result >= 0) {
+			header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
+			exit;
+		} else {
+			$mesg = $object->error;
+		}
+	} elseif ($action == 'confirm_unsign' && $confirm == 'yes' && $user->hasRight('contract', 'creer')) {
+		$result = $object->setSignedStatus($user, Contrat::$SIGNED_STATUSES['STATUS_NO_SIGNATURE'], 0, 'CONTRACT_MODIFY');
+		if ($result >= 0) {
+			header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
+			exit;
+		} else {
+			$mesg = $object->error;
 		}
 	} elseif ($action == 'confirm_closeline' && $confirm == 'yes' && $permissiontoactivate) {
 		$date_end = '';
@@ -584,7 +601,7 @@ if (empty($reshook)) {
 				}
 				$tva_tx = str_replace('*', '', $tva_tx);
 				$desc = $product_desc;
-				$fk_unit = GETPOST('units', 'alpha');
+				$fk_unit = GETPOSTINT('units');
 				$pu_ht_devise = price2num($price_ht_devise, 'MU');
 				$pu_ttc_devise = price2num($price_ttc_devise, 'MU');
 
@@ -762,7 +779,7 @@ if (empty($reshook)) {
 				$pa_ht = null;
 			}
 
-			$fk_unit = GETPOST('unit', 'alpha');
+			$fk_unit = GETPOSTINT('unit');
 
 			// update price_ht with discount
 			// TODO Use object->updateline instead objectline->update
@@ -793,7 +810,7 @@ if (empty($reshook)) {
 			// $objectline->rang = $objectline->rang;
 
 			if ($fk_unit > 0) {
-				$objectline->fk_unit = GETPOST('unit');
+				$objectline->fk_unit = GETPOSTINT('unit');
 			} else {
 				$objectline->fk_unit = null;
 			}
@@ -815,6 +832,7 @@ if (empty($reshook)) {
 			if ($result < 0) {
 				$error++;
 				$action = 'editline';
+				$_GET['rowid'] = GETPOST('elrowid');
 				setEventMessages($objectline->error, $objectline->errors, 'errors');
 			}
 		}
@@ -1020,8 +1038,8 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 
-	if (getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB') && $user->hasRight('contrat', 'creer')) {
-		if ($action == 'addcontact') {
+	if (getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB')) {
+		if ($action == 'addcontact' && $user->hasRight('contrat', 'creer')) {
 			$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
 			$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
 			$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
@@ -1037,10 +1055,10 @@ if (empty($reshook)) {
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
-		} elseif ($action == 'swapstatut') {
+		} elseif ($action == 'swapstatut' && $user->hasRight('contrat', 'creer')) {
 			// bascule du statut d'un contact
 			$result = $object->swapContactStatus(GETPOSTINT('ligne'));
-		} elseif ($action == 'deletecontact') {
+		} elseif ($action == 'deletecontact' && $user->hasRight('contrat', 'creer')) {
 			// Efface un contact
 			$result = $object->delete_contact(GETPOSTINT('lineid'));
 
@@ -1054,7 +1072,7 @@ if (empty($reshook)) {
 	}
 
 	// Action clone object
-	if ($action == 'confirm_clone' && $confirm == 'yes') {
+	if ($action == 'confirm_clone' && $confirm == 'yes' && $user->hasRight('contrat', 'creer')) {
 		if (!GETPOSTINT('socid', 3)) {
 			setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 		} else {
@@ -1264,13 +1282,13 @@ if ($action == 'create') {
 	}
 
 	print '<tr><td>'.$langs->trans("NotePublic").'</td><td class="tdtop">';
-	$doleditor = new DolEditor('note_public', $note_public, '', '100', 'dolibarr_notes', 'In', 1, true, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
+	$doleditor = new DolEditor('note_public', $note_public, '', 100, 'dolibarr_notes', 'In', 1, true, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
 	print $doleditor->Create(1);
 	print '</td></tr>';
 
 	if (empty($user->socid)) {
 		print '<tr><td>'.$langs->trans("NotePrivate").'</td><td class="tdtop">';
-		$doleditor = new DolEditor('note_private', $note_private, '', '100', 'dolibarr_notes', 'In', 1, true, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
+		$doleditor = new DolEditor('note_private', $note_private, '', 100, 'dolibarr_notes', 'In', 1, true, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
 		print $doleditor->Create(1);
 		print '</td></tr>';
 	}
@@ -1328,7 +1346,7 @@ if ($action == 'create') {
 
 		$head = contract_prepare_head($object);
 
-		$hselected = 0;
+		$hselected = '0';
 		$formconfirm = '';
 
 		print dol_get_fiche_head($head, $hselected, $langs->trans("Contract"), -1, 'contract');
@@ -1362,6 +1380,31 @@ if ($action == 'create') {
 			// Clone confirmation
 			$formquestion = array(array('type' => 'other', 'name' => 'socid', 'label' => $langs->trans("SelectThirdParty"), 'value' => $form->select_company(GETPOSTINT('socid'), 'socid', $filter)));
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneContract', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
+		} elseif ($action == 'sign') {
+			$text = $langs->trans('ConfirmSignContract');
+			if (isModEnabled('notification')) {
+				require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
+				$notify = new Notify($db);
+				$text .= '<br>';
+				$text .= $notify->confirmMessage('CONTRACT_MODIFY', $object->socid, $object);
+			}
+			$formquestion = [];
+			$formquestion[] = [
+				'type' 		=> 'select',
+				'name' 		=> 'signed_status',
+				'label'		=> '<span class="fieldrequired">'.$langs->trans('SignStatus').'</span>',
+				'values'	=> $object->getSignedStatusLocalisedArray()
+			];
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('SignContract'), $text, 'confirm_sign', $formquestion, 0, 1);
+		} elseif ($action == 'unsign') {
+			$text = $langs->trans('ConfirmUnsignContract');
+			if (isModEnabled('notification')) {
+				require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
+				$notify = new Notify($db);
+				$text .= '<br>';
+				$text .= $notify->confirmMessage('CONTRACT_MODIFY', $object->socid, $object);
+			}
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('UnsignContract'), $text, 'confirm_unsign', '', 0, 1);
 		}
 
 
@@ -1550,6 +1593,7 @@ if ($action == 'create') {
 			$sql .= " WHERE cd.rowid = ".((int) $object->lines[$cursorline - 1]->id);
 
 			$result = $db->query($sql);
+			$objp = null;
 			if ($result) {
 				$total = 0;
 
@@ -1739,11 +1783,11 @@ if ($action == 'create') {
 					// Ligne carac
 					print '<tr class="oddeven">';
 					print '<td>';
-					$currentLineProductId=GETPOSTISSET('idprod')?GETPOST('idprod'):(!empty($object->lines[$cursorline - 1]->fk_product) ? $object->lines[$cursorline - 1]->fk_product : 0);
+					$currentLineProductId = GETPOSTISSET('idprod') ? GETPOST('idprod') : (!empty($object->lines[$cursorline - 1]->fk_product) ? $object->lines[$cursorline - 1]->fk_product : 0);
 					if ($objp->fk_product > 0) {
 						$canchangeproduct = 1;
 
-						// TODO: As $canchangeproduct is set just before, in what usecase it can be empty ?
+						// @TODO: As $canchangeproduct is set just before, in what usecase it can be empty ?
 						if (empty($canchangeproduct)) {
 							$productstatic->id = $objp->fk_product;
 							$productstatic->type = $objp->ptype;
@@ -1753,9 +1797,9 @@ if ($action == 'create') {
 							print $objp->label ? ' - '.dol_trunc($objp->label, 32) : '';
 							print '<input type="hidden" name="idprod" value="'.$currentLineProductId.'">';
 						} else {
-							$senderissupplier = 0;
+							$senderissupplier = 0;	// @TODO Option to allow purchased products ?
 							if (empty($senderissupplier)) {
-								print $form->select_produits($currentLineProductId, 'idprod');
+								print $form->select_produits($currentLineProductId, 'idprod', '', 0, 0, 1, 2, '', 0, array(), 0, 1, 0, 'minwidth250onall maxwidth500 widthcentpercentminusx');
 							} else {
 								$form->select_produits_fournisseurs($currentLineProductId, 'idprod');
 							}
@@ -1772,7 +1816,7 @@ if ($action == 'create') {
 					if (getDolGlobalString('MAIN_INPUT_DESC_HEIGHT')) {
 						$nbrows = getDolGlobalString('MAIN_INPUT_DESC_HEIGHT');
 					}
-					$doleditor = new DolEditor('product_desc', (GETPOSTISSET('product_desc')?GETPOST('product_desc'):$objp->description), '', 92, 'dolibarr_details', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_DETAILS'), $nbrows, '90%');
+					$doleditor = new DolEditor('product_desc', (GETPOSTISSET('product_desc') ? GETPOST('product_desc') : $objp->description), '', 92, 'dolibarr_details', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_DETAILS'), $nbrows, '90%');
 					$doleditor->Create();
 
 					print '</td>';
@@ -1783,7 +1827,7 @@ if ($action == 'create') {
 					print '</td>';
 
 					// Price
-					print '<td class="right"><input class="width50" type="text" name="elprice" value="'.(GETPOSTISSET('elprice')?GETPOST('elprice'):price($objp->subprice)).'"></td>';
+					print '<td class="right"><input class="width50" type="text" name="elprice" value="'.(GETPOSTISSET('elprice') ? GETPOST('elprice') : price($objp->subprice)).'"></td>';
 
 					// Price multicurrency
 					/*if (isModEnabled("multicurrency")) {
@@ -1791,24 +1835,24 @@ if ($action == 'create') {
 					 }*/
 
 					// Quantity
-					print '<td class="center"><input size="2" type="text" name="elqty" value="'.(GETPOSTISSET('elqty')?GETPOST('elqty'):$objp->qty).'"></td>';
+					print '<td class="center"><input size="2" type="text" name="elqty" value="'.(GETPOSTISSET('elqty') ? GETPOST('elqty') : $objp->qty).'"></td>';
 
 					// Unit
 					if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 						print '<td class="left">';
-						print $form->selectUnits((GETPOSTISSET('unit')?GETPOST('unit'):$objp->fk_unit), "unit");
+						print $form->selectUnits((GETPOSTISSET('unit') ? GETPOSTINT('unit') : $objp->fk_unit), "unit");
 						print '</td>';
 					}
 
 					// Discount
-					print '<td class="nowrap right"><input size="1" type="text" name="elremise_percent" value="'.(GETPOSTISSET('elremise_percent')?GETPOST('elremise_percent'):$objp->remise_percent).'">%</td>';
+					print '<td class="nowraponall right"><input size="1" type="text" name="elremise_percent" value="'.(GETPOSTISSET('elremise_percent') ? GETPOST('elremise_percent') : $objp->remise_percent).'">%</td>';
 
 					if (!empty($usemargins)) {
 						print '<td class="right">';
 						if ($objp->fk_product) {
 							print '<select id="fournprice" name="fournprice"></select>';
 						}
-						print '<input id="buying_price" type="text" class="width50" name="buying_price" value="'.price((GETPOSTISSET('buying_price')?GETPOST('buying_price'):$objp->pa_ht), 0, '', 0).'"></td>';
+						print '<input id="buying_price" type="text" class="width50" name="buying_price" value="'.price((GETPOSTISSET('buying_price') ? GETPOST('buying_price') : $objp->pa_ht), 0, '', 0).'"></td>';
 					}
 					print '<td class="center">';
 					print '<input type="submit" class="button margintoponly marginbottomonly" name="save" value="'.$langs->trans("Modify").'">';
@@ -1908,7 +1952,7 @@ if ($action == 'create') {
 				print '<td><span class="valignmiddle hideonsmartphone">'.$langs->trans("ServiceStatus").':</span> '.$object->lines[$cursorline - 1]->getLibStatut(4).'</td>';
 				print '<td width="30" class="right">';
 				if ($user->socid == 0) {
-					if ($object->statut > 0 && $action != 'activateline' && $action != 'unactivateline') {
+					if ($object->statut > 0 && $action != 'activateline' && $action != 'unactivateline' && is_object($objp)) {
 						$tmpaction = 'activateline';
 						$tmpactionpicto = 'play';
 						$tmpactiontext = $langs->trans("Activate");
@@ -1964,7 +2008,7 @@ if ($action == 'create') {
 			}
 
 			// Form to activate line
-			if ($user->hasRight('contrat', 'activer') && $action == 'activateline' && $object->lines[$cursorline - 1]->id == GETPOSTINT('ligne')) {
+			if ($user->hasRight('contrat', 'activer') && $action == 'activateline' && $object->lines[$cursorline - 1]->id == GETPOSTINT('ligne') && is_object($objp)) {
 				print '<form name="active" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="confirm_active">';
@@ -2019,7 +2063,7 @@ if ($action == 'create') {
 				print '</form>';
 			}
 
-			if ($user->hasRight('contrat', 'activer') && $action == 'unactivateline' && $object->lines[$cursorline - 1]->id == GETPOSTINT('ligne')) {
+			if ($user->hasRight('contrat', 'activer') && $action == 'unactivateline' && $object->lines[$cursorline - 1]->id == GETPOSTINT('ligne') && is_object($objp)) {
 				/**
 				 * Disable a contract line
 				 */
@@ -2185,7 +2229,8 @@ if ($action == 'create') {
 						'url' => '/commande/card.php?action=create&token='.newToken().'&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id,
 						'label' => $langs->trans('AddOrder'),
 						'lang' => 'orders',
-						'perm' => $user->hasRight('commande', 'creer')
+						'perm' => $user->hasRight('commande', 'creer'),
+						'enabled' => true,
 					);
 				}
 				if (isModEnabled('invoice') && $object->status > 0 && $soc->client > 0) {
@@ -2193,7 +2238,8 @@ if ($action == 'create') {
 						'url' => '/compta/facture/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id,
 						'label' => $langs->trans('CreateBill'),
 						'lang' => 'bills',
-						'perm' => $user->hasRight('facture', 'creer')
+						'perm' => $user->hasRight('facture', 'creer'),
+						'enabled' => true,
 					);
 				}
 				if (isModEnabled('supplier_invoice') && $object->status > 0 && $soc->fournisseur == 1) {
@@ -2202,7 +2248,8 @@ if ($action == 'create') {
 						'url' => '/fourn/facture/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id,
 						'label' => $langs->trans('AddSupplierInvoice'),
 						'lang' => 'bills',
-						'perm' => $user->hasRight('fournisseur', 'facture', 'creer')
+						'perm' => $user->hasRight('fournisseur', 'facture', 'creer'),
+						'enabled' => true,
 					);
 				}
 				if (count($arrayofcreatebutton)) {
@@ -2245,6 +2292,15 @@ if ($action == 'create') {
 					}
 				}
 
+				// Sign
+				if ($object->status > Contrat::STATUS_DRAFT) {
+					if ($object->signed_status != Contrat::$SIGNED_STATUSES['STATUS_SIGNED_ALL']) {
+						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=sign&token=' . newToken() . '">' . $langs->trans("ContractSign") . '</a></div>';
+					} else {
+						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=unsign&token=' . newToken() . '">' . $langs->trans("ContractUnsign") . '</a></div>';
+					}
+				}
+
 				// Clone
 				if ($user->hasRight('contrat', 'creer')) {
 					unset($params['attr']['title']);
@@ -2276,7 +2332,7 @@ if ($action == 'create') {
 
 
 			// Show links to link elements
-			$linktoelem = $form->showLinkToObjectBlock($object, null, array('contrat'));
+			$linktoelem = $form->showLinkToObjectBlock($object, array(), array('contrat'));
 			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 			// Show online signature link

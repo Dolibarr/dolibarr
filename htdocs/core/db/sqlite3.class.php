@@ -166,7 +166,7 @@ class DoliDBSqlite3 extends DoliDB
 			if ($type == 'dml') {
 				$line = preg_replace('/\s/', ' ', $line); // Replace tabulation with space
 
-				// we are inside create table statement so lets process datatypes
+				// we are inside create table statement so let's process datatypes
 				if (preg_match('/(ISAM|innodb)/i', $line)) { // end of create table sequence
 					$line = preg_replace('/\)[\s\t]*type[\s\t]*=[\s\t]*(MyISAM|innodb);/i', ');', $line);
 					$line = preg_replace('/\)[\s\t]*engine[\s\t]*=[\s\t]*(MyISAM|innodb);/i', ');', $line);
@@ -962,7 +962,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *	Create a table into database
 	 *
 	 *	@param	    string	$table 			Nom de la table
-	 *	@param	    array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>	$fields 		Tableau associatif [nom champ][tableau des descriptions]
+	 *	@param	    array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>	$fields 		Tableau associatif [nom champ][tableau des descriptions]
 	 *	@param	    string	$primary_key 	Nom du champ qui sera la clef primaire
 	 *	@param	    string	$type 			Type de la table
 	 *	@param	    array	$unique_keys 	Tableau associatifs Nom de champs qui seront clef unique => valeur
@@ -1415,14 +1415,15 @@ class DoliDBSqlite3 extends DoliDB
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
+	/* Unused/commented
 	 * calc_daynr
 	 *
-	 * @param 	int 	$year		Year
-	 * @param 	int 	$month		Month
-	 * @param	int     $day 		Day
-	 * @return int Formatted date
+	 * param 	int 	$year		Year
+	 * param 	int 	$month		Month
+	 * param	int     $day 		Day
+	 * return int Formatted date
 	 */
+	/*
 	private static function calc_daynr($year, $month, $day)
 	{
 		// phpcs:enable
@@ -1439,46 +1440,52 @@ class DoliDBSqlite3 extends DoliDB
 		$temp = floor(($y / 100 + 1) * 3 / 4);
 		return (int) ($num + floor($y / 4) - $temp);
 	}
+	*/
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
+	/* Unused/commented
 	 * calc_weekday
 	 *
-	 * @param int	$daynr							???
-	 * @param bool	$sunday_first_day_of_week		???
-	 * @return int
+	 * param int	$daynr							???
+	 * param bool	$sunday_first_day_of_week		???
+	 * return int
 	 */
+	/*
 	private static function calc_weekday($daynr, $sunday_first_day_of_week)
 	{
 		// phpcs:enable
 		$ret = (int) floor(($daynr + 5 + ($sunday_first_day_of_week ? 1 : 0)) % 7);
 		return $ret;
 	}
+	*/
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
+	/* Unused/commented
 	 * calc_days_in_year
 	 *
-	 * @param 	int		$year		Year
-	 * @return	int					Nb of days in year
+	 * param 	int		$year		Year
+	 * return	int					Nb of days in year
 	 */
+	/*
 	private static function calc_days_in_year($year)
 	{
 		// phpcs:enable
 		return (($year & 3) == 0 && ($year % 100 || ($year % 400 == 0 && $year)) ? 366 : 365);
 	}
+	*/
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
+	/* Unused/commented
 	 * calc_week
 	 *
-	 * @param 	int		$year				Year
-	 * @param 	int		$month				Month
-	 * @param 	int		$day				Day
-	 * @param 	int		$week_behaviour		Week behaviour, bit masks: WEEK_MONDAY_FIRST, WEEK_YEAR, WEEK_FIRST_WEEKDEAY
-	 * @param 	int		$calc_year			??? Year where the week started
-	 * @return	int							??? Week number in year
+	 * param 	int		$year				Year
+	 * param 	int		$month				Month
+	 * param 	int		$day				Day
+	 * param 	int		$week_behaviour		Week behaviour, bit masks: WEEK_MONDAY_FIRST, WEEK_YEAR, WEEK_FIRST_WEEKDAY
+	 * param 	int		$calc_year			??? Year where the week started
+	 * return	int							??? Week number in year
 	 */
+	/*
 	private static function calc_week($year, $month, $day, $week_behaviour, &$calc_year)
 	{
 		// phpcs:enable
@@ -1516,4 +1523,5 @@ class DoliDBSqlite3 extends DoliDB
 		}
 		return (int) floor($days / 7 + 1);
 	}
+	*/
 }

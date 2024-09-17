@@ -70,7 +70,7 @@ class Categorie extends CommonObject
 
 
 	/**
-	 * @var array Table of mapping between type string and ID used for field 'type' in table llx_categories
+	 * @var array<string,int> Table of mapping between type string and ID used for field 'type' in table llx_categories
 	 */
 	protected $MAP_ID = array(
 		'product'      => 0,
@@ -90,7 +90,7 @@ class Categorie extends CommonObject
 	);
 
 	/**
-	 * @var array Code mapping from ID
+	 * @var array<int,string> Code mapping from ID
 	 *
 	 * @note This array should be removed in future, once previous constants are moved to the string value. Deprecated
 	 */
@@ -112,7 +112,7 @@ class Categorie extends CommonObject
 	);
 
 	/**
-	 * @var array Foreign keys mapping from type string when value does not match
+	 * @var array<string,string> Foreign keys mapping from type string when value does not match
 	 *
 	 * @todo Move to const array when PHP 5.6 will be our minimum target
 	 */
@@ -124,7 +124,7 @@ class Categorie extends CommonObject
 	);
 
 	/**
-	 * @var array Category tables mapping from type string (llx_categorie_...) when value does not match
+	 * @var array<string,string> Category tables mapping from type string (llx_categorie_...) when value does not match
 	 *
 	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
@@ -135,7 +135,7 @@ class Categorie extends CommonObject
 	);
 
 	/**
-	 * @var array Object class mapping from type string
+	 * @var array<string,string> Object class mapping from type string
 	 *
 	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
@@ -157,7 +157,7 @@ class Categorie extends CommonObject
 	);
 
 	/**
-	 * @var array Title Area mapping from type string
+	 * @var array<string,string> Title Area mapping from type string
 	 *
 	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
@@ -173,11 +173,13 @@ class Categorie extends CommonObject
 		'project' => 'ProjectsCategoriesArea',
 		'warehouse' => 'StocksCategoriesArea',
 		'actioncomm' => 'ActioncommCategoriesArea',
-		'website_page' => 'WebsitePageCategoriesArea'
+		'website_page' => 'WebsitePageCategoriesArea',
+		'ticket' => 'TicketCategoriesArea',
+		'knowledgemanagement' => 'KnowledgemanagementCategoriesArea'
 	);
 
 	/**
-	 * @var array 	Object table mapping from type string (table llx_...) when value of key does not match table name.
+	 * @var array<string,string> 	Object table mapping from type string (table llx_...) when value of key does not match table name.
 	 * 				This array may be completed by external modules with hook "constructCategory"
 	 */
 	public $MAP_OBJ_TABLE = array(
@@ -284,6 +286,24 @@ class Categorie extends CommonObject
 	 * @var int imgHeight
 	 */
 	public $imgHeight;
+
+	public $fields = array(
+		"rowid" => array("type" => "integer", "label" => "TechnicalID", "enabled" => "1", 'position' => 10, 'notnull' => 1, "visible" => "-1",),
+		"fk_parent" => array("type" => "integer", "label" => "Fkparent", "enabled" => "1", 'position' => 20, 'notnull' => 1, "visible" => "-1", "css" => "maxwidth500 widthcentpercentminusxx",),
+		"label" => array("type" => "varchar(180)", "label" => "Label", "enabled" => "1", 'position' => 25, 'notnull' => 1, "visible" => "-1", "alwayseditable" => "1", "css" => "minwidth300", "cssview" => "wordbreak", "csslist" => "tdoverflowmax150",),
+		"ref_ext" => array("type" => "varchar(255)", "label" => "Refext", "enabled" => "1", 'position' => 30, 'notnull' => 0, "visible" => "0", "alwayseditable" => "1",),
+		"type" => array("type" => "integer", "label" => "Type", "enabled" => "1", 'position' => 35, 'notnull' => 1, "visible" => "-1", "alwayseditable" => "1",),
+		"description" => array("type" => "text", "label" => "Description", "enabled" => "1", 'position' => 40, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
+		"color" => array("type" => "varchar(8)", "label" => "Color", "enabled" => "1", 'position' => 45, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
+		"position" => array("type" => "integer", "label" => "Position", "enabled" => "1", 'position' => 50, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
+		"fk_soc" => array("type" => "integer:Societe:societe/class/societe.class.php", "label" => "ThirdParty", "picto" => "company", "enabled" => "1", 'position' => 55, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1", "css" => "maxwidth500 widthcentpercentminusxx", "csslist" => "tdoverflowmax150",),
+		"visible" => array("type" => "integer", "label" => "Visible", "enabled" => "1", 'position' => 60, 'notnull' => 1, "visible" => "-1", "alwayseditable" => "1",),
+		"import_key" => array("type" => "varchar(14)", "label" => "ImportId", "enabled" => "1", 'position' => 900, 'notnull' => 0, "visible" => "-2", "alwayseditable" => "1",),
+		"date_creation" => array("type" => "datetime", "label" => "Datecreation", "enabled" => "1", 'position' => 70, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
+		"tms" => array("type" => "timestamp", "label" => "DateModification", "enabled" => "1", 'position' => 75, 'notnull' => 1, "visible" => "-1", "alwayseditable" => "1",),
+		"fk_user_creat" => array("type" => "integer:User:user/class/user.class.php", "label" => "UserAuthor", "enabled" => "1", 'position' => 80, 'notnull' => 0, "visible" => "-2", "alwayseditable" => "1", "css" => "maxwidth500 widthcentpercentminusxx", "csslist" => "tdoverflowmax150",),
+		"fk_user_modif" => array("type" => "integer:User:user/class/user.class.php", "label" => "UserModif", "enabled" => "1", 'position' => 85, 'notnull' => -1, "visible" => "-2", "alwayseditable" => "1", "css" => "maxwidth500 widthcentpercentminusxx", "csslist" => "tdoverflowmax150",),
+	);
 
 	/**
 	 *	Constructor
@@ -673,7 +693,7 @@ class Categorie extends CommonObject
 			'categorie_ticket' => array('field' => 'fk_categorie', 'enabled' => isModEnabled('ticket')),
 			'categorie_warehouse' => 'fk_categorie',
 			'categorie_website_page' => array('field' => 'fk_categorie', 'enabled' => isModEnabled('website')),
-			'bank_class' => 'fk_categ',
+			'category_bankline' => 'fk_categ',
 			'categorie_lang' => 'fk_category',
 			'categorie' => 'rowid',
 		);
@@ -1239,7 +1259,8 @@ class Categorie extends CommonObject
 		}
 
 		dol_syslog(get_class($this)."::get_full_arbo dol_sort_array", LOG_DEBUG);
-		$this->cats = dol_sort_array($this->cats, 'fulllabel', 'asc', true, false);
+
+		$this->cats = dol_sort_array($this->cats, 'fulllabel', 'asc', 1, 0, 1);		// Sort on full label like "Label 1 >> Sublabel a >> Subsublabel"
 
 		return $this->cats;
 	}
@@ -1456,7 +1477,7 @@ class Categorie extends CommonObject
 	/**
 	 *	Returns an array containing the list of parent categories
 	 *
-	 *	@return	int|array Return integer <0 KO, array OK
+	 *	@return	int|Categorie[] Return integer <0 KO, array OK
 	 */
 	public function get_meres()
 	{
@@ -1488,7 +1509,7 @@ class Categorie extends CommonObject
 	 * 	Returns in a table all possible paths to get to the category
 	 * 	starting with the major categories represented by Tables of categories
 	 *
-	 *	@return	array
+	 *	@return	Categorie[][]
 	 */
 	public function get_all_ways()
 	{
@@ -1518,11 +1539,11 @@ class Categorie extends CommonObject
 	 * Return list of categories (object instances or labels) linked to element of id $id and type $type
 	 * Should be named getListOfCategForObject
 	 *
-	 * @param   int    		$id     Id of element
-	 * @param   string|int	$type   Type of category ('customer', 'supplier', 'contact', 'product', 'member') or (0, 1, 2, ...)
-	 * @param   string 		$mode   'id'=Get array of category ids, 'object'=Get array of fetched category instances, 'label'=Get array of category
-	 *                      	    labels, 'id'= Get array of category IDs
-	 * @return  Categorie[]|int     Array of category objects or < 0 if KO
+	 * @param   int    		$id                 Id of element
+	 * @param   string|int	$type               Type of category ('customer', 'supplier', 'contact', 'product', 'member') or (0, 1, 2, ...)
+	 * @param   string 		$mode               'id'=Get array of category ids, 'object'=Get array of fetched category instances, 'label'=Get array of category
+	 *                                          labels, 'id'= Get array of category IDs
+	 * @return  Categorie[]|int[]|string[]|int  Array of category objects, labels or IDs or < 0 if KO
 	 */
 	public function containing($id, $type, $mode = 'object')
 	{
@@ -1532,10 +1553,10 @@ class Categorie extends CommonObject
 			$type = Categorie::$MAP_ID_TO_CODE[$type];
 		}
 
-		if ($type === Categorie::TYPE_BANK_LINE) {   // TODO Remove this with standard category code after migration of llx_bank_categ into llx_categorie
+		if ($type === Categorie::TYPE_BANK_LINE) {   // TODO Remove this with standard category code after migration of llx_category_bank into llx_categorie
 			// Load bank categories
 			$sql = "SELECT c.label, c.rowid";
-			$sql .= " FROM ".MAIN_DB_PREFIX."bank_class as a, ".MAIN_DB_PREFIX."bank_categ as c";
+			$sql .= " FROM ".MAIN_DB_PREFIX."category_bankline as a, ".MAIN_DB_PREFIX."category_bank as c";
 			$sql .= " WHERE a.lineid=".((int) $id)." AND a.fk_categ = c.rowid";
 			$sql .= " AND c.entity IN (".getEntity('category').")";
 			$sql .= " ORDER BY c.label";
@@ -1827,7 +1848,7 @@ class Categorie extends CommonObject
 		}
 
 		if (file_exists($dir)) {
-			if (is_array($file['name']) && count($file['name']) > 0) {
+			if (is_array($file['name'])) {
 				$nbfile = count($file['name']);
 				for ($i = 0; $i < $nbfile; $i++) {
 					$originImage = $dir.$file['name'][$i];

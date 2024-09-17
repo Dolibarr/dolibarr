@@ -159,7 +159,7 @@ class WebsitePage extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid'          => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
@@ -353,7 +353,7 @@ class WebsitePage extends CommonObject
 	/**
 	 * Return array of all web site pages.
 	 *
-	 * @param  string      	$websiteid   	Web site
+	 * @param  string|int  	$websiteid   	Web site ID
 	 * @param  string      	$sortorder   	Sort Order
 	 * @param  string      	$sortfield    	Sort field
 	 * @param  int         	$limit        	limit
@@ -504,12 +504,13 @@ class WebsitePage extends CommonObject
 	/**
 	 * Count objects in the database.
 	 *
-	 * @param  string      $websiteid    Web site
-	 * @param  array       $filter       Filter array
-	 * @param  string      $filtermode   Filter mode (AND or OR)
-	 * @return int         		         int <0 if KO, array of pages if OK
+	 * @param  string      	$websiteid    	Web site
+	 * @param  string|array	$filter       	Filter as an Universal Search string.
+	 * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
+	 * @param  string      	$filtermode   	Filter mode (AND or OR)
+	 * @return int         		         	int <0 if KO, array of pages if OK
 	 */
-	public function countAll($websiteid, array $filter = array(), $filtermode = 'AND')
+	public function countAll($websiteid, $filter = '', $filtermode = 'AND')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -519,36 +520,53 @@ class WebsitePage extends CommonObject
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		$sql .= ' WHERE t.fk_website = '.((int) $websiteid);
 
-		// Manage filter (same than into fetchAll)
-		$sqlwhere = array();
-		if (count($filter) > 0) {
-			foreach ($filter as $key => $value) {
-				if ($key == 't.rowid' || $key == 't.fk_website' || $key == 'status') {
-					$sqlwhere[] = $key." = ".((int) $value);
-				} elseif ($key == 'type_container') {
-					$sqlwhere[] = $key." = '".$this->db->escape($value)."'";
-				} elseif ($key == 'lang' || $key == 't.lang') {
-					$listoflang = array();
-					$foundnull = 0;
-					foreach (explode(',', $value) as $tmpvalue) {
-						if ($tmpvalue == 'null') {
-							$foundnull++;
-							continue;
+		// Deprecated. If we receive an array, we use it. Prefer using the USF syntax.
+		if (is_array($filter)) {
+			$sqlwhere = array();
+
+			if (count($filter) > 0) {
+				foreach ($filter as $key => $value) {
+					if ($key == 't.rowid' || $key == 'rowid' || $key == 't.fk_website' || $key == 'fk_website' || $key == 'status' || $key == 't.status') {
+						$sqlwhere[] = $key." = ".((int) $value);
+					} elseif ($key == 'type_container' || $key == 't.type_container') {
+						$sqlwhere[] = $key." = '".$this->db->escape($value)."'";
+					} elseif ($key == 'lang' || $key == 't.lang') {
+						$listoflang = array();
+						$foundnull = 0;
+						foreach (explode(',', $value) as $tmpvalue) {
+							if ($tmpvalue == 'null') {
+								$foundnull++;
+								continue;
+							}
+							$listoflang[] = "'".$this->db->escape(substr(str_replace("'", '', $tmpvalue), 0, 2))."'";
 						}
-						$listoflang[] = "'".$this->db->escape(substr(str_replace("'", '', $tmpvalue), 0, 2))."'";
+						$stringtouse = $this->db->sanitize($key)." IN (".$this->db->sanitize(implode(',', $listoflang), 1).")";
+						if ($foundnull) {
+							$stringtouse = "(".$stringtouse." OR ".$this->db->sanitize($key)." IS NULL)";
+						}
+						$sqlwhere[] = $stringtouse;
+					} else {
+						$sqlwhere[] = $this->db->sanitize($key)." LIKE '%".$this->db->escape($value)."%'";
 					}
-					$stringtouse = $key." IN (".$this->db->sanitize(implode(',', $listoflang), 1).")";
-					if ($foundnull) {
-						$stringtouse = "(".$stringtouse." OR ".$key." IS NULL)";
-					}
-					$sqlwhere[] = $stringtouse;
-				} else {
-					$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
 				}
 			}
+			if (count($sqlwhere) > 0) {
+				if (!empty($websiteid)) {
+					$sql .= " AND (".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
+				} else {
+					$sql .= " WHERE ".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+				}
+			}
+
+			$filter = '';
 		}
-		if (count($sqlwhere) > 0) {
-			$sql .= ' AND ('.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
+
+		$errormessage = '';
+		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+		if ($errormessage) {
+			$this->errors[] = $errormessage;
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+			return -1;
 		}
 
 		$resql = $this->db->query($sql);
@@ -672,16 +690,17 @@ class WebsitePage extends CommonObject
 	/**
 	 * Load an object from its id and create a new one in database
 	 *
-	 * @param	User	$user				User making the clone
-	 * @param 	int 	$fromid 			Id of object to clone
-	 * @param	string	$newref				New ref/alias of page
-	 * @param	string	$newlang			New language
-	 * @param	int		$istranslation		1=New page is a translation of the cloned page.
-	 * @param	int		$newwebsite			0=Same web site, >0=Id of new website
-	 * @param	string	$newtitle			New title
-	 * @return 	mixed 						New object created, <0 if KO
+	 * @param	User			$user				User making the clone
+	 * @param 	int 			$fromid 			Id of object to clone
+	 * @param	string			$newref				New ref/alias of page
+	 * @param	string			$newlang			New language
+	 * @param	int				$istranslation		1=New page is a translation of the cloned page.
+	 * @param	int				$newwebsite			0=Same web site, >0=Id of new website
+	 * @param	string			$newtitle			New title
+	 * @param	Website|null	$website			Website
+	 * @return 	mixed 								New object created, <0 if KO
 	 */
-	public function createFromClone(User $user, $fromid, $newref, $newlang = '', $istranslation = 0, $newwebsite = 0, $newtitle = '')
+	public function createFromClone(User $user, $fromid, $newref, $newlang = '', $istranslation = 0, $newwebsite = 0, $newtitle = '', $website = null)
 	{
 		global $hookmanager, $langs;
 
@@ -704,6 +723,19 @@ class WebsitePage extends CommonObject
 			return -1;
 		}
 
+		if ($istranslation) {
+			if (is_null($website)) {
+				$website = new Website($this->db);
+			}
+			$website->fetch($object->fk_website);
+
+			if ($website->id != $newwebsite) {
+				$langs->load("errors");
+				$this->error = $langs->trans("WebsiteMustBeSameThanClonedPageIfTranslation");
+				return -1;
+			}
+		}
+
 		$this->db->begin();
 
 		// Load source object
@@ -723,11 +755,18 @@ class WebsitePage extends CommonObject
 		if (!empty($newlang)) {
 			$object->lang = $newlang;
 		}
+
 		if ($istranslation) {
-			$object->fk_page = $fromid;
+			if ($website->lang == $newlang) {
+				// The new page is into the website language, the parent page will be 0, and we must instead update the source page later.
+				$object->fk_page = 0;
+			} else {
+				$object->fk_page = $fromid;
+			}
 		} else {
 			$object->fk_page = 0;
 		}
+
 		if (!empty($newwebsite)) {
 			$object->fk_website = $newwebsite;
 		}
@@ -742,6 +781,19 @@ class WebsitePage extends CommonObject
 			$this->error = $object->error;
 			$this->errors = $object->errors;
 			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+		}
+
+		if ($istranslation) {
+			if ($website->lang == $newlang) {
+				// We must now update the source page to link to the new page as a translation of.
+				$sql = "UPDATE ".MAIN_DB_PREFIX."website_page SET fk_page = ".((int) $result)." WHERE rowid = ".((int) $fromid);
+
+				$result = $this->db->query($sql);
+				if (!$result) {
+					$error++;
+					$this->error = $this->db->lasterror();
+				}
+			}
 		}
 
 		unset($object->context['createfromclone']);

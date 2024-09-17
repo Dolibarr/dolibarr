@@ -3,6 +3,8 @@
  * Copyright (C) 2015-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -124,7 +126,7 @@ $arrayfields = array();
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
-		$visible = (int) dol_eval($val['visible'], 1);
+		$visible = (int) dol_eval((string) $val['visible'], 1);
 		$arrayfields['s.'.$key] = array(
 			'label' => $val['label'],
 			'checked' => (($visible < 0) ? 0 : 1),
@@ -143,6 +145,8 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 $permissiontoread = $user->hasRight('salaries', 'read');
 $permissiontoadd = $user->hasRight('salaries', 'write');
 $permissiontodelete = $user->hasRight('salaries', 'delete');
+
+$error = 0;
 
 // Security check
 $socid = GETPOSTINT("socid");
@@ -181,7 +185,7 @@ if ($massaction == 'withdrawrequest') {
 			$result = $objecttmp->fetch($toselectid);
 			if ($result > 0) {
 				$totalpaid = $objecttmp->getSommePaiement();
-				$objecttmp->resteapayer = price2num($objecttmp->amount - $totalpaid, 'MT');
+				$objecttmp->resteapayer = price2num((float) $objecttmp->amount - $totalpaid, 'MT');
 
 				// hook to finalize the remaining amount, considering e.g. cash discount agreements
 				$parameters = array('remaintopay' => $objecttmp->resteapayer);
@@ -197,10 +201,10 @@ if ($massaction == 'withdrawrequest') {
 
 				if ($objecttmp->status == Salary::STATUS_PAID || $objecttmp->resteapayer == 0) {
 					$error++;
-					setEventMessages($objecttmp->ref.' '.$langs->trans("AlreadyPaid"), $objecttmp->errors, 'errors');
+					setEventMessages($langs->trans("Salary").' '.$objecttmp->ref.' : '.$langs->trans("AlreadyPaid"), $objecttmp->errors, 'errors');
 				} elseif ($resteapayer < 0) {
 					$error++;
-					setEventMessages($objecttmp->ref.' '.$langs->trans("AmountMustBePositive"), $objecttmp->errors, 'errors');
+					setEventMessages($langs->trans("Salary").' '.$objecttmp->ref.' : '.$langs->trans("AmountMustBePositive"), $objecttmp->errors, 'errors');
 				}
 
 				$rsql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande";
@@ -220,18 +224,20 @@ if ($massaction == 'withdrawrequest') {
 				}
 
 				if ($numprlv > 0) {
+					//$error++;		// Not an error, a simple warning we can ignore
+					setEventMessages($langs->trans("Salary").' '.$objecttmp->ref.' : '.$langs->trans("RequestAlreadyDone"), $objecttmp->errors, 'warnings');
+				} elseif (!empty($objecttmp->type_payment_code) && $objecttmp->type_payment_code != 'VIR') {
+					$langs->load("errors");
 					$error++;
-					setEventMessages($objecttmp->ref.' '.$langs->trans("RequestAlreadyDone"), $objecttmp->errors, 'warnings');
-				} elseif (!empty($objecttmp->type_payment) && $objecttmp->type_payment != '2') {
-					$error++;
-					setEventMessages($objecttmp->ref.' '.$langs->trans("BadPaymentMethod"), $objecttmp->errors, 'errors');
+					setEventMessages($langs->trans("Salary").' '.$objecttmp->ref.' : '.$langs->trans("ErrorThisPaymentModeIsNotCreditTransfer"), $objecttmp->errors, 'errors');
 				} else {
 					$listofSalries[] = $objecttmp;
 				}
 			}
 		}
 
-		if (!empty($listofSalries)) {
+		// Now process all record not in error
+		if (!$error && !empty($listofSalries)) {
 			$nbwithdrawrequestok = 0;
 			foreach ($listofSalries as $salary) {
 				$db->begin();
@@ -498,7 +504,7 @@ $arrayofmassactions = array(
 if (!empty($permissiontodelete)) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
-if (isModEnabled('prelevement') && $user->hasRight('prelevement', 'bons', 'creer')) {
+if (isModEnabled('paymentbybanktransfer') && $user->hasRight('paymentbybanktransfer', 'create')) {
 	$langs->load("withdrawals");
 	$arrayofmassactions['withdrawrequest'] = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("MakeBankTransferOrder");
 }

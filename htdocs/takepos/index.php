@@ -66,7 +66,7 @@ if (empty($_SESSION["takeposterminal"])) {
 
 if ($setterminal > 0) {
 	$_SESSION["takeposterminal"] = $setterminal;
-	setcookie("takeposterminal", (string) $setterminal, (time() + (86400 * 354)), '/', '', (empty($dolibarr_main_force_https) ? false : true), true); // Permanent takeposterminal var in a cookie
+	setcookie("takeposterminal", (string) $setterminal, (time() + (86400 * 354)), '/', '', !empty($dolibarr_main_force_https), true); // Permanent takeposterminal var in a cookie
 }
 
 if ($setcurrency != "") {
@@ -537,8 +537,10 @@ function ClickProduct(position, qty = 1) {
 		console.log($('#prodiv4').data('rowid'));
 		invoiceid = $("#invoiceid").val();
 		idproduct=$('#prodiv'+position).data('rowid');
-		console.log("Click on product at position "+position+" for idproduct "+idproduct+", qty="+qty+" invoicdeid="+invoiceid);
-		if (idproduct=="") return;
+		console.log("Click on product at position "+position+" for idproduct "+idproduct+", qty="+qty+" invoiceid="+invoiceid);
+		if (idproduct == "") {
+			return;
+		}
 		// Call page invoice.php to generate the section with product lines
 		if (invoiceid == "") {
 				createNewInvoice(idproduct, qty);

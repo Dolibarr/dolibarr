@@ -194,9 +194,10 @@ class Projects extends DolibarrApi
 	 * @param  int    $category   Use this param to filter list by category
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param bool             $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return  array                               Array of project objects
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $category = 0, $sqlfilters = '', $properties = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $category = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('projet', 'lire')) {
 			throw new RestException(403);
@@ -244,6 +245,9 @@ class Projects extends DolibarrApi
 			}
 		}
 
+		//this query will return total orders with the filters given
+		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
 			if ($page < 0) {
@@ -273,6 +277,23 @@ class Projects extends DolibarrApi
 			throw new RestException(503, 'Error when retrieve project list : '.$this->db->lasterror());
 		}
 
+		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		if ($pagination_data) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret = [];
+
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = [
+				'total' => (int) $total,
+				'page' => $page, //count starts from 0
+				'page_count' => ceil((int) $total / $limit),
+				'limit' => $limit
+			];
+		}
+
 		return $obj_ret;
 	}
 
@@ -284,6 +305,7 @@ class Projects extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
+		global $conf;
 		if (!DolibarrApiAccess::$user->hasRight('projet', 'creer')) {
 			throw new RestException(403, "Insuffisant rights");
 		}
@@ -306,6 +328,48 @@ class Projects extends DolibarrApi
 		  }
 		  $this->project->lines = $lines;
 		}*/
+
+		// Auto-generate the "ref" field if it is set to "auto"
+		if ($this->project->ref == -1 || $this->project->ref === 'auto') {
+			$reldir = '';
+			$defaultref = '';
+			$file = '';
+			$classname = '';
+			$filefound = 0;
+			$modele = getDolGlobalString('PROJECT_ADDON', 'mod_project_simple');
+
+			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+			foreach ($dirmodels as $reldir) {
+				$file = dol_buildpath($reldir."core/modules/project/".$modele.'.php', 0);
+				if (file_exists($file)) {
+					$filefound = 1;
+					$classname = $modele;
+					break;
+				}
+			}
+			if ($filefound && !empty($classname)) {
+				$result = dol_include_once($reldir . "core/modules/project/" . $modele . '.php');
+				if ($result !== false && class_exists($classname)) {
+					$modProject = new $classname();
+					$defaultref = $modProject->getNextValue(null, $this->project);
+				} else {
+					dol_syslog("Failed to include module file or invalid classname: " . $reldir . "core/modules/project/" . $modele . '.php', LOG_ERR);
+				}
+			} else {
+				dol_syslog("Module file not found or classname is empty: " . $modele, LOG_ERR);
+			}
+
+			if (is_numeric($defaultref) && $defaultref <= 0) {
+				$defaultref = '';
+			}
+
+			if (empty($defaultref)) {
+				$defaultref = 'PJ' . dol_print_date(dol_now(), 'dayrfc');
+			}
+
+			$this->project->ref = $defaultref;
+		}
+
 		if ($this->project->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, "Error creating project", array_merge(array($this->project->error), $this->project->errors));
 		}

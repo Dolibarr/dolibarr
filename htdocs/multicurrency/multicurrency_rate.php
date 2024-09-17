@@ -12,7 +12,8 @@
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016       Ferran Marcet		    <fmarcet@2byte.es>
  * Copyright (C) 2023       Lenin Rivas		    	<lenin.rivas777@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -129,12 +130,12 @@ $error = 0;
  * Actions
  */
 
-if ($action == "create") {
+if ($action == "create" && $user->hasRight('multicurrency', 'currency', 'read')) {
 	if (empty($multicurrency_code) || $multicurrency_code == '-1') {
 		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Currency")), null, "errors");
 		$error++;
 	}
-	if ($rateinput === '0') {
+	if ($rateinput == 0) {
 		setEventMessages($langs->trans('NoEmptyRate'), null, "errors");
 		$error++;
 	} elseif (empty($rateinput)) {
@@ -163,7 +164,7 @@ if ($action == "create") {
 	}
 }
 
-if ($action == 'update') {
+if ($action == 'update' && $user->hasRight('multicurrency', 'currency', 'read')) {
 	$currencyRate = new CurrencyRate($db);
 	$result = $currencyRate->fetch($id_rate_selected);
 	if ($result > 0) {
@@ -183,7 +184,7 @@ if ($action == 'update') {
 	}
 }
 
-if ($action == "deleteRate") {
+if ($action == "deleteRate" && $user->hasRight('multicurrency', 'currency', 'read')) {
 	$current_rate = new CurrencyRate($db);
 	$current_rate->fetch((int) $id_rate_selected);
 
@@ -208,7 +209,7 @@ if ($action == "deleteRate") {
 	}
 }
 
-if ($action == "confirm_delete") {
+if ($action == "confirm_delete" && $user->hasRight('multicurrency', 'currency', 'read')) {
 	$current_rate = new CurrencyRate($db);
 	$current_rate->fetch((int) $id_rate_selected);
 	if ($current_rate) {
@@ -298,11 +299,11 @@ if (!in_array($action, array("updateRate", "deleteRate"))) {
 	print '<td>'.$form->selectMultiCurrency((GETPOSTISSET('multicurrency_code') ? GETPOST('multicurrency_code', 'alpha') : $multicurrency_code), 'multicurrency_code', 1, " code != '".$db->escape($conf->currency)."'", true).'</td>';
 
 	print ' <td>'.$langs->trans('Rate').' / '.$langs->getCurrencySymbol($conf->currency).'</td>';
-	print ' <td><input type="text" min="0" step="any" class="maxwidth75" id="rateinput" name="rateinput" value="'.dol_escape_htmltag($rateinput).'"></td>';
+	print ' <td><input type="text" min="0" step="any" class="maxwidth75" id="rateinput" name="rateinput" value="'.dol_escape_htmltag((string) $rateinput).'"></td>';
 
 	if (getDolGlobalString('MULTICURRENCY_USE_RATE_INDIRECT')) {
 		print ' <td>'.$langs->trans('RateIndirect').' / '.$langs->getCurrencySymbol($conf->currency).'</td>';
-		print ' <td><input type="text" min="0" step="any" class="maxwidth75" id="rateindirectinput" name="rateindirectinput" value="'.dol_escape_htmltag($rateindirectinput).'"></td>';
+		print ' <td><input type="text" min="0" step="any" class="maxwidth75" id="rateindirectinput" name="rateindirectinput" value="'.dol_escape_htmltag((string) $rateindirectinput).'"></td>';
 		// LRR Calculate Rate Direct
 		print '<script type="text/javascript">';
 		print 'jQuery(document).ready(function () {
@@ -563,7 +564,7 @@ if ($resql) {
 			print '<td><input class="minwidth200" name="dateinput" value="'. date('Y-m-d', dol_stringtotime($obj->date_sync)) .'" type="date"></td>';
 			print '<td>' . $form->selectMultiCurrency($obj->code, 'multicurrency_code', 1, " code != '".$conf->currency."'", true) . '</td>';
 			print '<td><input type="text" min="0" step="any" class="maxwidth100" name="rateinput" value="' . dol_escape_htmltag($obj->rate) . '">';
-			print '<input type="hidden" name="page" value="'.dol_escape_htmltag($page).'">';
+			print '<input type="hidden" name="page" value="'.dol_escape_htmltag((string) $page).'">';
 			print '<input type="hidden" name="id_rate" value="'.dol_escape_htmltag($obj->rowid).'">';
 			print '<button type="submit" class="button small reposition" name="action" value="update">'.$langs->trans("Modify").'</button>';
 			print '<button type="submit" class="button small reposition" name="action" value="cancel">'.$langs->trans("Cancel").'</button>';

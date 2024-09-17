@@ -117,6 +117,8 @@ if ($action == 'updateMaskTask') {
 
 		$module = new $classname($db);
 
+		'@phan-var-force ModelePDFProjects $module';
+
 		if ($module->write_file($project, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=project&file=SPECIMEN.pdf");
 			return;
@@ -151,6 +153,8 @@ if ($action == 'updateMaskTask') {
 
 		$module = new $classname($db);
 
+		'@phan-var-force ModelePDFTask $module';
+
 		if ($module->write_file($project, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=project_task&file=SPECIMEN.pdf");
 			return;
@@ -171,14 +175,14 @@ if ($action == 'updateMaskTask') {
 } elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		if ($conf->global->PROJECT_ADDON_PDF == "$value") {
+		if (getDolGlobalString('PROJECT_ADDON_PDF') == "$value") {
 			dolibarr_del_const($db, 'PROJECT_ADDON_PDF', $conf->entity);
 		}
 	}
 } elseif ($action == 'deltask') {
 	$ret = delDocumentModel($value, 'project_task');
 	if ($ret > 0) {
-		if ($conf->global->PROJECT_TASK_ADDON_PDF == "$value") {
+		if (getDolGlobalString('PROJECT_TASK_ADDON_PDF') == "$value") {
 			dolibarr_del_const($db, 'PROJECT_TASK_ADDON_PDF', $conf->entity);
 		}
 	}
@@ -322,6 +326,7 @@ foreach ($dirmodels as $reldir) {
 					require_once $dir.$file.'.php';
 
 					$module = new $file();
+					'@phan-var-force ModeleNumRefProjects $module';
 
 					// Show modules according to features level
 					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -350,7 +355,7 @@ foreach ($dirmodels as $reldir) {
 						print '</td>'."\n";
 
 						print '<td class="center">';
-						if ($conf->global->PROJECT_ADDON == 'mod_'.$classname) {
+						if (getDolGlobalString('PROJECT_ADDON') == 'mod_'.$classname) {
 							print img_picto($langs->trans("Activated"), 'switch_on');
 						} else {
 							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value=mod_'.$classname.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
@@ -364,7 +369,7 @@ foreach ($dirmodels as $reldir) {
 						$htmltooltip = '';
 						$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
 						$nextval = $module->getNextValue($mysoc, $project);
-						if ("$nextval" != $langs->trans("NotAvailable")) {	// Keep " on nextval
+						if ((string) $nextval != $langs->trans("NotAvailable")) {
 							$htmltooltip .= ''.$langs->trans("NextValue").': ';
 							if ($nextval) {
 								$htmltooltip .= $nextval.'<br>';
@@ -420,6 +425,7 @@ if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 						require_once $dir.$file.'.php';
 
 						$module = new $file();
+						'@phan-var-force ModeleNumRefTask $module';
 
 						// Show modules according to features level
 						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -590,7 +596,7 @@ foreach ($dirmodels as $reldir) {
 
 								// Default
 								print "<td class=\"center\">";
-								if ($conf->global->PROJECT_ADDON_PDF == "$name") {
+								if (getDolGlobalString('PROJECT_ADDON_PDF') == "$name") {
 									print img_picto($langs->trans("Default"), 'on');
 								} else {
 									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';

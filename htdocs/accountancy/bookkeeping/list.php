@@ -4,7 +4,7 @@
  * Copyright (C) 2013-2024  Alexandre Spangaro      <alexandre@inoveasya.solutions>
  * Copyright (C) 2022  		Lionel Vessiller        <lvessiller@open-dsi.fr>
  * Copyright (C) 2016-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022  		Progiseize         		<a.bisotti@progiseiea-conseil.com>
  * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
  *
@@ -177,7 +177,7 @@ if (!in_array($action, array('delmouv', 'delmouvconfirm')) && !GETPOSTISSET('beg
 			$search_date_end = strtotime($fiscalYear->date_end);
 		} else {
 			$month_start = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
-			$year_start = dol_print_date(dol_now(), '%Y');
+			$year_start = (int) dol_print_date(dol_now(), '%Y');
 			if (dol_print_date(dol_now(), '%m') < $month_start) {
 				$year_start--; // If current month is lower that starting fiscal month, we start last year
 			}
@@ -228,6 +228,8 @@ if ($user->socid > 0) {
 if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 	accessforbidden();
 }
+
+$permissiontoadd = $user->hasRight('accounting', 'mouvements', 'creer');
 
 
 /*
@@ -545,8 +547,8 @@ if (empty($reshook)) {
 	}
 
 	// mass actions on lettering
-	if (!$error && getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING') && $user->hasRight('accounting', 'mouvements', 'creer')) {
-		if ($massaction == 'letteringauto') {
+	if (!$error && getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING')) {
+		if ($massaction == 'letteringauto' && $permissiontoadd) {
 			$lettering = new Lettering($db);
 			$nb_lettering = $lettering->bookkeepingLetteringAll($toselect);
 			if ($nb_lettering < 0) {
@@ -567,7 +569,7 @@ if (empty($reshook)) {
 				header('Location: ' . $_SERVER['PHP_SELF'] . '?noreset=1' . $param);
 				exit();
 			}
-		} elseif ($massaction == 'letteringmanual') {
+		} elseif ($massaction == 'letteringmanual' && $permissiontoadd) {
 			$lettering = new Lettering($db);
 			$result = $lettering->updateLettering($toselect);
 			if ($result < 0) {
@@ -577,7 +579,7 @@ if (empty($reshook)) {
 				header('Location: ' . $_SERVER['PHP_SELF'] . '?noreset=1' . $param);
 				exit();
 			}
-		} elseif ($action == 'unletteringauto' && $confirm == "yes") {
+		} elseif ($action == 'unletteringauto' && $confirm == "yes" && $permissiontoadd) {
 			$lettering = new Lettering($db);
 			$nb_lettering = $lettering->bookkeepingLetteringAll($toselect, true);
 			if ($nb_lettering < 0) {
@@ -598,10 +600,10 @@ if (empty($reshook)) {
 				header('Location: ' . $_SERVER['PHP_SELF'] . '?noreset=1' . $param);
 				exit();
 			}
-		} elseif ($action == 'unletteringmanual' && $confirm == "yes") {
+		} elseif ($action == 'unletteringmanual' && $confirm == "yes" && $permissiontoadd) {
 			$lettering = new Lettering($db);
 			$nb_lettering = $lettering->deleteLettering($toselect);
-			if ($result < 0) {
+			if ($nb_lettering < 0) {
 				setEventMessages('', $lettering->errors, 'errors');
 			} else {
 				setEventMessages($langs->trans('AccountancyOneUnletteringModifiedSuccessfully'), array(), 'mesgs');
@@ -1212,8 +1214,10 @@ while ($i < min($num, $limit)) {
 	}
 
 	// Document ref
-	$modulepart = '';
+	$modulepart = '';	// may be used by include*.tpl.php
 	if (!empty($arrayfields['t.doc_ref']['checked'])) {
+		$objectstatic = null;
+
 		if ($line->doc_type === 'customer_invoice') {
 			$langs->loadLangs(array('bills'));
 
@@ -1270,11 +1274,11 @@ while ($i < min($num, $limit)) {
 		$labeltoshow = '';
 		$labeltoshowalt = '';
 		$classforlabel = '';
-		if ($line->doc_type === 'customer_invoice' || $line->doc_type === 'supplier_invoice' || $line->doc_type === 'expense_report') {
+		if (($line->doc_type === 'customer_invoice' || $line->doc_type === 'supplier_invoice' || $line->doc_type === 'expense_report') && is_object($objectstatic)) {
 			$labeltoshow .= $objectstatic->getNomUrl(1, '', 0, 0, '', 0, -1, 1);
 			$labeltoshow .= $documentlink;
 			$labeltoshowalt .= $objectstatic->ref;
-		} elseif ($line->doc_type === 'bank') {
+		} elseif ($line->doc_type === 'bank' && is_object($objectstatic)) {
 			$labeltoshow .= $objectstatic->getNomUrl(1);
 			$labeltoshowalt .= $objectstatic->ref;
 			$bank_ref = strstr($line->doc_ref, '-');
