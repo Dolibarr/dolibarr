@@ -666,7 +666,7 @@ if ($action == "view_ticketlist") {
 					// Duration (Sum of linked fichinter)
 					if (getDolGlobalString('TICKET_SHOW_DURATION') && !empty($arrayfields['t.duration']['checked'])) {
 						print '<td>';
-						print (isset($obj->duration) ? convertSecondToTime($obj->duration, 'all', getDolGlobalString('MAIN_DURATION_OF_WORKDAY')) : '');
+						print (isset($obj->duration) ? convertSecondToTime($obj->duration, 'all', getDolGlobalInt('MAIN_DURATION_OF_WORKDAY')) : '');
 						print '</td>';
 					}
 

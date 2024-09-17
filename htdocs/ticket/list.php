@@ -1121,7 +1121,7 @@ while ($i < $imaxinloop) {
 					print '</span>';
 				} elseif ($key == 'duration') {
 					print '<span title="'.dol_escape_htmltag($s).'">';
-					print (isset($object->duration) ? convertSecondToTime($object->duration, 'all', getDolGlobalString('MAIN_DURATION_OF_WORKDAY')) : '');
+					print (isset($object->duration) ? convertSecondToTime($object->duration, 'all', getDolGlobalInt('MAIN_DURATION_OF_WORKDAY')) : '');
 					print '</span>';
 				} elseif ($key == 'tms') {
 					print dol_print_date($db->jdate($obj->$key), 'dayhour', 'tzuser');

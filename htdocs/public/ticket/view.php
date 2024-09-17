@@ -377,7 +377,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		// Duration (Sum of linked fichinter)
 		if (getDolGlobalString('TICKET_SHOW_DURATION')) {
 			print '<tr><td>'.$langs->trans("TicketDurationAuto").'</td><td>';
-			print (isset($object->dao->duration) ? convertSecondToTime($object->dao->duration, 'all', getDolGlobalString('MAIN_DURATION_OF_WORKDAY')) : '');
+			print (isset($object->dao->duration) ? convertSecondToTime($object->dao->duration, 'all', getDolGlobalInt('MAIN_DURATION_OF_WORKDAY')) : '');
 			print '</td></tr>';
 		}
 
