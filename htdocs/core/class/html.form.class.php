@@ -2274,7 +2274,7 @@ class Form
 				if ($show_every) {
 					$out .= '<option value="-2"' . ((in_array(-2, $selected)) ? ' selected' : '') . '>-- ' . $langs->trans("Everybody") . ' --</option>' . "\n";
 
-					$outarray[-2] = $textforempty;
+					$outarray[-2] = '-- ' . $langs->trans("Everybody") . ' --';
 					$outarray2[-2] = array(
 						'id' => -2,
 						'label' => '-- ' . $langs->trans("Everybody") . ' --',
