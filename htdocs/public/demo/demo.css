@@ -4,7 +4,7 @@
 /* ============================================================================== */
 
 div.titre {
-	text-transform: none;	
+	text-transform: none;
 }
 
 a:hover {
@@ -16,7 +16,7 @@ a:hover {
 	font-weight: normal;
 	color: #444444 !important;
 
-	margin: 8px 2px 8px 2px;
+	margin: 10px 6px 10px 6px;
 	max-width: 346px;
 }
 .demobox {
@@ -48,9 +48,9 @@ a:hover {
 	    text-align: left;
 	}
 	#divprofdemoall {
-		max-width: unset;		
+		max-width: unset;
 	}
-	
+
 	.demomaxoveflow {
 	    max-width: 200px;
 	}
@@ -104,7 +104,10 @@ a:hover {
 	display: inline-block;
 }
 .demobanbox {
-    font-size: 90%;
+    font-size: 0.9em;
+}
+.demothumbtext {
+    font-size: 0.85em;
 }
 img.demothumb {
     /* box-shadow: 2px 2px 8px #BBB; */

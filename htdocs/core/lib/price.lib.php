@@ -41,7 +41,7 @@
  *		@param	float	$qty						Quantity
  * 		@param 	float	$pu                         Unit price (HT or TTC depending on price_base_type. TODO Add also mode 'INCT' when pu is price HT+VAT+LT1+LT2)
  *		@param 	float	$remise_percent_ligne       Discount for line
- *		@param 	float	$txtva                      0=do not apply VAT tax, VAT rate=apply (this is VAT rate only without text code, we don't need text code because we alreaydy have all tax info into $localtaxes_array)
+ *		@param 	float	$txtva                      0=do not apply VAT tax, VAT rate=apply (this is VAT rate only without text code, we don't need text code because we already have all tax info into $localtaxes_array)
  *		@param  float	$uselocaltax1_rate          0=do not use localtax1, >0=apply and get value from localtaxes_array (or database if empty), -1=autodetect according to seller if we must apply, get value from localtaxes_array (or database if empty). Try to always use -1.
  *		@param  float	$uselocaltax2_rate          0=do not use localtax2, >0=apply and get value from localtaxes_array (or database if empty), -1=autodetect according to seller if we must apply, get value from localtaxes_array (or database if empty). Try to always use -1.
  *		@param 	float	$remise_percent_global		0
@@ -438,8 +438,8 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 		$result[22] = $result[6];
 		$result[23] = $result[7];
 		$result[24] = $result[8];
-		$result[25] = $result[9];   // @phan-ignore-current-line PhanTypePossiblyInvalidDimOffset
-		$result[26] = $result[10];  // @phan-ignore-current-line PhanTypePossiblyInvalidDimOffset
+		$result[25] = $result[9];
+		$result[26] = $result[10];
 	}
 	dol_syslog('Price.lib::calcul_price_total MAIN_ROUNDING_RULE_TOT='.getDolGlobalString('MAIN_ROUNDING_RULE_TOT').' pu='.$pu.' qty='.$qty.' price_base_type='.$price_base_type.' total_ht='.$result[0].'-total_vat='.$result[1].'-total_ttc='.$result[2]);
 

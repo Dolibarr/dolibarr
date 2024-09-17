@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015-2019 Frederic France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,7 +69,10 @@ class box_supplier_orders extends ModeleBoxes
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 		$thirdpartystatic = new Fournisseur($this->db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLatest".(getDolGlobalString('MAIN_LASTBOX_ON_OBJECT_DATE') ? "" : "Modified")."SupplierOrders", $max));
+		$text = $langs->trans("BoxTitleLatest".(getDolGlobalString('MAIN_LASTBOX_ON_OBJECT_DATE') ? "" : "Modified")."SupplierOrders", $max);
+		$this->info_box_head = array(
+			'text' => $text.'<a class="paddingleft" href="'.DOL_URL_ROOT.'/fourn/commande/list.php?sortfield=cf.tms&sortorder=DESC"><span class="badge">...</span></a>'
+		);
 
 		if ($user->hasRight('fournisseur', 'commande', 'lire')) {
 			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
@@ -167,7 +171,7 @@ class box_supplier_orders extends ModeleBoxes
 			} else {
 				$this->info_box_contents[0][] = array(
 					'td' => '',
-					'maxlength'=>500,
+					'maxlength' => 500,
 					'text' => ($this->db->error().' sql='.$sql),
 				);
 			}
@@ -182,9 +186,9 @@ class box_supplier_orders extends ModeleBoxes
 	/**
 	 *  Method to show box
 	 *
-	 *  @param  array   $head       Array with properties of box title
-	 *  @param  array   $contents   Array with properties of box lines
-	 *  @param  int     $nooutput   No print, only return string
+	 *	@param	?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}	$head	Array with properties of box title
+	 *	@param	?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>	$contents	Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *  @return string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)

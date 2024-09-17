@@ -84,7 +84,7 @@ class Mo extends CommonObject
 	 */
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'position' => 1, 'notnull' => 1, 'index' => 1, 'comment' => "Id",),
@@ -112,18 +112,43 @@ class Mo extends CommonObject
 		'status' => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'visible' => 2, 'position' => 1000, 'default' => '0', 'notnull' => 1, 'index' => 1, 'arrayofkeyval' => array('0' => 'Draft', '1' => 'Validated', '2' => 'InProgress', '3' => 'StatusMOProduced', '9' => 'Canceled')),
 		'fk_parent_line' => array('type' => 'integer:MoLine:mrp/class/mo.class.php', 'label' => 'ParentMo', 'enabled' => 1, 'visible' => 0, 'position' => 1020, 'default' => '0', 'notnull' => 0, 'index' => 1,'showoncombobox' => 0),
 	);
+	/**
+	 * @var int
+	 */
 	public $rowid;
+	/**
+	 * @var int
+	 */
 	public $entity;
+	/**
+	 * @var string
+	 */
 	public $ref;
 
 	/**
 	 * @var int mrptype
 	 */
 	public $mrptype;
+	/**
+	 * @var string
+	 */
 	public $label;
+
+	/**
+	 * @var float Quantity
+	 */
 	public $qty;
+	/**
+	 * @var int
+	 */
 	public $fk_warehouse;
+	/**
+	 * @var int
+	 */
 	public $fk_soc;
+	/**
+	 * @var int
+	 */
 	public $socid;
 
 	/**
@@ -137,18 +162,25 @@ class Mo extends CommonObject
 	public $note_private;
 
 	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
-
-	/**
-	 * @var integer|string date_validation
+	 * @var int|string date_validation
 	 */
 	public $date_valid;
 
+	/**
+	 * @var int
+	 */
 	public $fk_user_creat;
+	/**
+	 * @var int
+	 */
 	public $fk_user_modif;
+	/**
+	 * @var string
+	 */
 	public $import_key;
+	/**
+	 * @var int
+	 */
 	public $status;
 
 	/**
@@ -162,12 +194,12 @@ class Mo extends CommonObject
 	public $product;
 
 	/**
-	 * @var integer|string date_start_planned
+	 * @var int|string date_start_planned
 	 */
 	public $date_start_planned;
 
 	/**
-	 * @var integer|string date_end_planned
+	 * @var int|string date_end_planned
 	 */
 	public $date_end_planned;
 
@@ -330,11 +362,11 @@ class Mo extends CommonObject
 
 		if (!$error) {
 			$this->db->commit();
+			return $idcreated;
 		} else {
 			$this->db->rollback();
+			return -1;
 		}
-
-		return $idcreated;
 	}
 
 	/**
@@ -342,7 +374,7 @@ class Mo extends CommonObject
 	 *
 	 * @param  	User 	$user      	User that creates
 	 * @param  	int 	$fromid     Id of object to clone
-	 * @return 	mixed 				New object created, <0 if KO
+	 * @return 	self|int<-1,1>		New object created, <0 if KO
 	 */
 	public function createFromClone(User $user, $fromid)
 	{
@@ -370,14 +402,21 @@ class Mo extends CommonObject
 		unset($object->fk_user_creat);
 		unset($object->import_key);
 
+		// We make $object->lines empty to sort it without produced and consumed lines
+		$TLines = $object->lines;
+		$object->lines = array();
+
 		// Remove produced and consumed lines
-		foreach ($object->lines as $key => $line) {
+		foreach ($TLines as $key => $line) {
 			if (in_array($line->role, array('consumed', 'produced'))) {
 				unset($object->lines[$key]);
+			} else {
+				$object->lines[] = $line;
 			}
 		}
 
-		// Clear fields
+
+		// Clear fields  @phan-suppress-next-line PhanTypeMismatchProperty
 		$object->ref = empty($this->fields['ref']['default']) ? "copy_of_".$object->ref : $this->fields['ref']['default'];
 		$object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
 		$object->status = self::STATUS_DRAFT;
@@ -435,9 +474,9 @@ class Mo extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param int    $id   Id object
-	 * @param string $ref  Ref
-	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
+	 * @param	int		$id		Id object
+	 * @param	?string	$ref	Ref
+	 * @return int<-1,1>		Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null)
 	{
@@ -454,7 +493,7 @@ class Mo extends CommonObject
 	/**
 	 * Load object lines in memory from the database
 	 *
-	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
+	 * @return int<-1,1>	Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetchLines()
 	{
@@ -733,7 +772,6 @@ class Mo extends CommonObject
 				$error++;
 				$this->error = $moline->error;
 				$this->errors = $moline->errors;
-				dol_print_error($this->db, $moline->error, $moline->errors);
 			}
 
 			if ($this->fk_bom > 0) {	// If a BOM is defined, we know what to consume.
@@ -752,7 +790,7 @@ class Mo extends CommonObject
 							if ($line->qty_frozen) {
 								$moline->qty = $line->qty; // Qty to consume does not depends on quantity to produce
 							} else {
-								$moline->qty = price2num(($line->qty / (!empty($bom->qty) ? $bom->qty : 1)) * $this->qty / (!empty($line->efficiency) ? $line->efficiency : 1), 'MS'); // Calculate with Qty to produce and  more presition
+								$moline->qty = (float) price2num(($line->qty / (!empty($bom->qty) ? $bom->qty : 1)) * $this->qty / (!empty($line->efficiency) ? $line->efficiency : 1), 'MS'); // Calculate with Qty to produce and  more presition
 							}
 							if ($moline->qty <= 0) {
 								$error++;
@@ -825,7 +863,7 @@ class Mo extends CommonObject
 					if ($moLine->role == 'toconsume' || $moLine->role == 'toproduce') {
 						if (empty($moLine->qty_frozen)) {
 							$qty = $newQty * $moLine->qty / $oldQty;
-							$moLine->qty = price2num($qty, 'MS');
+							$moLine->qty = (float) price2num($qty, 'MS');
 							$res = $moLine->update($user);
 							if (!$res) {
 								$error++;
@@ -1016,7 +1054,7 @@ class Mo extends CommonObject
 				$mybool = ((bool) @include_once $dir.$file) || $mybool;
 			}
 
-			if ($mybool === false) {
+			if (!$mybool) {
 				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
@@ -1381,7 +1419,7 @@ class Mo extends CommonObject
 		global $langs;
 
 		$langs->loadLangs(['mrp', 'products']);
-		$nofetch = isset($params['nofetch']) ? true : false;
+		$nofetch = isset($params['nofetch']);
 
 		$datas = [];
 
@@ -1750,15 +1788,20 @@ class Mo extends CommonObject
 	 *  If lines are into a template, title must also be into a template
 	 *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
 	 *
-	 * 	@param	MoLine	$line				Line
-	 * 	@param	string				$var				Var
-	 *	@param	string				$restrictlist		''=All lines, 'services'=Restrict to services only (strike line if not)
-	 *  @param	string				$defaulttpldir		Directory where to find the template
-	 *  @param  array       		$selectedLines      Array of lines id for selected lines
+	 * 	@param	CommonObjectLine	$line			Line
+	 * 	@param	string				$var			Var
+	 *	@param	string				$restrictlist	''=All lines, 'services'=Restrict to services only (strike line if not)
+	 *  @param	string				$defaulttpldir	Directory where to find the template
+	 *  @param  int[]  				$selectedLines	Array of lines id for selected lines
 	 * 	@return	void
 	 */
 	public function printOriginLine($line, $var, $restrictlist = '', $defaulttpldir = '/core/tpl', $selectedLines = array())
 	{
+		if (!$line instanceof MoLine) {
+			dol_syslog(__METHOD__.'::pringOriginLine $line is '.get_class($line).'<>MoLine', LOG_WARNING);
+			parent::printOriginLine($line, $var, $restrictlist, $defaulttpldir, $selectedLines);
+			return;
+		}
 		$productstatic = new Product($this->db);
 
 		$this->tpl['id'] = $line->id;
@@ -1932,11 +1975,11 @@ class Mo extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
@@ -1960,9 +2003,13 @@ class Mo extends CommonObject
 		}
 		if (!empty($arraydata['product'])) {
 			$return .= '<br><span class="info-box-label">'.$arraydata['product']->getNomUrl(1).'</span>';
-		}
-		if (property_exists($this, 'qty')) {
-			$return .= '<br><span class="info-box-label">'.$langs->trans('Quantity').' : '.$this->qty.'</span>';
+			if (property_exists($this, 'qty')) {
+				$return .= ' <span class="info-box-label">('.$langs->trans("Qty").' '.$this->qty.')</span>';
+			}
+		} else {
+			if (property_exists($this, 'qty')) {
+				$return .= '<br><span class="info-box-label">'.$langs->trans('Quantity').' : '.$this->qty.'</span>';
+			}
 		}
 		if (method_exists($this, 'getLibStatut')) {
 			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
@@ -1990,6 +2037,56 @@ class MoLine extends CommonObjectLine
 	 */
 	public $table_element = 'mrp_production';
 
+	/**
+	 * @see CommonObjectLine
+	 */
+	public $parent_element = 'mo';
+
+	/**
+	 * @see CommonObjectLine
+	 */
+	public $fk_parent_attribute = 'fk_mo';
+
+	/**
+	 *  'type' field format:
+	 *  	'integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]',
+	 *  	'select' (list of values are in 'options'. for integer list of values are in 'arrayofkeyval'),
+	 *  	'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:CategoryIdType[:CategoryIdList[:SortField]]]]]]',
+	 *  	'chkbxlst:...',
+	 *  	'varchar(x)',
+	 *  	'text', 'text:none', 'html',
+	 *   	'double(24,8)', 'real', 'price', 'stock',
+	 *  	'date', 'datetime', 'timestamp', 'duration',
+	 *  	'boolean', 'checkbox', 'radio', 'array',
+	 *  	'mail', 'phone', 'url', 'password', 'ip'
+	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
+	 *  'label' the translation key.
+	 *  'alias' the alias used into some old hard coded SQL requests
+	 *  'picto' is code of a picto to show before value in forms
+	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalInt("MY_SETUP_PARAM")' or 'isModEnabled("multicurrency")' ...)
+	 *  'position' is the sort order of field.
+	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
+	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
+	 *  'noteditable' says if field is not editable (1 or 0)
+	 *  'alwayseditable' says if field can be modified also when status is not draft ('1' or '0')
+	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'index' if we want an index in database.
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
+	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
+	 *  'isameasure' must be set to 1 or 2 if field can be used for measure. Field type must be summable like integer or double(24,8). Use 1 in most cases, or 2 if you don't want to see the column total into list (for example for percentage)
+	 *  'css' and 'cssview' and 'csslist' is the CSS style to use on field. 'css' is used in creation and update. 'cssview' is used in view mode. 'csslist' is used for columns in lists. For example: 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'cssview'=>'wordbreak', 'csslist'=>'tdoverflowmax200'
+	 *  'help' and 'helplist' is a 'TranslationString' to use to show a tooltip on field. You can also use 'TranslationString:keyfortooltiponlick' for a tooltip on click.
+	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
+	 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code.
+	 *  'arrayofkeyval' to set a list of values if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel"). Note that type can be 'integer' or 'varchar'
+	 *  'autofocusoncreate' to have field having the focus on a create form. Only 1 field should have this property set to 1.
+	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
+	 *	'validate' is 1 if you need to validate the field with $this->validateField(). Need MAIN_ACTIVATE_VALIDATION_RESULT.
+	 *  'copytoclipboard' is 1 or 2 to allow to add a picto to copy value into clipboard (1=picto after label, 2=picto after value)
+	 *
+	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
+	 */
+
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'ID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
 		'fk_mo' => array('type' => 'integer', 'label' => 'Mo', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 15),
@@ -1999,8 +2096,8 @@ class MoLine extends CommonObjectLine
 		'fk_product' => array('type' => 'integer', 'label' => 'Product', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 25),
 		'fk_warehouse' => array('type' => 'integer', 'label' => 'Warehouse', 'enabled' => 1, 'visible' => -1, 'position' => 30),
 		'qty' => array('type' => 'real', 'label' => 'Qty', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 35),
-		'qty_frozen' => array('type' => 'smallint', 'label' => 'QuantityFrozen', 'enabled' => 1, 'visible' => 1, 'default' => '0', 'position' => 105, 'css' => 'maxwidth50imp', 'help' => 'QuantityConsumedInvariable'),
-		'disable_stock_change' => array('type' => 'smallint', 'label' => 'DisableStockChange', 'enabled' => 1, 'visible' => 1, 'default' => '0', 'position' => 108, 'css' => 'maxwidth50imp', 'help' => 'DisableStockChangeHelp'),
+		'qty_frozen' => array('type' => 'smallint', 'label' => 'QuantityFrozen', 'enabled' => 1, 'visible' => 1, 'default' => '0', 'notnull' => 1, 'position' => 105, 'css' => 'maxwidth50imp', 'help' => 'QuantityConsumedInvariable'),
+		'disable_stock_change' => array('type' => 'smallint', 'label' => 'DisableStockChange', 'enabled' => 1, 'visible' => 1, 'default' => '0', 'notnull' => 1, 'position' => 108, 'css' => 'maxwidth50imp', 'help' => 'DisableStockChangeHelp'),
 		'batch' => array('type' => 'varchar(30)', 'label' => 'Batch', 'enabled' => 1, 'visible' => -1, 'position' => 140),
 		'role' => array('type' => 'varchar(10)', 'label' => 'Role', 'enabled' => 1, 'visible' => -1, 'position' => 145),
 		'fk_mrp_production' => array('type' => 'integer', 'label' => 'Fk mrp production', 'enabled' => 1, 'visible' => -1, 'position' => 150),
@@ -2014,26 +2111,80 @@ class MoLine extends CommonObjectLine
 		'fk_unit' => array('type' => 'int', 'label' => 'Unit', 'enabled' => 1, 'visible' => 1, 'notnull' => 0, 'position' => 186)
 	);
 
+	/**
+	 * @var int
+	 */
 	public $rowid;
+	/**
+	 * @var int
+	 */
 	public $fk_mo;
+	/**
+	 * @var int
+	 */
 	public $origin_id;
+	/**
+	 * @var string
+	 */
 	public $origin_type;
+	/**
+	 * @var int
+	 */
 	public $position;
+	/**
+	 * @var int
+	 */
 	public $fk_product;
+	/**
+	 * @var int
+	 */
 	public $fk_warehouse;
+
+	/**
+	 * @var float Quantity
+	 */
 	public $qty;
+
+	/**
+	 * @var float Quantity frozen
+	 */
 	public $qty_frozen;
+	/**
+	 * @var int<0,1>
+	 */
 	public $disable_stock_change;
+	/**
+	 * @var float|int
+	 */
 	public $efficiency;
+
+	/**
+	 * @var string batch reference
+	 */
 	public $batch;
+	/**
+	 * @var string
+	 */
 	public $role;
+	/**
+	 * @var int
+	 */
 	public $fk_mrp_production;
+	/**
+	 * @var int
+	 */
 	public $fk_stock_movement;
-	public $date_creation;
-	public $fk_user_creat;
-	public $fk_user_modif;
+	/**
+	 * @var string
+	 */
 	public $import_key;
+	/**
+	 * @var int
+	 */
 	public $fk_parent_line;
+	/**
+	 * @var ?int
+	 */
 	public $fk_unit;
 
 	/**
@@ -2084,14 +2235,14 @@ class MoLine extends CommonObjectLine
 	/**
 	 * Create object into database
 	 *
-	 * @param  User $user      User that creates
-	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
-	 * @return int             Return integer <0 if KO, Id of created object if OK
+	 * @param  User		$user		User that creates
+	 * @param  int<0,1> $notrigger	0=launch triggers after, 1=disable triggers
+	 * @return int<-1,1>			Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = 0)
 	{
 		if (empty($this->qty)) {
-			$this->error = 'BadValueForQty';
+			$this->error = 'ErrorEmptyValueForQty';
 			return -1;
 		}
 
@@ -2101,9 +2252,9 @@ class MoLine extends CommonObjectLine
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param int    $id   Id object
-	 * @param string $ref  Ref
-	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
+	 * @param int		$id		Id object
+	 * @param string	$ref	Ref
+	 * @return int<-1,1>		Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null)
 	{
@@ -2202,9 +2353,9 @@ class MoLine extends CommonObjectLine
 	/**
 	 * Update object into database
 	 *
-	 * @param  User $user      User that modifies
-	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
-	 * @return int             Return integer <0 if KO, >0 if OK
+	 * @param  User		$user		User that modifies
+	 * @param  int<0,1> $notrigger	0=launch triggers after, 1=disable triggers
+	 * @return int<-1,1>			Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
@@ -2214,9 +2365,9 @@ class MoLine extends CommonObjectLine
 	/**
 	 * Delete object in database
 	 *
-	 * @param User 	$user       User that deletes
-	 * @param int 	$notrigger  0=launch triggers after, 1=disable triggers
-	 * @return int             	Return integer <0 if KO, >0 if OK
+	 * @param User		$user       User that deletes
+	 * @param int<0,1> 	$notrigger  0=launch triggers after, 1=disable triggers
+	 * @return int<-1,1>			Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = 0)
 	{

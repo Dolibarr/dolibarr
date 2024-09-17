@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017 Maxime Kohlhaas <support@atm-consulting.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +34,7 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
@@ -63,7 +64,7 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
 	 */
 	public function info($langs)
 	{
-		global $db, $conf, $langs;
+		global $db, $langs;
 
 		$langs->load("bills");
 
@@ -74,17 +75,18 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte .= '<input type="hidden" name="action" value="updateMask">';
 		$texte .= '<input type="hidden" name="maskconst" value="EXPENSEREPORT_SAND_MASK">';
-		$texte .= '<table class="nobordernopadding" width="100%">';
+		$texte .= '<table class="nobordernopadding centpercent">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("ExpenseReport"), $langs->transnoentities("ExpenseReport"));
 		//$tooltip.=$langs->trans("GenericMaskCodes2");
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("ExpenseReport"), $langs->transnoentities("ExpenseReport"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
+		$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$mask = !getDolGlobalString('EXPENSEREPORT_SAND_MASK') ? '' : $conf->global->EXPENSEREPORT_SAND_MASK;
+		$mask = getDolGlobalString('EXPENSEREPORT_SAND_MASK');
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskvalue" value="'.$mask.'">', $tooltip, 1, 1).'</td>';
 
 		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button" value="'.$langs->trans("Modify").'"></td>';
@@ -104,7 +106,7 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
 	 */
 	public function getExample()
 	{
-		global $db, $conf, $langs, $user;
+		global $db, $langs, $user;
 
 		$exp = new ExpenseReport($db);
 		$exp->initAsSpecimen();
@@ -122,16 +124,16 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
 	 *  Return next free value
 	 *
 	 *  @param  ExpenseReport	$object     Object we need next value for
-	 *  @return string|0                	Next value if OK, 0 if KO
+	 *  @return string|int<-1,0>   			Next value if OK, -1 or 0 if KO
 	 */
 	public function getNextValue($object)
 	{
-		global $db, $conf;
+		global $db;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		// We get cursor rule
-		$mask = !getDolGlobalString('EXPENSEREPORT_SAND_MASK') ? '' : $conf->global->EXPENSEREPORT_SAND_MASK;
+		$mask = getDolGlobalString('EXPENSEREPORT_SAND_MASK');
 
 		if (!$mask) {
 			$this->error = 'NotConfigured';
@@ -150,7 +152,7 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
 			$fuser->fetch($object->fk_user_author);
 		}
 
-		$numFinal = get_next_value($db, $mask, 'expensereport', 'ref', '', null, $date, 'next', true, $fuser);
+		$numFinal = get_next_value($db, $mask, 'expensereport', 'ref', '', null, (string) $date, 'next', true, $fuser);
 
 		return $numFinal;
 	}

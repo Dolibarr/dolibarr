@@ -157,10 +157,11 @@ class Proposals extends DolibarrApi
 	 * @param int		$page				Page number
 	 * @param string	$thirdparty_ids		Thirdparty ids to filter commercial proposals (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
 	 * @param string    $sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.datec:<:'2016-01-01')"
-	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param string    $properties	        Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param bool      $pagination_data    If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return  array                       Array of order objects
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('propal', 'lire')) {
 			throw new RestException(403);
@@ -201,6 +202,9 @@ class Proposals extends DolibarrApi
 			}
 		}
 
+		//this query will return total proposals with the filters given
+		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
 			if ($page < 0) {
@@ -233,6 +237,23 @@ class Proposals extends DolibarrApi
 			}
 		} else {
 			throw new RestException(503, 'Error when retrieve propal list : '.$this->db->lasterror());
+		}
+
+		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		if ($pagination_data) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret = [];
+
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = [
+				'total' => (int) $total,
+				'page' => $page, //count starts from 0
+				'page_count' => ceil((int) $total / $limit),
+				'limit' => $limit
+			];
 		}
 
 		return $obj_ret;
@@ -579,16 +600,17 @@ class Proposals extends DolibarrApi
 	 * Add a contact type of given commercial proposal
 	 *
 	 * @param int    $id             Id of commercial proposal to update
-	 * @param int    $contactid      Id of contact to add
-	 * @param string $type           Type of the contact (BILLING, SHIPPING, CUSTOMER)
+	 * @param int    $contactid      Id of external or internal contact to add
+	 * @param string $type           Type of the external contact (BILLING, SHIPPING, CUSTOMER), internal contact (SALESREPFOLL)
+	 * @param string $source         Source of the contact (internal, external)
 	 * @return array
 	 *
-	 * @url	POST {id}/contact/{contactid}/{type}
+	 * @url	POST {id}/contact/{contactid}/{type}/{source}
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 404
 	 */
-	public function postContact($id, $contactid, $type)
+	public function postContact($id, $contactid, $type, $source = 'external')
 	{
 		if (!DolibarrApiAccess::$user->hasRight('propal', 'creer')) {
 			throw new RestException(403);
@@ -600,15 +622,23 @@ class Proposals extends DolibarrApi
 			throw new RestException(404, 'Proposal not found');
 		}
 
-		if (!in_array($type, array('BILLING', 'SHIPPING', 'CUSTOMER'), true)) {
-			throw new RestException(500, 'Availables types: BILLING, SHIPPING OR CUSTOMER');
+		if (!in_array($source, array('internal', 'external'), true)) {
+			throw new RestException(500, 'Availables sources: internal OR external');
+		}
+
+		if ($source == 'external' && !in_array($type, array('BILLING', 'SHIPPING', 'CUSTOMER'), true)) {
+			throw new RestException(500, 'Availables external types: BILLING, SHIPPING OR CUSTOMER');
+		}
+
+		if ($source == 'internal' && !in_array($type, array('SALESREPFOLL'), true)) {
+			throw new RestException(500, 'Availables internal types: SALESREPFOLL');
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$result = $this->propal->add_contact($contactid, $type, 'external');
+		$result = $this->propal->add_contact($contactid, $type, $source);
 
 		if (!$result) {
 			throw new RestException(500, 'Error when added the contact');
@@ -863,11 +893,12 @@ class Proposals extends DolibarrApi
 	 * @param   int		$status			Must be 2 (accepted) or 3 (refused)				{@min 2}{@max 3}
 	 * @param   string  $note_private   Add this mention at end of private note
 	 * @param   int     $notrigger      Disabled triggers
+	 * @param   string  $note_public    Add this mention at end of public note
 	 * @return	Object					Object with cleaned properties
 	 *
 	 * @url POST    {id}/close
 	 */
-	public function close($id, $status, $note_private = '', $notrigger = 0)
+	public function close($id, $status, $note_private = '', $notrigger = 0, $note_public = '')
 	{
 		if (!DolibarrApiAccess::$user->hasRight('propal', 'creer')) {
 			throw new RestException(403);
@@ -881,7 +912,7 @@ class Proposals extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$result = $this->propal->closeProposal(DolibarrApiAccess::$user, $status, $note_private, $notrigger);
+		$result = $this->propal->closeProposal(DolibarrApiAccess::$user, $status, $note_private, $notrigger, $note_public);
 		if ($result == 0) {
 			throw new RestException(304, 'Error nothing done. May be object is already closed');
 		}

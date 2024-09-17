@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +63,7 @@ $pagenext = $page + 1;
 //if (! $sortfield) $sortfield="p.date_fin";
 //if (! $sortorder) $sortorder="DESC";
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new BOM($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->bom->dir_output.'/temp/massgeneration/'.$user->id;
@@ -108,11 +109,11 @@ $arrayfields = array();
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
-		$visible = (int) dol_eval($val['visible'], 1);
+		$visible = (int) dol_eval((string) $val['visible'], 1);
 		$arrayfields['t.'.$key] = array(
 			'label' => $val['label'],
 			'checked' => (($visible < 0) ? 0 : 1),
-			'enabled' => (abs($visible) != 3 && (int) dol_eval($val['enabled'], 1)),
+			'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
 			'position' => $val['position'],
 			'help' => isset($val['help']) ? $val['help'] : ''
 		);
@@ -460,7 +461,7 @@ foreach ($search as $key => $val) {
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
-$parameters = array();
+$parameters = array('param' => &$param);
 $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
 

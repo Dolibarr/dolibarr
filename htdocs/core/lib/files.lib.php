@@ -535,6 +535,18 @@ function dol_is_link($pathoffile)
 }
 
 /**
+ * Test if directory or filename is writable
+ *
+ * @param	string		$folderorfile   Name of folder or filename
+ * @return	boolean     				True if it's writable, False if not found
+ */
+function dol_is_writable($folderorfile)
+{
+	$newfolderorfile = dol_osencode($folderorfile);
+	return is_writable($newfolderorfile);
+}
+
+/**
  * Return if path is an URI (the name of the method is misleading).
  *
  * URLs are addresses for websites, URI refer to online resources.
@@ -656,7 +668,7 @@ function dol_fileperm($pathoffile)
  * @param	string					$srcfile			       Source file (can't be a directory)
  * @param	array<string,string>	$arrayreplacement	       Array with strings to replace. Example: array('valuebefore'=>'valueafter', ...)
  * @param	string					$destfile			       Destination file (can't be a directory). If empty, will be same than source file.
- * @param	string					$newmask			       Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0666'
+ * @param	string					$newmask			       Mask for new file. '0' by default means getDolGlobalString('MAIN_UMASK'). Example: '0666'.
  * @param	int						$indexdatabase		       1=index new file into database.
  * @param   int     				$arrayreplacementisregex   1=Array of replacement is already an array with key that is a regex. Warning: the key must be escaped with preg_quote for '/'
  * @return	int											       Return integer <0 if error, 0 if nothing done (dest file already exists), >0 if OK
@@ -1097,7 +1109,11 @@ function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
 					$ecmfile->filename = $filename;
 					$ecmfile->label = md5_file(dol_osencode($destfile)); // $destfile is a full path to file
 					$ecmfile->fullpath_orig = basename($srcfile);
-					$ecmfile->gen_or_uploaded = 'uploaded';
+					if (!empty($moreinfo) && !empty($moreinfo['gen_or_uploaded'])) {
+						$ecmfile->gen_or_uploaded = $moreinfo['gen_or_uploaded'];
+					} else {
+						$ecmfile->gen_or_uploaded = 'uploaded';
+					}
 					if (!empty($moreinfo) && !empty($moreinfo['description'])) {
 						$ecmfile->description = $moreinfo['description']; // indexed content
 					} else {
@@ -1124,13 +1140,21 @@ function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
 					$resultecm = $ecmfile->create($user);
 					if ($resultecm < 0) {
 						setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
+					} else {
+						if (!empty($moreinfo) && !empty($moreinfo['array_options']) && is_array($moreinfo['array_options'])) {
+							$ecmfile->array_options = $moreinfo['array_options'];
+							$resultecm = $ecmfile->insertExtraFields();
+							if ($resultecm < 0) {
+								setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
+							}
+						}
 					}
 				} elseif ($resultecm < 0) {
 					setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
 				}
 
 				if ($resultecm > 0) {
-					$result = true;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+					$result = true;
 				} else {
 					$result = false;
 				}
@@ -1155,7 +1179,7 @@ function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
  *
  * @param	string	$srcdir 			Source directory
  * @param	string 	$destdir			Destination directory
- * @param	int		$overwriteifexists	Overwrite directory if exists (1 by default)
+ * @param	int		$overwriteifexists	Overwrite directory if it already exists (1 by default)
  * @param	int		$indexdatabase		Index new name of files into database.
  * @param	int		$renamedircontent	Also rename contents inside srcdir after the move to match new destination name.
  * @return  boolean 					True if OK, false if KO
@@ -1170,7 +1194,7 @@ function dol_move_dir($srcdir, $destdir, $overwriteifexists = 1, $indexdatabase 
 	$destexists = dol_is_dir($destdir);
 
 	if (!$srcexists) {
-		dol_syslog("files.lib.php::dol_move_dir srcdir does not exists. we ignore the move request.");
+		dol_syslog("files.lib.php::dol_move_dir srcdir does not exists. Move fails");
 		return false;
 	}
 
@@ -1178,9 +1202,20 @@ function dol_move_dir($srcdir, $destdir, $overwriteifexists = 1, $indexdatabase 
 		$newpathofsrcdir = dol_osencode($srcdir);
 		$newpathofdestdir = dol_osencode($destdir);
 
+		// On windows, if destination directory exists and is empty, command fails. So if overwrite is on, we first remove destination directory.
+		// On linux, if destination directory exists and is empty, command succeed. So no need to delete di destination directory first.
+		// Note: If dir exists and is not empty, it will and must fail on both linux and windows even, if option $overwriteifexists is on.
+		if ($overwriteifexists) {
+			if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+				if (is_dir($newpathofdestdir)) {
+					@rmdir($newpathofdestdir);
+				}
+			}
+		}
+
 		$result = @rename($newpathofsrcdir, $newpathofdestdir);
 
-		// Now we rename also contents inside dir after the move to match new destination name
+		// Now rename contents in the directory after the move to match the new destination
 		if ($result && $renamedircontent) {
 			if (file_exists($newpathofdestdir)) {
 				$destbasename = basename($newpathofdestdir);
@@ -1198,14 +1233,14 @@ function dol_move_dir($srcdir, $destdir, $overwriteifexists = 1, $indexdatabase 
 							if ($file["type"] == "dir") {
 								$res = dol_move_dir($filepath.'/'.$oldname, $filepath.'/'.$newname, $overwriteifexists, $indexdatabase, $renamedircontent);
 							} else {
-								$res = dol_move($filepath.'/'.$oldname, $filepath.'/'.$newname, 0, $overwriteifexists, 0, $indexdatabase);
+								$res = dol_move($filepath.'/'.$oldname, $filepath.'/'.$newname, '0', $overwriteifexists, 0, $indexdatabase);
 							}
 							if (!$res) {
 								return $result;
 							}
 						}
 					}
-					$result = true;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+					$result = true;
 				}
 			}
 		}
@@ -1445,11 +1480,8 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
  */
 function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0, $object = null, $allowdotdot = false, $indexdatabase = 1, $nolog = 0)
 {
-	global $db, $user, $langs;
+	global $db, $user;
 	global $hookmanager;
-
-	// Load translation files required by the page
-	$langs->loadLangs(array('other', 'errors'));
 
 	if (empty($nolog)) {
 		dol_syslog("dol_delete_file file=".$file." disableglob=".$disableglob." nophperrors=".$nophperrors." nohook=".$nohook);
@@ -2588,9 +2620,9 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles =
 
 	try {
 		if ($mode == 'gz') {
-			$foundhandler = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$foundhandler = 0;
 		} elseif ($mode == 'bz') {
-			$foundhandler = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$foundhandler = 0;
 		} elseif ($mode == 'zip') {
 			/*if (defined('ODTPHP_PATHTOPCLZIP'))
 			 {
@@ -2703,7 +2735,7 @@ function dol_most_recent_file($dir, $regexfilter = '', $excludefilter = array('(
  *
  * @param	string		$modulepart			Module of document ('module', 'module_user_temp', 'module_user' or 'module_temp'). Example: 'medias', 'invoice', 'logs', 'tax-vat', ...
  * @param	string		$original_file		Relative path with filename, relative to modulepart.
- * @param	string		$entity				Restrict onto entity (0=no restriction)
+ * @param	int 		$entity				Restrict onto entity (0=no restriction)
  * @param  	User|null	$fuser				User object (forced)
  * @param	string		$refname			Ref of object to check permission for external users (autodetect if not provided by taking the dirname of $original_file) or for hierarchy
  * @param   string  	$mode               Check permission for 'read' or 'write'
@@ -2806,7 +2838,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $conf->mycompany->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'userphoto' && !empty($conf->user->dir_output)) {
 		// Wrapping for users photos (user photos are allowed to any connected users)
-		$accessallowed = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$accessallowed = 0;
 		if (preg_match('/^\d+\/photos\//', $original_file)) {
 			$accessallowed = 1;
 		}
@@ -2842,7 +2874,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $conf->mycompany->dir_output.'/logos/'.$original_file;
 	} elseif ($modulepart == 'memberphoto' && !empty($conf->member->dir_output)) {
 		// Wrapping for members photos
-		$accessallowed = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$accessallowed = 0;
 		if (preg_match('/^\d+\/photos\//', $original_file)) {
 			$accessallowed = 1;
 		}
@@ -2902,7 +2934,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			if ($refname && !$fuser->hasRight('holiday', 'readall') && !preg_match('/^specimen/i', $original_file)) {
 				include_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 				$tmpholiday = new Holiday($db);
-				$tmpholiday->fetch('', $refname);
+				$tmpholiday->fetch(0, $refname);
 				$accessallowed = checkUserAccessToObject($user, array('holiday'), $tmpholiday, 'holiday', '', '', 'rowid', '');
 			}
 		}
@@ -2914,7 +2946,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			if ($refname && !$fuser->hasRight('expensereport', 'readall') && !preg_match('/^specimen/i', $original_file)) {
 				include_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 				$tmpexpensereport = new ExpenseReport($db);
-				$tmpexpensereport->fetch('', $refname);
+				$tmpexpensereport->fetch(0, $refname);
 				$accessallowed = checkUserAccessToObject($user, array('expensereport'), $tmpexpensereport, 'expensereport', '', '', 'rowid', '');
 			}
 		}
@@ -3173,7 +3205,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			if ($refname && !preg_match('/^specimen/i', $original_file)) {
 				include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 				$tmpproject = new Project($db);
-				$tmpproject->fetch('', $refname);
+				$tmpproject->fetch(0, $refname);
 				$accessallowed = checkUserAccessToObject($user, array('projet'), $tmpproject->id, 'projet&project', '', '', 'rowid', '');
 			}
 		}
@@ -3186,7 +3218,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			if ($refname && !preg_match('/^specimen/i', $original_file)) {
 				include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 				$tmptask = new Task($db);
-				$tmptask->fetch('', $refname);
+				$tmptask->fetch(0, $refname);
 				$accessallowed = checkUserAccessToObject($user, array('projet_task'), $tmptask->id, 'projet_task&project', '', '', 'rowid', '');
 			}
 		}
@@ -3213,6 +3245,12 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->fournisseur->payment->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."paiementfournisseur WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
+	} elseif ($modulepart == 'payment') {
+			// Wrapping pour les rapport de paiements
+		if ($fuser->rights->facture->{$lire} || preg_match('/^specimen/i', $original_file)) {
+			$accessallowed = 1;
+		}
+		$original_file = $conf->compta->payment->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'facture_paiement' && !empty($conf->invoice->dir_output)) {
 		// Wrapping pour les rapport de paiements
 		if ($fuser->hasRight('facture', $lire) || preg_match('/^specimen/i', $original_file)) {
@@ -3488,10 +3526,15 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 function dol_filecache($directory, $filename, $object)
 {
 	if (!dol_is_dir($directory)) {
-		dol_mkdir($directory);
+		$result = dol_mkdir($directory);
+		if ($result < -1) {
+			dol_syslog("Failed to create the cache directory ".$directory, LOG_WARNING);
+		}
 	}
 	$cachefile = $directory.$filename;
+
 	file_put_contents($cachefile, serialize($object), LOCK_EX);
+
 	dolChmod($cachefile, '0644');
 }
 
@@ -3701,16 +3744,16 @@ function dragAndDropFileUpload($htmlname)
 /**
  * Manage backup versions for a given file, ensuring only a maximum number of versions are kept.
  *
- * @param 	string 	$filetpl          	Full path of the source filename for the backups. Example /mydir/mydocuments/mymodule/filename.ext
+ * @param 	string 	$srcfile          	Full path of the source filename for the backups. Example /mydir/mydocuments/mymodule/filename.ext
  * @param 	int    	$max_versions     	The maximum number of backup versions to keep.
  * @param	string	$archivedir			Target directory of backups (without ending /). Keep empty to save into the same directory than source file.
  * @param	string	$suffix				'v' (versioned files) or 'd' (archived files after deletion)
  * @param	string	$moveorcopy			'move' or 'copy'
  * @return 	bool                    	Returns true if successful, false otherwise.
  */
-function archiveOrBackupFile($filetpl, $max_versions = 5, $archivedir = '', $suffix = "v", $moveorcopy = 'move')
+function archiveOrBackupFile($srcfile, $max_versions = 5, $archivedir = '', $suffix = "v", $moveorcopy = 'move')
 {
-	$base_file_pattern = ($archivedir ? $archivedir : dirname($filetpl)).'/'.basename($filetpl).".".$suffix;
+	$base_file_pattern = ($archivedir ? $archivedir : dirname($srcfile)).'/'.basename($srcfile).".".$suffix;
 	$files_in_directory = glob($base_file_pattern . "*");
 
 	// Extract the modification timestamps for each file
@@ -3752,13 +3795,13 @@ function archiveOrBackupFile($filetpl, $max_versions = 5, $archivedir = '', $suf
 	}
 
 	$timestamp = dol_now('gmt');
-	$new_backup = $filetpl . ".v" . $timestamp;
+	$new_backup = $srcfile . ".v" . $timestamp;
 
 	// Move or copy the original file to the new backup with the timestamp
 	if ($moveorcopy == 'move') {
-		$result = dol_move($filetpl, $new_backup, '0', 1, 0, 0);
+		$result = dol_move($srcfile, $new_backup, '0', 1, 0, 0);
 	} else {
-		$result = dol_copy($filetpl, $new_backup, '0', 1, 0, 0);
+		$result = dol_copy($srcfile, $new_backup, '0', 1, 0, 0);
 	}
 
 	if (!$result) {

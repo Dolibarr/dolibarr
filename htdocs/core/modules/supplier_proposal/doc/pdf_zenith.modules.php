@@ -69,7 +69,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr';
 
@@ -136,15 +136,15 @@ class pdf_zenith extends ModelePDFSupplierProposal
 	/**
 	 *  Function to build pdf onto disk
 	 *
-	 *  @param		SupplierProposal	$object				Id of object to generate
-	 *  @param		Translate			$outputlangs		Lang output object
-	 *  @param		string				$srctemplatepath	Full path of source filename for generator using a template file
-	 *  @param		int					$hidedetails		Do not show line details
-	 *  @param		int					$hidedesc			Do not show desc
-	 *  @param		int					$hideref			Do not show ref
-	 *  @return		int										1=OK, 0=KO
+	 *	@param	SupplierProposal	$object				Object source to build document
+	 *	@param	Translate			$outputlangs		Lang output object
+	 *	@param	string				$srctemplatepath	Full path of source filename for generator using a template file
+	 *	@param	int<0,1>			$hidedetails		Do not show line details
+	 *	@param	int<0,1>			$hidedesc			Do not show desc
+	 *	@param	int<0,1>			$hideref			Do not show ref
+	 *	@return	int<-1,1>								1 if OK, <=0 if KO
 	 */
-	public function write_file($object, $outputlangs = null, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 		// phpcs:enable
 		global $user, $langs, $conf, $hookmanager, $mysoc, $nblines;
@@ -264,7 +264,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 				$pdf = pdf_getInstance($this->format);
 				$default_font_size = pdf_getPDFFontSize($outputlangs); // Must be after pdf_getInstance
 				$heightforinfotot = 50; // Height reserved to output the info and total part
-				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
+				$heightforfreetext = getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT', 5); // Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
 				if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS')) {
 					$heightforfooter += 6;
@@ -468,7 +468,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 						}
 					}
 
-					$tab_height = $tab_height - $height_note;
+					$tab_height -= $height_note;
 					$tab_top = $posyafter + 6;
 				} else {
 					$height_note = 0;
@@ -788,7 +788,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 				// Pied de page
 				$this->_pagefoot($pdf, $object, $outputlangs);
 				if (method_exists($pdf, 'AliasNbPages')) {
-					$pdf->AliasNbPages();
+					$pdf->AliasNbPages();  // @phan-suppress-current-line PhanUndeclaredMethod
 				}
 
 				$pdf->Close();
@@ -907,8 +907,8 @@ class pdf_zenith extends ModelePDFSupplierProposal
 	/**
 	 *	Show total to pay
 	 *
-	 *	@param	TCPDF		$pdf           Object PDF
-	 *	@param  Facture		$object         Object invoice
+	 *	@param	TCPDF		$pdf            Object PDF
+	 *	@param  SupplierProposal $object    Object supplier proposal
 	 *	@param  int			$deja_regle     Montant deja regle
 	 *	@param	int			$posy			Position depart
 	 *	@param	Translate	$outputlangs	Object langs
@@ -1167,7 +1167,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 	 *  Show top header of page.
 	 *
 	 *  @param	TCPDF		$pdf     		Object PDF
-	 *  @param  CommandeFournisseur		$object     	Object to show
+	 *  @param  SupplierProposal		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @return	float|int                   Return topshift value
@@ -1304,7 +1304,8 @@ class pdf_zenith extends ModelePDFSupplierProposal
 		// Get contact
 		if (getDolGlobalString('DOC_SHOW_FIRST_SALES_REP')) {
 			$arrayidcontact = $object->getIdContact('internal', 'SALESREPFOLL');
-			if (count($arrayidcontact) > 0) {
+
+			if (is_array($arrayidcontact) && count($arrayidcontact) > 0) {
 				$usertmp = new User($this->db);
 				$usertmp->fetch($arrayidcontact[0]);
 				$posy += 4;
@@ -1375,10 +1376,14 @@ class pdf_zenith extends ModelePDFSupplierProposal
 
 
 
-			// If CUSTOMER contact defined on proposal, we use it. Note: Even if this is a supplier object, the code for external contat that follow order is 'CUSTOMER'
+			// If CUSTOMER contact defined on proposal, we use it. Note: Even if this is a supplier object, the code for external contact that follow order is 'CUSTOMER'
 			$usecontact = false;
-			$arrayidcontact = $object->getIdContact('external', 'CUSTOMER');
-			if (count($arrayidcontact) > 0) {
+			if (!getDolGlobalInt('SUPPLIER_PROPOSAL_ADD_BILLING_CONTACT')) {
+				$arrayidcontact = $object->getIdContact('external', 'CUSTOMER');
+			} else {
+				$arrayidcontact = array_merge($object->getIdContact('external', 'CUSTOMER'), $object->getIdContact('external', 'BILLING'));
+			}
+			if (is_array($arrayidcontact) && count($arrayidcontact) > 0) {
 				$usecontact = true;
 				$result = $object->fetch_contact($arrayidcontact[0]);
 			}
@@ -1392,7 +1397,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 
 			$carac_client_name = pdfBuildThirdpartyName($thirdparty, $outputlangs);
 
-			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ($usecontact ? $object->contact : ''), $usecontact, 'target', $object);
+			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ($usecontact ? $object->contact : ''), ($usecontact ? 1 : 0), 'target', $object);
 
 			// Show recipient
 			$widthrecbox = 100;
@@ -1435,7 +1440,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 	 *   	Show footer of page. Need this->emetteur object
 	 *
 	 *   	@param	TCPDF		$pdf     			PDF
-	 * 		@param	CommandeFournisseur		$object				Object to show
+	 * 		@param	SupplierProposal		$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output
 	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	int								Return height of bottom margin including footer text
@@ -1451,7 +1456,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 	/**
 	 *   	Define Array Column Field
 	 *
-	 *   	@param	Object			$object    		common object
+	 *   	@param	SupplierProposal			$object    		common object
 	 *   	@param	Translate		$outputlangs    langs
 	 *      @param	int			   $hidedetails		Do not show line details
 	 *      @param	int			   $hidedesc		Do not show desc
@@ -1492,7 +1497,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 			),
 		);
 
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['photo'] = array(
 			'rank' => $rank,
 			'width' => getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH', 20), // in mm
@@ -1512,7 +1517,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 		}
 
 
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['vat'] = array(
 			'rank' => $rank,
 			'status' => false,
@@ -1527,7 +1532,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 			$this->cols['vat']['status'] = true;
 		}
 
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['subprice'] = array(
 			'rank' => $rank,
 			'width' => 19, // in mm
@@ -1542,7 +1547,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 			$this->cols['subprice']['status'] = true;
 		}
 
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['qty'] = array(
 			'rank' => $rank,
 			'width' => 16, // in mm
@@ -1553,7 +1558,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 			'border-left' => true, // add left line separator
 		);
 
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['unit'] = array(
 			'rank' => $rank,
 			'width' => 11, // in mm
@@ -1567,7 +1572,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 			$this->cols['unit']['status'] = true;
 		}
 
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['discount'] = array(
 			'rank' => $rank,
 			'width' => 13, // in mm
@@ -1581,7 +1586,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 			$this->cols['discount']['status'] = true;
 		}
 
-		$rank = $rank + 1000; // add a big offset to be sure is the last col because default extrafield rank is 100
+		$rank += 1000; // add a big offset to be sure is the last col because default extrafield rank is 100
 		$this->cols['totalexcltax'] = array(
 			'rank' => $rank,
 			'width' => 26, // in mm

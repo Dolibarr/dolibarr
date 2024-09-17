@@ -1,13 +1,14 @@
 <?php
-/* Copyright (C) 2001-2004  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2019      Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2023-2024	William Mead			<william.mead@manchenumerique.fr>
+/* Copyright (C) 2001-2004	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2016	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
+ * Copyright (C) 2018		Ferran Marcet				<fmarcet@2byte.es>
+ * Copyright (C) 2018		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2019		Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2023-2024	William Mead				<william.mead@manchenumerique.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,9 +41,9 @@ $langs->loadLangs(array('products', 'contracts', 'companies'));
 // Get parameters
 $massaction = GETPOST('massaction', 'alpha');
 $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
-$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 $mode       = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')).$mode; // To manage different context of search
 
 // Load variable for pagination
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -72,32 +73,44 @@ $search_total_ttc = GETPOST("search_total_ttc", 'alpha');
 $search_contract = GETPOST("search_contract", 'alpha');
 $search_service = GETPOST("search_service", 'alpha');
 $search_status = GETPOST("search_status", 'alpha');
+$search_option = GETPOST('search_option', 'alpha');
 $search_product_category = GETPOSTINT('search_product_category');
+
+// To support selection into combo list of status with detailed status '4&filter'
+$filter = '';
+if ($search_status == '4&filter=notexpired') {
+	$search_status = '4';
+	$filter = 'notexpired';
+}
+if ($search_status == '4&filter=expired') {
+	$search_status = '4';
+	$filter = 'expired';
+}
+
 $socid = GETPOSTINT('socid');
-$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'contractservicelist'.$mode;
 
 $opouvertureprevuemonth = GETPOST('opouvertureprevuemonth');
 $opouvertureprevueday = GETPOST('opouvertureprevueday');
 $opouvertureprevueyear = GETPOST('opouvertureprevueyear');
-$filter_opouvertureprevue = GETPOST('filter_opouvertureprevue');
+$filter_opouvertureprevue = GETPOST('filter_opouvertureprevue', 'alphawithlgt');
 
 $op1month = GETPOSTINT('op1month');
 $op1day = GETPOSTINT('op1day');
 $op1year = GETPOSTINT('op1year');
-$filter_op1 = GETPOST('filter_op1', 'alpha');
+$filter_op1 = GETPOST('filter_op1', 'alphawithlgt');
 
 $op2month = GETPOSTINT('op2month');
 $op2day = GETPOSTINT('op2day');
 $op2year = GETPOSTINT('op2year');
-$filter_op2 = GETPOST('filter_op2', 'alpha');
+$filter_op2 = GETPOST('filter_op2', 'alphawithlgt');
 
 $opcloturemonth = GETPOSTINT('opcloturemonth');
 $opclotureday = GETPOSTINT('opclotureday');
 $opclotureyear = GETPOSTINT('opclotureyear');
-$filter_opcloture = GETPOST('filter_opcloture', 'alpha');
+$filter_opcloture = GETPOST('filter_opcloture', 'alphawithlgt');
 
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new ContratLigne($db);
 $hookmanager->initHooks(array('contractservicelist'));
 $extrafields = new ExtraFields($db);
@@ -182,6 +195,7 @@ if (empty($reshook)) {
 		$search_contract = "";
 		$search_service = "";
 		$search_status = "";
+		$search_option = '';
 		$opouvertureprevuemonth = "";
 		$opouvertureprevueday = "";
 		$opouvertureprevueyear = "";
@@ -198,6 +212,7 @@ if (empty($reshook)) {
 		$opclotureday = "";
 		$opclotureyear = "";
 		$filter_opcloture = "";
+		$filter = '';
 		$toselect = array();
 		$search_array_options = array();
 	}
@@ -225,7 +240,7 @@ if ($search_status == "4" && $filter == "expired") {
 if ($search_status == "5") {
 	$title = $langs->trans("ListOfClosedServices");
 }
-$help_url = '';
+$help_url = 'EN:Module_Contracts|FR:Module_Contrat|ES:Contratos_de_servicio';
 
 // Build and execute select
 // --------------------------------------------------------------------
@@ -285,14 +300,22 @@ if ($search_status == "0") {
 if ($search_status == "4") {
 	$sql .= " AND cd.statut = 4";
 }
-if ($search_status == "4&filter=expired") {
+if ($search_status == "4&filter=expired" || ($search_status == '4' && $filter == 'expired')) {
 	$sql .= " AND cd.statut = 4 AND cd.date_fin_validite < '".$db->idate($now)."'";
 }
-if ($search_status == "4&filter=notexpired") {
+if ($search_status == "4&filter=notexpired" || ($search_status == '4' && $filter == 'notexpired')) {
 	$sql .= " AND cd.statut = 4 AND cd.date_fin_validite >= '".$db->idate($now)."'";
 }
 if ($search_status == "5") {
 	$sql .= " AND cd.statut = 5";
+}
+if ($search_option == 'late' && $search_status != '0') {
+	$warning_date = $db->idate(dol_now() - $conf->contract->services->expires->warning_delay);
+	$sql .= " AND cd.date_fin_validite < '".addslashes($warning_date)."'";
+}
+if ($search_option == 'late' && $search_status == '0') {
+	$warning_date = $db->idate(dol_now() - $conf->contract->services->expires->warning_delay);
+	$sql .= " AND (cd.date_ouverture_prevue < '".addslashes($warning_date)."' OR cd.date_fin_validite < '".addslashes($warning_date)."')";
 }
 if ($search_subprice) {
 	$sql .= natural_search("cd.subprice", $search_subprice, 1);
@@ -420,7 +443,7 @@ if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $sear
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-contrat page-list_services bodyforlist');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -463,6 +486,9 @@ if ($search_service) {
 }
 if ($search_status) {
 	$param .= '&amp;search_status='.urlencode($search_status);
+}
+if ($search_option) {
+	$param .= "&amp;search_option=".urlencode($search_option);
 }
 if (!empty($filter_opouvertureprevue) && $filter_opouvertureprevue != -1) {
 	$param .= '&amp;filter_opouvertureprevue='.urlencode($filter_opouvertureprevue);
@@ -539,6 +565,10 @@ if (isModEnabled('category') && ($user->hasRight('produit', 'lire') || $user->ha
 	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, 0, 'widthcentpercentminusx maxwidth300', 1);
 	$moreforfilter .= '</div>';
 }
+// alert on late date
+$moreforfilter .= '<div class="divsearchfield">';
+$moreforfilter .= $langs->trans('Alert').' <input type="checkbox" name="search_option" value="late"'.($search_option == 'late' ? ' checked' : '').'>';
+$moreforfilter .= '</div>';
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -778,7 +808,7 @@ $productstatic = new Product($db);
 
 $i = 0;
 $savnbfield = $totalarray['nbfield'];
-$totalarray = array('nbfield' => 0, 'cd.qty' => 0, 'cd.total_ht' => 0, 'cd.total_tva' => 0);
+$totalarray = array('nbfield' => 0, 'val' => array('cd.qty' => 0, 'cd.total_ht' => 0, 'cd.total_tva' => 0));
 $imaxinloop = ($limit ? min($num, $limit) : $num);
 while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
@@ -991,7 +1021,8 @@ while ($i < $imaxinloop) {
 		print '<td class="right">';
 		if ($obj->cstatut == 0) {
 			// If contract is draft, we say line is also draft
-			print $contractstatic->LibStatut(0, 5);
+			//print $contractstatic->LibStatut(0, 5);
+			print $staticcontratligne->LibStatut($obj->statut, 5, ($obj->date_fin_validite && $db->jdate($obj->date_fin_validite) < $now) ? 1 : 0, '', ' - '.$langs->trans("Draft"));
 		} else {
 			print $staticcontratligne->LibStatut($obj->statut, 5, ($obj->date_fin_validite && $db->jdate($obj->date_fin_validite) < $now) ? 1 : 0);
 		}

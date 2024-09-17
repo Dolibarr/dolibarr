@@ -62,7 +62,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Calendar($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->bookcal->dir_output.'/temp/massgeneration/'.$user->id;
@@ -124,11 +124,11 @@ $arrayfields = array();
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
-		$visible = (int) dol_eval($val['visible'], 1);
+		$visible = (int) dol_eval((string) $val['visible'], 1);
 		$arrayfields['t.'.$key] = array(
 			'label' => $val['label'],
 			'checked' => (($visible < 0) ? 0 : 1),
-			'enabled' => (abs($visible) != 3 && (int) dol_eval($val['enabled'], 1)),
+			'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
 			'position' => $val['position'],
 			'help' => isset($val['help']) ? $val['help'] : ''
 		);
@@ -371,7 +371,7 @@ $num = $db->num_rows($resql);
 
 
 // Direct jump if only one record found
-if ($num == 1 && !getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
+if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
 	header("Location: ".dol_buildpath('/bookcal/calendar_card.php', 1).'?id='.$id);
@@ -382,7 +382,7 @@ if ($num == 1 && !getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $sea
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for no horizontal scroll
+llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist mod-bookcal page-list_calendar');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for no horizontal scroll
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -417,7 +417,7 @@ foreach ($search as $key => $val) {
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
-$parameters = array();
+$parameters = array('param' => &$param);
 $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
 

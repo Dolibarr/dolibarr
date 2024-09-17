@@ -124,7 +124,7 @@ if ($action == 'update') {
  * View
  */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-compta');
 
 $form = new Form($db);
 

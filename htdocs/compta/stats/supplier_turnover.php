@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2020       Maxime Kohlhaas         <maxime@atm-consulting.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,12 +41,12 @@ $nbofyear = 4;
 // Date range
 $year = GETPOSTINT('year');
 if (empty($year)) {
-	$year_current = dol_print_date(dol_now(), "%Y");
-	$month_current = dol_print_date(dol_now(), "%m");
+	$year_current = (int) dol_print_date(dol_now(), "%Y");
+	$month_current = (int) dol_print_date(dol_now(), "%m");
 	$year_start = $year_current - ($nbofyear - 1);
 } else {
 	$year_current = $year;
-	$month_current = dol_print_date(dol_now(), "%m");
+	$month_current = (int) dol_print_date(dol_now(), "%m");
 	$year_start = $year - $nbofyear + (getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') > 1 ? 0 : 1);
 }
 $date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear, 'tzserver');	// We use timezone of server so report is same from everywhere
@@ -53,12 +54,12 @@ $date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear, 
 
 // We define date_start and date_end
 if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
-	$q = GETPOST("q") ? GETPOST("q") : 0;
-	if ($q == 0) {
+	$q = GETPOSTINT("q");
+	if (empty($q)) {
 		// We define date_start and date_end
 		$year_end = $year_start + $nbofyear - (getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') > 1 ? 0 : 1);
 		$month_start = GETPOSTISSET("month") ? GETPOSTINT("month") : getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
-		if (!GETPOST('month')) {
+		if (!GETPOST('month')) {	// If month not forced
 			if (!$year && $month_start > $month_current) {
 				$year_start--;
 				$year_end--;
@@ -95,8 +96,10 @@ $userid = GETPOSTINT('userid');
 $socid = GETPOSTINT('socid');
 
 $tmps = dol_getdate($date_start);
+$month_start = $tmps['mon'];
 $year_start = $tmps['year'];
 $tmpe = dol_getdate($date_end);
+$month_end = $tmpe['mon'];
 $year_end = $tmpe['year'];
 $nbofyear = ($year_end - $year_start) + 1;
 
@@ -188,9 +191,10 @@ if ($modecompta == "RECETTES-DEPENSES" || $modecompta == "BOOKKEEPINGCOLLECTED")
 } else {
 	if (isModEnabled('accounting')) {
 		$calcmode .= '<input type="radio" name="modecompta" id="modecompta3" value="BOOKKEEPING"'.($modecompta == 'BOOKKEEPING' ? ' checked="checked"' : '').'><label for="modecompta3"> '.$langs->trans("CalcModeBookkeeping").'</label>';
+		$calcmode .= ' <span class="opacitymedium hideonsmartphone">('.$langs->trans("DataMustHaveBeenTransferredInAccounting").')</span>';
 		$calcmode .= '<br>';
 	}
-	$calcmode .= '<input type="radio" name="modecompta" id="modecompta2" value="CREANCES-DETTES"'.($modecompta == 'CREANCES-DETTES' ? ' checked="checked"' : '').'><label for="modecompta2"> '.$langs->trans("CalcModePayment");
+	$calcmode .= '<input type="radio" name="modecompta" id="modecompta2" value="CREANCES-DETTES"'.($modecompta == 'CREANCES-DETTES' ? ' checked="checked"' : '').'><label for="modecompta2"> '.$langs->trans("CalcModeDebt");
 	if (isModEnabled('accounting')) {
 		$calcmode .= ' <span class="opacitymedium hideonsmartphone">('.$langs->trans("CalcModeNoBookKeeping").')</span>';
 	}
@@ -200,8 +204,33 @@ if ($modecompta == "RECETTES-DEPENSES" || $modecompta == "BOOKKEEPINGCOLLECTED")
 
 report_header($name, $namelink, $period, $periodlink, $description, $builddate, $exportlink, $moreparam, $calcmode);
 
-if (isModEnabled('accounting') && $modecompta != 'BOOKKEEPING') {
-	print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
+if (isModEnabled('accounting')) {
+	if ($modecompta != 'BOOKKEEPING') {
+		print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, '1');
+	} else {
+		// Test if there is at least one line in bookkeeping
+		$pcgverid = getDolGlobalInt('CHARTOFACCOUNTS');
+		$pcgvercode = dol_getIdFromCode($db, $pcgverid, 'accounting_system', 'rowid', 'pcg_version');
+		if (empty($pcgvercode)) {
+			$pcgvercode = $pcgverid;
+		}
+
+		$sql = "SELECT b.rowid ";
+		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b,";
+		$sql .= " ".MAIN_DB_PREFIX."accounting_account as aa";
+		$sql .= " WHERE b.entity = ".$conf->entity; // In module double party accounting, we never share entities
+		$sql .= " AND b.numero_compte = aa.account_number";
+		$sql .= " AND aa.entity = ".$conf->entity;
+		$sql .= " AND aa.fk_pcg_version = '".$db->escape($pcgvercode)."'";
+		$sql .= $db->plimit(1);
+
+		$resql = $db->query($sql);
+		$nb = $db->num_rows($resql);
+		if ($nb == 0) {
+			$langs->load("errors");
+			print info_admin($langs->trans("WarningNoDataTransferedInAccountancyYet"), 0, 0, '1');
+		}
+	}
 }
 
 
@@ -242,8 +271,6 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql .= " AND aa.fk_pcg_version = '".$db->escape($pcgvercode)."'";
 	$sql .= " AND aa.pcg_type = 'EXPENSE'";		// TODO Be able to use a custom group
 }
-//print $sql;
-
 $sql .= " GROUP BY dm";
 $sql .= " ORDER BY dm";
 // TODO Add a filter on $date_start and $date_end to reduce quantity on data
@@ -328,14 +355,13 @@ $now_show_delta = 0;
 $minyear = substr($minyearmonth, 0, 4);
 $maxyear = substr($maxyearmonth, 0, 4);
 $nowyear = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
-//$nowyearmonth = strftime("%Y-%m", dol_now());
 $nowyearmonth = dol_print_date(dol_now(), "%Y-%m");
 $maxyearmonth = max($maxyearmonth, $nowyearmonth);
 $now = dol_now();
 $casenow = dol_print_date($now, "%Y-%m");
 
 // Loop on each month
-$nb_mois_decalage = $conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START - 1) : 0;
+$nb_mois_decalage = GETPOSTISSET('date_startmonth') ? (GETPOSTINT('date_startmonth') - 1) : (!getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') ? 0 : (getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') - 1));
 for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 	$mois_modulo = $mois; // ajout
 	if ($mois > 12) {

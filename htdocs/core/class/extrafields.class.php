@@ -45,7 +45,7 @@ class ExtraFields
 	public $db;
 
 	/**
-	 * @var array<string,array{label:array<string,string>,type:array<string,string>,size:array<string,string>,default:array<string,string>,computed:array<string,string>,unique:array<string,int>,required:array<string,int>,param:array<string,mixed>,perms:array<string,mixed[]>,list:array<string,int|string>,pos:array<string,int>,totalizable:array<string,int>,help:array<string,string>,printable:array<string,int>,enabled:array<string,int>,langfile:array<string,string>,css:array<string,string>,csslist:array<string,string>,hidden:array<string,int>,mandatoryfieldsofotherentities:array<string,string>,loaded?:int,count:int}> New array to store extrafields definition  Note: count set as present to avoid static analysis notices
+	 * @var array<string,array{label:array<string,string>,type:array<string,string>,size:array<string,string>,default:array<string,string>,computed:array<string,string>,unique:array<string,int>,required:array<string,int>,param:array<string,mixed>,perms:array<string,mixed[]>,list:array<string,int|string>,pos:array<string,int>,totalizable:array<string,int>,help:array<string,string>,printable:array<string,int>,enabled:array<string,int>,langfile:array<string,string>,css:array<string,string>,csslist:array<string,string>,cssview:array<string,string>,hidden:array<string,int>,mandatoryfieldsofotherentities:array<string,string>,loaded?:int,count:int}> New array to store extrafields definition  Note: count set as present to avoid static analysis notices
 	 */
 	public $attributes = array();
 
@@ -90,9 +90,9 @@ class ExtraFields
 		'ip' => 'ExtrafieldIP',
 		'icon' => 'Icon',
 		'password' => 'ExtrafieldPassword',
+		'radio' => 'ExtrafieldRadio',
 		'select' => 'ExtrafieldSelect',
 		'sellist' => 'ExtrafieldSelectList',
-		'radio' => 'ExtrafieldRadio',
 		'checkbox' => 'ExtrafieldCheckBox',
 		'chkbxlst' => 'ExtrafieldCheckBoxFromList',
 		'link' => 'ExtrafieldLink',
@@ -564,10 +564,17 @@ class ExtraFields
 							$error++;
 						}
 					}
+				} else {
+					$this->error = $this->db->lasterror();
+					$this->errors[] = $this->db->lasterror();
+					$error++;
 				}
 			}
-
-			return $result;
+			if (empty($error)) {
+				return $result;
+			} else {
+				return $error*-1;
+			}
 		} else {
 			return 0;
 		}
@@ -642,6 +649,8 @@ class ExtraFields
 	public function update($attrname, $label, $type, $length, $elementtype, $unique = 0, $required = 0, $pos = 0, $param = array(), $alwayseditable = 0, $perms = '', $list = '', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array())
 	{
 		global $action, $hookmanager;
+
+		$result = 0;
 
 		if ($elementtype == 'thirdparty') {
 			$elementtype = 'societe';
@@ -736,9 +745,9 @@ class ExtraFields
 					dol_syslog(get_class($this).'::update', LOG_DEBUG);
 					$resql = $this->db->query($sql, 1, 'dml');
 					/*if ($resql < 0) {
-						$this->error = $this->db->lasterror();
-						return -1;
-					}*/
+					 $this->error = $this->db->lasterror();
+					 return -1;
+					 }*/
 					return 1;
 				} else {
 					$this->error = $this->db->lasterror();
@@ -1039,8 +1048,8 @@ class ExtraFields
 	 * @param  string        $key            		Key of attribute
 	 * @param  string|array  $value 			    Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value); for dates in filter mode, a range array('start'=><timestamp>, 'end'=><timestamp>) should be provided
 	 * @param  string        $moreparam      		To add more parameters on html input tag
-	 * @param  string        $keysuffix      		Prefix string to add after name and id of field (can be used to avoid duplicate names)
-	 * @param  string        $keyprefix      		Suffix string to add before name and id of field (can be used to avoid duplicate names)
+	 * @param  string        $keysuffix      		Suffix string to add after name and id of field (can be used to avoid duplicate names)
+	 * @param  string        $keyprefix      		Prefix string to add before name and id of field (can be used to avoid duplicate names)
 	 * @param  string        $morecss        		More css (to defined size of field. Old behaviour: may also be a numeric)
 	 * @param  int           $objectid       		Current object id
 	 * @param  string        $extrafieldsobjectkey	The key to use to store retrieved data (commonly $object->table_element)
@@ -1059,7 +1068,7 @@ class ExtraFields
 		$out = '';
 
 		if (!preg_match('/options_$/', $keyprefix)) {	// Because we work on extrafields, we add 'options_' to prefix if not already added
-			$keyprefix = $keyprefix.'options_';
+			$keyprefix .= 'options_';
 		}
 
 		if (empty($extrafieldsobjectkey)) {
@@ -1186,10 +1195,10 @@ class ExtraFields
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
 		} elseif ($type == 'icon') {
 			/* External lib inclusion are not allowed in backoffice. Also lib is included several time if there is several icon file.
-			Some code must be added into main when MAIN_ADD_ICONPICKER_JS is set to add of lib in html header
-			$out ='<link rel="stylesheet" href="'.dol_buildpath('/myfield/css/fontawesome-iconpicker.min.css', 1).'">';
-			$out.='<script src="'.dol_buildpath('/myfield/js/fontawesome-iconpicker.min.js', 1).'"></script>';
-			*/
+			 Some code must be added into main when MAIN_ADD_ICONPICKER_JS is set to add of lib in html header
+			 $out ='<link rel="stylesheet" href="'.dol_buildpath('/myfield/css/fontawesome-iconpicker.min.css', 1).'">';
+			 $out.='<script src="'.dol_buildpath('/myfield/js/fontawesome-iconpicker.min.js', 1).'"></script>';
+			 */
 			$out .= '<input type="text" class="form-control icp icp-auto iconpicker-element iconpicker-input flat '.$morecss.' maxwidthonsmartphone"';
 			$out .= ' name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
 			if (getDolGlobalInt('MAIN_ADD_ICONPICKER_JS')) {
@@ -1220,7 +1229,7 @@ class ExtraFields
 		} elseif ($type == 'html') {
 			if (!preg_match('/search_/', $keyprefix)) {		// If keyprefix is search_ or search_options_, we must just use a simple text field
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-				$doleditor = new DolEditor($keyprefix.$key.$keysuffix, $value, '', 200, 'dolibarr_notes', 'In', false, false, isModEnabled('fckeditor') && $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_5, '90%');
+				$doleditor = new DolEditor($keyprefix.$key.$keysuffix, $value, '', 200, 'dolibarr_notes', 'In', false, false, isModEnabled('fckeditor') && getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_5, '90%');
 				$out = (string) $doleditor->Create(1);
 			} else {
 				$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
@@ -1235,7 +1244,7 @@ class ExtraFields
 				}
 				$out = '<input type="checkbox" class="flat valignmiddle'.($morecss ? ' '.$morecss : '').' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.$checked.' '.($moreparam ? $moreparam : '').'>';
 			} else {
-				$out = $form->selectyesno($keyprefix.$key.$keysuffix, $value, 1, false, 1);
+				$out = $form->selectyesno($keyprefix.$key.$keysuffix, $value, 1, false, 1, 1, 'width75 yesno');
 			}
 			$out .= '<input type="hidden" name="'.$keyprefix.$key.$keysuffix.'_boolean" value="1">';	// A hidden field ending with "_boolean" that is always set to 1.
 		} elseif ($type == 'price') {
@@ -1259,7 +1268,7 @@ class ExtraFields
 			}
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam ? $moreparam : '').'> ';
 		} elseif ($type == 'select') {
-			$out = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$out = '';
 			if ($mode) {
 				$options = array();
 				foreach ($param['options'] as $okey => $val) {
@@ -1313,8 +1322,8 @@ class ExtraFields
 				}
 				$out .= '</select>';
 			}
-		} elseif ($type == 'sellist') {
-			$out = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		} elseif ($type == 'sellist') {		// List of values selected from a table (1 choice)
+			$out = '';
 			if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_EXTRAFIELDS_DISABLE_SELECT2')) {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 				$out .= ajax_combobox($keyprefix.$key.$keysuffix, array(), 0);
@@ -1322,31 +1331,66 @@ class ExtraFields
 
 			$out .= '<select class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '').'>';
 			if (is_array($param['options'])) {
-				$param_list = array_keys($param['options']);
-				$InfoFieldList = explode(":", $param_list[0]);
-				$parentName = '';
-				$parentField = '';
+				$tmpparamoptions = array_keys($param['options']);
+				$paramoptions = preg_split('/[\r\n]+/', $tmpparamoptions[0]);
+
+				$InfoFieldList = explode(":", $paramoptions[0], 5);
 				// 0 : tableName
 				// 1 : label field name
-				// 2 : key fields name (if differ of rowid)
-				// 3 : key field parent (for dependent lists)
-				// 4 : where clause filter on column or table extrafield, syntax field='value' or extra.field=value
-				// 5 : id category type
-				// 6 : ids categories list separated by comma for category root
-				// 7 : sort by (to be close to common object)
+				// 2 : key fields name (if different of rowid)
+				// optional parameters...
+				// 3 : key field parent (for dependent lists). How this is used ?
+				// 4 : where clause filter on column or table extrafield, syntax field='value' or extra.field=value. Or use USF on the second line.
+				// 5 : string category type. This replace the filter.
+				// 6 : ids categories list separated by comma for category root. This replace the filter.
+				// 7 : sort field (not used here but used into format for commobject)
+
+				// If there is a filter, we extract it by taking all content inside parenthesis.
+				if (! empty($InfoFieldList[4])) {
+					$pos = 0;	// $pos will be position of ending filter
+					$parenthesisopen = 0;
+					while (substr($InfoFieldList[4], $pos, 1) !== '' && ($parenthesisopen || $pos == 0 || substr($InfoFieldList[4], $pos, 1) != ':')) {
+						if (substr($InfoFieldList[4], $pos, 1) == '(') {
+							$parenthesisopen++;
+						}
+						if (substr($InfoFieldList[4], $pos, 1) == ')') {
+							$parenthesisopen--;
+						}
+						$pos++;
+					}
+					$tmpbefore = substr($InfoFieldList[4], 0, $pos);
+					$tmpafter = substr($InfoFieldList[4], $pos + 1);
+					//var_dump($InfoFieldList[4].' -> '.$pos); var_dump($tmpafter);
+					$InfoFieldList[4] = $tmpbefore;
+					if ($tmpafter !== '') {
+						$InfoFieldList = array_merge($InfoFieldList, explode(':', $tmpafter));
+					}
+
+					// Fix better compatibility with some old extrafield syntax filter "(field=123)"
+					$reg = array();
+					if (preg_match('/^\(?([a-z0-9]+)([=<>]+)(\d+)\)?$/i', $InfoFieldList[4], $reg)) {
+						$InfoFieldList[4] = '('.$reg[1].':'.$reg[2].':'.$reg[3].')';
+					}
+
+					//var_dump($InfoFieldList);
+				}
+
+				//$Usf = empty($paramoptions[1]) ? '' :$paramoptions[1];
+
+				$parentName = '';
+				$parentField = '';
 				$keyList = (empty($InfoFieldList[2]) ? 'rowid' : $InfoFieldList[2].' as rowid');
 
-
+				if (count($InfoFieldList) > 3 && !empty($InfoFieldList[3])) {
+					list($parentName, $parentField) = explode('|', $InfoFieldList[3]);
+					$keyList .= ', '.$parentField;
+				}
 				if (count($InfoFieldList) > 4 && !empty($InfoFieldList[4])) {
 					if (strpos($InfoFieldList[4], 'extra.') !== false) {
 						$keyList = 'main.'.$InfoFieldList[2].' as rowid';
 					} else {
 						$keyList = $InfoFieldList[2].' as rowid';
 					}
-				}
-				if (count($InfoFieldList) > 3 && !empty($InfoFieldList[3])) {
-					list($parentName, $parentField) = explode('|', $InfoFieldList[3]);
-					$keyList .= ', '.$parentField;
 				}
 
 				$filter_categorie = false;
@@ -1356,7 +1400,7 @@ class ExtraFields
 					}
 				}
 
-				if ($filter_categorie === false) {
+				if (!$filter_categorie) {
 					$fields_label = explode('|', $InfoFieldList[1]);
 					if (is_array($fields_label)) {
 						$keyList .= ', ';
@@ -1366,6 +1410,8 @@ class ExtraFields
 					$sqlwhere = '';
 					$sql = "SELECT ".$keyList;
 					$sql .= ' FROM '.$this->db->prefix().$InfoFieldList[0];
+
+					// Add filter from 4th field
 					if (!empty($InfoFieldList[4])) {
 						// can use current entity filter
 						if (strpos($InfoFieldList[4], '$ENTITY$') !== false) {
@@ -1382,16 +1428,33 @@ class ExtraFields
 						} else {
 							$InfoFieldList[4] = str_replace('$ID$', '0', $InfoFieldList[4]);
 						}
-						//We have to join on extrafield table
+
+						// We have to join on extrafield table
+						$errstr = '';
 						if (strpos($InfoFieldList[4], 'extra.') !== false) {
-							$sql .= ' as main, '.$this->db->prefix().$InfoFieldList[0].'_extrafields as extra';
-							$sqlwhere .= " WHERE extra.fk_object=main.".$InfoFieldList[2]." AND ".$InfoFieldList[4];
+							$sql .= ' as main, '.$this->db->sanitize($this->db->prefix().$InfoFieldList[0]).'_extrafields as extra';
+							$sqlwhere .= " WHERE extra.fk_object = main.".$this->db->sanitize($InfoFieldList[2]);
+							$sqlwhere .= " AND " . forgeSQLFromUniversalSearchCriteria($InfoFieldList[4], $errstr, 1);
 						} else {
-							$sqlwhere .= " WHERE ".$InfoFieldList[4];
+							$sqlwhere .= " WHERE " . forgeSQLFromUniversalSearchCriteria($InfoFieldList[4], $errstr, 1);
 						}
 					} else {
 						$sqlwhere .= ' WHERE 1=1';
 					}
+
+					// Add Usf filter on second line
+					/*
+					 if ($Usf) {
+					 $errorstr = '';
+					 $sqlusf .= forgeSQLFromUniversalSearchCriteria($Usf, $errorstr);
+					 if (!$errorstr) {
+					 $sqlwhere .= $sqlusf;
+					 } else {
+					 $sqlwhere .= " AND invalid_usf_filter_of_extrafield";
+					 }
+					 }
+					 */
+
 					// Some tables may have field, some other not. For the moment we disable it.
 					if (in_array($InfoFieldList[0], array('tablewithentity'))) {
 						$sqlwhere .= ' AND entity = '.((int) $conf->entity);
@@ -1477,7 +1540,7 @@ class ExtraFields
 			}
 			$out = $form->multiselectarray($keyprefix.$key.$keysuffix, (empty($param['options']) ? null : $param['options']), $value_arr, '', 0, '', 0, '100%');
 		} elseif ($type == 'radio') {
-			$out = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$out = '';
 			foreach ($param['options'] as $keyopt => $val) {
 				$out .= '<input class="flat '.$morecss.'" type="radio" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '');
 				$out .= ' value="'.$keyopt.'"';
@@ -1485,7 +1548,7 @@ class ExtraFields
 				$out .= ($value == $keyopt ? 'checked' : '');
 				$out .= '/><label for="'.$keyprefix.$key.$keysuffix.'_'.$keyopt.'">'.$langs->trans($val).'</label><br>';
 			}
-		} elseif ($type == 'chkbxlst') {
+		} elseif ($type == 'chkbxlst') {	// List of values selected from a table (n choices)
 			if (is_array($value)) {
 				$value_arr = $value;
 			} else {
@@ -1493,18 +1556,54 @@ class ExtraFields
 			}
 
 			if (is_array($param['options'])) {
-				$param_list = array_keys($param['options']);
-				$InfoFieldList = explode(":", $param_list[0]);
-				$parentName = '';
-				$parentField = '';
+				$tmpparamoptions = array_keys($param['options']);
+				$paramoptions = preg_split('/[\r\n]+/', $tmpparamoptions[0]);
+
+				$InfoFieldList = explode(":", $paramoptions[0], 5);
 				// 0 : tableName
 				// 1 : label field name
-				// 2 : key fields name (if differ of rowid)
-				// 3 : key field parent (for dependent lists)
-				// 4 : where clause filter on column or table extrafield, syntax field='value' or extra.field=value
-				// 5 : id category type
-				// 6 : ids categories list separated by comma for category root
-				// 7 : sort by (to be close to common object)
+				// 2 : key fields name (if different of rowid)
+				// optional parameters...
+				// 3 : key field parent (for dependent lists). How this is used ?
+				// 4 : where clause filter on column or table extrafield, syntax field='value' or extra.field=value. Or use USF on the second line.
+				// 5 : string category type. This replace the filter.
+				// 6 : ids categories list separated by comma for category root. This replace the filter.
+				// 7 : sort field (not used here but used into format for commobject)
+
+				// If there is a filter, we extract it by taking all content inside parenthesis.
+				if (! empty($InfoFieldList[4])) {
+					$pos = 0;
+					$parenthesisopen = 0;
+					while (substr($InfoFieldList[4], $pos, 1) !== '' && ($parenthesisopen || $pos == 0 || substr($InfoFieldList[4], $pos, 1) != ':')) {
+						if (substr($InfoFieldList[4], $pos, 1) == '(') {
+							$parenthesisopen++;
+						}
+						if (substr($InfoFieldList[4], $pos, 1) == ')') {
+							$parenthesisopen--;
+						}
+						$pos++;
+					}
+					$tmpbefore = substr($InfoFieldList[4], 0, $pos);
+					$tmpafter = substr($InfoFieldList[4], $pos + 1);
+					//var_dump($InfoFieldList[4].' -> '.$pos); var_dump($tmpafter);
+					$InfoFieldList[4] = $tmpbefore;
+					if ($tmpafter !== '') {
+						$InfoFieldList = array_merge($InfoFieldList, explode(':', $tmpafter));
+					}
+
+					// Fix better compatibility with some old extrafield syntax filter "(field=123)"
+					$reg = array();
+					if (preg_match('/^\(?([a-z0-9]+)([=<>]+)(\d+)\)?$/i', $InfoFieldList[4], $reg)) {
+						$InfoFieldList[4] = '('.$reg[1].':'.$reg[2].':'.$reg[3].')';
+					}
+
+					//var_dump($InfoFieldList);
+				}
+
+				//$Usf = empty($paramoptions[1]) ? '' :$paramoptions[1];
+
+				$parentName = '';
+				$parentField = '';
 				$keyList = (empty($InfoFieldList[2]) ? 'rowid' : $InfoFieldList[2].' as rowid');
 
 				if (count($InfoFieldList) > 3 && !empty($InfoFieldList[3])) {
@@ -1526,7 +1625,7 @@ class ExtraFields
 					}
 				}
 
-				if ($filter_categorie === false) {
+				if (!$filter_categorie) {
 					$fields_label = explode('|', $InfoFieldList[1]);
 					if (is_array($fields_label)) {
 						$keyList .= ', ';
@@ -1536,6 +1635,8 @@ class ExtraFields
 					$sqlwhere = '';
 					$sql = "SELECT ".$keyList;
 					$sql .= ' FROM '.$this->db->prefix().$InfoFieldList[0];
+
+					// Add filter from 4th field
 					if (!empty($InfoFieldList[4])) {
 						// can use current entity filter
 						if (strpos($InfoFieldList[4], '$ENTITY$') !== false) {
@@ -1602,15 +1703,31 @@ class ExtraFields
 						}
 
 						// We have to join on extrafield table
+						$errstr = '';
 						if (strpos($InfoFieldList[4], 'extra.') !== false) {
-							$sql .= ' as main, '.$this->db->prefix().$InfoFieldList[0].'_extrafields as extra';
-							$sqlwhere .= " WHERE extra.fk_object=main.".$InfoFieldList[2]." AND ".$InfoFieldList[4];
+							$sql .= ' as main, '.$this->db->sanitize($this->db->prefix().$InfoFieldList[0]).'_extrafields as extra';
+							$sqlwhere .= " WHERE extra.fk_object = main.".$this->db->sanitize($InfoFieldList[2]);
+							$sqlwhere .= " AND " . forgeSQLFromUniversalSearchCriteria($InfoFieldList[4], $errstr, 1);
 						} else {
-							$sqlwhere .= " WHERE ".$InfoFieldList[4];
+							$sqlwhere .= " WHERE " . forgeSQLFromUniversalSearchCriteria($InfoFieldList[4], $errstr, 1);
 						}
 					} else {
 						$sqlwhere .= ' WHERE 1=1';
 					}
+
+					// Add Usf filter on second line
+					/*
+					 if ($Usf) {
+					 $errorstr = '';
+					 $sqlusf .= forgeSQLFromUniversalSearchCriteria($Usf, $errorstr);
+					 if (!$errorstr) {
+					 $sqlwhere .= $sqlusf;
+					 } else {
+					 $sqlwhere .= " AND invalid_usf_filter_of_extrafield";
+					 }
+					 }
+					 */
+
 					// Some tables may have field, some other not. For the moment we disable it.
 					if (in_array($InfoFieldList[0], array('tablewithentity'))) {
 						$sqlwhere .= " AND entity = ".((int) $conf->entity);
@@ -1619,6 +1736,8 @@ class ExtraFields
 					// print $sql;
 
 					$sql .= $sqlwhere;
+					$sql .= ' ORDER BY '.implode(', ', $fields_label);
+
 					dol_syslog(get_class($this).'::showInputField type=chkbxlst', LOG_DEBUG);
 					$resql = $this->db->query($sql);
 					if ($resql) {
@@ -1696,11 +1815,11 @@ class ExtraFields
 		} elseif ($type == 'link') {
 			$param_list = array_keys($param['options']); // $param_list[0] = 'ObjectName:classPath' but can also be 'ObjectName:classPath:1:(status:=:1)'
 			/* Removed.
-			The selectForForms is called with parameter $objectfield defined, so the app can retrieve the filter inside the ajax component instead of being provided as parameters. The
-			filter was used to pass SQL requests leading to serious SQL injection problem. This should not be possible. Also the call of the ajax was broken by some WAF.
-			if (strpos($param_list[0], '$ID$') !== false && !empty($objectid)) {
-				$param_list[0] = str_replace('$ID$', $objectid, $param_list[0]);
-			}*/
+			 The selectForForms is called with parameter $objectfield defined, so the app can retrieve the filter inside the ajax component instead of being provided as parameters. The
+			 filter was used to pass SQL requests leading to serious SQL injection problem. This should not be possible. Also the call of the ajax was broken by some WAF.
+			 if (strpos($param_list[0], '$ID$') !== false && !empty($objectid)) {
+			 $param_list[0] = str_replace('$ID$', $objectid, $param_list[0]);
+			 }*/
 			$showempty = (($required && $default != '') ? 0 : 1);
 
 			$tmparray = explode(':', $param_list[0]);
@@ -1733,7 +1852,7 @@ class ExtraFields
 				$out .= $geomapeditor->getHtml($keyprefix.$key.$keysuffix, $geojson, $centroidjson, $type);
 			} else {
 				// If keyprefix is search_ or search_options_, we must just use a simple text field
-				$out = ''; // @phan-suppress-current-line PhanPluginRedundantAssignment
+				$out = '';
 			}
 		} elseif ($type == 'password') {
 			// If prefix is 'search_', field is used as a filter, we use a common text field.
@@ -1748,8 +1867,8 @@ class ExtraFields
 		 elseif ($type == 'datetime') $out.=' (YYYY-MM-DD HH:MM:SS)';
 		 */
 		/*if (!empty($help) && $keyprefix != 'search_options_') {
-			$out .= $form->textwithpicto('', $help, 1, 'help', '', 0, 3);
-		}*/
+		 $out .= $form->textwithpicto('', $help, 1, 'help', '', 0, 3);
+		 }*/
 		return $out;
 	}
 
@@ -1789,6 +1908,8 @@ class ExtraFields
 		$langfile = $this->attributes[$extrafieldsobjectkey]['langfile'][$key];
 		$list = (string) dol_eval($this->attributes[$extrafieldsobjectkey]['list'][$key], 1, 1, '2');
 		$help = $this->attributes[$extrafieldsobjectkey]['help'][$key];
+		$cssview = $this->attributes[$extrafieldsobjectkey]['cssview'][$key];
+
 		$hidden = (empty($list) ? 1 : 0); // If $list empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
 
 		if ($hidden) {
@@ -1911,8 +2032,8 @@ class ExtraFields
 			dol_syslog(get_class($this).':showOutputField:$type=sellist', LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql) {
-				if ($filter_categorie === false) {
-					$value = ''; // value was used, so now we reste it to use it to build final output
+				if (!$filter_categorie) {
+					$value = ''; // value was used, so now we reset it to use it to build final output
 
 					$obj = $this->db->fetch_object($resql);
 
@@ -2021,8 +2142,8 @@ class ExtraFields
 			dol_syslog(get_class($this).':showOutputField:$type=chkbxlst', LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql) {
-				if ($filter_categorie === false) {
-					$value = ''; // value was used, so now we reste it to use it to build final output
+				if (!$filter_categorie) {
+					$value = ''; // value was used, so now we reset it to use it to build final output
 					$toprint = array();
 					while ($obj = $this->db->fetch_object($resql)) {
 						// Several field into label (eq table:code|label:rowid)
@@ -2091,6 +2212,7 @@ class ExtraFields
 					dol_include_once($InfoFieldList[1]);
 					if ($classname && class_exists($classname)) {
 						$object = new $classname($this->db);
+						'@phan-var-force CommonObject $object';
 						$object->fetch($value);
 						$value = $object->getNomUrl(3);
 					}
@@ -2116,7 +2238,7 @@ class ExtraFields
 				$value = '';
 			}
 		} elseif ($type == 'text') {
-			$value = dol_htmlentitiesbr($value);
+			$value = '<div class="'.($cssview ? $cssview : 'shortmessagecut').'">'.dol_htmlentitiesbr($value).'</div>';
 		} elseif ($type == 'html') {
 			$value = dol_htmlentitiesbr($value);
 		} elseif ($type == 'password') {
@@ -2143,8 +2265,6 @@ class ExtraFields
 	 */
 	public function getAlignFlag($key, $extrafieldsobjectkey = '')
 	{
-		global $conf, $langs;
-
 		$type = 'varchar';
 		if (!empty($extrafieldsobjectkey)) {
 			$type = $this->attributes[$extrafieldsobjectkey]['type'][$key];
@@ -2205,7 +2325,7 @@ class ExtraFields
 		$expand_display = false;
 		if (is_array($extrafield_param_list) && count($extrafield_param_list) > 0) {
 			$extrafield_collapse_display_value = intval($extrafield_param_list[0]);
-			$expand_display = ((isset($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key]) || GETPOSTINT('ignorecollapsesetup')) ? (empty($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key]) ? false : true) : ($extrafield_collapse_display_value == 2 ? false : true));
+			$expand_display = ((isset($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key]) || GETPOSTINT('ignorecollapsesetup')) ? (!empty($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key])) : !($extrafield_collapse_display_value == 2));
 		}
 		$disabledcookiewrite = 0;
 		if ($mode == 'create') {
@@ -2239,7 +2359,7 @@ class ExtraFields
 				$out .= '<script nonce="'.getNonce().'" type="text/javascript">'."\n";
 				$out .= 'jQuery(document).ready(function(){'."\n";
 				if (empty($disabledcookiewrite)) {
-					if ($expand_display === false) {
+					if (!$expand_display) {
 						$out .= '   console.log("Inject js for the collapsing of extrafield '.$key.' - hide");'."\n";
 						$out .= '   jQuery(".trextrafields_collapse'.$collapse_group.'").hide();'."\n";
 					} else {
@@ -2310,7 +2430,7 @@ class ExtraFields
 
 				$enabled = 1;
 				if (isset($this->attributes[$object->table_element]['enabled'][$key])) {	// 'enabled' is often a condition on module enabled or not
-					$enabled = (int) dol_eval($this->attributes[$object->table_element]['enabled'][$key], 1, 1, '2');
+					$enabled = (int) dol_eval((string) $this->attributes[$object->table_element]['enabled'][$key], 1, 1, '2');
 				}
 
 				$visibility = 1;
@@ -2328,13 +2448,13 @@ class ExtraFields
 						&& in_array($this->attributes[$object->table_element]['type'][$key], array('boolean', 'checkbox', 'chkbxlst'))
 						&& in_array(abs($enabled), array(2, 5))
 						&& ! GETPOSTISSET('options_' . $key) // Update hidden checkboxes and multiselect only if they are provided
-					)
-				) {
-					continue;
+						)
+					) {
+						continue;
 				}
 
-				$visibility_abs = abs($visibility);
-				// not modify if extra field is not in update form (0 : never, 2 or -2 : list only, 5 or - 5 : list and view only)
+					$visibility_abs = abs($visibility);
+					// not modify if extra field is not in update form (0 : never, 2 or -2 : list only, 5 or - 5 : list and view only)
 				if (empty($visibility_abs) || $visibility_abs == 2 || $visibility_abs == 5) {
 					continue;
 				}
@@ -2345,9 +2465,9 @@ class ExtraFields
 				if ($this->attributes[$object->table_element]['required'][$key]) {	// Value is required
 					// Check if functionally empty without using GETPOST (depending on the type of extrafield, a
 					// technically non-empty value may be treated as empty functionally).
-					// value can be alpha, int, array, etc...
-					$v = $_POST["options_".$key] ?? null;
-					$type = $this->attributes[$object->table_element]['type'][$key];
+						// value can be alpha, int, array, etc...
+						$v = $_POST["options_".$key] ?? null;
+						$type = $this->attributes[$object->table_element]['type'][$key];
 					if (self::isEmptyValue($v, $type)) {
 						//print 'ccc'.$value.'-'.$this->attributes[$object->table_element]['required'][$key];
 
@@ -2419,7 +2539,7 @@ class ExtraFields
 					}
 				}
 
-				$object->array_options["options_".$key] = $value_key;
+					$object->array_options["options_".$key] = $value_key;
 			}
 
 			if ($nofillrequired) {
@@ -2439,11 +2559,11 @@ class ExtraFields
 	 * return array_options array of data of extrafields value of object sent by a search form
 	 *
 	 * @param  array|string		$extrafieldsobjectkey  	array of extrafields (old usage) or value of object->table_element (new usage)
-	 * @param  string			$keyprefix      		Prefix string to add into name and id of field (can be used to avoid duplicate names)
 	 * @param  string			$keysuffix      		Suffix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param  string			$keyprefix      		Prefix string to add into name and id of field (can be used to avoid duplicate names)
 	 * @return array|int								array_options set or 0 if no value
 	 */
-	public function getOptionalsFromPost($extrafieldsobjectkey, $keyprefix = '', $keysuffix = '')
+	public function getOptionalsFromPost($extrafieldsobjectkey, $keysuffix = '', $keyprefix = '')
 	{
 		global $_POST;
 
@@ -2464,78 +2584,83 @@ class ExtraFields
 				}
 
 				if (in_array($key_type, array('date'))) {
-					$dateparamname_start = $keysuffix . 'options_' . $key . $keyprefix . '_start';
-					$dateparamname_end   = $keysuffix . 'options_' . $key . $keyprefix . '_end';
+					$dateparamname_start = $keyprefix . 'options_' . $key . $keysuffix . '_start';
+					$dateparamname_end   = $keyprefix . 'options_' . $key . $keysuffix . '_end';
+
 					if (GETPOST($dateparamname_start . 'year') || GETPOST($dateparamname_end . 'year')) {
 						$value_key = array();
 						// values provided as a component year, month, day, etc.
 						if (GETPOST($dateparamname_start . 'year')) {
 							$value_key['start'] = dol_mktime(0, 0, 0, GETPOSTINT($dateparamname_start . 'month'), GETPOSTINT($dateparamname_start . 'day'), GETPOSTINT($dateparamname_start . 'year'));
 						}
-						if (GETPOST($dateparamname_start . 'year')) {
+						if (GETPOST($dateparamname_end . 'year')) {
 							$value_key['end'] = dol_mktime(23, 59, 59, GETPOSTINT($dateparamname_end . 'month'), GETPOSTINT($dateparamname_end . 'day'), GETPOSTINT($dateparamname_end . 'year'));
 						}
-					} elseif (GETPOST($keysuffix."options_".$key.$keyprefix."year")) {
+					} elseif (GETPOST($keyprefix."options_".$key.$keysuffix."year")) {
 						// Clean parameters
-						$value_key = dol_mktime(12, 0, 0, GETPOSTINT($keysuffix."options_".$key.$keyprefix."month"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."day"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."year"));
+						$value_key = dol_mktime(12, 0, 0, GETPOSTINT($keyprefix."options_".$key.$keysuffix."month"), GETPOSTINT($keyprefix."options_".$key.$keysuffix."day"), GETPOSTINT($keyprefix."options_".$key.$keysuffix."year"));
 					} else {
 						continue; // Value was not provided, we should not set it.
 					}
 				} elseif (in_array($key_type, array('datetime', 'datetimegmt'))) {
-					$dateparamname_start = $keysuffix . 'options_' . $key . $keyprefix . '_start';
-					$dateparamname_end   = $keysuffix . 'options_' . $key . $keyprefix . '_end';
-					if (GETPOST($dateparamname_start . 'year') && GETPOST($dateparamname_end . 'year')) {
+					$dateparamname_start = $keyprefix . 'options_' . $key . $keysuffix . '_start';
+					$dateparamname_end   = $keyprefix . 'options_' . $key . $keysuffix . '_end';
+
+					if (GETPOST($dateparamname_start . 'year') || GETPOST($dateparamname_end . 'year')) {
 						// values provided as a date pair (start date + end date), each date being broken down as year, month, day, etc.
+						$dateparamname_start_hour = GETPOSTINT($dateparamname_start . 'hour') != '-1' ? GETPOSTINT($dateparamname_start . 'hour') : '00';
+						$dateparamname_start_min = GETPOSTINT($dateparamname_start . 'min') != '-1' ? GETPOSTINT($dateparamname_start . 'min') : '00';
+						$dateparamname_start_sec = GETPOSTINT($dateparamname_start . 'sec') != '-1' ? GETPOSTINT($dateparamname_start . 'sec') : '00';
 						$dateparamname_end_hour = GETPOSTINT($dateparamname_end . 'hour') != '-1' ? GETPOSTINT($dateparamname_end . 'hour') : '23';
 						$dateparamname_end_min = GETPOSTINT($dateparamname_end . 'min') != '-1' ? GETPOSTINT($dateparamname_end . 'min') : '59';
 						$dateparamname_end_sec = GETPOSTINT($dateparamname_end . 'sec') != '-1' ? GETPOSTINT($dateparamname_end . 'sec') : '59';
 						if ($key_type == 'datetimegmt') {
 							$value_key = array(
-								'start' => dol_mktime(GETPOSTINT($dateparamname_start . 'hour'), GETPOSTINT($dateparamname_start . 'min'), GETPOSTINT($dateparamname_start . 'sec'), GETPOSTINT($dateparamname_start . 'month'), GETPOSTINT($dateparamname_start . 'day'), GETPOSTINT($dateparamname_start . 'year'), 'gmt'),
+								'start' => dol_mktime($dateparamname_start_hour, $dateparamname_start_min, $dateparamname_start_sec, GETPOSTINT($dateparamname_start . 'month'), GETPOSTINT($dateparamname_start . 'day'), GETPOSTINT($dateparamname_start . 'year'), 'gmt'),
 								'end' => dol_mktime($dateparamname_end_hour, $dateparamname_end_min, $dateparamname_end_sec, GETPOSTINT($dateparamname_end . 'month'), GETPOSTINT($dateparamname_end . 'day'), GETPOSTINT($dateparamname_end . 'year'), 'gmt')
 							);
 						} else {
 							$value_key = array(
-								'start' => dol_mktime(GETPOSTINT($dateparamname_start . 'hour'), GETPOSTINT($dateparamname_start . 'min'), GETPOSTINT($dateparamname_start . 'sec'), GETPOSTINT($dateparamname_start . 'month'), GETPOSTINT($dateparamname_start . 'day'), GETPOSTINT($dateparamname_start . 'year'), 'tzuserrel'),
+								'start' => dol_mktime($dateparamname_start_hour, $dateparamname_start_min, $dateparamname_start_sec, GETPOSTINT($dateparamname_start . 'month'), GETPOSTINT($dateparamname_start . 'day'), GETPOSTINT($dateparamname_start . 'year'), 'tzuserrel'),
 								'end' => dol_mktime($dateparamname_end_hour, $dateparamname_end_min, $dateparamname_end_sec, GETPOSTINT($dateparamname_end . 'month'), GETPOSTINT($dateparamname_end . 'day'), GETPOSTINT($dateparamname_end . 'year'), 'tzuserrel')
 							);
 						}
-					} elseif (GETPOST($keysuffix."options_".$key.$keyprefix."year")) {
+					} elseif (GETPOST($keyprefix."options_".$key.$keysuffix."year")) {
 						// Clean parameters
 						if ($key_type == 'datetimegmt') {
-							$value_key = dol_mktime(GETPOSTINT($keysuffix."options_".$key.$keyprefix."hour"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."min"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."sec"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."month"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."day"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."year"), 'gmt');
+							$value_key = dol_mktime(GETPOSTINT($keyprefix."options_".$key.$keysuffix."hour"), GETPOSTINT($keyprefix."options_".$key.$keysuffix."min"), GETPOSTINT($keyprefix."options_".$key.$keysuffix."sec"), GETPOSTINT($keyprefix."options_".$key.$keysuffix."month"), GETPOSTINT($keyprefix."options_".$key.$keysuffix."day"), GETPOSTINT($keyprefix."options_".$key.$keysuffix."year"), 'gmt');
 						} else {
-							$value_key = dol_mktime(GETPOSTINT($keysuffix."options_".$key.$keyprefix."hour"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."min"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."sec"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."month"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."day"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."year"), 'tzuserrel');
+							$value_key = dol_mktime(GETPOSTINT($keyprefix."options_".$key.$keysuffix."hour"), GETPOSTINT($keyprefix."options_".$key.$keysuffix."min"), GETPOSTINT($keyprefix."options_".$key.$keysuffix."sec"), GETPOSTINT($keyprefix."options_".$key.$keysuffix."month"), GETPOSTINT($keyprefix."options_".$key.$keysuffix."day"), GETPOSTINT($keyprefix."options_".$key.$keysuffix."year"), 'tzuserrel');
 						}
 					} else {
 						continue; // Value was not provided, we should not set it.
 					}
 				} elseif ($key_type == 'select') {
 					// to detect if we are in search context
-					if (GETPOSTISARRAY($keysuffix."options_".$key.$keyprefix)) {
-						$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix, 'array:aZ09');
+					if (GETPOSTISARRAY($keyprefix."options_".$key.$keysuffix)) {
+						$value_arr = GETPOST($keyprefix."options_".$key.$keysuffix, 'array:aZ09');
 						// Make sure we get an array even if there's only one selected
 						$value_arr = (array) $value_arr;
 						$value_key = implode(',', $value_arr);
 					} else {
-						$value_key = GETPOST($keysuffix."options_".$key.$keyprefix);
+						$value_key = GETPOST($keyprefix."options_".$key.$keysuffix);
 					}
 				} elseif (in_array($key_type, array('checkbox', 'chkbxlst'))) {
 					// We test on a hidden field named "..._multiselect" that is always set to 1 if param is in form so
 					// when nothing is provided we can make a difference between noparam in the form and param was set to nothing.
-					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix.'_multiselect')) {
+					if (!GETPOSTISSET($keyprefix."options_".$key.$keysuffix.'_multiselect')) {
 						continue; // Value was not provided, we should not set it.
 					}
-					$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix);
+					$value_arr = GETPOST($keyprefix."options_".$key.$keysuffix);
 					// Make sure we get an array even if there's only one checkbox
 					$value_arr = (array) $value_arr;
 					$value_key = implode(',', $value_arr);
 				} elseif (in_array($key_type, array('price', 'double', 'int'))) {
-					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) {
+					if (!GETPOSTISSET($keyprefix."options_".$key.$keysuffix)) {
 						continue; // Value was not provided, we should not set it.
 					}
-					$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix);
-					if ($keysuffix != 'search_') {    // If value is for a search, we must keep complex string like '>100 <=150'
+					$value_arr = GETPOST($keyprefix."options_".$key.$keysuffix);
+					if ($keyprefix != 'search_') {    // If value is for a search, we must keep complex string like '>100 <=150'
 						$value_key = price2num($value_arr);
 					} else {
 						$value_key = $value_arr;
@@ -2543,25 +2668,25 @@ class ExtraFields
 				} elseif (in_array($key_type, array('boolean'))) {
 					// We test on a hidden field named "..._boolean" that is always set to 1 if param is in form so
 					// when nothing is provided we can make a difference between noparam in the form and param was set to nothing.
-					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix."_boolean")) {
+					if (!GETPOSTISSET($keyprefix."options_".$key.$keysuffix."_boolean")) {
 						$value_key = '';
 					} else {
-						$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix);
+						$value_arr = GETPOST($keyprefix."options_".$key.$keysuffix);
 						$value_key = $value_arr;
 					}
 				} elseif (in_array($key_type, array('html'))) {
-					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) {
+					if (!GETPOSTISSET($keyprefix."options_".$key.$keysuffix)) {
 						continue; // Value was not provided, we should not set it.
 					}
-					$value_key = dol_htmlcleanlastbr(GETPOST($keysuffix."options_".$key.$keyprefix, 'restricthtml'));
+					$value_key = dol_htmlcleanlastbr(GETPOST($keyprefix."options_".$key.$keysuffix, 'restricthtml'));
 				} else {
-					if (!GETPOST($keysuffix."options_".$key.$keyprefix)) {
+					if (!GETPOSTISSET($keyprefix."options_".$key.$keysuffix)) {
 						continue; // Value was not provided, we should not set it.
 					}
-					$value_key = GETPOST($keysuffix."options_".$key.$keyprefix);
+					$value_key = GETPOST($keyprefix."options_".$key.$keysuffix);
 				}
 
-				$array_options[$keysuffix."options_".$key] = $value_key; // No keyprefix here. keyprefix is used only for read.
+				$array_options[$keyprefix."options_".$key] = $value_key; // No keyprefix here. keyprefix is used only for read.
 			}
 
 			return $array_options;
@@ -2579,23 +2704,24 @@ class ExtraFields
 	{
 		global $langs;
 
+		$arraytype2label = array('');
+
 		$tmptype2label = ExtraFields::$type2label;
-		$type2label = array('');
 		foreach ($tmptype2label as $key => $val) {
-			$type2label[$key] = $langs->transnoentitiesnoconv($val);
+			$arraytype2label[$key] = $langs->transnoentitiesnoconv($val);
 		}
 
 		if (!getDolGlobalString('MAIN_USE_EXTRAFIELDS_ICON')) {
-			unset($type2label['icon']);
+			unset($arraytype2label['icon']);
 		}
 		if (!getDolGlobalString('MAIN_USE_GEOPHP')) {
-			unset($type2label['point']);
-			unset($type2label['multipts']);
-			unset($type2label['linestrg']);
-			unset($type2label['polygon']);
+			unset($arraytype2label['point']);
+			unset($arraytype2label['multipts']);
+			unset($arraytype2label['linestrg']);
+			unset($arraytype2label['polygon']);
 		}
 
-		return $type2label;
+		return $arraytype2label;
 	}
 
 	/**

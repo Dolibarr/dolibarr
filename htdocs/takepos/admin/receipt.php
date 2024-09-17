@@ -82,7 +82,7 @@ if (GETPOST('action', 'alpha') == 'set') {
 $form = new Form($db);
 $formproduct = new FormProduct($db);
 
-llxHeader('', $langs->trans("CashDeskSetup"));
+llxHeader('', $langs->trans("CashDeskSetup"), '', '', 0, 0, '', '', '', 'mod-takepos page-admin_receipt');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("CashDeskSetup").' (TakePOS)', $linkback, 'title_setup');
@@ -211,11 +211,13 @@ print "</td></tr>\n";
 print '</table>';
 print '</div>';
 
-print '<br>';
-
 print $form->buttonsSaveCancel("Save", '');
 
 print "</form>\n";
+
+
+print '<br>';
+
 
 print load_fiche_titre($langs->trans("Preview"), '', '');
 print '<div style="width: 50%; float:center;background-color:#606060">';

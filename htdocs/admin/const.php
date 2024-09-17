@@ -159,7 +159,7 @@ if ($action == 'delete') {
 $form = new Form($db);
 
 $wikihelp = 'EN:Setup_Other|FR:Paramétrage_Divers|ES:Configuración_Varios';
-llxHeader('', $langs->trans("Setup"), $wikihelp);
+llxHeader('', $langs->trans("Setup"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-const');
 
 // Add logic to show/hide buttons
 if ($conf->use_javascript_ajax) {
@@ -186,6 +186,7 @@ jQuery(document).ready(function() {
 print load_fiche_titre($langs->trans("OtherSetup"), '', 'title_setup');
 
 print '<span class="opacitymedium">'.$langs->trans("ConstDesc")."</span><br>\n";
+print "<br>\n";
 print "<br>\n";
 
 $param = '';

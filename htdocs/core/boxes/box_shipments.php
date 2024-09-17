@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2019      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +61,7 @@ class box_shipments extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $user, $langs, $conf;
+		global $user, $langs;
 		$langs->loadLangs(array('orders', 'sendings'));
 
 		$this->max = $max;
@@ -73,7 +74,9 @@ class box_shipments extends ModeleBoxes
 		$orderstatic = new Commande($this->db);
 		$societestatic = new Societe($this->db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastCustomerShipments", $max));
+		$this->info_box_head = array(
+			'text' => $langs->trans("BoxTitleLastCustomerShipments", $max).'<a class="paddingleft" href="'.DOL_URL_ROOT.'/expedition/list.php?sortfield=e.tms&sortorder=DESC"><span class="badge">...</span></a>'
+		);
 
 		if ($user->hasRight('expedition', 'lire')) {
 			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
@@ -98,12 +101,12 @@ class box_shipments extends ModeleBoxes
 				$sql .= " AND e.fk_statut = 1";
 			}
 			if ($user->socid > 0) {
-				$sql.= " AND s.rowid = ".((int) $user->socid);
+				$sql .= " AND s.rowid = ".((int) $user->socid);
 			}
 			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND sc.fk_user = ".((int) $user->id);
 			} else {
-				$sql .= " ORDER BY e.date_delivery, e.ref DESC";
+				$sql .= " ORDER BY e.tms DESC, e.date_delivery DESC, e.ref DESC";
 			}
 			$sql .= $this->db->plimit($max, 0);
 
@@ -128,6 +131,7 @@ class box_shipments extends ModeleBoxes
 					//$societestatic->name_alias = $objp->name_alias;
 					$societestatic->code_client = $objp->code_client;
 					$societestatic->code_compta = $objp->code_compta;
+					$societestatic->code_compta_client = $objp->code_compta;
 					$societestatic->client = $objp->client;
 					$societestatic->logo = $objp->logo;
 					$societestatic->email = $objp->email;
@@ -147,7 +151,7 @@ class box_shipments extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="nowraponall"',
-						'text' => $orderstatic->getNomUrl(1),
+						'text' => ($orderstatic->id > 0 ? $orderstatic->getNomUrl(1) : ''),
 						'asis' => 1,
 					);
 
@@ -162,7 +166,7 @@ class box_shipments extends ModeleBoxes
 				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
 					'td' => 'class="center"',
-						'text'=> '<span class="opacitymedium">'.$langs->trans("NoRecordedShipments").'</span>'
+						'text' => '<span class="opacitymedium">'.$langs->trans("NoRecordedShipments").'</span>'
 					);
 				}
 
@@ -170,7 +174,7 @@ class box_shipments extends ModeleBoxes
 			} else {
 				$this->info_box_contents[0][0] = array(
 					'td' => '',
-					'maxlength'=>500,
+					'maxlength' => 500,
 					'text' => ($this->db->error().' sql='.$sql),
 				);
 			}
@@ -185,9 +189,9 @@ class box_shipments extends ModeleBoxes
 	/**
 	 *	Method to show box
 	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
+	 *	@param	?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}	$head	Array with properties of box title
+	 *	@param	?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>	$contents	Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *	@return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)

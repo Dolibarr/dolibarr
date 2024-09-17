@@ -68,7 +68,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr';
 
@@ -119,10 +119,10 @@ class pdf_storm extends ModelePDFDeliveryOrder
 	 *  @param      Delivery	$object				Object to generate
 	 *  @param      Translate	$outputlangs		Lang output object
 	 *  @param      string		$srctemplatepath	Full path of source filename for generator using a template file
-	 *  @param      int			$hidedetails		Do not show line details
-	 *  @param      int			$hidedesc			Do not show desc
-	 *  @param      int			$hideref			Do not show ref
-	 *  @return     int             			1=OK, 0=KO
+	 *  @param      int<0,1>	$hidedetails		Do not show line details
+	 *  @param      int<0,1>	$hidedesc			Do not show desc
+	 *  @param      int<0,1>	$hideref			Do not show ref
+	 *  @return     int<0,1>             			1=OK, 0=KO
 	 */
 	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
@@ -230,7 +230,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 				$pdf = pdf_getInstance($this->format);
 				$default_font_size = pdf_getPDFFontSize($outputlangs); // Must be after pdf_getInstance
 				$heightforinfotot = 30; // Height reserved to output the info and total part
-				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
+				$heightforfreetext = getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT', 5); // Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
 				if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS')) {
 					$heightforfooter += 6;
@@ -337,7 +337,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 					$pdf->SetDrawColor(192, 192, 192);
 					$pdf->Rect($this->marge_gauche, $tab_top - 1, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_note + 1);
 
-					$tab_height = $tab_height - $height_note;
+					$tab_height -= $height_note;
 					$tab_top = $nexY + 6;
 				} else {
 					$height_note = 0;
@@ -558,7 +558,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 				$this->_pagefoot($pdf, $object, $outputlangs);
 
 				if (method_exists($pdf, 'AliasNbPages')) {
-					$pdf->AliasNbPages();
+					$pdf->AliasNbPages();  // @phan-suppress-current-line PhanUndeclaredMethod
 				}
 
 				$pdf->Close();
@@ -815,14 +815,14 @@ class pdf_storm extends ModelePDFDeliveryOrder
 
 			$carac_client_name = pdfBuildThirdpartyName($thirdparty, $outputlangs);
 
-			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ($usecontact ? $object->contact : ''), $usecontact, 'target', $object);
+			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ($usecontact ? $object->contact : ''), ($usecontact ? 1 : 0), 'target', $object);
 
 			// Show recipient
 			$widthrecbox = 100;
 			if ($this->page_largeur < 210) {
 				$widthrecbox = 84; // To work with US executive format
 			}
-			$posy = 42;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$posy = 42;
 			$posx = $this->page_largeur - $this->marge_droite - $widthrecbox;
 			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
 				$posx = $this->marge_gauche;
@@ -932,7 +932,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 			),
 		);
 
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['photo'] = array(
 			'rank' => $rank,
 			'width' => getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH', 20), // in mm
@@ -952,7 +952,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 		}
 
 
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['Comments'] = array(
 			'rank' => $rank,
 			'width' => 50, // in mm
@@ -963,7 +963,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 			'border-left' => true, // add left line separator
 		);
 
-		//      $rank = $rank + 10;
+		//      $rank += 10;
 		//      $this->cols['weight'] = array(
 		//          'rank' => $rank,
 		//          'width' => 30, // in mm
@@ -974,7 +974,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 		//          'border-left' => true, // add left line separator
 		//      );
 
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['qty_shipped'] = array(
 			'rank' => $rank,
 			'width' => 20, // in mm
@@ -985,7 +985,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 			'border-left' => true, // add left line separator
 		);
 
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['qty_remaining'] = array(
 			'rank' => $rank,
 			'width' => 20, // in mm

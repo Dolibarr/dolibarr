@@ -103,10 +103,10 @@ class modIncoterm extends DolibarrModules
 
 		// Permissions
 		$this->rights = array(); // Permission array used by this module
-		$r = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$r = 0;
 
 		// Main menu entries
 		$this->menu = array(); // List of menus to add
-		$r = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$r = 0;
 	}
 }

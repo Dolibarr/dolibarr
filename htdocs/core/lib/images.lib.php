@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -508,13 +509,13 @@ function correctExifImageOrientation($fileSource, $fileDest, $quality = 95)
  *    	@param     int		$quality        	Quality of compression (0=worst, 100=best)
  *      @param     string	$outdir           	Directory where to store thumb
  *      @param     int		$targetformat     	New format of target (IMAGETYPE_GIF, IMAGETYPE_JPG, IMAGETYPE_PNG, IMAGETYPE_BMP, IMAGETYPE_WBMP ... or 0 to keep old format)
- *    	@return    string|0						Full path of thumb or '' if it fails or 'Error...' if it fails, or 0 if it fails to detect the type of image
+ *    	@return    string|int<0,0>				Full path of thumb or '' if it fails or 'Error...' if it fails, or 0 if it fails to detect the type of image
  */
 function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small', $quality = 50, $outdir = 'thumbs', $targetformat = 0)
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-	global $conf, $langs;
+	global $langs;
 
 	dol_syslog("vignette file=".$file." extName=".$extName." maxWidth=".$maxWidth." maxHeight=".$maxHeight." quality=".$quality." outdir=".$outdir." targetformat=".$targetformat);
 
@@ -632,7 +633,8 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 	}
 
 	// Before PHP8, img was a resource, With PHP8, it is a GdImage
-	if (!is_resource($img) && class_exists('GdImage') && !($img instanceof GdImage)) {
+	// if (!is_resource($img) && class_exists('GdImage') && !($img instanceof GdImage)) {
+	if (is_null($img) || $img === false) {
 		dol_syslog('Failed to detect type of image. We found infoImg[2]='.$infoImg[2], LOG_WARNING);
 		return 0;
 	}
@@ -811,4 +813,19 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 	imagedestroy($imgThumb);
 
 	return $imgThumbName;
+}
+
+
+/**
+ * Beautify an image by adding a link edit and delete on image
+ *
+ * @param	string		$htmlid			ID of HTML img tag
+ * @param	string		$urledit		URL to submit to edit Image
+ * @param	string		$urldelete		URL to call when deleting the image
+ * @return	string						HTML and JS code to manage the update/delete of image.
+ */
+function imgAddEditDeleteButton($htmlid, $urledit, $urldelete)
+{
+	// TODO
+	return '';
 }

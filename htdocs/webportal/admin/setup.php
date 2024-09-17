@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT . "/webportal/lib/webportal.lib.php";
 // Translations
 $langs->loadLangs(array("admin", "webportal", "website"));
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('webportalsetup', 'globalsetup'));
 
 // Parameters
@@ -60,6 +60,18 @@ if (!class_exists('FormSetup')) {
 	require_once DOL_DOCUMENT_ROOT . '/core/class/html.formsetup.class.php';
 }
 $formSetup = new FormSetup($db);
+
+
+// Add logged user
+//$formSetup->newItem('WEBPORTAL_USER_LOGGED2')->setAsSelectUser();
+// only enabled users
+$userList = $formSetup->form->select_dolusers(getDolGlobalInt('WEBPORTAL_USER_LOGGED'), 'WEBPORTAL_USER_LOGGED', 1, null, 0, '', '', '0', 0, 0, '', 0, '', '', 1, 2);
+
+$item = $formSetup->newItem('WEBPORTAL_USER_LOGGED');
+$item->setAsSelect($userList);
+$item->picto = 'user';
+$item->helpText = $langs->transnoentities('WebPortalUserLoggedHelp');
+// TODO Add a property mandatory to set style to "fieldrequired" and to add a check in submit
 
 
 // root url
@@ -115,15 +127,6 @@ if (isModEnabled('member')) {
 	$item->helpText = $langs->transnoentities('WebPortalMemberCardAccessHelp');
 }
 
-// Add logged user
-//$formSetup->newItem('WEBPORTAL_USER_LOGGED2')->setAsSelectUser();
-// only enabled users
-$userList = $formSetup->form->select_dolusers(getDolGlobalInt('WEBPORTAL_USER_LOGGED'), 'WEBPORTAL_USER_LOGGED', 0, null, 0, '', '', '0', 0, 0, '', 0, '', '', 1, 1);
-
-$item = $formSetup->newItem('WEBPORTAL_USER_LOGGED');
-$item->setAsSelect($userList);
-$item->picto = 'user';
-$item->helpText = $langs->transnoentities('WebPortalUserLoggedHelp');
 
 $setupnotempty += count($formSetup->items);
 

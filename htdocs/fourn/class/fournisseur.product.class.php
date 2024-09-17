@@ -61,6 +61,7 @@ class ProductFournisseur extends Product
 	public $id;
 
 	/**
+	 * @var string
 	 * @deprecated
 	 * @see $ref_supplier
 	 */
@@ -82,11 +83,12 @@ class ProductFournisseur extends Product
 	public $desc_supplier;
 
 	/**
-	 * @var float		The VAT rate by default for this {supplier, qty, product}. Can be set by get_buyprice().
+	 * @var string		The VAT rate by default for this {supplier, qty, product}. Can be set by get_buyprice().
 	 */
 	public $vatrate_supplier;
 
 	/**
+	 * @var int
 	 * @deprecated
 	 * @see $product_id
 	 */
@@ -391,7 +393,7 @@ class ProductFournisseur extends Product
 		}
 		if ($price_base_type == 'TTC') {
 			$ttx = $tva_tx;
-			$buyprice = $buyprice / (1 + ($ttx / 100));
+			$buyprice /= (1 + ($ttx / 100));
 		}
 
 		// Multicurrency
@@ -406,12 +408,12 @@ class ProductFournisseur extends Product
 			}
 			if ($multicurrency_price_base_type == 'TTC') {
 				$ttx = $tva_tx;
-				$multicurrency_buyprice = $multicurrency_buyprice / (1 + ($ttx / 100));
+				$multicurrency_buyprice /= (1 + ($ttx / 100));
 			}
 			$multicurrency_buyprice = price2num($multicurrency_buyprice, 'MU');
-			$multicurrency_unitBuyPrice = price2num($multicurrency_buyprice / $qty, 'MU');
+			$multicurrency_unitBuyPrice = price2num((float) $multicurrency_buyprice / $qty, 'MU');
 
-			$buyprice = $multicurrency_buyprice / $multicurrency_tx;
+			$buyprice = (float) $multicurrency_buyprice / $multicurrency_tx;
 			$fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $multicurrency_code);
 		}
 
@@ -772,7 +774,7 @@ class ProductFournisseur extends Product
 	 *    @param	int			$limit		Limit
 	 *    @param	int			$offset		Offset
 	 *    @param	int			$socid		Filter on a third party id
-	 *    @return	array|int				Array of ProductFournisseur with new properties to define supplier price
+	 *    @return	ProductFournisseur[]|int<-1,-1>	Array of ProductFournisseur with new properties to define supplier price
 	 *    @see find_min_price_product_fournisseur()
 	 */
 	public function list_product_fournisseur_price($prodid, $sortfield = '', $sortorder = '', $limit = 0, $offset = 0, $socid = 0)
@@ -970,11 +972,11 @@ class ProductFournisseur extends Product
 						if ($price_result >= 0) {
 							$fourn_price = price2num($price_result, 'MU');
 							if ($record["quantity"] != 0) {
-								$fourn_unitprice = price2num($fourn_price / $record["quantity"], 'MU');
+								$fourn_unitprice = price2num((float) $fourn_price / $record["quantity"], 'MU');
 							} else {
 								$fourn_unitprice = $fourn_price;
 							}
-							$fourn_unitprice_with_discount = $fourn_unitprice * (1 - $record["remise_percent"] / 100);
+							$fourn_unitprice_with_discount = (float) $fourn_unitprice * (1 - $record["remise_percent"] / 100);
 						}
 					}
 					if ($fourn_unitprice < $min || $min == -1) {

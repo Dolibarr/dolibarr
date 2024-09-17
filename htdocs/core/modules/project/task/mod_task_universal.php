@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010 Regis Houssin  <regis.houssin@inodbox.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +34,7 @@ class mod_task_universal extends ModeleNumRefTask
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
@@ -82,6 +83,7 @@ class mod_task_universal extends ModeleNumRefTask
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Task"), $langs->transnoentities("Task"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
+		$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
@@ -104,11 +106,11 @@ class mod_task_universal extends ModeleNumRefTask
 	 */
 	public function getExample()
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		$old_code_client = $mysoc->code_client;
 		$mysoc->code_client = 'CCCCCCCCCC';
-		$numExample = $this->getNextValue($mysoc, '');
+		$numExample = $this->getNextValue($mysoc, null);
 		$mysoc->code_client = $old_code_client;
 
 		if (!$numExample) {
@@ -120,13 +122,13 @@ class mod_task_universal extends ModeleNumRefTask
 	/**
 	 *  Return next value
 	 *
-	 *  @param	Societe|string	$objsoc		Object third party
-	 *  @param	Task|string		$object	    Object task
-	 *  @return string|0					Value if OK, 0 if KO
+	 *  @param	null|Societe|string	$objsoc	Object third party
+	 *  @param	null|Task|string	$object	Object Task
+	 *  @return	string|int<-1,0>			Value if OK, <=0 if KO
 	 */
-	public function getNextValue($objsoc = '', $object = '')
+	public function getNextValue($objsoc, $object)
 	{
-		global $db, $conf;
+		global $db;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 

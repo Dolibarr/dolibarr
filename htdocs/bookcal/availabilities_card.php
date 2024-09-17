@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2022 Alice Adminson <aadminson@example.com>
+/* Copyright (C) 2017 		Laurent Destailleur  	<eldy@users.sourceforge.net>
+ * Copyright (C) 2022 		Alice Adminson 			<aadminson@example.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +47,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $dol_openinpopup = GETPOST('dol_openinpopup', 'aZ09');
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Availabilities($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->bookcal->dir_output.'/temp/massgeneration/'.$user->id;
@@ -71,10 +72,10 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 //avoid warning on missing/undef entity
-$object->entity					= (GETPOSTISSET('entity') ? GETPOSTINT('entity') : $conf->entity);
+$object->entity	= ((GETPOSTISSET('entity') && GETPOST('entity') != '') ? GETPOSTINT('entity') : $conf->entity);
 
 // There is several ways to check permission.
 // Set $enablepermissioncheck to 1 to enable a minimum low level of checks
@@ -145,6 +146,11 @@ if (empty($reshook)) {
 	$startyear = GETPOST('startyear', 'int');
 	$starthour = GETPOST('startHour', 'int');
 
+	if ($starthour == "0") {
+		$error++;
+		setEventMessages($langs->trans("ErrorStartHourIsNull"), $hookmanager->errors, 'errors');
+	}
+
 	$dateStartTimestamp = dol_mktime($starthour, 0, 0, $startmonth, $startday, $startyear);
 
 	$endday = GETPOST('endday', 'int');
@@ -152,6 +158,10 @@ if (empty($reshook)) {
 	$endyear = GETPOST('endyear', 'int');
 	$endhour = GETPOST('endHour', 'int');
 
+	if ($endhour == "0") {
+		$error++;
+		setEventMessages($langs->trans("ErrorEndHourIsNull"), $hookmanager->errors, 'errors');
+	}
 
 	$dateEndTimestamp = dol_mktime($endhour, 0, 0, $endmonth, $endday, $endyear);
 
@@ -159,14 +169,14 @@ if (empty($reshook)) {
 	if ($starthour > $endhour) {
 		if ($dateStartTimestamp === $dateEndTimestamp) {
 			$error++;
-			setEventMessages($langs->trans("ErrorEndTimeMustBeGreaterThanStartTime"), null, 'errors');
+			setEventMessages($langs->trans("ErrorEndTimeMustBeGreaterThanStartTime"), $hookmanager->errors, 'errors');
 		}
 	}
 
 	// check date
-	if ($dateStartTimestamp > $dateEndTimestamp) {
+	if (($dateStartTimestamp != "") && ($dateStartTimestamp >= $dateEndTimestamp)) {
 		$error++;
-		setEventMessages($langs->trans("ErrorIncoherentDates"), null, 'errors');
+		setEventMessages($langs->trans("ErrorIncoherentDates"), $hookmanager->errors, 'errors');
 	}
 
 
@@ -214,7 +224,7 @@ $formproject = new FormProjets($db);
 
 $title = $langs->trans("Availabilities");
 $help_url = '';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-bookcal page-card_availabilities');
 
 // Example : Adding jquery code
 // print '<script type="text/javascript">
@@ -239,7 +249,7 @@ if ($action == 'create') {
 		exit;
 	}
 
-	print load_fiche_titre($langs->trans("NewAvailabilities"), '', '', 'object_'.$object->picto);
+	print load_fiche_titre($langs->trans("NewAvailabilities"), '', 'object_'.$object->picto);
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	if ($error != 0) {

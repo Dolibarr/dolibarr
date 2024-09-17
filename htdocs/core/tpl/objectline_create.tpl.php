@@ -6,11 +6,12 @@
  * Copyright (C) 2014		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015-2016	Marcos García		<marcosgdf@gmail.com>
- * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
- * Copyright (C) 2018		Ferran Marcet		<fmarcet@2byte.es>
- * Copyright (C) 2019		Nicolas ZABOURI		<info@inovea-conseil.com>
- * Copyright (C) 2022		OpenDSI				<support@open-dsi.fr>
- * Copyright (C) 2022      	Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2018-2024	Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018       Ferran Marcet       <fmarcet@2byte.es>
+ * Copyright (C) 2019       Nicolas ZABOURI     <info@inovea-conseil.com>
+ * Copyright (C) 2022       OpenDSI             <support@open-dsi.fr>
+ * Copyright (C) 2022       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024       Alexandre Spangaro  <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +26,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Need to have following variables defined:
+ * Need to have the following variables defined:
  * $object (invoice, order, ...)
  * $conf
  * $langs
@@ -142,6 +143,9 @@ if ($nolinesbefore) {
 		// Fields for situation invoice
 		if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 			print '<td class="linecolcycleref right">'.$langs->trans('Progress').'</td>';
+			if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+				print '<td class="nobottom nowrap right"></td>';
+			}
 			print '<td class="linecolcycleref2 right"></td>';
 		}
 		if (!empty($usemargins)) {
@@ -255,9 +259,9 @@ if ($nolinesbefore) {
 				}
 				if (getDolGlobalString('ENTREPOT_EXTRA_STATUS')) {
 					// hide products in closed warehouse, but show products for internal transfer
-					$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500 widthcentpercentminusx', 0, $statuswarehouse, GETPOST('combinations', 'array'));
+					$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, getDolGlobalInt('PRODUIT_LIMIT_SIZE'), $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500 widthcentpercentminusx', 0, $statuswarehouse, GETPOST('combinations', 'array'));
 				} else {
-					$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500 widthcentpercentminusx', 0, '', GETPOST('combinations', 'array'));
+					$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, getDolGlobalInt('PRODUIT_LIMIT_SIZE'), $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500 widthcentpercentminusx', 0, '', GETPOST('combinations', 'array'));
 				}
 				if (getDolGlobalString('MAIN_AUTO_OPEN_SELECT2_ON_FOCUS_FOR_CUSTOMER_PRODUCTS')) {
 					?>
@@ -293,7 +297,7 @@ if ($nolinesbefore) {
 					);
 					$alsoproductwithnosupplierprice = 1;
 				}
-				$form->select_produits_fournisseurs($object->socid, GETPOST('idprodfournprice'), 'idprodfournprice', '', '', $ajaxoptions, 1, $alsoproductwithnosupplierprice, 'minwidth300imp maxwidth500');
+				$form->select_produits_fournisseurs($object->socid, GETPOST('idprodfournprice'), 'idprodfournprice', '', '', $ajaxoptions, 1, $alsoproductwithnosupplierprice, 'minwidth100 maxwidth500 widthcentpercentminusx');
 				if (getDolGlobalString('MAIN_AUTO_OPEN_SELECT2_ON_FOCUS_FOR_SUPPLIER_PRODUCTS')) {
 					?>
 				<script>
@@ -396,7 +400,7 @@ if ($nolinesbefore) {
 		// Editor wysiwyg
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$nbrows = ROWS_2;
-		$enabled = (getDolGlobalString('FCKEDITOR_ENABLE_DETAILS') ? $conf->global->FCKEDITOR_ENABLE_DETAILS : 0);
+		$enabled = getDolGlobalString('FCKEDITOR_ENABLE_DETAILS', '0');
 		if (getDolGlobalString('MAIN_INPUT_DESC_HEIGHT')) {
 			$nbrows = getDolGlobalString('MAIN_INPUT_DESC_HEIGHT');
 		}
@@ -404,7 +408,7 @@ if ($nolinesbefore) {
 		if (getDolGlobalString('FCKEDITOR_ENABLE_DETAILS_FULL')) {
 			$toolbarname = 'dolibarr_notes';
 		}
-		$doleditor = new DolEditor('dp_desc', GETPOST('dp_desc', 'restricthtml'), '', (!getDolGlobalString('MAIN_DOLEDITOR_HEIGHT') ? 100 : $conf->global->MAIN_DOLEDITOR_HEIGHT), $toolbarname, '', false, true, $enabled, $nbrows, '98%');
+		$doleditor = new DolEditor('dp_desc', GETPOST('dp_desc', 'restricthtml'), '', getDolGlobalInt('MAIN_DOLEDITOR_HEIGHT', 100), $toolbarname, '', false, true, $enabled, $nbrows, '98%');
 		$doleditor->Create();
 		// Show autofill date for recurring invoices
 		if (isModEnabled("service") && ($object->element == 'facturerec' || $object->element == 'invoice_supplier_rec')) {
@@ -443,7 +447,7 @@ if ($nolinesbefore) {
 			$type_tva = 2;
 		}
 		if ($seller->tva_assuj == "0") {
-			echo '<input type="hidden" name="tva_tx" id="tva_tx" value="0">'.vatrate(0, true);
+			echo '<input type="hidden" name="tva_tx" id="tva_tx" value="0">'.vatrate('0', true);
 		} else {
 			echo $form->load_tva('tva_tx', (GETPOSTISSET("tva_tx") ? GETPOST("tva_tx", 'alpha', 2) : -1), $seller, $buyer, 0, 0, '', false, 1, $type_tva);
 		}
@@ -494,6 +498,10 @@ if ($nolinesbefore) {
 	if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 		$coldisplay++;
 		print '<td class="nobottom nowrap right"><input class="flat right" type="text" size="1" value="" name="progress"><span class="opacitymedium hideonsmartphone">%</span></td>';
+		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+			$coldisplay++;
+			print '<td class="nobottom nowrap right"></td>';
+		}
 		$coldisplay++;
 		print '<td></td>';
 	}
@@ -1287,7 +1295,13 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 		<?php } ?>
 		/* jQuery("#tva_tx, #title_vat").hide(); */
 		/* jQuery("#title_fourn_ref").hide(); */
-		jQuery("#np_marginRate, #np_markRate, .np_marginRate, .np_markRate, #units, #title_units").hide();
+		<?php if (!getDolGlobalString('DISPLAY_MARGIN_RATES')) { ?>
+			jQuery("#np_marginRate, .np_marginRate").hide();
+		<?php } ?>
+		<?php if (!getDolGlobalString('DISPLAY_MARK_RATES')) { ?>
+			jQuery("#np_markRate, .np_markRate").hide();
+		<?php } ?>
+		jQuery(#units, #title_units").hide();
 		jQuery("#buying_price").show();
 		jQuery('#trlinefordates, .divlinefordates').show();
 	}

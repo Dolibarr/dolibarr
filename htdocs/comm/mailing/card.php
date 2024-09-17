@@ -3,7 +3,8 @@
  * Copyright (C) 2005-2019	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2016	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2021		Waël Almoman            <info@almoman.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,7 +52,7 @@ $cancel = GETPOST('cancel', 'aZ09');
 $urlfrom = GETPOST('urlfrom');
 $backtopageforcancel = GETPOST('backtopageforcancel');
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Mailing($db);
 $extrafields = new ExtraFields($db);
 $hookmanager->initHooks(array('mailingcard', 'globalcard'));
@@ -60,7 +61,7 @@ $hookmanager->initHooks(array('mailingcard', 'globalcard'));
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 // Array of possible substitutions (See also file mailing-send.php that should manage same substitutions)
 $object->substitutionarray = FormMail::getAvailableSubstitKey('emailing');
@@ -290,19 +291,19 @@ if (empty($reshook)) {
 							$substitutionarray['__ONLINEPAYMENTLINK_INVOICE__'] = getHtmlOnlinePaymentLink('invoice', $obj->source_id);
 							$substitutionarray['__ONLINEPAYMENTLINK_CONTRACTLINE__'] = getHtmlOnlinePaymentLink('contractline', $obj->source_id);
 
-							$substitutionarray['__SECUREKEYPAYMENT__'] = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN'), 2);
+							$substitutionarray['__SECUREKEYPAYMENT__'] = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN'), '2');
 							if (!getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
-								$substitutionarray['__SECUREKEYPAYMENT_MEMBER__'] = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN'), 2);
-								$substitutionarray['__SECUREKEYPAYMENT_DONATION__'] = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN'), 2);
-								$substitutionarray['__SECUREKEYPAYMENT_ORDER__'] = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN'), 2);
-								$substitutionarray['__SECUREKEYPAYMENT_INVOICE__'] = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN'), 2);
-								$substitutionarray['__SECUREKEYPAYMENT_CONTRACTLINE__'] = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN'), 2);
+								$substitutionarray['__SECUREKEYPAYMENT_MEMBER__'] = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN'), '2');
+								$substitutionarray['__SECUREKEYPAYMENT_DONATION__'] = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN'), '2');
+								$substitutionarray['__SECUREKEYPAYMENT_ORDER__'] = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN'), '2');
+								$substitutionarray['__SECUREKEYPAYMENT_INVOICE__'] = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN'), '2');
+								$substitutionarray['__SECUREKEYPAYMENT_CONTRACTLINE__'] = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN'), '2');
 							} else {
-								$substitutionarray['__SECUREKEYPAYMENT_MEMBER__'] = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . 'member'.$obj->source_id, 2);
-								$substitutionarray['__SECUREKEYPAYMENT_DONATION__'] = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . 'donation'.$obj->source_id, 2);
-								$substitutionarray['__SECUREKEYPAYMENT_ORDER__'] = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . 'order'.$obj->source_id, 2);
-								$substitutionarray['__SECUREKEYPAYMENT_INVOICE__'] = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . 'invoice'.$obj->source_id, 2);
-								$substitutionarray['__SECUREKEYPAYMENT_CONTRACTLINE__'] = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . 'contractline'.$obj->source_id, 2);
+								$substitutionarray['__SECUREKEYPAYMENT_MEMBER__'] = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . 'member'.$obj->source_id, '2');
+								$substitutionarray['__SECUREKEYPAYMENT_DONATION__'] = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . 'donation'.$obj->source_id, '2');
+								$substitutionarray['__SECUREKEYPAYMENT_ORDER__'] = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . 'order'.$obj->source_id, '2');
+								$substitutionarray['__SECUREKEYPAYMENT_INVOICE__'] = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . 'invoice'.$obj->source_id, '2');
+								$substitutionarray['__SECUREKEYPAYMENT_CONTRACTLINE__'] = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . 'contractline'.$obj->source_id, '2');
 							}
 						}
 						if (getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
@@ -310,30 +311,30 @@ if (empty($reshook)) {
 						}
 						/* For backward compatibility, deprecated */
 						if (isModEnabled('paypal') && getDolGlobalString('PAYPAL_SECURITY_TOKEN')) {
-							$substitutionarray['__SECUREKEYPAYPAL__'] = dol_hash(getDolGlobalString('PAYPAL_SECURITY_TOKEN'), 2);
+							$substitutionarray['__SECUREKEYPAYPAL__'] = dol_hash(getDolGlobalString('PAYPAL_SECURITY_TOKEN'), '2');
 
 							if (!getDolGlobalString('PAYPAL_SECURITY_TOKEN_UNIQUE')) {
-								$substitutionarray['__SECUREKEYPAYPAL_MEMBER__'] = dol_hash(getDolGlobalString('PAYPAL_SECURITY_TOKEN'), 2);
+								$substitutionarray['__SECUREKEYPAYPAL_MEMBER__'] = dol_hash(getDolGlobalString('PAYPAL_SECURITY_TOKEN'), '2');
 							} else {
-								$substitutionarray['__SECUREKEYPAYPAL_MEMBER__'] = dol_hash(getDolGlobalString('PAYPAL_SECURITY_TOKEN') . 'membersubscription'.$obj->source_id, 2);
+								$substitutionarray['__SECUREKEYPAYPAL_MEMBER__'] = dol_hash(getDolGlobalString('PAYPAL_SECURITY_TOKEN') . 'membersubscription'.$obj->source_id, '2');
 							}
 
 							if (!getDolGlobalString('PAYPAL_SECURITY_TOKEN_UNIQUE')) {
-								$substitutionarray['__SECUREKEYPAYPAL_ORDER__'] = dol_hash(getDolGlobalString('PAYPAL_SECURITY_TOKEN'), 2);
+								$substitutionarray['__SECUREKEYPAYPAL_ORDER__'] = dol_hash(getDolGlobalString('PAYPAL_SECURITY_TOKEN'), '2');
 							} else {
-								$substitutionarray['__SECUREKEYPAYPAL_ORDER__'] = dol_hash(getDolGlobalString('PAYPAL_SECURITY_TOKEN') . 'order'.$obj->source_id, 2);
+								$substitutionarray['__SECUREKEYPAYPAL_ORDER__'] = dol_hash(getDolGlobalString('PAYPAL_SECURITY_TOKEN') . 'order'.$obj->source_id, '2');
 							}
 
 							if (!getDolGlobalString('PAYPAL_SECURITY_TOKEN_UNIQUE')) {
-								$substitutionarray['__SECUREKEYPAYPAL_INVOICE__'] = dol_hash(getDolGlobalString('PAYPAL_SECURITY_TOKEN'), 2);
+								$substitutionarray['__SECUREKEYPAYPAL_INVOICE__'] = dol_hash(getDolGlobalString('PAYPAL_SECURITY_TOKEN'), '2');
 							} else {
-								$substitutionarray['__SECUREKEYPAYPAL_INVOICE__'] = dol_hash(getDolGlobalString('PAYPAL_SECURITY_TOKEN') . 'invoice'.$obj->source_id, 2);
+								$substitutionarray['__SECUREKEYPAYPAL_INVOICE__'] = dol_hash(getDolGlobalString('PAYPAL_SECURITY_TOKEN') . 'invoice'.$obj->source_id, '2');
 							}
 
 							if (!getDolGlobalString('PAYPAL_SECURITY_TOKEN_UNIQUE')) {
-								$substitutionarray['__SECUREKEYPAYPAL_CONTRACTLINE__'] = dol_hash(getDolGlobalString('PAYPAL_SECURITY_TOKEN'), 2);
+								$substitutionarray['__SECUREKEYPAYPAL_CONTRACTLINE__'] = dol_hash(getDolGlobalString('PAYPAL_SECURITY_TOKEN'), '2');
 							} else {
-								$substitutionarray['__SECUREKEYPAYPAL_CONTRACTLINE__'] = dol_hash(getDolGlobalString('PAYPAL_SECURITY_TOKEN') . 'contractline'.$obj->source_id, 2);
+								$substitutionarray['__SECUREKEYPAYPAL_CONTRACTLINE__'] = dol_hash(getDolGlobalString('PAYPAL_SECURITY_TOKEN') . 'contractline'.$obj->source_id, '2');
 							}
 						}
 						//$substitutionisok=true;
@@ -427,7 +428,7 @@ if (empty($reshook)) {
 							dol_syslog("comm/mailing/card.php: error for #".$iforemailloop.($mail->error ? ' - '.$mail->error : ''), LOG_WARNING);
 
 							$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
-							$sql .= " SET statut=-1, error_text='".$db->escape($mail->error)."', date_envoi='".$db->idate($now)."' WHERE rowid=".((int) $obj->rowid);
+							$sql .= " SET statut=-1, error_text='".$db->escape(substr($mail->error, 0, 255))."', date_envoi='".$db->idate($now)."' WHERE rowid=".((int) $obj->rowid);
 							$resql2 = $db->query($sql);
 							if (!$resql2) {
 								dol_print_error($db);
@@ -588,19 +589,19 @@ if (empty($reshook)) {
 	if (($action == 'settitle' || $action == 'setemail_from' || $action == 'setemail_replyto' || $action == 'setreplyto' || $action == 'setemail_errorsto' || $action == 'setevenunsubscribe') && $permissiontovalidatesend) {
 		$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, 2, 0, 1, $object, 'mailing');
 
-		if ($action == 'settitle') {
+		if ($action == 'settitle') {					// Test on permission already done
 			$object->title = trim(GETPOST('title', 'alpha'));
-		} elseif ($action == 'setemail_from') {
+		} elseif ($action == 'setemail_from') {			// Test on permission already done
 			$object->email_from = trim(GETPOST('email_from', 'alphawithlgt')); // Must allow 'name <email>'
-		} elseif ($action == 'setemail_replyto') {
+		} elseif ($action == 'setemail_replyto') {		// Test on permission already done
 			$object->email_replyto = trim(GETPOST('email_replyto', 'alphawithlgt')); // Must allow 'name <email>'
-		} elseif ($action == 'setemail_errorsto') {
+		} elseif ($action == 'setemail_errorsto') {		// Test on permission already done
 			$object->email_errorsto = trim(GETPOST('email_errorsto', 'alphawithlgt')); // Must allow 'name <email>'
-		} elseif ($action == 'settitle' && empty($object->title)) {
+		} elseif ($action == 'settitle' && empty($object->title)) {		// Test on permission already done
 			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailTitle"));
-		} elseif ($action == 'setfrom' && empty($object->email_from)) {
+		} elseif ($action == 'setfrom' && empty($object->email_from)) {	// Test on permission already done
 			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailFrom"));
-		} elseif ($action == 'setevenunsubscribe') {
+		} elseif ($action == 'setevenunsubscribe') {	// Test on permission already done
 			$object->evenunsubscribe = (GETPOST('evenunsubscribe') ? 1 : 0);
 		}
 
@@ -771,7 +772,7 @@ llxHeader(
 );
 
 
-if ($action == 'create') {
+if ($action == 'create') {	// aaa
 	// EMailing in creation mode
 	print '<form name="new_mailing" action="'.$_SERVER['PHP_SELF'].'" method="POST">'."\n";
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -845,15 +846,15 @@ if ($action == 'create') {
 	print '<br><br>';
 
 	print '<table class="border centpercent">';
-	print '<tr class="fieldsforemail"><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTopic").'</td><td><input class="flat minwidth200 quatrevingtpercent" name="sujet" value="'.dol_escape_htmltag(GETPOST('sujet', 'alphanohtml')).'"></td></tr>';
+	print '<tr class="fieldsforemail"><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTopic").'</td><td><input id="sujet" class="flat minwidth200 quatrevingtpercent" name="sujet" value="'.dol_escape_htmltag(GETPOST('sujet', 'alphanohtml')).'"></td></tr>';
 	print '<tr class="fieldsforemail"><td>'.$langs->trans("BackgroundColorByDefault").'</td><td colspan="3">';
 	print $htmlother->selectColor(GETPOST('bgcolor'), 'bgcolor', '', 0);
 	print '</td></tr>';
 
 	$formmail = new FormMail($db);
 	$formmail->withfckeditor = 1;
-	$formmail->withaiprompt = 'html';
 	$formmail->withlayout = 1;
+	$formmail->withaiprompt = 'html';
 
 	print '<tr class="fieldsforemail"><td></td><td class="tdtop">';
 
@@ -908,9 +909,7 @@ if ($action == 'create') {
 		if ($action != 'edit' && $action != 'edittxt' && $action != 'edithtml') {
 			print dol_get_fiche_head($head, 'card', $langs->trans("Mailing"), -1, 'email');
 
-			/*
-			 * View mode mailing
-			 */
+			// View mode mailing
 			if ($action == 'sendall') {
 				// Define message to recommend from command line
 				$sendingmode = getDolGlobalString('EMAILING_MAIL_SENDMODE');
@@ -976,7 +975,7 @@ if ($action == 'create') {
 
 					if (!isset($conf->global->MAILING_LIMIT_SENDBYCLI) || getDolGlobalInt('MAILING_LIMIT_SENDBYCLI') >= 0) {
 						$text .= '<br><br>';
-						$text .= $langs->trans("MailingNeedCommand");
+						$text .= '<u>'.$langs->trans("AdvancedAlternative").':</u> '.$langs->trans("MailingNeedCommand");
 						$text .= '<br><textarea class="quatrevingtpercent" rows="'.ROWS_2.'" wrap="soft" disabled>php ./scripts/emailings/mailing-send.php '.$object->id.' '.$user->login.'</textarea>';
 					}
 
@@ -1034,14 +1033,20 @@ if ($action == 'create') {
 				print $form->editfieldkey("MailErrorsTo", 'email_errorsto', $object->email_errorsto, $object, $user->hasRight('mailing', 'creer') && $object->status < $object::STATUS_SENTCOMPLETELY, 'string');
 				print '</td><td>';
 				print $form->editfieldval("MailErrorsTo", 'email_errorsto', $object->email_errorsto, $object, $user->hasRight('mailing', 'creer') && $object->status < $object::STATUS_SENTCOMPLETELY, 'string');
-				$email = CMailFile::getValidAddress($object->email_errorsto, 2);
-				if ($action != 'editemail_errorsto') {
-					if ($email && !isValidEmail($email)) {
-						$langs->load("errors");
-						print img_warning($langs->trans("ErrorBadEMail", $email));
-					} elseif ($email && !isValidMailDomain($email)) {
-						$langs->load("errors");
-						print img_warning($langs->trans("ErrorBadMXDomain", $email));
+				$emailarray = CMailFile::getArrayAddress($object->email_errorsto);
+				foreach ($emailarray as $email => $name) {
+					if ($name != $email) {
+						print dol_escape_htmltag($name).' &lt;'.$email;
+						print '&gt;';
+						if ($email && !isValidEmail($email)) {
+							$langs->load("errors");
+							print img_warning($langs->trans("ErrorBadEMail", $email));
+						} elseif ($email && !isValidMailDomain($email)) {
+							$langs->load("errors");
+							print img_warning($langs->trans("ErrorBadMXDomain", $email));
+						}
+					} else {
+						print dol_print_email($object->email_errorsto, 0, 0, 0, 0, 1);
 					}
 				}
 				print '</td></tr>';
@@ -1081,9 +1086,9 @@ if ($action == 'create') {
 			$nbemail = ($object->nbemail ? $object->nbemail : 0);
 			if (is_numeric($nbemail)) {
 				$text = '';
-				if ((getDolGlobalString('MAILING_LIMIT_SENDBYWEB') && getDolGlobalInt('MAILING_LIMIT_SENDBYWEB') < $nbemail) && ($object->statut == 1 || ($object->statut == 2 && $nbtry < $nbemail))) {
+				if ((getDolGlobalString('MAILING_LIMIT_SENDBYWEB') && getDolGlobalInt('MAILING_LIMIT_SENDBYWEB') < $nbemail) && ($object->status == 1 || ($object->status == 2 && $nbtry < $nbemail))) {
 					if (getDolGlobalInt('MAILING_LIMIT_SENDBYWEB') > 0) {
-						$text .= $langs->trans('LimitSendingEmailing', getDolGlobalInt('MAILING_LIMIT_SENDBYWEB'));
+						$text .= $langs->trans('LimitSendingEmailing', getDolGlobalString('MAILING_LIMIT_SENDBYWEB'));
 					} else {
 						$text .= $langs->trans('SendingFromWebInterfaceIsNotAllowed');
 					}
@@ -1158,7 +1163,7 @@ if ($action == 'create') {
 
 				if (($object->status == 0 || $object->status == 1 || $object->status == 2) && $user->hasRight('mailing', 'creer')) {
 					if (isModEnabled('fckeditor') && getDolGlobalString('FCKEDITOR_ENABLE_MAILING') && $object->messtype != 'sms') {
-						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("EditHTML").'</a>';
+						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Edit").'</a>';
 					} else {
 						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edittxt&token='.newToken().'&id='.$object->id.'">'.$langs->trans("EditWithTextEditor").'</a>';
 					}

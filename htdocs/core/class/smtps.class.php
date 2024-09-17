@@ -5,6 +5,7 @@
  * Copyright (C) 2006-2011 Regis Houssin
  * Copyright (C) 2016      Jonathan TISSEAU     <jonathan.tisseau@86dev.fr>
  * Copyright (C) 2024      MDW                  <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -209,7 +210,7 @@ class SMTPs
 	 * If '$_transportType' is set to '1', then this variable is used
 	 * to define the UNIX file system path to the sendmail executable
 	 */
-	private $_mailPath = '/usr/lib/sendmail';
+	private $_mailPath = '/usr/lib/sendmail'; // @phpstan-ignore-line
 
 	/**
 	 * Sets the SMTP server timeout in seconds.
@@ -233,7 +234,7 @@ class SMTPs
 	 *  2 - message generation logging
 	 *  3 - detail logging
 	 */
-	private $_log_level = 0;
+	private $_log_level = 0; // @phpstan-ignore-line
 
 	/**
 	 * Place Class in" debug" mode
@@ -1598,7 +1599,7 @@ class SMTPs
 		$this->_msgContent[$strType]['dataText'] = $strContentAltText;
 
 		if ($this->getMD5flag()) {
-			$this->_msgContent[$strType]['md5'] = dol_hash($strContent, 3);
+			$this->_msgContent[$strType]['md5'] = dol_hash($strContent, '3');
 		}
 		//}
 	}
@@ -1778,7 +1779,7 @@ class SMTPs
 			$this->_msgContent['attachment'][$strFileName]['cid']      = $strCid;		// If defined, it means this attachment must be shown inline
 
 			if ($this->getMD5flag()) {
-				$this->_msgContent['attachment'][$strFileName]['md5'] = dol_hash($strContent, 3);
+				$this->_msgContent['attachment'][$strFileName]['md5'] = dol_hash($strContent, '3');
 			}
 		}
 	}
@@ -1805,7 +1806,7 @@ class SMTPs
 			$this->_msgContent['image'][$strImageName]['data']     = $strContent;
 
 			if ($this->getMD5flag()) {
-				$this->_msgContent['image'][$strImageName]['md5'] = dol_hash($strContent, 3);
+				$this->_msgContent['image'][$strImageName]['md5'] = dol_hash($strContent, '3');
 			}
 		}
 	}
@@ -1940,8 +1941,8 @@ class SMTPs
 	private function _setBoundary()
 	{
 		$this->_smtpsBoundary = "multipart_x.".time().".x_boundary";
-		$this->_smtpsRelatedBoundary = 'mul_'.dol_hash(uniqid("dolibarr2"), 3);
-		$this->_smtpsAlternativeBoundary = 'mul_'.dol_hash(uniqid("dolibarr3"), 3);
+		$this->_smtpsRelatedBoundary = 'mul_'.dol_hash(uniqid("dolibarr2"), '3');
+		$this->_smtpsAlternativeBoundary = 'mul_'.dol_hash(uniqid("dolibarr3"), '3');
 	}
 
 	/**

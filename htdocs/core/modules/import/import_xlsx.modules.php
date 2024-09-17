@@ -4,6 +4,7 @@
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2012-2016 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,7 @@
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 require_once DOL_DOCUMENT_ROOT . '/core/modules/import/modules_import.php';
 
@@ -49,26 +51,34 @@ class ImportXlsx extends ModeleImports
 	public $id;
 
 	/**
-	 * @var string label
-	 */
-	public $label;
-
-	public $extension; // Extension of files imported by driver
-
-	/**
 	 * Dolibarr version of driver
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr';
 
+	/**
+	 * @var string
+	 */
 	public $label_lib; // Label of external lib used by driver
 
+	/**
+	 * @var string
+	 */
 	public $version_lib; // Version of external lib used by driver
 
+	/**
+	 * @var string
+	 */
 	public $separator;
 
+	/**
+	 * @var string
+	 */
 	public $file; // Path of file
 
+	/**
+	 * @var resource
+	 */
 	public $handle; // Handle fichier
 
 	public $cacheconvert = array(); // Array to cache list of value found after a conversion
@@ -79,10 +89,19 @@ class ImportXlsx extends ModeleImports
 
 	public $nbupdate = 0; // # of update done during the import
 
+	/**
+	 * @var \PhpOffice\PhpSpreadsheet\Spreadsheet
+	 */
 	public $workbook; // temporary import file
 
+	/**
+	 * @var int
+	 */
 	public $record; // current record
 
+	/**
+	 * @var array<int,mixed>
+	 */
 	public $headers;
 
 
@@ -94,7 +113,7 @@ class ImportXlsx extends ModeleImports
 	 */
 	public function __construct($db, $datatoimport)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		parent::__construct();
 		$this->db = $db;
@@ -106,6 +125,14 @@ class ImportXlsx extends ModeleImports
 		$this->extension = 'xlsx'; // Extension for generated file by this driver
 		$this->picto = 'mime/xls'; // Picto (This is not used by the example file code as Mime type, too bad ...)
 		$this->version = '1.0'; // Driver version
+		$this->phpmin = array(7, 1); // Minimum version of PHP required by module
+
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+		if (versioncompare($this->phpmin, versionphparray()) > 0) {
+			dol_syslog("Module need a higher PHP version");
+			$this->error = "Module need a higher PHP version";
+			return;
+		}
 
 		// If driver use an external library, put its name here
 		require_once DOL_DOCUMENT_ROOT.'/includes/phpoffice/phpspreadsheet/src/autoloader.php';
@@ -158,7 +185,7 @@ class ImportXlsx extends ModeleImports
 	 * 	Output title line of an example file for this format
 	 *
 	 * 	@param	Translate	$outputlangs		Output language
-	 *  @param	array		$headerlinefields	Array of fields name
+	 *  @param	string[]	$headerlinefields	Array of fields name
 	 * 	@return	string							String output
 	 */
 	public function write_title_example($outputlangs, $headerlinefields)
@@ -184,7 +211,7 @@ class ImportXlsx extends ModeleImports
 	 * 	Output record of an example file for this format
 	 *
 	 * 	@param	Translate	$outputlangs		Output language
-	 * 	@param	array		$contentlinevalues	Array of lines
+	 * 	@param	mixed[]		$contentlinevalues	Array of lines
 	 * 	@return	string							Empty string
 	 */
 	public function write_record_example($outputlangs, $contentlinevalues)
@@ -300,22 +327,34 @@ class ImportXlsx extends ModeleImports
 	public function import_read_record()
 	{
 		// phpcs:enable
-		global $conf;
-
 		$rowcount = $this->workbook->getActiveSheet()->getHighestDataRow();
 		if ($this->record > $rowcount) {
 			return false;
 		}
 		$array = array();
+
 		$xlsx = new Xlsx();
 		$info = $xlsx->listWorksheetinfo($this->file);
 		$countcolumns = $info[0]['totalColumns'];
+
 		for ($col = 1; $col <= $countcolumns; $col++) {
-			$val = $this->workbook->getActiveSheet()->getCellByColumnAndRow($col, $this->record)->getValue();
+			$tmpcell = $this->workbook->getActiveSheet()->getCellByColumnAndRow($col, $this->record);
+
+			$val = $tmpcell->getValue();
+
+			if (Date::isDateTime($tmpcell)) {
+				// For date field, we use the standard date format string.
+				$dateValue = Date::excelToDateTimeObject($val);
+				$val = $dateValue->format('Y-m-d H:i:s');
+			}
+
 			$array[$col]['val'] = $val;
 			$array[$col]['type'] = (dol_strlen($val) ? 1 : -1); // If empty we consider it null
 		}
 		$this->record++;
+
+		unset($xlsx);
+
 		return $array;
 	}
 
@@ -339,12 +378,12 @@ class ImportXlsx extends ModeleImports
 	/**
 	 * Insert a record into database
 	 *
-	 * @param	array	$arrayrecord					Array of read values: [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=string), [fieldpos+1]...
-	 * @param	array	$array_match_file_to_database	Array of target fields where to insert data: [fieldpos] => 's.fieldname', [fieldpos+1]...
-	 * @param 	Object	$objimport						Object import (contains objimport->array_import_tables, objimport->array_import_fields, objimport->array_import_convertvalue, ...)
-	 * @param	int		$maxfields						Max number of fields to use
-	 * @param	string	$importid						Import key
-	 * @param	array	$updatekeys						Array of keys to use to try to do an update first before insert. This field are defined into the module descriptor.
+	 * @param	array<int,array{val:mixed,type:int}>|bool	$arrayrecord			Array of read values: [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=string), [fieldpos+1]...
+	 * @param	array<int|string,string>	$array_match_file_to_database	Array of target fields where to insert data: [fieldpos] => 's.fieldname', [fieldpos+1]...
+	 * @param 	Object		$objimport						Object import (contains objimport->array_import_tables, objimport->array_import_fields, objimport->array_import_convertvalue, ...)
+	 * @param	int			$maxfields						Max number of fields to use
+	 * @param	string		$importid						Import key
+	 * @param	string[]	$updatekeys						Array of keys to use to try to do an update first before insert. This field are defined into the module descriptor.
 	 * @return	int										Return integer <0 if KO, >0 if OK
 	 */
 	public function import_insert($arrayrecord, $array_match_file_to_database, $objimport, $maxfields, $importid, $updatekeys)
@@ -406,7 +445,7 @@ class ImportXlsx extends ModeleImports
 					//dol_syslog("Table ".$tablename." check for entity into cache is ".$tablewithentity_cache[$tablename]);
 				}
 
-				// Define array to convert fields ('c.ref', ...) into column index (1, ...)
+				// Define an array to convert fields ('c.ref', ...) into column index (1, ...)
 				$arrayfield = array();
 				foreach ($sort_array_match_file_to_database as $key => $val) {
 					$arrayfield[$val] = ($key);
@@ -630,7 +669,7 @@ class ImportXlsx extends ModeleImports
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getcustomeraccountancycodeifauto') {
 									if (strtolower($newval) == 'auto') {
 										$this->thirdpartyobject->get_codecompta('customer');
-										$newval = $this->thirdpartyobject->code_compta;
+										$newval = $this->thirdpartyobject->code_compta_client;
 										//print 'code_compta='.$newval;
 									}
 									if (empty($newval)) {
@@ -658,6 +697,7 @@ class ImportXlsx extends ModeleImports
 										if (!empty($classModForNumber) && !empty($pathModForNumber) && is_readable(DOL_DOCUMENT_ROOT.$pathModForNumber)) {
 											require_once DOL_DOCUMENT_ROOT.$pathModForNumber;
 											$modForNumber = new $classModForNumber();
+											'@phan-var-force ModeleNumRefMembers|ModeleNumRefCommandes|ModeleNumRefSuppliersInvoices|ModeleNumRefSuppliersOrders|ModeleNumRefProjects|ModeleNumRefTask|ModeleNumRefPropales $modForNumber';
 
 											$tmpobject = null;
 											// Set the object with the date property when we can
@@ -883,10 +923,16 @@ class ImportXlsx extends ModeleImports
 									}
 								} else {
 									$this->errors[$error]['type'] = 'CLASSERROR';
-									$this->errors[$error]['lib'] = implode(
-										"\n",
-										array_merge([$classinstance->error], $classinstance->errors)
-									);
+									if (is_object($classinstance)) {
+										$this->errors[$error]['lib'] = implode(
+											"\n",
+											array_merge([$classinstance->error], $classinstance->errors)
+										);
+									} else {
+										$this->errors[$error]['lib']
+											= "Unexpected rule ".$objimport->array_import_convertvalue[0][$fieldname]['rule'];
+									}
+
 									$errorforthistable++;
 									$error++;
 								}
@@ -924,6 +970,7 @@ class ImportXlsx extends ModeleImports
 								$data = array_combine($listfields, $listvalues);
 
 								$where = array();	// filters to forge SQL request
+								// @phpstan-ignore-next-line
 								'@phan-var string[] $where';
 								$filters = array();	// filters to forge output error message
 								foreach ($updatekeys as $key) {

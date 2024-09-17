@@ -3,6 +3,7 @@
  * Copyright (C) 2006-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2010       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,7 +53,7 @@ if (empty($dolibarr_main_demo)) {
 	httponly_accessforbidden('Parameter dolibarr_main_demo must be defined in conf file with value "default login,default pass" to enable the demo entry page');
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $res = $hookmanager->initHooks(array('demo'));
 
 $demoprofiles = array();
@@ -76,34 +77,44 @@ $reshook = $hookmanager->executeHooks('addDemoProfile', $parameters, $object, $t
 $error = $hookmanager->error; $errors = $hookmanager->errors;
 if (empty($reshook)) {
 	$demoprofiles = array(
-		array('default'=>'1', 'key'=>'profdemoservonly', 'label'=>'DemoCompanyServiceOnly',
-		'disablemodules'=>'adherent,barcode,bom,cashdesk,don,expedition,externalsite,ftp,incoterm,mailmanspip,margin,mrp,prelevement,product,productbatch,stock,takepos',
-		//'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot8.png',
-		'icon'=>DOL_URL_ROOT.'/public/demo/demo-profile-service.jpg',
-		'url'=>$url
+		array(
+			'default'=>'1', 'key'=>'profdemoservonly', 'label'=>'DemoCompanyServiceOnly',
+			'disablemodules'=>'adherent,barcode,bom,cashdesk,don,expedition,externalsite,ftp,incoterm,mailmanspip,margin,mrp,prelevement,product,productbatch,stock,takepos',
+			//'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot8.png',
+			'icon'=>DOL_URL_ROOT.'/public/demo/demo-profile-service.jpg',
+			'url'=>$url,
+			'lang' => '',
 		),
-		array('default'=>'0', 'key'=>'profmanufacture', 'label'=>'DemoCompanyManufacturing',
+		array(
+			'default'=>'0', 'key'=>'profmanufacture', 'label'=>'DemoCompanyManufacturing',
 			'disablemodules'=>'adherent,contrat,don,externalsite,ficheinter,ftp,mailmanspip,prelevement,service',
 			'icon'=>DOL_URL_ROOT.'/public/demo/demo-profile-manufacturing.jpg',
-			'url'=>$url
+			'url'=>$url,
+			'lang' => '',
 		),
-		array('default'=>'0', 'key'=>'profdemoprodstock', 'label'=>'DemoCompanyProductAndStocks',
-		'disablemodules'=>'adherent,bom,contrat,don,externalsite,ficheinter,ftp,mailmanspip,mrp,prelevement,service',
-		//'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot2.png',
-		'icon'=>DOL_URL_ROOT.'/public/demo/demo-profile-product.jpg',
-		'url'=>$url
+		array(
+			'default'=>'0', 'key'=>'profdemoprodstock', 'label'=>'DemoCompanyProductAndStocks',
+			'disablemodules'=>'adherent,bom,contrat,don,externalsite,ficheinter,ftp,mailmanspip,mrp,prelevement,service',
+			//'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot2.png',
+			'icon'=>DOL_URL_ROOT.'/public/demo/demo-profile-product.jpg',
+			'url'=>$url,
+			'lang' => '',
 		),
-		array('default'=>'0', 'key'=>'profdemofun2', 'label'=>'DemoFundation2',
-		'disablemodules'=>'barcode,cashdesk,bom,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,ficheinter,ftp,incoterm,mailmanspip,margin,mrp,prelevement,product,productbatch,projet,propal,propale,service,societe,stock,tax,takepos',
-		//'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot6.png',
-		'icon'=>DOL_URL_ROOT.'/public/demo/demo-profile-foundation.jpg',
-		'url'=>$url
+		array(
+			'default'=>'0', 'key'=>'profdemofun2', 'label'=>'DemoFundation2',
+			'disablemodules'=>'barcode,cashdesk,bom,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,ficheinter,ftp,incoterm,mailmanspip,margin,mrp,prelevement,product,productbatch,projet,propal,propale,service,societe,stock,tax,takepos',
+			//'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot6.png',
+			'icon'=>DOL_URL_ROOT.'/public/demo/demo-profile-foundation.jpg',
+			'url'=>$url,
+			'lang' => '',
 		),
 		// All demo profile
-		array('default'=>'0', 'key'=>'profdemoall', 'label'=>'ChooseYourDemoProfilMore',
-		'disablemodules'=>'adherent,cashdesk,don,externalsite,mailmanspip',
-		//'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot9.png'
-		'icon'=>DOL_URL_ROOT.'/public/demo/demo-profile-all.jpg'
+		array(
+			'default'=>'0', 'key'=>'profdemoall', 'label'=>'ChooseYourDemoProfilMore',
+			'disablemodules'=>'adherent,cashdesk,don,externalsite,mailmanspip',
+			//'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot9.png'
+			'icon'=>DOL_URL_ROOT.'/public/demo/demo-profile-all.jpg',
+			'lang' => '',
 		)
 	);
 
@@ -186,7 +197,6 @@ foreach ($modulesdir as $dir) {
 }
 
 asort($orders);
-//var_dump($orders);
 
 
 /*
@@ -222,7 +232,7 @@ if (GETPOST('action', 'aZ09') == 'gotodemo') {     // Action run when we click o
 			$url .= (preg_match('/\?/', $url) ? '&amp;' : '?').'urlfrom='.urlencode(GETPOST('urlfrom', 'alpha'));
 		}
 		$url .= (preg_match('/\?/', $url) ? '&amp;' : '?').'disablemodules='.$disablestring;
-		//var_dump($url);exit;
+
 		header("Location: ".$url);
 		exit;
 	}

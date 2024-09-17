@@ -838,7 +838,7 @@ function dolObfuscateEmail($mail, $replace = "*", $nbreplace = 8, $nbdisplaymail
  * 	Return lines of an html table from an array
  * 	Used by array2table function only
  *
- * 	@param	array	$data		Array of data
+ * 	@param	array<null|int|float|string>	$data		Array of data
  * 	@param	string	$troptions	Options for tr
  * 	@param	string	$tdoptions	Options for td
  * 	@return	string
@@ -847,7 +847,7 @@ function array2tr($data, $troptions = '', $tdoptions = '')
 {
 	$text = '<tr '.$troptions.'>';
 	foreach ($data as $key => $item) {
-		$text .= '<td '.$tdoptions.'>'.$item.'</td>';
+		$text .= '<td '.$tdoptions.'>'.((string) $item).'</td>';
 	}
 	$text .= '</tr>';
 	return $text;
@@ -856,7 +856,7 @@ function array2tr($data, $troptions = '', $tdoptions = '')
 /**
  * 	Return an html table from an array
  *
- * 	@param	array	$data			Array of data
+ * 	@param	array<int|string,null|string|int|float>	$data	Array of data
  * 	@param	int		$tableMarkup	Table markup
  * 	@param	string	$tableoptions	Options for table
  * 	@param	string	$troptions		Options for tr
@@ -874,8 +874,8 @@ function array2table($data, $tableMarkup = 1, $tableoptions = '', $troptions = '
 			$text .= array2tr($item, $troptions, $tdoptions);
 		} else {
 			$text .= '<tr '.$troptions.'>';
-			$text .= '<td '.$tdoptions.'>'.$key.'</td>';
-			$text .= '<td '.$tdoptions.'>'.$item.'</td>';
+			$text .= '<td '.$tdoptions.'>'.((string) $key).'</td>';
+			$text .= '<td '.$tdoptions.'>'.((string) $item).'</td>';
 			$text .= '</tr>';
 		}
 	}
@@ -893,7 +893,7 @@ function array2table($data, $tableMarkup = 1, $tableoptions = '', $troptions = '
  * @param   string		$table			Table containing field with counter
  * @param   string		$field			Field containing already used values of counter
  * @param   string		$where			To add a filter on selection (for example to filter on invoice types)
- * @param   Societe|string $objsoc		The company that own the object we need a counter for
+ * @param   Societe|''  $objsoc			The company that own the object we need a counter for
  * @param   string		$date			Date to use for the {y},{m},{d} tags.
  * @param   string		$mode			'next' for next value or 'last' for last value
  * @param   bool		$bentityon		Activate the entity filter. Default is true (for modules not compatible with multicompany)
@@ -1000,12 +1000,12 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		$maskuser_value = '';
 	}
 
-	// Personalized field {XXX-1} à {XXX-9}
+	// Personalized field {XXX-1} à {XXX-99}
 	$maskperso = array();
 	$maskpersonew = array();
 	$tmpmask = $mask;
 	$regKey = array();
-	while (preg_match('/\{([A-Z]+)\-([1-9])\}/', $tmpmask, $regKey)) {
+	while (preg_match('/\{([A-Z]+)\-([0-9]+)\}/', $tmpmask, $regKey)) {
 		$maskperso[$regKey[1]] = '{'.$regKey[1].'-'.$regKey[2].'}';
 		// @phan-suppress-next-line PhanParamSuspiciousOrder
 		$maskpersonew[$regKey[1]] = str_pad('', (int) $regKey[2], '_', STR_PAD_RIGHT);
@@ -1124,9 +1124,9 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 
 		if (!empty($yearoffsettype) && !is_numeric($yearoffsettype) && $yearoffsettype != '=') {	// $yearoffsettype is - or +
 			$currentyear = (int) date("Y", $date);
-			$fiscaldate = dol_mktime('0', '0', '0', $maskraz, '1', $currentyear);
-			$newyeardate = dol_mktime('0', '0', '0', '1', '1', $currentyear);
-			$nextnewyeardate = dol_mktime('0', '0', '0', '1', '1', $currentyear + 1);
+			$fiscaldate = dol_mktime(0, 0, 0, $maskraz, 1, $currentyear);
+			$newyeardate = dol_mktime(0, 0, 0, 1, 1, $currentyear);
+			$nextnewyeardate = dol_mktime(0, 0, 0, 1, 1, $currentyear + 1);
 			//echo 'currentyear='.$currentyear.' date='.dol_print_date($date, 'day').' fiscaldate='.dol_print_date($fiscaldate, 'day').'<br>';
 
 			// If after or equal of current fiscal date
@@ -1406,7 +1406,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			$maskrefclient_maskbefore = '{'.$maskrefclient.'}';
 			$maskrefclient_maskafter = $maskrefclient_clientcode;
 			if (dol_strlen($maskrefclient_maskcounter) > 0) {
-				$maskrefclient_maskafter .= str_pad($maskrefclient_counter, dol_strlen($maskrefclient_maskcounter), "0", STR_PAD_LEFT);
+				$maskrefclient_maskafter .= str_pad((string) $maskrefclient_counter, dol_strlen($maskrefclient_maskcounter), "0", STR_PAD_LEFT);
 			}
 			$numFinal = str_replace($maskrefclient_maskbefore, $maskrefclient_maskafter, $numFinal);
 		}
@@ -1718,13 +1718,13 @@ function weight_convert($weight, &$from_unit, $to_unit)
 	$weight = is_numeric($weight) ? $weight : 0;
 	while ($from_unit != $to_unit) {
 		if ($from_unit > $to_unit) {
-			$weight = $weight * 10;
-			$from_unit = $from_unit - 1;
+			$weight *= 10;
+			$from_unit -= 1;
 			$weight = weight_convert($weight, $from_unit, $to_unit);
 		}
 		if ($from_unit < $to_unit) {
-			$weight = $weight / 10;
-			$from_unit = $from_unit + 1;
+			$weight /= 10;
+			$from_unit += 1;
 			$weight = weight_convert($weight, $from_unit, $to_unit);
 		}
 	}
@@ -1777,7 +1777,14 @@ function dol_set_user_param($db, $conf, &$user, $tab)
 
 	foreach ($tab as $key => $value) {
 		// Set new parameters
-		if ($value) {
+		$forcevalue = 0;
+		if (is_array($value)) {
+			if ($value["forcevalue"] == 1) {
+				$forcevalue = 1;
+			}
+			$value = $value["value"];
+		}
+		if ($forcevalue == 1 || $value) {
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_param(fk_user,entity,param,value)";
 			$sql .= " VALUES (".((int) $user->id).",".((int) $conf->entity).",";
 			$sql .= " '".$db->escape($key)."','".$db->escape($value)."')";
@@ -1813,7 +1820,7 @@ function dol_print_reduction($reduction, $langs)
 	if ($reduction == 100) {
 		$string = $langs->transnoentities("Offered");
 	} else {
-		$string = vatrate($reduction, true);
+		$string = vatrate((string) $reduction, true);
 	}
 
 	return $string;
@@ -1888,7 +1895,7 @@ function version_webserver()
  * 	@param	DoliDB		$db				    Database handler
  * 	@param	string		$type			    Type of models (company, invoice, ...)
  *  @param  int		    $maxfilenamelength  Max length of value to show
- * 	@return	array|int			    		0 if no module is activated, or array(key=>label). For modules that need directory scan, key is completed with ":filename".
+ * 	@return	string[]|int<-1,0>	    		0 if no module is activated, or array(key=>label). For modules that need directory scan, key is completed with ":filename", -1 if error
  */
 function getListOfModels($db, $type, $maxfilenamelength = 0)
 {
@@ -2044,13 +2051,13 @@ function getSoapParams()
 	global $conf;
 
 	$params = array();
-	$proxyuse = (!getDolGlobalString('MAIN_PROXY_USE') ? false : true);
-	$proxyhost = (!getDolGlobalString('MAIN_PROXY_USE') ? false : $conf->global->MAIN_PROXY_HOST);
-	$proxyport = (!getDolGlobalString('MAIN_PROXY_USE') ? false : $conf->global->MAIN_PROXY_PORT);
-	$proxyuser = (!getDolGlobalString('MAIN_PROXY_USE') ? false : $conf->global->MAIN_PROXY_USER);
-	$proxypass = (!getDolGlobalString('MAIN_PROXY_USE') ? false : $conf->global->MAIN_PROXY_PASS);
-	$timeout = (!getDolGlobalString('MAIN_USE_CONNECT_TIMEOUT') ? 10 : $conf->global->MAIN_USE_CONNECT_TIMEOUT); // Connection timeout
-	$response_timeout = (!getDolGlobalString('MAIN_USE_RESPONSE_TIMEOUT') ? 30 : $conf->global->MAIN_USE_RESPONSE_TIMEOUT); // Response timeout
+	$proxyuse = getDolGlobalString('MAIN_PROXY_USE');
+	$proxyhost = (!$proxyuse ? false : $conf->global->MAIN_PROXY_HOST);
+	$proxyport = (!$proxyuse ? false : $conf->global->MAIN_PROXY_PORT);
+	$proxyuser = (!$proxyuse ? false : $conf->global->MAIN_PROXY_USER);
+	$proxypass = (!$proxyuse ? false : $conf->global->MAIN_PROXY_PASS);
+	$timeout = getDolGlobalInt('MAIN_USE_CONNECT_TIMEOUT', 10); // Connection timeout
+	$response_timeout = getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT', 30); // Response timeout
 	//print extension_loaded('soap');
 	if ($proxyuse) {
 		$params = array('connection_timeout' => $timeout,
@@ -2239,7 +2246,7 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 
 
 /**
- * Clean corrupted tree (orphelins linked to a not existing parent), record linked to themself and child-parent loop
+ * Clean corrupted database tree (orphelins linked to a not existing parent), record linked to themself, and also child-parent loop
  *
  * @param	DoliDB	$db					Database handler
  * @param	string	$tabletocleantree	Table to clean
@@ -2302,6 +2309,7 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 					$listofidtoclean[$cursor] = $id;
 					break;
 				}
+				// @phpstan-ignore-next-line PHPStan thinks this line is never reached
 				$cursor = $listofparentid[$cursor];
 			}
 
@@ -2310,8 +2318,8 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 			}
 		}
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX.$tabletocleantree;
-		$sql .= " SET ".$fieldfkparent." = 0";
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$db->sanitize($tabletocleantree);
+		$sql .= " SET ".$db->sanitize($fieldfkparent)." = 0";
 		$sql .= " WHERE rowid IN (".$db->sanitize(implode(',', $listofidtoclean)).")"; // So we update only records detected wrong
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -2327,9 +2335,9 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 		//else dol_print_error($db);
 
 		// Check and clean orphelins
-		$sql = "UPDATE ".MAIN_DB_PREFIX.$tabletocleantree;
-		$sql .= " SET ".$fieldfkparent." = 0";
-		$sql .= " WHERE ".$fieldfkparent." NOT IN (".$db->sanitize(implode(',', $listofid), 1).")"; // So we update only records linked to a non existing parent
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$db->sanitize($tabletocleantree);
+		$sql .= " SET ".$db->sanitize($fieldfkparent)." = 0";
+		$sql .= " WHERE ".$db->sanitize($fieldfkparent)." NOT IN (".$db->sanitize(implode(',', $listofid), 1).")"; // So we update only records linked to a non existing parent
 		$resql = $db->query($sql);
 		if ($resql) {
 			$nb = $db->affected_rows($sql);
@@ -2530,7 +2538,7 @@ function colorLighten($hex, $percent)
  * @param string 		$hex 			color in hex
  * @param float|false	$alpha 			0 to 1 to add alpha channel
  * @param bool 			$returnArray	true=return an array instead, false=return string
- * @return string|array					String or array
+ * @return string|array{r:int,g:int,b:int,a?:float}		String or array
  */
 function colorHexToRgb($hex, $alpha = false, $returnArray = false)
 {
@@ -2561,7 +2569,7 @@ function colorHexToRgb($hex, $alpha = false, $returnArray = false)
  * @param	string 			$hex 			Color in hex
  * @param	float|false 	$alpha 			0 to 1 to add alpha channel
  * @param	bool 			$returnArray	true=return an array instead, false=return string
- * @return	string|array					String or array
+ * @return	array{h:float,l:float,s:float,a:int|float}|string HSLA as string or array
  */
 function colorHexToHsl($hex, $alpha = false, $returnArray = false)
 {
@@ -2694,6 +2702,8 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'fichinter';
 	} elseif ($moduleobject == 'mos') {
 		$moduledirforclass = 'mrp';
+	} elseif ($moduleobject == 'workstations') {
+		$moduledirforclass = 'workstation';
 	} elseif ($moduleobject == 'accounting') {
 		$moduledirforclass = 'accountancy';
 	} elseif (in_array($moduleobject, array('products', 'expensereports', 'users', 'tickets', 'boms', 'receptions', 'partnerships', 'recruitments'))) {
@@ -2985,11 +2995,12 @@ function removeGlobalParenthesis($string)
 
 
 /**
- * Return array of Emojis
+ * Return array of Emojis for miscellaneous use.
  *
- * @return 	array			Array of Emojis in hexadecimal
+ * @return 	array<string,array<string>>			Array of Emojis in hexadecimal
+ * @see getArrayOfEmoji()
  */
-function getArrayOfEmoji()
+function getArrayOfEmojiBis()
 {
 	$arrayofcommonemoji = array(
 		'misc' => array('2600', '26FF'),		// Miscellaneous Symbols
@@ -3019,8 +3030,6 @@ function removeEmoji($text, $allowedemoji = 1)
 	// 0=no emoji, 1=exclude the main known emojis (default), 2=keep only the main known (not implemented), 3=accept all
 	// Note that to accept emoji in database, you must use utf8mb4, utf8mb3 is not enough.
 
-	$arrayofcommonemoji = getArrayOfEmoji();
-
 	if ($allowedemoji == 0) {
 		// For a large removal:
 		$text = preg_replace('/[\x{2600}-\x{FFFF}]/u', '', $text);
@@ -3030,6 +3039,8 @@ function removeEmoji($text, $allowedemoji = 1)
 	// Delete emoji chars with a regex
 	// See https://www.unicode.org/emoji/charts/full-emoji-list.html
 	if ($allowedemoji == 1) {
+		$arrayofcommonemoji = getArrayOfEmojiBis();
+
 		foreach ($arrayofcommonemoji as $key => $valarray) {
 			$text = preg_replace('/[\x{'.$valarray[0].'}-\x{'.$valarray[1].'}]/u', '', $text);
 		}

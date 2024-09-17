@@ -2,6 +2,7 @@
 /* Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2021 Gaëtan MAISON <gm@ilad.org>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,21 +54,21 @@ class DolEditor
 	/**
 	 *  Create an object to build an HTML area to edit a large string content
 	 *
-	 *  @param 	string			$htmlname		        		HTML name of WYSIWYG field
-	 *  @param 	string			$content		        		Content of WYSIWYG field
-	 *  @param	int|string		$width							Width in pixel of edit area (auto by default)
-	 *  @param 	int				$height			       		 	Height in pixel of edit area (200px by default)
-	 *  @param 	string			$toolbarname	       		 	Name of bar set to use ('Full', 'dolibarr_notes[_encoded]', 'dolibarr_details[_encoded]'=the less featured, 'dolibarr_mailings[_encoded]', 'dolibarr_readonly').
-	 *  @param  string			$toolbarlocation       			Deprecated. Not used
-	 *  @param  boolean			$toolbarstartexpanded  			Bar is visible or not at start
-	 *  @param	boolean|int		$uselocalbrowser				Enabled to add links to local object with local browser. If false, only external images can be added in content.
-	 *  @param  boolean|string	$okforextendededitor    		True=Allow usage of extended editor tool if qualified (like ckeditor). If 'textarea', force use of simple textarea. If 'ace', force use of Ace.
-	 *                                                  		Warning: If you use 'ace', don't forget to also include ace.js in page header. Also, the button "save" must have class="buttonforacesave".
-	 *  @param  int				$rows                   		Size of rows for textarea tool
-	 *  @param  string			$cols                   		Size of cols for textarea tool (textarea number of cols '70' or percent 'x%')
-	 *  @param	int				$readonly						0=Read/Edit, 1=Read only
-	 *  @param	array			$poscursor						Array for initial cursor position array('x'=>x, 'y'=>y).
-	 *                                             				array('find'=> 'word')  can be used to go to line were the word has been found
+	 *  @param 	string				$htmlname		        		HTML name of WYSIWYG field
+	 *  @param 	string				$content		        		Content of WYSIWYG field
+	 *  @param	int|string			$width							Width in pixel of edit area (auto by default)
+	 *  @param 	int					$height			       		 	Height in pixel of edit area (200px by default)
+	 *  @param 	string				$toolbarname	       		 	Name of bar set to use ('Full', 'dolibarr_notes[_encoded]', 'dolibarr_details[_encoded]'=the less featured, 'dolibarr_mailings[_encoded]', 'dolibarr_readonly').
+	 *  @param  string				$toolbarlocation       			Deprecated. Not used
+	 *  @param  boolean				$toolbarstartexpanded  			Bar is visible or not at start
+	 *  @param	boolean|int			$uselocalbrowser				Enabled to add links to local object with local browser. If false, only external images can be added in content.
+	 *  @param  boolean|int|string	$okforextendededitor    		1 or True=Allow usage of extended editor tool if qualified (like ckeditor). If 'textarea', force use of simple textarea. If 'ace', force use of Ace.
+	 *                          	                        		Warning: If you use 'ace', don't forget to also include ace.js in page header. Also, the button "save" must have class="buttonforacesave".
+	 *  @param  int					$rows                   		Size of rows for textarea tool
+	 *  @param  string				$cols                   		Size of cols for textarea tool (textarea number of cols '70' or percent 'x%')
+	 *  @param	int					$readonly						0=Read/Edit, 1=Read only
+	 *  @param	array				$poscursor						Array for initial cursor position array('x'=>x, 'y'=>y).
+	 *                      	                       				array('find'=> 'word')  can be used to go to line were the word has been found
 	 */
 	public function __construct($htmlname, $content, $width = '', $height = 200, $toolbarname = 'Basic', $toolbarlocation = 'In', $toolbarstartexpanded = false, $uselocalbrowser = 1, $okforextendededitor = true, $rows = 0, $cols = '', $readonly = 0, $poscursor = array())
 	{
@@ -90,13 +91,16 @@ class DolEditor
 		$this->readonly = $readonly;
 
 		// Check if extended editor is ok. If not we force textarea
-		if ((!isModEnabled('fckeditor') && $okforextendededitor != 'ace') || empty($okforextendededitor)) {
+		if ((!isModEnabled('fckeditor') && $okforextendededitor !== 'ace') || empty($okforextendededitor)) {
 			$this->tool = 'textarea';
 		}
 		if ($okforextendededitor === 'ace') {
 			$this->tool = 'ace';
 		}
 		//if ($conf->dol_use_jmobile) $this->tool = 'textarea';       // ckeditor and ace seems ok with mobile
+		if (empty($conf->use_javascript_ajax)) {	// If no javascript, we force use of textarea
+			$this->tool = 'textarea';
+		}
 
 		if ( isset($poscursor['find']) ) {
 			$posy = 0;
@@ -199,7 +203,7 @@ class DolEditor
 
 				$htmlencode_force = preg_match('/_encoded$/', $this->toolbarname) ? 'true' : 'false';
 
-				$out .= '<!-- Output ckeditor $disallowAnyContent='.dol_escape_htmltag($disallowAnyContent).' toolbarname='.dol_escape_htmltag($this->toolbarname).' -->'."\n";
+				$out .= '<!-- Output ckeditor disallowAnyContent='.dol_escape_htmltag((string) $disallowAnyContent).' toolbarname='.dol_escape_htmltag($this->toolbarname).' -->'."\n";
 				$out .= '<script nonce="'.getNonce().'" type="text/javascript">
             			$(document).ready(function () {
 							/* console.log("Run ckeditor"); */
@@ -213,8 +217,8 @@ class DolEditor
 									versionCheck: false,
             						readOnly: '.($this->readonly ? 'true' : 'false').',
                             		htmlEncodeOutput: '.dol_escape_js($htmlencode_force).',
-            						allowedContent: '.($disallowAnyContent ? 'false' : 'true').',		/* Advanced Content Filter (ACF) is own when allowedContent is false */
-            						extraAllowedContent: \'a[target];div{float,display}\',				/* Add the style float and display into div to default other allowed tags */
+            						allowedContent: '.($disallowAnyContent ? 'false' : 'true').',		/* Advanced Content Filter (ACF) is on when allowedContent is false */
+            						extraAllowedContent: \'a[target];section[contenteditable,id];div{float,display}\',		/* Allow a tag with attribute target, allow seciont tag and allow the style float and display into div to default other allowed tags */
 									disallowedContent: \'\',		/* Tags that are not allowed */
             						fullPage: '.($fullpage ? 'true' : 'false').',						/* if true, the html, header and body tags are kept */
                             		toolbar: \''.dol_escape_js($this->toolbarname).'\',
@@ -227,7 +231,12 @@ class DolEditor
                                     textDirection: \''.dol_escape_js($langs->trans("DIRECTION")).'\',
                                     on : {
                                                 instanceReady : function(ev) {
-													console.log("ckeditor instanceReady");
+													console.log(\'ckeditor '.dol_escape_js($this->htmlname).' instanceReady\');
+
+													/* If we found the attribute required on source div, we remove it (not compatible with ckeditor) */
+													/* Disabled, because attribute required should never be used on fields for doleditor */
+													/* jQuery("#'.dol_escape_js($this->htmlname).'").attr("required", false); */
+
                                                     // Output paragraphs as <p>Text</p>.
                                                     this.dataProcessor.writer.setRules( \'p\', {
                                                         indent : false,
@@ -238,17 +247,15 @@ class DolEditor
                                                     });
                                                 },
 												/* This is to remove the tab Link on image popup. Does not work, so commented */
-												/*
-												dialogDefinition: function (event) {
+												/* dialogDefinition: function (event) {
 										            var dialogName = event.data.name;
 										            var dialogDefinition = event.data.definition;
 										            if (dialogName == \'image\') {
 										                dialogDefinition.removeContents(\'Link\');
 										            }
-										        }
-												*/
+										        } */
 										},
-									disableNativeSpellChecker: '.(!getDolGlobalString('CKEDITOR_NATIVE_SPELLCHECKER') ? 'true' : 'false');
+									disableNativeSpellChecker: '.(getDolGlobalString('CKEDITOR_NATIVE_SPELLCHECKER') ? 'false' : 'true');
 
 				if ($this->uselocalbrowser) {
 					$out .= ','."\n";
@@ -294,14 +301,14 @@ class DolEditor
 				$out .= '</div>';
 				$out .= '<script nonce="'.getNonce().'" type="text/javascript">'."\n";
 				$out .= 'jQuery(document).ready(function() {'."\n";
-				$out .= '	var aceEditor = window.ace.edit("'.$this->htmlname.'aceeditorid");
+				$out .= '	var aceEditor = window.ace.edit("'.dol_escape_all($this->htmlname).'aceeditorid");
 							aceEditor.moveCursorTo('.($this->posy + 1).','.$this->posx.');
 							aceEditor.gotoLine('.($this->posy + 1).','.$this->posx.');
 	    	    		   	var StatusBar = window.ace.require("ace/ext/statusbar").StatusBar;									// Init status bar. Need lib ext-statusbar
-	        			   	var statusBar = new StatusBar(aceEditor, document.getElementById("statusBar'.$this->htmlname.'"));	// Init status bar. Need lib ext-statusbar
+	        			   	var statusBar = new StatusBar(aceEditor, document.getElementById("statusBar'.dol_escape_all($this->htmlname).'"));	// Init status bar. Need lib ext-statusbar
 
 							var oldNbOfLines = 0;
-							jQuery(".morelines'.$this->htmlname.'").click(function() {
+							jQuery(".morelines'.dol_escape_all($this->htmlname).'").click(function() {
 	        	    				var aceEditorClicked = window.ace.edit("'.$this->htmlname.'aceeditorid");
 									currentline = aceEditorClicked.getOption("maxLines");
 									if (oldNbOfLines == 0)
@@ -339,24 +346,51 @@ class DolEditor
 
 				    aceEditor.session.setMode("ace/mode/'.$format.'");
 					aceEditor.setOptions({
-	   				   enableBasicAutocompletion: true, // the editor completes the statement when you hit Ctrl + Space. Need lib ext-language_tools.js
-					   enableLiveAutocompletion: false, // the editor completes the statement while you are typing. Need lib ext-language_tools.js
-					   showPrintMargin: false, // hides the vertical limiting strip
-					   minLines: 10,
-					   maxLines: '.(empty($this->height) ? '34' : (round($this->height / 10))).',
-				       fontSize: "110%" // ensures that the editor fits in the environment
+	   					enableBasicAutocompletion: true, 	// the editor completes the statement when you hit Ctrl + Space. Need lib ext-language_tools.js
+						enableLiveAutocompletion: false, 	// the editor completes the statement while you are typing. Need lib ext-language_tools.js
+						//enableSnippets: true,				// ???
+						showPrintMargin: false, 			// hides the vertical limiting strip
+						minLines: 10,
+						maxLines: '.(empty($this->height) ? '34' : (round($this->height / 10))).',
+				    	fontSize: "110%" // ensures that the editor fits in the environment
 					});
 
 					// defines the style of the editor
 					aceEditor.setTheme("ace/theme/chrome");
+
 					// hides line numbers (widens the area occupied by error and warning messages)
 					//aceEditor.renderer.setOption("showLineNumbers", false);
 					// ensures proper autocomplete, validation and highlighting of JavaScript code
-					//aceEditor.getSession().setMode("ace/mode/javascript_expression");
-					'."\n";
+					//aceEditor.getSession().setMode("ace/mode/javascript_expression");'."\n";
 
-			$out .= 'jQuery(document).ready(function() {
-						jQuery(".buttonforacesave").click(function() {
+			// If page is PAGE_CONTENT to edit HTML web page in web site module, we add some autocompletion
+			if ($this->htmlname == 'PAGE_CONTENT') {
+				$out .= '
+						// Add custom function in the autocompletion
+						var customCompleter = {
+							getCompletions: function(editor, session, pos, prefix, callback) {
+								var wordList = [
+								{ caption: \'dol_escape_all\', value: \'dol_escape_all(string)\', meta: \'custom\' },
+								{ caption: \'dol_escape_js\', value: \'dol_escape_js(string)\', meta: \'custom\' },
+								{ caption: \'includeContainer\', value: \'includeContainer(alias_of_container_to_include)\', meta: \'custom\' },
+								{ caption: \'redirectToContainer\', value: \'redirectToContainer(alias_of_container_to_redirect_to)\', meta: \'custom\' },
+								{ caption: \'getImageFromHtmlContent\', value: \'getImageFromHtmlContent(websitepage->htmlcontent)\', meta: \'custom\' },
+								];
+								callback(null, wordList.map(function(word) {
+									return {
+										caption: word.caption,
+										value: word.value,
+										meta: word.meta
+									};
+								}));
+							}
+						};
+	 					aceEditor.completers = [customCompleter];
+					'."\n";
+			}
+
+			$out .= 'jQuery(document).ready(function() {';
+			$out .= '	jQuery(".buttonforacesave").click(function() {
         					console.log("We click on savefile button for component '.dol_escape_js($this->htmlname).'");
         					var aceEditor = window.ace.edit("'.dol_escape_js($this->htmlname).'aceeditorid");
 							if (aceEditor) {

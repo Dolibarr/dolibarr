@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -139,22 +140,12 @@ class Mailing extends CommonObject
 	public $joined_file4;
 
 	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
-
-	/**
-	 * @var int date validate
-	 */
-	public $date_validation;
-
-	/**
 	 * @var int|null date sending
 	 */
 	public $date_envoi;
 
 	/**
-	 * @var array extraparams
+	 * @var array<string,string>  (Encoded as JSON in database)
 	 */
 	public $extraparams = array();
 
@@ -508,14 +499,14 @@ class Mailing extends CommonObject
 					if ($this->db->num_rows($result)) {
 						while ($obj = $this->db->fetch_object($result)) {
 							$target_array[] = array(
-								'fk_contact'=>$obj->fk_contact,
-								'lastname'=>$obj->lastname,
-								'firstname'=>$obj->firstname,
-								'email'=>$obj->email,
-								'other'=>$obj->other,
-								'source_url'=>$obj->source_url,
-								'source_id'=>$obj->source_id,
-								'source_type'=>$obj->source_type
+								'fk_contact' => $obj->fk_contact,
+								'lastname' => $obj->lastname,
+								'firstname' => $obj->firstname,
+								'email' => $obj->email,
+								'other' => $obj->other,
+								'source_url' => $obj->source_url,
+								'source_id' => $obj->source_id,
+								'source_type' => $obj->source_type
 							);
 						}
 					}
@@ -665,6 +656,49 @@ class Mailing extends CommonObject
 		}
 	}
 
+	/**
+	 *  Reset status of a specific recipient in error
+	 *
+	 *	@param	User	$user      	Object user qui valide
+	 *	@param	int	$id      		Recipient id to reset
+	 *  @return int         		Return integer <0 if KO, >0 if OK
+	 */
+	public function resetTargetErrorStatus($user, $id)
+	{
+		// phpcs:enable
+		global $langs;
+
+		$sql = "SELECT email, statut FROM ".MAIN_DB_PREFIX."mailing_cibles";
+		$sql .= " WHERE fk_mailing = ".((int) $this->id);
+		$sql .= " AND rowid = ".((int) $id);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$nb = $this->db->num_rows($resql);
+			$obj = $this->db->fetch_object($resql);
+			if ($obj->statut != -1) {
+				$langs->load("errors");
+				$this->error = $langs->trans('ErrorIsNotInError', $obj->email);
+				return 0;
+			}
+		} else {
+			$this->error = $this->db->lasterror();
+		}
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
+		$sql .= " SET statut = 0";
+		$sql .= " WHERE fk_mailing = ".((int) $this->id);
+		$sql .= " AND rowid = ".((int) $id);
+		$sql .= " AND statut = -1";
+
+		dol_syslog("Mailing::reset_targets_status", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			return 1;
+		} else {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+	}
 
 	/**
 	 *  Count number of target with status
@@ -843,7 +877,7 @@ class Mailing extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array('emailingdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -900,7 +934,7 @@ class Mailing extends CommonObject
 	 *
 	 *  @param	int		$status        	Id status
 	 *  @param  int		$mode           0=Long label, 1=Short label, 2=Picto+Short label, 3=Picto, 4=Picto+Short label, 5=Short label+Picto, 6=Picto+Long label, 7=Very short label+Picto
-	 *  @param	string	$desc			Desc error
+	 *  @param	string	$desc			Description of error to show as tooltip
 	 *  @return string        			Label
 	 */
 	public static function libStatutDest($status, $mode = 0, $desc = '')
@@ -934,9 +968,10 @@ class Mailing extends CommonObject
 		}
 
 		$param = array();
-		if ($status == - 1) {
-			$param = array('badgeParams'=>array('attr'=>array('title'=>$desc)));
+		if ($status == -1) {
+			$param = array('badgeParams' => array('attr' => array('title' => $desc)));
 		}
+
 		return dolGetStatus($labelStatus[$status], $labelStatusShort[$status], '', $statusType, $mode, '', $param);
 	}
 }

@@ -71,7 +71,7 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
 
 $textobject = $langs->transnoentitiesnoconv("BillsSuppliers");
 
-llxHeader('', $langs->trans("SuppliersSetup"));
+llxHeader('', $langs->trans("SuppliersSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-supplierinvoicedet_rec_extrafields');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("SuppliersSetup"), $linkback, 'title_setup');

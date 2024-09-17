@@ -193,7 +193,7 @@ class DoliDBPgsql extends DoliDB
 
 				$line = preg_replace('/\s/', ' ', $line); // Replace tabulation with space
 
-				// we are inside create table statement so lets process datatypes
+				// we are inside create table statement so let's process datatypes
 				if (preg_match('/(ISAM|innodb)/i', $line)) { // end of create table sequence
 					$line = preg_replace('/\)[\s\t]*type[\s\t]*=[\s\t]*(MyISAM|innodb).*;/i', ');', $line);
 					$line = preg_replace('/\)[\s\t]*engine[\s\t]*=[\s\t]*(MyISAM|innodb).*;/i', ');', $line);
@@ -1019,8 +1019,7 @@ class DoliDBPgsql extends DoliDB
 	 *	List information of columns into a table.
 	 *
 	 *	@param	string	$table		Name of table
-	 *	@return	array				Tableau des information des champs de la table
-	 *
+	 *	@return	array				Array with information on table
 	 */
 	public function DDLInfoTable($table)
 	{
@@ -1028,22 +1027,21 @@ class DoliDBPgsql extends DoliDB
 		$infotables = array();
 
 		$sql = "SELECT ";
-		$sql .= "	infcol.column_name as \"Column\",";
+		$sql .= "	infcol.column_name as 'Column',";
 		$sql .= "	CASE WHEN infcol.character_maximum_length IS NOT NULL THEN infcol.udt_name || '('||infcol.character_maximum_length||')'";
 		$sql .= "		ELSE infcol.udt_name";
-		$sql .= "	END as \"Type\",";
-		$sql .= "	infcol.collation_name as \"Collation\",";
-		$sql .= "	infcol.is_nullable as \"Null\",";
-		$sql .= "	'' as \"Key\",";
-		$sql .= "	infcol.column_default as \"Default\",";
-		$sql .= "	'' as \"Extra\",";
-		$sql .= "	'' as \"Privileges\"";
+		$sql .= "	END as 'Type',";
+		$sql .= "	infcol.collation_name as 'Collation',";
+		$sql .= "	infcol.is_nullable as 'Null',";
+		$sql .= "	'' as 'Key',";
+		$sql .= "	infcol.column_default as 'Default',";
+		$sql .= "	'' as 'Extra',";
+		$sql .= "	'' as 'Privileges'";
 		$sql .= "	FROM information_schema.columns infcol";
 		$sql .= "	WHERE table_schema = 'public' ";
 		$sql .= "	AND table_name = '".$this->escape($table)."'";
 		$sql .= "	ORDER BY ordinal_position;";
 
-		dol_syslog($sql, LOG_DEBUG);
 		$result = $this->query($sql);
 		if ($result) {
 			while ($row = $this->fetch_row($result)) {
@@ -1059,7 +1057,7 @@ class DoliDBPgsql extends DoliDB
 	 *	Create a table into database
 	 *
 	 *	@param	    string	$table 			Nom de la table
-	 *	@param	    array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>	$fields 		Tableau associatif [nom champ][tableau des descriptions]
+	 *	@param	    array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>	$fields 		Tableau associatif [nom champ][tableau des descriptions]
 	 *	@param	    string	$primary_key 	Nom du champ qui sera la clef primaire
 	 *	@param	    string	$type 			Type de la table
 	 *	@param	    array	$unique_keys 	Tableau associatifs Nom de champs qui seront clef unique => valeur

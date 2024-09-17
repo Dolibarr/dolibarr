@@ -3,12 +3,12 @@
  * Copyright (C) 2007-2010  Jean Heimburger         <jean@tiaris.info>
  * Copyright (C) 2011       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2013-2023  Alexandre Spangaro      <aspangaro@easya.solutions>
+ * Copyright (C) 2013-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018       Eric Seigne             <eric.seigne@cap-rel.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,6 +75,17 @@ if (!$user->hasRight('accounting', 'bind', 'write')) {
 
 $error = 0;
 
+$tabfac = array();
+$tabht = array();
+$tabtva = array();
+$tabttc = array();
+$tablocaltax1 = array();
+$tablocaltax2 = array();
+$tabrctva = array();
+$tabrclocaltax1 = array();
+$tabrclocaltax2 = array();
+$tabpay = array();
+
 
 /*
  * Actions
@@ -84,7 +95,7 @@ $reshook = $hookmanager->executeHooks('doActions', $parameters, $user, $action);
 
 $accountingaccount = new AccountingAccount($db);
 
-// Get information of journal
+// Get information of a journal
 $accountingjournalstatic = new AccountingJournal($db);
 $accountingjournalstatic->fetch($id_journal);
 $journal = $accountingjournalstatic->code;
@@ -92,6 +103,9 @@ $journal_label = $accountingjournalstatic->label;
 
 $date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
 $date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
+
+$pastmonth = null;  // Initialise, could be unset
+$pastmonthyear = null;  // Initialise, could be unset
 
 if (empty($date_startmonth)) {
 	// Period by default on transfer
@@ -230,7 +244,7 @@ if ($result) {
 		$compta_localtax2 = (!empty($vatdata['accountancy_code_buy']) ? $vatdata['accountancy_code_buy'] : $cpttva);
 		$compta_counterpart_tva_npr = getDolGlobalString('ACCOUNTING_COUNTERPART_VAT_NPR', 'NotDefined');
 
-		// Define array to display all VAT rates that use this accounting account $compta_tva
+		// Define an array to display all VAT rates that use this accounting account $compta_tva
 		if (price2num($obj->tva_tx) || !empty($obj->vat_src_code)) {
 			$def_tva[$obj->rowid][$compta_tva][vatrate($obj->tva_tx).($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : '')] = (vatrate($obj->tva_tx).($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''));
 		}
@@ -329,15 +343,16 @@ if ($result) {
 			);
 
 		$i++;
+
+		// Check for too many lines.
+		if ($i > getDolGlobalInt('ACCOUNTANCY_MAX_TOO_MANY_LINES_TO_PROCESS', 10000)) {
+			$error++;
+			setEventMessages("ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter", null, 'errors');
+			break;
+		}
 	}
 } else {
 	dol_print_error($db);
-}
-
-// Check for too many invoices first.
-if (count($tabfac) > 10000) { // Global config in htdocs/admin/const.php???
-	$error++;
-	setEventMessages("TooManyInvoicesToProcessPleaseUseAMoreSelectiveFilter", null, 'errors');
 }
 
 $errorforinvoice = array();
@@ -391,7 +406,7 @@ while ($i < $num) {
 
 
 // Bookkeeping Write
-if ($action == 'writebookkeeping' && !$error) {
+if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'bind', 'write')) {
 	$now = dol_now();
 	$error = 0;
 
@@ -399,7 +414,7 @@ if ($action == 'writebookkeeping' && !$error) {
 	$invoicestatic = new FactureFournisseur($db);
 	$accountingaccountsupplier = new AccountingAccount($db);
 
-	$accountingaccountsupplier->fetch(null, getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER'), true);
+	$accountingaccountsupplier->fetch(0, getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER'), true);
 
 	foreach ($tabfac as $key => $val) {		// Loop on each invoice
 		$errorforline = 0;
@@ -407,7 +422,7 @@ if ($action == 'writebookkeeping' && !$error) {
 		$totalcredit = 0;
 		$totaldebit = 0;
 
-		$db->begin();
+		$db->begin();		// We accept transaction into loop, so if we hang, we can continue transfer from the last error
 
 		$companystatic->id = $tabcompany[$key]['id'];
 		$companystatic->name = $tabcompany[$key]['name'];
@@ -424,7 +439,7 @@ if ($action == 'writebookkeeping' && !$error) {
 
 		$date = dol_print_date($val["date"], 'day');
 
-		// Is it a replaced invoice ? 0=not a replaced invoice, 1=replaced invoice not yet dispatched, 2=replaced invoice dispatched
+		// Is it a replaced invoice? 0=not a replaced invoice, 1=replaced invoice not yet dispatched, 2=replaced invoice dispatched
 		$replacedinvoice = 0;
 		if ($invoicestatic->close_code == FactureFournisseur::CLOSECODE_REPLACED) {
 			$replacedinvoice = 1;
@@ -506,11 +521,18 @@ if ($action == 'writebookkeeping' && !$error) {
 		// Product / Service
 		if (!$errorforline) {
 			foreach ($tabht[$key] as $k => $mt) {
-				$resultfetch = $accountingaccount->fetch(null, $k, true);	// TODO Use a cache
+				if (empty($conf->cache['accountingaccountincurrententity'][$k])) {
+					$accountingaccount = new AccountingAccount($db);
+					$accountingaccount->fetch(0, $k, true);
+					$conf->cache['accountingaccountincurrententity'][$k] = $accountingaccount;
+				} else {
+					$accountingaccount = $conf->cache['accountingaccountincurrententity'][$k];
+				}
+
 				$label_account = $accountingaccount->label;
 
 				// get compte id and label
-				if ($resultfetch > 0) {
+				if ($accountingaccount->id > 0) {
 					$bookkeeping = new BookKeeping($db);
 					$bookkeeping->doc_date = $val["date"];
 					$bookkeeping->date_lim_reglement = $val["datereg"];
@@ -606,7 +628,7 @@ if ($action == 'writebookkeeping' && !$error) {
 
 				foreach ($arrayofvat[$key] as $k => $mt) {
 					if ($mt) {
-						$accountingaccount->fetch(null, $k, true);		// TODO Use a cache for label
+						$accountingaccount->fetch(0, $k, true);		// TODO Use a cache for label
 						$label_account = $accountingaccount->label;
 
 						$bookkeeping = new BookKeeping($db);
@@ -788,7 +810,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 
 		$date = dol_print_date($val["date"], 'day');
 
-		// Is it a replaced invoice ? 0=not a replaced invoice, 1=replaced invoice not yet dispatched, 2=replaced invoice dispatched
+		// Is it a replaced invoice? 0=not a replaced invoice, 1=replaced invoice not yet dispatched, 2=replaced invoice dispatched
 		$replacedinvoice = 0;
 		if ($invoicestatic->close_code == FactureFournisseur::CLOSECODE_REPLACED) {
 			$replacedinvoice = 1;
@@ -825,7 +847,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 		// Product / Service
 		foreach ($tabht[$key] as $k => $mt) {
 			$accountingaccount = new AccountingAccount($db);
-			$accountingaccount->fetch(null, $k, true);
+			$accountingaccount->fetch(0, $k, true);
 			//if ($mt) {
 			print '"'.$key.'"'.$sep;
 			print '"'.$date.'"'.$sep;
@@ -921,8 +943,8 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 
 if (empty($action) || $action == 'view') {
 	$title = $langs->trans("GenerationOfAccountingEntries").' - '.$accountingjournalstatic->getNomUrl(0, 2, 1, '', 1);
-
-	llxHeader('', dol_string_nohtmltag($title));
+	$help_url = 'EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#G&eacute;n&eacute;ration_des_&eacute;critures_en_comptabilit&eacute;';
+	llxHeader('', dol_string_nohtmltag($title), $help_url, '', 0, 0, '', '', '', 'mod-accountancy accountancy-generation page-purchasesjournal');
 
 	$nom = $title;
 	$nomlink = '';
@@ -1041,7 +1063,7 @@ if (empty($action) || $action == 'view') {
 
 		$date = dol_print_date($val["date"], 'day');
 
-		// Is it a replaced invoice ? 0=not a replaced invoice, 1=replaced invoice not yet dispatched, 2=replaced invoice dispatched
+		// Is it a replaced invoice? 0=not a replaced invoice, 1=replaced invoice not yet dispatched, 2=replaced invoice dispatched
 		$replacedinvoice = 0;
 		if ($invoicestatic->close_code == FactureFournisseur::CLOSECODE_REPLACED) {
 			$replacedinvoice = 1;
@@ -1128,8 +1150,13 @@ if (empty($action) || $action == 'view') {
 
 		// Product / Service
 		foreach ($tabht[$key] as $k => $mt) {
-			$accountingaccount = new AccountingAccount($db);
-			$accountingaccount->fetch(null, $k, true);
+			if (empty($conf->cache['accountingaccountincurrententity'][$k])) {
+				$accountingaccount = new AccountingAccount($db);
+				$accountingaccount->fetch(0, $k, true);
+				$conf->cache['accountingaccountincurrententity'][$k] = $accountingaccount;
+			} else {
+				$accountingaccount = $conf->cache['accountingaccountincurrententity'][$k];
+			}
 
 			print '<tr class="oddeven">';
 			print "<!-- Product -->";

@@ -104,6 +104,16 @@ if ($action == 'update') {
 		dolibarr_del_const($db, "INVOICE_SHOW_SHIPPING_ADDRESS", $conf->entity);
 	}
 
+	if (GETPOSTISSET('BARCODE_ON_SHIPPING_PDF')) {
+		dolibarr_set_const($db, "BARCODE_ON_SHIPPING_PDF", GETPOSTINT("BARCODE_ON_SHIPPING_PDF"), 'chaine', 0, '', $conf->entity);
+	}
+	if (GETPOSTISSET('BARCODE_ON_RECEPTION_PDF')) {
+		dolibarr_set_const($db, "BARCODE_ON_RECEPTION_PDF", GETPOSTINT("BARCODE_ON_RECEPTION_PDF"), 'chaine', 0, '', $conf->entity);
+	}
+	if (GETPOSTISSET('BARCODE_ON_STOCKTRANSFER_PDF')) {
+		dolibarr_set_const($db, "BARCODE_ON_STOCKTRANSFER_PDF", GETPOSTINT("BARCODE_ON_STOCKTRANSFER_PDF"), 'chaine', 0, '', $conf->entity);
+	}
+
 	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
@@ -117,7 +127,7 @@ if ($action == 'update') {
  */
 
 $wikihelp = 'EN:First_setup|FR:Premiers_param&eacute;trages|ES:Primeras_configuraciones';
-llxHeader('', $langs->trans("Setup"), $wikihelp);
+llxHeader('', $langs->trans("Setup"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-pdf_other');
 
 $form = new Form($db);
 $formother = new FormOther($db);
@@ -308,10 +318,43 @@ if (isModEnabled('invoice')) {
 	}
 	print '</td></tr>';
 
+	/* Keep this option hidden for the moment to avoid options inflation. We'll see later if it is used enough...
+	print '<tr class="oddeven"><td>';
+	print $form->textwithpicto($langs->trans("SUPPLIER_PROPOSAL_ADD_BILLING_CONTACT"), $langs->trans("SUPPLIER_PROPOSAL_ADD_BILLING_CONTACTMore"));
+	print '</td><td>';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('SUPPLIER_PROPOSAL_ADD_BILLING_CONTACT');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("SUPPLIER_PROPOSAL_ADD_BILLING_CONTACT", $arrval, $conf->global->SUPPLIER_PROPOSAL_ADD_BILLING_CONTACT);
+	}
+	print '</td></tr>';
+	*/
+
 	print '</table>';
 	print '</div>';
 }
 
+if (isModEnabled('shipping')) {
+	print load_fiche_titre($langs->trans("Shipments"), '', 'shipment');
+
+	print '<div class="div-table-responsive-no-min">';
+	print '<table summary="more" class="noborder centpercent">';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameters").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("BARCODE_ON_SHIPPING_PDF");
+	print '</td><td>';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('BARCODE_ON_SHIPPING_PDF');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("BARCODE_ON_SHIPPING_PDF", $arrval, getDolGlobalString('BARCODE_ON_SHIPPING_PDF'));
+	}
+	print '</td></tr>';
+	print '</table>';
+	print '</div>';
+}
 
 
 if (isModEnabled('reception')) {
@@ -328,7 +371,7 @@ if (isModEnabled('reception')) {
 		print ajax_constantonoff('RECEPTION_PDF_HIDE_ORDERED');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("RECEPTION_PDF_HIDE_ORDERED", $arrval, $conf->global->RECEPTION_PDF_HIDE_ORDERED);
+		print $form->selectarray("RECEPTION_PDF_HIDE_ORDERED", $arrval, getDolGlobalString('RECEPTION_PDF_HIDE_ORDERED'));
 	}
 	print '</td></tr>';
 
@@ -339,7 +382,39 @@ if (isModEnabled('reception')) {
 		print ajax_constantonoff('MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT", $arrval, $conf->global->MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT);
+		print $form->selectarray("MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT", $arrval, getDolGlobalString('MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT'));
+	}
+	print '</td></tr>';
+
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("BARCODE_ON_RECEPTION_PDF");
+	print '</td><td>';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('BARCODE_ON_RECEPTION_PDF');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("BARCODE_ON_RECEPTION_PDF", $arrval, getDolGlobalString('BARCODE_ON_RECEPTION_PDF'));
+	}
+	print '</td></tr>';
+	print '</table>';
+	print '</div>';
+}
+
+if (isModEnabled('stocktransfer')) {
+	print load_fiche_titre($langs->trans("StockTransfer"), '', 'stock');
+
+	print '<div class="div-table-responsive-no-min">';
+	print '<table summary="more" class="noborder centpercent">';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameters").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("BARCODE_ON_STOCKTRANSFER_PDF");
+	print '</td><td>';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('BARCODE_ON_STOCKTRANSFER_PDF');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("BARCODE_ON_STOCKTRANSFER_PDF", $arrval, getDolGlobalString('BARCODE_ON_STOCKTRANSFER_PDF'));
 	}
 	print '</td></tr>';
 

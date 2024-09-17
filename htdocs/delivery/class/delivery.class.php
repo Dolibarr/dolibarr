@@ -6,8 +6,8 @@
  * Copyright (C) 2011-2023 Philippe Grand	     <philippe.grand@atoo-net.com>
  * Copyright (C) 2013      Florian Henry	     <florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015 Marcos García         <marcosgdf@gmail.com>
- * Copyright (C) 2023-2024 Frédéric France       <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2023-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,17 +89,12 @@ class Delivery extends CommonObject
 	public $ref_customer;
 
 	/**
-	 * @var integer|string Date really received
+	 * @var int|'' Date really received
 	 */
 	public $date_delivery;
 
 	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
-
-	/**
-	 * @var integer|string date_valid
+	 * @var int|'' date_valid
 	 */
 	public $date_valid;
 
@@ -108,6 +103,9 @@ class Delivery extends CommonObject
 	 */
 	public $model_pdf;
 
+	/**
+	 * @var int ID of order
+	 */
 	public $commande_id;
 
 	/**
@@ -119,6 +117,11 @@ class Delivery extends CommonObject
 	 * @var int user_author_id
 	 */
 	public $user_author_id;
+
+
+	const STATUS_DRAFT = 0;
+	const STATUS_VALIDATED = 1;
+	const STATUS_CANCELED = -1;
 
 
 	/**
@@ -269,23 +272,22 @@ class Delivery extends CommonObject
 	/**
 	 *	Create a line
 	 *
-	 *	@param	string	$origin_id				Id of order
+	 *	@param	int 	$origin_id				Id of order
 	 *	@param	string	$qty					Quantity
-	 *	@param	string	$fk_product				Id of predefined product
+	 *	@param	int 	$fk_product				Id of predefined product
 	 *	@param	string	$description			Description
-	 *  @param	array	$array_options			Array options
+	 *  @param	array<string,?mixed>	$array_options	Array options
 	 *	@return	int								Return integer <0 if KO, >0 if OK
 	 */
 	public function create_line($origin_id, $qty, $fk_product, $description, $array_options = [])
 	{
 		// phpcs:enable
 		$error = 0;
-		$idprod = $fk_product;
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."deliverydet (fk_delivery, fk_origin_line,";
 		$sql .= " fk_product, description, qty)";
 		$sql .= " VALUES (".$this->id.",".((int) $origin_id).",";
-		$sql .= " ".($idprod > 0 ? ((int) $idprod) : "null").",";
+		$sql .= " ".($fk_product > 0 ? ((int) $fk_product) : "null").",";
 		$sql .= " ".($description ? "'".$this->db->escape($description)."'" : "null").",";
 		$sql .= (price2num($qty, 'MS')).")";
 
@@ -360,7 +362,7 @@ class Delivery extends CommonObject
 				$this->label_incoterms = $obj->label_incoterms;
 				$this->db->free($result);
 
-				if ($this->statut == 0) {
+				if ($this->status == 0) {
 					$this->draft = 1;
 				}
 
@@ -418,11 +420,12 @@ class Delivery extends CommonObject
 
 					// Retrieving the new reference
 					$objMod = new $modName($this->db);
+					'@phan-var-force ModeleNumRefDeliveryOrder $objMod';
 					$soc = new Societe($this->db);
 					$soc->fetch($this->socid);
 
 					if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
-						$numref = $objMod->delivery_get_num($soc, $this);
+						$numref = $objMod->getNextValue($soc, $this);
 					} else {
 						$numref = $this->ref;
 					}
@@ -514,7 +517,7 @@ class Delivery extends CommonObject
 						// Set new ref and current status
 						if (!$error) {
 							$this->ref = $numref;
-							$this->statut = 1;
+							$this->status = 1;
 						}
 
 						dol_syslog(get_class($this)."::valid ok");
@@ -544,7 +547,7 @@ class Delivery extends CommonObject
 	 *
 	 *	@param	User	$user           User who creates
 	 *	@param  int		$sending_id		Id of the expedition that serves as a model
-	 *	@return	integer					Return integer <=0 if KO, >0 if OK
+	 *	@return	int						Return integer <=0 if KO, >0 if OK
 	 */
 	public function create_from_sending($user, $sending_id)
 	{
@@ -594,9 +597,9 @@ class Delivery extends CommonObject
 	/**
 	 * Update a livraison line (only extrafields)
 	 *
-	 * @param 	int		$id					Id of line (livraison line)
-	 * @param	array	$array_options		extrafields array
-	 * @return	int							Return integer <0 if KO, >0 if OK
+	 * @param 	int					$id					Id of line (livraison line)
+	 * @param	array<string,mixed>	$array_options		extrafields array
+	 * @return	int										Return integer <0 if KO, >0 if OK
 	 */
 	public function update_line($id, $array_options = [])
 	{
@@ -629,7 +632,7 @@ class Delivery extends CommonObject
 	 *
 	 *	@param	int		$origin_id				Origin id
 	 *	@param	float	$qty					Qty
-	 *  @param	array	$array_options			Array options
+	 *  @param	array<string,mixed>	$array_options		Array options
 	 *	@return	void
 	 */
 	public function addline($origin_id, $qty, $array_options = [])
@@ -655,7 +658,7 @@ class Delivery extends CommonObject
 	 */
 	public function deleteLine($lineid)
 	{
-		if ($this->statut == 0) {
+		if ($this->status == 0) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."commandedet";
 			$sql .= " WHERE rowid = ".((int) $lineid);
 
@@ -748,9 +751,9 @@ class Delivery extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 * @param array $params params to construct tooltip data
+	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
-	 * @return array
+	 * @return array{picto:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -767,7 +770,7 @@ class Delivery extends CommonObject
 	}
 
 	/**
-	 *	Return clicable name (with picto eventually)
+	 *	Return clickable name (with picto eventually)
 	 *
 	 *	@param	int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
 	 *  @param  int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
@@ -917,7 +920,7 @@ class Delivery extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->statut, $mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1001,7 +1004,7 @@ class Delivery extends CommonObject
 		$line->fk_product     = reset($prodids);
 		$line->qty_asked      = 10;
 		$line->qty_shipped    = 9;
-		$line->ref            = 'REFPROD';
+		$line->product_ref = 'REFPROD';
 		$line->label          = 'Specimen';
 		$line->description    = 'Description';
 		$line->price          = 100;
@@ -1013,15 +1016,15 @@ class Delivery extends CommonObject
 	}
 
 	/**
-	 *  Renvoie la quantite de produit restante a livrer pour une commande
+	 *  Get data list of Products remaining to be delivered for an order (with qty)
 	 *
-	 *  @return     array|int		Product remaining to be delivered or <0 if KO
+	 *	@return array<int,array{qty:float|int,ref:string,label:string}>|int<min,-1>	Product remaining to be delivered or <0 if KO
 	 *  TODO use new function
 	 */
 	public function getRemainingDelivered()
 	{
 		// Get the linked object
-		$this->fetchObjectLinked('', '', $this->id, $this->element);
+		$this->fetchObjectLinked(null, '', $this->id, $this->element);
 		//var_dump($this->linkedObjectsIds);
 		// Get the product ref and qty in source
 		$sqlSourceLine = "SELECT st.rowid, st.description, st.qty";
@@ -1206,28 +1209,65 @@ class DeliveryLine extends CommonObjectLine
 	/**
 	 * @deprecated
 	 * @see $product_ref
+	 * @var string
 	 */
 	public $ref;
 	/**
 	 * @deprecated
 	 * @see product_label;
+	 * @var string
 	 */
 	public $libelle;
 
 	// From llx_expeditiondet
+	/**
+	 * @var float Quantity
+	 */
 	public $qty;
+
+	/**
+	 * @var float Quantity asked
+	 */
 	public $qty_asked;
+
+	/**
+	 * @var float Quantity shipped
+	 */
 	public $qty_shipped;
 
+	/**
+	 * @var int
+	 */
 	public $fk_product;
+	/**
+	 * @var string
+	 */
 	public $product_desc;
+	/**
+	 * @var int
+	 */
 	public $product_type;
+	/**
+	 * @var string
+	 */
 	public $product_ref;
+	/**
+	 * @var string
+	 */
 	public $product_label;
 
+	/**
+	 * @var int|float|string
+	 */
 	public $price;
 
+	/**
+	 * @var int
+	 */
 	public $fk_origin_line;
+	/**
+	 * @var int
+	 */
 	public $origin_id;
 
 	/**

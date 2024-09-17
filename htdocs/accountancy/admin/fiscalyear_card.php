@@ -46,17 +46,17 @@ $dol_openinpopup = GETPOST('dol_openinpopup', 'aZ09');
 
 if (!empty($backtopagejsfields)) {
 	$tmpbacktopagejsfields = explode(':', $backtopagejsfields);
-	$dol_openinpopup = $tmpbacktopagejsfields[0];
+	$dol_openinpopup = preg_replace('/[^a-z0-9_]/i', '', $tmpbacktopagejsfields[0]);
 }
 
 $error = 0;
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Fiscalyear($db);
 $extrafields = new ExtraFields($db);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 // List of status
 static $tmpstatus2label = array(

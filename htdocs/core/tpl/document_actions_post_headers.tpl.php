@@ -93,6 +93,7 @@ if (!isset($savingdocmask) || getDolGlobalString('MAIN_DISABLE_SUGGEST_REF_AS_PR
 			'facture',
 			'commande',
 			'propal',
+			'payment',
 			'supplier_proposal',
 			'ficheinter',
 			'contract',

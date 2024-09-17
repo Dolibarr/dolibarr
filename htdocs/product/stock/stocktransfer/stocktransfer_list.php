@@ -2,6 +2,7 @@
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2021  Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) ---Put here your own copyright and developer email---
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +45,7 @@ $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'stocktransferlist'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+$mode       = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
 
 $id = GETPOSTINT('id');
 
@@ -60,7 +62,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new StockTransfer($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = getMultidirOutput($object).'/temp/massgeneration/'.$user->id;
@@ -107,13 +109,13 @@ $arrayfields = array();
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
-		$visible = (int) dol_eval($val['visible'], 1);
+		$visible = (int) dol_eval((string) $val['visible'], 1);
 		$arrayfields['t.'.$key] = array(
-			'label'=>$val['label'],
-			'checked'=>(($visible < 0) ? 0 : 1),
-			'enabled'=>(abs($visible) != 3 && (int) dol_eval($val['enabled'], 1)),
-			'position'=>$val['position'],
-			'help'=> isset($val['help']) ? $val['help'] : ''
+			'label' => $val['label'],
+			'checked' => (($visible < 0) ? 0 : 1),
+			'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
+			'position' => $val['position'],
+			'help' => isset($val['help']) ? $val['help'] : ''
 		);
 	}
 }
@@ -342,7 +344,7 @@ if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $sear
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for no horizontal scroll
+llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist mod-product page-stock-stocktransfer_stocktransfer_list');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for no horizontal scroll
 
 // Example : Adding jquery code
 // print '<script type="text/javascript">
@@ -392,7 +394,7 @@ foreach ($search as $key => $val) {
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
-$parameters = array();
+$parameters = array('param' => &$param);
 $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
 

@@ -2,6 +2,7 @@
 /* Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015-2017 Francis Appels       <francis.appels@yahoo.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -414,7 +415,7 @@ class FormProduct
 
 		dol_syslog(get_class($this)."::selectWorkstations $selected, $htmlname, $empty, $disabled, $fk_product, $empty_label, $forcecombo, $morecss", LOG_DEBUG);
 
-		$filterstatus='';
+		$filterstatus = '';
 		$out = '';
 		if (!empty($fk_product) && $fk_product > 0) {
 			$this->cache_workstations = array();
@@ -529,16 +530,16 @@ class FormProduct
 	 *
 	 *  @param	string		$name               Name of HTML field
 	 *  @param	string		$measuring_style    Unit to show: weight, size, surface, volume, time
-	 *  @param  string		$default            Preselected value
+	 *  @param  string		$selected            Preselected value
 	 * 	@param	int			$adddefault			Add empty unit called "Default"
 	 *  @param  int         $mode               1=Use short label as value, 0=Use rowid
 	 * 	@return	void
 	 *  @deprecated
 	 */
-	public function select_measuring_units($name = 'measuring_units', $measuring_style = '', $default = '0', $adddefault = 0, $mode = 0)
+	public function select_measuring_units($name = 'measuring_units', $measuring_style = '', $selected = '0', $adddefault = 0, $mode = 0)
 	{
 		//phpcs:enable
-		print $this->selectMeasuringUnits($name, $measuring_style, $default, $adddefault, $mode);
+		print $this->selectMeasuringUnits($name, $measuring_style, $selected, $adddefault, $mode);
 	}
 
 	/**
@@ -547,15 +548,15 @@ class FormProduct
 	 *
 	 *  @param  string		$name                Name of HTML field
 	 *  @param  string		$measuring_style     Unit to show: weight, size, surface, volume, time
-	 *  @param  string		$default             Preselected value
+	 *  @param  string		$selected            Preselected value
 	 *  @param  int|string	$adddefault			 1=Add empty unit called "Default", ''=Add empty value
 	 *  @param  int         $mode                1=Use short label as value, 0=Use rowid, 2=Use scale (power)
 	 *  @param	string		$morecss			 More CSS
 	 *  @return string|-1
 	 */
-	public function selectMeasuringUnits($name = 'measuring_units', $measuring_style = '', $default = '0', $adddefault = 0, $mode = 0, $morecss = 'maxwidth125')
+	public function selectMeasuringUnits($name = 'measuring_units', $measuring_style = '', $selected = '0', $adddefault = 0, $mode = 0, $morecss = 'minwidth75 maxwidth125')
 	{
-		global $langs, $conf, $mysoc, $db;
+		global $langs, $db;
 
 		$langs->load("other");
 
@@ -584,7 +585,7 @@ class FormProduct
 		} else {
 			$return .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$name.'" id="'.$name.'">';
 			if ($adddefault || $adddefault === '') {
-				$return .= '<option value="0">'.($adddefault ? $langs->trans("Default") : '').'</option>';
+				$return .= '<option value="0"'.($selected === '0' ? ' selected' : '').'>'.($adddefault ? '('.$langs->trans("Default").')' : '').'</option>';
 			}
 
 			foreach ($measuringUnits->records as $lines) {
@@ -597,11 +598,11 @@ class FormProduct
 					$return .= $lines->id;
 				}
 				$return .= '"';
-				if ($mode == 1 && $lines->short_label == $default) {
+				if ($mode == 1 && $lines->short_label == $selected) {
 					$return .= ' selected';
-				} elseif ($mode == 2 && $lines->scale == $default) {
+				} elseif ($mode == 2 && $lines->scale == $selected) {
 					$return .= ' selected';
-				} elseif ($mode == 0 && $lines->id == $default) {
+				} elseif ($mode == 0 && $lines->id == $selected) {
 					$return .= ' selected';
 				}
 				$return .= '>';
@@ -792,7 +793,7 @@ class FormProduct
 	 */
 	public function selectLotDataList($htmlname = 'batch_id', $empty = 0, $fk_product = 0, $fk_entrepot = 0, $objectLines = array())
 	{
-		global $langs, $hookmanager;
+		global $conf, $langs, $hookmanager;
 
 		dol_syslog(get_class($this)."::selectLotDataList $htmlname, $empty, $fk_product, $fk_entrepot", LOG_DEBUG);
 
@@ -842,7 +843,8 @@ class FormProduct
 					if (empty($fk_entrepot) || $fk_entrepot == $arraytypes['entrepot_id']) {
 						$label = $arraytypes['entrepot_label'] . ' - ';
 						$label .= $arraytypes['batch'];
-						$out .= '<option data-warehouse="'.dol_escape_htmltag($label).'" value="' . $arraytypes['batch'] . '">(' . $langs->trans('Stock Total') . ': ' . $arraytypes['qty'] . ')</option>';
+						// Notice: Chrome show 1 line with value and 1 for label. Firefox show only 1 line with label
+						$out .= '<option data-warehouse="'.dol_escape_htmltag($label).'" value="' . $arraytypes['batch'] . '">' . ($conf->browser->name === 'chrome' ? '' : $arraytypes['batch']) . ' (' . $langs->trans('Stock Total') . ': ' . $arraytypes['qty'] . ')</option>';
 					}
 				}
 			}
@@ -873,7 +875,7 @@ class FormProduct
 		if (count($productIdArray) && count($this->cache_lot)) {
 			// check cache already loaded for product id's
 			foreach ($productIdArray as $productId) {
-				$cacheLoaded = !empty($this->cache_lot[$productId]) ? true : false;
+				$cacheLoaded = !empty($this->cache_lot[$productId]);
 			}
 		}
 		if ($cacheLoaded) {

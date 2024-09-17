@@ -98,7 +98,7 @@ if (!$sortorder) {
 	$sortorder = "ASC";
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('pricesuppliercard', 'globalcard'));
 
 $object = new ProductFournisseur($db);
@@ -375,7 +375,7 @@ if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) {
 	$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios|DE:Modul_Lesitungen';
 }
 
-llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'classforhorizontalscrolloftabs mod-product page-price_supplier');
+llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'classforhorizontalscrolloftabs mod-product page-price_suppliers');
 
 if ($id > 0 || $ref) {
 	if ($result) {
@@ -520,8 +520,8 @@ if ($id > 0 || $ref) {
 					}
 					print '<script type="text/javascript">
 					$(document).ready(function () {
-						$("#search_id_fourn").change(load_vat)
 						console.log("Requesting default VAT rate for the supplier...")
+						$("#search_id_fourn").change(load_vat)
 					});
 					function load_vat() {
 						// get soc id
@@ -529,11 +529,12 @@ if ($id > 0 || $ref) {
 
 						// load available VAT rates
 						let vat_url = "'.dol_buildpath('/core/ajax/vatrates.php', 1).'"
-						//Make GET request with params
+						// make GET request with params
 						let options = "";
 						options += "id=" + socid
 						options += "&htmlname=tva_tx"
-						options += "&action=default" // not defined in vatrates.php, default behavior.
+						options += "&token='.currentToken().'"
+						options += "&action=getBuyerVATRates" // not defined in vatrates.php, default behavior.
 
 						var get = $.getJSON(
 							vat_url,
@@ -958,6 +959,9 @@ if ($id > 0 || $ref) {
 					'pfp.packaging'=>array('label'=>$langs->trans("PackagingForThisProduct"), 'enabled' => getDolGlobalInt('PRODUCT_USE_SUPPLIER_PACKAGING'), 'checked'=>0, 'position'=>17),
 					'pfp.status'=>array('label'=>$langs->trans("Status"), 'enabled' => 1, 'checked'=>0, 'position'=>40),
 					'pfp.tms'=>array('label'=>$langs->trans("DateModification"), 'enabled' => isModEnabled('barcode'), 'checked'=>1, 'position'=>50),
+					'pfp.price'=>array('label'=>$langs->trans("PriceQtyMinHT"), 'checked'=>1, 'position'=>60),
+					'pfp.multicurrency_price'=>array('label'=>$langs->trans("PriceQtyMinHTCurrency"), 'enabled' => isModEnabled('multicurrency'), 'checked'=>1, 'position'=>70),
+
 				);
 
 				// fetch optionals attributes and labels
@@ -1021,9 +1025,11 @@ if ($id > 0 || $ref) {
 				}
 				print_liste_field_titre("VATRate", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
 				$nbfields++;
-				print_liste_field_titre("PriceQtyMinHT", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
-				$nbfields++;
-				if (isModEnabled("multicurrency")) {
+				if (!empty($arrayfields['pfp.price']['checked'])) {
+					print_liste_field_titre("PriceQtyMinHT", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
+					$nbfields++;
+				}
+				if (isModEnabled("multicurrency") && !empty($arrayfields['pfp.multicurrency_price']['checked'])) {
 					print_liste_field_titre("PriceQtyMinHTCurrency", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
 					$nbfields++;
 				}
@@ -1156,11 +1162,13 @@ if ($id > 0 || $ref) {
 						print '</td>';
 
 						// Price for the quantity
-						print '<td class="right">';
-						print $productfourn->fourn_price ? '<span class="amount">'.price($productfourn->fourn_price).'</span>' : "";
-						print '</td>';
+						if (!empty($arrayfields['pfp.price']['checked'])) {
+							print '<td class="right">';
+							print $productfourn->fourn_price ? '<span class="amount">'.price($productfourn->fourn_price).'</span>' : "";
+							print '</td>';
+						}
 
-						if (isModEnabled("multicurrency")) {
+						if (isModEnabled("multicurrency") && !empty($arrayfields['pfp.multicurrency_price']['checked'])) {
 							// Price for the quantity in currency
 							print '<td class="right">';
 							print $productfourn->fourn_multicurrency_price ? '<span class="amount">'.price($productfourn->fourn_multicurrency_price).'</span>' : "";
@@ -1250,7 +1258,7 @@ if ($id > 0 || $ref) {
 						// Date modification
 						if (!empty($arrayfields['pfp.tms']['checked'])) {
 							print '<td class="right nowraponall">';
-							print dol_print_date(($productfourn->fourn_date_modification ? $productfourn->fourn_date_modification : $productfourn->date_modification), "dayhour");
+							print dol_print_date(($productfourn->fourn_date_modification ? $productfourn->fourn_date_modification : $productfourn->date_modification), "dayhour", "tzuserrel");
 							print '</td>';
 						}
 

@@ -37,7 +37,7 @@ PropalStatusNotSigned=Imzo qo'yilmagan (yopiq)
 PropalStatusBilled=Hisob-kitob
 PropalStatusCanceledShort=Bekor qilingan
 PropalStatusDraftShort=Qoralama
-PropalStatusValidatedShort=Open
+PropalStatusValidatedShort=Ochiq
 PropalStatusClosedShort=Yopiq
 PropalStatusSignedShort=Imzolangan
 PropalStatusNotSignedShort=Imzo qo'yilmagan
@@ -77,13 +77,11 @@ AvailabilityTypeAV_1W=1 hafta
 AvailabilityTypeAV_2W=2 hafta
 AvailabilityTypeAV_3W=3 hafta
 AvailabilityTypeAV_1M=1 oy
-
 ##### Types ofe contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Vakilning keyingi taklifi
 TypeContact_propal_external_BILLING=Mijozlarning hisob-fakturasi bilan aloqa qilish
 TypeContact_propal_external_CUSTOMER=Keyingi taklif bilan mijozlar bilan bog'lanish
 TypeContact_propal_external_SHIPPING=Yetkazib berish uchun mijozlar bilan bog'lanish
-
 # Document models
 CantBeNoSign=o'rnatib bo'lmaydi, imzolanmagan
 CaseFollowedBy=Keyingi ish
@@ -122,3 +120,5 @@ SignSociete_rib=Mandatni imzolash
 SignPropal=Taklifni qabul qiling
 Signed=imzolangan
 SignedOnly=Faqat imzolangan
+ExpeditionSigned=Shipment signed
+SignExpedition=Sign shipment

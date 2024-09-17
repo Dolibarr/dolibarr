@@ -3,6 +3,7 @@
  * Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2016      Meziane Sof          <virtualsof@yahoo.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -137,7 +138,7 @@ if ($action == 'add') {
 		$menu->enabled = (string) GETPOST('enabled', 'alphanohtml');
 		$menu->perms = (string) GETPOST('perms', 'alphanohtml');
 		$menu->target = (string) GETPOST('target', 'alphanohtml');
-		$menu->user = (string) GETPOST('user', 'alphanohtml');
+		$menu->user = GETPOSTINT('user');
 		$menu->mainmenu = (string) GETPOST('propertymainmenu', 'alphanohtml');
 		if (is_numeric(GETPOST('menuIdParent', 'alphanohtml'))) {
 			$menu->fk_menu = (int) GETPOST('menuIdParent', 'alphanohtml');
@@ -198,7 +199,7 @@ if ($action == 'update') {
 				$menu->enabled = (string) GETPOST('enabled', 'alphanohtml');
 				$menu->perms = (string) GETPOST('perms', 'alphanohtml');
 				$menu->target = (string) GETPOST('target', 'alphanohtml');
-				$menu->user = (string) GETPOST('user', 'alphanohtml');
+				$menu->user = GETPOSTINT('user');
 				$menu->mainmenu = (string) GETPOST('propertymainmenu', 'alphanohtml');
 				if (is_numeric(GETPOST('menuIdParent', 'alphanohtml'))) {
 					$menu->fk_menu = (int) GETPOST('menuIdParent', 'alphanohtml');
@@ -244,7 +245,7 @@ if ($action == 'update') {
 $form = new Form($db);
 $formadmin = new FormAdmin($db);
 
-llxHeader('', $langs->trans("Menu"));
+llxHeader('', $langs->trans('Menu'), '', '', 0, 0, '', '', '', 'mod-admin page-menus_edit');
 
 
 if ($action == 'create') {

@@ -125,7 +125,7 @@ if ($action == 'set_thirdparty' && $user->hasRight('ticket', 'write')) {
 $form = new Form($db);
 
 $help_url = '';
-llxHeader('', $langs->trans("TicketDocumentsLinked").' - '.$langs->trans("Files"), $help_url);
+llxHeader('', $langs->trans("TicketDocumentsLinked").' - '.$langs->trans("Files"), $help_url, '', 0, 0, '', '', '', 'mod-ticket page-card_documents');
 
 if ($object->id) {
 	/*
@@ -222,6 +222,13 @@ if ($object->id) {
 			$upload_msg_dir = $conf->agenda->dir_output.'/'.$db->fetch_row($resql)[0];
 			$file_msg = dol_dir_list($upload_msg_dir, "files", 0, '', '\.meta$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 			if (count($file_msg)) {
+				// add specific module part and user rights for delete
+				foreach ($file_msg as $key => $file) {
+					$file_msg[$key]['modulepart'] = 'actions';
+					$file_msg[$key]['relativepath'] = $file['level1name'].'/'; // directory without file name
+					$file_msg[$key]['permtoedit'] = 0;
+					$file_msg[$key]['permonobject'] = 0;
+				}
 				$file_msg_array = array_merge($file_msg, $file_msg_array);
 			}
 		}

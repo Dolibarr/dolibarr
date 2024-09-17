@@ -231,9 +231,9 @@ function getCategory($authentication, $id)
 	}
 
 	if (!$error) {
-		$fuser->getrights();
+		$fuser->loadRights();
 
-		$nbmax = 10;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$nbmax = 10;
 		if ($fuser->hasRight('categorie', 'lire')) {
 			$categorie = new Categorie($db);
 			$result = $categorie->fetch($id);

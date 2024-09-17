@@ -137,7 +137,6 @@ AgendaUrlOptions1=You can also add following parameters to filter output:
 AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic events.
 AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
 AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> to include events of holidays.

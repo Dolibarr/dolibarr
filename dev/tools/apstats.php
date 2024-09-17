@@ -98,7 +98,7 @@ while ($i < $argc) {
 }
 
 // PHPSTAN setup
-$PHPSTANLEVEL = 4;
+$PHPSTANLEVEL = 6;
 
 // PHAN setup. Configuration is required, otherwise phan is disabled.
 $PHAN_CONFIG = "{$path}phan/config_extended.php";
@@ -149,7 +149,7 @@ $phpstanversion = $output_arrtd[0];
 
 $output_arrtd = array();
 if ($dirphpstan != 'disabled') {
-	$commandcheck = ($dirphpstan ? $dirphpstan.'/' : '').'phpstan --level='.$PHPSTANLEVEL.' -v analyze -a build/phpstan/bootstrap.php --memory-limit 5G --error-format=github';
+	$commandcheck = ($dirphpstan ? $dirphpstan.'/' : '').'phpstan --level='.$PHPSTANLEVEL.' -v analyze -a build/phpstan/bootstrap.php --memory-limit 8G --error-format=github';
 	print 'Execute PHPStan to get the technical debt: '.$commandcheck."\n";
 	$resexectd = 0;
 	exec($commandcheck, $output_arrtd, $resexectd);
@@ -745,7 +745,7 @@ $html .= '<div class="boxallwidth">'."\n";
 $html .= <<<END
 <center><br>Thumbs of most active contributors<br>
 <br>
-<a href="https://github.com/Dolibarr/dolibarr/graphs/contributors"><img src="https://camo.githubusercontent.com/a641a400eef38e00a93b572dcfc30d13ceaaeefbca951d09ed9189142d20cf62/68747470733a2f2f6f70656e636f6c6c6563746976652e636f6d2f646f6c69626172722f636f6e7472696275746f72732e7376673f77696474683d38393026627574746f6e3d66616c7365" alt="Dolibarr" data-canonical-src="https://opencollective.com/dolibarr/contributors.svg?width=890&amp;button=false" style="max-width: 100%;"></a>
+<a href="https://github.com/Dolibarr/dolibarr/graphs/contributors"><img src="https://opencollective.com/dolibarr/contributors.svg?width=890&button=false" alt="Dolibarr" data-canonical-src="https://opencollective.com/dolibarr/contributors.svg?width=890&amp;button=false" style="max-width: 100%;"></a>
 </center>
 <br>
 END;
@@ -883,7 +883,7 @@ $html .= '<h2><span class="fas fa-code pictofixedwidth"></span>'.$title_security
 $html .= '<div class="boxallwidth">'."\n";
 $html .= '<div class="div-table-responsive">'."\n";
 $html .= '<table class="list_technical_debt centpercent">'."\n";
-$html .= '<tr class="trgroup"><td>Commit ID</td><td>Date</td><td style="white-space: nowrap">Reported on<br>Yogosha</td><td style="white-space: nowrap">Reported on<br>GIT</td><td style="white-space: nowrap">Reported on<br>CVE</td><td>Title</td><td>Branch</td></tr>'."\n";
+$html .= '<tr class="trgroup"><td>Commit ID</td><td>Date</td><td style="white-space: nowrap">Reported on<br>Yogosha</td><td style="white-space: nowrap">Reported on<br>GIT</td><td style="white-space: nowrap">Reported on<br>CVE</td><td>Title</td><td>Branch of fix</td></tr>'."\n";
 foreach ($arrayofalerts as $key => $alert) {
 	$cve = '';
 	$yogosha = empty($alert['issueidyogosha']) ? '' : $alert['issueidyogosha'];
@@ -1019,11 +1019,13 @@ if ($fh) {
 
 		fwrite($fh, '<item>'."\n");
 		fwrite($fh, '<title>' . htmlspecialchars($alert['title']) . '</title>'."\n");
+		// Description of alert, list of links to sources and branches of fixes
 		fwrite($fh, '<description>' . $alert['description'] . '</description>'."\n");	// no htmlspeciachars here
 		fwrite($fh, '<link>' . htmlspecialchars($alert['url_commit']) . '</link>'."\n");
 		$tmpdate = strtotime($alert['created_at']);
 		fwrite($fh, '<pubDate>' . htmlspecialchars(date('r', $tmpdate)) . '</pubDate>'."\n");
-		fwrite($fh, '<guid isPermaLink="false"><![CDATA['.htmlspecialchars($alert['commitid']).']]></guid>'."\n");
+		fwrite($fh, '<guid isPermaLink="false"><![CDATA['.htmlspecialchars($alert['commitid']).']]></guid>'."\n");	// A hidden unique ID
+
 		fwrite($fh, '</item>'."\n");
 	}
 

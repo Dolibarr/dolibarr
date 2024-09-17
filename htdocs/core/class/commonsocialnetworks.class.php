@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2012 Regis Houssin  <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +29,7 @@
 trait CommonSocialNetworks
 {
 	/**
-	 * @var array array of socialnetworks
+	 * @var array<string,string>
 	 */
 	public $socialnetworks;
 
@@ -36,7 +37,7 @@ trait CommonSocialNetworks
 	/**
 	 * Show social network part if the module is enabled with hiding functionality
 	 *
-	 * @param	array	$socialnetworks		Array of social networks
+	 * @param	array<string,array{active:int<0,1>,icon:string,label:string}>	$socialnetworks		Array of social networks
 	 * @param	int		$colspan			Colspan
 	 * @return 	void
 	 */
@@ -53,7 +54,7 @@ trait CommonSocialNetworks
 		}
 
 		if ($nbofnetworks > 1) {
-			print '<tr><td><br><a class="paddingtop paddingbottom socialnetworklnk onreposition" colspan="'.$colspan.'" id="socialnetworklnk" href="#"></a>';
+			print '<tr><td colspan="'.$colspan.'"><br><a class="paddingtop paddingbottom socialnetworklnk onreposition" id="socialnetworklnk" href="#"></a>';
 			//print '</td>';
 			//print '<td'.($colspan ? ' colspan="'.($colspan-1).'"' : '').'>';
 			//print '<br>';
@@ -76,7 +77,6 @@ trait CommonSocialNetworks
 				print '<input type="hidden" name="'.$key.'" value="'.$object->socialnetworks[$key].'">';
 			}
 		}
-		print '<tr><td'.($colspan ? ' colspan="'.$colspan.'"' : '').'><hr></td></tr>';
 
 		if ($nbofnetworks > 1) {
 			print '<script nonce="'.getNonce().'" type="text/javascript">

@@ -7,6 +7,7 @@
  * Copyright (C) 2011-2014  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2023		Benjamin Falière		<benjamin.faliere@altairis.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +54,7 @@ if (!empty($user->socid)) {
 $fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
 $fieldtype = (!empty($ref) ? 'ref' : 'rowid');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('productcompositioncard', 'globalcard'));
 
 $object = new Product($db);
@@ -217,7 +218,7 @@ if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) {
 	$help_url = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios|DE:Modul_Leistungen';
 }
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-product page-composition_card');
 
 $head = product_prepare_head($object);
 
@@ -532,7 +533,7 @@ if ($id > 0 || !empty($ref)) {
 					print $hookmanager->resPrint;
 
 					// Qty in kit
-					print '<td class="right">'.dol_escape_htmltag($value['nb']).'</td>';
+					print '<td class="right">'.dol_escape_htmltag((string) $value['nb']).'</td>';
 
 					// Inc/dec
 					print '<td>&nbsp;</td>';

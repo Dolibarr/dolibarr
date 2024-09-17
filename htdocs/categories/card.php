@@ -91,7 +91,7 @@ $object = new Categorie($db);
 $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('categorycard'));
 
 $error = 0;
@@ -100,6 +100,7 @@ $error = 0;
 /*
  *	Actions
  */
+
 $parameters = array('socid' => $socid, 'origin' => $origin, 'catorigin' => $catorigin, 'type' => $type, 'urlfrom' => $urlfrom, 'backtopage' => $backtopage, 'label' => $label, 'description' => $description, 'color' => $color, 'position' => $position, 'visible' => $visible, 'parent' => $parent);
 // Note that $action and $object may be modified by some hooks
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
@@ -174,41 +175,39 @@ if (empty($reshook)) {
 			}
 		}
 	}
-	// Confirm action
-	if (($action == 'add' || $action == 'confirmed') && $user->hasRight('categorie', 'creer')) {
-		// Action confirmation of creation category
-		if ($action == 'confirmed') {
-			if ($urlfrom) {
-				header("Location: ".$urlfrom);
-				exit;
-			} elseif ($backtopage) {
-				header("Location: ".$backtopage);
-				exit;
-			} elseif ($idProdOrigin) {
-				header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idProdOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
-				exit;
-			} elseif ($idCompanyOrigin) {
-				header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idCompanyOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
-				exit;
-			} elseif ($idSupplierOrigin) {
-				header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idSupplierOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
-				exit;
-			} elseif ($idMemberOrigin) {
-				header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idMemberOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
-				exit;
-			} elseif ($idContactOrigin) {
-				header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idContactOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
-				exit;
-			} elseif ($idProjectOrigin) {
-				header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idProjectOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
-				exit;
-			}
-
-			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$result.'&type='.$type);
+	// Action confirmation of creation category
+	if ($action == 'confirmed' && $user->hasRight('categorie', 'creer')) {
+		if ($urlfrom) {
+			header("Location: ".$urlfrom);
+			exit;
+		} elseif ($backtopage) {
+			header("Location: ".$backtopage);
+			exit;
+		} elseif ($idProdOrigin) {
+			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idProdOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
+			exit;
+		} elseif ($idCompanyOrigin) {
+			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idCompanyOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
+			exit;
+		} elseif ($idSupplierOrigin) {
+			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idSupplierOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
+			exit;
+		} elseif ($idMemberOrigin) {
+			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idMemberOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
+			exit;
+		} elseif ($idContactOrigin) {
+			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idContactOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
+			exit;
+		} elseif ($idProjectOrigin) {
+			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idProjectOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
 		}
+
+		header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$result.'&type='.$type);
+		exit;
 	}
 }
+
 
 /*
  * View
@@ -244,7 +243,7 @@ if ($user->hasRight('categorie', 'creer')) {
 
 		print dol_get_fiche_head();
 
-		print '<table width="100%" class="border">';
+		print '<table class="border centpercent">';
 
 		// Ref
 		print '<tr>';
@@ -254,7 +253,7 @@ if ($user->hasRight('categorie', 'creer')) {
 		// Description
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor = new DolEditor('description', $description, '', 160, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_5, '90%');
+		$doleditor = new DolEditor('description', $description, '', 160, 'dolibarr_notes', '', false, true, isModEnabled('fckeditor') && getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_5, '90%');
 		$doleditor->Create();
 		print '</td></tr>';
 
@@ -265,7 +264,7 @@ if ($user->hasRight('categorie', 'creer')) {
 
 		// Position
 		print '<tr>';
-		print '<td class="titlefieldcreate">'.$langs->trans("Position").'</td><td><input id="position" class="minwidth100" name="position" value="'.$position.'">';
+		print '<td class="titlefieldcreate">'.$langs->trans("Position").'</td><td><input id="position" type="number" class="minwidth50 maxwidth50" name="position" value="'.$position.'">';
 		print'</td></tr>';
 
 		// Parent category

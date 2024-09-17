@@ -93,11 +93,19 @@ dolibarr_install_syslog("--- step2: entering step2.php page");
 
 '@phan-var-force string $dolibarr_main_db_prefix';  // From configuraiotn file or install/inc.php
 
+
+/*
+ * Actions
+ */
+
+// None
+
+
 /*
  *	View
  */
 
-pHeader($langs->trans("CreateDatabaseObjects"), "step4");
+pHeader($langs->trans("DolibarrSetup").' - '.$langs->trans("CreateDatabaseObjects"), "step4");
 
 // Test if we can run a first install process
 if (!is_writable($conffile)) {
@@ -106,7 +114,7 @@ if (!is_writable($conffile)) {
 	exit;
 }
 
-if ($action == "set") {
+if ($action == "set") {		// Test on permission not required. Already managed by test in inc.php
 	print '<h3><img class="valignmiddle inline-block paddingright" src="../theme/common/octicons/build/svg/database.svg" width="20" alt="Database"> '.$langs->trans("Database").'</h3>';
 
 	print '<table cellspacing="0" style="padding: 4px 4px 4px 0" border="0" width="100%">';
@@ -535,6 +543,9 @@ if ($action == "set") {
 					if ($dolibarr_main_db_prefix != 'llx_') {
 						$buffer = preg_replace('/llx_/i', $dolibarr_main_db_prefix, $buffer);
 					}
+
+					// Replace __ENTITY__ tag with 1 (master entity), this is only for dictionaries.
+					$buffer = preg_replace('/__ENTITY__/i', '1', $buffer);
 
 					//dolibarr_install_syslog("step2: request: " . $buffer);
 					$resql = $db->query($buffer, 1);

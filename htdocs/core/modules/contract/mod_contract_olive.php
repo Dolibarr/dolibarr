@@ -77,9 +77,9 @@ class mod_contract_olive extends ModelNumRefContracts
 	/**
 	 * Return an example of result returned by getNextValue
 	 *
-	 * @param	Societe		$objsoc		Object thirdparty
-	 * @param	Contrat		$contract	Object contract
-	 * @return	string					Return next value
+	 *	@param	Societe		$objsoc		Object thirdparty
+	 *	@param	Contrat		$contract	Object contract
+	 *	@return string|int<-1,0>		Value if OK, <=0 if KO
 	 */
 	public function getNextValue($objsoc, $contract)
 	{
@@ -108,7 +108,7 @@ class mod_contract_olive extends ModelNumRefContracts
 		$code = strtoupper(trim($code));
 
 		if (empty($code) && $this->code_null && !getDolGlobalString('MAIN_CONTRACT_CODE_ALWAYS_REQUIRED')) {
-			$result = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$result = 0;
 		} elseif (empty($code) && (!$this->code_null || getDolGlobalString('MAIN_CONTRACT_CODE_ALWAYS_REQUIRED'))) {
 			$result = -2;
 		}

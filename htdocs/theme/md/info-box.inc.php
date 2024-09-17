@@ -27,6 +27,12 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 
 ?>
 
+.nonature-back {
+	background-color: #EEE;
+	padding: 2px;
+	margin: 2px;
+	border-radius: 3px;
+}
 .customer-back {
 	background-color: #65953d !important;
 	color: #FFF !important;
@@ -49,17 +55,19 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	border-radius: 3px;
 }
 .member-company-back {
-	padding: 2px 7px 2px 7px;
+	padding: 2px;
+	margin: 2px;
 	background-color: #e4e4e4;
 	color: #666;
-	border-radius: 10px;
+	border-radius: 3px;
 	white-space: nowrap;
 }
 .member-individual-back {
-	padding: 2px 7px 2px 7px;
+	padding: 2px;
+	margin: 2px;
 	background-color: #e4e4e4;
 	color: #666;
-	border-radius: 10px;
+	border-radius: 3px;
 	white-space: nowrap;
 }
 
@@ -91,6 +99,14 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	<?php echo $prefix; ?>color: #755114  !important;
 }
 
+/* Disable colors on left vmenu */
+a.vmenu span, span.vmenu, span.vmenu span {
+	/* To force no color on picto in left menu */
+	/* color: var(--colortextbackvmenu) !important; */
+}
+div.login_block_other a {
+	color: var(--colortextbackvmenu);
+}
 
 .infobox-adherent, .infobox-member {
 	color: #79633f;
@@ -524,35 +540,6 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 }
 
 
-/* USING IMAGES FOR WEATHER INSTEAD OF FONT AWESOME */
-/* For other themes just uncomment this part */
-/*.info-box-weather-level0,
-.info-box-weather-level1,
-.info-box-weather-level2,
-.info-box-weather-level3,
-.info-box-weather-level4 {
-	background-position: 15px 50%;
-	background-repeat: no-repeat;
-}
-
-.info-box-weather .info-box-icon{
-	display: none !important;
-}
-.info-box-weather-level0 {
-	background-image: url("img/weather/weather-clear.png");
-}
-.info-box-weather-level1 {
-	background-image: url("img/weather/weather-few-clouds.png");
-}
-.info-box-weather-level2 {
-	background-image: url("img/weather/weather-clouds.png");
-}
-.info-box-weather-level3 {
-	background-image: url("img/weather/weather-many-clouds.png");
-}
-.info-box-weather-level4 {
-	background-image: url("img/weather/weather-storm.png");
-}*/
 
 
 
@@ -561,8 +548,8 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	flex-direction: row;
 	flex-wrap: wrap;
 	width: 100%;
-	margin: 0 0 0 -15px;
-	/*justify-content: space-between;*/
+	margin: 0 0 0 -10px;
+	/* justify-content: space-between; Do not use this: If there is 3 elements on last line and previous has 4, then the 3 are centered */
 }
 .box-flex-container-columns {
 	display: flex; /* or inline-flex */
@@ -572,26 +559,68 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 }
 .box-flex-container-column {
 	flex-grow: 1;
-	}
+}
 .box-flex-container-column:not(:last-of-type) {
 	border-right: 1px solid #AAA;
+}
+
+.box-flex-container-column.kanban {
+	flex: 1;
+}
+.kanban.kanbancollapsed {
+	flex: unset;
+	width: 80px;
+}
+.kanban.kanbancollapsed .kanbanlabel, .text-vertical {
+	writing-mode: vertical-rl;
 }
 
 .box-flex-grow-zero{
 	flex-grow: 0 !important;
 }
 
-.box-flex-item{
+.box-flex-item {
 	flex-grow : 1;
 	flex-shrink: 1;
 	flex-basis: auto;
-
-	width: 290px;
-	margin: 5px 0px 0px 15px;
+	width: 300px;
 }
 .box-flex-item.filler{
-	margin: 0px 0px 0px 15px !important;
 	height: 0;
+}
+.box-flex-item, .kanbanlabel  {
+	margin-top: 5px;
+	margin-<?php echo $right; ?>: 10px;
+	margin-bottom: 0px;
+	margin-<?php echo $left; ?>: 10px;
+}
+.kanbanlabel {
+	background: var(--colorbacktitle1);
+	padding: 5px;
+	margin-bottom: 10px;
+	border-radius: 5px;
+}
+.kanban .box-flex-item {
+	line-height: 1.4em;
+}
+
+/* css for small kanban */
+.box-flex-item-small {
+	width: 200px !important;
+}
+.box-flex-item-small .info-box-sm .info-box-content {
+	margin-left: 0;
+}
+.box-flex-item-small .info-box-icon.bg-infobox-action {
+	display: none;
+}
+
+
+@media only screen and (max-width: 767px)
+{
+	.box-flex-container {
+		margin: 0 0 0 -8px !important;
+	}
 }
 
 .info-box-title {

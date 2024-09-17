@@ -70,8 +70,9 @@ class box_factures_fourn extends ModeleBoxes
 		$facturestatic = new FactureFournisseur($this->db);
 		$thirdpartystatic = new Fournisseur($this->db);
 
+		$text = $langs->trans("BoxTitleLast".(getDolGlobalString('MAIN_LASTBOX_ON_OBJECT_DATE') ? "" : "Modified")."SupplierBills", $max);
 		$this->info_box_head = array(
-			'text' => $langs->trans("BoxTitleLast".(getDolGlobalString('MAIN_LASTBOX_ON_OBJECT_DATE') ? "" : "Modified")."SupplierBills", $max)
+			'text' => $text.'<a class="paddingleft" href="'.DOL_URL_ROOT.'/fourn/facture/list.php?sortfield=f.tms&sortorder=DESC"><span class="badge">...</span></a>'
 		);
 
 		if ($user->hasRight('fournisseur', 'facture', 'lire')) {
@@ -218,9 +219,9 @@ class box_factures_fourn extends ModeleBoxes
 	/**
 	 *	Method to show box
 	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
+	 *	@param	?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}	$head	Array with properties of box title
+	 *	@param	?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>	$contents	Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *	@return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)

@@ -398,7 +398,7 @@ class FormFile
 		$printer = 0;
 		// The direct print feature is implemented only for such elements
 		if (in_array($modulepart, array('contract', 'facture', 'supplier_proposal', 'propal', 'proposal', 'order', 'commande', 'expedition', 'commande_fournisseur', 'expensereport', 'delivery', 'ticket'))) {
-			$printer = ($user->hasRight('printing', 'read') && !empty($conf->printing->enabled)) ? true : false;
+			$printer = ($user->hasRight('printing', 'read') && !empty($conf->printing->enabled));
 		}
 
 		$hookmanager->initHooks(array('formfile'));
@@ -594,7 +594,7 @@ class FormFile
 				} else {
 					include_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
 					//$modellist = ModeleExports::liste_modeles($this->db);		// liste_modeles() does not exists. We are using listOfAvailableExportFormat() method instead that return a different array format.
-					$modellist = array();  // @phan-suppress-current-line PhanPluginRedundantAssignment
+					$modellist = array();
 				}
 			} elseif ($modulepart == 'commande_fournisseur' || $modulepart == 'supplier_order') {
 				if (is_array($genallowed)) {
@@ -714,7 +714,7 @@ class FormFile
 			$out .= '<tr class="liste_titre">';
 			$addcolumforpicto = ($delallowed || $printer || $morepicto);
 			$colspan = (4 + ($addcolumforpicto ? 1 : 0));
-			$colspanmore = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$colspanmore = 0;
 
 			$out .= '<th colspan="'.$colspan.'" class="formdoc liste_titre maxwidthonsmartphone center">';
 
@@ -1135,7 +1135,7 @@ class FormFile
 				// Download
 				$tmpout .= '<li class="nowrap"><a class="pictopreview nowrap" ';
 				if (getDolGlobalInt('MAIN_DISABLE_FORCE_SAVEAS') == 2) {
-						$tmpout .= 'target="_blank" ';
+					$tmpout .= 'target="_blank" ';
 				}
 				$tmpout .= 'href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&amp;entity='.$entity.'&amp;file='.urlencode($relativepath).'"';
 				$mime = dol_mimetype($relativepath, '', 0);
@@ -1175,12 +1175,11 @@ class FormFile
 	 * 	@param	 int			$forcedownload		Force to open dialog box "Save As" when clicking on file.
 	 * 	@param	 string			$relativepath		Relative path of docs (autodefined if not provided), relative to module dir, not to MAIN_DATA_ROOT.
 	 * 	@param	 int			$permonobject		Permission on object (so permission to delete or crop document)
-	 * 	@param	 int			$useinecm			Change output for use in ecm module:
-	 * 												0 or 6: Add a preview column. Show also a rename button. Show also a crop button for some values of $modulepart (must be supported into hard coded list in this function + photos_resize.php + restrictedArea + checkUserAccessToObject)
+	 * 	@param	 int			$useinecm			Change output to add more information:
+	 * 												0, 4, 5, 6: Add a preview column. Show also a rename button. Show also a crop button for some values of $modulepart (must be supported into hard coded list in this function + photos_resize.php + restrictedArea + checkUserAccessToObject)
 	 * 												1: Add link to edit ECM entry
 	 * 												2: Add rename and crop link
-	 *                                  		    4: Add a preview column
-	 *                                  		    5: Add link to edit ECM entry and Add a preview column
+	 *                                  		    5: Add link to edit ECM entry and add a preview column
 	 * 	@param	 string			$textifempty		Text to show if filearray is empty ('NoFileFound' if not defined)
 	 *  @param   int			$maxlength          Maximum length of file name shown.
 	 *  @param	 string			$title				Title before list. Use 'none' to disable title.
@@ -1287,7 +1286,7 @@ class FormFile
 			}
 
 			// Show list of existing files
-			if ((empty($useinecm) || $useinecm == 6) && $title != 'none') {
+			if ((empty($useinecm) || $useinecm == 3 || $useinecm == 6) && $title != 'none') {
 				print load_fiche_titre($title ? $title : $langs->trans("AttachedFiles"), '', 'file-upload', 0, '', 'table-list-of-attached-files');
 			}
 			if (empty($url)) {
@@ -1357,6 +1356,12 @@ class FormFile
 			$i = 0;
 			$nboflines = 0;
 			$lastrowid = 0;
+			$parametersByDefault = array(
+				'modulepart'=> $modulepart,
+				'relativepath'=> $relativepath,
+				'permtoedit' => $permtoeditline,
+				'permonobject' => $permonobject,
+			);
 			foreach ($filearray as $key => $file) {      // filearray must be only files here
 				if ($file['name'] != '.' && $file['name'] != '..' && !preg_match('/\.meta$/i', $file['name'])) {
 					if (array_key_exists('rowid', $filearray[$key]) && $filearray[$key]['rowid'] > 0) {
@@ -1364,8 +1369,13 @@ class FormFile
 					}
 					//var_dump($filearray[$key]);
 
-					// Note: for supplier invoice, $modulepart may be already 'facture_fournisseur' and $relativepath may be already '6/1/SI2210-0013/'
+					// get specific parameters from file attributes if set or get default ones
+					$modulepart = ($file['modulepart'] ?? $parametersByDefault['modulepart']);
+					$relativepath = ($file['relativepath'] ?? $parametersByDefault['relativepath']);
+					$permtoeditline = ($file['permtoedit'] ?? $parametersByDefault['permtoedit']);
+					$permonobject = ($file['permonobject'] ?? $parametersByDefault['permonobject']);
 
+					// Note: for supplier invoice, $modulepart may be already 'facture_fournisseur' and $relativepath may be already '6/1/SI2210-0013/'
 					if (empty($relativepath) || empty($modulepart)) {
 						$filepath = $file['level1name'].'/'.$file['name'];
 					} else {
@@ -1388,7 +1398,7 @@ class FormFile
 
 
 					// File name
-					print '<td class="minwith200 tdoverflowmax500">';
+					print '<td class="minwith200 tdoverflowmax500" title="'.dolPrintHTMLForAttribute($file['name']).'">';
 
 					// Show file name with link to download
 					//print "XX".$file['name'];	//$file['name'] must be utf8
@@ -1455,7 +1465,7 @@ class FormFile
 						print '<td class="center">';
 						if (image_format_supported($file['name']) >= 0) {
 							if ($useinecm == 5 || $useinecm == 6) {
-								$smallfile = getImageFileNameForSize($file['name'], ''); // There is no thumb for ECM module and Media filemanager, so we use true image. TODO Change this it is slow on image dir.
+								$smallfile = getImageFileNameForSize($file['name'], ''); // There is no thumb for ECM module and Media filemanager, so we use true image. TODO Change this for better performance.
 							} else {
 								$smallfile = getImageFileNameForSize($file['name'], '_small'); // For new thumbs using same ext (in lower case however) than original
 							}
@@ -1470,7 +1480,7 @@ class FormFile
 
 							$urlforhref = getAdvancedPreviewUrl($modulepart, $relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']), 1, '&entity='.(empty($object->entity) ? $conf->entity : $object->entity));
 							if (empty($urlforhref)) {
-								$urlforhref = DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(empty($object->entity) ? $conf->entity : $object->entity).'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']));
+								$urlforhref = DOL_URL_ROOT.'/viewimage.php?modulepart='.urlencode($modulepart).'&entity='.(empty($object->entity) ? $conf->entity : $object->entity).'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']));
 								print '<a href="'.$urlforhref.'" class="aphoto" target="_blank" rel="noopener noreferrer">';
 							} else {
 								print '<a href="'.$urlforhref['url'].'" class="'.$urlforhref['css'].'" target="'.$urlforhref['target'].'" mime="'.$urlforhref['mime'].'">';
@@ -1482,10 +1492,12 @@ class FormFile
 								//print ' style="max-height: '.$maxheightmini.'px"';
 								print ' style="max-height: 24px"';
 							}
-							print ' src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(empty($object->entity) ? $conf->entity : $object->entity).'&file='.urlencode($relativepath.$smallfile).'" title="">';
+							print ' src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.urlencode($modulepart).'&entity='.(empty($object->entity) ? $conf->entity : $object->entity).'&file='.urlencode($relativepath.$smallfile);
+							if (!empty($filearray[$key]['date'])) {	// We know the date of file, we can use it as cache key so URL will be in browser cache as long as file date is not modified.
+								print '&cache='.urlencode((string) $filearray[$key]['date']);
+							}
+							print '" title="">';
 							print '</a>';
-						} else {
-							print '&nbsp;';
 						}
 						print '</td>';
 					}
@@ -1536,7 +1548,7 @@ class FormFile
 							print '<a class="editfielda editfilelink" href="'.DOL_URL_ROOT.'/ecm/file_card.php?urlfile='.urlencode($file['name']).$param.'&backtopage='.urlencode($backtopage).'" rel="'.urlencode($file['name']).'">'.img_edit('default', 0, 'class="paddingrightonly"').'</a>';
 						}
 
-						if (empty($useinecm) || $useinecm == 2 || $useinecm == 6) {	// 6=Media file manager
+						if (empty($useinecm) || $useinecm == 2 || $useinecm == 3 || $useinecm == 6) {	// 6=Media file manager
 							$newmodulepart = $modulepart;
 							if (in_array($modulepart, array('product', 'produit', 'service'))) {
 								$newmodulepart = 'produit|service';
@@ -1598,7 +1610,7 @@ class FormFile
 							if (getDolGlobalString('MAIN_ECM_DISABLE_JS')) {
 								$useajax = 0;
 							}
-							print '<a href="'.((($useinecm && $useinecm != 6) && $useajax) ? '#' : ($url.'?action=deletefile&token='.newToken().'&urlfile='.urlencode($filepath).$param)).'" class="reposition deletefilelink" rel="'.$filepath.'">'.img_delete().'</a>';
+							print '<a href="'.((($useinecm && $useinecm != 3 && $useinecm != 6) && $useajax) ? '#' : ($url.'?action=deletefile&token='.newToken().'&urlfile='.urlencode($filepath).$param)).'" class="reposition deletefilelink" rel="'.$filepath.'">'.img_delete().'</a>';
 						}
 						print "</td>";
 
@@ -1922,7 +1934,7 @@ class FormFile
 						if ($id) {
 							$result = $object_instance->fetch($id);
 						} else {
-							if (!($result = $object_instance->fetch('', $ref))) {
+							if (!($result = $object_instance->fetch(0, $ref))) {
 								//fetchOneLike looks for objects with wildcards in its reference.
 								//It is useful for those masks who get underscores instead of their actual symbols (because the _ had replaced all forbidden chars into filename)
 								// TODO Example when this is needed ?

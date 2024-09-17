@@ -102,14 +102,6 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	// Change customer bank information to withdraw
-	/*
-	if ($action == 'modify') {
-		for ($i = 1; $i < 9; $i++) {
-			dolibarr_set_const($db, GETPOST("nom".$i), GETPOST("value".$i), 'chaine', 0, '', $conf->entity);
-		}
-	}
-	*/
 	if ($action == 'create' && $permissiontocreate) {
 		$default_account = ($type == 'bank-transfer' ? 'PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT' : 'PRELEVEMENT_ID_BANKACCOUNT');
 		//var_dump($default_account);var_dump(getDolGlobalString($default_account));var_dump($id_bankaccount);exit;
@@ -274,7 +266,7 @@ if ($sourcetype == 'salary') {
 
 print '<tr><td class="titlefield">'.$labeltoshow.'</td>';
 print '<td class="nowraponall">';
-print dol_escape_htmltag($nb);
+print dol_escape_htmltag((string) $nb);
 print '</td></tr>';
 
 print '<tr><td>'.$langs->trans("AmountTotal").'</td>';
@@ -563,7 +555,9 @@ if ($resql) {
 
 				$invoicestatic->id = $obj->rowid;
 				$invoicestatic->ref = $obj->ref;
-				$invoicestatic->ref_supplier = $obj->ref_supplier;
+				if ($type == 'bank-transfer') {
+					$invoicestatic->ref_supplier = $obj->ref_supplier;
+				}
 			} else {
 				$bac = new UserBankAccount($db);
 				$bac->fetch(0, '', $obj->uid);

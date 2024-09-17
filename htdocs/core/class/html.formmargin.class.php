@@ -231,7 +231,7 @@ class FormMargin
 		} elseif (empty($reshook)) {
 			if (getDolGlobalString('MARGIN_ADD_SHOWHIDE_BUTTON')) {
 				print $langs->trans('ShowMarginInfos') . ' ';
-				$hidemargininfos = preg_replace('/[^a-zA-Z0-9_\-]/', '', $_COOKIE['DOLUSER_MARGININFO_HIDE_SHOW']); // Clean cookie
+				$hidemargininfos = preg_replace('/[^a-zA-Z0-9_\-]/', '', $_COOKIE['DOLUSER_MARGININFO_HIDE_SHOW']) ?? ''; // Clean cookie
 				print '<span id="showMarginInfos" class="linkobject valignmiddle ' . (!empty($hidemargininfos) ? '' : 'hideobject') . '">' . img_picto($langs->trans("Disabled"), 'switch_off') . '</span>';
 				print '<span id="hideMarginInfos" class="linkobject valignmiddle ' . (!empty($hidemargininfos) ? 'hideobject' : '') . '">' . img_picto($langs->trans("Enabled"), 'switch_on') . '</span>';
 

@@ -5,8 +5,9 @@
  * Copyright (C) 2010-2014 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2017      Ferran Marcet         <fmarcet@2byte.es>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2018-2024 Frédéric France       <frederic.france@free.fr>
+ * Copyright (C) 2024      MDW                   <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024      Josep Lluís Amador    <joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,7 +71,7 @@ class pdf_vinci extends ModelePDFMo
 
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr';
 
@@ -125,15 +126,15 @@ class pdf_vinci extends ModelePDFMo
 	/**
 	 *  Function to build pdf onto disk
 	 *
-	 *  @param		Mo				$object				Id of object to generate
-	 *  @param		Translate		$outputlangs		Lang output object
-	 *  @param		string			$srctemplatepath	Full path of source filename for generator using a template file
-	 *  @param		int				$hidedetails		Do not show line details
-	 *  @param		int				$hidedesc			Do not show desc
-	 *  @param		int				$hideref			Do not show ref
-	 *  @return		int									1=OK, 0=KO
+	 *	@param		Mo			$object				Object source to build document
+	 *  @param		Translate	$outputlangs		Lang output object
+	 *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file
+	 *  @param		int<0,1>	$hidedetails		Do not show line details
+	 *  @param		int<0,1>	$hidedesc			Do not show desc
+	 *  @param		int<0,1>	$hideref			Do not show ref
+	 *  @return		int<-1,1>							1 if OK, <=0 if KO
 	 */
-	public function write_file($object, $outputlangs = null, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 		// phpcs:enable
 		global $user, $langs, $conf, $hookmanager, $mysoc;
@@ -167,9 +168,6 @@ class pdf_vinci extends ModelePDFMo
 		if (getDolGlobalString('MAIN_PDF_DISABLE_COL_HEAD_TITLE')) {
 			$hidetop = getDolGlobalString('MAIN_PDF_DISABLE_COL_HEAD_TITLE');
 		}
-
-		// Loop on each lines to detect if there is at least one image to show
-		$realpatharray = array();
 
 		if ($conf->mrp->dir_output) {
 			$object->fetch_thirdparty();
@@ -213,7 +211,7 @@ class pdf_vinci extends ModelePDFMo
 				$pdf = pdf_getInstance($this->format);
 				$default_font_size = pdf_getPDFFontSize($outputlangs); // Must be after pdf_getInstance
 				$heightforinfotot = 50; // Height reserved to output the info and total part
-				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
+				$heightforfreetext = getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT', 5); // Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
 				if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS')) {
 					$heightforfooter += 6;
@@ -340,7 +338,6 @@ class pdf_vinci extends ModelePDFMo
 						while ($i < $pageposafternote) {
 							$pdf->setPage($i);
 
-
 							$pdf->SetDrawColor(128, 128, 128);
 							// Draw note frame
 							if ($i > $pageposbeforenote) {
@@ -393,7 +390,7 @@ class pdf_vinci extends ModelePDFMo
 						}
 					}
 
-					$tab_height = $tab_height - $height_note;
+					$tab_height -= $height_note;
 					$tab_top = $posyafter + 6;
 				} else {
 					$height_note = 0;
@@ -421,12 +418,6 @@ class pdf_vinci extends ModelePDFMo
 					$prod = new Product($this->db);
 					$prod->fetch($bom->lines[$i]->fk_product);
 
-					// Define size of image if we need it
-					$imglinesize = array();
-					if (!empty($realpatharray[$i])) {
-						$imglinesize = pdf_getSizeForImage($realpatharray[$i]);
-					}
-
 					$pdf->setTopMargin($tab_top_newpage);
 					$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
 					$pageposbefore = $pdf->getPage();
@@ -435,33 +426,6 @@ class pdf_vinci extends ModelePDFMo
 					$posYAfterImage = 0;
 					$posYAfterDescription = 0;
 
-					// We start with Photo of product line
-					if (!empty($imglinesize['width']) && !empty($imglinesize['height']) && ($curY + $imglinesize['height']) > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot))) {	// If photo too high, we moved completely on new page
-						$pdf->AddPage('', '', true);
-						if (!empty($tplidx)) {
-							$pdf->useTemplate($tplidx);
-						}
-						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
-							$this->_pagehead($pdf, $object, 0, $outputlangs);
-						}
-						$pdf->setPage($pageposbefore + 1);
-
-						$curY = $tab_top_newpage;
-
-						// Allows data in the first page if description is long enough to break in multiples pages
-						if (getDolGlobalString('MAIN_PDF_DATA_ON_FIRST_PAGE')) {
-							$showpricebeforepagebreak = 1;
-						} else {
-							$showpricebeforepagebreak = 0;
-						}
-					}
-
-					if (!empty($imglinesize['width']) && !empty($imglinesize['height'])) {
-						$curX = $this->posxpicture - 1;
-						$pdf->Image($realpatharray[$i], $curX + (($this->posxtva - $this->posxpicture - $imglinesize['width']) / 2), $curY, $imglinesize['width'], $imglinesize['height'], '', '', '', 2, 300); // Use 300 dpi
-						// $pdf->Image does not increase value return by getY, so we save it manually
-						$posYAfterImage = $curY + $imglinesize['height'];
-					}
 					// Description of product line
 					$curX = $this->posxdesc - 1;
 					$showpricebeforepagebreak = 1;
@@ -595,8 +559,6 @@ class pdf_vinci extends ModelePDFMo
 				}
 
 
-
-
 				// Show square
 				if ($pagenb == $pageposbeforeprintlines) {
 					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, $hidetop, 0, $object->multicurrency_code);
@@ -620,7 +582,7 @@ class pdf_vinci extends ModelePDFMo
 				// Pied de page
 				$this->_pagefoot($pdf, $object, $outputlangs);
 				if (method_exists($pdf, 'AliasNbPages')) {
-					$pdf->AliasNbPages();
+					$pdf->AliasNbPages();  // @phan-suppress-current-line PhanUndeclaredMethod
 				}
 
 				$pdf->Close();
@@ -1111,11 +1073,11 @@ class pdf_vinci extends ModelePDFMo
 			}
 		}
 
-		if (!empty($object->date_approve)) {
+		if (!empty($object->date_start_planned)) {
 			$posy += 5;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("MoDate")." : ".dol_print_date($object->date_approve, "day", false, $outputlangs, true), '', 'R');
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("MoDate")." : ".dol_print_date($object->date_start_planned, "day", false, $outputlangs, true), '', 'R');
 		} else {
 			$posy += 5;
 			$pdf->SetXY($posx, $posy);
@@ -1373,9 +1335,15 @@ class pdf_vinci extends ModelePDFMo
 			'status' => true,
 			'width' => 35, // in mm
 			'title' => array(
-				'textkey' => 'Ref'
+				'textkey' => 'Ref',
+				'align' => 'L',
+				'padding' => array(0.5, 1, 0.5, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			),
 			'border-left' => true, // add left line separator
+			'content' => array(
+				'align' => 'L',
+				'padding' => array(1, 0.5, 1, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+			),
 		);
 
 		$rank = 1; // do not use negative rank
@@ -1397,26 +1365,7 @@ class pdf_vinci extends ModelePDFMo
 			),
 		);
 
-		$rank = $rank + 10;
-		$this->cols['photo'] = array(
-			'rank' => $rank,
-			'width' => getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH', 20), // in mm
-			'status' => false,
-			'title' => array(
-				'textkey' => 'Photo',
-				'label' => ' '
-			),
-			'content' => array(
-				'padding' => array(0, 0, 0, 0), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
-			),
-			'border-left' => false, // remove left line separator
-		);
-
-		if (getDolGlobalString('MAIN_GENERATE_ORDERS_WITH_PICTURE')) {
-			$this->cols['photo']['status'] = true;
-		}
-
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['dim'] = array(
 			'rank' => $rank,
 			'status' => true,
@@ -1427,7 +1376,7 @@ class pdf_vinci extends ModelePDFMo
 			'border-left' => true, // add left line separator
 		);
 
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['qty'] = array(
 			'rank' => $rank,
 			'width' => 16, // in mm
@@ -1438,7 +1387,7 @@ class pdf_vinci extends ModelePDFMo
 			'border-left' => true, // add left line separator
 		);
 
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['qtytot'] = array(
 			'rank' => $rank,
 			'width' => 25, // in mm

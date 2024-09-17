@@ -91,7 +91,7 @@ class modPaymentByBankTransfer extends DolibarrModules
 		// Permissions
 		$this->rights = array();
 		$this->rights_class = 'paymentbybanktransfer';
-		$r = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$r = 0;
 		$r++;
 		$this->rights[$r][0] = 561;
 		$this->rights[$r][1] = 'Read bank transfer payment orders';

@@ -71,7 +71,7 @@ if (!$sortorder) {
 	$sortorder = 'DESC,DESC';
 }
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Availabilities($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->bookcal->dir_output.'/temp/massgeneration/'.$user->id;
@@ -80,7 +80,7 @@ $hookmanager->initHooks(array('availabilitiesagenda', 'globalcard')); // Note th
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
 if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->bookcal->multidir_output[!empty($object->entity) ? $object->entity : $conf->entity]."/".$object->id;
 }
@@ -144,7 +144,7 @@ $form = new Form($db);
 if ($object->id > 0) {
 	$title = $langs->trans("Agenda");
 	$help_url = 'EN:Module_Agenda_En|DE:Modul_Terminplanung';
-	llxHeader('', $title, $help_url);
+	llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-bookcal page-card_availabilities_agenda');
 
 	if (!empty($conf->notification->enabled)) {
 		$langs->load("mails");

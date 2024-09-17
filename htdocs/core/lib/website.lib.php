@@ -287,6 +287,7 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = 0)
 	global $dolibarr_main_url_root, $dolibarr_main_data_root;
 	global $website;
 	global $includehtmlcontentopened;
+	'@phan-var-force WebSite $website';
 
 	$nbrep = 0;
 
@@ -330,6 +331,10 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = 0)
 		// Warning: we may replace twice if href="..." was inside an include (dolWebsiteOutput called by include and the by final page), that's why
 		// at end we replace the '!~!~!~' only if we are in final parent page.
 		$content = preg_replace('/(href=")\/?([^:\"\!]*)\.php\?([^#\"<>]*)(#[^\"<>]*)?\"/', '\1!~!~!~'.DOL_URL_ROOT.'/public/website/index.php?website='.$website->ref.'&pageref=\2&\3\4"', $content, -1, $nbrep);
+		// Replace occurrence like _service_XXX.php with dolibarr URL
+		$content = preg_replace('/([\'"])_service_([^\'"]+)\.php\1/', '\1!~!~!~' . DOL_URL_ROOT . '/public/website/index.php?website=' . $website->ref . '&pageref=_service_\2\1', $content, -1, $nbrep);
+		// Replace occurrence like _library_XXX.php with dolibarr URL
+		$content = preg_replace('/([\'"])_library_([^\'"]+)\.php\1/', '\1!~!~!~' . DOL_URL_ROOT . '/public/website/index.php?website=' . $website->ref . '&pageref=_library_\2\1', $content, -1, $nbrep);
 		// Replace relative link without .php like /xxx#aaa or /xxx with dolibarr URL:  ...href="....php"
 		$content = preg_replace('/(href=")\/?([a-zA-Z0-9\-_#]+)(\"|\?)/', '\1!~!~!~'.DOL_URL_ROOT.'/public/website/index.php?website='.$website->ref.'&pageref=\2\3', $content, -1, $nbrep);
 
@@ -514,6 +519,7 @@ function dolWebsiteSaveContent($content)
 function redirectToContainer($containerref, $containeraliasalt = '', $containerid = 0, $permanent = 0, $parameters = array())
 {
 	global $db, $website;
+	'@phan-var-force WebSite $website';
 
 	$newurl = '';
 	$result = 0;
@@ -566,7 +572,7 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 		}
 	} else { // When page called from virtual host server
 		$newurl = '/'.$containerref.'.php';
-		$newurl = $newurl.(empty($_SERVER["QUERY_STRING"]) ? '' : '?'.$_SERVER["QUERY_STRING"]);
+		$newurl .= (empty($_SERVER["QUERY_STRING"]) ? '' : '?'.$_SERVER["QUERY_STRING"]);
 	}
 
 	if ($newurl) {
@@ -598,6 +604,7 @@ function includeContainer($containerref)
 	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running included containers.
 	global $includehtmlcontentopened;
 	global $websitekey, $websitepagefile;
+	'@phan-var-force WebSite $website';
 
 	$MAXLEVEL = 20;
 
@@ -608,7 +615,7 @@ function includeContainer($containerref)
 	$fullpathfile = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/'.$websitekey.'/'.$containerref;
 
 	if (empty($includehtmlcontentopened)) {
-		$includehtmlcontentopened = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$includehtmlcontentopened = 0;
 	}
 	$includehtmlcontentopened++;
 	if ($includehtmlcontentopened > $MAXLEVEL) {
@@ -627,7 +634,10 @@ function includeContainer($containerref)
 	$tmpoutput = ob_get_contents();
 	ob_end_clean();
 
-	print "\n".'<!-- include '.$websitekey.'/'.$containerref.(is_object($websitepage) ? ' parent id='.$websitepage->id : '').' level = '.$includehtmlcontentopened.' -->'."\n";
+	// We don't print info messages for pages of type library or service
+	if (!empty($websitepage->type_container) && !in_array($websitepage->type_container, array('library', 'service'))) {
+		print "\n".'<!-- include '.$websitekey.'/'.$containerref.(is_object($websitepage) ? ' parent id='.$websitepage->id : '').' level = '.$includehtmlcontentopened.' -->'."\n";
+	}
 	print preg_replace(array('/^.*<body[^>]*>/ims', '/<\/body>.*$/ims'), array('', ''), $tmpoutput);
 
 	if (!$res) {
@@ -650,6 +660,7 @@ function includeContainer($containerref)
 function getStructuredData($type, $data = array())
 {
 	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs; // Very important. Required to have var available when running included containers.
+	'@phan-var-force WebSite $website';
 
 	$type = strtolower($type);
 
@@ -857,6 +868,7 @@ function getStructuredData($type, $data = array())
 function getSocialNetworkHeaderCards($params = null)
 {
 	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running included containers.
+	'@phan-var-force WebSite $website';
 
 	$out = '';
 
@@ -926,11 +938,13 @@ function getSocialNetworkHeaderCards($params = null)
 /**
  * Return HTML content to add structured data for an article, news or Blog Post.
  *
+ * @param	string	$socialnetworks			'' or list of social networks
  * @return  string							HTML content
  */
-function getSocialNetworkSharingLinks()
+function getSocialNetworkSharingLinks($socialnetworks = '')
 {
-	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running included containers.
+	global $website, $websitepage; // Very important. Required to have var available when running included containers.
+	'@phan-var-force WebSite $website';
 
 	$out = '<!-- section for social network sharing of page -->'."\n";
 
@@ -941,37 +955,30 @@ function getSocialNetworkSharingLinks()
 		$out .= '<div class="dol-social-share">'."\n";
 
 		// Twitter
-		$out .= '<div class="dol-social-share-tw">'."\n";
-		$out .= '<a href="https://twitter.com/share" class="twitter-share-button" data-url="'.$fullurl.'" data-text="'.dol_escape_htmltag($websitepage->description).'" data-lang="'.$websitepage->lang.'" data-size="small" data-related="" data-hashtags="'.preg_replace('/^#/', '', $hashtags).'" data-count="horizontal">Tweet</a>';
-		$out .= '<script nonce="'.getNonce().'">!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?\'http\':\'https\';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+\'://platform.twitter.com/widgets.js\';fjs.parentNode.insertBefore(js,fjs);}}(document, \'script\', \'twitter-wjs\');</script>';
-		$out .= '</div>'."\n";
+		if (empty($socialnetworks) || preg_match('/twitter/', $socialnetworks)) {
+			$out .= '<div class="dol-social-share-tw">'."\n";
+			$out .= '<a href="https://twitter.com/share" class="twitter-share-button" data-url="'.$fullurl.'" data-text="'.dol_escape_htmltag($websitepage->description).'" data-lang="'.$websitepage->lang.'" data-size="small" data-related="" data-hashtags="'.preg_replace('/^#/', '', $hashtags).'" data-count="horizontal">Tweet</a>';
+			$out .= '<script nonce="'.getNonce().'">!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?\'http\':\'https\';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+\'://platform.twitter.com/widgets.js\';fjs.parentNode.insertBefore(js,fjs);}}(document, \'script\', \'twitter-wjs\');</script>';
+			$out .= '</div>'."\n";
+		}
 
 		// Reddit
-		$out .= '<div class="dol-social-share-reddit">'."\n";
-		$out .= '<a href="https://www.reddit.com/submit" target="_blank" rel="noopener noreferrer external" onclick="window.location = \'https://www.reddit.com/submit?url='.$fullurl.'\'; return false">';
-		$out .= '<span class="dol-social-share-reddit-span">Reddit</span>';
-		$out .= '</a>';
-		$out .= '</div>'."\n";
+		if (empty($socialnetworks) || preg_match('/reddit/', $socialnetworks)) {
+			$out .= '<div class="dol-social-share-reddit">'."\n";
+			$out .= '<a href="https://www.reddit.com/submit" target="_blank" rel="noopener noreferrer external" onclick="window.location = \'https://www.reddit.com/submit?url='.urlencode($fullurl).'\'; return false">';
+			$out .= '<span class="dol-social-share-reddit-span">Reddit</span>';
+			$out .= '</a>';
+			$out .= '</div>'."\n";
+		}
 
 		// Facebook
-		$out .= '<div class="dol-social-share-fbl">'."\n";
-		$out .= '<div id="fb-root"></div>'."\n";
-		$out .= '<script nonce="'.getNonce().'">(function(d, s, id) {
-				  var js, fjs = d.getElementsByTagName(s)[0];
-				  if (d.getElementById(id)) return;
-				  js = d.createElement(s); js.id = id;
-				  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.0&amp;appId=dolibarr.org";
-				  fjs.parentNode.insertBefore(js, fjs);
-				}(document, \'script\', \'facebook-jssdk\'));</script>
-				        <fb:like
-				        href="'.$fullurl.'"
-				        layout="button_count"
-				        show_faces="false"
-				        width="90"
-				        colorscheme="light"
-				        share="1"
-				        action="like" ></fb:like>'."\n";
-		$out .= '</div>'."\n";
+		if (empty($socialnetworks) || preg_match('/facebook/', $socialnetworks)) {
+			$out .= '<div class="dol-social-share-fbl">'."\n";
+			$out .= '<a href="https://www.facebook.com/sharer/sharer.php?u='.urlencode($fullurl).'">';
+			$out .= '<span class="dol-social-share-fbl-span">Facebook</span>';
+			$out .= '</a>';
+			$out .= '</div>';
+		}
 
 		$out .= "\n</div>\n";
 	} else {
@@ -984,7 +991,7 @@ function getSocialNetworkSharingLinks()
 
 
 /**
- * Return HTML content to add structured data for an article, news or Blog Post.
+ * Return nb of images known into inde files for an object;
  *
  * @param	Object	$object		Object
  * @return  int					HTML img content or '' if no image found
@@ -1019,13 +1026,14 @@ function getNbOfImagePublicURLOfObject($object)
 }
 
 /**
- * Return HTML content to add structured data for an article, news or Blog Post.
+ * Return the public image URL of an object.
+ * For example, you can get the public image URL of a product (image that is shared).
  *
  * @param	Object	$object			Object
  * @param	int		$no				Numero of image (if there is several images. 1st one by default)
  * @param   string  $extName        Extension to differentiate thumb file name ('', '_small', '_mini')
  * @return  string					HTML img content or '' if no image found
- * @see getNbOfImagePublicURLOfObject()
+ * @see getNbOfImagePublicURLOfObject(), getPublicFilesOfObject()
  */
 function getImagePublicURLOfObject($object, $no = 1, $extName = '')
 {
@@ -1063,8 +1071,8 @@ function getImagePublicURLOfObject($object, $no = 1, $extName = '')
 					} else {
 						$image_path = '/wrapper.php?hashp='.urlencode($obj->share);
 					}
+
 					if ($extName) {
-						//getImageFileNameForSize($dir.$file, '_small')
 						$image_path .= '&extname='.urlencode($extName);
 					}
 				}
@@ -1094,6 +1102,57 @@ function getImagePublicURLOfObject($object, $no = 1, $extName = '')
 	return $image_path;
 }
 
+/**
+ * Return array with list of all public files of a given object.
+ *
+ * @param	Object	$object			Object
+ * @return  array					List of public files of object
+ * @see getImagePublicURLOfObject()
+ */
+function getPublicFilesOfObject($object)
+{
+	global $db;
+
+	$files = array();
+
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+	$regexforimg = getListOfPossibleImageExt(0);
+	$regexforimg = '/('.$regexforimg.')$/i';
+
+	$sql = "SELECT rowid, ref, share, filename, cover, position";
+	$sql .= " FROM ".MAIN_DB_PREFIX."ecm_files";
+	$sql .= " WHERE entity IN (".getEntity($object->element).")";
+	$sql .= " AND src_object_type = '".$db->escape($object->element)."' AND src_object_id = ".((int) $object->id);
+	$sql .= $db->order("cover,position,rowid", "ASC,ASC,ASC");
+
+	$resql = $db->query($sql);
+	if ($resql) {
+		$num = $db->num_rows($resql);
+		$i = 0;
+		while ($i < $num) {
+			$obj = $db->fetch_object($resql);
+			if ($obj) {
+				if (!empty($obj->share)) {
+					$files[$obj->rowid]['filename'] = $obj->filename;
+					$files[$obj->rowid]['position'] = $obj->position;
+					if (defined('USEDOLIBARRSERVER') || defined('USEDOLIBARREDITOR')) {
+						if (preg_match($regexforimg, $obj->filename)) {
+							$files[$obj->rowid]['url'] = DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($obj->share);
+						} else {
+							$files[$obj->rowid]['url'] = DOL_URL_ROOT.'/document.php?hashp='.urlencode($obj->share);
+						}
+					} else {
+						$files[$obj->rowid]['url'] = '/wrapper.php?hashp='.urlencode($obj->share);
+					}
+				}
+			}
+			$i++;
+		}
+	}
+
+	return $files;
+}
+
 
 /**
  * Return list of containers object that match a criteria.
@@ -1113,6 +1172,7 @@ function getImagePublicURLOfObject($object, $no = 1, $extName = '')
 function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $sortfield = 'date_creation', $sortorder = 'DESC', $langcode = '', $otherfilters = [], $status = 1)
 {
 	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running included containers.
+	'@phan-var-force WebSite $website';
 
 	$error = 0;
 	$arrayresult = array('code' => '', 'list' => array());
@@ -1137,15 +1197,15 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 		$arrayresult['message'] = $weblangs->trans("ErrorSearchCriteriaTooSmall");
 	} else {
 	*/
-		$tmparrayoftype = explode(',', $type);
-		/*foreach ($tmparrayoftype as $tmptype) {
-			if (!in_array($tmptype, array('', 'page', 'blogpost'))) {
-				$error++;
-				$arrayresult['code'] = 'KO';
-				$arrayresult['message'] = 'Bad value for parameter type';
-				break;
-			}
-		}*/
+	$tmparrayoftype = explode(',', $type);
+	/*foreach ($tmparrayoftype as $tmptype) {
+		if (!in_array($tmptype, array('', 'page', 'blogpost'))) {
+			$error++;
+			$arrayresult['code'] = 'KO';
+			$arrayresult['message'] = 'Bad value for parameter type';
+			break;
+		}
+	}*/
 	//}
 
 	$searchdone = 0;
@@ -1268,17 +1328,60 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 }
 
 /**
- * Download all images found into page content $tmp.
+ * Return the URL of an image found into a HTML content.
+ * To get image from an external URL to download first, see getAllImages()
+ *
+ * @param	string		$htmlContent	HTML content
+ * @param	int			$imageNumber	The position of image. 1 by default = first image found
+ * @return	string						URL of image or '' if not foud
+ */
+function getImageFromHtmlContent($htmlContent, $imageNumber = 1)
+{
+	$dom = new DOMDocument();
+
+	libxml_use_internal_errors(false);	// Avoid to fill memory with xml errors
+	if (LIBXML_VERSION < 20900) {
+		// Avoid load of external entities (security problem).
+		// Required only if LIBXML_VERSION < 20900
+		// @phan-suppress-next-line PhanDeprecatedFunctionInternal
+		libxml_disable_entity_loader(true);
+	}
+
+	// Load HTML content into object
+	$dom->loadHTML($htmlContent);
+
+	// Re-enable HTML load errors
+	libxml_clear_errors();
+
+	// Load all img tags
+	$images = $dom->getElementsByTagName('img');
+
+	// Check if nb of image is valid
+	if ($imageNumber > 0 && $imageNumber <= $images->length) {
+		// Récupère l'image correspondante (index - 1 car $imageNumber est 1-based)
+		$img = $images->item($imageNumber - 1);
+		if ($img instanceof DOMElement) {
+			return $img->getAttribute('src');
+		}
+	}
+
+	return '';
+}
+
+/**
+ * Download all images found into an external URL.
+ * It using a text regex parsing solution, not a DOM analysis.
  * If $modifylinks is set, links to images will be replace with a link to viewimage wrapper.
+ * To extract an URL from a HTML text content, see instead getImageFromHtmlContent().
  *
  * @param 	Website	 	$object			Object website
  * @param 	WebsitePage	$objectpage		Object website page
- * @param 	string		$urltograb		URL to grab (example: http://www.nltechno.com/ or http://www.nltechno.com/dir1/ or http://www.nltechno.com/dir1/mapage1)
+ * @param 	string		$urltograb		URL to grab (example: https://www.nltechno.com/ or s://www.nltechno.com/dir1/ or https://www.nltechno.com/dir1/mapage1)
  * @param 	string		$tmp			Content to parse
  * @param 	string		$action			Var $action
- * @param	int 		$modifylinks	0=Do not modify content, 1=Replace links with a link to viewimage
- * @param	int			$grabimages		0=Do not grab images, 1=Grab images
- * @param	string		$grabimagesinto	'root' or 'subpage'
+ * @param	int<0,1>	$modifylinks	0=Do not modify content, 1=Replace links with a link to viewimage
+ * @param	int<0,1>	$grabimages		0=Do not grab images, 1=Grab images
+ * @param	'root'|'subpage'	$grabimagesinto	'root' or 'subpage'
  * @return	void
  */
 function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modifylinks = 0, $grabimages = 1, $grabimagesinto = 'subpage')
