@@ -97,6 +97,7 @@ if (isModEnabled('accounting')) {
 $error = 0;
 $errors = array();
 
+$refalreadyexists = 0;
 
 // Get parameters
 $action		= (GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view');

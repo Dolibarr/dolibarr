@@ -873,6 +873,11 @@ class Societe extends CommonObject
 	 */
 	public $bank_account;
 
+	/**
+	 * @var int
+	 */
+	public $no_button_copy;
+
 
 	const STATUS_CEASED = 0;
 	const STATUS_INACTIVITY = 1;
