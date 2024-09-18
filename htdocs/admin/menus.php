@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,7 +95,7 @@ if ($action == 'update' && !$cancel) {
 			if (file_exists($fullpath)) {
 				$db->begin();
 
-				$result = run_sql($fullpath, 1, '', 1, $key, 'none');
+				$result = run_sql($fullpath, 1, 0, 1, $key, 'none');
 				if ($result > 0) {
 					$db->commit();
 				} else {
