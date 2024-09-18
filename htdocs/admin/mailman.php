@@ -160,22 +160,10 @@ if (getDolGlobalString('ADHERENT_USE_MAILMAN')) {
 	$link .= '</a>';
 	// Edit the global variables
 	$constantes = array(
-		'ADHERENT_MAILMAN_ADMIN_PASSWORD' => [
-			'type' => 'string',
-			'label' => 'ADHERENT_MAILMAN_ADMIN_PASSWORD',
-		],
-		'ADHERENT_MAILMAN_URL' => [
-			'type' => 'string',
-			'label' => 'ADHERENT_MAILMAN_URL',
-		],
-		'ADHERENT_MAILMAN_UNSUB_URL' => [
-			'type' => 'string',
-			'label' => 'ADHERENT_MAILMAN_UNSUB_URL',
-		],
-		'ADHERENT_MAILMAN_LISTS' => [
-			'type' => 'string',
-			'label' => 'ADHERENT_MAILMAN_LISTS',
-		]
+		'ADHERENT_MAILMAN_ADMIN_PASSWORD',
+		'ADHERENT_MAILMAN_URL',
+		'ADHERENT_MAILMAN_UNSUB_URL',
+		'ADHERENT_MAILMAN_LISTS'
 	);
 
 	print load_fiche_titre($langs->trans('MailmanTitle'), $link, '');
