@@ -1073,6 +1073,8 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 			} else { jQuery("#pbq").val(''); }
 			<?php
 		}
+		$reshook = $hookmanager->executeHooks('objectlinecreatesupplierorderproductselected', $parameters, $object, $action);
+
 		?>
 
 
@@ -1257,7 +1259,9 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 		setforpredef();
 		<?php } ?>
 	});
-
+	<?php
+	$reshook = $hookmanager->executeHooks('objectlinecreatesupplierorderlineextrafieldselected', $parameters, $object, $action);
+	?>
 	/* Function to set fields visibility after selecting a free product */
 	function setforfree() {
 		console.log("objectline_create.tpl::setforfree. We show most fields");
