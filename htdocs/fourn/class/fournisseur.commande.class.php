@@ -1192,15 +1192,13 @@ class CommandeFournisseur extends CommonOrder
 
 
 	/**
-	 *	Class not invoiced the supplier order
+	 *	Classify not billed
 	 *
 	 *  @param      User        $user       Object user making the change
 	 *	@return     int     	            Return integer <0 if KO, 0 if already not billed,  >0 if OK
 	 */
 	public function classifyUnBilled(User $user)
 	{
-		$error = 0;
-
 		if (empty($this->billed)) {
 			return 0;
 		}
@@ -1210,31 +1208,23 @@ class CommandeFournisseur extends CommonOrder
 		$sql = 'UPDATE '.$this->db->prefix().'commande_fournisseur SET billed = 0';
 		$sql .= " WHERE rowid = ".((int) $this->id).' AND fk_statut > '.self::STATUS_DRAFT;;
 
-		if ($this->db->query($sql)) {
-			if (!$error) {
-				// Call trigger
-				$result = $this->call_trigger('ORDER_SUPPLIER_CLASSIFY_UNBILLED', $user);
-				if ($result < 0) {
-					$error++;
-				}
-				// End call triggers
-			}
-
-			if (!$error) {
-				$this->billed = 1;
-
-				$this->db->commit();
-				return 1;
-			} else {
-				$this->db->rollback();
-				return -1;
-			}
-		} else {
+		if (!$this->db->query($sql)) {
 			dol_print_error($this->db);
-
 			$this->db->rollback();
 			return -1;
 		}
+
+		// Call trigger
+		$result = $this->call_trigger('ORDER_SUPPLIER_CLASSIFY_UNBILLED', $user);
+		if ($result < 0) {
+			$this->db->rollback();
+			return -1;
+		}
+		// End call triggers
+
+		$this->billed = 1;
+		$this->db->commit();
+		return 1;
 	}
 
 
