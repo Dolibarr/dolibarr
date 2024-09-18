@@ -75,9 +75,9 @@ class DolibarrApi
 	 * Check and convert a string depending on its type/name.
 	 *
 	 * @param	string			$field		Field name
-	 * @param	string|array	$value		Value to check/clean
+	 * @param	string|string[]	$value		Value to check/clean
 	 * @param	Object			$object		Object
-	 * @return 	string|array				Value cleaned
+	 * @return 	string|array<string,mixed>	Value cleaned
 	 */
 	protected function _checkValForAPI($field, $value, $object)
 	{
@@ -411,7 +411,7 @@ class DolibarrApi
 	 * Function to forge a SQL criteria from a Generic filter string.
 	 * Function no more used. Kept for backward compatibility with old APIs of modules
 	 *
-	 * @param  array    $matches    Array of found string by regex search.
+	 * @param  string[]	$matches    Array of found string by regex search.
 	 * 								Each entry is 1 and only 1 criteria.
 	 * 								Example: "t.ref:like:'SO-%'", "t.date_creation:<:'20160101'", "t.date_creation:<:'2016-01-01 12:30:00'", "t.nature:is:NULL", "t.field2:isnot:NULL"
 	 * @return string               Forged criteria. Example: "t.field like 'abc%'"

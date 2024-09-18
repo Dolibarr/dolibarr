@@ -502,6 +502,7 @@ if ($object->id > 0) {
 		print '</tr>';
 	}
 
+	$limit_field_type = '';
 	// Max outstanding bill
 	if ($object->client) {
 		print '<tr class="nowrap">';
@@ -923,12 +924,12 @@ if ($object->id > 0) {
 		}
 	}
 
+	$orders2invoice = null;
+	$param = "";
 	/*
 	 * Latest orders
 	 */
 	if (isModEnabled('order') && $user->hasRight('commande', 'lire')) {
-		$param = "";
-
 		$sql = "SELECT s.nom, s.rowid";
 		$sql .= ", c.rowid as cid, c.entity, c.fk_projet, c.total_ht";
 		$sql .= ", c.total_tva";

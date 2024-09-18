@@ -82,6 +82,8 @@ if ($action == 'set') {
 
 	$commande = new CommandeFournisseur($db);
 	$commande->initAsSpecimen();
+	$specimenthirdparty = new Societe($db);
+	$specimenthirdparty->initAsSpecimen();
 	$commande->thirdparty = $specimenthirdparty;
 
 	// Search template files

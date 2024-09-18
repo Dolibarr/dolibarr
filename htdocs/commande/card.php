@@ -104,6 +104,21 @@ if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
 
+$array_options = 0;
+$object_id = 0;
+$price_base_type = null;
+$lineClassName = null;
+$remise_percent = null;
+$ref_client = null;
+$availability_id = null;
+$shipping_method_id = null;
+$warehouse_id = null;
+$demand_reason_id = null;
+$formproject = null;
+$objectsrc = null;
+$note_public = null;
+$note_private = null;
+
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('ordercard', 'globalcard'));
 
@@ -226,6 +241,7 @@ if (empty($reshook)) {
 		// Reopen a closed order
 		if ($object->statut == Commande::STATUS_CANCELED || $object->statut == Commande::STATUS_CLOSED) {
 			if (getDolGlobalInt('ORDER_REOPEN_TO_DRAFT')) {
+				$idwarehouse = GETPOSTINT('idwarehouse');
 				$result = $object->setDraft($user, $idwarehouse);
 				if ($result < 0) {
 					setEventMessages($object->error, $object->errors, 'errors');

@@ -187,9 +187,9 @@ class UserGroup extends CommonObject
 	/**
 	 *  Return array of groups objects for a particular user
 	 *
-	 *  @param		int			$userid 		User id to search
-	 *  @param		boolean		$load_members	Load all members of the group
-	 *  @return		array|int     				Array of groups objects
+	 *  @param		int			$userid 			User id to search
+	 *  @param		boolean		$load_members		Load all members of the group
+	 *  @return		array<int,UserGroup>|int<-1,-1>	Array of groups objects
 	 */
 	public function listGroupsForUser($userid, $load_members = true)
 	{
@@ -237,9 +237,9 @@ class UserGroup extends CommonObject
 	/**
 	 * 	Return array of User objects for group this->id (or all if this->id not defined)
 	 *
-	 * 	@param	string	$excludefilter		Filter to exclude. Do not use here a string coming from user input.
-	 *  @param	int		$mode				0=Return array of user instance, 1=Return array of users id only
-	 * 	@return	mixed						Array of users or -1 on error
+	 * 	@param	string		$excludefilter		Filter to exclude. Do not use here a string coming from user input.
+	 *  @param	int<0,1>	$mode				0=Return array of user instance, 1=Return array of users id only
+	 * 	@return	array<int,User>|array<int,int>|int<-1,-1>	Array of users or -1 on error
 	 */
 	public function listUsersForGroup($excludefilter = '', $mode = 0)
 	{
