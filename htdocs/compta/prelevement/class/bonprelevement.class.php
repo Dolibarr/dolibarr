@@ -1024,7 +1024,7 @@ class BonPrelevement extends CommonObject
 		$sql = "SELECT fk_societe_rib";
 		$sql .= " FROM " . $this->db->prefix() . "prelevement_demande as pd";
 		$sql .= " LEFT JOIN " . $this->db->prefix() . $sqlTable . " as f ON f.rowid = pd.fk_".$sqlTable;
-		$sql .= " WHERE f.entity IN (" . $entity . ')';
+		$sql .= " WHERE f.entity IN (" . $this->db->escape($entity) . ')';
 
 		$resql = $this->db->query($sql);
 
