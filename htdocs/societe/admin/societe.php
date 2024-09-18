@@ -427,6 +427,7 @@ foreach ($dirsociete as $dirroot) {
 }
 
 $arrayofmodules = dol_sort_array($arrayofmodules, 'position');
+'@phan-var-force array<string,ModeleThirdPartyCode> $arrayofmodules';  // Repeat type because of dol_sort_array
 
 foreach ($arrayofmodules as $file => $modCodeTiers) {
 	print '<tr class="oddeven">'."\n";
@@ -506,6 +507,7 @@ foreach ($dirsociete as $dirroot) {
 }
 
 $arrayofmodules = dol_sort_array($arrayofmodules, 'position');
+'@phan-var-force array<string,ModeleAccountancyCode> $arrayofmodules';
 
 
 foreach ($arrayofmodules as $file => $modCodeCompta) {
@@ -588,6 +590,7 @@ foreach ($dirsociete as $dirroot) {
 				}
 
 				$module = new $classname($db);
+				'@phan-var-force ModeleThirdPartyDoc $module';
 
 				$modulequalified = 1;
 				if (!empty($module->version)) {
@@ -603,7 +606,7 @@ foreach ($dirsociete as $dirroot) {
 					print dol_escape_htmltag($module->name);
 					print "</td><td>\n";
 					if (method_exists($module, 'info')) {
-						print $module->info($langs);
+						print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
 					} else {
 						print $module->description;
 					}

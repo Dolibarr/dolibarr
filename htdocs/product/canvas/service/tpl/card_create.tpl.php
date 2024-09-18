@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010-2018 Regis Houssin <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +32,7 @@ $statutarray = array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOn
 
 <?php
 print load_fiche_titre($langs->trans("NewService"), '', 'service');
-print dol_get_fiche_head('');
+print dol_get_fiche_head([]);
 ?>
 
 <?php dol_htmloutput_errors($this->control->tpl['error'], $this->control->tpl['errors']); ?>

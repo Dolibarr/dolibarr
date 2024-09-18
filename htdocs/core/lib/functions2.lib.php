@@ -2538,7 +2538,7 @@ function colorLighten($hex, $percent)
  * @param string 		$hex 			color in hex
  * @param float|false	$alpha 			0 to 1 to add alpha channel
  * @param bool 			$returnArray	true=return an array instead, false=return string
- * @return string|array					String or array
+ * @return string|array{r:int,g:int,b:int,a?:float}		String or array
  */
 function colorHexToRgb($hex, $alpha = false, $returnArray = false)
 {
@@ -2569,7 +2569,7 @@ function colorHexToRgb($hex, $alpha = false, $returnArray = false)
  * @param	string 			$hex 			Color in hex
  * @param	float|false 	$alpha 			0 to 1 to add alpha channel
  * @param	bool 			$returnArray	true=return an array instead, false=return string
- * @return	string|array					String or array
+ * @return	array{h:float,l:float,s:float,a:int|float}|string HSLA as string or array
  */
 function colorHexToHsl($hex, $alpha = false, $returnArray = false)
 {

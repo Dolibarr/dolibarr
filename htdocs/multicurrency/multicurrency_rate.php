@@ -12,7 +12,7 @@
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016       Ferran Marcet		    <fmarcet@2byte.es>
  * Copyright (C) 2023       Lenin Rivas		    	<lenin.rivas777@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -299,11 +299,11 @@ if (!in_array($action, array("updateRate", "deleteRate"))) {
 	print '<td>'.$form->selectMultiCurrency((GETPOSTISSET('multicurrency_code') ? GETPOST('multicurrency_code', 'alpha') : $multicurrency_code), 'multicurrency_code', 1, " code != '".$db->escape($conf->currency)."'", true).'</td>';
 
 	print ' <td>'.$langs->trans('Rate').' / '.$langs->getCurrencySymbol($conf->currency).'</td>';
-	print ' <td><input type="text" min="0" step="any" class="maxwidth75" id="rateinput" name="rateinput" value="'.dol_escape_htmltag($rateinput).'"></td>';
+	print ' <td><input type="text" min="0" step="any" class="maxwidth75" id="rateinput" name="rateinput" value="'.dol_escape_htmltag((string) $rateinput).'"></td>';
 
 	if (getDolGlobalString('MULTICURRENCY_USE_RATE_INDIRECT')) {
 		print ' <td>'.$langs->trans('RateIndirect').' / '.$langs->getCurrencySymbol($conf->currency).'</td>';
-		print ' <td><input type="text" min="0" step="any" class="maxwidth75" id="rateindirectinput" name="rateindirectinput" value="'.dol_escape_htmltag($rateindirectinput).'"></td>';
+		print ' <td><input type="text" min="0" step="any" class="maxwidth75" id="rateindirectinput" name="rateindirectinput" value="'.dol_escape_htmltag((string) $rateindirectinput).'"></td>';
 		// LRR Calculate Rate Direct
 		print '<script type="text/javascript">';
 		print 'jQuery(document).ready(function () {
