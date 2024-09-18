@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2013-2014	Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2023-2024	William Mead		<william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2013-2014	Jean-François Ferry		<jfefe@aternatik.fr>
+ * Copyright (C) 2023-2024	William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
