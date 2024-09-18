@@ -104,7 +104,6 @@ parameters:
 		- '#expects string, bool\|mysqli_result\|resource given.#'
 		- '#( |::)((multi)?selectarray)\(\) expects array#'
 		- '# (reWriteAllMenus|check_authentication) expects array#'
-		- '# (dol_get_fiche_head) expects array<int#'
 		- '#::(_validateMyObject|select_company)\(\) expects array<string#'
 		- '# (dol_print_error|get_htmloutput_mesg|dolGetButtonTitle|dol_htmloutput_errors|dol_htmloutput_mesg) expects array<string#'
 		- '# getNav expects array#'
