@@ -852,7 +852,7 @@ if ($object->id > 0) {
 				print '<td>'.$langs->trans("LatestSupplierTemplateInvoices", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td>';
 				print '<td class="right">';
 				print '<a class="notasortlink" href="'.DOL_URL_ROOT.'/fourn/facture/list-rec.php?socid='.$object->id.'">';
-				print '<span class="hideonsmartphone">'.$langs->trans("AllSupplierTemplateInvoices").'</span><span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
+				print '<span class="hideonsmartphone">'.$langs->trans("AllSupplierTempateInvoices").'</span><span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
 				print '</tr></table>';
 				print '</td>';
 				print '</tr>';
