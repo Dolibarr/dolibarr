@@ -1078,7 +1078,7 @@ class BonPrelevement extends CommonObject
 			$sql .= " LEFT JOIN " . $this->db->prefix() . $societeOrUser."_rib as sr ON s.rowid = sr.".$socOrUser;
 			if ($sourcetype != 'salary') {
 				if (!empty($societeRibID)) {
-					$sql .= " AND sr.rowid = " . $societeRibID;
+					$sql .= " AND sr.rowid = " . intval($societeRibID);
 				} else {
 					$sql .= " AND sr.default_rib = 1";
 				}
@@ -1787,7 +1787,7 @@ class BonPrelevement extends CommonObject
 				$sql .= " AND soc.fk_pays = c.rowid";
 				$sql .= " AND rib.fk_soc = f.fk_soc";
 				if (!empty($societeRibID)) {
-					$sql .= " AND rib.rowid = " . $societeRibID;
+					$sql .= " AND rib.rowid = " . intval($societeRibID);
 				} else {
 					$sql .= " AND rib.default_rib = 1";
 				}
@@ -1929,7 +1929,7 @@ class BonPrelevement extends CommonObject
 					$sql .= " AND f.fk_soc = soc.rowid";
 					$sql .= " AND rib.fk_soc = f.fk_soc";
 					if (!empty($societeRibID)) {
-						$sql .= " AND rib.rowid = " . $societeRibID;
+						$sql .= " AND rib.rowid = " . intval($societeRibID);
 					} else {
 						$sql .= " AND rib.default_rib = 1";
 					}
