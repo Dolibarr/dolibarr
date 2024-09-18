@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2018-2019  Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -117,12 +118,14 @@ if (!$rowid) {
 
 	try {
 		if ($stripeacc) {
-			$txn = \Stripe\BalanceTransaction::all(array("limit" => $limit), array("stripe_account" => $stripeacc));
+			$txn_all = \Stripe\BalanceTransaction::all(array("limit" => $limit), array("stripe_account" => $stripeacc));
 		} else {
-			$txn = \Stripe\BalanceTransaction::all(array("limit" => $limit));
+			$txn_all = \Stripe\BalanceTransaction::all(array("limit" => $limit));
 		}
+		'@phan-var-force \Stripe\BalanceTransaction $txn_all';  // TStripeObject is 'template' of StripeObject
 
-		foreach ($txn->data as $txn) {
+		foreach ($txn_all->data as $txn) {
+			'@phan-var-force \Stripe\BalanceTransaction $txn';  // TStripeObject is 'template' of StripeObject
 			//$charge = $txn;
 			//var_dump($txn);
 

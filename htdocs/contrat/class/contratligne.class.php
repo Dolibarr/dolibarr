@@ -953,7 +953,7 @@ class ContratLigne extends CommonObjectLine
 		$this->commentaire = $comment;
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET statut = ".((int) $this->statut).",";
-		$sql .= " date_ouverture = ".(dol_strlen($this->date_start_real) != 0 ? "'".$this->db->idate($this->date_start_real)."'" : "null").",";
+		$sql .= " date_ouverture = ".(dol_strlen((string) $this->date_start_real) != 0 ? "'".$this->db->idate($this->date_start_real)."'" : "null").",";
 		if ($date_end >= 0) {
 			$sql .= " date_fin_validite = ".(dol_strlen($this->date_end) != 0 ? "'".$this->db->idate($this->date_end)."'" : "null").",";
 		}

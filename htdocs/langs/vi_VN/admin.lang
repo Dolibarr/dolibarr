@@ -514,15 +514,17 @@ ModuleCompanyCodeCustomerDigitaria=%s theo sau tên khách hàng bị cắt bớ
 ModuleCompanyCodeSupplierDigitaria=%s theo sau tên nhà cung cấp bị cắt bớt theo bở số lượng ký tự: %s cho mã kế toán nhà cung cấp.
 Use3StepsApproval=Theo mặc định, Đơn đặt hàng cần được tạo và phê duyệt bởi 2 người dùng khác nhau (một bước / người dùng để tạo và một bước / người dùng để phê duyệt. Lưu ý rằng nếu người dùng có cả quyền để tạo và phê duyệt, một bước / người dùng sẽ đủ) . Bạn có thể yêu cầu tùy chọn này để giới thiệu bước thứ ba / phê duyệt của người dùng, nếu số tiền cao hơn giá trị chuyên dụng (vì vậy sẽ cần 3 bước: 1 = xác thực, 2 = phê duyệt đầu tiên và 3 = phê duyệt thứ hai nếu số tiền là đủ). <br> Đặt điều này thành trống nếu một phê duyệt (2 bước) là đủ, đặt nó thành giá trị rất thấp (0,1) nếu luôn luôn cần phê duyệt thứ hai (3 bước).
 UseDoubleApproval=Sử dụng phê duyệt 3 bước khi số tiền (chưa có thuế) cao hơn ...
-WarningPHPMail=WARNING: The setup to send emails from the application is using the default generic setup. This choice needs no technical knowledge to complete the setup.<br>However, it is often better to setup outgoing emails to use the email server of your Email Service Provider instead of the default setup for several reasons:
+WarningPHPMail=NOTICE: The setup to send emails from the application is using the default generic setup (called "%s"). This choice needs no technical knowledge and no particular setup.<br>However, it is often better to setup outgoing emails to use the other method (called "%s") to use the email server of your Email Service Provider, instead of the default setup for several reasons:
 WarningPHPMailA=- Using the server of the Email Service Provider increases the trustworthiness of your email, so it increases the deliverability without being flagged as SPAM
-WarningPHPMailB=- Một số Nhà cung cấp dịch vụ Email (như Yahoo) không cho phép bạn gửi email từ máy chủ khác ngoài máy chủ của họ. Thiết lập hiện tại của bạn sử dụng máy chủ của ứng dụng để gửi email chứ không phải máy chủ của nhà cung cấp email của bạn, vì vậy một số người nhận (máy chủ tương thích với giao thức DMARC hạn chế), sẽ hỏi nhà cung cấp email của bạn xem họ có thể chấp nhận email của bạn và một số nhà cung cấp email không (như Yahoo) có thể trả lời "không" vì máy chủ không phải của họ, vì vậy một số Email đã gửi của bạn có thể không được chấp nhận gửi (cũng hãy cẩn thận với hạn ngạch gửi của nhà cung cấp email của bạn).
+WarningPHPMailB=- If the domain of your email (the part mymaildomain.com into myname@mymaildomain.com) is protected by a SPF + a DMARC record, your email may be flagged as SPAM because your DMARC rule defined into DNS zone of the domain of the sender (mymaildomain.com) does not allow the sending as a generic sender. In such a case, you must disable the DMARC for the domain (or set it to p=none like done by @gmail.com) or, better, if you have the technical knowledge, use the other method to send emails using the SMTP server of your own email provider.
 WarningPHPMailC=- Việc sử dụng máy chủ SMTP của Nhà cung cấp dịch vụ Email của chính bạn để gửi email cũng rất thú vị vì tất cả các email được gửi từ ứng dụng cũng sẽ được lưu vào thư mục "Đã gửi" trong hộp thư của bạn.
 WarningPHPMailD=Do đó, nên thay đổi phương thức gửi e-mail thành giá trị "SMTP".
 WarningPHPMailDbis=Nếu bạn thực sự muốn giữ phương thức "PHP" mặc định để gửi email, chỉ cần bỏ qua cảnh báo này hoặc xóa nó bằng cách %snhấp vào đây%s.
 WarningPHPMail2=Nếu nhà cung cấp dịch vụ email email của bạn cần hạn chế ứng dụng email khách đến một số địa chỉ IP (rất hiếm), thì đây là địa chỉ IP của tác nhân người dùng thư (MUA) cho ứng dụng ERP CRM của bạn: <strong>%s</strong> .
-WarningPHPMailSPF=Nếu tên miền trong địa chỉ email người gửi của bạn được bảo vệ bằng bản ghi SPF (hãy hỏi nhà đăng ký tên miền của bạn), bạn phải thêm các IP sau vào bản ghi SPF của DNS trong miền của bạn: <strong>%s</strong>.
-ActualMailSPFRecordFound=Đã tìm thấy bản ghi SPF thực tế (đối với email %s): %s
+WarningPHPMailSPF=If the domain name in your sender email address is protected by a SPF record (ask your domain name registar), you must add the following IPs or entry in the SPF record of the DNS of your domain: <strong>%s</strong>.
+WarningPHPMailSPFDMARC=If the domain name in your sender email address is protected by a DMARC record different than p=none (ask your domain name registar), you must remove your DMARC record, or set it to p=none like do @gmail.com) or use sending another method.
+SPFAndDMARCInformation=SPF and DMARC DNS record for main email addresses
+ActualMailDNSRecordFound=Actual %s record found (for email %s) : %s
 ClickToShowDescription=Nhấn vào đây để hiển thị mô tả
 DependsOn=Mô-đun này cần (các) mô-đun
 RequiredBy=Mô-đun này được yêu cầu bởi (các) mô-đun
@@ -867,7 +869,7 @@ Permission255=Chỉnh sửa mật khẩu của người dùng khác
 Permission256=Xóa hoặc vô hiệu người dùng khác
 Permission262=Extend access to all third parties AND their objects (not only third parties for which the user is linked as a sale representative).
 Permission262b=Not effective for external users (always limited to themselves for proposals, orders, invoices, contracts, etc.).
-Permission262c=Not effective for projects (only rules on project permissions, visibility and assignment matters).
+Permission262c=Not effective for projects (only rules on project permissions, visibility and users assignment matter).
 Permission263=Mở rộng quyền truy cập cho tất cả các bên thứ ba MÀ KHÔNG CÓ đối tượng của họ (không chỉ các bên thứ ba mà người dùng là đại diện bán hàng).<br>Không hiệu quả đối với người dùng bên ngoài (luôn giới hạn ở chính họ đối với các đề xuất, đơn đặt hàng, hóa đơn, hợp đồng, v.v.).<br>Không hiệu quả đối với các dự án (chỉ các quy tắc về quyền của dự án, khả năng hiển thị và các vấn đề chuyển nhượng).
 Permission271=Xem CA
 Permission272=Xem hóa đơn
@@ -944,7 +946,7 @@ Permission776=Báo cáo thanh toán chi phí
 Permission777=Đọc tất cả các báo cáo chi phí (kể cả báo cáo của người dùng không phải cấp dưới)
 Permission778=Tạo/sửa đổi báo cáo chi phí của mọi người
 Permission779=Xuất dữ liệu báo cáo chi phí
-Permission1001=Xem tồn kho
+Permission1001=Read warehouses and stocks
 Permission1002=Tạo/chỉnh sửa Kho hàng
 Permission1003=Xóa kho hàng
 Permission1004=Xem thay đổi tồn kho
@@ -2218,7 +2220,7 @@ CreateCandidature=Tạo đơn xin việc
 FormatZip=Zip
 MainMenuCode=Mã mục nhập menu (mainmenu)
 ECMAutoTree=Hiển thị cây ECM tự động
-OperationParamDesc=Xác định các quy tắc sẽ sử dụng để trích xuất một số dữ liệu hoặc đặt giá trị để sử dụng cho hoạt động.<br><br>Ví dụ về trích xuất tên công ty từ chủ đề email thành một biến tạm thời:<br>tmp_var=EXTRACT:SUBJECT:Tin nhắn từ công ty ([^\n]*)<br><br>Ví dụ về cách đặt thuộc tính của đối tượng cần tạo:<br>objproperty1=SET:giá trị được mã hóa cứng<br>objproperty2=SET:__tmp_var__<br>objproperty3=SETIFEMPTY:a giá trị (giá trị chỉ được đặt nếu thuộc tính chưa được xác định)<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:Tên công ty của tôi là\\ s([^\\s]*)<br><br>Sử dụng một dòng mới để trích xuất hoặc đặt một số thuộc tính.
+OperationParamDesc=Define the rules to use to extract some data or set values to use for operation.<br><br>Example to extract a string from email header, subject or body into a temporary variable:<br>tmp_var1=EXTRACT:HEADER:My regex ([^\n]*)<br>tmp_var2=EXTRACT:SUBJECT:My refex ([^\n]*)<br>tmp_var3=EXTRACT:BODY:My regex ([^\n]*)<br><br>Examples to set the properties of an object to create:<br>objproperty1=SET:a hard coded value<br>objproperty2=SET:__tmp_var__<br>objproperty3=SETIFEMPTY:a value (value is set only if property is not already defined)<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a new line to extract or set several properties.
 OpeningHours=Giờ mở cửa
 OpeningHoursDesc=Nhập vào đây giờ mở cửa thường xuyên của công ty bạn.
 ResourceSetup=Cấu hình của mô-đun tài nguyên
@@ -2264,7 +2266,7 @@ LargerThan=Lớn hơn
 IfTrackingIDFoundEventWillBeLinked=Lưu ý rằng nếu tìm thấy ID theo dõi của một đối tượng trong email hoặc nếu email đó là câu trả lời của một email đã được thu thập và liên kết với một đối tượng thì sự kiện đã tạo sẽ tự động được liên kết với đối tượng liên quan đã biết.
 WithGMailYouCanCreateADedicatedPassword=Với tài khoản Gmail, nếu bạn đã bật xác thực 2 bước, bạn nên tạo mật khẩu thứ hai dành riêng cho ứng dụng thay vì sử dụng mật khẩu tài khoản của chính bạn từ https://myaccount.google.com/.
 EmailCollectorTargetDir=Có thể bạn nên chuyển email sang thẻ/thư mục khác khi nó được xử lý thành công. Chỉ cần đặt tên thư mục ở đây để sử dụng tính năng này (KHÔNG sử dụng ký tự đặc biệt trong tên). Lưu ý rằng bạn cũng phải sử dụng tài khoản đăng nhập đọc/ghi.
-EmailCollectorLoadThirdPartyHelp=Bạn có thể sử dụng hành động này để sử dụng nội dung email nhằm tìm và tải bên thứ ba hiện có trong cơ sở dữ liệu của mình (việc tìm kiếm sẽ được thực hiện trên thuộc tính được xác định trong số 'id','name','name_alias','email'). Bên thứ ba được tìm thấy (hoặc đã tạo) sẽ được sử dụng cho các hành động cần đến nó.<br>Ví dụ: nếu bạn muốn tạo bên thứ ba có tên được trích xuất từ một chuỗi ' Tên: tên cần tìm' hiện trong nội dung, sử dụng email người gửi làm email, bạn có thể đặt trường tham số như thế này:<br>'email=HEADER:^From:(. *);name=EXTRACT:BODY:Name:\\s([^\\s]*);client=SET:2;'<br>
+EmailCollectorLoadThirdPartyHelp=You can use this action to use the email content to find and load an existing third party in your database (search will be done on the defined property among 'id','name','name_alias','email'). The found (or created) third party will be used for following actions that need it.<br>For example, if you want to create a third party with a name extracted from a string 'Name: name to find' present into the body, use the sender email as email, you can set the parameter field like this:<br>'email=EXTRACT:HEADER:^From:(.*);name=EXTRACT:BODY:Name:\\s([^\\s]*);client=SET:2;'<br>
 FilterSearchImapHelp=Cảnh báo: rất nhiều máy chủ email (như Gmail) đang thực hiện tìm kiếm từ đầy đủ khi tìm kiếm trên một chuỗi và sẽ không trả về kết quả nếu chuỗi đó chỉ được tìm thấy một phần trong một từ. Vì lý do này, việc sử dụng các ký tự đặc biệt vào tiêu chí tìm kiếm sẽ bị bỏ qua vì chúng không phải là một phần của các từ hiện có.<br>Để thực hiện tìm kiếm loại trừ trên một từ (trả lại email nếu từ đó không tìm thấy), bạn có thể sử dụng ! ký tự trước từ (có thể không hoạt động trên một số máy chủ thư).
 EndPointFor=Điểm kết thúc cho %s: %s
 DeleteEmailCollector=Xóa trình thu thập email

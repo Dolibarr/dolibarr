@@ -467,7 +467,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i', $act
 		$htmltooltip = $langs->trans("ECMAreaDesc2");
 		$htmltooltip .= '<br>'.$langs->trans("ECMAreaDesc2b");
 
-		$sectionauto = dol_sort_array($sectionauto, 'label', 'ASC', true, false);
+		$sectionauto = dol_sort_array($sectionauto, 'label', 'ASC', 1, 0);
 
 		print '<tr>';
 		print '<td colspan="6">';

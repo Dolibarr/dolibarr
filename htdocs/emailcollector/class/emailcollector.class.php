@@ -1676,7 +1676,7 @@ class EmailCollector extends CommonObject
 				$header = preg_replace('/\r\n\s+/m', ' ', $header); // When a header line is on several lines, merge lines
 
 				$matches = array();
-				preg_match_all('/([^: ]+): (.+?(?:\r\n\s(?:.+?))*)\r\n/m', $header, $matches);
+				preg_match_all('/([^: ]+): (.+?(?:\r\n\s(?:.+?))*)(\r\n|\s$)/m', $header, $matches);
 				$headers = array_combine($matches[1], $matches[2]);
 
 
@@ -1732,10 +1732,10 @@ class EmailCollector extends CommonObject
 					$msgid = str_replace(array('<', '>'), '', $overview[0]->message_id);
 				}
 				$operationslog .= " - MsgId: ".$msgid;
-				$operationslog .= " - Date: ".($headers['Date'] ?? '');
-				$operationslog .= " - References: ".dol_escape_htmltag($headers['References'] ?? '')." - Subject: ".dol_escape_htmltag($headers['Subject']);
+				$operationslog .= " - Date: ".($headers['Date'] ?? $langs->transnoentitiesnoconv("NotFound"));
+				$operationslog .= " - References: ".dol_escape_htmltag($headers['References'] ?? $langs->transnoentitiesnoconv("NotFound"))." - Subject: ".dol_escape_htmltag($headers['Subject']);
 
-				dol_syslog("-- Process email #".$iforemailloop." MsgId: ".$msgid." Date: ".($headers['Date'] ?? '')." References: ".($headers['References'] ?? '')." Subject: ".$headers['Subject']);
+				dol_syslog("-- Process email #".$iforemailloop.", MsgId: ".$msgid.", Date: ".($headers['Date'] ?? '').", References: ".($headers['References'] ?? '').", Subject: ".$headers['Subject']);
 
 
 				$trackidfoundintorecipienttype = '';
@@ -2565,7 +2565,7 @@ class EmailCollector extends CommonObject
 
 								if (!$errorforactions && ($idtouseforthirdparty || $emailtouseforthirdparty || $nametouseforthirdparty || $namealiastouseforthirdparty)) {
 									// We make another search on thirdparty
-									$operationslog .= '<br>We have this data to search thirdparty: id='.$idtouseforthirdparty.', email='.$emailtouseforthirdparty.', name='.$nametouseforthirdparty.', name_alias='.$namealiastouseforthirdparty;
+									$operationslog .= '<br>We have this initial main data to search thirdparty: id='.$idtouseforthirdparty.', email='.$emailtouseforthirdparty.', name='.$nametouseforthirdparty.', name_alias='.$namealiastouseforthirdparty.'.';
 
 									$tmpobject = new stdClass();
 									$tmpobject->element = 'generic';
@@ -2581,7 +2581,7 @@ class EmailCollector extends CommonObject
 									$namealiastouseforthirdparty = $tmpobject->name_alias;
 									$emailtouseforthirdparty = $tmpobject->email;
 
-									$operationslog .= '<br>We try to search existing thirdparty with '.$idtouseforthirdparty.' '.$emailtouseforthirdparty.' '.$nametouseforthirdparty.' '.$namealiastouseforthirdparty;
+									$operationslog .= '<br>We try to search existing thirdparty with idtouseforthirdparty='.$idtouseforthirdparty.' emailtouseforthirdparty='.$emailtouseforthirdparty.' nametouseforthirdparty='.$nametouseforthirdparty.' namealiastouseforthirdparty='.$namealiastouseforthirdparty;
 
 									// Try to find the thirdparty that match the most the information we have
 									$result = $thirdpartystatic->findNearest($idtouseforthirdparty, $nametouseforthirdparty, '', '', '', '', '', '', '', '', $emailtouseforthirdparty, $namealiastouseforthirdparty);
@@ -2595,8 +2595,8 @@ class EmailCollector extends CommonObject
 										if ($operation['type'] == 'loadthirdparty') {
 											dol_syslog("Third party with id=".$idtouseforthirdparty." email=".$emailtouseforthirdparty." name=".$nametouseforthirdparty." name_alias=".$namealiastouseforthirdparty." was not found");
 
-											//search into contacts of thirdparty
-											$resultContact = $contactstatic->fetch(0, '', '', $emailtouseforthirdparty);
+											// Search into contacts of thirdparties to try to guess the thirdparty to use
+											$resultContact = $contactstatic->findNearest(0, '', '', '', $emailtouseforthirdparty, '', 0);
 											if ($resultContact > 0) {
 												$idtouseforthirdparty = $contactstatic->socid;
 												$result = $thirdpartystatic->fetch($idtouseforthirdparty);

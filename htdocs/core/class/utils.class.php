@@ -172,6 +172,7 @@ class Utils
 						$tmpcountdeleted = 0;
 
 						$result = dol_delete_dir_recursive($filesarray[$key]['fullname'], $startcount, 1, 0, $tmpcountdeleted);
+
 						$excluded = [
 							$conf->user->dir_temp,
 						];
@@ -705,15 +706,15 @@ class Utils
 	/**
 	 * Execute a CLI command.
 	 *
-	 * @param 	string	$command			Command line to execute.
-	 * 										Warning: The command line is sanitize by escapeshellcmd(), except if $noescapecommand set, so can't contains any redirection char '>'. Use param $redirectionfile if you need it.
-	 * @param 	string	$outputfile			A path for an output file (used only when method is 2). For example: $conf->admin->dir_temp.'/out.tmp';
-	 * @param	int		$execmethod			0=Use default method (that is 1 by default), 1=Use the PHP 'exec', 2=Use the 'popen' method
-	 * @param	string	$redirectionfile	If defined, a redirection of output to this file is added.
-	 * @param	int		$noescapecommand	1=Do not escape command. Warning: Using this parameter needs you already have sanitized the $command parameter. If not, it will lead to security vulnerability.
-	 * 										This parameter is provided for backward compatibility with external modules. Always use 0 in core.
-	 * @param	string	$redirectionfileerr	If defined, a redirection of error is added to this file instead of to channel 1.
-	 * @return	array						array('result'=>...,'output'=>...,'error'=>...). result = 0 means OK.
+	 * @param 	string		$command			Command line to execute.
+	 * 											Warning: The command line is sanitize by escapeshellcmd(), except if $noescapecommand set, so can't contains any redirection char '>'. Use param $redirectionfile if you need it.
+	 * @param 	string		$outputfile			A path for an output file (used only when method is 2). For example: $conf->admin->dir_temp.'/out.tmp';
+	 * @param	int<0,2>	$execmethod			0=Use default method (that is 1 by default), 1=Use the PHP 'exec', 2=Use the 'popen' method
+	 * @param	?string		$redirectionfile	If defined, a redirection of output to this file is added.
+	 * @param	int<0,1>	$noescapecommand	1=Do not escape command. Warning: Using this parameter needs you already have sanitized the $command parameter. If not, it will lead to security vulnerability.
+	 * 											This parameter is provided for backward compatibility with external modules. Always use 0 in core.
+	 * @param	?string		$redirectionfileerr	If defined, a redirection of error is added to this file instead of to channel 1.
+	 * @return	array{result:int,output:string,error:string}	array('result'=>...,'output'=>...,'error'=>...). result = 0 means OK.
 	 */
 	public function executeCLI($command, $outputfile, $execmethod = 0, $redirectionfile = null, $noescapecommand = 0, $redirectionfileerr = null)
 	{

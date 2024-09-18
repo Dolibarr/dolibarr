@@ -275,7 +275,7 @@ if ($dirins && $action == 'initmodule' && $modulename && $user->hasRight("module
 			'mymodule' => strtolower($modulename),
 			'MyModule' => $modulename
 		);
-		$result = dolCopyDir($srcdir, $destdir, 0, 0, $arrayreplacement);
+		$result = dolCopyDir($srcdir, $destdir, '0', 0, $arrayreplacement);
 		//dol_mkdir($destfile);
 		if ($result <= 0) {
 			if ($result < 0) {
@@ -980,7 +980,7 @@ if ($dirins && $action == 'addlanguage' && !empty($module) && $user->hasRight("m
 				$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template/langs/en_US';
 				$arrayofreplacement = array('mymodule' => $modulelowercase);
 			}
-			$result = dolCopyDir($srcdir, $destdir, 0, 0, $arrayofreplacement);
+			$result = dolCopyDir($srcdir, $destdir, '0', 0, $arrayofreplacement);
 		}
 	} else {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Language")), null, 'errors');
@@ -3682,8 +3682,17 @@ if ($module == 'initmodule') {
 						print '<input class="reposition button smallpaddingimp" type="submit" name="modifydesc" value="'.$langs->trans("Modify").'"/>';
 						print '<input class="reposition button button-cancel smallpaddingimp" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"/>';
 					} else {
-						print $moduleobj->getDesc();
+						print $moduleobj->description;
 						print '<a class="editfielda reposition marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=edit_moduledescription&token='.newToken().'&tab='.urlencode($tab).'&module='.urlencode($module).'&keydescription=desc">'.img_edit().'</a>';
+
+						$moduledescritpionautotrans = $moduleobj->getDesc();
+						if ($moduledescritpionautotrans != "Module".$moduleobj->name."Desc") {
+							// $moduledescritpionautotrans has been found into a translation file
+							print ' '.$form->textwithpicto('', $langs->trans("ModuleTranslatedIntoLangForKeyInto", "Module".$moduleobj->name."Desc", $moduledescritpionautotrans));
+						} elseif ($moduledescritpionautotrans != "Module".$moduleobj->numero."Desc") {
+							// $moduledescritpionautotrans has been found into a translation file
+							print ' '.$form->textwithpicto('', $langs->trans("ModuleTranslatedIntoLangForKeyInto", "Module".$moduleobj->numero."Desc", $moduledescritpionautotrans));
+						}
 					}
 					print '</td></tr>';
 

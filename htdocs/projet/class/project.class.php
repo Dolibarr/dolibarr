@@ -1692,7 +1692,15 @@ class Project extends CommonObject
 			// No filter. Use this if user has permission to see all project
 		}
 
-		$sql .= $filter;
+		// Manage filter
+		$errormessage = '';
+		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+		if ($errormessage) {
+			$this->errors[] = $errormessage;
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+			$sql .= $filter;
+		}
+
 		//print $sql;
 
 		$resql = $this->db->query($sql);

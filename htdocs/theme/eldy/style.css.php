@@ -58,6 +58,41 @@ require __DIR__.'/theme_vars.inc.php';
 if (defined('THEME_ONLY_CONSTANT')) {
 	return;
 }
+// Types from theme_vars
+'
+@phan-var-force string $badgeWarning
+@phan-var-force string $butactionbg
+@phan-var-force string $colorbackbody
+@phan-var-force string $colorbackhmenu1
+@phan-var-force string $colorbacklinebreak
+@phan-var-force string $colorbacklineimpair1
+@phan-var-force string $colorbacklineimpair2
+@phan-var-force string $colorbacklinepair1
+@phan-var-force string $colorbacklinepair2
+@phan-var-force string $colorbacklinepairchecked
+@phan-var-force string $colorbacklinepairhover
+@phan-var-force string $colorbacktabactive
+@phan-var-force string $colorbacktabcard1
+@phan-var-force string $colorbacktitle1
+@phan-var-force string $colorbackvmenu1
+@phan-var-force string $colorblind_deuteranopes_textSuccess
+@phan-var-force string $colorblind_deuteranopes_textWarning
+@phan-var-force string $colortext
+@phan-var-force string $colortextlink
+@phan-var-force string $colortexttitle
+@phan-var-force string $colortexttitlelink
+@phan-var-force string $colortexttitlenotab
+@phan-var-force string $colortexttitlenotab2
+@phan-var-force string $colortopbordertitle1
+@phan-var-force string $fontsize
+@phan-var-force string $textDanger
+@phan-var-force string $textSuccess
+@phan-var-force string $textWarning
+@phan-var-force string $textbutaction
+@phan-var-force string $toolTipBgColor
+@phan-var-force string $toolTipFontColor
+@phan-var-force string $topMenuFontSize
+';
 
 
 session_cache_limiter('public');
@@ -68,7 +103,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 // Load user to have $user->conf loaded (not done into main because of NOLOGIN constant defined)
 // and permission, so we can later calculate number of top menu ($nbtopmenuentries) according to user profile.
 if (empty($user->id) && !empty($_SESSION['dol_login'])) {
-	$user->fetch('', $_SESSION['dol_login'], '', 1);
+	$user->fetch(0, $_SESSION['dol_login'], '', 1);
 	$user->loadRights();
 
 	// Reload menu now we have the good user (and we need the good menu to have ->showmenu('topnb') correct.
@@ -195,6 +230,8 @@ $colortexttitle       = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!g
 $colortexttitlelink   = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_TEXTTITLELINK') ? $colortexttitlelink : $conf->global->THEME_ELDY_TEXTTITLELINK) : (empty($user->conf->THEME_ELDY_TEXTTITLELINK) ? $colortexttitlelink : $user->conf->THEME_ELDY_TEXTTITLELINK);
 $colortext            = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_TEXT') ? $colortext : $conf->global->THEME_ELDY_TEXT) : (empty($user->conf->THEME_ELDY_TEXT) ? $colortext : $user->conf->THEME_ELDY_TEXT);
 $colortextlink        = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_TEXTLINK') ? $colortextlink : $conf->global->THEME_ELDY_TEXTLINK) : (empty($user->conf->THEME_ELDY_TEXTLINK) ? $colortextlink : $user->conf->THEME_ELDY_TEXTLINK);
+$colortextlinkHsla    = colorHexToHsl($colortextlink, false, true);
+
 $butactionbg       	  = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_BTNACTION') ? $butactionbg : $conf->global->THEME_ELDY_BTNACTION) : (empty($user->conf->THEME_ELDY_BTNACTION) ? $butactionbg : $user->conf->THEME_ELDY_BTNACTION);
 $textbutaction        = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_TEXTBTNACTION') ? $textbutaction : $conf->global->THEME_ELDY_TEXTBTNACTION) : (empty($user->conf->THEME_ELDY_TEXTBTNACTION) ? $textbutaction : $user->conf->THEME_ELDY_TEXTBTNACTION);
 $fontsize             = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_FONT_SIZE1') ? $fontsize : $conf->global->THEME_ELDY_FONT_SIZE1) : (empty($user->conf->THEME_ELDY_FONT_SIZE1) ? $fontsize : $user->conf->THEME_ELDY_FONT_SIZE1);

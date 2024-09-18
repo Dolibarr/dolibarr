@@ -1302,7 +1302,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-	print "\n".'<table class="tagtable liste">'."\n";
+	print "\n".'<table class="tagtable liste noborder">'."\n";
 
 	$param = "socid=".urlencode((string) ($object->id));
 	if ($search_rowid != '') {
@@ -2234,7 +2234,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		foreach ($histo as $key => $value) {
 			$actionstatic->fetch($histo[$key]['id']); // TODO Do we need this, we already have a lot of data of line into $histo
 
-			$actionstatic->type_picto = $histo[$key]['apicto'];
+			$actionstatic->type_picto = $histo[$key]['apicto'] ?? '';
 			$actionstatic->type_code = $histo[$key]['acode'];
 
 			$out .= '<tr class="oddeven">';

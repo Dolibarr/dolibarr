@@ -90,6 +90,9 @@ $permissiontoaddupdatepaymentinformation = ((!getDolGlobalString('MAIN_USE_ADVAN
 // Check permission on company
 $result = restrictedArea($user, 'societe', '', '');
 
+$stripe = null;  // Stripe object
+$stripeacc = null; // Stripe Account
+$stripecu = null; // Remote stripe customer
 
 // Init Stripe objects
 if (isModEnabled('stripe')) {
@@ -138,11 +141,11 @@ if (empty($reshook)) {
 
 	if ($action == 'update' && $permissiontoaddupdatepaymentinformation) {
 		// Update the bank account
-		if (!GETPOST('label', 'alpha') || !(GETPOST('bank', 'alpha') || (getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC')!=0))) {
+		if (!GETPOST('label', 'alpha') || !(GETPOST('bank', 'alpha') || (getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC') != 0))) {
 			if (!GETPOST('label', 'alpha')) {
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Label")), null, 'errors');
 			}
-			if (!GETPOST('bank', 'alpha') && (getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC')==0)) {
+			if (!GETPOST('bank', 'alpha') && (getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC') == 0)) {
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankName")), null, 'errors');
 			}
 			$action = 'edit';
@@ -155,7 +158,9 @@ if (empty($reshook)) {
 				$action = 'edit';
 				$error++;
 			}
-			if (!GETPOST('bic') && (getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC')==0)) {
+		}
+		if ($companybankaccount->needBIC() == 1) {
+			if (!GETPOST('bic') && (getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC') == 0)) {
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BIC")), null, 'errors');
 				$action = 'edit';
 				$error++;
@@ -338,7 +343,9 @@ if (empty($reshook)) {
 					$action = 'create';
 					$error++;
 				}
-				if (!GETPOST('bic') && (getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC')==0)) {
+			}
+			if ($companybankaccount->needBIC() == 1) {
+				if (!GETPOST('bic') && (getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC') == 0)) {
 					setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BIC")), null, 'errors');
 					$action = 'create';
 					$error++;
@@ -1193,7 +1200,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 		print '<!-- List of card payments -->'."\n";
 		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-		print '<table class="liste centpercent">'."\n";
+		print '<table class="liste centpercent noborder">'."\n";
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans('Label').'</td>';
 		print '<td>'.$form->textwithpicto($langs->trans('ExternalSystemID'), $langs->trans("IDOfPaymentInAnExternalSystem")).'</td>';	// external system ID
@@ -1492,7 +1499,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 	if (isModEnabled('stripe') && !empty($conf->stripeconnect->enabled) && !empty($stripesupplieracc)) {
 		print load_fiche_titre($langs->trans('StripeBalance').($stripesupplieracc ? ' (Stripe connection with StripeConnect account '.$stripesupplieracc.')' : ' (Stripe connection with keys from Stripe module setup)'), $morehtmlright, 'stripe-s');
 		$balance = \Stripe\Balance::retrieve(array("stripe_account" => $stripesupplieracc));
-		print '<table class="liste centpercent">'."\n";
+		print '<table class="liste centpercent noborder">'."\n";
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans('Currency').'</td>';
 		print '<td>'.$langs->trans('Available').'</td>';
@@ -1534,6 +1541,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		print '<br>';
 	}
 
+
 	// List of bank accounts
 	if ($permissiontoaddupdatepaymentinformation) {
 		$morehtmlright = dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"] . '?socid=' . $object->id . '&amp;action=create');
@@ -1549,7 +1557,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 	if (is_array($rib_list)) {
 		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-		print '<table class="liste centpercent">';
+		print '<table class="liste centpercent noborder">';
 
 		print '<tr class="liste_titre">';
 		print_liste_field_titre("Label");
@@ -1729,8 +1737,8 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 
+			// Show online signature link
 			if (!getDolGlobalInt('SOCIETE_DISABLE_BANKACCOUNT') && getDolGlobalInt("SOCIETE_RIB_ALLOW_ONLINESIGN")) {
-				// Show online signature link
 				print '<td class="width200">';
 				$useonlinesignature = 1;
 				if ($useonlinesignature) {
@@ -1848,15 +1856,16 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				print img_picto($langs->trans("Default"), 'on');
 			}
 			print '</td>';
-			/*
-			print '<td>';
-			print $langs->trans("Remote");
-			//if ($src->cvc_check == 'fail') print ' - CVC check fail';
-			print '</td>';
-			*/
 
+			// Doc gen
 			print '<td>';
 			print '</td>';
+
+			// Online sign
+			if (!getDolGlobalInt('SOCIETE_DISABLE_BANKACCOUNT') && getDolGlobalInt("SOCIETE_RIB_ALLOW_ONLINESIGN")) {
+				print '<td>';
+				print '</td>';
+			}
 
 			// Fields from hook
 			$parameters = array('arrayfields' => array(), 'stripe_card_ref' => $rib->stripe_card_ref, 'stripe_account' => $rib->stripe_account, 'linetype' => 'stripebanremoteonly');
@@ -1972,7 +1981,7 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 	print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Label").'</td>';
 	print '<td><input class="minwidth300" type="text" name="label" value="'.$companybankaccount->label.'"></td></tr>';
 
-	$required = (getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC')==0) ? "fieldrequired" : "";
+	$required = (getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC') == 0) ? "fieldrequired" : "";
 	print '<tr><td class="'.$required.'">'.$langs->trans("BankName").'</td>';
 	print '<td><input class="minwidth200" type="text" name="bank" value="'.$companybankaccount->bank.'"></td></tr>';
 
@@ -2010,7 +2019,7 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 			$name = 'bic';
 			$size = 12;
 			$content = $bankaccount->bic;
-			if ($bankaccount->needIBAN() && (getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC')==0)) {
+			if ($bankaccount->needBIC() && (getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC') == 0)) {
 				$require = true;
 			}
 			$tooltip = $langs->trans("Example").': LIABLT2XXXX';
@@ -2182,7 +2191,7 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 			$name = 'bic';
 			$size = 12;
 			$content = $companybankaccount->bic;
-			if ($companybankaccount->needIBAN() && (getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC')==0)) {
+			if ($companybankaccount->needBIC() && (getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC') == 0)) {
 				$require = true;
 			}
 			$tooltip = $langs->trans("Example").': LIABLT2XXXX';

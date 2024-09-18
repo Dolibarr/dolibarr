@@ -12,7 +12,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es.com>
- * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022-2023  George Gkantinas        <info@geowv.eu>
  * Copyright (C) 2023       Nick Fragoulis
  * Copyright (C) 2023       Alexandre Janniaux      <alexandre.janniaux@gmail.com>
@@ -837,6 +837,53 @@ if (empty($reshook)) {
 	// warehouse
 	if ($action == 'setwarehouse' && $permissiontoadd) {
 		$result = $object->setWarehouse(GETPOSTINT('fk_warehouse'));
+	}
+
+	if ($action == 'confirm_clone' && $confirm != 'yes') {
+		$action = '';
+	}
+	//clone company essential info
+	if ($action == 'confirm_clone' && $confirm == 'yes' && $user->hasRight('societe', 'creer')) {
+		if ($object->id > 0) {
+			$error = 0;
+
+			$clone = dol_clone($object, 1);
+
+			if (!empty(GETPOST('clone_name'))) {
+				$clone->id = 0;
+				$clone->name = GETPOST('clone_name', 'alphanohtml');
+				$clone->status = 1;
+				$clone->fournisseur = 0;
+				$clone->client = 0;
+
+				$db->begin();
+
+				$clone->context['createfromclone'] = 'createfromclone';
+				$id = $clone->create($user);
+				if ($id > 0) {
+					$clone->id = $id;
+				} else {
+					setEventMessages($clone->error, $clone->errors, 'errors');
+					$error++;
+				}
+
+				unset($clone->context['createfromclone']);
+
+				if ($error) {
+					$db->rollback();
+				} else {
+					$db->commit();
+					$db->close();
+					header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
+					exit;
+				}
+			} else {
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NewRefForClone")), null, 'errors');
+			}
+		} else {
+			dol_print_error($db, $object->error, $object->errors);
+		}
+		$action = 'clone';
 	}
 
 	$id = $socid;
@@ -2607,14 +2654,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '</td></tr>';
 				}
 
-				// Webservices url/key
-				if (isModEnabled('webservicesclient')) {
-					print '<tr><td>'.$form->editfieldkey('WebServiceURL', 'webservices_url', '', $object, 0).'</td>';
-					print '<td><input type="text" name="webservices_url" id="webservices_url" value="'.$object->webservices_url.'"></td>';
-					print '<td>'.$form->editfieldkey('WebServiceKey', 'webservices_key', '', $object, 0).'</td>';
-					print '<td><input type="text" name="webservices_key" id="webservices_key" value="'.$object->webservices_key.'"></td></tr>';
-				}
-
 				// Logo
 				print '<tr class="hideonsmartphone">';
 				print '<td>'.$form->editfieldkey('Logo', 'photoinput', '', $object, 0).'</td>';
@@ -2665,7 +2704,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 					if (isModEnabled('accounting')) {
 						// Accountancy_code_sell
-						print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellCode").'</td>';
+						print '<tr><td>'.$langs->trans("ProductAccountancySellCode").'</td>';
 						print '<td>';
 						print $formaccounting->select_account($object->accountancy_code_sell, 'accountancy_code_sell', 1, '', 1, 1);
 						print '</td></tr>';
@@ -2677,7 +2716,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						print '</td></tr>';
 					} else { // For external software
 						// Accountancy_code_sell
-						print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellCode").'</td>';
+						print '<tr><td>'.$langs->trans("ProductAccountancySellCode").'</td>';
 						print '<td><input name="accountancy_code_sell" class="maxwidth200" value="'.$object->accountancy_code_sell.'">';
 						print '</td></tr>';
 
@@ -2728,6 +2767,17 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			);
 
 			$formconfirm .= $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id, $langs->trans("MergeThirdparties"), $langs->trans("ConfirmMergeThirdparties"), "confirm_merge", $formquestion, 'no', 1, 250);
+		}
+
+		// Clone confirmation
+		if (($action == 'clone' && (empty($conf->use_javascript_ajax) || !empty($conf->dol_use_jmobile)))		// Output when action = clone if jmobile or no js
+		|| (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile))) {							// Always output when not jmobile nor js
+			// Define confirmation messages
+			$formquestionclone = array(
+			'text' => $langs->trans("ConfirmClone"),
+			0 => array('type' => 'text', 'name' => 'clone_name', 'label' => $langs->trans("NewSocNameForClone"), 'value' => empty($tmpcode) ? $langs->trans("CopyOf").' '.$object->nom : $tmpcode, 'morecss' => 'width250'),
+			);
+			$formconfirm .= $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneThirdparties', $object->name), 'confirm_clone', $formquestionclone, 'yes', 'action-clone', 350, 600);
 		}
 
 		// Call Hook formConfirm
@@ -3011,7 +3061,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 				// Customer
 				if ($object->prospect || $object->client || getDolGlobalString('THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT')) {
-					print '<tr><td>'.$langs->trans("CustomersCategoriesShort").'</td>';
+					print '<tr><td class="titlefieldmiddle">'.$langs->trans("CustomersCategoriesShort").'</td>';
 					print '<td>';
 					print $form->showCategories($object->id, Categorie::TYPE_CUSTOMER, 1);
 					print "</td></tr>";
@@ -3019,7 +3069,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				// Supplier
 				if (((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) && $object->fournisseur) {
-					print '<tr><td>'.$langs->trans("SuppliersCategoriesShort").'</td>';
+					print '<tr><td class="titlefieldmiddle">'.$langs->trans("SuppliersCategoriesShort").'</td>';
 					print '<td>';
 					print $form->showCategories($object->id, Categorie::TYPE_SUPPLIER, 1);
 					print "</td></tr>";
@@ -3028,7 +3078,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 
 			// Third-Party Type
-			print '<tr><td>';
+			print '<tr><td class="titlefieldmiddle">';
 			print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans('ThirdPartyType').'</td>';
 			if ($action != 'editthirdpartytype' && $user->hasRight('societe', 'creer')) {
 				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editthirdpartytype&token='.newToken().'&socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
@@ -3045,7 +3095,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			}
 
 			// Legal
-			print '<tr><td class="titlefield">'.$langs->trans('JuridicalStatus').'</td><td>'.$object->forme_juridique.'</td></tr>';
+			print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td>'.dolPrintHTML($object->forme_juridique).'</td></tr>';
 
 			// Capital
 			print '<tr><td>'.$langs->trans('Capital').'</td><td>';
@@ -3206,12 +3256,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '</td></tr>';
 			*/
 
-			// Webservices url/key
-			if (isModEnabled('webservicesclient')) {
-				print '<tr><td>'.$langs->trans("WebServiceURL").'</td><td>'.dol_print_url($object->webservices_url).'</td></tr>';
-				print '<tr><td class="nowrap">'.$langs->trans('WebServiceKey').'</td><td>'.$object->webservices_key.'</td></tr>';
-			}
-
 			print '</table>';
 			print '</div>';
 
@@ -3250,6 +3294,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				}
 
 				print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=edit&token='.newToken(), '', $permissiontoadd);
+
+				if (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)) {
+					$cloneSocietetUrl = '';
+					$cloneButtonId = 'action-clone';
+				}
+				print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $cloneSocietetUrl, $cloneButtonId, $user->hasRight('societe', 'creer'));
 
 				if (isModEnabled('member')) {
 					$adh = new Adherent($db);

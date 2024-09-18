@@ -514,15 +514,17 @@ ModuleCompanyCodeCustomerDigitaria=%s ac yna enw'r cwsmer cwtogi yn ôl nifer y 
 ModuleCompanyCodeSupplierDigitaria=%s ac yna enw'r cyflenwr cwtogi yn ôl nifer y nodau: %s ar gyfer cod cyfrifyddu'r cyflenwr.
 Use3StepsApproval=Yn ddiofyn, mae angen i Archebion Prynu gael eu creu a'u cymeradwyo gan 2 ddefnyddiwr gwahanol (un cam/defnyddiwr i'w greu ac un cam/defnyddiwr i'w gymeradwyo. Sylwch os oes gan y defnyddiwr ganiatâd i greu a chymeradwyo, bydd un cam/defnyddiwr yn ddigon) . Gallwch ofyn gyda'r opsiwn hwn i gyflwyno trydydd cam/cymeradwyaeth defnyddiwr, os yw'r swm yn uwch na'r gwerth penodol (felly bydd angen 3 cham: 1 = dilysu, 2 = cymeradwyaeth gyntaf a 3 = ail gymeradwyaeth os yw'r swm yn ddigon). <br> Gosodwch hwn i wag os yw un gymeradwyaeth (2 gam) yn ddigon, gosodwch ef i werth isel iawn (0.1) os oes angen ail gymeradwyaeth (3 cham) bob amser.
 UseDoubleApproval=Defnyddiwch gymeradwyaeth 3 cham pan fydd y swm (heb dreth) yn uwch na...
-WarningPHPMail=WARNING: The setup to send emails from the application is using the default generic setup. This choice needs no technical knowledge to complete the setup.<br>However, it is often better to setup outgoing emails to use the email server of your Email Service Provider instead of the default setup for several reasons:
+WarningPHPMail=NOTICE: The setup to send emails from the application is using the default generic setup (called "%s"). This choice needs no technical knowledge and no particular setup.<br>However, it is often better to setup outgoing emails to use the other method (called "%s") to use the email server of your Email Service Provider, instead of the default setup for several reasons:
 WarningPHPMailA=- Using the server of the Email Service Provider increases the trustworthiness of your email, so it increases the deliverability without being flagged as SPAM
-WarningPHPMailB=- Nid yw rhai Darparwyr Gwasanaeth E-bost (fel Yahoo) yn caniatáu ichi anfon e-bost o weinydd arall yn hytrach na'u gweinydd eu hunain. Mae eich gosodiad presennol yn defnyddio gweinydd y rhaglen i anfon e-bost ac nid gweinydd eich darparwr e-bost, felly bydd rhai derbynwyr (yr un sy'n gydnaws â'r protocol DMARC cyfyngol), yn gofyn i'ch darparwr e-bost a allant dderbyn eich e-bost a rhai darparwyr e-bost Efallai y bydd (fel Yahoo) yn ymateb "na" oherwydd nad yw'r gweinydd yn perthyn iddynt, felly mae'n bosibl na fydd ychydig o'r E-byst a anfonwyd gennych yn cael eu derbyn i'w hanfon (byddwch yn ofalus hefyd o gwota anfon eich darparwr e-bost).
+WarningPHPMailB=- If the domain of your email (the part mymaildomain.com into myname@mymaildomain.com) is protected by a SPF + a DMARC record, your email may be flagged as SPAM because your DMARC rule defined into DNS zone of the domain of the sender (mymaildomain.com) does not allow the sending as a generic sender. In such a case, you must disable the DMARC for the domain (or set it to p=none like done by @gmail.com) or, better, if you have the technical knowledge, use the other method to send emails using the SMTP server of your own email provider.
 WarningPHPMailC=- Mae defnyddio gweinydd SMTP eich Darparwr Gwasanaeth E-bost eich hun i anfon e-byst hefyd yn ddiddorol felly bydd yr holl negeseuon e-bost a anfonir o'r cais hefyd yn cael eu cadw yn eich cyfeiriadur "Anfonwyd" o'ch blwch post.
 WarningPHPMailD=Argymhellir felly newid y dull anfon e-byst i'r gwerth "SMTP".
 WarningPHPMailDbis=Os ydych chi wir eisiau cadw'r dull "PHP" rhagosodedig i anfon e-byst, anwybyddwch y rhybudd hwn, neu ei ddileu trwy %s clicio yma%s.
 WarningPHPMail2=Os oes angen i'ch darparwr SMTP e-bost gyfyngu cleient e-bost i rai cyfeiriadau IP (prin iawn), dyma gyfeiriad IP yr asiant defnyddiwr post (MUA) ar gyfer eich cais CRM ERP: <strong> %s </strong> .
-WarningPHPMailSPF=Os yw'r enw parth yn eich cyfeiriad e-bost anfonwr wedi'i warchod gan gofnod SPF (gofynnwch i'ch cofrestrydd enw parth), rhaid i chi ychwanegu'r IPs canlynol yng nghofnod SPF DNS eich parth: <strong> %s </strong> .
-ActualMailSPFRecordFound=Wedi canfod cofnod SPF gwirioneddol (ar gyfer e-bost %s): %s
+WarningPHPMailSPF=If the domain name in your sender email address is protected by a SPF record (ask your domain name registar), you must add the following IPs or entry in the SPF record of the DNS of your domain: <strong>%s</strong>.
+WarningPHPMailSPFDMARC=If the domain name in your sender email address is protected by a DMARC record different than p=none (ask your domain name registar), you must remove your DMARC record, or set it to p=none like do @gmail.com) or use sending another method.
+SPFAndDMARCInformation=SPF and DMARC DNS record for main email addresses
+ActualMailDNSRecordFound=Actual %s record found (for email %s) : %s
 ClickToShowDescription=Cliciwch i ddangos disgrifiad
 DependsOn=Mae angen y modiwl(au) ar y modiwl hwn
 RequiredBy=Mae angen y modiwl hwn yn ôl modiwl(au)
@@ -867,7 +869,7 @@ Permission255=Addasu cyfrinair defnyddwyr eraill
 Permission256=Dileu neu analluogi defnyddwyr eraill
 Permission262=Extend access to all third parties AND their objects (not only third parties for which the user is linked as a sale representative).
 Permission262b=Not effective for external users (always limited to themselves for proposals, orders, invoices, contracts, etc.).
-Permission262c=Not effective for projects (only rules on project permissions, visibility and assignment matters).
+Permission262c=Not effective for projects (only rules on project permissions, visibility and users assignment matter).
 Permission263=Ymestyn mynediad i bob trydydd parti HEB eu hamcanion (nid dim ond trydydd parti y mae'r defnyddiwr yn gynrychiolydd gwerthu ar eu cyfer). <br> Ddim yn effeithiol ar gyfer defnyddwyr allanol (bob amser yn gyfyngedig iddynt hwy eu hunain ar gyfer cynigion, archebion, anfonebau, contractau, ac ati). <br> Ddim yn effeithiol ar gyfer prosiectau (dim ond rheolau ar ganiatadau prosiect, gwelededd a materion aseiniad).
 Permission271=Darllenwch CA
 Permission272=Darllen anfonebau
@@ -944,7 +946,7 @@ Permission776=Adroddiadau costau talu
 Permission777=Darllenwch yr holl adroddiadau treuliau (hyd yn oed adroddiadau defnyddwyr nid is-weithwyr)
 Permission778=Creu/addasu adroddiadau treuliau pawb
 Permission779=Adroddiadau costau allforio
-Permission1001=Darllenwch stociau
+Permission1001=Read warehouses and stocks
 Permission1002=Creu/addasu warysau
 Permission1003=Dileu warysau
 Permission1004=Darllenwch symudiadau stoc
@@ -2218,7 +2220,7 @@ CreateCandidature=Creu cais am swydd
 FormatZip=Sip
 MainMenuCode=Cod mynediad dewislen (prif ddewislen)
 ECMAutoTree=Dangos coeden ECM awtomatig
-OperationParamDesc=Diffinio'r rheolau i'w defnyddio i echdynnu peth data neu osod gwerthoedd i'w defnyddio ar gyfer gweithrediad.<br><br>Enghraifft echdynnu enw cwmni o e-bost yn destun newidyn dros dro:<br> tmp_var=EXTRACT:TESTUN:Neges gan y cwmni ([^\n]*)<br><br>Enghreifftiau i osod priodweddau gwrthrych i'w greu:<br>objproperty1=SET: gwerth cod caled<br>objproperty2=SET:__tmp_var__<br>objproperty3=SETIFEMPTY:gwerth (gwerth wedi'i osod dim ond os nad yw'r priodwedd wedi'i ddiffinio'n barod)<br> objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:TESTUN:([^&#92;n]*)<br>object.objproperty5=EXTRACT:CORFF:Enw fy nghwmni yw\\ s([^\\s]*)<br><br>Defnyddiwch linell newydd i echdynnu neu osod sawl priodwedd.
+OperationParamDesc=Define the rules to use to extract some data or set values to use for operation.<br><br>Example to extract a string from email header, subject or body into a temporary variable:<br>tmp_var1=EXTRACT:HEADER:My regex ([^\n]*)<br>tmp_var2=EXTRACT:SUBJECT:My refex ([^\n]*)<br>tmp_var3=EXTRACT:BODY:My regex ([^\n]*)<br><br>Examples to set the properties of an object to create:<br>objproperty1=SET:a hard coded value<br>objproperty2=SET:__tmp_var__<br>objproperty3=SETIFEMPTY:a value (value is set only if property is not already defined)<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a new line to extract or set several properties.
 OpeningHours=Oriau agor
 OpeningHoursDesc=Nodwch yma oriau agor arferol eich cwmni.
 ResourceSetup=Ffurfweddu modiwl Adnodd
@@ -2264,7 +2266,7 @@ LargerThan=Mwy na
 IfTrackingIDFoundEventWillBeLinked=Sylwch, Os canfyddir ID olrhain gwrthrych mewn e-bost, neu os yw'r e-bost yn ateb e-bost a gasglwyd eisoes ac yn gysylltiedig â gwrthrych, bydd y digwyddiad a grëwyd yn cael ei gysylltu'n awtomatig â'r gwrthrych cysylltiedig hysbys.
 WithGMailYouCanCreateADedicatedPassword=Gyda chyfrif GMail, os gwnaethoch alluogi'r dilysiad 2 gam, argymhellir creu ail gyfrinair pwrpasol ar gyfer y cais yn lle defnyddio cyfrinair eich cyfrif eich hun o https://myaccount.google.com/.
 EmailCollectorTargetDir=Gall fod yn ymddygiad dymunol symud yr e-bost i dag/cyfeiriadur arall pan gafodd ei brosesu'n llwyddiannus. Gosodwch enw'r cyfeiriadur yma i ddefnyddio'r nodwedd hon (PEIDIWCH â defnyddio nodau arbennig mewn enw). Sylwch fod yn rhaid i chi hefyd ddefnyddio cyfrif mewngofnodi darllen/ysgrifennu.
-EmailCollectorLoadThirdPartyHelp=Gallwch ddefnyddio'r weithred hon i ddefnyddio'r cynnwys e-bost i ddod o hyd i drydydd parti presennol a'i lwytho yn eich cronfa ddata (bydd chwiliad yn cael ei wneud ar yr eiddo diffiniedig ymhlith 'id', 'name', 'name_alias', 'email'). Defnyddir y trydydd parti a ganfuwyd (neu a grëwyd) ar gyfer y gweithredoedd canlynol sydd eu hangen.<br>Er enghraifft, os ydych am greu trydydd parti gydag enw wedi'i dynnu o linyn ' Enw: enw i'w ddarganfod' yn bresennol yn y corff, defnyddiwch e-bost yr anfonwr fel e-bost, gallwch osod y maes paramedr fel hyn:<br> 'email=HEADER:^From:(. *); enw=DYFYNIAD:CORFF:Enw:\\s([^\\s]*);client=SET:2;'<br>
+EmailCollectorLoadThirdPartyHelp=You can use this action to use the email content to find and load an existing third party in your database (search will be done on the defined property among 'id','name','name_alias','email'). The found (or created) third party will be used for following actions that need it.<br>For example, if you want to create a third party with a name extracted from a string 'Name: name to find' present into the body, use the sender email as email, you can set the parameter field like this:<br>'email=EXTRACT:HEADER:^From:(.*);name=EXTRACT:BODY:Name:\\s([^\\s]*);client=SET:2;'<br>
 FilterSearchImapHelp=Warning: a lot of email servers (like Gmail) are doing full word searches when searching on a string and will not return a result if the string is only found partially into a word. For this reason too, use special characters into a search criteria will be ignored are they are not part of existing words.<br>To make an exclude search on a word (return email if word is not found), you can use the ! character before the word (may not work on some mail servers).
 EndPointFor=Pwynt gorffen ar gyfer %s : %s
 DeleteEmailCollector=Dileu casglwr e-bost

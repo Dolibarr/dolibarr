@@ -295,8 +295,8 @@ CurrencyXPF=الحراجية المعتمدة الفرنك
 CurrencySingXPF=الحراجية المعتمدة الفرنك
 CurrencyCentEUR=سنتا
 CurrencyCentSingEUR=سنت
-CurrencyCentINR=بيزة
-CurrencyCentSingINR=paise
+CurrencyCentINR=paise
+CurrencyCentSingINR=بيزة
 CurrencyThousandthSingTND=الألف
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=الإنترنت

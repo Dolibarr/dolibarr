@@ -150,7 +150,7 @@ $diroutputmassaction = $conf->project->dir_output.'/tasks/temp/massgeneration/'.
 
 $progress = GETPOSTINT('progress');
 $budget_amount = GETPOSTFLOAT('budget_amount');
-$billable = (GETPOST('billable', 'aZ') == 'yes'? 1 : 0);
+$billable = (GETPOST('billable', 'aZ') == 'yes' ? 1 : 0);
 $label = GETPOST('label', 'alpha');
 $description = GETPOST('description', 'restricthtml');
 $planned_workloadhour = (GETPOSTISSET('planned_workloadhour') ? GETPOSTINT('planned_workloadhour') : '');
@@ -893,7 +893,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 		}
 	}
 
-	$linktocreatetask = dolGetButtonTitle($langs->trans('AddTask'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/tasks.php?action=create'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id), '', $linktocreatetaskUserRight, $linktocreatetaskParam);
+	$linktocreatetask = dolGetButtonTitle($langs->trans('AddTask'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/tasks.php?action=create'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id), '', (int) $linktocreatetaskUserRight, $linktocreatetaskParam);
 
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
