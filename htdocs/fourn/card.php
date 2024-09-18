@@ -812,7 +812,7 @@ if ($object->id > 0) {
 
 
 	/*
-	 *   Latest invoices templates
+	 * Latest invoices templates
 	 */
 	if (isModEnabled("supplier_invoice") && ($user->hasRight('fournisseur', 'facture', 'lire') || $user->hasRight('supplier_invoice', 'read'))) {
 		$sql = 'SELECT f.rowid as id, f.titre as ref';
@@ -849,7 +849,10 @@ if ($object->id > 0) {
 				}
 				print '<td colspan="'.$colspan.'">';
 				print '<table class="centpercent nobordernopadding"><tr>';
-				print '<td>'.$langs->trans("LatestSupplierTemplateInvoices", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/fourn/facture/list-rec.php?socid='.$object->id.'"><span class="hideonsmartphone">'.$langs->trans("AllSupplierTemplateInvoices").'</span><span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
+				print '<td>'.$langs->trans("LatestSupplierTemplateInvoices", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td>';
+				print '<td class="right">';
+				print '<a class="notasortlink" href="'.DOL_URL_ROOT.'/fourn/facture/list-rec.php?socid='.$object->id.'">';
+				print '<span class="hideonsmartphone">'.$langs->trans("AllSupplierTemplateInvoices").'</span><span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
 				print '</tr></table>';
 				print '</td>';
 				print '</tr>';
