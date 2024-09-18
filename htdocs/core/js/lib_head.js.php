@@ -1322,19 +1322,42 @@ jQuery(document).ready(function() {
 
 jQuery(document).ready(function() {
 	jQuery(".butAction.dropdown-toggle").on("click", function(event) {
-		console.log("Click on .butAction.dropdown-toggle");
-		var parentholder = jQuery(event.target).parent();
-		var offset = parentholder.offset();
-		var widthdocument = $(document).width();
-		var left = offset.left;
-		var right = widthdocument - offset.left - parentholder.width();
-		var widthpopup = parentholder.children(".dropdown-content").width();
-		console.log("left="+left+" right="+right+" width="+widthpopup+" widthdocument="+widthdocument);
-		if (widthpopup + right >= widthdocument) {
-			right = 10;
+
+		let parentHolder = jQuery(event.target).parent();
+		let dropDownContent = parentHolder.children(".dropdown-content");
+		let offset = parentHolder.offset();
+		let widthDocument = $(document).width();
+		let heightDocument = $(document).height();
+		let right = widthDocument - offset.left - parentHolder.width();
+		let widthPopup = parentHolder.children(".dropdown-content").width();
+		if (widthPopup + right >= widthDocument) {
+			//right = 10;
 		}
-		parentholder.toggleClass("open");
-		parentholder.children(".dropdown-content").css({"right": right+"px", "left": "auto"});
+		parentHolder.toggleClass("open");
+
+		// Check tooltip is in viewport
+		let dropDownContentTop = dropDownContent.offset().top;
+		let dropDownContentLeft = dropDownContent.offset().left;
+		let dropDownContentHeight = dropDownContent.outerHeight();
+		let dropDownContentBottom = dropDownContentTop + dropDownContentHeight;
+		let viewportBottom = $(window).scrollTop() + $(window).height();
+
+		// Change dropdown Up/Down orientation if dropdown is close to bottom viewport
+		if(parentHolder.hasClass('open')
+			&& dropDownContentBottom > viewportBottom // Check bottom of dropdown is behind viewport
+			&& dropDownContentTop - dropDownContentHeight > 0 // check if set dropdown to --up will not go over the top of document
+		){
+			parentHolder.addClass("--up");
+		}else{
+			parentHolder.removeClass("--up");
+		}
+
+		// Change dropdown left/right offset if dropdown is close to left viewport
+		if(parentHolder.hasClass('open') && dropDownContentLeft < 0){
+			parentHolder.addClass("--left");
+		}else{
+			parentHolder.removeClass("--left");
+		}
 	});
 
 	// Close drop down
@@ -1344,7 +1367,7 @@ jQuery(document).ready(function() {
 			let parentholder = jQuery(".dropdown-toggle").closest(".dropdown.open");
 			if(parentholder){
 				// Hide the menus.
-				parentholder.removeClass("open");
+				parentholder.removeClass("open --up");
 			}
 		}
 	});
