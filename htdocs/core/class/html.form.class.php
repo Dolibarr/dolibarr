@@ -7018,7 +7018,7 @@ class Form
 	 * @param int<0,1> 				$disabled 		Disable input fields
 	 * @param int|string			$fullday 		When a checkbox with id #fullday is checked, hours are set with 00:00 (if value if 'fulldaystart') or 23:59 (if value is 'fulldayend')
 	 * @param string 				$addplusone 	Add a link "+1 hour". Value must be name of another selectDate field.
-	 * @param int|string|array      $adddateof 		Add a link "Date of ..." using the following date. Must be array(array('adddateof'=>..., 'labeladddateof'=>...))
+	 * @param int|string|array      $adddateof 		Add a link "Date of ..." using the following date. Must be array(array('adddateof' => ..., 'labeladddateof' => ...))
 	 * @param string 				$openinghours 	Specify hour start and hour end for the select ex 8,20
 	 * @param int 					$stepminutes 	Specify step for minutes between 1 and 30
 	 * @param string 				$labeladddateof Label to use for the $adddateof parameter. Deprecated. Used only when $adddateof is not an array.

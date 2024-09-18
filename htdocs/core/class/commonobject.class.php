@@ -17,7 +17,7 @@
  * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2021      Grégory Blémand      <gregory.blemand@atm-consulting.fr>
  * Copyright (C) 2023      Lenin Rivas      	<lenin.rivas777@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -5971,6 +5971,8 @@ abstract class CommonObject
 				$ecmfile->gen_or_uploaded = 'generated';
 				$ecmfile->description = ''; // indexed content
 				$ecmfile->keywords = ''; // keyword content
+				$ecmfile->src_object_type = $this->table_element;
+				$ecmfile->src_object_id = $this->id;
 				$result = $ecmfile->update($user);
 				if ($result < 0) {
 					setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');

@@ -23,7 +23,8 @@ The following changes may create regressions for some external modules, but were
 * More class properties (with old name in french) are now deprecated in favor of the property name in english.
 * The json emulator dol_json_encode/decode() is removed. The native json PHP module must be enabled/available (this is the case by default with most PHP installation).
 * The experimental and deprecated module WebserviceClient is completely removed (SOAP technology is deprecated). May be replaced with the stable module Webhook.
-
+* The dynamic properties ->no_button_delete, ->no_button_edit, ->no_button_copy for $object Product that could be set by an external module must no more
+  be set (not allowed by PHP 8.2). A module can already return an array with key 'no_button_delete', 'no_button_edit', 'no_button_copy' for same purpose.
 
 
 ***** ChangeLog for 20.0.0 compared to 19.0 *****

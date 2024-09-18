@@ -1231,7 +1231,7 @@ if ($action == 'create') {	// aaa
 				print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
 				print load_fiche_titre($langs->trans("TestMailing"));
 
-				print dol_get_fiche_head(null, '', '', -1);
+				print dol_get_fiche_head([], '', '', -1);
 
 				// Create mail form object
 				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
@@ -1279,7 +1279,7 @@ if ($action == 'create') {	// aaa
 			// Print mail content
 			print load_fiche_titre($langs->trans("EMail"), $form->textwithpicto('<span class="opacitymedium hideonsmartphone">'.$langs->trans("AvailableVariables").'</span>', $htmltext, 1, 'helpclickable', '', 0, 3, 'emailsubstitionhelp'), 'generic');
 
-			print dol_get_fiche_head('', '', '', -1);
+			print dol_get_fiche_head([], '', '', -1);
 
 			print '<table class="bordernooddeven tableforfield centpercent">';
 
@@ -1465,7 +1465,7 @@ if ($action == 'create') {	// aaa
 			// Print mail content
 			print load_fiche_titre($langs->trans("EMail"), '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("AvailableVariables").'</span>', $htmltext, 1, 'help', '', 0, 2, 'emailsubstitionhelp'), 'generic');
 
-			print dol_get_fiche_head(null, '', '', -1);
+			print dol_get_fiche_head([], '', '', -1);
 
 			print '<table class="bordernooddeven centpercent">';
 

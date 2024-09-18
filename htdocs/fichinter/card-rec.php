@@ -474,7 +474,7 @@ if ($action == 'create') {
 	}
 } elseif ($action == 'selsocforcreatefrommodel') {
 	print load_fiche_titre($langs->trans("CreateRepeatableIntervention"), '', 'intervention');
-	print dol_get_fiche_head('');
+	print dol_get_fiche_head([]);
 
 	print '<form name="fichinter" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 	print '<table class="border centpercent">';
