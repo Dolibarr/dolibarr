@@ -36,6 +36,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 
+
+'
+@phan-var-force array{0:string,1:string} $bctag From main.inc
+';
 // Load translation files required by the page
 $langs->loadLangs(array("mails", "admin"));
 
@@ -117,6 +121,7 @@ if (!GETPOST('confirmmassaction', 'alpha')) {
 if ($action == 'add' && $permissiontocreate) {		// Add recipients
 	$module = GETPOST("module", 'alpha');
 	$result = -1;
+	$obj = null;
 
 	foreach ($modulesdir as $dir) {
 		// Load modules attributes in arrays (name, numero, orders) from dir directory
@@ -133,8 +138,10 @@ if ($action == 'add' && $permissiontocreate) {		// Add recipients
 			// Add targets into database
 			dol_syslog("Call add_to_target() on class ".$classname." evenunsubscribe=".$object->evenunsubscribe);
 
+			$obj = null;
 			if (class_exists($classname)) {
 				$obj = new $classname($db);
+				'@phan-var-force MailingTargets $obj';
 				$obj->evenunsubscribe = $object->evenunsubscribe;
 
 				$result = $obj->add_to_target($id);
@@ -158,7 +165,7 @@ if ($action == 'add' && $permissiontocreate) {		// Add recipients
 	if ($result == 0) {
 		setEventMessages($langs->trans("WarningNoEMailsAdded"), null, 'warnings');
 	}
-	if ($result < 0) {
+	if ($result < 0 && is_object($obj)) {
 		setEventMessages($langs->trans("Error").($obj->error ? ' '.$obj->error : ''), null, 'errors');
 	}
 }
@@ -554,6 +561,7 @@ if ($object->fetch($id) >= 0) {
 				require_once $file;
 
 				$obj = new $classname($db);
+				'@phan-var-force MailingTargets $obj';
 
 				// Check if qualified
 				$qualified = (is_null($obj->enabled) ? 1 : (int) dol_eval($obj->enabled, 1));
@@ -589,6 +597,8 @@ if ($object->fetch($id) >= 0) {
 					print '<div class="tagtd valignmiddle">';	//  style="height: 4em"
 					print $obj->getDesc();
 					print '</div>';
+
+					$nbofrecipient = -1;
 
 					try {
 						$obj->evenunsubscribe = $object->evenunsubscribe;	// Set flag to include/exclude email that has opt-out.

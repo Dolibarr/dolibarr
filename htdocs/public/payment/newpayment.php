@@ -100,6 +100,7 @@ $source = GETPOST("s", 'aZ09') ? GETPOST("s", 'aZ09') : GETPOST("source", 'aZ09'
 $getpostlang = GETPOST('lang', 'aZ09');
 $ws = GETPOST("ws"); // Website reference where the newpayment page is embedded
 
+
 if (!$action) {
 	if (!GETPOST("amount", 'alpha') && !$source) {
 		print $langs->trans('ErrorBadParameters')." - amount or source";
@@ -115,6 +116,10 @@ if (!$action) {
 	}
 }
 
+
+$thirdparty = null; // Init for static analysis
+$istrpecu = null; // Init for static analysis
+$paymentintent = null; // Init for static analysis
 
 // Load data required later for actions and view
 
@@ -142,6 +147,7 @@ if ($source == 'organizedeventregistration') {		// Test on permission not requir
 		}*/
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."eventorganization_conferenceorboothattendee";
 		$sql .= " WHERE fk_invoice = ".((int) $invoiceid);
+		$attendeeid = 0;
 		$resql = $db->query($sql);
 		if ($resql) {
 			$obj = $db->fetch_object($resql);
@@ -262,9 +268,17 @@ $urlko = preg_replace('/&$/', '', $urlko); // Remove last &
 
 // Make special controls
 
+// From paypal.lib - reused across 'if' bodies
+'
+@phan-var-force string $PAYPAL_API_SANDBOX
+@phan-var-force string $PAYPAL_API_OK
+@phan-var-force string $PAYPAL_API_KO
+';
+
 if ((empty($paymentmethod) || $paymentmethod == 'paypal') && isModEnabled('paypal')) {
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypalfunctions.lib.php';
+
 
 	// Check parameters
 	$PAYPAL_API_OK = "";
@@ -288,9 +302,9 @@ if ((empty($paymentmethod) || $paymentmethod == 'paypal') && isModEnabled('paypa
 		exit;
 	}
 }
-if ((empty($paymentmethod) || $paymentmethod == 'paybox') && isModEnabled('paybox')) {
-	// No specific test for the moment
-}
+//if ((empty($paymentmethod) || $paymentmethod == 'paybox') && isModEnabled('paybox')) {
+// No specific test for the moment
+//}
 if ((empty($paymentmethod) || $paymentmethod == 'stripe') && isModEnabled('stripe')) {
 	require_once DOL_DOCUMENT_ROOT.'/stripe/config.php'; // This include also /stripe/lib/stripe.lib.php, /includes/stripe/stripe-php/init.php, ...
 }
@@ -492,8 +506,6 @@ if ($action == 'dopayment') {	// Test on permission not required here (anonymous
 // When using the old Charge API architecture, this code is called after clicking the 'dopayment' with the Charge API architecture.
 // When using the PaymentIntent API architecture, the Stripe customer was already created when creating PaymentIntent when showing payment page, and the payment is already ok when action=charge.
 if ($action == 'charge' && isModEnabled('stripe')) {	// Test on permission not required here (anonymous action protected by mitigation of /public/... urls)
-	$stripecu = null;
-
 	$amountstripe = (float) $amount;
 
 	// Correct the amount according to unit of currency
@@ -522,6 +534,7 @@ if ($action == 'charge' && isModEnabled('stripe')) {	// Test on permission not r
 
 	$error = 0;
 	$errormessage = '';
+	$stripeacc = null;
 
 	// When using the old Charge API architecture
 	if (!getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION')) {
@@ -665,7 +678,7 @@ if ($action == 'charge' && isModEnabled('stripe')) {	// Test on permission not r
 					'description' => 'Stripe payment: '.$FULLTAG.' ref='.$ref,
 					'metadata' => $metadata,
 					'statement_descriptor' => dol_trunc($FULLTAG, 10, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt (company + description)
-				), array("idempotency_key" => "$FULLTAG", "stripe_account" => "$stripeacc"));
+				), array("idempotency_key" => (string) $FULLTAG, "stripe_account" => (string) $stripeacc));
 				// Return $charge = array('id'=>'ch_XXXX', 'status'=>'succeeded|pending|failed', 'failure_code'=>, 'failure_message'=>...)
 				if (empty($charge)) {
 					$error++;
@@ -877,10 +890,10 @@ if ($source && in_array($ref, array('member_ref', 'contractline_ref', 'invoice_r
 
 // Show sandbox warning
 if ((empty($paymentmethod) || $paymentmethod == 'paypal') && isModEnabled('paypal') && (getDolGlobalString('PAYPAL_API_SANDBOX') || GETPOSTINT('forcesandbox'))) {		// We can force sand box with param 'forcesandbox'
-	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Paypal'), '', 'warning');
+	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Paypal'), array(), 'warning');
 }
 if ((empty($paymentmethod) || $paymentmethod == 'stripe') && isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE') || GETPOSTINT('forcesandbox'))) {
-	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
+	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), array(), 'warning');
 }
 
 
@@ -994,6 +1007,8 @@ $found = false;
 $error = 0;
 
 $object = null;
+$tag = null;
+$fulltag = null;
 
 
 // Free payment
@@ -1053,7 +1068,7 @@ if ($source == 'order') {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
 	$order = new Commande($db);
-	$result = $order->fetch('', $ref);
+	$result = $order->fetch(0, $ref);
 	if ($result <= 0) {
 		$mesg = $order->error;
 		$error++;
@@ -1184,7 +1199,7 @@ if ($source == 'invoice') {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 	$invoice = new Facture($db);
-	$result = $invoice->fetch('', $ref);
+	$result = $invoice->fetch(0, $ref);
 	if ($result <= 0) {
 		$mesg = $invoice->error;
 		$error++;
@@ -1328,7 +1343,7 @@ if ($source == 'contractline') {
 	$contract = new Contrat($db);
 	$contractline = new ContratLigne($db);
 
-	$result = $contractline->fetch('', $ref);
+	$result = $contractline->fetch(0, $ref);
 	if ($result <= 0) {
 		$mesg = $contractline->error;
 		$error++;
@@ -1531,7 +1546,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 	$adht = new AdherentType($db);
 	$subscription = new Subscription($db);
 
-	$result = $member->fetch('', $ref);
+	$result = $member->fetch(0, $ref);
 	if ($result <= 0) {
 		$mesg = $member->error;
 		$error++;
@@ -1913,7 +1928,7 @@ if ($source == 'donation') {
 	print '<input type="hidden" name="desc" value="'.dol_escape_htmltag($labeldesc).'">'."\n";
 }
 
-if ($source == 'organizedeventregistration') {
+if ($source == 'organizedeventregistration' && is_object($thirdparty)) {
 	$found = true;
 	$langs->loadLangs(array("members", "eventorganization"));
 
@@ -2217,10 +2232,10 @@ if ($action != 'dopayment') {
 						print '<span class="buttonpaymentsmall">'.$langs->trans("CreditOrDebitCard").'</span><span class="buttonpaymentsmall"> - </span>';
 						print '<span class="buttonpaymentsmall">'.$langs->trans("PayPalBalance").'</span>';
 					}
-					if (getDolGlobalString('PAYPAL_API_INTEGRAL_OR_PAYPALONLY') == 'paypalonly') {
-						//print '<br>';
-						//print '<span class="buttonpaymentsmall">'.$langs->trans("PayPalBalance").'"></span>';
-					}
+					//if (getDolGlobalString('PAYPAL_API_INTEGRAL_OR_PAYPALONLY') == 'paypalonly') {
+					//print '<br>';
+					//print '<span class="buttonpaymentsmall">'.$langs->trans("PayPalBalance").'"></span>';
+					//}
 					print '</div>';
 					print '<script>
 							$( document ).ready(function() {
@@ -2264,6 +2279,8 @@ if (preg_match('/^dopayment/', $action)) {			// If we chose/clicked on the payme
 	$_SESSION["FinalPaymentAmt"] = $amount;
 	$_SESSION['ipaddress'] = ($remoteip ? $remoteip : 'unknown'); // Payer ip
 	$_SESSION["paymentType"] = '';
+
+	$stripecu = null;
 
 	// For Stripe
 	if (GETPOST('dopayment_stripe', 'alpha')) {

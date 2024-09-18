@@ -508,7 +508,7 @@ print '<tr class="oddeven"><td>';
 print $form->textwithpicto($langs->trans("PDFIn2Languages"), $langs->trans("PDF_USE_ALSO_LANGUAGE_CODE"));
 print '</td><td>';
 $selected = GETPOSTISSET('PDF_USE_ALSO_LANGUAGE_CODE') ? GETPOST('PDF_USE_ALSO_LANGUAGE_CODE') : getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE');
-print $formadmin->select_language($selected, 'PDF_USE_ALSO_LANGUAGE_CODE', 0, null, 1);
+print $formadmin->select_language($selected, 'PDF_USE_ALSO_LANGUAGE_CODE', 0, array(), 1);
 print '</td></tr>';
 
 // Height of logo

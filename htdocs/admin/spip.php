@@ -6,6 +6,7 @@
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2013 Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +63,7 @@ if ($action == 'update' || $action == 'add') {
 		foreach ($constnamearray as $key => $val) {
 			$constname = dol_escape_htmltag($constnamearray[$key]);
 			$constvalue = dol_escape_htmltag($constvaluearray[$key]);
-			$consttype = dol_escape_htmltag($consttypearray[$key]);
+			$consttype = (int) $consttypearray[$key];
 			$constnote = dol_escape_htmltag($constnotearray[$key]);
 
 			$res = dolibarr_set_const($db, $constname, $constvalue, $type[$consttype], 0, $constnote, $conf->entity);
