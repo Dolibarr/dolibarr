@@ -6,6 +6,7 @@
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2013 Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -159,10 +160,22 @@ if (getDolGlobalString('ADHERENT_USE_MAILMAN')) {
 	$link .= '</a>';
 	// Edit the global variables
 	$constantes = array(
-		'ADHERENT_MAILMAN_ADMIN_PASSWORD',
-		'ADHERENT_MAILMAN_URL',
-		'ADHERENT_MAILMAN_UNSUB_URL',
-		'ADHERENT_MAILMAN_LISTS'
+		'ADHERENT_MAILMAN_ADMIN_PASSWORD' => [
+			'type' => 'string',
+			'label' => 'ADHERENT_MAILMAN_ADMIN_PASSWORD',
+		],
+		'ADHERENT_MAILMAN_URL' => [
+			'type' => 'string',
+			'label' => 'ADHERENT_MAILMAN_URL',
+		],
+		'ADHERENT_MAILMAN_UNSUB_URL' => [
+			'type' => 'string',
+			'label' => 'ADHERENT_MAILMAN_UNSUB_URL',
+		],
+		'ADHERENT_MAILMAN_LISTS' => [
+			'type' => 'string',
+			'label' => 'ADHERENT_MAILMAN_LISTS',
+		]
 	);
 
 	print load_fiche_titre($langs->trans('MailmanTitle'), $link, '');

@@ -1767,7 +1767,6 @@ function form_constantes($tableau, $strictw3c = 2, $helptext = '', $text = 'Valu
 				$const = $key;
 			}
 		}
-
 		$sql = "SELECT ";
 		$sql .= "rowid";
 		$sql .= ", ".$db->decrypt('name')." as name";
