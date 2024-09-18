@@ -1,9 +1,10 @@
 <?php
 /**
- * Copyright (C) 2018    	Andreu Bisquerra   	<jove@bisquerra.com>
- * Copyright (C) 2021    	Nicolas ZABOURI    	<info@inovea-conseil.com>
- * Copyright (C) 2022-2023	Christophe Battarel	<christophe.battarel@altairis.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2018    	Andreu Bisquerra   		<jove@bisquerra.com>
+ * Copyright (C) 2021    	Nicolas ZABOURI    		<info@inovea-conseil.com>
+ * Copyright (C) 2022-2023	Christophe Battarel		<christophe.battarel@altairis.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -236,19 +237,19 @@ if (empty($reshook)) {
 		$allowstockchange = (getDolGlobalString($constantforkey) != "1");
 
 		if ($error) {
-			dol_htmloutput_errors($errormsg, null, 1);
+			dol_htmloutput_errors($errormsg, [], 1);
 		} elseif ($invoice->status != Facture::STATUS_DRAFT) {
 			//If invoice is validated but it is not fully paid is not error and make the payment
 			if ($invoice->getRemainToPay() > 0) {
 				$res = 1;
 			} else {
 				dol_syslog("Sale already validated");
-				dol_htmloutput_errors($langs->trans("InvoiceIsAlreadyValidated", "TakePos"), null, 1);
+				dol_htmloutput_errors($langs->trans("InvoiceIsAlreadyValidated", "TakePos"), [], 1);
 			}
 		} elseif (count($invoice->lines) == 0) {
 			$error++;
 			dol_syslog('Sale without lines');
-			dol_htmloutput_errors($langs->trans("NoLinesToBill", "TakePos"), null, 1);
+			dol_htmloutput_errors($langs->trans("NoLinesToBill", "TakePos"), [], 1);
 		} elseif (isModEnabled('stock') && !isModEnabled('productbatch') && $allowstockchange) {
 			// Validation of invoice with change into stock when produt/lot module is NOT enabled and stock change NOT disabled.
 			// The case for isModEnabled('productbatch') is processed few lines later.
@@ -606,7 +607,7 @@ if (empty($reshook)) {
 
 		if ($invoice->socid <= 0) {
 			$langs->load('errors');
-			dol_htmloutput_errors($langs->trans("ErrorModuleSetupNotComplete", "TakePos"), null, 1);
+			dol_htmloutput_errors($langs->trans("ErrorModuleSetupNotComplete", "TakePos"), [], 1);
 		} else {
 			$db->begin();
 
@@ -968,7 +969,7 @@ if (empty($reshook)) {
 					}
 				}
 				if (!$permissiontoupdateline) {
-					dol_htmloutput_errors($langs->trans("NotEnoughPermissions", "TakePos").' - No permission to updateqty', null, 1);
+					dol_htmloutput_errors($langs->trans("NotEnoughPermissions", "TakePos").' - No permission to updateqty', [], 1);
 				} else {
 					$result = $invoice->updateline($line->id, $line->desc, $line->subprice, $number, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
 				}
