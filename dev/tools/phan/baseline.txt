@@ -55,7 +55,6 @@ return [
         'htdocs/admin/dict.php' => ['PhanRedefineFunction'],
         'htdocs/admin/fckeditor.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/admin/mails_templates.php' => ['PhanRedefineFunction'],
-        'htdocs/admin/security_file.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/api/class/api_access.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanUndeclaredProperty'],
         'htdocs/api/class/api_documents.class.php' => ['PhanPluginDuplicateExpressionBinaryOp', 'PhanPluginUnknownArrayMethodReturnType', 'PhanPossiblyUndeclaredVariable'],
         'htdocs/api/class/api_login.class.php' => ['PhanPluginUnknownArrayMethodReturnType'],
