@@ -1367,7 +1367,7 @@ jQuery(document).ready(function() {
 			let parentholder = jQuery(".dropdown-toggle").closest(".dropdown.open");
 			if(parentholder){
 				// Hide the menus.
-				parentholder.removeClass("open --up");
+				parentholder.removeClass("open --up --left");
 			}
 		}
 	});
