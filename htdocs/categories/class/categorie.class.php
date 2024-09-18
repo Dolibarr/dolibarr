@@ -70,7 +70,7 @@ class Categorie extends CommonObject
 
 
 	/**
-	 * @var array Table of mapping between type string and ID used for field 'type' in table llx_categories
+	 * @var array<string,int> Table of mapping between type string and ID used for field 'type' in table llx_categories
 	 */
 	protected $MAP_ID = array(
 		'product'      => 0,
@@ -90,7 +90,7 @@ class Categorie extends CommonObject
 	);
 
 	/**
-	 * @var array Code mapping from ID
+	 * @var array<int,string> Code mapping from ID
 	 *
 	 * @note This array should be removed in future, once previous constants are moved to the string value. Deprecated
 	 */
@@ -112,7 +112,7 @@ class Categorie extends CommonObject
 	);
 
 	/**
-	 * @var array Foreign keys mapping from type string when value does not match
+	 * @var array<string,string> Foreign keys mapping from type string when value does not match
 	 *
 	 * @todo Move to const array when PHP 5.6 will be our minimum target
 	 */
@@ -124,7 +124,7 @@ class Categorie extends CommonObject
 	);
 
 	/**
-	 * @var array Category tables mapping from type string (llx_categorie_...) when value does not match
+	 * @var array<string,string> Category tables mapping from type string (llx_categorie_...) when value does not match
 	 *
 	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
@@ -135,7 +135,7 @@ class Categorie extends CommonObject
 	);
 
 	/**
-	 * @var array Object class mapping from type string
+	 * @var array<string,string> Object class mapping from type string
 	 *
 	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
@@ -157,7 +157,7 @@ class Categorie extends CommonObject
 	);
 
 	/**
-	 * @var array Title Area mapping from type string
+	 * @var array<string,string> Title Area mapping from type string
 	 *
 	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
@@ -179,7 +179,7 @@ class Categorie extends CommonObject
 	);
 
 	/**
-	 * @var array 	Object table mapping from type string (table llx_...) when value of key does not match table name.
+	 * @var array<string,string> 	Object table mapping from type string (table llx_...) when value of key does not match table name.
 	 * 				This array may be completed by external modules with hook "constructCategory"
 	 */
 	public $MAP_OBJ_TABLE = array(
@@ -287,22 +287,22 @@ class Categorie extends CommonObject
 	 */
 	public $imgHeight;
 
-	public $fields=array(
-		"rowid" => array("type"=>"integer", "label"=>"TechnicalID", "enabled"=>"1", 'position'=>10, 'notnull'=>1, "visible"=>"-1",),
-		"fk_parent" => array("type"=>"integer", "label"=>"Fkparent", "enabled"=>"1", 'position'=>20, 'notnull'=>1, "visible"=>"-1", "css"=>"maxwidth500 widthcentpercentminusxx",),
-		"label" => array("type"=>"varchar(180)", "label"=>"Label", "enabled"=>"1", 'position'=>25, 'notnull'=>1, "visible"=>"-1", "alwayseditable"=>"1", "css"=>"minwidth300", "cssview"=>"wordbreak", "csslist"=>"tdoverflowmax150",),
-		"ref_ext" => array("type"=>"varchar(255)", "label"=>"Refext", "enabled"=>"1", 'position'=>30, 'notnull'=>0, "visible"=>"0", "alwayseditable"=>"1",),
-		"type" => array("type"=>"integer", "label"=>"Type", "enabled"=>"1", 'position'=>35, 'notnull'=>1, "visible"=>"-1", "alwayseditable"=>"1",),
-		"description" => array("type"=>"text", "label"=>"Description", "enabled"=>"1", 'position'=>40, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
-		"color" => array("type"=>"varchar(8)", "label"=>"Color", "enabled"=>"1", 'position'=>45, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
-		"position" => array("type"=>"integer", "label"=>"Position", "enabled"=>"1", 'position'=>50, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
-		"fk_soc" => array("type"=>"integer:Societe:societe/class/societe.class.php", "label"=>"ThirdParty", "picto"=>"company", "enabled"=>"1", 'position'=>55, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1", "css"=>"maxwidth500 widthcentpercentminusxx", "csslist"=>"tdoverflowmax150",),
-		"visible" => array("type"=>"integer", "label"=>"Visible", "enabled"=>"1", 'position'=>60, 'notnull'=>1, "visible"=>"-1", "alwayseditable"=>"1",),
-		"import_key" => array("type"=>"varchar(14)", "label"=>"ImportId", "enabled"=>"1", 'position'=>900, 'notnull'=>0, "visible"=>"-2", "alwayseditable"=>"1",),
-		"date_creation" => array("type"=>"datetime", "label"=>"Datecreation", "enabled"=>"1", 'position'=>70, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
-		"tms" => array("type"=>"timestamp", "label"=>"DateModification", "enabled"=>"1", 'position'=>75, 'notnull'=>1, "visible"=>"-1", "alwayseditable"=>"1",),
-		"fk_user_creat" => array("type"=>"integer:User:user/class/user.class.php", "label"=>"UserAuthor", "enabled"=>"1", 'position'=>80, 'notnull'=>0, "visible"=>"-2", "alwayseditable"=>"1", "css"=>"maxwidth500 widthcentpercentminusxx", "csslist"=>"tdoverflowmax150",),
-		"fk_user_modif" => array("type"=>"integer:User:user/class/user.class.php", "label"=>"UserModif", "enabled"=>"1", 'position'=>85, 'notnull'=>-1, "visible"=>"-2", "alwayseditable"=>"1", "css"=>"maxwidth500 widthcentpercentminusxx", "csslist"=>"tdoverflowmax150",),
+	public $fields = array(
+		"rowid" => array("type" => "integer", "label" => "TechnicalID", "enabled" => "1", 'position' => 10, 'notnull' => 1, "visible" => "-1",),
+		"fk_parent" => array("type" => "integer", "label" => "Fkparent", "enabled" => "1", 'position' => 20, 'notnull' => 1, "visible" => "-1", "css" => "maxwidth500 widthcentpercentminusxx",),
+		"label" => array("type" => "varchar(180)", "label" => "Label", "enabled" => "1", 'position' => 25, 'notnull' => 1, "visible" => "-1", "alwayseditable" => "1", "css" => "minwidth300", "cssview" => "wordbreak", "csslist" => "tdoverflowmax150",),
+		"ref_ext" => array("type" => "varchar(255)", "label" => "Refext", "enabled" => "1", 'position' => 30, 'notnull' => 0, "visible" => "0", "alwayseditable" => "1",),
+		"type" => array("type" => "integer", "label" => "Type", "enabled" => "1", 'position' => 35, 'notnull' => 1, "visible" => "-1", "alwayseditable" => "1",),
+		"description" => array("type" => "text", "label" => "Description", "enabled" => "1", 'position' => 40, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
+		"color" => array("type" => "varchar(8)", "label" => "Color", "enabled" => "1", 'position' => 45, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
+		"position" => array("type" => "integer", "label" => "Position", "enabled" => "1", 'position' => 50, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
+		"fk_soc" => array("type" => "integer:Societe:societe/class/societe.class.php", "label" => "ThirdParty", "picto" => "company", "enabled" => "1", 'position' => 55, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1", "css" => "maxwidth500 widthcentpercentminusxx", "csslist" => "tdoverflowmax150",),
+		"visible" => array("type" => "integer", "label" => "Visible", "enabled" => "1", 'position' => 60, 'notnull' => 1, "visible" => "-1", "alwayseditable" => "1",),
+		"import_key" => array("type" => "varchar(14)", "label" => "ImportId", "enabled" => "1", 'position' => 900, 'notnull' => 0, "visible" => "-2", "alwayseditable" => "1",),
+		"date_creation" => array("type" => "datetime", "label" => "Datecreation", "enabled" => "1", 'position' => 70, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
+		"tms" => array("type" => "timestamp", "label" => "DateModification", "enabled" => "1", 'position' => 75, 'notnull' => 1, "visible" => "-1", "alwayseditable" => "1",),
+		"fk_user_creat" => array("type" => "integer:User:user/class/user.class.php", "label" => "UserAuthor", "enabled" => "1", 'position' => 80, 'notnull' => 0, "visible" => "-2", "alwayseditable" => "1", "css" => "maxwidth500 widthcentpercentminusxx", "csslist" => "tdoverflowmax150",),
+		"fk_user_modif" => array("type" => "integer:User:user/class/user.class.php", "label" => "UserModif", "enabled" => "1", 'position' => 85, 'notnull' => -1, "visible" => "-2", "alwayseditable" => "1", "css" => "maxwidth500 widthcentpercentminusxx", "csslist" => "tdoverflowmax150",),
 	);
 
 	/**

@@ -78,6 +78,7 @@ $leftmenuwidth = 240;
 @phan-var-force string $toolTipFontColor
 @phan-var-force int<0,1> $useboldtitle
 @phan-var-force int $userborderontable
+@phan-var-force array{h:int,l:int,s:int,a:int} $colortextlinkHsla
 ';
 
 ?>
@@ -109,6 +110,10 @@ $leftmenuwidth = 240;
 	--colortexttitlelink: rgba(<?php print $colortexttitlelink; ?>, 0.9);
 	--colortext: rgb(<?php print $colortext; ?>);
 	--colortextlink: rgb(<?php print $colortextlink; ?>);
+	--colortextlink-h: <?php print $colortextlinkHsla['h']; ?>;
+	--colortextlink-l: <?php print $colortextlinkHsla['l']; ?>%;
+	--colortextlink-s: <?php print $colortextlinkHsla['s']; ?>%;
+	--colortextlink-a: 1;
 	--colortextbackhmenu: #<?php print $colortextbackhmenu; ?>;
 	--colortextbackvmenu: #<?php print $colortextbackvmenu; ?>;
 	--colortopbordertitle1: rgb(<?php print $colortopbordertitle1; ?>);
@@ -309,7 +314,7 @@ div.tabBar input, div.tabBar input.flat, div.tabBar textarea, div.tabBar textare
 		background-color: #f8f8fa;
 		border-bottom-left-radius: 0;
 		border-bottom-right-radius: 0;
-				<?php
+						<?php
 	}
 	?>
 }

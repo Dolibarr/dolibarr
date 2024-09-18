@@ -185,10 +185,10 @@ if (empty($reshook) && (GETPOST('removedassigned') || GETPOST('removedassigned')
 
 	$_SESSION['assignedtouser'] = json_encode($tmpassigneduserids);
 	$donotclearsession = 1;
-	if ($action == 'add' && $usercancreate) {
+	if ($action == 'add') {		// Test on permission not required here
 		$action = 'create';
 	}
-	if ($action == 'update' && $usercancreate) {
+	if ($action == 'update') {	// Test on permission not required here
 		$action = 'edit';
 	}
 
@@ -989,6 +989,13 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 					// the notification must be created for every user assigned to the event
 					foreach ($object->userassigned as $userassigned) {
 						$actionCommReminder->fk_user = $userassigned['id'];
+
+						// We update the event, so we recreate the notification event.
+						// First we delete all reminders for the user and the type of reminding (all offset dates).
+						$sqldelete = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
+						$sqldelete .= " WHERE fk_user = ".((int) $actionCommReminder->fk_user)." AND fk_actioncomm = ".((int) $object->id)." AND typeremind = '".$db->escape($remindertype)."'";
+						$resqldelete = $db->query($sqldelete);
+
 						$res = $actionCommReminder->create($user);
 
 						if ($res <= 0) {
@@ -1003,13 +1010,14 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 					}
 				}
 
-				unset($_SESSION['assignedtouser']);
-				unset($_SESSION['assignedtoresource']);
-
 				if (!$error) {
+					unset($_SESSION['assignedtouser']);
+					unset($_SESSION['assignedtoresource']);
+
 					$db->commit();
 				} else {
 					$db->rollback();
+					$action = 'edit';
 				}
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -1964,6 +1972,7 @@ if ($id > 0) {
 				$listofuserid = json_decode($_SESSION['assignedtouser'], true);
 			}
 		}
+
 		$listofcontactid = $object->socpeopleassigned; // Contact assigned
 		$listofotherid = $object->otherassigned; // Other undefined email (not used yet)
 
