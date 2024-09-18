@@ -62,6 +62,9 @@ $error = 0;
 if ($action == 'updateMask') {
 	$maskconstpropal = GETPOST('maskconstpropal', 'aZ09');
 	$maskpropal = GETPOST('maskpropal', 'alpha');
+
+	$res = 0;
+
 	if ($maskconstpropal && preg_match('/_MASK$/', $maskconstpropal)) {
 		$res = dolibarr_set_const($db, $maskconstpropal, $maskpropal, 'chaine', 0, '', $conf->entity);
 	}

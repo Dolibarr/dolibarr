@@ -313,7 +313,22 @@ if (empty($user->conf->AGENDA_DISABLE_EXT)) {
 		}
 	}
 }
-
+$firstdaytoshow = 0;
+$max_day_in_month = 0;
+$lastdaytoshow = 0;
+$tmpday = 0;
+$datestart = 0;
+$dateend = 0;
+$first_day = 0;
+$first_month = 0;
+$first_year = 0;
+$prev_day = 0;
+$prev_month = 0;
+$prev_year = 0;
+$max_day_in_prev_month = 0;
+$next_day = 0;
+$next_month = 0;
+$next_year = 0;
 if (empty($mode) || $mode == 'show_month') {
 	$prev = dol_get_prev_month($month, $year);
 	$prev_year  = $prev['year'];
