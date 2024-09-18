@@ -12,7 +12,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es.com>
- * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022-2023  George Gkantinas        <info@geowv.eu>
  * Copyright (C) 2023       Nick Fragoulis
  * Copyright (C) 2023       Alexandre Janniaux      <alexandre.janniaux@gmail.com>
@@ -856,7 +856,6 @@ if (empty($reshook)) {
 				$clone->fournisseur = 0;
 				$clone->client = 0;
 
-
 				$db->begin();
 
 				$clone->context['createfromclone'] = 'createfromclone';
@@ -864,16 +863,7 @@ if (empty($reshook)) {
 				if ($id > 0) {
 					$clone->id = $id;
 				} else {
-					if ($clone->error == 'ErrorProductAlreadyExists') {
-						$refalreadyexists++;
-						$action = "";
-
-						$mesg = $langs->trans("ErrorProductAlreadyExists", $clone->ref);
-						$mesg .= ' <a href="' . $_SERVER["PHP_SELF"] . '?ref=' . $clone->ref . '">' . $langs->trans("ShowCardHere") . '</a>.';
-						setEventMessages($mesg, null, 'errors');
-					} else {
-						setEventMessages(empty($clone->error) ? '' : $langs->trans($clone->error), $clone->errors, 'errors');
-					}
+					setEventMessages($clone->error, $clone->errors, 'errors');
 					$error++;
 				}
 
@@ -3305,13 +3295,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=edit&token='.newToken(), '', $permissiontoadd);
 
-				if (!isset($object->no_button_copy) || $object->no_button_copy != 1) {
-					if (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)) {
-						$cloneSocietetUrl = '';
-						$cloneButtonId = 'action-clone';
-					}
-					print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $cloneSocietetUrl, $cloneButtonId, $user->hasRight('societe', 'creer'));
+				if (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)) {
+					$cloneSocietetUrl = '';
+					$cloneButtonId = 'action-clone';
 				}
+				print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $cloneSocietetUrl, $cloneButtonId, $user->hasRight('societe', 'creer'));
 
 				if (isModEnabled('member')) {
 					$adh = new Adherent($db);
