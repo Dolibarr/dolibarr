@@ -1195,7 +1195,7 @@ class CommandeFournisseur extends CommonOrder
 	 *	Class not invoiced the supplier order
 	 *
 	 *  @param      User        $user       Object user making the change
-	 *	@return     int     	            <0 if KO, 0 if already billed,  >0 if OK
+	 *	@return     int     	            Return integer <0 if KO, 0 if already not billed,  >0 if OK
 	 */
 	public function classifyUnBilled(User $user)
 	{
