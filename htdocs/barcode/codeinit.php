@@ -342,6 +342,7 @@ if (isModEnabled('societe')) {
 	print $langs->trans("CurrentlyNWithoutBarCode", $nbthirdpartyno, $nbthirdpartytotal, $langs->transnoentitiesnoconv("ThirdParties"))."\n";
 
 	$disabledthirdparty = $disabledthirdparty1 = 0;
+	$titleno = '';
 
 	if (is_object($modBarCodeThirdparty)) {
 		print '<br>'.$langs->trans("BarCodeNumberManager").": ";
@@ -420,6 +421,7 @@ if (isModEnabled('product') || isModEnabled('service')) {
 
 	$disabledproduct = $disabledproduct1 = 0;
 
+	$titleno = '';
 	if (is_object($modBarCodeProduct)) {
 		print '<br>'.$langs->trans("BarCodeNumberManager").": ";
 		$objproduct = new Product($db);

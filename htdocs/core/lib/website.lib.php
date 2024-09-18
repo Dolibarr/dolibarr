@@ -1528,3 +1528,29 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 		}
 	}
 }
+
+/**
+ * Retrieves the details of a news post by its ID.
+ *
+ * @param string $postId  The ID of the news post to retrieve.
+ * @return array|int   Return array if OK, -1 if KO
+ */
+function getNewsDetailsById($postId)
+{
+	global $db;
+
+	if (empty($postId)) {
+		return -1;
+	}
+
+	$sql = "SELECT p.title, p.description, p.date_creation, p.image
+            FROM ".MAIN_DB_PREFIX."website_page as p
+            WHERE p.rowid = ".(intval($postId));
+
+	$resql = $db->query($sql);
+	if ($resql) {
+		return $db->fetch_array($resql);
+	} else {
+		return -1;
+	}
+}

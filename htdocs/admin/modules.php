@@ -42,6 +42,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/admin/dolistore/class/dolistore.class.php';
 
+'
+@phan-var-force string $dolibarr_main_url_root_alt
+';
+
 // Load translation files required by the page
 $langs->loadLangs(array("errors", "admin", "modulebuilder"));
 
@@ -534,6 +538,8 @@ foreach ($modulesdir as $dir) {
 	}
 }
 
+'@phan-var-force array<string,DolibarrModules> $modules';
+
 if ($action == 'reset_confirm' && $user->admin) {
 	if (!empty($modules[$value])) {
 		$objMod = $modules[$value];
@@ -597,9 +603,9 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 		$deschelp .= '<br>';
 	}
 }
-if ($mode == 'marketplace') {
-	//$deschelp = '<div class="info hideonsmartphone">'.$langs->trans("ModulesMarketPlaceDesc")."<br></div><br>\n";
-}
+//if ($mode == 'marketplace') {
+//	$deschelp = '<div class="info hideonsmartphone">'.$langs->trans("ModulesMarketPlaceDesc")."<br></div><br>\n";
+//}
 if ($mode == 'deploy') {
 	$deschelp = '<div class="info hideonsmartphone">'.$langs->trans("ModulesDeployDesc", $langs->transnoentitiesnoconv("AvailableModules"))."<br></div><br>\n";
 }
@@ -721,6 +727,10 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 
 		/** @var DolibarrModules $objMod */
 		$objMod = $modules[$modName];
+
+		if (!is_object($objMod)) {
+			continue;
+		}
 
 		//print $objMod->name." - ".$key." - ".$objMod->version."<br>";
 		if ($mode == 'expdev' && $objMod->version != 'development' && $objMod->version != 'experimental') {
@@ -889,7 +899,8 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 
 			if (!empty($objMod->disabled)) {
 				$codeenabledisable .= $langs->trans("Disabled");
-			} elseif (!empty($objMod->always_enabled) || ((isModEnabled('multicompany') && $objMod->core_enabled) && ($user->entity || $conf->entity != 1))) {
+			} elseif (is_object($objMod)
+				&& (!empty($objMod->always_enabled) || ((isModEnabled('multicompany') && $objMod->core_enabled) && ($user->entity || $conf->entity != 1)))) {
 				// @phan-suppress-next-line PhanUndeclaredMethod
 				if (method_exists($objMod, 'alreadyUsed') && $objMod->alreadyUsed()) {
 					$codeenabledisable .= $langs->trans("Used");
@@ -902,7 +913,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 				}
 			} else {
 				// @phan-suppress-next-line PhanUndeclaredMethod
-				if (!empty($objMod->warnings_unactivation[$mysoc->country_code]) && method_exists($objMod, 'alreadyUsed') && $objMod->alreadyUsed()) {
+				if (is_object($objMod) && !empty($objMod->warnings_unactivation[$mysoc->country_code]) && method_exists($objMod, 'alreadyUsed') && $objMod->alreadyUsed()) {
 					$codeenabledisable .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;token='.newToken().'&amp;module_position='.$module_position.'&amp;action=reset_confirm&amp;confirm_message_code='.urlencode($objMod->warnings_unactivation[$mysoc->country_code]).'&amp;value='.$modName.'&amp;mode='.$mode.$param.'">';
 					$codeenabledisable .= img_picto($langs->trans("Activated").($warningstring ? ' '.$warningstring : ''), 'switch_on');
 					$codeenabledisable .= '</a>';
