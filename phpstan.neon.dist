@@ -97,7 +97,6 @@ parameters:
 		- '# (dol_strlen|vatrate) expects string, float(\|(int|array)(\<.*\>)?)* given.#'
 		- '#create_line\(\) expects string, float given.#'
 		- '# dol_stringtotime expects string, DateTime given.#'
-		- '# (dol_add_file_process) expects string, null given.#'
 		- '# (show_ldap_content|projectLinesa) expects string, true given.#'
 		- '# DolEditor constructor expects string, false given.#'
 		- '# dol_eval expects string, array given.#'
