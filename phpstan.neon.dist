@@ -116,7 +116,6 @@ parameters:
 		- '# Form::formconfirm\(\) expects array#'
 		- '# FormWebPortal::selectForForms\(\) expects int, array#'
 		- '# Lettering::getBankLinesFromFkDocAndDocType\(\) expects array#'
-		- '# form_constantes expects array#'
 		- '# (Odf) constructor expects #'
 		- '# Stripe[^ ]+::all\(\) expects #'
 		- '#expects resource#'
