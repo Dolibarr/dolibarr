@@ -63,6 +63,7 @@ $ref = GETPOST('ref', 'aZ09');
 $mode = GETPOST('mode', 'aZ09');    // 'proposal', ...
 $SECUREKEY = GETPOST("securekey"); // Secure key
 $online_sign_name = GETPOST("onlinesignname");
+$signatory_type = GETPOST('signatorytype', 'alpha');
 
 $error = 0;
 $response = "";
@@ -476,7 +477,7 @@ if ($action == "importSignature") {
 				if (preg_match('/\.pdf/i', $last_main_doc_file)) {
 					// TODO Use the $last_main_doc_file to defined the $newpdffilename and $sourcefile
 					$newpdffilename = $upload_dir . $ref . "_signed-" . $date . ".pdf";
-					$sourcefile = $upload_dir . $ref . ".pdf";
+					$sourcefile = DOL_DATA_ROOT . '/' . $last_main_doc_file;
 
 					if (dol_is_file($sourcefile)) {
 						$parameters = array('sourcefile' => $sourcefile, 'newpdffilename' => $newpdffilename);
@@ -545,11 +546,15 @@ if ($action == "importSignature") {
 							if (!getDolGlobalString("FICHINTER_SIGNATURE_ON_ALL_PAGES")) {
 								// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
 								// TODO Get position of box from PDF template
-
-								$param['xforimgstart'] = (empty($s['w']) ? 110 : $s['w'] / 2 - 2);
-								$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 38);
-								$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 20);
-
+								if ($signatory_type == 'internal') {
+									$param['xforimgstart'] = 16;
+									$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 38);
+									$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 110);
+								} elseif ($signatory_type == 'thirdparty') {
+									$param['xforimgstart'] = (empty($s['w']) ? 110 : $s['w'] / 2 - 2);
+									$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 38);
+									$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 20);
+								}
 								dolPrintSignatureImage($pdf, $langs, $param);
 							}
 
