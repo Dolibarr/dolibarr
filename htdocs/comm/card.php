@@ -1184,13 +1184,14 @@ if ($object->id > 0) {
 				$contrat->ref_supplier = $objp->refsup;
 				$contrat->fk_project = $objp->fk_projet;
 				$contrat->statut = $objp->contract_status;
+				$contrat->status = $objp->contract_status;
 				$contrat->last_main_doc = $objp->last_main_doc;
 				$contrat->model_pdf = $objp->model_pdf;
 				$contrat->fetch_lines();
 
 				$late = '';
 				foreach ($contrat->lines as $line) {
-					if ($contrat->statut == Contrat::STATUS_VALIDATED && $line->statut == ContratLigne::STATUS_OPEN) {
+					if ($contrat->status == Contrat::STATUS_VALIDATED && $line->statut == ContratLigne::STATUS_OPEN) {
 						if (((!empty($line->date_end) ? $line->date_end : 0) + $conf->contrat->services->expires->warning_delay) < $now) {
 							$late = img_warning($langs->trans("Late"));
 						}
@@ -1227,16 +1228,16 @@ if ($object->id > 0) {
 						print $formfile->showPreview($file_list, $contrat->element, $relativepath, 0);
 					}
 				}
-				print '</td><td class="left">';
-				if ($contrat->fk_project > 0) {
-					$project->fetch($contrat->fk_project);
-					print $project->getNomUrl(1);
-				}
 				// $filename = dol_sanitizeFileName($objp->ref);
 				// $filedir = $conf->contrat->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
 				// $urlsource = '/contrat/card.php?id='.$objp->cid;
 				// print $formfile->getDocumentsLink($contrat->element, $filename, $filedir);
 				print $late;
+				print '</td><td class="tdoverflowmax100">';
+				if ($contrat->fk_project > 0) {
+					$project->fetch($contrat->fk_project);
+					print $project->getNomUrl(1);
+				}
 				print "</td>\n";
 				print '<td class="nowrap">';
 				print dol_trunc(strtolower(get_class($object)) == strtolower(Client::class) ? $objp->refcus : $objp->refsup, 12);
