@@ -310,22 +310,22 @@ print '<td>';
 
 $oauthservicesStringKeys = [];
 foreach ($oauthservices as $key => $value) {
-    $key = (string) $key;
-    $oauthservicesStringKeys[$key] = $value;
+	$key = (string) $key;
+	$oauthservicesStringKeys[$key] = $value;
 }
 
 /** @phan-var-force array<string, array{label:string, data-html:string, disable?:int, css?:string}> $oauthservices */
 if (!isModEnabled('multicompany') || ($user->admin && !$user->entity)) {
-    print $form->selectarray('OAUTH_SERVICE_SOCIAL_NETWORK', $oauthservicesStringKeys, (string) $conf->global->OAUTH_SERVICE_SOCIAL_NETWORK);
+	print $form->selectarray('OAUTH_SERVICE_SOCIAL_NETWORK', $oauthservicesStringKeys, (string) $conf->global->OAUTH_SERVICE_SOCIAL_NETWORK);
 } else {
-    $selectedKey = (string) getDolGlobalString('OAUTH_SERVICE_SOCIAL_NETWORK');
-    $text = isset($oauthservicesStringKeys[$selectedKey]) ? $oauthservicesStringKeys[$selectedKey]['label'] : '';
-    if (empty($text)) {
-        $text = $langs->trans("Undefined");
-    }
-    $htmltext = $langs->trans("ContactSuperAdminForChange");
-    print $form->textwithpicto($text, $htmltext, 1, 'superadmin');
-    print '<input type="hidden" name="OAUTH_SERVICE_SOCIAL_NETWORK" value="'.$selectedKey.'">';
+	$selectedKey = (string) getDolGlobalString('OAUTH_SERVICE_SOCIAL_NETWORK');
+	$text = isset($oauthservicesStringKeys[$selectedKey]) ? $oauthservicesStringKeys[$selectedKey]['label'] : '';
+	if (empty($text)) {
+		$text = $langs->trans("Undefined");
+	}
+	$htmltext = $langs->trans("ContactSuperAdminForChange");
+	print $form->textwithpicto($text, $htmltext, 1, 'superadmin');
+	print '<input type="hidden" name="OAUTH_SERVICE_SOCIAL_NETWORK" value="'.$selectedKey.'">';
 }
 print '</td>';
 print '</tr>';
