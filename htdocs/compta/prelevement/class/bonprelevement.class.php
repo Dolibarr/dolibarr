@@ -1085,7 +1085,7 @@ class BonPrelevement extends CommonObject
 				// TODO Add 'AND sr.default_rib = 1' in sourcetype salary too Note: the column has been created in v21 in llx_user_rib and default to 0
 				// If we add a test on sr.default_rib = 1, we must also check we have a correct error management to stop if no default BAN is found.
 			}
-			$sql .= " WHERE f.entity IN (" . $entity . ')';
+			$sql .= " WHERE f.entity IN (" . $this->db->escape($entity) . ')';
 			if ($sourcetype != 'salary') {
 				$sql .= " AND f.fk_statut = 1"; // Invoice validated
 				$sql .= " AND f.paye = 0";
