@@ -858,7 +858,7 @@ if (empty($reshook)) {
 
 
 				$db->begin();
-
+				$refalreadyexists = 0;
 				$clone->context['createfromclone'] = 'createfromclone';
 				$id = $clone->create($user);
 				if ($id > 0) {
