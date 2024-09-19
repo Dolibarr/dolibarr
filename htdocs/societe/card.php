@@ -1437,11 +1437,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			}
 			print '<td class="maxwidthonsmartphone"'.($conf->browser->layout != 'phone' ? 'colspan="3"' : 'colspan="2"').'>';
 
-			if (!getDolGlobalString('SOCIETE_DISABLE_PROSPECTSCUSTOMERS') && !getDolGlobalString('SOCIETE_DISABLE_PROSPECTS')) {
+			if (!getDolGlobalString('SOCIETE_DISABLE_PROSPECTS')) {
 				print '<span id="spannature1" class="spannature prospect-back paddinglarge marginrightonly"><label for="prospectinput" class="valignmiddle">'.$langs->trans("Prospect").'<input id="prospectinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="prospect" value="2"'.($selectedprospect ? ' checked="checked"' : '').'></label></span>';
 			}
 
-			if (!getDolGlobalString('SOCIETE_DISABLE_PROSPECTSCUSTOMERS') && !getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS')) {
+			if (!getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS')) {
 				print '<span id="spannature2" class="spannature customer-back paddinglarge marginrightonly"><label for="customerinput" class="valignmiddle">'.$langs->trans("Customer").'<input id="customerinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="customer" value="1"'.($selectedcustomer ? ' checked="checked"' : '').'></label></span>';
 			}
 
@@ -1473,8 +1473,21 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						}
 					});
 				}
+
+				function manageprospectcustomer(element) {
+					console.log("We uncheck unwanted values on a nature");
+					id = $(element).attr("id").split("spannature")[1];
+					if ( id == 1){
+						$("#spannature2 .checkforselect").prop("checked", false);
+					}
+					if ( id == 2){
+						$("#spannature1 .checkforselect").prop("checked", false);
+					}
+				}
+
 				jQuery(".spannature").click(function(){
 					console.log("We click on a nature");
+					'.(getDolGlobalString('SOCIETE_DISABLE_PROSPECTSCUSTOMERS') ? 'manageprospectcustomer($(this));' : '').'
 					refreshNatureCss();
 				});
 				refreshNatureCss();
@@ -2236,11 +2249,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '<tr class="marginbottomlarge height50"><td class="titlefieldcreate">'.$form->editfieldkey('NatureOfThirdParty', 'customerprospect', '', $object, 0, 'string', '', 0).'</td>';
 				print '<td class="maxwidthonsmartphone" colspan="3">';
 
-				if (!getDolGlobalString('SOCIETE_DISABLE_PROSPECTSCUSTOMERS') && !getDolGlobalString('SOCIETE_DISABLE_PROSPECTS')) {
+				if (!getDolGlobalString('SOCIETE_DISABLE_PROSPECTS')) {
 					print '<span id="spannature1" class="spannature prospect-back paddinglarge marginrightonly"><label for="prospectinput" class="valignmiddle">'.$langs->trans("Prospect").'<input id="prospectinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="prospect" value="2"'.($selectedprospect ? ' checked="checked"' : '').'></label></span>';
 				}
 
-				if (!getDolGlobalString('SOCIETE_DISABLE_PROSPECTSCUSTOMERS') && !getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS')) {
+				if (!getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS')) {
 					print '<span id="spannature2" class="spannature customer-back paddinglarge marginrightonly"><label for="customerinput" class="valignmiddle">'.$langs->trans("Customer").'<input id="customerinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="customer" value="1"'.($selectedcustomer ? ' checked="checked"' : '').'></label></span>';
 				}
 				if ((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))
@@ -2272,8 +2285,21 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 								}
 							})
 						}
+
+						function manageprospectcustomer(element) {
+							console.log("We uncheck unwanted values on a nature");
+							id = $(element).attr("id").split("spannature")[1];
+							if ( id == 1){
+								$("#spannature2 .checkforselect").prop("checked", false);
+							}
+							if ( id == 2){
+								$("#spannature1 .checkforselect").prop("checked", false);
+							}
+						}
+
 						jQuery(".spannature").click(function(){
 							console.log("We click on a nature");
+							'.(getDolGlobalString('SOCIETE_DISABLE_PROSPECTSCUSTOMERS') ? 'manageprospectcustomer($(this));' : '').'
 							refreshNatureCss();
 						});
 						refreshNatureCss();
