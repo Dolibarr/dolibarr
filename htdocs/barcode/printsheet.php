@@ -140,6 +140,7 @@ if (empty($reshook)) {
 			$error++;
 		}
 
+		$stdobject = null;
 		if (!$error) {
 			// Get encoder (barcode_type_coder) from barcode type id (barcode_type)
 			$stdobject = new GenericObject($db);
@@ -151,7 +152,12 @@ if (empty($reshook)) {
 			}
 		}
 
-		if (!$error) {
+		$encoding = null;
+		$diroutput = null;
+		$template = null;
+		$is2d = false;
+
+		if (!$error && $stdobject !== null) {
 			$code = $forbarcode;
 			$generator = $stdobject->barcode_type_coder; // coder (loaded by fetch_barcode). Engine.
 			$encoding = strtoupper($stdobject->barcode_type_code); // code (loaded by fetch_barcode). Example 'ean', 'isbn', ...
@@ -186,7 +192,6 @@ if (empty($reshook)) {
 			if ($generator != 'tcpdfbarcode') {		// $generator can be 'phpbarcode' (with this generator, barcode is generated on disk first) or 'tcpdfbarcode' (no need to enter this section with this generator).
 				'@phan-var-force modPhpbarcode $module';
 				$template = 'standardlabel';
-				$is2d = false;
 				if ($module->encodingIsSupported($encoding)) {
 					$barcodeimage = $conf->barcode->dir_temp.'/barcode_'.$code.'_'.$encoding.'.png';
 					dol_delete_file($barcodeimage);
