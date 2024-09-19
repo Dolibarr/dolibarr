@@ -1,4 +1,6 @@
 <?php
+/* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ */
 /*
 * 2007-2022 PrestaShop SA and Contributors
 *
@@ -31,7 +33,6 @@
  */
 class PrestaShopWebservice
 {
-
 	/** @var string Shop URL */
 	protected $url;
 
@@ -68,7 +69,7 @@ class PrestaShopWebservice
 	 *
 	 * @param string $url Root URL for the shop
 	 * @param string $key Authentication key
-	 * @param mixed $debug Debug mode Activated (true) or deactivated (false)
+	 * @param bool $debug Debug mode Activated (true) or deactivated (false)
 	 *
 	 * @throws PrestaShopWebserviceException if curl is not loaded
 	 */
@@ -92,7 +93,7 @@ class PrestaShopWebservice
 	 * 'response' => CURL response
 	 * </p>
 	 *
-	 * @param array $request Response elements of CURL request
+	 * @param array{status_code:int,response:string} $request Response elements of CURL request
 	 *
 	 * @return void
 	 * @throws PrestaShopWebserviceException if HTTP status code is not 200 or 201
@@ -132,7 +133,7 @@ class PrestaShopWebservice
 			$errors = $response->children()->children();
 			if ($errors && count($errors) > 0) {
 				foreach ($errors as $error) {
-					$error_message.= ' - (Code ' . $error->code . '): ' . $error->message;
+					$error_message .= ' - (Code ' . $error->code . '): ' . $error->message;
 				}
 			}
 			$error_label = 'This call to PrestaShop Web Services failed and returned an HTTP status of %d. That means: %s.';
@@ -142,7 +143,7 @@ class PrestaShopWebservice
 
 	/**
 	 * Provides default parameters for the curl connection(s)
-	 * @return array Default parameters for curl connection(s)
+	 * @return array<int,bool|int|string|string[]|array<int,string>> Default parameters for curl connection(s)
 	 */
 	protected function getCurlDefaultParams()
 	{
@@ -164,9 +165,9 @@ class PrestaShopWebservice
 	 * Handles a CURL request to PrestaShop Webservice. Can throw exception.
 	 *
 	 * @param string $url Resource name
-	 * @param mixed $curl_params CURL parameters (sent to curl_set_opt)
+	 * @param array<int,null|int|bool|string|float>	$curl_params CURL parameters (sent to curl_set_opt)
 	 *
-	 * @return array status_code, response, header
+	 * @return array{status_code:int,response:?string,header:string}
 	 *
 	 * @throws PrestaShopWebserviceException
 	 */
@@ -296,7 +297,7 @@ class PrestaShopWebservice
 				libxml_disable_entity_loader(true);
 			}
 
-			$xml = simplexml_load_string(trim($response), 'SimpleXMLElement', LIBXML_NOCDATA|LIBXML_NONET);
+			$xml = simplexml_load_string(trim($response), 'SimpleXMLElement', LIBXML_NOCDATA | LIBXML_NONET);
 			if (libxml_get_errors()) {
 				$msg = var_export(libxml_get_errors(), true);
 				libxml_clear_errors();
@@ -315,7 +316,7 @@ class PrestaShopWebservice
 	 * 'postXml' => Full XML string to add resource<br><br>
 	 * Examples are given in the tutorial</p>
 	 *
-	 * @param array $options        Options
+	 * @param array{url?:string,resource?:string,id?:string,id_shop?:string,id_group_shop?:string,postXml:mixed} $options Array representing resource to add.
 	 *
 	 * @return SimpleXMLElement status_code, response
 	 * @throws PrestaShopWebserviceException
@@ -368,7 +369,7 @@ class PrestaShopWebservice
 	 * ?>
 	 * </code>
 	 *
-	 * @param array $options Array representing resource to get.
+	 * @param array<string,string> $options Array representing resource to get.
 	 *
 	 * @return SimpleXMLElement status_code, response
 	 * @throws PrestaShopWebserviceException
@@ -409,9 +410,9 @@ class PrestaShopWebservice
 	/**
 	 * Head method (HEAD) a resource
 	 *
-	 * @param array $options Array representing resource for head request.
+	 * @param array<string,string> $options Array representing resource for head request.
 	 *
-	 * @return SimpleXMLElement status_code, response
+	 * @return string
 	 * @throws PrestaShopWebserviceException
 	 */
 	public function head($options)
@@ -452,7 +453,7 @@ class PrestaShopWebservice
 	 * 'putXml' => Modified XML string of a resource<br><br>
 	 * Examples are given in the tutorial</p>
 	 *
-	 * @param array $options Array representing resource to edit.
+	 * @param array{url?:string,resource?:string,id?:string,id_shop?:string,id_group_shop?:string,putXml:mixed} $options Array representing resource to edit.
 	 *
 	 * @return SimpleXMLElement
 	 * @throws PrestaShopWebserviceException
@@ -503,7 +504,7 @@ class PrestaShopWebservice
 	 * ?>
 	 * </code>
 	 *
-	 * @param array $options Array representing resource to delete.
+	 * @param array{url?:string,resource?:string,id?:string,id_shop?:string,id_group_shop?:string} $options Array representing resource to delete.
 	 *
 	 * @return bool
 	 * @throws PrestaShopWebserviceException

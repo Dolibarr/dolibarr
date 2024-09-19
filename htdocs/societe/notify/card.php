@@ -71,6 +71,9 @@ $now = dol_now();
 
 $object = new Societe($db);
 
+$permissiontoadd = $user->hasRight('societe', 'lire');
+
+
 /*
  * Actions
  */
@@ -89,7 +92,7 @@ if (empty($reshook)) {
 	}
 
 	// Add a notification
-	if ($action == 'add') {
+	if ($action == 'add' && $permissiontoadd) {
 		if (empty($contactid)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Contact")), null, 'errors');
 			$error++;
@@ -103,7 +106,7 @@ if (empty($reshook)) {
 			$db->begin();
 
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def";
-			$sql .= " WHERE fk_soc=".((int) $socid)." AND fk_contact=".((int) $contactid)." AND fk_action=".((int) $actionid);
+			$sql .= " WHERE fk_soc=".((int) $socid)." AND fk_contact=".((int) $contactid)." AND fk_action = ".((int) $actionid);
 			if ($db->query($sql)) {
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify_def (datec,fk_soc, fk_contact, fk_action)";
 				$sql .= " VALUES ('".$db->idate($now)."',".((int) $socid).",".((int) $contactid).",".((int) $actionid).")";
@@ -125,8 +128,8 @@ if (empty($reshook)) {
 	}
 
 	// Remove a notification
-	if ($action == 'delete') {
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def where rowid=".GETPOSTINT('actid');
+	if ($action == 'delete' && $permissiontoadd) {
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def where rowid = ".GETPOSTINT('actid');
 		$db->query($sql);
 	}
 }

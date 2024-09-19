@@ -313,7 +313,22 @@ if (empty($user->conf->AGENDA_DISABLE_EXT)) {
 		}
 	}
 }
-
+$firstdaytoshow = 0;
+$max_day_in_month = 0;
+$lastdaytoshow = 0;
+$tmpday = 0;
+$datestart = 0;
+$dateend = 0;
+$first_day = 0;
+$first_month = 0;
+$first_year = 0;
+$prev_day = 0;
+$prev_month = 0;
+$prev_year = 0;
+$max_day_in_prev_month = 0;
+$next_day = 0;
+$next_month = 0;
+$next_year = 0;
 if (empty($mode) || $mode == 'show_month') {
 	$prev = dol_get_prev_month($month, $year);
 	$prev_year  = $prev['year'];
@@ -1525,7 +1540,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	$newparam .= '&viewcal=1';
 
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
-	print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid, $search_categ_cus);
+	print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, '', $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid, $search_categ_cus);
 	print '</div>';
 
 	print '<div class="div-table-responsive-no-min sectioncalendarbymonth maxscreenheightless300">';
@@ -1636,7 +1651,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	$newparam .= '&viewweek=1';
 
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
-	print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
+	print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, '', $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
 	print '</div>';
 
 	print '<div class="div-table-responsive-no-min sectioncalendarbyweek maxscreenheightless300">';
@@ -1704,7 +1719,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	$arraytimestamp = dol_getdate($timestamp);
 
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
-	print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
+	print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, '', $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
 	print '</div>';
 
 	print '<div class="div-table-responsive-no-min sectioncalendarbyday maxscreenheightless300">';

@@ -1405,7 +1405,7 @@ class Cronjob extends CommonObject
 
 					$this->error      = $arrayresult['error'];
 					$this->lastoutput = $arrayresult['output'];
-					$this->lastresult = $arrayresult['result'];
+					$this->lastresult = (string) $arrayresult['result'];
 				}
 			}
 		}

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017       Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,7 +69,7 @@ if (!$sortfield) {
 $object = new PaymentVarious($db);
 $object->fetch($id, $ref);
 
-$upload_dir = $conf->bank->dir_output.'/'.dol_sanitizeFileName($object->id);
+$upload_dir = $conf->bank->dir_output.'/'.dol_sanitizeFileName((string) $object->id);
 $modulepart = 'banque';
 
 $permissiontoadd = $user->hasRight('banque', 'modifier');	// Used by the include of actions_dellink.inc.php

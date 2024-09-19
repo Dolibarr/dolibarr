@@ -75,6 +75,8 @@ if ($action == 'updateMask') {
 	$maskconstticket = GETPOST('maskconstticket', 'aZ09');
 	$maskticket = GETPOST('maskticket', 'alpha');
 
+	$res = 0;
+
 	if ($maskconstticket && preg_match('/_MASK$/', $maskconstticket)) {
 		$res = dolibarr_set_const($db, $maskconstticket, $maskticket, 'chaine', 0, '', $conf->entity);
 	}
@@ -749,7 +751,7 @@ $mail_intro = getDolGlobalString('TICKET_MESSAGE_MAIL_INTRO', '');
 print '<tr class="oddeven"><td>'.$langs->trans("TicketMessageMailIntro");
 print '</td><td>';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-$doleditor = new DolEditor('TICKET_MESSAGE_MAIL_INTRO', $mail_intro, '100%', 90, 'dolibarr_mailings', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_MAIL'), ROWS_2, 70);
+$doleditor = new DolEditor('TICKET_MESSAGE_MAIL_INTRO', $mail_intro, '100%', 90, 'dolibarr_mailings', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_MAIL'), ROWS_2, '70');
 $doleditor->Create();
 print '</td>';
 print '<td class="center">';
@@ -761,7 +763,7 @@ $mail_signature = getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE');
 print '<tr class="oddeven"><td>'.$langs->trans("TicketMessageMailFooter").'</label>';
 print '</td><td>';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-$doleditor = new DolEditor('TICKET_MESSAGE_MAIL_SIGNATURE', $mail_signature, '100%', 90, 'dolibarr_mailings', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_MAIL'), ROWS_2, 70);
+$doleditor = new DolEditor('TICKET_MESSAGE_MAIL_SIGNATURE', $mail_signature, '100%', 90, 'dolibarr_mailings', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_MAIL'), ROWS_2, '70');
 $doleditor->Create();
 print '</td>';
 print '<td class="center">';

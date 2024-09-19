@@ -572,7 +572,7 @@ function createProductOrService($authentication, $product)
 
 		$newobject->country_id = isset($product['country_id']) ? $product['country_id'] : 0;
 		if (!empty($product['country_code'])) {
-			$newobject->country_id = getCountry($product['country_code'], 3);
+			$newobject->country_id = getCountry($product['country_code'], '3');
 		}
 		$newobject->customcode = isset($product['customcode']) ? $product['customcode'] : '';
 
@@ -742,7 +742,7 @@ function updateProductOrService($authentication, $product)
 
 		$newobject->country_id = isset($product['country_id']) ? $product['country_id'] : 0;
 		if (!empty($product['country_code'])) {
-			$newobject->country_id = getCountry($product['country_code'], 3);
+			$newobject->country_id = getCountry($product['country_code'], '3');
 		}
 		$newobject->customcode = isset($product['customcode']) ? $product['customcode'] : '';
 

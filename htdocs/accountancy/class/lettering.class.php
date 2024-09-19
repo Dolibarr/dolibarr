@@ -3,6 +3,7 @@
  * Copyright (C) 2013       Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +34,9 @@ include_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
  */
 class Lettering extends BookKeeping
 {
+	/**
+	 * @var array<string,array{payment_table:string,payment_table_fk_bank:string,doc_payment_table:string,doc_payment_table_fk_payment:string,doc_payment_table_fk_doc:string,linked_info:array<array{table:string,fk_doc:string,fk_link:string,prefix:string,fk_line_link?:string,table_link_line?:string,fk_table_link_line?:string,fk_table_link_line_parent?:string,is_fk_link_is_also_fk_doc?:bool}>}>
+	 */
 	public static $doc_type_infos = array(
 		'customer_invoice' => array(
 			'payment_table' => 'paiement',
@@ -289,7 +293,7 @@ class Lettering extends BookKeeping
 
 	/**
 	 *
-	 * @param	array		$ids			ids array
+	 * @param	int[]		$ids			ids array
 	 * @param	int			$notrigger		no trigger
 	 * @param	bool		$partial		Partial lettering
 	 * @return	int
@@ -316,11 +320,15 @@ class Lettering extends BookKeeping
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
-				if (empty($obj->lettering_code)) continue;
+				if (empty($obj->lettering_code)) {
+					continue;
+				}
 
 				// Remove normal lettering code if set partial lettering
 				if ($partial && preg_match('/^[A-Z]+$/', $obj->lettering_code)) {
-					if (!empty($obj->bookkeeping_ids)) $ids = array_diff($ids, explode(',', $obj->bookkeeping_ids));
+					if (!empty($obj->bookkeeping_ids)) {
+						$ids = array_diff($ids, explode(',', $obj->bookkeeping_ids));
+					}
 				} elseif (!$partial && preg_match('/^[a-z]+$/', $obj->lettering_code)) {
 					// Delete partial lettering code if set normal lettering
 					$sql2 = "UPDATE " . MAIN_DB_PREFIX . "accounting_bookkeeping SET";
@@ -427,7 +435,7 @@ class Lettering extends BookKeeping
 
 	/**
 	 *
-	 * @param	array		$ids			ids array
+	 * @param	int[]		$ids			ids array
 	 * @param	int			$notrigger		no trigger
 	 * @return	int							Nb of affectd rows or <0 if error
 	 */
@@ -463,7 +471,7 @@ class Lettering extends BookKeeping
 	/**
 	 * Lettering bookkeeping lines all types
 	 *
-	 * @param	array		$bookkeeping_ids		Lettering specific list of bookkeeping id
+	 * @param	int[]		$bookkeeping_ids		Lettering specific list of bookkeeping id
 	 * @param	bool		$unlettering			Do unlettering
 	 * @return	int									Return integer <0 if error (nb lettered = result -1), 0 if noting to lettering, >0 if OK (nb lettered)
 	 */
@@ -495,7 +503,7 @@ class Lettering extends BookKeeping
 	/**
 	 * Lettering bookkeeping lines
 	 *
-	 * @param	array		$bookkeeping_ids		Lettering specific list of bookkeeping id
+	 * @param	int[]		$bookkeeping_ids		Lettering specific list of bookkeeping id
 	 * @param	bool		$unlettering			Do unlettering
 	 * @return	int									Return integer <0 if error (nb lettered = result -1), 0 if noting to lettering, >0 if OK (nb lettered)
 	 */
@@ -581,9 +589,9 @@ class Lettering extends BookKeeping
 	/**
 	 * Lettering bookkeeping lines
 	 *
-	 * @param	array			$bookkeeping_ids				Lettering specific list of bookkeeping id
+	 * @param	int[]			$bookkeeping_ids				Lettering specific list of bookkeeping id
 	 * @param	bool			$only_has_subledger_account		Get only lines who have subledger account
-	 * @return	array|int										Return integer <0 if error otherwise all linked lines by block
+	 * @return	int<-1,-1>|array<array<int,array{id:int,piece_num:int,debit:int|float,credit:int|float,lettering_code:string}>>	Return integer <0 if error otherwise all linked lines by block
 	 */
 	public function getLinkedLines($bookkeeping_ids, $only_has_subledger_account = true)
 	{
@@ -719,8 +727,8 @@ class Lettering extends BookKeeping
 	/**
 	 * Get all fk_doc by doc_type from list of bank ids
 	 *
-	 * @param	array			$bank_ids		List of bank ids
-	 * @return	array|int						Return integer <0 if error otherwise all fk_doc by doc_type
+	 * @param	int[]			$bank_ids		List of bank ids
+	 * @return	array<string,array<int,int>>|int						Return integer <0 if error otherwise all fk_doc by doc_type
 	 */
 	public function getDocTypeAndFkDocFromBankLines($bank_ids)
 	{
@@ -761,9 +769,9 @@ class Lettering extends BookKeeping
 	/**
 	 * Get all bank ids from list of document ids of a type
 	 *
-	 * @param	array			$document_ids	List of document id
+	 * @param	array<string,int[]>		$document_ids	List of document id
 	 * @param	string			$doc_type		Type of document ('customer_invoice' or 'supplier_invoice', ...)
-	 * @return	array|int						Return integer <0 if error otherwise all all bank ids from list of document ids of a type
+	 * @return	array<int,int>|int<-1,-1>	Return integer <0 if error otherwise all all bank ids from list of document ids of a type
 	 */
 	public function getBankLinesFromFkDocAndDocType($document_ids, $doc_type)
 	{
@@ -794,6 +802,7 @@ class Lettering extends BookKeeping
 		$sql = "SELECT DISTINCT p." . $this->db->sanitize($doc_type_info['payment_table_fk_bank']) . " AS fk_doc";
 		$sql .= " FROM " . MAIN_DB_PREFIX . $this->db->sanitize($doc_type_info['payment_table']) . " AS p";
 		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . $this->db->sanitize($doc_type_info['doc_payment_table']) . " AS dp ON dp." . $this->db->sanitize($doc_type_info['doc_payment_table_fk_payment']) . " = p.rowid";
+		// Implode used on array of int @phan-suppress-next-line PhanTypeMismatchArgumentInternal
 		$sql .= " WHERE dp." . $this->db->sanitize($doc_type_info['doc_payment_table_fk_doc']) . " IN (" . $this->db->sanitize(implode(',', $document_ids)) . ")";
 		$sql .= " AND p." . $this->db->sanitize($doc_type_info['payment_table_fk_bank']) . " > 0";
 
@@ -815,9 +824,9 @@ class Lettering extends BookKeeping
 	/**
 	 * Get all linked document ids by group and type
 	 *
-	 * @param	array			$document_ids	List of document id
+	 * @param	int[]			$document_ids	List of document id
 	 * @param	string			$doc_type		Type of document ('customer_invoice' or 'supplier_invoice', ...)
-	 * @return	array|int						Return integer <0 if error otherwise all linked document ids by group and type [ [ 'doc_type' => [ doc_id, ... ], ... ], ... ]
+	 * @return	array<int,array<int,int>>|int<-1,-1>		Return integer <0 if error otherwise all linked document ids by group and type [ [ 'doc_type' => [ doc_id, ... ], ... ], ... ]
 	 */
 	public function getLinkedDocumentByGroup($document_ids, $doc_type)
 	{
@@ -903,11 +912,11 @@ class Lettering extends BookKeeping
 	/**
 	 * Get element ids grouped by link or element in common
 	 *
-	 * @param	array	$link_by_element	List of payment ids by link key
-	 * @param	array	$element_by_link	List of element ids by link key
-	 * @param	string	$link_key			Link key (used for recursive function)
-	 * @param	array	$current_group		Current group (used for recursive function)
-	 * @return	array						List of element ids grouped by link or element in common
+	 * @param	array<array<string,int>>	$link_by_element	List of payment ids by link key
+	 * @param	array<string,array<int,int>>	$element_by_link	List of element ids by link key
+	 * @param	string				$link_key			Link key (used for recursive function)
+	 * @param	array<int,int>		$current_group		Current group (used for recursive function)
+	 * @return	array<int,array<int,int>>			List of element ids grouped by link or element in common
 	 */
 	public function getGroupElements(&$link_by_element, &$element_by_link, $link_key = '', &$current_group = array())
 	{
@@ -917,8 +926,9 @@ class Lettering extends BookKeeping
 			return $grouped_elements;
 		}
 
+
 		if (empty($link_key)) {
-			// Save list when is the begin of recursive function
+			// Save list when is the first step of the recursive recursive function
 			$save_link_by_element = $link_by_element;
 			$save_element_by_link = $element_by_link;
 		}
@@ -957,8 +967,8 @@ class Lettering extends BookKeeping
 
 		if (empty($link_key)) {
 			// Restore list when is the begin of recursive function
-			$link_by_element = $save_link_by_element;
-			$element_by_link = $save_element_by_link;
+			$link_by_element = $save_link_by_element;  // @phan-suppress-current-line PhanPossiblyUndeclaredVariable
+			$element_by_link = $save_element_by_link;  // @phan-suppress-current-line PhanPossiblyUndeclaredVariable
 		}
 
 		return $grouped_elements;

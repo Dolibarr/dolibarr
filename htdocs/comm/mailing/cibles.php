@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2024      MDW	                <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +36,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 
+
+'
+@phan-var-force array{0:string,1:string} $bctag From main.inc
+';
 // Load translation files required by the page
 $langs->loadLangs(array("mails", "admin"));
 
@@ -116,6 +121,7 @@ if (!GETPOST('confirmmassaction', 'alpha')) {
 if ($action == 'add' && $permissiontocreate) {		// Add recipients
 	$module = GETPOST("module", 'alpha');
 	$result = -1;
+	$obj = null;
 
 	foreach ($modulesdir as $dir) {
 		// Load modules attributes in arrays (name, numero, orders) from dir directory
@@ -132,8 +138,10 @@ if ($action == 'add' && $permissiontocreate) {		// Add recipients
 			// Add targets into database
 			dol_syslog("Call add_to_target() on class ".$classname." evenunsubscribe=".$object->evenunsubscribe);
 
+			$obj = null;
 			if (class_exists($classname)) {
 				$obj = new $classname($db);
+				'@phan-var-force MailingTargets $obj';
 				$obj->evenunsubscribe = $object->evenunsubscribe;
 
 				$result = $obj->add_to_target($id);
@@ -157,7 +165,7 @@ if ($action == 'add' && $permissiontocreate) {		// Add recipients
 	if ($result == 0) {
 		setEventMessages($langs->trans("WarningNoEMailsAdded"), null, 'warnings');
 	}
-	if ($result < 0) {
+	if ($result < 0 && is_object($obj)) {
 		setEventMessages($langs->trans("Error").($obj->error ? ' '.$obj->error : ''), null, 'errors');
 	}
 }
@@ -268,22 +276,22 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 }
 
 // Action update description of emailing
-if ($action == 'settitle' || $action == 'setemail_from' || $action == 'setreplyto' || $action == 'setemail_errorsto' || $action == 'setevenunsubscribe') {
+if (($action == 'settitle' || $action == 'setemail_from' || $action == 'setreplyto' || $action == 'setemail_errorsto' || $action == 'setevenunsubscribe') && $permissiontocreate) {
 	$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, 2, 0, 1, $object, 'mailing');
 
-	if ($action == 'settitle') {
+	if ($action == 'settitle') {					// Test on permission already done
 		$object->title = trim(GETPOST('title', 'alpha'));
-	} elseif ($action == 'setemail_from') {
+	} elseif ($action == 'setemail_from') {			// Test on permission already done
 		$object->email_from = trim(GETPOST('email_from', 'alphawithlgt')); // Must allow 'name <email>'
-	} elseif ($action == 'setemail_replyto') {
+	} elseif ($action == 'setemail_replyto') {		// Test on permission already done
 		$object->email_replyto = trim(GETPOST('email_replyto', 'alphawithlgt')); // Must allow 'name <email>'
-	} elseif ($action == 'setemail_errorsto') {
+	} elseif ($action == 'setemail_errorsto') {		// Test on permission already done
 		$object->email_errorsto = trim(GETPOST('email_errorsto', 'alphawithlgt')); // Must allow 'name <email>'
-	} elseif ($action == 'settitle' && empty($object->title)) {
+	} elseif ($action == 'settitle' && empty($object->title)) {		// Test on permission already done
 		$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailTitle"));
-	} elseif ($action == 'setfrom' && empty($object->email_from)) {
+	} elseif ($action == 'setfrom' && empty($object->email_from)) {	// Test on permission already done
 		$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailFrom"));
-	} elseif ($action == 'setevenunsubscribe') {
+	} elseif ($action == 'setevenunsubscribe') {	// Test on permission already done
 		$object->evenunsubscribe = (GETPOST('evenunsubscribe') ? 1 : 0);
 	}
 
@@ -553,6 +561,7 @@ if ($object->fetch($id) >= 0) {
 				require_once $file;
 
 				$obj = new $classname($db);
+				'@phan-var-force MailingTargets $obj';
 
 				// Check if qualified
 				$qualified = (is_null($obj->enabled) ? 1 : (int) dol_eval($obj->enabled, 1));
@@ -588,6 +597,8 @@ if ($object->fetch($id) >= 0) {
 					print '<div class="tagtd valignmiddle">';	//  style="height: 4em"
 					print $obj->getDesc();
 					print '</div>';
+
+					$nbofrecipient = -1;
 
 					try {
 						$obj->evenunsubscribe = $object->evenunsubscribe;	// Set flag to include/exclude email that has opt-out.
@@ -649,7 +660,7 @@ if ($object->fetch($id) >= 0) {
 		print '<br>';
 
 		if ($sqlmessage && $user->admin) {
-			print info_admin($langs->trans("SQLUsedForExport").':<br> '.$sqlmessage, 0, 0, 1, '', 'TechnicalInformation');
+			print info_admin($langs->trans("SQLUsedForExport").':<br> '.$sqlmessage, 0, 0, '1', '', 'TechnicalInformation');
 			print '<br>';
 		}
 

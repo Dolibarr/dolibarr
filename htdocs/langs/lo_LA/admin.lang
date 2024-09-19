@@ -514,15 +514,17 @@ ModuleCompanyCodeCustomerDigitaria=%s ຕິດຕາມມາດ້ວຍຊື
 ModuleCompanyCodeSupplierDigitaria=%s ຕິດຕາມດ້ວຍຊື່ຜູ້ສະ ໜອງ ທີ່ຖືກຕັດອອກໂດຍ ຈຳ ນວນຕົວອັກສອນ: %s ສຳ ລັບລະຫັດບັນຊີຜູ້ສະ ໜອງ.
 Use3StepsApproval=ຕາມຄ່າເລີ່ມຕົ້ນ, ຄຳ ສັ່ງຊື້ຕ້ອງສ້າງແລະອະນຸມັດໂດຍຜູ້ໃຊ້ 2 ຄົນທີ່ແຕກຕ່າງກັນ (ຂັ້ນຕອນ ໜຶ່ງ/ຜູ້ໃຊ້ເພື່ອສ້າງແລະຂັ້ນຕອນ ໜຶ່ງ/ຜູ້ໃຊ້ເພື່ອອະນຸມັດ. ຈື່ໄວ້ວ່າຖ້າຜູ້ໃຊ້ມີທັງການອະນຸຍາດສ້າງແລະອະນຸມັດ, ໜຶ່ງ ຂັ້ນຕອນ/ຜູ້ໃຊ້ຈະພຽງພໍ) . ເຈົ້າສາມາດຖາມດ້ວຍຕົວເລືອກນີ້ເພື່ອແນະ ນຳ ຂັ້ນຕອນທີສາມ/ການອະນຸມັດຂອງຜູ້ໃຊ້, ຖ້າ ຈຳ ນວນສູງກວ່າມູນຄ່າສະເພາະ (ສະນັ້ນຈະຕ້ອງມີ 3 ຂັ້ນຕອນ: 1 = ການກວດສອບ, 2 = ການອະນຸມັດ ທຳ ອິດແລະ 3 = ການອະນຸມັດຄັ້ງທີສອງຖ້າ ຈຳ ນວນພຽງພໍ). <br> ຕັ້ງອັນນີ້ຫວ່າງເປົ່າຖ້າການອະນຸມັດອັນ ໜຶ່ງ (2 ຂັ້ນຕອນ) ແມ່ນພຽງພໍ, ຕັ້ງມັນເປັນຄ່າຕໍ່າຫຼາຍ (0.1) ຖ້າຕ້ອງການການອະນຸມັດທີສອງ (3 ຂັ້ນຕອນ) ສະເີ.
 UseDoubleApproval=ໃຊ້ການອະນຸມັດ 3 ຂັ້ນຕອນເມື່ອ ຈຳ ນວນ (ບໍ່ລວມພາສີ) ສູງກວ່າ ...
-WarningPHPMail=WARNING: The setup to send emails from the application is using the default generic setup. This choice needs no technical knowledge to complete the setup.<br>However, it is often better to setup outgoing emails to use the email server of your Email Service Provider instead of the default setup for several reasons:
+WarningPHPMail=NOTICE: The setup to send emails from the application is using the default generic setup (called "%s"). This choice needs no technical knowledge and no particular setup.<br>However, it is often better to setup outgoing emails to use the other method (called "%s") to use the email server of your Email Service Provider, instead of the default setup for several reasons:
 WarningPHPMailA=- Using the server of the Email Service Provider increases the trustworthiness of your email, so it increases the deliverability without being flagged as SPAM
-WarningPHPMailB=- ບາງຜູ້ໃຫ້ບໍລິການອີເມລ like (ເຊັ່ນ Yahoo) ບໍ່ອະນຸຍາດໃຫ້ເຈົ້າສົ່ງອີເມວຈາກເຊີບເວີອື່ນຫຼາຍກວ່າເຊີບເວີຂອງເຂົາເຈົ້າເອງ. ການຕັ້ງຄ່າປັດຈຸບັນຂອງເຈົ້າໃຊ້ເຊີບເວີຂອງແອັບພລິເຄຊັນເພື່ອສົ່ງອີເມວແລະບໍ່ແມ່ນເຊີບເວີຂອງຜູ້ໃຫ້ບໍລິການອີເມວຂອງເຈົ້າ, ສະນັ້ນຜູ້ຮັບບາງຄົນ (ອັນທີ່ເຂົ້າກັນໄດ້ກັບໂປຣໂຕຄໍ DMARC ທີ່ຈໍາກັດ), ຈະຖາມຫາຜູ້ໃຫ້ບໍລິການອີເມວຂອງເຈົ້າຖ້າເຂົາເຈົ້າສາມາດຍອມຮັບອີເມວຂອງເຈົ້າແລະບາງຜູ້ໃຫ້ບໍລິການອີເມວ. (ຄື Yahoo) ອາດຈະຕອບ "ບໍ່" ເພາະວ່າເຊີບເວີບໍ່ແມ່ນຂອງເຂົາເຈົ້າ, ສະນັ້ນອີເມລທີ່ເຈົ້າສົ່ງໄປນັ້ນຈໍານວນ ໜຶ່ງ ອາດຈະບໍ່ຖືກຍອມຮັບສໍາລັບການຈັດສົ່ງ (ຈົ່ງລະວັງໂຄຕ້າສົ່ງຂອງຜູ້ໃຫ້ບໍລິການອີເມລຂອງເຈົ້ານໍາ).
+WarningPHPMailB=- If the domain of your email (the part mymaildomain.com into myname@mymaildomain.com) is protected by a SPF + a DMARC record, your email may be flagged as SPAM because your DMARC rule defined into DNS zone of the domain of the sender (mymaildomain.com) does not allow the sending as a generic sender. In such a case, you must disable the DMARC for the domain (or set it to p=none like done by @gmail.com) or, better, if you have the technical knowledge, use the other method to send emails using the SMTP server of your own email provider.
 WarningPHPMailC=- ການໃຊ້ເຊີບເວີ SMTP ຂອງຜູ້ໃຫ້ບໍລິການອີເມລ your ຂອງເຈົ້າເອງເພື່ອສົ່ງອີເມລ is ກໍ່ເປັນສິ່ງທີ່ ໜ້າ ສົນໃຈດັ່ງນັ້ນອີເມລ sent ທັງsentົດທີ່ສົ່ງຈາກແອັບພລິເຄຊັນກໍ່ຈະຖືກບັນທຶກໄວ້ໃນບັນຊີລາຍການ "ສົ່ງແລ້ວ" ຂອງກ່ອງຈົດyourາຍຂອງເຈົ້າ.
 WarningPHPMailD=ດັ່ງນັ້ນ, ມັນໄດ້ຖືກແນະນໍາໃຫ້ປ່ຽນວິທີການສົ່ງອີເມລ໌ກັບຄ່າ "SMTP".
 WarningPHPMailDbis=ຖ້າທ່ານຕ້ອງການຮັກສາວິທີການເລີ່ມຕົ້ນ "PHP" ໃນການສົ່ງອີເມວ, ພຽງແຕ່ບໍ່ສົນໃຈຄໍາເຕືອນນີ້, ຫຼືເອົາມັນອອກໂດຍ %sຄລິກທີ່ນີ້%s.
 WarningPHPMail2=ຖ້າຜູ້ໃຫ້ບໍລິການ SMTP ອີເມລຂອງເຈົ້າຕ້ອງການຈໍາກັດລູກຄ້າອີເມລ to ຫາບາງທີ່ຢູ່ IP (ຫາຍາກຫຼາຍ), ນີ້ແມ່ນທີ່ຢູ່ IP ຂອງຕົວແທນຜູ້ໃຊ້ຈົດ(າຍ (MUA) ສໍາລັບການສະEັກ ERP CRM ຂອງເຈົ້າ: <strong> %s </strong>.
-WarningPHPMailSPF=ຖ້າຊື່ໂດເມນໃນທີ່ຢູ່ອີເມວຜູ້ສົ່ງຂອງເຈົ້າຖືກປົກປ້ອງໂດຍບັນທຶກ SPF (ຂໍໃຫ້ລົງທະບຽນຊື່ໂດເມນຂອງເຈົ້າ), ເຈົ້າຕ້ອງເພີ່ມ IP ຕໍ່ໄປນີ້ໃນບັນທຶກ SPF ຂອງ DNS ຂອງໂດເມນຂອງເຈົ້າ: <strong>%s</strong>.
-ActualMailSPFRecordFound=ພົບບັນທຶກ SPF ຕົວຈິງ (ສຳລັບອີເມວ %s): %s
+WarningPHPMailSPF=If the domain name in your sender email address is protected by a SPF record (ask your domain name registar), you must add the following IPs or entry in the SPF record of the DNS of your domain: <strong>%s</strong>.
+WarningPHPMailSPFDMARC=If the domain name in your sender email address is protected by a DMARC record different than p=none (ask your domain name registar), you must remove your DMARC record, or set it to p=none like do @gmail.com) or use sending another method.
+SPFAndDMARCInformation=SPF and DMARC DNS record for main email addresses
+ActualMailDNSRecordFound=Actual %s record found (for email %s) : %s
 ClickToShowDescription=ຄລິກເພື່ອສະແດງລາຍລະອຽດ
 DependsOn=ໂມດູນນີ້ຕ້ອງການໂມດູນ
 RequiredBy=ໂມດູນນີ້ຕ້ອງການໂດຍໂມດູນ
@@ -867,7 +869,7 @@ Permission255=ແກ້ໄຂລະຫັດຜ່ານຜູ້ໃຊ້ອື
 Permission256=ລຶບຫຼືປິດການ ນຳ ໃຊ້ຜູ້ໃຊ້ອື່ນ
 Permission262=Extend access to all third parties AND their objects (not only third parties for which the user is linked as a sale representative).
 Permission262b=Not effective for external users (always limited to themselves for proposals, orders, invoices, contracts, etc.).
-Permission262c=Not effective for projects (only rules on project permissions, visibility and assignment matters).
+Permission262c=Not effective for projects (only rules on project permissions, visibility and users assignment matter).
 Permission263=ຂະຫຍາຍການເຂົ້າເຖິງທຸກພາກສ່ວນທີສາມໂດຍບໍ່ມີວັດຖຸຂອງເຂົາເຈົ້າ (ບໍ່ພຽງແຕ່ພາກສ່ວນທີສາມທີ່ຜູ້ໃຊ້ເປັນຕົວແທນຂາຍ). <br> ບໍ່ມີປະສິດທິພາບສໍາລັບຜູ້ໃຊ້ພາຍນອກ (ຈໍາກັດສະເພາະຕົນເອງສະເforີສໍາລັບຂໍ້ສະ ເໜີ, ຄໍາສັ່ງ, ໃບແຈ້ງ ໜີ້, ສັນຍາ, ແລະອື່ນ)). <br> ບໍ່ມີປະສິດທິພາບສໍາລັບໂຄງການ (ມີພຽງກົດລະບຽບກ່ຽວກັບການອະນຸຍາດໂຄງການ, ການເບິ່ງເຫັນແລະເລື່ອງການມອບາຍ).
 Permission271=ອ່ານ CA
 Permission272=ອ່ານໃບແຈ້ງ ໜີ້
@@ -944,7 +946,7 @@ Permission776=ລາຍງານລາຍຈ່າຍ
 Permission777=ອ່ານ​ລາຍ​ງານ​ຄ່າ​ໃຊ້​ຈ່າຍ​ທັງ​ຫມົດ (ເຖິງ​ແມ່ນ​ວ່າ​ຂອງ​ຜູ້​ໃຊ້​ບໍ່​ແມ່ນ subordinates​)
 Permission778=ສ້າງ/ແກ້ໄຂລາຍງານຄ່າໃຊ້ຈ່າຍຂອງທຸກຄົນ
 Permission779=ລາຍງານຄ່າໃຊ້ຈ່າຍໃນການສົ່ງອອກ
-Permission1001=ອ່ານຮຸ້ນ
+Permission1001=Read warehouses and stocks
 Permission1002=ສ້າງ/ດັດແປງຄັງສິນຄ້າ
 Permission1003=ລຶບສາງ
 Permission1004=ອ່ານການເຄື່ອນໄຫວຂອງຫຼັກຊັບ
@@ -2218,7 +2220,7 @@ CreateCandidature=ສ້າງໃບສະjobັກວຽກ
 FormatZip=Zip
 MainMenuCode=ລະຫັດການເຂົ້າເມນູ (ເມນູຫຼັກ)
 ECMAutoTree=ສະແດງຕົ້ນໄມ້ ECM ອັດຕະໂນມັດ
-OperationParamDesc=ກໍານົດກົດລະບຽບທີ່ຈະໃຊ້ເພື່ອສະກັດຂໍ້ມູນບາງຢ່າງ ຫຼືກໍານົດຄ່າທີ່ຈະໃຊ້ສໍາລັບການປະຕິບັດງານ.<br><br>ຕົວຢ່າງເພື່ອສະກັດຊື່ບໍລິສັດຈາກ ຫົວຂໍ້ອີເມວເຂົ້າໄປໃນຕົວແປຊົ່ວຄາວ:<br>tmp_var=EXTRACT:SUBJECT:ຂໍ້ຄວາມຈາກບໍລິສັດ ([^\n]*)<br><br>ຕົວຢ່າງເພື່ອກຳນົດຄຸນສົມບັດຂອງວັດຖຸເພື່ອສ້າງ:<br>objproperty1=SET:ຄ່າລະຫັດຍາກ<br>objproperty2=SET:__tmp_var__<br>objproperty3=aSETIFEMIF ຖືກກໍານົດພຽງແຕ່ຖ້າຄຸນສົມບັດບໍ່ໄດ້ຖືກກໍານົດໄວ້ແລ້ວ)<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY\\:ຊື່ບໍລິສັດຂອງຂ້ອຍ s([^\\s]*)<br><br>ໃຊ້ແຖວໃໝ່ເພື່ອແຍກ ຫຼືຕັ້ງຄຸນສົມບັດຫຼາຍຢ່າງ.
+OperationParamDesc=Define the rules to use to extract some data or set values to use for operation.<br><br>Example to extract a string from email header, subject or body into a temporary variable:<br>tmp_var1=EXTRACT:HEADER:My regex ([^\n]*)<br>tmp_var2=EXTRACT:SUBJECT:My refex ([^\n]*)<br>tmp_var3=EXTRACT:BODY:My regex ([^\n]*)<br><br>Examples to set the properties of an object to create:<br>objproperty1=SET:a hard coded value<br>objproperty2=SET:__tmp_var__<br>objproperty3=SETIFEMPTY:a value (value is set only if property is not already defined)<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a new line to extract or set several properties.
 OpeningHours=ເວລາເປີດ
 OpeningHoursDesc=ມາທີ່ນີ້ເວລາເປີດປົກກະຕິຂອງບໍລິສັດຂອງເຈົ້າ.
 ResourceSetup=ການຕັ້ງຄ່າໂມດູນຊັບພະຍາກອນ
@@ -2264,7 +2266,7 @@ LargerThan=ໃຫຍ່ກວ່າ
 IfTrackingIDFoundEventWillBeLinked=ໃຫ້ສັງເກດວ່າຖ້າ ID ການຕິດຕາມຂອງວັດຖຸຖືກພົບເຫັນຢູ່ໃນອີເມວ, ຫຼືຖ້າອີເມວເປັນຄໍາຕອບຂອງອີເມວທີ່ເກັບກໍາແລະເຊື່ອມໂຍງກັບວັດຖຸ, ເຫດການທີ່ສ້າງຂຶ້ນຈະຖືກເຊື່ອມຕໍ່ໂດຍອັດຕະໂນມັດກັບວັດຖຸທີ່ກ່ຽວຂ້ອງທີ່ຮູ້ຈັກ.
 WithGMailYouCanCreateADedicatedPassword=ດ້ວຍບັນຊີ GMail, ຖ້າທ່ານເປີດໃຊ້ການກວດສອບ 2 ຂັ້ນຕອນ, ແນະນໍາໃຫ້ສ້າງລະຫັດຜ່ານທີສອງສະເພາະສໍາລັບແອັບພລິເຄຊັນແທນທີ່ຈະໃຊ້ລະຫັດຜ່ານບັນຊີຂອງເຈົ້າເອງຈາກ https://myaccount.google.com/.
 EmailCollectorTargetDir=ມັນອາດຈະເປັນພຶດຕິກໍາທີ່ຕ້ອງການເພື່ອຍ້າຍອີເມລ໌ເຂົ້າໄປໃນແທັກ / ໄດເລກະທໍລີອື່ນເມື່ອມັນຖືກປຸງແຕ່ງຢ່າງສໍາເລັດຜົນ. ພຽງແຕ່ຕັ້ງຊື່ຂອງໄດເລກະທໍລີຢູ່ທີ່ນີ້ເພື່ອໃຊ້ຄຸນສົມບັດນີ້ (ຢ່າໃຊ້ຕົວອັກສອນພິເສດໃນຊື່). ໃຫ້ສັງເກດວ່າທ່ານຍັງຕ້ອງໃຊ້ບັນຊີເຂົ້າສູ່ລະບົບອ່ານ / ຂຽນ.
-EmailCollectorLoadThirdPartyHelp=ທ່ານສາມາດນໍາໃຊ້ການດໍາເນີນການນີ້ເພື່ອນໍາໃຊ້ເນື້ອໃນອີເມລ໌ເພື່ອຊອກຫາແລະໂຫຼດພາກສ່ວນທີສາມທີ່ມີຢູ່ແລ້ວໃນຖານຂໍ້ມູນຂອງທ່ານ (ການຊອກຫາຈະເຮັດໄດ້ໃນຄຸນສົມບັດທີ່ກໍານົດໄວ້ລະຫວ່າງ 'id','name','name_alias','email'). ພາກສ່ວນທີສາມທີ່ພົບເຫັນ (ຫຼືສ້າງ) ຈະຖືກໃຊ້ເພື່ອປະຕິບັດຕາມຄຳສັ່ງທີ່ຕ້ອງການ.<br>ຕົວຢ່າງ: ຖ້າທ່ານຕ້ອງການສ້າງພາກສ່ວນທີສາມທີ່ມີຊື່ທີ່ແຍກອອກມາຈາກ string ' ຊື່: ຊື່ເພື່ອຊອກຫາ' ຢູ່ໃນຮ່າງກາຍ, ໃຊ້ອີເມວຜູ້ສົ່ງເປັນອີເມລ໌, ທ່ານສາມາດກໍານົດພາກສະຫນາມພາລາມິເຕີເຊັ່ນນີ້:<br>'email=HEADER:^From:(. *);name=EXTRACT:BODY:Name:\\s([^\\s]*);client=SET:2;'<br>
+EmailCollectorLoadThirdPartyHelp=You can use this action to use the email content to find and load an existing third party in your database (search will be done on the defined property among 'id','name','name_alias','email'). The found (or created) third party will be used for following actions that need it.<br>For example, if you want to create a third party with a name extracted from a string 'Name: name to find' present into the body, use the sender email as email, you can set the parameter field like this:<br>'email=EXTRACT:HEADER:^From:(.*);name=EXTRACT:BODY:Name:\\s([^\\s]*);client=SET:2;'<br>
 FilterSearchImapHelp=Warning: a lot of email servers (like Gmail) are doing full word searches when searching on a string and will not return a result if the string is only found partially into a word. For this reason too, use special characters into a search criteria will be ignored are they are not part of existing words.<br>To make an exclude search on a word (return email if word is not found), you can use the ! character before the word (may not work on some mail servers).
 EndPointFor=ຈຸດສິ້ນສຸດ ສຳ ລັບ %s: %s
 DeleteEmailCollector=ລຶບຜູ້ເກັບອີເມລ

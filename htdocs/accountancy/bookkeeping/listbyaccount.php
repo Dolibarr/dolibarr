@@ -213,6 +213,10 @@ if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 }
 
 $error = 0;
+$result = -1; // For static analysis
+$documentlink = ''; // For static analysis
+
+$permissiontoadd = $user->hasRight('accounting', 'mouvements', 'creer');
 
 
 /*
@@ -506,8 +510,8 @@ if (empty($reshook)) {
 	}
 
 	// others mass actions
-	if (!$error && getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING') && $user->hasRight('accounting', 'mouvements', 'creer')) {
-		if ($massaction == 'letteringauto') {
+	if (!$error && getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING')) {
+		if ($massaction == 'letteringauto' && $permissiontoadd) {
 			$lettering = new Lettering($db);
 			$nb_lettering = $lettering->bookkeepingLetteringAll($toselect);
 			if ($nb_lettering < 0) {
@@ -528,7 +532,7 @@ if (empty($reshook)) {
 				header('Location: ' . $_SERVER['PHP_SELF'] . '?noreset=1' . $param);
 				exit();
 			}
-		} elseif ($massaction == 'letteringmanual') {
+		} elseif ($massaction == 'letteringmanual' && $permissiontoadd) {
 			$lettering = new Lettering($db);
 			$result = $lettering->updateLettering($toselect);
 			if ($result < 0) {
@@ -548,7 +552,7 @@ if (empty($reshook)) {
 				header('Location: ' . $_SERVER['PHP_SELF'] . '?noreset=1' . $param);
 				exit();
 			}
-		} elseif ($action == 'unletteringauto' && $confirm == "yes") {
+		} elseif ($action == 'unletteringauto' && $confirm == "yes" && $permissiontoadd) {
 			$lettering = new Lettering($db);
 			$nb_lettering = $lettering->bookkeepingLetteringAll($toselect, true);
 			if ($nb_lettering < 0) {
@@ -569,7 +573,7 @@ if (empty($reshook)) {
 				header('Location: ' . $_SERVER['PHP_SELF'] . '?noreset=1' . $param);
 				exit();
 			}
-		} elseif ($action == 'unletteringmanual' && $confirm == "yes") {
+		} elseif ($action == 'unletteringmanual' && $confirm == "yes" && $permissiontoadd) {
 			$lettering = new Lettering($db);
 			$nb_lettering = $lettering->deleteLettering($toselect);
 			if ($result < 0) {
@@ -1021,6 +1025,10 @@ print "</tr>\n";
 
 $displayed_account_number = null; // Start with undefined to be able to distinguish with empty
 
+$objectstatic = null;  // Init for static analysis
+$objectlink = '';  // Init for static analysis
+$result = -1;  // Init for static analysis
+
 // Loop on record
 // --------------------------------------------------------------------
 $i = 0;
@@ -1033,6 +1041,11 @@ $totalarray['val'] = array();
 $totalarray['val']['totaldebit'] = 0;
 $totalarray['val']['totalcredit'] = 0;
 $totalarray['val']['totalbalance'] = 0;
+
+// Init for static analysis
+$colspan = 0;			// colspan before field 'label of operation'
+$colspanend = 0;		// colspan after debit/credit
+$accountg = '-';
 
 while ($i < min($num, $limit)) {
 	$line = $object->lines[$i];

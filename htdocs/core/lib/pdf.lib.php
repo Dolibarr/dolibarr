@@ -79,9 +79,9 @@ function pdf_admin_prepare_head()
 /**
  *	Return array with format properties of default PDF format
  *
- *	@param		Translate|null	$outputlangs		Output lang to use to autodetect output format if we need 'auto' detection
- *  @param		string			$mode				'setup' = Use setup, 'auto' = Force autodetection whatever is setup
- *  @return     array								Array('width'=>w,'height'=>h,'unit'=>u);
+ *	@param		?Translate		$outputlangs		Output lang to use to autodetect output format if we need 'auto' detection
+ *  @param		'setup'|'auto'	$mode				'setup' = Use setup, 'auto' = Force autodetection whatever is setup
+ *  @return     array{width:float|int,height:float|int,unit:string}		Array('width'=>w,'height'=>h,'unit'=>u);
  */
 function pdf_getFormat(Translate $outputlangs = null, $mode = 'setup')
 {
@@ -120,9 +120,9 @@ function pdf_getFormat(Translate $outputlangs = null, $mode = 'setup')
 /**
  *      Return a PDF instance object. We create a FPDI instance that instantiate TCPDF.
  *
- *      @param	string		$format         Array(width,height). Keep empty to use default setup.
+ *      @param	array{float|int,float|int}|array{}|''	$format	Array(width,height). Keep empty to use default setup.
  *      @param	string		$metric         Unit of format ('mm')
- *      @param  string		$pagetype       'P' or 'l'
+ *      @param  'P'|'l'		$pagetype       'P' or 'l'
  *      @return TCPDF|TCPDI					PDF object
  */
 function pdf_getInstance($format = '', $metric = 'mm', $pagetype = 'P')
@@ -658,7 +658,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 
 			// Legal form
 			if (getDolGlobalString('MAIN_LEGALFORM_IN_ADDRESS') && !empty($targetcompany->forme_juridique_code)) {
-				$tmp = getFormeJuridiqueLabel($targetcompany->forme_juridique_code);
+				$tmp = getFormeJuridiqueLabel((string) $targetcompany->forme_juridique_code);
 				$stringaddress .= ($stringaddress ? "\n" : '').$tmp;
 			}
 
@@ -1102,7 +1102,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 	// Line 3 of company infos
 	// Juridical status
 	if (!empty($fromcompany->forme_juridique_code) && $fromcompany->forme_juridique_code) {
-		$line3 .= ($line3 ? " - " : "").$outputlangs->convToOutputCharset(getFormeJuridiqueLabel($fromcompany->forme_juridique_code));
+		$line3 .= ($line3 ? " - " : "").$outputlangs->convToOutputCharset(getFormeJuridiqueLabel((string) $fromcompany->forme_juridique_code));
 	}
 	// Capital
 	if (!empty($fromcompany->capital)) {
@@ -1389,7 +1389,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
  *	@param	float		$w					Width of cells. If 0, they extend up to the right margin of the page.
  *	@param	float		$h					Cell minimum height. The cell extends automatically if needed.
  *	@param	string		$align				Align
- *	@param	string		$default_font_size	Font size
+ *	@param	float		$default_font_size	Font size
  *	@return	float                           The Y PDF position
  */
 function pdf_writeLinkedObjects(&$pdf, $object, $outputlangs, $posx, $posy, $w, $h, $align, $default_font_size)

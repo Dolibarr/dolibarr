@@ -971,10 +971,11 @@ class Contact extends CommonObject
 	 *  @param      ?User	$user       	Load also alerts of this user (subscribing to alerts) that want alerts about this contact
 	 *  @param      string  $ref_ext    	External reference, not given by Dolibarr
 	 *  @param		string	$email			Email
-	 *  @param		int		$loadalsoroles	Load also roles. Try to always 0 here and load roles with a separate call of fetchRoles().
+	 *  @param		int		$loadalsoroles	Load also roles. Try to always use 0 here and load roles with a separate call of fetchRoles().
+	 *  @param		int		$socid			Filter on thirdparty id
 	 *  @return     int     		    	>0 if OK, <0 if KO or if two records found for same ref or idprof, 0 if not found.
 	 */
-	public function fetch($id, $user = null, $ref_ext = '', $email = '', $loadalsoroles = 0)
+	public function fetch($id, $user = null, $ref_ext = '', $email = '', $loadalsoroles = 0, $socid = 0)
 	{
 		global $langs;
 
@@ -1018,6 +1019,9 @@ class Contact extends CommonObject
 			}
 			if ($email) {
 				$sql .= " AND c.email = '".$this->db->escape($email)."'";
+			}
+			if ($socid) {
+				$sql .= " AND c.fk_soc = ".((int) $socid);
 			}
 		}
 
@@ -1156,6 +1160,37 @@ class Contact extends CommonObject
 			$this->error = $this->db->error();
 			return -1;
 		}
+	}
+
+	/**
+	 *    Search the contact that match the most the provided parameters.
+	 *    Searching rules try to find the existing contact.
+	 *
+	 *  @param      int		$id         	Id of contact
+	 *  @param      string  $lastname    	Lastname (TODO Not yet implemented)
+	 *  @param      string  $firstname   	Firstname (TODO Not yet implemented)
+	 *  @param      string  $ref_ext    	External reference, not given by Dolibarr
+	 *  @param		string	$email			Email
+	 *  @param		string	$ref_alias		Name alias (TODO Not yet implemented)
+	 *  @param		int		$socid			Filter on thirdparty id
+	 *  @return     int     		    	>0 if OK, <0 if KO or if two records found for same ref or idprof, 0 if not found.
+	 */
+	public function findNearest($id = 0, $lastname = '', $firstname = '', $ref_ext = '', $email = '', $ref_alias = '', $socid = 0)
+	{
+		// A rowid is known, it is a unique key so we found it
+		if ($id) {
+			return $id;
+		}
+
+		// We try to find the contact with exact matching on all fields
+		// TODO Replace this with step by step search
+		// Then search on email
+		// Then search on lastname + firstname
+		// Then search ref_ext or alias with a OR
+		$tmpcontact = new Contact($this->db);
+		$result = $tmpcontact->fetch($id, null, $ref_ext, $email, 0, $socid);
+
+		return $result;
 	}
 
 
@@ -1893,6 +1928,9 @@ class Contact extends CommonObject
 		} else {
 			if (count($this->roles) > 0) {
 				foreach ($this->roles as $keyRoles => $valRoles) {
+					if (empty($valRoles)) {
+						continue;
+					}
 					$idrole = 0;
 					if (is_array($valRoles)) {
 						$idrole = $valRoles['id'];
@@ -2038,47 +2076,47 @@ class Contact extends CommonObject
 
 		if ($mode == 2) {
 			if ($statut == '-1' || $statut == 'ST_NO') {
-				return img_action($langs->trans("StatusProspect-1"), -1, $picto).' '.$langs->trans("StatusProspect-1");
+				return img_action($langs->trans("StatusProspect-1"), '-1', $picto).' '.$langs->trans("StatusProspect-1");
 			} elseif ($statut == '0' || $statut == 'ST_NEVER') {
-				return img_action($langs->trans("StatusProspect0"), 0, $picto).' '.$langs->trans("StatusProspect0");
+				return img_action($langs->trans("StatusProspect0"), '0', $picto).' '.$langs->trans("StatusProspect0");
 			} elseif ($statut == '1' || $statut == 'ST_TODO') {
-				return img_action($langs->trans("StatusProspect1"), 1, $picto).' '.$langs->trans("StatusProspect1");
+				return img_action($langs->trans("StatusProspect1"), '1', $picto).' '.$langs->trans("StatusProspect1");
 			} elseif ($statut == '2' || $statut == 'ST_PEND') {
-				return img_action($langs->trans("StatusProspect2"), 2, $picto).' '.$langs->trans("StatusProspect2");
+				return img_action($langs->trans("StatusProspect2"), '2', $picto).' '.$langs->trans("StatusProspect2");
 			} elseif ($statut == '3' || $statut == 'ST_DONE') {
-				return img_action($langs->trans("StatusProspect3"), 3, $picto).' '.$langs->trans("StatusProspect3");
+				return img_action($langs->trans("StatusProspect3"), '3', $picto).' '.$langs->trans("StatusProspect3");
 			} else {
-				return img_action(($langs->trans("StatusProspect".$statut) != "StatusProspect".$statut) ? $langs->trans("StatusProspect".$statut) : $label, 0, $picto).' '.(($langs->trans("StatusProspect".$statut) != "StatusProspect".$statut) ? $langs->trans("StatusProspect".$statut) : $label);
+				return img_action(($langs->trans("StatusProspect".$statut) != "StatusProspect".$statut) ? $langs->trans("StatusProspect".$statut) : $label, '0', $picto).' '.(($langs->trans("StatusProspect".$statut) != "StatusProspect".$statut) ? $langs->trans("StatusProspect".$statut) : $label);
 			}
 		}
 		if ($mode == 3) {
 			if ($statut == '-1' || $statut == 'ST_NO') {
-				return img_action($langs->trans("StatusProspect-1"), -1, $picto);
+				return img_action($langs->trans("StatusProspect-1"), '-1', $picto);
 			} elseif ($statut == '0' || $statut == 'ST_NEVER') {
-				return img_action($langs->trans("StatusProspect0"), 0, $picto);
+				return img_action($langs->trans("StatusProspect0"), '0', $picto);
 			} elseif ($statut == '1' || $statut == 'ST_TODO') {
-				return img_action($langs->trans("StatusProspect1"), 1, $picto);
+				return img_action($langs->trans("StatusProspect1"), '1', $picto);
 			} elseif ($statut == '2' || $statut == 'ST_PEND') {
-				return img_action($langs->trans("StatusProspect2"), 2, $picto);
+				return img_action($langs->trans("StatusProspect2"), '2', $picto);
 			} elseif ($statut == '3' || $statut == 'ST_DONE') {
-				return img_action($langs->trans("StatusProspect3"), 3, $picto);
+				return img_action($langs->trans("StatusProspect3"), '3', $picto);
 			} else {
-				return img_action(($langs->trans("StatusProspect".$statut) != "StatusProspect".$statut) ? $langs->trans("StatusProspect".$statut) : $label, 0, $picto);
+				return img_action(($langs->trans("StatusProspect".$statut) != "StatusProspect".$statut) ? $langs->trans("StatusProspect".$statut) : $label, '0', $picto);
 			}
 		}
 		if ($mode == 4) {
 			if ($statut == '-1' || $statut == 'ST_NO') {
-				return img_action($langs->trans("StatusProspect-1"), -1, $picto).' '.$langs->trans("StatusProspect-1");
+				return img_action($langs->trans("StatusProspect-1"), '-1', $picto).' '.$langs->trans("StatusProspect-1");
 			} elseif ($statut == '0' || $statut == 'ST_NEVER') {
-				return img_action($langs->trans("StatusProspect0"), 0, $picto).' '.$langs->trans("StatusProspect0");
+				return img_action($langs->trans("StatusProspect0"), '0', $picto).' '.$langs->trans("StatusProspect0");
 			} elseif ($statut == '1' || $statut == 'ST_TODO') {
-				return img_action($langs->trans("StatusProspect1"), 1, $picto).' '.$langs->trans("StatusProspect1");
+				return img_action($langs->trans("StatusProspect1"), '1', $picto).' '.$langs->trans("StatusProspect1");
 			} elseif ($statut == '2' || $statut == 'ST_PEND') {
-				return img_action($langs->trans("StatusProspect2"), 2, $picto).' '.$langs->trans("StatusProspect2");
+				return img_action($langs->trans("StatusProspect2"), '2', $picto).' '.$langs->trans("StatusProspect2");
 			} elseif ($statut == '3' || $statut == 'ST_DONE') {
-				return img_action($langs->trans("StatusProspect3"), 3, $picto).' '.$langs->trans("StatusProspect3");
+				return img_action($langs->trans("StatusProspect3"), '3', $picto).' '.$langs->trans("StatusProspect3");
 			} else {
-				return img_action(($langs->trans("StatusProspect".$statut) != "StatusProspect".$statut) ? $langs->trans("StatusProspect".$statut) : $label, 0, $picto).' '.(($langs->trans("StatusProspect".$statut) != "StatusProspect".$statut) ? $langs->trans("StatusProspect".$statut) : $label);
+				return img_action(($langs->trans("StatusProspect".$statut) != "StatusProspect".$statut) ? $langs->trans("StatusProspect".$statut) : $label, '0', $picto).' '.(($langs->trans("StatusProspect".$statut) != "StatusProspect".$statut) ? $langs->trans("StatusProspect".$statut) : $label);
 			}
 		}
 

@@ -729,7 +729,7 @@ class FormCompany extends Form
 
 			print "\n" . '<!-- Input text for third party with Ajax.Autocompleter (selectCompaniesForNewContact) -->' . "\n";
 			print '<input type="text" size="30" id="search_' . $htmlname . '" name="search_' . $htmlname . '" value="' . $name . '" />';
-			print ajax_autocompleter(($socid ? $socid : -1), $htmlname, DOL_URL_ROOT . '/societe/ajax/ajaxcompanies.php', '', $minLength, 0);
+			print ajax_autocompleter((string) ($socid ? $socid : -1), $htmlname, DOL_URL_ROOT . '/societe/ajax/ajaxcompanies.php', '', $minLength, 0);
 			return $socid;
 		} else {
 			// Search to list thirdparties

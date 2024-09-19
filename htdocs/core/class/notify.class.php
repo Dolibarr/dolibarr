@@ -144,12 +144,14 @@ class Notify
 		'ORDER_SUPPLIER_APPROVE',
 		'ORDER_SUPPLIER_SUBMIT',
 		'ORDER_SUPPLIER_REFUSE',
+		'SHIPPING_MODIFY',
 		'SHIPPING_VALIDATE',
 		'EXPENSE_REPORT_VALIDATE',
 		'EXPENSE_REPORT_APPROVE',
 		'HOLIDAY_VALIDATE',
 		'HOLIDAY_APPROVE',
-		'ACTION_CREATE'
+		'ACTION_CREATE',
+		'CONTRACT_MODIFY'
 	);
 
 	/**
@@ -868,6 +870,13 @@ class Notify
 								$mesg .= $outputlangs->transnoentitiesnoconv("EMailTextSupplierOrderRefusedBy", $link, $user->getFullName($outputlangs));
 								$mesg .= "\n\n".$outputlangs->transnoentitiesnoconv("Sincerely").".\n\n";
 								break;
+							case 'SHIPPING_MODIFY':
+								$link = '<a href="'.$urlwithroot.'/expedition/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
+								$context_info = array_key_exists('signature', $object->context) ? $object->getLibSignedStatus() : '';
+								$dir_output = $conf->expedition->dir_output."/sending/".get_exdir(0, 0, 0, 1, $object, 'shipment');
+								$object_type = 'shipping';
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextExpeditionModified", $link, $context_info);
+								break;
 							case 'SHIPPING_VALIDATE':
 								$link = '<a href="'.$urlwithroot.'/expedition/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$dir_output = $conf->expedition->dir_output."/sending/".get_exdir(0, 0, 0, 1, $object, 'shipment');
@@ -903,6 +912,13 @@ class Notify
 								$dir_output = $conf->agenda->dir_output;
 								$object_type = 'action';
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextActionAdded", $link);
+								break;
+							case 'CONTRACT_MODIFY':
+								$link = '<a href="'.$urlwithroot.'/contrat/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
+								$context_info = array_key_exists('signature', $object->context) ? $object->getLibSignedStatus() : '';
+								$dir_output = $conf->contract->multidir_output;
+								$object_type = 'contract';
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextContractModified", $link, $context_info);
 								break;
 							default:
 								$object_type = $object->element;
@@ -1166,6 +1182,13 @@ class Notify
 						$mesg .= $langs->transnoentitiesnoconv("EMailTextSupplierOrderRefusedBy", $link, $user->getFullName($langs));
 						$mesg .= "\n\n".$langs->transnoentitiesnoconv("Sincerely").".\n\n";
 						break;
+					case 'SHIPPING_MODIFY':
+						$link = '<a href="'.$urlwithroot.'/expedition/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
+						$context_info = array_key_exists('signature', $object->context) ? $object->getLibSignedStatus() : '';
+						$dir_output = $conf->expedition->dir_output."/sending/".get_exdir(0, 0, 0, 1, $object, 'shipment');
+						$object_type = 'order_supplier';
+						$mesg = $langs->transnoentitiesnoconv("EMailTextExpeditionModified", $link, $context_info);
+						break;
 					case 'SHIPPING_VALIDATE':
 						$link = '<a href="'.$urlwithroot.'/expedition/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 						$dir_output = $conf->expedition->dir_output."/sending/".get_exdir(0, 0, 0, 1, $object, 'shipment');
@@ -1201,6 +1224,13 @@ class Notify
 						$dir_output = $conf->agenda->dir_output;
 						$object_type = 'action';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextActionAdded", $link);
+						break;
+					case 'CONTRACT_MODIFY':
+						$link = '<a href="'.$urlwithroot.'/contrat/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
+						$context_info = array_key_exists('signature', $object->context) ? $object->getLibSignedStatus() : '';
+						$dir_output = $conf->contract->multidir_output;
+						$object_type = 'contrat';
+						$mesg = $langs->transnoentitiesnoconv("EMailTextContractModified", $link, $context_info);
 						break;
 					default:
 						$object_type = $object->element;

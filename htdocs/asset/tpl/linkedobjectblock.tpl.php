@@ -38,6 +38,7 @@ $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 $langs->load("assets");
 
 $linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date', 'desc', 0, 0, 1);
+'@phan-var-force CommonObject[] $linkedObjectBlock';  // Repeat because type lost after dol_sort_array)
 
 $total = 0;
 $ilink = 0;

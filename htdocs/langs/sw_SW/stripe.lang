@@ -22,7 +22,8 @@ ToOfferALinkForOnlinePaymentOnContractLine=URL ya kutoa %s ukurasa wa malipo mta
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL ya kutoa %s ukurasa wa malipo mtandaoni wa kiasi chochote bila kitu kilichopo
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL ya kutoa %s ukurasa wa malipo mtandaoni kwa usajili wa wanachama
 ToOfferALinkForOnlinePaymentOnDonation=URL ya kutoa %s ukurasa wa malipo mtandaoni kwa malipo ya mchango
-YouCanAddTagOnUrl=Unaweza pia kuongeza kigezo cha url <b> &tag= <i> thamani </i>  </b>  kwa URL yoyote kati ya hizo (lazima tu kwa malipo ambayo hayajaunganishwa na kitu) ili kuongeza lebo yako ya maoni ya malipo. <br> Kwa URL ya malipo bila kifaa kilichopo, unaweza pia kuongeza kigezo <strong> &noidempotency=1 </strong>  kwa hivyo kiungo sawa kilicho na lebo sawa kinaweza kutumika mara kadhaa (baadhi ya njia ya malipo inaweza kupunguza malipo hadi 1 kwa kila kiungo tofauti bila kigezo hiki)
+YouCanAddTagOnUrl=You can also add url parameter <b>&tag=value</b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
+YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful of failed online payment.
 SetupStripeToHavePaymentCreatedAutomatically=Sanidi Stripe yako kwa url <b> %s </b>  kufanya malipo kuundwa kiotomatiki yanapothibitishwa na Stripe.
 AccountParameter=Vigezo vya akaunti
 UsageParameter=Vigezo vya matumizi
@@ -77,4 +78,13 @@ TERMINAL_LOCATION=Mahali (anwani) ya Vituo vya Stripe
 RequestDirectDebitWithStripe=Omba Debit ya Moja kwa moja na Stripe
 RequesCreditTransferWithStripe=Request Credit Transfer with Stripe
 STRIPE_SEPA_DIRECT_DEBIT=Washa malipo ya Debit ya Moja kwa Moja kupitia Stripe
+STRIPE_KLARNA=Enable the payments using Klarna
+STRIPE_BANCONTACT=Enable the payments using BANCONTACT
+STRIPE_IDEAL=Enable the payments using IDEAL
+STRIPE_GIROPAY=Enable the payments using GIROPAY
+STRIPE_SOFORT=Enable the payments using SOFORT
 StripeConnect_Mode=Stripe Connect mode
+ExampleOnlyForBECustomers=Only for belgium customers
+ExampleOnlyForDECustomers=Only for german customers
+ExampleOnlyForNLCustomers=Only for dutch customers
+ExampleOnlyForATBEDEITNLESCustomers=Only for customers from Austria, Belgium, Germany, Italy, Netherlands, Spain

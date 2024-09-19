@@ -515,7 +515,6 @@ class BonPrelevement extends CommonObject
 					$fk_bank_account = ($this->type == 'bank-transfer' ? getDolGlobalInt('PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT') : getDolGlobalInt('PRELEVEMENT_ID_BANKACCOUNT'));
 				}
 
-				$facs = array();
 				$amounts = array();
 				$amountsperthirdparty = array();
 
@@ -750,9 +749,10 @@ class BonPrelevement extends CommonObject
 	/**
 	 *	Get invoice or salary list (with amount or not)
 	 *
-	 *  @param 	int		$amounts 	If you want to get the amount of the order for each invoice or salary
-	 *  @param  string  $type       'salary' for type=salary
-	 *	@return	array 				Array(Id of invoices/salary, Amount to pay)
+	 *  @param	int<0,1>	$amounts 		If you want to get the amount of the order for each invoice or salary
+	 *  @param	'bank-transfer'|'salary'|'' $type	'salary' for type=salary (default = supplier invoice
+	 *	@return	array<array{int,float}>|int[]	Array(Id of invoices/salary, Amount to pay)
+	 *	@phpstan-return	($amounts is 0 ? int[] : array<array{int,float}>)
 	 */
 	private function getListInvoices($amounts = 0, $type = '')
 	{
@@ -827,8 +827,8 @@ class BonPrelevement extends CommonObject
 	 *	Returns amount waiting for direct debit payment or credit transfer payment
 	 *
 	 *	@param	string	$mode		'direct-debit' or 'bank-transfer'
-	 *  @param  string  $type        for type=salary
-	 *	@return	double	 			Return integer <O if KO, Total amount
+	 *  @param  string  $type      	for type=salary
+	 *	@return	float 	 			Return integer <O if KO, Total amount
 	 */
 	public function SommeAPrelever($mode = 'direct-debit', $type = '')
 	{
@@ -1057,7 +1057,9 @@ class BonPrelevement extends CommonObject
 				$sql .= " FROM " . MAIN_DB_PREFIX . "salary as f";
 				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "prelevement_demande as pd ON f.rowid = pd.fk_salary";
 				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "user as s ON s.rowid = f.fk_user";
-				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "user_rib as sr ON s.rowid = sr.fk_user";	// TODO Add AND sr.default_rib = 1 here
+				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "user_rib as sr ON s.rowid = sr.fk_user";
+				// TODO Add 'AND sr.default_rib = 1' here. Note: the column has been created in v21 in llx_user_rib and default to 0
+				// If we add a test on sr.default_rib = 1, we must also check we have a correct error management to stop if no default BAN is found.
 			}
 			if ($sourcetype != 'salary') {
 				if ($type != 'bank-transfer') {
@@ -1442,7 +1444,7 @@ class BonPrelevement extends CommonObject
 	/**
 	 *  Get object and lines from database
 	 *
-	 *  @param	User	$user		Object user that delete
+	 *  @param	?User	$user		Object user that delete
 	 *  @param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *  @return	int					>0 if OK, <0 if KO
 	 */
@@ -2780,7 +2782,7 @@ class BonPrelevement extends CommonObject
 	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @param		?array{string,mixed}	$arraydata				Array of data
 	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)

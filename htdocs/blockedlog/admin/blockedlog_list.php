@@ -502,6 +502,10 @@ if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 }
 print '</tr>';
 
+$checkresult = array();
+$checkdetail = array();
+$loweridinerror = 0;
+
 if (getDolGlobalString('BLOCKEDLOG_SCAN_ALL_FOR_LOWERIDINERROR')) {
 	// This is version that is faster but require more memory and report errors that are outside the filter range
 
@@ -509,9 +513,6 @@ if (getDolGlobalString('BLOCKEDLOG_SCAN_ALL_FOR_LOWERIDINERROR')) {
 	// to find the $loweridinerror.
 } else {
 	// This is version that optimize the memory (but will not report errors that are outside the filter range)
-	$loweridinerror = 0;
-	$checkresult = array();
-	$checkdetail = array();
 	if (is_array($blocks)) {
 		foreach ($blocks as &$block) {
 			$tmpcheckresult = $block->checkSignature('', 1); // Note: this make a sql request at each call, we can't avoid this as the sorting order is various
@@ -560,7 +561,7 @@ if (is_array($blocks)) {
 			}
 
 			// ID
-			print '<td>'.dol_escape_htmltag($block->id).'</td>';
+			print '<td>'.dol_escape_htmltag((string) $block->id).'</td>';
 
 			// Date
 			print '<td class="nowraponall">'.dol_print_date($block->date_creation, 'dayhour').'</td>';

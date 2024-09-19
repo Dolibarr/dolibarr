@@ -127,6 +127,7 @@ if (!defined('WEBPORTAL_NOREQUIRETRAN') || (!defined('WEBPORTAL_NOLOGIN') && !em
 if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->accessNeedLoggedUser)) {
 	$admin_error_messages = array();
 	$webportal_logged_thirdparty_account_id = isset($_SESSION["webportal_logged_thirdparty_account_id"]) && $_SESSION["webportal_logged_thirdparty_account_id"] > 0 ? $_SESSION["webportal_logged_thirdparty_account_id"] : 0;
+
 	if (empty($webportal_logged_thirdparty_account_id)) {
 		// It is not already authenticated and it requests the login / password
 		$langs->loadLangs(array("other", "help", "admin"));
@@ -193,6 +194,7 @@ if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->access
 		// We are already into an authenticated session
 		$websiteaccount = new SocieteAccount($db);
 		$result = $websiteaccount->fetch($webportal_logged_thirdparty_account_id);
+
 		if ($result <= 0) {
 			$error++;
 
@@ -208,12 +210,22 @@ if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->access
 
 		if (!$error) {
 			$user_id = getDolGlobalInt('WEBPORTAL_USER_LOGGED');
-			$result = $logged_user->fetch($user_id);
-			if ($result <= 0) {
+
+			if ($user_id <= 0) {
 				$error++;
-				$error_msg = $langs->transnoentitiesnoconv('WebPortalErrorFetchLoggedUser', $user_id);
-				dol_syslog($error_msg, LOG_ERR);
-				$context->setEventMessage($error_msg, 'errors');
+				$error_msg = $langs->transnoentitiesnoconv('WebPortalSetupNotComplete');
+				dol_syslog($error_msg, LOG_WARNING);
+				$context->setEventMessages($error_msg, null, 'errors');
+			}
+
+			if (!$error) {
+				$result = $logged_user->fetch($user_id);
+				if ($result <= 0) {
+					$error++;
+					$error_msg = $langs->transnoentitiesnoconv('WebPortalErrorFetchLoggedUser', $user_id);
+					dol_syslog($error_msg, LOG_ERR);
+					$context->setEventMessages($error_msg, null, 'errors');
+				}
 			}
 
 			if (!$error) {
@@ -243,7 +255,7 @@ if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->access
 						$context->setEventMessage($error_msg, 'errors');
 					}
 
-					if (!$error) {
+					if (!$error && $logged_member->id > 0) {
 						// get partnership
 						$logged_partnership = new WebPortalPartnership($db);
 						// @phan-suppress-next-line PhanPluginSuspiciousParamPosition

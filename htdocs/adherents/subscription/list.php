@@ -3,6 +3,7 @@
  * Copyright (C) 2003		Jean-Louis Bergamo			<jlb@j1b.org>
  * Copyright (C) 2004-2023	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +47,7 @@ $mode       = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hier
 
 $statut = (GETPOSTISSET("statut") ? GETPOST("statut", "alpha") : 1);
 $search_ref = GETPOST('search_ref', 'alpha');
-$search_type = GETPOST('search_type', 'alpha');
+$search_type = GETPOSTINT('search_type');
 $search_lastname = GETPOST('search_lastname', 'alpha');
 $search_firstname = GETPOST('search_firstname', 'alpha');
 $search_login = GETPOST('search_login', 'alpha');
@@ -168,6 +169,7 @@ if (empty($reshook)) {
 $form = new Form($db);
 $subscription = new Subscription($db);
 $adherent = new Adherent($db);
+$adht = new AdherentType($db);
 $accountstatic = new Account($db);
 
 $now = dol_now();
@@ -209,7 +211,7 @@ if ($search_ref) {
 		$sql .= " AND 1 = 2"; // Always wrong
 	}
 }
-if ($search_type) {
+if ($search_type > 0) {
 	$sql .= natural_search(array('c.fk_type'), $search_type);
 }
 if ($search_lastname) {
@@ -311,7 +313,7 @@ if ($statut != '') {
 	$param .= "&statut=".urlencode($statut);
 }
 if ($search_type) {
-	$param .= "&search_type=".urlencode($search_type);
+	$param .= "&search_type=".((int) $search_type);
 }
 if ($date_select) {
 	$param .= "&date_select=".urlencode($date_select);
@@ -384,6 +386,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 if ($search_all) {
 	$setupstring = '';
+	// @phan-suppress-next-line PhanEmptyForeach
 	foreach ($fieldstosearchall as $key => $val) {
 		$fieldstosearchall[$key] = $langs->trans($val);
 		$setupstring .= $key."=".$val.";";
@@ -446,7 +449,7 @@ if (!empty($arrayfields['d.ref']['checked'])) {
 // Type
 if (!empty($arrayfields['d.fk_type']['checked'])) {
 	print '<td class="liste_titre left">';
-	print '<input class="flat maxwidth50" type="text" name="search_type" value="'.dol_escape_htmltag($search_type).'">';
+	print $form->selectarray("search_type", $adht->liste_array(), $search_type, 1);
 	print'</td>';
 }
 

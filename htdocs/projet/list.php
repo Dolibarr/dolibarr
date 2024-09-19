@@ -232,7 +232,7 @@ $arrayfields = array();
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
-		$visible = (int) dol_eval($val['visible'], 1, 1, '1');
+		$visible = (int) dol_eval((string) $val['visible'], 1, 1, '1');
 		$arrayfields['p.'.$key] = array(
 			'label' => $val['label'],
 			'checked' => (($visible < 0) ? 0 : 1),
@@ -267,6 +267,13 @@ if (GETPOST('search_usage_event_organization')) {
 	$arrayfields['p.usage_organize_event']['checked'] = 1;
 }
 $arrayfields['p.fk_project']['enabled'] = 0;
+
+// Force this field to be visible
+if ($contextpage == 'lead') {
+	$arrayfields['p.fk_opp_status']['enabled'] = 1;
+	$arrayfields['p.fk_opp_status']['visible'] = 1;
+}
+
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
