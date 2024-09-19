@@ -1613,7 +1613,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmUserClone', $object->firstname.' '.$object->lastname), 'confirm_clone', $formquestionclone, 'yes', 'action-clone', 350, 600);
 		}
 
-    
+
 		/*
 		 * View mode
 		 */
