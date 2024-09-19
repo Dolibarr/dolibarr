@@ -2935,7 +2935,7 @@ class Form
 		}
 
 		//Price by customer
-		if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') && !empty($socid)) {
+		if ((getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && !empty($socid)) {
 			$sql .= ', pcp.rowid as idprodcustprice, pcp.price as custprice, pcp.price_ttc as custprice_ttc,';
 			$sql .= ' pcp.price_base_type as custprice_base_type, pcp.tva_tx as custtva_tx, pcp.default_vat_code as custdefault_vat_code, pcp.ref_customer as custref';
 			$selectFields .= ", idprodcustprice, custprice, custprice_ttc, custprice_base_type, custtva_tx, custdefault_vat_code, custref";
@@ -2993,7 +2993,7 @@ class Form
 		}
 
 		//Price by customer
-		if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') && !empty($socid)) {
+		if ((getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && !empty($socid)) {
 			$sql .= " LEFT JOIN  " . $this->db->prefix() . "product_customer_price as pcp ON pcp.fk_soc=" . ((int) $socid) . " AND pcp.fk_product=p.rowid";
 		}
 		// Units
@@ -3073,7 +3073,7 @@ class Form
 				if (getDolGlobalInt('MAIN_MULTILANGS')) {
 					$sql .= " OR pl.label LIKE '" . $this->db->escape($prefix . $crit) . "%'";
 				}
-				if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') && !empty($socid)) {
+				if ((getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && !empty($socid)) {
 					$sql .= " OR pcp.ref_customer LIKE '" . $this->db->escape($prefix . $crit) . "%'";
 				}
 				if (getDolGlobalString('PRODUCT_AJAX_SEARCH_ON_DESCRIPTION')) {
@@ -3431,7 +3431,7 @@ class Form
 		$labeltoshowprice = '';
 		$labeltoshowhtmlprice = '';
 		// If we need a particular price level (from 1 to n)
-		if (empty($hidepriceinlabel) && $price_level >= 1 && (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES'))) {
+		if (empty($hidepriceinlabel) && $price_level >= 1 && (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES'))) {
 			$sql = "SELECT price, price_ttc, price_base_type, tva_tx, default_vat_code";
 			$sql .= " FROM " . $this->db->prefix() . "product_price";
 			$sql .= " WHERE fk_product = " . ((int) $objp->rowid);
@@ -3502,7 +3502,7 @@ class Form
 		}
 
 		// Price by customer
-		if (empty($hidepriceinlabel) && getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
+		if (empty($hidepriceinlabel) && (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES'))) {
 			if (!empty($objp->idprodcustprice)) {
 				$found = 1;
 

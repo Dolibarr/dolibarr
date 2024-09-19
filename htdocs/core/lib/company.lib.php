@@ -121,7 +121,7 @@ function societe_prepare_head(Societe $object)
 		$head[$h][2] = 'customer';
 		$h++;
 
-		if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
+		if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 			$langs->load("products");
 			// price
 			$head[$h][0] = DOL_URL_ROOT.'/societe/price.php?socid='.$object->id;

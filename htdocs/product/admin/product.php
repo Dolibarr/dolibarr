@@ -59,6 +59,7 @@ $select_pricing_rules = array(
 	'PRODUCT_PRICE_UNIQ' => $langs->trans('PriceCatalogue'), // Unique price
 	'PRODUIT_MULTIPRICES' => $langs->trans('MultiPricesAbility'), // Several prices according to a customer level
 	'PRODUIT_CUSTOMER_PRICES' => $langs->trans('PriceByCustomer'), // Different price for each customer
+	'PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES'=>$langs->trans('PriceByCustomeAndMultiPricesAbility'), // Different price for each customer and several prices according to a customer level
 );
 $keyforparam = 'PRODUIT_CUSTOMER_PRICES_BY_QTY';
 if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1 || getDolGlobalString($keyforparam)) {
@@ -113,6 +114,7 @@ if ($action == 'other') {
 				$res = dolibarr_set_const($db, 'PRODUIT_MULTIPRICES', 0, 'chaine', 0, '', $conf->entity);
 				$res = dolibarr_set_const($db, 'PRODUIT_CUSTOMER_PRICES_BY_QTY', 0, 'chaine', 0, '', $conf->entity);
 				$res = dolibarr_set_const($db, 'PRODUIT_CUSTOMER_PRICES', 0, 'chaine', 0, '', $conf->entity);
+				$res = dolibarr_set_const($db, 'PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES', 0, 'chaine', 0, '', $conf->entity);
 				dolibarr_set_const($db, 'PRODUCT_PRICE_UNIQ', 1, 'chaine', 0, '', $conf->entity);
 			} else {
 				$multirule = explode('&', $princingrules);
@@ -585,6 +587,9 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 }
 if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
 	$current_rule = 'PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES';
+}
+if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
+	$current_rule = 'PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES';
 }
 print $form->selectarray("princingrule", $select_pricing_rules, $current_rule, 0, 0, 0, '', 1, 0, 0, '', 'maxwidth400', 1);
 print '</td>';

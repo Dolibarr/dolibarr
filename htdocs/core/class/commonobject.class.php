@@ -1887,7 +1887,7 @@ abstract class CommonObject
 			$this->thirdparty = $thirdparty;
 
 			// Use first price level if level not defined for third party
-			if (getDolGlobalString('PRODUIT_MULTIPRICES') && empty($this->thirdparty->price_level)) {
+			if ((getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && empty($this->thirdparty->price_level)) {
 				$this->thirdparty->price_level = 1;
 			}
 
