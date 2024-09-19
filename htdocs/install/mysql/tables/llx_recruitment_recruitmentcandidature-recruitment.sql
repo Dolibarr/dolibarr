@@ -41,6 +41,6 @@ CREATE TABLE llx_recruitment_recruitmentcandidature(
 	email_msgid varchar(175),				-- Do not use a too large value, it generates trouble with unique index
 	email_date datetime,
 	fk_recruitment_origin INTEGER NULL,
-  	ip varchar(250)                              --ip used to create record (for public submission page)
 	-- END MODULEBUILDER FIELDS
+  	ip varchar(250)                              --ip used to create record (for public submission page)
 ) ENGINE=innodb;
