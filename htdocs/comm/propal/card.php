@@ -1136,10 +1136,14 @@ if (empty($reshook)) {
 					require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
 					$prodcustprice = new ProductCustomerPrice($db);
 					$filter = array('t.fk_product' => $prod->id, 't.fk_soc' => $object->thirdparty->id);
+
+					// If a price per customer exist
+					$pricebycustomerexist = false;
 					$result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
 					if ($result) {
 						// If there is some prices specific to the customer
 						if (count($prodcustprice->lines) > 0) {
+							$pricebycustomerexist = true;
 							$pu_ht = price($prodcustprice->lines[0]->price);
 							$pu_ttc = price($prodcustprice->lines[0]->price_ttc);
 							$price_min =  price($prodcustprice->lines[0]->price_min);
@@ -1154,7 +1158,9 @@ if (empty($reshook)) {
 								$tva_npr = 0;
 							}*/
 						}
-					} elseif ($object->thirdparty->price_level) { // // If price per segment
+					}
+					
+					if ( !$pricebycustomerexist && $object->thirdparty->price_level) { // If price per segment
 						$pu_ht = $prod->multiprices[$object->thirdparty->price_level];
 						$pu_ttc = $prod->multiprices_ttc[$object->thirdparty->price_level];
 						$price_min = $prod->multiprices_min[$object->thirdparty->price_level];
