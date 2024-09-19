@@ -73,7 +73,7 @@ parameters:
 		- '#color.* expects int, string#'
 		- '#imap.* expects int, string#'
 		- '# (Setup|Asset|Proposals|Orders|Invoices|FactureRec|BonPrelevement|Products|Thirdparties)::_fetch\S*\(\) expects int, string#'
-		- '#(getFullName|sendTicketMessageByEmail|addItemsFact|update_price|setPhoneNumber|recur|addDepreciationLine|addline|generate|buildRumNumber|update|update_label|getSelectConditionsPaiements|select_state|listBoxes|addLineRec|literalBarcodeType)\(\) expects int, string#'
+		- '#(getFullName|sendTicketMessageByEmail|addItemsFact|update_price|recur|addDepreciationLine|addline|generate|buildRumNumber|update|update_label|getSelectConditionsPaiements|select_state|listBoxes|addLineRec|literalBarcodeType)\(\) expects int, string#'
 		- '#run_sql expects int, string#'
 		- '#on array{url: mixed} in empty\(\) does not exist.#'
 		- '#dol_copy expects string, int given#'
