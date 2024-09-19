@@ -87,5 +87,5 @@ $webPortalTheme = new WebPortalTheme();
 }
 <?php
 
-print '/* Here, the content of the common custom CSS defined into Home - Setup - Display - CSS'."*/\n";
+print '/* Here, the content of the common custom CSS defined into Home - Setup - Display - CSS */'."\n";
 print getDolGlobalString('WEBPORTAL_CUSTOM_CSS');
