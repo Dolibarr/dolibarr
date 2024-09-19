@@ -99,7 +99,6 @@ parameters:
 		- '# dol_stringtotime expects string, DateTime given.#'
 		- '# (load_fiche_titre|dol_add_file_process) expects string, null given.#'
 		- '# (show_ldap_content|projectLinesa) expects string, true given.#'
-		- '# DolEditor constructor expects string, false given.#'
 		- '# dol_eval expects string, array given.#'
 		- '#expects string, bool\|mysqli_result\|resource given.#'
 		- '#( |::)((multi)?selectarray)\(\) expects array#'
