@@ -115,7 +115,7 @@ class modTicket extends DolibarrModules
 			5 => array('TICKET_DELAY_BEFORE_FIRST_RESPONSE', 'chaine', '0', 'Maximum wanted elapsed time before a first answer to a ticket (in hours). Display a warning in tickets list if not respected.', 0),
 			6 => array('TICKET_DELAY_SINCE_LAST_RESPONSE', 'chaine', '0', 'Maximum wanted elapsed time between two answers on the same ticket (in hours). Display a warning in tickets list if not respected.', 0),
 			7 => array('TICKET_NOTIFY_AT_CLOSING', 'chaine', '0', 'Default notify contacts when closing a module', 0),
-			8 => array('TICKET_PRODUCT_CATEGORY', 'chaine', 0, 'The category of product that is being used for ticket accounting', 0),
+			8 => array('TICKET_PRODUCT_CATEGORY', 'chaine', 0, 'The category of product that is being used to find contract to link to created ticket', 0),
 			9 => array('TICKET_NOTIFICATION_EMAIL_FROM', 'chaine', getDolGlobalString('MAIN_MAIL_EMAIL_FROM'), 'Email to use by default as sender for messages sent from Dolibarr', 0),
 			10 => array('TICKET_MESSAGE_MAIL_INTRO', 'chaine', $langs->trans('TicketMessageMailIntroText'), 'Introduction text of ticket replies sent from Dolibarr', 0),
 			11 => array('TICKET_MESSAGE_MAIL_SIGNATURE', 'chaine', $default_footer, 'Signature to use by default for messages sent from Dolibarr', 0),
