@@ -1023,7 +1023,7 @@ class BonPrelevement extends CommonObject
 		// Check if there is an iban associated to bank transfer or if we take the default
 		$sql = "SELECT fk_societe_rib";
 		$sql .= " FROM " . $this->db->prefix() . "prelevement_demande as pd";
-		$sql .= " LEFT JOIN " . $this->db->prefix() . $sqlTable . " as f ON f.rowid = pd.fk_".$sqlTable;
+		$sql .= " LEFT JOIN " . $this->db->prefix() . $this->db->escape($sqlTable) . " as f ON f.rowid = pd.fk_".$this->db->escape($sqlTable);
 		$sql .= " WHERE f.entity IN (" . $this->db->escape($entity) . ')';
 
 		$resql = $this->db->query($sql);
@@ -1062,7 +1062,7 @@ class BonPrelevement extends CommonObject
 			dol_syslog(__METHOD__ . " Read invoices for did=" . ((int) $did), LOG_DEBUG);
 
 			$sql = "SELECT f.rowid, pd.rowid as pfdrowid";
-			$sql .= ", f.".$socOrUser;
+			$sql .= ", f.".$this->db->escape($socOrUser);
 			$sql .= ", pd.code_banque, pd.code_guichet, pd.number, pd.cle_rib";
 			$sql .= ", pd.amount";
 			if ($sourcetype != 'salary') {
@@ -1073,9 +1073,9 @@ class BonPrelevement extends CommonObject
 				$sql .= ", f.ref, sr.bic, sr.iban_prefix, 'FRST' as frstrecur";
 			}
 			$sql .= " FROM " . $this->db->prefix() . $sqlTable . " as f";
-			$sql .= " LEFT JOIN " . $this->db->prefix() . "prelevement_demande as pd ON f.rowid = pd.fk_".$sqlTable;
-			$sql .= " LEFT JOIN " . $this->db->prefix() . $societeOrUser." as s ON s.rowid = f.".$socOrUser;
-			$sql .= " LEFT JOIN " . $this->db->prefix() . $societeOrUser."_rib as sr ON s.rowid = sr.".$socOrUser;
+			$sql .= " LEFT JOIN " . $this->db->prefix() . "prelevement_demande as pd ON f.rowid = pd.fk_".$this->db->escape($sqlTable);
+			$sql .= " LEFT JOIN " . $this->db->prefix() . $societeOrUser." as s ON s.rowid = f.".$this->db->escape($socOrUser);
+			$sql .= " LEFT JOIN " . $this->db->prefix() . $societeOrUser."_rib as sr ON s.rowid = sr.".$this->db->escape($socOrUser);
 			if ($sourcetype != 'salary') {
 				if (!empty($societeRibID)) {
 					$sql .= " AND sr.rowid = " . intval($societeRibID);
