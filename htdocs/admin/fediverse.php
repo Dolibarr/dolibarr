@@ -272,6 +272,7 @@ print '<td>'.$langs->trans('SocialNetworkUrl').'</td>';
 print '<td><input type="text" class="flat minwidth300" name="socialnetwork_url"></td>';
 print '<td>https://mastodon.social/api/v1/accounts/id_user</td>';
 print '</tr>';
+$vartosmtpstype = 'MAIN_MAIL_SMTPS_AUTH_TYPE_EMAILING';
 
 print '<script>
 $(document).ready(function() {
@@ -307,18 +308,24 @@ print '<tr class="oddeven" id="oauth_service_div"  style="display: none;">';
 print '<td>'.$langs->trans("MAIN_MAIL_SMTPS_OAUTH_SERVICE").'</td>';
 print '<td>';
 
+$oauthservicesStringKeys = [];
+foreach ($oauthservices as $key => $value) {
+    $key = (string) $key;
+    $oauthservicesStringKeys[$key] = $value;
+}
+
 /** @phan-var-force array<string, array{label:string, data-html:string, disable?:int, css?:string}> $oauthservices */
 if (!isModEnabled('multicompany') || ($user->admin && !$user->entity)) {
-	print $form->selectarray('OAUTH_SERVICE_SOCIAL_NETWORK', $oauthservices, $conf->global->OAUTH_SERVICE_SOCIAL_NETWORK);
+    print $form->selectarray('OAUTH_SERVICE_SOCIAL_NETWORK', $oauthservicesStringKeys, (string) $conf->global->OAUTH_SERVICE_SOCIAL_NETWORK);
 } else {
-	$selectedKey = $oauthservices[getDolGlobalString('OAUTH_SERVICE_SOCIAL_NETWORK')];
-	$text = isset($oauthservices[$selectedKey]) ? $oauthservices[$selectedKey]['label'] : '';
-	if (empty($text)) {
-		$text = $langs->trans("Undefined");
-	}
-	$htmltext = $langs->trans("ContactSuperAdminForChange");
-	print $form->textwithpicto($text, $htmltext, 1, 'superadmin');
-	print '<input type="hidden" name="OAUTH_SERVICE_SOCIAL_NETWORK" value="'.$selectedKey.'">';
+    $selectedKey = (string) getDolGlobalString('OAUTH_SERVICE_SOCIAL_NETWORK');
+    $text = isset($oauthservicesStringKeys[$selectedKey]) ? $oauthservicesStringKeys[$selectedKey]['label'] : '';
+    if (empty($text)) {
+        $text = $langs->trans("Undefined");
+    }
+    $htmltext = $langs->trans("ContactSuperAdminForChange");
+    print $form->textwithpicto($text, $htmltext, 1, 'superadmin');
+    print '<input type="hidden" name="OAUTH_SERVICE_SOCIAL_NETWORK" value="'.$selectedKey.'">';
 }
 print '</td>';
 print '</tr>';
