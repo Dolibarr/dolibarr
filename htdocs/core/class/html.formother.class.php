@@ -524,13 +524,13 @@ class FormOther
 		if (!empty($user->socid)) {
 			$sql_usr .= " AND u.fk_soc = ".((int) $user->socid);
 		}
-		if (getDolGlobalString('USER_HIDE_NONEMPLOYEE_IN_COMBOBOX')) {
+		if (getDolUserString('USER_HIDE_NONEMPLOYEE_IN_COMBOBOX', getDolGlobalString('USER_HIDE_NONEMPLOYEE_IN_COMBOBOX'))) {
 			$sql_usr .= " AND u.employee <> 0";
 		}
-		if (getDolGlobalString('USER_HIDE_EXTERNAL_IN_COMBOBOX')) {
+		if (getDolUserString('USER_HIDE_EXTERNAL_IN_COMBOBOX', getDolGlobalString('USER_HIDE_EXTERNAL_IN_COMBOBOX'))) {
 			$sql_usr .= " AND u.fk_soc IS NULL";
 		}
-		if (getDolGlobalString('USER_HIDE_INACTIVE_IN_COMBOBOX')) {
+		if (getDolUserString('USER_HIDE_INACTIVE_IN_COMBOBOX', getDolGlobalString('USER_HIDE_INACTIVE_IN_COMBOBOX'))) {	// Can be set in setup of module User.
 			$sql_usr .= " AND u.statut <> 0";
 		}
 
@@ -1211,7 +1211,7 @@ class FormOther
 
 
 	/**
-	 * 	Get array with HTML tabs with boxes of a particular area including personalized choices of user.
+	 * 	Get array with HTML tabs with widgets/boxes of a particular area including personalized choices of user.
 	 *  Class 'Form' must be known.
 	 *
 	 * 	@param	   User         $user		 Object User
@@ -1237,7 +1237,13 @@ class FormOther
 			if (empty($user->conf->$confuserzone) || $box->fk_user == $user->id) {
 				$boxidactivatedforuser[$box->id] = $box->id; // We keep only boxes to show for user
 			}
+
+			if (!empty($box->lang)) {
+				$langs->loadLangs(array($box->lang));
+				$box->boxlabel = $langs->transnoentitiesnoconv($box->boxlabel);
+			}
 		}
+
 
 		// Define selectboxlist
 		$arrayboxtoactivatelabel = array();
@@ -1248,6 +1254,7 @@ class FormOther
 				if (!empty($boxidactivatedforuser[$box->id])) {
 					continue; // Already visible for user
 				}
+
 				$label = $langs->transnoentitiesnoconv($box->boxlabel);
 				//if (preg_match('/graph/',$box->class)) $label.=' ('.$langs->trans("Graph").')';
 				if (preg_match('/graph/', $box->class) && $conf->browser->layout != 'phone') {
