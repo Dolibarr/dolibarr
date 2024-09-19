@@ -2118,6 +2118,9 @@ if ($action == 'create' || $action == 'adduserldap') {
 					)
 				);
 				//clone user
+				$cloneButtonId = '';
+				$cloneUserUrl = '';
+
 				if (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)) {
 					$cloneUserUrl = '';
 					$cloneButtonId = 'action-clone';
