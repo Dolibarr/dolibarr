@@ -213,7 +213,7 @@ if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->access
 
 			if ($user_id <= 0) {
 				$error++;
-				$error_msg = $langs->transnoentitiesnoconv('WebPortalSetupNotComplete', $user_id);
+				$error_msg = $langs->transnoentitiesnoconv('WebPortalSetupNotComplete');
 				dol_syslog($error_msg, LOG_WARNING);
 				$context->setEventMessages($error_msg, null, 'errors');
 			}
