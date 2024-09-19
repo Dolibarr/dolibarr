@@ -74,6 +74,7 @@ if (!$sortfield) {
 $selected_cat = GETPOST('search_categ', 'intcomma');
 $selected_catsoc = GETPOST('search_categ_soc', 'intcomma');
 $selected_soc = GETPOST('search_soc', 'intcomma');
+$selected_commercial = GETPOST('search_commercial', 'int');
 $typent_id = GETPOST('typent_id', 'int');
 $subcat = false;
 if (GETPOST('subcat', 'alpha') === 'yes') {
@@ -406,7 +407,10 @@ if ($modecompta == 'CREANCES-DETTES') {
 	if ($typent_id > 0) {
 		$sql .= " AND soc.fk_typent = ".((int) $typent_id);
 	}
-
+	if ($selected_commercial > 0) {
+		$sql.= " AND EXISTS (SELECT sc.rowid FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE f.fk_soc = sc.fk_soc";
+		$sql.= " AND sc.fk_user = ".$selected_commercial.")";
+	}
 	$sql .= " AND f.entity IN (".getEntity('invoice').")";
 
 	$parameters = array();
@@ -486,6 +490,9 @@ if ($modecompta == 'CREANCES-DETTES') {
 	print '<br>';
 	print img_picto('', 'company', 'class="pictofixedwidth"');
 	print $form->select_company($selected_soc, 'search_soc', '', $langs->trans("ThirdParty"));
+	print '&nbsp; &nbsp;';
+	print $langs->trans("Commercial").': ';
+	print $form->select_dolusers($selected_commercial, 'search_commercial', 1);
 	print '</td>';
 
 	print '<td colspan="5" class="right">';
