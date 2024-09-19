@@ -891,27 +891,23 @@ class Form
                     jQuery(".' . $cssclass . '").click(function() {
                         initCheckForSelect(1, "' . $name . '", "' . $cssclass . '");
                     });
-                        jQuery(".' . $name . 'select").change(function() {
-        			var massaction = $( this ).val();
-        			var urlform = $( this ).closest("form").attr("action").replace("#show_files","");
-        			if (massaction == "builddoc")
-                    {
-                        urlform = urlform + "#show_files";
-    	            }
-        			$( this ).closest("form").attr("action", urlform);
-                    console.log("we select a mass action name=' . $name . ' massaction="+massaction+" - "+urlform);
-        	        /* Warning: if you set submit button to disabled, post using Enter will no more work if there is no other button */
-        			if ($(this).val() != \'0\')
-    	  			{
+                    jQuery(".' . $name . 'select").change(function() {
+        				var massaction = $( this ).val();
+        				var urlform = $( this ).closest("form").attr("action").replace("#show_files","");
+        				if (massaction == "builddoc") {
+                        	urlform = urlform + "#show_files";
+    	            	}
+        				$( this ).closest("form").attr("action", urlform);
+                    	console.log("we select a mass action name=' . $name . ' massaction="+massaction+" - "+urlform);
+        	        	/* Warning: if you set submit button to disabled, post using Enter will no more work if there is no other button */
+        				if ($(this).val() != \'0\') {
                                         jQuery(".' . $name . 'confirmed").prop(\'disabled\', false);
 										jQuery(".' . $name . 'other").hide();	/* To disable if another div was open */
                                         jQuery(".' . $name . '"+massaction).show();
-    	  			}
-    	  			else
-    	  			{
+    	  				} else {
                                         jQuery(".' . $name . 'confirmed").prop(\'disabled\', true);
 										jQuery(".' . $name . 'other").hide();	/* To disable any div open */
-    	  			}
+    	  				}
     	        });
         	});
     		</script>
