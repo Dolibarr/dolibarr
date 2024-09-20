@@ -1260,7 +1260,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 		<?php } ?>
 	});
 	<?php
-	$reshook = $hookmanager->executeHooks('objectlinecreatesupplierorderlineextrafieldselected', $parameters, $object, $action);
+	$reshook = $hookmanager->executeHooks('objectlineCreateSupplierOrderProductSelected', $parameters, $object, $action);
 	?>
 	/* Function to set fields visibility after selecting a free product */
 	function setforfree() {
