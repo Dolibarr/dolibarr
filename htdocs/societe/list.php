@@ -2181,8 +2181,8 @@ while ($i < $imaxinloop) {
 		}
 		// Note public
 		if (!empty($arrayfields['s.note_public']['checked'])) {
-			print '<td class="sensiblehtmlcontent center">';
-			print dolPrintHTML($obj->note_public);
+			print '<td class="flat maxwidth250imp">';
+			print dolPrintHTML(dolGetFirstLineOfText($obj->note_public), 5);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2191,7 +2191,7 @@ while ($i < $imaxinloop) {
 		// Note private
 		if (!empty($arrayfields['s.note_private']['checked'])) {
 			print '<td class="flat maxwidth250imp">';
-			print dolPrintHTML($obj->note_private);
+			print dolPrintHTML(dolGetFirstLineOfText($obj->note_private), 5);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
