@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
  *
  * @param	Project	$project	Object related to tabs
  * @param	string	$moreparam	More param on url
- * @return	array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function project_prepare_head(Project $project, $moreparam = '')
 {
@@ -82,7 +82,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 		} else {
 			require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 			$taskstatic = new Task($db);
-			$nbTasks = count($taskstatic->getTasksArray(0, 0, $project->id, 0, 0));
+			$nbTasks = count($taskstatic->getTasksArray(null, null, $project->id, 0, 0));
 			dol_setcache($cachekey, $nbTasks, 120);	// If setting cache fails, this is not a problem, so we do not test result.
 		}
 		$head[$h][0] = DOL_URL_ROOT.'/projet/tasks.php?id='.((int) $project->id).($moreparam ? '&'.$moreparam : '');
@@ -370,7 +370,7 @@ function project_prepare_head(Project $project, $moreparam = '')
  * Prepare array with list of tabs
  *
  * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function task_prepare_head($object)
 {
@@ -477,7 +477,7 @@ function task_prepare_head($object)
  *
  * @param	string	$mode		Mode
  * @param   string  $fuser      Filter on user
- * @return  array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function project_timesheet_prepare_head($mode, $fuser = null)
 {
@@ -523,7 +523,7 @@ function project_timesheet_prepare_head($mode, $fuser = null)
 /**
  * Prepare array with list of tabs
  *
- * @return  array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function project_admin_prepare_head()
 {
