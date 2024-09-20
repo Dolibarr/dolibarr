@@ -4093,7 +4093,7 @@ class Form
 					'type' => $outtype,
 					'duration_value' => $outdurationvalue,
 					'duration_unit' => $outdurationunit,
-					'disabled' => (empty($objp->idprodfournprice) ? true : false),
+					'disabled' => empty($objp->idprodfournprice),
 					'description' => $objp->description
 				);
 				if (isModEnabled('multicurrency')) {
