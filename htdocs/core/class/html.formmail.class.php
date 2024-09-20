@@ -499,7 +499,7 @@ class FormMail extends Form
 
 			$modelmail_array = array();
 			if ($this->param['models'] != 'none') {
-				$result = $this->fetchAllEMailTemplate($this->param["models"], $user, $outputlangs);	// Fill $this->lines_model
+				$result = $this->fetchAllEMailTemplate($this->param["models"], $user, $outputlangs);
 				if ($result < 0) {
 					setEventMessages($this->error, $this->errors, 'errors');
 				}
@@ -1514,16 +1514,21 @@ class FormMail extends Form
 	 * Return HTML code for selection of email layout
 	 *
 	 * @param   string      $htmlContent    HTML name of WYSIWYG field to fill
-	 * @return 	string      				HTML for model email boxes
+	 * @return  string                      HTML for model email boxes
 	 */
 	public function getModelEmailTemplate($htmlContent = 'message')
 	{
-		global $langs;
+		global $websitepage, $langs, $user;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/emaillayout.lib.php';
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 
-		$out = '<div id="template-selector" class="template-container hidden">';
+		// Fetch blogs
+		$websitepage = new WebsitePage($this->db);
+		$arrayofblogs = $websitepage->fetchAll('', 'DESC', 'date_creation', 0, 0, array('type_container' => 'blogpost'));
+
+		$out = '<div id="template-selector" class="template-container">';
 		$templates = array(
 			'empty' => 'empty',
 		);
@@ -1546,35 +1551,63 @@ class FormMail extends Form
 		}
 		$out .= '</div>';
 
+		// Prepare the array for multiselect
+		$blogArray = array();
+		if (!empty($arrayofblogs)) {
+			foreach ($arrayofblogs as $blog) {
+				$blogArray[$blog->id] = substr(htmlentities($blog->title), 0, 30);
+			}
+		}
+
+		// Use the multiselect array function to create the dropdown
+		$out .= '<div id="post-dropdown-container" style="display:none;">';
+		$out .= '<label for="blogpost-select">Select Posts: </label>';
+		$out .= self::multiselectarray('blogpost-select', $blogArray);
+		$out .= '</div>';
+
 		$out .= '<script type="text/javascript">
-			$(document).ready(function() {
-				$(".template-option").click(function() {
-					var template = $(this).data("template");
-					var subject = jQuery("#subject").val();
-					var fromtype = jQuery("#fromtype").val();
-					var sendto = jQuery("#sendto").val();
-					var sendtocc = jQuery("#sendtocc").val();
-					var sendtoccc = jQuery("#sendtoccc").val();
+      $(document).ready(function() {
+        $(".template-option").click(function() {
+          var template = $(this).data("template");
+          var subject = jQuery("#subject").val();
+          var fromtype = jQuery("#fromtype").val();
+          var sendto = jQuery("#sendto").val();
+          var sendtocc = jQuery("#sendtocc").val();
+          var sendtoccc = jQuery("#sendtoccc").val();
 
 					console.log("We choose a layout for email template=" + template + ", subject="+subject);
 
-					$(".template-option").removeClass("selected");
-					$(this).addClass("selected");
+				console.log("We choose a layout for email template " + template);
 
-					var contentHtml = $(this).data("content");
-					var csrfToken = "'.newToken().'";
+				$(".template-option").removeClass("selected");
+				$(this).addClass("selected");
 
-					// Remplacer la variable de substitution dans le contenu HTML
-					contentHtml = contentHtml.replace(/__SUBJECT__/g, subject);
+				var subject = $("#sujet").val();
 
-					// Envoyer le contenu HTML à process_template.php pour traitement PHP
+				var contentHtml = $(this).data("content");
+				contentHtml = contentHtml.replace(/__SUBJECT__/g, subject);
+
+				if (template === "news") {
+					$("#post-dropdown-container").show();
+					console.log("Displaying dropdown for news template");
+				} else {
+					$("#post-dropdown-container").hide();
+
+					var csrfToken = "' .newToken().'";
 					$.ajax({
 						type: "POST",
 						url: "'.DOL_URL_ROOT.'/core/ajax/mailtemplate.php",
-						data: { template: template, subject: subject, fromtype: fromtype, sendto: sendto, sendtocc: sendtocc, sendtoccc: sendtoccc, content: contentHtml, token: csrfToken },
+						data: {  content: contentHtml, token: csrfToken },
+						url: "/core/ajax/mailtemplate.php",
+						data: {
+              template: template, subject: subject, fromtype: fromtype, sendto: sendto, sendtocc: sendtocc, sendtoccc: sendtoccc,
+							content: contentHtml,
+							selectedPosts: "[]",
+							token: csrfToken
+						},
 						success: function(response) {
-							jQuery("#'.dol_sanitizeKeyCode($htmlContent).'").val(response);
-							var editorInstance = CKEDITOR.instances["'.dol_sanitizeKeyCode($htmlContent).'"];
+							jQuery("#'.$htmlContent.'").val(response);
+							var editorInstance = CKEDITOR.instances["'.$htmlContent.'"];
 							if (editorInstance) {
 								editorInstance.setData(response);
 							}
@@ -1583,9 +1616,58 @@ class FormMail extends Form
 							console.error("An error occurred: " + xhr.responseText);
 						}
 					});
-				});
+				}
 			});
-		</script>';
+
+			$("#blogpost-select").change(function() {
+				var selectedIds = $(this).val();
+				var contentHtml = $(".template-option.selected").data("content");
+
+				updateSelectedPostsContent(contentHtml, selectedIds);
+			});
+
+			function updateSelectedPostsContent(contentHtml, selectedIds) {
+				var csrfToken = "' .newToken().'";
+				$.ajax({
+					type: "POST",
+					url: "/core/ajax/getnews.php",
+					data: {
+						selectedIds: JSON.stringify(selectedIds),
+						token : csrfToken
+					},
+					success: function(response) {
+						var selectedPosts = JSON.parse(response);
+						var subject = $("#sujet").val();
+
+						contentHtml = contentHtml.replace(/__SUBJECT__/g, subject);
+
+						$.ajax({
+							type: "POST",
+							url: "/core/ajax/mailtemplate.php",
+							data: {
+								content: contentHtml,
+								selectedPosts: selectedIds.join(","),
+								token: csrfToken
+							},
+							success: function(response) {
+								jQuery("#'.$htmlContent.'").val(response);
+								var editorInstance = CKEDITOR.instances["'.$htmlContent.'"];
+								if (editorInstance) {
+									editorInstance.setData(response);
+								}
+							},
+							error: function(xhr, status, error) {
+								console.error("An error occurred: " + xhr.responseText);
+							}
+						});
+					},
+					error: function(xhr, status, error) {
+						console.error("An error occurred: " + xhr.responseText);
+					}
+				});
+			}
+		});
+	</script>';
 
 		return $out;
 	}

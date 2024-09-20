@@ -1488,7 +1488,7 @@ class BOM extends CommonObject
 						$reg = array();
 						$qtyhourservice = 0;
 						if (preg_match('/^(\d+)([a-z]+)$/', $defaultdurationofservice, $reg)) {
-							$qtyhourservice = convertDurationtoHour($reg[1], $reg[2]);
+							$qtyhourservice = convertDurationtoHour((int) $reg[1], $reg[2]);
 						}
 
 						if ($qtyhourservice) {

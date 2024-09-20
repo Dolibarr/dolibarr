@@ -148,6 +148,10 @@ class RecruitmentCandidature extends CommonObject
 	public $status;
 	// END MODULEBUILDER PROPERTIES
 
+	/**
+	 * @var string IP address
+	 */
+	public $ip;
 
 	/**
 	 * Constructor

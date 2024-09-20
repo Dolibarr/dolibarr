@@ -44,12 +44,7 @@ require_once '../../main.inc.php';
 require_once '../lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-
-// There is no permission test on this component for the moment. Test will be added when knowing which data it read.
-
-// TODO $selectedPosts is not initialised, i set it to '' but this is surely a bug and not the expected behaviour.
-// Should be set to list of last news...
-$selectedPosts = '';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';
 
 
 /*
@@ -60,12 +55,16 @@ top_httphead();
 
 // TODO Replace with ID of template
 if (GETPOSTISSET('content')) {
-	$content = GETPOST('content');
+	$content = filter_input(INPUT_POST, 'content', FILTER_UNSAFE_RAW);
 
-	if (!empty($selectedPosts)) {
+	$selectedPostsStr = GETPOST('selectedPosts', 'alpha');
+	$selectedPosts = explode(',', $selectedPostsStr);
+
+	if (is_array($selectedPosts) && !empty($selectedPosts)) {
 		$newsList = '';
 
-		foreach ($selectedPosts as $post) {
+		foreach ($selectedPosts as $postId) {
+			$post = getNewsDetailsById($postId);
 			$newsList .= '<div style="display: flex; align-items: flex-start; justify-content: flex-start; width: 100%; max-width: 800px; margin-top: 20px;margin-bottom: 50px; padding: 20px;">
                             <div style="flex-grow: 1; margin-right: 30px; max-width: 600px; margin-left: 100px;">
                                 <h2 style="margin: 0; font-size: 1.5em;">' . htmlentities($post['title']) . '</h2>

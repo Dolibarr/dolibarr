@@ -42,6 +42,32 @@ const PREFIXES = [
 	'php' => ['/* ', ' * ', ' */', '<?php'],
 ];
 
+
+/**
+ * Expand tabs in string to spaces.
+ *
+ * @param $str      String in which to expand the tabs to spaces
+ * @param $tabWidth Width to use for a tabstop
+ *
+ * @return string   Expanded string value.
+ */
+function expandTabs($str, $tabWidth)
+{
+	$expanded = '';
+	$col = 0;
+	$len = mb_strlen($str);
+	for ($i = 0; $i < $len; $i++) {
+		if ($str[$i] == "\t") {
+			$expanded .= str_repeat(' ', $tabWidth - ($col % $tabWidth));
+			$col += $tabWidth - ($col % $tabWidth);
+		} else {
+			$expanded .= $str[$i];
+			$col++;
+		}
+	}
+	return $expanded;
+}
+
 /**
  * Update or add copyright notice in a file
  *
@@ -70,9 +96,31 @@ function updateCopyrightNotice($filename, $fileType, $name, $email)
 	$n = 50;
 	$lines = implode('', array_slice(file($filename), 0, $n));
 
-	// Define the regex pattern for matching copyright notices
-	$pattern = "~(?:{$r_prefix0}|{$r_prefix1})Copyright \(C\)\s+(?:(?:\d{4}-)?(?<year>\d{4}))\s+{$r_name}\s*\<{$r_email}>~";
+	// Based on the tendency to limit the length of the spacing between the name
+	// and email to the smallest one, determine the biggest offset from the start
+	// of a name to the start of the email, and use that for the current name/email
+	// offset if it is sufficient.
 
+	// Pattern to match any copyright already present
+	$allpattern = "~(?:{$r_prefix0}|{$r_prefix1})Copyright \(C\)\s+(?:(?:\d{4}-)?(?:\d{4}))\s+(\S.*)<\S+>~";
+	// Set minimum offset based of width of new name
+	$nameStartToMailStartOffset = 4 * (int) ((mb_strlen($r_name) + 4) / 4);
+
+	if (preg_match_all($allpattern, $lines, $allmatches)) {
+		foreach ($allmatches[1] as $nameAndSpaces) {
+			//print $nameAndSpaces."\n";
+			$nameAndSpaces = expandTabs($nameAndSpaces, 4);
+			$currentOffset = mb_strlen($nameAndSpaces);
+			$currentOffset = 4 * (int) ((3 + $currentOffset) / 4);
+			//print "Other offset $nameAndSpaces: $currentOffset\n";
+			if ($currentOffset > $nameStartToMailStartOffset) {
+				$nameStartToMailStartOffset = $currentOffset;
+			}
+		}
+	}
+
+	// Pattern to match the line matching the current developer
+	$pattern = "~(?:{$r_prefix0}|{$r_prefix1})Copyright \(C\)\s+(?:(?:\d{4}-)?(?<year>\d{4}))\s+{$r_name}\s*\<{$r_email}>~";
 	// Check if the lines match the pattern
 	$matches = array();
 	if (preg_match($pattern, $lines, $matches)) {
@@ -90,7 +138,8 @@ function updateCopyrightNotice($filename, $fileType, $name, $email)
 		// If the existing year is the same, no need to update
 	} else {
 		// Adjust tabs for proper alignment
-		$emailTabs = str_repeat("\t", (int) (max(0, (31 - mb_strlen($name)) / 4)));
+		print "Offset:".$nameStartToMailStartOffset."\n";
+		$emailTabs = str_repeat("\t", (int) (max(0, ($nameStartToMailStartOffset + 4 - mb_strlen($name)) / 4)));
 
 		// No match found, add a new line to the header
 		$newNotice = "Copyright (C) " . date('Y') . "\t\t" . $name . $emailTabs . "<" . $email . ">";
@@ -113,7 +162,8 @@ function updateCopyrightNotice($filename, $fileType, $name, $email)
 		}
 
 		// Write the updated content back to the file
-		file_put_contents($filename, $fileContent);
+		//file_put_contents($filename, $fileContent);
+		print $fileContent;
 		return true; // Change detected
 	}
 

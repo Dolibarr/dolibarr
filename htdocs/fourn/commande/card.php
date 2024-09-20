@@ -371,13 +371,6 @@ if (empty($reshook)) {
 
 			$result = $object->setStatus($user, $newstatus);
 			if ($result > 0) {
-				// Currently the "Re-open" also remove the billed flag because there is no button "Set unpaid" yet.
-				$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur';
-				$sql .= ' SET billed = 0';
-				$sql .= ' WHERE rowid = '.((int) $object->id);
-
-				$resql = $db->query($sql);
-
 				if ($newstatus == 0) {
 					$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur';
 					$sql .= ' SET fk_user_approve = null, fk_user_approve2 = null, date_approve = null, date_approve2 = null';
@@ -403,6 +396,13 @@ if (empty($reshook)) {
 	 */
 	if ($action == 'classifybilled' && $usercancreate) {
 		$ret = $object->classifyBilled($user);
+		if ($ret < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
+
+	if ($action == 'classifyunbilled' && $usercancreate) {
+		$ret = $object->classifyUnBilled($user);
 		if ($ret < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -628,7 +628,7 @@ if (empty($reshook)) {
 					($price_base_type == 'TTC' ? $pu : 0),
 					$type,
 					$tva_npr,
-					'',
+					0,
 					$date_start,
 					$date_end,
 					$array_options,
@@ -671,6 +671,7 @@ if (empty($reshook)) {
 
 			if (GETPOST('price_ht') != '' || GETPOST('multicurrency_price_ht') != '') {
 				$pu_ht = price2num($price_ht, 'MU'); // $pu_ht must be rounded according to settings
+				$pu_ttc = '';
 			} else {
 				$pu_ttc = price2num(GETPOST('price_ttc'), 'MU');
 				$pu_ht = price2num((float) $pu_ttc / (1 + ((float) $tva_tx / 100)), 'MU'); // $pu_ht must be rounded according to settings
@@ -678,7 +679,7 @@ if (empty($reshook)) {
 			$price_base_type = 'HT';
 			$pu_ht_devise = price2num($price_ht_devise, 'CU');
 
-			$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, $ref_supplier, $remise_percent, $price_base_type, $pu_ttc, $type, '', '', $date_start, $date_end, $array_options, $fk_unit, $pu_ht_devise);
+			$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, $ref_supplier, $remise_percent, $price_base_type, $pu_ttc, $type, 0, 0, $date_start, $date_end, $array_options, $fk_unit, $pu_ht_devise);
 		}
 
 		//print "xx".$tva_tx; exit;
@@ -1123,6 +1124,7 @@ if (empty($reshook)) {
 
 	// Action clone object
 	if ($action == 'confirm_clone' && $confirm == 'yes' && $usercancreate) {
+		// @phan-suppress-next-line PhanPluginBothLiteralsBinaryOp
 		if (1 == 0 && !GETPOST('clone_content') && !GETPOST('clone_receivers')) {
 			setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 		} else {
@@ -1398,8 +1400,8 @@ if (empty($reshook)) {
 									'HT',
 									0,
 									$lines[$i]->product_type,
-									'',
-									'',
+									0,
+									0,
 									null,
 									null,
 									$array_option,
@@ -1529,6 +1531,8 @@ if ($action == 'create') {
 	$currency_code = $conf->currency;
 
 	$societe = '';
+	$objectsrc = null;
+
 	if ($socid > 0) {
 		$societe = new Societe($db);
 		$societe->fetch($socid);
@@ -1575,6 +1579,7 @@ if ($action == 'create') {
 
 		$projectid = (!empty($objectsrc->fk_project) ? $objectsrc->fk_project : '');
 		$ref_client = (!empty($objectsrc->ref_client) ? $objectsrc->ref_client : '');
+		$fk_account = 0;
 		if ($origin == "commande") {
 			$cond_reglement_id = 0;
 			$mode_reglement_id = 0;
@@ -1658,7 +1663,7 @@ if ($action == 'create') {
 		print '<input type="hidden" name="originmulticurrency_tx" value="'.$currency_tx.'">';
 	}
 
-	print dol_get_fiche_head('');
+	print dol_get_fiche_head(array());
 
 	// Call Hook tabContentCreateSupplierOrder
 	$parameters = array();
@@ -1679,7 +1684,7 @@ if ($action == 'create') {
 			print '<input type="hidden" name="socid" value="'.$societe->id.'">';
 		} else {
 			$filter = '((s.fournisseur:=:1) AND (s.status:=:1))';
-			print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company((empty($socid) ? '' : $socid), 'socid', $filter, 'SelectThirdParty', 1, 0, null, 0, 'minwidth175 maxwidth500 widthcentpercentminusxx');
+			print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company((empty($socid) ? '' : $socid), 'socid', $filter, 'SelectThirdParty', 1, 0, array(), 0, 'minwidth175 maxwidth500 widthcentpercentminusxx');
 			// reload page to retrieve customer information
 			if (!getDolGlobalString('RELOAD_PAGE_ON_SUPPLIER_CHANGE_DISABLED')) {
 				print '<script>
@@ -1701,7 +1706,7 @@ if ($action == 'create') {
 			// Discounts for third party
 			print '<tr><td>'.$langs->trans('Discounts').'</td><td>';
 
-			$absolute_discount = $societe->getAvailableDiscounts('', '', 0, 1);
+			$absolute_discount = $societe->getAvailableDiscounts(null, '', 0, 1);
 
 			$thirdparty = $societe;
 			$discount_type = 1;
@@ -2118,8 +2123,8 @@ if ($action == 'create') {
 			$filtercreditnote = "fk_invoice_supplier_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS PAID)%')";
 		}
 
-		$absolute_discount = $societe->getAvailableDiscounts('', $filterabsolutediscount, 0, 1);
-		$absolute_creditnote = $societe->getAvailableDiscounts('', $filtercreditnote, 0, 1);
+		$absolute_discount = $societe->getAvailableDiscounts(null, $filterabsolutediscount, 0, 1);
+		$absolute_creditnote = $societe->getAvailableDiscounts(null, $filtercreditnote, 0, 1);
 		$absolute_discount = price2num($absolute_discount, 'MT');
 		$absolute_creditnote = price2num($absolute_creditnote, 'MT');
 
@@ -2627,6 +2632,11 @@ if ($action == 'create') {
 					}
 				}
 
+				// Classify unbilled manually
+				if ($usercancreate && $object->billed > 0 && $object->statut > $object::STATUS_DRAFT) {
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=classifyunbilled&token='.newToken().'">'.$langs->trans("ClassifyUnbilled").'</a>';
+				}
+
 				// Clone
 				if ($usercancreate) {
 					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$object->socid.'&amp;action=clone&amp;token='.newToken().'&amp;object=order">'.$langs->trans("ToClone").'</a>';
@@ -2707,7 +2717,7 @@ if ($action == 'create') {
 			$somethingshown = $formfile->numoffiles;
 
 			// Show links to link elements
-			$linktoelem = $form->showLinkToObjectBlock($object, null, array('supplier_order', 'order_supplier'));
+			$linktoelem = $form->showLinkToObjectBlock($object, array(), array('supplier_order', 'order_supplier'));
 			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 			print '</div><div class="fichehalfright">';
@@ -2768,15 +2778,16 @@ if ($action == 'create') {
 			$ws_key      = $object->thirdparty->webservices_key;
 			$ws_user     = GETPOST('ws_user', 'alpha');
 			$ws_password = GETPOST('ws_password', 'alpha');
+			$error_occurred = false;
 
 			// NS and Authentication parameters
 			$ws_ns = 'http://www.dolibarr.org/ns/';
 			$ws_authentication = array(
-			'dolibarrkey' => $ws_key,
-			'sourceapplication' => 'DolibarrWebServiceClient',
-			'login' => $ws_user,
-			'password' => $ws_password,
-			'entity' => ''
+				'dolibarrkey' => $ws_key,
+				'sourceapplication' => 'DolibarrWebServiceClient',
+				'login' => $ws_user,
+				'password' => $ws_password,
+				'entity' => ''
 			);
 
 			print load_fiche_titre($langs->trans('CreateRemoteOrder'), '');
@@ -2870,7 +2881,7 @@ if ($action == 'create') {
 							// Check the result code
 							$status_code = $result_product["result"]["result_code"];
 							if (empty($status_code)) { //No result, check error str
-								setEventMessages($langs->trans("Error")." SOAP '".$soapclient_order->error_str."'", null, 'errors');
+								setEventMessages($langs->trans("Error")." SOAP '".$soapclient_product->error_str."'", null, 'errors');
 							} elseif ($status_code != "OK") { //Something went wrong
 								if ($status_code == "NOT_FOUND") {
 									setEventMessages($line_id.$langs->trans("SupplierMissingRef")." '".$ref_supplier."'", null, 'warnings');
