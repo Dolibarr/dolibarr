@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
 
 /**
- * Check if the object exceded the number of posts for a specific ip
+ * Check if the object exceeded the number of posts for a specific ip
  * @param  object    $object         Object to check
  * @param  int       $nb_post_max    Number max of posts
  *
