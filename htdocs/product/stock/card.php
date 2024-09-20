@@ -705,7 +705,7 @@ if ($action == 'create') {
 			if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 				$sql .= ",fk_unit";
 			}
-			$sql .= " ,(ps.reel * p.pmp) as svalue";
+			$sql .= ", (ps.reel * p.pmp) as svalue";
 			// Add fields from hooks
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
