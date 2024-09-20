@@ -1072,7 +1072,6 @@ return [
         'htdocs/webservices/server_contact.php' => ['PhanPluginUnknownArrayFunctionParamType', 'PhanPluginUnknownArrayFunctionReturnType', 'PhanTypeMismatchProperty', 'PhanUndeclaredProperty'],
         'htdocs/webservices/server_invoice.php' => ['PhanPluginUnknownArrayFunctionParamType', 'PhanPluginUnknownArrayFunctionReturnType', 'PhanPossiblyUndeclaredVariable', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredProperty'],
         'htdocs/webservices/server_order.php' => ['PhanPluginUnknownArrayFunctionParamType', 'PhanPluginUnknownArrayFunctionReturnType', 'PhanPossiblyUndeclaredVariable', 'PhanTypeExpectedObjectPropAccess', 'PhanUndeclaredProperty'],
-        'htdocs/webservices/server_other.php' => ['PhanPluginUnknownArrayFunctionParamType', 'PhanPluginUnknownArrayFunctionReturnType', 'PhanTypeMismatchDimFetch', 'PhanUndeclaredProperty'],
         'htdocs/webservices/server_payment.php' => ['PhanPluginUnknownArrayFunctionParamType', 'PhanTypeExpectedObjectPropAccess', 'PhanUndeclaredProperty'],
         'htdocs/webservices/server_productorservice.php' => ['PhanPluginUnknownArrayFunctionParamType', 'PhanPluginUnknownArrayFunctionReturnType', 'PhanUndeclaredProperty'],
         'htdocs/webservices/server_project.php' => ['PhanPluginUnknownArrayFunctionParamType', 'PhanPluginUnknownArrayFunctionReturnType', 'PhanTypeMismatchProperty', 'PhanUndeclaredProperty'],
