@@ -920,8 +920,8 @@ class Categorie extends CommonObject
 			$sql .= " AND c.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." = o.rowid";
 		}
 		if (!empty($filterlang)) {
-			$sql .= " AND ol.fk_".(empty($this->MAP_OBJ_FK[$type]) ? $type : $this->MAP_OBJ_FK[$type])." = o.rowid";
-			$sql .= " AND ol.lang = '".$filterlang."'";
+			$sql .= " AND ol.fk_".(empty($this->MAP_OBJ_TABLE[$type]) ? $type : $this->MAP_OBJ_TABLE[$type])." = o.rowid";
+			$sql .= " AND ol.lang = '".$this->db->escape($filterlang)."'";
 		}
 		// Protection for external users
 		if (($type == 'customer' || $type == 'supplier') && $user->socid > 0) {
