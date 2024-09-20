@@ -342,7 +342,7 @@ print $tooltiponpriceend;
 
 if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) { ?>
 	<td class="linecoluttc nowraponall right"><?php $coldisplay++; ?><?php
-	$upinctax = isset($line->pu_ttc) ? $line->pu_ttc : null;
+	$upinctax = isset($line->total_ttc) ? $line->total_ttc : null;
 	if (getDolGlobalInt('MAIN_UNIT_PRICE_WITH_TAX_IS_FOR_ALL_TAXES')) {
 		$upinctax = price2num($line->total_ttc / (float) $line->qty, 'MU');
 	}
