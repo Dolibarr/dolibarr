@@ -627,7 +627,7 @@ class FormMail extends Form
 
 						// Add also email aliases from the c_email_senderprofile table
 						$sql = "SELECT rowid, label, email FROM ".$this->db->prefix()."c_email_senderprofile";
-						$sql .= " WHERE active = 1 AND (private = 0 OR private = ".((int) $user->id).")";
+                        $sql .= " WHERE active = 1 AND (private = 0 OR private = ".((int) $user->id).") AND entity in (0," . $conf->entity . ")";
 						$sql .= " ORDER BY position";
 						$resql = $this->db->query($sql);
 						if ($resql) {
