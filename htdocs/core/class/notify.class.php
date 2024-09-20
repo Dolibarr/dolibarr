@@ -938,7 +938,7 @@ class Notify
 							$arraydefaultmessage = $formmail->getEMailTemplate($this->db, $object_type.'_send', $user, $outputlangs, 0, 1, $labeltouse);
 						}
 						if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
-							if (empty($object->thirdparty)) {
+							if (method_exists($object, 'fetch_thirdparty') && empty($object->thirdparty)) {
 								$object->fetch_thirdparty();
 							}
 							$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
