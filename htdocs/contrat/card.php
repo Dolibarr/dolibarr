@@ -2264,6 +2264,7 @@ if ($action == 'create') {
 						'label' => $langs->trans('ActivateAllContracts'),
 						'lang' => 'bills',
 						'perm' => $user->hasRight('contrat', 'activer'),
+						'enabled' => true,
 					);
 				}
 				if ($object->nbofservicesclosed < $nbofservices) {
@@ -2272,6 +2273,7 @@ if ($action == 'create') {
 						'label' => $langs->trans('CloseAllContracts'),
 						'lang' => 'bills',
 						'perm' => $user->hasRight('contrat', 'desactiver'),
+						'enabled' => true,
 					);
 				}
 
