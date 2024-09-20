@@ -549,7 +549,7 @@ if (empty($reshook)) {
 			$action = 'view';
 			$comefromclone = true;
 
-			setEventMessages($langs->trans("ProjectCreatedInDolibarr", $newobject->ref), "", 'mesgs');
+			setEventMessages($langs->trans("ProjectCreatedInDolibarr", $newobject->ref), null, 'mesgs');
 			//var_dump($newobject); exit;
 		}
 	}
