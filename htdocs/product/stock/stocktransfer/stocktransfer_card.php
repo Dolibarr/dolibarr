@@ -251,7 +251,7 @@ if (empty($reshook)) {
 		} else {
 			if (!empty($batch)) {
 				$error++;
-				setEventMessages($langs->transnoentities('StockTransferNoBatchForProduct', $prod->getNomUrl()), '', 'errors');
+				setEventMessages($langs->transnoentities('StockTransferNoBatchForProduct', $prod->getNomUrl()), null, 'errors');
 				$action = 'editline';
 			}
 		}
