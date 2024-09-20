@@ -2415,7 +2415,7 @@ td.showDragHandle {
 	padding-bottom: 20px;
 <?php if (GETPOST('optioncss', 'aZ09') != 'print') { ?>
 	padding-<?php print $left; ?>: <?php echo $leftmenuwidth + 9; ?>px;
-	padding-top: 16px;
+	padding-top: 28px;
 <?php } ?>
 }
 .bodyforlist #id-right {
