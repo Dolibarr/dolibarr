@@ -351,13 +351,17 @@ class ChargeSociales extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."chargesociales";
-		$sql .= " SET libelle='".$this->db->escape($this->label ? $this->label : $this->lib)."'";
-		$sql .= ", date_ech='".$this->db->idate($this->date_ech)."'";
-		$sql .= ", periode='".$this->db->idate($this->periode)."'";
-		$sql .= ", amount='".price2num($this->amount, 'MT')."'";
-		$sql .= ", fk_projet=".($this->fk_project > 0 ? $this->db->escape($this->fk_project) : "NULL");
-		$sql .= ", fk_user=".($this->fk_user > 0 ? $this->db->escape($this->fk_user) : "NULL");
-		$sql .= ", fk_user_modif=".$user->id;
+		$sql .= " SET libelle = '".$this->db->escape($this->label ? $this->label : $this->lib)."'";
+		$sql .= ", date_ech = '".$this->db->idate($this->date_ech)."'";
+		$sql .= ", periode = '".$this->db->idate($this->period ? $this->period : $this->periode)."'";
+		$sql .= ", amount = ".((float) price2num($this->amount, 'MT'));
+		$sql .= ", fk_projet=".($this->fk_project > 0 ? ((int) $this->fk_project) : "NULL");
+		$sql .= ", fk_user=".($this->fk_user > 0 ? ((int) $this->fk_user) : "NULL");
+		$sql .= ", fk_user_modif=".((int) $user->id);
+		if ($this->type > 0) {
+			$sql .= ", fk_type = ".((int) $this->type);
+		}
+		$sql .= ", fk_user_modif=".((int) $user->id);
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -401,14 +405,12 @@ class ChargeSociales extends CommonObject
 	 */
 	public function solde($year = 0)
 	{
-		global $conf;
-
 		$sql = "SELECT SUM(f.amount) as amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX."chargesociales as f";
-		$sql .= " WHERE f.entity = ".$conf->entity;
+		$sql .= " WHERE f.entity = ".((int) $conf->entity);
 		$sql .= " AND paye = 0";
 
-		if ($year) {
+		if ($year) {	// TODO Fix to use date function
 			$sql .= " AND f.datev >= '".((int) $year)."-01-01' AND f.datev <= '".((int) $year)."-12-31' ";
 		}
 
