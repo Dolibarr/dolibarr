@@ -2262,7 +2262,7 @@ if ($action == 'create') {
 					$arrayforbutaction[] = array(
 						'url' => $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=activate&token='.newToken(),
 						'label' => $langs->trans('ActivateAllContracts'),
-						'langs' => 'bills',
+						'lang' => 'bills',
 						'perm' => $user->hasRight('contrat', 'activer'),
 					);
 				}
@@ -2270,7 +2270,7 @@ if ($action == 'create') {
 					$arrayforbutaction[] = array(
 						'url' => $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=close&token='.newToken(),
 						'label' => $langs->trans('CloseAllContracts'),
-						'langs' => 'bills',
+						'lang' => 'bills',
 						'perm' => $user->hasRight('contrat', 'desactiver'),
 					);
 				}
