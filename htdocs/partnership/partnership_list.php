@@ -97,8 +97,8 @@ if ($managedfor != 'member' && $sortfield == 'd.datefin') {
 
 // Add non object fields to fields for list
 $non_object_fields = array(
-	'town' => array('type' => 'varchar(128)', 'label' => 'Town', 'enabled' => 1, 'position' => 51, 'notnull' => 0, 'visible' => 1, 'alwayseditable' => 1,),
-	'country' => array('type' => 'integer', 'label' => 'Country', 'enabled' => 1, 'position' => 51, 'notnull' => 0, 'visible' => 1, 'alwayseditable' => 1, 'css' => 'maxwidth500 widthcentpercentminusxx',)
+	'town' => array('type' => 'varchar(128)', 'label' => 'Town', 'enabled' => 1, 'position' => 51, 'notnull' => 0, 'visible' => 1, 'alwayseditable' => 1, 'searchall' => 1,),
+	'country' => array('type' => 'integer', 'label' => 'Country', 'enabled' => 1, 'position' => 51, 'notnull' => 0, 'visible' => 1, 'alwayseditable' => 1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'searchall' => 1,)
 );
 
 // All fields in list
