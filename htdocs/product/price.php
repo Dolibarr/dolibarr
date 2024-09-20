@@ -1059,32 +1059,6 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 			}
 			else print vatrate($object->tva_tx . ($object->tva_npr ? '*' : ''), true);*/
 			print '</td></tr>';
-			if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
-				// Price
-				print '<tr class="field_selling_price"><td>'.$langs->trans("SellingPrice").'</td><td>';
-				if ($object->price_base_type == 'TTC') {
-					print price($object->price_ttc).' '.$langs->trans($object->price_base_type);
-				} else {
-					print price($object->price).' '.$langs->trans($object->price_base_type);
-					if (getDolGlobalString('PRODUCT_DISPLAY_VAT_INCL_PRICES') && !empty($object->price_ttc)) {
-						print '<i class="opacitymedium"> - ' . price($object->price_ttc).' '.$langs->trans('TTC') . '</i>';
-					}
-				}
-
-				print '</td></tr>';
-
-				// Price minimum
-				print '<tr class="field_min_price"><td>'.$langs->trans("MinPrice").'</td><td>';
-				if ($object->price_base_type == 'TTC') {
-					print price($object->price_min_ttc).' '.$langs->trans($object->price_base_type);
-				} else {
-					print price($object->price_min).' '.$langs->trans($object->price_base_type);
-					if (getDolGlobalString('PRODUCT_DISPLAY_VAT_INCL_PRICES') && !empty($object->price_min_ttc)) {
-						print '<i class="opacitymedium"> - ' . price($object->price_min_ttc).' '.$langs->trans('TTC') . '</i>';
-					}
-				}
-				print '</td></tr>';
-			}
 		}
 		print '</table>';
 
@@ -2133,58 +2107,60 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 		$total_localtax2 = $resultarray[10];
 		$total_ttc = $resultarray[2];
 
-		print '<tr class="oddeven">';
-		print '<td colspan="3">' . $langs->trans('Default') . '</td>';
+		if (!getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
+			print '<tr class="oddeven">';
+			print '<td colspan="3">' . $langs->trans('Default') . '</td>';
 
-		print '<td class="center">'.$langs->trans($object->price_base_type)."</td>";
+			print '<td class="center">'.$langs->trans($object->price_base_type)."</td>";
 
-		// VAT Rate
-		print '<td class="right">';
+			// VAT Rate
+			print '<td class="right">';
 
-		$positiverates = '';
-		if (price2num($object->tva_tx)) {
-			$positiverates .= ($positiverates ? '/' : '').price2num($object->tva_tx);
-		}
-		if (price2num($object->localtax1_type)) {
-			$positiverates .= ($positiverates ? '/' : '').price2num($object->localtax1_tx);
-		}
-		if (price2num($object->localtax2_type)) {
-			$positiverates .= ($positiverates ? '/' : '').price2num($object->localtax2_tx);
-		}
-		if (empty($positiverates)) {
-			$positiverates = '0';
-		}
-		echo vatrate($positiverates.($object->default_vat_code ? ' ('.$object->default_vat_code.')' : ''), '%', $object->tva_npr);
+			$positiverates = '';
+			if (price2num($object->tva_tx)) {
+				$positiverates .= ($positiverates ? '/' : '').price2num($object->tva_tx);
+			}
+			if (price2num($object->localtax1_type)) {
+				$positiverates .= ($positiverates ? '/' : '').price2num($object->localtax1_tx);
+			}
+			if (price2num($object->localtax2_type)) {
+				$positiverates .= ($positiverates ? '/' : '').price2num($object->localtax2_tx);
+			}
+			if (empty($positiverates)) {
+				$positiverates = '0';
+			}
+			echo vatrate($positiverates.($object->default_vat_code ? ' ('.$object->default_vat_code.')' : ''), '%', $object->tva_npr);
 
-		//print vatrate($object->tva_tx, true, $object->tva_npr);
-		//print $object->default_vat_code?' ('.$object->default_vat_code.')':'';
-		print "</td>";
+			//print vatrate($object->tva_tx, true, $object->tva_npr);
+			//print $object->default_vat_code?' ('.$object->default_vat_code.')':'';
+			print "</td>";
 
-		print '<td class="right"><span class="amount">'.price($object->price)."</span></td>";
+			print '<td class="right"><span class="amount">'.price($object->price)."</span></td>";
 
-		print '<td class="right"><span class="amount">'.price($object->price_ttc)."</span></td>";
-		if ($mysoc->localtax1_assuj == "1" || $mysoc->localtax2_assuj == "1") {
-			//print '<td class="right">' . price($object->price_ttc) . "</td>";
-			print '<td class="right"><span class="amount">'.price($resultarray[2]).'</span></td>';
-		}
+			print '<td class="right"><span class="amount">'.price($object->price_ttc)."</span></td>";
+			if ($mysoc->localtax1_assuj == "1" || $mysoc->localtax2_assuj == "1") {
+				//print '<td class="right">' . price($object->price_ttc) . "</td>";
+				print '<td class="right"><span class="amount">'.price($resultarray[2]).'</span></td>';
+			}
 
-		print '<td class="right">'.price($object->price_min).'</td>';
-		print '<td class="right">'.price($object->price_min_ttc).'</td>';
-		print '<td class="right">'.$object->price_label.'</td>';
-		print '<td class="right">';
-		print '</td>';
-		if ($user->hasRight('produit', 'supprimer') || $user->hasRight('service', 'supprimer')) {
-			print '<td class="nowraponall">';
-			print '<a class="marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?action=showlog_default_price&token='.newToken().'&id='.$object->id.'">';
-			print img_info($langs->trans('PriceByCustomerLog'));
-			print '</a>';
-			print ' ';
-			print '<a class="marginleftonly marginrightonly editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit_price&token='.newToken().'&id='.$object->id.'">';
-			print img_edit('default', 0, 'style="vertical-align: middle;"');
-			print '</a>';
+			print '<td class="right">'.price($object->price_min).'</td>';
+			print '<td class="right">'.price($object->price_min_ttc).'</td>';
+			print '<td class="right">'.$object->price_label.'</td>';
+			print '<td class="right">';
 			print '</td>';
+			if ($user->hasRight('produit', 'supprimer') || $user->hasRight('service', 'supprimer')) {
+				print '<td class="nowraponall">';
+				print '<a class="marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?action=showlog_default_price&token='.newToken().'&id='.$object->id.'">';
+				print img_info($langs->trans('PriceByCustomerLog'));
+				print '</a>';
+				print ' ';
+				print '<a class="marginleftonly marginrightonly editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit_price&token='.newToken().'&id='.$object->id.'">';
+				print img_edit('default', 0, 'style="vertical-align: middle;"');
+				print '</a>';
+				print '</td>';
+			}
+			print "</tr>\n";
 		}
-		print "</tr>\n";
 
 		if (count($prodcustprice->lines) > 0) {
 			foreach ($prodcustprice->lines as $line) {
