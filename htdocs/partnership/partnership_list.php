@@ -989,15 +989,15 @@ while ($i < $imaxinloop) {
 							print  $langs->trans("Country".$adherent->country_code);
 						}
 					} else {
-						if (!empty($companyobj->country_code)) {
-							print  $langs->trans("Country".$companyobj->country_code);
+						if (!empty($object->thirdparty->country_code)) {
+							print  $langs->trans("Country".$object->thirdparty->country_code);
 						}
 					}
 				} elseif ($key == 'town') {
 					if ($managedfor == 'member') {
 						print $adherent->town;
 					} else {
-						print $companyobj->town;
+						print $object->thirdparty->town;
 					}
 				} elseif ($key == 'rowid') {
 					print $object->showOutputField($val, $key, $object->id, '');
