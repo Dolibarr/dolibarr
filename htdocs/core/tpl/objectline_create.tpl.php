@@ -1073,7 +1073,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 			} else { jQuery("#pbq").val(''); }
 			<?php
 		}
-		$reshook = $hookmanager->executeHooks('objectlinecreatesupplierorderproductselected', $parameters, $object, $action);
+		$reshook = $hookmanager->executeHooks('objectlineCreateSupplierOrderProductSelected', $parameters, $object, $action);
 
 		?>
 
@@ -1260,7 +1260,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 		<?php } ?>
 	});
 	<?php
-	$reshook = $hookmanager->executeHooks('objectlineCreateSupplierOrderProductSelected', $parameters, $object, $action);
+	$reshook = $hookmanager->executeHooks('objectlineCreatesupplierorderlineExtrafieldSelected', $parameters, $object, $action);
 	?>
 	/* Function to set fields visibility after selecting a free product */
 	function setforfree() {
