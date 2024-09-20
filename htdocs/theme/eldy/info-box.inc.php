@@ -341,7 +341,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	border-radius: 3px;
 }
 .prospect-back {
-	background-color: #b7d5c0 !important;
+	background-color: #a7c5b0 !important;
 	color: #FFF !important;
 	padding: 2px;
 	margin: 2px;

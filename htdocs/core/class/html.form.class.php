@@ -891,27 +891,23 @@ class Form
                     jQuery(".' . $cssclass . '").click(function() {
                         initCheckForSelect(1, "' . $name . '", "' . $cssclass . '");
                     });
-                        jQuery(".' . $name . 'select").change(function() {
-        			var massaction = $( this ).val();
-        			var urlform = $( this ).closest("form").attr("action").replace("#show_files","");
-        			if (massaction == "builddoc")
-                    {
-                        urlform = urlform + "#show_files";
-    	            }
-        			$( this ).closest("form").attr("action", urlform);
-                    console.log("we select a mass action name=' . $name . ' massaction="+massaction+" - "+urlform);
-        	        /* Warning: if you set submit button to disabled, post using Enter will no more work if there is no other button */
-        			if ($(this).val() != \'0\')
-    	  			{
+                    jQuery(".' . $name . 'select").change(function() {
+        				var massaction = $( this ).val();
+        				var urlform = $( this ).closest("form").attr("action").replace("#show_files","");
+        				if (massaction == "builddoc") {
+                        	urlform = urlform + "#show_files";
+    	            	}
+        				$( this ).closest("form").attr("action", urlform);
+                    	console.log("we select a mass action name=' . $name . ' massaction="+massaction+" - "+urlform);
+        	        	/* Warning: if you set submit button to disabled, post using Enter will no more work if there is no other button */
+        				if ($(this).val() != \'0\') {
                                         jQuery(".' . $name . 'confirmed").prop(\'disabled\', false);
 										jQuery(".' . $name . 'other").hide();	/* To disable if another div was open */
                                         jQuery(".' . $name . '"+massaction).show();
-    	  			}
-    	  			else
-    	  			{
+    	  				} else {
                                         jQuery(".' . $name . 'confirmed").prop(\'disabled\', true);
 										jQuery(".' . $name . 'other").hide();	/* To disable any div open */
-    	  			}
+    	  				}
     	        });
         	});
     		</script>
@@ -2688,7 +2684,7 @@ class Form
 			if ((int) $warehouseId > 0) {
 				$urloption .= '&warehouseid=' . (int) $warehouseId;
 			}
-			$out .= ajax_autocompleter((string) $selected, $htmlname, DOL_URL_ROOT . '/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 1, $ajaxoptions);
+			$out .= ajax_autocompleter((string) $selected, $htmlname, DOL_URL_ROOT . '/product/ajax/products.php', $urloption, getDolGlobalInt('PRODUIT_USE_SEARCH_TO_SELECT'), getDolGlobalInt('PRODUCT_SEARCH_AUTO_SELECT_IF_ONLY_ONE', 1), $ajaxoptions);
 
 			if (isModEnabled('variants') && is_array($selected_combinations)) {
 				// Code to automatically insert with javascript the select of attributes under the select of product
