@@ -1962,7 +1962,7 @@ if ($action == 'create') {
 							$tmpactiontext = $langs->trans("Disable");
 						}
 						if (($tmpaction == 'activateline' && $user->hasRight('contrat', 'activer')) || ($tmpaction == 'unactivateline' && $user->hasRight('contrat', 'desactiver'))) {
-							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;ligne='.$object->lines[$cursorline - 1]->id.'&amp;action='.$tmpaction.'">';
+							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;ligne='.$object->lines[$cursorline - 1]->id.'&amp;action='.$tmpaction.'&token='.newToken().'">';
 							print img_picto($tmpactiontext, $tmpactionpicto);
 							print '</a>';
 						}
