@@ -1956,7 +1956,7 @@ function pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails = 0)
 					} else {
 						$tmpresult = '';
 					}
-					$tmpresult .= vatrate(abs($object->lines[$i]->localtax1_tx), 0);
+					$tmpresult .= vatrate((string) abs($object->lines[$i]->localtax1_tx), 0);
 				}
 			}
 			if (!getDolGlobalString('MAIN_PDF_MAIN_HIDE_THIRD_TAX')) {
@@ -1966,7 +1966,7 @@ function pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails = 0)
 					} else {
 						$tmpresult = '';
 					}
-					$tmpresult .= vatrate(abs($object->lines[$i]->localtax2_tx), 0);
+					$tmpresult .= vatrate((string) abs($object->lines[$i]->localtax2_tx), 0);
 				}
 			}
 			$tmpresult .= '%';
