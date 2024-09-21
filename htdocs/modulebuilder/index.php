@@ -419,7 +419,7 @@ if ($dirins && $action == 'initmodule' && $modulename && $user->hasRight("module
 		// file_put_contents($destdir.'/'.strtolower($modulename).'propertycard.php','');
 		// $srcFileCard = DOL_DOCUMENT_ROOT.'/modulebuilder/card.php';
 		// $destFileCard = $dirins.'/'.strtolower($modulename).'/template/card.php';
-		// dol_copy($srcFileCard, $destdir.'/'.strtolower($modulename).'propertycard.php', 0,1, $arrayreplacement);
+		// dol_copy($srcFileCard, $destdir.'/'.strtolower($modulename).'propertycard.php', '0',1, $arrayreplacement);
 	}
 
 	if (!$error) {
@@ -454,7 +454,7 @@ if ($dirins && in_array($action, array('initapi', 'initphpunit', 'initpagecontac
 
 	if ($action == 'initapi') {					// Test on permission already done
 		if (file_exists($dirins.'/'.strtolower($module).'/class/api_'.strtolower($module).'.class.php')) {
-			$result = dol_copy(DOL_DOCUMENT_ROOT.'/modulebuilder/template/class/api_mymodule.class.php', $dirins.'/'.strtolower($module).'/class/api_'.strtolower($module).'.class.php', 0, 1);
+			$result = dol_copy(DOL_DOCUMENT_ROOT.'/modulebuilder/template/class/api_mymodule.class.php', $dirins.'/'.strtolower($module).'/class/api_'.strtolower($module).'.class.php', '0', 1);
 		}
 		dol_mkdir($dirins.'/'.strtolower($module).'/class');
 		$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
@@ -494,7 +494,7 @@ if ($dirins && in_array($action, array('initapi', 'initphpunit', 'initpagecontac
 	//var_dump($srcfile);
 	//var_dump($destfile);
 	if (!file_exists($destfile)) {
-		$result = dol_copy($srcfile, $destfile, 0, 0);
+		$result = dol_copy($srcfile, $destfile, '0', 0);
 	}
 
 	if ($result > 0) {
@@ -549,12 +549,12 @@ if ($dirins && $action == 'initsqlextrafields' && !empty($module) && $user->hasR
 	$destfile1 = $dirins.'/'.strtolower($module).'/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'_extrafields.sql';
 	//var_dump($srcfile);
 	//var_dump($destfile);
-	$result1 = dol_copy($srcfile1, $destfile1, 0, 0);
+	$result1 = dol_copy($srcfile1, $destfile1, '0', 0);
 	$srcfile2 = $srcdir.'/sql/llx_mymodule_myobject_extrafields.key.sql';
 	$destfile2 = $dirins.'/'.strtolower($module).'/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'_extrafields.key.sql';
 	//var_dump($srcfile);
 	//var_dump($destfile);
-	$result2 = dol_copy($srcfile2, $destfile2, 0, 0);
+	$result2 = dol_copy($srcfile2, $destfile2, '0', 0);
 
 	if ($result1 > 0 && $result2 > 0) {
 		$modulename = ucfirst($module); // Force first letter in uppercase
@@ -603,7 +603,7 @@ if ($dirins && $action == 'inithook' && !empty($module) && $user->hasRight("modu
 	$destfile = $dirins.'/'.strtolower($module).'/class/actions_'.strtolower($module).'.class.php';
 	//var_dump($srcfile);
 	//var_dump($destfile);
-	$result = dol_copy($srcfile, $destfile, 0, 0);
+	$result = dol_copy($srcfile, $destfile, '0', 0);
 
 	if ($result > 0) {
 		$modulename = ucfirst($module); // Force first letter in uppercase
@@ -638,7 +638,7 @@ if ($dirins && $action == 'inittrigger' && !empty($module) && $user->hasRight("m
 	$destfile = $dirins.'/'.strtolower($module).'/core/triggers/interface_99_mod'.$module.'_'.$module.'Triggers.class.php';
 	//var_dump($srcfile);
 	//var_dump($destfile);
-	$result = dol_copy($srcfile, $destfile, 0, 0);
+	$result = dol_copy($srcfile, $destfile, '0', 0);
 
 	if ($result > 0) {
 		$modulename = ucfirst($module); // Force first letter in uppercase
@@ -673,7 +673,7 @@ if ($dirins && $action == 'initwidget' && !empty($module) && $user->hasRight("mo
 	$destfile = $dirins.'/'.strtolower($module).'/core/boxes/'.strtolower($module).'widget1.php';
 	//var_dump($srcfile);
 	//var_dump($destfile);
-	$result = dol_copy($srcfile, $destfile, 0, 0);
+	$result = dol_copy($srcfile, $destfile, '0', 0);
 
 	if ($result > 0) {
 		$modulename = ucfirst($module); // Force first letter in uppercase
@@ -708,7 +708,7 @@ if ($dirins && $action == 'initemailing' && !empty($module) && $user->hasRight("
 	$destfile = $dirins.'/'.strtolower($module).'/core/modules/mailings/mailing_'.strtolower($module).'_selector1.modules.php';
 	//var_dump($srcfile);
 	//var_dump($destfile);
-	$result = dol_copy($srcfile, $destfile, 0, 0);
+	$result = dol_copy($srcfile, $destfile, '0', 0);
 
 	if ($result > 0) {
 		$modulename = ucfirst($module); // Force first letter in uppercase
@@ -743,7 +743,7 @@ if ($dirins && $action == 'initcss' && !empty($module) && $user->hasRight("modul
 	$destfile = $dirins.'/'.strtolower($module).'/css/'.strtolower($module).'.css.php';
 	//var_dump($srcfile);
 	//var_dump($destfile);
-	$result = dol_copy($srcfile, $destfile, 0, 0);
+	$result = dol_copy($srcfile, $destfile, '0', 0);
 
 	if ($result > 0) {
 		$modulename = ucfirst($module); // Force first letter in uppercase
@@ -783,7 +783,7 @@ if ($dirins && $action == 'initjs' && !empty($module) && $user->hasRight("module
 	$destfile = $dirins.'/'.strtolower($module).'/js/'.strtolower($module).'.js.php';
 	//var_dump($srcfile);
 	//var_dump($destfile);
-	$result = dol_copy($srcfile, $destfile, 0, 0);
+	$result = dol_copy($srcfile, $destfile, '0', 0);
 
 	if ($result > 0) {
 		$modulename = ucfirst($module); // Force first letter in uppercase
@@ -823,7 +823,7 @@ if ($dirins && $action == 'initcli' && !empty($module) && $user->hasRight("modul
 	$destfile = $dirins.'/'.strtolower($module).'/scripts/'.strtolower($module).'.php';
 	//var_dump($srcfile);
 	//var_dump($destfile);
-	$result = dol_copy($srcfile, $destfile, 0, 0);
+	$result = dol_copy($srcfile, $destfile, '0', 0);
 
 	if ($result > 0) {
 		$modulename = ucfirst($module); // Force first letter in uppercase
@@ -865,7 +865,7 @@ if ($dirins && $action == 'initdoc' && !empty($module) && $user->hasRight("modul
 	$destfile = $dirins.'/'.strtolower($module).'/doc/Documentation.asciidoc';
 	//var_dump($srcfile);
 	//var_dump($destfile);
-	$result = dol_copy($srcfile, $destfile, 0, 0);
+	$result = dol_copy($srcfile, $destfile, '0', 0);
 
 	if ($result > 0) {
 		$modulename = ucfirst($module); // Force first letter in uppercase
@@ -966,7 +966,7 @@ if ($dirins && $action == 'addlanguage' && !empty($module) && $user->hasRight("m
 			$srcfile = $diroflang.'/langs/en_US/'.$modulelowercase.'.lang';
 			$destfile = $diroflang.'/langs/'.$newlangcode.'/'.$modulelowercase.'.lang';
 
-			$result = dol_copy($srcfile, $destfile, 0, 0);
+			$result = dol_copy($srcfile, $destfile, '0', 0);
 			if ($result < 0) {
 				setEventMessages($langs->trans("ErrorFailToCopyFile", $srcfile, $destfile), null, 'errors');
 			}
@@ -2650,7 +2650,7 @@ if ($action == 'savefile' && empty($cancel) && $user->hasRight("modulebuilder", 
 
 		// Save old version
 		if (dol_is_file($pathoffile)) {
-			dol_copy($pathoffile, $pathoffilebackup, 0, 1);
+			dol_copy($pathoffile, $pathoffilebackup, '0', 1);
 		}
 
 		$check = 'restricthtml';
