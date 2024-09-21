@@ -138,7 +138,7 @@ function updateCopyrightNotice($filename, $fileType, $name, $email)
 		// If the existing year is the same, no need to update
 	} else {
 		// Adjust tabs for proper alignment
-		print "Offset:".$nameStartToMailStartOffset."\n";
+		// print "Offset:".$nameStartToMailStartOffset."\n";
 		$emailTabs = str_repeat("\t", (int) (max(0, ($nameStartToMailStartOffset + 4 - mb_strlen($name)) / 4)));
 
 		// No match found, add a new line to the header
@@ -162,8 +162,8 @@ function updateCopyrightNotice($filename, $fileType, $name, $email)
 		}
 
 		// Write the updated content back to the file
-		//file_put_contents($filename, $fileContent);
-		print $fileContent;
+		file_put_contents($filename, $fileContent);
+		// print $fileContent;
 		return true; // Change detected
 	}
 
