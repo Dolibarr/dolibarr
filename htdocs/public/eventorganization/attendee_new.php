@@ -86,7 +86,9 @@ if ($type == 'conf') {
 }
 
 $conference = new ConferenceOrBooth($db);
+$confattendee = new ConferenceOrBoothAttendee($db);
 $project = new Project($db);
+$object = $confattendee;
 
 if ($type == 'conf') {
 	$resultconf = $conference->fetch($id);
@@ -150,6 +152,8 @@ $user->loadDefaultValues();
 if (empty($conf->eventorganization->enabled)) {
 	httponly_accessforbidden('Module Event organization not enabled');
 }
+
+$extrafields->fetch_name_optionals_label($object->table_element); // fetch optionals attributes and labels
 
 
 /**
@@ -264,8 +268,6 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 
 	if (!$error) {
 		// Check if attendee already exists (by email and for this event)
-		$confattendee = new ConferenceOrBoothAttendee($db);
-
 		$filter = array();
 
 		if ($type == 'global') {
@@ -292,6 +294,15 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			$confattendee->firstname = $firstname;
 			$confattendee->lastname = $lastname;
 
+			// Fill array 'array_options' with data from add form
+			$extrafields->fetch_name_optionals_label($confattendee->table_element);
+			$ret = $extrafields->setOptionalsFromPost(null, $confattendee);
+			if ($ret < 0) {
+				$error++;
+				$errmsg .= $confattendee->error;
+			}
+
+			// Count recent already posted event
 			$confattendee->ip = getUserRemoteIP();
 			$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 200);
 			$now = dol_now();
@@ -488,6 +499,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 				$tmpcode = $modCodeClient->getNextValue($thirdparty, 0);
 			}
 			$thirdparty->code_client = $tmpcode;
+
 			$readythirdparty = $thirdparty->create($user);
 			if ($readythirdparty < 0) {
 				$error++;
@@ -891,13 +903,19 @@ if ((!empty($conference->id) && $conference->status == ConferenceOrBooth::STATUS
 			print '</td></tr>';
 		}
 
+		// Other attributes
+		$parameters['tpl_context'] = 'public';	// define template context to public
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
+
 		$notetoshow = $note_public;
 		print '<tr><td>' . $langs->trans('Note') . '</td><td>';
 		if (getDolGlobalString('EVENTORGANIZATION_DEFAULT_NOTE_ON_REGISTRATION')) {
-			$notetoshow = str_replace('\n', "\n", $conf->global->EVENTORGANIZATION_DEFAULT_NOTE_ON_REGISTRATION);
+			$notetoshow = str_replace('\n', "\n", getDolGlobalString('EVENTORGANIZATION_DEFAULT_NOTE_ON_REGISTRATION'));
 		}
 		print '<textarea name="note_public" class="centpercent" rows="'.ROWS_9.'">'.dol_escape_htmltag($notetoshow, 0, 1).'</textarea>';
 		print '</td></tr>';
+
+
 
 		print "</table>\n";
 
