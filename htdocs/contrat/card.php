@@ -1962,7 +1962,7 @@ if ($action == 'create') {
 							$tmpactiontext = $langs->trans("Disable");
 						}
 						if (($tmpaction == 'activateline' && $user->hasRight('contrat', 'activer')) || ($tmpaction == 'unactivateline' && $user->hasRight('contrat', 'desactiver'))) {
-							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;ligne='.$object->lines[$cursorline - 1]->id.'&amp;action='.$tmpaction.'">';
+							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;ligne='.$object->lines[$cursorline - 1]->id.'&amp;action='.$tmpaction.'&token='.newToken().'">';
 							print img_picto($tmpactiontext, $tmpactionpicto);
 							print '</a>';
 						}
@@ -2257,31 +2257,29 @@ if ($action == 'create') {
 					print dolGetButtonAction('', $langs->trans("Create"), 'default', $arrayofcreatebutton, '', true, $params);
 				}
 
+				$arrayforbutaction = array();
 				if ($object->nbofservicesclosed > 0 || $object->nbofserviceswait > 0) {
-					if ($user->hasRight('contrat', 'activer')) {
-						unset($params['attr']['title']);
-						print dolGetButtonAction($langs->trans('ActivateAllContracts'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=activate&token='.newToken(), '', true, $params);
-					} else {
-						unset($params['attr']['title']);
-						print dolGetButtonAction($langs->trans('ActivateAllContracts'), '', 'default', '#', '', false, $params);
-					}
+					$arrayforbutaction[] = array(
+						'url' => $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=activate&token='.newToken(),
+						'label' => $langs->trans('ActivateAllContracts'),
+						'lang' => 'bills',
+						'perm' => $user->hasRight('contrat', 'activer'),
+						'enabled' => true,
+					);
 				}
 				if ($object->nbofservicesclosed < $nbofservices) {
-					if ($user->hasRight('contrat', 'desactiver')) {
-						unset($params['attr']['title']);
-						print dolGetButtonAction($langs->trans('CloseAllContracts'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=close&token='.newToken(), '', true, $params);
-					} else {
-						unset($params['attr']['title']);
-						print dolGetButtonAction($langs->trans('CloseAllContracts'), '', 'default', '#', '', false, $params);
-					}
+					$arrayforbutaction[] = array(
+						'url' => $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=close&token='.newToken(),
+						'label' => $langs->trans('CloseAllContracts'),
+						'lang' => 'bills',
+						'perm' => $user->hasRight('contrat', 'desactiver'),
+						'enabled' => true,
+					);
+				}
 
-					//if (! $numactive)
-					//{
-					//}
-					//else
-					//{
-					//	print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("CloseRefusedBecauseOneServiceActive").'">'.$langs->trans("Close").'</a></div>';
-					//}
+				if (count($arrayforbutaction)) {
+					unset($params['attr']['title']);
+					print dolGetButtonAction('', $langs->trans("Services"), 'default', $arrayforbutaction, '', true, $params);
 				}
 
 				if (getDolGlobalString('CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT') && $object->nbofservicesclosed > 0) {

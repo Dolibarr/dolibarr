@@ -1859,7 +1859,10 @@ class Ticket extends CommonObject
 		$actioncomm->fk_element = $this->id;
 		$actioncomm->fk_project = $this->fk_project;
 
-		// add contact id from author email on public interface
+		// Add first contact id found in database from submitter email entered into public interface
+		// Feature disabled: This has a security trouble. The public interface is a no login interface, so being able to show the contact info from an
+		// email decided by the submiter allows anybody to get information on any contact (customer or supplier) in Dolibarr database.
+		// He can even check if contact exists by trying any email if this feature is enabled.
 		if ($public_area && !empty($this->origin_email) && getDolGlobalString('TICKET_ASSIGN_CONTACT_TO_MESSAGE')) {
 			$contacts = $this->searchContactByEmail($this->origin_email);
 			if (!empty($contacts)) {

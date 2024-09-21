@@ -80,6 +80,7 @@ if ($complete == 'na' || $complete == -2) {
 	$complete = -1;
 }
 
+$tzforfullday = null;
 if ($fulldayevent) {
 	$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
 	// For "full day" events, we must store date in GMT (It must be viewed as same moment everywhere)
@@ -123,6 +124,7 @@ $formactions = new FormActions($db);
 // Load object
 if ($id > 0 && $action != 'add') {
 	$ret = $object->fetch($id);
+	$ret1 = 0;
 	if ($ret > 0) {
 		$ret = $object->fetch_optionals();
 		$ret1 = $object->fetch_userassigned();
@@ -329,6 +331,8 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 		$datep = dol_mktime(GETPOSTINT("aphour"), GETPOSTINT("apmin"), GETPOSTINT("apsec"), GETPOSTINT("apmonth"), GETPOSTINT("apday"), GETPOSTINT("apyear"), 'tzuserrel');
 		$datef = dol_mktime(GETPOSTINT("p2hour"), GETPOSTINT("p2min"), GETPOSTINT("apsec"), GETPOSTINT("p2month"), GETPOSTINT("p2day"), GETPOSTINT("p2year"), 'tzuserrel');
 	}
+	//set end date to now if percentage is set to 100 and end date not set
+	$datef = (!$datef && $percentage == 100)?dol_now():$datef;
 
 	// Check parameters
 	if (!$datef && $percentage == 100) {
@@ -517,6 +521,7 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 
 		// Creation of action/event
 		$idaction = $object->create($user);
+		$moreparam = '';
 
 		if ($idaction > 0) {
 			if (!$object->error) {
@@ -526,7 +531,6 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 
 				unset($_SESSION['assignedtouser']);
 
-				$moreparam = '';
 				if ($user->id != $object->userownerid) {
 					$moreparam = "filtert=-1"; // We force to remove filter so created record is visible when going back to per user view.
 				}
@@ -604,6 +608,8 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 		}
 
 		if ($eventisrecurring) {
+			$dayoffset = 0;
+			$monthoffset = 0;
 			// We set first date of recurrence and offsets
 			if ($selectedrecurrulefreq == 'WEEKLY' && !empty($selectedrecurrulebyday)) {
 				$firstdatearray = dol_get_first_day_week(GETPOSTINT("apday"), GETPOSTINT("apmonth"), GETPOSTINT("apyear"));
@@ -718,9 +724,9 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 
 				// increment date for recurrent events
 				$datep = dol_time_plus_duree($datep, $dayoffset, 'd');
-				$datep = dol_time_plus_duree($datep, $monthoffset, 'm');
+				$datep = dol_time_plus_duree($datep, $monthoffset, 'm');  // @phan-suppress-current-line PhanPluginSuspiciousParamOrder
 				$datef = dol_time_plus_duree($datef, $dayoffset, 'd');
-				$datef = dol_time_plus_duree($datef, $monthoffset, 'm');
+				$datef = dol_time_plus_duree($datef, $monthoffset, 'm');  // @phan-suppress-current-line PhanPluginSuspiciousParamOrder
 			}
 		}
 		if (!empty($backtopage) && !$error) {
@@ -775,7 +781,7 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 			$datef = dol_mktime(GETPOST("p2hour", 'int'), GETPOST("p2min", 'int'), GETPOST("apsec", 'int'), GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'), 'tzuserrel');
 		}
 		//set end date to now if percentage is set to 100 and end date not set
-		$datef = (!$datef && $percentage == 100)?dol_now():$datef;
+		$datef = (!$datef && $percentage == 100) ? dol_now() : $datef;
 
 		if ($object->elementtype == 'ticket') {	// code should be TICKET_MSG, TICKET_MSG_PRIVATE, TICKET_MSG_SENTBYMAIL, TICKET_MSG_PRIVATE_SENTBYMAIL
 			if ($private) {

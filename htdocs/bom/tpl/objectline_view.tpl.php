@@ -38,10 +38,13 @@
  * @var CommonObjectLine $line
  * @var int $num
  */
-'@phan-var-force CommonObjectLine $line
- @phan-var-force int $num
- @phan-var-force CommonObject $this
- @phan-var-force CommonObject $object';
+'
+@phan-var-force CommonObjectLine $line
+@phan-var-force int $num
+@phan-var-force int $i
+@phan-var-force CommonObject $this
+@phan-var-force CommonObject $object
+';
 
 require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 

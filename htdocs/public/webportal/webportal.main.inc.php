@@ -76,8 +76,11 @@ if (!function_exists('dol_getprefix')) {
 	}
 }
 
-
-include '../../main.inc.php';
+$relDir = '';
+if (defined('MAIN_INC_REL_DIR')) {
+	$relDir = MAIN_INC_REL_DIR;
+}
+include $relDir.'../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT . '/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT . '/societe/class/societeaccount.class.php';
@@ -213,7 +216,7 @@ if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->access
 
 			if ($user_id <= 0) {
 				$error++;
-				$error_msg = $langs->transnoentitiesnoconv('WebPortalSetupNotComplete', $user_id);
+				$error_msg = $langs->transnoentitiesnoconv('WebPortalSetupNotComplete');
 				dol_syslog($error_msg, LOG_WARNING);
 				$context->setEventMessages($error_msg, null, 'errors');
 			}

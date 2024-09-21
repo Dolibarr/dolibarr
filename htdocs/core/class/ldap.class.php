@@ -1168,13 +1168,13 @@ class Ldap
 	 *	Returns an array containing a details or list of LDAP record(s).
 	 *	ldapsearch -LLLx -hlocalhost -Dcn=admin,dc=parinux,dc=org -w password -b "ou=adherents,ou=people,dc=parinux,dc=org" userPassword
 	 *
-	 *	@param	string	$search			 	Value of field to search, '*' for all. Not used if $activefilter is set.
-	 *	@param	string	$userDn			 	DN (Ex: ou=adherents,ou=people,dc=parinux,dc=org)
-	 *	@param	string	$useridentifier 	Name of key field (Ex: uid).
-	 *	@param	array	$attributeArray 	Array of fields required. Note this array must also contain field $useridentifier (Ex: sn,userPassword)
-	 *	@param	int		$activefilter		'1' or 'user'=use field this->filter as filter instead of parameter $search, 'group'=use field this->filtergroup as filter, 'member'=use field this->filtermember as filter
-	 *	@param	array	$attributeAsArray 	Array of fields wanted as an array not a string
-	 *	@return	array|int					if KO: <0 || if OK: array of [id_record][ldap_field]=value
+	 *	@param	string			$search			 	Value of field to search, '*' for all. Not used if $activefilter is set.
+	 *	@param	string			$userDn			 	DN (Ex: ou=adherents,ou=people,dc=parinux,dc=org)
+	 *	@param	string			$useridentifier 	Name of key field (Ex: uid).
+	 *	@param	string[]		$attributeArray 	Array of fields required. Note this array must also contain field $useridentifier (Ex: sn,userPassword)
+	 *	@param	0|1|'1'|'user'|'group'|'member'	$activefilter	'1' or 'user'=use field this->filter as filter instead of parameter $search, 'group'=use field this->filtergroup as filter, 'member'=use field this->filtermember as filter
+	 *	@param	string[]		$attributeAsArray 	Array of fields wanted as an array not a string
+	 *	@return	array<string,array<string,string>>|int<min,-1>				if KO: <0 || if OK: array of [id_record][ldap_field]=value
 	 */
 	public function getRecords($search, $userDn, $useridentifier, $attributeArray, $activefilter = 0, $attributeAsArray = array())
 	{
