@@ -65,7 +65,7 @@ parameters:
 		- '#expects \(callable#'
 		- '#expects bool\|string#'
 		- '#expects bool, int#'
-		- '# (dol_getdate|dol_concatdesc|vatrate) expects bool, string given.#'
+		- '# (dol_getdate|vatrate) expects bool, string given.#'
 		- '# SMTPs::(getFrom|getErrorsTo|getReplyTo)\(\) expects bool, string given.#'
 		- '# (dolibarr_set_const|yn|getLocalTaxesFromRate) expects int\|string#'
 		- '#::(options)\(\) expects int\|string#'
