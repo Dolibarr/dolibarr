@@ -1918,10 +1918,10 @@ function pdf_getlineref_supplier($object, $i, $outputlangs, $hidedetails = 0)
 /**
  *	Return line vat rate
  *
- *	@param	Object		$object				Object
- *	@param	int			$i					Current line number
- *  @param  Translate	$outputlangs		Object langs for output
- *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
+ *	@param	CommonObject	$object				Object
+ *	@param	int				$i					Current line number
+ *  @param  Translate		$outputlangs		Object langs for output
+ *  @param	int				$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
  * 	@return	string
  */
 function pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails = 0)
