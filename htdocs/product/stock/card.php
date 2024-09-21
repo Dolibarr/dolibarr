@@ -760,7 +760,7 @@ if ($action == 'create') {
 					print '<tr class="oddeven">';
 
 					$parameters = array('obj' => $objp, 'totalarray' => &$totalarray);
-					$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
+					$reshook = $hookmanager->executeHooks('printFieldPreListValue', $parameters); // Note that $action and $object may have been modified by hook
 					print $hookmanager->resPrint;
 
 					$productstatic->id = $objp->rowid;
@@ -842,6 +842,10 @@ if ($action == 'create') {
 						print $langs->trans("CorrectStock");
 						print "</a></td>";
 					}
+
+					$parameters = array('obj' => $objp, 'totalarray' => &$totalarray);
+					$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
+					print $hookmanager->resPrint;
 
 					print "</tr>";
 
