@@ -92,7 +92,7 @@ parameters:
 		- '# (envoi_mail|sendEmailTo) expects string, \(float\|int\) given.#'
 		- '#::printStdColumnContent\(\) expects string, float(\|(int|array)(\<.*\>)?)* given.#'
 		- '#::HTML2OpenIDServer\(\) expects string, array given.#'
-		- '# (dol_strlen|vatrate) expects string, float(\|(int|array)(\<.*\>)?)* given.#'
+		- '# dol_strlen expects string, float(\|(int|array)(\<.*\>)?)* given.#'
 		- '#create_line\(\) expects string, float given.#'
 		- '# dol_stringtotime expects string, DateTime given.#'
 		- '# (show_ldap_content|projectLinesa) expects string, true given.#'
