@@ -124,6 +124,7 @@ class RecruitmentCandidature extends CommonObject
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'position' => 1000, 'notnull' => -1, 'visible' => -2,),
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'position' => 1010, 'notnull' => -1, 'visible' => 0,),
 		'status' => array('type' => 'smallint', 'label' => 'Status', 'enabled' => 1, 'position' => 1000, 'notnull' => 1, 'visible' => 2, 'index' => 1, 'default' => '0', 'arrayofkeyval' => array('0' => 'Draft', '1' => 'Received', '3' => 'ContractProposed', '5' => 'ContractSigned', '8' => 'Refused', '9' => 'Canceled')),
+		"ip" => array("type" => "varchar(250)", "label" => "Ip", "enabled" => "1", 'position' => 700, 'notnull' => 0, "visible" => "0", "comment" => "ip used to create record (for public submission page)"),
 	);
 	public $rowid;
 	public $entity;
@@ -146,12 +147,8 @@ class RecruitmentCandidature extends CommonObject
 	public $import_key;
 	public $model_pdf;
 	public $status;
-	// END MODULEBUILDER PROPERTIES
-
-	/**
-	 * @var string IP address
-	 */
 	public $ip;
+	// END MODULEBUILDER PROPERTIES
 
 	/**
 	 * Constructor

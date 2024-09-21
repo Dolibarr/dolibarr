@@ -358,6 +358,10 @@ if (empty($reshook)) {
 			$object->code_client			= GETPOSTISSET('customer_code') ? GETPOST('customer_code', 'alpha') : GETPOST('code_client', 'alpha');
 			$object->code_fournisseur		= GETPOSTISSET('supplier_code') ? GETPOST('supplier_code', 'alpha') : GETPOST('code_fournisseur', 'alpha');
 			$object->capital				= GETPOST('capital', 'alphanohtml');
+			if ($action == 'add') {
+				$object->cond_reglement_id	= GETPOSTINT('cond_reglement_id');
+				$object->mode_reglement_id	= GETPOSTINT('mode_reglement_id');
+			}
 			$object->barcode				= GETPOST('barcode', 'alphanohtml');
 
 			$object->tva_intra				= GETPOST('tva_intra', 'alphanohtml');
@@ -1058,6 +1062,16 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 		$object->email				= GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL);
 		$object->url				= GETPOST('url', 'custom', 0, FILTER_SANITIZE_URL);
 		$object->capital			= GETPOST('capital', 'alphanohtml');
+		$paymentTermId = GETPOSTINT('cond_reglement_id'); // can be set by default values on create page and not already in get or post variables
+		if (empty($paymentTermId) && !GETPOSTISSET('cond_reglement_id')) {
+			$paymentTermId = getDolGlobalString('MAIN_DEFAULT_PAYMENT_TERM_ID');
+		}
+		$object->cond_reglement_id	= $paymentTermId;
+		$paymentTypeId = GETPOSTINT('mode_reglement_id'); // can be set by default values on create page and not already in get or post variables
+		if (empty($paymentTypeId) && !GETPOSTISSET('mode_reglement_id')) {
+			$paymentTypeId = getDolGlobalString('MAIN_DEFAULT_PAYMENT_TYPE_ID');
+		}
+		$object->mode_reglement_id 	= $paymentTypeId;
 		$object->barcode			= GETPOST('barcode', 'alphanohtml');
 		$object->idprof1			= GETPOST('idprof1', 'alphanohtml');
 		$object->idprof2			= GETPOST('idprof2', 'alphanohtml');
@@ -1821,6 +1835,20 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '</td>';
 				print '</tr>';
 			}
+
+			// Payment terms of the settlement
+			print '<tr>';
+			print '<td>'.$form->editfieldkey('PaymentConditions', 'cond_reglement_id', '', $object, 0).'</td>';
+			print '<td colspan="3" class="maxwidthonsmartphone">';
+			print $form->getSelectConditionsPaiements($object->cond_reglement_id, 'cond_reglement_id', 1, 1, 1, '', $object->deposit_percent);
+			print '</td></tr>';
+
+			// Payment mode
+			print '<tr>';
+			print '<td>'.$form->editfieldkey('PaymentMode', 'mode_reglement_id', '', $object, 0).'</td>';
+			print '<td colspan="3" class="maxwidthonsmartphone">';
+			print $form->select_types_paiements($object->mode_reglement_id, 'mode_reglement_id', '', 0, 1, 1, 0, 1);
+			print '</td></tr>';
 
 			// Incoterms
 			if (isModEnabled('incoterm')) {
