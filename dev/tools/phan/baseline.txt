@@ -9,7 +9,7 @@
  */
 return [
     // # Issue statistics:
-    // PhanPluginUnknownPropertyType : 1550+ occurrences
+    // PhanPluginUnknownPropertyType : 1520+ occurrences
     // PhanUndeclaredProperty : 840+ occurrences
     // PhanTypeMismatchArgumentProbablyReal : 780+ occurrences
     // PhanPossiblyUndeclaredGlobalVariable : 730+ occurrences
@@ -26,9 +26,9 @@ return [
     // PhanPluginUndeclaredVariableIsset : 70+ occurrences
     // PhanPluginEmptyStatementIf : 55+ occurrences
     // PhanRedefineFunction : 55+ occurrences
-    // PhanTypeExpectedObjectPropAccess : 50+ occurrences
     // PhanTypeSuspiciousNonTraversableForeach : 50+ occurrences
     // PhanTypeMismatchDimFetch : 40+ occurrences
+    // PhanTypeExpectedObjectPropAccess : 25+ occurrences
     // PhanPossiblyNullTypeMismatchProperty : 15+ occurrences
     // PhanTypeComparisonFromArray : 15+ occurrences
     // PhanUndeclaredConstant : 15+ occurrences
@@ -39,8 +39,8 @@ return [
     // PhanUndeclaredMethod : 9 occurrences
     // PhanPluginBothLiteralsBinaryOp : 8 occurrences
     // PhanPluginDuplicateArrayKey : 8 occurrences
-    // PhanTypeExpectedObjectPropAccessButGotNull : 8 occurrences
     // PhanTypeMismatchDimFetchNullable : 7 occurrences
+    // PhanTypeExpectedObjectPropAccessButGotNull : 6 occurrences
     // PhanInvalidFQSENInClasslike : 2 occurrences
     // PhanParamTooMany : 2 occurrences
     // PhanAccessMethodProtected : 1 occurrence
@@ -332,7 +332,6 @@ return [
         'htdocs/core/class/html.formother.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType', 'PhanPluginUnknownObjectMethodCall', 'PhanPluginUnknownPropertyType'],
         'htdocs/core/class/html.formprojet.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownPropertyType', 'PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/core/class/html.formsetup.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayPropertyType'],
-        'htdocs/core/class/html.formsms.class.php' => ['PhanPluginUnknownObjectMethodCall', 'PhanPluginUnknownPropertyType', 'PhanPossiblyUndeclaredVariable', 'PhanTypeExpectedObjectPropAccessButGotNull'],
         'htdocs/core/class/html.formticket.class.php' => ['PhanPluginUnknownArrayPropertyType', 'PhanPluginUnknownObjectMethodCall', 'PhanPluginUnknownPropertyType', 'PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/core/class/html.formwebsite.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownPropertyType'],
         'htdocs/core/class/infobox.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType'],
@@ -343,7 +342,7 @@ return [
         'htdocs/core/class/notify.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownObjectMethodCall', 'PhanPluginUnknownPropertyType'],
         'htdocs/core/class/openid.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType', 'PhanPluginUnknownPropertyType'],
         'htdocs/core/class/reddithandler.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType', 'PhanPluginUnknownArrayPropertyType'],
-        'htdocs/core/class/rssparser.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType', 'PhanPluginUnknownObjectMethodCall', 'PhanPluginUnknownPropertyType', 'PhanTypeExpectedObjectPropAccess'],
+        'htdocs/core/class/rssparser.class.php' => ['PhanPluginUnknownArrayMethodReturnType'],
         'htdocs/core/class/smtps.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType', 'PhanPluginUnknownPropertyType', 'PhanTypeMismatchDimFetch'],
         'htdocs/core/class/socialnetworkmanager.class.php' => ['PhanPluginUnknownArrayMethodParamType'],
         'htdocs/core/class/stats.class.php' => ['PhanPossiblyUndeclaredVariable', 'PhanTypeMismatchDimFetch'],
@@ -623,10 +622,9 @@ return [
         'htdocs/expedition/note.php' => ['PhanPossiblyUndeclaredGlobalVariable'],
         'htdocs/expedition/shipment.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredGlobalVariable'],
         'htdocs/expedition/tpl/linkedobjectblock.tpl.php' => ['PhanUndeclaredProperty'],
-        'htdocs/expensereport/card.php' => ['PhanPluginBothLiteralsBinaryOp', 'PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeExpectedObjectPropAccess', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredProperty'],
+        'htdocs/expensereport/card.php' => ['PhanPluginBothLiteralsBinaryOp', 'PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredProperty'],
         'htdocs/expensereport/class/api_expensereports.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType'],
-        'htdocs/expensereport/class/expensereport.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType', 'PhanPluginUnknownObjectMethodCall', 'PhanPluginUnknownPropertyType', 'PhanTypeExpectedObjectPropAccess', 'PhanTypeExpectedObjectPropAccessButGotNull'],
-        'htdocs/expensereport/class/expensereport_ik.class.php' => ['PhanPluginUnknownArrayMethodReturnType'],
+        'htdocs/expensereport/class/expensereport.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType', 'PhanPluginUnknownObjectMethodCall', 'PhanPluginUnknownPropertyType', 'PhanTypeExpectedObjectPropAccessButGotNull'],
         'htdocs/expensereport/class/expensereportstats.class.php' => ['PhanPluginUnknownArrayMethodReturnType'],
         'htdocs/expensereport/class/paymentexpensereport.class.php' => ['PhanPossiblyUndeclaredVariable', 'PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/expensereport/payment/card.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanUndeclaredGlobalVariable'],
@@ -637,7 +635,7 @@ return [
         'htdocs/expensereport/tpl/expensereport_linktofile.tpl.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/expensereport/tpl/linkedobjectblock.tpl.php' => ['PhanUndeclaredProperty'],
         'htdocs/externalsite/frames.php' => ['PhanUndeclaredGlobalVariable'],
-        'htdocs/fichinter/card-rec.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeExpectedObjectPropAccessButGotNull', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
+        'htdocs/fichinter/card-rec.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
         'htdocs/fichinter/card.php' => ['PhanPossiblyUndeclaredGlobalVariable'],
         'htdocs/fichinter/class/api_interventions.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType', 'PhanUndeclaredProperty'],
         'htdocs/fichinter/class/fichinter.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType', 'PhanPluginUnknownObjectMethodCall'],
