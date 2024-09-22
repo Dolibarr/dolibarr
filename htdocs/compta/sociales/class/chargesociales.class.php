@@ -405,6 +405,7 @@ class ChargeSociales extends CommonObject
 	 */
 	public function solde($year = 0)
 	{
+		global $conf;
 		$sql = "SELECT SUM(f.amount) as amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX."chargesociales as f";
 		$sql .= " WHERE f.entity = ".((int) $conf->entity);
