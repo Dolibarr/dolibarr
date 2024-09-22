@@ -25,6 +25,7 @@ parameters:
 		- htdocs/support/*
 		analyse:
 		- htdocs/includes/*
+		- htdocs/core/class/lessc.class.php
 	checkAlwaysTrueCheckTypeFunctionCall: false
 	checkAlwaysTrueInstanceof: false
 	checkAlwaysTrueStrictComparison: false
