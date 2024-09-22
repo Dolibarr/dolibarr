@@ -1903,7 +1903,7 @@ class Project extends CommonObject
 				if (dol_mkdir($clone_project_dir) >= 0) {
 					$filearray = dol_dir_list($ori_project_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', '', SORT_ASC, 1);
 					foreach ($filearray as $key => $file) {
-						$rescopy = dol_copy($ori_project_dir.'/'.$file['name'], $clone_project_dir.'/'.$file['name'], 0, 1);
+						$rescopy = dol_copy($ori_project_dir.'/'.$file['name'], $clone_project_dir.'/'.$file['name'], '0', 1);
 						if (is_numeric($rescopy) && $rescopy < 0) {
 							$this->error .= $langs->trans("ErrorFailToCopyFile", $ori_project_dir.'/'.$file['name'], $clone_project_dir.'/'.$file['name']);
 							$error++;

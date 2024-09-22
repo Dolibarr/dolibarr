@@ -588,7 +588,7 @@ if (empty($reshook)) {
 				if (!empty($product_desc) && getDolGlobalString('MAIN_NO_CONCAT_DESCRIPTION')) {
 					$desc = $product_desc;
 				} else {
-					$desc = dol_concatdesc($desc, $product_desc, '', getDolGlobalString('MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION'));
+					$desc = dol_concatdesc($desc, $product_desc, false, getDolGlobalString('MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION') ? true : false);
 				}
 
 				$fk_unit = $prod->fk_unit;
@@ -1680,7 +1680,7 @@ if ($action == 'create') {
 					}
 					// VAT
 					print '<td class="center">';
-					print vatrate($objp->tva_tx.($objp->vat_src_code ? (' ('.$objp->vat_src_code.')') : ''), '%', $objp->info_bits);
+					print vatrate($objp->tva_tx.($objp->vat_src_code ? (' ('.$objp->vat_src_code.')') : ''), true, $objp->info_bits);
 					print '</td>';
 					// Price
 					print '<td class="right">'.($objp->subprice != '' ? price($objp->subprice) : '')."</td>\n";

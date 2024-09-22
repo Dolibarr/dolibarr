@@ -623,13 +623,6 @@ if ($result) {
 	dol_print_error($db);
 }
 
-
-//var_dump($tabpay);
-//var_dump($tabcompany);
-//var_dump($tabbq);
-//var_dump($tabtp);
-//var_dump($tabtype);
-
 // Write bookkeeping
 if (!$error && $action == 'writebookkeeping' && $user->hasRight('accounting', 'bind', 'write')) {
 	$now = dol_now();
@@ -663,9 +656,6 @@ if (!$error && $action == 'writebookkeeping' && $user->hasRight('accounting', 'b
 		$db->begin();
 
 		// Introduce a protection. Total of tabtp must be total of tabbq
-		//var_dump($tabpay);
-		//var_dump($tabtp);
-		//var_dump($tabbq);exit;
 
 		// Bank
 		if (!$errorforline && is_array($tabbq[$key])) {
@@ -1388,9 +1378,6 @@ if (empty($action) || $action == 'view') {
 						$accounttoshowsubledger = length_accounta($k);
 						if ($accounttoshow != $accounttoshowsubledger) {
 							if (empty($accounttoshowsubledger) || $accounttoshowsubledger == 'NotDefined') {
-								//var_dump($tabpay[$key]);
-								//var_dump($tabtype[$key]);
-								//var_dump($tabbq[$key]);
 								//print '<span class="error">'.$langs->trans("ThirdpartyAccountNotDefined").'</span>';
 								if (!empty($tabcompany[$key]['code_compta'])) {
 									if (in_array($tabtype[$key], array('payment_various', 'payment_salary'))) {

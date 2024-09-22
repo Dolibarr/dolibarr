@@ -344,7 +344,7 @@ class WebPortalMember extends Adherent
 			} elseif ($mode == 'ref') {
 				$result .= $this->ref;
 			} else {
-				$result .= $this->getFullName($langs, '', ($mode == 'firstname' ? 2 : ($mode == 'lastname' ? 4 : -1)), $maxlen);
+				$result .= $this->getFullName($langs, 0, ($mode == 'firstname' ? 2 : ($mode == 'lastname' ? 4 : -1)), $maxlen);
 			}
 			if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$result .= '</span>';

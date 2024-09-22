@@ -2306,7 +2306,7 @@ class Task extends CommonObjectLine
 						}
 					}
 
-					$rescopy = dol_copy($ori_task_dir.'/'.$file['name'], $clone_task_dir.'/'.$file['name'], 0, 1);
+					$rescopy = dol_copy($ori_task_dir.'/'.$file['name'], $clone_task_dir.'/'.$file['name'], '0', 1);
 					if (is_numeric($rescopy) && $rescopy < 0) {
 						$this->error .= $langs->trans("ErrorFailToCopyFile", $ori_task_dir.'/'.$file['name'], $clone_task_dir.'/'.$file['name']);
 						$error++;

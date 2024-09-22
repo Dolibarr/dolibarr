@@ -1385,7 +1385,6 @@ if ($id > 0) {
 	} elseif ($search_active == 'no') {
 		$sql .= " AND ".$db->sanitize($tableprefix)."active = 0";
 	}
-	//var_dump($sql);
 
 	// Count total nb of records
 	$nbtotalofrecords = '';
