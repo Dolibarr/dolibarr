@@ -49,7 +49,7 @@ function checkNbPostsForASpeceificIp($object, $nb_post_max)
 	}
 
 	if ($nb_post_max > 0) {	// Calculate only if there is a limit to check
-		$sql = "SELECT COUNT(rowid) as nb_posts";
+		$sql = "SELECT COUNT(".(!empty($object->table_rowid) ? $object->table_rowid : 'rowid').") as nb_posts";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element;
 		$sql .= " WHERE ip = '".$db->escape($object->ip)."'";
 		$sql .= " AND datec > '".$db->idate($minmonthpost)."'";
@@ -64,6 +64,7 @@ function checkNbPostsForASpeceificIp($object, $nb_post_max)
 			}
 		} else {
 			array_push($object->errors, $db->lasterror());
+			return -1;
 		}
 	}
 	if ($nb_post_max > 0 && $nb_post_ip >= $nb_post_max) {
