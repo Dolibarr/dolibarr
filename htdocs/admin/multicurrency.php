@@ -121,7 +121,7 @@ if ($action == 'add_currency') {
 		$currency = new MultiCurrency($db);
 
 		if ($currency->fetch($fk_multicurrency) > 0) {
-			if ($currency->delete() > 0) {
+			if ($currency->delete($user) > 0) {
 				setEventMessages($langs->trans('RecordDeleted'), array());
 			} else {
 				setEventMessages($langs->trans('ErrorDeleteCurrencyFail'), array(), 'errors');
