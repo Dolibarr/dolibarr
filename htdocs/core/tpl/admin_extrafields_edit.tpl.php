@@ -245,7 +245,7 @@ if (in_array($type, array_keys($typewecanchangeinto))) {
 	</td><td>
 	<span id="helpselect" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpselect"), 1, 0, '', 0, 2, 'helpvalue1')?></span>
 	<span id="helpsellist" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpsellist"), 1, 0, '', 0, 2, 'helpvalue2')?></span>
-	<span id="helpchkbxlst" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpchkbxlst"), 1, 0, '', 0, 2, 'helpvalue3')?></span>
+	<span id="helpchkbxlst" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpsellist"), 1, 0, '', 0, 2, 'helpvalue3')?></span>
 	<span id="helplink" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelplink").'<br><br>'.$langs->trans("Examples").':<br>'.$listofexamplesforlink, 1, 0, '', 0, 2, 'helpvalue4')?></span>
 	<span id="helppassword" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpPassword"), 1, 0, '', 0, 2, 'helpvalue5')?></span>
 	<span id="helpseparate" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpSeparator"), 1, 0, '', 0, 2, 'helpvalue6')?></span>

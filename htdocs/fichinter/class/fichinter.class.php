@@ -876,7 +876,7 @@ class Fichinter extends CommonObject
 	 */
 	public function getTooltipContentArray($params)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$langs->load('interventions');
 

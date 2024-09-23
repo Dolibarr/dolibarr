@@ -103,32 +103,37 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 	public $box_order;
 
 	/**
-	 * @var int User ID
+	 * @var int 	User ID
 	 */
 	public $fk_user;
 
 	/**
-	 * @var string Source file
+	 * @var string 	Source file
 	 */
 	public $sourcefile;
 
 	/**
-	 * @var string Class name
+	 * @var string 	Class name
 	 */
 	public $class;
 
 	/**
-	 * @var string ID
+	 * @var string 	ID
 	 */
 	public $box_id;
 
 	/**
-	 * @var string Alphanumeric ID
+	 * @var string 	Box language file if it needs a specific language file.
+	 */
+	public $lang;
+
+	/**
+	 * @var string 	Alphanumeric ID
 	 */
 	public $boxcode;
 
 	/**
-	 * @var string Note
+	 * @var string 	Note
 	 */
 	public $note;
 

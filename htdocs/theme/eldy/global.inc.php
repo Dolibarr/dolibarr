@@ -3017,7 +3017,6 @@ a.tmenuimage:hover{
 	text-decoration: none;
 }
 
-
 /* To show text of top menu according to option THEME_TOPMENU_DISABLE_IMAGE */
 
 /* Text hidden by default */

@@ -978,6 +978,9 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 		// Now do a correction of the suggested date
 		if (getDolGlobalString('MEMBER_SUBSCRIPTION_START_FIRST_DAY_OF') === "m") {
 			$datefrom = dol_get_first_day((int) dol_print_date($datefrom, "%Y"), (int) dol_print_date($datefrom, "%m"));
+		} elseif (getDolGlobalString('MEMBER_SUBSCRIPTION_START_FIRST_DAY_OF') === "3m") {
+			$datefrom = dol_time_plus_duree($object->datefin, -3, 'm');
+			$datefrom = dol_get_first_day((int) dol_print_date($datefrom, "%Y"), (int) dol_print_date($datefrom, "%m"));
 		} elseif (getDolGlobalString('MEMBER_SUBSCRIPTION_START_FIRST_DAY_OF') === "Y") {
 			$datefrom = dol_get_first_day((int) dol_print_date($datefrom, "%Y"));
 		}
