@@ -483,7 +483,7 @@ print '</td></tr>'."\n";
 
 // Phone
 print '<tr class="oddeven"><td><label for="phone">'.$langs->trans("Phone").'</label></td><td>';
-print img_picto('', 'object_phoning', '', false, 0, 0, '', 'pictofixedwidth');
+print img_picto('', 'object_phoning', '', 0, 0, 0, '', 'pictofixedwidth');
 print '<input class="maxwidth150 widthcentpercentminusx" name="phone" id="phone" value="'.dol_escape_htmltag((GETPOSTISSET('phone') ? GETPOST('phone', 'alphanohtml') : (getDolGlobalString('MAIN_INFO_SOCIETE_TEL')))).'"></td></tr>';
 print '</td></tr>'."\n";
 
@@ -501,7 +501,7 @@ print '</td></tr>'."\n";
 
 // Email
 print '<tr class="oddeven"><td><label for="email">'.$langs->trans("EMail").'</label></td><td>';
-print img_picto('', 'object_email', '', false, 0, 0, '', 'pictofixedwidth');
+print img_picto('', 'object_email', '', 0, 0, 0, '', 'pictofixedwidth');
 print '<input class="minwidth300 maxwidth500 widthcentpercentminusx" name="mail" id="email" value="'.dol_escape_htmltag((GETPOSTISSET('mail') ? GETPOST('mail', 'alphanohtml') : (getDolGlobalString('MAIN_INFO_SOCIETE_MAIL') ? $conf->global->MAIN_INFO_SOCIETE_MAIL : ''))).'"></td></tr>';
 print '</td></tr>'."\n";
 
