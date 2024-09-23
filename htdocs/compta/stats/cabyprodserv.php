@@ -88,8 +88,8 @@ if ($selected_type == '') {
 }
 
 // Date range
-$year = GETPOST("year");
-$month = GETPOST("month");
+$year = GETPOSTINT("year");
+$month = GETPOSTINT("month");
 $date_startyear = GETPOST("date_startyear");
 $date_startmonth = GETPOST("date_startmonth");
 $date_startday = GETPOST("date_startday");
