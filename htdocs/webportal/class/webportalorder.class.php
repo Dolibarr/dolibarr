@@ -189,9 +189,10 @@ class WebPortalOrder extends Commande
 	 * @param	int		$save_lastsearch_value	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 * @param	int		$addlinktonotes			Add link to notes
 	 * @param	string	$target					Attribute target for link
+	 * @param	int		$with_third_name		0=Without third-party name (no fetch), 1=With third-party name (fetch)
 	 * @return	string	String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $notooltip = 0, $save_lastsearch_value = -1, $addlinktonotes = 0, $target = '')
+	public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $notooltip = 0, $save_lastsearch_value = -1, $addlinktonotes = 0, $target = '', $with_third_name = 0)
 	{
 		global $conf, $langs, $hookmanager;
 

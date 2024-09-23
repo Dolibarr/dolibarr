@@ -187,9 +187,10 @@ class WebPortalPropal extends Propal
 	 * @param	int		$notooltip				1=Disable tooltip
 	 * @param	int		$save_lastsearch_value	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 * @param	int		$addlinktonotes			-1=Disable, 0=Just add label show notes, 1=Add private note (only internal user), 2=Add public note (internal or external user), 3=Add private (internal user) and public note (internal and external user)
+	 * @param	int		$with_third_name		0=Without third-party name (no fetch), 1=With third-party name (fetch)
 	 * @return	string	String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $get_params = '', $notooltip = 0, $save_lastsearch_value = -1, $addlinktonotes = -1)
+	public function getNomUrl($withpicto = 0, $option = '', $get_params = '', $notooltip = 0, $save_lastsearch_value = -1, $addlinktonotes = -1, $with_third_name = 0)
 	{
 		global $conf, $hookmanager;
 
@@ -202,7 +203,7 @@ class WebPortalPropal extends Propal
 			'id' => $this->id,
 			'objecttype' => $this->element,
 			'option' => $option,
-			'nofetch' => 1,
+			'nofetch' => !empty($with_third_name) ? 0 : 1,
 		];
 		$classfortooltip = 'classfortooltip';
 		$dataparams = '';
