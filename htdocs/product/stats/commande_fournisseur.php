@@ -148,9 +148,9 @@ if ($id > 0 || !empty($ref)) {
 
 		if ($user->hasRight('fournisseur', 'commande', 'lire')) {
 			$sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, s.code_client,";
-			$sql .= " c.rowid, d.total_ht as total_ht, c.ref, d.subprice as unitprice,";
-			$sql .= " c.date_commande, c.fk_statut as statut, c.rowid as commandeid, d.rowid, d.qty,";
-			$sql .= " c.date_livraison as delivery_date";
+			$sql .= " c.rowid, d.total_ht as total_ht, c.ref,";
+			$sql .= " c.date_livraison as delivery_date,";
+			$sql .= " c.date_commande, c.fk_statut as statut, c.rowid as commandeid, d.rowid, d.qty, d.subprice as unitprice";
 			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= ", sc.fk_soc, sc.fk_user ";
 			}
