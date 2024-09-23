@@ -182,6 +182,7 @@ LastCustomersBills=Latest %s customer invoices
 LastSuppliersBills=Latest %s vendor invoices
 AllBills=All invoices
 AllCustomerTemplateInvoices=All template invoices
+AllSupplierTemplateInvoices=All template invoices
 OtherBills=Other invoices
 DraftBills=Draft invoices
 CustomersDraftInvoices=Customer draft invoices
