@@ -758,7 +758,7 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
  * @param	int		$nbofactivatedmodules		Number if activated modules
  * @param	int		$nboftotalmodules			Nb of total modules
  * @param	int		$nbmodulesnotautoenabled	Nb of modules not auto enabled that are activated
- * @return  array								Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function modules_prepare_head($nbofactivatedmodules, $nboftotalmodules, $nbmodulesnotautoenabled)
 {
@@ -803,7 +803,7 @@ function modules_prepare_head($nbofactivatedmodules, $nboftotalmodules, $nbmodul
 /**
  * Prepare array with list of tabs
  *
- * @return  array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function ihm_prepare_head()
 {
@@ -848,7 +848,7 @@ function ihm_prepare_head()
 /**
  * Prepare array with list of tabs
  *
- * @return  array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function security_prepare_head()
 {
@@ -926,7 +926,7 @@ function security_prepare_head()
  * Prepare array with list of tabs
  *
  * @param 	DolibarrModules		$object 	Descriptor class
- * @return  array<array<int,string>>		Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function modulehelp_prepare_head($object)
 {
@@ -964,7 +964,7 @@ function modulehelp_prepare_head($object)
 /**
  * Prepare array with list of tabs
  *
- * @return  array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function translation_prepare_head()
 {
@@ -994,7 +994,7 @@ function translation_prepare_head()
 /**
  * Prepare array with list of tabs
  *
- * @return  array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function defaultvalues_prepare_head()
 {

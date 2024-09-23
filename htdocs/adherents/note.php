@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2014	Laurent Destailleur			<eldy@users.sourceforge.net>
- * Copyright (C) 2015		Frederic France				<frederic.france@free.fr>
+ * Copyright (C) 2015-2024	Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *

@@ -439,7 +439,7 @@ class pdf_beluga extends ModelePDFProjects
 					}
 
 					//var_dump("$key, $tablename, $datefieldname, $dates, $datee");
-					$elementarray = $object->get_element_list($key, $tablename, $datefieldname, null, null, $projectField);
+					$elementarray = $object->get_element_list($key, $tablename, $datefieldname, 0, 0, $projectField);
 
 					$num = count($elementarray);
 					if ($num >= 0) {
