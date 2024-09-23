@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2011-2014	Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2014	    Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,7 +54,7 @@ if (empty($date_start) || empty($date_end)) { // We define date_start and date_e
 	if (empty($q)) {
 		if (GETPOST("month")) {
 			$date_start = dol_get_first_day($year_start, GETPOST("month"), false);
-			$date_end = dol_get_last_day($year_start, GETPOST("month"), false);
+			$date_end = dol_get_last_day($year_start, GETPOSTINT("month"), false);
 		} else {
 			$date_start = dol_get_first_day($year_start, !getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START, false);
 			if (!getDolGlobalString('MAIN_INFO_VAT_RETURN') || getDolGlobalInt('MAIN_INFO_VAT_RETURN') == 2) {
