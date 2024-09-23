@@ -3209,7 +3209,9 @@ class Form
 							$objp->price_ttc = price2num($objp->price_ttc, 'MU');
 						}
 					}
-
+					if (getDolGlobalInt('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES') && !empty($objp->custprice)) {
+						$price_level = '';
+					}
 					$this->constructProductListOption($objp, $opt, $optJson, $price_level, $selected, $hidepriceinlabel, $filterkey);
 					// Add new entry
 					// "key" value of json key array is used by jQuery automatically as selected value
