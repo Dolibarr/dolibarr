@@ -964,20 +964,20 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 						} else {
 							if (preg_match('/^([^@]+)@([^@]+)$/i', $urlpage, $regs)) {
 								$urltouse = dol_buildpath('/'.$regs[2].'/admin/'.$regs[1], 1);
-								$codetoconfig .= '<a href="'.$urltouse.(preg_match('/\?/', $urltouse) ? '&' : '?').'save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"', false, 0, 0, '', 'fa-15').'</a>';
+								$codetoconfig .= '<a href="'.$urltouse.(preg_match('/\?/', $urltouse) ? '&' : '?').'save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"', 0, 0, 0, '', 'fa-15').'</a>';
 							} else {
 								$urltouse = $urlpage;
-								$codetoconfig .= '<a href="'.$urltouse.(preg_match('/\?/', $urltouse) ? '&' : '?').'save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"', false, 0, 0, '', 'fa-15').'</a>';
+								$codetoconfig .= '<a href="'.$urltouse.(preg_match('/\?/', $urltouse) ? '&' : '?').'save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"', 0, 0, 0, '', 'fa-15').'</a>';
 							}
 						}
 					}
 				} elseif (preg_match('/^([^@]+)@([^@]+)$/i', (string) $objMod->config_page_url, $regs)) {
-					$codetoconfig .= '<a class="valignmiddle" href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1], 1).'?save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"', false, 0, 0, '', 'fa-15').'</a>';
+					$codetoconfig .= '<a class="valignmiddle" href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1], 1).'?save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"', 0, 0, 0, '', 'fa-15').'</a>';
 				} else {
-					$codetoconfig .= '<a class="valignmiddle" href="'.((string) $objMod->config_page_url).'?save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"', false, 0, 0, '', 'fa-15').'</a>';
+					$codetoconfig .= '<a class="valignmiddle" href="'.((string) $objMod->config_page_url).'?save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"', 0, 0, 0, '', 'fa-15').'</a>';
 				}
 			} else {
-				$codetoconfig .= img_picto($langs->trans("NothingToSetup"), "setup", 'class="opacitytransp" style="padding-right: 6px"', false, 0, 0, '', 'fa-15');
+				$codetoconfig .= img_picto($langs->trans("NothingToSetup"), "setup", 'class="opacitytransp" style="padding-right: 6px"', 0, 0, 0, '', 'fa-15');
 			}
 		} else { // Module not yet activated
 			// Set $codeenabledisable

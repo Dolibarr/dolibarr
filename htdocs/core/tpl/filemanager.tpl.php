@@ -86,13 +86,13 @@ if ($permtoadd) {
 	print '</a>';
 } else {
 	print '<a id="acreatedir" href="#" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.$langs->trans("NotAllowed").'">';
-	print img_picto('', 'folder-plus', 'disabled', false, 0, 0, '', 'size15x marginrightonly');
+	print img_picto('', 'folder-plus', 'disabled', 0, 0, 0, '', 'size15x marginrightonly');
 	print '</a>';
 }
 if ($module == 'ecm') {
 	$tmpurl = ((!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_ECM_DISABLE_JS')) ? '#' : ($_SERVER["PHP_SELF"].'?action=refreshmanual'.($module ? '&amp;module='.$module : '').($section ? '&amp;section='.$section : '')));
 	print '<a id="arefreshbutton" href="'.$tmpurl.'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans('ReSyncListOfDir')).'">';
-	print img_picto('', 'refresh', 'id="refreshbutton"', false, 0, 0, '', 'size15x marginrightonly');
+	print img_picto('', 'refresh', 'id="refreshbutton"', 0, 0, 0, '', 'size15x marginrightonly');
 	print '</a>';
 }
 if ($permtoadd && GETPOSTISSET('website')) {	// If on file manager to manage medias of a web site

@@ -3322,7 +3322,7 @@ if (is_array($listofmodules) && count($listofmodules) > 0) {
 	} else {
 		if (is_object($moduleobj)) {
 			$linktoenabledisable .= '<a class="reposition asetresetmodule valignmiddle" href="'.$_SERVER["PHP_SELF"].'?id='.$moduleobj->numero.'&action=set&token='.newToken().'&value=mod'.$module.$param.'">';
-			$linktoenabledisable .= img_picto($langs->trans("ModuleIsNotActive", $urltomodulesetup), 'switch_off', 'style="padding-right: 8px"', false, 0, 0, '', 'classfortooltip', 1);
+			$linktoenabledisable .= img_picto($langs->trans("ModuleIsNotActive", $urltomodulesetup), 'switch_off', 'style="padding-right: 8px"', 0, 0, 0, '', 'classfortooltip', 1);
 			$linktoenabledisable .= "</a>\n";
 		}
 	}

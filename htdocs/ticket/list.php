@@ -1159,7 +1159,7 @@ while ($i < $imaxinloop) {
 							$creation_date =  $object->datec;
 							$hour_diff_creation = ($now - $creation_date) / 3600 ;
 							if ($hour_diff_creation > getDolGlobalInt('TICKET_DELAY_BEFORE_FIRST_RESPONSE')) {
-								print " " . img_picto($langs->trans('Late') . ' : ' . $langs->trans('TicketsDelayForFirstResponseTooLong', getDolGlobalString('TICKET_DELAY_BEFORE_FIRST_RESPONSE')), 'warning', 'style="color: red;"', false, 0, 0, '', '');
+								print " " . img_picto($langs->trans('Late') . ' : ' . $langs->trans('TicketsDelayForFirstResponseTooLong', getDolGlobalString('TICKET_DELAY_BEFORE_FIRST_RESPONSE')), 'warning', 'style="color: red;"', 0, 0, 0, '', '');
 							}
 						} elseif (getDolGlobalString('TICKET_DELAY_SINCE_LAST_RESPONSE') && $hour_diff > getDolGlobalInt('TICKET_DELAY_SINCE_LAST_RESPONSE')) {
 							print " " . img_picto($langs->trans('Late') . ' : ' . $langs->trans('TicketsDelayFromLastResponseTooLong', getDolGlobalString('TICKET_DELAY_SINCE_LAST_RESPONSE')), 'warning');
