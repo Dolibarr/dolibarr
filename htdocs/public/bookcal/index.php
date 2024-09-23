@@ -97,7 +97,7 @@ $max_day_in_prev_month = idate("t", dol_mktime(0, 0, 0, $prev_month, 1, $prev_ye
 $max_day_in_month = idate("t", dol_mktime(0, 0, 0, $month, 1, $year)); // Nb of days in next month
 // tmpday is a negative or null cursor to know how many days before the 1st to show on month view (if tmpday=0, 1st is monday)
 $tmpday = - idate("w", dol_mktime(12, 0, 0, $month, 1, $year, 'gmt')) + 2; // idate('w') is 0 for sunday
-$tmpday += ((isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : 1) - 1);
+$tmpday += (getDolGlobalInt('MAIN_START_WEEK', 1) - 1);
 if ($tmpday >= 1) {
 	$tmpday -= 7; // If tmpday is 0 we start with sunday, if -6, we start with monday of previous week.
 }
@@ -130,7 +130,7 @@ $errmsg = '';
  */
 function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
 {
-	global $user, $conf, $langs, $mysoc;
+	global $conf, $langs, $mysoc;
 
 	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss); // Show html headers
 
@@ -185,7 +185,7 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
  * Actions
  */
 
-if ($action == 'add') {
+if ($action == 'add' ) {	// Test on permission not required here (anonymous action protected by mitigation of /public/... urls)
 	$error = 0;
 	$idcontact = 0;
 	$calendar = $object;
@@ -421,7 +421,7 @@ if ($action == 'afteradd') {
 		}
 		print ' </tr>'."\n";
 
-		$todayarray = dol_getdate($now, 'fast');
+		$todayarray = dol_getdate($now, true);
 		$todaytms = dol_mktime(0, 0, 0, $todayarray['mon'], $todayarray['mday'], $todayarray['year']);
 
 		// Load into an array all days with availabilities of the calendar for the current month $todayarray['mon'] and $todayarray['year']

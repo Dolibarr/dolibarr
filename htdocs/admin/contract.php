@@ -62,6 +62,7 @@ $error = 0;
 if ($action == 'updateMask') {
 	$maskconst = GETPOST('maskconstcontract', 'aZ09');
 	$maskvalue = GETPOST('maskcontract', 'alpha');
+	$res = 0;
 	if ($maskconst && preg_match('/_MASK$/', $maskconst)) {
 		$res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
 	}
@@ -99,12 +100,13 @@ if ($action == 'updateMask') {
 		$module = new $classname($db);
 		'@phan-var-force ModelePDFContract $module';
 
+		/** @var ModelePDFContract $module */
 		if ($module->write_file($contract, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=contract&file=SPECIMEN.pdf");
 			return;
 		} else {
-			setEventMessages($obj->error, $obj->errors, 'errors');
-			dol_syslog($obj->error, LOG_ERR);
+			setEventMessages($module->error, $module->errors, 'errors');
+			dol_syslog($module->error, LOG_ERR);
 		}
 	} else {
 		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
@@ -247,6 +249,8 @@ foreach ($dirmodels as $reldir) {
 					/** @var ModelNumRefContracts $module */
 					$module = new $file($db);
 
+					'@phan-var-force ModelNumRefContracts $module';
+
 					// Show modules according to features level
 					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 						continue;
@@ -383,6 +387,8 @@ foreach ($dirmodels as $reldir) {
 							/** @var ModelePDFContract $module */
 							$module = new $classname($db);
 
+							'@phan-var-force ModelePDFContract $module';
+
 							$modulequalified = 1;
 							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 								$modulequalified = 0;
@@ -396,7 +402,7 @@ foreach ($dirmodels as $reldir) {
 								print(empty($module->name) ? $name : $module->name);
 								print "</td><td>\n";
 								if (method_exists($module, 'info')) {
-									print $module->info($langs);
+									print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
 								} else {
 									print $module->description;
 								}

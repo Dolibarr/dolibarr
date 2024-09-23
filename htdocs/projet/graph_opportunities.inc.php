@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2013-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,7 +64,7 @@ if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 		}
 		$db->free($resql);
 
-		$ponderated_opp_amount = $ponderated_opp_amount / 100;
+		$ponderated_opp_amount /= 100;
 
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder nohover centpercent">';

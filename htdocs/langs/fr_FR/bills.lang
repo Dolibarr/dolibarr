@@ -182,6 +182,7 @@ LastCustomersBills=Les %s dernières factures client
 LastSuppliersBills=Les %s dernières factures fournisseur
 AllBills=Toutes les factures
 AllCustomerTemplateInvoices=Tous les modèles
+AllSupplierTemplateInvoices=Tous les modèles
 OtherBills=Autres factures
 DraftBills=Factures brouillons
 CustomersDraftInvoices=Factures clients brouillons
@@ -645,7 +646,7 @@ BILL_SUPPLIER_DELETEInDolibarr=Facture fournisseur supprimée
 UnitPriceXQtyLessDiscount=Prix unitaire x Qté - Remise
 CustomersInvoicesArea=Zone de facturation client
 SupplierInvoicesArea=Zone de facturation fournisseur
-SituationTotalRayToRest=Reste à payer sans taxe
+SituationTotalRayToRest=Reste à payer HT
 PDFSituationTitle=Situation n°%d
 SituationTotalProgress=Avancement total %d %%
 SearchUnpaidInvoicesWithDueDate=Rechercher les factures impayées avec date d'échéance = %s

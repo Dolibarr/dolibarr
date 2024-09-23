@@ -6,6 +6,7 @@
  * Copyright (C) 2013      Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2020      Open-DSI	                    <support@open-dsi.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +38,7 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
 {
 	/**
 	 * Dolibarr version of the loaded document 'development', 'experimental', 'dolibarr'
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr';
 
@@ -78,6 +79,7 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
 		$tooltip .= $langs->trans('GenericMaskCodes3');
 		$tooltip .= $langs->trans('GenericMaskCodes4a', $langs->transnoentities('CashDesk'), $langs->transnoentities('CashDesk'));
 		$tooltip .= $langs->trans('GenericMaskCodes5');
+		//$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 		$tooltip .= $langs->trans('CashDeskGenericMaskCodes6');
 
 		// Setting up the prefix
@@ -101,11 +103,11 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
 	 */
 	public function getExample()
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		$old_code_client = $mysoc->code_client;
 		$mysoc->code_client = 'CCCCCCCCCC';
-		$numExample = $this->getNextValue($mysoc, '');
+		$numExample = $this->getNextValue($mysoc, null);
 		$mysoc->code_client = $old_code_client;
 
 		if (!$numExample) {
@@ -117,10 +119,10 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
 	/**
 	 * Return next free value
 	 *
-	 * @param   Societe     $objsoc     Object thirdparty
-	 * @param   Facture		$invoice	Object invoice
-	 * @param   string		$mode       'next' for next value or 'last' for last value
-	 * @return  string|0                Next value if OK, 0 if KO
+	 * @param	?Societe	$objsoc		Object third party
+	 * @param	?Facture	$invoice	Object invoice
+	 * @param	string		$mode		'next' for next value or 'last' for last value
+	 * @return	string|int<-1,0>		Next ref value or last ref if $mode is 'last'
 	 */
 	public function getNextValue($objsoc = null, $invoice = null, $mode = 'next')
 	{
@@ -141,7 +143,7 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
 
 		$date = (empty($invoice->date) ? dol_now() : $invoice->date);
 		$pos_source = is_object($invoice) && $invoice->pos_source > 0 ? $invoice->pos_source : 0;
-		$mask = str_replace('{TN}', $pos_source, $mask);
+		$mask = str_replace('{TN}', (string) $pos_source, $mask);
 		$numFinal = get_next_value($db, $mask, 'facture', 'ref', '', $objsoc, $date, $mode, false, null, $entity);
 
 		return $numFinal;

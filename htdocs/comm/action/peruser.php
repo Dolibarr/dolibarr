@@ -6,8 +6,8 @@
  * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014      Cedric GROSS         <c.gross@kreiz-it.fr>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2023 Florian HENRY <florian.henry@scopen.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2023       Florian HENRY           <florian.henry@scopen.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -540,7 +540,7 @@ $s .= "\n".'<!-- End div to calendars selectors -->'."\n";
 print $s;
 
 print '<div class="liste_titre liste_titre_bydiv centpercent">';
-print_actions_filter($form, $canedit, $search_status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid, $search_categ_cus);
+print_actions_filter($form, $canedit, $search_status, $year, $month, $day, $showbirthday, '', $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid, $search_categ_cus);
 print '</div>';
 
 
@@ -762,9 +762,9 @@ if ($resql) {
 
 			// Add an entry in actionarray for each day
 			$daycursor = $event->date_start_in_calendar;
-			$annee = dol_print_date($daycursor, '%Y', 'tzuserrel');
-			$mois = dol_print_date($daycursor, '%m', 'tzuserrel');
-			$jour = dol_print_date($daycursor, '%d', 'tzuserrel');
+			$annee = (int) dol_print_date($daycursor, '%Y', 'tzuserrel');
+			$mois = (int) dol_print_date($daycursor, '%m', 'tzuserrel');
+			$jour = (int) dol_print_date($daycursor, '%d', 'tzuserrel');
 			//print $daycursor.' '.dol_print_date($daycursor, 'dayhour', 'gmt').' '.$event->id.' -> '.$annee.'-'.$mois.'-'.$jour.'<br>';
 
 			// Loop on each day covered by action to prepare an index to show on calendar
@@ -831,6 +831,8 @@ echo '<input type="hidden" name="newdate" id="newdate">';
 $currentdaytoshow = $firstdaytoshow;
 echo '<div class="div-table-responsive">';
 //print dol_print_date($currentdaytoshow, 'dayhour', 'gmt');
+
+$colorsbytype = array();
 
 while ($currentdaytoshow < $lastdaytoshow) {
 	echo '<table class="centpercent noborder nocellnopadd cal_month">';
@@ -988,7 +990,6 @@ while ($currentdaytoshow < $lastdaytoshow) {
 	}
 
 	// Load array of colors by type
-	$colorsbytype = array();
 	$labelbytype = array();
 	$sql = "SELECT code, color, libelle as label FROM ".MAIN_DB_PREFIX."c_actioncomm ORDER BY position";
 	$resql = $db->query($sql);
@@ -998,7 +999,7 @@ while ($currentdaytoshow < $lastdaytoshow) {
 	}
 
 	// Loop on each user to show calendar
-	$todayarray = dol_getdate($now, 'fast');
+	$todayarray = dol_getdate($now, true);
 	$sav = $tmpday;
 	$showheader = true;
 	$var = false;
@@ -1026,9 +1027,9 @@ while ($currentdaytoshow < $lastdaytoshow) {
 			// Show days of the current week
 			$curtime = dol_time_plus_duree($currentdaytoshow, $iter_day, 'd');
 			// $curtime is a gmt time, but we want the day, month, year in user TZ
-			$tmpday = dol_print_date($curtime, "%d", "tzuserrel");
-			$tmpmonth = dol_print_date($curtime, "%m", "tzuserrel");
-			$tmpyear = dol_print_date($curtime, "%Y", "tzuserrel");
+			$tmpday = (int) dol_print_date($curtime, "%d", "tzuserrel");
+			$tmpmonth = (int) dol_print_date($curtime, "%m", "tzuserrel");
+			$tmpyear = (int) dol_print_date($curtime, "%Y", "tzuserrel");
 			//var_dump($curtime.' '.$tmpday.' '.$tmpmonth.' '.$tmpyear);
 
 			$style = 'cal_current_month';

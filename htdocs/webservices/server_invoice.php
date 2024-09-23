@@ -330,7 +330,7 @@ function getInvoice($authentication, $id = 0, $ref = '', $ref_ext = '')
 	}
 
 	if (!$error) {
-		$fuser->getrights();
+		$fuser->loadRights();
 
 		if ($fuser->hasRight('facture', 'lire')) {
 			$invoice = new Facture($db);
@@ -698,7 +698,7 @@ function createInvoiceFromOrder($authentication, $id_order = '', $ref_order = ''
 
 	//////////////////////
 	if (!$error) {
-		$fuser->getrights();
+		$fuser->loadRights();
 
 		if ($fuser->hasRight('commande', 'lire')) {
 			$order = new Commande($db);

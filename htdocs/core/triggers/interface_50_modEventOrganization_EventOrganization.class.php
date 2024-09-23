@@ -91,11 +91,12 @@ class InterfaceEventOrganization extends DolibarrTriggers
 						$task->label = $taskLabel;
 						$task->fk_project = $object->id;
 						$defaultref = '';
-						$obj = !getDolGlobalString('PROJECT_TASK_ADDON') ? 'mod_task_simple' : $conf->global->PROJECT_TASK_ADDON;
+						$classnamemodtask = getDolGlobalString('PROJECT_TASK_ADDON', 'mod_task_simple');
 						if (getDolGlobalString('PROJECT_TASK_ADDON') && is_readable(DOL_DOCUMENT_ROOT . "/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON') . ".php")) {
 							require_once DOL_DOCUMENT_ROOT . "/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON') . '.php';
-							$modTask = new $obj();
-							$defaultref = $modTask->getNextValue($object->thirdparty, null);
+							$modTask = new $classnamemodtask();
+							'@phan-var-force ModeleNumRefTask $modTask';
+							$defaultref = $modTask->getNextValue($object->thirdparty, $task);
 						}
 						if (is_numeric($defaultref) && $defaultref <= 0) {
 							$defaultref = '';

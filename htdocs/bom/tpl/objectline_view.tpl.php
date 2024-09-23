@@ -29,7 +29,6 @@
  * $element     (used to test $user->hasRight($element, 'creer'))
  * $permtoedit  (used to replace test $user->hasRight($element, 'creer'))
  * $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
- * $object_rights->creer initialized from = $object->getRights()
  * $disableedit, $disablemove, $disableremove
  *
  * $type, $text, $description, $line
@@ -39,10 +38,13 @@
  * @var CommonObjectLine $line
  * @var int $num
  */
-'@phan-var-force CommonObjectLine $line
- @phan-var-force int $num
- @phan-var-force CommonObject $this
- @phan-var-force CommonObject $object';
+'
+@phan-var-force CommonObjectLine $line
+@phan-var-force int $num
+@phan-var-force int $i
+@phan-var-force CommonObject $this
+@phan-var-force CommonObject $object
+';
 
 require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 
@@ -207,7 +209,7 @@ if (!empty($line->fk_bom_child)) {
 }
 print '</td>';
 
-if ($this->status == 0 && ($object_rights->write) && $action != 'selectlines') {
+if ($this->status == 0 && $user->hasRight('bom', 'write') && $action != 'selectlines') {
 	print '<td class="linecoledit center">';
 	$coldisplay++;
 	if (($line->info_bits & 2) == 2 || !empty($disableedit)) {
@@ -246,7 +248,7 @@ if ($this->status == 0 && ($object_rights->write) && $action != 'selectlines') {
 	}
 } else {
 	print '<td colspan="3"></td>';
-	$coldisplay = $coldisplay + 3;
+	$coldisplay += 3;
 }
 
 if ($action == 'selectlines') {

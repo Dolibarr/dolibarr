@@ -374,6 +374,7 @@ if ($resql) {
 			$companystatic->name_alias = $obj->name_alias;
 			$companystatic->code_client = $obj->code_client;
 			$companystatic->code_compta = $obj->code_compta;
+			$companystatic->code_compta_client = $obj->code_compta;
 			$companystatic->client = $obj->client;
 			$companystatic->code_fournisseur = $obj->code_fournisseur;
 			$companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;

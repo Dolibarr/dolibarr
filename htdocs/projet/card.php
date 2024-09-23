@@ -57,10 +57,10 @@ $backtopagejsfields = GETPOST('backtopagejsfields', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'aZ09');
 
-$dol_openinpopup = 0;
+$dol_openinpopup = '';
 if (!empty($backtopagejsfields)) {
 	$tmpbacktopagejsfields = explode(':', $backtopagejsfields);
-	$dol_openinpopup = $tmpbacktopagejsfields[0];
+	$dol_openinpopup = preg_replace('/[^a-z0-9_]/i', '', $tmpbacktopagejsfields[0]);
 }
 
 $status = GETPOSTINT('status');
@@ -218,7 +218,7 @@ if (empty($reshook)) {
 			$object->title                = GETPOST('title', 'alphanohtml');
 			$object->socid                = GETPOSTINT('socid');
 			$object->description          = GETPOST('description', 'restricthtml'); // Do not use 'alpha' here, we want field as it is
-			$object->public               = GETPOST('public', 'alphanohtml');
+			$object->public               = GETPOSTINT('public') ? 1 : 0;
 			$object->opp_amount           = GETPOSTFLOAT('opp_amount');
 			$object->budget_amount        = GETPOSTFLOAT('budget_amount');
 			$object->date_c               = dol_now();
@@ -243,11 +243,11 @@ if (empty($reshook)) {
 
 			$result = $object->create($user);
 			if (!$error && $result > 0) {
-				// Add myself as project leader
-				$typeofcontact = 'PROJECTLEADER';
+				// Add myself as Owner Contact Selected in the form
+				$typeofcontact = GETPOST('typeofcontact');
 				$result = $object->add_contact($user->id, $typeofcontact, 'internal');
 
-				// -3 means type not found (PROJECTLEADER renamed, de-activated or deleted), so don't prevent creation if it has been the case
+				// -3 means type not found (renamed, de-activated or deleted), so don't prevent creation if it has been the case
 				if ($result == -3) {
 					setEventMessage('ErrorPROJECTLEADERRoleMissingRestoreIt', 'errors');
 					$error++;
@@ -319,7 +319,7 @@ if (empty($reshook)) {
 			$object->status       = GETPOSTINT('status');
 			$object->socid        = GETPOSTINT('socid');
 			$object->description  = GETPOST('description', 'restricthtml'); // Do not use 'alpha' here, we want field as it is
-			$object->public       = GETPOST('public', 'alpha');
+			$object->public       = GETPOSTINT('public') ? 1 : 0;
 			$object->date_start   = (!GETPOST('projectstart')) ? '' : $date_start;
 			$object->date_end     = (!GETPOST('projectend')) ? '' : $date_end;
 			$object->date_start_event = (!GETPOST('date_start_event')) ? '' : $date_start_event;
@@ -549,7 +549,7 @@ if (empty($reshook)) {
 			$action = 'view';
 			$comefromclone = true;
 
-			setEventMessages($langs->trans("ProjectCreatedInDolibarr", $newobject->ref), "", 'mesgs');
+			setEventMessages($langs->trans("ProjectCreatedInDolibarr", $newobject->ref), null, 'mesgs');
 			//var_dump($newobject); exit;
 		}
 	}
@@ -617,7 +617,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 	print '<table class="border centpercent tableforfieldcreate">';
 
 	$defaultref = '';
-	$modele = !getDolGlobalString('PROJECT_ADDON') ? 'mod_project_simple' : $conf->global->PROJECT_ADDON;
+	$modele = getDolGlobalString('PROJECT_ADDON', 'mod_project_simple');
 
 	// Search template files
 	$file = '';
@@ -633,11 +633,13 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 		}
 	}
 
-	if ($filefound) {
+	if ($filefound && !empty($classname)) {
 		$result = dol_include_once($reldir."core/modules/project/".$modele.'.php');
-		$modProject = new $classname();
+		if (class_exists($classname)) {
+			$modProject = new $classname();
 
-		$defaultref = $modProject->getNextValue($thirdparty, $object);
+			$defaultref = $modProject->getNextValue($thirdparty, $object);
+		}
 	}
 
 	if (is_numeric($defaultref) && $defaultref <= 0) {
@@ -815,11 +817,11 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 	}
 
 	if (count($array) > 0) {
-		print $form->selectarray('public', $array, GETPOST('public'), 0, 0, 0, '', 0, 0, 0, '', '', 1);
+		print $form->selectarray('public', $array, GETPOSTINT('public') ? 1 : 0, 0, 0, 0, '', 0, 0, 0, '', '', 1);
 	} else {
-		print '<input type="hidden" name="public" id="public" value="'.GETPOST('public').'">';
+		print '<input type="hidden" name="public" id="public" value="'.(GETPOSTINT('public') ? 1 : 0).'">';
 
-		if (GETPOST('public') == 0) {
+		if (GETPOSTINT('public') == 0) {
 			print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
 			print $langs->trans("PrivateProject");
 		} else {
@@ -892,6 +894,14 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 		print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 		print "</td></tr>";
 	}
+
+	// Selection of Owner contact type
+	print '<tr><td class="tdtop">'.$langs->trans("ProjectContactTypeManager").'</td>';
+	print '<td>';
+	$contactList = $object->liste_type_contact('internal', 'position', 1);
+	$typeofcontact = GETPOST('typeofcontact') ? GETPOST('typeofcontact') : 'PROJECTLEADER';
+	print $form->selectarray('typeofcontact', $contactList, $typeofcontact, 0, 0, 0, '', 0, 0, 0, '', '', 1);
+	print '</td></tr>';
 
 	// Other options
 	$parameters = array();

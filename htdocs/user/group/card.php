@@ -34,18 +34,19 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 // Define if user can read permissions
-$canreadperms = ($user->admin || $user->hasRight("user", "user", "read"));
-$caneditperms = ($user->admin || $user->hasRight("user", "user", "write"));
-$candisableperms = ($user->admin || $user->hasRight("user", "user", "delete"));
+$permissiontoadd = ($user->admin || $user->hasRight("user", "user", "write"));
+$permissiontoread = ($user->admin || $user->hasRight("user", "user", "read"));
+$permissiontoedit = ($user->admin || $user->hasRight("user", "user", "write"));
+$permissiontodisable = ($user->admin || $user->hasRight("user", "user", "delete"));
 $feature2 = 'user';
 
 // Advanced permissions
 $advancedpermsactive = false;
 if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$advancedpermsactive = true;
-	$canreadperms = ($user->admin || ($user->hasRight("user", "group_advance", "read") && $user->hasRight("user", "group_advance", "readperms")));
-	$caneditperms = ($user->admin || $user->hasRight("user", "group_advance", "write"));
-	$candisableperms = ($user->admin || $user->hasRight("user", "group_advance", "delete"));
+	$permissiontoread = ($user->admin || ($user->hasRight("user", "group_advance", "read") && $user->hasRight("user", "group_advance", "readperms")));
+	$permissiontoedit = ($user->admin || $user->hasRight("user", "group_advance", "write"));
+	$permissiontodisable = ($user->admin || $user->hasRight("user", "group_advance", "delete"));
 	$feature2 = 'group_advance';
 }
 
@@ -68,7 +69,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
-$object->getrights();
+$object->loadRights();
 
 // Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('groupcard', 'globalcard'));
@@ -86,7 +87,7 @@ if (isModEnabled('multicompany') && $conf->entity > 1 && $conf->global->MULTICOM
  * Actions
  */
 
-$parameters = array('id' => $id, 'userid' => $userid, 'caneditperms' => $caneditperms);
+$parameters = array('id' => $id, 'userid' => $userid, 'caneditperms' => $permissiontoedit);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -111,139 +112,118 @@ if (empty($reshook)) {
 	}
 
 	// Action remove group
-	if ($action == 'confirm_delete' && $confirm == "yes") {
-		if ($caneditperms) {
-			$object->fetch($id);
-			$object->delete($user);
-			header("Location: ".DOL_URL_ROOT."/user/group/list.php?restore_lastsearch_values=1");
-			exit;
-		} else {
-			$langs->load("errors");
-			setEventMessages($langs->trans('ErrorForbidden'), null, 'errors');
-		}
+	if ($action == 'confirm_delete' && $confirm == "yes" && $permissiontoedit) {
+		$object->fetch($id);
+		$object->delete($user);
+		header("Location: ".DOL_URL_ROOT."/user/group/list.php?restore_lastsearch_values=1");
+		exit;
 	}
 
 	// Action add group
-	if ($action == 'add') {
-		if ($caneditperms) {
-			if (!GETPOST("nom", "alphanohtml")) {
-				setEventMessages($langs->trans("NameNotDefined"), null, 'errors');
-				$action = "create"; // Go back to create page
-			} else {
-				$object->name	= GETPOST("nom", 'alphanohtml');
-				$object->note	= dol_htmlcleanlastbr(trim(GETPOST("note", 'restricthtml')));
-
-				// Fill array 'array_options' with data from add form
-				$ret = $extrafields->setOptionalsFromPost(null, $object);
-				if ($ret < 0) {
-					$error++;
-				}
-
-				if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
-					$object->entity = 0;
-				} else {
-					if ($conf->entity == 1 && $user->admin && !$user->entity) {		// Same permissions test than the one used to show the combo of entities into the form
-						$object->entity = GETPOSTISSET("entity") ? GETPOST("entity") : $conf->entity;
-					} else {
-						$object->entity = $conf->entity;
-					}
-				}
-
-				$db->begin();
-
-				$id = $object->create();
-
-				if ($id > 0) {
-					$db->commit();
-
-					header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
-					exit;
-				} else {
-					$db->rollback();
-
-					$langs->load("errors");
-					setEventMessages($langs->trans("ErrorGroupAlreadyExists", $object->name), null, 'errors');
-					$action = "create"; // Go back to create page
-				}
-			}
+	if ($action == 'add' && $permissiontoedit) {
+		if (!GETPOST("nom", "alphanohtml")) {
+			setEventMessages($langs->trans("NameNotDefined"), null, 'errors');
+			$action = "create"; // Go back to create page
 		} else {
-			$langs->load("errors");
-			setEventMessages($langs->trans('ErrorForbidden'), null, 'errors');
-		}
-	}
-
-	// Add/Remove user into group
-	if ($action == 'adduser' || $action == 'removeuser') {
-		if ($caneditperms) {
-			if ($userid > 0) {
-				$object->fetch($id);
-				$object->oldcopy = clone $object;
-
-				$edituser = new User($db);
-				$edituser->fetch($userid);
-				if ($action == 'adduser') {
-					$result = $edituser->SetInGroup($object->id, $object->entity);
-				}
-				if ($action == 'removeuser') {
-					$result = $edituser->RemoveFromGroup($object->id, $object->entity);
-				}
-
-				if ($result > 0) {
-					header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
-					exit;
-				} else {
-					setEventMessages($edituser->error, $edituser->errors, 'errors');
-				}
-			}
-		} else {
-			$langs->load("errors");
-			setEventMessages($langs->trans('ErrorForbidden'), null, 'errors');
-		}
-	}
-
-
-	if ($action == 'update') {
-		if ($caneditperms) {
-			$db->begin();
-
-			$object->fetch($id);
-
-			$object->oldcopy = clone $object;
-
-			$object->name = GETPOST("nom", 'alphanohtml');
-			$object->note = dol_htmlcleanlastbr(trim(GETPOST("note", 'restricthtml')));
-			$object->tms = dol_now();
+			$object->name	= GETPOST("nom", 'alphanohtml');
+			$object->note	= dol_htmlcleanlastbr(trim(GETPOST("note", 'restricthtml')));
 
 			// Fill array 'array_options' with data from add form
-			$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
+			$ret = $extrafields->setOptionalsFromPost(null, $object);
 			if ($ret < 0) {
 				$error++;
 			}
 
 			if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 				$object->entity = 0;
-			} elseif (GETPOSTISSET("entity")) {
-				$object->entity = GETPOSTINT("entity");
-			}
-
-			$ret = $object->update();
-
-			if ($ret >= 0 && !count($object->errors)) {
-				setEventMessages($langs->trans("GroupModified"), null, 'mesgs');
-				$db->commit();
 			} else {
-				setEventMessages($object->error, $object->errors, 'errors');
-				$db->rollback();
+				if ($conf->entity == 1 && $user->admin && !$user->entity) {		// Same permissions test than the one used to show the combo of entities into the form
+					$object->entity = GETPOSTISSET("entity") ? GETPOST("entity") : $conf->entity;
+				} else {
+					$object->entity = $conf->entity;
+				}
 			}
+
+			$db->begin();
+
+			$id = $object->create();
+
+			if ($id > 0) {
+				$db->commit();
+
+				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+				exit;
+			} else {
+				$db->rollback();
+
+				$langs->load("errors");
+				setEventMessages($langs->trans("ErrorGroupAlreadyExists", $object->name), null, 'errors');
+				$action = "create"; // Go back to create page
+			}
+		}
+	}
+
+	// Add/Remove user into group
+	if (($action == 'adduser' || $action == 'removeuser') && $permissiontoedit) {
+		if ($userid > 0) {
+			$object->fetch($id);
+			$object->oldcopy = clone $object;
+
+			$edituser = new User($db);
+			$edituser->fetch($userid);
+			if ($action == 'adduser') {		// Test on permission already done
+				$result = $edituser->SetInGroup($object->id, $object->entity);
+			}
+			if ($action == 'removeuser') {	// Test on permission already done
+				$result = $edituser->RemoveFromGroup($object->id, $object->entity);
+			}
+
+			if ($result > 0) {
+				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+				exit;
+			} else {
+				setEventMessages($edituser->error, $edituser->errors, 'errors');
+			}
+		}
+	}
+
+
+	if ($action == 'update' && $permissiontoedit) {
+		$db->begin();
+
+		$object->fetch($id);
+
+		$object->oldcopy = clone $object;
+
+		$object->name = GETPOST("nom", 'alphanohtml');
+		$object->note = dol_htmlcleanlastbr(trim(GETPOST("note", 'restricthtml')));
+		$object->tms = dol_now();
+
+		// Fill array 'array_options' with data from add form
+		$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
+		if ($ret < 0) {
+			$error++;
+		}
+
+		if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
+			$object->entity = 0;
+		} elseif (GETPOSTISSET("entity")) {
+			$object->entity = GETPOSTINT("entity");
+		}
+
+		$ret = $object->update();
+
+		if ($ret >= 0 && !count($object->errors)) {
+			setEventMessages($langs->trans("GroupModified"), null, 'mesgs');
+			$db->commit();
 		} else {
-			$langs->load("errors");
-			setEventMessages($langs->trans('ErrorForbidden'), null, 'mesgs');
+			setEventMessages($object->error, $object->errors, 'errors');
+			$db->rollback();
 		}
 	}
 
 	// Actions to build doc
 	$upload_dir = $conf->user->dir_output.'/usergroups';
-	$permissiontoadd = $user->hasRight("user", "user", "write");
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 
@@ -388,11 +368,11 @@ if ($action == 'create') {
 				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 			}
 
-			if ($caneditperms) {
+			if ($permissiontoedit) {
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
 			}
 
-			if ($candisableperms) {
+			if ($permissiontodisable) {
 				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans("DeleteGroup").'</a>';
 			}
 
@@ -412,12 +392,12 @@ if ($action == 'create') {
 			}
 
 			// Other form for add user to group
-			$parameters = array('caneditperms' => $caneditperms, 'exclude' => $exclude);
+			$parameters = array('caneditperms' => $permissiontoedit, 'exclude' => $exclude);
 			$reshook = $hookmanager->executeHooks('formAddUserToGroup', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 
 			if (empty($reshook)) {
-				if ($caneditperms) {
+				if ($permissiontoedit) {
 					print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST">'."\n";
 					print '<input type="hidden" name="token" value="'.newToken().'">';
 					print '<input type="hidden" name="action" value="adduser">';
@@ -508,7 +488,7 @@ if ($action == 'create') {
 			// List of actions on element
 			/*include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 			$formactions = new FormActions($db);
-			$somethingshown = $formactions->showactions($object, 'usergroup', $socid, 1);*/
+			$somethingshown = $formactions->showactions($object, 'usergroup', $socid, 1, '', $MAXEVENT);*/
 
 			print '</div></div>';
 		}
@@ -517,7 +497,7 @@ if ($action == 'create') {
 		 * Card in edit mode
 		 */
 
-		if ($action == 'edit' && $caneditperms) {
+		if ($action == 'edit' && $permissiontoedit) {
 			print '<form action="'.$_SERVER['PHP_SELF'].'" method="post" name="updategroup" enctype="multipart/form-data">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="update">';

@@ -60,6 +60,41 @@ require __DIR__.'/theme_vars.inc.php';
 if (defined('THEME_ONLY_CONSTANT')) {
 	return;
 }
+// Types from theme_vars
+'
+@phan-var-force string $badgeDanger
+@phan-var-force string $badgeWarning
+@phan-var-force string $butactionbg
+@phan-var-force string $colorbackbody
+@phan-var-force string $colorbackhmenu1
+@phan-var-force string $colorbacklinebreak
+@phan-var-force string $colorbacklineimpair1
+@phan-var-force string $colorbacklineimpair2
+@phan-var-force string $colorbacklinepair1
+@phan-var-force string $colorbacklinepair2
+@phan-var-force string $colorbacklinepairchecked
+@phan-var-force string $colorbacklinepairhover
+@phan-var-force string $colorbacktabactive
+@phan-var-force string $colorbacktabcard1
+@phan-var-force string $colorbacktitle1
+@phan-var-force string $colorbackvmenu1
+@phan-var-force string $colorblind_deuteranopes_textSuccess
+@phan-var-force string $colorblind_deuteranopes_textWarning
+@phan-var-force string $colortext
+@phan-var-force string $colortextlink
+@phan-var-force string $colortexttitle
+@phan-var-force string $colortexttitlelink
+@phan-var-force string $colortexttitlenotab
+@phan-var-force string $colortexttitlenotab2
+@phan-var-force string $colortopbordertitle1
+@phan-var-force string $fontsize
+@phan-var-force string $textDanger
+@phan-var-force string $textSuccess
+@phan-var-force string $textWarning
+@phan-var-force string $textbutaction
+@phan-var-force string $toolTipBgColor
+@phan-var-force string $toolTipFontColor
+';
 
 session_cache_limiter('public');
 
@@ -70,12 +105,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 // Load user to have $user->conf loaded (not done into main because of NOLOGIN constant defined)
 // and permission, so we can later calculate number of top menu ($nbtopmenuentries) according to user profile.
 if (empty($user->id) && !empty($_SESSION['dol_login'])) {
-	$user->fetch('', $_SESSION['dol_login'], '', 1);
-	$user->getrights();
+	$user->fetch(0, $_SESSION['dol_login'], '', 1);
+	$user->loadRights();
 	//$user->loadPersonalConf();
 
 	// Reload menu now we have the good user (and we need the good menu to have ->showmenu('topnb') correct.
+	// @phan-suppress-next-line PhanRedefinedClassReference
 	$menumanager = new MenuManager($db, empty($user->socid) ? 0 : 1);
+	// @phan-suppress-next-line PhanRedefinedClassReference
 	$menumanager->loadMenu();
 }
 
@@ -196,6 +233,7 @@ $colortexttitle      = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!ge
 $colortexttitlelink  = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_TEXTTITLELINK') ? $colortexttitlelink : $conf->global->THEME_ELDY_TEXTTITLELINK) : (empty($user->conf->THEME_ELDY_TEXTTITLELINK) ? $colortexttitlelink : $user->conf->THEME_ELDY_TEXTTITLELINK);
 $colortext           = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_TEXT') ? $colortext : $conf->global->THEME_ELDY_TEXT) : (empty($user->conf->THEME_ELDY_TEXT) ? $colortext : $user->conf->THEME_ELDY_TEXT);
 $colortextlink       = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_TEXTLINK') ? $colortext : $conf->global->THEME_ELDY_TEXTLINK) : (empty($user->conf->THEME_ELDY_TEXTLINK) ? $colortextlink : $user->conf->THEME_ELDY_TEXTLINK);
+$colortextlinkHsla    = colorHexToHsl($colortextlink, false, true);
 $butactionbg       	 = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_BTNACTION') ? $butactionbg : $conf->global->THEME_ELDY_BTNACTION) : (empty($user->conf->THEME_ELDY_BTNACTION) ? $butactionbg : $user->conf->THEME_ELDY_BTNACTION);
 $textbutaction     = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_TEXTBTNACTION') ? $textbutaction : $conf->global->THEME_ELDY_TEXTBTNACTION) : (empty($user->conf->THEME_ELDY_TEXTBTNACTION) ? $textbutaction : $user->conf->THEME_ELDY_TEXTBTNACTION);
 $fontsize            = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_FONT_SIZE1') ? $fontsize : $conf->global->THEME_ELDY_FONT_SIZE1) : (empty($user->conf->THEME_ELDY_FONT_SIZE1) ? $fontsize : $user->conf->THEME_ELDY_FONT_SIZE1);
@@ -281,6 +319,7 @@ $colortexttitle = implode(',', colorStringToArray($colortexttitle));
 $colortext = implode(',', colorStringToArray($colortext));
 $colortextlink = implode(',', colorStringToArray($colortextlink));
 
+// @phan-suppress-next-line PhanRedefinedClassReference
 $nbtopmenuentries = $menumanager->showmenu('topnb');
 $nbtopmenuentriesreal = $nbtopmenuentries;
 if ($conf->browser->layout == 'phone') {
@@ -347,6 +386,11 @@ $leftmenuwidth = 242;
 	--colortexttitlelink: rgba(<?php print $colortexttitlelink; ?>, 0.9);
 	--colortext: rgb(<?php print $colortext; ?>);
 	--colortextlink: rgb(<?php print $colortextlink; ?>);
+	--colortextlink: rgb(<?php print $colortextlink; ?>);
+	--colortextlink-h: <?php print $colortextlinkHsla['h']; ?>;
+	--colortextlink-l: <?php print $colortextlinkHsla['l']; ?>%;
+	--colortextlink-s: <?php print $colortextlinkHsla['s']; ?>%;
+	--colortextlink-a: 1;
 	--colortextbackhmenu: #<?php print $colortextbackhmenu; ?>;
 	--colortextbackvmenu: #<?php print $colortextbackvmenu; ?>;
 	--colortopbordertitle1: rgb(<?php print $colortopbordertitle1; ?>);
@@ -1176,16 +1220,16 @@ td.wordbreak img, td.wordbreakimp img {
 	padding: 0;
 }
 .nopaddingleft {
-	padding-left: 0;
+	padding-<?php print $left; ?>: 0;
 }
 .nopaddingright {
-	padding-right: 0;
+	padding-<?php print $right; ?>: 0;
 }
 .nopaddingleftimp {
-	padding-left: 0 !important;
+	padding-<?php print $left; ?>: 0 !important;
 }
 .nopaddingrightimp {
-	padding-right: 0 !important;
+	padding-<?php print $right; ?>: 0 !important;
 }
 .paddingleft {
 	padding-<?php print $left; ?>: 4px;
@@ -1228,6 +1272,9 @@ td.wordbreak img, td.wordbreakimp img {
 }
 .marginright2 {
 	margin-<?php print $right; ?>: 2px;
+}
+.paddinglarge {
+	padding: 6px !important;
 }
 .nowidthimp {
 	width: unset !important;
@@ -1861,6 +1908,7 @@ select.flat.selectlimit {
 	overflow-y: hidden;
 	-ms-overflow-style: -ms-autohiding-scrollbar;
 }*/
+
 /* Style used for most tables */
 div.fiche>div.tabBar>form>div.div-table-responsive {
 	min-height: 392px;
@@ -1872,13 +1920,20 @@ div.fiche>div.tabBar>form>div.div-table-responsive {
 .div-table-responsive {
 	line-height: var(--heightrow);
 }
+
 /* Style used for full page tables with field selector and no content after table (priority before previous for such tables) */
-div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive-no-min {
-	overflow-x: auto;
-}
 div.fiche>form>div.div-table-responsive {
 	min-height: 392px;
 }
+div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive-no-min {
+	overflow-x: auto;
+}
+
+/* Style used for table in public ticket */
+div.ticketpublicarealist>form>div.div-table-responsive {
+	min-height: 392px;
+}
+
 
 .display-flex {
 	display: flex;
@@ -2108,7 +2163,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	}
 
 	div.divphotoref {
-		padding-right: 10px !important;
+		padding-<?php echo $right; ?>: 10px !important;
 	}
 
 	table.liste tr.trkanban td {
@@ -2278,19 +2333,16 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	}
 
 	div.statusref {
-		padding-right: 10px;
+		padding-<?php echo $right; ?>: 10px;
 		max-width: 55%;
 	   }
-	div.statusref img {
-		padding-right: 3px !important;
-	   }
-	div.statusrefbis {
-		padding-right: 3px !important;
-	   }
+	div.statusref img, div.statusrefbis {
+		padding-<?php echo $right; ?>: 3px !important;
+	}
 
-	   input.buttonpayment {
+	input.buttonpayment {
 		min-width: 300px;
-	   }
+	}
 }
 
 /* Force values for small screen 320 */
@@ -2363,7 +2415,7 @@ td.showDragHandle {
 	padding-bottom: 20px;
 <?php if (GETPOST('optioncss', 'aZ09') != 'print') { ?>
 	padding-<?php print $left; ?>: <?php echo $leftmenuwidth + 9; ?>px;
-	padding-top: 16px;
+	padding-top: 28px;
 <?php } ?>
 }
 .bodyforlist #id-right {
@@ -2380,7 +2432,7 @@ td.showDragHandle {
 	float: left;
 }
 .classforhorizontalscrolloftabs #id-right {
-	width:calc(100% - 210px);
+	width:calc(100% - 252px);
 	display: inline-block;
 }
 
@@ -2786,8 +2838,8 @@ div.paginationref {
 	padding-bottom: 10px;
 }
 div.statusref {
-	float: right;
-	padding-left: 12px;
+	float: <?php echo $right; ?>;
+	padding-<?php echo $left; ?>: 12px;
 	margin-top: 8px;
 	margin-bottom: 10px;
 	clear: both;
@@ -2800,8 +2852,8 @@ div.statusref img {
 }
 div.statusrefbis {
 	padding-left: 8px;
-	   padding-right: 9px;
-	   vertical-align: text-bottom;
+	padding-right: 9px;
+	vertical-align: text-bottom;
 }
 img.photoref, div.photoref {
 	border: 1px solid #CCC;
@@ -3145,78 +3197,78 @@ li.tmenu:hover .tmenuimage:not(.menuhider), li.tmenu:hover .tmenuimage:not(.menu
 	<?php include dol_buildpath($path.'/theme/'.$theme.'/main_menu_fa_icons.inc.php', 0); ?>
 
 	<?php
-			// Add here more div for other menu entries. moduletomainmenu=array('module name'=>'name of class for div')
+										// Add here more div for other menu entries. moduletomainmenu=array('module name'=>'name of class for div')
 
-			$moduletomainmenu = array(
-				'user' => '', 'syslog' => '', 'societe' => 'companies', 'projet' => 'project', 'propale' => 'commercial', 'commande' => 'commercial',
-				'produit' => 'products', 'service' => 'products', 'stock' => 'products',
-				'don' => 'accountancy', 'tax' => 'accountancy', 'banque' => 'accountancy', 'facture' => 'accountancy', 'compta' => 'accountancy', 'accounting' => 'accountancy', 'adherent' => 'members', 'import' => 'tools', 'export' => 'tools', 'mailing' => 'tools',
-				'contrat' => 'commercial', 'ficheinter' => 'commercial', 'ticket' => 'ticket', 'deplacement' => 'commercial',
-				'fournisseur' => 'companies',
-				'barcode' => '', 'fckeditor' => '', 'categorie' => '',
-			);
-			$mainmenuused = 'home';
-			foreach ($conf->modules as $val) {
-				$mainmenuused .= ','.(isset($moduletomainmenu[$val]) ? $moduletomainmenu[$val] : $val);
-			}
-			$mainmenuusedarray = array_unique(explode(',', $mainmenuused));
+										$moduletomainmenu = array(
+											'user' => '', 'syslog' => '', 'societe' => 'companies', 'projet' => 'project', 'propale' => 'commercial', 'commande' => 'commercial',
+											'produit' => 'products', 'service' => 'products', 'stock' => 'products',
+											'don' => 'accountancy', 'tax' => 'accountancy', 'banque' => 'accountancy', 'facture' => 'accountancy', 'compta' => 'accountancy', 'accounting' => 'accountancy', 'adherent' => 'members', 'import' => 'tools', 'export' => 'tools', 'mailing' => 'tools',
+											'contrat' => 'commercial', 'ficheinter' => 'commercial', 'ticket' => 'ticket', 'deplacement' => 'commercial',
+											'fournisseur' => 'companies',
+											'barcode' => '', 'fckeditor' => '', 'categorie' => '',
+										);
+										$mainmenuused = 'home';
+										foreach ($conf->modules as $val) {
+											$mainmenuused .= ','.(isset($moduletomainmenu[$val]) ? $moduletomainmenu[$val] : $val);
+										}
+										$mainmenuusedarray = array_unique(explode(',', $mainmenuused));
 
-			$generic = 1;
-			// Put here list of menu entries when the div.mainmenu.menuentry was previously defined
-			$divalreadydefined = array('home', 'companies', 'products', 'mrp', 'commercial', 'externalsite', 'accountancy', 'project', 'tools', 'members', 'agenda', 'ftp', 'holiday', 'hrm', 'bookmark', 'cashdesk', 'takepos', 'ecm', 'geoipmaxmind', 'gravatar', 'clicktodial', 'paypal', 'stripe', 'webservices', 'website');
-			// Put here list of menu entries we are sure we don't want
-			$divnotrequired = array('multicurrency', 'salaries', 'ticket', 'margin', 'opensurvey', 'paybox', 'expensereport', 'incoterm', 'prelevement', 'propal', 'workflow', 'notification', 'supplier_proposal', 'cron', 'product', 'productbatch', 'expedition');
-			foreach ($mainmenuusedarray as $val) {
-				if (empty($val) || in_array($val, $divalreadydefined)) {
-					continue;
-				}
-				if (in_array($val, $divnotrequired)) {
-					continue;
-				}
-				//print "XXX".$val;
+										$generic = 1;
+										// Put here list of menu entries when the div.mainmenu.menuentry was previously defined
+										$divalreadydefined = array('home', 'companies', 'products', 'mrp', 'commercial', 'externalsite', 'accountancy', 'project', 'tools', 'members', 'agenda', 'ftp', 'holiday', 'hrm', 'bookmark', 'cashdesk', 'takepos', 'ecm', 'geoipmaxmind', 'gravatar', 'clicktodial', 'paypal', 'stripe', 'webservices', 'website');
+										// Put here list of menu entries we are sure we don't want
+										$divnotrequired = array('multicurrency', 'salaries', 'ticket', 'margin', 'opensurvey', 'paybox', 'expensereport', 'incoterm', 'prelevement', 'propal', 'workflow', 'notification', 'supplier_proposal', 'cron', 'product', 'productbatch', 'expedition');
+										foreach ($mainmenuusedarray as $val) {
+											if (empty($val) || in_array($val, $divalreadydefined)) {
+												continue;
+											}
+											if (in_array($val, $divnotrequired)) {
+												continue;
+											}
+											//print "XXX".$val;
 
-				$found = 0;
-				$url = '';
-				$constformoduleicon = 'MAIN_MODULE_'.strtoupper($val).'_ICON';
-				$iconformodule = getDolGlobalString($constformoduleicon);
-				if ($iconformodule) {
-					if (preg_match('/^fa\-/', $iconformodule)) {
-						// This is a fa icon
-					} else {
-						$url = 	dol_buildpath('/'.$val.'/img/'.$iconformodule.'.png', 1);
-					}
-					$found = 1;
-				} else {
-					// Search img file in module dir
-					foreach ($conf->file->dol_document_root as $dirroot) {
-						if (file_exists($dirroot."/".$val."/img/".$val.".png")) {
-							$url = dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
-							$found = 1;
-							break;
-						}
-					}
-				}
+											$found = 0;
+											$url = '';
+											$constformoduleicon = 'MAIN_MODULE_'.strtoupper($val).'_ICON';
+											$iconformodule = getDolGlobalString($constformoduleicon);
+											if ($iconformodule) {
+												if (preg_match('/^fa\-/', $iconformodule)) {
+													// This is a fa icon
+												} else {
+													$url = 	dol_buildpath('/'.$val.'/img/'.$iconformodule.'.png', 1);
+												}
+												$found = 1;
+											} else {
+												// Search img file in module dir
+												foreach ($conf->file->dol_document_root as $dirroot) {
+													if (file_exists($dirroot."/".$val."/img/".$val.".png")) {
+														$url = dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
+														$found = 1;
+														break;
+													}
+												}
+											}
 
-				// Output entry for menu icon in CSS
-				if (!$found) {
-					print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
-					print 'div.mainmenu.'.$val.' span::before {'."\n";
-					print 'content: "\f249";'."\n";
-					print '}'."\n";
-					$generic++;
-				} else {
-					if ($url) {
-						print "div.mainmenu.".$val." {\n";
-						print "	background-image: url(".$url.");\n";
-						print " background-position-y: 3px;\n";
-						print " filter: saturate(0);\n";
-						print "}\n";
-					} else {
-						print '/* icon for module '.$val.' is a fa icon */'."\n";
-					}
-				}
-			}
-			// End of part to add more div class css
+											// Output entry for menu icon in CSS
+											if (!$found) {
+												print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
+												print 'div.mainmenu.'.$val.' span::before {'."\n";
+												print 'content: "\f249";'."\n";
+												print '}'."\n";
+												$generic++;
+											} else {
+												if ($url) {
+													print "div.mainmenu.".$val." {\n";
+													print "	background-image: url(".$url.");\n";
+													print " background-position-y: 3px;\n";
+													print " filter: saturate(0);\n";
+													print "}\n";
+												} else {
+													print '/* icon for module '.$val.' is a fa icon */'."\n";
+												}
+											}
+										}
+										// End of part to add more div class css
 }	// End test if $dol_hide_topmenu?>
 
 
@@ -3423,7 +3475,7 @@ div.login_block table {
 div.login {
 	white-space:nowrap;
 	font-weight: bold;
-	float: right;
+	float: <?php echo $right; ?>;
 }
 div.login a {
 	color: var(--colortextvmenu);
@@ -3446,8 +3498,8 @@ div.login_block_other { padding-top: 15px; }
 	vertical-align: middle;
 	clear: <?php echo $disableimages ? 'none' : 'both'; ?>;
 	padding-top: 0;
-	text-align: right;
-	margin-right: 8px;
+	text-align: <?php echo $right; ?>;
+	margin-<?php echo $right; ?>: 8px;
 	max-width: 200px;
 }
 
@@ -3456,7 +3508,7 @@ div.login_block_other { padding-top: 15px; }
 	line-height: 25px;
 }
 .login_block_elem {
-	float: right;
+	float: <?php echo $right; ?>;
 	vertical-align: middle;
 	padding: 0px 3px 0px 3px !important;
 	height: 18px;
@@ -4383,7 +4435,7 @@ div.refaddress div.address {
 }
 
 div.pagination {
-	float: right;
+	float:<?php echo $right; ?>
 }
 div.pagination a {
 	font-weight: normal;
@@ -5129,7 +5181,7 @@ div.error {
 
 
 /*
- *   Liens Payes/Non payes
+ * Paid/Unpaid Links
  */
 
 a.normal:link { font-weight: normal }
@@ -5205,8 +5257,8 @@ label.radioprivate {
 /*	margin-bottom: 2px;
 	margin-top: 2px; */
 }
-div.divphotoref > img.photowithmargin, div.divphotoref > a > .photowithmargin {		/* Margin right for photo not inside a div.photoref frame only */
-	margin-right: 15px;
+div.divphotoref > div > .photowithmargin, div.divphotoref > img.photowithmargin, div.divphotoref > a > .photowithmargin {		/* Margin right for photo not inside a div.photoref frame only */
+	margin-<?php echo $right; ?>: 15px;
 }
 .photowithborder {
 	border: 1px solid #f0f0f0;
@@ -6451,8 +6503,8 @@ ul.ecmjqft a:hover {
 div.ecmjqft {
 	vertical-align: middle;
 	display: inline-block !important;
-	text-align: right;
-	float: right;
+	text-align: <?php echo $right; ?>;
+	float: <?php echo $right; ?>;
 	right:4px;
 	clear: both;
 }
@@ -6463,7 +6515,7 @@ div#ecm-layout-west {
 div#ecm-layout-center {
 	width: calc(100% - 405px);
 	vertical-align: top;
-	float: right;
+	float: <?php echo $right; ?>;
 }
 
 .ecmjqft LI.directory { font-weight:normal; background: url(<?php echo dol_buildpath($path.'/theme/common/treemenu/folder2.png', 1); ?>) left top no-repeat; }
@@ -6498,12 +6550,40 @@ div#ecm-layout-center {
 .jnotify-container .jnotify-notification-warning .jnotify-close, .jnotify-container .jnotify-notification-warning .jnotify-message {
 	color: #a28918 !important;
 }
+.jnotify-container .jnotify-close {
+	top: 4px !important;
+	font-size: 1.6em !important;
+}
 
 /* use or not ? */
 div.jnotify-background {
 	opacity : 0.95 !important;
 	-webkit-box-shadow: 2px 2px 4px #8888 !important;
 	box-shadow: 2px 2px 4px #8888 !important;
+}
+
+/* jnotify for the login page */
+.bodylogin .jnotify-container {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: 100000;
+	max-width: unset;
+	padding-left: unset !important;
+	padding-right: unset !important;
+	padding-top: unset !important;
+}
+.bodylogin .jnotify-container .jnotify-notification {
+	margin: unset !important;
+}
+.bodylogin .jnotify-container .jnotify-notification .jnotify-background {
+	border-radius: unset !important;
+}
+.bodylogin .jnotify-container .jnotify-notification .jnotify-message {
+	text-align: center;
+	font-size: 1.1em;
+	font-weight: bold;
 }
 
 
@@ -6917,11 +6997,11 @@ select.multiselectononeline {
 @media only screen and (min-width: 767px)
 {
 	/* CSS to have the dropdown boxes larger that the input search area */
-	.select2-container.select2-container--open:not(.graphtype) .select2-dropdown.ui-dialog {
+	.select2-container.select2-container--open:not(.graphtype):not(.yesno) .select2-dropdown.ui-dialog {
 		min-width: 240px !important;
 	}
-	.select2-container.select2-container--open:not(.graphtype) .select2-dropdown--below:not(.onrightofpage),
-	.select2-container.select2-container--open:not(.graphtype) .select2-dropdown--above:not(.onrightofpage) {
+	.select2-container.select2-container--open:not(.graphtype):not(.yesno) .select2-dropdown--below:not(.onrightofpage),
+	.select2-container.select2-container--open:not(.graphtype):not(.yesno) .select2-dropdown--above:not(.onrightofpage) {
 		min-width: 240px !important;
 	}
 	.onrightofpage span.select2-dropdown.ui-dialog.select2-dropdown--below,
@@ -8210,7 +8290,7 @@ table.jPicker {
 		min-width: 0 !important;
 	}
 	div.divphotoref {
-		padding-right: 5px;
+		padding-<?php echo $right; ?>: 5px;
 	}
 	img.photoref, div.photoref {
 		border: 1px solid rgba(0, 0, 0, 0.2);

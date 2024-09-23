@@ -392,7 +392,7 @@ function getProductOrService($authentication, $id = 0, $ref = '', $ref_ext = '',
 		$langcode = ($lang ? $lang : (!getDolGlobalString('MAIN_LANG_DEFAULT') ? 'auto' : $conf->global->MAIN_LANG_DEFAULT));
 		$langs->setDefaultLang($langcode);
 
-		$fuser->getrights();
+		$fuser->loadRights();
 
 		$nbmax = 10;
 		if ($fuser->hasRight('produit', 'lire') || $fuser->hasRight('service', 'lire')) {
@@ -572,7 +572,7 @@ function createProductOrService($authentication, $product)
 
 		$newobject->country_id = isset($product['country_id']) ? $product['country_id'] : 0;
 		if (!empty($product['country_code'])) {
-			$newobject->country_id = getCountry($product['country_code'], 3);
+			$newobject->country_id = getCountry($product['country_code'], '3');
 		}
 		$newobject->customcode = isset($product['customcode']) ? $product['customcode'] : '';
 
@@ -742,7 +742,7 @@ function updateProductOrService($authentication, $product)
 
 		$newobject->country_id = isset($product['country_id']) ? $product['country_id'] : 0;
 		if (!empty($product['country_code'])) {
-			$newobject->country_id = getCountry($product['country_code'], 3);
+			$newobject->country_id = getCountry($product['country_code'], '3');
 		}
 		$newobject->customcode = isset($product['customcode']) ? $product['customcode'] : '';
 
@@ -1029,7 +1029,7 @@ function getProductsForCategory($authentication, $id, $lang = '')
 		$langcode = ($lang ? $lang : (!getDolGlobalString('MAIN_LANG_DEFAULT') ? 'auto' : $conf->global->MAIN_LANG_DEFAULT));
 		$langs->setDefaultLang($langcode);
 
-		$fuser->getrights();
+		$fuser->loadRights();
 
 		$nbmax = 10;
 		if ($fuser->hasRight('produit', 'lire')) {

@@ -1,7 +1,22 @@
 <?php
+/* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
-	die('Must be call by steelsheet');
+	die('Must be called by steelsheet');
 }
+
+// From theme_vars.inc, must be included by steelsheet
+'
+@phan-var-force string $badgePrimary
+@phan-var-force string $badgeSecondary
+@phan-var-force string $badgeSuccess
+@phan-var-force string $badgeDanger
+@phan-var-force string $badgeWarning
+@phan-var-force string $badgeInfo
+@phan-var-force string $badgeLight
+@phan-var-force string $badgeDark
+@phan-var-force string $colorblind_deuteranopes_badgeWarning
+';
 ?>
 /* <style type="text/css" > */
 /*
@@ -211,10 +226,10 @@ a.badge-dark:focus, a.badge-dark:hover {
 <?php
 for ($i = 0; $i <= 10; $i++) {
 	/* Default Status */
-	_createStatusBadgeCss($i, '', "STATUS".$i);
+	_createStatusBadgeCss((string) $i, '', "STATUS".$i);
 
 	// create status for accessibility
-	_createStatusBadgeCss($i, 'colorblind_deuteranopes_', "COLORBLIND STATUS".$i, 'body[class*="colorblind-"] ');
+	_createStatusBadgeCss((string) $i, 'colorblind_deuteranopes_', "COLORBLIND STATUS".$i, 'body[class*="colorblind-"] ');
 }
 
 _createStatusBadgeCss('1b', '', "STATUS1b");

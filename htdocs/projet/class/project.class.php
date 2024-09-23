@@ -10,6 +10,7 @@
  * Copyright (C) 2023       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,8 +90,7 @@ class Project extends CommonObject
 
 	/**
 	 * @var int 	Date start
-	 * @deprecated
-	 * @see $date_start
+	 * @deprecated Use $date_start
 	 */
 	public $dateo;
 
@@ -101,8 +101,7 @@ class Project extends CommonObject
 
 	/**
 	 * @var int 	Date end
-	 * @deprecated
-	 * @see $date_end
+	 * @deprecated Use $date_end
 	 */
 	public $datee;
 
@@ -131,6 +130,9 @@ class Project extends CommonObject
 	 */
 	public $date_close;
 
+	/**
+	 * @var int	Id of thirdparty
+	 */
 	public $socid; // To store id of thirdparty
 
 	/**
@@ -138,14 +140,20 @@ class Project extends CommonObject
 	 */
 	public $thirdparty_name; // To store name of thirdparty (defined only in some cases)
 
-	public $user_author_id; //!< Id of project creator. Not defined if shared project.
+	/**
+	 * @var int	Id of project creator. Not defined if shared project.
+	 */
+	public $user_author_id;
 
 	/**
 	 * @var int user close id
 	 */
 	public $fk_user_close;
 
-	public $public; //!< Tell if this is a public or private project
+	/**
+	 * @var int<0,1>  Tell if this is a public or private project
+	 */
+	public $public;
 
 	/**
 	 * @var float|string budget Amount (May need price2num)
@@ -199,8 +207,7 @@ class Project extends CommonObject
 
 	/**
 	 * @var int status
-	 * @deprecated
-	 * @see $status
+	 * @deprecated Use $status
 	 */
 	public $statut; // 0=draft, 1=opened, 2=closed
 
@@ -239,25 +246,33 @@ class Project extends CommonObject
 	 */
 	public $email_msgid;
 
+	/**
+	 * @var ?static
+	 */
 	public $oldcopy;
 
-	public $weekWorkLoad; // Used to store workload details of a projet
+	/**
+	 * @var array<int,int> Used to store workload details of a projet (array[day])
+	 */
+	public $weekWorkLoad;
+	/**
+	 * @var array<int,array<int,int>> Used to store workload details of a projet (array[day][taskid])
+	 */
 	public $weekWorkLoadPerTask; // Used to store workload details of tasks of a projet
 
 	/**
-	 * @var array Used to store workload details of a projet
+	 * @var array<string,int> Used to store workload details of a projet
 	 */
 	public $monthWorkLoad;
 
 	/**
-	 * @var array Used to store workload details of tasks of a projet
+	 * @var array<string,array<int,int>> Used to store workload details of tasks of a projet (array[weeknbr][task_id])
 	 */
 	public $monthWorkLoadPerTask;
 
 	/**
 	 * @var int Creation date
-	 * @deprecated
-	 * @see $date_c
+	 * @deprecated Use $date_c
 	 */
 	public $datec;
 
@@ -268,8 +283,7 @@ class Project extends CommonObject
 
 	/**
 	 * @var int Modification date
-	 * @deprecated
-	 * @see $date_m
+	 * @deprecated Use $date_m
 	 */
 	public $datem;
 
@@ -330,7 +344,7 @@ class Project extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'ID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -1360,10 +1374,9 @@ class Project extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 *
-	 * @param array $params ex option, infologin
+	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
-	 * @return array
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -1635,8 +1648,8 @@ class Project extends CommonObject
 	 * @param 	int		$mode			0=All project I have permission on (assigned to me or public), 1=Projects assigned to me only, 2=Will return list of all projects with no test on contacts
 	 * @param 	int		$list			0=Return array, 1=Return string list
 	 * @param	int		$socid			0=No filter on third party, id of third party
-	 * @param	string	$filter			additional filter on project (statut, ref, ...). TODO Use USF syntax here.
-	 * @return 	array|string			Array of projects id, or string with projects id separated with "," if list is 1
+	 * @param	string	$filter			Additional filter on project (statut, ref, ...). TODO Use USF syntax here.
+	 * @return 	int[]|string			Array of projects id, or string with projects id separated with "," if list is 1
 	 */
 	public function getProjectsAuthorizedForUser($user, $mode = 0, $list = 0, $socid = 0, $filter = '')
 	{
@@ -1649,9 +1662,9 @@ class Project extends CommonObject
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_contact as ec ON ec.element_id = p.rowid";
 		} elseif ($mode == 1) {
 			$sql .= ", ".MAIN_DB_PREFIX."element_contact as ec";
-		} elseif ($mode == 2) {
-			// No filter. Use this if user has permission to see all project
-		}
+		} // elseif ($mode == 2) {
+		// No filter. Use this if user has permission to see all project
+		// }
 		$sql .= " WHERE p.entity IN (".getEntity('project').")";
 		// Internal users must see project he is contact to even if project linked to a third party he can't see.
 		//if ($socid || ! $user->rights->societe->client->voir)	$sql.= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
@@ -1687,11 +1700,19 @@ class Project extends CommonObject
 			$sql .= "  ( ec.fk_c_type_contact IN (".$this->db->sanitize(implode(',', array_keys($listofprojectcontacttype))).")";
 			$sql .= " AND ec.fk_socpeople = ".((int) $user->id).")";
 			$sql .= " )";
-		} elseif ($mode == 2) {
-			// No filter. Use this if user has permission to see all project
+		} // elseif ($mode == 2) {
+		// No filter. Use this if user has permission to see all project
+		//}
+
+		// Manage filter
+		$errormessage = '';
+		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+		if ($errormessage) {
+			$this->errors[] = $errormessage;
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+			$sql .= $filter;
 		}
 
-		$sql .= $filter;
 		//print $sql;
 
 		$resql = $this->db->query($sql);
@@ -1768,7 +1789,7 @@ class Project extends CommonObject
 		if ($move_date) {
 			$clone_project->date_start = $now;
 			if (!(empty($clone_project->date_end))) {
-				$clone_project->date_end = $clone_project->date_end + ($now - $orign_dt_start);
+				$clone_project->date_end += ($now - $orign_dt_start);
 			}
 		}
 
@@ -1781,7 +1802,7 @@ class Project extends CommonObject
 
 		//Generate next ref
 		$defaultref = '';
-		$obj = !getDolGlobalString('PROJECT_ADDON') ? 'mod_project_simple' : $conf->global->PROJECT_ADDON;
+		$obj = getDolGlobalString('PROJECT_ADDON', 'mod_project_simple');
 		// Search template files
 		$file = '';
 		$classname = '';
@@ -1793,6 +1814,7 @@ class Project extends CommonObject
 				$filefound = 1;
 				dol_include_once($reldir."core/modules/project/".$obj.'.php');
 				$modProject = new $obj();
+				'@phan-var-force ModeleNumRefProjects $modProject';
 				$defaultref = $modProject->getNextValue(is_object($clone_project->thirdparty) ? $clone_project->thirdparty : null, $clone_project);
 				break;
 			}
@@ -1881,7 +1903,7 @@ class Project extends CommonObject
 				if (dol_mkdir($clone_project_dir) >= 0) {
 					$filearray = dol_dir_list($ori_project_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', '', SORT_ASC, 1);
 					foreach ($filearray as $key => $file) {
-						$rescopy = dol_copy($ori_project_dir.'/'.$file['name'], $clone_project_dir.'/'.$file['name'], 0, 1);
+						$rescopy = dol_copy($ori_project_dir.'/'.$file['name'], $clone_project_dir.'/'.$file['name'], '0', 1);
 						if (is_numeric($rescopy) && $rescopy < 0) {
 							$this->error .= $langs->trans("ErrorFailToCopyFile", $ori_project_dir.'/'.$file['name'], $clone_project_dir.'/'.$file['name']);
 							$error++;
@@ -1905,9 +1927,10 @@ class Project extends CommonObject
 					$socid = $user->socid;
 				}
 
-				$tasksarray = $taskstatic->getTasksArray(0, 0, $fromid, $socid, 0);
+				$tasksarray = $taskstatic->getTasksArray(null, null, $fromid, $socid, 0);
 
 				$tab_conv_child_parent = array();
+				$result_clonse = 0;
 
 				// Loop on each task, to clone it
 				foreach ($tasksarray as $tasktoclone) {
@@ -1928,7 +1951,7 @@ class Project extends CommonObject
 				}
 
 				//Parse all clone node to be sure to update new parent
-				$tasksarray = $taskstatic->getTasksArray(0, 0, $clone_project_id, $socid, 0);
+				$tasksarray = $taskstatic->getTasksArray(null, null, $clone_project_id, $socid, 0);
 				foreach ($tasksarray as $task_cloned) {
 					$taskstatic->fetch($task_cloned->id);
 					if ($taskstatic->fk_task_parent != 0) {
@@ -1977,7 +2000,7 @@ class Project extends CommonObject
 			$socid = $user->socid;
 		}
 
-		$tasksarray = $taskstatic->getTasksArray(0, 0, $this->id, $socid, 0);
+		$tasksarray = $taskstatic->getTasksArray(null, null, $this->id, $socid, 0);
 
 		foreach ($tasksarray as $tasktoshiftdate) {
 			$to_update = false;
@@ -1991,6 +2014,8 @@ class Project extends CommonObject
 					$error++;
 					$this->error .= $task->error;
 				}
+			} else {
+				continue;
 			}
 			//print "$this->date_start + $tasktoshiftdate->date_start - $old_project_dt_start";exit;
 
@@ -2153,7 +2178,7 @@ class Project extends CommonObject
 		//print $sql;
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$daylareadyfound = array();
+			$dayallreadyfound = array();
 
 			$num = $this->db->num_rows($resql);
 			$i = 0;
@@ -2161,14 +2186,14 @@ class Project extends CommonObject
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 				$day = $this->db->jdate($obj->element_date); // task_date is date without hours
-				if (empty($daylareadyfound[$day])) {
+				if (empty($dayallreadyfound[$day])) {
 					$this->weekWorkLoad[$day] = $obj->element_duration;
 					$this->weekWorkLoadPerTask[$day][$obj->fk_element] = $obj->element_duration;
 				} else {
 					$this->weekWorkLoad[$day] += $obj->element_duration;
 					$this->weekWorkLoadPerTask[$day][$obj->fk_element] += $obj->element_duration;
 				}
-				$daylareadyfound[$day] = 1;
+				$dayallreadyfound[$day] = 1;
 				$i++;
 			}
 			$this->db->free($resql);
@@ -2219,14 +2244,14 @@ class Project extends CommonObject
 
 			$num = $this->db->num_rows($resql);
 			$i = 0;
+			$week_number = '';  // Initialisation for static analysis
 			// Loop on each record found, so each couple (project id, task id)
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 				if (!empty($obj->element_date)) {
 					$date = explode('-', $obj->element_date);
-					$week_number = getWeekNumber($date[2], $date[1], $date[0]);
+					$week_number = getWeekNumber((int) $date[2], (int) $date[1], (int) $date[0]);
 				}
-				'@phan-var-force int $week_number';  // Needed because phan considers it might be null
 				if (empty($weekalreadyfound[$week_number])) {
 					$this->monthWorkLoad[$week_number] = $obj->element_duration;
 					$this->monthWorkLoadPerTask[$week_number][$obj->fk_element] = $obj->element_duration;
@@ -2266,6 +2291,7 @@ class Project extends CommonObject
 		$response->label = $langs->trans("OpenedProjects");
 		$response->labelShort = $langs->trans("Opened");
 		$response->url = DOL_URL_ROOT.'/projet/list.php?search_project_user=-1&search_status=1&mainmenu=project';
+		$response->url_late = DOL_URL_ROOT.'/projet/list.php?search_option=late&mainmenu=project';
 		$response->img = img_object('', "projectpub");
 		$response->nbtodo = 0;
 		$response->nbtodolate = 0;
@@ -2452,7 +2478,7 @@ class Project extends CommonObject
 	/**
 	 * Create an array of tasks of current project
 	 *
-	 * @param	User	$user       		Object user we want project allowed to
+	 * @param	?User	$user       		Object user we want project allowed to
 	 * @param	int		$loadRoleMode		1= will test Roles on task;  0 used in delete project action
 	 * @return 	int							>0 if OK, <0 if KO
 	 */
@@ -2461,7 +2487,7 @@ class Project extends CommonObject
 		require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 		$taskstatic = new Task($this->db);
 
-		$this->lines = $taskstatic->getTasksArray(0, $user, $this->id, 0, 0, '', '-1', '', 0, 0, array(), 0, array(), 0, $loadRoleMode);
+		$this->lines = $taskstatic->getTasksArray(null, $user, $this->id, 0, 0, '', '-1', '', 0, 0, null, 0, array(), 0, $loadRoleMode);
 		return 1;
 	}
 
@@ -2471,9 +2497,9 @@ class Project extends CommonObject
 	 *
 	 *  @param	string	$text				Content of message (not html entities encoded)
 	 *  @param	string	$subject			Subject of message
-	 *  @param 	array	$filename_list      Array of attached files
-	 *  @param 	array	$mimetype_list      Array of mime types of attached files
-	 *  @param 	array	$mimefilename_list  Array of public names of attached files
+	 *  @param	string[]	$filename_list      Array of attached files
+	 *  @param 	string[]	$mimetype_list      Array of mime types of attached files
+	 *  @param 	string[]	$mimefilename_list  Array of public names of attached files
 	 *  @param 	string	$addr_cc            Email cc
 	 *  @param 	string	$addr_bcc           Email bcc
 	 *  @param 	int		$deliveryreceipt	Ask a delivery receipt
@@ -2491,12 +2517,12 @@ class Project extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @param		string		$size					Size of thumb (''=auto, 'large'=large, 'small'=small)
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @param		string					$size					Size of thumb (''=auto, 'large'=large, 'small'=small)
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null, $size = '')
 	{
@@ -2545,7 +2571,7 @@ class Project extends CommonObject
 			$return .= '</div>';
 			if (!empty($this->thirdparty->phone)) {
 				$return .= '<div class="inline-block valignmiddle">';
-				$return .= dol_print_phone($this->thirdparty->phone, $this->thirdparty->country_code, 0, $this->thirdparty->id, 'tel', 'hidenum', 'phone', $this->thirdparty->phone, 0, 'paddingleft paddingright');
+				$return .= dol_print_phone($this->thirdparty->phone, $this->thirdparty->country_code, 0, $this->thirdparty->id, 'tel', 'hidenum', 'phone', $this->thirdparty->phone, 0, 'paddingleft paddingright');  // @phan-suppress-current-line PhanPluginSuspiciousParamPosition
 				$return .= '</div>';
 			}
 			if (!empty($this->thirdparty->email)) {
@@ -2592,7 +2618,7 @@ class Project extends CommonObject
 	/**
 	 *  Return array of sub-projects of the current project
 	 *
-	 *  @return		array		Children of this project as objects with rowid & title as members
+	 *  @return		stdClass[]	Children of this project as objects with rowid & title as members
 	 */
 	public function getChildren()
 	{
@@ -2674,7 +2700,7 @@ class Project extends CommonObject
 				$to = $obj->email;
 				$numHolidays = num_public_holiday($lastWeekStartTS, $lastWeekEndTS, $mysoc->country_code, 1);
 				if (getDolGlobalString('MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY') && getDolGlobalString('MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY')) {
-					$numHolidays = $numHolidays - 2;
+					$numHolidays -= 2;
 					$weekendEnabled = 2;
 				}
 
@@ -2702,7 +2728,7 @@ class Project extends CommonObject
 					$error++;
 				}
 
-				$mail = new CMailFile($subject, $to, $from, $reportContent, array(), array(), array(), '', '', 0, -1, '', '', 0, 'text/html');
+				$mail = new CMailFile($subject, $to, $from, $reportContent, array(), array(), array(), '', '', 0, -1, '', '', '', 'text/html');
 
 				if ($mail->sendfile()) {
 					$nbMailSend++;

@@ -41,6 +41,8 @@ if (empty($module)) {
 	$module = 'ecm';
 }
 
+'@phan-var-force WebSite $website';
+
 $permtoadd = 0;
 $permtoupload = 0;
 $showroot = 0;

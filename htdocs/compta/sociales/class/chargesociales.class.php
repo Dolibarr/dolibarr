@@ -57,11 +57,13 @@ class ChargeSociales extends CommonObject
 	protected $table_ref_field = 'ref';
 
 	/**
-	 * @var integer|string $date_ech
+	 * @var int|string $date_ech
 	 */
 	public $date_ech;
 
-
+	/**
+	 * @var string label
+	 */
 	public $label;
 	public $type;
 	public $type_label;
@@ -96,6 +98,9 @@ class ChargeSociales extends CommonObject
 	 */
 	public $paiementtype;
 
+	/**
+	 * @var int ID
+	 */
 	public $mode_reglement_id;
 	public $mode_reglement_code;
 	public $mode_reglement;
@@ -115,6 +120,9 @@ class ChargeSociales extends CommonObject
 	 */
 	public $total;
 
+	/**
+	 * @var float total paid
+	 */
 	public $totalpaid;
 
 
@@ -351,13 +359,17 @@ class ChargeSociales extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."chargesociales";
-		$sql .= " SET libelle='".$this->db->escape($this->label ? $this->label : $this->lib)."'";
-		$sql .= ", date_ech='".$this->db->idate($this->date_ech)."'";
-		$sql .= ", periode='".$this->db->idate($this->periode)."'";
-		$sql .= ", amount='".price2num($this->amount, 'MT')."'";
-		$sql .= ", fk_projet=".($this->fk_project > 0 ? $this->db->escape($this->fk_project) : "NULL");
-		$sql .= ", fk_user=".($this->fk_user > 0 ? $this->db->escape($this->fk_user) : "NULL");
-		$sql .= ", fk_user_modif=".$user->id;
+		$sql .= " SET libelle = '".$this->db->escape($this->label ? $this->label : $this->lib)."'";
+		$sql .= ", date_ech = '".$this->db->idate($this->date_ech)."'";
+		$sql .= ", periode = '".$this->db->idate($this->period ? $this->period : $this->periode)."'";
+		$sql .= ", amount = ".((float) price2num($this->amount, 'MT'));
+		$sql .= ", fk_projet=".($this->fk_project > 0 ? ((int) $this->fk_project) : "NULL");
+		$sql .= ", fk_user=".($this->fk_user > 0 ? ((int) $this->fk_user) : "NULL");
+		$sql .= ", fk_user_modif=".((int) $user->id);
+		if ($this->type > 0) {
+			$sql .= ", fk_type = ".((int) $this->type);
+		}
+		$sql .= ", fk_user_modif=".((int) $user->id);
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -405,10 +417,10 @@ class ChargeSociales extends CommonObject
 
 		$sql = "SELECT SUM(f.amount) as amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX."chargesociales as f";
-		$sql .= " WHERE f.entity = ".$conf->entity;
+		$sql .= " WHERE f.entity = ".((int) $conf->entity);
 		$sql .= " AND paye = 0";
 
-		if ($year) {
+		if ($year) {	// TODO Fix to use date function
 			$sql .= " AND f.datev >= '".((int) $year)."-01-01' AND f.datev <= '".((int) $year)."-12-31' ";
 		}
 
@@ -755,11 +767,11 @@ class ChargeSociales extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{

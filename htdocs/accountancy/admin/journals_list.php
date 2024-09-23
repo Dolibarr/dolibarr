@@ -351,7 +351,7 @@ $formadmin = new FormAdmin($db);
 
 $title = $langs->trans('AccountingJournals');
 $help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-accountancy page-admin_journals_list');
 
 $titre = $langs->trans("DictionarySetup");
 $linkback = '';
@@ -686,8 +686,8 @@ $db->close();
 /**
  *	Show fields in insert/edit mode
  *
- *  @param	string[]	$fieldlist      Array of fields
- *  @param	Object		$obj            If we show a particular record, obj is filled with record fields
+ * 	@param	string[]	$fieldlist		Array of fields
+ *  @param	?Object		$obj            If we show a particular record, obj is filled with record fields
  *  @param	string		$tabname        Name of SQL table
  *  @param	string		$context        'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we don't want it to be rendered
  *  @return	void

@@ -93,18 +93,21 @@ class FormWebPortal extends Form
 	/**
 	 * Input for date
 	 *
-	 * @param	string	$name			Name of html input
-	 * @param	string	$value			[=''] Value of input (format : YYYY-MM-DD)
-	 * @param	string	$placeholder	[=''] Placeholder for input (keep empty for no label)
-	 * @param	string	$id				[=''] Id
-	 * @param	string	$morecss		[=''] Class
-	 * @param	string	$moreparam		[=''] Add attributes (checked, required, etc)
-	 * @return	string  Html for input date
+	 * @param	string		$name			Name of html input
+	 * @param	string|int	$value			[=''] Value of input (format : YYYY-MM-DD)
+	 * @param	string		$placeholder	[=''] Placeholder for input (keep empty for no label)
+	 * @param	string		$id				[=''] Id
+	 * @param	string		$morecss		[=''] Class
+	 * @param	string		$moreparam		[=''] Add attributes (checked, required, etc)
+	 * @return	string  	Html for input date
 	 */
 	public function inputDate($name, $value = '', $placeholder = '', $id = '', $morecss = '', $moreparam = '')
 	{
 		$out = '';
 
+		// Disabled: Use of native browser date input field as it is not compliant with multilanguagedate format,
+		// nor with timezone management.
+		/*
 		$out .= '<input';
 		if ($placeholder != '' && $value == '') {
 			// to show a placeholder on date input
@@ -121,6 +124,9 @@ class FormWebPortal extends Form
 		$out .= ($moreparam ? ' ' . $moreparam : '');
 
 		$out .= '>';
+		*/
+
+		$out = $this->selectDate($value === '' ? -1 : $value, $name, 0, 0, 0, "", 1, 0, 0, '');
 
 		return $out;
 	}
@@ -830,7 +836,7 @@ class FormWebPortal extends Form
 					}
 				}
 
-				if ($filter_categorie === false) {
+				if (!$filter_categorie) {
 					$fields_label = explode('|', $InfoFieldList[1]);
 					if (is_array($fields_label)) {
 						$keyList .= ', ';
@@ -953,7 +959,7 @@ class FormWebPortal extends Form
 
 			case 'link':
 				$param_list = array_keys($param['options']); // $param_list='ObjectName:classPath[:AddCreateButtonOrNot[:Filter[:Sortfield]]]'
-				$showempty = (($required && $default != '') ? 0 : 1);
+				$showempty = (($required && $default != '') ? '0' : '1');
 
 				$out = $this->selectForForms($param_list[0], $htmlName, $value, $showempty, '', '', $morecss, $moreparam, 0, empty($val['disabled']) ? 0 : 1);
 
@@ -1096,7 +1102,7 @@ class FormWebPortal extends Form
 		} elseif ($type == 'duration') {
 			include_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 			if (!is_null($value) && $value !== '') {
-				$value = convertSecondToTime($value, 'allhourmin');
+				$value = convertSecondToTime((int) $value, 'allhourmin');
 			}
 		} elseif ($type == 'double' || $type == 'real') {
 			if (!is_null($value) && $value !== '') {
@@ -1163,8 +1169,8 @@ class FormWebPortal extends Form
 			dol_syslog(__METHOD__ . ' type=sellist', LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql) {
-				if ($filter_categorie === false) {
-					$value = ''; // value was used, so now we reste it to use it to build final output
+				if (!$filter_categorie) {
+					$value = ''; // value was used, so now we reset it to use it to build final output
 					$numrows = $this->db->num_rows($resql);
 					if ($numrows) {
 						$obj = $this->db->fetch_object($resql);
@@ -1266,8 +1272,8 @@ class FormWebPortal extends Form
 			dol_syslog(__METHOD__ . ' type=chkbxlst', LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql) {
-				if ($filter_categorie === false) {
-					$value = ''; // value was used, so now we reste it to use it to build final output
+				if (!$filter_categorie) {
+					$value = ''; // value was used, so now we reset it to use it to build final output
 					$toprint = array();
 					while ($obj = $this->db->fetch_object($resql)) {
 						// Several field into label (eq table:code|libelle:rowid)

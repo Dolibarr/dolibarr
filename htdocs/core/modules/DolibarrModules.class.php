@@ -192,10 +192,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $errors;
 
 	/**
-	 * @var string Module version
+	 * @var string 	Module version ('x.y.z' or a reserved keyword)
 	 * @see http://semver.org
 	 *
-	 * The following keywords can also be used:
+	 * The following keywords that can also be used are:
 	 * 'development'
 	 * 'experimental'
 	 * 'dolibarr': only for core modules that share its version
@@ -243,7 +243,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	// For exports
 
 	/**
-	 * @var string Module export code
+	 * @var string[] Module export code
 	 */
 	public $export_code;
 
@@ -252,23 +252,68 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 */
 	public $export_label;
 
+	/**
+	 * @var string[]
+	 */
 	public $export_icon;
 
 	/**
-	 * @var array export enabled
+	 * @var string[] export enabled (list of php expressions, '1' or "isModEnabled('xxx')...")
 	 */
 	public $export_enabled;
+	/**
+	 * @var array<array<array{string,string}>>
+	 */
 	public $export_permission;
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $export_fields_array;
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $export_TypeFields_array; // Array of key=>type where type can be 'Numeric', 'Date', 'Text', 'Boolean', 'Status', 'List:xxx:fieldlabel:rowid'
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $export_entities_array;
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $export_aggregate_array;
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $export_examplevalues_array;
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $export_help_array;
+	/**
+	 * @var array<array<array{rule:string,file:string,classfile:string,class:string,method:string,method_params:string[]}>>|array<array<string,string>>
+	 *
+	 * Other example:
+	 * modBanque: [<int>]=array('-b.amount'=>'NULLIFNEG', 'b.amount'=>'NULLIFNEG')
+	 */
 	public $export_special_array; // special or computed field
+	/**
+	 * @var array<int,array<string,string|string[]>>
+	 *
+	 * Note: example from modAdherent: [<int]= array('subscription'=>'c.rowid');
+	 *       example from modResource: [<int]= array('resource' => array('r.rowid'));
+	 */
 	public $export_dependencies_array;
+	/**
+	 * @var string[]
+	 */
 	public $export_sql_start;
+	/**
+	 * @var string[]
+	 */
 	public $export_sql_end;
+	/**
+	 * @var string[]
+	 */
 	public $export_sql_order;
 
 
@@ -284,18 +329,57 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 */
 	public $import_label;
 
+	/**
+	 * @var string[]
+	 */
 	public $import_icon;
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $import_entities_array;
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $import_tables_array;
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $import_tables_creator_array;
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $import_fields_array;
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $import_fieldshidden_array;
+	/**
+	 * @var array<array<array{rule:string,file:string,class:string,method:string}>>
+	 */
 	public $import_convertvalue_array;
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $import_regex_array;
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $import_examplevalues_array;
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $import_updatekeys_array;
+	/**
+	 * @var array<int,array<int,string>>
+	 */
 	public $import_run_sql_after_array;
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $import_TypeFields_array;
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $import_help_array;
 
 	/**
@@ -336,8 +420,11 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 
 	/**
-	 * @var array 	List of module class names that must be enabled if this module is enabled. e.g.: array('modAnotherModule', 'FR'=>'modYetAnotherModule')
+	 * @var string[]|array<string,string[]> 	List of module class names that must be enabled if this module is enabled. e.g.: array('modAnotherModule', 'FR'=>'modYetAnotherModule')
 	 * 				Another example : array('always'=>array("modBanque", "modFacture", "modProduct", "modCategorie"), 'FR'=>array('modBlockedLog'));
+	 * Note: Example in modTakePos:  array('always'=>array("modBanque", "modFacture", "modProduct", "modCategorie"), 'FR'=>array('modBlockedLog'));
+	 *       Example in modAccounting: array("modFacture", "modBanque", "modTax");
+
 	 * @see $requiredby
 	 */
 	public $depends;
@@ -381,15 +468,18 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $warnings_unactivation;
 
 	/**
-	 * @var array Minimum version of PHP required by module.
+	 * @var int[] Minimum version of PHP required by module.
 	 * e.g.: PHP ≥ 7.0 = array(7, 0)
 	 */
 	public $phpmin;
 
+	/**
+	 * @var int[] Maximum version of PHP ensured compatible with module.
+	 */
 	public $phpmax;
 
 	/**
-	 * @var array Minimum version of Dolibarr required by module.
+	 * @var int[] Minimum version of Dolibarr required by module.
 	 * e.g.: Dolibarr ≥ 3.6 = array(3, 6)
 	 */
 	public $need_dolibarr_version;
@@ -898,7 +988,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 */
 	public function getModulePosition()
 	{
-		if (in_array($this->version, array('dolibarr', 'experimental', 'development'))) {	// core module
+		if (in_array($this->version, array('dolibarr', 'dolibarr_deprecated', 'experimental', 'development'))) {	// core module
 			return $this->module_position;
 		} else {																			// external module
 			if ($this->module_position >= 100000) {
@@ -912,8 +1002,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 	/**
 	 * Tells if module is core or external.
-	 * 'dolibarr' and 'dolibarr_deprecated' is core
-	 * 'experimental' and 'development' is core
+	 * Version = 'dolibarr', 'dolibarr_deprecated', 'experimental' and 'development' means core modules
 	 *
 	 * @return string  'core', 'external' or 'unknown'
 	 */
@@ -1508,130 +1597,111 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public function insert_cronjobs()
 	{
 		// phpcs:enable
-		include_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
+		include_once DOL_DOCUMENT_ROOT . '/core/class/infobox.class.php';
+		include_once DOL_DOCUMENT_ROOT . '/cron/class/cronjob.class.php';
 
-		global $conf;
+		global $conf, $user;
 
 		$err = 0;
 
 		if (is_array($this->cronjobs)) {
-			dol_syslog(get_class($this)."::insert_cronjobs", LOG_DEBUG);
+			dol_syslog(get_class($this) . "::insert_cronjobs", LOG_DEBUG);
 
 			foreach ($this->cronjobs as $key => $value) {
-				$entity = isset($this->cronjobs[$key]['entity']) ? $this->cronjobs[$key]['entity'] : $conf->entity;
-				$label  = isset($this->cronjobs[$key]['label']) ? $this->cronjobs[$key]['label'] : '';
-				$jobtype = isset($this->cronjobs[$key]['jobtype']) ? $this->cronjobs[$key]['jobtype'] : '';
-				$class  = isset($this->cronjobs[$key]['class']) ? $this->cronjobs[$key]['class'] : '';
-				$objectname  = isset($this->cronjobs[$key]['objectname']) ? $this->cronjobs[$key]['objectname'] : '';
-				$method = isset($this->cronjobs[$key]['method']) ? $this->cronjobs[$key]['method'] : '';
-				$command = isset($this->cronjobs[$key]['command']) ? $this->cronjobs[$key]['command'] : '';
-				$parameters  = isset($this->cronjobs[$key]['parameters']) ? $this->cronjobs[$key]['parameters'] : '';
-				$comment = isset($this->cronjobs[$key]['comment']) ? $this->cronjobs[$key]['comment'] : '';
-				$frequency = isset($this->cronjobs[$key]['frequency']) ? $this->cronjobs[$key]['frequency'] : '';
-				$unitfrequency = isset($this->cronjobs[$key]['unitfrequency']) ? $this->cronjobs[$key]['unitfrequency'] : '';
-				$priority = isset($this->cronjobs[$key]['priority']) ? $this->cronjobs[$key]['priority'] : '';
-				$datestart = isset($this->cronjobs[$key]['datestart']) ? $this->cronjobs[$key]['datestart'] : '';
-				$dateend = isset($this->cronjobs[$key]['dateend']) ? $this->cronjobs[$key]['dateend'] : '';
-				$status = isset($this->cronjobs[$key]['status']) ? $this->cronjobs[$key]['status'] : '';
-				$test = isset($this->cronjobs[$key]['test']) ? $this->cronjobs[$key]['test'] : ''; // Line must be enabled or not (so visible or not)
-
-				// Search if cron entry already present
-				$sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."cronjob";
-				//$sql .= " WHERE module_name = '".$this->db->escape(empty($this->rights_class) ?strtolower($this->name) : $this->rights_class)."'";
-				$sql .= " WHERE label = '".$this->db->escape($label)."'";
-				/*if ($class) {
-					$sql .= " AND classesname = '".$this->db->escape($class)."'";
-				}
-				if ($objectname) {
-					$sql .= " AND objectname = '".$this->db->escape($objectname)."'";
-				}
-				if ($method) {
-					$sql .= " AND methodename = '".$this->db->escape($method)."'";
-				}
-				if ($command) {
-					$sql .= " AND command = '".$this->db->escape($command)."'";
-				}
-				if ($parameters) {
-					$sql .= " AND params = '".$this->db->escape($parameters)."'";
-				}*/
-				$sql .= " AND entity = ".((int) $entity); // Must be exact entity
-
 				$now = dol_now();
 
+				$entity = isset($value['entity']) ? $value['entity'] : $conf->entity;
+				$label = isset($value['label']) ? $value['label'] : '';
+				$jobtype = isset($value['jobtype']) ? $value['jobtype'] : '';
+				$classesname = isset($value['class']) ? $value['class'] : '';
+				$objectname = isset($value['objectname']) ? $value['objectname'] : '';
+				$methodename = isset($value['method']) ? $value['method'] : '';
+				$command = isset($value['command']) ? $value['command'] : '';
+				$params = isset($value['parameters']) ? $value['parameters'] : '';
+				$md5params = isset($value['md5params']) ? $value['md5params'] : '';
+				$comment = isset($value['comment']) ? $value['comment'] : '';
+				$frequency = isset($value['frequency']) ? $value['frequency'] : '';
+				$unitfrequency = isset($value['unitfrequency']) ? $value['unitfrequency'] : '';
+				$priority = isset($value['priority']) ? $value['priority'] : '';
+				$datestart = isset($value['datestart']) ? $value['datestart'] : '';
+				$dateend = isset($value['dateend']) ? $value['dateend'] : '';
+				$datenextrun = isset($value['datenextrun']) ? $value['datenextrun'] : $now;
+				$status = isset($value['status']) ? $value['status'] : '';
+				$maxrun = isset($value['maxrun']) ? $value['maxrun'] : 0;
+				$libname = isset($value['libname']) ? $value['libname'] : '';
+				$test = isset($value['test']) ? $value['test'] : ''; // Line must be enabled or not (so visible or not)
+
+				// Search if cron entry already present
+				$sql = "SELECT count(*) as nb FROM " . MAIN_DB_PREFIX . "cronjob";
+				//$sql .= " WHERE module_name = '" . $this->db->escape(empty($this->rights_class) ? strtolower($this->name) : $this->rights_class) . "'";
+				$sql .= " WHERE label = '".$this->db->escape($label)."'";
+				/* unique key is on label,entity so no need for this test
+				if ($classesname) {
+					$sql .= " AND classesname = '" . $this->db->escape($classesname) . "'";
+				}
+				if ($objectname) {
+					$sql .= " AND objectname = '" . $this->db->escape($objectname) . "'";
+				}
+				if ($methodename) {
+					$sql .= " AND methodename = '" . $this->db->escape($methodename) . "'";
+				}
+				if ($command) {
+					$sql .= " AND command = '" . $this->db->escape($command) . "'";
+				}
+				if ($params) {
+					$sql .= " AND params = '" . $this->db->escape($params) . "'";
+				}
+				*/
+				$sql .= " AND entity = " . ((int) $entity); // Must be exact entity
+
 				$result = $this->db->query($sql);
-				if ($result) {
-					$obj = $this->db->fetch_object($result);
-					if ($obj->nb == 0) {
-						$this->db->begin();
-
-						if (!$err) {
-							$sql = "INSERT INTO ".MAIN_DB_PREFIX."cronjob (module_name, datec, datestart, dateend, label, jobtype, classesname, objectname, methodename, command, params, note,";
-							if (is_int($frequency)) {
-								$sql .= ' frequency,';
-							}
-							if (is_int($unitfrequency)) {
-								$sql .= ' unitfrequency,';
-							}
-							if (is_int($priority)) {
-								$sql .= ' priority,';
-							}
-							if (is_int($status)) {
-								$sql .= ' status,';
-							}
-							$sql .= " entity, test)";
-							$sql .= " VALUES (";
-							$sql .= "'".$this->db->escape(empty($this->rights_class) ? strtolower($this->name) : $this->rights_class)."', ";
-							$sql .= "'".$this->db->idate($now)."', ";
-							$sql .= ($datestart ? "'".$this->db->idate($datestart)."'" : "'".$this->db->idate($now)."'").", ";
-							$sql .= ($dateend ? "'".$this->db->idate($dateend)."'" : "NULL").", ";
-							$sql .= "'".$this->db->escape($label)."', ";
-							$sql .= "'".$this->db->escape($jobtype)."', ";
-							$sql .= ($class ? "'".$this->db->escape($class)."'" : "null").",";
-							$sql .= ($objectname ? "'".$this->db->escape($objectname)."'" : "null").",";
-							$sql .= ($method ? "'".$this->db->escape($method)."'" : "null").",";
-							$sql .= ($command ? "'".$this->db->escape($command)."'" : "null").",";
-							$sql .= ($parameters ? "'".$this->db->escape($parameters)."'" : "null").",";
-							$sql .= ($comment ? "'".$this->db->escape($comment)."'" : "null").",";
-							if (is_int($frequency)) {
-								$sql .= "'".$this->db->escape($frequency)."', ";
-							}
-							if (is_int($unitfrequency)) {
-								$sql .= "'".$this->db->escape($unitfrequency)."', ";
-							}
-							if (is_int($priority)) {
-								$sql .= "'".$this->db->escape($priority)."', ";
-							}
-							if (is_int($status)) {
-								$sql .= ((int) $status).", ";
-							}
-							$sql .= $entity.",";
-							$sql .= "'".$this->db->escape($test)."'";
-							$sql .= ")";
-
-							$resql = $this->db->query($sql);
-							if (!$resql) {
-								$err++;
-							}
-						}
-
-						if (!$err) {
-							$this->db->commit();
-						} else {
-							$this->error = $this->db->lasterror();
-							$this->db->rollback();
-						}
-					}
-					// else box already registered into database
-				} else {
+				if (!$result) {
 					$this->error = $this->db->lasterror();
 					$err++;
+					break;
+					// else box already registered into database
+				}
+
+				$obj = $this->db->fetch_object($result);
+				if ($obj->nb > 0) {
+					continue;
+				}
+
+				$cronjob = new Cronjob($this->db);
+
+				$cronjob->entity = $entity;
+				$cronjob->label = $label;
+				$cronjob->jobtype = $jobtype;
+				$cronjob->classesname = $classesname;
+				$cronjob->objectname = $objectname;
+				$cronjob->methodename = $methodename;
+				$cronjob->command = $command;
+				$cronjob->params = $params;
+				$cronjob->md5params = $md5params;
+				$cronjob->comment = $comment;
+				$cronjob->frequency = $frequency;
+				$cronjob->unitfrequency = $unitfrequency;
+				$cronjob->priority = $priority;
+				$cronjob->datestart = $datestart;
+				$cronjob->dateend = $dateend;
+				$cronjob->datenextrun = $datenextrun;
+				$cronjob->maxrun = $maxrun;
+				$cronjob->status = $status;
+				$cronjob->test = $test;
+				$cronjob->libname = $libname;
+				$cronjob->module_name = empty($this->rights_class) ? strtolower($this->name) : $this->rights_class;
+
+				$retCreate = $cronjob->create($user);
+
+				if ($retCreate < 0) {
+					$this->error = implode("\n", array_merge([$cronjob->error], $cronjob->errors));
+					return -1;
 				}
 			}
 		}
 
 		return $err;
 	}
-
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -1967,7 +2037,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 							$sql .= ", '".$this->db->escape($r_perms)."'";
 							$sql .= ", '".$this->db->escape($r_subperms)."'";
 							$sql .= ", '".$this->db->escape($r_enabled)."'";
-							$sql.= ")";
+							$sql .= ")";
 
 							$resqlinsert = $this->db->query($sql, 1);
 
@@ -2019,7 +2089,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				if (!empty($reinitadminperms) && !empty($user->admin)) {  // Reload permission for current user if defined
 					// We reload permissions
 					$user->clearrights();
-					$user->getrights();
+					$user->loadRights();
 				}
 			}
 			$this->db->free($resql);
@@ -2606,9 +2676,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	}
 
 	/**
-	 * Check for module update
-	 * TODO : store results for $this->url_last_version and $this->needUpdate
-	 * Add a cron task to monitor for updates
+	 * Check for module update.
+	 * Get URL content of $this->url_last_version and set $this->lastVersion and$this->needUpdate
+	 * TODO Store result in DB.
+	 * TODO Add a cron task to monitor for updates.
 	 *
 	 * @return int Return integer <0 if Error, 0 == no update needed,  >0 if need update
 	 */
@@ -2657,10 +2728,12 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		$fields = array('name', 'lib', 'sql', 'sqlsort', 'field', 'fieldvalue', 'fieldinsert', 'rowid', 'cond', 'help', 'fieldcheck');
 
 		foreach ($fields as $field) {
-			if (!empty($dictionaryArray[$field])) {
+			if (isset($dictionaryArray[$field])) {
 				$this->dictionaries['tab'.$field][] = $dictionaryArray[$field];
 			}
 		}
-		if ($langs && !in_array($langs, $this->dictionaries[$langs])) $this->dictionaries['langs'][] = $langs;
+		if ($langs && !in_array($langs, $this->dictionaries[$langs])) {
+			$this->dictionaries['langs'][] = $langs;
+		}
 	}
 }

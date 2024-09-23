@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2012 Regis Houssin  <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +24,15 @@
 
 
 /**
- *      Superclass for incoterm classes
+ *      Trait for incoterm classes
+ *
+ * Properties expected on the host class:
+ *
+ * @property DoliDB $db
+ * @property int $id
+ * @property string[] $errors
+ * @property string $table_element
+ *
  */
 trait CommonIncoterm
 {

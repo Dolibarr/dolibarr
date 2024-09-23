@@ -73,6 +73,7 @@ $search_total_ttc = GETPOST("search_total_ttc", 'alpha');
 $search_contract = GETPOST("search_contract", 'alpha');
 $search_service = GETPOST("search_service", 'alpha');
 $search_status = GETPOST("search_status", 'alpha');
+$search_option = GETPOST('search_option', 'alpha');
 $search_product_category = GETPOSTINT('search_product_category');
 
 // To support selection into combo list of status with detailed status '4&filter'
@@ -91,22 +92,22 @@ $socid = GETPOSTINT('socid');
 $opouvertureprevuemonth = GETPOST('opouvertureprevuemonth');
 $opouvertureprevueday = GETPOST('opouvertureprevueday');
 $opouvertureprevueyear = GETPOST('opouvertureprevueyear');
-$filter_opouvertureprevue = GETPOST('filter_opouvertureprevue');
+$filter_opouvertureprevue = GETPOST('filter_opouvertureprevue', 'alphawithlgt');
 
 $op1month = GETPOSTINT('op1month');
 $op1day = GETPOSTINT('op1day');
 $op1year = GETPOSTINT('op1year');
-$filter_op1 = GETPOST('filter_op1', 'alpha');
+$filter_op1 = GETPOST('filter_op1', 'alphawithlgt');
 
 $op2month = GETPOSTINT('op2month');
 $op2day = GETPOSTINT('op2day');
 $op2year = GETPOSTINT('op2year');
-$filter_op2 = GETPOST('filter_op2', 'alpha');
+$filter_op2 = GETPOST('filter_op2', 'alphawithlgt');
 
 $opcloturemonth = GETPOSTINT('opcloturemonth');
 $opclotureday = GETPOSTINT('opclotureday');
 $opclotureyear = GETPOSTINT('opclotureyear');
-$filter_opcloture = GETPOST('filter_opcloture', 'alpha');
+$filter_opcloture = GETPOST('filter_opcloture', 'alphawithlgt');
 
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
@@ -194,6 +195,7 @@ if (empty($reshook)) {
 		$search_contract = "";
 		$search_service = "";
 		$search_status = "";
+		$search_option = '';
 		$opouvertureprevuemonth = "";
 		$opouvertureprevueday = "";
 		$opouvertureprevueyear = "";
@@ -306,6 +308,14 @@ if ($search_status == "4&filter=notexpired" || ($search_status == '4' && $filter
 }
 if ($search_status == "5") {
 	$sql .= " AND cd.statut = 5";
+}
+if ($search_option == 'late' && $search_status != '0') {
+	$warning_date = $db->idate(dol_now() - $conf->contract->services->expires->warning_delay);
+	$sql .= " AND cd.date_fin_validite < '".addslashes($warning_date)."'";
+}
+if ($search_option == 'late' && $search_status == '0') {
+	$warning_date = $db->idate(dol_now() - $conf->contract->services->expires->warning_delay);
+	$sql .= " AND (cd.date_ouverture_prevue < '".addslashes($warning_date)."' OR cd.date_fin_validite < '".addslashes($warning_date)."')";
 }
 if ($search_subprice) {
 	$sql .= natural_search("cd.subprice", $search_subprice, 1);
@@ -477,6 +487,9 @@ if ($search_service) {
 if ($search_status) {
 	$param .= '&amp;search_status='.urlencode($search_status);
 }
+if ($search_option) {
+	$param .= "&amp;search_option=".urlencode($search_option);
+}
 if (!empty($filter_opouvertureprevue) && $filter_opouvertureprevue != -1) {
 	$param .= '&amp;filter_opouvertureprevue='.urlencode($filter_opouvertureprevue);
 }
@@ -552,6 +565,10 @@ if (isModEnabled('category') && ($user->hasRight('produit', 'lire') || $user->ha
 	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, 0, 'widthcentpercentminusx maxwidth300', 1);
 	$moreforfilter .= '</div>';
 }
+// alert on late date
+$moreforfilter .= '<div class="divsearchfield">';
+$moreforfilter .= $langs->trans('Alert').' <input type="checkbox" name="search_option" value="late"'.($search_option == 'late' ? ' checked' : '').'>';
+$moreforfilter .= '</div>';
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
