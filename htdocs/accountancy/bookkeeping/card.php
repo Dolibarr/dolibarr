@@ -81,7 +81,7 @@ if (!empty($update)) {
 }
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-$hookmanager->initHooks(array('bookkeepingccard', 'globalcard'));
+$hookmanager->initHooks(array('bookkeepingcard', 'globalcard'));
 
 $object = new BookKeeping($db);
 
@@ -376,10 +376,10 @@ if (empty($reshook)) {
 		if (!$error) {
 			foreach ($toselect as $toselectid) {
 				$result = $object->fetch($toselectid);
-				if ($result > 0 && (!isset($object->date_validation) || $object->date_validation === '')) {
+				if ($result >= 0 && (!isset($object->date_validation) || $object->date_validation === '')) {
 					$result = $object->deleteMvtNum($object->piece_num);
-					if ($result > 0) {
-						$nbok++;
+					if ($result >= 0) {
+						$nbok += $result;
 					} else {
 						setEventMessages($object->error, $object->errors, 'errors');
 						$error++;
@@ -767,12 +767,12 @@ if ($action == 'create') {
 				if (!empty($line->date_validation)) {
 					$atleastonevalidated = 1;
 				}
-				if (empty($line->date_export) && empty($line->date_validation)) {
+				if (!empty($line->date_export) || !empty($line->date_validation)) {
 					$atleastoneexported = 1;
 				}
 			}
 
-			if ($mode != '_tmp' && !$atleastonevalidated && !$atleastoneexported) {
+			if ($mode != '_tmp' && !$atleastonevalidated) {
 				print "\n".'<div class="tabsAction">'."\n";
 
 				$parameters = array();
@@ -780,7 +780,7 @@ if ($action == 'create') {
 				if (empty($reshook)) {
 					if ($permissiontodelete) {
 						if (!isset($hookmanager->resArray['no_button_edit']) || $hookmanager->resArray['no_button_edit'] != 1) {
-							print dolGetButtonAction('', $langs->trans('Delete'), 'delete', DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?action=deletebookkeepingwriting&confirm=yes&token='.newToken().'&toselect='.implode(',', $tmptoselect), '', $permissiontodelete);
+							print dolGetButtonAction('', $langs->trans('Delete'), 'delete', DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?action=deletebookkeepingwriting&confirm=yes&token='.newToken().'&piece_num='.((int) $object->piece_num).'&toselect='.implode(',', $tmptoselect), '', $permissiontodelete);
 						}
 					}
 				}

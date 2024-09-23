@@ -1706,7 +1706,7 @@ class BookKeeping extends CommonObject
 	 *
 	 * @param 	int 	$piecenum 	Piecenum to delete
 	 * @param 	string 	$mode 		Mode ('' or '_tmp')
-	 * @return 	int 				Result
+	 * @return 	int 				Nb of record deleted
 	 */
 	public function deleteMvtNum($piecenum, $mode = '')
 	{
@@ -1716,6 +1716,8 @@ class BookKeeping extends CommonObject
 		if (!isset($sql_filter)) {
 			return -1;
 		}
+
+		$nbprocessed = 0;
 
 		$this->db->begin();
 
@@ -1737,10 +1739,13 @@ class BookKeeping extends CommonObject
 			}
 			$this->db->rollback();
 			return -1;
+		} else {
+			$nbprocessed = $this->db->affected_rows($resql);
 		}
 
 		$this->db->commit();
-		return 1;
+
+		return $nbprocessed;
 	}
 
 	/**
