@@ -238,7 +238,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 
 		$societe->note_private = GETPOST('note_private');
 
-		$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 1);
+		$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 200);
 
 		if (checkNbPostsForASpeceificIp($societe, $nb_post_max) <= 0) {
 			$error++;
