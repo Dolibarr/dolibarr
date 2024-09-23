@@ -160,9 +160,9 @@ class InfoBox
 
 						if ($mode == 'activated' && !is_object($user)) {	// List of activated box was not yet personalized into database
 							if (is_numeric($box->box_order)) {
-								if ($box->box_order % 2 == 1) {
+								if (((int) $box->box_order % 2) == 1) {
 									$box->box_order = 'A'.$box->box_order;
-								} elseif ($box->box_order % 2 == 0) {
+								} elseif (((int) $box->box_order % 2) == 0) {
 									$box->box_order = 'B'.$box->box_order;
 								}
 							}
@@ -245,7 +245,7 @@ class InfoBox
 		// Save parameters to say user has a dedicated setup
 		$tab = array();
 		$confuserzone = 'MAIN_BOXES_'.$zone;
-		$tab[$confuserzone] = 1;
+		$tab[$confuserzone] = '1';
 		if (dol_set_user_param($dbs, $conf, $user, $tab) < 0) {
 			$error = $dbs->lasterror();
 			$dbs->rollback();

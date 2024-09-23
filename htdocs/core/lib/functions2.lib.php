@@ -2066,7 +2066,7 @@ function dol_buildlogin($lastname, $firstname)
 /**
  *  Return array to use for SoapClient constructor
  *
- *  @return	array{connection_timeout:int,response_timeout:int,proxy_use:int,proxy_host:bool,proxy_port:bool,proxy_login:bool,proxy_password:bool,trace:int}
+ *  @return	array{connection_timeout:int,response_timeout:int,proxy_use:int<0,1>,proxy_host:false|string,proxy_port:false|string,proxy_login:false|string,proxy_password:false|string,trace:int<0,1>}
  */
 function getSoapParams()
 {
