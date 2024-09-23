@@ -1704,7 +1704,7 @@ class BookKeeping extends CommonObject
 	 *
 	 * @param 	int 	$piecenum 	Piecenum to delete
 	 * @param 	string 	$mode 		Mode ('' or '_tmp')
-	 * @return 	int 				Result
+	 * @return 	int 				Nb of record deleted
 	 */
 	public function deleteMvtNum($piecenum, $mode = '')
 	{
@@ -1714,6 +1714,8 @@ class BookKeeping extends CommonObject
 		if (!isset($sql_filter)) {
 			return -1;
 		}
+
+		$nbprocessed = 0;
 
 		$this->db->begin();
 
@@ -1735,10 +1737,13 @@ class BookKeeping extends CommonObject
 			}
 			$this->db->rollback();
 			return -1;
+		} else {
+			$nbprocessed = $this->db->affected_rows($resql);
 		}
 
 		$this->db->commit();
-		return 1;
+
+		return $nbprocessed;
 	}
 
 	/**
@@ -2346,12 +2351,20 @@ class BookKeeping extends CommonObject
 
 			$sql_list = array();
 			if (!empty($conf->cache['active_fiscal_period_cached']) && is_array($conf->cache['active_fiscal_period_cached'])) {
+				$i = 0;
 				foreach ($conf->cache['active_fiscal_period_cached'] as $fiscal_period) {
-					$sql_list[] = "('" . $this->db->idate($fiscal_period['date_start']) . "' <= ".$this->db->sanitize($alias)."doc_date AND ".$this->db->sanitize($alias)."doc_date <= '" . $this->db->idate($fiscal_period['date_end']) . "')";
+					$sql_list[$i] = "(";
+					$sql_list[$i] .= "'".$this->db->idate($fiscal_period['date_start']) . "' <= ".$this->db->sanitize($alias)."doc_date";
+					if (!empty($fiscal_period['date_end'])) {
+						$sql_list[$i] .= " AND ";
+						$sql_list[$i] .= $this->db->sanitize($alias)."doc_date <= '" . $this->db->idate($fiscal_period['date_end'])."'";
+					}
+					$sql_list[$i] .= ")";
+					$i++;
 				}
 			}
 			$sqlsanitized = implode(' OR ', $sql_list);
-			self::$can_modify_bookkeeping_sql_cached[$alias] = !empty($sql_list) ? " AND (".$sqlsanitized.")" : "";
+			self::$can_modify_bookkeeping_sql_cached[$alias] = empty($sql_list) ? "" : " AND (".$sqlsanitized.")";
 		}
 
 		return self::$can_modify_bookkeeping_sql_cached[$alias];
