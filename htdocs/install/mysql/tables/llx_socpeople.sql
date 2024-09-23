@@ -68,4 +68,5 @@ create table llx_socpeople
   canvas			varchar(32),			-- type of canvas if used (null by default)
   import_key		varchar(14),
   statut			tinyint DEFAULT 1 NOT NULL
+  ip    varchar(250)    --ip used to create record (for public submission page)
 )ENGINE=innodb;
