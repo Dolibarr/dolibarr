@@ -95,10 +95,19 @@ if ($managedfor != 'member' && $sortfield == 'd.datefin') {
 	$sortfield = '';
 }
 
+// Add non object fields to fields for list
+$non_object_fields = array(
+	'town' => array('type' => 'varchar(128)', 'label' => 'Town', 'enabled' => 1, 'position' => 51, 'notnull' => 0, 'visible' => 1, 'alwayseditable' => 1, 'searchall' => 1,),
+	'country' => array('type' => 'integer', 'label' => 'Country', 'enabled' => 1, 'position' => 51, 'notnull' => 0, 'visible' => 1, 'alwayseditable' => 1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'searchall' => 1,)
+);
+
+// All fields in list
+$all_fields_list = array_merge($object->fields, $non_object_fields);
+
 // Default sort order (if not yet defined by previous GETPOST)
 if (!$sortfield) {
-	reset($object->fields); // Reset is required to avoid key() to return null.
-	$sortfield = "t.".key($object->fields); // Set here default search field. By default 1st field in definition.
+	reset($all_fields_list); // Reset is required to avoid key() to return null.
+	$sortfield = "t.".key($all_fields_list); // Set here default search field. By default 1st field in definition.
 }
 if (!$sortorder) {
 	$sortorder = "ASC";
@@ -107,7 +116,7 @@ if (!$sortorder) {
 // Initialize array of search criteria
 $search_all = GETPOST('search_all', 'alphanohtml');
 $search = array();
-foreach ($object->fields as $key => $val) {
+foreach ($all_fields_list as $key => $val) {
 	if (GETPOST('search_'.$key, 'alpha') !== '') {
 		$search[$key] = GETPOST('search_'.$key, 'alpha');
 	}
@@ -124,7 +133,7 @@ if ($filter) {
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array();
-foreach ($object->fields as $key => $val) {
+foreach ($non_object_fields as $key => $val) {
 	if (!empty($val['searchall'])) {
 		$fieldstosearchall['t.'.$key] = $val['label'];
 	}
@@ -132,7 +141,7 @@ foreach ($object->fields as $key => $val) {
 
 // Definition of array of fields for columns
 $arrayfields = array();
-foreach ($object->fields as $key => $val) {
+foreach ($all_fields_list as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
 		$visible = (int) dol_eval((string) $val['visible'], 1);
@@ -150,6 +159,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
+$all_fields_list = dol_sort_array($all_fields_list, 'position');
 
 $permissiontoread = $user->hasRight('partnership', 'read');
 $permissiontoadd = $user->hasRight('partnership', 'write');
@@ -197,7 +207,7 @@ if (empty($reshook)) {
 
 	// Purge search criteria
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
-		foreach ($object->fields as $key => $val) {
+		foreach ($all_fields_list as $key => $val) {
 			$search[$key] = '';
 			if (preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
 				$search[$key.'_dtstart'] = '';
@@ -337,6 +347,8 @@ if (isset($extrafields->attributes[$object->table_element]['label']) && is_array
 if ($managedfor == 'member') {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent as d on (d.rowid = t.fk_member)";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent_type as dty on (dty.rowid = d.fk_adherent_type)";
+} else {
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as d on (d.rowid = t.fk_soc)";
 }
 // Add table from hooks
 $parameters = array();
@@ -386,6 +398,17 @@ foreach ($search as $key => $val) {
 					$sql .= " AND t.".$db->escape($columnName)." <= '".$db->idate($search[$key])."'";
 				}
 			}
+		}
+		if ($key == 'country' && $search[$key] != '') {
+			if ($managedfor == 'member') {
+				$sql .= " AND d.country = '".$db->escape($val)."'";
+			} else {
+				$sql .= " AND d.fk_pays = '".$db->escape($val)."'";
+			}
+			//$sql .= natural_search("d.fk_pays", $val);
+		}
+		if ($key == 'town' && $search[$key] != '') {
+			$sql .= natural_search("d.town", $val);
 		}
 	}
 }
@@ -742,7 +765,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print $searchpicto;
 	print '</td>';
 }
-foreach ($object->fields as $key => $val) {
+foreach ($all_fields_list as $key => $val) {
 	$searchkey = empty($search[$key]) ? '' : $search[$key];
 	$cssforfield = (empty($val['csslist']) ? (empty($val['css']) ? '' : $val['css']) : $val['csslist']);
 	if ($key == 'status') {
@@ -771,6 +794,8 @@ foreach ($object->fields as $key => $val) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 			$formadmin = new FormAdmin($db);
 			print $formadmin->select_language($search[$key], 'search_lang', 0, null, 1, 0, 0, 'minwidth100imp maxwidth125', 2);
+		} elseif ($key == 'country') {
+			print $form->select_country($search[$key], 'search_country', '', 0, 'minwidth100imp maxwidth100');
 		} else {
 			print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag(isset($search[$key]) ? $search[$key] : '').'">';
 		}
@@ -810,7 +835,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print getTitleFieldOfList(($mode != 'kanban' ? $selectedfields : ''), 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;	// For the column action
 }
-foreach ($object->fields as $key => $val) {
+foreach ($all_fields_list as $key => $val) {
 	$cssforfield = (empty($val['csslist']) ? (empty($val['css']) ? '' : $val['css']) : $val['csslist']);
 	if ($key == 'status') {
 		$cssforfield .= ($cssforfield ? ' ' : '').'center';
@@ -888,6 +913,12 @@ while ($i < $imaxinloop) {
 		$object->thirdparty = $companyobj;
 	}
 
+	if ($managedfor == 'member') {
+		if ($obj->fk_member > 0) {
+			$result = $adherent->fetch($obj->fk_member);
+		}
+	}
+
 	if ($mode == 'kanban') {
 		if ($i == 0) {
 			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
@@ -925,7 +956,7 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
-		foreach ($object->fields as $key => $val) {
+		foreach ($all_fields_list as $key => $val) {
 			$cssforfield = (empty($val['csslist']) ? (empty($val['css']) ? '' : $val['css']) : $val['csslist']);
 			if (in_array($val['type'], array('date', 'datetime', 'timestamp'))) {
 				$cssforfield .= ($cssforfield ? ' ' : '').'center';
@@ -952,6 +983,22 @@ while ($i < $imaxinloop) {
 				print '>';
 				if ($key == 'status') {
 					print $object->getLibStatut(5);
+				} elseif ($key == 'country') {
+					if ($managedfor == 'member') {
+						if (!empty($adherent->country_code)) {
+							print  $langs->trans("Country".$adherent->country_code);
+						}
+					} else {
+						if (!empty($object->thirdparty->country_code)) {
+							print  $langs->trans("Country".$object->thirdparty->country_code);
+						}
+					}
+				} elseif ($key == 'town') {
+					if ($managedfor == 'member') {
+						print $adherent->town;
+					} else {
+						print $object->thirdparty->town;
+					}
 				} elseif ($key == 'rowid') {
 					print $object->showOutputField($val, $key, $object->id, '');
 				} else {

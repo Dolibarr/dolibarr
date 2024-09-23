@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2008-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2022       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +29,7 @@
  * Prepare array with list of different ecm main dashboard
  *
  * @param   object	$object		Object related to tabs
- * @return  array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function ecm_prepare_dasboard_head($object)
 {
@@ -86,7 +87,7 @@ function ecm_prepare_dasboard_head($object)
  * @param   object	$object		Object related to tabs
  * @param	string	$module		Module
  * @param	string	$section	Section
- * @return  array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function ecm_prepare_head($object, $module = 'ecm', $section = '')
 {
@@ -113,7 +114,7 @@ function ecm_prepare_head($object, $module = 'ecm', $section = '')
  * Prepare array with list of tabs
  *
  * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function ecm_file_prepare_head($object)
 {
@@ -149,7 +150,7 @@ function ecm_file_prepare_head($object)
  * Prepare array with list of tabs
  *
  * @param   object	$object		Object related to tabs
- * @return  array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function ecm_prepare_head_fm($object)
 {

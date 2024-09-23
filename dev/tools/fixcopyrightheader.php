@@ -120,16 +120,21 @@ function updateCopyrightNotice($filename, $fileType, $name, $email)
 	}
 
 	// Pattern to match the line matching the current developer
-	$pattern = "~(?:{$r_prefix0}|{$r_prefix1})Copyright \(C\)\s+(?:(?:\d{4}-)?(?<year>\d{4}))\s+{$r_name}\s*\<{$r_email}>~";
+	$pattern = "~(?:{$r_prefix0}|{$r_prefix1})Copyright \(C\)\s+(?:(?:(?<start>\d{4})-)?(?<last>\d{4}))\s+{$r_name}\s*\<{$r_email}>~";
 	// Check if the lines match the pattern
 	$matches = array();
 	if (preg_match($pattern, $lines, $matches)) {
-		$existingYear = $matches['year'];
+		$existingYear = $matches['last'];
+		if (array_key_exists('start', $matches)) {
+			$startYear = $matches['start'];
+		} else {
+			$startYear = $existingYear;
+		}
 
 		// Check if the existing year is different from the current year
 		if ($existingYear !== date('Y')) {
-			// Update the year range to include or be up to the current year
-			$updatedNotice = preg_replace('/(\d{4})(-\d{4})?\s+/', $existingYear . '-' . date('Y') . "\t", $matches[0]);
+			// Extend the year range to the current year
+			$updatedNotice = preg_replace('/(?:\d{4}-)?\d{4}\s+/', $startYear . '-' . date('Y') . "\t", $matches[0]);
 
 			// Replace the old notice with the updated one in the file
 			file_put_contents($filename, preg_replace($pattern, $updatedNotice, file_get_contents($filename)));
@@ -138,7 +143,7 @@ function updateCopyrightNotice($filename, $fileType, $name, $email)
 		// If the existing year is the same, no need to update
 	} else {
 		// Adjust tabs for proper alignment
-		print "Offset:".$nameStartToMailStartOffset."\n";
+		// print "Offset:".$nameStartToMailStartOffset."\n";
 		$emailTabs = str_repeat("\t", (int) (max(0, ($nameStartToMailStartOffset + 4 - mb_strlen($name)) / 4)));
 
 		// No match found, add a new line to the header
@@ -162,8 +167,8 @@ function updateCopyrightNotice($filename, $fileType, $name, $email)
 		}
 
 		// Write the updated content back to the file
-		//file_put_contents($filename, $fileContent);
-		print $fileContent;
+		file_put_contents($filename, $fileContent);
+		// print $fileContent;
 		return true; // Change detected
 	}
 

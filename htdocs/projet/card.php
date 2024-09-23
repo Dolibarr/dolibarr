@@ -218,7 +218,7 @@ if (empty($reshook)) {
 			$object->title                = GETPOST('title', 'alphanohtml');
 			$object->socid                = GETPOSTINT('socid');
 			$object->description          = GETPOST('description', 'restricthtml'); // Do not use 'alpha' here, we want field as it is
-			$object->public               = GETPOST('public', 'alphanohtml');
+			$object->public               = GETPOSTINT('public') ? 1 : 0;
 			$object->opp_amount           = GETPOSTFLOAT('opp_amount');
 			$object->budget_amount        = GETPOSTFLOAT('budget_amount');
 			$object->date_c               = dol_now();
@@ -319,7 +319,7 @@ if (empty($reshook)) {
 			$object->status       = GETPOSTINT('status');
 			$object->socid        = GETPOSTINT('socid');
 			$object->description  = GETPOST('description', 'restricthtml'); // Do not use 'alpha' here, we want field as it is
-			$object->public       = GETPOST('public', 'alpha');
+			$object->public       = GETPOSTINT('public') ? 1 : 0;
 			$object->date_start   = (!GETPOST('projectstart')) ? '' : $date_start;
 			$object->date_end     = (!GETPOST('projectend')) ? '' : $date_end;
 			$object->date_start_event = (!GETPOST('date_start_event')) ? '' : $date_start_event;
@@ -817,11 +817,11 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 	}
 
 	if (count($array) > 0) {
-		print $form->selectarray('public', $array, GETPOST('public'), 0, 0, 0, '', 0, 0, 0, '', '', 1);
+		print $form->selectarray('public', $array, GETPOSTINT('public') ? 1 : 0, 0, 0, 0, '', 0, 0, 0, '', '', 1);
 	} else {
-		print '<input type="hidden" name="public" id="public" value="'.GETPOST('public').'">';
+		print '<input type="hidden" name="public" id="public" value="'.(GETPOSTINT('public') ? 1 : 0).'">';
 
-		if (GETPOST('public') == 0) {
+		if (GETPOSTINT('public') == 0) {
 			print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
 			print $langs->trans("PrivateProject");
 		} else {
