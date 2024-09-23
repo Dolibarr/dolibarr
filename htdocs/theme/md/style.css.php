@@ -2802,6 +2802,10 @@ img.hideonsmartphone.pictoactionview {
 	width: 20px;
 	/* padding-right: 0; */
 }
+img.pictofixedwidth {
+	width: 18px;
+	padding-right: 2px;
+}
 
 .colorthumb {
 	padding-left: 1px !important;
