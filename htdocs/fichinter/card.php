@@ -868,6 +868,8 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 $formfile = new FormFile($db);
+$formcontract = null;
+$formproject = null;
 if (isModEnabled('contract')) {
 	$formcontract = new FormContract($db);
 }
@@ -1015,7 +1017,7 @@ if ($action == 'create') {
 		}
 
 		// Contract
-		if (isModEnabled('contract')) {
+		if (isModEnabled('contract') && is_object($formcontract)) {
 			$langs->load("contracts");
 			print '<tr><td>'.$langs->trans("Contract").'</td><td>';
 			$numcontrat = $formcontract->select_contract($soc->id, GETPOSTINT('contratid'), 'contratid', 0, 1, 1);

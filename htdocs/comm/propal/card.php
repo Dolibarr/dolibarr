@@ -547,7 +547,7 @@ if (empty($reshook)) {
 						$element = $subelement = 'contrat';
 					}
 					if ($element == 'inter') {
-						$element = $subelement = 'ficheinter';
+						$element = $subelement = 'fichinter';
 					}
 					if ($element == 'shipping') {
 						$element = $subelement = 'expedition';
@@ -568,6 +568,7 @@ if (empty($reshook)) {
 
 						$classname = ucfirst($subelement);
 						$srcobject = new $classname($db);
+						'@phan-var-force Commande|Propal|Contrat|Fichinter|Expedition $srcobject';  // Can be other class, but CommonObject is too generic
 
 						dol_syslog("Try to find source object origin=".$object->origin." originid=".$object->origin_id." to add lines");
 						$result = $srcobject->fetch($object->origin_id);
@@ -1885,6 +1886,7 @@ if ($action == 'create') {
 
 			$classname = ucfirst($subelement);
 			$objectsrc = new $classname($db);
+			'@phan-var-force Commande|Propal|Contrat|Expedition $objectsrc';  // Can be other class, but CommonObject is too generic
 			$objectsrc->fetch($originid);
 			if (empty($objectsrc->lines) && method_exists($objectsrc, 'fetch_lines')) {
 				$objectsrc->fetch_lines();
@@ -2002,7 +2004,7 @@ if ($action == 'create') {
 		} else {
 			print '<td class="valuefieldcreate">';
 			$filter = '((s.client:IN:1,2,3) AND (s.status:=:1))';
-			print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company('', 'socid', $filter, 'SelectThirdParty', 1, 0, null, 0, 'minwidth300 maxwidth500 widthcentpercentminusxx');
+			print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company('', 'socid', $filter, 'SelectThirdParty', 1, 0, array(), 0, 'minwidth300 maxwidth500 widthcentpercentminusxx');
 			// reload page to retrieve customer information
 			if (!getDolGlobalString('RELOAD_PAGE_ON_CUSTOMER_CHANGE_DISABLED')) {
 				print '<script>
@@ -2335,7 +2337,7 @@ if ($action == 'create') {
 		$formquestion = array(
 			// 'text' => $langs->trans("ConfirmClone"),
 			// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
-			array('type' => 'other', 'name' => 'socid', 'label' => $langs->trans("SelectThirdParty"), 'value' => $form->select_company(GETPOSTINT('socid'), 'socid', $filter, '', 0, 0, null, 0, 'maxwidth300')),
+			array('type' => 'other', 'name' => 'socid', 'label' => $langs->trans("SelectThirdParty"), 'value' => $form->select_company(GETPOSTINT('socid'), 'socid', $filter, '', 0, 0, array(), 0, 'maxwidth300')),
 			array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans('PuttingPricesUpToDate'), 'value' => 0),
 			array('type' => 'checkbox', 'name' => 'update_desc', 'label' => $langs->trans('PuttingDescUpToDate'), 'value' => 0),
 		);
@@ -2370,6 +2372,7 @@ if ($action == 'create') {
 
 				if (array_key_exists('facture', $object->linkedObjects)) {
 					foreach ($object->linkedObjects['facture'] as $invoice) {
+						'@phan-var-force Facture $invoice';
 						if ($invoice->type == Facture::TYPE_DEPOSIT) {
 							$eligibleForDepositGeneration = false;
 							break;
@@ -2383,6 +2386,7 @@ if ($action == 'create') {
 
 						if (array_key_exists('facture', $order->linkedObjects)) {
 							foreach ($order->linkedObjects['facture'] as $invoice) {
+								'@phan-var-force Facture $invoice';
 								if ($invoice->type == Facture::TYPE_DEPOSIT) {
 									$eligibleForDepositGeneration = false;
 									break 2;
@@ -2631,8 +2635,8 @@ if ($action == 'create') {
 
 		print '<tr><td class="titlefieldmax45">'.$langs->trans('Discounts').'</td><td>';
 
-		$absolute_discount = $soc->getAvailableDiscounts('', $filterabsolutediscount);
-		$absolute_creditnote = $soc->getAvailableDiscounts('', $filtercreditnote);
+		$absolute_discount = $soc->getAvailableDiscounts(null, $filterabsolutediscount);
+		$absolute_creditnote = $soc->getAvailableDiscounts(null, $filtercreditnote);
 		$absolute_discount = price2num($absolute_discount, 'MT');
 		$absolute_creditnote = price2num($absolute_creditnote, 'MT');
 
@@ -3223,7 +3227,7 @@ if ($action == 'create') {
 		print $formfile->showdocuments('propal', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang, '', $object);
 
 		// Show links to link elements
-		$linktoelem = $form->showLinkToObjectBlock($object, null, array('propal'));
+		$linktoelem = $form->showLinkToObjectBlock($object, array(), array('propal'));
 
 		$compatibleImportElementsList = false;
 		if ($user->hasRight('propal', 'creer') && $object->statut == Propal::STATUS_DRAFT) {
