@@ -597,7 +597,7 @@ print $formcategory->textwithpicto('', $langs->trans("TicketsAutoNotifyCloseHelp
 print '</td>';
 print '</tr>';
 
-// Auto mark ticket as read when created from backoffice
+// Enable open only filter on other ticket list
 print '<tr class="oddeven"><td>'.$langs->trans("TicketsClientOtherTicketOnlyOpen").'</td>';
 print '<td class="left">';
 if ($conf->use_javascript_ajax) {
