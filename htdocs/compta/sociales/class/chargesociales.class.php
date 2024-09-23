@@ -61,7 +61,9 @@ class ChargeSociales extends CommonObject
 	 */
 	public $date_ech;
 
-
+	/**
+	 * @var string label
+	 */
 	public $label;
 	public $type;
 	public $type_label;
@@ -96,6 +98,9 @@ class ChargeSociales extends CommonObject
 	 */
 	public $paiementtype;
 
+	/**
+	 * @var int ID
+	 */
 	public $mode_reglement_id;
 	public $mode_reglement_code;
 	public $mode_reglement;
@@ -115,6 +120,9 @@ class ChargeSociales extends CommonObject
 	 */
 	public $total;
 
+	/**
+	 * @var float total paid
+	 */
 	public $totalpaid;
 
 
@@ -405,6 +413,8 @@ class ChargeSociales extends CommonObject
 	 */
 	public function solde($year = 0)
 	{
+		global $conf;
+
 		$sql = "SELECT SUM(f.amount) as amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX."chargesociales as f";
 		$sql .= " WHERE f.entity = ".((int) $conf->entity);

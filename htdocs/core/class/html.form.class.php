@@ -23,7 +23,7 @@
  * Copyright (C) 2018       Josep Lluis Amador      <joseplluis@lliuretic.cat>
  * Copyright (C) 2023		Joachim Kueter			<git-jk@bloxera.com>
  * Copyright (C) 2023		Nick Fragoulis
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -4093,7 +4093,7 @@ class Form
 					'type' => $outtype,
 					'duration_value' => $outdurationvalue,
 					'duration_unit' => $outdurationunit,
-					'disabled' => (empty($objp->idprodfournprice) ? true : false),
+					'disabled' => empty($objp->idprodfournprice),
 					'description' => $objp->description
 				);
 				if (isModEnabled('multicurrency')) {

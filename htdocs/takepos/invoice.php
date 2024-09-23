@@ -1879,7 +1879,7 @@ if ($placeid > 0) {
 				$htmlsupplements[$line->fk_parent_line] .= $hookmanager->resPrint;
 
 				if (empty($_SESSION["basiclayout"]) || $_SESSION["basiclayout"] != 1) {
-					$htmlsupplements[$line->fk_parent_line] .= '<td class="right">'.vatrate($line->remise_percent, true).'</td>';
+					$htmlsupplements[$line->fk_parent_line] .= '<td class="right">'.vatrate(price2num($line->remise_percent), true).'</td>';
 					$htmlsupplements[$line->fk_parent_line] .= '<td class="right">'.$line->qty.'</td>';
 					$htmlsupplements[$line->fk_parent_line] .= '<td class="right">'.price($line->total_ttc).'</td>';
 				}
@@ -1994,7 +1994,7 @@ if ($placeid > 0) {
 				if (getDolGlobalInt("TAKEPOS_SHOW_SUBPRICE")) {
 					$htmlforlines .= '<td class="right">'.price($line->subprice).'</td>';
 				}
-				$htmlforlines .= '<td class="right">'.vatrate($line->remise_percent, true).'</td>';
+				$htmlforlines .= '<td class="right">'.vatrate(price2num($line->remise_percent), true).'</td>';
 				$htmlforlines .= '<td class="right">';
 				if (isModEnabled('stock') && $user->hasRight('stock', 'mouvement', 'lire')) {
 					$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];

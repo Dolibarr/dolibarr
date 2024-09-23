@@ -40,36 +40,111 @@ class RssParser
 	 */
 	public $error = '';
 
+	/**
+	 * @var string
+	 */
 	public $feed_version;
 
+	/**
+	 * @var string
+	 */
 	private $_format = '';
+	/**
+	 * @var string
+	 */
 	private $_urlRSS;
+	/**
+	 * @var string
+	 */
 	private $_language;
+	/**
+	 * @var string
+	 */
 	private $_generator;
+	/**
+	 * @var string
+	 */
 	private $_copyright;
+	/**
+	 * @var string
+	 */
 	private $_lastbuilddate;
+	/**
+	 * @var string
+	 */
 	private $_imageurl;
+	/**
+	 * @var string
+	 */
 	private $_link;
+	/**
+	 * @var string
+	 */
 	private $_title;
+	/**
+	 * @var string
+	 */
 	private $_description;
+	/**
+	 * @var int
+	 */
 	private $_lastfetchdate; // Last successful fetch
+	/**
+	 * @var array<array{link:string,title:string,description:string,pubDate:string,category:string,id:string,author:string}>
+	 */
 	private $_rssarray = array();
 
+	/**
+	 * @var string|false
+	 */
 	private $current_namespace;
+
 	public $items = array();
+	/**
+	 * @var array<string,string>|array<string,array<string,string>>
+	 */
 	public $current_item = array();
+	/**
+	 * @var SimpleXMLElement|array<string,mixed>  SimpleXMLElement when getDolGlobalString('EXTERNALRSS_USE_SIMPLEXML')
+	 */
 	public $channel = array();
+	/**
+	 * @var array<string,array<string,string>>  array[namespace][element]
+	 */
 	public $textinput = array();
+	/**
+	 * @var array<string,array<string,string>>  array[namespace][element]
+	 */
 	public $image = array();
 
+	/**
+	 * @var bool
+	 */
 	private $initem;
+	/**
+	 * @var bool
+	 */
 	private $intextinput;
+	/**
+	 * @var false|string
+	 */
 	private $incontent;
+	/**
+	 * @var bool
+	 */
 	private $inimage;
+	/**
+	 * @var bool
+	 */
 	private $inchannel;
 
-	// For parsing with xmlparser
+	/**
+	 * @var string[] For parsing with xmlparser
+	 */
 	public $stack = array(); // parser stack
+	/**
+	 * @var string[]
+	 */
 	private $_CONTENT_CONSTRUCTS = array('content', 'summary', 'info', 'title', 'tagline', 'copyright');
 
 
@@ -533,8 +608,8 @@ class RssParser
 	 * 	Triggered when opened tag is found
 	 *
 	 * 	@param	string		$p			Start
-	 *  @param	string		$element	Tag
-	 *  @param	array		$attrs		Attributes of tags
+	 *  @param	string					$element	Tag
+	 *  @param	array<string,mixed|mixed[]>	$attrs		Attributes of tags
 	 *  @return	void
 	 */
 	public function feed_start_element($p, $element, $attrs)
@@ -750,7 +825,7 @@ class RssParser
 	/**
 	 * Return a description/summary for one item from a ATOM feed
 	 *
-	 * @param	array	$item		A parsed item of a ATOM feed
+	 * @param	array<string,mixed>	$item		A parsed item of a ATOM feed
 	 * @param	int		$maxlength	(optional) The maximum length for the description
 	 * @return	string				A summary description
 	 */
@@ -781,7 +856,7 @@ class RssParser
 	/**
 	 * Return a URL to a image of the given ATOM feed
 	 *
-	 * @param	array	$feed	The ATOM feed that possible contain a link to a logo or icon
+	 * @param	array<string,mixed>	$feed	The ATOM feed that possible contain a link to a logo or icon
 	 * @return	string			A URL to a image from a ATOM feed when found, otherwise a empty string
 	 */
 	private function getAtomImageUrl(array $feed)
@@ -841,7 +916,7 @@ function rss_map_attrs($k, $v)
  * Function to convert an XML object into an array
  *
  * @param	SimpleXMLElement			$xml		Xml
- * @return	array|string
+ * @return	array<string,mixed|mixed[]>|string
  */
 function xml2php($xml)
 {
@@ -849,6 +924,7 @@ function xml2php($xml)
 	$tab = false;
 	$array = array();
 	foreach ($xml->children() as $key => $value) {
+		'@phan-var-force SimpleXMLElement $value';
 		$child = xml2php($value);
 
 		//To deal with the attributes

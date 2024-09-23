@@ -1132,7 +1132,7 @@ class pdf_azur extends ModelePDFPropales
 							if (getDolGlobalString('PDF_LOCALTAX1_LABEL_IS_CODE_OR_RATE') == 'nocodenorate') {
 								$totalvat .= $tvacompl;
 							} else {
-								$totalvat .= vatrate(abs((float) $tvakey), 1).$tvacompl;
+								$totalvat .= vatrate((string) abs((float) $tvakey), 1).$tvacompl;
 							}
 
 							$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, 'L', 1);
@@ -1168,7 +1168,7 @@ class pdf_azur extends ModelePDFPropales
 							if (getDolGlobalString('PDF_LOCALTAX2_LABEL_IS_CODE_OR_RATE') == 'nocodenorate') {
 								$totalvat .= $tvacompl;
 							} else {
-								$totalvat .= vatrate(abs((float) $tvakey), 1).$tvacompl;
+								$totalvat .= vatrate((string) abs((float) $tvakey), 1).$tvacompl;
 							}
 
 							$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, 'L', 1);
@@ -1235,7 +1235,7 @@ class pdf_azur extends ModelePDFPropales
 							if (getDolGlobalString('PDF_LOCALTAX1_LABEL_IS_CODE_OR_RATE') == 'nocodenorate') {
 								$totalvat .= $tvacompl;
 							} else {
-								$totalvat .= vatrate(abs((float) $tvakey), 1).$tvacompl;
+								$totalvat .= vatrate((string) abs((float) $tvakey), 1).$tvacompl;
 							}
 
 							$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, 'L', 1);
@@ -1272,7 +1272,7 @@ class pdf_azur extends ModelePDFPropales
 							if (getDolGlobalString('PDF_LOCALTAX2_LABEL_IS_CODE_OR_RATE') == 'nocodenorate') {
 								$totalvat .= $tvacompl;
 							} else {
-								$totalvat .= vatrate(abs((float) $tvakey), 1).$tvacompl;
+								$totalvat .= vatrate((string) abs((float) $tvakey), 1).$tvacompl;
 							}
 
 							$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, 'L', 1);
