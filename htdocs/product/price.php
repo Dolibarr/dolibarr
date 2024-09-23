@@ -2400,7 +2400,7 @@ if ((!getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || $action == 'showlog_defau
 						if (empty($positiverates)) {
 							$positiverates = '0';
 						}
-						echo vatrate($positiverates.($objp->default_vat_code ? ' ('.$objp->default_vat_code.')' : ''), '%', !empty($objp->tva_npr) ? $objp->tva_npr : 0);
+						echo vatrate($positiverates.($objp->default_vat_code ? ' ('.$objp->default_vat_code.')' : ''), true, !empty($objp->tva_npr) ? $objp->tva_npr : 0);
 						/*
 						if ($objp->default_vat_code)
 						{
