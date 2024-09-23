@@ -211,7 +211,6 @@ foreach ($object->fields as $key => $val) {
 }
 $arrayfields = dol_sort_array($arrayfields, 'position');
 '@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
-//var_dump($arrayfields);exit;
 
 // Security check
 $result = restrictedArea($user, 'adherent');

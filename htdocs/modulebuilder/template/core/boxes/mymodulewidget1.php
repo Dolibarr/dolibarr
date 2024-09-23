@@ -50,7 +50,12 @@ class mymodulewidget1 extends ModeleBoxes
 	/**
 	 * @var string Box label (in configuration page)
 	 */
-	public $boxlabel;
+	public $boxlabel = 'MyWidget';
+
+	/**
+	 * @var string Box language file if it needs a specific language file.
+	 */
+	public $lang = 'mymodule@mymodule';
 
 	/**
 	 * @var string[] Module dependencies
@@ -71,13 +76,9 @@ class mymodulewidget1 extends ModeleBoxes
 	 */
 	public function __construct(DoliDB $db, $param = '')
 	{
-		global $user, $conf, $langs;
-		// Translations
-		$langs->loadLangs(array("boxes", "mymodule@mymodule"));
+		global $user;
 
 		parent::__construct($db, $param);
-
-		$this->boxlabel = $langs->transnoentitiesnoconv("MyWidget");
 
 		$this->param = $param;
 
