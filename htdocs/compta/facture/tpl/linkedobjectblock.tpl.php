@@ -72,7 +72,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		print '<a class="objectlinked_importbtn" href="'.$objectlink->getNomUrl(0, '', 0, 1).'&amp;action=selectlines" data-element="'.$objectlink->element.'" data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a';
 	}
 	print '</td>';
-	print '<td class="linkedcol-name tdoverflowmax150">'.$objectlink->getNomUrl(1).'</td>';
+	print '<td class="linkedcol-name tdoverflowmax150">'.$objectlink->getNomUrl(1, '', 0, 0, '', 0, 0, -1, '', 1).'</td>';
 	print '<td class="linkedcol-ref tdoverflowmax150" title="'.dol_escape_htmltag($objectlink->ref_client).'">'.dol_escape_htmltag($objectlink->ref_client).'</td>';
 	print '<td class="linkedcol-date center">'.dol_print_date($objectlink->date, 'day').'</td>';
 	print '<td class="linkedcol-amount right nowraponall">';

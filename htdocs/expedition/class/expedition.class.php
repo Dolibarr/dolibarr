@@ -1874,9 +1874,10 @@ class Expedition extends CommonObject
 	 *	@param      int			$short						Use short labels
 	 *  @param      int         $notooltip      			1=No tooltip
 	 *  @param      int     	$save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *  @param      int     	$with_third_name			0=Without third-party name (no fetch), 1=With third-party name (fetch)
 	 *	@return     string          						String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $notooltip = 0, $save_lastsearch_value = -1)
+	public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $notooltip = 0, $save_lastsearch_value = -1, $with_third_name = 0)
 	{
 		global $langs, $hookmanager;
 
@@ -1885,7 +1886,7 @@ class Expedition extends CommonObject
 			'id' => $this->id,
 			'objecttype' => $this->element,
 			'option' => $option,
-			'nofetch' => 1,
+			'nofetch' => !empty($with_third_name) ? 0 : 1,
 		];
 		$classfortooltip = 'classfortooltip';
 		$dataparams = '';

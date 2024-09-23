@@ -1009,9 +1009,10 @@ class CommandeFournisseur extends CommonOrder
 	 *  @param	    int   	$notooltip					1=Disable tooltip
 	 *  @param      int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *  @param		int		$addlinktonotes				Add link to show notes
+	 *  @param		int		$with_third_name			0=Without third-party name (no fetch), 1=With third-party name (fetch)
 	 *	@return		string								Chain with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $save_lastsearch_value = -1, $addlinktonotes = 0)
+	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $save_lastsearch_value = -1, $addlinktonotes = 0, $with_third_name = 0)
 	{
 		global $langs, $user, $hookmanager;
 
@@ -1020,7 +1021,7 @@ class CommandeFournisseur extends CommonOrder
 			'id' => $this->id,
 			'objecttype' => $this->element,
 			'option' => $option,
-			'nofetch' => 1
+			'nofetch' => !empty($with_third_name) ? 0 : 1,
 		];
 		$classfortooltip = 'classfortooltip';
 		$dataparams = '';

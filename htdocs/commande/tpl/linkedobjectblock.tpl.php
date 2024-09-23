@@ -54,7 +54,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		print '<a class="objectlinked_importbtn" href="'.$objectlink->getNomUrl(0, '', 0, 1).'&amp;action=selectlines" data-element="'.$objectlink->element.'" data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a';
 	}
 	echo '</td>';
-	echo '<td class="linkedcol-name tdoverflowmax150" >'.$objectlink->getNomUrl(1).'</td>';
+	echo '<td class="linkedcol-name tdoverflowmax150" >'.$objectlink->getNomUrl(1, '', 0, 0, 0, -1, 0, '', 1).'</td>';
 	echo '<td class="linkedcol-ref">'.$objectlink->ref_client.'</td>';
 	echo '<td class="linkedcol-date center">'.dol_print_date($objectlink->date, 'day').'</td>';
 	echo '<td class="linkedcol-amount right">';

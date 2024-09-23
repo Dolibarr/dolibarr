@@ -2033,9 +2033,10 @@ class Facture extends CommonInvoice
 	 *  @param  int     $addlinktonotes  			1=Add link to notes
 	 *  @param  int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *  @param  string  $target                     Target of link ('', '_self', '_blank', '_parent', '_backoffice', ...)
+	 *  @param	int		$with_third_name			0=Without third-party name (no fetch), 1=With third-party name (fetch)
 	 *  @return string 			         			String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $moretitle = '', $notooltip = 0, $addlinktonotes = 0, $save_lastsearch_value = -1, $target = '')
+	public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $moretitle = '', $notooltip = 0, $addlinktonotes = 0, $save_lastsearch_value = -1, $target = '', $with_third_name = 0)
 	{
 		global $langs, $conf, $user;
 
@@ -2086,6 +2087,7 @@ class Facture extends CommonInvoice
 			'objecttype' => $this->element,
 			'moretitle' => $moretitle,
 			'option' => $option,
+			'nofetch' => !empty($with_third_name) ? 0 : 1,
 		];
 		$classfortooltip = 'classfortooltip';
 		$dataparams = '';
