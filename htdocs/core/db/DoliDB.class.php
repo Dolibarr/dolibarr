@@ -421,7 +421,7 @@ abstract class DoliDB implements Database
 	 */
 	public function getRows($sql)
 	{
-		if (!preg_match('/LIMIT \d+,?\d*\ *;?$/', $sql)) {
+		if (!preg_match('/LIMIT \d+(?:(?:,\ *\d*)|(?:\ +OFFSET\ +\d*))?\ *;?$/', $sql)) {
 			trigger_error(__CLASS__ .'::'.__FUNCTION__.'() query must have a LIMIT clause', E_USER_ERROR);
 		}
 
