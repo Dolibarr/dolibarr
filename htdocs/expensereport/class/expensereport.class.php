@@ -1747,10 +1747,9 @@ class ExpenseReport extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 *
-	 * @param array $params ex option, infologin
+	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
-	 * @return array{picto:string,ref?:string,total_ht?:string,total_tva?:string,total_ttc?:string}
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
