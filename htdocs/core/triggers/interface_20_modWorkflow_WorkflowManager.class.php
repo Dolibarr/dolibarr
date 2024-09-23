@@ -505,8 +505,8 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 
 		if ($action == 'TICKET_CREATE') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-			// Auto link contract
-			if (!empty($conf->contract->enabled) && isModEnabled('ticket') && isModEnabled('ficheinter') && !empty($conf->workflow->enabled) && getDolGlobalString('WORKFLOW_TICKET_LINK_CONTRACT') && getDolGlobalString('TICKET_PRODUCT_CATEGORY') && !empty($object->fk_soc)) {
+			// Auto link ticket to contract
+			if (isModEnabled('contract') && isModEnabled('ticket') && isModEnabled('workflow') && getDolGlobalString('WORKFLOW_TICKET_LINK_CONTRACT') && getDolGlobalString('TICKET_PRODUCT_CATEGORY') && !empty($object->fk_soc)) {
 				$societe = new Societe($this->db);
 				$company_ids = (!getDolGlobalString('WORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS')) ? [$object->fk_soc] : $societe->getParentsForCompany($object->fk_soc, [$object->fk_soc]);
 
@@ -514,6 +514,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				$number_contracts_found = 0;
 				foreach ($company_ids as $company_id) {
 					$contrat->socid = $company_id;
+
 					$list = $contrat->getListOfContracts($option = 'all', $status = [Contrat::STATUS_DRAFT, Contrat::STATUS_VALIDATED], $product_categories = [$conf->global->TICKET_PRODUCT_CATEGORY], $line_status = [ContratLigne::STATUS_INITIAL, ContratLigne::STATUS_OPEN]);
 					if (!is_array($list) || empty($list)) {
 						continue;
@@ -533,20 +534,18 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					}
 					break;
 				}
-				if ($number_contracts_found == 0) {
-					if (empty(NOLOGIN)) {
-						setEventMessage($langs->trans('TicketNoContractFoundToLink'), 'mesgs');
-					}
+				if ($number_contracts_found == 0 && !defined('NOLOGIN')) {
+					setEventMessage($langs->trans('TicketNoContractFoundToLink'), 'mesgs');
 				}
 			}
 			// Automatically create intervention
-			if (isModEnabled('ficheinter') && isModEnabled('ticket') && !empty($conf->workflow->enabled) && getDolGlobalString('WORKFLOW_TICKET_CREATE_INTERVENTION')) {
+			if (isModEnabled('ficheinter') && isModEnabled('ticket') && isModEnabled('workflow') && getDolGlobalString('WORKFLOW_TICKET_CREATE_INTERVENTION')) {
 				$fichinter = new Fichinter($this->db);
 				$fichinter->socid = (int) $object->fk_soc;
 				$fichinter->fk_project = (int) $object->fk_project;
 				$fichinter->fk_contrat = (int) $object->fk_contract;
 				$fichinter->author = $user->id;
-				$fichinter->model_pdf = (getDolGlobalString('FICHEINTER_ADDON_PDF')) ? $conf->global->FICHEINTER_ADDON_PDF : 'soleil';
+				$fichinter->model_pdf = getDolGlobalString('FICHEINTER_ADDON_PDF', 'soleil');
 				$fichinter->origin = $object->element;
 				$fichinter->origin_id = $object->id;
 
