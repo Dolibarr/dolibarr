@@ -759,10 +759,6 @@ if ($action == 'create') {
 					//print '<td>'.dol_print_date($objp->datem).'</td>';
 					print '<tr class="oddeven">';
 
-					$parameters = array('obj' => $objp, 'totalarray' => &$totalarray);
-					$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
-					print $hookmanager->resPrint;
-
 					$productstatic->id = $objp->rowid;
 					$productstatic->ref = $objp->ref;
 					$productstatic->label = $objp->produit;
@@ -842,6 +838,10 @@ if ($action == 'create') {
 						print $langs->trans("CorrectStock");
 						print "</a></td>";
 					}
+
+					$parameters = array('obj' => $objp, 'totalarray' => &$totalarray);
+					$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
+					print $hookmanager->resPrint;
 
 					print "</tr>";
 

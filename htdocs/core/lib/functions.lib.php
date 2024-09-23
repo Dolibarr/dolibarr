@@ -12899,7 +12899,7 @@ function getElementProperties($elementType)
 		$classfile = 'mailing';
 		$classname = 'Mailing';
 		$subelement = '';
-	} elseif ($elementType == 'member') {
+	} elseif ($elementType == 'member' || $elementType == 'adherent') {
 		$classpath = 'adherents/class';
 		$module = 'adherent';
 		$subelement = 'adherent';
