@@ -22,6 +22,13 @@ if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
+// From controller using view
+'
+@phan-var-force FormAdvTargetEmailing $formadvtargetemaling
+@phan-var-force AdvanceTargetingMailing $advTarget
+@phan-var-force array<string,string|int|string[]> $array_query
+';
+
 print '<script>
 	$(document).ready(function() {
 
@@ -112,7 +119,7 @@ if (!empty($array_query['cust_code'])) {
 } else {
 	$cust_code_str = null;
 }
-print '</td><td><input type="text" name="cust_code"'.($cust_code_str!=null?' value="'.$cust_code_str:'').'"/></td><td>'."\n";
+print '</td><td><input type="text" name="cust_code"'.($cust_code_str != null ? ' value="'.$cust_code_str : '').'"/></td><td>'."\n";
 print $form->textwithpicto('', $langs->trans("AdvTgtSearchTextHelp"), 1, 'help');
 print '</td></tr>'."\n";
 
@@ -277,8 +284,8 @@ if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 		print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 	}
 	print '</td><td>'."\n";
-	$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, 'parent', null, null, 1);
-	print $form->multiselectarray('cust_categ', $cate_arbo, GETPOST('cust_categ', 'array'), null, null, null, null, "90%");
+	$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, '', 'parent', 0, 0, 1);
+	print $form->multiselectarray('cust_categ', $cate_arbo, GETPOST('cust_categ', 'array'), 0, 0, '', 0, "90%");
 	print '</td><td>'."\n";
 	print '</td></tr>'."\n";
 }
@@ -469,8 +476,8 @@ if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 		print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 	}
 	print '</td><td>'."\n";
-	$cate_arbo = $form->select_all_categories(Categorie::TYPE_CONTACT, null, 'parent', null, null, 1);
-	print $form->multiselectarray('contact_categ', $cate_arbo, GETPOST('contact_categ', 'array'), null, null, null, null, "90%");
+	$cate_arbo = $form->select_all_categories(Categorie::TYPE_CONTACT, '', 'parent', 0, 0, 1);
+	print $form->multiselectarray('contact_categ', $cate_arbo, GETPOST('contact_categ', 'array'), 0, 0, '', 0, "90%");
 	print '</td><td>'."\n";
 	print '</td></tr>'."\n";
 }
