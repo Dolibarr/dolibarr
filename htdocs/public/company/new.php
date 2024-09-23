@@ -62,6 +62,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/cunits.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formadmin.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/public.lib.php';
 // Init vars
 $backtopage = GETPOST('backtopage', 'alpha');
 $action = GETPOST('action', 'aZ09');
@@ -215,9 +216,6 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 	if (!$error) {
 		$societe = new Societe($db);
 
-		// TODO Support MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS
-
-
 		$societe->name = GETPOST('name', 'alphanohtml');
 
 		$societe->client = GETPOSTINT('client') ? GETPOSTINT('client') : $societe->client;
@@ -239,6 +237,13 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 		$societe->name_alias = GETPOST('name_alias', 'alphanohtml');
 
 		$societe->note_private = GETPOST('note_private');
+
+		$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 200);
+
+		if (checkNbPostsForASpeceificIp($societe, $nb_post_max) <= 0) {
+			$error++;
+			$errmsg .= implode('<br>', $societe->errors);
+		}
 
 		if (!$error) {
 			$result = $societe->create($user);

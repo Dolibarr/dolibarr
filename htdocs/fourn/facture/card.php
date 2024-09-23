@@ -260,7 +260,7 @@ if (empty($reshook)) {
 
 					$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 					if ($result < 0) {
-						dol_print_error($db, $result);
+						dol_print_error($db, $object->error, $object->errors);
 					}
 				}
 			}
@@ -1701,7 +1701,7 @@ if (empty($reshook)) {
 					$desc = $product_desc;
 				}
 				if (!empty($product_desc) && trim($product_desc) != trim($desc)) {
-					$desc = dol_concatdesc($desc, $product_desc, '', getDolGlobalString('MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION'));
+					$desc = dol_concatdesc($desc, $product_desc, false, getDolGlobalString('MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION') ? true : false);
 				}
 
 				$ref_supplier = $productsupplier->ref_supplier;
@@ -1833,7 +1833,7 @@ if (empty($reshook)) {
 
 				$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				if ($result < 0) {
-					dol_print_error($db, $result);
+					dol_print_error($db, $object->error, $object->errors);
 				}
 			}
 
@@ -1933,7 +1933,7 @@ if (empty($reshook)) {
 
 					$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 					if ($result < 0) {
-						dol_print_error($db, $result);
+						dol_print_error($db, $object->error, $object->errors);
 					}
 				}
 
@@ -1978,7 +1978,7 @@ if (empty($reshook)) {
 		$object->fetch_thirdparty();
 		$result = $object->update_price(0, (($calculationrule == 'totalofround') ? '0' : '1'), 0, $object->thirdparty);
 		if ($result <= 0) {
-			dol_print_error($db, $result);
+			dol_print_error($db, $object->error, $object->errors);
 			exit;
 		}
 	}
