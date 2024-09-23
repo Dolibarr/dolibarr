@@ -18,6 +18,7 @@
  * Copyright (C) 2021-2024  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2022		Josep Lluís Amador			<joseplluis@lliuretic.cat>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		William Mead			    <william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -146,6 +147,12 @@ $search_date_signature_end = dol_mktime(23, 59, 59, $search_date_signature_endmo
 $search_status = GETPOST('search_status', 'alpha');
 $search_note_public = GETPOST('search_note_public', 'alpha');
 
+$search_option = GETPOST('search_option', 'alpha');
+if ($search_option == 'late') {
+	$search_status = '1';
+	$object_statut = '1';
+}
+
 // Pagination
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -257,18 +264,18 @@ $arrayfields = array(
 
 // List of fields to search into when doing a "search in all"
 /*$fieldstosearchall = array();
-foreach ($object->fields as $key => $val) {
-	if (!empty($val['searchall'])) {
-		$fieldstosearchall['t.'.$key] = $val['label'];
-	}
-}*/
+ foreach ($object->fields as $key => $val) {
+ if (!empty($val['searchall'])) {
+ $fieldstosearchall['t.'.$key] = $val['label'];
+ }
+ }*/
 
 // Definition of array of fields for columns
 /*$arrayfields = array();
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
-		$visible = (int) dol_eval($val['visible'], 1);
+		$visible = (int) dol_eval((string) $val['visible'], 1);
 		$arrayfields['t.'.$key] = array(
 			'label'=>$val['label'],
 			'checked'=>(($visible < 0) ? 0 : 1),
@@ -312,6 +319,9 @@ if (GETPOST('cancel', 'alpha')) {
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
 }
+
+$objectclass = null;
+$search_code_client = '';
 
 $parameters = array('socid' => $socid, 'arrayfields' => &$arrayfields);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -375,6 +385,7 @@ if (empty($reshook)) {
 		$search_date_delivery_start = '';
 		$search_date_delivery_end = '';
 		$search_availability = '';
+		$search_option = '';
 		$search_status = '';
 		$search_categ_cus = 0;
 		$search_fk_cond_reglement = '';
@@ -498,7 +509,7 @@ if ($action == "nosign" && $permissiontoclose) {
 }
 
 // Closed records
-if (!$error && $massaction === 'setbilled' && $permissiontoclose) {
+if (!$error && $massaction === 'setbilled' && $permissiontoclose && $objectclass !== null) {
 	$db->begin();
 
 	$objecttmp = new $objectclass($db);
@@ -812,6 +823,9 @@ if (!empty($searchCategoryProductList)) {
 			$sql .= " AND (".implode(' AND ', $searchCategoryProductSqlList).")";
 		}
 	}
+}
+if ($search_option == 'late') {
+	$sql .= " AND p.fin_validite < '".$db->idate(dol_now() - $conf->propal->cloture->warning_delay)."'";
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -1716,10 +1730,11 @@ if (isModEnabled('margin') && (
 	|| !empty($arrayfields['total_margin']['checked'])
 	|| !empty($arrayfields['total_margin_rate']['checked'])
 	|| !empty($arrayfields['total_mark_rate']['checked'])
-)
-) {
-	$with_margin_info = true;
+	)
+	) {
+		$with_margin_info = true;
 }
+
 $total_ht = 0;
 $total_margin = 0;
 
@@ -1732,6 +1747,9 @@ while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) {
 		break; // Should not happen
+	}
+	if ($search_option) {
+		$param .= "&search_option=".urlencode($search_option);
 	}
 
 	$objectstatic->id = $obj->rowid;

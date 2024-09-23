@@ -45,6 +45,7 @@ NoError=Nicio eroare
 Error=Eroare
 Errors=Erori
 ErrorFieldRequired=Câmpul " %s" este obligatoriu
+CustomMandatoryFieldRule=Regulă personalizată "Câmp obligatoriu"
 ErrorFieldFormat=Câmpul  " %s" are o valoare incorectă
 ErrorFileDoesNotExists=Fișierul % s nu există
 ErrorFailedToOpenFile=Nu se poate deschide fișierul % s

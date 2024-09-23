@@ -142,9 +142,9 @@ $arrayfields = array(
 	'f.note_public' => array('label' => 'NotePublic', 'checked' => 0, 'position' => 510, 'enabled' => (!getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES'))),
 	'f.note_private' => array('label' => 'NotePrivate', 'checked' => 0, 'position' => 511, 'enabled' => (!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES'))),
 	'f.fk_statut' => array('label' => 'Status', 'checked' => 1, 'position' => 1000),
-	'f.signed_status' =>array('label' => 'Signed status', 'checked' => 0, 'position' => 1001),
-	'fd.description' => array('label' => "DescriptionOfLine", 'checked' => 1, 'enabled' => !getDolGlobalString('FICHINTER_DISABLE_DETAILS') ? 1 : 0),
-	'fd.date' => array('label' => 'DateOfLine', 'checked' => 1, 'enabled' => !getDolGlobalString('FICHINTER_DISABLE_DETAILS') ? 1 : 0),
+	'f.signed_status' =>array('label' => 'SignedStatus', 'checked' => 0, 'position' => 1001),
+	'fd.description' => array('label' => "DescriptionOfLine", 'checked' => 1, 'enabled' => getDolGlobalString('FICHINTER_DISABLE_DETAILS') != '1' ? 1 : 0),
+	'fd.date' => array('label' => 'DateOfLine', 'checked' => 1, 'enabled' => getDolGlobalString('FICHINTER_DISABLE_DETAILS') != '1' ? 1 : 0),
 	'fd.duree' => array('label' => 'DurationOfLine', 'type' => 'duration', 'checked' => 1, 'enabled' => !getDolGlobalString('FICHINTER_DISABLE_DETAILS') ? 1 : 0), //type duration is here because in database, column 'duree' is double
 );
 '@phan-var-force array{label:string,type?:string,checked:int,position?:int,enabled?:int,langfile?:string,help:string} $arrayfields';

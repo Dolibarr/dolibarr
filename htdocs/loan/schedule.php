@@ -66,11 +66,14 @@ if ($object->paid > 0 && count($echeances->lines) == 0) {
 	$pay_without_schedule = 0;
 }
 
+$permissiontoadd = $user->hasRight('loan', 'write');
+
+
 /*
  * Actions
  */
 
-if ($action == 'createecheancier' && empty($pay_without_schedule)) {
+if ($action == 'createecheancier' && empty($pay_without_schedule) && $permissiontoadd) {
 	$db->begin();
 	$i = 1;
 	while ($i < $object->nbterm + 1) {
@@ -107,7 +110,7 @@ if ($action == 'createecheancier' && empty($pay_without_schedule)) {
 	}
 }
 
-if ($action == 'updateecheancier' && empty($pay_without_schedule)) {
+if ($action == 'updateecheancier' && empty($pay_without_schedule) && $permissiontoadd) {
 	$db->begin();
 	$i = 1;
 	while ($i < $object->nbterm + 1) {
@@ -139,9 +142,11 @@ if ($action == 'updateecheancier' && empty($pay_without_schedule)) {
 	}
 }
 
+
 /*
  * View
  */
+
 $form = new Form($db);
 $formproject = new FormProjets($db);
 

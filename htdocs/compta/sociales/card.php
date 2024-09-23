@@ -55,6 +55,7 @@ $cancel = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'myobjectcard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
+
 $lineid = GETPOSTINT('lineid');
 
 $fk_project = (GETPOST('fk_project') ? GETPOSTINT('fk_project') : 0);
@@ -96,7 +97,6 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'tax', $object->id, 'chargesociales', 'charges');
-
 
 
 /*
@@ -216,7 +216,6 @@ if (empty($reshook)) {
 		}
 	}
 
-
 	if ($action == 'update' && !$cancel && $permissiontoadd) {
 		$amount = price2num(GETPOST('amount', 'alpha'), 'MT');
 
@@ -235,21 +234,29 @@ if (empty($reshook)) {
 		} else {
 			$result = $object->fetch($id);
 
+			$object->oldcopy = dol_clone($object, 2);
+
+			$object->type = $actioncode;
 			$object->date_ech = $dateech;
-			$object->periode = $dateperiod;
 			$object->period = $dateperiod;
+			$object->periode = $dateperiod;
 			$object->amount = $amount;
 			$object->fk_user = $fk_user;
 
 			$result = $object->update($user);
 			if ($result <= 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
+			} else {
+				// Reload object to get new value of some properties
+				if ($object->oldcopy->type != $object->type) {
+					$object->fetch($id);
+				}
 			}
 		}
 	}
 
 	// Action clone object
-	if ($action == 'confirm_clone' && $confirm != 'yes') {
+	if ($action == 'confirm_clone' && $confirm != 'yes') {	// Test on permission not required here
 		$action = '';
 	}
 
@@ -273,15 +280,13 @@ if (empty($reshook)) {
 			}
 
 			if (GETPOSTINT('clone_for_next_month')) {	// This can be true only if TAX_ADD_CLONE_FOR_NEXT_MONTH_CHECKBOX has been set
-				$object->periode = dol_time_plus_duree($object->periode, 1, 'm');
-				$object->period = dol_time_plus_duree($object->periode, 1, 'm');
+				$object->period = dol_time_plus_duree($object->period, 1, 'm');
 				$object->date_ech = dol_time_plus_duree($object->date_ech, 1, 'm');
 			} else {
 				// Note date_ech is often a little bit higher than dateperiod
 				$newdateperiod = dol_mktime(0, 0, 0, GETPOSTINT('clone_periodmonth'), GETPOSTINT('clone_periodday'), GETPOSTINT('clone_periodyear'));
 				$newdateech = dol_mktime(0, 0, 0, GETPOSTINT('clone_date_echmonth'), GETPOSTINT('clone_date_echday'), GETPOSTINT('clone_date_echyear'));
 				if ($newdateperiod) {
-					$object->periode = $newdateperiod;
 					$object->period = $newdateperiod;
 					if (empty($newdateech)) {
 						$object->date_ech = $object->periode;
@@ -291,8 +296,7 @@ if (empty($reshook)) {
 					$object->date_ech = $newdateech;
 					if (empty($newdateperiod)) {
 						// TODO We can here get dol_get_last_day of previous month:
-						// $object->periode = dol_get_last_day(year of $object->date_ech - 1m, month or $object->date_ech -1m)
-						$object->periode = $object->date_ech;
+						// $object->period = dol_get_last_day(year of $object->date_ech - 1m, month or $object->date_ech -1m)
 						$object->period = $object->date_ech;
 					}
 				}
@@ -498,9 +502,7 @@ if ($id > 0) {
 			$formconfirm = $hookmanager->resPrint;
 		}
 
-		/*
-		 *	View card
-		 */
+
 		print dol_get_fiche_head($head, 'card', $langs->trans("SocialContribution"), -1, 'bill', 0, '', '', 0, '', 1);
 
 		// Print form confirm
@@ -582,8 +584,15 @@ if ($id > 0) {
 		print '<table class="border centpercent tableforfield">';
 
 		// Type
-		print '<tr><td class="titlefield">';
-		print $langs->trans("Type")."</td><td>".$object->type_label."</td>";
+		print '<tr><td class="titlefieldmiddle">';
+		print $langs->trans("Type")."</td><td>";
+		if ($action == 'edit' && $object->getSommePaiement() == 0) {
+			$formsocialcontrib->select_type_socialcontrib(GETPOST("actioncode", 'alpha') ? GETPOST("actioncode", 'alpha') : $object->type, 'actioncode', 1);
+		} else {
+			print $object->type_label;
+		}
+		print "</td>";
+
 		print "</tr>";
 
 		// Date
@@ -599,9 +608,9 @@ if ($id > 0) {
 		print "<tr><td>".$form->textwithpicto($langs->trans("PeriodEndDate"), $langs->trans("LastDayTaxIsRelatedTo"))."</td>";
 		print "<td>";
 		if ($action == 'edit') {
-			print $form->selectDate($object->periode, 'period', 0, 0, 0, 'charge', 1);
+			print $form->selectDate($object->period, 'period', 0, 0, 0, 'charge', 1);
 		} else {
-			print dol_print_date($object->periode, "day");
+			print dol_print_date($object->period, "day");
 		}
 		print "</td></tr>";
 

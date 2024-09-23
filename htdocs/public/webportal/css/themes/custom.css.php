@@ -45,21 +45,25 @@ if (!defined('NOREQUIREAJAX')) {
 
 session_cache_limiter('public');
 
+if (!defined('MAIN_INC_REL_DIR')) {
+	define('MAIN_INC_REL_DIR', '../../');
+}
 require_once __DIR__.'/../../webportal.main.inc.php';
 dol_include_once('/webportal/class/webPortalTheme.class.php');
 
 // Define css type
-// top_httphead('text/css');
+top_httphead('text/css');
+/*
 header("Content-Type: text/css");
 header("X-Content-Type-Options: nosniff");
 header("X-Frame-Options: SAMEORIGIN");
-
+*/
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-// if (empty($dolibarr_nocache)) {
+if (empty($dolibarr_nocache)) {
 	header('Cache-Control: max-age=10800, public, must-revalidate');
-/* } else {
+} else {
 	header('Cache-Control: no-cache');
-} */
+}
 
 $webPortalTheme = new WebPortalTheme();
 
@@ -84,5 +88,5 @@ $webPortalTheme = new WebPortalTheme();
 }
 <?php
 
-print '/* Here, the content of the common custom CSS defined into Home - Setup - Display - CSS'."*/\n";
+print '/* Here, the content of the common custom CSS defined into Home - Setup - Display - CSS */'."\n";
 print getDolGlobalString('WEBPORTAL_CUSTOM_CSS');

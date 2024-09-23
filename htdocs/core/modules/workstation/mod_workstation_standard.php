@@ -84,7 +84,7 @@ class mod_workstation_standard extends ModeleNumRefWorkstation
 	 */
 	public function canBeActivated($object)
 	{
-		global $conf, $langs, $db;
+		global $conf, $db;
 
 		$max = '';
 
@@ -122,7 +122,7 @@ class mod_workstation_standard extends ModeleNumRefWorkstation
 	 */
 	public function getNextValue($object)
 	{
-		global $db, $conf;
+		global $db;
 
 		// First we get the max value
 		$posindice = strlen($this->prefix) + 2;

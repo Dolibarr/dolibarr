@@ -52,7 +52,7 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 	public $param;
 
 	/**
-	 * @var array box info heads
+	 * @var array box info heads. Example: array('text' => $langs->trans("BoxScheduledJobs", $max), 'nbcol' => 4);
 	 */
 	public $info_box_head = array();
 
@@ -103,32 +103,37 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 	public $box_order;
 
 	/**
-	 * @var int User ID
+	 * @var int 	User ID
 	 */
 	public $fk_user;
 
 	/**
-	 * @var string Source file
+	 * @var string 	Source file
 	 */
 	public $sourcefile;
 
 	/**
-	 * @var string Class name
+	 * @var string 	Class name
 	 */
 	public $class;
 
 	/**
-	 * @var string ID
+	 * @var string 	ID
 	 */
 	public $box_id;
 
 	/**
-	 * @var string Alphanumeric ID
+	 * @var string 	Box language file if it needs a specific language file.
+	 */
+	public $lang;
+
+	/**
+	 * @var string 	Alphanumeric ID
 	 */
 	public $boxcode;
 
 	/**
-	 * @var string Note
+	 * @var string 	Note
 	 */
 	public $note;
 
@@ -261,7 +266,7 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 
 			$out .= '<div class="box divboxtable boxdraggable" id="boxto_'.$this->box_id.'">'."\n";
 			if (!empty($head['text']) || !empty($head['sublink']) || !empty($head['subpicto']) || $nblines) {
-				$out .= '<table summary="boxtable'.$this->box_id.'" width="100%" class="noborder boxtable">'."\n";
+				$out .= '<table summary="boxtable'.$this->box_id.'" class="noborder boxtable centpercent">'."\n";
 			}
 
 			// Show box title

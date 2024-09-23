@@ -85,8 +85,15 @@ abstract class ModeleNumRefSupplierProposal extends CommonNumRefGenerator
 	 *  Return next value
 	 *
 	 *  @param	Societe				$objsoc					Object third party
-	 * 	@param	SupplierProposal	$supplier_proposal		Object commercial proposal
+	 * 	@param	?SupplierProposal	$supplier_proposal		Object commercial proposal
 	 *  @return string|int<-1,0>							Next value if OK, -1 if KO
 	 */
 	abstract public function getNextValue($objsoc, $supplier_proposal);
+
+	/**
+	 *  Return an example of numbering
+	 *
+	 *  @return     string      Example
+	 */
+	abstract public function getExample();
 }

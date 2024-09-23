@@ -266,8 +266,8 @@ class FormCompany extends Form
 	 *   The key of the list is the code (there can be several entries for a given code but in this case, the country field differs).
 	 *   Thus the links with the departments are done on a department independently of its name.
 	 *
-	 *    @param	int		$selected        	Code state preselected (mus be state id)
-	 *    @param    integer	$country_codeid    	Country code or id: 0=list for all countries, otherwise country code or country rowid to show
+	 *    @param	int		$selected        	Code state preselected (must be state id)
+	 *    @param    int		$country_codeid    	Country code or id: 0=list for all countries, otherwise country code or country rowid to show
 	 *    @param    string	$htmlname			Id of department. If '', we want only the string with <option>
 	 *    @param	string	$morecss			Add more css
 	 * 	  @return	string						String with HTML select
@@ -378,9 +378,9 @@ class FormCompany extends Form
 	 *   The key of the list is the code (there can be several entries for a given code but in this case, the country field differs).
 	 *   Thus the links with the departments are done on a department independently of its name.
 	 *
-	 *    @param	string		$parent_field_id        Parent select name to monitor
-	 *    @param	integer		$selected        	Code state preselected (mus be state id)
-	 *    @param    integer		$country_codeid    	Country code or id: 0=list for all countries, otherwise country code or country rowid to show
+	 *    @param	string		$parent_field_id	Parent select name to monitor
+	 *    @param	int			$selected        	Code state preselected (must be state id)
+	 *    @param    int			$country_codeid    	Country code or id: 0=list for all countries, otherwise country code or country rowid to show
 	 *    @param    string		$htmlname			Id of department. If '', we want only the string with <option>
 	 *    @param	string		$morecss			Add more css
 	 * 	  @return	string						String with HTML select
@@ -522,14 +522,14 @@ class FormCompany extends Form
 	 *    Return the list of all juridical entity types for all countries or a specific country.
 	 *    A country separator is included in case the list for all countries is returned.
 	 *
-	 *    @param	string		$selected        	Preselected code for juridical type
-	 *    @param    mixed		$country_codeid		0=All countries, else the code of the country to display
+	 *    @param	int			$selected        	Preselected code for juridical type
+	 *    @param    int			$country_codeid		0=All countries, else the code of the country to display
 	 *    @param    string		$filter          	Add a SQL filter on list
 	 *    @return	void
 	 *    @deprecated Use print xxx->select_juridicalstatus instead
 	 *    @see select_juridicalstatus()
 	 */
-	public function select_forme_juridique($selected = '', $country_codeid = 0, $filter = '')
+	public function select_forme_juridique($selected = 0, $country_codeid = 0, $filter = '')
 	{
 		// phpcs:enable
 		print $this->select_juridicalstatus($selected, $country_codeid, $filter);
@@ -540,14 +540,14 @@ class FormCompany extends Form
 	 *    Return the list of all juridical entity types for all countries or a specific country.
 	 *    A country separator is included in case the list for all countries is returned.
 	 *
-	 *    @param	string		$selected        	Preselected code of juridical type
+	 *    @param	int			$selected        	Preselected code of juridical type
 	 *    @param    int			$country_codeid     0=list for all countries, otherwise list only country requested
 	 *    @param    string		$filter          	Add a SQL filter on list. Data must not come from user input.
 	 *    @param	string		$htmlname			HTML name of select
 	 *    @param	string		$morecss			More CSS
 	 *    @return	string							String with HTML select
 	 */
-	public function select_juridicalstatus($selected = '', $country_codeid = 0, $filter = '', $htmlname = 'forme_juridique_code', $morecss = '')
+	public function select_juridicalstatus($selected = 0, $country_codeid = 0, $filter = '', $htmlname = 'forme_juridique_code', $morecss = '')
 	{
 		// phpcs:enable
 		global $conf, $langs, $user;
@@ -729,7 +729,7 @@ class FormCompany extends Form
 
 			print "\n" . '<!-- Input text for third party with Ajax.Autocompleter (selectCompaniesForNewContact) -->' . "\n";
 			print '<input type="text" size="30" id="search_' . $htmlname . '" name="search_' . $htmlname . '" value="' . $name . '" />';
-			print ajax_autocompleter(($socid ? $socid : -1), $htmlname, DOL_URL_ROOT . '/societe/ajax/ajaxcompanies.php', '', $minLength, 0);
+			print ajax_autocompleter((string) ($socid ? $socid : -1), $htmlname, DOL_URL_ROOT . '/societe/ajax/ajaxcompanies.php', '', $minLength, 0);
 			return $socid;
 		} else {
 			// Search to list thirdparties

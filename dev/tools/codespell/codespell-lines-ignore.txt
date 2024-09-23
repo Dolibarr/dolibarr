@@ -81,7 +81,7 @@
 		$sql .= " OR (cs.periode IS NULL AND cs.date_ech between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
 		$sql .= ", '".$this->db->idate($this->periode)."'";
 		$sql .= ", cs.libelle as label, cs.fk_type, cs.amount, cs.fk_projet as fk_project, cs.paye, cs.periode as period, cs.import_key";
-		$sql .= ", periode='".$this->db->idate($this->periode)."'";
+		$sql .= ", periode = '".$this->db->idate($this->period ? $this->period : $this->periode)."'";
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."chargesociales (fk_type, fk_account, fk_mode_reglement, libelle, date_ech, periode, amount, fk_projet, entity, fk_user_author, fk_user, date_creation)";
 		$sql = "SELECT id_users, nom as name, id_sondage, reponses";
 		$sql = "SELECT id_users, nom as name, reponses";

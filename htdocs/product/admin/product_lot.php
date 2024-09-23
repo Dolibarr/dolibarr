@@ -257,7 +257,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 							$htmltooltip = '';
 							$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
 							$nextval = $module->getNextValue($mysoc, $batch);
-							if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
+							if ((string) $nextval != $langs->trans("NotAvailable")) {  // Keep " on nextval
 								$htmltooltip .= ''.$langs->trans("NextValue").': ';
 								if ($nextval) {
 									if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {

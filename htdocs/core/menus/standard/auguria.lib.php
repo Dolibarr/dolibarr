@@ -2,6 +2,7 @@
 /* Copyright (C) 2010-2022	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -688,7 +689,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 /**
  * Function to test if an entry is enabled or not
  *
- * @param	string		$type_user					0=We need backoffice menu, 1=We need frontoffice menu
+ * @param	int		$type_user					0=We need backoffice menu, 1=We need frontoffice menu
  * @param	array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level:int,prefix:string}	$menuentry	Array for menu entry
  * @param	string[]	$listofmodulesforexternal	Array with list of modules allowed to external users
  * @return	int<0,2>								0=Hide, 1=Show, 2=Show gray

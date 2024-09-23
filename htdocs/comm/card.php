@@ -162,7 +162,7 @@ if (empty($reshook)) {
 	}
 
 	// Set accountancy code
-	if ($action == 'setcustomeraccountancycode') {
+	if ($action == 'setcustomeraccountancycode' && $user->hasRight('societe', 'creer')) {
 		$result = $object->fetch($id);
 		$object->code_compta_client = GETPOST("customeraccountancycode");
 		$object->code_compta = $object->code_compta_client; // For Backward compatibility
@@ -239,7 +239,7 @@ if (empty($reshook)) {
 	}
 
 	// set communication status
-	if ($action == 'setstcomm') {
+	if ($action == 'setstcomm' && $user->hasRight('societe', 'creer')) {
 		$object->fetch($id);
 		$object->stcomm_id = dol_getIdFromCode($db, GETPOST('stcomm', 'alpha'), 'c_stcomm');
 		$result = $object->update($object->id, $user);
@@ -251,7 +251,7 @@ if (empty($reshook)) {
 	}
 
 	// update outstandng limit
-	if ($action == 'setoutstanding_limit') {
+	if ($action == 'setoutstanding_limit' && $user->hasRight('societe', 'creer')) {
 		$object->fetch($id);
 		$object->outstanding_limit = GETPOST('outstanding_limit');
 		$result = $object->update($object->id, $user);
@@ -261,7 +261,7 @@ if (empty($reshook)) {
 	}
 
 	// update order min amount
-	if ($action == 'setorder_min_amount') {
+	if ($action == 'setorder_min_amount' && $user->hasRight('societe', 'creer')) {
 		$object->fetch($id);
 		$object->order_min_amount = price2num(GETPOST('order_min_amount', 'alpha'));
 		$result = $object->update($object->id, $user);
@@ -502,6 +502,7 @@ if ($object->id > 0) {
 		print '</tr>';
 	}
 
+	$limit_field_type = '';
 	// Max outstanding bill
 	if ($object->client) {
 		print '<tr class="nowrap">';
@@ -923,12 +924,12 @@ if ($object->id > 0) {
 		}
 	}
 
+	$orders2invoice = null;
+	$param = "";
 	/*
 	 * Latest orders
 	 */
 	if (isModEnabled('order') && $user->hasRight('commande', 'lire')) {
-		$param = "";
-
 		$sql = "SELECT s.nom, s.rowid";
 		$sql .= ", c.rowid as cid, c.entity, c.fk_projet, c.total_ht";
 		$sql .= ", c.total_tva";
@@ -1183,13 +1184,14 @@ if ($object->id > 0) {
 				$contrat->ref_supplier = $objp->refsup;
 				$contrat->fk_project = $objp->fk_projet;
 				$contrat->statut = $objp->contract_status;
+				$contrat->status = $objp->contract_status;
 				$contrat->last_main_doc = $objp->last_main_doc;
 				$contrat->model_pdf = $objp->model_pdf;
 				$contrat->fetch_lines();
 
 				$late = '';
 				foreach ($contrat->lines as $line) {
-					if ($contrat->statut == Contrat::STATUS_VALIDATED && $line->statut == ContratLigne::STATUS_OPEN) {
+					if ($contrat->status == Contrat::STATUS_VALIDATED && $line->statut == ContratLigne::STATUS_OPEN) {
 						if (((!empty($line->date_end) ? $line->date_end : 0) + $conf->contrat->services->expires->warning_delay) < $now) {
 							$late = img_warning($langs->trans("Late"));
 						}
@@ -1226,16 +1228,16 @@ if ($object->id > 0) {
 						print $formfile->showPreview($file_list, $contrat->element, $relativepath, 0);
 					}
 				}
-				print '</td><td class="left">';
-				if ($contrat->fk_project > 0) {
-					$project->fetch($contrat->fk_project);
-					print $project->getNomUrl(1);
-				}
 				// $filename = dol_sanitizeFileName($objp->ref);
 				// $filedir = $conf->contrat->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
 				// $urlsource = '/contrat/card.php?id='.$objp->cid;
 				// print $formfile->getDocumentsLink($contrat->element, $filename, $filedir);
 				print $late;
+				print '</td><td class="tdoverflowmax100">';
+				if ($contrat->fk_project > 0) {
+					$project->fetch($contrat->fk_project);
+					print $project->getNomUrl(1);
+				}
 				print "</td>\n";
 				print '<td class="nowrap">';
 				print dol_trunc(strtolower(get_class($object)) == strtolower(Client::class) ? $objp->refcus : $objp->refsup, 12);

@@ -805,7 +805,7 @@ class Task extends CommonObjectLine
 				$projectstatic = new Project($this->db);
 				$projectstatic->fetch($this->fk_project);
 
-				$dir = $conf->project->dir_output."/".dol_sanitizeFileName($projectstatic->ref).'/'.dol_sanitizeFileName($this->id);
+				$dir = $conf->project->dir_output."/".dol_sanitizeFileName($projectstatic->ref).'/'.dol_sanitizeFileName((string) $this->id);
 				dol_syslog(get_class($this)."::delete dir=".$dir, LOG_DEBUG);
 				if (file_exists($dir)) {
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -896,10 +896,9 @@ class Task extends CommonObjectLine
 
 	/**
 	 * getTooltipContentArray
-	 *
-	 * @param array $params ex option, infologin
+	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
-	 * @return array
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -1041,8 +1040,8 @@ class Task extends CommonObjectLine
 	 * Return list of tasks for all projects or for one particular project
 	 * Sort order is on project, then on position of task, and last on start date of first level task
 	 *
-	 * @param	User	$usert					Object user to limit tasks affected to a particular user
-	 * @param	User	$userp					Object user to limit projects of a particular user and public projects
+	 * @param	?User	$usert					Object user to limit tasks affected to a particular user
+	 * @param	?User	$userp					Object user to limit projects of a particular user and public projects
 	 * @param	int		$projectid				Project id
 	 * @param	int		$socid					Third party id
 	 * @param	int		$mode					0=Return list of tasks and their projects, 1=Return projects and tasks if exists
@@ -1053,12 +1052,12 @@ class Task extends CommonObjectLine
 	 * @param	int		$filterontaskuser		Filter on user assigned to task
 	 * @param	?Extrafields	$extrafields	Show additional column from project or task
 	 * @param   int     $includebilltime    	Calculate also the time to bill and billed
-	 * @param   array   $search_array_options 	Array of search filters. Not Used yet.
+	 * @param   array<string,string>   $search_array_options 	Array of search filters. Not Used yet.
 	 * @param   int     $loadextras         	Fetch all Extrafields on each project and task
 	 * @param	int		$loadRoleMode			1= will test Roles on task;  0 used in delete project action
 	 * @param	string	$sortfield				Sort field
 	 * @param	string	$sortorder				Sort order
-	 * @return 	array|string					Array of tasks
+	 * @return 	Task[]|string					Array of tasks
 	 */
 	public function getTasksArray($usert = null, $userp = null, $projectid = 0, $socid = 0, $mode = 0, $filteronproj = '', $filteronprojstatus = '-1', $morewherefilter = '', $filteronprojuser = 0, $filterontaskuser = 0, $extrafields = null, $includebilltime = 0, $search_array_options = array(), $loadextras = 0, $loadRoleMode = 1, $sortfield = '', $sortorder = '')
 	{
@@ -2199,6 +2198,7 @@ class Task extends CommonObjectLine
 		if (getDolGlobalString('PROJECT_TASK_ADDON') && is_readable(DOL_DOCUMENT_ROOT."/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON').".php")) {
 			require_once DOL_DOCUMENT_ROOT."/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON').'.php';
 			$modTask = new $obj();
+			'@phan-var-force ModeleNumRefTask $modTask';
 			$defaultref = $modTask->getNextValue(0, $clone_task);
 		}
 
@@ -2294,7 +2294,7 @@ class Task extends CommonObjectLine
 				}
 
 				$clone_task_dir = $conf->project->dir_output."/".dol_sanitizeFileName($clone_project_ref)."/".dol_sanitizeFileName($clone_task_ref);
-				$ori_task_dir = $conf->project->dir_output."/".dol_sanitizeFileName($ori_project_ref)."/".dol_sanitizeFileName($fromid);
+				$ori_task_dir = $conf->project->dir_output."/".dol_sanitizeFileName($ori_project_ref)."/".dol_sanitizeFileName((string) $fromid);
 
 				$filearray = dol_dir_list($ori_task_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', '', SORT_ASC, 1);
 				foreach ($filearray as $key => $file) {
@@ -2305,7 +2305,7 @@ class Task extends CommonObjectLine
 						}
 					}
 
-					$rescopy = dol_copy($ori_task_dir.'/'.$file['name'], $clone_task_dir.'/'.$file['name'], 0, 1);
+					$rescopy = dol_copy($ori_task_dir.'/'.$file['name'], $clone_task_dir.'/'.$file['name'], '0', 1);
 					if (is_numeric($rescopy) && $rescopy < 0) {
 						$this->error .= $langs->trans("ErrorFailToCopyFile", $ori_task_dir.'/'.$file['name'], $clone_task_dir.'/'.$file['name']);
 						$error++;

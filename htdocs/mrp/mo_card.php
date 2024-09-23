@@ -145,7 +145,7 @@ if (empty($reshook)) {
 	$triggermodname = 'MO_MODIFY'; // Name of trigger action code to execute when we modify record
 
 	// Create MO with Children
-	if ($action == 'add' && empty($id) && !empty($TBomLineId)) {
+	if ($action == 'add' && empty($id) && !empty($TBomLineId) && $permissiontoadd) {
 		$noback = 1;
 		include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 

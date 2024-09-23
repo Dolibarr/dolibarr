@@ -171,4 +171,23 @@ class WebsiteTest extends CommonClassTest
 		print __METHOD__." result dolKeepOnlyPhpCode=".$result."\n";
 		$this->assertEquals('<?php test() ?><?php test2(); ?>', $result, 'dolKeepOnlyPhpCode did extract the correct string');
 	}
+
+	/**
+	 * testGetImageFromHtmlContent
+	 *
+	 * @return void
+	 */
+	public function testGetImageFromHtmlContent()
+	{
+		// Example of usage
+		$htmlContent = '<p>Some text before.</p><img src="image1.jpg"><p>Some text in between.</p><img src="/mydir/image2.jpg"><p>Some text after.</p>';
+
+		$firstImage = getImageFromHtmlContent($htmlContent, 1);
+		print __METHOD__." result firstImage=".$firstImage."\n";
+		$this->assertEquals('image1.jpg', $firstImage, ' failed to get firstimage');
+
+		$secondImage = getImageFromHtmlContent($htmlContent, 2);
+		print __METHOD__." result secondImage=".$secondImage."\n";
+		$this->assertEquals('/mydir/image2.jpg', $secondImage, ' failed to get second image');
+	}
 }

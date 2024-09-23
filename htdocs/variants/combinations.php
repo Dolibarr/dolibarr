@@ -114,11 +114,11 @@ if (!$object->isProduct() && !$object->isService()) {
 	header('Location: '.dol_buildpath('/product/card.php?id='.$object->id, 2));
 	exit();
 }
-if ($action == 'add') {
+if ($action == 'add') {		// Test on permission not required
 	unset($selectedvariant);
 	unset($_SESSION['addvariant_'.$object->id]);
 }
-if ($action == 'create' && GETPOST('selectvariant', 'alpha')) {	// We click on select combination
+if ($action == 'create' && GETPOST('selectvariant', 'alpha') && $usercancreate) {	// We click on select combination
 	$action = 'add';
 	$attribute_id = GETPOSTINT('attribute');
 	$attribute_value_id = GETPOSTINT('value');
@@ -128,7 +128,7 @@ if ($action == 'create' && GETPOST('selectvariant', 'alpha')) {	// We click on s
 		$_SESSION['addvariant_'.$object->id] = $selectedvariant;
 	}
 }
-if ($action == 'create' && $subaction == 'delete') {	// We click on select combination
+if ($action == 'create' && $subaction == 'delete' && $usercancreate) {	// We click on select combination
 	$action = 'add';
 	$feature = GETPOST('feature', 'intcomma');
 	if (isset($selectedvariant[$feature])) {
@@ -143,12 +143,12 @@ $prodcomb2val = new ProductCombination2ValuePair($db);
 
 $productCombination2ValuePairs1 = array();
 
-if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST('selectvariant', 'alpha') && empty($subaction)) {	// We click on Create all defined combinations
+if (($action == 'add' || $action == 'create') && $usercancreate && empty($massaction) && !GETPOST('selectvariant', 'alpha') && empty($subaction)) {	// We click on Create all defined combinations
 	//$features = GETPOST('features', 'array');
 	$features = !empty($_SESSION['addvariant_'.$object->id]) ? $_SESSION['addvariant_'.$object->id] : array();
 
 	if (!$features) {
-		if ($action == 'create') {
+		if ($action == 'create') {	// Test on permission already done
 			setEventMessages($langs->trans('ErrorFieldsRequired'), null, 'errors');
 		}
 	} else {
@@ -272,7 +272,7 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 		$db->commit();
 		setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 	}
-} elseif ($action === 'update' && $combination_id > 0) {
+} elseif ($action === 'update' && $combination_id > 0 && $usercancreate) {
 	if ($prodcomb->fetch($combination_id) < 0) {
 		dol_print_error($db, $langs->trans('ErrorRecordNotFound'));
 		exit();
@@ -342,7 +342,7 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 // Reload variants
 $productCombinations = $prodcomb->fetchAllByFkProductParent($object->id, true);
 
-if ($action === 'confirm_deletecombination') {
+if ($action === 'confirm_deletecombination' && $usercancreate) {
 	if ($prodcomb->fetch($combination_id) > 0) {
 		$db->begin();
 
@@ -357,7 +357,7 @@ if ($action === 'confirm_deletecombination') {
 		setEventMessages($langs->trans('ProductCombinationAlreadyUsed'), null, 'errors');
 		$action = '';
 	}
-} elseif ($action === 'edit') {
+} elseif ($action === 'edit' && $usercancreate) {
 	if ($prodcomb->fetch($combination_id) < 0) {
 		dol_print_error($db, $langs->trans('ErrorRecordNotFound'));
 		exit();
@@ -371,7 +371,7 @@ if ($action === 'confirm_deletecombination') {
 	$price_impact_percent = $prodcomb->variation_price_percentage;
 
 	$productCombination2ValuePairs1 = $prodcomb2val->fetchByFkCombination($combination_id);
-} elseif ($action === 'confirm_copycombination') {
+} elseif ($action === 'confirm_copycombination' && $usercancreate) {
 	//Check destination product
 	$dest_product = GETPOST('dest_product');
 
@@ -451,7 +451,7 @@ if (!empty($id) || !empty($ref)) {
 	if (empty($positiverates)) {
 		$positiverates = '0';
 	}
-	echo vatrate($positiverates.($object->default_vat_code ? ' ('.$object->default_vat_code.')' : ''), '%', $object->tva_npr);
+	echo vatrate($positiverates.($object->default_vat_code ? ' ('.$object->default_vat_code.')' : ''), true, $object->tva_npr);
 	/*
 	if ($object->default_vat_code)
 	{

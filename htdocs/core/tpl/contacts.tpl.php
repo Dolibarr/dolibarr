@@ -208,7 +208,7 @@ if ($permission) {
 
 // Prepare list
 
-// TODO: replace this with direct SQL string to use $db->sort($sortfield, $sortorder)
+// TODO: replace this with 1 single direct SQL (for both eyernal and external string to use $db->sort($sortfield, $sortorder)
 $list = array();
 foreach (array('internal', 'external') as $source) {
 	if (($object->element == 'shipping' || $object->element == 'reception') && is_object($objectsrc)) {
@@ -311,7 +311,7 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
 print '<div class="div-table-responsive-no-min">'."\n";
-print '<table class="tagtable nobottomiftotal liste">';
+print '<table class="tagtable nobottomiftotal liste noborder">';
 
 print '<tr class="liste_titre">';
 print_liste_field_titre($arrayfields['thirdparty']['label'], $_SERVER["PHP_SELF"], "thirdparty_name", "", $param, "", $sortfield, $sortorder);

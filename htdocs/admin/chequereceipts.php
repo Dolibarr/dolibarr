@@ -57,6 +57,9 @@ if (!getDolGlobalString('CHEQUERECEIPTS_ADDON')) {
 if ($action == 'updateMask') {
 	$maskconstchequereceipts = GETPOST('maskconstchequereceipts', 'aZ09');
 	$maskchequereceipts = GETPOST('maskchequereceipts', 'alpha');
+
+	$res = 0;
+
 	if ($maskconstchequereceipts && preg_match('/_MASK$/', $maskconstchequereceipts)) {
 		$res = dolibarr_set_const($db, $maskconstchequereceipts, $maskchequereceipts, 'chaine', 0, '', $conf->entity);
 	}
@@ -216,7 +219,7 @@ foreach ($dirmodels as $reldir) {
 
 							if (getDolGlobalString('CHEQUERECEIPTS_ADDON').'.php' == $file) {  // If module is the one used, we show existing errors
 								if (!empty($module->error)) {
-									dol_htmloutput_mesg($module->error, '', 'error', 1);
+									dol_htmloutput_mesg($module->error, array(), 'error', 1);
 								}
 							}
 
