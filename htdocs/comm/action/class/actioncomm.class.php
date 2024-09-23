@@ -1869,7 +1869,7 @@ class ActionComm extends CommonObject
 				$color = 'style="color: #'.$this->type_color.' !important;"';
 			}
 			if ($this->type_picto) {
-				$imgpicto = img_picto($titlealt, $this->type_picto, '', false, 0, 0, '', ($morecss ? ' '.$morecss : ''));
+				$imgpicto = img_picto($titlealt, $this->type_picto, '', 0, 0, 0, '', ($morecss ? ' '.$morecss : ''));
 			} else {
 				if ($this->type_code == 'AC_RDV') {
 					$imgpicto = img_picto($titlealt, 'meeting', $color, false, 0, 0, '', ($morecss ? ' '.$morecss : ''));
@@ -1892,9 +1892,9 @@ class ActionComm extends CommonObject
 		} else {
 			// 2 picto: 1 for auto, 1 for manual
 			if ($this->type != 'systemauto') {
-				$imgpicto = img_picto($titlealt, 'user-cog', '', false, 0, 0, '', ($morecss ? ' '.$morecss : ''));
+				$imgpicto = img_picto($titlealt, 'user-cog', '', 0, 0, 0, '', ($morecss ? ' '.$morecss : ''));
 			} else {
-				$imgpicto = img_picto($titlealt, 'cog', '', false, 0, 0, '', ($morecss ? ' '.$morecss : ''));
+				$imgpicto = img_picto($titlealt, 'cog', '', 0, 0, 0, '', ($morecss ? ' '.$morecss : ''));
 			}
 		}
 

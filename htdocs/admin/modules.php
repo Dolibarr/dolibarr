@@ -905,7 +905,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 				if (method_exists($objMod, 'alreadyUsed') && $objMod->alreadyUsed()) {
 					$codeenabledisable .= $langs->trans("Used");
 				} else {
-					$codeenabledisable .= img_picto($langs->trans("Required"), 'switch_on', '', false, 0, 0, '', 'opacitymedium valignmiddle');
+					$codeenabledisable .= img_picto($langs->trans("Required"), 'switch_on', '', 0, 0, 0, '', 'opacitymedium valignmiddle');
 					//print $langs->trans("Required");
 				}
 				if (isModEnabled('multicompany') && $user->entity) {
