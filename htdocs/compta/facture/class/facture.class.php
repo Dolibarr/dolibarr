@@ -821,7 +821,7 @@ class Facture extends CommonInvoice
 						$this->add_contact($objcontact->fk_socpeople, $objcontact->code, $objcontact->source); // May failed because of duplicate key or because code of contact type does not exists for new object
 					}
 				} else {
-					dol_print_error($this->db, $resqlcontact);
+					dol_print_error($this->db);
 				}
 			}
 

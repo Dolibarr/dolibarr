@@ -951,10 +951,9 @@ class CommandeFournisseur extends CommonOrder
 
 	/**
 	 * getTooltipContentArray
-	 *
-	 * @param array $params ex option, infologin
+	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
-	 * @return array
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -1189,6 +1188,45 @@ class CommandeFournisseur extends CommonOrder
 			return -1;
 		}
 	}
+
+
+	/**
+	 *	Classify not billed
+	 *
+	 *  @param      User        $user       Object user making the change
+	 *	@return     int     	            Return integer <0 if KO, 0 if already not billed,  >0 if OK
+	 */
+	public function classifyUnBilled(User $user)
+	{
+		if (empty($this->billed)) {
+			return 0;
+		}
+
+		$this->db->begin();
+
+		$sql = 'UPDATE '.$this->db->prefix().'commande_fournisseur SET billed = 0';
+		$sql .= " WHERE rowid = ".((int) $this->id).' AND fk_statut > '.self::STATUS_DRAFT;
+		;
+
+		if (!$this->db->query($sql)) {
+			dol_print_error($this->db);
+			$this->db->rollback();
+			return -1;
+		}
+
+		// Call trigger
+		$result = $this->call_trigger('ORDER_SUPPLIER_CLASSIFY_UNBILLED', $user);
+		if ($result < 0) {
+			$this->db->rollback();
+			return -1;
+		}
+		// End call triggers
+
+		$this->billed = 1;
+		$this->db->commit();
+		return 1;
+	}
+
 
 	/**
 	 * 	Approve a supplier order
@@ -1919,10 +1957,10 @@ class CommandeFournisseur extends CommonOrder
 	 *	@param		int			$type					Type of line (0=product, 1=service)
 	 *	@param		int			$info_bits				More information
 	 *	@param		int			$notrigger				Disable triggers
-	 *	@param		int			$date_start				Date start of service
-	 *	@param		int			$date_end				Date end of service
-	 *	@param		array		$array_options			extrafields array
-	 *	@param 		int|null	$fk_unit 				Code of the unit to use. Null to use the default one
+	 *	@param		?int		$date_start				Date start of service
+	 *	@param		?int		$date_end				Date end of service
+	 *	@param		array<string,null|int|float|string>	$array_options	extrafields array
+	 *	@param 		?int		$fk_unit 				Code of the unit to use. Null to use the default one
 	 *	@param 		int|string		$pu_ht_devise			Amount in currency
 	 *	@param		string		$origin					'order', ...
 	 *	@param		int			$origin_id				Id of origin object

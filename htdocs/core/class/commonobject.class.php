@@ -17,7 +17,7 @@
  * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2021      Grégory Blémand      <gregory.blemand@atm-consulting.fr>
  * Copyright (C) 2023      Lenin Rivas      	<lenin.rivas777@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -535,12 +535,12 @@ abstract class CommonObject
 	public $multicurrency_total_ttc;
 
 	/**
-	 * @var float Multicurrency total localta1
+	 * @var float|string Multicurrency total localtax1
 	 */
 	public $multicurrency_total_localtax1;	// not in database
 
 	/**
-	 * @var float Multicurrency total localtax2
+	 * @var float|string Multicurrency total localtax2
 	 */
 	public $multicurrency_total_localtax2;	// not in database
 
@@ -1164,21 +1164,21 @@ abstract class CommonObject
 
 				// TODO We can't, we don't have full path of file, only last_main_doc and ->element, so we must first rebuild full path $destfull
 				/*
-				$ecmfile->filepath = $rel_dir;
-				$ecmfile->filename = $filename;
-				$ecmfile->label = md5_file(dol_osencode($destfull));    // hash of file content
-				$ecmfile->fullpath_orig = '';
-				$ecmfile->gen_or_uploaded = 'generated';
-				$ecmfile->description = '';    // indexed content
-				$ecmfile->keywords = '';        // keyword content
-				$ecmfile->share = getRandomPassword(true);
-				$result = $ecmfile->create($user);
-				if ($result < 0)
-				{
-					$this->error = $ecmfile->error;
-					$this->errors = $ecmfile->errors;
-				}
-				*/
+				 $ecmfile->filepath = $rel_dir;
+				 $ecmfile->filename = $filename;
+				 $ecmfile->label = md5_file(dol_osencode($destfull));    // hash of file content
+				 $ecmfile->fullpath_orig = '';
+				 $ecmfile->gen_or_uploaded = 'generated';
+				 $ecmfile->description = '';    // indexed content
+				 $ecmfile->keywords = '';        // keyword content
+				 $ecmfile->share = getRandomPassword(true);
+				 $result = $ecmfile->create($user);
+				 if ($result < 0)
+				 {
+				 $this->error = $ecmfile->error;
+				 $this->errors = $ecmfile->errors;
+				 }
+				 */
 			} else {
 				return '';
 			}
@@ -5971,6 +5971,8 @@ abstract class CommonObject
 				$ecmfile->gen_or_uploaded = 'generated';
 				$ecmfile->description = ''; // indexed content
 				$ecmfile->keywords = ''; // keyword content
+				$ecmfile->src_object_type = $this->table_element;
+				$ecmfile->src_object_id = $this->id;
 				$result = $ecmfile->update($user);
 				if ($result < 0) {
 					setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
@@ -6268,10 +6270,10 @@ abstract class CommonObject
 				$enabled = (int) dol_eval($this->fields[$key]['enabled'], 1, 1, '1');
 			}
 			/*$perms = 1;
-			if (isset($this->fields[$key]['perms']))
-			{
-				$perms = (int) dol_eval($this->fields[$key]['perms'], 1, 1, '1');
-			}*/
+			 if (isset($this->fields[$key]['perms']))
+			 {
+			 $perms = (int) dol_eval($this->fields[$key]['perms'], 1, 1, '1');
+			 }*/
 			if (empty($enabled)) {
 				continue;
 			}
@@ -6305,10 +6307,10 @@ abstract class CommonObject
 			$this->array_languages[$key][$codelang] = $value_key;
 
 			/*if ($nofillrequired) {
-				$langs->load('errors');
-				setEventMessages($langs->trans('ErrorFieldsRequired').' : '.implode(', ', $error_field_required), null, 'errors');
-				return -1;
-			}*/
+			 $langs->load('errors');
+			 setEventMessages($langs->trans('ErrorFieldsRequired').' : '.implode(', ', $error_field_required), null, 'errors');
+			 return -1;
+			 }*/
 		}
 
 		return 1;
@@ -6440,8 +6442,8 @@ abstract class CommonObject
 					}
 				} else {
 					/**
-					We are in a situation where the current object has no values in its extra fields.
-					We want to initialize all the values to null so that the array_option is accessible in other contexts (especially in document generation).
+					 We are in a situation where the current object has no values in its extra fields.
+					 We want to initialize all the values to null so that the array_option is accessible in other contexts (especially in document generation).
 					 **/
 					if (is_array($extrafields->attributes[$this->table_element]['label'])) {
 						foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
@@ -6619,11 +6621,11 @@ abstract class CommonObject
 						$new_array_options[$key] = $value;
 						break;
 						/*case 'select':	// Not required, we chose value='0' for undefined values
-							 if ($value=='-1')
-							 {
-								 $this->array_options[$key] = null;
-							 }
-							 break;*/
+						 if ($value=='-1')
+						 {
+						 $this->array_options[$key] = null;
+						 }
+						 break;*/
 					case 'password':
 						$algo = '';
 						if ($this->array_options[$key] != '' && is_array($extrafields->attributes[$this->table_element]['param'][$attributeKey]['options'])) {
@@ -7065,13 +7067,13 @@ abstract class CommonObject
 					$this->array_options["options_".$key] = $new_array_options["options_".$key];
 					break;
 					/*case 'select':	// Not required, we chose value='0' for undefined values
-						 if ($value=='-1')
-						 {
-							$new_array_options["options_".$key] = $value;
+					 if ($value=='-1')
+					 {
+					 $new_array_options["options_".$key] = $value;
 
-							$this->array_options["options_".$key] = $new_array_options["options_".$key];
-						 }
-						 break;*/
+					 $this->array_options["options_".$key] = $new_array_options["options_".$key];
+					 }
+					 break;*/
 				case 'password':
 					$algo = '';
 					if ($this->array_options["options_".$key] != '' && is_array($extrafields->attributes[$this->table_element]['param'][$attributeKey]['options'])) {
@@ -7173,18 +7175,18 @@ abstract class CommonObject
 								if (is_numeric($value)) $res = $object->fetch($value);	// Common case
 								else $res = $object->fetch(0, $value);					// For compatibility
 
-								if ($res > 0) $new_array_options[$key] = $object->id;
-								else {
-									$this->error = "Id/Ref '".$value."' for object '".$object->element."' not found";
-									$this->db->rollback();
-									return -1;
-								}
-							}
-						} else {
-							dol_syslog('Error bad setup of extrafield', LOG_WARNING);
-						}
-						break;
-					*/
+					 if ($res > 0) $new_array_options[$key] = $object->id;
+					 else {
+					 $this->error = "Id/Ref '".$value."' for object '".$object->element."' not found";
+					 $this->db->rollback();
+					 return -1;
+					 }
+					 }
+					 } else {
+					 dol_syslog('Error bad setup of extrafield', LOG_WARNING);
+					 }
+					 break;
+					 */
 				case 'checkbox':
 				case 'chkbxlst':
 					$new_array_options = array();
@@ -7634,8 +7636,21 @@ abstract class CommonObject
 
 			$out .= '<select class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '').'>';
 			if (is_array($param['options'])) {
-				$param_list = array_keys($param['options']);
-				$InfoFieldList = explode(":", $param_list[0], 5);
+				$tmpparamoptions = array_keys($param['options']);
+				$paramoptions = preg_split('/[\r\n]+/', $tmpparamoptions[0]);
+
+				$InfoFieldList = explode(":", $paramoptions[0], 5);
+				// 0 : tableName
+				// 1 : label field name
+				// 2 : key fields name (if different of rowid)
+				// optional parameters...
+				// 3 : key field parent (for dependent lists). How this is used ?
+				// 4 : where clause filter on column or table extrafield, syntax field='value' or extra.field=value. Or use USF on a second line separated by "\n".
+				// 5 : string category type. This replace the filter.
+				// 6 : ids categories list separated by comma for category root. This replace the filter.
+				// 7 : sort field
+
+				// If there is filter
 				if (! empty($InfoFieldList[4])) {
 					$pos = 0;
 					$parenthesisopen = 0;
@@ -7656,18 +7671,21 @@ abstract class CommonObject
 						$InfoFieldList = array_merge($InfoFieldList, explode(':', $tmpafter));
 					}
 					//var_dump($InfoFieldList);
+
+					// Fix better compatibility with some old extrafield syntax filter "(field=123)"
+					$reg = array();
+					if (preg_match('/^\(?([a-z0-9]+)([=<>]+)(\d+)\)?$/i', $InfoFieldList[4], $reg)) {
+						$InfoFieldList[4] = '('.$reg[1].':'.$reg[2].':'.$reg[3].')';
+					}
+
+					//var_dump($InfoFieldList);
 				}
+
+				//$Usf = empty($paramoptions[1]) ? '' :$paramoptions[1];
+
 				$parentName = '';
 				$parentField = '';
 
-				// 0 : tableName
-				// 1 : label field name
-				// 2 : key fields name (if differ of rowid)
-				// 3 : key field parent (for dependent lists)
-				// 4 : where clause filter on column or table extrafield, syntax field='value' or extra.field=value
-				// 5 : id category type
-				// 6 : ids categories list separated by comma for category root
-				// 7 : sort field
 				$keyList = (empty($InfoFieldList[2]) ? 'rowid' : $InfoFieldList[2].' as rowid');
 
 				if (count($InfoFieldList) > 4 && !empty($InfoFieldList[4])) {
@@ -7699,6 +7717,7 @@ abstract class CommonObject
 					$sqlwhere = '';
 					$sql = "SELECT " . $keyList;
 					$sql .= " FROM " . $this->db->prefix() . $InfoFieldList[0];
+
 					if (!empty($InfoFieldList[4])) {
 						// can use SELECT request
 						if (strpos($InfoFieldList[4], '$SEL$') !== false) {
@@ -7715,8 +7734,8 @@ abstract class CommonObject
 						// We have to join on extrafield table
 						$errstr = '';
 						if (strpos($InfoFieldList[4], 'extra') !== false) {
-							$sql .= " as main, " . $this->db->prefix() . $InfoFieldList[0] . "_extrafields as extra";
-							$sqlwhere .= " WHERE extra.fk_object=main." . $InfoFieldList[2];
+							$sql .= " as main, " . $this->db->sanitize($this->db->prefix() . $InfoFieldList[0]) . "_extrafields as extra";
+							$sqlwhere .= " WHERE extra.fk_object = main." . $this->db->sanitize($InfoFieldList[2]);
 							$sqlwhere .= " AND " . forgeSQLFromUniversalSearchCriteria($InfoFieldList[4], $errstr, 1);
 						} else {
 							$sqlwhere .= " WHERE " . forgeSQLFromUniversalSearchCriteria($InfoFieldList[4], $errstr, 1);
@@ -7724,6 +7743,20 @@ abstract class CommonObject
 					} else {
 						$sqlwhere .= ' WHERE 1=1';
 					}
+
+					// Add Usf filter on second line
+					/*
+					 if ($Usf) {
+					 $errorstr = '';
+					 $sqlusf .= forgeSQLFromUniversalSearchCriteria($Usf, $errorstr);
+					 if (!$errorstr) {
+					 $sqlwhere .= $sqlusf;
+					 } else {
+					 $sqlwhere .= " AND invalid_usf_filter_of_extrafield";
+					 }
+					 }
+					 */
+
 					// Some tables may have field, some other not. For the moment we disable it.
 					if (in_array($InfoFieldList[0], array('tablewithentity'))) {
 						$sqlwhere .= " AND entity = " . ((int) $conf->entity);
@@ -7836,18 +7869,56 @@ abstract class CommonObject
 			}
 
 			if (is_array($param['options'])) {
-				$param_list = array_keys($param['options']);
-				$InfoFieldList = explode(":", $param_list[0]);
-				$parentName = '';
-				$parentField = '';
+				$tmpparamoptions = array_keys($param['options']);
+				$paramoptions = preg_split('/[\r\n]+/', $tmpparamoptions[0]);
+
+				$InfoFieldList = explode(":", $paramoptions[0], 5);
 				// 0 : tableName
 				// 1 : label field name
-				// 2 : key fields name (if differ of rowid)
-				// 3 : key field parent (for dependent lists)
-				// 4 : where clause filter on column or table extrafield, syntax field='value' or extra.field=value
-				// 5 : id category type
-				// 6 : ids categories list separated by comma for category root
+				// 2 : key fields name (if different of rowid)
+				// optional parameters...
+				// 3 : key field parent (for dependent lists). How this is used ?
+				// 4 : where clause filter on column or table extrafield, syntax field='value' or extra.field=value. Or use USF on a second line separated by "\n".
+				// 5 : string category type. This replace the filter.
+				// 6 : ids categories list separated by comma for category root. This replace the filter.
+				// 7 : sort field
+
+				// If there is a filter
+				if (! empty($InfoFieldList[4])) {
+					$pos = 0;
+					$parenthesisopen = 0;
+					while (substr($InfoFieldList[4], $pos, 1) !== '' && ($parenthesisopen || $pos == 0 || substr($InfoFieldList[4], $pos, 1) != ':')) {
+						if (substr($InfoFieldList[4], $pos, 1) == '(') {
+							$parenthesisopen++;
+						}
+						if (substr($InfoFieldList[4], $pos, 1) == ')') {
+							$parenthesisopen--;
+						}
+						$pos++;
+					}
+					$tmpbefore = substr($InfoFieldList[4], 0, $pos);
+					$tmpafter = substr($InfoFieldList[4], $pos + 1);
+					//var_dump($InfoFieldList[4].' -> '.$pos); var_dump($tmpafter);
+					$InfoFieldList[4] = $tmpbefore;
+					if ($tmpafter !== '') {
+						$InfoFieldList = array_merge($InfoFieldList, explode(':', $tmpafter));
+					}
+
+					// Fix better compatibility with some old extrafield syntax filter "(field=123)"
+					$reg = array();
+					if (preg_match('/^\(?([a-z0-9]+)([=<>]+)(\d+)\)?$/i', $InfoFieldList[4], $reg)) {
+						$InfoFieldList[4] = '('.$reg[1].':'.$reg[2].':'.$reg[3].')';
+					}
+
+					//var_dump($InfoFieldList);
+				}
+
+				//$Usf = empty($paramoptions[1]) ? '' :$paramoptions[1];
+
 				'@phan-var-force array{0:string,1:string,2:string,3:string,3:string,5:string,6:string} $InfoFieldList';
+
+				$parentName = '';
+				$parentField = '';
 
 				$keyList = (empty($InfoFieldList[2]) ? 'rowid' : $InfoFieldList[2].' as rowid');
 
@@ -7870,6 +7941,7 @@ abstract class CommonObject
 					}
 				}
 
+				// Common filter
 				if (!$filter_categorie) {
 					$fields_label = explode('|', $InfoFieldList[1]);
 					if (is_array($fields_label)) {
@@ -7880,6 +7952,7 @@ abstract class CommonObject
 					$sqlwhere = '';
 					$sql = "SELECT " . $keyList;
 					$sql .= ' FROM ' . $this->db->prefix() . $InfoFieldList[0];
+
 					if (!empty($InfoFieldList[4])) {
 						// can use SELECT request
 						if (strpos($InfoFieldList[4], '$SEL$') !== false) {
@@ -7894,15 +7967,31 @@ abstract class CommonObject
 						}
 
 						// We have to join on extrafield table
+						$errstr = '';
 						if (strpos($InfoFieldList[4], 'extra') !== false) {
-							$sql .= ' as main, ' . $this->db->prefix() . $InfoFieldList[0] . '_extrafields as extra';
-							$sqlwhere .= " WHERE extra.fk_object=main." . $InfoFieldList[2] . " AND " . $InfoFieldList[4];
+							$sql .= ' as main, ' . $this->db->sanitize($this->db->prefix() . $InfoFieldList[0]) . '_extrafields as extra';
+							$sqlwhere .= " WHERE extra.fk_object = main." . $this->db->sanitize($InfoFieldList[2]);
+							$sqlwhere .= " AND " . $InfoFieldList[4];
 						} else {
 							$sqlwhere .= " WHERE " . $InfoFieldList[4];
 						}
 					} else {
 						$sqlwhere .= ' WHERE 1=1';
 					}
+
+					// Add Usf filter on second line
+					/*
+					 if ($Usf) {
+					 $errorstr = '';
+					 $sqlusf .= forgeSQLFromUniversalSearchCriteria($Usf, $errorstr);
+					 if (!$errorstr) {
+					 $sqlwhere .= $sqlusf;
+					 } else {
+					 $sqlwhere .= " AND invalid_usf_filter_of_extrafield";
+					 }
+					 }
+					 */
+
 					// Some tables may have field, some other not. For the moment we disable it.
 					if (in_array($InfoFieldList[0], array('tablewithentity'))) {
 						$sqlwhere .= " AND entity = " . ((int) $conf->entity);
@@ -7911,7 +8000,9 @@ abstract class CommonObject
 					// print $sql;
 
 					$sql .= $sqlwhere;
+
 					dol_syslog(get_class($this) . '::showInputField type=chkbxlst', LOG_DEBUG);
+
 					$resql = $this->db->query($sql);
 					if ($resql) {
 						$num = $this->db->num_rows($resql);
@@ -8227,7 +8318,7 @@ abstract class CommonObject
 		} elseif ($type == 'duration') {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 			if (!is_null($value) && $value !== '') {
-				$value = convertSecondToTime($value, 'allhourmin');
+				$value = convertSecondToTime((int) $value, 'allhourmin');
 			}
 		} elseif ($type == 'double' || $type == 'real') {
 			if (!is_null($value) && $value !== '') {
@@ -8958,20 +9049,20 @@ abstract class CommonObject
 					if ($extrafields->attributes[$this->table_element]['type'][$key] == 'separate') {
 						$extrafields_collapse_num = $key;
 						/*
-						$extrafield_param = $extrafields->attributes[$this->table_element]['param'][$key];
-						if (!empty($extrafield_param) && is_array($extrafield_param)) {
-							$extrafield_param_list = array_keys($extrafield_param['options']);
+						 $extrafield_param = $extrafields->attributes[$this->table_element]['param'][$key];
+						 if (!empty($extrafield_param) && is_array($extrafield_param)) {
+						 $extrafield_param_list = array_keys($extrafield_param['options']);
 
-							if (count($extrafield_param_list) > 0) {
-								$extrafield_collapse_display_value = intval($extrafield_param_list[0]);
+						 if (count($extrafield_param_list) > 0) {
+						 $extrafield_collapse_display_value = intval($extrafield_param_list[0]);
 
-								if ($extrafield_collapse_display_value == 1 || $extrafield_collapse_display_value == 2) {
-									//$extrafields_collapse_num = $extrafields->attributes[$this->table_element]['pos'][$key];
-									$extrafields_collapse_num = $key;
-								}
-							}
-						}
-						*/
+						 if ($extrafield_collapse_display_value == 1 || $extrafield_collapse_display_value == 2) {
+						 //$extrafields_collapse_num = $extrafields->attributes[$this->table_element]['pos'][$key];
+						 $extrafields_collapse_num = $key;
+						 }
+						 }
+						 }
+						 */
 
 						// if colspan=0 or 1, the second column is not extended, so the separator must be on 2 columns
 						$out .= $extrafields->showSeparator($key, $this, ($colspan ? $colspan + 1 : 2), $display_type, $mode);
@@ -10278,9 +10369,9 @@ abstract class CommonObject
 
 					// Note: extrafields load of line not yet supported
 					/*
-					if (empty($noextrafields)) {
-						// Load extrafields of line
-					}*/
+					 if (empty($noextrafields)) {
+					 // Load extrafields of line
+					 }*/
 
 					$this->lines[] = $newline;
 				}
@@ -10364,11 +10455,11 @@ abstract class CommonObject
 
 			//var_dump($key.'-'.$values[$key].'-'.($this->fields[$key]['notnull'] == 1));
 			/*
-			if ($this->fields[$key]['notnull'] == 1 && empty($values[$key]))
-			{
-				$error++;
-				$this->errors[]=$langs->trans("ErrorFieldRequired", $this->fields[$key]['label']);
-			}*/
+			 if ($this->fields[$key]['notnull'] == 1 && empty($values[$key]))
+			 {
+			 $error++;
+			 $this->errors[]=$langs->trans("ErrorFieldRequired", $this->fields[$key]['label']);
+			 }*/
 		}
 
 		$sql = 'UPDATE '.$this->db->prefix().$this->table_element.' SET '.implode(', ', $tmp).' WHERE rowid='.((int) $this->id);

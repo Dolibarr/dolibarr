@@ -3,6 +3,7 @@
 /**
  * Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2015 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -232,7 +233,7 @@ if ($result >= 0) {
 			if (isset($ldapuser[getDolGlobalString('LDAP_FIELD_MEMBER_STATUS')])) {
 				$member->datec = dol_stringtotime($ldapuser[getDolGlobalString('LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE')]);
 				$member->datevalid = dol_stringtotime($ldapuser[getDolGlobalString('LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE')]);
-				$member->statut = $ldapuser[getDolGlobalString('LDAP_FIELD_MEMBER_STATUS')];
+				$member->statut = (int) $ldapuser[getDolGlobalString('LDAP_FIELD_MEMBER_STATUS')];
 			}
 			// if ($member->statut > 1) $member->statut=1;
 

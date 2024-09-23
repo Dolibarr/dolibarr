@@ -109,6 +109,7 @@ $parameters = array('type' => $type, 'id' => $id, 'label' => $label);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 // Remove element from category
 if ($id > 0 && $removeelem > 0 && $action == 'unlink') {	// Test on permission not required here. Done later according to type of object.
+	$tmpobject = null;
 	if ($type == Categorie::TYPE_PRODUCT && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 		$tmpobject = new Product($db);
@@ -185,6 +186,7 @@ if ($elemid && $action == 'addintocategory') {	// Test on permission not require
 	 ($type == Categorie::TYPE_USER && $user->hasRight('user', 'user', 'creer')) ||
 	 ($type == Categorie::TYPE_ACCOUNT && $user->hasRight('banque', 'configurer'))
 	) {
+		$newobject = null;
 		if ($type == Categorie::TYPE_PRODUCT) {
 			require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 			$newobject = new Product($db);
@@ -224,7 +226,9 @@ if ($elemid && $action == 'addintocategory') {	// Test on permission not require
 		} else {
 			dol_print_error(null, "Not supported value of type = ".$type);
 		}
-		$result = $newobject->fetch($elemid);
+		if ($newobject !== null) {
+			$result = $newobject->fetch($elemid);
+		}
 
 		// Add into category
 		$result = $object->add_type($newobject, $elementtype);
@@ -741,7 +745,7 @@ if ($type == Categorie::TYPE_SUPPLIER) {
 					// Link to delete from category
 					print '<td class="right">';
 					if ($permission) {
-						print '<a class="reposition" href="'.$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".$typeid."&action=unlink&token=".newToken()."&removeelem=".$soc->id.($limit?'&limit='.$limit:'').'">';
+						print '<a class="reposition" href="'.$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".$typeid."&action=unlink&token=".newToken()."&removeelem=".$soc->id.($limit ? '&limit='.$limit : '').'">';
 						print $langs->trans("DeleteFromCat");
 						print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', false, 0, 0, '', 'paddingleft');
 						print "</a>";
