@@ -40,6 +40,9 @@
  */
 class FormOther
 {
+	/**
+	 * @var DoliDB
+	 */
 	private $db;
 
 	/**
@@ -694,7 +697,7 @@ class FormOther
 	 *
 	 * @param 	int		$inc					Cursor counter
 	 * @param 	int		$parent					Id of parent task we want to see
-	 * @param 	array	$lines					Array of task lines
+	 * @param 	Task[]	$lines					Array of task lines
 	 * @param 	int		$level					Level
 	 * @param 	int		$selectedtask			Id selected task
 	 * @param 	int		$selectedproject		Id selected project
@@ -831,9 +834,9 @@ class FormOther
 	 *  @param	string		$prefix			Name of HTML field
 	 *  @param	string		$form_name		Deprecated. Not used.
 	 *  @param	int			$showcolorbox	1=Show color code and color box, 0=Show only color code
-	 *  @param 	array		$arrayofcolors	Array of colors. Example: array('29527A','5229A3','A32929','7A367A','B1365F','0D7813')
+	 *  @param 	string[]	$arrayofcolors	Array of colors. Example: array('29527A','5229A3','A32929','7A367A','B1365F','0D7813')
 	 *  @return	void
-	 *  @deprecated Use instead selectColor
+	 *  @deprecated Use selectColor()
 	 *  @see selectColor()
 	 */
 	public function select_color($set_color = '', $prefix = 'f_color', $form_name = '', $showcolorbox = 1, $arrayofcolors = [])
@@ -1216,21 +1219,28 @@ class FormOther
 	 *
 	 * 	@param	   User         $user		 Object User
 	 * 	@param	   string       $areacode    Code of area for pages - 0 = Home page ... See getListOfPagesForBoxes()
-	 *	@return    array                     array('selectboxlist'=>, 'boxactivated'=>, 'boxlista'=>, 'boxlistb'=>)
+	 *	@return array{selectboxlist:string,boxactivated:ModeleBoxes[],boxlista:string,boxlistb:string}
 	 */
 	public static function getBoxesArea($user, $areacode)
 	{
 		global $conf, $langs, $db;
 
 		include_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
+		// From include
+		'
+		@phan-var-force ModeleBoxes[] $boxactivated
+		@phan-var-force int[] $boxidactivatedforuser
+		';
 
 		$confuserzone = 'MAIN_BOXES_'.$areacode;
+
+
 
 		// $boxactivated will be array of boxes enabled into global setup
 		// $boxidactivatedforuser will be array of boxes chose by user
 
 		$selectboxlist = '';
-		$boxactivated = InfoBox::listBoxes($db, 'activated', $areacode, (empty($user->conf->$confuserzone) ? null : $user), array(), 0); // Search boxes of common+user (or common only if user has no specific setup)
+		$blistBoxesoxactivated = InfoBox::listBoxes($db, 'activated', $areacode, (empty($user->conf->$confuserzone) ? null : $user), array(), 0); // Search boxes of common+user (or common only if user has no specific setup)
 
 		$boxidactivatedforuser = array();
 		foreach ($boxactivated as $box) {
@@ -1541,12 +1551,12 @@ class FormOther
 	/**
 	 * Return HTML select list to select a group by field
 	 *
-	 * @param 	mixed	$object				Object analyzed
-	 * @param	array	$search_groupby		Array of preselected fields
-	 * @param	array	$arrayofgroupby		Array of groupby to fill
-	 * @param	string	$morecss			More CSS
-	 * @param	string  $showempty          '1' or 'text'
-	 * @return string						HTML string component
+	 * @param 	mixed		$object				Object analyzed
+	 * @param	string[]	$search_groupby		Array of preselected fields
+	 * @param	array<string,array{label:string}>	$arrayofgroupby		Array of groupby to fill
+	 * @param	string		$morecss			More CSS
+	 * @param	string  	$showempty          '1' or 'text'
+	 * @return	string						HTML string component
 	 */
 	public function selectGroupByField($object, $search_groupby, &$arrayofgroupby, $morecss = 'minwidth200 maxwidth250', $showempty = '1')
 	{
@@ -1565,8 +1575,8 @@ class FormOther
 	 * Return HTML select list to select a group by field
 	 *
 	 * @param 	mixed	$object				Object analyzed
-	 * @param	array	$search_xaxis		Array of preselected fields
-	 * @param	array	$arrayofxaxis		Array of groupby to fill
+	 * @param	string[]	$search_xaxis	Array of preselected fields
+	 * @param	array<string,array{label:string}>	$arrayofxaxis		Array of groupby to fill
 	 * @param	string  $showempty          '1' or 'text'
 	 * @param	string	$morecss			More css
 	 * @return 	string						HTML string component

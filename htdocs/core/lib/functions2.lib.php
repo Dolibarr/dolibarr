@@ -143,8 +143,8 @@ function dol_getDefaultFormat(Translate $outputlangs = null)
  *	Show information on an object
  *  TODO Move this into html.formother
  *
- *	@param	object	$object			Object to show
- *  @param  int     $usetable       Output into a table
+ *	@param	object|CommonObject	$object			Object to show
+ *  @param  int					$usetable       Output into a table
  *	@return	void
  */
 function dol_print_object_info($object, $usetable = 0)
@@ -361,8 +361,10 @@ function dol_print_object_info($object, $usetable = 0)
 		} else {
 			print ': ';
 		}
+		// user_approve is not defined in Dolibarr code @phan-suppress-next-line PhanUndeclaredProperty
 		if (!empty($object->user_approve) && is_object($object->user_approve)) {
-			if ($object->user_approve->id) {
+			if ($object->user_approve->id) {  // @phan-suppress-current-line PhanUndeclaredProperty
+				// @phan-suppress-next-line PhanUndeclaredProperty,PhanPluginUnknownObjectMethodCall
 				print $object->user_approve->getNomUrl(-1, '', 0, 0, 0);
 			} else {
 				print $langs->trans("Unknown");
@@ -385,6 +387,7 @@ function dol_print_object_info($object, $usetable = 0)
 
 	// Date approve
 	if (!empty($object->date_approve) || !empty($object->date_approval)) {
+		'@phan-var-force ExpenseReport|CommandeFournisseur $object';
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
 		}
@@ -407,6 +410,7 @@ function dol_print_object_info($object, $usetable = 0)
 
 	// User approve
 	if (!empty($object->user_approve_id2)) {
+		'@phan-var-force CommandeFournisseur $object';
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
 		}
@@ -454,6 +458,7 @@ function dol_print_object_info($object, $usetable = 0)
 
 	// User signature
 	if (!empty($object->user_signature) || !empty($object->user_signature_id)) {
+		'@phan-var-force Propal $object';
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
 		}
@@ -559,6 +564,7 @@ function dol_print_object_info($object, $usetable = 0)
 
 	// User conciliate
 	if (!empty($object->user_rappro) || !empty($object->user_rappro_id)) {
+		'@phan-var-force Account $object';
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
 		}
@@ -569,8 +575,10 @@ function dol_print_object_info($object, $usetable = 0)
 			print ': ';
 		}
 		if (is_object($object->user_rappro)) {
-			if ($object->user_rappro->id) {
-				print $object->user_rappro->getNomUrl(-1, '', 0, 0, 0);
+			$user_rappro = $object->user_rappro;
+			'@phan-var-force User $user_rappro';
+			if ($user_rappro->id) {
+				print $user_rappro->getNomUrl(-1, '', 0, 0, 0);
 			} else {
 				print $langs->trans("Unknown");
 			}
@@ -590,8 +598,9 @@ function dol_print_object_info($object, $usetable = 0)
 		}
 	}
 
-	// Date conciliate
+	// Date conciliate  Note: date_rappro is not found on Dolibarr classes
 	if (!empty($object->date_rappro)) {
+		// Datte
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
 		}
@@ -601,9 +610,9 @@ function dol_print_object_info($object, $usetable = 0)
 		} else {
 			print ': ';
 		}
-		print dol_print_date($object->date_rappro, 'dayhour', 'tzserver');
+		print dol_print_date($object->date_rappro, 'dayhour', 'tzserver');  // @phan-suppress-current-line PhanUndeclaredProperty
 		if ($deltadateforuser) {
-			print ' <span class="opacitymedium">'.$langs->trans("CurrentHour").'</span> &nbsp; / &nbsp; '.dol_print_date($object->date_rappro, "dayhour", 'tzuserrel').' &nbsp;<span class="opacitymedium">'.$langs->trans("ClientHour").'</span>';
+			print ' <span class="opacitymedium">'.$langs->trans("CurrentHour").'</span> &nbsp; / &nbsp; '.dol_print_date($object->date_rappro, "dayhour", 'tzuserrel').' &nbsp;<span class="opacitymedium">'.$langs->trans("ClientHour").'</span>';  // @phan-suppress-current-line PhanUndeclaredProperty
 		}
 		if ($usetable) {
 			print '</td></tr>';
@@ -614,6 +623,7 @@ function dol_print_object_info($object, $usetable = 0)
 
 	// Date send
 	if (!empty($object->date_envoi)) {
+		'@phan-var-force Mailing $object';
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
 		}
@@ -930,8 +940,12 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	//$mask='FA{yy}{mm}-{0000@99}';
 	//$date=dol_mktime(12, 0, 0, 1, 1, 1900);
 	//$date=dol_stringtotime('20130101');
-
 	$hasglobalcounter = false;
+	$maskrefclient_maskcounter = '';
+	$maskrefclient_clientcode = '';
+	$maskrefclient_maskclientcode = '';
+	$maskrefclient_maskoffset = '';
+
 	$reg = array();
 	// Extract value for mask counter, mask raz and mask offset
 	if (preg_match('/\{(0+)([@\+][0-9\-\+\=]+)?([@\+][0-9\-\+\=]+)?\}/i', $mask, $reg)) {
@@ -1156,6 +1170,8 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 				$yearcomp1 = sprintf("%04d", idate("Y", $date) + $yearoffset + 1);
 			} elseif ($yearlen == 2) {
 				$yearcomp1 = sprintf("%02d", idate("y", $date) + $yearoffset + 1);
+			} else {
+				$yearcomp1 = '';
 			}
 
 			$sqlwhere .= "(";
@@ -1408,7 +1424,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			if (dol_strlen($maskrefclient_maskcounter) > 0) {
 				$maskrefclient_maskafter .= str_pad((string) $maskrefclient_counter, dol_strlen($maskrefclient_maskcounter), "0", STR_PAD_LEFT);
 			}
-			$numFinal = str_replace($maskrefclient_maskbefore, $maskrefclient_maskafter, $numFinal);
+			$numFinal = str_replace($maskrefclient_maskbefore, (string) $maskrefclient_maskafter, $numFinal);
 		}
 
 		// Now we replace the type
@@ -1470,6 +1486,8 @@ function check_value($mask, $value)
 	$result = 0;
 
 	$hasglobalcounter = false;
+	$maskrefclient_maskcounter = '';
+
 	// Extract value for mask counter, mask raz and mask offset
 	$reg = array();
 	if (preg_match('/\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}/i', $mask, $reg)) {
@@ -1639,6 +1657,10 @@ function numero_semaine($time)
 		$annee = (int) $reg[1];
 		$mois = (int) $reg[2];
 		$jour = (int) $reg[3];
+	} else {
+		$annee = 0;
+		$mois = 0;
+		$jour = 0;
 	}
 
 	/*
@@ -1738,7 +1760,7 @@ function weight_convert($weight, &$from_unit, $to_unit)
  *	@param	DoliDB	$db         Handler database
  *	@param	Conf	$conf		Object conf
  *	@param	User	$user      	Object user
- *	@param	array	$tab        Array (key=>value) with all parameters to save/update
+ *	@param	array<string,string>	$tab        Array (key=>value) with all parameters to save/update
  *	@return int         		Return integer <0 if KO, >0 if OK
  *
  *	@see		dolibarr_get_const(), dolibarr_set_const(), dolibarr_del_const()
@@ -1941,7 +1963,7 @@ function getListOfModels($db, $type, $maxfilenamelength = 0)
 					}
 					if (is_dir($tmpdir)) {
 						// all type of template is allowed
-						$tmpfiles = dol_dir_list($tmpdir, 'files', 0, '', null, 'name', SORT_ASC, 0);
+						$tmpfiles = dol_dir_list($tmpdir, 'files', 0, '', array(), 'name', SORT_ASC, 0);
 						if (count($tmpfiles)) {
 							$listoffiles = array_merge($listoffiles, $tmpfiles);
 						}
@@ -2044,7 +2066,7 @@ function dol_buildlogin($lastname, $firstname)
 /**
  *  Return array to use for SoapClient constructor
  *
- *  @return     array
+ *  @return	array{connection_timeout:int,response_timeout:int,proxy_use:int,proxy_host:bool,proxy_port:bool,proxy_login:bool,proxy_password:bool,trace:int}
  */
 function getSoapParams()
 {
@@ -2284,7 +2306,7 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$tabletocleantree." SET ".$fieldfkparent." = 0 WHERE ".$fieldfkparent." = rowid"; // So we update only records linked to themself
 		$resql = $db->query($sql);
 		if ($resql) {
-			$nb = $db->affected_rows($sql);
+			$nb = $db->affected_rows($resql);
 			if ($nb > 0) {
 				print '<br>Some record that were parent of themself were cleaned.';
 			}
@@ -2323,7 +2345,7 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 		$sql .= " WHERE rowid IN (".$db->sanitize(implode(',', $listofidtoclean)).")"; // So we update only records detected wrong
 		$resql = $db->query($sql);
 		if ($resql) {
-			$nb = $db->affected_rows($sql);
+			$nb = $db->affected_rows($resql);
 			if ($nb > 0) {
 				// Removed orphelins records
 				print '<br>Some records were detected to have parent that is a child, we set them as root record for id: ';
@@ -2340,7 +2362,7 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 		$sql .= " WHERE ".$db->sanitize($fieldfkparent)." NOT IN (".$db->sanitize(implode(',', $listofid), 1).")"; // So we update only records linked to a non existing parent
 		$resql = $db->query($sql);
 		if ($resql) {
-			$nb = $db->affected_rows($sql);
+			$nb = $db->affected_rows($resql);
 			if ($nb > 0) {
 				// Removed orphelins records
 				print '<br>Some orphelins were found and modified to be parent so records are visible again for id: ';
@@ -2362,7 +2384,7 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
  *	Convert an array with RGB value into hex RGB value.
  *  This is the opposite function of colorStringToArray
  *
- *  @param	array	$arraycolor			Array
+ *  @param	array{0:int,1:int,2:int}	$arraycolor			Array
  *  @param	string	$colorifnotfound	Color code to return if entry not defined or not a RGB format
  *  @return	string						RGB hex value (without # before). For example: 'FF00FF', '01FF02'
  *  @see	colorStringToArray(), colorHexToRgb()
@@ -2383,9 +2405,9 @@ function colorArrayToHex($arraycolor, $colorifnotfound = '888888')
  *  This is the opposite function of colorArrayToHex.
  *  If entry is already an array, return it.
  *
- *  @param	string	$stringcolor		String with hex (FFFFFF) or comma RGB ('255,255,255')
- *  @param	array	$colorifnotfound	Color code array to return if entry not defined
- *  @return	array   					RGB hex value (without # before). For example: FF00FF
+ *  @param	string						$stringcolor		String with hex (FFFFFF) or comma RGB ('255,255,255')
+ *  @param	array{0:int,1:int,2:int}|array{}	$colorifnotfound	Color code array to return if entry not defined
+ *  @return	array{0:int,1:int,2:int}	RGB hex value (without # before). For example: FF00FF
  *  @see	colorArrayToHex(), colorHexToRgb()
  */
 function colorStringToArray($stringcolor, $colorifnotfound = array(88, 88, 88))
@@ -2396,7 +2418,8 @@ function colorStringToArray($stringcolor, $colorifnotfound = array(88, 88, 88))
 	$reg = array();
 	$tmp = preg_match('/^#?([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])$/', $stringcolor, $reg);
 	if (!$tmp) {
-		$tmp = explode(',', $stringcolor);
+		$tmp = array_map('intval', explode(',', $stringcolor));
+		'@phan-var-force int[] $tmp';
 		if (count($tmp) < 3) {
 			return $colorifnotfound;
 		}
@@ -2624,8 +2647,8 @@ function colorHexToHsl($hex, $alpha = false, $returnArray = false)
  * Applies the Cartesian product algorithm to an array
  * Source: http://stackoverflow.com/a/15973172
  *
- * @param   array $input    Array of products
- * @return  array           Array of combinations
+ * @param   array<string|int,string[]> $input		Array of products
+ * @return  array<array<string,string>>				Array of combinations
  */
 function cartesianArray(array $input)
 {
@@ -3020,9 +3043,9 @@ function getArrayOfEmojiBis()
 /**
  * Remove EMoji from email content
  *
- * @param 	string	$text			String to sanitize
- * @param	int		$allowedemoji	Mode to allow emoji
- * @return 	string					Sanitized string
+ * @param 	string		$text			String to sanitize
+ * @param	int<0,2>	$allowedemoji	Mode to allow emoji
+ * @return 	string						Sanitized string
  */
 function removeEmoji($text, $allowedemoji = 1)
 {

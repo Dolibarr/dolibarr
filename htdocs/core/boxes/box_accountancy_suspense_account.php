@@ -56,9 +56,10 @@ class box_accountancy_suspense_account extends ModeleBoxes
 	/**
 	 *  Load data for box to show them later
 	 *
+	 *  @param  int     $max        Maximum number of records to load
 	 *  @return	void
 	 */
-	public function loadBox()
+	public function loadBox($max = 1)
 	{
 		global $user, $langs, $conf;
 

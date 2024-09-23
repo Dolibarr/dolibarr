@@ -134,8 +134,8 @@ class box_funnel_of_prospection extends ModeleBoxes
 
 		$this->info_box_head = array(
 			'text' => $langs->trans("Statistics").' - '.$langs->trans("BoxTitleFunnelOfProspection"),
-			'nbcol' => '2',
-			'graph' => '1'
+			'nbcol' => 2,
+			'graph' => 1
 		);
 
 		if ($user->hasRight('projet', 'lire') || getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {

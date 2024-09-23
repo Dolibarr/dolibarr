@@ -154,6 +154,7 @@ class box_accountancy_last_manual_entries extends ModeleBoxes
 		}
 	}
 
+
 	/**
 	 *	Method to show box
 	 *

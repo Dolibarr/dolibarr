@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2019		Nicolas ZABOURI			<info@inovea-conseil.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,10 +87,10 @@ class InfoBox
 	 *  @param	DoliDB		$dbs			Database handler
 	 *  @param	string		$mode			'available' or 'activated'
 	 *  @param	int			$zone			Name or area (-1 for all, 0 for Homepage, 1 for Accountancy, 2 for xxx, ...)
-	 *  @param  User|null   $user	  		Object user to filter
-	 *  @param	array		$excludelist	Array of box id (box.box_id = boxes_def.rowid) to exclude
+	 *  @param  ?User		$user	  		Object user to filter
+	 *  @param	int[]		$excludelist	Array of box id (box.box_id = boxes_def.rowid) to exclude
 	 *  @param  int         $includehidden  Include also hidden boxes
-	 *  @return array       	        	Array of boxes
+	 *  @return ModeleBoxes[]|array{error:string}	Array of boxes or error info
 	 */
 	public static function listBoxes($dbs, $mode, $zone, $user = null, $excludelist = array(), $includehidden = 1)
 	{
@@ -145,6 +146,7 @@ class InfoBox
 					dol_include_once($relsourcefile);
 					if (class_exists($boxname)) {
 						$box = new $boxname($dbs, $obj->note); // Constructor may set properties like box->enabled. obj->note is note into box def, not user params.
+						'@phan-var-force ModeleBoxes $box';
 						//$box=new stdClass();
 
 						// box properties
@@ -205,7 +207,7 @@ class InfoBox
 			}
 		} else {
 			dol_syslog($dbs->lasterror(), LOG_ERR);
-			return array('error'=>$dbs->lasterror());
+			return array('error' => $dbs->lasterror());
 		}
 
 		return $boxes;
