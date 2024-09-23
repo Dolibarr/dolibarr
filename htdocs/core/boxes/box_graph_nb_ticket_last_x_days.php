@@ -1,9 +1,9 @@
 <?php
 /* Module descriptor for ticket system
  * Copyright (C) 2013-2016  Jean-François FERRY     <hello@librethic.io>
- *               2016       Christophe Battarel     <christophe@altairis.fr>
- * Copyright (C) 2021-2024	Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2016       Christophe Battarel     <christophe@altairis.fr>
+ * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

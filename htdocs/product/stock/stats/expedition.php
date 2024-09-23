@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2014	   Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2014	   Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2023	   Gauthier VERDOL		<gauthier.verdol@atm-consulting.fr>
+/* Copyright (C) 2003-2007  Rodolphe Quiedeville 	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2016  Laurent Destailleur  	<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin        	<regis.houssin@inodbox.com>
+ * Copyright (C) 2014	    Juanjo Menent        	<jmenent@2byte.es>
+ * Copyright (C) 2014	    Florian Henry			<florian.henry@open-concept.pro>
+ * Copyright (C) 2023	    Gauthier VERDOL			<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -297,7 +297,7 @@ if ($id > 0 || !empty($ref)) {
 				print $langs->trans('Year').':'.$formother->selectyear($search_year ? $search_year : - 1, 'search_year', 1, 20, 5);
 				print '<div style="vertical-align: middle; display: inline-block">';
 				print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', 0, 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-				print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+				print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"), 'searchclear.png', '', 0, 1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 				print '</div>';
 				print '</div>';
 				print '</div>';
