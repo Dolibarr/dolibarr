@@ -263,7 +263,7 @@ function getDolUserString($key, $default = '', $tmpuser = null)
 		$tmpuser = $user;
 	}
 
-	return (string) (empty($tmpuser->conf->$key) ? $default : $tmpuser->conf->$key);
+	return (string) (isset($tmpuser->conf->$key) ? $tmpuser->conf->$key : $default);
 }
 
 /**
@@ -281,7 +281,7 @@ function getDolUserInt($key, $default = 0, $tmpuser = null)
 		$tmpuser = $user;
 	}
 
-	return (int) (empty($tmpuser->conf->$key) ? $default : $tmpuser->conf->$key);
+	return (int) (isset($tmpuser->conf->$key) ? $tmpuser->conf->$key: $default);
 }
 
 
@@ -8413,7 +8413,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 			// Keep only some html tags and remove also some 'javascript:' strings
 			if ($check == 'restricthtmlallowlinkscript') {
 				$out = dol_string_onlythesehtmltags($out, 0, 1, 0, 0, array(), 1, 1);
-			} elseif ($check == 'restricthtmlallowclass') {
+			} elseif ($check == 'restricthtmlallowclass' || $check == 'restricthtmlallowunvalid') {
 				$out = dol_string_onlythesehtmltags($out, 0, 0, 1);
 			} else {
 				$out = dol_string_onlythesehtmltags($out, 0, 1, 1);

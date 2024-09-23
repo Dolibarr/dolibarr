@@ -7,6 +7,7 @@
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2013 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,8 +43,6 @@ if (!$user->admin) {
 }
 
 
-$type = array('yesno', 'texte', 'chaine');
-
 $action = GETPOST('action', 'aZ09');
 
 
@@ -55,7 +54,6 @@ $action = GETPOST('action', 'aZ09');
 if ($action == 'update' || $action == 'add') {
 	$constnamearray = GETPOST("constname", 'array');
 	$constvaluearray = GETPOST("constvalue", 'array');
-	$consttypearray = GETPOST("consttype", 'array');
 	$constnotearray = GETPOST("constnote", 'array');
 
 	// Action mise a jour ou ajout d'une constante
@@ -63,10 +61,9 @@ if ($action == 'update' || $action == 'add') {
 		foreach ($constnamearray as $key => $val) {
 			$constname = dol_escape_htmltag($constnamearray[$key]);
 			$constvalue = dol_escape_htmltag($constvaluearray[$key]);
-			$consttype = (int) $consttypearray[$key];
 			$constnote = dol_escape_htmltag($constnotearray[$key]);
 
-			$res = dolibarr_set_const($db, $constname, $constvalue, $type[$consttype], 0, $constnote, $conf->entity);
+			$res = dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, $constnote, $conf->entity);
 
 			if (!($res > 0)) {
 				$error++;
