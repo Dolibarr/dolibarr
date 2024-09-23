@@ -48,7 +48,7 @@ function is_empty($var, $allow_false = false, $allow_ws = false)
  *	Prepare array with list of tabs
  *
  *	@param	AccountingAccount	$object		Accounting account
- *	@return	array				Array of tabs to show
+ *	@return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function accounting_prepare_head(AccountingAccount $object)
 {

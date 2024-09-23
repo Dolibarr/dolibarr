@@ -6,6 +6,7 @@
  * Copyright (C) 2015-2022  Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2023  		Joachim Kueter			<git-jk@bloxera.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -100,6 +101,12 @@ if ($action == 'update') {
 			$valuesellservice = 'payment';
 			$valuebuyservice = 'payment';
 			break;
+		default:
+			$valuesellproduct = null;
+			$valuebuyproduct = null;
+			$valuesellservice = null;
+			$valuebuyservice = null;
+			break;
 	}
 
 	$res = dolibarr_set_const($db, 'TAX_MODE_SELL_PRODUCT', $valuesellproduct, 'chaine', 0, '', $conf->entity);
@@ -154,7 +161,7 @@ if (isModEnabled('accounting')) {
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans('TaxSetup'), $linkback, 'title_setup');
 
-//print dol_get_fiche_head(null, '', '', -1);
+//print dol_get_fiche_head([], '', '', -1);
 
 if (empty($mysoc->tva_assuj)) {
 	print $langs->trans("YourCompanyDoesNotUseVAT").'<br>';
@@ -179,10 +186,10 @@ if (empty($mysoc->tva_assuj)) {
 	} else {
 		print '<td width="120">';
 		$listval = array(
-			'0'=>$langs->trans(""),
-			'1'=>$langs->trans("Monthly"),
-			'2'=>$langs->trans("Quarterly"),
-			'3'=>$langs->trans("Annual"),
+			'0' => $langs->trans(""),
+			'1' => $langs->trans("Monthly"),
+			'2' => $langs->trans("Quarterly"),
+			'3' => $langs->trans("Annual"),
 		);
 		print $form->selectarray("MAIN_INFO_VAT_RETURN", $listval, getDolGlobalString('MAIN_INFO_VAT_RETURN'));
 		print "</td>";

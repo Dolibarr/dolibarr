@@ -832,6 +832,8 @@ $currentdaytoshow = $firstdaytoshow;
 echo '<div class="div-table-responsive">';
 //print dol_print_date($currentdaytoshow, 'dayhour', 'gmt');
 
+$colorsbytype = array();
+
 while ($currentdaytoshow < $lastdaytoshow) {
 	echo '<table class="centpercent noborder nocellnopadd cal_month">';
 
@@ -988,7 +990,6 @@ while ($currentdaytoshow < $lastdaytoshow) {
 	}
 
 	// Load array of colors by type
-	$colorsbytype = array();
 	$labelbytype = array();
 	$sql = "SELECT code, color, libelle as label FROM ".MAIN_DB_PREFIX."c_actioncomm ORDER BY position";
 	$resql = $db->query($sql);
@@ -998,7 +999,7 @@ while ($currentdaytoshow < $lastdaytoshow) {
 	}
 
 	// Loop on each user to show calendar
-	$todayarray = dol_getdate($now, 'fast');
+	$todayarray = dol_getdate($now, true);
 	$sav = $tmpday;
 	$showheader = true;
 	$var = false;

@@ -73,6 +73,8 @@ if (isModEnabled('margin')) {
 }
 
 $error = 0;
+$outlangs = null;
+$array_options = array();
 
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
@@ -135,6 +137,8 @@ $usercancreatepurchaseorder = ($user->hasRight('fournisseur', 'commande', 'creer
 $permissionnote = $usercancreate; // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $usercancreate; // Used by the include of actions_dellink.inc.php
 $permissiontoedit = $usercancreate; // Used by the include of actions_lineupdown.inc.php
+
+$price_base_type = null;
 
 // Security check
 if (!empty($user->socid)) {
@@ -701,7 +705,7 @@ if (empty($reshook)) {
 							$ret = $object->fetch($id); // Reload to get new records
 							$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 							if ($result < 0) {
-								dol_print_error($db, $result);
+								dol_print_error($db, $object->error, $object->errors);
 							}
 						}
 
@@ -855,6 +859,8 @@ if (empty($reshook)) {
 			} elseif ($fromElement == 'facture') {
 				dol_include_once('/compta/'.$fromElement.'/class/'.$fromElement.'.class.php');
 				$lineClassName = 'FactureLigne';
+			} else {
+				$lineClassName = null;
 			}
 			$nextRang = count($object->lines) + 1;
 			$importCount = 0;
@@ -1270,7 +1276,7 @@ if (empty($reshook)) {
 				if (!empty($product_desc) && getDolGlobalString('MAIN_NO_CONCAT_DESCRIPTION')) {
 					$desc = $product_desc;
 				} else {
-					$desc = dol_concatdesc($desc, $product_desc, '', getDolGlobalString('MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION'));
+					$desc = dol_concatdesc($desc, $product_desc, false, getDolGlobalString('MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION') ? true : false);
 				}
 
 				// Add custom code and origin country into description
@@ -1766,6 +1772,7 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $formpropal = new FormPropal($db);
 $formmargin = new FormMargin($db);
+$formproject = null;
 if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
@@ -1800,6 +1807,7 @@ if ($action == 'create') {
 	$datepropal = (empty($datepropal) ? (!getDolGlobalString('MAIN_AUTOFILL_DATE_PROPOSAL') ? -1 : '') : $datepropal);
 
 	// Load objectsrc
+	$objectsrc = null;
 	if (!empty($origin) && !empty($originid)) {
 		// Parse element/subelement (ex: project_task)
 		$element = $subelement = $origin;
@@ -1935,6 +1943,7 @@ if ($action == 'create') {
 		print '<tr class="field_socid">';
 		print '<td class="titlefieldcreate fieldrequired">'.$langs->trans('Customer').'</td>';
 		$shipping_method_id = 0;
+		$warehouse_id = 0;
 		if ($socid > 0) {
 			print '<td class="valuefieldcreate">';
 			print $soc->getNomUrl(1, 'customer');
@@ -2035,6 +2044,7 @@ if ($action == 'create') {
 			print '</td></tr>';
 		}
 
+		$formproduct = null;
 		// Warehouse
 		if (isModEnabled('stock') && getDolGlobalString('WAREHOUSE_ASK_WAREHOUSE_DURING_PROPAL')) {
 			require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
@@ -2070,7 +2080,7 @@ if ($action == 'create') {
 		print '</td></tr>';
 
 		// Project
-		if (isModEnabled('project')) {
+		if (isModEnabled('project') && is_object($formproject)) {
 			$langs->load("projects");
 			print '<tr class="field_projectid">';
 			print '<td class="titlefieldcreate">'.$langs->trans("Project").'</td><td class="valuefieldcreate">';

@@ -34,7 +34,7 @@
  * Prepare array with list of tabs
  *
  * @param   Account	$object		Object related to tabs
- * @return  array				Array of tabs to show
+ * @return  array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function bank_prepare_head(Account $object)
 {
@@ -128,8 +128,8 @@ function bank_prepare_head(Account $object)
 /**
  * Prepare array with list of tabs
  *
- * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to shoc
+ * @param   ?CommonObject	$object						Object related to tabs
+ * @return  array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function bank_admin_prepare_head($object)
 {
@@ -189,9 +189,9 @@ function bank_admin_prepare_head($object)
 /**
  * Prepare array with list of tabs
  *
- * @param   Object	$object		Object related to tabs
- * @param   string	$num		val to account statement
- * @return  array				Array of tabs to shoc
+ * @param   CommonObject					$object		Object related to tabs
+ * @param   string							$num		val to account statement
+ * @return  array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function account_statement_prepare_head($object, $num)
 {
@@ -231,7 +231,7 @@ function account_statement_prepare_head($object, $num)
  * Prepare array with list of tabs
  *
  * @param   CommonObject	$object		Object related to tabs
- * @return  array						Array of tabs to shoc
+ * @return  array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function various_payment_prepare_head($object)
 {
