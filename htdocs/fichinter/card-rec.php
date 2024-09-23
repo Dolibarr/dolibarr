@@ -733,13 +733,16 @@ if ($action == 'create') {
 				if (isset($object->lines[$i]->product_type)) {
 					$type = $object->lines[$i]->product_type;
 				} // else { $object->lines[$i]->fk_product_type; }
-				// Try to enhance type detection using date_start and date_end for free lines when type
-				// was not saved.
-				if (!empty($objp->date_start)) {
-					$type = 1;
-				}
-				if (!empty($objp->date_end)) {
-					$type = 1;
+
+				if (is_object($objp)) {
+					// Try to enhance type detection using date_start and date_end for free lines when type
+					// was not saved.
+					if (!empty($objp->date_start)) {
+						$type = 1;
+					}
+					if (!empty($objp->date_end)) {
+						$type = 1;
+					}
 				}
 
 				// Show line
