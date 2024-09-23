@@ -194,6 +194,13 @@ if ($action == 'order' && GETPOST('valid')) {
 							// TODO Get desc in language of thirdparty
 						}
 
+						// If we use multicurrency
+						if (isModEnabled('multicurrency') && !empty($productsupplier->fourn_multicurrency_code) && $productsupplier->fourn_multicurrency_code != $conf->currency) {
+							$line->multicurrency_code = $productsupplier->fourn_multicurrency_code;
+							$line->fk_multicurrency = $productsupplier->fourn_multicurrency_id;
+							$line->multicurrency_subprice = $productsupplier->fourn_multicurrency_unitprice;
+						}
+
 						$line->tva_tx = $productsupplier->vatrate_supplier;
 						$line->subprice = $productsupplier->fourn_pu;
 						$line->total_ht = $productsupplier->fourn_pu * $qty;
@@ -262,7 +269,8 @@ if ($action == 'order' && GETPOST('valid')) {
 						null,
 						null,
 						0,
-						$line->fk_unit
+						$line->fk_unit,
+						$line->multicurrency_subprice ?? 0
 					);
 				}
 				if ($result < 0) {
@@ -277,6 +285,7 @@ if ($action == 'order' && GETPOST('valid')) {
 			} else {
 				$order->socid = $suppliersid[$i];
 				$order->fetch_thirdparty();
+				$order->multicurrency_code = $order->thirdparty->multicurrency_code;
 
 				// Trick to know which orders have been generated using the replenishment feature
 				$order->source = $order::SOURCE_ID_REPLENISHMENT;
