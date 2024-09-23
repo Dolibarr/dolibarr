@@ -2276,54 +2276,54 @@ class Product extends CommonObject
 		$price_min = $this->price_min;
 		$price_base_type = $this->price_base_type;
 
-        // if price by customer / level
-        if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
-            require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
+		// if price by customer / level
+		if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
+			require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
 
-            $prodcustprice = new ProductCustomerPrice($this->db);
+			$prodcustprice = new ProductCustomerPrice($this->db);
 
-            $filter = array('t.fk_product' => $this->id, 't.fk_soc' => $thirdparty_buyer->id);
+			$filter = array('t.fk_product' => $this->id, 't.fk_soc' => $thirdparty_buyer->id);
 
-            // If a price per customer exist
-            $pricebycustomerexist = false;
-            $result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
-            if ($result) {
-                if (count($prodcustprice->lines) > 0) {
-                    $pricebycustomerexist = true;
-                    $pu_ht = price($prodcustprice->lines[0]->price);
-                    $price_min = price($prodcustprice->lines[0]->price_min);
-                    $pu_ttc = price($prodcustprice->lines[0]->price_ttc);
-                    $price_base_type = $prodcustprice->lines[0]->price_base_type;
-                    $tva_tx = $prodcustprice->lines[0]->tva_tx;
-                    if ($prodcustprice->lines[0]->default_vat_code && !preg_match('/\(.*\)/', $tva_tx)) {
-                        $tva_tx .= ' ('.$prodcustprice->lines[0]->default_vat_code.')';
-                    }
-                    $tva_npr = $prodcustprice->lines[0]->recuperableonly;
-                    if (empty($tva_tx)) {
-                        $tva_npr = 0;
-                    }
-                }
-            }
+			// If a price per customer exist
+			$pricebycustomerexist = false;
+			$result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
+			if ($result) {
+				if (count($prodcustprice->lines) > 0) {
+					$pricebycustomerexist = true;
+					$pu_ht = price($prodcustprice->lines[0]->price);
+					$price_min = price($prodcustprice->lines[0]->price_min);
+					$pu_ttc = price($prodcustprice->lines[0]->price_ttc);
+					$price_base_type = $prodcustprice->lines[0]->price_base_type;
+					$tva_tx = $prodcustprice->lines[0]->tva_tx;
+					if ($prodcustprice->lines[0]->default_vat_code && !preg_match('/\(.*\)/', $tva_tx)) {
+						$tva_tx .= ' ('.$prodcustprice->lines[0]->default_vat_code.')';
+					}
+					$tva_npr = $prodcustprice->lines[0]->recuperableonly;
+					if (empty($tva_tx)) {
+						$tva_npr = 0;
+					}
+				}
+			}
 
-            if ( !$pricebycustomerexist && !empty($thirdparty_buyer->price_level)) {
-                $pu_ht = $this->multiprices[$thirdparty_buyer->price_level];
-                $pu_ttc = $this->multiprices_ttc[$thirdparty_buyer->price_level];
-                $price_min = $this->multiprices_min[$thirdparty_buyer->price_level];
-                $price_base_type = $this->multiprices_base_type[$thirdparty_buyer->price_level];
-                if (getDolGlobalString('PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL')) {
-                    // using this option is a bug. kept for backward compatibility
-                    if (isset($this->multiprices_tva_tx[$thirdparty_buyer->price_level])) {
-                        $tva_tx = $this->multiprices_tva_tx[$thirdparty_buyer->price_level];
-                    }
-                    if (isset($this->multiprices_recuperableonly[$thirdparty_buyer->price_level])) {
-                        $tva_npr = $this->multiprices_recuperableonly[$thirdparty_buyer->price_level];
-                    }
-                    if (empty($tva_tx)) {
-                        $tva_npr = 0;
-                    }
-                }
-            }
-        } elseif(getDolGlobalString('PRODUIT_MULTIPRICES') && !empty($thirdparty_buyer->price_level)) { // // If price per segment
+			if ( !$pricebycustomerexist && !empty($thirdparty_buyer->price_level)) {
+				$pu_ht = $this->multiprices[$thirdparty_buyer->price_level];
+				$pu_ttc = $this->multiprices_ttc[$thirdparty_buyer->price_level];
+				$price_min = $this->multiprices_min[$thirdparty_buyer->price_level];
+				$price_base_type = $this->multiprices_base_type[$thirdparty_buyer->price_level];
+				if (getDolGlobalString('PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL')) {
+					// using this option is a bug. kept for backward compatibility
+					if (isset($this->multiprices_tva_tx[$thirdparty_buyer->price_level])) {
+						$tva_tx = $this->multiprices_tva_tx[$thirdparty_buyer->price_level];
+					}
+					if (isset($this->multiprices_recuperableonly[$thirdparty_buyer->price_level])) {
+						$tva_npr = $this->multiprices_recuperableonly[$thirdparty_buyer->price_level];
+					}
+					if (empty($tva_tx)) {
+						$tva_npr = 0;
+					}
+				}
+			}
+		} elseif (getDolGlobalString('PRODUIT_MULTIPRICES') && !empty($thirdparty_buyer->price_level)) { // // If price per segment
 			$pu_ht = $this->multiprices[$thirdparty_buyer->price_level];
 			$pu_ttc = $this->multiprices_ttc[$thirdparty_buyer->price_level];
 			$price_min = $this->multiprices_min[$thirdparty_buyer->price_level];

@@ -76,7 +76,7 @@ if ($id > 0 || !empty($ref)) {
 }
 
 // Clean param
-if ((getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT')) {
+if ((getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && !getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT')) {
 	$conf->global->PRODUIT_MULTIPRICES_LIMIT = 5;
 }
 
@@ -2116,20 +2116,20 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 			// VAT Rate
 			print '<td class="right">';
 
-		$positiverates = '';
-		if (price2num($object->tva_tx)) {
-			$positiverates .= ($positiverates ? '/' : '').price2num($object->tva_tx);
-		}
-		if (price2num($object->localtax1_type)) {
-			$positiverates .= ($positiverates ? '/' : '').price2num($object->localtax1_tx);
-		}
-		if (price2num($object->localtax2_type)) {
-			$positiverates .= ($positiverates ? '/' : '').price2num($object->localtax2_tx);
-		}
-		if (empty($positiverates)) {
-			$positiverates = '0';
-		}
-		echo vatrate($positiverates.($object->default_vat_code ? ' ('.$object->default_vat_code.')' : ''), true, $object->tva_npr);
+			$positiverates = '';
+			if (price2num($object->tva_tx)) {
+				$positiverates .= ($positiverates ? '/' : '').price2num($object->tva_tx);
+			}
+			if (price2num($object->localtax1_type)) {
+				$positiverates .= ($positiverates ? '/' : '').price2num($object->localtax1_tx);
+			}
+			if (price2num($object->localtax2_type)) {
+				$positiverates .= ($positiverates ? '/' : '').price2num($object->localtax2_tx);
+			}
+			if (empty($positiverates)) {
+				$positiverates = '0';
+			}
+			echo vatrate($positiverates.($object->default_vat_code ? ' ('.$object->default_vat_code.')' : ''), true, $object->tva_npr);
 
 			//print vatrate($object->tva_tx, true, $object->tva_npr);
 			//print $object->default_vat_code?' ('.$object->default_vat_code.')':'';

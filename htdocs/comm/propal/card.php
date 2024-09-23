@@ -1165,7 +1165,7 @@ if (empty($reshook)) {
 							}*/
 						}
 					}
-					
+
 					if ( !$pricebycustomerexist && $object->thirdparty->price_level) { // If price per segment
 						$pu_ht = $prod->multiprices[$object->thirdparty->price_level];
 						$pu_ttc = $prod->multiprices_ttc[$object->thirdparty->price_level];
