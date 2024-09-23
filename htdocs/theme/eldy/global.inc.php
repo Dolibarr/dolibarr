@@ -78,6 +78,7 @@ $leftmenuwidth = 240;
 @phan-var-force string $toolTipFontColor
 @phan-var-force int<0,1> $useboldtitle
 @phan-var-force int $userborderontable
+@phan-var-force array{h:int,l:int,s:int,a:int} $colortextlinkHsla
 ';
 
 ?>
@@ -313,7 +314,7 @@ div.tabBar input, div.tabBar input.flat, div.tabBar textarea, div.tabBar textare
 		background-color: #f8f8fa;
 		border-bottom-left-radius: 0;
 		border-bottom-right-radius: 0;
-				<?php
+						<?php
 	}
 	?>
 }
@@ -2677,7 +2678,10 @@ span.widthpictotitle.pictotitle {
 	width: 20px;
 	/* padding-right: 0; */
 }
-
+img.pictofixedwidth {
+	width: 18px;
+	padding-right: 2px;
+}
 
 .colorthumb {
 	padding-left: 1px !important;
@@ -3015,7 +3019,6 @@ a.tmenuimage {
 a.tmenuimage:hover{
 	text-decoration: none;
 }
-
 
 /* To show text of top menu according to option THEME_TOPMENU_DISABLE_IMAGE */
 

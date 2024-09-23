@@ -588,7 +588,7 @@ if (empty($reshook)) {
 				if (!empty($product_desc) && getDolGlobalString('MAIN_NO_CONCAT_DESCRIPTION')) {
 					$desc = $product_desc;
 				} else {
-					$desc = dol_concatdesc($desc, $product_desc, '', getDolGlobalString('MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION'));
+					$desc = dol_concatdesc($desc, $product_desc, false, getDolGlobalString('MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION') ? true : false);
 				}
 
 				$fk_unit = $prod->fk_unit;
@@ -1680,7 +1680,7 @@ if ($action == 'create') {
 					}
 					// VAT
 					print '<td class="center">';
-					print vatrate($objp->tva_tx.($objp->vat_src_code ? (' ('.$objp->vat_src_code.')') : ''), '%', $objp->info_bits);
+					print vatrate($objp->tva_tx.($objp->vat_src_code ? (' ('.$objp->vat_src_code.')') : ''), true, $objp->info_bits);
 					print '</td>';
 					// Price
 					print '<td class="right">'.($objp->subprice != '' ? price($objp->subprice) : '')."</td>\n";
@@ -1962,7 +1962,7 @@ if ($action == 'create') {
 							$tmpactiontext = $langs->trans("Disable");
 						}
 						if (($tmpaction == 'activateline' && $user->hasRight('contrat', 'activer')) || ($tmpaction == 'unactivateline' && $user->hasRight('contrat', 'desactiver'))) {
-							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;ligne='.$object->lines[$cursorline - 1]->id.'&amp;action='.$tmpaction.'">';
+							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;ligne='.$object->lines[$cursorline - 1]->id.'&amp;action='.$tmpaction.'&token='.newToken().'">';
 							print img_picto($tmpactiontext, $tmpactionpicto);
 							print '</a>';
 						}
@@ -2229,7 +2229,8 @@ if ($action == 'create') {
 						'url' => '/commande/card.php?action=create&token='.newToken().'&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id,
 						'label' => $langs->trans('AddOrder'),
 						'lang' => 'orders',
-						'perm' => $user->hasRight('commande', 'creer')
+						'perm' => $user->hasRight('commande', 'creer'),
+						'enabled' => true,
 					);
 				}
 				if (isModEnabled('invoice') && $object->status > 0 && $soc->client > 0) {
@@ -2237,7 +2238,8 @@ if ($action == 'create') {
 						'url' => '/compta/facture/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id,
 						'label' => $langs->trans('CreateBill'),
 						'lang' => 'bills',
-						'perm' => $user->hasRight('facture', 'creer')
+						'perm' => $user->hasRight('facture', 'creer'),
+						'enabled' => true,
 					);
 				}
 				if (isModEnabled('supplier_invoice') && $object->status > 0 && $soc->fournisseur == 1) {
@@ -2246,7 +2248,8 @@ if ($action == 'create') {
 						'url' => '/fourn/facture/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id,
 						'label' => $langs->trans('AddSupplierInvoice'),
 						'lang' => 'bills',
-						'perm' => $user->hasRight('fournisseur', 'facture', 'creer')
+						'perm' => $user->hasRight('fournisseur', 'facture', 'creer'),
+						'enabled' => true,
 					);
 				}
 				if (count($arrayofcreatebutton)) {
@@ -2254,31 +2257,29 @@ if ($action == 'create') {
 					print dolGetButtonAction('', $langs->trans("Create"), 'default', $arrayofcreatebutton, '', true, $params);
 				}
 
+				$arrayforbutaction = array();
 				if ($object->nbofservicesclosed > 0 || $object->nbofserviceswait > 0) {
-					if ($user->hasRight('contrat', 'activer')) {
-						unset($params['attr']['title']);
-						print dolGetButtonAction($langs->trans('ActivateAllContracts'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=activate&token='.newToken(), '', true, $params);
-					} else {
-						unset($params['attr']['title']);
-						print dolGetButtonAction($langs->trans('ActivateAllContracts'), '', 'default', '#', '', false, $params);
-					}
+					$arrayforbutaction[] = array(
+						'url' => $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=activate&token='.newToken(),
+						'label' => $langs->trans('ActivateAllContracts'),
+						'lang' => 'bills',
+						'perm' => $user->hasRight('contrat', 'activer'),
+						'enabled' => true,
+					);
 				}
 				if ($object->nbofservicesclosed < $nbofservices) {
-					if ($user->hasRight('contrat', 'desactiver')) {
-						unset($params['attr']['title']);
-						print dolGetButtonAction($langs->trans('CloseAllContracts'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=close&token='.newToken(), '', true, $params);
-					} else {
-						unset($params['attr']['title']);
-						print dolGetButtonAction($langs->trans('CloseAllContracts'), '', 'default', '#', '', false, $params);
-					}
+					$arrayforbutaction[] = array(
+						'url' => $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=close&token='.newToken(),
+						'label' => $langs->trans('CloseAllContracts'),
+						'lang' => 'bills',
+						'perm' => $user->hasRight('contrat', 'desactiver'),
+						'enabled' => true,
+					);
+				}
 
-					//if (! $numactive)
-					//{
-					//}
-					//else
-					//{
-					//	print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("CloseRefusedBecauseOneServiceActive").'">'.$langs->trans("Close").'</a></div>';
-					//}
+				if (count($arrayforbutaction)) {
+					unset($params['attr']['title']);
+					print dolGetButtonAction('', $langs->trans("Services"), 'default', $arrayforbutaction, '', true, $params);
 				}
 
 				if (getDolGlobalString('CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT') && $object->nbofservicesclosed > 0) {

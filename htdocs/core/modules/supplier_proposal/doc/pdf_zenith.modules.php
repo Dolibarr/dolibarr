@@ -1018,7 +1018,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 							$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 						}
 						$totalvat = $outputlangs->transcountrynoentities("TotalLT1", $mysoc->country_code).' ';
-						$totalvat .= vatrate(abs($tvakey), 1).$tvacompl;
+						$totalvat .= vatrate((string) abs((float) $tvakey), 1).$tvacompl;
 						$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
 						$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
@@ -1048,7 +1048,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 							$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 						}
 						$totalvat = $outputlangs->transcountrynoentities("TotalLT2", $mysoc->country_code).' ';
-						$totalvat .= vatrate(abs($tvakey), 1).$tvacompl;
+						$totalvat .= vatrate((string) abs((float) $tvakey), 1).$tvacompl;
 						$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
 						$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);

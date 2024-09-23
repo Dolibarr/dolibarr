@@ -2011,7 +2011,7 @@ function get_left_menu_bank($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 			if ($usemenuhider || empty($leftmenu) || $leftmenu == "withdraw") {
 				$newmenu->add("/compta/prelevement/create.php?mainmenu=bank", $langs->trans("NewStandingOrder"), 1, $user->hasRight('prelevement', 'bons', 'creer'));
 
-				$newmenu->add("/compta/prelevement/orders_list.php?mainmenu=bank", $langs->trans("WithdrawalsReceipts"), 1, $user->hasRight('prelevement', 'bons', 'lire'));
+				$newmenu->add("/compta/prelevement/orders_list.php?mainmenu=bank", $langs->trans("List"), 1, $user->hasRight('prelevement', 'bons', 'lire'));
 				$newmenu->add("/compta/prelevement/list.php?mainmenu=bank", $langs->trans("WithdrawalsLines"), 1, $user->hasRight('prelevement', 'bons', 'lire'));
 				$newmenu->add("/compta/prelevement/rejets.php?mainmenu=bank", $langs->trans("Rejects"), 1, $user->hasRight('prelevement', 'bons', 'lire'));
 				$newmenu->add("/compta/prelevement/stats.php?mainmenu=bank", $langs->trans("Statistics"), 1, $user->hasRight('prelevement', 'bons', 'lire'));
@@ -2025,7 +2025,7 @@ function get_left_menu_bank($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 			if ($usemenuhider || empty($leftmenu) || $leftmenu == "banktransfer") {
 				$newmenu->add("/compta/prelevement/create.php?type=bank-transfer&mainmenu=bank", $langs->trans("NewPaymentByBankTransfer"), 1, $user->hasRight('paymentbybanktransfer', 'create'));
 
-				$newmenu->add("/compta/prelevement/orders_list.php?type=bank-transfer&mainmenu=bank", $langs->trans("PaymentByBankTransferReceipts"), 1, $user->hasRight('paymentbybanktransfer', 'read'));
+				$newmenu->add("/compta/prelevement/orders_list.php?type=bank-transfer&mainmenu=bank", $langs->trans("List"), 1, $user->hasRight('paymentbybanktransfer', 'read'));
 				$newmenu->add("/compta/prelevement/list.php?type=bank-transfer&mainmenu=bank", $langs->trans("PaymentByBankTransferLines"), 1, $user->hasRight('paymentbybanktransfer', 'read'));
 				$newmenu->add("/compta/prelevement/rejets.php?type=bank-transfer&mainmenu=bank", $langs->trans("Rejects"), 1, $user->hasRight('paymentbybanktransfer', 'read'));
 				$newmenu->add("/compta/prelevement/stats.php?type=bank-transfer&mainmenu=bank", $langs->trans("Statistics"), 1, $user->hasRight('paymentbybanktransfer', 'read'));

@@ -74,6 +74,14 @@ abstract class ModeleBarCode
 	{
 		return -1;	// Error by default, this method must be implemented by the driver
 	}
+
+	/**
+	 *  Return true if encoding is supported
+	 *
+	 *  @param  string  $encoding       Encoding norm
+	 *  @return int                     >0 if supported, 0 if not
+	 */
+	abstract public function encodingIsSupported($encoding);
 }
 
 

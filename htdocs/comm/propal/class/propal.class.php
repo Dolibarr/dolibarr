@@ -3442,7 +3442,7 @@ class Propal extends CommonObject
 			$response->label = $label;
 			$response->labelShort = $labelShort;
 			$response->url = DOL_URL_ROOT.'/comm/propal/list.php?search_status='.$status.'&mainmenu=commercial&leftmenu=propals';
-			$response->url_late = DOL_URL_ROOT.'/comm/propal/list.php?search_status='.$status.'&mainmenu=commercial&leftmenu=propals&sortfield=p.datep&sortorder=asc';
+			$response->url_late = DOL_URL_ROOT.'/comm/propal/list.php?search_option=late&mainmenu=commercial&leftmenu=propals&sortfield=p.datep&sortorder=asc';
 			$response->img = img_object('', "propal");
 
 			// This assignment in condition is not a bug. It allows walking the results.
@@ -3663,9 +3663,9 @@ class Propal extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 * @param array $params params to construct tooltip data
+	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
-	 * @return array
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{

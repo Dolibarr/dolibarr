@@ -1501,6 +1501,8 @@ class pdf_eagle_proforma extends ModelePDFStockTransfer
 	public function defineColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 		global $conf, $hookmanager;
+		'@phan-var-force StockTransfer $object';
+		/** @var StockTransfer $object */
 
 		// Default field style for content
 		$this->defaultContentsFieldsStyle = array(

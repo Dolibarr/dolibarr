@@ -1159,7 +1159,7 @@ class Contrat extends CommonObject
 							$this->add_contact($objcontact->fk_socpeople, $objcontact->code, $objcontact->source); // May failed because of duplicate key or because code of contact type does not exists for new object
 						}
 					} else {
-						dol_print_error($this->db, $resqlcontact);
+						dol_print_error($this->db);
 					}
 				}
 			}
@@ -2021,7 +2021,9 @@ class Contrat extends CommonObject
 			$text .= ($mode == 7 ? '</span><span class="nowraponall">' : '');
 			$text .= ($mode != 7 || $this->nbofservicesclosed > 0) ? ($this->nbofservicesclosed.ContratLigne::LibStatut(5, 3, -1, 'class="marginleft2"')) : '';
 			$text .= ($mode == 7 ? '</span>' : '');
-			$text .= $this->signed_status != '' ? ' '.$this->getLibSignedStatus(5) : '';
+			if (getDolGlobalString('CONTRACT_SHOW_SIGNATURE_STATUS_WITH_SERVICE_STATUS')) {
+				$text .= is_null($this->signed_status) ? '' : ' '.$this->getLibSignedStatus(5);
+			}
 			return $text;
 		} else {
 			return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
@@ -2032,7 +2034,7 @@ class Contrat extends CommonObject
 	 * getTooltipContentArray
 	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
-	 * @return array{picto:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{

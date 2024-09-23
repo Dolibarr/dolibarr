@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015 Alexandre Spangaro <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +26,7 @@
  * Return head table for establishment tabs screen
  *
  * @param   Establishment	$object		Object related to tabs
- * @return  array						Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function establishment_prepare_head($object)
 {
