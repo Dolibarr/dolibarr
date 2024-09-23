@@ -421,7 +421,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {	// TODO Not used by current c
 		if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE') || GETPOST('forcesandbox', 'alpha'))) {
 			$service = 'StripeTest';
 			$servicestatus = '0';
-			dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
+			dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), [], 'warning');
 		} else {
 			$service = 'StripeLive';
 			$servicestatus = '1';

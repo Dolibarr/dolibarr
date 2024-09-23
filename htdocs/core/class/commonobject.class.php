@@ -535,12 +535,12 @@ abstract class CommonObject
 	public $multicurrency_total_ttc;
 
 	/**
-	 * @var float Multicurrency total localta1
+	 * @var float|string Multicurrency total localtax1
 	 */
 	public $multicurrency_total_localtax1;	// not in database
 
 	/**
-	 * @var float Multicurrency total localtax2
+	 * @var float|string Multicurrency total localtax2
 	 */
 	public $multicurrency_total_localtax2;	// not in database
 
@@ -2751,111 +2751,111 @@ abstract class CommonObject
 								/** @var Propal $this */
 								/** @var PropaleLigne $line */
 								$this->updateline(
-								$line->id,
-								$line->subprice,
-								$line->qty,
-								$line->remise_percent,
-								$line->tva_tx,
-								$line->localtax1_tx,
-								$line->localtax2_tx,
-								($line->description ? $line->description : $line->desc),
-								'HT',
-								$line->info_bits,
-								$line->special_code,
-								$line->fk_parent_line,
-								$line->skip_update_total,
-								$line->fk_fournprice,
-								$line->pa_ht,
-								$line->label,
-								$line->product_type,
-								$line->date_start,
-								$line->date_end,
-								$line->array_options,
-								$line->fk_unit,
-								$line->multicurrency_subprice
+									$line->id,
+									$line->subprice,
+									$line->qty,
+									$line->remise_percent,
+									$line->tva_tx,
+									$line->localtax1_tx,
+									$line->localtax2_tx,
+									($line->description ? $line->description : $line->desc),
+									'HT',
+									$line->info_bits,
+									$line->special_code,
+									$line->fk_parent_line,
+									$line->skip_update_total,
+									$line->fk_fournprice,
+									$line->pa_ht,
+									$line->label,
+									$line->product_type,
+									$line->date_start,
+									$line->date_end,
+									$line->array_options,
+									$line->fk_unit,
+									$line->multicurrency_subprice
 								);
 								break;
 							case 'commande':
 								/** @var Commande $this */
 								/** @var OrderLine $line */
 								$this->updateline(
-								$line->id,
-								($line->description ? $line->description : $line->desc),
-								$line->subprice,
-								$line->qty,
-								$line->remise_percent,
-								$line->tva_tx,
-								$line->localtax1_tx,
-								$line->localtax2_tx,
-								'HT',
-								$line->info_bits,
-								$line->date_start,
-								$line->date_end,
-								$line->product_type,
-								$line->fk_parent_line,
-								$line->skip_update_total,
-								$line->fk_fournprice,
-								$line->pa_ht,
-								$line->label,
-								$line->special_code,
-								$line->array_options,
-								$line->fk_unit,
-								$line->multicurrency_subprice
+									$line->id,
+									($line->description ? $line->description : $line->desc),
+									$line->subprice,
+									$line->qty,
+									$line->remise_percent,
+									$line->tva_tx,
+									$line->localtax1_tx,
+									$line->localtax2_tx,
+									'HT',
+									$line->info_bits,
+									$line->date_start,
+									$line->date_end,
+									$line->product_type,
+									$line->fk_parent_line,
+									$line->skip_update_total,
+									$line->fk_fournprice,
+									$line->pa_ht,
+									$line->label,
+									$line->special_code,
+									$line->array_options,
+									$line->fk_unit,
+									$line->multicurrency_subprice
 								);
 								break;
 							case 'facture':
 								/** @var Facture $this */
 								/** @var FactureLigne $line */
 								$this->updateline(
-								$line->id,
-								($line->description ? $line->description : $line->desc),
-								$line->subprice,
-								$line->qty,
-								$line->remise_percent,
-								$line->date_start,
-								$line->date_end,
-								$line->tva_tx,
-								$line->localtax1_tx,
-								$line->localtax2_tx,
-								'HT',
-								$line->info_bits,
-								$line->product_type,
-								$line->fk_parent_line,
-								$line->skip_update_total,
-								$line->fk_fournprice,
-								$line->pa_ht,
-								$line->label,
-								$line->special_code,
-								$line->array_options,
-								$line->situation_percent,
-								$line->fk_unit,
-								$line->multicurrency_subprice
+									$line->id,
+									($line->description ? $line->description : $line->desc),
+									$line->subprice,
+									$line->qty,
+									$line->remise_percent,
+									$line->date_start,
+									$line->date_end,
+									$line->tva_tx,
+									$line->localtax1_tx,
+									$line->localtax2_tx,
+									'HT',
+									$line->info_bits,
+									$line->product_type,
+									$line->fk_parent_line,
+									$line->skip_update_total,
+									$line->fk_fournprice,
+									$line->pa_ht,
+									$line->label,
+									$line->special_code,
+									$line->array_options,
+									$line->situation_percent,
+									$line->fk_unit,
+									$line->multicurrency_subprice
 								);
 								break;
 							case 'supplier_proposal':
 								/** @var SupplierProposal $this */
 								/** @var SupplierProposalLine $line */
 								$this->updateline(
-								$line->id,
-								$line->subprice,
-								$line->qty,
-								$line->remise_percent,
-								$line->tva_tx,
-								$line->localtax1_tx,
-								$line->localtax2_tx,
-								($line->description ? $line->description : $line->desc),
-								'HT',
-								$line->info_bits,
-								$line->special_code,
-								$line->fk_parent_line,
-								$line->skip_update_total,
-								$line->fk_fournprice,
-								$line->pa_ht,
-								$line->label,
-								$line->product_type,
-								$line->array_options,
-								$line->ref_fourn,
-								$line->multicurrency_subprice
+									$line->id,
+									$line->subprice,
+									$line->qty,
+									$line->remise_percent,
+									$line->tva_tx,
+									$line->localtax1_tx,
+									$line->localtax2_tx,
+									($line->description ? $line->description : $line->desc),
+									'HT',
+									$line->info_bits,
+									$line->special_code,
+									$line->fk_parent_line,
+									$line->skip_update_total,
+									$line->fk_fournprice,
+									$line->pa_ht,
+									$line->label,
+									$line->product_type,
+									$line->array_options,
+									$line->ref_fourn,
+									$line->multicurrency_subprice
 								);
 								break;
 							case 'order_supplier':
@@ -8106,20 +8106,20 @@ abstract class CommonObject
 			if (!empty($param_list_array[2])) {		// If the entry into $fields is set, we must add a create button
 				if ((!GETPOSTISSET('backtopage') || strpos(GETPOST('backtopage'), $_SERVER['PHP_SELF']) === 0)	// // To avoid to open several times the 'Plus' button (we accept only one level)
 					&& empty($val['disabled']) && empty($nonewbutton)) {	// and to avoid to show the button if the field is protected by a "disabled".
-						list($class, $classfile) = explode(':', $param_list[0]);
+					list($class, $classfile) = explode(':', $param_list[0]);
 					if (file_exists(dol_buildpath(dirname(dirname($classfile)).'/card.php'))) {
 						$url_path = dol_buildpath(dirname(dirname($classfile)).'/card.php', 1);
 					} else {
 						$url_path = dol_buildpath(dirname(dirname($classfile)).'/'.strtolower($class).'_card.php', 1);
 					}
-						$paramforthenewlink = '';
-						$paramforthenewlink .= (GETPOSTISSET('action') ? '&action='.GETPOST('action', 'aZ09') : '');
-						$paramforthenewlink .= (GETPOSTISSET('id') ? '&id='.GETPOSTINT('id') : '');
-						$paramforthenewlink .= (GETPOSTISSET('origin') ? '&origin='.GETPOST('origin', 'aZ09') : '');
-						$paramforthenewlink .= (GETPOSTISSET('originid') ? '&originid='.GETPOSTINT('originid') : '');
-						$paramforthenewlink .= '&fk_'.strtolower($class).'=--IDFORBACKTOPAGE--';
-						// TODO Add JavaScript code to add input fields already filled into $paramforthenewlink so we won't loose them when going back to main page
-						$out .= '<a class="butActionNew" title="'.$langs->trans("New").'" href="'.$url_path.'?action=create&backtopage='.urlencode($_SERVER['PHP_SELF'].($paramforthenewlink ? '?'.$paramforthenewlink : '')).'"><span class="fa fa-plus-circle valignmiddle"></span></a>';
+					$paramforthenewlink = '';
+					$paramforthenewlink .= (GETPOSTISSET('action') ? '&action='.GETPOST('action', 'aZ09') : '');
+					$paramforthenewlink .= (GETPOSTISSET('id') ? '&id='.GETPOSTINT('id') : '');
+					$paramforthenewlink .= (GETPOSTISSET('origin') ? '&origin='.GETPOST('origin', 'aZ09') : '');
+					$paramforthenewlink .= (GETPOSTISSET('originid') ? '&originid='.GETPOSTINT('originid') : '');
+					$paramforthenewlink .= '&fk_'.strtolower($class).'=--IDFORBACKTOPAGE--';
+					// TODO Add JavaScript code to add input fields already filled into $paramforthenewlink so we won't loose them when going back to main page
+					$out .= '<a class="butActionNew" title="'.$langs->trans("New").'" href="'.$url_path.'?action=create&backtopage='.urlencode($_SERVER['PHP_SELF'].($paramforthenewlink ? '?'.$paramforthenewlink : '')).'"><span class="fa fa-plus-circle valignmiddle"></span></a>';
 				}
 			}
 		} elseif ($type == 'password') {
