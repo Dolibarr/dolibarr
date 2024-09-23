@@ -82,7 +82,7 @@ parameters:
 		- '# EmailCollector::getpart\(\) expects string#'
 		- '#expects int, float#'
 		- '#::saveboxorder\(\) expects int, array#'
-		- '# (print_projecttasks(_array)?|dol_time_plus_duree|get_default_tva|get_default_npr) expects int, array#'
+		- '# (print_projecttasks(_array)?|get_default_tva|get_default_npr) expects int, array#'
 		- '# (fetchObjectByElement|print_actions_filter|dol_mktime|dol_get_first_day|dol_get_last_day|dol_remove_file_process|displayUsersListWithPicto) expects int, array\|string given.#'
 		- '# (CSMSFile) constructor expects int, array\|string given.#'
 		- "# (img_picto) expects int<0, 1>, (false|'') given.#"
