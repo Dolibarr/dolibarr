@@ -768,11 +768,6 @@ class Product extends CommonObject
 	public $mandatory_period;
 
 	/**
-	 * @var int
-	 */
-	public $no_button_copy;
-
-	/**
 	 * 0=This service or product is not managed in stock, 1=This service or product is managed in stock
 	 *
 	 * @var boolean
