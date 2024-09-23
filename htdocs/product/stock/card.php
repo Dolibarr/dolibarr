@@ -648,7 +648,7 @@ if ($action == 'create') {
 			print_liste_field_titre($form->textwithpicto($langs->trans("AverageUnitPricePMPShort"), $langs->trans("AverageUnitPricePMPDesc")), "", "p.pmp", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
 			$totalarray['nbfield']++;
 
-			print_liste_field_titre("EstimatedStockValueShort", "", "", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+			print_liste_field_titre("EstimatedStockValueShort", "", "svalue", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
 			$totalarray['nbfield']++;
 			$totalarray['pos'][$totalarray['nbfield']] = 'totalvalue';
 			$totalarray['type'][$totalarray['nbfield']] = '';
@@ -705,6 +705,7 @@ if ($action == 'create') {
 			if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 				$sql .= ",fk_unit";
 			}
+			$sql .= ", (ps.reel * p.pmp) as svalue";
 			// Add fields from hooks
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
@@ -757,10 +758,6 @@ if ($action == 'create') {
 
 					//print '<td>'.dol_print_date($objp->datem).'</td>';
 					print '<tr class="oddeven">';
-
-					$parameters = array('obj' => $objp, 'totalarray' => &$totalarray);
-					$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
-					print $hookmanager->resPrint;
 
 					$productstatic->id = $objp->rowid;
 					$productstatic->ref = $objp->ref;
@@ -841,6 +838,10 @@ if ($action == 'create') {
 						print $langs->trans("CorrectStock");
 						print "</a></td>";
 					}
+
+					$parameters = array('obj' => $objp, 'totalarray' => &$totalarray);
+					$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
+					print $hookmanager->resPrint;
 
 					print "</tr>";
 

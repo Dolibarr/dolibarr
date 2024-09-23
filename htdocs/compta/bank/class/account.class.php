@@ -746,6 +746,11 @@ class Account extends CommonObject
 			$this->status = $this->clos;
 		}
 
+		if (empty($this->address && !empty($this->domiciliation))) {
+			dol_syslog(get_class($this)."::create domiciliation is deprecated use address", LOG_NOTICE);
+			$this->address = $this->domiciliation;
+		}
+
 		// Load the library to validate/check a BAN account
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 
