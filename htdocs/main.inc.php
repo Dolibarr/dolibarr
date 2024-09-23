@@ -3700,7 +3700,7 @@ function printSearchForm($urlaction, $urlobject, $title, $htmlmorecss, $htmlinpu
 		$ret .= '<div class="tagtd left">'.$title.'</div> ';
 	}
 	$ret .= '<div class="tagtd">';
-	$ret .= img_picto('', $img, '', false, 0, 0, '', 'paddingright width20');
+	$ret .= img_picto('', $img, '', 0, 0, 0, '', 'paddingright width20');
 	$ret .= '<input type="text" class="flat '.$htmlmorecss.'"';
 	$ret .= ' style="background-repeat: no-repeat; background-position: 3px;"';
 	$ret .= ($accesskey ? ' accesskey="'.$accesskey.'"' : '');
