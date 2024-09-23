@@ -1925,9 +1925,9 @@ function pdf_getlineref_supplier($object, $i, $outputlangs, $hidedetails = 0)
  *	Return line vat rate
  *
  *	@param	SupplierProposal|CommandeFournisseur|FactureFournisseur|Propal|Facture|Commande|ExpenseReport|StockTransfer	$object	Object
- *	@param	int			$i					Current line number
- *  @param  Translate	$outputlangs		Object langs for output
- *  @param	int<0,2>	$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
+ *	@param	int				$i					Current line number
+ *  @param  Translate		$outputlangs		Object langs for output
+ *  @param	int<0,2>		$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
  * 	@return	string
  */
 function pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails = 0)
@@ -1962,7 +1962,7 @@ function pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails = 0)
 					} else {
 						$tmpresult = '';
 					}
-					$tmpresult .= vatrate(abs($object->lines[$i]->localtax1_tx), 0);
+					$tmpresult .= vatrate((string) abs($object->lines[$i]->localtax1_tx), 0);
 				}
 			}
 			if (!getDolGlobalString('MAIN_PDF_MAIN_HIDE_THIRD_TAX')) {
@@ -1972,7 +1972,7 @@ function pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails = 0)
 					} else {
 						$tmpresult = '';
 					}
-					$tmpresult .= vatrate(abs($object->lines[$i]->localtax2_tx), 0);
+					$tmpresult .= vatrate((string) abs($object->lines[$i]->localtax2_tx), 0);
 				}
 			}
 			$tmpresult .= '%';

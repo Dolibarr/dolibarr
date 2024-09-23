@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015-2018  Frederic France     <frederic.france@netlogic.fr>
+/* Copyright (C) 2015-2024	Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2016       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2022       Laurent Destailleur <eldy@users.sourceforge.net>
  *
