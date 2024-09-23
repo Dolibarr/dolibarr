@@ -78,13 +78,18 @@ if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 	$ecmdir = new EcmDirectory($db);
 	if ($section > 0) {
 		$result = $ecmdir->fetch($section);
-		if (!($result > 0)) {
-			//dol_print_error($db,$ecmdir->error);
-			//exit;
-		}
+		//if (!($result > 0)) {
+		//dol_print_error($db,$ecmdir->error);
+		//exit;
+		//}
 	}
 } else {
-	// For no ajax call
+	// When no an ajax call (include from other file)
+	'
+	@phan-var-force int $section
+	@phan-var-force string $module
+	@phan-var-force string $showonrightsize
+	';
 	$rootdirfordoc = $conf->ecm->dir_output;
 
 	$ecmdir = new EcmDirectory($db);
@@ -291,7 +296,7 @@ if ($type == 'directory') {
 
 		$textifempty = ($section ? $langs->trans("NoFileFound") : ($showonrightsize == 'featurenotyetavailable' ? $langs->trans("FeatureNotYetAvailable") : $langs->trans("NoFileFound")));
 
-		$filter = preg_quote($search_doc_ref, '/');
+		$filter = preg_quote((string) $search_doc_ref, '/');
 		$filearray = dol_dir_list($upload_dir, "files", 1, $filter, $excludefiles, $sortfield, $sorting, 1);
 
 		$perm = $user->hasRight('ecm', 'upload');
@@ -355,6 +360,7 @@ if ($type == 'directory') {
 			$textifempty = ($showonrightsize == 'featurenotyetavailable' ? $langs->trans("FeatureNotYetAvailable") : $langs->trans("ECMSelectASection"));
 		}
 
+		$useinecm = null;
 		if ($module == 'medias') {
 			$useinecm = 6;
 			$modulepart = 'medias';

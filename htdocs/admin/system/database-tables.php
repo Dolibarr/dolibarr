@@ -4,6 +4,7 @@
  * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,6 +95,7 @@ if (preg_match('/mysql/i', $conf->db->type)) {
 if (!$base) {
 	print $langs->trans("FeatureNotAvailableWithThisDatabaseDriver");
 } else {
+	$i = 0;
 	if ($base == 1) {
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder">';
@@ -137,7 +139,7 @@ if (!$base) {
 
 				print '<tr class="oddeven">';
 
-				print '<td>'.($i+1).'</td>';
+				print '<td>'.($i + 1).'</td>';
 				print '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($obj->Name).'"><a href="dbtable.php?table='.urlencode($obj->Name).'">'.$obj->Name.'</a>';
 				$tablename = preg_replace('/^'.MAIN_DB_PREFIX.'/', 'llx_', $obj->Name);
 
@@ -217,7 +219,7 @@ if (!$base) {
 			while ($i < $num) {
 				$row = $db->fetch_row($resql);
 				print '<tr class="oddeven">';
-				print '<td>'.($i+1).'</td>';
+				print '<td>'.($i + 1).'</td>';
 				print '<td>'.$row[0].'</td>';
 				print '<td class="right">'.$row[1].'</td>';
 				print '<td class="right">'.$row[2].'</td>';
@@ -256,7 +258,7 @@ if (!$base) {
 				}
 
 				print '<tr class="oddeven">';
-				print '<td>'.($i+1).'</td>';
+				print '<td>'.($i + 1).'</td>';
 				print '<td>'.$row[0].'</td>';
 				print '<td>'.$count.'</td>';
 				print '</tr>';

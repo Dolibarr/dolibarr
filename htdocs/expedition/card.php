@@ -506,7 +506,7 @@ if (empty($reshook)) {
 
 				$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				if ($result < 0) {
-					dol_print_error($db, $result);
+					dol_print_error($db, $object->error, $object->errors);
 				}
 			}
 		}
@@ -958,7 +958,7 @@ if ($action == 'create') {
 				print '<input type="hidden" name="entrepot_id" value="'.GETPOSTINT('entrepot_id').'">';
 			}
 
-			print dol_get_fiche_head('');
+			print dol_get_fiche_head([]);
 
 			print '<table class="border centpercent">';
 

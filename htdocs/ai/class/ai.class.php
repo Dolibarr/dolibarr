@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2024  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,11 +18,11 @@
  * or see https://www.gnu.org/
  */
 
- /**
- * \file    htdocs/ai/class/ai.class.php
- * \ingroup ai
- * \brief   Class files with common methods for Ai
- */
+/**
+* \file    htdocs/ai/class/ai.class.php
+* \ingroup ai
+* \brief   Class files with common methods for Ai
+*/
 
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
@@ -75,7 +76,7 @@ class Ai
 	 * @param   string  		$model          Model name ('gpt-3.5-turbo', 'gpt-4-turbo', 'dall-e-3', ...)
 	 * @param   string  		$function     	Code of the feature we want to use ('textgeneration', 'transcription', 'audiogeneration', 'imagegeneration', 'translation')
 	 * @param	string			$format			Format for output ('', 'html', ...)
-	 * @return  string|array   	$response		Text or array if error
+	 * @return  string|array{error:bool,message:string,code?:int,curl_error_no?:''|int,format?:string,service?:string,function?:string}	$response		Text or array if error
 	 */
 	public function generateContent($instructions, $model = 'auto', $function = 'textgeneration', $format = '')
 	{
@@ -288,10 +289,10 @@ class Ai
 				'error' => true,
 				'message' => $errormessage,
 				'code' => (empty($response['http_code']) ? 0 : $response['http_code']),
-				'curl_error_no' => (empty($response['curl_error_no']) ? $response['curl_error_no'] : ''),
+				'curl_error_no' => (!empty($response['curl_error_no']) ? $response['curl_error_no'] : ''),
 				'format' => $format,
 				'service' => $this->apiService,
-				'function'=>$function
+				'function' => $function
 			);
 		}
 	}

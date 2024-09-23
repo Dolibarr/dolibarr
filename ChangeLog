@@ -23,7 +23,8 @@ The following changes may create regressions for some external modules, but were
 * More class properties (with old name in french) are now deprecated in favor of the property name in english.
 * The json emulator dol_json_encode/decode() is removed. The native json PHP module must be enabled/available (this is the case by default with most PHP installation).
 * The experimental and deprecated module WebserviceClient is completely removed (SOAP technology is deprecated). May be replaced with the stable module Webhook.
-
+* The dynamic properties ->no_button_delete, ->no_button_edit, ->no_button_copy for $object Product that could be set by an external module must no more
+  be set (not allowed by PHP 8.2). A module can already return an array with key 'no_button_delete', 'no_button_edit', 'no_button_copy' for same purpose.
 
 
 ***** ChangeLog for 20.0.0 compared to 19.0 *****
@@ -44,6 +45,10 @@ NEW: Accountancy - Add possibility for specific format FEC to sort with the FEC 
 NEW: Accountancy - Expense report - Add an option to use end period for transfer (#26706)
 NEW: Accountancy - Show accounting result on balance
 NEW: Accountancy - Show import key if exist (#29265)
+NEW: Accountancy - Auto-determine piece number in FEC import (#29672)
+NEW: Accountancy - Option to transfer only reconciled lines from bank (#29408)
+NEW: Accountancy - Separation of accounting default account for salary and expense report
+NEW: Various payment - Use list of accounting account when edit (#27992)
 NEW: Add option to change all service dates at once
 NEW: Add a default limit in nb to agenda export
 NEW: Add a Feedback-ID into email headers
@@ -96,7 +101,6 @@ NEW: Allow smileys into emailing html content
 NEW: Allow to set a default project for POS sales (#27042)
 NEW: animation for display spinner when waiting response
 NEW: Asset Module - make asset model creation in a single step (#26982)
-NEW: auto-determine piece number in FEC import (#29672)
 NEW: auto fill infos in template email
 NEW: Automatically fill matching extra fields of object on line creation. (#27240)
 NEW: Can add documents on a payment (#29660)
@@ -133,7 +137,7 @@ NEW: fetch object by element for website account card
 NEW: filter on sale representative in contact list
 NEW: Filter shipments by selecting multiple shipping methods (#28376)
 NEW: Font param Look and Feel (#29302)
-NEW: fuctionnality for stock configuration prompt in AI module (#28030)
+NEW: functionality for stock configuration prompt in AI module (#28030)
 NEW: functionality to delete contact of company list
 NEW: functionality to display codebar on pdf files  (#29623)
 NEW: functionality to list event for user
@@ -165,7 +169,6 @@ NEW: notification action triggers for cancelling orders and invoices
 NEW: now button when editing an event
 NEW: online signature of shipments (#29559)
 NEW: On OAuth Google login, no prompt at all if already logged in Google
-NEW: Option to transfer only reconciliated lines from bank (#29408)
 NEW: Param to show main menu logo in color look and feel (#29305)
 NEW: Payment page received from donations
 NEW: possibility to define a completely inactive module (#29289)
@@ -178,7 +181,6 @@ NEW: resource address, phone, email & maxusers (#28185)
 NEW: Script for fast identification of missing/unused/duplicate translations
 NEW: search member by date
 NEW: See the documents of my subordinates  (#28318)
-NEW: separation of expense report from salary accounting code
 NEW: Show error on ical parse
 NEW: Show the profit per attendee on events
 NEW: signed status CRUD to contract and fichinter
@@ -205,7 +207,6 @@ NEW: Update expense report card.php to allow pdf preview even without thumbnail 
 NEW: update price with auto to use const for rounding prices (#29350)
 NEW: Use a nicer combo list to select the export accounting format
 NEW: users can set their own length for short lists
-NEW: Various payment - Use list of account when edit (#27992)
 NEW: warning message when cloning a product whose status is not to sell (#28374)
 PERF: Performance enhancement on Invoice/Paiement area page
 PERF: Use cache for loaded users/contact on project list
@@ -218,6 +219,7 @@ SEC: Reduce nb of var without WAF used when using the website module
 
 For developers or integrators:
 ------------------------------
+NEW: Situation invoice - Add new official progressive mode - (constant INVOICE_USE_SITUATION = 2)
 NEW: $noescapetags param of dol_escape_html works if attributes
 NEW: Add createInvoiceFromContract to API invoice (#27277)
 NEW: add debugging info to api/status if non-production

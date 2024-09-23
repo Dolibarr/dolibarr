@@ -57,6 +57,8 @@ if ($action == 'updateMask') {
 	$maskconstmrp = GETPOST('maskconstMo', 'aZ09');
 	$maskmrp = GETPOST('maskMo', 'alpha');
 
+	$res = 0;
+
 	if ($maskconstmrp && preg_match('/_MASK$/', $maskconstmrp)) {
 		$res = dolibarr_set_const($db, $maskconstmrp, $maskmrp, 'chaine', 0, '', $conf->entity);
 	}

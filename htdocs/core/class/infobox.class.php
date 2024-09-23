@@ -141,7 +141,7 @@ class InfoBox
 
 					// TODO PERF Do not make "dol_include_once" here, nor "new" later. This means, we must store a 'depends' field to store modules list, then
 					// the "enabled" condition for modules forbidden for external users and the depends condition can be done.
-					// Goal is to avoid making a "new" done for each boxes returned by select.
+					// Goal is to avoid to make a "new" done for each boxes returned by select.
 					dol_include_once($relsourcefile);
 					if (class_exists($boxname)) {
 						$box = new $boxname($dbs, $obj->note); // Constructor may set properties like box->enabled. obj->note is note into box def, not user params.

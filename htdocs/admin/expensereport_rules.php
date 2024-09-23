@@ -51,6 +51,9 @@ if (!$user->admin) {
  */
 
 $parameters = array();
+$rules = array();
+$tab_apply = array();
+$tab_rules_type = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -218,7 +221,7 @@ if ($action != 'edit') {
 	echo '<td>';
 	echo '<div class="float linecolapplyto">' . $form->selectarray('apply_to', $tab_apply, '', 0) . '</div>';
 	echo '<div id="user" class="float linecoluser">' . $form->select_dolusers('', 'fk_user') . '</div>';
-	echo '<div id="group" class="float linecolgroup">' . $form->select_dolgroups('', 'fk_usergroup') . '</div>';
+	echo '<div id="group" class="float linecolgroup">' . $form->select_dolgroups(0, 'fk_usergroup') . '</div>';
 	echo '</td>';
 
 	echo '<td class="linecoltype">' . $form->selectExpense('', 'fk_c_type_fees', 0, 1, 1) . '</td>';
