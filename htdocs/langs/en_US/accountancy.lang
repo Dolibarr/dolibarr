@@ -402,6 +402,7 @@ SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of third party is
 ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
 ForbiddenTransactionAlreadyValidated=Forbidden: The transaction has been validated.
 DataMustHaveBeenTransferredInAccounting=The transfer of data in accounting must have been done
+IfTransactionHasDueDate=For transactions related to documents that need payment
 ## Dictionary
 Range=Range of accounting account
 Calculated=Calculated
