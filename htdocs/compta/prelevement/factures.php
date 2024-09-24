@@ -417,7 +417,7 @@ if ($resql) {
 		// If the page show all record (no pagination) and total does not match total of file, we show a warning. Should not happen.
 		if (($nbtotalofrecords <= $num) && $totalamount_requested != (float) $object->amount) {
 			$langs->load("errors");
-			print img_warning("WarningAmountOfFileDiffersFromSumOfLines", (string)(float) $object->amount, (string) $totalamount_requested);
+			print img_warning("WarningAmountOfFileDiffersFromSumOfLines", (string) (float) $object->amount, (string) $totalamount_requested);
 		}
 		print price($totalamount_requested);
 		print "</td>\n";
