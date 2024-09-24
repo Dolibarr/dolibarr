@@ -515,7 +515,7 @@ if ($action == 'create') {
 
 		print dol_get_fiche_head($head, 'transaction', '', -1);
 
-		$object->ref = $object->piece_num;
+		$object->ref = (string) $object->piece_num;
 		$object->label = $object->doc_ref;
 
 		$morehtmlref = '<div style="clear: both;"></div>';
