@@ -201,7 +201,7 @@ if ($action == 'order' && GETPOST('valid') && $user->hasRight('fournisseur', 'co
 						// If we use multicurrency
 						if (isModEnabled('multicurrency') && !empty($productsupplier->fourn_multicurrency_code) && $productsupplier->fourn_multicurrency_code != $conf->currency) {
 							$line->multicurrency_code = $productsupplier->fourn_multicurrency_code;
-							$line->fk_multicurrency = $productsupplier->fourn_multicurrency_id;
+							$line->fk_multicurrency = (int) $productsupplier->fourn_multicurrency_id;
 							$line->multicurrency_subprice = $productsupplier->fourn_multicurrency_unitprice;
 						}
 
@@ -255,6 +255,7 @@ if ($action == 'order' && GETPOST('valid') && $user->hasRight('fournisseur', 'co
 					if (empty($line->remise_percent)) {
 						$line->remise_percent = (float) $order->thirdparty->remise_supplier_percent;
 					}
+					$line_subprice = isset($line->multicurrency_subprice) ? $line->multicurrency_subprice : 0;
 					$result = $order->addline(
 						$line->desc,
 						$line->subprice,
@@ -275,7 +276,7 @@ if ($action == 'order' && GETPOST('valid') && $user->hasRight('fournisseur', 'co
 						null,
 						0,
 						$line->fk_unit,
-						$line->multicurrency_subprice ?? 0
+						$line_subprice
 					);
 				}
 				if ($result < 0) {
