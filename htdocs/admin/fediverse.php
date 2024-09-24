@@ -54,6 +54,24 @@ if (!isModEnabled('socialnetworks')) {
 	accessforbidden('Module Social Networks is not enabled');
 }
 
+// List of oauth services
+$oauthservices = array();
+
+foreach ($conf->global as $key => $val) {
+	if (!empty($val) && preg_match('/^OAUTH_.*_ID$/', $key)) {
+		$key = preg_replace('/^OAUTH_/', '', $key);
+		$key = preg_replace('/_ID$/', '', $key);
+		if (preg_match('/^.*-/', $key)) {
+			$name = preg_replace('/^.*-/', '', $key);
+		} else {
+			$name = $langs->trans("NoName");
+		}
+		$provider = preg_replace('/-.*$/', '', $key);
+		$provider = ucfirst(strtolower($provider));
+
+		$oauthservices[$key] = $name." (".$provider.")";
+	}
+}
 
 /*
  * Actions
@@ -68,6 +86,9 @@ if ($action == 'add') {
 
 	$socialNetworkName = GETPOST('socialnetwork_name', 'alpha');
 	$socialNetworkUrl = GETPOST('socialnetwork_url', 'alpha');
+	if (GETPOSTISSET("OAUTH_SERVICE_SOCIAL_NETWORK")) {
+		dolibarr_set_const($db, "OAUTH_SERVICE_SOCIAL_NETWORK", GETPOST("OAUTH_SERVICE_SOCIAL_NETWORK", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+	}
 
 	// other params if exist
 	$paramNames = GETPOST('param_name', 'array');
@@ -271,6 +292,63 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans('SocialNetworkUrl').'</td>';
 print '<td><input type="text" class="flat minwidth300" name="socialnetwork_url"></td>';
 print '<td>https://mastodon.social/api/v1/accounts/id_user</td>';
+print '</tr>';
+$vartosmtpstype = 'MAIN_MAIL_SMTPS_AUTH_TYPE_EMAILING';
+
+print '<script>
+$(document).ready(function() {
+    function toggleOAuthServiceDisplay() {
+        if ($("#radio_oauth").is(":checked")) {
+            $("#oauth_service_div").show();
+        } else {
+            $("#oauth_service_div").hide();
+        }
+    }
+
+    toggleOAuthServiceDisplay();
+
+    $("input[name=\"'.$vartosmtpstype.'\"]").change(function() {
+        toggleOAuthServiceDisplay();
+    });
+});
+</script>';
+// Methods oauth
+print '<td>'.$langs->trans("MAIN_MAIL_SMTPS_AUTH_TYPE").'</td>';
+print '<td>';
+print '<input type="radio" id="radio_oauth" name="'.$vartosmtpstype.'" value="XOAUTH2"'.(getDolGlobalString($vartosmtpstype) == 'XOAUTH2' ? ' checked' : '').(isModEnabled('oauth') ? '' : ' disabled').'>';
+print '<label for="radio_oauth">'.$form->textwithpicto($langs->trans("UseOauth"), $langs->trans("OauthNotAvailableForAllAndHadToBeCreatedBefore")).'</label>';
+if (!isModEnabled('oauth')) {
+	print ' &nbsp; <a href="'.DOL_URL_ROOT.'/admin/modules.php?search_keyword=oauth">'.$langs->trans("EnableModuleX", "OAuth").'</a>';
+} else {
+	print ' &nbsp; <a href="'.DOL_URL_ROOT.'/admin/oauth.php">'.$langs->trans("SetupModuleX", " OAuth").'</a>';
+}
+print '</td>';
+print '</tr>';
+
+print '<tr class="oddeven" id="oauth_service_div"  style="display: none;">';
+print '<td>'.$langs->trans("MAIN_MAIL_SMTPS_OAUTH_SERVICE").'</td>';
+print '<td>';
+
+$oauthservicesStringKeys = [];
+foreach ($oauthservices as $key => $value) {
+	$key = (string) $key;
+	$oauthservicesStringKeys[$key] = $value;
+}
+
+/** @phan-var-force array<string, array{label:string, data-html:string, disable?:int, css?:string}> $oauthservices */
+if (!isModEnabled('multicompany') || ($user->admin && !$user->entity)) {
+	print $form->selectarray('OAUTH_SERVICE_SOCIAL_NETWORK', $oauthservicesStringKeys, (string) $conf->global->OAUTH_SERVICE_SOCIAL_NETWORK);
+} else {
+	$selectedKey = (string) getDolGlobalString('OAUTH_SERVICE_SOCIAL_NETWORK');
+	$text = isset($oauthservicesStringKeys[$selectedKey]) ? $oauthservicesStringKeys[$selectedKey]['label'] : '';
+	if (empty($text)) {
+		$text = $langs->trans("Undefined");
+	}
+	$htmltext = $langs->trans("ContactSuperAdminForChange");
+	print $form->textwithpicto($text, $htmltext, 1, 'superadmin');
+	print '<input type="hidden" name="OAUTH_SERVICE_SOCIAL_NETWORK" value="'.$selectedKey.'">';
+}
+print '</td>';
 print '</tr>';
 
 print '<tr class="oddeven"><td>';
