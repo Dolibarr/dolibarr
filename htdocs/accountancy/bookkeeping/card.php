@@ -521,7 +521,7 @@ if ($action == 'create') {
 		$head[$h][2] = 'transaction';
 		$h++;
 
-		dol_get_fiche_head($head, 'transaction', '', -1);
+		print dol_get_fiche_head($head, 'transaction', '', -1);
 
 		$object->ref = (string) $object->piece_num;
 		$object->label = $object->doc_ref;
@@ -531,7 +531,7 @@ if ($action == 'create') {
 		$morehtmlref .= $object->label;
 		$morehtmlref .= '</div>';
 
-		print dol_banner_tab($object, 'ref', $backlink, 1, 'piece_num', 'piece_num', $morehtmlref);
+		dol_banner_tab($object, 'ref', $backlink, 1, 'piece_num', 'piece_num', $morehtmlref);
 
 		print '<div class="fichecenter">';
 
