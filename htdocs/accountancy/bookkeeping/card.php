@@ -518,7 +518,7 @@ if ($action == 'create') {
 		$object->ref = $object->piece_num;
 		$object->label = $object->doc_ref;
 
-		$morehtmlref .= '<div style="clear: both;"></div>';
+		$morehtmlref = '<div style="clear: both;"></div>';
 		$morehtmlref .= '<div class="refidno opacitymedium">';
 		$morehtmlref .= $object->label;
 		$morehtmlref .= '</div>';
