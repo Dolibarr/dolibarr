@@ -9791,16 +9791,16 @@ class Form
 	/**
 	 *    Return an html string with a select combo box to choose yes or no
 	 *
-	 * @param string 	$htmlname 		Name of html select field
-	 * @param string 	$value 			Pre-selected value
-	 * @param int 		$option 		0 return yes/no, 1 return 1/0
-	 * @param bool 		$disabled 		true or false
-	 * @param int 		$useempty 		1=Add empty line
-	 * @param int 		$addjscombo 	1=Add js beautifier on combo box
-	 * @param string 	$morecss 		More CSS
-	 * @param string 	$labelyes 		Label for Yes
-	 * @param string 	$labelno 		Label for No
-	 * @return    string                See option
+	 * @param string 		$htmlname 		Name of html select field
+	 * @param string|int 	$value 			Pre-selected value
+	 * @param int 			$option 		0 return yes/no, 1 return 1/0
+	 * @param bool 			$disabled 		true or false
+	 * @param int 			$useempty 		1=Add empty line
+	 * @param int 			$addjscombo 	1=Add js beautifier on combo box
+	 * @param string 		$morecss 		More CSS
+	 * @param string 		$labelyes 		Label for Yes
+	 * @param string 		$labelno 		Label for No
+	 * @return	string                      See option
 	 */
 	public function selectyesno($htmlname, $value = '', $option = 0, $disabled = false, $useempty = 0, $addjscombo = 0, $morecss = 'width75', $labelyes = 'Yes', $labelno = 'No')
 	{
