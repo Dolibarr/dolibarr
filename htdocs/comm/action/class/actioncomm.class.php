@@ -845,6 +845,7 @@ class ActionComm extends CommonObject
 				$this->type_color = $obj->type_color;
 				$this->type_picto = $obj->type_picto;
 				$this->type       = $obj->type_type;
+				$this->type_label = $obj->type_label;
 
 				$this->code = $obj->code;
 				$this->label = $obj->label;
