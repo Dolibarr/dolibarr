@@ -940,7 +940,7 @@ if ($action == 'create') {
 				if ($mode == '_tmp' && $action == '' && $permissiontoadd) {
 					print '<br>';
 					print '<div class="center">';
-					if (empty($total_debit) && empty($total_debit)) {
+					if (empty($total_debit) && empty($total_credit)) {
 						print '<input type="submit" class="button" disabled="disabled" href="#" title="'.dol_escape_htmltag($langs->trans("EnterNonEmptyLinesFirst")).'" value="'.dol_escape_htmltag($langs->trans("ValidTransaction")).'">';
 					} elseif ($total_debit == $total_credit) {
 						print '<a class="button" href="'.$_SERVER["PHP_SELF"].'?piece_num='.((int) $object->piece_num).'&action=valid&token='.newToken().'">'.$langs->trans("ValidTransaction").'</a>';
