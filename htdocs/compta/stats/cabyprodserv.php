@@ -491,8 +491,9 @@ if ($modecompta == 'CREANCES-DETTES') {
 	print img_picto('', 'company', 'class="pictofixedwidth"');
 	print $form->select_company($selected_soc, 'search_soc', '', $langs->trans("ThirdParty"));
 	print '&nbsp; &nbsp;';
-	print $langs->trans("Commercial").': ';
-	print $form->select_dolusers($selected_commercial, 'search_commercial', 1);
+	print img_picto('', 'user', 'class="pictofixedwidth"');
+	$tmptitle = $langs->trans('ThirdPartiesOfSaleRepresentative');
+	print $form->select_dolusers($selected_commercial, 'search_commercial',$tmptitle);
 	print '</td>';
 
 	print '<td colspan="5" class="right">';
