@@ -1775,7 +1775,7 @@ if ($id > 0) {
 				}
 
 				if (empty($reshook)) {
-					fieldList($fieldlist, $obj, $tabname[$id], 'add');
+					dict_fieldList($fieldlist, $obj, $tabname[$id], 'add');
 				}
 
 				if ($id == DICT_COUNTRY) {
@@ -2280,7 +2280,7 @@ if ($id > 0) {
 
 					// Show fields
 					if (empty($reshook)) {
-						$withentity = fieldList($fieldlist, $obj, $tabname[$id], 'edit');
+						$withentity = dict_fieldList($fieldlist, $obj, $tabname[$id], 'edit');
 					}
 
 					print '<td colspan="3" class="center">';
@@ -2680,7 +2680,7 @@ $db->close();
  *  @param		''|'add'|'edit'|'hide'	$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we don't want it to be rendered
  *	@return		string						'' or value of entity into table
  */
-function fieldList($fieldlist, $obj = null, $tabname = '', $context = '')
+function dict_fieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 {
 	global $langs, $db, $mysoc;
 	global $form;
