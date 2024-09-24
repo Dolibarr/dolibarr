@@ -859,8 +859,7 @@ while ($i < $imaxinloop) {
 				print $langs->trans("MaxNumberOfGenerationReached");
 			} elseif (empty($objp->frequency) || $db->jdate($objp->date_when) <= $today) {
 				print '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;socid='.$objp->socid.'&amp;fac_rec='.$objp->facid.'">';
-				print img_picto($langs->trans("CreateBill"), 'add', 'class="paddingrightonly"');
-				//print $langs->trans("CreateBill");
+				print img_picto($langs->trans("CreateBill"), 'add', 'class="none"');
 				print '</a>';
 			} else {
 				print $form->textwithpicto('', $langs->trans("DateIsNotEnough"));

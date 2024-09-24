@@ -9144,7 +9144,7 @@ abstract class CommonObject
 							if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER') && ($action == 'view' || $action == 'valid' || $action == 'editline' || $action == 'confirm_valid' || $action == 'confirm_cancel')) {
 								$out .= '<td></td>';
 							}
-							$out .= '<td class="'.(empty($params['tdclass']) ? 'titlefieldcreate' : $params['tdclass']).' wordbreak';
+							$out .= '<td class="'.(empty($params['tdclass']) ? 'titlefieldmax45' : $params['tdclass']).' wordbreak';
 							if ($extrafields->attributes[$this->table_element]['type'][$key] == 'text') {
 								$out .= ' tdtop';
 							}
