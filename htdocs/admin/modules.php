@@ -282,8 +282,20 @@ if ($action == 'install' && $allowonlineinstall) {
 	}
 
 	if (!$error) {
-		$message = $langs->trans("SetupIsReadyForUse", DOL_URL_ROOT.'/admin/modules.php?mainmenu=home', $langs->transnoentitiesnoconv("Home").' - '.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("Modules"));
+		$searchParams = array(
+			'search_keyword' => $modulenameval,
+			'search_status' => '-1',
+			'search_nature' => '-1',
+			'search_version' => '-1'
+		);
+		$queryString = http_build_query($searchParams);
+		$redirectUrl = DOL_URL_ROOT . '/admin/modules.php?' . $queryString;
+
+		$message = $langs->trans("SetupIsReadyForUse", $redirectUrl, $langs->transnoentitiesnoconv("Home").' - '.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("Modules"));
+
 		setEventMessages($message, null, 'warnings');
+		header('Location: ' . $redirectUrl);
+		exit;
 	}
 } elseif ($action == 'install' && !$allowonlineinstall) {
 	httponly_accessforbidden("You try to bypass the protection to disallow deployment of an external module. Hack attempt ?");
