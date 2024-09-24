@@ -37,6 +37,9 @@ require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'bills', 'companies', 'withdrawals', 'salaries', 'suppliers'));
 
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
+$optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+
 // Get supervariables
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
@@ -94,7 +97,6 @@ $thirdpartytmp = new Societe($db);
 llxHeader('', $langs->trans("WithdrawalsReceipts"));
 
 if ($id > 0 || $ref) {
-	$object->fetch($id, $ref);
 	if (empty($object->id)) {
 		$langs->load('errors');
 		echo '<div class="error">'.$langs->trans("ErrorRecordNotFound").'</div>';
@@ -311,9 +313,9 @@ if ($resql) {
 		print_liste_field_titre("RefSupplierShort", $_SERVER["PHP_SELF"], "f.ref_supplier", '', $param, '', $sortfield, $sortorder);
 	}
 	print_liste_field_titre(($salaryBonPl ? "Employee" : "ThirdParty"), $_SERVER["PHP_SELF"], "s.nom", '', $param, '', $sortfield, $sortorder);
-	print_liste_field_titre(($salaryBonPl ? "AmountSalary" : "AmountInvoice"), $_SERVER["PHP_SELF"], "f.total_ttc", "", $param, 'class="right"', $sortfield, $sortorder);
-	print_liste_field_titre("AmountRequested", $_SERVER["PHP_SELF"], "pl.amount", "", $param, 'class="right"', $sortfield, $sortorder);
-	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", $param, 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre(($salaryBonPl ? "AmountSalary" : "AmountInvoice"), $_SERVER["PHP_SELF"], "f.total_ttc", "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("AmountRequested", $_SERVER["PHP_SELF"], "pl.amount", "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", $param, '"', $sortfield, $sortorder, 'center ');
 	print "</tr>\n";
 
 	$totalinvoices = 0;
@@ -413,8 +415,9 @@ if ($resql) {
 		print "</td>\n";
 		print '<td class="right">';
 		// If the page show all record (no pagination) and total does not match total of file, we show a warning. Should not happen.
-		if (($nbtotalofrecords <= $num) && $totalamount_requested != $object->amount) {
-			print img_warning("AmountOfFileDiffersFromSumOfInvoices");
+		if (($nbtotalofrecords <= $num) && $totalamount_requested != (float) $object->amount) {
+			$langs->load("errors");
+			print img_warning("WarningAmountOfFileDiffersFromSumOfLines", (float) $object->amount, $totalamount_requested);
 		}
 		print price($totalamount_requested);
 		print "</td>\n";
