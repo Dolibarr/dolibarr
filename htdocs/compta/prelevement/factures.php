@@ -339,7 +339,7 @@ if ($resql) {
 			$salarytmp->fetch($obj->salaryid);
 			$usertmp->fetch($obj->userid);
 			$itemurl = $salarytmp->getNomUrl(1);
-			$partyurl = $usertmp->getNomUrl(1);
+			$partyurl = $usertmp->getNomUrl(-1);
 		} elseif ($invoicetmpcustomer instanceof Facture && $invoicetmpsupplier instanceof FactureFournisseur) {
 			if ($obj->type == 'bank-transfer') {
 				$invoicetmp = $invoicetmpsupplier;
