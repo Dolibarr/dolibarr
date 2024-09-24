@@ -523,7 +523,7 @@ if ($action == 'create') {
 		$morehtmlref .= $object->label;
 		$morehtmlref .= '</div>';
 
-		print dol_banner_tab($object, 'ref', $backlink, 1, 'piece_num', 'piece_num', $morehtmlref);
+		dol_banner_tab($object, 'ref', $backlink, 1, 'piece_num', 'piece_num', $morehtmlref);
 
 		print '<div class="fichecenter">';
 
