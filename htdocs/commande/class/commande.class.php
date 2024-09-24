@@ -11,9 +11,10 @@
  * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2018      Nicolas ZABOURI	    <info@inovea-conseil.com>
  * Copyright (C) 2016-2022 Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2021-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2022       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2021-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2022       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -229,6 +230,9 @@ class Commande extends CommonOrder
 	 */
 	public $warehouse_id;
 
+	/**
+	 * @var array<string,string>  (Encoded as JSON in database)
+	 */
 	public $extraparams = array();
 
 	public $linked_objects = array();
@@ -1165,7 +1169,7 @@ class Commande extends CommonOrder
 								$this->add_contact($objcontact->fk_socpeople, $objcontact->code, $objcontact->source); // May failed because of duplicate key or because code of contact type does not exists for new object
 							}
 						} else {
-							dol_print_error($this->db, $resqlcontact);
+							dol_print_error($this->db);
 						}
 					}
 
@@ -3629,10 +3633,12 @@ class Commande extends CommonOrder
 			}
 
 			$response = new WorkboardResponse();
+
 			$response->warning_delay = $delay_warning;
 			$response->label = $label;
 			$response->labelShort = $labelShort;
 			$response->url = $url;
+			$response->url_late = DOL_URL_ROOT.'/commande/list.php?search_option=late&mainmenu=commercial&leftmenu=orders';
 			$response->img = img_object('', "order");
 
 			$generic_commande = new Commande($this->db);
@@ -3757,9 +3763,9 @@ class Commande extends CommonOrder
 
 	/**
 	 * getTooltipContentArray
-	 *
-	 * @param array $params params to construct tooltip data
-	 * @return array
+	 * @param array<string,mixed> $params params to construct tooltip data
+	 * @since v18
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{

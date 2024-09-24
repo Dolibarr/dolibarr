@@ -131,6 +131,8 @@ if ($user->id != $id && !$permissiontoread) {
 }
 
 // Define value to know what current user can do on properties of edited user
+$permissiontoeditpasswordandsee = false;
+$permissiontoeditpasswordandsend = false;
 if ($id > 0) {
 	// $user is the current logged user, $id is the user we want to edit
 	$permissiontoedit = ((($user->id == $id) && $user->hasRight("user", "self", "write")) || (($user->id != $id) && $user->hasRight("user", "user", "write")));
@@ -138,6 +140,8 @@ if ($id > 0) {
 	$permissiontoeditpasswordandsend = ((($user->id == $id) && $user->hasRight("user", "self", "password")) || (($user->id != $id) && $user->hasRight("user", "user", "password")));
 }
 
+$passwordismodified = false;
+$ldap = null;
 
 /*
  * Actions
@@ -807,6 +811,7 @@ if ($object->id > 0) {
 	}
 }
 $help_url = '';
+$text = null;
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-user page-card');
 
@@ -1273,7 +1278,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	if (isModEnabled('agenda')) {
 		print '<tr><td>'.$langs->trans("ColorUser").'</td>';
 		print '<td>';
-		print $formother->selectColor(GETPOSTISSET('color') ? GETPOST('color', 'alphanohtml') : $object->color, 'color', null, 1, '', 'hideifnotset');
+		print $formother->selectColor(GETPOSTISSET('color') ? GETPOST('color', 'alphanohtml') : $object->color, 'color', null, 1, array(), 'hideifnotset');
 		print '</td></tr>';
 	}
 
@@ -1289,7 +1294,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	if (getDolGlobalInt('MAIN_MULTILANGS')) {
 		print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0, 'string', '', 0, 0, 'id', $langs->trans("WarningNotLangOfInterface", $langs->transnoentitiesnoconv("UserGUISetup"))).'</td>';
 		print '<td class="maxwidthonsmartphone">'."\n";
-		print img_picto('', 'language', 'class="pictofixedwidth"').$formadmin->select_language(GETPOST('default_lang', 'alpha') ? GETPOST('default_lang', 'alpha') : ($object->lang ? $object->lang : ''), 'default_lang', 0, 0, 1, 0, 0, 'maxwidth300 widthcentpercentminusx');
+		print img_picto('', 'language', 'class="pictofixedwidth"').$formadmin->select_language(GETPOST('default_lang', 'alpha') ? GETPOST('default_lang', 'alpha') : ($object->lang ? $object->lang : ''), 'default_lang', 0, array(), 1, 0, 0, 'maxwidth300 widthcentpercentminusx');
 		print '</td>';
 		print '</tr>';
 	}
@@ -1440,6 +1445,10 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 		}
 
+		$passDoNotExpire = 0;
+		$statutUACF = '';
+		$userChangePassNextLogon = 0;
+		$userDisabled = 0;
 		// Connection ldap
 		// pour recuperer passDoNotExpire et userChangePassNextLogon
 		if (isModEnabled('ldap') && !empty($object->ldap_sid)) {
@@ -1451,11 +1460,6 @@ if ($action == 'create' || $action == 'adduserldap') {
 				if (!$entries) {
 					setEventMessages($ldap->error, $ldap->errors, 'errors');
 				}
-
-				$passDoNotExpire = 0;
-				$userChangePassNextLogon = 0;
-				$userDisabled = 0;
-				$statutUACF = '';
 
 				// Check options of user account
 				if (count($ldap->uacf) > 0) {
@@ -1582,7 +1586,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</td></tr>'."\n";
 
 			// Ldap sid
-			if ($object->ldap_sid) {
+			if ($object->ldap_sid && is_object($ldap)) {
 				print '<tr><td>'.$langs->trans("Type").'</td><td>';
 				print $langs->trans("DomainUser", $ldap->domainFQDN);
 				print '</td></tr>'."\n";
@@ -1739,7 +1743,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			// Color user
 			if (isModEnabled('agenda')) {
-				print '<tr><td class="titlefield">'.$langs->trans("ColorUser").'</td>';
+				print '<tr><td class="titlefieldmax45">'.$langs->trans("ColorUser").'</td>';
 				print '<td>';
 				print $formother->showColor($object->color, '');
 				print '</td>';
@@ -1748,8 +1752,8 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			// Categories
 			if (isModEnabled('category') && $user->hasRight("categorie", "read")) {
-				print '<tr><td class="titlefield">'.$langs->trans("Categories").'</td>';
-				print '<td colspan="3">';
+				print '<tr><td>'.$langs->trans("Categories").'</td>';
+				print '<td>';
 				print $form->showCategories($object->id, Categorie::TYPE_USER, 1);
 				print '</td></tr>';
 			}
@@ -1758,7 +1762,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			if (getDolGlobalInt('MAIN_MULTILANGS')) {
 				$langs->load("languages");
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-				print '<tr><td class="titlefield">';
+				print '<tr><td>';
 				print $form->textwithpicto($langs->trans("DefaultLang"), $langs->trans("WarningNotLangOfInterface", $langs->transnoentitiesnoconv("UserGUISetup")));
 				print '</td><td>';
 				//$s=picto_from_langcode($object->default_lang);
@@ -1855,16 +1859,16 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			print '<br>';
 			print '<div class="div-table-responsive-no-min">';
-			print '<table class="border tableforfield centpercent">';
+			print '<table class="noborder tableforfield centpercent">';
 
-			print '<tr class="liste_titre"><td class="liste_titre">';
-			print img_picto('', 'security', 'class="paddingleft pictofixedwidth"').$langs->trans("Credentials");
-			print '</td>';
-			print '<td class="liste_titre"></td>';
+			print '<tr class="liste_titre"><th class="liste_titre">';
+			print img_picto('', 'security', 'class="paddingleft pictofixedwidth"').$langs->trans("Security");
+			print '</th>';
+			print '<th class="liste_titre"></th>';
 			print '</tr>';
 
 			// Date login validity
-			print '<tr class="nooddeven"><td class="titlefield">'.$langs->trans("RangeOfLoginValidity").'</td>';
+			print '<tr class="nooddeven"><td class="titlefieldmax45">'.$langs->trans("RangeOfLoginValidity").'</td>';
 			print '<td>';
 			if ($object->datestartvalidity) {
 				print '<span class="opacitymedium">'.$langs->trans("FromDate").'</span> ';
@@ -1879,7 +1883,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			// Alternative email for OAUth2 login
 			if (!empty($object->email_oauth2) && preg_match('/googleoauth/', $dolibarr_main_authentication)) {
-				print '<tr class="nooddeven"><td class="titlefield">'.$langs->trans("AlternativeEmailForOAuth2").'</td>';
+				print '<tr class="nooddeven"><td class="titlefieldmiddle">'.$langs->trans("AlternativeEmailForOAuth2").'</td>';
 				print '<td>';
 				print dol_print_email($object->email_oauth2);
 				print '</td>';
@@ -1934,7 +1938,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 
 			if (dol_string_nohtmltag($valuetoshow)) {	// If there is a real visible content to show
-				print '<tr class="nooddeven"><td class="titlefield">'.$langs->trans("Password").'</td>';
+				print '<tr class="nooddeven"><td class="titlefieldmiddle">'.$langs->trans("Password").'</td>';
 				print '<td class="wordbreak">';
 				print $valuetoshow;
 				print "</td>";
@@ -2136,7 +2140,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 						print '<tr class="liste_titre"><th class="liste_titre">'.$langs->trans("Groups").'</th>'."\n";
 						print '<th class="liste_titre right">';
 						if ($permissiontoeditgroup) {
-							print $form->select_dolgroups('', 'group', 1, $exclude, 0, '', '', $object->entity, false, 'maxwidth150');
+							print $form->select_dolgroups(0, 'group', 1, $exclude, 0, '', array(), $object->entity, false, 'maxwidth150');
 							print ' &nbsp; ';
 							print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
 							print '<input type="submit" class="button buttongen button-add reposition" value="'.$langs->trans("Add").'" />';
@@ -2427,7 +2431,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				}
 
 				if ($object->socid > 0 && !($object->contact_id > 0)) {	// external user but no link to a contact
-					print img_picto('', 'company').$form->select_company($object->socid, 'socid', '', '&nbsp;', 0, 0, null, 0, 'maxwidth300');
+					print img_picto('', 'company').$form->select_company($object->socid, 'socid', '', '&nbsp;', 0, 0, array(), 0, 'maxwidth300');
 					print img_picto('', 'contact');
 					//print $form->selectcontacts(0, 0, 'contactid', 1, '', '', 1, 'maxwidth300', false, 1);
 					print $form->select_contact(0, 0, 'contactid', 1, '', '', 1, 'minwidth100imp widthcentpercentminusxx maxwidth300', true, 1);
@@ -2435,7 +2439,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 						print ' ('.$langs->trans("DomainUser").')';
 					}
 				} elseif ($object->socid > 0 && $object->contact_id > 0) {	// external user with a link to a contact
-					print img_picto('', 'company').$form->select_company($object->socid, 'socid', '', '&nbsp;', 0, 0, null, 0, 'maxwidth300'); // We keep thirdparty empty, contact is already set
+					print img_picto('', 'company').$form->select_company($object->socid, 'socid', '', '&nbsp;', 0, 0, array(), 0, 'maxwidth300'); // We keep thirdparty empty, contact is already set
 					print img_picto('', 'contact');
 					//print $form->selectcontacts(0, $object->contact_id, 'contactid', 1, '', '', 1, 'maxwidth300', false, 1);
 					print $form->select_contact(0, $object->contact_id, 'contactid', 1, '', '', 1, 'minwidth100imp widthcentpercentminusxx maxwidth300', true, 1);
@@ -2443,7 +2447,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 						print ' ('.$langs->trans("DomainUser").')';
 					}
 				} elseif (!($object->socid > 0) && $object->contact_id > 0) {	// internal user with a link to a contact
-					print img_picto('', 'company').$form->select_company(0, 'socid', '', '&nbsp;', 0, 0, null, 0, 'maxwidth300'); // We keep thirdparty empty, contact is already set
+					print img_picto('', 'company').$form->select_company(0, 'socid', '', '&nbsp;', 0, 0, array(), 0, 'maxwidth300'); // We keep thirdparty empty, contact is already set
 					print img_picto('', 'contact');
 					//print $form->selectcontacts(0, $object->contact_id, 'contactid', 1, '', '', 1, 'maxwidth300', false, 1);
 					print $form->select_contact(0, $object->contact_id, 'contactid', 1, '', '', 1, 'minwidth100imp widthcentpercentminusxx maxwidth300', true, 1);
@@ -2451,7 +2455,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 						print ' ('.$langs->trans("DomainUser").')';
 					}
 				} else {	// $object->socid is not > 0 here
-					print img_picto('', 'company').$form->select_company(0, 'socid', '', '&nbsp;', 0, 0, null, 0, 'maxwidth300'); // We keep thirdparty empty, contact is already set
+					print img_picto('', 'company').$form->select_company(0, 'socid', '', '&nbsp;', 0, 0, array(), 0, 'maxwidth300'); // We keep thirdparty empty, contact is already set
 					print img_picto('', 'contact');
 					//print $form->selectcontacts(0, 0, 'contactid', 1, '', '', 1, 'maxwidth300', false, 1);
 					print $form->select_contact(0, 0, 'contactid', 1, '', '', 1, 'minwidth100imp widthcentpercentminusxx maxwidth300', true, 1);
@@ -2700,7 +2704,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '<tr><td class="titlefieldcreate">'.$langs->trans("ColorUser").'</td>';
 				print '<td>';
 				if ($permissiontoedit) {
-					print $formother->selectColor(GETPOSTISSET('color') ? GETPOST('color', 'alphanohtml') : $object->color, 'color', null, 1, '', 'hideifnotset');
+					print $formother->selectColor(GETPOSTISSET('color') ? GETPOST('color', 'alphanohtml') : $object->color, 'color', null, 1, array(), 'hideifnotset');
 				} else {
 					print $formother->showColor($object->color, '');
 				}
@@ -2720,7 +2724,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '<tr><td>'.$form->editfieldkey('Categories', 'usercats', '', $object, 0).'</td>';
 				print '<td>';
 				print img_picto('', 'category', 'class="pictofixedwidth"');
-				$cate_arbo = $form->select_all_categories(Categorie::TYPE_USER, null, null, null, null, 1);
+				$cate_arbo = $form->select_all_categories(Categorie::TYPE_USER, '', '', 0, 0, 1);
 				$c = new Categorie($db);
 				$cats = $c->containing($object->id, Categorie::TYPE_USER);
 				$arrayselected = array();
@@ -2728,7 +2732,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 					$arrayselected[] = $cat->id;
 				}
 				if ($permissiontoedit) {
-					print $form->multiselectarray('usercats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%');
+					print $form->multiselectarray('usercats', $cate_arbo, $arrayselected, 0, 0, '', 0, '90%');
 				} else {
 					print $form->showCategories($object->id, Categorie::TYPE_USER, 1);
 				}
@@ -2738,7 +2742,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			// Default language
 			if (getDolGlobalInt('MAIN_MULTILANGS')) {
 				print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0, 'string', '', 0, 0, 'id', $langs->trans("WarningNotLangOfInterface", $langs->transnoentitiesnoconv("UserGUISetup"))).'</td><td colspan="3">'."\n";
-				print img_picto('', 'language', 'class="pictofixedwidth"').$formadmin->select_language($object->lang, 'default_lang', 0, null, '1', 0, 0, 'widthcentpercentminusx maxwidth300');
+				print img_picto('', 'language', 'class="pictofixedwidth"').$formadmin->select_language($object->lang, 'default_lang', 0, array(), '1', 0, 0, 'widthcentpercentminusx maxwidth300');
 				print '</td>';
 				print '</tr>';
 			}
@@ -2960,11 +2964,11 @@ if ($action == 'create' || $action == 'adduserldap') {
 			$genallowed = $user->hasRight("user", "user", "read");
 			$delallowed = $user->hasRight("user", "user", "write");
 
-			print $formfile->showdocuments('user', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', 0, '', empty($soc->default_lang) ? '' : $soc->default_lang);
+			print $formfile->showdocuments('user', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', 0, '', !is_object($soc) || empty($soc->default_lang) ? '' : $soc->default_lang);
 			$somethingshown = $formfile->numoffiles;
 
 			// Show links to link elements
-			$linktoelem = $form->showLinkToObjectBlock($object, null, null);
+			$linktoelem = $form->showLinkToObjectBlock($object, array(), array());
 			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 			$MAXEVENT = 10;

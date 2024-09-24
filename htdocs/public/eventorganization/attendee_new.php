@@ -87,7 +87,9 @@ if ($type == 'conf') {
 }
 
 $conference = new ConferenceOrBooth($db);
+$confattendee = new ConferenceOrBoothAttendee($db);
 $project = new Project($db);
+$object = $confattendee;
 
 if ($type == 'conf') {
 	$resultconf = $conference->fetch($id);
@@ -151,6 +153,8 @@ $user->loadDefaultValues();
 if (empty($conf->eventorganization->enabled)) {
 	httponly_accessforbidden('Module Event organization not enabled');
 }
+
+$extrafields->fetch_name_optionals_label($object->table_element); // fetch optionals attributes and labels
 
 
 /**
@@ -237,7 +241,7 @@ if ($reshook < 0) {
 }
 
 // Action called when page is submitted
-if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conference->status == 2  || !empty($project->id) && $project->status == Project::STATUS_VALIDATED)) {
+if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conference->status == 2  || !empty($project->id) && $project->status == Project::STATUS_VALIDATED)) {	// Test on permission not required. Check are done on securitykey and mitigation
 	$error = 0;
 
 	$urlback = '';
@@ -265,8 +269,6 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 
 	if (!$error) {
 		// Check if attendee already exists (by email and for this event)
-		$confattendee = new ConferenceOrBoothAttendee($db);
-
 		$filter = array();
 
 		if ($type == 'global') {
@@ -293,6 +295,15 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			$confattendee->firstname = $firstname;
 			$confattendee->lastname = $lastname;
 
+			// Fill array 'array_options' with data from add form
+			$extrafields->fetch_name_optionals_label($confattendee->table_element);
+			$ret = $extrafields->setOptionalsFromPost(null, $confattendee);
+			if ($ret < 0) {
+				$error++;
+				$errmsg .= $confattendee->error;
+			}
+
+			// Count recent already posted event
 			$confattendee->ip = getUserRemoteIP();
 			$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 200);
 			$now = dol_now();
@@ -489,14 +500,15 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 				$tmpcode = $modCodeClient->getNextValue($thirdparty, 0);
 			}
 			$thirdparty->code_client = $tmpcode;
+
 			$readythirdparty = $thirdparty->create($user);
 			if ($readythirdparty < 0) {
 				$error++;
 				$errmsg .= $thirdparty->error;
 				$errors = array_merge($errors, $thirdparty->errors);
 			} else {
-				$thirdparty->country_code = getCountry($thirdparty->country_id, 2, $db, $langs);
-				$thirdparty->country      = getCountry($thirdparty->country_code, 0, $db, $langs);
+				$thirdparty->country_code = getCountry($thirdparty->country_id, '2', $db, $langs);
+				$thirdparty->country      = getCountry($thirdparty->country_code, '', $db, $langs);
 
 				// Update attendee country to match country of thirdparty
 				$confattendee->fk_soc     = $thirdparty->id;
@@ -697,7 +709,7 @@ print '<div id="divsubscribe">';
 
 // Sub banner
 print '<div class="center subscriptionformbanner subbanner justify margintoponly paddingtop marginbottomonly padingbottom">';
-print load_fiche_titre($langs->trans("NewRegistration"), '', '', 0, 0, 'center');
+print load_fiche_titre($langs->trans("NewRegistration"), '', '', 0, '', 'center');
 // Welcome message
 print '<span class="opacitymedium">'.$langs->trans("EvntOrgWelcomeMessage").'</span>';
 print '<br>';
@@ -858,20 +870,20 @@ if ((!empty($conference->id) && $conference->status == ConferenceOrBooth::STATUS
 		print img_picto('', 'country', 'class="pictofixedwidth"');
 		$country_id = GETPOST('country_id');
 		if (!$country_id && getDolGlobalString('MEMBER_NEWFORM_FORCECOUNTRYCODE')) {
-			$country_id = getCountry($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE, 2, $db, $langs);
+			$country_id = getCountry($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE, '2', $db, $langs);
 		}
 		if (!$country_id && !empty($conf->geoipmaxmind->enabled)) {
 			$country_code = dol_user_country();
 			//print $country_code;
 			if ($country_code) {
-				$new_country_id = getCountry($country_code, 3, $db, $langs);
+				$new_country_id = getCountry($country_code, '3', $db, $langs);
 				//print 'xxx'.$country_code.' - '.$new_country_id;
 				if ($new_country_id) {
 					$country_id = $new_country_id;
 				}
 			}
 		}
-		$country_code = getCountry($country_id, 2, $db, $langs);
+		$country_code = getCountry($country_id, '2', $db, $langs);
 		print $form->select_country($country_id, 'country_id', '', 0, 'minwidth200 widthcentpercentminusx maxwidth300');
 		print '</td></tr>';
 		// State
@@ -892,13 +904,19 @@ if ((!empty($conference->id) && $conference->status == ConferenceOrBooth::STATUS
 			print '</td></tr>';
 		}
 
+		// Other attributes
+		$parameters['tpl_context'] = 'public';	// define template context to public
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
+
 		$notetoshow = $note_public;
 		print '<tr><td>' . $langs->trans('Note') . '</td><td>';
 		if (getDolGlobalString('EVENTORGANIZATION_DEFAULT_NOTE_ON_REGISTRATION')) {
-			$notetoshow = str_replace('\n', "\n", $conf->global->EVENTORGANIZATION_DEFAULT_NOTE_ON_REGISTRATION);
+			$notetoshow = str_replace('\n', "\n", getDolGlobalString('EVENTORGANIZATION_DEFAULT_NOTE_ON_REGISTRATION'));
 		}
 		print '<textarea name="note_public" class="centpercent" rows="'.ROWS_9.'">'.dol_escape_htmltag($notetoshow, 0, 1).'</textarea>';
 		print '</td></tr>';
+
+
 
 		print "</table>\n";
 

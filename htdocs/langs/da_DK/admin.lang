@@ -514,15 +514,17 @@ ModuleCompanyCodeCustomerDigitaria=%s efterfulgt af det afkortede kundenavn med 
 ModuleCompanyCodeSupplierDigitaria=%s efterfulgt af det afkortede leverandørnavn med antallet af tegn: %s for leverandørens regnskabskode.
 Use3StepsApproval=Indkøbsordrer skal som standard oprettes og godkendes af 2 forskellige brugere (et trin/bruger til at oprette og et trin/bruger til at godkende. Bemærk, at hvis bruger har både tilladelse til at oprette og godkende, vil et trin/bruger være nok) . Du kan med denne mulighed bede om at indføre et tredje trin/brugergodkendelse, hvis beløbet er højere end en dedikeret værdi (så 3 trin vil være nødvendige: 1=validering, 2=første godkendelse og 3=anden godkendelse, hvis beløbet er nok).<br>Indstil denne til tom, hvis én godkendelse (2 trin) er nok, indstil den til en meget lav værdi (0,1), hvis en anden godkendelse (3 trin) altid er påkrævet.
 UseDoubleApproval=Brug en 3-trins godkendelse, når beløbet (uden skat) er højere end ...
-WarningPHPMail=ADVARSEL: Opsætningen til at sende e-mails fra applikationen bruger den generelle standardopsætning. Dette valg kræver ingen teknisk viden for at fuldføre opsætningen.<br>Det er dog ofte bedre at konfigurere udgående e-mails til at bruge e-mail-serveren hos din e-mail-tjenesteudbyder i stedet for standardopsætningen for adskillige grunde:
+WarningPHPMail=NOTICE: The setup to send emails from the application is using the default generic setup (called "%s"). This choice needs no technical knowledge and no particular setup.<br>However, it is often better to setup outgoing emails to use the other method (called "%s") to use the email server of your Email Service Provider, instead of the default setup for several reasons:
 WarningPHPMailA=- Brug af e-mail-tjenesteudbyderens server øger troværdigheden af din e-mail, så det øger leveringsevnen uden at blive markeret som SPAM
-WarningPHPMailB=- Nogle e-mail-tjenesteudbydere (som Yahoo) tillader ikke, at du sender en e-mail fra en anden server end deres egen server. Din nuværende opsætning bruger applikationens server til at sende e-mail og ikke serveren på din e-mail-udbyder, så nogle modtagere (den der er kompatibel med den restriktive DMARC protokol), vil spørge din e-mail-udbyder, om de kan acceptere din e-mail og nogle e-mail-udbydere (som Yahoo) kan svare "nej", fordi serveren ikke er deres, så få af dine sendte e-mails bliver muligvis ikke accepteret til levering (vær også forsigtig med din e-mailudbyders sendekvote).
+WarningPHPMailB=- If the domain of your email (the part mymaildomain.com into myname@mymaildomain.com) is protected by a SPF + a DMARC record, your email may be flagged as SPAM because your DMARC rule defined into DNS zone of the domain of the sender (mymaildomain.com) does not allow the sending as a generic sender. In such a case, you must disable the DMARC for the domain (or set it to p=none like done by @gmail.com) or, better, if you have the technical knowledge, use the other method to send emails using the SMTP server of your own email provider.
 WarningPHPMailC=- Det er også interessant at bruge SMTP-serveren fra din egen e-mail-tjenesteudbyder til at sende e-mails, så alle e-mails, der sendes fra applikationen, vil også blive gemt i din "Sendte" mappe i din postkasse.
 WarningPHPMailD=Det anbefales derfor at ændre afsendelsesmetoden for e-mails til værdien "SMTP".
 WarningPHPMailDbis=Hvis du virkelig vil beholde standardmetoden "PHP" til at sende e-mails, skal du bare ignorere denne advarsel eller fjerne den ved at %sklikke her%s.
 WarningPHPMail2=Hvis din e-mail SMTP-udbyder har brug for at begrænse e-mail klienten til nogle IP-adresser (meget sjældent), er dette IP-adressen på mailbrugeragenten (MUA) til din ERP CRM-applikation: <strong>%s</strong>.
-WarningPHPMailSPF=Hvis domænenavnet i din afsender e-mail adresse er beskyttet af en SPF-record (spørg din domænenavnsregistrator), skal du tilføje følgende IP-adresser i SPF-recorden for dit domænes DNS: <strong>%s</strong>.
-ActualMailSPFRecordFound=Faktisk SPF-post fundet (for e-mail %s): %s
+WarningPHPMailSPF=If the domain name in your sender email address is protected by a SPF record (ask your domain name registar), you must add the following IPs or entry in the SPF record of the DNS of your domain: <strong>%s</strong>.
+WarningPHPMailSPFDMARC=If the domain name in your sender email address is protected by a DMARC record different than p=none (ask your domain name registar), you must remove your DMARC record, or set it to p=none like do @gmail.com) or use sending another method.
+SPFAndDMARCInformation=SPF- og DMARC-DNS-post for hoved-e-mailadresser
+ActualMailDNSRecordFound=Faktisk %s post fundet (til e-mail %s): %s
 ClickToShowDescription=Klik for at vise beskrivelse
 DependsOn=Dette modul har brug for modulet/modulerne
 RequiredBy=Dette modul er påkrævet af modul(erne)
@@ -867,7 +869,7 @@ Permission255=Rediger andre brugeres adgangskode
 Permission256=Slet eller deaktiver andre brugere
 Permission262=Udvid adgangen til alle tredjeparter OG deres objekter (ikke kun tredjeparter, som brugeren er knyttet til som salgsrepræsentant).
 Permission262b=Ikke effektiv for eksterne brugere (altid begrænset til sig selv for forslag, ordrer, fakturaer, kontrakter osv.).
-Permission262c=Ikke effektiv for projekter (kun regler om projekttilladelser, synlighed og tildelingsforhold).
+Permission262c=Ikke effektiv for projekter (kun regler om projekttilladelser, synlighed og brugertildeling har betydning).
 Permission263=Udvid adgangen til alle tredjeparter UDEN deres objekter (ikke kun tredjeparter, som brugeren er salgsrepræsentant for).<br>Ikke effektiv for eksterne brugere (altid begrænset til sig selv for forslag, ordrer, fakturaer, kontrakter osv.).<br>Ikke effektiv for projekter (kun regler om projekttilladelser, synlighed og tildelingsspørgsmål).
 Permission271=Læs CA
 Permission272=Læs fakturaer
@@ -944,7 +946,7 @@ Permission776=Betal udgiftsrapporter
 Permission777=Læs alle udgiftsrapporter (selv dem fra brugere, der ikke er underordnede)
 Permission778=Opret/rediger udgiftsrapporter for alle
 Permission779=Eksporter udgiftsrapporter
-Permission1001=Læs beholdninger
+Permission1001=Læs lagre og lagre
 Permission1002=Oprette/ændre varehuse
 Permission1003=Slet varehuse
 Permission1004=Læs lagerbevægelser
@@ -2218,7 +2220,7 @@ CreateCandidature=Opret jobansøgning
 FormatZip=ZIP
 MainMenuCode=Menuindgangskode (hovedmenu)
 ECMAutoTree=Vis automatisk ECM-træ
-OperationParamDesc=Definer de regler, der skal bruges til at udtrække nogle data, eller sæt værdier, der skal bruges til drift. <br> <br> Eksempel på at udtrække et firmanavn fra e-mail-emne til en midlertidig variabel: <br> tmp_var=EXTRACT:SUBJECT:Besked fra firma ([^\n]*) <br> <br> Eksempler til at indstille egenskaberne for et objekt, der skal oprettes: <br> objproperty1=SET:en hårdkodet værdi <br> objproperty2=SET:__tmp_var__<br>objproperty2=objproperty2=varcc__fjbda3 SET:__f3mprty2=SET:__01mprty2=SET:__01mp3mp3 SETIFEMPTY: en værdi (værdi er kun angivet, hvis egenskaben ikke allerede er defineret) <br> objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)  options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*) <br> options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br> b0342bACTertyD5 firmanavn er\\s([^\\s]*)  <br><br> Brug en ny linje til at udtrække eller indstille flere egenskaber.
+OperationParamDesc=Definer de regler, der skal bruges til at udtrække nogle data, eller indstil værdier, der skal bruges til drift.<br><br>Eksempel på at udtrække en streng fra e-mail header, emne eller brødtekst i en midlertidig variabel:<br>tmp_var1=EXTRACT:HEADER:Mit regex ([^\n]*)<br>tmp_var2=EXTRACT:SUBJECT:Min refeks ([^\n]*)<br>tmp_var3=EXTRACT:BODY:Mit regex ([^\n]*)<br><br>Eksempler på at indstille egenskaberne for et objekt, der skal oprettes:<br>objproperty1=SET:en hårdkodet værdi<br>objproperty2=SET:__tmp_var__<br>objproperty3=aSETIFETY (værdi) indstilles kun, hvis egenskaben ikke allerede er defineret)<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:Mit firmanavn er\\ s([^\\s]*)<br><br>Brug en ny linje til at udtrække eller indstille flere egenskaber.
 OpeningHours=Åbningstider
 OpeningHoursDesc=Indtast her din virksomheds almindelige åbningstider.
 ResourceSetup=Opsætning af ressourcemodul
@@ -2264,7 +2266,7 @@ LargerThan=Større end
 IfTrackingIDFoundEventWillBeLinked=Bemærk, at hvis et sporings-id for et objekt findes i e-mail, eller hvis e-mailen er et svar på en e-mail, der allerede er indsamlet og knyttet til et objekt, vil den oprettede hændelse automatisk blive knyttet til det kendte relaterede objekt.
 WithGMailYouCanCreateADedicatedPassword=Med en Gmail-konto, hvis du har aktiveret 2-trins-validering, anbefales det at oprette en dedikeret anden adgangskode til applikationen i stedet for at bruge din egen kontoadgangskode fra https://myaccount.google.com/.
 EmailCollectorTargetDir=Det kan være en ønsket adfærd at flytte e-mailen til en anden tag/mappe, når den blev behandlet. Indstil blot navnet på mappen her for at bruge denne funktion (brug IKKE specialtegn i navnet). Bemærk, at du også skal bruge en læse/skrive login-konto.
-EmailCollectorLoadThirdPartyHelp=Du kan bruge denne handling til at bruge e-mail-indholdet til at finde og indlæse en eksisterende tredjepart i din database (søgning vil blive udført på den definerede egenskab blandt 'id', 'navn', 'navn_alias', 'e-mail'). Den fundne (eller oprettede) tredjepart vil blive brugt til følgende handlinger, der har brug for det.<br>For eksempel, hvis du vil oprette en tredjepart med et navn udtrukket fra en streng ' Navn: navn at finde' til stede i brødteksten, brug afsenderens e-mail som e-mail, du kan indstille parameterfeltet sådan her:<br>'email=HEADER:^Fra:(. *);name=EXTRACT:BODY:Name:\\s([^\\s]*);client=SET:2;'<br>
+EmailCollectorLoadThirdPartyHelp=Du kan bruge denne handling til at bruge e-mail-indholdet til at finde og indlæse en eksisterende tredjepart i din database (søgning vil blive udført på den definerede egenskab blandt 'id', 'navn', 'navn_alias', 'e-mail'). Den fundne (eller oprettede) tredjepart vil blive brugt til følgende handlinger, der har brug for det.<br>For eksempel, hvis du vil oprette en tredjepart med et navn udtrukket fra en streng ' Navn: navn at finde' til stede i brødteksten, brug afsenderens e-mail som e-mail, du kan indstille parameterfeltet sådan her:<br>'email=EXTRACT:HEADER:^Fra: (.*);name=EXTRACT:BODY:Name:\\s([^\\s]*);client=SET:2;'<br>
 FilterSearchImapHelp=Advarsel: mange e-mail-servere (som Gmail) udfører fulde ordsøgninger, når de søger på en streng og vil ikke returnere et resultat, hvis strengen kun findes delvist i et ord. Også af denne grund vil brug af specialtegn i et søgekriterie blive ignoreret, hvis de ikke er en del af eksisterende ord. <br> For at foretage en ekskluderingssøgning på et ord (retur e-mail, hvis ordet ikke findes), kan du bruge ! tegn før ordet (fungerer muligvis ikke på nogle mailservere).
 EndPointFor=Slutpunkt for %s: %s
 DeleteEmailCollector=Slet e-mail-samler

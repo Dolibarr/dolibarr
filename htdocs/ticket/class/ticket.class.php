@@ -571,8 +571,8 @@ class Ticket extends CommonObject
 			$sql .= " ".(empty($this->category_code) || $this->category_code == '-1' ? 'NULL' : "'".$this->db->escape($this->category_code)."'").",";
 			$sql .= " ".(!isset($this->severity_code) ? 'NULL' : "'".$this->db->escape($this->severity_code)."'").",";
 			$sql .= " ".(!isDolTms($this->datec) ? 'NULL' : "'".$this->db->idate($this->datec)."'").",";
-			$sql .= " ".(!isset($this->date_read) || dol_strlen($this->date_read) == 0 ? 'NULL' : "'".$this->db->idate($this->date_read)."'").",";
-			$sql .= " ".(!isset($this->date_close) || dol_strlen($this->date_close) == 0 ? 'NULL' : "'".$this->db->idate($this->date_close)."'");
+			$sql .= " ".(!isset($this->date_read) || dol_strlen((string) $this->date_read) == 0 ? 'NULL' : "'".$this->db->idate($this->date_read)."'").",";
+			$sql .= " ".(!isset($this->date_close) || dol_strlen((string) $this->date_close) == 0 ? 'NULL' : "'".$this->db->idate($this->date_close)."'");
 			$sql .= ", ".((int) $this->entity);
 			$sql .= ", ".(!isset($this->notify_tiers_at_create) ? 1 : ((int) $this->notify_tiers_at_create));
 			$sql .= ", '".$this->db->escape($this->model_pdf)."'";
@@ -1108,10 +1108,10 @@ class Ticket extends CommonObject
 		$sql .= " category_code=".(isset($this->category_code) ? "'".$this->db->escape($this->category_code)."'" : "null").",";
 		$sql .= " severity_code=".(isset($this->severity_code) ? "'".$this->db->escape($this->severity_code)."'" : "null").",";
 		$sql .= " datec=".(isDolTms($this->datec) ? "'".$this->db->idate($this->datec)."'" : 'null').",";
-		$sql .= " date_read=".(dol_strlen($this->date_read) != 0 ? "'".$this->db->idate($this->date_read)."'" : 'null').",";
-		$sql .= " date_last_msg_sent=".(dol_strlen($this->date_last_msg_sent) != 0 ? "'".$this->db->idate($this->date_last_msg_sent)."'" : 'null').",";
+		$sql .= " date_read=".(dol_strlen((string) $this->date_read) != 0 ? "'".$this->db->idate($this->date_read)."'" : 'null').",";
+		$sql .= " date_last_msg_sent=".(dol_strlen((string) $this->date_last_msg_sent) != 0 ? "'".$this->db->idate($this->date_last_msg_sent)."'" : 'null').",";
 		$sql .= " model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
-		$sql .= " date_close=".(dol_strlen($this->date_close) != 0 ? "'".$this->db->idate($this->date_close)."'" : 'null');
+		$sql .= " date_close=".(dol_strlen((string) $this->date_close) != 0 ? "'".$this->db->idate($this->date_close)."'" : 'null');
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -1570,10 +1570,9 @@ class Ticket extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 *
-	 * @param array<string> $params ex option, infologin
+	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
-	 * @return array
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -1859,7 +1858,10 @@ class Ticket extends CommonObject
 		$actioncomm->fk_element = $this->id;
 		$actioncomm->fk_project = $this->fk_project;
 
-		// add contact id from author email on public interface
+		// Add first contact id found in database from submitter email entered into public interface
+		// Feature disabled: This has a security trouble. The public interface is a no login interface, so being able to show the contact info from an
+		// email decided by the submiter allows anybody to get information on any contact (customer or supplier) in Dolibarr database.
+		// He can even check if contact exists by trying any email if this feature is enabled.
 		if ($public_area && !empty($this->origin_email) && getDolGlobalString('TICKET_ASSIGN_CONTACT_TO_MESSAGE')) {
 			$contacts = $this->searchContactByEmail($this->origin_email);
 			if (!empty($contacts)) {
@@ -2567,7 +2569,7 @@ class Ticket extends CommonObject
 			}
 
 			$moreinfo = array('description' => 'File saved by copyFilesForTicket', 'src_object_type' => $this->element, 'src_object_id' => $this->id);
-			$res = dol_move($filepath[$i], $destfile, 0, 1, 0, 1, $moreinfo);
+			$res = dol_move($filepath[$i], $destfile, '0', 1, 0, 1, $moreinfo);
 			if (!$res) {
 				// Move has failed
 				$this->error = "Failed to move file ".dirbasename($filepath[$i])." into ".dirbasename($destfile);

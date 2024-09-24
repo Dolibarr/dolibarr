@@ -1,5 +1,5 @@
 IntraCommReport=Déclaration d'échanges intracommunautaires
-IntraCommReports=Intracomm reports
+IntraCommReports=Rapports intracomm
 
 Module68000Name = Déclaration d'échanges intracommunautaires
 Module68000Desc = Gestion des déclarations d'échanges intracommunautaires (y compris l'export aux formats DEB/DES des douanes françaises)
@@ -35,4 +35,4 @@ IntracommReportTypeDeclaration=Type de Déclaration
 IntracommReportDownload=Télécharger le fichier XML
 # Invoice
 IntracommReportTransportMode=Mode de transport
-DeleteIntraCommReport=Delete IntraComm report
+DeleteIntraCommReport=Supprimer rapport IntraComm

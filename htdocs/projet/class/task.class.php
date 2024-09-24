@@ -805,7 +805,7 @@ class Task extends CommonObjectLine
 				$projectstatic = new Project($this->db);
 				$projectstatic->fetch($this->fk_project);
 
-				$dir = $conf->project->dir_output."/".dol_sanitizeFileName($projectstatic->ref).'/'.dol_sanitizeFileName($this->id);
+				$dir = $conf->project->dir_output."/".dol_sanitizeFileName($projectstatic->ref).'/'.dol_sanitizeFileName((string) $this->id);
 				dol_syslog(get_class($this)."::delete dir=".$dir, LOG_DEBUG);
 				if (file_exists($dir)) {
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -896,10 +896,9 @@ class Task extends CommonObjectLine
 
 	/**
 	 * getTooltipContentArray
-	 *
-	 * @param array $params ex option, infologin
+	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
-	 * @return array
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -2295,7 +2294,7 @@ class Task extends CommonObjectLine
 				}
 
 				$clone_task_dir = $conf->project->dir_output."/".dol_sanitizeFileName($clone_project_ref)."/".dol_sanitizeFileName($clone_task_ref);
-				$ori_task_dir = $conf->project->dir_output."/".dol_sanitizeFileName($ori_project_ref)."/".dol_sanitizeFileName($fromid);
+				$ori_task_dir = $conf->project->dir_output."/".dol_sanitizeFileName($ori_project_ref)."/".dol_sanitizeFileName((string) $fromid);
 
 				$filearray = dol_dir_list($ori_task_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', '', SORT_ASC, 1);
 				foreach ($filearray as $key => $file) {
@@ -2306,7 +2305,7 @@ class Task extends CommonObjectLine
 						}
 					}
 
-					$rescopy = dol_copy($ori_task_dir.'/'.$file['name'], $clone_task_dir.'/'.$file['name'], 0, 1);
+					$rescopy = dol_copy($ori_task_dir.'/'.$file['name'], $clone_task_dir.'/'.$file['name'], '0', 1);
 					if (is_numeric($rescopy) && $rescopy < 0) {
 						$this->error .= $langs->trans("ErrorFailToCopyFile", $ori_task_dir.'/'.$file['name'], $clone_task_dir.'/'.$file['name']);
 						$error++;

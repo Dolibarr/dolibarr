@@ -336,7 +336,7 @@ if ($action == 'create') {
 		// Author
 		print "<tr><td>".$langs->trans("Author")."</td><td>".$user->getFullName($langs)."</td></tr>";
 
-		if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS')) {
+		if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS') || getDolGlobalString('FICHINTER_DISABLE_DETAILS') == '2') {
 			// Duration
 			print '<tr><td>'.$langs->trans("TotalDuration").'</td>';
 			print '<td colspan="3">'.convertSecondToTime($object->duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
@@ -474,7 +474,7 @@ if ($action == 'create') {
 	}
 } elseif ($action == 'selsocforcreatefrommodel') {
 	print load_fiche_titre($langs->trans("CreateRepeatableIntervention"), '', 'intervention');
-	print dol_get_fiche_head('');
+	print dol_get_fiche_head([]);
 
 	print '<form name="fichinter" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 	print '<table class="border centpercent">';
@@ -557,7 +557,7 @@ if ($action == 'create') {
 
 			print "<tr><td>".$langs->trans("Author").'</td><td colspan="3">'.$author->getFullName($langs)."</td></tr>";
 
-			if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS')) {
+			if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS') || getDolGlobalString('FICHINTER_DISABLE_DETAILS') == '2') {
 				// Duration
 				print '<tr><td class="titlefield">'.$langs->trans("TotalDuration").'</td>';
 				print '<td colspan="3">';
@@ -733,13 +733,16 @@ if ($action == 'create') {
 				if (isset($object->lines[$i]->product_type)) {
 					$type = $object->lines[$i]->product_type;
 				} // else { $object->lines[$i]->fk_product_type; }
-				// Try to enhance type detection using date_start and date_end for free lines when type
-				// was not saved.
-				if (!empty($objp->date_start)) {
-					$type = 1;
-				}
-				if (!empty($objp->date_end)) {
-					$type = 1;
+
+				if (is_object($objp)) {
+					// Try to enhance type detection using date_start and date_end for free lines when type
+					// was not saved.
+					if (!empty($objp->date_start)) {
+						$type = 1;
+					}
+					if (!empty($objp->date_end)) {
+						$type = 1;
+					}
 				}
 
 				// Show line

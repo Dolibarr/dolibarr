@@ -23,7 +23,7 @@
  * Copyright (C) 2018       Josep Lluis Amador      <joseplluis@lliuretic.cat>
  * Copyright (C) 2023		Joachim Kueter			<git-jk@bloxera.com>
  * Copyright (C) 2023		Nick Fragoulis
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -891,27 +891,23 @@ class Form
                     jQuery(".' . $cssclass . '").click(function() {
                         initCheckForSelect(1, "' . $name . '", "' . $cssclass . '");
                     });
-                        jQuery(".' . $name . 'select").change(function() {
-        			var massaction = $( this ).val();
-        			var urlform = $( this ).closest("form").attr("action").replace("#show_files","");
-        			if (massaction == "builddoc")
-                    {
-                        urlform = urlform + "#show_files";
-    	            }
-        			$( this ).closest("form").attr("action", urlform);
-                    console.log("we select a mass action name=' . $name . ' massaction="+massaction+" - "+urlform);
-        	        /* Warning: if you set submit button to disabled, post using Enter will no more work if there is no other button */
-        			if ($(this).val() != \'0\')
-    	  			{
+                    jQuery(".' . $name . 'select").change(function() {
+        				var massaction = $( this ).val();
+        				var urlform = $( this ).closest("form").attr("action").replace("#show_files","");
+        				if (massaction == "builddoc") {
+                        	urlform = urlform + "#show_files";
+    	            	}
+        				$( this ).closest("form").attr("action", urlform);
+                    	console.log("we select a mass action name=' . $name . ' massaction="+massaction+" - "+urlform);
+        	        	/* Warning: if you set submit button to disabled, post using Enter will no more work if there is no other button */
+        				if ($(this).val() != \'0\') {
                                         jQuery(".' . $name . 'confirmed").prop(\'disabled\', false);
 										jQuery(".' . $name . 'other").hide();	/* To disable if another div was open */
                                         jQuery(".' . $name . '"+massaction).show();
-    	  			}
-    	  			else
-    	  			{
+    	  				} else {
                                         jQuery(".' . $name . 'confirmed").prop(\'disabled\', true);
 										jQuery(".' . $name . 'other").hide();	/* To disable any div open */
-    	  			}
+    	  				}
     	        });
         	});
     		</script>
@@ -1318,8 +1314,8 @@ class Form
 	 * @param string 		$htmlname 				Name of field in form
 	 * @param string 		$filter 				Optional filters criteras. WARNING: To avoid SQL injection, only few chars [.a-z0-9 =<>()] are allowed here. Example: ((s.client:IN:1,3) AND (s.status:=:1)). Do not use a filter coming from input of users.
 	 * @param string|int<1,1> 	$showempty 			Add an empty field (Can be '1' or text key to use on empty line like 'SelectThirdParty')
-	 * @param int 			$showtype 				Show third party type in combolist (customer, prospect or supplier)
-	 * @param int 			$forcecombo 			Force to load all values and output a standard combobox (with no beautification)
+	 * @param int<0,1>		$showtype 				Show third party type in combolist (customer, prospect or supplier)
+	 * @param int<0,1>		$forcecombo 			Force to load all values and output a standard combobox (with no beautification)
 	 * @param array<array{method:string,url:string,htmlname:string,params:array<string,string>}> 	$events 	Ajax event options to run on change. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
 	 * @param int 			$limit 					Maximum number of elements
 	 * @param string 		$morecss 				Add more css styles to the SELECT component
@@ -2261,9 +2257,27 @@ class Form
 						$textforempty = $show_empty;
 					}
 					$out .= '<option class="optiongrey" value="' . ($show_empty < 0 ? $show_empty : -1) . '"' . ((empty($selected) || in_array(-1, $selected)) ? ' selected' : '') . '>' . $textforempty . '</option>' . "\n";
+
+					$outarray[($show_empty < 0 ? $show_empty : -1)] = $textforempty;
+					$outarray2[($show_empty < 0 ? $show_empty : -1)] = array(
+						'id' => ($show_empty < 0 ? $show_empty : -1),
+						'label' => $textforempty,
+						'labelhtml' => $textforempty,
+						'color' => '',
+						'picto' => ''
+					);
 				}
 				if ($show_every) {
 					$out .= '<option value="-2"' . ((in_array(-2, $selected)) ? ' selected' : '') . '>-- ' . $langs->trans("Everybody") . ' --</option>' . "\n";
+
+					$outarray[-2] = '-- ' . $langs->trans("Everybody") . ' --';
+					$outarray2[-2] = array(
+						'id' => -2,
+						'label' => '-- ' . $langs->trans("Everybody") . ' --',
+						'labelhtml' => '-- ' . $langs->trans("Everybody") . ' --',
+						'color' => '',
+						'picto' => ''
+					);
 				}
 
 				$userstatic = new User($this->db);
@@ -2667,10 +2681,10 @@ class Form
 			}
 			// mode=1 means customers products
 			$urloption = ($socid > 0 ? 'socid=' . $socid . '&' : '') . 'htmlname=' . $htmlname . '&outjson=1&price_level=' . $price_level . '&type=' . $filtertype . '&mode=1&status=' . $status . '&status_purchase=' . $status_purchase . '&finished=' . $finished . '&hidepriceinlabel=' . $hidepriceinlabel . '&warehousestatus=' . $warehouseStatus;
-			if ((int) $warehouseId>0) {
+			if ((int) $warehouseId > 0) {
 				$urloption .= '&warehouseid=' . (int) $warehouseId;
 			}
-			$out .= ajax_autocompleter((string) $selected, $htmlname, DOL_URL_ROOT . '/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 1, $ajaxoptions);
+			$out .= ajax_autocompleter((string) $selected, $htmlname, DOL_URL_ROOT . '/product/ajax/products.php', $urloption, getDolGlobalInt('PRODUIT_USE_SEARCH_TO_SELECT'), getDolGlobalInt('PRODUCT_SEARCH_AUTO_SELECT_IF_ONLY_ONE', 1), $ajaxoptions);
 
 			if (isModEnabled('variants') && is_array($selected_combinations)) {
 				// Code to automatically insert with javascript the select of attributes under the select of product
@@ -3367,7 +3381,7 @@ class Form
 		}
 		$labeltoshow .= ' - ' . dol_trunc($label, $maxlengtharticle);
 		if ($outorigin && getDolGlobalString('PRODUCT_SHOW_ORIGIN_IN_COMBO')) {
-			$labeltoshow .= ' (' . getCountry($outorigin, 1) . ')';
+			$labeltoshow .= ' (' . getCountry($outorigin, '1') . ')';
 		}
 
 		// Set $labltoshowhtml
@@ -3384,7 +3398,7 @@ class Form
 		}
 		$labeltoshowhtml .= ' - ' . dol_trunc($label, $maxlengtharticle);
 		if ($outorigin && getDolGlobalString('PRODUCT_SHOW_ORIGIN_IN_COMBO')) {
-			$labeltoshowhtml .= ' (' . getCountry($outorigin, 1) . ')';
+			$labeltoshowhtml .= ' (' . getCountry($outorigin, '1') . ')';
 		}
 
 		// Stock
@@ -3698,9 +3712,7 @@ class Form
 
 		$sql = "SELECT p.rowid, p.ref, p.label, p.price, p.duration, p.fk_product_type, p.stock, p.tva_tx as tva_tx_sale, p.default_vat_code as default_vat_code_sale,";
 		$sql .= " pfp.ref_fourn, pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.quantity, pfp.remise_percent, pfp.remise, pfp.unitprice, pfp.barcode";
-		if (isModEnabled('multicurrency')) {
-			$sql .= ", pfp.multicurrency_code, pfp.multicurrency_unitprice";
-		}
+		$sql .= ", pfp.multicurrency_code, pfp.multicurrency_unitprice";
 		$sql .= ", pfp.fk_supplier_price_expression, pfp.fk_product, pfp.tva_tx, pfp.default_vat_code, pfp.fk_soc, s.nom as name";
 		$sql .= ", pfp.supplier_reputation";
 		// if we use supplier description of the products
@@ -4053,7 +4065,8 @@ class Form
 					'optstart' => &$optstart,
 					'optlabel' => &$optlabel,
 					'outvallabel' => &$outvallabel,
-					'outarrayentry' => &$outarrayentry
+					'outarrayentry' => &$outarrayentry,
+					'fk_soc' => $socid
 				);
 				$reshook = $hookmanager->executeHooks('selectProduitsFournisseurListOption', $parameters, $this);
 
@@ -6999,7 +7012,7 @@ class Form
 	 * @param int<0,1> 				$disabled 		Disable input fields
 	 * @param int|string			$fullday 		When a checkbox with id #fullday is checked, hours are set with 00:00 (if value if 'fulldaystart') or 23:59 (if value is 'fulldayend')
 	 * @param string 				$addplusone 	Add a link "+1 hour". Value must be name of another selectDate field.
-	 * @param int|string|array      $adddateof 		Add a link "Date of ..." using the following date. Must be array(array('adddateof'=>..., 'labeladddateof'=>...))
+	 * @param int|string|array      $adddateof 		Add a link "Date of ..." using the following date. Must be array(array('adddateof' => ..., 'labeladddateof' => ...))
 	 * @param string 				$openinghours 	Specify hour start and hour end for the select ex 8,20
 	 * @param int 					$stepminutes 	Specify step for minutes between 1 and 30
 	 * @param string 				$labeladddateof Label to use for the $adddateof parameter. Deprecated. Used only when $adddateof is not an array.
@@ -7801,18 +7814,18 @@ class Form
 	/**
 	 *  Return list of projects in Ajax if Ajax activated or go to selectTicketsList
 	 *
-	 * @param 	string 	$selected 				Preselected tickets
-	 * @param 	string 	$htmlname 				Name of HTML select field (must be unique in page).
-	 * @param 	string 	$filtertype				To add a filter
-	 * @param 	int 	$limit 					Limit on number of returned lines
-	 * @param 	int 	$status 				Ticket status
-	 * @param 	string 	$selected_input_value 	Value of preselected input text (for use with ajax)
+	 * @param 	string 		$selected 				Preselected tickets
+	 * @param 	string 		$htmlname 				Name of HTML select field (must be unique in page).
+	 * @param 	string 		$filtertype				To add a filter
+	 * @param 	int 		$limit 					Limit on number of returned lines
+	 * @param 	int 		$status 				Not used
+	 * @param 	string 		$selected_input_value 	Value of preselected input text (for use with ajax)
 	 * @param 	int<0,3>	$hidelabel 				Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
-	 * @param 	array<string,string|string[]>	$ajaxoptions 			Options for ajax_autocompleter
-	 * @param 	int 	$socid 					Thirdparty Id (to get also price dedicated to this customer)
-	 * @param 	string|int<0,1>	$showempty 		'' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
+	 * @param 	array<string,string|string[]>		$ajaxoptions 			Options for ajax_autocompleter
+	 * @param 	int 		$socid 					Thirdparty Id (to get also price dedicated to this customer)
+	 * @param 	string|int<0,1>	$showempty 			'' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
 	 * @param 	int<0,1> 	$forcecombo 			Force to use combo box
-	 * @param 	string 	$morecss 				Add more css on select
+	 * @param 	string 		$morecss 				Add more css on select
 	 * @param 	array<string,string> $selected_combinations 	Selected combinations. Format: array([attrid] => attrval, [...])
 	 * @param 	int<0,1>	$nooutput 				No print, return the output into a string
 	 * @return 	string
@@ -7867,20 +7880,20 @@ class Form
 	}
 
 	/**
-	 *    Return list of projects.
+	 *  Return list of projects.
 	 *  Called by selectProjects.
 	 *
-	 * @param string $selected Preselected project
-	 * @param string $htmlname Name of select html
-	 * @param string $filtertype Filter on project type
-	 * @param int $limit Limit on number of returned lines
-	 * @param string $filterkey Filter on project ref or subject
-	 * @param int $status Ticket status
-	 * @param int $outputmode 0=HTML select string, 1=Array
-	 * @param string|int<0,1> $showempty '' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
-	 * @param int $forcecombo Force to use combo box
-	 * @param string $morecss Add more css on select
-	 * @return     array|string                Array of keys for json or HTML component
+	 * @param 	string 		$selected 		Preselected project
+	 * @param 	string 		$htmlname 		Name of select html
+	 * @param 	string 		$filtertype 	Filter on project type
+	 * @param 	int 		$limit 			Limit on number of returned lines
+	 * @param 	string 		$filterkey	 	Filter on project ref or subject
+	 * @param 	int 		$status 		Not used
+	 * @param 	int 		$outputmode 	0=HTML select string, 1=Array
+	 * @param 	string|int<0,1> $showempty '' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
+	 * @param 	int 		$forcecombo 	Force to use combo box
+	 * @param 	string 		$morecss 		Add more css on select
+	 * @return  array|string                Array of keys for json or HTML component
 	 */
 	public function selectProjectsList($selected = '', $htmlname = 'projectid', $filtertype = '', $limit = 20, $filterkey = '', $status = 1, $outputmode = 0, $showempty = '1', $forcecombo = 0, $morecss = '')
 	{
@@ -7935,7 +7948,7 @@ class Form
 
 			if (!$forcecombo) {
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-				$out .= ajax_combobox($htmlname, $events, $conf->global->PROJECT_USE_SEARCH_TO_SELECT);
+				$out .= ajax_combobox($htmlname, $events, getDolGlobalInt('PROJECT_USE_SEARCH_TO_SELECT'));
 			}
 
 			$out .= '<select class="flat' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '" id="' . $htmlname . '">';

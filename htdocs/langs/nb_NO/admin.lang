@@ -514,15 +514,17 @@ ModuleCompanyCodeCustomerDigitaria=%s etterfulgt av det avkortede kundenavnet me
 ModuleCompanyCodeSupplierDigitaria=%s etterfulgt av det avkortede leverandørnavnet med antall tegn: %s for leverandørens regnskapskode.
 Use3StepsApproval=Som standard må innkjøpsordrer opprettes og godkjennes av 2 forskjellige brukere (ett trinn/bruker for å opprette og ett trinn/bruker for å godkjenne. Merk at hvis brukeren har både tillatelse til å opprette og godkjenne, vil ett trinn/ bruker vil være nok). Du kan bruke dette alternativet for å innføre et tredje trinn/bruker godkjenning, hvis beløpet er høyere enn en spesifisert verdi (så vil 3 trinn være nødvendig: 1=validering, 2=første godkjenning og 3=andre godkjenning dersom beløpet er høyt nok). <br> Sett denne tom en godkjenning (2 trinn) er nok, sett den til en svært lav verdi (0,1) hvis det alltid kreves en andre godkjenning (3 trinn).
 UseDoubleApproval=Bruk 3-trinns godkjennelse når beløpet (eks. MVA) er høyere enn...
-WarningPHPMail=ADVARSEL: Oppsettet for å sende e-post fra applikasjonen bruker det generelle standardoppsettet. Dette valget trenger ingen teknisk kunnskap for å fullføre oppsettet.<br>Det er imidlertid ofte bedre å konfigurere utgående e-post for å bruke epost serveren til epost tjenesteleverandøren din i stedet for standardoppsettet av flere grunner:
+WarningPHPMail=MERKNAD: Oppsettet for å sende e-post fra applikasjonen bruker standard generisk oppsett (kalt "%s"). Dette valget krever ingen teknisk kunnskap og ingen spesielt oppsett.<br>Det er imidlertid ofte bedre å sette opp utgående e-poster for å bruke den andre metoden (kalt "%s") for å bruke epost-serveren til epost Tjenesteleverandør, i stedet for standardoppsettet av flere grunner:
 WarningPHPMailA=- Bruk av serveren til epost tjenesteleverandøren øker påliteligheten til epost, så det øker leveringsevnen uten å bli flagget som SPAM
-WarningPHPMailB=- Noen e-posttjenesteleverandører (som Yahoo) tillater ikke at du sender en e-post fra en annen server enn deres egen server. Det nåværende oppsettet ditt bruker serveren til applikasjonen til å sende e-post og ikke serveren til e-postleverandøren din, så noen mottakere (den som er kompatibel med den begrensende DMARC-protokollen) vil spørre e-postleverandøren din om de kan godta e-posten din og noen e-postleverandører (som Yahoo) kan svare "nei" fordi serveren ikke er deres. Noen av de sendte e-postene dine blir kanskje ikke akseptert for levering (vær også oppmerksom på e-postleverandørens sendekvote).
+WarningPHPMailB=- Hvis domenet til epost (delen mymaildomain.com i mittnavn@mymaildomain.com) er beskyttet av en SPF + en DMARC-post, kan eposten din bli flagget som SPAM fordi DMARC-regelen din definert i DNS-sonen til domenet til avsenderen (mymaildomain.com) ikke tillater sending som en generisk avsender. I et slikt tilfelle må du deaktivere DMARC for domenet (eller sette den til p=ingen som gjort av @gmail.com) eller, bedre, hvis du har den tekniske kunnskapen, bruke den andre metoden for å sende e-poster ved hjelp av SMTP server til din egen epost-leverandør.
 WarningPHPMailC=- Ved å bruke SMTP-serveren til din egen e-posttjenesteleverandør for å sende e-post vil alle e-postmeldinger som sendes fra applikasjonen bli lagret i "Sendt"-katalogen i postkassen din.
 WarningPHPMailD=Det anbefales derfor å endre sendemetoden for e-post til verdien "SMTP".
 WarningPHPMailDbis=Hvis du virkelig ønsker å beholde standard "PHP"-metoden for å sende e-poster, bare ignorer denne advarselen, eller fjern den ved å %sklikke her%s.
 WarningPHPMail2=Hvis din epost-SMTP-leverandør må begrense epostklienten til noen IP-adresser (svært sjelden), er dette IP-adressen til epost-brukeragenten (MUA) for ERP CRM-programmet: <strong> %s </strong>.
-WarningPHPMailSPF=Hvis domenenavnet i avsenderens e-postadresse er beskyttet av en SPF-post (spør domenenavnsregistratoren), må du legge til følgende IP-er i SPF-posten til DNS-en til domenet ditt: <strong> %s <strong>.
-ActualMailSPFRecordFound=Faktisk SPF-post funnet (for e-post %s): %s
+WarningPHPMailSPF=If the domain name in your sender email address is protected by a SPF record (ask your domain name registar), you must add the following IPs or entry in the SPF record of the DNS of your domain: <strong>%s</strong>.
+WarningPHPMailSPFDMARC=If the domain name in your sender email address is protected by a DMARC record different than p=none (ask your domain name registar), you must remove your DMARC record, or set it to p=none like do @gmail.com) or use sending another method.
+SPFAndDMARCInformation=SPF og DMARC DNS-post for epost hovedadresser
+ActualMailDNSRecordFound=Faktisk %s-post funnet (for epost %s) : %s
 ClickToShowDescription=Klikk for å vise beskrivelse
 DependsOn=Denne modulen trenger modulen(ene)
 RequiredBy=Denne modulen er påkrevd av modul(ene)
@@ -867,7 +869,7 @@ Permission255=Opprett/endre egen brukerinformasjon
 Permission256=Slett eller deaktiver andre brukere
 Permission262=Utvid tilgangen til alle tredjeparter og deres objekter (ikke bare tredjeparter som brukeren er knyttet til som salgsrepresentant).
 Permission262b=Ikke effektiv for eksterne brukere (alltid begrenset til seg selv for tilbud, ordre, fakturaer, kontrakter osv.).
-Permission262c=Ikke effektiv for prosjekter (bare regler for prosjekttillatelser, synlighet og oppgaverelatert).
+Permission262c=Ikke effektiv for prosjekter (bare regler for prosjekttillatelser, synlighet og brukeroppdrag er viktige).
 Permission263=Utvid tilgangen til alle tredjeparter UTEN deres objekter (ikke bare tredjeparter som brukeren er salgsrepresentant for). <br> Ikke effektiv for eksterne brukere (alltid begrenset til seg selv for tilbud, ordre, fakturaer, kontrakter osv.). <br> Ikke effektiv for prosjekter (bare regler for prosjekttillatelser, synlighet og oppgaver).
 Permission271=Vis CA
 Permission272=Vis fakturaer
@@ -944,7 +946,7 @@ Permission776=Betal utgift
 Permission777=Les alle utgiftsrapporter (selv de til brukere som ikke er underordnede)
 Permission778=Lag/endre utgiftsrapporter for alle
 Permission779=Eksporter utgiftsrapporter
-Permission1001=Vis beholdning
+Permission1001=Les lager og varer
 Permission1002=Opprett/endre lager
 Permission1003=Slett lager
 Permission1004=Vis lagerbevegelser
@@ -2218,7 +2220,7 @@ CreateCandidature=Opprett jobbsøknad
 FormatZip=Postnummer
 MainMenuCode=Meny-oppføringskode (hovedmeny)
 ECMAutoTree=Vis ECM-tre automatisk 
-OperationParamDesc=Definer reglene som skal brukes for å trekke ut noen data eller angi verdier som skal brukes for drift.<br><br>Eksempel for å trekke ut et firmanavn fra e-postemne til en midlertidig variabel: <br> tmp_var=EXTRACT:SUBJECT:Message from company ([^\n]*) <br> <br> Eksempler for å angi egenskapene til et objekt som skal opprettes: <br> objproperty1=SET:en hardkodet verdi <br> objproperty2=OBJproperty2=varcc__fjda9=SET:__01mprty2=SET:__01mp3mp3__00 SETIFEMPTY:en verdi (verdi angis bare hvis egenskapen ikke allerede er definert) <br> objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*) <br> options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*) <br> options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*) firmanavn er\\s([^\\s]*) <br> <br> Bruk en ny linje for å trekke ut eller angi flere egenskaper.
+OperationParamDesc=Definer reglene som skal brukes for å trekke ut noen data eller angi verdier som skal brukes for operasjon.<br><br>Eksempel for å trekke ut en streng fra epost overskrift, emne eller brødtekst inn i en midlertidig variabel:<br>tmp_var1=EXTRACT:HEADER:Min regex ([^\n]*)<br>tmp_var2=EXTRACT:SUBJECT:Min regeks ([^\n]*)<br>tmp_var3=EXTRACT:BODY:My regex ([^\n]*)<br><br>Eksempler for å angi egenskapene til et objekt som skal opprettes:<br>objproperty1=SET:en hardkodet verdi<br>objproperty2=SET:__tmp_var__<br>objproperty3=aSETIFETY (verdi angis bare hvis egenskapen ikke allerede er definert)<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:Mitt firmanavn er\\ s([^\\s]*)<br><br>Bruk en ny linje for å trekke ut eller angi flere egenskaper.
 OpeningHours=Åpningstider
 OpeningHoursDesc=Skriv inn de vanlige åpningstidene for bedriften din.
 ResourceSetup=Konfigurasjon av ressursmodulen
@@ -2264,7 +2266,7 @@ LargerThan=Større enn
 IfTrackingIDFoundEventWillBeLinked=Merk at hvis en sporings-ID for et objekt blir funnet i eposten, eller hvis eposten er et svar på en allerede samlet epost som er knyttet til et objekt, vil den opprettede hendelsen automatisk bli knyttet til det kjente relaterte objektet.
 WithGMailYouCanCreateADedicatedPassword=Med en Gmail-konto, hvis du har aktivert 2-trinns validering, anbefales det å opprette et dedikert andre passord for applikasjonen i stedet for å bruke ditt eget kontopassord fra https://myaccount.google.com/.
 EmailCollectorTargetDir=Det kan være en ønsket oppførsel å flytte epost til en annen merke/katalog når den ble behandlet. Bare angi navn på katalog her for å bruke denne funksjonen (IKKE bruk spesialtegn i navnet). Merk at du også må bruke en lese/skrive påloggingskonto.
-EmailCollectorLoadThirdPartyHelp=Du kan bruke denne handlingen til å bruke e-postinnholdet til å finne og laste en eksisterende tredjepart i databasen din (søk vil bli gjort på den definerte egenskapen blant 'id','name','name_alias','email'). Den funne (eller opprettede) tredjeparten vil bli brukt til følgende handlinger som trenger det.<br>For eksempel, hvis du vil opprette en tredjepart med et navn hentet fra en streng ' Navn: navn å finne' til stede i brødteksten, bruk avsenderens e-post som e-post, du kan angi parameterfeltet slik:<br>'email=HEADER:^Fra:(. *);name=EXTRACT:BODY:Name:\\s([^\\s]*);client=SET:2;'<br>
+EmailCollectorLoadThirdPartyHelp=Du kan bruke denne handlingen til å bruke epost-innholdet for å finne og laste en eksisterende tredjepart i databasen din (søket vil bli utført på den definerte egenskapen blant 'id','name','name_alias','epost'). Den funnet (eller opprettet) tredjeparten vil bli brukt til følgende handlinger som trenger det.<br>For eksempel, hvis du vil opprette en tredjepart med et navn hentet fra en streng ' Navn: navn å finne' til stede i brødteksten, bruk avsenderen epost som epost, du kan angi parameterfeltet slik :<br>'epost=EXTRACT:HEADER:^Fra:(.*);name=EXTRACT:BODY:Name:\\ s([^\\s]*);client=SET:2;'<br>
 FilterSearchImapHelp=Advarsel: mange e-postservere (som Gmail) utfører fullordsøk når de søker på en streng og vil ikke returnere et resultat hvis strengen bare finnes delvis i et ord. Også av denne grunn vil bruk av spesialtegn i et søkekriterie bli ignorert hvis de ikke er en del av eksisterende ord. <br> For å gjøre et ekskluderingssøk på et ord (retur e-post hvis ordet ikke blir funnet), kan du bruke ! tegn før ordet (fungerer kanskje ikke på enkelte e-postservere).
 EndPointFor=Sluttpunkt for %s: %s
 DeleteEmailCollector=Slett e-postsamler

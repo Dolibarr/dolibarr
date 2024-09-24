@@ -654,7 +654,7 @@ class CodingPhpTest extends CommonClassTest
 			$ok = true;
 			$matches = array();
 
-			// Get to part of string to use for analysis
+			// Get the part of string to use for analysis
 			$reg = array();
 			if (preg_match('/\*\s+Action(.*)\*\s+View/ims', $filecontentorigin, $reg)) {
 				$filecontentaction = $reg[1];
@@ -662,7 +662,8 @@ class CodingPhpTest extends CommonClassTest
 				$filecontentaction = $filecontent;
 			}
 
-			preg_match_all('/if\s*\(\s*\$action\s*==\s*[\'"][a-z]+[\'"].*/', $filecontentaction, $matches, PREG_SET_ORDER);
+			preg_match_all('/if.*\$action\s*==\s*[\'"][a-z\-]+[\'"].*$/si', $filecontentaction, $matches, PREG_SET_ORDER);
+
 			foreach ($matches as $key => $val) {
 				if (!preg_match('/\$user->hasR/', $val[0])
 					&& !preg_match('/\$permission/', $val[0])

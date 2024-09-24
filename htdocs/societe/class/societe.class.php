@@ -784,6 +784,11 @@ class Societe extends CommonObject
 	public $ref_ext;
 
 	/**
+	 * @var string IP address
+	 */
+	public $ip;
+
+	/**
 	 * Import key.
 	 * Set when the thirdparty has been created through an import process. This is to relate those created thirdparties
 	 * to an import process
@@ -862,6 +867,9 @@ class Societe extends CommonObject
 
 	// Fields loaded by fetchPartnerships()
 
+	/**
+	 * @var array<array<mixed>>
+	 */
 	public $partnerships = array();
 
 
@@ -1020,6 +1028,7 @@ class Societe extends CommonObject
 			$sql .= ", import_key";
 			$sql .= ", fk_multicurrency";
 			$sql .= ", multicurrency_code";
+			$sql .= ", ip";
 			if (!getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 				$sql .= ", vat_reverse_charge";
 				$sql .= ", accountancy_code_buy";
@@ -1040,6 +1049,7 @@ class Societe extends CommonObject
 			$sql .= ", ".(!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 			$sql .= ", ".(int) $this->fk_multicurrency;
 			$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";
+			$sql .= ", '".$this->db->escape($this->ip)."'";
 			if (!getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 				$sql .= ", ".(empty($this->vat_reverse_charge) ? '0' : '1');
 				$sql .= ", '" . $this->db->escape($this->accountancy_code_buy) . "'";
@@ -2172,7 +2182,7 @@ class Societe extends CommonObject
 		// TODO Replace this with step by step search
 		// Then search on barcode if we have it (+ restriction on is_client and is_supplier)
 		// Then search on profids with a OR (+ restriction on is_client and is_supplier)
-		// Then search on email with a OR (+ restriction on is_client and is_supplier)
+		// Then search on email (+ restriction on is_client and is_supplier)
 		// Then search ref, ref_ext or alias with a OR (+ restriction on is_client and is_supplier)
 		$tmpthirdparty = new Societe($this->db);
 		$result = $tmpthirdparty->fetch($rowid, $ref, $ref_ext, $barcode, $idprof1, $idprof2, $idprof3, $idprof4, $idprof5, $idprof6, $email, $ref_alias, $is_client, $is_supplier);
@@ -2416,7 +2426,7 @@ class Societe extends CommonObject
 			// Writes trace in discount history
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_remise";
 			$sql .= " (entity, datec, fk_soc, remise_client, note, fk_user_author)";
-			$sql .= " VALUES (".$conf->entity.", '".$this->db->idate($now)."', ".((int) $this->id).", '".$this->db->escape($remise)."',";
+			$sql .= " VALUES (".((int) $conf->entity).", '".$this->db->idate($now)."', ".((int) $this->id).", '".$this->db->escape($remise)."',";
 			$sql .= " '".$this->db->escape($note)."',";
 			$sql .= " ".((int) $user->id);
 			$sql .= ")";
@@ -2477,7 +2487,7 @@ class Societe extends CommonObject
 			// Writes trace in discount history
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_remise_supplier";
 			$sql .= " (entity, datec, fk_soc, remise_supplier, note, fk_user_author)";
-			$sql .= " VALUES (".$conf->entity.", '".$this->db->idate($now)."', ".((int) $this->id).", '".$this->db->escape($remise)."',";
+			$sql .= " VALUES (".((int) $conf->entity).", '".$this->db->idate($now)."', ".((int) $this->id).", '".$this->db->escape($remise)."',";
 			$sql .= " '".$this->db->escape($note)."',";
 			$sql .= " ".((int) $user->id);
 			$sql .= ")";
@@ -4468,8 +4478,8 @@ class Societe extends CommonObject
 				// For backward compatibility
 				dol_syslog("Your country setup use an old syntax. Reedit it using setup area.", LOG_WARNING);
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-				$country_code = getCountry($country_id, 2, $this->db); // This need a SQL request, but it's the old feature that should not be used anymore
-				$country_label = getCountry($country_id, 0, $this->db); // This need a SQL request, but it's the old feature that should not be used anymore
+				$country_code = getCountry($country_id, '2', $this->db); // This need a SQL request, but it's the old feature that should not be used anymore
+				$country_label = getCountry($country_id, '', $this->db); // This need a SQL request, but it's the old feature that should not be used anymore
 			}
 		}
 		$this->country_id = $country_id;

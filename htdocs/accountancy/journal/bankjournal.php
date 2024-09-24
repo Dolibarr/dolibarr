@@ -113,6 +113,9 @@ $error = 0;
 $date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
 $date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
 
+$pastmonth = null;  // Initialise for static analysis  (could be really unseg)
+$pastmonthyear = null;
+
 if (empty($date_startmonth)) {
 	// Period by default on transfer
 	$dates = getDefaultDatesForTransfer();
@@ -199,6 +202,7 @@ $tmppayment = new Paiement($db);
 $tmpinvoice = new Facture($db);
 
 $accountingaccount = new AccountingAccount($db);
+$account_transfer = 'NotDefined'; // For static analysis, NotDefined is a reserved word
 
 // Get code of finance journal
 $accountingjournalstatic = new AccountingJournal($db);
@@ -619,31 +623,24 @@ if ($result) {
 	dol_print_error($db);
 }
 
-
-//var_dump($tabpay);
-//var_dump($tabcompany);
-//var_dump($tabbq);
-//var_dump($tabtp);
-//var_dump($tabtype);
-
 // Write bookkeeping
 if (!$error && $action == 'writebookkeeping' && $user->hasRight('accounting', 'bind', 'write')) {
 	$now = dol_now();
 
 	$accountingaccountcustomer = new AccountingAccount($db);
-	$accountingaccountcustomer->fetch(null, getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER'), true);
+	$accountingaccountcustomer->fetch(0, getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER'), true);
 
 	$accountingaccountsupplier = new AccountingAccount($db);
-	$accountingaccountsupplier->fetch(null, getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER'), true);
+	$accountingaccountsupplier->fetch(0, getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER'), true);
 
 	$accountingaccountpayment = new AccountingAccount($db);
-	$accountingaccountpayment->fetch(null, getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT'), true);
+	$accountingaccountpayment->fetch(0, getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT'), true);
 
 	$accountingaccountexpensereport = new AccountingAccount($db);
-	$accountingaccountexpensereport->fetch(null, $conf->global->ACCOUNTING_ACCOUNT_EXPENSEREPORT, true);
+	$accountingaccountexpensereport->fetch(0, $conf->global->ACCOUNTING_ACCOUNT_EXPENSEREPORT, true);
 
 	$accountingaccountsuspense = new AccountingAccount($db);
-	$accountingaccountsuspense->fetch(null, getDolGlobalString('ACCOUNTING_ACCOUNT_SUSPENSE'), true);
+	$accountingaccountsuspense->fetch(0, getDolGlobalString('ACCOUNTING_ACCOUNT_SUSPENSE'), true);
 
 	$error = 0;
 	foreach ($tabpay as $key => $val) {		// $key is rowid into llx_bank
@@ -659,9 +656,6 @@ if (!$error && $action == 'writebookkeeping' && $user->hasRight('accounting', 'b
 		$db->begin();
 
 		// Introduce a protection. Total of tabtp must be total of tabbq
-		//var_dump($tabpay);
-		//var_dump($tabtp);
-		//var_dump($tabbq);exit;
 
 		// Bank
 		if (!$errorforline && is_array($tabbq[$key])) {
@@ -791,43 +785,43 @@ if (!$error && $action == 'writebookkeeping' && $user->hasRight('accounting', 'b
 						} elseif (in_array($tabtype[$key], array('sc', 'payment_sc'))) {   // If payment is payment of social contribution
 							$bookkeeping->subledger_account = '';
 							$bookkeeping->subledger_label = '';
-							$accountingaccount->fetch(null, $k, true);	// TODO Use a cache
+							$accountingaccount->fetch(0, $k, true);	// TODO Use a cache
 							$bookkeeping->numero_compte = $k;
 							$bookkeeping->label_compte = $accountingaccount->label;
 						} elseif ($tabtype[$key] == 'payment_vat') {
 							$bookkeeping->subledger_account = '';
 							$bookkeeping->subledger_label = '';
-							$accountingaccount->fetch(null, $k, true);		// TODO Use a cache
+							$accountingaccount->fetch(0, $k, true);		// TODO Use a cache
 							$bookkeeping->numero_compte = $k;
 							$bookkeeping->label_compte = $accountingaccount->label;
 						} elseif ($tabtype[$key] == 'payment_donation') {
 							$bookkeeping->subledger_account = '';
 							$bookkeeping->subledger_label = '';
-							$accountingaccount->fetch(null, $k, true);		// TODO Use a cache
+							$accountingaccount->fetch(0, $k, true);		// TODO Use a cache
 							$bookkeeping->numero_compte = $k;
 							$bookkeeping->label_compte = $accountingaccount->label;
 						} elseif ($tabtype[$key] == 'member') {
 							$bookkeeping->subledger_account = '';
 							$bookkeeping->subledger_label = '';
-							$accountingaccount->fetch(null, $k, true);		// TODO Use a cache
+							$accountingaccount->fetch(0, $k, true);		// TODO Use a cache
 							$bookkeeping->numero_compte = $k;
 							$bookkeeping->label_compte = $accountingaccount->label;
 						} elseif ($tabtype[$key] == 'payment_loan') {
 							$bookkeeping->subledger_account = '';
 							$bookkeeping->subledger_label = '';
-							$accountingaccount->fetch(null, $k, true);		// TODO Use a cache
+							$accountingaccount->fetch(0, $k, true);		// TODO Use a cache
 							$bookkeeping->numero_compte = $k;
 							$bookkeeping->label_compte = $accountingaccount->label;
 						} elseif ($tabtype[$key] == 'payment_various') {
 							$bookkeeping->subledger_account = $k;
 							$bookkeeping->subledger_label = $tabcompany[$key]['name'];
-							$accountingaccount->fetch(null, $tabpay[$key]["account_various"], true);	// TODO Use a cache
+							$accountingaccount->fetch(0, $tabpay[$key]["account_various"], true);	// TODO Use a cache
 							$bookkeeping->numero_compte = $tabpay[$key]["account_various"];
 							$bookkeeping->label_compte = $accountingaccount->label;
 						} elseif ($tabtype[$key] == 'banktransfert') {
 							$bookkeeping->subledger_account = '';
 							$bookkeeping->subledger_label = '';
-							$accountingaccount->fetch(null, $k, true);		// TODO Use a cache
+							$accountingaccount->fetch(0, $k, true);		// TODO Use a cache
 							$bookkeeping->numero_compte = $k;
 							$bookkeeping->label_compte = $accountingaccount->label;
 						} else {
@@ -1097,7 +1091,7 @@ if (empty($action) || $action == 'view') {
 	$variousstatic = new PaymentVarious($db);
 
 	$title = $langs->trans("GenerationOfAccountingEntries").' - '.$accountingjournalstatic->getNomUrl(0, 2, 1, '', 1);
-	$help_url ='EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#G&eacute;n&eacute;ration_des_&eacute;critures_en_comptabilit&eacute;';
+	$help_url = 'EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#G&eacute;n&eacute;ration_des_&eacute;critures_en_comptabilit&eacute;';
 	llxHeader('', dol_string_nohtmltag($title), $help_url, '', 0, 0, '', '', '', 'mod-accountancy accountancy-generation page-bankjournal');
 
 	$nom = $title;
@@ -1384,9 +1378,6 @@ if (empty($action) || $action == 'view') {
 						$accounttoshowsubledger = length_accounta($k);
 						if ($accounttoshow != $accounttoshowsubledger) {
 							if (empty($accounttoshowsubledger) || $accounttoshowsubledger == 'NotDefined') {
-								//var_dump($tabpay[$key]);
-								//var_dump($tabtype[$key]);
-								//var_dump($tabbq[$key]);
 								//print '<span class="error">'.$langs->trans("ThirdpartyAccountNotDefined").'</span>';
 								if (!empty($tabcompany[$key]['code_compta'])) {
 									if (in_array($tabtype[$key], array('payment_various', 'payment_salary'))) {
@@ -1475,7 +1466,7 @@ $db->close();
 /**
  * Return source for doc_ref of a bank transaction
  *
- * @param 	array 	$val			Array of val
+ * @param 	array<string,null|int|float|string> 	$val	Array of val
  * @param 	string	$typerecord		Type of record ('payment', 'payment_supplier', 'payment_expensereport', 'payment_vat', ...)
  * @return 	string					A string label to describe a record into llx_bank_url
  */

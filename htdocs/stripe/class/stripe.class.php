@@ -354,18 +354,18 @@ class Stripe extends CommonObject
 	 * @param   string  $currency_code                      Currency code
 	 * @param   string  $tag                                Tag
 	 * @param   string  $description                        Description
-	 * @param	mixed	$object							    Object to pay with Stripe
-	 * @param	string 	$customer							Stripe customer ref 'cus_xxxxxxxxxxxxx' via customerStripe()
-	 * @param	string	$key							    ''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
+	 * @param	?CommonObject	$object					    Object to pay with Stripe
+	 * @param	?string $customer							Stripe customer ref 'cus_xxxxxxxxxxxxx' via customerStripe()
+	 * @param	?string	$key							    ''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
 	 * @param	int		$status							    Status (0=test, 1=live)
 	 * @param	int		$usethirdpartyemailforreceiptemail	1=use thirdparty email for receipt
 	 * @param	string	$mode		                        automatic=automatic confirmation/payment when conditions are ok, manual=need to call confirm() on intent
 	 * @param   boolean $confirmnow                         false=default, true=try to confirm immediately after create (if conditions are ok)
-	 * @param   string  $payment_method                     'pm_....' (if known)
+	 * @param   ?string  $payment_method                     'pm_....' (if known)
 	 * @param   int     $off_session                        If we use an already known payment method to pay when customer is not available during the checkout flow.
 	 * @param	int     $noidempotency_key					Do not use the idempotency_key when creating the PaymentIntent
 	 * @param	int		$did								ID of an existing line into llx_prelevement_demande (Dolibarr intent). If provided, no new line will be created.
-	 * @return 	\Stripe\PaymentIntent|null 			        Stripe PaymentIntent or null if not found and failed to create
+	 * @return 	?\Stripe\PaymentIntent				        Stripe PaymentIntent or null if not found and failed to create
 	 */
 	public function getPaymentIntent($amount, $currency_code, $tag, $description = '', $object = null, $customer = null, $key = null, $status = 0, $usethirdpartyemailforreceiptemail = 0, $mode = 'automatic', $confirmnow = false, $payment_method = null, $off_session = 0, $noidempotency_key = 1, $did = 0)
 	{
@@ -1362,6 +1362,7 @@ class Stripe extends CommonObject
 					$charge = \Stripe\Charge::create($paymentarray, array("idempotency_key" => "$description", "stripe_account" => "$account"));
 				}
 			}
+			'@phan-var-force stdclass|\Stripe\Charge $charge';
 			if (isset($charge->id)) {
 			}
 

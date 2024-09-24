@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C)           Kai Blankenhorn      <kaib@bitfolge.de>
- * Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.org>
- * Copyright (C) 2020		Tobias Sekan		<tobias.sekan@startmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C)            Kai Blankenhorn      	<kaib@bitfolge.de>
+ * Copyright (C) 2005-2017  Laurent Destailleur  	<eldy@users.sourceforge.org>
+ * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,7 +108,7 @@ class vCard
 	/**
 	 *  Format phone number.
 	 *
-	 *  @param	int		$number		numero de telephone
+	 *  @param	string	$number		numero de telephone
 	 *  @param	string	$type		Type ('cell')
 	 *  @return	void
 	 */

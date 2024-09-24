@@ -7,6 +7,7 @@
  * Copyright (C) 2012-2014 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2022      Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,13 +108,13 @@ class modSociete extends DolibarrModules
 		$r++;
 
 		/*
-		$this->const[$r][0] = "COMPANY_HIDE_INACTIVE_IN_COMBOBOX";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "0";
-		$this->const[$r][3] = "hide thirdparty customer inative in combobox";
-		$this->const[$r][4] = 1;
-		$r++;
-		*/
+		 $this->const[$r][0] = "COMPANY_HIDE_INACTIVE_IN_COMBOBOX";
+		 $this->const[$r][1] = "chaine";
+		 $this->const[$r][2] = "0";
+		 $this->const[$r][3] = "hide thirdparty customer inative in combobox";
+		 $this->const[$r][4] = 1;
+		 $r++;
+		 */
 
 		$this->const[$r][0] = "SOCIETE_ADD_REF_IN_LIST";
 		$this->const[$r][1] = "yesno";
@@ -144,21 +145,21 @@ class modSociete extends DolibarrModules
 		$this->rights[$r][4] = 'lire';
 
 		/*$r++;
-		$this->rights[$r][0] = 241;
-		$this->rights[$r][1] = 'Read thirdparties customers';
-		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'thirdparty_customer_advance';      // Visible if option MAIN_USE_ADVANCED_PERMS is on
-		$this->rights[$r][5] = 'read';
+		 $this->rights[$r][0] = 241;
+		 $this->rights[$r][1] = 'Read thirdparties customers';
+		 $this->rights[$r][2] = 'r';
+		 $this->rights[$r][3] = 0;
+		 $this->rights[$r][4] = 'thirdparty_customer_advance';      // Visible if option MAIN_USE_ADVANCED_PERMS is on
+		 $this->rights[$r][5] = 'read';
 
-		$r++;
-		$this->rights[$r][0] = 242;
-		$this->rights[$r][1] = 'Read thirdparties suppliers';
-		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'thirdparty_supplier_advance';      // Visible if option MAIN_USE_ADVANCED_PERMS is on
-		$this->rights[$r][5] = 'read';
-		*/
+		 $r++;
+		 $this->rights[$r][0] = 242;
+		 $this->rights[$r][1] = 'Read thirdparties suppliers';
+		 $this->rights[$r][2] = 'r';
+		 $this->rights[$r][3] = 0;
+		 $this->rights[$r][4] = 'thirdparty_supplier_advance';      // Visible if option MAIN_USE_ADVANCED_PERMS is on
+		 $this->rights[$r][5] = 'read';
+		 */
 
 		$r++;
 		$this->rights[$r][0] = 122; // id de la permission
@@ -168,21 +169,21 @@ class modSociete extends DolibarrModules
 		$this->rights[$r][4] = 'creer';
 
 		/* $r++;
-		$this->rights[$r][0] = 251;
-		$this->rights[$r][1] = 'Create thirdparties customers';
-		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'thirdparty_customer_advance';      // Visible if option MAIN_USE_ADVANCED_PERMS is on
-		$this->rights[$r][5] = 'read';
+		 $this->rights[$r][0] = 251;
+		 $this->rights[$r][1] = 'Create thirdparties customers';
+		 $this->rights[$r][2] = 'r';
+		 $this->rights[$r][3] = 0;
+		 $this->rights[$r][4] = 'thirdparty_customer_advance';      // Visible if option MAIN_USE_ADVANCED_PERMS is on
+		 $this->rights[$r][5] = 'read';
 
-		$r++;
-		$this->rights[$r][0] = 252;
-		$this->rights[$r][1] = 'Create thirdparties suppliers';
-		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'thirdparty_supplier_advance';      // Visible if option MAIN_USE_ADVANCED_PERMS is on
-		$this->rights[$r][5] = 'read';
-		*/
+		 $r++;
+		 $this->rights[$r][0] = 252;
+		 $this->rights[$r][1] = 'Create thirdparties suppliers';
+		 $this->rights[$r][2] = 'r';
+		 $this->rights[$r][3] = 0;
+		 $this->rights[$r][4] = 'thirdparty_supplier_advance';      // Visible if option MAIN_USE_ADVANCED_PERMS is on
+		 $this->rights[$r][5] = 'read';
+		 */
 
 		$r++;
 		$this->rights[$r][0] = 125; // id de la permission
@@ -215,14 +216,14 @@ class modSociete extends DolibarrModules
 		$this->rights[$r][5] = 'voir';
 
 		/*
-		$r++;
-		$this->rights[$r][0] = 263;
-		$this->rights[$r][1] = 'Read all third parties (without their objects) by internal users (otherwise only if commercial contact). Not effective for external users (limited to themselves).';
-		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'client';
-		$this->rights[$r][5] = 'readallthirdparties_advance';
-		*/
+		 $r++;
+		 $this->rights[$r][0] = 263;
+		 $this->rights[$r][1] = 'Read all third parties (without their objects) by internal users (otherwise only if commercial contact). Not effective for external users (limited to themselves).';
+		 $this->rights[$r][2] = 'r';
+		 $this->rights[$r][3] = 0;
+		 $this->rights[$r][4] = 'client';
+		 $this->rights[$r][5] = 'readallthirdparties_advance';
+		 */
 
 		$r++;
 		$this->rights[$r][0] = 281; // id de la permission
@@ -411,6 +412,7 @@ class modSociete extends DolibarrModules
 			's.code_compta' => "company", 's.code_compta_fournisseur' => "company",
 			's.client' => "company", 's.fournisseur' => "company",
 			's.address' => "company", 's.zip' => "company", 's.town' => "company", 's.phone' => "company", 's.email' => "company",
+			's.note_private' => 'company', 's.note_public' => "company",
 			't.code' => "company",
 			's.entity' => 'company',
 		); // We define here only fields that use another picto
@@ -448,12 +450,16 @@ class modSociete extends DolibarrModules
 			$this->export_sql_end[$r] .= ')';
 		}
 
-		// Export list of third-party payment methods
+		// Export list of third-party and bank/payment methods
 		$r++;
 		$this->export_code[$r] = $this->rights_class.'_'.$r;
 		$this->export_label[$r] = 'ExportDataset_company_3';
 		$this->export_icon[$r] = 'account';
-		$this->export_permission[$r] = array(array("societe", "contact", "export"), array("societe", "thirdparty_paymentinformation_advance", "write"));
+		if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
+			$this->export_permission[$r] = array(array("societe", "export"), array("societe", "thirdparty_paymentinformation_advance", "write"));
+		} else {
+			$this->export_permission[$r] = array(array("societe", "export"));
+		}
 		$this->export_fields_array[$r] = array(
 			'b.rowid' => "IdPaymentMode",
 			'b.fk_soc' => "ThirdPartyName",
@@ -681,24 +687,24 @@ class modSociete extends DolibarrModules
 				'table_element' => 'c_stcomm'
 			),
 			/*
-			's.fk_prospectlevel' => array(
-				'rule' => 'fetchidfromcodeid',
-				'classfile' => '/core/class/cgenericdic.class.php',
-				'class' => 'CGenericDic',
-				'method' => 'fetch',
-				'dict' => 'DictionaryProspectLevel',
-				'element' => 'c_prospectlevel',
-				'table_element' => 'c_prospectlevel'
-			),*/
-		//          TODO
-		//          's.fk_incoterms' => array(
-		//              'rule' => 'fetchidfromcodeid',
-		//              'classfile' => '/core/class/cincoterm.class.php',
-		//              'class' => 'Cincoterm',
-		//              'method' => 'fetch',
-		//              'dict' => 'IncotermLabel'
-		//			)
-		);
+			 's.fk_prospectlevel' => array(
+			 'rule' => 'fetchidfromcodeid',
+			 'classfile' => '/core/class/cgenericdic.class.php',
+			 'class' => 'CGenericDic',
+			 'method' => 'fetch',
+			 'dict' => 'DictionaryProspectLevel',
+			 'element' => 'c_prospectlevel',
+			 'table_element' => 'c_prospectlevel'
+			 ),*/
+			//          TODO
+			//          's.fk_incoterms' => array(
+			//              'rule' => 'fetchidfromcodeid',
+				//              'classfile' => '/core/class/cincoterm.class.php',
+				//              'class' => 'Cincoterm',
+				//              'method' => 'fetch',
+				//              'dict' => 'IncotermLabel'
+				//			)
+			);
 		//$this->import_convertvalue_array[$r]=array('s.fk_soc'=>array('rule'=>'lastrowid',table='t');
 		$this->import_regex_array[$r] = array(//field order as per structure of table llx_societe
 			's.status' => '^[0|1]',
@@ -977,7 +983,7 @@ class modSociete extends DolibarrModules
 			'sr.datec' => 'date used for creating direct debit UMR formatted as '.dol_print_date(
 				dol_now(),
 				'%Y-%m-%d'
-			),
+				),
 			'sr.bank' => 'bank name eg: "ING-Direct"',
 			'sr.code_banque' => 'account sort code (GB)/Routing number (US) eg. "8456"',
 			'sr.code_guichet' => "bank code for office/branch",
@@ -1004,8 +1010,8 @@ class modSociete extends DolibarrModules
 		$this->import_fields_array[$r] = array('sr.fk_soc' => "ThirdPartyName*", 'sr.fk_user' => "User*");
 
 		$this->import_convertvalue_array[$r] = array(
-				'sr.fk_soc' => array('rule' => 'fetchidfromref', 'classfile' => '/societe/class/societe.class.php', 'class' => 'Societe', 'method' => 'fetch', 'element' => 'ThirdParty'),
-				'sr.fk_user' => array('rule' => 'fetchidfromref', 'classfile' => '/user/class/user.class.php', 'class' => 'User', 'method' => 'fetch', 'element' => 'User')
+			'sr.fk_soc' => array('rule' => 'fetchidfromref', 'classfile' => '/societe/class/societe.class.php', 'class' => 'Societe', 'method' => 'fetch', 'element' => 'ThirdParty'),
+			'sr.fk_user' => array('rule' => 'fetchidfromref', 'classfile' => '/user/class/user.class.php', 'class' => 'User', 'method' => 'fetch', 'element' => 'User')
 		);
 		$this->import_examplevalues_array[$r] = array('sr.fk_soc' => "MyBigCompany", 'sr.fk_user' => "login");
 	}
@@ -1034,7 +1040,7 @@ class modSociete extends DolibarrModules
 		if (file_exists($src) && !file_exists($dest)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
-			$result = dol_copy($src, $dest, 0, 0);
+			$result = dol_copy($src, $dest, '0', 0);
 			if ($result < 0) {
 				$langs->load("errors");
 				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);

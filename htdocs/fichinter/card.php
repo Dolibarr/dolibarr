@@ -156,7 +156,7 @@ if (empty($reshook)) {
 
 	// Action clone object
 	if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
-		if (1 == 0 && !GETPOST('clone_content') && !GETPOST('clone_receivers')) {
+		if (false && !GETPOST('clone_content') && !GETPOST('clone_receivers')) {
 			setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 		} else {
 			if ($object->id > 0) {
@@ -228,7 +228,7 @@ if (empty($reshook)) {
 			$mesg = $object->error;
 		}
 	} elseif ($action == 'confirm_unsign' && $confirm == 'yes' && $permissiontoadd) {
-		$result = $object->setSignedStatus($user, $object::SIGNED_STATUSES['STATUS_NO_SIGNATURE'], 0, 'FICHINTER_MODIFY');
+		$result = $object->setSignedStatus($user, Fichinter::$SIGNED_STATUSES['STATUS_NO_SIGNATURE'], 0, 'FICHINTER_MODIFY');
 		if ($result >= 0) {
 			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				// Define output language
@@ -368,6 +368,7 @@ if (empty($reshook)) {
 
 					$classname = ucfirst($subelement);
 					$srcobject = new $classname($db);
+					'@phan-var-force Commande|Propal|Contrat $srcobject';  // Can be other class, but CommonObject is too generic
 
 					dol_syslog("Try to find source object origin=".$object->origin." originid=".$object->origin_id." to add lines");
 					$result = $srcobject->fetch($object->origin_id);
@@ -924,6 +925,7 @@ if ($action == 'create') {
 
 			$classname = ucfirst($subelement);
 			$objectsrc = new $classname($db);
+			'@phan-var-force Commande|Propal|Contrat $objectsrc';
 			$objectsrc->fetch(GETPOST('originid'));
 			if (empty($objectsrc->lines) && method_exists($objectsrc, 'fetch_lines')) {
 				$objectsrc->fetch_lines();
@@ -954,7 +956,7 @@ if ($action == 'create') {
 		exit;
 	}
 
-	$object->date = dol_now();
+	$object->datec = dol_now();
 
 	$obj = getDolGlobalString('FICHEINTER_ADDON');
 	$obj = "mod_".$obj;
@@ -972,7 +974,7 @@ if ($action == 'create') {
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-		print dol_get_fiche_head('');
+		print dol_get_fiche_head([]);
 
 		print '<table class="border centpercent">';
 
@@ -1126,7 +1128,7 @@ if ($action == 'create') {
 		print '<input type="hidden" name="action" value="create">';		// We go back to create action
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-		print dol_get_fiche_head('');
+		print dol_get_fiche_head([]);
 
 		if (is_object($objectsrc)) {
 			print '<input type="hidden" name="origin"         value="'.$objectsrc->element.'">';
@@ -1136,7 +1138,7 @@ if ($action == 'create') {
 		}
 		print '<table class="border centpercent">';
 		print '<tr><td class="fieldrequired">'.$langs->trans("ThirdParty").'</td><td>';
-		print $form->select_company('', 'socid', '', 'SelectThirdParty', 1, 0, null, 0, 'minwidth300');
+		print $form->select_company('', 'socid', '', 'SelectThirdParty', 1, 0, array(), 0, 'minwidth300');
 		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
 		print '</td></tr>';
 		print '</table>';
@@ -1264,7 +1266,7 @@ if ($action == 'create') {
 							// 1),
 							// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value'
 							// => 1),
-							array('type' => 'other', 'name' => 'socid', 'label' => $langs->trans("SelectThirdParty"), 'value' => $form->select_company(GETPOSTINT('socid'), 'socid', '', '', 0, 0, null, 0, 'minwidth200')));
+							array('type' => 'other', 'name' => 'socid', 'label' => $langs->trans("SelectThirdParty"), 'value' => $form->select_company(GETPOSTINT('socid'), 'socid', '', '', 0, 0, array(), 0, 'minwidth200')));
 		// Paiement incomplet. On demande si motif = escompte ou autre
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneIntervention', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
@@ -1380,7 +1382,7 @@ if ($action == 'create') {
 				$contratstatic = new Contrat($db);
 				$contratstatic->fetch($object->fk_contrat);
 				//print '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$selected.'">'.$projet->title.'</a>';
-				print $contratstatic->getNomUrl(0, '', 1);
+				print $contratstatic->getNomUrl(0, 0, 1);
 			} else {
 				print "&nbsp;";
 			}
@@ -1401,7 +1403,7 @@ if ($action == 'create') {
 
 	print '<table class="border tableforfield centpercent">';
 
-	if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS')) {
+	if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS') || getDolGlobalString('FICHINTER_DISABLE_DETAILS') == '2') {
 		// Duration in time
 		print '<tr><td class="titlefield">'.$langs->trans("TotalDuration").'</td>';
 		print '<td>'.convertSecondToTime($object->duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).' ('.convertDurationtoHour($object->duration, "s").' '.$langs->trans("h").')</td>';
@@ -1429,7 +1431,7 @@ if ($action == 'create') {
 	}
 
 	// Line of interventions
-	if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS')) {
+	if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS') || getDolGlobalString('FICHINTER_DISABLE_DETAILS') == '2') {
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" name="addinter" method="post">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
@@ -1610,7 +1612,7 @@ if ($action == 'create') {
 			$db->free($resql);
 
 			// Add new line
-			if ($object->statut == 0 && $user->hasRight('ficheinter', 'creer') && $action != 'editline' && !getDolGlobalString('FICHINTER_DISABLE_DETAILS')) {
+			if ($object->statut == 0 && $user->hasRight('ficheinter', 'creer') && $action != 'editline' && (!getDolGlobalString('FICHINTER_DISABLE_DETAILS') || getDolGlobalString('FICHINTER_DISABLE_DETAILS') == '2')) {
 				if (!$num) {
 					print '<br>';
 					print '<table class="noborder centpercent">';
@@ -1727,7 +1729,7 @@ if ($action == 'create') {
 		if ($user->socid == 0) {
 			if ($action != 'editdescription' && ($action != 'presend')) {
 				// Validate
-				if ($object->statut == Fichinter::STATUS_DRAFT && (count($object->lines) > 0 || getDolGlobalString('FICHINTER_DISABLE_DETAILS'))) {
+				if ($object->statut == Fichinter::STATUS_DRAFT && (count($object->lines) > 0 || getDolGlobalString('FICHINTER_DISABLE_DETAILS') == '1')) {
 					if ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ficheinter', 'creer')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ficheinter', 'ficheinter_advance', 'validate'))) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&action=validate&token='.newToken().'">'.$langs->trans("Validate").'</a></div>';
 					} else {
@@ -1738,7 +1740,7 @@ if ($action == 'create') {
 				// Modify
 				if ($object->statut == Fichinter::STATUS_VALIDATED && ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ficheinter', 'creer')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ficheinter', 'ficheinter_advance', 'unvalidate')))) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&action=modify&token='.newToken().'">';
-					if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS')) {
+					if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS') || getDolGlobalString('FICHINTER_DISABLE_DETAILS') == '2') {
 						print $langs->trans("Modify");
 					} else {
 						print $langs->trans("SetToDraft");
@@ -1807,7 +1809,7 @@ if ($action == 'create') {
 
 				// Sign
 				if ($object->statut > Fichinter::STATUS_DRAFT) {
-					if ($object->signed_status != Fichinter::SIGNED_STATUSES['STATUS_SIGNED_ALL']) {
+					if ($object->signed_status != Fichinter::$SIGNED_STATUSES['STATUS_SIGNED_ALL']) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=sign&token=' . newToken() . '">' . $langs->trans("InterventionSign") . '</a></div>';
 					} else {
 						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=unsign&token=' . newToken() . '">' . $langs->trans("InterventionUnsign") . '</a></div>';
@@ -1848,7 +1850,7 @@ if ($action == 'create') {
 		print $formfile->showdocuments('ficheinter', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 
 		// Show links to link elements
-		$linktoelem = $form->showLinkToObjectBlock($object, null, array('fichinter'));
+		$linktoelem = $form->showLinkToObjectBlock($object, array(), array('fichinter'));
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 		// Show direct download link

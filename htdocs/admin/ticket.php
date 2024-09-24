@@ -75,6 +75,8 @@ if ($action == 'updateMask') {
 	$maskconstticket = GETPOST('maskconstticket', 'aZ09');
 	$maskticket = GETPOST('maskticket', 'alpha');
 
+	$res = 0;
+
 	if ($maskconstticket && preg_match('/_MASK$/', $maskconstticket)) {
 		$res = dolibarr_set_const($db, $maskconstticket, $maskticket, 'chaine', 0, '', $conf->entity);
 	}
@@ -165,20 +167,11 @@ if ($action == 'updateMask') {
 		$error++;
 	}
 
-	if (GETPOSTISSET('product_category_id')) {
-		$param_ticket_product_category = GETPOSTINT('product_category_id');
-		$res = dolibarr_set_const($db, 'TICKET_PRODUCT_CATEGORY', $param_ticket_product_category, 'chaine', 0, '', $conf->entity);
-		if (!($res > 0)) {
-			$error++;
-		}
-	}
-
 	$param_status = GETPOST('TICKET_SET_STATUS_ON_ANSWER');
 	$res = dolibarr_set_const($db, 'TICKET_SET_STATUS_ON_ANSWER', $param_status, 'chaine', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
 	}
-
 
 	$param_delay_first_response = GETPOSTINT('delay_first_response');
 	$res = dolibarr_set_const($db, 'TICKET_DELAY_BEFORE_FIRST_RESPONSE', $param_delay_first_response, 'chaine', 0, '', $conf->entity);
@@ -622,37 +615,6 @@ print '<td class="center">';
 print $formcategory->textwithpicto('', $langs->trans("TicketAutoCheckNotifyThirdPartyHelp"), 1, 'help');
 print '</td>';
 print '</tr>';
-
-// Assign contact to a message
-print '<tr class="oddeven"><td>'.$langs->trans("TicketAssignContactToMessage").'</td>';
-print '<td class="left">';
-if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('TICKET_ASSIGN_CONTACT_TO_MESSAGE');
-} else {
-	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $formcategory->selectarray("TICKET_ASSIGN_CONTACT_TO_MESSAGE", $arrval, getDolGlobalString('TICKET_ASSIGN_CONTACT_TO_MESSAGE'));
-}
-print '</td>';
-print '<td class="center">';
-print $formcategory->textwithpicto('', $langs->trans("TicketAssignContactToMessageHelp"), 1, 'help');
-print '</td>';
-print '</tr>';
-
-if (isModEnabled('product')) {
-	$htmlname = "product_category_id";
-	print '<tr class="oddeven"><td>'.$langs->trans("TicketChooseProductCategory").'</td>';
-	print '<td class="left">';
-	print img_picto('', 'category', 'class="pictofixedwidth"');
-	$formcategory->selectProductCategory(getDolGlobalString('TICKET_PRODUCT_CATEGORY'), $htmlname);
-	if ($conf->use_javascript_ajax) {
-		print ajax_combobox('select_'.$htmlname);
-	}
-	print '</td>';
-	print '<td class="center">';
-	print $formcategory->textwithpicto('', $langs->trans("TicketChooseProductCategoryHelp"), 1, 'help');
-	print '</td>';
-	print '</tr>';
-}
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("TicketsDelayBeforeFirstAnswer")."</td>";

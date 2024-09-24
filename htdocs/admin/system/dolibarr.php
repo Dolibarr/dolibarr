@@ -2,6 +2,7 @@
 /* Copyright (C) 2005-2020	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2007		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2007-2012	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
+'
+@phan-var-force string $dolibarr_main_document_root_alt
+';
 // Load translation files required by the page
 $langs->loadLangs(array("install", "other", "admin"));
 
@@ -58,7 +62,7 @@ if ($action == 'getlastversion') {
 			libxml_disable_entity_loader(true);
 		}
 
-		$sfurl = simplexml_load_string($result['content'], 'SimpleXMLElement', LIBXML_NOCDATA|LIBXML_NONET);
+		$sfurl = simplexml_load_string($result['content'], 'SimpleXMLElement', LIBXML_NOCDATA | LIBXML_NONET);
 	} else {
 		setEventMessages($langs->trans("ErrorPHPDoesNotSupport", "xml"), null, 'errors');
 	}
@@ -324,7 +328,7 @@ $configfileparameters = array(
 	'separator0' => '',
 	'dolibarr_main_url_root' => $langs->trans("URLRoot"),
 	'?dolibarr_main_url_root_alt' => $langs->trans("URLRoot").' (alt)',
-	'dolibarr_main_document_root'=> $langs->trans("DocumentRootServer"),
+	'dolibarr_main_document_root' => $langs->trans("DocumentRootServer"),
 	'?dolibarr_main_document_root_alt' => $langs->trans("DocumentRootServer").' (alt)',
 	'dolibarr_main_data_root' => $langs->trans("DataRootServer"),
 	'separator1' => '',
@@ -340,8 +344,8 @@ $configfileparameters = array(
 	'dolibarr_main_db_readonly' => $langs->trans("ReadOnlyMode"),
 	'separator2' => '',
 	'dolibarr_main_authentication' => $langs->trans("AuthenticationMode"),
-	'?multicompany_transverse_mode'=>  $langs->trans("MultiCompanyMode"),
-	'separator'=> '',
+	'?multicompany_transverse_mode' =>  $langs->trans("MultiCompanyMode"),
+	'separator' => '',
 	'?dolibarr_main_auth_ldap_login_attribute' => 'dolibarr_main_auth_ldap_login_attribute',
 	'?dolibarr_main_auth_ldap_host' => 'dolibarr_main_auth_ldap_host',
 	'?dolibarr_main_auth_ldap_port' => 'dolibarr_main_auth_ldap_port',
@@ -383,6 +387,9 @@ print '</td>';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td></td>';
 print '</tr>'."\n";
+
+
+$lastkeyshown = null;
 
 foreach ($configfileparameters as $key => $value) {
 	$ignore = 0;

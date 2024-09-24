@@ -3,6 +3,7 @@
  * Copyright (C) 2022  		Lionel Vessiller    <lvessiller@open-dsi.fr>
  * Copyright (C) 2016       Charlie Benke		<charlie@patas-monkey.com>
  * Copyright (C) 2022  		Progiseize         	<a.bisotti@progiseize.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +22,13 @@
 // $formatexportset must be defined
 // $downloadMode 	=0 for direct download or =1 to download after writing files or =-1 not to download files
 
+'
+@phan-var-force string $formatexportset
+@phan-var-force string $type_export
+@phan-var-force string $filename
+@phan-var-force int<-1,1> $downloadMode
+';
+
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
@@ -35,6 +43,7 @@ $siren = getDolGlobalString('MAIN_INFO_SIREN');
 
 $date_export = "_".dol_print_date(dol_now(), '%Y%m%d%H%M%S');
 $endaccountingperiod = dol_print_date(dol_now(), '%Y%m%d');
+
 
 if (empty($downloadMode)) {
 	header('Content-Type: text/csv');

@@ -211,7 +211,6 @@ foreach ($object->fields as $key => $val) {
 }
 $arrayfields = dol_sort_array($arrayfields, 'position');
 '@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
-//var_dump($arrayfields);exit;
 
 // Security check
 $result = restrictedArea($user, 'adherent');
@@ -228,6 +227,10 @@ if (GETPOST('cancel', 'alpha')) {
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
 }
+
+$permissiontoread = 0;
+$permissiontodelete = 0;
+$permissiontoadd = 0;
 
 $parameters = array('socid' => isset($socid) ? $socid : null, 'arrayfields' => &$arrayfields);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -1238,12 +1241,15 @@ while ($i < $imaxinloop) {
 		if ($memberstatic->thirdparty->id > 0) {
 			$companyname = $memberstatic->thirdparty->name;
 			$companynametoshow = $memberstatic->thirdparty->getNomUrl(1);
+		} else {
+			$companyname = null;
+			$companynametoshow = null;
 		}
 	} else {
 		$companyname = $obj->company;
 		$companynametoshow = $obj->company;
 	}
-	$memberstatic->company = $companyname;
+	$memberstatic->company = (string) $companyname;
 
 	$object = $memberstatic;
 

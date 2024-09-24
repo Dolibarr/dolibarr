@@ -83,6 +83,8 @@ top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 <?php
 
 $usestripeterminals = 0;
+$keyforstripeterminalbank = '';
+$stripe = null;
 
 if (isModEnabled('stripe')) {
 	$service = 'StripeTest';
@@ -147,7 +149,7 @@ function fetchConnectionToken() {
 }
 
 if (isModEnabled('stripe') && isset($keyforstripeterminalbank) && (!getDolGlobalString('STRIPE_LIVE') || GETPOST('forcesandbox', 'alpha'))) {
-	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning', 1);
+	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), [], 'warning', 1);
 }
 
 $invoice = new Facture($db);
@@ -222,8 +224,8 @@ if ($usestripeterminals && $invoice->type != $invoice::TYPE_CREDIT_NOTE) {
 </script>
 <?php
 
-		// Define list of possible payments
-		$arrayOfValidPaymentModes = array();
+					// Define list of possible payments
+					$arrayOfValidPaymentModes = array();
 $arrayOfValidBankAccount = array();
 
 $sql = "SELECT code, libelle as label FROM ".MAIN_DB_PREFIX."c_paiement";
@@ -604,7 +606,7 @@ array(
 $numpad = getDolGlobalString('TAKEPOS_NUMPAD');
 if (isModEnabled('stripe') && isset($keyforstripeterminalbank) && getDolGlobalString('STRIPE_CARD_PRESENT')) {
 	print '<span id="card-present-alert">';
-	dol_htmloutput_mesg($langs->trans('ConnectingToStripeTerminal', 'Stripe'), '', 'warning', 1);
+	dol_htmloutput_mesg($langs->trans('ConnectingToStripeTerminal', 'Stripe'), [], 'warning', 1);
 	print '</span>';
 }
 print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '7' : '10').')">'.($numpad == 0 ? '7' : '10').'</button>';
