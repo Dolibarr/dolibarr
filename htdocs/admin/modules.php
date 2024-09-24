@@ -165,7 +165,7 @@ if (GETPOST('buttonreset', 'alpha')) {
 
 if ($action == 'install' && $allowonlineinstall) {
 	$error = 0;
-
+	$modulenameval = '';
 	// $original_file should match format module_modulename-x.y[.z].zip
 	$original_file = basename($_FILES["fileinstall"]["name"]);
 	$original_file = preg_replace('/\s*\(\d+\)\.zip$/i', '.zip', $original_file);
