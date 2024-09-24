@@ -928,6 +928,9 @@ class EcmFiles extends CommonObject
 		$label = '<u>'.$langs->trans("File").'</u>';
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		if (!empty($this->gen_or_uploaded)) {
+			$label .= '<br><b>'.$langs->trans('GenOrUpload').':</b> '.$this->gen_or_uploaded;
+		}
 
 		if ($option) {
 			$url = DOL_URL_ROOT.'/document.php?modulepart='.$option.'&file='.urlencode(preg_replace('/[a-zA-Z]+\//', '', $this->filepath).'/'.$this->filename).'&entity='.$this->entity;
@@ -968,6 +971,7 @@ class EcmFiles extends CommonObject
 		} else {
 			$result .= $hookmanager->resPrint;
 		}
+
 		return $result;
 	}
 
