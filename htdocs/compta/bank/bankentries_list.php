@@ -1966,9 +1966,9 @@ if ($resql) {
 				print '<td class="right"><span class="amount">'.price($totalarray['totalcred']).'</span></td>';
 			} elseif ($i == $posconciliatecol) {
 				print '<td class="center">';
-				if ($user->hasRight('banque', 'consolidate') && $action == 'reconcile') {
+				/*if ($user->hasRight('banque', 'consolidate') && $action == 'reconcile') {
 					print '<input class="button smallpaddingimp" name="confirm_reconcile" type="submit" value="'.$langs->trans("Conciliate").'">';
-				}
+				}*/
 				print '</td>';
 			} else {
 				print '<td></td>';
