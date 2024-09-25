@@ -2276,8 +2276,54 @@ class Product extends CommonObject
 		$price_min = $this->price_min;
 		$price_base_type = $this->price_base_type;
 
-		// If price per segment
-		if (getDolGlobalString('PRODUIT_MULTIPRICES') && !empty($thirdparty_buyer->price_level)) {
+		// if price by customer / level
+		if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
+			require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
+
+			$prodcustprice = new ProductCustomerPrice($this->db);
+
+			$filter = array('t.fk_product' => $this->id, 't.fk_soc' => $thirdparty_buyer->id);
+
+			// If a price per customer exist
+			$pricebycustomerexist = false;
+			$result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
+			if ($result) {
+				if (count($prodcustprice->lines) > 0) {
+					$pricebycustomerexist = true;
+					$pu_ht = price($prodcustprice->lines[0]->price);
+					$price_min = price($prodcustprice->lines[0]->price_min);
+					$pu_ttc = price($prodcustprice->lines[0]->price_ttc);
+					$price_base_type = $prodcustprice->lines[0]->price_base_type;
+					$tva_tx = $prodcustprice->lines[0]->tva_tx;
+					if ($prodcustprice->lines[0]->default_vat_code && !preg_match('/\(.*\)/', $tva_tx)) {
+						$tva_tx .= ' ('.$prodcustprice->lines[0]->default_vat_code.')';
+					}
+					$tva_npr = $prodcustprice->lines[0]->recuperableonly;
+					if (empty($tva_tx)) {
+						$tva_npr = 0;
+					}
+				}
+			}
+
+			if ( !$pricebycustomerexist && !empty($thirdparty_buyer->price_level)) {
+				$pu_ht = $this->multiprices[$thirdparty_buyer->price_level];
+				$pu_ttc = $this->multiprices_ttc[$thirdparty_buyer->price_level];
+				$price_min = $this->multiprices_min[$thirdparty_buyer->price_level];
+				$price_base_type = $this->multiprices_base_type[$thirdparty_buyer->price_level];
+				if (getDolGlobalString('PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL')) {
+					// using this option is a bug. kept for backward compatibility
+					if (isset($this->multiprices_tva_tx[$thirdparty_buyer->price_level])) {
+						$tva_tx = $this->multiprices_tva_tx[$thirdparty_buyer->price_level];
+					}
+					if (isset($this->multiprices_recuperableonly[$thirdparty_buyer->price_level])) {
+						$tva_npr = $this->multiprices_recuperableonly[$thirdparty_buyer->price_level];
+					}
+					if (empty($tva_tx)) {
+						$tva_npr = 0;
+					}
+				}
+			}
+		} elseif (getDolGlobalString('PRODUIT_MULTIPRICES') && !empty($thirdparty_buyer->price_level)) { // // If price per segment
 			$pu_ht = $this->multiprices[$thirdparty_buyer->price_level];
 			$pu_ttc = $this->multiprices_ttc[$thirdparty_buyer->price_level];
 			$price_min = $this->multiprices_min[$thirdparty_buyer->price_level];
@@ -2576,7 +2622,7 @@ class Product extends CommonObject
 
 		// If multiprices are enabled, then we check if the current product is subject to price autogeneration
 		// Price will be modified ONLY when the first one is the one that is being modified
-		if ((getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) && !$ignore_autogen && $this->price_autogen && ($level == 1)) {
+		if ((getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && !$ignore_autogen && $this->price_autogen && ($level == 1)) {
 			return $this->generateMultiprices($user, $newprice, $newpricebase, $newvat, $newnpr, $newpbq);
 		}
 
@@ -2976,7 +3022,7 @@ class Product extends CommonObject
 				}
 
 				// Load multiprices array
-				if (getDolGlobalString('PRODUIT_MULTIPRICES') && empty($ignore_price_load)) {                // prices per segment
+				if ((getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && empty($ignore_price_load)) {                // prices per segment
 					$produit_multiprices_limit = getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT');
 					for ($i = 1; $i <= $produit_multiprices_limit; $i++) {
 						$sql = "SELECT price, price_ttc, price_min, price_min_ttc,";
@@ -3042,7 +3088,7 @@ class Product extends CommonObject
 							return -1;
 						}
 					}
-				} elseif (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') && empty($ignore_price_load)) {            // prices per customers
+				} elseif ((getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && empty($ignore_price_load)) {            // prices per customers
 					// Nothing loaded by default. List may be very long.
 				} elseif (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY') && empty($ignore_price_load)) {    // prices per quantity
 					$sql = "SELECT price, price_ttc, price_min, price_min_ttc,";

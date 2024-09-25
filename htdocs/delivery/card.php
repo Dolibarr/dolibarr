@@ -60,6 +60,7 @@ if (isModEnabled('incoterm')) {
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
+$id = GETPOSTINT('id');
 
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
@@ -81,7 +82,6 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'inclu
 $error = 0;
 
 // Security check
-$id = GETPOSTINT('id');
 if ($user->socid) {
 	$socid = $user->socid;
 }

@@ -437,3 +437,4 @@ AllowStockMovementVariantParentHelp=Par défaut, un parent d'une variante est un
 ConfirmSetToDraftInventory=Êtes-vous sûr de vouloir revenir à l'état de brouillon ?<br>Les quantités actuellement définies dans l'inventaire seront réinitialisées.
 WarningLineProductNotToSell=Le produit ou le service "%s" n'est pas à vendre et a été cloné.
 PriceLabel=Libellé du prix
+PriceByCustomeAndMultiPricesAbility=Prix différents pour chaque client + Plusieurs niveaux de prix par produit/service (chaque client est dans un et un seul niveau)
