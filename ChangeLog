@@ -12,7 +12,7 @@ NEW value for FICHINTER_DISABLE_DETAILS. If FICHINTER_DISABLE_DETAILS is set to 
 
 For developers:
 ---------------
-
+QUAL line classes for various buisness object classes have been moved to individual files.
 
 
 WARNING:
