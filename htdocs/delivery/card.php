@@ -59,6 +59,7 @@ if (isModEnabled('incoterm')) {
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
+$id = GETPOSTINT('id');
 
 $object = new Delivery($db);
 $extrafields = new ExtraFields($db);
@@ -78,7 +79,6 @@ $hookmanager->initHooks(array('deliverycard', 'globalcard'));
 $error = 0;
 
 // Security check
-$id = GETPOSTINT('id');
 if ($user->socid) {
 	$socid = $user->socid;
 }
