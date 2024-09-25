@@ -346,7 +346,7 @@ if (($id || $ref) && $action == 'edit') {
 				print '</td>';
 				print '<td class="valuefieldcreate">';
 				//              if (!empty($val['picto'])) {
-				//                  print img_picto('', $val['picto'], '', false, 0, 0, '', 'pictofixedwidth');
+				//                  print img_picto('', $val['picto'], '', 0, 0, 0, '', 'pictofixedwidth');
 				//              }
 				//              if (in_array($val['type'], array('int', 'integer'))) {
 				//                  $value = GETPOSTISSET($key) ? GETPOST($key, 'int') : $sk->$key;
