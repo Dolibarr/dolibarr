@@ -800,7 +800,7 @@ $moreforfilter .= '</div>';
 $moreforfilter .= '</div>';
 
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 if (empty($reshook)) {
 	$moreforfilter .= $hookmanager->resPrint;
 } else {
