@@ -941,6 +941,9 @@ if ($search_all) {
 }
 if ($search_billed != '' && $search_billed >= 0) {
 	$sql .= ' AND c.facture = '.((int) $search_billed);
+	if(getDolGlobalString('HIDE_CANCELLED_ORDERS_BILLABLE') == 1){
+		$sql .= ' AND c.fk_statut > 0';
+	}
 }
 if ($search_status != '') {
 	if ($search_status <= 3 && $search_status >= -1) {	// status from -1 to 3 are real status (other are virtual combination)
