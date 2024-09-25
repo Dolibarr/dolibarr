@@ -354,6 +354,11 @@ class FunctionsLibTest extends CommonClassTest
 		$result = isValidEmail($input);
 		print __METHOD__." result=".$result."\n";
 		$this->assertTrue($result, 'Check isValidEmail '.$input);
+
+		$input = "1234.abcdefg@domainame.entreprises";
+		$result = isValidEmail($input);
+		print __METHOD__." result=".$result."\n";
+		$this->assertTrue($result, 'Check isValidEmail '.$input);
 	}
 
 	/**

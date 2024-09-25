@@ -300,7 +300,7 @@ if (!empty($current_fiscal_period)) {
 print load_fiche_titre($langs->trans("Closure") . " - " . $fiscal_period_nav_text, '', 'title_accountancy');
 
 if (empty($current_fiscal_period)) {
-	print $langs->trans('ErrorNoFiscalPeriodActiveFound', $langs->trans("Accounting"), $langs->trans("Setup"), $langs->trans("FiscalPeriod"));
+	print $langs->trans('ErrorNoFiscalPeriodActiveFound', $langs->transnoentitiesnoconv("Accounting"), $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("FiscalPeriod"));
 }
 
 if (isset($current_fiscal_period)) {

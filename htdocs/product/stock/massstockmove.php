@@ -177,7 +177,7 @@ if ($action == 'createmovements' && $user->hasRight('stock', 'mouvement', 'creer
 
 	if (!GETPOST("label")) {
 		$error++;
-		setEventMessages($langs->trans("ErrorFieldRequired"), $langs->transnoentitiesnoconv("MovementLabel"), null, 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("MovementLabel")), null, 'errors');
 	}
 
 	$db->begin();
