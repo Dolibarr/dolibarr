@@ -416,7 +416,7 @@ $comments = $object->getComments();
 if (!empty($comments)) {
 	foreach ($comments as $comment) {
 		if ($user->hasRight('opensurvey', 'write')) {
-			print '<a class="reposition" href="'.DOL_URL_ROOT.'/opensurvey/card.php?action=deletecomment&token='.newToken().'&idcomment='.((int) $comment->id_comment).'&id='.urlencode($numsondage).'"> '.img_picto('', 'delete.png', '', false, 0, 0, '', '', 0).'</a> ';
+			print '<a class="reposition" href="'.DOL_URL_ROOT.'/opensurvey/card.php?action=deletecomment&token='.newToken().'&idcomment='.((int) $comment->id_comment).'&id='.urlencode($numsondage).'"> '.img_picto('', 'delete.png', '', 0, 0, 0, '', '', 0).'</a> ';
 		}
 
 		print dol_htmlentities($comment->usercomment).': '.dol_nl2br(dol_htmlentities($comment->comment))." <br>";

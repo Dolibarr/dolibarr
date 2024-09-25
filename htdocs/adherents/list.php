@@ -54,6 +54,7 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'me
 $backtopage = GETPOST('backtopage', 'alpha');
 $optioncss 	= GETPOST('optioncss', 'aZ');
 $mode 		= GETPOST('mode', 'alpha');
+$groupby = GETPOST('groupby', 'aZ09');	// Example: $groupby = 'p.fk_opp_status' or $groupby = 'p.fk_statut'
 
 // Search fields
 $search 			= GETPOST("search", 'alpha');
@@ -107,14 +108,15 @@ if ($search_status < -2) {
 	$search_status = '';
 }
 
-// Pagination parameters
+// Load variable for pagination
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
-if (empty($page) || $page == -1) {
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT('page');
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
-}     // If $page is not defined, or '' or -1
+}
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -131,7 +133,7 @@ $object = new Adherent($db);
 $hookmanager->initHooks(array('memberlist'));
 $extrafields = new ExtraFields($db);
 
-// fetch optionals attributes and labels
+// Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
@@ -192,6 +194,7 @@ $object->fields = dol_sort_array($object->fields, 'position');
 
 // Complete array of fields for columns
 $tableprefix = 'd';
+$arrayfields = array();
 foreach ($object->fields as $key => $val) {
 	if (!array_key_exists($tableprefix.'.'.$key, $arrayfields)) {	// Discard record not into $arrayfields
 		continue;
@@ -209,6 +212,9 @@ foreach ($object->fields as $key => $val) {
 		);
 	}
 }
+// Extra fields
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+
 $arrayfields = dol_sort_array($arrayfields, 'position');
 '@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
@@ -410,11 +416,7 @@ $morecss = array();
 
 // Build and execute select
 // --------------------------------------------------------------------
-if (!empty($search_categ) && $search_categ > 0) {
-	$sql = "SELECT DISTINCT";
-} else {
-	$sql = "SELECT";
-}
+$sql = "SELECT";
 $sql .= " d.rowid, d.ref, d.login, d.lastname, d.firstname, d.gender, d.societe as company, d.fk_soc,";
 $sql .= " d.civility, d.datefin, d.address, d.zip, d.town, d.state_id, d.country,";
 $sql .= " d.email, d.phone, d.phone_perso, d.phone_mobile, d.birth, d.public, d.photo,";
@@ -428,7 +430,7 @@ $sql .= " state.code_departement as state_code, state.nom as state_name";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : "");
 	}
 }
 
@@ -441,7 +443,7 @@ $sql = preg_replace('/,\s*$/', '', $sql);
 $sqlfields = $sql; // $sql fields to remove for count total
 
 // SQL Alias adherent
-$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";  // maybe better to use ad (adh) instead of d
+$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";
 if (!empty($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (d.rowid = ef.fk_object)";
 }
@@ -623,7 +625,7 @@ $num = $db->num_rows($resql);
 
 
 // Direct jump if only one record found
-if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
+if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
 	header("Location: ".DOL_URL_ROOT.'/adherents/card.php?id='.$id);
@@ -657,6 +659,9 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 }
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
+}
+if ($groupby != '') {
+	$param .= '&groupby='.urlencode($groupby);
 }
 if ($search_all != "") {
 	$param .= "&search_all=".urlencode($search_all);
@@ -777,13 +782,12 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 $newcardbutton = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
-if ($user->hasRight('adherent', 'creer')) {
-	$newcardbutton .= dolGetButtonTitleSeparator();
-	$newcardbutton .= dolGetButtonTitle($langs->trans('NewMember'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/adherents/card.php?action=create');
-}
+$newcardbutton .= dolGetButtonTitleSeparator();
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewMember'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/adherents/card.php?action=create', '', $user->hasRight('adherent', 'creer'));
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
+// Add code for pre mass action (confirmation or email presend form)
 $topicmail = "Information";
 $modelmail = "member";
 $objecttmp = new Adherent($db);
@@ -853,9 +857,6 @@ if (empty($reshook)) {
 if (!empty($moreforfilter)) {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;
-	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
 	print '</div>';
 }
 

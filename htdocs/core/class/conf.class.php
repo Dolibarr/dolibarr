@@ -1041,7 +1041,7 @@ class Conf extends stdClass
 				$this->holiday->approve->warning_delay = (isset($this->global->MAIN_DELAY_HOLIDAYS) ? (int) $this->global->MAIN_DELAY_HOLIDAYS : 0) * 86400;
 			}
 
-			if (!empty($this->global->PRODUIT_MULTIPRICES) && empty($this->global->PRODUIT_MULTIPRICES_LIMIT)) {
+			if ((!empty($this->global->PRODUIT_MULTIPRICES) || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && empty($this->global->PRODUIT_MULTIPRICES_LIMIT)) {
 				$this->global->PRODUIT_MULTIPRICES_LIMIT = 5;
 			}
 
