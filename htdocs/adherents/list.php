@@ -196,11 +196,7 @@ $object->fields = dol_sort_array($object->fields, 'position');
 $tableprefix = 'd';
 $arrayfields = array();
 foreach ($object->fields as $key => $val) {
-	if (!array_key_exists($tableprefix.'.'.$key, $arrayfields)) {	// Discard record not into $arrayfields
-		continue;
-	}
 	// If $val['visible']==0, then we never show the field
-
 	if (!empty($val['visible'])) {
 		$visible = (int) dol_eval((string) $val['visible'], 1);
 		$arrayfields[$tableprefix.'.'.$key] = array(
