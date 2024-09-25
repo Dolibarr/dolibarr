@@ -223,6 +223,7 @@ TicketTimeToRead=Time elapsed before read
 TicketTimeElapsedBeforeSince=Time elapsed before / since
 TicketContacts=Contacts ticket
 TicketDocumentsLinked=Documents linked to ticket
+TicketDocumentsLinkedToMessages=Documents linked to ticket message
 ConfirmReOpenTicket=Confirm reopen this ticket ?
 TicketMessageMailIntroAutoNewPublicMessage=A new message was posted on the ticket with the subject %s:
 TicketAssignedToYou=Ticket assigned
