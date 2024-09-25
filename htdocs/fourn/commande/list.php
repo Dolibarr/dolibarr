@@ -873,7 +873,7 @@ if ($search_request_author) {
 }
 if ($search_billed != '' && $search_billed >= 0) {
 	$sql .= " AND cf.billed = ".((int) $search_billed);
-	if(getDolGlobalString('HIDE_CANCELLED_ORDERS_BILLABLE') == 1){
+	if (getDolGlobalString('HIDE_CANCELLED_ORDERS_BILLABLE') == 1) {
 		$sql .= ' AND cf.fk_statut < 5';
 	}
 }
