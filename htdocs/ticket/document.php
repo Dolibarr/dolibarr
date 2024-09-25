@@ -76,8 +76,8 @@ $object = new Ticket($db);
 $result = $object->fetch($id, $ref, $track_id);
 
 $res = 0;
+$objectMsg = new ActionComm($db);
 if (GETPOSTISSET("urlfile") && dirname(GETPOST('urlfile', 'alpha', 0, null, null, 1)) != $object->ref) {
-	$objectMsg = new ActionComm($db);
 	$res = $objectMsg->fetch(0, dirname(GETPOST('urlfile', 'alpha', 0, null, null, 1)));
 }
 
