@@ -270,7 +270,7 @@ DescVentilCustomer=Consult here the list of customer invoice lines bound (or not
 DescVentilMore=In most cases, if you use predefined products or services and you set the account (from chart of account) on the product/service card, the application will be able to make all the binding between your invoice lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on product/service cards or if you still have some lines not bound to an account, you will have to make a manual binding from the menu "<strong>%s</strong>".
 DescVentilDoneCustomer=Consult here the list of the lines of invoices customers and their product account from chart of account
 DescVentilTodoCustomer=Bind invoice lines not already bound with a product account from chart of account
-ChangeAccount=Change the product/service account (from chart of account) for the selected lines with the following account:
+ChangeAccount=Change the product/service account (from chart of account) for the selected lines with:
 Vide=-
 DescVentilSupplier=Consult here the list of vendor invoice lines bound or not yet bound to a product account from chart of account (only record not already transferred in accountancy are visible)
 DescVentilDoneSupplier=Consult here the list of the lines of vendor invoices and their accounting account
@@ -402,6 +402,7 @@ SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of third party is
 ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
 ForbiddenTransactionAlreadyValidated=Forbidden: The transaction has been validated.
 DataMustHaveBeenTransferredInAccounting=The transfer of data in accounting must have been done
+IfTransactionHasDueDate=For transactions related to documents that need payment
 ## Dictionary
 Range=Range of accounting account
 Calculated=Calculated

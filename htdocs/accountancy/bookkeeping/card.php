@@ -665,6 +665,16 @@ if ($action == 'create') {
 		print '</td>';
 		print '</tr>';
 
+		// Due date (if invoice)
+		//if (in_array($object->doc_type, array('customer_invoice', 'supplier_invoice'))) {
+		print '<tr>';
+		print '<td class="titlefield">' . $form->textwithpicto($langs->trans('DateDue'), $langs->trans("IfTransactionHasDueDate")) . '</td>';
+		print '<td>';
+		print $object->date_lim_reglement ? dol_print_date($object->date_lim_reglement, 'day') : '&nbsp;';
+		print '</td>';
+		print '</tr>';
+		//}
+
 		// Don't show in tmp mode, inevitably empty
 		if ($mode != "_tmp") {
 			// Date document export
@@ -693,14 +703,6 @@ if ($action == 'create') {
 				print '</tr>';
 			}
 		}
-
-		// Due date
-		print '<tr>';
-		print '<td class="titlefield">' . $langs->trans('DateDue') . '</td>';
-		print '<td>';
-		print $object->date_lim_reglement ? dol_print_date($object->date_lim_reglement, 'day') : '&nbsp;';
-		print '</td>';
-		print '</tr>';
 
 		// Validate
 		/*
