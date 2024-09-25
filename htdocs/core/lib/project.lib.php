@@ -2546,15 +2546,15 @@ function searchTaskInChild(&$inc, $parent, &$lines, &$taskrole)
 /**
  * Return HTML table with list of projects and number of opened tasks
  *
- * @param	DoliDB		$db					Database handler
- * @param	Form		$form				Object form
- * @param   int			$socid				Id thirdparty
- * @param   int			$projectsListId     Id of project I have permission on
- * @param   int<0,1>	$mytasks            Limited to task I am contact to
- * @param	int<-1,1>	$status				-1=No filter on statut, 0 or 1 = Filter on status
+ * @param	DoliDB			$db					Database handler
+ * @param	Form			$form				Object form
+ * @param   int				$socid				Id thirdparty
+ * @param   int				$projectsListId     Id of project I have permission on
+ * @param   int<0,1>		$mytasks            Limited to task I am contact to
+ * @param	int<-1,1>		$status				-1=No filter on statut, 0 or 1 = Filter on status
  * @param	array<int,string>	$listofoppstatus	List of opportunity status
- * @param   string[]	$hiddenfields       List of info to not show ('projectlabel', 'declaredprogress', '...', )
- * @param	int<0,max>	$max				Max nb of record to show in HTML list
+ * @param   string[]		$hiddenfields       List of info to not show ('projectlabel', 'declaredprogress', '...', )
+ * @param	int<0,max>		$max				Max nb of record to show in HTML list
  * @return	void
  */
 function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks = 0, $status = -1, $listofoppstatus = array(), $hiddenfields = array(), $max = 0)
