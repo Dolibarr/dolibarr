@@ -443,7 +443,7 @@ class Form
 
 			$result .= '<!-- Widget for translation -->' . "\n";
 			$result .= '<div class="inline-block paddingleft image-' . $object->element . '-' . $fieldname . '">';
-			$s = img_picto($langs->trans("ShowOtherLanguages"), 'language', '', false, 0, 0, '', 'fa-15 editfieldlang');
+			$s = img_picto($langs->trans("ShowOtherLanguages"), 'language', '', 0, 0, 0, '', 'fa-15 editfieldlang');
 			$result .= $s;
 			$result .= '</div>';
 
