@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,8 +65,8 @@ $permissiontodelete = $user->hasRight('bookmark', 'supprimer');
  * Actions
  */
 
-if ($action == 'add' || $action == 'addproduct' || $action == 'update') {
-	if ($action == 'update') {
+if (($action == 'add' || $action == 'addproduct' || $action == 'update') && $permissiontoadd) {
+	if ($action == 'update') {	// Test on permission already done
 		$invertedaction = 'edit';
 	} else {
 		$invertedaction = 'create';
@@ -81,7 +82,7 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update') {
 		exit;
 	}
 
-	if ($action == 'update') {
+	if ($action == 'update') {	// Test on permission already done
 		$object->fetch(GETPOSTINT("id"));
 	}
 	// Check if null because user not admin can't set an user and send empty value here.
@@ -106,7 +107,7 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update') {
 	if (!$error) {
 		$object->favicon = 'none';
 
-		if ($action == 'update') {
+		if ($action == 'update') {	// Test on permission already done
 			$res = $object->update();
 		} else {
 			$res = $object->create();
@@ -166,7 +167,7 @@ if ($action == 'create') {
 
 	print load_fiche_titre($langs->trans("NewBookmark"), '', 'bookmark');
 
-	print dol_get_fiche_head(null, 'bookmark', '', 0, '');
+	print dol_get_fiche_head([], 'bookmark', '', 0, '');
 
 	print '<table class="border centpercent tableforfieldcreate">';
 

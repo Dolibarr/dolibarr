@@ -171,6 +171,8 @@ if (isModEnabled("reception")) {
 	$permissiontodelete = $user->hasRight('fournisseur', 'commande', 'receptionner');
 }
 
+$error = 0;
+
 
 /*
  * Actions
@@ -212,7 +214,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php'; // Must be 'include', not 'include_once'
 
 	// Reopen
-	if ($action == 'reopen' && $permissiontoadd) {
+	if ($action == 'reopen' && $permissiontoadd) {	// Test on permissions not required here
 		$result = $object->reOpen();
 	}
 
@@ -289,11 +291,11 @@ if (empty($reshook)) {
 	// Create reception
 	if ($action == 'add' && $permissiontoadd) {
 		$error = 0;
-		$predef = '';
 
 		$db->begin();
 
 		$object->note = GETPOST('note', 'alpha');
+		$object->note_private = GETPOST('note', 'alpha');
 		$object->origin = $origin;
 		$object->origin_id = $origin_id;
 		$object->fk_project = GETPOSTINT('projectid');
@@ -460,7 +462,7 @@ if (empty($reshook)) {
 
 						$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 						if ($result < 0) {
-							dol_print_error($db, $result);
+							dol_print_error($db, $object->error, $object->errors);
 						}
 					}
 				}
@@ -507,7 +509,7 @@ if (empty($reshook)) {
 
 				$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				if ($result < 0) {
-					dol_print_error($db, $result);
+					dol_print_error($db, $object->error, $object->errors);
 				}
 			}
 		}
@@ -521,7 +523,7 @@ if (empty($reshook)) {
 		}
 
 		// TODO add alternative status
-		/*} elseif ($action == 'reopen' && (!empty($user->rights->reception->creer) || !empty($user->rights->reception->reception_advance->validate))) {
+		/*} elseif ($action == 'reopen' && ($user->hasRights('reception', 'creer') || $user->hasRights('reception', 'reception_advance', 'validate'))) {
 			$result = $object->setStatut(0);
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -543,27 +545,27 @@ if (empty($reshook)) {
 		// Action update
 		$error = 0;
 
-		if ($action == 'settracking_number') {
+		if ($action == 'settracking_number') {	// Test on permission to add
 			$object->tracking_number = trim(GETPOST('tracking_number', 'alpha'));
 		}
-		if ($action == 'settracking_url') {
+		if ($action == 'settracking_url') {		// Test on permission to add
 			$object->tracking_url = trim(GETPOST('tracking_url', 'restricthtml'));
 		}
-		if ($action == 'settrueWeight') {
+		if ($action == 'settrueWeight') {		// Test on permission to add
 			$object->trueWeight = GETPOSTINT('trueWeight');
 			$object->weight_units = GETPOSTINT('weight_units');
 		}
-		if ($action == 'settrueWidth') {
+		if ($action == 'settrueWidth') {		// Test on permission to add
 			$object->trueWidth = GETPOSTINT('trueWidth');
 		}
-		if ($action == 'settrueHeight') {
+		if ($action == 'settrueHeight') {		// Test on permission to add
 			$object->trueHeight = GETPOSTINT('trueHeight');
 			$object->size_units = GETPOSTINT('size_units');
 		}
-		if ($action == 'settrueDepth') {
+		if ($action == 'settrueDepth') {		// Test on permission to add
 			$object->trueDepth = GETPOSTINT('trueDepth');
 		}
-		if ($action == 'setshipping_method_id') {
+		if ($action == 'setshipping_method_id') {	// Test on permission to add
 			$object->shipping_method_id = GETPOSTINT('shipping_method_id');
 		}
 
@@ -973,10 +975,10 @@ if ($action == 'create') {
 			include_once DOL_DOCUMENT_ROOT.'/core/modules/reception/modules_reception.php';
 			$list = ModelePdfReception::liste_modeles($db);
 
-			if (count($list) > 1) {
+			if (is_countable($list) && count($list) > 1) {
 				print "<tr><td>".$langs->trans("DefaultModel")."</td>";
 				print '<td colspan="3">';
-				print $form->selectarray('model', $list, $conf->global->RECEPTION_ADDON_PDF);
+				print $form->selectarray('model', $list, getDolGlobalString('RECEPTION_ADDON_PDF'));
 				print "</td></tr>\n";
 			}
 
@@ -1585,7 +1587,7 @@ if ($action == 'create') {
 		if (!empty($object->trueWeight)) {
 			print ' ('.$langs->trans("SumOfProductWeights").': ';
 		}
-		print showDimensionInBestUnit($totalWeight, 0, "weight", $langs, isset($conf->global->MAIN_WEIGHT_DEFAULT_ROUND) ? $conf->global->MAIN_WEIGHT_DEFAULT_ROUND : -1, isset($conf->global->MAIN_WEIGHT_DEFAULT_UNIT) ? $conf->global->MAIN_WEIGHT_DEFAULT_UNIT : 'no');
+		print showDimensionInBestUnit($totalWeight, 0, "weight", $langs, getDolGlobalInt('MAIN_WEIGHT_DEFAULT_ROUND', -1), getDolGlobalString('MAIN_WEIGHT_DEFAULT_UNIT', 'no'));
 		if (!empty($object->trueWeight)) {
 			print ')';
 		}
@@ -1637,7 +1639,7 @@ if ($action == 'create') {
 	// If reception volume not defined we use sum of products
 	if ($calculatedVolume > 0) {
 		if ($volumeUnit < 50) {
-			print showDimensionInBestUnit($calculatedVolume, $volumeUnit, "volume", $langs, isset($conf->global->MAIN_VOLUME_DEFAULT_ROUND) ? $conf->global->MAIN_VOLUME_DEFAULT_ROUND : -1, isset($conf->global->MAIN_VOLUME_DEFAULT_UNIT) ? $conf->global->MAIN_VOLUME_DEFAULT_UNIT : 'no');
+			print showDimensionInBestUnit($calculatedVolume, $volumeUnit, "volume", $langs, getDolGlobalInt('MAIN_VOLUME_DEFAULT_ROUND', -1), getDolGlobalString("MAIN_VOLUME_DEFAULT_UNIT", 'no'));
 		} else {
 			print $calculatedVolume.' '.measuringUnitString(0, "volume", (string) $volumeUnit);
 		}
@@ -1646,7 +1648,7 @@ if ($action == 'create') {
 		if ($calculatedVolume) {
 			print ' ('.$langs->trans("SumOfProductVolumes").': ';
 		}
-		print showDimensionInBestUnit($totalVolume, 0, "volume", $langs, isset($conf->global->MAIN_VOLUME_DEFAULT_ROUND) ? $conf->global->MAIN_VOLUME_DEFAULT_ROUND : -1, isset($conf->global->MAIN_VOLUME_DEFAULT_UNIT) ? $conf->global->MAIN_VOLUME_DEFAULT_UNIT : 'no');
+		print showDimensionInBestUnit($totalVolume, 0, "volume", $langs, getDolGlobalInt('MAIN_VOLUME_DEFAULT_ROUND', -1), getDolGlobalString('MAIN_VOLUME_DEFAULT_UNIT', 'no'));
 		//if (empty($calculatedVolume)) print ' ('.$langs->trans("Calculated").')';
 		if ($calculatedVolume) {
 			print ')';

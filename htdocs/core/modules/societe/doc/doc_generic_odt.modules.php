@@ -119,7 +119,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				continue;
 			}
 			if (!is_dir($tmpdir)) {
-				$texttitle .= img_warning($langs->trans("ErrorDirNotFound", $tmpdir), 0);
+				$texttitle .= img_warning($langs->trans("ErrorDirNotFound", $tmpdir), '');
 			} else {
 				$tmpfiles = dol_dir_list($tmpdir, 'files', 0, '\.od(s|t)$', '', 'name', SORT_ASC, 0, 1); // Disable hook for the moment
 				if (count($tmpfiles)) {
@@ -235,7 +235,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 
 		if ($conf->societe->multidir_output[$object->entity]) {
 			$dir = $conf->societe->multidir_output[$object->entity];
-			$objectref = dol_sanitizeFileName($object->id);
+			$objectref = dol_sanitizeFileName((string) $object->id);
 			if (!preg_match('/specimen/i', $objectref)) {
 				$dir .= "/".$objectref;
 			}

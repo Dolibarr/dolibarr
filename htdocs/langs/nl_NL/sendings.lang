@@ -63,7 +63,7 @@ NoProductToShipFoundIntoStock=Geen product te verzenden in het magazijn <b> %s <
 WeightVolShort=Gewicht / Vol.
 ValidateOrderFirstBeforeShipment=U moet eerst de bestelling valideren voordat u zendingen kunt maken.
 NoLineGoOnTabToAddSome=Geen regel. Ga naar tabblad "%s" om toe te voegen
-CreateInvoiceForThisCustomerFromSendings=Factuurverzendingen
+CreateInvoiceForThisCustomerFromSendings=Create Bills
 IfValidateInvoiceIsNoSendingStayUnbilled=Als de Factuur-validatie 'Nee' is, blijft de verzending op de status 'Niet gefactureerd' totdat de Factuur is gevalideerd.
 OptionToSetSendingBilledNotEnabled=De optie uit de module Workflow, om het verzenden automatisch naar 'Gefactureerd' in te stellen wanneer Factuur is gevalideerd, is niet ingeschakeld, dus u zult de status van verzendingen daarna handmatig moeten instellen op 'Gefactureerd' de Factuur is gegenereerd.
 

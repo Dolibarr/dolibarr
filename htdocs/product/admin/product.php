@@ -340,7 +340,7 @@ foreach ($dirproduct as $dirroot) {
 				print '<td>'.$modCodeProduct->info($langs).'</td>'."\n";
 				print '<td class="nowrap"><span class="opacitymedium">'.$modCodeProduct->getExample($langs).'</span></td>'."\n";
 
-				if (getDolGlobalString('PRODUCT_CODEPRODUCT_ADDON') && $conf->global->PRODUCT_CODEPRODUCT_ADDON == $file) {
+				if (getDolGlobalString('PRODUCT_CODEPRODUCT_ADDON') == $file) {
 					print '<td class="center">'."\n";
 					print img_picto($langs->trans("Activated"), 'switch_on');
 					print "</td>\n";
@@ -432,6 +432,7 @@ foreach ($dirmodels as $reldir) {
 
 							require_once $dir.'/'.$file;
 							$module = new $classname($db);
+							'@phan-var-force ModelePDFProduct $module';
 
 							$modulequalified = 1;
 							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -446,7 +447,7 @@ foreach ($dirmodels as $reldir) {
 								print(empty($module->name) ? $name : $module->name);
 								print "</td><td>\n";
 								if (method_exists($module, 'info')) {
-									print $module->info($langs);
+									print $module->info($langs); // @phan-suppress-current-line PhanUndeclaredMethod
 								} else {
 									print $module->description;
 								}

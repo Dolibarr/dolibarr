@@ -94,6 +94,9 @@ if ($action == 'activate_delivery') {
 if ($action == 'updateMask') {
 	$maskconstdelivery = GETPOST('maskconstdelivery', 'aZ09');
 	$maskdelivery = GETPOST('maskdelivery', 'alpha');
+
+	$res = 0;
+
 	if ($maskconstdelivery && preg_match('/_MASK$/', $maskconstdelivery)) {
 		$res = dolibarr_set_const($db, $maskconstdelivery, $maskdelivery, 'chaine', 0, '', $conf->entity);
 	}

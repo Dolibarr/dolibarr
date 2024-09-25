@@ -161,6 +161,9 @@ class SupplierProposal extends CommonObject
 	 */
 	public $mode_reglement;
 
+	/**
+	 * @var array<string,string>  (Encoded as JSON in database)
+	 */
 	public $extraparams = array();
 	public $lines = array();
 	public $line;
@@ -2445,10 +2448,9 @@ class SupplierProposal extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 *
-	 * @param array $params ex option, infologin
+	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
-	 * @return array
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -2997,57 +2999,58 @@ class SupplierProposalLine extends CommonObjectLine
 
 		$result = $this->db->query($sql);
 		if ($result) {
-			$objp = $this->db->fetch_object($result);
+			if ($objp = $this->db->fetch_object($result)) {
+				$this->id = $objp->rowid;
+				$this->fk_supplier_proposal = $objp->fk_supplier_proposal;
+				$this->fk_parent_line = $objp->fk_parent_line;
+				$this->label = $objp->custom_label;
+				$this->desc = $objp->description;
+				$this->qty = $objp->qty;
+				$this->subprice = $objp->subprice;
+				$this->tva_tx = $objp->tva_tx;
+				$this->remise_percent = $objp->remise_percent;
+				$this->fk_remise_except = $objp->fk_remise_except;
+				$this->fk_product = $objp->fk_product;
+				$this->info_bits = $objp->info_bits;
+				$this->date_start = $this->db->jdate($objp->date_start);
+				$this->date_end = $this->db->jdate($objp->date_end);
 
-			$this->id = $objp->rowid;
-			$this->fk_supplier_proposal = $objp->fk_supplier_proposal;
-			$this->fk_parent_line = $objp->fk_parent_line;
-			$this->label			= $objp->custom_label;
-			$this->desc				= $objp->description;
-			$this->qty = $objp->qty;
-			$this->subprice = $objp->subprice;
-			$this->tva_tx = $objp->tva_tx;
-			$this->remise_percent = $objp->remise_percent;
-			$this->fk_remise_except = $objp->fk_remise_except;
-			$this->fk_product		= $objp->fk_product;
-			$this->info_bits		= $objp->info_bits;
-			$this->date_start		= $this->db->jdate($objp->date_start);
-			$this->date_end			= $this->db->jdate($objp->date_end);
+				$this->total_ht = $objp->total_ht;
+				$this->total_tva = $objp->total_tva;
+				$this->total_ttc = $objp->total_ttc;
 
-			$this->total_ht			= $objp->total_ht;
-			$this->total_tva		= $objp->total_tva;
-			$this->total_ttc		= $objp->total_ttc;
+				$this->fk_fournprice = $objp->fk_fournprice;
 
-			$this->fk_fournprice = $objp->fk_fournprice;
+				$marginInfos = getMarginInfos($objp->subprice, $objp->remise_percent, $objp->tva_tx, $objp->localtax1_tx, $objp->localtax2_tx, $this->fk_fournprice, $objp->pa_ht);
+				$this->pa_ht = $marginInfos[0];
+				$this->marge_tx = $marginInfos[1];
+				$this->marque_tx = $marginInfos[2];
 
-			$marginInfos			= getMarginInfos($objp->subprice, $objp->remise_percent, $objp->tva_tx, $objp->localtax1_tx, $objp->localtax2_tx, $this->fk_fournprice, $objp->pa_ht);
-			$this->pa_ht			= $marginInfos[0];
-			$this->marge_tx			= $marginInfos[1];
-			$this->marque_tx		= $marginInfos[2];
+				$this->special_code = $objp->special_code;
+				$this->product_type = $objp->product_type;
+				$this->rang = $objp->rang;
 
-			$this->special_code		= $objp->special_code;
-			$this->product_type		= $objp->product_type;
-			$this->rang = $objp->rang;
+				$this->ref = $objp->product_ref; // deprecated
+				$this->product_ref = $objp->product_ref;
+				$this->libelle = $objp->product_label; // deprecated
+				$this->product_label = $objp->product_label;
+				$this->product_desc = $objp->product_desc;
 
-			$this->ref = $objp->product_ref; // deprecated
-			$this->product_ref = $objp->product_ref;
-			$this->libelle = $objp->product_label; // deprecated
-			$this->product_label	= $objp->product_label;
-			$this->product_desc		= $objp->product_desc;
+				$this->ref_fourn = $objp->ref_produit_fourn;
 
-			$this->ref_fourn = $objp->ref_produit_fourn;
+				// Multicurrency
+				$this->fk_multicurrency = $objp->fk_multicurrency;
+				$this->multicurrency_code = $objp->multicurrency_code;
+				$this->multicurrency_subprice = $objp->multicurrency_subprice;
+				$this->multicurrency_total_ht = $objp->multicurrency_total_ht;
+				$this->multicurrency_total_tva = $objp->multicurrency_total_tva;
+				$this->multicurrency_total_ttc = $objp->multicurrency_total_ttc;
+				$this->fk_unit = $objp->fk_unit;
 
-			// Multicurrency
-			$this->fk_multicurrency = $objp->fk_multicurrency;
-			$this->multicurrency_code = $objp->multicurrency_code;
-			$this->multicurrency_subprice 	= $objp->multicurrency_subprice;
-			$this->multicurrency_total_ht 	= $objp->multicurrency_total_ht;
-			$this->multicurrency_total_tva 	= $objp->multicurrency_total_tva;
-			$this->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
-			$this->fk_unit = $objp->fk_unit;
-
-			$this->db->free($result);
-			return 1;
+				$this->db->free($result);
+				return 1;
+			}
+			return 0;
 		} else {
 			dol_print_error($this->db);
 			return -1;

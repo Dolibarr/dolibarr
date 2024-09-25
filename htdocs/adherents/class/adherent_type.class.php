@@ -136,7 +136,7 @@ class AdherentType extends CommonObject
 	public $email;
 
 	/**
-	 * @var array multilangs
+	 * @var array<string,array{label:string,description:string,email:string}>	multilangs
 	 */
 	public $multilangs = array();
 
@@ -178,9 +178,9 @@ class AdherentType extends CommonObject
 					$this->description = $obj->description;
 					$this->email        = $obj->email;
 				}
-				$this->multilangs["$obj->lang"]["label"] = $obj->label;
-				$this->multilangs["$obj->lang"]["description"] = $obj->description;
-				$this->multilangs["$obj->lang"]["email"] = $obj->email;
+				$this->multilangs[(string) $obj->lang]["label"] = $obj->label;
+				$this->multilangs[(string) $obj->lang]["description"] = $obj->description;
+				$this->multilangs[(string) $obj->lang]["email"] = $obj->email;
 			}
 			return 1;
 		} else {
@@ -638,7 +638,7 @@ class AdherentType extends CommonObject
 					if ($mode < 2) {
 						$memberstatic = new Adherent($this->db);
 						if ($mode == 1) {
-							$memberstatic->fetch($obj->rowid, '', '', '', false, false);
+							$memberstatic->fetch($obj->rowid, '', 0, '', false, false);
 						} else {
 							$memberstatic->fetch($obj->rowid);
 						}
@@ -681,9 +681,9 @@ class AdherentType extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 * @param array $params params to construct tooltip data
+	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
-	 * @return array
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -818,7 +818,7 @@ class AdherentType extends CommonObject
 	/**
 	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
 	 *
-	 *	@param	array		$info	Info array loaded by _load_ldap_info
+	 *	@param	array<string,mixed>	$info	Info array loaded by _load_ldap_info
 	 *	@param	int<0,2>	$mode	0=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
 	 *								1=Return DN without key inside (ou=xxx,dc=aaa,dc=bbb)
 	 *								2=Return key only (uid=qqq)
@@ -846,7 +846,7 @@ class AdherentType extends CommonObject
 	/**
 	 *	Initialize the info array (array of LDAP values) that will be used to call LDAP functions
 	 *
-	 *	@return		array		Tableau info des attributes
+	 *	@return		array<string,mixed>	Info table with attributes
 	 */
 	public function _load_ldap_info()
 	{
@@ -871,7 +871,7 @@ class AdherentType extends CommonObject
 			$valueofldapfield = array();
 			foreach ($this->members as $key => $val) {    // This is array of users for group into dolibarr database.
 				$member = new Adherent($this->db);
-				$member->fetch($val->id, '', '', '', false, false);
+				$member->fetch($val->id, '', 0, '', false, false);
 				$info2 = $member->_load_ldap_info();
 				$valueofldapfield[] = $member->_load_ldap_dn($info2);
 			}

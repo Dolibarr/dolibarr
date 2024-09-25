@@ -74,6 +74,9 @@ if ($socid && $socid != $object->thirdparty->id) {
 	accessforbidden();
 }
 
+$stripecu = null;
+$stripeacc = null;
+
 // Init Stripe objects
 if (isModEnabled('stripe')) {
 	require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';

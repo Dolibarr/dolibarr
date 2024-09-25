@@ -540,7 +540,7 @@ $s .= "\n".'<!-- End div to calendars selectors -->'."\n";
 print $s;
 
 print '<div class="liste_titre liste_titre_bydiv centpercent">';
-print_actions_filter($form, $canedit, $search_status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid, $search_categ_cus);
+print_actions_filter($form, $canedit, $search_status, $year, $month, $day, $showbirthday, '', $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid, $search_categ_cus);
 print '</div>';
 
 
@@ -832,6 +832,8 @@ $currentdaytoshow = $firstdaytoshow;
 echo '<div class="div-table-responsive">';
 //print dol_print_date($currentdaytoshow, 'dayhour', 'gmt');
 
+$colorsbytype = array();
+
 while ($currentdaytoshow < $lastdaytoshow) {
 	echo '<table class="centpercent noborder nocellnopadd cal_month">';
 
@@ -988,7 +990,6 @@ while ($currentdaytoshow < $lastdaytoshow) {
 	}
 
 	// Load array of colors by type
-	$colorsbytype = array();
 	$labelbytype = array();
 	$sql = "SELECT code, color, libelle as label FROM ".MAIN_DB_PREFIX."c_actioncomm ORDER BY position";
 	$resql = $db->query($sql);
@@ -998,7 +999,7 @@ while ($currentdaytoshow < $lastdaytoshow) {
 	}
 
 	// Loop on each user to show calendar
-	$todayarray = dol_getdate($now, 'fast');
+	$todayarray = dol_getdate($now, true);
 	$sav = $tmpday;
 	$showheader = true;
 	$var = false;

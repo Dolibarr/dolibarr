@@ -224,7 +224,7 @@ $arraylistofpdfformat = array(
 
 $s = $langs->trans("LibraryToBuildPDF")."<br>";
 $i = 0;
-$pdf = pdf_getInstance('A4');
+$pdf = pdf_getInstance(array(210, 297));
 if (class_exists('FPDF') && !class_exists('TCPDF')) {
 	if ($i) {
 		$s .= ' + ';
@@ -508,7 +508,7 @@ print '<tr class="oddeven"><td>';
 print $form->textwithpicto($langs->trans("PDFIn2Languages"), $langs->trans("PDF_USE_ALSO_LANGUAGE_CODE"));
 print '</td><td>';
 $selected = GETPOSTISSET('PDF_USE_ALSO_LANGUAGE_CODE') ? GETPOST('PDF_USE_ALSO_LANGUAGE_CODE') : getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE');
-print $formadmin->select_language($selected, 'PDF_USE_ALSO_LANGUAGE_CODE', 0, null, 1);
+print $formadmin->select_language($selected, 'PDF_USE_ALSO_LANGUAGE_CODE', 0, array(), 1);
 print '</td></tr>';
 
 // Height of logo
@@ -638,7 +638,9 @@ if ($conf->use_javascript_ajax) {
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>'.$langs->trans("PDF_USE_A").'</td><td>';
-print $form->selectarray('PDF_USE_A', $arraylistofpdfformat, getDolGlobalString('PDF_USE_A', '0'));
+//$pdfa = false; // PDF default version
+$pdfa = getDolGlobalString('PDF_USE_A', '3'); 	// PDF/A-1 ou PDF/A-3
+print $form->selectarray('PDF_USE_A', $arraylistofpdfformat, $pdfa);
 print '</td></tr>';
 
 print '</table>';

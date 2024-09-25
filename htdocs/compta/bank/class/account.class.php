@@ -746,6 +746,11 @@ class Account extends CommonObject
 			$this->status = $this->clos;
 		}
 
+		if (empty($this->address && !empty($this->domiciliation))) {
+			dol_syslog(get_class($this)."::create domiciliation is deprecated use address", LOG_NOTICE);
+			$this->address = $this->domiciliation;
+		}
+
 		// Load the library to validate/check a BAN account
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 
@@ -1482,10 +1487,9 @@ class Account extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 *
-	 * @param 	array 	$params 	Params to construct tooltip data
-	 * @since 	v18
-	 * @return 	array
+	 * @param array<string,mixed> $params params to construct tooltip data
+	 * @since v18
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -1747,7 +1751,7 @@ class Account extends CommonObject
 	}
 
 	/**
-	 * Return 1 if IBAN / BIC is mandatory (otherwise option)
+	 * Return 1 if IBAN is mandatory (otherwise option)
 	 *
 	 * @return		int        1 = mandatory / 0 = Not mandatory
 	 */
@@ -1799,6 +1803,37 @@ class Account extends CommonObject
 
 		if (in_array($country_code, $country_code_in_EEC)) {
 			return 1; // France, Spain, ...
+		}
+		return 0;
+	}
+
+	/**
+	 * Return 1 if BIC is mandatory (otherwise option)
+	 *
+	 * @return		int        1 = mandatory / 0 = Not mandatory
+	 */
+	public function needBIC()
+	{
+		if (getDolGlobalString('MAIN_IBAN_IS_NEVER_MANDATORY')) {
+			return 0;
+		}
+
+		$country_code = $this->getCountryCode();
+
+		$country_code_in_EEC = array(
+			'AD', // Andorra
+			'BH', // Bahrein
+			'DK', // Denmark
+			'FR', // France
+			'GH', // Ghana
+			'HU', // Hungary
+			'JP', // Japan
+			'LV', // Latvia
+			'SE', // Sweden
+		);
+
+		if (in_array($country_code, $country_code_in_EEC)) {
+			return 1; // Andorra, Bahrein, ...
 		}
 		return 0;
 	}

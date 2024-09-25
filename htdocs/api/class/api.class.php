@@ -75,9 +75,9 @@ class DolibarrApi
 	 * Check and convert a string depending on its type/name.
 	 *
 	 * @param	string			$field		Field name
-	 * @param	string|array	$value		Value to check/clean
+	 * @param	string|string[]	$value		Value to check/clean
 	 * @param	Object			$object		Object
-	 * @return 	string|array				Value cleaned
+	 * @return 	string|array<string,mixed>	Value cleaned
 	 */
 	protected function _checkValForAPI($field, $value, $object)
 	{
@@ -257,17 +257,6 @@ class DolibarrApi
 		unset($object->stats_mrptoconsume);
 		unset($object->stats_mrptoproduce);
 
-		unset($object->origin_object);
-		unset($object->origin);
-		unset($object->element);
-		unset($object->element_for_permission);
-		unset($object->fk_element);
-		unset($object->table_element);
-		unset($object->table_element_line);
-		unset($object->class_element_line);
-		unset($object->picto);
-		unset($object->linked_objects);
-
 		unset($object->fieldsforcombobox);
 		unset($object->regeximgext);
 
@@ -294,9 +283,20 @@ class DolibarrApi
 
 		unset($object->prefix_comm);
 
-		if (!isset($object->table_element) || $object->table_element != 'ticket') {
+		if (!isset($object->table_element) || ! in_array($object->table_element, array('expensereport_det', 'ticket'))) {
 			unset($object->comments);
 		}
+
+		unset($object->origin_object);
+		unset($object->origin);
+		unset($object->element);
+		unset($object->element_for_permission);
+		unset($object->fk_element);
+		unset($object->table_element);
+		unset($object->table_element_line);
+		unset($object->class_element_line);
+		unset($object->picto);
+		unset($object->linked_objects);
 
 		// Remove the $oldcopy property because it is not supported by the JSON
 		// encoder. The following error is generated when trying to serialize
@@ -411,7 +411,7 @@ class DolibarrApi
 	 * Function to forge a SQL criteria from a Generic filter string.
 	 * Function no more used. Kept for backward compatibility with old APIs of modules
 	 *
-	 * @param  array    $matches    Array of found string by regex search.
+	 * @param  string[]	$matches    Array of found string by regex search.
 	 * 								Each entry is 1 and only 1 criteria.
 	 * 								Example: "t.ref:like:'SO-%'", "t.date_creation:<:'20160101'", "t.date_creation:<:'2016-01-01 12:30:00'", "t.nature:is:NULL", "t.field2:isnot:NULL"
 	 * @return string               Forged criteria. Example: "t.field like 'abc%'"

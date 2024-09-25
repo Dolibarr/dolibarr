@@ -78,6 +78,7 @@ if (GETPOST('button_removefilter_x', 'alpha')) {
 	$search_email = '';
 }
 $array_query = array();
+'@phan-var-force array<string,int|string|string[]> $array_query';
 $object = new Mailing($db);
 $advTarget = new AdvanceTargetingMailing($db);
 
@@ -103,12 +104,15 @@ if (!$user->hasRight('mailing', 'lire') || (!getDolGlobalString('EXTERNAL_USERS_
 }
 //$result = restrictedArea($user, 'mailing');
 
+$permissiontoread = $user->hasRight('mailing', 'lire');
+$permissiontoadd = $user->hasRight('mailing', 'creer');
+
 
 /*
  * Actions
  */
 
-if ($action == 'loadfilter') {
+if ($action == 'loadfilter' && $permissiontoread) {
 	if (!empty($template_id)) {
 		$result = $advTarget->fetch($template_id);
 		if ($result < 0) {
@@ -121,7 +125,7 @@ if ($action == 'loadfilter') {
 	}
 }
 
-if ($action == 'add') {
+if ($action == 'add' && $permissiontoadd) {
 	$user_contact_query = false;
 
 	$array_query = array();
@@ -258,7 +262,7 @@ if ($action == 'add') {
 	}
 }
 
-if ($action == 'clear') {
+if ($action == 'clear' && $permissiontoadd) {
 	$mailingtargets = new MailingTargets($db);
 	$mailingtargets->clear_target($id);
 
@@ -266,11 +270,11 @@ if ($action == 'clear') {
 	exit();
 }
 
-if ($action == 'savefilter' || $action == 'createfilter') {
+if (($action == 'savefilter' || $action == 'createfilter') && $permissiontoadd) {
 	$template_name = GETPOST('template_name');
 	$error = 0;
 
-	if ($action == 'createfilter' && empty($template_name)) {
+	if ($action == 'createfilter' && empty($template_name) && $permissiontoadd) {
 		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('AdvTgtOrCreateNewFilter')), null, 'errors');
 		$error++;
 	}
@@ -354,13 +358,13 @@ if ($action == 'savefilter' || $action == 'createfilter') {
 		}
 		$advTarget->filtervalue = json_encode($array_query);
 
-		if ($action == 'createfilter') {
+		if ($action == 'createfilter') {		// Test on permission already done
 			$advTarget->name = $template_name;
 			$result = $advTarget->create($user);
 			if ($result < 0) {
 				setEventMessages($advTarget->error, $advTarget->errors, 'errors');
 			}
-		} elseif ($action == 'savefilter') {
+		} elseif ($action == 'savefilter') {	// Test on permission already done
 			$result = $advTarget->update($user);
 			if ($result < 0) {
 				setEventMessages($advTarget->error, $advTarget->errors, 'errors');
@@ -370,7 +374,7 @@ if ($action == 'savefilter' || $action == 'createfilter') {
 	}
 }
 
-if ($action == 'deletefilter') {
+if ($action == 'deletefilter' && $permissiontoadd) {
 	$result = $advTarget->delete($user);
 	if ($result < 0) {
 		setEventMessages($advTarget->error, $advTarget->errors, 'errors');
@@ -379,7 +383,7 @@ if ($action == 'deletefilter') {
 	exit();
 }
 
-if ($action == 'delete') {
+if ($action == 'delete' && $permissiontoadd) {
 	// Ici, rowid indique le destinataire et id le mailing
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE rowid = ".((int) $rowid);
 	$resql = $db->query($sql);
@@ -404,6 +408,7 @@ if (GETPOST("button_removefilter")) {
 	$search_prenom = '';
 	$search_email = '';
 }
+
 
 /*
  * View
@@ -461,6 +466,10 @@ if ($object->fetch($id) >= 0) {
 
 	// Show email selectors
 	if ($object->status == 0 && $user->hasRight('mailing', 'creer')) {
+		// @phan-assert FormAdvTargetEmailing $formadvtargetemaling
+		// @phan-assert AdvanceTargetingMailing $advTarget
+
+		// @phan-assert array<string,int|string|string[] $array_query'
 		include DOL_DOCUMENT_ROOT.'/core/tpl/advtarget.tpl.php';
 	}
 }

@@ -32,7 +32,7 @@
  * Prepare array with list of tabs
  *
  * @param   User	$object		Object related to tabs
- * @return  array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function user_prepare_head(User $object)
 {
@@ -231,7 +231,7 @@ function user_prepare_head(User $object)
  * Prepare array with list of tabs
  *
  * @param 	UserGroup $object		Object group
- * @return	array				    Array of tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function group_prepare_head($object)
 {
@@ -280,7 +280,7 @@ function group_prepare_head($object)
 /**
  * Prepare array with list of tabs
  *
- * @return  array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function user_admin_prepare_head()
 {

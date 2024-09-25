@@ -4,7 +4,7 @@
  * Copyright (C) 2006-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
- * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
  * Copyright (C) 2022       Udo Tamm                <dev@dolibit.de>
@@ -62,6 +62,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/cunits.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formadmin.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/public.lib.php';
 // Init vars
 $backtopage = GETPOST('backtopage', 'alpha');
 $action = GETPOST('action', 'aZ09');
@@ -92,9 +93,10 @@ $hookmanager->initHooks(array('publicnewmembercard', 'globalcard'));
 
 $extrafields = new ExtraFields($db);
 
-
 $objectsoc = new Societe($db);
 $user->loadDefaultValues();
+
+$extrafields->fetch_name_optionals_label($objectsoc->table_element); // fetch optionals attributes and labels
 
 
 /**
@@ -190,7 +192,7 @@ if ($reshook < 0) {
 }
 
 // Action called when page is submitted
-if (empty($reshook) && $action == 'add') {
+if (empty($reshook) && $action == 'add') {	// Test on permission not required here. This is a public page. Security is done on constant and mitigation.
 	$error = 0;
 	$urlback = '';
 
@@ -216,26 +218,34 @@ if (empty($reshook) && $action == 'add') {
 		$societe = new Societe($db);
 
 		$societe->name = GETPOST('name', 'alphanohtml');
-
 		$societe->client = GETPOSTINT('client') ? GETPOSTINT('client') : $societe->client;
-
 		$societe->address	= GETPOST('address', 'alphanohtml');
-
 		$societe->country_id				= GETPOSTINT('country_id');
-
 		$societe->phone					= GETPOST('phone', 'alpha');
-
 		$societe->fax				= GETPOST('fax', 'alpha');
-
 		$societe->email					= trim(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL));
-
 		$societe->client = 2 ; // our client is a prospect
-
 		$societe->code_client		= '-1';
-
 		$societe->name_alias = GETPOST('name_alias', 'alphanohtml');
+		$societe->note_private = GETPOST('note_private', 'alphanohtml');
 
-		$societe->note_private = GETPOST('note_private');
+		// Fill array 'array_options' with data from add form
+		/*
+		$extrafields->fetch_name_optionals_label($societe->table_element);
+		$ret = $extrafields->setOptionalsFromPost(null, $societe);
+		if ($ret < 0) {
+			$error++;
+			$errmsg .= $societe->error;
+		}
+		*/
+
+		$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 200);
+
+		if (checkNbPostsForASpeceificIp($societe, $nb_post_max) <= 0) {
+			$error++;
+			$errmsg .= implode('<br>', $societe->errors);
+		}
+
 		if (!$error) {
 			$result = $societe->create($user);
 			if ($result > 0) {
@@ -272,7 +282,7 @@ if (empty($reshook) && $action == 'add') {
 // If MEMBER_URL_REDIRECT_SUBSCRIPTION is set to an url, we never go here because a redirect was done to this url. Same if we ask to redirect to the payment page.
 // backtopage parameter with an url was set on prospect submit page, we never go here because a redirect was done to this url.
 
-if (empty($reshook) && $action == 'added') {
+if (empty($reshook) && $action == 'added') {	// Test on permission not required here
 	llxHeaderVierge("newSocieteAdded");
 
 	// If we have not been redirected
@@ -295,13 +305,12 @@ $form = new Form($db);
 $formcompany = new FormCompany($db);
 $adht = new AdherentType($db);
 $formadmin = new FormAdmin($db);
-$extrafields->fetch_name_optionals_label($objectsoc->table_element); // fetch optionals attributes and labels
 
 
 llxHeaderVierge($langs->trans("ContactUs"));
 
 print '<br>';
-print load_fiche_titre(img_picto('', 'member_nocolor', 'class="pictofixedwidth"') . ' &nbsp; ' . $langs->trans("ContactUs"), '', '', 0, 0, 'center');
+print load_fiche_titre(img_picto('', 'member_nocolor', 'class="pictofixedwidth"') . ' &nbsp; ' . $langs->trans("ContactUs"), '', '', 0, '', 'center');
 
 
 print '<div align="center">';
@@ -433,9 +442,14 @@ print '<tr>';
 print '<td class="tdtop">' . $langs->trans("Comments") . '</td>';
 print '<td class="tdtop"><textarea name="note_private" id="note_private" wrap="soft" class="quatrevingtpercent" rows="' . ROWS_3 . '">' . dol_escape_htmltag(GETPOST('note_private', 'restricthtml'), 0, 1) . '</textarea></td>';
 print '</tr>' . "\n";
+
+
+// Other attributes
+$parameters['tpl_context'] = 'public';	// define template context to public
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
+
+
 // TODO Move this into generic feature.
-
-
 
 // Display Captcha code if is enabled
 if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA')) {

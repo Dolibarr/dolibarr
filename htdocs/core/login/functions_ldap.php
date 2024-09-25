@@ -255,7 +255,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 					$ldap->ldapErrorText = ldap_error($ldap->connection);
 					dol_syslog("functions_ldap::check_user_password_ldap ".$ldap->ldapErrorCode." ".$ldap->ldapErrorText);
 				} catch (Throwable $exception) {
-					$ldap->ldapErrorCode = '';
+					$ldap->ldapErrorCode = 0;
 					$ldap->ldapErrorText = '';
 					dol_syslog('functions_ldap::check_user_password_ldap '.$exception, LOG_WARNING);
 				}

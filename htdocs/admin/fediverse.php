@@ -209,6 +209,27 @@ if ($action == 'updatesocialnetwork') {
 	}
 }
 
+if ($action == 'editsocialnetwork' && GETPOST('confirm') == 'yes') {
+	$paramKey = GETPOST('paramkey', 'alpha');
+	$key = GETPOST('key', 'alpha');
+	$name = GETPOST('name');
+	$result = dolibarr_get_const($db, "SOCIAL_NETWORKS_DATA_".$name, $conf);
+	$socialNetworkData = json_decode($result, true);
+
+	unset($socialNetworkData[$paramKey]);
+	$newData = json_encode($socialNetworkData);
+
+	$result = dolibarr_set_const($db, "SOCIAL_NETWORKS_DATA_".$name, $newData, 'chaine', 0, '', $conf->entity);
+	if ($result) {
+		$db->commit();
+		header("Location: ".$_SERVER["PHP_SELF"].'?action=editsocialnetwork&token='.newToken().'&key='.urlencode($key));
+		exit;
+	} else {
+		$db->rollback();
+		dol_print_error($db);
+	}
+}
+
 
 
 /*
@@ -297,6 +318,22 @@ if ($action == 'deletesocialnetwork') {
 		$langs->trans('Delete'),
 		$langs->trans('ConfirmDeleteSocialNetwork', GETPOST('key', 'alpha')),
 		'confirm_delete',
+		'',
+		0,
+		1
+	);
+	print $formconfirm;
+}
+// delete params of social network
+if ($action == 'editsocialnetwork' && GETPOST('paramkey', 'alpha')) {
+	$paramKey = GETPOST('paramkey', 'alpha');
+	$name = GETPOST('name', 'alpha');
+
+	$formconfirm = $form->formconfirm(
+		$_SERVER["PHP_SELF"].'?key='.urlencode(GETPOST('key', 'alpha')).'&paramkey='.urlencode($paramKey).'&name='.urlencode($name),
+		$langs->trans('Delete'),
+		$langs->trans('ConfirmDeleteParamOfSocialNetwork', $paramKey),
+		'editsocialnetwork',
 		'',
 		0,
 		1
@@ -400,6 +437,8 @@ if ($resql) {
 					} else {
 						print '<td><input type="text" class="flat minwidth300" name="paramsVal[]" value="'.dol_escape_htmltag($val).'" />';
 					}
+					print '<button type="button" class="delete-param-btn" data-paramkey="'.htmlspecialchars($k).'">'.img_delete().'</button>';
+
 					print '</td>';
 					print '</tr>'."\n";
 				}
@@ -409,6 +448,17 @@ if ($resql) {
 			print '<td><input type="hidden" name="action" value="updatesocialnetwork" /></td>';
 			print '<td><input class="button " type="submit" name="update" value="'.$langs->trans('Modify').'" /></td>';
 			print '</tr>'."\n";
+
+			print '<script>
+					$(document).ready(function() {
+						$(\'.delete-param-btn\').on(\'click\', function() {
+							var paramKey = $(this).data(\'paramkey\');
+							var socialNetworkId = \''.htmlspecialchars($socialNetworkId).'\';
+							var socialNetworkName = \''.htmlspecialchars($socialNetworkTitle).'\';
+							window.location.href = \''.$_SERVER["PHP_SELF"].'?action=editsocialnetwork&token='.newToken().'&paramkey=\' + encodeURIComponent(paramKey) + \'&key=\' + encodeURIComponent(socialNetworkId) + \'&name=\' + encodeURIComponent(socialNetworkName);
+						});
+					});
+					</script>';
 		}
 
 		print '</table>'."\n";

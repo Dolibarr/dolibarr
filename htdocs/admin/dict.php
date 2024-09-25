@@ -11,9 +11,10 @@
  * Copyright (C) 2011-2023	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2016		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2019-2022  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020-2022  Open-Dsi                <support@open-dsi.fr>
  * Copyright (C) 2024       Charlene Benke          <charlene@patas-monkey.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -100,7 +101,7 @@ $confirm = GETPOST('confirm', 'alpha');
 
 $id = GETPOSTINT('id');
 $rowid = GETPOST('rowid', 'alpha');
-$entity = GETPOSTINT('entity');
+$entity = GETPOST('entity', 'alpha');	// Do not use GETPOSTINT here. Should be '', 0 or >0.
 $code = GETPOST('code', 'alpha');
 $from = GETPOST('from', 'alpha');
 
@@ -1127,11 +1128,17 @@ if (empty($reshook)) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET active = 1 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		} elseif ($code) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET active = 1 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+		} else {
+			$sql = null;
 		}
 
-		$result = $db->query($sql);
-		if (!$result) {
-			dol_print_error($db);
+		if ($sql !== null) {
+			$result = $db->query($sql);
+			if (!$result) {
+				dol_print_error($db);
+			}
+		} {
+			dol_print_error(null, "No DB entry or no code");
 		}
 	}
 
@@ -1150,11 +1157,17 @@ if (empty($reshook)) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET active = 0 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		} elseif ($code) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET active = 0 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+		} else {
+			$sql = null;
 		}
 
-		$result = $db->query($sql);
-		if (!$result) {
-			dol_print_error($db);
+		if ($sql !== null) {
+			$result = $db->query($sql);
+			if (!$result) {
+				dol_print_error($db);
+			}
+		} {
+			dol_print_error(null, "No DB entry or no code");
 		}
 	}
 
@@ -1173,11 +1186,17 @@ if (empty($reshook)) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET favorite = 1 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		} elseif ($code) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET favorite = 1 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+		} else {
+			$sql = null;
 		}
 
-		$result = $db->query($sql);
-		if (!$result) {
-			dol_print_error($db);
+		if ($sql !== null) {
+			$result = $db->query($sql);
+			if (!$result) {
+				dol_print_error($db);
+			}
+		} {
+			dol_print_error(null, "No DB entry or no code");
 		}
 	}
 
@@ -1196,11 +1215,17 @@ if (empty($reshook)) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET favorite = 0 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		} elseif ($code) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET favorite = 0 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+		} else {
+			$sql = null;
 		}
 
-		$result = $db->query($sql);
-		if (!$result) {
-			dol_print_error($db);
+		if ($sql !== null) {
+			$result = $db->query($sql);
+			if (!$result) {
+				dol_print_error($db);
+			}
+		} {
+			dol_print_error(null, "No DB entry or no code");
 		}
 	}
 
@@ -1219,11 +1244,17 @@ if (empty($reshook)) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET eec = 1 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		} elseif ($code) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET eec = 1 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+		} else {
+			$sql = null;
 		}
 
-		$result = $db->query($sql);
-		if (!$result) {
-			dol_print_error($db);
+		if ($sql !== null) {
+			$result = $db->query($sql);
+			if (!$result) {
+				dol_print_error($db);
+			}
+		} {
+			dol_print_error(null, "No DB entry or no code");
 		}
 	}
 
@@ -1242,11 +1273,17 @@ if (empty($reshook)) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET eec = 0 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		} elseif ($code) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET eec = 0 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+		} else {
+			$sql = null;
 		}
 
-		$result = $db->query($sql);
-		if (!$result) {
-			dol_print_error($db);
+		if ($sql !== null) {
+			$result = $db->query($sql);
+			if (!$result) {
+				dol_print_error($db);
+			}
+		} {
+			dol_print_error(null, "No DB entry or no code");
 		}
 	}
 }
@@ -1348,7 +1385,6 @@ if ($id > 0) {
 	} elseif ($search_active == 'no') {
 		$sql .= " AND ".$db->sanitize($tableprefix)."active = 0";
 	}
-	//var_dump($sql);
 
 	// Count total nb of records
 	$nbtotalofrecords = '';
@@ -2249,7 +2285,7 @@ if ($id > 0) {
 
 					print '<td colspan="3" class="center">';
 					print '<div name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'"></div>';
-					print '<input type="hidden" name="page" value="'.dol_escape_htmltag($page).'">';
+					print '<input type="hidden" name="page" value="'.dol_escape_htmltag((string) $page).'">';
 					print '<input type="hidden" name="rowid" value="'.dol_escape_htmltag($rowid).'">';
 					if (!is_null($withentity)) {
 						print '<input type="hidden" name="entity" value="'.$withentity.'">';
@@ -2638,10 +2674,10 @@ $db->close();
 /**
  *	Show fields in insert/edit mode
  *
- * 	@param		array		$fieldlist		Array of fields
- * 	@param		Object		$obj			If we show a particular record, obj is filled with record fields
+ * 	@param		string[]	$fieldlist		Array of fields
+ * 	@param		?Object		$obj			If we show a particular record, obj is filled with record fields
  *  @param		string		$tabname		Name of SQL table
- *  @param		string		$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we don't want it to be rendered
+ *  @param		''|'add'|'edit'|'hide'	$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we don't want it to be rendered
  *	@return		string						'' or value of entity into table
  */
 function fieldList($fieldlist, $obj = null, $tabname = '', $context = '')
@@ -2777,7 +2813,7 @@ function fieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 				print '<input type="hidden" name="'. $value .'" value="'.$transkey.'">';
 			}
 			print '</td>';
-		} elseif ($value == 'price' || preg_match('/^amount/i', $value)) {
+		} elseif ($value == 'price' || preg_match('/^amount/i', (string) $value)) {
 			print '<td><input type="text" class="flat minwidth75" value="'.price((!empty($obj->{$value}) ? $obj->{$value} : '')).'" name="'. $value .'"></td>';
 		} elseif ($value == 'code' && isset($obj->{$value})) {
 			print '<td>';
@@ -2814,7 +2850,7 @@ function fieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 			if (isModEnabled('accounting')) {
 				$fieldname = $value;
 				$accountancy_account = (!empty($obj->$fieldname) ? $obj->$fieldname : 0);
-				print $formaccounting->select_account($accountancy_account, '.'. $value, 1, '', 1, 1, 'maxwidth200 maxwidthonsmartphone');
+				print $formaccounting->select_account($accountancy_account, '.'. $value, 1, array(), 1, 1, 'maxwidth200 maxwidthonsmartphone');
 			} else {
 				$fieldname = $value;
 				print '<input type="text" size="10" class="flat" value="'.(isset($obj->$fieldname) ? $obj->$fieldname : '').'" name="'. $value .'">';
