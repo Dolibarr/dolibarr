@@ -80,7 +80,8 @@ $entitytoicon = array(
 	'translation'  => 'generic',
 	'bomm'         => 'bom',
 	'bomline'      => 'bom',
-	'conferenceorboothattendee' => 'contact'
+	'conferenceorboothattendee' => 'contact',
+	'inventory_line' => 'inventory'
 );
 
 // Translation code, array duplicated in import.php, was not synchronized, TODO put it somewhere only once
@@ -133,7 +134,8 @@ $entitytolang = array(
 	'bom'          => 'BOM',
 	'bomline'      => 'BOMLine',
 	'conferenceorboothattendee' => 'Attendee',
-	'inventory'   => 'Inventory'
+	'inventory'   => 'Inventory',
+	'inventory_line' => 'InventoryLine'
 );
 
 $array_selected = isset($_SESSION["export_selected_fields"]) ? $_SESSION["export_selected_fields"] : array();

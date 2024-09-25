@@ -263,7 +263,7 @@ function getDolUserString($key, $default = '', $tmpuser = null)
 		$tmpuser = $user;
 	}
 
-	return (string) (empty($tmpuser->conf->$key) ? $default : $tmpuser->conf->$key);
+	return (string) (isset($tmpuser->conf->$key) ? $tmpuser->conf->$key : $default);
 }
 
 /**
@@ -281,7 +281,7 @@ function getDolUserInt($key, $default = 0, $tmpuser = null)
 		$tmpuser = $user;
 	}
 
-	return (int) (empty($tmpuser->conf->$key) ? $default : $tmpuser->conf->$key);
+	return (int) (isset($tmpuser->conf->$key) ? $tmpuser->conf->$key: $default);
 }
 
 
@@ -448,7 +448,7 @@ function getEntity($element, $shared = 1, $currentobject = null)
 		$out = $mc->getEntity($element, $shared, $currentobject);
 	} else {
 		$out = '';
-		$addzero = array('user', 'usergroup', 'cronjob', 'c_email_templates', 'email_template', 'default_values', 'overwrite_trans');
+		$addzero = array('user', 'usergroup', 'cronjob', 'c_email_templates', 'c_holiday_types', 'email_template', 'default_values', 'overwrite_trans');
 		if (in_array($element, $addzero)) {
 			$out .= '0,';
 		}
@@ -2768,19 +2768,19 @@ function dol_get_fiche_end($notab = 0)
  *  Show tab footer of a card.
  *  Note: $object->next_prev_filter can be set to restrict select to find next or previous record by $form->showrefnav.
  *
- *  @param	CommonObject $object	Object to show
- *  @param	string	$paramid   		Name of parameter to use to name the id into the URL next/previous link
- *  @param	string	$morehtml  		More html content to output just before the nav bar
- *  @param	int|bool $shownav	  	Show Condition (navigation is shown if value is 1 or true)
- *  @param	string	$fieldid   		Name of the field in DB to use to select next et previous (we make the select max and min on this field). Use 'none' for no prev/next search.
- *  @param	string	$fieldref   	Name of the field (object->ref) to use to select next et previous
- *  @param	string	$morehtmlref  	More html to show after the ref (see $morehtmlleft for before)
- *  @param	string	$moreparam  	More param to add in nav link url.
- *	@param	int		$nodbprefix		Do not include DB prefix to forge table name
- *	@param	string	$morehtmlleft	More html code to show before the ref (see $morehtmlref for after)
- *	@param	string	$morehtmlstatus	More html code to show under navigation arrows
- *  @param  int     $onlybanner     Put this to 1, if the card will contains only a banner (this add css 'arearefnobottom' on div)
- *	@param	string	$morehtmlright	More html code to show before navigation arrows
+ *  @param	CommonObject $object		Object to show
+ *  @param	string		$paramid   		Name of parameter to use to name the id into the URL next/previous link
+ *  @param	string		$morehtml  		More html content to output just before the nav bar
+ *  @param	int|bool 	$shownav	  	Show Condition (navigation is shown if value is 1 or true)
+ *  @param	string		$fieldid   		Name of the field in DB to use to select next et previous (we make the select max and min on this field). Use 'none' for no prev/next search.
+ *  @param	string		$fieldref   	Name of the field (object->ref) to use to select next et previous
+ *  @param	string		$morehtmlref  	More html to show after the ref (see $morehtmlleft for before)
+ *  @param	string		$moreparam  	More param to add in nav link url.
+ *	@param	int			$nodbprefix		Do not include DB prefix to forge table name
+ *	@param	string		$morehtmlleft	More html code to show before the ref (see $morehtmlref for after)
+ *	@param	string		$morehtmlstatus	More html code to show under navigation arrows
+ *  @param  int     	$onlybanner     Put this to 1, if the card will contains only a banner (this add css 'arearefnobottom' on div)
+ *	@param	string		$morehtmlright	More html code to show before navigation arrows
  *  @return	void
  */
 function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldid = 'rowid', $fieldref = 'ref', $morehtmlref = '', $moreparam = '', $nodbprefix = 0, $morehtmlleft = '', $morehtmlstatus = '', $onlybanner = 0, $morehtmlright = '')
@@ -3125,6 +3125,11 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	} elseif ($reshook > 0) {
 		$morehtmlref = $hookmanager->resPrint;
 	}
+
+	// $morehtml is the right part (link "Back to list")
+	// $morehtmlleft is the picto or photo of banner
+	// $morehtmlstatus is part under the status
+	// $morehtmlright is part of htmlright
 
 	print '<div class="'.($onlybanner ? 'arearefnobottom ' : 'arearef ').'heightref valignmiddle centpercent">';
 	print $form->showrefnav($object, $paramid, $morehtml, $shownav, $fieldid, $fieldref, $morehtmlref, $moreparam, $nodbprefix, $morehtmlleft, $morehtmlstatus, $morehtmlright);
@@ -8413,7 +8418,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 			// Keep only some html tags and remove also some 'javascript:' strings
 			if ($check == 'restricthtmlallowlinkscript') {
 				$out = dol_string_onlythesehtmltags($out, 0, 1, 0, 0, array(), 1, 1);
-			} elseif ($check == 'restricthtmlallowclass') {
+			} elseif ($check == 'restricthtmlallowclass' || $check == 'restricthtmlallowunvalid') {
 				$out = dol_string_onlythesehtmltags($out, 0, 0, 1);
 			} else {
 				$out = dol_string_onlythesehtmltags($out, 0, 1, 1);
@@ -12899,7 +12904,7 @@ function getElementProperties($elementType)
 		$classfile = 'mailing';
 		$classname = 'Mailing';
 		$subelement = '';
-	} elseif ($elementType == 'member') {
+	} elseif ($elementType == 'member' || $elementType == 'adherent') {
 		$classpath = 'adherents/class';
 		$module = 'adherent';
 		$subelement = 'adherent';
@@ -13936,15 +13941,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 			$sql .= ", sp.lastname, sp.firstname";
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent') {
 			$sql .= ", m.lastname, m.firstname";
-		} elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur') {
-			$sql .= ", o.ref";
-		} elseif (is_object($filterobj) && get_class($filterobj) == 'Product') {
-			$sql .= ", o.ref";
-		} elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket') {
-			$sql .= ", o.ref";
-		} elseif (is_object($filterobj) && get_class($filterobj) == 'BOM') {
-			$sql .= ", o.ref";
-		} elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat') {
+		} elseif (is_object($filterobj) && in_array(get_class($filterobj), array('Commande', 'CommandeFournisseur', 'Product', 'Ticket', 'BOM', 'Contrat', 'Facture', 'FactureFournisseur'))) {
 			$sql .= ", o.ref";
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
@@ -13995,6 +13992,11 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 				if ($filterobj->id) {
 					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
 				}
+			} elseif (is_object($filterobj) && get_class($filterobj) == 'Commande') {
+				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'order'";
+				if ($filterobj->id) {
+					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
+				}
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur') {
 				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'order_supplier'";
 				if ($filterobj->id) {
@@ -14026,9 +14028,14 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 					$sql .= " AND a.fk_contact = ".((int) $filterobj->id);
 				}
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'Facture') {
-				$sql .= "AND a.fk_element = o.rowid";
+				$sql .= " AND a.fk_element = o.rowid";
 				if ($filterobj->id) {
-					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
+					$sql .= " AND a.fk_element = ".((int) $filterobj->id)." AND a.elementtype = 'invoice'";
+				}
+			} elseif (is_object($filterobj) && get_class($filterobj) == 'FactureFournisseur') {
+				$sql .= " AND a.fk_element = o.rowid";
+				if ($filterobj->id) {
+					$sql .= " AND a.fk_element = ".((int) $filterobj->id)." AND a.elementtype = 'invoice_supplier'";
 				}
 			}
 		} else {
@@ -14036,7 +14043,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 		}
 
 		// Condition on actioncode
-		if (!empty($actioncode)) {
+		if (!empty($actioncode) && $actioncode != '-1') {
 			if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
 				if ($actioncode == 'AC_NON_AUTO') {
 					$sql .= " AND c.type != 'systemauto'";
@@ -14253,14 +14260,13 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 
 		$out .= getTitleFieldOfList('Date', 0, $_SERVER["PHP_SELF"], 'a.datep', '', $param, '', $sortfield, $sortorder, '')."\n";
 
-		$out .= '<th class="liste_titre"><strong class="hideonsmartphone">'.$langs->trans("Search").' : </strong></th>';
+		$out .= '<th class="liste_titre hideonsmartphone"><strong class="hideonsmartphone">'.$langs->trans("Search").' : </strong></th>';
 		if ($donetodo) {
 			$out .= '<th class="liste_titre"></th>';
 		}
 		$out .= '<th class="liste_titre">';
-		$out .= '<span class="fas fa-square inline-block fawidth30" style=" color: #ddd;" title="'.$langs->trans("ActionType").'"></span>';
-		//$out .= img_picto($langs->trans("Type"), 'type');
-		$out .= $formactions->select_type_actions($actioncode, "actioncode", '', !getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? 1 : -1, 0, 0, 1, 'minwidth200imp');
+		$out .= '<span class="fas fa-square inline-block fawidth30 hideonsmartphone" style="color: #ddd;" title="'.$langs->trans("ActionType").'"></span>';
+		$out .= $formactions->select_type_actions($actioncode, "actioncode", '', getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? -1 : 1, 0, 0, 1, 'minwidth200imp', $langs->trans("Type"));
 		$out .= '</th>';
 		$out .= '<th class="liste_titre maxwidth100onsmartphone">';
 		$out .= '<input type="text" class="maxwidth100onsmartphone" name="search_agenda_label" value="'.$filters['search_agenda_label'].'" placeholder="'.$langs->trans("Label").'">';
@@ -14275,7 +14281,6 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 		}
 
 		$out .= '</tr>';
-
 
 		$out .= '</table>';
 

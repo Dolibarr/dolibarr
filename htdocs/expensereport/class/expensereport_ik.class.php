@@ -156,7 +156,7 @@ class ExpenseReportIk extends CommonObject
 	 * Return expense categories in array
 	 *
 	 * @param	int		$mode	1=only active; 2=only inactive; other value return all
-	 * @return	array of category
+	 * @return	array<int,object> of category
 	 */
 	public function getTaxCategories($mode = 1)
 	{
@@ -186,11 +186,11 @@ class ExpenseReportIk extends CommonObject
 	}
 
 	/**
-	 * Return an array of ranges for a user
+	 * Return a range for a user
 	 *
 	 * @param User  $userauthor         user author id
 	 * @param int   $fk_c_exp_tax_cat   category
-	 * @return boolean|array
+	 * @return false|ExpenseReportIk
 	 */
 	public function getRangeByUser(User $userauthor, int $fk_c_exp_tax_cat)
 	{
@@ -211,7 +211,7 @@ class ExpenseReportIk extends CommonObject
 	 *
 	 * @param int	$fk_c_exp_tax_cat	category id
 	 * @param int	$active				active
-	 * @return array
+	 * @return ExpenseReportIk[]
 	 */
 	public function getRangesByCategory(int $fk_c_exp_tax_cat, $active = 1)
 	{
@@ -251,7 +251,7 @@ class ExpenseReportIk extends CommonObject
 	/**
 	 * Return an array of ranges grouped by category
 	 *
-	 * @return array
+	 * @return array<int,array{ranges:array<Object>,label:string,active:int<0,1>}>
 	 */
 	public function getAllRanges()
 	{
@@ -274,7 +274,7 @@ class ExpenseReportIk extends CommonObject
 					$ik->fetch($obj->fk_expense_ik);
 				}
 
-				// TODO Set a $tmparay = new stdObj(); and use it to fill $ranges array
+				// TODO Set a $tmparray = new stdObj(); and use it to fill $ranges array
 				$obj->ik = $ik;
 
 				if (!isset($ranges[$obj->fk_c_exp_tax_cat])) {

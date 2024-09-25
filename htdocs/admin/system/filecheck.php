@@ -2,7 +2,7 @@
 /* Copyright (C) 2005-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2007       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2007-2012  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2019  Frederic France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2015-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2017       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *

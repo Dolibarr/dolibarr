@@ -6,6 +6,7 @@
  * Copyright (C) 2015-2016	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2023	   	Gauthier VERDOL			<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024	   	Jean-Rémi TAPONIER		<jean-remi@netlogic.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +33,7 @@
  * Prepare array with list of tabs
  *
  * @param   Product	$object		Object related to tabs
- * @return  array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function product_prepare_head($object)
 {
@@ -73,7 +74,7 @@ function product_prepare_head($object)
 	// if (!empty($object->status_buy) || (isModEnabled('margin') && !empty($object->status))) {   // If margin is on and product on sell, we may need the cost price even if product os not on purchase
 	if ((isModEnabled("supplier_proposal") || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && ($user->hasRight('fournisseur', 'lire') || $user->hasRight('supplier_order', 'read') || $user->hasRight('supplier_invoice', 'read'))
 		|| (isModEnabled('margin') && $user->hasRight("margin", "liretous"))
-		) {
+	) {
 		if ($usercancreadprice) {
 			$head[$h][0] = DOL_URL_ROOT."/product/price_suppliers.php?id=".$object->id;
 			$head[$h][1] = $langs->trans("BuyingPrices");
@@ -238,7 +239,7 @@ function product_prepare_head($object)
  * Prepare array with list of tabs
  *
  * @param   ProductLot	$object		Object related to tabs
- * @return  array		     		Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function productlot_prepare_head($object)
 {
@@ -694,7 +695,7 @@ function show_stats_for_company($product, $socid)
 		print '</td>';
 		print '</tr>';
 	}
-	$parameters = array('socid'=>$socid);
+	$parameters = array('socid' => $socid);
 	$reshook = $hookmanager->executeHooks('addMoreProductStat', $parameters, $product, $nblines); // Note that $action and $object may have been modified by some hooks
 	if ($reshook < 0) {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -814,7 +815,7 @@ function show_stats_for_batch($batch, $socid)
 		print '</tr>';
 	}
 
-	$parameters = array('socid'=>$socid);
+	$parameters = array('socid' => $socid);
 	$reshook = $hookmanager->executeHooks('addMoreBatchProductStat', $parameters, $batch, $nblines); // Note that $action and $object may have been modified by some hooks
 	if ($reshook < 0) {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');

@@ -1897,6 +1897,11 @@ select.flat.selectlimit {
 .fa-15 {
 	font-size: 1.5em;
 }
+
+.fa-map-marked-alt:before {
+	font-size: 0.85em;
+}
+
 .text-security {
 	-webkit-text-security: disc;
 }
@@ -2415,7 +2420,7 @@ td.showDragHandle {
 	padding-bottom: 20px;
 <?php if (GETPOST('optioncss', 'aZ09') != 'print') { ?>
 	padding-<?php print $left; ?>: <?php echo $leftmenuwidth + 9; ?>px;
-	padding-top: 16px;
+	padding-top: 28px;
 <?php } ?>
 }
 .bodyforlist #id-right {
@@ -2801,6 +2806,10 @@ img.hideonsmartphone.pictoactionview {
 	text-align: start;
 	width: 20px;
 	/* padding-right: 0; */
+}
+img.pictofixedwidth {
+	width: 18px;
+	padding-right: 2px;
 }
 
 .colorthumb {

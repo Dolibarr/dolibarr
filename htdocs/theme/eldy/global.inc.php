@@ -1708,6 +1708,11 @@ table.paymenttable td.amountpaymentcomplete, table.paymenttable td.amountremaint
 .fa-15 {
 	font-size: 1.5em;
 }
+
+.fa-map-marked-alt:before {
+	font-size: 0.85em;
+}
+
 .text-security {
 	-webkit-text-security: disc;
 }
@@ -2678,7 +2683,10 @@ span.widthpictotitle.pictotitle {
 	width: 20px;
 	/* padding-right: 0; */
 }
-
+img.pictofixedwidth {
+	width: 18px;
+	padding-right: 2px;
+}
 
 .colorthumb {
 	padding-left: 1px !important;

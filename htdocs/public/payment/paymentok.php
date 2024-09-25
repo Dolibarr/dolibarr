@@ -555,6 +555,9 @@ if ($ispaymentok) {
 				// Now do a correction of the suggested date
 				if (getDolGlobalString('MEMBER_SUBSCRIPTION_START_FIRST_DAY_OF') === "m") {
 					$datesubscription = dol_get_first_day((int) dol_print_date($datesubscription, "%Y"), (int) dol_print_date($datesubscription, "%m"));
+				} elseif (getDolGlobalString('MEMBER_SUBSCRIPTION_START_FIRST_DAY_OF') === "3m") {
+					$datesubscription = dol_time_plus_duree($object->datefin, -3, 'm');
+					$datesubscription = dol_get_first_day((int) dol_print_date($datesubscription, "%Y"), (int) dol_print_date($datesubscription, "%m"));
 				} elseif (getDolGlobalString('MEMBER_SUBSCRIPTION_START_FIRST_DAY_OF') === "Y") {
 					$datesubscription = dol_get_first_day((int) dol_print_date($datesubscription, "%Y"));
 				}

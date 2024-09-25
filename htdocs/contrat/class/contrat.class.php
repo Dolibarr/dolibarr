@@ -1159,7 +1159,7 @@ class Contrat extends CommonObject
 							$this->add_contact($objcontact->fk_socpeople, $objcontact->code, $objcontact->source); // May failed because of duplicate key or because code of contact type does not exists for new object
 						}
 					} else {
-						dol_print_error($this->db, $resqlcontact);
+						dol_print_error($this->db);
 					}
 				}
 			}
@@ -1569,7 +1569,7 @@ class Contrat extends CommonObject
 			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
 			$remise = 0;
 			$price = price2num(round($pu_ht, 2));
-			if (dol_strlen($remise_percent) > 0) {
+			if (dol_strlen(price2num($remise_percent)) > 0) {
 				$remise = round(($pu_ht * $remise_percent / 100), 2);
 				$price = $pu_ht - $remise;
 			}
@@ -1731,7 +1731,7 @@ class Contrat extends CommonObject
 
 		$subprice = $price;
 		$remise = 0;
-		if (dol_strlen($remise_percent) > 0) {
+		if (dol_strlen(price2num($remise_percent)) > 0) {
 			$remise = round(($pu * $remise_percent / 100), 2);
 			$price = $pu - $remise;
 		} else {
@@ -1770,7 +1770,7 @@ class Contrat extends CommonObject
 		// Anciens indicateurs: $price, $remise (a ne plus utiliser)
 		$remise = 0;
 		$price = price2num(round($pu, 2));
-		if (dol_strlen($remise_percent) > 0) {
+		if (dol_strlen(price2num($remise_percent)) > 0) {
 			$remise = round(($pu * $remise_percent / 100), 2);
 			$price = $pu - $remise;
 		}
@@ -2034,7 +2034,7 @@ class Contrat extends CommonObject
 	 * getTooltipContentArray
 	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
-	 * @return array{picto:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{

@@ -999,7 +999,7 @@ while ($currentdaytoshow < $lastdaytoshow) {
 	}
 
 	// Loop on each user to show calendar
-	$todayarray = dol_getdate($now, 'fast');
+	$todayarray = dol_getdate($now, true);
 	$sav = $tmpday;
 	$showheader = true;
 	$var = false;

@@ -379,11 +379,12 @@ if (empty($dolibarr_main_stream_to_disable)) {
 } else {
 	print implode(', ', $dolibarr_main_stream_to_disable);
 }
-print '<span class="bold"> -> Current PHP streams allowed = </span>';
+print '<span class="bold"> &nbsp; -> Current PHP streams allowed = </span>';
 $arrayofstreams = stream_get_wrappers();
 if (!empty($arrayofstreams)) {
 	sort($arrayofstreams);
-	print(implode(', ', $arrayofstreams)).' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("TryToKeepOnly", 'file,http,https,php,zip').')</span>'."\n";
+	print '<span class="wordbreakall">'.implode(',', $arrayofstreams).'</span>';
+	print ' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("TryToKeepOnly", 'file,http,https,php,zip').')</span>'."\n";
 }
 print '</div>';
 

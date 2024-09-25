@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2013-2014	Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2023-2024	William Mead		<william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2013-2014	Jean-François Ferry		<jfefe@aternatik.fr>
+ * Copyright (C) 2023-2024	William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -306,7 +306,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
 		print '<td>';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor = new DolEditor('description', ($description ?: $object->description), '', 200, 'dolibarr_notes', false);
+		$doleditor = new DolEditor('description', ($description ?: $object->description), '', 200, 'dolibarr_notes');
 		$doleditor->Create();
 		print '</td></tr>';
 
