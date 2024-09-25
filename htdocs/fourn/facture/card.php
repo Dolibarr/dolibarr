@@ -1709,7 +1709,7 @@ if (empty($reshook)) {
 				// Get vat rate
 				if (!GETPOSTISSET('tva_tx')) {	// If vat rate not provided from the form (the form has the priority)
 					$tmpidprodfournprice = GETPOST('idprodfournprice', 'alpha');	// can be an id of price, or -1, -2, -99 or 'idprod_...'
-					if (is_numeric($tmpidprodfournprice) && (int) $tmpidprodfournprice > 0) { 
+					if (is_numeric($tmpidprodfournprice) && (int) $tmpidprodfournprice > 0) {
 						$tmpidprodfournprice = (int) $tmpidprodfournprice;
 					} else {
 						$tmpidprodfournprice = 0;
