@@ -346,6 +346,10 @@ abstract class CommonDocGenerator
 		// phpcs:enable
 		global $extrafields;
 
+		if (!is_object($object)) {
+			return array();
+		}
+
 		if (empty($object->country) && !empty($object->country_code)) {
 			$object->country = $outputlangs->transnoentitiesnoconv("Country".$object->country_code);
 		}
@@ -954,7 +958,7 @@ abstract class CommonDocGenerator
 		// phpcs:enable
 		global $conf;
 
-		if (is_array($extrafields->attributes[$object->table_element]['label'])) {
+		if (isset($extrafields->attributes[$object->table_element]) && is_array($extrafields->attributes[$object->table_element]) && is_array($extrafields->attributes[$object->table_element]['label'])) {
 			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label) {
 				$formatedarrayoption = $object->array_options;
 
