@@ -1,0 +1,79 @@
+body.dolibarr-doc {
+    background: rgb(232, 232, 232);font-family: "Segoe UI", sans-serif;font-weight: 400;font-style: normal;font-size: 0.9em;margin: 0;
+}
+
+/***************************/
+/* SIDEBAR */
+/***************************/
+.doc-sidebar {background: rgb(38,60,92); position: fixed; max-width: 260px; width: 260px; top: 0; left: 0;bottom:0; box-shadow: 6px 0 12px rgba(0, 0, 0, 0.1);height: 100%;}
+
+/* Logo */
+.doc-sidebar .sidebar-logo {background: #fff;width: 100%;display: flex;height: 75px;}
+.doc-sidebar .sidebar-logo img {height:50px;width: auto;display: block;margin:auto;}
+
+/* Navigation */
+.doc-sidebar nav {height: calc(100% - 85px);overflow-y: auto;box-sizing: border-box;}
+.doc-sidebar nav::-webkit-scrollbar {width: 6px;}
+.doc-sidebar nav::-webkit-scrollbar-track {background-color: rgba(38,60,92,1);}
+.doc-sidebar nav::-webkit-scrollbar-thumb {background-color: rgba(38,60,92,1);}
+.doc-sidebar nav:hover::-webkit-scrollbar-thumb {background-color: rgba(0,0,0,0.25);}
+
+.doc-sidebar nav ul {margin: 12px 0 ;padding: 0;list-style: none;}
+.doc-sidebar nav ul li {}
+.doc-sidebar nav ul li.li-withsubmenu {}
+.doc-sidebar nav ul li a {text-decoration: none; color: rgba(255, 255, 255, 0.5);display: block;padding: 12px 24px;display: flex;align-items: baseline;justify-content: center;}
+.doc-sidebar nav ul li a i.menu-icon {margin-right: 12px; color: rgba(255, 255, 255, 1);}
+.doc-sidebar nav ul li a i.submenu-toggle {text-align: right;color: rgba(255, 255, 255, .25);margin-right: 0;font-size: 0.9em;}
+.doc-sidebar nav ul li a:hover i.submenu-toggle {color: rgba(255,255,255,1);}
+.doc-sidebar nav ul li a .label {flex: 1;}
+.doc-sidebar nav ul li a:hover {color:#fff;}
+.doc-sidebar nav ul li.active a {color: rgba(255, 255, 255, 1);}
+.doc-sidebar nav ul li.active a i.submenu-toggle {transform: rotate(90deg);color: rgba(255, 255, 255, 1);}
+
+.doc-sidebar nav ul li.li-withsubmenu ul {margin: 0 0 0 16px;display: none;}
+.doc-sidebar nav ul li.li-withsubmenu ul li {}
+.doc-sidebar nav ul li.li-withsubmenu ul li a {padding: 12px 24px;}
+.doc-sidebar nav ul li.li-withsubmenu.active ul {display: block;}
+.doc-sidebar nav ul li.li-withsubmenu.active ul li {}
+.doc-sidebar nav ul li.li-withsubmenu.active ul li a {color: rgba(255, 255, 255, .5);}
+.doc-sidebar nav ul li.li-withsubmenu.active ul li a:hover {color: rgba(255, 255, 255, 1);}
+.doc-sidebar nav ul li.li-withsubmenu.active ul li.active a {color: rgba(255, 255, 255, 1);}
+.doc-sidebar nav ul li.li-withsubmenu.active ul li a i.submenu-toggle {color: rgba(255, 255, 255, .25);transform: rotate(0);}
+.doc-sidebar nav ul li.li-withsubmenu.active ul li.li-withsubmenu ul {display: none;}
+.doc-sidebar nav ul li.li-withsubmenu.active ul li.li-withsubmenu.active ul {display: block;}
+
+/***************************/
+/* MAIN WRAPPER */
+/***************************/
+.doc-wrapper {margin: 0;margin-left: 260px;}
+
+/* Breadcrumb */
+.doc-wrapper .doc-breadcrumbs {display: flex;margin: 0;padding: 0;list-style: none;background: #fff;height: 75px;box-sizing: border-box;}
+.doc-wrapper .doc-breadcrumbs ul {display: flex;margin: auto 32px;padding: 0;list-style: none;}
+.doc-wrapper .doc-breadcrumbs ul li {color:rgba(64, 64, 64, 1);}
+.doc-wrapper .doc-breadcrumbs ul li.breadcrumb-item:not(:last-child):after {display: inline-block;content:'/';margin: 0 8px;}
+.doc-wrapper .doc-breadcrumbs ul li a {color: rgba(38,60,92,1);text-decoration: none;font-weight: 500;}
+
+.doc-wrapper .doc-content-wrapper {padding: 24px 32px;max-width: 960px;box-sizing: border-box; }
+.doc-wrapper .doc-content-wrapper h1.documentation-title {margin: 0;margin-bottom:16px;padding: 0;color: rgb(38,60,92);}
+.doc-wrapper .doc-content-wrapper p.documentation-text {margin: 0;margin-bottom:16px;line-height: 1.6;color:rgba(64, 64, 64, 1);}
+
+.doc-wrapper .doc-content-wrapper .warning p.documentation-text {color: #887711;}
+.doc-wrapper .doc-content-wrapper .warning p.documentation-text:first-child {margin-top:6px;}
+.doc-wrapper .doc-content-wrapper .warning p.documentation-text:last-child {margin-bottom:6px;}
+
+/* Documentation summary */
+.doc-wrapper .doc-content-wrapper ul.documentation-summary {margin: 0 0 32px 0;padding: 0 0 0 16px;color: rgba(0, 0, 0, .25);}
+.doc-wrapper .doc-content-wrapper ul.documentation-summary li a {color: rgb(38, 60, 92); text-decoration: none;font-weight: 500}
+.doc-wrapper .doc-content-wrapper ul.documentation-summary li a:hover {color: rgb(0, 123, 140);}
+
+/* Documentation section */
+.doc-wrapper .doc-content-wrapper .documentation-section {background: #fff;padding: 16px;border-radius: 4px;margin-bottom: 24px;}
+.doc-wrapper .doc-content-wrapper .documentation-section h2.documentation-title {margin: 0;margin-bottom:16px;padding: 0;color: rgb(38,60,92);}
+.doc-wrapper .doc-content-wrapper .documentation-section .documentation-example {border:1px dashed #ccc;box-sizing: border-box;padding: 16px;margin-bottom: 16px;}
+.doc-wrapper .doc-content-wrapper .documentation-section .documentation-code {background: var(--colorbacklinepairchecked);border:1px dashed #ccc;box-sizing: border-box;padding: 16px;margin-bottom: 16px;overflow: auto;}
+.doc-wrapper .doc-content-wrapper .documentation-section .documentation-code pre {margin: 0;padding: 0;}
+
+/* Documentation scroll indicator */
+#documentation-scrollwrapper {height: 5px;position: fixed;bottom: 0;left: 300px;right:0;z-index: 99;}
+#documentation-scroll {background: rgb(0, 123, 140);height: 5px;position: absolute;top: 0;left:0}
