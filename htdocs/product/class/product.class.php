@@ -309,26 +309,28 @@ class Product extends CommonObject
 	 * @var string
 	 */
 	public $default_vat_code_supplier;
+
 	/**
-	 * @var string|int
+	 * @var string|int|float
 	 */
 	public $fourn_multicurrency_price;
 	/**
-	 * @var string|int
+	 * @var string|int|float
 	 */
 	public $fourn_multicurrency_unitprice;
 	/**
-	 * @var string|int
+	 * @var string|int|float
 	 */
 	public $fourn_multicurrency_tx;
 	/**
-	 * @var string
+	 * @var int			ID of multicurrency
 	 */
 	public $fourn_multicurrency_id;
 	/**
-	 * @var string
+	 * @var string		Code of multicurrency
 	 */
 	public $fourn_multicurrency_code;
+
 	/**
 	 * @var float
 	 */
