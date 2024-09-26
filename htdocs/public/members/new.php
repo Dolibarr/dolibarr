@@ -4,7 +4,7 @@
  * Copyright (C) 2006-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
- * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
  * Copyright (C) 2022       Udo Tamm                <dev@dolibit.de>
@@ -91,7 +91,7 @@ if (!getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
 	httponly_accessforbidden("Auto subscription form for public visitors has not been enabled");
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('publicnewmembercard', 'globalcard'));
 
 $extrafields = new ExtraFields($db);
@@ -114,7 +114,7 @@ $user->loadDefaultValues();
  */
 function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
 {
-	global $user, $conf, $langs, $mysoc;
+	global $conf, $langs, $mysoc;
 
 	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss); // Show html headers
 
@@ -192,7 +192,7 @@ if ($reshook < 0) {
 }
 
 // Action called when page is submitted
-if (empty($reshook) && $action == 'add') {
+if (empty($reshook) && $action == 'add') {	// Test on permission not required here. This is an anonymous form. Check is done on constant to enable and mitigation.
 	$error = 0;
 	$urlback = '';
 
@@ -243,10 +243,10 @@ if (empty($reshook) && $action == 'add') {
 	if (getDolGlobalString('ADHERENT_MAIL_REQUIRED') && empty(GETPOST('email'))) {
 		$error++;
 		$errmsg .= $langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Email'))."<br>\n";
-	} elseif (GETPOST("email") && !isValidEmail(GETPOST("email"))) {
+	} elseif (GETPOST("email", "aZ09arobase") && !isValidEmail(GETPOST("email", "aZ09arobase"))) {
 		$langs->load('errors');
 		$error++;
-		$errmsg .= $langs->trans("ErrorBadEMail", GETPOST("email"))."<br>\n";
+		$errmsg .= $langs->trans("ErrorBadEMail", GETPOST("email", "aZ09arobase"))."<br>\n";
 	}
 	$birthday = dol_mktime(GETPOSTINT("birthhour"), GETPOSTINT("birthmin"), GETPOSTINT("birthsec"), GETPOSTINT("birthmonth"), GETPOSTINT("birthday"), GETPOSTINT("birthyear"));
 	if (GETPOST("birthmonth") && empty($birthday)) {
@@ -264,7 +264,7 @@ if (empty($reshook) && $action == 'add') {
 	// Check Captcha code if is enabled
 	if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA')) {
 		$sessionkey = 'dol_antispam_value';
-		$ok = (array_key_exists($sessionkey, $_SESSION) === true && (strtolower($_SESSION[$sessionkey]) == strtolower(GETPOST('code'))));
+		$ok = (array_key_exists($sessionkey, $_SESSION) && (strtolower($_SESSION[$sessionkey]) == strtolower(GETPOST('code'))));
 		if (!$ok) {
 			$error++;
 			$errmsg .= $langs->trans("ErrorBadValueForCode")."<br>\n";
@@ -278,6 +278,7 @@ if (empty($reshook) && $action == 'add') {
 		// E-mail looks OK and login does not exist
 		$adh = new Adherent($db);
 		$adh->statut      = -1;
+		$adh->status      = -1;
 		$adh->public      = $public;
 		$adh->firstname   = GETPOST('firstname');
 		$adh->lastname    = GETPOST('lastname');
@@ -288,10 +289,10 @@ if (empty($reshook) && $action == 'add') {
 		$adh->address     = GETPOST('address');
 		$adh->zip         = GETPOST('zipcode');
 		$adh->town        = GETPOST('town');
-		$adh->email       = GETPOST('email');
+		$adh->email       = GETPOST('email', 'aZ09arobase');
 		if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
 			$adh->login       = GETPOST('login');
-			$adh->pass        = GETPOST('pass1');
+			$adh->pass        = GETPOST('pass1', 'password');
 		}
 		$adh->photo       = GETPOST('photo');
 		$adh->country_id  = getDolGlobalInt("MEMBER_NEWFORM_FORCECOUNTRYCODE", GETPOSTINT('country_id'));
@@ -454,7 +455,7 @@ if (empty($reshook) && $action == 'add') {
 						// It is not so important because a test is done on return of payment validation.
 					}
 
-					$urlback = getOnlinePaymentUrl(0, 'member', $adh->ref, price2num(GETPOST('amount', 'alpha'), 'MT'), '', 0);
+					$urlback = getOnlinePaymentUrl(0, 'member', $adh->ref, (float) price2num(GETPOST('amount', 'alpha'), 'MT'), '', 0);
 
 					if (GETPOST('email')) {
 						$urlback .= '&email='.urlencode(GETPOST('email'));
@@ -489,7 +490,7 @@ if (empty($reshook) && $action == 'add') {
 // If MEMBER_URL_REDIRECT_SUBSCRIPTION is set to an url, we never go here because a redirect was done to this url. Same if we ask to redirect to the payment page.
 // backtopage parameter with an url was set on member submit page, we never go here because a redirect was done to this url.
 
-if (empty($reshook) && $action == 'added') {
+if (empty($reshook) && $action == 'added') {	// Test on permission not required here
 	llxHeaderVierge($langs->trans("NewMemberForm"));
 
 	// If we have not been redirected
@@ -517,7 +518,7 @@ $extrafields->fetch_name_optionals_label($object->table_element); // fetch optio
 llxHeaderVierge($langs->trans("NewSubscription"));
 
 print '<br>';
-print load_fiche_titre(img_picto('', 'member_nocolor', 'class="pictofixedwidth"').' &nbsp; '.$langs->trans("NewSubscription"), '', '', 0, 0, 'center');
+print load_fiche_titre(img_picto('', 'member_nocolor', 'class="pictofixedwidth"').' &nbsp; '.$langs->trans("NewSubscription"), '', '', 0, '', 'center');
 
 
 print '<div align="center">';
@@ -633,7 +634,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 	// EMail
 	print '<tr><td class="'.(getDolGlobalString("ADHERENT_MAIL_REQUIRED") ? 'classfortooltip' : '').'" title="'.dol_escape_htmltag($messagemandatory).'">'.$langs->trans("Email").(getDolGlobalString("ADHERENT_MAIL_REQUIRED") ? ' <span class="star">*</span>' : '').'</td><td>';
 	//print img_picto('', 'email', 'class="pictofixedwidth"');
-	print '<input type="text" name="email" maxlength="255" class="minwidth200" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
+	print '<input type="email" name="email" maxlength="255" class="minwidth200" value="'.dol_escape_htmltag(GETPOST('email', "aZ09arobase")).'"></td></tr>'."\n";
 
 	// Login
 	if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
@@ -665,20 +666,20 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 	print img_picto('', 'country', 'class="pictofixedwidth paddingright"');
 	$country_id = GETPOSTINT('country_id');
 	if (!$country_id && getDolGlobalString('MEMBER_NEWFORM_FORCECOUNTRYCODE')) {
-		$country_id = getCountry($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE, 2, $db, $langs);
+		$country_id = getCountry($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE, '2', $db, $langs);
 	}
 	if (!$country_id && !empty($conf->geoipmaxmind->enabled)) {
 		$country_code = dol_user_country();
 		//print $country_code;
 		if ($country_code) {
-			$new_country_id = getCountry($country_code, 3, $db, $langs);
+			$new_country_id = getCountry($country_code, '3', $db, $langs);
 			//print 'xxx'.$country_code.' - '.$new_country_id;
 			if ($new_country_id) {
 				$country_id = $new_country_id;
 			}
 		}
 	}
-	$country_code = getCountry($country_id, 2, $db, $langs);
+	$country_code = getCountry($country_id, '2', $db, $langs);
 	print $form->select_country($country_id, 'country_id');
 	print '</td></tr>';
 
@@ -815,7 +816,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 	// Display Captcha code if is enabled
 	if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA')) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-		print '<tr><td class="titlefield"><label for="email"><span class="fieldrequired">'.$langs->trans("SecurityCode").'</span></label></td><td>';
+		print '<tr><td class="titlefield"><label><span class="fieldrequired">'.$langs->trans("SecurityCode").'</span></label></td><td>';
 		print '<span class="span-icon-security inline-block">';
 		print '<input id="securitycode" placeholder="'.$langs->trans("SecurityCode").'" class="flat input-icon-security width150" type="text" maxlength="5" name="code" tabindex="3" />';
 		print '</span>';

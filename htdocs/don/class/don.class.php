@@ -62,12 +62,24 @@ class Don extends CommonObject
 	public $picto = 'donation';
 
 	/**
-	 * @var int|string Date of the donation
+	 * @var int|'' Date of the donation
 	 */
 	public $date;
 
+	/**
+	 * @var int|'' Date of creation
+	 */
 	public $datec;
+
+	/**
+	 * @var int|'' Date of modification
+	 */
 	public $datem;
+
+	/**
+	 * @var int|'' date validation
+	 */
+	public $date_valid;
 
 	/**
 	 * amount of donation
@@ -105,9 +117,15 @@ class Don extends CommonObject
 	 */
 	public $email;
 
+	/**
+	 * @var string phone
+	 */
 	public $phone;
-	public $phone_mobile;
 
+	/**
+	 * @var string phone mobile
+	 */
+	public $phone_mobile;
 
 	/**
 	 * @var string
@@ -139,7 +157,6 @@ class Don extends CommonObject
 	 *                  (Cheque or bank transfer reference. Can be "ABC123")
 	 */
 	public $num_payment;
-	public $date_valid;
 
 	/**
 	 * @var int payment mode id
@@ -175,14 +192,14 @@ class Don extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->statut, $mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return the label of a given status
 	 *
-	 *  @param	int		$status        Id statut
+	 *  @param	int		$status        Id status
 	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return string 			       Label of status
 	 */
@@ -519,7 +536,7 @@ class Don extends CommonObject
 		$sql .= ", email='".$this->db->escape(trim($this->email))."'";
 		$sql .= ", phone='".$this->db->escape(trim($this->phone))."'";
 		$sql .= ", phone_mobile='".$this->db->escape(trim($this->phone_mobile))."'";
-		$sql .= ", fk_statut=".((int) $this->statut);
+		$sql .= ", fk_statut=".((int) $this->status);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::Update", LOG_DEBUG);
@@ -764,7 +781,7 @@ class Don extends CommonObject
 		}
 
 		if (!$error) {
-			$this->statut = 1;
+			$this->status = 1;
 			$this->db->commit();
 			return 1;
 		} else {
@@ -791,7 +808,7 @@ class Don extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($this->db->affected_rows($resql)) {
-				$this->statut = 2;
+				$this->status = 2;
 				$this->paid = 1;
 				return 1;
 			} else {
@@ -818,7 +835,7 @@ class Don extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($this->db->affected_rows($resql)) {
-				$this->statut = -1;
+				$this->status = -1;
 				return 1;
 			} else {
 				return 0;
@@ -839,7 +856,7 @@ class Don extends CommonObject
 	public function reopen($user, $notrigger = 0)
 	{
 		// Protection
-		if ($this->statut != self::STATUS_CANCELED) {
+		if ($this->status != self::STATUS_CANCELED) {
 			return 0;
 		}
 
@@ -903,7 +920,7 @@ class Don extends CommonObject
 	}
 
 	/**
-	 *	Return clicable name (with picto eventually)
+	 *	Return clickable name (with picto eventually)
 	 *
 	 *	@param	int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@param	int  	$notooltip					1=Disable tooltip
@@ -1145,11 +1162,11 @@ class Don extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{

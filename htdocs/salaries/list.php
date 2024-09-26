@@ -3,6 +3,9 @@
  * Copyright (C) 2015-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024 	    Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,7 +70,7 @@ if (!$sortorder) {
 }
 
 // Initialize technical objects
-$object = new PaymentSalary($db);
+$object = new Salary($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->user->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('salarieslist')); // Note that conf->hooks_modules contains array
@@ -115,7 +118,7 @@ foreach ($object->fields as $key => $val) {
 $fieldstosearchall = array();
 foreach ($object->fields as $key => $val) {
 	if (!empty($val['searchall'])) {
-		$fieldstosearchall['t.'.$key] = $val['label'];
+		$fieldstosearchall['s.'.$key] = $val['label'];
 	}
 }
 
@@ -124,8 +127,8 @@ $arrayfields = array();
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
-		$visible = (int) dol_eval($val['visible'], 1);
-		$arrayfields['t.'.$key] = array(
+		$visible = (int) dol_eval((string) $val['visible'], 1);
+		$arrayfields['s.'.$key] = array(
 			'label' => $val['label'],
 			'checked' => (($visible < 0) ? 0 : 1),
 			'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
@@ -183,7 +186,7 @@ if ($massaction == 'withdrawrequest') {
 			$result = $objecttmp->fetch($toselectid);
 			if ($result > 0) {
 				$totalpaid = $objecttmp->getSommePaiement();
-				$objecttmp->resteapayer = price2num($objecttmp->amount - $totalpaid, 'MT');
+				$objecttmp->resteapayer = price2num((float) $objecttmp->amount - $totalpaid, 'MT');
 
 				// hook to finalize the remaining amount, considering e.g. cash discount agreements
 				$parameters = array('remaintopay' => $objecttmp->resteapayer);
@@ -339,6 +342,9 @@ $sql = preg_replace('/,\s*$/', '', $sql);
 $sqlfields = $sql; // $sql fields to remove for count total
 
 $sql .= " FROM ".MAIN_DB_PREFIX."salary as s";
+if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (s.rowid = ef.fk_object)";
+}
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."payment_salary as ps ON (ps.fk_salary = s.rowid) ";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pst ON (s.fk_typepayment = pst.id) ";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account ba ON (ba.rowid = s.fk_account), ";
@@ -386,6 +392,8 @@ if ($search_status != '' && $search_status >= 0) {
 if ($search_type_id) {
 	$sql .= " AND s.fk_typepayment=".((int) $search_type_id);
 }
+// Add where from extra fields
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 $sql .= " GROUP BY u.rowid, u.lastname, u.firstname, u.login, u.email, u.admin, u.photo, u.salary, u.fk_soc, u.statut,";
 $sql .= " s.rowid, s.fk_account, s.paye, s.fk_user, s.amount, s.salary, s.label, s.datesp, s.dateep, s.fk_typepayment, s.fk_bank,";
 $sql .= " ba.rowid, ba.ref, ba.number, ba.account_number, ba.fk_accountancy_journal, ba.label, ba.iban_prefix, ba.bic, ba.currency_code, ba.clos,";
@@ -431,7 +439,7 @@ $num = $db->num_rows($resql);
 if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
-	header("Location: ".dol_buildpath('/mymodule/myobject_card.php', 1).'?id='.$id);
+	header("Location: ".DOL_URL_ROOT.'/salaries/card.php?id='.$id);
 	exit;
 }
 
@@ -559,9 +567,6 @@ if (empty($reshook)) {
 if (!empty($moreforfilter)) {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;
-	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
 	print '</div>';
 }
 
@@ -584,61 +589,80 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print '</td>';
 }
 // Ref
-print '<td class="liste_titre left">';
-print '<input class="flat width50" type="text" name="search_ref" value="'.$db->escape($search_ref).'">';
-print '</td>';
-// Label
-print '<td class="liste_titre"><input type="text" class="flat width100" name="search_label" value="'.$db->escape($search_label).'"></td>';
-
-// Date start
-print '<td class="liste_titre center">';
-print '<div class="nowrapfordate">';
-print $form->selectDate($search_date_start_from ? $search_date_start_from : -1, 'search_date_start_from', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
-print '</div>';
-print '<div class="nowrapfordate">';
-print $form->selectDate($search_date_start_to ? $search_date_start_to : -1, 'search_date_start_to', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
-print '</div>';
-print '</td>';
-
-// Date End
-print '<td class="liste_titre center">';
-print '<div class="nowrapfordate">';
-print $form->selectDate($search_date_end_from ? $search_date_end_from : -1, 'search_date_end_from', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
-print '</div>';
-print '<div class="nowrapfordate">';
-print $form->selectDate($search_date_end_to ? $search_date_end_to : -1, 'search_date_end_to', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
-print '</div>';
-print '</td>';
-
-// Employee
-print '<td class="liste_titre">';
-print '<input class="flat" type="text" size="6" name="search_user" value="'.$db->escape($search_user).'">';
-print '</td>';
-
-// Type
-print '<td class="liste_titre left">';
-print $form->select_types_paiements($search_type_id, 'search_type_id', '', 0, 1, 1, 16, 1, 'maxwidth125', 1);
-print '</td>';
-
-// Bank account
-if (isModEnabled("bank")) {
-	print '<td class="liste_titre">';
-	print $form->select_comptes($search_account, 'search_account', 0, '', 1, '', 0, 'maxwidth125', 1);
+if (!empty($arrayfields['s.ref']['checked'])) {
+	print '<td class="liste_titre left">';
+	print '<input class="flat width50" type="text" name="search_ref" value="'.$db->escape($search_ref).'">';
 	print '</td>';
 }
 
-// Amount
-print '<td class="liste_titre right"><input name="search_amount" class="flat" type="text" size="8" value="'.$db->escape($search_amount).'"></td>';
+// Label
+if (!empty($arrayfields['s.label']['checked'])) {
+	print '<td class="liste_titre"><input type="text" class="flat width100" name="search_label" value="'.$db->escape($search_label).'"></td>';
+}
 
-// Status
-print '<td class="liste_titre right parentonrightofpage">';
-$liststatus = array('0' => $langs->trans("Unpaid"), '1' => $langs->trans("Paid"));
-// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage');
-print '</td>';
+// Date start
+if (!empty($arrayfields['s.datesp']['checked'])) {
+	print '<td class="liste_titre center">';
+	print '<div class="nowrapfordate">';
+	print $form->selectDate($search_date_start_from ? $search_date_start_from : -1, 'search_date_start_from', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '</div>';
+	print '<div class="nowrapfordate">';
+	print $form->selectDate($search_date_start_to ? $search_date_start_to : -1, 'search_date_start_to', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	print '</div>';
+	print '</td>';
+}
+
+// Date End
+if (!empty($arrayfields['s.dateep']['checked'])) {
+	print '<td class="liste_titre center">';
+	print '<div class="nowrapfordate">';
+	print $form->selectDate($search_date_end_from ? $search_date_end_from : -1, 'search_date_end_from', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '</div>';
+	print '<div class="nowrapfordate">';
+	print $form->selectDate($search_date_end_to ? $search_date_end_to : -1, 'search_date_end_to', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	print '</div>';
+	print '</td>';
+}
+
+// Employee
+if (!empty($arrayfields['s.fk_user']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input class="flat" type="text" size="6" name="search_user" value="'.$db->escape($search_user).'">';
+	print '</td>';
+}
+
+// Type
+if (!empty($arrayfields['s.fk_typepayment']['checked'])) {
+	print '<td class="liste_titre left">';
+	print $form->select_types_paiements($search_type_id, 'search_type_id', '', 0, 1, 1, 16, 1, 'maxwidth125', 1);
+	print '</td>';
+}
+
+// Bank account
+if (isModEnabled("bank")) {
+	if (!empty($arrayfields['s.fk_account']['checked'])) {
+		print '<td class="liste_titre">';
+		print $form->select_comptes($search_account, 'search_account', 0, '', 1, '', 0, 'maxwidth125', 1);
+		print '</td>';
+	}
+}
 
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
+
+// Amount
+if (!empty($arrayfields['s.amount']['checked'])) {
+	print '<td class="liste_titre right"><input name="search_amount" class="flat" type="text" size="8" value="'.$db->escape($search_amount).'"></td>';
+}
+
+// Status
+if (!empty($arrayfields['s.paye']['checked'])) {
+	print '<td class="liste_titre center parentonrightofpage">';
+	$liststatus = array('0' => $langs->trans("Unpaid"), '1' => $langs->trans("Paid"));
+	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
+	print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage');
+	print '</td>';
+}
 
 // Fields from hook
 $parameters = array('arrayfields' => $arrayfields);
@@ -664,28 +688,57 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
-print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "s.rowid", "", $param, "", $sortfield, $sortorder);
-$totalarray['nbfield']++;
-print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "s.label", "", $param, '', $sortfield, $sortorder);
-$totalarray['nbfield']++;
-print_liste_field_titre("DateStart", $_SERVER["PHP_SELF"], "s.datesp,s.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
-$totalarray['nbfield']++;
-print_liste_field_titre("DateEnd", $_SERVER["PHP_SELF"], "s.dateep,s.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
-$totalarray['nbfield']++;
-print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.lastname", "", $param, "", $sortfield, $sortorder);
-$totalarray['nbfield']++;
-print_liste_field_titre("DefaultPaymentMode", $_SERVER["PHP_SELF"], "type", "", $param, '', $sortfield, $sortorder);
-$totalarray['nbfield']++;
-if (isModEnabled("bank")) {
-	print_liste_field_titre("DefaultBankAccount", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
+
+if (!empty($arrayfields['s.ref']['checked'])) {
+	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "s.rowid", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
-print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "s.amount", "", $param, '', $sortfield, $sortorder, 'right ');
-$totalarray['nbfield']++;
-print_liste_field_titre('Status', $_SERVER["PHP_SELF"], "s.paye", '', $param, '', $sortfield, $sortorder, 'center ');
-$totalarray['nbfield']++;
+
+if (!empty($arrayfields['s.label']['checked'])) {
+	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "s.label", "", $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+
+if (!empty($arrayfields['s.datesp']['checked'])) {
+	print_liste_field_titre("DateStart", $_SERVER["PHP_SELF"], "s.datesp,s.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
+
+if (!empty($arrayfields['s.dateep']['checked'])) {
+	print_liste_field_titre("DateEnd", $_SERVER["PHP_SELF"], "s.dateep,s.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
+
+if (!empty($arrayfields['s.fk_user']['checked'])) {
+	print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.lastname", "", $param, "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+
+if (!empty($arrayfields['s.fk_typepayment']['checked'])) {
+	print_liste_field_titre("DefaultPaymentMode", $_SERVER["PHP_SELF"], "type", "", $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+
+if (isModEnabled("bank")) {
+	if (!empty($arrayfields['s.fk_account']['checked'])) {
+		print_liste_field_titre("DefaultBankAccount", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
+		$totalarray['nbfield']++;
+	}
+}
+
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
+
+if (!empty($arrayfields['s.amount']['checked'])) {
+	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "s.amount", "", $param, '', $sortfield, $sortorder, 'right ');
+	$totalarray['nbfield']++;
+}
+
+if (!empty($arrayfields['s.paye']['checked'])) {
+	print_liste_field_titre('Status', $_SERVER["PHP_SELF"], "s.paye", '', $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
+
 // Hook fields
 $parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -787,73 +840,50 @@ while ($i < $imaxinloop) {
 		}
 
 		// Ref
-		print "<td>".$salstatic->getNomUrl(1)."</td>\n";
-		if (!$i) {
-			$totalarray['nbfield']++;
+		if (!empty($arrayfields['s.ref']['checked'])) {
+			print "<td>".$salstatic->getNomUrl(1)."</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 
 		// Label payment
-		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->label).'">'.dol_escape_htmltag($obj->label)."</td>\n";
-		if (!$i) {
-			$totalarray['nbfield']++;
+		if (!empty($arrayfields['s.label']['checked'])) {
+			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->label).'">'.dol_escape_htmltag($obj->label)."</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 
 		// Date Start
-		print '<td class="center">'.dol_print_date($db->jdate($obj->datesp), 'day')."</td>\n";
-		if (!$i) {
-			$totalarray['nbfield']++;
+		if (!empty($arrayfields['s.datesp']['checked'])) {
+			print '<td class="center">'.dol_print_date($db->jdate($obj->datesp), 'day')."</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 
 		// Date End
-		print '<td class="center">'.dol_print_date($db->jdate($obj->dateep), 'day')."</td>\n";
-		if (!$i) {
-			$totalarray['nbfield']++;
+		if (!empty($arrayfields['s.dateep']['checked'])) {
+			print '<td class="center">'.dol_print_date($db->jdate($obj->dateep), 'day')."</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 
 		// Employee
-		print '<td class="tdoverflowmax150">'.$userstatic->getNomUrl(-1)."</td>\n";
-		if (!$i) {
-			$totalarray['nbfield']++;
+		if (!empty($arrayfields['s.fk_user']['checked'])) {
+			print '<td class="tdoverflowmax150">'.$userstatic->getNomUrl(-1)."</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 
 		// Payment mode
-		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($langs->trans("PaymentTypeShort".$obj->payment_code)).'">';
-		if (!empty($obj->payment_code)) {
-			print $langs->trans("PaymentTypeShort".$obj->payment_code);
-		}
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-
-		// Account
-		if (isModEnabled("bank")) {
-			print '<td>';
-			if ($obj->fk_account > 0) {
-				//$accountstatic->fetch($obj->fk_bank);
-				$accountstatic->id = $obj->bid;
-				$accountstatic->ref = $obj->bref;
-				$accountstatic->label = $obj->blabel;
-				$accountstatic->number = $obj->bnumber;
-				$accountstatic->iban = $obj->iban;
-				$accountstatic->bic = $obj->bic;
-				$accountstatic->currency_code = $langs->trans("Currency".$obj->currency_code);
-				$accountstatic->account_number = $obj->account_number;
-				$accountstatic->clos = $obj->clos;
-				$accountstatic->status = $obj->clos;
-
-				if (isModEnabled('accounting')) {
-					$accountstatic->account_number = $obj->account_number;
-
-					$accountingjournal = new AccountingJournal($db);
-					$accountingjournal->fetch($obj->fk_accountancy_journal);
-
-					$accountstatic->accountancy_journal = $accountingjournal->getNomUrl(0, 1, 1, '', 1);
-				}
-				//$accountstatic->label = $obj->blabel;
-				print $accountstatic->getNomUrl(1);
-			} else {
-				print '&nbsp;';
+		if (!empty($arrayfields['s.fk_typepayment']['checked'])) {
+			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($langs->trans("PaymentTypeShort".$obj->payment_code)).'">';
+			if (!empty($obj->payment_code)) {
+				print $langs->trans("PaymentTypeShort".$obj->payment_code);
 			}
 			print '</td>';
 			if (!$i) {
@@ -861,26 +891,66 @@ while ($i < $imaxinloop) {
 			}
 		}
 
-		// if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'totalttcfield';
+		// Account
+		if (isModEnabled("bank")) {
+			if (!empty($arrayfields['s.fk_account']['checked'])) {
+				print '<td>';
+				if ($obj->fk_account > 0) {
+					//$accountstatic->fetch($obj->fk_bank);
+					$accountstatic->id = $obj->bid;
+					$accountstatic->ref = $obj->bref;
+					$accountstatic->label = $obj->blabel;
+					$accountstatic->number = $obj->bnumber;
+					$accountstatic->iban = $obj->iban;
+					$accountstatic->bic = $obj->bic;
+					$accountstatic->currency_code = $langs->trans("Currency".$obj->currency_code);
+					$accountstatic->account_number = $obj->account_number;
+					$accountstatic->clos = $obj->clos;
+					$accountstatic->status = $obj->clos;
 
-		// Amount
-		print '<td class="nowraponall right"><span class="amount">'.price($obj->amount).'</span></td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-		if (!$i) {
-			$totalarray['pos'][$totalarray['nbfield']] = 'totalttcfield';
-		}
-		$totalarray['val']['totalttcfield'] += $obj->amount;
+					if (isModEnabled('accounting')) {
+						$accountstatic->account_number = $obj->account_number;
 
-		// Status
-		print '<td class="nowraponall center">'.$salstatic->getLibStatut(5, $obj->alreadypayed).'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
+						$accountingjournal = new AccountingJournal($db);
+						$accountingjournal->fetch($obj->fk_accountancy_journal);
+
+						$accountstatic->accountancy_journal = $accountingjournal->getNomUrl(0, 1, 1, '', 1);
+					}
+					//$accountstatic->label = $obj->blabel;
+					print $accountstatic->getNomUrl(1);
+				} else {
+					print '&nbsp;';
+				}
+				print '</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
 		}
 
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
+
+		// Amount
+		if (!empty($arrayfields['s.amount']['checked'])) {
+			print '<td class="nowraponall right"><span class="amount">'.price($obj->amount).'</span></td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+			if (!$i) {
+				$totalarray['pos'][$totalarray['nbfield']] = 'totalttcfield';
+			}
+			$totalarray['val']['totalttcfield'] += $obj->amount;
+		}
+
+		// Status
+		if (!empty($arrayfields['s.paye']['checked'])) {
+			print '<td class="nowraponall center">'.$salstatic->getLibStatut(5, $obj->alreadypayed).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
 		// Fields from hook
 		$parameters = array('arrayfields' => $arrayfields, 'object' => $object, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook

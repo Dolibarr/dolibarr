@@ -1,19 +1,19 @@
 <?php
-/* Copyright (C) 2001-2004  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2003       Eric Seigne             <erics@rycks.com>
- * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2013-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
- * Copyright (C) 2013       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2018       Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2019       Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2019       Josep Lluís Amador      <joseplluis@lliuretic.cat>
- * Copyright (C) 2020       Open-Dsi      			<support@open-dsi.fr>
+/* Copyright (C) 2001-2004	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2003		Eric Seigne					<erics@rycks.com>
+ * Copyright (C) 2004-2012	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2013-2015	Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2013		Cédric Salvador				<csalvador@gpcsolutions.fr>
+ * Copyright (C) 2013-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
+ * Copyright (C) 2018		Nicolas ZABOURI				<info@inovea-conseil.com>
+ * Copyright (C) 2018		Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2019-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2019		Josep Lluís Amador			<joseplluis@lliuretic.cat>
+ * Copyright (C) 2020		Open-Dsi					<support@open-dsi.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Benjamin Falière		<benjamin.faliere@altairis.fr>
+ * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,10 +65,6 @@ if ($contextpage == 'poslist') {
 $id = GETPOSTINT('id');
 $contactid = GETPOSTINT('id');
 $ref = ''; // There is no ref for contacts
-if ($user->socid > 0) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'contact', $contactid, '');
 
 $search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_cti = preg_replace('/^0+/', '', preg_replace('/[^0-9]/', '', GETPOST('search_cti', 'alphanohtml'))); // Phone number without any special chars
@@ -184,10 +180,15 @@ if ($type == "c") {
 	$urlfiche = "";
 }
 
-// Initialize technical object
+// Initialize a technical object
 $object = new Contact($db);
 $extrafields = new ExtraFields($db);
 $hookmanager->initHooks(array($contextpage));
+
+if ($user->socid > 0) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'contact', $contactid, '');
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -228,7 +229,7 @@ $arrayfields = array();
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
-		$visible = (int) dol_eval($val['visible'], 1);
+		$visible = (int) dol_eval((string) $val['visible'], 1);
 		$arrayfields['p.'.$key] = array(
 			'label' => $val['label'],
 			'checked' => (($visible < 0) ? 0 : 1),
@@ -408,7 +409,7 @@ if (empty($reshook)) {
 	$uploaddir = $conf->societe->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
-	if ($action == 'setstcomm') {
+	if ($action == 'setstcomm' && $permissiontoadd) {
 		$object = new Contact($db);
 		$result = $object->fetch(GETPOST('stcommcontactid'));
 		$object->stcomm_id = dol_getIdFromCode($db, GETPOST('stcomm', 'alpha'), 'c_stcommcontact');
@@ -720,7 +721,7 @@ if (strlen($search_town)) {
 	$sql .= natural_search("p.town", $search_town);
 }
 if (count($search_roles) > 0) {
-	$sql .= " AND p.rowid IN (SELECT sc.fk_socpeople FROM ".MAIN_DB_PREFIX."societe_contacts as sc WHERE sc.fk_c_type_contact IN (".$db->sanitize(implode(',', $search_roles))."))";
+	$sql .= " AND EXISTS (SELECT sc.rowid FROM ".MAIN_DB_PREFIX."societe_contacts as sc WHERE p.rowid = sc.fk_socpeople AND sc.fk_c_type_contact IN (".$db->sanitize(implode(',', $search_roles))."))";
 }
 if ($search_no_email != -1 && $search_no_email > 0) {
 	$sql .= " AND (SELECT count(*) FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = p.email) > 0";
@@ -819,7 +820,7 @@ if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && ($
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist');
+llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-societe page-contact-list bodyforlist');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -1043,8 +1044,7 @@ if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 }
 
 $moreforfilter .= '<div class="divsearchfield">';
-$moreforfilter .= $langs->trans('Roles').': ';
-$moreforfilter .= $formcompany->showRoles("search_roles", $objecttmp, 'edit', $search_roles);
+$moreforfilter .= $formcompany->showRoles("search_roles", $objecttmp, 'edit', $search_roles, 'minwidth500', $langs->transnoentitiesnoconv('ContactRoles'));
 $moreforfilter .= '</div>';
 
 print '<div class="liste_titre liste_titre_bydiv centpercent">';

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,21 +87,35 @@ if ($action == "getjsonformtrigger") {
 
 		$json->triggercode = empty($objecttriggername[1]) ? $triggercode : $objecttriggername[1];
 
-		if (!empty($objecttriggername[1])) {
-			$objtype = explode("_", $objecttriggername[1])[0];
+		if (!empty($json->triggercode)) {
+			$objtype = explode("_", $json->triggercode)[0];
 			$obj = findobjecttosend($objtype);
 			if (is_object($obj)) {
-				//TODO: Case if obj is an object
+				dol_syslog("Ajax webhook: We clean object fetched");
+				$properties = dol_get_object_properties($obj);
+				foreach ($properties as $key => $property) {
+					if (empty($property)) {
+						unset($obj->$key);
+					}
+				}
+				unset($obj->db);
+				unset($obj->fields);
+				unset($obj->table_element);
+				unset($obj->picto);
+				unset($obj->isextrafieldmanaged);
+				unset($obj->ismultientitymanaged);
+
+				$json->object = $obj;
 			} else {
-				$objnotfound ++;
+				$objnotfound++;
 			}
 		} else {
-			$objnotfound ++;
+			$objnotfound++;
 		}
 
 		if ($objnotfound) {
+			dol_syslog("Ajax webhook: Class not found for trigger code ".$json->triggercode);
 			$json->object = new stdClass();
-			//$json->object->initAsSpecimen();
 			$json->object->field1 = 'field1';
 			$json->object->field2 = 'field2';
 			$json->object->field3 = 'field3';
@@ -115,13 +130,17 @@ if ($action == "getjsonformtrigger") {
  * Find and init a specimen for the given object type
  *
  * @param 	string      $objecttype		Object type to init as a specimen
- * @return object|false
+ * @return CommonObject|false
  */
 function findobjecttosend($objecttype)
 {
-	// TODO: Find right object from objecttype and initAsSpecimen
-
-	// You can use fetchObjectByElement()
-
-	return false;
+	dol_syslog("Ajax webhook: We fetch object of type = ".$objecttype." and we init it as specimen");
+	$obj = fetchObjectByElement(0, dol_strtolower($objecttype));
+	if (is_object($obj)) {
+		'@phan-var-force CommonObject $obj';
+		$obj->initAsSpecimen();
+	} else {
+		return false;
+	}
+	return $obj;
 }

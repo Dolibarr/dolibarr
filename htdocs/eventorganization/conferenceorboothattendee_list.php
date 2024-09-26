@@ -1,6 +1,8 @@
 <?php
-/* Copyright (C) 2017-2024 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2021      Florian Henry        <florian.henry@scopen.fr>
+/* Copyright (C) 2017-2024	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2021		Florian Henry 				<florian.henry@scopen.fr>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,7 +80,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new ConferenceOrBoothAttendee($db);
 $project = new Project($db);
 $projectstatic = new Project($db);
@@ -127,7 +129,7 @@ $arrayfields = array();
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
-		$visible = (int) dol_eval($val['visible'], 1);
+		$visible = (int) dol_eval((string) $val['visible'], 1);
 		$arrayfields['t.'.$key] = array(
 			'label' => $val['label'],
 			'checked' => (($visible < 0) ? 0 : 1),
@@ -237,8 +239,8 @@ if (empty($reshook)) {
 $form = new Form($db);
 $now = dol_now();
 
-//$help_url="EN:Module_ConferenceOrBoothAttendee|FR:Module_ConferenceOrBoothAttendee_FR|ES:Módulo_ConferenceOrBoothAttendee";
-$help_url = '';
+$help_url = "EN:Module_Event_Organization";
+
 $morejs = array();
 $morecss = array();
 
@@ -390,7 +392,7 @@ if ($confOrBooth->id > 0) {
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'classforhorizontalscrolloftabs');
+llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-eventorganization page-attendee-list classforhorizontalscrolloftabs');
 
 
 
@@ -719,7 +721,7 @@ foreach ($search as $key => $val) {
 	}
 }
 if ($confOrBooth->id > 0) {
-	$param .= '&conforboothid='.urlencode($confOrBooth->id);
+	$param .= '&conforboothid='.urlencode((string) $confOrBooth->id);
 }
 if ($projectstatic->id > 0) {
 	$param .= '&fk_project='.urlencode((string) ($projectstatic->id));
@@ -809,9 +811,6 @@ if (empty($reshook)) {
 if (!empty($moreforfilter)) {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;
-	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
 	print '</div>';
 }
 

@@ -50,9 +50,6 @@ if (isModEnabled('productbatch')) {
 	$langs->load("productbatch");
 }
 
-// Security check
-$result = restrictedArea($user, 'stock');
-
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $msid = GETPOSTINT('msid');
@@ -92,9 +89,13 @@ if (!$sortorder) {
 
 $pdluoid = GETPOSTINT('pdluoid');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$object = new MouvementStock($db);
 $hookmanager->initHooks(array('movementlist'));
+
+// Security check
+$result = restrictedArea($user, 'stock');
+
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$object = new MouvementStock($db);
 $extrafields = new ExtraFields($db);
 $formfile = new FormFile($db);
 

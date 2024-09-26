@@ -126,10 +126,10 @@ top_htmlhead('', '', 0, 0, $arrayofjs, $arrayofcss);
 <form>
 <input type="text" id="desc" name="desc" class="takepospay" style="width:40%;" placeholder="<?php echo $langs->trans('Description'); ?>">
 <?php
-if ($action == "freezone") {
+if ($action == "freezone" && $user->hasRight('takepos', 'run')) {
 	echo '<input type="text" id="number" name="number" class="takepospay" style="width:15%;" placeholder="'.$langs->trans(getDolGlobalString("TAKEPOS_CHANGE_PRICE_HT") ? 'AmountHT' : 'AmountTTC').'">';
 }
-if ($action == "addnote") {
+if ($action == "addnote" && $user->hasRight('takepos', 'run')) {
 	echo '<input type="hidden" id="number" name="number" value="'.$idline.'">';
 }
 ?>
@@ -137,7 +137,7 @@ if ($action == "addnote") {
 <input type="submit" class="button takepospay clearboth" value="OK" onclick="Save(); return false;">
 </form>
 <?php
-if ($action == 'freezone' && !getDolGlobalString("TAKEPOS_USE_DEFAULT_VATRATE_FOR_FREEZONE")) {
+if ($action == 'freezone' && !getDolGlobalString("TAKEPOS_USE_DEFAULT_VATRATE_FOR_FREEZONE") && $user->hasRight('takepos', 'run')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 	$form = new Form($db);

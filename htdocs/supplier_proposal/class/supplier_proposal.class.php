@@ -68,6 +68,10 @@ class SupplierProposal extends CommonObject
 	public $table_element_line = 'supplier_proposaldet';
 
 	/**
+	 * @var string Name of class line
+	 */
+	public $class_element_line = 'SupplierProposalLine';
+	/**
 	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_supplier_proposal';
@@ -100,17 +104,18 @@ class SupplierProposal extends CommonObject
 	public $ref_supplier; //Reference saisie lors de l'ajout d'une ligne à la demande
 
 	/**
+	 * @var int
 	 * @deprecated
 	 */
 	public $statut; // 0 (draft), 1 (validated), 2 (signed), 3 (not signed), 4 (processed/billed)
 
 	/**
-	 * @var integer|string Date of proposal
+	 * @var int|string Date of proposal
 	 */
 	public $date;
 
 	/**
-	 * @var integer|string date_livraison
+	 * @var null|int|'' date_livraison
 	 */
 	public $delivery_date;
 
@@ -121,21 +126,10 @@ class SupplierProposal extends CommonObject
 	public $datec;
 
 	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
-
-	/**
 	 * @deprecated
 	 * @see $date_validation
 	 */
 	public $datev;
-
-	/**
-	 * @var integer|string date_validation
-	 */
-	public $date_validation;
-
 
 	public $user_author_id;
 
@@ -167,6 +161,9 @@ class SupplierProposal extends CommonObject
 	 */
 	public $mode_reglement;
 
+	/**
+	 * @var array<string,string>  (Encoded as JSON in database)
+	 */
 	public $extraparams = array();
 	public $lines = array();
 	public $line;
@@ -949,7 +946,7 @@ class SupplierProposal extends CommonObject
 		$sql .= ", ".($this->cond_reglement_id > 0 ? ((int) $this->cond_reglement_id) : 'NULL');
 		$sql .= ", ".($this->mode_reglement_id > 0 ? ((int) $this->mode_reglement_id) : 'NULL');
 		$sql .= ", ".($this->fk_account > 0 ? ((int) $this->fk_account) : 'NULL');
-		$sql .= ", ".($delivery_date ? "'".$this->db->idate($delivery_date)."'" : "null");
+		$sql .= ", ".(isDolTms($delivery_date) ? "'".$this->db->idate($delivery_date)."'" : "null");
 		$sql .= ", ".($this->shipping_method_id > 0 ? ((int) $this->shipping_method_id) : 'NULL');
 		$sql .= ", ".($this->fk_project > 0 ? ((int) $this->fk_project) : "null");
 		$sql .= ", ".((int) $conf->entity);
@@ -1524,7 +1521,7 @@ class SupplierProposal extends CommonObject
 	{
 		if ($user->hasRight('supplier_proposal', 'creer')) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal ";
-			$sql .= " SET date_livraison = ".($delivery_date != '' ? "'".$this->db->idate($delivery_date)."'" : 'null');
+			$sql .= " SET date_livraison = ".(isDolTms($delivery_date) ? "'".$this->db->idate($delivery_date)."'" : 'null');
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			if ($this->db->query($sql)) {
@@ -2451,10 +2448,9 @@ class SupplierProposal extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 *
-	 * @param array $params ex option, infologin
+	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
-	 * @return array
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -2493,7 +2489,7 @@ class SupplierProposal extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      int		$withpicto					Add picto into link
 	 *	@param      string	$option						Where point the link ('compta', 'expedition', 'document', ...)
@@ -2747,11 +2743,11 @@ class SupplierProposal extends CommonObject
 
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{

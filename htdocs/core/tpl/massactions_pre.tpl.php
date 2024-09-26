@@ -3,6 +3,7 @@
  * Copyright (C)    2013-2014 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C)	2015	  Marcos García		  <marcosgdf@gmail.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +22,7 @@
 
 // Following var must be set:
 // $action
+// $massaction
 // $arrayofselected = array of id selected
 // $objecttmp = new MyObject($db);
 // $topicmail="SendSupplierProposalRef";
@@ -31,7 +33,10 @@
 // $object = Object fetched;
 // $sendto
 // $withmaindocfilemail
-'@phan-var-force CommonObject $objecttmp';
+'
+@phan-var-force CommonObject $objecttmp
+@phan-var-force int[] $toselect
+';
 
 if (!empty($sall) || !empty($search_all)) {
 	$search_all = empty($sall) ? $search_all : $sall;
@@ -52,7 +57,6 @@ if ($massaction == 'preclonetasks') {
 	foreach (GETPOST('toselect') as $tmpselected) {
 		$selected .= '&selected[]=' . $tmpselected;
 	}
-
 	$formquestion = array(
 		// TODO If list of project is long and project is not on a thirdparty, the combo may be very long.
 		// Solution: Allow only sameproject for cloning tasks ?
@@ -210,7 +214,7 @@ if ($massaction == 'presend') {
 
 	print '<input type="hidden" name="massaction" value="confirm_presend">';
 
-	print dol_get_fiche_head(null, '', '');
+	print dol_get_fiche_head([], '', '');
 
 	// Create mail form
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';

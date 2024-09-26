@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2014 Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024 MDW                  <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,9 +18,10 @@
  */
 
 /**
- *       \file       htdocs/comm/mailing/advtargetemailing.php
- *       \ingroup    mailing
- *       \brief      Page to define emailing targets
+ *       \file      htdocs/comm/mailing/advtargetemailing.php
+ *       \ingroup   mailing
+ *       \brief     Page to define emailing targets. Visible when option EMAILING_USE_ADVANCED_SELECTOR is on (need MAIN_FEATURES_LEVEL to 1 to see this option)
+ *					@TODO This page needs a lot of works to be stable and understandable.
  */
 
 if (!defined('NOSTYLECHECK')) {
@@ -76,6 +78,7 @@ if (GETPOST('button_removefilter_x', 'alpha')) {
 	$search_email = '';
 }
 $array_query = array();
+'@phan-var-force array<string,int|string|string[]> $array_query';
 $object = new Mailing($db);
 $advTarget = new AdvanceTargetingMailing($db);
 
@@ -233,10 +236,11 @@ if ($action == 'add' && $permissiontoadd) {
 		$advTarget->contact_lines = array();
 	}
 
+	$mailingadvthirdparties = null;
 	if ((count($advTarget->thirdparty_lines) > 0) || (count($advTarget->contact_lines) > 0)) {
 		// Add targets into database
-		$obj = new mailing_advthirdparties($db);
-		$result = $obj->add_to_target_spec($id, $advTarget->thirdparty_lines, $array_query['type_of_target'], $advTarget->contact_lines);
+		$mailingadvthirdparties = new mailing_advthirdparties($db);
+		$result = $mailingadvthirdparties->add_to_target_spec($id, $advTarget->thirdparty_lines, $array_query['type_of_target'], $advTarget->contact_lines);
 	} else {
 		$result = 0;
 	}
@@ -253,16 +257,14 @@ if ($action == 'add' && $permissiontoadd) {
 	if ($result == 0) {
 		setEventMessages($langs->trans("WarningNoEMailsAdded"), null, 'warnings');
 	}
-	if ($result < 0) {
-		setEventMessages($obj->error, $obj->errors, 'errors');
+	if ($result < 0 && is_object($mailingadvthirdparties)) {
+		setEventMessages($mailingadvthirdparties->error, $mailingadvthirdparties->errors, 'errors');
 	}
 }
 
 if ($action == 'clear' && $permissiontoadd) {
-	// Load a new class instance
-	$classname = "MailingTargets";
-	$obj = new $classname($db);
-	$obj->clear_target($id);
+	$mailingtargets = new MailingTargets($db);
+	$mailingtargets->clear_target($id);
 
 	header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 	exit();
@@ -387,9 +389,8 @@ if ($action == 'delete' && $permissiontoadd) {
 	$resql = $db->query($sql);
 	if ($resql) {
 		if (!empty($id)) {
-			$classname = "MailingTargets";
-			$obj = new $classname($db);
-			$obj->update_nb($id);
+			$mailingtargets = new MailingTargets($db);
+			$mailingtargets->update_nb($id);
 
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 			exit();
@@ -465,6 +466,10 @@ if ($object->fetch($id) >= 0) {
 
 	// Show email selectors
 	if ($object->status == 0 && $user->hasRight('mailing', 'creer')) {
+		// @phan-assert FormAdvTargetEmailing $formadvtargetemaling
+		// @phan-assert AdvanceTargetingMailing $advTarget
+
+		// @phan-assert array<string,int|string|string[] $array_query'
 		include DOL_DOCUMENT_ROOT.'/core/tpl/advtarget.tpl.php';
 	}
 }

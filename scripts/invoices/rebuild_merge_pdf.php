@@ -2,6 +2,7 @@
 <?php
 /*
  * Copyright (C) 2009-2012 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -232,7 +233,7 @@ if (in_array('bank', $filter) && in_array('nopayment', $filter)) {
 
 // Define SQL and SQL request to select invoices
 // Use $filter, $dateafterdate, datebeforedate, $paymentdateafter, $paymentdatebefore
-$result = rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filter, $dateafterdate, $datebeforedate, $paymentdateafter, $paymentdatebefore, 1, $regenerate, $option, $paymentonbankid, $thirdpartiesid, $fileprefix);
+$result = rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filter, $dateafterdate, $datebeforedate, $paymentdateafter, $paymentdatebefore, 1, $regenerate, $option, (string) $paymentonbankid, $thirdpartiesid, $fileprefix);
 
 // -------------------- END OF YOUR CODE --------------------
 

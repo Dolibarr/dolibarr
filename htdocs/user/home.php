@@ -38,9 +38,9 @@ if (!$user->hasRight('user', 'user', 'lire') && !$user->admin) {
 // Load translation files required by page
 $langs->load("users");
 
-$canreadperms = true;
+$permissiontoreadgroup = true;
 if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
-	$canreadperms = (!empty($user->admin) || $user->hasRight("user", "group_advance", "read"));
+	$permissiontoreadgroup = (!empty($user->admin) || $user->hasRight("user", "group_advance", "read"));
 }
 
 // Security check (for external users)
@@ -52,7 +52,7 @@ if ($user->socid > 0) {
 $companystatic = new Societe($db);
 $fuserstatic = new User($db);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('userhome'));
 if (!isset($form) || !is_object($form)) {
 	$form = new Form($db);
@@ -98,7 +98,7 @@ $searchbox .= '<tr><td>';
 $searchbox .= $langs->trans("User").':</td><td><input class="flat inputsearch width200" type="text" name="search_user"></td></tr>';
 
 // Search Group
-if ($canreadperms) {
+if ($permissiontoreadgroup) {
 	$searchbox .= '<tr><td>';
 	$searchbox .= $langs->trans("Group").':</td><td><input class="flat inputsearch width200" type="text" name="search_group"></td></tr>';
 }
@@ -231,7 +231,7 @@ if ($resql) {
  * Last groups created
  */
 $lastgroupbox = '';
-if ($canreadperms) {
+if ($permissiontoreadgroup) {
 	$sql = "SELECT g.rowid, g.nom as name, g.note, g.entity, g.datec";
 	$sql .= " FROM ".MAIN_DB_PREFIX."usergroup as g";
 	if (isModEnabled('multicompany') && $conf->entity == 1 && (getDolGlobalInt('MULTICOMPANY_TRANSVERSE_MODE') || ($user->admin && !$user->entity))) {
@@ -323,7 +323,7 @@ print $boxlist;
 
 print '</div>';
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardUsersGroups', $parameters, $object); // Note that $action and $object may have been modified by hook
 

@@ -72,12 +72,12 @@ if (!$sortorder) {
 	$sortorder = "DESC";
 }
 
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('warehousecard', 'stocklist', 'globalcard'));
+
 // Security check
 //$result=restrictedArea($user,'stock', $id, 'entrepot&stock');
 $result = restrictedArea($user, 'stock');
-
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('warehousecard', 'stocklist', 'globalcard'));
 
 $object = new Entrepot($db);
 $extrafields = new ExtraFields($db);
@@ -508,7 +508,7 @@ if ($action == 'create') {
 			print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>'.dol_htmlentitiesbr($object->description).'</td></tr>';
 
 			// Warehouse usage
-			if (getDolGlobalInt("MAIN_FEATURES_LEVEL")) {
+			if (getDolGlobalInt("STOCK_USE_WAREHOUSE_USAGE")) {
 				$labelusagestring = $object->fields['warehouse_usage']['arrayofkeyval'][empty($object->warehouse_usage) ? 1 : $object->warehouse_usage];
 				$labelusage = $labelusagestring ? $langs->trans($labelusagestring) : 'Unknown';
 				print '<td class="titlefield tdtop">'.$langs->trans("WarehouseUsage").'</td><td>'.dol_htmlentitiesbr($labelusage).'</td></tr>';
@@ -648,7 +648,7 @@ if ($action == 'create') {
 			print_liste_field_titre($form->textwithpicto($langs->trans("AverageUnitPricePMPShort"), $langs->trans("AverageUnitPricePMPDesc")), "", "p.pmp", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
 			$totalarray['nbfield']++;
 
-			print_liste_field_titre("EstimatedStockValueShort", "", "", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+			print_liste_field_titre("EstimatedStockValueShort", "", "svalue", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
 			$totalarray['nbfield']++;
 			$totalarray['pos'][$totalarray['nbfield']] = 'totalvalue';
 			$totalarray['type'][$totalarray['nbfield']] = '';
@@ -705,6 +705,7 @@ if ($action == 'create') {
 			if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 				$sql .= ",fk_unit";
 			}
+			$sql .= ", (ps.reel * p.pmp) as svalue";
 			// Add fields from hooks
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
@@ -757,10 +758,6 @@ if ($action == 'create') {
 
 					//print '<td>'.dol_print_date($objp->datem).'</td>';
 					print '<tr class="oddeven">';
-
-					$parameters = array('obj' => $objp, 'totalarray' => &$totalarray);
-					$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
-					print $hookmanager->resPrint;
 
 					$productstatic->id = $objp->rowid;
 					$productstatic->ref = $objp->ref;
@@ -841,6 +838,10 @@ if ($action == 'create') {
 						print $langs->trans("CorrectStock");
 						print "</a></td>";
 					}
+
+					$parameters = array('obj' => $objp, 'totalarray' => &$totalarray);
+					$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
+					print $hookmanager->resPrint;
 
 					print "</tr>";
 

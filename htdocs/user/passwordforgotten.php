@@ -3,6 +3,7 @@
  * Copyright (C) 2008-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2008-2011	Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2014       Teddy Andreotti    	<125155@supinfo.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,7 +77,7 @@ if (GETPOST('dol_use_jmobile', 'alpha') || !empty($_SESSION['dol_use_jmobile']))
 }
 
 
-/**
+/*
  * Actions
  */
 
@@ -90,7 +91,7 @@ if ($reshook < 0) {
 
 if (empty($reshook)) {
 	// Validate new password
-	if ($action == 'validatenewpassword' && $username && $passworduidhash) {
+	if ($action == 'validatenewpassword' && $username && $passworduidhash) {	// Test on permission not required here. Security is managed by $passworduihash
 		$edituser = new User($db);
 		$result = $edituser->fetch('', $username, '', 0, $conf->entity);
 		if ($result < 0) {
@@ -107,7 +108,7 @@ if (empty($reshook)) {
 				$newpassword = $edituser->setPassword($user, $edituser->pass_temp, 0);
 				dol_syslog("passwordforgotten.php new password for user->id=".$edituser->id." validated in database");
 
-				header("Location: ".DOL_URL_ROOT.'/');
+				header("Location: ".DOL_URL_ROOT.'/?username='.urlencode($edituser->login));
 				exit;
 			} else {
 				$langs->load("errors");
@@ -117,9 +118,9 @@ if (empty($reshook)) {
 	}
 
 	// Action to set a temporary password and send email for reset
-	if ($action == 'buildnewpassword' && $username) {
+	if ($action == 'buildnewpassword' && $username) {	// Test on permission not required here. This action is done anonymously.
 		$sessionkey = 'dol_antispam_value';
-		$ok = (array_key_exists($sessionkey, $_SESSION) === true && (strtolower($_SESSION[$sessionkey]) == strtolower(GETPOST('code'))));
+		$ok = (array_key_exists($sessionkey, $_SESSION) && (strtolower($_SESSION[$sessionkey]) == strtolower(GETPOST('code'))));
 
 		// Verify code
 		if (!$ok) {
@@ -157,7 +158,7 @@ if (empty($reshook)) {
 						// Technical failure
 						$message = '<div class="error">'.$langs->trans("ErrorFailedToChangePassword").'</div>';
 					} else {
-						// Success
+						// Success to set temporary password, send email
 						if ($edituser->send_password($user, $newpassword, 1) > 0) {
 							$message .= $messagewarning;
 							$username = '';
@@ -173,7 +174,7 @@ if (empty($reshook)) {
 }
 
 
-/**
+/*
  * View
  */
 

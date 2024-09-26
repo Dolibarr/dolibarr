@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Need to have following variables defined:
+ * Need to have the following variables defined:
  * $object (invoice, order, ...)
  * $action
  * $conf
@@ -58,7 +58,7 @@ foreach ($object->fields as $key => $val) {
 	$value = $object->$key;
 
 	print '<tr class="field_'.$key.'"><td';
-	print ' class="'.(empty($val['tdcss']) ? 'titlefield' : $val['tdcss']).' fieldname_'.$key;
+	print ' class="'.(empty($val['tdcss']) ? 'titlefieldmiddle' : $val['tdcss']).' fieldname_'.$key;
 	//if ($val['notnull'] > 0) print ' fieldrequired';     // No fieldrequired on the view output
 	if ($val['type'] == 'text' || $val['type'] == 'html') {
 		print ' tdtop';

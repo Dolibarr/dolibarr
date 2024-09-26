@@ -354,7 +354,7 @@ class ProductStockEntrepot extends CommonObject
 		// Update request
 		$sql = 'UPDATE '.$this->db->prefix().$this->table_element.' SET';
 
-		$sql .= ' tms = '.(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : "'".$this->db->idate(dol_now())."'").',';
+		$sql .= ' tms = '.(dol_strlen((string) $this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : "'".$this->db->idate(dol_now())."'").',';
 		$sql .= ' fk_product = '.(isset($this->fk_product) ? $this->fk_product : "null").',';
 		$sql .= ' fk_entrepot = '.(isset($this->fk_entrepot) ? $this->fk_entrepot : "null").',';
 		$sql .= ' seuil_stock_alerte = '.(isset($this->seuil_stock_alerte) ? $this->seuil_stock_alerte : "null").',';

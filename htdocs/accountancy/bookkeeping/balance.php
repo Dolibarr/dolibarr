@@ -83,7 +83,7 @@ if ($sortfield == "") {
 	$sortfield = "t.numero_compte";
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new BookKeeping($db);
 $hookmanager->initHooks(array($contextpage));  // Note that conf->hooks_modules contains array
 
@@ -103,7 +103,7 @@ if (empty($search_date_start) && !GETPOSTISSET('formfilteraction')) {
 		$search_date_end = strtotime($fiscalYear->date_end);
 	} else {
 		$month_start = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
-		$year_start = dol_print_date(dol_now(), '%Y');
+		$year_start = (int) dol_print_date(dol_now(), '%Y');
 		if (dol_print_date(dol_now(), '%m') < $month_start) {
 			$year_start--; // If current month is lower that starting fiscal month, we start last year
 		}
@@ -393,7 +393,7 @@ if ($action != 'export_csv') {
 		print '<div class="liste_titre liste_titre_bydiv centpercent">';
 		print $moreforfilter;
 		$parameters = array();
-		$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
+		$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		print '</div>';
 	}

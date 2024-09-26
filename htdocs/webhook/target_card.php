@@ -47,7 +47,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $lineid   = GETPOSTINT('lineid');
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Target($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->webhook->dir_output.'/temp/massgeneration/'.$user->id;
@@ -72,7 +72,7 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 // Permissions
 // There is several ways to check permission.
@@ -602,7 +602,7 @@ if ($action == "test") {
 			$.ajax({
 				method: \'GET\',
 				url:  \''.DOL_URL_ROOT.'/webhook/ajax/webhook.php\',
-				data: { action: "getjsonformtrigger", triggercode: triggercode },
+				data: { action: "getjsonformtrigger", triggercode: triggercode , token:"'.currentToken().'"},
 				success: function(response) {
 					obj = JSON.stringify(response);
 					$("#jsondata").val(obj);

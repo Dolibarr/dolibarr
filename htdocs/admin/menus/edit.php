@@ -3,6 +3,7 @@
  * Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2016      Meziane Sof          <virtualsof@yahoo.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +50,7 @@ foreach ($dirmenus as $dirmenu) {
 
 $action = GETPOST('action', 'aZ09');
 
+$menu = null;
 $menu_handler_top = getDolGlobalString('MAIN_MENU_STANDARD');
 $menu_handler_smartphone = getDolGlobalString('MAIN_MENU_SMARTPHONE');
 $menu_handler_top = preg_replace('/_backoffice.php/i', '', $menu_handler_top);
@@ -137,7 +139,7 @@ if ($action == 'add') {
 		$menu->enabled = (string) GETPOST('enabled', 'alphanohtml');
 		$menu->perms = (string) GETPOST('perms', 'alphanohtml');
 		$menu->target = (string) GETPOST('target', 'alphanohtml');
-		$menu->user = (string) GETPOST('user', 'alphanohtml');
+		$menu->user = GETPOSTINT('user');
 		$menu->mainmenu = (string) GETPOST('propertymainmenu', 'alphanohtml');
 		if (is_numeric(GETPOST('menuIdParent', 'alphanohtml'))) {
 			$menu->fk_menu = (int) GETPOST('menuIdParent', 'alphanohtml');
@@ -198,7 +200,7 @@ if ($action == 'update') {
 				$menu->enabled = (string) GETPOST('enabled', 'alphanohtml');
 				$menu->perms = (string) GETPOST('perms', 'alphanohtml');
 				$menu->target = (string) GETPOST('target', 'alphanohtml');
-				$menu->user = (string) GETPOST('user', 'alphanohtml');
+				$menu->user = GETPOSTINT('user');
 				$menu->mainmenu = (string) GETPOST('propertymainmenu', 'alphanohtml');
 				if (is_numeric(GETPOST('menuIdParent', 'alphanohtml'))) {
 					$menu->fk_menu = (int) GETPOST('menuIdParent', 'alphanohtml');
@@ -387,8 +389,10 @@ if ($action == 'create') {
 
 	// Target
 	print '<tr><td>'.$langs->trans('Target').'</td><td><select class="flat" name="target" id="target">';
-	print '<option value=""'.(isset($menu->target) && $menu->target == "" ? ' selected' : '').'>&nbsp;</option>';
-	print '<option value="_blank"'.(isset($menu->target) && $menu->target == "_blank" ? ' selected' : '').'>'.$langs->trans('_blank').'</option>';
+	if ($menu instanceof Menubase) {
+		print '<option value=""'.(isset($menu->target) && $menu->target == "" ? ' selected' : '').'>&nbsp;</option>';
+		print '<option value="_blank"'.(isset($menu->target) && $menu->target == "_blank" ? ' selected' : '').'>'.$langs->trans('_blank').'</option>';
+	}
 	print '</select>';
 	print ajax_combobox("target");
 	print '</td></td><td>'.$langs->trans('DetailTarget').'</td></tr>';

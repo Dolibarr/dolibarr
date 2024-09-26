@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2014-2018  Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2015-2024  Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,21 +70,6 @@ class Loan extends CommonObject
 	public $accountancy_account_capital;
 	public $accountancy_account_insurance;
 	public $accountancy_account_interest;
-
-	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
-
-	/**
-	 * @var integer|string date_modification
-	 */
-	public $date_modification;
-
-	/**
-	 * @var integer|string date_validation
-	 */
-	public $date_validation;
 
 	public $insurance_amount;
 
@@ -532,7 +518,7 @@ class Loan extends CommonObject
 
 
 	/**
-	 *  Return clicable name (with eventually the picto)
+	 *  Return clickable name (with eventually the picto)
 	 *
 	 *  @param	int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
 	 *  @param	int		$maxlen						Label max length
@@ -708,11 +694,11 @@ class Loan extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string		HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{

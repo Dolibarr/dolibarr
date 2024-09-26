@@ -4,6 +4,7 @@
  * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -97,6 +98,7 @@ print load_fiche_titre($langs->trans("Table")." ".$table, '', 'title_setup');
 
 // Define request to get table description
 $base = 0;
+$sql = null;
 if (preg_match('/mysql/i', $conf->db->type)) {
 	$sql = "SHOW TABLE STATUS LIKE '".$db->escape($db->escapeforlike($table))."'";
 	$base = 1;
@@ -105,7 +107,7 @@ if (preg_match('/mysql/i', $conf->db->type)) {
 	$base = 2;
 }
 
-if (!$base) {
+if (!$base || $sql === null) {
 	print $langs->trans("FeatureNotAvailableWithThisDatabaseDriver");
 } else {
 	$resql = $db->query($sql);

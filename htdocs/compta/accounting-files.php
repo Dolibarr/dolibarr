@@ -6,6 +6,7 @@
  * Copyright (C) 2021       Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2022-2024  Alexandre Spangaro          <alexandre@inovea-conseil.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,7 +75,7 @@ $date_stop = dol_mktime(23, 59, 59, $date_stopMonth, $date_stopDay, $date_stopYe
 $action = GETPOST('action', 'aZ09');
 $projectid = GETPOSTINT('projectid');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('comptafileslist', 'globallist'));
 
 // Load variable for pagination
@@ -152,7 +153,6 @@ $listofchoices = array(
  * Actions
  */
 
-
 //$parameters = array('socid' => $id);
 //$reshook = $hookmanager->executeHooks('doActions', $parameters, $object); // Note that $object may have been modified by some hooks
 //if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -162,7 +162,7 @@ $filesarray = array();
 '@phan-var-force array<string,array{id:string,entity:string,date:string,date_due:string,paid:float|int,amount_ht:float|int,amount_ttc:float|int,amount_vat:float|int,amount_localtax1:float|int,amount_localtax2:float|int,amount_revenuestamp:float|int,ref:string,fk:string,item:string,thirdparty_name:string,thirdparty_code:string,country_code:string,vatnum:string,sens:string,currency:string,line?:string,name?:string,files?:mixed}> $filesarray';
 
 $result = false;
-if (($action == 'searchfiles' || $action == 'dl')) {
+if ($action == 'searchfiles' || $action == 'dl') {	// Test on permission not required here. Test is done per object type later.
 	if (empty($date_start)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateStart")), null, 'errors');
 		$error++;
@@ -496,10 +496,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 	}
 }
 
-
-/*
- *ZIP creation
- */
+// zip creation
 
 $dirfortmpfile = (!empty($conf->accounting->dir_temp) ? $conf->accounting->dir_temp : $conf->comptabilite->dir_temp);
 if (empty($dirfortmpfile)) {
@@ -507,8 +504,7 @@ if (empty($dirfortmpfile)) {
 	$error++;
 }
 
-
-if ($result && $action == "dl" && !$error) {
+if ($result && $action == "dl" && !$error) {	// Test on permission not required here. Test is done per object type later.
 	if (!extension_loaded('zip')) {
 		setEventMessages('PHPZIPExtentionNotLoaded', null, 'errors');
 	} else {
@@ -872,7 +868,7 @@ if (!empty($date_start) && !empty($date_stop)) {
 					$filename = ($filecursor['name'] ? $filecursor['name'] : $filecursor['ref']);
 					print '<a href='.DOL_URL_ROOT.'/'.$filecursor['link'].' target="_blank" rel="noopener noreferrer" title="'.dol_escape_htmltag($filename).'">';
 					if (empty($tmppreview)) {
-						print img_picto('', 'generic', '', false, 0, 0, '', 'pictonopreview pictofixedwidth paddingright');
+						print img_picto('', 'generic', '', 0, 0, 0, '', 'pictonopreview pictofixedwidth paddingright');
 					}
 					print $filename;
 					print '</a><br>';

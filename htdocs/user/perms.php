@@ -6,7 +6,8 @@
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,6 +75,9 @@ if ($user->id == $id && (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user
 	accessforbidden();
 }
 
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('usercard', 'userperms', 'globalcard'));
+
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 if ($user->id != $id && !$canreaduser) {
 	accessforbidden();
@@ -81,13 +85,9 @@ if ($user->id != $id && !$canreaduser) {
 
 $object = new User($db);
 $object->fetch($id, '', '', 1);
-$object->getrights();
+$object->loadRights();
 
 $entity = $conf->entity;
-
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('usercard', 'userperms', 'globalcard'));
-
 
 /*
  * Actions
@@ -111,12 +111,13 @@ if (empty($reshook)) {
 		// If we are changing our own permissions, we reload permissions and menu
 		if ($object->id == $user->id) {
 			$user->clearrights();
-			$user->getrights();
+			$user->loadRights();
+			// @phan-suppress-next-line PhanRedefinedClassReference
 			$menumanager->loadMenu();
 		}
 
 		$object->clearrights();
-		$object->getrights();
+		$object->loadRights();
 	}
 
 	if ($action == 'delrights' && $caneditperms && $confirm == 'yes') {
@@ -130,12 +131,13 @@ if (empty($reshook)) {
 		// If we are changing our own permissions, we reload permissions and menu
 		if ($object->id == $user->id) {
 			$user->clearrights();
-			$user->getrights();
+			$user->loadRights();
+			// @phan-suppress-next-line PhanRedefinedClassReference
 			$menumanager->loadMenu();
 		}
 
 		$object->clearrights();
-		$object->getrights();
+		$object->loadRights();
 	}
 }
 
@@ -173,6 +175,7 @@ foreach ($modulesdir as $dir) {
 				if ($modName) {
 					include_once $dir.$file;
 					$objMod = new $modName($db);
+					'@phan-var-force DolibarrModules $objMod';
 
 					// Load all lang files of module
 					if (isset($objMod->langfiles) && is_array($objMod->langfiles)) {
@@ -602,7 +605,7 @@ if ($result) {
 				print '<td class="center">'.img_picto($langs->trans("AdministratorDesc"), 'star').'</td>';
 			} else {
 				print '<td class="center nowrap">';
-				print img_picto($langs->trans("Active"), 'switch_on', '', false, 0, 0, '', 'opacitymedium');
+				print img_picto($langs->trans("Active"), 'switch_on', '', 0, 0, 0, '', 'opacitymedium');
 				print '</td>';
 			}
 			print '<td>';
@@ -617,7 +620,7 @@ if ($result) {
 				print '</a></td>';
 			} else {
 				print '<td class="center nowrap">';
-				print img_picto($langs->trans("Active"), 'switch_on', '', false, 0, 0, '', 'opacitymedium');
+				print img_picto($langs->trans("Active"), 'switch_on', '', 0, 0, 0, '', 'opacitymedium');
 				print '</td>';
 			}
 			print '<td>';
@@ -626,7 +629,7 @@ if ($result) {
 			print '<!-- permsgroupbyentitypluszero -->';
 			if (in_array($obj->id, $permsgroupbyentitypluszero)) {	// Permission granted by group
 				print '<td class="center nowrap">';
-				print img_picto($langs->trans("Active"), 'switch_on', '', false, 0, 0, '', 'opacitymedium');
+				print img_picto($langs->trans("Active"), 'switch_on', '', 0, 0, 0, '', 'opacitymedium');
 				//print img_picto($langs->trans("Active"), 'tick');
 				print '</td>';
 				print '<td>';
@@ -642,7 +645,7 @@ if ($result) {
 					print '</a></td>';
 				} else {
 					print '<td class="center nowrap">';
-					print img_picto($langs->trans("Disabled"), 'switch_off', '', false, 0, 0, '', 'opacitymedium');
+					print img_picto($langs->trans("Disabled"), 'switch_off', '', 0, 0, 0, '', 'opacitymedium');
 					print '</td>';
 				}
 				print '<td>';
@@ -659,7 +662,7 @@ if ($result) {
 				print '</a></td>';
 			} else {
 				print '<td>';
-				print img_picto($langs->trans("Disabled"), 'switch_off', '', false, 0, 0, '', 'opacitymedium');
+				print img_picto($langs->trans("Disabled"), 'switch_off', '', 0, 0, 0, '', 'opacitymedium');
 				print '</td>';
 			}
 			print '<td class="center">';

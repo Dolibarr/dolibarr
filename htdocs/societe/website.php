@@ -72,7 +72,7 @@ if (!$sortorder) {
 }
 
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Societe($db);
 $objectwebsiteaccount = new SocieteAccount($db);
 $extrafields = new ExtraFields($db);
@@ -88,10 +88,12 @@ unset($objectwebsiteaccount->fields['fk_soc']); // Remove this field, we are alr
 
 // Initialize array of search criteria
 $search_all = GETPOST("search_all", 'alpha');
+/** @var array<string[]|string> $search */
 $search = array();
 foreach ($objectwebsiteaccount->fields as $key => $val) {
-	if (GETPOST('search_'.$key, 'alpha')) {
-		$search[$key] = GETPOST('search_'.$key, 'alpha');
+	$value = GETPOST('search_'.$key, 'alpha');
+	if ($value) {
+		$search[$key] = $value;
 	}
 }
 
@@ -479,9 +481,6 @@ if (empty($reshook)) {
 if (!empty($moreforfilter)) {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;
-	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
 	print '</div>';
 }
 

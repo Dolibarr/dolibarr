@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2004-2013  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012  Regis Houssin       <regis.houssin@inodbox.com>
- * Copyright (C) 2014       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2015       Frederic France     <frederic.france@free.fr>
+/* Copyright (C) 2004-2013	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2014		Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2015		Frederic France				<frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -40,6 +40,13 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 	public $db;
 
 	/**
+	 * Must be defined in the box class
+	 *
+	 * @var ''|'development'|'experimental'|'dolibarr'
+	 */
+	public $version;
+
+	/**
 	 * @var string param
 	 */
 	public $param;
@@ -60,7 +67,7 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 	public $error = '';
 
 	/**
-	 * @var int Maximum lines
+	 * @var int<0,max> Maximum lines
 	 */
 	public $max = 5;
 
@@ -96,32 +103,37 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 	public $box_order;
 
 	/**
-	 * @var int User ID
+	 * @var int 	User ID
 	 */
 	public $fk_user;
 
 	/**
-	 * @var string Source file
+	 * @var string 	Source file
 	 */
 	public $sourcefile;
 
 	/**
-	 * @var string Class name
+	 * @var string 	Class name
 	 */
 	public $class;
 
 	/**
-	 * @var string ID
+	 * @var string 	ID
 	 */
 	public $box_id;
 
 	/**
-	 * @var string Alphanumeric ID
+	 * @var string 	Box language file if it needs a specific language file.
+	 */
+	public $lang;
+
+	/**
+	 * @var string 	Alphanumeric ID
 	 */
 	public $boxcode;
 
 	/**
-	 * @var string Note
+	 * @var string 	Note
 	 */
 	public $note;
 
@@ -129,6 +141,24 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 	 * @var string 	Widget type ('graph' means the widget is a graph widget)
 	 */
 	public $widgettype = '';
+
+
+	//! Must be provided in child classes
+	/**
+	 * Note $picto is deprecated
+	 *
+	 * @var string  Example "accountancy"
+	 */
+	public $boximg;
+	/**
+	 * @var string  Example "BoxLastManualEntries"
+	 */
+	public $boxlabel;
+	/**
+	 * @var string[]  Example  array("accounting")
+	 */
+	public $depends;
+
 
 
 	/**
@@ -156,9 +186,9 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 	/**
 	 * Load a box line from its rowid
 	 *
-	 * @param   int $rowid  Row id to load
+	 * @param   int	$rowid	Row id to load
 	 *
-	 * @return  int         Return integer <0 if KO, >0 if OK
+	 * @return  int<-1,1>	Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($rowid)
 	{
@@ -194,12 +224,12 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 	/**
 	 * Standard method to show a box (usage by boxes not mandatory, a box can still use its own showBox function)
 	 *
-	 * @param   array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}   $head       Array with properties of box title
-	 * @param   array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>   $contents   Array with properties of box lines
-	 * @param	int		$nooutput	No print, only return string
+	 * @param   ?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}   $head       Array with properties of box title
+	 * @param   ?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>   $contents   Array with properties of box lines
+	 * @param	int<0,1>	$nooutput	No print, only return string
 	 * @return  string
 	 */
-	public function showBox($head, $contents, $nooutput = 0)
+	public function showBox($head = null, $contents = null, $nooutput = 0)
 	{
 		global $langs, $user, $conf;
 
@@ -217,6 +247,10 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 		$filename = '/box-'.$fileid;
 		$refresh = dol_cache_refresh($cachedir, $filename, $cachetime);
 		$out = '';
+
+		if ($contents === null) {
+			$contents = array();
+		}
 
 		if ($refresh) {
 			dol_syslog(get_class($this).'::showBox');
@@ -417,7 +451,8 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 	 *  List is sorted by widget filename so by priority to run.
 	 *
 	 *  @param	?string[]	$forcedirwidget		null=All default directories. This parameter is used by modulebuilder module only.
-	 * 	@return	array						Array list of widget
+	 *	@return	array<array{picto:string,file:string,fullpath:string,relpath:string,iscoreorexternal:'external'|'internal',version:string,status:string,info:string}>	Array list of widgets
+	 *
 	 */
 	public static function getWidgetsList($forcedirwidget = null)
 	{
@@ -503,6 +538,7 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 			}
 
 			$objMod = new $modName($db);
+			'@phan-var-force ModeleBoxes $objMod';
 			if (is_object($objMod)) {
 				// Define disabledbyname and disabledbymodule
 				$disabledbyname = 0;
@@ -514,8 +550,8 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 					$disabledbyname = 1;
 				}
 
-				// We set info of modules
-				$widget[$j]['picto'] = (empty($objMod->picto) ? (empty($objMod->boximg) ? img_object('', 'generic') : $objMod->boximg) : img_object('', $objMod->picto));
+				// We set info of modules  @phan-suppress-next-line PhanUndeclaredProperty
+				$widget[$j]['picto'] = ((!property_exists($objMod, 'picto') || empty($objMod->picto)) ? (empty($objMod->boximg) ? img_object('', 'generic') : $objMod->boximg) : img_object('', $objMod->picto));
 				$widget[$j]['file'] = $files[$key];
 				$widget[$j]['fullpath'] = $fullpath[$key];
 				$widget[$j]['relpath'] = $relpath[$key];

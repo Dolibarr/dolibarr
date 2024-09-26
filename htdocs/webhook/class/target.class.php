@@ -90,13 +90,13 @@ class Target extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => "Id"),
 		'ref' => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'position' => 20, 'notnull' => 1, 'visible' => 4, 'noteditable' => 1, 'index' => 1, 'searchall' => 1, 'validate' => 1, 'comment' => "Reference of object"),
-		'label' => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'position' => 30, 'notnull' => 0, 'visible' => 1, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'csslist'=>'tdoverflowmax150', 'showoncombobox' => 2, 'validate' => 1,),
-		'trigger_codes' => array('type' => 'text', 'label' => 'TriggerCodes', 'enabled' => 1, 'position' => 50, 'notnull' => 1, 'visible' => 1, 'help' => "TriggerCodeInfo", 'tdcss'=>'titlefieldmiddle', 'csslist'=>'tdoverflowmax200', 'css' => 'minwidth400', 'arrayofkeyval' => array('defined_in_constructor' => 'defined_from_c_action_trigger'), 'multiinput' => 1,),
+		'label' => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'position' => 30, 'notnull' => 0, 'visible' => 1, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'csslist' => 'tdoverflowmax150', 'showoncombobox' => 2, 'validate' => 1,),
+		'trigger_codes' => array('type' => 'text', 'label' => 'TriggerCodes', 'enabled' => 1, 'position' => 50, 'notnull' => 1, 'visible' => 1, 'help' => "TriggerCodeInfo", 'tdcss' => 'titlefieldmiddle', 'csslist' => 'tdoverflowmax200', 'css' => 'minwidth400', 'arrayofkeyval' => array('defined_in_constructor' => 'defined_from_c_action_trigger'), 'multiinput' => 1,),
 		'url' => array('type' => 'url', 'label' => 'Url', 'enabled' => 1, 'position' => 55, 'notnull' => 1, 'visible' => 1,),
 		'description' => array('type' => 'text', 'label' => 'Description', 'enabled' => 1, 'position' => 60, 'notnull' => 0, 'visible' => 3, 'validate' => 1,),
 		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'position' => 61, 'notnull' => 0, 'visible' => 0, 'cssview' => 'wordbreak', 'validate' => 1,),
@@ -114,7 +114,6 @@ class Target extends CommonObject
 	public $description;
 	public $note_public;
 	public $note_private;
-	public $date_creation;
 	public $fk_user_creat;
 	public $fk_user_modif;
 	public $import_key;
@@ -210,9 +209,23 @@ class Target extends CommonObject
 	 */
 	public function initListOfTriggers()
 	{
+		$entitytoicon = array(
+			'societe'			=> 'company',
+			'facture'			=> 'bill',
+			'commande'			=> 'order',
+			'order_supplier'    => 'supplier_order',
+			'proposal_supplier' => 'supplier_proposal',
+			'invoice_supplier' 	=> 'supplier_invoice',
+			'facturerec' 		=> 'bill',
+			'ficheinter'    	=> 'intervention',
+			'shipping'	   		=> 'shipment',
+			'contrat'       	=> 'contract',
+			'recruitment'       => 'recruitmentjobposition',
+		);
 		// Define the array $arrayofkeyval for $this->fields["trigger_codes"]
+		// @phan-suppress-next-line PhanTypeMismatchProperty
 		if (!empty($this->fields["trigger_codes"]['arrayofkeyval']) && is_array($this->fields["trigger_codes"]['arrayofkeyval']) && !empty($this->fields["trigger_codes"]["multiinput"])) {
-			$sql = "SELECT c.code, c.label FROM ".MAIN_DB_PREFIX."c_action_trigger as c ORDER BY c.rang DESC";
+			$sql = "SELECT c.code, c.label, c.elementtype FROM ".MAIN_DB_PREFIX."c_action_trigger as c ORDER BY c.rang ASC";
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$num = $this->db->num_rows($resql);
@@ -220,7 +233,8 @@ class Target extends CommonObject
 				$arraytrigger = array();
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($resql);
-					$arraytrigger[$obj->code] = $obj->label.' ('.$obj->code.')';
+					$elementtype = (!empty($entitytoicon[$obj->elementtype]) ? $entitytoicon[$obj->elementtype] : $obj->elementtype);
+					$arraytrigger[$obj->code] = img_object("", $elementtype).' '.$obj->label.' ('.$obj->code.')';
 					$i++;
 				}
 				$this->fields["trigger_codes"]['arrayofkeyval'] = $arraytrigger;
@@ -457,9 +471,6 @@ class Target extends CommonObject
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
-		// Clean trigger_codes
-		$this->trigger_codes = preg_replace('/[\r\n\s]/', '', $this->trigger_codes);
-
 		return $this->updateCommon($user, $notrigger);
 	}
 
@@ -536,7 +547,7 @@ class Target extends CommonObject
 			if (!empty($this->fields['date_validation'])) {
 				$sql .= ", date_validation = '".$this->db->idate($now)."'";
 			}
-			if (!empty($this->fields['fk_user_valid'])) {
+			if (!empty($this->fields['fk_user_valid'])) { // @phan-suppress-current-line PhanTypeMismatchProperty
 				$sql .= ", fk_user_valid = ".((int) $user->id);
 			}
 			$sql .= " WHERE rowid = ".((int) $this->id);
@@ -910,7 +921,7 @@ class Target extends CommonObject
 			$mybool = ((bool) @include_once $dir.$file) || $mybool;
 		}
 
-		if ($mybool === false) {
+		if (!$mybool) {
 			dol_print_error(null, "Failed to include file ".$file);
 			return '';
 		}

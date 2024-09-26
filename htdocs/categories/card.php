@@ -58,6 +58,14 @@ $position = GETPOSTINT('position');
 $visible = GETPOSTINT('visible');
 $parent = GETPOSTINT('parent');
 
+$idProdOrigin = 0;
+$idSupplierOrigin = 0;
+$idCompanyOrigin = 0;
+$idMemberOrigin = 0;
+$idContactOrigin = 0;
+$idProjectOrigin = 0;
+$idProdOrigin = 0;
+
 if ($origin) {
 	if ($type == Categorie::TYPE_PRODUCT) {
 		$idProdOrigin     = $origin;
@@ -91,7 +99,7 @@ $object = new Categorie($db);
 $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('categorycard'));
 
 $error = 0;

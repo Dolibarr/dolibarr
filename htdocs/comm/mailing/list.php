@@ -62,7 +62,7 @@ $search_ref = GETPOST("search_ref", "alpha") ? GETPOST("search_ref", "alpha") : 
 $search_messtype = GETPOST("search_messtype", "alpha");
 $filteremail = GETPOST('filteremail', 'alpha');
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Mailing($db);
 $extrafields = new ExtraFields($db);
 $hookmanager->initHooks(array($contextpage)); 	// Note that conf->hooks_modules contains array of activated contexes
@@ -269,7 +269,7 @@ if ($filteremail) {
 	$title .= ' ('.$langs->trans("SentTo", $filteremail).')';
 }
 
-llxHeader('', $title, $help_url, 0, 0, '', '', '', 'bodyforlist');
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -372,9 +372,6 @@ if (empty($reshook)) {
 if (!empty($moreforfilter)) {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;
-	$parameters = array('type' => $type);
-	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
 	print '</div>';
 }
 

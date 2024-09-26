@@ -93,7 +93,7 @@ class SocieteAccount extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 
 	public $fields = array(
@@ -110,6 +110,7 @@ class SocieteAccount extends CommonObject
 		'key_account' => array('type' => 'varchar(128)', 'label' => 'KeyAccount', 'visible' => 0, 'enabled' => 1, 'position' => 48, 'notnull' => 0, 'index' => 1, 'searchall' => 1, 'comment' => 'The id of third party in the external web site (for site_account if site_account defined)',),
 		'date_last_login' => array('type' => 'datetime', 'label' => 'LastConnexion', 'visible' => 2, 'enabled' => 1, 'position' => 50, 'notnull' => 0,),
 		'date_previous_login' => array('type' => 'datetime', 'label' => 'PreviousConnexion', 'visible' => 2, 'enabled' => 1, 'position' => 51, 'notnull' => 0,),
+		'date_last_reset_password' => array('type' => 'datetime', 'label' => 'PreviousResetPassword', 'visible' => 0, 'enabled' => 1, 'position' => 53, 'notnull' => 0,),
 		//'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'visible'=>-1, 'enabled'=>1, 'position'=>45, 'notnull'=>-1,),
 		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'visible' => -1, 'enabled' => 1, 'position' => 46, 'notnull' => -1,),
 		'date_creation' => array('type' => 'datetime', 'label' => 'DateCreation', 'visible' => -2, 'enabled' => 1, 'position' => 500, 'notnull' => 1,),
@@ -145,18 +146,13 @@ class SocieteAccount extends CommonObject
 	public $site_account;
 
 	/**
-	 * @var integer|string date_last_login
+	 * @var int|string date_last_login
 	 */
 	public $date_last_login;
 
-
+	public $date_last_reset_password;
 	public $date_previous_login;
 	public $note_private;
-
-	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
 
 	/**
 	 * @var int ID
@@ -406,9 +402,9 @@ class SocieteAccount extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 * @param array $params params to construct tooltip data
+	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
-	 * @return array
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{

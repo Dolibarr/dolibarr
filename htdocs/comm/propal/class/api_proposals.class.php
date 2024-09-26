@@ -157,10 +157,11 @@ class Proposals extends DolibarrApi
 	 * @param int		$page				Page number
 	 * @param string	$thirdparty_ids		Thirdparty ids to filter commercial proposals (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
 	 * @param string    $sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.datec:<:'2016-01-01')"
-	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param string    $properties	        Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param bool      $pagination_data    If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return  array                       Array of order objects
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('propal', 'lire')) {
 			throw new RestException(403);
@@ -201,6 +202,9 @@ class Proposals extends DolibarrApi
 			}
 		}
 
+		//this query will return total proposals with the filters given
+		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
 			if ($page < 0) {
@@ -233,6 +237,23 @@ class Proposals extends DolibarrApi
 			}
 		} else {
 			throw new RestException(503, 'Error when retrieve propal list : '.$this->db->lasterror());
+		}
+
+		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		if ($pagination_data) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret = [];
+
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = [
+				'total' => (int) $total,
+				'page' => $page, //count starts from 0
+				'page_count' => ceil((int) $total / $limit),
+				'limit' => $limit
+			];
 		}
 
 		return $obj_ret;
@@ -872,11 +893,12 @@ class Proposals extends DolibarrApi
 	 * @param   int		$status			Must be 2 (accepted) or 3 (refused)				{@min 2}{@max 3}
 	 * @param   string  $note_private   Add this mention at end of private note
 	 * @param   int     $notrigger      Disabled triggers
+	 * @param   string  $note_public    Add this mention at end of public note
 	 * @return	Object					Object with cleaned properties
 	 *
 	 * @url POST    {id}/close
 	 */
-	public function close($id, $status, $note_private = '', $notrigger = 0)
+	public function close($id, $status, $note_private = '', $notrigger = 0, $note_public = '')
 	{
 		if (!DolibarrApiAccess::$user->hasRight('propal', 'creer')) {
 			throw new RestException(403);
@@ -890,7 +912,7 @@ class Proposals extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$result = $this->propal->closeProposal(DolibarrApiAccess::$user, $status, $note_private, $notrigger);
+		$result = $this->propal->closeProposal(DolibarrApiAccess::$user, $status, $note_private, $notrigger, $note_public);
 		if ($result == 0) {
 			throw new RestException(304, 'Error nothing done. May be object is already closed');
 		}

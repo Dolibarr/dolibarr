@@ -4,6 +4,7 @@
  * Copyright (C) 2010-2012 Destailleur Laurent 	<eldy@users.sourceforge.net>
  * Copyright (C) 2014 	   Henry Florian 		<florian.henry@open-concept.pro>
  * Copyright (C) 2023 	   Benjamin Falière		<benjamin.faliere@altairis.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,6 +54,9 @@ if ($id > 0 || !empty($ref)) {
 	$object->fetch($id, $ref);
 }
 
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('producttranslationcard', 'globalcard'));
+
 if ($object->id > 0) {
 	if ($object->type == $object::TYPE_PRODUCT) {
 		restrictedArea($user, 'produit', $object->id, 'product&product', '', '');
@@ -63,9 +67,6 @@ if ($object->id > 0) {
 } else {
 	restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 }
-
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('producttranslationcard', 'globalcard'));
 
 // Permissions
 $usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'creer')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'creer')));
@@ -264,7 +265,7 @@ if ($action == 'edit') {
 		foreach ($object->multilangs as $key => $value) {
 			$i++;
 
-			$s = picto_from_langcode($key);
+			$s = picto_from_langcode((string) $key);
 			print($i > 1 ? "<br>" : "").($s ? $s.' ' : '').' <div class="inline-block margintop marginbottomonly"><b>'.$langs->trans('Language_'.$key).'</b></div><div class="inline-block floatright"><a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'&langtodelete='.$key.'">'.img_delete('', 'class="valigntextbottom marginrightonly"').'</a></div>';
 
 			print '<div class="underbanner clearboth"></div>';
@@ -298,7 +299,7 @@ if ($action == 'edit') {
 		foreach ($object->multilangs as $key => $value) {
 			$i++;
 
-			$s = picto_from_langcode($key);
+			$s = picto_from_langcode((string) $key);
 			print($i > 1 ? "<br>" : "").($s ? $s.' ' : '').' <div class="inline-block marginbottomonly"><b>'.$langs->trans('Language_'.$key).'</b></div><div class="inline-block floatright"><a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'&langtodelete='.$key.'">'.img_delete('', 'class="valigntextbottom marginrightonly"').'</a></div>';
 
 			print '<div class="fichecenter">';

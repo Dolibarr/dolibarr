@@ -66,7 +66,7 @@ if (empty($objecttype)) {
 $TAuthorizedObjects = array('job', 'user');
 $skill = new SkillRank($db);
 
-// Initialize technical objects
+// Initialize a technical objects
 if (in_array($objecttype, $TAuthorizedObjects)) {
 	if ($objecttype == 'job') {
 		$object = new Job($db);
@@ -80,7 +80,7 @@ if (in_array($objecttype, $TAuthorizedObjects)) {
 $hookmanager->initHooks(array('skilltab', 'globalcard')); // Note that conf->hooks_modules contains array
 
 // Load object
-include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 if (method_exists($object, 'loadPersonalConf')) {
 	$object->loadPersonalConf();
 }
@@ -127,7 +127,7 @@ if (empty($reshook)) {
 	}
 
 	// update national_registration_number
-	if ($action == 'setnational_registration_number') {
+	if ($action == 'setnational_registration_number' && $permissiontoadd) {
 		$object->national_registration_number = (string) GETPOST('national_registration_number', 'alphanohtml');
 		$result = $object->update($user);
 		if ($result < 0) {
@@ -135,7 +135,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'addSkill') {
+	if ($action == 'addSkill' && $permissiontoadd) {
 		$error = 0;
 
 		if (empty($TSkillsToAdd)) {
@@ -158,7 +158,7 @@ if (empty($reshook)) {
 				setEventMessages($langs->trans("SaveAddSkill"), null);
 			}
 		}
-	} elseif ($action == 'saveSkill') {
+	} elseif ($action == 'saveSkill' && $permissiontoadd) {
 		if (!empty($TNote)) {
 			foreach ($TNote as $skillId => $rank) {
 				$TSkills = $skill->fetchAll('ASC', 't.rowid', 0, 0, '(fk_object:=:'.((int) $id).") AND (objecttype:=:'".$db->escape($objecttype)."') AND (fk_skill:=:".((int) $skillId).')');
@@ -173,7 +173,7 @@ if (empty($reshook)) {
 			header("Location: " . DOL_URL_ROOT.'/hrm/skill_tab.php?id=' . $id. '&objecttype=job');
 			exit;
 		}
-	} elseif ($action == 'confirm_deleteskill' && $confirm == 'yes') {
+	} elseif ($action == 'confirm_deleteskill' && $confirm == 'yes' && $permissiontoadd) {
 		$skillToDelete = new SkillRank($db);
 		$ret = $skillToDelete->fetch($lineid);
 		setEventMessages($langs->trans("DeleteSkill"), null);
@@ -182,6 +182,7 @@ if (empty($reshook)) {
 		}
 	}
 }
+
 
 /*
  * View
@@ -216,15 +217,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$formconfirm = '';
 
 	// Confirmation to delete
-	/*if ($action == 'delete') {
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteSkill'), $langs->trans('ConfirmDeleteObject'), 'confirm_delete', '', 0, 1);
-	}*/
 	// Confirmation to delete line
 	if ($action == 'ask_deleteskill') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id . '&objecttype=' . $objecttype . '&lineid=' . $lineid, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_deleteskill', '', 0, 1);
 	}
 	// Clone confirmation
-	/*if ($action == 'clone') {
+	/*if ($action == 'clone' && $permissiontoadd) {
 		// Create an array for form
 		$formquestion = array();
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
@@ -500,6 +498,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		} else {
 			$i = 0;
 			$sameRef = array();
+			/** @var array<Object|array> $objects */
 			$objects = array();
 			while ($i < $num) {
 				$obj = $db->fetch_object($resql);

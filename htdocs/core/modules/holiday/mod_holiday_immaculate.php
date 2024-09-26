@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2011-2019		Juanjo Menent	    <jmenent@2byte.es>
- * Copyright (C) 2018			Charlene Benke		<charlie@patas-monkey.com>
+/* Copyright (C) 2011-2019	Juanjo Menent	    	<jmenent@2byte.es>
+ * Copyright (C) 2018		Charlene Benke			<charlie@patas-monkey.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +32,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/holiday/modules_holiday.php';
  */
 class mod_holiday_immaculate extends ModelNumRefHolidays
 {
-
 	// variables inherited from ModelNumRefHolidays class
 	public $name = 'Immaculate';
 	public $version = 'dolibarr';
@@ -85,20 +85,25 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 	/**
 	 *	Return numbering example
 	 *
-	 *	@return     string      Example
+	 *	@return     string|int<0,0>      Example
 	 */
 	public function getExample()
 	{
-		global $langs, $user;
+		global $db, $langs, $user;
+		require_once DOL_DOCUMENT_ROOT . '/holiday/class/holiday.class.php';
+
+		$holiday = new Holiday($db);
+		$holiday->initAsSpecimen();
 
 		$old_login = $user->login;
 		$user->login = 'UUUUUUU';
-		$numExample = $this->getNextValue($user, '');
+		$numExample = $this->getNextValue($user, $holiday);
 		$user->login = $old_login;
 
 		if (!$numExample) {
 			$numExample = $langs->trans('NotConfigured');
 		}
+
 		return $numExample;
 	}
 
@@ -107,7 +112,7 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 	 *
 	 *	@param	Societe			$objsoc     third party object
 	 *	@param	Holiday			$holiday	holiday object
-	 *	@return string|int      			Value if OK, 0 if KO
+	 *	@return string|int<-1,0>   			Value if OK, <=0 if KO
 	 */
 	public function getNextValue($objsoc, $holiday)
 	{

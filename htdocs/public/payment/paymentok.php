@@ -5,6 +5,7 @@
  * Copyright (C) 2021-2023	Waël Almoman			<info@almoman.com>
  * Copyright (C) 2021		Maxime Demarest			<maxime@indelog.fr>
  * Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -220,7 +221,7 @@ if (empty($doactionsthenredirect)) {
 	$logosmall = $mysoc->logo_small;
 	$logo = $mysoc->logo;
 	$paramlogo = 'ONLINE_PAYMENT_LOGO_'.$suffix;
-	if (!empty($conf->global->$paramlogo)) {
+	if (getDolGlobalString($paramlogo)) {
 		$logosmall = getDolGlobalString($paramlogo);
 	} elseif (getDolGlobalString('ONLINE_PAYMENT_LOGO')) {
 		$logosmall = getDolGlobalString('ONLINE_PAYMENT_LOGO');
@@ -294,7 +295,7 @@ if (isModEnabled('paypal')) {
 					// Nothing to do
 					dol_syslog("Call to GetExpressCheckoutDetails return ".$ack, LOG_DEBUG, 0, '_payment');
 				} else {
-					dol_syslog("Call to GetExpressCheckoutDetails return error: ".json_encode($resArray), LOG_WARNING, '_payment');
+					dol_syslog("Call to GetExpressCheckoutDetails return error: ".json_encode($resArray), LOG_WARNING, 0, '_payment');
 				}
 
 				dol_syslog("We call DoExpressCheckoutPayment token=".$onlinetoken." paymentType=".$paymentType." currencyCodeType=".$currencyCodeType." payerID=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt." fulltag=".$fulltag, LOG_DEBUG, 0, '_payment');
@@ -553,9 +554,12 @@ if ($ispaymentok) {
 				}
 				// Now do a correction of the suggested date
 				if (getDolGlobalString('MEMBER_SUBSCRIPTION_START_FIRST_DAY_OF') === "m") {
-					$datesubscription = dol_get_first_day(dol_print_date($datesubscription, "%Y"), dol_print_date($datesubscription, "%m"));
+					$datesubscription = dol_get_first_day((int) dol_print_date($datesubscription, "%Y"), (int) dol_print_date($datesubscription, "%m"));
+				} elseif (getDolGlobalString('MEMBER_SUBSCRIPTION_START_FIRST_DAY_OF') === "3m") {
+					$datesubscription = dol_time_plus_duree($object->datefin, -3, 'm');
+					$datesubscription = dol_get_first_day((int) dol_print_date($datesubscription, "%Y"), (int) dol_print_date($datesubscription, "%m"));
 				} elseif (getDolGlobalString('MEMBER_SUBSCRIPTION_START_FIRST_DAY_OF') === "Y") {
-					$datesubscription = dol_get_first_day(dol_print_date($datesubscription, "%Y"));
+					$datesubscription = dol_get_first_day((int) dol_print_date($datesubscription, "%Y"));
 				}
 
 				$datesubend = null;
@@ -1482,7 +1486,7 @@ if ($ispaymentok) {
 
 							$trackid = 'inv'.$object->id;
 
-							$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, $listofpaths, $listofmimes, $listofnames, $cc, '', 0, $ishtml, '', '', $trackid, '', 'standard');
+							$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, $listofpaths, $listofmimes, $listofnames, $cc, '', 0, ($ishtml ? 1 : 0), '', '', $trackid, '', 'standard');
 
 							$result = $mailfile->sendfile();
 							if ($result) {
@@ -1686,7 +1690,7 @@ if ($ispaymentok) {
 										$ishtml = dol_textishtml($texttosend); // May contain urls
 										$trackid = 'inv'.$invoice->id;
 
-										$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, array(), array(), array(), '', '', 0, $ishtml, '', '', $trackid, '', 'standard');
+										$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, array(), array(), array(), '', '', 0, $ishtml ? 1 : 0, '', '', $trackid, '', 'standard');
 
 										$result = $mailfile->sendfile();
 										if ($result) {
@@ -2007,7 +2011,7 @@ if ($ispaymentok) {
 		$trackid = '';
 
 		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-		$mailfile = new CMailFile($topic, $sendto, $from, $content, array(), array(), array(), '', '', 0, $ishtml, '', '', $trackid, '', 'standard');
+		$mailfile = new CMailFile($topic, $sendto, $from, $content, array(), array(), array(), '', '', 0, $ishtml ? 1 : 0, '', '', $trackid, '', 'standard');
 
 		$result = $mailfile->sendfile();
 		if ($result) {
@@ -2068,7 +2072,7 @@ if ($ispaymentok) {
 		$trackid = '';
 
 		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-		$mailfile = new CMailFile($topic, $sendto, $from, $content, array(), array(), array(), '', '', 0, $ishtml, '', '', $trackid, '', 'standard');
+		$mailfile = new CMailFile($topic, $sendto, $from, $content, array(), array(), array(), '', '', 0, $ishtml ? 1 : 0, '', '', $trackid, '', 'standard');
 
 		$result = $mailfile->sendfile();
 		if ($result) {

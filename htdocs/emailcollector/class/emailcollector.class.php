@@ -1720,7 +1720,7 @@ class EmailCollector extends CommonObject
 				//var_dump($headers);
 				//var_dump($overview);exit;
 
-				$operationslog .= '<br>** Process email #'.dol_escape_htmltag($iforemailloop);
+				$operationslog .= '<br>** Process email #'.dol_escape_htmltag((string) $iforemailloop);
 
 				if (getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')) {
 					/** @var Webklex\PHPIMAP\Message $imapemail */
@@ -2700,7 +2700,7 @@ class EmailCollector extends CommonObject
 											// Search country by name or code
 											if (!empty($contactstatic->country)) {
 												require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
-												$result = getCountry('', 3, $this->db, null, 1, $contactstatic->country);
+												$result = getCountry('', '3', $this->db, null, 1, $contactstatic->country);
 												if ($result == 'NotDefined') {
 													$errorforactions++;
 													$this->error = "Error country not found by this name '" . $contactstatic->country . "'";
@@ -2714,7 +2714,7 @@ class EmailCollector extends CommonObject
 												}
 											} elseif (!empty($contactstatic->country_code)) {
 												require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
-												$result = getCountry($contactstatic->country_code, 3, $this->db);
+												$result = getCountry($contactstatic->country_code, '3', $this->db);
 												if ($result == 'NotDefined') {
 													$errorforactions++;
 													$this->error = "Error country not found by this code '" . $contactstatic->country_code . "'";
@@ -2907,7 +2907,7 @@ class EmailCollector extends CommonObject
 							} else {
 								$pj = getAttachments($imapemail, $connection);
 								foreach ($pj as $key => $val) {
-									$data[$val['filename']] = getFileData($imapemail, $val['pos'], $val['type'], $connection);
+									$data[$val['filename']] = getFileData($imapemail, (string) $val['pos'], $val['type'], $connection);
 								}
 							}
 							if (count($data) > 0) {
@@ -3046,6 +3046,7 @@ class EmailCollector extends CommonObject
 									$elementpath = $mod;
 									dol_include_once($moddesc['class']);
 									$objectmanaged = new $moddesc['object']($this->db);
+									'@phan-var-force CommonObject $objectmanaged';
 									foreach ($ids as $val) {
 										$res = $objectmanaged->fetch($val);
 										if ($res) {
@@ -3435,6 +3436,7 @@ class EmailCollector extends CommonObject
 
 								 $result = dol_include_once($reldir."core/modules/ticket/".$modele.'.php');
 								 $modModuleToUseForNextValue = new $classname;
+								'@phan-var-force ModeleNumRefTicket $modModuleToUseForNextValue';
 								 $defaultref = $modModuleToUseForNextValue->getNextValue(($thirdpartystatic->id > 0 ? $thirdpartystatic : null), $tickettocreate);
 								 }
 								 $candidaturetocreate->ref = $defaultref;
@@ -3699,7 +3701,7 @@ class EmailCollector extends CommonObject
 
 		if (!$s->parts) {
 			// simple
-			$this->getpart($mbox, $mid, $s, 0); // pass 0 as part-number
+			$this->getpart($mbox, $mid, $s, '0'); // pass '0' as part-number
 		} else {
 			// multipart: cycle through each part
 			foreach ($s->parts as $partno0 => $p) {

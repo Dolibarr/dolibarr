@@ -137,12 +137,12 @@ class PaymentSocialContribution extends CommonObject
 	public $chid;
 
 	/**
-	 * @var integer|string datepaye
+	 * @var int|string datepaye
 	 */
 	public $datepaye;
 
 	/**
-	 * @var integer|string paiementtype
+	 * @var int|string paiementtype
 	 */
 	public $paiementtype;
 
@@ -399,7 +399,7 @@ class PaymentSocialContribution extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."paiementcharge SET";
 		$sql .= " fk_charge=".(isset($this->fk_charge) ? ((int) $this->fk_charge) : "null").",";
 		$sql .= " datec=".(dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
-		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
+		$sql .= " tms=".(dol_strlen((string) $this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
 		$sql .= " datep=".(dol_strlen($this->datep) != 0 ? "'".$this->db->idate($this->datep)."'" : 'null').",";
 		$sql .= " amount=".(isset($this->amount) ? price2num($this->amount) : "null").",";
 		$sql .= " fk_typepaiement=".(isset($this->fk_typepaiement) ? ((int) $this->fk_typepaiement) : "null").",";
@@ -674,7 +674,7 @@ class PaymentSocialContribution extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Mise a jour du lien entre le paiement de  charge et la ligne dans llx_bank generee
+	 *  Update the link between the Payment and the line generated in llx_bank
 	 *
 	 *  @param	int		$id_bank         Id if bank
 	 *  @return	int			             >0 if OK, <=0 if KO
@@ -759,7 +759,7 @@ class PaymentSocialContribution extends CommonObject
 	}
 
 	/**
-	 *  Return clicable name (with picto eventually)
+	 *  Return clickable name (with picto eventually)
 	 *
 	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 * 	@param	int		$maxlen			Longueur max libelle

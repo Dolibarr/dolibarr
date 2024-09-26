@@ -48,6 +48,9 @@ if ($id == '' && $label == '') {
 	exit();
 }
 
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('categorycard'));
+
 $object = new Categorie($db);
 $result = $object->fetch($id, $label);
 if ($result <= 0) {
@@ -61,8 +64,6 @@ if (is_numeric($type)) {
 }
 
 $upload_dir = $conf->categorie->multidir_output[$object->entity];
-
-$hookmanager->initHooks(array('categorycard'));
 
 // Security check
 $result = restrictedArea($user, 'categorie', $id, '&category');

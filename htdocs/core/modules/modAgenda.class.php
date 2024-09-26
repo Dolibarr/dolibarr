@@ -9,6 +9,7 @@
  * Copyright (C) 2015      Bahfir Abbes         <bafbes@gmail.com>
  * Copyright (C) 2017      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -99,7 +100,7 @@ class modAgenda extends DolibarrModules
 				$this->const[] = array('MAIN_AGENDA_ACTIONAUTO_'.$obj->code, "chaine", "1", '', 0, 'current');
 			}
 		} else {
-			dol_print_error($this->db->lasterror());
+			dol_print_error($this->db, $this->db->lasterror());
 		}
 		//$this->const[] = array("MAIN_AGENDA_XCAL_EXPORTKEY", "chaine", "123456", "Securekey for the public link");
 

@@ -3,6 +3,7 @@
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2016   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2023   Romain Neil             <contact@romain-neil.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -734,7 +735,7 @@ class Documents extends DolibarrApi
 				require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 				$object = new Task($this->db);
 
-				$task_result = $object->fetch('', $ref);
+				$task_result = $object->fetch(0, $ref);
 
 				// Fetching the tasks project is required because its out_dir might be a sub-directory of the project
 				if ($task_result > 0) {
@@ -790,7 +791,7 @@ class Documents extends DolibarrApi
 					// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 					$result = $object->fetch($ref);
 				} else {
-					$result = $object->fetch('', $ref);
+					$result = $object->fetch(0, $ref);
 				}
 
 				if ($result == 0) {
@@ -940,9 +941,9 @@ class Documents extends DolibarrApi
 		}
 
 		// Move the temporary file at its final emplacement
-		$result = dol_move($destfiletmp, $dest_file, 0, $overwriteifexists, 1, 1, $moreinfo);
+		$result = dol_move($destfiletmp, $dest_file, '0', $overwriteifexists, 1, 1, $moreinfo);
 		if (!$result) {
-			throw new RestException(500, "Failed to move file into '".$destfile."'");
+			throw new RestException(500, "Failed to move file into '".$dest_file."'");
 		}
 
 		return dol_basename($destfile);

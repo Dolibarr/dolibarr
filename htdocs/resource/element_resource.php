@@ -2,7 +2,7 @@
 /* Copyright (C) 2013-2018	Jean-François Ferry	<hello+jf@librethic.io>
  * Copyright (C) 2016		Gilles Poirier 		<glgpoirier@gmail.com>
  * Copyright (C) 2019		Josep Lluís Amador	<joseplluis@lliuretic.cat>
- * Copyright (C) 2021		Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2024	Frédéric France		<frederic.france@free.fr>
  * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -96,7 +96,7 @@ if ($element == 'product' || $element == 'service') {	// When RESOURCE_ON_PRODUC
 	$tmpobject = new Product($db);
 	$tmpobject->fetch($element_id);
 	$fieldtype = $tmpobject->type;
-	$result = restrictedArea($user, 'produit|service', $element_id, 'product&product', '', '', $fieldtype);
+	$result = restrictedArea($user, 'produit|service', $element_id, 'product&product', '', '', (string) $fieldtype);
 }
 
 
@@ -305,7 +305,7 @@ $help_url = '';
 llxHeader('', $pagetitle, $help_url, '', 0, 0, '', '', '', 'mod-resource page-element_resource');
 
 $now = dol_now();
-$delay_warning = $conf->global->MAIN_DELAY_ACTIONS_TODO * 24 * 60 * 60;
+$delay_warning = getDolGlobalInt('MAIN_DELAY_ACTIONS_TODO') * 24 * 60 * 60;
 
 // Load available resource, declared by modules
 $ret = count($object->available_resources);
@@ -326,7 +326,7 @@ if (!$ret) {
 	if (($element_id || $element_ref) && $element == 'action') {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 
-		// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+		// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 		$hookmanager->initHooks(array('actioncard', 'globalcard'));
 
 		$act = fetchObjectByElement($element_id, $element, $element_ref);

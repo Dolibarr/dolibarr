@@ -155,7 +155,7 @@ if (!$sortorder) {
 
 $show_shippable_command = GETPOST('show_shippable_command', 'aZ09');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Commande($db);
 $hookmanager->initHooks(array('orderlistdetail'));
 $extrafields = new ExtraFields($db);
@@ -962,7 +962,7 @@ if ($resql) {
 
 
 	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
+	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) {
 		$moreforfilter .= $hookmanager->resPrint;
 	} else {
@@ -1547,7 +1547,7 @@ if ($resql) {
 		$projectstatic->title = $obj->project_label;
 
 		$marginInfo = array();
-		if ($with_margin_info === true) {
+		if ($with_margin_info) {
 			$generic_commande->fetch_lines();
 			$marginInfo = $formmargin->getMarginInfosArray($generic_commande);
 			$total_ht += $obj->total_ht;
@@ -2168,10 +2168,10 @@ if ($resql) {
 						}
 					}
 					if ($notshippable == 0) {
-						$text_icon = img_picto('', 'dolly', '', false, 0, 0, '', 'green paddingleft');
+						$text_icon = img_picto('', 'dolly', '', 0, 0, 0, '', 'green paddingleft');
 						$text_info = $text_icon.' '.$langs->trans('Shippable').'<br>'.$text_info;
 					} else {
-						$text_icon = img_picto('', 'dolly', '', false, 0, 0, '', 'error paddingleft');
+						$text_icon = img_picto('', 'dolly', '', 0, 0, 0, '', 'error paddingleft');
 						$text_info = $text_icon.' '.$langs->trans('NonShippable').'<br>'.$text_info;
 					}
 				}

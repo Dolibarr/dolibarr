@@ -95,7 +95,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("Intervention"));
+llxHeader('', $langs->trans("Intervention"), '', '', 0, 0, '', '', '', 'mod-fichinter page-card_document');
 
 if ($object->id) {
 	$object->fetch_thirdparty();

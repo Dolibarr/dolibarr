@@ -101,7 +101,7 @@ $pagenext = $page + 1;
 $diroutputmassaction = $conf->reception->multidir_output[$conf->entity].'/temp/massgeneration/'.$user->id;
 $object = new Reception($db);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('receptionlist'));
 $extrafields = new ExtraFields($db);
 
@@ -253,7 +253,7 @@ if (empty($reshook)) {
 				// Add all links of this new reception to the existing invoice
 				$objecttmp->fetchObjectLinked();
 				$rcp->fetchObjectLinked();
-				if (count($rcp->linkedObjectsIds['order_supplier']) > 0) {
+				if (!empty($rcp->linkedObjectsIds['order_supplier']) && is_array($rcp->linkedObjectsIds['order_supplier'])) {
 					foreach ($rcp->linkedObjectsIds['order_supplier'] as $key => $value) {
 						if (empty($objecttmp->linkedObjectsIds['order_supplier']) || !in_array($value, $objecttmp->linkedObjectsIds['order_supplier'])) { //Don't try to link if already linked
 							$objecttmp->add_object_linked('order_supplier', $value); // add supplier order linked object
@@ -405,7 +405,8 @@ if (empty($reshook)) {
 						$desc = ($lines[$i]->desc ? $lines[$i]->desc : $lines[$i]->libelle);
 						// If we build one invoice for several reception, we must put the ref of reception on the invoice line
 						if (!empty($createbills_onebythird)) {
-							$desc = dol_concatdesc($desc, $langs->trans("Reception").' '.$rcp->ref.' - '.dol_print_date($rcp->date, 'day'));
+							$desc = dol_concatdesc($desc, $langs->trans("Reception").' '.$rcp->ref);
+							$desc .= (!empty($rcp->date_reception) ? ' - '.dol_print_date($rcp->date_reception, 'day') : '');
 						}
 
 						if ($lines[$i]->subprice < 0) {
@@ -951,7 +952,7 @@ if (!empty($moreforfilter)) {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;
 	$parameters = array('type' => $type);
-	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
+	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	print '</div>';
 }

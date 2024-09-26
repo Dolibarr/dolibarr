@@ -155,7 +155,7 @@ if (!$sortorder) {
 
 $show_shippable_command = GETPOST('show_shippable_command', 'aZ09');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Commande($db);
 $hookmanager->initHooks(array('orderlist'));
 $extrafields = new ExtraFields($db);
@@ -371,6 +371,7 @@ if (empty($reshook)) {
 
 		$nbOrders = is_array($orders) ? count($orders) : 1;
 
+		$currentIndex = 0;
 		foreach ($orders as $id_order) {
 			$cmd = new Commande($db);
 			if ($cmd->fetch($id_order) <= 0) {
@@ -381,6 +382,7 @@ if (empty($reshook)) {
 			$objecttmp = new Facture($db);
 			if (!empty($createbills_onebythird) && !empty($TFactThird[$cmd->socid])) {
 				// If option "one bill per third" is set, and an invoice for this thirdparty was already created, we reuse it.
+				$currentIndex++;
 				$objecttmp = $TFactThird[$cmd->socid];
 			} else {
 				// If we want one invoice per order or if there is no first invoice yet for this thirdparty.
@@ -395,6 +397,10 @@ if (empty($reshook)) {
 				$objecttmp->multicurrency_code = $cmd->multicurrency_code;
 				if (empty($createbills_onebythird)) {
 					$objecttmp->ref_client = $cmd->ref_client;
+				}
+
+				if (empty($objecttmp->note_public)) {
+					$objecttmp->note_public =  $langs->transnoentities("Orders");
 				}
 
 				$datefacture = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
@@ -559,6 +565,11 @@ if (empty($reshook)) {
 						}
 					}
 				}
+			}
+
+			if ($currentIndex <= (getDolGlobalInt("MAXREFONDOC") ? getDolGlobalInt("MAXREFONDOC") : 10)) {
+				$objecttmp->note_public = dol_concatdesc($objecttmp->note_public, $langs->transnoentities($cmd->ref).(empty($cmd->ref_client) ? '' : ' ('.$cmd->ref_client.')'));
+				$objecttmp->update($user);
 			}
 
 			//$cmd->classifyBilled($user);        // Disabled. This behavior must be set or not using the workflow module.
@@ -1409,7 +1420,7 @@ $newcardbutton = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
-$newcardbutton .= dolGetButtonTitle($langs->trans('NewOrder'), '', 'fa fa-plus-circle', $url, '', ($contextpage == 'orderlist' || $contextpage == 'billableorders') && $permissiontoadd);
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewOrder'), '', 'fa fa-plus-circle', $url, '', (int) (($contextpage == 'orderlist' || $contextpage == 'billableorders') && $permissiontoadd));
 
 // Lines of title fields
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
@@ -2154,7 +2165,7 @@ while ($i < $imaxinloop) {
 	$projectstatic->title = $obj->project_label;
 
 	$marginInfo = array();
-	if ($with_margin_info === true) {
+	if ($with_margin_info) {
 		$generic_commande->fetch_lines();
 		$marginInfo = $formmargin->getMarginInfosArray($generic_commande);
 		$total_ht += $obj->total_ht;
@@ -2183,7 +2194,7 @@ while ($i < $imaxinloop) {
 	} else {
 		// Show line of result
 		$j = 0;
-		print '<tr data-rowid="'.$object->id.'" class="oddeven">';
+		print '<tr data-rowid="'.$object->id.'" class="oddeven '.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->billed == 1) ? 'opacitymedium' : '').'">';
 
 		// Action column
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -2359,7 +2370,7 @@ while ($i < $imaxinloop) {
 			if (empty($typenArray)) {
 				$typenArray = $formcompany->typent_array(1);
 			}
-			print $typenArray[$obj->typent_code]??'';
+			print $typenArray[$obj->typent_code] ?? '';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2779,10 +2790,10 @@ while ($i < $imaxinloop) {
 						}
 					}
 					if ($notshippable == 0) {
-						$text_icon = img_picto('', 'dolly', '', false, 0, 0, '', 'green paddingleft');
+						$text_icon = img_picto('', 'dolly', '', 0, 0, 0, '', 'green paddingleft');
 						$text_info = $text_icon.' '.$langs->trans('Shippable').'<br>'.$text_info;
 					} else {
-						$text_icon = img_picto('', 'dolly', '', false, 0, 0, '', 'error paddingleft');
+						$text_icon = img_picto('', 'dolly', '', 0, 0, 0, '', 'error paddingleft');
 						$text_info = $text_icon.' '.$langs->trans('NonShippable').'<br>'.$text_info;
 					}
 				}

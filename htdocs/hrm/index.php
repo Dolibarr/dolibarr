@@ -52,7 +52,7 @@ if (isModEnabled('holiday')) {
 }
 
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager = new HookManager($db);
 
 $hookmanager->initHooks('hrmindex');
@@ -445,7 +445,7 @@ if (isModEnabled('recruitment') && $user->hasRight('recruitment', 'recruitmentjo
 
 print '</div></div></div>';
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardHRM', $parameters, $object); // Note that $action and $object may have been modified by hook
 

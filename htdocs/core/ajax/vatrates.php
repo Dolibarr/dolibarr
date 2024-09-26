@@ -44,6 +44,13 @@ $result = restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid
 
 
 /*
+ * Actions
+ */
+
+// None
+
+
+/*
  * View
  */
 
@@ -58,10 +65,10 @@ if (!empty($id) && !empty($action) && !empty($htmlname)) {
 
 	$soc->fetch($id);
 
-	if ($action == 'getSellerVATRates') {	// action = 'getSellerVATRates'
+	if ($action == 'getSellerVATRates') {	// action = 'getSellerVATRates'. Test on permission not required here, already done in the restrictArea()
 		$seller = $mysoc;
 		$buyer = $soc;
-	} else {								// action = 'getBuyerVATRates'
+	} else {	// action = 'getBuyerVATRates' or 'getVatRates'. Test on permission not required here, already done in the restrictArea()
 		$buyer = $mysoc;
 		$seller = $soc;
 	}

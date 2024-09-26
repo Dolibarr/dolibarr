@@ -27,6 +27,19 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 
 ?>
 
+.nonature-back {
+	background-color: #EEE;
+	padding: 2px;
+	margin: 2px;
+	border-radius: 3px;
+}
+.prospect-back {
+	background-color: #a7c5b0 !important;
+	color: #FFF !important;
+	padding: 2px;
+	margin: 2px;
+	border-radius: 3px;
+}
 .customer-back {
 	background-color: #65953d !important;
 	color: #FFF !important;
@@ -49,17 +62,19 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	border-radius: 3px;
 }
 .member-company-back {
-	padding: 2px 7px 2px 7px;
+	padding: 2px;
+	margin: 2px;
 	background-color: #e4e4e4;
 	color: #666;
-	border-radius: 10px;
+	border-radius: 3px;
 	white-space: nowrap;
 }
 .member-individual-back {
-	padding: 2px 7px 2px 7px;
+	padding: 2px;
+	margin: 2px;
 	background-color: #e4e4e4;
 	color: #666;
-	border-radius: 10px;
+	border-radius: 3px;
 	white-space: nowrap;
 }
 
@@ -532,35 +547,6 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 }
 
 
-/* USING IMAGES FOR WEATHER INSTEAD OF FONT AWESOME */
-/* For other themes just uncomment this part */
-/*.info-box-weather-level0,
-.info-box-weather-level1,
-.info-box-weather-level2,
-.info-box-weather-level3,
-.info-box-weather-level4 {
-	background-position: 15px 50%;
-	background-repeat: no-repeat;
-}
-
-.info-box-weather .info-box-icon{
-	display: none !important;
-}
-.info-box-weather-level0 {
-	background-image: url("img/weather/weather-clear.png");
-}
-.info-box-weather-level1 {
-	background-image: url("img/weather/weather-few-clouds.png");
-}
-.info-box-weather-level2 {
-	background-image: url("img/weather/weather-clouds.png");
-}
-.info-box-weather-level3 {
-	background-image: url("img/weather/weather-many-clouds.png");
-}
-.info-box-weather-level4 {
-	background-image: url("img/weather/weather-storm.png");
-}*/
 
 
 
@@ -604,7 +590,6 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	flex-grow : 1;
 	flex-shrink: 1;
 	flex-basis: auto;
-
 	width: 300px;
 }
 .box-flex-item.filler{

@@ -142,6 +142,7 @@ class Conf extends stdClass
 	public $format_date_hour_text;
 
 	public $liste_limit;
+	public $main_checkbox_left_column;
 
 	public $tzuserinputkey = 'tzserver';		// Use 'tzuserrel' to always store date in GMT and show date in time zone of user.
 
@@ -726,12 +727,12 @@ class Conf extends stdClass
 				$this->global->MAIN_UMASK = '0660'; // Default mask
 			} else {
 				// We remove the execute bits on the file umask
-				$tmpumask = (octdec($this->global->MAIN_UMASK) & 0666);
+				$tmpumask = (octdec(getDolGlobalString('MAIN_UMASK')) & 0666);
 				$tmpumask = decoct($tmpumask);
-				if (!preg_match('/^0/', $tmpumask)) {
+				if (!preg_match('/^0/', $tmpumask)) {	// Convert string '123' into octal representation '0123'
 					$tmpumask = '0'.$tmpumask;
 				}
-				if (empty($tmpumask) || $tmpumask === '0') {
+				if (empty($tmpumask)) {		// when $tmpmask is null, '', or '0'
 					$tmpumask = '0664';
 				}
 				$this->global->MAIN_UMASK = $tmpumask;
@@ -812,20 +813,30 @@ class Conf extends stdClass
 				$this->global->MAIN_HTML_TITLE = 'thirdpartynameonly,contactnameonly,projectnameonly';
 			}
 
-			// conf->liste_limit = constante de taille maximale des listes
-			if (empty($this->global->MAIN_SIZE_LISTE_LIMIT)) {
-				$this->global->MAIN_SIZE_LISTE_LIMIT = 15;
+			// conf->liste_limit = constant to limit size of lists
+			$this->liste_limit = getDolGlobalInt('MAIN_SIZE_LISTE_LIMIT', 15);
+			if ((int) $this->liste_limit <= 0) {
+				// Mode automatic.
+				$this->liste_limit = 15;
+				if (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] < 910) {
+					$this->liste_limit = 10;
+				} elseif (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] > 1130) {
+					$this->liste_limit = 20;
+				}
 			}
-			$this->liste_limit = $this->global->MAIN_SIZE_LISTE_LIMIT;
 
-			// conf->product->limit_size = constante de taille maximale des select de produit
+			// conf->main_checkbox_left_column = constant to set checkbox list to left
+			if (!isset($this->main_checkbox_left_column)) {
+				$this->main_checkbox_left_column = getDolGlobalInt("MAIN_CHECKBOX_LEFT_COLUMN");
+			}
+
+			// Set PRODUIT_LIMIT_SIZE if never defined
 			if (!isset($this->global->PRODUIT_LIMIT_SIZE)) {
 				$this->global->PRODUIT_LIMIT_SIZE = 1000;
 			}
-			$this->product->limit_size = $this->global->PRODUIT_LIMIT_SIZE;
 
 			// Set PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE, may be modified later according to browser
-			$this->global->PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE = (isset($this->global->PRODUIT_DESC_IN_FORM) ? $this->global->PRODUIT_DESC_IN_FORM : 0);
+			$this->global->PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE = getDolGlobalInt('PRODUIT_DESC_IN_FORM');
 
 			// conf->theme et $this->css
 			if (empty($this->global->MAIN_THEME)) {
@@ -945,6 +956,7 @@ class Conf extends stdClass
 					$this->global->MAIN_MODULES_FOR_EXTERNAL .= ",".$key;
 				}
 			}
+			//$this->global->MAIN_MODULES_FOR_EXTERNAL .= ",ecm";
 
 			// Enable select2
 			if (empty($this->global->MAIN_USE_JQUERY_MULTISELECT) || $this->global->MAIN_USE_JQUERY_MULTISELECT == '1') {
@@ -1030,7 +1042,7 @@ class Conf extends stdClass
 				$this->holiday->approve->warning_delay = (isset($this->global->MAIN_DELAY_HOLIDAYS) ? (int) $this->global->MAIN_DELAY_HOLIDAYS : 0) * 86400;
 			}
 
-			if (!empty($this->global->PRODUIT_MULTIPRICES) && empty($this->global->PRODUIT_MULTIPRICES_LIMIT)) {
+			if ((!empty($this->global->PRODUIT_MULTIPRICES) || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && empty($this->global->PRODUIT_MULTIPRICES_LIMIT)) {
 				$this->global->PRODUIT_MULTIPRICES_LIMIT = 5;
 			}
 

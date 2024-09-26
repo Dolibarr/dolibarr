@@ -509,13 +509,13 @@ function correctExifImageOrientation($fileSource, $fileDest, $quality = 95)
  *    	@param     int		$quality        	Quality of compression (0=worst, 100=best)
  *      @param     string	$outdir           	Directory where to store thumb
  *      @param     int		$targetformat     	New format of target (IMAGETYPE_GIF, IMAGETYPE_JPG, IMAGETYPE_PNG, IMAGETYPE_BMP, IMAGETYPE_WBMP ... or 0 to keep old format)
- *    	@return    string|0						Full path of thumb or '' if it fails or 'Error...' if it fails, or 0 if it fails to detect the type of image
+ *    	@return    string|int<0,0>				Full path of thumb or '' if it fails or 'Error...' if it fails, or 0 if it fails to detect the type of image
  */
 function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small', $quality = 50, $outdir = 'thumbs', $targetformat = 0)
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-	global $conf, $langs;
+	global $langs;
 
 	dol_syslog("vignette file=".$file." extName=".$extName." maxWidth=".$maxWidth." maxHeight=".$maxHeight." quality=".$quality." outdir=".$outdir." targetformat=".$targetformat);
 
@@ -813,4 +813,19 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 	imagedestroy($imgThumb);
 
 	return $imgThumbName;
+}
+
+
+/**
+ * Beautify an image by adding a link edit and delete on image
+ *
+ * @param	string		$htmlid			ID of HTML img tag
+ * @param	string		$urledit		URL to submit to edit Image
+ * @param	string		$urldelete		URL to call when deleting the image
+ * @return	string						HTML and JS code to manage the update/delete of image.
+ */
+function imgAddEditDeleteButton($htmlid, $urledit, $urldelete)
+{
+	// TODO
+	return '';
 }

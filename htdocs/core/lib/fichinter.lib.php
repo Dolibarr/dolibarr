@@ -1,11 +1,11 @@
 <?php
 /* Copyright (C) 2006-2007	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2007		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2016		Gilles Poirier 		   <glgpoirier@gmail.com>
- * Copyright (C) 2018		charlene Benke 		   <charlie@patas-monkey.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
-
+ * Copyright (C) 2007		    Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2012		    Regis Houssin			    <regis.houssin@inodbox.com>
+ * Copyright (C) 2016		    Gilles Poirier 		    <glgpoirier@gmail.com>
+ * Copyright (C) 2018-2024	Charlene Benke 		    <charlene@patas-monkey.com>
+ * Copyright (C) 2024		    MDW						        <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		    Frédéric France			  <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,12 +32,12 @@
  * Prepare array with list of tabs
  *
  * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function fichinter_prepare_head($object)
 {
 	global $db, $langs, $conf, $user;
-	$langs->load("fichinter");
+	$langs->load("interventions");
 
 	$h = 0;
 	$head = array();
@@ -175,12 +175,18 @@ function fichinter_admin_prepare_head()
 	$extrafields->fetch_name_optionals_label('fichinter');
 	$extrafields->fetch_name_optionals_label('fichinterdet');
 
+
 	$h = 0;
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT."/admin/fichinter.php";
 	$head[$h][1] = $langs->trans("Interventions");
 	$head[$h][2] = 'ficheinter';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/fichinter_xcal.php";
+	$head[$h][1] = $langs->trans("ExportCal");
+	$head[$h][2] = 'xcal';
 	$h++;
 
 	// Show more tabs from modules
@@ -216,7 +222,7 @@ function fichinter_admin_prepare_head()
  * Prepare array with list of tabs
  *
  * @param   Object  $object     Object related to tabs
- * @return  array               Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function fichinter_rec_prepare_head($object)
 {

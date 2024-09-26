@@ -179,7 +179,7 @@ $diroutputmassaction = $conf->facture->dir_output.'/temp/massgeneration/'.$user-
 $now = dol_now();
 $error = 0;
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Facture($db);
 $hookmanager->initHooks(array($contextpage));
 $extrafields = new ExtraFields($db);
@@ -276,7 +276,7 @@ foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 
 	if (!empty($val['visible'])) {
-		$visible = (int) dol_eval($val['visible'], 1, 1, '1');
+		$visible = (int) dol_eval((string) $val['visible'], 1, 1, '1');
 		$newkey = '';
 		if (array_key_exists($key, $arrayfields)) {
 			$newkey = $key;
@@ -1012,7 +1012,7 @@ if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $s
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url, 0, 0, '', '', '', 'bodyforlist');
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
 
 $param = '&socid='.urlencode((string) ($socid));
 if (!empty($mode)) {
@@ -2032,7 +2032,7 @@ if ($num > 0) {
 		$facturestatic->totalpaid = $paiement;
 
 		$marginInfo = array();
-		if ($with_margin_info === true) {
+		if ($with_margin_info) {
 			$facturestatic->fetch_lines();
 			$marginInfo = $formmargin->getMarginInfosArray($facturestatic);
 			$total_ht += $obj->total_ht;

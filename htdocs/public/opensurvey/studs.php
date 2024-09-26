@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García       <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -325,7 +327,7 @@ $toutsujet = explode(",", $object->sujet);
 $listofanswers = array();
 foreach ($toutsujet as $value) {
 	$tmp = explode('@', $value);
-	$listofanswers[] = array('label'=>$tmp[0], 'format'=>(!empty($tmp[1]) ? $tmp[1] : 'checkbox'));
+	$listofanswers[] = array('label' => $tmp[0], 'format' => (!empty($tmp[1]) ? $tmp[1] : 'checkbox'));
 }
 $toutsujet = str_replace("°", "'", $toutsujet);
 
@@ -405,7 +407,7 @@ if ($object->format == "D") {
 	for ($i = 0; $i < $nbofsujet; $i++) {
 		$cur = intval($toutsujet[$i]); // intval() est utiliser pour supprimer le suffixe @* qui déplaît logiquement à strftime()
 
-		if (isset($toutsujet[$i + 1]) === false) {
+		if (!isset($toutsujet[$i + 1])) {
 			$next = false;
 		} else {
 			$next = intval($toutsujet[$i + 1]);
@@ -427,7 +429,7 @@ if ($object->format == "D") {
 	$colspan = 1;
 	for ($i = 0; $i < $nbofsujet; $i++) {
 		$cur = intval($toutsujet[$i]);
-		if (isset($toutsujet[$i + 1]) === false) {
+		if (!isset($toutsujet[$i + 1])) {
 			$next = false;
 		} else {
 			$next = intval($toutsujet[$i + 1]);
@@ -583,11 +585,11 @@ while ($compteur < $num) {
 					print '>';
 				}
 				if (!empty($listofanswers[$i]['format']) && $listofanswers[$i]['format'] == 'yesno') {
-					$arraychoice = array('2'=>'&nbsp;', '0'=>$langs->trans("No"), '1'=>$langs->trans("Yes"));
+					$arraychoice = array('2' => '&nbsp;', '0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
 					print $form->selectarray("choix".$i, $arraychoice, $car);
 				}
 				if (!empty($listofanswers[$i]['format']) && $listofanswers[$i]['format'] == 'foragainst') {
-					$arraychoice = array('2'=>'&nbsp;', '0'=>$langs->trans("Against"), '1'=>$langs->trans("For"));
+					$arraychoice = array('2' => '&nbsp;', '0' => $langs->trans("Against"), '1' => $langs->trans("For"));
 					print $form->selectarray("choix".$i, $arraychoice, $car);
 				}
 				print '</td>'."\n";
@@ -701,18 +703,18 @@ if ($ligneamodifier < 0 && (!isset($_SESSION['nom']))) {
 			print '>';
 		}
 		if (!empty($listofanswers[$i]['format']) && $listofanswers[$i]['format'] == 'yesno') {
-			$arraychoice = array('2'=>'&nbsp;', '0'=>$langs->trans("No"), '1'=>$langs->trans("Yes"));
+			$arraychoice = array('2' => '&nbsp;', '0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
 			print $form->selectarray("choix".$i, $arraychoice, GETPOST('choix'.$i));
 		}
 		if (!empty($listofanswers[$i]['format']) && $listofanswers[$i]['format'] == 'foragainst') {
-			$arraychoice = array('2'=>'&nbsp;', '0'=>$langs->trans("Against"), '1'=>$langs->trans("For"));
+			$arraychoice = array('2' => '&nbsp;', '0' => $langs->trans("Against"), '1' => $langs->trans("For"));
 			print $form->selectarray("choix".$i, $arraychoice, GETPOST('choix'.$i));
 		}
 		print '</td>'."\n";
 	}
 
 	// Show button to add a new line into database
-	print '<td><input type="image" class="borderimp" name="boutonp" value="'.$langs->trans("Vote").'" src="'.img_picto('', 'edit_add', '', false, 1).'"></td>'."\n";
+	print '<td><input type="image" class="borderimp" name="boutonp" value="'.$langs->trans("Vote").'" src="'.img_picto('', 'edit_add', '', 0, 1).'"></td>'."\n";
 	print '</tr>'."\n";
 }
 
@@ -838,9 +840,9 @@ if ($comments) {
 
 		print '<div class="comment"><span class="usercomment">';
 		if (in_array($obj->usercomment, $listofvoters)) {
-			print '<a href="'.$_SERVER["PHP_SELF"].'?deletecomment='.$obj->id_comment.'&sondage='.$numsondage.'"> '.img_picto('', 'delete.png', '', false, 0, 0, '', 'nomarginleft').'</a> ';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?deletecomment='.$obj->id_comment.'&sondage='.$numsondage.'"> '.img_picto('', 'delete.png', '', 0, 0, 0, '', 'nomarginleft').'</a> ';
 		}
-		//else print img_picto('', 'ellipsis-h', '', false, 0, 0, '', 'nomarginleft').' ';
+		//else print img_picto('', 'ellipsis-h', '', 0, 0, 0, '', 'nomarginleft').' ';
 		print img_picto('', 'user', 'class="pictofixedwidth"').dol_htmlentities($obj->usercomment).':</span> <span class="comment">'.dol_nl2br(dol_htmlentities($obj->comment))."</span></div>";
 	}
 }

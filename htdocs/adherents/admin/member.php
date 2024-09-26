@@ -1,16 +1,17 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2011-2012 Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2012      J. Fernando Lagrange <fernando@demo-tic.org>
- * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
- * Copyright (C) 2020-2021 Frédéric France      <frederic.france@netlogic.fr>
- * Copyright (C) 2023		Waël Almoman		<info@almoman.com>
+/* Copyright (C) 2003		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2003		Jean-Louis Bergamo			<jlb@j1b.org>
+ * Copyright (C) 2004-2012	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2004		Sebastien Di Cintio			<sdicintio@ressource-toi.org>
+ * Copyright (C) 2004		Benoit Mortier				<benoit.mortier@opensides.be>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2011-2012	Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2012		J. Fernando Lagrange		<fernando@demo-tic.org>
+ * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
+ * Copyright (C) 2020-2021	Frédéric France      		<frederic.france@netlogic.fr>
+ * Copyright (C) 2023		Waël Almoman				<info@almoman.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,12 +56,16 @@ $type = 'member';
 $action = GETPOST('action', 'aZ09');
 $modulepart = GETPOST('modulepart', 'aZ09');
 
+$reg = array();
+
 
 /*
  * Actions
  */
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
+
+global $conf;
 
 if ($action == 'set_default') {
 	$ret = addDocumentModel($value, $type, $label, $scandir);
@@ -180,7 +185,7 @@ if ($action == 'set_default') {
 		}
 	}
 
-	$consttype = GETPOST('consttype', 'alpha');
+	$consttype = GETPOSTINT('consttype');
 	$constnote = GETPOST('constnote');
 	$res = dolibarr_set_const($db, $constname, $constvalue, $choices[$consttype], 0, $constnote, $conf->entity);
 
@@ -219,9 +224,10 @@ if ($action == 'unset') {
 
 $form = new Form($db);
 
+$title = $langs->trans("MembersSetup");
 $help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder';
 
-llxHeader('', $langs->trans("MembersSetup"), $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-member page-admin');
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
@@ -293,14 +299,14 @@ foreach ($arrayofmodules as $file => $modCodeMember) {
 	print '<tr class="oddeven">'."\n";
 	print '<td width="140">'.$modCodeMember->name.'</td>'."\n";
 	print '<td>'.$modCodeMember->info($langs).'</td>'."\n";
-	print '<td class="nowrap">'.$modCodeMember->getExample($langs).'</td>'."\n";
+	print '<td class="nowrap">'.$modCodeMember->getExample().'</td>'."\n";
 
 	if (getDolGlobalString('MEMBER_CODEMEMBER_ADDON') == "$file") {
 		print '<td class="center">'."\n";
 		print img_picto($langs->trans("Activated"), 'switch_on');
 		print "</td>\n";
 	} else {
-		$disabled = (isModEnabled('multicompany') && (is_object($mc) && !empty($mc->sharings['referent']) && $mc->sharings['referent'] != $conf->entity) ? true : false);
+		$disabled = isModEnabled('multicompany') && ((is_object($mc) && !empty($mc->sharings['referent']) && $mc->sharings['referent'] != $conf->entity));
 		print '<td class="center">';
 		if (!$disabled) {
 			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setcodemember&token='.newToken().'&value='.urlencode($file).'">';
@@ -313,7 +319,7 @@ foreach ($arrayofmodules as $file => $modCodeMember) {
 	}
 
 	print '<td class="center">';
-	$s = $modCodeMember->getToolTip($langs, null, -1);
+	$s = $modCodeMember->getToolTip($langs, null);
 	print $form->textwithpicto('', $s, 1);
 	print '</td>';
 
@@ -387,6 +393,7 @@ foreach ($dirmodels as $reldir) {
 
 							require_once $dir.'/'.$file;
 							$module = new $classname($db);
+							'@phan-var-force doc_generic_member_odt|pdf_standard_member $module';
 
 							$modulequalified = 1;
 							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -498,6 +505,7 @@ print "</td></tr>\n";
 $startpoint = array();
 $startpoint[0] = $langs->trans("NoCorrection");
 $startpoint["m"] = $langs->trans("Month");
+$startpoint["3m"] = $langs->trans("Quarter");
 $startpoint["Y"] = $langs->trans("Year");
 print '<tr class="oddeven drag" id="startfirstdayof"><td>';
 print $langs->trans("MemberSubscriptionStartFirstDayOf");

@@ -15,6 +15,8 @@ noe
 udo
 tim
 
+ConfirmActionXxx
+
 # Inside email
 ba
 blacklist
@@ -71,7 +73,6 @@ unvalidate
 
 # Some french strings
 somme
-caracteres
 cas
 sur
 Datas
@@ -84,3 +85,7 @@ fonction
 espace
 methode
 datee
+
+# other
+blacklists
+confirmactionxxx

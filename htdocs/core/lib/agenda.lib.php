@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2022-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +42,7 @@
  * @param 	int				$pid				Product id
  * @param 	int				$socid				Third party id
  * @param	string			$action				Action string
- * @param	array			$showextcals		Array with list of external calendars (used to show links to select calendar), or -1 to show no legend
+ * @param	array|int		$showextcals		Array with list of external calendars (used to show links to select calendar), or -1 to show no legend
  * @param	string|array	$actioncode			Preselected value(s) of actioncode for filter on event type
  * @param	int				$usergroupid		Id of group to filter on users
  * @param	string			$excludetype		A type to exclude ('systemauto', 'system', '')
@@ -162,7 +163,7 @@ function print_actions_filter(
 	}
 
 	// Hooks
-	$parameters = array('canedit'=>$canedit, 'pid'=>$pid, 'socid'=>$socid);
+	$parameters = array('canedit' => $canedit, 'pid' => $pid, 'socid' => $socid);
 	$object = null;
 	$reshook = $hookmanager->executeHooks('searchAgendaFrom', $parameters, $object, $action); // Note that $action and $object may have been
 
@@ -242,6 +243,7 @@ function show_array_actions_to_do($max = 5)
 				//$customerstatic->name_alias = $obj->name_alias;
 				$customerstatic->code_client = $obj->code_client;
 				$customerstatic->code_compta = $obj->code_compta;
+				$customerstatic->code_compta_client = $obj->code_compta;
 				$customerstatic->client = $obj->client;
 				$customerstatic->logo = $obj->logo;
 				$customerstatic->email = $obj->email;
@@ -358,6 +360,7 @@ function show_array_last_actions_done($max = 5)
 				//$customerstatic->name_alias = $obj->name_alias;
 				$customerstatic->code_client = $obj->code_client;
 				$customerstatic->code_compta = $obj->code_compta;
+				$customerstatic->code_compta_client = $obj->code_compta;
 				$customerstatic->client = $obj->client;
 				$customerstatic->logo = $obj->logo;
 				$customerstatic->email = $obj->email;
@@ -390,7 +393,7 @@ function show_array_last_actions_done($max = 5)
 /**
  * Prepare array with list of tabs
  *
- * @return  array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function agenda_prepare_head()
 {
@@ -448,7 +451,7 @@ function agenda_prepare_head()
  * Prepare array with list of tabs
  *
  * @param   object	$object		Object related to tabs
- * @return  array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function actions_prepare_head($object)
 {

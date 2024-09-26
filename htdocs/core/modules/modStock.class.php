@@ -5,6 +5,7 @@
  * Copyright (C) 2012	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2021	   Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,14 +83,14 @@ class modStock extends DolibarrModules
 		$r++;
 		$this->const[$r][0] = "STOCK_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "standard";
+		$this->const[$r][2] = "standard_stock";
 		$this->const[$r][3] = 'Name of PDF model of stock';
 		$this->const[$r][4] = 0;
 
 		$r++;
 		$this->const[$r][0] = "MOUVEMENT_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "stdmovement";
+		$this->const[$r][2] = "standard_movement_stock";
 		$this->const[$r][3] = 'Name of PDF model of stock movement';
 		$this->const[$r][4] = 0;
 
@@ -304,9 +305,9 @@ class modStock extends DolibarrModules
 				'e.rowid' => 'IdWarehouse', 'e.ref' => 'LocationSummary', 'e.description' => 'DescWareHouse', 'e.lieu' => 'LieuWareHouse', 'e.address' => 'Address', 'e.zip' => 'Zip', 'e.town' => 'Town',
 				'p.rowid' => "ProductId", 'p.ref' => "Ref", 'p.fk_product_type' => "Type", 'p.label' => "Label", 'p.description' => "Description", 'p.note' => "Note",
 				'p.price' => "Price", 'p.tva_tx' => 'VAT', 'p.tosell' => "OnSell", 'p.tobuy' => 'OnBuy', 'p.duration' => "Duration",
-				'p.datec' => 'DateCreation', 'p.tms' => 'DateModification', 'p.pmp' => 'PMPValue', 'p.cost_price' => 'CostPrice',
+				'p.datec' => 'DateCreation', 'p.tms' => 'DateModification', 'p.pmp' => 'PMPValue', 'p.cost_price' => 'CostPrice', 'lcpn.label'=>'Nature',
 				'pb.rowid' => 'Id', 'pb.batch' => 'Batch', 'pb.qty' => 'Qty',
-				'pl.eatby' => 'EatByDate', 'pl.sellby' => 'SellByDate'
+				'pl.eatby' => 'EatByDate', 'pl.sellby' => 'SellByDate', 'none.dateLastMovement' => 'LastMovement'
 			);
 			if (isModEnabled('barcode')) {
 				$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('p.barcode' => 'BarCode'));
@@ -315,9 +316,9 @@ class modStock extends DolibarrModules
 				'e.rowid' => 'List:entrepot:ref::stock', 'e.ref' => 'Text', 'e.lieu' => 'Text', 'e.description' => 'Text', 'e.address' => 'Text', 'e.zip' => 'Text', 'e.town' => 'Text',
 				'p.rowid' => "Numeric", 'p.ref' => "Text", 'p.fk_product_type' => "Text", 'p.label' => "Text", 'p.description' => "Text", 'p.note' => "Text",
 				'p.price' => "Numeric", 'p.tva_tx' => 'Numeric', 'p.tosell' => "Boolean", 'p.tobuy' => "Boolean", 'p.duration' => "Duree",
-				'p.datec' => 'DateCreation', 'p.tms' => 'DateModification', 'p.pmp' => 'PMPValue', 'p.cost_price' => 'CostPrice',
+				'p.datec' => 'DateCreation', 'p.tms' => 'DateModification', 'p.pmp' => 'PMPValue', 'p.cost_price' => 'CostPrice', 'lcpn.label'=>'Text',
 				'pb.batch' => 'Text', 'pb.qty' => 'Numeric',
-				'pl.eatby' => 'Date', 'pl.sellby' => 'Date'
+				'pl.eatby' => 'Date', 'pl.sellby' => 'Date', 'none.dateLastMovement' => 'Date'
 			);
 			if (isModEnabled('barcode')) {
 				$this->export_TypeFields_array[$r] = array_merge($this->export_TypeFields_array[$r], array('p.barcode' => 'Text'));
@@ -325,10 +326,13 @@ class modStock extends DolibarrModules
 			$this->export_entities_array[$r] = array(
 				'p.rowid' => "product", 'p.ref' => "product", 'p.fk_product_type' => "product", 'p.label' => "product", 'p.description' => "product", 'p.note' => "product",
 				'p.price' => "product", 'p.tva_tx' => 'product', 'p.tosell' => "product", 'p.tobuy' => "product", 'p.duration' => "product",
-				'p.datec' => 'product', 'p.tms' => 'product', 'p.pmp' => 'product', 'p.cost_price' => 'product',
-				'pb.rowid' => 'batch', 'pb.batch' => 'batch', 'pb.qty' => 'batch',
+				'p.datec' => 'product', 'p.tms' => 'product', 'p.pmp' => 'product', 'p.cost_price' => 'product', 'lcpn.label'=>'product',
+				'pb.rowid' => 'batch', 'pb.batch' => 'batch', 'pb.qty' => 'batch', 'none.dateLastMovement' => 'movement',
 				'pl.eatby' => 'batch', 'pl.sellby' => 'batch'
 			);	// We define here only fields that use another icon that the one defined into export_icon
+			$this->export_special_array[$r] = array(
+				'none.dateLastMovement'=>array('rule'=>'compute', 'classfile'=>'/product/stock/class/mouvementstock.class.php', 'class'=>'MouvementStock', 'method'=>'getDateLastMovementProductBatch', 'method_params'=>['e_rowid', 'p_rowid', 'pb_batch']),
+			);
 			if (isModEnabled('barcode')) {
 				$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('p.barcode' => 'product'));
 			}
@@ -344,7 +348,8 @@ class modStock extends DolibarrModules
 			$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'product_stock as ps ON ps.rowid = pb.fk_product_stock';
 			$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'product as p ON p.rowid = ps.fk_product';
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_lot as pl ON pl.fk_product = p.rowid AND pl.batch = pb.batch';
-			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_lot_extrafields as extra ON extra.fk_object = pl.rowid,';
+			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_lot_extrafields as extra ON extra.fk_object = pl.rowid';
+			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_product_nature as lcpn on lcpn.code = p.finished,';
 			$this->export_sql_end[$r] .= ' '.MAIN_DB_PREFIX.'entrepot as e';
 			$this->export_sql_end[$r] .= ' WHERE ps.fk_entrepot = e.rowid';
 			$this->export_sql_end[$r] .= ' AND e.entity IN ('.getEntity('stock').')';
@@ -395,8 +400,8 @@ class modStock extends DolibarrModules
 		$this->export_sql_end[$r] .= ' WHERE p.rowid = sm.fk_product AND sm.fk_entrepot = e.rowid';
 		$this->export_sql_end[$r] .= ' AND e.entity IN ('.getEntity('stock').')';
 
-		// Export inventory
 
+		// Export inventories
 		$r++;
 		$this->export_code[$r] = $this->rights_class.'_inventory';
 		$this->export_label[$r] = "Inventories"; // Translation key (used only if key ExportDataset_xxx_z not found)
@@ -404,7 +409,7 @@ class modStock extends DolibarrModules
 		$this->export_permission[$r] = array(array("stock", "lire"));
 		$this->export_fields_array[$r] = array(
 			'i.rowid' => 'InventoryId', 'i.ref' => 'InventoryRef', 'i.date_inventory' => 'DateInventory', 'i.status' => 'InventoryStatus', 'i.title' => 'InventoryTitle',
-			'id.rowid' => 'InventoryLineId', 'id.qty_view' => 'QtyViewed', 'id.qty_stock' => 'QtyStock', 'id.qty_regulated' => 'QtyRegulated', 'id.fk_warehouse' => 'InventoryEntrepot',
+			'id.rowid' => 'InventoryLineId', 'id.qty_view' => 'QtyViewed', 'id.qty_stock' => 'QtyStock', 'id.qty_regulated' => 'QtyRegulated',
 			'id.batch' => 'Lotserial',
 			'e.rowid' => 'IdWarehouse', 'e.ref' => 'LocationSummary', 'e.description' => 'DescWareHouse', 'e.lieu' => 'LieuWareHouse', 'e.address' => 'Address', 'e.zip' => 'Zip', 'e.town' => 'Town',
 			'p.rowid' => "ProductId", 'p.ref' => "Ref", 'p.fk_product_type' => "Type", 'p.label' => "Label", 'p.description' => "Description", 'p.note' => "Note",
@@ -426,14 +431,14 @@ class modStock extends DolibarrModules
 			$this->export_TypeFields_array[$r] = array_merge($this->export_TypeFields_array[$r], array('p.barcode' => 'Text'));
 		}
 		$this->export_entities_array[$r] = array(
-			'e.rowid' => 'warehouse', 'e.ref' => 'warehouse', 'e.description' => 'warehouse', 'e.lieu' => 'warehouse', 'e.address' => 'warehouse', 'e.zip' => 'warehouse', 'e.town' => 'warehouse',
+			'id.qty_view' => 'inventory_line', 'id.qty_stock' => 'inventory_line', 'id.batch' => 'inventory_line', 'id.qty_regulated' => 'inventory_line', 'id.fk_warehouse' => 'inventory_line', 'id.rowid' => 'inventory_line',	'e.rowid' => 'warehouse', 'e.ref' => 'warehouse', 'e.description' => 'warehouse', 'e.lieu' => 'warehouse', 'e.address' => 'warehouse', 'e.zip' => 'warehouse', 'e.town' => 'warehouse',
 			'p.rowid' => "product", 'p.ref' => "product", 'p.fk_product_type' => "product", 'p.label' => "product", 'p.description' => "product", 'p.note' => "product",
 			'p.barcode' => "product", 'p.price' => "product", 'p.tva_tx' => 'product', 'p.tosell' => "product", 'p.tobuy' => "product", 'p.duration' => "product", 'p.datec' => 'product', 'p.tms' => 'product'
 		);	// We define here only fields that use another icon that the one defined into export_icon
 		if (isModEnabled('productbatch')) {
 			$this->export_fields_array[$r]['id.batch'] = 'Batch';
 			$this->export_TypeFields_array[$r]['id.batch'] = 'Text';
-			$this->export_entities_array[$r]['id.batch'] = 'movement';
+			$this->export_entities_array[$r]['id.batch'] = 'inventory_line';
 		}
 		if (isModEnabled('barcode')) {
 			$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('p.barcode' => 'product'));
@@ -544,7 +549,7 @@ class modStock extends DolibarrModules
 		if (file_exists($src) && !file_exists($dest)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
-			$result = dol_copy($src, $dest, 0, 0);
+			$result = dol_copy($src, $dest, '0', 0);
 			if ($result < 0) {
 				$langs->load("errors");
 				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);

@@ -48,7 +48,7 @@ class CommandeStats extends Stats
 	public $field;
 	public $field_line;
 	public $categ_link;
-	public $where;
+	public $where = '';
 	public $join;
 
 

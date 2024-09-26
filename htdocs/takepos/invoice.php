@@ -1,9 +1,10 @@
 <?php
 /**
- * Copyright (C) 2018    	Andreu Bisquerra   	<jove@bisquerra.com>
- * Copyright (C) 2021    	Nicolas ZABOURI    	<info@inovea-conseil.com>
- * Copyright (C) 2022-2023	Christophe Battarel	<christophe.battarel@altairis.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2018    	Andreu Bisquerra   		<jove@bisquerra.com>
+ * Copyright (C) 2021    	Nicolas ZABOURI    		<info@inovea-conseil.com>
+ * Copyright (C) 2022-2023	Christophe Battarel		<christophe.battarel@altairis.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -236,19 +237,19 @@ if (empty($reshook)) {
 		$allowstockchange = (getDolGlobalString($constantforkey) != "1");
 
 		if ($error) {
-			dol_htmloutput_errors($errormsg, null, 1);
+			dol_htmloutput_errors($errormsg, [], 1);
 		} elseif ($invoice->status != Facture::STATUS_DRAFT) {
 			//If invoice is validated but it is not fully paid is not error and make the payment
 			if ($invoice->getRemainToPay() > 0) {
 				$res = 1;
 			} else {
 				dol_syslog("Sale already validated");
-				dol_htmloutput_errors($langs->trans("InvoiceIsAlreadyValidated", "TakePos"), null, 1);
+				dol_htmloutput_errors($langs->trans("InvoiceIsAlreadyValidated", "TakePos"), [], 1);
 			}
 		} elseif (count($invoice->lines) == 0) {
 			$error++;
 			dol_syslog('Sale without lines');
-			dol_htmloutput_errors($langs->trans("NoLinesToBill", "TakePos"), null, 1);
+			dol_htmloutput_errors($langs->trans("NoLinesToBill", "TakePos"), [], 1);
 		} elseif (isModEnabled('stock') && !isModEnabled('productbatch') && $allowstockchange) {
 			// Validation of invoice with change into stock when produt/lot module is NOT enabled and stock change NOT disabled.
 			// The case for isModEnabled('productbatch') is processed few lines later.
@@ -389,6 +390,8 @@ if (empty($reshook)) {
 		//$creditnote->remise_percent = $invoice->remise_percent;
 		$creditnote->create($user);
 
+		$fk_parent_line = 0; // Initialise
+
 		foreach ($invoice->lines as $line) {
 			// Reset fk_parent_line for no child products and special product
 			if (($line->product_type != 9 && empty($line->fk_parent_line)) || $line->product_type == 9) {
@@ -423,16 +426,16 @@ if (empty($reshook)) {
 								$maxPrevSituationPercent = max($maxPrevSituationPercent, $prevLine->situation_percent);
 
 								//$line->subprice  = $line->subprice - $prevLine->subprice;
-								$line->total_ht  = $line->total_ht - $prevLine->total_ht;
-								$line->total_tva = $line->total_tva - $prevLine->total_tva;
-								$line->total_ttc = $line->total_ttc - $prevLine->total_ttc;
-								$line->total_localtax1 = $line->total_localtax1 - $prevLine->total_localtax1;
-								$line->total_localtax2 = $line->total_localtax2 - $prevLine->total_localtax2;
+								$line->total_ht  -= $prevLine->total_ht;
+								$line->total_tva -= $prevLine->total_tva;
+								$line->total_ttc -= $prevLine->total_ttc;
+								$line->total_localtax1 -= $prevLine->total_localtax1;
+								$line->total_localtax2 -= $prevLine->total_localtax2;
 
-								$line->multicurrency_subprice  = $line->multicurrency_subprice - $prevLine->multicurrency_subprice;
-								$line->multicurrency_total_ht  = $line->multicurrency_total_ht - $prevLine->multicurrency_total_ht;
-								$line->multicurrency_total_tva = $line->multicurrency_total_tva - $prevLine->multicurrency_total_tva;
-								$line->multicurrency_total_ttc = $line->multicurrency_total_ttc - $prevLine->multicurrency_total_ttc;
+								$line->multicurrency_subprice  -= $prevLine->multicurrency_subprice;
+								$line->multicurrency_total_ht  -= $prevLine->multicurrency_total_ht;
+								$line->multicurrency_total_tva -= $prevLine->multicurrency_total_tva;
+								$line->multicurrency_total_ttc -= $prevLine->multicurrency_total_ttc;
 							}
 						}
 
@@ -581,7 +584,7 @@ if (empty($reshook)) {
 	}
 
 	if (($action == 'history' || $action == 'creditnote') && $user->hasRight('takepos', 'run')) {
-		if ($action == 'creditnote' && $creditnote->id > 0) {
+		if ($action == 'creditnote' && $creditnote->id > 0) {	// Test on permission already done
 			$placeid = $creditnote->id;
 		} else {
 			$placeid = GETPOSTINT('placeid');
@@ -604,7 +607,7 @@ if (empty($reshook)) {
 
 		if ($invoice->socid <= 0) {
 			$langs->load('errors');
-			dol_htmloutput_errors($langs->trans("ErrorModuleSetupNotComplete", "TakePos"), null, 1);
+			dol_htmloutput_errors($langs->trans("ErrorModuleSetupNotComplete", "TakePos"), [], 1);
 		} else {
 			$db->begin();
 
@@ -966,7 +969,7 @@ if (empty($reshook)) {
 					}
 				}
 				if (!$permissiontoupdateline) {
-					dol_htmloutput_errors($langs->trans("NotEnoughPermissions", "TakePos").' - No permission to updateqty', null, 1);
+					dol_htmloutput_errors($langs->trans("NotEnoughPermissions", "TakePos").' - No permission to updateqty', [], 1);
 				} else {
 					$result = $invoice->updateline($line->id, $line->desc, $line->subprice, $number, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
 				}
@@ -987,12 +990,20 @@ if (empty($reshook)) {
 				$datapriceofproduct = $prod->getSellPrice($mysoc, $customer, 0);
 				$price_min = $datapriceofproduct['price_min'];
 				$usercanproductignorepricemin = ((getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight('produit', 'ignore_price_min_advance')) || !getDolGlobalString('MAIN_USE_ADVANCED_PERMS'));
-				$pu_ht = price2num($number / (1 + ($line->tva_tx / 100)), 'MU');
-				//Check min price
-				if ($usercanproductignorepricemin && (!empty($price_min) && (price2num($pu_ht) * (1 - price2num($line->remise_percent) / 100) < price2num($price_min)))) {
+
+				$vatratecleaned = $line->tva_tx;
+				$reg = array();
+				if (preg_match('/^(.*)\s*\((.*)\)$/', (string) $line->tva_tx, $reg)) {     // If vat is "xx (yy)"
+					$vatratecleaned = trim($reg[1]);
+					//$vatratecode = $reg[2];
+				}
+
+				$pu_ht = price2num((float) price2num($number, 'MU') / (1 + ((float) $vatratecleaned / 100)), 'MU');
+				// Check min price
+				if ($usercanproductignorepricemin && (!empty($price_min) && ((float) price2num($pu_ht) * (1 - (float) price2num($line->remise_percent) / 100) < price2num($price_min)))) {
 					$langs->load("products");
 					dol_htmloutput_errors($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency)));
-					//echo $langs->trans("CantBeLessThanMinPrice");
+					// echo $langs->trans("CantBeLessThanMinPrice");
 				} else {
 					$permissiontoupdateline = ($user->hasRight('takepos', 'editlines') && ($user->hasRight('takepos', 'editorderedlines') || $line->special_code != "4"));
 					if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
@@ -1003,7 +1014,7 @@ if (empty($reshook)) {
 						}
 					}
 					if (!$permissiontoupdateline) {
-						dol_htmloutput_errors($langs->trans("NotEnoughPermissions", "TakePos").' - No permission to updateprice', null, 1);
+						dol_htmloutput_errors($langs->trans("NotEnoughPermissions", "TakePos").' - No permission to updateprice', [], 1);
 					} elseif (getDolGlobalInt('TAKEPOS_CHANGE_PRICE_HT')  == 1) {
 						$result = $invoice->updateline($line->id, $line->desc, $number, $line->qty, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
 					} else {
@@ -1035,7 +1046,7 @@ if (empty($reshook)) {
 				$pu_ht = price2num($line->subprice / (1 + ($line->tva_tx / 100)), 'MU');
 
 				// Check min price
-				if ($usercanproductignorepricemin && (!empty($price_min) && (price2num($line->subprice) * (1 - price2num($number) / 100) < price2num($price_min)))) {
+				if ($usercanproductignorepricemin && (!empty($price_min) && ((float) price2num($line->subprice) * (1 - (float) price2num($number) / 100) < (float) price2num($price_min)))) {
 					$langs->load("products");
 					dol_htmloutput_errors($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency)));
 				} else {
@@ -1048,7 +1059,7 @@ if (empty($reshook)) {
 						}
 					}
 					if (!$permissiontoupdateline) {
-						dol_htmloutput_errors($langs->trans("NotEnoughPermissions", "TakePos"), null, 1);
+						dol_htmloutput_errors($langs->trans("NotEnoughPermissions", "TakePos"), [], 1);
 					} else {
 						$result = $invoice->updateline($line->id, $line->desc, $line->subprice, $line->qty, $number, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
 					}
@@ -1868,7 +1879,7 @@ if ($placeid > 0) {
 				$htmlsupplements[$line->fk_parent_line] .= $hookmanager->resPrint;
 
 				if (empty($_SESSION["basiclayout"]) || $_SESSION["basiclayout"] != 1) {
-					$htmlsupplements[$line->fk_parent_line] .= '<td class="right">'.vatrate($line->remise_percent, true).'</td>';
+					$htmlsupplements[$line->fk_parent_line] .= '<td class="right">'.vatrate(price2num($line->remise_percent), true).'</td>';
 					$htmlsupplements[$line->fk_parent_line] .= '<td class="right">'.$line->qty.'</td>';
 					$htmlsupplements[$line->fk_parent_line] .= '<td class="right">'.price($line->total_ttc).'</td>';
 				}
@@ -1983,7 +1994,7 @@ if ($placeid > 0) {
 				if (getDolGlobalInt("TAKEPOS_SHOW_SUBPRICE")) {
 					$htmlforlines .= '<td class="right">'.price($line->subprice).'</td>';
 				}
-				$htmlforlines .= '<td class="right">'.vatrate($line->remise_percent, true).'</td>';
+				$htmlforlines .= '<td class="right">'.vatrate(price2num($line->remise_percent), true).'</td>';
 				$htmlforlines .= '<td class="right">';
 				if (isModEnabled('stock') && $user->hasRight('stock', 'mouvement', 'lire')) {
 					$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
