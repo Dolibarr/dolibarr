@@ -274,6 +274,7 @@ if ($action == 'convertimgwebp' && $permtoadd) {
 	$action = 'file_manager';
 }
 
+// List of directories
 if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg_match('/refresh/i', $action) || $action == 'delete') {
 	$langs->load("ecm");
 
