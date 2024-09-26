@@ -848,7 +848,7 @@ class Salary extends CommonObject
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
 		if (!empty($arraydata['user']) && is_object($arraydata['user'])) {
-			$return .= '<br><span class="info-box-label">'.$arraydata['user']->getNomUrl(1, '', 0, 0, 16, 0, '', 'maxwidth100').'</span>';
+			$return .= '<br><span class="info-box-label">'.$arraydata['user']->getNomUrl(empty($arraydata['user']->photo) ? 1 : -1, '', 0, 0, 16, 0, '', 'maxwidth100').'</span>';
 		}
 		if (property_exists($this, 'amount')) {
 			$return .= '<br><span class="info-box-label amount">'.price($this->amount).'</span>';
