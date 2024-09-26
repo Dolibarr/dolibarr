@@ -432,7 +432,7 @@ print '<div class="inline-block toolbarbutton centpercent">';
 // Toolbar
 $url = ((!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_ECM_DISABLE_JS')) ? '#' : ($_SERVER["PHP_SELF"].'?action=refreshmanual'.($module ? '&amp;module='.$module : '').($section ? '&amp;section='.$section : '')));
 print '<a href="'.$url.'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans('Refresh')).'">';
-print img_picto('', 'refresh', 'id="refreshbutton"', false, 0, 0, '', 'size15x marginrightonly');
+print img_picto('', 'refresh', 'id="refreshbutton"', 0, 0, 0, '', 'size15x marginrightonly');
 print '</a>';
 
 print '</div>';
@@ -462,6 +462,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i', $act
 	print '</th></tr>';
 
 	$showonrightsize = '';
+
 	// Auto section
 	if (count($sectionauto)) {
 		$htmltooltip = $langs->trans("ECMAreaDesc2");
@@ -473,6 +474,8 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i', $act
 		print '<td colspan="6">';
 		print '<div id="filetreeauto" class="ecmfiletree"><ul class="ecmjqft">';
 
+		$arrayofmodulesforexternalusers = explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL'));
+
 		$nbofentries = 0;
 		$oldvallevel = 0;
 		foreach ($sectionauto as $key => $val) {
@@ -480,9 +483,19 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i', $act
 				continue; // If condition to show the ECM auto directory is ok
 			}
 
+			// External users are not allowed to see manual directories so we quit.
+			if ($user->socid > 0) {
+				// Check if dir is allowed to external users
+				//var_dump($conf->global->MAIN_MODULES_FOR_EXTERNAL);
+				if (! in_array($val['module'], $arrayofmodulesforexternalusers)) {
+					// Discard this entry
+					continue;
+				}
+			}
+
 			print '<li class="directory collapsed">';
 			print '<a class="fmdirlia jqft ecmjqft" href="'.$_SERVER["PHP_SELF"].'?module='.urlencode($val['module']).'">';
-			print $val['label'];
+			print dolPrintLabel($val['label']);
 			print '</a>';
 
 			print '<div class="ecmjqft">';
