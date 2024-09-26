@@ -318,7 +318,7 @@ trait CommonPeople
 		if (getDolGlobalString('MAIN_TE_PRIVATE_FIRST_AND_LASTNAME_TO_UPPER')) {
 			$this->lastname = dol_ucwords(dol_strtolower($this->lastname));
 			$this->firstname = dol_ucwords(dol_strtolower($this->firstname));
-		  	if (empty($this->typent_code) || $this->typent_code != "TE_PRIVATE") {
+			if (empty($this->typent_code) || $this->typent_code != "TE_PRIVATE") {
 				$this->name = dol_ucwords(dol_strtolower($this->name));
 			}
 			if (!empty($this->firstname)) {
