@@ -692,8 +692,6 @@ class Mo extends CommonObject
 	 */
 	public function createProduction(User $user, $notrigger = true)
 	{
-		global $langs;
-
 		$error = 0;
 		$role = "";
 
@@ -745,7 +743,6 @@ class Mo extends CommonObject
 				$this->error = $moline->error;
 				$this->errors = $moline->errors;
 				dol_print_error($this->db, $moline->error, $moline->errors);
-				exit;
 			}
 
 			if ($this->fk_bom > 0) {	// If a BOM is defined, we know what to consume.
