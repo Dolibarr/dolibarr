@@ -523,15 +523,15 @@ if ($action == 'create') {
 
 		print dol_get_fiche_head($head, 'transaction', '', -1);
 
-		$object->ref = $object->piece_num;
+		$object->ref = (string) $object->piece_num;
 		$object->label = $object->doc_ref;
 
-		$morehtmlref .= '<div style="clear: both;"></div>';
+		$morehtmlref = '<div style="clear: both;"></div>';
 		$morehtmlref .= '<div class="refidno opacitymedium">';
 		$morehtmlref .= $object->label;
 		$morehtmlref .= '</div>';
 
-		print dol_banner_tab($object, 'ref', $backlink, 1, 'piece_num', 'piece_num', $morehtmlref);
+		dol_banner_tab($object, 'ref', $backlink, 1, 'piece_num', 'piece_num', $morehtmlref);
 
 		print '<div class="fichecenter">';
 
@@ -958,7 +958,7 @@ if ($action == 'create') {
 				if ($mode == '_tmp' && $action == '' && $permissiontoadd) {
 					print '<br>';
 					print '<div class="center">';
-					if (empty($total_debit) && empty($total_debit)) {
+					if (empty($total_debit) && empty($total_credit)) {
 						print '<input type="submit" class="button" disabled="disabled" href="#" title="'.dol_escape_htmltag($langs->trans("EnterNonEmptyLinesFirst")).'" value="'.dol_escape_htmltag($langs->trans("ValidTransaction")).'">';
 					} elseif ($total_debit == $total_credit) {
 						print '<a class="button" href="'.$_SERVER["PHP_SELF"].'?piece_num='.((int) $object->piece_num).'&action=valid&token='.newToken().'">'.$langs->trans("ValidTransaction").'</a>';
