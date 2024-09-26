@@ -58,7 +58,6 @@ parameters:
 		- '#(?:Else branch is unreachable because (?:(?:previous|ternary operator) condition)) is always true#'
 		- '#(?:(?:Elsei|I)f condition|Left side of (?:&&|\|\|)|Negated boolean expression|R(?:esult of (?:&&|\|\|)|ight side of (?:&&|\|\|))|Ternary operator condition) is always true#'
 		- '#is_object\(\) with mixed will always evaluate to false#'
-		- '#(?:is_resource\(\) with XMLParser will always) evaluate to false#'
 		- '#Empty array passed to foreach#'
 		- '#in empty\(\) always exists and is (not|always) falsy#'
 		- '#in empty\(\) is not falsy#'
@@ -95,7 +94,6 @@ parameters:
 		- '#(?:(?:EvalMath::trigger|F(?:acture(?:(?:Fournisseur)?Rec::addline)|ichinterRec::addLineRec)|SMTPs::socket_send_str)\(\)|dolMd2Html|setEventMessages) expects string\|null#'
 		- '# (envoi_mail|sendEmailTo) expects string, \(float\|int\) given.#'
 		- '#::printStdColumnContent\(\) expects string, float(\|(int|array)(\<.*\>)?)* given.#'
-		- '~(?:Parameter #3 \$morecss of function) img_warning expects string, \(float\|int\)~'
 		- '#::HTML2OpenIDServer\(\) expects string, array given.#'
 		- '#create_line\(\) expects string, float given.#'
 		- '# dol_stringtotime expects string, DateTime given.#'
@@ -132,7 +130,7 @@ parameters:
 	cache:
 		nodesByFileCountMax: 512
 		nodesByStringCountMax: 512
-	reportUnmatchedIgnoredErrors: true
+	reportUnmatchedIgnoredErrors: false
 	universalObjectCratesClasses:
 		- stdClass
 		- SimpleXMLElement
