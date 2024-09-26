@@ -345,8 +345,6 @@ class Mo extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
-
-		return $idcreated;
 	}
 
 	/**
