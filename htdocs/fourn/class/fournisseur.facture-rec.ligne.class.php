@@ -49,43 +49,128 @@ class FactureFournisseurLigneRec extends CommonInvoiceLine
 	 */
 	public $table_element = 'facture_fourn_det_rec';
 
+	/**
+	 * @var int
+	 */
 	public $fk_facture_fourn;
+
+	/**
+	 * @var int
+	 */
 	public $fk_parent;
+
+	/**
+	 * @var int
+	 */
 	public $fk_product;
+
+	/**
+	 * @var string
+	 */
 	public $ref_supplier;
+
+	/**
+	 * @var string
+	 */
 	public $label;
 	/**
 	 * @deprecated	Use desc
 	 */
 	public $description;
+
+	/**
+	 * @var float
+	 */
 	public $pu_ht;
+
+	/**
+	 * @var float
+	 */
 	public $pu_ttc;
 
 	/**
 	 * @var float Quantity
 	 */
 	public $qty;
+
+	/**
+	 * @var float
+	 */
 	public $remise_percent;
+
+	/**
+	 * @var int
+	 */
 	public $fk_remise_except;
+
+	/**
+	 * @var string
+	 */
 	public $vat_src_code;
+
+	/**
+	 * @var string|float
+	 */
 	public $tva_tx;
+
+	/**
+	 * @var float
+	 */
 	public $localtax1_tx;
+
+	/**
+	 * @var int
+	 */
 	public $localtax1_type;
+
+	/**
+	 * @var float
+	 */
 	public $localtax2_tx;
+
+	/**
+	 * @var int
+	 */
 	public $localtax2_type;
 
+	/**
+	 * @var int
+	 */
 	public $product_type;
+
+	/**
+	 * @var int
+	 */
 	public $date_start;
+
+	/**
+	 * @var int
+	 */
 	public $date_end;
+
+	/**
+	 * @var int
+	 */
 	public $info_bits;
 
 	/**
 	 * @var int special code
 	 */
 	public $special_code;
+
+	/**
+	 * @var int
+	 */
 	public $rang;
 
+	/**
+	 * @var int
+	 */
 	public $fk_user_author;
+
+	/**
+	 * @var int
+	 */
 	public $fk_user_modif;
 
 
