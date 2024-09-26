@@ -425,7 +425,7 @@ print_liste_field_titre(
 
 			// Quantity
 			print '<td class="right">';
-			print $qty[$key];
+			print price($qty[$key], 1, $langs, 0, 0);
 			print '</td>';
 
 			// Percent;
