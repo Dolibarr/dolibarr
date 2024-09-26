@@ -6,6 +6,7 @@
  * Copyright (C) 2021       Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2022-2024  Alexandre Spangaro          <alexandre@inovea-conseil.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -867,7 +868,7 @@ if (!empty($date_start) && !empty($date_stop)) {
 					$filename = ($filecursor['name'] ? $filecursor['name'] : $filecursor['ref']);
 					print '<a href='.DOL_URL_ROOT.'/'.$filecursor['link'].' target="_blank" rel="noopener noreferrer" title="'.dol_escape_htmltag($filename).'">';
 					if (empty($tmppreview)) {
-						print img_picto('', 'generic', '', false, 0, 0, '', 'pictonopreview pictofixedwidth paddingright');
+						print img_picto('', 'generic', '', 0, 0, 0, '', 'pictonopreview pictofixedwidth paddingright');
 					}
 					print $filename;
 					print '</a><br>';

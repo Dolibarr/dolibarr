@@ -156,7 +156,7 @@ if (empty($reshook)) {
 
 	// Action clone object
 	if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
-		if (1 == 0 && !GETPOST('clone_content') && !GETPOST('clone_receivers')) {
+		if (false && !GETPOST('clone_content') && !GETPOST('clone_receivers')) {
 			setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 		} else {
 			if ($object->id > 0) {
@@ -368,6 +368,7 @@ if (empty($reshook)) {
 
 					$classname = ucfirst($subelement);
 					$srcobject = new $classname($db);
+					'@phan-var-force Commande|Propal|Contrat $srcobject';  // Can be other class, but CommonObject is too generic
 
 					dol_syslog("Try to find source object origin=".$object->origin." originid=".$object->origin_id." to add lines");
 					$result = $srcobject->fetch($object->origin_id);
@@ -867,6 +868,8 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 $formfile = new FormFile($db);
+$formcontract = null;
+$formproject = null;
 if (isModEnabled('contract')) {
 	$formcontract = new FormContract($db);
 }
@@ -924,6 +927,7 @@ if ($action == 'create') {
 
 			$classname = ucfirst($subelement);
 			$objectsrc = new $classname($db);
+			'@phan-var-force Commande|Propal|Contrat $objectsrc';
 			$objectsrc->fetch(GETPOST('originid'));
 			if (empty($objectsrc->lines) && method_exists($objectsrc, 'fetch_lines')) {
 				$objectsrc->fetch_lines();
@@ -1013,7 +1017,7 @@ if ($action == 'create') {
 		}
 
 		// Contract
-		if (isModEnabled('contract')) {
+		if (isModEnabled('contract') && is_object($formcontract)) {
 			$langs->load("contracts");
 			print '<tr><td>'.$langs->trans("Contract").'</td><td>';
 			$numcontrat = $formcontract->select_contract($soc->id, GETPOSTINT('contratid'), 'contratid', 0, 1, 1);
@@ -1136,7 +1140,7 @@ if ($action == 'create') {
 		}
 		print '<table class="border centpercent">';
 		print '<tr><td class="fieldrequired">'.$langs->trans("ThirdParty").'</td><td>';
-		print $form->select_company('', 'socid', '', 'SelectThirdParty', 1, 0, null, 0, 'minwidth300');
+		print $form->select_company('', 'socid', '', 'SelectThirdParty', 1, 0, array(), 0, 'minwidth300');
 		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
 		print '</td></tr>';
 		print '</table>';
@@ -1264,7 +1268,7 @@ if ($action == 'create') {
 							// 1),
 							// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value'
 							// => 1),
-							array('type' => 'other', 'name' => 'socid', 'label' => $langs->trans("SelectThirdParty"), 'value' => $form->select_company(GETPOSTINT('socid'), 'socid', '', '', 0, 0, null, 0, 'minwidth200')));
+							array('type' => 'other', 'name' => 'socid', 'label' => $langs->trans("SelectThirdParty"), 'value' => $form->select_company(GETPOSTINT('socid'), 'socid', '', '', 0, 0, array(), 0, 'minwidth200')));
 		// Paiement incomplet. On demande si motif = escompte ou autre
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneIntervention', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
@@ -1365,14 +1369,14 @@ if ($action == 'create') {
 		print '<table class="nobordernopadding centpercent"><tr><td>';
 		print $langs->trans('Contract');
 		print '</td>';
-		if ($action != 'contrat') {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=contrat&amp;id='.$object->id.'">';
+		if ($action != 'editcontract') {
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editcontract&id='.$object->id.'">';
 			print img_edit($langs->trans('SetContract'), 1);
 			print '</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td>';
-		if ($action == 'contrat') {
+		if ($action == 'editcontract') {
 			$formcontract = new FormContract($db);
 			$formcontract->formSelectContract($_SERVER["PHP_SELF"].'?id='.$object->id, $object->socid, $object->fk_contrat, 'contratid', 0, 1, 1);
 		} else {
@@ -1380,7 +1384,7 @@ if ($action == 'create') {
 				$contratstatic = new Contrat($db);
 				$contratstatic->fetch($object->fk_contrat);
 				//print '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$selected.'">'.$projet->title.'</a>';
-				print $contratstatic->getNomUrl(0, '', 1);
+				print $contratstatic->getNomUrl(0, 0, 1);
 			} else {
 				print "&nbsp;";
 			}
@@ -1724,6 +1728,7 @@ if ($action == 'create') {
 	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
 	// modified by hook
 	if (empty($reshook)) {
+		$params = array();
 		if ($user->socid == 0) {
 			if ($action != 'editdescription' && ($action != 'presend')) {
 				// Validate
@@ -1773,15 +1778,18 @@ if ($action == 'create') {
 					print '</div>';
 				}
 
+				$arrayofcreatebutton = array();
 				// Proposal
 				if (isModEnabled("service") && isModEnabled("propal") && $object->statut > Fichinter::STATUS_DRAFT) {
 					$langs->load("propal");
 					if ($object->statut < Fichinter::STATUS_BILLED) {
-						if ($user->hasRight('propal', 'creer')) {
-							print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/propal/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("AddProp").'</a></div>';
-						} else {
-							print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("AddProp").'</a></div>';
-						}
+						$arrayofcreatebutton[] = array(
+							'url' => '/comm/propal/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid,
+							'label' => $langs->trans('AddProp'),
+							'lang' => 'propal',
+							'perm' => $user->hasRight('propal', 'creer'),
+							'enabled' => true,
+						);
 					}
 				}
 
@@ -1789,11 +1797,13 @@ if ($action == 'create') {
 				if (isModEnabled('invoice') && $object->statut > Fichinter::STATUS_DRAFT) {
 					$langs->load("bills");
 					if ($object->statut < Fichinter::STATUS_BILLED) {
-						if ($user->hasRight('facture', 'creer')) {
-							print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("AddBill").'</a></div>';
-						} else {
-							print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("AddBill").'</a></div>';
-						}
+						$arrayofcreatebutton[] = array(
+							'url' => '/compta/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid,
+							'label' => $langs->trans('AddBill'),
+							'lang' => 'bills',
+							'perm' => $user->hasRight('facture', 'creer'),
+							'enabled' => true,
+						);
 					}
 
 					if (getDolGlobalString('FICHINTER_CLASSIFY_BILLED')) {    // Option deprecated. In a future, billed must be managed with a dedicated field to 0 or 1
@@ -1803,6 +1813,10 @@ if ($action == 'create') {
 							print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=classifyunbilled&token='.newToken().'">'.$langs->trans("InterventionClassifyUnBilled").'</a></div>';
 						}
 					}
+				}
+
+				if (count($arrayofcreatebutton)) {
+					print dolGetButtonAction('', $langs->trans("Create"), 'default', $arrayofcreatebutton, '', true, $params);
 				}
 
 				// Sign
@@ -1848,7 +1862,7 @@ if ($action == 'create') {
 		print $formfile->showdocuments('ficheinter', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 
 		// Show links to link elements
-		$linktoelem = $form->showLinkToObjectBlock($object, null, array('fichinter'));
+		$linktoelem = $form->showLinkToObjectBlock($object, array(), array('fichinter'));
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 		// Show direct download link

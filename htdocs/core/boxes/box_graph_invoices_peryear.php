@@ -190,7 +190,7 @@ class box_graph_invoices_peryear extends ModeleBoxes
 				$stringtoshow .= '<input type="hidden" name="page_y" value="">';
 				$stringtoshow .= '<input type="hidden" name="DOL_AUTOSET_COOKIE" value="DOLUSERCOOKIE_box_'.$this->boxcode.':year,showtot">';
 				$stringtoshow .= $langs->trans("Year").' <input class="flat" size="4" type="text" name="'.$param_year.'" value="'.$endyear.'">';
-				$stringtoshow .= '<input class="reposition inline-block valigntextbottom" type="image" alt="'.$langs->trans("Refresh").'" src="'.img_picto($langs->trans("Refresh"), 'refresh.png', '', '', 1).'">';
+				$stringtoshow .= '<input class="reposition inline-block valigntextbottom" type="image" alt="'.$langs->trans("Refresh").'" src="'.img_picto($langs->trans("Refresh"), 'refresh.png', '', 0, 1).'">';
 				$stringtoshow .= '</form>';
 				$stringtoshow .= '</div>';
 				$stringtoshow .= $px2->show();

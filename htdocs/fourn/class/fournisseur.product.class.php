@@ -179,7 +179,12 @@ class ProductFournisseur extends Product
 	public $reputations = array();
 
 	// Multicurreny
+
+	/**
+	 * @var int		ID of multicurrency
+	 */
 	public $fourn_multicurrency_id;
+
 	public $fourn_multicurrency_code;
 	public $fourn_multicurrency_tx;
 	public $fourn_multicurrency_price;
@@ -489,7 +494,7 @@ class ProductFournisseur extends Product
 			$sql .= " multicurrency_price = ".(isset($multicurrency_buyprice) ? "'".$this->db->escape(price2num($multicurrency_buyprice))."'" : 'null').",";
 			$sql .= " multicurrency_unitprice = ".(isset($multicurrency_unitBuyPrice) ? "'".$this->db->escape(price2num($multicurrency_unitBuyPrice))."'" : 'null').",";
 			$sql .= " multicurrency_tx = ".(isset($multicurrency_tx) ? "'".$this->db->escape($multicurrency_tx)."'" : '1').",";
-			$sql .= " fk_multicurrency = ".(isset($fk_multicurrency) ? "'".$this->db->escape($fk_multicurrency)."'" : 'null').",";
+			$sql .= " fk_multicurrency = ".(isset($fk_multicurrency) ? (int) $fk_multicurrency : 'null').",";
 			$sql .= " multicurrency_code = ".(isset($multicurrency_code) ? "'".$this->db->escape($multicurrency_code)."'" : 'null').",";
 			$sql .= " entity = ".$conf->entity.",";
 			$sql .= " tva_tx = ".price2num($tva_tx).",";
@@ -915,7 +920,7 @@ class ProductFournisseur extends Product
 		$this->fourn_multicurrency_price       = 0;
 		$this->fourn_multicurrency_unitprice   = 0;
 		$this->fourn_multicurrency_tx          = 0;
-		$this->fourn_multicurrency_id          = '';
+		$this->fourn_multicurrency_id          = 0;
 		$this->fourn_multicurrency_code        = '';
 
 		$sql = "SELECT s.nom as supplier_name, s.rowid as fourn_id,";

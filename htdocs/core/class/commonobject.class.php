@@ -535,12 +535,12 @@ abstract class CommonObject
 	public $multicurrency_total_ttc;
 
 	/**
-	 * @var float Multicurrency total localta1
+	 * @var float|string Multicurrency total localtax1
 	 */
 	public $multicurrency_total_localtax1;	// not in database
 
 	/**
-	 * @var float Multicurrency total localtax2
+	 * @var float|string Multicurrency total localtax2
 	 */
 	public $multicurrency_total_localtax2;	// not in database
 
@@ -1893,7 +1893,7 @@ abstract class CommonObject
 			$this->thirdparty = $thirdparty;
 
 			// Use first price level if level not defined for third party
-			if (getDolGlobalString('PRODUIT_MULTIPRICES') && empty($this->thirdparty->price_level)) {
+			if ((getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && empty($this->thirdparty->price_level)) {
 				$this->thirdparty->price_level = 1;
 			}
 
@@ -2750,117 +2750,127 @@ abstract class CommonObject
 							case 'propal':
 								/** @var Propal $this */
 								/** @var PropaleLigne $line */
+								'@phan-var-force Propal $this';
+								'@phan-var-force PropaleLigne $line';
 								$this->updateline(
-								$line->id,
-								$line->subprice,
-								$line->qty,
-								$line->remise_percent,
-								$line->tva_tx,
-								$line->localtax1_tx,
-								$line->localtax2_tx,
-								($line->description ? $line->description : $line->desc),
-								'HT',
-								$line->info_bits,
-								$line->special_code,
-								$line->fk_parent_line,
-								$line->skip_update_total,
-								$line->fk_fournprice,
-								$line->pa_ht,
-								$line->label,
-								$line->product_type,
-								$line->date_start,
-								$line->date_end,
-								$line->array_options,
-								$line->fk_unit,
-								$line->multicurrency_subprice
+									$line->id,
+									$line->subprice,
+									$line->qty,
+									$line->remise_percent,
+									$line->tva_tx,
+									$line->localtax1_tx,
+									$line->localtax2_tx,
+									($line->description ? $line->description : $line->desc),
+									'HT',
+									$line->info_bits,
+									$line->special_code,
+									$line->fk_parent_line,
+									$line->skip_update_total,
+									$line->fk_fournprice,
+									$line->pa_ht,
+									$line->label,
+									$line->product_type,
+									$line->date_start,
+									$line->date_end,
+									$line->array_options,
+									$line->fk_unit,
+									$line->multicurrency_subprice
 								);
 								break;
 							case 'commande':
 								/** @var Commande $this */
 								/** @var OrderLine $line */
+								'@phan-var-force Commande $this';
+								'@phan-var-force OrderLine $line';
 								$this->updateline(
-								$line->id,
-								($line->description ? $line->description : $line->desc),
-								$line->subprice,
-								$line->qty,
-								$line->remise_percent,
-								$line->tva_tx,
-								$line->localtax1_tx,
-								$line->localtax2_tx,
-								'HT',
-								$line->info_bits,
-								$line->date_start,
-								$line->date_end,
-								$line->product_type,
-								$line->fk_parent_line,
-								$line->skip_update_total,
-								$line->fk_fournprice,
-								$line->pa_ht,
-								$line->label,
-								$line->special_code,
-								$line->array_options,
-								$line->fk_unit,
-								$line->multicurrency_subprice
+									$line->id,
+									($line->description ? $line->description : $line->desc),
+									$line->subprice,
+									$line->qty,
+									$line->remise_percent,
+									$line->tva_tx,
+									$line->localtax1_tx,
+									$line->localtax2_tx,
+									'HT',
+									$line->info_bits,
+									$line->date_start,
+									$line->date_end,
+									$line->product_type,
+									$line->fk_parent_line,
+									$line->skip_update_total,
+									$line->fk_fournprice,
+									$line->pa_ht,
+									$line->label,
+									$line->special_code,
+									$line->array_options,
+									$line->fk_unit,
+									$line->multicurrency_subprice
 								);
 								break;
 							case 'facture':
 								/** @var Facture $this */
 								/** @var FactureLigne $line */
+								'@phan-var-force Facture $this';
+								'@phan-var-force FactureLigne $line';
 								$this->updateline(
-								$line->id,
-								($line->description ? $line->description : $line->desc),
-								$line->subprice,
-								$line->qty,
-								$line->remise_percent,
-								$line->date_start,
-								$line->date_end,
-								$line->tva_tx,
-								$line->localtax1_tx,
-								$line->localtax2_tx,
-								'HT',
-								$line->info_bits,
-								$line->product_type,
-								$line->fk_parent_line,
-								$line->skip_update_total,
-								$line->fk_fournprice,
-								$line->pa_ht,
-								$line->label,
-								$line->special_code,
-								$line->array_options,
-								$line->situation_percent,
-								$line->fk_unit,
-								$line->multicurrency_subprice
+									$line->id,
+									($line->description ? $line->description : $line->desc),
+									$line->subprice,
+									$line->qty,
+									$line->remise_percent,
+									$line->date_start,
+									$line->date_end,
+									$line->tva_tx,
+									$line->localtax1_tx,
+									$line->localtax2_tx,
+									'HT',
+									$line->info_bits,
+									$line->product_type,
+									$line->fk_parent_line,
+									$line->skip_update_total,
+									$line->fk_fournprice,
+									$line->pa_ht,
+									$line->label,
+									$line->special_code,
+									$line->array_options,
+									$line->situation_percent,
+									$line->fk_unit,
+									$line->multicurrency_subprice
 								);
 								break;
 							case 'supplier_proposal':
 								/** @var SupplierProposal $this */
 								/** @var SupplierProposalLine $line */
+								'@phan-var-force SupplierProposal $this';
+								'@phan-var-force SupplierProposalLine $line';
 								$this->updateline(
-								$line->id,
-								$line->subprice,
-								$line->qty,
-								$line->remise_percent,
-								$line->tva_tx,
-								$line->localtax1_tx,
-								$line->localtax2_tx,
-								($line->description ? $line->description : $line->desc),
-								'HT',
-								$line->info_bits,
-								$line->special_code,
-								$line->fk_parent_line,
-								$line->skip_update_total,
-								$line->fk_fournprice,
-								$line->pa_ht,
-								$line->label,
-								$line->product_type,
-								$line->array_options,
-								$line->ref_fourn,
-								$line->multicurrency_subprice
+									$line->id,
+									$line->subprice,
+									$line->qty,
+									$line->remise_percent,
+									$line->tva_tx,
+									$line->localtax1_tx,
+									$line->localtax2_tx,
+									($line->description ? $line->description : $line->desc),
+									'HT',
+									$line->info_bits,
+									$line->special_code,
+									$line->fk_parent_line,
+									$line->skip_update_total,
+									$line->fk_fournprice,
+									$line->pa_ht,
+									$line->label,
+									$line->product_type,
+									$line->array_options,
+									$line->ref_fourn,
+									$line->multicurrency_subprice
 								);
 								break;
 							case 'order_supplier':
 								/** @var CommandeFournisseur $this */
 								/** @var CommandeFournisseurLigne $line */
+								'@phan-var-force CommandeFournisseur $this';
+								'@phan-var-force CommandeFournisseurLigne $line';
 								$this->updateline(
 									$line->id,
 									($line->description ? $line->description : $line->desc),
@@ -2885,6 +2895,8 @@ abstract class CommonObject
 							case 'invoice_supplier':
 								/** @var FactureFournisseur $this */
 								/** @var SupplierInvoiceLine $line */
+								'@phan-var-force FactureFournisseur $this';
+								'@phan-var-force SupplierInvoiceLIne $line';
 								$this->updateline(
 									$line->id,
 									($line->description ? $line->description : $line->desc),
@@ -4028,8 +4040,9 @@ abstract class CommonObject
 			$this->multicurrency_total_ttc += isset($this->revenuestamp) ? ($this->revenuestamp * $multicurrency_tx) : 0;
 
 			// Situations totals
-			if (!empty($this->situation_cycle_ref) && !empty($this->situation_counter) && $this->situation_counter > 1 && method_exists($this, 'get_prev_sits')) {
-				include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+			if (!empty($this->situation_cycle_ref) && !empty($this->situation_counter) && $this->situation_counter > 1 && method_exists($this, 'get_prev_sits')) {  // @phan-suppress-current-line PhanUndeclaredProperty
+				'@phan-var-force Facture $this';
+				include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';  // Note: possibly useless as $this is normally already Facture, so the class file should be loaded
 				if ($this->type != Facture::TYPE_CREDIT_NOTE) {	// @phpstan-ignore-line
 					if (getDolGlobalInt('INVOICE_USE_SITUATION') != 2) {
 						$prev_sits = $this->get_prev_sits();
@@ -4353,6 +4366,7 @@ abstract class CommonObject
 							if (class_exists($className)) {
 								foreach ($objectids as $i => $objectid) {	// $i is rowid into llx_element_element
 									$object = new $className($this->db);
+									'@phan-var-force CommonObject $object';
 									$ret = $object->fetch($objectid);
 									if ($ret >= 0) {
 										$this->linkedObjects[$objecttype][$i] = $object;
@@ -4459,13 +4473,13 @@ abstract class CommonObject
 	/**
 	 *	Delete all links between an object $this
 	 *
-	 *	@param	int		$sourceid		Object source id
+	 *	@param	?int	$sourceid		Object source id
 	 *	@param  string	$sourcetype		Object source type
-	 *	@param  int		$targetid		Object target id
+	 *	@param  ?int	$targetid		Object target id
 	 *	@param  string	$targettype		Object target type
 	 *  @param	int		$rowid			Row id of line to delete. If defined, other parameters are not used.
-	 * 	@param	User	$f_user			User that create
-	 * 	@param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
+	 * 	@param	?User	$f_user			User that create
+	 * 	@param	int<0,1>	$notrigger		1=Does not execute triggers, 0= execute triggers
 	 *	@return     					int	>0 if OK, <0 if KO
 	 *	@see	add_object_linked(), updateObjectLinked(), fetchObjectLinked()
 	 */
@@ -4631,7 +4645,7 @@ abstract class CommonObject
 	 *      Set status of an object.
 	 *
 	 *      @param	int		$status			Status to set
-	 *      @param	int		$elementId		Id of element to force (use this->id by default if null)
+	 *      @param	?int	$elementId		Id of element to force (use this->id by default if null)
 	 *      @param	string	$elementType	Type of element to force (use this->table_element by default)
 	 *      @param	string	$trigkey		Trigger key to use for trigger. Use '' means automatic but it is not recommended and is deprecated.
 	 *      @param	string	$fieldstatus	Name of status field in this->table_element
@@ -5269,7 +5283,7 @@ abstract class CommonObject
 	 *	@param  Societe	    		$seller            	Object of seller third party
 	 *	@param  Societe	    		$buyer             	Object of buyer third party
 	 *	@param	int					$selected		   	ID line selected
-	 *  @param  Extrafields			$extrafields		Object of extrafields
+	 *  @param  ?Extrafields		$extrafields		Object of extrafields
 	 *  @param	string				$defaulttpldir		Directory where to find the template (deprecated)
 	 *	@return	void
 	 */
@@ -5519,6 +5533,7 @@ abstract class CommonObject
 		}
 
 		if (!empty($line->desc)) {
+			'@phan-var-force OrderLine|FactureLigne|ContratLigne|FactureFournisseurLigneRec|SupplierInvoiceLine|SupplierProposalLine $line';
 			if ($line->desc == '(CREDIT_NOTE)') {  // TODO Not sure this is used for source object
 				$discount = new DiscountAbsolute($this->db);
 				$discount->fetch($line->fk_remise_except);
@@ -5854,6 +5869,8 @@ abstract class CommonObject
 		if ($obj instanceof ModelePDFMember) {
 			$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1, 'tmp_cards');
 		} else {
+			// TODO: Try to set type above again
+			'@phan-var-force ModeleBarCode|ModeleDon|ModeleExports|ModeleImports|ModelePDFAsset|ModelePDFContract|ModelePDFDeliveryOrder|ModelePDFEvaluation|ModelePDFFactures|ModelePDFFicheinter|ModelePDFMo|ModelePDFMovement|ModelePDFProduct|ModelePDFProjects|ModelePDFPropales|ModelePDFRecruitmentJobPosition|ModelePDFStock|ModelePDFStockTransfer|ModelePDFSupplierProposal|ModelePDFSuppliersInvoices|ModelePDFSuppliersOrders|ModelePDFSuppliersPayments|ModelePDFTask|ModelePDFTicket|ModelePDFUser|ModelePDFUserGroup|ModelePdfExpedition|ModelePdfReception|ModeleThirdPartyDoc $obj';
 			$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $moreparams);
 		}
 		// After call of write_file $obj->result['fullpath'] is set with generated file. It will be used to update the ECM database index.
@@ -6357,8 +6374,8 @@ abstract class CommonObject
 		if (empty($rowid)) {
 			$rowid = $this->id;
 		}
-		if (empty($rowid) && isset($this->rowid)) {
-			$rowid = $this->rowid; // deprecated
+		if (empty($rowid) && isset($this->rowid)) {  // @phan-suppress-current-line PhanUndeclaredProperty
+			$rowid = $this->rowid; // deprecated  @phan-suppress-current-line PhanUndeclaredProperty
 		}
 
 		// To avoid SQL errors. Probably not the better solution though
@@ -6704,6 +6721,7 @@ abstract class CommonObject
 								$new_array_options[$key] = '';
 							} elseif ($value) {
 								$object = new $InfoFieldList[0]($this->db);
+								'@phan-var-force CommonObject $object';
 								if (is_numeric($value)) {
 									$res = $object->fetch($value); // Common case
 								} else {
@@ -6884,7 +6902,7 @@ abstract class CommonObject
 						if (is_array($value) || (!is_numeric($value) && $value != '')) {
 							$this->errors[] = $langs->trans("ExtraLanguageHasWrongValue", $attributeLabel);
 							return -1;
-						} elseif ($value == '') {
+						} elseif ($value == '') {  // @phan-suppress-current-line PhanTypeComparisonFromArray
 							$new_array_languages[$key] = null;
 						}
 						break;
@@ -8060,7 +8078,7 @@ abstract class CommonObject
 									$isDependList = 1;
 								}
 
-								$data[$obj->rowid] = $labeltoshow;
+								$data[(int) $obj->rowid] = $labeltoshow;
 							}
 
 							$i++;
@@ -8073,7 +8091,7 @@ abstract class CommonObject
 					}
 				} else {
 					require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-					$data = $form->select_all_categories(Categorie::$MAP_ID_TO_CODE[$InfoFieldList[5]], '', 'parent', 64, $InfoFieldList[6], 1, 1);
+					$data = $form->select_all_categories(Categorie::$MAP_ID_TO_CODE[(int) $InfoFieldList[5]], '', 'parent', 64, $InfoFieldList[6], 1, 1);
 					$out = $form->multiselectarray($keyprefix . $key . $keysuffix, $data, $value_arr, 0, 0, $morecss, 0, '100%');
 				}
 			}
@@ -8106,20 +8124,20 @@ abstract class CommonObject
 			if (!empty($param_list_array[2])) {		// If the entry into $fields is set, we must add a create button
 				if ((!GETPOSTISSET('backtopage') || strpos(GETPOST('backtopage'), $_SERVER['PHP_SELF']) === 0)	// // To avoid to open several times the 'Plus' button (we accept only one level)
 					&& empty($val['disabled']) && empty($nonewbutton)) {	// and to avoid to show the button if the field is protected by a "disabled".
-						list($class, $classfile) = explode(':', $param_list[0]);
+					list($class, $classfile) = explode(':', $param_list[0]);
 					if (file_exists(dol_buildpath(dirname(dirname($classfile)).'/card.php'))) {
 						$url_path = dol_buildpath(dirname(dirname($classfile)).'/card.php', 1);
 					} else {
 						$url_path = dol_buildpath(dirname(dirname($classfile)).'/'.strtolower($class).'_card.php', 1);
 					}
-						$paramforthenewlink = '';
-						$paramforthenewlink .= (GETPOSTISSET('action') ? '&action='.GETPOST('action', 'aZ09') : '');
-						$paramforthenewlink .= (GETPOSTISSET('id') ? '&id='.GETPOSTINT('id') : '');
-						$paramforthenewlink .= (GETPOSTISSET('origin') ? '&origin='.GETPOST('origin', 'aZ09') : '');
-						$paramforthenewlink .= (GETPOSTISSET('originid') ? '&originid='.GETPOSTINT('originid') : '');
-						$paramforthenewlink .= '&fk_'.strtolower($class).'=--IDFORBACKTOPAGE--';
-						// TODO Add JavaScript code to add input fields already filled into $paramforthenewlink so we won't loose them when going back to main page
-						$out .= '<a class="butActionNew" title="'.$langs->trans("New").'" href="'.$url_path.'?action=create&backtopage='.urlencode($_SERVER['PHP_SELF'].($paramforthenewlink ? '?'.$paramforthenewlink : '')).'"><span class="fa fa-plus-circle valignmiddle"></span></a>';
+					$paramforthenewlink = '';
+					$paramforthenewlink .= (GETPOSTISSET('action') ? '&action='.GETPOST('action', 'aZ09') : '');
+					$paramforthenewlink .= (GETPOSTISSET('id') ? '&id='.GETPOSTINT('id') : '');
+					$paramforthenewlink .= (GETPOSTISSET('origin') ? '&origin='.GETPOST('origin', 'aZ09') : '');
+					$paramforthenewlink .= (GETPOSTISSET('originid') ? '&originid='.GETPOSTINT('originid') : '');
+					$paramforthenewlink .= '&fk_'.strtolower($class).'=--IDFORBACKTOPAGE--';
+					// TODO Add JavaScript code to add input fields already filled into $paramforthenewlink so we won't loose them when going back to main page
+					$out .= '<a class="butActionNew" title="'.$langs->trans("New").'" href="'.$url_path.'?action=create&backtopage='.urlencode($_SERVER['PHP_SELF'].($paramforthenewlink ? '?'.$paramforthenewlink : '')).'"><span class="fa fa-plus-circle valignmiddle"></span></a>';
 				}
 			}
 		} elseif ($type == 'password') {
@@ -8590,13 +8608,16 @@ abstract class CommonObject
 
 					if ($classname && class_exists($classname)) {
 						$object = new $classname($this->db);
+						'@phan-var-force CommonObject $object';
 						if ($object->element === 'product') {	// Special case for product because default valut of fetch are wrong
+							'@phan-var-force Product $object';
 							$result = $object->fetch($value, '', '', '', 0, 1, 1);
 						} else {
 							$result = $object->fetch($value);
 						}
 						if ($result > 0) {
 							if ($object->element === 'product') {
+								'@phan-var-force Product $object';
 								$get_name_url_param_arr = array($getnomurlparam, $getnomurlparam2, 0, -1, 0, '', 0);
 								if (isset($val['get_name_url_params'])) {
 									$get_name_url_params = explode(':', $val['get_name_url_params']);
@@ -9035,7 +9056,7 @@ abstract class CommonObject
 									$value = $getposttemp;
 								}
 							} elseif (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('int'))) {
-								$value = (!empty($this->array_options["options_".$key]) || $this->array_options["options_".$key] === '0') ? $this->array_options["options_".$key] : '';
+								$value = (!empty($this->array_options["options_".$key]) || (isset($this->array_options["options_".$key]) && $this->array_options["options_".$key] === '0')) ? $this->array_options["options_".$key] : '';
 							} else {
 								$value = (!empty($this->array_options["options_".$key]) ? $this->array_options["options_".$key] : ''); // No GET, no POST, no default value, so we take value of object.
 							}
@@ -9144,7 +9165,7 @@ abstract class CommonObject
 							if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER') && ($action == 'view' || $action == 'valid' || $action == 'editline' || $action == 'confirm_valid' || $action == 'confirm_cancel')) {
 								$out .= '<td></td>';
 							}
-							$out .= '<td class="'.(empty($params['tdclass']) ? 'titlefieldcreate' : $params['tdclass']).' wordbreak';
+							$out .= '<td class="'.(empty($params['tdclass']) ? 'titlefieldmax45' : $params['tdclass']).' wordbreak';
 							if ($extrafields->attributes[$this->table_element]['type'][$key] == 'text') {
 								$out .= ' tdtop';
 							}
@@ -10266,7 +10287,7 @@ abstract class CommonObject
 	 * Load object in memory from the database. This does not load line. This is done by parent fetch() that call fetchCommon
 	 *
 	 * @param	int			$id				Id object
-	 * @param	string		$ref			Ref
+	 * @param	?string		$ref			Ref
 	 * @param	string		$morewhere		More SQL filters (' AND ...')
 	 * @param	int<0,1>	$noextrafields	0=Default to load extrafields, 1=No extrafields
 	 * @return 	int<-4,1>	      			Return integer <0 if KO, 0 if not found, >0 if OK

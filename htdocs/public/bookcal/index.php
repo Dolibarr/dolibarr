@@ -242,7 +242,7 @@ if ($action == 'add' ) {	// Test on permission not required here (anonymous acti
 	}
 
 	if (!$error) {
-		$dateend = dol_time_plus_duree(GETPOSTINT("datetimebooking"), GETPOST("durationbooking"), 'i');
+		$dateend = dol_time_plus_duree(GETPOSTINT("datetimebooking"), GETPOSTINT("durationbooking"), 'i');
 
 		$actioncomm->label = $langs->trans("BookcalBookingTitle");
 		$actioncomm->type = 'AC_RDV';
@@ -421,7 +421,7 @@ if ($action == 'afteradd') {
 		}
 		print ' </tr>'."\n";
 
-		$todayarray = dol_getdate($now, 'fast');
+		$todayarray = dol_getdate($now, true);
 		$todaytms = dol_mktime(0, 0, 0, $todayarray['mon'], $todayarray['mday'], $todayarray['year']);
 
 		// Load into an array all days with availabilities of the calendar for the current month $todayarray['mon'] and $todayarray['year']

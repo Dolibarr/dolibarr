@@ -246,7 +246,7 @@ class Societe extends CommonObject
 		'localtax2_value' => array('type' => 'double(6,3)', 'label' => 'Localtax2 value', 'enabled' => 1, 'visible' => -1, 'position' => 355),
 		'vat_reverse_charge' => array('type' => 'tinyint(4)', 'label' => 'Vat reverse charge', 'enabled' => 1, 'visible' => -1, 'position' => 335),
 		'barcode' => array('type' => 'varchar(255)', 'label' => 'Barcode', 'enabled' => 1, 'visible' => -1, 'position' => 360),
-		'price_level' => array('type' => 'integer', 'label' => 'Price level', 'enabled' => '$conf->global->PRODUIT_MULTIPRICES || getDolGlobalString("PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES")', 'visible' => -1, 'position' => 365),
+		'price_level' => array('type' => 'integer', 'label' => 'Price level', 'enabled' => '$conf->global->PRODUIT_MULTIPRICES || getDolGlobalString("PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES") || getDolGlobalString("PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES")', 'visible' => -1, 'position' => 365),
 		'default_lang' => array('type' => 'varchar(6)', 'label' => 'Default lang', 'enabled' => 1, 'visible' => -1, 'position' => 370),
 		'canvas' => array('type' => 'varchar(32)', 'label' => 'Canvas', 'enabled' => 1, 'visible' => -1, 'position' => 375),
 		'fk_barcode_type' => array('type' => 'integer', 'label' => 'Fk barcode type', 'enabled' => 1, 'visible' => -1, 'position' => 405),
@@ -784,6 +784,11 @@ class Societe extends CommonObject
 	public $ref_ext;
 
 	/**
+	 * @var string IP address
+	 */
+	public $ip;
+
+	/**
 	 * Import key.
 	 * Set when the thirdparty has been created through an import process. This is to relate those created thirdparties
 	 * to an import process
@@ -1023,6 +1028,7 @@ class Societe extends CommonObject
 			$sql .= ", import_key";
 			$sql .= ", fk_multicurrency";
 			$sql .= ", multicurrency_code";
+			$sql .= ", ip";
 			if (!getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 				$sql .= ", vat_reverse_charge";
 				$sql .= ", accountancy_code_buy";
@@ -1043,6 +1049,7 @@ class Societe extends CommonObject
 			$sql .= ", ".(!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 			$sql .= ", ".(int) $this->fk_multicurrency;
 			$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";
+			$sql .= ", '".$this->db->escape($this->ip)."'";
 			if (!getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 				$sql .= ", ".(empty($this->vat_reverse_charge) ? '0' : '1');
 				$sql .= ", '" . $this->db->escape($this->accountancy_code_buy) . "'";
@@ -2137,7 +2144,7 @@ class Societe extends CommonObject
 		}
 
 		// Use first price level if level not defined for third party
-		if ((getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) && empty($this->price_level)) {
+		if ((getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && empty($this->price_level)) {
 			$this->price_level = 1;
 		}
 

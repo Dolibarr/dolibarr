@@ -125,6 +125,7 @@ class Contact extends CommonObject
 		'fk_user_creat' => array('type' => 'integer', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => 3, 'position' => 310),
 		'fk_user_modif' => array('type' => 'integer', 'label' => 'UserModif', 'enabled' => 1, 'visible' => 3, 'position' => 315),
 		'statut' => array('type' => 'tinyint(4)', 'label' => 'Status', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 500),
+		'ip' => array('type' => 'varchar(250)', 'label' => 'Ip', 'enabled' => '1', 'position' => 700, 'notnull' => 0, 'visible' => '0', 'comment' => 'ip used to create record (for public submission page)'),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -1, 'position' => 1000),
 	);
 
@@ -321,6 +322,10 @@ class Contact extends CommonObject
 	 */
 	public $user_login;
 
+	/**
+	 * @var string IP address
+	 */
+	public $ip;
 	// END MODULEBUILDER PROPERTIES
 
 
@@ -495,6 +500,7 @@ class Contact extends CommonObject
 		$sql .= ", entity";
 		$sql .= ", ref_ext";
 		$sql .= ", import_key";
+		$sql .= ", ip";
 		$sql .= ") VALUES (";
 		$sql .= "'".$this->db->idate($now)."',";
 		if ($this->socid > 0) {
@@ -512,7 +518,8 @@ class Contact extends CommonObject
 		$sql .= " ".(!empty($this->canvas) ? "'".$this->db->escape($this->canvas)."'" : "null").",";
 		$sql .= " ".((int) $this->entity).",";
 		$sql .= "'".$this->db->escape($this->ref_ext)."',";
-		$sql .= " ".(!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
+		$sql .= " ".(!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null").",";
+		$sql .= " ".(!empty($this->ip) ? "'".$this->db->escape($this->ip)."'" : "null");
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -1440,9 +1447,9 @@ class Contact extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 * @param array $params params to construct tooltip data
+	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
-	 * @return array
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{

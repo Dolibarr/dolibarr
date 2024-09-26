@@ -793,6 +793,7 @@ class Mo extends CommonObject
 							if ($moline->qty <= 0) {
 								$error++;
 								$this->error = "BadValueForquantityToConsume";
+								$this->errors[] = $this->error;
 								break;
 							} else {
 								$moline->fk_product = $line->fk_product;
@@ -808,7 +809,8 @@ class Mo extends CommonObject
 								if ($resultline <= 0) {
 									$error++;
 									$this->error = $moline->error;
-									$this->errors = $moline->errors;
+									$this->errors[] = $moline->error;
+									$this->errors = array_merge($this->errors, $moline->errors);
 									dol_print_error($this->db, $moline->error, $moline->errors);
 									break;
 								}
@@ -1407,10 +1409,9 @@ class Mo extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 *
-	 * @param array $params ex option, infologin
+	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
-	 * @return array
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{

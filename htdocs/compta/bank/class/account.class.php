@@ -746,6 +746,11 @@ class Account extends CommonObject
 			$this->status = $this->clos;
 		}
 
+		if (empty($this->address && !empty($this->domiciliation))) {
+			dol_syslog(get_class($this)."::create domiciliation is deprecated use address", LOG_NOTICE);
+			$this->address = $this->domiciliation;
+		}
+
 		// Load the library to validate/check a BAN account
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 
@@ -1482,10 +1487,9 @@ class Account extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 *
-	 * @param 	array 	$params 	Params to construct tooltip data
-	 * @since 	v18
-	 * @return 	array
+	 * @param array<string,mixed> $params params to construct tooltip data
+	 * @since v18
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{

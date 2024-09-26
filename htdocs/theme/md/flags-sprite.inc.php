@@ -717,6 +717,11 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	width: 16px;
 	height: 12px;
 }
+.flag-sprite.mf {
+	background-position:0 -847px;
+	width: 16px;
+	height: 12px;
+}
 .flag-sprite.mg {
 	background-position:0 -1563px;
 	width: 16px;

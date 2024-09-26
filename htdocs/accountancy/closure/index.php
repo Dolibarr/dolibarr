@@ -124,14 +124,28 @@ if (empty($reshook)) {
 			$separate_auxiliary_account = GETPOST('separate_auxiliary_account', 'aZ09');
 			$generate_bookkeeping_records = GETPOST('generate_bookkeeping_records', 'aZ09');
 
-			$result = $object->closeFiscalPeriod($current_fiscal_period['id'], $new_fiscal_period_id, $separate_auxiliary_account, $generate_bookkeeping_records);
-			if ($result < 0) {
-				setEventMessages($object->error, $object->errors, 'errors');
-			} else {
-				setEventMessages($langs->trans("AccountancyClosureCloseSuccessfully"), null, 'mesgs');
+			$error = 0;
+			if ($generate_bookkeeping_records) {
+				if (!getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT')) {
+					$error++;
+					setEventMessages($langs->trans("ErrorModuleSetupNotComplete"), null, 'errors');
+				}
+				if (!getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT')) {
+					$error++;
+					setEventMessages($langs->trans("ErrorModuleSetupNotComplete"), null, 'errors');
+				}
+			}
 
-				header("Location: " . $_SERVER['PHP_SELF'] . (isset($current_fiscal_period) ? '?fiscal_period_id=' . $current_fiscal_period['id'] : ''));
-				exit;
+			if (!$error) {
+				$result = $object->closeFiscalPeriod($current_fiscal_period['id'], $new_fiscal_period_id, $separate_auxiliary_account, $generate_bookkeeping_records);
+				if ($result < 0) {
+					setEventMessages($object->error, $object->errors, 'errors');
+				} else {
+					setEventMessages($langs->trans("AccountancyClosureCloseSuccessfully"), null, 'mesgs');
+
+					header("Location: " . $_SERVER['PHP_SELF'] . (isset($current_fiscal_period) ? '?fiscal_period_id=' . $current_fiscal_period['id'] : ''));
+					exit;
+				}
 			}
 		} elseif ($action == 'confirm_step_3' && $confirm == "yes") {
 			$inventory_journal_id = GETPOSTINT('inventory_journal_id');
@@ -301,7 +315,7 @@ if (!empty($current_fiscal_period)) {
 print load_fiche_titre($langs->trans("Closure") . " - " . $fiscal_period_nav_text, '', 'title_accountancy');
 
 if (empty($current_fiscal_period)) {
-	print $langs->trans('ErrorNoFiscalPeriodActiveFound', $langs->trans("Accounting"), $langs->trans("Setup"), $langs->trans("FiscalPeriod"));
+	print $langs->trans('ErrorNoFiscalPeriodActiveFound', $langs->transnoentitiesnoconv("Accounting"), $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("FiscalPeriod"));
 }
 
 if (isset($current_fiscal_period)) {

@@ -4363,7 +4363,7 @@ function migrate_reload_menu($db, $langs, $conf)
 		$dir = DOL_DOCUMENT_ROOT."/core/menus/";
 		$file = 'init_menu_'.$key.'.sql';
 		if (file_exists($dir.$file)) {
-			$result = run_sql($dir.$file, 1, '', 1, $key);
+			$result = run_sql($dir.$file, 1, 0, 1, $key);
 		}
 
 		print '</td></tr>';
@@ -4437,7 +4437,7 @@ function migrate_user_photospath()
 
 											//print $origin.'/'.$file.'/'.$thumb.' -> '.$destin.'/'.$file.'/'.$thumb.'<br>'."\n";
 											print '.';
-											dol_copy($origin.'/'.$file.'/'.$thumb, $destin.'/'.$file.'/'.$thumb, 0, 0);
+											dol_copy($origin.'/'.$file.'/'.$thumb, $destin.'/'.$file.'/'.$thumb, '0', 0);
 											//var_dump('aaa');exit;
 										}
 									}
@@ -4447,7 +4447,7 @@ function migrate_user_photospath()
 								if (!dol_is_file($destin.'/'.$file)) {
 									//print $origin.'/'.$file.' -> '.$destin.'/'.$file.'<br>'."\n";
 									print '.';
-									dol_copy($origin.'/'.$file, $destin.'/'.$file, 0, 0);
+									dol_copy($origin.'/'.$file, $destin.'/'.$file, '0', 0);
 									//var_dump('eee');exit;
 								}
 							}
@@ -4530,7 +4530,7 @@ function migrate_user_photospath2()
 
 											//print $origin.'/'.$file.'/'.$thumb.' -> '.$destin.'/'.$file.'/'.$thumb.'<br>'."\n";
 											print '.';
-											dol_copy($origin.'/'.$file.'/'.$thumb, $destin.'/'.$file.'/'.$thumb, 0, 0);
+											dol_copy($origin.'/'.$file.'/'.$thumb, $destin.'/'.$file.'/'.$thumb, '0', 0);
 										}
 									}
 									// dol_delete_dir($origin.'/'.$file);
@@ -4539,7 +4539,7 @@ function migrate_user_photospath2()
 								if (!dol_is_file($destin.'/'.$file)) {
 									//print $origin.'/'.$file.' -> '.$destin.'/'.$file.'<br>'."\n";
 									print '.';
-									dol_copy($origin.'/'.$file, $destin.'/'.$file, 0, 0);
+									dol_copy($origin.'/'.$file, $destin.'/'.$file, '0', 0);
 								}
 							}
 						}

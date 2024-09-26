@@ -23,7 +23,7 @@
  * Copyright (C) 2018       Josep Lluis Amador      <joseplluis@lliuretic.cat>
  * Copyright (C) 2023		Joachim Kueter			<git-jk@bloxera.com>
  * Copyright (C) 2023		Nick Fragoulis
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -293,7 +293,7 @@ class Form
 					// So we convert & into &amp; so a string like 'a &lt; <b>b</b><br>é<br>&lt;script&gt;alert('X');&lt;script&gt;' stay a correct html and is not converted by textarea component when wysiwyg is off.
 					$valuetoshow = str_replace('&', '&amp;', $valuetoshow);
 					$ret .= dol_htmlwithnojs(dol_string_neverthesehtmltags($valuetoshow, array('textarea')));
-					$ret .= '</textarea>';
+					$ret .= '</textarea><div class="clearboth"></div>';
 				} elseif ($typeofdata == 'day' || $typeofdata == 'datepicker') {
 					$addnowlink = empty($moreoptions['addnowlink']) ? 0 : $moreoptions['addnowlink'];
 					$adddateof = empty($moreoptions['adddateof']) ? '' : $moreoptions['adddateof'];
@@ -443,7 +443,7 @@ class Form
 
 			$result .= '<!-- Widget for translation -->' . "\n";
 			$result .= '<div class="inline-block paddingleft image-' . $object->element . '-' . $fieldname . '">';
-			$s = img_picto($langs->trans("ShowOtherLanguages"), 'language', '', false, 0, 0, '', 'fa-15 editfieldlang');
+			$s = img_picto($langs->trans("ShowOtherLanguages"), 'language', '', 0, 0, 0, '', 'fa-15 editfieldlang');
 			$result .= $s;
 			$result .= '</div>';
 
@@ -2684,7 +2684,7 @@ class Form
 			if ((int) $warehouseId > 0) {
 				$urloption .= '&warehouseid=' . (int) $warehouseId;
 			}
-			$out .= ajax_autocompleter((string) $selected, $htmlname, DOL_URL_ROOT . '/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 1, $ajaxoptions);
+			$out .= ajax_autocompleter((string) $selected, $htmlname, DOL_URL_ROOT . '/product/ajax/products.php', $urloption, getDolGlobalInt('PRODUIT_USE_SEARCH_TO_SELECT'), getDolGlobalInt('PRODUCT_SEARCH_AUTO_SELECT_IF_ONLY_ONE', 1), $ajaxoptions);
 
 			if (isModEnabled('variants') && is_array($selected_combinations)) {
 				// Code to automatically insert with javascript the select of attributes under the select of product
@@ -2949,7 +2949,7 @@ class Form
 		}
 
 		//Price by customer
-		if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') && !empty($socid)) {
+		if ((getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && !empty($socid)) {
 			$sql .= ', pcp.rowid as idprodcustprice, pcp.price as custprice, pcp.price_ttc as custprice_ttc,';
 			$sql .= ' pcp.price_base_type as custprice_base_type, pcp.tva_tx as custtva_tx, pcp.default_vat_code as custdefault_vat_code, pcp.ref_customer as custref';
 			$selectFields .= ", idprodcustprice, custprice, custprice_ttc, custprice_base_type, custtva_tx, custdefault_vat_code, custref";
@@ -3007,7 +3007,7 @@ class Form
 		}
 
 		//Price by customer
-		if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') && !empty($socid)) {
+		if ((getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && !empty($socid)) {
 			$sql .= " LEFT JOIN  " . $this->db->prefix() . "product_customer_price as pcp ON pcp.fk_soc=" . ((int) $socid) . " AND pcp.fk_product=p.rowid";
 		}
 		// Units
@@ -3087,7 +3087,7 @@ class Form
 				if (getDolGlobalInt('MAIN_MULTILANGS')) {
 					$sql .= " OR pl.label LIKE '" . $this->db->escape($prefix . $crit) . "%'";
 				}
-				if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') && !empty($socid)) {
+				if ((getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && !empty($socid)) {
 					$sql .= " OR pcp.ref_customer LIKE '" . $this->db->escape($prefix . $crit) . "%'";
 				}
 				if (getDolGlobalString('PRODUCT_AJAX_SEARCH_ON_DESCRIPTION')) {
@@ -3223,7 +3223,9 @@ class Form
 							$objp->price_ttc = price2num($objp->price_ttc, 'MU');
 						}
 					}
-
+					if (getDolGlobalInt('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES') && !empty($objp->custprice)) {
+						$price_level = '';
+					}
 					$this->constructProductListOption($objp, $opt, $optJson, $price_level, $selected, $hidepriceinlabel, $filterkey);
 					// Add new entry
 					// "key" value of json key array is used by jQuery automatically as selected value
@@ -3445,7 +3447,7 @@ class Form
 		$labeltoshowprice = '';
 		$labeltoshowhtmlprice = '';
 		// If we need a particular price level (from 1 to n)
-		if (empty($hidepriceinlabel) && $price_level >= 1 && (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES'))) {
+		if (empty($hidepriceinlabel) && $price_level >= 1 && (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES'))) {
 			$sql = "SELECT price, price_ttc, price_base_type, tva_tx, default_vat_code";
 			$sql .= " FROM " . $this->db->prefix() . "product_price";
 			$sql .= " WHERE fk_product = " . ((int) $objp->rowid);
@@ -3516,7 +3518,7 @@ class Form
 		}
 
 		// Price by customer
-		if (empty($hidepriceinlabel) && getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
+		if (empty($hidepriceinlabel) && (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES'))) {
 			if (!empty($objp->idprodcustprice)) {
 				$found = 1;
 
@@ -3678,20 +3680,20 @@ class Form
 	/**
 	 *    Return list of suppliers products
 	 *
-	 * @param int $socid Id of supplier thirdparty (0 = no filter)
-	 * @param string $selected Product price preselected (must be 'id' in product_fournisseur_price or 'idprod_IDPROD')
-	 * @param string $htmlname Name of HTML select
-	 * @param string $filtertype Filter on product type (''=nofilter, 0=product, 1=service)
-	 * @param string $filtre Generic filter. Data must not come from user input.
-	 * @param string $filterkey Filter of produdts
-	 * @param int $statut -1=Return all products, 0=Products not on buy, 1=Products on buy
-	 * @param int $outputmode 0=HTML select string, 1=Array
-	 * @param int $limit Limit of line number
-	 * @param int $alsoproductwithnosupplierprice 1=Add also product without supplier prices
-	 * @param string $morecss Add more CSS
-	 * @param int $showstockinlist Show stock information (slower).
-	 * @param string $placeholder Placeholder
-	 * @return array|string                Array of keys for json or HTML component
+	 * @param int 		$socid 				Id of supplier thirdparty (0 = no filter)
+	 * @param string 	$selected 			Product price preselected (must be 'id' in product_fournisseur_price or 'idprod_IDPROD')
+	 * @param string 	$htmlname 			Name of HTML select
+	 * @param string 	$filtertype 		Filter on product type (''=nofilter, 0=product, 1=service)
+	 * @param string 	$filtre 			Generic filter. Data must not come from user input.
+	 * @param string 	$filterkey 			Filter of produdts
+	 * @param int 		$statut 			-1=Return all products, 0=Products not on buy, 1=Products on buy
+	 * @param int 		$outputmode 		0=HTML select string, 1=Array
+	 * @param int 		$limit 				Limit of line number
+	 * @param int 		$alsoproductwithnosupplierprice 1=Add also product without supplier prices
+	 * @param string 	$morecss 			Add more CSS
+	 * @param int 		$showstockinlist 	Show stock information (slower).
+	 * @param string 	$placeholder 		Placeholder
+	 * @return array|string                	Array of keys for json or HTML component
 	 */
 	public function select_produits_fournisseurs_list($socid, $selected = '', $htmlname = 'productid', $filtertype = '', $filtre = '', $filterkey = '', $statut = -1, $outputmode = 0, $limit = 100, $alsoproductwithnosupplierprice = 0, $morecss = '', $showstockinlist = 0, $placeholder = '')
 	{
@@ -3712,9 +3714,7 @@ class Form
 
 		$sql = "SELECT p.rowid, p.ref, p.label, p.price, p.duration, p.fk_product_type, p.stock, p.tva_tx as tva_tx_sale, p.default_vat_code as default_vat_code_sale,";
 		$sql .= " pfp.ref_fourn, pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.quantity, pfp.remise_percent, pfp.remise, pfp.unitprice, pfp.barcode";
-		if (isModEnabled('multicurrency')) {
-			$sql .= ", pfp.multicurrency_code, pfp.multicurrency_unitprice";
-		}
+		$sql .= ", pfp.multicurrency_code, pfp.multicurrency_unitprice";
 		$sql .= ", pfp.fk_supplier_price_expression, pfp.fk_product, pfp.tva_tx, pfp.default_vat_code, pfp.fk_soc, s.nom as name";
 		$sql .= ", pfp.supplier_reputation";
 		// if we use supplier description of the products
@@ -6267,18 +6267,19 @@ class Form
 			print '<form method="POST" action="' . $page . '">';
 			print '<input type="hidden" name="action" value="setmulticurrencyrate">';
 			print '<input type="hidden" name="token" value="' . newToken() . '">';
-			print '<input type="text" class="maxwidth100" name="' . $htmlname . '" value="' . (!empty($rate) ? price(price2num($rate, 'CU')) : 1) . '" /> ';
-			print '<select name="calculation_mode">';
+			print '<input type="text" class="maxwidth75" name="' . $htmlname . '" value="' . (!empty($rate) ? price(price2num($rate, 'CU')) : 1) . '" /> ';
+			print '<select name="calculation_mode" id="calculation_mode">';
 			print '<option value="1">Change ' . $langs->trans("PriceUHT") . ' of lines</option>';
 			print '<option value="2">Change ' . $langs->trans("PriceUHTCurrency") . ' of lines</option>';
 			print '</select> ';
+			print ajax_combobox("calculation_mode");
 			print '<input type="submit" class="button smallpaddingimp valignmiddle" value="' . $langs->trans("Modify") . '">';
 			print '</form>';
 		} else {
 			if (!empty($rate)) {
 				print price($rate, 1, $langs, 0, 0);
 				if ($currency && $rate != 1) {
-					print ' &nbsp; (' . price($rate, 1, $langs, 0, 0) . ' ' . $currency . ' = 1 ' . $conf->currency . ')';
+					print ' &nbsp; <span class="opacitymedium">(' . price($rate, 1, $langs, 0, 0) . ' ' . $currency . ' = 1 ' . $conf->currency . ')</span>';
 				}
 			} else {
 				print 1;
@@ -8671,7 +8672,7 @@ class Form
 	 * @param string 				$htmlname 			Name of html select area. Try to start name with "multi" or "search_multi" if this is a multiselect
 	 * @param array{label:string,data-html:string,disable?:int<0,1>,css?:string}	$array 	Array like array(key => value) or array(key=>array('label'=>..., 'data-...'=>..., 'disabled'=>..., 'css'=>...))
 	 * @param string|string[]|int 	$id					Preselected key or array of preselected keys for multiselect. Use 'ifone' to autoselect record if there is only one record.
-	 * @param int<0,1>|string 		$show_empty 		0 no empty value allowed, 1 or string to add an empty value into list (If 1: key is -1 and value is '' or '&nbsp;', If placeholder string: key is -1 and value is the string), <0 to add an empty value with key that is this value.
+	 * @param int<0,1>|string 		$show_empty 		0 no empty value allowed, 1 or string to add an empty value into list (If 1: key is -1 and value is '' or '&nbsp;', If 'Placeholder string': key is -1 and value is the string), <0 to add an empty value with key that is this value.
 	 * @param int<0,1>				$key_in_label 		1 to show key into label with format "[key] value"
 	 * @param int<0,1>				$value_as_key 		1 to use value as key
 	 * @param string 				$moreparam 			Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container

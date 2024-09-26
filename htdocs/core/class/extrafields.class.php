@@ -45,7 +45,7 @@ class ExtraFields
 	public $db;
 
 	/**
-	 * @var array<string,array{label:array<string,string>,type:array<string,string>,size:array<string,string>,default:array<string,string>,computed:array<string,string>,unique:array<string,int>,required:array<string,int>,param:array<string,mixed>,perms:array<string,mixed[]>,list:array<string,int|string>,pos:array<string,int>,totalizable:array<string,int>,help:array<string,string>,printable:array<string,int>,enabled:array<string,int>,langfile:array<string,string>,css:array<string,string>,csslist:array<string,string>,cssview:array<string,string>,hidden:array<string,int>,mandatoryfieldsofotherentities:array<string,string>,loaded?:int,count:int}> New array to store extrafields definition  Note: count set as present to avoid static analysis notices
+	 * @var array<string,array{label:array<string,string>,type:array<string,string>,size:array<string,string>,default:array<string,string>,computed:array<string,string>,unique:array<string,int>,required:array<string,int>,param:array<string,mixed>,perms:array<string,mixed>,list:array<string,int|string>,pos:array<string,int>,totalizable:array<string,int>,help:array<string,string>,printable:array<string,int>,enabled:array<string,int>,langfile:array<string,string>,css:array<string,string>,csslist:array<string,string>,cssview:array<string,string>,hidden:array<string,int>,mandatoryfieldsofotherentities:array<string,string>,loaded?:int,count:int}> New array to store extrafields definition  Note: count set as present to avoid static analysis notices
 	 */
 	public $attributes = array();
 
@@ -150,6 +150,7 @@ class ExtraFields
 
 		$result = 0;
 
+		// Clean properties
 		if ($type == 'separator' || $type == 'separate') {
 			$type = 'separate';
 			$unique = 0;
@@ -160,6 +161,11 @@ class ExtraFields
 		}
 		if ($elementtype == 'contact') {
 			$elementtype = 'socpeople';
+		}
+		// If property has a computed formula, it must not be a required or unique field
+		if (!empty($computed)) {
+			$required = 0;
+			$unique = 0;
 		}
 
 		// Create field into database except for separator type which is not stored in database
@@ -665,6 +671,7 @@ class ExtraFields
 		}
 
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/", $attrname)) {
+			// Clean parameters
 			if ($type == 'boolean') {
 				$typedb = 'int';
 				$lengthdb = '1';
@@ -712,6 +719,12 @@ class ExtraFields
 				$lengthdb = $length;
 			}
 			$field_desc = array('type' => $typedb, 'value' => $lengthdb, 'null' => ($required ? 'NOT NULL' : 'NULL'), 'default' => $default);
+
+			// If property has a computed formula, it must not be a required or unique field
+			if (!empty($computed)) {
+				$required = 0;
+				$unique = 0;
+			}
 
 			if (is_object($hookmanager)) {
 				$hookmanager->initHooks(array('extrafieldsdao'));
