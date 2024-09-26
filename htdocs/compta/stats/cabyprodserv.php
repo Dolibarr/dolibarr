@@ -425,7 +425,7 @@ print_liste_field_titre(
 
 			// Quantity
 			print '<td class="right">';
-			print $qty[$key];
+			print $qty[$key] == round($qty[$key]) ? $qty[$key] : price($qty[$key]);
 			print '</td>';
 
 			// Percent;
