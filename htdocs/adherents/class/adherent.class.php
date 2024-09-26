@@ -2248,7 +2248,7 @@ class Adherent extends CommonObject
 	 * getTooltipContentArray
 	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
-	 * @return array{picto:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -3288,12 +3288,9 @@ class Adherent extends CommonObject
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
-		if (property_exists($this, 'type')) {
-			$return .= '<br><span class="info-box-label opacitymedium">'.$this->type.'</span>';
-		}
-		if (method_exists($this, 'getmorphylib')) {
-			$return .= '<br><span class="info-box-label">'.$this->getmorphylib('', 2).'</span>';
-		}
+		$return .= '<br><span class="info-box-label paddingright">'.$this->getmorphylib('', 2).'</span>';
+		$return .= '<span class="info-box-label opacitymedium">'.$this->type.'</span>';
+
 		if (method_exists($this, 'getLibStatut')) {
 			$return .= '<br><div class="info-box-status paddingtop">';
 			$return .= $this->LibStatut($this->status, $this->need_subscription, $this->datefin, 5);

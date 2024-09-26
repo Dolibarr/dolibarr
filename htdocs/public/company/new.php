@@ -62,6 +62,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/cunits.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formadmin.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/public.lib.php';
 // Init vars
 $backtopage = GETPOST('backtopage', 'alpha');
 $action = GETPOST('action', 'aZ09');
@@ -92,9 +93,10 @@ $hookmanager->initHooks(array('publicnewmembercard', 'globalcard'));
 
 $extrafields = new ExtraFields($db);
 
-
 $objectsoc = new Societe($db);
 $user->loadDefaultValues();
+
+$extrafields->fetch_name_optionals_label($objectsoc->table_element); // fetch optionals attributes and labels
 
 
 /**
@@ -216,26 +218,33 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 		$societe = new Societe($db);
 
 		$societe->name = GETPOST('name', 'alphanohtml');
-
 		$societe->client = GETPOSTINT('client') ? GETPOSTINT('client') : $societe->client;
-
 		$societe->address	= GETPOST('address', 'alphanohtml');
-
 		$societe->country_id				= GETPOSTINT('country_id');
-
 		$societe->phone					= GETPOST('phone', 'alpha');
-
 		$societe->fax				= GETPOST('fax', 'alpha');
-
 		$societe->email					= trim(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL));
-
 		$societe->client = 2 ; // our client is a prospect
-
 		$societe->code_client		= '-1';
-
 		$societe->name_alias = GETPOST('name_alias', 'alphanohtml');
+		$societe->note_private = GETPOST('note_private', 'alphanohtml');
 
-		$societe->note_private = GETPOST('note_private');
+		// Fill array 'array_options' with data from add form
+		/*
+		$extrafields->fetch_name_optionals_label($societe->table_element);
+		$ret = $extrafields->setOptionalsFromPost(null, $societe);
+		if ($ret < 0) {
+			$error++;
+			$errmsg .= $societe->error;
+		}
+		*/
+
+		$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 200);
+
+		if (checkNbPostsForASpeceificIp($societe, $nb_post_max) <= 0) {
+			$error++;
+			$errmsg .= implode('<br>', $societe->errors);
+		}
 
 		if (!$error) {
 			$result = $societe->create($user);
@@ -296,7 +305,6 @@ $form = new Form($db);
 $formcompany = new FormCompany($db);
 $adht = new AdherentType($db);
 $formadmin = new FormAdmin($db);
-$extrafields->fetch_name_optionals_label($objectsoc->table_element); // fetch optionals attributes and labels
 
 
 llxHeaderVierge($langs->trans("ContactUs"));
@@ -434,9 +442,14 @@ print '<tr>';
 print '<td class="tdtop">' . $langs->trans("Comments") . '</td>';
 print '<td class="tdtop"><textarea name="note_private" id="note_private" wrap="soft" class="quatrevingtpercent" rows="' . ROWS_3 . '">' . dol_escape_htmltag(GETPOST('note_private', 'restricthtml'), 0, 1) . '</textarea></td>';
 print '</tr>' . "\n";
+
+
+// Other attributes
+$parameters['tpl_context'] = 'public';	// define template context to public
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
+
+
 // TODO Move this into generic feature.
-
-
 
 // Display Captcha code if is enabled
 if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA')) {

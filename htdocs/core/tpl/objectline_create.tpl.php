@@ -1305,7 +1305,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 		<?php if (!getDolGlobalString('DISPLAY_MARK_RATES')) { ?>
 			jQuery("#np_markRate, .np_markRate").hide();
 		<?php } ?>
-		jQuery(#units, #title_units").hide();
+		jQuery("#units, #title_units").hide();
 		jQuery("#buying_price").show();
 		jQuery('#trlinefordates, .divlinefordates').show();
 	}

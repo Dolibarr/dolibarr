@@ -165,7 +165,7 @@ if (GETPOST('buttonreset', 'alpha')) {
 
 if ($action == 'install' && $allowonlineinstall) {
 	$error = 0;
-
+	$modulenameval = '';
 	// $original_file should match format module_modulename-x.y[.z].zip
 	$original_file = basename($_FILES["fileinstall"]["name"]);
 	$original_file = preg_replace('/\s*\(\d+\)\.zip$/i', '.zip', $original_file);
@@ -282,8 +282,20 @@ if ($action == 'install' && $allowonlineinstall) {
 	}
 
 	if (!$error) {
-		$message = $langs->trans("SetupIsReadyForUse", DOL_URL_ROOT.'/admin/modules.php?mainmenu=home', $langs->transnoentitiesnoconv("Home").' - '.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("Modules"));
+		$searchParams = array(
+			'search_keyword' => $modulenameval,
+			'search_status' => '-1',
+			'search_nature' => '-1',
+			'search_version' => '-1'
+		);
+		$queryString = http_build_query($searchParams);
+		$redirectUrl = DOL_URL_ROOT . '/admin/modules.php?' . $queryString;
+
+		$message = $langs->trans("SetupIsReadyForUse", $redirectUrl, $langs->transnoentitiesnoconv("Home").' - '.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("Modules"));
+
 		setEventMessages($message, null, 'warnings');
+		header('Location: ' . $redirectUrl);
+		exit;
 	}
 } elseif ($action == 'install' && !$allowonlineinstall) {
 	httponly_accessforbidden("You try to bypass the protection to disallow deployment of an external module. Hack attempt ?");
@@ -690,7 +702,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	if (!empty($moreforfilter)) {
 		print $moreforfilter;
 		$parameters = array();
-		$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
+		$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 	}
 
@@ -905,7 +917,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 				if (method_exists($objMod, 'alreadyUsed') && $objMod->alreadyUsed()) {
 					$codeenabledisable .= $langs->trans("Used");
 				} else {
-					$codeenabledisable .= img_picto($langs->trans("Required"), 'switch_on', '', false, 0, 0, '', 'opacitymedium valignmiddle');
+					$codeenabledisable .= img_picto($langs->trans("Required"), 'switch_on', '', 0, 0, 0, '', 'opacitymedium valignmiddle');
 					//print $langs->trans("Required");
 				}
 				if (isModEnabled('multicompany') && $user->entity) {
@@ -964,20 +976,20 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 						} else {
 							if (preg_match('/^([^@]+)@([^@]+)$/i', $urlpage, $regs)) {
 								$urltouse = dol_buildpath('/'.$regs[2].'/admin/'.$regs[1], 1);
-								$codetoconfig .= '<a href="'.$urltouse.(preg_match('/\?/', $urltouse) ? '&' : '?').'save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"', false, 0, 0, '', 'fa-15').'</a>';
+								$codetoconfig .= '<a href="'.$urltouse.(preg_match('/\?/', $urltouse) ? '&' : '?').'save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"', 0, 0, 0, '', 'fa-15').'</a>';
 							} else {
 								$urltouse = $urlpage;
-								$codetoconfig .= '<a href="'.$urltouse.(preg_match('/\?/', $urltouse) ? '&' : '?').'save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"', false, 0, 0, '', 'fa-15').'</a>';
+								$codetoconfig .= '<a href="'.$urltouse.(preg_match('/\?/', $urltouse) ? '&' : '?').'save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"', 0, 0, 0, '', 'fa-15').'</a>';
 							}
 						}
 					}
 				} elseif (preg_match('/^([^@]+)@([^@]+)$/i', (string) $objMod->config_page_url, $regs)) {
-					$codetoconfig .= '<a class="valignmiddle" href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1], 1).'?save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"', false, 0, 0, '', 'fa-15').'</a>';
+					$codetoconfig .= '<a class="valignmiddle" href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1], 1).'?save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"', 0, 0, 0, '', 'fa-15').'</a>';
 				} else {
-					$codetoconfig .= '<a class="valignmiddle" href="'.((string) $objMod->config_page_url).'?save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"', false, 0, 0, '', 'fa-15').'</a>';
+					$codetoconfig .= '<a class="valignmiddle" href="'.((string) $objMod->config_page_url).'?save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"', 0, 0, 0, '', 'fa-15').'</a>';
 				}
 			} else {
-				$codetoconfig .= img_picto($langs->trans("NothingToSetup"), "setup", 'class="opacitytransp" style="padding-right: 6px"', false, 0, 0, '', 'fa-15');
+				$codetoconfig .= img_picto($langs->trans("NothingToSetup"), "setup", 'class="opacitytransp" style="padding-right: 6px"', 0, 0, 0, '', 'fa-15');
 			}
 		} else { // Module not yet activated
 			// Set $codeenabledisable

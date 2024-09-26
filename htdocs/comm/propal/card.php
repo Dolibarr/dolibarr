@@ -705,7 +705,7 @@ if (empty($reshook)) {
 							$ret = $object->fetch($id); // Reload to get new records
 							$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 							if ($result < 0) {
-								dol_print_error($db, $result);
+								dol_print_error($db, $object->error, $object->errors);
 							}
 						}
 
@@ -930,7 +930,10 @@ if (empty($reshook)) {
 
 	// Go back to draft
 	if ($action == 'modif' && $usercancreate) {
-		$object->setDraft($user);
+		$result = $object->setDraft($user);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 
 		if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 			// Define output language
@@ -1137,8 +1140,51 @@ if (empty($reshook)) {
 				$price_min_ttc = $prod->price_min_ttc;
 				$price_base_type = $prod->price_base_type;
 
-				// If price per segment
-				if (getDolGlobalString('PRODUIT_MULTIPRICES') && $object->thirdparty->price_level) {
+				if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
+					// If price per customer
+					require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
+					$prodcustprice = new ProductCustomerPrice($db);
+					$filter = array('t.fk_product' => $prod->id, 't.fk_soc' => $object->thirdparty->id);
+
+					// If a price per customer exist
+					$pricebycustomerexist = false;
+					$result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
+					if ($result) {
+						// If there is some prices specific to the customer
+						if (count($prodcustprice->lines) > 0) {
+							$pricebycustomerexist = true;
+							$pu_ht = price($prodcustprice->lines[0]->price);
+							$pu_ttc = price($prodcustprice->lines[0]->price_ttc);
+							$price_min =  price($prodcustprice->lines[0]->price_min);
+							$price_min_ttc =  price($prodcustprice->lines[0]->price_min_ttc);
+							$price_base_type = $prodcustprice->lines[0]->price_base_type;
+							/*$tva_tx = ($prodcustprice->lines[0]->default_vat_code ? $prodcustprice->lines[0]->tva_tx.' ('.$prodcustprice->lines[0]->default_vat_code.' )' : $prodcustprice->lines[0]->tva_tx);
+							if ($prodcustprice->lines[0]->default_vat_code && !preg_match('/\(.*\)/', $tva_tx)) {
+								$tva_tx .= ' ('.$prodcustprice->lines[0]->default_vat_code.')';
+							}
+							$tva_npr = $prodcustprice->lines[0]->recuperableonly;
+							if (empty($tva_tx)) {
+								$tva_npr = 0;
+							}*/
+						}
+					}
+
+					if ( !$pricebycustomerexist && $object->thirdparty->price_level) { // If price per segment
+						$pu_ht = $prod->multiprices[$object->thirdparty->price_level];
+						$pu_ttc = $prod->multiprices_ttc[$object->thirdparty->price_level];
+						$price_min = $prod->multiprices_min[$object->thirdparty->price_level];
+						$price_min_ttc = $prod->multiprices_min_ttc[$object->thirdparty->price_level];
+						$price_base_type = $prod->multiprices_base_type[$object->thirdparty->price_level];
+						if (getDolGlobalString('PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL')) {  // using this option is a bug. kept for backward compatibility
+							if (isset($prod->multiprices_tva_tx[$object->thirdparty->price_level])) {
+								$tva_tx = $prod->multiprices_tva_tx[$object->thirdparty->price_level];
+							}
+							if (isset($prod->multiprices_recuperableonly[$object->thirdparty->price_level])) {
+								$tva_npr = $prod->multiprices_recuperableonly[$object->thirdparty->price_level];
+							}
+						}
+					}
+				} elseif (getDolGlobalString('PRODUIT_MULTIPRICES') && $object->thirdparty->price_level) { // If price per segment
 					$pu_ht = $prod->multiprices[$object->thirdparty->price_level];
 					$pu_ttc = $prod->multiprices_ttc[$object->thirdparty->price_level];
 					$price_min = $prod->multiprices_min[$object->thirdparty->price_level];
@@ -1276,7 +1322,7 @@ if (empty($reshook)) {
 				if (!empty($product_desc) && getDolGlobalString('MAIN_NO_CONCAT_DESCRIPTION')) {
 					$desc = $product_desc;
 				} else {
-					$desc = dol_concatdesc($desc, $product_desc, '', getDolGlobalString('MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION'));
+					$desc = dol_concatdesc($desc, $product_desc, false, getDolGlobalString('MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION') ? true : false);
 				}
 
 				// Add custom code and origin country into description
@@ -1549,11 +1595,11 @@ if (empty($reshook)) {
 			$label = ((GETPOST('update_label') && GETPOST('product_label')) ? GETPOST('product_label') : '');
 
 			$price_min = $product->price_min;
-			if (getDolGlobalString('PRODUIT_MULTIPRICES') && !empty($object->thirdparty->price_level)) {
+			if ((getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && !empty($object->thirdparty->price_level)) {
 				$price_min = $product->multiprices_min[$object->thirdparty->price_level];
 			}
 			$price_min_ttc = $product->price_min_ttc;
-			if (getDolGlobalString('PRODUIT_MULTIPRICES') && !empty($object->thirdparty->price_level)) {
+			if ((getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && !empty($object->thirdparty->price_level)) {
 				$price_min_ttc = $product->multiprices_min_ttc[$object->thirdparty->price_level];
 			}
 
@@ -2583,7 +2629,7 @@ if ($action == 'create') {
 			$filtercreditnote = "fk_facture_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS RECEIVED)%')";
 		}
 
-		print '<tr><td>'.$langs->trans('Discounts').'</td><td>';
+		print '<tr><td class="titlefieldmax45">'.$langs->trans('Discounts').'</td><td>';
 
 		$absolute_discount = $soc->getAvailableDiscounts('', $filterabsolutediscount);
 		$absolute_creditnote = $soc->getAvailableDiscounts('', $filtercreditnote);
@@ -2682,7 +2728,7 @@ if ($action == 'create') {
 
 		// Payment mode
 		print '<tr class="field_mode_reglement_id">';
-		print '<td class="titlefieldcreate">';
+		print '<td>';
 		print '<table class="nobordernopadding centpercent"><tr><td>';
 		print $langs->trans('PaymentMode');
 		print '</td>';
@@ -2709,7 +2755,7 @@ if ($action == 'create') {
 
 		// Delivery delay
 		print '<tr class="fielddeliverydelay"><td>';
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
+		print '<table class="nobordernopadding centpercent"><tr><td>';
 		if (isModEnabled('order')) {
 			print $form->textwithpicto($langs->trans('AvailabilityPeriod'), $langs->trans('AvailabilityPeriod').' ('.$langs->trans('AfterOrder').')');
 		} else {
@@ -2755,7 +2801,7 @@ if ($action == 'create') {
 			$langs->load('stocks');
 			require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 			$formproduct = new FormProduct($db);
-			print '<tr class="field_warehouse_id"><td class="titlefieldcreate">';
+			print '<tr class="field_warehouse_id"><td>';
 			$editenable = $usercancreate;
 			print $form->editfieldkey("Warehouse", 'warehouse', '', $object, $editenable);
 			print '</td><td class="valuefieldcreate">';
@@ -2785,56 +2831,6 @@ if ($action == 'create') {
 		}
 		print '</td>';
 		print '</tr>';
-
-		// Multicurrency
-		if (isModEnabled("multicurrency")) {
-			// Multicurrency code
-			print '<tr>';
-			print '<td>';
-			print '<table class="nobordernopadding" width="100%"><tr><td>';
-			print $form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0);
-			print '</td>';
-			if ($action != 'editmulticurrencycode' && $object->statut == $object::STATUS_DRAFT && $usercancreate) {
-				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmulticurrencycode&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1).'</a></td>';
-			}
-			print '</tr></table>';
-			print '</td><td class="valuefield">';
-			if ($object->statut == $object::STATUS_DRAFT && $action == 'editmulticurrencycode' && $usercancreate) {
-				$form->form_multicurrency_code($_SERVER['PHP_SELF'].'?id='.$object->id, $object->multicurrency_code, 'multicurrency_code');
-			} else {
-				$form->form_multicurrency_code($_SERVER['PHP_SELF'].'?id='.$object->id, $object->multicurrency_code, 'none');
-			}
-			print '</td></tr>';
-
-			// Multicurrency rate
-			if ($object->multicurrency_code != $conf->currency || $object->multicurrency_tx != 1) {
-				print '<tr>';
-				print '<td>';
-				print '<table class="nobordernopadding" width="100%"><tr>';
-				print '<td>';
-				print $form->editfieldkey('CurrencyRate', 'multicurrency_tx', '', $object, 0);
-				print '</td>';
-				if ($action != 'editmulticurrencyrate' && $object->statut == $object::STATUS_DRAFT && $object->multicurrency_code && $object->multicurrency_code != $conf->currency && $usercancreate) {
-					print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmulticurrencyrate&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1).'</a></td>';
-				}
-				print '</tr></table>';
-				print '</td><td class="valuefield">';
-				if ($object->statut == $object::STATUS_DRAFT && ($action == 'editmulticurrencyrate' || $action == 'actualizemulticurrencyrate') && $usercancreate) {
-					if ($action == 'actualizemulticurrencyrate') {
-						list($object->fk_multicurrency, $object->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($object->db, $object->multicurrency_code);
-					}
-					$form->form_multicurrency_rate($_SERVER['PHP_SELF'].'?id='.$object->id, $object->multicurrency_tx, 'multicurrency_tx', $object->multicurrency_code);
-				} else {
-					$form->form_multicurrency_rate($_SERVER['PHP_SELF'].'?id='.$object->id, $object->multicurrency_tx, 'none', $object->multicurrency_code);
-					if ($object->statut == $object::STATUS_DRAFT && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
-						print '<div class="inline-block"> &nbsp; &nbsp; &nbsp; &nbsp; ';
-						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=actualizemulticurrencyrate">'.$langs->trans("ActualizeCurrency").'</a>';
-						print '</div>';
-					}
-				}
-				print '</td></tr>';
-			}
-		}
 
 		if ($soc->outstanding_limit) {
 			// Outstanding Bill
@@ -2869,20 +2865,22 @@ if ($action == 'create') {
 			print '</tr>';
 		}
 
-		$tmparray = $object->getTotalWeightVolume();
-		$totalWeight = isset($tmparray['weight']) ? $tmparray['weight'] : 0;
-		$totalVolume = isset($tmparray['volume']) ? $tmparray['volume'] : 0;
-		if ($totalWeight) {
-			print '<tr><td>'.$langs->trans("CalculatedWeight").'</td>';
-			print '<td class="valuefield">';
-			print showDimensionInBestUnit($totalWeight, 0, "weight", $langs, isset($conf->global->MAIN_WEIGHT_DEFAULT_ROUND) ? $conf->global->MAIN_WEIGHT_DEFAULT_ROUND : -1, isset($conf->global->MAIN_WEIGHT_DEFAULT_UNIT) ? $conf->global->MAIN_WEIGHT_DEFAULT_UNIT : 'no', 0);
-			print '</td></tr>';
-		}
-		if ($totalVolume) {
-			print '<tr><td>'.$langs->trans("CalculatedVolume").'</td>';
-			print '<td class="valuefield">';
-			print showDimensionInBestUnit($totalVolume, 0, "volume", $langs, isset($conf->global->MAIN_VOLUME_DEFAULT_ROUND) ? $conf->global->MAIN_VOLUME_DEFAULT_ROUND : -1, isset($conf->global->MAIN_VOLUME_DEFAULT_UNIT) ? $conf->global->MAIN_VOLUME_DEFAULT_UNIT : 'no', 0);
-			print '</td></tr>';
+		if (!getDolGlobalString('PROPOSAL_HIDE_CALCULATED_WEIGHT_VOLUME')) {
+			$tmparray = $object->getTotalWeightVolume();
+			$totalWeight = isset($tmparray['weight']) ? $tmparray['weight'] : 0;
+			$totalVolume = isset($tmparray['volume']) ? $tmparray['volume'] : 0;
+			if ($totalWeight) {
+				print '<tr><td>'.$langs->trans("CalculatedWeight").'</td>';
+				print '<td class="valuefield">';
+				print showDimensionInBestUnit($totalWeight, 0, "weight", $langs, getDolGlobalInt('MAIN_WEIGHT_DEFAULT_ROUND', -1), getDolGlobalString('MAIN_WEIGHT_DEFAULT_UNIT', 'no'), 1);
+				print '</td></tr>';
+			}
+			if ($totalVolume) {
+				print '<tr><td>'.$langs->trans("CalculatedVolume").'</td>';
+				print '<td class="valuefield">';
+				print showDimensionInBestUnit($totalVolume, 0, "volume", $langs, getDolGlobalInt('MAIN_VOLUME_DEFAULT_ROUND', -1), getDolGlobalString('MAIN_VOLUME_DEFAULT_UNIT', 'no'), 1);
+				print '</td></tr>';
+			}
 		}
 
 		// Incoterms
@@ -2918,6 +2916,8 @@ if ($action == 'create') {
 
 		print '<table class="border tableforfield centpercent">';
 
+		include DOL_DOCUMENT_ROOT.'/core/tpl/object_currency_amount.tpl.php';
+
 		print '<tr>';
 		print '<td class="titlefieldmiddle">' . $langs->trans('AmountHT') . '</td>';
 		print '<td class="nowrap amountcard right">' . price($object->total_ht, 0, $langs, 1, -1, -1, $conf->currency) . '</td>';
@@ -2927,7 +2927,7 @@ if ($action == 'create') {
 		print '</tr>';
 
 		print '<tr>';
-		print '<td class="titlefieldmiddle">' . $langs->trans('AmountVAT') . '</td>';
+		print '<td>' . $langs->trans('AmountVAT') . '</td>';
 		print '<td class="nowrap amountcard right">' . price($object->total_tva, 0, $langs, 1, -1, -1, $conf->currency) . '</td>';
 		if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
 			print '<td class="nowrap amountcard right">' . price($object->multicurrency_total_tva, 0, $langs, 1, -1, -1, $object->multicurrency_code) . '</td>';
@@ -2936,7 +2936,7 @@ if ($action == 'create') {
 
 		if ($mysoc->localtax1_assuj == "1" || $object->total_localtax1 != 0) {
 			print '<tr>';
-			print '<td class="titlefieldmiddle">' . $langs->transcountry("AmountLT1", $mysoc->country_code) . '</td>';
+			print '<td>' . $langs->transcountry("AmountLT1", $mysoc->country_code) . '</td>';
 			print '<td class="nowrap amountcard right">' . price($object->total_localtax1, 0, $langs, 1, -1, -1, $conf->currency) . '</td>';
 			if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
 				$object->multicurrency_total_localtax1 = price2num($object->total_localtax1 * $object->multicurrency_tx, 'MT');
