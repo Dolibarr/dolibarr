@@ -57,7 +57,7 @@ restrictedArea($user, 'bookmark', $object);
 
 $permissiontoread = $user->hasRight('bookmark', 'lire');
 $permissiontoadd = $user->hasRight('bookmark', 'creer');
-$permissiontodelete = $user->hasRight('bookmark', 'supprimer');
+$permissiontodelete = ($user->hasRight('bookmark', 'supprimer') || ($permissiontoadd && $object->fk_user == $user->id));	// Can always delete its own bookmark
 
 
 
@@ -326,7 +326,7 @@ if ($id > 0 && !preg_match('/^add/i', $action)) {
 
 	// Buttons
 
-	print "<div class=\"tabsAction\">\n";
+	print '<div class="tabsAction">'."\n";
 
 	// Edit
 	if ($permissiontoadd && $action != 'edit') {
