@@ -692,6 +692,8 @@ class Mo extends CommonObject
 	 */
 	public function createProduction(User $user, $notrigger = true)
 	{
+		global $langs;
+
 		$error = 0;
 		$role = "";
 
