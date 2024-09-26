@@ -415,41 +415,41 @@ abstract class ActionsCardCommon
 		// phpcs:enable
 		global $langs, $mysoc;
 
-		$this->object->id = GETPOST("socid");
+		$this->object->id = GETPOSTINT("socid");
 		$this->object->name = GETPOST("nom");
 		$this->object->prefix_comm			= GETPOST("prefix_comm");
-		$this->object->client = GETPOST("client");
+		$this->object->client = GETPOSTINT("client");
 		$this->object->code_client			= GETPOST("code_client");
-		$this->object->fournisseur			= GETPOST("fournisseur");
+		$this->object->fournisseur			= GETPOSTINT("fournisseur");
 		$this->object->code_fournisseur = GETPOST("code_fournisseur");
 		$this->object->address = GETPOST("address");
 		$this->object->zip = GETPOST("zipcode");
 		$this->object->town					= GETPOST("town");
 		$this->object->country_id = GETPOST("country_id") ? GETPOST("country_id") : $mysoc->country_id;
-		$this->object->state_id = GETPOST("state_id");
+		$this->object->state_id = GETPOSTINT("state_id");
 		$this->object->phone				= GETPOST("phone");
 		$this->object->phone_mobile			= GETPOST("phone_mobile");
 		$this->object->fax					= GETPOST("fax");
 		$this->object->email				= GETPOST("email", 'alphawithlgt');
 		$this->object->url					= GETPOST("url");
-		$this->object->capital				= GETPOST("capital");
+		$this->object->capital				= (float) GETPOST("capital");
 		$this->object->idprof1				= GETPOST("idprof1");
 		$this->object->idprof2				= GETPOST("idprof2");
 		$this->object->idprof3				= GETPOST("idprof3");
 		$this->object->idprof4				= GETPOST("idprof4");
-		$this->object->typent_id = GETPOST("typent_id");
-		$this->object->effectif_id = GETPOST("effectif_id");
+		$this->object->typent_id = GETPOSTINT("typent_id");
+		$this->object->effectif_id = GETPOSTINT("effectif_id");
 		$this->object->barcode				= GETPOST("barcode");
-		$this->object->forme_juridique_code = GETPOST("forme_juridique_code");
+		$this->object->forme_juridique_code = GETPOSTINT("forme_juridique_code");
 		$this->object->default_lang			= GETPOST("default_lang");
-		$this->object->commercial_id		= GETPOST("commercial_id");
+		$this->object->commercial_id		= GETPOSTINT("commercial_id");
 
 		$this->object->tva_assuj = GETPOST("assujtva_value") ? GETPOST("assujtva_value") : 1;
 		$this->object->tva_intra = GETPOST("tva_intra");
 
 		//Local Taxes
-		$this->object->localtax1_assuj		= GETPOST("localtax1assuj_value");
-		$this->object->localtax2_assuj		= GETPOST("localtax2assuj_value");
+		$this->object->localtax1_assuj		= GETPOSTINT("localtax1assuj_value");
+		$this->object->localtax2_assuj		= GETPOSTINT("localtax2assuj_value");
 
 		// We set country_id, and country_code label of the chosen country
 		if ($this->object->country_id) {
