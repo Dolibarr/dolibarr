@@ -2626,7 +2626,7 @@ if ($action == 'create') {
 			$filtercreditnote = "fk_facture_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS RECEIVED)%')";
 		}
 
-		print '<tr><td>'.$langs->trans('Discounts').'</td><td>';
+		print '<tr><td class="titlefieldmax45">'.$langs->trans('Discounts').'</td><td>';
 
 		$absolute_discount = $soc->getAvailableDiscounts('', $filterabsolutediscount);
 		$absolute_creditnote = $soc->getAvailableDiscounts('', $filtercreditnote);
@@ -2725,7 +2725,7 @@ if ($action == 'create') {
 
 		// Payment mode
 		print '<tr class="field_mode_reglement_id">';
-		print '<td class="titlefieldcreate">';
+		print '<td>';
 		print '<table class="nobordernopadding centpercent"><tr><td>';
 		print $langs->trans('PaymentMode');
 		print '</td>';
@@ -2752,7 +2752,7 @@ if ($action == 'create') {
 
 		// Delivery delay
 		print '<tr class="fielddeliverydelay"><td>';
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
+		print '<table class="nobordernopadding centpercent"><tr><td>';
 		if (isModEnabled('order')) {
 			print $form->textwithpicto($langs->trans('AvailabilityPeriod'), $langs->trans('AvailabilityPeriod').' ('.$langs->trans('AfterOrder').')');
 		} else {
@@ -2798,7 +2798,7 @@ if ($action == 'create') {
 			$langs->load('stocks');
 			require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 			$formproduct = new FormProduct($db);
-			print '<tr class="field_warehouse_id"><td class="titlefieldcreate">';
+			print '<tr class="field_warehouse_id"><td>';
 			$editenable = $usercancreate;
 			print $form->editfieldkey("Warehouse", 'warehouse', '', $object, $editenable);
 			print '</td><td class="valuefieldcreate">';
@@ -2828,6 +2828,90 @@ if ($action == 'create') {
 		}
 		print '</td>';
 		print '</tr>';
+
+		if ($soc->outstanding_limit) {
+			// Outstanding Bill
+			print '<tr><td>';
+			print $langs->trans('OutstandingBill');
+			print '</td><td class="valuefield">';
+			$arrayoutstandingbills = $soc->getOutstandingBills();
+			print($arrayoutstandingbills['opened'] > $soc->outstanding_limit ? img_warning() : '');
+			print price($arrayoutstandingbills['opened']).' / ';
+			print price($soc->outstanding_limit, 0, $langs, 1, - 1, - 1, $conf->currency);
+			print '</td>';
+			print '</tr>';
+		}
+
+		if (getDolGlobalString('BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL') && isModEnabled("bank")) {
+			// Bank Account
+			print '<tr><td>';
+			print '<table width="100%" class="nobordernopadding"><tr><td>';
+			print $langs->trans('BankAccount');
+			print '</td>';
+			if ($action != 'editbankaccount' && $usercancreate) {
+				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
+			}
+			print '</tr></table>';
+			print '</td><td class="valuefield">';
+			if ($action == 'editbankaccount') {
+				$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account', 1);
+			} else {
+				$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
+			}
+			print '</td>';
+			print '</tr>';
+		}
+
+		if (!getDolGlobalString('PROPOSAL_HIDE_CALCULATED_WEIGHT_VOLUME')) {
+			$tmparray = $object->getTotalWeightVolume();
+			$totalWeight = isset($tmparray['weight']) ? $tmparray['weight'] : 0;
+			$totalVolume = isset($tmparray['volume']) ? $tmparray['volume'] : 0;
+			if ($totalWeight) {
+				print '<tr><td>'.$langs->trans("CalculatedWeight").'</td>';
+				print '<td class="valuefield">';
+				print showDimensionInBestUnit($totalWeight, 0, "weight", $langs, getDolGlobalInt('MAIN_WEIGHT_DEFAULT_ROUND', -1), getDolGlobalString('MAIN_WEIGHT_DEFAULT_UNIT', 'no'), 1);
+				print '</td></tr>';
+			}
+			if ($totalVolume) {
+				print '<tr><td>'.$langs->trans("CalculatedVolume").'</td>';
+				print '<td class="valuefield">';
+				print showDimensionInBestUnit($totalVolume, 0, "volume", getDolGlobalInt('MAIN_VOLUME_DEFAULT_ROUND', -1), getDolGlobalString('MAIN_VOLUME_DEFAULT_UNIT', 'no'), 1);
+				print '</td></tr>';
+			}
+		}
+
+		// Incoterms
+		if (isModEnabled('incoterm')) {
+			print '<tr><td>';
+			print '<table width="100%" class="nobordernopadding"><tr><td>';
+			print $langs->trans('IncotermLabel');
+			print '<td><td class="right">';
+			if ($action != 'editincoterm' && $usercancreate && $caneditfield) {
+				print '<a class="editfielda" href="'.DOL_URL_ROOT.'/comm/propal/card.php?id='.$object->id.'&action=editincoterm&token='.newToken().'">'.img_edit().'</a>';
+			} else {
+				print '&nbsp;';
+			}
+			print '</td></tr></table>';
+			print '</td>';
+			print '<td class="valuefield">';
+			if ($action == 'editincoterm' && $usercancreate && $caneditfield) {
+				print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms) ? $object->location_incoterms : ''), $_SERVER['PHP_SELF'].'?id='.$object->id);
+			} else {
+				print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
+			}
+			print '</td></tr>';
+		}
+
+		// Other attributes
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
+
+		print '</table>';
+
+		print '</div>';
+		print '<div class="fichehalfright">';
+		print '<div class="underbanner clearboth"></div>';
+
+		print '<table class="border tableforfield centpercent">';
 
 		// Multicurrency
 		if (isModEnabled("multicurrency")) {
@@ -2878,88 +2962,6 @@ if ($action == 'create') {
 				print '</td></tr>';
 			}
 		}
-
-		if ($soc->outstanding_limit) {
-			// Outstanding Bill
-			print '<tr><td>';
-			print $langs->trans('OutstandingBill');
-			print '</td><td class="valuefield">';
-			$arrayoutstandingbills = $soc->getOutstandingBills();
-			print($arrayoutstandingbills['opened'] > $soc->outstanding_limit ? img_warning() : '');
-			print price($arrayoutstandingbills['opened']).' / ';
-			print price($soc->outstanding_limit, 0, $langs, 1, - 1, - 1, $conf->currency);
-			print '</td>';
-			print '</tr>';
-		}
-
-		if (getDolGlobalString('BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL') && isModEnabled("bank")) {
-			// Bank Account
-			print '<tr><td>';
-			print '<table width="100%" class="nobordernopadding"><tr><td>';
-			print $langs->trans('BankAccount');
-			print '</td>';
-			if ($action != 'editbankaccount' && $usercancreate) {
-				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
-			}
-			print '</tr></table>';
-			print '</td><td class="valuefield">';
-			if ($action == 'editbankaccount') {
-				$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account', 1);
-			} else {
-				$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
-			}
-			print '</td>';
-			print '</tr>';
-		}
-
-		$tmparray = $object->getTotalWeightVolume();
-		$totalWeight = isset($tmparray['weight']) ? $tmparray['weight'] : 0;
-		$totalVolume = isset($tmparray['volume']) ? $tmparray['volume'] : 0;
-		if ($totalWeight) {
-			print '<tr><td>'.$langs->trans("CalculatedWeight").'</td>';
-			print '<td class="valuefield">';
-			print showDimensionInBestUnit($totalWeight, 0, "weight", $langs, isset($conf->global->MAIN_WEIGHT_DEFAULT_ROUND) ? $conf->global->MAIN_WEIGHT_DEFAULT_ROUND : -1, isset($conf->global->MAIN_WEIGHT_DEFAULT_UNIT) ? $conf->global->MAIN_WEIGHT_DEFAULT_UNIT : 'no', 0);
-			print '</td></tr>';
-		}
-		if ($totalVolume) {
-			print '<tr><td>'.$langs->trans("CalculatedVolume").'</td>';
-			print '<td class="valuefield">';
-			print showDimensionInBestUnit($totalVolume, 0, "volume", $langs, isset($conf->global->MAIN_VOLUME_DEFAULT_ROUND) ? $conf->global->MAIN_VOLUME_DEFAULT_ROUND : -1, isset($conf->global->MAIN_VOLUME_DEFAULT_UNIT) ? $conf->global->MAIN_VOLUME_DEFAULT_UNIT : 'no', 0);
-			print '</td></tr>';
-		}
-
-		// Incoterms
-		if (isModEnabled('incoterm')) {
-			print '<tr><td>';
-			print '<table width="100%" class="nobordernopadding"><tr><td>';
-			print $langs->trans('IncotermLabel');
-			print '<td><td class="right">';
-			if ($action != 'editincoterm' && $usercancreate && $caneditfield) {
-				print '<a class="editfielda" href="'.DOL_URL_ROOT.'/comm/propal/card.php?id='.$object->id.'&action=editincoterm&token='.newToken().'">'.img_edit().'</a>';
-			} else {
-				print '&nbsp;';
-			}
-			print '</td></tr></table>';
-			print '</td>';
-			print '<td class="valuefield">';
-			if ($action == 'editincoterm' && $usercancreate && $caneditfield) {
-				print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms) ? $object->location_incoterms : ''), $_SERVER['PHP_SELF'].'?id='.$object->id);
-			} else {
-				print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
-			}
-			print '</td></tr>';
-		}
-
-		// Other attributes
-		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
-
-		print '</table>';
-
-		print '</div>';
-		print '<div class="fichehalfright">';
-		print '<div class="underbanner clearboth"></div>';
-
-		print '<table class="border tableforfield centpercent">';
 
 		print '<tr>';
 		print '<td class="titlefieldmiddle">' . $langs->trans('AmountHT') . '</td>';
