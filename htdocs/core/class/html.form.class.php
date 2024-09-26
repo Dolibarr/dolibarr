@@ -3680,20 +3680,20 @@ class Form
 	/**
 	 *    Return list of suppliers products
 	 *
-	 * @param int $socid Id of supplier thirdparty (0 = no filter)
-	 * @param string $selected Product price preselected (must be 'id' in product_fournisseur_price or 'idprod_IDPROD')
-	 * @param string $htmlname Name of HTML select
-	 * @param string $filtertype Filter on product type (''=nofilter, 0=product, 1=service)
-	 * @param string $filtre Generic filter. Data must not come from user input.
-	 * @param string $filterkey Filter of produdts
-	 * @param int $statut -1=Return all products, 0=Products not on buy, 1=Products on buy
-	 * @param int $outputmode 0=HTML select string, 1=Array
-	 * @param int $limit Limit of line number
-	 * @param int $alsoproductwithnosupplierprice 1=Add also product without supplier prices
-	 * @param string $morecss Add more CSS
-	 * @param int $showstockinlist Show stock information (slower).
-	 * @param string $placeholder Placeholder
-	 * @return array|string                Array of keys for json or HTML component
+	 * @param int 		$socid 				Id of supplier thirdparty (0 = no filter)
+	 * @param string 	$selected 			Product price preselected (must be 'id' in product_fournisseur_price or 'idprod_IDPROD')
+	 * @param string 	$htmlname 			Name of HTML select
+	 * @param string 	$filtertype 		Filter on product type (''=nofilter, 0=product, 1=service)
+	 * @param string 	$filtre 			Generic filter. Data must not come from user input.
+	 * @param string 	$filterkey 			Filter of produdts
+	 * @param int 		$statut 			-1=Return all products, 0=Products not on buy, 1=Products on buy
+	 * @param int 		$outputmode 		0=HTML select string, 1=Array
+	 * @param int 		$limit 				Limit of line number
+	 * @param int 		$alsoproductwithnosupplierprice 1=Add also product without supplier prices
+	 * @param string 	$morecss 			Add more CSS
+	 * @param int 		$showstockinlist 	Show stock information (slower).
+	 * @param string 	$placeholder 		Placeholder
+	 * @return array|string                	Array of keys for json or HTML component
 	 */
 	public function select_produits_fournisseurs_list($socid, $selected = '', $htmlname = 'productid', $filtertype = '', $filtre = '', $filterkey = '', $statut = -1, $outputmode = 0, $limit = 100, $alsoproductwithnosupplierprice = 0, $morecss = '', $showstockinlist = 0, $placeholder = '')
 	{

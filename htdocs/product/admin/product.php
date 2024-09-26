@@ -674,7 +674,7 @@ print '</tr>';
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("NumberOfProductShowInSelect").'</td>';
-print '<td class="right"><input size="3" type="text" class="flat" name="value_PRODUIT_LIMIT_SIZE" value="' . getDolGlobalString('PRODUIT_LIMIT_SIZE').'"></td>';
+print '<td class="right"><input size="3" type="text" class="flat" name="value_PRODUIT_LIMIT_SIZE" value="' . getDolGlobalString('PRODUIT_LIMIT_SIZE', 1000).'"></td>';
 print '</tr>';
 
 
