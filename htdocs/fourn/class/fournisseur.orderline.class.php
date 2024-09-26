@@ -32,7 +32,7 @@
  */
 
 /**
- *	\file       htdocs/fourn/class/fournisseur.commande.ligne.class.php
+ *	\file       htdocs/fourn/class/fournisseur.orderline.class.php
  *	\ingroup    fournisseur,commande
  *	\brief      File of class to manage supplier order lines
  */
@@ -527,14 +527,14 @@ class CommandeFournisseurLigne extends CommonOrderLine
 			return -1;
 		}
 
-		$sql1 = 'UPDATE '.$this->db->prefix()."commandedet SET fk_commandefourndet = NULL WHERE rowid=".((int) $this->id);
+		$sql1 = 'UPDATE '.$this->db->prefix()."commandedet SET fk_commandefourndet = NULL WHERE fk_commandefourndet = ".((int) $this->id);
 		$resql = $this->db->query($sql1);
 		if (!$resql) {
 			$this->db->rollback();
 			return -1;
 		}
 
-		$sql2 = 'DELETE FROM '.$this->db->prefix()."commande_fournisseurdet WHERE rowid=".((int) $this->id);
+		$sql2 = 'DELETE FROM '.$this->db->prefix()."commande_fournisseurdet WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql2);

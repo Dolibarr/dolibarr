@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
-if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
+if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
 
 	$prodcustprice = new ProductCustomerPrice($db);
@@ -258,7 +258,7 @@ print dol_get_fiche_end();
 
 
 
-if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
+if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 	$prodcustprice = new ProductCustomerPrice($db);
 
 	$sortfield = GETPOST('sortfield', 'aZ09comma');

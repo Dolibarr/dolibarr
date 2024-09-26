@@ -242,7 +242,7 @@ if ($action == 'add' ) {	// Test on permission not required here (anonymous acti
 	}
 
 	if (!$error) {
-		$dateend = dol_time_plus_duree(GETPOSTINT("datetimebooking"), GETPOST("durationbooking"), 'i');
+		$dateend = dol_time_plus_duree(GETPOSTINT("datetimebooking"), GETPOSTINT("durationbooking"), 'i');
 
 		$actioncomm->label = $langs->trans("BookcalBookingTitle");
 		$actioncomm->type = 'AC_RDV';

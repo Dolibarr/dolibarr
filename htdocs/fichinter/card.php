@@ -868,6 +868,8 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 $formfile = new FormFile($db);
+$formcontract = null;
+$formproject = null;
 if (isModEnabled('contract')) {
 	$formcontract = new FormContract($db);
 }
@@ -1015,7 +1017,7 @@ if ($action == 'create') {
 		}
 
 		// Contract
-		if (isModEnabled('contract')) {
+		if (isModEnabled('contract') && is_object($formcontract)) {
 			$langs->load("contracts");
 			print '<tr><td>'.$langs->trans("Contract").'</td><td>';
 			$numcontrat = $formcontract->select_contract($soc->id, GETPOSTINT('contratid'), 'contratid', 0, 1, 1);
@@ -1367,14 +1369,14 @@ if ($action == 'create') {
 		print '<table class="nobordernopadding centpercent"><tr><td>';
 		print $langs->trans('Contract');
 		print '</td>';
-		if ($action != 'contrat') {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=contrat&amp;id='.$object->id.'">';
+		if ($action != 'editcontract') {
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editcontract&id='.$object->id.'">';
 			print img_edit($langs->trans('SetContract'), 1);
 			print '</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td>';
-		if ($action == 'contrat') {
+		if ($action == 'editcontract') {
 			$formcontract = new FormContract($db);
 			$formcontract->formSelectContract($_SERVER["PHP_SELF"].'?id='.$object->id, $object->socid, $object->fk_contrat, 'contratid', 0, 1, 1);
 		} else {
@@ -1726,6 +1728,7 @@ if ($action == 'create') {
 	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
 	// modified by hook
 	if (empty($reshook)) {
+		$params = array();
 		if ($user->socid == 0) {
 			if ($action != 'editdescription' && ($action != 'presend')) {
 				// Validate
@@ -1775,15 +1778,18 @@ if ($action == 'create') {
 					print '</div>';
 				}
 
+				$arrayofcreatebutton = array();
 				// Proposal
 				if (isModEnabled("service") && isModEnabled("propal") && $object->statut > Fichinter::STATUS_DRAFT) {
 					$langs->load("propal");
 					if ($object->statut < Fichinter::STATUS_BILLED) {
-						if ($user->hasRight('propal', 'creer')) {
-							print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/propal/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("AddProp").'</a></div>';
-						} else {
-							print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("AddProp").'</a></div>';
-						}
+						$arrayofcreatebutton[] = array(
+							'url' => '/comm/propal/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid,
+							'label' => $langs->trans('AddProp'),
+							'lang' => 'propal',
+							'perm' => $user->hasRight('propal', 'creer'),
+							'enabled' => true,
+						);
 					}
 				}
 
@@ -1791,11 +1797,13 @@ if ($action == 'create') {
 				if (isModEnabled('invoice') && $object->statut > Fichinter::STATUS_DRAFT) {
 					$langs->load("bills");
 					if ($object->statut < Fichinter::STATUS_BILLED) {
-						if ($user->hasRight('facture', 'creer')) {
-							print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("AddBill").'</a></div>';
-						} else {
-							print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("AddBill").'</a></div>';
-						}
+						$arrayofcreatebutton[] = array(
+							'url' => '/compta/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid,
+							'label' => $langs->trans('AddBill'),
+							'lang' => 'bills',
+							'perm' => $user->hasRight('facture', 'creer'),
+							'enabled' => true,
+						);
 					}
 
 					if (getDolGlobalString('FICHINTER_CLASSIFY_BILLED')) {    // Option deprecated. In a future, billed must be managed with a dedicated field to 0 or 1
@@ -1805,6 +1813,10 @@ if ($action == 'create') {
 							print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=classifyunbilled&token='.newToken().'">'.$langs->trans("InterventionClassifyUnBilled").'</a></div>';
 						}
 					}
+				}
+
+				if (count($arrayofcreatebutton)) {
+					print dolGetButtonAction('', $langs->trans("Create"), 'default', $arrayofcreatebutton, '', true, $params);
 				}
 
 				// Sign

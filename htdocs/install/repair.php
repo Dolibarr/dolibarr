@@ -239,7 +239,7 @@ if ($ok && GETPOST('standard', 'alpha')) {
 		$name = substr($file, 0, dol_strlen($file) - 4);
 
 		// Run sql script
-		$ok = run_sql($dir.$file, 0, '', 1);
+		$ok = run_sql($dir.$file, 0, 0, 1);
 	}
 }
 

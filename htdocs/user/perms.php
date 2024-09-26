@@ -6,7 +6,8 @@
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -604,7 +605,7 @@ if ($result) {
 				print '<td class="center">'.img_picto($langs->trans("AdministratorDesc"), 'star').'</td>';
 			} else {
 				print '<td class="center nowrap">';
-				print img_picto($langs->trans("Active"), 'switch_on', '', false, 0, 0, '', 'opacitymedium');
+				print img_picto($langs->trans("Active"), 'switch_on', '', 0, 0, 0, '', 'opacitymedium');
 				print '</td>';
 			}
 			print '<td>';
@@ -619,7 +620,7 @@ if ($result) {
 				print '</a></td>';
 			} else {
 				print '<td class="center nowrap">';
-				print img_picto($langs->trans("Active"), 'switch_on', '', false, 0, 0, '', 'opacitymedium');
+				print img_picto($langs->trans("Active"), 'switch_on', '', 0, 0, 0, '', 'opacitymedium');
 				print '</td>';
 			}
 			print '<td>';
@@ -628,7 +629,7 @@ if ($result) {
 			print '<!-- permsgroupbyentitypluszero -->';
 			if (in_array($obj->id, $permsgroupbyentitypluszero)) {	// Permission granted by group
 				print '<td class="center nowrap">';
-				print img_picto($langs->trans("Active"), 'switch_on', '', false, 0, 0, '', 'opacitymedium');
+				print img_picto($langs->trans("Active"), 'switch_on', '', 0, 0, 0, '', 'opacitymedium');
 				//print img_picto($langs->trans("Active"), 'tick');
 				print '</td>';
 				print '<td>';
@@ -644,7 +645,7 @@ if ($result) {
 					print '</a></td>';
 				} else {
 					print '<td class="center nowrap">';
-					print img_picto($langs->trans("Disabled"), 'switch_off', '', false, 0, 0, '', 'opacitymedium');
+					print img_picto($langs->trans("Disabled"), 'switch_off', '', 0, 0, 0, '', 'opacitymedium');
 					print '</td>';
 				}
 				print '<td>';
@@ -661,7 +662,7 @@ if ($result) {
 				print '</a></td>';
 			} else {
 				print '<td>';
-				print img_picto($langs->trans("Disabled"), 'switch_off', '', false, 0, 0, '', 'opacitymedium');
+				print img_picto($langs->trans("Disabled"), 'switch_off', '', 0, 0, 0, '', 'opacitymedium');
 				print '</td>';
 			}
 			print '<td class="center">';

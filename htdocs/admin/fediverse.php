@@ -312,8 +312,9 @@ $(document).ready(function() {
     });
 });
 </script>';
+
 // Methods oauth
-print '<td>'.$langs->trans("MAIN_MAIL_SMTPS_AUTH_TYPE").'</td>';
+print '<tr><td>'.$langs->trans("MAIN_MAIL_SMTPS_AUTH_TYPE").'</td>';
 print '<td>';
 print '<input type="radio" id="radio_oauth" name="'.$vartosmtpstype.'" value="XOAUTH2"'.(getDolGlobalString($vartosmtpstype) == 'XOAUTH2' ? ' checked' : '').(isModEnabled('oauth') ? '' : ' disabled').'>';
 print '<label for="radio_oauth">'.$form->textwithpicto($langs->trans("UseOauth"), $langs->trans("OauthNotAvailableForAllAndHadToBeCreatedBefore")).'</label>';
@@ -351,7 +352,7 @@ if (!isModEnabled('multicompany') || ($user->admin && !$user->entity)) {
 print '</td>';
 print '</tr>';
 
-print '<tr class="oddeven"><td>';
+print '<tr class="oddeven" id="add_param_row"><td>';
 print $form->textwithpicto($langs->trans("Others"), $langs->trans("AddMoreParams"));
 print '</td><td><button type="button" id="addParamButton">'.img_picto($langs->trans("AddMoreParams"), 'add', 'pictofixedwidth').'</button></td>';
 print '<td>Token : ****<br>Cookie : ****</td>';
@@ -372,14 +373,38 @@ print '</div>';
 print $form->buttonsSaveCancel("Add", '');
 print '<input type="hidden" name="action" value="add">';
 print '<script type="text/javascript">
-	document.getElementById("addParamButton").addEventListener("click", function() {
-		var container = document.getElementById("additionalParams");
-		var index = container.children.length;
-		var div = document.createElement("div");
-		div.className = "pair-group";
-		div.innerHTML = "<input type=\'text\' class=\'flat minwidth300\' name=\'param_name[]\' placeholder=\''.$langs->trans("ParamName").'\' class=\'flat\' /> <input type=\'text\' class=\'flat minwidth300\' name=\'param_value[]\' placeholder=\''.$langs->trans("ParamValue").'\' class=\'flat\' />";
-		container.appendChild(div);
-	});
+    $(document).ready(function() {
+        function toggleOAuthServiceDisplay() {
+            if ($("#radio_oauth").is(":checked")) {
+                $("#oauth_service_div").show();  // Afficher le sélecteur OAuth
+            } else {
+                $("#oauth_service_div").hide();  // Cacher le sélecteur OAuth
+            }
+        }
+
+        function toggleAddParamRow() {
+            if ($("#radio_oauth").is(":checked")) {
+                $("#add_param_row").hide();  // Cacher toute la ligne
+            } else {
+                $("#add_param_row").show();  // Afficher toute la ligne
+            }
+        }
+
+        toggleOAuthServiceDisplay();
+        toggleAddParamRow();
+
+        $("input[name=\"'.$vartosmtpstype.'\"]").change(function() {
+            toggleOAuthServiceDisplay();
+            toggleAddParamRow();
+        });
+
+        $("#addParamButton").click(function() {
+            var container = $("#additionalParams");
+            var index = container.children().length;
+            var newParam = $("<div class=\'pair-group\'><input type=\'text\' class=\'flat minwidth300\' name=\'param_name[]\' placeholder=\''.$langs->trans("ParamName").'\' class=\'flat\' /> <input type=\'text\' class=\'flat minwidth300\' name=\'param_value[]\' placeholder=\''.$langs->trans("ParamValue").'\' class=\'flat\' /></div>");
+            container.append(newParam);
+        });
+    });
 </script>';
 print '</form>';
 
