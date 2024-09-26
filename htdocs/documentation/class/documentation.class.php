@@ -70,7 +70,7 @@ class Documentation
 	 *    Output header + body
 	 *
 	 * @param string $title Title of page
-	 * @return null
+	 * @return void
 	 */
 	public function docHeader($title = '')
 	{
@@ -94,7 +94,7 @@ class Documentation
 
 	/**
 	 *    Output close body + html
-	 * @return null
+	 * @return void
 	 */
 	public function docFooter()
 	{
@@ -108,7 +108,7 @@ class Documentation
 
 	/**
 	 *    Output sidebar
-	 * @return null
+	 * @return void
 	 */
 	public function showSidebar()
 	{
@@ -137,7 +137,7 @@ class Documentation
 	 *
 	 * @param array $menu  $this->menu or submenus
 	 * @param int   $level level of menu
-	 * @return null
+	 * @return void
 	 */
 	private function displayMenu($menu, $level = 0)
 	{
@@ -165,7 +165,7 @@ class Documentation
 
 	/**
 	 *    Output breadcrumb
-	 * @return null
+	 * @return void
 	 */
 	public function showBreadcrumb()
 	{
@@ -196,7 +196,7 @@ class Documentation
 	 *    Output a View Code area
 	 *
 	 * @param array $lines Lines of code to show
-	 * @return null
+	 * @return void
 	 */
 	public function showCode($lines = array())
 	{
