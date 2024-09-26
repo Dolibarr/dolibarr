@@ -91,7 +91,10 @@ if (isModEnabled('multicurrency')) {
 			$form->form_multicurrency_rate($_SERVER['PHP_SELF'].'?id='.$object->id, $object->multicurrency_tx, 'none', $object->multicurrency_code);
 			if ($object->status == $object::STATUS_DRAFT && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
 				print '<div class="inline-block"> &nbsp; &nbsp; &nbsp; &nbsp; ';
-				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=actualizemulticurrencyrate&token='.newToken().'" title="'.$langs->trans("ActualizeCurrency").'">'.$langs->trans("ActualizeCurrency").'</a>';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=actualizemulticurrencyrate&token='.newToken().'" title="'.$langs->trans("ActualizeCurrency").'">';
+				//print $langs->trans("ActualizeCurrency");
+				print img_picto($langs->trans("ActualizeCurrency"), 'undo');
+				print '</a>';
 				print '</div>';
 			}
 		}
