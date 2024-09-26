@@ -418,7 +418,7 @@ if ($resql) {
 		if (($nbtotalofrecords <= $num) && $totalamount_requested != (float) $object->amount) {
 			$langs->load("errors");
 			// Warning, amount of file (%s) differs from the sum of lines (%s)
-			print img_warning($langs->trans("WarningAmountOfFileDiffersFromSumOfLines", price($object->amount), price($totalamount_requested)));
+			print img_warning($langs->trans("WarningAmountOfFileDiffersFromSumOfLines", price((float) $object->amount), price($totalamount_requested)));
 		}
 		print price($totalamount_requested);
 		print "</td>\n";
