@@ -917,6 +917,7 @@ foreach ($listofreferent as $key => $value) {
 					$defaultvat = get_default_tva($mysoc, $mysoc);
 					$reg = array();
 					if (preg_replace('/^(\d+\.)\s\(.*\)/', $defaultvat, $reg)) {
+						// @phan-suppress-next-line PhanTypeInvalidDimOffset
 						$defaultvat = $reg[1];
 					}
 					$total_ttc_by_line = price2num($total_ht_by_line * (1 + ((float) $defaultvat / 100)), 'MT');

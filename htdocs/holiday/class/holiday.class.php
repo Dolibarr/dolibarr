@@ -746,9 +746,9 @@ class Holiday extends CommonObject
 	/**
 	 *	Validate leave request
 	 *
-	 *  @param	User	$user        	User that validate
-	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *  @return int         			Return integer <0 if KO, >0 if OK
+	 *  @param	User		$user        	User that validate
+	 *  @param  int<0,1>	$notrigger	    0=launch triggers after, 1=disable triggers
+	 *  @return int							Return integer <0 if KO, >0 if OK
 	 */
 	public function validate($user = null, $notrigger = 0)
 	{
@@ -871,8 +871,8 @@ class Holiday extends CommonObject
 	/**
 	 *	Approve leave request
 	 *
-	 *  @param	User	$user        	User that approve
-	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
+	 *  @param	User		$user        	User that approve
+	 *  @param  int<0,1>	$notrigger	    0=launch triggers after, 1=disable triggers
 	 *  @return int         			Return integer <0 if KO, >0 if OK
 	 */
 	public function approve($user = null, $notrigger = 0)
@@ -998,8 +998,8 @@ class Holiday extends CommonObject
 	/**
 	 *	Update database
 	 *
-	 *  @param	User	$user        	User that modify
-	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
+	 *  @param	User		$user        	User that modify
+	 *  @param  int<0,1>	$notrigger	    0=launch triggers after, 1=disable triggers
 	 *  @return int         			Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
@@ -1268,7 +1268,7 @@ class Holiday extends CommonObject
 	 * 	@param 	int			$fk_user				Id user
 	 *  @param	integer	    $timestamp				Time stamp date for a day (YYYY-MM-DD) without hours  (= 12:00AM in english and not 12:00PM that is 12:00)
 	 *  @param	string		$status					Filter on holiday status. '-1' = no filter.
-	 * 	@return array								array('morning'=> ,'afternoon'=> ), Boolean is true if user is available for day timestamp.
+	 * 	@return array{morning_reason?:string,afternoon_reason?:string}		array('morning'=> ,'afternoon'=> ), Boolean is true if user is available for day timestamp.
 	 *  @see verifDateHolidayCP()
 	 */
 	public function verifDateHolidayForTimestamp($fk_user, $timestamp, $status = '-1')
@@ -1685,7 +1685,7 @@ class Holiday extends CommonObject
 
 					dol_syslog("We update leave type id ".$userCounter['type']." for user id ".$userCounter['rowid'], LOG_DEBUG);
 
-					$nowHoliday = $userCounter['nb_holiday'];
+					$nowHoliday = (float) $userCounter['nb_holiday'];
 					$newSolde = $nowHoliday + $nbDaysToAdd;
 
 					// We add a log for each user
@@ -1794,7 +1794,7 @@ class Holiday extends CommonObject
 	 *
 	 *  @param	int		$user_id    User ID
 	 *  @param	int		$fk_type	Filter on type
-	 *  @return float|null     		Balance of annual leave if OK, null if KO.
+	 *  @return ?float	     		Balance of annual leave if OK, null if KO.
 	 */
 	public function getCPforUser($user_id, $fk_type = 0)
 	{
@@ -1821,12 +1821,12 @@ class Holiday extends CommonObject
 	}
 
 	/**
-	 *    Get list of Users or list of vacation balance.
+	 *	Get list of Users or list of vacation balance.
 	 *
-	 *    @param      boolean			$stringlist	    If true return a string list of id. If false, return an array with detail.
-	 *    @param      boolean   		$type			If true, read Dolibarr user list, if false, return vacation balance list.
-	 *    @param      string            $filters        Filters. Warning: This must not contains data from user input.
-	 *    @return     array|string|int      			Return an array
+	 *	@param	boolean		$stringlist	    If true return a string list of id. If false, return an array with detail.
+	 *	@param	boolean		$type			If true, read Dolibarr user list, if false, return vacation balance list.
+	 *	@param	string		$filters        Filters. Warning: This must not contains data from user input.
+	 *	@return array{rowid:int,id:int,name:string,lastname:string,firstname:string,gender:string,status:string,employee:string,photo:string,fk_user:int,type?:int,nb_holiday?:int}|string|int<-1,-1>	Return an array
 	 */
 	public function fetchUsers($stringlist = true, $type = true, $filters = '')
 	{
@@ -2481,7 +2481,7 @@ class Holiday extends CommonObject
 	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array{string,mixed}		$arraydata				Label of holiday type (if known)
+	 *  @param		?array{labeltype:string,selected?:int<0,1>,nbopenedday?:int}	$arraydata		Label of holiday type (if known)
 	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)

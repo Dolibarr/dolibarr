@@ -1008,10 +1008,10 @@ class Account extends CommonObject
 	/**
 	 *  Update BBAN (RIB) account fields
 	 *
-	 *  @param	User|null	$user       Object user making update
-	 *  @return	int						Return integer <0 if KO, >0 if OK
+	 *  @param	?User	$user       Object user making update
+	 *  @return	int					Return integer <0 if KO, >0 if OK
 	 */
-	public function update_bban(User $user = null)
+	public function update_bban(?User $user = null)
 	{
 		// phpcs:enable
 		global $conf, $langs;
@@ -1186,11 +1186,11 @@ class Account extends CommonObject
 	/**
 	 *  Delete bank account from database
 	 *
-	 *  @param	User|null	$user		User deleting
-	 *	@param  int			$notrigger	1=Disable triggers
+	 *  @param	?User		$user		User deleting
+	 *	@param  int<0,1>	$notrigger	1=Disable triggers
 	 *  @return int      	       		Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user = null, $notrigger = 0)
+	public function delete(?User $user = null, $notrigger = 0)
 	{
 		$error = 0;
 
@@ -2344,11 +2344,11 @@ class AccountLine extends CommonObjectLine
 	/**
 	 * Delete bank transaction record
 	 *
-	 * @param	User|null	$user		User object that delete
-	 * @param	int			$notrigger	1=Does not execute triggers, 0= execute triggers
+	 * @param	?User		$user		User object that delete
+	 * @param	int<0,1>	$notrigger	1=Does not execute triggers, 0= execute triggers
 	 * @return	int 					Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user = null, $notrigger = 0)
+	public function delete(?User $user = null, $notrigger = 0)
 	{
 		$nbko = 0;
 
@@ -2428,10 +2428,10 @@ class AccountLine extends CommonObjectLine
 	/**
 	 * 	Delete bank line records
 	 *
-	 *	@param	User|null	$user	User object that delete
+	 *	@param	?User		$user	User object that delete
 	 *  @return	int 				Return integer <0 if KO, >0 if OK
 	 */
-	public function delete_urls(User $user = null)
+	public function delete_urls(?User $user = null)
 	{
 		// phpcs:enable
 		$nbko = 0;

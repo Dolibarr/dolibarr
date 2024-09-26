@@ -180,7 +180,7 @@ class FormMail extends Form
 	public $substit = array();
 	public $substit_lines = array();
 	/**
-	 * @var array{}|array{models:string,langmodels?:string,fileinit?:string[],returnurl:string}
+	 * @var array{}|array{models:string,langsmodels?:string,fileinit?:string[],returnurl:string}
 	 */
 	public $param = array();
 

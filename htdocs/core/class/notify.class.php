@@ -263,10 +263,10 @@ class Notify
 	/**
 	 *  Delete a notification from database
 	 *
-	 *	@param		User|null	$user		User deleting
+	 *	@param		?User		$user		User deleting
 	 *  @return		int		    	        Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user = null)
+	public function delete(?User $user = null)
 	{
 		$error = 0;
 
@@ -296,11 +296,11 @@ class Notify
 	/**
 	 * Create notification information record.
 	 *
-	 * @param   User|null   $user		User
-	 * @param   int    		$notrigger  1=Disable triggers
+	 * @param   ?User		$user		User
+	 * @param   int<0,1>	$notrigger  1=Disable triggers
 	 * @return	int						Return integer <0 if KO, > 0 if OK (ID of newly created company notification information)
 	 */
-	public function create(User $user = null, $notrigger = 0)
+	public function create(?User $user = null, $notrigger = 0)
 	{
 		$now = dol_now();
 
@@ -398,11 +398,11 @@ class Notify
 	/**
 	 *	Update record in database
 	 *
-	 *	@param	User|null	$user	     Object user
-	 *  @param  int     	$notrigger   1=Disable triggers
+	 *	@param	?User		$user	     Object user
+	 *  @param  int<0,1>  	$notrigger   1=Disable triggers
 	 *	@return	int					     Return integer <=0 if KO, >0 if OK
 	 */
-	public function update(User $user = null, $notrigger = -1)
+	public function update(?User $user = null, $notrigger = 0)
 	{
 		global $langs;
 

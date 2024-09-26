@@ -454,7 +454,7 @@ class pdf_soleil extends ModelePDFFicheinter
 	 *   @param		?Fichinter	$object			FichInter Object
 	 *   @return	void
 	 */
-	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, Fichinter $object = null)
+	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, ?Fichinter $object = null)
 	{
 		global $conf;
 

@@ -648,6 +648,7 @@ if ($arrayfields['entry']['checked']) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['account']['checked'])) {
+	// False positive @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['account']['label'], $_SERVER["PHP_SELF"], 'v.accountancy_code', '', $param, '', $sortfield, $sortorder, 'left ');
 	$totalarray['nbfield']++;
 }

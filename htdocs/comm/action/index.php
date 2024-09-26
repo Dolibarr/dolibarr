@@ -365,7 +365,7 @@ if ($mode == 'show_week') {
 	$week = $prev['week'];
 
 	$day = (int) $day;
-	$next = dol_get_next_week($first_day, $week, $first_month, $first_year);
+	$next = dol_get_next_week($first_day, (int) $week, $first_month, $first_year);
 	$next_year  = $next['year'];
 	$next_month = $next['month'];
 	$next_day   = $next['day'];

@@ -3633,7 +3633,7 @@ class CommandeFournisseur extends CommonOrder
 
 							//scan the array of results
 							foreach ($diff_array as $key => $value) {
-								//if the quantity delivered is greater or equal to wish quantity
+								//if the quantity delivered is greater or equal to wish quantity  @phan-suppress-next-line PhanTypeInvalidDimOffset
 								if ($qtydelivered[$key] >= $qtywished[$key]) {
 									$close++;
 								}
