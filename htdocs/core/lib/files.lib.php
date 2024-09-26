@@ -1011,7 +1011,7 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
  */
 function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $testvirus = 0, $indexdatabase = 1, $moreinfo = array())
 {
-	global $user, $db, $conf;
+	global $user, $db;
 	$result = false;
 
 	dol_syslog("files.lib.php::dol_move srcfile=".$srcfile." destfile=".$destfile." newmask=".$newmask." overwritifexists=".$overwriteifexists);
@@ -2607,7 +2607,7 @@ function dol_uncompress($inputfile, $outputdir)
  * @param 	string	$mode			'zip'
  * @param	string	$excludefiles   A regex pattern to exclude files. For example: '/\.log$|\/temp\//'
  * @param	string	$rootdirinzip	Add a root dir level in zip file
- * @param	string	$newmask		Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0666'
+ * @param	string	$newmask		Mask for new file ('0' by default means getDolGlobalString('MAIN_UMASK')). Example: '0666'
  * @return	int						Return integer <0 if KO, >0 if OK
  * @see dol_uncompress(), dol_compress_file()
  */
