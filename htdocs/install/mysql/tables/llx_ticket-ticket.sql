@@ -34,6 +34,7 @@ CREATE TABLE llx_ticket
 	fk_statut integer,
 	resolution integer,
 	progress integer DEFAULT 0,				-- progression 0 - 100 or null
+	duration integer,				        -- duration (Sum of linked fichinter) or null
 	timing varchar(20),
 	type_code varchar(32),
 	category_code varchar(32),

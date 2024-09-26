@@ -680,3 +680,37 @@ alter table llx_product_attribute_combination_price_level drop index fk_product_
 alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_62;
 alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_63;
 ALTER TABLE llx_product_attribute_combination_price_level ADD UNIQUE INDEX uk_prod_att_comb_price_level(fk_product_attribute_combination, fk_price_level);
+
+-- Duration (Sum of linked fichinter) of ticket
+UPDATE llx_ticket AS t1
+LEFT JOIN (
+    SELECT
+        (
+            CASE
+                WHEN ee.targettype = 'ticket' THEN ee.fk_target ELSE
+                    ee.fk_source
+            END
+        ) AS rowid,
+        SUM(fd.duree) AS duration
+    FROM llx_element_element AS ee
+    LEFT JOIN
+        llx_fichinterdet AS fd
+        ON
+            (
+                CASE
+                    WHEN ee.targettype = 'fichinter' THEN ee.fk_target ELSE
+                        ee.fk_source
+                END
+            )
+            = fd.fk_fichinter
+    WHERE
+        (ee.sourcetype = 'fichinter' AND ee.targettype = 'ticket')
+        OR (ee.targettype = 'fichinter' AND ee.sourcetype = 'ticket')
+    GROUP BY
+        (
+            CASE
+                WHEN ee.targettype = 'ticket' THEN ee.fk_target ELSE
+                    ee.fk_source
+            END
+        )
+) AS t2 ON t1.rowid = t2.rowid SET t1.duration = t2.duration;

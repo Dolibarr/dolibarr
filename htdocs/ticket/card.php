@@ -1143,27 +1143,12 @@ if ($action == 'create' || $action == 'presend') {
 		print '</td>';
 		print '</tr>';
 
-		// Timing (Duration sum of linked fichinter)
+		// Duration (Sum of linked fichinter)
 		if (isModEnabled('intervention')) {
-			$object->fetchObjectLinked();
-			$num = count($object->linkedObjects);
-			$timing = 0;
-			$foundinter = 0;
-			if ($num) {
-				foreach ($object->linkedObjects as $objecttype => $objects) {
-					if ($objecttype == "fichinter") {
-						foreach ($objects as $fichinter) {
-							$foundinter++;
-							/** @var Fichinter $fichinter */
-							$timing += $fichinter->duration;
-						}
-					}
-				}
-			}
 			print '<tr><td>';
 			print $form->textwithpicto($langs->trans("TicketDurationAuto"), $langs->trans("TicketDurationAutoInfos"), 1);
 			print '</td><td>';
-			print $foundinter ? convertSecondToTime($timing, 'all', getDolGlobalInt('MAIN_DURATION_OF_WORKDAY')) : '';
+			print isset($object->duration) ? convertSecondToTime($object->duration, 'all', getDolGlobalInt('MAIN_DURATION_OF_WORKDAY')) : '';
 			print '</td></tr>';
 		}
 
