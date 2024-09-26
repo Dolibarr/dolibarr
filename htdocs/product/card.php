@@ -1748,7 +1748,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '<hr>';
 
 			if (!getDolGlobalString('PRODUCT_DISABLE_PRICES')) {
-				if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
+				if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 					// We do no show price array on create when multiprices enabled.
 					// We must set them on prices tab.
 					print '<table class="border centpercent">';
