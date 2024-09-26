@@ -805,10 +805,9 @@ class Documents extends DolibarrApi
 			throw new RestException(500, "Refused to deliver file ".$dest_file);
 		}
 
-		$result = dol_move($destfiletmp, $destfile, 0, $overwriteifexists, 1, 1);
-
+		$result = dol_move($destfiletmp, $dest_file, 0, $overwriteifexists, 1, 1);
 		if (!$result) {
-			throw new RestException(500, "Failed to move file into '".$destfile."'");
+			throw new RestException(500, "Failed to move file into '".$dest_file."'");
 		}
 
 		return dol_basename($destfile);
