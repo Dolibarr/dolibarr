@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2017-2019  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,7 +66,7 @@ foreach ($object->fields as $key => $val) {
 	print '<td class="valuefieldcreate">';
 
 	if (!empty($val['picto'])) {
-		print img_picto('', $val['picto'], '', false, 0, 0, '', 'pictofixedwidth');
+		print img_picto('', $val['picto'], '', 0, 0, 0, '', 'pictofixedwidth');
 	}
 
 	if (in_array($val['type'], array('int', 'integer'))) {

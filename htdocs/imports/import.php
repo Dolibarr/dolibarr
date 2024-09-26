@@ -1029,7 +1029,7 @@ if ($step == 4 && $datatoimport) {
 	print '<div class="marginbottomonly">';
 	print '<span class="opacitymedium">';
 	$s = $langs->trans("SelectImportFieldsSource", '{s1}');
-	$s = str_replace('{s1}', img_picto('', 'grip_title', '', false, 0, 0, '', '', 0), $s);
+	$s = str_replace('{s1}', img_picto('', 'grip_title', '', 0, 0, 0, '', '', 0), $s);
 	print $s;
 	print '</span> ';
 	$htmlother->select_import_model($importmodelid, 'importmodelid', $datatoimport, 1, $user->id);
