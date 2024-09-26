@@ -898,7 +898,7 @@ function array2table($data, $tableMarkup = 1, $tableoptions = '', $troptions = '
  * @param   string		$mode			'next' for next value or 'last' for last value
  * @param   bool		$bentityon		Activate the entity filter. Default is true (for modules not compatible with multicompany)
  * @param	User		$objuser		Object user we need data from.
- * @param	int			$forceentity	Entity id to force
+ * @param	string		$forceentity	Entity id to force, can be '0' or '1' or '1,2' etc
  * @return 	string						New value (numeric) or error message
  */
 function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $date = '', $mode = 'next', $bentityon = true, $objuser = null, $forceentity = null)
