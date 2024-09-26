@@ -166,8 +166,8 @@ class pdf_standard_movementstock extends ModelePDFMovement
 		$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'movementlist';
 
 		$idproduct = GETPOSTINT('idproduct');
-		$year = GETPOST("year");
-		$month = GETPOST("month");
+		$year = GETPOSTINT("year");
+		$month = GETPOSTINT("month");
 		$search_ref = GETPOST('search_ref', 'alpha');
 		$search_movement = GETPOST("search_movement");
 		$search_product_ref = trim(GETPOST("search_product_ref"));

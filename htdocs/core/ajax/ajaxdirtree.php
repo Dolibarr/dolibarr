@@ -115,6 +115,7 @@ if ($modulepart == 'ecm') {
 	accessforbidden();
 }
 
+
 /*
  * Actions
  */
@@ -150,6 +151,7 @@ foreach ($sqltree as $keycursor => $val) {
 }
 
 if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_ECM_DISABLE_JS')) {
+	//
 	treeOutputForAbsoluteDir($sqltree, $selecteddir, $fullpathselecteddir, $modulepart, $websitekey, $pageid, $preopened, $fullpathpreopened);
 
 	// TODO Find a solution to not output this code for each leaf we open
@@ -370,7 +372,7 @@ if ((!isset($mode) || $mode != 'noajax') && is_object($db)) {
  */
 function treeOutputForAbsoluteDir($sqltree, $selecteddir, $fullpathselecteddir, $modulepart, $websitekey, $pageid, $preopened, $fullpathpreopened, $depth = 0)
 {
-	global $conf, $db, $langs, $form;
+	global $conf, $db, $langs, $form, $user;
 	global $dolibarr_main_data_root;
 
 	$ecmdirstatic = new EcmDirectory($db);
@@ -379,15 +381,23 @@ function treeOutputForAbsoluteDir($sqltree, $selecteddir, $fullpathselecteddir, 
 	if (file_exists($fullpathselecteddir)) {
 		$files = @scandir($fullpathselecteddir);
 
-		if (!empty($files)) {
+		if (!empty($files)) {	// array should have at least . and ..
 			natcasesort($files);
 			if (count($files) > 2) {    /* The 2 accounts for . and .. */
 				echo '<ul class="ecmjqft" style="display: none;">'."\n";
 
 				// All dirs
-				foreach ($files as $file) {    // $file can be '.', '..', or 'My dir' or 'My file'
-					if ($file == 'temp') {
+				$nboflinesshown = 0;
+				foreach ($files as $file) {
+					// $file can be '.', '..', 'temp', or 'My dir' or 'My file'
+					if (in_array($file, array('temp', '.', '..'))) {
 						continue;
+					}
+
+					// External users are not allowed to see manual directories so we quit.
+					// TODO Implement acl on directory for user groups.
+					if ($user->socid > 0) {
+						break;
 					}
 
 					$nbofsubdir = 0;
@@ -419,7 +429,7 @@ function treeOutputForAbsoluteDir($sqltree, $selecteddir, $fullpathselecteddir, 
 					}
 
 					//print 'modulepart='.$modulepart.' fullpathselecteddir='.$fullpathselecteddir.' - val[fullrelativename] (in database)='.$val['fullrelativename'].' - val[id]='.$val['id'].' - is_dir='.dol_is_dir($fullpathselecteddir . $file).' - file='.$file."\n";
-					if ($file != '.' && $file != '..' && ((!empty($val['fullrelativename']) && $val['id'] >= 0) || dol_is_dir($fullpathselecteddir.(preg_match('/\/$/', $fullpathselecteddir) ? '' : '/').$file))) {
+					if ((!empty($val['fullrelativename']) && $val['id'] >= 0) || dol_is_dir($fullpathselecteddir.(preg_match('/\/$/', $fullpathselecteddir) ? '' : '/').$file)) {
 						if (empty($val['fullrelativename'])) {	// If we did not find entry into database, but found a directory (dol_is_dir was ok at previous test)
 							$val['fullrelativename'] = (($selecteddir && $selecteddir != '/') ? $selecteddir.'/' : '').$file;
 							$val['id'] = 0;
@@ -432,6 +442,9 @@ function treeOutputForAbsoluteDir($sqltree, $selecteddir, $fullpathselecteddir, 
 						if (preg_match('/^'.preg_quote($val['fullrelativename'].'/', '/').'/', $preopened)) {
 							$collapsedorexpanded = 'expanded';
 						}
+
+						$nboflinesshown++;
+
 						print '<li class="directory '.$collapsedorexpanded.' lidirecm">'; // collapsed is opposite if expanded
 
 						//print '<div class="divfmdirlia inline-block">';	// Disabled, this break the javascrip component
@@ -519,6 +532,11 @@ function treeOutputForAbsoluteDir($sqltree, $selecteddir, $fullpathselecteddir, 
 
 						print "</li>\n";
 					}
+				}
+
+				if ($user->socid > 0 && empty($nboflinesshown)) {
+					// External users are not allowed to see manual directories
+					print '<li>Not directory allowed to external users.<br>ACL for external users not yet implemented.</li>';
 				}
 
 				echo "</ul>\n";
