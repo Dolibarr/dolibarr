@@ -146,7 +146,6 @@ if (empty($reshook)) {
 	// Create MO with Childs
 	if ($action == 'add' && empty($id) && !empty($TBomLineId)) {
 		$noback = 1;
-
 		include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 
 		$mo_parent = $object;

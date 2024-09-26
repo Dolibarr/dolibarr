@@ -793,6 +793,7 @@ class Mo extends CommonObject
 				}
 			}
 		}
+
 		if (!$error) {
 			$this->db->commit();
 			return 1;
