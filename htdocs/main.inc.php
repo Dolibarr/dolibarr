@@ -2175,9 +2175,9 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 
 		//If you want to load custom javascript file from your selected theme directory
 		if (getDolGlobalString('ALLOW_THEME_JS')) {
-			$theme_js = dol_buildpath('/theme/'.$conf->theme.'/'.$conf->theme.'.js', 0);
+			$theme_js = dol_buildpath('/theme/'.$conf->theme.'/'.$conf->theme.'.js.php', 0);
 			if (file_exists($theme_js)) {
-				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/'.$conf->theme.'.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/'.$conf->theme.'.js.php'.($ext ? '?'.$ext : '').'"></script>'."\n";
 			}
 		}
 
