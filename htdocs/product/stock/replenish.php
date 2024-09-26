@@ -212,7 +212,8 @@ if ($action == 'order' && GETPOST('valid') && $user->hasRight('fournisseur', 'co
 						$line->total_tva = $line->total_ht * $tva;
 						$line->total_ttc = $line->total_ht + $line->total_tva;
 						$line->remise_percent = (float) $productsupplier->remise_percent;
-						$line->ref_fourn = $productsupplier->ref_supplier;
+						$line->ref_fourn = $productsupplier->ref_supplier;	// deprecated
+						$line->ref_supplier = $productsupplier->ref_supplier;
 						$line->type = $productsupplier->type;
 						$line->fk_unit = $productsupplier->fk_unit;
 
@@ -255,7 +256,6 @@ if ($action == 'order' && GETPOST('valid') && $user->hasRight('fournisseur', 'co
 					if (empty($line->remise_percent)) {
 						$line->remise_percent = (float) $order->thirdparty->remise_supplier_percent;
 					}
-					$line_subprice = isset($line->multicurrency_subprice) ? $line->multicurrency_subprice : 0;
 					$result = $order->addline(
 						$line->desc,
 						$line->subprice,
@@ -276,7 +276,7 @@ if ($action == 'order' && GETPOST('valid') && $user->hasRight('fournisseur', 'co
 						null,
 						0,
 						$line->fk_unit,
-						$line_subprice
+						$line->multicurrency_subprice
 					);
 				}
 				if ($result < 0) {
