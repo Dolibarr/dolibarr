@@ -96,7 +96,6 @@ parameters:
 		- '# (envoi_mail|sendEmailTo) expects string, \(float\|int\) given.#'
 		- '#::printStdColumnContent\(\) expects string, float(\|(int|array)(\<.*\>)?)* given.#'
 		- '~(?:Parameter #3 \$morecss of function) img_warning expects string, \(float\|int\)~'
-		- '~(?:Parameter #2 \$moreatt of function) img_warning expects string, float~'
 		- '#::HTML2OpenIDServer\(\) expects string, array given.#'
 		- '#create_line\(\) expects string, float given.#'
 		- '# dol_stringtotime expects string, DateTime given.#'
