@@ -314,7 +314,7 @@ if (empty($reshook)) {
 					}
 
 					// Auto assign user
-					if ((empty($fk_user_assign) && getDolGlobalString('TICKET_AUTO_ASSIGN_USER_CREATE')) || getDolGlobalString('TICKET_FORCE_ASSIGN_USER_CREATE'))) {
+					if ((empty($fk_user_assign) && getDolGlobalInt('TICKET_AUTO_ASSIGN_USER_CREATE') == 1) || (getDolGlobalInt('TICKET_AUTO_ASSIGN_USER_CREATE') == 2)) {
 						$result = $object->assignUser($user, $user->id, 1);
 						$object->add_contact($user->id, "SUPPORTTEC", 'internal');
 					}
