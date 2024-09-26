@@ -671,12 +671,12 @@ if (empty($conf->use_javascript_ajax)) {
 }
 print '</tr>';
 
-if (!getDolGlobalString('PRODUIT_USE_SEARCH_TO_SELECT')) {
-	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("NumberOfProductShowInSelect").'</td>';
-	print '<td class="right"><input size="3" type="text" class="flat" name="value_PRODUIT_LIMIT_SIZE" value="' . getDolGlobalString('PRODUIT_LIMIT_SIZE').'"></td>';
-	print '</tr>';
-}
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("NumberOfProductShowInSelect").'</td>';
+print '<td class="right"><input size="3" type="text" class="flat" name="value_PRODUIT_LIMIT_SIZE" value="' . getDolGlobalString('PRODUIT_LIMIT_SIZE').'"></td>';
+print '</tr>';
+
 
 // Do Not Add Product description on add lines
 print '<tr class="oddeven">';
