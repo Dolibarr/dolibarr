@@ -293,7 +293,7 @@ class Form
 					// So we convert & into &amp; so a string like 'a &lt; <b>b</b><br>é<br>&lt;script&gt;alert('X');&lt;script&gt;' stay a correct html and is not converted by textarea component when wysiwyg is off.
 					$valuetoshow = str_replace('&', '&amp;', $valuetoshow);
 					$ret .= dol_htmlwithnojs(dol_string_neverthesehtmltags($valuetoshow, array('textarea')));
-					$ret .= '</textarea>';
+					$ret .= '</textarea><div class="clearboth"></div>';
 				} elseif ($typeofdata == 'day' || $typeofdata == 'datepicker') {
 					$addnowlink = empty($moreoptions['addnowlink']) ? 0 : $moreoptions['addnowlink'];
 					$adddateof = empty($moreoptions['adddateof']) ? '' : $moreoptions['adddateof'];
@@ -443,7 +443,7 @@ class Form
 
 			$result .= '<!-- Widget for translation -->' . "\n";
 			$result .= '<div class="inline-block paddingleft image-' . $object->element . '-' . $fieldname . '">';
-			$s = img_picto($langs->trans("ShowOtherLanguages"), 'language', '', false, 0, 0, '', 'fa-15 editfieldlang');
+			$s = img_picto($langs->trans("ShowOtherLanguages"), 'language', '', 0, 0, 0, '', 'fa-15 editfieldlang');
 			$result .= $s;
 			$result .= '</div>';
 
@@ -2949,7 +2949,7 @@ class Form
 		}
 
 		//Price by customer
-		if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') && !empty($socid)) {
+		if ((getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && !empty($socid)) {
 			$sql .= ', pcp.rowid as idprodcustprice, pcp.price as custprice, pcp.price_ttc as custprice_ttc,';
 			$sql .= ' pcp.price_base_type as custprice_base_type, pcp.tva_tx as custtva_tx, pcp.default_vat_code as custdefault_vat_code, pcp.ref_customer as custref';
 			$selectFields .= ", idprodcustprice, custprice, custprice_ttc, custprice_base_type, custtva_tx, custdefault_vat_code, custref";
@@ -3007,7 +3007,7 @@ class Form
 		}
 
 		//Price by customer
-		if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') && !empty($socid)) {
+		if ((getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && !empty($socid)) {
 			$sql .= " LEFT JOIN  " . $this->db->prefix() . "product_customer_price as pcp ON pcp.fk_soc=" . ((int) $socid) . " AND pcp.fk_product=p.rowid";
 		}
 		// Units
@@ -3087,7 +3087,7 @@ class Form
 				if (getDolGlobalInt('MAIN_MULTILANGS')) {
 					$sql .= " OR pl.label LIKE '" . $this->db->escape($prefix . $crit) . "%'";
 				}
-				if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') && !empty($socid)) {
+				if ((getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && !empty($socid)) {
 					$sql .= " OR pcp.ref_customer LIKE '" . $this->db->escape($prefix . $crit) . "%'";
 				}
 				if (getDolGlobalString('PRODUCT_AJAX_SEARCH_ON_DESCRIPTION')) {
@@ -3223,7 +3223,9 @@ class Form
 							$objp->price_ttc = price2num($objp->price_ttc, 'MU');
 						}
 					}
-
+					if (getDolGlobalInt('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES') && !empty($objp->custprice)) {
+						$price_level = '';
+					}
 					$this->constructProductListOption($objp, $opt, $optJson, $price_level, $selected, $hidepriceinlabel, $filterkey);
 					// Add new entry
 					// "key" value of json key array is used by jQuery automatically as selected value
@@ -3445,7 +3447,7 @@ class Form
 		$labeltoshowprice = '';
 		$labeltoshowhtmlprice = '';
 		// If we need a particular price level (from 1 to n)
-		if (empty($hidepriceinlabel) && $price_level >= 1 && (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES'))) {
+		if (empty($hidepriceinlabel) && $price_level >= 1 && (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES'))) {
 			$sql = "SELECT price, price_ttc, price_base_type, tva_tx, default_vat_code";
 			$sql .= " FROM " . $this->db->prefix() . "product_price";
 			$sql .= " WHERE fk_product = " . ((int) $objp->rowid);
@@ -3516,7 +3518,7 @@ class Form
 		}
 
 		// Price by customer
-		if (empty($hidepriceinlabel) && getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
+		if (empty($hidepriceinlabel) && (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES'))) {
 			if (!empty($objp->idprodcustprice)) {
 				$found = 1;
 
