@@ -640,7 +640,7 @@ print '</td></tr>';
 print '<tr class="oddeven"><td>'.$langs->trans("PDF_USE_A").'</td><td>';
 
 //$pdfa = false; // PDF default version
-$pdfa = getDolGlobalInt('PDF_USE_A', 3); 	// PDF/A-1 ou PDF/A-3
+$pdfa = getDolGlobalInt('PDF_USE_A', 0); 	// PDF/A-1 ou PDF/A-3
 
 print $form->selectarray('PDF_USE_A', $arraylistofpdfformat, $pdfa);
 print '</td></tr>';
