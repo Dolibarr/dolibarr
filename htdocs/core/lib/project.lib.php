@@ -585,10 +585,10 @@ function project_admin_prepare_head()
  * @param   int 		$parent				    Id of parent task to show (0 to show all)
  * @param   Task[]		$lines				    Array of lines
  * @param   int			$level				    Level (start to 0, then increased/decrease by recursive call), or -1 to show all level in order of $lines without the recursive groupment feature.
- * @param 	string		$var				    Color
+ * @param 	string		$var				    Not used
  * @param 	int			$showproject		    Show project columns
  * @param	int			$taskrole			    Array of roles of user for each tasks
- * @param	string		$projectsListId		    List of id of project allowed to user (string separated with comma)
+ * @param	string		$projectsListId		    List of id of projects allowed to user (string separated with comma)
  * @param	int			$addordertick		    Add a tick to move task
  * @param   int         $projectidfortotallink  0 or Id of project to use on total line (link to see all time consumed for project)
  * @param   string      $dummy					Not used.
@@ -610,7 +610,10 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
 	$lastprojectid = 0;
 
-	$projectsArrayId = explode(',', $projectsListId);
+	$projectsArrayId = array();
+	if ($projectsListId) {
+		$projectsArrayId = explode(',', $projectsListId);
+	}
 
 	$numlines = count($lines);
 
@@ -672,7 +675,6 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 			if ($showline) {
 				// Break on a new project
 				if ($parent == 0 && $lines[$i]->fk_project != $lastprojectid) {
-					$var = !$var;
 					$lastprojectid = $lines[$i]->fk_project;
 				}
 
@@ -985,7 +987,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				if ($level >= 0) {    // Call sublevels
 					$level++;
 					if ($lines[$i]->id) {
-						projectLinesa($inc, $lines[$i]->id, $lines, $level, $var, $showproject, $taskrole, $projectsListId, $addordertick, $projectidfortotallink, '', $showbilltime, $arrayfields);
+						projectLinesa($inc, $lines[$i]->id, $lines, $level, '', $showproject, $taskrole, $projectsListId, $addordertick, $projectidfortotallink, '', $showbilltime, $arrayfields);
 					}
 					$level--;
 				}
@@ -2549,7 +2551,7 @@ function searchTaskInChild(&$inc, $parent, &$lines, &$taskrole)
  * @param	DoliDB		$db					Database handler
  * @param	Form		$form				Object form
  * @param   int			$socid				Id thirdparty
- * @param   int			$projectsListId     Id of project I have permission on
+ * @param   int|string	$projectsListId     Id or ids of project I have permission on (separated with comma)
  * @param   int<0,1>	$mytasks            Limited to task I am contact to
  * @param	int<-1,1>	$status				-1=No filter on statut, 0 or 1 = Filter on status
  * @param	array<int,string>	$listofoppstatus	List of opportunity status
@@ -2607,7 +2609,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t ON p.rowid = t.fk_projet";
 	}
 	$sql .= " WHERE p.entity IN (".getEntity('project').")";
-	$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId).")";
+	$sql .= " AND p.rowid IN (".$db->sanitize((string) $projectsListId).")";
 	if ($socid) {
 		$sql .= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
 	}
