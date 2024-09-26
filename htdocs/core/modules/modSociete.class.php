@@ -7,6 +7,7 @@
  * Copyright (C) 2012-2014 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2022      Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -449,6 +450,92 @@ class modSociete extends DolibarrModules
 			$this->export_sql_end[$r] .= ')';
 		}
 
+		// Export list of third-party and bank/payment methods
+		$r++;
+		$this->export_code[$r] = $this->rights_class.'_'.$r;
+		$this->export_label[$r] = 'ExportDataset_company_3';
+		$this->export_icon[$r] = 'account';
+		if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
+			$this->export_permission[$r] = array(array("societe", "export"), array("societe", "thirdparty_paymentinformation_advance", "write"));
+		} else {
+			$this->export_permission[$r] = array(array("societe", "export"));
+		}
+		$this->export_fields_array[$r] = array(
+			'b.rowid' => "IdPaymentMode",
+			'b.fk_soc' => "ThirdPartyName",
+			'b.label' => 'Label',
+			'b.bank' => 'Bank',
+			'b.code_banque' => 'Code banque',
+			'b.code_guichet' => 'Code guichet',
+			'b.number' => 'Number',
+			'b.cle_rib' => 'Cle rib',
+			'b.bic' => 'Bic',
+			'b.iban_prefix' => 'Iban prefix',
+			'b.domiciliation' => 'Domiciliation',
+			'b.proprio' => 'Proprio',
+			'b.owner_address' => 'Owner address',
+			'b.default_rib' => 'Default rib',
+			'b.rum' => 'Rum',
+			'b.date_rum' => 'Date rum',
+			'b.frstrecur' => 'Frstrecur',
+			'b.type' => 'Type',
+			'b.status' => "status",
+			'b.datec' => "DateCreation",
+			'b.tms' => "DateLastModification"
+		);
+		// Add multicompany field
+		if (getDolGlobalString('MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED')) {
+			if (isModEnabled('multicompany')) {
+				$nbofallowedentities = count(explode(',', getEntity('societe')));
+				if ($nbofallowedentities > 1) {
+					$this->export_fields_array[$r]['s.entity'] = 'Entity';
+				}
+			}
+		}
+		$this->export_examplevalues_array[$r] = array();
+		$this->export_TypeFields_array[$r] = array(
+			's.nom' => "Text",
+			's.entity' => "List:entity:label:rowid",
+			'b.rowid' => "Numeric",
+			'b.label' => 'Text',
+			'b.bank' => 'Text',
+			'b.code_banque' => 'Text',
+			'b.code_guichet' => 'Text',
+			'b.number' => 'Text',
+			'b.cle_rib' => 'Text',
+			'b.bic' => 'Text',
+			'b.iban_prefix' => 'Text',
+			'b.domiciliation' => 'Text',
+			'b.proprio' => 'Text',
+			'b.owner_address' => 'Text',
+			'b.default_rib' => 'Boolean"',
+			'b.rum' => 'Text',
+			'b.date_rum' => 'Date',
+			'b.frstrecur' => 'Text',
+			'b.type' => 'Text',
+			'b.status' => "Status",
+			'b.datec' => "Date",
+			'b.tms' => "Date"
+		);
+		$this->export_entities_array[$r] = array(
+			's.nom' => "company",
+			's.entity' => 'company'
+		); // We define here only fields that use another picto
+		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
+		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'societe_rib as b';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON b.fk_soc = s.rowid';
+		if (is_object($user) && !$user->hasRight('societe', 'client', 'voir')) {
+			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
+		}
+		$this->export_sql_end[$r] .= ' WHERE s.entity IN ('.getEntity('societe').')';
+		if (is_object($user) && !$user->hasRight('societe', 'client', 'voir')) {
+			$this->export_sql_end[$r] .= ' AND (sc.fk_user = '.((int) $user->id).' ';
+			if (getDolGlobalString('SOCIETE_EXPORT_SUBORDINATES_CHILDS')) {
+				$subordinatesids = $user->getAllChildIds();
+				$this->export_sql_end[$r] .= count($subordinatesids) > 0 ? ' OR (sc.fk_user IN ('.$this->db->sanitize(implode(',', $subordinatesids)).')' : '';
+			}
+			$this->export_sql_end[$r] .= ')';
+		}
 
 		// Imports
 		//--------
@@ -953,7 +1040,7 @@ class modSociete extends DolibarrModules
 		if (file_exists($src) && !file_exists($dest)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
-			$result = dol_copy($src, $dest, 0, 0);
+			$result = dol_copy($src, $dest, '0', 0);
 			if ($result < 0) {
 				$langs->load("errors");
 				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);

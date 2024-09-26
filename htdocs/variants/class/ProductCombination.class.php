@@ -202,7 +202,8 @@ class ProductCombination
 			if ($fk_price_level > 0) {
 				$combination_price_levels[$fk_price_level] = ProductCombinationLevel::createFromParent($this->db, $this, $fk_price_level);
 			} else {
-				for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
+				$produit_multiprices_limit = getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT');
+				for ($i = 1; $i <= $produit_multiprices_limit; $i++) {
 					$combination_price_levels[$i] = ProductCombinationLevel::createFromParent($this->db, $this, $i);
 				}
 			}
@@ -551,7 +552,8 @@ class ProductCombination
 
 			// MultiPrix
 			if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
-				for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
+				$produit_multiprices_limit = getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT');
+				for ($i = 1; $i <= $produit_multiprices_limit; $i++) {
 					if ($parent->multiprices[$i] != '' || isset($this->combination_price_levels[$i]->variation_price)) {
 						$new_type = empty($parent->multiprices_base_type[$i]) ? 'HT' : $parent->multiprices_base_type[$i];
 						$new_min_price = $parent->multiprices_min[$i];
@@ -742,16 +744,16 @@ class ProductCombination
 	 * [...]
 	 * )
 	 *
-	 * @param User 				$user 			Object user
-	 * @param Product 			$product 		Parent product
-	 * @param array<int,int> 	$combinations 	Attribute and value combinations.
+	 * @param User                      $user                   User
+	 * @param Product                   $product                Parent Product
+	 * @param array<int,int>            $combinations           Attribute and value combinations.
 	 * @param array<int,array<int,array{weight:string|float,price:string|float}>> $variations 	Price and weight variations (example: $variations[fk_product_attribute][fk_product_attribute_value]['weight'])
-	 * @param bool|array 		$price_var_percent 	Is the price variation a relative variation?
-	 * @param bool|float 		$forced_pricevar 	If the price variation is forced
-	 * @param bool|float 		$forced_weightvar 	If the weight variation is forced
-	 * @param bool|string 		$forced_refvar 		If the reference is forced
-	 * @param string 	    	$ref_ext            External reference
-	 * @return int<-1,1>							Return integer <0 KO, >0 OK
+	 * @param bool|bool[]               $price_var_percent      Is the price variation value a relative variation (in %)? (it is an array if global constant "PRODUIT_MULTIPRICES" is on)
+	 * @param false|float|float[]       $forced_pricevar        Value of the price variation if it is forced ; in currency or percent. (it is an array if global constant "PRODUIT_MULTIPRICES" is on)
+	 * @param false|float               $forced_weightvar       Value of the weight variation if it is forced
+	 * @param false|string              $forced_refvar          Value of the reference if it is forced
+	 * @param string                    $ref_ext                External reference
+	 * @return int<-1,1>                                        Return integer <0 KO, >0 OK
 	 */
 	public function createProductCombination(User $user, Product $product, array $combinations, array $variations, $price_var_percent = false, $forced_pricevar = false, $forced_weightvar = false, $forced_refvar = false, $ref_ext = '')
 	{
@@ -844,8 +846,9 @@ class ProductCombination
 				$price_impact[1] += (float) price2num($variations[$currcombattr][$currcombval]['price']);
 
 				// Manage Price levels
-				if ($conf->global->PRODUIT_MULTIPRICES) {
-					for ($i = 2; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
+				if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
+					$produit_multiprices_limit = getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT');
+					for ($i = 2; $i <= $produit_multiprices_limit; $i++) {
 						$price_impact[$i] += (float) price2num($variations[$currcombattr][$currcombval]['price']);
 					}
 				}
@@ -872,8 +875,9 @@ class ProductCombination
 		$newcomb->variation_ref_ext = $this->db->escape($ref_ext);
 
 		// Init price level
-		if ($conf->global->PRODUIT_MULTIPRICES) {
-			for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
+		if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
+			$produit_multiprices_limit = getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT');
+			for ($i = 1; $i <= $produit_multiprices_limit; $i++) {
 				$productCombinationLevel = new ProductCombinationLevel($this->db);
 				$productCombinationLevel->fk_product_attribute_combination = $newcomb->id;
 				$productCombinationLevel->fk_price_level = $i;
@@ -1298,7 +1302,7 @@ class ProductCombinationLevel
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " WHERE fk_product_attribute_combination = ".(int) $fk_product_attribute_combination;
-		$sql .= " AND fk_price_level > ".intval($conf->global->PRODUIT_MULTIPRICES_LIMIT);
+		$sql .= " AND fk_price_level > ".(int) getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT');
 		$res = $this->db->query($sql);
 
 		return $res ? 1 : -1;

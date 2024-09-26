@@ -58,7 +58,7 @@ if (GETPOST('enddatemonth')) {
 	$enddate = dol_mktime(23, 59, 59, GETPOSTINT('enddatemonth'), GETPOSTINT('enddateday'), GETPOST('enddateyear'));
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Societe($db);
 $hookmanager->initHooks(array('margincustomerlist'));
 
@@ -83,7 +83,7 @@ $invoicestatic = new Facture($db);
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("Margins").' - '.$langs->trans("Clients"));
+llxHeader('', $langs->trans("Margins").' - '.$langs->trans("Clients"), '', '', 0, 0, '', '', '', 'mod-margin page-customermargins');
 
 $text = $langs->trans("Margins");
 //print load_fiche_titre($text);

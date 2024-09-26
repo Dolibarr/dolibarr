@@ -39,7 +39,7 @@ require_once './lib/replenishment.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks', 'orders'));
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('stockatdate'));
 
 //checks if a product has been ordered
@@ -193,7 +193,7 @@ if ($date && $dateIsValid) {	// Avoid heavy sql if mandatory date is not defined
 		dol_print_error($db);
 	}
 	//var_dump($stock_prod_warehouse);
-} elseif ($action == 'filter') {
+} elseif ($action == 'filter') {	// Test on permissions not required here
 	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
 }
 

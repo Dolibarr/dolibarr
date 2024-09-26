@@ -9,7 +9,7 @@
  * Copyright (C) 2022  		Lionel Vessiller    <lvessiller@open-dsi.fr>
  * Copyright (C) 2013-2017  Olivier Geffroy     <jeff@jeffinfo.com>
  * Copyright (C) 2017       Elarifr. Ari Elbaz  <github@accedinfo.com>
- * Copyright (C) 2017-2019  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2017-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2017       André Schild        <a.schild@aarboard.ch>
  * Copyright (C) 2020       Guillaume Alexandre <guillaume@tag-info.fr>
  * Copyright (C) 2022		Joachim Kueter		<jkueter@gmx.de>
@@ -49,26 +49,46 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 class AccountancyExport
 {
 	// Types of export.
+	/** @var int */
 	public static $EXPORT_TYPE_CONFIGURABLE = 1; // CSV
+	/** @var int */
 	public static $EXPORT_TYPE_AGIRIS = 10;
+	/** @var int */
 	public static $EXPORT_TYPE_EBP = 15;
+	/** @var int */
 	public static $EXPORT_TYPE_CEGID = 20;
+	/** @var int */
 	public static $EXPORT_TYPE_COGILOG = 25;
+	/** @var int */
 	public static $EXPORT_TYPE_COALA = 30;
+	/** @var int */
 	public static $EXPORT_TYPE_BOB50 = 35;
+	/** @var int */
 	public static $EXPORT_TYPE_CIEL = 40;
+	/** @var int */
 	public static $EXPORT_TYPE_SAGE50_SWISS = 45;
+	/** @var int */
 	public static $EXPORT_TYPE_CHARLEMAGNE = 50;
+	/** @var int */
 	public static $EXPORT_TYPE_QUADRATUS = 60;
+	/** @var int */
 	public static $EXPORT_TYPE_WINFIC = 70;
+	/** @var int */
 	public static $EXPORT_TYPE_OPENCONCERTO = 100;
+	/** @var int */
 	public static $EXPORT_TYPE_LDCOMPTA = 110;
+	/** @var int */
 	public static $EXPORT_TYPE_LDCOMPTA10 = 120;
+	/** @var int */
 	public static $EXPORT_TYPE_GESTIMUMV3 = 130;
+	/** @var int */
 	public static $EXPORT_TYPE_GESTIMUMV5 = 135;
+	/** @var int */
 	public static $EXPORT_TYPE_ISUITEEXPERT = 200;
 	// Generic FEC after that
+	/** @var int */
 	public static $EXPORT_TYPE_FEC = 1000;
+	/** @var int */
 	public static $EXPORT_TYPE_FEC2 = 1010;
 
 	/**
@@ -92,7 +112,7 @@ class AccountancyExport
 	public $end_line = '';
 
 	/**
-	 * @var array 	Generated file
+	 * @var array{downloadFilePath:string,downloadFileMimeType:string,downloadFileFullName:string}|array{}	Generated file
 	 */
 	public $generatedfiledata = array();
 
@@ -116,8 +136,8 @@ class AccountancyExport
 	/**
 	 * Array with all export type available (key + label)
 	 *
-	 * @param	int		$mode		Mode of list: 0=flat list, 1=rich list
-	 * @return 						array of type
+	 * @param	int<0,1>	$mode		Mode of list: 0=flat list, 1=rich list
+	 * @return	array<int|string,string>|array<int|string,array{id:int|string,label:string,position:int,disabled?:string}>	array of type
 	 */
 	public function getType($mode = 0)
 	{
@@ -214,9 +234,9 @@ class AccountancyExport
 	}
 
 	/**
-	 * Array with all export type available (key + label) and parameters for config
+	 * Array with all export types available (key + label) and parameters for config
 	 *
-	 * @return array of type
+	 * @return array{param:array<int|string,array<string,string>>,cr:array<int|string,string>,format:array<string,string>} of type
 	 */
 	public function getTypeConfig()
 	{
@@ -338,21 +358,21 @@ class AccountancyExport
 	/**
 	 * Function who chose which export to use with the default config, and make the export into a file
 	 *
-	 * @param 	array	$TData 						Array with data
-	 * @param	int		$formatexportset			Id of export format
-	 * @param	int		$withAttachment				[=0] Not add files
-	 * 												or 1 to have attached in an archive (ex : Quadratus) - Force output mode to write in a file (output mode = 1)
-	 * @param	int		$downloadMode				[=0] Direct download. Deprecated. Always use value 1.
-	 * 												or 1 to download after writing files - Forced by default when use withAttachment = 1
-	 * 												or -1 not to download files
-	 * @param	int		$outputMode					[=0] Print on screen. Deprecated. Always use value 1.
-	 * 												or 1 to write in file and uses the temp directory - Forced by default when use withAttachment = 1
-	 * 												or 2 to write in file a default export directory (accounting/export/)
-	 * @param	int		$noouput					0=old mode. Deprecated. Always use value 1.
-	 * 												or 1=Do not output the file on stdout with this method. This must always be done by the main page, never by a method.
+	 * @param 	BookKeepingLine[]	$TData 			Array with data
+	 * @param	int			$formatexportset			Id of export format
+	 * @param	int<0,1>	$withAttachment				[=0] Not add files
+	 *                                                  or 1 to have attached in an archive (ex : Quadratus) - Force output mode to write in a file (output mode = 1)
+	 * @param	int<1,1>	$downloadMode				[=0] Direct download. Deprecated. Always use value 1.
+	 *                                                  or 1 to download after writing files - Forced by default when use withAttachment = 1
+	 *                                                  or -1 not to download files
+	 * @param	int<1,1>	$outputMode					[=0] Print on screen. Deprecated. Always use value 1.
+	 *                                                  or 1 to write in file and uses the temp directory - Forced by default when use withAttachment = 1
+	 *                                                  or 2 to write in file a default export directory (accounting/export/)
+	 * @param	int<1,1>	$noouput					0=old mode. Deprecated. Always use value 1.
+	 *                                                  or 1=Do not output the file on stdout with this method. This must always be done by the main page, never by a method.
 	 * @return 	int									Return integer <0 if KO, >0 OK. The property ->generatedfile is also filled.
 	 */
-	public function export(&$TData, $formatexportset, $withAttachment = 0, $downloadMode = 0, $outputMode = 0, $noouput = 0)
+	public function export(&$TData, $formatexportset, $withAttachment = 0, $downloadMode = 1, $outputMode = 1, $noouput = 1)
 	{
 		global $db, $conf, $langs;	// The tpl file use $db
 		global $search_date_end; 	// Used into /accountancy/tpl/export_journal.tpl.php
@@ -414,7 +434,7 @@ class AccountancyExport
 
 				// directory already created when module is enabled
 				$outputDir .= '/export';
-				$outputDir .= '/'.dol_sanitizePathName($formatexportset);
+				$outputDir .= '/'.dol_sanitizePathName((string) $formatexportset);
 			}
 
 			if (!dol_is_dir($outputDir)) {
@@ -614,8 +634,8 @@ class AccountancyExport
 	/**
 	 * Export format : CEGID
 	 *
-	 * @param 	array 		$objectLines 			data
-	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @param 	BookKeepingLine[]	$objectLines	data
+	 * @param 	?resource			$exportFile		[=null] File resource to export or print if null
 	 * @return	void
 	 */
 	public function exportCegid($objectLines, $exportFile = null)
@@ -650,8 +670,8 @@ class AccountancyExport
 	 * Export format : COGILOG
 	 * Last review for this format : 2022-07-12 Alexandre Spangaro (aspangaro@open-dsi.fr)
 	 *
-	 * @param 	array 		$objectLines 			data
-	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @param 	BookKeepingLine[]	$objectLines 	data
+	 * @param 	?resource			$exportFile		[=null] File resource to export or print if null
 	 * @return	void
 	 */
 	public function exportCogilog($objectLines, $exportFile = null)
@@ -714,8 +734,8 @@ class AccountancyExport
 	/**
 	 * Export format : COALA
 	 *
-	 * @param 	array 		$objectLines 			data
-	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @param 	BookKeepingLine[]	$objectLines 	data
+	 * @param 	?resource			$exportFile		[=null] File resource to export or print if null
 	 * @return 	void
 	 */
 	public function exportCoala($objectLines, $exportFile = null)
@@ -751,8 +771,8 @@ class AccountancyExport
 	/**
 	 * Export format : BOB50
 	 *
-	 * @param 	array 		$objectLines 			data
-	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @param 	BookKeepingLine[]	$objectLines	data
+	 * @param 	?resource			$exportFile		[=null] File resource to export or print if null
 	 * @return 	void
 	 */
 	public function exportBob50($objectLines, $exportFile = null)
@@ -806,8 +826,8 @@ class AccountancyExport
 	 * If you want to force filename to "XIMPORT.TXT" for automatically import file present in a directory :
 	 * use constant ACCOUNTING_EXPORT_XIMPORT_FORCE_FILENAME
 	 *
-	 * @param 	array 		$objectLines 			data
-	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @param 	BookKeepingLine[]	$objectLines 	data
+	 * @param 	?resource			$exportFile		[=null] File resource to export or print if null
 	 * @return 	void
 	 */
 	public function exportCiel($objectLines, $exportFile = null)
@@ -827,7 +847,7 @@ class AccountancyExport
 
 			$tab = array();
 
-			$tab[] = str_pad($line->piece_num, 5);
+			$tab[] = str_pad((string) $line->piece_num, 5);
 			$tab[] = str_pad(self::trunc($line->code_journal, 2), 2);
 			$tab[] = str_pad($date_document, 8, ' ', STR_PAD_LEFT);
 			$tab[] = str_pad($date_echeance, 8, ' ', STR_PAD_LEFT);
@@ -859,11 +879,11 @@ class AccountancyExport
 	 * Help to import in Quadra: https://wiki.dolibarr.org/index.php?title=Module_Comptabilit%C3%A9_en_Partie_Double#Import_vers_CEGID_Quadra
 	 * In QuadraCompta | Use menu : "Outils" > "Suivi des dossiers" > "Import ASCII(Compta)"
 	 *
-	 * @param 	array 		$objectLines 			data
-	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
-	 * @param 	array		$archiveFileList		[=array()] Archive file list : array of ['path', 'name']
-	 * @param 	int			$withAttachment			[=0] Not add files or 1 to have attached in an archive
-	 * @return	array		Archive file list : array of ['path', 'name']
+	 * @param 	BookKeepingLine[]	$objectLines 	data
+	 * @param 	?resource			$exportFile		[=null] File resource to export or print if null
+	 * @param 	array<string,array{name:string,path:string}>		$archiveFileList		[=array()] Archive file list : array of ['path', 'name']
+	 * @param 	int<0,1>	$withAttachment			[=0] Not add files or 1 to have attached in an archive
+	 * @return	array<string,array{name:string,path:string}>	Archive file list : array of ['path', 'name']
 	 */
 	public function exportQuadratus($objectLines, $exportFile = null, $archiveFileList = array(), $withAttachment = 0)
 	{
@@ -978,13 +998,13 @@ class AccountancyExport
 			// $tab['lettrage'] = str_repeat(' ', 5);
 			$tab['lettrage'] = str_repeat(' ', 2);
 			$tab['codestat'] = str_repeat(' ', 3);
-			$tab['num_piece'] = str_pad(self::trunc($line->piece_num, 5), 5);
+			$tab['num_piece'] = str_pad(self::trunc((string) $line->piece_num, 5), 5);
 
 			// Keep correct quadra named field instead of anon filler
 			// $tab['filler2'] = str_repeat(' ', 20);
 			$tab['affaire'] = str_repeat(' ', 10);
 			$tab['quantity1'] = str_repeat(' ', 10);
-			$tab['num_piece2'] = str_pad(self::trunc($line->piece_num, 8), 8);
+			$tab['num_piece2'] = str_pad(self::trunc((string) $line->piece_num, 8), 8);
 			$tab['devis'] = str_pad($conf->currency, 3);
 			$tab['code_journal2'] = str_pad(self::trunc($line->code_journal, 3), 3);
 			$tab['filler3'] = str_repeat(' ', 3);
@@ -1006,7 +1026,7 @@ class AccountancyExport
 			// get document file
 			$attachmentFileName = '';
 			if ($withAttachment == 1) {
-				$attachmentFileKey = trim($line->piece_num);
+				$attachmentFileKey = trim((string) $line->piece_num);
 
 				if (!isset($archiveFileList[$attachmentFileKey])) {
 					$objectDirPath = '';
@@ -1025,9 +1045,9 @@ class AccountancyExport
 					$arrayofinclusion = array();
 					// If it is a supplier invoice, we want to use last uploaded file
 					$arrayofinclusion[] = '^'.preg_quote($objectFileName, '/').(($line->doc_type == 'supplier_invoice') ? '.+' : '').'\.pdf$';
-					$fileFoundList = dol_dir_list($objectDirPath.'/'.$objectFileName, 'files', 0, implode('|', $arrayofinclusion), '(\.meta|_preview.*\.png)$', 'date', SORT_DESC, 0, true);
+					$fileFoundList = dol_dir_list($objectDirPath.'/'.$objectFileName, 'files', 0, implode('|', $arrayofinclusion), '(\.meta|_preview.*\.png)$', 'date', SORT_DESC, 0, 1);
 					if (!empty($fileFoundList)) {
-						$attachmentFileNameTrunc = str_pad(self::trunc($line->piece_num, 8), 8, '0', STR_PAD_LEFT);
+						$attachmentFileNameTrunc = str_pad(self::trunc((string) $line->piece_num, 8), 8, '0', STR_PAD_LEFT);
 						foreach ($fileFoundList as $fileFound) {
 							if (strstr($fileFound['name'], $objectFileName)) {
 								// skip native invoice pdfs (canelle)
@@ -1080,8 +1100,8 @@ class AccountancyExport
 	 *
 	 * Help : https://wiki.gestan.fr/lib/exe/fetch.php?media=wiki:v15:compta:accountancy-format_winfic-ewinfic-winsiscompta.pdf
 	 *
-	 * @param 	array 		$objectLines 			data
-	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @param 	BookKeepingLine[]	$objectLines 	data
+	 * @param 	?resource			$exportFile		[=null] File resource to export or print if null
 	 * @return 	void
 	 */
 	public function exportWinfic($objectLines, $exportFile = null)
@@ -1110,7 +1130,7 @@ class AccountancyExport
 
 			$tab['folio'] = '     1';
 
-			$tab['num_ecriture'] = str_pad(dol_trunc($index, 6, 'right', 'UTF-8', 1), 6, ' ', STR_PAD_LEFT);
+			$tab['num_ecriture'] = str_pad(dol_trunc((string) $index, 6, 'right', 'UTF-8', 1), 6, ' ', STR_PAD_LEFT);
 
 			$tab['jour_ecriture'] = dol_print_date($line->doc_date, '%d%m%y');
 
@@ -1130,7 +1150,7 @@ class AccountancyExport
 
 			$tab['lettrage'] = str_repeat(dol_trunc($line->lettering_code, 2, 'left', 'UTF-8', 1), 2);
 
-			$tab['code_piece'] = str_pad(dol_trunc($line->piece_num, 5, 'left', 'UTF-8', 1), 5, ' ', STR_PAD_LEFT);
+			$tab['code_piece'] = str_pad(dol_trunc((string) $line->piece_num, 5, 'left', 'UTF-8', 1), 5, ' ', STR_PAD_LEFT);
 
 			$tab['code_stat'] = str_repeat(' ', 4);
 
@@ -1162,8 +1182,8 @@ class AccountancyExport
 	/**
 	 * Export format : EBP
 	 *
-	 * @param 	array 		$objectLines 			data
-	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @param 	BookKeepingLine[]	$objectLines 	data
+	 * @param 	?resource			$exportFile		[=null] File resource to export or print if null
 	 * @return 	void
 	 */
 	public function exportEbp($objectLines, $exportFile = null)
@@ -1186,7 +1206,7 @@ class AccountancyExport
 			}
 			//$tab[] = substr(length_accountg($line->numero_compte), 0, 2) . $separator;
 			$tab[] = '"'.dol_trunc($line->label_operation, 40, 'right', 'UTF-8', 1).'"';
-			$tab[] = '"'.dol_trunc($line->piece_num, 15, 'right', 'UTF-8', 1).'"';
+			$tab[] = '"'.dol_trunc((string) $line->piece_num, 15, 'right', 'UTF-8', 1).'"';
 			$tab[] = price2num(abs($line->debit - $line->credit));
 			$tab[] = $line->sens;
 			$tab[] = $date_document;
@@ -1205,8 +1225,8 @@ class AccountancyExport
 	/**
 	 * Export format : Agiris Isacompta
 	 *
-	 * @param 	array 		$objectLines 			data
-	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @param 	BookKeepingLine[]	$objectLines 	data
+	 * @param 	?resource			$exportFile		[=null] File resource to export or print if null
 	 * @return 	void
 	 */
 	public function exportAgiris($objectLines, $exportFile = null)
@@ -1252,8 +1272,8 @@ class AccountancyExport
 	/**
 	 * Export format : OpenConcerto
 	 *
-	 * @param 	array 		$objectLines 			data
-	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @param 	BookKeepingLine[]	$objectLines	data
+	 * @param 	?resource			$exportFile		[=null] File resource to export or print if null
 	 * @return 	void
 	 */
 	public function exportOpenConcerto($objectLines, $exportFile = null)
@@ -1290,8 +1310,8 @@ class AccountancyExport
 	/**
 	 * Export format : Configurable CSV
 	 *
-	 * @param 	array 		$objectLines 			data
-	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @param 	BookKeepingLine[]	$objectLines 			data
+	 * @param	?resource	$exportFile				[=null] File resource to export or print if null
 	 * @return	void
 	 */
 	public function exportConfigurable($objectLines, $exportFile = null)
@@ -1331,11 +1351,11 @@ class AccountancyExport
 	 *
 	 * Help to import in your software: https://wiki.dolibarr.org/index.php?title=Module_Comptabilit%C3%A9_en_Partie_Double#Exports_avec_fichiers_sources
 	 *
-	 * @param 	array 		$objectLines 			data
-	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
-	 * @param 	array		$archiveFileList		[=array()] Archive file list : array of ['path', 'name']
-	 * @param 	int			$withAttachment			[=0] Not add files or 1 to have attached in an archive
-	 * @return	array		Archive file list : array of ['path', 'name']
+	 * @param 	BookKeepingLine[]	$objectLines 			data
+	 * @param	?resource	$exportFile				[=null] File resource to export or print if null
+	 * @param 	array<string,array{name:string,path:string}>		$archiveFileList		[=array()] Archive file list : array of ['path', 'name']
+	 * @param 	int<0,1>	$withAttachment			[=0] Not add files or 1 to have attached in an archive
+	 * @return	array<string,array{name:string,path:string}>	Archive file list : array of ['path', 'name']
 	 */
 	public function exportFEC($objectLines, $exportFile = null, $archiveFileList = array(), $withAttachment = 0)
 	{
@@ -1475,7 +1495,7 @@ class AccountancyExport
 				// get document file
 				$attachmentFileName = '';
 				if ($withAttachment == 1) {
-					$attachmentFileKey = trim($line->piece_num);
+					$attachmentFileKey = trim((string) $line->piece_num);
 
 					if (!isset($archiveFileList[$attachmentFileKey])) {
 						$objectDirPath = '';
@@ -1485,13 +1505,14 @@ class AccountancyExport
 						} elseif ($line->doc_type == 'expense_report') {
 							$objectDirPath = !empty($conf->expensereport->multidir_output[$conf->entity]) ? $conf->expensereport->multidir_output[$conf->entity] : $conf->expensereport->dir_output;
 						} elseif ($line->doc_type == 'supplier_invoice') {
+							'@phan-var-force FactureFournisseur $invoice';
 							$objectDirPath = !empty($conf->fournisseur->facture->multidir_output[$conf->entity]) ? $conf->fournisseur->facture->multidir_output[$conf->entity] : $conf->fournisseur->facture->dir_output;
 							$objectDirPath .= '/'.rtrim(get_exdir($invoice->id, 2, 0, 0, $invoice, 'invoice_supplier'), '/');
 						}
 						$arrayofinclusion = array();
 						// If it is a supplier invoice, we want to use last uploaded file
 						$arrayofinclusion[] = '^'.preg_quote($objectFileName, '/').(($line->doc_type == 'supplier_invoice') ? '.+' : '').'\.pdf$';
-						$fileFoundList = dol_dir_list($objectDirPath.'/'.$objectFileName, 'files', 0, implode('|', $arrayofinclusion), '(\.meta|_preview.*\.png)$', 'date', SORT_DESC, 0, true);
+						$fileFoundList = dol_dir_list($objectDirPath.'/'.$objectFileName, 'files', 0, implode('|', $arrayofinclusion), '(\.meta|_preview.*\.png)$', 'date', SORT_DESC, 0, 1);
 						if (!empty($fileFoundList)) {
 							$attachmentFileNameTrunc = $line->doc_ref;
 							foreach ($fileFoundList as $fileFound) {
@@ -1544,11 +1565,11 @@ class AccountancyExport
 	 *
 	 * Help to import in your software: https://wiki.dolibarr.org/index.php?title=Module_Comptabilit%C3%A9_en_Partie_Double#Exports_avec_fichiers_sources
 	 *
-	 * @param 	array 		$objectLines 			data
-	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
-	 * @param 	array		$archiveFileList		[=array()] Archive file list : array of ['path', 'name']
-	 * @param 	int			$withAttachment			[=0] Not add files or 1 to have attached in an archive
-	 * @return	array		Archive file list : array of ['path', 'name']
+	 * @param 	BookKeepingLine[]	$objectLines 			data
+	 * @param	?resource	$exportFile				[=null] File resource to export or print if null
+	 * @param 	array<string,array{name:string,path:string}>		$archiveFileList		[=array()] Archive file list : array of ['path', 'name']
+	 * @param 	int<0,1>	$withAttachment			[=0] Not add files or 1 to have attached in an archive
+	 * @return	array<string,array{name:string,path:string}>	Archive file list : array of ['path', 'name']
 	 */
 	public function exportFEC2($objectLines, $exportFile = null, $archiveFileList = array(), $withAttachment = 0)
 	{
@@ -1687,7 +1708,7 @@ class AccountancyExport
 				// get document file
 				$attachmentFileName = '';
 				if ($withAttachment == 1) {
-					$attachmentFileKey = trim($line->piece_num);
+					$attachmentFileKey = trim((string) $line->piece_num);
 
 					if (!isset($archiveFileList[$attachmentFileKey])) {
 						$objectDirPath = '';
@@ -1697,13 +1718,14 @@ class AccountancyExport
 						} elseif ($line->doc_type == 'expense_report') {
 							$objectDirPath = !empty($conf->expensereport->multidir_output[$conf->entity]) ? $conf->expensereport->multidir_output[$conf->entity] : $conf->expensereport->dir_output;
 						} elseif ($line->doc_type == 'supplier_invoice') {
+							'@phan-var-force FactureFournisseur $invoice';
 							$objectDirPath = !empty($conf->fournisseur->facture->multidir_output[$conf->entity]) ? $conf->fournisseur->facture->multidir_output[$conf->entity] : $conf->fournisseur->facture->dir_output;
 							$objectDirPath .= '/'.rtrim(get_exdir($invoice->id, 2, 0, 0, $invoice, 'invoice_supplier'), '/');
 						}
 						$arrayofinclusion = array();
 						// If it is a supplier invoice, we want to use last uploaded file
 						$arrayofinclusion[] = '^'.preg_quote($objectFileName, '/').(($line->doc_type == 'supplier_invoice') ? '.+' : '').'\.pdf$';
-						$fileFoundList = dol_dir_list($objectDirPath.'/'.$objectFileName, 'files', 0, implode('|', $arrayofinclusion), '(\.meta|_preview.*\.png)$', 'date', SORT_DESC, 0, true);
+						$fileFoundList = dol_dir_list($objectDirPath.'/'.$objectFileName, 'files', 0, implode('|', $arrayofinclusion), '(\.meta|_preview.*\.png)$', 'date', SORT_DESC, 0, 1);
 						if (!empty($fileFoundList)) {
 							$attachmentFileNameTrunc = $line->doc_ref;
 							foreach ($fileFoundList as $fileFound) {
@@ -1755,8 +1777,8 @@ class AccountancyExport
 	 * https://onlinehelp.sageschweiz.ch/default.aspx?tabid=19984
 	 * http://media.topal.ch/Public/Schnittstellen/TAF/Specification/Sage50-TAF-format.pdf
 	 *
-	 * @param 	array 		$objectLines 			data
-	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @param 	BookKeepingLine[]	$objectLines 			data
+	 * @param	?resource	$exportFile				[=null] File resource to export or print if null
 	 * @return 	void
 	 */
 	public function exportSAGE50SWISS($objectLines, $exportFile = null)
@@ -1909,8 +1931,8 @@ class AccountancyExport
 	 * Export format : LD Compta version 9
 	 * http://www.ldsysteme.fr/fileadmin/telechargement/np/ldcompta/Documentation/IntCptW9.pdf
 	 *
-	 * @param 	array 		$objectLines 			data
-	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @param 	BookKeepingLine[]	$objectLines 			data
+	 * @param	?resource	$exportFile				[=null] File resource to export or print if null
 	 * @return 	void
 	 */
 	public function exportLDCompta($objectLines, $exportFile = null)
@@ -2049,8 +2071,8 @@ class AccountancyExport
 	 *
 	 * Help : http://www.ldsysteme.fr/fileadmin/telechargement/np/ldcompta/Documentation/IntCptW10.pdf
 	 *
-	 * @param 	array 		$objectLines 			data
-	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @param 	BookKeepingLine[]	$objectLines 			data
+	 * @param	?resource	$exportFile				[=null] File resource to export or print if null
 	 * @return 	void
 	 */
 	public function exportLDCompta10($objectLines, $exportFile = null)
@@ -2329,8 +2351,8 @@ class AccountancyExport
 	/**
 	 * Export format : Charlemagne
 	 *
-	 * @param 	array 		$objectLines 			data
-	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @param 	BookKeepingLine[]	$objectLines 			data
+	 * @param	?resource	$exportFile				[=null] File resource to export or print if null
 	 * @return 	void
 	 */
 	public function exportCharlemagne($objectLines, $exportFile = null)
@@ -2407,8 +2429,8 @@ class AccountancyExport
 	/**
 	 * Export format : Gestimum V3
 	 *
-	 * @param 	array 		$objectLines 			data
-	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @param 	BookKeepingLine[]	$objectLines 			data
+	 * @param	?resource	$exportFile				[=null] File resource to export or print if null
 	 * @return	void
 	 */
 	public function exportGestimumV3($objectLines, $exportFile = null)
@@ -2490,7 +2512,7 @@ class AccountancyExport
 				//Libellé manual
 				$tab[] = dol_trunc(str_replace('"', '', $invoice_ref . (!empty($company_name) ? ' - ' : '') . $company_name), 40, 'right', 'UTF-8', 1);
 				//Numéro de pièce
-				$tab[] = dol_trunc(str_replace('"', '', $line->piece_num), 10, 'right', 'UTF-8', 1);
+				$tab[] = dol_trunc(str_replace('"', '', (string) $line->piece_num), 10, 'right', 'UTF-8', 1);
 				//Devise
 				$tab[] = 'EUR';
 				//Amount
@@ -2515,8 +2537,8 @@ class AccountancyExport
 	/**
 	 * Export format : Gestimum V5
 	 *
-	 * @param 	array 		$objectLines 			data
-	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @param 	BookKeepingLine[]	$objectLines 			data
+	 * @param	?resource	$exportFile				[=null] File resource to export or print if null
 	 * @return 	void
 	 */
 	public function exportGestimumV5($objectLines, $exportFile = null)
@@ -2543,7 +2565,7 @@ class AccountancyExport
 				$tab[] = "";
 				$tab[] = '"'.dol_trunc(str_replace('"', '', $line->label_operation), 40, 'right', 'UTF-8', 1).'"';
 				$tab[] = '"' . dol_trunc(str_replace('"', '', $line->doc_ref), 40, 'right', 'UTF-8', 1) . '"';
-				$tab[] = '"' . dol_trunc(str_replace('"', '', $line->piece_num), 10, 'right', 'UTF-8', 1) . '"';
+				$tab[] = '"' . dol_trunc(str_replace('"', '', (string) $line->piece_num), 10, 'right', 'UTF-8', 1) . '"';
 				$tab[] = price2num(abs($line->debit - $line->credit));
 				$tab[] = $line->sens;
 				$tab[] = $date_document;
@@ -2566,8 +2588,8 @@ class AccountancyExport
 	*
 	* by OpenSolus [https://opensolus.fr]
 	*
-	 * @param 	array 		$objectLines 			data
-	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @param 	BookKeepingLine[]	$objectLines 	data
+	 * @param	?resource			$exportFile		[=null] File resource to export or print if null
 	 * @return 	void
 	*/
 	public function exportiSuiteExpert($objectLines, $exportFile = null)

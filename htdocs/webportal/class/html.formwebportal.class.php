@@ -346,6 +346,31 @@ class FormWebPortal extends Form
 	}
 
 	/**
+	 * Show a Signature icon with link
+	 * You may want to call this into a div like this:
+	 * print '<div class="inline-block valignmiddle">'.$formfile->getDocumentsLink($element_doc, $filename, $filedir).'</div>';
+	 *
+	 * @param string $modulepart 'proposal', 'facture', 'facture_fourn', ...
+	 * @param Object $object Object linked to the document to be signed
+	 * @param string $morecss Add more css to the download picto
+	 * @return    string                Output string with HTML link of signature (might be empty string).
+	 */
+	public function getSignatureLink($modulepart, $object, $morecss = '')
+	{
+		global $langs;
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
+		$out = '<!-- html.formwebportal::getSignatureLink -->' . "\n";
+		$url = getOnlineSignatureUrl(0, $modulepart, $object->ref, 1, $object);
+		if (!empty($url)) {
+			$out .= '<a target="_blank" rel="noopener noreferrer" href="' . $url . '"' . ($morecss ? ' class="' . $morecss . '"' : '') . ' role="signaturelink">';
+			$out .= '<i class="fa fa-file-signature"></i>';
+			$out .= $langs->trans("Sign");
+			$out .= '</a>';
+		}
+		return $out;
+	}
+
+	/**
 	 * Generic method to select a component from a combo list.
 	 * Can use autocomplete with ajax after x key pressed or a full combo, depending on setup.
 	 * This is the generic method that will replace all specific existing methods.
@@ -537,7 +562,7 @@ class FormWebPortal extends Form
 			$textifempty = '&nbsp;';
 
 			//if (!empty($conf->use_javascript_ajax) || $forcecombo) $textifempty='';
-			if (!empty($conf->global->$confkeyforautocompletemode)) {
+			if (getDolGlobalString($confkeyforautocompletemode)) {
 				if ($showempty && !is_numeric($showempty)) {
 					$textifempty = $langs->trans($showempty);
 				} else {
@@ -811,7 +836,7 @@ class FormWebPortal extends Form
 					}
 				}
 
-				if ($filter_categorie === false) {
+				if (!$filter_categorie) {
 					$fields_label = explode('|', $InfoFieldList[1]);
 					if (is_array($fields_label)) {
 						$keyList .= ', ';
@@ -934,7 +959,7 @@ class FormWebPortal extends Form
 
 			case 'link':
 				$param_list = array_keys($param['options']); // $param_list='ObjectName:classPath[:AddCreateButtonOrNot[:Filter[:Sortfield]]]'
-				$showempty = (($required && $default != '') ? 0 : 1);
+				$showempty = (($required && $default != '') ? '0' : '1');
 
 				$out = $this->selectForForms($param_list[0], $htmlName, $value, $showempty, '', '', $morecss, $moreparam, 0, empty($val['disabled']) ? 0 : 1);
 
@@ -1077,7 +1102,7 @@ class FormWebPortal extends Form
 		} elseif ($type == 'duration') {
 			include_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 			if (!is_null($value) && $value !== '') {
-				$value = convertSecondToTime($value, 'allhourmin');
+				$value = convertSecondToTime((int) $value, 'allhourmin');
 			}
 		} elseif ($type == 'double' || $type == 'real') {
 			if (!is_null($value) && $value !== '') {
@@ -1144,8 +1169,8 @@ class FormWebPortal extends Form
 			dol_syslog(__METHOD__ . ' type=sellist', LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql) {
-				if ($filter_categorie === false) {
-					$value = ''; // value was used, so now we reste it to use it to build final output
+				if (!$filter_categorie) {
+					$value = ''; // value was used, so now we reset it to use it to build final output
 					$numrows = $this->db->num_rows($resql);
 					if ($numrows) {
 						$obj = $this->db->fetch_object($resql);
@@ -1247,8 +1272,8 @@ class FormWebPortal extends Form
 			dol_syslog(__METHOD__ . ' type=chkbxlst', LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql) {
-				if ($filter_categorie === false) {
-					$value = ''; // value was used, so now we reste it to use it to build final output
+				if (!$filter_categorie) {
+					$value = ''; // value was used, so now we reset it to use it to build final output
 					$toprint = array();
 					while ($obj = $this->db->fetch_object($resql)) {
 						// Several field into label (eq table:code|libelle:rowid)

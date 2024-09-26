@@ -1,11 +1,12 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2023      Charlene Benke       <charlene@patas_monkey.com>
- * Copyright (C) 2023      Christian Foellmann  <christian@foellmann.de>
- * Copyright (C) 2024      MDW                  <mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024      Frédéric France      <frederic.france@free.fr>
+/* Copyright (C) 2001-2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2023       Charlene Benke          <charlene@patas_monkey.com>
+ * Copyright (C) 2023       Christian Foellmann     <christian@foellmann.de>
+ * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024       Alexandre Spangaro      <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,7 +79,7 @@ $fk_project = GETPOSTINT('fk_project');
 $mine = GETPOST('mode') == 'mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('projectcard', 'globalcard'));
 
 $object = new Project($db);
@@ -162,7 +163,7 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
-	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, not include_once
+	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be 'include', not 'include_once'
 
 	// Action setdraft object
 	if ($action == 'confirm_setdraft' && $confirm == 'yes' && $permissiontoadd) {
@@ -217,7 +218,7 @@ if (empty($reshook)) {
 			$object->title                = GETPOST('title', 'alphanohtml');
 			$object->socid                = GETPOSTINT('socid');
 			$object->description          = GETPOST('description', 'restricthtml'); // Do not use 'alpha' here, we want field as it is
-			$object->public               = GETPOST('public', 'alphanohtml');
+			$object->public               = GETPOSTINT('public') ? 1 : 0;
 			$object->opp_amount           = GETPOSTFLOAT('opp_amount');
 			$object->budget_amount        = GETPOSTFLOAT('budget_amount');
 			$object->date_c               = dol_now();
@@ -226,7 +227,7 @@ if (empty($reshook)) {
 			$object->date_start_event     = $date_start_event;
 			$object->date_end_event       = $date_end_event;
 			$object->location             = $location;
-			$object->statut               = $status;
+			$object->status               = $status;
 			$object->opp_status           = $opp_status;
 			$object->opp_percent          = $opp_percent;
 			$object->usage_opportunity    = (GETPOST('usage_opportunity', 'alpha') == 'on' ? 1 : 0);
@@ -242,11 +243,11 @@ if (empty($reshook)) {
 
 			$result = $object->create($user);
 			if (!$error && $result > 0) {
-				// Add myself as project leader
-				$typeofcontact = 'PROJECTLEADER';
+				// Add myself as Owner Contact Selected in the form
+				$typeofcontact = GETPOST('typeofcontact');
 				$result = $object->add_contact($user->id, $typeofcontact, 'internal');
 
-				// -3 means type not found (PROJECTLEADER renamed, de-activated or deleted), so don't prevent creation if it has been the case
+				// -3 means type not found (renamed, de-activated or deleted), so don't prevent creation if it has been the case
 				if ($result == -3) {
 					setEventMessage('ErrorPROJECTLEADERRoleMissingRestoreIt', 'errors');
 					$error++;
@@ -315,10 +316,10 @@ if (empty($reshook)) {
 			$object->ref          = GETPOST('ref', 'alpha');
 			$object->fk_project   = GETPOSTINT('fk_project');
 			$object->title        = GETPOST('title', 'alphanohtml'); // Do not use 'alpha' here, we want field as it is
-			$object->statut       = GETPOSTINT('status');
+			$object->status       = GETPOSTINT('status');
 			$object->socid        = GETPOSTINT('socid');
 			$object->description  = GETPOST('description', 'restricthtml'); // Do not use 'alpha' here, we want field as it is
-			$object->public       = GETPOST('public', 'alpha');
+			$object->public       = GETPOSTINT('public') ? 1 : 0;
 			$object->date_start   = (!GETPOST('projectstart')) ? '' : $date_start;
 			$object->date_end     = (!GETPOST('projectend')) ? '' : $date_end;
 			$object->date_start_event = (!GETPOST('date_start_event')) ? '' : $date_start_event;
@@ -548,7 +549,7 @@ if (empty($reshook)) {
 			$action = 'view';
 			$comefromclone = true;
 
-			setEventMessages($langs->trans("ProjectCreatedInDolibarr", $newobject->ref), "", 'mesgs');
+			setEventMessages($langs->trans("ProjectCreatedInDolibarr", $newobject->ref), null, 'mesgs');
 			//var_dump($newobject); exit;
 		}
 	}
@@ -578,7 +579,7 @@ if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/projectnameonly/', get
 
 $help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos|DE:Modul_Projekte";
 
-llxHeader("", $title, $help_url);
+llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-project page-card');
 
 $titleboth = $langs->trans("LeadsOrProjects");
 $titlenew = $langs->trans("NewLeadOrProject"); // Leads and opportunities by default
@@ -616,7 +617,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 	print '<table class="border centpercent tableforfieldcreate">';
 
 	$defaultref = '';
-	$modele = !getDolGlobalString('PROJECT_ADDON') ? 'mod_project_simple' : $conf->global->PROJECT_ADDON;
+	$modele = getDolGlobalString('PROJECT_ADDON', 'mod_project_simple');
 
 	// Search template files
 	$file = '';
@@ -632,11 +633,13 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 		}
 	}
 
-	if ($filefound) {
+	if ($filefound && !empty($classname)) {
 		$result = dol_include_once($reldir."core/modules/project/".$modele.'.php');
-		$modProject = new $classname();
+		if (class_exists($classname)) {
+			$modProject = new $classname();
 
-		$defaultref = $modProject->getNextValue($thirdparty, $object);
+			$defaultref = $modProject->getNextValue($thirdparty, $object);
+		}
 	}
 
 	if (is_numeric($defaultref) && $defaultref <= 0) {
@@ -814,11 +817,11 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 	}
 
 	if (count($array) > 0) {
-		print $form->selectarray('public', $array, GETPOST('public'), 0, 0, 0, '', 0, 0, 0, '', '', 1);
+		print $form->selectarray('public', $array, GETPOSTINT('public') ? 1 : 0, 0, 0, 0, '', 0, 0, 0, '', '', 1);
 	} else {
-		print '<input type="hidden" name="public" id="public" value="'.GETPOST('public').'">';
+		print '<input type="hidden" name="public" id="public" value="'.(GETPOSTINT('public') ? 1 : 0).'">';
 
-		if (GETPOST('public') == 0) {
+		if (GETPOSTINT('public') == 0) {
 			print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
 			print $langs->trans("PrivateProject");
 		} else {
@@ -891,6 +894,14 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 		print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 		print "</td></tr>";
 	}
+
+	// Selection of Owner contact type
+	print '<tr><td class="tdtop">'.$langs->trans("ProjectContactTypeManager").'</td>';
+	print '<td>';
+	$contactList = $object->liste_type_contact('internal', 'position', 1);
+	$typeofcontact = GETPOST('typeofcontact') ? GETPOST('typeofcontact') : 'PROJECTLEADER';
+	print $form->selectarray('typeofcontact', $contactList, $typeofcontact, 0, 0, 0, '', 0, 0, 0, '', '', 1);
+	print '</td></tr>';
 
 	// Other options
 	$parameters = array();
@@ -1027,7 +1038,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 			unset($statuses[$object::STATUS_DRAFT]);
 		}
 		foreach ($statuses as $key => $val) {
-			print '<option value="'.$key.'"'.((GETPOSTISSET('status') ? GETPOST('status') : $object->statut) == $key ? ' selected="selected"' : '').'>'.$langs->trans($val).'</option>';
+			print '<option value="'.$key.'"'.((GETPOSTISSET('status') ? GETPOST('status') : $object->status) == $key ? ' selected="selected"' : '').'>'.$langs->trans($val).'</option>';
 		}
 		print '</select>';
 		print ajax_combobox('status');
@@ -1298,7 +1309,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 
 		print '</table>';
 	} else {
-		print dol_get_fiche_head($head, 'project', $langs->trans("Project"), -1, ($object->public ? 'projectpub' : 'project'));
+		print dol_get_fiche_head($head, 'project', $langs->trans("Project"), -1, ($object->public ? 'projectpub' : 'project'), 0, '', '', 0, '', 1);
 
 		// Project card
 
@@ -1583,7 +1594,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 
 			// Send
 			if (empty($user->socid)) {
-				if ($object->statut != Project::STATUS_CLOSED) {
+				if ($object->status != Project::STATUS_CLOSED) {
 					print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"].'?action=presend&token='.newToken().'&id='.$object->id.'&mode=init#formmailbeforetitle', '');
 				}
 			}
@@ -1591,7 +1602,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 			// Accounting Report
 			/*
 			$accouting_module_activated = isModEnabled('comptabilite') || isModEnabled('accounting');
-			if ($accouting_module_activated && $object->statut != Project::STATUS_DRAFT) {
+			if ($accouting_module_activated && $object->status != Project::STATUS_DRAFT) {
 				$start = dol_getdate((int) $object->date_start);
 				$end = dol_getdate((int) $object->date_end);
 				$url = DOL_URL_ROOT.'/compta/accounting-files.php?projectid='.$object->id;
@@ -1603,7 +1614,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 
 			// Back to draft
 			if (!getDolGlobalString('MAIN_DISABLEDRAFTSTATUS') && !getDolGlobalString('MAIN_DISABLEDRAFTSTATUS_PROJECT')) {
-				if ($object->statut != Project::STATUS_DRAFT && $user->hasRight('projet', 'creer')) {
+				if ($object->status != Project::STATUS_DRAFT && $user->hasRight('projet', 'creer')) {
 					if ($userWrite > 0) {
 						print dolGetButtonAction('', $langs->trans('SetToDraft'), 'default', $_SERVER["PHP_SELF"].'?action=confirm_setdraft&amp;confirm=yes&amp;token='.newToken().'&amp;id='.$object->id, '');
 					} else {
@@ -1613,7 +1624,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 			}
 
 			// Modify
-			if ($object->statut != Project::STATUS_CLOSED && $user->hasRight('projet', 'creer')) {
+			if ($object->status != Project::STATUS_CLOSED && $user->hasRight('projet', 'creer')) {
 				if ($userWrite > 0) {
 					print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id, '');
 				} else {
@@ -1622,7 +1633,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 			}
 
 			// Validate
-			if ($object->statut == Project::STATUS_DRAFT && $user->hasRight('projet', 'creer')) {
+			if ($object->status == Project::STATUS_DRAFT && $user->hasRight('projet', 'creer')) {
 				if ($userWrite > 0) {
 					print dolGetButtonAction('', $langs->trans('Validate'), 'default', $_SERVER["PHP_SELF"].'?action=validate&amp;token='.newToken().'&amp;id='.$object->id, '');
 				} else {
@@ -1631,7 +1642,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 			}
 
 			// Close
-			if ($object->statut == Project::STATUS_VALIDATED && $user->hasRight('projet', 'creer')) {
+			if ($object->status == Project::STATUS_VALIDATED && $user->hasRight('projet', 'creer')) {
 				if ($userWrite > 0) {
 					print dolGetButtonAction('', $langs->trans('Close'), 'default', $_SERVER["PHP_SELF"].'?action=close&amp;token='.newToken().'&amp;id='.$object->id, '');
 				} else {
@@ -1640,7 +1651,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 			}
 
 			// Reopen
-			if ($object->statut == Project::STATUS_CLOSED && $user->hasRight('projet', 'creer')) {
+			if ($object->status == Project::STATUS_CLOSED && $user->hasRight('projet', 'creer')) {
 				if ($userWrite > 0) {
 					print dolGetButtonAction('', $langs->trans('ReOpen'), 'default', $_SERVER["PHP_SELF"].'?action=reopen&amp;token='.newToken().'&amp;id='.$object->id, '');
 				} else {
@@ -1678,8 +1689,8 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 			}
 
 			// Delete
-			if ($user->hasRight('projet', 'supprimer') || ($object->statut == Project::STATUS_DRAFT && $user->hasRight('projet', 'creer'))) {
-				if ($userDelete > 0 || ($object->statut == Project::STATUS_DRAFT && $user->hasRight('projet', 'creer'))) {
+			if ($user->hasRight('projet', 'supprimer') || ($object->status == Project::STATUS_DRAFT && $user->hasRight('projet', 'creer'))) {
+				if ($userDelete > 0 || ($object->status == Project::STATUS_DRAFT && $user->hasRight('projet', 'creer'))) {
 					print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id, '');
 				} else {
 					print dolGetButtonAction($langs->trans('NotOwnerOfProject'), $langs->trans('Delete'), 'default', $_SERVER['PHP_SELF']. '#', '', false);

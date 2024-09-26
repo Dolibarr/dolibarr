@@ -3,6 +3,7 @@
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
  * Copyright (C) 2003-2010 Frederico Caldeira Knabben
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * == BEGIN LICENSE ==
  *
@@ -91,7 +92,7 @@ function CreateXmlFooter()
 function SendError($number, $text)
 {
 	if ($_GET['Command'] == 'FileUpload') {
-		SendUploadResults($number, "", "", $text);
+		SendUploadResults((string) $number, "", "", $text);
 	}
 
 	if (isset($GLOBALS['HeaderSent']) && $GLOBALS['HeaderSent']) {
@@ -343,7 +344,7 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 		//var_dump($sFileName); var_dump(image_format_supported($sFileName));exit;
 		$imgsupported = image_format_supported($sFileName);
-		$isImageValid = ($imgsupported >= 0 ? true : false);
+		$isImageValid = ($imgsupported >= 0);
 		if (!$isImageValid) {
 			$sErrorNumber = '202';
 		}
@@ -391,10 +392,14 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 						dol_syslog("connector.lib.php IsImageValid is ko");
 						@unlink($sFilePath);
 						$sErrorNumber = '202';
-					} elseif (isset($detectHtml) && $detectHtml === -1 && DetectHtml($sFilePath) === true) {
-						dol_syslog("connector.lib.php DetectHtml is ko");
-						@unlink($sFilePath);
-						$sErrorNumber = '202';
+					} else {
+						$detectHtml = DetectHtml($sFilePath);
+						if ($detectHtml === true || $detectHtml == -1) {
+							// Note that is is a simple test and not reliable. Security does not rely on this.
+							dol_syslog("connector.lib.php DetectHtml is ko");
+							@unlink($sFilePath);
+							$sErrorNumber = '202';
+						}
 					}
 				}
 			} else {
@@ -807,7 +812,7 @@ function SanitizeFileName($sNewFileName)
 /**
  * This is the function that sends the results of the uploading process.
  *
- * @param	string		$errorNumber	errorNumber
+ * @param	string 		$errorNumber	errorNumber
  * @param	string		$fileUrl		fileUrl
  * @param	string		$fileName		fileName
  * @param	string		$customMsg		customMsg
@@ -822,7 +827,7 @@ function SendUploadResults($errorNumber, $fileUrl = '', $fileName = '', $customM
 (function(){var d=document.domain;while (true){try{var A=window.parent.document.domain;break;}catch(e) {};d=d.replace(/.*?(?:\.|$)/,'');if (d.length==0) break;try{document.domain=d;}catch (e){break;}}})();
 EOF;
 
-	if ($errorNumber && $errorNumber != 201) {
+	if ($errorNumber && $errorNumber != '201') {
 		$fileUrl = "";
 		$fileName = "";
 	}
@@ -951,8 +956,8 @@ function IsHtmlExtension($ext, $formExtensions)
  * Detect HTML in the first KB to prevent against potential security issue with
  * IE/Safari/Opera file type auto detection bug.
  *
- * @param string $filePath absolute path to file
- * @return bool|-1		Returns true if the file contains insecure HTML code at the beginning, or -1 if error
+ * @param 	string 	$filePath 	Absolute path to file
+ * @return 	bool|-1				Returns true if the file contains insecure HTML code at the beginning or false, or -1 if error
  */
 function DetectHtml($filePath)
 {

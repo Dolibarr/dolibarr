@@ -1,13 +1,13 @@
 <?php
-/* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
- * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
- * Copyright (C) 2015		Alexandre Spangaro		<aspangaro@open-dsi.fr>
- * Copyright (C) 2019-2022	Thibault Foucart		<support@ptibogxiv.net>
- * Copyright (C) 2020		Josep Lluís Amador		<joseplluis@lliuretic.cat>
- * Copyright (C) 2021		Waël Almoman			<info@almoman.com>
+/* Copyright (C) 2001-2002	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2003		Jean-Louis Bergamo			<jlb@j1b.org>
+ * Copyright (C) 2004-2011	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2017	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2013		Florian Henry				<florian.henry@open-concept.pro>
+ * Copyright (C) 2015-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2019-2022	Thibault Foucart			<support@ptibogxiv.net>
+ * Copyright (C) 2020		Josep Lluís Amador			<joseplluis@lliuretic.cat>
+ * Copyright (C) 2021		Waël Almoman				<info@almoman.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
@@ -92,7 +92,7 @@ $comment = GETPOST("comment", 'restricthtml');
 $mail_valid = GETPOST("mail_valid", 'restricthtml');
 $caneditamount = GETPOSTINT("caneditamount");
 
-// Initialize technical objects
+// Initialize a technical object
 $object = new AdherentType($db);
 $extrafields = new ExtraFields($db);
 $hookmanager->initHooks(array('membertypecard', 'globalcard'));
@@ -108,7 +108,7 @@ $result = restrictedArea($user, 'adherent', $rowid, 'adherent_type');
  *	Actions
  */
 
-if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 	$search_ref = "";
 	$search_lastname = "";
 	$search_login = "";
@@ -168,7 +168,7 @@ if ($action == 'add' && $user->hasRight('adherent', 'configurer')) {
 		if ($num) {
 			$error++;
 			$langs->load("errors");
-			setEventMessages($langs->trans("ErrorLabelAlreadyExists", $login), null, 'errors');
+			setEventMessages($langs->trans("ErrorLabelAlreadyExists", $object->label), null, 'errors');
 		}
 	}
 
@@ -249,15 +249,16 @@ if ($action == 'confirm_delete' && $user->hasRight('adherent', 'configurer')) {
 $form = new Form($db);
 $formproduct = new FormProduct($db);
 
+$title = $langs->trans("MembersTypeSetup");
 $help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder';
 
-llxHeader('', $langs->trans("MembersTypeSetup"), $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-member page-type');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
 // List of members type
 if (!$rowid && $action != 'create' && $action != 'edit') {
-	//print dol_get_fiche_head('');
+	//print dol_get_fiche_head([]);
 
 	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.amount, d.caneditamount, d.vote, d.statut as status, d.morphy, d.duration";
 	$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
@@ -442,8 +443,6 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 
 // Creation
 if ($action == 'create') {
-	$object = new AdherentType($db);
-
 	print load_fiche_titre($langs->trans("NewMemberType"), '', 'members');
 
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
@@ -451,7 +450,7 @@ if ($action == 'create') {
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-	print dol_get_fiche_head('');
+	print dol_get_fiche_head(array());
 
 	print '<table class="border centpercent">';
 	print '<tbody>';

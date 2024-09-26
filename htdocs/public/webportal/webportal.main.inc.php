@@ -140,7 +140,7 @@ if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->access
 
 		if ($action == 'login') {
 			$login = GETPOST('login', 'alphanohtml');
-			$password = GETPOST('password', 'none');
+			$password = GETPOST('password', 'password');
 			// $security_code = GETPOST('security_code', 'alphanohtml');
 
 			if (empty($login)) {
@@ -183,7 +183,7 @@ if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->access
 		if (empty($webportal_logged_thirdparty_account_id)) {
 			// Set cookie for timeout management
 			if (getDolGlobalString('MAIN_SESSION_TIMEOUT')) {
-				setcookie($sessiontimeout, $conf->global->MAIN_SESSION_TIMEOUT, 0, "/", '', (empty($dolibarr_main_force_https) ? false : true), true);
+				setcookie($sessiontimeout, $conf->global->MAIN_SESSION_TIMEOUT, 0, "/", '', !empty($dolibarr_main_force_https), true);
 			}
 
 			$context->controller = 'login';
@@ -204,7 +204,7 @@ if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->access
 			// Account has been removed after login
 			dol_syslog("Can't load third-party account (ID: $webportal_logged_thirdparty_account_id) even if session logged.", LOG_WARNING);
 			session_destroy();
-			session_set_cookie_params(0, '/', null, (empty($dolibarr_main_force_https) ? false : true), true); // Add tag secure and httponly on session cookie
+			session_set_cookie_params(0, '/', null, !empty($dolibarr_main_force_https), true); // Add tag secure and httponly on session cookie
 			session_name($sessionname);
 			session_start();
 

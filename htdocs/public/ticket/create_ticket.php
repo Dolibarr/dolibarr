@@ -2,6 +2,8 @@
 /* Copyright (C) 2013-2016    Jean-François FERRY <hello@librethic.io>
  * Copyright (C) 2016         Christophe Battarel <christophe@altairis.fr>
  * Copyright (C) 2023         Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,7 +81,7 @@ $cancel = GETPOST('cancel', 'aZ09');
 
 $backtopage = '';
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('publicnewticketcard', 'globalcard'));
 
 $object = new Ticket($db);
@@ -210,16 +212,16 @@ if (empty($reshook)) {
 			}
 		}
 
-		if (!GETPOST("subject", "alphanohtml")) {
-			$error++;
-			array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("Subject")));
-			$action = '';
-		}
-		if (!GETPOST("message", "restricthtml")) {
-			$error++;
-			array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("Message")));
-			$action = '';
-		}
+
+		$fieldsToCheck = [
+			'type_code' => ['check' => 'alpha', 'langs' => 'TicketTypeRequest'],
+			'category_code' => ['check' => 'alpha', 'langs' => 'TicketCategory'],
+			'severity_code' => ['check' => 'alpha', 'langs' => 'TicketSeverity'],
+			'subject' => ['check' => 'alphanohtml', 'langs' => 'Subject'],
+			'message' => ['check' => 'restricthtml', 'langs' => 'Message']
+		];
+
+		FormTicket::checkRequiredFields($fieldsToCheck, $error);
 
 		// Check email address
 		if (!empty($origin_email) && !isValidEmail($origin_email)) {
@@ -231,7 +233,7 @@ if (empty($reshook)) {
 		// Check Captcha code if is enabled
 		if (getDolGlobalInt('MAIN_SECURITY_ENABLECAPTCHA_TICKET')) {
 			$sessionkey = 'dol_antispam_value';
-			$ok = (array_key_exists($sessionkey, $_SESSION) === true && (strtolower($_SESSION[$sessionkey]) === strtolower(GETPOST('code', 'restricthtml'))));
+			$ok = (array_key_exists($sessionkey, $_SESSION) && (strtolower($_SESSION[$sessionkey]) === strtolower(GETPOST('code', 'restricthtml'))));
 			if (!$ok) {
 				$error++;
 				array_push($object->errors, $langs->trans("ErrorBadValueForCode"));
@@ -511,7 +513,7 @@ if (!getDolGlobalInt('TICKET_ENABLE_PUBLIC_INTERFACE')) {
 
 $arrayofjs = array();
 
-$arrayofcss = array('/opensurvey/css/style.css', getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', '/ticket/').'css/styles.css.php');
+$arrayofcss = array(getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', '/public/ticket/').'css/styles.css.php');
 
 llxHeaderTicket($langs->trans("CreateTicket"), "", 0, 0, $arrayofjs, $arrayofcss);
 
@@ -532,7 +534,7 @@ if ($action != "infos_success") {
 
 	$formticket->param = array('returnurl' => $_SERVER['PHP_SELF'].($conf->entity > 1 ? '?entity='.$conf->entity : ''));
 
-	print load_fiche_titre($langs->trans('NewTicket'), '', '', 0, 0, 'marginleftonly');
+	print load_fiche_titre($langs->trans('NewTicket'), '', '', 0, '', 'marginleftonly');
 
 	if (!getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM')) {
 		$langs->load("errors");

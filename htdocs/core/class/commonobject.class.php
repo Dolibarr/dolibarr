@@ -17,7 +17,8 @@
  * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2021      Grégory Blémand      <gregory.blemand@atm-consulting.fr>
  * Copyright (C) 2023      Lenin Rivas      	<lenin.rivas777@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -139,13 +140,14 @@ abstract class CommonObject
 
 
 	/**
-	 * @var array		Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array();
 
 	/**
 	 * @var array<string,array<string,string>>	Array to store alternative languages values of object
-	 * 											Note: call fetchValuesForExtraLanguages() before using this
+	 *
+	 * Note: call fetchValuesForExtraLanguages() before using this
 	 */
 	public $array_languages = null; // Value is array() when load already tried
 
@@ -165,12 +167,12 @@ abstract class CommonObject
 	public $linkedObjectsIds;
 
 	/**
-	 * @var mixed		Array of linked objects. Loaded by ->fetchObjectLinked
+	 * @var array<string,CommonObject[]>	Array of linked objects. Loaded by ->fetchObjectLinked, key = object type
 	 */
 	public $linkedObjects;
 
 	/**
-	 * @var boolean[]	Array of boolean with object id as key and value as true if linkedObjects full loaded for object id. Loaded by ->fetchObjectLinked. Important for pdf generation time reduction.
+	 * @var array<int,bool>	Array of boolean with object id as key and value as true if linkedObjects full loaded for object id. Loaded by ->fetchObjectLinked. Important for pdf generation time reduction.
 	 */
 	private $linkedObjectsFullLoaded = array();
 
@@ -533,12 +535,12 @@ abstract class CommonObject
 	public $multicurrency_total_ttc;
 
 	/**
-	 * @var float Multicurrency total localta1
+	 * @var float|string Multicurrency total localtax1
 	 */
 	public $multicurrency_total_localtax1;	// not in database
 
 	/**
-	 * @var float Multicurrency total localtax2
+	 * @var float|string Multicurrency total localtax2
 	 */
 	public $multicurrency_total_localtax2;	// not in database
 
@@ -655,17 +657,17 @@ abstract class CommonObject
 
 	// Dates
 	/**
-	 * @var integer|string|null		Object creation date
+	 * @var integer|''|null		Object creation date
 	 */
 	public $date_creation;
 
 	/**
-	 * @var integer|string|null		Object last validation date
+	 * @var integer|''|null		Object last validation date
 	 */
 	public $date_validation;
 
 	/**
-	 * @var integer|string|null		Object last modification date
+	 * @var integer|''|null		Object last modification date
 	 */
 	public $date_modification;
 
@@ -677,14 +679,14 @@ abstract class CommonObject
 	public $tms;
 
 	/**
-	 * @var int|string|null
+	 * @var int|''|null
 	 * @deprecated Use $date_modification instead.
 	 * @see $date_modification
 	 */
 	private $date_update;
 
 	/**
-	 * @var integer|string|null		Object closing date
+	 * @var integer|''|null		Object closing date
 	 */
 	public $date_cloture;
 
@@ -815,7 +817,7 @@ abstract class CommonObject
 	public $output;
 
 	/**
-	 * @var array|string	extra parameters. Try to store here the array of parameters. Old code is sometimes storing a string.
+	 * @var array<string,string>|string	extra parameters. Try to store here the array of parameters. Old code is sometimes storing a string.
 	 */
 	public $extraparams = array();
 
@@ -842,8 +844,8 @@ abstract class CommonObject
 	public $cond_reglement_supplier_id;
 
 	/**
-	 * @var float       Deposit percent for payment terms.
-	 *                  Populated by setPaymentTerms().
+	 * @var float|string Deposit percent for payment terms.
+	 *                   Populated by setPaymentTerms().
 	 * @see setPaymentTerms()
 	 */
 	public $deposit_percent;
@@ -1002,7 +1004,7 @@ abstract class CommonObject
 				}
 				$enabled = 1;
 				if ($enabled && isset($extrafields->attributes[$this->table_element]['enabled'][$key])) {
-					$enabled = (int) dol_eval($extrafields->attributes[$this->table_element]['enabled'][$key], 1, 1, '2');
+					$enabled = (int) dol_eval((string) $extrafields->attributes[$this->table_element]['enabled'][$key], 1, 1, '2');
 				}
 				if ($enabled && isset($extrafields->attributes[$this->table_element]['list'][$key])) {
 					$enabled = (int) dol_eval($extrafields->attributes[$this->table_element]['list'][$key], 1, 1, '2');
@@ -1484,7 +1486,7 @@ abstract class CommonObject
 	 *    @param	int<0,1>	$list       	0:Returned array contains all properties, 1:Return array contains just id
 	 *    @param    string      $code       	Filter on this code of contact type ('SHIPPING', 'BILLING', ...)
 	 *    @param	int			$status			Status of user or company
-	 *    @param	int[]		$arrayoftcids	Array with ID of type of contacts. If we provide this, we can make a ec.fk_c_type_contact in ($arrayoftcids) to avoid link on tc table. TODO Not implemented.
+	 *    @param	int[]		$arrayoftcids	Array with ID of type of contacts. If we provide this, we can filter on ec.fk_c_type_contact IN ($arrayoftcids) to avoid a link on c_type_contact table (faster).
 	 *    @return array<int,array{parentId:int,source:string,socid:int,id:int,nom:string,civility:string,lastname:string,firstname:string,email:string,login:string,photo:string,gender:string,statuscontact:int,rowid:int,code:string,libelle:string,status:string,fk_c_type_contact:int}>|int<-1,-1>        	Array of contacts, -1 if error
 	 */
 	public function liste_contact($statusoflink = -1, $source = 'external', $list = 0, $code = '', $status = -1, $arrayoftcids = array())
@@ -1502,34 +1504,40 @@ abstract class CommonObject
 			$sql .= ", t.fk_soc as socid, t.statut as statuscontact";
 		}
 		$sql .= ", t.civility as civility, t.lastname as lastname, t.firstname, t.email";
-		$sql .= ", tc.source, tc.element, tc.code, tc.libelle as type_label";
-		$sql .= " FROM ".$this->db->prefix()."c_type_contact tc,";
-		$sql .= " ".$this->db->prefix()."element_contact ec";
+		if (empty($arrayoftcids)) {
+			$sql .= ", tc.source, tc.element, tc.code, tc.libelle as type_label";
+		}
+		$sql .= " FROM";
+		if (empty($arrayoftcids)) {
+			$sql .= " ".$this->db->prefix()."c_type_contact as tc,";
+		}
+		$sql .= " ".$this->db->prefix()."element_contact as ec";
 		if ($source == 'internal') {	// internal contact (user)
-			$sql .= " LEFT JOIN ".$this->db->prefix()."user t on ec.fk_socpeople = t.rowid";
+			$sql .= " LEFT JOIN ".$this->db->prefix()."user as t on ec.fk_socpeople = t.rowid";
 		}
 		if ($source == 'external' || $source == 'thirdparty') {	// external contact (socpeople)
-			$sql .= " LEFT JOIN ".$this->db->prefix()."socpeople t on ec.fk_socpeople = t.rowid";
+			$sql .= " LEFT JOIN ".$this->db->prefix()."socpeople as t on ec.fk_socpeople = t.rowid";
 		}
 		$sql .= " WHERE ec.element_id = ".((int) $this->id);
-		$sql .= " AND ec.fk_c_type_contact = tc.rowid";
-		$sql .= " AND tc.element = '".$this->db->escape($this->element)."'";
-		if ($code) {
-			$sql .= " AND tc.code = '".$this->db->escape($code)."'";
-		}
-		if ($source == 'internal') {
-			$sql .= " AND tc.source = 'internal'";
-			if ($status >= 0) {
-				$sql .= " AND t.statut = ".((int) $status);
+		if (empty($arrayoftcids)) {
+			$sql .= " AND ec.fk_c_type_contact = tc.rowid";
+			$sql .= " AND tc.element = '".$this->db->escape($this->element)."'";
+			if ($code) {
+				$sql .= " AND tc.code = '".$this->db->escape($code)."'";
 			}
-		}
-		if ($source == 'external' || $source == 'thirdparty') {
-			$sql .= " AND tc.source = 'external'";
-			if ($status >= 0) {
-				$sql .= " AND t.statut = ".((int) $status);	// t is llx_socpeople
+			if ($source == 'internal') {
+				$sql .= " AND tc.source = 'internal'";
 			}
+			if ($source == 'external' || $source == 'thirdparty') {
+				$sql .= " AND tc.source = 'external'";
+			}
+			$sql .= " AND tc.active = 1";
+		} else {
+			$sql .= " AND ec.fk_c_type_contact IN (".$this->db->sanitize(implode(',', $arrayoftcids)).")";
 		}
-		$sql .= " AND tc.active = 1";
+		if ($status >= 0) {
+			$sql .= " AND t.statut = ".((int) $status);	// t is llx_user or llx_socpeople
+		}
 		if ($statusoflink >= 0) {
 			$sql .= " AND ec.statut = ".((int) $statusoflink);
 		}
@@ -1885,7 +1893,7 @@ abstract class CommonObject
 			$this->thirdparty = $thirdparty;
 
 			// Use first price level if level not defined for third party
-			if (getDolGlobalString('PRODUIT_MULTIPRICES') && empty($this->thirdparty->price_level)) {
+			if ((getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && empty($this->thirdparty->price_level)) {
 				$this->thirdparty->price_level = 1;
 			}
 
@@ -2159,13 +2167,13 @@ abstract class CommonObject
 	 *	Setter generic. Update a specific field into database.
 	 *  Warning: Trigger is run only if param trigkey is provided.
 	 *
-	 *	@param	string		$field			Field to update
-	 *	@param	mixed		$value			New value
-	 *	@param	string		$table			To force other table element or element line (should not be used)
-	 *	@param	int			$id				To force other object id (should not be used)
-	 *	@param	string		$format			Data format ('text', 'int', 'date'). 'text' is used if not defined
-	 *	@param	string		$id_field		To force rowid field name. 'rowid' is used if not defined
-	 *	@param	User|string	$fuser			Update the user of last update field with this user. If not provided, current user is used except if value is 'none'
+	 *	@param	string			$field			Field to update
+	 *	@param	mixed			$value			New value
+	 *	@param	string			$table			To force other table element or element line (should not be used)
+	 *	@param	?int			$id				To force other object id (should not be used)
+	 *	@param	string			$format			Data format ('text', 'int', 'date'). 'text' is used if not defined
+	 *	@param	string			$id_field		To force rowid field name. 'rowid' is used if not defined
+	 *	@param	User|string|null	$fuser	Update the user of last update field with this user. If not provided, current user is used except if value is 'none'
 	 *  @param  string      $trigkey    	Trigger key to run (in most cases something like 'XXX_MODIFY')
 	 *  @param	string		$fk_user_field	Name of field to save user id making change
 	 *	@return	int<-2,1>					Return integer <0 if KO, >0 if OK
@@ -2547,6 +2555,7 @@ abstract class CommonObject
 		}
 
 		$sql = "UPDATE ".$this->db->prefix().$this->table_element;
+		// @phan-suppress-next-line PhanTypeMismatchProperty
 		if (!empty($this->fields['fk_project'])) {		// Common case
 			if ($projectid) {
 				$sql .= " SET fk_project = ".((int) $projectid);
@@ -2742,160 +2751,160 @@ abstract class CommonObject
 								/** @var Propal $this */
 								/** @var PropaleLigne $line */
 								$this->updateline(
-								$line->id,
-								$line->subprice,
-								$line->qty,
-								$line->remise_percent,
-								$line->tva_tx,
-								$line->localtax1_tx,
-								$line->localtax2_tx,
-								($line->description ? $line->description : $line->desc),
-								'HT',
-								$line->info_bits,
-								$line->special_code,
-								$line->fk_parent_line,
-								$line->skip_update_total,
-								$line->fk_fournprice,
-								$line->pa_ht,
-								$line->label,
-								$line->product_type,
-								$line->date_start,
-								$line->date_end,
-								$line->array_options,
-								$line->fk_unit,
-								$line->multicurrency_subprice
+									$line->id,
+									$line->subprice,
+									$line->qty,
+									$line->remise_percent,
+									$line->tva_tx,
+									$line->localtax1_tx,
+									$line->localtax2_tx,
+									($line->description ? $line->description : $line->desc),
+									'HT',
+									$line->info_bits,
+									$line->special_code,
+									$line->fk_parent_line,
+									$line->skip_update_total,
+									$line->fk_fournprice,
+									$line->pa_ht,
+									$line->label,
+									$line->product_type,
+									$line->date_start,
+									$line->date_end,
+									$line->array_options,
+									$line->fk_unit,
+									$line->multicurrency_subprice
 								);
 								break;
 							case 'commande':
 								/** @var Commande $this */
 								/** @var OrderLine $line */
 								$this->updateline(
-								$line->id,
-								($line->description ? $line->description : $line->desc),
-								$line->subprice,
-								$line->qty,
-								$line->remise_percent,
-								$line->tva_tx,
-								$line->localtax1_tx,
-								$line->localtax2_tx,
-								'HT',
-								$line->info_bits,
-								$line->date_start,
-								$line->date_end,
-								$line->product_type,
-								$line->fk_parent_line,
-								$line->skip_update_total,
-								$line->fk_fournprice,
-								$line->pa_ht,
-								$line->label,
-								$line->special_code,
-								$line->array_options,
-								$line->fk_unit,
-								$line->multicurrency_subprice
+									$line->id,
+									($line->description ? $line->description : $line->desc),
+									$line->subprice,
+									$line->qty,
+									$line->remise_percent,
+									$line->tva_tx,
+									$line->localtax1_tx,
+									$line->localtax2_tx,
+									'HT',
+									$line->info_bits,
+									$line->date_start,
+									$line->date_end,
+									$line->product_type,
+									$line->fk_parent_line,
+									$line->skip_update_total,
+									$line->fk_fournprice,
+									$line->pa_ht,
+									$line->label,
+									$line->special_code,
+									$line->array_options,
+									$line->fk_unit,
+									$line->multicurrency_subprice
 								);
 								break;
 							case 'facture':
 								/** @var Facture $this */
 								/** @var FactureLigne $line */
 								$this->updateline(
-								$line->id,
-								($line->description ? $line->description : $line->desc),
-								$line->subprice,
-								$line->qty,
-								$line->remise_percent,
-								$line->date_start,
-								$line->date_end,
-								$line->tva_tx,
-								$line->localtax1_tx,
-								$line->localtax2_tx,
-								'HT',
-								$line->info_bits,
-								$line->product_type,
-								$line->fk_parent_line,
-								$line->skip_update_total,
-								$line->fk_fournprice,
-								$line->pa_ht,
-								$line->label,
-								$line->special_code,
-								$line->array_options,
-								$line->situation_percent,
-								$line->fk_unit,
-								$line->multicurrency_subprice
+									$line->id,
+									($line->description ? $line->description : $line->desc),
+									$line->subprice,
+									$line->qty,
+									$line->remise_percent,
+									$line->date_start,
+									$line->date_end,
+									$line->tva_tx,
+									$line->localtax1_tx,
+									$line->localtax2_tx,
+									'HT',
+									$line->info_bits,
+									$line->product_type,
+									$line->fk_parent_line,
+									$line->skip_update_total,
+									$line->fk_fournprice,
+									$line->pa_ht,
+									$line->label,
+									$line->special_code,
+									$line->array_options,
+									$line->situation_percent,
+									$line->fk_unit,
+									$line->multicurrency_subprice
 								);
 								break;
 							case 'supplier_proposal':
 								/** @var SupplierProposal $this */
 								/** @var SupplierProposalLine $line */
 								$this->updateline(
-								$line->id,
-								$line->subprice,
-								$line->qty,
-								$line->remise_percent,
-								$line->tva_tx,
-								$line->localtax1_tx,
-								$line->localtax2_tx,
-								($line->description ? $line->description : $line->desc),
-								'HT',
-								$line->info_bits,
-								$line->special_code,
-								$line->fk_parent_line,
-								$line->skip_update_total,
-								$line->fk_fournprice,
-								$line->pa_ht,
-								$line->label,
-								$line->product_type,
-								$line->array_options,
-								$line->ref_fourn,
-								$line->multicurrency_subprice
+									$line->id,
+									$line->subprice,
+									$line->qty,
+									$line->remise_percent,
+									$line->tva_tx,
+									$line->localtax1_tx,
+									$line->localtax2_tx,
+									($line->description ? $line->description : $line->desc),
+									'HT',
+									$line->info_bits,
+									$line->special_code,
+									$line->fk_parent_line,
+									$line->skip_update_total,
+									$line->fk_fournprice,
+									$line->pa_ht,
+									$line->label,
+									$line->product_type,
+									$line->array_options,
+									$line->ref_fourn,
+									$line->multicurrency_subprice
 								);
 								break;
 							case 'order_supplier':
 								/** @var CommandeFournisseur $this */
 								/** @var CommandeFournisseurLigne $line */
 								$this->updateline(
-								$line->id,
-								($line->description ? $line->description : $line->desc),
-								$line->subprice,
-								$line->qty,
-								$line->remise_percent,
-								$line->tva_tx,
-								$line->localtax1_tx,
-								$line->localtax2_tx,
-								'HT',
-								$line->info_bits,
-								$line->product_type,
-								false,
-								$line->date_start,
-								$line->date_end,
-								$line->array_options,
-								$line->fk_unit,
-								$line->multicurrency_subprice,
-								$line->ref_supplier
+									$line->id,
+									($line->description ? $line->description : $line->desc),
+									$line->subprice,
+									$line->qty,
+									$line->remise_percent,
+									$line->tva_tx,
+									$line->localtax1_tx,
+									$line->localtax2_tx,
+									'HT',
+									$line->info_bits,
+									$line->product_type,
+									0,
+									$line->date_start,
+									$line->date_end,
+									$line->array_options,
+									$line->fk_unit,
+									$line->multicurrency_subprice,
+									$line->ref_supplier
 								);
 								break;
 							case 'invoice_supplier':
 								/** @var FactureFournisseur $this */
 								/** @var SupplierInvoiceLine $line */
 								$this->updateline(
-								$line->id,
-								($line->description ? $line->description : $line->desc),
-								$line->subprice,
-								$line->tva_tx,
-								$line->localtax1_tx,
-								$line->localtax2_tx,
-								$line->qty,
-								0,
-								'HT',
-								$line->info_bits,
-								$line->product_type,
-								$line->remise_percent,
-								false,
-								$line->date_start,
-								$line->date_end,
-								$line->array_options,
-								$line->fk_unit,
-								$line->multicurrency_subprice,
-								$line->ref_supplier
+									$line->id,
+									($line->description ? $line->description : $line->desc),
+									$line->subprice,
+									$line->tva_tx,
+									$line->localtax1_tx,
+									$line->localtax2_tx,
+									$line->qty,
+									0,
+									'HT',
+									$line->info_bits,
+									$line->product_type,
+									$line->remise_percent,
+									0,
+									$line->date_start,
+									$line->date_end,
+									$line->array_options,
+									$line->fk_unit,
+									$line->multicurrency_subprice,
+									$line->ref_supplier
 								);
 								break;
 							default:
@@ -3357,8 +3366,8 @@ abstract class CommonObject
 	 * 	Get children of line
 	 *
 	 * 	@param	int			$id				Id of parent line
-	 * 	@param	int<0,1>	$includealltree	0 = 1st level child, 1 = All level child
-	 * 	@return	int[]			            Array with list of children lines id
+	 * 	@param	int<0,1001>	$includealltree	0 = 1st level child, 1 = All level child, 2-1001: internal use
+	 * 	@return	int[]						Array with list of children lines id
 	 */
 	public function getChildrenOfLine($id, $includealltree = 0)
 	{
@@ -3375,13 +3384,14 @@ abstract class CommonObject
 		$sql .= " ORDER BY " . $fieldposition . " ASC";
 
 		dol_syslog(get_class($this)."::getChildrenOfLine search children lines for line ".$id, LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($this->db->num_rows($resql) > 0) {
 				while ($row = $this->db->fetch_row($resql)) {
 					$rows[] = $row[0];
-					if (!empty($includealltree)) {
-						$rows = array_merge($rows, $this->getChildrenOfLine($row[0], $includealltree));
+					if (!empty($includealltree) && $includealltree <= 1000) {	// Test <= 1000 is a protection in depth of recursive call to avoid infinite loop
+						$rows = array_merge($rows, $this->getChildrenOfLine($row[0], $includealltree + 1));
 					}
 				}
 			}
@@ -3855,6 +3865,10 @@ abstract class CommonObject
 			$fieldup = 'pu_ht';
 		}
 		if ($this->element == 'expensereport') {
+			// Force rounding mode to '0', otherwise when you set MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND to 1, you may have lines with different totals.
+			// For example, if you have 2 lines with same TTC amounts (6,2 Unit price TTC and VAT rate 20%), on the first line you got 5,17 on HT total
+			// and 5,16 on HT total and 1,04 on VAT total to get 6,20 on TTT total on second line (see #30051).
+			$forcedroundingmode = '0';
 			$fieldup = 'value_unit';
 			$base_price_type = 'TTC';
 		}
@@ -3901,7 +3915,7 @@ abstract class CommonObject
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 
-				// Note: There is no check on detail line and no check on total, if $forcedroundingmode = 'none'
+				// Note: There is no check on detail line and no check on total, if $forcedroundingmode = '0'
 				$parameters = array('fk_element' => $obj->rowid);
 				$reshook = $hookmanager->executeHooks('changeRoundingMode', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
@@ -3962,7 +3976,11 @@ abstract class CommonObject
 				$total_ttc_by_vats[$obj->vatrate] += $obj->total_ttc;
 
 				if ($forcedroundingmode == '1') {	// Check if we need adjustment onto line for vat. TODO This works on the company currency but not on foreign currency
-					$tmpvat = price2num($total_ht_by_vats[$obj->vatrate] * $obj->vatrate / 100, 'MT', 1);
+					if ($base_price_type == 'TTC') {
+						$tmpvat = price2num($total_ttc_by_vats[$obj->vatrate] * $obj->vatrate / (100 + $obj->vatrate), 'MT', 1);
+					} else {
+						$tmpvat = price2num($total_ht_by_vats[$obj->vatrate] * $obj->vatrate / 100, 'MT', 1);
+					}
 					$diff = price2num($total_tva_by_vats[$obj->vatrate] - (float) $tmpvat, 'MT', 1);
 					//print 'Line '.$i.' rowid='.$obj->rowid.' vat_rate='.$obj->vatrate.' total_ht='.$obj->total_ht.' total_tva='.$obj->total_tva.' total_ttc='.$obj->total_ttc.' total_ht_by_vats='.$total_ht_by_vats[$obj->vatrate].' total_tva_by_vats='.$total_tva_by_vats[$obj->vatrate].' (new calculation = '.$tmpvat.') total_ttc_by_vats='.$total_ttc_by_vats[$obj->vatrate].($diff?" => DIFF":"")."<br>\n";
 					if ($diff) {
@@ -3975,8 +3993,14 @@ abstract class CommonObject
 							$error++;
 							break;
 						}
-						$sqlfix = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldtva." = ".price2num($obj->total_tva - (float) $diff).", total_ttc = ".price2num($obj->total_ttc - (float) $diff)." WHERE rowid = ".((int) $obj->rowid);
-						dol_syslog('We found a difference of '.$diff.' for line rowid = '.$obj->rowid.' between TotalHT('.$total_ht_by_vats[$obj->vatrate].')*VATrate('.$obj->vatrate.')='.$tmpvat.' and total in database='.$total_tva_by_vats[$obj->vatrate]." (calculated with UP*qty). We fix the total_vat and total_ttc of line by running sqlfix = ".$sqlfix);
+
+						if ($base_price_type == 'TTC') {
+							$sqlfix = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldtva." = ".price2num($obj->total_tva - (float) $diff).", total_ht = ".price2num($obj->total_ht + (float) $diff)." WHERE rowid = ".((int) $obj->rowid);
+							dol_syslog('We found a difference of '.$diff.' for line rowid = '.$obj->rowid.' between TotalHT('.$total_ht_by_vats[$obj->vatrate].')*VATrate('.$obj->vatrate.')='.$tmpvat.' and total in database='.$total_tva_by_vats[$obj->vatrate]." (calculated with UP*qty). We fix the total_vat and total_ht of line by running sqlfix = ".$sqlfix);
+						} else {
+							$sqlfix = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldtva." = ".price2num($obj->total_tva - (float) $diff).", total_ttc = ".price2num($obj->total_ttc - (float) $diff)." WHERE rowid = ".((int) $obj->rowid);
+							dol_syslog('We found a difference of '.$diff.' for line rowid = '.$obj->rowid.' between TotalHT('.$total_ht_by_vats[$obj->vatrate].')*VATrate('.$obj->vatrate.')='.$tmpvat.' and total in database='.$total_tva_by_vats[$obj->vatrate]." (calculated with UP*qty). We fix the total_vat and total_ttc of line by running sqlfix = ".$sqlfix);
+						}
 
 						$resqlfix = $this->db->query($sqlfix);
 
@@ -3985,9 +4009,14 @@ abstract class CommonObject
 						}
 
 						$this->total_tva = (float) price2num($this->total_tva - (float) $diff, '', 1);
-						$this->total_ttc = (float) price2num($this->total_ttc - (float) $diff, '', 1);
 						$total_tva_by_vats[$obj->vatrate] = (float) price2num($total_tva_by_vats[$obj->vatrate] - (float) $diff, '', 1);
-						$total_ttc_by_vats[$obj->vatrate] = (float) price2num($total_ttc_by_vats[$obj->vatrate] - (float) $diff, '', 1);
+						if ($base_price_type == 'TTC') {
+							$this->total_ht = (float) price2num($this->total_ht + (float) $diff, '', 1);
+							$total_ht_by_vats[$obj->vatrate] = (float) price2num($total_ht_by_vats[$obj->vatrate] + (float) $diff, '', 1);
+						} else {
+							$this->total_ttc = (float) price2num($this->total_ttc - (float) $diff, '', 1);
+							$total_ttc_by_vats[$obj->vatrate] = (float) price2num($total_ttc_by_vats[$obj->vatrate] - (float) $diff, '', 1);
+						}
 					}
 				}
 
@@ -5097,7 +5126,7 @@ abstract class CommonObject
 	 *
 	 *  @param	int		        $dateSelector       1=Show also date range input fields
 	 *  @param	Societe			$seller				Object thirdparty who sell
-	 *  @param	Societe			$buyer				Object thirdparty who buy
+	 *  @param	?Societe		$buyer				Object thirdparty who buy
 	 *  @param	string			$defaulttpldir		Directory where to find the template
 	 *	@return	void
 	 */
@@ -5147,7 +5176,7 @@ abstract class CommonObject
 	 *
 	 *	@param	string		$action				Action code
 	 *	@param  Societe		$seller            	Object of seller third party
-	 *	@param  Societe  	$buyer             	Object of buyer third party
+	 *	@param  ?Societe  	$buyer             	Object of buyer third party
 	 *	@param	int			$selected		   	ID line selected
 	 *	@param  int	    	$dateSelector      	1=Show also date range input fields
 	 *  @param	string		$defaulttpldir		Directory where to find the template
@@ -5233,7 +5262,7 @@ abstract class CommonObject
 	 *
 	 *	@param	string      		$action				GET/POST action
 	 *	@param  CommonObjectLine 	$line			    Selected object line to output
-	 *	@param  string	    		$var               	Not used
+	 *	@param  ''		    		$var               	Not used
 	 *	@param  int		    		$num               	Number of line (0)
 	 *	@param  int		    		$i					I
 	 *	@param  int		    		$dateSelector      	1=Show also date range input fields
@@ -5248,9 +5277,7 @@ abstract class CommonObject
 	{
 		global $conf, $langs, $user, $object, $hookmanager;
 		global $form;
-		global $object_rights, $disableedit, $disablemove, $disableremove; // TODO We should not use global var for this !
-
-		$object_rights = $this->getRights();
+		global $disableedit, $disablemove, $disableremove; // TODO We should not use global var for this !
 
 		// var used into tpl
 		$text = '';
@@ -5757,6 +5784,19 @@ abstract class CommonObject
 
 		$obj = new $classname($this->db);
 
+		// TODO: Check the following classes that seem possible for $obj, but removed for compatibility:
+		//  ModeleBankAccountDoc|ModeleExpenseReport|ModelePDFBom|ModelePDFCommandes|ModelePDFContract|
+		//  ModelePDFDeliveryOrder|ModelePDFEvaluation|ModelePDFFactures|ModelePDFFicheinter|
+		//  ModelePDFMo|ModelePDFMovement|ModelePDFProduct|ModelePDFProjects|ModelePDFPropales|
+		//  ModelePDFRecruitmentJobPosition|ModelePDFSupplierProposal|ModelePDFSuppliersInvoices|
+		//  ModelePDFSuppliersOrders|ModelePDFSuppliersPayments|ModelePdfExpedition|ModelePdfReception|
+		//  ModelePDFStock|ModelePDFStockTransfer|
+		//  ModeleDon|ModelePDFTask|
+		//  ModelePDFAsset|ModelePDFTicket|ModelePDFUserGroup|ModeleThirdPartyDoc|ModelePDFUser
+		//  Has no write_file: ModeleBarCode|ModeleImports|ModeleExports|
+		'@phan-var-force ModelePDFMember $obj';
+		// '@phan-var-force ModelePDFMember|ModeleBarCode|ModeleDon|ModeleExports|ModeleImports|ModelePDFAsset|ModelePDFContract|ModelePDFDeliveryOrder|ModelePDFEvaluation|ModelePDFFactures|ModelePDFFicheinter|ModelePDFMo|ModelePDFMovement|ModelePDFProduct|ModelePDFProjects|ModelePDFPropales|ModelePDFRecruitmentJobPosition|ModelePDFStock|ModelePDFStockTransfer|ModelePDFSupplierProposal|ModelePDFSuppliersInvoices|ModelePDFSuppliersOrders|ModelePDFSuppliersPayments|ModelePDFTask|ModelePDFTicket|ModelePDFUser|ModelePDFUserGroup|ModelePdfExpedition|ModelePdfReception|ModeleThirdPartyDoc $obj';
+
 		// If generator is ODT, we must have srctemplatepath defined, if not we set it.
 		if ($obj->type == 'odt' && empty($srctemplatepath)) {
 			$varfortemplatedir = $obj->scandir;
@@ -5811,9 +5851,8 @@ abstract class CommonObject
 		// update model_pdf in object
 		$this->model_pdf = $saved_model;
 
-		if (in_array(get_class($this), array('Adherent'))) {
-			'@phan-var-force Adherent $this';
-			$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1, 'tmp_cards', $moreparams);
+		if ($obj instanceof ModelePDFMember) {
+			$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1, 'tmp_cards');
 		} else {
 			$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $moreparams);
 		}
@@ -5932,6 +5971,8 @@ abstract class CommonObject
 				$ecmfile->gen_or_uploaded = 'generated';
 				$ecmfile->description = ''; // indexed content
 				$ecmfile->keywords = ''; // keyword content
+				$ecmfile->src_object_type = $this->table_element;
+				$ecmfile->src_object_id = $this->id;
 				$result = $ecmfile->update($user);
 				if ($result < 0) {
 					setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
@@ -6666,7 +6707,7 @@ abstract class CommonObject
 								if (is_numeric($value)) {
 									$res = $object->fetch($value); // Common case
 								} else {
-									$res = $object->fetch('', $value); // For compatibility
+									$res = $object->fetch(0, $value); // For compatibility
 								}
 
 								if ($res > 0) {
@@ -7118,21 +7159,21 @@ abstract class CommonObject
 					}
 					break;
 					/*
-					 case 'link':
-					 $param_list = array_keys($attributeParam['options']);
-					 // 0 : ObjectName
-					 // 1 : classPath
-					 $InfoFieldList = explode(":", $param_list[0]);
-					 dol_include_once($InfoFieldList[1]);
-					 if ($InfoFieldList[0] && class_exists($InfoFieldList[0]))
-					 {
-					 if ($value == '-1')	// -1 is key for no defined in combo list of objects
-					 {
-					 $new_array_options[$key] = '';
-					 } elseif ($value) {
-					 $object = new $InfoFieldList[0]($this->db);
-					 if (is_numeric($value)) $res = $object->fetch($value);	// Common case
-					 else $res = $object->fetch('', $value);					// For compatibility
+					case 'link':
+						$param_list = array_keys($attributeParam['options']);
+						// 0 : ObjectName
+						// 1 : classPath
+						$InfoFieldList = explode(":", $param_list[0]);
+						dol_include_once($InfoFieldList[1]);
+						if ($InfoFieldList[0] && class_exists($InfoFieldList[0]))
+						{
+							if ($value == '-1')	// -1 is key for no defined in combo list of objects
+							{
+								$new_array_options[$key] = '';
+							} elseif ($value) {
+								$object = new $InfoFieldList[0]($this->db);
+								if (is_numeric($value)) $res = $object->fetch($value);	// Common case
+								else $res = $object->fetch(0, $value);					// For compatibility
 
 					 if ($res > 0) $new_array_options[$key] = $object->id;
 					 else {
@@ -7327,7 +7368,7 @@ abstract class CommonObject
 		$param = array();
 		$param['options'] = array();
 		$reg = array();
-		// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
+		// @phan-suppress-next-line PhanTypeMismatchProperty
 		$size = !empty($this->fields[$key]['size']) ? $this->fields[$key]['size'] : 0;
 		// Because we work on extrafields
 		if (preg_match('/^(integer|link):(.*):(.*):(.*):(.*)/i', $val['type'], $reg)) {
@@ -7367,7 +7408,7 @@ abstract class CommonObject
 		// Special case that force options and type ($type can be integer, varchar, ...)
 		if (!empty($this->fields[$key]['arrayofkeyval']) && is_array($this->fields[$key]['arrayofkeyval'])) {
 			$param['options'] = $this->fields[$key]['arrayofkeyval'];
-			// Special case that prevent to force $type to have multiple input
+			// Special case that prevent to force $type to have multiple input @phan-suppress-next-line PhanTypeMismatchProperty
 			if (empty($this->fields[$key]['multiinput'])) {
 				$type = (($this->fields[$key]['type'] == 'checkbox') ? $this->fields[$key]['type'] : 'select');
 			}
@@ -7377,18 +7418,18 @@ abstract class CommonObject
 		//$elementtype=$this->fields[$key]['elementtype'];	// Seems not used
 		// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
 		$default = (!empty($this->fields[$key]['default']) ? $this->fields[$key]['default'] : '');
-		// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
+		// @phan-suppress-next-line PhanTypeMismatchProperty
 		$computed = (!empty($this->fields[$key]['computed']) ? $this->fields[$key]['computed'] : '');
-		// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
+		// @phan-suppress-next-line PhanTypeMismatchProperty
 		$unique = (!empty($this->fields[$key]['unique']) ? $this->fields[$key]['unique'] : 0);
-		// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
+		// @phan-suppress-next-line PhanTypeMismatchProperty
 		$required = (!empty($this->fields[$key]['required']) ? $this->fields[$key]['required'] : 0);
-		// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
+		// @phan-suppress-next-line PhanTypeMismatchProperty
 		$autofocusoncreate = (!empty($this->fields[$key]['autofocusoncreate']) ? $this->fields[$key]['autofocusoncreate'] : 0);
 
-		// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
+		// @phan-suppress-next-line PhanTypeMismatchProperty
 		$langfile = (!empty($this->fields[$key]['langfile']) ? $this->fields[$key]['langfile'] : '');
-		// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
+		// @phan-suppress-next-line PhanTypeMismatchProperty
 		$list = (!empty($this->fields[$key]['list']) ? $this->fields[$key]['list'] : 0);
 		$hidden = (in_array(abs($this->fields[$key]['visible']), array(0, 2)) ? 1 : 0);
 
@@ -7474,6 +7515,7 @@ abstract class CommonObject
 					// If the textarea field has a list of arrayofkeyval into its definition, we suggest a combo with possible values to fill the textarea.
 					//var_dump($param['options']);
 					$out .= $form->selectarray($keyprefix.$key.$keysuffix."_multiinput", $param['options'], '', 1, 0, 0, "flat maxwidthonphone".$morecss);
+					$out .= '<input id="'.$keyprefix.$key.$keysuffix.'_multiinputadd" type="button" class="button" value="'.$langs->trans("Add").'">';
 					$out .= "<script>";
 					$out .= '
 					function handlemultiinputdisabling(htmlname){
@@ -7481,7 +7523,7 @@ abstract class CommonObject
 						multiinput = $("#"+htmlname+"_multiinput");
 						multiinput.find("option").each(function(){
 							tmpval = $("#"+htmlname).val();
-							tmpvalarray = tmpval.split(",");
+							tmpvalarray = tmpval.split("\n");
 							valtotest = $(this).val();
 							if(tmpvalarray.includes(valtotest)){
 								$(this).prop("disabled",true);
@@ -7495,27 +7537,31 @@ abstract class CommonObject
 					}
 
 					$(document).ready(function () {
-						$("#'.$keyprefix.$key.$keysuffix.'_multiinput").on("change",function() {
-							console.log("We add the selected value to the text area '.$keyprefix.$key.$keysuffix.'");
+						$("#'.$keyprefix.$key.$keysuffix.'_multiinputadd").on("click",function() {
 							tmpval = $("#'.$keyprefix.$key.$keysuffix.'").val();
 							tmpvalarray = tmpval.split(",");
-							valtotest = $(this).val();
+							valtotest = $("#'.$keyprefix.$key.$keysuffix.'_multiinput").val();
 							if(valtotest != -1 && !tmpvalarray.includes(valtotest)){
+								console.log("We add the selected value to the text area '.$keyprefix.$key.$keysuffix.'");
 								if(tmpval == ""){
 									tmpval = valtotest;
 								} else {
-									tmpval = tmpval + "," + valtotest;
+									tmpval = tmpval + "\n" + valtotest;
 								}
 								$("#'.$keyprefix.$key.$keysuffix.'").val(tmpval);
 								handlemultiinputdisabling("'.$keyprefix.$key.$keysuffix.'");
+								$("#'.$keyprefix.$key.$keysuffix.'_multiinput").val(-1);
+							} else {
+								console.log("We add nothing the text area '.$keyprefix.$key.$keysuffix.'");
 							}
 						});
 						$("#'.$keyprefix.$key.$keysuffix.'").on("change",function(){
-							handlemultiinputdisabling($(this).attr("id"));
+							handlemultiinputdisabling("'.$keyprefix.$key.$keysuffix.'");
 						});
 						handlemultiinputdisabling("'.$keyprefix.$key.$keysuffix.'");
 					})';
 					$out .= "</script>";
+					$value = str_replace(',', "\n", $value);
 				}
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 				$doleditor = new DolEditor($keyprefix.$key.$keysuffix, $value, '', 200, 'dolibarr_notes', 'In', false, false, false, ROWS_5, '90%');
@@ -8041,12 +8087,14 @@ abstract class CommonObject
 
 			if (!preg_match('/search_/', $keyprefix)) {
 				if (!empty($param_list_array[2])) {		// If the entry into $fields is set to add a create button
+					// @phan-suppress-next-line PhanTypeMismatchProperty
 					if (!empty($this->fields[$key]['picto'])) {
 						$morecss .= ' widthcentpercentminusxx';
 					} else {
 						$morecss .= ' widthcentpercentminusx';
 					}
 				} else {
+					// @phan-suppress-next-line PhanTypeMismatchProperty
 					if (!empty($this->fields[$key]['picto'])) {
 						$morecss .= ' widthcentpercentminusx';
 					}
@@ -8058,20 +8106,20 @@ abstract class CommonObject
 			if (!empty($param_list_array[2])) {		// If the entry into $fields is set, we must add a create button
 				if ((!GETPOSTISSET('backtopage') || strpos(GETPOST('backtopage'), $_SERVER['PHP_SELF']) === 0)	// // To avoid to open several times the 'Plus' button (we accept only one level)
 					&& empty($val['disabled']) && empty($nonewbutton)) {	// and to avoid to show the button if the field is protected by a "disabled".
-						list($class, $classfile) = explode(':', $param_list[0]);
+					list($class, $classfile) = explode(':', $param_list[0]);
 					if (file_exists(dol_buildpath(dirname(dirname($classfile)).'/card.php'))) {
 						$url_path = dol_buildpath(dirname(dirname($classfile)).'/card.php', 1);
 					} else {
 						$url_path = dol_buildpath(dirname(dirname($classfile)).'/'.strtolower($class).'_card.php', 1);
 					}
-						$paramforthenewlink = '';
-						$paramforthenewlink .= (GETPOSTISSET('action') ? '&action='.GETPOST('action', 'aZ09') : '');
-						$paramforthenewlink .= (GETPOSTISSET('id') ? '&id='.GETPOSTINT('id') : '');
-						$paramforthenewlink .= (GETPOSTISSET('origin') ? '&origin='.GETPOST('origin', 'aZ09') : '');
-						$paramforthenewlink .= (GETPOSTISSET('originid') ? '&originid='.GETPOSTINT('originid') : '');
-						$paramforthenewlink .= '&fk_'.strtolower($class).'=--IDFORBACKTOPAGE--';
-						// TODO Add JavaScript code to add input fields already filled into $paramforthenewlink so we won't loose them when going back to main page
-						$out .= '<a class="butActionNew" title="'.$langs->trans("New").'" href="'.$url_path.'?action=create&backtopage='.urlencode($_SERVER['PHP_SELF'].($paramforthenewlink ? '?'.$paramforthenewlink : '')).'"><span class="fa fa-plus-circle valignmiddle"></span></a>';
+					$paramforthenewlink = '';
+					$paramforthenewlink .= (GETPOSTISSET('action') ? '&action='.GETPOST('action', 'aZ09') : '');
+					$paramforthenewlink .= (GETPOSTISSET('id') ? '&id='.GETPOSTINT('id') : '');
+					$paramforthenewlink .= (GETPOSTISSET('origin') ? '&origin='.GETPOST('origin', 'aZ09') : '');
+					$paramforthenewlink .= (GETPOSTISSET('originid') ? '&originid='.GETPOSTINT('originid') : '');
+					$paramforthenewlink .= '&fk_'.strtolower($class).'=--IDFORBACKTOPAGE--';
+					// TODO Add JavaScript code to add input fields already filled into $paramforthenewlink so we won't loose them when going back to main page
+					$out .= '<a class="butActionNew" title="'.$langs->trans("New").'" href="'.$url_path.'?action=create&backtopage='.urlencode($_SERVER['PHP_SELF'].($paramforthenewlink ? '?'.$paramforthenewlink : '')).'"><span class="fa fa-plus-circle valignmiddle"></span></a>';
 				}
 			}
 		} elseif ($type == 'password') {
@@ -8168,6 +8216,7 @@ abstract class CommonObject
 			$type = 'varchar'; // convert varchar(xx) int varchar
 		}
 		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
+			// @phan-suppress-next-line PhanTypeMismatchProperty
 			if (empty($this->fields[$key]['multiinput'])) {
 				$type = (($this->fields[$key]['type'] == 'checkbox') ? $this->fields[$key]['type'] : 'select');
 			}
@@ -8248,6 +8297,7 @@ abstract class CommonObject
 
 		// Format output value differently according to properties of field
 		if (in_array($key, array('rowid', 'ref')) && method_exists($this, 'getNomUrl')) {
+			// @phan-suppress-next-line PhanTypeMismatchProperty
 			if ($key != 'rowid' || empty($this->fields['ref'])) {	// If we want ref field or if we want ID and there is no ref field, we show the link.
 				$value = $this->getNomUrl(1, '', 0, '', 1);
 			}
@@ -8268,7 +8318,7 @@ abstract class CommonObject
 		} elseif ($type == 'duration') {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 			if (!is_null($value) && $value !== '') {
-				$value = convertSecondToTime($value, 'allhourmin');
+				$value = convertSecondToTime((int) $value, 'allhourmin');
 			}
 		} elseif ($type == 'double' || $type == 'real') {
 			if (!is_null($value) && $value !== '') {
@@ -8330,7 +8380,7 @@ abstract class CommonObject
 
 			$sql = "SELECT ".$keyList;
 			$sql .= ' FROM '.$this->db->prefix().$InfoFieldList[0];
-			if (strpos($InfoFieldList[4], 'extra') !== false) {
+			if (isset($InfoFieldList[4]) && strpos($InfoFieldList[4], 'extra') !== false) {
 				$sql .= ' as main';
 			}
 			if ($selectkey == 'rowid' && empty($value)) {
@@ -8347,7 +8397,7 @@ abstract class CommonObject
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				if (!$filter_categorie) {
-					$value = ''; // value was used, so now we reste it to use it to build final output
+					$value = ''; // value was used, so now we reset it to use it to build final output
 					$numrows = $this->db->num_rows($resql);
 					if ($numrows) {
 						$obj = $this->db->fetch_object($resql);
@@ -8590,6 +8640,9 @@ abstract class CommonObject
 				return 'Error unexpected result from code evaluation';
 			}
 		} else {	// text|html|varchar
+			if (!empty($value) && preg_match('/^text/', (string) $type) && !preg_match('/search_/', $keyprefix) && !empty($param['options'])) {
+				$value = str_replace(',', "\n", $value);
+			}
 			$value = dol_htmlentitiesbr($value);
 		}
 
@@ -8645,10 +8698,10 @@ abstract class CommonObject
 	/**
 	 * Return validation test result for a field
 	 *
-	 * @param array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>	$fields	Array of properties of field to show
-	 * @param  string  $fieldKey            Key of attribute
-	 * @param  string  $fieldValue          value of attribute
-	 * @return bool return false if fail true on success, see $this->error for error message
+	 * @param array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>	$fields	Array of properties of field to show
+	 * @param  	string  $fieldKey           Key of attribute
+	 * @param	string  $fieldValue         Value of attribute
+	 * @return 	bool 						Return false if fail true on success, see $this->error for error message
 	 */
 	public function validateField($fields, $fieldKey, $fieldValue)
 	{
@@ -8660,7 +8713,7 @@ abstract class CommonObject
 
 		$this->clearFieldError($fieldKey);
 
-		if (!isset($fields[$fieldKey]) || $fields[$fieldKey] === null) {
+		if (!array_key_exists($fieldKey, $fields) || !is_array($fields[$fieldKey])) {
 			$this->setFieldError($fieldKey, $langs->trans('FieldNotFoundInObject'));
 			return false;
 		}
@@ -8912,7 +8965,7 @@ abstract class CommonObject
 					// Test on 'enabled' ('enabled' is different than 'list' = 'visibility')
 					$enabled = 1;
 					if ($enabled && isset($extrafields->attributes[$this->table_element]['enabled'][$key])) {
-						$enabled = (int) dol_eval($extrafields->attributes[$this->table_element]['enabled'][$key], 1, 1, '2');
+						$enabled = (int) dol_eval((string) $extrafields->attributes[$this->table_element]['enabled'][$key], 1, 1, '2');
 					}
 					if (empty($enabled)) {
 						continue;
@@ -8982,7 +9035,7 @@ abstract class CommonObject
 									$value = $getposttemp;
 								}
 							} elseif (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('int'))) {
-								$value =( !empty($this->array_options["options_".$key]) || $this->array_options["options_".$key] === '0' ) ? $this->array_options["options_".$key] : '';
+								$value = (!empty($this->array_options["options_".$key]) || $this->array_options["options_".$key] === '0') ? $this->array_options["options_".$key] : '';
 							} else {
 								$value = (!empty($this->array_options["options_".$key]) ? $this->array_options["options_".$key] : ''); // No GET, no POST, no default value, so we take value of object.
 							}
@@ -10382,6 +10435,11 @@ abstract class CommonObject
 			$value = $this->fields[$k];
 			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			$values[$k] = $this->quote($v, $value);
+			if (($value["type"] == "text") && !empty($value['arrayofkeyval']) && is_array($value['arrayofkeyval'])) {
+				// Clean values for text with selectbox
+				$v = preg_replace('/\s/', ',', $v);
+				$v = preg_replace('/,+/', ',', $v);
+			}
 			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			$tmp[] = $k.'='.$this->quote($v, $this->fields[$k]);
 		}
@@ -10765,56 +10823,6 @@ abstract class CommonObject
 	}
 
 	/**
-	 *	Set to a signed status
-	 *
-	 *	@param	User	$user			Object user that modify
-	 *  @param	int		$status			New status to set (often a constant like self::STATUS_XXX)
-	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *  @param  string  $triggercode    Trigger code to use
-	 *	@return	int						Return integer <0 if KO, >0 if OK
-	 */
-	public function setSignedStatusCommon($user, $status, $notrigger = 0, $triggercode = '')
-	{
-		$error = 0;
-
-		$this->db->begin();
-
-		$statusfield = 'signed_status';
-
-		$sql = "UPDATE ".$this->db->prefix().$this->table_element;
-		$sql .= " SET ".$statusfield." = ".((int) $status);
-		$sql .= " WHERE rowid = ".((int) $this->id);
-
-		if ($this->db->query($sql)) {
-			if (!$error) {
-				$this->oldcopy = clone $this;
-			}
-
-			if (!$error && !$notrigger) {
-				// Call trigger
-				$result = $this->call_trigger($triggercode, $user);
-				if ($result < 0) {
-					$error++;
-				}
-			}
-
-			if (!$error) {
-				$this->status = $status;
-				$this->db->commit();
-				return 1;
-			} else {
-				$this->db->rollback();
-				return -1;
-			}
-		} else {
-			$this->error = $this->db->error();
-			$this->db->rollback();
-			return -1;
-		}
-	}
-
-
-	/**
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
@@ -10923,7 +10931,7 @@ abstract class CommonObject
 	 * Existing categories are left untouch.
 	 *
 	 * @param 	string 		$type_categ 	Category type ('customer', 'supplier', 'website_page', ...)
-	 * @return	int							Array of category objects or < 0 if KO
+	 * @return	int[]|int					Array of category IDs or < 0 if KO
 	 */
 	public function getCategoriesCommon($type_categ)
 	{

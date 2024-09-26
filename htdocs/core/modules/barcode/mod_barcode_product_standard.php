@@ -39,7 +39,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
@@ -109,12 +109,16 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	/**
 	 * Return an example of result returned by getNextValue
 	 *
-	 * @param	Translate	$langs			Object langs
-	 * @param	?Product	$objproduct		Object product
-	 * @return	string						Return string example
+	 * @param	?Translate		$langs			Object langs
+	 * @param	?CommonObject	$objproduct		Object
+	 * @return	string							Return string example
 	 */
-	public function getExample($langs, $objproduct = null)
+	public function getExample($langs = null, $objproduct = null)
 	{
+		if (!$langs instanceof Translate) {
+			$langs = $GLOBALS['langs'];
+			'@phan-var-force Translate $langs';
+		}
 		$examplebarcode = $this->getNextValue($objproduct, '');
 		if (!$examplebarcode) {
 			$examplebarcode = $langs->trans('NotConfigured');
@@ -224,18 +228,22 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	 *
 	 *	@param	DoliDB		$db					Database handler
 	 *	@param	string		$code				Code to check/correct
-	 *	@param	Product		$product			Object product
-	 *  @param  int		  	$thirdparty_type   	0 = customer/prospect , 1 = supplier
+	 *	@param	Product|Societe	$product			Object product
+	 *  @param  int<0,1>  	$thirdparty_type   	0 = customer/prospect , 1 = supplier
 	 *  @param	string		$type       	    type of barcode (EAN, ISBN, ...)
-	 *  @return int								0 if OK
+	 *  @return int<-7,0>						0 if OK
 	 * 											-1 ErrorBadCustomerCodeSyntax
 	 * 											-2 ErrorCustomerCodeRequired
 	 * 											-3 ErrorCustomerCodeAlreadyUsed
 	 * 											-4 ErrorPrefixRequired
+	 * 											-7 ErrorBadClass
 	 */
 	public function verif($db, &$code, $product, $thirdparty_type, $type)
 	{
-		global $conf;
+		if (!$product instanceof Product) {
+			dol_syslog(get_class($this)."::verif called with ".get_class($product)." Expected Product", LOG_ERR);
+			return -7;
+		}
 
 		//var_dump($code.' '.$product->ref.' '.$thirdparty_type);exit;
 

@@ -149,7 +149,7 @@ class BonPrelevement extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 10, 'notnull' => 1, 'visible' => 0,),
@@ -515,7 +515,6 @@ class BonPrelevement extends CommonObject
 					$fk_bank_account = ($this->type == 'bank-transfer' ? getDolGlobalInt('PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT') : getDolGlobalInt('PRELEVEMENT_ID_BANKACCOUNT'));
 				}
 
-				$facs = array();
 				$amounts = array();
 				$amountsperthirdparty = array();
 
@@ -634,7 +633,13 @@ class BonPrelevement extends CommonObject
 							$addbankurl = 'direct-debit';	// = 'directdebit'
 						}
 
-						$result = $paiement->addPaymentToBank($user, $modeforaddpayment, $labelforaddpayment, $fk_bank_account, '', '', 0, '', $addbankurl);
+
+						if ($paiement instanceof PaymentSalary) {
+							// Only 6 arguments for PaymentSalary
+							$result = $paiement->addPaymentToBank($user, $modeforaddpayment, $labelforaddpayment, $fk_bank_account, '', '');
+						} else {
+							$result = $paiement->addPaymentToBank($user, $modeforaddpayment, $labelforaddpayment, $fk_bank_account, '', '', 0, '', $addbankurl);
+						}
 
 						if ($result < 0) {
 							$error++;
@@ -744,9 +749,10 @@ class BonPrelevement extends CommonObject
 	/**
 	 *	Get invoice or salary list (with amount or not)
 	 *
-	 *  @param 	int		$amounts 	If you want to get the amount of the order for each invoice or salary
-	 *  @param  string  $type       'salary' for type=salary
-	 *	@return	array 				Array(Id of invoices/salary, Amount to pay)
+	 *  @param	int<0,1>	$amounts 		If you want to get the amount of the order for each invoice or salary
+	 *  @param	'bank-transfer'|'salary'|'' $type	'salary' for type=salary (default = supplier invoice
+	 *	@return	array<array{int,float}>|int[]	Array(Id of invoices/salary, Amount to pay)
+	 *	@phpstan-return	($amounts is 0 ? int[] : array<array{int,float}>)
 	 */
 	private function getListInvoices($amounts = 0, $type = '')
 	{
@@ -821,8 +827,8 @@ class BonPrelevement extends CommonObject
 	 *	Returns amount waiting for direct debit payment or credit transfer payment
 	 *
 	 *	@param	string	$mode		'direct-debit' or 'bank-transfer'
-	 *  @param  string  $type        for type=salary
-	 *	@return	double	 			Return integer <O if KO, Total amount
+	 *  @param  string  $type      	for type=salary
+	 *	@return	float 	 			Return integer <O if KO, Total amount
 	 */
 	public function SommeAPrelever($mode = 'direct-debit', $type = '')
 	{
@@ -1051,7 +1057,9 @@ class BonPrelevement extends CommonObject
 				$sql .= " FROM " . MAIN_DB_PREFIX . "salary as f";
 				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "prelevement_demande as pd ON f.rowid = pd.fk_salary";
 				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "user as s ON s.rowid = f.fk_user";
-				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "user_rib as sr ON s.rowid = sr.fk_user";	// TODO Add AND sr.default_rib = 1 here
+				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "user_rib as sr ON s.rowid = sr.fk_user";
+				// TODO Add 'AND sr.default_rib = 1' here. Note: the column has been created in v21 in llx_user_rib and default to 0
+				// If we add a test on sr.default_rib = 1, we must also check we have a correct error management to stop if no default BAN is found.
 			}
 			if ($sourcetype != 'salary') {
 				if ($type != 'bank-transfer') {
@@ -1146,7 +1154,7 @@ class BonPrelevement extends CommonObject
 						}
 
 						$verif = checkSwiftForAccount(null, $fac[10]);
-						if ($verif) {
+						if ($verif || (empty($fac[10]) && getDolGlobalInt("WITHDRAWAL_WITHOUT_BIC"))) {
 							$verif = checkIbanForAccount(null, $fac[11]);
 						}
 
@@ -1436,7 +1444,7 @@ class BonPrelevement extends CommonObject
 	/**
 	 *  Get object and lines from database
 	 *
-	 *  @param	User	$user		Object user that delete
+	 *  @param	?User	$user		Object user that delete
 	 *  @param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *  @return	int					>0 if OK, <0 if KO
 	 */
@@ -1786,7 +1794,7 @@ class BonPrelevement extends CommonObject
 
 						$fileDebiteurSection .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code, $obj->cb, $obj->cg, $obj->cc, $obj->somme, $obj->reffac, $obj->idfac, $obj->iban, $obj->bic, $daterum, $obj->drum, $obj->rum, $type);
 
-						$this->total = $this->total + $obj->somme;
+						$this->total += $obj->somme;
 						$i++;
 					}
 					$nbtotalDrctDbtTxInf = $i;
@@ -1927,7 +1935,7 @@ class BonPrelevement extends CommonObject
 
 						$fileCrediteurSection .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code, $obj->cb, $obj->cg, $obj->cc, $obj->somme, $refobj, $obj->idfac, $obj->iban, $obj->bic, $daterum, $obj->drum, $obj->rum, $type, $obj->fac_ref_supplier);
 
-						$this->total = $this->total + $obj->somme;
+						$this->total += $obj->somme;
 						$i++;
 					}
 					$nbtotalDrctDbtTxInf = $i;
@@ -2004,7 +2012,7 @@ class BonPrelevement extends CommonObject
 
 					while ($i < $num) {
 						$obj = $this->db->fetch_object($resql);
-						$this->total = $this->total + $obj->amount;
+						$this->total += $obj->amount;
 
 						// TODO Write record into file
 						$i++;
@@ -2029,7 +2037,7 @@ class BonPrelevement extends CommonObject
 
 					while ($i < $num) {
 						$obj = $this->db->fetch_object($resql);
-						$this->total = $this->total + $obj->amount;
+						$this->total += $obj->amount;
 
 						// TODO Write record into file
 						$i++;
@@ -2213,7 +2221,9 @@ class BonPrelevement extends CommonObject
 			$XML_DEBITOR .= '				</DrctDbtTx>' . $CrLf;
 			$XML_DEBITOR .= '				<DbtrAgt>' . $CrLf;
 			$XML_DEBITOR .= '					<FinInstnId>' . $CrLf;
-			$XML_DEBITOR .= '						<BIC>' . $row_bic . '</BIC>' . $CrLf;
+			if (getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC') == 0) {
+				$XML_DEBITOR .= '						<BIC>' . $row_bic . '</BIC>' . $CrLf;
+			}
 			$XML_DEBITOR .= '					</FinInstnId>' . $CrLf;
 			$XML_DEBITOR .= '				</DbtrAgt>' . $CrLf;
 			$XML_DEBITOR .= '				<Dbtr>' . $CrLf;
@@ -2342,7 +2352,7 @@ class BonPrelevement extends CommonObject
 
 		fwrite($this->file, substr($this->raison_sociale . "                           ", 0, 24));
 
-		// Reference de la remise creancier D1 sur 7 caracteres
+		// Ref of thirdparty on 7 characters
 
 		fwrite($this->file, substr($this->reference_remise . "                           ", 0, 7));
 
@@ -2769,11 +2779,11 @@ class BonPrelevement extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		?array{string,mixed}	$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{

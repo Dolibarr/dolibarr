@@ -78,13 +78,18 @@ if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 	$ecmdir = new EcmDirectory($db);
 	if ($section > 0) {
 		$result = $ecmdir->fetch($section);
-		if (!($result > 0)) {
-			//dol_print_error($db,$ecmdir->error);
-			//exit;
-		}
+		//if (!($result > 0)) {
+		//dol_print_error($db,$ecmdir->error);
+		//exit;
+		//}
 	}
 } else {
-	// For no ajax call
+	// When no an ajax call (include from other file)
+	'
+	@phan-var-force int $section
+	@phan-var-force string $module
+	@phan-var-force string $showonrightsize
+	';
 	$rootdirfordoc = $conf->ecm->dir_output;
 
 	$ecmdir = new EcmDirectory($db);
@@ -291,8 +296,24 @@ if ($type == 'directory') {
 
 		$textifempty = ($section ? $langs->trans("NoFileFound") : ($showonrightsize == 'featurenotyetavailable' ? $langs->trans("FeatureNotYetAvailable") : $langs->trans("NoFileFound")));
 
-		$filter = preg_quote($search_doc_ref, '/');
+		$filter = preg_quote((string) $search_doc_ref, '/');
 		$filearray = dol_dir_list($upload_dir, "files", 1, $filter, $excludefiles, $sortfield, $sorting, 1);
+
+		// To allow external users,we must restrict $filearray to entries the user is a thirdparty.
+		// This can be done by filtering on entries found into llx_ecm
+		if ($user->socid > 0) {
+			$filearrayallowedtoexternal = array();	// 'fullpath' => array(...)
+
+			// Search files in ECM with select filepath.filename where src_object_type = $module and src_object_type EXISTS in (select rowid from $objecttablename WERE fk_soc = '.$user->socid.' and entity in getEntity($objecttbalename)
+			// TODO
+
+			// Now clean $filearray to keep only record also found into $filearrayallowedtoexternal.
+			foreach ($filearray as $key => $val) {
+				if (!in_array($upload_dir.'/'.$val['relativename'], $filearrayallowedtoexternal)) {
+					unset($filearray[$key]);
+				}
+			}
+		}
 
 		$perm = $user->hasRight('ecm', 'upload');
 
@@ -355,6 +376,7 @@ if ($type == 'directory') {
 			$textifempty = ($showonrightsize == 'featurenotyetavailable' ? $langs->trans("FeatureNotYetAvailable") : $langs->trans("ECMSelectASection"));
 		}
 
+		$useinecm = null;
 		if ($module == 'medias') {
 			$useinecm = 6;
 			$modulepart = 'medias';

@@ -330,7 +330,7 @@ class Account extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -546,12 +546,12 @@ class Account extends CommonObject
 			$num = $this->db->num_rows($result);
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($result);
-				// Anciens liens (pour compatibilite)
+				// Old links (for compatibility)
 				$lines[$i][0] = $obj->url;
 				$lines[$i][1] = $obj->url_id;
 				$lines[$i][2] = $obj->label;
 				$lines[$i][3] = $obj->type;
-				// Nouveaux liens
+				// New links
 				$lines[$i]['url'] = $obj->url;
 				$lines[$i]['url_id'] = $obj->url_id;
 				$lines[$i]['label'] = $obj->label;
@@ -665,7 +665,7 @@ class Account extends CommonObject
 
 		if ($accline->insert() > 0) {
 			if ($categorie > 0) {
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class(";
+				$sql = "INSERT INTO ".MAIN_DB_PREFIX."category_bankline(";
 				$sql .= "lineid, fk_categ";
 				$sql .= ") VALUES (";
 				$sql .= ((int) $accline->id).", '".$this->db->escape($categorie)."'";
@@ -1487,10 +1487,9 @@ class Account extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 *
-	 * @param 	array 	$params 	Params to construct tooltip data
-	 * @since 	v18
-	 * @return 	array
+	 * @param array<string,mixed> $params params to construct tooltip data
+	 * @since v18
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -1529,7 +1528,7 @@ class Account extends CommonObject
 	}
 
 	/**
-	 *  Return clicable name (with picto eventually)
+	 *  Return clickable name (with picto eventually)
 	 *
 	 *	@param	int		$withpicto					Include picto into link
 	 *  @param  string	$mode           			''=Link to card, 'transactions'=Link to transactions card
@@ -1641,7 +1640,9 @@ class Account extends CommonObject
 			$error++;
 			$this->error = 'IBANNotValid';
 		}
-		if (!checkSwiftForAccount($this)) {
+		// Call function to check Swift/BIC.
+		// A non valid BIC/Swift is a problem if: it is not empty or always a problem if WITHDRAWAL_WITHOUT_BIC is not set).
+		if (!checkSwiftForAccount($this) && (!empty($this->bic) || !getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC'))) {
 			$error++;
 			$this->error = 'SwiftNotValid';
 		}
@@ -1750,7 +1751,7 @@ class Account extends CommonObject
 	}
 
 	/**
-	 * Return 1 if IBAN / BIC is mandatory (otherwise option)
+	 * Return 1 if IBAN is mandatory (otherwise option)
 	 *
 	 * @return		int        1 = mandatory / 0 = Not mandatory
 	 */
@@ -1802,6 +1803,37 @@ class Account extends CommonObject
 
 		if (in_array($country_code, $country_code_in_EEC)) {
 			return 1; // France, Spain, ...
+		}
+		return 0;
+	}
+
+	/**
+	 * Return 1 if BIC is mandatory (otherwise option)
+	 *
+	 * @return		int        1 = mandatory / 0 = Not mandatory
+	 */
+	public function needBIC()
+	{
+		if (getDolGlobalString('MAIN_IBAN_IS_NEVER_MANDATORY')) {
+			return 0;
+		}
+
+		$country_code = $this->getCountryCode();
+
+		$country_code_in_EEC = array(
+			'AD', // Andorra
+			'BH', // Bahrein
+			'DK', // Denmark
+			'FR', // France
+			'GH', // Ghana
+			'HU', // Hungary
+			'JP', // Japan
+			'LV', // Latvia
+			'SE', // Sweden
+		);
+
+		if (in_array($country_code, $country_code_in_EEC)) {
+			return 1; // Andorra, Bahrein, ...
 		}
 		return 0;
 	}
@@ -1962,11 +1994,11 @@ class Account extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
@@ -2362,7 +2394,7 @@ class AccountLine extends CommonObjectLine
 			$nbko++;
 		}
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid=".(int) $this->rowid;
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."category_bankline WHERE lineid=".(int) $this->rowid;
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if (!$result) {
@@ -2521,7 +2553,7 @@ class AccountLine extends CommonObjectLine
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if (!empty($cat) && $cat > 0) {
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (";
+				$sql = "INSERT INTO ".MAIN_DB_PREFIX."category_bankline (";
 				$sql .= "lineid";
 				$sql .= ", fk_categ";
 				$sql .= ") VALUES (";

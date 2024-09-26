@@ -397,7 +397,7 @@ class FormOther
 	/**
 	 * Return select list for categories (to use in form search selectors)
 	 *
-	 * @param	int			$type			Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
+	 * @param	string		$type			Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
 	 * @param   integer		$selected     	Preselected value
 	 * @param   string		$htmlname      	Name of combo list
 	 * @param	int			$nocateg		Show also an entry "Not categorized"
@@ -847,9 +847,9 @@ class FormOther
 	 *
 	 *  @param	string		$set_color				Pre-selected color with format '#......'
 	 *  @param	string		$prefix					Name of HTML field
-	 *  @param	string		$form_name				Deprecated. Not used.
+	 *  @param	null|''		$form_name				Deprecated. Not used.
 	 *  @param	int			$showcolorbox			1=Show color code and color box, 0=Show only color code
-	 *  @param 	array		$arrayofcolors			Array of possible colors to choose in the selector. All colors are possible if empty. Example: array('29527A','5229A3','A32929','7A367A','B1365F','0D7813')
+	 *  @param 	string[]	$arrayofcolors			Array of possible colors to choose in the selector. All colors are possible if empty. Example: array('29527A','5229A3','A32929','7A367A','B1365F','0D7813')
 	 *  @param	string		$morecss				Add css style into input field
 	 *  @param	string		$setpropertyonselect	Set this CSS property after selecting a color
 	 *  @param	string		$default				Default color
@@ -1211,7 +1211,7 @@ class FormOther
 
 
 	/**
-	 * 	Get array with HTML tabs with boxes of a particular area including personalized choices of user.
+	 * 	Get array with HTML tabs with widgets/boxes of a particular area including personalized choices of user.
 	 *  Class 'Form' must be known.
 	 *
 	 * 	@param	   User         $user		 Object User
@@ -1237,7 +1237,13 @@ class FormOther
 			if (empty($user->conf->$confuserzone) || $box->fk_user == $user->id) {
 				$boxidactivatedforuser[$box->id] = $box->id; // We keep only boxes to show for user
 			}
+
+			if (!empty($box->lang)) {
+				$langs->loadLangs(array($box->lang));
+				$box->boxlabel = $langs->transnoentitiesnoconv($box->boxlabel);
+			}
 		}
+
 
 		// Define selectboxlist
 		$arrayboxtoactivatelabel = array();
@@ -1248,10 +1254,11 @@ class FormOther
 				if (!empty($boxidactivatedforuser[$box->id])) {
 					continue; // Already visible for user
 				}
+
 				$label = $langs->transnoentitiesnoconv($box->boxlabel);
 				//if (preg_match('/graph/',$box->class)) $label.=' ('.$langs->trans("Graph").')';
 				if (preg_match('/graph/', $box->class) && $conf->browser->layout != 'phone') {
-					$label = $label.' <span class="fas fa-chart-bar"></span>';
+					$label .= ' <span class="fas fa-chart-bar"></span>';
 				}
 				$arrayboxtoactivatelabel[$box->id] = array('label' => $label, 'data-html' => img_picto('', $box->boximg, 'class="pictofixedwidth valignmiddle"').'<span class="valignmiddle">'.$langs->trans($label).'</span>'); // We keep only boxes not shown for user, to show into combo list
 			}

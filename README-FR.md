@@ -10,13 +10,15 @@ Il est simple d'utilisation et modulaire, vous permettant de n'activez que les f
 
 ![ScreenShot](https://www.dolibarr.org/medias/dolibarr_screenshot1_1920x1080.jpg)
 
+
 ## LICENCE
 
 Dolibarr est distribué sous les termes de la licence GNU General Public License v3+ ou supérieure.
 
+
 ## INSTALLER DOLIBARR
 
-### Configuration simple
+### Installation simple
 
 Si vous avez peu de compétences techniques et que vous souhaitez installer Dolibarr ERP/CRM en quelques clics, vous pouvez utiliser l'une des versions pré-packagées avec les prérequis:
 
@@ -26,7 +28,7 @@ Si vous avez peu de compétences techniques et que vous souhaitez installer Doli
 
 Les packages peuvent être téléchargés à partir de [site web officiel](https://www.dolibarr.org/).
 
-### Configuration avancée
+### Installation recommandée/avancée
 
 Vous pouvez aussi utiliser un serveur Web et une base de données prise en charge (MariaDB, MySQL ou PostgreSQL) pour installer la version standard.
 
@@ -54,6 +56,7 @@ Vous pouvez aussi utiliser un serveur Web et une base de données prise en charg
 
 - Suivez les instructions de l'installateur
 
+
 ## METTRE A JOUR DOLIBARR
 
 Pour mettre à jour Dolibarr depuis une vieille version vers celle ci:
@@ -70,9 +73,11 @@ Pour mettre à jour Dolibarr depuis une vieille version vers celle ci:
 
 Note: *Le processus de migration peut être lancé manuellement et plusieurs fois, sans risque, en appelant la page /install/*
 
+
 ## CE QUI EST NOUVEAU
 
 Voir le fichier [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog).
+
 
 ## CE QUE DOLIBARR PEUT FAIRE
 
@@ -143,6 +148,7 @@ Voir le fichier [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/Ch
 
 Dolibarr peut aussi être étendu à volonté avec l'ajout de modules/applications externes développées par des développeurs tiers, disponible sur [DoliStore](https://www.dolistore.com).
 
+
 ## CE QUE DOLIBARR NE PEUT PAS (ENCORE) FAIRE
 
 Voici un liste de fonctionnalités pas encore gérées par Dolibarr:
@@ -152,9 +158,11 @@ Voici un liste de fonctionnalités pas encore gérées par Dolibarr:
 - Dolibarr n'embarque pas de Webmail intégré nativement.
 - Dolibarr ne fait pas le café (pas encore).
 
+
 ## DOCUMENTATION
 
 La documentation utilisateur, développeur et traducteur est disponible sous forme de ressources de la communauté via le site [Wiki](https://wiki.dolibarr.org).
+
 
 ## CONTRIBUER
 
@@ -162,11 +170,13 @@ Ce projet existe grâce à ses nombreux contributeurs [[Contribuer](https://gith
 
 [![Dolibarr](https://opencollective.com/dolibarr/contributors.svg?width=890&button=false)](https://github.com/Dolibarr/dolibarr/graphs/contributors)
 
+
 ## CREDITS
 
 Dolibarr est le résultat du travail de nombreux contributeurs depuis des années et utilise des librairies d'autres contributeurs.
 
 Voir le fichier [COPYRIGHT](https://github.com/Dolibarr/dolibarr/blob/develop/COPYRIGHT)
+
 
 ## ACTUALITES ET RESEAUX SOCIAUX
 

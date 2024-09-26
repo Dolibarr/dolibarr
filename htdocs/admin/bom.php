@@ -56,6 +56,8 @@ if ($action == 'updateMask') {
 	$maskconstbom = GETPOST('maskconstBom', 'aZ09');
 	$maskbom = GETPOST('maskBom', 'alpha');
 
+	$res = 0;
+
 	if ($maskconstbom && preg_match('/_MASK$/', $maskconstbom)) {
 		$res = dolibarr_set_const($db, $maskconstbom, $maskbom, 'chaine', 0, '', $conf->entity);
 	}
@@ -212,6 +214,8 @@ foreach ($dirmodels as $reldir) {
 
 					$module = new $classname($db);
 
+					'@phan-var-force ModeleNumRefBoms $module';
+
 					// Show modules according to features level
 					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 						continue;
@@ -349,6 +353,7 @@ foreach ($dirmodels as $reldir) {
 
 							require_once $dir.'/'.$file;
 							$module = new $classname($db);
+							'@phan-var-force ModelePDFBom $module';
 
 							$modulequalified = 1;
 							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -363,7 +368,7 @@ foreach ($dirmodels as $reldir) {
 								print(empty($module->name) ? $name : $module->name);
 								print "</td><td>\n";
 								if (method_exists($module, 'info')) {
-									print $module->info($langs);
+									print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
 								} else {
 									print $module->description;
 								}

@@ -9,6 +9,7 @@
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière	<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		Vincent Maury		<vmaury@timgroup.fr>
+ * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,12 +97,13 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 $search_status = GETPOST('search_status', 'intcomma');
+$search_signed_status = GETPOST('search_signed_status', 'alpha');
 
 $diroutputmassaction = $conf->expedition->dir_output.'/sending/temp/massgeneration/'.$user->id;
 
 $object = new Expedition($db);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('shipmentlist'));
 $extrafields = new ExtraFields($db);
 
@@ -139,6 +141,7 @@ $arrayfields = array(
 	'e.datec' => array('label' => $langs->trans("DateCreation"), 'checked' => 0, 'position' => 500),
 	'e.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => 0, 'position' => 500),
 	'e.fk_statut' => array('label' => $langs->trans("Status"), 'checked' => 1, 'position' => 1000),
+	'e.signed_status' =>array('label' => 'Signed status', 'checked' => 0, 'position' => 1001),
 	'l.ref' => array('label' => $langs->trans("DeliveryRef"), 'checked' => 1, 'position' => 1010, 'enabled' => (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') ? 1 : 0)),
 	'l.date_delivery' => array('label' => $langs->trans("DateReceived"), 'position' => 1020, 'checked' => 1, 'enabled' => (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') ? 1 : 0)),
 	'e.billed' => array('label' => $langs->trans("Billed"), 'checked' => 1, 'position' => 1100, 'enabled' => 'getDolGlobalString("WORKFLOW_BILL_ON_SHIPMENT") !== "0"'),
@@ -206,6 +209,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_datereceipt_start = '';
 	$search_datereceipt_end = '';
 	$search_status = '';
+	$search_signed_status = '';
 	$toselect = array();
 	$search_array_options = array();
 	$search_categ_cus = 0;
@@ -517,8 +521,8 @@ if (empty($reshook)) {
 			if ($limit > 0 && $limit != $conf->liste_limit) {
 				$param .= '&limit='.urlencode(strval($limit));
 			}
-			if ($sall) {
-				$param .= "&sall=".urlencode($sall);
+			if ($search_all) {
+				$param .= "&search_all=".urlencode($search_all);
 			}
 			if ($search_ref_exp) {
 				$param .= "&search_ref_exp=".urlencode($search_ref_exp);
@@ -573,6 +577,9 @@ if (empty($reshook)) {
 			}
 			if ($search_status != '') {
 				$param .= '&search_status='.urlencode($search_status);
+			}
+			if ($search_signed_status != '' && $search_signed_status >= 0) {
+				$param .= '&search_signed_status='.urlencode($search_signed_status);
 			}
 			if ($optioncss != '') {
 				$param .= '&optioncss='.urlencode($optioncss);
@@ -644,13 +651,13 @@ $shipment = new Expedition($db);
 $title = $langs->trans('ListOfSendings');
 $help_url = 'EN:Module_Shipments|FR:Module_Exp&eacute;ditions|ES:M&oacute;dulo_Expediciones';
 
-llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-expedition page-list');
 
 $sql = 'SELECT';
 if ($search_all || $search_user > 0) {
 	$sql = 'SELECT DISTINCT';
 }
-$sql .= " e.rowid, e.ref, e.ref_customer, e.date_expedition as date_expedition, e.weight, e.weight_units, e.date_delivery as delivery_date, e.fk_statut, e.billed, e.tracking_number, e.fk_shipping_method,";
+$sql .= " e.rowid, e.ref, e.ref_customer, e.date_expedition as date_expedition, e.weight, e.weight_units, e.date_delivery as delivery_date, e.fk_statut, e.signed_status, e.billed, e.tracking_number, e.fk_shipping_method,";
 if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) {
 	// Link for delivery fields ref and date. Does not duplicate the line because we should always have only 1 link or 0 per shipment
 	$sql .= " l.date_delivery as date_reception,";
@@ -713,6 +720,9 @@ if ($socid) {
 }
 if ($search_status != '' && $search_status >= 0) {
 	$sql .= " AND e.fk_statut = ".((int) $search_status);
+}
+if ($search_signed_status != '' && $search_signed_status >= 0) {
+	$sql .= ' AND e.signed_status = '.urlencode($search_signed_status);
 }
 if ($search_ref_customer != '') {
 	$sql .= natural_search('e.ref_customer', $search_ref_customer);
@@ -889,6 +899,14 @@ $num = $db->num_rows($resql);
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
+// Redirect to expedition card if there is only one result for global search
+if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all) {
+	$obj = $db->fetch_object($resql);
+	$id = $obj->rowid;
+	header("Location: ".DOL_URL_ROOT.'/expedition/card.php?id='.$id);
+	exit;
+}
+
 $expedition = new Expedition($db);
 
 if ($socid > 0) {
@@ -971,6 +989,9 @@ if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
 if ($search_status != '') {
 	$param .= '&search_status='.urlencode($search_status);
 }
+if ($search_signed_status != '' && $search_signed_status >= 0) {
+	$param .= '&search_signed_status='.urlencode($search_signed_status);
+}
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
@@ -983,6 +1004,7 @@ $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, 
 $param .= $hookmanager->resPrint;
 
 $arrayofmassactions = array(
+	'generate_doc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
 	'builddoc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	'classifyclose' => img_picto('', 'stop-circle', 'class="pictofixedwidth"').$langs->trans("Close"),
 	'presend'  => img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
@@ -1279,6 +1301,13 @@ if (!empty($arrayfields['e.fk_statut']['checked'])) {
 	print $form->selectarray('search_status', array('0' => $langs->trans('StatusSendingDraftShort'), '1' => $langs->trans('StatusSendingValidatedShort'), '2' => $langs->trans('StatusSendingProcessedShort')), $search_status, 1, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage');
 	print '</td>';
 }
+// Signed status
+if (!empty($arrayfields['e.signed_status']['checked'])) {
+	print '<td class="liste_titre center">';
+	$list_signed_status = $object->getSignedStatusLocalisedArray();
+	print $form->selectarray('search_signed_status', $list_signed_status, $search_signed_status, 1, 0, 0, '', 1, 0, 0, '', 'search_status');
+	print '</td>';
+}
 // Status billed
 if (!empty($arrayfields['e.billed']['checked'])) {
 	print '<td class="liste_titre maxwidthonsmartphone center">';
@@ -1384,6 +1413,10 @@ if (!empty($arrayfields['e.tms']['checked'])) {
 }
 if (!empty($arrayfields['e.fk_statut']['checked'])) {
 	print_liste_field_titre($arrayfields['e.fk_statut']['label'], $_SERVER["PHP_SELF"], "e.fk_statut", "", $param, '', $sortfield, $sortorder, 'right ');
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['e.signed_status']['checked'])) {
+	print_liste_field_titre($arrayfields['e.signed_status']['label'], $_SERVER["PHP_SELF"], "e.signed_status", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['e.billed']['checked'])) {
@@ -1538,7 +1571,7 @@ while ($i < $imaxinloop) {
 			print '<td class="center">';
 			if (empty($object->trueWeight)) {
 				$tmparray = $object->getTotalWeightVolume();
-				print showDimensionInBestUnit($tmparray['weight'], 0, "weight", $langs, isset($conf->global->MAIN_WEIGHT_DEFAULT_ROUND) ? $conf->global->MAIN_WEIGHT_DEFAULT_ROUND : -1, isset($conf->global->MAIN_WEIGHT_DEFAULT_UNIT) ? $conf->global->MAIN_WEIGHT_DEFAULT_UNIT : 'no');
+				print showDimensionInBestUnit($tmparray['weight'], 0, "weight", $langs, getDolGlobalInt('MAIN_WEIGHT_DEFAULT_ROUND', -1), isset($conf->global->MAIN_WEIGHT_DEFAULT_UNIT) ? $conf->global->MAIN_WEIGHT_DEFAULT_UNIT : 'no');
 				print $form->textwithpicto('', $langs->trans('EstimatedWeight'), 1);
 			} else {
 				print $object->trueWeight;
@@ -1645,6 +1678,13 @@ while ($i < $imaxinloop) {
 		// Status
 		if (!empty($arrayfields['e.fk_statut']['checked'])) {
 			print '<td class="right nowrap">'.$object->getLibStatut(5).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Signed Status
+		if (!empty($arrayfields['e.signed_status']['checked'])) {
+			print '<td class="center">'.$object->getLibSignedStatus(5).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

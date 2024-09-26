@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2007-2022	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2011		Dimitri Mouillard	<dmouillard@teclib.com>
- * Copyright (C) 2013		Marcos García		<marcosgdf@gmail.com>
- * Copyright (C) 2016		Regis Houssin		<regis.houssin@inodbox.com>
+/* Copyright (C) 2007-2022	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2011		Dimitri Mouillard			<dmouillard@teclib.com>
+ * Copyright (C) 2013		Marcos García				<marcosgdf@gmail.com>
+ * Copyright (C) 2016		Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,7 +67,7 @@ if (!$sortorder) {
 }
 
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('defineholidaylist'));
 $extrafields = new ExtraFields($db);
 
@@ -223,8 +224,9 @@ $userstatic = new User($db);
 
 
 $title = $langs->trans('CPTitreMenu');
+$help_url = 'EN:Module_Holiday';
 
-llxHeader('', $title);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-holiday page-define_holiday');
 
 $typeleaves = $holiday->getTypes(1, 1);
 $result = $holiday->updateBalance(); // Create users into table holiday if they don't exists. TODO Remove this whif we use field into table user.
@@ -257,7 +259,7 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 $title = $langs->trans("MenuConfCP");
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $massactionbutton, '', '', 'title_hrm', 0, '', '', $limit, 0, 0, 1);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $massactionbutton, 0, '', 'title_hrm', 0, '', '', $limit, 0, 0, 1);
 
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 

@@ -110,7 +110,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new FactureRec($db);
 $extrafields = new ExtraFields($db);
 
@@ -121,7 +121,7 @@ if (($id > 0 || $ref) && $action != 'create' && $action != 'add') {
 	}
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('invoicereclist'));
 
 // Fetch optionals attributes and labels

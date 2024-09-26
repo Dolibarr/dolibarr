@@ -6,6 +6,8 @@
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		Vincent Maury		<vmaury@timgroup.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +22,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Need to have following variables defined:
+ * Need to have the following variables defined:
  * $object (invoice, order, ...)
  * $conf
  * $langs
@@ -40,8 +42,15 @@ if (empty($object) || !is_object($object)) {
 	exit(1);
 }
 
-'@phan-var-force CommonObject $this
- @phan-var-force CommonObject $object';
+'
+@phan-var-force CommonObject $this
+@phan-var-force CommonObject $object
+@phan-var-force int $i
+@phan-var-force bool $var
+@phan-var-force BOMLine $line
+@phan-var-force Societe $buyer
+@phan-var-force Societe $seller
+';
 
 global $forceall, $filtertype;
 
@@ -62,7 +71,7 @@ $colspan = 3; // Columns: total ht + col edit + col delete
 // Lines for extrafield
 $objectline = new BOMLine($this->db);
 
-print "<!-- BEGIN PHP TEMPLATE objectline_edit.tpl.php -->\n";
+print "<!-- BEGIN PHP TEMPLATE bom/tpl/objectline_edit.tpl.php -->\n";
 
 $coldisplay = 0;
 print '<tr class="oddeven tredited">';
@@ -93,13 +102,13 @@ if ($line->fk_product > 0) {
 
 if (is_object($hookmanager)) {
 	$fk_parent_line = (GETPOST('fk_parent_line') ? GETPOST('fk_parent_line') : $line->fk_parent_line);
-	$parameters = array('line'=>$line, 'fk_parent_line'=>$fk_parent_line, 'var'=>$var, 'dateSelector'=>$dateSelector, 'seller'=>$seller, 'buyer'=>$buyer);
+	$parameters = array('line' => $line, 'fk_parent_line' => $fk_parent_line, 'var' => $var, 'dateSelector' => $dateSelector, 'seller' => $seller, 'buyer' => $buyer);
 	$reshook = $hookmanager->executeHooks('formEditProductOptions', $parameters, $this, $action);
 }
 
 //Line extrafield
 if (is_object($objectline) && !empty($extrafields)) {
-	$temps = $line->showOptionals($extrafields, 'edit', array('class'=>'tredited'), '', '', 1, 'line');
+	$temps = $line->showOptionals($extrafields, 'edit', array('class' => 'tredited'), '', '', 1, 'line');
 	if (!empty($temps)) {
 		print '<div style="padding-top: 10px" id="extrafield_lines_area_edit" name="extrafield_lines_area_edit">';
 		print $temps;
@@ -129,44 +138,47 @@ if (($line->info_bits & 2) != 2) {
 }
 print '</td>';
 
-if ($filtertype != 1) {
+if ($filtertype != 1) { // Product
 	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 		$coldisplay++;
 		print '<td class="nobottom nowrap linecolunit">';
 		print  $formproduct->selectMeasuringUnits("fk_unit", '', (($line->fk_unit) ? $line->fk_unit : ''), 0, 0);
 		print '</td>';
 	}
-
-	$coldisplay++;
-	print '<td class="nobottom linecolqtyfrozen right"><input type="checkbox" name="qty_frozen" id="qty_frozen" class="flat right" value="1"' . (GETPOSTISSET("qty_frozen") ? (GETPOSTINT('qty_frozen') ? ' checked="checked"' : '') : ($line->qty_frozen ? ' checked="checked"' : '')) . '>';
-	print '</td>';
-
-	$coldisplay++;
-	print '<td class="nobottom linecoldisablestockchange right"><input type="checkbox" name="disable_stock_change" id="disable_stock_change" class="flat right" value="1"' . (GETPOSTISSET('disablestockchange') ? (GETPOSTINT("disable_stock_change") ? ' checked="checked"' : '') : ($line->disable_stock_change ? ' checked="checked"' : '')) . '">';
-	print '</td>';
-
-	$coldisplay++;
-	print '<td class="nobottom nowrap linecollost right">';
-	print '<input type="text" size="2" name="efficiency" id="efficiency" class="flat right" value="' . $line->efficiency . '"></td>';
-
-	$coldisplay++;
-	print '<td class="nobottom nowrap linecolcostprice right">';
-	print '</td>';
-} else {
+} else { // Service
 	$coldisplay++;
 	print '<td class="nobottom nowrap linecolunit">';
 	print  $formproduct->selectMeasuringUnits("fk_unit", "time", ($line->fk_unit) ? $line->fk_unit : '', 0, 0);
 	print '</td>';
+}
+if ($filtertype != 1 || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) { // Product or stock support for Services is active
+	// Qty frozen
+	$coldisplay++;
+	print '<td class="nobottom linecolqtyfrozen right"><input type="checkbox" name="qty_frozen" id="qty_frozen" class="flat right" value="1"' . (GETPOSTISSET("qty_frozen") ? (GETPOSTINT('qty_frozen') ? ' checked="checked"' : '') : ($line->qty_frozen ? ' checked="checked"' : '')) . '>';
+	print '</td>';
 
+	// Disable stock change
+	$coldisplay++;
+	print '<td class="nobottom linecoldisablestockchange right"><input type="checkbox" name="disable_stock_change" id="disable_stock_change" class="flat right" value="1"' . (GETPOSTISSET('disablestockchange') ? (GETPOSTINT("disable_stock_change") ? ' checked="checked"' : '') : ($line->disable_stock_change ? ' checked="checked"' : '')) . '">';
+	print '</td>';
+
+	// Efficiency
+	$coldisplay++;
+	print '<td class="nobottom nowrap linecollost right">';
+	print '<input type="text" size="2" name="efficiency" id="efficiency" class="flat right" value="' . $line->efficiency . '"></td>';
+}
+
+// Service and workstations are active
+if ($filtertype == 1 && isModEnabled('workstation')) {
 	$coldisplay++;
 	print '<td class="nobottom nowrap linecolworkstation">';
 	print $formproduct->selectWorkstations($line->fk_default_workstation, 'idworkstations', 1);
 	print '</td>';
-
-	$coldisplay++;
-	print '<td class="nobottom nowrap linecolcostprice right">';
-	print '</td>';
 }
+// Cost
+$coldisplay++;
+print '<td class="nobottom nowrap linecolcostprice right">';
+print '</td>';
 
 $coldisplay += $colspan;
 print '<td class="nobottom linecoledit center valignmiddle" colspan="'.$colspan.'">';

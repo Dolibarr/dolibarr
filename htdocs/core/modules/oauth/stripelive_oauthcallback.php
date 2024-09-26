@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2022       Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2019       Thibault FOUCART     <support@ptibogxiv.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,6 +87,8 @@ if (GETPOST('state')) {
 }*/
 //var_dump($requestedpermissionsarray);exit;
 
+$apiService = null;
+$state = null;
 // Instantiate the Api service using the credentials, http client and storage mechanism for the token
 //$apiService = $serviceFactory->createService('StripeTest', $credentials, $storage, $requestedpermissionsarray);
 
@@ -110,8 +113,8 @@ if (!getDolGlobalString($keyforparamsecret)) {
  * Actions
  */
 
-
-if ($action == 'delete') {
+if ($action == 'delete' && (!empty($user->admin) || $user->id == GETPOSTINT('userid'))) {
+	$storage->userid = GETPOSTINT('userid');
 	$storage->clearToken('StripeLive');
 
 	setEventMessages($langs->trans('TokenDeleted'), null, 'mesgs');
@@ -131,23 +134,28 @@ if (GETPOST('code')) {     // We are coming from oauth provider page
 	dol_syslog("We are coming from the oauth provider page code=".dol_trunc(GETPOST('code'), 5));
 
 	// This was a callback request from service, get the token
-	try {
-		//var_dump($state);
-		//var_dump($apiService);      // OAuth\OAuth2\Service\Stripe
+	if ($apiService === null) {
+		dol_syslog("No API Service", LOG_ERR);
+	} else {
+		'@phan-var-force OAuth\OAuth2\Service\AbstractService|OAuth\OAuth1\Service\AbstractService $apiService';
+		try {
+			//var_dump($state);
+			//var_dump($apiService);      // OAuth\OAuth2\Service\Stripe
 
-		//$token = $apiService->requestAccessToken(GETPOST('code'), $state);
-		$token = $apiService->requestAccessToken(GETPOST('code'));
-		// Stripe is a service that does not need state to be stored as second parameter of requestAccessToken
+			//$token = $apiService->requestAccessToken(GETPOST('code'), $state);
+			$token = $apiService->requestAccessToken(GETPOST('code'));
+			// Stripe is a service that does not need state to be stored as second parameter of requestAccessToken
 
-		setEventMessages($langs->trans('NewTokenStored'), null, 'mesgs'); // Stored into object managed by class DoliStorage so into table oauth_token
+			setEventMessages($langs->trans('NewTokenStored'), null, 'mesgs'); // Stored into object managed by class DoliStorage so into table oauth_token
 
-		$backtourl = $_SESSION["backtourlsavedbeforeoauthjump"];
-		unset($_SESSION["backtourlsavedbeforeoauthjump"]);
+			$backtourl = $_SESSION["backtourlsavedbeforeoauthjump"];
+			unset($_SESSION["backtourlsavedbeforeoauthjump"]);
 
-		header('Location: '.$backtourl);
-		exit();
-	} catch (Exception $e) {
-		print $e->getMessage();
+			header('Location: '.$backtourl);
+			exit();
+		} catch (Exception $e) {
+			print $e->getMessage();
+		}
 	}
 } else { // If entry on page with no parameter, we arrive here
 	$_SESSION["backtourlsavedbeforeoauthjump"] = $backtourl;
@@ -157,7 +165,11 @@ if (GETPOST('code')) {     // We are coming from oauth provider page
 	// This may create record into oauth_state before the header redirect.
 	// Creation of record with state in this tables depend on the Provider used (see its constructor).
 	if (GETPOST('state')) {
-		$url = $apiService->getAuthorizationUri(array('state'=>GETPOST('state')));
+		if ($apiService === null) {
+			dol_syslog("No API Service", LOG_ERR);
+		} else {
+			$url = $apiService->getAuthorizationUri(array('state' => GETPOST('state')));
+		}
 	} else {
 		//$url = $apiService->getAuthorizationUri();      // Parameter state will be randomly generated
 		//https://connect.stripe.com/oauth/authorize?response_type=code&client_id=ca_AX27ut70tJ1j6eyFCV3ObEXhNOo2jY6V&scope=read_write

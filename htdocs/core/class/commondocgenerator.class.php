@@ -43,7 +43,7 @@ abstract class CommonDocGenerator
 	public $name = '';
 
 	/**
-	 * @var string Version
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental' Version
 	 */
 	public $version = '';
 
@@ -63,7 +63,7 @@ abstract class CommonDocGenerator
 	protected $db;
 
 	/**
-	 * @var Extrafields object
+	 * @var ?Extrafields object
 	 */
 	public $extrafieldsCache;
 
@@ -154,7 +154,7 @@ abstract class CommonDocGenerator
 	public $phpmin = array(7, 1);
 
 	/**
-	 * @var array<string,array{rank:int,width:float|int,title:array{textkey:string,label:string,align:string,padding:array{0:float,1:float,2:float,3:float}},content:array{align:string,padding:array{0:float,1:float,2:float,3:float}}}>	Array of columns
+	 * @var array<string,array{rank:int,width:float|int,status:bool,title:array{textkey:string,label:string,align:string,padding:array{0:float,1:float,2:float,3:float}},content:array{align:string,padding:array{0:float,1:float,2:float,3:float}}}>	Array of columns
 	 */
 	public $cols;
 
@@ -199,7 +199,7 @@ abstract class CommonDocGenerator
 	 *
 	 * @param   User		$user           User
 	 * @param   Translate	$outputlangs    Language object for output
-	 * @return	array						Array of substitution key->code
+	 * @return	array<string,mixed>			Array of substitution key->code
 	 */
 	public function get_substitutionarray_user($user, $outputlangs)
 	{
@@ -248,7 +248,7 @@ abstract class CommonDocGenerator
 	 *
 	 * @param   Adherent	$member         Member
 	 * @param   Translate	$outputlangs    Language object for output
-	 * @return	array						Array of substitution key->code
+	 * @return	array<string,mixed>			Array of substitution key->code
 	 */
 	public function getSubstitutionarrayMember($member, $outputlangs)
 	{
@@ -295,7 +295,7 @@ abstract class CommonDocGenerator
 	 *
 	 * @param   Societe		$mysoc			Object thirdparty
 	 * @param   Translate	$outputlangs    Language object for output
-	 * @return	array						Array of substitution key->code
+	 * @return	array<string,mixed>			Array of substitution key->code
 	 */
 	public function get_substitutionarray_mysoc($mysoc, $outputlangs)
 	{
@@ -303,13 +303,14 @@ abstract class CommonDocGenerator
 		global $conf;
 
 		if (empty($mysoc->forme_juridique) && !empty($mysoc->forme_juridique_code)) {
-			$mysoc->forme_juridique = getFormeJuridiqueLabel($mysoc->forme_juridique_code);
+			$mysoc->forme_juridique = getFormeJuridiqueLabel((string) $mysoc->forme_juridique_code);
 		}
 		if (empty($mysoc->country) && !empty($mysoc->country_code)) {
 			$mysoc->country = $outputlangs->transnoentitiesnoconv("Country".$mysoc->country_code);
 		}
 		if (empty($mysoc->state) && !empty($mysoc->state_code)) {
-			$mysoc->state = getState($mysoc->state_code, 0);
+			$state_id = dol_getIdFromCode($this->db, $mysoc->state_code, 'c_departements', 'code_departement', 'rowid');
+			$mysoc->state = getState($state_id, '0');
 		}
 
 		$logotouse = $conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small;
@@ -354,7 +355,7 @@ abstract class CommonDocGenerator
 	 * @param	Societe		$object			Object
 	 * @param   Translate	$outputlangs    Language object for output
 	 * @param   string		$array_key	    Name of the key for return array
-	 * @return	array						Array of substitution key->code
+	 * @return	array<string,mixed>			Array of substitution key->code
 	 */
 	public function get_substitutionarray_thirdparty($object, $outputlangs, $array_key = 'company')
 	{
@@ -369,7 +370,8 @@ abstract class CommonDocGenerator
 			$object->country = $outputlangs->transnoentitiesnoconv("Country".$object->country_code);
 		}
 		if (empty($object->state) && !empty($object->state_code)) {
-			$object->state = getState($object->state_code, 0);
+			$state_id = dol_getIdFromCode($this->db, $object->state_code, 'c_departements', 'code_departement', 'rowid');
+			$object->state = getState($state_id, '0');
 		}
 
 		$array_thirdparty = array(
@@ -395,7 +397,7 @@ abstract class CommonDocGenerator
 			'company_juridicalstatus' => $object->forme_juridique,
 			'company_outstanding_limit' => $object->outstanding_limit,
 			'company_capital' => $object->capital,
-			'company_capital_formated'=> price($object->capital, 0, '', 1, -1),
+			'company_capital_formated' => price($object->capital, 0, '', 1, -1),
 			'company_idprof1' => $object->idprof1,
 			'company_idprof2' => $object->idprof2,
 			'company_idprof3' => $object->idprof3,
@@ -424,7 +426,7 @@ abstract class CommonDocGenerator
 	 * @param	Contact 	$object        	contact
 	 * @param	Translate 	$outputlangs   	object for output
 	 * @param   string		$array_key	    Name of the key for return array
-	 * @return	array 						Array of substitution key->code
+	 * @return	array<string,mixed>			Array of substitution key->code
 	 */
 	public function get_substitutionarray_contact($object, $outputlangs, $array_key = 'object')
 	{
@@ -435,7 +437,8 @@ abstract class CommonDocGenerator
 			$object->country = $outputlangs->transnoentitiesnoconv("Country".$object->country_code);
 		}
 		if (empty($object->state) && !empty($object->state_code)) {
-			$object->state = getState($object->state_code, 0);
+			$state_id = dol_getIdFromCode($this->db, $object->state_code, 'c_departements', 'code_departement', 'rowid');
+			$object->state = getState($state_id, '0');
 		}
 
 		$array_contact = array(
@@ -482,7 +485,7 @@ abstract class CommonDocGenerator
 	 * Define array with couple substitution key => substitution value
 	 *
 	 * @param   Translate	$outputlangs    Language object for output
-	 * @return	array						Array of substitution key->code
+	 * @return	array<string,mixed>			Array of substitution key->code
 	 */
 	public function get_substitutionarray_other($outputlangs)
 	{
@@ -525,7 +528,7 @@ abstract class CommonDocGenerator
 	 * @param   CommonObject	$object             Main object to use as data source
 	 * @param   Translate		$outputlangs        Lang object to use for output
 	 * @param   string		    $array_key	        Name of the key for return array
-	 * @return	array								Array of substitution
+	 * @return	array<string,mixed>					Array of substitution
 	 */
 	public function get_substitutionarray_object($object, $outputlangs, $array_key = 'object')
 	{
@@ -537,6 +540,7 @@ abstract class CommonDocGenerator
 
 		if ($object->element == 'facture') {
 			/** @var Facture $object */
+			'@phan-var-force Facture $object';
 			$invoice_source = new Facture($this->db);
 			if ($object->fk_facture_source > 0) {
 				$invoice_source->fetch($object->fk_facture_source);
@@ -547,10 +551,10 @@ abstract class CommonDocGenerator
 			$already_payed_all = $sumpayed + $sumdeposit + $sumcreditnote;
 		}
 
+		// Ignore notice for deprecated date - @phan-suppress-next-line PhanUndeclaredProperty
 		$date = (isset($object->element) && $object->element == 'contrat' && isset($object->date_contrat)) ? $object->date_contrat : (isset($object->date) ? $object->date : null);
 
-		if (get_class($object) == 'CommandeFournisseur') {
-			/** @var CommandeFournisseur $object*/
+		if ($object instanceof CommandeFournisseur) {
 			$object->date_validation =  $object->date_valid;
 			$object->date_commande = $object->date;
 		}
@@ -728,7 +732,7 @@ abstract class CommonDocGenerator
 	 *	@param  CommonObjectLine	$line			Object line
 	 *	@param  Translate			$outputlangs    Translate object to use for output
 	 *  @param  int					$linenumber		The number of the line for the substitution of "object_line_pos"
-	 *  @return	array								Return a substitution array
+	 *  @return	array<string,mixed>					Return a substitution array
 	 */
 	public function get_substitutionarray_lines($line, $outputlangs, $linenumber = 0)
 	{
@@ -855,7 +859,7 @@ abstract class CommonDocGenerator
 	 * @param   Expedition		$object             Main object to use as data source
 	 * @param   Translate		$outputlangs        Lang object to use for output
 	 * @param   string			$array_key	        Name of the key for return array
-	 * @return	array								Array of substitution
+	 * @return	array<string,mixed>					Array of substitution
 	 */
 	public function get_substitutionarray_shipment($object, $outputlangs, $array_key = 'object')
 	{
@@ -920,10 +924,10 @@ abstract class CommonDocGenerator
 	/**
 	 * Define array with couple substitution key => substitution value
 	 *
-	 * @param   Object		$object    		Dolibarr Object
-	 * @param   Translate	$outputlangs    Language object for output
-	 * @param   boolean|int	$recursive    	Want to fetch child array or child object.
-	 * @return	array						Array of substitution key->code
+	 * @param   array<string,mixed>	$object	Dolibarr Object
+	 * @param   Translate	$outputlangs	Language object for output
+	 * @param   boolean|int	$recursive		Want to fetch child array or child object.
+	 * @return	array<string,mixed>		Array of substitution key->code
 	 */
 	public function get_substitutionarray_each_var_object(&$object, $outputlangs, $recursive = 1)
 	{
@@ -965,12 +969,12 @@ abstract class CommonDocGenerator
 	 *	Fill array with couple extrafield key => extrafield value
 	 *  Note that vars into substitutions array are formatted.
 	 *
-	 *	@param  Object			$object				Object with extrafields (must have $object->array_options filled)
-	 *	@param  array			$array_to_fill      Substitution array
+	 *	@param  CommonObject	$object				Object with extrafields (must have $object->array_options filled)
+	 *	@param  array<string,string>	$array_to_fill      Substitution array
 	 *  @param  Extrafields		$extrafields        Extrafields object
 	 *  @param  string			$array_key	        Prefix for name of the keys into returned array
 	 *  @param  Translate		$outputlangs        Lang object to use for output
-	 *	@return	array								Substitution array
+	 *	@return	array<string,string>				Substitution array
 	 */
 	public function fill_substitutionarray_with_extrafields($object, $array_to_fill, $extrafields, $array_key, $outputlangs)
 	{
@@ -1034,6 +1038,7 @@ abstract class CommonDocGenerator
 							dol_include_once($InfoFieldList[1]);
 							if ($classname && class_exists($classname)) {
 								$tmpobject = new $classname($this->db);
+								'@phan-var-force CommonObject $tmpobject';
 								$tmpobject->fetch($id);
 								// completely replace the id with the linked object name
 								$formatedarrayoption['options_'.$key] = $tmpobject->name;
@@ -1062,8 +1067,8 @@ abstract class CommonDocGenerator
 	 * @param	float		$y		        Ordinate of first point
 	 * @param	float		$l				??
 	 * @param	float		$h				??
-	 * @param	int			$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
-	 * @param	int			$hidebottom		Hide bottom
+	 * @param	int<-1,1>	$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
+	 * @param	int<0,1>	$hidebottom		Hide bottom
 	 * @return	void
 	 */
 	public function printRect($pdf, $x, $y, $l, $h, $hidetop = 0, $hidebottom = 0)
@@ -1082,9 +1087,9 @@ abstract class CommonDocGenerator
 	/**
 	 *  uasort callback function to Sort columns fields
 	 *
-	 *  @param	array			$a    			PDF lines array fields configs
-	 *  @param	array			$b    			PDF lines array fields configs
-	 *  @return	int								Return compare result
+	 *  @param	array{rank?:int}	$a    			PDF lines array fields configs
+	 *  @param	array{rank?:int}	$b    			PDF lines array fields configs
+	 *  @return	int<-1,1>							Return compare result
 	 */
 	public function columnSort($a, $b)
 	{
@@ -1103,11 +1108,11 @@ abstract class CommonDocGenerator
 	/**
 	 *   	Prepare Array Column Field
 	 *
-	 *   	@param	object			$object				common object
+	 *   	@param	CommonObject	$object				common object
 	 *   	@param	Translate		$outputlangs		langs
-	 *      @param	int				$hidedetails		Do not show line details
-	 *      @param	int				$hidedesc			Do not show desc
-	 *      @param	int				$hideref			Do not show ref
+	 *      @param	int<0,1>		$hidedetails		Do not show line details
+	 *      @param	int<0,1>		$hidedesc			Do not show desc
+	 *      @param	int<0,1>		$hideref			Do not show ref
 	 *      @return	void
 	 */
 	public function prepareArrayColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
@@ -1217,7 +1222,7 @@ abstract class CommonDocGenerator
 	 *  get column position rank from column key
 	 *
 	 *  @param	string		$newColKey    		the new column key
-	 *  @param	array		$defArray    		a single column definition array
+	 *  @param	array{rank?:int}	$defArray    		a single column definition array
 	 *  @param	string		$targetCol    		target column used to place the new column beside
 	 *  @param	bool		$insertAfterTarget  insert before or after target column ?
 	 *  @return	int         					new rank on success and -1 on error
@@ -1247,7 +1252,7 @@ abstract class CommonDocGenerator
 
 		foreach ($this->cols as $colKey => & $colDef) {
 			if ($rank <= $colDef['rank']) {
-				$colDef['rank'] = $colDef['rank'] + 1;
+				$colDef['rank'] += 1;
 			}
 		}
 
@@ -1307,12 +1312,12 @@ abstract class CommonDocGenerator
 	 *	@param	TCPDI|TCPDF	$pdf            Pdf object
 	 *  @param	float		$curY    		current Y position
 	 *  @param	string		$colKey    		the column key
-	 *  @param  object      $object 		CommonObject
+	 *  @param  CommonObject	$object 	CommonObject
 	 *  @param  int         $i  			the $object->lines array key
 	 *  @param  Translate 	$outputlangs    Output language
-	 *  @param  int 		$hideref 		hide ref
-	 *  @param  int 		$hidedesc 		hide desc
-	 *  @param  int 		$issupplierline if object need supplier product
+	 *  @param  int<0,1>	$hideref 		hide ref
+	 *  @param  int<0,1> 	$hidedesc 		hide desc
+	 *  @param  int<0,1> 	$issupplierline if object needx supplier product
 	 *  @return void
 	 */
 	public function printColDescContent($pdf, &$curY, $colKey, $object, $i, $outputlangs, $hideref = 0, $hidedesc = 0, $issupplierline = 0)
@@ -1372,7 +1377,7 @@ abstract class CommonDocGenerator
 
 
 		// Load extra fields if they haven't been loaded already.
-		if (empty($this->extrafieldsCache)) {
+		if (is_null($this->extrafieldsCache)) {
 			$this->extrafieldsCache = new ExtraFields($this->db);
 		}
 		if (empty($this->extrafieldsCache->attributes[$object->table_element])) {
@@ -1414,7 +1419,7 @@ abstract class CommonDocGenerator
 	 *
 	 *  @param	CommonObjectLine	$object    		line of common object
 	 *  @param 	Translate 			$outputlangs    Output language
-	 *  @param 	array 				$params    		array of additional parameters
+	 *  @param 	array<string,mixed> $params    		array of additional parameters
 	 *  @return	string  							Html string
 	 */
 	public function getExtrafieldsInHtml($object, $outputlangs, $params = array())
@@ -1426,7 +1431,7 @@ abstract class CommonDocGenerator
 		}
 
 		// Load extrafields if not already done
-		if (empty($this->extrafieldsCache)) {
+		if (is_null($this->extrafieldsCache)) {
 			$this->extrafieldsCache = new ExtraFields($this->db);
 		}
 		if (empty($this->extrafieldsCache->attributes[$object->table_element])) {
@@ -1459,7 +1464,7 @@ abstract class CommonDocGenerator
 			),
 		);
 
-		$params = $params + $defaultParams;
+		$params += $defaultParams;
 
 		/**
 		 * @var ExtraFields $extrafields
@@ -1720,7 +1725,7 @@ abstract class CommonDocGenerator
 		}
 
 		// Load extra fields if they haven't been loaded already.
-		if (empty($this->extrafieldsCache)) {
+		if (is_null($this->extrafieldsCache)) {
 			$this->extrafieldsCache = new ExtraFields($this->db);
 		}
 		if (empty($this->extrafieldsCache->attributes[$object->table_element])) {

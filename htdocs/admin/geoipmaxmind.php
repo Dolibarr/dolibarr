@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2009-2019	Laurent Destailleur	<eldy@users.sourceforge.org>
  * Copyright (C) 2011-2013  Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -166,10 +167,11 @@ if ($geoip) {
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 
+	$ip = '24.24.24.24';
+
 	print '<br><br>';
 	print '<br><span class="opacitymedium">'.$langs->trans("TestGeoIPResult", $ip).':</span>';
 
-	$ip = '24.24.24.24';
 	print '<br>'.$ip.' -> ';
 	$result = dol_print_ip($ip, 1);
 	if ($result) {

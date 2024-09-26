@@ -253,7 +253,7 @@ if ($action == 'dispatch' && $permissiontoreceive) {
 				if (!isModEnabled("multicurrency") && empty($conf->dynamicprices->enabled)) {
 					$dto = GETPOSTINT("dto_".$reg[1].'_'.$reg[2]);
 					if (!empty($dto)) {
-						$unit_price = price2num(GETPOST("pu_".$reg[1]) * (100 - $dto) / 100, 'MU');
+						$unit_price = price2num((float) GETPOST("pu_".$reg[1]) * (100 - $dto) / 100, 'MU');
 					}
 					$saveprice = "saveprice_".$reg[1].'_'.$reg[2];
 				}
@@ -323,7 +323,7 @@ if ($action == 'dispatch' && $permissiontoreceive) {
 				if (!isModEnabled("multicurrency") && empty($conf->dynamicprices->enabled)) {
 					$dto = GETPOSTINT("dto_".$reg[1].'_'.$reg[2]);
 					if (!empty($dto)) {
-						$unit_price = price2num(GETPOST("pu_".$reg[1]) * (100 - $dto) / 100, 'MU');
+						$unit_price = price2num((float) GETPOST("pu_".$reg[1]) * (100 - $dto) / 100, 'MU');
 					}
 					$saveprice = "saveprice_".$reg[1].'_'.$reg[2];
 				}
@@ -997,9 +997,13 @@ if ($id > 0 || !empty($ref)) {
 						}
 
 						// Qty to dispatch
-						print '<td class="right">';
-						print '<a href="#" id="reset'.$suffix.'" class="resetline">'.img_picto($langs->trans("Reset"), 'eraser', 'class="pictofixedwidth opacitymedium"').'</a>';
-						print '<input id="qty'.$suffix.'" name="qty'.$suffix.'" type="text" class="width50 right qtydispatchinput" value="'.(GETPOSTISSET('qty'.$suffix) ? GETPOSTINT('qty'.$suffix) : (!getDolGlobalString('SUPPLIER_ORDER_DISPATCH_FORCE_QTY_INPUT_TO_ZERO') ? $remaintodispatch : 0)).'">';
+						print '<td class="right nowrap">';
+						if ($remaintodispatch>0) {
+							$btnLabel = $langs->trans("Fill").' : '.$remaintodispatch;
+							print '<button class="auto-fill-qty btn-low-emphasis --btn-icon" data-rowname="qty'.$suffix.'" data-value="'.$remaintodispatch.'" title="'.dol_escape_htmltag($btnLabel).'" aria-label="'.dol_escape_htmltag($btnLabel).'" >'.img_picto($btnLabel, 'fa-arrow-right', 'aria-hidden="true"', 0, 0, 1).'</button>';
+						}
+						print '<input id="qty'.$suffix.'" name="qty'.$suffix.'" type="number" step="any" class="width50 right qtydispatchinput" value="'.(GETPOSTISSET('qty'.$suffix) ? GETPOSTINT('qty'.$suffix) : (!getDolGlobalString('SUPPLIER_ORDER_DISPATCH_FORCE_QTY_INPUT_TO_ZERO') ? $remaintodispatch : 0)).'">';
+						print '<button class="resetline btn-low-emphasis --btn-icon" id="reset'.$suffix.'" title="'.dol_escape_htmltag($langs->trans("Reset")).'" >'.img_picto($langs->trans("Reset"), 'eraser', 'aria-hidden="true"', 0, 0, 1).'</button>';
 						print '</td>';
 
 						print '<td>';
@@ -1136,6 +1140,11 @@ if ($id > 0 || !empty($ref)) {
 					$("select[name^=entrepot_]").val(fk_default_warehouse).change();
                 });
 
+				$(".auto-fill-qty").on("click touchstart", function(e){
+					e.preventDefault();
+					$("input[name="+$(this).data("rowname")+"]").val($(this).data("value")).trigger("change");
+				});
+
 	            $("#autoreset").click(function() {
 					$(".qtydispatchinput").each(function(){
 						id = $(this).attr("id");
@@ -1154,7 +1163,8 @@ if ($id > 0 || !empty($ref)) {
 					});
                 });
 
-				$(".resetline").click(function(){
+				$(".resetline").click(function(e){
+					e.preventDefault();
 					id = $(this).attr("id");
 					id = id.split("reset_");
 					console.log("Reset trigger for id = qty_"+id[1]);

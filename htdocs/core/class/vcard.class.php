@@ -1,7 +1,9 @@
 <?php
-/* Copyright (C)           Kai Blankenhorn      <kaib@bitfolge.de>
- * Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.org>
- * Copyright (C) 2020		Tobias Sekan		<tobias.sekan@startmail.com>
+/* Copyright (C)            Kai Blankenhorn      	<kaib@bitfolge.de>
+ * Copyright (C) 2005-2017  Laurent Destailleur  	<eldy@users.sourceforge.org>
+ * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -106,7 +108,7 @@ class vCard
 	/**
 	 *  Format phone number.
 	 *
-	 *  @param	int		$number		numero de telephone
+	 *  @param	string	$number		numero de telephone
 	 *  @param	string	$type		Type ('cell')
 	 *  @return	void
 	 */
@@ -211,7 +213,7 @@ class vCard
 		$this->properties[$key] = encode($postoffice).";".encode($extended).";".encode($street).";".encode($city).";".encode($region).";".encode($zip).";".encode($country);
 
 		//if ($this->properties["LABEL;".$type.";".$this->encoding] == '') {
-			//$this->setLabel($postoffice, $extended, $street, $city, $region, $zip, $country, $type);
+		//$this->setLabel($postoffice, $extended, $street, $city, $region, $zip, $country, $type);
 		//}
 	}
 
@@ -426,7 +428,7 @@ class vCard
 
 		if (!empty($object->socialnetworks)) {
 			foreach ($object->socialnetworks as $key => $val) {
-				if (empty($val)) {	// Disacard social network if empty
+				if (empty($val)) {	// Discard social network if empty
 					continue;
 				}
 				$urlsn = '';

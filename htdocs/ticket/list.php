@@ -7,6 +7,7 @@
  * Copyright (C) 2023		Charlene Benke		<charlene@patas-monkey.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière	<benjamin.faliere@altairis.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,7 +86,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Ticket($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->ticket->dir_output.'/temp/massgeneration/'.$user->id;
@@ -143,7 +144,7 @@ $arrayfields = array();
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
-		$visible = (int) dol_eval($val['visible'], 1);
+		$visible = (int) dol_eval((string) $val['visible'], 1);
 		$arrayfields['t.'.$key] = array(
 			'label' => $val['label'],
 			'checked' => (($visible < 0) ? 0 : 1),
@@ -434,10 +435,10 @@ if ($search_societe) {
 	$sql .= natural_search('s.nom', $search_societe);
 }
 if ($search_fk_project > 0) {
-	$sql .= natural_search('fk_project', $search_fk_project, 2);
+	$sql .= natural_search('fk_project', (string) $search_fk_project, 2);
 }
 if ($search_fk_contract > 0) {
-	$sql .= natural_search('fk_contract', $search_fk_contract, 2);
+	$sql .= natural_search('fk_contract', (string) $search_fk_contract, 2);
 }
 if ($search_date_start) {
 	$sql .= " AND t.datec >= '".$db->idate($search_date_start)."'";
@@ -1158,7 +1159,7 @@ while ($i < $imaxinloop) {
 							$creation_date =  $object->datec;
 							$hour_diff_creation = ($now - $creation_date) / 3600 ;
 							if ($hour_diff_creation > getDolGlobalInt('TICKET_DELAY_BEFORE_FIRST_RESPONSE')) {
-								print " " . img_picto($langs->trans('Late') . ' : ' . $langs->trans('TicketsDelayForFirstResponseTooLong', getDolGlobalString('TICKET_DELAY_BEFORE_FIRST_RESPONSE')), 'warning', 'style="color: red;"', false, 0, 0, '', '');
+								print " " . img_picto($langs->trans('Late') . ' : ' . $langs->trans('TicketsDelayForFirstResponseTooLong', getDolGlobalString('TICKET_DELAY_BEFORE_FIRST_RESPONSE')), 'warning', 'style="color: red;"', 0, 0, 0, '', '');
 							}
 						} elseif (getDolGlobalString('TICKET_DELAY_SINCE_LAST_RESPONSE') && $hour_diff > getDolGlobalInt('TICKET_DELAY_SINCE_LAST_RESPONSE')) {
 							print " " . img_picto($langs->trans('Late') . ' : ' . $langs->trans('TicketsDelayFromLastResponseTooLong', getDolGlobalString('TICKET_DELAY_SINCE_LAST_RESPONSE')), 'warning');

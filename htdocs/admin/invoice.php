@@ -70,6 +70,7 @@ if ($action == 'updateMask') {
 	$maskreplacement = GETPOST('maskreplacement', 'alpha');
 	$maskcredit = GETPOST('maskcredit', 'alpha');
 	$maskdeposit = GETPOST('maskdeposit', 'alpha');
+	$res = 0;
 	if ($maskconstinvoice && preg_match('/_MASK_/', $maskconstinvoice)) {
 		$res = dolibarr_set_const($db, $maskconstinvoice, $maskinvoice, 'chaine', 0, '', $conf->entity);
 	}
@@ -114,7 +115,7 @@ if ($action == 'updateMask') {
 		require_once $file;
 
 		$module = new $classname($db);
-		'@phan-var-force CommonDocGenerator $module';
+		'@phan-var-force ModelePDFFactures $module';
 
 		if ($module->write_file($facture, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=facture&file=SPECIMEN.pdf");
@@ -133,7 +134,7 @@ if ($action == 'updateMask') {
 } elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		if ($conf->global->FACTURE_ADDON_PDF == "$value") {
+		if (getDolGlobalString('FACTURE_ADDON_PDF') == (string) $value) {
 			dolibarr_del_const($db, 'FACTURE_ADDON_PDF', $conf->entity);
 		}
 	}
@@ -333,6 +334,8 @@ foreach ($dirmodels as $reldir) {
 
 						$module = new $classname($db);
 
+						'@phan-var-force ModeleNumRefFactures $module';
+
 						// Show modules according to features level
 						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 							continue;
@@ -442,7 +445,7 @@ foreach ($dirmodels as $reldir) {
 
 							if (getDolGlobalString('FACTURE_ADDON') . '.php' == $file) {  // If module is the one used, we show existing errors
 								if (!empty($module->error)) {
-									dol_htmloutput_mesg($module->error, '', 'error', 1);
+									dol_htmloutput_mesg($module->error, array(), 'error', 1);
 								}
 							}
 
@@ -530,6 +533,8 @@ foreach ($dirmodels as $reldir) {
 							require_once $dir.'/'.$file;
 							$module = new $classname($db);
 
+							'@phan-var-force ModelePDFFactures $module';
+
 							$modulequalified = 1;
 							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 								$modulequalified = 0;
@@ -546,7 +551,7 @@ foreach ($dirmodels as $reldir) {
 								print(empty($module->name) ? $name : $module->name);
 								print "</td><td>\n";
 								if (method_exists($module, 'info')) {
-									print $module->info($langs);
+									print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
 								} else {
 									print $module->description;
 								}
@@ -567,7 +572,7 @@ foreach ($dirmodels as $reldir) {
 
 								// Default
 								print '<td class="center">';
-								if ($conf->global->FACTURE_ADDON_PDF == "$name") {
+								if (getDolGlobalString('FACTURE_ADDON_PDF') == (string) $name) {
 									print img_picto($langs->trans("Default"), 'on');
 								} else {
 									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("SetAsDefault"), 'off').'</a>';
@@ -750,7 +755,7 @@ if ($resql) {
 	}
 }
 print "</select>";
-print ajax_combobox("chq", array(), 0, 0, 'resolve', -2);
+print ajax_combobox("chq", array(), 0, 0, 'resolve', '-2');
 
 print "</td></tr>";
 print "</table>";

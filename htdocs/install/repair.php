@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2021      Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2021-2024  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Vincent de Grandpré	<vincent@de-grandpre.quebec>
@@ -517,7 +517,7 @@ if ($ok && GETPOST('restore_thirdparties_logos')) {
 			$name=preg_replace('/\'/','',$name);
 			*/
 
-			$tmp = explode('.', $obj->logo);
+			$tmp = explode('.', (string) $obj->logo);
 			$name = $tmp[0];
 			if (isset($tmp[1])) {
 				$ext = '.'.$tmp[1];
@@ -591,7 +591,7 @@ if ($ok && GETPOST('restore_user_pictures', 'alpha')) {
 			 $name=preg_replace('/\'/','',$name);
 			 */
 
-			$tmp = explode('.', $obj->photo);
+			$tmp = explode('.', (string) $obj->photo);
 			$name = $tmp[0];
 			if (isset($tmp[1])) {
 				$ext = '.'.$tmp[1];
@@ -843,7 +843,7 @@ if ($ok && GETPOST('clean_orphelin_dir', 'alpha')) {
 
 		print '<tr><td colspan="2"><br>*** Clean orphelins files into files '.$upload_dir.'</td></tr>';
 
-		$filearray = dol_dir_list($upload_dir, "files", 1, '', array('^SPECIMEN\.pdf$', '^\.', '(\.meta|_preview.*\.png)$', '^temp$', '^payments$', '^CVS$', '^thumbs$'), '', SORT_DESC, 1, true);
+		$filearray = dol_dir_list($upload_dir, "files", 1, '', array('^SPECIMEN\.pdf$', '^\.', '(\.meta|_preview.*\.png)$', '^temp$', '^payments$', '^CVS$', '^thumbs$'), '', SORT_DESC, 1, 1);
 
 		// To show ref or specific information according to view to show (defined by $module)
 		if ($modulepart == 'company') {

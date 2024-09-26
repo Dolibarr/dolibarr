@@ -15,6 +15,10 @@ ListOfBOMs=Bills of material - BOM
 ListOfManufacturingOrders=Manufacturing Orders
 NewBOM=New bill of materials
 ProductBOMHelp=Product to create (or disassemble) with this BOM.<br>Note: Products with the property 'Nature of product' = 'Raw material' are not visible into this list.
+CloneDefBomProduct=Clone the default BOM to use to manufacture the product
+CloneOtherBomsProduct=Clone all BOMs that can be used to manufacture the product
+BOMofRef=BOM of %s
+ErrorProductCloneBom=Error: Failed to clone a BOM
 BOMsNumberingModules=BOM numbering templates
 BOMsModelModule=BOM document templates
 MOsNumberingModules=MO numbering templates
@@ -131,7 +135,7 @@ Manufacturing=Manufacturing
 Disassemble=Disassemble
 ProducedBy=Produced by
 QtyTot=Qty Total
-
+MOIsClosed=Manufacturing Order is closed
 QtyCantBeSplit= Quantity cannot be split
 NoRemainQtyToDispatch=No quantity remaining to divide
 THMOperatorEstimatedHelp=Estimated cost of operator per hour. Will be used to estimate cost of a BOM using this workstation.

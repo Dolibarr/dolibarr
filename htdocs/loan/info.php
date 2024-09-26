@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2014-2023  Alexandre Spangaro  <aspangaro@easya.solutions>
- * Copyright (C) 2017       Ferran Marcet       <fmarcet@2byte.es>
+/* Copyright (C) 2014-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2017		Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -47,6 +47,13 @@ $result = restrictedArea($user, 'loan', $id, '', '');
 
 
 /*
+ * Actions
+ */
+
+// None
+
+
+/*
  * View
  */
 
@@ -54,7 +61,8 @@ $form = new Form($db);
 
 $title = $langs->trans("Loan").' - '.$langs->trans("Info");
 $help_url = 'EN:Module_Loan|FR:Module_Emprunt';
-llxHeader("", $title, $help_url);
+
+llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-loan page-card_info');
 
 $object = new Loan($db);
 $object->fetch($id);

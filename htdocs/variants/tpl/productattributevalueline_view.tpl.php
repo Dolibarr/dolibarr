@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2022   Open-Dsi		<support@open-dsi.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,19 +16,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Need to have following variables defined:
+ * Need to have the following variables defined:
  * $object (invoice, order, ...)
  * $conf
  * $langs
  * $dateSelector
  * $forceall (0 by default, 1 for supplier invoices/orders)
  * $element     (used to test $user->hasRight($element, 'creer'))
- * $permtoedit  (used to replace test $user->hasRight($element, 'creer'))
  * $senderissupplier (0 by default, 1 for supplier invoices/orders)
  * $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
  * $outputalsopricetotalwithtax
  * $usemargins (0 to disable all margins columns, 1 to show according to margin setup)
- * $object_rights->creer initialized from = $object->getRights()
  * $disableedit, $disablemove, $disableremove
  *
  * $text, $description, $line
@@ -40,7 +39,8 @@ if (empty($object) || !is_object($object)) {
 }
 
 '@phan-var-force CommonObject $this
- @phan-var-force CommonObject $object';
+ @phan-var-force CommonObject $object
+ @phan-var-force int $num';
 
 // add html5 elements
 $domData  = ' data-element="'.$line->element.'"';
@@ -57,9 +57,10 @@ $coldisplay = 0;
 		<?php print $line->ref ?>
 	</td>
 
-	<td class="linecolvalue nowrap"><?php $coldisplay++; print $line->value ?></td>
+	<td class="linecolvalue nowrap"><?php $coldisplay++;
+	print $line->value ?></td>
 <?php
-if (!empty($object_rights->write) && $action != 'selectlines') {
+if ($user->hasRight('variants', 'write') && $action != 'selectlines') {
 	print '<td class="linecoledit center width25">';
 	$coldisplay++;
 	if (empty($disableedit)) { ?>
@@ -97,7 +98,7 @@ if (!empty($object_rights->write) && $action != 'selectlines') {
 	}
 } else {
 	print '<td colspan="3"></td>';
-	$coldisplay = $coldisplay + 3;
+	$coldisplay += 3;
 }
 
 if ($action == 'selectlines') { ?>

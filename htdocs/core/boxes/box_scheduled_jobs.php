@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2017 	   Nicolas Zabouri      <info@inovea-conseil.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -153,7 +154,7 @@ class box_scheduled_jobs extends ModeleBoxes
 						'textnoformat' => (empty($resultarray[$line][2]) ? '' : $form->textwithpicto(dol_print_date($resultarray[$line][2], "dayhoursec", 'tzserver'), $langs->trans("CurrentTimeZone")))
 					);
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="center" ',
+						'td' => 'class="right" ',
 						'textnoformat' => $resultarray[$line][4]
 					);
 					$line++;
@@ -166,16 +167,16 @@ class box_scheduled_jobs extends ModeleBoxes
 				);
 				$textnoformat = '';
 				if ($nbjobsnotfinished) {
-					$textnoformat .= '<a class="inline-block paddingleft paddingright marginleftonly marginrightonly minwidth25 nounderlineimp" href="'.DOL_URL_ROOT.'/cron/list.php" title="'.$langs->trans("NumberScheduledJobNeverFinished").'"><div class="center badge badge-warning nounderlineimp"><i class="fa fa-exclamation-triangle"></i> '.$nbjobsnotfinished.'</div></a>';
+					$textnoformat .= '<a class="inline-block paddingleft paddingright marginleftonly'.($nbjobsinerror ? ' marginrightonly' : '').' minwidth25 nounderlineimp" href="'.DOL_URL_ROOT.'/cron/list.php" title="'.$langs->trans("NumberScheduledJobNeverFinished").'"><div class="center badge badge-warning nounderlineimp"><i class="fa fa-exclamation-triangle"></i> '.$nbjobsnotfinished.'</div></a>';
 				}
 				if ($nbjobsinerror) {
-					$textnoformat .= '<a class="inline-block paddingleft paddingright marginleftonly marginrightonly minwidth25 nounderlineimp" href="'.DOL_URL_ROOT.'/cron/list.php?search_lastresult='.urlencode('<>0').'" title="'.$langs->trans("NumberScheduledJobError").'"><div class="badge badge-danger nounderlineimp"><i class="fa fa-exclamation-triangle"></i> '.$nbjobsinerror.'</div></a>';
+					$textnoformat .= '<a class="inline-block paddingleft paddingright marginleftonly minwidth25 nounderlineimp" href="'.DOL_URL_ROOT.'/cron/list.php?search_lastresult='.urlencode('<>0').'" title="'.$langs->trans("NumberScheduledJobError").'"><div class="badge badge-danger nounderlineimp"><i class="fa fa-exclamation-triangle"></i> '.$nbjobsinerror.'</div></a>';
 				}
 				if (empty($nbjobsnotfinished) && empty($nbjobsinerror)) {
-					$textnoformat .= '<a class="inline-block paddingleft paddingright marginleftonly marginrightonly minwidth25 nounderlineimp" href="'.DOL_URL_ROOT.'/cron/list.php"><div class="center badge badge-status4 nounderline">0</div></a>';
+					$textnoformat .= '<a class="inline-block paddingleft marginleftonly minwidth25 nounderlineimp" href="'.DOL_URL_ROOT.'/cron/list.php"><div class="center badge badge-status4 nounderline">0</div></a>';
 				}
 				$this->info_box_contents[$line][] = array(
-					'td' => 'class="center"',
+					'td' => 'class="right"',
 					'textnoformat' => $textnoformat
 				);
 			} else {
@@ -196,9 +197,9 @@ class box_scheduled_jobs extends ModeleBoxes
 	/**
 	 *	Method to show box
 	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
+	 *	@param	?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}	$head	Array with properties of box title
+	 *	@param	?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>	$contents	Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *	@return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)

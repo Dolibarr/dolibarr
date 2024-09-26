@@ -5,35 +5,27 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 Module56000Name=برگه‌های پشتیبانی
 Module56000Desc=سامانۀ برگه‌های پشتیبانی برای مدیریت مشکلات و درخواست‌ها
-
 Permission56001=نمایش برگه‌ها
 Permission56002=ویرایش برگه‌ه
 Permission56003=حذف برگه‌ها
 Permission56004=مدیریت برگه‌ها
 Permission56005=نمایش همۀ برگه‌های مربوط به اشخاص سوم (برای کاربران خارجی مؤثر نیست و همواره به شخص‌سومی که به‌آن وصل است وابسته است)
 Permission56006=Export tickets
-
 Tickets=برگه‌های پشتیبانی
 TicketDictType=برگه‌ها - انواع
 TicketDictCategory=Ticket - Groups
 TicketDictSeverity=برگه‌ها - سطح اهمیت
 TicketDictResolution=Ticket - Resolution
-
 TicketTypeShortCOM=سوال تجاری
 TicketTypeShortHELP=Request for functional help
 TicketTypeShortISSUE=Issue or bug
@@ -41,51 +33,39 @@ TicketTypeShortPROBLEM=Problem
 TicketTypeShortREQUEST=Change or enhancement request
 TicketTypeShortPROJET=طرح
 TicketTypeShortOTHER=سایر
-
 TicketSeverityShortLOW=کم
 TicketSeverityShortNORMAL=عادی
 TicketSeverityShortHIGH=زیاد
 TicketSeverityShortBLOCKING=Critical, Blocking
-
 TicketCategoryShortOTHER=سایر
-
 ErrorBadEmailAddress=بخش '%s' نادرست است
 MenuTicketMyAssign=برگه‌ها من
 MenuTicketMyAssignNonClosed=برگه‌های باز من
 MenuListNonClosed=برگه‌های باز
-
 TypeContact_ticket_internal_CONTRIBUTOR=مشارکت‌کننده
 TypeContact_ticket_internal_SUPPORTTEC=کاربر نسبت داده شده
 TypeContact_ticket_external_SUPPORTCLI=طرف‌تماس‌مشتری / ره‌گیری حادثه
 TypeContact_ticket_external_CONTRIBUTOR=مشارکت‌کنندۀ بیرونی
-
 OriginEmail=Reporter Email
+EmailReplyto=Reply to in Email
+EmailReferences=References in Emails
 Notify_TICKET_SENTBYMAIL=ارسال پیام برگه با رایانامه
-
 ExportDataset_ticket_1=برگه‌های پشتیبانی
-
 # Status
 Read=خوانده‌شده
 Assigned=نسبت‌داده شده
 NeedMoreInformation=Waiting for reporter feedback
 NeedMoreInformationShort=Waiting for feedback
-TicketAnswered=پاسخ داده شده
 Waiting=در انتظار
 SolvedClosed=Solved
 Deleted=حذف شده
-
 # Dict
-Type=نوع
 Severity=حساسیت
 TicketGroupIsPublic=Group is public
 TicketGroupIsPublicDesc=If a ticket group is public, it will be visible in the form when creating a ticket from the public interface
-
 # Email templates
 MailToSendTicketMessage=برای ارسال رایانامه از برگۀ پیا
-
-#
 # Admin page
-#
 TicketSetup=برپاسازی واحد برگه‌های پشتیبانی
 TicketSettings=تنظیمات
 TicketPublicAccess=یک رابط عمومی که بدون نیاز به تائید اعتبار شناسه است در نشانی زیر فعال است
@@ -157,10 +137,7 @@ TicketUseCaptchaCode=Use graphical code (CAPTCHA) when creating a ticket
 TicketUseCaptchaCodeHelp=Adds CAPTCHA verification when creating a new ticket.
 TicketsAllowClassificationModificationIfClosed=Allow to modify classification of closed tickets
 TicketsAllowClassificationModificationIfClosedHelp=Allow to modify classification (type, ticket group, severity) even if tickets are closed.
-
-#
 # Index & list page
-#
 TicketsIndex=Tickets area
 TicketList=فهرست برگه‌ها
 TicketAssignedToMeInfos=این برگه نمایش دهندۀ برگه‌های پشتیبانی است که به کاربر جاری نسبت داشته شده یا توسط وی ساخته شده است
@@ -175,10 +152,7 @@ ShowAsConversation=Show as conversation list
 MessageListViewType=Show as table list
 ConfirmMassTicketClosingSendEmail=Automatically send emails when closing tickets
 ConfirmMassTicketClosingSendEmailQuestion=Do you want to notify thirdparties when closing these tickets ?
-
-#
 # Ticket card
-#
 Ticket=برگۀ پشتیبانی
 TicketCard=کارت برگۀ‌پشتیبانی
 CreateTicket=ساخت برگه
@@ -278,20 +252,14 @@ TicketsDelayFromLastResponseTooLong=Too much time elapsed since last answer on t
 TicketNoContractFoundToLink=No contract was found to be automatically linked to this ticket. Please link a contract manually.
 TicketManyContractsLinked=Many contracts have been automatically linked to this ticket. Make sure to verify which should be chosen.
 TicketRefAlreadyUsed=The reference [%s] is already used, your new reference is [%s]
-
-#
 # Logs
-#
 TicketLogMesgReadBy=برگۀ %s توسط %s خوانده شد
 NoLogForThisTicket=هنوز گزارشی برای این برگه وجود ندارد
 TicketLogAssignedTo=برگۀ %s به %s نسبت داده شد
 TicketLogPropertyChanged=برگۀ %s ویرایش شد: طبقه‌بندی از %s به %s
 TicketLogClosedBy=برگۀ %s توسط %s بسته شد
 TicketLogReopen=Ticket %s re-open
-
-#
 # Public pages
-#
 TicketSystem=سامانۀ برگۀ‌پشتیبانی
 ShowListTicketWithTrackId=نمایش فهرست برگه‌ها از شناسۀ رهگیری
 ShowTicketWithTrackId=نمایش برگۀ پشتیبانی از شناسۀ رهگیری
@@ -306,13 +274,13 @@ TicketNewEmailBodyCustomer=این یک رایانامۀ خودکار است که
 TicketNewEmailBodyInfosTicket=اطلاعات برای زیرنظرگرفتن برگۀ‌پشتیبانی
 TicketNewEmailBodyInfosTrackId=شمارۀ رهگیری برگه: %s
 TicketNewEmailBodyInfosTrackUrl=You can view the progress of the ticket by clicking the following link
-TicketNewEmailBodyInfosTrackUrlCustomer=شما می‌توانید میزان پیش‌رفت برگه را در یک رابط اختصاصی با کلیک بر روی پیوند خود مشاهده کنید
+TicketNewEmailBodyInfosTrackUrlCustomer=You can view the progress of the ticket in the public ticket portal by clicking the following link
 TicketCloseEmailBodyInfosTrackUrlCustomer=You can consult the history of this ticket by clicking the following link
 TicketEmailPleaseDoNotReplyToThisEmail=لطفا این رایانامه را مستقیما جواب ندهید! برای پاسخ دادن در رابط اختصاصی، روی پیوند کلیک نمائید
 TicketPublicInfoCreateTicket=این برگه به شما امکان ثبت یک برگۀ پشتیبانی در سامانۀ مدیریت ما را می‌دهد.
 TicketPublicPleaseBeAccuratelyDescribe=Please accurately describe your request. Provide the most information possible to allow us to correctly identify your request.
 TicketPublicMsgViewLogIn=لطفا شناسۀ رهگیری برگه را وارد نمائید
-TicketTrackId=شناسۀ رهگیری عمومی
+TicketTrackId=Tracking ID
 OneOfTicketTrackId=یکی از شناسه‌های رهگیری شما
 ErrorTicketNotFound=برگه‌ای با شناسۀ رهگیری %s پیدا نشد
 Subject=موضوع
@@ -330,7 +298,6 @@ NumberOfTicketsByMonth=تعداد برگه‌های پشتیبانی در ماه
 NbOfTickets=تعداد برگه‌های پشتیبانی
 ExternalContributors=External contributors
 AddContributor=Add external contributor
-
 # notifications
 TicketCloseEmailSubjectCustomer=Ticket closed
 TicketCloseEmailBodyCustomer=This is an automatic message to notify you that ticket %s has just been closed.
@@ -342,12 +309,8 @@ TicketNotificationRecipient=گیرندۀ آگاهی‌رسانی
 TicketNotificationLogMessage=پیام گزارش
 TicketNotificationEmailBodyInfosTrackUrlinternal=نمایش برگۀ پشتیبانی در رابط
 TicketNotificationNumberEmailSent=رایانامۀ اطلاع‌رسانی ارسال شد: %s
-
 ActionsOnTicket=روی‌دادهای مربوط به برگه
-
-#
 # Boxes
-#
 BoxLastTicket=آخرین برگه‌های ساخته شده
 BoxLastTicketDescription=آخرین %s برگۀ ساخته شده
 BoxLastTicketContent=

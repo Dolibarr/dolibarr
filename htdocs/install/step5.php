@@ -97,12 +97,13 @@ dolibarr_install_syslog("--- step5: entering step5.php page ".$versionfrom." ".$
 
 $error = 0;
 
+
 /*
  *	Actions
  */
 
 // If install, check password and password_verification used to create admin account
-if ($action == "set") {
+if ($action == "set") {		// Test on permissions not required here
 	if ($pass != $pass_verif) {
 		header("Location: step4.php?error=1&selectlang=$setuplang".(isset($login) ? '&login='.$login : ''));
 		exit;
