@@ -93,7 +93,7 @@ parameters:
 		- '#::HTML2OpenIDServer\(\) expects string, array given.#'
 		- '#create_line\(\) expects string, float given.#'
 		- '# dol_stringtotime expects string, DateTime given.#'
-		- '# (show_ldap_content|projectLinesa) expects string, true given.#'
+		- '# show_ldap_content expects string, true given.#'
 		- '#expects string, bool\|mysqli_result\|resource given.#'
 		- '#( |::)((multi)?selectarray)\(\) expects array#'
 		- '# (reWriteAllMenus|check_authentication) expects array#'
