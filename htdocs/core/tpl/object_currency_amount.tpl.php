@@ -23,6 +23,22 @@
  * $langs
  */
 
+// Protection to avoid direct call of template
+if (empty($conf) || !is_object($conf)) {
+	print "Error, template page can't be called as URL";
+	exit(1);
+}
+
+'
+@phan-var-force CommonObject $object
+@phan-var-force int $usercancreate
+@phan-var-force string $action
+@phan-var-force Form $form
+@phan-var-force Conf $conf
+@phan-var-force Translate $langs
+';
+
+
 print '<!-- BEGIN object_currency_amount.tpl.php -->'."\n";
 
 // Multicurrency
@@ -35,6 +51,7 @@ if (isModEnabled('multicurrency')) {
 		$currencyIsEditable = ($object->suspended == $object::STATUS_SUSPENDED);
 		$colspan = 1;
 	} else {
+		// @phan-suppress-next-line PhanUndeclaredConstantOfClass
 		$currencyIsEditable = ($object->status == $object::STATUS_DRAFT);
 	}
 
