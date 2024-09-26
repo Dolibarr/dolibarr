@@ -180,7 +180,17 @@ if ($usemargins && isModEnabled('margin') && empty($user->socid)) {
 		print '</th>';
 	}
 	if (getDolGlobalString('DISPLAY_MARK_RATES') && $user->hasRight('margins', 'liretous')) {
-		print '<th class="linecolmargin2 margininfos right width75">'.$langs->trans('MarkRate').'</th>';
+		print '<th class="linecolmargin2 margininfos right width75">'.$langs->trans('MarkRate');
+		if (in_array($object->element, array('propal', 'commande', 'facture')) && $object->status == get_class($object)::STATUS_DRAFT) {
+			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?mode=markforalllines&id='.$object->id.'">'.img_edit($langs->trans("UpdateForAllLines"), 0, 'class="clickmarkforalllines opacitymedium paddingleft cursorpointer"').'</a>';
+			if (GETPOST('mode', 'aZ09') == 'markforalllines') {
+				print '<div class="classmarkforalllines inline-block nowraponall">';
+				print '<input type="number" name="markforalllines" min="0" max="999.9" value="20.0" step="0.1" class="width50"><label>%</label>';
+				print '<input class="inline-block button smallpaddingimp" type="submit" name="submitforallmark" value="'.$langs->trans("Update").'">';
+				print '</div>';
+			}
+		}
+		print '</th>';
 	}
 }
 

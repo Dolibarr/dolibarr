@@ -931,7 +931,6 @@ class Propal extends CommonObject
 				$rangmax = $this->line_max($fk_parent_line);
 				$this->line->rang = $rangmax + 1;
 			}
-
 			$this->line->id = $rowid;
 			$this->line->label = $label;
 			$this->line->desc = $desc;
@@ -975,7 +974,6 @@ class Propal extends CommonObject
 			$this->line->multicurrency_total_ht 	= $multicurrency_total_ht;
 			$this->line->multicurrency_total_tva 	= $multicurrency_total_tva;
 			$this->line->multicurrency_total_ttc 	= $multicurrency_total_ttc;
-
 			$result = $this->line->update($notrigger);
 			if ($result > 0) {
 				// Reorder if child line
