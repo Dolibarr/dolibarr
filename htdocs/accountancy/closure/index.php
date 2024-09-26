@@ -127,11 +127,11 @@ if (empty($reshook)) {
 			if ($generate_bookkeeping_records) {
 				if (!getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT')) {
 					$error++;
-					setEventMessages($langs->trans("ErrorSetupNotComplete"), null, 'errors');
+					setEventMessages($langs->trans("ErrorModuleSetupNotComplete"), null, 'errors');
 				}
 				if (!getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT')) {
 					$error++;
-					setEventMessages($langs->trans("ErrorSetupNotComplete"), null, 'errors');
+					setEventMessages($langs->trans("ErrorModuleSetupNotComplete"), null, 'errors');
 				}
 			}
 
