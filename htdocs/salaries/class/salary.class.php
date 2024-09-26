@@ -131,6 +131,32 @@ class Salary extends CommonObject
 
 	public $resteapayer;
 
+	public $fields = array(
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
+		'ref' => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'position' => 10, 'visible' => 1, 'index' => 1, 'comment' => "Reference of object"),
+		'label' => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'position' => 12, 'notnull' => 0, 'visible' => 1),
+		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => 0, 'position' => 30),
+		'datep' => array('type' => 'date', 'label' => 'Date', 'enabled' => 1, 'visible' => 0, 'position' => 40, 'comment' => 'Date'),
+		'datev' => array('type' => 'date', 'label' => 'Date', 'enabled' => 1, 'visible' => 0,  'position' => 50, 'comment' => 'Date'),
+		'fk_user' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Employee', 'enabled' => 1, 'position' => 15, 'notnull' => 1, 'visible' => 1, 'picto' => 'user'),
+		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'position' => 20),
+		'salary' => array('type' => 'double(24,8)', 'label' => 'salary', 'enabled' => 1, 'visible' => 0, 'position' => 70),
+		'amount' => array('type' => 'double(24,8)', 'label' => 'Amount', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 80),
+		'fk_projet' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Project', 'enabled' => "isModEnabled('project')", 'visible' => 0, 'position' => 90),
+		'fk_typepayment' => array('type' => 'typepayment', 'label' => 'DefaultPaymentMode', 'enabled' => 1, 'visible' => 1, 'position' => 100, 'comment' => 'Payment type'),
+		'num_payment' => array('type' => 'string', 'label' => 'Reference', 'enabled' => 1, 'visible' => 0, 'position' => 110, 'comment' => 'Reference'),
+		'datesp' => array('type' => 'date', 'label' => 'DateStart', 'enabled' => 1, 'visible' => 1, 'position' => 130, 'comment' => 'Date'),
+		'dateep' => array('type' => 'date', 'label' => 'DateEnd', 'enabled' => 1, 'visible' => 1, 'position' => 140, 'comment' => 'Date'),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => 0, 'position' => 150, 'index' => 1),
+		'note' => array('type' => 'text', 'label' => 'Note', 'enabled' => 1, 'position' => 160, 'visible' => 0,),
+		'fk_bank' => array('type' => 'integer', 'label' => 'BankId', 'enabled' => 1, 'visible' => 0, 'position' => 170),
+		'paye' => array('type' => 'smallint(6)', 'label' => 'Status', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 180),
+		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => 0, 'position' => 190),
+		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'position' => 200, 'visible' => 0,),
+		'ref_ext' => array('type' => 'varchar(128)', 'label' => 'Ref ext', 'enabled' => 1, 'visible' => 0, 'position' => 210),
+		'note_public' => array('type' => 'text', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 220),
+	);
+
 
 	/**
 	 *	Constructor
@@ -159,6 +185,8 @@ class Salary extends CommonObject
 		$this->amount = trim($this->amount);
 		$this->label = trim($this->label);
 		$this->note = trim($this->note);
+		$this->note_private = trim($this->note_private);
+		$this->note_public = trim($this->note_public);
 
 		// Check parameters
 		if (empty($this->fk_user) || $this->fk_user < 0) {
@@ -819,7 +847,7 @@ class Salary extends CommonObject
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
 		if (!empty($arraydata['user']) && is_object($arraydata['user'])) {
-			$return .= '<br><span class="info-box-label">'.$arraydata['user']->getNomUrl(1, '', 0, 0, 16, 0, '', 'maxwidth100').'</span>';
+			$return .= '<br><span class="info-box-label">'.$arraydata['user']->getNomUrl(empty($arraydata['user']->photo) ? 1 : -1, '', 0, 0, 16, 0, '', 'maxwidth100').'</span>';
 		}
 		if (property_exists($this, 'amount')) {
 			$return .= '<br><span class="info-box-label amount">'.price($this->amount).'</span>';

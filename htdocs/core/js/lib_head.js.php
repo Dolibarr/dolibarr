@@ -274,7 +274,7 @@ function formatDate(date,format)
 
 	var result="";
 
-	var year=date.getYear()+""; if (year.length < 4) { year=""+(year-0+2000); } /* #28334 */
+	var year=date.getFullYear();
 	var month=date.getMonth()+1;
 	var day=date.getDate();
 	var hour=date.getHours();
@@ -344,7 +344,7 @@ function getDateFromFormat(val,format)
 	if (val == '') return 0;
 
 	var now=new Date();
-	var year=now.getYear(); if (year.length < 4) { year=""+(year-0+2000); } /*  #28334 */
+	var year=now.getFullYear();
 	var month=now.getMonth()+1;
 	var day=now.getDate();
 	var hour=now.getHours();

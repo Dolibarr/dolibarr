@@ -181,7 +181,7 @@ function pdf_getInstance($format = '', $metric = 'mm', $pagetype = 'P')
 	//$metric=$arrayformat['unit'];
 
 	//$pdfa = false; // PDF default version
-	$pdfa = getDolGlobalString('PDF_USE_A', '3'); 	// PDF/A-1 ou PDF/A-3
+	$pdfa = getDolGlobalInt('PDF_USE_A', 0); 	// PDF/A-1 ou PDF/A-3
 
 	if (!getDolGlobalString('MAIN_DISABLE_TCPDI') && class_exists('TCPDI')) {
 		$pdf = new TCPDI($pagetype, $metric, $format, true, 'UTF-8', false, $pdfa);
@@ -1506,7 +1506,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 		$prodser = new Product($db);
 
-		if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
+		if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 			include_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
 		}
 	}
@@ -1685,7 +1685,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 		} else {
 			$ref_prodserv = $prodser->ref; // Show local ref only
 
-			if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
+			if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 				$productCustomerPriceStatic = new ProductCustomerPrice($db);
 				$filter = array('fk_product' => $idprod, 'fk_soc' => $object->socid);
 
