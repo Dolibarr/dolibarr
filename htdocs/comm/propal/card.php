@@ -930,7 +930,10 @@ if (empty($reshook)) {
 
 	// Go back to draft
 	if ($action == 'modif' && $usercancreate) {
-		$object->setDraft($user);
+		$result = $object->setDraft($user);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 
 		if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 			// Define output language
