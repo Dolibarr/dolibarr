@@ -159,9 +159,10 @@ class ExtraFields
 		if ($elementtype == 'contact') {
 			$elementtype = 'socpeople';
 		}
-		// If property has a computed formula, it must not be a required field
+		// If property has a computed formula, it must not be a required or unique field
 		if (!empty($computed)) {
 			$required = 0;
+			$unique = 0;
 		}
 
 		// Create field into database except for separator type which is not stored in database
@@ -610,9 +611,10 @@ class ExtraFields
 			}
 			$field_desc = array('type'=>$typedb, 'value'=>$lengthdb, 'null'=>($required ? 'NOT NULL' : 'NULL'), 'default'=>$default);
 
-			// If property has a computed formula, it must not be a required field
+			// If property has a computed formula, it must not be a required or unique field
 			if (!empty($computed)) {
 				$required = 0;
+				$unique = 0;
 			}
 
 			if (is_object($hookmanager)) {
