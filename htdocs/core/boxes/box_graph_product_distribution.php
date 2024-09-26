@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024	Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -368,7 +368,7 @@ class box_graph_product_distribution extends ModeleBoxes
 			}
 			$stringtoshow .= '<br>';
 			$stringtoshow .= $langs->trans("Year").' <input class="flat" size="4" type="text" name="'.$param_year.'" value="'.$year.'">';
-			$stringtoshow .= '<input type="image" class="reposition inline-block valigntextbottom" alt="'.$langs->trans("Refresh").'" src="'.img_picto('', 'refresh.png', '', '', 1).'">';
+			$stringtoshow .= '<input type="image" class="reposition inline-block valigntextbottom" alt="'.$langs->trans("Refresh").'" src="'.img_picto('', 'refresh.png', '', 0, 1).'">';
 			$stringtoshow .= '</form>';
 			$stringtoshow .= '</div>';
 
