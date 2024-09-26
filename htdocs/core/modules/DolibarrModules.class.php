@@ -844,7 +844,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			}
 		}
 
-		return $content;
+		return '<div class="moduledesclong">'.$content.'</div>';
 	}
 
 	/**
