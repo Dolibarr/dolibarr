@@ -2366,7 +2366,7 @@ class pdf_sponge extends ModelePDFFactures
 				$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("BillFrom"), 0, $ltrdirection);
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetFillColor(230, 230, 230);
-				$pdf->MultiCell($widthrecbox, $hautcadre, "", 0, 'R', 1);
+				$pdf->RoundedRect($posx, $posy, $widthrecbox, $hautcadre, $this->corner_radius, '1234', 'F');
 				$pdf->SetTextColor(0, 0, 60);
 			}
 
@@ -2421,7 +2421,7 @@ class pdf_sponge extends ModelePDFFactures
 				$pdf->SetFont('', '', $default_font_size - 2);
 				$pdf->SetXY($posx + 2, $posy - 5);
 				$pdf->MultiCell($widthrecbox - 2, 5, $outputlangs->transnoentities("BillTo"), 0, $ltrdirection);
-				$pdf->Rect($posx, $posy, $widthrecbox, $hautcadre);
+				$pdf->RoundedRect($posx, $posy, $widthrecbox, $hautcadre, $this->corner_radius, '1234', 'D');
 			}
 
 			// Show recipient name
@@ -2461,7 +2461,7 @@ class pdf_sponge extends ModelePDFFactures
 					$pdf->SetXY($posx + 2, $posy - 5);
 					$pdf->SetFont('', '', $default_font_size - 2);
 					$pdf->MultiCell($widthrecbox, '', $outputlangs->transnoentities('ShippingTo'), 0, 'L', 0);
-					$pdf->Rect($posx, $posy, $widthrecbox, $hautcadre);
+					$pdf->RoundedRect($posx, $posy, $widthrecbox, $hautcadre, $this->corner_radius, '1234', 'D');
 
 					// Show shipping name
 					$pdf->SetXY($posx + 2, $posy + 3);
