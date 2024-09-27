@@ -527,7 +527,7 @@ if ($step == 2 && $datatoexport) {
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table width="100%" class="border tableforfield">';
+	print '<table class="border tableforfield centpercent">';
 
 	// Module
 	print '<tr><td class="titlefield">'.$langs->trans("Module").'</td>';
@@ -572,9 +572,17 @@ if ($step == 2 && $datatoexport) {
 	print '<td>'.$langs->trans("Object").'</td>';
 	print '<td>'.$langs->trans("ExportableFields").'</td>';
 	print '<td width="100" class="center">';
-	print '<a class="liste_titre commonlink" title='.$langs->trans("All").' alt='.$langs->trans("All").' href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=selectfield&field=all&token='.newToken().'">'.$langs->trans("All")."</a>";
+	$morecss = '';
+	$moretitle = '';
+	if (!$user->hasRight('export', 'creer')) {
+		$morecss = ' disabled';
+		$moretitle = $langs->trans("NotAllowed");
+	}
+	print '<a class="liste_titre commonlink'.$morecss;
+	print '" title="'.$langs->trans("All").($moretitle ? ' - '.$moretitle : '').'" href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.urlencode($datatoexport).'&action=selectfield&field=all&token='.newToken().'">'.$langs->trans("All")."</a>";
 	print ' / ';
-	print '<a class="liste_titre commonlink" title='.$langs->trans("None").' alt='.$langs->trans("None").' href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=unselectfield&field=all&token='.newToken().'">'.$langs->trans("None")."</a>";
+	print '<a class="liste_titre commonlink'.$morecss;
+	print '" title="'.$langs->trans("None").($moretitle ? ' - '.$moretitle : '').'" href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.urlencode($datatoexport).'&action=unselectfield&field=all&token='.newToken().'">'.$langs->trans("None")."</a>";
 	print '</td>';
 	print '<td width="44%">'.$langs->trans("ExportedFields").'</td>';
 	print '</tr>';
@@ -615,7 +623,14 @@ if ($step == 2 && $datatoexport) {
 		print img_object('', $entityicon).' '.$langs->trans($entitylang);
 		print '</td>';
 
-		$text = (empty($objexport->array_export_special[0][$code]) ? '' : '<i>').$langs->trans($label).(empty($objexport->array_export_special[0][$code]) ? '' : '</i>');
+		$text = (empty($objexport->array_export_special[0][$code]) ? '' : '<i>');
+		$tmplabelarray = explode(':', $label);
+		if (!empty($tmplabelarray[1])) {
+			$text .= $langs->trans($tmplabelarray[0]).' - '.$langs->trans($tmplabelarray[1]);
+		} else {
+			$text .= $langs->trans($label);
+		}
+		$text .=(empty($objexport->array_export_special[0][$code]) ? '' : '</i>');
 
 		$tablename = getablenamefromfield($code, $sqlmaxforexport);
 		$htmltext = '<b>'.$langs->trans("Name").":</b> ".$text.'<br>';
@@ -637,7 +652,7 @@ if ($step == 2 && $datatoexport) {
 		if (isset($array_selected[$code]) && $array_selected[$code]) {
 			// Selected fields
 			print '<td>&nbsp;</td>';
-			print '<td class="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=unselectfield&field='.$code.'">'.img_left('default', 0, 'style="max-width: 20px"').'</a></td>';
+			print '<td class="center"><a class="reposition'.$morecss.'" href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.urlencode($datatoexport).'&action=unselectfield&token='.newToken().'&field='.urlencode($code).'">'.img_left($moretitle, 0, 'style="max-width: 20px"').'</a></td>';
 			print '<td>';
 			//print $text.'-'.$htmltext."<br>";
 			print $form->textwithpicto($text, $htmltext);
@@ -650,7 +665,7 @@ if ($step == 2 && $datatoexport) {
 			print $form->textwithpicto($text, $htmltext);
 			//print ' ('.$code.')';
 			print '</td>';
-			print '<td class="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=selectfield&field='.$code.'">'.img_right('default', 0, 'style="max-width: 20px"').'</a></td>';
+			print '<td class="center"><a class="reposition'.$morecss.'" href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.urlencode($datatoexport).'&action=selectfield&token='.newToken().'&field='.urlencode($code).'">'.img_right($moretitle, 0, 'style="max-width: 20px"').'</a></td>';
 			print '<td>&nbsp;</td>';
 		}
 
@@ -736,7 +751,13 @@ if ($step == 3 && $datatoexport) {
 	foreach ($array_selected as $code => $value) {
 		if (isset($objexport->array_export_fields[0][$code])) {
 			$list .= (!empty($list) ? ', ' : '');
-			$list .= $langs->trans($objexport->array_export_fields[0][$code]);
+
+			$tmplabelarray = explode(':', $objexport->array_export_fields[0][$code]);
+			if (!empty($tmplabelarray[1])) {
+				$list .= $langs->trans($tmplabelarray[0]).' - '.$langs->trans($tmplabelarray[1]);
+			} else {
+				$list .= $langs->trans($objexport->array_export_fields[0][$code]);
+			}
 		}
 	}
 	print '<td>'.$list.'</td></tr>';
@@ -797,7 +818,15 @@ if ($step == 3 && $datatoexport) {
 		// Field name
 		$labelName = (!empty($fieldsarray[$code]) ? $fieldsarray[$code] : '');
 		$ValueFilter = (!empty($array_filtervalue[$code]) ? $array_filtervalue[$code] : '');
-		$text = (empty($objexport->array_export_special[0][$code]) ? '' : '<i>').$langs->trans($labelName).(empty($objexport->array_export_special[0][$code]) ? '' : '</i>');
+
+		$text = (empty($objexport->array_export_special[0][$code]) ? '' : '<i>');
+		$tmplabelarray = explode(':', $label);
+		if (!empty($tmplabelarray[1])) {
+			$text .= $langs->trans($tmplabelarray[0]).' - '.$langs->trans($tmplabelarray[1]);
+		} else {
+			$text .= $langs->trans($label);
+		}
+		$text .=(empty($objexport->array_export_special[0][$code]) ? '' : '</i>');
 
 		$tablename = getablenamefromfield($code, $sqlmaxforexport);
 		$htmltext = '<b>'.$langs->trans("Name").':</b> '.$text.'<br>';
@@ -918,7 +947,13 @@ if ($step == 4 && $datatoexport) {
 	foreach ($array_selected as $code => $value) {
 		if (isset($objexport->array_export_fields[0][$code])) {
 			$list .= (!empty($list) ? ', ' : '');
-			$list .= $langs->trans($objexport->array_export_fields[0][$code]);
+
+			$tmplabelarray = explode(':', $objexport->array_export_fields[0][$code]);
+			if (!empty($tmplabelarray[1])) {
+				$list .= $langs->trans($tmplabelarray[0]).' - '.$langs->trans($tmplabelarray[1]);
+			} else {
+				$list .= $langs->trans($objexport->array_export_fields[0][$code]);
+			}
 		}
 	}
 	print '<td>'.$list.'</td>';
@@ -993,7 +1028,14 @@ if ($step == 4 && $datatoexport) {
 
 		$labelName = $objexport->array_export_fields[0][$code];
 
-		$text = (empty($objexport->array_export_special[0][$code]) ? '' : '<i>').$langs->trans($labelName).(empty($objexport->array_export_special[0][$code]) ? '' : '</i>');
+		$text = (empty($objexport->array_export_special[0][$code]) ? '' : '<i>');
+		$tmplabelarray = explode(':', $labelName);
+		if (!empty($tmplabelarray[1])) {
+			$text .= $langs->trans($tmplabelarray[0]).' - '.$langs->trans($tmplabelarray[1]);
+		} else {
+			$text .= $langs->trans($labelName);
+		}
+		$text .=(empty($objexport->array_export_special[0][$code]) ? '' : '</i>');
 
 		$tablename = getablenamefromfield($code, $sqlmaxforexport);
 		$htmltext = '<b>'.$langs->trans("Name").':</b> '.$text.'<br>';
@@ -1210,7 +1252,13 @@ if ($step == 5 && $datatoexport) {
 	foreach ($array_selected as $code => $label) {
 		if (isset($objexport->array_export_fields[0][$code])) {
 			$list .= (!empty($list) ? ', ' : '');
-			$list .= $langs->trans($objexport->array_export_fields[0][$code]);
+
+			$tmplabelarray = explode(':', $objexport->array_export_fields[0][$code]);
+			if (!empty($tmplabelarray[1])) {
+				$list .= $langs->trans($tmplabelarray[0]).' - '.$langs->trans($tmplabelarray[1]);
+			} else {
+				$list .= $langs->trans($objexport->array_export_fields[0][$code]);
+			}
 		}
 	}
 	print '<td>'.$list.'</td></tr>';
