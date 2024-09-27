@@ -79,7 +79,7 @@ $entitytoicon = array(
 	'bomm'         => 'bom',
 	'bomline'      => 'bom',
 	'conferenceorboothattendee' => 'contact',
-	'inventory_line' => 'inventory'
+	'inventory_line' => 'inventory',
 );
 
 // Translation code, array duplicated in import.php, was not synchronized, TODO put it somewhere only once
@@ -131,6 +131,7 @@ $entitytolang = array(
 	'translation'  => 'Translation',
 	'bom'          => 'BOM',
 	'bomline'      => 'BOMLine',
+	'mrp'          => 'ManufacturingOrder',
 	'conferenceorboothattendee' => 'Attendee',
 	'inventory'   => 'Inventory',
 	'inventory_line' => 'InventoryLine'
