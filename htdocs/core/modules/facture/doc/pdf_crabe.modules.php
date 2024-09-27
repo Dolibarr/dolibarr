@@ -2175,7 +2175,7 @@ class pdf_crabe extends ModelePDFFactures
 				if (!empty($carac_client_shipping)) {
 					$posy += $hautcadre;
 
-					$hautcadre = $hautcadre - 10;	// Height for the shipping address does not need to be as high as main box
+					$hautcadre -= 10;	// Height for the shipping address does not need to be as high as main box
 
 					// Show shipping frame
 					$pdf->SetXY($posx + 2, $posy - 5);

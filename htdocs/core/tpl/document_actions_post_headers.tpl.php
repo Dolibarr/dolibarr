@@ -60,8 +60,11 @@ $disablemove = 1;
 if (in_array($modulepart, array('product', 'produit', 'societe', 'user', 'ticket', 'holiday', 'expensereport'))) {
 	$disablemove = 0;
 }
-
-
+$parameters = array();
+$reshook = $hookmanager->executeHooks('isLinkedDocumentObjectNotMovable', $parameters, $object);
+if ($reshook) {
+	$disablemove = $hookmanager->resArray['disablemove'];
+}
 
 /*
  * Confirm form to delete a file
