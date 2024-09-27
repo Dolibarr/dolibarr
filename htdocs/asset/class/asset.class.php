@@ -451,7 +451,6 @@ class Asset extends CommonObject
 			}
 		}
 
-		var_dump($this);
 		return $result;
 	}
 
