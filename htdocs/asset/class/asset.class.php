@@ -150,11 +150,11 @@ class Asset extends CommonObject
 	 */
 	public $reversal_date;
 	/**
-	 * @var string
+	 * @var int
 	 */
 	public $date_acquisition;
 	/**
-	 * @var string
+	 * @var int
 	 */
 	public $date_start;
 	/**
@@ -450,6 +450,8 @@ class Asset extends CommonObject
 				$this->fields['reversal_amount_ht']['noteditable'] = '1';
 			}
 		}
+
+		var_dump($this);
 		return $result;
 	}
 
