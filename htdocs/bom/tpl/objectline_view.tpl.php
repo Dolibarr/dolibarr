@@ -177,7 +177,7 @@ if ($filtertype != 1) {
 	print '</td>';
 
 	// Work station
-	if (isModEnabled('workstation') && !empty($line->fk_default_workstation)) {
+	if (isModEnabled('workstation')) {
 		$workstation = new Workstation($object->db);
 		$res = $workstation->fetch($line->fk_default_workstation);
 
