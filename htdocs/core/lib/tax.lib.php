@@ -569,25 +569,26 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$sql .= " d.total_localtax1 as total_localtax1, d.total_localtax2 as total_localtax2, ";
 		$sql .= " e.date_debut as date_start, e.date_fin as date_end, e.fk_user_author,";
 		$sql .= " e.ref as facnum, e.total_ttc as ftotal_ttc, e.date_create, d.fk_c_type_fees as type,";
-		$sql .= " p.fk_bank as payment_id, p.amount as payment_amount, p.rowid as pid, e.ref as pref";
+		$sql .= " pu.fk_bank as payment_id, p.amount as payment_amount, p.rowid as pid, e.ref as pref";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as e";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."expensereport_det as d ON d.fk_expensereport = e.rowid ";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."payment_expensereport as p ON p.fk_expensereport = e.rowid ";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."payment_expensereport as pu ON p.fk_paiementuser = pu.rowid ";
 		$sql .= " WHERE e.entity = ".$conf->entity;
 		$sql .= " AND e.fk_statut in (6)";
 		if ($y && $m) {
-			$sql .= " AND p.datep >= '".$db->idate(dol_get_first_day($y, $m, false))."'";
-			$sql .= " AND p.datep <= '".$db->idate(dol_get_last_day($y, $m, false))."'";
+			$sql .= " AND pu.datep >= '".$db->idate(dol_get_first_day($y, $m, false))."'";
+			$sql .= " AND pu.datep <= '".$db->idate(dol_get_last_day($y, $m, false))."'";
 		} elseif ($y) {
-			$sql .= " AND p.datep >= '".$db->idate(dol_get_first_day($y, 1, false))."'";
-			$sql .= " AND p.datep <= '".$db->idate(dol_get_last_day($y, 12, false))."'";
+			$sql .= " AND pu.datep >= '".$db->idate(dol_get_first_day($y, 1, false))."'";
+			$sql .= " AND pu.datep <= '".$db->idate(dol_get_last_day($y, 12, false))."'";
 		}
 		if ($q) {
-			$sql .= " AND p.datep > '".$db->idate(dol_get_first_day($y, (($q - 1) * 3) + 1, false))."'";
-			$sql .= " AND p.datep <= '".$db->idate(dol_get_last_day($y, ($q * 3), false))."'";
+			$sql .= " AND pu.datep > '".$db->idate(dol_get_first_day($y, (($q - 1) * 3) + 1, false))."'";
+			$sql .= " AND pu.datep <= '".$db->idate(dol_get_last_day($y, ($q * 3), false))."'";
 		}
 		if ($date_start && $date_end) {
-			$sql .= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
+			$sql .= " AND pu.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
 		}
 		$sql .= " AND (d.product_type = -1";
 		$sql .= " OR e.date_debut is NOT null OR e.date_fin IS NOT NULL)"; // enhance detection of service
@@ -1157,25 +1158,26 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		$sql .= " d.total_localtax1 as total_localtax1, d.total_localtax2 as total_localtax2, ";
 		$sql .= " e.date_debut as date_start, e.date_fin as date_end, e.fk_user_author,";
 		$sql .= " e.ref as facnum, e.total_ttc as ftotal_ttc, e.date_create, d.fk_c_type_fees as type,";
-		$sql .= " p.fk_bank as payment_id, p.amount as payment_amount, p.rowid as pid, e.ref as pref";
+		$sql .= " pu.fk_bank as payment_id, p.amount as payment_amount, p.rowid as pid, e.ref as pref";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as e";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."expensereport_det as d ON d.fk_expensereport = e.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."payment_expensereport as p ON p.fk_expensereport = e.rowid";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."payment_expensereport as pu ON p.fk_paiementuser = pu.rowid ";
 		$sql .= " WHERE e.entity = ".$conf->entity;
 		$sql .= " AND e.fk_statut in (6)";
 		if ($y && $m) {
-			$sql .= " AND p.datep >= '".$db->idate(dol_get_first_day($y, $m, false))."'";
-			$sql .= " AND p.datep <= '".$db->idate(dol_get_last_day($y, $m, false))."'";
+			$sql .= " AND pu.datep >= '".$db->idate(dol_get_first_day($y, $m, false))."'";
+			$sql .= " AND pu.datep <= '".$db->idate(dol_get_last_day($y, $m, false))."'";
 		} elseif ($y) {
-			$sql .= " AND p.datep >= '".$db->idate(dol_get_first_day($y, 1, false))."'";
-			$sql .= " AND p.datep <= '".$db->idate(dol_get_last_day($y, 12, false))."'";
+			$sql .= " AND pu.datep >= '".$db->idate(dol_get_first_day($y, 1, false))."'";
+			$sql .= " AND pu.datep <= '".$db->idate(dol_get_last_day($y, 12, false))."'";
 		}
 		if ($q) {
-			$sql .= " AND p.datep > '".$db->idate(dol_get_first_day($y, (($q - 1) * 3) + 1, false))."'";
-			$sql .= " AND p.datep <= '".$db->idate(dol_get_last_day($y, ($q * 3), false))."'";
+			$sql .= " AND pu.datep > '".$db->idate(dol_get_first_day($y, (($q - 1) * 3) + 1, false))."'";
+			$sql .= " AND pu.datep <= '".$db->idate(dol_get_last_day($y, ($q * 3), false))."'";
 		}
 		if ($date_start && $date_end) {
-			$sql .= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
+			$sql .= " AND pu.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
 		}
 		$sql .= " AND (d.product_type = -1";
 		$sql .= " OR e.date_debut is NOT null OR e.date_fin IS NOT NULL)"; // enhance detection of service

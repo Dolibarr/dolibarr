@@ -670,3 +670,7 @@ SearchValidatedSupplierInvoicesWithDate=Search unpaid supplier invoices with a v
 SendEmailsRemindersOnSupplierInvoiceDueDate=Send reminder by email for validated and unpaid supplier invoices
 PaymentMadeForSeveralInvoices=Payment made for several invoices
 SituationInvoiceProgressCurrent=Invoice progress
+AllCompletelyPayedExpenseReportWillBeClosed=All completely payed expense report will be closed
+ConfirmUserPayment=Confirm user payment
+ClosePaidExpenseReportsAutomatically=Close paid expense reports automatically
+PayedUsersPayments= Payed user payments
