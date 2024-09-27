@@ -779,6 +779,10 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	public function getLibStatut($mode = 0, $alreadypaid = -1)
 	{
+		$alreadypaid = $alreadypaid > 0 
+			? $alreadypaid + $this->totalcreditnotes + $this->totaldeposits 
+			: $this->totalcreditnotes + $this->totaldeposits;
+			
 		return $this->LibStatut($this->paye, $this->statut, $mode, $alreadypaid, $this->type);
 	}
 
