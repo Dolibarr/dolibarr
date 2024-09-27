@@ -146,15 +146,15 @@ class Asset extends CommonObject
 	 */
 	public $recovered_vat;
 	/**
-	 * @var string
+	 * @var int|''
 	 */
 	public $reversal_date;
 	/**
-	 * @var int
+	 * @var int|''
 	 */
 	public $date_acquisition;
 	/**
-	 * @var int
+	 * @var int|''
 	 */
 	public $date_start;
 	/**
