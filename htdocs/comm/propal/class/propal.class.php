@@ -1125,7 +1125,7 @@ class Propal extends CommonObject
 		$this->db->begin();
 
 		// Insert into database
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."propal (";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element." (";
 		$sql .= "fk_soc";
 		$sql .= ", price";
 		$sql .= ", total_tva";
@@ -1193,11 +1193,11 @@ class Propal extends CommonObject
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."propal");
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
 
 			if ($this->id) {
 				$this->ref = '(PROV'.$this->id.')';
-				$sql = 'UPDATE '.MAIN_DB_PREFIX."propal SET ref='".$this->db->escape($this->ref)."' WHERE rowid=".((int) $this->id);
+				$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element." SET ref='".$this->db->escape($this->ref)."' WHERE rowid=".((int) $this->id);
 
 				dol_syslog(get_class($this)."::create", LOG_DEBUG);
 				$resql = $this->db->query($sql);
@@ -1314,7 +1314,7 @@ class Propal extends CommonObject
 				// Set delivery address
 				/*if (! $error && $this->fk_delivery_address)
 				{
-					$sql = "UPDATE ".MAIN_DB_PREFIX."propal";
+					$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 					$sql.= " SET fk_delivery_address = ".((int) $this->fk_delivery_address);
 					$sql.= " WHERE ref = '".$this->db->escape($this->ref)."'";
 					$sql.= " AND entity = ".setEntity($this);
@@ -1597,7 +1597,7 @@ class Propal extends CommonObject
 		$sql .= ", dr.code as demand_reason_code, dr.label as demand_reason";
 		$sql .= ", cr.code as cond_reglement_code, cr.libelle as cond_reglement, cr.libelle_facture as cond_reglement_libelle_doc, p.deposit_percent";
 		$sql .= ", cp.code as mode_reglement_code, cp.libelle as mode_reglement";
-		$sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as p";
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_propalst as c ON p.fk_statut = c.id';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as cp ON p.fk_mode_reglement = cp.id AND cp.entity IN ('.getEntity('c_paiement').')';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as cr ON p.fk_cond_reglement = cr.rowid AND cr.entity IN ('.getEntity('c_payment_term').')';
@@ -1767,7 +1767,7 @@ class Propal extends CommonObject
 		// Put here code to add control on parameters values
 
 		// Update request
-		$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET";
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
 		$sql .= " ref=".(isset($this->ref) ? "'".$this->db->escape($this->ref)."'" : "null").",";
 		$sql .= " ref_client=".(isset($this->ref_client) ? "'".$this->db->escape($this->ref_client)."'" : "null").",";
 		$sql .= " ref_ext=".(isset($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null").",";
@@ -1857,7 +1857,7 @@ class Propal extends CommonObject
 		$sql .= ' p.weight, p.weight_units, p.volume, p.volume_units,';
 		$sql .= ' d.date_start, d.date_end,';
 		$sql .= ' d.fk_multicurrency, d.multicurrency_code, d.multicurrency_subprice, d.multicurrency_total_ht, d.multicurrency_total_tva, d.multicurrency_total_ttc';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'propaldet as d';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->$table_element_line.' as d';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (d.fk_product = p.rowid)';
 		$sql .= ' WHERE d.fk_propal = '.((int) $this->id);
 		if ($only_product) {
@@ -2013,7 +2013,7 @@ class Propal extends CommonObject
 		}
 		$this->newref = dol_sanitizeFileName($num);
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."propal";
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " SET ref = '".$this->db->escape($num)."',";
 		$sql .= " fk_statut = ".self::STATUS_VALIDATED.", date_valid='".$this->db->idate($now)."', fk_user_valid=".((int) $user->id);
 		$sql .= " WHERE rowid = ".((int) $this->id)." AND fk_statut = ".self::STATUS_DRAFT;
@@ -2117,7 +2117,7 @@ class Propal extends CommonObject
 
 			$this->db->begin();
 
-			$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET datep = '".$this->db->idate($date)."'";
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET datep = '".$this->db->idate($date)."'";
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
@@ -2175,7 +2175,7 @@ class Propal extends CommonObject
 
 			$this->db->begin();
 
-			$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fin_validite = ".($date_end_validity != '' ? "'".$this->db->idate($date_end_validity)."'" : 'null');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET fin_validite = ".($date_end_validity != '' ? "'".$this->db->idate($date_end_validity)."'" : 'null');
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
@@ -2248,7 +2248,7 @@ class Propal extends CommonObject
 
 			$this->db->begin();
 
-			$sql = "UPDATE ".MAIN_DB_PREFIX."propal ";
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 			$sql .= " SET date_livraison = ".(isDolTms($delivery_date) ? "'".$this->db->idate($delivery_date)."'" : 'null');
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -2306,7 +2306,7 @@ class Propal extends CommonObject
 
 			$this->db->begin();
 
-			$sql = "UPDATE ".MAIN_DB_PREFIX."propal";
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 			$sql .= " SET fk_availability = ".((int) $id);
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -2369,7 +2369,7 @@ class Propal extends CommonObject
 
 			$this->db->begin();
 
-			$sql = "UPDATE ".MAIN_DB_PREFIX."propal ";
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 			$sql .= " SET fk_input_reason = ".((int) $id);
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -2434,7 +2434,7 @@ class Propal extends CommonObject
 
 			$this->db->begin();
 
-			$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET ref_client = ".(empty($ref_client) ? 'NULL' : "'".$this->db->escape($ref_client)."'");
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET ref_client = ".(empty($ref_client) ? 'NULL' : "'".$this->db->escape($ref_client)."'");
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(__METHOD__.' $this->id='.$this->id.', ref_client='.$ref_client, LOG_DEBUG);
@@ -2488,7 +2488,7 @@ class Propal extends CommonObject
 	{
 		$error = 0;
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."propal";
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " SET fk_statut = ".((int) $status).",";
 		if (!empty($note)) {
 			$sql .= " note_private = '".$this->db->escape($note)."',";
@@ -2570,7 +2570,7 @@ class Propal extends CommonObject
 			}
 		}
 
-		$sql  = "UPDATE ".MAIN_DB_PREFIX."propal";
+		$sql  = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " SET fk_statut = ".((int) $status).", note_private = '".$this->db->escape($newprivatenote)."', note_public = '".$this->db->escape($newpublicnote)."'";
 		if ($status == self::STATUS_SIGNED) {
 			$sql .= ", date_signature='".$this->db->idate($now)."', fk_user_signature = ".($fk_user_signature);
@@ -2676,7 +2676,7 @@ class Propal extends CommonObject
 
 		$newprivatenote = dol_concatdesc($this->note_private, $note);
 
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'propal SET fk_statut = '.self::STATUS_BILLED.", ";
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET fk_statut = '.self::STATUS_BILLED.", ";
 		$sql .= " note_private = '".$this->db->escape($newprivatenote)."', date_cloture='".$this->db->idate($now)."', fk_user_cloture=".((int) $user->id);
 		$sql .= ' WHERE rowid = '.((int) $this->id).' AND fk_statut = '.((int) self::STATUS_SIGNED);
 
@@ -2751,7 +2751,7 @@ class Propal extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "UPDATE ". MAIN_DB_PREFIX . "propal";
+		$sql = "UPDATE ". MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " SET fk_statut = " . self::STATUS_CANCELED . ",";
 		$sql .= " fk_user_modif = " . ((int) $user->id);
 		$sql .= " WHERE rowid = " . ((int) $this->id);
@@ -2809,7 +2809,7 @@ class Propal extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."propal";
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " SET fk_statut = ".self::STATUS_DRAFT;
 		$sql .= ",  online_sign_ip = NULL , online_sign_name = NULL";
 		$sql .= " WHERE rowid = ".((int) $this->id);
@@ -2874,7 +2874,7 @@ class Propal extends CommonObject
 		$sql = "SELECT s.rowid, s.nom as name, s.client,";
 		$sql .= " p.rowid as propalid, p.fk_statut, p.total_ht, p.ref, p.remise, ";
 		$sql .= " p.datep as dp, p.fin_validite as datelimite";
-		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
+		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX.$this->table_element." as p, ".MAIN_DB_PREFIX."c_propalst as c";
 		$sql .= " WHERE p.entity IN (".getEntity('propal').")";
 		$sql .= " AND p.fk_soc = s.rowid";
 		$sql .= " AND p.fk_statut = c.id";
@@ -3155,7 +3155,7 @@ class Propal extends CommonObject
 
 			$this->db->begin();
 
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.'propal';
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 			$sql .= ' SET fk_availability = '.((int) $availability_id);
 			$sql .= ' WHERE rowid='.((int) $this->id);
 
@@ -3219,7 +3219,7 @@ class Propal extends CommonObject
 
 			$this->db->begin();
 
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.'propal';
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 			$sql .= ' SET fk_input_reason = '.((int) $demand_reason_id);
 			$sql .= ' WHERE rowid='.((int) $this->id);
 
@@ -3276,7 +3276,7 @@ class Propal extends CommonObject
 		$sql = "SELECT c.rowid, ";
 		$sql .= " c.datec, c.date_valid as datev, c.date_signature, c.date_cloture,";
 		$sql .= " c.fk_user_author, c.fk_user_valid, c.fk_user_signature, c.fk_user_cloture";
-		$sql .= " FROM ".MAIN_DB_PREFIX."propal as c";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as c";
 		$sql .= " WHERE c.rowid = ".((int) $id);
 
 		$result = $this->db->query($sql);
@@ -3394,7 +3394,7 @@ class Propal extends CommonObject
 		$clause = " WHERE";
 
 		$sql = "SELECT p.rowid, p.ref, p.datec as datec, p.fin_validite as datefin, p.total_ht";
-		$sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as p";
 		$sql .= $clause." p.entity IN (".getEntity('propal').")";
 		if ($mode == 'opened') {
 			$sql .= " AND p.fk_statut = ".self::STATUS_VALIDATED;
@@ -3575,7 +3575,7 @@ class Propal extends CommonObject
 		$clause = "WHERE";
 
 		$sql = "SELECT count(p.rowid) as nb";
-		$sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as p";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON p.fk_soc = s.rowid";
 		$sql .= " ".$clause." p.entity IN (".getEntity('propal').")";
 
@@ -3934,7 +3934,7 @@ class Propal extends CommonObject
 	public static function replaceProduct(DoliDB $db, $origin_id, $dest_id)
 	{
 		$tables = array(
-			'propaldet'
+			$this->$table_element_line
 		);
 
 		return CommonObject::commonReplaceProduct($db, $origin_id, $dest_id, $tables);
