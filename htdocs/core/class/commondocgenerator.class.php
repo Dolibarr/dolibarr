@@ -1100,11 +1100,11 @@ abstract class CommonDocGenerator
 	 */
 	public function printRoundedRect($pdf, $x, $y, $w, $h, $r, $hidetop = 0, $hidebottom = 0, $style = 'D')
 	{
-    	// Top line
+		// Top line
 		if (empty($hidetop) || $hidetop == -1) {
 			$pdf->RoundedRect($x, $y, $w, $h, $r, '1111', $style);
 		} else {
-			// Draw rounded rectangle with hidden top side
+		// Draw rounded rectangle with hidden top side
 			$pdf->RoundedRect($x, $y, $w, $h, $r, '0111', $style);
 		}
 		if (!empty($hidebottom)) {
