@@ -3680,20 +3680,20 @@ class Form
 	/**
 	 *    Return list of suppliers products
 	 *
-	 * @param int $socid Id of supplier thirdparty (0 = no filter)
-	 * @param string $selected Product price preselected (must be 'id' in product_fournisseur_price or 'idprod_IDPROD')
-	 * @param string $htmlname Name of HTML select
-	 * @param string $filtertype Filter on product type (''=nofilter, 0=product, 1=service)
-	 * @param string $filtre Generic filter. Data must not come from user input.
-	 * @param string $filterkey Filter of produdts
-	 * @param int $statut -1=Return all products, 0=Products not on buy, 1=Products on buy
-	 * @param int $outputmode 0=HTML select string, 1=Array
-	 * @param int $limit Limit of line number
-	 * @param int $alsoproductwithnosupplierprice 1=Add also product without supplier prices
-	 * @param string $morecss Add more CSS
-	 * @param int $showstockinlist Show stock information (slower).
-	 * @param string $placeholder Placeholder
-	 * @return array|string                Array of keys for json or HTML component
+	 * @param int 		$socid 				Id of supplier thirdparty (0 = no filter)
+	 * @param string 	$selected 			Product price preselected (must be 'id' in product_fournisseur_price or 'idprod_IDPROD')
+	 * @param string 	$htmlname 			Name of HTML select
+	 * @param string 	$filtertype 		Filter on product type (''=nofilter, 0=product, 1=service)
+	 * @param string 	$filtre 			Generic filter. Data must not come from user input.
+	 * @param string 	$filterkey 			Filter of produdts
+	 * @param int 		$statut 			-1=Return all products, 0=Products not on buy, 1=Products on buy
+	 * @param int 		$outputmode 		0=HTML select string, 1=Array
+	 * @param int 		$limit 				Limit of line number
+	 * @param int 		$alsoproductwithnosupplierprice 1=Add also product without supplier prices
+	 * @param string 	$morecss 			Add more CSS
+	 * @param int 		$showstockinlist 	Show stock information (slower).
+	 * @param string 	$placeholder 		Placeholder
+	 * @return array|string                	Array of keys for json or HTML component
 	 */
 	public function select_produits_fournisseurs_list($socid, $selected = '', $htmlname = 'productid', $filtertype = '', $filtre = '', $filterkey = '', $statut = -1, $outputmode = 0, $limit = 100, $alsoproductwithnosupplierprice = 0, $morecss = '', $showstockinlist = 0, $placeholder = '')
 	{
@@ -6267,18 +6267,19 @@ class Form
 			print '<form method="POST" action="' . $page . '">';
 			print '<input type="hidden" name="action" value="setmulticurrencyrate">';
 			print '<input type="hidden" name="token" value="' . newToken() . '">';
-			print '<input type="text" class="maxwidth100" name="' . $htmlname . '" value="' . (!empty($rate) ? price(price2num($rate, 'CU')) : 1) . '" /> ';
-			print '<select name="calculation_mode">';
+			print '<input type="text" class="maxwidth75" name="' . $htmlname . '" value="' . (!empty($rate) ? price(price2num($rate, 'CU')) : 1) . '" /> ';
+			print '<select name="calculation_mode" id="calculation_mode">';
 			print '<option value="1">Change ' . $langs->trans("PriceUHT") . ' of lines</option>';
 			print '<option value="2">Change ' . $langs->trans("PriceUHTCurrency") . ' of lines</option>';
 			print '</select> ';
+			print ajax_combobox("calculation_mode");
 			print '<input type="submit" class="button smallpaddingimp valignmiddle" value="' . $langs->trans("Modify") . '">';
 			print '</form>';
 		} else {
 			if (!empty($rate)) {
 				print price($rate, 1, $langs, 0, 0);
 				if ($currency && $rate != 1) {
-					print ' &nbsp; (' . price($rate, 1, $langs, 0, 0) . ' ' . $currency . ' = 1 ' . $conf->currency . ')';
+					print ' &nbsp; <span class="opacitymedium">(' . price($rate, 1, $langs, 0, 0) . ' ' . $currency . ' = 1 ' . $conf->currency . ')</span>';
 				}
 			} else {
 				print 1;
