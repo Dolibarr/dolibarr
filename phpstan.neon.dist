@@ -86,7 +86,6 @@ parameters:
 		- '#::saveboxorder\(\) expects int, array#'
 		- '# (fetchObjectByElement|print_actions_filter|dol_mktime|dol_get_first_day|dol_remove_file_process|displayUsersListWithPicto) expects int, array\|string given.#'
 		- '# (CSMSFile) constructor expects int, array\|string given.#'
-		- '# (?:price(?:2num)?) expects float\|string#'
 		- '#(?:ProductFournisseur::logPrice\(\)) expects float\|null#'
 		- '#(?:(?:Asset::addDepreciationL|Facture(?:(?:(?:Fournisseur)?::add|Fournisseur::update)l))ine\(\)|calcul_price_total|dol_convertToWord|(?:loanCalcMonthlyPaymen|print_paypal_redirec)t) expects float, string given.#'
 		- '#(?:(?:EvalMath::trigger|F(?:acture(?:(?:Fournisseur)?Rec::addline)|ichinterRec::addLineRec)|SMTPs::socket_send_str)\(\)|dolMd2Html|setEventMessages) expects string\|null#'
