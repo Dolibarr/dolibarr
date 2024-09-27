@@ -363,7 +363,7 @@ function show_stats_for_company($product, $socid)
 		print '</td><td class="right">';
 		print $product->stats_propale['nb'];
 		print '</td><td class="right">';
-		print $product->stats_propale['qty'];
+		print price($product->stats_propale['qty'], 1, $langs, 0, 0);
 		print '</td>';
 		print '</tr>';
 	}
@@ -381,7 +381,7 @@ function show_stats_for_company($product, $socid)
 		print '</td><td class="right">';
 		print $product->stats_proposal_supplier['nb'];
 		print '</td><td class="right">';
-		print $product->stats_proposal_supplier['qty'];
+		print price($product->stats_proposal_supplier['qty'], 1, $langs, 0, 0);
 		print '</td>';
 		print '</tr>';
 	}
@@ -399,7 +399,7 @@ function show_stats_for_company($product, $socid)
 		print '</td><td class="right">';
 		print $product->stats_commande['nb'];
 		print '</td><td class="right">';
-		print $product->stats_commande['qty'];
+		print price($product->stats_commande['qty'], 1, $langs, 0, 0);
 		print '</td>';
 		print '</tr>';
 	}
@@ -417,7 +417,7 @@ function show_stats_for_company($product, $socid)
 		print '</td><td class="right">';
 		print $product->stats_commande_fournisseur['nb'];
 		print '</td><td class="right">';
-		print $product->stats_commande_fournisseur['qty'];
+		print price($product->stats_commande_fournisseur['qty'], 1, $langs, 0, 0);
 		print '</td>';
 		print '</tr>';
 	}
@@ -435,7 +435,7 @@ function show_stats_for_company($product, $socid)
 		print '</td><td class="right">';
 		print $product->stats_facture['nb'];
 		print '</td><td class="right">';
-		print $product->stats_facture['qty'];
+		print price($product->stats_facture['qty'], 1, $langs, 0, 0);
 		print '</td>';
 		print '</tr>';
 	}
@@ -453,7 +453,7 @@ function show_stats_for_company($product, $socid)
 		print '</td><td class="right">';
 		print $product->stats_facture_fournisseur['nb'];
 		print '</td><td class="right">';
-		print $product->stats_facture_fournisseur['qty'];
+		print price($product->stats_facture_fournisseur['qty'], 1, $langs, 0, 0);
 		print '</td>';
 		print '</tr>';
 	}
@@ -472,7 +472,7 @@ function show_stats_for_company($product, $socid)
 		print '</td><td class="right">';
 		print $product->stats_contrat['nb'];
 		print '</td><td class="right">';
-		print $product->stats_contrat['qty'];
+		print price($product->stats_contrat['qty'], 1, $langs, 0, 0);
 		print '</td>';
 		print '</tr>';
 	}
