@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,13 +79,13 @@ class box_graph_propales_permonth extends ModeleBoxes
 		$text = $langs->trans("BoxProposalsPerMonth", $max);
 		$this->info_box_head = array(
 				'text' => $text,
-				'limit'=> dol_strlen($text),
-				'graph'=> 1, // Set to 1 if it's a box graph
-				'sublink'=>'',
-				'subtext'=>$langs->trans("Filter"),
-				'subpicto'=>'filter.png',
-				'subclass'=>'linkobject boxfilter',
-				'target'=>'none'	// Set '' to get target="_blank"
+				'limit' => dol_strlen($text),
+				'graph' => 1, // Set to 1 if it's a box graph
+				'sublink' => '',
+				'subtext' => $langs->trans("Filter"),
+				'subpicto' => 'filter.png',
+				'subclass' => 'linkobject boxfilter',
+				'target' => 'none'	// Set '' to get target="_blank"
 		);
 
 		$dir = ''; // We don't need a path because image file will not be saved into disk
@@ -234,7 +235,7 @@ class box_graph_propales_permonth extends ModeleBoxes
 				$stringtoshow .= '<input type="checkbox" name="'.$param_showtot.'"'.($showtot ? ' checked' : '').'> '.$langs->trans("AmountOfProposalsByMonthHT");
 				$stringtoshow .= '<br>';
 				$stringtoshow .= $langs->trans("Year").' <input class="flat" size="4" type="text" name="'.$param_year.'" value="'.$endyear.'">';
-				$stringtoshow .= '<input type="image" class="reposition inline-block valigntextbottom" alt="'.$langs->trans("Refresh").'" src="'.img_picto($langs->trans("Refresh"), 'refresh.png', '', '', 1).'">';
+				$stringtoshow .= '<input type="image" class="reposition inline-block valigntextbottom" alt="'.$langs->trans("Refresh").'" src="'.img_picto($langs->trans("Refresh"), 'refresh.png', '', 0, 1).'">';
 				$stringtoshow .= '</form>';
 				$stringtoshow .= '</div>';
 				if ($shownb && $showtot) {
@@ -256,13 +257,13 @@ class box_graph_propales_permonth extends ModeleBoxes
 					$stringtoshow .= '</div>';
 				}
 				$this->info_box_contents[0][0] = array(
-					'tr'=>'class="oddeven nohover"',
+					'tr' => 'class="oddeven nohover"',
 					'td' => 'class="nohover center"',
-					'textnoformat'=>$stringtoshow,
+					'textnoformat' => $stringtoshow,
 				);
 			} else {
 				$this->info_box_contents[0][0] = array(
-					'tr'=>'class="oddeven nohover"',
+					'tr' => 'class="oddeven nohover"',
 					'td' => 'class="nohover left"',
 					'maxlength' => 500,
 					'text' => $mesg,
@@ -279,9 +280,9 @@ class box_graph_propales_permonth extends ModeleBoxes
 	/**
 	 *	Method to show box
 	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
+	 *	@param	?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}	$head	Array with properties of box title
+	 *	@param	?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>	$contents	Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *	@return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)

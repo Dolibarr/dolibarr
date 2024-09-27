@@ -3,6 +3,8 @@
  * Copyright (C) 2022	    Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2023       Maxime Nicolas          <maxime@oarces.com>
  * Copyright (C) 2023       Benjamin GREMBI         <benjamin@oarces.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -128,7 +130,7 @@ if ($action == 'presend') {
 	print '<br>';
 	print load_fiche_titre($langs->trans($titreform));
 
-	print dol_get_fiche_head('', '', '', -1);
+	print dol_get_fiche_head([], '', '', -1);
 
 	// Create form for email
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
@@ -316,7 +318,7 @@ if ($action == 'presend') {
 				$element = $subelement = 'contrat';
 			}
 			if ($element == 'inter') {
-				$element = $subelement = 'ficheinter';
+				$element = $subelement = 'fichinter';
 			}
 			if ($element == 'shipping') {
 				$element = $subelement = 'expedition';

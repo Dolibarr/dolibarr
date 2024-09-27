@@ -543,7 +543,7 @@ div.quickaddblock:focus {
 
 
 /* for the dropdown on action buttons */
-dropdown-holder {
+.dropdown-holder {
 	position: relative;
 	display: inline-block;
 }
@@ -553,11 +553,30 @@ dropdown-holder {
 	position: absolute;
 	z-index: 1;
 	width: 300px;
-	right:10px;	/* will be set with js */
+	right:0;
+	bottom: 0;
+	transform: translateY(100%);
+
 	background: #fff;
 	border: 1px solid #bbb;
-	text-align: <?php echo $left; ?>
+	text-align: <?php echo $left; ?>;
+	-webkit-box-shadow: 5px 5px 0px rgba(0,0,0,0.1);
+	box-shadow: 5px 5px 0px rgba(0,0,0,0.1);
 }
+
+/* dropdown --up variant */
+.dropdown-holder.--up .dropdown-content{
+	bottom: auto;
+	top: 0;
+	transform: translateY(-100%);
+}
+
+/* dropdown --left variant */
+.dropdown-holder.--left .dropdown-content{
+	right: auto;
+	left: 12px;
+}
+
 
 .dropdown-content a {
 	margin-right: auto !important;
@@ -567,13 +586,28 @@ dropdown-holder {
 	background: none;
 	color: #000 !important;
 }
-.dropdown-content a.butAction {
+.dropdown-content a:is(.butAction,.butActionDelete,.butActionRefused) {
 	display: flex;
+	border-radius: 0;
 }
 .dropdown-content .butAction:hover {
 	box-shadow: none;
-	text-decoration: underline;
+	background-color: var(--butactionbg);
+	color: var(--textbutaction) !important;
+	text-decoration: none;
 }
+
+.dropdown-content .butActionDelete{
+	background-color: transparent !important;
+	color: #633 !important;
+}
+.dropdown-content .butActionDelete:hover {
+	box-shadow: none;
+	background-color: var(--butactiondeletebg) !important;
+	color: #633 !important;
+	text-decoration: none;
+}
+
 .dropdown-content .butActionRefused {
 	margin-left: 0;
 	margin-right: 0;
@@ -582,6 +616,36 @@ dropdown-holder {
 
 .dropdown-holder.open .dropdown-content {
 	display: block;
+}
+
+
+/** dropdown arrow used to clearly identify parent button of dropdown*/
+.dropdown-holder.open .dropdown-content::before {
+	--triangleBorderSize : 5px;
+	position: absolute;
+	content: "";
+	top: calc(var(--triangleBorderSize) * -1);
+	right: 12px;
+	width: 0px;
+	height: 0px;
+	border-style: solid;
+	border-width: 0 var(--triangleBorderSize) var(--triangleBorderSize) var(--triangleBorderSize);
+	border-color: transparent transparent #ffff transparent;
+	transform: rotate(0deg);
+}
+
+/* dropdown --up variant*/
+.dropdown-holder.--up.open .dropdown-content::before{
+	top: auto;
+	bottom: calc(var(--triangleBorderSize) * -1);
+	border-width: 0 var(--triangleBorderSize) var(--triangleBorderSize) var(--triangleBorderSize);
+	transform: rotate(180deg);
+}
+
+/* dropdown --left variant*/
+.dropdown-holder.--left.open .dropdown-content::before{
+	right: auto;
+	left: 12px;
 }
 
 

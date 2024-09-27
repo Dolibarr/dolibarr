@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2011-2022	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2011-2023	Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2011-2022	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2011-2023	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +21,7 @@
  *       \file      htdocs/core/class/fileupload.class.php
  *       \brief     File to return the ajax response of core/ajax/fileupload.php for common file upload.
  *       			Security is check by the ajax component.
- *       			For large files, see flowjs-server.php
+ *       			For large files upload, see flowjs-server.php
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -34,6 +35,10 @@ class FileUpload
 {
 	public $options;
 	protected $fk_element;
+
+	/**
+	 * @var string object element
+	 */
 	protected $element;
 
 	/**
@@ -156,9 +161,8 @@ class FileUpload
 			$this->options = array_replace_recursive($this->options, $options);
 		}
 
-		// At this point we should have a valid upload_dir in options
-		//if ($pathname === null && $filename === null) { // OR or AND???
-		if ($pathname === null || $filename === null) {
+		// At this point we should have a valid upload_dir in this->options
+		if (empty($pathname) || empty($filename)) {
 			if (!array_key_exists("upload_dir", $this->options)) {
 				setEventMessage('If $fk_element = null or $element = null you must specify upload_dir on $options', 'errors');
 				throw new Exception('If $fk_element = null or $element = null you must specify upload_dir on $options');
@@ -526,7 +530,7 @@ class FileUpload
 				isset($_SERVER['HTTP_X_FILE_SIZE']) ? $_SERVER['HTTP_X_FILE_SIZE'] : (isset($upload['size']) ? $upload['size'] : null),
 				isset($_SERVER['HTTP_X_FILE_TYPE']) ? $_SERVER['HTTP_X_FILE_TYPE'] : (isset($upload['type']) ? $upload['type'] : null),
 				isset($upload['error']) ? $upload['error'] : null,
-				0
+				'0'
 			);
 			if (!empty($tmpres->error)) {
 				$error++;

@@ -69,6 +69,7 @@ $search_desc = GETPOST('search_desc', 'alpha');
 $search_projet_ref = GETPOST('search_projet_ref', 'alpha');
 $search_contrat_ref = GETPOST('search_contrat_ref', 'alpha');
 $search_status = GETPOST('search_status', 'alpha');
+$search_signed_status = GETPOST('search_signed_status', 'alpha');
 $search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_date_startday = GETPOSTINT('search_date_startday');
 $search_date_startmonth = GETPOSTINT('search_date_startmonth');
@@ -102,7 +103,7 @@ if (!$sortfield) {
 	$sortfield = "f.ref";
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Fichinter($db);
 $hookmanager->initHooks(array($contextpage)); 	// Note that conf->hooks_modules contains array of activated contexes
 
@@ -141,8 +142,9 @@ $arrayfields = array(
 	'f.note_public' => array('label' => 'NotePublic', 'checked' => 0, 'position' => 510, 'enabled' => (!getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES'))),
 	'f.note_private' => array('label' => 'NotePrivate', 'checked' => 0, 'position' => 511, 'enabled' => (!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES'))),
 	'f.fk_statut' => array('label' => 'Status', 'checked' => 1, 'position' => 1000),
-	'fd.description' => array('label' => "DescriptionOfLine", 'checked' => 1, 'enabled' => !getDolGlobalString('FICHINTER_DISABLE_DETAILS') ? 1 : 0),
-	'fd.date' => array('label' => 'DateOfLine', 'checked' => 1, 'enabled' => !getDolGlobalString('FICHINTER_DISABLE_DETAILS') ? 1 : 0),
+	'f.signed_status' =>array('label' => 'SignedStatus', 'checked' => 0, 'position' => 1001),
+	'fd.description' => array('label' => "DescriptionOfLine", 'checked' => 1, 'enabled' => getDolGlobalString('FICHINTER_DISABLE_DETAILS') != '1' ? 1 : 0),
+	'fd.date' => array('label' => 'DateOfLine', 'checked' => 1, 'enabled' => getDolGlobalString('FICHINTER_DISABLE_DETAILS') != '1' ? 1 : 0),
 	'fd.duree' => array('label' => 'DurationOfLine', 'type' => 'duration', 'checked' => 1, 'enabled' => !getDolGlobalString('FICHINTER_DISABLE_DETAILS') ? 1 : 0), //type duration is here because in database, column 'duree' is double
 );
 '@phan-var-force array{label:string,type?:string,checked:int,position?:int,enabled?:int,langfile?:string,help:string} $arrayfields';
@@ -196,6 +198,7 @@ if (empty($reshook)) {
 		$search_contrat_ref = "";
 		$search_desc = "";
 		$search_status = "";
+		$search_signed_status = '';
 		$search_date_startday = '';
 		$search_date_startmonth = '';
 		$search_date_startyear = '';
@@ -253,7 +256,7 @@ foreach ($arrayfields as $tmpkey => $tmpval) {
 }
 
 $sql = "SELECT";
-$sql .= " f.ref, f.ref_client, f.rowid, f.fk_statut as status, f.description, f.datec as date_creation, f.tms as date_modification, f.note_public, f.note_private,";
+$sql .= " f.ref, f.ref_client, f.rowid, f.fk_statut as status, f.signed_status as signed_status, f.description, f.datec as date_creation, f.tms as date_modification, f.note_public, f.note_private,";
 if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS') && $atleastonefieldinlines) {
 	$sql .= " fd.rowid as lineid, fd.description as descriptiondetail, fd.date as dp, fd.duree,";
 }
@@ -326,6 +329,9 @@ if ($search_desc) {
 }
 if ($search_status != '' && $search_status >= 0) {
 	$sql .= ' AND f.fk_statut = '.urlencode($search_status);
+}
+if ($search_signed_status != '' && $search_signed_status >= 0) {
+	$sql .= ' AND f.signed_status = '.urlencode($search_signed_status);
 }
 if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS') && $atleastonefieldinlines) {
 	if ($search_date_start) {
@@ -412,7 +418,7 @@ if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $s
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for no horizontal scroll
+llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist mod-fichinter page-list');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for no horizontal scroll
 
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
@@ -455,6 +461,9 @@ if ($search_desc) {
 }
 if ($search_status != '' && $search_status > -1) {
 	$param .= "&search_status=".urlencode($search_status);
+}
+if ($search_signed_status != '' && $search_signed_status >= 0) {
+	$param .= '&search_signed_status='.urlencode($search_signed_status);
 }
 if ($search_date_startday > 0) {
 	$param .= '&search_date_startday='.urlencode((string) ($search_date_startday));
@@ -652,6 +661,13 @@ if (!empty($arrayfields['f.fk_statut']['checked'])) {
 	print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 1, 0, 0, '', 'search_status width100 onrightofpage');
 	print '</td>';
 }
+// Signed status
+if (!empty($arrayfields['f.signed_status']['checked'])) {
+	print '<td class="liste_titre center">';
+	$list_signed_status = $object->getSignedStatusLocalisedArray();
+	print $form->selectarray('search_signed_status', $list_signed_status, $search_signed_status, 1, 0, 0, '', 1, 0, 0, '', 'search_status');
+	print '</td>';
+}
 // Fields of detail line
 if (!empty($arrayfields['fd.description']['checked'])) {
 	print '<td class="liste_titre">&nbsp;</td>';
@@ -739,6 +755,10 @@ if (!empty($arrayfields['f.fk_statut']['checked'])) {
 	print_liste_field_titre($arrayfields['f.fk_statut']['label'], $_SERVER["PHP_SELF"], "f.fk_statut", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
+if (!empty($arrayfields['f.signed_status']['checked'])) {
+	print_liste_field_titre($arrayfields['f.signed_status']['label'], $_SERVER["PHP_SELF"], "f.signed_status", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
 if (!empty($arrayfields['fd.description']['checked'])) {
 	print_liste_field_titre($arrayfields['fd.description']['label'], $_SERVER["PHP_SELF"], '');
 	$totalarray['nbfield']++;
@@ -784,6 +804,7 @@ while ($i < $imaxinloop) {
 	$objectstatic->ref_client = $obj->ref_client;
 	$objectstatic->statut = $obj->status;	// deprecated
 	$objectstatic->status = $obj->status;
+	$objectstatic->signed_status = $obj->signed_status;
 
 	$companystatic->name = $obj->name;
 	$companystatic->id = $obj->socid;
@@ -970,6 +991,13 @@ while ($i < $imaxinloop) {
 		// Status
 		if (!empty($arrayfields['f.fk_statut']['checked'])) {
 			print '<td class="center">'.$objectstatic->getLibStatut(5).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Signed Status
+		if (!empty($arrayfields['f.signed_status']['checked'])) {
+			print '<td class="center">'.$objectstatic->getLibSignedStatus(5).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2024      MDW	                <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +36,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 
+
+'
+@phan-var-force array{0:string,1:string} $bctag From main.inc
+';
 // Load translation files required by the page
 $langs->loadLangs(array("mails", "admin"));
 
@@ -59,6 +64,8 @@ if (!$sortorder) {
 $id = GETPOSTINT('id');
 $rowid = GETPOSTINT('rowid');
 $action = GETPOST('action', 'aZ09');
+$toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
+$massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 $search_lastname = GETPOST("search_lastname", 'alphanohtml');
 $search_firstname = GETPOST("search_firstname", 'alphanohtml');
 $search_email = GETPOST("search_email", 'alphanohtml');
@@ -71,7 +78,7 @@ $modulesdir = dolGetModulesDirs('/mailings');
 $object = new Mailing($db);
 $result = $object->fetch($id);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('ciblescard', 'globalcard'));
 
 $sqlmessage = '';
@@ -103,10 +110,18 @@ $permissiontodelete = $user->hasRight('mailing', 'supprimer');
 /*
  * Actions
  */
+if (GETPOST('cancel', 'alpha')) {
+	$action = 'list';
+	$massaction = '';
+}
+if (!GETPOST('confirmmassaction', 'alpha')) {
+	$massaction = '';
+}
 
 if ($action == 'add' && $permissiontocreate) {		// Add recipients
 	$module = GETPOST("module", 'alpha');
 	$result = -1;
+	$obj = null;
 
 	foreach ($modulesdir as $dir) {
 		// Load modules attributes in arrays (name, numero, orders) from dir directory
@@ -123,8 +138,10 @@ if ($action == 'add' && $permissiontocreate) {		// Add recipients
 			// Add targets into database
 			dol_syslog("Call add_to_target() on class ".$classname." evenunsubscribe=".$object->evenunsubscribe);
 
+			$obj = null;
 			if (class_exists($classname)) {
 				$obj = new $classname($db);
+				'@phan-var-force MailingTargets $obj';
 				$obj->evenunsubscribe = $object->evenunsubscribe;
 
 				$result = $obj->add_to_target($id);
@@ -148,7 +165,7 @@ if ($action == 'add' && $permissiontocreate) {		// Add recipients
 	if ($result == 0) {
 		setEventMessages($langs->trans("WarningNoEMailsAdded"), null, 'warnings');
 	}
-	if ($result < 0) {
+	if ($result < 0 && is_object($obj)) {
 		setEventMessages($langs->trans("Error").($obj->error ? ' '.$obj->error : ''), null, 'errors');
 	}
 }
@@ -221,6 +238,33 @@ if ($action == 'delete' && $permissiontocreate) {
 	}
 }
 
+if ($action == "confirm_reset_target" && $permissiontocreate) {
+	if ($object->id > 0) {
+		$db->begin();
+		$nbok = 0;
+		$error = 0;
+		foreach ($toselect as $toselectid) {
+			$result = $object->resetTargetErrorStatus($user, $toselectid);
+			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+				break;
+			} elseif ($result > 0) {
+				$nbok++;
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+			}
+		}
+		if (!$error) {
+			setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+			$db->commit();
+		} else {
+			$db->rollback();
+		}
+	}
+}
+
 // Purge search criteria
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 	$search_lastname = '';
@@ -228,6 +272,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_email = '';
 	$search_other = '';
 	$search_dest_status = '';
+	$toselect = array();
 }
 
 // Action update description of emailing
@@ -272,6 +317,7 @@ llxHeader('', $langs->trans("Mailing"), 'EN:Module_EMailing|FR:Module_Mailing|ES
 
 $form = new Form($db);
 $formmailing = new FormMailing($db);
+$arrayofselected = is_array($toselect) ? $toselect : array();
 
 if ($object->fetch($id) >= 0) {
 	$head = emailing_prepare_head($object);
@@ -515,6 +561,7 @@ if ($object->fetch($id) >= 0) {
 				require_once $file;
 
 				$obj = new $classname($db);
+				'@phan-var-force MailingTargets $obj';
 
 				// Check if qualified
 				$qualified = (is_null($obj->enabled) ? 1 : (int) dol_eval($obj->enabled, 1));
@@ -550,6 +597,8 @@ if ($object->fetch($id) >= 0) {
 					print '<div class="tagtd valignmiddle">';	//  style="height: 4em"
 					print $obj->getDesc();
 					print '</div>';
+
+					$nbofrecipient = -1;
 
 					try {
 						$obj->evenunsubscribe = $object->evenunsubscribe;	// Set flag to include/exclude email that has opt-out.
@@ -611,7 +660,7 @@ if ($object->fetch($id) >= 0) {
 		print '<br>';
 
 		if ($sqlmessage && $user->admin) {
-			print info_admin($langs->trans("SQLUsedForExport").':<br> '.$sqlmessage, 0, 0, 1, '', 'TechnicalInformation');
+			print info_admin($langs->trans("SQLUsedForExport").':<br> '.$sqlmessage, 0, 0, '1', '', 'TechnicalInformation');
 			print '<br>';
 		}
 
@@ -707,15 +756,17 @@ if ($object->fetch($id) >= 0) {
 		print '<input type="hidden" name="page_y" value="">';
 
 		$morehtmlcenter = '';
+		$arrayofmassactions = array();
+		if ($permissiontocreate) {
+			$arrayofmassactions['reset_target'] = img_picto('', 'refresh', 'class="pictofixedwidth"').$langs->trans("ResetMailingTargetMassaction");
+		}
+		$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
+		$morehtmlcenter .= $massactionbutton .'<br>';
+
 		if ($object->status == $object::STATUS_DRAFT) {
 			$morehtmlcenter = '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ToClearAllRecipientsClickHere").'</span> <a href="'.$_SERVER["PHP_SELF"].'?clearlist=1&id='.$object->id.'" class="button reposition smallpaddingimp">'.$langs->trans("TargetsReset").'</a>';
 		}
 		$morehtmlcenter .= ' &nbsp; <a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=exportcsv&token='.newToken().'&exportcsv=1&id='.$object->id.'">'.img_picto('', 'download', 'class="pictofixedwidth"').$langs->trans("Download").'</a>';
-
-		$massactionbutton = '';
-
-		// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-		print_barre_liste($langs->trans("MailSelectedRecipients"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $morehtmlcenter, $num, $nbtotalofrecords, 'generic', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 		print '</form>';
 
@@ -728,6 +779,14 @@ if ($object->fetch($id) >= 0) {
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 		print '<input type="hidden" name="limit" value="'.$limit.'">';
 		print '<input type="hidden" name="page_y" value="">';
+
+		// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
+		print_barre_liste($langs->trans("MailSelectedRecipients"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $morehtmlcenter, $num, $nbtotalofrecords, 'generic', 0, $newcardbutton, '', $limit, 0, 0, 1);
+
+		if ($massaction == 'reset_target') {
+			// Confirm reset
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("ConfirmResetMailingTargetMassaction"), $langs->trans("ConfirmResetMailingTargetMassactionQuestion"), "confirm_reset_target", null, '', 0, 0, 500, 1);
+		}
 
 		print '<div class="div-table-responsive">';
 		print '<table class="noborder centpercent">';
@@ -837,6 +896,13 @@ if ($object->fetch($id) >= 0) {
 				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 					print '<td class="center">';
 					print '<!-- ID mailing_cibles = '.$obj->rowid.' -->';
+					if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+						$selected = 0;
+						if (in_array($obj->rowid, $arrayofselected)) {
+							$selected = 1;
+						}
+						print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+					}
 					if ($obj->status == $object::STATUS_DRAFT) {	// Not sent yet
 						if ($user->hasRight('mailing', 'creer')) {
 							print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&rowid='.((int) $obj->rowid).$param.'">'.img_delete($langs->trans("RemoveRecipient")).'</a>';

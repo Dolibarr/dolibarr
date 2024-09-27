@@ -55,7 +55,6 @@ class DoliStorage implements TokenStorageInterface
 	 */
 	public $errors = array();
 
-	private $conf;
 	private $key;
 	//private $stateKey;
 	private $keyforprovider;
@@ -66,16 +65,17 @@ class DoliStorage implements TokenStorageInterface
 	public $date_creation;
 	public $date_modification;
 
+	public $userid;		// ID of user for user specific OAuth entries
+
 
 	/**
 	 * @param 	DoliDB 	$db					Database handler
-	 * @param 	\Conf 	$conf				Conf object
+	 * @param 	\Conf 	$notused			Conf object (not used as parameter, used with global $conf)
 	 * @param	string	$keyforprovider		Key to manage several providers of the same type. For example 'abc' will be added to 'Google' to defined storage key.
 	 */
-	public function __construct(DoliDB $db, \Conf $conf, $keyforprovider = '')
+	public function __construct(DoliDB $db, \Conf $notused, $keyforprovider = '')
 	{
 		$this->db = $db;
-		$this->conf = $conf;
 		$this->keyforprovider = $keyforprovider;
 		$this->token = '';
 		$this->tokens = array();
@@ -228,6 +228,9 @@ class DoliStorage implements TokenStorageInterface
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."oauth_token";
 		$sql .= " WHERE service = '".$this->db->escape($servicepluskeyforprovider)."'";
 		$sql .= " AND entity IN (".getEntity('oauth_token').")";
+		if (!empty($this->userid)) {
+			$sql .= " AND fk_user = ".((int) $this->userid);
+		}
 		$resql = $this->db->query($sql);
 		//}
 
@@ -352,9 +355,6 @@ class DoliStorage implements TokenStorageInterface
 
 		if (is_array($this->states) && array_key_exists($service, $this->states)) {
 			unset($this->states[$service]);
-
-			// Replace the stored tokens array
-			//$this->conf->set($this->stateKey, $states);
 		}
 
 		// allow chaining
@@ -384,5 +384,15 @@ class DoliStorage implements TokenStorageInterface
 		$this->tenant = getDolGlobalString('OAUTH_MICROSOFT'.($this->keyforprovider ? '-'.$this->keyforprovider : '').'_TENANT');
 
 		return $this->tenant;
+	}
+
+	/**
+	 * Return the keyforprovider
+	 *
+	 * @return string	String for the accurate key provider identification
+	 */
+	public function getKeyForProvider()
+	{
+		return $this->keyforprovider;
 	}
 }

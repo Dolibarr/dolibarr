@@ -6,7 +6,7 @@ ProductStatusNotOnBatch=否 (不使用批号/序列号)
 ProductStatusOnBatchShort=批号
 ProductStatusOnSerialShort=序列号
 ProductStatusNotOnBatchShort=否
-BatchSellOrEatByMandatoryList=Make %s or %s mandatory
+BatchSellOrEatByMandatoryList=%s or %s is mandatory
 BatchSellOrEatByMandatoryNone=无
 BatchSellOrEatByMandatoryAll=%s and %s
 Batch=批号/序列号
@@ -44,7 +44,7 @@ QCFrequency=质量控制频率（以天为单位）
 ShowAllLots=显示所有批号
 HideLots=隐藏批号
 #Traceability - qc status
-OutOfOrder=乱序
+OutOfOrder=订单外
 InWorkingOrder=在生产订单中
 ToReplace=替换
 CantMoveNonExistantSerial=错误。您要求移动不存在的连续记录。可能您在同一个仓库同一个发货单多次发货同一批次的货，或者它已被另一个发货单使用过。请移除该发货单并准备另一个发货单。

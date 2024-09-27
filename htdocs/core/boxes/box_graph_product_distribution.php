@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024	Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -125,13 +126,13 @@ class box_graph_product_distribution extends ModeleBoxes
 		$text = $langs->trans("BoxProductDistribution", $max).' - '.$langs->trans("Year").': '.$year;
 		$this->info_box_head = array(
 				'text' => $text,
-				'limit'=> dol_strlen($text),
-				'graph'=> 1,
-				'sublink'=>'',
-				'subtext'=>$langs->trans("Filter"),
-				'subpicto'=>'filter.png',
-				'subclass'=>'linkobject boxfilter',
-				'target'=>'none'	// Set '' to get target="_blank"
+				'limit' => dol_strlen($text),
+				'graph' => 1,
+				'sublink' => '',
+				'subtext' => $langs->trans("Filter"),
+				'subpicto' => 'filter.png',
+				'subclass' => 'linkobject boxfilter',
+				'target' => 'none'	// Set '' to get target="_blank"
 		);
 
 
@@ -154,7 +155,7 @@ class box_graph_product_distribution extends ModeleBoxes
 				if (empty($data2)) {
 					$showpointvalue = 0;
 					$nocolor = 1;
-					$data2 = array(array(0=>$langs->trans("None"), 1=>1));
+					$data2 = array(array(0 => $langs->trans("None"), 1 => 1));
 				}
 
 				$filenamenb = $dir."/prodserforpropal-".$year.".png";
@@ -217,7 +218,7 @@ class box_graph_product_distribution extends ModeleBoxes
 				if (empty($data3)) {
 					$showpointvalue = 0;
 					$nocolor = 1;
-					$data3 = array(array(0=>$langs->trans("None"), 1=>1));
+					$data3 = array(array(0 => $langs->trans("None"), 1 => 1));
 				}
 
 				$filenamenb = $dir."/prodserfororder-".$year.".png";
@@ -282,7 +283,7 @@ class box_graph_product_distribution extends ModeleBoxes
 				if (empty($data1)) {
 					$showpointvalue = 0;
 					$nocolor = 1;
-					$data1 = array(array(0=>$langs->trans("None"), 1=>1));
+					$data1 = array(array(0 => $langs->trans("None"), 1 => 1));
 				}
 				$filenamenb = $dir."/prodserforinvoice-".$year.".png";
 				$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=productstats&amp;file=prodserforinvoice-'.$year.'.png';
@@ -367,7 +368,7 @@ class box_graph_product_distribution extends ModeleBoxes
 			}
 			$stringtoshow .= '<br>';
 			$stringtoshow .= $langs->trans("Year").' <input class="flat" size="4" type="text" name="'.$param_year.'" value="'.$year.'">';
-			$stringtoshow .= '<input type="image" class="reposition inline-block valigntextbottom" alt="'.$langs->trans("Refresh").'" src="'.img_picto('', 'refresh.png', '', '', 1).'">';
+			$stringtoshow .= '<input type="image" class="reposition inline-block valigntextbottom" alt="'.$langs->trans("Refresh").'" src="'.img_picto('', 'refresh.png', '', 0, 1).'">';
 			$stringtoshow .= '</form>';
 			$stringtoshow .= '</div>';
 
@@ -408,12 +409,12 @@ class box_graph_product_distribution extends ModeleBoxes
 			$this->info_box_contents[0][0] = array(
 				'tr' => 'class="oddeven nohover"',
 				'td' => 'class="nohover center"',
-				'textnoformat'=>$stringtoshow,
+				'textnoformat' => $stringtoshow,
 			);
 		} else {
 			$this->info_box_contents[0][0] = array(
 				'td' => 'class="nohover left"',
-				'maxlength'=>500,
+				'maxlength' => 500,
 				'text' => '<span class="opacitymedium">'.$mesg.'</span>'
 			);
 		}
@@ -422,9 +423,9 @@ class box_graph_product_distribution extends ModeleBoxes
 	/**
 	 *	Method to show box
 	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
+	 *	@param	?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}	$head	Array with properties of box title
+	 *	@param	?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>	$contents	Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *	@return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)

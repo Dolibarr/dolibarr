@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015      Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -180,7 +181,7 @@ class modWebsite extends DolibarrModules
 			if (is_dir($src)) {
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 				dol_mkdir($dest);
-				$result = dolCopyDir($src, $dest, 0, 0);
+				$result = dolCopyDir($src, $dest, '0', 0);
 				if ($result < 0) {
 					$langs->load("errors");
 					$this->error = $langs->trans('ErrorFailToCopyDir', $src, $dest);
@@ -206,7 +207,7 @@ class modWebsite extends DolibarrModules
 			$src = $srcroot.'/'.$cursorfile['name'];
 			$dest = $destroot.'/'.$cursorfile['name'];
 
-			$result = dol_copy($src, $dest, 0, 1); // For full zip templates, we overwrite old existing files
+			$result = dol_copy($src, $dest, '0', 1); // For full zip templates, we overwrite old existing files
 			if ($result < 0) {
 				$langs->load("errors");
 				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);

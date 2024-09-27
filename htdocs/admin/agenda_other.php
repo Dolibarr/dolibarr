@@ -120,6 +120,8 @@ if ($action == 'set') {
 
 	$commande = new CommandeFournisseur($db);
 	$commande->initAsSpecimen();
+	$specimenthirdparty = new Societe($db);
+	$specimenthirdparty->initAsSpecimen();
 	$commande->thirdparty = $specimenthirdparty;
 
 	// Search template files
@@ -204,7 +206,7 @@ print dol_get_fiche_head($head, 'other', $langs->trans("Agenda"), -1, 'action');
  *  Miscellaneous
  */
 
-// Define array def of models
+// Define an array def of models
 $def = array();
 
 $sql = "SELECT nom";
@@ -242,6 +244,9 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 
 	clearstatcache();
 
+	$specimenthirdparty = new Societe($db);
+	$specimenthirdparty->initAsSpecimen();
+
 	foreach ($dirmodels as $reldir) {
 		$dir = dol_buildpath($reldir."core/modules/action/doc");
 
@@ -256,6 +261,8 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 						require_once $dir.'/'.$file;
 						$module = new $classname($db, new ActionComm($db));
 
+						'@phan-var-force ModeleAction $module';
+
 						print '<tr class="oddeven">'."\n";
 						print "<td>";
 						print(empty($module->name) ? $name : $module->name);
@@ -263,8 +270,9 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 						print "<td>\n";
 						require_once $dir.'/'.$file;
 						$module = new $classname($db, $specimenthirdparty);
+						'@phan-var-force ModeleAction $module';
 						if (method_exists($module, 'info')) {
-							print $module->info($langs);
+							print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
 						} else {
 							print $module->description;
 						}

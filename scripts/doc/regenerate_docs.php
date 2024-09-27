@@ -20,7 +20,7 @@
 /**
  * \file 	scripts/doc/regenerate_docs.php
  * \ingroup scripts
- * \brief 	Regenerated main documents into documents directory
+ * \brief 	Massive re-generation of the main documents into one sub-directory of the documents directory
  */
 
 if (!defined('NOSESSION')) {

@@ -2,6 +2,7 @@
 /* Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015-2017 Francis Appels       <francis.appels@yahoo.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -234,7 +235,10 @@ class FormProduct
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Return full path to current warehouse in $tab (recursive function)
-	 *
+	 * Set Hidden conf MAIN_WAREHOUSE_LIST_DISPLAY_MODE at 0 || 1 || 2 to unlock display
+	 *   0 : Default behavior, display parents of warehouse
+	 *   1 : Display only current warehouse label only
+	 *   2 : Display last parent warehouse label
 	 * @param	array	$tab			warehouse data in $this->cache_warehouses line
 	 * @param	string	$final_label	full label with all parents, separated by ' >> ' (completed on each call)
 	 * @return	string					full label with all parents, separated by ' >> '
@@ -246,11 +250,14 @@ class FormProduct
 			$final_label = $tab['label'];
 		}
 
-		if (empty($tab['parent_id'])) {
+		if (empty($tab['parent_id']) || getDolGlobalInt('MAIN_WAREHOUSE_LIST_DISPLAY_MODE') === 1) {
 			return $final_label;
 		} else {
 			if (!empty($this->cache_warehouses[$tab['parent_id']])) {
-				$final_label = $this->cache_warehouses[$tab['parent_id']]['label'].' >> '.$final_label;
+				if (getDolGlobalInt('MAIN_WAREHOUSE_LIST_DISPLAY_MODE') !== 2 || (getDolGlobalInt('MAIN_WAREHOUSE_LIST_DISPLAY_MODE') === 2 && empty($this->cache_warehouses[$tab['parent_id']]['parent_id']))) {
+					$final_label = $this->cache_warehouses[$tab['parent_id']]['label'] . ' >> ' . $final_label;
+				}
+
 				return $this->get_parent_path($this->cache_warehouses[$tab['parent_id']], $final_label);
 			}
 		}
@@ -414,7 +421,7 @@ class FormProduct
 
 		dol_syslog(get_class($this)."::selectWorkstations $selected, $htmlname, $empty, $disabled, $fk_product, $empty_label, $forcecombo, $morecss", LOG_DEBUG);
 
-		$filterstatus='';
+		$filterstatus = '';
 		$out = '';
 		if (!empty($fk_product) && $fk_product > 0) {
 			$this->cache_workstations = array();
@@ -553,7 +560,7 @@ class FormProduct
 	 *  @param	string		$morecss			 More CSS
 	 *  @return string|-1
 	 */
-	public function selectMeasuringUnits($name = 'measuring_units', $measuring_style = '', $selected = '0', $adddefault = 0, $mode = 0, $morecss = 'maxwidth125')
+	public function selectMeasuringUnits($name = 'measuring_units', $measuring_style = '', $selected = '0', $adddefault = 0, $mode = 0, $morecss = 'minwidth75 maxwidth125')
 	{
 		global $langs, $db;
 
@@ -874,7 +881,7 @@ class FormProduct
 		if (count($productIdArray) && count($this->cache_lot)) {
 			// check cache already loaded for product id's
 			foreach ($productIdArray as $productId) {
-				$cacheLoaded = !empty($this->cache_lot[$productId]) ? true : false;
+				$cacheLoaded = !empty($this->cache_lot[$productId]);
 			}
 		}
 		if ($cacheLoaded) {

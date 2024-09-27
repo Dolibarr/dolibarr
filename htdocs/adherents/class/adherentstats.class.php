@@ -40,12 +40,30 @@ class AdherentStats extends Stats
 	 */
 	public $table_element;
 
+	/**
+	 * @var int
+	 */
 	public $memberid;
+	/**
+	 * @var int
+	 */
 	public $socid;
+	/**
+	 * @var int
+	 */
 	public $userid;
 
+	/**
+	 * @var string
+	 */
 	public $from;
+	/**
+	 * @var string
+	 */
 	public $field;
+	/**
+	 * @var string
+	 */
 	public $where;
 
 
@@ -81,9 +99,9 @@ class AdherentStats extends Stats
 	/**
 	 * Return the number of proposition by month for a given year
 	 *
-	 * @param   int		$year       Year
+	 *	@param	int		$year       Year
 	 *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 * @return	array				Array of nb each month
+	 *	@return	array<int<0,11>,array{0:int<1,12>,1:int}>	Array of nb each month
 	 */
 	public function getNbByMonth($year, $format = 0)
 	{
@@ -100,7 +118,7 @@ class AdherentStats extends Stats
 	/**
 	 * Return the number of subscriptions by year
 	 *
-	 * @return	array				Array of nb each year
+	 * @return	array<array{0:int,1:int}>				Array of nb each year
 	 */
 	public function getNbByYear()
 	{
@@ -118,7 +136,7 @@ class AdherentStats extends Stats
 	 *
 	 * @param   int		$year       Year
 	 * @param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 * @return	array				Array of amount each month
+	 *	@return	array<int<0,11>,array{0:int<1,12>,1:int|float}>	Array of values by month
 	 */
 	public function getAmountByMonth($year, $format = 0)
 	{
@@ -135,8 +153,8 @@ class AdherentStats extends Stats
 	/**
 	 * Return average amount each month
 	 *
-	 * @param   int		$year       Year
-	 * @return	array				Array of average each month
+	 *	@param	int		$year       Year
+	 *	@return	array<int<0,11>,array{0:int<1,12>,1:int|float}>	Array of average each month
 	 */
 	public function getAverageByMonth($year)
 	{
@@ -154,7 +172,7 @@ class AdherentStats extends Stats
 	/**
 	 *	Return nb, total and average
 	 *
-	 * 	@return		array					Array with nb, total amount, average for each year
+	 *  @return array<array{year:string,nb:string,nb_diff:float,total_diff:float,avg_diff:float,avg_weighted:float}>    Array with nb, total amount, average for each year
 	 */
 	public function getAllByYear()
 	{

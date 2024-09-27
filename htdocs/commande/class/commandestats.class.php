@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2020      Maxime DEMAREST      <maxime@indelog.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,15 +41,49 @@ class CommandeStats extends Stats
 	 */
 	public $table_element;
 
+	/**
+	 * @var int ID
+	 */
 	public $socid;
+
+	/**
+	 * @var int ID
+	 */
 	public $userid;
 
+	/**
+	 * @var string	To store the FROM part of the main table of the SQL request
+	 */
 	public $from;
+
+	/**
+	 * @var string	To store the FROM part of the lines table of the SQL request
+	 */
 	public $from_line;
+
+	/**
+	 * @var string	To store the field
+	 */
 	public $field;
+
+	/**
+	 * @var string	To store the field of the line table of the SQL request
+	 */
 	public $field_line;
+
+	/**
+	 * @var string	To store the FROM part of the categorie table of the SQL request
+	 */
 	public $categ_link;
-	public $where;
+
+	/**
+	 * @var string	To store the WHERE part of the main table of the SQL request
+	 */
+	public $where = '';
+
+	/**
+	 * @var string	To store the join
+	 */
 	public $join;
 
 

@@ -289,7 +289,7 @@ function getContact($authentication, $id, $ref_ext)
 	}
 
 	if (!$error) {
-		$fuser->getrights();
+		$fuser->loadRights();
 
 		$contact = new Contact($db);
 		$result = $contact->fetch($id, null, $ref_ext);
@@ -672,7 +672,7 @@ function updateContact($authentication, $contact)
 
 			$object->country_id = $contact['country_id'];
 			if ($contact['country_code']) {
-				$object->country_id = getCountry($contact['country_code'], 3);
+				$object->country_id = getCountry($contact['country_code'], '3');
 			}
 			$object->province_id = $contact['province_id'];
 

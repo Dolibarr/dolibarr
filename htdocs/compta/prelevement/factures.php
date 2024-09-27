@@ -68,7 +68,7 @@ if (!$sortorder) {
 $object = new BonPrelevement($db);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
 
 $hookmanager->initHooks(array('directdebitprevcard', 'globalcard', 'directdebitprevlist'));
 
@@ -417,7 +417,8 @@ if ($resql) {
 		// If the page show all record (no pagination) and total does not match total of file, we show a warning. Should not happen.
 		if (($nbtotalofrecords <= $num) && $totalamount_requested != (float) $object->amount) {
 			$langs->load("errors");
-			print img_warning("WarningAmountOfFileDiffersFromSumOfLines", price((float) $object->amount), price($totalamount_requested));
+			// Warning, amount of file (%s) differs from the sum of lines (%s)
+			print img_warning($langs->trans("WarningAmountOfFileDiffersFromSumOfLines", price((float) $object->amount), price($totalamount_requested)));
 		}
 		print price($totalamount_requested);
 		print "</td>\n";

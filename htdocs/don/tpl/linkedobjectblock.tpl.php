@@ -3,6 +3,7 @@
  * Copyright (C) 2013		Juanjo Menent <jmenent@2byte.es>
  * Copyright (C) 2014       Marcos García <marcosgdf@gmail.com>
  * Copyright (C) 2017       Charlene Benke <cf.benke@patas-monkey.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +45,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	print '<td class="center">'.$objectlink->ref_client.'</td>';
 	print '<td class="center">'.dol_print_date($objectlink->date, 'day').'</td>';
 	print '<td class="right">';
-	$total = $total + $objectlink->total_ht;
+	$total += $objectlink->total_ht;
 	echo price($objectlink->total_ht);
 }
 print '</td>';

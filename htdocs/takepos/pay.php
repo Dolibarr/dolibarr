@@ -2,6 +2,7 @@
 /* Copyright (C) 2018		Andreu Bisquerra	<jove@bisquerra.com>
  * Copyright (C) 2021-2022	Thibault FOUCART	<support@ptibogxiv.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,6 +83,8 @@ top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 <?php
 
 $usestripeterminals = 0;
+$keyforstripeterminalbank = '';
+$stripe = null;
 
 if (isModEnabled('stripe')) {
 	$service = 'StripeTest';
@@ -146,7 +149,7 @@ function fetchConnectionToken() {
 }
 
 if (isModEnabled('stripe') && isset($keyforstripeterminalbank) && (!getDolGlobalString('STRIPE_LIVE') || GETPOST('forcesandbox', 'alpha'))) {
-	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning', 1);
+	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), [], 'warning', 1);
 }
 
 $invoice = new Facture($db);
@@ -221,8 +224,8 @@ if ($usestripeterminals && $invoice->type != $invoice::TYPE_CREDIT_NOTE) {
 </script>
 <?php
 
-	// Define list of possible payments
-	$arrayOfValidPaymentModes = array();
+					// Define list of possible payments
+					$arrayOfValidPaymentModes = array();
 $arrayOfValidBankAccount = array();
 
 $sql = "SELECT code, libelle as label FROM ".MAIN_DB_PREFIX."c_paiement";
@@ -588,22 +591,22 @@ if (isModEnabled('multicurrency') && $sessioncurrency != "" && $conf->currency !
 <?php
 $action_buttons = array(
 array(
-	"function" => "reset()",
-	"span" => "style='font-size: 150%;'",
-	"text" => "C",
-	"class" => "poscolorblue"
+"function" => "reset()",
+"span" => "style='font-size: 150%;'",
+"text" => "C",
+"class" => "poscolorblue"
 ),
 array(
-	"function" => "parent.$.colorbox.close();",
-	"span" => "id='printtext' style='font-weight: bold; font-size: 18pt;'",
-	"text" => "X",
-	"class" => "poscolordelete"
+"function" => "parent.$.colorbox.close();",
+"span" => "id='printtext' style='font-weight: bold; font-size: 18pt;'",
+"text" => "X",
+"class" => "poscolordelete"
 ),
 );
 $numpad = getDolGlobalString('TAKEPOS_NUMPAD');
 if (isModEnabled('stripe') && isset($keyforstripeterminalbank) && getDolGlobalString('STRIPE_CARD_PRESENT')) {
 	print '<span id="card-present-alert">';
-	dol_htmloutput_mesg($langs->trans('ConnectingToStripeTerminal', 'Stripe'), '', 'warning', 1);
+	dol_htmloutput_mesg($langs->trans('ConnectingToStripeTerminal', 'Stripe'), [], 'warning', 1);
 	print '</span>';
 }
 print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '7' : '10').')">'.($numpad == 0 ? '7' : '10').'</button>';
@@ -709,7 +712,7 @@ while ($i < count($arrayOfValidPaymentModes)) {
 	}
 
 	print '<button type="button" class="calcbutton2" onclick="Validate(\''.dol_escape_js($paycode).'\')">'.(!empty($payIcon) ? '<span class="fa fa-2x fa-'.$payIcon.' iconwithlabel"></span><br>'.$langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[$i]->code) : $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[$i]->code)).'</button>';
-	$i = $i + 1;
+	$i += 1;
 }
 
 if (isModEnabled('stripe') && isset($keyforstripeterminalbank) && getDolGlobalString('STRIPE_CARD_PRESENT')) {

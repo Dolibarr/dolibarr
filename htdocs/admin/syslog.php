@@ -47,6 +47,9 @@ $activeModules = array();
 
 if (getDolGlobalString('SYSLOG_HANDLERS')) {
 	$activeModules = json_decode($conf->global->SYSLOG_HANDLERS);
+	if (!is_array($activeModules)) {
+		$activeModules = array();
+	}
 }
 
 $dirsyslogs = array_merge(array('/core/modules/syslog/'), $conf->modules_parts['syslog']);

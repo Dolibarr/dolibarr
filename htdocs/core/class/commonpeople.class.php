@@ -24,7 +24,35 @@
 
 
 /**
- *      Support class for thirdparties, contacts, members, users or resources
+ *      Support class for third parties, contacts, members, users or resources
+ *
+ *
+ * Properties expected in the host class receiving this trait.
+ *
+ * @property int 	$id
+ * @property int 	$contact_id
+ * @property int 	$fk_soc
+ * @property string $civility_code
+ * @property DoliDB	$db
+ * @property string $element
+ * @property string $name
+ * @property string $name_alias
+ * @property string $nom
+ * @property string $company
+ * @property string $firstname
+ * @property string $lastname
+ * @property string $personal_email
+ * @property array<string,string> $socialnetworks
+ * @property string $fax
+ * @property string $office_fax
+ * @property string $office_phone
+ * @property string $phone
+ * @property string $phone_perso
+ * @property string $phone_pro
+ * @property string $phone_mobile
+ * @property string $user_mobile
+ * @property string $country_code
+ * @property string $region
  */
 trait CommonPeople
 {
@@ -44,10 +72,16 @@ trait CommonPeople
 	public $town;
 
 	/**
-	 * @var int		$state_id
+	 * @var int	The state/department
 	 */
-	public $state_id; // The state/department
+	public $state_id;
+	/**
+	 * @var string
+	 */
 	public $state_code;
+	/**
+	 * @var string
+	 */
 	public $state;
 
 	/**
@@ -76,6 +110,7 @@ trait CommonPeople
 		$lastname = $this->lastname;
 		$firstname = $this->firstname;
 		if (empty($lastname)) {
+			// societe is deprecated - @suppress-next-line PhanUndeclaredProperty
 			$lastname = (isset($this->lastname) ? $this->lastname : (isset($this->name) ? $this->name : (property_exists($this, 'nom') && isset($this->nom) ? $this->nom : (property_exists($this, 'societe') && isset($this->societe) ? $this->societe : (property_exists($this, 'company') && isset($this->company) ? $this->company : '')))));
 		}
 
@@ -280,6 +315,19 @@ trait CommonPeople
 	 */
 	public function setUpperOrLowerCase()
 	{
+		if (getDolGlobalString('MAIN_TE_PRIVATE_FIRST_AND_LASTNAME_TO_UPPER')) {
+			$this->lastname = dol_ucwords(dol_strtolower($this->lastname));
+			$this->firstname = dol_ucwords(dol_strtolower($this->firstname));
+			if (empty($this->typent_code) || $this->typent_code != "TE_PRIVATE") {
+				$this->name = dol_ucwords(dol_strtolower($this->name));
+			}
+			if (!empty($this->firstname)) {
+				$this->lastname = dol_strtoupper($this->lastname);
+			}
+			if (property_exists($this, 'name_alias')) {
+				$this->name_alias = isset($this->name_alias) ? dol_ucwords(dol_strtolower($this->name_alias)) : '';
+			}
+		}
 		if (getDolGlobalString('MAIN_FIRST_TO_UPPER')) {
 			$this->lastname = dol_ucwords(dol_strtolower($this->lastname));
 			$this->firstname = dol_ucwords(dol_strtolower($this->firstname));
@@ -306,4 +354,29 @@ trait CommonPeople
 			$this->personal_email = dol_strtolower($this->personal_email);
 		}
 	}
+
+
+	// Methods used by this Trait that must be implemented in the parent class.
+	// Note: this helps static type checking
+
+	/**
+	 *  Return full address of contact
+	 *
+	 *  @param      int<0,1>    $withcountry        1=Add country into address string
+	 *  @param      string      $sep                Separator to use to build string
+	 *  @param      int<0,1>    $withregion         1=Add region into address string
+	 *  @param      string      $extralangcode      User extralanguages as value
+	 *  @return     string                          Full address string
+	 */
+	abstract public function getFullAddress($withcountry = 0, $sep = "\n", $withregion = 0, $extralangcode = '');
+
+
+	/**
+	 *  Function to get alternative languages of a data into $this->array_languages
+	 *  This method is NOT called by method fetch of objects but must be called separately.
+	 *
+	 *  @return int<-1,1>                   Return integer <0 if error, 0 if no values of alternative languages to find nor found, 1 if a value was found and loaded
+	 *  @see fetch_optionnals()
+	 */
+	abstract public function fetchValuesForExtraLanguages();
 }

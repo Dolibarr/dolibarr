@@ -36,7 +36,7 @@ $langs->loadLangs(array('projects', 'companies'));
 
 $hookmanager = new HookManager($db);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('activityindex'));
 
 $action = GETPOST('action', 'aZ09');
@@ -99,7 +99,7 @@ $tasktmp = new Task($db);
 $title = $langs->trans("Activities");
 //if ($mine) $title=$langs->trans("MyActivities");
 
-llxHeader("", $title);
+llxHeader("", $title, '', '', 0, 0, '', '', '', 'mod-project project-activity page-dashboard');
 
 
 // Title for combo list see all projects

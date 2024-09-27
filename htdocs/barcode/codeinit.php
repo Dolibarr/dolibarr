@@ -87,7 +87,7 @@ if (getDolGlobalString('BARCODE_THIRDPARTY_ADDON_NUM')) {
 					}
 
 					$modBarCodeThirdparty = new $file();
-					'@phan-var-force ModeleNumRefBarCode $module';
+					'@phan-var-force ModeleNumRefBarCode $modBarCodeThirdparty';
 					break;
 				}
 			}
@@ -192,7 +192,7 @@ if (getDolGlobalString('BARCODE_PRODUCT_ADDON_NUM')) {
 						}
 
 						$modBarCodeProduct = new $file();
-						'@phan-var-force ModeleNumRefBarCode $module';
+						'@phan-var-force ModeleNumRefBarCode $modBarCodeProduct';
 						break;
 					}
 				}
@@ -285,8 +285,6 @@ if ($action == 'initbarcodeproducts' && $user->hasRight('produit', 'lire')) {
  * View
  */
 
-$form = new Form($db);
-
 llxHeader('', $langs->trans("MassBarcodeInit"), '', '', 0, 0, '', '', '', 'mod-barcode page-codeinit');
 
 print load_fiche_titre($langs->trans("MassBarcodeInit"), '', 'title_setup.png');
@@ -318,9 +316,10 @@ if (isModEnabled('societe')) {
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	$nbthirdpartyno = $nbthirdpartytotal = 0;
 
+	print '<div class="divsection">';
+
 	print load_fiche_titre($langs->trans("BarcodeInitForThirdparties"), '', 'company');
 
-	print '<br>'."\n";
 	$sql = "SELECT count(rowid) as nb FROM ".MAIN_DB_PREFIX."societe where barcode IS NULL or barcode = ''";
 	$resql = $db->query($sql);
 	if ($resql) {
@@ -343,6 +342,7 @@ if (isModEnabled('societe')) {
 	print $langs->trans("CurrentlyNWithoutBarCode", $nbthirdpartyno, $nbthirdpartytotal, $langs->transnoentitiesnoconv("ThirdParties"))."\n";
 
 	$disabledthirdparty = $disabledthirdparty1 = 0;
+	$titleno = '';
 
 	if (is_object($modBarCodeThirdparty)) {
 		print '<br>'.$langs->trans("BarCodeNumberManager").": ";
@@ -362,11 +362,13 @@ if (isModEnabled('societe')) {
 	}
 
 	$moretagsthirdparty1 = (($disabledthirdparty || $disabledthirdparty1) ? ' disabled title="'.dol_escape_htmltag($titleno).'"' : '');
-	print '<br><input class="button button-add" type="submit" id="submitformbarcodethirdpartygen" value="'.$langs->trans("InitEmptyBarCode", $nbthirdpartyno).'"'.$moretagsthirdparty1.'>';
+	print '<input class="button button-add" type="submit" id="submitformbarcodethirdpartygen" value="'.$langs->trans("InitEmptyBarCode", $nbthirdpartyno).'"'.$moretagsthirdparty1.'>';
 	$moretagsthirdparty2 = (($nbthirdpartyno == $nbthirdpartytotal) ? ' disabled' : '');
 	print ' &nbsp; ';
 	print '<input type="submit" class="button butActionDelete" name="eraseallthirdpartybarcode" id="eraseallthirdpartybarcode" value="'.$langs->trans("EraseAllCurrentBarCode").'"'.$moretagsthirdparty2.' onClick="return confirm_erase();">';
-	print '<br><br><br><br>';
+	print '<br><br>';
+	print '</div>';
+	print '<br>';
 	print '</form>';
 }
 
@@ -380,8 +382,9 @@ if (isModEnabled('product') || isModEnabled('service')) {
 
 	$nbproductno = $nbproducttotal = 0;
 
+	print '<div class="divsection">';
+
 	print load_fiche_titre($langs->trans("BarcodeInitForProductsOrServices"), '', 'product');
-	print '<br>'."\n";
 
 	$sql = "SELECT count(rowid) as nb, fk_product_type, datec";
 	$sql .= " FROM ".MAIN_DB_PREFIX."product";
@@ -418,6 +421,7 @@ if (isModEnabled('product') || isModEnabled('service')) {
 
 	$disabledproduct = $disabledproduct1 = 0;
 
+	$titleno = '';
 	if (is_object($modBarCodeProduct)) {
 		print '<br>'.$langs->trans("BarCodeNumberManager").": ";
 		$objproduct = new Product($db);
@@ -441,18 +445,23 @@ if (isModEnabled('product') || isModEnabled('service')) {
 	$moretagsproduct2 = (($nbproductno == $nbproducttotal) ? ' disabled' : '');
 	print ' &nbsp; ';
 	print '<input type="submit" class="button butActionDelete" name="eraseallproductbarcode" id="eraseallproductbarcode" value="'.$langs->trans("EraseAllCurrentBarCode").'"'.$moretagsproduct2.' onClick="return confirm_erase();">';
-	print '<br><br><br><br>';
+	print '<br><br>';
+	print '</div>';
+	print '<br>';
 	print '</form>';
 }
 
 
+print '<div class="divsection">';
+
 print load_fiche_titre($langs->trans("BarCodePrintsheet"), '', 'generic');
-print '<br>'."\n";
 print $langs->trans("ClickHereToGoTo").' : <a href="'.DOL_URL_ROOT.'/barcode/printsheet.php">'.$langs->trans("BarCodePrintsheet").'</a>';
-
-
+print '<br>'."\n";
 
 print '<br>';
+
+print '</div>';
+
 
 // End of page
 llxFooter();
