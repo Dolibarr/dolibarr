@@ -29,3 +29,15 @@ DocBadgeHelperDescription=Using the dolGetBadge function provide in core/lib/fun
 DocButtonsTitle=Buttons for action
 DocButtonsMainDescription=Documentation and examples for buttons.
 DocButtonBasicUsageDescription=Display a button depending on the action to be performed and user rights
+
+#Progress bars
+DocProgressBarsTitle = Progress bars
+DocProgressBarsMainDescription = Documentation and examples for using progress bars featuring support for stacked bars, animated backgrounds, and text labels.
+DocProgressBarsDescription = Progress components are built with two HTML elements, some CSS to set the width, and a few attributes. We don’t use the HTML5 <progress> element, ensuring you can stack progress bars, animate them, and place text labels over them.
+DocProgressCanBeSpaced = You can add space separation by adding class .spaced
+DocColorVariants = Colors
+DocColorVariantsDesc = Use color utility classes to change the appearance of individual progress bars.
+DocStripedVariants = Striped
+DocStripedVariantsDesc = Add .progress-bar-striped to any .progress-bar to apply a stripe via CSS gradient over the progress bar’s background color.
+DocOtherVariants = Other
+DocOtherVariantsDesc =

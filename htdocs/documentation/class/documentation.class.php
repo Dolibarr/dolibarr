@@ -57,11 +57,12 @@ class Documentation
 		$this->db = $db;
 
 		$this->menu = array(
-		'BackToDolibarr' => array('url' => DOL_URL_ROOT, 'icon' => 'fas fa-arrow-left','submenu' => array()),
-		'DocumentationHome' => array('url' => dol_buildpath('documentation/index.php', 1), 'icon' => 'fas fa-book','submenu' => array()),
-		'Elements' => array('url' => dol_buildpath('documentation/ux/index.php', 1), 'icon' => 'fas fa-th-large','submenu' => array(
-		'Badges' => array('url' => dol_buildpath('documentation/ux/badges.php', 1), 'icon' => 'fas fa-certificate','submenu' => array()),
-		'Buttons' => array('url' => dol_buildpath('documentation/ux/buttons.php', 1), 'icon' => 'fas fa-mouse','submenu' => array()),
+		'BackToDolibarr' => array('url' => DOL_URL_ROOT, 'icon' => 'fas fa-arrow-left pictofixedwidth','submenu' => array()),
+		'DocumentationHome' => array('url' => dol_buildpath('documentation/index.php', 1), 'icon' => 'fas fa-book pictofixedwidth','submenu' => array()),
+		'Elements' => array('url' => dol_buildpath('documentation/ux/index.php', 1), 'icon' => 'fas fa-th-large pictofixedwidth','submenu' => array(
+		'Badges' => array('url' => dol_buildpath('documentation/ux/badges.php', 1), 'icon' => 'fas fa-certificate pictofixedwidth','submenu' => array()),
+		'Progress' => array('url' => dol_buildpath('documentation/ux/progress-bars.php', 1), 'icon' => 'fas fa-battery-half pictofixedwidth','submenu' => array()),
+		'Buttons' => array('url' => dol_buildpath('documentation/ux/buttons.php', 1), 'icon' => 'fas fa-mouse pictofixedwidth','submenu' => array()),
 		)),
 		);
 	}
