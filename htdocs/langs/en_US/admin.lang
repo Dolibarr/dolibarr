@@ -2556,3 +2556,5 @@ ParamName=Name of parameter
 ParamValue=Value of parameter
 ConfirmDeleteParamOfSocialNetwork=Are you sure you want to delete this parameter ?
 HelpMariaDBToGetPossibleValues=You can get a list of possible values by running the following SQL command: %s
+PDFBoxFrameRoundedCorners=Enable frame rounded corners
+MAIN_PDF_FRAME_CORNER_RADIUS=Default value is 0 for corner radius so no rounder corners. Choose values 1-3 to increase corner radius and enable rounded corners
