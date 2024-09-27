@@ -140,3 +140,4 @@ QtyCantBeSplit= Quantity cannot be split
 NoRemainQtyToDispatch=No quantity remaining to divide
 THMOperatorEstimatedHelp=Estimated cost of operator per hour. Will be used to estimate cost of a BOM using this workstation.
 THMMachineEstimatedHelp=Estimated cost of machine per hour. Will be used to estimate cost of a BOM using this workstation.
+BadValueForquantityToConsume=Quantity to consume for a material cannot be 0 or negative

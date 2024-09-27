@@ -2299,6 +2299,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	.maxwidth250onsmartphone { max-width: 250px; }
 	.maxwidth300onsmartphone { max-width: 300px; }
 	.maxwidth400onsmartphone { max-width: 400px; }
+	.minwidth150 { min-width: 110px !important; }
 	.minwidth50imp  { min-width: 50px !important; }
 	.minwidth75imp  { min-width: 75px !important; }
 	.minwidth100imp { min-width: 100px !important; }
@@ -6704,10 +6705,6 @@ div.dataTables_length select {
 /*  Select2                                                                       */
 /* ============================================================================== */
 
-span#select2-taskid-container[title^='--'] {
-	opacity: 0.3;
-}
-
 input.select2-input {
 	border-bottom: none ! important;
 }
@@ -6918,7 +6915,17 @@ a span.select2-chosen
 	max-height: 400px;
 }
 
+/* special case for some select2 component */
+
+.selecttype span.select2-dropdown.ui-dialog {
+	min-width: 200px;
+}
+span#select2-taskid-container[title^='--'] {
+	opacity: 0.3;
+}
+
 /* Special case for the select2 add widget */
+
 #addbox .select2-container .select2-choice > .select2-chosen, #actionbookmark .select2-container .select2-choice > .select2-chosen {
 	text-align: <?php echo $left; ?>;
 	opacity: 0.3;
@@ -6934,7 +6941,9 @@ span#select2-boxbookmark-container, span#select2-boxcombo-container {
 .select2-container .select2-selection--single .select2-selection__rendered {
 	padding-left: 6px;
 }
+
 /* Style used before the select2 js is executed on boxcombo */
+
 #boxbookmark.boxcombo, #boxcombo.boxcombo {
 	text-align: left;
 	opacity: 0.3;
