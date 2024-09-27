@@ -1015,8 +1015,10 @@ if (!$variants || getDolGlobalString('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PA
 	$sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e,";
 	$sql .= " ".MAIN_DB_PREFIX."product_stock as ps";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = ps.fk_product";
-	$sql .= " WHERE ps.reel != 0";
-	$sql .= " AND ps.fk_entrepot = e.rowid";
+	$sql .= " WHERE ps.fk_entrepot = e.rowid";
+	if (!getDolGlobalInt('STOCK_MOVEMENT_FORCE_DO_NOT_CLEAN_EMPTY_LINES')) {
+		$sql .= " AND ps.reel != 0";
+	}
 	$sql .= " AND e.entity IN (".getEntity('stock').")";
 	$sql .= " AND ps.fk_product = ".((int) $object->id);
 	$sql .= " ORDER BY e.ref";
