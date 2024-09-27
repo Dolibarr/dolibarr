@@ -37,6 +37,7 @@ Translation=Translation
 Translations=Translations
 CurrentTimeZone=TimeZone PHP (server)
 EmptySearchString=Enter non empty search criteria
+EnterNonEmptyLinesFirst=enter non empty lines first
 EnterADateCriteria=Enter a date criteria
 NoRecordFound=No record found
 NoRecordDeleted=No record deleted

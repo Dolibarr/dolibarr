@@ -370,6 +370,7 @@ ALTER TABLE llx_actioncomm_reminder ADD UNIQUE uk_actioncomm_reminder_unique (fk
 ALTER TABLE llx_actioncomm_reminder ADD INDEX idx_actioncomm_reminder_status (status);
 
 ALTER TABLE llx_inventorydet ADD COLUMN fk_warehouse integer DEFAULT 0;
+ALTER TABLE llx_inventorydet ADD COLUMN batch varchar(128) DEFAULT NULL;
 ALTER TABLE llx_inventorydet ADD UNIQUE uk_inventorydet(fk_inventory, fk_warehouse, fk_product, batch);
 
 ALTER TABLE llx_commandedet ADD COLUMN ref_ext varchar(255) AFTER label;
