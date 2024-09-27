@@ -266,12 +266,12 @@ class modMrp extends DolibarrModules
 			'm.date_valid'=>'DateValidation',
 			'm.note_private'=>'NotePrivate',
 			'm.note_public'=>'Note',
-			'm.fk_soc'=>'Tiers',
-			'e.rowid'=>'WarehouseId',
-			'e.ref'=>'WarehouseRef',
+			'm.fk_soc'=>'ThirdParty:ID',
 			'm.qty'=>'Qty',
 			'm.date_creation'=>'DateCreation',
-			'm.tms'=>'DateModification'
+			'm.tms'=>'DateModification',
+			'm.fk_warehouse'=>'WarehouseForProduction:ID',
+			'e.ref'=>'WarehouseForProduction:Ref'
 		);
 		$keyforselect = 'mrp_mo';
 		$keyforelement = 'mrp_mo';
@@ -294,19 +294,119 @@ class modMrp extends DolibarrModules
 			'm.note_private'=>'Text',
 			'm.note_public'=>'Text',
 			'm.fk_soc'=>'Numeric',
-			'e.fk_warehouse'=>'Numeric',
-			'e.ref'=>'Text',
 			'm.qty'=>'Numeric',
 			'm.date_creation'=>'Date',
-			'm.tms'=>'Date'
-
+			'm.tms'=>'Date',
+			'm.fk_warehouse'=>'Numeric',
+			'e.ref'=>'Text',
 		);
-		$this->export_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
+		$this->export_entities_array[$r] = array('m.fk_warehouse' => 'warehouse', 'e.ref' => 'warehouse'); // We define here only fields that use another icon that the one defined into import_icon
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'mrp_mo as m';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'mrp_mo_extrafields as extra ON m.rowid = extra.fk_object';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'entrepot as e ON e.rowid = m.fk_warehouse';
 		$this->export_sql_end[$r] .= ' WHERE m.entity IN ('.getEntity('mrp_mo').')'; // For product and service profile
+
+		// Export of MO + liste of consumption / production
+		$r++;
+		$this->export_code[$r]=$this->rights_class.'_'.$r;
+		$this->export_label[$r]='ConsumptionAndProductionInMos';	// Translation key (used only if key ExportDataset_xxx_z not found)
+		$this->export_icon[$r]='mrp';
+		$this->export_fields_array[$r] = array(
+			'm.rowid'=>"Id",
+			'm.ref'=>"Ref",
+			'm.label'=>"Label",
+			'm.fk_project'=>'ProjectId',
+			'm.fk_bom'=>"Bom:ID",
+			'm.date_start_planned'=>"DateStartPlanned",
+			'm.date_end_planned'=>"DateEndPlanned",
+			'm.fk_product'=>"Product",
+			'm.status'=>'Status',
+			'm.model_pdf'=>'Model',
+			'm.fk_user_valid'=>'ValidatedById',
+			'm.fk_user_modif'=>'ModifiedById',
+			'm.fk_user_creat'=>'CreatedById',
+			'm.date_valid'=>'DateValidation',
+			'm.note_private'=>'NotePrivate',
+			'm.note_public'=>'Note',
+			'm.fk_soc'=>'Tiers',
+			'm.qty'=>'Qty',
+			'm.date_creation'=>'DateCreation',
+			'm.tms'=>'DateModification',
+			//'e.rowid'=>'WarehouseId',
+			//'e.ref'=>'WarehouseRef',
+		);
+		$keyforselect = 'mrp_mo';
+		$keyforelement = 'mrp_mo';
+		$keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
+		// Add fields for lines
+		$this->export_fields_array[$r]['mp.role'] = 'TypeOfMovement';
+		$this->export_fields_array[$r]['mp.date_creation'] = 'DateCreation';
+		$this->export_fields_array[$r]['mp.qty'] = 'Qty';
+		$this->export_fields_array[$r]['mp.batch'] = 'Batch';
+		$this->export_fields_array[$r]['mp.fk_product'] = 'ProductId';
+		$this->export_fields_array[$r]['p.ref'] = 'ProductRef';
+		$this->export_fields_array[$r]['mp.fk_warehouse'] = 'WarehouseId';
+		$this->export_fields_array[$r]['e.ref'] = 'WarehouseRef';
+		$this->export_fields_array[$r]['mp.fk_stock_movement'] = 'StockMovement:ID';
+
+		$keyforselect = 'mrp_production';
+		$keyforelement = 'mrp_production';
+		$keyforaliasextra = 'extramp';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
+
+		$this->export_TypeFields_array[$r] = array(
+			'm.ref'=>"Text",
+			'm.label'=>"Text",
+			'm.fk_project'=>'Numeric',
+			'm.fk_bom'=>"Numeric",
+			'm.date_end_planned'=>"Date",
+			'm.date_start_planned'=>"Date",
+			'm.fk_product'=>"Numeric",
+			'm.status'=>'Numeric',
+			'm.model_pdf'=>'Text',
+			'm.fk_user_valid'=>'Numeric',
+			'm.fk_user_modif'=>'Numeric',
+			'm.fk_user_creat'=>'Numeric',
+			'm.date_valid'=>'Date',
+			'm.note_private'=>'Text',
+			'm.note_public'=>'Text',
+			'm.fk_soc'=>'Numeric',
+			'm.qty'=>'Numeric',
+			'm.date_creation'=>'Date',
+			'm.tms'=>'Date',
+			'e.fk_warehouse'=>'Numeric',
+			'e.ref'=>'Text',
+			'mp.qty' => 'Numeric',
+			'mp.batch' => 'Text',
+			'mp.fk_product' => 'Numeric',
+			'p.ref' => 'Text',
+			'mp.role' => 'Text',
+			'mp.date_creation' => 'Date',
+			'mp.fk_warehouse' => 'Numeric',
+			'mp.fk_stock_movement' => 'Numeric'
+		);
+		$this->export_entities_array[$r] = array(
+			'mp.qty' => 'mrp_line',
+			'mp.batch' => 'mrp_line',
+			'mp.role' => 'mrp_line',
+			'mp.date_creation' => 'mrp_line',
+			'mp.fk_product' => 'product',
+			'p.ref' => 'product',
+			'mp.fk_warehouse' => 'warehouse',
+			'e.ref' => 'warehouse',
+			'mp.fk_stock_movement' => 'stock'
+		); // We define here only fields that use another icon that the one defined into import_icon
+		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
+		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'mrp_mo as m';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'mrp_mo_extrafields as extra ON m.rowid = extra.fk_object';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'mrp_production as mp ON m.rowid = mp.fk_mo';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'mrp_production_extrafields as extramp ON mp.rowid = extramp.fk_object';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'entrepot as e ON e.rowid = mp.fk_warehouse';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON p.rowid = mp.fk_product';
+		$this->export_sql_end[$r] .= ' WHERE m.entity IN ('.getEntity('mrp_mo').')'; // For product and service profile
+
 
 		// Imports profiles provided by this module
 		$r = 0;
