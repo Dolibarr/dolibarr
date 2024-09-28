@@ -97,17 +97,17 @@ class box_graph_invoices_peryear extends ModeleBoxes
 		if ($user->hasRight('facture', 'lire')) {
 			$mesg = '';
 
-			$param_year = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_year';
-			$param_showtot = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_showtot';
+			$param_year = 'DOLUSER_box_'.$this->boxcode.'_year';
+			$param_showtot = 'DOLUSER_box_'.$this->boxcode.'_showtot';
 
 			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 			include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facturestats.class.php';
 			$autosetarray = preg_split("/[,;:]+/", GETPOST('DOL_AUTOSET_COOKIE'));
-			if (in_array('DOLUSERCOOKIE_box_'.$this->boxcode, $autosetarray)) {
+			if (in_array('DOLUSER_box_'.$this->boxcode, $autosetarray)) {
 				$endyear = GETPOSTINT($param_year);
 				$showtot = GETPOST($param_showtot, 'alpha');
 			} else {
-				$tmparray = json_decode($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode], true);
+				$tmparray = json_decode($_COOKIE['DOLUSER_box_'.$this->boxcode], true);
 				$endyear = $tmparray['year'];
 				$showtot = $tmparray['showtot'];
 			}
@@ -188,7 +188,7 @@ class box_graph_invoices_peryear extends ModeleBoxes
 				$stringtoshow .= '<input type="hidden" name="token" value="'.newToken().'">';
 				$stringtoshow .= '<input type="hidden" name="action" value="'.$refreshaction.'">';
 				$stringtoshow .= '<input type="hidden" name="page_y" value="">';
-				$stringtoshow .= '<input type="hidden" name="DOL_AUTOSET_COOKIE" value="DOLUSERCOOKIE_box_'.$this->boxcode.':year,showtot">';
+				$stringtoshow .= '<input type="hidden" name="DOL_AUTOSET_COOKIE" value="DOLUSER_box_'.$this->boxcode.':year,showtot">';
 				$stringtoshow .= $langs->trans("Year").' <input class="flat" size="4" type="text" name="'.$param_year.'" value="'.$endyear.'">';
 				$stringtoshow .= '<input class="reposition inline-block valigntextbottom" type="image" alt="'.$langs->trans("Refresh").'" src="'.img_picto($langs->trans("Refresh"), 'refresh.png', '', 0, 1).'">';
 				$stringtoshow .= '</form>';
