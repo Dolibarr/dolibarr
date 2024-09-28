@@ -122,10 +122,9 @@ class pdf_standard_actions extends ModeleAction
 	 * Constructor
 	 *
 	 * @param 	DoliDB	$db		Database handler
-	 * @param	int		$month	Month
-	 * @param	int		$year	Year
+	 * @param	Actioncomm $action  Actioncomm object
 	 */
-	public function __construct($db, $month, $year)
+	public function __construct($db, $action)
 	{
 		global $langs;
 
@@ -137,6 +136,7 @@ class pdf_standard_actions extends ModeleAction
 		$this->date_edition = time();
 		$this->month = $month;
 		$this->year = $year;
+		$this->update_main_doc_field = 0;
 
 		// Page size for A4 format
 		$this->type = 'pdf';

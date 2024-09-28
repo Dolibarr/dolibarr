@@ -34,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/defaultvalues.class.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
 if (!$user->admin) {
 	accessforbidden();
@@ -118,11 +119,11 @@ if ($action == 'set') {
 } elseif ($action == 'specimen') {  // For orders
 	$modele = GETPOST('module', 'alpha');
 
-	$commande = new CommandeFournisseur($db);
-	$commande->initAsSpecimen();
+	$action = new ActionComm($db);
+	$action->initAsSpecimen();
 	$specimenthirdparty = new Societe($db);
 	$specimenthirdparty->initAsSpecimen();
-	$commande->thirdparty = $specimenthirdparty;
+	$action->thirdparty = $specimenthirdparty;
 
 	// Search template files
 	$file = '';
@@ -257,7 +258,6 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 					if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
 						$name = substr($file, 4, dol_strlen($file) - 16);
 						$classname = substr($file, 0, dol_strlen($file) - 12);
-
 						require_once $dir.'/'.$file;
 						$module = new $classname($db, new ActionComm($db));
 
