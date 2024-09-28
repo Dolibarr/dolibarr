@@ -26,6 +26,7 @@
  *	\brief      File to build PDF with events
  */
 
+require_once DOL_DOCUMENT_ROOT.'/core/modules/action/modules_action.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -35,22 +36,12 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 /**
  *	Class to generate event report
  */
-class pdf_standard_actions
+class pdf_standard_actions extends ModeleAction
 {
 	/**
 	 * @var DoliDB Database handler.
 	 */
 	public $db;
-
-	/**
-	 * @var string error message
-	 */
-	public $error;
-
-	/**
-	 * @var string[] array of errors messages
-	 */
-	public $errors;
 
 	/**
 	 * @var string description
