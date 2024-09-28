@@ -247,8 +247,8 @@ class Propal extends CommonObject
 	public $mode_reglement;
 
 	/**
-	 * @var float 	Deposit percent for payment terms.
-	 *				Populated by $CommonObject->setPaymentTerms().
+	 * @var float|string	Deposit percent for payment terms.
+	 *						Populated by $CommonObject->setPaymentTerms().
 	 * @see setPaymentTerms()
 	 */
 	public $deposit_percent;
