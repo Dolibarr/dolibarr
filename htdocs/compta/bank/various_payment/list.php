@@ -230,6 +230,7 @@ if (empty($reshook)) {
  */
 
 $form = new Form($db);
+$proj = null;
 if ($arrayfields['account']['checked'] || $arrayfields['subledger']['checked']) {
 	$formaccounting = new FormAccounting($db);
 }
@@ -783,7 +784,7 @@ while ($i < $imaxinloop) {
 		// Project
 		if ($arrayfields['project']['checked']) {
 			print '<td class="nowraponall">';
-			if ($obj->fk_project > 0) {
+			if ($obj->fk_project > 0 && is_object($proj)) {
 				$proj->fetch($obj->fk_project);
 				print $proj->getNomUrl(1);
 			}
