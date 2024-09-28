@@ -90,7 +90,7 @@ class pdf_octopus extends ModelePDFFactures
 	public $heightforfreetext;
 
 	/**
-	 * @var int height for footer
+	 * @var float height for footer
 	 */
 	public $heightforfooter;
 
