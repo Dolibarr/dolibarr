@@ -282,21 +282,6 @@ if ($action == 'add' ) {	// Test on permission not required here (anonymous acti
 				$errmsg .= $actioncomm->error." ".implode(',', $actioncomm->errors);
 			}
 		}
-
-		if (!$error) {
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources";
-			$sql .= "(fk_actioncomm, element_type, fk_element, answer_status, mandatory, transparency";
-			$sql .= ") VALUES (";
-			$sql .= (int) $actioncomm->id;
-			$sql .= ", 'socpeople'";
-			$sql .= ", ". (int) $contact->id;
-			$sql .= ", 0, 0, 0)";
-			$resql = $db->query($sql);
-			if (!$resql) {
-				$error++;
-				$errmsg .= $db->lasterror();
-			}
-		}
 	}
 
 	if (!$error) {

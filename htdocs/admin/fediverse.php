@@ -206,7 +206,7 @@ if ($action == 'updatesocialnetwork') {
 		}
 	}
 
-	 // Add new key, value if changed
+	// Add new key, value if changed
 	foreach ($mergedParams as $newKey => $newValue) {
 		if (!isset($socialNetworkData[$newKey]) || $socialNetworkData[$newKey] !== $newValue) {
 			$socialNetworkData[$newKey] = $newValue;
@@ -466,7 +466,7 @@ if ($resql) {
 		print '<table class="noborder centpercent">'."\n";
 
 		print '<tr class="liste_titre">';
-		print "<td>".$langs->trans("SocialNetworks")." ".($i+1)."</td>";
+		print "<td>".$langs->trans("SocialNetworks")." ".($i + 1)."</td>";
 		print '<td class="right">';
 		print '<a class="viewfielda reposition marginleftonly marginrighttonly showInputBtn" href="'.$_SERVER["PHP_SELF"].'?action=editsocialnetwork&token='.newToken().'&key='.urlencode($socialNetworkId).'">'.img_edit().'</a>';
 		print '<a class="deletefielda reposition marginleftonly right" href="'.$_SERVER["PHP_SELF"].'?action=deletesocialnetwork&token='.newToken().'&key='.urlencode($socialNetworkId).'">'.img_delete().'</a>';
@@ -564,8 +564,8 @@ $db->close();
 /**
  * Check if the given fediverse feed if inside the list of boxes/widgets
  *
- * @param	int		$id		The id of the socialnetwork
- * @param array<int, stdClass> $boxlist A list with boxes/widgets (array of stdClass objects).
+ * @param	int				$id			The id of the socialnetwork
+ * @param	ModeleBoxes[]	$boxlist	A list with boxes/widgets
  * @return	bool					True if the socialnetwork is inside the box/widget list, otherwise false
  */
 function _isInBoxListFediverse(int $id, array $boxlist)

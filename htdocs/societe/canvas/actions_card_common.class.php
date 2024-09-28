@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,15 +33,32 @@ abstract class ActionsCardCommon
 	 */
 	public $db;
 
+	/**
+	 * @var string
+	 */
 	public $dirmodule;
+	/**
+	 * @var string
+	 */
 	public $targetmodule;
+	/**
+	 * @var string
+	 */
 	public $canvas;
+	/**
+	 * @var string
+	 */
 	public $card;
 
-	//! Template container
+	/**
+	 * @var array<string,mixed>	Template container
+	 */
 	public $tpl = array();
 
 	//! Object container
+	/**
+	 * @var Societe
+	 */
 	public $object;
 
 	/**
@@ -59,7 +77,7 @@ abstract class ActionsCardCommon
 	 *
 	 *  @param		int		$id			Object id
 	 *  @param		string	$ref		Object ref
-	 *  @return		object				Object loaded
+	 *  @return		Societe				Object loaded
 	 */
 	protected function getObject($id, $ref = '')
 	{
@@ -78,7 +96,7 @@ abstract class ActionsCardCommon
 	/**
 	 *    Assign custom values for canvas (for example into this->tpl to be used by templates)
 	 *
-	 *    @param	string	$action    Type of action
+	 *    @param	string	$action		Type of action
 	 *    @param	integer	$id			Id of object
 	 *    @param	string	$ref		Ref of object
 	 *    @return	void
@@ -88,6 +106,11 @@ abstract class ActionsCardCommon
 		// phpcs:enable
 		global $conf, $langs, $db, $user, $mysoc, $canvas;
 		global $form, $formadmin, $formcompany;
+		'
+		@phan-var-force Form $form
+		@phan-var-force FormAdmin $formadmin
+		@phan-var-force FormCompany $formcompany
+		';
 
 		if ($action == 'add' || $action == 'update') {
 			$this->assign_post($action);
@@ -165,6 +188,7 @@ abstract class ActionsCardCommon
 				}
 			}
 			$modCodeClient = new $module($db);
+			'@phan-var-force ModeleThirdPartyCode $modCodeClient';
 			$this->tpl['auto_customercode'] = $modCodeClient->code_auto;
 			// We verified if the tag prefix is used
 			if ($modCodeClient->code_auto) {
@@ -204,6 +228,7 @@ abstract class ActionsCardCommon
 					}
 				}
 				$modCodeFournisseur = new $module();
+				'@phan-var-force ModeleThirdPartyCode $modCodeFournisseur';
 				$this->tpl['auto_suppliercode'] = $modCodeFournisseur->code_auto;
 				// We verified if the tag prefix is used
 				if ($modCodeFournisseur->code_auto) {
@@ -249,7 +274,7 @@ abstract class ActionsCardCommon
 
 			// Language
 			if (getDolGlobalInt('MAIN_MULTILANGS')) {
-				$this->tpl['select_lang'] = $formadmin->select_language((empty($this->object->default_lang) ? getDolGlobalString('MAIN_LANG_DEFAULT') : $this->object->default_lang), 'default_lang', 0, 0, 1);
+				$this->tpl['select_lang'] = $formadmin->select_language((empty($this->object->default_lang) ? getDolGlobalString('MAIN_LANG_DEFAULT') : $this->object->default_lang), 'default_lang', 0, array(), 1);
 			}
 
 			// VAT
@@ -348,7 +373,7 @@ abstract class ActionsCardCommon
 			if (isModEnabled('member')) {
 				$langs->load("members");
 				$adh = new Adherent($this->db);
-				$result = $adh->fetch('', '', $this->object->id);
+				$result = $adh->fetch(0, '', $this->object->id);
 				if ($result > 0) {
 					$adh->ref = $adh->getFullName($langs);
 					$this->tpl['linked_member'] = $adh->getNomUrl(1);
@@ -390,41 +415,41 @@ abstract class ActionsCardCommon
 		// phpcs:enable
 		global $langs, $mysoc;
 
-		$this->object->id = GETPOST("socid");
+		$this->object->id = GETPOSTINT("socid");
 		$this->object->name = GETPOST("nom");
 		$this->object->prefix_comm			= GETPOST("prefix_comm");
-		$this->object->client = GETPOST("client");
+		$this->object->client = GETPOSTINT("client");
 		$this->object->code_client			= GETPOST("code_client");
-		$this->object->fournisseur			= GETPOST("fournisseur");
+		$this->object->fournisseur			= GETPOSTINT("fournisseur");
 		$this->object->code_fournisseur = GETPOST("code_fournisseur");
 		$this->object->address = GETPOST("address");
 		$this->object->zip = GETPOST("zipcode");
 		$this->object->town					= GETPOST("town");
 		$this->object->country_id = GETPOST("country_id") ? GETPOST("country_id") : $mysoc->country_id;
-		$this->object->state_id = GETPOST("state_id");
+		$this->object->state_id = GETPOSTINT("state_id");
 		$this->object->phone				= GETPOST("phone");
 		$this->object->phone_mobile			= GETPOST("phone_mobile");
 		$this->object->fax					= GETPOST("fax");
 		$this->object->email				= GETPOST("email", 'alphawithlgt');
 		$this->object->url					= GETPOST("url");
-		$this->object->capital				= GETPOST("capital");
+		$this->object->capital				= (float) GETPOST("capital");
 		$this->object->idprof1				= GETPOST("idprof1");
 		$this->object->idprof2				= GETPOST("idprof2");
 		$this->object->idprof3				= GETPOST("idprof3");
 		$this->object->idprof4				= GETPOST("idprof4");
-		$this->object->typent_id = GETPOST("typent_id");
-		$this->object->effectif_id = GETPOST("effectif_id");
+		$this->object->typent_id = GETPOSTINT("typent_id");
+		$this->object->effectif_id = GETPOSTINT("effectif_id");
 		$this->object->barcode				= GETPOST("barcode");
-		$this->object->forme_juridique_code = GETPOST("forme_juridique_code");
+		$this->object->forme_juridique_code = GETPOSTINT("forme_juridique_code");
 		$this->object->default_lang			= GETPOST("default_lang");
-		$this->object->commercial_id		= GETPOST("commercial_id");
+		$this->object->commercial_id		= GETPOSTINT("commercial_id");
 
 		$this->object->tva_assuj = GETPOST("assujtva_value") ? GETPOST("assujtva_value") : 1;
 		$this->object->tva_intra = GETPOST("tva_intra");
 
 		//Local Taxes
-		$this->object->localtax1_assuj		= GETPOST("localtax1assuj_value");
-		$this->object->localtax2_assuj		= GETPOST("localtax2assuj_value");
+		$this->object->localtax1_assuj		= GETPOSTINT("localtax1assuj_value");
+		$this->object->localtax2_assuj		= GETPOSTINT("localtax2assuj_value");
 
 		// We set country_id, and country_code label of the chosen country
 		if ($this->object->country_id) {
