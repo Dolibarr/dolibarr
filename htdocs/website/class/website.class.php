@@ -47,6 +47,9 @@ class Website extends CommonObject
 	 */
 	public $table_element = 'website';
 
+	/**
+	 * @var string[]	List of child tables. To know object to delete on cascade.
+	 */
 	protected $childtablesoncascade = array();
 
 	/**

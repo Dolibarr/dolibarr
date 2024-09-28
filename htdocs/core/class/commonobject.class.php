@@ -6907,7 +6907,7 @@ abstract class CommonObject
 						}
 						break;
 					case 'double':
-						$value = price2num($value);
+						$value = price2num((string) $value);
 						if (!is_numeric($value) && $value != '') {
 							dol_syslog($langs->trans("ExtraLanguageHasWrongValue")." on ".$attributeLabel."(".$value."is not '".$attributeType."')", LOG_DEBUG);
 							$this->errors[] = $langs->trans("ExtraLanguageHasWrongValue", $attributeLabel);
