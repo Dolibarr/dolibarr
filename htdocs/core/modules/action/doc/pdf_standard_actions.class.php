@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2004       Rodolphe Quiedeville 	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012  Laurent Destailleur  	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009  Regis Houssin        	<regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,6 @@
  *	\brief      File to build PDF with events
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/action/modules_action.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -36,12 +35,22 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 /**
  *	Class to generate event report
  */
-class pdf_standard_actions extends ModeleAction
+class pdf_standard_actions
 {
 	/**
 	 * @var DoliDB Database handler.
 	 */
 	public $db;
+
+	/**
+	 * @var string error message
+	 */
+	public $error;
+
+	/**
+	 * @var string[] array of errors messages
+	 */
+	public $errors;
 
 	/**
 	 * @var string description
@@ -122,9 +131,10 @@ class pdf_standard_actions extends ModeleAction
 	 * Constructor
 	 *
 	 * @param 	DoliDB	$db		Database handler
-	 * @param	Actioncomm $action  Actioncomm object
+	 * @param	int		$month	Month
+	 * @param	int		$year	Year
 	 */
-	public function __construct($db, $action)
+	public function __construct($db, $month, $year)
 	{
 		global $langs;
 
@@ -136,7 +146,6 @@ class pdf_standard_actions extends ModeleAction
 		$this->date_edition = time();
 		$this->month = $month;
 		$this->year = $year;
-		$this->update_main_doc_field = 0;
 
 		// Page size for A4 format
 		$this->type = 'pdf';
