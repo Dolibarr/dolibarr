@@ -107,7 +107,6 @@ class Propal extends CommonObject
 	 * @var int
 	 */
 	public $contactid;
-	public $author;
 
 	/**
 	 * Ref from thirdparty
@@ -144,12 +143,14 @@ class Propal extends CommonObject
 	public $status;
 
 	/**
+	 * @var int|''
 	 * @deprecated
 	 * @see $date_creation
 	 */
 	public $datec;
 
 	/**
+	 * @var int|''
 	 * @deprecated
 	 * @see $date_validation
 	 */
@@ -176,6 +177,7 @@ class Propal extends CommonObject
 	public $date;
 
 	/**
+	 * @var int|''
 	 * @deprecated
 	 * @see $date
 	 */
@@ -198,6 +200,11 @@ class Propal extends CommonObject
 	public $user_author_id;
 
 	/**
+	 * @var User user identified by user_author_id
+	 */
+	public $author;
+
+	/**
 	 * @deprecated
 	 * @see $total_ht
 	 */
@@ -214,13 +221,36 @@ class Propal extends CommonObject
 	 */
 	public $total;
 
-	public $cond_reglement_code;	// code
-	public $cond_reglement;			// label
-	public $cond_reglement_doc;		// label doc
+	/**
+	 * @var string payment conditions code
+	 */
+	public $cond_reglement_code;
 
-	public $mode_reglement_code;	// code
-	public $mode_reglement;			// label
+	/**
+	 * @var string payment conditions label
+	 */
+	public $cond_reglement;
 
+	/**
+	 * @var string payment conditions label doc
+	 */
+	public $cond_reglement_doc;
+
+	/**
+	 * @var string method of payment code
+	 */
+	public $mode_reglement_code;
+
+	/**
+	 * @var string method of payment label
+	 */
+	public $mode_reglement;
+
+	/**
+	 * @var float|string	Deposit percent for payment terms.
+	 *						Populated by $CommonObject->setPaymentTerms().
+	 * @see setPaymentTerms()
+	 */
 	public $deposit_percent;
 
 	/**
@@ -229,7 +259,16 @@ class Propal extends CommonObject
 	 */
 	public $fk_address;
 
+	/**
+	 * @var string address type
+	 * @deprecated
+	 */
 	public $address_type;
+
+	/**
+	 * @var string address
+	 * @deprecated
+	 */
 	public $address;
 
 	/**

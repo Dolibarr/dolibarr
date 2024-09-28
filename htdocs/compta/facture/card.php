@@ -120,6 +120,14 @@ $extrafields = new ExtraFields($db);
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
+$objectidnext = 0;
+$total_global_ttc = 0;
+$displayWarranty = false;
+$statusreplacement = 0;
+$type_fac = 0;
+$price_base_type = '';
+$array_options = array();
+
 // Load object
 if ($id > 0 || !empty($ref)) {
 	if ($action != 'add') {
@@ -2250,6 +2258,7 @@ if (empty($reshook)) {
 			}
 		}
 
+		$price_base_type = null;
 		if (!$error && ($qty >= 0) && (!empty($product_desc) || (!empty($idprod) && $idprod > 0))) {
 			$ret = $object->fetch($id);
 			if ($ret < 0) {
@@ -2494,7 +2503,7 @@ if (empty($reshook)) {
 			}
 
 			if (!$error) {
-				'@phan-var-force array<string,mixed> $lines';
+				'@phan-var-force CommonObjectLine[] $lines';
 				// Add batchinfo if the detail_batch array is defined
 				if (isModEnabled('productbatch') && !empty($lines[$i]->detail_batch) && is_array($lines[$i]->detail_batch) && getDolGlobalString('INVOICE_INCUDE_DETAILS_OF_LOTS_SERIALS')) {
 					$langs->load('productbatch');
@@ -2996,6 +3005,7 @@ if (empty($reshook)) {
 		$importLines = GETPOST('line_checkbox');
 
 		if (!empty($importLines) && is_array($importLines) && !empty($fromElement) && ctype_alpha($fromElement) && !empty($fromElementid)) {
+			$lineClassName = '';
 			if ($fromElement == 'commande') {
 				dol_include_once('/'.$fromElement.'/class/'.$fromElement.'.class.php');
 				$lineClassName = 'OrderLine';
@@ -3007,6 +3017,17 @@ if (empty($reshook)) {
 			$importCount = 0;
 			$error = 0;
 			foreach ($importLines as $lineId) {
+				if ($lineClassName === '') {
+					// No class
+					if ($error === 0) {
+						// Log only once
+						dol_syslog('compta/facture/card - No lineClassName - skip import', LOG_ERR);
+					}
+					// Ensure we report that all line failed (see error message below)
+					$error++;
+					break;
+				}
+
 				$lineId = intval($lineId);
 				$originLine = new $lineClassName($db);
 				if (intval($fromElementid) > 0 && $originLine->fetch($lineId) > 0) {
@@ -3166,6 +3187,7 @@ $formmargin = new FormMargin($db);
 $soc = new Societe($db);
 $paymentstatic = new Paiement($db);
 $bankaccountstatic = new Account($db);
+$formproject = null;
 if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
@@ -3199,6 +3221,7 @@ if ($action == 'create') {
 	$fk_account = GETPOSTINT('fk_account');
 
 	// Load objectsrc
+	$objectsrc = null;  // Initialise
 	//$remise_absolue = 0;
 	if (!empty($origin) && !empty($originid)) {
 		// Parse element/subelement (ex: project_task)
@@ -3248,6 +3271,7 @@ if ($action == 'create') {
 
 			$classname = ucfirst($subelement);
 			$objectsrc = new $classname($db);
+			'@phan-var-force Commande|Propal|Contrat|Expedition $objectsrc';
 			$objectsrc->fetch($originid);
 			if (empty($objectsrc->lines) && method_exists($objectsrc, 'fetch_lines')) {
 				$objectsrc->fetch_lines();
@@ -3273,6 +3297,7 @@ if ($action == 'create') {
 				$classname = ucfirst($subelem);
 
 				$expesrc = new $classname($db);
+				'@phan-var-force CommonObject $expesrc';
 				$expesrc->fetch($expeoriginid);
 
 				$cond_reglement_id 	= (!empty($expesrc->cond_reglement_id) ? $expesrc->cond_reglement_id : (!empty($soc->cond_reglement_id) ? $soc->cond_reglement_id : 1));
@@ -3992,7 +4017,7 @@ if ($action == 'create') {
 		}
 
 		// Project
-		if (isModEnabled('project')) {
+		if (isModEnabled('project') && is_object($formproject)) {
 			$langs->load('projects');
 			print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
 			print img_picto('', 'project', 'class="pictofixedwidth"').$formproject->select_projects(($socid > 0 ? $socid : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500 widthcentpercentminusxx');
@@ -4116,6 +4141,7 @@ if ($action == 'create') {
 
 			// TODO for compatibility
 			if ($origin == 'contrat') {
+				'@phan-var-force Contrat $objectsrc';
 				// Calcul contrat->price (HT), contrat->total (TTC), contrat->tva
 				$objectsrc->update_price(1, 'auto', 1);
 			}
@@ -5176,9 +5202,13 @@ if ($action == 'create') {
 
 				$current_situation_counter = array();
 				foreach ($object->tab_previous_situation_invoice as $prev_invoice) {
-					$tmptotalpaidforthisinvoice = $prev_invoice->getSommePaiement();
+					$tmptotalallpayments = $prev_invoice->getSommePaiement(0);
+					$tmptotalallpayments += $prev_invoice->getSumDepositsUsed(0);
+					$tmptotalallpayments += $prev_invoice->getSumCreditNotesUsed(0);
+
 					$total_prev_ht += $prev_invoice->total_ht;
 					$total_prev_ttc += $prev_invoice->total_ttc;
+
 					$current_situation_counter[] = (($prev_invoice->type == Facture::TYPE_CREDIT_NOTE) ? -1 : 1) * $prev_invoice->situation_counter;
 					print '<tr class="oddeven">';
 					print '<td>'.$prev_invoice->getNomUrl(1).'</td>';
@@ -5189,17 +5219,22 @@ if ($action == 'create') {
 					}
 					print '<td class="right"><span class="amount">'.price($prev_invoice->total_ht).'</span></td>';
 					print '<td class="right"><span class="amount">'.price($prev_invoice->total_ttc).'</span></td>';
-					print '<td class="right">'.$prev_invoice->getLibStatut(3, $tmptotalpaidforthisinvoice).'</td>';
+					print '<td class="right">'.$prev_invoice->getLibStatut(3, $tmptotalallpayments).'</td>';
 					print '</tr>';
 				}
 			}
 
+			$totalallpayments = $object->getSommePaiement(0);
+			$totalallpayments += $object->getSumCreditNotesUsed(0);
+			$totalallpayments += $object->getSumDepositsUsed(0);
 
 			$total_global_ht += $total_prev_ht;
 			$total_global_ttc += $total_prev_ttc;
 			$total_global_ht += $object->total_ht;
 			$total_global_ttc += $object->total_ttc;
+
 			$current_situation_counter[] = (($object->type == Facture::TYPE_CREDIT_NOTE) ? -1 : 1) * $object->situation_counter;
+
 			print '<tr class="oddeven">';
 			print '<td>'.$object->getNomUrl(1).'</td>';
 			print '<td></td>';
@@ -5209,7 +5244,7 @@ if ($action == 'create') {
 			}
 			print '<td class="right"><span class="amount">'.price($object->total_ht).'</span></td>';
 			print '<td class="right"><span class="amount">'.price($object->total_ttc).'</span></td>';
-			print '<td class="right">'.$object->getLibStatut(3, $object->getSommePaiement()).'</td>';
+			print '<td class="right">'.$object->getLibStatut(3, $totalallpayments).'</td>';
 			print '</tr>';
 
 
@@ -5251,7 +5286,10 @@ if ($action == 'create') {
 				$total_next_ht = $total_next_ttc = 0;
 
 				foreach ($object->tab_next_situation_invoice as $next_invoice) {
-					$totalpaid = $next_invoice->getSommePaiement();
+					$totalpaid = $next_invoice->getSommePaiement(0);
+					$totalcreditnotes = $next_invoice->getSumCreditNotesUsed(0);
+					$totaldeposits = $next_invoice->getSumDepositsUsed(0);
+
 					$total_next_ht += $next_invoice->total_ht;
 					$total_next_ttc += $next_invoice->total_ttc;
 
@@ -5264,7 +5302,7 @@ if ($action == 'create') {
 					}
 					print '<td class="right"><span class="amount">'.price($next_invoice->total_ht).'</span></td>';
 					print '<td class="right"><span class="amount">'.price($next_invoice->total_ttc).'</span></td>';
-					print '<td class="right">'.$next_invoice->getLibStatut(3, $totalpaid).'</td>';
+					print '<td class="right">'.$next_invoice->getLibStatut(3, $totalpaid + $totalcreditnotes + $totaldeposits).'</td>';
 					print '</tr>';
 				}
 

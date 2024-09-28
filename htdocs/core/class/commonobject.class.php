@@ -769,14 +769,14 @@ abstract class CommonObject
 	public $sendtoid;
 
 	/**
-	 * @var	float		Amount already paid from getSommePaiement() (used to show correct status)
-	 * @deprecated		Use $totalpaid instead
+	 * @var	float		Amount already paid from getSommePaiement() + getSumCreditNotesUsed() + getSumDepositsUsed() (used to show correct status)
 	 * @see $totalpaid
 	 */
-	private $alreadypaid;
+	public $alreadypaid;
 
 	/**
-	 * @var	float		Amount already paid from getSommePaiement() (used to show correct status)
+	 * @var	float		Amount already paid from getSommePaiement()
+	 * @see $alreadpaid
 	 */
 	public $totalpaid;
 
