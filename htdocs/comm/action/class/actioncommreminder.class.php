@@ -97,6 +97,9 @@ class ActionCommReminder extends CommonObject
 	 */
 	public $entity;
 
+	/**
+	 * @var int date remind
+	 */
 	public $dateremind;
 
 	/**

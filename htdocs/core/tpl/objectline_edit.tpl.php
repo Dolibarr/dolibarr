@@ -5,10 +5,10 @@
  * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024	Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2022		OpenDSI				<support@open-dsi.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024 Alexandre Spangaro <alexandre@inovea-conseil.com>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Alexandre Spangaro  <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -304,7 +304,7 @@ $coldisplay++;
 		$coldisplay++;
 		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
 			$tmp_fieldv = (GETPOSTISSET('progress') ? GETPOST('progress') : $line->situation_percent);
-			$old_fieldv = $line->get_allprev_progress($line->fk_facture);
+			$old_fieldv = $line->getAllPrevProgress($line->fk_facture);
 			$fieldv = $tmp_fieldv + $old_fieldv;
 
 			print '<td class="nowrap right linecolcycleref"><input class="right" type="text" size="1" value="'.$fieldv.'" name="progress">%</td>';

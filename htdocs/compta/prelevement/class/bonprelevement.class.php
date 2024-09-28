@@ -2172,7 +2172,7 @@ class BonPrelevement extends CommonObject
 	 *	@param	int			$row_idfac			p.fk_facture AS idfac or p.fk_facture_fourn or p.fk_salary,
 	 *	@param	string		$row_iban			rib.iban_prefix AS iban,
 	 *	@param	string		$row_bic			rib.bic AS bic,
-	 *	@param	string		$row_datec			rib.datec,
+	 *	@param	int 		$row_datec			rib.datec,
 	 *	@param	string		$row_drum			rib.rowid used to generate rum
 	 * 	@param	string		$row_rum			rib.rum Rum defined on company bank account
 	 *  @param	string		$type				'direct-debit' or 'bank-transfer'
