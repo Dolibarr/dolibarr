@@ -9656,6 +9656,7 @@ class Form
 			}
 		}
 
+		// Build the html part with possible suggested links
 		foreach ($possiblelinks as $key => $possiblelink) {
 			$num = 0;
 
@@ -9666,7 +9667,7 @@ class Form
 			if (!empty($possiblelink['perms']) && (empty($restrictlinksto) || in_array($key, $restrictlinksto)) && (empty($excludelinksto) || !in_array($key, $excludelinksto))) {
 				print '<div id="' . $key . 'list"' . (empty($conf->use_javascript_ajax) ? '' : ' style="display:none"') . '>';
 
-				if (getDolGlobalString('MAIN_LINK_BY_REF_IN_LINKTO')) {
+				if (getDolGlobalString('MAIN_HIDE_LINK_BY_REF_IN_LINKTO')) {
 					print '<br>'."\n";
 					print '<!-- form to add a link from anywhere -->'."\n";
 					print '<form action="' . $_SERVER["PHP_SELF"] . '" method="POST" name="formlinkedbyref' . $key . '">';
@@ -9692,52 +9693,55 @@ class Form
 					$num = $this->db->num_rows($resqllist);
 					$i = 0;
 
-					print '<br>';
-					print '<!-- form to add a link from object to same thirdparty -->'."\n";
-					print '<form action="' . $_SERVER["PHP_SELF"] . '" method="POST" name="formlinked' . $key . '">';
-					print '<input type="hidden" name="action" value="addlink">';
-					print '<input type="hidden" name="token" value="' . newToken() . '">';
-					print '<input type="hidden" name="id" value="' . $object->id . '">';
-					print '<input type="hidden" name="addlink" value="' . $key . '">';
-					print '<table class="noborder">';
-					print '<tr class="liste_titre">';
-					print '<td class="nowrap"></td>';
-					print '<td class="center">' . $langs->trans("Ref") . '</td>';
-					print '<td class="left">' . $langs->trans("RefCustomer") . '</td>';
-					print '<td class="right">' . $langs->trans("AmountHTShort") . '</td>';
-					print '<td class="left">' . $langs->trans("Company") . '</td>';
-					print '</tr>';
-					while ($i < $num) {
-						$objp = $this->db->fetch_object($resqllist);
-
-						print '<tr class="oddeven">';
-						print '<td class="left">';
-						print '<input type="checkbox" name="idtolinkto[' . $key . '_' . $objp->rowid . ']" id="' . $key . '_' . $objp->rowid . '" value="' . $objp->rowid . '">';
-						print '</td>';
-						print '<td class="center"><label for="' . $key . '_' . $objp->rowid . '">' . $objp->ref . '</label></td>';
-						print '<td>' . (!empty($objp->ref_client) ? $objp->ref_client : (!empty($objp->ref_supplier) ? $objp->ref_supplier : '')) . '</td>';
-						print '<td class="right">';
-						if ($possiblelink['label'] == 'LinkToContract') {
-							$form = new Form($this->db);
-							print $form->textwithpicto('', $langs->trans("InformationOnLinkToContract")) . ' ';
-						}
-						print '<span class="amount">' . (isset($objp->total_ht) ? price($objp->total_ht) : '') . '</span>';
-						print '</td>';
-						print '<td>' . $objp->name . '</td>';
+					if ($num > 0) {
+						print '<br>';
+						print '<!-- form to add a link from object to same thirdparty -->'."\n";
+						print '<form action="' . $_SERVER["PHP_SELF"] . '" method="POST" name="formlinked' . $key . '">';
+						print '<input type="hidden" name="action" value="addlink">';
+						print '<input type="hidden" name="token" value="' . newToken() . '">';
+						print '<input type="hidden" name="id" value="' . $object->id . '">';
+						print '<input type="hidden" name="addlink" value="' . $key . '">';
+						print '<table class="noborder">';
+						print '<tr class="liste_titre">';
+						print '<td class="nowrap"></td>';
+						print '<td class="center">' . $langs->trans("Ref") . '</td>';
+						print '<td class="left">' . $langs->trans("RefCustomer") . '</td>';
+						print '<td class="right">' . $langs->trans("AmountHTShort") . '</td>';
+						print '<td class="left">' . $langs->trans("Company") . '</td>';
 						print '</tr>';
-						$i++;
+						while ($i < $num) {
+							$objp = $this->db->fetch_object($resqllist);
+
+							print '<tr class="oddeven">';
+							print '<td class="left">';
+							print '<input type="checkbox" name="idtolinkto[' . $key . '_' . $objp->rowid . ']" id="' . $key . '_' . $objp->rowid . '" value="' . $objp->rowid . '">';
+							print '</td>';
+							print '<td class="center"><label for="' . $key . '_' . $objp->rowid . '">' . $objp->ref . '</label></td>';
+							print '<td>' . (!empty($objp->ref_client) ? $objp->ref_client : (!empty($objp->ref_supplier) ? $objp->ref_supplier : '')) . '</td>';
+							print '<td class="right">';
+							if ($possiblelink['label'] == 'LinkToContract') {
+								$form = new Form($this->db);
+								print $form->textwithpicto('', $langs->trans("InformationOnLinkToContract")) . ' ';
+							}
+							print '<span class="amount">' . (isset($objp->total_ht) ? price($objp->total_ht) : '') . '</span>';
+							print '</td>';
+							print '<td>' . $objp->name . '</td>';
+							print '</tr>';
+							$i++;
+						}
+						print '</table>';
+						print '<div class="center">';
+						if ($num) {
+							print '<input type="submit" class="button valignmiddle marginleftonly marginrightonly small" value="' . $langs->trans('ToLink') . '">';
+						}
+						if (empty($conf->use_javascript_ajax)) {
+							print '<input type="submit" class="button button-cancel marginleftonly marginrightonly small" name="cancel" value="' . $langs->trans("Cancel") . '"></div>';
+						} else {
+							print '<input type="submit" onclick="jQuery(\'#' . $key . 'list\').toggle(); return false;" class="button button-cancel marginleftonly marginrightonly small" name="cancel" value="' . $langs->trans("Cancel") . '"></div>';
+						}
+						print '</form>';
 					}
-					print '</table>';
-					print '<div class="center">';
-					if ($num) {
-						print '<input type="submit" class="button valignmiddle marginleftonly marginrightonly small" value="' . $langs->trans('ToLink') . '">';
-					}
-					if (empty($conf->use_javascript_ajax)) {
-						print '<input type="submit" class="button button-cancel marginleftonly marginrightonly small" name="cancel" value="' . $langs->trans("Cancel") . '"></div>';
-					} else {
-						print '<input type="submit" onclick="jQuery(\'#' . $key . 'list\').toggle(); return false;" class="button button-cancel marginleftonly marginrightonly small" name="cancel" value="' . $langs->trans("Cancel") . '"></div>';
-					}
-					print '</form>';
+
 					$this->db->free($resqllist);
 				} else {
 					dol_print_error($this->db);
@@ -9745,7 +9749,7 @@ class Form
 				print '</div>';
 
 				//$linktoelem.=($linktoelem?' &nbsp; ':'');
-				if ($num > 0 || getDolGlobalString('MAIN_LINK_BY_REF_IN_LINKTO')) {
+				if ($num > 0 || getDolGlobalString('MAIN_HIDE_LINK_BY_REF_IN_LINKTO')) {
 					$linktoelemlist .= '<li><a href="#linkto' . $key . '" class="linkto dropdowncloseonclick" rel="' . $key . '">' . $langs->trans($possiblelink['label']) . ' (' . $num . ')</a></li>';
 					// } else $linktoelem.=$langs->trans($possiblelink['label']);
 				} else {
