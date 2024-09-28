@@ -30,7 +30,7 @@
 
 $dellinkid = GETPOSTINT('dellinkid');
 $addlink = GETPOST('addlink', 'alpha');
-$addlinkid = GETPOST('idtolinkto'); //array
+$addlinkid = GETPOST('idtolinkto', 'array:int');
 $addlinkref = GETPOST('reftolinkto', 'alpha');
 $cancellink = GETPOST('cancel', 'alpha');
 
