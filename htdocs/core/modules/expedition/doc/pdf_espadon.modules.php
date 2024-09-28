@@ -1,11 +1,12 @@
 <?php
-/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2012 Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2018-2024  Frédéric France    	<frederic.france@free.fr>
- * Copyright (C) 2023 		Charlene Benke    	<charlene@patas-monkey.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2005       Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2012  Laurent Destailleur	 <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin		 <regis.houssin@inodbox.com>
+ * Copyright (C) 2014-2015  Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2018-2024  Frédéric France    	 <frederic.france@free.fr>
+ * Copyright (C) 2023 		Charlene Benke    	 <charlene@patas-monkey.com>
+ * Copyright (C) 2024		MDW					 <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024	    Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -97,7 +98,7 @@ class pdf_espadon extends ModelePdfExpedition
 		$this->marge_droite = getDolGlobalInt('MAIN_PDF_MARGIN_RIGHT', 10);
 		$this->marge_haute = getDolGlobalInt('MAIN_PDF_MARGIN_TOP', 10);
 		$this->marge_basse = getDolGlobalInt('MAIN_PDF_MARGIN_BOTTOM', 10);
-
+		$this->corner_radius = getDolGlobalInt('MAIN_PDF_FRAME_CORNER_RADIUS', 0);
 		$this->option_logo = 1; // Display logo
 		$this->option_draft_watermark = 1; // Support add of a watermark on drafts
 		$this->watermark = '';
@@ -311,7 +312,7 @@ class pdf_espadon extends ModelePdfExpedition
 
 						// Rect takes a length in 3rd parameter
 						$pdf->SetDrawColor(192, 192, 192);
-						$pdf->Rect($this->marge_gauche, $tab_top - 1, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_incoterms + 1);
+						$pdf->RoundedRect($this->marge_gauche, $tab_top - 1, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_incoterms + 3, $this->corner_radius, '1234', 'D');
 
 						$tab_top = $nexY + 6;
 						$height_incoterms += 4;
@@ -439,7 +440,7 @@ class pdf_espadon extends ModelePdfExpedition
 										$height_note = $this->page_hauteur - ($tab_top_newpage + $heightforfooter) + $height_trackingnumber + 1;
 										$tab_top_newpage = $tab_topbeforetrackingnumber;
 									}
-									$pdf->Rect($this->marge_gauche, $tab_top_newpage - 1, $tab_width, $height_note + 2);
+									$pdf->RoundedRect($this->marge_gauche, $tab_top_newpage - 1, $tab_width, $height_note + 2, $this->corner_radius, '1234', 'D');
 								} else {
 									if (empty($height_trackingnumber)) {
 										$height_note = $this->page_hauteur - ($tab_top + $heightforfooter);
@@ -447,7 +448,7 @@ class pdf_espadon extends ModelePdfExpedition
 										$height_note = $this->page_hauteur - ($tab_top + $heightforfooter) + $height_trackingnumber + 1;
 										$tab_top = $tab_topbeforetrackingnumber;
 									}
-									$pdf->Rect($this->marge_gauche, $tab_top - 1, $tab_width, $height_note + 2);
+									$pdf->RoundedRect($this->marge_gauche, $tab_top - 1, $tab_width, $height_note + 2, $this->corner_radius, '1234', 'D');
 								}
 
 								// Add footer
@@ -466,7 +467,7 @@ class pdf_espadon extends ModelePdfExpedition
 								$this->_pagehead($pdf, $object, 0, $outputlangs);
 							}
 							$height_note = $posyafter - $tab_top_newpage;
-							$pdf->Rect($this->marge_gauche, $tab_top_newpage - 1, $tab_width, $height_note + 1);
+							$pdf->RoundedRect($this->marge_gauche, $tab_top_newpage - 1, $tab_width, $height_note + 1, $this->corner_radius, '1234', 'D');
 						} else { // No pagebreak
 							$pdf->commitTransaction();
 							$posyafter = $pdf->GetY();
@@ -476,7 +477,7 @@ class pdf_espadon extends ModelePdfExpedition
 								$height_note = $posyafter - $tab_top + $height_trackingnumber + 1;
 								$tab_top = $tab_topbeforetrackingnumber;
 							}
-							$pdf->Rect($this->marge_gauche, $tab_top - 1, $tab_width, $height_note + 2);
+							$pdf->RoundedRect($this->marge_gauche, $tab_top - 1, $tab_width, $height_note + 2, $this->corner_radius, '1234', 'D');
 
 
 							if ($posyafter > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + 20))) {
@@ -943,7 +944,7 @@ class pdf_espadon extends ModelePdfExpedition
 
 		if (empty($hidetop)) {
 			if (getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')) {
-				$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, $this->tabTitleHeight, 'F', array(), explode(',', getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')));
+				$pdf->RoundedRect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, $this->tabTitleHeight, $this->corner_radius, '1001', 'F', explode(',', getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')));
 			}
 		}
 
@@ -951,7 +952,7 @@ class pdf_espadon extends ModelePdfExpedition
 		$pdf->SetFont('', '', $default_font_size - 1);
 
 		// Output Rect
-		$this->printRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $tab_height, $hidetop, $hidebottom); // Rect takes a length in 3rd parameter and 4th parameter
+		$this->printRoundedRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $tab_height, $this->corner_radius, $hidetop, $hidebottom, 'D'); // Rect takes a length in 3rd parameter and 4th parameter
 
 
 		$this->pdfTabTitles($pdf, $tab_top, $tab_height, $outputlangs, $hidetop);
@@ -1134,7 +1135,7 @@ class pdf_espadon extends ModelePdfExpedition
 				$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("Sender"), 0, 'L');
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetFillColor(230, 230, 230);
-				$pdf->MultiCell($widthrecbox, $hautcadre, "", 0, 'R', 1);
+				$pdf->RoundedRect($posx, $posy, $widthrecbox, $hautcadre, $this->corner_radius, '1234', 'F');
 				$pdf->SetTextColor(0, 0, 60);
 				$pdf->SetFillColor(255, 255, 255);
 			}
@@ -1189,7 +1190,7 @@ class pdf_espadon extends ModelePdfExpedition
 				$pdf->SetFont('', '', $default_font_size - 2);
 				$pdf->SetXY($posx + 2, $posy - 5);
 				$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("Recipient"), 0, 'L');
-				$pdf->Rect($posx, $posy, $widthrecbox, $hautcadre);
+				$pdf->RoundedRect($posx, $posy, $widthrecbox, $hautcadre, $this->corner_radius, '1234', 'D');
 			}
 
 			// Show recipient name
