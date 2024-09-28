@@ -62,42 +62,74 @@ class WebsitePage extends CommonObject
 	 */
 	protected $childtablesoncascade = array('categorie_website_page');
 
-
 	/**
-	 * @var int ID
+	 * @var int Website ID
 	 */
 	public $fk_website;
 
+	/**
+	 * @var ?int Page ID
+	 */
 	public $fk_page;		// If translation of another page
 
+	/**
+	 * @var string Page url
+	 */
 	public $pageurl;
+
+	/**
+	 * @var string Alias alt
+	 */
 	public $aliasalt;
+
+	/**
+	 * @var string Container type
+	 */
 	public $type_container;
 
 	/**
 	 * @var string title
 	 */
 	public $title;
+
 	/**
 	 * @var string description
 	 */
 	public $description;
+
 	/**
 	 * @var string image
 	 */
 	public $image;
+
 	/**
 	 * @var string keywords
 	 */
 	public $keywords;
+
 	/**
 	 * @var string language code ('en', 'fr', 'en-gb', ..)
 	 */
 	public $lang;
 
+	/**
+	 * @var int allowed in frames
+	 */
 	public $allowed_in_frames;
+
+	/**
+	 * @var string html header
+	 */
 	public $htmlheader;
+
+	/**
+	 * @var string content
+	 */
 	public $content;
+
+	/**
+	 * @var string grabbed from
+	 */
 	public $grabbed_from;
 
 	/**
@@ -105,7 +137,14 @@ class WebsitePage extends CommonObject
 	 */
 	public $status;
 
+	/**
+	 * @var int ID
+	 */
 	public $fk_user_creat;
+
+	/**
+	 * @var int ID
+	 */
 	public $fk_user_modif;
 
 	/**
