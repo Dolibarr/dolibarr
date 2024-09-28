@@ -56,8 +56,8 @@ div#topmenu-login-dropdown {
 }
 
 #topmenu-global-search-dropdown .dropdown-menu, #topmenu-quickadd-dropdown .dropdown-menu, #topmenu-bookmark-dropdown .dropdown-menu, #topmenu-login-dropdown .dropdown-menu {
-	min-width: 300px;
-	max-width: 360px;
+	min-width: 370px;
+	max-width: 400px;
 }
 
 button.dropdown-item.global-search-item {
@@ -338,6 +338,14 @@ a.top-menu-dropdown-link {
 a.dropdown-item {
 	text-align: start;
 }
+.dropdown-item.bookmark-item {
+	padding-left: 14px;
+	padding-right: 14px;
+}
+.dropdown-item.bookmark-item:before {
+	width: 20px;
+	padding-left: 2px;
+}
 
 .button-top-menu-dropdown {
 	display: inline-block;
@@ -488,9 +496,9 @@ a.dropdown-item {
 }
 
 .quickadd-item {
-	font-size: 1em;
-	padding-top: 6px;
-	padding-bottom: 6px;
+	font-size: 1.1em;
+	padding-top: 8px;
+	padding-bottom: 8px;
 }
 
 .quickadd-item:before {
