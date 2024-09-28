@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2004       Rodolphe Quiedeville   <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2012  Laurent Destailleur    <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009  Regis Houssin          <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW					   <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France        <frederic.france@free.fr>
+ * Copyright (C) 2024	    Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,7 +102,7 @@ class pdf_standard_actions
 		$this->date_edition = time();
 		$this->month = $month;
 		$this->year = $year;
-
+		$this->corner_radius = getDolGlobalInt('MAIN_PDF_FRAME_CORNER_RADIUS', 0);
 		// Page size for A4 format
 		$this->type = 'pdf';
 		$formatarray = pdf_getFormat();
@@ -379,7 +380,7 @@ class pdf_standard_actions
 
 		$y = $pdf->GetY() + 2;
 
-		$pdf->Rect($this->marge_gauche, $y, ($this->page_largeur - $this->marge_gauche - $this->marge_droite), ($this->page_hauteur - $this->marge_haute - $this->marge_basse));
+		$pdf->RoundedRect($this->marge_gauche, $y, ($this->page_largeur - $this->marge_gauche - $this->marge_droite), ($this->page_hauteur - $this->marge_haute - $this->marge_basse), $this->corner_radius, '1234', 'D');
 		$y = $pdf->GetY() + 1;
 
 		return $y;
