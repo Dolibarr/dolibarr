@@ -379,9 +379,14 @@ if ((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMO
 				}
 				print '<td class="nowrap right"><span class="amount">'.price($obj->total_ttc).'</span></td>';
 				print '<td class="right" title="'.dol_escape_htmltag($langs->trans("DateModificationShort").' : '.dol_print_date($db->jdate($obj->tms), 'dayhour', 'tzuserrel')).'">'.dol_print_date($db->jdate($obj->tms), 'day', 'tzuserrel').'</td>';
+
 				$alreadypaid = $facstatic->getSommePaiement();
+				$alreadypaid += $facstatic->getSumCreditNotesUsed();
+				$alreadypaid += $facstatic->getSumDepositsUsed();
+
 				print '<td>'.$facstatic->getLibStatut(3, $alreadypaid).'</td>';
 				print '</tr>';
+
 				$total_ht += $obj->total_ht;
 				$total_ttc += $obj->total_ttc;
 				$totalam += $obj->am;

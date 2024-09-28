@@ -4,6 +4,7 @@
  * Copyright (C) 2010       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +54,8 @@ if (empty($dolibarr_main_demo)) {
 	httponly_accessforbidden('Parameter dolibarr_main_demo must be defined in conf file with value "default login,default pass" to enable the demo entry page');
 }
 
-// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+// Initialize a technical object to manage hooks of the page.
+// Note that conf->hooks_modules contains an array of hook contexats
 $res = $hookmanager->initHooks(array('demo'));
 
 $demoprofiles = array();
@@ -74,46 +76,47 @@ $tmpaction = 'view';
 $parameters = array();
 $object = new stdClass();
 $reshook = $hookmanager->executeHooks('addDemoProfile', $parameters, $object, $tmpaction); // Note that $action and $object may have been modified by some hooks
-$error = $hookmanager->error; $errors = $hookmanager->errors;
+$error = $hookmanager->error;
+$errors = $hookmanager->errors;
 if (empty($reshook)) {
 	$demoprofiles = array(
 		array(
-			'default'=>'1', 'key'=>'profdemoservonly', 'label'=>'DemoCompanyServiceOnly',
-			'disablemodules'=>'adherent,barcode,bom,cashdesk,don,expedition,externalsite,ftp,incoterm,mailmanspip,margin,mrp,prelevement,product,productbatch,stock,takepos',
+			'default' => '1', 'key' => 'profdemoservonly', 'label' => 'DemoCompanyServiceOnly',
+			'disablemodules' => 'adherent,barcode,bom,cashdesk,don,expedition,externalsite,ftp,incoterm,mailmanspip,margin,mrp,prelevement,product,productbatch,stock,takepos',
 			//'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot8.png',
-			'icon'=>DOL_URL_ROOT.'/public/demo/demo-profile-service.jpg',
-			'url'=>$url,
+			'icon' => DOL_URL_ROOT.'/public/demo/demo-profile-service.jpg',
+			'url' => $url,
 			'lang' => '',
 		),
 		array(
-			'default'=>'0', 'key'=>'profmanufacture', 'label'=>'DemoCompanyManufacturing',
-			'disablemodules'=>'adherent,contrat,don,externalsite,ficheinter,ftp,mailmanspip,prelevement,service',
-			'icon'=>DOL_URL_ROOT.'/public/demo/demo-profile-manufacturing.jpg',
-			'url'=>$url,
+			'default' => '0', 'key' => 'profmanufacture', 'label' => 'DemoCompanyManufacturing',
+			'disablemodules' => 'adherent,contrat,don,externalsite,ficheinter,ftp,mailmanspip,prelevement,service',
+			'icon' => DOL_URL_ROOT.'/public/demo/demo-profile-manufacturing.jpg',
+			'url' => $url,
 			'lang' => '',
 		),
 		array(
-			'default'=>'0', 'key'=>'profdemoprodstock', 'label'=>'DemoCompanyProductAndStocks',
-			'disablemodules'=>'adherent,bom,contrat,don,externalsite,ficheinter,ftp,mailmanspip,mrp,prelevement,service',
+			'default' => '0', 'key' => 'profdemoprodstock', 'label' => 'DemoCompanyProductAndStocks',
+			'disablemodules' => 'adherent,bom,contrat,don,externalsite,ficheinter,ftp,mailmanspip,mrp,prelevement,service',
 			//'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot2.png',
-			'icon'=>DOL_URL_ROOT.'/public/demo/demo-profile-product.jpg',
-			'url'=>$url,
+			'icon' => DOL_URL_ROOT.'/public/demo/demo-profile-product.jpg',
+			'url' => $url,
 			'lang' => '',
 		),
 		array(
-			'default'=>'0', 'key'=>'profdemofun2', 'label'=>'DemoFundation2',
-			'disablemodules'=>'barcode,cashdesk,bom,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,ficheinter,ftp,incoterm,mailmanspip,margin,mrp,prelevement,product,productbatch,projet,propal,propale,service,societe,stock,tax,takepos',
+			'default' => '0', 'key' => 'profdemofun2', 'label' => 'DemoFundation2',
+			'disablemodules' => 'barcode,cashdesk,bom,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,ficheinter,ftp,incoterm,mailmanspip,margin,mrp,prelevement,product,productbatch,projet,propal,propale,service,societe,stock,tax,takepos',
 			//'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot6.png',
-			'icon'=>DOL_URL_ROOT.'/public/demo/demo-profile-foundation.jpg',
-			'url'=>$url,
+			'icon' => DOL_URL_ROOT.'/public/demo/demo-profile-foundation.jpg',
+			'url' => $url,
 			'lang' => '',
 		),
-		// All demo profile
+		// All demo profiles
 		array(
-			'default'=>'0', 'key'=>'profdemoall', 'label'=>'ChooseYourDemoProfilMore',
-			'disablemodules'=>'adherent,cashdesk,don,externalsite,mailmanspip',
+			'default' => '0', 'key' => 'profdemoall', 'label' => 'ChooseYourDemoProfilMore',
+			'disablemodules' => 'adherent,cashdesk,don,externalsite,mailmanspip',
 			//'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot9.png'
-			'icon'=>DOL_URL_ROOT.'/public/demo/demo-profile-all.jpg',
+			'icon' => DOL_URL_ROOT.'/public/demo/demo-profile-all.jpg',
 			'lang' => '',
 		)
 	);
@@ -140,13 +143,13 @@ $dirlist = $conf->file->dol_document_root;
 // Search modules dirs
 $modulesdir = dolGetModulesDirs();
 
-
 $filename = array();
 $modules = array();
 $orders = array();
 $categ = array();
 $i = 0; // is a sequencer of modules found
-$j = 0; // j is module number. Automatically affected if module number not defined.
+$j = 0; // j is module number. Automatically assigned if module number is not defined.
+$const_name = '';
 
 foreach ($modulesdir as $dir) {
 	// Charge tableaux modules, nom, numero, orders depuis repertoire dir
@@ -196,6 +199,7 @@ foreach ($modulesdir as $dir) {
 	}
 }
 
+'@phan-var-force DolibarrModules[] $modules';
 asort($orders);
 
 
