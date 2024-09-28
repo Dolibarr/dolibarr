@@ -68,7 +68,7 @@ class WebsitePage extends CommonObject
 	public $fk_website;
 
 	/**
-	 * @var int Page ID
+	 * @var ?int Page ID
 	 */
 	public $fk_page;		// If translation of another page
 
