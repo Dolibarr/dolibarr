@@ -99,6 +99,9 @@ abstract class CommonDocGenerator
 	public $marge_droite;
 	public $marge_haute;
 	public $marge_basse;
+	/**
+	 * @var int corner radius
+	 */
 	public $corner_radius;
 	public $option_logo;
 	public $option_tva;
