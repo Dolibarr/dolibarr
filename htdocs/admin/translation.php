@@ -250,7 +250,7 @@ if ($transvalue) {
 
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-if (isset($optioncss) && $optioncss != '') {
+if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }
 print '<input type="hidden" name="token" value="'.newToken().'">';

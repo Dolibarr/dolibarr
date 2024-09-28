@@ -2247,7 +2247,7 @@ class FormFile
 				$out .= '</a>';
 			} else {
 				if ($ruleforpicto < 0) {
-					$out .= img_picto('', 'generic', '', false, 0, 0, '', 'paddingright pictofixedwidth');
+					$out .= img_picto('', 'generic', '', 0, 0, 0, '', 'paddingright pictofixedwidth');
 				}
 			}
 		}

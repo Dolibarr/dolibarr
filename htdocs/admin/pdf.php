@@ -638,7 +638,11 @@ if ($conf->use_javascript_ajax) {
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>'.$langs->trans("PDF_USE_A").'</td><td>';
-print $form->selectarray('PDF_USE_A', $arraylistofpdfformat, getDolGlobalString('PDF_USE_A', '0'));
+
+//$pdfa = false; // PDF default version
+$pdfa = getDolGlobalInt('PDF_USE_A', 0); 	// PDF/A-1 ou PDF/A-3
+
+print $form->selectarray('PDF_USE_A', $arraylistofpdfformat, $pdfa);
 print '</td></tr>';
 
 print '</table>';
