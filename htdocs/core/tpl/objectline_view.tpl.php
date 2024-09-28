@@ -7,9 +7,9 @@
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2017		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2022		OpenDSI				<support@open-dsi.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024 		Alexandre Spangaro 		<alexandre@inovea-conseil.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Alexandre Spangaro  <alexandre@inovea-conseil.com>
+ * Copyright (C) 2024       Frédéric France		  <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -388,7 +388,7 @@ if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 	$coldisplay++;
 	if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
-		$previous_progress = $line->get_allprev_progress($object->id);
+		$previous_progress = $line->getAllPrevProgress($object->id);
 		$current_progress = $previous_progress + floatval($line->situation_percent);
 		print '<td class="linecolcycleref nowrap right">'.$current_progress.'%</td>';
 		$coldisplay++;
