@@ -1207,8 +1207,7 @@ span.fa.fa-plus-circle.paddingleft {
 .fa-toggle-on, .fa-toggle-off, .size2x { font-size: 2em; }
 .websiteselectionsection .fa-toggle-on, .websiteselectionsection .fa-toggle-off,
 .asetresetmodule .fa-toggle-on, .asetresetmodule .fa-toggle-off,
-.tdwebsitesearchresult .fa-toggle-on, .tdwebsitesearchresult .fa-toggle-off
-{
+.tdwebsitesearchresult .fa-toggle-on, .tdwebsitesearchresult .fa-toggle-off {
 	font-size: 1.5em;
 	vertical-align: text-bottom;
 }
@@ -2183,6 +2182,10 @@ datalist {
 
 	input.buttonpayment {
 		min-width: 300px;
+	}
+
+	.colorblack.totalnboflines {
+		margin-left: 4px !important;
 	}
 }
 
