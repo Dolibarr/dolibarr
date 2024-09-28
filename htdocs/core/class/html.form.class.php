@@ -659,11 +659,11 @@ class Form
 
 		$extrastyle = '';
 		if ($direction < 0) {
-			$extracss = ($extracss ? $extracss . ' ' : '') . ($notabs != 3 ? 'inline-block' : '');
+			$extracss = ($extracss ? $extracss : '') . ($notabs != 3 ? ' inline-block' : '');
 			$extrastyle = 'padding: 0px; padding-left: 2px;';
 		}
 		if ($direction > 0) {
-			$extracss = ($extracss ? $extracss . ' ' : '') . ($notabs != 3 ? 'inline-block' : '');
+			$extracss = ($extracss ? $extracss : '') . ($notabs != 3 ? ' inline-block' : '');
 			$extrastyle = 'padding: 0px; padding-right: 2px;';
 		}
 
@@ -747,7 +747,7 @@ class Form
 	 * @param 	int 		$forcenowrap 		Force no wrap between text and picto (works with notabs=2 only)
 	 * @return	string                        	HTML code of text, picto, tooltip
 	 */
-	public function textwithpicto($text, $htmltext, $direction = 1, $type = 'help', $extracss = '', $noencodehtmltext = 0, $notabs = 3, $tooltiptrigger = '', $forcenowrap = 0)
+	public function textwithpicto($text, $htmltext, $direction = 1, $type = 'help', $extracss = 'valignmiddle', $noencodehtmltext = 0, $notabs = 3, $tooltiptrigger = '', $forcenowrap = 0)
 	{
 		global $conf, $langs;
 
@@ -8824,21 +8824,21 @@ class Form
 	}
 
 	/**
-	 *    Return a HTML select string, built from an array of key+value, but content returned into select come from an Ajax call of an URL.
-	 *  Note: Do not apply langs->trans function on returned content of Ajax service, content may be entity encoded twice.
+	 * Return a HTML select string, built from an array of key+value, but content returned into select come from an Ajax call of an URL.
+	 * Note: Do not apply langs->trans function on returned content of Ajax service, content may be entity encoded twice.
 	 *
-	 * @param string $htmlname Name of html select area
-	 * @param string $url Url. Must return a json_encode of array(key=>array('text'=>'A text', 'url'=>'An url'), ...)
-	 * @param string $id Preselected key
-	 * @param string $moreparam Add more parameters onto the select tag
-	 * @param string $moreparamtourl Add more parameters onto the Ajax called URL
-	 * @param int $disabled Html select box is disabled
-	 * @param int $minimumInputLength Minimum Input Length
-	 * @param string $morecss Add more class to css styles
-	 * @param int $callurlonselect If set to 1, some code is added so an url return by the ajax is called when value is selected.
-	 * @param string $placeholder String to use as placeholder
-	 * @param integer $acceptdelayedhtml 1 = caller is requesting to have html js content not returned but saved into global $delayedhtmlcontent (so caller can show it at end of page to avoid flash FOUC effect)
-	 * @return    string                        HTML select string
+	 * @param 	string 		$htmlname 			Name of html select area
+	 * @param 	string 		$url 				Url. Must return a json_encode of array(key=>array('text'=>'A text', 'url'=>'An url'), ...)
+	 * @param 	string 		$id 				Preselected key
+	 * @param 	string 		$moreparam 			Add more parameters onto the select tag
+	 * @param 	string 		$moreparamtourl 	Add more parameters onto the Ajax called URL
+	 * @param 	int 		$disabled 			Html select box is disabled
+	 * @param 	int 		$minimumInputLength Minimum Input Length
+	 * @param 	string 		$morecss 			Add more class to css styles
+	 * @param 	int 		$callurlonselect 	If set to 1, some code is added so an url return by the ajax is called when value is selected.
+	 * @param 	string 		$placeholder 		String to use as placeholder
+	 * @param 	integer 	$acceptdelayedhtml 	1 = caller is requesting to have html js content not returned but saved into global $delayedhtmlcontent (so caller can show it at end of page to avoid flash FOUC effect)
+	 * @return  string                      	HTML select string
 	 * @see selectArrayFilter(), ajax_combobox() in ajax.lib.php
 	 */
 	public static function selectArrayAjax($htmlname, $url, $id = '', $moreparam = '', $moreparamtourl = '', $disabled = 0, $minimumInputLength = 1, $morecss = '', $callurlonselect = 0, $placeholder = '', $acceptdelayedhtml = 0)
@@ -9712,7 +9712,7 @@ class Form
 
 						print '<tr class="oddeven">';
 						print '<td class="left">';
-						print '<input type="radio" name="idtolinkto" id="' . $key . '_' . $objp->rowid . '" value="' . $objp->rowid . '">';
+						print '<input type="checkbox" name="idtolinkto[' . $key . '_' . $objp->rowid . ']" id="' . $key . '_' . $objp->rowid . '" value="' . $objp->rowid . '">';
 						print '</td>';
 						print '<td class="center"><label for="' . $key . '_' . $objp->rowid . '">' . $objp->ref . '</label></td>';
 						print '<td>' . (!empty($objp->ref_client) ? $objp->ref_client : (!empty($objp->ref_supplier) ? $objp->ref_supplier : '')) . '</td>';

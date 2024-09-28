@@ -29,15 +29,17 @@
 
 $dellinkid = GETPOSTINT('dellinkid');
 $addlink = GETPOST('addlink', 'alpha');
-$addlinkid = GETPOSTINT('idtolinkto');
+$addlinkids = GETPOST('idtolinkto', 'array:int');
 $addlinkref = GETPOST('reftolinkto', 'alpha');
 $cancellink = GETPOST('cancel', 'alpha');
 
 // Link object to another object
-if ($action == 'addlink' && !empty($permissiondellink) && !$cancellink && $id > 0 && $addlinkid > 0) {
+if ($action == 'addlink' && !empty($permissiondellink) && !$cancellink && $id > 0 && !empty($addlinkids)) {
 	$object->fetch($id);
 	$object->fetch_thirdparty();
-	$result = $object->add_object_linked($addlink, $addlinkid);
+	foreach ($addlinkids as $addlinkid) {
+		$result = $object->add_object_linked($addlink, $addlinkid);
+	}
 }
 
 // Link by reference
