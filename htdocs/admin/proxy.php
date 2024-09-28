@@ -127,7 +127,7 @@ print '<table class="centpercent noborder">';
 
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("Parameters").'</td>';
-print '<td width="200">'.$langs->trans("Value").'</td>';
+print '<td width="200"></td>';
 print "</tr>\n";
 
 
