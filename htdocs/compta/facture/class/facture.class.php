@@ -1979,11 +1979,16 @@ class Facture extends CommonInvoice
 
 			// Complete datas
 			if (!empty($params['fromajaxtooltip']) && !isset($this->totalpaid)) {
-				// Load the totalpaid field
 				$this->totalpaid = $this->getSommePaiement(0);
 			}
-			if (isset($this->status) && isset($this->totalpaid)) {
-				$datas['picto'] .= ' '.$this->getLibStatut(5, $this->totalpaid);
+			if (!empty($params['fromajaxtooltip']) && !isset($this->totalcreditnotes)) {
+				$this->totalcreditnotes = $this->getSumCreditNotesUsed(0);
+			}
+			if (!empty($params['fromajaxtooltip']) && !isset($this->totaldeposits)) {
+				$this->totaldeposits = $this->getSumDepositsUsed(0);
+			}
+			if (isset($this->status) && isset($this->totalpaid) && isset($this->totalcreditnotes) && isset($this->totaldeposits)) {
+				$datas['picto'] .= ' '.$this->getLibStatut(5, $this->totalpaid + $this->totalcreditnotes + $this->totaldeposits);
 			}
 			if ($moretitle) {
 				$datas['picto'] .= ' - '.$moretitle;

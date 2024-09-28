@@ -5176,9 +5176,13 @@ if ($action == 'create') {
 
 				$current_situation_counter = array();
 				foreach ($object->tab_previous_situation_invoice as $prev_invoice) {
-					$tmptotalpaidforthisinvoice = $prev_invoice->getSommePaiement();
+					$tmptotalallpayments = $prev_invoice->getSommePaiement(0);
+					$tmptotalallpayments += $prev_invoice->getSumDepositsUsed(0);
+					$tmptotalallpayments += $prev_invoice->getSumCreditNotesUsed(0);
+
 					$total_prev_ht += $prev_invoice->total_ht;
 					$total_prev_ttc += $prev_invoice->total_ttc;
+
 					$current_situation_counter[] = (($prev_invoice->type == Facture::TYPE_CREDIT_NOTE) ? -1 : 1) * $prev_invoice->situation_counter;
 					print '<tr class="oddeven">';
 					print '<td>'.$prev_invoice->getNomUrl(1).'</td>';
@@ -5189,17 +5193,22 @@ if ($action == 'create') {
 					}
 					print '<td class="right"><span class="amount">'.price($prev_invoice->total_ht).'</span></td>';
 					print '<td class="right"><span class="amount">'.price($prev_invoice->total_ttc).'</span></td>';
-					print '<td class="right">'.$prev_invoice->getLibStatut(3, $tmptotalpaidforthisinvoice).'</td>';
+					print '<td class="right">'.$prev_invoice->getLibStatut(3, $tmptotalallpayments).'</td>';
 					print '</tr>';
 				}
 			}
 
+			$totalallpayments = $object->getSommePaiement(0);
+			$totalallpayments += $object->getSumCreditNotesUsed(0);
+			$totalallpayments += $object->getSumDepositsUsed(0);
 
 			$total_global_ht += $total_prev_ht;
 			$total_global_ttc += $total_prev_ttc;
 			$total_global_ht += $object->total_ht;
 			$total_global_ttc += $object->total_ttc;
+
 			$current_situation_counter[] = (($object->type == Facture::TYPE_CREDIT_NOTE) ? -1 : 1) * $object->situation_counter;
+
 			print '<tr class="oddeven">';
 			print '<td>'.$object->getNomUrl(1).'</td>';
 			print '<td></td>';
@@ -5209,7 +5218,7 @@ if ($action == 'create') {
 			}
 			print '<td class="right"><span class="amount">'.price($object->total_ht).'</span></td>';
 			print '<td class="right"><span class="amount">'.price($object->total_ttc).'</span></td>';
-			print '<td class="right">'.$object->getLibStatut(3, $object->getSommePaiement()).'</td>';
+			print '<td class="right">'.$object->getLibStatut(3, $totalallpayments).'</td>';
 			print '</tr>';
 
 
@@ -5251,7 +5260,10 @@ if ($action == 'create') {
 				$total_next_ht = $total_next_ttc = 0;
 
 				foreach ($object->tab_next_situation_invoice as $next_invoice) {
-					$totalpaid = $next_invoice->getSommePaiement();
+					$totalpaid = $next_invoice->getSommePaiement(0);
+					$totalcreditnotes = $next_invoice->getSumCreditNotesUsed(0);
+					$totaldeposits = $next_invoice->getSumDepositsUsed(0);
+
 					$total_next_ht += $next_invoice->total_ht;
 					$total_next_ttc += $next_invoice->total_ttc;
 
@@ -5264,7 +5276,7 @@ if ($action == 'create') {
 					}
 					print '<td class="right"><span class="amount">'.price($next_invoice->total_ht).'</span></td>';
 					print '<td class="right"><span class="amount">'.price($next_invoice->total_ttc).'</span></td>';
-					print '<td class="right">'.$next_invoice->getLibStatut(3, $totalpaid).'</td>';
+					print '<td class="right">'.$next_invoice->getLibStatut(3, $totalpaid + $totalcreditnotes + $totaldeposits).'</td>';
 					print '</tr>';
 				}
 
