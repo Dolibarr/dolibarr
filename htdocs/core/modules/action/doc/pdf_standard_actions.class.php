@@ -23,7 +23,7 @@
 /**
  *	\file       htdocs/core/modules/action/doc/pdf_standard_actions.class.php
  *	\ingroup    commercial
- *	\brief      File to build PDF with events, it's not a standard module to generate a pdf for only one actioncomm
+ *	\brief      File to build PDF with events (reports), it's not a standard module to generate a pdf for only one actioncomm
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
