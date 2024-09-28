@@ -9372,16 +9372,16 @@ class Form
 	/**
 	 *  Show linked object block.
 	 *
-	 * @param 	CommonObject 	$object 						Object we want to show links to
-	 * @param 	string 			$morehtmlright 					More html to show on right of title
+	 * @param 	CommonObject 		$object 						Object we want to show links to
+	 * @param 	string 				$morehtmlright 					More html to show on right of title
 	 * @param 	array<int,string>	$compatibleImportElementsList 	Array of compatibles elements object for "import from" action
-	 * @param 	string 			$title 							Title
-	 * @return  int                                             Return Number of different types
+	 * @param 	string 				$title 							Title
+	 * @return  int                                             	Return Number of different types
 	 */
 	public function showLinkedObjectBlock($object, $morehtmlright = '', $compatibleImportElementsList = array(), $title = 'RelatedObjects')
 	{
 		global $conf, $langs, $hookmanager;
-		global $bc, $action;
+		global $action;
 
 		$object->fetchObjectLinked();
 
@@ -9531,17 +9531,20 @@ class Form
 	}
 
 	/**
-	 *  Show block with links to link to other objects.
+	 *  Show block with links "to link to" other objects.
 	 *
 	 * @param 	CommonObject 	$object 			Object we want to show links to
 	 * @param 	string[] 		$restrictlinksto 	Restrict links to some elements, for example array('order') or array('supplier_order'). null or array() if no restriction.
 	 * @param 	string[] 		$excludelinksto 	Do not show links of this type, for example array('order') or array('supplier_order'). null or array() if no exclusion.
+	 * @param	string			$nooutput			1=Return array with content instead of printing it.
 	 * @return  string                              HTML block
 	 */
-	public function showLinkToObjectBlock($object, $restrictlinksto = array(), $excludelinksto = array())
+	public function showLinkToObjectBlock($object, $restrictlinksto = array(), $excludelinksto = array(), $nooutput = 0)
 	{
 		global $conf, $langs, $hookmanager;
 		global $action;
+
+		$form = new Form($this->db);
 
 		$linktoelem = '';
 		$linktoelemlist = '';
@@ -9657,6 +9660,7 @@ class Form
 		}
 
 		// Build the html part with possible suggested links
+		$htmltoenteralink = '';
 		foreach ($possiblelinks as $key => $possiblelink) {
 			$num = 0;
 
@@ -9665,25 +9669,26 @@ class Form
 			}
 
 			if (!empty($possiblelink['perms']) && (empty($restrictlinksto) || in_array($key, $restrictlinksto)) && (empty($excludelinksto) || !in_array($key, $excludelinksto))) {
-				print '<div id="' . $key . 'list"' . (empty($conf->use_javascript_ajax) ? '' : ' style="display:none"') . '>';
+				$htmltoenteralink .= '<div id="' . $key . 'list"' . (empty($conf->use_javascript_ajax) ? '' : ' style="display:none"') . '>';
 
+				// Section for free ref input
 				if (!getDolGlobalString('MAIN_HIDE_LINK_BY_REF_IN_LINKTO')) {
-					print '<br>'."\n";
-					print '<!-- form to add a link from anywhere -->'."\n";
-					print '<form action="' . $_SERVER["PHP_SELF"] . '" method="POST" name="formlinkedbyref' . $key . '">';
-					print '<input type="hidden" name="id" value="' . $object->id . '">';
-					print '<input type="hidden" name="action" value="addlinkbyref">';
-					print '<input type="hidden" name="token" value="' . newToken() . '">';
-					print '<input type="hidden" name="addlink" value="' . $key . '">';
-					print '<table class="noborder">';
-					print '<tr>';
+					$htmltoenteralink .= '<br>'."\n";
+					$htmltoenteralink .= '<!-- form to add a link from anywhere -->'."\n";
+					$htmltoenteralink .= '<form action="' . $_SERVER["PHP_SELF"] . '" method="POST" name="formlinkedbyref' . $key . '">';
+					$htmltoenteralink .= '<input type="hidden" name="id" value="' . $object->id . '">';
+					$htmltoenteralink .= '<input type="hidden" name="action" value="addlinkbyref">';
+					$htmltoenteralink .= '<input type="hidden" name="token" value="' . newToken() . '">';
+					$htmltoenteralink .= '<input type="hidden" name="addlink" value="' . $key . '">';
+					$htmltoenteralink .= '<table class="noborder">';
+					$htmltoenteralink .= '<tr>';
 					//print '<td>' . $langs->trans("Ref") . '</td>';
-					print '<td class="center"><input type="text" placeholder="'.dol_escape_htmltag($langs->trans("Ref")).'" name="reftolinkto" value="' . dol_escape_htmltag(GETPOST('reftolinkto', 'alpha')) . '">&nbsp;';
-					print '<input type="submit" class="button small valignmiddle" value="' . $langs->trans('ToLink') . '">&nbsp;';
-					print '<input type="submit" class="button small" name="cancel" value="' . $langs->trans('Cancel') . '"></td>';
-					print '</tr>';
-					print '</table>';
-					print '</form>';
+					$htmltoenteralink .= '<td class="center"><input type="text" placeholder="'.dol_escape_htmltag($langs->trans("Ref")).'" name="reftolinkto" value="' . dol_escape_htmltag(GETPOST('reftolinkto', 'alpha')) . '">&nbsp;';
+					$htmltoenteralink .= '<input type="submit" class="button small valignmiddle" value="' . $langs->trans('ToLink') . '">&nbsp;';
+					$htmltoenteralink .= '<input type="submit" class="button small" name="cancel" value="' . $langs->trans('Cancel') . '"></td>';
+					$htmltoenteralink .= '</tr>';
+					$htmltoenteralink .= '</table>';
+					$htmltoenteralink .= '</form>';
 				}
 
 				$sql = $possiblelink['sql'];
@@ -9694,61 +9699,62 @@ class Form
 					$i = 0;
 
 					if ($num > 0) {
-						print '<br>';
-						print '<!-- form to add a link from object to same thirdparty -->'."\n";
-						print '<form action="' . $_SERVER["PHP_SELF"] . '" method="POST" name="formlinked' . $key . '">';
-						print '<input type="hidden" name="action" value="addlink">';
-						print '<input type="hidden" name="token" value="' . newToken() . '">';
-						print '<input type="hidden" name="id" value="' . $object->id . '">';
-						print '<input type="hidden" name="addlink" value="' . $key . '">';
-						print '<table class="noborder">';
-						print '<tr class="liste_titre">';
-						print '<td class="nowrap"></td>';
-						print '<td class="center">' . $langs->trans("Ref") . '</td>';
-						print '<td class="left">' . $langs->trans("RefCustomer") . '</td>';
-						print '<td class="right">' . $langs->trans("AmountHTShort") . '</td>';
-						print '<td class="left">' . $langs->trans("Company") . '</td>';
-						print '</tr>';
+						// Section for free predefined list
+						$htmltoenteralink .= '<br>';
+						$htmltoenteralink .= '<!-- form to add a link from object to same thirdparty -->'."\n";
+						$htmltoenteralink .= '<form action="' . $_SERVER["PHP_SELF"] . '" method="POST" name="formlinked' . $key . '">';
+						$htmltoenteralink .= '<input type="hidden" name="action" value="addlink">';
+						$htmltoenteralink .= '<input type="hidden" name="token" value="' . newToken() . '">';
+						$htmltoenteralink .= '<input type="hidden" name="id" value="' . $object->id . '">';
+						$htmltoenteralink .= '<input type="hidden" name="addlink" value="' . $key . '">';
+						$htmltoenteralink .= '<table class="noborder">';
+						$htmltoenteralink .= '<tr class="liste_titre">';
+						$htmltoenteralink .= '<td class="nowrap"></td>';
+						$htmltoenteralink .= '<td class="center">' . $langs->trans("Ref") . '</td>';
+						$htmltoenteralink .= '<td class="left">' . $langs->trans("RefCustomer") . '</td>';
+						$htmltoenteralink .= '<td class="right">' . $langs->trans("AmountHTShort") . '</td>';
+						$htmltoenteralink .= '<td class="left">' . $langs->trans("Company") . '</td>';
+						$htmltoenteralink .= '</tr>';
 						while ($i < $num) {
 							$objp = $this->db->fetch_object($resqllist);
 
-							print '<tr class="oddeven">';
-							print '<td class="left">';
-							print '<input type="checkbox" name="idtolinkto[' . $key . '_' . $objp->rowid . ']" id="' . $key . '_' . $objp->rowid . '" value="' . $objp->rowid . '">';
-							print '</td>';
-							print '<td class="center"><label for="' . $key . '_' . $objp->rowid . '">' . $objp->ref . '</label></td>';
-							print '<td>' . (!empty($objp->ref_client) ? $objp->ref_client : (!empty($objp->ref_supplier) ? $objp->ref_supplier : '')) . '</td>';
-							print '<td class="right">';
+							$htmltoenteralink .= '<tr class="oddeven">';
+							$htmltoenteralink .= '<td class="left">';
+							$htmltoenteralink .= '<input type="checkbox" name="idtolinkto[' . $key . '_' . $objp->rowid . ']" id="' . $key . '_' . $objp->rowid . '" value="' . $objp->rowid . '">';
+							$htmltoenteralink .= '</td>';
+							$htmltoenteralink .= '<td class="center"><label for="' . $key . '_' . $objp->rowid . '">' . $objp->ref . '</label></td>';
+							$htmltoenteralink .= '<td>' . (!empty($objp->ref_client) ? $objp->ref_client : (!empty($objp->ref_supplier) ? $objp->ref_supplier : '')) . '</td>';
+							$htmltoenteralink .= '<td class="right">';
 							if ($possiblelink['label'] == 'LinkToContract') {
-								$form = new Form($this->db);
-								print $form->textwithpicto('', $langs->trans("InformationOnLinkToContract")) . ' ';
+								$htmltoenteralink .= $form->textwithpicto('', $langs->trans("InformationOnLinkToContract")) . ' ';
 							}
-							print '<span class="amount">' . (isset($objp->total_ht) ? price($objp->total_ht) : '') . '</span>';
-							print '</td>';
-							print '<td>' . $objp->name . '</td>';
-							print '</tr>';
+							$htmltoenteralink .= '<span class="amount">' . (isset($objp->total_ht) ? price($objp->total_ht) : '') . '</span>';
+							$htmltoenteralink .= '</td>';
+							$htmltoenteralink .= '<td>' . $objp->name . '</td>';
+							$htmltoenteralink .= '</tr>';
 							$i++;
 						}
-						print '</table>';
-						print '<div class="center">';
+						$htmltoenteralink .= '</table>';
+						$htmltoenteralink .= '<div class="center">';
 						if ($num) {
-							print '<input type="submit" class="button valignmiddle marginleftonly marginrightonly small" value="' . $langs->trans('ToLink') . '">';
+							$htmltoenteralink .= '<input type="submit" class="button valignmiddle marginleftonly marginrightonly small" value="' . $langs->trans('ToLink') . '">';
 						}
 						if (empty($conf->use_javascript_ajax)) {
-							print '<input type="submit" class="button button-cancel marginleftonly marginrightonly small" name="cancel" value="' . $langs->trans("Cancel") . '"></div>';
+							$htmltoenteralink .= '<input type="submit" class="button button-cancel marginleftonly marginrightonly small" name="cancel" value="' . $langs->trans("Cancel") . '"></div>';
 						} else {
-							print '<input type="submit" onclick="jQuery(\'#' . $key . 'list\').toggle(); return false;" class="button button-cancel marginleftonly marginrightonly small" name="cancel" value="' . $langs->trans("Cancel") . '"></div>';
+							$htmltoenteralink .= '<input type="submit" onclick="jQuery(\'#' . $key . 'list\').toggle(); return false;" class="button button-cancel marginleftonly marginrightonly small" name="cancel" value="' . $langs->trans("Cancel") . '"></div>';
 						}
-						print '</form>';
+						$htmltoenteralink .= '</form>';
 					}
 
 					$this->db->free($resqllist);
 				} else {
 					dol_print_error($this->db);
 				}
-				print '</div>';
+				$htmltoenteralink .= '</div>';
 
-				//$linktoelem.=($linktoelem?' &nbsp; ':'');
+
+				// Complete the list for the combo box
 				if ($num > 0 || !getDolGlobalString('MAIN_HIDE_LINK_BY_REF_IN_LINKTO')) {
 					$linktoelemlist .= '<li><a href="#linkto' . $key . '" class="linkto dropdowncloseonclick" rel="' . $key . '">' . $langs->trans($possiblelink['label']) . ' (' . $num . ')</a></li>';
 					// } else $linktoelem.=$langs->trans($possiblelink['label']);
@@ -9787,6 +9793,12 @@ class Form
 				});
 				</script>
 		    ';
+		}
+
+		if ($nooutput) {
+			return array('linktoelem' => $linktoelem, 'htmltoenteralink' => $htmltoenteralink);
+		} else {
+			print $htmltoenteralink;
 		}
 
 		return $linktoelem;
