@@ -9710,19 +9710,19 @@ class Form
 						$htmltoenteralink .= '<table class="noborder">';
 						$htmltoenteralink .= '<tr class="liste_titre">';
 						$htmltoenteralink .= '<td class="nowrap"></td>';
-						$htmltoenteralink .= '<td class="center">' . $langs->trans("Ref") . '</td>';
-						$htmltoenteralink .= '<td class="left">' . $langs->trans("RefCustomer") . '</td>';
+						$htmltoenteralink .= '<td>' . $langs->trans("Ref") . '</td>';
+						$htmltoenteralink .= '<td>' . $langs->trans("RefCustomer") . '</td>';
 						$htmltoenteralink .= '<td class="right">' . $langs->trans("AmountHTShort") . '</td>';
-						$htmltoenteralink .= '<td class="left">' . $langs->trans("Company") . '</td>';
+						$htmltoenteralink .= '<td>' . $langs->trans("Company") . '</td>';
 						$htmltoenteralink .= '</tr>';
 						while ($i < $num) {
 							$objp = $this->db->fetch_object($resqllist);
 
 							$htmltoenteralink .= '<tr class="oddeven">';
-							$htmltoenteralink .= '<td class="left">';
+							$htmltoenteralink .= '<td>';
 							$htmltoenteralink .= '<input type="checkbox" name="idtolinkto[' . $key . '_' . $objp->rowid . ']" id="' . $key . '_' . $objp->rowid . '" value="' . $objp->rowid . '">';
 							$htmltoenteralink .= '</td>';
-							$htmltoenteralink .= '<td class="center"><label for="' . $key . '_' . $objp->rowid . '">' . $objp->ref . '</label></td>';
+							$htmltoenteralink .= '<td><label for="' . $key . '_' . $objp->rowid . '">' . $objp->ref . '</label></td>';
 							$htmltoenteralink .= '<td>' . (!empty($objp->ref_client) ? $objp->ref_client : (!empty($objp->ref_supplier) ? $objp->ref_supplier : '')) . '</td>';
 							$htmltoenteralink .= '<td class="right">';
 							if ($possiblelink['label'] == 'LinkToContract') {
