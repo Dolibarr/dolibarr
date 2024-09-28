@@ -3495,7 +3495,7 @@ div.login a:hover {
 	text-decoration:underline;
 }
 div.login_block_user, div.login_block_other { clear: both; }
-div.login_block_other { padding-top: 15px; }
+div.login_block_other, div.login_block_tools { padding-top: 15px; }
 
 .topnav div.login_block_user {
 	display: inline-block;
@@ -8284,6 +8284,10 @@ table.jPicker {
 	div.login_block {
 		border-right: 1px solid rgba(0,0,0,0.3);
 	}
+	div.login_block_other, div.login_block_tools {
+		display: inline-block;
+	}
+
 	.loginbuttonexternal {
 		width: 260px;
 	}

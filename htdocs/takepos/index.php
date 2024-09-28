@@ -1470,11 +1470,11 @@ if ($r % 3 == 2) {
 }
 
 if (getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR')) {
-	$menus[$r++] = array('title' => '<span class="fa fa-sign-out-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("Logout").'</div>', 'action' => 'window.location.href=\''.DOL_URL_ROOT.'/user/logout.php?token='.newToken().'\';');
+	$menus[$r++] = array('title' => '<span class="fa fa-sign-out-alt pictofixedwidth"></span><div class="trunc">'.$langs->trans("Logout").'</div>', 'action' => 'window.location.href=\''.DOL_URL_ROOT.'/user/logout.php?token='.newToken().'\';');
 }
 
 if (getDolGlobalString('TAKEPOS_WEIGHING_SCALE')) {
-	$menus[$r++] = array('title' => '<span class="fa fa-balance-scale paddingrightonly"></span><div class="trunc">'.$langs->trans("WeighingScale").'</div>', 'action' => 'WeighingScale();');
+	$menus[$r++] = array('title' => '<span class="fa fa-balance-scale pictofixedwidth"></span><div class="trunc">'.$langs->trans("WeighingScale").'</div>', 'action' => 'WeighingScale();');
 }
 
 ?>
