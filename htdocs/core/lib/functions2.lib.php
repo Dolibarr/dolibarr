@@ -120,7 +120,7 @@ function dolGetModulesDirs($subdir = '')
  *	@param		?Translate		$outputlangs		Output lang to use to autodetect output format if setup not done
  *	@return		string								Default paper format code
  */
-function dol_getDefaultFormat(?Translate $outputlangs = null)
+function dol_getDefaultFormat($outputlangs = null)
 {
 	global $langs;
 

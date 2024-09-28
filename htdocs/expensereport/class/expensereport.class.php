@@ -1185,7 +1185,7 @@ class ExpenseReport extends CommonObject
 	 * @param 	int<0,1>	$notrigger  0=launch triggers after, 1=disable triggers
 	 * @return  int         	        Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(?User $user = null, $notrigger = 0)
+	public function delete($user = null, $notrigger = 0)
 	{
 		global $conf;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';

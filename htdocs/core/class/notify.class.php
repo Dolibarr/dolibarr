@@ -266,7 +266,7 @@ class Notify
 	 *	@param		?User		$user		User deleting
 	 *  @return		int		    	        Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(?User $user = null)
+	public function delete($user = null)
 	{
 		$error = 0;
 
@@ -300,7 +300,7 @@ class Notify
 	 * @param   int<0,1>	$notrigger  1=Disable triggers
 	 * @return	int						Return integer <0 if KO, > 0 if OK (ID of newly created company notification information)
 	 */
-	public function create(?User $user = null, $notrigger = 0)
+	public function create($user = null, $notrigger = 0)
 	{
 		$now = dol_now();
 
@@ -402,7 +402,7 @@ class Notify
 	 *  @param  int<0,1>  	$notrigger   1=Disable triggers
 	 *	@return	int					     Return integer <=0 if KO, >0 if OK
 	 */
-	public function update(?User $user = null, $notrigger = 0)
+	public function update($user = null, $notrigger = 0)
 	{
 		global $langs;
 

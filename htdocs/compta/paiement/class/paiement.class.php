@@ -1021,7 +1021,7 @@ class Paiement extends CommonObject
 	 * @return	int     				Return integer <0 if KO, >0 if OK
 	 * @deprecated
 	 */
-	public function valide(?User $user = null)
+	public function valide($user = null)
 	{
 		return $this->validate($user);
 	}
@@ -1032,7 +1032,7 @@ class Paiement extends CommonObject
 	 * @param	?User		$user		User making validation
 	 * @return	int     				Return integer <0 if KO, >0 if OK
 	 */
-	public function validate(?User $user = null)
+	public function validate($user = null)
 	{
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET statut = 1 WHERE rowid = '.((int) $this->id);
 
@@ -1053,7 +1053,7 @@ class Paiement extends CommonObject
 	 * @param	?User		$user		User making reject
 	 * @return  int     				Return integer <0 if KO, >0 if OK
 	 */
-	public function reject(?User $user = null)
+	public function reject($user = null)
 	{
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET statut = 2 WHERE rowid = '.((int) $this->id);
 

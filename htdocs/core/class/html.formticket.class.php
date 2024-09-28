@@ -182,7 +182,7 @@ class FormTicket
 	 * @param	?Ticket			$object					[=NULL] Ticket object
 	 * @return 	void
 	 */
-	public function showForm($withdolfichehead = 0, $mode = 'edit', $public = 0, ?Contact $with_contact = null, $action = '', ?Ticket $object = null)
+	public function showForm($withdolfichehead = 0, $mode = 'edit', $public = 0, $with_contact = null, $action = '', $object = null)
 	{
 		global $conf, $langs, $user, $hookmanager;
 

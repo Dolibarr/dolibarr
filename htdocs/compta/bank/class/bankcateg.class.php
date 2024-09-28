@@ -176,7 +176,7 @@ class BankCateg // extends CommonObject
 	 * @param  int<0,1>		$notrigger 	0=launch triggers after, 1=disable triggers
 	 * @return int          	        Return integer <0 if KO, >0 if OK
 	 */
-	public function update(?User $user = null, $notrigger = 0)
+	public function update($user = null, $notrigger = 0)
 	{
 		global $conf;
 		$error = 0;

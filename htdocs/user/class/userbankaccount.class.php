@@ -91,7 +91,7 @@ class UserBankAccount extends Account
 	 * @param	int<0,1>	$notrigger	1=Disable triggers
 	 * @return	int						Return integer <0 if KO, >= 0 if OK
 	 */
-	public function create(?User $user = null, $notrigger = 0)
+	public function create($user = null, $notrigger = 0)
 	{
 		$now = dol_now();
 
@@ -119,7 +119,7 @@ class UserBankAccount extends Account
 	 *	@param	int<0,1>	$notrigger	1=Disable triggers
 	 *	@return	int						Return integer <=0 if KO, >0 if OK
 	 */
-	public function update(?User $user = null, $notrigger = 0)
+	public function update($user = null, $notrigger = 0)
 	{
 		$error = 0;
 
@@ -262,7 +262,7 @@ class UserBankAccount extends Account
 	 *	@param  int<0,1>	$notrigger	1=Disable triggers
 	 *  @return int      	       		Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(?User $user = null, $notrigger = 0)
+	public function delete($user = null, $notrigger = 0)
 	{
 		$error = 0;
 

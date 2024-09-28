@@ -698,7 +698,7 @@ class Account extends CommonObject
 	 *  @param  int     $notrigger  1=Disable triggers
 	 *  @return int        			Return integer < 0 if KO, > 0 if OK
 	 */
-	public function create(User $user, $notrigger = 0)
+	public function create($user, $notrigger = 0)
 	{
 		global $langs, $conf;
 
@@ -883,11 +883,11 @@ class Account extends CommonObject
 	/**
 	 *    	Update bank account card
 	 *
-	 *    	@param	User	$user       Object user making action
-	 *      @param  int     $notrigger  1=Disable triggers
-	 *		@return	int					Return integer <0 if KO, >0 if OK
+	 *    	@param	User		$user       Object user making action
+	 *      @param  int<0,1>	$notrigger  1=Disable triggers
+	 *		@return	int						Return integer <0 if KO, >0 if OK
 	 */
-	public function update(User $user, $notrigger = 0)
+	public function update($user, $notrigger = 0)
 	{
 		global $langs, $conf;
 
@@ -1011,7 +1011,7 @@ class Account extends CommonObject
 	 *  @param	?User	$user       Object user making update
 	 *  @return	int					Return integer <0 if KO, >0 if OK
 	 */
-	public function update_bban(?User $user = null)
+	public function update_bban($user = null)
 	{
 		// phpcs:enable
 		global $conf, $langs;
@@ -1190,7 +1190,7 @@ class Account extends CommonObject
 	 *	@param  int<0,1>	$notrigger	1=Disable triggers
 	 *  @return int      	       		Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(?User $user = null, $notrigger = 0)
+	public function delete($user = null, $notrigger = 0)
 	{
 		$error = 0;
 
@@ -2348,7 +2348,7 @@ class AccountLine extends CommonObjectLine
 	 * @param	int<0,1>	$notrigger	1=Does not execute triggers, 0= execute triggers
 	 * @return	int 					Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(?User $user = null, $notrigger = 0)
+	public function delete($user = null, $notrigger = 0)
 	{
 		$nbko = 0;
 
@@ -2431,7 +2431,7 @@ class AccountLine extends CommonObjectLine
 	 *	@param	?User		$user	User object that delete
 	 *  @return	int 				Return integer <0 if KO, >0 if OK
 	 */
-	public function delete_urls(?User $user = null)
+	public function delete_urls($user = null)
 	{
 		// phpcs:enable
 		$nbko = 0;

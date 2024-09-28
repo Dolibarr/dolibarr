@@ -1262,7 +1262,7 @@ class Categorie extends CommonObject
 					|| preg_match('/'.$keyfilter3.'/', $fullpath) || preg_match('/'.$keyfilter4.'/', $fullpath));
 
 				if (($test && !$include) || (!$test && $include)) {
-					unset($this->cats[$key]);
+					unset($this->cats[$key]);  // @phpstan-ignore-line
 				}
 			}
 		}
