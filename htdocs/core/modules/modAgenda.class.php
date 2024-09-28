@@ -89,8 +89,8 @@ class modAgenda extends DolibarrModules
 		$this->const = array();
 		$r = 0;
 
-		$this->const[$r] = ["ACTION_EVENT_ADDON_PDF", "chaine", "standard", 'Name of PDF model of actioncomm', 0];
-		//$this->const[] = array('AGENDA_DEFAULT_FILTER_TYPE', 'chaine', 'AC_NON_AUTO', 'Default filter for type of event on agenda', 0, 'current');
+		// $this->const[$r] = ["ACTION_EVENT_ADDON_PDF", "chaine", "standard", 'Name of PDF model of actioncomm', 0];
+		// $this->const[] = array('AGENDA_DEFAULT_FILTER_TYPE', 'chaine', 'AC_NON_AUTO', 'Default filter for type of event on agenda', 0, 'current');
 		$sqlreadactions = "SELECT code, label, description FROM ".MAIN_DB_PREFIX."c_action_trigger ORDER by rang";
 		$resql = $this->db->query($sqlreadactions);
 		if ($resql) {
@@ -609,7 +609,7 @@ class modAgenda extends DolibarrModules
 
 		$sql = array(
 			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type='action' AND entity = ".((int) $conf->entity),
-			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','action',".((int) $conf->entity).")"
+			// "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','action',".((int) $conf->entity).")"
 		);
 
 		return $this->_init($sql, $options);
