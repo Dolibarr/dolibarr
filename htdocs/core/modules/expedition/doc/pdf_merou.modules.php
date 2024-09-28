@@ -4,8 +4,9 @@
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024	   MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024      Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024	   Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,7 +99,7 @@ class pdf_merou extends ModelePdfExpedition
 		$this->marge_droite = getDolGlobalInt('MAIN_PDF_MARGIN_RIGHT', 10);
 		$this->marge_haute = getDolGlobalInt('MAIN_PDF_MARGIN_TOP', 10);
 		$this->marge_basse = getDolGlobalInt('MAIN_PDF_MARGIN_BOTTOM', 10);
-
+		$this->corner_radius = getDolGlobalInt('MAIN_PDF_FRAME_CORNER_RADIUS', 0);
 		$this->option_logo = 1; // Display logo
 
 		// Get source company
@@ -256,7 +257,7 @@ class pdf_merou extends ModelePdfExpedition
 
 					// Rect takes a length in 3rd parameter
 					$pdf->SetDrawColor(192, 192, 192);
-					$pdf->Rect($this->marge_gauche, $tab_top - 1, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_note + 1);
+					$pdf->RoundedRect($this->marge_gauche, $tab_top - 1, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_note + 2, $this->corner_radius, '1234', 'D');
 
 					$tab_height -= $height_note;
 					$tab_top = $nexY + 6;
@@ -440,7 +441,7 @@ class pdf_merou extends ModelePdfExpedition
 			$pdf->SetXY(170, $tab_top);
 			$pdf->MultiCell(30, 5, $outputlangs->transnoentities("QtyToShip"), 0, 'C', 1);
 		}
-		$pdf->Rect(10, $tab_top, 190, $tab_height);
+		$pdf->RoundedRect(10, $tab_top, 190, $tab_height, $this->corner_radius, '1234', 'D');
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
@@ -631,7 +632,7 @@ class pdf_merou extends ModelePdfExpedition
 		$blExpX = $Xoff - 20;
 		$blW = 52;
 		$Ydef = $Yoff;
-		$pdf->Rect($blExpX, $Yoff, $blW, 26);
+		$pdf->RoundedRect($blExpX, $Yoff, $blW, 26, $this->corner_radius, '1234', 'D');
 
 		$object->fetch_thirdparty();
 
@@ -674,7 +675,7 @@ class pdf_merou extends ModelePdfExpedition
 		$pdf->SetFont('', 'B', $default_font_size - 3);
 		$pdf->SetXY($blDestX, $Yoff - 4);
 		$pdf->MultiCell($blW, 3, $outputlangs->transnoentities("Recipient"), 0, 'L');
-		$pdf->Rect($blDestX, $Yoff - 1, $blW, 26);
+		$pdf->RoundedRect($blDestX, $Yoff - 1, $blW, 26, $this->corner_radius, '1234', 'D');
 
 		// Show recipient name
 		$pdf->SetFont('', 'B', $default_font_size - 3);
