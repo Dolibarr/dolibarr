@@ -103,7 +103,7 @@ class pdf_standard_actions
 	public $marge_basse;
 
 	/**
-	 * @var array{width:float|int,height:float|int,unit:string} Array('width'=>w,'height'=>h,'unit'=>u);
+	 * @var array format
 	 */
 	public $format;
 
