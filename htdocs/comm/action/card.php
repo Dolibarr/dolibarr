@@ -1227,7 +1227,29 @@ if ($action == 'create') {
 						console.log("setdatefields");
                         setdatefields();
                     });
-
+					var old_startdate = null;
+					$("#ap").focus(function() {
+						old_startdate = new Date($("#apyear").val(), $("#apmonth").val() - 1, $("#apday").val());
+					});
+					$("#ap").next(".ui-datepicker-trigger").click(function() {
+						old_startdate = new Date($("#apyear").val(), $("#apmonth").val() - 1, $("#apday").val());
+					});
+					$("#ap").change(function() {
+						setTimeout(function() {
+							if ($("#p2").val() !== "") {
+								var new_startdate = new Date($("#apyear").val(), $("#apmonth").val() - 1, $("#apday").val());
+								var old_enddate = new Date($("#p2year").val(), $("#p2month").val() - 1, $("#p2day").val());
+								if (new_startdate > old_enddate) {
+									var timeDiff = old_enddate - old_startdate;
+									var new_enddate = new Date(new_startdate.getTime() + timeDiff);
+									$("#p2").val(formatDate(new_enddate, "' . $langs->trans('FormatDateShortJavaInput') . '"));
+									$("#p2day").val(new_enddate.getDate());
+									$("#p2month").val(new_enddate.getMonth() + 1);
+									$("#p2year").val(new_enddate.getFullYear());
+								}
+							}
+						}, 0);
+					});
                     $("#actioncode").change(function() {
                         if ($("#actioncode").val() == \'AC_RDV\') $("#dateend").addClass("fieldrequired");
                         else $("#dateend").removeClass("fieldrequired");
@@ -1819,6 +1841,29 @@ if ($id > 0) {
 	            		$("#fullday").change(function() {
 	            			setdatefields();
 	            		});
+						var old_startdate = null;
+						$("#ap").focus(function() {
+							old_startdate = new Date($("#apyear").val(), $("#apmonth").val() - 1, $("#apday").val());
+						});
+						$("#ap").next(".ui-datepicker-trigger").click(function() {
+							old_startdate = new Date($("#apyear").val(), $("#apmonth").val() - 1, $("#apday").val());
+						});
+						$("#ap").change(function() {
+							setTimeout(function() {
+								if ($("#p2").val() !== "") {
+									var new_startdate = new Date($("#apyear").val(), $("#apmonth").val() - 1, $("#apday").val());
+									var old_enddate = new Date($("#p2year").val(), $("#p2month").val() - 1, $("#p2day").val());
+									if (new_startdate > old_enddate) {
+										var timeDiff = old_enddate - old_startdate;
+										var new_enddate = new Date(new_startdate.getTime() + timeDiff);
+										$("#p2").val(formatDate(new_enddate, "' . $langs->trans('FormatDateShortJavaInput') . '"));
+										$("#p2day").val(new_enddate.getDate());
+										$("#p2month").val(new_enddate.getMonth() + 1);
+										$("#p2year").val(new_enddate.getFullYear());
+									}
+								}
+							}, 0);
+						});
 	            		$("#actioncode").change(function() {
                         	if ($("#actioncode").val() == \'AC_RDV\') $("#dateend").addClass("fieldrequired");
                         	else $("#dateend").removeClass("fieldrequired");
@@ -2336,12 +2381,13 @@ if ($id > 0) {
 		// Type
 		if (getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
 			print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td>';
-			$labeltoshow = $langs->trans("Action".$object->type_code);
+			$labeltype = ($langs->transnoentities("Action".$object->type_code) != "Action".$object->type_code) ? $langs->transnoentities("Action".$object->type_code) : $object->type_label;
+			$labeltoshow = $labeltype;
 			if ($object->code) {
 				$labeltoshow .= ' ('.$object->code.')';
 			}
 			print $object->getTypePicto('pictofixedwidth paddingright', $labeltoshow);
-			print $langs->trans("Action".$object->type_code);
+			print $labeltype;
 			print '</td></tr>';
 		}
 

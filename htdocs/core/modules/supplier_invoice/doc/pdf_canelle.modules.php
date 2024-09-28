@@ -724,7 +724,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 					$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
 					$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-					$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
+					$pdf->MultiCell($largcol2, $tab2_hl, price((string) $tvaval, 0, $outputlangs), 0, 'R', 1);
 				}
 			}
 			//}
@@ -749,7 +749,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 					$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
 					$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-					$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
+					$pdf->MultiCell($largcol2, $tab2_hl, price((string) $tvaval, 0, $outputlangs), 0, 'R', 1);
 				}
 			}
 			//}

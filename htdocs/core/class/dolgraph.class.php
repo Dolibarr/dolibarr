@@ -1,7 +1,8 @@
 <?php
-/* Copyright (c) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (c) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (c) 2003-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (c) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -689,7 +690,7 @@ class DolGraph
 		if ($max != 0) {
 			$max++;
 		}
-		$size = dol_strlen(abs(ceil($max)));
+		$size = dol_strlen((string) abs(ceil($max)));
 		$factor = 1;
 		for ($i = 0; $i < ($size - 1); $i++) {
 			$factor *= 10;
@@ -720,7 +721,7 @@ class DolGraph
 		if ($min != 0) {
 			$min--;
 		}
-		$size = dol_strlen(abs(floor($min)));
+		$size = dol_strlen((string) abs(floor($min)));
 		$factor = 1;
 		for ($i = 0; $i < ($size - 1); $i++) {
 			$factor *= 10;

@@ -30,11 +30,11 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
 
 /**
- * Check if the object exceeded the number of posts for a specific ip
- * @param  object    $object         Object to check
- * @param  int       $nb_post_max    Number max of posts
+ * Check if the object exceeded the number of posts for a specific ip in the same week
  *
- * @return int       return <0 if error, >0 if OK
+ * @param  object    $object        Object to check
+ * @param  int       $nb_post_max   Number max of posts
+ * @return int       				Return <0 if error, >0 if OK
  */
 function checkNbPostsForASpeceificIp($object, $nb_post_max)
 {
@@ -42,14 +42,14 @@ function checkNbPostsForASpeceificIp($object, $nb_post_max)
 
 	$nb_post_ip = 0;
 	$now = dol_now();
-	$minmonthpost = dol_time_plus_duree($now, -1, "m");
+	$minmonthpost = dol_time_plus_duree($now, -1, "w");
 
 	if (empty($object->ip)) {
 		$object->ip = getUserRemoteIP();
 	}
 
 	if ($nb_post_max > 0) {	// Calculate only if there is a limit to check
-		$sql = "SELECT COUNT(rowid) as nb_posts";
+		$sql = "SELECT COUNT(".(!empty($object->table_rowid) ? $object->table_rowid : 'rowid').") as nb_posts";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element;
 		$sql .= " WHERE ip = '".$db->escape($object->ip)."'";
 		$sql .= " AND datec > '".$db->idate($minmonthpost)."'";
@@ -64,6 +64,7 @@ function checkNbPostsForASpeceificIp($object, $nb_post_max)
 			}
 		} else {
 			array_push($object->errors, $db->lasterror());
+			return -1;
 		}
 	}
 	if ($nb_post_max > 0 && $nb_post_ip >= $nb_post_max) {

@@ -1,6 +1,8 @@
 Mrp=Manufacturing Orders
 MOs=Manufacturing orders
 ManufacturingOrder=Manufacturing Order
+ManufacturingOrderLine=Line of Manufacturing Order (consumption/production)
+ConsumptionAndProductionInMos=Manufacturing Orders and lines of Consumption and Production
 MRPDescription=Module to manage production and Manufacturing Orders (MO).
 MRPArea=MRP Area
 MrpSetupPage=Setup of module MRP
@@ -140,3 +142,4 @@ QtyCantBeSplit= Quantity cannot be split
 NoRemainQtyToDispatch=No quantity remaining to divide
 THMOperatorEstimatedHelp=Estimated cost of operator per hour. Will be used to estimate cost of a BOM using this workstation.
 THMMachineEstimatedHelp=Estimated cost of machine per hour. Will be used to estimate cost of a BOM using this workstation.
+BadValueForquantityToConsume=Quantity to consume for a material cannot be 0 or negative
