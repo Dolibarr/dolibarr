@@ -109,12 +109,13 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $dirs = array();
 
 	/**
-	 * @var array Module boxes
+	 * @var array<array{file?:string,note?:string,enabledbydefaulton:string,1?:string}> Module boxes
 	 */
 	public $boxes = array();
 
 	/**
-	 * @var array Module constants
+	 * @var	array<array{0:string,1:string,2:string|int,3:string,4?:int<0,1>,5?:string,6?:int<0,1>}> Module constants
+	 *		(0:name,1:type,2:val,3:note,4:visible,5:entity,6:deleteonunactive)
 	 */
 	public $const = array();
 
