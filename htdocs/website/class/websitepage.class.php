@@ -73,7 +73,7 @@ class WebsitePage extends CommonObject
 	public $fk_page;		// If translation of another page
 
 	/**
-	 * @var ?string Page url
+	 * @var string Page url
 	 */
 	public $pageurl;
 
