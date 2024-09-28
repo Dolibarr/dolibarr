@@ -42,8 +42,14 @@ class pdf_standard_actions
 	 */
 	public $db;
 
+	/**
+	 * @var string error message
+	 */
 	public $error;
 
+	/**
+	 * @var string[] array of errors messages
+	 */
 	public $errors;
 
 	/**
@@ -53,32 +59,68 @@ class pdf_standard_actions
 
 	public $date_edition;
 
+	/**
+	 * @var int year
+	 */
 	public $year;
 
+	/**
+	 * @var int month
+	 */
 	public $month;
 
+	/**
+	 * @var string title
+	 */
 	public $title;
 
+	/**
+	 * @var string subject
+	 */
 	public $subject;
 
+	/**
+	 * @var int left margin
+	 */
 	public $marge_gauche;
 
+	/**
+	 * @var int right margin
+	 */
 	public $marge_droite;
 
+	/**
+	 * @var int top margin
+	 */
 	public $marge_haute;
 
+	/**
+	 * @var int bottom margin
+	 */
 	public $marge_basse;
 
+	/**
+	 * @var array{width:float|int,height:float|int,unit:string} Array('width'=>w,'height'=>h,'unit'=>u);
+	 */
 	public $format;
 
+	/**
+	 * @var string type of doc
+	 */
 	public $type;
 
+	/**
+	 * @var int page height
+	 */
 	public $page_hauteur;
 
+	/**
+	 * @var int page wicth
+	 */
 	public $page_largeur;
 
 	/**
-	 * @var array
+	 * @var array{fullpath:string}
 	 */
 	public $result;
 
