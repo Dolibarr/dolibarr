@@ -75,18 +75,18 @@ class box_graph_product_distribution extends ModeleBoxes
 		include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 		include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
-		$param_year = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_year';
-		$param_showinvoicenb = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_showinvoicenb';
-		$param_showpropalnb = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_showpropalnb';
-		$param_showordernb = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_showordernb';
+		$param_year = 'DOLUSER_box_'.$this->boxcode.'_year';
+		$param_showinvoicenb = 'DOLUSER_box_'.$this->boxcode.'_showinvoicenb';
+		$param_showpropalnb = 'DOLUSER_box_'.$this->boxcode.'_showpropalnb';
+		$param_showordernb = 'DOLUSER_box_'.$this->boxcode.'_showordernb';
 		$autosetarray = preg_split("/[,;:]+/", GETPOST('DOL_AUTOSET_COOKIE'));
-		if (in_array('DOLUSERCOOKIE_box_'.$this->boxcode, $autosetarray)) {
+		if (in_array('DOLUSER_box_'.$this->boxcode, $autosetarray)) {
 			$year = GETPOSTINT($param_year);
 			$showinvoicenb = GETPOST($param_showinvoicenb, 'alpha');
 			$showpropalnb = GETPOST($param_showpropalnb, 'alpha');
 			$showordernb = GETPOST($param_showordernb, 'alpha');
 		} else {
-			$tmparray = (!empty($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode]) ? json_decode($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode], true) : array());
+			$tmparray = (!empty($_COOKIE['DOLUSER_box_'.$this->boxcode]) ? json_decode($_COOKIE['DOLUSER_box_'.$this->boxcode], true) : array());
 			$year = (!empty($tmparray['year']) ? $tmparray['year'] : '');
 			$showinvoicenb = (!empty($tmparray['showinvoicenb']) ? $tmparray['showinvoicenb'] : '');
 			$showpropalnb = (!empty($tmparray['showpropalnb']) ? $tmparray['showpropalnb'] : '');
@@ -354,7 +354,7 @@ class box_graph_product_distribution extends ModeleBoxes
 			$stringtoshow .= '<input type="hidden" name="token" value="'.newToken().'">';
 			$stringtoshow .= '<input type="hidden" name="action" value="'.$refreshaction.'">';
 			$stringtoshow .= '<input type="hidden" name="page_y" value="">';
-			$stringtoshow .= '<input type="hidden" name="DOL_AUTOSET_COOKIE" value="DOLUSERCOOKIE_box_'.$this->boxcode.':year,showinvoicenb,showpropalnb,showordernb">';
+			$stringtoshow .= '<input type="hidden" name="DOL_AUTOSET_COOKIE" value="DOLUSER_box_'.$this->boxcode.':year,showinvoicenb,showpropalnb,showordernb">';
 			if (isModEnabled("propal") || $user->hasRight('propal', 'lire')) {
 				$stringtoshow .= '<input type="checkbox" name="'.$param_showpropalnb.'"'.($showpropalnb ? ' checked' : '').'> '.$langs->trans("ForProposals");
 				$stringtoshow .= '&nbsp;';

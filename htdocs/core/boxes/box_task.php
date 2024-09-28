@@ -75,7 +75,7 @@ class box_task extends ModeleBoxes
 		$projectstatic = new Project($this->db);
 		$taskstatic = new Task($this->db);
 		$form = new Form($this->db);
-		$cookie_name = 'DOLUSERCOOKIE_boxfilter_task';
+		$cookie_name = 'DOLUSER_boxfilter_task';
 		$boxcontent = '';
 		$socid = $user->socid;
 
