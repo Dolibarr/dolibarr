@@ -3624,7 +3624,7 @@ class Facture extends CommonInvoice
 						$line = $this->lines[$i];
 						'@phan-var-force FactureLigne $line';
 						if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
-							$previousprogress = $line->get_allprev_progress($line->fk_facture);
+							$previousprogress = $line->getAllPrevProgress($line->fk_facture);
 							$current_progress = (float) $line->situation_percent;
 							$full_progress = $previousprogress + $current_progress;
 							$final = ($full_progress == 100);
@@ -4394,7 +4394,7 @@ class Facture extends CommonInvoice
 			$percent = 100;
 		}
 		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
-			$previous_progress = $line->get_allprev_progress($line->fk_facture);
+			$previous_progress = $line->getAllPrevProgress($line->fk_facture);
 			$current_progress = $percent - $previous_progress;
 			$line->situation_percent = $current_progress;
 			$tabprice = calcul_price_total($line->qty, $line->subprice, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 0, 'HT', 0, $line->product_type, $mysoc, array(), $current_progress);
