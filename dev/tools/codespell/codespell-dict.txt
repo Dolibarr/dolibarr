@@ -8,6 +8,7 @@ aplhanothtml->alphanohtml
 aploha->alpha
 aplohanothtml->alphanohtml
 aplphanothtml->alphanohtml
+centpecent->centpercent
 choosed->chosen
 cumuled->cumulative
 dokument->document
