@@ -57,6 +57,9 @@ class pdf_standard_actions
 	 */
 	public $description;
 
+	/**
+	 * @var int edition date
+	 */
 	public $date_edition;
 
 	/**
