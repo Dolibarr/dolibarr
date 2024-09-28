@@ -116,7 +116,7 @@ if ($action == 'set') {
 	} else {
 		setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 	}
-} elseif ($action == 'specimen') {  // For orders
+} elseif ($action == 'specimen') {  // For actioncomm
 	$modele = GETPOST('module', 'alpha');
 
 	$action = new ActionComm($db);
@@ -140,10 +140,10 @@ if ($action == 'set') {
 	if ($classname !== '') {
 		require_once $file;
 
-		$module = new $classname($db, $commande);
+		$module = new $classname($db, $action);
 		'@phan-var-force pdf_standard_actions $module';
 
-		if ($module->write_file($commande, $langs) > 0) {
+		if ($module->write_file($action, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=action&file=SPECIMEN.pdf");
 			return;
 		} else {
