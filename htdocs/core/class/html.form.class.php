@@ -9667,7 +9667,7 @@ class Form
 			if (!empty($possiblelink['perms']) && (empty($restrictlinksto) || in_array($key, $restrictlinksto)) && (empty($excludelinksto) || !in_array($key, $excludelinksto))) {
 				print '<div id="' . $key . 'list"' . (empty($conf->use_javascript_ajax) ? '' : ' style="display:none"') . '>';
 
-				if (getDolGlobalString('MAIN_HIDE_LINK_BY_REF_IN_LINKTO')) {
+				if (!getDolGlobalString('MAIN_HIDE_LINK_BY_REF_IN_LINKTO')) {
 					print '<br>'."\n";
 					print '<!-- form to add a link from anywhere -->'."\n";
 					print '<form action="' . $_SERVER["PHP_SELF"] . '" method="POST" name="formlinkedbyref' . $key . '">';
@@ -9749,7 +9749,7 @@ class Form
 				print '</div>';
 
 				//$linktoelem.=($linktoelem?' &nbsp; ':'');
-				if ($num > 0 || getDolGlobalString('MAIN_HIDE_LINK_BY_REF_IN_LINKTO')) {
+				if ($num > 0 || !getDolGlobalString('MAIN_HIDE_LINK_BY_REF_IN_LINKTO')) {
 					$linktoelemlist .= '<li><a href="#linkto' . $key . '" class="linkto dropdowncloseonclick" rel="' . $key . '">' . $langs->trans($possiblelink['label']) . ' (' . $num . ')</a></li>';
 					// } else $linktoelem.=$langs->trans($possiblelink['label']);
 				} else {

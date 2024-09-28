@@ -43,7 +43,7 @@ if ($action == 'addlink' && !empty($permissiondellink) && !$cancellink && $id > 
 }
 
 // Link by reference
-if ($action == 'addlinkbyref' && !empty($permissiondellink) && !$cancellink && $id > 0 && !empty($addlinkref) && getDolGlobalString('MAIN_HIDE_LINK_BY_REF_IN_LINKTO')) {
+if ($action == 'addlinkbyref' && !empty($permissiondellink) && !$cancellink && $id > 0 && !empty($addlinkref) && !getDolGlobalString('MAIN_HIDE_LINK_BY_REF_IN_LINKTO')) {
 	$element_prop = getElementProperties($addlink);
 	if (is_array($element_prop)) {
 		dol_include_once('/' . $element_prop['classpath'] . '/' . $element_prop['classfile'] . '.class.php');
