@@ -2714,7 +2714,7 @@ if ($action == 'create') {
 
 		// Payment term
 		print '<tr><td>';
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
+		print '<table class="nobordernopadding centpecent"><tr><td>';
 		print $langs->trans('PaymentConditionsShort');
 		print '</td>';
 		if ($action != 'editconditions' && $usercancreate && $caneditfield) {
