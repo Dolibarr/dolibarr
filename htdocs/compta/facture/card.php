@@ -2161,7 +2161,6 @@ if (empty($reshook)) {
 		$price_ttc_devise = '';
 		$price_min = '';
 		$price_min_ttc = '';
-		$price_base_type = '';
 
 		if (GETPOST('price_ht') !== '') {
 			$price_ht = price2num(GETPOST('price_ht'), 'MU', 2);
@@ -2264,8 +2263,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		$price_base_type = '';  // Initialise (for static analysis)
-
+		$price_base_type = null;
 		if (!$error && ($qty >= 0) && (!empty($product_desc) || (!empty($idprod) && $idprod > 0))) {
 			$ret = $object->fetch($id);
 			if ($ret < 0) {
@@ -3013,7 +3011,6 @@ if (empty($reshook)) {
 
 		if (!empty($importLines) && is_array($importLines) && !empty($fromElement) && ctype_alpha($fromElement) && !empty($fromElementid)) {
 			$lineClassName = '';
-
 			if ($fromElement == 'commande') {
 				dol_include_once('/'.$fromElement.'/class/'.$fromElement.'.class.php');
 				$lineClassName = 'OrderLine';
