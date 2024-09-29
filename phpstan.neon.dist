@@ -76,7 +76,7 @@ parameters:
 		- '#::(options)\(\) expects int\|string#'
 		- '# (print_barre_liste|dol_substr) expects int\|null#'
 		- '#(?:colorAdjustBrightness|imap_(?:(?:fetch)?body|fetchstructure)) expects int, string#'
-		- '# (Setup|Asset|Proposals|Orders|BonPrelevement|Thirdparties)::_fetch\S*\(\) expects int, string#'
+		- '# (Setup|Asset|BonPrelevement|Thirdparties)::_fetch\S*\(\) expects int, string#'
 		- '#(sendTicketMessageByEmail|addItemsFact|update_price|recur|addDepreciationLine|addline|generate|update|update_label|getSelectConditionsPaiements|select_state|listBoxes|addLineRec|literalBarcodeType)\(\) expects int, string#'
 		- '#on array{url: mixed} in empty\(\) does not exist.#'
 		- '#EvalMath::trigger\(\) expects string, int given#'
