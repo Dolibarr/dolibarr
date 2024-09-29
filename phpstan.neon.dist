@@ -84,7 +84,7 @@ parameters:
 		- '# EmailCollector::getpart\(\) expects string#'
 		- '#expects int, float#'
 		- '#::saveboxorder\(\) expects int, array#'
-		- '# (fetchObjectByElement|print_actions_filter|dol_mktime|dol_remove_file_process|displayUsersListWithPicto) expects int, array\|string given.#'
+		- '# (fetchObjectByElement|print_actions_filter|dol_mktime|dol_remove_file_process) expects int, array\|string given.#'
 		- '# (CSMSFile) constructor expects int, array\|string given.#'
 		- '#(?:ProductFournisseur::logPrice\(\)) expects float\|null#'
 		- '#(?:(?:Asset::addDepreciationL|Facture(?:(?:(?:Fournisseur)?::add|Fournisseur::update)l))ine\(\)|calcul_price_total|dol_convertToWord|(?:loanCalcMonthlyPaymen|print_paypal_redirec)t) expects float, string given.#'

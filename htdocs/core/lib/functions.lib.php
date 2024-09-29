@@ -6406,7 +6406,7 @@ function print_barre_liste($title, $page, $file, $options = '', $sortfield = '',
 	//print 'totalnboflines='.$totalnboflines.'-savlimit='.$savlimit.'-limit='.$limit.'-num='.$num.'-nextpage='.$nextpage.'-hideselectlimit='.$hideselectlimit.'-hidenavigation='.$hidenavigation;
 
 	print "\n";
-	print "<!-- Begin title -->\n";
+	print "<!-- Begin print_barre_liste -->\n";
 	print '<table class="centpercent notopnoleftnoright table-fiche-title'.($morecss ? ' '.$morecss : '').'"><tr>'; // maring bottom must be same than into load_fiche_tire
 
 	// Left
@@ -6417,9 +6417,9 @@ function print_barre_liste($title, $page, $file, $options = '', $sortfield = '',
 
 	print '<td class="nobordernopadding valignmiddle col-title">';
 	print '<div class="titre inline-block">';
-	print '<span class="inline-block">'.dolPrintLabel($title).'</span>';	// $title may contains HTML
+	print '<span class="inline-block valignmiddle">'.dolPrintLabel($title).'</span>';	// $title may contains HTML
 	if (!empty($title) && $savtotalnboflines >= 0 && (string) $savtotalnboflines != '') {
-		print '<span class="opacitymedium colorblack marginleftonly totalnboflines" title="'.$langs->trans("NbRecordQualified").'">('.$totalnboflines.')</span>';
+		print '<span class="opacitymedium colorblack marginleftonly totalnboflines valignmiddle" title="'.$langs->trans("NbRecordQualified").'">('.$totalnboflines.')</span>';
 	}
 	print '</div></td>';
 
