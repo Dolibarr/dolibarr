@@ -455,7 +455,7 @@ class Context
 	/**
 	 * Set errors
 	 *
-	 * @param 	array	$errors		Errors
+	 * @param 	string[]	$errors		Errors
 	 * @return	void
 	 */
 	public function setError($errors)
