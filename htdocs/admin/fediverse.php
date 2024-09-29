@@ -295,8 +295,26 @@ print '<td>https://mastodon.social/api/v1/accounts/id_user</td>';
 print '</tr>';
 $vartosmtpstype = 'MAIN_MAIL_SMTPS_AUTH_TYPE_EMAILING';
 
+print '<script>
+$(document).ready(function() {
+    function toggleOAuthServiceDisplay() {
+        if ($("#radio_oauth").is(":checked")) {
+            $("#oauth_service_div").show();
+        } else {
+            $("#oauth_service_div").hide();
+        }
+    }
+
+    toggleOAuthServiceDisplay();
+
+    $("input[name=\"'.$vartosmtpstype.'\"]").change(function() {
+        toggleOAuthServiceDisplay();
+    });
+});
+</script>';
+
 // Methods oauth
-print '<td>'.$langs->trans("MAIN_MAIL_SMTPS_AUTH_TYPE").'</td>';
+print '<tr><td>'.$langs->trans("MAIN_MAIL_SMTPS_AUTH_TYPE").'</td>';
 print '<td>';
 print '<input type="radio" id="radio_oauth" name="'.$vartosmtpstype.'" value="XOAUTH2"'.(getDolGlobalString($vartosmtpstype) == 'XOAUTH2' ? ' checked' : '').(isModEnabled('oauth') ? '' : ' disabled').'>';
 print '<label for="radio_oauth">'.$form->textwithpicto($langs->trans("UseOauth"), $langs->trans("OauthNotAvailableForAllAndHadToBeCreatedBefore")).'</label>';
