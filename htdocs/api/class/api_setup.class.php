@@ -1,12 +1,12 @@
 <?php
-/* Copyright (C) 2016   Xebax Christy           <xebax@wanadoo.fr>
- * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2017	Regis Houssin	        <regis.houssin@inodbox.com>
- * Copyright (C) 2017	Neil Orley	            <neil.orley@oeris.fr>
- * Copyright (C) 2018-2021   Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2018-2022   Thibault FOUCART        <support@ptibogxiv.net>
- * Copyright (C) 2024        Jon Bendtsen            <jon.bendtsen.github@jonb.dk>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2016       Xebax Christy           <xebax@wanadoo.fr>
+ * Copyright (C) 2016	    Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2017	    Regis Houssin	        <regis.houssin@inodbox.com>
+ * Copyright (C) 2017	    Neil Orley	            <neil.orley@oeris.fr>
+ * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2022  Thibault FOUCART        <support@ptibogxiv.net>
+ * Copyright (C) 2024       Jon Bendtsen            <jon.bendtsen.github@jonb.dk>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  *
  * This program is free software; you can redistribute it and/or modify
@@ -419,7 +419,7 @@ class Setup extends DolibarrApi
 	 */
 	public function getRegionByCode($code)
 	{
-		return $this->_fetchCregion('', $code);
+		return $this->_fetchCregion(0, $code);
 	}
 
 	/**
@@ -528,7 +528,7 @@ class Setup extends DolibarrApi
 	 */
 	public function getStateByCode($code)
 	{
-		return $this->_fetchCstate('', $code);
+		return $this->_fetchCstate(0, $code);
 	}
 
 	/**
@@ -637,7 +637,7 @@ class Setup extends DolibarrApi
 	 */
 	public function getCountryByCode($code, $lang = '')
 	{
-		return $this->_fetchCcountry('', $code, '', $lang);
+		return $this->_fetchCcountry(0, $code, '', $lang);
 	}
 
 	/**
@@ -654,7 +654,7 @@ class Setup extends DolibarrApi
 	 */
 	public function getCountryByISO($iso, $lang = '')
 	{
-		return $this->_fetchCcountry('', '', $iso, $lang);
+		return $this->_fetchCcountry(0, '', $iso, $lang);
 	}
 
 	/**
