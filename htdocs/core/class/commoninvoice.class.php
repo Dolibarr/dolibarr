@@ -609,7 +609,8 @@ abstract class CommonInvoice extends CommonObject
 	}
 
 	/**
-	 *	Return if an invoice was dispatched into bookkeeping
+	 *	Return if an invoice was transferred into accountnancy.
+	 *  This is true if at least on line was transferred into table accounting_bookkeeping
 	 *
 	 *	@return     int         Return integer <0 if KO, 0=no, 1=yes
 	 */
@@ -622,7 +623,9 @@ abstract class CommonInvoice extends CommonObject
 			$type = 'supplier_invoice';
 		}
 
-		$sql = " SELECT COUNT(ab.rowid) as nb FROM ".$this->db->prefix()."accounting_bookkeeping as ab WHERE ab.doc_type='".$this->db->escape($type)."' AND ab.fk_doc = ".((int) $this->id);
+		$sql = " SELECT COUNT(ab.rowid) as nb FROM ".$this->db->prefix()."accounting_bookkeeping as ab";
+		$sql .= " WHERE ab.doc_type='".$this->db->escape($type)."' AND ab.fk_doc = ".((int) $this->id);
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
