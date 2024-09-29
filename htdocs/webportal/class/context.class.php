@@ -115,14 +115,26 @@ class Context
 	 */
 	public $tplPath;
 
+	/**
+	 * @var stdClass
+	 */
 	public $topMenu;
 
+	/**
+	 * @var string root url
+	 */
 	public $rootUrl;
 
 	public $menu_active = array();
 
+	/**
+	 * @var string[] event messages
+	 */
 	public $eventMessages = array();
 
+	/**
+	 * @var string token key
+	 */
 	public $tokenKey = 'token';
 
 	/**
@@ -150,7 +162,6 @@ class Context
 	 * @var CommonObject Logged partnership
 	 */
 	public $logged_partnership = null;
-
 
 	/**
 	 * @var WebPortalTheme Theme data
