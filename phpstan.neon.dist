@@ -103,7 +103,6 @@ parameters:
 		- '# ldap_search expects array\|LDAP#'
 		- '# ajax_combobox expects array#'
 		- '# Context::setError\(\) expects array, string#'
-		- '# Form::formconfirm\(\) expects array#'
 		- '# FormWebPortal::selectForForms\(\) expects int, array#'
 		- '# Lettering::getBankLinesFromFkDocAndDocType\(\) expects array#'
 		- '# (Odf) constructor expects #'
