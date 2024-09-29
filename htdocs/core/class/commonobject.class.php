@@ -10352,7 +10352,7 @@ abstract class CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param	string		$morewhere		More SQL filters (' AND ...')
+	 * @param	string		$morewhere		More SQL filters (' AND ...'). No user coming from user input are allowed here. Only hard coded values.
 	 * @param	int<0,1>	$noextrafields	0=Default to load extrafields, 1=No extrafields
 	 * @return 	int<-1,1>        			Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
