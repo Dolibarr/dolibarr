@@ -2,7 +2,8 @@
 /* Copyright (C) 2005-2020	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2007		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2007-2012	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -276,7 +277,7 @@ $daylight = round($c - $b);
 $val = ($a >= 0 ? '+' : '').$a;
 $val .= ' ('.($a == 'unknown' ? 'unknown' : ($a >= 0 ? '+' : '').($a * 3600)).')';
 $val .= ' &nbsp; &nbsp; &nbsp; '.getServerTimeZoneString();
-$val .= ' &nbsp; &nbsp; &nbsp; '.$langs->trans("DaylingSavingTime").': '.((is_null($b) || is_null($c)) ? 'unknown' : ($a == $c ? yn($daylight) : yn(0).($daylight ? '  &nbsp; &nbsp; ('.$langs->trans('YesInSummer').')' : '')));
+$val .= ' &nbsp; &nbsp; &nbsp; '.$langs->trans("DaylingSavingTime").': '.((is_null($b) || is_null($c)) ? 'unknown' : ($a == $c ? yn((int) $daylight) : yn(0).($daylight ? '  &nbsp; &nbsp; ('.$langs->trans('YesInSummer').')' : '')));
 print $form->textwithtooltip($val, $txt, 2, 1, img_info(''));
 print '</td></tr>'."\n"; // value defined in http://fr3.php.net/manual/en/timezones.europe.php
 print '<tr class="oddeven"><td>&nbsp; => '.$langs->trans("CurrentHour").'</td><td>'.dol_print_date(dol_now('gmt'), 'dayhour', 'tzserver').'</td></tr>'."\n";

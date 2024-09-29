@@ -6417,7 +6417,7 @@ function print_barre_liste($title, $page, $file, $options = '', $sortfield = '',
 
 	print '<td class="nobordernopadding valignmiddle col-title">';
 	print '<div class="titre inline-block">';
-	print $title;	// $title may contains HTML
+	print '<span class="inline-block">'.dolPrintLabel($title).'</span>';	// $title may contains HTML
 	if (!empty($title) && $savtotalnboflines >= 0 && (string) $savtotalnboflines != '') {
 		print '<span class="opacitymedium colorblack marginleftonly totalnboflines" title="'.$langs->trans("NbRecordQualified").'">('.$totalnboflines.')</span>';
 	}
@@ -7693,10 +7693,10 @@ function get_default_localtax($thirdparty_seller, $thirdparty_buyer, $local, $id
 /**
  *	Return yes or no in current language
  *
- *	@param	string|int	$yesno			Value to test (1, 'yes', 'true' or 0, 'no', 'false')
- *	@param	integer		$case			1=Yes/No, 0=yes/no, 2=Disabled checkbox, 3=Disabled checkbox + Yes/No
- *	@param	int			$color			0=texte only, 1=Text is formatted with a color font style ('ok' or 'error'), 2=Text is formatted with 'ok' color.
- *	@return	string						HTML string
+ *	@param	int<0, 1>|'yes'|'true'|'no'|'false'	$yesno	Value to test (1, 'yes', 'true' or 0, 'no', 'false')
+ *	@param	integer			$case						1=Yes/No, 0=yes/no, 2=Disabled checkbox, 3=Disabled checkbox + Yes/No
+ *	@param	int				$color						0=texte only, 1=Text is formatted with a color font style ('ok' or 'error'), 2=Text is formatted with 'ok' color.
+ *	@return	string										HTML string
  */
 function yn($yesno, $case = 1, $color = 0)
 {

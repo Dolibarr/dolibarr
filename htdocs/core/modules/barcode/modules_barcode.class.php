@@ -145,7 +145,7 @@ abstract class ModeleNumRefBarCode extends CommonNumRefGenerator
 			if (getDolGlobalString('MAIN_BARCODE_CODE_ALWAYS_REQUIRED') && !empty($this->code_null)) {
 				$s .= '<strike>';
 			}
-			$s .= yn(!$this->code_null, 1, 2);
+			$s .= yn($this->code_null ? 0 : 1, 1, 2);
 			if (getDolGlobalString('MAIN_BARCODE_CODE_ALWAYS_REQUIRED') && !empty($this->code_null)) {
 				$s .= '</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
 			}
@@ -156,7 +156,7 @@ abstract class ModeleNumRefBarCode extends CommonNumRefGenerator
 			if (getDolGlobalString('MAIN_BARCODE_CODE_ALWAYS_REQUIRED') && !empty($this->code_null)) {
 				$s .= '<strike>';
 			}
-			$s .= yn(!$this->code_null, 1, 2);
+			$s .= yn($this->code_null ? 0 : 1, 1, 2);
 			if (getDolGlobalString('MAIN_BARCODE_CODE_ALWAYS_REQUIRED') && !empty($this->code_null)) {
 				$s .= '</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
 			}
@@ -167,7 +167,7 @@ abstract class ModeleNumRefBarCode extends CommonNumRefGenerator
 			if (getDolGlobalString('MAIN_BARCODE_CODE_ALWAYS_REQUIRED') && !empty($this->code_null)) {
 				$s .= '<strike>';
 			}
-			$s .= yn(!$this->code_null, 1, 2);
+			$s .= yn($this->code_null ? 0 : 1, 1, 2);
 			if (getDolGlobalString('MAIN_BARCODE_CODE_ALWAYS_REQUIRED') && !empty($this->code_null)) {
 				$s .= '</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
 			}
