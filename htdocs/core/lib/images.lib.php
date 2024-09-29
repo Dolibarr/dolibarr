@@ -423,7 +423,7 @@ function dolRotateImage($file_path)
  * Add exif orientation correction for image
  *
  * @param string $fileSource Full path to source image to rotate
- * @param string|bool $fileDest string : Full path to image to rotate | false return gd img  | null  the raw image stream will be outputted directly
+ * @param string|bool|null $fileDest string : Full path to image to rotate | false return gd img  | null  the raw image stream will be outputted directly
  * @param int<-1,100> $quality output image quality
  * @return bool : true on success or false on failure or gd img if $fileDest is false.
  */
