@@ -631,7 +631,7 @@ class ExtraFields
 	 *  @param	string	$attrname			Name of attribute
 	 *  @param	string	$label				Label of attribute
 	 *  @param	string	$type				Type of attribute ('boolean', 'int', 'varchar', 'text', 'html', 'date', 'datetime','price','phone','mail','password','url','select','checkbox', ...)
-	 *  @param	int		$length				Length of attribute
+	 *  @param	string	$length				Size/length of attribute ('5', '24,8', ...)
 	 *  @param  string	$elementtype        Element type ('member', 'product', 'thirdparty', 'contact', ...)
 	 *  @param	int		$unique				Is field unique or not
 	 *  @param	int		$required			Is field required or not
