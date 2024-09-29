@@ -3228,7 +3228,6 @@ if ($action == 'create') {
 	// Load objectsrc
 	$objectsrc = null;  // Initialise
 	//$remise_absolue = 0;
-	$objectsrc = null;
 	if (!empty($origin) && !empty($originid)) {
 		// Parse element/subelement (ex: project_task)
 		$element = $subelement = $origin;
