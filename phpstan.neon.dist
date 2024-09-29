@@ -98,7 +98,6 @@ parameters:
 		- '#( |::)((multi)?selectarray)\(\) expects array#'
 		- '# (reWriteAllMenus|check_authentication) expects array#'
 		- '#::(_validateMyObject|select_company)\(\) expects array<string#'
-		- '# dolGetButtonTitle expects array<string#'
 		- '# getNav expects array#'
 		- '# getCommonSubstitutionArray expects array#'
 		- '# ldap_search expects array\|LDAP#'
