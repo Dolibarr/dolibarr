@@ -9537,7 +9537,7 @@ class Form
 	 * @param 	string[] 		$restrictlinksto 	Restrict links to some elements, for example array('order') or array('supplier_order'). null or array() if no restriction.
 	 * @param 	string[] 		$excludelinksto 	Do not show links of this type, for example array('order') or array('supplier_order'). null or array() if no exclusion.
 	 * @param	int				$nooutput			1=Return array with content instead of printing it.
-	 * @return  string                              HTML block
+	 * @return  string|array                        HTML block or array with htmlblock (depending on $nooutput value)
 	 */
 	public function showLinkToObjectBlock($object, $restrictlinksto = array(), $excludelinksto = array(), $nooutput = 0)
 	{
