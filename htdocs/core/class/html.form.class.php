@@ -4653,17 +4653,17 @@ class Form
 	 * Return list of payment methods
 	 * Constant MAIN_DEFAULT_PAYMENT_TYPE_ID can used to set default value but scope is all application, probably not what you want.
 	 *
-	 * @param 	string 	$selected 		Id or code or preselected payment mode
-	 * @param 	string 	$htmlname 		Name of select field
-	 * @param 	string 	$filtertype 	To filter on field type in llx_c_paiement ('CRDT' or 'DBIT' or array('code'=>xx,'label'=>zz))
-	 * @param 	int 	$format 		0=id+label, 1=code+code, 2=code+label, 3=id+code
-	 * @param 	int 	$empty 			1=can be empty, 0 otherwise
-	 * @param 	int 	$noadmininfo 	0=Add admin info, 1=Disable admin info
-	 * @param 	int 	$maxlength 		Max length of label
-	 * @param 	int 	$active 		Active or not, -1 = all
-	 * @param 	string 	$morecss 		Add more CSS on select tag
-	 * @param 	int 	$nooutput 		1=Return string, do not send to output
-	 * @return  string|void             String for the HTML select component
+	 * @param 	string 		$selected 		Id or code or preselected payment mode
+	 * @param 	string 		$htmlname 		Name of select field
+	 * @param 	string 		$filtertype 	To filter on field type in llx_c_paiement ('CRDT' or 'DBIT' or array('code'=>xx,'label'=>zz))
+	 * @param 	int 		$format 		0=id+label, 1=code+code, 2=code+label, 3=id+code
+	 * @param 	int 		$empty 			1=can be empty, 0 otherwise
+	 * @param 	int 		$noadmininfo 	0=Add admin info, 1=Disable admin info
+	 * @param 	int 		$maxlength 		Max length of label
+	 * @param 	int 		$active 		Active or not, -1 = all
+	 * @param 	string 		$morecss 		Add more CSS on select tag
+	 * @param 	int<0,1>	$nooutput 		1=Return string, do not send to output
+	 * @return  string|void             	String for the HTML select component
 	 */
 	public function select_types_paiements($selected = '', $htmlname = 'paiementtype', $filtertype = '', $format = 0, $empty = 1, $noadmininfo = 0, $maxlength = 0, $active = 1, $morecss = '', $nooutput = 0)
 	{
@@ -5120,7 +5120,7 @@ class Form
 	 * @param string 		$moreattrib 	To add more attribute on select
 	 * @param int 			$showcurrency 	Show currency in label
 	 * @param string 		$morecss 		More CSS
-	 * @param int 			$nooutput 		1=Return string, do not send to output
+	 * @param int<0,1>		$nooutput 		1=Return string, do not send to output
 	 * @return int|string   	           	If noouput=0: Return integer <0 if error, Num of bank account found if OK (0, 1, 2, ...), If nooutput=1: Return a HTML select string.
 	 */
 	public function select_comptes($selected = '', $htmlname = 'accountid', $status = 0, $filtre = '', $useempty = 0, $moreattrib = '', $showcurrency = 0, $morecss = '', $nooutput = 0)
@@ -5882,7 +5882,7 @@ class Form
 	 * @param 	int 		$discard_closed 	Discard closed projects (0=Keep,1=hide completely except $selected,2=Disable)
 	 * @param 	int 		$maxlength 			Max length
 	 * @param 	int 		$forcefocus 		Force focus on field (works with javascript only)
-	 * @param 	int 		$nooutput 			No print is done. String is returned.
+	 * @param 	int<0,1>	$nooutput 			No print is done. String is returned.
 	 * @param 	string 		$textifnoproject 	Text to show if no project
 	 * @param 	string 		$morecss 			More CSS
 	 * @return	string                      	Return html content
@@ -5940,7 +5940,7 @@ class Form
 	 * @param int	 	$deposit_percent 	< 0 : deposit_percent input makes no sense (for example, in list filters)
 	 *                                		0 : use default deposit percentage from entry
 	 *                                		> 0 : force deposit percentage (for example, from company object)
-	 * @param int 		$nooutput 			No print is done. String is returned.
+	 * @param int<0,1>	$nooutput 			No print is done. String is returned.
 	 * @return string                   	HTML output or ''
 	 */
 	public function form_conditions_reglement($page, $selected = '', $htmlname = 'cond_reglement_id', $addempty = 0, $type = '', $filtertype = -1, $deposit_percent = -1, $nooutput = 0)
@@ -6065,7 +6065,7 @@ class Form
 	 * @param string $htmlname Html name of date input fields or 'none'
 	 * @param int $displayhour Display hour selector
 	 * @param int $displaymin Display minutes selector
-	 * @param int $nooutput 1=No print output, return string
+	 * @param int<0,1> $nooutput 1=No print output, return string
 	 * @param string $type 'direct-debit' or 'bank-transfer'
 	 * @return    string
 	 * @see        selectDate()
@@ -6154,7 +6154,7 @@ class Form
 	 * @param int $active Active or not, -1 = all
 	 * @param int $addempty 1=Add empty entry
 	 * @param string $type Type ('direct-debit' or 'bank-transfer')
-	 * @param int $nooutput 1=Return string, no output
+	 * @param int<0,1> $nooutput 1=Return string, no output
 	 * @return    string                    HTML output or ''
 	 */
 	public function form_modes_reglement($page, $selected = '', $htmlname = 'mode_reglement_id', $filtertype = '', $active = 1, $addempty = 0, $type = '', $nooutput = 0)
@@ -6446,7 +6446,7 @@ class Form
 	 * @param int<0,1>	$showtype 				Show third party type in combolist (customer, prospect or supplier)
 	 * @param int<0,1>	$forcecombo 			Force to use combo box
 	 * @param 	array<array{method:string,url:string,htmlname:string,params:array<string,string>}> 	$events 	Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
-	 * @param int 		$nooutput 				No print output. Return it only.
+	 * @param int<0,1>	$nooutput 				No print output. Return it only.
 	 * @param int[] 	$excludeids 			Exclude IDs from the select combo
 	 * @param string 	$textifnothirdparty 	Text to show if no thirdparty
 	 * @return    string                        HTML output or ''
@@ -6948,7 +6948,7 @@ class Form
 	 * @param string $form_name Not used
 	 * @param int $d 1=Show days, month, years
 	 * @param int $addnowlink Add a link "Now"
-	 * @param int $nooutput Do not output html string but return it
+	 * @param int<0,1> $nooutput Do not output html string but return it
 	 * @param int $disabled Disable input fields
 	 * @param int $fullday When a checkbox with this html name is on, hour and day are set with 00:00 or 23:59
 	 * @param string $addplusone Add a link "+1 hour". Value must be name of another select_date field.
@@ -7508,7 +7508,7 @@ class Form
 	 *                         If 'text' input hour is in text and input min is a text,
 	 *                         If 'textselect' input hour is in text and input min is a combo
 	 * @param integer $minunderhours If 1, show minutes selection under the hours
-	 * @param int $nooutput Do not output html string but return it
+	 * @param int<0,1> $nooutput Do not output html string but return it
 	 * @return    string                        HTML component
 	 */
 	public function select_duration($prefix, $iSecond = '', $disabled = 0, $typehour = 'select', $minunderhours = 0, $nooutput = 0)
@@ -9536,8 +9536,8 @@ class Form
 	 * @param 	CommonObject 	$object 			Object we want to show links to
 	 * @param 	string[] 		$restrictlinksto 	Restrict links to some elements, for example array('order') or array('supplier_order'). null or array() if no restriction.
 	 * @param 	string[] 		$excludelinksto 	Do not show links of this type, for example array('order') or array('supplier_order'). null or array() if no exclusion.
-	 * @param	int				$nooutput			1=Return array with content instead of printing it.
-	 * @return  string                              HTML block
+	 * @param	int<0,1>		$nooutput			1=Return array with content instead of printing it.
+	 * @return  array{linktoelem:''|string,htmltoenteralink:''|string}                              HTML block
 	 */
 	public function showLinkToObjectBlock($object, $restrictlinksto = array(), $excludelinksto = array(), $nooutput = 0)
 	{
