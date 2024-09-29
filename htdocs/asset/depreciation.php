@@ -190,7 +190,7 @@ if ($id > 0 || !empty($ref)) {
 						print price($line['cumulative_depreciation_ht']);
 						print '</td>';
 						print '<td class="right">';
-						print price(price2num((float) $depreciation_info['base_depreciation_ht'] - $line['cumulative_depreciation_ht'], 'MT'));
+						print price(price2num((float) $depreciation_info['base_depreciation_ht'] - (float) $line['cumulative_depreciation_ht'], 'MT'));
 						print '</td>';
 						print "</tr>\n";
 					}

@@ -261,6 +261,7 @@ class KnowledgeRecord extends CommonObject
 			$object->ref = empty($this->fields['ref']['default']) ? "Copy_Of_".$object->ref : $this->fields['ref']['default'];
 		}
 		if (property_exists($object, 'question')) {
+			// @phan-suppress-next-line PhanTypeInvalidDimOffset
 			$object->question = empty($this->fields['question']['default']) ? $langs->trans("CopyOf")." ".$object->question : $this->fields['question']['default'];
 		}
 		if (property_exists($object, 'status')) {

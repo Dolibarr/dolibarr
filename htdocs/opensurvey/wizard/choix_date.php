@@ -150,6 +150,7 @@ if (GETPOST('confirmation')) {
 					}
 				}
 
+				// @phan-suppress-next-line PhanTypeInvalidDimOffset
 				if ($_SESSION["horaires$i"][0] == "" && $_SESSION["horaires$i"][1] == "" && $_SESSION["horaires$i"][2] == "" && $_SESSION["horaires$i"][3] == "" && $_SESSION["horaires$i"][4] == "") {
 					$choixdate .= ",";
 					$choixdate .= $_SESSION["totalchoixjour"][$i];

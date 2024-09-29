@@ -117,6 +117,7 @@ class Interfaces
 			$handle = opendir($newdir);
 			if (is_resource($handle)) {
 				$fullpathfiles = array();
+				'@phan-var-force array<string,string> $fullpathfiles';
 				while (($file = readdir($handle)) !== false) {
 					$reg = array();
 					if (is_readable($newdir."/".$file) && preg_match('/^interface_([0-9]+)_([^_]+)_(.+)\.class\.php$/i', $file, $reg)) {
@@ -146,7 +147,7 @@ class Interfaces
 
 						$modName = "Interface".ucfirst($reg[3]);
 						//print "file=$file - modName=$modName\n";
-						if (in_array($modName, $modules)) {    // $modules = list of modName already loaded
+						if (array_key_exists($modName, $fullpathfiles)) {    // $modules = list of modName already loaded, fullpathfiles[$modName] is alsoset
 							$langs->load("errors");
 							dol_syslog(get_class($this)."::run_triggers action=".$action." ".$langs->trans("ErrorDuplicateTrigger", $newdir."/".$file, $fullpathfiles[$modName]), LOG_WARNING);
 							continue;

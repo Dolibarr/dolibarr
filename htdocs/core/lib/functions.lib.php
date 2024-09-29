@@ -281,7 +281,7 @@ function getDolUserInt($key, $default = 0, $tmpuser = null)
 		$tmpuser = $user;
 	}
 
-	return (int) (isset($tmpuser->conf->$key) ? $tmpuser->conf->$key: $default);
+	return (int) (isset($tmpuser->conf->$key) ? $tmpuser->conf->$key : $default);
 }
 
 
@@ -2234,7 +2234,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 	}
 
 	if (!empty($message)) {
-		// Test log level  @phan-ignore-next-line PhanPluginDuplicateArrayKey
+		// Test log level  @phan-suppress-next-line PhanPluginDuplicateArrayKey
 		$logLevels = array(LOG_EMERG => 'EMERG', LOG_ALERT => 'ALERT', LOG_CRIT => 'CRITICAL', LOG_ERR => 'ERR', LOG_WARNING => 'WARN', LOG_NOTICE => 'NOTICE',LOG_INFO => 'INFO', LOG_DEBUG => 'DEBUG');
 		if (!array_key_exists($level, $logLevels)) {
 			throw new Exception('Incorrect log level');
@@ -8984,10 +8984,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__REF_SUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : null);
 			$substitutionarray['__NOTE_PUBLIC__'] = (isset($object->note_public) ? $object->note_public : null);
 			$substitutionarray['__NOTE_PRIVATE__'] = (isset($object->note_private) ? $object->note_private : null);
-			$substitutionarray['__DATE_CREATION__'] = (isset($object->date_creation) ? dol_print_date($object->date_creation, 'day', 0, $outputlangs) : '');
-			$substitutionarray['__DATE_MODIFICATION__'] = (isset($object->date_modification) ? dol_print_date($object->date_modification, 'day', 0, $outputlangs) : '');
-			$substitutionarray['__DATE_VALIDATION__'] = (isset($object->date_validation) ? dol_print_date($object->date_validation, 'day', 0, $outputlangs) : '');
-			$substitutionarray['__DATE_DELIVERY__'] = (isset($object->date_delivery) ? dol_print_date($object->date_delivery, 'day', 0, $outputlangs) : '');
+			$substitutionarray['__DATE_CREATION__'] = (isset($object->date_creation) ? dol_print_date($object->date_creation, 'day', false, $outputlangs) : '');
+			$substitutionarray['__DATE_MODIFICATION__'] = (isset($object->date_modification) ? dol_print_date($object->date_modification, 'day', false, $outputlangs) : '');
+			$substitutionarray['__DATE_VALIDATION__'] = (isset($object->date_validation) ? dol_print_date($object->date_validation, 'day', false, $outputlangs) : '');
+			$substitutionarray['__DATE_DELIVERY__'] = (isset($object->date_delivery) ? dol_print_date($object->date_delivery, 'day', false, $outputlangs) : '');
 			$substitutionarray['__DATE_DELIVERY_DAY__'] = (isset($object->date_delivery) ? dol_print_date($object->date_delivery, "%d") : '');
 			$substitutionarray['__DATE_DELIVERY_DAY_TEXT__'] = (isset($object->date_delivery) ? dol_print_date($object->date_delivery, "%A") : '');
 			$substitutionarray['__DATE_DELIVERY_MON__'] = (isset($object->date_delivery) ? dol_print_date($object->date_delivery, "%m") : '');
@@ -9000,7 +9000,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			// For backward compatibility (deprecated)
 			$substitutionarray['__REFCLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : null));
 			$substitutionarray['__REFSUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : null);
-			$substitutionarray['__SUPPLIER_ORDER_DATE_DELIVERY__'] = (isset($object->delivery_date) ? dol_print_date($object->delivery_date, 'day', 0, $outputlangs) : '');
+			$substitutionarray['__SUPPLIER_ORDER_DATE_DELIVERY__'] = (isset($object->delivery_date) ? dol_print_date($object->delivery_date, 'day', false, $outputlangs) : '');
 			$substitutionarray['__SUPPLIER_ORDER_DELAY_DELIVERY__'] = (isset($object->availability_code) ? ($outputlangs->transnoentities("AvailabilityType".$object->availability_code) != 'AvailabilityType'.$object->availability_code ? $outputlangs->transnoentities("AvailabilityType".$object->availability_code) : $outputlangs->convToOutputCharset(isset($object->availability) ? $object->availability : '')) : '');
 			$substitutionarray['__EXPIRATION_DATE__'] = (isset($object->fin_validite) ? dol_print_date($object->fin_validite, 'daytext') : '');
 
@@ -9358,10 +9358,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		'@phan-var-force Facture|FactureRec $object';
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functionsnumtoword.lib.php';
 
-		$substitutionarray['__DATE_YMD__']          = is_object($object) ? (isset($object->date) ? dol_print_date($object->date, 'day', 0, $outputlangs) : null) : '';
-		$substitutionarray['__DATE_DUE_YMD__']      = is_object($object) ? (isset($object->date_lim_reglement) ? dol_print_date($object->date_lim_reglement, 'day', 0, $outputlangs) : null) : '';
-		$substitutionarray['__DATE_YMD_TEXT__']     = is_object($object) ? (isset($object->date) ? dol_print_date($object->date, 'daytext', 0, $outputlangs) : null) : '';
-		$substitutionarray['__DATE_DUE_YMD_TEXT__'] = is_object($object) ? (isset($object->date_lim_reglement) ? dol_print_date($object->date_lim_reglement, 'daytext', 0, $outputlangs) : null) : '';
+		$substitutionarray['__DATE_YMD__']          = is_object($object) ? (isset($object->date) ? dol_print_date($object->date, 'day', false, $outputlangs) : null) : '';
+		$substitutionarray['__DATE_DUE_YMD__']      = is_object($object) ? (isset($object->date_lim_reglement) ? dol_print_date($object->date_lim_reglement, 'day', false, $outputlangs) : null) : '';
+		$substitutionarray['__DATE_YMD_TEXT__']     = is_object($object) ? (isset($object->date) ? dol_print_date($object->date, 'daytext', false, $outputlangs) : null) : '';
+		$substitutionarray['__DATE_DUE_YMD_TEXT__'] = is_object($object) ? (isset($object->date_lim_reglement) ? dol_print_date($object->date_lim_reglement, 'daytext', false, $outputlangs) : null) : '';
 
 		$already_payed_all = 0;
 		if (is_object($object) && ($object instanceof Facture)) {
@@ -12384,7 +12384,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
 			$dolGetBadgeParams['attr']['title'] = empty($params['tooltip']) ? $statusLabel : ($params['tooltip'] != 'no' ? $params['tooltip'] : '');
 		} else {	// If a title was forced from $params['badgeParams']['attr']['title'], we set the class to get it as a tooltip.
 			$dolGetBadgeParams['attr']['class'] .= ' classfortooltip';
-			// And if we use tooltip, we can output title in HTML
+			// And if we use tooltip, we can output title in HTML  @phan-suppress-next-line PhanTypeInvalidDimOffset
 			$dolGetBadgeParams['attr']['title'] = dol_htmlentitiesbr($dolGetBadgeParams['attr']['title'], 1);
 		}
 
@@ -12452,6 +12452,7 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 
 		$out = '';
 
+		// @phan-suppress-next-line PhanTypeInvalidDimOffset
 		if (isset($params["areDropdownButtons"]) && $params["areDropdownButtons"] === false) {
 			foreach ($url as $button) {
 				if (!empty($button['lang'])) {

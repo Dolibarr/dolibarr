@@ -609,6 +609,7 @@ foreach ($object->fields as $key => $val) {
 
 // usergroups
 if (!empty($arrayfields['wug.fk_usergroup']['checked'])) {
+	// @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print getTitleFieldOfList($arrayfields['wug.fk_usergroup']['label'], 0, $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, '') . "\n";
 }
 

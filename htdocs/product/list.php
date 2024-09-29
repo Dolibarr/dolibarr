@@ -1307,6 +1307,7 @@ if (!empty($arrayfields['p.label']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.fk_product_type']['checked'])) {
+	// @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['p.fk_product_type']['label'], $_SERVER["PHP_SELF"], "p.fk_product_type", "", $param, "", $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }

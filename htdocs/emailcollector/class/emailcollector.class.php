@@ -50,7 +50,6 @@ require_once DOL_DOCUMENT_ROOT .'/ticket/class/ticket.class.php';               
 use Webklex\PHPIMAP\ClientManager;
 use Webklex\PHPIMAP\Exceptions\ConnectionFailedException;
 use Webklex\PHPIMAP\Exceptions\InvalidWhereQueryCriteriaException;
-
 use OAuth\Common\Storage\DoliStorage;
 use OAuth\Common\Consumer\Credentials;
 
@@ -1011,6 +1010,7 @@ class EmailCollector extends CommonObject
 						if (property_exists($object, $tmpproperty)) {
 							$valuecurrent = $object->$tmpproperty;
 						} else {
+							// @phan-suppress-next-line PhanTypeInvalidDimOffset
 							$valuecurrent = $tmp[$tmpproperty];
 						}
 					}
@@ -1031,6 +1031,7 @@ class EmailCollector extends CommonObject
 										if (property_exists($object, $keytoreplace)) {
 											$substitutionarray['__'.$keytoreplace.'__'] = $object->$keytoreplace;
 										} else {
+											// False positive @phan-suppress-next-line PhanTypeInvalidDimOffset
 											$substitutionarray['__'.$keytoreplace.'__'] = $tmp[$keytoreplace];
 										}
 									}
@@ -3579,7 +3580,7 @@ class EmailCollector extends CommonObject
 			foreach ($arrayofemailtodelete as $imapemailnum => $imapemail) {
 				dol_syslog("EmailCollect::doCollectOneCollector delete email ".$imapemailnum);
 
-				$operationslog .= "<br> move email ".$imapemailnum.($mode> 0 ? ' (test)' : '');
+				$operationslog .= "<br> move email ".$imapemailnum.($mode > 0 ? ' (test)' : '');
 
 				if (empty($mode) && empty($error)) {
 					$tmptargetdir = $targetdir;
@@ -3614,7 +3615,7 @@ class EmailCollector extends CommonObject
 			foreach ($arrayofemailtodelete as $imapemail => $msgid) {
 				dol_syslog("EmailCollect::doCollectOneCollector delete email ".$imapemail." ".$msgid);
 
-				$operationslog .= "<br> delete email ".$imapemail." ".$msgid.($mode> 0 ? ' (test)' : '');
+				$operationslog .= "<br> delete email ".$imapemail." ".$msgid.($mode > 0 ? ' (test)' : '');
 
 				if (empty($mode) && empty($error)) {
 					$res = imap_mail_move($connection, $imapemail, $targetdir, CP_UID);

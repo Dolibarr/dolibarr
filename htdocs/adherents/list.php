@@ -185,6 +185,7 @@ $arrayfields = array(
 	'd.statut' => array('label' => "Status"),
 	'd.import_key' => array('label' => "ImportId"),
 );
+
 // Complete array of fields for columns
 $tableprefix = 'd';
 foreach ($object->fields as $key => $val) {
@@ -1084,6 +1085,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['d.rowid']['checked'])) {
+	// @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['d.rowid']['label'], $_SERVER["PHP_SELF"], 'd.rowid', '', $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }

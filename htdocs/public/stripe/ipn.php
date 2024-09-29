@@ -220,7 +220,7 @@ if ($event->type == 'payout.created') {
 } elseif ($event->type == 'payout.paid') {
 	// When a payout to transfer money to your account is completely done
 	$error = 0;
-	$result = dolibarr_set_const($db, $service."_NEXTPAYOUT", null, 'chaine', 0, '', $conf->entity);
+	$result = dolibarr_set_const($db, $service."_NEXTPAYOUT", 0, 'chaine', 0, '', $conf->entity);
 	if ($result) {
 		$langs->load("errors");
 
