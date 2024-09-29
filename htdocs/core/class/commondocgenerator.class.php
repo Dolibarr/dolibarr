@@ -122,7 +122,7 @@ abstract class CommonDocGenerator
 	 * @var float bottom margin
 	 */
 	public $marge_basse;
-  
+
 	/**
 	 * @var int corner radius
 	 */
@@ -131,7 +131,7 @@ abstract class CommonDocGenerator
 	/**
 	 * @var int<0,1> option logo
 	 */
-  
+
 	public $option_logo;
 	public $option_tva;
 	public $option_multilang;
