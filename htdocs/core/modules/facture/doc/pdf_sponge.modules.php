@@ -89,7 +89,7 @@ class pdf_sponge extends ModelePDFFactures
 	public $heightforfreetext;
 
 	/**
-	 * @var int heightforfooter
+	 * @var float heightforfooter
 	 */
 	public $heightforfooter;
 
