@@ -174,15 +174,15 @@ abstract class ModeleThirdPartyCode extends CommonNumRefGenerator
 		$s .= '<u>'.$langs->trans("ThisIsModuleRules").':</u><br>';
 		if ($type == 0) {
 			$s .= $langs->trans("RequiredIfCustomer").': '.$strikestart;
-			$s .= yn(!$this->code_null, 1, 2).$strikeend;
+			$s .= yn($this->code_null ? 0 : 1, 1, 2).$strikeend;
 			$s .= '<br>';
 		} elseif ($type == 1) {
 			$s .= $langs->trans("RequiredIfSupplier").': '.$strikestart;
-			$s .= yn(!$this->code_null, 1, 2).$strikeend;
+			$s .= yn($this->code_null ? 0 : 1, 1, 2).$strikeend;
 			$s .= '<br>';
 		} elseif ($type == -1) {
 			$s .= $langs->trans("Required").': '.$strikestart;
-			$s .= yn(!$this->code_null, 1, 2).$strikeend;
+			$s .= yn($this->code_null ? 0 : 1, 1, 2).$strikeend;
 			$s .= '<br>';
 		}
 		$s .= $langs->trans("CanBeModifiedIfOk").': ';
