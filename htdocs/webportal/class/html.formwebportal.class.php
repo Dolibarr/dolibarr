@@ -40,7 +40,7 @@ class FormWebPortal extends Form
 	public $db;
 
 	/**
-	 * @var array $infofiles Array of file info
+	 * @var array{nboffiles:int,extensions:array<string,int>,files:string[]} Array of file info
 	 */
 	public $infofiles; // Used to return information by function getDocumentsLink
 
@@ -318,7 +318,7 @@ class FormWebPortal extends Form
 				$this->infofiles['nboffiles']++;
 				$this->infofiles['files'][] = $file['fullname'];
 				$ext = pathinfo($file["name"], PATHINFO_EXTENSION);
-				if (empty($this->infofiles[$ext])) {
+				if (empty($this->infofiles['extensions'][$ext])) {
 					$this->infofiles['extensions'][$ext] = 1;
 				} else {
 					$this->infofiles['extensions'][$ext]++;

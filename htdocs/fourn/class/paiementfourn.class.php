@@ -291,6 +291,14 @@ class PaiementFourn extends Paiement
 									if ($invoice->type == FactureFournisseur::TYPE_DEPOSIT) {
 										$amount_ht = $amount_tva = $amount_ttc = array();
 										$multicurrency_amount_ht = $multicurrency_amount_tva = $multicurrency_amount_ttc = array();
+										'
+										@phan-var-force array<string,float> $amount_ht
+										@phan-var-force array<string,float> $amount_tva
+										@phan-var-force array<string,float> $amount_ttc
+										@phan-var-force array<string,float> $multicurrency_amount_ht
+										@phan-var-force array<string,float> $multicurrency_amount_tva
+										@phan-var-force array<string,float> $multicurrency_amount_ttc
+										';
 
 										// Insert one discount by VAT rate category
 										require_once DOL_DOCUMENT_ROOT . '/core/class/discount.class.php';
@@ -307,6 +315,14 @@ class PaiementFourn extends Paiement
 											$i = 0;
 											foreach ($invoice->lines as $line) {
 												if ($line->total_ht != 0) {    // no need to create discount if amount is null
+													if (!array_key_exists($line->tva_tx, $amount_ht)) {
+														$amount_ht[$line->tva_tx] = 0.0;
+														$amount_tva[$line->tva_tx] = 0.0;
+														$amount_ttc[$line->tva_tx] = 0.0;
+														$multicurrency_amount_ht[$line->tva_tx] = 0.0;
+														$multicurrency_amount_tva[$line->tva_tx] = 0.0;
+														$multicurrency_amount_ttc[$line->tva_tx] = 0.0;
+													}
 													$amount_ht[$line->tva_tx] += $line->total_ht;
 													$amount_tva[$line->tva_tx] += $line->total_tva;
 													$amount_ttc[$line->tva_tx] += $line->total_ttc;
@@ -324,7 +340,7 @@ class PaiementFourn extends Paiement
 												$discount->multicurrency_amount_ht = abs($multicurrency_amount_ht[$tva_tx]);
 												$discount->multicurrency_amount_tva = abs($multicurrency_amount_tva[$tva_tx]);
 												$discount->multicurrency_amount_ttc = abs($multicurrency_amount_ttc[$tva_tx]);
-												$discount->tva_tx = abs($tva_tx);
+												$discount->tva_tx = abs((float) $tva_tx);
 
 												$result = $discount->create($user);
 												if ($result < 0) {

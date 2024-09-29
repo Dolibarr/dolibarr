@@ -341,6 +341,7 @@ class BOM extends CommonObject
 		// Clear fields
 		$default_ref = $this->fields['ref']['default'] ?? null;
 		$object->ref = empty($default_ref) ? $langs->trans("copy_of_").$object->ref : $default_ref;
+		// @phan-suppress-next-line PhanTypeInvalidDimOffset
 		$object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
 		$object->status = self::STATUS_DRAFT;
 		// ...

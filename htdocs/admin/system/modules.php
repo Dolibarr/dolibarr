@@ -107,7 +107,7 @@ foreach ($modulesdir as $dir) {
 				if ($modName) {
 					//print 'xx'.$dir.$file.'<br>';
 					if (in_array($file, $modules_files)) {
-						// File duplicate
+						// File duplicate @phan-suppress-next-line PhanTypeInvalidDimOffset
 						print "Warning duplicate file found : ".$file." (Found ".$dir.$file.", already found ".$modules_fullpath[$file].")<br>";
 					} else {
 						// File to load
