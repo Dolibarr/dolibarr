@@ -128,7 +128,7 @@ class Context
 	public $menu_active = array();
 
 	/**
-	 * @var array{mesgs:string[],warnings:string[],errors:string[]} event messages
+	 * @var array{mesgs:string[],warnings:string[],errors:string[]}|array{} event messages
 	 */
 	public $eventMessages = array();
 
