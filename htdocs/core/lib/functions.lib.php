@@ -8984,10 +8984,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__REF_SUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : null);
 			$substitutionarray['__NOTE_PUBLIC__'] = (isset($object->note_public) ? $object->note_public : null);
 			$substitutionarray['__NOTE_PRIVATE__'] = (isset($object->note_private) ? $object->note_private : null);
-			$substitutionarray['__DATE_CREATION__'] = (isset($object->date_creation) ? dol_print_date($object->date_creation, 'day', 0, $outputlangs) : '');
-			$substitutionarray['__DATE_MODIFICATION__'] = (isset($object->date_modification) ? dol_print_date($object->date_modification, 'day', 0, $outputlangs) : '');
-			$substitutionarray['__DATE_VALIDATION__'] = (isset($object->date_validation) ? dol_print_date($object->date_validation, 'day', 0, $outputlangs) : '');
-			$substitutionarray['__DATE_DELIVERY__'] = (isset($object->date_delivery) ? dol_print_date($object->date_delivery, 'day', 0, $outputlangs) : '');
+			$substitutionarray['__DATE_CREATION__'] = (isset($object->date_creation) ? dol_print_date($object->date_creation, 'day', false, $outputlangs) : '');
+			$substitutionarray['__DATE_MODIFICATION__'] = (isset($object->date_modification) ? dol_print_date($object->date_modification, 'day', false, $outputlangs) : '');
+			$substitutionarray['__DATE_VALIDATION__'] = (isset($object->date_validation) ? dol_print_date($object->date_validation, 'day', false, $outputlangs) : '');
+			$substitutionarray['__DATE_DELIVERY__'] = (isset($object->date_delivery) ? dol_print_date($object->date_delivery, 'day', false, $outputlangs) : '');
 			$substitutionarray['__DATE_DELIVERY_DAY__'] = (isset($object->date_delivery) ? dol_print_date($object->date_delivery, "%d") : '');
 			$substitutionarray['__DATE_DELIVERY_DAY_TEXT__'] = (isset($object->date_delivery) ? dol_print_date($object->date_delivery, "%A") : '');
 			$substitutionarray['__DATE_DELIVERY_MON__'] = (isset($object->date_delivery) ? dol_print_date($object->date_delivery, "%m") : '');
@@ -9000,7 +9000,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			// For backward compatibility (deprecated)
 			$substitutionarray['__REFCLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : null));
 			$substitutionarray['__REFSUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : null);
-			$substitutionarray['__SUPPLIER_ORDER_DATE_DELIVERY__'] = (isset($object->delivery_date) ? dol_print_date($object->delivery_date, 'day', 0, $outputlangs) : '');
+			$substitutionarray['__SUPPLIER_ORDER_DATE_DELIVERY__'] = (isset($object->delivery_date) ? dol_print_date($object->delivery_date, 'day', false, $outputlangs) : '');
 			$substitutionarray['__SUPPLIER_ORDER_DELAY_DELIVERY__'] = (isset($object->availability_code) ? ($outputlangs->transnoentities("AvailabilityType".$object->availability_code) != 'AvailabilityType'.$object->availability_code ? $outputlangs->transnoentities("AvailabilityType".$object->availability_code) : $outputlangs->convToOutputCharset(isset($object->availability) ? $object->availability : '')) : '');
 			$substitutionarray['__EXPIRATION_DATE__'] = (isset($object->fin_validite) ? dol_print_date($object->fin_validite, 'daytext') : '');
 
@@ -9358,10 +9358,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		'@phan-var-force Facture|FactureRec $object';
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functionsnumtoword.lib.php';
 
-		$substitutionarray['__DATE_YMD__']          = is_object($object) ? (isset($object->date) ? dol_print_date($object->date, 'day', 0, $outputlangs) : null) : '';
-		$substitutionarray['__DATE_DUE_YMD__']      = is_object($object) ? (isset($object->date_lim_reglement) ? dol_print_date($object->date_lim_reglement, 'day', 0, $outputlangs) : null) : '';
+		$substitutionarray['__DATE_YMD__']          = is_object($object) ? (isset($object->date) ? dol_print_date($object->date, 'day', false, $outputlangs) : null) : '';
+		$substitutionarray['__DATE_DUE_YMD__']      = is_object($object) ? (isset($object->date_lim_reglement) ? dol_print_date($object->date_lim_reglement, 'day', false, $outputlangs) : null) : '';
 		$substitutionarray['__DATE_YMD_TEXT__']     = is_object($object) ? (isset($object->date) ? dol_print_date($object->date, 'daytext', 0, $outputlangs) : null) : '';
-		$substitutionarray['__DATE_DUE_YMD_TEXT__'] = is_object($object) ? (isset($object->date_lim_reglement) ? dol_print_date($object->date_lim_reglement, 'daytext', 0, $outputlangs) : null) : '';
+		$substitutionarray['__DATE_DUE_YMD_TEXT__'] = is_object($object) ? (isset($object->date_lim_reglement) ? dol_print_date($object->date_lim_reglement, 'daytext', false, $outputlangs) : null) : '';
 
 		$already_payed_all = 0;
 		if (is_object($object) && ($object instanceof Facture)) {
