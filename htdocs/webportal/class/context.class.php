@@ -96,7 +96,7 @@ class Context
 	public $error;
 
 	/**
-	 * @var array errors
+	 * @var string[] errors
 	 */
 	public $errors = array();
 
@@ -105,8 +105,16 @@ class Context
 	 */
 	public $action;
 
+	/**
+	 * @var string tpl directory
+	 */
 	public $tplDir;
+
+	/**
+	 * @var string tpl path
+	 */
 	public $tplPath;
+
 	public $topMenu;
 
 	public $rootUrl;
@@ -455,7 +463,7 @@ class Context
 	/**
 	 * Set errors
 	 *
-	 * @param 	string[]	$errors		Errors
+	 * @param 	string|string[]	$errors		Errors
 	 * @return	void
 	 */
 	public function setError($errors)
