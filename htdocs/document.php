@@ -329,7 +329,7 @@ $readfile = true;
 // on view document, can output images with good orientation according to exif infos
 // TODO Why this on document.php and not in viewimage.php ?
 if (!$attachment && getDolGlobalString('MAIN_USE_EXIF_ROTATION') && image_format_supported($fullpath_original_file_osencoded) == 1) {
-	$imgres = correctExifImageOrientation($fullpath_original_file_osencoded, null);
+	$imgres = correctExifImageOrientation($fullpath_original_file_osencoded, -1);
 	$readfile = !$imgres;
 }
 
