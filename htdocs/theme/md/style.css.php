@@ -5324,7 +5324,7 @@ div.titre {
 }
 
 table.notopnoleftnoright.table-fiche-title {
-	margin-bottom: 14px;
+	margin-bottom: 15px;
 }
 .fichehalfleft table.table-fiche-title, .fichehalfright table.table-fiche-title {
 	margin-bottom: 8px;
@@ -5333,6 +5333,9 @@ table.notopnoleftnoright.table-fiche-title {
 
 table.table-fiche-title .col-title div.titre, .col-center .btnTitle-icon, .col-right .btnTitle-icon {
 	line-height: 40px;
+}
+table.table-fiche-title .col-title div.titre span {
+	line-height: normal;
 }
 
 div.backgreypublicpayment {
