@@ -439,7 +439,7 @@ abstract class CommonInvoice extends CommonObject
 	 *
 	 *  @see $error Empty string '' if no error.
 	 *
-	 *	@param		string	$filtertype		1 to filter on type of payment == 'PRE'
+	 *	@param		string	$filtertype		1 to filter on type of payment == 'PRE' for the payment lines
 	 *  @param      int     $multicurrency  Return multicurrency_amount instead of amount
 	 *  @return     array<array{amount:int|float,date:int,num:string,ref:string,ref_ext?:string,fk_bank_line?:int,type:string}>		 Array with list of payments
 	 */
@@ -482,7 +482,11 @@ abstract class CommonInvoice extends CommonObject
 			$i = 0;
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
-				$tmp = array('amount' => $obj->amount, 'type' => $obj->code, 'date' => $obj->datep, 'num' => $obj->num, 'ref' => $obj->ref);
+				if ($multicurrency) {
+					$tmp = array('amount' => $obj->multicurrency_amount, 'type' => $obj->code, 'typeline' => 'payment', 'date' => $obj->datep, 'num' => $obj->num, 'ref' => $obj->ref);
+				} else {
+					$tmp = array('amount' => $obj->amount, 'type' => $obj->code, 'typeline' => 'payment', 'date' => $obj->datep, 'num' => $obj->num, 'ref' => $obj->ref);
+				}
 				if (!empty($field3)) {
 					$tmp['ref_ext'] = $obj->ref_ext;
 				}
@@ -494,7 +498,7 @@ abstract class CommonInvoice extends CommonObject
 			}
 			$this->db->free($resql);
 
-			//look for credit notes and discounts and deposits
+			// look for credit notes and discounts and deposits
 			$sql = '';
 			if ($this->element == 'facture' || $this->element == 'invoice') {
 				$sql = "SELECT rc.amount_ttc as amount, rc.multicurrency_amount_ttc as multicurrency_amount, rc.datec as date, f.ref as ref, rc.description as type";
@@ -516,9 +520,9 @@ abstract class CommonInvoice extends CommonObject
 					while ($i < $num) {
 						$obj = $this->db->fetch_object($resql);
 						if ($multicurrency) {
-							$retarray[] = array('amount' => $obj->multicurrency_amount, 'type' => $obj->type, 'date' => $obj->date, 'num' => '0', 'ref' => $obj->ref);
+							$retarray[] = array('amount' => $obj->multicurrency_amount, 'type' => $obj->type, 'typeline' => 'discount', 'date' => $obj->date, 'num' => '0', 'ref' => $obj->ref);
 						} else {
-							$retarray[] = array('amount' => $obj->amount, 'type' => $obj->type, 'date' => $obj->date, 'num' => '', 'ref' => $obj->ref);
+							$retarray[] = array('amount' => $obj->amount, 'type' => $obj->type, 'typeline' => 'discount', 'date' => $obj->date, 'num' => '', 'ref' => $obj->ref);
 						}
 						$i++;
 					}
