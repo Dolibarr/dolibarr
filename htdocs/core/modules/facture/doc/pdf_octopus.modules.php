@@ -3432,7 +3432,7 @@ class pdf_octopus extends ModelePDFFactures
 			// Output Rect
 			$pdf->SetDrawColor(128, 128, 128);
 			//$this->printRect($pdf, $posx, $posy, $this->page_largeur - $this->marge_gauche - $this->marge_droite, 6);	// Rect prend une longueur en 3eme param et 4eme param
-			$this->printRoundedRect($pdf, $posx, $posy, $this->page_largeur - $this->marge_gauche - $this->marge_droite, 6, $this->corner_radius, $hidetop, $hidebottom, 'D'); // Rect takes a length in 3rd parameter and 4th parameter
+			$this->printRoundedRect($pdf, $posx, $posy, $this->page_largeur - $this->marge_gauche - $this->marge_droite, 6, $this->corner_radius, 0, 0, 'D'); // Rect takes a length in 3rd parameter and 4th parameter
 
 			$posy += 4;
 		} elseif (count($orders)) {
@@ -3713,7 +3713,7 @@ class pdf_octopus extends ModelePDFFactures
 			// Output Rect
 			$pdf->SetDrawColor(128, 128, 128);
 			//$this->printRect($pdf, $this->marge_gauche, $posy, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height * $index + $y);
-			$this->printRoundedRect($pdf, $this->marge_gauche, $posy, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height * $index + $y, $this->corner_radius, $hidetop, $hidebottom, 'D');
+			$this->printRoundedRect($pdf, $this->marge_gauche, $posy, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height * $index + $y, $this->corner_radius, 0, 0, 'D');
 			$posy += $height * $index + $y;
 
 			$pageposafter = $pdf->getPage();
@@ -3774,6 +3774,6 @@ class pdf_octopus extends ModelePDFFactures
 
 		$pdf->SetDrawColor(128, 128, 128);
 		//$this->printRect($pdf, $this->marge_gauche, $posy, $this->page_largeur - $this->marge_gauche - $this->marge_droite, 7);
-		$this->printRoundedRect($pdf, $this->marge_gauche, $posy, $this->page_largeur - $this->marge_gauche - $this->marge_droite, 7, $this->corner_radius, $hidetop, $hidebottom, 'D');
+		$this->printRoundedRect($pdf, $this->marge_gauche, $posy, $this->page_largeur - $this->marge_gauche - $this->marge_droite, 7, $this->corner_radius, 0, 0, 'D');
 	}
 }
