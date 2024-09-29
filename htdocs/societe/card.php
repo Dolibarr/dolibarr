@@ -363,10 +363,6 @@ if (empty($reshook)) {
 			$object->code_client			= GETPOSTISSET('customer_code') ? GETPOST('customer_code', 'alpha') : GETPOST('code_client', 'alpha');
 			$object->code_fournisseur		= GETPOSTISSET('supplier_code') ? GETPOST('supplier_code', 'alpha') : GETPOST('code_fournisseur', 'alpha');
 			$object->capital				= GETPOST('capital', 'alphanohtml');
-			if ($action == 'add') {
-				$object->cond_reglement_id	= GETPOSTINT('cond_reglement_id');
-				$object->mode_reglement_id	= GETPOSTINT('mode_reglement_id');
-			}
 			$object->barcode				= GETPOST('barcode', 'alphanohtml');
 
 			$object->tva_intra				= GETPOST('tva_intra', 'alphanohtml');
@@ -394,6 +390,34 @@ if (empty($reshook)) {
 
 			$object->client					= $prospectcustomer;
 			$object->fournisseur			= (GETPOSTINT('supplier') > 0 ? 1 : 0);
+
+			if ($action == 'add') {
+				// for prospect, customer or supplier
+				if ($object->client > 0 || $object->fournisseur > 0) {
+					$form = new Form($db);
+					$form->load_cache_types_paiements();
+
+					$paymentTermId = GETPOSTINT('cond_reglement_id');
+					$paymentTypeId = GETPOSTINT('mode_reglement_id');
+					if ($object->client > 0) {
+						$object->cond_reglement_id = $paymentTermId;
+
+						$filterPaymentTypeIdArr = array(0, 2, 3); // allow payment type for customer (filter is "CRDT" in "Form::select_types_paiements()" method)
+						if (!empty($form->cache_types_paiements[$paymentTypeId]) && isset($form->cache_types_paiements[$paymentTypeId]['type']) && in_array($form->cache_types_paiements[$paymentTypeId]['type'], $filterPaymentTypeIdArr)) {
+							$object->mode_reglement_id = $paymentTypeId;
+						}
+					}
+
+					if ($object->fournisseur > 0) {
+						$object->cond_reglement_supplier_id	= $paymentTermId;
+
+						$filterPaymentTypeIdArr = array(1, 2, 3); // allow payment type for supplier (filter is "DBIT" in "Form::select_types_paiements()" method)
+						if (!empty($form->cache_types_paiements[$paymentTypeId]) && isset($form->cache_types_paiements[$paymentTypeId]['type']) && in_array($form->cache_types_paiements[$paymentTypeId]['type'], $filterPaymentTypeIdArr)) {
+							$object->mode_reglement_supplier_id = $paymentTypeId;
+						}
+					}
+				}
+			}
 
 			$object->commercial_id			= GETPOSTINT('commercial_id');
 			$object->default_lang			= GETPOST('default_lang');

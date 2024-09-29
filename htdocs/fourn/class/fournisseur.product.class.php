@@ -678,7 +678,7 @@ class ProductFournisseur extends Product
 	/**
 	 *    Loads the price information of a provider
 	 *
-	 *    @param    int     $rowid              Line id
+	 *    @param    int     $rowid              Line id in product_fournisseur_price
 	 *    @param    int     $ignore_expression  Ignores the math expression for calculating price and uses the db value instead
 	 *    @return   int 					    Return integer < 0 if KO, 0 if OK but not found, > 0 if OK
 	 */
@@ -890,15 +890,13 @@ class ProductFournisseur extends Product
 	 *
 	 *  @param	int		$prodid	    Product id
 	 *  @param	float	$qty		Minimum quantity
-	 *  @param	int		$socid		get min price for specific supplier
+	 *  @param	int		$socid		Load min price for this specific supplier
 	 *  @return int					Return integer <0 if KO, 0=Not found of no product id provided, >0 if OK
 	 *  @see list_product_fournisseur_price()
 	 */
 	public function find_min_price_product_fournisseur($prodid, $qty = 0, $socid = 0)
 	{
 		// phpcs:enable
-		global $conf;
-
 		if (empty($prodid)) {
 			dol_syslog("Warning function find_min_price_product_fournisseur were called with prodid empty. May be a bug.", LOG_WARNING);
 			return 0;
@@ -926,8 +924,8 @@ class ProductFournisseur extends Product
 		$sql = "SELECT s.nom as supplier_name, s.rowid as fourn_id,";
 		$sql .= " pfp.rowid as product_fourn_price_id, pfp.ref_fourn,";
 		$sql .= " pfp.price, pfp.quantity, pfp.unitprice, pfp.tva_tx, pfp.charges,";
-		$sql .= " pfp.remise, pfp.remise_percent, pfp.fk_supplier_price_expression, pfp.delivery_time_days";
-		$sql .= " ,pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code";
+		$sql .= " pfp.remise, pfp.remise_percent, pfp.fk_supplier_price_expression, pfp.delivery_time_days,";
+		$sql .= " pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
 		$sql .= " WHERE s.entity IN (".getEntity('societe').")";
 		$sql .= " AND pfp.entity IN (".getEntity('productsupplierprice').")";
@@ -984,7 +982,9 @@ class ProductFournisseur extends Product
 							$fourn_unitprice_with_discount = (float) $fourn_unitprice * (1 - $record["remise_percent"] / 100);
 						}
 					}
+
 					if ($fourn_unitprice < $min || $min == -1) {
+						$this->id                       = $prodid;
 						$this->product_fourn_price_id   = $record["product_fourn_price_id"];
 						$this->ref_supplier             = $record["ref_fourn"];
 						$this->ref_fourn                = $record["ref_fourn"]; // deprecated
@@ -997,23 +997,24 @@ class ProductFournisseur extends Product
 						$this->fourn_unitprice_with_discount = $fourn_unitprice_with_discount;
 						$this->fourn_charges            = $record["charges"]; // when getDolGlobalString('PRODUCT_CHARGES') is set
 						$this->fourn_tva_tx             = $record["tva_tx"];
-						$this->fourn_id                 = $record["fourn_id"];
+						$this->fourn_id                 = $record["fourn_id"];	// thirdparty id
 						$this->fourn_name               = $record["supplier_name"];
 						$this->delivery_time_days = $record["delivery_time_days"];
 						$this->fk_supplier_price_expression = $record["fk_supplier_price_expression"];
-						$this->id                       = $prodid;
 						$this->fourn_multicurrency_price       = $record["multicurrency_price"];
 						$this->fourn_multicurrency_unitprice   = $record["multicurrency_unitprice"];
 						$this->fourn_multicurrency_tx          = $record["multicurrency_tx"];
 						$this->fourn_multicurrency_id          = $record["fk_multicurrency"];
 						$this->fourn_multicurrency_code        = $record["multicurrency_code"];
+
 						$min = $fourn_unitprice;
 					}
 				}
 			}
 
 			$this->db->free($resql);
-			return 1;
+
+			return $this->product_fourn_price_id;
 		} else {
 			$this->error = $this->db->error();
 			return -1;

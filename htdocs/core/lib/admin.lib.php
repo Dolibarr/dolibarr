@@ -861,6 +861,11 @@ function security_prepare_head()
 	$head[$h][2] = 'misc';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT."/admin/security_captcha.php";
+	$head[$h][1] = $langs->trans("Captcha");
+	$head[$h][2] = 'captcha';
+	$h++;
+
 	$head[$h][0] = DOL_URL_ROOT."/admin/security.php";
 	$head[$h][1] = $langs->trans("Passwords");
 	$head[$h][2] = 'passwords';

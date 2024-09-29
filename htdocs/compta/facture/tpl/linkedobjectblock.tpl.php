@@ -88,11 +88,21 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 
 	print '</td>';
 	print '<td class="linkedcol-statut right">';
+	$totalallpayments = 0;
+	$totalcalculated = false;
 	if (method_exists($objectlink, 'getSommePaiement')) {
-		print $objectlink->getLibStatut(3, $objectlink->getSommePaiement());
-	} else {
-		print $objectlink->getLibStatut(3);
+		$totalcalculated = true;
+		$totalallpayments += $objectlink->getSommePaiement();
 	}
+	if (method_exists($objectlink, 'getSumDepositsUsed')) {
+		$totalcalculated = true;
+		$totalallpayments += $objectlink->getSumDepositsUsed();
+	}
+	if (method_exists($objectlink, 'getSumCreditNotesUsed')) {
+		$totalcalculated = true;
+		$totalallpayments += $objectlink->getSumCreditNotesUsed();
+	}
+	print $objectlink->getLibStatut(3, ($totalcalculated ? $totalallpayments : -1));
 	print '</td>';
 	print '<td class="linkedcol-action right"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&token='.newToken().'&dellinkid='.$key.'">'.img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink').'</a></td>';
 	print "</tr>\n";

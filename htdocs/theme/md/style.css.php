@@ -2091,6 +2091,7 @@ tr.nobottom td {
 .titlefieldcreate { width: 20%; }
 .titlefield       { /* width: 25%; */ min-width: 150px; width: 25%; }
 .titlefieldmiddle { width: 50%; }
+.titlefieldmax45 { max-width: 45%; min-width: 180px; }
 .imgmaxwidth180 { max-width: 180px; }
 .imgmaxheight50 { max-height: 50px; }
 
@@ -2128,6 +2129,7 @@ tr.nobottom td {
 /* Force values for small screen 1000 */
 @media only screen and (max-width: 1000px)
 {
+	.titlefieldmax45 { min-width: 100px; }
 	.maxwidthonsmartphone { max-width: 100px; }
 	.minwidth50imp  { min-width: 50px !important; }
 	.minwidth75imp  { min-width: 70px !important; }
@@ -3495,7 +3497,7 @@ div.login a:hover {
 	text-decoration:underline;
 }
 div.login_block_user, div.login_block_other { clear: both; }
-div.login_block_other { padding-top: 15px; }
+div.login_block_other, div.login_block_tools { padding-top: 15px; }
 
 .topnav div.login_block_user {
 	display: inline-block;
@@ -8284,6 +8286,10 @@ table.jPicker {
 	div.login_block {
 		border-right: 1px solid rgba(0,0,0,0.3);
 	}
+	div.login_block_other, div.login_block_tools {
+		display: inline-block;
+	}
+
 	.loginbuttonexternal {
 		width: 260px;
 	}

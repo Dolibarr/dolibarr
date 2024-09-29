@@ -112,10 +112,25 @@ class Notify
 	 */
 	public $errors = array();
 
+	/**
+	 * @var string
+	 */
 	public $author;
+	/**
+	 * @var string
+	 */
 	public $ref;
+	/**
+	 * @var int
+	 */
 	public $date;
+	/**
+	 * @var int
+	 */
 	public $duree;
+	/**
+	 * @var string
+	 */
 	public $note;
 
 	/**
@@ -602,12 +617,12 @@ class Notify
 	 *  Check if notification are active for couple action/company.
 	 * 	If yes, send mail and save trace into llx_notify.
 	 *
-	 * 	@param	string	$notifcode			Code of action in llx_c_action_trigger (new usage) or Id of action in llx_c_action_trigger (old usage)
-	 * 	@param	Object	$object				Object the notification deals on
-	 *	@param 	array	$filename_list		List of files to attach (full path of filename on file system)
-	 *	@param 	array	$mimetype_list		List of MIME type of attached files
-	 *	@param 	array	$mimefilename_list	List of attached file name in message
-	 *	@return	int							Return integer <0 if KO, or number of changes if OK
+	 * 	@param	string			$notifcode			Code of action in llx_c_action_trigger (new usage) or Id of action in llx_c_action_trigger (old usage)
+	 * 	@param	CommonObject	$object				Object the notification deals on
+	 *	@param 	string[]		$filename_list		List of files to attach (full path of filename on file system)
+	 *	@param 	string[]		$mimetype_list		List of MIME type of attached files
+	 *	@param 	string[]		$mimefilename_list	List of attached file name in message
+	 *	@return	int									Return integer <0 if KO, or number of changes if OK
 	 */
 	public function send($notifcode, $object, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array())
 	{

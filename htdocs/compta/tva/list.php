@@ -745,7 +745,10 @@ while ($i < $imaxinloop) {
 		}
 
 		if (!empty($arrayfields['t.status']['checked'])) {
-			print '<td class="nowrap right">' . $tva_static->getLibStatut(5, $obj->alreadypayed) . '</td>';
+			$totalallpayments = $obj->alreadypayed;
+			// TODO Add deposit and credit notes
+
+			print '<td class="nowrap right">' . $tva_static->getLibStatut(5, $totalallpayments) . '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

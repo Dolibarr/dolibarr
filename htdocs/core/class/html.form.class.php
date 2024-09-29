@@ -659,11 +659,11 @@ class Form
 
 		$extrastyle = '';
 		if ($direction < 0) {
-			$extracss = ($extracss ? $extracss . ' ' : '') . ($notabs != 3 ? 'inline-block' : '');
+			$extracss = ($extracss ? $extracss : '') . ($notabs != 3 ? ' inline-block' : '');
 			$extrastyle = 'padding: 0px; padding-left: 2px;';
 		}
 		if ($direction > 0) {
-			$extracss = ($extracss ? $extracss . ' ' : '') . ($notabs != 3 ? 'inline-block' : '');
+			$extracss = ($extracss ? $extracss : '') . ($notabs != 3 ? ' inline-block' : '');
 			$extrastyle = 'padding: 0px; padding-right: 2px;';
 		}
 
@@ -747,7 +747,7 @@ class Form
 	 * @param 	int 		$forcenowrap 		Force no wrap between text and picto (works with notabs=2 only)
 	 * @return	string                        	HTML code of text, picto, tooltip
 	 */
-	public function textwithpicto($text, $htmltext, $direction = 1, $type = 'help', $extracss = '', $noencodehtmltext = 0, $notabs = 3, $tooltiptrigger = '', $forcenowrap = 0)
+	public function textwithpicto($text, $htmltext, $direction = 1, $type = 'help', $extracss = 'valignmiddle', $noencodehtmltext = 0, $notabs = 3, $tooltiptrigger = '', $forcenowrap = 0)
 	{
 		global $conf, $langs;
 
@@ -4653,17 +4653,17 @@ class Form
 	 * Return list of payment methods
 	 * Constant MAIN_DEFAULT_PAYMENT_TYPE_ID can used to set default value but scope is all application, probably not what you want.
 	 *
-	 * @param 	string 	$selected 		Id or code or preselected payment mode
-	 * @param 	string 	$htmlname 		Name of select field
-	 * @param 	string 	$filtertype 	To filter on field type in llx_c_paiement ('CRDT' or 'DBIT' or array('code'=>xx,'label'=>zz))
-	 * @param 	int 	$format 		0=id+label, 1=code+code, 2=code+label, 3=id+code
-	 * @param 	int 	$empty 			1=can be empty, 0 otherwise
-	 * @param 	int 	$noadmininfo 	0=Add admin info, 1=Disable admin info
-	 * @param 	int 	$maxlength 		Max length of label
-	 * @param 	int 	$active 		Active or not, -1 = all
-	 * @param 	string 	$morecss 		Add more CSS on select tag
-	 * @param 	int 	$nooutput 		1=Return string, do not send to output
-	 * @return  string|void             String for the HTML select component
+	 * @param 	string 		$selected 		Id or code or preselected payment mode
+	 * @param 	string 		$htmlname 		Name of select field
+	 * @param 	string 		$filtertype 	To filter on field type in llx_c_paiement ('CRDT' or 'DBIT' or array('code'=>xx,'label'=>zz))
+	 * @param 	int 		$format 		0=id+label, 1=code+code, 2=code+label, 3=id+code
+	 * @param 	int 		$empty 			1=can be empty, 0 otherwise
+	 * @param 	int 		$noadmininfo 	0=Add admin info, 1=Disable admin info
+	 * @param 	int 		$maxlength 		Max length of label
+	 * @param 	int 		$active 		Active or not, -1 = all
+	 * @param 	string 		$morecss 		Add more CSS on select tag
+	 * @param 	int<0,1>	$nooutput 		1=Return string, do not send to output
+	 * @return  string|void             	String for the HTML select component
 	 */
 	public function select_types_paiements($selected = '', $htmlname = 'paiementtype', $filtertype = '', $format = 0, $empty = 1, $noadmininfo = 0, $maxlength = 0, $active = 1, $morecss = '', $nooutput = 0)
 	{
@@ -5120,7 +5120,7 @@ class Form
 	 * @param string 		$moreattrib 	To add more attribute on select
 	 * @param int 			$showcurrency 	Show currency in label
 	 * @param string 		$morecss 		More CSS
-	 * @param int 			$nooutput 		1=Return string, do not send to output
+	 * @param int<0,1>		$nooutput 		1=Return string, do not send to output
 	 * @return int|string   	           	If noouput=0: Return integer <0 if error, Num of bank account found if OK (0, 1, 2, ...), If nooutput=1: Return a HTML select string.
 	 */
 	public function select_comptes($selected = '', $htmlname = 'accountid', $status = 0, $filtre = '', $useempty = 0, $moreattrib = '', $showcurrency = 0, $morecss = '', $nooutput = 0)
@@ -5882,7 +5882,7 @@ class Form
 	 * @param 	int 		$discard_closed 	Discard closed projects (0=Keep,1=hide completely except $selected,2=Disable)
 	 * @param 	int 		$maxlength 			Max length
 	 * @param 	int 		$forcefocus 		Force focus on field (works with javascript only)
-	 * @param 	int 		$nooutput 			No print is done. String is returned.
+	 * @param 	int<0,1>	$nooutput 			No print is done. String is returned.
 	 * @param 	string 		$textifnoproject 	Text to show if no project
 	 * @param 	string 		$morecss 			More CSS
 	 * @return	string                      	Return html content
@@ -5940,7 +5940,7 @@ class Form
 	 * @param int	 	$deposit_percent 	< 0 : deposit_percent input makes no sense (for example, in list filters)
 	 *                                		0 : use default deposit percentage from entry
 	 *                                		> 0 : force deposit percentage (for example, from company object)
-	 * @param int 		$nooutput 			No print is done. String is returned.
+	 * @param int<0,1>	$nooutput 			No print is done. String is returned.
 	 * @return string                   	HTML output or ''
 	 */
 	public function form_conditions_reglement($page, $selected = '', $htmlname = 'cond_reglement_id', $addempty = 0, $type = '', $filtertype = -1, $deposit_percent = -1, $nooutput = 0)
@@ -6065,7 +6065,7 @@ class Form
 	 * @param string $htmlname Html name of date input fields or 'none'
 	 * @param int $displayhour Display hour selector
 	 * @param int $displaymin Display minutes selector
-	 * @param int $nooutput 1=No print output, return string
+	 * @param int<0,1> $nooutput 1=No print output, return string
 	 * @param string $type 'direct-debit' or 'bank-transfer'
 	 * @return    string
 	 * @see        selectDate()
@@ -6154,7 +6154,7 @@ class Form
 	 * @param int $active Active or not, -1 = all
 	 * @param int $addempty 1=Add empty entry
 	 * @param string $type Type ('direct-debit' or 'bank-transfer')
-	 * @param int $nooutput 1=Return string, no output
+	 * @param int<0,1> $nooutput 1=Return string, no output
 	 * @return    string                    HTML output or ''
 	 */
 	public function form_modes_reglement($page, $selected = '', $htmlname = 'mode_reglement_id', $filtertype = '', $active = 1, $addempty = 0, $type = '', $nooutput = 0)
@@ -6446,7 +6446,7 @@ class Form
 	 * @param int<0,1>	$showtype 				Show third party type in combolist (customer, prospect or supplier)
 	 * @param int<0,1>	$forcecombo 			Force to use combo box
 	 * @param 	array<array{method:string,url:string,htmlname:string,params:array<string,string>}> 	$events 	Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
-	 * @param int 		$nooutput 				No print output. Return it only.
+	 * @param int<0,1>	$nooutput 				No print output. Return it only.
 	 * @param int[] 	$excludeids 			Exclude IDs from the select combo
 	 * @param string 	$textifnothirdparty 	Text to show if no thirdparty
 	 * @return    string                        HTML output or ''
@@ -6948,7 +6948,7 @@ class Form
 	 * @param string $form_name Not used
 	 * @param int $d 1=Show days, month, years
 	 * @param int $addnowlink Add a link "Now"
-	 * @param int $nooutput Do not output html string but return it
+	 * @param int<0,1> $nooutput Do not output html string but return it
 	 * @param int $disabled Disable input fields
 	 * @param int $fullday When a checkbox with this html name is on, hour and day are set with 00:00 or 23:59
 	 * @param string $addplusone Add a link "+1 hour". Value must be name of another select_date field.
@@ -7508,7 +7508,7 @@ class Form
 	 *                         If 'text' input hour is in text and input min is a text,
 	 *                         If 'textselect' input hour is in text and input min is a combo
 	 * @param integer $minunderhours If 1, show minutes selection under the hours
-	 * @param int $nooutput Do not output html string but return it
+	 * @param int<0,1> $nooutput Do not output html string but return it
 	 * @return    string                        HTML component
 	 */
 	public function select_duration($prefix, $iSecond = '', $disabled = 0, $typehour = 'select', $minunderhours = 0, $nooutput = 0)
@@ -8824,21 +8824,21 @@ class Form
 	}
 
 	/**
-	 *    Return a HTML select string, built from an array of key+value, but content returned into select come from an Ajax call of an URL.
-	 *  Note: Do not apply langs->trans function on returned content of Ajax service, content may be entity encoded twice.
+	 * Return a HTML select string, built from an array of key+value, but content returned into select come from an Ajax call of an URL.
+	 * Note: Do not apply langs->trans function on returned content of Ajax service, content may be entity encoded twice.
 	 *
-	 * @param string $htmlname Name of html select area
-	 * @param string $url Url. Must return a json_encode of array(key=>array('text'=>'A text', 'url'=>'An url'), ...)
-	 * @param string $id Preselected key
-	 * @param string $moreparam Add more parameters onto the select tag
-	 * @param string $moreparamtourl Add more parameters onto the Ajax called URL
-	 * @param int $disabled Html select box is disabled
-	 * @param int $minimumInputLength Minimum Input Length
-	 * @param string $morecss Add more class to css styles
-	 * @param int $callurlonselect If set to 1, some code is added so an url return by the ajax is called when value is selected.
-	 * @param string $placeholder String to use as placeholder
-	 * @param integer $acceptdelayedhtml 1 = caller is requesting to have html js content not returned but saved into global $delayedhtmlcontent (so caller can show it at end of page to avoid flash FOUC effect)
-	 * @return    string                        HTML select string
+	 * @param 	string 		$htmlname 			Name of html select area
+	 * @param 	string 		$url 				Url. Must return a json_encode of array(key=>array('text'=>'A text', 'url'=>'An url'), ...)
+	 * @param 	string 		$id 				Preselected key
+	 * @param 	string 		$moreparam 			Add more parameters onto the select tag
+	 * @param 	string 		$moreparamtourl 	Add more parameters onto the Ajax called URL
+	 * @param 	int 		$disabled 			Html select box is disabled
+	 * @param 	int 		$minimumInputLength Minimum Input Length
+	 * @param 	string 		$morecss 			Add more class to css styles
+	 * @param 	int 		$callurlonselect 	If set to 1, some code is added so an url return by the ajax is called when value is selected.
+	 * @param 	string 		$placeholder 		String to use as placeholder
+	 * @param 	integer 	$acceptdelayedhtml 	1 = caller is requesting to have html js content not returned but saved into global $delayedhtmlcontent (so caller can show it at end of page to avoid flash FOUC effect)
+	 * @return  string                      	HTML select string
 	 * @see selectArrayFilter(), ajax_combobox() in ajax.lib.php
 	 */
 	public static function selectArrayAjax($htmlname, $url, $id = '', $moreparam = '', $moreparamtourl = '', $disabled = 0, $minimumInputLength = 1, $morecss = '', $callurlonselect = 0, $placeholder = '', $acceptdelayedhtml = 0)
@@ -9372,16 +9372,16 @@ class Form
 	/**
 	 *  Show linked object block.
 	 *
-	 * @param 	CommonObject 	$object 						Object we want to show links to
-	 * @param 	string 			$morehtmlright 					More html to show on right of title
+	 * @param 	CommonObject 		$object 						Object we want to show links to
+	 * @param 	string 				$morehtmlright 					More html to show on right of title
 	 * @param 	array<int,string>	$compatibleImportElementsList 	Array of compatibles elements object for "import from" action
-	 * @param 	string 			$title 							Title
-	 * @return  int                                             Return Number of different types
+	 * @param 	string 				$title 							Title
+	 * @return  int                                             	Return Number of different types
 	 */
 	public function showLinkedObjectBlock($object, $morehtmlright = '', $compatibleImportElementsList = array(), $title = 'RelatedObjects')
 	{
 		global $conf, $langs, $hookmanager;
-		global $bc, $action;
+		global $action;
 
 		$object->fetchObjectLinked();
 
@@ -9531,17 +9531,20 @@ class Form
 	}
 
 	/**
-	 *  Show block with links to link to other objects.
+	 *  Show block with links "to link to" other objects.
 	 *
 	 * @param 	CommonObject 	$object 			Object we want to show links to
 	 * @param 	string[] 		$restrictlinksto 	Restrict links to some elements, for example array('order') or array('supplier_order'). null or array() if no restriction.
 	 * @param 	string[] 		$excludelinksto 	Do not show links of this type, for example array('order') or array('supplier_order'). null or array() if no exclusion.
-	 * @return  string                              HTML block
+	 * @param	int<0,1>		$nooutput			1=Return array with content instead of printing it.
+	 * @return  array{linktoelem:string,htmltoenteralink:string}|string                              HTML block
 	 */
-	public function showLinkToObjectBlock($object, $restrictlinksto = array(), $excludelinksto = array())
+	public function showLinkToObjectBlock($object, $restrictlinksto = array(), $excludelinksto = array(), $nooutput = 0)
 	{
 		global $conf, $langs, $hookmanager;
 		global $action;
+
+		$form = new Form($this->db);
 
 		$linktoelem = '';
 		$linktoelemlist = '';
@@ -9656,6 +9659,8 @@ class Form
 			}
 		}
 
+		// Build the html part with possible suggested links
+		$htmltoenteralink = '';
 		foreach ($possiblelinks as $key => $possiblelink) {
 			$num = 0;
 
@@ -9664,25 +9669,26 @@ class Form
 			}
 
 			if (!empty($possiblelink['perms']) && (empty($restrictlinksto) || in_array($key, $restrictlinksto)) && (empty($excludelinksto) || !in_array($key, $excludelinksto))) {
-				print '<div id="' . $key . 'list"' . (empty($conf->use_javascript_ajax) ? '' : ' style="display:none"') . '>';
+				$htmltoenteralink .= '<div id="' . $key . 'list"' . (empty($conf->use_javascript_ajax) ? '' : ' style="display:none"') . '>';
 
-				if (getDolGlobalString('MAIN_LINK_BY_REF_IN_LINKTO')) {
-					print '<br>'."\n";
-					print '<!-- form to add a link from anywhere -->'."\n";
-					print '<form action="' . $_SERVER["PHP_SELF"] . '" method="POST" name="formlinkedbyref' . $key . '">';
-					print '<input type="hidden" name="id" value="' . $object->id . '">';
-					print '<input type="hidden" name="action" value="addlinkbyref">';
-					print '<input type="hidden" name="token" value="' . newToken() . '">';
-					print '<input type="hidden" name="addlink" value="' . $key . '">';
-					print '<table class="noborder">';
-					print '<tr>';
+				// Section for free ref input
+				if (!getDolGlobalString('MAIN_HIDE_LINK_BY_REF_IN_LINKTO')) {
+					$htmltoenteralink .= '<br>'."\n";
+					$htmltoenteralink .= '<!-- form to add a link from anywhere -->'."\n";
+					$htmltoenteralink .= '<form action="' . $_SERVER["PHP_SELF"] . '" method="POST" name="formlinkedbyref' . $key . '">';
+					$htmltoenteralink .= '<input type="hidden" name="id" value="' . $object->id . '">';
+					$htmltoenteralink .= '<input type="hidden" name="action" value="addlinkbyref">';
+					$htmltoenteralink .= '<input type="hidden" name="token" value="' . newToken() . '">';
+					$htmltoenteralink .= '<input type="hidden" name="addlink" value="' . $key . '">';
+					$htmltoenteralink .= '<table class="noborder">';
+					$htmltoenteralink .= '<tr>';
 					//print '<td>' . $langs->trans("Ref") . '</td>';
-					print '<td class="center"><input type="text" placeholder="'.dol_escape_htmltag($langs->trans("Ref")).'" name="reftolinkto" value="' . dol_escape_htmltag(GETPOST('reftolinkto', 'alpha')) . '">&nbsp;';
-					print '<input type="submit" class="button small valignmiddle" value="' . $langs->trans('ToLink') . '">&nbsp;';
-					print '<input type="submit" class="button small" name="cancel" value="' . $langs->trans('Cancel') . '"></td>';
-					print '</tr>';
-					print '</table>';
-					print '</form>';
+					$htmltoenteralink .= '<td class="center"><input type="text" placeholder="'.dol_escape_htmltag($langs->trans("Ref")).'" name="reftolinkto" value="' . dol_escape_htmltag(GETPOST('reftolinkto', 'alpha')) . '">&nbsp;';
+					$htmltoenteralink .= '<input type="submit" class="button small valignmiddle" value="' . $langs->trans('ToLink') . '">&nbsp;';
+					$htmltoenteralink .= '<input type="submit" class="button small" name="cancel" value="' . $langs->trans('Cancel') . '"></td>';
+					$htmltoenteralink .= '</tr>';
+					$htmltoenteralink .= '</table>';
+					$htmltoenteralink .= '</form>';
 				}
 
 				$sql = $possiblelink['sql'];
@@ -9692,60 +9698,64 @@ class Form
 					$num = $this->db->num_rows($resqllist);
 					$i = 0;
 
-					print '<br>';
-					print '<!-- form to add a link from object to same thirdparty -->'."\n";
-					print '<form action="' . $_SERVER["PHP_SELF"] . '" method="POST" name="formlinked' . $key . '">';
-					print '<input type="hidden" name="action" value="addlink">';
-					print '<input type="hidden" name="token" value="' . newToken() . '">';
-					print '<input type="hidden" name="id" value="' . $object->id . '">';
-					print '<input type="hidden" name="addlink" value="' . $key . '">';
-					print '<table class="noborder">';
-					print '<tr class="liste_titre">';
-					print '<td class="nowrap"></td>';
-					print '<td class="center">' . $langs->trans("Ref") . '</td>';
-					print '<td class="left">' . $langs->trans("RefCustomer") . '</td>';
-					print '<td class="right">' . $langs->trans("AmountHTShort") . '</td>';
-					print '<td class="left">' . $langs->trans("Company") . '</td>';
-					print '</tr>';
-					while ($i < $num) {
-						$objp = $this->db->fetch_object($resqllist);
+					if ($num > 0) {
+						// Section for free predefined list
+						$htmltoenteralink .= '<br>';
+						$htmltoenteralink .= '<!-- form to add a link from object to same thirdparty -->'."\n";
+						$htmltoenteralink .= '<form action="' . $_SERVER["PHP_SELF"] . '" method="POST" name="formlinked' . $key . '">';
+						$htmltoenteralink .= '<input type="hidden" name="action" value="addlink">';
+						$htmltoenteralink .= '<input type="hidden" name="token" value="' . newToken() . '">';
+						$htmltoenteralink .= '<input type="hidden" name="id" value="' . $object->id . '">';
+						$htmltoenteralink .= '<input type="hidden" name="addlink" value="' . $key . '">';
+						$htmltoenteralink .= '<table class="noborder">';
+						$htmltoenteralink .= '<tr class="liste_titre">';
+						$htmltoenteralink .= '<td class="nowrap"></td>';
+						$htmltoenteralink .= '<td>' . $langs->trans("Ref") . '</td>';
+						$htmltoenteralink .= '<td>' . $langs->trans("RefCustomer") . '</td>';
+						$htmltoenteralink .= '<td class="right">' . $langs->trans("AmountHTShort") . '</td>';
+						$htmltoenteralink .= '<td>' . $langs->trans("Company") . '</td>';
+						$htmltoenteralink .= '</tr>';
+						while ($i < $num) {
+							$objp = $this->db->fetch_object($resqllist);
 
-						print '<tr class="oddeven">';
-						print '<td class="left">';
-						print '<input type="radio" name="idtolinkto" id="' . $key . '_' . $objp->rowid . '" value="' . $objp->rowid . '">';
-						print '</td>';
-						print '<td class="center"><label for="' . $key . '_' . $objp->rowid . '">' . $objp->ref . '</label></td>';
-						print '<td>' . (!empty($objp->ref_client) ? $objp->ref_client : (!empty($objp->ref_supplier) ? $objp->ref_supplier : '')) . '</td>';
-						print '<td class="right">';
-						if ($possiblelink['label'] == 'LinkToContract') {
-							$form = new Form($this->db);
-							print $form->textwithpicto('', $langs->trans("InformationOnLinkToContract")) . ' ';
+							$htmltoenteralink .= '<tr class="oddeven">';
+							$htmltoenteralink .= '<td>';
+							$htmltoenteralink .= '<input type="checkbox" name="idtolinkto[' . $key . '_' . $objp->rowid . ']" id="' . $key . '_' . $objp->rowid . '" value="' . $objp->rowid . '">';
+							$htmltoenteralink .= '</td>';
+							$htmltoenteralink .= '<td><label for="' . $key . '_' . $objp->rowid . '">' . $objp->ref . '</label></td>';
+							$htmltoenteralink .= '<td>' . (!empty($objp->ref_client) ? $objp->ref_client : (!empty($objp->ref_supplier) ? $objp->ref_supplier : '')) . '</td>';
+							$htmltoenteralink .= '<td class="right">';
+							if ($possiblelink['label'] == 'LinkToContract') {
+								$htmltoenteralink .= $form->textwithpicto('', $langs->trans("InformationOnLinkToContract")) . ' ';
+							}
+							$htmltoenteralink .= '<span class="amount">' . (isset($objp->total_ht) ? price($objp->total_ht) : '') . '</span>';
+							$htmltoenteralink .= '</td>';
+							$htmltoenteralink .= '<td>' . $objp->name . '</td>';
+							$htmltoenteralink .= '</tr>';
+							$i++;
 						}
-						print '<span class="amount">' . (isset($objp->total_ht) ? price($objp->total_ht) : '') . '</span>';
-						print '</td>';
-						print '<td>' . $objp->name . '</td>';
-						print '</tr>';
-						$i++;
+						$htmltoenteralink .= '</table>';
+						$htmltoenteralink .= '<div class="center">';
+						if ($num) {
+							$htmltoenteralink .= '<input type="submit" class="button valignmiddle marginleftonly marginrightonly small" value="' . $langs->trans('ToLink') . '">';
+						}
+						if (empty($conf->use_javascript_ajax)) {
+							$htmltoenteralink .= '<input type="submit" class="button button-cancel marginleftonly marginrightonly small" name="cancel" value="' . $langs->trans("Cancel") . '"></div>';
+						} else {
+							$htmltoenteralink .= '<input type="submit" onclick="jQuery(\'#' . $key . 'list\').toggle(); return false;" class="button button-cancel marginleftonly marginrightonly small" name="cancel" value="' . $langs->trans("Cancel") . '"></div>';
+						}
+						$htmltoenteralink .= '</form>';
 					}
-					print '</table>';
-					print '<div class="center">';
-					if ($num) {
-						print '<input type="submit" class="button valignmiddle marginleftonly marginrightonly small" value="' . $langs->trans('ToLink') . '">';
-					}
-					if (empty($conf->use_javascript_ajax)) {
-						print '<input type="submit" class="button button-cancel marginleftonly marginrightonly small" name="cancel" value="' . $langs->trans("Cancel") . '"></div>';
-					} else {
-						print '<input type="submit" onclick="jQuery(\'#' . $key . 'list\').toggle(); return false;" class="button button-cancel marginleftonly marginrightonly small" name="cancel" value="' . $langs->trans("Cancel") . '"></div>';
-					}
-					print '</form>';
+
 					$this->db->free($resqllist);
 				} else {
 					dol_print_error($this->db);
 				}
-				print '</div>';
+				$htmltoenteralink .= '</div>';
 
-				//$linktoelem.=($linktoelem?' &nbsp; ':'');
-				if ($num > 0 || getDolGlobalString('MAIN_LINK_BY_REF_IN_LINKTO')) {
+
+				// Complete the list for the combo box
+				if ($num > 0 || !getDolGlobalString('MAIN_HIDE_LINK_BY_REF_IN_LINKTO')) {
 					$linktoelemlist .= '<li><a href="#linkto' . $key . '" class="linkto dropdowncloseonclick" rel="' . $key . '">' . $langs->trans($possiblelink['label']) . ' (' . $num . ')</a></li>';
 					// } else $linktoelem.=$langs->trans($possiblelink['label']);
 				} else {
@@ -9756,18 +9766,18 @@ class Form
 
 		if ($linktoelemlist) {
 			$linktoelem = '
-    		<dl class="dropdown" id="linktoobjectname">
-    		';
+			<dl class="dropdown" id="linktoobjectname">
+			';
 			if (!empty($conf->use_javascript_ajax)) {
 				$linktoelem .= '<dt><a href="#linktoobjectname"><span class="fas fa-link paddingrightonly"></span>' . $langs->trans("LinkTo") . '...</a></dt>';
 			}
 			$linktoelem .= '<dd>
-    		<div class="multiselectlinkto">
-    		<ul class="ulselectedfields">' . $linktoelemlist . '
-    		</ul>
-    		</div>
-    		</dd>
-    		</dl>';
+			<div class="multiselectlinkto">
+			<ul class="ulselectedfields">' . $linktoelemlist . '
+			</ul>
+			</div>
+			</dd>
+			</dl>';
 		} else {
 			$linktoelem = '';
 		}
@@ -9782,7 +9792,13 @@ class Form
 					});
 				});
 				</script>
-		    ';
+			';
+		}
+
+		if ($nooutput) {
+			return array('linktoelem' => $linktoelem, 'htmltoenteralink' => $htmltoenteralink);
+		} else {
+			print $htmltoenteralink;
 		}
 
 		return $linktoelem;
@@ -9791,16 +9807,16 @@ class Form
 	/**
 	 *    Return an html string with a select combo box to choose yes or no
 	 *
-	 * @param string 	$htmlname 		Name of html select field
-	 * @param string 	$value 			Pre-selected value
-	 * @param int 		$option 		0 return yes/no, 1 return 1/0
-	 * @param bool 		$disabled 		true or false
-	 * @param int 		$useempty 		1=Add empty line
-	 * @param int 		$addjscombo 	1=Add js beautifier on combo box
-	 * @param string 	$morecss 		More CSS
-	 * @param string 	$labelyes 		Label for Yes
-	 * @param string 	$labelno 		Label for No
-	 * @return    string                See option
+	 * @param string 		$htmlname 		Name of html select field
+	 * @param string|int 	$value 			Pre-selected value
+	 * @param int 			$option 		0 return yes/no, 1 return 1/0
+	 * @param bool 			$disabled 		true or false
+	 * @param int 			$useempty 		1=Add empty line
+	 * @param int 			$addjscombo 	1=Add js beautifier on combo box
+	 * @param string 		$morecss 		More CSS
+	 * @param string 		$labelyes 		Label for Yes
+	 * @param string 		$labelno 		Label for No
+	 * @return	string                      See option
 	 */
 	public function selectyesno($htmlname, $value = '', $option = 0, $disabled = false, $useempty = 0, $addjscombo = 0, $morecss = 'width75', $labelyes = 'Yes', $labelno = 'No')
 	{

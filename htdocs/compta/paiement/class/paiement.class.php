@@ -1324,7 +1324,7 @@ class Paiement extends CommonObject
 				$facturestatic = new Facture($this->db);
 				foreach ($arraybill as $billid) {
 					$facturestatic->fetch($billid);
-					$label .= '<br> '.$facturestatic->getNomUrl(1, '', 0, 0, '', 1).' '.$facturestatic->getLibStatut(2, 1);
+					$label .= '<br> '.$facturestatic->getNomUrl(1, '', 0, 0, '', 1).' '.$facturestatic->getLibStatut(2, -1);
 				}
 			}
 		}

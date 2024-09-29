@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2021 Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2014      Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2019      Eric Seigne          <eric.seigne@cap-rel.fr>
- * Copyright (C) 2021-2024 Frédéric France      <frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
+ * Copyright (C) 2013-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2014       Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2019       Eric Seigne             <eric.seigne@cap-rel.fr>
+ * Copyright (C) 2021-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -347,7 +347,7 @@ function getDefaultDatesForTransfer()
  * Get current period of fiscal year
  *
  * @param 	DoliDB		$db				Database handler
- * @param 	stdClass	$conf			Config
+ * @param 	Conf		$conf			Config
  * @param 	int 		$from_time		[=null] Get current time or set time to find fiscal period
  * @return 	array		Period of fiscal year : [date_start, date_end]
  */

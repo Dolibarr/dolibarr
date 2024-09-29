@@ -2338,7 +2338,7 @@ class ExtraFields
 		$expand_display = false;
 		if (is_array($extrafield_param_list) && count($extrafield_param_list) > 0) {
 			$extrafield_collapse_display_value = intval($extrafield_param_list[0]);
-			$expand_display = ((isset($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key]) || GETPOSTINT('ignorecollapsesetup')) ? (!empty($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key])) : !($extrafield_collapse_display_value == 2));
+			$expand_display = ((isset($_COOKIE['DOLUSER_COLLAPSE_'.$object->table_element.'_extrafields_'.$key]) || GETPOSTINT('ignorecollapsesetup')) ? (!empty($_COOKIE['DOLUSER_COLLAPSE_'.$object->table_element.'_extrafields_'.$key])) : !($extrafield_collapse_display_value == 2));
 		}
 		$disabledcookiewrite = 0;
 		if ($mode == 'create') {
@@ -2377,7 +2377,7 @@ class ExtraFields
 						$out .= '   jQuery(".trextrafields_collapse'.$collapse_group.'").hide();'."\n";
 					} else {
 						$out .= '   console.log("Inject js for collapsing of extrafield '.$key.' - keep visible and set cookie");'."\n";
-						$out .= '   document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=1; path='.$_SERVER["PHP_SELF"].'"'."\n";
+						$out .= '   document.cookie = "DOLUSER_COLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=1; path='.$_SERVER["PHP_SELF"].'"'."\n";
 					}
 				}
 				$out .= '   jQuery("#trextrafieldseparator'.$key.(!empty($object->id) ? '_'.$object->id : '').'").click(function(){'."\n";
@@ -2385,10 +2385,10 @@ class ExtraFields
 				$out .= '       jQuery(".trextrafields_collapse'.$collapse_group.'").toggle(100, function(){'."\n";
 				$out .= '           if (jQuery(".trextrafields_collapse'.$collapse_group.'").is(":hidden")) {'."\n";
 				$out .= '               jQuery("#trextrafieldseparator'.$key.(!empty($object->id) ? '_'.$object->id : '').' '.$tagtype_dyn.' span").addClass("fa-plus-square").removeClass("fa-minus-square");'."\n";
-				$out .= '               document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=0; path='.$_SERVER["PHP_SELF"].'"'."\n";
+				$out .= '               document.cookie = "DOLUSER_COLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=0; path='.$_SERVER["PHP_SELF"].'"'."\n";
 				$out .= '           } else {'."\n";
 				$out .= '               jQuery("#trextrafieldseparator'.$key.(!empty($object->id) ? '_'.$object->id : '').' '.$tagtype_dyn.' span").addClass("fa-minus-square").removeClass("fa-plus-square");'."\n";
-				$out .= '               document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=1; path='.$_SERVER["PHP_SELF"].'"'."\n";
+				$out .= '               document.cookie = "DOLUSER_COLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=1; path='.$_SERVER["PHP_SELF"].'"'."\n";
 				$out .= '           }'."\n";
 				$out .= '       });'."\n";
 				$out .= '   });'."\n";

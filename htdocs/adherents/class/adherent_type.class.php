@@ -107,7 +107,9 @@ class AdherentType extends CommonObject
 	/** @var string 	Public note */
 	public $note_public;
 
-	/** @var integer	Can vote */
+	/**
+	 * @var int<0,1>	Can vote
+	 */
 	public $vote;
 
 	/** @var string Email sent during validation of member */
