@@ -34,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/defaultvalues.class.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
 if (!$user->admin) {
 	accessforbidden();
@@ -115,14 +116,14 @@ if ($action == 'set') {
 	} else {
 		setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 	}
-} elseif ($action == 'specimen') {  // For orders
+} elseif ($action == 'specimen') {  // For actioncomm
 	$modele = GETPOST('module', 'alpha');
 
-	$commande = new CommandeFournisseur($db);
-	$commande->initAsSpecimen();
+	$action = new ActionComm($db);
+	$action->initAsSpecimen();
 	$specimenthirdparty = new Societe($db);
 	$specimenthirdparty->initAsSpecimen();
-	$commande->thirdparty = $specimenthirdparty;
+	$action->thirdparty = $specimenthirdparty;
 
 	// Search template files
 	$file = '';
@@ -139,10 +140,10 @@ if ($action == 'set') {
 	if ($classname !== '') {
 		require_once $file;
 
-		$module = new $classname($db, $commande);
+		$module = new $classname($db, $action);
 		'@phan-var-force pdf_standard_actions $module';
 
-		if ($module->write_file($commande, $langs) > 0) {
+		if ($module->write_file($action, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=action&file=SPECIMEN.pdf");
 			return;
 		} else {
@@ -257,7 +258,6 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 					if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
 						$name = substr($file, 4, dol_strlen($file) - 16);
 						$classname = substr($file, 0, dol_strlen($file) - 12);
-
 						require_once $dir.'/'.$file;
 						$module = new $classname($db, new ActionComm($db));
 

@@ -72,7 +72,7 @@ parameters:
 		- '# (dol_print_date|correctExifImageOrientation) expects bool\|string#'
 		- '# (getRandomPassword|vatrate|DolEditor constructor) expects bool, int#'
 		- '# SMTPs::(getFrom|getErrorsTo|getReplyTo)\(\) expects bool, string given.#'
-		- '# (dolibarr_set_const|yn|getLocalTaxesFromRate) expects int\|string#'
+		- '# (dolibarr_set_const|getLocalTaxesFromRate) expects int\|string#'
 		- '#::(options)\(\) expects int\|string#'
 		- '# (print_barre_liste|dol_substr) expects int\|null#'
 		- '#(?:colorAdjustBrightness|imap_(?:(?:fetch)?body|fetchstructure)) expects int, string#'

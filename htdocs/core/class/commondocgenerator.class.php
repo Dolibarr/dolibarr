@@ -92,13 +92,39 @@ abstract class CommonDocGenerator
 	 */
 	public $type;
 
+	/**
+	 * @var float page height
+	 */
 	public $page_hauteur;
+
+	/**
+	 * @var float page wicth
+	 */
 	public $page_largeur;
+
+	/**
+	 * @var float left margin
+	 */
 	public $marge_gauche;
+
+	/**
+	 * @var float right margin
+	 */
 	public $marge_droite;
+
+	/**
+	 * @var float top margin
+	 */
 	public $marge_haute;
+
+	/**
+	 * @var float bottom margin
+	 */
 	public $marge_basse;
 
+	/**
+	 * @var int<0,1> option logo
+	 */
 	public $option_logo;
 	public $option_tva;
 	public $option_multilang;

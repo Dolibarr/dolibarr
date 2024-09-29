@@ -3420,16 +3420,17 @@ class CommandeFournisseur extends CommonOrder
 			return '';
 		}
 
-		$obj = new ProductFournisseur($this->db);
+		$tmpproductfourn = new ProductFournisseur($this->db);
 
 		$nb = 0;
 		foreach ($this->lines as $line) {
 			if ($line->fk_product > 0) {
-				$idp = $obj->find_min_price_product_fournisseur($line->fk_product, $line->qty);
-				if ($idp) {
-					$obj->fetch($idp);
-					if ($obj->delivery_time_days > $nb) {
-						$nb = $obj->delivery_time_days;
+				// Load delivery_time_days, return id into product_fournisseur_price
+				$idp = $tmpproductfourn->find_min_price_product_fournisseur($line->fk_product, $line->qty, $this->thirdparty->id);
+				if ($idp > 0) {
+					//$tmpproductfourn->fetch_product_fournisseur_price($idp);
+					if ($tmpproductfourn->delivery_time_days > $nb) {
+						$nb = $tmpproductfourn->delivery_time_days;
 					}
 				}
 			}
@@ -3438,7 +3439,7 @@ class CommandeFournisseur extends CommonOrder
 		if ($nb === 0) {
 			return '';
 		} else {
-			return $nb.' '.$langs->trans('Days');
+			return $nb.' '.$langs->trans('days');
 		}
 	}
 
