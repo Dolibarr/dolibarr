@@ -38,7 +38,7 @@ class WebPortalTheme
 	public $primaryColorHex = '#263c5c';
 
 	/**
-	 * @var array{h:int,l:int,s:int,a:int}
+	 * @var array{h:float,l:float,s:float,a:float}
 	 */
 	public $primaryColorHsl = array(
 		'h' => 216, // Hue
