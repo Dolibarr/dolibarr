@@ -864,7 +864,7 @@ if ($event->type == 'payout.created') {
 
 	dol_syslog("The payment disputed is ".$amountdispute." and the invoice is ".$payment_amountInDolibarr);
 
-	if ($amountdispute != $amountdispute) {
+	if ($amountdispute != $payment_amountInDolibarr) {
 		http_response_code(500);
 		print "The payment disputed is ".$amountdispute." and the invoice is ".$payment_amountInDolibarr.". Amount differs, we don't know what to do.";
 		return -1;
@@ -877,7 +877,7 @@ if ($event->type == 'payout.created') {
 	$paiement = new Paiement($db);
 
 	$amounts = array();
-	$amounts[$tmpinvoice->id] = -1 * price2num($payment_amountInDolibarr);
+	$amounts[$tmpinvoice->id] = -1 * $payment_amountInDolibarr;
 
 	$paiement->datepaye = dol_now();
 	$paiement->amounts = $amounts; // Array with all payments dispatching with invoice id
