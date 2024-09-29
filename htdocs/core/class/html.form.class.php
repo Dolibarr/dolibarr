@@ -9537,7 +9537,7 @@ class Form
 	 * @param 	string[] 		$restrictlinksto 	Restrict links to some elements, for example array('order') or array('supplier_order'). null or array() if no restriction.
 	 * @param 	string[] 		$excludelinksto 	Do not show links of this type, for example array('order') or array('supplier_order'). null or array() if no exclusion.
 	 * @param	int<0,1>		$nooutput			1=Return array with content instead of printing it.
-	 * @return  array{linktoelem:string,htmltoenteralink:string}                              HTML block
+	 * @return  array{linktoelem:string,htmltoenteralink:string}|string                              HTML block
 	 */
 	public function showLinkToObjectBlock($object, $restrictlinksto = array(), $excludelinksto = array(), $nooutput = 0)
 	{
@@ -9766,18 +9766,18 @@ class Form
 
 		if ($linktoelemlist) {
 			$linktoelem = '
-    		<dl class="dropdown" id="linktoobjectname">
-    		';
+			<dl class="dropdown" id="linktoobjectname">
+			';
 			if (!empty($conf->use_javascript_ajax)) {
 				$linktoelem .= '<dt><a href="#linktoobjectname"><span class="fas fa-link paddingrightonly"></span>' . $langs->trans("LinkTo") . '...</a></dt>';
 			}
 			$linktoelem .= '<dd>
-    		<div class="multiselectlinkto">
-    		<ul class="ulselectedfields">' . $linktoelemlist . '
-    		</ul>
-    		</div>
-    		</dd>
-    		</dl>';
+			<div class="multiselectlinkto">
+			<ul class="ulselectedfields">' . $linktoelemlist . '
+			</ul>
+			</div>
+			</dd>
+			</dl>';
 		} else {
 			$linktoelem = '';
 		}
@@ -9792,7 +9792,7 @@ class Form
 					});
 				});
 				</script>
-		    ';
+			';
 		}
 
 		if ($nooutput) {
