@@ -112,6 +112,7 @@ if ($nolinesbefore) {
 	print '<td class="linecoledit" colspan="' . $colspan . '">&nbsp;</td>';
 	print '</tr>';
 }
+
 print '<tr class="pair nodrag nodrop nohoverpair'.(($nolinesbefore || $object->element == 'contrat') ? '' : ' liste_titre_create').'">';
 $coldisplay = 0;
 
