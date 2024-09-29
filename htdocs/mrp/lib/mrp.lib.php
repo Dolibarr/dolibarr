@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2019 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +17,7 @@
  */
 
 /**
- * \file    mrp/lib/mrp.lib.php
+ * \file    htdocs/mrp/lib/mrp.lib.php
  * \ingroup mrp
  * \brief   Library files with common functions for Mrp
  */
@@ -28,23 +29,34 @@
  */
 function mrpAdminPrepareHead()
 {
-	global $langs, $conf;
+	global $langs, $conf, $db;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('mrp_mo');
 
 	$langs->load("mrp");
 
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = dol_buildpath("/admin/mrp.php", 1);
+	$head[$h][0] = DOL_URL_ROOT . '/admin/mrp.php';
 	$head[$h][1] = $langs->trans("Settings");
 	$head[$h][2] = 'settings';
 	$h++;
 
-	$head[$h][0] = dol_buildpath("/admin/mrp_extrafields.php", 1);
+	$head[$h][0] = DOL_URL_ROOT . '/admin/mrp_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
+	$nbExtrafields = $extrafields->attributes['mrp_mo']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbExtrafields . '</span>';
+	}
 	$head[$h][2] = 'mrp_extrafields';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT . '/admin/mrp_production_extrafields.php';
+	$head[$h][1] = $langs->trans("ExtraFieldsLines");
+	$head[$h][2] = 'mrp_production_extrafields';
+	$h++;
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	//$this->tabs = array(

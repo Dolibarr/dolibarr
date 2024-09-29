@@ -3,7 +3,7 @@
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 
@@ -33,7 +33,7 @@ if ((array) $linked_resources && count($linked_resources) > 0) {
 
 		//$element_id = $linked_resource['rowid'];
 
-		if ($mode == 'edit' && $linked_resource['rowid'] == GETPOST('lineid', 'int')) {
+		if ($mode == 'edit' && $linked_resource['rowid'] == GETPOSTINT('lineid')) {
 			print '<div class="tagtr oddeven">';
 			print '<input type="hidden" name="lineid" value="'.$linked_resource['rowid'].'" />';
 			print '<input type="hidden" name="element" value="'.$element.'" />';
@@ -47,7 +47,7 @@ if ((array) $linked_resources && count($linked_resources) > 0) {
 			print '</div>';
 		} else {
 			$class = '';
-			if ($linked_resource['rowid'] == GETPOST('lineid', 'int')) {
+			if ($linked_resource['rowid'] == GETPOSTINT('lineid')) {
 				$class = 'highlight';
 			}
 

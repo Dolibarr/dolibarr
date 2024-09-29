@@ -34,7 +34,7 @@ $path = __DIR__.'/';
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+	exit(1);
 }
 
 require_once $path."../../htdocs/master.inc.php";
@@ -46,6 +46,9 @@ require_once DOL_DOCUMENT_ROOT."/compta/paiement/class/paiement.class.php";
 // Global variables
 $version = constant('DOL_VERSION');
 $error = 0;
+
+$hookmanager->initHooks(array('cli'));
+
 
 /*
  * Main
@@ -61,18 +64,17 @@ $month = dol_print_date($datetimeprev, "%m");
 $year = dol_print_date($datetimeprev, "%Y");
 
 $user = new User($db);
-$user->fetch($conf->global->PRELEVEMENT_USER);
+$user->fetch(getDolGlobalString('PRELEVEMENT_USER'));
 
 if (!isset($argv[1])) { // Check parameters
 	print "This script check invoices with a withdrawal request and\n";
 	print "then create payment and build a withdraw file.\n";
 	print "Usage: ".$script_file." simu|real\n";
-	exit(-1);
+	exit(1);
 }
 
 $withdrawreceipt = new BonPrelevement($db);
-// $conf->global->PRELEVEMENT_CODE_BANQUE and $conf->global->PRELEVEMENT_CODE_GUICHET should be empty
-$result = $withdrawreceipt->create($conf->global->PRELEVEMENT_CODE_BANQUE, $conf->global->PRELEVEMENT_CODE_GUICHET, $argv[1]);
+$result = $withdrawreceipt->create(getDolGlobalString('PRELEVEMENT_CODE_BANQUE'), getDolGlobalString('PRELEVEMENT_CODE_GUICHET'), $argv[1]);
 
 $db->close();
 

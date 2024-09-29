@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - printing
-Module64000Name=One click Printing
-Module64000Desc=Enable One click Printing System
-PrintingSetup=Setup of One click Printing System
-PrintingDesc=This module adds a Print button to various modules to allow documents to be printed directly to a printer with no need to open the document into another application.
-MenuDirectPrinting=One click Printing jobs
-DirectPrint=One click Print
+Module64000Name=Як клик Чоп кардан
+Module64000Desc=Системаи чопи як кликро фаъол созед
+PrintingSetup=Танзими системаи чопи як клик
+PrintingDesc=Ин модул тугмаи Чопро ба модулҳои гуногун илова мекунад, то ҳуҷҷатҳоро мустақиман дар принтер бидуни зарурати кушодани ҳуҷҷат дар замимаи дигар чоп кунанд.
+MenuDirectPrinting=Як клик Корҳои чоп
+DirectPrint=Як клик Чоп кунед
 PrintingDriverDesc=Тағирёбандаҳои конфигуратсия барои драйвери чоп.
 ListDrivers=Рӯйхати ронандагон
 PrintTestDesc=Рӯйхати чопгарҳо.
@@ -32,6 +32,7 @@ PRINTIPP_HOST=Сервери чоп
 PRINTIPP_PORT=Порт
 PRINTIPP_USER=Даромадан
 PRINTIPP_PASSWORD=Рамз
+PRINTIPP_SSL=Use SSL
 NoDefaultPrinterDefined=Ягон принтери пешфарз муайян карда нашудааст
 DefaultPrinter=Чопгари пешфарз
 Printer=Чопгар
@@ -52,3 +53,4 @@ PrintingDriverDescprintgcp=Тағирёбандаҳои конфигуратси
 PrintingDriverDescprintipp=Тағирёбандаҳои конфигуратсия барои чопи косаҳои драйвер.
 PrintTestDescprintgcp=Рӯйхати чопгарҳо барои Google Cloud Print.
 PrintTestDescprintipp=Рӯйхати чопгарҳо барои косаҳо.
+Testbbbb

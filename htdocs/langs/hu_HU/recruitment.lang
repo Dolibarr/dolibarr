@@ -4,40 +4,25 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
 ModuleRecruitmentName = Toborzás
 # Module description 'ModuleRecruitmentDesc'
 ModuleRecruitmentDesc = Kezelje és kövesse az új álláshelyekre vonatkozó toborzási kampányokat
-
-#
 # Admin page
-#
 RecruitmentSetup = Toborzás beállítása
-Settings = Beállítások
 RecruitmentSetupPage = Adja meg itt a toborzási modul főbb beállításait
 RecruitmentArea=Toborzási terület
 PublicInterfaceRecruitmentDesc=A munkák nyilvános oldalai nyilvános URL-ek, amelyek megjelenítik és megválaszolják a nyitott munkákat. Minden egyes munkarekordon egy-egy hivatkozás található minden nyitott munkához.
 EnablePublicRecruitmentPages=A nyitott munkák nyilvános oldalainak engedélyezése
 
-#
-# About page
-#
-About = Névjegy
-RecruitmentAbout = Toborzási névjegy
-RecruitmentAboutPage = Toborzás névjegy oldala
 NbOfEmployeesExpected=A munkavállalók várható száma
 JobLabel=A munkakör megnevezése
 WorkPlace=Munkavégzés helye
@@ -49,7 +34,6 @@ PositionToBeFilled=Munkakör
 PositionsToBeFilled=Munkakörök
 ListOfPositionsToBeFilled=Munkakörök listája
 NewPositionToBeFilled=Új állások
-
 JobOfferToBeFilled=Betöltésre váró munkakör
 ThisIsInformationOnJobPosition=A betöltendő munkakör információja
 ContactForRecruitment=Kapcsolatfelvétel a toborzáshoz
@@ -66,7 +50,7 @@ ContractRefused=A szerződés elutasítva
 RecruitmentCandidature=Jelentkezés
 JobPositions=Munkakörök
 RecruitmentCandidatures=Alkalmazások
-InterviewToDo=Contacts to follow
+InterviewToDo=Követendő elérhetőségek
 AnswerCandidature=Jelentkezési válasz
 YourCandidature=Az Ön jelentkezése
 YourCandidatureAnswerMessage=Köszönjük jelentkezését.<br>...
@@ -77,3 +61,6 @@ ExtrafieldsApplication=Kiegészítő tulajdonságok (munkapályázatok)
 MakeOffer=Tegyen ajánlatot
 WeAreRecruiting=Toborozunk. Ez a betöltendő pozíciók listája...
 NoPositionOpen=Jelenleg nincs nyitott pozíció
+ConfirmClose=Erősítse meg a törlést
+ConfirmCloseAsk=Biztosan visszavonja ezt a toborzási jelentkezést?
+Recruitment=Toborzás

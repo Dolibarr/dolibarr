@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2006-2010	Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2006-2021	Regis Houssin        <regis.houssin@inodbox.com>
+/* Copyright (C) 2006-2010	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2021	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +37,7 @@ $langs->load("admin");
 $action = GETPOST('action', 'aZ09');
 
 // Security check
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -56,7 +57,7 @@ if ($action == 'dolibarr2ldap') {
 	$db->begin();
 
 	$ldap = new Ldap();
-	$result = $ldap->connect_bind();
+	$result = $ldap->connectBind();
 
 	$info = $object->_load_ldap_info();
 	$dn = $object->_load_ldap_dn($info);
@@ -80,9 +81,10 @@ if ($action == 'dolibarr2ldap') {
 
 $form = new Form($db);
 
-$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
+$title = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
+$help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas';
 
-llxHeader('', $title, 'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas');
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-societe page-contact-card_ldap');
 
 $head = contact_prepare_head($object);
 
@@ -137,19 +139,19 @@ print dol_get_fiche_end();
  */
 print '<div class="tabsAction">';
 
-if (!empty($conf->global->LDAP_CONTACT_ACTIVE) && getDolGlobalInt('LDAP_CONTACT_ACTIVE') != Ldap::SYNCHRO_LDAP_TO_DOLIBARR) {
+if (getDolGlobalString('LDAP_CONTACT_ACTIVE') && getDolGlobalInt('LDAP_CONTACT_ACTIVE') != Ldap::SYNCHRO_LDAP_TO_DOLIBARR) {
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=dolibarr2ldap">'.$langs->trans("ForceSynchronize").'</a>';
 }
 
 print "</div>\n";
 
-if (!empty($conf->global->LDAP_CONTACT_ACTIVE) && getDolGlobalInt('LDAP_CONTACT_ACTIVE') != Ldap::SYNCHRO_LDAP_TO_DOLIBARR) {
+if (getDolGlobalString('LDAP_CONTACT_ACTIVE') && getDolGlobalInt('LDAP_CONTACT_ACTIVE') != Ldap::SYNCHRO_LDAP_TO_DOLIBARR) {
 	print "<br>\n";
 }
 
 
 
-// Affichage attributs LDAP
+// Affichage attributes LDAP
 print load_fiche_titre($langs->trans("LDAPInformationsForThisContact"));
 
 print '<table width="100%" class="noborder">';
@@ -161,7 +163,7 @@ print '</tr>';
 
 // Lecture LDAP
 $ldap = new Ldap();
-$result = $ldap->connect_bind();
+$result = $ldap->connectBind();
 if ($result > 0) {
 	$info = $object->_load_ldap_info();
 	$dn = $object->_load_ldap_dn($info, 1);

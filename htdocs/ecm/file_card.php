@@ -38,7 +38,7 @@ $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 // Get parameters
-$socid = GETPOST("socid", "int");
+$socid = GETPOSTINT("socid");
 
 // Security check
 if ($user->socid > 0) {
@@ -46,10 +46,10 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -65,12 +65,12 @@ if (!$sortfield) {
 
 $section = GETPOST("section", 'alpha');
 if (!$section) {
-	dol_print_error('', 'Error, section parameter missing');
+	dol_print_error(null, 'Error, section parameter missing');
 	exit;
 }
 $urlfile = (string) dol_sanitizePathName(GETPOST("urlfile"), '_', 0);
 if (!$urlfile) {
-	dol_print_error('', "ErrorParamNotDefined");
+	dol_print_error(null, "ErrorParamNotDefined");
 	exit;
 }
 
@@ -103,9 +103,9 @@ if ($result < 0) {
 }
 
 // Permissions
-$permissiontoread = $user->rights->ecm->read;
-$permissiontoadd = $user->rights->ecm->setup;
-$permissiontoupload = $user->rights->ecm->upload;
+$permissiontoread = $user->hasRight('ecm', 'read');
+$permissiontoadd = $user->hasRight('ecm', 'setup');
+$permissiontoupload = $user->hasRight('ecm', 'upload');
 
 if (!$permissiontoread) {
 	accessforbidden();
@@ -238,7 +238,7 @@ if ($action == 'update' && $permissiontoadd) {
 
 $form = new Form($db);
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-ecm page-file_card');
 
 $object->section_id = $ecmdir->id;
 $object->label = $urlfile;
@@ -421,11 +421,9 @@ if ($action != 'edit') {
 	// Actions buttons
 	print '<div class="tabsAction">';
 
-	if ($user->rights->ecm->setup) {
+	if ($user->hasRight('ecm', 'setup')) {
 		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&section='.urlencode($section).'&urlfile='.urlencode($urlfile).'">'.$langs->trans('Edit').'</a>';
 	}
-
-	//print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $user->rights->ecm->setup);
 
 	print '</div>';
 }

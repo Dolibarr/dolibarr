@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +25,7 @@
 
 
 /**
- * Return if a BVRB number is valid or not (For switzerland)
+ * Return if a BVRB number is valid or not (For Switzerland)
  *
  * @param	string	$bvrb		BVRB number
  * @return 	boolean				True if OK, false if KO
@@ -32,6 +33,7 @@
 function dol_ch_controle_bvrb($bvrb)
 {
 	// Init array for control
+	$tableau = array();
 	$tableau[0][0] = 0;
 	$tableau[0][1] = 9;
 	$tableau[0][2] = 4;
@@ -156,14 +158,14 @@ function dol_ch_controle_bvrb($bvrb)
 	// Clean data
 	$bv = str_replace(' ', '', $bvrb);
 
-	// Make control
+	// Check (verify/validate)
 	$report = 0;
 	while (dol_strlen($bv) > 1) {
-		$match = substr($bv, 0, 1);
+		$match = (int) substr($bv, 0, 1);
 		$report = $tableau[$report][$match];
 		$bv = substr($bv, 1);
 	}
-	$controle = $tableau[$report][10];
+	$check = $tableau[$report][10];
 
-	return ($controle == $bv);
+	return ($check == $bv);
 }

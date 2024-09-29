@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +42,8 @@ if (empty($module)) {
 	$module = 'ecm';
 }
 
+'@phan-var-force WebSite $website';
+
 $permtoadd = 0;
 $permtoupload = 0;
 $showroot = 0;
@@ -61,7 +65,7 @@ if (!isset($section)) {
 // Confirm remove file (for non javascript users)
 if (($action == 'delete' || $action == 'file_manager_delete') && empty($conf->use_javascript_ajax)) {
 	// TODO Add website, pageid, filemanager if defined
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section.'&urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', '', 1);
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section.'&urlfile='.urlencode(GETPOST("urlfile")), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', '', 1);
 }
 
 // Start container of all panels
@@ -76,29 +80,29 @@ print '<div class="inline-block toolbarbutton centpercent">';
 
 // Toolbar
 if ($permtoadd) {
-	$websitekeyandpageid = (!empty($websitekey) ? '&website='.urlencode($websitekey) : '').(!empty($pageid) ? '&pageid='.urlencode($pageid) : '');
+	$websitekeyandpageid = (!empty($websitekey) ? '&website='.urlencode($websitekey) : '').(!empty($pageid) ? '&pageid='.urlencode((string) $pageid) : '');
 	print '<a id="acreatedir" href="'.DOL_URL_ROOT.'/ecm/dir_add_card.php?action=create&module='.urlencode($module).$websitekeyandpageid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?file_manager=1'.$websitekeyandpageid).'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans('ECMAddSection')).'">';
-	print img_picto('', 'folder-plus', '', false, 0, 0, '', 'size15x marginrightonly');
+	print img_picto('', 'folder-plus', '', 0, 0, 0, '', 'size15x marginrightonly');
 	print '</a>';
 } else {
 	print '<a id="acreatedir" href="#" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.$langs->trans("NotAllowed").'">';
-	print img_picto('', 'folder-plus', 'disabled', false, 0, 0, '', 'size15x marginrightonly');
+	print img_picto('', 'folder-plus', 'disabled', 0, 0, 0, '', 'size15x marginrightonly');
 	print '</a>';
 }
 if ($module == 'ecm') {
-	$tmpurl = ((!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) ? '#' : ($_SERVER["PHP_SELF"].'?action=refreshmanual'.($module ? '&amp;module='.$module : '').($section ? '&amp;section='.$section : '')));
+	$tmpurl = ((!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_ECM_DISABLE_JS')) ? '#' : ($_SERVER["PHP_SELF"].'?action=refreshmanual'.($module ? '&amp;module='.$module : '').($section ? '&amp;section='.$section : '')));
 	print '<a id="arefreshbutton" href="'.$tmpurl.'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans('ReSyncListOfDir')).'">';
-	print img_picto('', 'refresh', 'id="refreshbutton"', false, 0, 0, '', 'size15x marginrightonly');
+	print img_picto('', 'refresh', 'id="refreshbutton"', 0, 0, 0, '', 'size15x marginrightonly');
 	print '</a>';
 }
 if ($permtoadd && GETPOSTISSET('website')) {	// If on file manager to manage medias of a web site
 	print '<a id="agenerateimgwebp" href="'.$_SERVER["PHP_SELF"].'?action=confirmconvertimgwebp&token='.newToken().'&website='.urlencode($website->ref).'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans("GenerateImgWebp")).'">';
-	print img_picto('', 'images', '', false, 0, 0, '', 'size15x flip marginrightonly');
+	print img_picto('', 'images', '', 0, 0, 0, '', 'size15x flip marginrightonly');
 	print '</a>';
 } elseif ($permtoadd && $module == 'ecm') {	// If on file manager medias in ecm
 	if (getDolGlobalInt('ECM_SHOW_GENERATE_WEBP_BUTTON')) {
 		print '<a id="agenerateimgwebp" href="'.$_SERVER["PHP_SELF"].'?action=confirmconvertimgwebp&token='.newToken().'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans("GenerateImgWebp")).'">';
-		print img_picto('', 'images', '', false, 0, 0, '', 'size15x flip marginrightonly');
+		print img_picto('', 'images', '', 0, 0, 0, '', 'size15x flip marginrightonly');
 		print '</a>';
 	}
 }
@@ -149,8 +153,8 @@ $nameforformuserfile = 'formuserfileecm';
 
 print '<div class="inline-block valignmiddle floatright">';
 
-// For to attach a new file
-if ((!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) || !empty($section)) {
+// Zone to attach a new file
+if ((!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_ECM_DISABLE_JS')) || !empty($section)) {
 	if ((empty($section) || $section == -1) && ($module != 'medias')) {
 		?>
 		<script>
@@ -161,7 +165,7 @@ if ((!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE
 		<?php
 	}
 
-	$sectiondir = GETPOST('file', 'alpha') ?GETPOST('file', 'alpha') : GETPOST('section_dir', 'alpha');
+	$sectiondir = GETPOST('file', 'alpha') ? GETPOST('file', 'alpha') : GETPOST('section_dir', 'alpha');
 
 	print '<!-- Start form to attach new file in filemanager.tpl.php sectionid='.$section.' sectiondir='.$sectiondir.' -->'."\n";
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -195,19 +199,24 @@ if ($action == 'delete_section') {
 if ($action == 'confirmconvertimgwebp') {
 	$langs->load("ecm");
 
-	$section_dir=GETPOST('section_dir', 'alpha');
-	$section=GETPOST('section', 'alpha');
-	$file=GETPOST('filetoregenerate', 'alpha');
+	$section_dir = GETPOST('section_dir', 'alpha');
+	$section = GETPOST('section', 'alpha');
+	$file = GETPOST('filetoregenerate', 'alpha');
 	$form = new Form($db);
-	$formquestion['section_dir']=array('type'=>'hidden', 'value'=>$section_dir, 'name'=>'section_dir');
-	$formquestion['section']=array('type'=>'hidden', 'value'=>$section, 'name'=>'section');
-	$formquestion['filetoregenerate']=array('type'=>'hidden', 'value'=>$file, 'name'=>'filetoregenerate');
+	$formquestion = array();
+	$formquestion['section_dir'] = array('type' => 'hidden', 'value' => $section_dir, 'name' => 'section_dir');
+	$formquestion['section'] = array('type' => 'hidden', 'value' => $section, 'name' => 'section');
+	$formquestion['filetoregenerate'] = array('type' => 'hidden', 'value' => $file, 'name' => 'filetoregenerate');
 	if ($module == 'medias') {
-		$formquestion['website']=array('type'=>'hidden', 'value'=>$website->ref, 'name'=>'website');
+		$formquestion['website'] = array('type' => 'hidden', 'value' => $website->ref, 'name' => 'website');
 	}
 	$param = '';
-	if (!empty($sortfield)) $param .= '&sortfield='.urlencode($sortfield);
-	if (!empty($sortorder)) $param .= '&sortorder='.urlencode($sortorder);
+	if (!empty($sortfield)) {
+		$param .= '&sortfield='.urlencode($sortfield);
+	}
+	if (!empty($sortorder)) {
+		$param .= '&sortorder='.urlencode($sortorder);
+	}
 	print $form->formconfirm($_SERVER["PHP_SELF"].($param ? '?'.$param : ''), empty($file) ? $langs->trans('ConfirmImgWebpCreation') : $langs->trans('ConfirmChosenImgWebpCreation'), empty($file) ? $langs->trans('ConfirmGenerateImgWebp') : $langs->trans('ConfirmGenerateChosenImgWebp', basename($file)), 'convertimgwebp', $formquestion, "yes", 1);
 	$action = 'file_manager';
 }
@@ -265,6 +274,7 @@ if ($action == 'convertimgwebp' && $permtoadd) {
 	$action = 'file_manager';
 }
 
+// List of directories
 if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg_match('/refresh/i', $action) || $action == 'delete') {
 	$langs->load("ecm");
 
@@ -282,10 +292,10 @@ if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg
 	$htmltooltip = $langs->trans("ECMAreaDesc2a");
 	$htmltooltip .= '<br>'.$langs->trans("ECMAreaDesc2b");
 
-	if (!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) {
+	if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_ECM_DISABLE_JS')) {
 		// Show the link to "Root"
 		if ($showroot) {
-			print '<tr class="nooddeven"><td><div style="padding-left: 5px; padding-right: 5px;"><a href="'.$_SERVER["PHP_SELF"].'?file_manager=1'.(!empty($websitekey) ? '&website='.urlencode($websitekey) : '').'&pageid='.urlencode($pageid).'">';
+			print '<tr class="oddeven nohover"><td><div style="padding-left: 5px; padding-right: 5px;"><a href="'.$_SERVER["PHP_SELF"].'?file_manager=1'.(!empty($websitekey) ? '&website='.urlencode($websitekey) : '').'&pageid='.urlencode((string) $pageid).'">';
 			if ($module == 'medias') {
 				print $langs->trans("RootOfMedias");
 			} else {
@@ -294,7 +304,7 @@ if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg
 			print '</a></div></td></tr>';
 		}
 
-		print '<tr class="nooddeven"><td>';
+		print '<tr class="oddeven nohover"><td>';
 
 		// Show filemanager tree (will be filled by a call of ajax /ecm/tpl/enablefiletreeajax.tpl.php, later, that executes ajaxdirtree.php)
 		print '<div id="filetree" class="ecmfiletree"></div>';
@@ -310,7 +320,7 @@ if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg
 
 		$_POST['modulepart'] = $module;
 		$_POST['openeddir'] = GETPOST('openeddir');
-		$_POST['dir'] = empty($_POST['dir']) ? '/' : $_POST['dir'];
+		$_POST['dir'] = empty($_POST['dir']) ? '/' : GETPOST('dir');
 
 		// Show filemanager tree (will be filled by direct include of ajaxdirtree.php in mode noajax, this will return all dir - all levels - to show)
 		print '<div id="filetree" class="ecmfiletree">';
@@ -365,7 +375,7 @@ include DOL_DOCUMENT_ROOT.'/core/ajax/ajaxdirpreview.php'; // Show content of a 
 <?php
 
 
-if (!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) { // Show filtree when ajax is enabled
+if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_ECM_DISABLE_JS')) { // Show filtree when ajax is enabled
 	//var_dump($modulepart);
 	// Variables that may be defined:
 	// $_GET['modulepart'], $_GET['openeddir'], $_GET['sortfield'], $_GET['sortorder']

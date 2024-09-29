@@ -5,32 +5,34 @@ DeleteResource=Obriši sredstvo
 ConfirmDeleteResourceElement=Potvrdite brisanje sredstva za ovaj element
 NoResourceInDatabase=Nema sredstava u bazi
 NoResourceLinked=Nema povezanih sredstava
-ActionsOnResource=Events about this resource
+ActionsOnResource=Događaji o ovom resursu
 ResourcePageIndex=Popis sredstava
 ResourceSingular=Sredstvo
 ResourceCard=Kartica sredstva
+NewResource=Novo sredstvo
 AddResource=Izradi sredstvo
 ResourceFormLabel_ref=Naziv sredstva
-ResourceType=Vrsta sredstva
 ResourceFormLabel_description=Opis sredstva
-
+ResourceType=Vrsta sredstva
+ResourceTypeID=Resource type ID
+ResourceTypeLabel=Resource type label
 ResourcesLinkedToElement=Sredstva povezana s elementom
 
 ShowResource=Prikaži sredstvo
-
 ResourceElementPage=Sredstva elementa
 ResourceCreatedWithSuccess=Sredstvo uspješno kreirano
 RessourceLineSuccessfullyDeleted=Stavka sredstva uspješno obrisana
 RessourceLineSuccessfullyUpdated=Stavka sredstva uspješno promjenjena
 ResourceLinkedWithSuccess=Sredstvo uspješno povezano
-
 ConfirmDeleteResource=Potvrdite brisanje sredstva
 RessourceSuccessfullyDeleted=Sredstvo uspješno obrisano
 DictionaryResourceType=Tipovi sredstava
-
 SelectResource=Odaberite sredstvo
-
-IdResource=Id resource
-AssetNumber=Serial number
-ResourceTypeCode=Resource type code
+IdResource=Id resursa
+AssetNumber=Serijski broj
+ResourceTypeCode=Šifra vrste resursa
 ImportDataset_resource_1=Resursi
+ErrorResourcesAlreadyInUse=Neki resursi su u upotrebi
+ErrorResourceUseInEvent=%s korišten u događaju %s
+MaxUsers=Maximum users (places, seats, etc.)
+MaxUsersLabel=Maximum users

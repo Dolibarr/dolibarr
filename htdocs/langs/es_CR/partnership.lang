@@ -1,4 +1,7 @@
 # Dolibarr language file - Source file is en_US - partnership
+ModulePartnershipName=Gestión Asociaciones
+PartnershipDescription=Gestión Módulo Asociaciones
+PartnershipDescriptionLong=Gestión Módulo Asociaciones
 Partnership=Asociación
 PartnershipAbout=Acerca de la asociación
 PublicFormRegistrationPartnerDesc=Dolibarr puede proporcionarle una URL/sitio web público para permitir que los visitantes externos soliciten ser parte del programa de asociación

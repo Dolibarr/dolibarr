@@ -1,22 +1,24 @@
-# Dolibarr language file - Source file is en_US - marque pages
-AddThisPageToBookmarks=Thêm trang hiện tại vào dấu trang
-Bookmark=Đánh dấu trang
-Bookmarks=Dấu trang
-ListOfBookmarks=Danh sách đánh dấu trang
-EditBookmarks=Danh sách / chỉnh sửa dấu trang
-NewBookmark=Dấu trang mới
-ShowBookmark=Hiển thị dấu trang
-OpenANewWindow=Mở một tab mới
-ReplaceWindow=Thay thế tab hiện tại
-BookmarkTargetNewWindowShort=Tab mới
-BookmarkTargetReplaceWindowShort=Tab hiện tại
-BookmarkTitle=Tên dấu trang
-UrlOrLink=URL
-BehaviourOnClick=Hành vi khi một URL đánh dấu trang được chọn
-CreateBookmark=Tạo dấu trang
-SetHereATitleForLink=Đặt tên cho dấu trang
-UseAnExternalHttpLinkOrRelativeDolibarrLink=Use an external/absolute link (https://externalurl.com) or an internal/relative link (/mypage.php). You can also use phone like tel:0123456.
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Chọn nếu trang được liên kết sẽ mở trong tab hiện tại hoặc tab mới
-BookmarksManagement=Quản lý dấu trang
-BookmarksMenuShortCut=Ctrl + shift + m
-NoBookmarks=No bookmarks defined
+# Dolibarr language file - Source file is en_US - marque pages / bookmarks
+
+AddThisPageToBookmarks = Thêm trang hiện tại vào dấu trang
+BehaviourOnClick = Hành vi khi URL dấu trang được chọn
+Bookmark = Đánh dấu trang
+Bookmarks = Dấu trang
+BookmarkTargetNewWindowShort = Tab mới
+BookmarkTargetReplaceWindowShort = Tab hiện tại
+BookmarkTitle = Tên dấu trang
+BookmarksManagement = Quản lý dấu trang
+BookmarksMenuShortCut = Ctrl + shift + m
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark = Chọn nếu trang được liên kết sẽ mở trong tab hiện tại hoặc tab mới
+CreateBookmark = Tạo dấu trang
+EditBookmarks = Danh sách / chỉnh sửa dấu trang
+ListOfBookmarks = Danh sách đánh dấu trang
+NewBookmark = Dấu trang mới
+NoBookmarkFound = Không tìm thấy dấu trang
+NoBookmarks = Không có dấu trang nào được xác định
+OpenANewWindow = Mở một tab mới
+ReplaceWindow = Thay thế tab hiện tại
+SetHereATitleForLink = Đặt tên cho dấu trang
+ShowBookmark = Hiển thị dấu trang
+UrlOrLink = URL
+UseAnExternalHttpLinkOrRelativeDolibarrLink = Sử dụng liên kết bên ngoài/tuyệt đối (https://externalurl.com) hoặc liên kết nội bộ/tương đối (/mypage.php). Bạn cũng có thể sử dụng điện thoại như tel:0123456.

@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2006-2016 	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012	 	Florian Henry			<florian.henry@open-concept.pro>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,7 +59,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 dol_syslog("Call ActionComm webservices interfaces");
 
 // Enable and test if module web services is enabled
-if (empty($conf->global->MAIN_MODULE_WEBSERVICES)) {
+if (!getDolGlobalString('MAIN_MODULE_WEBSERVICES')) {
 	$langs->load("admin");
 	dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
 	print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
@@ -82,11 +84,11 @@ $server->wsdl->addComplexType(
 	'all',
 	'',
 	array(
-		'dolibarrkey' => array('name'=>'dolibarrkey', 'type'=>'xsd:string'),
-		'sourceapplication' => array('name'=>'sourceapplication', 'type'=>'xsd:string'),
-		'login' => array('name'=>'login', 'type'=>'xsd:string'),
-		'password' => array('name'=>'password', 'type'=>'xsd:string'),
-		'entity' => array('name'=>'entity', 'type'=>'xsd:string'),
+		'dolibarrkey' => array('name' => 'dolibarrkey', 'type' => 'xsd:string'),
+		'sourceapplication' => array('name' => 'sourceapplication', 'type' => 'xsd:string'),
+		'login' => array('name' => 'login', 'type' => 'xsd:string'),
+		'password' => array('name' => 'password', 'type' => 'xsd:string'),
+		'entity' => array('name' => 'entity', 'type' => 'xsd:string'),
 	)
 );
 
@@ -98,37 +100,37 @@ $server->wsdl->addComplexType(
 	'all',
 	'',
 	array(
-		'result_code' => array('name'=>'result_code', 'type'=>'xsd:string'),
-		'result_label' => array('name'=>'result_label', 'type'=>'xsd:string'),
+		'result_code' => array('name' => 'result_code', 'type' => 'xsd:string'),
+		'result_label' => array('name' => 'result_label', 'type' => 'xsd:string'),
 	)
 );
 
 
 $actioncomm_fields = array(
-	'id' => array('name'=>'id', 'type'=>'xsd:string'),
-	'ref' => array('name'=>'ref', 'type'=>'xsd:string'),
-	'ref_ext' => array('name'=>'ref_ext', 'type'=>'xsd:string'),
-	'type_id' => array('name'=>'type_id', 'type'=>'xsd:string'),
-	'type_code' => array('name'=>'type_code', 'type'=>'xsd:string'),
-	'type' => array('name'=>'type', 'type'=>'xsd:string'),
-	'label' => array('name'=>'label', 'type'=>'xsd:string'),
-	'datep' => array('name'=>'datep', 'type'=>'xsd:dateTime'),
-	'datef' => array('name'=>'datef', 'type'=>'xsd:dateTime'),
-	'datec' => array('name'=>'datec', 'type'=>'xsd:dateTime'),
-	'datem' => array('name'=>'datem', 'type'=>'xsd:dateTime'),
-	'note' => array('name'=>'note', 'type'=>'xsd:string'),
-	'percentage' => array('name'=>'percentage', 'type'=>'xsd:string'),
-	'author' => array('name'=>'author', 'type'=>'xsd:string'),
-	'usermod' => array('name'=>'usermod', 'type'=>'xsd:string'),
-	'userownerid' => array('name'=>'userownerid', 'type'=>'xsd:string'),
-	'priority' => array('name'=>'priority', 'type'=>'xsd:string'),
-	'fulldayevent' => array('name'=>'fulldayevent', 'type'=>'xsd:string'),
-	'location' => array('name'=>'location', 'type'=>'xsd:string'),
-	'socid' => array('name'=>'socid', 'type'=>'xsd:string'),
-	'contactid' => array('name'=>'contactid', 'type'=>'xsd:string'),
-	'projectid' => array('name'=>'projectid', 'type'=>'xsd:string'),
-	'fk_element' => array('name'=>'fk_element', 'type'=>'xsd:string'),
-	'elementtype' => array('name'=>'elementtype', 'type'=>'xsd:string'));
+	'id' => array('name' => 'id', 'type' => 'xsd:string'),
+	'ref' => array('name' => 'ref', 'type' => 'xsd:string'),
+	'ref_ext' => array('name' => 'ref_ext', 'type' => 'xsd:string'),
+	'type_id' => array('name' => 'type_id', 'type' => 'xsd:string'),
+	'type_code' => array('name' => 'type_code', 'type' => 'xsd:string'),
+	'type' => array('name' => 'type', 'type' => 'xsd:string'),
+	'label' => array('name' => 'label', 'type' => 'xsd:string'),
+	'datep' => array('name' => 'datep', 'type' => 'xsd:dateTime'),
+	'datef' => array('name' => 'datef', 'type' => 'xsd:dateTime'),
+	'datec' => array('name' => 'datec', 'type' => 'xsd:dateTime'),
+	'datem' => array('name' => 'datem', 'type' => 'xsd:dateTime'),
+	'note' => array('name' => 'note', 'type' => 'xsd:string'),
+	'percentage' => array('name' => 'percentage', 'type' => 'xsd:string'),
+	'author' => array('name' => 'author', 'type' => 'xsd:string'),
+	'usermod' => array('name' => 'usermod', 'type' => 'xsd:string'),
+	'userownerid' => array('name' => 'userownerid', 'type' => 'xsd:string'),
+	'priority' => array('name' => 'priority', 'type' => 'xsd:string'),
+	'fulldayevent' => array('name' => 'fulldayevent', 'type' => 'xsd:string'),
+	'location' => array('name' => 'location', 'type' => 'xsd:string'),
+	'socid' => array('name' => 'socid', 'type' => 'xsd:string'),
+	'contactid' => array('name' => 'contactid', 'type' => 'xsd:string'),
+	'projectid' => array('name' => 'projectid', 'type' => 'xsd:string'),
+	'fk_element' => array('name' => 'fk_element', 'type' => 'xsd:string'),
+	'elementtype' => array('name' => 'elementtype', 'type' => 'xsd:string'));
 
 
 $elementtype = 'actioncomm';
@@ -138,7 +140,7 @@ $elementtype = 'actioncomm';
 $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($elementtype, true);
 $extrafield_array = null;
-if (is_array($extrafields) && count($extrafields) > 0) {
+if (is_array($extrafields->attributes) && $extrafields->attributes[$elementtype]['count'] > 0) {
 	$extrafield_array = array();
 }
 if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
@@ -150,7 +152,7 @@ if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafie
 			$type = 'xsd:string';
 		}
 
-		$extrafield_array['options_'.$key] = array('name'=>'options_'.$key, 'type'=>$type);
+		$extrafield_array['options_'.$key] = array('name' => 'options_'.$key, 'type' => $type);
 	}
 }
 if (is_array($extrafield_array)) {
@@ -175,8 +177,8 @@ $server->wsdl->addComplexType(
 	'sequence',
 	'',
 	array(
-		'code' => array('name'=>'code', 'type'=>'xsd:string'),
-		'libelle' => array('name'=>'libelle', 'type'=>'xsd:string')
+		'code' => array('name' => 'code', 'type' => 'xsd:string'),
+		'libelle' => array('name' => 'libelle', 'type' => 'xsd:string')
 	)
 );
 
@@ -209,9 +211,9 @@ $styleuse = 'encoded'; // encoded/literal/literal wrapped
 $server->register(
 	'getListActionCommType',
 	// Entry values
-	array('authentication'=>'tns:authentication'),
+	array('authentication' => 'tns:authentication'),
 	// Exit values
-	array('result'=>'tns:result', 'actioncommtypes'=>'tns:actioncommtypes'),
+	array('result' => 'tns:result', 'actioncommtypes' => 'tns:actioncommtypes'),
 	$ns,
 	$ns.'#getListActionCommType',
 	$styledoc,
@@ -223,9 +225,9 @@ $server->register(
 $server->register(
 	'getActionComm',
 	// Entry values
-	array('authentication'=>'tns:authentication', 'id'=>'xsd:string'),
+	array('authentication' => 'tns:authentication', 'id' => 'xsd:string'),
 	// Exit values
-	array('result'=>'tns:result', 'actioncomm'=>'tns:actioncomm'),
+	array('result' => 'tns:result', 'actioncomm' => 'tns:actioncomm'),
 	$ns,
 	$ns.'#getActionComm',
 	$styledoc,
@@ -237,9 +239,9 @@ $server->register(
 $server->register(
 	'createActionComm',
 	// Entry values
-	array('authentication'=>'tns:authentication', 'actioncomm'=>'tns:actioncomm'),
+	array('authentication' => 'tns:authentication', 'actioncomm' => 'tns:actioncomm'),
 	// Exit values
-	array('result'=>'tns:result', 'id'=>'xsd:string'),
+	array('result' => 'tns:result', 'id' => 'xsd:string'),
 	$ns,
 	$ns.'#createActionComm',
 	$styledoc,
@@ -251,9 +253,9 @@ $server->register(
 $server->register(
 	'updateActionComm',
 	// Entry values
-	array('authentication'=>'tns:authentication', 'actioncomm'=>'tns:actioncomm'),
+	array('authentication' => 'tns:authentication', 'actioncomm' => 'tns:actioncomm'),
 	// Exit values
-	array('result'=>'tns:result', 'id'=>'xsd:string'),
+	array('result' => 'tns:result', 'id' => 'xsd:string'),
 	$ns,
 	$ns.'#updateActionComm',
 	$styledoc,
@@ -283,47 +285,49 @@ function getActionComm($authentication, $id)
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
 	if ($error || (!$id)) {
 		$error++;
-		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
+		$errorcode = 'BAD_PARAMETERS';
+		$errorlabel = "Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
 	}
 
 	if (!$error) {
-		$fuser->getrights();
+		$fuser->loadRights();
 
-		if ($fuser->rights->agenda->allactions->read) {
+		if ($fuser->hasRight('agenda', 'allactions', 'read')) {
 			$actioncomm = new ActionComm($db);
 			$result = $actioncomm->fetch($id);
 			if ($result > 0) {
 				$actioncomm_result_fields = array(
 						'id' => $actioncomm->id,
-						'ref'=> $actioncomm->ref,
-						'ref_ext'=> $actioncomm->ref_ext,
-						'type_id'=> $actioncomm->type_id,
-						'type_code'=> $actioncomm->type_code,
-						'type'=> $actioncomm->type,
-						'label'=> $actioncomm->label,
-						'datep'=> dol_print_date($actioncomm->datep, 'dayhourrfc'),
-						'datef'=> dol_print_date($actioncomm->datef, 'dayhourrfc'),
-						'datec'=> dol_print_date($actioncomm->datec, 'dayhourrfc'),
-						'datem'=> dol_print_date($actioncomm->datem, 'dayhourrfc'),
-						'note'=> $actioncomm->note_private,
-						'percentage'=> $actioncomm->percentage,
-						'author'=> $actioncomm->authorid,
-						'usermod'=> $actioncomm->usermodid,
-						'userownerid'=> $actioncomm->userownerid,
-						'priority'=> $actioncomm->priority,
-						'fulldayevent'=> $actioncomm->fulldayevent,
-						'location'=> $actioncomm->location,
-						'socid'=> $actioncomm->socid,
-						'contactid'=> $actioncomm->contact_id,
-						'projectid'=> $actioncomm->fk_project,
-						'fk_element'=> $actioncomm->fk_element,
-						'elementtype'=> $actioncomm->elementtype
+						'ref' => $actioncomm->ref,
+						'ref_ext' => $actioncomm->ref_ext,
+						'type_id' => $actioncomm->type_id,
+						'type_code' => $actioncomm->type_code,
+						'type' => $actioncomm->type,
+						'label' => $actioncomm->label,
+						'datep' => dol_print_date($actioncomm->datep, 'dayhourrfc'),
+						'datef' => dol_print_date($actioncomm->datef, 'dayhourrfc'),
+						'datec' => dol_print_date($actioncomm->datec, 'dayhourrfc'),
+						'datem' => dol_print_date($actioncomm->datem, 'dayhourrfc'),
+						'note' => $actioncomm->note_private,
+						'percentage' => $actioncomm->percentage,
+						'author' => $actioncomm->authorid,
+						'usermod' => $actioncomm->usermodid,
+						'userownerid' => $actioncomm->userownerid,
+						'priority' => $actioncomm->priority,
+						'fulldayevent' => $actioncomm->fulldayevent,
+						'location' => $actioncomm->location,
+						'socid' => $actioncomm->socid,
+						'contactid' => $actioncomm->contact_id,
+						'projectid' => $actioncomm->fk_project,
+						'fk_element' => $actioncomm->fk_element,
+						'elementtype' => $actioncomm->elementtype
 				);
 
 				$elementtype = 'actioncomm';
@@ -343,20 +347,22 @@ function getActionComm($authentication, $id)
 
 				// Create
 				$objectresp = array(
-					'result'=>array('result_code'=>'OK', 'result_label'=>''),
-					'actioncomm'=>$actioncomm_result_fields);
+					'result' => array('result_code' => 'OK', 'result_label' => ''),
+					'actioncomm' => $actioncomm_result_fields);
 			} else {
 				$error++;
-				$errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id;
+				$errorcode = 'NOT_FOUND';
+				$errorlabel = 'Object not found for id='.$id;
 			}
 		} else {
 			$error++;
-			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
+			$errorcode = 'PERMISSION_DENIED';
+			$errorlabel = 'User does not have permission for this request';
 		}
 	}
 
 	if ($error) {
-		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+		$objectresp = array('result' => array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 
 	return $objectresp;
@@ -381,37 +387,40 @@ function getListActionCommType($authentication)
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 
 	if (!$error) {
-		$fuser->getrights();
+		$fuser->loadRights();
 
-		if ($fuser->rights->agenda->myactions->read) {
+		if ($fuser->hasRight('agenda', 'myactions', 'read')) {
 			$cactioncomm = new CActionComm($db);
 			$result = $cactioncomm->liste_array('', 'code');
 			if ($result > 0) {
 				$resultarray = array();
 				foreach ($cactioncomm->liste_array as $code => $libeller) {
-					$resultarray[] = array('code'=>$code, 'libelle'=>$libeller);
+					$resultarray[] = array('code' => $code, 'libelle' => $libeller);
 				}
 
-				 $objectresp = array(
-					'result'=>array('result_code'=>'OK', 'result_label'=>''),
-					'actioncommtypes'=>$resultarray);
+				$objectresp = array(
+					'result' => array('result_code' => 'OK', 'result_label' => ''),
+					'actioncommtypes' => $resultarray);
 			} else {
 				$error++;
-				$errorcode = 'NOT_FOUND'; $errorlabel = 'Failed to execute liste_array';
+				$errorcode = 'NOT_FOUND';
+				$errorlabel = 'Failed to execute liste_array';
 			}
 		} else {
 			$error++;
-			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
+			$errorcode = 'PERMISSION_DENIED';
+			$errorlabel = 'User does not have permission for this request';
 		}
 	}
 
 	if ($error) {
-		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+		$objectresp = array('result' => array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 
 	return $objectresp;
@@ -422,12 +431,12 @@ function getListActionCommType($authentication)
  * Create ActionComm
  *
  * @param	array		$authentication		Array of authentication information
- * @param	ActionComm	$actioncomm		    $actioncomm
+ * @param	array		$actioncomm		    $actioncomm
  * @return	array							Array result
  */
 function createActionComm($authentication, $actioncomm)
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
 	$now = dol_now();
 
@@ -439,7 +448,8 @@ function createActionComm($authentication, $actioncomm)
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 
@@ -452,6 +462,7 @@ function createActionComm($authentication, $actioncomm)
 		$newobject->socid = $actioncomm['socid'];
 		$newobject->fk_project = $actioncomm['projectid'];
 		$newobject->note = $actioncomm['note'];
+		$newobject->note_private = $actioncomm['note'];
 		$newobject->contact_id = $actioncomm['contactid'];
 		$newobject->userownerid = $actioncomm['userownerid'];
 		$newobject->label = $actioncomm['label'];
@@ -484,7 +495,7 @@ function createActionComm($authentication, $actioncomm)
 
 		if (!$error) {
 			$db->commit();
-			$objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>''), 'id'=>$newobject->id);
+			$objectresp = array('result' => array('result_code' => 'OK', 'result_label' => ''), 'id' => $newobject->id);
 		} else {
 			$db->rollback();
 			$error++;
@@ -494,7 +505,7 @@ function createActionComm($authentication, $actioncomm)
 	}
 
 	if ($error) {
-		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+		$objectresp = array('result' => array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 
 	return $objectresp;
@@ -504,12 +515,12 @@ function createActionComm($authentication, $actioncomm)
  * Create ActionComm
  *
  * @param	array		$authentication		Array of authentication information
- * @param	ActionComm	$actioncomm		    $actioncomm
+ * @param	array		$actioncomm		    $actioncomm
  * @return	array							Array result
  */
 function updateActionComm($authentication, $actioncomm)
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
 	$now = dol_now();
 
@@ -521,12 +532,15 @@ function updateActionComm($authentication, $actioncomm)
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
 	if (empty($actioncomm['id'])) {
-		$error++; $errorcode = 'KO'; $errorlabel = "Actioncomm id is mandatory.";
+		$error++;
+		$errorcode = 'KO';
+		$errorlabel = "Actioncomm id is mandatory.";
 	}
 
 	if (!$error) {
@@ -574,12 +588,13 @@ function updateActionComm($authentication, $actioncomm)
 				$error++;
 			}
 		}
+		'@phan-var-force array{id:string} $actioncomm';
 
 		if ((!$error) && ($objectfound)) {
 			$db->commit();
 			$objectresp = array(
-					'result'=>array('result_code'=>'OK', 'result_label'=>''),
-					'id'=>$object->id
+					'result' => array('result_code' => 'OK', 'result_label' => ''),
+					'id' => $object->id
 			);
 		} elseif ($objectfound) {
 			$db->rollback();
@@ -594,7 +609,7 @@ function updateActionComm($authentication, $actioncomm)
 	}
 
 	if ($error) {
-		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+		$objectresp = array('result' => array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 
 	return $objectresp;

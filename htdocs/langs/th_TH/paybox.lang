@@ -1,31 +1,16 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=PayBox ติดตั้งโมดูล
-PayBoxDesc=หน้าเสนอโมดูลนี้จะอนุญาตให้มีการชำระเงินใน <a href="http://www.paybox.com" target="_blank">Paybox</a> จากลูกค้า นี้สามารถใช้สำหรับการชำระเงินฟรีหรือการชำระเงินบนวัตถุโดยเฉพาะอย่างยิ่ง Dolibarr (ใบแจ้งหนี้การสั่งซื้อ ... )
-FollowingUrlAreAvailableToMakePayments=URL ต่อไปนี้จะพร้อมที่จะให้หน้าให้กับลูกค้าที่จะทำให้การชำระเงินบนวัตถุ Dolibarr
-PaymentForm=รูปแบบการชำระเงิน
-WelcomeOnPaymentPage=Welcome to our online payment service
-ThisScreenAllowsYouToPay=หน้าจอนี้จะช่วยให้คุณสามารถชำระเงินออนไลน์ไปยัง% s
-ThisIsInformationOnPayment=นี้เป็นข้อมูลเกี่ยวกับการชำระเงินที่จะทำ
-ToComplete=ให้เสร็จสมบูรณ์
-YourEMail=ส่งอีเมล์ถึงจะได้รับการยืนยันการชำระเงิน
-Creditor=เจ้าหนี้
-PaymentCode=รหัสการชำระเงิน
-PayBoxDoPayment=Pay with Paybox
+PayBoxDesc=โมดูลนี้นำเสนอหน้าเว็บที่อนุญาตการชำระเงินใน <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">Paybox</a> โดยลูกค้า สามารถใช้สำหรับการชำระเงินฟรีหรือการชำระเงินสำหรับออบเจ็กต์ Dolibarr เฉพาะ (ใบแจ้งหนี้ คำสั่งซื้อ ...)
+PayBoxDoPayment=ชำระเงินด้วย Paybox
 YouWillBeRedirectedOnPayBox=คุณจะถูกเปลี่ยนเส้นทางในหน้า Paybox การรักษาความปลอดภัยในการป้อนข้อมูลบัตรเครดิต
-Continue=ถัดไป
-SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
+SetupPayBoxToHavePaymentCreatedAutomatically=ตั้งค่า Paybox ของคุณด้วย url <b>%s</b> เพื่อให้ระบบสร้างการชำระเงินโดยอัตโนมัติเมื่อ ตรวจสอบโดย Paybox
 YourPaymentHasBeenRecorded=หน้านี้ยืนยันว่าชำระเงินของคุณได้รับการบันทึก ขอบคุณ
-YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.
-AccountParameter=พารามิเตอร์บัญชี
-UsageParameter=พารามิเตอร์การใช้งาน
-InformationToFindParameters=ช่วยในการหาข้อมูลเกี่ยวกับบัญชีของคุณ s%
+YourPaymentHasNotBeenRecorded=การชำระเงินของคุณไม่ได้รับการบันทึกและธุรกรรมได้ถูกยกเลิกแล้ว ขอบคุณ
 PAYBOX_CGI_URL_V2=url ของ Paybox โมดูล CGI สำหรับการชำระเงิน
-VendorName=ชื่อของผู้ขาย
-CSSUrlForPaymentForm=รูปแบบ CSS url ของแผ่นสำหรับรูปแบบการชำระเงิน
 NewPayboxPaymentReceived=การชำระเงิน Paybox ใหม่ที่ได้รับ
 NewPayboxPaymentFailed=การชำระเงิน Paybox ใหม่พยายาม แต่ล้มเหลว
-PAYBOX_PAYONLINE_SENDEMAIL=Email notification after payment attempt (success or fail)
+PAYBOX_PAYONLINE_SENDEMAIL=การแจ้งเตือนทางอีเมลหลังจากพยายามชำระเงิน (สำเร็จหรือล้มเหลว)
 PAYBOX_PBX_SITE=ราคาเว็บไซต์ PBX
 PAYBOX_PBX_RANG=ราคา PBX รัง
 PAYBOX_PBX_IDENTIFIANT=ราคา PBX ID
-PAYBOX_HMAC_KEY=HMAC key
+PAYBOX_HMAC_KEY=คีย์ HMAC

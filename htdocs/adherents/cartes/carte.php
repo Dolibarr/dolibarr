@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2003		Jean-Louis Bergamo			<jlb@j1b.org>
+ * Copyright (C) 2006-2013	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -150,10 +151,10 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 
 			// For business cards
 			if (empty($mode) || $mode == 'card' || $mode == 'cardlogin') {
-				$textleft = make_substitutions($conf->global->ADHERENT_CARD_TEXT, $substitutionarray);
-				$textheader = make_substitutions($conf->global->ADHERENT_CARD_HEADER_TEXT, $substitutionarray);
-				$textfooter = make_substitutions($conf->global->ADHERENT_CARD_FOOTER_TEXT, $substitutionarray);
-				$textright = make_substitutions($conf->global->ADHERENT_CARD_TEXT_RIGHT, $substitutionarray);
+				$textleft = make_substitutions(getDolGlobalString('ADHERENT_CARD_TEXT'), $substitutionarray);
+				$textheader = make_substitutions(getDolGlobalString('ADHERENT_CARD_HEADER_TEXT'), $substitutionarray);
+				$textfooter = make_substitutions(getDolGlobalString('ADHERENT_CARD_FOOTER_TEXT'), $substitutionarray);
+				$textright = make_substitutions(getDolGlobalString('ADHERENT_CARD_TEXT_RIGHT'), $substitutionarray);
 
 				if (is_numeric($foruserid) || $foruserlogin) {
 					$nb = $_Avery_Labels[$model]['NX'] * $_Avery_Labels[$model]['NY'];	// $_Avery_Labels is defined into an include
@@ -187,10 +188,10 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 
 			// For labels
 			if ($mode == 'label') {
-				if (empty($conf->global->ADHERENT_ETIQUETTE_TEXT)) {
+				if (!getDolGlobalString('ADHERENT_ETIQUETTE_TEXT')) {
 					$conf->global->ADHERENT_ETIQUETTE_TEXT = "__FULLNAME__\n__ADDRESS__\n__ZIP__ __TOWN__\n__COUNTRY__";
 				}
-				$textleft = make_substitutions($conf->global->ADHERENT_ETIQUETTE_TEXT, $substitutionarray);
+				$textleft = make_substitutions(getDolGlobalString('ADHERENT_ETIQUETTE_TEXT'), $substitutionarray);
 				$textheader = '';
 				$textfooter = '';
 				$textright = '';
@@ -245,7 +246,7 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 		}
 
 		if ($result <= 0) {
-			dol_print_error('', $result);
+			dol_print_error(null, $result);
 		}
 	} else {
 		dol_print_error($db);
@@ -264,7 +265,10 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("MembersCards"));
+$title = $langs->trans('MembersCards');
+$help_url = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios|DE:Modul_Mitglieder';
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-member page-cards');
 
 print load_fiche_titre($langs->trans("LinkToGeneratedPages"), '', $adherentstatic->picto);
 
@@ -275,7 +279,7 @@ dol_htmloutput_errors($mesg);
 
 print '<br>';
 
-print img_picto('', 'card').' '.$langs->trans("DocForAllMembersCards", (!empty($conf->global->ADHERENT_CARD_TYPE) ? $conf->global->ADHERENT_CARD_TYPE : $langs->transnoentitiesnoconv("None"))).' ';
+print img_picto('', 'card').' '.$langs->trans("DocForAllMembersCards", getDolGlobalString('ADHERENT_CARD_TYPE', $langs->transnoentitiesnoconv("None"))).' ';
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="foruserid" value="all">';
@@ -288,13 +292,13 @@ foreach (array_keys($_Avery_Labels) as $codecards) {
 	$arrayoflabels[$codecards] = $_Avery_Labels[$codecards]['name'];
 }
 asort($arrayoflabels);
-print $form->selectarray('modelcard', $arrayoflabels, (GETPOST('modelcard') ? GETPOST('modelcard') : (empty($conf->global->ADHERENT_CARD_TYPE) ? '' : $conf->global->ADHERENT_CARD_TYPE)), 1, 0, 0, '', 0, 0, 0, '', '', 1);
+print $form->selectarray('modelcard', $arrayoflabels, (GETPOST('modelcard') ? GETPOST('modelcard') : getDolGlobalString('ADHERENT_CARD_TYPE')), 1, 0, 0, '', 0, 0, 0, '', '', 1);
 print '<br><input type="submit" class="button small" value="'.$langs->trans("BuildDoc").'">';
 print '</form>';
 
 print '<br><br>';
 
-print img_picto('', 'card').' '.$langs->trans("DocForOneMemberCards", (!empty($conf->global->ADHERENT_CARD_TYPE) ? $conf->global->ADHERENT_CARD_TYPE : $langs->transnoentitiesnoconv("None"))).' ';
+print img_picto('', 'card').' '.$langs->trans("DocForOneMemberCards", getDolGlobalString('ADHERENT_CARD_TYPE', $langs->transnoentitiesnoconv("None"))).' ';
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="mode" value="cardlogin">';
@@ -306,14 +310,14 @@ foreach (array_keys($_Avery_Labels) as $codecards) {
 	$arrayoflabels[$codecards] = $_Avery_Labels[$codecards]['name'];
 }
 asort($arrayoflabels);
-print $form->selectarray('model', $arrayoflabels, (GETPOST('model') ?GETPOST('model') : (empty($conf->global->ADHERENT_CARD_TYPE) ? '' : $conf->global->ADHERENT_CARD_TYPE)), 1, 0, 0, '', 0, 0, 0, '', '', 1);
+print $form->selectarray('model', $arrayoflabels, (GETPOST('model') ? GETPOST('model') : getDolGlobalString('ADHERENT_CARD_TYPE')), 1, 0, 0, '', 0, 0, 0, '', '', 1);
 print '<br>'.$langs->trans("Login").': <input class="with100" type="text" name="foruserlogin" value="'.GETPOST('foruserlogin').'">';
 print '<br><input type="submit" class="button small" value="'.$langs->trans("BuildDoc").'">';
 print '</form>';
 
 print '<br><br>';
 
-print img_picto('', 'card').' '.$langs->trans("DocForLabels", (empty($conf->global->ADHERENT_ETIQUETTE_TYPE) ? '' : $conf->global->ADHERENT_ETIQUETTE_TYPE)).' ';
+print img_picto('', 'card').' '.$langs->trans("DocForLabels", getDolGlobalString('ADHERENT_ETIQUETTE_TYPE')).' ';
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="mode" value="label">';
@@ -325,7 +329,7 @@ foreach (array_keys($_Avery_Labels) as $codecards) {
 	$arrayoflabels[$codecards] = $_Avery_Labels[$codecards]['name'];
 }
 asort($arrayoflabels);
-print $form->selectarray('modellabel', $arrayoflabels, (GETPOST('modellabel') ? GETPOST('modellabel') : (empty($conf->global->ADHERENT_ETIQUETTE_TYPE) ? '' : $conf->global->ADHERENT_ETIQUETTE_TYPE)), 1, 0, 0, '', 0, 0, 0, '', '', 1);
+print $form->selectarray('modellabel', $arrayoflabels, (GETPOST('modellabel') ? GETPOST('modellabel') : getDolGlobalString('ADHERENT_ETIQUETTE_TYPE')), 1, 0, 0, '', 0, 0, 0, '', '', 1);
 print '<br><input type="submit" class="button small" value="'.$langs->trans("BuildDoc").'">';
 print '</form>';
 

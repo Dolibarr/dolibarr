@@ -28,7 +28,7 @@
 class Validate
 {
 	/**
-	 * @var DoliDb		Database handler (result of a new DoliDB)
+	 * @var DoliDB		Database handler (result of a new DoliDB)
 	 */
 	public $db;
 
@@ -94,10 +94,10 @@ class Validate
 	 * Check for e-mail validity
 	 *
 	 * @param 	string 	$email 		e-mail address to validate
-	 * @param 	int   	$maxLength 	string max length
+	 * @param 	int   	$maxLength 	string max length (not used)
 	 * @return 	boolean 			Validity is ok or not
 	 */
-	public function isEmail($email, $maxLength = false)
+	public function isEmail($email, $maxLength = 0)
 	{
 		if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 			$this->error = $this->outputLang->trans('RequireValidEmail');
@@ -321,10 +321,34 @@ class Validate
 
 					if (!empty($object->table_element) && $object->isExistingObject($object->table_element, $id)) {
 						return true;
-					} else { $this->error = $this->outputLang->trans('RequireValidExistingElement'); }
-				} else { $this->error = $this->outputLang->trans('BadSetupOfFieldClassNotFoundForValidation'); }
-			} else { $this->error = $this->outputLang->trans('BadSetupOfFieldFileNotFound'); }
-		} else { $this->error = $this->outputLang->trans('BadSetupOfField'); }
+					} else {
+						$this->error = $this->outputLang->trans('RequireValidExistingElement');
+					}
+				} else {
+					$this->error = $this->outputLang->trans('BadSetupOfFieldClassNotFoundForValidation');
+				}
+			} else {
+				$this->error = $this->outputLang->trans('BadSetupOfFieldFileNotFound');
+			}
+		} else {
+			$this->error = $this->outputLang->trans('BadSetupOfField');
+		}
 		return false;
+	}
+
+	/**
+	 * Check for all values in db for an element
+	 * @see self::isFetchable()
+	 *
+	 * @param integer  $id of element
+	 * @param string $element_type the element type
+	 * @return boolean Validity is ok or not
+	 * @throws Exception
+	 */
+	public function isFetchableElement($id, $element_type)
+	{
+		// TODO use newObjectByElement() introduce in V20 by PR #30036 for better errors management
+		$elementProperty = getElementProperties($element_type);
+		return $this->isFetchable($id, $elementProperty['classname'], $elementProperty['classpath'].'/'.$elementProperty['classfile'].'.class.php');
 	}
 }

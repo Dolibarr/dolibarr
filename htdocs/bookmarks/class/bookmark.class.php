@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2015 Marcos García       <marcosgdf@gmail.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,19 +40,12 @@ class Bookmark extends CommonObject
 	public $table_element = 'bookmark';
 
 	/**
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 * @var int
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
-	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 * @var string  String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'bookmark';
 
 	/**
-	 * Last error code on a local method
-	 * @var int		Error number
+	 * @var string  Last error number. For example: 'DB_ERROR_RECORD_ALREADY_EXISTS', '12345', ...
 	 */
 	public $errno;
 
@@ -61,7 +55,7 @@ class Bookmark extends CommonObject
 	public $id;
 
 	/**
-	 * @var int User ID. If > 0, bookmark of one user. If == 0, bookmark public (for everybody)
+	 * @var int   User ID. If > 0, bookmark of one user. If == 0, bookmark public (for everybody)
 	 */
 	public $fk_user;
 
@@ -103,13 +97,15 @@ class Bookmark extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
 	}
 
 	/**
 	 *    Directs the bookmark
 	 *
 	 *    @param    int		$id		Bookmark Id Loader
-	 *    @return	int				<0 if KO, >0 if OK
+	 *    @return	int				Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -148,7 +144,7 @@ class Bookmark extends CommonObject
 	/**
 	 *      Insert bookmark into database
 	 *
-	 *      @return     int     <0 si ko, rowid du bookmark cree si ok
+	 *      @return     int     Return integer <0 si ko, rowid du bookmark cree si ok
 	 */
 	public function create()
 	{
@@ -201,7 +197,7 @@ class Bookmark extends CommonObject
 	/**
 	 *      Update bookmark record
 	 *
-	 *      @return     int         <0 if KO, > if OK
+	 *      @return     int         Return integer <0 if KO, > if OK
 	 */
 	public function update()
 	{
@@ -235,7 +231,7 @@ class Bookmark extends CommonObject
 	 *      Removes the bookmark
 	 *
 	 *      @param      User	$user     	User deleting
-	 *      @return     int         		<0 if KO, >0 if OK
+	 *      @return     int         		Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user)
 	{
@@ -280,7 +276,7 @@ class Bookmark extends CommonObject
 	}
 
 	/**
-	 *  Return a link to the object card (with optionaly the picto)
+	 *  Return a link to the object card (with optionally the picto)
 	 *
 	 *  @param  int     $withpicto                  Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
 	 *  @param  string  $option                     On what the link point to ('nolink', ...)
@@ -318,7 +314,7 @@ class Bookmark extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowBookmark");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}

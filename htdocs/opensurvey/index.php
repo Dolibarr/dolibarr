@@ -32,13 +32,13 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 $langs->load("opensurvey");
 
 // Security check
-if (empty($user->rights->opensurvey->read)) {
+if (!$user->hasRight('opensurvey', 'read')) {
 	accessforbidden();
 }
 
 $hookmanager = new HookManager($db);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('opensurveyindex'));
 
 

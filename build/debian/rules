@@ -4,7 +4,7 @@
 export DH_VERBOSE=1
 export DH_OPTIONS=-v
 
-#export DH_COMPAT=7    # This is the debhelper compatability version to use, now defined into compat file
+#export DH_COMPAT=7    # This is the debhelper compatibility version to use, now defined into compat file
 
 
 %:

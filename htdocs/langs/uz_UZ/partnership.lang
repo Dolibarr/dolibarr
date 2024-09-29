@@ -4,56 +4,45 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModulePartnershipName=Hamkorlikni boshqarish
 PartnershipDescription=Modul sherikligini boshqarish
 PartnershipDescriptionLong= Modul sherikligini boshqarish
 Partnership=Hamkorlik
+Partnerships=Hamkorlik
 AddPartnership=Hamkorlik qo'shing
 CancelPartnershipForExpiredMembers=Hamkorlik: muddati o'tgan obunalari bo'lgan a'zolarning sherikligini bekor qiling
 PartnershipCheckBacklink=Hamkorlik: teskari bog'lanishni tekshiring
-
-#
 # Menu
-#
 NewPartnership=Yangi hamkorlik
+NewPartnershipbyWeb=Hamkorlik soʻrovingiz muvaffaqiyatli qoʻshildi. Tez orada siz bilan bog'lanishimiz mumkin...
 ListOfPartnerships=Hamkorlik ro'yxati
-
-#
 # Admin page
-#
 PartnershipSetup=Hamkorlikni o'rnatish
 PartnershipAbout=Hamkorlik haqida
 PartnershipAboutPage=Sahifa haqida hamkorlik
-partnershipforthirdpartyormember=Hamkor maqomi "uchinchi tomon" yoki "a'zo" da o'rnatilishi kerak
+partnershipforthirdpartyormember=Hamkor maqomi "uchinchi tomon" yoki "a'zo" ga o'rnatilishi kerak
 PARTNERSHIP_IS_MANAGED_FOR=Hamkorlik boshqarildi
 PARTNERSHIP_BACKLINKS_TO_CHECK=Tekshirish uchun qayta bog'lanishlar
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Obuna muddati tugaganidan keyin hamkorlik maqomini bekor qilishdan bir necha kun oldin
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Obuna muddati tugashi bilan hamkorlik holatini bekor qilishdan bir kun oldin
 ReferingWebsiteCheck=Veb-saytga yo'naltirilganligini tekshiring
 ReferingWebsiteCheckDesc=Siz o'zingizning veb-saytingizda sheriklaringizning veb-sayt domenlariga orqa bog'lanishni qo'shganligini tekshirish uchun xususiyatni yoqishingiz mumkin.
 PublicFormRegistrationPartnerDesc=Dolibarr sizga tashqi tashrif buyuruvchilarga hamkorlik dasturining bir qismi bo'lishni so'rashiga ruxsat berish uchun sizga umumiy URL/veb-sayt taqdim etishi mumkin.
-
-#
 # Object
-#
 DeletePartnership=Hamkorlikni o'chirib tashlang
 PartnershipDedicatedToThisThirdParty=Ushbu uchinchi tomonga bag'ishlangan hamkorlik
 PartnershipDedicatedToThisMember=Ushbu a'zoga bag'ishlangan hamkorlik
 DatePartnershipStart=Boshlanish vaqti
 DatePartnershipEnd=Tugash sanasi
 ReasonDecline=Rad etish sababi
-ReasonDeclineOrCancel=Rad etish sababi
+ReasonDeclineOrCancel=Rad etish yoki bekor qilish sababi
 PartnershipAlreadyExist=Hamkorlik allaqachon mavjud
 ManagePartnership=Hamkorlikni boshqarish
 BacklinkNotFoundOnPartnerWebsite=Backlink sherik veb-saytida topilmadi
@@ -66,29 +55,22 @@ PartnershipAccepted=Qabul qilindi
 PartnershipRefused=Rad etildi
 PartnershipCanceled=Bekor qilindi
 PartnershipManagedFor=Hamkorlar
-
-#
 # Template Mail
-#
 SendingEmailOnPartnershipWillSoonBeCanceled=Yaqinda hamkorlik bekor qilinadi
 SendingEmailOnPartnershipRefused=Hamkorlik rad etildi
 SendingEmailOnPartnershipAccepted=Hamkorlik qabul qilindi
 SendingEmailOnPartnershipCanceled=Hamkorlik bekor qilindi
-
 YourPartnershipWillSoonBeCanceledTopic=Yaqinda hamkorlik bekor qilinadi
 YourPartnershipRefusedTopic=Hamkorlik rad etildi
 YourPartnershipAcceptedTopic=Hamkorlik qabul qilindi
 YourPartnershipCanceledTopic=Hamkorlik bekor qilindi
-
-YourPartnershipWillSoonBeCanceledContent=Sizning hamkorligingiz yaqinda bekor qilinishini xabar qilamiz (Backlink topilmadi)
-YourPartnershipRefusedContent=Sizning sheriklik so'rovingiz rad etilganligi haqida xabar beramiz.
-YourPartnershipAcceptedContent=Sizga sheriklik so'rovingiz qabul qilinganligi to'g'risida xabar beramiz.
-YourPartnershipCanceledContent=Sizning hamkorligingiz bekor qilinganligi haqida xabar beramiz.
-
+YourPartnershipWillSoonBeCanceledContent=Sizga shuni ma'lum qilamizki, bizning hamkorligimiz tez orada bekor qilinadi (biz yangilanmagan yoki hamkorligimiz uchun zarur shart bajarilmagan). Agar siz buni xatolik tufayli olgan bo'lsangiz, iltimos biz bilan bog'laning.
+YourPartnershipRefusedContent=Sizning sheriklik so'rovingiz rad etilganligini ma'lum qilamiz. Old shartlar bajarilmagan. Agar sizga qo'shimcha ma'lumot kerak bo'lsa, biz bilan bog'laning.
+YourPartnershipAcceptedContent=Sizning hamkorlikka bo'lgan talabingiz qabul qilinganligini ma'lum qilamiz.
+YourPartnershipCanceledContent=Sizga shuni ma'lum qilamizki, bizning hamkorligimiz bekor qilingan. Agar sizga qo'shimcha ma'lumot kerak bo'lsa, biz bilan bog'laning.
 CountLastUrlCheckError=Oxirgi URL tekshiruvidagi xatolar soni
 LastCheckBacklink=URLni oxirgi tekshirish sanasi
-ReasonDeclineOrCancel=Rad etish sababi
-
 NewPartnershipRequest=Yangi hamkorlik talabi
 NewPartnershipRequestDesc=Ushbu shakl sizga hamkorlik dasturimizning bir qismi bo'lish uchun so'rov yuborish imkonini beradi. Agar sizga ushbu shaklni to'ldirishda yordam kerak bo'lsa, <b> %s </b> elektron pochta orqali bog'laning.
-
+ThisUrlMustContainsAtLeastOneLinkToWebsite=Bu sahifada quyidagi domenlardan biriga kamida bitta havola boʻlishi kerak: %s
+IPOfApplicant=Ariza beruvchining IP

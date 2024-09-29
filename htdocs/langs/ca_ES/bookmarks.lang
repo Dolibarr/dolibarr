@@ -1,23 +1,24 @@
-# Dolibarr language file - Source file is en_US - marque pages
-AddThisPageToBookmarks=Afegeix aquesta pàgina als marcadors
-Bookmark=Marcador
-Bookmarks=Marcadors
-ListOfBookmarks=Llista de marcadors
-EditBookmarks=Llista/edita els marcadors
-NewBookmark=Marcador nou
-ShowBookmark=Mostra marcador
-OpenANewWindow=Obriu una pestanya nova
-ReplaceWindow=Reemplaça la pestanya actual
-BookmarkTargetNewWindowShort=Pestanya nova
-BookmarkTargetReplaceWindowShort=Pestanya actual
-BookmarkTitle=Nom de marcatge
-UrlOrLink=URL
-BehaviourOnClick=Comportament quan se selecciona un URL de marcador
-CreateBookmark=Crea marcador
-SetHereATitleForLink=Estableix un nom per al marcador
-UseAnExternalHttpLinkOrRelativeDolibarrLink=Utilitzeu un enllaç extern/absolut (https://externalurl.com) o un enllaç intern/relatiu (/mypage.php). També podeu utilitzar el telèfon com tel: 0123456.
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Trieu si la pàgina enllaçada s'ha d'obrir a la pestanya actual o a una pestanya nova
-BookmarksManagement=Gestió de marcadors
-BookmarksMenuShortCut=Ctrl + shift + m
-NoBookmarks=No s'han definit cap marcador
-NoBookmarkFound=No s'ha trobat cap marcador
+# Dolibarr language file - Source file is en_US - marque pages / bookmarks
+
+AddThisPageToBookmarks = Afegeix aquesta pàgina als marcadors
+BehaviourOnClick = Comportament quan es selecciona un URL d'adreces d'interès
+Bookmark = Marcador
+Bookmarks = Marcadors
+BookmarkTargetNewWindowShort = Pestanya nova
+BookmarkTargetReplaceWindowShort = Pestanya actual
+BookmarkTitle = Nom de marcatge
+BookmarksManagement = Gestió de marcadors
+BookmarksMenuShortCut = Ctrl + shift + m
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark = Trieu si la pàgina enllaçada s'ha d'obrir a la pestanya actual o a una pestanya nova
+CreateBookmark = Crea marcador
+EditBookmarks = Llista/edita els marcadors
+ListOfBookmarks = Llista de marcadors
+NewBookmark = Marcador nou
+NoBookmarkFound = No s'ha trobat cap marcador
+NoBookmarks = No s'han definit cap marcador
+OpenANewWindow = Obriu una pestanya nova
+ReplaceWindow = Reemplaça la pestanya actual
+SetHereATitleForLink = Estableix un nom per al marcador
+ShowBookmark = Mostra marcador
+UrlOrLink = URL
+UseAnExternalHttpLinkOrRelativeDolibarrLink = Utilitzeu un enllaç extern/absolut (https://externalurl.com) o un enllaç intern/relatiu (/mypage.php). També podeu utilitzar el telèfon com tel: 0123456.

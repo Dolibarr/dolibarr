@@ -26,7 +26,7 @@ use Sabre\Uri;
  * request before it's done, such as adding authentication headers.
  *
  * The afterRequest event will be emitted after the request is completed
- * succesfully.
+ * successfully.
  *
  * If a HTTP error is returned (status code higher than 399) the error event is
  * triggered. It's possible using this event to retry the request, by setting
@@ -53,7 +53,7 @@ class Client extends EventEmitter
     protected $curlSettings = [];
 
     /**
-     * Wether or not exceptions should be thrown when a HTTP error is returned.
+     * Whether exceptions should be thrown when a HTTP error is returned.
      *
      * @var bool
      */
@@ -376,11 +376,16 @@ class Client extends EventEmitter
             default:
                 $body = $request->getBody();
                 if (is_resource($body)) {
+                    $bodyStat = fstat($body);
+
                     // This needs to be set to PUT, regardless of the actual
                     // method used. Without it, INFILE will be ignored for some
                     // reason.
                     $settings[CURLOPT_PUT] = true;
-                    $settings[CURLOPT_INFILE] = $request->getBody();
+                    $settings[CURLOPT_INFILE] = $body;
+                    if (false !== $bodyStat && array_key_exists('size', $bodyStat)) {
+                        $settings[CURLOPT_INFILESIZE] = $bodyStat['size'];
+                    }
                 } else {
                     // For security we cast this to a string. If somehow an array could
                     // be passed here, it would be possible for an attacker to use @ to
@@ -397,7 +402,10 @@ class Client extends EventEmitter
                 $nHeaders[] = $key.': '.$value;
             }
         }
-        $settings[CURLOPT_HTTPHEADER] = $nHeaders;
+
+        if ([] !== $nHeaders) {
+            $settings[CURLOPT_HTTPHEADER] = $nHeaders;
+        }
         $settings[CURLOPT_URL] = $request->getUrl();
         // FIXME: CURLOPT_PROTOCOLS is currently unsupported by HHVM
         if (defined('CURLOPT_PROTOCOLS')) {
@@ -450,8 +458,6 @@ class Client extends EventEmitter
      *   * http_code - HTTP status code, as an int. Only set if Only set if
      *                 status is STATUS_SUCCESS, or STATUS_HTTPERROR
      *
-     * @param array    $headerLines
-     * @param string   $body
      * @param resource $curlHandle
      */
     protected function parseCurlResponse(array $headerLines, string $body, $curlHandle): array

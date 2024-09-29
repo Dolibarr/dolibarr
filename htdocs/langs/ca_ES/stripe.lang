@@ -22,7 +22,8 @@ ToOfferALinkForOnlinePaymentOnContractLine=URL per a oferir una pàgina de pagam
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL per a oferir una pàgina de pagament en línia %s de qualsevol import sense cap objecte existent
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL per a oferir una pàgina de pagament en línia %s per a una subscripció de soci
 ToOfferALinkForOnlinePaymentOnDonation=URL per a oferir una pàgina de pagament en línia %s per al pagament d'una donació
-YouCanAddTagOnUrl=També podeu afegir el paràmetre URL <b> &tag=<i>valor</i></b> a qualsevol d’aquests URL (obligatori només per al pagament que no estigui vinculat a un objecte) per a afegir la vostra pròpia etiqueta de comentari de pagament. <br>Per a l'URL de pagaments sense objecte existent, també podeu afegir el paràmetre <strong> &noidempotency=1 </strong>, de manera que es pot utilitzar el mateix enllaç amb la mateixa etiqueta diverses vegades (alguns modes de pagament poden limitar el pagament a 1 per a cada enllaç diferent sense aquest paràmetre)
+YouCanAddTagOnUrl=You can also add url parameter <b>&tag=value</b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
+YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful of failed online payment.
 SetupStripeToHavePaymentCreatedAutomatically=Configureu el vostre Stripe amb l'URL <b> %s </b> perquè el pagament es creï automàticament quan Stripe el validi.
 AccountParameter=Paràmetres del compte
 UsageParameter=Paràmetres d'ús
@@ -31,7 +32,7 @@ STRIPE_CGI_URL_V2=URL CGI del mòdul Stripe per al pagament
 CSSUrlForPaymentForm=URL del full d'estil CSS per al formulari de pagament
 NewStripePaymentReceived=S'ha rebut un pagament nou de Stripe
 NewStripePaymentFailed=S'ha intentat el pagament nou de Stripe, però ha fallat
-FailedToChargeCard=No s'ha pogut fer el càrrec a la targeta
+FailedToChargeCard=No s'ha pogut cobrar a la targeta
 STRIPE_TEST_SECRET_KEY=Clau secreta de test
 STRIPE_TEST_PUBLISHABLE_KEY=Clau de test publicable
 STRIPE_TEST_WEBHOOK_KEY=Clau de prova de Webhook
@@ -48,7 +49,7 @@ OAUTH_STRIPE_TEST_ID=Identificador de client de Stripe Connect (ca _...)
 OAUTH_STRIPE_LIVE_ID=Identificador de client de Stripe Connect (ca _...)
 BankAccountForBankTransfer=Compte bancari per als pagaments de fons
 StripeAccount=Compte de Stripe
-StripeChargeList=Llista de càrregues de Stripe
+StripeChargeList=Llista de cobraments de Stripe
 StripeTransactionList=Llista de transaccions de Stripe
 StripeCustomerId=ID de client de Stripe
 StripePaymentId=Id de pagament de Stripe
@@ -70,10 +71,20 @@ StripePayoutList=Llista de pagaments de Stripe
 ToOfferALinkForTestWebhook=Enllaç per a configurar el WebHook de Stripe per a trucar a l'IPN (mode de prova)
 ToOfferALinkForLiveWebhook=Enllaç per a configurar el WebHook de Stripe per a trucar a l'IPN (mode en producció)
 PaymentWillBeRecordedForNextPeriod=El pagament es registrarà per al període següent.
-ClickHereToTryAgain=<a href="%s"> Feu clic aquí per a tornar-ho a provar... </a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=A causa de les fortes regles d'autenticació de clients, la creació d'una fitxa s'ha de fer des del panell de Stripe. Podeu fer clic aquí per a activar el registre de clients de Stripe: %s
+ClickHereToTryAgain=<a href="%s">Feu clic aquí per a tornar-ho a provar...</a>
+CreationOfPaymentModeMustBeDoneFromStripeInterface=A causa de les regles d'autenticació de client fortes, la creació d'una targeta s'ha de fer des de l'oficina administrativa de Stripe. Pots fer clic aquí per a activar el registre de client de Stripe: %s
 STRIPE_CARD_PRESENT=Targeta de regal per a terminals Stripe
 TERMINAL_LOCATION=Ubicació (adreça) de Stripe Terminals
 RequestDirectDebitWithStripe=Sol·liciteu domiciliació bancària amb Stripe
+RequesCreditTransferWithStripe=Sol·liciteu una transferència de crèdit amb Stripe
 STRIPE_SEPA_DIRECT_DEBIT=Activeu els pagaments per domiciliació bancària mitjançant Stripe
-
+STRIPE_KLARNA=Activa els pagaments amb Klarna
+STRIPE_BANCONTACT=Activa els pagaments mitjançant BANCONTACT
+STRIPE_IDEAL=Activa els pagaments amb IDEAL
+STRIPE_GIROPAY=Activa els pagaments amb GIROPAY
+STRIPE_SOFORT=Activa els pagaments mitjançant SOFORT
+StripeConnect_Mode=Mode Stripe Connect
+ExampleOnlyForBECustomers=Només per a clients belgues
+ExampleOnlyForDECustomers=Només per a clients alemanys
+ExampleOnlyForNLCustomers=Només per a clients holandesos
+ExampleOnlyForATBEDEITNLESCustomers=Només per a clients d'Àustria, Bèlgica, Alemanya, Itàlia, Països Baixos, Espanya

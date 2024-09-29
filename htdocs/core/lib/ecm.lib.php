@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2008-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2022       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +20,7 @@
 
 /**
  * \file       htdocs/core/lib/ecm.lib.php
- * \brief      Ensemble de fonctions de base pour le module ecm
+ * \brief      Ensemble de functions de base pour le module ecm
  * \ingroup    ecm
  */
 
@@ -28,7 +29,7 @@
  * Prepare array with list of different ecm main dashboard
  *
  * @param   object	$object		Object related to tabs
- * @return  array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function ecm_prepare_dasboard_head($object)
 {
@@ -54,7 +55,7 @@ function ecm_prepare_dasboard_head($object)
 	$head[$h][2] = 'index';
 	$h++;
 
-	if (empty($conf->global->ECM_AUTO_TREE_HIDEN)) {
+	if (!getDolGlobalString('ECM_AUTO_TREE_HIDEN')) {
 		$head[$h][0] = DOL_URL_ROOT.'/ecm/index_auto.php';
 		$head[$h][1] = $langs->trans("ECMSectionsAuto").$form->textwithpicto('', $helptext, 1, 'info', '', 0, 3);
 		$head[$h][2] = 'index_auto';
@@ -86,7 +87,7 @@ function ecm_prepare_dasboard_head($object)
  * @param   object	$object		Object related to tabs
  * @param	string	$module		Module
  * @param	string	$section	Section
- * @return  array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function ecm_prepare_head($object, $module = 'ecm', $section = '')
 {
@@ -113,7 +114,7 @@ function ecm_prepare_head($object, $module = 'ecm', $section = '')
  * Prepare array with list of tabs
  *
  * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function ecm_file_prepare_head($object)
 {
@@ -149,7 +150,7 @@ function ecm_file_prepare_head($object)
  * Prepare array with list of tabs
  *
  * @param   object	$object		Object related to tabs
- * @return  array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function ecm_prepare_head_fm($object)
 {
@@ -171,7 +172,7 @@ function ecm_prepare_head_fm($object)
 }
 
 /**
- *  Return array head with list of tabs to view object informations.
+ *  Return array head with list of tabs to view object information.
  *
  *  @return	array               head array with tabs
  */

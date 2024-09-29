@@ -1,12 +1,8 @@
 # Dolibarr language file - Source file is en_US - datapolicy
 datapolicySetup =Configuración de la política de privacidad de datos del módulo
-datapolicySetupPage =Dependiendo de las leyes de sus países (Ejemplo <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external"> Artículo 5 </a> del RGPD), los datos personales deben conservarse durante un período que no supere el necesario para los fines para los que fueron recopilados, excepto para fines de archivo. <br> El borrado se realizará automáticamente después de un cierto tiempo sin eventos (el tiempo que habrá indicado a continuación).
 DATAPOLICY_TIERS_PROSPECT =Prospecto
 DATAPOLICY_TIERS_PROSPECT_CLIENT =Prospecto/Cliente
 DATAPOLICY_TIERS_NIPROSPECT_NICLIENT =Ni prospecto/ni cliente
 DATAPOLICY_CONTACT_PROSPECT =Prospecto
 DATAPOLICY_CONTACT_PROSPECT_CLIENT =Prospecto/Cliente
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT =Ni prospecto/ni cliente
-DATAPOLICYMail =Configuración de correos electrónicos
-DATAPOLICY_POPUP_ANONYME_TEXTE =No puede eliminar este contacto de Dolibarr porque hay elementos relacionados. De acuerdo con el RGPD, harás anónimos todos estos datos para respetar tus obligaciones. Te gustaria continuar ?
-DATAPOLICY_PORTABILITE_CONFIRMATION =Quiere exportar los datos personales de este contacto. Está seguro ?

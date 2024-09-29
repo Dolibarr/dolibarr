@@ -67,5 +67,4 @@ ChooseBoxToAdd=Agregar widget a su tablero
 BoxAdded=Widget fue agregado en tu tablero
 NoRecordedManualEntries=No hay registros de entradas manuales en contabilidad
 BoxSuspenseAccount=Cuenta la operación de contabilidad con cuenta de suspenso
-BoxTitleLastCustomerShipments=Últimos %s envíos a Clientes
 NoRecordedShipments=Envíos a cliente no guardados

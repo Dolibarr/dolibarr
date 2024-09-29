@@ -2,6 +2,8 @@
 /* Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
  * Copyright (C) 2009      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2008-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +27,8 @@
 
 /**
  *	Class to manage menu Auguria
+ *
+ *	@phan-suppress PhanRedefineClass
  */
 class MenuManager
 {
@@ -33,8 +37,19 @@ class MenuManager
 	 */
 	public $db;
 
-	public $type_user; // Put 0 for internal users, 1 for external users
-	public $atarget = ""; // To store default target to use onto links
+	/**
+	 * @var int<0,1>	0 for internal users, 1 for external users
+	 */
+	public $type_user;
+
+	/**
+	 * @var string		Default target to use for links
+	 */
+	public $atarget = "";
+
+	/**
+	 * @var string Menu name
+	 */
 	public $name = "auguria";
 
 	/**
@@ -42,9 +57,18 @@ class MenuManager
 	 */
 	public $menu;
 
+	/**
+	 * @var array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level:int,prefix:string}>
+	 */
 	public $menu_array;
+	/**
+	 * @var array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level:int,prefix:string}>
+	 */
 	public $menu_array_after;
 
+	/**
+	 * @var array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level:int,prefix:string}>
+	 */
 	public $tabMenu;
 
 
@@ -52,7 +76,7 @@ class MenuManager
 	 *  Constructor
 	 *
 	 *  @param	DoliDB		$db     	Database handler
-	 *  @param	int			$type_user	Type of user
+	 *  @param	int<0,1>	$type_user	Type of user
 	 */
 	public function __construct($db, $type_user)
 	{
@@ -72,22 +96,22 @@ class MenuManager
 	{
 		global $conf, $user, $langs;
 
-		// On sauve en session le menu principal choisi
+		// We save into session the main menu selected
 		if (GETPOSTISSET("mainmenu")) {
 			$_SESSION["mainmenu"] = GETPOST("mainmenu", 'aZ09');
 		}
 		if (GETPOSTISSET("idmenu")) {
-			$_SESSION["idmenu"] = GETPOST("idmenu", 'int');
+			$_SESSION["idmenu"] = GETPOSTINT("idmenu");
 		}
 
-		// Read mainmenu and leftmenu that define which menu to show
+		// Read now mainmenu and leftmenu that define which menu to show
 		if (GETPOSTISSET("mainmenu")) {
 			// On sauve en session le menu principal choisi
 			$mainmenu = GETPOST("mainmenu", 'aZ09');
 			$_SESSION["mainmenu"] = $mainmenu;
 			$_SESSION["leftmenuopened"] = "";
 		} else {
-			// On va le chercher en session si non defini par le lien
+			// Look for the menu in the session if not set by the link
 			$mainmenu = isset($_SESSION["mainmenu"]) ? $_SESSION["mainmenu"] : '';
 		}
 		if (!empty($forcemainmenu)) {
@@ -106,7 +130,7 @@ class MenuManager
 				$_SESSION["leftmenuopened"] = $leftmenu;
 			}
 		} else {
-			// On va le chercher en session si non defini par le lien
+			// Look for the menu in the session if not set by the link
 			$leftmenu = isset($_SESSION["leftmenu"]) ? $_SESSION["leftmenu"] : '';
 		}
 		if (!empty($forceleftmenu)) {
@@ -120,9 +144,7 @@ class MenuManager
 		$this->tabMenu = $tabMenu;
 		//var_dump($tabMenu);
 
-		//if ($forcemainmenu == 'all') {
-		//var_dump($this->tabMenu);
-		//}
+		//if ($forcemainmenu == 'all') { var_dump($this->tabMenu); exit; }
 	}
 
 
@@ -130,9 +152,9 @@ class MenuManager
 	 *  Show menu.
 	 *  Menu defined in sql tables were stored into $this->tabMenu BEFORE this is called.
 	 *
-	 *	@param	string	$mode		    'top', 'topnb', 'left', 'jmobile' (used to get full xml ul/li menu)
-	 *  @param	array	$moredata		An array with more data to output
-	 *  @return int                     0 or nb of top menu entries if $mode = 'topnb'
+	 *	@param	string					$mode	    'top', 'topnb', 'left', 'jmobile' (used to get full xml ul/li menu)
+	 *  @param	?array<string,string>	$moredata	An array with more data to output
+	 *  @return int<0,max>							0 or nb of top menu entries if $mode = 'topnb'
 	 */
 	public function showmenu($mode, $moredata = null)
 	{
@@ -148,7 +170,7 @@ class MenuManager
 		require_once DOL_DOCUMENT_ROOT.'/core/class/menu.class.php';
 		$this->menu = new Menu();
 
-		if (empty($conf->global->MAIN_MENU_INVERT)) {
+		if (!getDolGlobalString('MAIN_MENU_INVERT')) {
 			if ($mode == 'top') {
 				print_auguria_menu($this->db, $this->atarget, $this->type_user, $this->tabMenu, $this->menu, 0, $mode);
 			}
@@ -176,6 +198,7 @@ class MenuManager
 			// $this->menu->liste is top menu
 			//var_dump($this->menu->liste);exit;
 			$lastlevel = array();
+			$showmenu = true;  // Is current menu shown - define here to keep static code checker happy
 			print '<!-- Generate menu list from menu handler '.$this->name.' -->'."\n";
 			foreach ($this->menu->liste as $key => $val) {		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
 				print '<ul class="ulmenu" data-inset="true">';
@@ -192,20 +215,22 @@ class MenuManager
 
 					// Add font-awesome
 					if ($val['level'] == 0 && !empty($val['prefix'])) {
-						print $val['prefix'];
-					} elseif ($val['level'] == 0 && $val['mainmenu'] == 'home') {
-						print '<span class="fa fa-home fa-fw paddingright pictofixedwidth" aria-hidden="true"></span>';
+						print str_replace('<span class="', '<span class="paddingright pictofixedwidth ', $val['prefix']);
 					}
 
 					print $val['titre'];
 					print '</a>'."\n";
 
-					// Search submenu fot this mainmenu entry
+					// Search submenu for this mainmenu entry
 					$tmpmainmenu = $val['mainmenu'];
 					$tmpleftmenu = 'all';
 					$submenu = new Menu();
 					print_left_auguria_menu($this->db, $this->menu_array, $this->menu_array_after, $this->tabMenu, $submenu, 1, $tmpmainmenu, $tmpleftmenu);
-					$nexturl = dol_buildpath($submenu->liste[0]['url'], 1);
+					if (!empty($submenu->liste[0]['url'])) {
+						$nexturl = dol_buildpath($submenu->liste[0]['url'], 1);
+					} else {
+						$nexturl = '';
+					}
 
 					$canonrelurl = preg_replace('/\?.*$/', '', $relurl);
 					$canonnexturl = preg_replace('/\?.*$/', '', $nexturl);
@@ -217,8 +242,13 @@ class MenuManager
 						// We add sub entry
 						print str_pad('', 1).'<li class="lilevel1 ui-btn-icon-right ui-btn">'; // ui-btn to highlight on clic
 						print '<a href="'.$relurl.'">';
+
+						if ($val['level'] == 0) {
+							print '<span class="fas fa-home fa-fw paddingright pictofixedwidth" aria-hidden="true"></span>';
+						}
+
 						if ($langs->trans(ucfirst($val['mainmenu'])."Dashboard") == ucfirst($val['mainmenu'])."Dashboard") {  // No translation
-							if (in_array($val['mainmenu'], array('cashdesk', 'externalsite', 'website', 'collab'))) {
+							if (in_array($val['mainmenu'], array('cashdesk', 'externalsite', 'website', 'collab', 'takepos'))) {
 								print $langs->trans("Access");
 							} else {
 								print $langs->trans("Dashboard");
@@ -243,7 +273,7 @@ class MenuManager
 					$lastlevel2 = array();
 					foreach ($submenu->liste as $key2 => $val2) {		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
 						$showmenu = true;
-						if (!empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED) && empty($val2['enabled'])) {
+						if (getDolGlobalString('MAIN_MENU_HIDE_UNAUTHORIZED') && empty($val2['enabled'])) {
 							$showmenu = false;
 						}
 
@@ -279,6 +309,7 @@ class MenuManager
 								$disabled = " vsmenudisabled";
 							}
 
+							// @phan-suppress-next-line PhanParamSuspiciousOrder
 							print str_pad('', $val2['level'] + 1);
 							print '<li class="lilevel'.($val2['level'] + 1);
 							if ($val2['level'] == 0) {
@@ -311,11 +342,7 @@ class MenuManager
 
 							print $val2['titre'];
 							if ($relurl2) {
-								if ($val2['enabled']) {	// Allowed
-									print '</a>';
-								} else {
-									print '</a>';
-								}
+								print '</a>';
 							}
 							print '</li>'."\n";
 						}

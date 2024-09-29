@@ -21,7 +21,7 @@
 
 /**
  *  \file       htdocs/commande/note.php
- *  \ingroup    commande
+ *  \ingroup    order
  *  \brief      Fiche de notes sur une commande
  */
 
@@ -36,9 +36,9 @@ if (isModEnabled('project')) {
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'orders'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 $action = GETPOST('action', 'aZ09');
 
 // Security check
@@ -47,14 +47,14 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('ordernote'));
 
 $result = restrictedArea($user, 'commande', $id, '');
 
 $usercancreate  =  $user->hasRight("commande", "creer");
 
-$permissionnote = $user->rights->commande->creer; // Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->hasRight('commande', 'creer'); // Used by the include of actions_setnotes.inc.php
 
 
 $object = new Commande($db);
@@ -74,7 +74,7 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 if (empty($reshook)) {
-	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be 'include', not 'include_once'
 }
 
 
@@ -83,7 +83,7 @@ if (empty($reshook)) {
  */
 $title = $object->ref." - ".$langs->trans('Notes');
 $help_url = 'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes|DE:Modul_Kundenaufträge';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-order page-card_notes');
 
 $form = new Form($db);
 

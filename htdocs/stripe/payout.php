@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2018-2023  Thibault FOUCART        <support@ptibogxiv.net>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,17 +36,17 @@ if (isModEnabled('accounting')) {
 $langs->loadLangs(array('compta', 'salaries', 'bills', 'hrm', 'stripe'));
 
 // Security check
-$socid = GETPOST("socid", "int");
+$socid = GETPOSTINT("socid");
 if ($user->socid) {
 	$socid = $user->socid;
 }
 //$result = restrictedArea($user, 'salaries', '', '', '');
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $rowid = GETPOST("rowid", 'alpha');
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -55,7 +56,6 @@ $pagenext = $page + 1;
 $optioncss = GETPOST('optioncss', 'alpha');
 $param = "";
 $num = 0;
-$totalnboflines = 0;
 
 $result = restrictedArea($user, 'banque');
 
@@ -70,10 +70,10 @@ $stripe = new Stripe($db);
 
 llxHeader('', $langs->trans("StripePayoutList"));
 
-if (isModEnabled('stripe') && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
+if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE') || GETPOST('forcesandbox', 'alpha'))) {
 	$service = 'StripeTest';
 	$servicestatus = '0';
-	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
+	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), [], 'warning');
 } else {
 	$service = 'StripeLive';
 	$servicestatus = '1';
@@ -84,6 +84,9 @@ $stripeacc = $stripe->getStripeAccount($service);
 {
 	print $langs->trans('ErrorStripeAccountNotDefined');
 }*/
+
+$moreforfilter = '';
+$totalnboflines = -1;
 
 if (!$rowid) {
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -118,18 +121,22 @@ if (!$rowid) {
 
 	try {
 		if ($stripeacc) {
-			$payout = \Stripe\Payout::all(array("limit" => $limit), array("stripe_account" => $stripeacc));
+			$payout_all = \Stripe\Payout::all(array("limit" => $limit), array("stripe_account" => $stripeacc));
 		} else {
-			$payout = \Stripe\Payout::all(array("limit" => $limit));
+			$payout_all = \Stripe\Payout::all(array("limit" => $limit));
 		}
+		'@phan-var-force \Stripe\Payout $payout_all';  // TStripeObject suggested, but is a template
 
-		foreach ($payout->data as $payout) {
+		foreach ($payout_all->data as $payout) {
+			'@phan-var-force \Stripe\Payout $payout';  // TStripeObject suggested, but is a template
 			print '<tr class="oddeven">';
 
 			// Ref
 			if (!empty($stripeacc)) {
 				$connect = $stripeacc.'/';
-			} else $connect = null;
+			} else {
+				$connect = null;
+			}
 
 			$url = 'https://dashboard.stripe.com/'.$connect.'test/payouts/'.$payout->id;
 			if ($servicestatus) {

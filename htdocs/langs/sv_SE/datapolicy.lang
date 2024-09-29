@@ -4,12 +4,10 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
@@ -17,13 +15,10 @@
 Module4100Name = Sekretesspolicy
 # Module description 'ModuledatapolicyDesc'
 Module4100Desc = Modul för att hantera sekretess (i enlighet med GDPR)
-
-#
 # Administration page
-#
 datapolicySetup = Inställning av sekretesspolicy
 Deletion = Radering av data
-datapolicySetupPage = Beroende på lagarna i ditt land (exempelvis <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">artikel 5</a> i GDPR) måste personuppgifter sparas under en period som inte överstiger vad som är nödvändigt för de ändamål för vilka de samlades in, förutom för arkivändamål. <br> Raderingen kommer att göras automatiskt efter en viss varaktighet utan händelse (längden som du kommer att ha angett nedan).
+datapolicySetupPage = Beroende på lagarna i dina länder (exempel <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Artikel 5</a> i GDPR) måste personuppgifter sparas under en period inte överstiger den varaktighet som uppgifterna behövs för ändamålet för vilka de samlades in, förutom för arkiveringsändamål.<br>Raderingen kommer att göras automatiskt efter en viss varaktighet utan händelser (varaktigheten som du kommer att ha angett nedan).
 NB_MONTHS = %s månader
 ONE_YEAR = 1 år
 NB_YEARS = %s år
@@ -38,55 +33,19 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = Prospekt/kund
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Inte prospekt eller kund
 DATAPOLICY_CONTACT_FOURNISSEUR = Leverantör
 DATAPOLICY_ADHERENT = Medlem
-DATAPOLICY_Tooltip_SETUP = Typ av kontakt - ange dina val för varje typ.
-DATAPOLICYMail = E-postinställningar
-DATAPOLICYSUBJECTMAIL = Ärenderad för e-post
-DATAPOLICYCONTENTMAIL = Innehållet i e-post
-DATAPOLICYSUBSITUTION = Du kan använda följande variabler i din e-post (LINKACCEPT gör det möjligt att skapa en länk som registrerar personens samtycke, LINKREFUSED gör det möjligt att registrera personens nekande):
-DATAPOLICYACCEPT = Meddelande efter överenskommelse
-DATAPOLICYREFUSE = Meddelande efter oenighet
+DATAPOLICY_Tooltip_SETUP=Define the delay with no interaction after which you want the record to be automatically purged.
 SendAgreementText = Du kan skicka e-post angående GDPR till alla dina relevanta kontakter (som ännu inte har fått ett mejl och som du inte har registrerat något för om deras GDPR-avtal). För att göra detta, använd följande knapp.
 SendAgreement = Skicka e-post
 AllAgreementSend = All e-post har skickats
 TXTLINKDATAPOLICYACCEPT = Text för länken "godkänn"
-TXTLINKDATAPOLICYREFUSE = Text för länken "neka"
-
-
-#
+TXTLINKDATAPOLICYREFUSE = Text för länken "oenighet"
 # Extrafields
-#
 DATAPOLICY_BLOCKCHECKBOX = GDPR: hantering av personuppgifter
 DATAPOLICY_consentement = Samtycke inhämtat för behandling av personuppgifter
-DATAPOLICY_opposition_traitement = Motsätter sig hantering av personuppgifter
-DATAPOLICY_opposition_prospection = Motsätter sig hantering av personuppgifter i prospekteringssyfte
-
-#
-# Popup
-#
-DATAPOLICY_POPUP_ANONYME_TITLE = Anonymisera en tredjepart
-DATAPOLICY_POPUP_ANONYME_TEXTE = Du kan inte ta bort den här kontakten från Dolibarr eftersom det finns relaterade objekt. I enlighet med GDPR kommer du att göra all denna data anonym för att uppfylla dina skyldigheter. Vill du fortsätta?
-
-#
-# Button for portability
-#
-DATAPOLICY_PORTABILITE = Portabilitet GDPR
-DATAPOLICY_PORTABILITE_TITLE = Export av personuppgifter
-DATAPOLICY_PORTABILITE_CONFIRMATION = Du vill exportera den här kontaktens personuppgifter. Är du säker?
-
-#
+DATAPOLICY_opposition_traitement = Motsätter sig behandling av hans personuppgifter
+DATAPOLICY_opposition_prospection = Motsätter sig behandling av hans personuppgifter i prospekteringssyfte
 # Notes added during an anonymization
-#
-ANONYMISER_AT = Anonymiserade %s
-
-# V2
-DATAPOLICYReturn = GDPR-validering
-DATAPOLICY_date = Datum för godkännande/nekande av GDPR
-DATAPOLICY_send = Datum då sekretessförfrågan skickats
-DATAPOLICYReturn = GDPR-validering
-DATAPOLICY_SEND = Skicka GDPR-förfrågan
+DATAPOLICY_date = Datum för överenskommelse/oenighet GDPR
+DATAPOLICY_send = Datum skickat avtalsmejl
 MailSent = E-post har skickats
-
-# ERROR
-ErrorSubjectIsRequired = Fel: Ämnet för e-post är obligatoriskt. Ange det i modulinställningen
-=På grund av ett tekniskt problem kunde vi inte registrera ditt val. Vi ber om ursäkt för det. Kontakta oss för att skicka oss ditt val.
 NUMBER_MONTH_BEFORE_DELETION = Antal månader före radering

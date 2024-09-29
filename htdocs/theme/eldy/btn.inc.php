@@ -15,9 +15,9 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 }
 
 <?php
-if (!empty($conf->global->THEME_DARKMODEENABLED)) {
+if (getDolGlobalString('THEME_DARKMODEENABLED')) {
 	print "/* For dark mode */\n";
-	if ($conf->global->THEME_DARKMODEENABLED != 2) {
+	if (getDolGlobalInt('THEME_DARKMODEENABLED') != 2) {
 		print "@media (prefers-color-scheme: dark) {";	// To test, click on the 3 dots menu, then Other options then Display then emulate prefer-color-schemes
 	} else {
 		print "@media not print {";
@@ -57,6 +57,10 @@ div.tabsAction > div.divButAction > a.butActionRefused {
 	margin-bottom: 1.4em !important;
 	margin-right: 0px !important;
 }
+.divButAction {
+	padding: 0 !important;
+	margin: 0 !important;
+}
 div.tabsActionNoBottom > a.butAction, div.tabsActionNoBottom > a.butActionRefused {
 	margin-bottom: 0 !important;
 }
@@ -78,13 +82,15 @@ span.butAction, span.butActionDelete {
 :not(.center) > .butActionRefused:last-child, :not(.center) > .butAction:last-child, :not(.center) > .butActionDelete:last-child {
 	margin-<?php echo $right; ?>: 0px !important;
 }
-.butActionRefused, .butAction, .butAction:link, .butAction:visited, .butAction:hover, .butAction:active, .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
+.butActionRefused, .butAction, .butAction:link, .butAction:visited, .butAction:hover, .butAction:active, .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active,
+.divButAction
+ {
 	text-decoration: none;
 	text-transform: uppercase;
 	font-weight: bold;
 
-	margin: 0em <?php echo ($dol_optimize_smallscreen ? '0.6' : '1'); ?>em;
-	padding: 0.6em <?php echo ($dol_optimize_smallscreen ? '0.6' : '0.7'); ?>em;
+	margin: 0em <?php echo($dol_optimize_smallscreen ? '0.6' : '1'); ?>em;
+	padding: 0.6em <?php echo($dol_optimize_smallscreen ? '0.6' : '0.7'); ?>em;
 	display: inline-block;
 	text-align: center;
 	cursor: pointer;
@@ -105,7 +111,7 @@ span.butAction, span.butActionDelete {
 	font-weight: normal;
 
 	margin: 0em 0.3em 0 0.3em !important;
-	padding: 0.2em <?php echo ($dol_optimize_smallscreen ? '0.4' : '0.7'); ?>em 0.3em;
+	padding: 0.2em <?php echo($dol_optimize_smallscreen ? '0.4' : '0.7'); ?>em 0.3em;
 	font-family: <?php print $fontlist ?>;
 	display: inline-block;
 	/* text-align: center; New button are on right of screen */
@@ -137,9 +143,10 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 	box-shadow: none; webkit-box-shadow: none;
 }
 
-.butAction:hover   {
-	-webkit-box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
-	box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
+.butAction:hover, .dropdown-holder.open > .butAction   {
+	/** TODO use css var with hsl from --colortextlink to allow create darken or lighten color */
+	-webkit-box-shadow: 0px 0px 6px rgba(50,50,50,0.4), inset 0px 0px 200px rgba(0,0,0,0.3); /* fix hover feedback : use "inset" background to easily darken background */
+	box-shadow: 0px 0px 6px rgba(50,50,50,0.4), inset 0px 0px 200px rgba(0,0,0,0.3); /* fix hover feedback : use "inset" background to easily darken background */
 }
 .butActionNew:hover   {
 	text-decoration: underline;
@@ -182,8 +189,8 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 
 	white-space: nowrap !important;
 	cursor: not-allowed !important;
-	margin: 0em <?php echo ($dol_optimize_smallscreen ? '0.7' : '0.9'); ?>em;
-	padding: 0.2em <?php echo ($dol_optimize_smallscreen ? '0.4' : '0.7'); ?>em;
+	margin: 0em <?php echo($dol_optimize_smallscreen ? '0.7' : '0.9'); ?>em;
+	padding: 0.2em <?php echo($dol_optimize_smallscreen ? '0.4' : '0.7'); ?>em;
 	font-family: <?php print $fontlist ?> !important;
 	display: inline-block;
 	/* text-align: center;  New button are on right of screen */
@@ -251,25 +258,32 @@ a.btnTitle.btnTitleSelected {
 	border-radius: 3px;
 	position: relative;
 	text-align: center;
-	/* color: #ffffff;
-	background-color: rgb(<?php print $colortextlink; ?>); */
 	font-size: 12px;
 	text-decoration: none;
 	box-shadow: none;
 }
+/* The buttonplus isgrowing on hover (don't know why). This is to avoid to have the cellegrowing too */
+.btnTitlePlus:hover {
+	max-width: 24px;
+	max-height: 40px;
+}
 
 .btnTitle.refused, a.btnTitle.refused, .btnTitle.refused:hover, a.btnTitle.refused:hover {
-		color: #8a8a8a;
-		cursor: not-allowed;
-		background-color: #fbfbfb;
-		background: repeating-linear-gradient( 45deg, #ffffff, #f1f1f1 4px, #f1f1f1 4px, #f1f1f1 4px );
+	color: #8a8a8a;
+	cursor: not-allowed;
+	background-color: #fbfbfb;
+	background: repeating-linear-gradient( 45deg, #ffffff, #f1f1f1 4px, #f1f1f1 4px, #f1f1f1 4px );
 }
 
-.btnTitle:hover .btnTitle-label{
-	 color: var(--btncolorborderhover);
+.btnTitle:hover .btnTitle-label {
+	color: var(--btncolorborderhover);
+}
+.btnTitle.reposition:not(.btnTitleSelected) {
+	background-color: unset;
+	border: unset;
 }
 
-.btnTitle.refused .btnTitle-label, .btnTitle.refused:hover .btnTitle-label{
+.btnTitle.refused .btnTitle-label, .btnTitle.refused:hover .btnTitle-label {
 	color: #8a8a8a;
 }
 
@@ -278,7 +292,9 @@ a.btnTitle.btnTitleSelected {
 	display: block;
 }
 
-div.pagination li:first-child a.btnTitle, div.pagination li.paginationafterarrows a.btnTitle {
+div.pagination li:first-child a.btnTitle, div.pagination li.paginationafterarrows a.btnTitle,
+table.table-fiche-title tr.titre td.col-center div.nowraponall a.btnTitle,
+table.table-fiche-title tr.titre td.col-right a.btnTitle {
 	margin-<?php echo $left; ?>: 10px;
 }
 
@@ -293,7 +309,7 @@ div.pagination li:first-child a.btnTitle, div.pagination li.paginationafterarrow
 }
 
 /* rule to reduce top menu - 2nd reduction: Reduce width of top menu icons again */
-@media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2) ? round($nbtopmenuentries * 69, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2; ?>px)	/* reduction 2 */
+@media only screen and (max-width: <?php echo !getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC2') ? round($nbtopmenuentries * 69, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2; ?>px)	/* reduction 2 */
 {
 	.butAction, .butActionRefused, .butActionDelete {
 		font-size: 0.95em;
@@ -306,7 +322,7 @@ div.pagination li:first-child a.btnTitle, div.pagination li.paginationafterarrow
 }
 
 /* rule to reduce top menu - 3rd reduction: The menu for user is on left */
-@media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
+@media only screen and (max-width: <?php echo !getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC3') ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
 {
 	.butAction, .butActionRefused, .butActionDelete {
 		font-size: 0.9em;
@@ -322,7 +338,7 @@ div.pagination li:first-child a.btnTitle, div.pagination li.paginationafterarrow
 }
 
 
-<?php if (!empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED) && (!$user->admin)) { ?>
+<?php if (getDolGlobalString('MAIN_BUTTON_HIDE_UNAUTHORIZED') && (!$user->admin)) { ?>
 .butActionRefused, .butActionNewRefused, .btnTitle.refused {
 	display: none !important;
 }
@@ -330,7 +346,7 @@ div.pagination li:first-child a.btnTitle, div.pagination li.paginationafterarrow
 
 
 /*
- * BTN LINK
+ * BTN LINK (used with <a/> tag in general but not with <button/>)
  */
 
 .btn-link{
@@ -345,4 +361,61 @@ div.pagination li:first-child a.btnTitle, div.pagination li.paginationafterarrow
 .btn-link:hover{
 	background-color: #ddd;
 	border: 1px solid #ddd;
+}
+
+
+/*
+ * BUTTON With Low emphasis
+ */
+
+button.btn-low-emphasis{
+	text-align: center;
+	display: inline-block;
+	border: none;
+	outline: none;
+	cursor: pointer;
+	margin: 0;
+	padding: 0;
+	width: auto;
+	min-width: 1.5em;
+	min-height: 1.5em;
+	line-height: 1.5em;
+
+	overflow: visible;
+	background: transparent;
+	background-position: center; /* used for hover ripple effect */
+	background-size: 0%;
+	color: var(--colortextlink, inherit);
+	font: inherit;
+	line-height: normal;
+
+	/* Corrects font smoothing for webkit */
+	-webkit-font-smoothing: inherit;
+	-moz-osx-font-smoothing: inherit;
+
+	/* Corrects inability to style clickable input types in iOS */
+	-webkit-appearance: none;
+
+
+	transition: background 0.8s;/* used for hover ripple effect */
+	background: transparent radial-gradient(circle, transparent 1%, hsla(var(--colortextlink-h),var(--colortextlink-s) ,var(--colortextlink-l) , 0.1) 1%, transparent 10%) center/15000%;
+}
+
+button.btn-low-emphasis.--btn-icon{
+	border-radius: 100%;
+}
+
+button.btn-low-emphasis :is(.fa, .fas){
+	color: var(--colortextlink, inherit);
+	opacity: 0.4;
+}
+
+button.btn-low-emphasis:is(:focus,:hover) :is(.fa, .fas){
+	opacity: 0.8;
+}
+
+button.btn-low-emphasis.--btn-icon:active {
+	background-color:  hsla(var(--colortextlink-h),var(--colortextlink-s) ,var(--colortextlink-l) , 0.1);
+	background-size: 100%;
+	transition: background 0s;/* used for hover ripple effect */
 }

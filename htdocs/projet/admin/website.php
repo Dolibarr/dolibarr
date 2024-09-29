@@ -62,7 +62,7 @@ if ($action == 'setPROJECT_ENABLE_PUBLIC') {
 
 if ($action == 'update') {
 	$public = GETPOST('PROJECT_ENABLE_PUBLIC');
-	$defaultoppstatus = GETPOST('PROJECT_DEFAULT_OPPORTUNITY_STATUS_FOR_ONLINE_LEAD', 'int');
+	$defaultoppstatus = GETPOSTINT('PROJECT_DEFAULT_OPPORTUNITY_STATUS_FOR_ONLINE_LEAD');
 	$res = dolibarr_set_const($db, "PROJET_VISIBILITY", $visibility, 'chaine', 0, '', $conf->entity);
 
 	$res = dolibarr_set_const($db, "PROJECT_ENABLE_PUBLIC", $public, 'chaine', 0, '', $conf->entity);
@@ -89,7 +89,7 @@ $formproject = new FormProjets($db);
 
 $title = $langs->trans("ProjectsSetup");
 $help_url = '';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-project page-admin_website');
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
@@ -111,7 +111,7 @@ print '<span class="opacitymedium">'.$langs->trans("LeadPublicFormDesc").'</span
 $param = '';
 
 $enabledisablehtml = $langs->trans("EnablePublicLeadForm").' ';
-if (empty($conf->global->PROJECT_ENABLE_PUBLIC)) {
+if (!getDolGlobalString('PROJECT_ENABLE_PUBLIC')) {
 	// Button off, click to enable
 	$enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setPROJECT_ENABLE_PUBLIC&token='.newToken().'&value=1'.$param.'">';
 	$enabledisablehtml .= img_picto($langs->trans("Disabled"), 'switch_off');
@@ -123,11 +123,11 @@ if (empty($conf->global->PROJECT_ENABLE_PUBLIC)) {
 	$enabledisablehtml .= '</a>';
 }
 print $enabledisablehtml;
-print '<input type="hidden" id="PROJECT_ENABLE_PUBLIC" name="PROJECT_ENABLE_PUBLIC" value="'.(empty($conf->global->PROJECT_ENABLE_PUBLIC) ? 0 : 1).'">';
+print '<input type="hidden" id="PROJECT_ENABLE_PUBLIC" name="PROJECT_ENABLE_PUBLIC" value="'.(!getDolGlobalString('PROJECT_ENABLE_PUBLIC') ? 0 : 1).'">';
 
 print '<br>';
 
-if (!empty($conf->global->PROJECT_ENABLE_PUBLIC)) {
+if (getDolGlobalString('PROJECT_ENABLE_PUBLIC')) {
 	print '<br>';
 
 	print '<div class="div-table-responsive-no-min">';
@@ -142,7 +142,7 @@ if (!empty($conf->global->PROJECT_ENABLE_PUBLIC)) {
 	print '<tr class="oddeven drag" id="trforcetype"><td>';
 	print $langs->trans("DefaultOpportunityStatus");
 	print '</td><td class="right">';
-	print $formproject->selectOpportunityStatus('PROJECT_DEFAULT_OPPORTUNITY_STATUS_FOR_ONLINE_LEAD', GETPOSTISSET('PROJECT_DEFAULT_OPPORTUNITY_STATUS_FOR_ONLINE_LEAD') ? GETPOST('PROJECT_DEFAULT_OPPORTUNITY_STATUS_FOR_ONLINE_LEAD', 'int') : $defaultoppstatus, 1, 0, 0, 0, '', 0, 1);
+	print $formproject->selectOpportunityStatus('PROJECT_DEFAULT_OPPORTUNITY_STATUS_FOR_ONLINE_LEAD', GETPOSTISSET('PROJECT_DEFAULT_OPPORTUNITY_STATUS_FOR_ONLINE_LEAD') ? GETPOSTINT('PROJECT_DEFAULT_OPPORTUNITY_STATUS_FOR_ONLINE_LEAD') : $defaultoppstatus, 1, 0, 0, 0, '', 0, 1);
 	print "</td></tr>\n";
 
 
@@ -167,7 +167,7 @@ print dol_get_fiche_end();
 print '</form>';
 
 
-if (!empty($conf->global->PROJECT_ENABLE_PUBLIC)) {
+if (getDolGlobalString('PROJECT_ENABLE_PUBLIC')) {
 	print '<br>';
 	//print $langs->trans('FollowingLinksArePublic').'<br>';
 	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans('BlankSubscriptionForm').'</span><br>';

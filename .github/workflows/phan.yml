@@ -1,0 +1,58 @@
+---
+on:
+  # pull_request:
+  # push:
+  # schedule:
+  #   # execute once a day, the 1st
+  #   - cron: 10 9 * * *
+  workflow_call:
+    inputs:
+      gh_event:
+        required: true
+        type: string
+  workflow_dispatch:
+
+concurrency:
+  group: phan-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+env:
+  gh_event: ${{ inputs.gh_event || github.event_name }}
+  PHAN_CONFIG: >
+    ${{ 'dev/tools/phan/config.php' }}
+  PHAN_BASELINE: dev/tools/phan/baseline.txt
+  PHAN_MIN_PHP: 7.0
+  PHAN_QUICK: ${{ github.event.schedule && '' || '--quick' }}
+  GITHUB_JSON: ${{ toJSON(github) }} # Helps in debugging Github Action
+
+name: phan
+jobs:
+  phan:
+    name: Run phan
+    runs-on: ubuntu-latest
+    # Do not run schedule on forks
+    if: |
+      github.repository == 'Dolibarr/dolibarr'
+      || github.event.schedule == false
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.2
+          coverage: none # disable xdebug, pcov
+          tools: cs2pr,phan
+      - name: Run Phan analysis
+        run: |
+          phan $PHAN_QUICK -k $PHAN_CONFIG -B $PHAN_BASELINE --analyze-twice --minimum-target-php-version $PHAN_MIN_PHP --output-mode=checkstyle -o _phan.xml
+      - name: Add results to PR
+        if: ${{ always() }}
+        run: |
+          cs2pr --prepend-filename --prepend-source --notices-as-warnings _phan.xml
+      - name: Provide phan log as artifact
+        uses: actions/upload-artifact@v4
+        if: ${{ always() }}
+        with:
+          name: phan-srcrt
+          # path: ${{ github.workspace }}/phan.log
+          path: ${{ github.workspace }}/_phan.xml
+          retention-days: 2

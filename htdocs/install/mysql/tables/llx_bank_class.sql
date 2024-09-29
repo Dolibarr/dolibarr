@@ -17,7 +17,7 @@
 -- Table to link bank tag/categories with bank lines
 -- ===================================================================
 
-create table llx_bank_class
+create table llx_category_bankline
 (
   lineid   integer NOT NULL,
   fk_categ integer NOT NULL

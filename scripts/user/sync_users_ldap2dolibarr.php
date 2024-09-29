@@ -35,7 +35,7 @@ $path = __DIR__.'/';
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+	exit(1);
 }
 
 require_once $path."../../htdocs/master.inc.php";
@@ -51,6 +51,9 @@ $error = 0;
 $forcecommit = 0;
 $excludeuser = array();
 $confirmed = 0;
+
+$hookmanager->initHooks(array('cli'));
+
 
 /*
  * Main
@@ -88,7 +91,7 @@ $required_fields = array_unique(array_values(array_filter($required_fields, "dol
 
 if (!isset($argv[1])) {
 	print "Usage:  $script_file (nocommitiferror|commitiferror) [--server=ldapserverhost] [--excludeuser=user1,user2...] [-y]\n";
-	exit(-1);
+	exit(1);
 }
 
 foreach ($argv as $key => $val) {
@@ -113,9 +116,9 @@ print "----- Synchronize all records from LDAP database:\n";
 print "host=" . getDolGlobalString('LDAP_SERVER_HOST')."\n";
 print "port=" . getDolGlobalString('LDAP_SERVER_PORT')."\n";
 print "login=" . getDolGlobalString('LDAP_ADMIN_DN')."\n";
-print "pass=".preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)."\n";
+print "pass=".preg_replace('/./i', '*', getDolGlobalString('LDAP_ADMIN_PASS'))."\n";
 print "DN to extract=" . getDolGlobalString('LDAP_USER_DN')."\n";
-if (!empty($conf->global->LDAP_FILTER_CONNECTION)) {
+if (getDolGlobalString('LDAP_FILTER_CONNECTION')) {
 	print 'Filter=(' . getDolGlobalString('LDAP_FILTER_CONNECTION').')'."\n"; // Note: filter is defined into function getRecords
 } else {
 	print 'Filter=(' . getDolGlobalString('LDAP_KEY_USERS').'=*)'."\n";
@@ -137,9 +140,9 @@ if (!$confirmed) {
 	$input = trim(fgets(STDIN));
 }
 
-if (empty($conf->global->LDAP_USER_DN)) {
+if (!getDolGlobalString('LDAP_USER_DN')) {
 	print $langs->trans("Error").': '.$langs->trans("LDAP setup for users not defined inside Dolibarr");
-	exit(-1);
+	exit(1);
 }
 
 // Load table of correspondence of countries
@@ -166,18 +169,18 @@ if ($resql) {
 	}
 } else {
 	dol_print_error($db);
-	exit(-1);
+	exit(1);
 }
 
 $ldap = new Ldap();
-$result = $ldap->connect_bind();
+$result = $ldap->connectBind();
 if ($result >= 0) {
 	$justthese = array();
 
 	// We disable synchro Dolibarr-LDAP
 	$conf->global->LDAP_SYNCHRO_ACTIVE = 0;
 
-	$ldaprecords = $ldap->getRecords('*', $conf->global->LDAP_USER_DN, $conf->global->LDAP_KEY_USERS, $required_fields, 'user'); // Fiter on 'user' filter param
+	$ldaprecords = $ldap->getRecords('*', getDolGlobalString('LDAP_USER_DN'), getDolGlobalString('LDAP_KEY_USERS'), $required_fields, 'user'); // Filter on 'user' filter param
 	if (is_array($ldaprecords)) {
 		$db->begin();
 
@@ -191,9 +194,9 @@ if ($result >= 0) {
 
 			$fuser = new User($db);
 
-			if ($conf->global->LDAP_KEY_USERS == $conf->global->LDAP_FIELD_SID) {
+			if (getDolGlobalString('LDAP_KEY_USERS') == getDolGlobalString('LDAP_FIELD_SID')) {
 				$fuser->fetch('', '', $ldapuser[getDolGlobalString('LDAP_KEY_USERS')]); // Chargement du user concerné par le SID
-			} elseif ($conf->global->LDAP_KEY_USERS == $conf->global->LDAP_FIELD_LOGIN) {
+			} elseif (getDolGlobalString('LDAP_KEY_USERS') == getDolGlobalString('LDAP_FIELD_LOGIN')) {
 				$fuser->fetch('', $ldapuser[getDolGlobalString('LDAP_KEY_USERS')]); // Chargement du user concerné par le login
 			}
 
@@ -206,10 +209,10 @@ if ($result >= 0) {
 
 			// $user->societe;
 			/*
-			 * $fuser->address=$ldapuser[$conf->global->LDAP_FIELD_ADDRESS];
-			 * $fuser->zip=$ldapuser[$conf->global->LDAP_FIELD_ZIP];
-			 * $fuser->town=$ldapuser[$conf->global->LDAP_FIELD_TOWN];
-			 * $fuser->country=$ldapuser[$conf->global->LDAP_FIELD_COUNTRY];
+			 * $fuser->address=$ldapuser[getDolGlobalString('LDAP_FIELD_ADDRESS')];
+			 * $fuser->zip=$ldapuser[getDolGlobalString('LDAP_FIELD_ZIP')];
+			 * $fuser->town=$ldapuser[getDolGlobalString('LDAP_FIELD_TOWN')];
+			 * $fuser->country=$ldapuser[getDolGlobalString('LDAP_FIELD_COUNTRY')];
 			 * $fuser->country_id=$countries[$hashlib2rowid[strtolower($fuser->country)]]['rowid'];
 			 * $fuser->country_code=$countries[$hashlib2rowid[strtolower($fuser->country)]]['code'];
 			 */
@@ -230,11 +233,10 @@ if ($result >= 0) {
 			$fuser->statut = 1;
 			// TODO : revoir la gestion du status
 			/*
-			 * if (isset($ldapuser[$conf->global->LDAP_FIELD_MEMBER_STATUS]))
-			 * {
+			 * if (isset($ldapuser[getDolGlobalString('LDAP_FIELD_MEMBER_STATUS')])) {
 			 * $fuser->datec=dol_stringtotime($ldapuser[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE]);
 			 * $fuser->datevalid=dol_stringtotime($ldapuser[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE]);
-			 * $fuser->statut=$ldapuser[$conf->global->LDAP_FIELD_MEMBER_STATUS];
+			 * $fuser->statut=$ldapuser[getDolGlobalString('LDAP_FIELD_MEMBER_STATUS')];
 			 * }
 			 */
 			// if ($fuser->statut > 1) $fuser->statut=1;
@@ -265,11 +267,11 @@ if ($result >= 0) {
 			print "\n";
 			// print_r($fuser);
 
-			// Gestion des groupes
-			// TODO : revoir la gestion des groupes (ou script de sync groupes)
+			// Management of the groups
+			// TODO : Review the group management (or script for syncing groups)
 			/*
 			 * if(!$error) {
-			 * foreach ($ldapuser[$conf->global->LDAP_FIELD_USERGROUPS] as $groupdn) {
+			 * foreach ($ldapuser[getDolGlobalString('LDAP_FIELD_USERGROUPS') as $groupdn) {
 			 * $groupdn;
 			 * }
 			 * }
@@ -289,11 +291,11 @@ if ($result >= 0) {
 		}
 		print "\n";
 	} else {
-		dol_print_error('', $ldap->error);
+		dol_print_error(null, $ldap->error);
 		$error++;
 	}
 } else {
-	dol_print_error('', $ldap->error);
+	dol_print_error(null, $ldap->error);
 	$error++;
 }
 

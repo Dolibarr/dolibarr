@@ -4,41 +4,27 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see .
 
-#
 # Generic
-#
-
 # Module label 'ModuleKnowledgeManagementName'
 ModuleKnowledgeManagementName = نالج مینجمنٹ سسٹم
 # Module description 'ModuleKnowledgeManagementDesc'
 ModuleKnowledgeManagementDesc=نالج مینجمنٹ (KM) یا ہیلپ ڈیسک بیس کا نظم کریں۔
-
-#
 # Admin page
-#
 KnowledgeManagementSetup = نالج مینجمنٹ سسٹم سیٹ اپ
-Settings = ترتیبات
 KnowledgeManagementSetupPage = نالج مینجمنٹ سسٹم سیٹ اپ صفحہ
-
-
-#
 # About page
-#
-About = کے بارے میں
 KnowledgeManagementAbout = نالج مینجمنٹ کے بارے میں
 KnowledgeManagementAboutPage = صفحہ کے بارے میں علم کا انتظام
-
 KnowledgeManagementArea = نالج مینجمنٹ
 MenuKnowledgeRecord = علم کی بنیاد
+MenuKnowledgeRecordShort = علم کی بنیاد
 ListKnowledgeRecord = مضامین کی فہرست
 NewKnowledgeRecord = نیا مضمون
 ValidateReply = حل کی توثیق کریں۔
@@ -46,9 +32,14 @@ KnowledgeRecords = مضامین
 KnowledgeRecord = مضمون
 KnowledgeRecordExtraFields = آرٹیکل کے لیے ایکسٹرا فیلڈز
 GroupOfTicket=ٹکٹوں کا گروپ
-YouCanLinkArticleToATicketCategory=You can link the article to a ticket group (so the article will be highlighted on any tickets in this group)
-SuggestedForTicketsInGroup=جب گروپ ہوتا ہے تو ٹکٹوں کے لیے تجویز کیا جاتا ہے۔
-
-SetObsolete=Set as obsolete
-ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
-ConfirmReopenKM=Do you want to restore this article to status "Validated" ?
+YouCanLinkArticleToATicketCategory=آپ مضمون کو ٹکٹ گروپ سے جوڑ سکتے ہیں (لہذا مضمون کو اس گروپ کے کسی بھی ٹکٹ پر نمایاں کیا جائے گا)
+SuggestedForTicketsInGroup=Suggested on tickets creation
+SetObsolete=متروک کے طور پر سیٹ کریں۔
+ConfirmCloseKM=کیا آپ اس مضمون کے متروک ہونے کی تصدیق کرتے ہیں؟
+ConfirmReopenKM=کیا آپ اس مضمون کو "تصدیق شدہ" کی حیثیت پر بحال کرنا چاہتے ہیں؟
+BoxLastKnowledgerecordDescription=آخری %s مضامین
+BoxLastKnowledgerecord=آخری مضامین
+BoxLastKnowledgerecordContent=آخری مضامین
+BoxLastKnowledgerecordModifiedContent=آخری ترمیم شدہ مضامین
+BoxLastModifiedKnowledgerecordDescription=آخری %s ترمیم شدہ مضامین
+BoxLastModifiedKnowledgerecord=آخری ترمیم شدہ مضامین

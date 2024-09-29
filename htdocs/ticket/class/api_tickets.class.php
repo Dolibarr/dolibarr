@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2016   Jean-François Ferry     <hello@librethic.io>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,7 +64,7 @@ class Tickets extends DolibarrApi
 	/**
 	 * Get properties of a Ticket object.
 	 *
-	 * Return an array with ticket informations
+	 * Return an array with ticket information
 	 *
 	 * @param	int				$id			ID of ticket
 	 * @return  Object						Object with cleaned properties
@@ -80,7 +81,7 @@ class Tickets extends DolibarrApi
 	/**
 	 * Get properties of a Ticket object from track id
 	 *
-	 * Return an array with ticket informations
+	 * Return an array with ticket information
 	 *
 	 * @param	string			$track_id	Tracking ID of ticket
 	 * @return	array|mixed					Data without useless information
@@ -99,7 +100,7 @@ class Tickets extends DolibarrApi
 	/**
 	 * Get properties of a Ticket object from ref
 	 *
-	 * Return an array with ticket informations
+	 * Return an array with ticket information
 	 *
 	 * @param	string			$ref		Reference for ticket
 	 * @return	array|mixed					Data without useless information
@@ -117,7 +118,7 @@ class Tickets extends DolibarrApi
 
 	/**
 	 * Get properties of a Ticket object
-	 * Return an array with ticket informations
+	 * Return an array with ticket information
 	 *
 	 * @param	int				$id			ID of ticket
 	 * @param	string			$track_id	Tracking ID of ticket
@@ -126,15 +127,15 @@ class Tickets extends DolibarrApi
 	 */
 	private function getCommon($id = 0, $track_id = '', $ref = '')
 	{
-		if (!DolibarrApiAccess::$user->rights->ticket->read) {
+		if (!DolibarrApiAccess::$user->hasRight('ticket', 'read')) {
 			throw new RestException(403);
 		}
 
 		// Check parameters
 		if (($id < 0) && !$track_id && !$ref) {
-			throw new RestException(401, 'Wrong parameters');
+			throw new RestException(400, 'Wrong parameters');
 		}
-		if ($id == 0) {
+		if (empty($id) && empty($ref) && empty($track_id)) {
 			$result = $this->ticket->initAsSpecimen();
 		} else {
 			$result = $this->ticket->fetch($id, $ref, $track_id);
@@ -178,7 +179,7 @@ class Tickets extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('ticket', $this->ticket->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		return $this->_cleanObjectDatas($this->ticket);
 	}
@@ -194,56 +195,43 @@ class Tickets extends DolibarrApi
 	 * @param int		$limit		Limit for list
 	 * @param int		$page		Page number
 	 * @param string	$sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101') and (t.fk_statut:=:1)"
-	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
+	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param bool             $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 *
 	 * @return array Array of ticket objects
 	 *
 	 */
-	public function index($socid = 0, $sortfield = "t.rowid", $sortorder = "ASC", $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
+	public function index($socid = 0, $sortfield = "t.rowid", $sortorder = "ASC", $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
-		global $db, $conf;
-
-		if (!DolibarrApiAccess::$user->rights->ticket->read) {
+		if (!DolibarrApiAccess::$user->hasRight('ticket', 'read')) {
 			throw new RestException(403);
 		}
 
 		$obj_ret = array();
 
-		if (!$socid && DolibarrApiAccess::$user->socid) {
-			$socid = DolibarrApiAccess::$user->socid;
-		}
+		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $socid;
 
 		$search_sale = null;
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
-		if (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) {
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
 
 		$sql = "SELECT t.rowid";
-		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) {
-			$sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
-		}
-		$sql .= " FROM ".MAIN_DB_PREFIX."ticket AS t LEFT JOIN ".MAIN_DB_PREFIX."ticket_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
-
-		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) {
-			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
-		}
-
+		$sql .= " FROM ".MAIN_DB_PREFIX."ticket AS t";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."ticket_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 		$sql .= ' WHERE t.entity IN ('.getEntity('ticket', 1).')';
-		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) {
-			$sql .= " AND t.fk_soc = sc.fk_soc";
-		}
 		if ($socid > 0) {
 			$sql .= " AND t.fk_soc = ".((int) $socid);
 		}
-		if ($search_sale > 0) {
-			$sql .= " AND t.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
-		}
-
-		// Insert sale filter
-		if ($search_sale > 0) {
-			$sql .= " AND sc.fk_user = ".((int) $search_sale);
+		// Search on sale representative
+		if ($search_sale && $search_sale != '-1') {
+			if ($search_sale == -2) {
+				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+			} elseif ($search_sale > 0) {
+				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+			}
 		}
 		// Add sql filters
 		if ($sqlfilters) {
@@ -253,6 +241,9 @@ class Tickets extends DolibarrApi
 				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 		}
+
+		//this query will return total orders with the filters given
+		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 
@@ -285,10 +276,25 @@ class Tickets extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieve ticket list');
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No ticket found');
+
+		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		if ($pagination_data) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret = [];
+
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = [
+				'total' => (int) $total,
+				'page' => $page, //count starts from 0
+				'page_count' => ceil((int) $total / $limit),
+				'limit' => $limit
+			];
 		}
-			return $obj_ret;
+
+		return $obj_ret;
 	}
 
 	/**
@@ -300,14 +306,20 @@ class Tickets extends DolibarrApi
 	public function post($request_data = null)
 	{
 		$ticketstatic = new Ticket($this->db);
-		if (!DolibarrApiAccess::$user->rights->ticket->write) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('ticket', 'write')) {
+			throw new RestException(403);
 		}
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
-			$this->ticket->$field = $value;
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$this->ticket->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+				continue;
+			}
+
+			$this->ticket->$field = $this->_checkValForAPI($field, $value, $this->ticket);
 		}
 		if (empty($this->ticket->ref)) {
 			$this->ticket->ref = $ticketstatic->getDefaultRef();
@@ -324,7 +336,7 @@ class Tickets extends DolibarrApi
 	}
 
 	/**
-	 * Create ticket object
+	 * Add a new message to an existing ticket identified by property ->track_id into request.
 	 *
 	 * @param array $request_data   Request datas
 	 * @return int  ID of ticket
@@ -333,14 +345,20 @@ class Tickets extends DolibarrApi
 	public function postNewMessage($request_data = null)
 	{
 		$ticketstatic = new Ticket($this->db);
-		if (!DolibarrApiAccess::$user->rights->ticket->write) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('ticket', 'write')) {
+			throw new RestException(403);
 		}
 		// Check mandatory fields
 		$result = $this->_validateMessage($request_data);
 
 		foreach ($request_data as $field => $value) {
-			$this->ticket->$field = $value;
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$this->ticket->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+				continue;
+			}
+
+			$this->ticket->$field = $this->_checkValForAPI($field, $value, $this->ticket);
 		}
 		$ticketMessageText = $this->ticket->message;
 		$result = $this->ticket->fetch('', '', $this->ticket->track_id);
@@ -357,15 +375,14 @@ class Tickets extends DolibarrApi
 	/**
 	 * Update ticket
 	 *
-	 * @param int   $id             Id of ticket to update
-	 * @param array $request_data   Datas
-	 * @return int
-	 *
+	 * @param 	int   	$id             	Id of ticket to update
+	 * @param 	array 	$request_data   	Datas
+	 * @return 	Object						Updated object
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->ticket->write) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('ticket', 'write')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->ticket->fetch($id);
@@ -374,18 +391,24 @@ class Tickets extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('ticket', $this->ticket->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		foreach ($request_data as $field => $value) {
-			$this->ticket->$field = $value;
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$this->ticket->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+				continue;
+			}
+
+			$this->ticket->$field = $this->_checkValForAPI($field, $value, $this->ticket);
 		}
 
-		if ($this->ticket->update($id, DolibarrApiAccess::$user)) {
+		if ($this->ticket->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
+		} else {
+			throw new RestException(500, $this->ticket->error);
 		}
-
-		return false;
 	}
 
 	/**
@@ -397,8 +420,8 @@ class Tickets extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->ticket->delete) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('ticket', 'delete')) {
+			throw new RestException(403);
 		}
 		$result = $this->ticket->fetch($id);
 		if (!$result) {
@@ -406,10 +429,10 @@ class Tickets extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('ticket', $this->ticket->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		if (!$this->ticket->delete($id)) {
+		if (!$this->ticket->delete(DolibarrApiAccess::$user)) {
 			throw new RestException(500, 'Error when deleting ticket');
 		}
 
@@ -520,8 +543,15 @@ class Tickets extends DolibarrApi
 			"cache_types_tickets",
 			"cache_category_tickets",
 			"regeximgext",
-			"statuts_short",
-			"statuts"
+			"labelStatus",
+			"labelStatusShort",
+			"multicurrency_code",
+			"multicurrency_tx",
+			"multicurrency_total_ht",
+			"multicurrency_total_ttc",
+			"multicurrency_total_tva",
+			"multicurrency_total_localtax1",
+			"multicurrency_total_localtax2"
 		);
 		foreach ($attr2clean as $toclean) {
 			unset($object->$toclean);

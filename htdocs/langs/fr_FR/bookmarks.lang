@@ -1,23 +1,24 @@
-# Dolibarr language file - Source file is en_US - marque pages
-AddThisPageToBookmarks=Placer la page courante dans les marques-pages
-Bookmark=Marque-page
-Bookmarks=Marque-pages
-ListOfBookmarks=Liste des marque-pages
-EditBookmarks=Lister/modifier marques-pages
-NewBookmark=Nouveau marque-page
-ShowBookmark=Afficher marque-page
-OpenANewWindow=Ouvrir une nouvelle fenêtre
-ReplaceWindow=Remplacer fenêtre courante
-BookmarkTargetNewWindowShort=Nouvelle fenêtre
-BookmarkTargetReplaceWindowShort=Fenêtre courante
-BookmarkTitle=Titre du marque-page
-UrlOrLink=URL
-BehaviourOnClick=Comportement sur sélection de l'URL
-CreateBookmark=Créer marque-page
-SetHereATitleForLink=Saisir ici un titre pour le marque-page
-UseAnExternalHttpLinkOrRelativeDolibarrLink=Utilisez un lien externe/absolu (https://externalurl.com) ou un lien interne/relatif (/mapage.php). Vous pouvez également utiliser un lien de téléphone comme tel:0123456.
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choisir si le raccourci doit ouvrir la page dans une nouvelle fenêtre ou fenêtre courante
-BookmarksManagement=Gestion des marque-pages
-BookmarksMenuShortCut=Ctrl + Maj + m
-NoBookmarks=Aucun marque page enregistré
-NoBookmarkFound=Pas de marque-page trouvé.
+# Dolibarr language file - Source file is en_US - marque pages / bookmarks
+
+AddThisPageToBookmarks = Placer la page courante dans les marques-pages
+BehaviourOnClick = Comportement sur sélection de l'URL
+Bookmark = Marque-page
+Bookmarks = Marque-pages
+BookmarkTargetNewWindowShort = Nouvelle fenêtre
+BookmarkTargetReplaceWindowShort = Fenêtre courante
+BookmarkTitle = Titre du marque-page
+BookmarksManagement = Gestion des marque-pages
+BookmarksMenuShortCut = Ctrl + Maj + m
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark = Choisir si le raccourci doit ouvrir la page dans une nouvelle fenêtre ou fenêtre courante
+CreateBookmark = Créer marque-page
+EditBookmarks = Lister/modifier marques-pages
+ListOfBookmarks = Liste des marque-pages
+NewBookmark = Nouveau marque-page
+NoBookmarkFound = Pas de marque-page trouvé.
+NoBookmarks = Aucun marque page enregistré
+OpenANewWindow = Ouvrir une nouvelle fenêtre
+ReplaceWindow = Remplacer fenêtre courante
+SetHereATitleForLink = Saisir ici un titre pour le marque-page
+ShowBookmark = Afficher marque-page
+UrlOrLink = URL
+UseAnExternalHttpLinkOrRelativeDolibarrLink = Utilisez un lien externe/absolu (https://externalurl.com) ou un lien interne/relatif (/mapage.php). Vous pouvez également utiliser un lien de téléphone comme tel:0123456.

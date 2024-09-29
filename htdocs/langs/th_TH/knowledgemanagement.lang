@@ -4,51 +4,42 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see .
 
-#
 # Generic
-#
-
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = Knowledge Management System
+ModuleKnowledgeManagementName = ระบบการจัดการความรู้
 # Module description 'ModuleKnowledgeManagementDesc'
-ModuleKnowledgeManagementDesc=Manage a Knowledge Management (KM) or Help-Desk base
-
-#
+ModuleKnowledgeManagementDesc=จัดการการจัดการความรู้ (KM) หรือฐาน Help-Desk
 # Admin page
-#
-KnowledgeManagementSetup = Knowledge Management System setup
-Settings = Settings
-KnowledgeManagementSetupPage = Knowledge Management System setup page
-
-
-#
+KnowledgeManagementSetup = การตั้งค่าระบบการจัดการความรู้
+KnowledgeManagementSetupPage = หน้าการตั้งค่าระบบการจัดการความรู้
 # About page
-#
-About = เกี่ยวกับ
-KnowledgeManagementAbout = About Knowledge Management
-KnowledgeManagementAboutPage = Knowledge Management about page
-
-KnowledgeManagementArea = Knowledge Management
-MenuKnowledgeRecord = Knowledge base
-ListKnowledgeRecord = List of articles
-NewKnowledgeRecord = New article
-ValidateReply = Validate solution
-KnowledgeRecords = Articles
+KnowledgeManagementAbout = เกี่ยวกับการจัดการความรู้
+KnowledgeManagementAboutPage = การจัดการความรู้เกี่ยวกับเพจ
+KnowledgeManagementArea = การจัดการความรู้
+MenuKnowledgeRecord = ฐานความรู้
+MenuKnowledgeRecordShort = ฐานความรู้
+ListKnowledgeRecord = รายการบทความ
+NewKnowledgeRecord = บทความใหม่
+ValidateReply = ตรวจสอบโซลูชัน
+KnowledgeRecords = บทความ
 KnowledgeRecord = บทความ
-KnowledgeRecordExtraFields = Extrafields for Article
-GroupOfTicket=Group of tickets
-YouCanLinkArticleToATicketCategory=You can link an article to a ticket group (so the article will be suggested during qualification of new tickets)
-SuggestedForTicketsInGroup=Suggested for tickets when group is
-
-SetObsolete=Set as obsolete
-ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
-ConfirmReopenKM=Do you want to restore this article to status "Validated" ?
+KnowledgeRecordExtraFields = ช่องพิเศษสำหรับบทความ
+GroupOfTicket=กลุ่มตั๋ว
+YouCanLinkArticleToATicketCategory=คุณสามารถเชื่อมโยงบทความเข้ากับกลุ่มตั๋วได้ (ดังนั้นบทความจะถูกเน้นบนตั๋วใดๆ ในกลุ่มนี้)
+SuggestedForTicketsInGroup=Suggested on tickets creation
+SetObsolete=ตั้งเป็นล้าสมัย
+ConfirmCloseKM=คุณยืนยันว่าการปิดบทความนี้ล้าสมัยหรือไม่
+ConfirmReopenKM=คุณต้องการกู้คืนบทความนี้เป็นสถานะ "ตรวจสอบแล้ว" หรือไม่
+BoxLastKnowledgerecordDescription=%s บทความล่าสุด
+BoxLastKnowledgerecord=บทความล่าสุด
+BoxLastKnowledgerecordContent=บทความล่าสุด
+BoxLastKnowledgerecordModifiedContent=บทความที่แก้ไขล่าสุด
+BoxLastModifiedKnowledgerecordDescription=%s บทความที่แก้ไขล่าสุด
+BoxLastModifiedKnowledgerecord=บทความที่แก้ไขล่าสุด

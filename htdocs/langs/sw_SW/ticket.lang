@@ -5,96 +5,75 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 Module56000Name=Tiketi
 Module56000Desc=Mfumo wa tikiti kwa usimamizi wa suala au ombi
-
 Permission56001=Tazama tikiti
 Permission56002=Rekebisha tikiti
 Permission56003=Futa tiketi
 Permission56004=Dhibiti tikiti
 Permission56005=Angalia tikiti za wahusika wengine (hazifai kwa watumiaji wa nje, kila wakati ziwe na wahusika wengine wanaomtegemea)
 Permission56006=Tuma tiketi
-
 Tickets=Tiketi
 TicketDictType=Tiketi - Aina
-TicketDictCategory=Tiketi - Vikundi
+TicketDictCategory=Ticket - Groups
 TicketDictSeverity=Tikiti - Ukali
 TicketDictResolution=Tiketi - Azimio
-
 TicketTypeShortCOM=Swali la kibiashara
-TicketTypeShortHELP=Ombi la usaidizi wa kiutendaji
+TicketTypeShortHELP=Request for functional help
 TicketTypeShortISSUE=Tatizo au mdudu
 TicketTypeShortPROBLEM=Tatizo
 TicketTypeShortREQUEST=Ombi la kubadilisha au uboreshaji
 TicketTypeShortPROJET=Mradi
 TicketTypeShortOTHER=Nyingine
-
 TicketSeverityShortLOW=Chini
 TicketSeverityShortNORMAL=Kawaida
 TicketSeverityShortHIGH=Juu
 TicketSeverityShortBLOCKING=Muhimu, Kuzuia
-
 TicketCategoryShortOTHER=Nyingine
-
 ErrorBadEmailAddress=Sehemu '%s'sio sahihi
 MenuTicketMyAssign=Tikiti zangu
 MenuTicketMyAssignNonClosed=Tikiti zangu wazi
 MenuListNonClosed=Fungua tiketi
-
 TypeContact_ticket_internal_CONTRIBUTOR=Mchangiaji
 TypeContact_ticket_internal_SUPPORTTEC=Mtumiaji aliyekabidhiwa
 TypeContact_ticket_external_SUPPORTCLI=Mawasiliano ya mteja / ufuatiliaji wa matukio
 TypeContact_ticket_external_CONTRIBUTOR=Mchangiaji wa nje
-
 OriginEmail=Barua pepe ya Mwandishi
+EmailReplyto=Reply to in Email
+EmailReferences=References in Emails
 Notify_TICKET_SENTBYMAIL=Tuma ujumbe wa tikiti kwa barua pepe
-
 ExportDataset_ticket_1=Tiketi
-
 # Status
 Read=Soma
 Assigned=Imekabidhiwa
 NeedMoreInformation=Inasubiri maoni ya mwandishi
 NeedMoreInformationShort=Inasubiri maoni
-Answered=Akajibu
 Waiting=Kusubiri
 SolvedClosed=Imetatuliwa
 Deleted=Imefutwa
-
 # Dict
-Type=Aina
 Severity=Ukali
 TicketGroupIsPublic=Kikundi ni cha umma
 TicketGroupIsPublicDesc=Ikiwa kikundi cha tikiti ni cha umma, kitaonekana katika fomu wakati wa kuunda tikiti kutoka kwa kiolesura cha umma
-
 # Email templates
 MailToSendTicketMessage=Kutuma barua pepe kutoka kwa ujumbe wa tikiti
-
-#
 # Admin page
-#
 TicketSetup=Usanidi wa moduli ya tikiti
 TicketSettings=Mipangilio
-TicketSetupPage=
 TicketPublicAccess=Kiolesura cha umma kisichohitaji kitambulisho kinapatikana kwenye url ifuatayo
 TicketSetupDictionaries=Aina ya tikiti, ukali na misimbo ya uchanganuzi zinaweza kusanidiwa kutoka kwa kamusi
 TicketParamModule=Usanidi wa kutofautisha wa moduli
 TicketParamMail=Mpangilio wa barua pepe
 TicketEmailNotificationFrom=Mtumaji barua pepe kwa arifa juu ya majibu
-TicketEmailNotificationFromHelp=Barua pepe ya mtumaji ya kutumia kutuma barua pepe ya arifa jibu linapotolewa ndani ya ofisi ya nyuma. Kwa mfano noreply@example.com
+TicketEmailNotificationFromHelp=Sender e-mail to use to send the notification email when an answer is provided inside the back office. For example noreply@example.com
 TicketEmailNotificationTo=Arifu uundaji wa tikiti kwa anwani hii ya barua pepe
 TicketEmailNotificationToHelp=Ikiwa iko, anwani hii ya barua pepe itaarifiwa kuhusu uundaji wa tikiti
 TicketNewEmailBodyLabel=Ujumbe wa maandishi umetumwa baada ya kuunda tikiti
@@ -105,10 +84,8 @@ TicketsEmailMustExistHelp=Katika kiolesura cha umma, barua pepe inapaswa tayari 
 TicketsShowProgression=Onyesha maendeleo ya tikiti katika kiolesura cha umma
 TicketsShowProgressionHelp=Washa chaguo hili ili kuficha maendeleo ya tiketi katika kurasa za kiolesura cha umma
 TicketCreateThirdPartyWithContactIfNotExist=Uliza jina na jina la kampuni kwa barua pepe zisizojulikana.
-TicketCreateThirdPartyWithContactIfNotExistHelp=Angalia ikiwa kuna mtu wa tatu au unayewasiliana naye kwa barua pepe uliyoweka. Ikiwa sivyo, uliza jina na jina la kampuni ili kuunda mtu wa tatu anayewasiliana naye.
+TicketCreateThirdPartyWithContactIfNotExistHelp=Check if a third party or a contact exists for the email entered. If not, ask a name and a company name to create a third party with contact.
 PublicInterface=Kiolesura cha umma
-TicketUrlPublicInterfaceLabelAdmin=URL mbadala ya kiolesura cha umma
-TicketUrlPublicInterfaceHelpAdmin=Inawezekana kufafanua lakabu kwa seva ya wavuti na hivyo kufanya kupatikana kwa kiolesura cha umma na URL nyingine (lazima seva ifanye kama wakala kwenye URL hii mpya)
 TicketPublicInterfaceTextHomeLabelAdmin=Maandishi ya kukaribisha ya kiolesura cha umma
 TicketPublicInterfaceTextHome=Unaweza kuunda tikiti ya usaidizi au kutazama iliyopo kutoka kwa tikiti yake ya kufuatilia kitambulisho.
 TicketPublicInterfaceTextHomeHelpAdmin=Maandishi yaliyofafanuliwa hapa yataonekana kwenye ukurasa wa nyumbani wa kiolesura cha umma.
@@ -145,23 +122,22 @@ TicketsPublicNotificationNewMessage=Tuma barua pepe wakati ujumbe/maoni mapya ya
 TicketsPublicNotificationNewMessageHelp=Tuma barua pepe ujumbe mpya unapoongezwa kutoka kwa kiolesura cha umma (kwa mtumiaji aliyekabidhiwa au barua pepe ya arifa kwenda (kusasisha) na/au barua pepe za arifa kwa)
 TicketPublicNotificationNewMessageDefaultEmail=Barua pepe ya arifa kwa (sasisha)
 TicketPublicNotificationNewMessageDefaultEmailHelp=Tuma barua pepe kwa anwani hii kwa kila arifa za ujumbe mpya ikiwa tiketi haina mtumiaji aliyepewa au ikiwa mtumiaji hana barua pepe yoyote inayojulikana.
-TicketsAutoReadTicket=Weka alama kiotomatiki kama ilivyosomwa (inapoundwa kutoka kwa ofisi ya nyuma)
-TicketsAutoReadTicketHelp=Tia alama kiotomatiki kama ilivyosomwa wakati imeundwa kutoka kwa ofisi ya nyuma. Wakati tikiti inaundwa kutoka kwa kiolesura cha umma, tikiti inabaki na hali "Haijasomwa".
+TicketsAutoReadTicket=Automatically mark the ticket as read (when created from back office)
+TicketsAutoReadTicketHelp=Automatically mark the ticket as read when created from back office. When ticket is create from the public interface, ticket remains with the status "Not Read".
 TicketsDelayBeforeFirstAnswer=Tikiti mpya inapaswa kupokea jibu la kwanza kabla ya (saa):
 TicketsDelayBeforeFirstAnswerHelp=Ikiwa tikiti mpya haijapokea jibu baada ya muda huu (katika saa), ikoni muhimu ya onyo itaonyeshwa kwenye mwonekano wa orodha.
 TicketsDelayBetweenAnswers=Tikiti ambayo haijasuluhishwa haipaswi kuwa haitumiki wakati (saa):
 TicketsDelayBetweenAnswersHelp=Ikiwa tikiti ambayo haijatatuliwa ambayo tayari imepokea jibu haijapata mwingiliano zaidi baada ya muda huu (kwa saa chache), ikoni ya onyo itaonyeshwa kwenye mwonekano wa orodha.
-TicketsAutoNotifyClose=Waarifu watu wengine kiotomatiki wakati wa kufunga tikiti
-TicketsAutoNotifyCloseHelp=Wakati wa kufunga tikiti, utapendekezwa kutuma ujumbe kwa mmoja wa waasiliani wa wahusika wengine. Wakati wa kufunga kwa wingi, ujumbe utatumwa kwa mwasiliani mmoja wa wahusika wengine waliounganishwa kwenye tikiti.
+TicketsAutoNotifyClose=Automatically notify the third party when closing a ticket
+TicketsAutoNotifyCloseHelp=When closing a ticket, you will be proposed to send a message to one of third-party contacts. On mass closing, a message will be sent to one contact of the third party linked to the ticket.
 TicketWrongContact=Anwani iliyotolewa sio sehemu ya anwani za sasa za tikiti. Barua pepe haijatumwa.
 TicketChooseProductCategory=Aina ya bidhaa kwa usaidizi wa tikiti
 TicketChooseProductCategoryHelp=Chagua aina ya bidhaa ya usaidizi wa tikiti. Hii itatumika kuunganisha mkataba kiotomatiki kwa tikiti.
 TicketUseCaptchaCode=Tumia msimbo wa picha (CAPTCHA) unapounda tikiti
 TicketUseCaptchaCodeHelp=Huongeza uthibitishaji wa CAPTCHA wakati wa kuunda tikiti mpya.
-
-#
+TicketsAllowClassificationModificationIfClosed=Allow to modify classification of closed tickets
+TicketsAllowClassificationModificationIfClosedHelp=Allow to modify classification (type, ticket group, severity) even if tickets are closed.
 # Index & list page
-#
 TicketsIndex=Eneo la tikiti
 TicketList=Orodha ya tikiti
 TicketAssignedToMeInfos=Orodha hii ya tikiti ya kuonyesha ukurasa iliyoundwa na au kupewa mtumiaji wa sasa
@@ -176,10 +152,7 @@ ShowAsConversation=Onyesha kama orodha ya mazungumzo
 MessageListViewType=Onyesha kama orodha ya jedwali
 ConfirmMassTicketClosingSendEmail=Tuma barua pepe kiotomatiki unapofunga tikiti
 ConfirmMassTicketClosingSendEmailQuestion=Je, ungependa kuwajulisha watu wengine wakati wa kufunga tikiti hizi?
-
-#
 # Ticket card
-#
 Ticket=Tikiti
 TicketCard=Kadi ya tikiti
 CreateTicket=Tengeneza tikiti
@@ -279,20 +252,14 @@ TicketsDelayFromLastResponseTooLong=Muda mwingi umepita tangu jibu la mwisho kwe
 TicketNoContractFoundToLink=Hakuna mkataba uliopatikana kuwa umeunganishwa kiotomatiki kwa tikiti hii. Tafadhali unganisha mkataba wewe mwenyewe.
 TicketManyContractsLinked=Mikataba mingi imeunganishwa kiotomatiki kwa tikiti hii. Hakikisha umethibitisha ni ipi inapaswa kuchaguliwa.
 TicketRefAlreadyUsed=Rejeleo [%s] tayari imetumika, rejeleo lako jipya ni [%s]
-
-#
 # Logs
-#
 TicketLogMesgReadBy=Tikiti %s imesomwa na %s
 NoLogForThisTicket=Bado hakuna kumbukumbu ya tikiti hii
 TicketLogAssignedTo=Tikiti %s imekabidhiwa %s
 TicketLogPropertyChanged=Tikiti %s iliyorekebishwa: uainishaji kutoka %s hadi %s
 TicketLogClosedBy=Tikiti %s imefungwa na %s
 TicketLogReopen=Tikiti %s fungua upya
-
-#
 # Public pages
-#
 TicketSystem=Mfumo wa tikiti
 ShowListTicketWithTrackId=Onyesha orodha ya tikiti kutoka kwa kitambulisho cha wimbo
 ShowTicketWithTrackId=Onyesha tikiti kutoka kwa kitambulisho cha wimbo
@@ -307,13 +274,13 @@ TicketNewEmailBodyCustomer=Hii ni barua pepe ya kiotomatiki ya kuthibitisha kuwa
 TicketNewEmailBodyInfosTicket=Taarifa za kufuatilia tikiti
 TicketNewEmailBodyInfosTrackId=Nambari ya kufuatilia tikiti: %s
 TicketNewEmailBodyInfosTrackUrl=Unaweza kuona maendeleo ya tikiti kwa kubofya kiungo kifuatacho
-TicketNewEmailBodyInfosTrackUrlCustomer=Unaweza kuona maendeleo ya tikiti katika kiolesura maalum kwa kubofya kiungo kifuatacho
+TicketNewEmailBodyInfosTrackUrlCustomer=You can view the progress of the ticket in the public ticket portal by clicking the following link
 TicketCloseEmailBodyInfosTrackUrlCustomer=Unaweza kutazama historia ya tikiti hii kwa kubofya kiungo kifuatacho
 TicketEmailPleaseDoNotReplyToThisEmail=Tafadhali usijibu barua pepe hii moja kwa moja! Tumia kiungo kujibu kiolesura.
 TicketPublicInfoCreateTicket=Fomu hii hukuruhusu kurekodi tikiti ya usaidizi katika mfumo wetu wa usimamizi.
-TicketPublicPleaseBeAccuratelyDescribe=Tafadhali eleza swali lako kwa usahihi. Toa maelezo mengi iwezekanavyo ili kuturuhusu kutambua ombi lako kwa usahihi.
+TicketPublicPleaseBeAccuratelyDescribe=Please accurately describe your request. Provide the most information possible to allow us to correctly identify your request.
 TicketPublicMsgViewLogIn=Tafadhali weka kitambulisho cha kufuatilia tikiti
-TicketTrackId=Kitambulisho cha Ufuatiliaji wa Umma
+TicketTrackId=Tracking ID
 OneOfTicketTrackId=Moja ya kitambulisho chako cha ufuatiliaji
 ErrorTicketNotFound=Tikiti yenye kitambulisho cha ufuatiliaji %s haipatikani!
 Subject=Somo
@@ -331,7 +298,6 @@ NumberOfTicketsByMonth=Idadi ya tikiti kwa mwezi
 NbOfTickets=Idadi ya tikiti
 ExternalContributors=External contributors
 AddContributor=Add external contributor
-
 # notifications
 TicketCloseEmailSubjectCustomer=Tikiti imefungwa
 TicketCloseEmailBodyCustomer=Huu ni ujumbe otomatiki wa kukuarifu kwamba tikiti %s imefungwa hivi punde.
@@ -343,12 +309,8 @@ TicketNotificationRecipient=Mpokeaji arifa
 TicketNotificationLogMessage=Ujumbe wa kumbukumbu
 TicketNotificationEmailBodyInfosTrackUrlinternal=Tazama tikiti kwenye kiolesura
 TicketNotificationNumberEmailSent=Barua pepe ya arifa imetumwa: %s
-
 ActionsOnTicket=Matukio kwenye tikiti
-
-#
 # Boxes
-#
 BoxLastTicket=Tikiti zilizoundwa hivi karibuni
 BoxLastTicketDescription=Hivi karibuni %s tikiti zilizoundwa
 BoxLastTicketContent=
@@ -362,7 +324,7 @@ BoxTicketSeverity=Idadi ya tikiti zilizofunguliwa kwa ukali
 BoxNoTicketSeverity=Hakuna tikiti zilizofunguliwa
 BoxTicketLastXDays=Idadi ya tikiti mpya kwa siku za mwisho %s siku
 BoxTicketLastXDayswidget = Idadi ya tikiti mpya kwa siku X zilizopita
-BoxNoTicketLastXDays=Hakuna tikiti mpya <span class='notranslate'>%s</span> ya mwisho\n siku
+BoxNoTicketLastXDays=No new tickets the last %s days
 BoxNumberOfTicketByDay=Idadi ya tikiti mpya kwa siku
 BoxNewTicketVSClose=Idadi ya tikiti dhidi ya tikiti zilizofungwa (leo)
 TicketCreatedToday=Tikiti imeundwa leo

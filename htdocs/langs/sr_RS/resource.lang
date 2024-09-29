@@ -5,32 +5,34 @@ DeleteResource=Obriši resurs
 ConfirmDeleteResourceElement=Potvrdi brisanje resursa za ovaj element
 NoResourceInDatabase=Nema resursa u bazi.
 NoResourceLinked=Nema povezanih resursa
-
+ActionsOnResource=Events about this resource
 ResourcePageIndex=Lista resursa
 ResourceSingular=Resurs
 ResourceCard=Kartica resursa
+NewResource=Novi resurs
 AddResource=Kreiraj resurs
 ResourceFormLabel_ref=Ime resursa
-ResourceType=Tip resursa
 ResourceFormLabel_description=Opis resursa
-
+ResourceType=Tip resursa
+ResourceTypeID=Resource type ID
+ResourceTypeLabel=Resource type label
 ResourcesLinkedToElement=Resursi vezani za elemenat
 
 ShowResource=Prikaži resurs
-
 ResourceElementPage=Resursi elementa
 ResourceCreatedWithSuccess=Resurs uspešno kreiran
 RessourceLineSuccessfullyDeleted=Linija resursa uspešno obrisana
 RessourceLineSuccessfullyUpdated=Linija resursa uspešno ažurirana
 ResourceLinkedWithSuccess=Resurs uspešno povezan
-
 ConfirmDeleteResource=Potvrdi brisanje ovog resursa
 RessourceSuccessfullyDeleted=Resurs uspešno obrisan
 DictionaryResourceType=Tip resursa
-
 SelectResource=Izbor resursa
-
 IdResource=ID broj resursa
 AssetNumber=Serijski broj
 ResourceTypeCode=Kod tipa resursa
 ImportDataset_resource_1=Resursi
+ErrorResourcesAlreadyInUse=Some resources are in use
+ErrorResourceUseInEvent=%s used in %s event
+MaxUsers=Maximum users (places, seats, etc.)
+MaxUsersLabel=Maximum users

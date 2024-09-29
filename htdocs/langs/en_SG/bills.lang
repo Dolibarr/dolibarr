@@ -1,2 +1,7 @@
 # Dolibarr language file - Source file is en_US - bills
-NbOfGenerationDoneShort=Number of generation done
+ConfirmClassifyPaidPartiallyReasonAvoir=Remaining unpaid <b>(%s %s)</b> is a discount granted because payment was made before term. I regularize the GST with a credit note.
+ConfirmClassifyPaidPartiallyReasonDiscountNoVat=Remaining unpaid <b>(%s %s)</b> is a discount granted because payment was made before term. I accept to lose the GST on this discount.
+ConfirmClassifyPaidPartiallyReasonDiscountVat=Remaining unpaid <b>(%s %s)</b> is a discount granted because payment was made before term. I recover the GST on this discount without a credit note.
+PaymentConditionShortPT_ORDER=Sales Order
+CantRemovePaymentVATPaid=Can't remove payment since GST declaration is classified paid
+ClosePaidVATAutomatically=Classify automatically GST declaration as "Paid" when payment is done entirely.

@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - trips
+# Dolibarr language file - Source file is en_US - trips.lang
 AUTHOR=Erstellt von
 AUTHORPAIEMENT=Bezahlt von
 AddTrip=Spesenabrechnung erstellen
@@ -13,6 +13,8 @@ byEX_EXP=pro Position (begrenzt auf %s)
 byEX_MON=pro Monat (begrenzt auf %s)
 byEX_YEA=pro Jahr (begrenzt auf %s)
 CANCEL_USER=Gelöscht von
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Buchungskonto (aus dem Kontenplan), das standardmäßig für „Benutzer“ für Spesen verwendet wird
+ACCOUNTING_ACCOUNT_EXPENSEREPORT_Desc=Das auf der Benutzerkarte definierte dedizierte Buchungskonto wird nur für die Nebenbuch-Buchhaltung verwendet. Dieser Wert wird für das Hauptbuch, und und auch als Standardwert  für die Nebenbuch-Buchhaltung verwendet, wenn für den Benutzer kein dediziertes Buchungskonto definiert ist.
 CarCategory=Fahrzeugkategorie
 ClassifyRefunded=Als 'erstattet' markieren
 CompanyVisited=Firma/Organisation besucht
@@ -39,7 +41,7 @@ expenseReportCoef=Koeffizient
 expenseReportCoefUndefined=(Wert nicht definiert)
 expenseReportOffset=Auslage
 expenseReportPrintExample=offset + (d x coef) = %s
-expenseReportRangeDisabled=Periode deaktiviert - Wörterbuch c_exp_tax_range
+expenseReportRangeDisabled=Periode deaktiviert - siehe Stammdaten zu c_exp_tax_range
 expenseReportRangeFromTo=von %d bis %d
 expenseReportRangeMoreThan=mehr als %d
 expenseReportTotalForFive=Beispiel mit <u>d</u> = 5
@@ -103,7 +105,7 @@ ShowExpenseReport=Spesenabrechnung anzeigen
 ShowTrip=Spesenabrechnung anzeigen
 TripCard=Reisekosten – Übersicht
 TripId=Spesenabrechnung ID
-TripNDF=Hinweise Spesenabrechnung 
+TripNDF=Informationen zur Spesenabrechnung
 TripSociete=Information zum Unternehmen
 Trips=Spesenabrechnungen
 TripsAndExpenses=Spesenabrechnungen
@@ -115,6 +117,10 @@ VALIDOR=Genehmigt durch
 ValidateAndSubmit=Freigeben und zur Genehmigung einreichen
 ValidatedWaitingApproval=Freigegeben (Wartet auf Genehmigung)
 ValideTrip=Genehmigen Spesenabrechnung
+ExpenseReportPayments=Zahlungen Spesenabrechnung
+TaxUndefinedForThisCategory = Für diese Kategorie ist keine Steuer definiert
+errorComputeTtcOnMileageExpense=Fehler bei der Berechnung der Kilometerpauschale
+ErrorOnlyDraftStatusCanBeDeletedInMassAction=Nur Elemente im Status 'Entwurf' können in einer Massenaktion gelöscht werden
 
 ## Dictionary
 EX_BRE=Frühstück

@@ -1,13 +1,13 @@
 <?php
 //============================================================+
 // File name   : tcpdf.php
-// Version     : 6.3.2
+// Version     : 6.7.5
 // Begin       : 2002-08-03
-// Last Update : 2019-09-20
+// Last Update : 2024-03-18
 // Author      : Nicola Asuni - Tecnick.com LTD - www.tecnick.com - info@tecnick.com
 // License     : GNU-LGPL v3 (http://www.gnu.org/copyleft/lesser.html)
 // -------------------------------------------------------------------
-// Copyright (C) 2002-2019 Nicola Asuni - Tecnick.com LTD
+// Copyright (C) 2002-2024 Nicola Asuni - Tecnick.com LTD
 //
 // This file is part of TCPDF software library.
 //
@@ -104,21 +104,21 @@
  * Tools to encode your unicode fonts are on fonts/utils directory.</p>
  * @package com.tecnick.tcpdf
  * @author Nicola Asuni
- * @version 6.3.2
+ * @version 6.6.5
  */
 
 // TCPDF configuration
-require_once dirname(__FILE__).'/tcpdf_autoconfig.php';
+require_once(dirname(__FILE__).'/tcpdf_autoconfig.php');
 // TCPDF static font methods and data
-require_once dirname(__FILE__).'/include/tcpdf_font_data.php';
+require_once(dirname(__FILE__).'/include/tcpdf_font_data.php');
 // TCPDF static font methods and data
-require_once dirname(__FILE__).'/include/tcpdf_fonts.php';
+require_once(dirname(__FILE__).'/include/tcpdf_fonts.php');
 // TCPDF static color methods and data
-require_once dirname(__FILE__).'/include/tcpdf_colors.php';
+require_once(dirname(__FILE__).'/include/tcpdf_colors.php');
 // TCPDF static image methods and data
-require_once dirname(__FILE__).'/include/tcpdf_images.php';
+require_once(dirname(__FILE__).'/include/tcpdf_images.php');
 // TCPDF static methods and data
-require_once dirname(__FILE__).'/include/tcpdf_static.php';
+require_once(dirname(__FILE__).'/include/tcpdf_static.php');
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -128,14 +128,13 @@ require_once dirname(__FILE__).'/include/tcpdf_static.php';
  * TCPDF project (http://www.tcpdf.org) has been originally derived in 2002 from the Public Domain FPDF class by Olivier Plathey (http://www.fpdf.org), but now is almost entirely rewritten.<br>
  * @package com.tecnick.tcpdf
  * @brief PHP class for generating PDF documents without requiring external extensions.
- * @version 6.3.2
+ * @version 6.7.5
  * @author Nicola Asuni - info@tecnick.com
  * @IgnoreAnnotation("protected")
  * @IgnoreAnnotation("public")
  * @IgnoreAnnotation("pre")
  */
-class TCPDF
-{
+class TCPDF {
 
 	// Protected properties
 
@@ -575,12 +574,14 @@ class TCPDF
 	/**
 	 * Minimum distance between header and top page margin.
 	 * @protected
+	 * @var float
 	 */
 	protected $header_margin;
 
 	/**
 	 * Minimum distance between footer and bottom page margin.
 	 * @protected
+	 * @var float
 	 */
 	protected $footer_margin;
 
@@ -601,12 +602,16 @@ class TCPDF
 	/**
 	 * Default font used on page header.
 	 * @protected
+	 * @var array<int,string|float|null>
+	 * @phpstan-var array{0: string, 1: string, 2: float|null}
 	 */
 	protected $header_font;
 
 	/**
 	 * Default font used on page footer.
 	 * @protected
+	 * @var array<int,string|float|null>
+	 * @phpstan-var array{0: string, 1: string, 2: float|null}
 	 */
 	protected $footer_font;
 
@@ -653,7 +658,7 @@ class TCPDF
 	protected $header_title = '';
 
 	/**
-	 * String to pring on page header after title.
+	 * String to print on page header after title.
 	 * @protected
 	 */
 	protected $header_string = '';
@@ -662,6 +667,8 @@ class TCPDF
 	 * Color for header text (RGB array).
 	 * @since 5.9.174 (2012-07-25)
 	 * @protected
+	 * @var int[]
+	 * @phpstan-var array{0: int, 1: int, 2: int}
 	 */
 	protected $header_text_color = array(0,0,0);
 
@@ -669,6 +676,8 @@ class TCPDF
 	 * Color for header line (RGB array).
 	 * @since 5.9.174 (2012-07-25)
 	 * @protected
+	 * @var int[]
+	 * @phpstan-var array{0: int, 1: int, 2: int}
 	 */
 	protected $header_line_color = array(0,0,0);
 
@@ -676,6 +685,8 @@ class TCPDF
 	 * Color for footer text (RGB array).
 	 * @since 5.9.174 (2012-07-25)
 	 * @protected
+	 * @var int[]
+	 * @phpstan-var array{0: int, 1: int, 2: int}
 	 */
 	protected $footer_text_color = array(0,0,0);
 
@@ -683,6 +694,8 @@ class TCPDF
 	 * Color for footer line (RGB array).
 	 * @since 5.9.174 (2012-07-25)
 	 * @protected
+	 * @var int[]
+	 * @phpstan-var array{0: int, 1: int, 2: int}
 	 */
 	protected $footer_line_color = array(0,0,0);
 
@@ -775,13 +788,6 @@ class TCPDF
 	protected $encoding = 'UTF-8';
 
 	/**
-	 * PHP internal encoding.
-	 * @protected
-	 * @since 1.53.0.TC016
-	 */
-	protected $internal_encoding;
-
-	/**
 	 * Boolean flag to indicate if the document language is Right-To-Left.
 	 * @protected
 	 * @since 2.0.000
@@ -831,6 +837,13 @@ class TCPDF
 	 * @since 5.0.005 (2010-05-12)
 	 */
 	protected $file_id;
+
+	/**
+	 * Internal secret used to encrypt data.
+	 * @protected
+	 * @since 6.7.5 (2024-03-21)
+	 */
+	protected $hash_key;
 
 	// --- bookmark ---
 
@@ -924,6 +937,7 @@ class TCPDF
 	 * Default cell height ratio.
 	 * @protected
 	 * @since 3.0.014 (2008-05-23)
+	 * @var float
 	 */
 	protected $cell_height_ratio = K_CELL_HEIGHT_RATIO;
 
@@ -1220,7 +1234,7 @@ class TCPDF
 	 * @protected
 	 * @since 4.5.025 (2009-03-10)
 	 */
-	protected $default_monospaced_font = 'freemono';
+	protected $default_monospaced_font = 'freemono';	// @CHANGE DOL
 
 	/**
 	 * Cloned copy of the current class object.
@@ -1801,6 +1815,7 @@ class TCPDF
 	 * (Check the "Entries in a Graphics State Parameter Dictionary" on PDF 32000-1:2008).
 	 * @protected
 	 * @since 5.9.152 (2012-03-23)
+	 * @var array<string,bool|int>
 	 */
 	protected $overprint = array('OP' => false, 'op' => false, 'OPM' => 0);
 
@@ -1833,6 +1848,23 @@ class TCPDF
 	 */
 	protected $gdgammacache = array();
 
+    /**
+     * Cache array for file content
+     * @protected
+     * @var array
+     * @since 6.3.5 (2020-09-28)
+     */
+	protected $fileContentCache = array();
+
+	/**
+	 * Whether to allow local file path in image html tags, when prefixed with file://
+	 *
+	 * @var bool
+	 * @protected
+	 * @since 6.4 (2020-07-23)
+	 */
+	protected $allowLocalFiles = false;
+
 	//------------------------------------------------------------
 	// METHODS
 	//------------------------------------------------------------
@@ -1841,37 +1873,30 @@ class TCPDF
 	 * This is the class constructor.
 	 * It allows to set up the page format, the orientation and the measure unit used in all the methods (except for the font sizes).
 	 *
-	 * IMPORTANT: Please note that this method sets the mb_internal_encoding to ASCII, so if you are using the mbstring module functions with TCPDF you need to correctly set/unset the mb_internal_encoding when needed.
-	 *
-	 * @param $orientation (string) page orientation. Possible values are (case insensitive):<ul><li>P or Portrait (default)</li><li>L or Landscape</li><li>'' (empty string) for automatic orientation</li></ul>
-	 * @param $unit (string) User measure unit. Possible values are:<ul><li>pt: point</li><li>mm: millimeter (default)</li><li>cm: centimeter</li><li>in: inch</li></ul><br />A point equals 1/72 of inch, that is to say about 0.35 mm (an inch being 2.54 cm). This is a very common unit in typography; font sizes are expressed in that unit.
-	 * @param $format (mixed) The format used for pages. It can be either: one of the string values specified at getPageSizeFromFormat() or an array of parameters specified at setPageFormat().
-	 * @param $unicode (boolean) TRUE means that the input text is unicode (default = true)
-	 * @param $encoding (string) Charset encoding (used only when converting back html entities); default is UTF-8.
-	 * @param $diskcache (boolean) DEPRECATED FEATURE
-	 * @param $pdfa (integer) If not false, set the document to PDF/A mode and the good version (1 or 3).
+	 * @param string $orientation page orientation. Possible values are (case insensitive):<ul><li>P or Portrait (default)</li><li>L or Landscape</li><li>'' (empty string) for automatic orientation</li></ul>
+	 * @param string $unit User measure unit. Possible values are:<ul><li>pt: point</li><li>mm: millimeter (default)</li><li>cm: centimeter</li><li>in: inch</li></ul><br />A point equals 1/72 of inch, that is to say about 0.35 mm (an inch being 2.54 cm). This is a very common unit in typography; font sizes are expressed in that unit.
+	 * @param mixed $format The format used for pages. It can be either: one of the string values specified at getPageSizeFromFormat() or an array of parameters specified at setPageFormat().
+	 * @param boolean $unicode TRUE means that the input text is unicode (default = true)
+	 * @param string $encoding Charset encoding (used only when converting back html entities); default is UTF-8.
+	 * @param boolean $diskcache DEPRECATED FEATURE
+	 * @param false|integer $pdfa If not false, set the document to PDF/A mode and the good version (1 or 3).
 	 * @public
 	 * @see getPageSizeFromFormat(), setPageFormat()
 	 */
-	public function __construct($orientation = 'P', $unit = 'mm', $format = 'A4', $unicode = true, $encoding = 'UTF-8', $diskcache = false, $pdfa = false)
-	{
-		/* Set internal character encoding to ASCII */
-		if (function_exists('mb_internal_encoding') AND mb_internal_encoding()) {
-			$this->internal_encoding = mb_internal_encoding();
-			mb_internal_encoding('ASCII');
-		}
+	public function __construct($orientation='P', $unit='mm', $format='A4', $unicode=true, $encoding='UTF-8', $diskcache=false, $pdfa=false) {
 		// set file ID for trailer
 		$serformat = (is_array($format) ? json_encode($format) : $format);
 		$this->file_id = md5(TCPDF_STATIC::getRandomSeed('TCPDF'.$orientation.$unit.$serformat.$encoding));
+		$this->hash_key = hash_hmac('sha256', TCPDF_STATIC::getRandomSeed($this->file_id), TCPDF_STATIC::getRandomSeed('TCPDF'), false);
 		$this->font_obj_ids = array();
 		$this->page_obj_id = array();
 		$this->form_obj_id = array();
-
 		// set pdf/a mode
 		if ($pdfa != false) {
 			$this->pdfa_mode = true;
 			$this->pdfa_version = $pdfa;  // 1 or 3
-		} else $this->pdfa_mode = false;
+		} else
+			$this->pdfa_mode = false;
 
 		$this->force_srgb = false;
 		// set language direction
@@ -1933,7 +1958,7 @@ class TCPDF
 		$this->setPageFormat($format, $orientation);
 		// page margins (1 cm)
 		$margin = 28.35 / $this->k;
-		$this->SetMargins($margin, $margin);
+		$this->setMargins($margin, $margin);
 		$this->clMargin = $this->lMargin;
 		$this->crMargin = $this->rMargin;
 		// internal cell padding
@@ -1948,11 +1973,11 @@ class TCPDF
 		$this->linestyleJoin = '0 j';
 		$this->linestyleDash = '[] 0 d';
 		// automatic page break
-		$this->SetAutoPageBreak(true, (2 * $margin));
+		$this->setAutoPageBreak(true, (2 * $margin));
 		// full width display mode
-		$this->SetDisplayMode('fullwidth');
+		$this->setDisplayMode('fullwidth');
 		// compression
-		$this->SetCompression();
+		$this->setCompression();
 		// set default PDF version number
 		$this->setPDFVersion();
 		$this->tcpdflink = true;
@@ -1983,7 +2008,7 @@ class TCPDF
 		// initialize some settings
 		TCPDF_FONTS::utf8Bidi(array(), '', false, $this->isunicode, $this->CurrentFont);
 		// set default font
-		$this->SetFont($this->FontFamily, $this->FontStyle, $this->FontSizePt);
+		$this->setFont($this->FontFamily, $this->FontStyle, $this->FontSizePt);
 		$this->setHeaderFont(array($this->FontFamily, $this->FontStyle, $this->FontSizePt));
 		$this->setFooterFont(array($this->FontFamily, $this->FontStyle, $this->FontSizePt));
 		// check if PCRE Unicode support is enabled
@@ -2008,9 +2033,6 @@ class TCPDF
 		$this->header_xobj_autoreset = false;
 		$this->custom_xmp = '';
 		$this->custom_xmp_rdf = '';
-		// Call cleanup method after script execution finishes or exit() is called.
-		// NOTE: This will not be executed if the process is killed with a SIGTERM or SIGKILL signal.
-		register_shutdown_function(array($this, '_destroy'), true);
 	}
 
 	/**
@@ -2018,20 +2040,18 @@ class TCPDF
 	 * @public
 	 * @since 1.53.0.TC016
 	 */
-	public function __destruct()
-	{
+	public function __destruct() {
 		// cleanup
 		$this->_destroy(true);
 	}
 
 	/**
 	 * Set the units of measure for the document.
-	 * @param $unit (string) User measure unit. Possible values are:<ul><li>pt: point</li><li>mm: millimeter (default)</li><li>cm: centimeter</li><li>in: inch</li></ul><br />A point equals 1/72 of inch, that is to say about 0.35 mm (an inch being 2.54 cm). This is a very common unit in typography; font sizes are expressed in that unit.
+	 * @param string $unit User measure unit. Possible values are:<ul><li>pt: point</li><li>mm: millimeter (default)</li><li>cm: centimeter</li><li>in: inch</li></ul><br />A point equals 1/72 of inch, that is to say about 0.35 mm (an inch being 2.54 cm). This is a very common unit in typography; font sizes are expressed in that unit.
 	 * @public
 	 * @since 3.0.015 (2008-06-06)
 	 */
-	public function setPageUnit($unit)
-	{
+	public function setPageUnit($unit) {
 		$unit = strtolower($unit);
 		//Set scale factor
 		switch ($unit) {
@@ -2070,61 +2090,60 @@ class TCPDF
 
 	/**
 	 * Change the format of the current page
-	 * @param $format (mixed) The format used for pages. It can be either: one of the string values specified at getPageSizeFromFormat() documentation or an array of two numbers (width, height) or an array containing the following measures and options:<ul>
-	 *                <li>['format'] = page format name (one of the above);</li>
-	 *                <li>['Rotate'] : The number of degrees by which the page shall be rotated clockwise when displayed or printed. The value shall be a multiple of 90.</li>
-	 *                <li>['PZ'] : The page's preferred zoom (magnification) factor.</li>
-	 *                <li>['MediaBox'] : the boundaries of the physical medium on which the page shall be displayed or printed:</li>
-	 *                <li>['MediaBox']['llx'] : lower-left x coordinate</li>
-	 *                <li>['MediaBox']['lly'] : lower-left y coordinate</li>
-	 *                <li>['MediaBox']['urx'] : upper-right x coordinate</li>
-	 *                <li>['MediaBox']['ury'] : upper-right y coordinate</li>
-	 *                <li>['CropBox'] : the visible region of default user space:</li>
-	 *                <li>['CropBox']['llx'] : lower-left x coordinate</li>
-	 *                <li>['CropBox']['lly'] : lower-left y coordinate</li>
-	 *                <li>['CropBox']['urx'] : upper-right x coordinate</li>
-	 *                <li>['CropBox']['ury'] : upper-right y coordinate</li>
-	 *                <li>['BleedBox'] : the region to which the contents of the page shall be clipped when output in a production environment:</li>
-	 *                <li>['BleedBox']['llx'] : lower-left x coordinate</li>
-	 *                <li>['BleedBox']['lly'] : lower-left y coordinate</li>
-	 *                <li>['BleedBox']['urx'] : upper-right x coordinate</li>
-	 *                <li>['BleedBox']['ury'] : upper-right y coordinate</li>
-	 *                <li>['TrimBox'] : the intended dimensions of the finished page after trimming:</li>
-	 *                <li>['TrimBox']['llx'] : lower-left x coordinate</li>
-	 *                <li>['TrimBox']['lly'] : lower-left y coordinate</li>
-	 *                <li>['TrimBox']['urx'] : upper-right x coordinate</li>
-	 *                <li>['TrimBox']['ury'] : upper-right y coordinate</li>
-	 *                <li>['ArtBox'] : the extent of the page's meaningful content:</li>
-	 *                <li>['ArtBox']['llx'] : lower-left x coordinate</li>
-	 *                <li>['ArtBox']['lly'] : lower-left y coordinate</li>
-	 *                <li>['ArtBox']['urx'] : upper-right x coordinate</li>
-	 *                <li>['ArtBox']['ury'] : upper-right y coordinate</li>
-	 *                <li>['BoxColorInfo'] :specify the colours and other visual characteristics that should be used in displaying guidelines on the screen for each of the possible page boundaries other than the MediaBox:</li>
-	 *                <li>['BoxColorInfo'][BOXTYPE]['C'] : an array of three numbers in the range 0-255, representing the components in the DeviceRGB colour space.</li>
-	 *                <li>['BoxColorInfo'][BOXTYPE]['W'] : the guideline width in default user units</li>
-	 *                <li>['BoxColorInfo'][BOXTYPE]['S'] : the guideline style: S = Solid; D = Dashed</li>
-	 *                <li>['BoxColorInfo'][BOXTYPE]['D'] : dash array defining a pattern of dashes and gaps to be used in drawing dashed guidelines</li>
-	 *                <li>['trans'] : the style and duration of the visual transition to use when moving from another page to the given page during a presentation</li>
-	 *                <li>['trans']['Dur'] : The page's display duration (also called its advance timing): the maximum length of time, in seconds, that the page shall be displayed during presentations before the viewer application shall automatically advance to the next page.</li>
-	 *                <li>['trans']['S'] : transition style : Split, Blinds, Box, Wipe, Dissolve, Glitter, R, Fly, Push, Cover, Uncover, Fade</li>
-	 *                <li>['trans']['D'] : The duration of the transition effect, in seconds.</li>
-	 *                <li>['trans']['Dm'] : (Split and Blinds transition styles only) The dimension in which the specified transition effect shall occur: H = Horizontal, V = Vertical. Default value: H.</li>
-	 *                <li>['trans']['M'] : (Split, Box and Fly transition styles only) The direction of motion for the specified transition effect: I = Inward from the edges of the page, O = Outward from the center of the pageDefault value: I.</li>
-	 *                <li>['trans']['Di'] : (Wipe, Glitter, Fly, Cover, Uncover and Push transition styles only) The direction in which the specified transition effect shall moves, expressed in degrees counterclockwise starting from a left-to-right direction. If the value is a number, it shall be one of: 0 = Left to right, 90 = Bottom to top (Wipe only), 180 = Right to left (Wipe only), 270 = Top to bottom, 315 = Top-left to bottom-right (Glitter only). If the value is a name, it shall be None, which is relevant only for the Fly transition when the value of SS is not 1.0. Default value: 0.</li>
-	 *                <li>['trans']['SS'] : (Fly transition style only) The starting or ending scale at which the changes shall be drawn. If M specifies an inward transition, the scale of the changes drawn shall progress from SS to 1.0 over the course of the transition. If M specifies an outward transition, the scale of the changes drawn shall progress from 1.0 to SS over the course of the transition. Default: 1.0.</li>
-	 *                <li>['trans']['B'] : (Fly transition style only) If true, the area that shall be flown in is rectangular and opaque. Default: false.</li>
-	 *                </ul>
-	 * @param $orientation (string) page orientation. Possible values are (case insensitive):<ul>
-	 *                     <li>P or Portrait (default)</li>
-	 *                     <li>L or Landscape</li>
-	 *                     <li>'' (empty string) for automatic orientation</li>
-	 *                     </ul>
+	 * @param mixed $format The format used for pages. It can be either: one of the string values specified at getPageSizeFromFormat() documentation or an array of two numbers (width, height) or an array containing the following measures and options:<ul>
+	 * <li>['format'] = page format name (one of the above);</li>
+	 * <li>['Rotate'] : The number of degrees by which the page shall be rotated clockwise when displayed or printed. The value shall be a multiple of 90.</li>
+	 * <li>['PZ'] : The page's preferred zoom (magnification) factor.</li>
+	 * <li>['MediaBox'] : the boundaries of the physical medium on which the page shall be displayed or printed:</li>
+	 * <li>['MediaBox']['llx'] : lower-left x coordinate</li>
+	 * <li>['MediaBox']['lly'] : lower-left y coordinate</li>
+	 * <li>['MediaBox']['urx'] : upper-right x coordinate</li>
+	 * <li>['MediaBox']['ury'] : upper-right y coordinate</li>
+	 * <li>['CropBox'] : the visible region of default user space:</li>
+	 * <li>['CropBox']['llx'] : lower-left x coordinate</li>
+	 * <li>['CropBox']['lly'] : lower-left y coordinate</li>
+	 * <li>['CropBox']['urx'] : upper-right x coordinate</li>
+	 * <li>['CropBox']['ury'] : upper-right y coordinate</li>
+	 * <li>['BleedBox'] : the region to which the contents of the page shall be clipped when output in a production environment:</li>
+	 * <li>['BleedBox']['llx'] : lower-left x coordinate</li>
+	 * <li>['BleedBox']['lly'] : lower-left y coordinate</li>
+	 * <li>['BleedBox']['urx'] : upper-right x coordinate</li>
+	 * <li>['BleedBox']['ury'] : upper-right y coordinate</li>
+	 * <li>['TrimBox'] : the intended dimensions of the finished page after trimming:</li>
+	 * <li>['TrimBox']['llx'] : lower-left x coordinate</li>
+	 * <li>['TrimBox']['lly'] : lower-left y coordinate</li>
+	 * <li>['TrimBox']['urx'] : upper-right x coordinate</li>
+	 * <li>['TrimBox']['ury'] : upper-right y coordinate</li>
+	 * <li>['ArtBox'] : the extent of the page's meaningful content:</li>
+	 * <li>['ArtBox']['llx'] : lower-left x coordinate</li>
+	 * <li>['ArtBox']['lly'] : lower-left y coordinate</li>
+	 * <li>['ArtBox']['urx'] : upper-right x coordinate</li>
+	 * <li>['ArtBox']['ury'] : upper-right y coordinate</li>
+	 * <li>['BoxColorInfo'] :specify the colours and other visual characteristics that should be used in displaying guidelines on the screen for each of the possible page boundaries other than the MediaBox:</li>
+	 * <li>['BoxColorInfo'][BOXTYPE]['C'] : an array of three numbers in the range 0-255, representing the components in the DeviceRGB colour space.</li>
+	 * <li>['BoxColorInfo'][BOXTYPE]['W'] : the guideline width in default user units</li>
+	 * <li>['BoxColorInfo'][BOXTYPE]['S'] : the guideline style: S = Solid; D = Dashed</li>
+	 * <li>['BoxColorInfo'][BOXTYPE]['D'] : dash array defining a pattern of dashes and gaps to be used in drawing dashed guidelines</li>
+	 * <li>['trans'] : the style and duration of the visual transition to use when moving from another page to the given page during a presentation</li>
+	 * <li>['trans']['Dur'] : The page's display duration (also called its advance timing): the maximum length of time, in seconds, that the page shall be displayed during presentations before the viewer application shall automatically advance to the next page.</li>
+	 * <li>['trans']['S'] : transition style : Split, Blinds, Box, Wipe, Dissolve, Glitter, R, Fly, Push, Cover, Uncover, Fade</li>
+	 * <li>['trans']['D'] : The duration of the transition effect, in seconds.</li>
+	 * <li>['trans']['Dm'] : (Split and Blinds transition styles only) The dimension in which the specified transition effect shall occur: H = Horizontal, V = Vertical. Default value: H.</li>
+	 * <li>['trans']['M'] : (Split, Box and Fly transition styles only) The direction of motion for the specified transition effect: I = Inward from the edges of the page, O = Outward from the center of the pageDefault value: I.</li>
+	 * <li>['trans']['Di'] : (Wipe, Glitter, Fly, Cover, Uncover and Push transition styles only) The direction in which the specified transition effect shall moves, expressed in degrees counterclockwise starting from a left-to-right direction. If the value is a number, it shall be one of: 0 = Left to right, 90 = Bottom to top (Wipe only), 180 = Right to left (Wipe only), 270 = Top to bottom, 315 = Top-left to bottom-right (Glitter only). If the value is a name, it shall be None, which is relevant only for the Fly transition when the value of SS is not 1.0. Default value: 0.</li>
+	 * <li>['trans']['SS'] : (Fly transition style only) The starting or ending scale at which the changes shall be drawn. If M specifies an inward transition, the scale of the changes drawn shall progress from SS to 1.0 over the course of the transition. If M specifies an outward transition, the scale of the changes drawn shall progress from 1.0 to SS over the course of the transition. Default: 1.0.</li>
+	 * <li>['trans']['B'] : (Fly transition style only) If true, the area that shall be flown in is rectangular and opaque. Default: false.</li>
+	 * </ul>
+	 * @param string $orientation page orientation. Possible values are (case insensitive):<ul>
+	 * <li>P or Portrait (default)</li>
+	 * <li>L or Landscape</li>
+	 * <li>'' (empty string) for automatic orientation</li>
+	 * </ul>
 	 * @protected
 	 * @since 3.0.015 (2008-06-06)
 	 * @see getPageSizeFromFormat()
 	 */
-	protected function setPageFormat($format, $orientation = 'P')
-	{
+	protected function setPageFormat($format, $orientation='P') {
 		if (!empty($format) AND isset($this->pagedim[$this->page])) {
 			// remove inherited values
 			unset($this->pagedim[$this->page]);
@@ -2232,14 +2251,13 @@ class TCPDF
 
 	/**
 	 * Set page orientation.
-	 * @param $orientation (string) page orientation. Possible values are (case insensitive):<ul><li>P or Portrait (default)</li><li>L or Landscape</li><li>'' (empty string) for automatic orientation</li></ul>
-	 * @param $autopagebreak (boolean) Boolean indicating if auto-page-break mode should be on or off.
-	 * @param $bottommargin (float) bottom margin of the page.
+	 * @param string $orientation page orientation. Possible values are (case insensitive):<ul><li>P or Portrait (default)</li><li>L or Landscape</li><li>'' (empty string) for automatic orientation</li></ul>
+	 * @param boolean|null $autopagebreak Boolean indicating if auto-page-break mode should be on or off.
+	 * @param float|null $bottommargin bottom margin of the page.
 	 * @public
 	 * @since 3.0.015 (2008-06-06)
 	 */
-	public function setPageOrientation($orientation, $autopagebreak = '', $bottommargin = '')
-	{
+	public function setPageOrientation($orientation, $autopagebreak=null, $bottommargin=null) {
 		if (!isset($this->pagedim[$this->page]['MediaBox'])) {
 			// the boundaries of the physical medium on which the page shall be displayed or printed
 			$this->pagedim = TCPDF_STATIC::setPageBoxes($this->page, 'MediaBox', 0, 0, $this->fwPt, $this->fhPt, true, $this->k, $this->pagedim);
@@ -2290,7 +2308,7 @@ class TCPDF
 			$this->wPt = $this->fwPt;
 			$this->hPt = $this->fhPt;
 		}
-		if ((abs($this->pagedim[$this->page]['MediaBox']['urx'] - $this->hPt) < $this->feps) AND (abs($this->pagedim[$this->page]['MediaBox']['ury'] - $this->wPt) < $this->feps)) {
+		if ((abs($this->pagedim[$this->page]['MediaBox']['urx'] - $this->hPt) < $this->feps) AND (abs($this->pagedim[$this->page]['MediaBox']['ury'] - $this->wPt) < $this->feps)){
 			// swap X and Y coordinates (change page orientation)
 			$this->pagedim = TCPDF_STATIC::swapPageBoxCoordinates($this->page, $this->pagedim);
 		}
@@ -2311,7 +2329,7 @@ class TCPDF
 				$bottommargin = 2 * 28.35 / $this->k;
 			}
 		}
-		$this->SetAutoPageBreak($autopagebreak, $bottommargin);
+		$this->setAutoPageBreak($autopagebreak, $bottommargin);
 		// store page dimensions
 		$this->pagedim[$this->page]['w'] = $this->wPt;
 		$this->pagedim[$this->page]['h'] = $this->hPt;
@@ -2341,12 +2359,11 @@ class TCPDF
 	 *      \p{Lo} : Unicode letter or ideograph that does not have lowercase and uppercase variants. Is used to chunk chinese words.
 	 *      \xa0   : Unicode Character 'NO-BREAK SPACE' (U+00A0)
 	 * </pre>
-	 * @param $re (string) regular expression (leave empty for default).
+	 * @param string $re regular expression (leave empty for default).
 	 * @public
 	 * @since 4.6.016 (2009-06-15)
 	 */
-	public function setSpacesRE($re = '/[^\S\xa0]/')
-	{
+	public function setSpacesRE($re='/[^\S\xa0]/') {
 		$this->re_spaces = $re;
 		$re_parts = explode('/', $re);
 		// get pattern parts
@@ -2366,13 +2383,12 @@ class TCPDF
 
 	/**
 	 * Enable or disable Right-To-Left language mode
-	 * @param $enable (Boolean) if true enable Right-To-Left language mode.
-	 * @param $resetx (Boolean) if true reset the X position on direction change.
+	 * @param boolean $enable if true enable Right-To-Left language mode.
+	 * @param boolean $resetx if true reset the X position on direction change.
 	 * @public
 	 * @since 2.0.000 (2008-01-03)
 	 */
-	public function setRTL($enable, $resetx = true)
-	{
+	public function setRTL($enable, $resetx=true) {
 		$enable = $enable ? true : false;
 		$resetx = ($resetx AND ($enable != $this->rtl));
 		$this->rtl = $enable;
@@ -2384,23 +2400,21 @@ class TCPDF
 
 	/**
 	 * Return the RTL status
-	 * @return boolean
+	 * @return bool
 	 * @public
 	 * @since 4.0.012 (2008-07-24)
 	 */
-	public function getRTL()
-	{
+	public function getRTL() {
 		return $this->rtl;
 	}
 
 	/**
 	 * Force temporary RTL language direction
-	 * @param $mode (mixed) can be false, 'L' for LTR or 'R' for RTL
+	 * @param false|string $mode can be false, 'L' for LTR or 'R' for RTL
 	 * @public
 	 * @since 2.1.000 (2008-01-09)
 	 */
-	public function setTempRTL($mode)
-	{
+	public function setTempRTL($mode) {
 		$newmode = false;
 		switch (strtoupper($mode)) {
 			case 'LTR':
@@ -2428,37 +2442,35 @@ class TCPDF
 
 	/**
 	 * Return the current temporary RTL status
-	 * @return boolean
+	 * @return bool
 	 * @public
 	 * @since 4.8.014 (2009-11-04)
 	 */
-	public function isRTLTextDir()
-	{
+	public function isRTLTextDir() {
 		return ($this->rtl OR ($this->tmprtl == 'R'));
 	}
 
 	/**
 	 * Set the last cell height.
-	 * @param $h (float) cell height.
+	 * @param float $h cell height.
 	 * @author Nicola Asuni
 	 * @public
 	 * @since 1.53.0.TC034
 	 */
-	public function setLastH($h)
-	{
+	public function setLastH($h) {
 		$this->lasth = $h;
 	}
 
 	/**
 	 * Return the cell height
-	 * @param $fontsize (int) Font size in internal units
-	 * @param $padding (boolean) If true add cell padding
+	 * @param int $fontsize Font size in internal units
+	 * @param boolean $padding If true add cell padding
 	 * @public
+	 * @return float
 	 */
-	public function getCellHeight($fontsize, $padding = true)
-	{
+	public function getCellHeight($fontsize, $padding=TRUE) {
 		$height = ($fontsize * $this->cell_height_ratio);
-		if ($padding) {
+		if ($padding && !empty($this->cell_padding)) {
 			$height += ($this->cell_padding['T'] + $this->cell_padding['B']);
 		}
 		return round($height, 6);
@@ -2469,31 +2481,28 @@ class TCPDF
 	 * @public
 	 * @since 5.9.000 (2010-10-03)
 	 */
-	public function resetLastH()
-	{
+	public function resetLastH() {
 		$this->lasth = $this->getCellHeight($this->FontSize);
 	}
 
 	/**
 	 * Get the last cell height.
-	 * @return last cell height
+	 * @return float last cell height
 	 * @public
 	 * @since 4.0.017 (2008-08-05)
 	 */
-	public function getLastH()
-	{
+	public function getLastH() {
 		return $this->lasth;
 	}
 
 	/**
 	 * Set the adjusting factor to convert pixels to user units.
-	 * @param $scale (float) adjusting factor to convert pixels to user units.
+	 * @param float $scale adjusting factor to convert pixels to user units.
 	 * @author Nicola Asuni
 	 * @public
 	 * @since 1.5.2
 	 */
-	public function setImageScale($scale)
-	{
+	public function setImageScale($scale) {
 		$this->imgscale = $scale;
 	}
 
@@ -2504,22 +2513,20 @@ class TCPDF
 	 * @public
 	 * @since 1.5.2
 	 */
-	public function getImageScale()
-	{
+	public function getImageScale() {
 		return $this->imgscale;
 	}
 
 	/**
 	 * Returns an array of page dimensions:
 	 * <ul><li>$this->pagedim[$this->page]['w'] = page width in points</li><li>$this->pagedim[$this->page]['h'] = height in points</li><li>$this->pagedim[$this->page]['wk'] = page width in user units</li><li>$this->pagedim[$this->page]['hk'] = page height in user units</li><li>$this->pagedim[$this->page]['tm'] = top margin</li><li>$this->pagedim[$this->page]['bm'] = bottom margin</li><li>$this->pagedim[$this->page]['lm'] = left margin</li><li>$this->pagedim[$this->page]['rm'] = right margin</li><li>$this->pagedim[$this->page]['pb'] = auto page break</li><li>$this->pagedim[$this->page]['or'] = page orientation</li><li>$this->pagedim[$this->page]['olm'] = original left margin</li><li>$this->pagedim[$this->page]['orm'] = original right margin</li><li>$this->pagedim[$this->page]['Rotate'] = The number of degrees by which the page shall be rotated clockwise when displayed or printed. The value shall be a multiple of 90.</li><li>$this->pagedim[$this->page]['PZ'] = The page's preferred zoom (magnification) factor.</li><li>$this->pagedim[$this->page]['trans'] : the style and duration of the visual transition to use when moving from another page to the given page during a presentation<ul><li>$this->pagedim[$this->page]['trans']['Dur'] = The page's display duration (also called its advance timing): the maximum length of time, in seconds, that the page shall be displayed during presentations before the viewer application shall automatically advance to the next page.</li><li>$this->pagedim[$this->page]['trans']['S'] = transition style : Split, Blinds, Box, Wipe, Dissolve, Glitter, R, Fly, Push, Cover, Uncover, Fade</li><li>$this->pagedim[$this->page]['trans']['D'] = The duration of the transition effect, in seconds.</li><li>$this->pagedim[$this->page]['trans']['Dm'] = (Split and Blinds transition styles only) The dimension in which the specified transition effect shall occur: H = Horizontal, V = Vertical. Default value: H.</li><li>$this->pagedim[$this->page]['trans']['M'] = (Split, Box and Fly transition styles only) The direction of motion for the specified transition effect: I = Inward from the edges of the page, O = Outward from the center of the pageDefault value: I.</li><li>$this->pagedim[$this->page]['trans']['Di'] = (Wipe, Glitter, Fly, Cover, Uncover and Push transition styles only) The direction in which the specified transition effect shall moves, expressed in degrees counterclockwise starting from a left-to-right direction. If the value is a number, it shall be one of: 0 = Left to right, 90 = Bottom to top (Wipe only), 180 = Right to left (Wipe only), 270 = Top to bottom, 315 = Top-left to bottom-right (Glitter only). If the value is a name, it shall be None, which is relevant only for the Fly transition when the value of SS is not 1.0. Default value: 0.</li><li>$this->pagedim[$this->page]['trans']['SS'] = (Fly transition style only) The starting or ending scale at which the changes shall be drawn. If M specifies an inward transition, the scale of the changes drawn shall progress from SS to 1.0 over the course of the transition. If M specifies an outward transition, the scale of the changes drawn shall progress from 1.0 to SS over the course of the transition. Default: 1.0. </li><li>$this->pagedim[$this->page]['trans']['B'] = (Fly transition style only) If true, the area that shall be flown in is rectangular and opaque. Default: false.</li></ul></li><li>$this->pagedim[$this->page]['MediaBox'] : the boundaries of the physical medium on which the page shall be displayed or printed<ul><li>$this->pagedim[$this->page]['MediaBox']['llx'] = lower-left x coordinate in points</li><li>$this->pagedim[$this->page]['MediaBox']['lly'] = lower-left y coordinate in points</li><li>$this->pagedim[$this->page]['MediaBox']['urx'] = upper-right x coordinate in points</li><li>$this->pagedim[$this->page]['MediaBox']['ury'] = upper-right y coordinate in points</li></ul></li><li>$this->pagedim[$this->page]['CropBox'] : the visible region of default user space<ul><li>$this->pagedim[$this->page]['CropBox']['llx'] = lower-left x coordinate in points</li><li>$this->pagedim[$this->page]['CropBox']['lly'] = lower-left y coordinate in points</li><li>$this->pagedim[$this->page]['CropBox']['urx'] = upper-right x coordinate in points</li><li>$this->pagedim[$this->page]['CropBox']['ury'] = upper-right y coordinate in points</li></ul></li><li>$this->pagedim[$this->page]['BleedBox'] : the region to which the contents of the page shall be clipped when output in a production environment<ul><li>$this->pagedim[$this->page]['BleedBox']['llx'] = lower-left x coordinate in points</li><li>$this->pagedim[$this->page]['BleedBox']['lly'] = lower-left y coordinate in points</li><li>$this->pagedim[$this->page]['BleedBox']['urx'] = upper-right x coordinate in points</li><li>$this->pagedim[$this->page]['BleedBox']['ury'] = upper-right y coordinate in points</li></ul></li><li>$this->pagedim[$this->page]['TrimBox'] : the intended dimensions of the finished page after trimming<ul><li>$this->pagedim[$this->page]['TrimBox']['llx'] = lower-left x coordinate in points</li><li>$this->pagedim[$this->page]['TrimBox']['lly'] = lower-left y coordinate in points</li><li>$this->pagedim[$this->page]['TrimBox']['urx'] = upper-right x coordinate in points</li><li>$this->pagedim[$this->page]['TrimBox']['ury'] = upper-right y coordinate in points</li></ul></li><li>$this->pagedim[$this->page]['ArtBox'] : the extent of the page's meaningful content<ul><li>$this->pagedim[$this->page]['ArtBox']['llx'] = lower-left x coordinate in points</li><li>$this->pagedim[$this->page]['ArtBox']['lly'] = lower-left y coordinate in points</li><li>$this->pagedim[$this->page]['ArtBox']['urx'] = upper-right x coordinate in points</li><li>$this->pagedim[$this->page]['ArtBox']['ury'] = upper-right y coordinate in points</li></ul></li></ul>
-	 * @param $pagenum (int) page number (empty = current page)
+	 * @param int|null $pagenum page number (empty = current page)
 	 * @return array of page dimensions.
 	 * @author Nicola Asuni
 	 * @public
 	 * @since 4.5.027 (2009-03-16)
 	 */
-	public function getPageDimensions($pagenum = '')
-	{
+	public function getPageDimensions($pagenum=null) {
 		if (empty($pagenum)) {
 			$pagenum = $this->page;
 		}
@@ -2528,15 +2535,14 @@ class TCPDF
 
 	/**
 	 * Returns the page width in units.
-	 * @param $pagenum (int) page number (empty = current page)
-	 * @return int page width.
+	 * @param int|null $pagenum page number (empty = current page)
+	 * @return int|float page width.
 	 * @author Nicola Asuni
 	 * @public
 	 * @since 1.5.2
 	 * @see getPageDimensions()
 	 */
-	public function getPageWidth($pagenum = '')
-	{
+	public function getPageWidth($pagenum=null) {
 		if (empty($pagenum)) {
 			return $this->w;
 		}
@@ -2545,15 +2551,14 @@ class TCPDF
 
 	/**
 	 * Returns the page height in units.
-	 * @param $pagenum (int) page number (empty = current page)
-	 * @return int page height.
+	 * @param int|null $pagenum page number (empty = current page)
+	 * @return int|float page height.
 	 * @author Nicola Asuni
 	 * @public
 	 * @since 1.5.2
 	 * @see getPageDimensions()
 	 */
-	public function getPageHeight($pagenum = '')
-	{
+	public function getPageHeight($pagenum=null) {
 		if (empty($pagenum)) {
 			return $this->h;
 		}
@@ -2562,15 +2567,14 @@ class TCPDF
 
 	/**
 	 * Returns the page break margin.
-	 * @param $pagenum (int) page number (empty = current page)
-	 * @return int page break margin.
+	 * @param int|null $pagenum page number (empty = current page)
+	 * @return int|float page break margin.
 	 * @author Nicola Asuni
 	 * @public
 	 * @since 1.5.2
 	 * @see getPageDimensions()
 	 */
-	public function getBreakMargin($pagenum = '')
-	{
+	public function getBreakMargin($pagenum=null) {
 		if (empty($pagenum)) {
 			return $this->bMargin;
 		}
@@ -2584,27 +2588,25 @@ class TCPDF
 	 * @public
 	 * @since 1.5.2
 	 */
-	public function getScaleFactor()
-	{
+	public function getScaleFactor() {
 		return $this->k;
 	}
 
 	/**
 	 * Defines the left, top and right margins.
-	 * @param $left (float) Left margin.
-	 * @param $top (float) Top margin.
-	 * @param $right (float) Right margin. Default value is the left one.
-	 * @param $keepmargins (boolean) if true overwrites the default page margins
+	 * @param int|float $left Left margin.
+	 * @param int|float $top Top margin.
+	 * @param int|float|null $right Right margin. Default value is the left one.
+	 * @param boolean $keepmargins if true overwrites the default page margins
 	 * @public
 	 * @since 1.0
 	 * @see SetLeftMargin(), SetTopMargin(), SetRightMargin(), SetAutoPageBreak()
 	 */
-	public function SetMargins($left, $top, $right = -1, $keepmargins = false)
-	{
+	public function setMargins($left, $top, $right=null, $keepmargins=false) {
 		//Set left, top and right margins
 		$this->lMargin = $left;
 		$this->tMargin = $top;
-		if ($right == -1) {
+		if ($right == -1 OR $right === null) {
 			$right = $left;
 		}
 		$this->rMargin = $right;
@@ -2617,13 +2619,12 @@ class TCPDF
 
 	/**
 	 * Defines the left margin. The method can be called before creating the first page. If the current abscissa gets out of page, it is brought back to the margin.
-	 * @param $margin (float) The margin.
+	 * @param int|float $margin The margin.
 	 * @public
 	 * @since 1.4
 	 * @see SetTopMargin(), SetRightMargin(), SetAutoPageBreak(), SetMargins()
 	 */
-	public function SetLeftMargin($margin)
-	{
+	public function setLeftMargin($margin) {
 		//Set left margin
 		$this->lMargin = $margin;
 		if (($this->page > 0) AND ($this->x < $margin)) {
@@ -2633,13 +2634,12 @@ class TCPDF
 
 	/**
 	 * Defines the top margin. The method can be called before creating the first page.
-	 * @param $margin (float) The margin.
+	 * @param int|float $margin The margin.
 	 * @public
 	 * @since 1.5
 	 * @see SetLeftMargin(), SetRightMargin(), SetAutoPageBreak(), SetMargins()
 	 */
-	public function SetTopMargin($margin)
-	{
+	public function setTopMargin($margin) {
 		//Set top margin
 		$this->tMargin = $margin;
 		if (($this->page > 0) AND ($this->y < $margin)) {
@@ -2649,13 +2649,12 @@ class TCPDF
 
 	/**
 	 * Defines the right margin. The method can be called before creating the first page.
-	 * @param $margin (float) The margin.
+	 * @param int|float $margin The margin.
 	 * @public
 	 * @since 1.5
 	 * @see SetLeftMargin(), SetTopMargin(), SetAutoPageBreak(), SetMargins()
 	 */
-	public function SetRightMargin($margin)
-	{
+	public function setRightMargin($margin) {
 		$this->rMargin = $margin;
 		if (($this->page > 0) AND ($this->x > ($this->w - $margin))) {
 			$this->x = $this->w - $margin;
@@ -2664,13 +2663,12 @@ class TCPDF
 
 	/**
 	 * Set the same internal Cell padding for top, right, bottom, left-
-	 * @param $pad (float) internal padding.
+	 * @param int|float $pad internal padding.
 	 * @public
 	 * @since 2.1.000 (2008-01-09)
 	 * @see getCellPaddings(), setCellPaddings()
 	 */
-	public function SetCellPadding($pad)
-	{
+	public function setCellPadding($pad) {
 		if ($pad >= 0) {
 			$this->cell_padding['L'] = $pad;
 			$this->cell_padding['T'] = $pad;
@@ -2681,26 +2679,25 @@ class TCPDF
 
 	/**
 	 * Set the internal Cell paddings.
-	 * @param $left (float) left padding
-	 * @param $top (float) top padding
-	 * @param $right (float) right padding
-	 * @param $bottom (float) bottom padding
+	 * @param int|float|null $left left padding
+	 * @param int|float|null $top top padding
+	 * @param int|float|null $right right padding
+	 * @param int|float|null $bottom bottom padding
 	 * @public
 	 * @since 5.9.000 (2010-10-03)
 	 * @see getCellPaddings(), SetCellPadding()
 	 */
-	public function setCellPaddings($left = '', $top = '', $right = '', $bottom = '')
-	{
-		if (($left !== '') AND ($left >= 0)) {
+	public function setCellPaddings($left=null, $top=null, $right=null, $bottom=null) {
+		if (!TCPDF_STATIC::empty_string($left) AND ($left >= 0)) {
 			$this->cell_padding['L'] = $left;
 		}
-		if (($top !== '') AND ($top >= 0)) {
+		if (!TCPDF_STATIC::empty_string($top) AND ($top >= 0)) {
 			$this->cell_padding['T'] = $top;
 		}
-		if (($right !== '') AND ($right >= 0)) {
+		if (!TCPDF_STATIC::empty_string($right) AND ($right >= 0)) {
 			$this->cell_padding['R'] = $right;
 		}
-		if (($bottom !== '') AND ($bottom >= 0)) {
+		if (!TCPDF_STATIC::empty_string($bottom) AND ($bottom >= 0)) {
 			$this->cell_padding['B'] = $bottom;
 		}
 	}
@@ -2712,33 +2709,31 @@ class TCPDF
 	 * @since 5.9.000 (2010-10-03)
 	 * @see setCellPaddings(), SetCellPadding()
 	 */
-	public function getCellPaddings()
-	{
+	public function getCellPaddings() {
 		return $this->cell_padding;
 	}
 
 	/**
 	 * Set the internal Cell margins.
-	 * @param $left (float) left margin
-	 * @param $top (float) top margin
-	 * @param $right (float) right margin
-	 * @param $bottom (float) bottom margin
+	 * @param int|float|null $left left margin
+	 * @param int|float|null $top top margin
+	 * @param int|float|null $right right margin
+	 * @param int|float|null $bottom bottom margin
 	 * @public
 	 * @since 5.9.000 (2010-10-03)
 	 * @see getCellMargins()
 	 */
-	public function setCellMargins($left = '', $top = '', $right = '', $bottom = '')
-	{
-		if (($left !== '') AND ($left >= 0)) {
+	public function setCellMargins($left=null, $top=null, $right=null, $bottom=null) {
+		if (!TCPDF_STATIC::empty_string($left) AND ($left >= 0)) {
 			$this->cell_margin['L'] = $left;
 		}
-		if (($top !== '') AND ($top >= 0)) {
+		if (!TCPDF_STATIC::empty_string($top) AND ($top >= 0)) {
 			$this->cell_margin['T'] = $top;
 		}
-		if (($right !== '') AND ($right >= 0)) {
+		if (!TCPDF_STATIC::empty_string($right) AND ($right >= 0)) {
 			$this->cell_margin['R'] = $right;
 		}
-		if (($bottom !== '') AND ($bottom >= 0)) {
+		if (!TCPDF_STATIC::empty_string($bottom) AND ($bottom >= 0)) {
 			$this->cell_margin['B'] = $bottom;
 		}
 	}
@@ -2750,20 +2745,18 @@ class TCPDF
 	 * @since 5.9.000 (2010-10-03)
 	 * @see setCellMargins()
 	 */
-	public function getCellMargins()
-	{
+	public function getCellMargins() {
 		return $this->cell_margin;
 	}
 
 	/**
 	 * Adjust the internal Cell padding array to take account of the line width.
-	 * @param $brd (mixed) Indicates if borders must be drawn around the cell. The value can be a number:<ul><li>0: no border (default)</li><li>1: frame</li></ul> or a string containing some or all of the following characters (in any order):<ul><li>L: left</li><li>T: top</li><li>R: right</li><li>B: bottom</li></ul> or an array of line styles for each border group - for example: array('LTRB' => array('width' => 2, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => array(0, 0, 0)))
-	 * @return array of adjustments
+	 * @param string|array|int|bool $brd Indicates if borders must be drawn around the cell. The value can be a number:<ul><li>0: no border (default)</li><li>1: frame</li></ul> or a string containing some or all of the following characters (in any order):<ul><li>L: left</li><li>T: top</li><li>R: right</li><li>B: bottom</li></ul> or an array of line styles for each border group - for example: array('LTRB' => array('width' => 2, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => array(0, 0, 0)))
+	 * @return void|array array of adjustments
 	 * @public
 	 * @since 5.9.000 (2010-10-03)
 	 */
-	protected function adjustCellPadding($brd = 0)
-	{
+	protected function adjustCellPadding($brd=0) {
 		if (empty($brd)) {
 			return;
 		}
@@ -2775,7 +2768,11 @@ class TCPDF
 				$newbrd[$brd[$i]] = true;
 			}
 			$brd = $newbrd;
-		} elseif (($brd === 1) OR ($brd === true) OR (is_numeric($brd) AND (intval($brd) > 0))) {
+		} elseif (
+			($brd === 1)
+			|| ($brd === true)
+			|| (is_numeric($brd) && ((int)$brd > 0))
+		) {
 			$brd = array('LRTB' => true);
 		}
 		if (!is_array($brd)) {
@@ -2793,7 +2790,7 @@ class TCPDF
 		// process borders
 		foreach ($brd as $border => $style) {
 			$line_width = $this->LineWidth;
-			if (is_array($style) AND isset($style['width'])) {
+			if (is_array($style) && isset($style['width'])) {
 				// get border width
 				$line_width = $style['width'];
 			}
@@ -2814,32 +2811,54 @@ class TCPDF
 				}
 			}
 			// correct internal cell padding if required to avoid overlap between text and lines
-			if ((strpos($border, 'T') !== false) AND ($this->cell_padding['T'] < $adj)) {
+			if (
+				is_numeric($this->cell_padding['T'])
+				&& ($this->cell_padding['T'] < $adj)
+				&& (strpos($border, 'T') !== false)
+			) {
 				$this->cell_padding['T'] = $adj;
 			}
-			if ((strpos($border, 'R') !== false) AND ($this->cell_padding['R'] < $adj)) {
+			if (
+				is_numeric($this->cell_padding['R'])
+				&& ($this->cell_padding['R'] < $adj)
+				&& (strpos($border, 'R') !== false)
+			) {
 				$this->cell_padding['R'] = $adj;
 			}
-			if ((strpos($border, 'B') !== false) AND ($this->cell_padding['B'] < $adj)) {
+			if (
+				is_numeric($this->cell_padding['B'])
+				&& ($this->cell_padding['B'] < $adj)
+				&& (strpos($border, 'B') !== false)
+			) {
 				$this->cell_padding['B'] = $adj;
 			}
-			if ((strpos($border, 'L') !== false) AND ($this->cell_padding['L'] < $adj)) {
+			if (
+				is_numeric($this->cell_padding['L'])
+				&& ($this->cell_padding['L'] < $adj)
+				&& (strpos($border, 'L') !== false)
+			) {
 				$this->cell_padding['L'] = $adj;
 			}
+
 		}
-		return array('T' => ($this->cell_padding['T'] - $cp['T']), 'R' => ($this->cell_padding['R'] - $cp['R']), 'B' => ($this->cell_padding['B'] - $cp['B']), 'L' => ($this->cell_padding['L'] - $cp['L']));
+
+		return array(
+			'T' => ($this->cell_padding['T'] - $cp['T']),
+			'R' => ($this->cell_padding['R'] - $cp['R']),
+			'B' => ($this->cell_padding['B'] - $cp['B']),
+			'L' => ($this->cell_padding['L'] - $cp['L']),
+		);
 	}
 
 	/**
 	 * Enables or disables the automatic page breaking mode. When enabling, the second parameter is the distance from the bottom of the page that defines the triggering limit. By default, the mode is on and the margin is 2 cm.
-	 * @param $auto (boolean) Boolean indicating if mode should be on or off.
-	 * @param $margin (float) Distance from the bottom of the page.
+	 * @param boolean $auto Boolean indicating if mode should be on or off.
+	 * @param float $margin Distance from the bottom of the page.
 	 * @public
 	 * @since 1.0
 	 * @see Cell(), MultiCell(), AcceptPageBreak()
 	 */
-	public function SetAutoPageBreak($auto, $margin = 0)
-	{
+	public function setAutoPageBreak($auto, $margin=0) {
 		$this->AutoPageBreak = $auto ? true : false;
 		$this->bMargin = $margin;
 		$this->PageBreakTrigger = $this->h - $margin;
@@ -2847,25 +2866,23 @@ class TCPDF
 
 	/**
 	 * Return the auto-page-break mode (true or false).
-	 * @return boolean auto-page-break mode
+	 * @return bool auto-page-break mode
 	 * @public
 	 * @since 5.9.088
 	 */
-	public function getAutoPageBreak()
-	{
+	public function getAutoPageBreak() {
 		return $this->AutoPageBreak;
 	}
 
 	/**
 	 * Defines the way the document is to be displayed by the viewer.
-	 * @param $zoom (mixed) The zoom to use. It can be one of the following string values or a number indicating the zooming factor to use. <ul><li>fullpage: displays the entire page on screen </li><li>fullwidth: uses maximum width of window</li><li>real: uses real size (equivalent to 100% zoom)</li><li>default: uses viewer default mode</li></ul>
-	 * @param $layout (string) The page layout. Possible values are:<ul><li>SinglePage Display one page at a time</li><li>OneColumn Display the pages in one column</li><li>TwoColumnLeft Display the pages in two columns, with odd-numbered pages on the left</li><li>TwoColumnRight Display the pages in two columns, with odd-numbered pages on the right</li><li>TwoPageLeft (PDF 1.5) Display the pages two at a time, with odd-numbered pages on the left</li><li>TwoPageRight (PDF 1.5) Display the pages two at a time, with odd-numbered pages on the right</li></ul>
-	 * @param $mode (string) A name object specifying how the document should be displayed when opened:<ul><li>UseNone Neither document outline nor thumbnail images visible</li><li>UseOutlines Document outline visible</li><li>UseThumbs Thumbnail images visible</li><li>FullScreen Full-screen mode, with no menu bar, window controls, or any other window visible</li><li>UseOC (PDF 1.5) Optional content group panel visible</li><li>UseAttachments (PDF 1.6) Attachments panel visible</li></ul>
+	 * @param mixed $zoom The zoom to use. It can be one of the following string values or a number indicating the zooming factor to use. <ul><li>fullpage: displays the entire page on screen </li><li>fullwidth: uses maximum width of window</li><li>real: uses real size (equivalent to 100% zoom)</li><li>default: uses viewer default mode</li></ul>
+	 * @param string $layout The page layout. Possible values are:<ul><li>SinglePage Display one page at a time</li><li>OneColumn Display the pages in one column</li><li>TwoColumnLeft Display the pages in two columns, with odd-numbered pages on the left</li><li>TwoColumnRight Display the pages in two columns, with odd-numbered pages on the right</li><li>TwoPageLeft (PDF 1.5) Display the pages two at a time, with odd-numbered pages on the left</li><li>TwoPageRight (PDF 1.5) Display the pages two at a time, with odd-numbered pages on the right</li></ul>
+	 * @param string $mode A name object specifying how the document should be displayed when opened:<ul><li>UseNone Neither document outline nor thumbnail images visible</li><li>UseOutlines Document outline visible</li><li>UseThumbs Thumbnail images visible</li><li>FullScreen Full-screen mode, with no menu bar, window controls, or any other window visible</li><li>UseOC (PDF 1.5) Optional content group panel visible</li><li>UseAttachments (PDF 1.6) Attachments panel visible</li></ul>
 	 * @public
 	 * @since 1.2
 	 */
-	public function SetDisplayMode($zoom, $layout = 'SinglePage', $mode = 'UseNone')
-	{
+	public function setDisplayMode($zoom, $layout='SinglePage', $mode='UseNone') {
 		if (($zoom == 'fullpage') OR ($zoom == 'fullwidth') OR ($zoom == 'real') OR ($zoom == 'default') OR (!is_string($zoom))) {
 			$this->ZoomMode = $zoom;
 		} else {
@@ -2878,12 +2895,11 @@ class TCPDF
 	/**
 	 * Activates or deactivates page compression. When activated, the internal representation of each page is compressed, which leads to a compression ratio of about 2 for the resulting document. Compression is on by default.
 	 * Note: the Zlib extension is required for this feature. If not present, compression will be turned off.
-	 * @param $compress (boolean) Boolean indicating if compression must be enabled.
+	 * @param boolean $compress Boolean indicating if compression must be enabled.
 	 * @public
 	 * @since 1.4
 	 */
-	public function SetCompression($compress = true)
-	{
+	public function setCompression($compress=true) {
 		$this->compress = false;
 		if (function_exists('gzcompress')) {
 			if ($compress) {
@@ -2896,95 +2912,99 @@ class TCPDF
 
 	/**
 	 * Set flag to force sRGB_IEC61966-2.1 black scaled ICC color profile for the whole document.
-	 * @param $mode (boolean) If true force sRGB output intent.
+	 * @param boolean $mode If true force sRGB output intent.
 	 * @public
 	 * @since 5.9.121 (2011-09-28)
 	 */
-	public function setSRGBmode($mode = false)
-	{
+	public function setSRGBmode($mode=false) {
 		$this->force_srgb = $mode ? true : false;
 	}
 
 	/**
 	 * Turn on/off Unicode mode for document information dictionary (meta tags).
 	 * This has effect only when unicode mode is set to false.
-	 * @param $unicode (boolean) if true set the meta information in Unicode
+	 * @param boolean $unicode if true set the meta information in Unicode
 	 * @since 5.9.027 (2010-12-01)
 	 * @public
 	 */
-	public function SetDocInfoUnicode($unicode = true)
-	{
+	public function setDocInfoUnicode($unicode=true) {
 		$this->docinfounicode = $unicode ? true : false;
 	}
 
 	/**
 	 * Defines the title of the document.
-	 * @param $title (string) The title.
+	 * @param string $title The title.
 	 * @public
 	 * @since 1.2
 	 * @see SetAuthor(), SetCreator(), SetKeywords(), SetSubject()
 	 */
-	public function SetTitle($title)
-	{
+	public function setTitle($title) {
 		$this->title = $title;
 	}
 
 	/**
 	 * Defines the subject of the document.
-	 * @param $subject (string) The subject.
+	 * @param string $subject The subject.
 	 * @public
 	 * @since 1.2
 	 * @see SetAuthor(), SetCreator(), SetKeywords(), SetTitle()
 	 */
-	public function SetSubject($subject)
-	{
+	public function setSubject($subject) {
 		$this->subject = $subject;
 	}
 
 	/**
 	 * Defines the author of the document.
-	 * @param $author (string) The name of the author.
+	 * @param string $author The name of the author.
 	 * @public
 	 * @since 1.2
 	 * @see SetCreator(), SetKeywords(), SetSubject(), SetTitle()
 	 */
-	public function SetAuthor($author)
-	{
+	public function setAuthor($author) {
 		$this->author = $author;
 	}
 
 	/**
 	 * Associates keywords with the document, generally in the form 'keyword1 keyword2 ...'.
-	 * @param $keywords (string) The list of keywords.
+	 * @param string $keywords The list of keywords.
 	 * @public
 	 * @since 1.2
 	 * @see SetAuthor(), SetCreator(), SetSubject(), SetTitle()
 	 */
-	public function SetKeywords($keywords)
-	{
+	public function setKeywords($keywords) {
 		$this->keywords = $keywords;
 	}
 
 	/**
 	 * Defines the creator of the document. This is typically the name of the application that generates the PDF.
-	 * @param $creator (string) The name of the creator.
+	 * @param string $creator The name of the creator.
 	 * @public
 	 * @since 1.2
 	 * @see SetAuthor(), SetKeywords(), SetSubject(), SetTitle()
 	 */
-	public function SetCreator($creator)
-	{
+	public function setCreator($creator) {
 		$this->creator = $creator;
 	}
 
 	/**
+	 * Whether to allow local file path in image html tags, when prefixed with file://
+	 *
+	 * @param bool $allowLocalFiles true, when local files should be allowed. Otherwise false.
+	 * @public
+	 * @since 6.4
+	 */
+	public function setAllowLocalFiles($allowLocalFiles) {
+		$this->allowLocalFiles = (bool) $allowLocalFiles;
+	}
+
+
+	/**
 	 * Throw an exception or print an error message and die if the K_TCPDF_PARSER_THROW_EXCEPTION_ERROR constant is set to true.
-	 * @param $msg (string) The error message
+	 * @param string $msg The error message
 	 * @public
 	 * @since 1.0
 	 */
-	public function Error($msg)
-	{
+	public function Error($msg) {
 		// unset all class variables
 		$this->_destroy(true);
 		if (defined('K_TCPDF_THROW_EXCEPTION_ERROR') AND !K_TCPDF_THROW_EXCEPTION_ERROR) {
@@ -3002,8 +3022,7 @@ class TCPDF
 	 * @since 1.0
 	 * @see AddPage(), Close()
 	 */
-	public function Open()
-	{
+	public function Open() {
 		$this->state = 1;
 	}
 
@@ -3015,8 +3034,7 @@ class TCPDF
 	 * @since 1.0
 	 * @see Open(), Output()
 	 */
-	public function Close()
-	{
+	public function Close() {
 		if ($this->state == 3) {
 			return;
 		}
@@ -3029,13 +3047,13 @@ class TCPDF
 			$gvars = $this->getGraphicVars();
 			$this->setEqualColumns();
 			$this->lastpage(true);
-			$this->SetAutoPageBreak(false);
+			$this->setAutoPageBreak(false);
 			$this->x = 0;
 			$this->y = $this->h - (1 / $this->k);
 			$this->lMargin = 0;
 			$this->_outSaveGraphicsState();
 			$font = defined('PDF_FONT_NAME_MAIN')?PDF_FONT_NAME_MAIN:'helvetica';
-			$this->SetFont($font, '', 1);
+			$this->setFont($font, '', 1);
 			$this->setTextRenderingMode(0, false, false);
 			$msg = "\x50\x6f\x77\x65\x72\x65\x64\x20\x62\x79\x20\x54\x43\x50\x44\x46\x20\x28\x77\x77\x77\x2e\x74\x63\x70\x64\x66\x2e\x6f\x72\x67\x29";
 			$lnk = "\x68\x74\x74\x70\x3a\x2f\x2f\x77\x77\x77\x2e\x74\x63\x70\x64\x66\x2e\x6f\x72\x67";
@@ -3054,14 +3072,13 @@ class TCPDF
 
 	/**
 	 * Move pointer at the specified document page and update page dimensions.
-	 * @param $pnum (int) page number (1 ... numpages)
-	 * @param $resetmargins (boolean) if true reset left, right, top margins and Y position.
+	 * @param int $pnum page number (1 ... numpages)
+	 * @param boolean $resetmargins if true reset left, right, top margins and Y position.
 	 * @public
 	 * @since 2.1.000 (2008-01-07)
 	 * @see getPage(), lastpage(), getNumPages()
 	 */
-	public function setPage($pnum, $resetmargins = false)
-	{
+	public function setPage($pnum, $resetmargins=false) {
 		if (($pnum == $this->page) AND ($this->state == 2)) {
 			return;
 		}
@@ -3081,13 +3098,13 @@ class TCPDF
 			$this->original_rMargin = $this->pagedim[$this->page]['orm'];
 			$this->AutoPageBreak = $this->pagedim[$this->page]['pb'];
 			$this->CurOrientation = $this->pagedim[$this->page]['or'];
-			$this->SetAutoPageBreak($this->AutoPageBreak, $this->bMargin);
+			$this->setAutoPageBreak($this->AutoPageBreak, $this->bMargin);
 			// restore graphic settings
 			//$this->setGraphicVars($gvars);
 			if ($resetmargins) {
 				$this->lMargin = $this->pagedim[$this->page]['olm'];
 				$this->rMargin = $this->pagedim[$this->page]['orm'];
-				$this->SetY($this->tMargin);
+				$this->setY($this->tMargin);
 			} else {
 				// account for booklet mode
 				if ($this->pagedim[$this->page]['olm'] != $this->pagedim[$oldpage]['olm']) {
@@ -3103,13 +3120,12 @@ class TCPDF
 
 	/**
 	 * Reset pointer to the last document page.
-	 * @param $resetmargins (boolean) if true reset left, right, top margins and Y position.
+	 * @param boolean $resetmargins if true reset left, right, top margins and Y position.
 	 * @public
 	 * @since 2.0.000 (2008-01-04)
 	 * @see setPage(), getPage(), getNumPages()
 	 */
-	public function lastPage($resetmargins = false)
-	{
+	public function lastPage($resetmargins=false) {
 		$this->setPage($this->getNumPages(), $resetmargins);
 	}
 
@@ -3120,8 +3136,7 @@ class TCPDF
 	 * @since 2.1.000 (2008-01-07)
 	 * @see setPage(), lastpage(), getNumPages()
 	 */
-	public function getPage()
-	{
+	public function getPage() {
 		return $this->page;
 	}
 
@@ -3132,22 +3147,20 @@ class TCPDF
 	 * @since 2.1.000 (2008-01-07)
 	 * @see setPage(), getPage(), lastpage()
 	 */
-	public function getNumPages()
-	{
+	public function getNumPages() {
 		return $this->numpages;
 	}
 
 	/**
 	 * Adds a new TOC (Table Of Content) page to the document.
-	 * @param $orientation (string) page orientation.
-	 * @param $format (mixed) The format used for pages. It can be either: one of the string values specified at getPageSizeFromFormat() or an array of parameters specified at setPageFormat().
-	 * @param $keepmargins (boolean) if true overwrites the default page margins with the current margins
+	 * @param string $orientation page orientation.
+	 * @param mixed $format The format used for pages. It can be either: one of the string values specified at getPageSizeFromFormat() or an array of parameters specified at setPageFormat().
+	 * @param boolean $keepmargins if true overwrites the default page margins with the current margins
 	 * @public
 	 * @since 5.0.001 (2010-05-06)
 	 * @see AddPage(), startPage(), endPage(), endTOCPage()
 	 */
-	public function addTOCPage($orientation = '', $format = '', $keepmargins = false)
-	{
+	public function addTOCPage($orientation='', $format='', $keepmargins=false) {
 		$this->AddPage($orientation, $format, $keepmargins, true);
 	}
 
@@ -3157,24 +3170,22 @@ class TCPDF
 	 * @since 5.0.001 (2010-05-06)
 	 * @see AddPage(), startPage(), endPage(), addTOCPage()
 	 */
-	public function endTOCPage()
-	{
+	public function endTOCPage() {
 		$this->endPage(true);
 	}
 
 	/**
 	 * Adds a new page to the document. If a page is already present, the Footer() method is called first to output the footer (if enabled). Then the page is added, the current position set to the top-left corner according to the left and top margins (or top-right if in RTL mode), and Header() is called to display the header (if enabled).
 	 * The origin of the coordinate system is at the top-left corner (or top-right for RTL) and increasing ordinates go downwards.
-	 * @param $orientation (string) page orientation. Possible values are (case insensitive):<ul><li>P or PORTRAIT (default)</li><li>L or LANDSCAPE</li></ul>
-	 * @param $format (mixed) The format used for pages. It can be either: one of the string values specified at getPageSizeFromFormat() or an array of parameters specified at setPageFormat().
-	 * @param $keepmargins (boolean) if true overwrites the default page margins with the current margins
-	 * @param $tocpage (boolean) if true set the tocpage state to true (the added page will be used to display Table Of Content).
+	 * @param string $orientation page orientation. Possible values are (case insensitive):<ul><li>P or PORTRAIT (default)</li><li>L or LANDSCAPE</li></ul>
+	 * @param mixed $format The format used for pages. It can be either: one of the string values specified at getPageSizeFromFormat() or an array of parameters specified at setPageFormat().
+	 * @param boolean $keepmargins if true overwrites the default page margins with the current margins
+	 * @param boolean $tocpage if true set the tocpage state to true (the added page will be used to display Table Of Content).
 	 * @public
 	 * @since 1.0
 	 * @see startPage(), endPage(), addTOCPage(), endTOCPage(), getPageSizeFromFormat(), setPageFormat()
 	 */
-	public function AddPage($orientation = '', $format = '', $keepmargins = false, $tocpage = false)
-	{
+	public function AddPage($orientation='', $format='', $keepmargins=false, $tocpage=false) {
 		if ($this->inxobj) {
 			// we are inside an XObject template
 			return;
@@ -3193,13 +3204,12 @@ class TCPDF
 
 	/**
 	 * Terminate the current page
-	 * @param $tocpage (boolean) if true set the tocpage state to false (end the page used to display Table Of Content).
+	 * @param boolean $tocpage if true set the tocpage state to false (end the page used to display Table Of Content).
 	 * @public
 	 * @since 4.2.010 (2008-11-14)
 	 * @see AddPage(), startPage(), addTOCPage(), endTOCPage()
 	 */
-	public function endPage($tocpage = false)
-	{
+	public function endPage($tocpage=false) {
 		// check if page is already closed
 		if (($this->page == 0) OR ($this->numpages > $this->page) OR (!$this->pageopen[$this->page])) {
 			return;
@@ -3218,15 +3228,14 @@ class TCPDF
 	/**
 	 * Starts a new page to the document. The page must be closed using the endPage() function.
 	 * The origin of the coordinate system is at the top-left corner and increasing ordinates go downwards.
-	 * @param $orientation (string) page orientation. Possible values are (case insensitive):<ul><li>P or PORTRAIT (default)</li><li>L or LANDSCAPE</li></ul>
-	 * @param $format (mixed) The format used for pages. It can be either: one of the string values specified at getPageSizeFromFormat() or an array of parameters specified at setPageFormat().
-	 * @param $tocpage (boolean) if true the page is designated to contain the Table-Of-Content.
+	 * @param string $orientation page orientation. Possible values are (case insensitive):<ul><li>P or PORTRAIT (default)</li><li>L or LANDSCAPE</li></ul>
+	 * @param mixed $format The format used for pages. It can be either: one of the string values specified at getPageSizeFromFormat() or an array of parameters specified at setPageFormat().
+	 * @param boolean $tocpage if true the page is designated to contain the Table-Of-Content.
 	 * @since 4.2.010 (2008-11-14)
 	 * @see AddPage(), endPage(), addTOCPage(), endTOCPage(), getPageSizeFromFormat(), setPageFormat()
 	 * @public
 	 */
-	public function startPage($orientation = '', $format = '', $tocpage = false)
-	{
+	public function startPage($orientation='', $format='', $tocpage=false) {
 		if ($tocpage) {
 			$this->tocpage = true;
 		}
@@ -3258,7 +3267,7 @@ class TCPDF
 		if ($this->numpages > $this->page) {
 			// this page has been already added
 			$this->setPage($this->page + 1);
-			$this->SetY($this->tMargin);
+			$this->setY($this->tMargin);
 			return;
 		}
 		// start a new page
@@ -3297,8 +3306,7 @@ class TCPDF
 	 * @public
 	 * @since 4.0.016 (2008-07-30)
 	 */
-	public function setPageMark()
-	{
+	public function setPageMark() {
 		$this->intmrk[$this->page] = $this->pagelen[$this->page];
 		$this->bordermrk[$this->page] = $this->intmrk[$this->page];
 		$this->setContentMark();
@@ -3307,12 +3315,11 @@ class TCPDF
 	/**
 	 * Set start-writing mark on selected page.
 	 * Borders and fills are always created after content and inserted on the position marked by this method.
-	 * @param $page (int) page number (default is the current page)
+	 * @param int $page page number (default is the current page)
 	 * @protected
 	 * @since 4.6.021 (2009-07-20)
 	 */
-	protected function setContentMark($page = 0)
-	{
+	protected function setContentMark($page=0) {
 		if ($page <= 0) {
 			$page = $this->page;
 		}
@@ -3325,16 +3332,15 @@ class TCPDF
 
 	/**
 	 * Set header data.
-	 * @param $ln (string) header image logo
-	 * @param $lw (string) header image logo width in mm
-	 * @param $ht (string) string to print as title on document header
-	 * @param $hs (string) string to print on document header
-	 * @param $tc (array) RGB array color for text.
-	 * @param $lc (array) RGB array color for line.
+	 * @param string $ln header image logo
+	 * @param int $lw header image logo width in mm
+	 * @param string $ht string to print as title on document header
+	 * @param string $hs string to print on document header
+	 * @param int[] $tc RGB array color for text.
+	 * @param int[] $lc RGB array color for line.
 	 * @public
 	 */
-	public function setHeaderData($ln = '', $lw = 0, $ht = '', $hs = '', $tc = array(0,0,0), $lc = array(0,0,0))
-	{
+	public function setHeaderData($ln='', $lw=0, $ht='', $hs='', $tc=array(0,0,0), $lc=array(0,0,0)) {
 		$this->header_logo = $ln;
 		$this->header_logo_width = $lw;
 		$this->header_title = $ht;
@@ -3345,12 +3351,11 @@ class TCPDF
 
 	/**
 	 * Set footer data.
-	 * @param $tc (array) RGB array color for text.
-	 * @param $lc (array) RGB array color for line.
+	 * @param int[] $tc RGB array color for text.
+	 * @param int[] $lc RGB array color for line.
 	 * @public
 	 */
-	public function setFooterData($tc = array(0,0,0), $lc = array(0,0,0))
-	{
+	public function setFooterData($tc=array(0,0,0), $lc=array(0,0,0)) {
 		$this->footer_text_color = $tc;
 		$this->footer_line_color = $lc;
 	}
@@ -3358,12 +3363,11 @@ class TCPDF
 	/**
 	 * Returns header data:
 	 * <ul><li>$ret['logo'] = logo image</li><li>$ret['logo_width'] = width of the image logo in user units</li><li>$ret['title'] = header title</li><li>$ret['string'] = header description string</li></ul>
-	 * @return array()
+	 * @return array<string,mixed>
 	 * @public
 	 * @since 4.0.012 (2008-07-24)
 	 */
-	public function getHeaderData()
-	{
+	public function getHeaderData() {
 		$ret = array();
 		$ret['logo'] = $this->header_logo;
 		$ret['logo_width'] = $this->header_logo_width;
@@ -3377,11 +3381,10 @@ class TCPDF
 	/**
 	 * Set header margin.
 	 * (minimum distance between header and top page margin)
-	 * @param $hm (int) distance in user units
+	 * @param float $hm distance in user units
 	 * @public
 	 */
-	public function setHeaderMargin($hm = 10)
-	{
+	public function setHeaderMargin($hm=10) {
 		$this->header_margin = $hm;
 	}
 
@@ -3391,19 +3394,17 @@ class TCPDF
 	 * @since 4.0.012 (2008-07-24)
 	 * @public
 	 */
-	public function getHeaderMargin()
-	{
+	public function getHeaderMargin() {
 		return $this->header_margin;
 	}
 
 	/**
 	 * Set footer margin.
 	 * (minimum distance between footer and bottom page margin)
-	 * @param $fm (int) distance in user units
+	 * @param float $fm distance in user units
 	 * @public
 	 */
-	public function setFooterMargin($fm = 10)
-	{
+	public function setFooterMargin($fm=10) {
 		$this->footer_margin = $fm;
 	}
 
@@ -3413,27 +3414,24 @@ class TCPDF
 	 * @since 4.0.012 (2008-07-24)
 	 * @public
 	 */
-	public function getFooterMargin()
-	{
+	public function getFooterMargin() {
 		return $this->footer_margin;
 	}
 	/**
 	 * Set a flag to print page header.
-	 * @param $val (boolean) set to true to print the page header (default), false otherwise.
+	 * @param boolean $val set to true to print the page header (default), false otherwise.
 	 * @public
 	 */
-	public function setPrintHeader($val = true)
-	{
+	public function setPrintHeader($val=true) {
 		$this->print_header = $val ? true : false;
 	}
 
 	/**
 	 * Set a flag to print page footer.
-	 * @param $val (boolean) set to true to print the page footer (default), false otherwise.
+	 * @param boolean $val set to true to print the page footer (default), false otherwise.
 	 * @public
 	 */
-	public function setPrintFooter($val = true)
-	{
+	public function setPrintFooter($val=true) {
 		$this->print_footer = $val ? true : false;
 	}
 
@@ -3442,8 +3440,7 @@ class TCPDF
 	 * @return float
 	 * @public
 	 */
-	public function getImageRBX()
-	{
+	public function getImageRBX() {
 		return $this->img_rb_x;
 	}
 
@@ -3452,8 +3449,7 @@ class TCPDF
 	 * @return float
 	 * @public
 	 */
-	public function getImageRBY()
-	{
+	public function getImageRBY() {
 		return $this->img_rb_y;
 	}
 
@@ -3461,18 +3457,16 @@ class TCPDF
 	 * Reset the xobject template used by Header() method.
 	 * @public
 	 */
-	public function resetHeaderTemplate()
-	{
+	public function resetHeaderTemplate() {
 		$this->header_xobjid = false;
 	}
 
 	/**
 	 * Set a flag to automatically reset the xobject template used by Header() method at each page.
-	 * @param $val (boolean) set to true to reset Header xobject template at each page, false otherwise.
+	 * @param boolean $val set to true to reset Header xobject template at each page, false otherwise.
 	 * @public
 	 */
-	public function setHeaderTemplateAutoreset($val = true)
-	{
+	public function setHeaderTemplateAutoreset($val=true) {
 		$this->header_xobj_autoreset = $val ? true : false;
 	}
 
@@ -3481,8 +3475,7 @@ class TCPDF
 	 * It is automatically called by AddPage() and could be overwritten in your own inherited class.
 	 * @public
 	 */
-	public function Header()
-	{
+	public function Header() {
 		if ($this->header_xobjid === false) {
 			// start a new XObject Template
 			$this->header_xobjid = $this->startTemplate($this->w, $this->tMargin);
@@ -3515,22 +3508,22 @@ class TCPDF
 				$header_x = $this->original_lMargin + ($headerdata['logo_width'] * 1.1);
 			}
 			$cw = $this->w - $this->original_lMargin - $this->original_rMargin - ($headerdata['logo_width'] * 1.1);
-			$this->SetTextColorArray($this->header_text_color);
+			$this->setTextColorArray($this->header_text_color);
 			// header title
-			$this->SetFont($headerfont[0], 'B', $headerfont[2] + 1);
-			$this->SetX($header_x);
+			$this->setFont($headerfont[0], 'B', $headerfont[2] + 1);
+			$this->setX($header_x);
 			$this->Cell($cw, $cell_height, $headerdata['title'], 0, 1, '', 0, '', 0);
 			// header string
-			$this->SetFont($headerfont[0], $headerfont[1], $headerfont[2]);
-			$this->SetX($header_x);
+			$this->setFont($headerfont[0], $headerfont[1], $headerfont[2]);
+			$this->setX($header_x);
 			$this->MultiCell($cw, $cell_height, $headerdata['string'], 0, '', 0, 1, '', '', true, 0, false, true, 0, 'T', false);
 			// print an ending header line
-			$this->SetLineStyle(array('width' => 0.85 / $this->k, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => $headerdata['line_color']));
-			$this->SetY((2.835 / $this->k) + max($imgy, $this->y));
+			$this->setLineStyle(array('width' => 0.85 / $this->k, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => $headerdata['line_color']));
+			$this->setY((2.835 / $this->k) + max($imgy, $this->y));
 			if ($this->rtl) {
-				$this->SetX($this->original_rMargin);
+				$this->setX($this->original_rMargin);
 			} else {
-				$this->SetX($this->original_lMargin);
+				$this->setX($this->original_lMargin);
 			}
 			$this->Cell(($this->w - $this->original_lMargin - $this->original_rMargin), 0, '', 'T', 0, 'C');
 			$this->endTemplate();
@@ -3559,13 +3552,12 @@ class TCPDF
 	 * It is automatically called by AddPage() and could be overwritten in your own inherited class.
 	 * @public
 	 */
-	public function Footer()
-	{
+	public function Footer() {
 		$cur_y = $this->y;
-		$this->SetTextColorArray($this->footer_text_color);
+		$this->setTextColorArray($this->footer_text_color);
 		//set style for cell border
 		$line_width = (0.85 / $this->k);
-		$this->SetLineStyle(array('width' => $line_width, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => $this->footer_line_color));
+		$this->setLineStyle(array('width' => $line_width, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => $this->footer_line_color));
 		//print document barcode
 		$barcode = $this->getBarcode();
 		if (!empty($barcode)) {
@@ -3591,13 +3583,13 @@ class TCPDF
 		} else {
 			$pagenumtxt = $w_page.$this->getPageNumGroupAlias().' / '.$this->getPageGroupAlias();
 		}
-		$this->SetY($cur_y);
+		$this->setY($cur_y);
 		//Print page number
 		if ($this->getRTL()) {
-			$this->SetX($this->original_rMargin);
+			$this->setX($this->original_rMargin);
 			$this->Cell(0, 0, $pagenumtxt, 'T', 0, 'L');
 		} else {
-			$this->SetX($this->original_lMargin);
+			$this->setX($this->original_lMargin);
 			$this->Cell(0, 0, $this->getAliasRightShift().$pagenumtxt, 'T', 0, 'R');
 		}
 	}
@@ -3607,8 +3599,7 @@ class TCPDF
 	 * @protected
 	 * @since 4.0.012 (2008-07-24)
 	 */
-	protected function setHeader()
-	{
+	protected function setHeader() {
 		if (!$this->print_header OR ($this->state != 2)) {
 			return;
 		}
@@ -3621,20 +3612,20 @@ class TCPDF
 		$this->_outSaveGraphicsState();
 		$this->rMargin = $this->original_rMargin;
 		$this->lMargin = $this->original_lMargin;
-		$this->SetCellPadding(0);
+		$this->setCellPadding(0);
 		//set current position
 		if ($this->rtl) {
-			$this->SetXY($this->original_rMargin, $this->header_margin);
+			$this->setXY($this->original_rMargin, $this->header_margin);
 		} else {
-			$this->SetXY($this->original_lMargin, $this->header_margin);
+			$this->setXY($this->original_lMargin, $this->header_margin);
 		}
-		$this->SetFont($this->header_font[0], $this->header_font[1], $this->header_font[2]);
+		$this->setFont($this->header_font[0], $this->header_font[1], $this->header_font[2]);
 		$this->Header();
 		//restore position
 		if ($this->rtl) {
-			$this->SetXY($this->original_rMargin, $this->tMargin);
+			$this->setXY($this->original_rMargin, $this->tMargin);
 		} else {
-			$this->SetXY($this->original_lMargin, $this->tMargin);
+			$this->setXY($this->original_lMargin, $this->tMargin);
 		}
 		$this->_outRestoreGraphicsState();
 		$this->lasth = $lasth;
@@ -3649,8 +3640,7 @@ class TCPDF
 	 * @protected
 	 * @since 4.0.012 (2008-07-24)
 	 */
-	protected function setFooter()
-	{
+	protected function setFooter() {
 		if ($this->state != 2) {
 			return;
 		}
@@ -3670,21 +3660,21 @@ class TCPDF
 			$this->_outSaveGraphicsState();
 			$this->rMargin = $this->original_rMargin;
 			$this->lMargin = $this->original_lMargin;
-			$this->SetCellPadding(0);
+			$this->setCellPadding(0);
 			//set current position
 			$footer_y = $this->h - $this->footer_margin;
 			if ($this->rtl) {
-				$this->SetXY($this->original_rMargin, $footer_y);
+				$this->setXY($this->original_rMargin, $footer_y);
 			} else {
-				$this->SetXY($this->original_lMargin, $footer_y);
+				$this->setXY($this->original_lMargin, $footer_y);
 			}
-			$this->SetFont($this->footer_font[0], $this->footer_font[1], $this->footer_font[2]);
+			$this->setFont($this->footer_font[0], $this->footer_font[1], $this->footer_font[2]);
 			$this->Footer();
 			//restore position
 			if ($this->rtl) {
-				$this->SetXY($this->original_rMargin, $this->tMargin);
+				$this->setXY($this->original_rMargin, $this->tMargin);
 			} else {
-				$this->SetXY($this->original_lMargin, $this->tMargin);
+				$this->setXY($this->original_lMargin, $this->tMargin);
 			}
 			$this->_outRestoreGraphicsState();
 			$this->lasth = $lasth;
@@ -3702,12 +3692,11 @@ class TCPDF
 
 	/**
 	 * Check if we are on the page body (excluding page header and footer).
-	 * @return true if we are not in page header nor in page footer, false otherwise.
+	 * @return bool true if we are not in page header nor in page footer, false otherwise.
 	 * @protected
 	 * @since 5.9.091 (2011-06-15)
 	 */
-	protected function inPageBody()
-	{
+	protected function inPageBody() {
 		return (($this->InHeader === false) AND ($this->InFooter === false));
 	}
 
@@ -3716,8 +3705,7 @@ class TCPDF
 	 * @protected
 	 * @since 4.5.030 (2009-03-25)
 	 */
-	protected function setTableHeader()
-	{
+	protected function setTableHeader() {
 		if ($this->num_columns > 1) {
 			// multi column mode
 			return;
@@ -3784,19 +3772,17 @@ class TCPDF
 	 * @since 1.0
 	 * @see getAliasNbPages()
 	 */
-	public function PageNo()
-	{
+	public function PageNo() {
 		return $this->page;
 	}
 
 	/**
 	 * Returns the array of spot colors.
-	 * @return (array) Spot colors array.
+	 * @return array Spot colors array.
 	 * @public
 	 * @since 6.0.038 (2013-09-30)
 	 */
-	public function getAllSpotColors()
-	{
+	public function getAllSpotColors() {
 		return $this->spot_colors;
 	}
 
@@ -3804,17 +3790,16 @@ class TCPDF
 	 * Defines a new spot color.
 	 * It can be expressed in RGB components or gray scale.
 	 * The method can be called before the first page is created and the value is retained from page to page.
-	 * @param $name (string) Full name of the spot color.
-	 * @param $c (float) Cyan color for CMYK. Value between 0 and 100.
-	 * @param $m (float) Magenta color for CMYK. Value between 0 and 100.
-	 * @param $y (float) Yellow color for CMYK. Value between 0 and 100.
-	 * @param $k (float) Key (Black) color for CMYK. Value between 0 and 100.
+	 * @param string $name Full name of the spot color.
+	 * @param float $c Cyan color for CMYK. Value between 0 and 100.
+	 * @param float $m Magenta color for CMYK. Value between 0 and 100.
+	 * @param float $y Yellow color for CMYK. Value between 0 and 100.
+	 * @param float $k Key (Black) color for CMYK. Value between 0 and 100.
 	 * @public
 	 * @since 4.0.024 (2008-09-12)
 	 * @see SetDrawSpotColor(), SetFillSpotColor(), SetTextSpotColor()
 	 */
-	public function AddSpotColor($name, $c, $m, $y, $k)
-	{
+	public function AddSpotColor($name, $c, $m, $y, $k) {
 		if (!isset($this->spot_colors[$name])) {
 			$i = (1 + count($this->spot_colors));
 			$this->spot_colors[$name] = array('C' => $c, 'M' => $m, 'Y' => $y, 'K' => $k, 'name' => $name, 'i' => $i);
@@ -3823,15 +3808,14 @@ class TCPDF
 
 	/**
 	 * Set the spot color for the specified type ('draw', 'fill', 'text').
-	 * @param $type (string) Type of object affected by this color: ('draw', 'fill', 'text').
-	 * @param $name (string) Name of the spot color.
-	 * @param $tint (float) Intensity of the color (from 0 to 100 ; 100 = full intensity by default).
-	 * @return (string) PDF color command.
+	 * @param string $type Type of object affected by this color: ('draw', 'fill', 'text').
+	 * @param string $name Name of the spot color.
+	 * @param float $tint Intensity of the color (from 0 to 100 ; 100 = full intensity by default).
+	 * @return string PDF color command.
 	 * @public
 	 * @since 5.9.125 (2011-10-03)
 	 */
-	public function setSpotColor($type, $name, $tint = 100)
-	{
+	public function setSpotColor($type, $name, $tint=100) {
 		$spotcolor = TCPDF_COLORS::getSpotColor($name, $this->spot_colors);
 		if ($spotcolor === false) {
 			$this->Error('Undefined spot color: '.$name.', you must add it using the AddSpotColor() method.');
@@ -3871,40 +3855,37 @@ class TCPDF
 
 	/**
 	 * Defines the spot color used for all drawing operations (lines, rectangles and cell borders).
-	 * @param $name (string) Name of the spot color.
-	 * @param $tint (float) Intensity of the color (from 0 to 100 ; 100 = full intensity by default).
+	 * @param string $name Name of the spot color.
+	 * @param float $tint Intensity of the color (from 0 to 100 ; 100 = full intensity by default).
 	 * @public
 	 * @since 4.0.024 (2008-09-12)
 	 * @see AddSpotColor(), SetFillSpotColor(), SetTextSpotColor()
 	 */
-	public function SetDrawSpotColor($name, $tint = 100)
-	{
+	public function setDrawSpotColor($name, $tint=100) {
 		$this->setSpotColor('draw', $name, $tint);
 	}
 
 	/**
 	 * Defines the spot color used for all filling operations (filled rectangles and cell backgrounds).
-	 * @param $name (string) Name of the spot color.
-	 * @param $tint (float) Intensity of the color (from 0 to 100 ; 100 = full intensity by default).
+	 * @param string $name Name of the spot color.
+	 * @param float $tint Intensity of the color (from 0 to 100 ; 100 = full intensity by default).
 	 * @public
 	 * @since 4.0.024 (2008-09-12)
 	 * @see AddSpotColor(), SetDrawSpotColor(), SetTextSpotColor()
 	 */
-	public function SetFillSpotColor($name, $tint = 100)
-	{
+	public function setFillSpotColor($name, $tint=100) {
 		$this->setSpotColor('fill', $name, $tint);
 	}
 
 	/**
 	 * Defines the spot color used for text.
-	 * @param $name (string) Name of the spot color.
-	 * @param $tint (int) Intensity of the color (from 0 to 100 ; 100 = full intensity by default).
+	 * @param string $name Name of the spot color.
+	 * @param int $tint Intensity of the color (from 0 to 100 ; 100 = full intensity by default).
 	 * @public
 	 * @since 4.0.024 (2008-09-12)
 	 * @see AddSpotColor(), SetDrawSpotColor(), SetFillSpotColor()
 	 */
-	public function SetTextSpotColor($name, $tint = 100)
-	{
+	public function setTextSpotColor($name, $tint=100) {
 		$this->setSpotColor('text', $name, $tint);
 	}
 
@@ -3912,15 +3893,14 @@ class TCPDF
 	 * Set the color array for the specified type ('draw', 'fill', 'text').
 	 * It can be expressed in RGB, CMYK or GRAY SCALE components.
 	 * The method can be called before the first page is created and the value is retained from page to page.
-	 * @param $type (string) Type of object affected by this color: ('draw', 'fill', 'text').
-	 * @param $color (array) Array of colors (1=gray, 3=RGB, 4=CMYK or 5=spotcolor=CMYK+name values).
-	 * @param $ret (boolean) If true do not send the PDF command.
-	 * @return (string) The PDF command or empty string.
+	 * @param string $type Type of object affected by this color: ('draw', 'fill', 'text').
+	 * @param array $color Array of colors (1=gray, 3=RGB, 4=CMYK or 5=spotcolor=CMYK+name values).
+	 * @param boolean $ret If true do not send the PDF command.
+	 * @return string The PDF command or empty string.
 	 * @public
 	 * @since 3.1.000 (2008-06-11)
 	 */
-	public function setColorArray($type, $color, $ret = false)
-	{
+	public function setColorArray($type, $color, $ret=false) {
 		if (is_array($color)) {
 			$color = array_values($color);
 			// component: grey, RGB red or CMYK cyan
@@ -3944,15 +3924,14 @@ class TCPDF
 	 * Defines the color used for all drawing operations (lines, rectangles and cell borders).
 	 * It can be expressed in RGB, CMYK or GRAY SCALE components.
 	 * The method can be called before the first page is created and the value is retained from page to page.
-	 * @param $color (array) Array of colors (1, 3 or 4 values).
-	 * @param $ret (boolean) If true do not send the PDF command.
+	 * @param array $color Array of colors (1, 3 or 4 values).
+	 * @param boolean $ret If true do not send the PDF command.
 	 * @return string the PDF command
 	 * @public
 	 * @since 3.1.000 (2008-06-11)
 	 * @see SetDrawColor()
 	 */
-	public function SetDrawColorArray($color, $ret = false)
-	{
+	public function setDrawColorArray($color, $ret=false) {
 		return $this->setColorArray('draw', $color, $ret);
 	}
 
@@ -3960,46 +3939,43 @@ class TCPDF
 	 * Defines the color used for all filling operations (filled rectangles and cell backgrounds).
 	 * It can be expressed in RGB, CMYK or GRAY SCALE components.
 	 * The method can be called before the first page is created and the value is retained from page to page.
-	 * @param $color (array) Array of colors (1, 3 or 4 values).
-	 * @param $ret (boolean) If true do not send the PDF command.
+	 * @param array $color Array of colors (1, 3 or 4 values).
+	 * @param boolean $ret If true do not send the PDF command.
 	 * @public
 	 * @since 3.1.000 (2008-6-11)
 	 * @see SetFillColor()
 	 */
-	public function SetFillColorArray($color, $ret = false)
-	{
+	public function setFillColorArray($color, $ret=false) {
 		return $this->setColorArray('fill', $color, $ret);
 	}
 
 	/**
 	 * Defines the color used for text. It can be expressed in RGB components or gray scale.
 	 * The method can be called before the first page is created and the value is retained from page to page.
-	 * @param $color (array) Array of colors (1, 3 or 4 values).
-	 * @param $ret (boolean) If true do not send the PDF command.
+	 * @param array $color Array of colors (1, 3 or 4 values).
+	 * @param boolean $ret If true do not send the PDF command.
 	 * @public
 	 * @since 3.1.000 (2008-6-11)
 	 * @see SetFillColor()
 	 */
-	public function SetTextColorArray($color, $ret = false)
-	{
+	public function setTextColorArray($color, $ret=false) {
 		return $this->setColorArray('text', $color, $ret);
 	}
 
 	/**
 	 * Defines the color used by the specified type ('draw', 'fill', 'text').
-	 * @param $type (string) Type of object affected by this color: ('draw', 'fill', 'text').
-	 * @param $col1 (float) GRAY level for single color, or Red color for RGB (0-255), or CYAN color for CMYK (0-100).
-	 * @param $col2 (float) GREEN color for RGB (0-255), or MAGENTA color for CMYK (0-100).
-	 * @param $col3 (float) BLUE color for RGB (0-255), or YELLOW color for CMYK (0-100).
-	 * @param $col4 (float) KEY (BLACK) color for CMYK (0-100).
-	 * @param $ret (boolean) If true do not send the command.
-	 * @param $name (string) spot color name (if any)
-	 * @return (string) The PDF command or empty string.
+	 * @param string $type Type of object affected by this color: ('draw', 'fill', 'text').
+	 * @param float $col1 GRAY level for single color, or Red color for RGB (0-255), or CYAN color for CMYK (0-100).
+	 * @param float $col2 GREEN color for RGB (0-255), or MAGENTA color for CMYK (0-100).
+	 * @param float $col3 BLUE color for RGB (0-255), or YELLOW color for CMYK (0-100).
+	 * @param float $col4 KEY (BLACK) color for CMYK (0-100).
+	 * @param boolean $ret If true do not send the command.
+	 * @param string $name spot color name (if any)
+	 * @return string The PDF command or empty string.
 	 * @public
 	 * @since 5.9.125 (2011-10-03)
 	 */
-	public function setColor($type, $col1 = 0, $col2 = -1, $col3 = -1, $col4 = -1, $ret = false, $name = '')
-	{
+	public function setColor($type, $col1=0, $col2=-1, $col3=-1, $col4=-1, $ret=false, $name='') {
 		// set default values
 		if (!is_numeric($col1)) {
 			$col1 = 0;
@@ -4067,7 +4043,7 @@ class TCPDF
 			}
 		}
 		$this->ColorFlag = ($this->FillColor != $this->TextColor);
-		if (($type != 'text') AND ($this->state == 2)) {
+		if (($type != 'text') AND ($this->state == 2) AND $type !== 0) {
 			if (!$ret) {
 				$this->_out($pdfcolor);
 			}
@@ -4078,95 +4054,92 @@ class TCPDF
 
 	/**
 	 * Defines the color used for all drawing operations (lines, rectangles and cell borders). It can be expressed in RGB components or gray scale. The method can be called before the first page is created and the value is retained from page to page.
-	 * @param $col1 (float) GRAY level for single color, or Red color for RGB (0-255), or CYAN color for CMYK (0-100).
-	 * @param $col2 (float) GREEN color for RGB (0-255), or MAGENTA color for CMYK (0-100).
-	 * @param $col3 (float) BLUE color for RGB (0-255), or YELLOW color for CMYK (0-100).
-	 * @param $col4 (float) KEY (BLACK) color for CMYK (0-100).
-	 * @param $ret (boolean) If true do not send the command.
-	 * @param $name (string) spot color name (if any)
+	 * @param float $col1 GRAY level for single color, or Red color for RGB (0-255), or CYAN color for CMYK (0-100).
+	 * @param float $col2 GREEN color for RGB (0-255), or MAGENTA color for CMYK (0-100).
+	 * @param float $col3 BLUE color for RGB (0-255), or YELLOW color for CMYK (0-100).
+	 * @param float $col4 KEY (BLACK) color for CMYK (0-100).
+	 * @param boolean $ret If true do not send the command.
+	 * @param string $name spot color name (if any)
 	 * @return string the PDF command
 	 * @public
 	 * @since 1.3
 	 * @see SetDrawColorArray(), SetFillColor(), SetTextColor(), Line(), Rect(), Cell(), MultiCell()
 	 */
-	public function SetDrawColor($col1 = 0, $col2 = -1, $col3 = -1, $col4 = -1, $ret = false, $name = '')
-	{
+	public function setDrawColor($col1=0, $col2=-1, $col3=-1, $col4=-1, $ret=false, $name='') {
 		return $this->setColor('draw', $col1, $col2, $col3, $col4, $ret, $name);
 	}
 
 	/**
 	 * Defines the color used for all filling operations (filled rectangles and cell backgrounds). It can be expressed in RGB components or gray scale. The method can be called before the first page is created and the value is retained from page to page.
-	 * @param $col1 (float) GRAY level for single color, or Red color for RGB (0-255), or CYAN color for CMYK (0-100).
-	 * @param $col2 (float) GREEN color for RGB (0-255), or MAGENTA color for CMYK (0-100).
-	 * @param $col3 (float) BLUE color for RGB (0-255), or YELLOW color for CMYK (0-100).
-	 * @param $col4 (float) KEY (BLACK) color for CMYK (0-100).
-	 * @param $ret (boolean) If true do not send the command.
-	 * @param $name (string) Spot color name (if any).
-	 * @return (string) The PDF command.
+	 * @param float $col1 GRAY level for single color, or Red color for RGB (0-255), or CYAN color for CMYK (0-100).
+	 * @param float $col2 GREEN color for RGB (0-255), or MAGENTA color for CMYK (0-100).
+	 * @param float $col3 BLUE color for RGB (0-255), or YELLOW color for CMYK (0-100).
+	 * @param float $col4 KEY (BLACK) color for CMYK (0-100).
+	 * @param boolean $ret If true do not send the command.
+	 * @param string $name Spot color name (if any).
+	 * @return string The PDF command.
 	 * @public
 	 * @since 1.3
 	 * @see SetFillColorArray(), SetDrawColor(), SetTextColor(), Rect(), Cell(), MultiCell()
 	 */
-	public function SetFillColor($col1 = 0, $col2 = -1, $col3 = -1, $col4 = -1, $ret = false, $name = '')
-	{
+	public function setFillColor($col1=0, $col2=-1, $col3=-1, $col4=-1, $ret=false, $name='') {
 		return $this->setColor('fill', $col1, $col2, $col3, $col4, $ret, $name);
 	}
 
 	/**
 	 * Defines the color used for text. It can be expressed in RGB components or gray scale. The method can be called before the first page is created and the value is retained from page to page.
-	 * @param $col1 (float) GRAY level for single color, or Red color for RGB (0-255), or CYAN color for CMYK (0-100).
-	 * @param $col2 (float) GREEN color for RGB (0-255), or MAGENTA color for CMYK (0-100).
-	 * @param $col3 (float) BLUE color for RGB (0-255), or YELLOW color for CMYK (0-100).
-	 * @param $col4 (float) KEY (BLACK) color for CMYK (0-100).
-	 * @param $ret (boolean) If true do not send the command.
-	 * @param $name (string) Spot color name (if any).
-	 * @return (string) Empty string.
+	 * @param float $col1 GRAY level for single color, or Red color for RGB (0-255), or CYAN color for CMYK (0-100).
+	 * @param float $col2 GREEN color for RGB (0-255), or MAGENTA color for CMYK (0-100).
+	 * @param float $col3 BLUE color for RGB (0-255), or YELLOW color for CMYK (0-100).
+	 * @param float $col4 KEY (BLACK) color for CMYK (0-100).
+	 * @param boolean $ret If true do not send the command.
+	 * @param string $name Spot color name (if any).
+	 * @return string Empty string.
 	 * @public
 	 * @since 1.3
 	 * @see SetTextColorArray(), SetDrawColor(), SetFillColor(), Text(), Cell(), MultiCell()
 	 */
-	public function SetTextColor($col1 = 0, $col2 = -1, $col3 = -1, $col4 = -1, $ret = false, $name = '')
-	{
+	public function setTextColor($col1=0, $col2=-1, $col3=-1, $col4=-1, $ret=false, $name='') {
 		return $this->setColor('text', $col1, $col2, $col3, $col4, $ret, $name);
 	}
 
 	/**
 	 * Returns the length of a string in user unit. A font must be selected.<br>
-	 * @param $s (string) The string whose length is to be computed
-	 * @param $fontname (string) Family font. It can be either a name defined by AddFont() or one of the standard families. It is also possible to pass an empty string, in that case, the current family is retained.
-	 * @param $fontstyle (string) Font style. Possible values are (case insensitive):<ul><li>empty string: regular</li><li>B: bold</li><li>I: italic</li><li>U: underline</li><li>D: line-through</li><li>O: overline</li></ul> or any combination. The default value is regular.
-	 * @param $fontsize (float) Font size in points. The default value is the current size.
-	 * @param $getarray (boolean) if true returns an array of characters widths, if false returns the total length.
-	 * @return mixed int total string length or array of characted widths
+	 * @param string $s The string whose length is to be computed
+	 * @param string $fontname Family font. It can be either a name defined by AddFont() or one of the standard families. It is also possible to pass an empty string, in that case, the current family is retained.
+	 * @param string $fontstyle Font style. Possible values are (case insensitive):<ul><li>empty string: regular</li><li>B: bold</li><li>I: italic</li><li>U: underline</li><li>D: line-through</li><li>O: overline</li></ul> or any combination. The default value is regular.
+	 * @param float $fontsize Font size in points. The default value is the current size.
+	 * @param boolean $getarray if true returns an array of characters widths, if false returns the total length.
+	 * @return float[]|float total string length or array of characted widths
+	 * @phpstan-return ($getarray is true ? float[] : float) total string length or array of characted widths
 	 * @author Nicola Asuni
 	 * @public
 	 * @since 1.2
 	 */
-	public function GetStringWidth($s, $fontname = '', $fontstyle = '', $fontsize = 0, $getarray = false)
-	{
+	public function GetStringWidth($s, $fontname='', $fontstyle='', $fontsize=0, $getarray=false) {
 		return $this->GetArrStringWidth(TCPDF_FONTS::utf8Bidi(TCPDF_FONTS::UTF8StringToArray($s, $this->isunicode, $this->CurrentFont), $s, $this->tmprtl, $this->isunicode, $this->CurrentFont), $fontname, $fontstyle, $fontsize, $getarray);
 	}
 
 	/**
 	 * Returns the string length of an array of chars in user unit or an array of characters widths. A font must be selected.<br>
-	 * @param $sa (string) The array of chars whose total length is to be computed
-	 * @param $fontname (string) Family font. It can be either a name defined by AddFont() or one of the standard families. It is also possible to pass an empty string, in that case, the current family is retained.
-	 * @param $fontstyle (string) Font style. Possible values are (case insensitive):<ul><li>empty string: regular</li><li>B: bold</li><li>I: italic</li><li>U: underline</li><li>D: line through</li><li>O: overline</li></ul> or any combination. The default value is regular.
-	 * @param $fontsize (float) Font size in points. The default value is the current size.
-	 * @param $getarray (boolean) if true returns an array of characters widths, if false returns the total length.
-	 * @return mixed int total string length or array of characted widths
+	 * @param array $sa The array of chars whose total length is to be computed
+	 * @param string $fontname Family font. It can be either a name defined by AddFont() or one of the standard families. It is also possible to pass an empty string, in that case, the current family is retained.
+	 * @param string $fontstyle Font style. Possible values are (case insensitive):<ul><li>empty string: regular</li><li>B: bold</li><li>I: italic</li><li>U: underline</li><li>D: line through</li><li>O: overline</li></ul> or any combination. The default value is regular.
+	 * @param float $fontsize Font size in points. The default value is the current size.
+	 * @param boolean $getarray if true returns an array of characters widths, if false returns the total length.
+	 * @return float[]|float total string length or array of characted widths
+	 * @phpstan-return ($getarray is true ? float[] : float) total string length or array of characted widths
 	 * @author Nicola Asuni
 	 * @public
 	 * @since 2.4.000 (2008-03-06)
 	 */
-	public function GetArrStringWidth($sa, $fontname = '', $fontstyle = '', $fontsize = 0, $getarray = false)
-	{
+	public function GetArrStringWidth($sa, $fontname='', $fontstyle='', $fontsize=0, $getarray=false) {
 		// store current values
 		if (!TCPDF_STATIC::empty_string($fontname)) {
 			$prev_FontFamily = $this->FontFamily;
 			$prev_FontStyle = $this->FontStyle;
 			$prev_FontSizePt = $this->FontSizePt;
-			$this->SetFont($fontname, $fontstyle, $fontsize, '', 'default', false);
+			$this->setFont($fontname, $fontstyle, $fontsize, '', 'default', false);
 		}
 		// convert UTF-8 array to Latin1 if required
 		if ($this->isunicode AND (!$this->isUnicodeFont())) {
@@ -4182,7 +4155,7 @@ class TCPDF
 		}
 		// restore previous values
 		if (!TCPDF_STATIC::empty_string($fontname)) {
-			$this->SetFont($prev_FontFamily, $prev_FontStyle, $prev_FontSizePt, '', 'default', false);
+			$this->setFont($prev_FontFamily, $prev_FontStyle, $prev_FontSizePt, '', 'default', false);
 		}
 		if ($getarray) {
 			return $wa;
@@ -4192,15 +4165,14 @@ class TCPDF
 
 	/**
 	 * Returns the length of the char in user unit for the current font considering current stretching and spacing (tracking).
-	 * @param $char (int) The char code whose length is to be returned
-	 * @param $notlast (boolean) If false ignore the font-spacing.
+	 * @param int $char The char code whose length is to be returned
+	 * @param boolean $notlast If false ignore the font-spacing.
 	 * @return float char width
 	 * @author Nicola Asuni
 	 * @public
 	 * @since 2.4.000 (2008-03-06)
 	 */
-	public function GetCharWidth($char, $notlast = true)
-	{
+	public function GetCharWidth($char, $notlast=true) {
 		// get raw width
 		$chw = $this->getRawCharWidth($char);
 		if (($this->font_spacing < 0) OR (($this->font_spacing > 0) AND $notlast)) {
@@ -4216,20 +4188,19 @@ class TCPDF
 
 	/**
 	 * Returns the length of the char in user unit for the current font.
-	 * @param $char (int) The char code whose length is to be returned
+	 * @param int $char The char code whose length is to be returned
 	 * @return float char width
 	 * @author Nicola Asuni
 	 * @public
 	 * @since 5.9.000 (2010-09-28)
 	 */
-	public function getRawCharWidth($char)
-	{
+	public function getRawCharWidth($char) {
 		if ($char == 173) {
 			// SHY character will not be printed
 			return (0);
 		}
-		if (isset($this->CurrentFont['cw'][$char])) {
-			$w = $this->CurrentFont['cw'][$char];
+		if (isset($this->CurrentFont['cw'][intval($char)])) {
+			$w = $this->CurrentFont['cw'][intval($char)];
 		} elseif (isset($this->CurrentFont['dw'])) {
 			// default width
 			$w = $this->CurrentFont['dw'];
@@ -4244,13 +4215,12 @@ class TCPDF
 
 	/**
 	 * Returns the numbero of characters in a string.
-	 * @param $s (string) The input string.
+	 * @param string $s The input string.
 	 * @return int number of characters
 	 * @public
 	 * @since 2.0.0001 (2008-01-07)
 	 */
-	public function GetNumChars($s)
-	{
+	public function GetNumChars($s) {
 		if ($this->isUnicodeFont()) {
 			return count(TCPDF_FONTS::UTF8StringToArray($s, $this->isunicode, $this->CurrentFont));
 		}
@@ -4262,8 +4232,7 @@ class TCPDF
 	 * @protected
 	 * @since 4.0.013 (2008-07-28)
 	 */
-	protected function getFontsList()
-	{
+	protected function getFontsList() {
 		if (($fontsdir = opendir(TCPDF_FONTS::_getfontpath())) !== false) {
 			while (($file = readdir($fontsdir)) !== false) {
 				if (substr($file, -4) == '.php') {
@@ -4278,17 +4247,16 @@ class TCPDF
 	 * Imports a TrueType, Type1, core, or CID0 font and makes it available.
 	 * It is necessary to generate a font definition file first (read /fonts/utils/README.TXT).
 	 * The definition file (and the font file itself when embedding) must be present either in the current directory or in the one indicated by K_PATH_FONTS if the constant is defined. If it could not be found, the error "Could not include font definition file" is generated.
-	 * @param $family (string) Font family. The name can be chosen arbitrarily. If it is a standard family name, it will override the corresponding font.
-	 * @param $style (string) Font style. Possible values are (case insensitive):<ul><li>empty string: regular (default)</li><li>B: bold</li><li>I: italic</li><li>BI or IB: bold italic</li></ul>
-	 * @param $fontfile (string) The font definition file. By default, the name is built from the family and style, in lower case with no spaces.
-	 * @return array containing the font data, or false in case of error.
-	 * @param $subset (mixed) if true embedd only a subset of the font (stores only the information related to the used characters); if false embedd full font; if 'default' uses the default value set using setFontSubsetting(). This option is valid only for TrueTypeUnicode fonts. If you want to enable users to change the document, set this parameter to false. If you subset the font, the person who receives your PDF would need to have your same font in order to make changes to your PDF. The file size of the PDF would also be smaller because you are embedding only part of a font.
+	 * @param string $family Font family. The name can be chosen arbitrarily. If it is a standard family name, it will override the corresponding font.
+	 * @param string $style Font style. Possible values are (case insensitive):<ul><li>empty string: regular (default)</li><li>B: bold</li><li>I: italic</li><li>BI or IB: bold italic</li></ul>
+	 * @param string $fontfile The font definition file. By default, the name is built from the family and style, in lower case with no spaces.
+	 * @return array|false array containing the font data, or false in case of error.
+	 * @param mixed $subset if true embedd only a subset of the font (stores only the information related to the used characters); if false embedd full font; if 'default' uses the default value set using setFontSubsetting(). This option is valid only for TrueTypeUnicode fonts. If you want to enable users to change the document, set this parameter to false. If you subset the font, the person who receives your PDF would need to have your same font in order to make changes to your PDF. The file size of the PDF would also be smaller because you are embedding only part of a font.
 	 * @public
 	 * @since 1.5
 	 * @see SetFont(), setFontSubsetting()
 	 */
-	public function AddFont($family, $style = '', $fontfile = '', $subset = 'default')
-	{
+	public function AddFont($family, $style='', $fontfile='', $subset='default') {
 		if ($subset === 'default') {
 			$subset = $this->font_subsetting;
 		}
@@ -4323,7 +4291,7 @@ class TCPDF
 			// all fonts must be embedded
 			$family = 'pdfa'.$family;
 		}
-		$tempstyle = strtoupper($style);
+		$tempstyle = strtoupper($style === null ? '' : $style);
 		$style = '';
 		// underline
 		if (strpos($tempstyle, 'U') !== false) {
@@ -4390,7 +4358,23 @@ class TCPDF
 		}
 		// include font file
 		if (!TCPDF_STATIC::empty_string($fontfile) AND (@TCPDF_STATIC::file_exists($fontfile))) {
-			include $fontfile;
+			$type=null;
+			$name=null;
+			$desc=null;
+			$up=-null;
+			$ut=null;
+			$cw=null;
+			$cbbox=null;
+			$dw=null;
+			$enc=null;
+			$cidinfo=null;
+			$file=null;
+			$ctg=null;
+			$diff=null;
+			$originalsize=null;
+			$size1=null;
+			$size2=null;
+			include($fontfile);
 		} else {
 			$this->Error('Could not include font definition file: '.$family.'');
 		}
@@ -4450,7 +4434,7 @@ class TCPDF
 			$this->Error('Unknow font type: '.$type.'');
 		}
 		// set name if unset
-		if (!isset($name) OR empty($name)) {
+		if (empty($name)) {
 			$name = $fontkey;
 		}
 		// create artificial font style variations if missing (only works with non-embedded fonts)
@@ -4493,7 +4477,7 @@ class TCPDF
 			// we are inside an XObject template
 			$this->xobjects[$this->xobjid]['fonts'][$fontkey] = $this->numfonts;
 		}
-		if (isset($diff) AND (!empty($diff))) {
+		if (!empty($diff)) {
 			//Search existing encodings
 			$d = 0;
 			$nb = count($this->diffs);
@@ -4511,7 +4495,7 @@ class TCPDF
 		}
 		if (!TCPDF_STATIC::empty_string($file)) {
 			if (!isset($this->FontFiles[$file])) {
-				if ((strcasecmp($type, 'TrueType') == 0) OR (strcasecmp($type, 'TrueTypeUnicode') == 0)) {
+				if ((strcasecmp($type,'TrueType') == 0) OR (strcasecmp($type, 'TrueTypeUnicode') == 0)) {
 					$this->FontFiles[$file] = array('length1' => $originalsize, 'fontdir' => $fontdir, 'subset' => $subset, 'fontkeys' => array($fontkey));
 				} elseif ($type != 'core') {
 					$this->FontFiles[$file] = array('length1' => $size1, 'length2' => $size2, 'fontdir' => $fontdir, 'subset' => $subset, 'fontkeys' => array($fontkey));
@@ -4533,19 +4517,18 @@ class TCPDF
 	 * The method can be called before the first page is created and the font is retained from page to page.
 	 * If you just wish to change the current font size, it is simpler to call SetFontSize().
 	 * Note: for the standard fonts, the font metric files must be accessible. There are three possibilities for this:<ul><li>They are in the current directory (the one where the running script lies)</li><li>They are in one of the directories defined by the include_path parameter</li><li>They are in the directory defined by the K_PATH_FONTS constant</li></ul><br />
-	 * @param $family (string) Family font. It can be either a name defined by AddFont() or one of the standard Type1 families (case insensitive):<ul><li>times (Times-Roman)</li><li>timesb (Times-Bold)</li><li>timesi (Times-Italic)</li><li>timesbi (Times-BoldItalic)</li><li>helvetica (Helvetica)</li><li>helveticab (Helvetica-Bold)</li><li>helveticai (Helvetica-Oblique)</li><li>helveticabi (Helvetica-BoldOblique)</li><li>courier (Courier)</li><li>courierb (Courier-Bold)</li><li>courieri (Courier-Oblique)</li><li>courierbi (Courier-BoldOblique)</li><li>symbol (Symbol)</li><li>zapfdingbats (ZapfDingbats)</li></ul> It is also possible to pass an empty string. In that case, the current family is retained.
-	 * @param $style (string) Font style. Possible values are (case insensitive):<ul><li>empty string: regular</li><li>B: bold</li><li>I: italic</li><li>U: underline</li><li>D: line through</li><li>O: overline</li></ul> or any combination. The default value is regular. Bold and italic styles do not apply to Symbol and ZapfDingbats basic fonts or other fonts when not defined.
-	 * @param $size (float) Font size in points. The default value is the current size. If no size has been specified since the beginning of the document, the value taken is 12
-	 * @param $fontfile (string) The font definition file. By default, the name is built from the family and style, in lower case with no spaces.
-	 * @param $subset (mixed) if true embedd only a subset of the font (stores only the information related to the used characters); if false embedd full font; if 'default' uses the default value set using setFontSubsetting(). This option is valid only for TrueTypeUnicode fonts. If you want to enable users to change the document, set this parameter to false. If you subset the font, the person who receives your PDF would need to have your same font in order to make changes to your PDF. The file size of the PDF would also be smaller because you are embedding only part of a font.
-	 * @param $out (boolean) if true output the font size command, otherwise only set the font properties.
+	 * @param string $family Family font. It can be either a name defined by AddFont() or one of the standard Type1 families (case insensitive):<ul><li>times (Times-Roman)</li><li>timesb (Times-Bold)</li><li>timesi (Times-Italic)</li><li>timesbi (Times-BoldItalic)</li><li>helvetica (Helvetica)</li><li>helveticab (Helvetica-Bold)</li><li>helveticai (Helvetica-Oblique)</li><li>helveticabi (Helvetica-BoldOblique)</li><li>courier (Courier)</li><li>courierb (Courier-Bold)</li><li>courieri (Courier-Oblique)</li><li>courierbi (Courier-BoldOblique)</li><li>symbol (Symbol)</li><li>zapfdingbats (ZapfDingbats)</li></ul> It is also possible to pass an empty string. In that case, the current family is retained.
+	 * @param string $style Font style. Possible values are (case insensitive):<ul><li>empty string: regular</li><li>B: bold</li><li>I: italic</li><li>U: underline</li><li>D: line through</li><li>O: overline</li></ul> or any combination. The default value is regular. Bold and italic styles do not apply to Symbol and ZapfDingbats basic fonts or other fonts when not defined.
+	 * @param float|null $size Font size in points. The default value is the current size. If no size has been specified since the beginning of the document, the value taken is 12
+	 * @param string $fontfile The font definition file. By default, the name is built from the family and style, in lower case with no spaces.
+	 * @param mixed $subset if true embedd only a subset of the font (stores only the information related to the used characters); if false embedd full font; if 'default' uses the default value set using setFontSubsetting(). This option is valid only for TrueTypeUnicode fonts. If you want to enable users to change the document, set this parameter to false. If you subset the font, the person who receives your PDF would need to have your same font in order to make changes to your PDF. The file size of the PDF would also be smaller because you are embedding only part of a font.
+	 * @param boolean $out if true output the font size command, otherwise only set the font properties.
 	 * @author Nicola Asuni
 	 * @public
 	 * @since 1.0
 	 * @see AddFont(), SetFontSize()
 	 */
-	public function SetFont($family, $style = '', $size = null, $fontfile = '', $subset = 'default', $out = true)
-	{
+	public function setFont($family, $style='', $size=null, $fontfile='', $subset='default', $out=true) {
 		//Select a font; size given in points
 		if ($size === null) {
 			$size = $this->FontSizePt;
@@ -4562,20 +4545,19 @@ class TCPDF
 			$this->setFontSubBuffer($this->CurrentFont['fontkey'], 'subsetchars', $this->CurrentFont['subsetchars']);
 		}
 		$this->CurrentFont = $this->getFontBuffer($fontdata['fontkey']);
-		$this->SetFontSize($size, $out);
+		$this->setFontSize($size, $out);
 	}
 
 	/**
 	 * Defines the size of the current font.
-	 * @param $size (float) The font size in points.
-	 * @param $out (boolean) if true output the font size command, otherwise only set the font properties.
+	 * @param float $size The font size in points.
+	 * @param boolean $out if true output the font size command, otherwise only set the font properties.
 	 * @public
 	 * @since 1.0
 	 * @see SetFont()
 	 */
-	public function SetFontSize($size, $out = true)
-	{
-		$size = (float) $size;
+	public function setFontSize($size, $out=true) {
+		$size = (float)$size;
 		// font size in points
 		$this->FontSizePt = $size;
 		// font size in user units
@@ -4615,8 +4597,7 @@ class TCPDF
 	 * @public
 	 * @since 5.9.152 (2012-03-23)
 	 */
-	public function getFontBBox()
-	{
+	public function getFontBBox() {
 		$fbbox = array();
 		if (isset($this->CurrentFont['desc']['FontBBox'])) {
 			$tmpbbox = explode(' ', substr($this->CurrentFont['desc']['FontBBox'], 1, -1));
@@ -4651,23 +4632,21 @@ class TCPDF
 
 	/**
 	 * Convert a relative font measure into absolute value.
-	 * @param $s (int) Font measure.
+	 * @param int $s Font measure.
 	 * @return float Absolute measure.
 	 * @since 5.9.186 (2012-09-13)
 	 */
-	public function getAbsFontMeasure($s)
-	{
+	public function getAbsFontMeasure($s) {
 		return ($s * $this->FontSize / 1000);
 	}
 
 	/**
 	 * Returns the glyph bounding box of the specified character in the current font in user units.
-	 * @param $char (int) Input character code.
-	 * @return mixed array(xMin, yMin, xMax, yMax) or FALSE if not defined.
+	 * @param int $char Input character code.
+	 * @return false|array array(xMin, yMin, xMax, yMax) or FALSE if not defined.
 	 * @since 5.9.186 (2012-09-13)
 	 */
-	public function getCharBBox($char)
-	{
+	public function getCharBBox($char) {
 		$c = intval($char);
 		if (isset($this->CurrentFont['cw'][$c])) {
 			// glyph is defined ... use zero width & height for glyphs without outlines
@@ -4682,16 +4661,15 @@ class TCPDF
 
 	/**
 	 * Return the font descent value
-	 * @param $font (string) font name
-	 * @param $style (string) font style
-	 * @param $size (float) The size (in points)
+	 * @param string $font font name
+	 * @param string $style font style
+	 * @param float $size The size (in points)
 	 * @return int font descent
 	 * @public
 	 * @author Nicola Asuni
 	 * @since 4.9.003 (2010-03-30)
 	 */
-	public function getFontDescent($font, $style = '', $size = 0)
-	{
+	public function getFontDescent($font, $style='', $size=0) {
 		$fontdata = $this->AddFont($font, $style);
 		$fontinfo = $this->getFontBuffer($fontdata['fontkey']);
 		if (isset($fontinfo['desc']['Descent']) AND ($fontinfo['desc']['Descent'] <= 0)) {
@@ -4704,16 +4682,15 @@ class TCPDF
 
 	/**
 	 * Return the font ascent value.
-	 * @param $font (string) font name
-	 * @param $style (string) font style
-	 * @param $size (float) The size (in points)
+	 * @param string $font font name
+	 * @param string $style font style
+	 * @param float $size The size (in points)
 	 * @return int font ascent
 	 * @public
 	 * @author Nicola Asuni
 	 * @since 4.9.003 (2010-03-30)
 	 */
-	public function getFontAscent($font, $style = '', $size = 0)
-	{
+	public function getFontAscent($font, $style='', $size=0) {
 		$fontdata = $this->AddFont($font, $style);
 		$fontinfo = $this->getFontBuffer($fontdata['fontkey']);
 		if (isset($fontinfo['desc']['Ascent']) AND ($fontinfo['desc']['Ascent'] > 0)) {
@@ -4726,15 +4703,14 @@ class TCPDF
 
 	/**
 	 * Return true in the character is present in the specified font.
-	 * @param $char (mixed) Character to check (integer value or string)
-	 * @param $font (string) Font name (family name).
-	 * @param $style (string) Font style.
-	 * @return (boolean) true if the char is defined, false otherwise.
+	 * @param mixed $char Character to check (integer value or string)
+	 * @param string $font Font name (family name).
+	 * @param string $style Font style.
+	 * @return bool true if the char is defined, false otherwise.
 	 * @public
 	 * @since 5.9.153 (2012-03-28)
 	 */
-	public function isCharDefined($char, $font = '', $style = '')
-	{
+	public function isCharDefined($char, $font='', $style='') {
 		if (is_string($char)) {
 			// get character code
 			$char = TCPDF_FONTS::UTF8StringToArray($char, $this->isunicode, $this->CurrentFont);
@@ -4753,16 +4729,15 @@ class TCPDF
 
 	/**
 	 * Replace missing font characters on selected font with specified substitutions.
-	 * @param $text (string) Text to process.
-	 * @param $font (string) Font name (family name).
-	 * @param $style (string) Font style.
-	 * @param $subs (array) Array of possible character substitutions. The key is the character to check (integer value) and the value is a single intege value or an array of possible substitutes.
-	 * @return (string) Processed text.
+	 * @param string $text Text to process.
+	 * @param string $font Font name (family name).
+	 * @param string $style Font style.
+	 * @param array $subs Array of possible character substitutions. The key is the character to check (integer value) and the value is a single intege value or an array of possible substitutes.
+	 * @return string Processed text.
 	 * @public
 	 * @since 5.9.153 (2012-03-28)
 	 */
-	public function replaceMissingChars($text, $font = '', $style = '', $subs = array())
-	{
+	public function replaceMissingChars($text, $font='', $style='', $subs=array()) {
 		if (empty($subs)) {
 			return $text;
 		}
@@ -4778,7 +4753,7 @@ class TCPDF
 				if (isset($subs[$chr])) {
 					// we have available substitutions
 					if (is_array($subs[$chr])) {
-						foreach ($subs[$chr] as $s) {
+						foreach($subs[$chr] as $s) {
 							if (isset($fontinfo['cw'][$s])) {
 								$uniarr[$k] = $s;
 								break;
@@ -4795,12 +4770,11 @@ class TCPDF
 
 	/**
 	 * Defines the default monospaced font.
-	 * @param $font (string) Font name.
+	 * @param string $font Font name.
 	 * @public
 	 * @since 4.5.025
 	 */
-	public function SetDefaultMonospacedFont($font)
-	{
+	public function setDefaultMonospacedFont($font) {
 		$this->default_monospaced_font = $font;
 	}
 
@@ -4811,8 +4785,7 @@ class TCPDF
 	 * @since 1.5
 	 * @see Cell(), Write(), Image(), Link(), SetLink()
 	 */
-	public function AddLink()
-	{
+	public function AddLink() {
 		// create a new internal link
 		$n = count($this->links) + 1;
 		$this->links[$n] = array('p' => 0, 'y' => 0, 'f' => false);
@@ -4821,17 +4794,16 @@ class TCPDF
 
 	/**
 	 * Defines the page and position a link points to.
-	 * @param $link (int) The link identifier returned by AddLink()
-	 * @param $y (float) Ordinate of target position; -1 indicates the current position. The default value is 0 (top of page)
-	 * @param $page (int) Number of target page; -1 indicates the current page (default value). If you prefix a page number with the * character, then this page will not be changed when adding/deleting/moving pages.
+	 * @param int $link The link identifier returned by AddLink()
+	 * @param float $y Ordinate of target position; -1 indicates the current position. The default value is 0 (top of page)
+	 * @param int|string $page Number of target page; -1 indicates the current page (default value). If you prefix a page number with the * character, then this page will not be changed when adding/deleting/moving pages.
 	 * @public
 	 * @since 1.5
 	 * @see AddLink()
 	 */
-	public function SetLink($link, $y = 0, $page = -1)
-	{
+	public function setLink($link, $y=0, $page=-1) {
 		$fixed = false;
-		if (!empty($page) AND ($page[0] == '*')) {
+		if (!empty($page) AND (substr($page, 0, 1) == '*')) {
 			$page = intval(substr($page, 1));
 			// this page number will not be changed when moving/add/deleting pages
 			$fixed = true;
@@ -4848,36 +4820,34 @@ class TCPDF
 	/**
 	 * Puts a link on a rectangular area of the page.
 	 * Text or image links are generally put via Cell(), Write() or Image(), but this method can be useful for instance to define a clickable area inside an image.
-	 * @param $x (float) Abscissa of the upper-left corner of the rectangle
-	 * @param $y (float) Ordinate of the upper-left corner of the rectangle
-	 * @param $w (float) Width of the rectangle
-	 * @param $h (float) Height of the rectangle
-	 * @param $link (mixed) URL or identifier returned by AddLink()
-	 * @param $spaces (int) number of spaces on the text to link
+	 * @param float $x Abscissa of the upper-left corner of the rectangle
+	 * @param float $y Ordinate of the upper-left corner of the rectangle
+	 * @param float $w Width of the rectangle
+	 * @param float $h Height of the rectangle
+	 * @param mixed $link URL or identifier returned by AddLink()
+	 * @param int $spaces number of spaces on the text to link
 	 * @public
 	 * @since 1.5
 	 * @see AddLink(), Annotation(), Cell(), Write(), Image()
 	 */
-	public function Link($x, $y, $w, $h, $link, $spaces = 0)
-	{
+	public function Link($x, $y, $w, $h, $link, $spaces=0) {
 		$this->Annotation($x, $y, $w, $h, $link, array('Subtype'=>'Link'), $spaces);
 	}
 
 	/**
 	 * Puts a markup annotation on a rectangular area of the page.
 	 * !!!!THE ANNOTATION SUPPORT IS NOT YET FULLY IMPLEMENTED !!!!
-	 * @param $x (float) Abscissa of the upper-left corner of the rectangle
-	 * @param $y (float) Ordinate of the upper-left corner of the rectangle
-	 * @param $w (float) Width of the rectangle
-	 * @param $h (float) Height of the rectangle
-	 * @param $text (string) annotation text or alternate content
-	 * @param $opt (array) array of options (see section 8.4 of PDF reference 1.7).
-	 * @param $spaces (int) number of spaces on the text to link
+	 * @param float $x Abscissa of the upper-left corner of the rectangle
+	 * @param float $y Ordinate of the upper-left corner of the rectangle
+	 * @param float $w Width of the rectangle
+	 * @param float $h Height of the rectangle
+	 * @param string $text annotation text or alternate content
+	 * @param array $opt array of options (see section 8.4 of PDF reference 1.7).
+	 * @param int $spaces number of spaces on the text to link
 	 * @public
 	 * @since 4.0.018 (2008-08-06)
 	 */
-	public function Annotation($x, $y, $w, $h, $text, $opt = array('Subtype'=>'Text'), $spaces = 0)
-	{
+	public function Annotation($x, $y, $w, $h, $text, $opt=array('Subtype'=>'Text'), $spaces=0) {
 		if ($this->inxobj) {
 			// store parameters for later use on template
 			$this->xobjects[$this->xobjid]['annotations'][] = array('x' => $x, 'y' => $y, 'w' => $w, 'h' => $h, 'text' => $text, 'opt' => $opt, 'spaces' => $spaces);
@@ -4967,16 +4937,15 @@ class TCPDF
 	 * @protected
 	 * @see Annotation()
 	 */
-	protected function _putEmbeddedFiles()
-	{
-		if ($this->pdfa_mode && $this->pdfa_version != 3) {
+	protected function _putEmbeddedFiles() {
+		if ($this->pdfa_mode && $this->pdfa_version != 3)  {
 			// embedded files are not allowed in PDF/A mode version 1 and 2
 			return;
 		}
 		reset($this->embeddedfiles);
 		foreach ($this->embeddedfiles as $filename => $filedata) {
-			$data = TCPDF_STATIC::fileGetContents($filedata['file']);
-			if ($data !== false) {
+		    $data = $this->getCachedFileContents($filedata['file']);
+			if ($data !== FALSE) {
 				$rawsize = strlen($data);
 				if ($rawsize > 0) {
 					// update name tree
@@ -5014,32 +4983,31 @@ class TCPDF
 	/**
 	 * Prints a text cell at the specified position.
 	 * This method allows to place a string precisely on the page.
-	 * @param $x (float) Abscissa of the cell origin
-	 * @param $y (float) Ordinate of the cell origin
-	 * @param $txt (string) String to print
-	 * @param $fstroke (int) outline size in user units (false = disable)
-	 * @param $fclip (boolean) if true activate clipping mode (you must call StartTransform() before this function and StopTransform() to stop the clipping tranformation).
-	 * @param $ffill (boolean) if true fills the text
-	 * @param $border (mixed) Indicates if borders must be drawn around the cell. The value can be a number:<ul><li>0: no border (default)</li><li>1: frame</li></ul> or a string containing some or all of the following characters (in any order):<ul><li>L: left</li><li>T: top</li><li>R: right</li><li>B: bottom</li></ul> or an array of line styles for each border group - for example: array('LTRB' => array('width' => 2, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => array(0, 0, 0)))
-	 * @param $ln (int) Indicates where the current position should go after the call. Possible values are:<ul><li>0: to the right (or left for RTL languages)</li><li>1: to the beginning of the next line</li><li>2: below</li></ul>Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value: 0.
-	 * @param $align (string) Allows to center or align the text. Possible values are:<ul><li>L or empty string: left align (default value)</li><li>C: center</li><li>R: right align</li><li>J: justify</li></ul>
-	 * @param $fill (boolean) Indicates if the cell background must be painted (true) or transparent (false).
-	 * @param $link (mixed) URL or identifier returned by AddLink().
-	 * @param $stretch (int) font stretch mode: <ul><li>0 = disabled</li><li>1 = horizontal scaling only if text is larger than cell width</li><li>2 = forced horizontal scaling to fit cell width</li><li>3 = character spacing only if text is larger than cell width</li><li>4 = forced character spacing to fit cell width</li></ul> General font stretching and scaling values will be preserved when possible.
-	 * @param $ignore_min_height (boolean) if true ignore automatic minimum height value.
-	 * @param $calign (string) cell vertical alignment relative to the specified Y value. Possible values are:<ul><li>T : cell top</li><li>A : font top</li><li>L : font baseline</li><li>D : font bottom</li><li>B : cell bottom</li></ul>
-	 * @param $valign (string) text vertical alignment inside the cell. Possible values are:<ul><li>T : top</li><li>C : center</li><li>B : bottom</li></ul>
-	 * @param $rtloff (boolean) if true uses the page top-left corner as origin of axis for $x and $y initial position.
+	 * @param float $x Abscissa of the cell origin
+	 * @param float $y Ordinate of the cell origin
+	 * @param string $txt String to print
+	 * @param int $fstroke outline size in user units (0 = disable)
+	 * @param boolean $fclip if true activate clipping mode (you must call StartTransform() before this function and StopTransform() to stop the clipping tranformation).
+	 * @param boolean $ffill if true fills the text
+	 * @param mixed $border Indicates if borders must be drawn around the cell. The value can be a number:<ul><li>0: no border (default)</li><li>1: frame</li></ul> or a string containing some or all of the following characters (in any order):<ul><li>L: left</li><li>T: top</li><li>R: right</li><li>B: bottom</li></ul> or an array of line styles for each border group - for example: array('LTRB' => array('width' => 2, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => array(0, 0, 0)))
+	 * @param int $ln Indicates where the current position should go after the call. Possible values are:<ul><li>0: to the right (or left for RTL languages)</li><li>1: to the beginning of the next line</li><li>2: below</li></ul>Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value: 0.
+	 * @param string $align Allows to center or align the text. Possible values are:<ul><li>L or empty string: left align (default value)</li><li>C: center</li><li>R: right align</li><li>J: justify</li></ul>
+	 * @param boolean $fill Indicates if the cell background must be painted (true) or transparent (false).
+	 * @param mixed $link URL or identifier returned by AddLink().
+	 * @param int $stretch font stretch mode: <ul><li>0 = disabled</li><li>1 = horizontal scaling only if text is larger than cell width</li><li>2 = forced horizontal scaling to fit cell width</li><li>3 = character spacing only if text is larger than cell width</li><li>4 = forced character spacing to fit cell width</li></ul> General font stretching and scaling values will be preserved when possible.
+	 * @param boolean $ignore_min_height if true ignore automatic minimum height value.
+	 * @param string $calign cell vertical alignment relative to the specified Y value. Possible values are:<ul><li>T : cell top</li><li>A : font top</li><li>L : font baseline</li><li>D : font bottom</li><li>B : cell bottom</li></ul>
+	 * @param string $valign text vertical alignment inside the cell. Possible values are:<ul><li>T : top</li><li>C : center</li><li>B : bottom</li></ul>
+	 * @param boolean $rtloff if true uses the page top-left corner as origin of axis for $x and $y initial position.
 	 * @public
 	 * @since 1.0
 	 * @see Cell(), Write(), MultiCell(), WriteHTML(), WriteHTMLCell()
 	 */
-	public function Text($x, $y, $txt, $fstroke = false, $fclip = false, $ffill = true, $border = 0, $ln = 0, $align = '', $fill = false, $link = '', $stretch = 0, $ignore_min_height = false, $calign = 'T', $valign = 'M', $rtloff = false)
-	{
+	public function Text($x, $y, $txt, $fstroke=0, $fclip=false, $ffill=true, $border=0, $ln=0, $align='', $fill=false, $link='', $stretch=0, $ignore_min_height=false, $calign='T', $valign='M', $rtloff=false) {
 		$textrendermode = $this->textrendermode;
 		$textstrokewidth = $this->textstrokewidth;
 		$this->setTextRenderingMode($fstroke, $ffill, $fclip);
-		$this->SetXY($x, $y, $rtloff);
+		$this->setXY($x, $y, $rtloff);
 		$this->Cell(0, 0, $txt, $border, $ln, $align, $fill, $link, $stretch, $ignore_min_height, $calign, $valign);
 		// restore previous rendering mode
 		$this->textrendermode = $textrendermode;
@@ -5050,13 +5018,12 @@ class TCPDF
 	 * Whenever a page break condition is met, the method is called, and the break is issued or not depending on the returned value.
 	 * The default implementation returns a value according to the mode selected by SetAutoPageBreak().<br />
 	 * This method is called automatically and should not be called directly by the application.
-	 * @return boolean
+	 * @return bool
 	 * @public
 	 * @since 1.4
 	 * @see SetAutoPageBreak()
 	 */
-	public function AcceptPageBreak()
-	{
+	public function AcceptPageBreak() {
 		if ($this->num_columns > 1) {
 			// multi column mode
 			if ($this->current_column < ($this->num_columns - 1)) {
@@ -5076,15 +5043,14 @@ class TCPDF
 
 	/**
 	 * Add page if needed.
-	 * @param $h (float) Cell height. Default value: 0.
-	 * @param $y (mixed) starting y position, leave empty for current position.
-	 * @param $addpage (boolean) if true add a page, otherwise only return the true/false state
-	 * @return boolean true in case of page break, false otherwise.
+	 * @param float $h Cell height. Default value: 0.
+	 * @param float|null $y starting y position, leave empty for current position.
+	 * @param bool  $addpage if true add a page, otherwise only return the true/false state
+	 * @return bool true in case of page break, false otherwise.
 	 * @since 3.2.000 (2008-07-01)
 	 * @protected
 	 */
-	protected function checkPageBreak($h = 0, $y = '', $addpage = true)
-	{
+	protected function checkPageBreak($h=0, $y=null, $addpage=true) {
 		if (TCPDF_STATIC::empty_string($y)) {
 			$y = $this->y;
 		}
@@ -5122,24 +5088,23 @@ class TCPDF
 	/**
 	 * Prints a cell (rectangular area) with optional borders, background color and character string. The upper-left corner of the cell corresponds to the current position. The text can be aligned or centered. After the call, the current position moves to the right or to the next line. It is possible to put a link on the text.<br />
 	 * If automatic page breaking is enabled and the cell goes beyond the limit, a page break is done before outputting.
-	 * @param $w (float) Cell width. If 0, the cell extends up to the right margin.
-	 * @param $h (float) Cell height. Default value: 0.
-	 * @param $txt (string) String to print. Default value: empty string.
-	 * @param $border (mixed) Indicates if borders must be drawn around the cell. The value can be a number:<ul><li>0: no border (default)</li><li>1: frame</li></ul> or a string containing some or all of the following characters (in any order):<ul><li>L: left</li><li>T: top</li><li>R: right</li><li>B: bottom</li></ul> or an array of line styles for each border group - for example: array('LTRB' => array('width' => 2, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => array(0, 0, 0)))
-	 * @param $ln (int) Indicates where the current position should go after the call. Possible values are:<ul><li>0: to the right (or left for RTL languages)</li><li>1: to the beginning of the next line</li><li>2: below</li></ul> Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value: 0.
-	 * @param $align (string) Allows to center or align the text. Possible values are:<ul><li>L or empty string: left align (default value)</li><li>C: center</li><li>R: right align</li><li>J: justify</li></ul>
-	 * @param $fill (boolean) Indicates if the cell background must be painted (true) or transparent (false).
-	 * @param $link (mixed) URL or identifier returned by AddLink().
-	 * @param $stretch (int) font stretch mode: <ul><li>0 = disabled</li><li>1 = horizontal scaling only if text is larger than cell width</li><li>2 = forced horizontal scaling to fit cell width</li><li>3 = character spacing only if text is larger than cell width</li><li>4 = forced character spacing to fit cell width</li></ul> General font stretching and scaling values will be preserved when possible.
-	 * @param $ignore_min_height (boolean) if true ignore automatic minimum height value.
-	 * @param $calign (string) cell vertical alignment relative to the specified Y value. Possible values are:<ul><li>T : cell top</li><li>C : center</li><li>B : cell bottom</li><li>A : font top</li><li>L : font baseline</li><li>D : font bottom</li></ul>
-	 * @param $valign (string) text vertical alignment inside the cell. Possible values are:<ul><li>T : top</li><li>C : center</li><li>B : bottom</li></ul>
+	 * @param float $w Cell width. If 0, the cell extends up to the right margin.
+	 * @param float $h Cell height. Default value: 0.
+	 * @param string $txt String to print. Default value: empty string.
+	 * @param mixed $border Indicates if borders must be drawn around the cell. The value can be a number:<ul><li>0: no border (default)</li><li>1: frame</li></ul> or a string containing some or all of the following characters (in any order):<ul><li>L: left</li><li>T: top</li><li>R: right</li><li>B: bottom</li></ul> or an array of line styles for each border group - for example: array('LTRB' => array('width' => 2, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => array(0, 0, 0)))
+	 * @param int $ln Indicates where the current position should go after the call. Possible values are:<ul><li>0: to the right (or left for RTL languages)</li><li>1: to the beginning of the next line</li><li>2: below</li></ul> Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value: 0.
+	 * @param string $align Allows to center or align the text. Possible values are:<ul><li>L or empty string: left align (default value)</li><li>C: center</li><li>R: right align</li><li>J: justify</li></ul>
+	 * @param boolean $fill Indicates if the cell background must be painted (true) or transparent (false).
+	 * @param mixed $link URL or identifier returned by AddLink().
+	 * @param int $stretch font stretch mode: <ul><li>0 = disabled</li><li>1 = horizontal scaling only if text is larger than cell width</li><li>2 = forced horizontal scaling to fit cell width</li><li>3 = character spacing only if text is larger than cell width</li><li>4 = forced character spacing to fit cell width</li></ul> General font stretching and scaling values will be preserved when possible.
+	 * @param boolean $ignore_min_height if true ignore automatic minimum height value.
+	 * @param string $calign cell vertical alignment relative to the specified Y value. Possible values are:<ul><li>T : cell top</li><li>C : center</li><li>B : cell bottom</li><li>A : font top</li><li>L : font baseline</li><li>D : font bottom</li></ul>
+	 * @param string $valign text vertical alignment inside the cell. Possible values are:<ul><li>T : top</li><li>C : center</li><li>B : bottom</li></ul>
 	 * @public
 	 * @since 1.0
 	 * @see SetFont(), SetDrawColor(), SetFillColor(), SetTextColor(), SetLineWidth(), AddLink(), Ln(), MultiCell(), Write(), SetAutoPageBreak()
 	 */
-	public function Cell($w, $h = 0, $txt = '', $border = 0, $ln = 0, $align = '', $fill = false, $link = '', $stretch = 0, $ignore_min_height = false, $calign = 'T', $valign = 'M')
-	{
+	public function Cell($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=false, $link='', $stretch=0, $ignore_min_height=false, $calign='T', $valign='M') {
 		$prev_cell_margin = $this->cell_margin;
 		$prev_cell_padding = $this->cell_padding;
 		$this->adjustCellPadding($border);
@@ -5162,9 +5127,9 @@ class TCPDF
 			// print shadow
 			$this->x += $this->txtshadow['depth_w'];
 			$this->y += $this->txtshadow['depth_h'];
-			$this->SetFillColorArray($this->txtshadow['color']);
-			$this->SetTextColorArray($this->txtshadow['color']);
-			$this->SetDrawColorArray($this->txtshadow['color']);
+			$this->setFillColorArray($this->txtshadow['color']);
+			$this->setTextColorArray($this->txtshadow['color']);
+			$this->setDrawColorArray($this->txtshadow['color']);
 			if ($this->txtshadow['opacity'] != $alpha['CA']) {
 				$this->setAlpha($this->txtshadow['opacity'], $this->txtshadow['blend_mode']);
 			}
@@ -5174,9 +5139,9 @@ class TCPDF
 			//restore data
 			$this->x = $x;
 			$this->y = $y;
-			$this->SetFillColorArray($bc);
-			$this->SetTextColorArray($fc);
-			$this->SetDrawColorArray($sc);
+			$this->setFillColorArray($bc);
+			$this->setTextColorArray($fc);
+			$this->setDrawColorArray($sc);
 			if ($this->txtshadow['opacity'] != $alpha['CA']) {
 				$this->setAlpha($alpha['CA'], $alpha['BM'], $alpha['ca'], $alpha['AIS']);
 			}
@@ -5191,26 +5156,26 @@ class TCPDF
 	/**
 	 * Returns the PDF string code to print a cell (rectangular area) with optional borders, background color and character string. The upper-left corner of the cell corresponds to the current position. The text can be aligned or centered. After the call, the current position moves to the right or to the next line. It is possible to put a link on the text.<br />
 	 * If automatic page breaking is enabled and the cell goes beyond the limit, a page break is done before outputting.
-	 * @param $w (float) Cell width. If 0, the cell extends up to the right margin.
-	 * @param $h (float) Cell height. Default value: 0.
-	 * @param $txt (string) String to print. Default value: empty string.
-	 * @param $border (mixed) Indicates if borders must be drawn around the cell. The value can be a number:<ul><li>0: no border (default)</li><li>1: frame</li></ul> or a string containing some or all of the following characters (in any order):<ul><li>L: left</li><li>T: top</li><li>R: right</li><li>B: bottom</li></ul> or an array of line styles for each border group - for example: array('LTRB' => array('width' => 2, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => array(0, 0, 0)))
-	 * @param $ln (int) Indicates where the current position should go after the call. Possible values are:<ul><li>0: to the right (or left for RTL languages)</li><li>1: to the beginning of the next line</li><li>2: below</li></ul>Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value: 0.
-	 * @param $align (string) Allows to center or align the text. Possible values are:<ul><li>L or empty string: left align (default value)</li><li>C: center</li><li>R: right align</li><li>J: justify</li></ul>
-	 * @param $fill (boolean) Indicates if the cell background must be painted (true) or transparent (false).
-	 * @param $link (mixed) URL or identifier returned by AddLink().
-	 * @param $stretch (int) font stretch mode: <ul><li>0 = disabled</li><li>1 = horizontal scaling only if text is larger than cell width</li><li>2 = forced horizontal scaling to fit cell width</li><li>3 = character spacing only if text is larger than cell width</li><li>4 = forced character spacing to fit cell width</li></ul> General font stretching and scaling values will be preserved when possible.
-	 * @param $ignore_min_height (boolean) if true ignore automatic minimum height value.
-	 * @param $calign (string) cell vertical alignment relative to the specified Y value. Possible values are:<ul><li>T : cell top</li><li>C : center</li><li>B : cell bottom</li><li>A : font top</li><li>L : font baseline</li><li>D : font bottom</li></ul>
-	 * @param $valign (string) text vertical alignment inside the cell. Possible values are:<ul><li>T : top</li><li>M : middle</li><li>B : bottom</li></ul>
+	 * @param float $w Cell width. If 0, the cell extends up to the right margin.
+	 * @param float $h Cell height. Default value: 0.
+	 * @param string $txt String to print. Default value: empty string.
+	 * @param mixed $border Indicates if borders must be drawn around the cell. The value can be a number:<ul><li>0: no border (default)</li><li>1: frame</li></ul> or a string containing some or all of the following characters (in any order):<ul><li>L: left</li><li>T: top</li><li>R: right</li><li>B: bottom</li></ul> or an array of line styles for each border group - for example: array('LTRB' => array('width' => 2, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => array(0, 0, 0)))
+	 * @param int $ln Indicates where the current position should go after the call. Possible values are:<ul><li>0: to the right (or left for RTL languages)</li><li>1: to the beginning of the next line</li><li>2: below</li></ul>Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value: 0.
+	 * @param string $align Allows to center or align the text. Possible values are:<ul><li>L or empty string: left align (default value)</li><li>C: center</li><li>R: right align</li><li>J: justify</li></ul>
+	 * @param boolean $fill Indicates if the cell background must be painted (true) or transparent (false).
+	 * @param mixed $link URL or identifier returned by AddLink().
+	 * @param int $stretch font stretch mode: <ul><li>0 = disabled</li><li>1 = horizontal scaling only if text is larger than cell width</li><li>2 = forced horizontal scaling to fit cell width</li><li>3 = character spacing only if text is larger than cell width</li><li>4 = forced character spacing to fit cell width</li></ul> General font stretching and scaling values will be preserved when possible.
+	 * @param boolean $ignore_min_height if true ignore automatic minimum height value.
+	 * @param string $calign cell vertical alignment relative to the specified Y value. Possible values are:<ul><li>T : cell top</li><li>C : center</li><li>B : cell bottom</li><li>A : font top</li><li>L : font baseline</li><li>D : font bottom</li></ul>
+	 * @param string $valign text vertical alignment inside the cell. Possible values are:<ul><li>T : top</li><li>M : middle</li><li>B : bottom</li></ul>
 	 * @return string containing cell code
 	 * @protected
 	 * @since 1.0
 	 * @see Cell()
 	 */
-	protected function getCellCode($w, $h = 0, $txt = '', $border = 0, $ln = 0, $align = '', $fill = false, $link = '', $stretch = 0, $ignore_min_height = false, $calign = 'T', $valign = 'M')
-	{
+	protected function getCellCode($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=false, $link='', $stretch=0, $ignore_min_height=false, $calign='T', $valign='M') {
 		// replace 'NO-BREAK SPACE' (U+00A0) character with a simple space
+		$txt = is_null($txt) ? '' : $txt;
 		$txt = str_replace(TCPDF_FONTS::unichr(160, $this->isunicode), ' ', $txt);
 		$prev_cell_margin = $this->cell_margin;
 		$prev_cell_padding = $this->cell_padding;
@@ -5586,12 +5551,12 @@ class TCPDF
 			$xdk = $xdx * $k;
 			// print text
 			$s .= sprintf('BT %F %F Td [(%s)] TJ ET', $xdk, (($this->h - $basefonty) * $k), $txt2);
-			if (isset($uniblock)) {
+			if (isset($uniblock)) { // @phpstan-ignore-line
 				// print overlapping characters as separate string
 				$xshift = 0; // horizontal shift
 				$ty = (($this->h - $basefonty + (0.2 * $this->FontSize)) * $k);
 				$spw = (($w - $txwidth - $this->cell_padding['L'] - $this->cell_padding['R']) / ($ns?$ns:1));
-				foreach ($uniblock as $uk => $uniarr) {
+				foreach ($uniblock as $uk => $uniarr) { // @phpstan-ignore-line
 					if (($uk % 2) == 0) {
 						// x space to skip
 						if ($spacewidth != 0) {
@@ -5671,14 +5636,13 @@ class TCPDF
 
 	/**
 	 * Replace a char if is defined on the current font.
-	 * @param $oldchar (int) Integer code (unicode) of the character to replace.
-	 * @param $newchar (int) Integer code (unicode) of the new character.
+	 * @param int $oldchar Integer code (unicode) of the character to replace.
+	 * @param int $newchar Integer code (unicode) of the new character.
 	 * @return int the replaced char or the old char in case the new char i not defined
 	 * @protected
 	 * @since 5.9.167 (2012-06-22)
 	 */
-	protected function replaceChar($oldchar, $newchar)
-	{
+	protected function replaceChar($oldchar, $newchar) {
 		if ($this->isCharDefined($newchar)) {
 			// add the new char on the subset list
 			$this->CurrentFont['subsetchars'][$newchar] = true;
@@ -5691,18 +5655,17 @@ class TCPDF
 
 	/**
 	 * Returns the code to draw the cell border
-	 * @param $x (float) X coordinate.
-	 * @param $y (float) Y coordinate.
-	 * @param $w (float) Cell width.
-	 * @param $h (float) Cell height.
-	 * @param $brd (mixed) Indicates if borders must be drawn around the cell. The value can be a number:<ul><li>0: no border (default)</li><li>1: frame</li></ul> or a string containing some or all of the following characters (in any order):<ul><li>L: left</li><li>T: top</li><li>R: right</li><li>B: bottom</li></ul> or an array of line styles for each border group - for example: array('LTRB' => array('width' => 2, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => array(0, 0, 0)))
+	 * @param float $x X coordinate.
+	 * @param float $y Y coordinate.
+	 * @param float $w Cell width.
+	 * @param float $h Cell height.
+	 * @param string|array|int $brd Indicates if borders must be drawn around the cell. The value can be a number:<ul><li>0: no border (default)</li><li>1: frame</li></ul> or a string containing some or all of the following characters (in any order):<ul><li>L: left</li><li>T: top</li><li>R: right</li><li>B: bottom</li></ul> or an array of line styles for each border group - for example: array('LTRB' => array('width' => 2, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => array(0, 0, 0)))
 	 * @return string containing cell border code
 	 * @protected
 	 * @see SetLineStyle()
 	 * @since 5.7.000 (2010-08-02)
 	 */
-	protected function getCellBorder($x, $y, $w, $h, $brd)
-	{
+	protected function getCellBorder($x, $y, $w, $h, $brd) {
 		$s = ''; // string to be returned
 		if (empty($brd)) {
 			return $s;
@@ -5744,7 +5707,7 @@ class TCPDF
 			if (is_array($style) AND !empty($style)) {
 				// apply border style
 				$prev_style = $this->linestyleWidth.' '.$this->linestyleCap.' '.$this->linestyleJoin.' '.$this->linestyleDash.' '.$this->DrawColor.' ';
-				$s .= $this->SetLineStyle($style, true)."\n";
+				$s .= $this->setLineStyle($style, true)."\n";
 			}
 			switch ($mode) {
 				case 'ext': {
@@ -5792,25 +5755,25 @@ class TCPDF
 			if (strlen($border) == 4) {
 				$s .= sprintf('%F %F %F %F re S ', $xT, $yT, ($w * $k), (-$h * $k));
 			} elseif (strlen($border) == 3) {
-				if (strpos($border, 'B') === false) { // LTR
+				if (strpos($border,'B') === false) { // LTR
 					$s .= sprintf('%F %F m ', $xL, $yL);
 					$s .= sprintf('%F %F l ', $xT, $yT);
 					$s .= sprintf('%F %F l ', $xR, $yR);
 					$s .= sprintf('%F %F l ', $xB, $yB);
 					$s .= 'S ';
-				} elseif (strpos($border, 'L') === false) { // TRB
+				} elseif (strpos($border,'L') === false) { // TRB
 					$s .= sprintf('%F %F m ', $xT, $yT);
 					$s .= sprintf('%F %F l ', $xR, $yR);
 					$s .= sprintf('%F %F l ', $xB, $yB);
 					$s .= sprintf('%F %F l ', $xL, $yL);
 					$s .= 'S ';
-				} elseif (strpos($border, 'T') === false) { // RBL
+				} elseif (strpos($border,'T') === false) { // RBL
 					$s .= sprintf('%F %F m ', $xR, $yR);
 					$s .= sprintf('%F %F l ', $xB, $yB);
 					$s .= sprintf('%F %F l ', $xL, $yL);
 					$s .= sprintf('%F %F l ', $xT, $yT);
 					$s .= 'S ';
-				} elseif (strpos($border, 'R') === false) { // BLT
+				} elseif (strpos($border,'R') === false) { // BLT
 					$s .= sprintf('%F %F m ', $xB, $yB);
 					$s .= sprintf('%F %F l ', $xL, $yL);
 					$s .= sprintf('%F %F l ', $xT, $yT);
@@ -5818,34 +5781,34 @@ class TCPDF
 					$s .= 'S ';
 				}
 			} elseif (strlen($border) == 2) {
-				if ((strpos($border, 'L') !== false) AND (strpos($border, 'T') !== false)) { // LT
+				if ((strpos($border,'L') !== false) AND (strpos($border,'T') !== false)) { // LT
 					$s .= sprintf('%F %F m ', $xL, $yL);
 					$s .= sprintf('%F %F l ', $xT, $yT);
 					$s .= sprintf('%F %F l ', $xR, $yR);
 					$s .= 'S ';
-				} elseif ((strpos($border, 'T') !== false) AND (strpos($border, 'R') !== false)) { // TR
+				} elseif ((strpos($border,'T') !== false) AND (strpos($border,'R') !== false)) { // TR
 					$s .= sprintf('%F %F m ', $xT, $yT);
 					$s .= sprintf('%F %F l ', $xR, $yR);
 					$s .= sprintf('%F %F l ', $xB, $yB);
 					$s .= 'S ';
-				} elseif ((strpos($border, 'R') !== false) AND (strpos($border, 'B') !== false)) { // RB
+				} elseif ((strpos($border,'R') !== false) AND (strpos($border,'B') !== false)) { // RB
 					$s .= sprintf('%F %F m ', $xR, $yR);
 					$s .= sprintf('%F %F l ', $xB, $yB);
 					$s .= sprintf('%F %F l ', $xL, $yL);
 					$s .= 'S ';
-				} elseif ((strpos($border, 'B') !== false) AND (strpos($border, 'L') !== false)) { // BL
+				} elseif ((strpos($border,'B') !== false) AND (strpos($border,'L') !== false)) { // BL
 					$s .= sprintf('%F %F m ', $xB, $yB);
 					$s .= sprintf('%F %F l ', $xL, $yL);
 					$s .= sprintf('%F %F l ', $xT, $yT);
 					$s .= 'S ';
-				} elseif ((strpos($border, 'L') !== false) AND (strpos($border, 'R') !== false)) { // LR
+				} elseif ((strpos($border,'L') !== false) AND (strpos($border,'R') !== false)) { // LR
 					$s .= sprintf('%F %F m ', $xL, $yL);
 					$s .= sprintf('%F %F l ', $xT, $yT);
 					$s .= 'S ';
 					$s .= sprintf('%F %F m ', $xR, $yR);
 					$s .= sprintf('%F %F l ', $xB, $yB);
 					$s .= 'S ';
-				} elseif ((strpos($border, 'T') !== false) AND (strpos($border, 'B') !== false)) { // TB
+				} elseif ((strpos($border,'T') !== false) AND (strpos($border,'B') !== false)) { // TB
 					$s .= sprintf('%F %F m ', $xT, $yT);
 					$s .= sprintf('%F %F l ', $xR, $yR);
 					$s .= 'S ';
@@ -5854,19 +5817,19 @@ class TCPDF
 					$s .= 'S ';
 				}
 			} else { // strlen($border) == 1
-				if (strpos($border, 'L') !== false) { // L
+				if (strpos($border,'L') !== false) { // L
 					$s .= sprintf('%F %F m ', $xL, $yL);
 					$s .= sprintf('%F %F l ', $xT, $yT);
 					$s .= 'S ';
-				} elseif (strpos($border, 'T') !== false) { // T
+				} elseif (strpos($border,'T') !== false) { // T
 					$s .= sprintf('%F %F m ', $xT, $yT);
 					$s .= sprintf('%F %F l ', $xR, $yR);
 					$s .= 'S ';
-				} elseif (strpos($border, 'R') !== false) { // R
+				} elseif (strpos($border,'R') !== false) { // R
 					$s .= sprintf('%F %F m ', $xR, $yR);
 					$s .= sprintf('%F %F l ', $xB, $yB);
 					$s .= 'S ';
-				} elseif (strpos($border, 'B') !== false) { // B
+				} elseif (strpos($border,'B') !== false) { // B
 					$s .= sprintf('%F %F m ', $xB, $yB);
 					$s .= sprintf('%F %F l ', $xL, $yL);
 					$s .= 'S ';
@@ -5884,29 +5847,28 @@ class TCPDF
 	 * This method allows printing text with line breaks.
 	 * They can be automatic (as soon as the text reaches the right border of the cell) or explicit (via the \n character). As many cells as necessary are output, one below the other.<br />
 	 * Text can be aligned, centered or justified. The cell block can be framed and the background painted.
-	 * @param $w (float) Width of cells. If 0, they extend up to the right margin of the page.
-	 * @param $h (float) Cell minimum height. The cell extends automatically if needed.
-	 * @param $txt (string) String to print
-	 * @param $border (mixed) Indicates if borders must be drawn around the cell. The value can be a number:<ul><li>0: no border (default)</li><li>1: frame</li></ul> or a string containing some or all of the following characters (in any order):<ul><li>L: left</li><li>T: top</li><li>R: right</li><li>B: bottom</li></ul> or an array of line styles for each border group - for example: array('LTRB' => array('width' => 2, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => array(0, 0, 0)))
-	 * @param $align (string) Allows to center or align the text. Possible values are:<ul><li>L or empty string: left align</li><li>C: center</li><li>R: right align</li><li>J: justification (default value when $ishtml=false)</li></ul>
-	 * @param $fill (boolean) Indicates if the cell background must be painted (true) or transparent (false).
-	 * @param $ln (int) Indicates where the current position should go after the call. Possible values are:<ul><li>0: to the right</li><li>1: to the beginning of the next line [DEFAULT]</li><li>2: below</li></ul>
-	 * @param $x (float) x position in user units
-	 * @param $y (float) y position in user units
-	 * @param $reseth (boolean) if true reset the last cell height (default true).
-	 * @param $stretch (int) font stretch mode: <ul><li>0 = disabled</li><li>1 = horizontal scaling only if text is larger than cell width</li><li>2 = forced horizontal scaling to fit cell width</li><li>3 = character spacing only if text is larger than cell width</li><li>4 = forced character spacing to fit cell width</li></ul> General font stretching and scaling values will be preserved when possible.
-	 * @param $ishtml (boolean) INTERNAL USE ONLY -- set to true if $txt is HTML content (default = false). Never set this parameter to true, use instead writeHTMLCell() or writeHTML() methods.
-	 * @param $autopadding (boolean) if true, uses internal padding and automatically adjust it to account for line width.
-	 * @param $maxh (float) maximum height. It should be >= $h and less then remaining space to the bottom of the page, or 0 for disable this feature. This feature works only when $ishtml=false.
-	 * @param $valign (string) Vertical alignment of text (requires $maxh = $h > 0). Possible values are:<ul><li>T: TOP</li><li>M: middle</li><li>B: bottom</li></ul>. This feature works only when $ishtml=false and the cell must fit in a single page.
-	 * @param $fitcell (boolean) if true attempt to fit all the text within the cell by reducing the font size (do not work in HTML mode). $maxh must be greater than 0 and equal to $h.
+	 * @param float $w Width of cells. If 0, they extend up to the right margin of the page.
+	 * @param float $h Cell minimum height. The cell extends automatically if needed.
+	 * @param string $txt String to print
+	 * @param mixed $border Indicates if borders must be drawn around the cell. The value can be a number:<ul><li>0: no border (default)</li><li>1: frame</li></ul> or a string containing some or all of the following characters (in any order):<ul><li>L: left</li><li>T: top</li><li>R: right</li><li>B: bottom</li></ul> or an array of line styles for each border group - for example: array('LTRB' => array('width' => 2, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => array(0, 0, 0)))
+	 * @param string $align Allows to center or align the text. Possible values are:<ul><li>L or empty string: left align</li><li>C: center</li><li>R: right align</li><li>J: justification (default value when $ishtml=false)</li></ul>
+	 * @param boolean $fill Indicates if the cell background must be painted (true) or transparent (false).
+	 * @param int $ln Indicates where the current position should go after the call. Possible values are:<ul><li>0: to the right</li><li>1: to the beginning of the next line [DEFAULT]</li><li>2: below</li></ul>
+	 * @param float|null $x x position in user units
+	 * @param float|null $y y position in user units
+	 * @param boolean $reseth if true reset the last cell height (default true).
+	 * @param int $stretch font stretch mode: <ul><li>0 = disabled</li><li>1 = horizontal scaling only if text is larger than cell width</li><li>2 = forced horizontal scaling to fit cell width</li><li>3 = character spacing only if text is larger than cell width</li><li>4 = forced character spacing to fit cell width</li></ul> General font stretching and scaling values will be preserved when possible.
+	 * @param boolean $ishtml INTERNAL USE ONLY -- set to true if $txt is HTML content (default = false). Never set this parameter to true, use instead writeHTMLCell() or writeHTML() methods.
+	 * @param boolean $autopadding if true, uses internal padding and automatically adjust it to account for line width.
+	 * @param float $maxh maximum height. It should be >= $h and less then remaining space to the bottom of the page, or 0 for disable this feature. This feature works only when $ishtml=false.
+	 * @param string $valign Vertical alignment of text (requires $maxh = $h > 0). Possible values are:<ul><li>T: TOP</li><li>M: middle</li><li>B: bottom</li></ul>. This feature works only when $ishtml=false and the cell must fit in a single page.
+	 * @param boolean $fitcell if true attempt to fit all the text within the cell by reducing the font size (do not work in HTML mode). $maxh must be greater than 0 and equal to $h.
 	 * @return int Return the number of cells or 1 for html mode.
 	 * @public
 	 * @since 1.3
 	 * @see SetFont(), SetDrawColor(), SetFillColor(), SetTextColor(), SetLineWidth(), Cell(), Write(), SetAutoPageBreak()
 	 */
-	public function MultiCell($w, $h, $txt, $border = 0, $align = 'J', $fill = false, $ln = 1, $x = '', $y = '', $reseth = true, $stretch = 0, $ishtml = false, $autopadding = true, $maxh = 0, $valign = 'T', $fitcell = false)
-	{
+	public function MultiCell($w, $h, $txt, $border=0, $align='J', $fill=false, $ln=1, $x=null, $y=null, $reseth=true, $stretch=0, $ishtml=false, $autopadding=true, $maxh=0, $valign='T', $fitcell=false) {
 		$prev_cell_margin = $this->cell_margin;
 		$prev_cell_padding = $this->cell_padding;
 		// adjust internal padding
@@ -5921,7 +5883,7 @@ class TCPDF
 			$this->resetLastH();
 		}
 		if (!TCPDF_STATIC::empty_string($y)) {
-			$this->SetY($y); // set y in order to convert negative y values to positive ones
+			$this->setY($y); // set y in order to convert negative y values to positive ones
 		}
 		$y = $this->GetY();
 		$resth = 0;
@@ -5936,7 +5898,7 @@ class TCPDF
 		// get current column
 		$startcolumn = $this->current_column;
 		if (!TCPDF_STATIC::empty_string($x)) {
-			$this->SetX($x);
+			$this->setX($x);
 		} else {
 			$x = $this->GetX();
 		}
@@ -5997,7 +5959,7 @@ class TCPDF
 					$maxit = (2 * min(100, max(10, intval($fmax)))); // max number of iterations
 					while ($maxit >= 0) {
 						$fmid = (($fmax + $fmin) / 2);
-						$this->SetFontSize($fmid, false);
+						$this->setFontSize($fmid, false);
 						$this->resetLastH();
 						$text_height = $this->getStringHeight($w, $txt, $reseth, $autopadding, $mc_padding, $border);
 						$diff = ($maxh - $text_height);
@@ -6013,11 +5975,11 @@ class TCPDF
 					}
 					if ($maxit < 0) {
 						// premature exit, we get the minimum font value to fit the cell
-						$this->SetFontSize($fmin);
+						$this->setFontSize($fmin);
 						$this->resetLastH();
 						$text_height = $this->getStringHeight($w, $txt, $reseth, $autopadding, $mc_padding, $border);
 					} else {
-						$this->SetFontSize($fmid);
+						$this->setFontSize($fmid);
 						$this->resetLastH();
 					}
 				}
@@ -6034,7 +5996,7 @@ class TCPDF
 			$nl = $this->Write($this->lasth, $txt, '', 0, $align, true, $stretch, false, true, $maxh, 0, $mc_margin);
 			if ($fitcell) {
 				// restore font size
-				$this->SetFontSize($prev_FontSizePt);
+				$this->setFontSize($prev_FontSizePt);
 			}
 		}
 		if ($autopadding) {
@@ -6081,7 +6043,7 @@ class TCPDF
 			$this->setPage($page);
 			if ($this->num_columns < 2) {
 				// single-column mode
-				$this->SetX($x);
+				$this->setX($x);
 				$this->y = $this->tMargin;
 			}
 			// account for margin changes
@@ -6243,15 +6205,15 @@ class TCPDF
 		}
 		if ($ln > 0) {
 			//Go to the beginning of the next line
-			$this->SetY($currentY + $mc_margin['B']);
+			$this->setY($currentY + $mc_margin['B']);
 			if ($ln == 2) {
-				$this->SetX($x + $w + $mc_margin['L'] + $mc_margin['R']);
+				$this->setX($x + $w + $mc_margin['L'] + $mc_margin['R']);
 			}
 		} else {
 			// go left or right by case
 			$this->setPage($startpage);
 			$this->y = $y;
-			$this->SetX($x + $w + $mc_margin['L'] + $mc_margin['R']);
+			$this->setX($x + $w + $mc_margin['L'] + $mc_margin['R']);
 		}
 		$this->setContentMark();
 		$this->cell_padding = $prev_cell_padding;
@@ -6263,20 +6225,19 @@ class TCPDF
 
 	/**
 	 * This method return the estimated number of lines for print a simple text string using Multicell() method.
-	 * @param $txt (string) String for calculating his height
-	 * @param $w (float) Width of cells. If 0, they extend up to the right margin of the page.
-	 * @param $reseth (boolean) if true reset the last cell height (default false).
-	 * @param $autopadding (boolean) if true, uses internal padding and automatically adjust it to account for line width (default true).
-	 * @param $cellpadding (float) Internal cell padding, if empty uses default cell padding.
-	 * @param $border (mixed) Indicates if borders must be drawn around the cell. The value can be a number:<ul><li>0: no border (default)</li><li>1: frame</li></ul> or a string containing some or all of the following characters (in any order):<ul><li>L: left</li><li>T: top</li><li>R: right</li><li>B: bottom</li></ul> or an array of line styles for each border group - for example: array('LTRB' => array('width' => 2, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => array(0, 0, 0)))
+	 * @param string $txt String for calculating his height
+	 * @param float $w Width of cells. If 0, they extend up to the right margin of the page.
+	 * @param boolean $reseth if true reset the last cell height (default false).
+	 * @param boolean $autopadding if true, uses internal padding and automatically adjust it to account for line width (default true).
+	 * @param array|null $cellpadding Internal cell padding, if empty uses default cell padding.
+	 * @param mixed $border Indicates if borders must be drawn around the cell. The value can be a number:<ul><li>0: no border (default)</li><li>1: frame</li></ul> or a string containing some or all of the following characters (in any order):<ul><li>L: left</li><li>T: top</li><li>R: right</li><li>B: bottom</li></ul> or an array of line styles for each border group - for example: array('LTRB' => array('width' => 2, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => array(0, 0, 0)))
 	 * @return float Return the minimal height needed for multicell method for printing the $txt param.
 	 * @author Alexander Escalona Fern\E1ndez, Nicola Asuni
 	 * @public
 	 * @since 4.5.011
 	 */
-	public function getNumLines($txt, $w = 0, $reseth = false, $autopadding = true, $cellpadding = '', $border = 0)
-	{
-		if ($txt === null) {
+	public function getNumLines($txt, $w=0, $reseth=false, $autopadding=true, $cellpadding=null, $border=0) {
+		if ($txt === NULL) {
 			return 0;
 		}
 		if ($txt === '') {
@@ -6358,7 +6319,7 @@ class TCPDF
 	 *  $start_page = $pdf->getPage();
 	 *  // call your printing functions with your parameters
 	 *  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-	 *  $pdf->MultiCell($w=0, $h=0, $txt, $border=1, $align='L', $fill=false, $ln=1, $x='', $y='', $reseth=true, $stretch=0, $ishtml=false, $autopadding=true, $maxh=0);
+	 *  $pdf->MultiCell($w=0, $h=0, $txt, $border=1, $align='L', $fill=false, $ln=1, $x=null, $y=null, $reseth=true, $stretch=0, $ishtml=false, $autopadding=true, $maxh=0);
 	 *  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	 *  // get the new Y
 	 *  $end_y = $pdf->GetY();
@@ -6384,18 +6345,17 @@ class TCPDF
 	 *  // restore previous object
 	 *  $pdf = $pdf->rollbackTransaction();
 	 *
-	 * @param $w (float) Width of cells. If 0, they extend up to the right margin of the page.
-	 * @param $txt (string) String for calculating his height
-	 * @param $reseth (boolean) if true reset the last cell height (default false).
-	 * @param $autopadding (boolean) if true, uses internal padding and automatically adjust it to account for line width (default true).
-	 * @param $cellpadding (float) Internal cell padding, if empty uses default cell padding.
-	 * @param $border (mixed) Indicates if borders must be drawn around the cell. The value can be a number:<ul><li>0: no border (default)</li><li>1: frame</li></ul> or a string containing some or all of the following characters (in any order):<ul><li>L: left</li><li>T: top</li><li>R: right</li><li>B: bottom</li></ul> or an array of line styles for each border group - for example: array('LTRB' => array('width' => 2, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => array(0, 0, 0)))
+	 * @param float $w Width of cells. If 0, they extend up to the right margin of the page.
+	 * @param string $txt String for calculating his height
+	 * @param boolean $reseth if true reset the last cell height (default false).
+	 * @param boolean $autopadding if true, uses internal padding and automatically adjust it to account for line width (default true).
+	 * @param array|null $cellpadding Internal cell padding, if empty uses default cell padding.
+	 * @param mixed $border Indicates if borders must be drawn around the cell. The value can be a number:<ul><li>0: no border (default)</li><li>1: frame</li></ul> or a string containing some or all of the following characters (in any order):<ul><li>L: left</li><li>T: top</li><li>R: right</li><li>B: bottom</li></ul> or an array of line styles for each border group - for example: array('LTRB' => array('width' => 2, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => array(0, 0, 0)))
 	 * @return float Return the minimal height needed for multicell method for printing the $txt param.
 	 * @author Nicola Asuni, Alexander Escalona Fern\E1ndez
 	 * @public
 	 */
-	public function getStringHeight($w, $txt, $reseth = false, $autopadding = true, $cellpadding = '', $border = 0)
-	{
+	public function getStringHeight($w, $txt, $reseth=false, $autopadding=true, $cellpadding=null, $border=0) {
 		// adjust internal padding
 		$prev_cell_padding = $this->cell_padding;
 		$prev_lasth = $this->lasth;
@@ -6412,31 +6372,30 @@ class TCPDF
 
 	/**
 	 * This method prints text from the current position.<br />
-	 * @param $h (float) Line height
-	 * @param $txt (string) String to print
-	 * @param $link (mixed) URL or identifier returned by AddLink()
-	 * @param $fill (boolean) Indicates if the cell background must be painted (true) or transparent (false).
-	 * @param $align (string) Allows to center or align the text. Possible values are:<ul><li>L or empty string: left align (default value)</li><li>C: center</li><li>R: right align</li><li>J: justify</li></ul>
-	 * @param $ln (boolean) if true set cursor at the bottom of the line, otherwise set cursor at the top of the line.
-	 * @param $stretch (int) font stretch mode: <ul><li>0 = disabled</li><li>1 = horizontal scaling only if text is larger than cell width</li><li>2 = forced horizontal scaling to fit cell width</li><li>3 = character spacing only if text is larger than cell width</li><li>4 = forced character spacing to fit cell width</li></ul> General font stretching and scaling values will be preserved when possible.
-	 * @param $firstline (boolean) if true prints only the first line and return the remaining string.
-	 * @param $firstblock (boolean) if true the string is the starting of a line.
-	 * @param $maxh (float) maximum height. It should be >= $h and less then remaining space to the bottom of the page, or 0 for disable this feature.
-	 * @param $wadj (float) first line width will be reduced by this amount (used in HTML mode).
-	 * @param $margin (array) margin array of the parent container
+	 * @param float $h Line height
+	 * @param string $txt String to print
+	 * @param mixed $link URL or identifier returned by AddLink()
+	 * @param boolean $fill Indicates if the cell background must be painted (true) or transparent (false).
+	 * @param string $align Allows to center or align the text. Possible values are:<ul><li>L or empty string: left align (default value)</li><li>C: center</li><li>R: right align</li><li>J: justify</li></ul>
+	 * @param boolean $ln if true set cursor at the bottom of the line, otherwise set cursor at the top of the line.
+	 * @param int $stretch font stretch mode: <ul><li>0 = disabled</li><li>1 = horizontal scaling only if text is larger than cell width</li><li>2 = forced horizontal scaling to fit cell width</li><li>3 = character spacing only if text is larger than cell width</li><li>4 = forced character spacing to fit cell width</li></ul> General font stretching and scaling values will be preserved when possible.
+	 * @param boolean $firstline if true prints only the first line and return the remaining string.
+	 * @param boolean $firstblock if true the string is the starting of a line.
+	 * @param float $maxh maximum height. It should be >= $h and less then remaining space to the bottom of the page, or 0 for disable this feature.
+	 * @param float $wadj first line width will be reduced by this amount (used in HTML mode).
+	 * @param array|null $margin margin array of the parent container
 	 * @return mixed Return the number of cells or the remaining string if $firstline = true.
 	 * @public
 	 * @since 1.5
 	 */
-	public function Write($h, $txt, $link = '', $fill = false, $align = '', $ln = false, $stretch = 0, $firstline = false, $firstblock = false, $maxh = 0, $wadj = 0, $margin = '')
-	{
+	public function Write($h, $txt, $link='', $fill=false, $align='', $ln=false, $stretch=0, $firstline=false, $firstblock=false, $maxh=0, $wadj=0, $margin=null) {
 		// check page for no-write regions and adapt page margins if necessary
 		list($this->x, $this->y) = $this->checkPageRegions($h, $this->x, $this->y);
 		if (strlen($txt) == 0) {
 			// fix empty text
 			$txt = ' ';
 		}
-		if ($margin === '') {
+		if (!is_array($margin)) {
 			// set default margins
 			$margin = $this->cell_margin;
 		}
@@ -6461,7 +6420,7 @@ class TCPDF
 		// calculate maximum width for a single character on string
 		$chrw = $this->GetArrStringWidth($chars, '', '', 0, true);
 		array_walk($chrw, array($this, 'getRawCharWidth'));
-		$maxchwidth = max($chrw);
+		$maxchwidth = ((is_array($chrw) || $chrw instanceof Countable) && count($chrw) > 0) ? max($chrw) : 0;
 		// get array of chars
 		$uchars = TCPDF_FONTS::UTF8ArrayToUniArray($chars, $this->isunicode);
 		// get the number of characters
@@ -6538,7 +6497,7 @@ class TCPDF
 					$w = $linew;
 					$tmpcellpadding = $this->cell_padding;
 					if ($maxh == 0) {
-						$this->SetCellPadding(0);
+						$this->setCellPadding(0);
 					}
 				}
 				if ($firstblock AND $this->isRTLTextDir()) {
@@ -6561,14 +6520,16 @@ class TCPDF
 				$shy = false;
 				// account for margin changes
 				if ((($this->y + $this->lasth) > $this->PageBreakTrigger) AND ($this->inPageBody())) {
-					$this->AcceptPageBreak();
-					if ($this->rtl) {
-						$this->x -= $margin['R'];
-					} else {
-						$this->x += $margin['L'];
+					if ($this->AcceptPageBreak())
+					{
+						if ($this->rtl) {
+							$this->x -= $margin['R'];
+						} else {
+							$this->x += $margin['L'];
+						}
+						$this->lMargin += $margin['L'];
+						$this->rMargin += $margin['R'];
 					}
-					$this->lMargin += $margin['L'];
-					$this->rMargin += $margin['R'];
 				}
 				$w = $this->getRemainingWidth();
 				$wmax = ($w - $this->cell_padding['L'] - $this->cell_padding['R']);
@@ -6612,7 +6573,7 @@ class TCPDF
 					// *** very slow ***
 					$l = $this->GetArrStringWidth(TCPDF_FONTS::utf8Bidi(array_slice($chars, $j, ($i - $j)), '', $this->tmprtl, $this->isunicode, $this->CurrentFont));
 				} else {
-					$l += $this->GetCharWidth($c);
+					$l += $this->GetCharWidth($c, ($i+1 < $nb));
 				}
 				if (($l > $wmax) OR (($c == 173) AND (($l + $tmp_shy_replacement_width) >= $wmax))) {
 					if (($c == 173) AND (($l + $tmp_shy_replacement_width) > $wmax)) {
@@ -6649,7 +6610,7 @@ class TCPDF
 								$w = $linew;
 								$tmpcellpadding = $this->cell_padding;
 								if ($maxh == 0) {
-									$this->SetCellPadding(0);
+									$this->setCellPadding(0);
 								}
 							}
 							if ($firstblock AND $this->isRTLTextDir()) {
@@ -6693,7 +6654,7 @@ class TCPDF
 								$w = $linew;
 								$tmpcellpadding = $this->cell_padding;
 								if ($maxh == 0) {
-									$this->SetCellPadding(0);
+									$this->setCellPadding(0);
 								}
 							}
 							if ($firstblock AND $this->isRTLTextDir()) {
@@ -6741,7 +6702,7 @@ class TCPDF
 								$w = $linew;
 								$tmpcellpadding = $this->cell_padding;
 								if ($maxh == 0) {
-									$this->SetCellPadding(0);
+									$this->setCellPadding(0);
 								}
 							}
 							// print the line
@@ -6766,14 +6727,16 @@ class TCPDF
 					}
 					// account for margin changes
 					if ((($this->y + $this->lasth) > $this->PageBreakTrigger) AND ($this->inPageBody())) {
-						$this->AcceptPageBreak();
-						if ($this->rtl) {
-							$this->x -= $margin['R'];
-						} else {
-							$this->x += $margin['L'];
+						if ($this->AcceptPageBreak())
+						{
+							if ($this->rtl) {
+								$this->x -= $margin['R'];
+							} else {
+								$this->x += $margin['L'];
+							}
+							$this->lMargin += $margin['L'];
+							$this->rMargin += $margin['R'];
 						}
-						$this->lMargin += $margin['L'];
-						$this->rMargin += $margin['R'];
 					}
 					$w = $this->getRemainingWidth();
 					$wmax = $w - $this->cell_padding['L'] - $this->cell_padding['R'];
@@ -6794,13 +6757,10 @@ class TCPDF
 			switch ($align) {
 				case 'J':
 				case 'C': {
-					$w = $w;
 					break;
 				}
 				case 'L': {
-					if ($this->rtl) {
-						$w = $w;
-					} else {
+					if (!$this->rtl) {
 						$w = $l;
 					}
 					break;
@@ -6808,8 +6768,6 @@ class TCPDF
 				case 'R': {
 					if ($this->rtl) {
 						$w = $l;
-					} else {
-						$w = $w;
 					}
 					break;
 				}
@@ -6835,7 +6793,7 @@ class TCPDF
 				$w = $linew;
 				$tmpcellpadding = $this->cell_padding;
 				if ($maxh == 0) {
-					$this->SetCellPadding(0);
+					$this->setCellPadding(0);
 				}
 			}
 			if ($firstblock AND $this->isRTLTextDir()) {
@@ -6857,11 +6815,10 @@ class TCPDF
 
 	/**
 	 * Returns the remaining width between the current position and margins.
-	 * @return int Return the remaining width
+	 * @return float Return the remaining width
 	 * @protected
 	 */
-	protected function getRemainingWidth()
-	{
+	protected function getRemainingWidth() {
 		list($this->x, $this->y) = $this->checkPageRegions(0, $this->x, $this->y);
 		if ($this->rtl) {
 			return ($this->x - $this->lMargin);
@@ -6872,17 +6829,16 @@ class TCPDF
 
 	/**
 	 * Set the block dimensions accounting for page breaks and page/column fitting
-	 * @param $w (float) width
-	 * @param $h (float) height
-	 * @param $x (float) X coordinate
-	 * @param $y (float) Y coodiante
-	 * @param $fitonpage (boolean) if true the block is resized to not exceed page dimensions.
-	 * @return array($w, $h, $x, $y)
+	 * @param float $w width
+	 * @param float $h height
+	 * @param float $x X coordinate
+	 * @param float $y Y coodiante
+	 * @param boolean $fitonpage if true the block is resized to not exceed page dimensions.
+	 * @return array array($w, $h, $x, $y)
 	 * @protected
 	 * @since 5.5.009 (2010-07-05)
 	 */
-	protected function fitBlock($w, $h, $x, $y, $fitonpage = false)
-	{
+	protected function fitBlock($w, $h, $x, $y, $fitonpage=false) {
 		if ($w <= 0) {
 			// set maximum width
 			$w = ($this->w - $this->lMargin - $this->rMargin);
@@ -6927,6 +6883,8 @@ class TCPDF
 		}
 		// resize the block to be contained on the remaining available page or column space
 		if ($fitonpage) {
+			// fallback to avoid division by zero
+			$h = $h == 0 ? 1 : $h;
 			$ratio_wh = ($w / $h);
 			if (($y + $h) > $this->PageBreakTrigger) {
 				$h = $this->PageBreakTrigger - $y;
@@ -6954,44 +6912,49 @@ class TCPDF
 	 * The format can be specified explicitly or inferred from the file extension.<br />
 	 * It is possible to put a link on the image.<br />
 	 * Remark: if an image is used several times, only one copy will be embedded in the file.<br />
-	 * @param $file (string) Name of the file containing the image or a '@' character followed by the image data string. To link an image without embedding it on the document, set an asterisk character before the URL (i.e.: '*http://www.example.com/image.jpg').
-	 * @param $x (float) Abscissa of the upper-left corner (LTR) or upper-right corner (RTL).
-	 * @param $y (float) Ordinate of the upper-left corner (LTR) or upper-right corner (RTL).
-	 * @param $w (float) Width of the image in the page. If not specified or equal to zero, it is automatically calculated.
-	 * @param $h (float) Height of the image in the page. If not specified or equal to zero, it is automatically calculated.
-	 * @param $type (string) Image format. Possible values are (case insensitive): JPEG and PNG (whitout GD library) and all images supported by GD: GD, GD2, GD2PART, GIF, JPEG, PNG, BMP, XBM, XPM;. If not specified, the type is inferred from the file extension.
-	 * @param $link (mixed) URL or identifier returned by AddLink().
-	 * @param $align (string) Indicates the alignment of the pointer next to image insertion relative to image height. The value can be:<ul><li>T: top-right for LTR or top-left for RTL</li><li>M: middle-right for LTR or middle-left for RTL</li><li>B: bottom-right for LTR or bottom-left for RTL</li><li>N: next line</li></ul>
-	 * @param $resize (mixed) If true resize (reduce) the image to fit $w and $h (requires GD or ImageMagick library); if false do not resize; if 2 force resize in all cases (upscaling and downscaling).
-	 * @param $dpi (int) dot-per-inch resolution used on resize
-	 * @param $palign (string) Allows to center or align the image on the current line. Possible values are:<ul><li>L : left align</li><li>C : center</li><li>R : right align</li><li>'' : empty string : left for LTR or right for RTL</li></ul>
-	 * @param $ismask (boolean) true if this image is a mask, false otherwise
-	 * @param $imgmask (mixed) image object returned by this function or false
-	 * @param $border (mixed) Indicates if borders must be drawn around the cell. The value can be a number:<ul><li>0: no border (default)</li><li>1: frame</li></ul> or a string containing some or all of the following characters (in any order):<ul><li>L: left</li><li>T: top</li><li>R: right</li><li>B: bottom</li></ul> or an array of line styles for each border group - for example: array('LTRB' => array('width' => 2, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => array(0, 0, 0)))
-	 * @param $fitbox (mixed) If not false scale image dimensions proportionally to fit within the ($w, $h) box. $fitbox can be true or a 2 characters string indicating the image alignment inside the box. The first character indicate the horizontal alignment (L = left, C = center, R = right) the second character indicate the vertical algnment (T = top, M = middle, B = bottom).
-	 * @param $hidden (boolean) If true do not display the image.
-	 * @param $fitonpage (boolean) If true the image is resized to not exceed page dimensions.
-	 * @param $alt (boolean) If true the image will be added as alternative and not directly printed (the ID of the image will be returned).
-	 * @param $altimgs (array) Array of alternate images IDs. Each alternative image must be an array with two values: an integer representing the image ID (the value returned by the Image method) and a boolean value to indicate if the image is the default for printing.
-	 * @return image information
+	 * @param string $file Name of the file containing the image or a '@' character followed by the image data string. To link an image without embedding it on the document, set an asterisk character before the URL (i.e.: '*http://www.example.com/image.jpg').
+	 * @param float|null $x Abscissa of the upper-left corner (LTR) or upper-right corner (RTL).
+	 * @param float|null $y Ordinate of the upper-left corner (LTR) or upper-right corner (RTL).
+	 * @param float $w Width of the image in the page. If not specified or equal to zero, it is automatically calculated.
+	 * @param float $h Height of the image in the page. If not specified or equal to zero, it is automatically calculated.
+	 * @param string $type Image format. Possible values are (case insensitive): JPEG and PNG (whitout GD library) and all images supported by GD: GD, GD2, GD2PART, GIF, JPEG, PNG, BMP, XBM, XPM;. If not specified, the type is inferred from the file extension.
+	 * @param mixed $link URL or identifier returned by AddLink().
+	 * @param string $align Indicates the alignment of the pointer next to image insertion relative to image height. The value can be:<ul><li>T: top-right for LTR or top-left for RTL</li><li>M: middle-right for LTR or middle-left for RTL</li><li>B: bottom-right for LTR or bottom-left for RTL</li><li>N: next line</li></ul>
+	 * @param mixed $resize If true resize (reduce) the image to fit $w and $h (requires GD or ImageMagick library); if false do not resize; if 2 force resize in all cases (upscaling and downscaling).
+	 * @param int $dpi dot-per-inch resolution used on resize
+	 * @param string $palign Allows to center or align the image on the current line. Possible values are:<ul><li>L : left align</li><li>C : center</li><li>R : right align</li><li>'' : empty string : left for LTR or right for RTL</li></ul>
+	 * @param boolean $ismask true if this image is a mask, false otherwise
+	 * @param mixed $imgmask image object returned by this function or false
+	 * @param mixed $border Indicates if borders must be drawn around the cell. The value can be a number:<ul><li>0: no border (default)</li><li>1: frame</li></ul> or a string containing some or all of the following characters (in any order):<ul><li>L: left</li><li>T: top</li><li>R: right</li><li>B: bottom</li></ul> or an array of line styles for each border group - for example: array('LTRB' => array('width' => 2, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => array(0, 0, 0)))
+	 * @param mixed $fitbox If not false scale image dimensions proportionally to fit within the ($w, $h) box. $fitbox can be true or a 2 characters string indicating the image alignment inside the box. The first character indicate the horizontal alignment (L = left, C = center, R = right) the second character indicate the vertical algnment (T = top, M = middle, B = bottom).
+	 * @param boolean $hidden If true do not display the image.
+	 * @param boolean $fitonpage If true the image is resized to not exceed page dimensions.
+	 * @param boolean $alt If true the image will be added as alternative and not directly printed (the ID of the image will be returned).
+	 * @param array $altimgs Array of alternate images IDs. Each alternative image must be an array with two values: an integer representing the image ID (the value returned by the Image method) and a boolean value to indicate if the image is the default for printing.
+	 * @return mixed|false image information
 	 * @public
 	 * @since 1.1
 	 */
-	public function Image($file, $x = '', $y = '', $w = 0, $h = 0, $type = '', $link = '', $align = '', $resize = false, $dpi = 300, $palign = '', $ismask = false, $imgmask = false, $border = 0, $fitbox = false, $hidden = false, $fitonpage = false, $alt = false, $altimgs = array())
-	{
+	public function Image($file, $x=null, $y=null, $w=0, $h=0, $type='', $link='', $align='', $resize=false, $dpi=300, $palign='', $ismask=false, $imgmask=false, $border=0, $fitbox=false, $hidden=false, $fitonpage=false, $alt=false, $altimgs=array()) {
 		if ($this->state != 2) {
-			return;
+			return false;
 		}
-		if (strcmp($x, '') === 0) {
+		if (TCPDF_STATIC::empty_string($x)) {
 			$x = $this->x;
 		}
-		if (strcmp($y, '') === 0) {
+		if (TCPDF_STATIC::empty_string($y)) {
 			$y = $this->y;
 		}
 		// check page for no-write regions and adapt page margins if necessary
 		list($x, $y) = $this->checkPageRegions($h, $x, $y);
 		$exurl = ''; // external streams
-		$imsize = false;
+		$imsize = FALSE;
+
+        // Make sure the file variable is not empty or null because accessing $file[0] later
+        // results in error when running PHP 7.4
+        if (empty($file)) {
+            return false;
+        }
 		// check if we are passing an image as file or string
 		if ($file[0] === '@') {
 			// image from string
@@ -7003,25 +6966,21 @@ class TCPDF
 				$exurl = $file;
 			}
 			// check if file exist and it is valid
-			if (!@TCPDF_STATIC::file_exists($file)) {
-				// DOL CHANGE If we keep this, the image is not visible on pages after the first one.
-				//var_dump($file.' '.(!@TCPDF_STATIC::file_exists($file)));
+			if (!@$this->fileExists($file)) {
+				// @CHANGE DOL If we keep this, the image is not visible on pages after the first one.
+				//var_dump($file.' '.(!@$this->fileExists($file)));
 				//return false;
 				// try to encode spaces on filename
 				$tfile = str_replace(' ', '%20', $file);
-				if (@TCPDF_STATIC::file_exists($tfile)) {
+				if (@$this->fileExists($tfile)) {
 					$file = $tfile;
 				}
 			}
-			if (($imsize = @getimagesize($file)) === false) {
-				if (in_array($file, $this->imagekeys)) {
-					// get existing image data
-					$info = $this->getImageBuffer($file);
-					$imsize = array($info['w'], $info['h']);
-				} elseif (strpos($file, '__tcpdf_'.$this->file_id.'_img') === false) {
-					$imgdata = TCPDF_STATIC::fileGetContents($file);
-				}
-			}
+            if (false !== $info = $this->getImageBuffer($file)) {
+                $imsize = array($info['w'], $info['h']);
+            } elseif (($imsize = @getimagesize($file)) === FALSE && strpos($file, '__tcpdf_'.$this->file_id.'_img') === FALSE){
+                $imgdata = $this->getCachedFileContents($file);
+            }
 		}
 		if (!empty($imgdata)) {
 			// copy image to cache
@@ -7035,12 +6994,12 @@ class TCPDF
 			fclose($fp);
 			unset($imgdata);
 			$imsize = @getimagesize($file);
-			if ($imsize === false) {
+			if ($imsize === FALSE) {
 				unlink($file);
 				$file = $original_file;
 			}
 		}
-		if ($imsize === false) {
+		if ($imsize === FALSE) {
 			if (($w > 0) AND ($h > 0)) {
 				// get measures from specified data
 				$pw = $this->getHTMLUnitToUnits($w, 0, $this->pdfunit, true) * $this->imgscale * $this->k;
@@ -7141,14 +7100,14 @@ class TCPDF
 			$newimage = false;
 			// get existing image data
 			$info = $this->getImageBuffer($file);
-			if (strpos($file, '__tcpdf_'.$this->file_id.'_imgmask_') === false) {
+			if (strpos($file, '__tcpdf_'.$this->file_id.'_imgmask_') === FALSE) {
 				// check if the newer image is larger
 				$oldsize = ($info['w'] * $info['h']);
 				if ((($oldsize < $newsize) AND ($resize)) OR (($oldsize < $pixsize) AND (!$resize))) {
 					$newimage = true;
 				}
 			}
-		} elseif (($ismask === false) AND ($imgmask === false) AND (strpos($file, '__tcpdf_'.$this->file_id.'_imgmask_') === false)) {
+		} elseif (($ismask === false) AND ($imgmask === false) AND (strpos($file, '__tcpdf_'.$this->file_id.'_imgmask_') === FALSE)) {
 			// create temp image file (without alpha channel)
 			$tempfile_plain = K_PATH_CACHE.'__tcpdf_'.$this->file_id.'_imgmask_plain_'.$filehash;
 			// create temp alpha file
@@ -7178,8 +7137,6 @@ class TCPDF
 			} elseif ($type == 'jpg') {
 				$type = 'jpeg';
 			}
-			$mqr = TCPDF_STATIC::get_mqr();
-			TCPDF_STATIC::set_mqr(false);
 			// Specific image handlers (defined on TCPDF_IMAGES CLASS)
 			$mtd = '_parse'.$type;
 			// GD image handler function
@@ -7188,7 +7145,7 @@ class TCPDF
 			if ((method_exists('TCPDF_IMAGES', $mtd)) AND (!($resize AND (function_exists($gdfunction) OR extension_loaded('imagick'))))) {
 				// TCPDF image functions
 				$info = TCPDF_IMAGES::$mtd($file);
-				if (($ismask === false) AND ($imgmask === false) AND (strpos($file, '__tcpdf_'.$this->file_id.'_imgmask_') === false)
+				if (($ismask === false) AND ($imgmask === false) AND (strpos($file, '__tcpdf_'.$this->file_id.'_imgmask_') === FALSE)
 					AND (($info === 'pngalpha') OR (isset($info['trns']) AND !empty($info['trns'])))) {
 					return $this->ImagePngAlpha($file, $x, $y, $pixw, $pixh, $w, $h, 'PNG', $link, $align, $resize, $dpi, $palign, $filehash);
 				}
@@ -7212,7 +7169,7 @@ class TCPDF
 							$info = TCPDF_IMAGES::_toJPEG($img, $this->jpeg_quality, TCPDF_STATIC::getObjFilename('img', $this->file_id));
 						}
 					}
-				} catch (Exception $e) {
+				} catch(Exception $e) {
 					$info = false;
 				}
 			}
@@ -7226,9 +7183,9 @@ class TCPDF
 							$svgimg = substr($file, 1);
 						} else {
 							// get SVG file content
-							$svgimg = TCPDF_STATIC::fileGetContents($file);
+                            $svgimg = $this->getCachedFileContents($file);
 						}
-						if ($svgimg !== false) {
+						if ($svgimg !== FALSE) {
 							// get width and height
 							$regs = array();
 							if (preg_match('/<svg([^\>]*)>/si', $svgimg, $regs)) {
@@ -7273,15 +7230,14 @@ class TCPDF
 					$info = TCPDF_IMAGES::_parsejpeg($tempname);
 					unlink($tempname);
 					$img->destroy();
-				} catch (Exception $e) {
+				} catch(Exception $e) {
 					$info = false;
 				}
 			}
 			if ($info === false) {
 				// unable to process image
-				return;
+				return false;
 			}
-			TCPDF_STATIC::set_mqr($mqr);
 			if ($ismask) {
 				// force grayscale
 				$info['cs'] = 'DeviceGray';
@@ -7298,31 +7254,20 @@ class TCPDF
 			$info['i'] = $this->setImageBuffer($file, $info);
 		}
 		// set alignment
+		$this->img_rb_x = $x + $w;
 		$this->img_rb_y = $y + $h;
+
 		// set alignment
-		if ($this->rtl) {
-			if ($palign == 'L') {
-				$ximg = $this->lMargin;
-			} elseif ($palign == 'C') {
-				$ximg = ($this->w + $this->lMargin - $this->rMargin - $w) / 2;
-			} elseif ($palign == 'R') {
-				$ximg = $this->w - $this->rMargin - $w;
-			} else {
-				$ximg = $x - $w;
-			}
-			$this->img_rb_x = $ximg;
+		if ($palign == 'L') {
+			$ximg = $this->lMargin;
+		} elseif ($palign == 'C') {
+			$ximg = ($this->w + $this->lMargin - $this->rMargin - $w) / 2;
+		} elseif ($palign == 'R') {
+			$ximg = $this->w - $this->rMargin - $w;
 		} else {
-			if ($palign == 'L') {
-				$ximg = $this->lMargin;
-			} elseif ($palign == 'C') {
-				$ximg = ($this->w + $this->lMargin - $this->rMargin - $w) / 2;
-			} elseif ($palign == 'R') {
-				$ximg = $this->w - $this->rMargin - $w;
-			} else {
-				$ximg = $x;
-			}
-			$this->img_rb_x = $ximg + $w;
+			$ximg = $this->rtl ? $x - $w : $x;
 		}
+
 		if ($ismask OR $hidden) {
 			// image is not displayed
 			return $info['i'];
@@ -7348,7 +7293,7 @@ class TCPDF
 			$this->Link($ximg, $y, $w, $h, $link, 0);
 		}
 		// set pointer to align the next text/objects
-		switch ($align) {
+		switch($align) {
 			case 'T': {
 				$this->y = $y;
 				$this->x = $this->img_rb_x;
@@ -7365,7 +7310,7 @@ class TCPDF
 				break;
 			}
 			case 'N': {
-				$this->SetY($this->img_rb_y);
+				$this->setY($this->img_rb_y);
 				break;
 			}
 			default:{
@@ -7382,27 +7327,26 @@ class TCPDF
 
 	/**
 	 * Extract info from a PNG image with alpha channel using the Imagick or GD library.
-	 * @param $file (string) Name of the file containing the image.
-	 * @param $x (float) Abscissa of the upper-left corner.
-	 * @param $y (float) Ordinate of the upper-left corner.
-	 * @param $wpx (float) Original width of the image in pixels.
-	 * @param $hpx (float) original height of the image in pixels.
-	 * @param $w (float) Width of the image in the page. If not specified or equal to zero, it is automatically calculated.
-	 * @param $h (float) Height of the image in the page. If not specified or equal to zero, it is automatically calculated.
-	 * @param $type (string) Image format. Possible values are (case insensitive): JPEG and PNG (whitout GD library) and all images supported by GD: GD, GD2, GD2PART, GIF, JPEG, PNG, BMP, XBM, XPM;. If not specified, the type is inferred from the file extension.
-	 * @param $link (mixed) URL or identifier returned by AddLink().
-	 * @param $align (string) Indicates the alignment of the pointer next to image insertion relative to image height. The value can be:<ul><li>T: top-right for LTR or top-left for RTL</li><li>M: middle-right for LTR or middle-left for RTL</li><li>B: bottom-right for LTR or bottom-left for RTL</li><li>N: next line</li></ul>
-	 * @param $resize (boolean) If true resize (reduce) the image to fit $w and $h (requires GD library).
-	 * @param $dpi (int) dot-per-inch resolution used on resize
-	 * @param $palign (string) Allows to center or align the image on the current line. Possible values are:<ul><li>L : left align</li><li>C : center</li><li>R : right align</li><li>'' : empty string : left for LTR or right for RTL</li></ul>
-	 * @param $filehash (string) File hash used to build unique file names.
+	 * @param string $file Name of the file containing the image.
+	 * @param float $x Abscissa of the upper-left corner.
+	 * @param float $y Ordinate of the upper-left corner.
+	 * @param float $wpx Original width of the image in pixels.
+	 * @param float $hpx original height of the image in pixels.
+	 * @param float $w Width of the image in the page. If not specified or equal to zero, it is automatically calculated.
+	 * @param float $h Height of the image in the page. If not specified or equal to zero, it is automatically calculated.
+	 * @param string $type Image format. Possible values are (case insensitive): JPEG and PNG (whitout GD library) and all images supported by GD: GD, GD2, GD2PART, GIF, JPEG, PNG, BMP, XBM, XPM;. If not specified, the type is inferred from the file extension.
+	 * @param mixed $link URL or identifier returned by AddLink().
+	 * @param string $align Indicates the alignment of the pointer next to image insertion relative to image height. The value can be:<ul><li>T: top-right for LTR or top-left for RTL</li><li>M: middle-right for LTR or middle-left for RTL</li><li>B: bottom-right for LTR or bottom-left for RTL</li><li>N: next line</li></ul>
+	 * @param boolean $resize If true resize (reduce) the image to fit $w and $h (requires GD library).
+	 * @param int $dpi dot-per-inch resolution used on resize
+	 * @param string $palign Allows to center or align the image on the current line. Possible values are:<ul><li>L : left align</li><li>C : center</li><li>R : right align</li><li>'' : empty string : left for LTR or right for RTL</li></ul>
+	 * @param string $filehash File hash used to build unique file names.
 	 * @author Nicola Asuni
 	 * @protected
 	 * @since 4.3.007 (2008-12-04)
 	 * @see Image()
 	 */
-	protected function ImagePngAlpha($file, $x, $y, $wpx, $hpx, $w, $h, $type, $link, $align, $resize, $dpi, $palign, $filehash = '')
-	{
+	protected function ImagePngAlpha($file, $x, $y, $wpx, $hpx, $w, $h, $type, $link, $align, $resize, $dpi, $palign, $filehash='') {
 		// create temp images
 		if (empty($filehash)) {
 			$filehash = md5($file);
@@ -7460,7 +7404,7 @@ class TCPDF
 						$color = imagecolorat($img, $xpx, $ypx);
 						// get and correct gamma color
 						$alpha = $this->getGDgamma($img, $color);
-						imagesetpixel($imgalpha, $xpx, $ypx, $alpha);
+						imagesetpixel($imgalpha, (int) $xpx, (int) $ypx, (int) $alpha);
 					}
 				}
 				imagepng($imgalpha, $tempfile_alpha);
@@ -7491,19 +7435,18 @@ class TCPDF
 
 	/**
 	 * Get the GD-corrected PNG gamma value from alpha color
-	 * @param $img (int) GD image Resource ID.
-	 * @param $c (int) alpha color
+	 * @param resource $img GD image Resource ID.
+	 * @param int $c alpha color
 	 * @protected
 	 * @since 4.3.007 (2008-12-04)
 	 */
-	protected function getGDgamma($img, $c)
-	{
+	protected function getGDgamma($img, $c) {
 		if (!isset($this->gdgammacache['#'.$c])) {
 			$colors = imagecolorsforindex($img, $c);
 			// GD alpha is only 7 bit (0 -> 127)
-			$this->gdgammacache['#'.$c] = (((127 - $colors['alpha']) / 127) * 255);
+			$this->gdgammacache['#'.$c] = (int) (((127 - $colors['alpha']) / 127) * 255);
 			// correct gamma
-			$this->gdgammacache['#'.$c] = (pow(($this->gdgammacache['#'.$c] / 255), 2.2) * 255);
+			$this->gdgammacache['#'.$c] = (int) (pow(($this->gdgammacache['#'.$c] / 255), 2.2) * 255);
 			// store the latest values on cache to improve performances
 			if (count($this->gdgammacache) > 8) {
 				// remove one element from the cache array
@@ -7516,14 +7459,13 @@ class TCPDF
 	/**
 	 * Performs a line break.
 	 * The current abscissa goes back to the left margin and the ordinate increases by the amount passed in parameter.
-	 * @param $h (float) The height of the break. By default, the value equals the height of the last printed cell.
-	 * @param $cell (boolean) if true add the current left (or right o for RTL) padding to the X coordinate
+	 * @param float|null $h The height of the break. By default, the value equals the height of the last printed cell.
+	 * @param boolean $cell if true add the current left (or right o for RTL) padding to the X coordinate
 	 * @public
 	 * @since 1.0
 	 * @see Cell()
 	 */
-	public function Ln($h = '', $cell = false)
-	{
+	public function Ln($h=null, $cell=false) {
 		if (($this->num_columns > 1) AND ($this->y == $this->columns[$this->current_column]['y']) AND isset($this->columns[$this->current_column]['x']) AND ($this->x == $this->columns[$this->current_column]['x'])) {
 			// revove vertical space from the top of the column
 			return;
@@ -7542,7 +7484,7 @@ class TCPDF
 		} else {
 			$this->x = $this->lMargin + $cellpadding;
 		}
-		if (is_string($h)) {
+		if (TCPDF_STATIC::empty_string($h)) {
 			$h = $this->lasth;
 		}
 		$this->y += $h;
@@ -7557,8 +7499,7 @@ class TCPDF
 	 * @since 1.2
 	 * @see SetX(), GetY(), SetY()
 	 */
-	public function GetX()
-	{
+	public function GetX() {
 		//Get x position
 		if ($this->rtl) {
 			return ($this->w - $this->x);
@@ -7574,8 +7515,7 @@ class TCPDF
 	 * @since 1.2
 	 * @see SetX(), GetY(), SetY()
 	 */
-	public function GetAbsX()
-	{
+	public function GetAbsX() {
 		return $this->x;
 	}
 
@@ -7586,22 +7526,20 @@ class TCPDF
 	 * @since 1.0
 	 * @see SetY(), GetX(), SetX()
 	 */
-	public function GetY()
-	{
+	public function GetY() {
 		return $this->y;
 	}
 
 	/**
 	 * Defines the abscissa of the current position.
 	 * If the passed value is negative, it is relative to the right of the page (or left if language is RTL).
-	 * @param $x (float) The value of the abscissa in user units.
-	 * @param $rtloff (boolean) if true always uses the page top-left corner as origin of axis.
+	 * @param float $x The value of the abscissa in user units.
+	 * @param boolean $rtloff if true always uses the page top-left corner as origin of axis.
 	 * @public
 	 * @since 1.2
 	 * @see GetX(), GetY(), SetY(), SetXY()
 	 */
-	public function SetX($x, $rtloff = false)
-	{
+	public function setX($x, $rtloff=false) {
 		$x = floatval($x);
 		if (!$rtloff AND $this->rtl) {
 			if ($x >= 0) {
@@ -7627,15 +7565,14 @@ class TCPDF
 	/**
 	 * Moves the current abscissa back to the left margin and sets the ordinate.
 	 * If the passed value is negative, it is relative to the bottom of the page.
-	 * @param $y (float) The value of the ordinate in user units.
-	 * @param $resetx (bool) if true (default) reset the X position.
-	 * @param $rtloff (boolean) if true always uses the page top-left corner as origin of axis.
+	 * @param float $y The value of the ordinate in user units.
+	 * @param bool $resetx if true (default) reset the X position.
+	 * @param boolean $rtloff if true always uses the page top-left corner as origin of axis.
 	 * @public
 	 * @since 1.0
 	 * @see GetX(), GetY(), SetY(), SetXY()
 	 */
-	public function SetY($y, $resetx = true, $rtloff = false)
-	{
+	public function setY($y, $resetx=true, $rtloff=false) {
 		$y = floatval($y);
 		if ($resetx) {
 			//reset x
@@ -7661,70 +7598,65 @@ class TCPDF
 	/**
 	 * Defines the abscissa and ordinate of the current position.
 	 * If the passed values are negative, they are relative respectively to the right and bottom of the page.
-	 * @param $x (float) The value of the abscissa.
-	 * @param $y (float) The value of the ordinate.
-	 * @param $rtloff (boolean) if true always uses the page top-left corner as origin of axis.
+	 * @param float $x The value of the abscissa.
+	 * @param float $y The value of the ordinate.
+	 * @param boolean $rtloff if true always uses the page top-left corner as origin of axis.
 	 * @public
 	 * @since 1.2
 	 * @see SetX(), SetY()
 	 */
-	public function SetXY($x, $y, $rtloff = false)
-	{
-		$this->SetY($y, false, $rtloff);
-		$this->SetX($x, $rtloff);
+	public function setXY($x, $y, $rtloff=false) {
+		$this->setY($y, false, $rtloff);
+		$this->setX($x, $rtloff);
 	}
 
 	/**
 	 * Set the absolute X coordinate of the current pointer.
-	 * @param $x (float) The value of the abscissa in user units.
+	 * @param float $x The value of the abscissa in user units.
 	 * @public
 	 * @since 5.9.186 (2012-09-13)
 	 * @see setAbsX(), setAbsY(), SetAbsXY()
 	 */
-	public function SetAbsX($x)
-	{
+	public function setAbsX($x) {
 		$this->x = floatval($x);
 	}
 
 	/**
 	 * Set the absolute Y coordinate of the current pointer.
-	 * @param $y (float) (float) The value of the ordinate in user units.
+	 * @param float $y (float) The value of the ordinate in user units.
 	 * @public
 	 * @since 5.9.186 (2012-09-13)
 	 * @see setAbsX(), setAbsY(), SetAbsXY()
 	 */
-	public function SetAbsY($y)
-	{
+	public function setAbsY($y) {
 		$this->y = floatval($y);
 	}
 
 	/**
 	 * Set the absolute X and Y coordinates of the current pointer.
-	 * @param $x (float) The value of the abscissa in user units.
-	 * @param $y (float) (float) The value of the ordinate in user units.
+	 * @param float $x The value of the abscissa in user units.
+	 * @param float $y (float) The value of the ordinate in user units.
 	 * @public
 	 * @since 5.9.186 (2012-09-13)
 	 * @see setAbsX(), setAbsY(), SetAbsXY()
 	 */
-	public function SetAbsXY($x, $y)
-	{
-		$this->SetAbsX($x);
-		$this->SetAbsY($y);
+	public function setAbsXY($x, $y) {
+		$this->setAbsX($x);
+		$this->setAbsY($y);
 	}
 
 	/**
 	 * Send the document to a given destination: string, local file or browser.
 	 * In the last case, the plug-in may be used (if present) or a download ("Save as" dialog box) may be forced.<br />
 	 * The method first calls Close() if necessary to terminate the document.
-	 * @param $name (string) The name of the file when saved. Note that special characters are removed and blanks characters are replaced with the underscore character.
-	 * @param $dest (string) Destination where to send the document. It can take one of the following values:<ul><li>I: send the file inline to the browser (default). The plug-in is used if available. The name given by name is used when one selects the "Save as" option on the link generating the PDF.</li><li>D: send to the browser and force a file download with the name given by name.</li><li>F: save to a local server file with the name given by name.</li><li>S: return the document as a string (name is ignored).</li><li>FI: equivalent to F + I option</li><li>FD: equivalent to F + D option</li><li>E: return the document as base64 mime multi-part email attachment (RFC 2045)</li></ul>
+	 * @param string $name The name of the file when saved
+	 * @param string $dest Destination where to send the document. It can take one of the following values:<ul><li>I: send the file inline to the browser (default). The plug-in is used if available. The name given by name is used when one selects the "Save as" option on the link generating the PDF.</li><li>D: send to the browser and force a file download with the name given by name.</li><li>F: save to a local server file with the name given by name.</li><li>S: return the document as a string (name is ignored).</li><li>FI: equivalent to F + I option</li><li>FD: equivalent to F + D option</li><li>E: return the document as base64 mime multi-part email attachment (RFC 2045)</li></ul>
 	 * @return string
 	 * @public
 	 * @since 1.0
 	 * @see Close()
 	 */
-	public function Output($name = 'doc.pdf', $dest = 'I')
-	{
+	public function Output($name='doc.pdf', $dest='I') {
 		//Output PDF to some destination
 		//Finish document if necessary
 		if ($this->state < 3) {
@@ -7735,10 +7667,7 @@ class TCPDF
 			$dest = $dest ? 'D' : 'F';
 		}
 		$dest = strtoupper($dest);
-		if ($dest[0] != 'F') {
-			$name = preg_replace('/[\s]+/', '_', $name);
-			$name = preg_replace('/[^a-zA-Z0-9_\.-]/', '', $name);
-		}
+
 		if ($this->sign) {
 			// *** apply digital signature to the document ***
 			// get the document content
@@ -7792,7 +7721,7 @@ class TCPDF
 			$this->buffer = substr($pdfdoc, 0, $byte_range[1]).'<'.$signature.'>'.substr($pdfdoc, $byte_range[1]);
 			$this->bufferlen = strlen($this->buffer);
 		}
-		switch ($dest) {
+		switch($dest) {
 			case 'I': {
 				// Send PDF to the standard output
 				if (ob_get_contents()) {
@@ -7809,7 +7738,8 @@ class TCPDF
 					header('Pragma: public');
 					header('Expires: Sat, 26 Jul 1997 05:00:00 GMT'); // Date in the past
 					header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
-					header('Content-Disposition: inline; filename="'.basename($name).'"');
+					header('Content-Disposition: inline; filename="' . rawurlencode(basename($name)) . '"; ' .
+						'filename*=UTF-8\'\'' . rawurlencode(basename($name)));
 					TCPDF_STATIC::sendOutputData($this->getBuffer(), $this->bufferlen);
 				} else {
 					echo $this->getBuffer();
@@ -7840,7 +7770,8 @@ class TCPDF
 					header('Content-Type: application/pdf');
 				}
 				// use the Content-Disposition header to supply a recommended filename
-				header('Content-Disposition: attachment; filename="'.basename($name).'"');
+				header('Content-Disposition: attachment; filename="' . rawurlencode(basename($name)) . '"; ' .
+					'filename*=UTF-8\'\'' . rawurlencode(basename($name)));
 				header('Content-Transfer-Encoding: binary');
 				TCPDF_STATIC::sendOutputData($this->getBuffer(), $this->bufferlen);
 				break;
@@ -7918,25 +7849,20 @@ class TCPDF
 	protected static $cleaned_ids = array();
 	/**
 	 * Unset all class variables except the following critical variables.
-	 * @param $destroyall (boolean) if true destroys all class variables, otherwise preserves critical variables.
-	 * @param $preserve_objcopy (boolean) if true preserves the objcopy variable
+	 * @param boolean $destroyall if true destroys all class variables, otherwise preserves critical variables.
+	 * @param boolean $preserve_objcopy if true preserves the objcopy variable
 	 * @public
 	 * @since 4.5.016 (2009-02-24)
 	 */
-	public function _destroy($destroyall = false, $preserve_objcopy = false)
-	{
-		// restore internal encoding
-		if (isset($this->internal_encoding) AND !empty($this->internal_encoding)) {
-			mb_internal_encoding($this->internal_encoding);
-		}
+	public function _destroy($destroyall=false, $preserve_objcopy=false) {
 		if (isset(self::$cleaned_ids[$this->file_id])) {
 			$destroyall = false;
 		}
-		if ($destroyall AND !$preserve_objcopy) {
+		if ($destroyall AND !$preserve_objcopy && isset($this->file_id)) {
 			self::$cleaned_ids[$this->file_id] = true;
 			// remove all temporary files
-			if ($handle = opendir(K_PATH_CACHE)) {
-				while ( false !== ( $file_name = readdir($handle) ) ) {
+			if ($handle = @opendir(K_PATH_CACHE)) {
+				while ( false !== ( $file_name = readdir( $handle ) ) ) {
 					if (strpos($file_name, '__tcpdf_'.$this->file_id.'_') === 0) {
 						unlink(K_PATH_CACHE.$file_name);
 					}
@@ -7944,15 +7870,15 @@ class TCPDF
 				closedir($handle);
 			}
 			if (isset($this->imagekeys)) {
-				foreach ($this->imagekeys as $file) {
-					// @CHANGE DOL
-					//                  unlink($file);
+				foreach($this->imagekeys as $file) {
+					if (strpos($file, K_PATH_CACHE) === 0 && TCPDF_STATIC::file_exists($file)) {
+						@unlink($file);
+					}
 				}
 			}
 		}
 		$preserve = array(
 			'file_id',
-			'internal_encoding',
 			'state',
 			'bufferlen',
 			'buffer',
@@ -7979,8 +7905,7 @@ class TCPDF
 	 * Check for locale-related bug
 	 * @protected
 	 */
-	protected function _dochecks()
-	{
+	protected function _dochecks() {
 		//Check for locale-related bug
 		if (1.1 == 1) {
 			$this->Error('Don\'t alter the locale before including class file');
@@ -7993,12 +7918,11 @@ class TCPDF
 
 	/**
 	 * Return an array containing variations for the basic page number alias.
-	 * @param $a (string) Base alias.
+	 * @param string $a Base alias.
 	 * @return array of page number aliases
 	 * @protected
 	 */
-	protected function getInternalPageNumberAliases($a = '')
-	{
+	protected function getInternalPageNumberAliases($a= '') {
 		$alias = array();
 		// build array of Unicode + ASCII variants (the order is important)
 		$alias = array('u' => array(), 'a' => array());
@@ -8019,11 +7943,10 @@ class TCPDF
 	 * @return array of page number aliases
 	 * @protected
 	 */
-	protected function getAllInternalPageNumberAliases()
-	{
+	protected function getAllInternalPageNumberAliases() {
 		$basic_alias = array(TCPDF_STATIC::$alias_tot_pages, TCPDF_STATIC::$alias_num_page, TCPDF_STATIC::$alias_group_tot_pages, TCPDF_STATIC::$alias_group_num_page, TCPDF_STATIC::$alias_right_shift);
 		$pnalias = array();
-		foreach ($basic_alias as $k => $a) {
+		foreach($basic_alias as $k => $a) {
 			$pnalias[$k] = $this->getInternalPageNumberAliases($a);
 		}
 		return $pnalias;
@@ -8032,14 +7955,13 @@ class TCPDF
 	/**
 	 * Replace right shift page number aliases with spaces to correct right alignment.
 	 * This works perfectly only when using monospaced fonts.
-	 * @param $page (string) Page content.
-	 * @param $aliases (array) Array of page aliases.
-	 * @param $diff (int) initial difference to add.
-	 * @return replaced page content.
+	 * @param string $page Page content.
+	 * @param array $aliases Array of page aliases.
+	 * @param int $diff initial difference to add.
+	 * @return string replaced page content.
 	 * @protected
 	 */
-	protected function replaceRightShiftPageNumAliases($page, $aliases, $diff)
-	{
+	protected function replaceRightShiftPageNumAliases($page, $aliases, $diff) {
 		foreach ($aliases as $type => $alias) {
 			foreach ($alias as $a) {
 				// find position of compensation factor
@@ -8071,11 +7993,10 @@ class TCPDF
 
 	/**
 	 * Set page boxes to be included on page descriptions.
-	 * @param $boxes (array) Array of page boxes to set on document: ('MediaBox', 'CropBox', 'BleedBox', 'TrimBox', 'ArtBox').
+	 * @param array $boxes Array of page boxes to set on document: ('MediaBox', 'CropBox', 'BleedBox', 'TrimBox', 'ArtBox').
 	 * @protected
 	 */
-	protected function setPageBoxTypes($boxes)
-	{
+	protected function setPageBoxTypes($boxes) {
 		$this->page_boxes = array();
 		foreach ($boxes as $box) {
 			if (in_array($box, TCPDF_STATIC::$pageboxes)) {
@@ -8088,8 +8009,7 @@ class TCPDF
 	 * Output pages (and replace page number aliases).
 	 * @protected
 	 */
-	protected function _putpages()
-	{
+	protected function _putpages() {
 		$filter = ($this->compress) ? '/Filter /FlateDecode ' : '';
 		// get internal aliases for page numbers
 		$pnalias = $this->getAllInternalPageNumberAliases();
@@ -8188,7 +8108,7 @@ class TCPDF
 			}
 			$out .= ' /Contents '.($this->n + 1).' 0 R';
 			$out .= ' /Rotate '.$this->pagedim[$n]['Rotate'];
-			if (!$this->pdfa_mode) {
+			if (!$this->pdfa_mode || $this->pdfa_version >= 2) {
 				$out .= ' /Group << /Type /Group /S /Transparency /CS /DeviceRGB >>';
 			}
 			if (isset($this->pagedim[$n]['trans']) AND !empty($this->pagedim[$n]['trans'])) {
@@ -8235,7 +8155,7 @@ class TCPDF
 		//Pages root
 		$out = $this->_getobj(1)."\n";
 		$out .= '<< /Type /Pages /Kids [';
-		foreach ($this->page_obj_id as $page_obj) {
+		foreach($this->page_obj_id as $page_obj) {
 			$out .= ' '.$page_obj.' 0 R';
 		}
 		$out .= ' ] /Count '.$num_pages.' >>';
@@ -8245,14 +8165,13 @@ class TCPDF
 
 	/**
 	 * Get references to page annotations.
-	 * @param $n (int) page number
+	 * @param int $n page number
 	 * @return string
 	 * @protected
 	 * @author Nicola Asuni
 	 * @since 5.0.010 (2010-05-17)
 	 */
-	protected function _getannotsrefs($n)
-	{
+	protected function _getannotsrefs($n) {
 		if (!(isset($this->PageAnnots[$n]) OR ($this->sign AND isset($this->signature_data['cert_type'])))) {
 			return '';
 		}
@@ -8296,8 +8215,7 @@ class TCPDF
 	 * @author Nicola Asuni
 	 * @since 4.0.018 (2008-08-06)
 	 */
-	protected function _putannotsobjs()
-	{
+	protected function _putannotsobjs() {
 		// reset object counter
 		for ($n=1; $n <= $this->numpages; ++$n) {
 			if (isset($this->PageAnnots[$n])) {
@@ -8545,8 +8463,13 @@ class TCPDF
 							} else {
 								$annots .= ' /Name /Note';
 							}
+							$hasStateModel = isset($pl['opt']['statemodel']);
+							$hasState = isset($pl['opt']['state']);
 							$statemodels = array('Marked', 'Review');
-							if (isset($pl['opt']['statemodel']) AND in_array($pl['opt']['statemodel'], $statemodels)) {
+							if (!$hasStateModel && !$hasState) {
+								break;
+							}
+							if ($hasStateModel AND in_array($pl['opt']['statemodel'], $statemodels)) {
 								$annots .= ' /StateModel /'.$pl['opt']['statemodel'];
 							} else {
 								$pl['opt']['statemodel'] = 'Marked';
@@ -8557,7 +8480,7 @@ class TCPDF
 							} else {
 								$states = array('Accepted', 'Rejected', 'Cancelled', 'Completed', 'None');
 							}
-							if (isset($pl['opt']['state']) AND in_array($pl['opt']['state'], $states)) {
+							if ($hasState AND in_array($pl['opt']['state'], $states)) {
 								$annots .= ' /State /'.$pl['opt']['state'];
 							} else {
 								if ($pl['opt']['statemodel'] == 'Marked') {
@@ -8572,7 +8495,7 @@ class TCPDF
 							if (is_string($pl['txt']) && !empty($pl['txt'])) {
 								if ($pl['txt'][0] == '#') {
 									// internal destination
-									$annots .= ' /A <</S /GoTo /D '.TCPDF_STATIC::encodeNameObject(substr($pl['txt'], 1)).'>>';
+									$annots .= ' /A <</S /GoTo /D /'.TCPDF_STATIC::encodeNameObject(substr($pl['txt'], 1)).'>>';
 								} elseif ($pl['txt'][0] == '%') {
 									// embedded PDF file
 									$filename = basename(substr($pl['txt'], 1));
@@ -8817,7 +8740,7 @@ class TCPDF
 								if (is_array($pl['opt']['ff'])) {
 									// array of bit settings
 									$flag = 0;
-									foreach ($pl['opt']['ff'] as $val) {
+									foreach($pl['opt']['ff'] as $val) {
 										$flag += 1 << ($val - 1);
 									}
 								} else {
@@ -8881,7 +8804,7 @@ class TCPDF
 							}
 							if (isset($pl['opt']['opt']) AND (is_array($pl['opt']['opt'])) AND !empty($pl['opt']['opt'])) {
 								$annots .= ' /Opt [';
-								foreach ($pl['opt']['opt'] AS $copt) {
+								foreach($pl['opt']['opt'] AS $copt) {
 									if (is_array($copt)) {
 										$annots .= ' ['.$this->_textstring($copt[0], $annot_obj_id).' '.$this->_textstring($copt[1], $annot_obj_id).']';
 									} else {
@@ -8895,7 +8818,7 @@ class TCPDF
 							}
 							if (isset($pl['opt']['i']) AND (is_array($pl['opt']['i'])) AND !empty($pl['opt']['i'])) {
 								$annots .= ' /I [';
-								foreach ($pl['opt']['i'] AS $copt) {
+								foreach($pl['opt']['i'] AS $copt) {
 									$annots .= intval($copt).' ';
 								}
 								$annots .= ']';
@@ -8935,15 +8858,14 @@ class TCPDF
 
 	/**
 	 * Put appearance streams XObject used to define annotation's appearance states.
-	 * @param $w (int) annotation width
-	 * @param $h (int) annotation height
-	 * @param $stream (string) appearance stream
+	 * @param int $w annotation width
+	 * @param int $h annotation height
+	 * @param string $stream appearance stream
 	 * @return int object ID
 	 * @protected
 	 * @since 4.8.001 (2009-09-09)
 	 */
-	protected function _putAPXObject($w = 0, $h = 0, $stream = '')
-	{
+	protected function _putAPXObject($w=0, $h=0, $stream='') {
 		$stream = trim($stream);
 		$out = $this->_getobj()."\n";
 		$this->xobjects['AX'.$this->n] = array('n' => $this->n);
@@ -8973,16 +8895,13 @@ class TCPDF
 	 * @author Nicola Asuni
 	 * @protected
 	 */
-	protected function _putfonts()
-	{
+	protected function _putfonts() {
 		$nf = $this->n;
 		foreach ($this->diffs as $diff) {
 			//Encodings
 			$this->_newobj();
 			$this->_out('<< /Type /Encoding /BaseEncoding /WinAnsiEncoding /Differences ['.$diff.'] >>'."\n".'endobj');
 		}
-		$mqr = TCPDF_STATIC::get_mqr();
-		TCPDF_STATIC::set_mqr(false);
 		foreach ($this->FontFiles as $file => $info) {
 			// search and get font file to embedd
 			$fontfile = TCPDF_FONTS::getFontFullPath($file, $info['fontdir']);
@@ -9036,7 +8955,6 @@ class TCPDF
 				$this->_out($out);
 			}
 		}
-		TCPDF_STATIC::set_mqr($mqr);
 		foreach ($this->fontkeys as $k) {
 			//Font objects
 			$font = $this->getFontBuffer($k);
@@ -9121,13 +9039,12 @@ class TCPDF
 	/**
 	 * Adds unicode fonts.<br>
 	 * Based on PDF Reference 1.3 (section 5)
-	 * @param $font (array) font data
+	 * @param array $font font data
 	 * @protected
 	 * @author Nicola Asuni
 	 * @since 1.52.0.TC005 (2005-01-05)
 	 */
-	protected function _puttruetypeunicode($font)
-	{
+	protected function _puttruetypeunicode($font) {
 		$fontname = '';
 		if ($font['subset']) {
 			// change name for font subsetting
@@ -9226,13 +9143,12 @@ class TCPDF
 	/**
 	 * Output CID-0 fonts.
 	 * A Type 0 CIDFont contains glyph descriptions based on the Adobe Type 1 font format
-	 * @param $font (array) font data
+	 * @param array $font font data
 	 * @protected
 	 * @author Andrew Whitehead, Nicola Asuni, Yukihiro Nakadaira
 	 * @since 3.2.000 (2008-06-23)
 	 */
-	protected function _putcidfont0($font)
-	{
+	protected function _putcidfont0($font) {
 		$cidoffset = 0;
 		if (!isset($font['cw'][1])) {
 			$cidoffset = 31;
@@ -9302,12 +9218,12 @@ class TCPDF
 	 * Output images.
 	 * @protected
 	 */
-	protected function _putimages()
-	{
+	protected function _putimages() {
 		$filter = ($this->compress) ? '/Filter /FlateDecode ' : '';
 		foreach ($this->imagekeys as $file) {
 			$info = $this->getImageBuffer($file);
 			// set object for alternate images array
+			$altoid = null;
 			if ((!$this->pdfa_mode) AND isset($info['altimgs']) AND !empty($info['altimgs'])) {
 				$altoid = $this->_newobj();
 				$out = '[';
@@ -9355,7 +9271,7 @@ class TCPDF
 				$out .= ' /Decode [1 0 1 0 1 0 1 0]';
 			}
 			$out .= ' /BitsPerComponent '.$info['bpc'];
-			if (isset($altoid) AND ($altoid > 0)) {
+			if ($altoid > 0) {
 				// reference to alternate images dictionary
 				$out .= ' /Alternates '.$altoid.' 0 R';
 			}
@@ -9432,8 +9348,7 @@ class TCPDF
 	 * @protected
 	 * @see startTemplate(), endTemplate(), printTemplate()
 	 */
-	protected function _putxobjects()
-	{
+	protected function _putxobjects() {
 		foreach ($this->xobjects as $key => $data) {
 			if (isset($data['outdata'])) {
 				$stream = str_replace($this->epsmarker, '', trim($data['outdata']));
@@ -9450,7 +9365,7 @@ class TCPDF
 				$out .= ' /Matrix [1 0 0 1 0 0]';
 				$out .= ' /Resources <<';
 				$out .= ' /ProcSet [/PDF /Text /ImageB /ImageC /ImageI]';
-				if (!$this->pdfa_mode) {
+				if (!$this->pdfa_mode || $this->pdfa_version >= 2) {
 					// transparency
 					if (isset($data['extgstates']) AND !empty($data['extgstates'])) {
 						$out .= ' /ExtGState <<';
@@ -9536,8 +9451,7 @@ class TCPDF
 	 * @protected
 	 * @since 4.0.024 (2008-09-12)
 	 */
-	protected function _putspotcolors()
-	{
+	protected function _putspotcolors() {
 		foreach ($this->spot_colors as $name => $color) {
 			$this->_newobj();
 			$this->spot_colors[$name]['n'] = $this->n;
@@ -9557,8 +9471,7 @@ class TCPDF
 	 * @protected
 	 * @since 5.8.014 (2010-08-23)
 	 */
-	protected function _getxobjectdict()
-	{
+	protected function _getxobjectdict() {
 		$out = '';
 		foreach ($this->xobjects as $id => $objid) {
 			$out .= ' /'.$id.' '.$objid['n'].' 0 R';
@@ -9570,8 +9483,7 @@ class TCPDF
 	 * Output Resources Dictionary.
 	 * @protected
 	 */
-	protected function _putresourcedict()
-	{
+	protected function _putresourcedict() {
 		$out = $this->_getobj(2)."\n";
 		$out .= '<< /ProcSet [/PDF /Text /ImageB /ImageC /ImageI]';
 		$out .= ' /Font <<';
@@ -9591,7 +9503,7 @@ class TCPDF
 			}
 			$out .= ' >>';
 		}
-		if (!$this->pdfa_mode) {
+		if (!$this->pdfa_mode || $this->pdfa_version >= 2) {
 			// transparency
 			if (isset($this->extgstates) AND !empty($this->extgstates)) {
 				$out .= ' /ExtGState <<';
@@ -9635,8 +9547,7 @@ class TCPDF
 	 * Output Resources.
 	 * @protected
 	 */
-	protected function _putresources()
-	{
+	protected function _putresources() {
 		$this->_putextgstates();
 		$this->_putocg();
 		$this->_putfonts();
@@ -9659,8 +9570,7 @@ class TCPDF
 	 * @return int object id
 	 * @protected
 	 */
-	protected function _putinfo()
-	{
+	protected function _putinfo() {
 		$oid = $this->_newobj();
 		$out = '<<';
 		// store current isunicode value
@@ -9707,35 +9617,32 @@ class TCPDF
 	/**
 	 * Set additional XMP data to be added on the default XMP data just before the end of "x:xmpmeta" tag.
 	 * IMPORTANT: This data is added as-is without controls, so you have to validate your data before using this method!
-	 * @param $xmp (string) Custom XMP data.
+	 * @param string $xmp Custom XMP data.
 	 * @since 5.9.128 (2011-10-06)
 	 * @public
 	 */
-	public function setExtraXMP($xmp)
-	{
+	public function setExtraXMP($xmp) {
 		$this->custom_xmp = $xmp;
 	}
 
 	/**
 	 * Set additional XMP data to be added on the default XMP data just before the end of "rdf:RDF" tag.
 	 * IMPORTANT: This data is added as-is without controls, so you have to validate your data before using this method!
-	 * @param $xmp (string) Custom XMP RDF data.
+	 * @param string $xmp Custom XMP RDF data.
 	 * @since 6.3.0 (2019-09-19)
 	 * @public
 	 */
-	public function setExtraXMPRDF($xmp)
-	{
+	public function setExtraXMPRDF($xmp) {
 		$this->custom_xmp_rdf = $xmp;
 	}
 
 	/**
 	 * Put XMP data object and return ID.
-	 * @return (int) The object ID.
+	 * @return int The object ID.
 	 * @since 5.9.121 (2011-09-28)
 	 * @protected
 	 */
-	protected function _putXMP()
-	{
+	protected function _putXMP() {
 		$oid = $this->_newobj();
 		// store current isunicode value
 		$prev_isunicode = $this->isunicode;
@@ -9810,6 +9717,16 @@ class TCPDF
 		$xmp .= "\t\t\t\t\t\t".'<pdfaSchema:namespaceURI>http://ns.adobe.com/pdf/1.3/</pdfaSchema:namespaceURI>'."\n";
 		$xmp .= "\t\t\t\t\t\t".'<pdfaSchema:prefix>pdf</pdfaSchema:prefix>'."\n";
 		$xmp .= "\t\t\t\t\t\t".'<pdfaSchema:schema>Adobe PDF Schema</pdfaSchema:schema>'."\n";
+		$xmp .= "\t\t\t\t\t\t".'<pdfaSchema:property>'."\n";
+		$xmp .= "\t\t\t\t\t\t\t".'<rdf:Seq>'."\n";
+		$xmp .= "\t\t\t\t\t\t\t\t".'<rdf:li rdf:parseType="Resource">'."\n";
+		$xmp .= "\t\t\t\t\t\t\t\t\t".'<pdfaProperty:category>internal</pdfaProperty:category>'."\n";
+		$xmp .= "\t\t\t\t\t\t\t\t\t".'<pdfaProperty:description>Adobe PDF Schema</pdfaProperty:description>'."\n";
+		$xmp .= "\t\t\t\t\t\t\t\t\t".'<pdfaProperty:name>InstanceID</pdfaProperty:name>'."\n";
+		$xmp .= "\t\t\t\t\t\t\t\t\t".'<pdfaProperty:valueType>URI</pdfaProperty:valueType>'."\n";
+		$xmp .= "\t\t\t\t\t\t\t\t".'</rdf:li>'."\n";
+		$xmp .= "\t\t\t\t\t\t\t".'</rdf:Seq>'."\n";
+		$xmp .= "\t\t\t\t\t\t".'</pdfaSchema:property>'."\n";
 		$xmp .= "\t\t\t\t\t".'</rdf:li>'."\n";
 		$xmp .= "\t\t\t\t\t".'<rdf:li rdf:parseType="Resource">'."\n";
 		$xmp .= "\t\t\t\t\t\t".'<pdfaSchema:namespaceURI>http://ns.adobe.com/xap/1.0/mm/</pdfaSchema:namespaceURI>'."\n";
@@ -9874,8 +9791,7 @@ class TCPDF
 	 * @return int object id
 	 * @protected
 	 */
-	protected function _putcatalog()
-	{
+	protected function _putcatalog() {
 		// put XMP
 		$xmpobj = $this->_putXMP();
 		// if required, add standard sRGB ICC colour profile
@@ -10005,7 +9921,7 @@ class TCPDF
 				}
 			}
 			if (!empty($this->form_obj_id)) {
-				foreach ($this->form_obj_id as $objid) {
+				foreach($this->form_obj_id as $objid) {
 					$objrefs .= ' '.$objid.' 0 R';
 				}
 			}
@@ -10030,7 +9946,7 @@ class TCPDF
 				}
 				$out .= ' >> >>';
 			}
-			$font = $this->getFontBuffer('helvetica');
+			$font = $this->getFontBuffer((($this->pdfa_mode) ? 'pdfa' : '') .'helvetica');
 			$out .= ' /DA (/F'.$font['i'].' 0 Tf 0 g)';
 			$out .= ' /Q '.(($this->rtl)?'2':'0');
 			//$out .= ' /XFA ';
@@ -10062,8 +9978,7 @@ class TCPDF
 	 * @since 3.1.000 (2008-06-09)
 	 * @protected
 	 */
-	protected function _putviewerpreferences()
-	{
+	protected function _putviewerpreferences() {
 		$vp = $this->viewer_preferences;
 		$out = ' /ViewerPreferences <<';
 		if ($this->rtl) {
@@ -10122,7 +10037,7 @@ class TCPDF
 			foreach ($vp['PrintPageRange'] as $k => $v) {
 				$PrintPageRangeNum .= ' '.($v - 1).'';
 			}
-			$out .= ' /PrintPageRange ['.substr($PrintPageRangeNum, 1).']';
+			$out .= ' /PrintPageRange ['.substr($PrintPageRangeNum,1).']';
 		}
 		if (isset($vp['NumCopies'])) {
 			$out .= ' /NumCopies '.intval($vp['NumCopies']);
@@ -10135,8 +10050,7 @@ class TCPDF
 	 * Output PDF File Header (7.5.2).
 	 * @protected
 	 */
-	protected function _putheader()
-	{
+	protected function _putheader() {
 		$this->_out('%PDF-'.$this->PDFVersion);
 		$this->_out('%'.chr(0xe2).chr(0xe3).chr(0xcf).chr(0xd3));
 	}
@@ -10145,8 +10059,7 @@ class TCPDF
 	 * Output end of document (EOF).
 	 * @protected
 	 */
-	protected function _enddoc()
-	{
+	protected function _enddoc() {
 		if (isset($this->CurrentFont['fontkey']) AND isset($this->CurrentFont['subsetchars'])) {
 			// save subset chars of the previous font
 			$this->setFontSubBuffer($this->CurrentFont['fontkey'], 'subsetchars', $this->CurrentFont['subsetchars']);
@@ -10232,13 +10145,12 @@ class TCPDF
 
 	/**
 	 * Initialize a new page.
-	 * @param $orientation (string) page orientation. Possible values are (case insensitive):<ul><li>P or PORTRAIT (default)</li><li>L or LANDSCAPE</li></ul>
-	 * @param $format (mixed) The format used for pages. It can be either: one of the string values specified at getPageSizeFromFormat() or an array of parameters specified at setPageFormat().
+	 * @param string $orientation page orientation. Possible values are (case insensitive):<ul><li>P or PORTRAIT (default)</li><li>L or LANDSCAPE</li></ul>
+	 * @param mixed $format The format used for pages. It can be either: one of the string values specified at getPageSizeFromFormat() or an array of parameters specified at setPageFormat().
 	 * @protected
 	 * @see getPageSizeFromFormat(), setPageFormat()
 	 */
-	protected function _beginpage($orientation = '', $format = '')
-	{
+	protected function _beginpage($orientation='', $format='') {
 		++$this->page;
 		$this->pageobjects[$this->page] = array();
 		$this->setPageBuffer($this->page, '');
@@ -10281,8 +10193,7 @@ class TCPDF
 	 * Mark end of page.
 	 * @protected
 	 */
-	protected function _endpage()
-	{
+	protected function _endpage() {
 		$this->setVisibility('all');
 		$this->state = 1;
 	}
@@ -10292,22 +10203,20 @@ class TCPDF
 	 * @return int object number
 	 * @protected
 	 */
-	protected function _newobj()
-	{
+	protected function _newobj() {
 		$this->_out($this->_getobj());
 		return $this->n;
 	}
 
 	/**
 	 * Return the starting object string for the selected object ID.
-	 * @param $objid (int) Object ID (leave empty to get a new ID).
+	 * @param int|null $objid Object ID (leave empty to get a new ID).
 	 * @return string the starting object string
 	 * @protected
 	 * @since 5.8.009 (2010-08-20)
 	 */
-	protected function _getobj($objid = '')
-	{
-		if ($objid === '') {
+	protected function _getobj($objid=null) {
+		if (TCPDF_STATIC::empty_string($objid)) {
 			++$this->n;
 			$objid = $this->n;
 		}
@@ -10318,95 +10227,89 @@ class TCPDF
 
 	/**
 	 * Underline text.
-	 * @param $x (int) X coordinate
-	 * @param $y (int) Y coordinate
-	 * @param $txt (string) text to underline
+	 * @param int $x X coordinate
+	 * @param int $y Y coordinate
+	 * @param string $txt text to underline
 	 * @protected
 	 */
-	protected function _dounderline($x, $y, $txt)
-	{
+	protected function _dounderline($x, $y, $txt) {
 		$w = $this->GetStringWidth($txt);
 		return $this->_dounderlinew($x, $y, $w);
 	}
 
 	/**
 	 * Underline for rectangular text area.
-	 * @param $x (int) X coordinate
-	 * @param $y (int) Y coordinate
-	 * @param $w (int) width to underline
+	 * @param int $x X coordinate
+	 * @param int $y Y coordinate
+	 * @param int $w width to underline
 	 * @protected
 	 * @since 4.8.008 (2009-09-29)
 	 */
-	protected function _dounderlinew($x, $y, $w)
-	{
+	protected function _dounderlinew($x, $y, $w) {
 		$linew = - $this->CurrentFont['ut'] / 1000 * $this->FontSizePt;
 		return sprintf('%F %F %F %F re f', $x * $this->k, ((($this->h - $y) * $this->k) + $linew), $w * $this->k, $linew);
 	}
 
 	/**
 	 * Line through text.
-	 * @param $x (int) X coordinate
-	 * @param $y (int) Y coordinate
-	 * @param $txt (string) text to linethrough
+	 * @param int $x X coordinate
+	 * @param int $y Y coordinate
+	 * @param string $txt text to linethrough
 	 * @protected
 	 */
-	protected function _dolinethrough($x, $y, $txt)
-	{
+	protected function _dolinethrough($x, $y, $txt) {
 		$w = $this->GetStringWidth($txt);
 		return $this->_dolinethroughw($x, $y, $w);
 	}
 
 	/**
 	 * Line through for rectangular text area.
-	 * @param $x (int) X coordinate
-	 * @param $y (int) Y coordinate
-	 * @param $w (int) line length (width)
+	 * @param int $x X coordinate
+	 * @param int $y Y coordinate
+	 * @param int $w line length (width)
 	 * @protected
 	 * @since 4.9.008 (2009-09-29)
 	 */
-	protected function _dolinethroughw($x, $y, $w)
-	{
+	protected function _dolinethroughw($x, $y, $w) {
 		$linew = - $this->CurrentFont['ut'] / 1000 * $this->FontSizePt;
 		return sprintf('%F %F %F %F re f', $x * $this->k, ((($this->h - $y) * $this->k) + $linew + ($this->FontSizePt / 3)), $w * $this->k, $linew);
 	}
 
 	/**
 	 * Overline text.
-	 * @param $x (int) X coordinate
-	 * @param $y (int) Y coordinate
-	 * @param $txt (string) text to overline
+	 * @param int $x X coordinate
+	 * @param int $y Y coordinate
+	 * @param string $txt text to overline
 	 * @protected
 	 * @since 4.9.015 (2010-04-19)
 	 */
-	protected function _dooverline($x, $y, $txt)
-	{
+	protected function _dooverline($x, $y, $txt) {
 		$w = $this->GetStringWidth($txt);
 		return $this->_dooverlinew($x, $y, $w);
 	}
 
 	/**
 	 * Overline for rectangular text area.
-	 * @param $x (int) X coordinate
-	 * @param $y (int) Y coordinate
-	 * @param $w (int) width to overline
+	 * @param int $x X coordinate
+	 * @param int $y Y coordinate
+	 * @param int $w width to overline
 	 * @protected
 	 * @since 4.9.015 (2010-04-19)
 	 */
-	protected function _dooverlinew($x, $y, $w)
-	{
+	protected function _dooverlinew($x, $y, $w) {
 		$linew = - $this->CurrentFont['ut'] / 1000 * $this->FontSizePt;
 		return sprintf('%F %F %F %F re f', $x * $this->k, (($this->h - $y + $this->FontAscent) * $this->k) - $linew, $w * $this->k, $linew);
+
 	}
 
 	/**
 	 * Format a data string for meta information
-	 * @param $s (string) data string to escape.
-	 * @param $n (int) object ID
+	 * @param string $s data string to escape.
+	 * @param int $n object ID
 	 * @return string escaped string.
 	 * @protected
 	 */
-	protected function _datastring($s, $n = 0)
-	{
+	protected function _datastring($s, $n=0) {
 		if ($n == 0) {
 			$n = $this->n;
 		}
@@ -10416,12 +10319,11 @@ class TCPDF
 
 	/**
 	 * Set the document creation timestamp
-	 * @param $time (mixed) Document creation timestamp in seconds or date-time string.
+	 * @param mixed $time Document creation timestamp in seconds or date-time string.
 	 * @public
 	 * @since 5.9.152 (2012-03-23)
 	 */
-	public function setDocCreationTimestamp($time)
-	{
+	public function setDocCreationTimestamp($time) {
 		if (is_string($time)) {
 			$time = TCPDF_STATIC::getTimestamp($time);
 		}
@@ -10430,12 +10332,11 @@ class TCPDF
 
 	/**
 	 * Set the document modification timestamp
-	 * @param $time (mixed) Document modification timestamp in seconds or date-time string.
+	 * @param mixed $time Document modification timestamp in seconds or date-time string.
 	 * @public
 	 * @since 5.9.152 (2012-03-23)
 	 */
-	public function setDocModificationTimestamp($time)
-	{
+	public function setDocModificationTimestamp($time) {
 		if (is_string($time)) {
 			$time = TCPDF_STATIC::getTimestamp($time);
 		}
@@ -10444,36 +10345,33 @@ class TCPDF
 
 	/**
 	 * Returns document creation timestamp in seconds.
-	 * @return (int) Creation timestamp in seconds.
+	 * @return int Creation timestamp in seconds.
 	 * @public
 	 * @since 5.9.152 (2012-03-23)
 	 */
-	public function getDocCreationTimestamp()
-	{
+	public function getDocCreationTimestamp() {
 		return $this->doc_creation_timestamp;
 	}
 
 	/**
 	 * Returns document modification timestamp in seconds.
-	 * @return (int) Modfication timestamp in seconds.
+	 * @return int Modfication timestamp in seconds.
 	 * @public
 	 * @since 5.9.152 (2012-03-23)
 	 */
-	public function getDocModificationTimestamp()
-	{
+	public function getDocModificationTimestamp() {
 		return $this->doc_modification_timestamp;
 	}
 
 	/**
 	 * Returns a formatted date for meta information
-	 * @param $n (int) Object ID.
-	 * @param $timestamp (int) Timestamp to convert.
+	 * @param int $n Object ID.
+	 * @param int $timestamp Timestamp to convert.
 	 * @return string escaped date string.
 	 * @protected
 	 * @since 4.6.028 (2009-08-25)
 	 */
-	protected function _datestring($n = 0, $timestamp = 0)
-	{
+	protected function _datestring($n=0, $timestamp=0) {
 		if ((empty($timestamp)) OR ($timestamp < 0)) {
 			$timestamp = $this->doc_creation_timestamp;
 		}
@@ -10482,13 +10380,12 @@ class TCPDF
 
 	/**
 	 * Format a text string for meta information
-	 * @param $s (string) string to escape.
-	 * @param $n (int) object ID
+	 * @param string $s string to escape.
+	 * @param int $n object ID
 	 * @return string escaped string.
 	 * @protected
 	 */
-	protected function _textstring($s, $n = 0)
-	{
+	protected function _textstring($s, $n=0) {
 		if ($this->isunicode) {
 			//Convert string to UTF-16BE
 			$s = TCPDF_FONTS::UTF8ToUTF16BE($s, true, $this->isunicode, $this->CurrentFont);
@@ -10498,14 +10395,13 @@ class TCPDF
 
 	/**
 	 * get raw output stream.
-	 * @param $s (string) string to output.
-	 * @param $n (int) object reference for encryption mode
+	 * @param string $s string to output.
+	 * @param int $n object reference for encryption mode
 	 * @protected
 	 * @author Nicola Asuni
 	 * @since 5.5.000 (2010-06-22)
 	 */
-	protected function _getrawstream($s, $n = 0)
-	{
+	protected function _getrawstream($s, $n=0) {
 		if ($n <= 0) {
 			// default to current object
 			$n = $this->n;
@@ -10515,11 +10411,10 @@ class TCPDF
 
 	/**
 	 * Output a string to the document.
-	 * @param $s (string) string to output.
-	 * @protected
+	 * @param string $s string to output.
+	 * @public
 	 */
-	protected function _out($s)
-	{
+	public function _out($s) {	// @CHANGE DOL
 		if ($this->state == 2) {
 			if ($this->inxobj) {
 				// we are inside an XObject template
@@ -10544,56 +10439,55 @@ class TCPDF
 
 	/**
 	 * Set header font.
-	 * @param $font (array) Array describing the basic font parameters: (family, style, size).
+	 * @param array<int,string|float|null> $font Array describing the basic font parameters: (family, style, size).
+	 * @phpstan-param array{0: string, 1: string, 2: float|null} $font
 	 * @public
 	 * @since 1.1
 	 */
-	public function setHeaderFont($font)
-	{
+	public function setHeaderFont($font) {
 		$this->header_font = $font;
 	}
 
 	/**
 	 * Get header font.
-	 * @return array() Array describing the basic font parameters: (family, style, size).
+	 * @return array<int,string|float|null> Array describing the basic font parameters: (family, style, size).
+	 * @phpstan-return array{0: string, 1: string, 2: float|null}
 	 * @public
 	 * @since 4.0.012 (2008-07-24)
 	 */
-	public function getHeaderFont()
-	{
+	public function getHeaderFont() {
 		return $this->header_font;
 	}
 
 	/**
 	 * Set footer font.
-	 * @param $font (array) Array describing the basic font parameters: (family, style, size).
+	 * @param array<int,string|float|null> $font Array describing the basic font parameters: (family, style, size).
+	 * @phpstan-param array{0: string, 1: string, 2: float|null} $font
 	 * @public
 	 * @since 1.1
 	 */
-	public function setFooterFont($font)
-	{
+	public function setFooterFont($font) {
 		$this->footer_font = $font;
 	}
 
 	/**
 	 * Get Footer font.
-	 * @return array() Array describing the basic font parameters: (family, style, size).
+	 * @return array<int,string|float|null> Array describing the basic font parameters: (family, style, size).
+	 * @phpstan-return array{0: string, 1: string, 2: float|null} $font
 	 * @public
 	 * @since 4.0.012 (2008-07-24)
 	 */
-	public function getFooterFont()
-	{
+	public function getFooterFont() {
 		return $this->footer_font;
 	}
 
 	/**
 	 * Set language array.
-	 * @param $language (array)
+	 * @param array $language
 	 * @public
 	 * @since 1.1
 	 */
-	public function setLanguageArray($language)
-	{
+	public function setLanguageArray($language) {
 		$this->l = $language;
 		if (isset($this->l['a_meta_dir'])) {
 			$this->rtl = $this->l['a_meta_dir']=='rtl' ? true : false;
@@ -10606,8 +10500,7 @@ class TCPDF
 	 * Returns the PDF data.
 	 * @public
 	 */
-	public function getPDFData()
-	{
+	public function getPDFData() {
 		if ($this->state < 3) {
 			$this->Close();
 		}
@@ -10616,18 +10509,17 @@ class TCPDF
 
 	/**
 	 * Output anchor link.
-	 * @param $url (string) link URL or internal link (i.e.: &lt;a href="#23,4.5"&gt;link to page 23 at 4.5 Y position&lt;/a&gt;)
-	 * @param $name (string) link name
-	 * @param $fill (boolean) Indicates if the cell background must be painted (true) or transparent (false).
-	 * @param $firstline (boolean) if true prints only the first line and return the remaining string.
-	 * @param $color (array) array of RGB text color
-	 * @param $style (string) font style (U, D, B, I)
-	 * @param $firstblock (boolean) if true the string is the starting of a line.
-	 * @return the number of cells used or the remaining text if $firstline = true;
+	 * @param string $url link URL or internal link (i.e.: &lt;a href="#23,4.5"&gt;link to page 23 at 4.5 Y position&lt;/a&gt;)
+	 * @param string $name link name
+	 * @param boolean $fill Indicates if the cell background must be painted (true) or transparent (false).
+	 * @param boolean $firstline if true prints only the first line and return the remaining string.
+	 * @param array|null $color array of RGB text color
+	 * @param string $style font style (U, D, B, I)
+	 * @param boolean $firstblock if true the string is the starting of a line.
+	 * @return int the number of cells used or the remaining text if $firstline = true;
 	 * @public
 	 */
-	public function addHtmlLink($url, $name, $fill = false, $firstline = false, $color = '', $style = -1, $firstblock = false)
-	{
+	public function addHtmlLink($url, $name, $fill=false, $firstline=false, $color=null, $style=-1, $firstblock=false) {
 		if (isset($url[1]) AND ($url[0] == '#') AND is_numeric($url[1])) {
 			// convert url to internal link
 			$lnkdata = explode(',', $url);
@@ -10639,50 +10531,48 @@ class TCPDF
 					$lnky = 0;
 				}
 				$url = $this->AddLink();
-				$this->SetLink($url, $lnky, $page);
+				$this->setLink($url, $lnky, $page);
 			}
 		}
 		// store current settings
 		$prevcolor = $this->fgcolor;
 		$prevstyle = $this->FontStyle;
 		if (empty($color)) {
-			$this->SetTextColorArray($this->htmlLinkColorArray);
+			$this->setTextColorArray($this->htmlLinkColorArray);
 		} else {
-			$this->SetTextColorArray($color);
+			$this->setTextColorArray($color);
 		}
 		if ($style == -1) {
-			$this->SetFont('', $this->FontStyle.$this->htmlLinkFontStyle);
+			$this->setFont('', $this->FontStyle.$this->htmlLinkFontStyle);
 		} else {
-			$this->SetFont('', $this->FontStyle.$style);
+			$this->setFont('', $this->FontStyle.$style);
 		}
 		$ret = $this->Write($this->lasth, $name, $url, $fill, '', false, 0, $firstline, $firstblock, 0);
 		// restore settings
-		$this->SetFont('', $prevstyle);
-		$this->SetTextColorArray($prevcolor);
+		$this->setFont('', $prevstyle);
+		$this->setTextColorArray($prevcolor);
 		return $ret;
 	}
 
 	/**
 	 * Converts pixels to User's Units.
-	 * @param $px (int) pixels
+	 * @param int $px pixels
 	 * @return float value in user's unit
 	 * @public
 	 * @see setImageScale(), getImageScale()
 	 */
-	public function pixelsToUnits($px)
-	{
+	public function pixelsToUnits($px) {
 		return ($px / ($this->imgscale * $this->k));
 	}
 
 	/**
 	 * Reverse function for htmlentities.
 	 * Convert entities in UTF-8.
-	 * @param $text_to_convert (string) Text to convert.
+	 * @param string $text_to_convert Text to convert.
 	 * @return string converted text string
 	 * @public
 	 */
-	public function unhtmlentities($text_to_convert)
-	{
+	public function unhtmlentities($text_to_convert) {
 		return @html_entity_decode($text_to_convert, ENT_QUOTES, $this->encoding);
 	}
 
@@ -10691,14 +10581,13 @@ class TCPDF
 	/**
 	 * Compute encryption key depending on object number where the encrypted data is stored.
 	 * This is used for all strings and streams without crypt filter specifier.
-	 * @param $n (int) object number
+	 * @param int $n object number
 	 * @return int object key
 	 * @protected
 	 * @author Nicola Asuni
 	 * @since 2.0.000 (2008-01-02)
 	 */
-	protected function _objectkey($n)
-	{
+	protected function _objectkey($n) {
 		$objkey = $this->encryptdata['key'].pack('VXxx', $n);
 		if ($this->encryptdata['mode'] == 2) { // AES-128
 			// AES padding
@@ -10711,15 +10600,14 @@ class TCPDF
 
 	/**
 	 * Encrypt the input string.
-	 * @param $n (int) object number
-	 * @param $s (string) data string to encrypt
-	 * @return encrypted string
+	 * @param int $n object number
+	 * @param string $s data string to encrypt
+	 * @return string encrypted string
 	 * @protected
 	 * @author Nicola Asuni
 	 * @since 5.0.005 (2010-05-11)
 	 */
-	protected function _encrypt_data($n, $s)
-	{
+	protected function _encrypt_data($n, $s) {
 		if (!$this->encrypted) {
 			return $s;
 		}
@@ -10747,8 +10635,7 @@ class TCPDF
 	 * @author Nicola Asuni
 	 * @since 2.0.000 (2008-01-02)
 	 */
-	protected function _putencryption()
-	{
+	protected function _putencryption() {
 		if (!$this->encrypted) {
 			return;
 		}
@@ -10868,8 +10755,7 @@ class TCPDF
 	 * @since 2.0.000 (2008-01-02)
 	 * @author Nicola Asuni
 	 */
-	protected function _Uvalue()
-	{
+	protected function _Uvalue() {
 		if ($this->encryptdata['mode'] == 0) { // RC4-40
 			return TCPDF_STATIC::_RC4($this->encryptdata['key'], TCPDF_STATIC::$enc_padding, $this->last_enc_key, $this->last_enc_key_c);
 		} elseif ($this->encryptdata['mode'] < 3) { // RC4-128, AES-128
@@ -10902,8 +10788,7 @@ class TCPDF
 	 * @since 5.9.006 (2010-10-19)
 	 * @author Nicola Asuni
 	 */
-	protected function _UEvalue()
-	{
+	protected function _UEvalue() {
 		$hashkey = hash('sha256', $this->encryptdata['user_password'].$this->encryptdata['UKS'], true);
 		return TCPDF_STATIC::_AESnopad($hashkey, $this->encryptdata['key']);
 	}
@@ -10915,8 +10800,7 @@ class TCPDF
 	 * @since 2.0.000 (2008-01-02)
 	 * @author Nicola Asuni
 	 */
-	protected function _Ovalue()
-	{
+	protected function _Ovalue() {
 		if ($this->encryptdata['mode'] < 3) { // RC4-40, RC4-128, AES-128
 			$tmp = TCPDF_STATIC::_md5_16($this->encryptdata['owner_password']);
 			if ($this->encryptdata['mode'] > 0) {
@@ -10954,22 +10838,20 @@ class TCPDF
 	 * @since 5.9.006 (2010-10-19)
 	 * @author Nicola Asuni
 	 */
-	protected function _OEvalue()
-	{
+	protected function _OEvalue() {
 		$hashkey = hash('sha256', $this->encryptdata['owner_password'].$this->encryptdata['OKS'].$this->encryptdata['U'], true);
 		return TCPDF_STATIC::_AESnopad($hashkey, $this->encryptdata['key']);
 	}
 
 	/**
 	 * Convert password for AES-256 encryption mode
-	 * @param $password (string) password
+	 * @param string $password password
 	 * @return string password
 	 * @protected
 	 * @since 5.9.006 (2010-10-19)
 	 * @author Nicola Asuni
 	 */
-	protected function _fixAES256Password($password)
-	{
+	protected function _fixAES256Password($password) {
 		$psw = ''; // password to be returned
 		$psw_array = TCPDF_FONTS::utf8Bidi(TCPDF_FONTS::UTF8StringToArray($password, $this->isunicode, $this->CurrentFont), $password, $this->rtl, $this->isunicode, $this->CurrentFont);
 		foreach ($psw_array as $c) {
@@ -10984,8 +10866,7 @@ class TCPDF
 	 * @since 2.0.000 (2008-01-02)
 	 * @author Nicola Asuni
 	 */
-	protected function _generateencryptionkey()
-	{
+	protected function _generateencryptionkey() {
 		$keybytelen = ($this->encryptdata['Length'] / 8);
 		if (!$this->encryptdata['pubkey']) { // standard mode
 			if ($this->encryptdata['mode'] == 3) { // AES-256
@@ -11094,17 +10975,16 @@ class TCPDF
 	 * Remark: the protection against modification is for people who have the full Acrobat product.
 	 * If you don't set any password, the document will open as usual. If you set a user password, the PDF viewer will ask for it before displaying the document. The master password, if different from the user one, can be used to get full access.
 	 * Note: protecting a document requires to encrypt it, which increases the processing time a lot. This can cause a PHP time-out in some cases, especially if the document contains images or fonts.
-	 * @param $permissions (Array) the set of permissions (specify the ones you want to block):<ul><li>print : Print the document;</li><li>modify : Modify the contents of the document by operations other than those controlled by 'fill-forms', 'extract' and 'assemble';</li><li>copy : Copy or otherwise extract text and graphics from the document;</li><li>annot-forms : Add or modify text annotations, fill in interactive form fields, and, if 'modify' is also set, create or modify interactive form fields (including signature fields);</li><li>fill-forms : Fill in existing interactive form fields (including signature fields), even if 'annot-forms' is not specified;</li><li>extract : Extract text and graphics (in support of accessibility to users with disabilities or for other purposes);</li><li>assemble : Assemble the document (insert, rotate, or delete pages and create bookmarks or thumbnail images), even if 'modify' is not set;</li><li>print-high : Print the document to a representation from which a faithful digital copy of the PDF content could be generated. When this is not set, printing is limited to a low-level representation of the appearance, possibly of degraded quality.</li><li>owner : (inverted logic - only for public-key) when set permits change of encryption and enables all other permissions.</li></ul>
-	 * @param $user_pass (String) user password. Empty by default.
-	 * @param $owner_pass (String) owner password. If not specified, a random value is used.
-	 * @param $mode (int) encryption strength: 0 = RC4 40 bit; 1 = RC4 128 bit; 2 = AES 128 bit; 3 = AES 256 bit.
-	 * @param $pubkeys (String) array of recipients containing public-key certificates ('c') and permissions ('p'). For example: array(array('c' => 'file://../examples/data/cert/tcpdf.crt', 'p' => array('print')))
+	 * @param array $permissions the set of permissions (specify the ones you want to block):<ul><li>print : Print the document;</li><li>modify : Modify the contents of the document by operations other than those controlled by 'fill-forms', 'extract' and 'assemble';</li><li>copy : Copy or otherwise extract text and graphics from the document;</li><li>annot-forms : Add or modify text annotations, fill in interactive form fields, and, if 'modify' is also set, create or modify interactive form fields (including signature fields);</li><li>fill-forms : Fill in existing interactive form fields (including signature fields), even if 'annot-forms' is not specified;</li><li>extract : Extract text and graphics (in support of accessibility to users with disabilities or for other purposes);</li><li>assemble : Assemble the document (insert, rotate, or delete pages and create bookmarks or thumbnail images), even if 'modify' is not set;</li><li>print-high : Print the document to a representation from which a faithful digital copy of the PDF content could be generated. When this is not set, printing is limited to a low-level representation of the appearance, possibly of degraded quality.</li><li>owner : (inverted logic - only for public-key) when set permits change of encryption and enables all other permissions.</li></ul>
+	 * @param string $user_pass user password. Empty by default.
+	 * @param string|null $owner_pass owner password. If not specified, a random value is used.
+	 * @param int $mode encryption strength: 0 = RC4 40 bit; 1 = RC4 128 bit; 2 = AES 128 bit; 3 = AES 256 bit.
+	 * @param array|null $pubkeys array of recipients containing public-key certificates ('c') and permissions ('p'). For example: array(array('c' => 'file://../examples/data/cert/tcpdf.crt', 'p' => array('print')))
 	 * @public
 	 * @since 2.0.000 (2008-01-02)
 	 * @author Nicola Asuni
 	 */
-	public function SetProtection($permissions = array('print', 'modify', 'copy', 'annot-forms', 'fill-forms', 'extract', 'assemble', 'print-high'), $user_pass = '', $owner_pass = null, $mode = 0, $pubkeys = null)
-	{
+	public function setProtection($permissions=array('print', 'modify', 'copy', 'annot-forms', 'fill-forms', 'extract', 'assemble', 'print-high'), $user_pass='', $owner_pass=null, $mode=0, $pubkeys=null) {
 		if ($this->pdfa_mode) {
 			// encryption is not allowed in PDF/A mode
 			return;
@@ -11210,8 +11090,7 @@ class TCPDF
 	 * @since 2.1.000 (2008-01-07)
 	 * @see StartTransform(), StopTransform()
 	 */
-	public function StartTransform()
-	{
+	public function StartTransform() {
 		if ($this->state != 2) {
 			return;
 		}
@@ -11234,8 +11113,7 @@ class TCPDF
 	 * @since 2.1.000 (2008-01-07)
 	 * @see StartTransform(), StopTransform()
 	 */
-	public function StopTransform()
-	{
+	public function StopTransform() {
 		if ($this->state != 2) {
 			return;
 		}
@@ -11253,62 +11131,58 @@ class TCPDF
 	}
 	/**
 	 * Horizontal Scaling.
-	 * @param $s_x (float) scaling factor for width as percent. 0 is not allowed.
-	 * @param $x (int) abscissa of the scaling center. Default is current x position
-	 * @param $y (int) ordinate of the scaling center. Default is current y position
+	 * @param float $s_x scaling factor for width as percent. 0 is not allowed.
+	 * @param int $x abscissa of the scaling center. Default is current x position
+	 * @param int $y ordinate of the scaling center. Default is current y position
 	 * @public
 	 * @since 2.1.000 (2008-01-07)
 	 * @see StartTransform(), StopTransform()
 	 */
-	public function ScaleX($s_x, $x = '', $y = '')
-	{
+	public function ScaleX($s_x, $x='', $y='') {
 		$this->Scale($s_x, 100, $x, $y);
 	}
 
 	/**
 	 * Vertical Scaling.
-	 * @param $s_y (float) scaling factor for height as percent. 0 is not allowed.
-	 * @param $x (int) abscissa of the scaling center. Default is current x position
-	 * @param $y (int) ordinate of the scaling center. Default is current y position
+	 * @param float $s_y scaling factor for height as percent. 0 is not allowed.
+	 * @param int $x abscissa of the scaling center. Default is current x position
+	 * @param int $y ordinate of the scaling center. Default is current y position
 	 * @public
 	 * @since 2.1.000 (2008-01-07)
 	 * @see StartTransform(), StopTransform()
 	 */
-	public function ScaleY($s_y, $x = '', $y = '')
-	{
+	public function ScaleY($s_y, $x='', $y='') {
 		$this->Scale(100, $s_y, $x, $y);
 	}
 
 	/**
 	 * Vertical and horizontal proportional Scaling.
-	 * @param $s (float) scaling factor for width and height as percent. 0 is not allowed.
-	 * @param $x (int) abscissa of the scaling center. Default is current x position
-	 * @param $y (int) ordinate of the scaling center. Default is current y position
+	 * @param float $s scaling factor for width and height as percent. 0 is not allowed.
+	 * @param int $x abscissa of the scaling center. Default is current x position
+	 * @param int $y ordinate of the scaling center. Default is current y position
 	 * @public
 	 * @since 2.1.000 (2008-01-07)
 	 * @see StartTransform(), StopTransform()
 	 */
-	public function ScaleXY($s, $x = '', $y = '')
-	{
+	public function ScaleXY($s, $x='', $y='') {
 		$this->Scale($s, $s, $x, $y);
 	}
 
 	/**
 	 * Vertical and horizontal non-proportional Scaling.
-	 * @param $s_x (float) scaling factor for width as percent. 0 is not allowed.
-	 * @param $s_y (float) scaling factor for height as percent. 0 is not allowed.
-	 * @param $x (int) abscissa of the scaling center. Default is current x position
-	 * @param $y (int) ordinate of the scaling center. Default is current y position
+	 * @param float $s_x scaling factor for width as percent. 0 is not allowed.
+	 * @param float $s_y scaling factor for height as percent. 0 is not allowed.
+	 * @param float|null $x abscissa of the scaling center. Default is current x position
+	 * @param float|null $y ordinate of the scaling center. Default is current y position
 	 * @public
 	 * @since 2.1.000 (2008-01-07)
 	 * @see StartTransform(), StopTransform()
 	 */
-	public function Scale($s_x, $s_y, $x = '', $y = '')
-	{
-		if ($x === '') {
+	public function Scale($s_x, $s_y, $x=null, $y=null) {
+		if (TCPDF_STATIC::empty_string($x)) {
 			$x = $this->x;
 		}
-		if ($y === '') {
+		if (TCPDF_STATIC::empty_string($y)) {
 			$y = $this->y;
 		}
 		if (($s_x == 0) OR ($s_y == 0)) {
@@ -11332,90 +11206,83 @@ class TCPDF
 
 	/**
 	 * Horizontal Mirroring.
-	 * @param $x (int) abscissa of the point. Default is current x position
+	 * @param float|null $x abscissa of the point. Default is current x position
 	 * @public
 	 * @since 2.1.000 (2008-01-07)
 	 * @see StartTransform(), StopTransform()
 	 */
-	public function MirrorH($x = '')
-	{
+	public function MirrorH($x=null) {
 		$this->Scale(-100, 100, $x);
 	}
 
 	/**
 	 * Verical Mirroring.
-	 * @param $y (int) ordinate of the point. Default is current y position
+	 * @param float|null $y ordinate of the point. Default is current y position
 	 * @public
 	 * @since 2.1.000 (2008-01-07)
 	 * @see StartTransform(), StopTransform()
 	 */
-	public function MirrorV($y = '')
-	{
-		$this->Scale(100, -100, '', $y);
+	public function MirrorV($y=null) {
+		$this->Scale(100, -100, null, $y);
 	}
 
 	/**
 	 * Point reflection mirroring.
-	 * @param $x (int) abscissa of the point. Default is current x position
-	 * @param $y (int) ordinate of the point. Default is current y position
+	 * @param float|null $x abscissa of the point. Default is current x position
+	 * @param float|null $y ordinate of the point. Default is current y position
 	 * @public
 	 * @since 2.1.000 (2008-01-07)
 	 * @see StartTransform(), StopTransform()
 	 */
-	public function MirrorP($x = '', $y = '')
-	{
+	public function MirrorP($x=null,$y=null) {
 		$this->Scale(-100, -100, $x, $y);
 	}
 
 	/**
 	 * Reflection against a straight line through point (x, y) with the gradient angle (angle).
-	 * @param $angle (float) gradient angle of the straight line. Default is 0 (horizontal line).
-	 * @param $x (int) abscissa of the point. Default is current x position
-	 * @param $y (int) ordinate of the point. Default is current y position
+	 * @param float $angle gradient angle of the straight line. Default is 0 (horizontal line).
+	 * @param float|null $x abscissa of the point. Default is current x position
+	 * @param float|null $y ordinate of the point. Default is current y position
 	 * @public
 	 * @since 2.1.000 (2008-01-07)
 	 * @see StartTransform(), StopTransform()
 	 */
-	public function MirrorL($angle = 0, $x = '', $y = '')
-	{
+	public function MirrorL($angle=0, $x=null,$y=null) {
 		$this->Scale(-100, 100, $x, $y);
 		$this->Rotate(-2*($angle-90), $x, $y);
 	}
 
 	/**
 	 * Translate graphic object horizontally.
-	 * @param $t_x (int) movement to the right (or left for RTL)
+	 * @param int $t_x movement to the right (or left for RTL)
 	 * @public
 	 * @since 2.1.000 (2008-01-07)
 	 * @see StartTransform(), StopTransform()
 	 */
-	public function TranslateX($t_x)
-	{
+	public function TranslateX($t_x) {
 		$this->Translate($t_x, 0);
 	}
 
 	/**
 	 * Translate graphic object vertically.
-	 * @param $t_y (int) movement to the bottom
+	 * @param int $t_y movement to the bottom
 	 * @public
 	 * @since 2.1.000 (2008-01-07)
 	 * @see StartTransform(), StopTransform()
 	 */
-	public function TranslateY($t_y)
-	{
+	public function TranslateY($t_y) {
 		$this->Translate(0, $t_y);
 	}
 
 	/**
 	 * Translate graphic object horizontally and vertically.
-	 * @param $t_x (int) movement to the right
-	 * @param $t_y (int) movement to the bottom
+	 * @param int $t_x movement to the right
+	 * @param int $t_y movement to the bottom
 	 * @public
 	 * @since 2.1.000 (2008-01-07)
 	 * @see StartTransform(), StopTransform()
 	 */
-	public function Translate($t_x, $t_y)
-	{
+	public function Translate($t_x, $t_y) {
 		//calculate elements of transformation matrix
 		$tm = array();
 		$tm[0] = 1;
@@ -11430,19 +11297,18 @@ class TCPDF
 
 	/**
 	 * Rotate object.
-	 * @param $angle (float) angle in degrees for counter-clockwise rotation
-	 * @param $x (int) abscissa of the rotation center. Default is current x position
-	 * @param $y (int) ordinate of the rotation center. Default is current y position
+	 * @param float $angle angle in degrees for counter-clockwise rotation
+	 * @param float|null $x abscissa of the rotation center. Default is current x position
+	 * @param float|null $y ordinate of the rotation center. Default is current y position
 	 * @public
 	 * @since 2.1.000 (2008-01-07)
 	 * @see StartTransform(), StopTransform()
 	 */
-	public function Rotate($angle, $x = '', $y = '')
-	{
-		if ($x === '') {
+	public function Rotate($angle, $x=null, $y=null) {
+		if (TCPDF_STATIC::empty_string($x)) {
 			$x = $this->x;
 		}
-		if ($y === '') {
+		if (TCPDF_STATIC::empty_string($y)) {
 			$y = $this->y;
 		}
 		$y = ($this->h - $y) * $this->k;
@@ -11461,48 +11327,45 @@ class TCPDF
 
 	/**
 	 * Skew horizontally.
-	 * @param $angle_x (float) angle in degrees between -90 (skew to the left) and 90 (skew to the right)
-	 * @param $x (int) abscissa of the skewing center. default is current x position
-	 * @param $y (int) ordinate of the skewing center. default is current y position
+	 * @param float $angle_x angle in degrees between -90 (skew to the left) and 90 (skew to the right)
+	 * @param float|null $x abscissa of the skewing center. default is current x position
+	 * @param float|null $y ordinate of the skewing center. default is current y position
 	 * @public
 	 * @since 2.1.000 (2008-01-07)
 	 * @see StartTransform(), StopTransform()
 	 */
-	public function SkewX($angle_x, $x = '', $y = '')
-	{
+	public function SkewX($angle_x, $x=null, $y=null) {
 		$this->Skew($angle_x, 0, $x, $y);
 	}
 
 	/**
 	 * Skew vertically.
-	 * @param $angle_y (float) angle in degrees between -90 (skew to the bottom) and 90 (skew to the top)
-	 * @param $x (int) abscissa of the skewing center. default is current x position
-	 * @param $y (int) ordinate of the skewing center. default is current y position
+	 * @param float $angle_y angle in degrees between -90 (skew to the bottom) and 90 (skew to the top)
+	 * @param float|null $x abscissa of the skewing center. default is current x position
+	 * @param float|null $y ordinate of the skewing center. default is current y position
 	 * @public
 	 * @since 2.1.000 (2008-01-07)
 	 * @see StartTransform(), StopTransform()
 	 */
-	public function SkewY($angle_y, $x = '', $y = '')
-	{
+	public function SkewY($angle_y, $x=null, $y=null) {
 		$this->Skew(0, $angle_y, $x, $y);
 	}
 
 	/**
 	 * Skew.
-	 * @param $angle_x (float) angle in degrees between -90 (skew to the left) and 90 (skew to the right)
-	 * @param $angle_y (float) angle in degrees between -90 (skew to the bottom) and 90 (skew to the top)
-	 * @param $x (int) abscissa of the skewing center. default is current x position
-	 * @param $y (int) ordinate of the skewing center. default is current y position
+	 * @param float $angle_x angle in degrees between -90 (skew to the left) and 90 (skew to the right)
+	 * @param float $angle_y angle in degrees between -90 (skew to the bottom) and 90 (skew to the top)
+	 * @param float|null $x abscissa of the skewing center. default is current x position
+	 * @param float|null $y ordinate of the skewing center. default is current y position
 	 * @public
 	 * @since 2.1.000 (2008-01-07)
 	 * @see StartTransform(), StopTransform()
 	 */
-	public function Skew($angle_x, $angle_y, $x = '', $y = '')
-	{
-		if ($x === '') {
+	public function Skew($angle_x, $angle_y, $x=null, $y=null) {
+		if (TCPDF_STATIC::empty_string($x)) {
 			$x = $this->x;
 		}
-		if ($y === '') {
+		if (TCPDF_STATIC::empty_string($y)) {
 			$y = $this->y;
 		}
 		if (($angle_x <= -90) OR ($angle_x >= 90) OR ($angle_y <= -90) OR ($angle_y >= 90)) {
@@ -11524,13 +11387,12 @@ class TCPDF
 
 	/**
 	 * Apply graphic transformations.
-	 * @param $tm (array) transformation matrix
+	 * @param array $tm transformation matrix
 	 * @protected
 	 * @since 2.1.000 (2008-01-07)
 	 * @see StartTransform(), StopTransform()
 	 */
-	protected function Transform($tm)
-	{
+	protected function Transform($tm) {
 		if ($this->state != 2) {
 			return;
 		}
@@ -11557,13 +11419,12 @@ class TCPDF
 
 	/**
 	 * Defines the line width. By default, the value equals 0.2 mm. The method can be called before the first page is created and the value is retained from page to page.
-	 * @param $width (float) The width.
+	 * @param float $width The width.
 	 * @public
 	 * @since 1.0
 	 * @see Line(), Rect(), Cell(), MultiCell()
 	 */
-	public function SetLineWidth($width)
-	{
+	public function setLineWidth($width) {
 		//Set line width
 		$this->LineWidth = $width;
 		$this->linestyleWidth = sprintf('%F w', ($width * $this->k));
@@ -11579,39 +11440,37 @@ class TCPDF
 	 * @since 2.1.000 (2008-01-07)
 	 * @see Line(), SetLineWidth()
 	 */
-	public function GetLineWidth()
-	{
+	public function GetLineWidth() {
 		return $this->LineWidth;
 	}
 
 	/**
 	 * Set line style.
-	 * @param $style (array) Line style. Array with keys among the following:
-	 *               <ul>
-	 *               <li>width (float): Width of the line in user units.</li>
-	 *               <li>cap (string): Type of cap to put on the line. Possible values are:
-	 *               butt, round, square. The difference between "square" and "butt" is that
-	 *               "square" projects a flat end past the end of the line.</li>
-	 *               <li>join (string): Type of join. Possible values are: miter, round,
-	 *               bevel.</li>
-	 *               <li>dash (mixed): Dash pattern. Is 0 (without dash) or string with
-	 *               series of length values, which are the lengths of the on and off dashes.
-	 *               For example: "2" represents 2 on, 2 off, 2 on, 2 off, ...; "2,1" is 2 on,
-	 *               1 off, 2 on, 1 off, ...</li>
-	 *               <li>phase (integer): Modifier on the dash pattern which is used to shift
-	 *               the point at which the pattern starts.</li>
-	 *               <li>color (array): Draw color. Format: array(GREY) or array(R,G,B) or array(C,M,Y,K) or array(C,M,Y,K,SpotColorName).</li>
-	 *               </ul>
-	 * @param $ret (boolean) if true do not send the command.
+	 * @param array $style Line style. Array with keys among the following:
+	 * <ul>
+	 *	 <li>width (float): Width of the line in user units.</li>
+	 *	 <li>cap (string): Type of cap to put on the line. Possible values are:
+	 * butt, round, square. The difference between "square" and "butt" is that
+	 * "square" projects a flat end past the end of the line.</li>
+	 *	 <li>join (string): Type of join. Possible values are: miter, round,
+	 * bevel.</li>
+	 *	 <li>dash (mixed): Dash pattern. Is 0 (without dash) or string with
+	 * series of length values, which are the lengths of the on and off dashes.
+	 * For example: "2" represents 2 on, 2 off, 2 on, 2 off, ...; "2,1" is 2 on,
+	 * 1 off, 2 on, 1 off, ...</li>
+	 *	 <li>phase (integer): Modifier on the dash pattern which is used to shift
+	 * the point at which the pattern starts.</li>
+	 *	 <li>color (array): Draw color. Format: array(GREY) or array(R,G,B) or array(C,M,Y,K) or array(C,M,Y,K,SpotColorName).</li>
+	 * </ul>
+	 * @param boolean $ret if true do not send the command.
 	 * @return string the PDF command
 	 * @public
 	 * @since 2.1.000 (2008-01-08)
 	 */
-	public function SetLineStyle($style, $ret = false)
-	{
+	public function setLineStyle($style, $ret=false) {
 		$s = ''; // string to be returned
 		if (!is_array($style)) {
-			return;
+			return $s;
 		}
 		if (isset($style['width'])) {
 			$this->LineWidth = $style['width'];
@@ -11655,7 +11514,7 @@ class TCPDF
 			$s .= $this->linestyleDash.' ';
 		}
 		if (isset($style['color'])) {
-			$s .= $this->SetDrawColorArray($style['color'], true).' ';
+			$s .= $this->setDrawColorArray($style['color'], true).' ';
 		}
 		if (!$ret AND ($this->state == 2)) {
 			$this->_out($s);
@@ -11665,13 +11524,12 @@ class TCPDF
 
 	/**
 	 * Begin a new subpath by moving the current point to coordinates (x, y), omitting any connecting line segment.
-	 * @param $x (float) Abscissa of point.
-	 * @param $y (float) Ordinate of point.
+	 * @param float $x Abscissa of point.
+	 * @param float $y Ordinate of point.
 	 * @protected
 	 * @since 2.1.000 (2008-01-08)
 	 */
-	protected function _outPoint($x, $y)
-	{
+	protected function _outPoint($x, $y) {
 		if ($this->state == 2) {
 			$this->_out(sprintf('%F %F m', ($x * $this->k), (($this->h - $y) * $this->k)));
 		}
@@ -11680,13 +11538,12 @@ class TCPDF
 	/**
 	 * Append a straight line segment from the current point to the point (x, y).
 	 * The new current point shall be (x, y).
-	 * @param $x (float) Abscissa of end point.
-	 * @param $y (float) Ordinate of end point.
+	 * @param float $x Abscissa of end point.
+	 * @param float $y Ordinate of end point.
 	 * @protected
 	 * @since 2.1.000 (2008-01-08)
 	 */
-	protected function _outLine($x, $y)
-	{
+	protected function _outLine($x, $y) {
 		if ($this->state == 2) {
 			$this->_out(sprintf('%F %F l', ($x * $this->k), (($this->h - $y) * $this->k)));
 		}
@@ -11694,16 +11551,15 @@ class TCPDF
 
 	/**
 	 * Append a rectangle to the current path as a complete subpath, with lower-left corner (x, y) and dimensions widthand height in user space.
-	 * @param $x (float) Abscissa of upper-left corner.
-	 * @param $y (float) Ordinate of upper-left corner.
-	 * @param $w (float) Width.
-	 * @param $h (float) Height.
-	 * @param $op (string) options
+	 * @param float $x Abscissa of upper-left corner.
+	 * @param float $y Ordinate of upper-left corner.
+	 * @param float $w Width.
+	 * @param float $h Height.
+	 * @param string $op options
 	 * @protected
 	 * @since 2.1.000 (2008-01-08)
 	 */
-	protected function _outRect($x, $y, $w, $h, $op)
-	{
+	protected function _outRect($x, $y, $w, $h, $op) {
 		if ($this->state == 2) {
 			$this->_out(sprintf('%F %F %F %F re %s', ($x * $this->k), (($this->h - $y) * $this->k), ($w * $this->k), (-$h * $this->k), $op));
 		}
@@ -11712,17 +11568,16 @@ class TCPDF
 	/**
 	 * Append a cubic Bezier curve to the current path. The curve shall extend from the current point to the point (x3, y3), using (x1, y1) and (x2, y2) as the Bezier control points.
 	 * The new current point shall be (x3, y3).
-	 * @param $x1 (float) Abscissa of control point 1.
-	 * @param $y1 (float) Ordinate of control point 1.
-	 * @param $x2 (float) Abscissa of control point 2.
-	 * @param $y2 (float) Ordinate of control point 2.
-	 * @param $x3 (float) Abscissa of end point.
-	 * @param $y3 (float) Ordinate of end point.
+	 * @param float $x1 Abscissa of control point 1.
+	 * @param float $y1 Ordinate of control point 1.
+	 * @param float $x2 Abscissa of control point 2.
+	 * @param float $y2 Ordinate of control point 2.
+	 * @param float $x3 Abscissa of end point.
+	 * @param float $y3 Ordinate of end point.
 	 * @protected
 	 * @since 2.1.000 (2008-01-08)
 	 */
-	protected function _outCurve($x1, $y1, $x2, $y2, $x3, $y3)
-	{
+	protected function _outCurve($x1, $y1, $x2, $y2, $x3, $y3) {
 		if ($this->state == 2) {
 			$this->_out(sprintf('%F %F %F %F %F %F c', ($x1 * $this->k), (($this->h - $y1) * $this->k), ($x2 * $this->k), (($this->h - $y2) * $this->k), ($x3 * $this->k), (($this->h - $y3) * $this->k)));
 		}
@@ -11731,15 +11586,14 @@ class TCPDF
 	/**
 	 * Append a cubic Bezier curve to the current path. The curve shall extend from the current point to the point (x3, y3), using the current point and (x2, y2) as the Bezier control points.
 	 * The new current point shall be (x3, y3).
-	 * @param $x2 (float) Abscissa of control point 2.
-	 * @param $y2 (float) Ordinate of control point 2.
-	 * @param $x3 (float) Abscissa of end point.
-	 * @param $y3 (float) Ordinate of end point.
+	 * @param float $x2 Abscissa of control point 2.
+	 * @param float $y2 Ordinate of control point 2.
+	 * @param float $x3 Abscissa of end point.
+	 * @param float $y3 Ordinate of end point.
 	 * @protected
 	 * @since 4.9.019 (2010-04-26)
 	 */
-	protected function _outCurveV($x2, $y2, $x3, $y3)
-	{
+	protected function _outCurveV($x2, $y2, $x3, $y3) {
 		if ($this->state == 2) {
 			$this->_out(sprintf('%F %F %F %F v', ($x2 * $this->k), (($this->h - $y2) * $this->k), ($x3 * $this->k), (($this->h - $y3) * $this->k)));
 		}
@@ -11748,15 +11602,14 @@ class TCPDF
 	/**
 	 * Append a cubic Bezier curve to the current path. The curve shall extend from the current point to the point (x3, y3), using (x1, y1) and (x3, y3) as the Bezier control points.
 	 * The new current point shall be (x3, y3).
-	 * @param $x1 (float) Abscissa of control point 1.
-	 * @param $y1 (float) Ordinate of control point 1.
-	 * @param $x3 (float) Abscissa of end point.
-	 * @param $y3 (float) Ordinate of end point.
+	 * @param float $x1 Abscissa of control point 1.
+	 * @param float $y1 Ordinate of control point 1.
+	 * @param float $x3 Abscissa of end point.
+	 * @param float $y3 Ordinate of end point.
 	 * @protected
 	 * @since 2.1.000 (2008-01-08)
 	 */
-	protected function _outCurveY($x1, $y1, $x3, $y3)
-	{
+	protected function _outCurveY($x1, $y1, $x3, $y3) {
 		if ($this->state == 2) {
 			$this->_out(sprintf('%F %F %F %F y', ($x1 * $this->k), (($this->h - $y1) * $this->k), ($x3 * $this->k), (($this->h - $y3) * $this->k)));
 		}
@@ -11764,22 +11617,21 @@ class TCPDF
 
 	/**
 	 * Draws a line between two points.
-	 * @param $x1 (float) Abscissa of first point.
-	 * @param $y1 (float) Ordinate of first point.
-	 * @param $x2 (float) Abscissa of second point.
-	 * @param $y2 (float) Ordinate of second point.
-	 * @param $style (array) Line style. Array like for SetLineStyle(). Default value: default line style (empty array).
+	 * @param float $x1 Abscissa of first point.
+	 * @param float $y1 Ordinate of first point.
+	 * @param float $x2 Abscissa of second point.
+	 * @param float $y2 Ordinate of second point.
+	 * @param array $style Line style. Array like for SetLineStyle(). Default value: default line style (empty array).
 	 * @public
 	 * @since 1.0
 	 * @see SetLineWidth(), SetDrawColor(), SetLineStyle()
 	 */
-	public function Line($x1, $y1, $x2, $y2, $style = array())
-	{
+	public function Line($x1, $y1, $x2, $y2, $style=array()) {
 		if ($this->state != 2) {
 			return;
 		}
 		if (is_array($style)) {
-			$this->SetLineStyle($style);
+			$this->setLineStyle($style);
 		}
 		$this->_outPoint($x1, $y1);
 		$this->_outLine($x2, $y2);
@@ -11788,24 +11640,23 @@ class TCPDF
 
 	/**
 	 * Draws a rectangle.
-	 * @param $x (float) Abscissa of upper-left corner.
-	 * @param $y (float) Ordinate of upper-left corner.
-	 * @param $w (float) Width.
-	 * @param $h (float) Height.
-	 * @param $style (string) Style of rendering. See the getPathPaintOperator() function for more information.
-	 * @param $border_style (array) Border style of rectangle. Array with keys among the following:
-	 *                      <ul>
-	 *                      <li>all: Line style of all borders. Array like for SetLineStyle().</li>
-	 *                      <li>L, T, R, B or combinations: Line style of left, top, right or bottom border. Array like for SetLineStyle().</li>
-	 *                      </ul>
-	 *                      If a key is not present or is null, the correspondent border is not drawn. Default value: default line style (empty array).
-	 * @param $fill_color (array) Fill color. Format: array(GREY) or array(R,G,B) or array(C,M,Y,K) or array(C,M,Y,K,SpotColorName). Default value: default color (empty array).
+	 * @param float $x Abscissa of upper-left corner.
+	 * @param float $y Ordinate of upper-left corner.
+	 * @param float $w Width.
+	 * @param float $h Height.
+	 * @param string $style Style of rendering. See the getPathPaintOperator() function for more information.
+	 * @param array $border_style Border style of rectangle. Array with keys among the following:
+	 * <ul>
+	 *	 <li>all: Line style of all borders. Array like for SetLineStyle().</li>
+	 *	 <li>L, T, R, B or combinations: Line style of left, top, right or bottom border. Array like for SetLineStyle().</li>
+	 * </ul>
+	 * If a key is not present or is null, the correspondent border is not drawn. Default value: default line style (empty array).
+	 * @param array $fill_color Fill color. Format: array(GREY) or array(R,G,B) or array(C,M,Y,K) or array(C,M,Y,K,SpotColorName). Default value: default color (empty array).
 	 * @public
 	 * @since 1.0
 	 * @see SetLineStyle()
 	 */
-	public function Rect($x, $y, $w, $h, $style = '', $border_style = array(), $fill_color = array())
-	{
+	public function Rect($x, $y, $w, $h, $style='', $border_style=array(), $fill_color=array()) {
 		if ($this->state != 2) {
 			return;
 		}
@@ -11814,12 +11665,12 @@ class TCPDF
 		}
 		if (!(strpos($style, 'F') === false) AND !empty($fill_color)) {
 			// set background color
-			$this->SetFillColorArray($fill_color);
+			$this->setFillColorArray($fill_color);
 		}
 		if (!empty($border_style)) {
 			if (isset($border_style['all']) AND !empty($border_style['all'])) {
 				//set global style for border
-				$this->SetLineStyle($border_style['all']);
+				$this->setLineStyle($border_style['all']);
 				$border_style = array();
 			} else {
 				// remove stroke operator from style
@@ -11861,32 +11712,31 @@ class TCPDF
 	 * Draws a Bezier curve.
 	 * The Bezier curve is a tangent to the line between the control points at
 	 * either end of the curve.
-	 * @param $x0 (float) Abscissa of start point.
-	 * @param $y0 (float) Ordinate of start point.
-	 * @param $x1 (float) Abscissa of control point 1.
-	 * @param $y1 (float) Ordinate of control point 1.
-	 * @param $x2 (float) Abscissa of control point 2.
-	 * @param $y2 (float) Ordinate of control point 2.
-	 * @param $x3 (float) Abscissa of end point.
-	 * @param $y3 (float) Ordinate of end point.
-	 * @param $style (string) Style of rendering. See the getPathPaintOperator() function for more information.
-	 * @param $line_style (array) Line style of curve. Array like for SetLineStyle(). Default value: default line style (empty array).
-	 * @param $fill_color (array) Fill color. Format: array(GREY) or array(R,G,B) or array(C,M,Y,K) or array(C,M,Y,K,SpotColorName). Default value: default color (empty array).
+	 * @param float $x0 Abscissa of start point.
+	 * @param float $y0 Ordinate of start point.
+	 * @param float $x1 Abscissa of control point 1.
+	 * @param float $y1 Ordinate of control point 1.
+	 * @param float $x2 Abscissa of control point 2.
+	 * @param float $y2 Ordinate of control point 2.
+	 * @param float $x3 Abscissa of end point.
+	 * @param float $y3 Ordinate of end point.
+	 * @param string $style Style of rendering. See the getPathPaintOperator() function for more information.
+	 * @param array $line_style Line style of curve. Array like for SetLineStyle(). Default value: default line style (empty array).
+	 * @param array $fill_color Fill color. Format: array(GREY) or array(R,G,B) or array(C,M,Y,K) or array(C,M,Y,K,SpotColorName). Default value: default color (empty array).
 	 * @public
 	 * @see SetLineStyle()
 	 * @since 2.1.000 (2008-01-08)
 	 */
-	public function Curve($x0, $y0, $x1, $y1, $x2, $y2, $x3, $y3, $style = '', $line_style = array(), $fill_color = array())
-	{
+	public function Curve($x0, $y0, $x1, $y1, $x2, $y2, $x3, $y3, $style='', $line_style=array(), $fill_color=array()) {
 		if ($this->state != 2) {
 			return;
 		}
-		if (!(false === strpos($style, 'F')) AND isset($fill_color)) {
-			$this->SetFillColorArray($fill_color);
+		if (!(false === strpos($style, 'F')) AND is_array($fill_color)) {
+			$this->setFillColorArray($fill_color);
 		}
 		$op = TCPDF_STATIC::getPathPaintOperator($style);
 		if ($line_style) {
-			$this->SetLineStyle($line_style);
+			$this->setLineStyle($line_style);
 		}
 		$this->_outPoint($x0, $y0);
 		$this->_outCurve($x1, $y1, $x2, $y2, $x3, $y3);
@@ -11897,30 +11747,29 @@ class TCPDF
 	 * Draws a poly-Bezier curve.
 	 * Each Bezier curve segment is a tangent to the line between the control points at
 	 * either end of the curve.
-	 * @param $x0 (float) Abscissa of start point.
-	 * @param $y0 (float) Ordinate of start point.
-	 * @param $segments (float) An array of bezier descriptions. Format: array(x1, y1, x2, y2, x3, y3).
-	 * @param $style (string) Style of rendering. See the getPathPaintOperator() function for more information.
-	 * @param $line_style (array) Line style of curve. Array like for SetLineStyle(). Default value: default line style (empty array).
-	 * @param $fill_color (array) Fill color. Format: array(GREY) or array(R,G,B) or array(C,M,Y,K) or array(C,M,Y,K,SpotColorName). Default value: default color (empty array).
+	 * @param float $x0 Abscissa of start point.
+	 * @param float $y0 Ordinate of start point.
+	 * @param float[] $segments An array of bezier descriptions. Format: array(x1, y1, x2, y2, x3, y3).
+	 * @param string $style Style of rendering. See the getPathPaintOperator() function for more information.
+	 * @param array $line_style Line style of curve. Array like for SetLineStyle(). Default value: default line style (empty array).
+	 * @param array $fill_color Fill color. Format: array(GREY) or array(R,G,B) or array(C,M,Y,K) or array(C,M,Y,K,SpotColorName). Default value: default color (empty array).
 	 * @public
 	 * @see SetLineStyle()
 	 * @since 3.0008 (2008-05-12)
 	 */
-	public function Polycurve($x0, $y0, $segments, $style = '', $line_style = array(), $fill_color = array())
-	{
+	public function Polycurve($x0, $y0, $segments, $style='', $line_style=array(), $fill_color=array()) {
 		if ($this->state != 2) {
 			return;
 		}
-		if (!(false === strpos($style, 'F')) AND isset($fill_color)) {
-			$this->SetFillColorArray($fill_color);
+		if (!(false === strpos($style, 'F')) AND is_array($fill_color)) {
+			$this->setFillColorArray($fill_color);
 		}
 		$op = TCPDF_STATIC::getPathPaintOperator($style);
 		if ($op == 'f') {
 			$line_style = array();
 		}
 		if ($line_style) {
-			$this->SetLineStyle($line_style);
+			$this->setLineStyle($line_style);
 		}
 		$this->_outPoint($x0, $y0);
 		foreach ($segments as $segment) {
@@ -11933,38 +11782,37 @@ class TCPDF
 	/**
 	 * Draws an ellipse.
 	 * An ellipse is formed from n Bezier curves.
-	 * @param $x0 (float) Abscissa of center point.
-	 * @param $y0 (float) Ordinate of center point.
-	 * @param $rx (float) Horizontal radius.
-	 * @param $ry (float) Vertical radius (if ry = 0 then is a circle, see Circle()). Default value: 0.
-	 * @param $angle: (float) Angle oriented (anti-clockwise). Default value: 0.
-	 * @param $astart: (float) Angle start of draw line. Default value: 0.
-	 * @param $afinish: (float) Angle finish of draw line. Default value: 360.
-	 * @param $style (string) Style of rendering. See the getPathPaintOperator() function for more information.
-	 * @param $line_style (array) Line style of ellipse. Array like for SetLineStyle(). Default value: default line style (empty array).
-	 * @param $fill_color (array) Fill color. Format: array(GREY) or array(R,G,B) or array(C,M,Y,K) or array(C,M,Y,K,SpotColorName). Default value: default color (empty array).
-	 * @param $nc (integer) Number of curves used to draw a 90 degrees portion of ellipse.
+	 * @param float $x0 Abscissa of center point.
+	 * @param float $y0 Ordinate of center point.
+	 * @param float $rx Horizontal radius.
+	 * @param float $ry Vertical radius (if ry = 0 then is a circle, see Circle()). Default value: 0.
+	 * @param float $angle Angle oriented (anti-clockwise). Default value: 0.
+	 * @param float $astart Angle start of draw line. Default value: 0.
+	 * @param float $afinish Angle finish of draw line. Default value: 360.
+	 * @param string $style Style of rendering. See the getPathPaintOperator() function for more information.
+	 * @param array $line_style Line style of ellipse. Array like for SetLineStyle(). Default value: default line style (empty array).
+	 * @param array $fill_color Fill color. Format: array(GREY) or array(R,G,B) or array(C,M,Y,K) or array(C,M,Y,K,SpotColorName). Default value: default color (empty array).
+	 * @param integer $nc Number of curves used to draw a 90 degrees portion of ellipse.
 	 * @author Nicola Asuni
 	 * @public
 	 * @since 2.1.000 (2008-01-08)
 	 */
-	public function Ellipse($x0, $y0, $rx, $ry = '', $angle = 0, $astart = 0, $afinish = 360, $style = '', $line_style = array(), $fill_color = array(), $nc = 2)
-	{
+	public function Ellipse($x0, $y0, $rx, $ry=0, $angle=0, $astart=0, $afinish=360, $style='', $line_style=array(), $fill_color=array(), $nc=2) {
 		if ($this->state != 2) {
 			return;
 		}
 		if (TCPDF_STATIC::empty_string($ry) OR ($ry == 0)) {
 			$ry = $rx;
 		}
-		if (!(false === strpos($style, 'F')) AND isset($fill_color)) {
-			$this->SetFillColorArray($fill_color);
+		if (!(false === strpos($style, 'F')) AND is_array($fill_color)) {
+			$this->setFillColorArray($fill_color);
 		}
 		$op = TCPDF_STATIC::getPathPaintOperator($style);
 		if ($op == 'f') {
 			$line_style = array();
 		}
 		if ($line_style) {
-			$this->SetLineStyle($line_style);
+			$this->setLineStyle($line_style);
 		}
 		$this->_outellipticalarc($x0, $y0, $rx, $ry, $angle, $astart, $afinish, false, $nc, true, true, false);
 		$this->_out($op);
@@ -11973,25 +11821,24 @@ class TCPDF
 	/**
 	 * Append an elliptical arc to the current path.
 	 * An ellipse is formed from n Bezier curves.
-	 * @param $xc (float) Abscissa of center point.
-	 * @param $yc (float) Ordinate of center point.
-	 * @param $rx (float) Horizontal radius.
-	 * @param $ry (float) Vertical radius (if ry = 0 then is a circle, see Circle()). Default value: 0.
-	 * @param $xang: (float) Angle between the X-axis and the major axis of the ellipse. Default value: 0.
-	 * @param $angs: (float) Angle start of draw line. Default value: 0.
-	 * @param $angf: (float) Angle finish of draw line. Default value: 360.
-	 * @param $pie (boolean) if true do not mark the border point (used to draw pie sectors).
-	 * @param $nc (integer) Number of curves used to draw a 90 degrees portion of ellipse.
-	 * @param $startpoint (boolean) if true output a starting point.
-	 * @param $ccw (boolean) if true draws in counter-clockwise.
-	 * @param $svg (boolean) if true the angles are in svg mode (already calculated).
+	 * @param float $xc Abscissa of center point.
+	 * @param float $yc Ordinate of center point.
+	 * @param float $rx Horizontal radius.
+	 * @param float $ry Vertical radius (if ry = 0 then is a circle, see Circle()). Default value: 0.
+	 * @param float $xang Angle between the X-axis and the major axis of the ellipse. Default value: 0.
+	 * @param float $angs Angle start of draw line. Default value: 0.
+	 * @param float $angf Angle finish of draw line. Default value: 360.
+	 * @param boolean $pie if true do not mark the border point (used to draw pie sectors).
+	 * @param integer $nc Number of curves used to draw a 90 degrees portion of ellipse.
+	 * @param boolean $startpoint if true output a starting point.
+	 * @param boolean $ccw if true draws in counter-clockwise.
+	 * @param boolean $svg if true the angles are in svg mode (already calculated).
 	 * @return array bounding box coordinates (x min, y min, x max, y max)
 	 * @author Nicola Asuni
 	 * @protected
 	 * @since 4.9.019 (2010-04-26)
 	 */
-	protected function _outellipticalarc($xc, $yc, $rx, $ry, $xang = 0, $angs = 0, $angf = 360, $pie = false, $nc = 2, $startpoint = true, $ccw = true, $svg = false)
-	{
+	protected function _outellipticalarc($xc, $yc, $rx, $ry, $xang=0, $angs=0, $angf=360, $pie=false, $nc=2, $startpoint=true, $ccw=true, $svg=false) {
 		if (($rx <= 0) OR ($ry < 0)) {
 			return;
 		}
@@ -12110,59 +11957,56 @@ class TCPDF
 	/**
 	 * Draws a circle.
 	 * A circle is formed from n Bezier curves.
-	 * @param $x0 (float) Abscissa of center point.
-	 * @param $y0 (float) Ordinate of center point.
-	 * @param $r (float) Radius.
-	 * @param $angstr: (float) Angle start of draw line. Default value: 0.
-	 * @param $angend: (float) Angle finish of draw line. Default value: 360.
-	 * @param $style (string) Style of rendering. See the getPathPaintOperator() function for more information.
-	 * @param $line_style (array) Line style of circle. Array like for SetLineStyle(). Default value: default line style (empty array).
-	 * @param $fill_color (array) Fill color. Format: array(red, green, blue). Default value: default color (empty array).
-	 * @param $nc (integer) Number of curves used to draw a 90 degrees portion of circle.
+	 * @param float $x0 Abscissa of center point.
+	 * @param float $y0 Ordinate of center point.
+	 * @param float $r Radius.
+	 * @param float $angstr Angle start of draw line. Default value: 0.
+	 * @param float $angend Angle finish of draw line. Default value: 360.
+	 * @param string $style Style of rendering. See the getPathPaintOperator() function for more information.
+	 * @param array $line_style Line style of circle. Array like for SetLineStyle(). Default value: default line style (empty array).
+	 * @param array $fill_color Fill color. Format: array(red, green, blue). Default value: default color (empty array).
+	 * @param integer $nc Number of curves used to draw a 90 degrees portion of circle.
 	 * @public
 	 * @since 2.1.000 (2008-01-08)
 	 */
-	public function Circle($x0, $y0, $r, $angstr = 0, $angend = 360, $style = '', $line_style = array(), $fill_color = array(), $nc = 2)
-	{
+	public function Circle($x0, $y0, $r, $angstr=0, $angend=360, $style='', $line_style=array(), $fill_color=array(), $nc=2) {
 		$this->Ellipse($x0, $y0, $r, $r, 0, $angstr, $angend, $style, $line_style, $fill_color, $nc);
 	}
 
 	/**
 	 * Draws a polygonal line
-	 * @param $p (array) Points 0 to ($np - 1). Array with values (x0, y0, x1, y1,..., x(np-1), y(np - 1))
-	 * @param $style (string) Style of rendering. See the getPathPaintOperator() function for more information.
-	 * @param $line_style (array) Line style of polygon. Array with keys among the following:
-	 *                    <ul>
-	 *                    <li>all: Line style of all lines. Array like for SetLineStyle().</li>
-	 *                    <li>0 to ($np - 1): Line style of each line. Array like for SetLineStyle().</li>
-	 *                    </ul>
-	 *                    If a key is not present or is null, not draws the line. Default value is default line style (empty array).
-	 * @param $fill_color (array) Fill color. Format: array(GREY) or array(R,G,B) or array(C,M,Y,K) or array(C,M,Y,K,SpotColorName). Default value: default color (empty array).
+	 * @param array $p Points 0 to ($np - 1). Array with values (x0, y0, x1, y1,..., x(np-1), y(np - 1))
+	 * @param string $style Style of rendering. See the getPathPaintOperator() function for more information.
+	 * @param array $line_style Line style of polygon. Array with keys among the following:
+	 * <ul>
+	 *	 <li>all: Line style of all lines. Array like for SetLineStyle().</li>
+	 *	 <li>0 to ($np - 1): Line style of each line. Array like for SetLineStyle().</li>
+	 * </ul>
+	 * If a key is not present or is null, not draws the line. Default value is default line style (empty array).
+	 * @param array $fill_color Fill color. Format: array(GREY) or array(R,G,B) or array(C,M,Y,K) or array(C,M,Y,K,SpotColorName). Default value: default color (empty array).
 	 * @since 4.8.003 (2009-09-15)
 	 * @public
 	 */
-	public function PolyLine($p, $style = '', $line_style = array(), $fill_color = array())
-	{
+	public function PolyLine($p, $style='', $line_style=array(), $fill_color=array()) {
 		$this->Polygon($p, $style, $line_style, $fill_color, false);
 	}
 
 	/**
 	 * Draws a polygon.
-	 * @param $p (array) Points 0 to ($np - 1). Array with values (x0, y0, x1, y1,..., x(np-1), y(np - 1))
-	 * @param $style (string) Style of rendering. See the getPathPaintOperator() function for more information.
-	 * @param $line_style (array) Line style of polygon. Array with keys among the following:
-	 *                    <ul>
-	 *                    <li>all: Line style of all lines. Array like for SetLineStyle().</li>
-	 *                    <li>0 to ($np - 1): Line style of each line. Array like for SetLineStyle().</li>
-	 *                    </ul>
-	 *                    If a key is not present or is null, not draws the line. Default value is default line style (empty array).
-	 * @param $fill_color (array) Fill color. Format: array(GREY) or array(R,G,B) or array(C,M,Y,K) or array(C,M,Y,K,SpotColorName). Default value: default color (empty array).
-	 * @param $closed (boolean) if true the polygon is closes, otherwise will remain open
+	 * @param array $p Points 0 to ($np - 1). Array with values (x0, y0, x1, y1,..., x(np-1), y(np - 1))
+	 * @param string $style Style of rendering. See the getPathPaintOperator() function for more information.
+	 * @param array $line_style Line style of polygon. Array with keys among the following:
+	 * <ul>
+	 *	 <li>all: Line style of all lines. Array like for SetLineStyle().</li>
+	 *	 <li>0 to ($np - 1): Line style of each line. Array like for SetLineStyle().</li>
+	 * </ul>
+	 * If a key is not present or is null, not draws the line. Default value is default line style (empty array).
+	 * @param array $fill_color Fill color. Format: array(GREY) or array(R,G,B) or array(C,M,Y,K) or array(C,M,Y,K,SpotColorName). Default value: default color (empty array).
+	 * @param boolean $closed if true the polygon is closes, otherwise will remain open
 	 * @public
 	 * @since 2.1.000 (2008-01-08)
 	 */
-	public function Polygon($p, $style = '', $line_style = array(), $fill_color = array(), $closed = true)
-	{
+	public function Polygon($p, $style='', $line_style=array(), $fill_color=array(), $closed=true) {
 		if ($this->state != 2) {
 			return;
 		}
@@ -12179,8 +12023,8 @@ class TCPDF
 			}
 			$nc += 4;
 		}
-		if (!(false === strpos($style, 'F')) AND isset($fill_color)) {
-			$this->SetFillColorArray($fill_color);
+		if (!(false === strpos($style, 'F')) AND is_array($fill_color)) {
+			$this->setFillColorArray($fill_color);
 		}
 		$op = TCPDF_STATIC::getPathPaintOperator($style);
 		if ($op == 'f') {
@@ -12189,7 +12033,7 @@ class TCPDF
 		$draw = true;
 		if ($line_style) {
 			if (isset($line_style['all'])) {
-				$this->SetLineStyle($line_style['all']);
+				$this->setLineStyle($line_style['all']);
 			} else {
 				$draw = false;
 				if ($op == 'B') {
@@ -12209,7 +12053,7 @@ class TCPDF
 						if ($line_style[$line_num] != 0) {
 							if (is_array($line_style[$line_num])) {
 								$this->_out('S');
-								$this->SetLineStyle($line_style[$line_num]);
+								$this->setLineStyle($line_style[$line_num]);
 								$this->_outPoint($p[$i - 2], $p[$i - 1]);
 								$this->_outLine($p[$i], $p[$i + 1]);
 								$this->_out('S');
@@ -12236,35 +12080,34 @@ class TCPDF
 
 	/**
 	 * Draws a regular polygon.
-	 * @param $x0 (float) Abscissa of center point.
-	 * @param $y0 (float) Ordinate of center point.
-	 * @param $r: (float) Radius of inscribed circle.
-	 * @param $ns (integer) Number of sides.
-	 * @param $angle (float) Angle oriented (anti-clockwise). Default value: 0.
-	 * @param $draw_circle (boolean) Draw inscribed circle or not. Default value: false.
-	 * @param $style (string) Style of rendering. See the getPathPaintOperator() function for more information.
-	 * @param $line_style (array) Line style of polygon sides. Array with keys among the following:
-	 *                    <ul>
-	 *                    <li>all: Line style of all sides. Array like for SetLineStyle().</li>
-	 *                    <li>0 to ($ns - 1): Line style of each side. Array like for SetLineStyle().</li>
-	 *                    </ul>
-	 *                    If a key is not present or is null, not draws the side. Default value is default line style (empty array).
-	 * @param $fill_color (array) Fill color. Format: array(red, green, blue). Default value: default color (empty array).
-	 * @param $circle_style (string) Style of rendering of inscribed circle (if draws). Possible values are:
-	 *                      <ul>
-	 *                      <li>D or empty string: Draw (default).</li>
-	 *                      <li>F: Fill.</li>
-	 *                      <li>DF or FD: Draw and fill.</li>
-	 *                      <li>CNZ: Clipping mode (using the even-odd rule to determine which regions lie inside the clipping path).</li>
-	 *                      <li>CEO: Clipping mode (using the nonzero winding number rule to determine which regions lie inside the clipping path).</li>
-	 *                      </ul>
-	 * @param $circle_outLine_style (array) Line style of inscribed circle (if draws). Array like for SetLineStyle(). Default value: default line style (empty array).
-	 * @param $circle_fill_color (array) Fill color of inscribed circle (if draws). Format: array(red, green, blue). Default value: default color (empty array).
+	 * @param float $x0 Abscissa of center point.
+	 * @param float $y0 Ordinate of center point.
+	 * @param float $r Radius of inscribed circle.
+	 * @param integer $ns Number of sides.
+	 * @param float $angle Angle oriented (anti-clockwise). Default value: 0.
+	 * @param boolean $draw_circle Draw inscribed circle or not. Default value: false.
+	 * @param string $style Style of rendering. See the getPathPaintOperator() function for more information.
+	 * @param array $line_style Line style of polygon sides. Array with keys among the following:
+	 * <ul>
+	 *	 <li>all: Line style of all sides. Array like for SetLineStyle().</li>
+	 *	 <li>0 to ($ns - 1): Line style of each side. Array like for SetLineStyle().</li>
+	 * </ul>
+	 * If a key is not present or is null, not draws the side. Default value is default line style (empty array).
+	 * @param array $fill_color Fill color. Format: array(red, green, blue). Default value: default color (empty array).
+	 * @param string $circle_style Style of rendering of inscribed circle (if draws). Possible values are:
+	 * <ul>
+	 *	 <li>D or empty string: Draw (default).</li>
+	 *	 <li>F: Fill.</li>
+	 *	 <li>DF or FD: Draw and fill.</li>
+	 *	 <li>CNZ: Clipping mode (using the even-odd rule to determine which regions lie inside the clipping path).</li>
+	 *	 <li>CEO: Clipping mode (using the nonzero winding number rule to determine which regions lie inside the clipping path).</li>
+	 * </ul>
+	 * @param array $circle_outLine_style Line style of inscribed circle (if draws). Array like for SetLineStyle(). Default value: default line style (empty array).
+	 * @param array $circle_fill_color Fill color of inscribed circle (if draws). Format: array(red, green, blue). Default value: default color (empty array).
 	 * @public
 	 * @since 2.1.000 (2008-01-08)
 	 */
-	public function RegularPolygon($x0, $y0, $r, $ns, $angle = 0, $draw_circle = false, $style = '', $line_style = array(), $fill_color = array(), $circle_style = '', $circle_outLine_style = array(), $circle_fill_color = array())
-	{
+	public function RegularPolygon($x0, $y0, $r, $ns, $angle=0, $draw_circle=false, $style='', $line_style=array(), $fill_color=array(), $circle_style='', $circle_outLine_style=array(), $circle_fill_color=array()) {
 		if (3 > $ns) {
 			$ns = 3;
 		}
@@ -12283,37 +12126,36 @@ class TCPDF
 
 	/**
 	 * Draws a star polygon
-	 * @param $x0 (float) Abscissa of center point.
-	 * @param $y0 (float) Ordinate of center point.
-	 * @param $r (float) Radius of inscribed circle.
-	 * @param $nv (integer) Number of vertices.
-	 * @param $ng (integer) Number of gap (if ($ng % $nv = 1) then is a regular polygon).
-	 * @param $angle: (float) Angle oriented (anti-clockwise). Default value: 0.
-	 * @param $draw_circle: (boolean) Draw inscribed circle or not. Default value is false.
-	 * @param $style (string) Style of rendering. See the getPathPaintOperator() function for more information.
-	 * @param $line_style (array) Line style of polygon sides. Array with keys among the following:
-	 *                    <ul>
-	 *                    <li>all: Line style of all sides. Array like for
-	 *                    SetLineStyle().</li>
-	 *                    <li>0 to (n - 1): Line style of each side. Array like for SetLineStyle().</li>
-	 *                    </ul>
-	 *                    If a key is not present or is null, not draws the side. Default value is default line style (empty array).
-	 * @param $fill_color (array) Fill color. Format: array(red, green, blue). Default value: default color (empty array).
-	 * @param $circle_style (string) Style of rendering of inscribed circle (if draws). Possible values are:
-	 *                      <ul>
-	 *                      <li>D or empty string: Draw (default).</li>
-	 *                      <li>F: Fill.</li>
-	 *                      <li>DF or FD: Draw and fill.</li>
-	 *                      <li>CNZ: Clipping mode (using the even-odd rule to determine which regions lie inside the clipping path).</li>
-	 *                      <li>CEO: Clipping mode (using the nonzero winding number rule to determine which regions lie inside the clipping path).</li>
-	 *                      </ul>
-	 * @param $circle_outLine_style (array) Line style of inscribed circle (if draws). Array like for SetLineStyle(). Default value: default line style (empty array).
-	 * @param $circle_fill_color (array) Fill color of inscribed circle (if draws). Format: array(red, green, blue). Default value: default color (empty array).
+	 * @param float $x0 Abscissa of center point.
+	 * @param float $y0 Ordinate of center point.
+	 * @param float $r Radius of inscribed circle.
+	 * @param integer $nv Number of vertices.
+	 * @param integer $ng Number of gap (if ($ng % $nv = 1) then is a regular polygon).
+	 * @param float $angle Angle oriented (anti-clockwise). Default value: 0.
+	 * @param boolean $draw_circle Draw inscribed circle or not. Default value is false.
+	 * @param string $style Style of rendering. See the getPathPaintOperator() function for more information.
+	 * @param array $line_style Line style of polygon sides. Array with keys among the following:
+	 * <ul>
+	 *	 <li>all: Line style of all sides. Array like for
+	 * SetLineStyle().</li>
+	 *	 <li>0 to (n - 1): Line style of each side. Array like for SetLineStyle().</li>
+	 * </ul>
+	 * If a key is not present or is null, not draws the side. Default value is default line style (empty array).
+	 * @param array $fill_color Fill color. Format: array(red, green, blue). Default value: default color (empty array).
+	 * @param string $circle_style Style of rendering of inscribed circle (if draws). Possible values are:
+	 * <ul>
+	 *	 <li>D or empty string: Draw (default).</li>
+	 *	 <li>F: Fill.</li>
+	 *	 <li>DF or FD: Draw and fill.</li>
+	 *	 <li>CNZ: Clipping mode (using the even-odd rule to determine which regions lie inside the clipping path).</li>
+	 *	 <li>CEO: Clipping mode (using the nonzero winding number rule to determine which regions lie inside the clipping path).</li>
+	 * </ul>
+	 * @param array $circle_outLine_style Line style of inscribed circle (if draws). Array like for SetLineStyle(). Default value: default line style (empty array).
+	 * @param array $circle_fill_color Fill color of inscribed circle (if draws). Format: array(red, green, blue). Default value: default color (empty array).
 	 * @public
 	 * @since 2.1.000 (2008-01-08)
 	 */
-	public function StarPolygon($x0, $y0, $r, $nv, $ng, $angle = 0, $draw_circle = false, $style = '', $line_style = array(), $fill_color = array(), $circle_style = '', $circle_outLine_style = array(), $circle_fill_color = array())
-	{
+	public function StarPolygon($x0, $y0, $r, $nv, $ng, $angle=0, $draw_circle=false, $style='', $line_style=array(), $fill_color=array(), $circle_style='', $circle_outLine_style=array(), $circle_fill_color=array()) {
 		if ($nv < 2) {
 			$nv = 2;
 		}
@@ -12343,40 +12185,38 @@ class TCPDF
 
 	/**
 	 * Draws a rounded rectangle.
-	 * @param $x (float) Abscissa of upper-left corner.
-	 * @param $y (float) Ordinate of upper-left corner.
-	 * @param $w (float) Width.
-	 * @param $h (float) Height.
-	 * @param $r (float) the radius of the circle used to round off the corners of the rectangle.
-	 * @param $round_corner (string) Draws rounded corner or not. String with a 0 (not rounded i-corner) or 1 (rounded i-corner) in i-position. Positions are, in order and begin to 0: top right, bottom right, bottom left and top left. Default value: all rounded corner ("1111").
-	 * @param $style (string) Style of rendering. See the getPathPaintOperator() function for more information.
-	 * @param $border_style (array) Border style of rectangle. Array like for SetLineStyle(). Default value: default line style (empty array).
-	 * @param $fill_color (array) Fill color. Format: array(GREY) or array(R,G,B) or array(C,M,Y,K) or array(C,M,Y,K,SpotColorName). Default value: default color (empty array).
+	 * @param float $x Abscissa of upper-left corner.
+	 * @param float $y Ordinate of upper-left corner.
+	 * @param float $w Width.
+	 * @param float $h Height.
+	 * @param float $r the radius of the circle used to round off the corners of the rectangle.
+	 * @param string $round_corner Draws rounded corner or not. String with a 0 (not rounded i-corner) or 1 (rounded i-corner) in i-position. Positions are, in order and begin to 0: top right, bottom right, bottom left and top left. Default value: all rounded corner ("1111").
+	 * @param string $style Style of rendering. See the getPathPaintOperator() function for more information.
+	 * @param array $border_style Border style of rectangle. Array like for SetLineStyle(). Default value: default line style (empty array).
+	 * @param array $fill_color Fill color. Format: array(GREY) or array(R,G,B) or array(C,M,Y,K) or array(C,M,Y,K,SpotColorName). Default value: default color (empty array).
 	 * @public
 	 * @since 2.1.000 (2008-01-08)
 	 */
-	public function RoundedRect($x, $y, $w, $h, $r, $round_corner = '1111', $style = '', $border_style = array(), $fill_color = array())
-	{
+	public function RoundedRect($x, $y, $w, $h, $r, $round_corner='1111', $style='', $border_style=array(), $fill_color=array()) {
 		$this->RoundedRectXY($x, $y, $w, $h, $r, $r, $round_corner, $style, $border_style, $fill_color);
 	}
 
 	/**
 	 * Draws a rounded rectangle.
-	 * @param $x (float) Abscissa of upper-left corner.
-	 * @param $y (float) Ordinate of upper-left corner.
-	 * @param $w (float) Width.
-	 * @param $h (float) Height.
-	 * @param $rx (float) the x-axis radius of the ellipse used to round off the corners of the rectangle.
-	 * @param $ry (float) the y-axis radius of the ellipse used to round off the corners of the rectangle.
-	 * @param $round_corner (string) Draws rounded corner or not. String with a 0 (not rounded i-corner) or 1 (rounded i-corner) in i-position. Positions are, in order and begin to 0: top right, bottom right, bottom left and top left. Default value: all rounded corner ("1111").
-	 * @param $style (string) Style of rendering. See the getPathPaintOperator() function for more information.
-	 * @param $border_style (array) Border style of rectangle. Array like for SetLineStyle(). Default value: default line style (empty array).
-	 * @param $fill_color (array) Fill color. Format: array(GREY) or array(R,G,B) or array(C,M,Y,K) or array(C,M,Y,K,SpotColorName). Default value: default color (empty array).
+	 * @param float $x Abscissa of upper-left corner.
+	 * @param float $y Ordinate of upper-left corner.
+	 * @param float $w Width.
+	 * @param float $h Height.
+	 * @param float $rx the x-axis radius of the ellipse used to round off the corners of the rectangle.
+	 * @param float $ry the y-axis radius of the ellipse used to round off the corners of the rectangle.
+	 * @param string $round_corner Draws rounded corner or not. String with a 0 (not rounded i-corner) or 1 (rounded i-corner) in i-position. Positions are, in order and begin to 0: top right, bottom right, bottom left and top left. Default value: all rounded corner ("1111").
+	 * @param string $style Style of rendering. See the getPathPaintOperator() function for more information.
+	 * @param array $border_style Border style of rectangle. Array like for SetLineStyle(). Default value: default line style (empty array).
+	 * @param array $fill_color Fill color. Format: array(GREY) or array(R,G,B) or array(C,M,Y,K) or array(C,M,Y,K,SpotColorName). Default value: default color (empty array).
 	 * @public
 	 * @since 4.9.019 (2010-04-22)
 	 */
-	public function RoundedRectXY($x, $y, $w, $h, $rx, $ry, $round_corner = '1111', $style = '', $border_style = array(), $fill_color = array())
-	{
+	public function RoundedRectXY($x, $y, $w, $h, $rx, $ry, $round_corner='1111', $style='', $border_style=array(), $fill_color=array()) {
 		if ($this->state != 2) {
 			return;
 		}
@@ -12386,15 +12226,15 @@ class TCPDF
 			return;
 		}
 		// Rounded
-		if (!(false === strpos($style, 'F')) AND isset($fill_color)) {
-			$this->SetFillColorArray($fill_color);
+		if (!(false === strpos($style, 'F')) AND is_array($fill_color)) {
+			$this->setFillColorArray($fill_color);
 		}
 		$op = TCPDF_STATIC::getPathPaintOperator($style);
 		if ($op == 'f') {
 			$border_style = array();
 		}
 		if ($border_style) {
-			$this->SetLineStyle($border_style);
+			$this->setLineStyle($border_style);
 		}
 		$MyArc = 4 / 3 * (sqrt(2) - 1);
 		$this->_outPoint($x + $rx, $y);
@@ -12436,18 +12276,17 @@ class TCPDF
 
 	/**
 	 * Draws a grahic arrow.
-	 * @param $x0 (float) Abscissa of first point.
-	 * @param $y0 (float) Ordinate of first point.
-	 * @param $x1 (float) Abscissa of second point.
-	 * @param $y1 (float) Ordinate of second point.
-	 * @param $head_style (int) (0 = draw only arrowhead arms, 1 = draw closed arrowhead, but no fill, 2 = closed and filled arrowhead, 3 = filled arrowhead)
-	 * @param $arm_size (float) length of arrowhead arms
-	 * @param $arm_angle (int) angle between an arm and the shaft
+	 * @param float $x0 Abscissa of first point.
+	 * @param float $y0 Ordinate of first point.
+	 * @param float $x1 Abscissa of second point.
+	 * @param float $y1 Ordinate of second point.
+	 * @param int $head_style (0 = draw only arrowhead arms, 1 = draw closed arrowhead, but no fill, 2 = closed and filled arrowhead, 3 = filled arrowhead)
+	 * @param float $arm_size length of arrowhead arms
+	 * @param int $arm_angle angle between an arm and the shaft
 	 * @author Piotr Galecki, Nicola Asuni, Andy Meier
 	 * @since 4.6.018 (2009-07-10)
 	 */
-	public function Arrow($x0, $y0, $x1, $y1, $head_style = 0, $arm_size = 5, $arm_angle = 15)
-	{
+	public function Arrow($x0, $y0, $x1, $y1, $head_style=0, $arm_size=5, $arm_angle=15) {
 		// getting arrow direction angle
 		// 0 deg angle is when both arms go along X axis. angle grows clockwise.
 		$dir_angle = atan2(($y0 - $y1), ($x0 - $x1));
@@ -12503,17 +12342,16 @@ class TCPDF
 	/**
 	 * Add a Named Destination.
 	 * NOTE: destination names are unique, so only last entry will be saved.
-	 * @param $name (string) Destination name.
-	 * @param $y (float) Y position in user units of the destiantion on the selected page (default = -1 = current position; 0 = page start;).
-	 * @param $page (int|string) Target page number (leave empty for current page). If you prefix a page number with the * character, then this page will not be changed when adding/deleting/moving pages.
-	 * @param $x (float) X position in user units of the destiantion on the selected page (default = -1 = current position;).
-	 * @return (string) Stripped named destination identifier or false in case of error.
+	 * @param string $name Destination name.
+	 * @param float $y Y position in user units of the destiantion on the selected page (default = -1 = current position; 0 = page start;).
+	 * @param int|string $page Target page number (leave empty for current page). If you prefix a page number with the * character, then this page will not be changed when adding/deleting/moving pages.
+	 * @param float $x X position in user units of the destiantion on the selected page (default = -1 = current position;).
+	 * @return string|false Stripped named destination identifier or false in case of error.
 	 * @public
 	 * @author Christian Deligant, Nicola Asuni
 	 * @since 5.9.097 (2011-06-23)
 	 */
-	public function setDestination($name, $y = -1, $page = '', $x = -1)
-	{
+	public function setDestination($name, $y=-1, $page='', $x=-1) {
 		// remove unsupported characters
 		$name = TCPDF_STATIC::encodeNameObject($name);
 		if (TCPDF_STATIC::empty_string($name)) {
@@ -12534,7 +12372,7 @@ class TCPDF
 			$x = $this->w;
 		}
 		$fixed = false;
-		if (!empty($page) AND ($page[0] == '*')) {
+		if (!empty($page) AND (substr($page, 0, 1) == '*')) {
 			$page = intval(substr($page, 1));
 			// this page number will not be changed when moving/add/deleting pages
 			$fixed = true;
@@ -12551,13 +12389,12 @@ class TCPDF
 
 	/**
 	 * Return the Named Destination array.
-	 * @return (array) Named Destination array.
+	 * @return array Named Destination array.
 	 * @public
 	 * @author Nicola Asuni
 	 * @since 5.9.097 (2011-06-23)
 	 */
-	public function getDestination()
-	{
+	public function getDestination() {
 		return $this->dests;
 	}
 
@@ -12567,14 +12404,13 @@ class TCPDF
 	 * @author Johannes G\FCntert, Nicola Asuni
 	 * @since 5.9.098 (2011-06-23)
 	 */
-	protected function _putdests()
-	{
+	protected function _putdests() {
 		if (empty($this->dests)) {
 			return;
 		}
 		$this->n_dests = $this->_newobj();
 		$out = ' <<';
-		foreach ($this->dests as $name => $o) {
+		foreach($this->dests as $name => $o) {
 			$out .= ' /'.$name.' '.sprintf('[%u 0 R /XYZ %F %F null]', $this->page_obj_id[($o['p'])], ($o['x'] * $this->k), ($this->pagedim[$o['p']]['h'] - ($o['y'] * $this->k)));
 		}
 		$out .= ' >>';
@@ -12584,36 +12420,34 @@ class TCPDF
 
 	/**
 	 * Adds a bookmark - alias for Bookmark().
-	 * @param $txt (string) Bookmark description.
-	 * @param $level (int) Bookmark level (minimum value is 0).
-	 * @param $y (float) Y position in user units of the bookmark on the selected page (default = -1 = current position; 0 = page start;).
-	 * @param $page (int|string) Target page number (leave empty for current page). If you prefix a page number with the * character, then this page will not be changed when adding/deleting/moving pages.
-	 * @param $style (string) Font style: B = Bold, I = Italic, BI = Bold + Italic.
-	 * @param $color (array) RGB color array (values from 0 to 255).
-	 * @param $x (float) X position in user units of the bookmark on the selected page (default = -1 = current position;).
-	 * @param $link (mixed) URL, or numerical link ID, or named destination (# character followed by the destination name), or embedded file (* character followed by the file name).
+	 * @param string $txt Bookmark description.
+	 * @param int $level Bookmark level (minimum value is 0).
+	 * @param float $y Y position in user units of the bookmark on the selected page (default = -1 = current position; 0 = page start;).
+	 * @param int|string $page Target page number (leave empty for current page). If you prefix a page number with the * character, then this page will not be changed when adding/deleting/moving pages.
+	 * @param string $style Font style: B = Bold, I = Italic, BI = Bold + Italic.
+	 * @param array $color RGB color array (values from 0 to 255).
+	 * @param float $x X position in user units of the bookmark on the selected page (default = -1 = current position;).
+	 * @param mixed $link URL, or numerical link ID, or named destination (# character followed by the destination name), or embedded file (* character followed by the file name).
 	 * @public
 	 */
-	public function setBookmark($txt, $level = 0, $y = -1, $page = '', $style = '', $color = array(0,0,0), $x = -1, $link = '')
-	{
+	public function setBookmark($txt, $level=0, $y=-1, $page='', $style='', $color=array(0,0,0), $x=-1, $link='') {
 		$this->Bookmark($txt, $level, $y, $page, $style, $color, $x, $link);
 	}
 
 	/**
 	 * Adds a bookmark.
-	 * @param $txt (string) Bookmark description.
-	 * @param $level (int) Bookmark level (minimum value is 0).
-	 * @param $y (float) Y position in user units of the bookmark on the selected page (default = -1 = current position; 0 = page start;).
-	 * @param $page (int|string) Target page number (leave empty for current page). If you prefix a page number with the * character, then this page will not be changed when adding/deleting/moving pages.
-	 * @param $style (string) Font style: B = Bold, I = Italic, BI = Bold + Italic.
-	 * @param $color (array) RGB color array (values from 0 to 255).
-	 * @param $x (float) X position in user units of the bookmark on the selected page (default = -1 = current position;).
-	 * @param $link (mixed) URL, or numerical link ID, or named destination (# character followed by the destination name), or embedded file (* character followed by the file name).
+	 * @param string $txt Bookmark description.
+	 * @param int $level Bookmark level (minimum value is 0).
+	 * @param float $y Y position in user units of the bookmark on the selected page (default = -1 = current position; 0 = page start;).
+	 * @param int|string $page Target page number (leave empty for current page). If you prefix a page number with the * character, then this page will not be changed when adding/deleting/moving pages.
+	 * @param string $style Font style: B = Bold, I = Italic, BI = Bold + Italic.
+	 * @param array $color RGB color array (values from 0 to 255).
+	 * @param float $x X position in user units of the bookmark on the selected page (default = -1 = current position;).
+	 * @param mixed $link URL, or numerical link ID, or named destination (# character followed by the destination name), or embedded file (* character followed by the file name).
 	 * @public
 	 * @since 2.1.002 (2008-02-12)
 	 */
-	public function Bookmark($txt, $level = 0, $y = -1, $page = '', $style = '', $color = array(0,0,0), $x = -1, $link = '')
-	{
+	public function Bookmark($txt, $level=0, $y=-1, $page='', $style='', $color=array(0,0,0), $x=-1, $link='') {
 		if ($level < 0) {
 			$level = 0;
 		}
@@ -12641,7 +12475,8 @@ class TCPDF
 			$x = $this->w;
 		}
 		$fixed = false;
-		if (!empty($page) AND ($page[0] == '*')) {
+		$pageAsString = (string) $page;
+		if ($pageAsString && $pageAsString[0] == '*') {
 			$page = intval(substr($page, 1));
 			// this page number will not be changed when moving/add/deleting pages
 			$fixed = true;
@@ -12660,8 +12495,7 @@ class TCPDF
 	 * @protected
 	 * @since 5.9.119 (2011-09-19)
 	 */
-	protected function sortBookmarks()
-	{
+	protected function sortBookmarks() {
 		// get sorting columns
 		$outline_p = array();
 		$outline_y = array();
@@ -12679,8 +12513,7 @@ class TCPDF
 	 * @author Olivier Plathey, Nicola Asuni
 	 * @since 2.1.002 (2008-02-12)
 	 */
-	protected function _putbookmarks()
-	{
+	protected function _putbookmarks() {
 		$nb = count($this->outlines);
 		if ($nb == 0) {
 			return;
@@ -12801,27 +12634,25 @@ class TCPDF
 
 	/**
 	 * Adds a javascript
-	 * @param $script (string) Javascript code
+	 * @param string $script Javascript code
 	 * @public
 	 * @author Johannes G\FCntert, Nicola Asuni
 	 * @since 2.1.002 (2008-02-12)
 	 */
-	public function IncludeJS($script)
-	{
+	public function IncludeJS($script) {
 		$this->javascript .= $script;
 	}
 
 	/**
 	 * Adds a javascript object and return object ID
-	 * @param $script (string) Javascript code
-	 * @param $onload (boolean) if true executes this object when opening the document
+	 * @param string $script Javascript code
+	 * @param boolean $onload if true executes this object when opening the document
 	 * @return int internal object ID
 	 * @public
 	 * @author Nicola Asuni
 	 * @since 4.8.000 (2009-09-07)
 	 */
-	public function addJavascriptObject($script, $onload = false)
-	{
+	public function addJavascriptObject($script, $onload=false) {
 		if ($this->pdfa_mode) {
 			// javascript is not allowed in PDF/A mode
 			return false;
@@ -12837,8 +12668,7 @@ class TCPDF
 	 * @author Johannes G\FCntert, Nicola Asuni
 	 * @since 2.1.002 (2008-02-12)
 	 */
-	protected function _putjavascript()
-	{
+	protected function _putjavascript() {
 		if ($this->pdfa_mode OR (empty($this->javascript) AND empty($this->js_objects))) {
 			return;
 		}
@@ -12885,19 +12715,18 @@ class TCPDF
 
 	/**
 	 * Adds a javascript form field.
-	 * @param $type (string) field type
-	 * @param $name (string) field name
-	 * @param $x (int) horizontal position
-	 * @param $y (int) vertical position
-	 * @param $w (int) width
-	 * @param $h (int) height
-	 * @param $prop (array) javascript field properties. Possible values are described on official Javascript for Acrobat API reference.
+	 * @param string $type field type
+	 * @param string $name field name
+	 * @param int $x horizontal position
+	 * @param int $y vertical position
+	 * @param int $w width
+	 * @param int $h height
+	 * @param array $prop javascript field properties. Possible values are described on official Javascript for Acrobat API reference.
 	 * @protected
 	 * @author Denis Van Nuffelen, Nicola Asuni
 	 * @since 2.1.002 (2008-02-12)
 	 */
-	protected function _addfield($type, $name, $x, $y, $w, $h, $prop)
-	{
+	protected function _addfield($type, $name, $x, $y, $w, $h, $prop) {
 		if ($this->rtl) {
 			$x = $x - $w;
 		}
@@ -12906,7 +12735,7 @@ class TCPDF
 		$k = $this->k;
 		$this->javascript .= sprintf("f".$name."=this.addField('%s','%s',%u,[%F,%F,%F,%F]);", $name, $type, $this->PageNo()-1, $x*$k, ($this->h-$y)*$k+1, ($x+$w)*$k, ($this->h-$y-$h)*$k+1)."\n";
 		$this->javascript .= 'f'.$name.'.textSize='.$this->FontSizePt.";\n";
-		foreach ($prop as $key => $val) {
+		foreach($prop as $key => $val) {
 			if (strcmp(substr($key, -5), 'Color') == 0) {
 				$val = TCPDF_COLORS::_JScolor($val);
 			} else {
@@ -12928,13 +12757,12 @@ class TCPDF
 
 	/**
 	 * Set default properties for form fields.
-	 * @param $prop (array) javascript field properties. Possible values are described on official Javascript for Acrobat API reference.
+	 * @param array $prop javascript field properties. Possible values are described on official Javascript for Acrobat API reference.
 	 * @public
 	 * @author Nicola Asuni
 	 * @since 4.8.000 (2009-09-06)
 	 */
-	public function setFormDefaultProp($prop = array())
-	{
+	public function setFormDefaultProp($prop=array()) {
 		$this->default_form_prop = $prop;
 	}
 
@@ -12945,31 +12773,29 @@ class TCPDF
 	 * @author Nicola Asuni
 	 * @since 4.8.000 (2009-09-06)
 	 */
-	public function getFormDefaultProp()
-	{
+	public function getFormDefaultProp() {
 		return $this->default_form_prop;
 	}
 
 	/**
 	 * Creates a text field
-	 * @param $name (string) field name
-	 * @param $w (float) Width of the rectangle
-	 * @param $h (float) Height of the rectangle
-	 * @param $prop (array) javascript field properties. Possible values are described on official Javascript for Acrobat API reference.
-	 * @param $opt (array) annotation parameters. Possible values are described on official PDF32000_2008 reference.
-	 * @param $x (float) Abscissa of the upper-left corner of the rectangle
-	 * @param $y (float) Ordinate of the upper-left corner of the rectangle
-	 * @param $js (boolean) if true put the field using JavaScript (requires Acrobat Writer to be rendered).
+	 * @param string $name field name
+	 * @param float $w Width of the rectangle
+	 * @param float $h Height of the rectangle
+	 * @param array $prop javascript field properties. Possible values are described on official Javascript for Acrobat API reference.
+	 * @param array $opt annotation parameters. Possible values are described on official PDF32000_2008 reference.
+	 * @param float|null $x Abscissa of the upper-left corner of the rectangle
+	 * @param float|null $y Ordinate of the upper-left corner of the rectangle
+	 * @param boolean $js if true put the field using JavaScript (requires Acrobat Writer to be rendered).
 	 * @public
 	 * @author Nicola Asuni
 	 * @since 4.8.000 (2009-09-07)
 	 */
-	public function TextField($name, $w, $h, $prop = array(), $opt = array(), $x = '', $y = '', $js = false)
-	{
-		if ($x === '') {
+	public function TextField($name, $w, $h, $prop=array(), $opt=array(), $x=null, $y=null, $js=false) {
+		if (TCPDF_STATIC::empty_string($x)) {
 			$x = $this->x;
 		}
-		if ($y === '') {
+		if (TCPDF_STATIC::empty_string($y)) {
 			$y = $this->y;
 		}
 		// check page for no-write regions and adapt page margins if necessary
@@ -13073,25 +12899,24 @@ class TCPDF
 
 	/**
 	 * Creates a RadioButton field.
-	 * @param $name (string) Field name.
-	 * @param $w (int) Width of the radio button.
-	 * @param $prop (array) Javascript field properties. Possible values are described on official Javascript for Acrobat API reference.
-	 * @param $opt (array) Annotation parameters. Possible values are described on official PDF32000_2008 reference.
-	 * @param $onvalue (string) Value to be returned if selected.
-	 * @param $checked (boolean) Define the initial state.
-	 * @param $x (float) Abscissa of the upper-left corner of the rectangle
-	 * @param $y (float) Ordinate of the upper-left corner of the rectangle
-	 * @param $js (boolean) If true put the field using JavaScript (requires Acrobat Writer to be rendered).
+	 * @param string $name Field name.
+	 * @param int $w Width of the radio button.
+	 * @param array $prop Javascript field properties. Possible values are described on official Javascript for Acrobat API reference.
+	 * @param array $opt Annotation parameters. Possible values are described on official PDF32000_2008 reference.
+	 * @param string $onvalue Value to be returned if selected.
+	 * @param boolean $checked Define the initial state.
+	 * @param float|null $x Abscissa of the upper-left corner of the rectangle
+	 * @param float|null $y Ordinate of the upper-left corner of the rectangle
+	 * @param boolean $js If true put the field using JavaScript (requires Acrobat Writer to be rendered).
 	 * @public
 	 * @author Nicola Asuni
 	 * @since 4.8.000 (2009-09-07)
 	 */
-	public function RadioButton($name, $w, $prop = array(), $opt = array(), $onvalue = 'On', $checked = false, $x = '', $y = '', $js = false)
-	{
-		if ($x === '') {
+	public function RadioButton($name, $w, $prop=array(), $opt=array(), $onvalue='On', $checked=false, $x=null, $y=null, $js=false) {
+		if (TCPDF_STATIC::empty_string($x)) {
 			$x = $this->x;
 		}
-		if ($y === '') {
+		if (TCPDF_STATIC::empty_string($y)) {
 			$y = $this->y;
 		}
 		// check page for no-write regions and adapt page margins if necessary
@@ -13177,25 +13002,24 @@ class TCPDF
 
 	/**
 	 * Creates a List-box field
-	 * @param $name (string) field name
-	 * @param $w (int) width
-	 * @param $h (int) height
-	 * @param $values (array) array containing the list of values.
-	 * @param $prop (array) javascript field properties. Possible values are described on official Javascript for Acrobat API reference.
-	 * @param $opt (array) annotation parameters. Possible values are described on official PDF32000_2008 reference.
-	 * @param $x (float) Abscissa of the upper-left corner of the rectangle
-	 * @param $y (float) Ordinate of the upper-left corner of the rectangle
-	 * @param $js (boolean) if true put the field using JavaScript (requires Acrobat Writer to be rendered).
+	 * @param string $name field name
+	 * @param int $w width
+	 * @param int $h height
+	 * @param array $values array containing the list of values.
+	 * @param array $prop javascript field properties. Possible values are described on official Javascript for Acrobat API reference.
+	 * @param array $opt annotation parameters. Possible values are described on official PDF32000_2008 reference.
+	 * @param float|null $x Abscissa of the upper-left corner of the rectangle
+	 * @param float|null $y Ordinate of the upper-left corner of the rectangle
+	 * @param boolean $js if true put the field using JavaScript (requires Acrobat Writer to be rendered).
 	 * @public
 	 * @author Nicola Asuni
 	 * @since 4.8.000 (2009-09-07)
 	 */
-	public function ListBox($name, $w, $h, $values, $prop = array(), $opt = array(), $x = '', $y = '', $js = false)
-	{
-		if ($x === '') {
+	public function ListBox($name, $w, $h, $values, $prop=array(), $opt=array(), $x=null, $y=null, $js=false) {
+		if (TCPDF_STATIC::empty_string($x)) {
 			$x = $this->x;
 		}
-		if ($y === '') {
+		if (TCPDF_STATIC::empty_string($y)) {
 			$y = $this->y;
 		}
 		// check page for no-write regions and adapt page margins if necessary
@@ -13225,7 +13049,7 @@ class TCPDF
 		$popt['ap'] = array();
 		$popt['ap']['n'] = '/Tx BMC q '.$fontstyle.' ';
 		$text = '';
-		foreach ($values as $item) {
+		foreach($values as $item) {
 			if (is_array($item)) {
 				$text .= $item[1]."\n";
 			} else {
@@ -13264,25 +13088,24 @@ class TCPDF
 
 	/**
 	 * Creates a Combo-box field
-	 * @param $name (string) field name
-	 * @param $w (int) width
-	 * @param $h (int) height
-	 * @param $values (array) array containing the list of values.
-	 * @param $prop (array) javascript field properties. Possible values are described on official Javascript for Acrobat API reference.
-	 * @param $opt (array) annotation parameters. Possible values are described on official PDF32000_2008 reference.
-	 * @param $x (float) Abscissa of the upper-left corner of the rectangle
-	 * @param $y (float) Ordinate of the upper-left corner of the rectangle
-	 * @param $js (boolean) if true put the field using JavaScript (requires Acrobat Writer to be rendered).
+	 * @param string $name field name
+	 * @param int $w width
+	 * @param int $h height
+	 * @param array $values array containing the list of values.
+	 * @param array $prop javascript field properties. Possible values are described on official Javascript for Acrobat API reference.
+	 * @param array $opt annotation parameters. Possible values are described on official PDF32000_2008 reference.
+	 * @param float|null $x Abscissa of the upper-left corner of the rectangle
+	 * @param float|null $y Ordinate of the upper-left corner of the rectangle
+	 * @param boolean $js if true put the field using JavaScript (requires Acrobat Writer to be rendered).
 	 * @public
 	 * @author Nicola Asuni
 	 * @since 4.8.000 (2009-09-07)
 	 */
-	public function ComboBox($name, $w, $h, $values, $prop = array(), $opt = array(), $x = '', $y = '', $js = false)
-	{
-		if ($x === '') {
+	public function ComboBox($name, $w, $h, $values, $prop=array(), $opt=array(), $x=null, $y=null, $js=false) {
+		if (TCPDF_STATIC::empty_string($x)) {
 			$x = $this->x;
 		}
-		if ($y === '') {
+		if (TCPDF_STATIC::empty_string($y)) {
 			$y = $this->y;
 		}
 		// check page for no-write regions and adapt page margins if necessary
@@ -13313,7 +13136,7 @@ class TCPDF
 		$popt['ap'] = array();
 		$popt['ap']['n'] = '/Tx BMC q '.$fontstyle.' ';
 		$text = '';
-		foreach ($values as $item) {
+		foreach($values as $item) {
 			if (is_array($item)) {
 				$text .= $item[1]."\n";
 			} else {
@@ -13352,25 +13175,24 @@ class TCPDF
 
 	/**
 	 * Creates a CheckBox field
-	 * @param $name (string) field name
-	 * @param $w (int) width
-	 * @param $checked (boolean) define the initial state.
-	 * @param $prop (array) javascript field properties. Possible values are described on official Javascript for Acrobat API reference.
-	 * @param $opt (array) annotation parameters. Possible values are described on official PDF32000_2008 reference.
-	 * @param $onvalue (string) value to be returned if selected.
-	 * @param $x (float) Abscissa of the upper-left corner of the rectangle
-	 * @param $y (float) Ordinate of the upper-left corner of the rectangle
-	 * @param $js (boolean) if true put the field using JavaScript (requires Acrobat Writer to be rendered).
+	 * @param string $name field name
+	 * @param int $w width
+	 * @param boolean $checked define the initial state.
+	 * @param array $prop javascript field properties. Possible values are described on official Javascript for Acrobat API reference.
+	 * @param array $opt annotation parameters. Possible values are described on official PDF32000_2008 reference.
+	 * @param string $onvalue value to be returned if selected.
+	 * @param float|null $x Abscissa of the upper-left corner of the rectangle
+	 * @param float|null $y Ordinate of the upper-left corner of the rectangle
+	 * @param boolean $js if true put the field using JavaScript (requires Acrobat Writer to be rendered).
 	 * @public
 	 * @author Nicola Asuni
 	 * @since 4.8.000 (2009-09-07)
 	 */
-	public function CheckBox($name, $w, $checked = false, $prop = array(), $opt = array(), $onvalue = 'Yes', $x = '', $y = '', $js = false)
-	{
-		if ($x === '') {
+	public function CheckBox($name, $w, $checked=false, $prop=array(), $opt=array(), $onvalue='Yes', $x=null, $y=null, $js=false) {
+		if (TCPDF_STATIC::empty_string($x)) {
 			$x = $this->x;
 		}
-		if ($y === '') {
+		if (TCPDF_STATIC::empty_string($y)) {
 			$y = $this->y;
 		}
 		// check page for no-write regions and adapt page margins if necessary
@@ -13432,26 +13254,25 @@ class TCPDF
 
 	/**
 	 * Creates a button field
-	 * @param $name (string) field name
-	 * @param $w (int) width
-	 * @param $h (int) height
-	 * @param $caption (string) caption.
-	 * @param $action (mixed) action triggered by pressing the button. Use a string to specify a javascript action. Use an array to specify a form action options as on section 12.7.5 of PDF32000_2008.
-	 * @param $prop (array) javascript field properties. Possible values are described on official Javascript for Acrobat API reference.
-	 * @param $opt (array) annotation parameters. Possible values are described on official PDF32000_2008 reference.
-	 * @param $x (float) Abscissa of the upper-left corner of the rectangle
-	 * @param $y (float) Ordinate of the upper-left corner of the rectangle
-	 * @param $js (boolean) if true put the field using JavaScript (requires Acrobat Writer to be rendered).
+	 * @param string $name field name
+	 * @param int $w width
+	 * @param int $h height
+	 * @param string $caption caption.
+	 * @param mixed $action action triggered by pressing the button. Use a string to specify a javascript action. Use an array to specify a form action options as on section 12.7.5 of PDF32000_2008.
+	 * @param array $prop javascript field properties. Possible values are described on official Javascript for Acrobat API reference.
+	 * @param array $opt annotation parameters. Possible values are described on official PDF32000_2008 reference.
+	 * @param float|null $x Abscissa of the upper-left corner of the rectangle
+	 * @param float|null $y Ordinate of the upper-left corner of the rectangle
+	 * @param boolean $js if true put the field using JavaScript (requires Acrobat Writer to be rendered).
 	 * @public
 	 * @author Nicola Asuni
 	 * @since 4.8.000 (2009-09-07)
 	 */
-	public function Button($name, $w, $h, $caption, $action, $prop = array(), $opt = array(), $x = '', $y = '', $js = false)
-	{
-		if ($x === '') {
+	public function Button($name, $w, $h, $caption, $action, $prop=array(), $opt=array(), $x=null, $y=null, $js=false) {
+		if (TCPDF_STATIC::empty_string($x)) {
 			$x = $this->x;
 		}
-		if ($y === '') {
+		if (TCPDF_STATIC::empty_string($y)) {
 			$y = $this->y;
 		}
 		// check page for no-write regions and adapt page margins if necessary
@@ -13484,7 +13305,7 @@ class TCPDF
 			'R' => array('width' => $bw, 'cap' => 'square', 'join' => 'miter', 'dash' => 0, 'color' => array(51)),
 			'T' => array('width' => $bw, 'cap' => 'square', 'join' => 'miter', 'dash' => 0, 'color' => array(231)),
 			'B' => array('width' => $bw, 'cap' => 'square', 'join' => 'miter', 'dash' => 0, 'color' => array(51)));
-		$this->SetFillColor(204);
+		$this->setFillColor(204);
 		$this->Cell($w, $h, $caption, $border, 0, 'C', true, '', 1, false, 'T', 'M');
 		$this->endTemplate();
 		--$this->n;
@@ -13614,8 +13435,7 @@ class TCPDF
 	 * @author Nicola Asuni
 	 * @since 4.6.008 (2009-05-07)
 	 */
-	protected function _putsignature()
-	{
+	protected function _putsignature() {
 		if ((!$this->sign) OR (!isset($this->signature_data['cert_type']))) {
 			return;
 		}
@@ -13691,27 +13511,26 @@ class TCPDF
 	 * WARNING: This is experimental and currently do not work.
 	 * Check the PDF Reference 8.7.1 Transform Methods,
 	 * Table 8.105 Entries in the UR transform parameters dictionary
-	 * @param $enable (boolean) if true enable user's rights on PDF reader
-	 * @param $document (string) Names specifying additional document-wide usage rights for the document. The only defined value is "/FullSave", which permits a user to save the document along with modified form and/or annotation data.
-	 * @param $annots (string) Names specifying additional annotation-related usage rights for the document. Valid names in PDF 1.5 and later are /Create/Delete/Modify/Copy/Import/Export, which permit the user to perform the named operation on annotations.
-	 * @param $form (string) Names specifying additional form-field-related usage rights for the document. Valid names are: /Add/Delete/FillIn/Import/Export/SubmitStandalone/SpawnTemplate
-	 * @param $signature (string) Names specifying additional signature-related usage rights for the document. The only defined value is /Modify, which permits a user to apply a digital signature to an existing signature form field or clear a signed signature form field.
-	 * @param $ef (string) Names specifying additional usage rights for named embedded files in the document. Valid names are /Create/Delete/Modify/Import, which permit the user to perform the named operation on named embedded files
-			Names specifying additional embedded-files-related usage rights for the document.
-	 * @param $formex (string) Names specifying additional form-field-related usage rights. The only valid name is BarcodePlaintext, which permits text form field data to be encoded as a plaintext two-dimensional barcode.
+	 * @param boolean $enable if true enable user's rights on PDF reader
+	 * @param string $document Names specifying additional document-wide usage rights for the document. The only defined value is "/FullSave", which permits a user to save the document along with modified form and/or annotation data.
+	 * @param string $annots Names specifying additional annotation-related usage rights for the document. Valid names in PDF 1.5 and later are /Create/Delete/Modify/Copy/Import/Export, which permit the user to perform the named operation on annotations.
+	 * @param string $form Names specifying additional form-field-related usage rights for the document. Valid names are: /Add/Delete/FillIn/Import/Export/SubmitStandalone/SpawnTemplate
+	 * @param string $signature Names specifying additional signature-related usage rights for the document. The only defined value is /Modify, which permits a user to apply a digital signature to an existing signature form field or clear a signed signature form field.
+	 * @param string $ef Names specifying additional usage rights for named embedded files in the document. Valid names are /Create/Delete/Modify/Import, which permit the user to perform the named operation on named embedded files
+	 Names specifying additional embedded-files-related usage rights for the document.
+	 * @param string $formex Names specifying additional form-field-related usage rights. The only valid name is BarcodePlaintext, which permits text form field data to be encoded as a plaintext two-dimensional barcode.
 	 * @public
 	 * @author Nicola Asuni
 	 * @since 2.9.000 (2008-03-26)
 	 */
 	public function setUserRights(
-		$enable = true,
-		$document = '/FullSave',
-		$annots = '/Create/Delete/Modify/Copy/Import/Export',
-		$form = '/Add/Delete/FillIn/Import/Export/SubmitStandalone/SpawnTemplate',
-		$signature = '/Modify',
-		$ef = '/Create/Delete/Modify/Import',
-		$formex = ''
-	) {
+			$enable=true,
+			$document='/FullSave',
+			$annots='/Create/Delete/Modify/Copy/Import/Export',
+			$form='/Add/Delete/FillIn/Import/Export/SubmitStandalone/SpawnTemplate',
+			$signature='/Modify',
+			$ef='/Create/Delete/Modify/Import',
+			$formex='') {
 		$this->ur['enabled'] = $enable;
 		$this->ur['document'] = $document;
 		$this->ur['annots'] = $annots;
@@ -13730,19 +13549,18 @@ class TCPDF
 	 * To create self-signed signature: openssl req -x509 -nodes -days 365000 -newkey rsa:1024 -keyout tcpdf.crt -out tcpdf.crt
 	 * To export crt to p12: openssl pkcs12 -export -in tcpdf.crt -out tcpdf.p12
 	 * To convert pfx certificate to pem: openssl pkcs12 -in tcpdf.pfx -out tcpdf.crt -nodes
-	 * @param $signing_cert (mixed) signing certificate (string or filename prefixed with 'file://')
-	 * @param $private_key (mixed) private key (string or filename prefixed with 'file://')
-	 * @param $private_key_password (string) password
-	 * @param $extracerts (string) specifies the name of a file containing a bunch of extra certificates to include in the signature which can for example be used to help the recipient to verify the certificate that you used.
-	 * @param $cert_type (int) The access permissions granted for this document. Valid values shall be: 1 = No changes to the document shall be permitted; any change to the document shall invalidate the signature; 2 = Permitted changes shall be filling in forms, instantiating page templates, and signing; other changes shall invalidate the signature; 3 = Permitted changes shall be the same as for 2, as well as annotation creation, deletion, and modification; other changes shall invalidate the signature.
-	 * @param $info (array) array of option information: Name, Location, Reason, ContactInfo.
-	 * @param $approval (string) Enable approval signature eg. for PDF incremental update
+	 * @param mixed $signing_cert signing certificate (string or filename prefixed with 'file://')
+	 * @param mixed $private_key private key (string or filename prefixed with 'file://')
+	 * @param string $private_key_password password
+	 * @param string $extracerts specifies the name of a file containing a bunch of extra certificates to include in the signature which can for example be used to help the recipient to verify the certificate that you used.
+	 * @param int $cert_type The access permissions granted for this document. Valid values shall be: 1 = No changes to the document shall be permitted; any change to the document shall invalidate the signature; 2 = Permitted changes shall be filling in forms, instantiating page templates, and signing; other changes shall invalidate the signature; 3 = Permitted changes shall be the same as for 2, as well as annotation creation, deletion, and modification; other changes shall invalidate the signature.
+	 * @param array $info array of option information: Name, Location, Reason, ContactInfo.
+	 * @param string $approval Enable approval signature eg. for PDF incremental update
 	 * @public
 	 * @author Nicola Asuni
 	 * @since 4.6.005 (2009-04-24)
 	 */
-	public function setSignature($signing_cert = '', $private_key = '', $private_key_password = '', $extracerts = '', $cert_type = 2, $info = array(), $approval = '')
-	{
+	public function setSignature($signing_cert='', $private_key='', $private_key_password='', $extracerts='', $cert_type=2, $info=array(), $approval='') {
 		// to create self-signed signature: openssl req -x509 -nodes -days 365000 -newkey rsa:1024 -keyout tcpdf.crt -out tcpdf.crt
 		// to export crt to p12: openssl pkcs12 -export -in tcpdf.crt -out tcpdf.p12
 		// to convert pfx certificate to pem: openssl
@@ -13769,54 +13587,51 @@ class TCPDF
 
 	/**
 	 * Set the digital signature appearance (a cliccable rectangle area to get signature properties)
-	 * @param $x (float) Abscissa of the upper-left corner.
-	 * @param $y (float) Ordinate of the upper-left corner.
-	 * @param $w (float) Width of the signature area.
-	 * @param $h (float) Height of the signature area.
-	 * @param $page (int) option page number (if < 0 the current page is used).
-	 * @param $name (string) Name of the signature.
+	 * @param float $x Abscissa of the upper-left corner.
+	 * @param float $y Ordinate of the upper-left corner.
+	 * @param float $w Width of the signature area.
+	 * @param float $h Height of the signature area.
+	 * @param int $page option page number (if < 0 the current page is used).
+	 * @param string $name Name of the signature.
 	 * @public
 	 * @author Nicola Asuni
 	 * @since 5.3.011 (2010-06-17)
 	 */
-	public function setSignatureAppearance($x = 0, $y = 0, $w = 0, $h = 0, $page = -1, $name = '')
-	{
+	public function setSignatureAppearance($x=0, $y=0, $w=0, $h=0, $page=-1, $name='') {
 		$this->signature_appearance = $this->getSignatureAppearanceArray($x, $y, $w, $h, $page, $name);
 	}
 
 	/**
 	 * Add an empty digital signature appearance (a cliccable rectangle area to get signature properties)
-	 * @param $x (float) Abscissa of the upper-left corner.
-	 * @param $y (float) Ordinate of the upper-left corner.
-	 * @param $w (float) Width of the signature area.
-	 * @param $h (float) Height of the signature area.
-	 * @param $page (int) option page number (if < 0 the current page is used).
-	 * @param $name (string) Name of the signature.
+	 * @param float $x Abscissa of the upper-left corner.
+	 * @param float $y Ordinate of the upper-left corner.
+	 * @param float $w Width of the signature area.
+	 * @param float $h Height of the signature area.
+	 * @param int $page option page number (if < 0 the current page is used).
+	 * @param string $name Name of the signature.
 	 * @public
 	 * @author Nicola Asuni
 	 * @since 5.9.101 (2011-07-06)
 	 */
-	public function addEmptySignatureAppearance($x = 0, $y = 0, $w = 0, $h = 0, $page = -1, $name = '')
-	{
+	public function addEmptySignatureAppearance($x=0, $y=0, $w=0, $h=0, $page=-1, $name='') {
 		++$this->n;
 		$this->empty_signature_appearance[] = array('objid' => $this->n) + $this->getSignatureAppearanceArray($x, $y, $w, $h, $page, $name);
 	}
 
 	/**
 	 * Get the array that defines the signature appearance (page and rectangle coordinates).
-	 * @param $x (float) Abscissa of the upper-left corner.
-	 * @param $y (float) Ordinate of the upper-left corner.
-	 * @param $w (float) Width of the signature area.
-	 * @param $h (float) Height of the signature area.
-	 * @param $page (int) option page number (if < 0 the current page is used).
-	 * @param $name (string) Name of the signature.
-	 * @return (array) Array defining page and rectangle coordinates of signature appearance.
+	 * @param float $x Abscissa of the upper-left corner.
+	 * @param float $y Ordinate of the upper-left corner.
+	 * @param float $w Width of the signature area.
+	 * @param float $h Height of the signature area.
+	 * @param int $page option page number (if < 0 the current page is used).
+	 * @param string $name Name of the signature.
+	 * @return array Array defining page and rectangle coordinates of signature appearance.
 	 * @protected
 	 * @author Nicola Asuni
 	 * @since 5.9.101 (2011-07-06)
 	 */
-	protected function getSignatureAppearanceArray($x = 0, $y = 0, $w = 0, $h = 0, $page = -1, $name = '')
-	{
+	protected function getSignatureAppearanceArray($x=0, $y=0, $w=0, $h=0, $page=-1, $name='') {
 		$sigapp = array();
 		if (($page < 1) OR ($page > $this->numpages)) {
 			$sigapp['page'] = $this->page;
@@ -13840,16 +13655,15 @@ class TCPDF
 	 * Enable document timestamping (requires the OpenSSL Library).
 	 * The trusted timestamping improve document security that means that no one should be able to change the document once it has been recorded.
 	 * Use with digital signature only!
-	 * @param $tsa_host (string) Time Stamping Authority (TSA) server (prefixed with 'https://')
-	 * @param $tsa_username (string) Specifies the username for TSA authorization (optional) OR specifies the TSA authorization PEM file (see: example_66.php, optional)
-	 * @param $tsa_password (string) Specifies the password for TSA authorization (optional)
-	 * @param $tsa_cert (string) Specifies the location of TSA certificate for authorization (optional for cURL)
+	 * @param string $tsa_host Time Stamping Authority (TSA) server (prefixed with 'https://')
+	 * @param string $tsa_username Specifies the username for TSA authorization (optional) OR specifies the TSA authorization PEM file (see: example_66.php, optional)
+	 * @param string $tsa_password Specifies the password for TSA authorization (optional)
+	 * @param string $tsa_cert Specifies the location of TSA certificate for authorization (optional for cURL)
 	 * @public
 	 * @author Richard Stockinger
 	 * @since 6.0.090 (2014-06-16)
 	 */
-	public function setTimeStamp($tsa_host = '', $tsa_username = '', $tsa_password = '', $tsa_cert = '')
-	{
+	public function setTimeStamp($tsa_host='', $tsa_username='', $tsa_password='', $tsa_cert='') {
 		$this->tsa_data = array();
 		if (!function_exists('curl_init')) {
 			$this->Error('Please enable cURL PHP extension!');
@@ -13871,14 +13685,13 @@ class TCPDF
 	/**
 	 * NOT YET IMPLEMENTED
 	 * Request TSA for a timestamp
-	 * @param $signature (string) Digital signature as binary string
-	 * @return (string) Timestamped digital signature
+	 * @param string $signature Digital signature as binary string
+	 * @return string Timestamped digital signature
 	 * @protected
 	 * @author Richard Stockinger
 	 * @since 6.0.090 (2014-06-16)
 	 */
-	protected function applyTSA($signature)
-	{
+	protected function applyTSA($signature) {
 		if (!$this->tsa_timestamp) {
 			return $signature;
 		}
@@ -13889,12 +13702,11 @@ class TCPDF
 	/**
 	 * Create a new page group.
 	 * NOTE: call this function before calling AddPage()
-	 * @param $page (int) starting group page (leave empty for next page).
+	 * @param int|null $page starting group page (leave empty for next page).
 	 * @public
 	 * @since 3.0.000 (2008-03-27)
 	 */
-	public function startPageGroup($page = '')
-	{
+	public function startPageGroup($page=null) {
 		if (empty($page)) {
 			$page = $this->page + 1;
 		}
@@ -13903,12 +13715,11 @@ class TCPDF
 
 	/**
 	 * Set the starting page number.
-	 * @param $num (int) Starting page number.
+	 * @param int $num Starting page number.
 	 * @since 5.9.093 (2011-06-16)
 	 * @public
 	 */
-	public function setStartingPageNumber($num = 1)
-	{
+	public function setStartingPageNumber($num=1) {
 		$this->starting_page_number = max(0, intval($num));
 	}
 
@@ -13919,8 +13730,7 @@ class TCPDF
 	 * @since 5.9.099 (2011-06-27)
 	 * @public
 	 */
-	public function getAliasRightShift()
-	{
+	public function getAliasRightShift() {
 		// calculate aproximatively the ratio between widths of aliases and replacements.
 		$ref = '{'.TCPDF_STATIC::$alias_right_shift.'}{'.TCPDF_STATIC::$alias_tot_pages.'}{'.TCPDF_STATIC::$alias_num_page.'}';
 		$rep = str_repeat(' ', $this->GetNumChars($ref));
@@ -13946,8 +13756,7 @@ class TCPDF
 	 * @since 4.0.018 (2008-08-08)
 	 * @public
 	 */
-	public function getAliasNbPages()
-	{
+	public function getAliasNbPages() {
 		if ($this->isUnicodeFont()) {
 			return '{'.TCPDF_STATIC::$alias_tot_pages.'}';
 		}
@@ -13962,8 +13771,7 @@ class TCPDF
 	 * @since 4.5.000 (2009-01-02)
 	 * @public
 	 */
-	public function getAliasNumPage()
-	{
+	public function getAliasNumPage() {
 		if ($this->isUnicodeFont()) {
 			return '{'.TCPDF_STATIC::$alias_num_page.'}';
 		}
@@ -13974,12 +13782,11 @@ class TCPDF
 	 * Return the alias for the total number of pages in the current page group.
 	 * If the current font is unicode type, the returned string is surrounded by additional curly braces.
 	 * This alias will be replaced by the total number of pages in this group.
-	 * @return alias of the current page group
+	 * @return string alias of the current page group
 	 * @public
 	 * @since 3.0.000 (2008-03-27)
 	 */
-	public function getPageGroupAlias()
-	{
+	public function getPageGroupAlias() {
 		if ($this->isUnicodeFont()) {
 			return '{'.TCPDF_STATIC::$alias_group_tot_pages.'}';
 		}
@@ -13990,12 +13797,11 @@ class TCPDF
 	 * Return the alias for the page number on the current page group.
 	 * If the current font is unicode type, the returned string is surrounded by additional curly braces.
 	 * This alias will be replaced by the page number (relative to the belonging group).
-	 * @return alias of the current page group
+	 * @return string alias of the current page group
 	 * @public
 	 * @since 4.5.000 (2009-01-02)
 	 */
-	public function getPageNumGroupAlias()
-	{
+	public function getPageNumGroupAlias() {
 		if ($this->isUnicodeFont()) {
 			return '{'.TCPDF_STATIC::$alias_group_num_page.'}';
 		}
@@ -14004,12 +13810,11 @@ class TCPDF
 
 	/**
 	 * Return the current page in the group.
-	 * @return current page in the group
+	 * @return int current page in the group
 	 * @public
 	 * @since 3.0.000 (2008-03-27)
 	 */
-	public function getGroupPageNo()
-	{
+	public function getGroupPageNo() {
 		return $this->pagegroups[$this->currpagegroup];
 	}
 
@@ -14019,8 +13824,7 @@ class TCPDF
 	 * @since 4.3.003 (2008-11-18)
 	 * @see PaneNo(), formatPageNumber()
 	 */
-	public function getGroupPageNoFormatted()
-	{
+	public function getGroupPageNoFormatted() {
 		return TCPDF_STATIC::formatPageNumber($this->getGroupPageNo());
 	}
 
@@ -14030,8 +13834,7 @@ class TCPDF
 	 * @since 4.2.005 (2008-11-06)
 	 * @see PaneNo(), formatPageNumber()
 	 */
-	public function PageNoFormatted()
-	{
+	public function PageNoFormatted() {
 		return TCPDF_STATIC::formatPageNumber($this->PageNo());
 	}
 
@@ -14040,8 +13843,7 @@ class TCPDF
 	 * @protected
 	 * @since 3.0.000 (2008-03-27)
 	 */
-	protected function _putocg()
-	{
+	protected function _putocg() {
 		if (empty($this->pdflayers)) {
 			return;
 		}
@@ -14050,9 +13852,9 @@ class TCPDF
 			 $out = '<< /Type /OCG';
 			 $out .= ' /Name '.$this->_textstring($layer['name'], $this->pdflayers[$key]['objid']);
 			 $out .= ' /Usage <<';
-			if (isset($layer['print']) AND ($layer['print'] !== null)) {
+			 if (isset($layer['print']) AND ($layer['print'] !== NULL)) {
 				$out .= ' /Print <</PrintState /'.($layer['print']?'ON':'OFF').'>>';
-			}
+			 }
 			 $out .= ' /View <</ViewState /'.($layer['view']?'ON':'OFF').'>>';
 			 $out .= ' >> >>';
 			 $out .= "\n".'endobj';
@@ -14062,15 +13864,14 @@ class TCPDF
 
 	/**
 	 * Start a new pdf layer.
-	 * @param $name (string) Layer name (only a-z letters and numbers). Leave empty for automatic name.
-	 * @param $print (boolean|null) Set to TRUE to print this layer, FALSE to not print and NULL to not set this option
-	 * @param $view (boolean) Set to true to view this layer.
-	 * @param $lock (boolean) If true lock the layer
+	 * @param string $name Layer name (only a-z letters and numbers). Leave empty for automatic name.
+	 * @param boolean|null $print Set to TRUE to print this layer, FALSE to not print and NULL to not set this option
+	 * @param boolean $view Set to true to view this layer.
+	 * @param boolean $lock If true lock the layer
 	 * @public
 	 * @since 5.9.102 (2011-07-13)
 	 */
-	public function startLayer($name = '', $print = true, $view = true, $lock = true)
-	{
+	public function startLayer($name='', $print=true, $view=true, $lock=true) {
 		if ($this->state != 2) {
 			return;
 		}
@@ -14090,8 +13891,7 @@ class TCPDF
 	 * @public
 	 * @since 5.9.102 (2011-07-13)
 	 */
-	public function endLayer()
-	{
+	public function endLayer() {
 		if ($this->state != 2) {
 			return;
 		}
@@ -14106,17 +13906,16 @@ class TCPDF
 	 * Set the visibility of the successive elements.
 	 * This can be useful, for instance, to put a background
 	 * image or color that will show on screen but won't print.
-	 * @param $v (string) visibility mode. Legal values are: all, print, screen or view.
+	 * @param string $v visibility mode. Legal values are: all, print, screen or view.
 	 * @public
 	 * @since 3.0.000 (2008-03-27)
 	 */
-	public function setVisibility($v)
-	{
+	public function setVisibility($v) {
 		if ($this->state != 2) {
 			return;
 		}
 		$this->endLayer();
-		switch ($v) {
+		switch($v) {
 			case 'print': {
 				$this->startLayer('Print', true, false);
 				break;
@@ -14139,14 +13938,13 @@ class TCPDF
 
 	/**
 	 * Add transparency parameters to the current extgstate
-	 * @param $parms (array) parameters
-	 * @return the number of extgstates
+	 * @param array $parms parameters
+	 * @return int|void the number of extgstates
 	 * @protected
 	 * @since 3.0.000 (2008-03-27)
 	 */
-	protected function addExtGState($parms)
-	{
-		if ($this->pdfa_mode) {
+	protected function addExtGState($parms) {
+		if ($this->pdfa_mode || $this->pdfa_version >= 2) {
 			// transparencies are not allowed in PDF/A mode
 			return;
 		}
@@ -14172,14 +13970,13 @@ class TCPDF
 
 	/**
 	 * Add an extgstate
-	 * @param $gs (array) extgstate
+	 * @param int $gs extgstate
 	 * @protected
 	 * @since 3.0.000 (2008-03-27)
 	 */
-	protected function setExtGState($gs)
-	{
-		if ($this->pdfa_mode OR ($this->state != 2)) {
-			// transparency is not allowed in PDF/A mode
+	protected function setExtGState($gs) {
+		if (($this->pdfa_mode && $this->pdfa_version < 2) OR ($this->state != 2)) {
+			// transparency is not allowed in PDF/A-1 mode
 			return;
 		}
 		$this->_out(sprintf('/GS%d gs', $gs));
@@ -14190,8 +13987,7 @@ class TCPDF
 	 * @protected
 	 * @since 3.0.000 (2008-03-27)
 	 */
-	protected function _putextgstates()
-	{
+	protected function _putextgstates() {
 		foreach ($this->extgstates as $i => $ext) {
 			$this->extgstates[$i]['n'] = $this->_newobj();
 			$out = '<< /Type /ExtGState';
@@ -14214,14 +14010,13 @@ class TCPDF
 	/**
 	 * Set overprint mode for stroking (OP) and non-stroking (op) painting operations.
 	 * (Check the "Entries in a Graphics State Parameter Dictionary" on PDF 32000-1:2008).
-	 * @param $stroking (boolean) If true apply overprint for stroking operations.
-	 * @param $nonstroking (boolean) If true apply overprint for painting operations other than stroking.
-	 * @param $mode (integer) Overprint mode: (0 = each source colour component value replaces the value previously painted for the corresponding device colorant; 1 = a tint value of 0.0 for a source colour component shall leave the corresponding component of the previously painted colour unchanged).
+	 * @param boolean $stroking If true apply overprint for stroking operations.
+	 * @param boolean|null $nonstroking If true apply overprint for painting operations other than stroking.
+	 * @param integer $mode Overprint mode: (0 = each source colour component value replaces the value previously painted for the corresponding device colorant; 1 = a tint value of 0.0 for a source colour component shall leave the corresponding component of the previously painted colour unchanged).
 	 * @public
 	 * @since 5.9.152 (2012-03-23)
 	 */
-	public function setOverprint($stroking = true, $nonstroking = '', $mode = 0)
-	{
+	public function setOverprint($stroking=true, $nonstroking=null, $mode=0) {
 		if ($this->state != 2) {
 			return;
 		}
@@ -14243,28 +14038,26 @@ class TCPDF
 	/**
 	 * Get the overprint mode array (OP, op, OPM).
 	 * (Check the "Entries in a Graphics State Parameter Dictionary" on PDF 32000-1:2008).
-	 * @return array.
+	 * @return array<string,bool|int>
 	 * @public
 	 * @since 5.9.152 (2012-03-23)
 	 */
-	public function getOverprint()
-	{
+	public function getOverprint() {
 		return $this->overprint;
 	}
 
 	/**
 	 * Set alpha for stroking (CA) and non-stroking (ca) operations.
-	 * @param $stroking (float) Alpha value for stroking operations: real value from 0 (transparent) to 1 (opaque).
-	 * @param $bm (string) blend mode, one of the following: Normal, Multiply, Screen, Overlay, Darken, Lighten, ColorDodge, ColorBurn, HardLight, SoftLight, Difference, Exclusion, Hue, Saturation, Color, Luminosity
-	 * @param $nonstroking (float) Alpha value for non-stroking operations: real value from 0 (transparent) to 1 (opaque).
-	 * @param $ais (boolean)
+	 * @param float $stroking Alpha value for stroking operations: real value from 0 (transparent) to 1 (opaque).
+	 * @param string $bm blend mode, one of the following: Normal, Multiply, Screen, Overlay, Darken, Lighten, ColorDodge, ColorBurn, HardLight, SoftLight, Difference, Exclusion, Hue, Saturation, Color, Luminosity
+	 * @param float|null $nonstroking Alpha value for non-stroking operations: real value from 0 (transparent) to 1 (opaque).
+	 * @param boolean $ais
 	 * @public
 	 * @since 3.0.000 (2008-03-27)
 	 */
-	public function setAlpha($stroking = 1, $bm = 'Normal', $nonstroking = '', $ais = false)
-	{
-		if ($this->pdfa_mode) {
-			// transparency is not allowed in PDF/A mode
+	public function setAlpha($stroking=1, $bm='Normal', $nonstroking=null, $ais=false) {
+		if ($this->pdfa_mode && $this->pdfa_version < 2) {
+			// transparency is not allowed in PDF/A-1 mode
 			return;
 		}
 		$stroking = floatval($stroking);
@@ -14290,23 +14083,21 @@ class TCPDF
 	/**
 	 * Get the alpha mode array (CA, ca, BM, AIS).
 	 * (Check the "Entries in a Graphics State Parameter Dictionary" on PDF 32000-1:2008).
-	 * @return array.
+	 * @return array<string,bool|string>
 	 * @public
 	 * @since 5.9.152 (2012-03-23)
 	 */
-	public function getAlpha()
-	{
+	public function getAlpha() {
 		return $this->alpha;
 	}
 
 	/**
 	 * Set the default JPEG compression quality (1-100)
-	 * @param $quality (int) JPEG quality, integer between 1 and 100
+	 * @param int $quality JPEG quality, integer between 1 and 100
 	 * @public
 	 * @since 3.0.000 (2008-03-27)
 	 */
-	public function setJPEGQuality($quality)
-	{
+	public function setJPEGQuality($quality) {
 		if (($quality < 1) OR ($quality > 100)) {
 			$quality = 75;
 		}
@@ -14315,48 +14106,48 @@ class TCPDF
 
 	/**
 	 * Set the default number of columns in a row for HTML tables.
-	 * @param $cols (int) number of columns
+	 * @param int $cols number of columns
 	 * @public
 	 * @since 3.0.014 (2008-06-04)
 	 */
-	public function setDefaultTableColumns($cols = 4)
-	{
+	public function setDefaultTableColumns($cols=4) {
 		$this->default_table_columns = intval($cols);
 	}
 
 	/**
 	 * Set the height of the cell (line height) respect the font height.
-	 * @param $h (int) cell proportion respect font height (typical value = 1.25).
+	 * @param float $h cell proportion respect font height (typical value = 1.25).
 	 * @public
 	 * @since 3.0.014 (2008-06-04)
 	 */
-	public function setCellHeightRatio($h)
-	{
+	public function setCellHeightRatio($h) {
 		$this->cell_height_ratio = $h;
 	}
 
 	/**
 	 * return the height of cell repect font height.
 	 * @public
+	 * @return float
 	 * @since 4.0.012 (2008-07-24)
 	 */
-	public function getCellHeightRatio()
-	{
+	public function getCellHeightRatio() {
 		return $this->cell_height_ratio;
 	}
 
 	/**
 	 * Set the PDF version (check PDF reference for valid values).
-	 * @param $version (string) PDF document version.
+	 * @param string $version PDF document version.
 	 * @public
 	 * @since 3.1.000 (2008-06-09)
 	 */
-	public function setPDFVersion($version = '1.7')
-	{
+	public function setPDFVersion($version='1.7') {
 		if ($this->pdfa_mode && $this->pdfa_version == 1 ) {
-			// PDF/A mode
+			// PDF/A-1 mode
 			$this->PDFVersion = '1.4';
-		} else {
+		} elseif ($this->pdfa_mode && $this->pdfa_version >= 2 ) {
+            // PDF/A-2 mode
+            $this->PDFVersion = '1.7';
+        } else {
 			$this->PDFVersion = $version;
 		}
 	}
@@ -14365,31 +14156,29 @@ class TCPDF
 	 * Set the viewer preferences dictionary controlling the way the document is to be presented on the screen or in print.
 	 * (see Section 8.1 of PDF reference, "Viewer Preferences").
 	 * <ul><li>HideToolbar boolean (Optional) A flag specifying whether to hide the viewer application's tool bars when the document is active. Default value: false.</li><li>HideMenubar boolean (Optional) A flag specifying whether to hide the viewer application's menu bar when the document is active. Default value: false.</li><li>HideWindowUI boolean (Optional) A flag specifying whether to hide user interface elements in the document's window (such as scroll bars and navigation controls), leaving only the document's contents displayed. Default value: false.</li><li>FitWindow boolean (Optional) A flag specifying whether to resize the document's window to fit the size of the first displayed page. Default value: false.</li><li>CenterWindow boolean (Optional) A flag specifying whether to position the document's window in the center of the screen. Default value: false.</li><li>DisplayDocTitle boolean (Optional; PDF 1.4) A flag specifying whether the window's title bar should display the document title taken from the Title entry of the document information dictionary (see Section 10.2.1, "Document Information Dictionary"). If false, the title bar should instead display the name of the PDF file containing the document. Default value: false.</li><li>NonFullScreenPageMode name (Optional) The document's page mode, specifying how to display the document on exiting full-screen mode:<ul><li>UseNone Neither document outline nor thumbnail images visible</li><li>UseOutlines Document outline visible</li><li>UseThumbs Thumbnail images visible</li><li>UseOC Optional content group panel visible</li></ul>This entry is meaningful only if the value of the PageMode entry in the catalog dictionary (see Section 3.6.1, "Document Catalog") is FullScreen; it is ignored otherwise. Default value: UseNone.</li><li>ViewArea name (Optional; PDF 1.4) The name of the page boundary representing the area of a page to be displayed when viewing the document on the screen. Valid values are (see Section 10.10.1, "Page Boundaries").:<ul><li>MediaBox</li><li>CropBox (default)</li><li>BleedBox</li><li>TrimBox</li><li>ArtBox</li></ul></li><li>ViewClip name (Optional; PDF 1.4) The name of the page boundary to which the contents of a page are to be clipped when viewing the document on the screen. Valid values are (see Section 10.10.1, "Page Boundaries").:<ul><li>MediaBox</li><li>CropBox (default)</li><li>BleedBox</li><li>TrimBox</li><li>ArtBox</li></ul></li><li>PrintArea name (Optional; PDF 1.4) The name of the page boundary representing the area of a page to be rendered when printing the document. Valid values are (see Section 10.10.1, "Page Boundaries").:<ul><li>MediaBox</li><li>CropBox (default)</li><li>BleedBox</li><li>TrimBox</li><li>ArtBox</li></ul></li><li>PrintClip name (Optional; PDF 1.4) The name of the page boundary to which the contents of a page are to be clipped when printing the document. Valid values are (see Section 10.10.1, "Page Boundaries").:<ul><li>MediaBox</li><li>CropBox (default)</li><li>BleedBox</li><li>TrimBox</li><li>ArtBox</li></ul></li><li>PrintScaling name (Optional; PDF 1.6) The page scaling option to be selected when a print dialog is displayed for this document. Valid values are: <ul><li>None, which indicates that the print dialog should reflect no page scaling</li><li>AppDefault (default), which indicates that applications should use the current print scaling</li></ul></li><li>Duplex name (Optional; PDF 1.7) The paper handling option to use when printing the file from the print dialog. The following values are valid:<ul><li>Simplex - Print single-sided</li><li>DuplexFlipShortEdge - Duplex and flip on the short edge of the sheet</li><li>DuplexFlipLongEdge - Duplex and flip on the long edge of the sheet</li></ul>Default value: none</li><li>PickTrayByPDFSize boolean (Optional; PDF 1.7) A flag specifying whether the PDF page size is used to select the input paper tray. This setting influences only the preset values used to populate the print dialog presented by a PDF viewer application. If PickTrayByPDFSize is true, the check box in the print dialog associated with input paper tray is checked. Note: This setting has no effect on Mac OS systems, which do not provide the ability to pick the input tray by size.</li><li>PrintPageRange array (Optional; PDF 1.7) The page numbers used to initialize the print dialog box when the file is printed. The first page of the PDF file is denoted by 1. Each pair consists of the first and last pages in the sub-range. An odd number of integers causes this entry to be ignored. Negative numbers cause the entire array to be ignored. Default value: as defined by PDF viewer application</li><li>NumCopies integer (Optional; PDF 1.7) The number of copies to be printed when the print dialog is opened for this file. Supported values are the integers 2 through 5. Values outside this range are ignored. Default value: as defined by PDF viewer application, but typically 1</li></ul>
-	 * @param $preferences (array) array of options.
+	 * @param array $preferences array of options.
 	 * @author Nicola Asuni
 	 * @public
 	 * @since 3.1.000 (2008-06-09)
 	 */
-	public function setViewerPreferences($preferences)
-	{
+	public function setViewerPreferences($preferences) {
 		$this->viewer_preferences = $preferences;
 	}
 
 	/**
 	 * Paints color transition registration bars
-	 * @param $x (float) abscissa of the top left corner of the rectangle.
-	 * @param $y (float) ordinate of the top left corner of the rectangle.
-	 * @param $w (float) width of the rectangle.
-	 * @param $h (float) height of the rectangle.
-	 * @param $transition (boolean) if true prints tcolor transitions to white.
-	 * @param $vertical (boolean) if true prints bar vertically.
-	 * @param $colors (string) colors to print separated by comma. Valid values are: A,W,R,G,B,C,M,Y,K,RGB,CMYK,ALL,ALLSPOT,<SPOT_COLOR_NAME>. Where: A = grayscale black, W = grayscale white, R = RGB red, G RGB green, B RGB blue, C = CMYK cyan, M = CMYK magenta, Y = CMYK yellow, K = CMYK key/black, RGB = RGB registration color, CMYK = CMYK registration color, ALL = Spot registration color, ALLSPOT = print all defined spot colors, <SPOT_COLOR_NAME> = name of the spot color to print.
+	 * @param float $x abscissa of the top left corner of the rectangle.
+	 * @param float $y ordinate of the top left corner of the rectangle.
+	 * @param float $w width of the rectangle.
+	 * @param float $h height of the rectangle.
+	 * @param boolean $transition if true prints tcolor transitions to white.
+	 * @param boolean $vertical if true prints bar vertically.
+	 * @param string $colors colors to print separated by comma. Valid values are: A,W,R,G,B,C,M,Y,K,RGB,CMYK,ALL,ALLSPOT,<SPOT_COLOR_NAME>. Where: A = grayscale black, W = grayscale white, R = RGB red, G RGB green, B RGB blue, C = CMYK cyan, M = CMYK magenta, Y = CMYK yellow, K = CMYK key/black, RGB = RGB registration color, CMYK = CMYK registration color, ALL = Spot registration color, ALLSPOT = print all defined spot colors, <SPOT_COLOR_NAME> = name of the spot color to print.
 	 * @author Nicola Asuni
 	 * @since 4.9.000 (2010-03-26)
 	 * @public
 	 */
-	public function colorRegistrationBar($x, $y, $w, $h, $transition = true, $vertical = false, $colors = 'A,R,G,B,C,M,Y,K')
-	{
+	public function colorRegistrationBar($x, $y, $w, $h, $transition=true, $vertical=false, $colors='A,R,G,B,C,M,Y,K') {
 		if (strpos($colors, 'ALLSPOT') !== false) {
 			// expand spot colors
 			$spot_colors = '';
@@ -14507,7 +14296,7 @@ class TCPDF
 					// color gradient
 					$this->LinearGradient($xb, $yb, $wb, $hb, $col_a, $col_b, $coords);
 				} else {
-					$this->SetFillColorArray($col_b);
+					$this->setFillColorArray($col_b);
 					// colored rectangle
 					$this->Rect($xb, $yb, $wb, $hb, 'F', array());
 				}
@@ -14519,19 +14308,18 @@ class TCPDF
 
 	/**
 	 * Paints crop marks.
-	 * @param $x (float) abscissa of the crop mark center.
-	 * @param $y (float) ordinate of the crop mark center.
-	 * @param $w (float) width of the crop mark.
-	 * @param $h (float) height of the crop mark.
-	 * @param $type (string) type of crop mark, one symbol per type separated by comma: T = TOP, F = BOTTOM, L = LEFT, R = RIGHT, TL = A = TOP-LEFT, TR = B = TOP-RIGHT, BL = C = BOTTOM-LEFT, BR = D = BOTTOM-RIGHT.
-	 * @param $color (array) crop mark color (default spot registration color).
+	 * @param float $x abscissa of the crop mark center.
+	 * @param float $y ordinate of the crop mark center.
+	 * @param float $w width of the crop mark.
+	 * @param float $h height of the crop mark.
+	 * @param string $type type of crop mark, one symbol per type separated by comma: T = TOP, F = BOTTOM, L = LEFT, R = RIGHT, TL = A = TOP-LEFT, TR = B = TOP-RIGHT, BL = C = BOTTOM-LEFT, BR = D = BOTTOM-RIGHT.
+	 * @param array $color crop mark color (default spot registration color).
 	 * @author Nicola Asuni
 	 * @since 4.9.000 (2010-03-26)
 	 * @public
 	 */
-	public function cropMark($x, $y, $w, $h, $type = 'T,R,B,L', $color = array(100,100,100,100,'All'))
-	{
-		$this->SetLineStyle(array('width' => (0.5 / $this->k), 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => $color));
+	public function cropMark($x, $y, $w, $h, $type='T,R,B,L', $color=array(100,100,100,100,'All')) {
+		$this->setLineStyle(array('width' => (0.5 / $this->k), 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => $color));
 		$type = strtoupper($type);
 		$type = preg_replace('/[^A-Z\-\,]*/', '', $type);
 		// split type in single components
@@ -14591,29 +14379,28 @@ class TCPDF
 
 	/**
 	 * Paints a registration mark
-	 * @param $x (float) abscissa of the registration mark center.
-	 * @param $y (float) ordinate of the registration mark center.
-	 * @param $r (float) radius of the crop mark.
-	 * @param $double (boolean) if true print two concentric crop marks.
-	 * @param $cola (array) crop mark color (default spot registration color 'All').
-	 * @param $colb (array) second crop mark color (default spot registration color 'None').
+	 * @param float $x abscissa of the registration mark center.
+	 * @param float $y ordinate of the registration mark center.
+	 * @param float $r radius of the crop mark.
+	 * @param boolean $double if true print two concentric crop marks.
+	 * @param array $cola crop mark color (default spot registration color 'All').
+	 * @param array $colb second crop mark color (default spot registration color 'None').
 	 * @author Nicola Asuni
 	 * @since 4.9.000 (2010-03-26)
 	 * @public
 	 */
-	public function registrationMark($x, $y, $r, $double = false, $cola = array(100,100,100,100,'All'), $colb = array(0,0,0,0,'None'))
-	{
-		$line_style = array('width' => max((0.5 / $this->k), ($r / 30)), 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => $cola);
-		$this->SetFillColorArray($cola);
+	public function registrationMark($x, $y, $r, $double=false, $cola=array(100,100,100,100,'All'), $colb=array(0,0,0,0,'None')) {
+		$line_style = array('width' => max((0.5 / $this->k),($r / 30)), 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => $cola);
+		$this->setFillColorArray($cola);
 		$this->PieSector($x, $y, $r, 90, 180, 'F');
 		$this->PieSector($x, $y, $r, 270, 360, 'F');
 		$this->Circle($x, $y, $r, 0, 360, 'C', $line_style, array(), 8);
 		if ($double) {
 			$ri = $r * 0.5;
-			$this->SetFillColorArray($colb);
+			$this->setFillColorArray($colb);
 			$this->PieSector($x, $y, $ri, 90, 180, 'F');
 			$this->PieSector($x, $y, $ri, 270, 360, 'F');
-			$this->SetFillColorArray($cola);
+			$this->setFillColorArray($cola);
 			$this->PieSector($x, $y, $ri, 0, 90, 'F');
 			$this->PieSector($x, $y, $ri, 180, 270, 'F');
 			$this->Circle($x, $y, $ri, 0, 360, 'C', $line_style, array(), 8);
@@ -14622,36 +14409,35 @@ class TCPDF
 
 	/**
 	 * Paints a CMYK registration mark
-	 * @param $x (float) abscissa of the registration mark center.
-	 * @param $y (float) ordinate of the registration mark center.
-	 * @param $r (float) radius of the crop mark.
+	 * @param float $x abscissa of the registration mark center.
+	 * @param float $y ordinate of the registration mark center.
+	 * @param float $r radius of the crop mark.
 	 * @author Nicola Asuni
 	 * @since 6.0.038 (2013-09-30)
 	 * @public
 	 */
-	public function registrationMarkCMYK($x, $y, $r)
-	{
+	public function registrationMarkCMYK($x, $y, $r) {
 		// line width
-		$lw = max((0.5 / $this->k), ($r / 8));
+		$lw = max((0.5 / $this->k),($r / 8));
 		// internal radius
 		$ri = ($r * 0.6);
 		// external radius
 		$re = ($r * 1.3);
 		// Cyan
-		$this->SetFillColorArray(array(100,0,0,0));
+		$this->setFillColorArray(array(100,0,0,0));
 		$this->PieSector($x, $y, $ri, 270, 360, 'F');
 		// Magenta
-		$this->SetFillColorArray(array(0,100,0,0));
+		$this->setFillColorArray(array(0,100,0,0));
 		$this->PieSector($x, $y, $ri, 0, 90, 'F');
 		// Yellow
-		$this->SetFillColorArray(array(0,0,100,0));
+		$this->setFillColorArray(array(0,0,100,0));
 		$this->PieSector($x, $y, $ri, 90, 180, 'F');
 		// Key - black
-		$this->SetFillColorArray(array(0,0,0,100));
+		$this->setFillColorArray(array(0,0,0,100));
 		$this->PieSector($x, $y, $ri, 180, 270, 'F');
 		// registration color
 		$line_style = array('width' => $lw, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => array(100,100,100,100,'All'));
-		$this->SetFillColorArray(array(100,100,100,100,'All'));
+		$this->setFillColorArray(array(100,100,100,100,'All'));
 		// external circle
 		$this->Circle($x, $y, $r, 0, 360, 'C', $line_style, array(), 8);
 		// cross lines
@@ -14663,63 +14449,60 @@ class TCPDF
 
 	/**
 	 * Paints a linear colour gradient.
-	 * @param $x (float) abscissa of the top left corner of the rectangle.
-	 * @param $y (float) ordinate of the top left corner of the rectangle.
-	 * @param $w (float) width of the rectangle.
-	 * @param $h (float) height of the rectangle.
-	 * @param $col1 (array) first color (Grayscale, RGB or CMYK components).
-	 * @param $col2 (array) second color (Grayscale, RGB or CMYK components).
-	 * @param $coords (array) array of the form (x1, y1, x2, y2) which defines the gradient vector (see linear_gradient_coords.jpg). The default value is from left to right (x1=0, y1=0, x2=1, y2=0).
+	 * @param float $x abscissa of the top left corner of the rectangle.
+	 * @param float $y ordinate of the top left corner of the rectangle.
+	 * @param float $w width of the rectangle.
+	 * @param float $h height of the rectangle.
+	 * @param array $col1 first color (Grayscale, RGB or CMYK components).
+	 * @param array $col2 second color (Grayscale, RGB or CMYK components).
+	 * @param array $coords array of the form (x1, y1, x2, y2) which defines the gradient vector (see linear_gradient_coords.jpg). The default value is from left to right (x1=0, y1=0, x2=1, y2=0).
 	 * @author Andreas W\FCrmser, Nicola Asuni
 	 * @since 3.1.000 (2008-06-09)
 	 * @public
 	 */
-	public function LinearGradient($x, $y, $w, $h, $col1 = array(), $col2 = array(), $coords = array(0,0,1,0))
-	{
+	public function LinearGradient($x, $y, $w, $h, $col1=array(), $col2=array(), $coords=array(0,0,1,0)) {
 		$this->Clip($x, $y, $w, $h);
 		$this->Gradient(2, $coords, array(array('color' => $col1, 'offset' => 0, 'exponent' => 1), array('color' => $col2, 'offset' => 1, 'exponent' => 1)), array(), false);
 	}
 
 	/**
 	 * Paints a radial colour gradient.
-	 * @param $x (float) abscissa of the top left corner of the rectangle.
-	 * @param $y (float) ordinate of the top left corner of the rectangle.
-	 * @param $w (float) width of the rectangle.
-	 * @param $h (float) height of the rectangle.
-	 * @param $col1 (array) first color (Grayscale, RGB or CMYK components).
-	 * @param $col2 (array) second color (Grayscale, RGB or CMYK components).
-	 * @param $coords (array) array of the form (fx, fy, cx, cy, r) where (fx, fy) is the starting point of the gradient with color1, (cx, cy) is the center of the circle with color2, and r is the radius of the circle (see radial_gradient_coords.jpg). (fx, fy) should be inside the circle, otherwise some areas will not be defined.
+	 * @param float $x abscissa of the top left corner of the rectangle.
+	 * @param float $y ordinate of the top left corner of the rectangle.
+	 * @param float $w width of the rectangle.
+	 * @param float $h height of the rectangle.
+	 * @param array $col1 first color (Grayscale, RGB or CMYK components).
+	 * @param array $col2 second color (Grayscale, RGB or CMYK components).
+	 * @param array $coords array of the form (fx, fy, cx, cy, r) where (fx, fy) is the starting point of the gradient with color1, (cx, cy) is the center of the circle with color2, and r is the radius of the circle (see radial_gradient_coords.jpg). (fx, fy) should be inside the circle, otherwise some areas will not be defined.
 	 * @author Andreas W\FCrmser, Nicola Asuni
 	 * @since 3.1.000 (2008-06-09)
 	 * @public
 	 */
-	public function RadialGradient($x, $y, $w, $h, $col1 = array(), $col2 = array(), $coords = array(0.5,0.5,0.5,0.5,1))
-	{
+	public function RadialGradient($x, $y, $w, $h, $col1=array(), $col2=array(), $coords=array(0.5,0.5,0.5,0.5,1)) {
 		$this->Clip($x, $y, $w, $h);
 		$this->Gradient(3, $coords, array(array('color' => $col1, 'offset' => 0, 'exponent' => 1), array('color' => $col2, 'offset' => 1, 'exponent' => 1)), array(), false);
 	}
 
 	/**
 	 * Paints a coons patch mesh.
-	 * @param $x (float) abscissa of the top left corner of the rectangle.
-	 * @param $y (float) ordinate of the top left corner of the rectangle.
-	 * @param $w (float) width of the rectangle.
-	 * @param $h (float) height of the rectangle.
-	 * @param $col1 (array) first color (lower left corner) (RGB components).
-	 * @param $col2 (array) second color (lower right corner) (RGB components).
-	 * @param $col3 (array) third color (upper right corner) (RGB components).
-	 * @param $col4 (array) fourth color (upper left corner) (RGB components).
-	 * @param $coords (array) <ul><li>for one patch mesh: array(float x1, float y1, .... float x12, float y12): 12 pairs of coordinates (normally from 0 to 1) which specify the Bezier control points that define the patch. First pair is the lower left edge point, next is its right control point (control point 2). Then the other points are defined in the order: control point 1, edge point, control point 2 going counter-clockwise around the patch. Last (x12, y12) is the first edge point's left control point (control point 1).</li><li>for two or more patch meshes: array[number of patches]: arrays with the following keys for each patch: f: where to put that patch (0 = first patch, 1, 2, 3 = right, top and left of precedent patch - I didn't figure this out completely - just try and error ;-) points: 12 pairs of coordinates of the Bezier control points as above for the first patch, 8 pairs of coordinates for the following patches, ignoring the coordinates already defined by the precedent patch (I also didn't figure out the order of these - also: try and see what's happening) colors: must be 4 colors for the first patch, 2 colors for the following patches</li></ul>
-	 * @param $coords_min (array) minimum value used by the coordinates. If a coordinate's value is smaller than this it will be cut to coords_min. default: 0
-	 * @param $coords_max (array) maximum value used by the coordinates. If a coordinate's value is greater than this it will be cut to coords_max. default: 1
-	 * @param $antialias (boolean) A flag indicating whether to filter the shading function to prevent aliasing artifacts.
+	 * @param float $x abscissa of the top left corner of the rectangle.
+	 * @param float $y ordinate of the top left corner of the rectangle.
+	 * @param float $w width of the rectangle.
+	 * @param float $h height of the rectangle.
+	 * @param array $col1 first color (lower left corner) (RGB components).
+	 * @param array $col2 second color (lower right corner) (RGB components).
+	 * @param array $col3 third color (upper right corner) (RGB components).
+	 * @param array $col4 fourth color (upper left corner) (RGB components).
+	 * @param array $coords <ul><li>for one patch mesh: array(float x1, float y1, .... float x12, float y12): 12 pairs of coordinates (normally from 0 to 1) which specify the Bezier control points that define the patch. First pair is the lower left edge point, next is its right control point (control point 2). Then the other points are defined in the order: control point 1, edge point, control point 2 going counter-clockwise around the patch. Last (x12, y12) is the first edge point's left control point (control point 1).</li><li>for two or more patch meshes: array[number of patches]: arrays with the following keys for each patch: f: where to put that patch (0 = first patch, 1, 2, 3 = right, top and left of precedent patch - I didn't figure this out completely - just try and error ;-) points: 12 pairs of coordinates of the Bezier control points as above for the first patch, 8 pairs of coordinates for the following patches, ignoring the coordinates already defined by the precedent patch (I also didn't figure out the order of these - also: try and see what's happening) colors: must be 4 colors for the first patch, 2 colors for the following patches</li></ul>
+	 * @param array $coords_min minimum value used by the coordinates. If a coordinate's value is smaller than this it will be cut to coords_min. default: 0
+	 * @param array $coords_max maximum value used by the coordinates. If a coordinate's value is greater than this it will be cut to coords_max. default: 1
+	 * @param boolean $antialias A flag indicating whether to filter the shading function to prevent aliasing artifacts.
 	 * @author Andreas W\FCrmser, Nicola Asuni
 	 * @since 3.1.000 (2008-06-09)
 	 * @public
 	 */
-	public function CoonsPatchMesh($x, $y, $w, $h, $col1 = array(), $col2 = array(), $col3 = array(), $col4 = array(), $coords = array(0.00,0.0,0.33,0.00,0.67,0.00,1.00,0.00,1.00,0.33,1.00,0.67,1.00,1.00,0.67,1.00,0.33,1.00,0.00,1.00,0.00,0.67,0.00,0.33), $coords_min = 0, $coords_max = 1, $antialias = false)
-	{
-		if ($this->pdfa_mode OR ($this->state != 2)) {
+	public function CoonsPatchMesh($x, $y, $w, $h, $col1=array(), $col2=array(), $col3=array(), $col4=array(), $coords=array(0.00,0.0,0.33,0.00,0.67,0.00,1.00,0.00,1.00,0.33,1.00,0.67,1.00,1.00,0.67,1.00,0.33,1.00,0.00,1.00,0.00,0.67,0.00,0.33), $coords_min=0, $coords_max=1, $antialias=false) {
+		if (($this->pdfa_mode && $this->pdfa_version < 2) OR ($this->state != 2)) {
 			return;
 		}
 		$this->Clip($x, $y, $w, $h);
@@ -14779,8 +14562,8 @@ class TCPDF
 				if ($patch_array[$i]['points'][$j] > $bpcd) {
 					$patch_array[$i]['points'][$j] = $bpcd;
 				}
-				$this->gradients[$n]['stream'] .= chr(floor($patch_array[$i]['points'][$j] / 256));
-				$this->gradients[$n]['stream'] .= chr(floor($patch_array[$i]['points'][$j] % 256));
+				$this->gradients[$n]['stream'] .= chr((int) floor($patch_array[$i]['points'][$j] / 256));
+				$this->gradients[$n]['stream'] .= chr((int) floor(intval($patch_array[$i]['points'][$j]) % 256));
 			}
 			$count_cols = count($patch_array[$i]['colors']);
 			for ($j=0; $j < $count_cols; ++$j) {
@@ -14802,16 +14585,15 @@ class TCPDF
 
 	/**
 	 * Set a rectangular clipping area.
-	 * @param $x (float) abscissa of the top left corner of the rectangle (or top right corner for RTL mode).
-	 * @param $y (float) ordinate of the top left corner of the rectangle.
-	 * @param $w (float) width of the rectangle.
-	 * @param $h (float) height of the rectangle.
+	 * @param float $x abscissa of the top left corner of the rectangle (or top right corner for RTL mode).
+	 * @param float $y ordinate of the top left corner of the rectangle.
+	 * @param float $w width of the rectangle.
+	 * @param float $h height of the rectangle.
 	 * @author Andreas W\FCrmser, Nicola Asuni
 	 * @since 3.1.000 (2008-06-09)
 	 * @protected
 	 */
-	protected function Clip($x, $y, $w, $h)
-	{
+	protected function Clip($x, $y, $w, $h) {
 		if ($this->state != 2) {
 			 return;
 		}
@@ -14829,18 +14611,17 @@ class TCPDF
 
 	/**
 	 * Output gradient.
-	 * @param $type (int) type of gradient (1 Function-based shading; 2 Axial shading; 3 Radial shading; 4 Free-form Gouraud-shaded triangle mesh; 5 Lattice-form Gouraud-shaded triangle mesh; 6 Coons patch mesh; 7 Tensor-product patch mesh). (Not all types are currently supported)
-	 * @param $coords (array) array of coordinates.
-	 * @param $stops (array) array gradient color components: color = array of GRAY, RGB or CMYK color components; offset = (0 to 1) represents a location along the gradient vector; exponent = exponent of the exponential interpolation function (default = 1).
-	 * @param $background (array) An array of colour components appropriate to the colour space, specifying a single background colour value.
-	 * @param $antialias (boolean) A flag indicating whether to filter the shading function to prevent aliasing artifacts.
+	 * @param int $type type of gradient (1 Function-based shading; 2 Axial shading; 3 Radial shading; 4 Free-form Gouraud-shaded triangle mesh; 5 Lattice-form Gouraud-shaded triangle mesh; 6 Coons patch mesh; 7 Tensor-product patch mesh). (Not all types are currently supported)
+	 * @param array $coords array of coordinates.
+	 * @param array $stops array gradient color components: color = array of GRAY, RGB or CMYK color components; offset = (0 to 1) represents a location along the gradient vector; exponent = exponent of the exponential interpolation function (default = 1).
+	 * @param array $background An array of colour components appropriate to the colour space, specifying a single background colour value.
+	 * @param boolean $antialias A flag indicating whether to filter the shading function to prevent aliasing artifacts.
 	 * @author Nicola Asuni
 	 * @since 3.1.000 (2008-06-09)
 	 * @public
 	 */
-	public function Gradient($type, $coords, $stops, $background = array(), $antialias = false)
-	{
-		if ($this->pdfa_mode OR ($this->state != 2)) {
+	public function Gradient($type, $coords, $stops, $background=array(), $antialias=false) {
+		if (($this->pdfa_mode && $this->pdfa_version < 2) OR ($this->state != 2)) {
 			return;
 		}
 		$n = count($this->gradients) + 1;
@@ -14853,7 +14634,7 @@ class TCPDF
 		// color space
 		$numcolspace = count($stops[0]['color']);
 		$bcolor = array_values($background);
-		switch ($numcolspace) {
+		switch($numcolspace) {
 			case 5:   // SPOT
 			case 4: { // CMYK
 				$this->gradients[$n]['colspace'] = 'DeviceCMYK';
@@ -14896,7 +14677,7 @@ class TCPDF
 			}
 			if (isset($stop['opacity'])) {
 				$this->gradients[$n]['colors'][$key]['opacity'] = $stop['opacity'];
-				if ((!$this->pdfa_mode) AND ($stop['opacity'] < 1)) {
+				if ((!($this->pdfa_mode && $this->pdfa_version < 2)) AND ($stop['opacity'] < 1)) {
 					$this->gradients[$n]['transparency'] = true;
 				}
 			} else {
@@ -14910,7 +14691,7 @@ class TCPDF
 			}
 			// set colors
 			$color = array_values($stop['color']);
-			switch ($numcolspace) {
+			switch($numcolspace) {
 				case 5:   // SPOT
 				case 4: { // CMYK
 					$this->gradients[$n]['colors'][$key]['color'] = sprintf('%F %F %F %F', $color[0]/100, $color[1]/100, $color[2]/100, $color[3]/100);
@@ -14946,9 +14727,8 @@ class TCPDF
 	 * @since 3.1.000 (2008-06-09)
 	 * @protected
 	 */
-	function _putshaders()
-	{
-		if ($this->pdfa_mode) {
+	function _putshaders() {
+		if ($this->pdfa_mode && $this->pdfa_version < 2) {
 			return;
 		}
 		$idt = count($this->gradients); //index for transparency gradients
@@ -15127,42 +14907,40 @@ class TCPDF
 	/**
 	 * Draw the sector of a circle.
 	 * It can be used for instance to render pie charts.
-	 * @param $xc (float) abscissa of the center.
-	 * @param $yc (float) ordinate of the center.
-	 * @param $r (float) radius.
-	 * @param $a (float) start angle (in degrees).
-	 * @param $b (float) end angle (in degrees).
-	 * @param $style (string) Style of rendering. See the getPathPaintOperator() function for more information.
-	 * @param $cw: (float) indicates whether to go clockwise (default: true).
-	 * @param $o: (float) origin of angles (0 for 3 o'clock, 90 for noon, 180 for 9 o'clock, 270 for 6 o'clock). Default: 90.
+	 * @param float $xc abscissa of the center.
+	 * @param float $yc ordinate of the center.
+	 * @param float $r radius.
+	 * @param float $a start angle (in degrees).
+	 * @param float $b end angle (in degrees).
+	 * @param string $style Style of rendering. See the getPathPaintOperator() function for more information.
+	 * @param float $cw indicates whether to go clockwise (default: true).
+	 * @param float $o origin of angles (0 for 3 o'clock, 90 for noon, 180 for 9 o'clock, 270 for 6 o'clock). Default: 90.
 	 * @author Maxime Delorme, Nicola Asuni
 	 * @since 3.1.000 (2008-06-09)
 	 * @public
 	 */
-	public function PieSector($xc, $yc, $r, $a, $b, $style = 'FD', $cw = true, $o = 90)
-	{
+	public function PieSector($xc, $yc, $r, $a, $b, $style='FD', $cw=true, $o=90) {
 		$this->PieSectorXY($xc, $yc, $r, $r, $a, $b, $style, $cw, $o);
 	}
 
 	/**
 	 * Draw the sector of an ellipse.
 	 * It can be used for instance to render pie charts.
-	 * @param $xc (float) abscissa of the center.
-	 * @param $yc (float) ordinate of the center.
-	 * @param $rx (float) the x-axis radius.
-	 * @param $ry (float) the y-axis radius.
-	 * @param $a (float) start angle (in degrees).
-	 * @param $b (float) end angle (in degrees).
-	 * @param $style (string) Style of rendering. See the getPathPaintOperator() function for more information.
-	 * @param $cw: (float) indicates whether to go clockwise.
-	 * @param $o: (float) origin of angles (0 for 3 o'clock, 90 for noon, 180 for 9 o'clock, 270 for 6 o'clock).
-	 * @param $nc (integer) Number of curves used to draw a 90 degrees portion of arc.
+	 * @param float $xc abscissa of the center.
+	 * @param float $yc ordinate of the center.
+	 * @param float $rx the x-axis radius.
+	 * @param float $ry the y-axis radius.
+	 * @param float $a start angle (in degrees).
+	 * @param float $b end angle (in degrees).
+	 * @param string $style Style of rendering. See the getPathPaintOperator() function for more information.
+	 * @param float $cw indicates whether to go clockwise.
+	 * @param float $o origin of angles (0 for 3 o'clock, 90 for noon, 180 for 9 o'clock, 270 for 6 o'clock).
+	 * @param integer $nc Number of curves used to draw a 90 degrees portion of arc.
 	 * @author Maxime Delorme, Nicola Asuni
 	 * @since 3.1.000 (2008-06-09)
 	 * @public
 	 */
-	public function PieSectorXY($xc, $yc, $rx, $ry, $a, $b, $style = 'FD', $cw = false, $o = 0, $nc = 2)
-	{
+	public function PieSectorXY($xc, $yc, $rx, $ry, $a, $b, $style='FD', $cw=false, $o=0, $nc=2) {
 		if ($this->state != 2) {
 			 return;
 		}
@@ -15190,24 +14968,23 @@ class TCPDF
 	 * NOTE: EPS is not yet fully implemented, use the setRasterizeVectorImages() method to enable/disable rasterization of vector images using ImageMagick library.
 	 * Only vector drawing is supported, not text or bitmap.
 	 * Although the script was successfully tested with various AI format versions, best results are probably achieved with files that were exported in the AI3 format (tested with Illustrator CS2, Freehand MX and Photoshop CS2).
-	 * @param $file (string) Name of the file containing the image or a '@' character followed by the EPS/AI data string.
-	 * @param $x (float) Abscissa of the upper-left corner.
-	 * @param $y (float) Ordinate of the upper-left corner.
-	 * @param $w (float) Width of the image in the page. If not specified or equal to zero, it is automatically calculated.
-	 * @param $h (float) Height of the image in the page. If not specified or equal to zero, it is automatically calculated.
-	 * @param $link (mixed) URL or identifier returned by AddLink().
-	 * @param $useBoundingBox (boolean) specifies whether to position the bounding box (true) or the complete canvas (false) at location (x,y). Default value is true.
-	 * @param $align (string) Indicates the alignment of the pointer next to image insertion relative to image height. The value can be:<ul><li>T: top-right for LTR or top-left for RTL</li><li>M: middle-right for LTR or middle-left for RTL</li><li>B: bottom-right for LTR or bottom-left for RTL</li><li>N: next line</li></ul>
-	 * @param $palign (string) Allows to center or align the image on the current line. Possible values are:<ul><li>L : left align</li><li>C : center</li><li>R : right align</li><li>'' : empty string : left for LTR or right for RTL</li></ul>
-	 * @param $border (mixed) Indicates if borders must be drawn around the cell. The value can be a number:<ul><li>0: no border (default)</li><li>1: frame</li></ul> or a string containing some or all of the following characters (in any order):<ul><li>L: left</li><li>T: top</li><li>R: right</li><li>B: bottom</li></ul> or an array of line styles for each border group - for example: array('LTRB' => array('width' => 2, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => array(0, 0, 0)))
-	 * @param $fitonpage (boolean) if true the image is resized to not exceed page dimensions.
-	 * @param $fixoutvals (boolean) if true remove values outside the bounding box.
+	 * @param string $file Name of the file containing the image or a '@' character followed by the EPS/AI data string.
+	 * @param float|null $x Abscissa of the upper-left corner.
+	 * @param float|null $y Ordinate of the upper-left corner.
+	 * @param float $w Width of the image in the page. If not specified or equal to zero, it is automatically calculated.
+	 * @param float $h Height of the image in the page. If not specified or equal to zero, it is automatically calculated.
+	 * @param mixed $link URL or identifier returned by AddLink().
+	 * @param boolean $useBoundingBox specifies whether to position the bounding box (true) or the complete canvas (false) at location (x,y). Default value is true.
+	 * @param string $align Indicates the alignment of the pointer next to image insertion relative to image height. The value can be:<ul><li>T: top-right for LTR or top-left for RTL</li><li>M: middle-right for LTR or middle-left for RTL</li><li>B: bottom-right for LTR or bottom-left for RTL</li><li>N: next line</li></ul>
+	 * @param string $palign Allows to center or align the image on the current line. Possible values are:<ul><li>L : left align</li><li>C : center</li><li>R : right align</li><li>'' : empty string : left for LTR or right for RTL</li></ul>
+	 * @param mixed $border Indicates if borders must be drawn around the cell. The value can be a number:<ul><li>0: no border (default)</li><li>1: frame</li></ul> or a string containing some or all of the following characters (in any order):<ul><li>L: left</li><li>T: top</li><li>R: right</li><li>B: bottom</li></ul> or an array of line styles for each border group - for example: array('LTRB' => array('width' => 2, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => array(0, 0, 0)))
+	 * @param boolean $fitonpage if true the image is resized to not exceed page dimensions.
+	 * @param boolean $fixoutvals if true remove values outside the bounding box.
 	 * @author Valentin Schmidt, Nicola Asuni
 	 * @since 3.1.000 (2008-06-09)
 	 * @public
 	 */
-	public function ImageEps($file, $x = '', $y = '', $w = 0, $h = 0, $link = '', $useBoundingBox = true, $align = '', $palign = '', $border = 0, $fitonpage = false, $fixoutvals = false)
-	{
+	public function ImageEps($file, $x=null, $y=null, $w=0, $h=0, $link='', $useBoundingBox=true, $align='', $palign='', $border=0, $fitonpage=false, $fixoutvals=false) {
 		if ($this->state != 2) {
 			 return;
 		}
@@ -15215,10 +14992,10 @@ class TCPDF
 			// convert EPS to raster image using GD or ImageMagick libraries
 			return $this->Image($file, $x, $y, $w, $h, 'EPS', $link, $align, true, 300, $palign, false, false, $border, false, false, $fitonpage);
 		}
-		if ($x === '') {
+		if (TCPDF_STATIC::empty_string($x)) {
 			$x = $this->x;
 		}
-		if ($y === '') {
+		if (TCPDF_STATIC::empty_string($y)) {
 			$y = $this->y;
 		}
 		// check page for no-write regions and adapt page margins if necessary
@@ -15227,19 +15004,19 @@ class TCPDF
 		if ($file[0] === '@') { // image from string
 			$data = substr($file, 1);
 		} else { // EPS/AI file
-			$data = TCPDF_STATIC::fileGetContents($file);
+            $data = $this->getCachedFileContents($file);
 		}
-		if ($data === false) {
+		if ($data === FALSE) {
 			$this->Error('EPS file not found: '.$file);
 		}
 		$regs = array();
 		// EPS/AI compatibility check (only checks files created by Adobe Illustrator!)
-		preg_match("/%%Creator:([^\r\n]+)/", $data, $regs); // find Creator
+		preg_match("/%%Creator:([^\r\n]+)/", $data, $regs); # find Creator
 		if (count($regs) > 1) {
-			$version_str = trim($regs[1]); // e.g. "Adobe Illustrator(R) 8.0"
+			$version_str = trim($regs[1]); # e.g. "Adobe Illustrator(R) 8.0"
 			if (strpos($version_str, 'Adobe Illustrator') !== false) {
 				$versexp = explode(' ', $version_str);
-				$version = (float) array_pop($versexp);
+				$version = (float)array_pop($versexp);
 				if ($version >= 9) {
 					$this->Error('This version of Adobe Illustrator file is not supported: '.$file);
 				}
@@ -15328,9 +15105,7 @@ class TCPDF
 		// translate
 		$this->_out(sprintf('%F %F %F %F %F %F cm', 1, 0, 0, 1, $dx, $dy + ($this->hPt - (2 * $y * $k) - ($y2 - $y1))));
 		// scale
-		if (isset($scale_x)) {
-			$this->_out(sprintf('%F %F %F %F %F %F cm', $scale_x, 0, 0, $scale_y, $x1 * (1 - $scale_x), $y2 * (1 - $scale_y)));
-		}
+		$this->_out(sprintf('%F %F %F %F %F %F cm', $scale_x, 0, 0, $scale_y, $x1 * (1 - $scale_x), $y2 * (1 - $scale_y)));
 		// handle pc/unix/mac line endings
 		$lines = preg_split('/[\r\n]+/si', $data, -1, PREG_SPLIT_NO_EMPTY);
 		$u=0;
@@ -15494,7 +15269,7 @@ class TCPDF
 			$this->Link($ximg, $y, $w, $h, $link, 0);
 		}
 		// set pointer to align the next text/objects
-		switch ($align) {
+		switch($align) {
 			case 'T':{
 				$this->y = $y;
 				$this->x = $this->img_rb_x;
@@ -15511,7 +15286,7 @@ class TCPDF
 				break;
 			}
 			case 'N':{
-				$this->SetY($this->img_rb_y);
+				$this->setY($this->img_rb_y);
 				break;
 			}
 			default:{
@@ -15523,11 +15298,10 @@ class TCPDF
 
 	/**
 	 * Set document barcode.
-	 * @param $bc (string) barcode
+	 * @param string $bc barcode
 	 * @public
 	 */
-	public function setBarcode($bc = '')
-	{
+	public function setBarcode($bc='') {
 		$this->barcode = $bc;
 	}
 
@@ -15537,53 +15311,51 @@ class TCPDF
 	 * @public
 	 * @since 4.0.012 (2008-07-24)
 	 */
-	public function getBarcode()
-	{
+	public function getBarcode() {
 		return $this->barcode;
 	}
 
 	/**
 	 * Print a Linear Barcode.
-	 * @param $code (string) code to print
-	 * @param $type (string) type of barcode (see tcpdf_barcodes_1d.php for supported formats).
-	 * @param $x (int) x position in user units (empty string = current x position)
-	 * @param $y (int) y position in user units (empty string = current y position)
-	 * @param $w (int) width in user units (empty string = remaining page width)
-	 * @param $h (int) height in user units (empty string = remaining page height)
-	 * @param $xres (float) width of the smallest bar in user units (empty string = default value = 0.4mm)
-	 * @param $style (array) array of options:<ul>
-	 *               <li>boolean $style['border'] if true prints a border</li>
-	 *               <li>int $style['padding'] padding to leave around the barcode in user units (set to 'auto' for automatic padding)</li>
-	 *               <li>int $style['hpadding'] horizontal padding in user units (set to 'auto' for automatic padding)</li>
-	 *               <li>int $style['vpadding'] vertical padding in user units (set to 'auto' for automatic padding)</li>
-	 *               <li>array $style['fgcolor'] color array for bars and text</li>
-	 *               <li>mixed $style['bgcolor'] color array for background (set to false for transparent)</li>
-	 *               <li>boolean $style['text'] if true prints text below the barcode</li>
-	 *               <li>string $style['label'] override default label</li>
-	 *               <li>string $style['font'] font name for text</li><li>int $style['fontsize'] font size for text</li>
-	 *               <li>int $style['stretchtext']: 0 = disabled; 1 = horizontal scaling only if necessary; 2 = forced horizontal scaling; 3 = character spacing only if necessary; 4 = forced character spacing.</li>
-	 *               <li>string $style['position'] horizontal position of the containing barcode cell on the page: L = left margin; C = center; R = right margin.</li>
-	 *               <li>string $style['align'] horizontal position of the barcode on the containing rectangle: L = left; C = center; R = right.</li>
-	 *               <li>string $style['stretch'] if true stretch the barcode to best fit the available width, otherwise uses $xres resolution for a single bar.</li>
-	 *               <li>string $style['fitwidth'] if true reduce the width to fit the barcode width + padding. When this option is enabled the 'stretch' option is automatically disabled.</li>
-	 *               <li>string $style['cellfitalign'] this option works only when 'fitwidth' is true and 'position' is unset or empty. Set the horizontal position of the containing barcode cell inside the specified rectangle: L = left; C = center; R = right.</li></ul>
-	 * @param $align (string) Indicates the alignment of the pointer next to barcode insertion relative to barcode height. The value can be:<ul><li>T: top-right for LTR or top-left for RTL</li><li>M: middle-right for LTR or middle-left for RTL</li><li>B: bottom-right for LTR or bottom-left for RTL</li><li>N: next line</li></ul>
+	 * @param string $code code to print
+	 * @param string $type type of barcode (see tcpdf_barcodes_1d.php for supported formats).
+	 * @param float|null $x x position in user units (null = current x position)
+	 * @param float|null $y y position in user units (null = current y position)
+	 * @param float|null $w width in user units (null = remaining page width)
+	 * @param float|null $h height in user units (null = remaining page height)
+	 * @param float|null $xres width of the smallest bar in user units (null = default value = 0.4mm)
+	 * @param array $style array of options:<ul>
+	 * <li>boolean $style['border'] if true prints a border</li>
+	 * <li>int $style['padding'] padding to leave around the barcode in user units (set to 'auto' for automatic padding)</li>
+	 * <li>int $style['hpadding'] horizontal padding in user units (set to 'auto' for automatic padding)</li>
+	 * <li>int $style['vpadding'] vertical padding in user units (set to 'auto' for automatic padding)</li>
+	 * <li>array $style['fgcolor'] color array for bars and text</li>
+	 * <li>mixed $style['bgcolor'] color array for background (set to false for transparent)</li>
+	 * <li>boolean $style['text'] if true prints text below the barcode</li>
+	 * <li>string $style['label'] override default label</li>
+	 * <li>string $style['font'] font name for text</li><li>int $style['fontsize'] font size for text</li>
+	 * <li>int $style['stretchtext']: 0 = disabled; 1 = horizontal scaling only if necessary; 2 = forced horizontal scaling; 3 = character spacing only if necessary; 4 = forced character spacing.</li>
+	 * <li>string $style['position'] horizontal position of the containing barcode cell on the page: L = left margin; C = center; R = right margin.</li>
+	 * <li>string $style['align'] horizontal position of the barcode on the containing rectangle: L = left; C = center; R = right.</li>
+	 * <li>string $style['stretch'] if true stretch the barcode to best fit the available width, otherwise uses $xres resolution for a single bar.</li>
+	 * <li>string $style['fitwidth'] if true reduce the width to fit the barcode width + padding. When this option is enabled the 'stretch' option is automatically disabled.</li>
+	 * <li>string $style['cellfitalign'] this option works only when 'fitwidth' is true and 'position' is unset or empty. Set the horizontal position of the containing barcode cell inside the specified rectangle: L = left; C = center; R = right.</li></ul>
+	 * @param string $align Indicates the alignment of the pointer next to barcode insertion relative to barcode height. The value can be:<ul><li>T: top-right for LTR or top-left for RTL</li><li>M: middle-right for LTR or middle-left for RTL</li><li>B: bottom-right for LTR or bottom-left for RTL</li><li>N: next line</li></ul>
 	 * @author Nicola Asuni
 	 * @since 3.1.000 (2008-06-09)
 	 * @public
 	 */
-	public function write1DBarcode($code, $type, $x = '', $y = '', $w = '', $h = '', $xres = '', $style = array(), $align = '')
-	{
+	public function write1DBarcode($code, $type, $x=null, $y=null, $w=null, $h=null, $xres=null, $style=array(), $align='') {
 		if (TCPDF_STATIC::empty_string(trim($code))) {
 			return;
 		}
-		require_once dirname(__FILE__).'/tcpdf_barcodes_1d.php';
+		require_once(dirname(__FILE__).'/tcpdf_barcodes_1d.php');
 		// save current graphic settings
 		$gvars = $this->getGraphicVars();
 		// create new barcode object
 		$barcodeobj = new TCPDFBarcode($code, $type);
 		$arrcode = $barcodeobj->getBarcodeArray();
-		if (($arrcode === false) OR empty($arrcode) OR ($arrcode['maxw'] <= 0)) {
+		if (empty($arrcode) OR ($arrcode['maxw'] <= 0)) {
 			$this->Error('Error in 1D barcode string');
 		}
 		if ($arrcode['maxh'] <= 0) {
@@ -15632,20 +15404,20 @@ class TCPDF
 			if (isset($style['fontsize'])) {
 				$fontsize = $style['fontsize'];
 			}
-			$this->SetFont($style['font'], '', $fontsize);
+			$this->setFont($style['font'], '', $fontsize);
 		}
 		if (!isset($style['stretchtext'])) {
 			$style['stretchtext'] = 4;
 		}
-		if ($x === '') {
+		if (TCPDF_STATIC::empty_string($x)) {
 			$x = $this->x;
 		}
-		if ($y === '') {
+		if (TCPDF_STATIC::empty_string($y)) {
 			$y = $this->y;
 		}
 		// check page for no-write regions and adapt page margins if necessary
 		list($x, $y) = $this->checkPageRegions($h, $x, $y);
-		if (($w === '') OR ($w <= 0)) {
+		if (TCPDF_STATIC::empty_string($w) OR ($w <= 0)) {
 			if ($this->rtl) {
 				$w = $x - $this->lMargin;
 			} else {
@@ -15729,7 +15501,7 @@ class TCPDF
 		}
 		$text_height = $this->getCellHeight($fontsize / $this->k);
 		// height
-		if (($h === '') OR ($h <= 0)) {
+		if (TCPDF_STATIC::empty_string($h) OR ($h <= 0)) {
 			// set default height
 			$h = (($arrcode['maxw'] * $xres) / 3) + (2 * $vpadding) + $text_height;
 		}
@@ -15739,7 +15511,7 @@ class TCPDF
 			if ($text_height > $h) {
 				$fontsize = (($h * $this->k) / (4 * $this->cell_height_ratio));
 				$text_height = $this->getCellHeight($fontsize / $this->k);
-				$this->SetFont($style['font'], '', $fontsize);
+				$this->setFont($style['font'], '', $fontsize);
 			}
 			if ($vpadding > 0) {
 				$vpadding = (($h - $text_height) / 4);
@@ -15804,8 +15576,8 @@ class TCPDF
 			$this->Rect($xpos_rect, $y, $w, $h, 'D');
 		}
 		// set foreground color
-		$this->SetDrawColorArray($style['fgcolor']);
-		$this->SetTextColorArray($style['fgcolor']);
+		$this->setDrawColorArray($style['fgcolor']);
+		$this->setTextColorArray($style['fgcolor']);
 		// print bars
 		foreach ($arrcode['bcode'] as $k => $v) {
 			$bw = ($v['w'] * $xres);
@@ -15831,8 +15603,8 @@ class TCPDF
 			$this->x = $xpos_text;
 			$this->y = $y + $vpadding + $barh;
 			$cellpadding = $this->cell_padding;
-			$this->SetCellPadding(0);
-			$this->Cell($txtwidth, '', $label, 0, 0, 'C', false, '', $style['stretchtext'], false, 'T', 'T');
+			$this->setCellPadding(0);
+			$this->Cell($txtwidth, 0, $label, 0, 0, 'C', false, '', $style['stretchtext'], false, 'T', 'T');
 			$this->cell_padding = $cellpadding;
 		}
 		// restore original direction
@@ -15840,7 +15612,7 @@ class TCPDF
 		// restore previous settings
 		$this->setGraphicVars($gvars);
 		// set pointer to align the next text/objects
-		switch ($align) {
+		switch($align) {
 			case 'T':{
 				$this->y = $y;
 				$this->x = $this->img_rb_x;
@@ -15857,7 +15629,7 @@ class TCPDF
 				break;
 			}
 			case 'N':{
-				$this->SetY($this->img_rb_y);
+				$this->setY($this->img_rb_y);
 				break;
 			}
 			default:{
@@ -15869,40 +15641,39 @@ class TCPDF
 
 	/**
 	 * Print 2D Barcode.
-	 * @param $code (string) code to print
-	 * @param $type (string) type of barcode (see tcpdf_barcodes_2d.php for supported formats).
-	 * @param $x (int) x position in user units
-	 * @param $y (int) y position in user units
-	 * @param $w (int) width in user units
-	 * @param $h (int) height in user units
-	 * @param $style (array) array of options:<ul>
-	 *               <li>boolean $style['border'] if true prints a border around the barcode</li>
-	 *               <li>int $style['padding'] padding to leave around the barcode in barcode units (set to 'auto' for automatic padding)</li>
-	 *               <li>int $style['hpadding'] horizontal padding in barcode units (set to 'auto' for automatic padding)</li>
-	 *               <li>int $style['vpadding'] vertical padding in barcode units (set to 'auto' for automatic padding)</li>
-	 *               <li>int $style['module_width'] width of a single module in points</li>
-	 *               <li>int $style['module_height'] height of a single module in points</li>
-	 *               <li>array $style['fgcolor'] color array for bars and text</li>
-	 *               <li>mixed $style['bgcolor'] color array for background or false for transparent</li>
-	 *               <li>string $style['position'] barcode position on the page: L = left margin; C = center; R = right margin; S = stretch</li>
-	 * @param $align (string) Indicates the alignment of the pointer next to barcode insertion relative to barcode height. The value can be:<ul><li>T: top-right for LTR or top-left for RTL</li><li>M: middle-right for LTR or middle-left for RTL</li><li>B: bottom-right for LTR or bottom-left for RTL</li><li>N: next line</li></ul>
-	 * @param $distort (boolean) if true distort the barcode to fit width and height, otherwise preserve aspect ratio
+	 * @param string $code code to print
+	 * @param string $type type of barcode (see tcpdf_barcodes_2d.php for supported formats).
+	 * @param float|null $x x position in user units
+	 * @param float|null $y y position in user units
+	 * @param float|null $w width in user units
+	 * @param float|null $h height in user units
+	 * @param array $style array of options:<ul>
+	 * <li>boolean $style['border'] if true prints a border around the barcode</li>
+	 * <li>int $style['padding'] padding to leave around the barcode in barcode units (set to 'auto' for automatic padding)</li>
+	 * <li>int $style['hpadding'] horizontal padding in barcode units (set to 'auto' for automatic padding)</li>
+	 * <li>int $style['vpadding'] vertical padding in barcode units (set to 'auto' for automatic padding)</li>
+	 * <li>int $style['module_width'] width of a single module in points</li>
+	 * <li>int $style['module_height'] height of a single module in points</li>
+	 * <li>array $style['fgcolor'] color array for bars and text</li>
+	 * <li>mixed $style['bgcolor'] color array for background or false for transparent</li>
+	 * <li>string $style['position'] barcode position on the page: L = left margin; C = center; R = right margin; S = stretch</li>
+	 * @param string $align Indicates the alignment of the pointer next to barcode insertion relative to barcode height. The value can be:<ul><li>T: top-right for LTR or top-left for RTL</li><li>M: middle-right for LTR or middle-left for RTL</li><li>B: bottom-right for LTR or bottom-left for RTL</li><li>N: next line</li></ul>
+	 * @param boolean $distort if true distort the barcode to fit width and height, otherwise preserve aspect ratio
 	 * @author Nicola Asuni
 	 * @since 4.5.037 (2009-04-07)
 	 * @public
 	 */
-	public function write2DBarcode($code, $type, $x = '', $y = '', $w = '', $h = '', $style = array(), $align = '', $distort = false)
-	{
+	public function write2DBarcode($code, $type, $x=null, $y=null, $w=null, $h=null, $style=array(), $align='', $distort=false) {
 		if (TCPDF_STATIC::empty_string(trim($code))) {
 			return;
 		}
-		require_once dirname(__FILE__).'/tcpdf_barcodes_2d.php';
+		require_once(dirname(__FILE__).'/tcpdf_barcodes_2d.php');
 		// save current graphic settings
 		$gvars = $this->getGraphicVars();
 		// create new barcode object
 		$barcodeobj = new TCPDF2DBarcode($code, $type);
 		$arrcode = $barcodeobj->getBarcodeArray();
-		if (($arrcode === false) OR empty($arrcode) OR !isset($arrcode['num_rows']) OR ($arrcode['num_rows'] == 0) OR !isset($arrcode['num_cols']) OR ($arrcode['num_cols'] == 0)) {
+		if (empty($arrcode) OR !isset($arrcode['num_rows']) OR ($arrcode['num_rows'] == 0) OR !isset($arrcode['num_cols']) OR ($arrcode['num_cols'] == 0)) {
 			$this->Error('Error in 2D barcode string');
 		}
 		// set default values
@@ -15943,10 +15714,10 @@ class TCPDF
 		if (!isset($style['module_height'])) {
 			$style['module_height'] = 1; // height of a single module in points
 		}
-		if ($x === '') {
+		if (TCPDF_STATIC::empty_string($x)) {
 			$x = $this->x;
 		}
-		if ($y === '') {
+		if (TCPDF_STATIC::empty_string($y)) {
 			$y = $this->y;
 		}
 		// check page for no-write regions and adapt page margins if necessary
@@ -15954,7 +15725,7 @@ class TCPDF
 		// number of barcode columns and rows
 		$rows = $arrcode['num_rows'];
 		$cols = $arrcode['num_cols'];
-		if (($rows <= 0) || ($cols <= 0)) {
+		if (($rows <= 0) || ($cols <= 0)){
 			$this->Error('Error in 2D barcode string');
 		}
 		// module width and height
@@ -15988,7 +15759,7 @@ class TCPDF
 			$h = $maxh;
 		}
 		// set dimensions
-		if ((($w === '') OR ($w <= 0)) AND (($h === '') OR ($h <= 0))) {
+		if ((TCPDF_STATIC::empty_string($w) OR ($w <= 0)) AND (TCPDF_STATIC::empty_string($h) OR ($h <= 0))) {
 			$w = ($cols + $hpad) * ($mw / $this->k);
 			$h = ($rows + $vpad) * ($mh / $this->k);
 		} elseif (($w === '') OR ($w <= 0)) {
@@ -16055,7 +15826,7 @@ class TCPDF
 			$this->Rect($xpos, $y, $w, $h, 'D');
 		}
 		// set foreground color
-		$this->SetDrawColorArray($style['fgcolor']);
+		$this->setDrawColorArray($style['fgcolor']);
 		// print barcode cells
 		// for each row
 		for ($r = 0; $r < $rows; ++$r) {
@@ -16075,7 +15846,7 @@ class TCPDF
 		// restore previous settings
 		$this->setGraphicVars($gvars);
 		// set pointer to align the next text/objects
-		switch ($align) {
+		switch($align) {
 			case 'T':{
 				$this->y = $y;
 				$this->x = $this->img_rb_x;
@@ -16092,7 +15863,7 @@ class TCPDF
 				break;
 			}
 			case 'N':{
-				$this->SetY($this->img_rb_y);
+				$this->setY($this->img_rb_y);
 				break;
 			}
 			default:{
@@ -16121,8 +15892,7 @@ class TCPDF
 	 * @public
 	 * @since 3.2.000 (2008-06-23)
 	 */
-	public function getMargins()
-	{
+	public function getMargins() {
 		$ret = array(
 			'left' => $this->lMargin,
 			'right' => $this->rMargin,
@@ -16149,8 +15919,7 @@ class TCPDF
 	 * @public
 	 * @since 4.0.012 (2008-07-24)
 	 */
-	public function getOriginalMargins()
-	{
+	public function getOriginalMargins() {
 		$ret = array(
 			'left' => $this->original_lMargin,
 			'right' => $this->original_rMargin
@@ -16160,23 +15929,21 @@ class TCPDF
 
 	/**
 	 * Returns the current font size.
-	 * @return current font size
+	 * @return float current font size
 	 * @public
 	 * @since 3.2.000 (2008-06-23)
 	 */
-	public function getFontSize()
-	{
+	public function getFontSize() {
 		return $this->FontSize;
 	}
 
 	/**
 	 * Returns the current font size in points unit.
-	 * @return current font size in points unit
+	 * @return int current font size in points unit
 	 * @public
 	 * @since 3.2.000 (2008-06-23)
 	 */
-	public function getFontSizePt()
-	{
+	public function getFontSizePt() {
 		return $this->FontSizePt;
 	}
 
@@ -16186,8 +15953,7 @@ class TCPDF
 	 * @public
 	 * @since 4.3.008 (2008-12-05)
 	 */
-	public function getFontFamily()
-	{
+	public function getFontFamily() {
 		return $this->FontFamily;
 	}
 
@@ -16197,37 +15963,34 @@ class TCPDF
 	 * @public
 	 * @since 4.3.008 (2008-12-05)
 	 */
-	public function getFontStyle()
-	{
+	public function getFontStyle() {
 		return $this->FontStyle;
 	}
 
 	/**
 	 * Cleanup HTML code (requires HTML Tidy library).
-	 * @param $html (string) htmlcode to fix
-	 * @param $default_css (string) CSS commands to add
-	 * @param $tagvs (array) parameters for setHtmlVSpace method
-	 * @param $tidy_options (array) options for tidy_parse_string function
+	 * @param string $html htmlcode to fix
+	 * @param string $default_css CSS commands to add
+	 * @param array|null $tagvs parameters for setHtmlVSpace method
+	 * @param array|null $tidy_options options for tidy_parse_string function
 	 * @return string XHTML code cleaned up
 	 * @author Nicola Asuni
 	 * @public
 	 * @since 5.9.017 (2010-11-16)
 	 * @see setHtmlVSpace()
 	 */
-	public function fixHTMLCode($html, $default_css = '', $tagvs = '', $tidy_options = '')
-	{
+	public function fixHTMLCode($html, $default_css='', $tagvs=null, $tidy_options=null) {
 		return TCPDF_STATIC::fixHTMLCode($html, $default_css, $tagvs, $tidy_options, $this->tagvspaces);
 	}
 
 	/**
 	 * Returns the border width from CSS property
-	 * @param $width (string) border width
+	 * @param string $width border width
 	 * @return int with in user units
 	 * @protected
 	 * @since 5.7.000 (2010-08-02)
 	 */
-	protected function getCSSBorderWidth($width)
-	{
+	protected function getCSSBorderWidth($width) {
 		if ($width == 'thin') {
 			$width = (2 / $this->k);
 		} elseif ($width == 'medium') {
@@ -16242,13 +16005,12 @@ class TCPDF
 
 	/**
 	 * Returns the border dash style from CSS property
-	 * @param $style (string) border style to convert
+	 * @param string $style border style to convert
 	 * @return int sash style (return -1 in case of none or hidden border)
 	 * @protected
 	 * @since 5.7.000 (2010-08-02)
 	 */
-	protected function getCSSBorderDashStyle($style)
-	{
+	protected function getCSSBorderDashStyle($style) {
 		switch (strtolower($style)) {
 			case 'none':
 			case 'hidden': {
@@ -16279,22 +16041,21 @@ class TCPDF
 
 	/**
 	 * Returns the border style array from CSS border properties
-	 * @param $cssborder (string) border properties
+	 * @param string $cssborder border properties
 	 * @return array containing border properties
 	 * @protected
 	 * @since 5.7.000 (2010-08-02)
 	 */
-	protected function getCSSBorderStyle($cssborder)
-	{
+	protected function getCSSBorderStyle($cssborder) {
 		$bprop = preg_split('/[\s]+/', trim($cssborder));
+		$count = count($bprop);
+		if ($count > 0 && $bprop[$count - 1] === '!important') {
+			unset($bprop[$count - 1]);
+			--$count;
+		}
+
 		$border = array(); // value to be returned
-		switch (count($bprop)) {
-			case 3: {
-				$width = $bprop[0];
-				$style = $bprop[1];
-				$color = $bprop[2];
-				break;
-			}
+		switch ($count) {
 			case 2: {
 				$width = 'medium';
 				$style = $bprop[0];
@@ -16307,10 +16068,16 @@ class TCPDF
 				$color = 'black';
 				break;
 			}
-			default: {
+			case 0: {
 				$width = 'medium';
 				$style = 'solid';
 				$color = 'black';
+				break;
+			}
+			default: {
+				$width = $bprop[0];
+				$style = $bprop[1];
+				$color = $bprop[2];
 				break;
 			}
 		}
@@ -16330,14 +16097,13 @@ class TCPDF
 
 	/**
 	 * Get the internal Cell padding from CSS attribute.
-	 * @param $csspadding (string) padding properties
-	 * @param $width (float) width of the containing element
+	 * @param string $csspadding padding properties
+	 * @param float $width width of the containing element
 	 * @return array of cell paddings
 	 * @public
 	 * @since 5.9.000 (2010-10-04)
 	 */
-	public function getCSSPadding($csspadding, $width = 0)
-	{
+	public function getCSSPadding($csspadding, $width=0) {
 		$padding = preg_split('/[\s]+/', trim($csspadding));
 		$cell_padding = array(); // value to be returned
 		switch (count($padding)) {
@@ -16385,14 +16151,13 @@ class TCPDF
 
 	/**
 	 * Get the internal Cell margin from CSS attribute.
-	 * @param $cssmargin (string) margin properties
-	 * @param $width (float) width of the containing element
+	 * @param string $cssmargin margin properties
+	 * @param float $width width of the containing element
 	 * @return array of cell margins
 	 * @public
 	 * @since 5.9.000 (2010-10-04)
 	 */
-	public function getCSSMargin($cssmargin, $width = 0)
-	{
+	public function getCSSMargin($cssmargin, $width=0) {
 		$margin = preg_split('/[\s]+/', trim($cssmargin));
 		$cell_margin = array(); // value to be returned
 		switch (count($margin)) {
@@ -16440,14 +16205,13 @@ class TCPDF
 
 	/**
 	 * Get the border-spacing from CSS attribute.
-	 * @param $cssbspace (string) border-spacing CSS properties
-	 * @param $width (float) width of the containing element
+	 * @param string $cssbspace border-spacing CSS properties
+	 * @param float $width width of the containing element
 	 * @return array of border spacings
 	 * @public
 	 * @since 5.9.010 (2010-10-27)
 	 */
-	public function getCSSBorderMargin($cssbspace, $width = 0)
-	{
+	public function getCSSBorderMargin($cssbspace, $width=0) {
 		$space = preg_split('/[\s]+/', trim($cssbspace));
 		$border_spacing = array(); // value to be returned
 		switch (count($space)) {
@@ -16475,14 +16239,13 @@ class TCPDF
 
 	/**
 	 * Returns the letter-spacing value from CSS value
-	 * @param $spacing (string) letter-spacing value
-	 * @param $parent (float) font spacing (tracking) value of the parent element
+	 * @param string $spacing letter-spacing value
+	 * @param float $parent font spacing (tracking) value of the parent element
 	 * @return float quantity to increases or decreases the space between characters in a text.
 	 * @protected
 	 * @since 5.9.000 (2010-10-02)
 	 */
-	protected function getCSSFontSpacing($spacing, $parent = 0)
-	{
+	protected function getCSSFontSpacing($spacing, $parent=0) {
 		$val = 0; // value to be returned
 		$spacing = trim($spacing);
 		switch ($spacing) {
@@ -16507,14 +16270,13 @@ class TCPDF
 
 	/**
 	 * Returns the percentage of font stretching from CSS value
-	 * @param $stretch (string) stretch mode
-	 * @param $parent (float) stretch value of the parent element
+	 * @param string $stretch stretch mode
+	 * @param float $parent stretch value of the parent element
 	 * @return float font stretching percentage
 	 * @protected
 	 * @since 5.9.000 (2010-10-02)
 	 */
-	protected function getCSSFontStretching($stretch, $parent = 100)
-	{
+	protected function getCSSFontStretching($stretch, $parent=100) {
 		$val = 100; // value to be returned
 		$stretch = trim($stretch);
 		switch ($stretch) {
@@ -16579,15 +16341,14 @@ class TCPDF
 
 	/**
 	 * Convert HTML string containing font size value to points
-	 * @param $val (string) String containing font size value and unit.
-	 * @param $refsize (float) Reference font size in points.
-	 * @param $parent_size (float) Parent font size in points.
-	 * @param $defaultunit (string) Default unit (can be one of the following: %, em, ex, px, in, mm, pc, pt).
+	 * @param string $val String containing font size value and unit.
+	 * @param float $refsize Reference font size in points.
+	 * @param float $parent_size Parent font size in points.
+	 * @param string $defaultunit Default unit (can be one of the following: %, em, ex, px, in, mm, pc, pt).
 	 * @return float value in points
 	 * @public
 	 */
-	public function getHTMLFontUnits($val, $refsize = 12, $parent_size = 12, $defaultunit = 'pt')
-	{
+	public function getHTMLFontUnits($val, $refsize=12, $parent_size=12, $defaultunit='pt') {
 		$refsize = TCPDF_FONTS::getFontRefSize($refsize);
 		$parent_size = TCPDF_FONTS::getFontRefSize($parent_size, $refsize);
 		switch ($val) {
@@ -16628,6 +16389,7 @@ class TCPDF
 				break;
 			}
 			default: {
+				$parentSize = $this->getHTMLUnitToUnits($parent_size, $refsize, $defaultunit, true);
 				$size = $this->getHTMLUnitToUnits($val, $parent_size, $defaultunit, true);
 			}
 		}
@@ -16636,26 +16398,72 @@ class TCPDF
 
 	/**
 	 * Returns the HTML DOM array.
-	 * @param $html (string) html code
+	 * @param string $html html code
 	 * @return array
 	 * @protected
 	 * @since 3.2.000 (2008-06-20)
 	 */
-	protected function getHtmlDomArray($html)
-	{
+	protected function getHtmlDomArray($html) {
+		// set inheritable properties fot the first void element
+		// possible inheritable properties are: azimuth, border-collapse, border-spacing, caption-side, color, cursor, direction, empty-cells, font, font-family, font-stretch, font-size, font-size-adjust, font-style, font-variant, font-weight, letter-spacing, line-height, list-style, list-style-image, list-style-position, list-style-type, orphans, page, page-break-inside, quotes, speak, speak-header, text-align, text-indent, text-transform, volume, white-space, widows, word-spacing
+		$dom = array(
+			array(
+				'tag' => false,
+				'block' => false,
+				'value' => '',
+				'parent' => 0,
+				'hide' => false,
+				'fontname' => $this->FontFamily,
+				'fontstyle' => $this->FontStyle,
+				'fontsize' => $this->FontSizePt,
+				'font-stretch' => $this->font_stretching,
+				'letter-spacing' => $this->font_spacing,
+				'stroke' => $this->textstrokewidth,
+				'fill' => (($this->textrendermode % 2) == 0),
+				'clip' => ($this->textrendermode > 3),
+				'line-height' => $this->cell_height_ratio,
+				'bgcolor' => false,
+				'fgcolor' => $this->fgcolor, // color
+				'strokecolor' => $this->strokecolor,
+				'align' => '',
+				'listtype' => '',
+				'text-indent' => 0,
+				'text-transform' => '',
+				'border' => array(),
+				'dir' => $this->rtl?'rtl':'ltr',
+				'width' => 0,
+				'height' => 0,
+				'x' => 0,
+				'y' => 0,
+				'w' => 0,
+				'h' => 0,
+				'l' => 0,
+				't' => 0,
+				'r' => 0,
+				'b' => 0,
+				'padding' => array('T' => 0, 'R' => 0, 'B' => 0, 'L' => 0),
+				'margin' => array('T' => 0, 'R' => 0, 'B' => 0, 'L' => 0),
+				'border-spacing' => array('H' => 0, 'V' => 0),
+				'border-collapse' => 'separate',
+			)
+		);
+
+		if(empty($html)) {
+			return $dom;
+		}
 		// array of CSS styles ( selector => properties).
 		$css = array();
 		// get CSS array defined at previous call
 		$matches = array();
-		if (preg_match_all('/<cssarray>([^\<]*)<\/cssarray>/isU', $html, $matches) > 0) {
+		if (preg_match_all('/<cssarray>([^\<]*?)<\/cssarray>/is', $html, $matches) > 0) {
 			if (isset($matches[1][0])) {
 				$css = array_merge($css, json_decode($this->unhtmlentities($matches[1][0]), true));
 			}
-			$html = preg_replace('/<cssarray>(.*?)<\/cssarray>/isU', '', $html);
+			$html = preg_replace('/<cssarray>(.*?)<\/cssarray>/is', '', $html);
 		}
 		// extract external CSS files
 		$matches = array();
-		if (preg_match_all('/<link([^\>]*)>/isU', $html, $matches) > 0) {
+		if (preg_match_all('/<link([^\>]*?)>/is', $html, $matches) > 0) {
 			foreach ($matches[1] as $key => $link) {
 				$type = array();
 				if (preg_match('/type[\s]*=[\s]*"text\/css"/', $link, $type)) {
@@ -16667,8 +16475,8 @@ class TCPDF
 						$type = array();
 						if (preg_match('/href[\s]*=[\s]*"([^"]*)"/', $link, $type) > 0) {
 							// read CSS data file
-							$cssdata = TCPDF_STATIC::fileGetContents(trim($type[1]));
-							if (($cssdata !== false) AND (strlen($cssdata) > 0)) {
+                            $cssdata = $this->getCachedFileContents(trim($type[1]));
+							if (($cssdata !== FALSE) AND (strlen($cssdata) > 0)) {
 								$css = array_merge($css, TCPDF_STATIC::extractCSSproperties($cssdata));
 							}
 						}
@@ -16678,7 +16486,7 @@ class TCPDF
 		}
 		// extract style tags
 		$matches = array();
-		if (preg_match_all('/<style([^\>]*)>([^\<]*)<\/style>/isU', $html, $matches) > 0) {
+		if (preg_match_all('/<style([^\>]*?)>([^\<]*?)<\/style>/is', $html, $matches) > 0) {
 			foreach ($matches[1] as $key => $media) {
 				$type = array();
 				preg_match('/media[\s]*=[\s]*"([^"]*)"/', $media, $type);
@@ -16693,8 +16501,8 @@ class TCPDF
 		// create a special tag to contain the CSS array (used for table content)
 		$csstagarray = '<cssarray>'.htmlentities(json_encode($css)).'</cssarray>';
 		// remove head and style blocks
-		$html = preg_replace('/<head([^\>]*)>(.*?)<\/head>/siU', '', $html);
-		$html = preg_replace('/<style([^\>]*)>([^\<]*)<\/style>/isU', '', $html);
+		$html = preg_replace('/<head([^\>]*?)>(.*?)<\/head>/is', '', $html);
+		$html = preg_replace('/<style([^\>]*?)>([^\<]*?)<\/style>/is', '', $html);
 		// define block tags
 		$blocktags = array('blockquote','br','dd','dl','div','dt','h1','h2','h3','h4','h5','h6','hr','li','ol','p','pre','ul','tcpdf','table','tr','td');
 		// define self-closing tags
@@ -16787,37 +16595,8 @@ class TCPDF
 		// count elements
 		$maxel = count($a);
 		$elkey = 0;
-		$key = 0;
-		// create an array of elements
-		$dom = array();
-		$dom[$key] = array();
-		// set inheritable properties fot the first void element
-		// possible inheritable properties are: azimuth, border-collapse, border-spacing, caption-side, color, cursor, direction, empty-cells, font, font-family, font-stretch, font-size, font-size-adjust, font-style, font-variant, font-weight, letter-spacing, line-height, list-style, list-style-image, list-style-position, list-style-type, orphans, page, page-break-inside, quotes, speak, speak-header, text-align, text-indent, text-transform, volume, white-space, widows, word-spacing
-		$dom[$key]['tag'] = false;
-		$dom[$key]['block'] = false;
-		$dom[$key]['value'] = '';
-		$dom[$key]['parent'] = 0;
-		$dom[$key]['hide'] = false;
-		$dom[$key]['fontname'] = $this->FontFamily;
-		$dom[$key]['fontstyle'] = $this->FontStyle;
-		$dom[$key]['fontsize'] = $this->FontSizePt;
-		$dom[$key]['font-stretch'] = $this->font_stretching;
-		$dom[$key]['letter-spacing'] = $this->font_spacing;
-		$dom[$key]['stroke'] = $this->textstrokewidth;
-		$dom[$key]['fill'] = (($this->textrendermode % 2) == 0);
-		$dom[$key]['clip'] = ($this->textrendermode > 3);
-		$dom[$key]['line-height'] = $this->cell_height_ratio;
-		$dom[$key]['bgcolor'] = false;
-		$dom[$key]['fgcolor'] = $this->fgcolor; // color
-		$dom[$key]['strokecolor'] = $this->strokecolor;
-		$dom[$key]['align'] = '';
-		$dom[$key]['listtype'] = '';
-		$dom[$key]['text-indent'] = 0;
-		$dom[$key]['text-transform'] = '';
-		$dom[$key]['border'] = array();
-		$dom[$key]['dir'] = $this->rtl?'rtl':'ltr';
 		$thead = false; // true when we are inside the THEAD tag
-		++$key;
+		$key = 1;
 		$level = array();
 		array_push($level, 0); // root
 		while ($elkey < $maxel) {
@@ -16888,7 +16667,11 @@ class TCPDF
 						$dom[($dom[$key]['parent'])]['content'] = str_replace('</thead>', '', $dom[($dom[$key]['parent'])]['content']);
 					}
 					// store header rows on a new table
-					if (($dom[$key]['value'] == 'tr') AND ($dom[($dom[$key]['parent'])]['thead'] === true)) {
+					if (
+						($dom[$key]['value'] === 'tr')
+						&& !empty($dom[($dom[$key]['parent'])]['thead'])
+						&& ($dom[($dom[$key]['parent'])]['thead'] === true)
+					) {
 						if (TCPDF_STATIC::empty_string($dom[($dom[($dom[$key]['parent'])]['parent'])]['thead'])) {
 							$dom[($dom[($dom[$key]['parent'])]['parent'])]['thead'] = $csstagarray.$a[$dom[($dom[($dom[$key]['parent'])]['parent'])]['elkey']];
 						}
@@ -16945,9 +16728,9 @@ class TCPDF
 					// get attributes
 					preg_match_all('/([^=\s]*)[\s]*=[\s]*"([^"]*)"/', $element, $attr_array, PREG_PATTERN_ORDER);
 					$dom[$key]['attribute'] = array(); // reset attribute array
-					foreach ($attr_array[1] as $id => $name) {
-						$dom[$key]['attribute'][strtolower($name)] = $attr_array[2][$id];
-					}
+                    foreach($attr_array[1] as $id => $name) {
+                        $dom[$key]['attribute'][strtolower($name)] = $attr_array[2][$id];
+                    }
 					if (!empty($css)) {
 						// merge CSS style to current style
 						list($dom[$key]['csssel'], $dom[$key]['cssdata']) = TCPDF_STATIC::getCSSdataArray($dom, $key, $css);
@@ -16958,10 +16741,10 @@ class TCPDF
 						// get style attributes
 						preg_match_all('/([^;:\s]*):([^;]*)/', $dom[$key]['attribute']['style'], $style_array, PREG_PATTERN_ORDER);
 						$dom[$key]['style'] = array(); // reset style attribute array
-						foreach ($style_array[1] as $id => $name) {
-							// in case of duplicate attribute the last replace the previous
-							$dom[$key]['style'][strtolower($name)] = trim($style_array[2][$id]);
-						}
+                        foreach($style_array[1] as $id => $name) {
+                            // in case of duplicate attribute the last replace the previous
+                            $dom[$key]['style'][strtolower($name)] = trim($style_array[2][$id]);
+                        }
 						// --- get some style attributes ---
 						// text direction
 						if (isset($dom[$key]['style']['direction'])) {
@@ -17318,10 +17101,20 @@ class TCPDF
 							// rows on thead block are printed as a separate table
 						} else {
 							$dom[$key]['thead'] = false;
+							$parent = $dom[$key]['parent'];
+
+							if (!isset($dom[$parent]['rows'])) {
+								$dom[$parent]['rows'] = 0;
+							}
 							// store the number of rows on table element
-							++$dom[($dom[$key]['parent'])]['rows'];
+							++$dom[$parent]['rows'];
+
+							if (!isset($dom[$parent]['trids'])) {
+								$dom[$parent]['trids'] = array();
+							}
+
 							// store the TR elements IDs on table element
-							array_push($dom[($dom[$key]['parent'])]['trids'], $key);
+							array_push($dom[$parent]['trids'], $key);
 						}
 					}
 					if (($dom[$key]['value'] == 'th') OR ($dom[$key]['value'] == 'td')) {
@@ -17414,6 +17207,7 @@ class TCPDF
 							}
 						}
 					}
+					$element = preg_replace("/&NBSP;/i", "&nbsp;", $element);
 				}
 				$dom[$key]['value'] = stripslashes($this->unhtmlentities($element));
 			}
@@ -17430,8 +17224,7 @@ class TCPDF
 	 * @author Nicola Asuni
 	 * @since 4.8.024 (2010-01-15)
 	 */
-	protected function getSpaceString()
-	{
+	protected function getSpaceString() {
 		$spacestr = chr(32);
 		if ($this->isUnicodeFont()) {
 			$spacestr = chr(0).chr(32);
@@ -17440,42 +17233,57 @@ class TCPDF
 	}
 
 	/**
-	 * Return an hash code used to ensure that the serialized data has been generated by this TCPDF instance.
-	 * @param $data (string) serialized data
-	 * @return string
-	 * @public static
+	 * Calculates the hash value of the given data.
+	 *
+	 * @param string $data The data to be hashed.
+	 * @return string The hashed value of the data.
 	 */
-	protected function getHashForTCPDFtagParams($data)
-	{
-		return md5(strlen($data).$this->file_id.$data);
+	protected function hashTCPDFtag($data) {
+		return hash_hmac('sha256', $data, $this->hash_key, false);
 	}
 
 	/**
-	 * Serialize an array of parameters to be used with TCPDF tag in HTML code.
-	 * @param $data (array) parameters array
-	 * @return string containing serialized data
+	 * Serialize data to be used with TCPDF tag in HTML code.
+	 * @param string $method TCPDF method name
+	 * @param array $params Method parameters
+	 * @return string Serialized data
 	 * @public static
 	 */
-	public function serializeTCPDFtagParameters($data)
-	{
+	public function serializeTCPDFtag($method, $params=array()) {
+		$data = array('m' => $method, 'p' => $params);
 		$encoded = urlencode(json_encode($data));
-		return $this->getHashForTCPDFtagParams($encoded).$encoded;
+		$hash = $this->hashTCPDFtag($encoded);
+		return strlen($hash).'+'.$hash.'+'.$encoded;
 	}
 
 	/**
-	 * Unserialize parameters to be used with TCPDF tag in HTML code.
-	 * @param $data (string) serialized data
+	 * Unserialize data to be used with TCPDF tag in HTML code.
+	 * @param string $data serialized data
 	 * @return array containing unserialized data
 	 * @protected static
 	 */
-	protected function unserializeTCPDFtagParameters($data)
-	{
-		$hash = substr($data, 0, 32);
-		$encoded = substr($data, 32);
-		if ($hash != $this->getHashForTCPDFtagParams($encoded)) {
+	protected function unserializeTCPDFtag($data) {
+		$hpos = strpos($data, '+');
+		$hlen = intval(substr($data, 0, $hpos));
+		$hash = substr($data, $hpos + 1, $hlen);
+		$encoded = substr($data, $hpos + 2 + $hlen);
+		if ($hash != $this->hashTCPDFtag($encoded)) {
 			$this->Error('Invalid parameters');
 		}
 		return json_decode(urldecode($encoded), true);
+	}
+
+	/**
+	 * Check if a TCPDF tag is allowed
+	 * @param string $method TCPDF method name
+	 * @return boolean
+	 * @protected
+	 */
+	protected function allowedTCPDFtag($method) {
+		if (defined('K_ALLOWED_TCPDF_TAGS')) {
+			return (strpos(K_ALLOWED_TCPDF_TAGS, '|'.$method.'|') !== false);
+		}
+		return false;
 	}
 
 	/**
@@ -17485,22 +17293,21 @@ class TCPDF
 	 * IMPORTANT: The HTML must be well formatted - try to clean-up it using an application like HTML-Tidy before submitting.
 	 * Supported tags are: a, b, blockquote, br, dd, del, div, dl, dt, em, font, h1, h2, h3, h4, h5, h6, hr, i, img, li, ol, p, pre, small, span, strong, sub, sup, table, tcpdf, td, th, thead, tr, tt, u, ul
 	 * NOTE: all the HTML attributes must be enclosed in double-quote.
-	 * @param $w (float) Cell width. If 0, the cell extends up to the right margin.
-	 * @param $h (float) Cell minimum height. The cell extends automatically if needed.
-	 * @param $x (float) upper-left corner X coordinate
-	 * @param $y (float) upper-left corner Y coordinate
-	 * @param $html (string) html text to print. Default value: empty string.
-	 * @param $border (mixed) Indicates if borders must be drawn around the cell. The value can be a number:<ul><li>0: no border (default)</li><li>1: frame</li></ul> or a string containing some or all of the following characters (in any order):<ul><li>L: left</li><li>T: top</li><li>R: right</li><li>B: bottom</li></ul> or an array of line styles for each border group - for example: array('LTRB' => array('width' => 2, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => array(0, 0, 0)))
-	 * @param $ln (int) Indicates where the current position should go after the call. Possible values are:<ul><li>0: to the right (or left for RTL language)</li><li>1: to the beginning of the next line</li><li>2: below</li></ul>            Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value: 0.
-	 * @param $fill (boolean) Indicates if the cell background must be painted (true) or transparent (false).
-	 * @param $reseth (boolean) if true reset the last cell height (default true).
-	 * @param $align (string) Allows to center or align the text. Possible values are:<ul><li>L : left align</li><li>C : center</li><li>R : right align</li><li>'' : empty string : left for LTR or right for RTL</li></ul>
-	 * @param $autopadding (boolean) if true, uses internal padding and automatically adjust it to account for line width.
+	 * @param float $w Cell width. If 0, the cell extends up to the right margin.
+	 * @param float $h Cell minimum height. The cell extends automatically if needed.
+	 * @param float|null $x upper-left corner X coordinate
+	 * @param float|null $y upper-left corner Y coordinate
+	 * @param string $html html text to print. Default value: empty string.
+	 * @param mixed $border Indicates if borders must be drawn around the cell. The value can be a number:<ul><li>0: no border (default)</li><li>1: frame</li></ul> or a string containing some or all of the following characters (in any order):<ul><li>L: left</li><li>T: top</li><li>R: right</li><li>B: bottom</li></ul> or an array of line styles for each border group - for example: array('LTRB' => array('width' => 2, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => array(0, 0, 0)))
+	 * @param int $ln Indicates where the current position should go after the call. Possible values are:<ul><li>0: to the right (or left for RTL language)</li><li>1: to the beginning of the next line</li><li>2: below</li></ul> Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value: 0.
+	 * @param boolean $fill Indicates if the cell background must be painted (true) or transparent (false).
+	 * @param boolean $reseth if true reset the last cell height (default true).
+	 * @param string $align Allows to center or align the text. Possible values are:<ul><li>L : left align</li><li>C : center</li><li>R : right align</li><li>'' : empty string : left for LTR or right for RTL</li></ul>
+	 * @param boolean $autopadding if true, uses internal padding and automatically adjust it to account for line width.
 	 * @see Multicell(), writeHTML()
 	 * @public
 	 */
-	public function writeHTMLCell($w, $h, $x, $y, $html = '', $border = 0, $ln = 0, $fill = false, $reseth = true, $align = '', $autopadding = true)
-	{
+	public function writeHTMLCell($w, $h, $x, $y, $html='', $border=0, $ln=0, $fill=false, $reseth=true, $align='', $autopadding=true) {
 		return $this->MultiCell($w, $h, $html, $border, $align, $fill, $ln, $x, $y, $reseth, 0, true, $autopadding, 0, 'T', false);
 	}
 
@@ -17509,16 +17316,15 @@ class TCPDF
 	 * IMPORTANT: The HTML must be well formatted - try to clean-up it using an application like HTML-Tidy before submitting.
 	 * Supported tags are: a, b, blockquote, br, dd, del, div, dl, dt, em, font, h1, h2, h3, h4, h5, h6, hr, i, img, li, ol, p, pre, small, span, strong, sub, sup, table, tcpdf, td, th, thead, tr, tt, u, ul
 	 * NOTE: all the HTML attributes must be enclosed in double-quote.
-	 * @param $html (string) text to display
-	 * @param $ln (boolean) if true add a new line after text (default = true)
-	 * @param $fill (boolean) Indicates if the background must be painted (true) or transparent (false).
-	 * @param $reseth (boolean) if true reset the last cell height (default false).
-	 * @param $cell (boolean) if true add the current left (or right for RTL) padding to each Write (default false).
-	 * @param $align (string) Allows to center or align the text. Possible values are:<ul><li>L : left align</li><li>C : center</li><li>R : right align</li><li>'' : empty string : left for LTR or right for RTL</li></ul>
+	 * @param string $html text to display
+	 * @param boolean $ln if true add a new line after text (default = true)
+	 * @param boolean $fill Indicates if the background must be painted (true) or transparent (false).
+	 * @param boolean $reseth if true reset the last cell height (default false).
+	 * @param boolean $cell if true add the current left (or right for RTL) padding to each Write (default false).
+	 * @param string $align Allows to center or align the text. Possible values are:<ul><li>L : left align</li><li>C : center</li><li>R : right align</li><li>'' : empty string : left for LTR or right for RTL</li></ul>
 	 * @public
 	 */
-	public function writeHTML($html, $ln = true, $fill = false, $reseth = false, $cell = false, $align = '')
-	{
+	public function writeHTML($html, $ln=true, $fill=false, $reseth=false, $cell=false, $align='') {
 		$gvars = $this->getGraphicVars();
 		// store current values
 		$prev_cell_margin = $this->cell_margin;
@@ -17626,6 +17432,7 @@ class TCPDF
 					++$key;
 				}
 			}
+			if ($key == $maxel) break;
 			if ($dom[$key]['tag'] AND isset($dom[$key]['attribute']['pagebreak'])) {
 				// check for pagebreak
 				if (($dom[$key]['attribute']['pagebreak'] == 'true') OR ($dom[$key]['attribute']['pagebreak'] == 'left') OR ($dom[$key]['attribute']['pagebreak'] == 'right')) {
@@ -17905,7 +17712,7 @@ class TCPDF
 							$this->cell_height_ratio = $dom[$key]['line-height'];
 							$fontaligned = true;
 						}
-						$this->SetFont($fontname, $fontstyle, $fontsize);
+						$this->setFont($fontname, $fontstyle, $fontsize);
 						// reset row height
 						$this->resetLastH();
 						$curfontname = $fontname;
@@ -17932,16 +17739,16 @@ class TCPDF
 				// get current position on page buffer
 				$curpos = $this->pagelen[$startlinepage];
 				if (isset($dom[$key]['bgcolor']) AND ($dom[$key]['bgcolor'] !== false)) {
-					$this->SetFillColorArray($dom[$key]['bgcolor']);
+					$this->setFillColorArray($dom[$key]['bgcolor']);
 					$wfill = true;
 				} else {
 					$wfill = $fill | false;
 				}
 				if (isset($dom[$key]['fgcolor']) AND ($dom[$key]['fgcolor'] !== false)) {
-					$this->SetTextColorArray($dom[$key]['fgcolor']);
+					$this->setTextColorArray($dom[$key]['fgcolor']);
 				}
 				if (isset($dom[$key]['strokecolor']) AND ($dom[$key]['strokecolor'] !== false)) {
-					$this->SetDrawColorArray($dom[$key]['strokecolor']);
+					$this->setDrawColorArray($dom[$key]['strokecolor']);
 				}
 				if (isset($dom[$key]['align'])) {
 					$lalign = $dom[$key]['align'];
@@ -17999,7 +17806,7 @@ class TCPDF
 							$pend = '';
 						}
 					}
-					if ((isset($plalign) AND ((($plalign == 'C') OR ($plalign == 'J') OR (($plalign == 'R') AND (!$this->rtl)) OR (($plalign == 'L') AND ($this->rtl)))))) {
+					if ((((($plalign == 'C') OR ($plalign == 'J') OR (($plalign == 'R') AND (!$this->rtl)) OR (($plalign == 'L') AND ($this->rtl)))))) {
 						// calculate shifting amount
 						$tw = $w;
 						if (($plalign == 'J') AND $this->isRTLTextDir() AND ($this->num_columns > 1)) {
@@ -18176,7 +17983,7 @@ class TCPDF
 											}
 											// justify block
 											if (preg_match('/([0-9\.\+\-]*)[\s]('.$strpiece[1][0].')[\s]('.$strpiece[2][0].')([\s]*)/x', $pmid, $pmatch) == 1) {
-												$newpmid = sprintf('%F', (floatval($pmatch[1]) + $spacew)).' '.$pmatch[2].' x*#!#*x'.$pmatch[3].$pmatch[4];
+												$newpmid = sprintf('%F',(floatval($pmatch[1]) + $spacew)).' '.$pmatch[2].' x*#!#*x'.$pmatch[3].$pmatch[4];
 												$pmid = str_replace($pmatch[0], $newpmid, $pmid);
 												unset($pmatch, $newpmid);
 											}
@@ -18221,8 +18028,8 @@ class TCPDF
 												}
 											}
 											if (preg_match('/('.$xmatches[1].')[\s]('.$xmatches[2].')[\s]('.$xmatches[3].')[\s]('.$strpiece[1][0].')[\s](re)([\s]*)/x', $pmid, $pmatch) == 1) {
-												$newx = sprintf('%F', (floatval($pmatch[1]) + $x_diff));
-												$neww = sprintf('%F', (floatval($pmatch[3]) + $w_diff));
+												$newx = sprintf('%F',(floatval($pmatch[1]) + $x_diff));
+												$neww = sprintf('%F',(floatval($pmatch[3]) + $w_diff));
 												$newpmid = $newx.' '.$pmatch[2].' '.$neww.' '.$pmatch[4].' x*#!#*x'.$pmatch[5].$pmatch[6];
 												$pmid = str_replace($pmatch[0], $newpmid, $pmid);
 												unset($pmatch, $newpmid, $newx, $neww);
@@ -18238,9 +18045,9 @@ class TCPDF
 											$currentxpos = $xmatches[1];
 											// justify block
 											if (preg_match('/('.$xmatches[1].')[\s]('.$xmatches[2].')[\s]('.$xmatches[3].')[\s]('.$xmatches[4].')[\s]('.$xmatches[5].')[\s]('.$strpiece[1][0].')[\s](c)([\s]*)/x', $pmid, $pmatch) == 1) {
-												$newx1 = sprintf('%F', (floatval($pmatch[1]) + $spacew));
-												$newx2 = sprintf('%F', (floatval($pmatch[3]) + $spacew));
-												$newx3 = sprintf('%F', (floatval($pmatch[5]) + $spacew));
+												$newx1 = sprintf('%F',(floatval($pmatch[1]) + $spacew));
+												$newx2 = sprintf('%F',(floatval($pmatch[3]) + $spacew));
+												$newx3 = sprintf('%F',(floatval($pmatch[5]) + $spacew));
 												$newpmid = $newx1.' '.$pmatch[2].' '.$newx2.' '.$pmatch[4].' '.$newx3.' '.$pmatch[6].' x*#!#*x'.$pmatch[7].$pmatch[8];
 												$pmid = str_replace($pmatch[0], $newpmid, $pmid);
 												unset($pmatch, $newpmid, $newx1, $newx2, $newx3);
@@ -18292,13 +18099,13 @@ class TCPDF
 									$pmid = preg_replace('/[\\\][\(]/x', '\\#!#OP#!#', $pmid);
 									$pmid = preg_replace('/[\\\][\)]/x', '\\#!#CP#!#', $pmid);
 									if (preg_match_all('/\[\(([^\)]*)\)\]/x', $pmid, $pamatch) > 0) {
-										foreach ($pamatch[0] as $pk => $pmatch) {
+										foreach($pamatch[0] as $pk => $pmatch) {
 											$replace = $pamatch[1][$pk];
 											$replace = str_replace('#!#OP#!#', '(', $replace);
 											$replace = str_replace('#!#CP#!#', ')', $replace);
 											$newpmid = '[('.str_replace(chr(0).chr(32), ') '.sprintf('%F', $spacew).' (', $replace).')]';
 											$pos = strpos($pmid, $pmatch, $pos);
-											if ($pos !== false) {
+											if ($pos !== FALSE) {
 												$pmid = substr_replace($pmid, $newpmid, $pos, strlen($pmatch));
 											}
 											++$pos;
@@ -18400,9 +18207,9 @@ class TCPDF
 				if (!($dom[$key]['tag'] AND !$dom[$key]['opening'] AND ($dom[$key]['value'] == 'table')
 					AND (isset($this->emptypagemrk[$this->page]))
 					AND ($this->emptypagemrk[$this->page] == $this->pagelen[$this->page]))) {
-					$this->SetFont($fontname, $fontstyle, $fontsize);
+					$this->setFont($fontname, $fontstyle, $fontsize);
 					if ($wfill) {
-						$this->SetFillColorArray($this->bgcolor);
+						$this->setFillColorArray($this->bgcolor);
 					}
 				}
 			} // end newline
@@ -18605,7 +18412,7 @@ class TCPDF
 							$dom[$trid]['cellpos'][($cellid - 1)]['bgcolor'] = $dom[$parentid]['bgcolor'];
 						}
 						// store border info
-						if (isset($tdborder) AND !empty($tdborder)) {
+						if (!empty($tdborder)) {
 							$dom[$trid]['cellpos'][($cellid - 1)]['border'] = $tdborder;
 						}
 						$prevLastH = $this->lasth;
@@ -18702,14 +18509,14 @@ class TCPDF
 			} elseif (strlen($dom[$key]['value']) > 0) {
 				// print list-item
 				if (!TCPDF_STATIC::empty_string($this->lispacer) AND ($this->lispacer != '^')) {
-					$this->SetFont($pfontname, $pfontstyle, $pfontsize);
+					$this->setFont($pfontname, $pfontstyle, $pfontsize);
 					$this->resetLastH();
 					$minstartliney = $this->y;
 					$maxbottomliney = ($startliney + $this->getCellHeight($this->FontSize));
 					if (is_numeric($pfontsize) AND ($pfontsize > 0)) {
 						$this->putHtmlListBullet($this->listnum, $this->lispacer, $pfontsize);
 					}
-					$this->SetFont($curfontname, $curfontstyle, $curfontsize);
+					$this->setFont($curfontname, $curfontstyle, $curfontsize);
 					$this->resetLastH();
 					if (is_numeric($pfontsize) AND ($pfontsize > 0) AND is_numeric($curfontsize) AND ($curfontsize > 0) AND ($pfontsize != $curfontsize)) {
 						$pfontascent = $this->getFontAscent($pfontname, $pfontstyle, $pfontsize);
@@ -18841,7 +18648,7 @@ class TCPDF
 						$strrest = $this->Write($this->lasth, $dom[$key]['value'], '', $wfill, '', false, 0, true, $firstblock, 0, $wadj);
 						// restore default direction
 						if ($reverse_dir AND ($wadj == 0)) {
-							$this->x = $xws;
+							$this->x = $xws; // @phpstan-ignore-line
 							$this->rtl = !$this->rtl;
 							$reverse_dir = false;
 						}
@@ -18871,8 +18678,8 @@ class TCPDF
 				} else {
 					$loop = 0;
 					// add the positive font spacing of the last character (if any)
-					if ($this->font_spacing > 0) {
-						if ($this->rtl) {
+					 if ($this->font_spacing > 0) {
+					 	if ($this->rtl) {
 							$this->x -= $this->font_spacing;
 						} else {
 							$this->x += $this->font_spacing;
@@ -18950,7 +18757,7 @@ class TCPDF
 					$pend = '';
 				}
 			}
-			if ((isset($plalign) AND ((($plalign == 'C') OR (($plalign == 'R') AND (!$this->rtl)) OR (($plalign == 'L') AND ($this->rtl)))))) {
+			if ((((($plalign == 'C') OR (($plalign == 'R') AND (!$this->rtl)) OR (($plalign == 'L') AND ($this->rtl)))))) {
 				// calculate shifting amount
 				$tw = $w;
 				if ($this->lMargin != $prevlMargin) {
@@ -19070,14 +18877,13 @@ class TCPDF
 
 	/**
 	 * Process opening tags.
-	 * @param $dom (array) html dom array
-	 * @param $key (int) current element id
-	 * @param $cell (boolean) if true add the default left (or right if RTL) padding to each new line (default false).
-	 * @return $dom array
+	 * @param array $dom html dom array
+	 * @param int $key current element id
+	 * @param boolean $cell if true add the default left (or right if RTL) padding to each new line (default false).
+	 * @return array $dom
 	 * @protected
 	 */
-	protected function openHTMLTagHandler($dom, $key, $cell)
-	{
+	protected function openHTMLTagHandler($dom, $key, $cell) {
 		$tag = $dom[$key];
 		$parent = $dom[($dom[$key]['parent'])];
 		$firsttag = ($key == 1);
@@ -19142,7 +18948,7 @@ class TCPDF
 			}
 		}
 		// Opening tag
-		switch ($tag['value']) {
+		switch($tag['value']) {
 			case 'table': {
 				$cp = 0;
 				$cs = 0;
@@ -19168,7 +18974,7 @@ class TCPDF
 				$dom[$key]['old_cell_padding'] = $this->cell_padding;
 				if (isset($tag['attribute']['cellpadding'])) {
 					$pad = $this->getHTMLUnitToUnits($tag['attribute']['cellpadding'], 1, 'px');
-					$this->SetCellPadding($pad);
+					$this->setCellPadding($pad);
 				} elseif (isset($tag['padding'])) {
 					$this->cell_padding = $tag['padding'];
 				}
@@ -19209,9 +19015,37 @@ class TCPDF
 					$hrWidth = $wtmp;
 				}
 				$prevlinewidth = $this->GetLineWidth();
-				$this->SetLineWidth($hrHeight);
-				$this->Line($x, $y, $x + $hrWidth, $y);
-				$this->SetLineWidth($prevlinewidth);
+				$this->setLineWidth($hrHeight);
+
+				$lineStyle = array();
+                    		if (isset($tag['fgcolor'])) {
+		                        $lineStyle['color'] = $tag['fgcolor'];
+                    		}
+
+                    		if (isset($tag['fgcolor'])) {
+                        		$lineStyle['color'] = $tag['fgcolor'];
+                    		}
+
+                    		if (isset($tag['style']['cap'])) {
+                        		$lineStyle['cap'] = $tag['style']['cap'];
+                    		}
+
+                    		if (isset($tag['style']['join'])) {
+                        		$lineStyle['join'] = $tag['style']['join'];
+                    		}
+
+                    		if (isset($tag['style']['dash'])) {
+                        		$lineStyle['dash'] = $tag['style']['dash'];
+                    		}
+
+                    		if (isset($tag['style']['phase'])) {
+                        		$lineStyle['phase'] = $tag['style']['phase'];
+                    		}
+
+				$lineStyle = array_filter($lineStyle);
+
+				$this->Line($x, $y, $x + $hrWidth, $y, $lineStyle);
+				$this->setLineWidth($prevlinewidth);
 				$this->addHTMLVertSpace(max($hbc, ($hrHeight / 2)), 0, $cell, !isset($dom[($key + 1)]));
 				break;
 			}
@@ -19230,7 +19064,14 @@ class TCPDF
 					// data stream
 					$imgsrc = '@'.base64_decode(substr($imgsrc, 1));
 					$type = '';
-				} else {
+				} else if (preg_match('@^data:image/([^;]*);base64,(.*)@', $imgsrc, $reg)) {
+					$imgsrc = '@'.base64_decode($reg[2]);
+					$type = $reg[1];
+				} elseif ( $this->allowLocalFiles && substr($imgsrc, 0, 7) === 'file://') {
+                    // get image type from a local file path
+                    $imgsrc = substr($imgsrc, 7);
+                    $type = TCPDF_IMAGES::getImageFileType($imgsrc);
+                } else {
 					// @CHANGE LDR Add support for src="file://..." links
 					if (strpos($imgsrc, 'file://') === 0) {
 						$imgsrc = str_replace('file://', '/', $imgsrc);
@@ -19244,7 +19085,7 @@ class TCPDF
 							$imgsrc = str_replace(K_PATH_MAIN, K_PATH_URL, $imgsrc);
 						}
 					} elseif (($imgsrc[0] === '/') AND !empty($_SERVER['DOCUMENT_ROOT']) AND ($_SERVER['DOCUMENT_ROOT'] != '/')) {
-							// fix image path
+						// fix image path
 						$findroot = strpos($imgsrc, $_SERVER['DOCUMENT_ROOT']);
 						if (($findroot === false) OR ($findroot > 1)) {
 							if (substr($_SERVER['DOCUMENT_ROOT'], -1) == '/') {
@@ -19263,7 +19104,6 @@ class TCPDF
 							$imgsrc = str_replace(K_PATH_MAIN, K_PATH_URL, $imgsrc);
 						}
 					}
-
 					// get image type
 					$type = TCPDF_IMAGES::getImageFileType($imgsrc);
 				}
@@ -19278,7 +19118,7 @@ class TCPDF
 					// further development is required for other modes.
 					$tag['attribute']['align'] = 'bottom';
 				//}
-				switch ($tag['attribute']['align']) {
+				switch($tag['attribute']['align']) {
 					case 'top': {
 						$align = 'T';
 						break;
@@ -19315,7 +19155,7 @@ class TCPDF
 								$lnky = 0;
 							}
 							$imglink = $this->AddLink();
-							$this->SetLink($imglink, $lnky, $page);
+							$this->setLink($imglink, $lnky, $page);
 						}
 					}
 				}
@@ -19339,7 +19179,7 @@ class TCPDF
 				} else {
 					$this->Image($imgsrc, $xpos, $this->y, $iw, $ih, '', $imglink, $align, false, 300, '', false, false, $border, false, false, true);
 				}
-				switch ($align) {
+				switch($align) {
 					case 'T': {
 						$this->y = $prevy;
 						break;
@@ -19469,11 +19309,11 @@ class TCPDF
 				break;
 			}
 			case 'sup': {
-				$this->SetXY($this->GetX(), $this->GetY() - ((0.7 * $this->FontSizePt) / $this->k));
+				$this->setXY($this->GetX(), $this->GetY() - ((0.7 * $this->FontSizePt) / $this->k));
 				break;
 			}
 			case 'sub': {
-				$this->SetXY($this->GetX(), $this->GetY() + ((0.3 * $this->FontSizePt) / $this->k));
+				$this->setXY($this->GetX(), $this->GetY() + ((0.3 * $this->FontSizePt) / $this->k));
 				break;
 			}
 			case 'h1':
@@ -19732,17 +19572,14 @@ class TCPDF
 			case 'tcpdf': {
 				if (defined('K_TCPDF_CALLS_IN_HTML') AND (K_TCPDF_CALLS_IN_HTML === true)) {
 					// Special tag used to call TCPDF methods
-					if (isset($tag['attribute']['method'])) {
-						$tcpdf_method = $tag['attribute']['method'];
-						if (method_exists($this, $tcpdf_method)) {
-							if (isset($tag['attribute']['params']) AND (!empty($tag['attribute']['params']))) {
-								$params = $this->unserializeTCPDFtagParameters($tag['attribute']['params']);
-								call_user_func_array(array($this, $tcpdf_method), $params);
-							} else {
-								$this->$tcpdf_method();
-							}
-							$this->newline = true;
+					// This tag is disabled by default by the K_TCPDF_CALLS_IN_HTML constant on TCPDF configuration file.
+					// Please use this feature only if you are in control of the HTML content and you are sure that it does not contain any harmful code.
+					if (!empty($tag['attribute']['data'])) {
+						$tcpdf_tag_data = $this->unserializeTCPDFtag($tag['attribute']['data']);
+						if ($this->allowedTCPDFtag($tcpdf_tag_data['m'])) {
+							call_user_func_array(array($this, $tcpdf_tag_data['m']), $tcpdf_tag_data['p']);
 						}
+						$this->newline = true;
 					}
 				}
 				break;
@@ -19775,15 +19612,14 @@ class TCPDF
 
 	/**
 	 * Process closing tags.
-	 * @param $dom (array) html dom array
-	 * @param $key (int) current element id
-	 * @param $cell (boolean) if true add the default left (or right if RTL) padding to each new line (default false).
-	 * @param $maxbottomliney (int) maximum y value of current line
-	 * @return $dom array
+	 * @param array $dom html dom array
+	 * @param int $key current element id
+	 * @param boolean $cell if true add the default left (or right if RTL) padding to each new line (default false).
+	 * @param int $maxbottomliney maximum y value of current line
+	 * @return array $dom
 	 * @protected
 	 */
-	protected function closeHTMLTagHandler($dom, $key, $cell, $maxbottomliney = 0)
-	{
+	protected function closeHTMLTagHandler($dom, $key, $cell, $maxbottomliney=0) {
 		$tag = $dom[$key];
 		$parent = $dom[($dom[$key]['parent'])];
 		$lasttag = ((!isset($dom[($key + 1)])) OR ((!isset($dom[($key + 2)])) AND ($dom[($key + 1)]['value'] == 'marker')));
@@ -19824,7 +19660,7 @@ class TCPDF
 			}
 		}
 		// Closing tag
-		switch ($tag['value']) {
+		switch($tag['value']) {
 			case 'tr': {
 				$table_el = $dom[($dom[$key]['parent'])]['parent'];
 				if (!isset($parent['endy'])) {
@@ -19913,394 +19749,394 @@ class TCPDF
 				// closing tag used for the thead part
 				$in_table_head = true;
 				$this->inthead = false;
-				case 'table': {
-					$table_el = $parent;
+			case 'table': {
+				$table_el = $parent;
+				// set default border
+				if (isset($table_el['attribute']['border']) AND ($table_el['attribute']['border'] > 0)) {
 					// set default border
-					if (isset($table_el['attribute']['border']) AND ($table_el['attribute']['border'] > 0)) {
-						// set default border
-						$border = array('LTRB' => array('width' => $this->getCSSBorderWidth($table_el['attribute']['border']), 'cap'=>'square', 'join'=>'miter', 'dash'=> 0, 'color'=>array(0,0,0)));
-					} else {
-						$border = 0;
+					$border = array('LTRB' => array('width' => $this->getCSSBorderWidth($table_el['attribute']['border']), 'cap'=>'square', 'join'=>'miter', 'dash'=> 0, 'color'=>array(0,0,0)));
+				} else {
+					$border = 0;
+				}
+				$default_border = $border;
+				// fix bottom line alignment of last line before page break
+				foreach ($dom[($dom[$key]['parent'])]['trids'] as $j => $trkey) {
+					// update row-spanned cells
+					if (isset($dom[($dom[$key]['parent'])]['rowspans'])) {
+						foreach ($dom[($dom[$key]['parent'])]['rowspans'] as $k => $trwsp) {
+							if (isset($prevtrkey) AND ($trwsp['trid'] == $prevtrkey) AND ($trwsp['mrowspan'] > 0)) {
+								$dom[($dom[$key]['parent'])]['rowspans'][$k]['trid'] = $trkey;
+							}
+							if ($dom[($dom[$key]['parent'])]['rowspans'][$k]['trid'] == $trkey) {
+								$dom[($dom[$key]['parent'])]['rowspans'][$k]['mrowspan'] -= 1;
+							}
+						}
 					}
-					$default_border = $border;
-					// fix bottom line alignment of last line before page break
-					foreach ($dom[($dom[$key]['parent'])]['trids'] as $j => $trkey) {
+					if (isset($prevtrkey) AND ($dom[$trkey]['startpage'] > $dom[$prevtrkey]['endpage'])) {
+						$pgendy = $this->pagedim[$dom[$prevtrkey]['endpage']]['hk'] - $this->pagedim[$dom[$prevtrkey]['endpage']]['bm'];
+						$dom[$prevtrkey]['endy'] = $pgendy;
 						// update row-spanned cells
 						if (isset($dom[($dom[$key]['parent'])]['rowspans'])) {
 							foreach ($dom[($dom[$key]['parent'])]['rowspans'] as $k => $trwsp) {
-								if (isset($prevtrkey) AND ($trwsp['trid'] == $prevtrkey) AND ($trwsp['mrowspan'] > 0)) {
-									$dom[($dom[$key]['parent'])]['rowspans'][$k]['trid'] = $trkey;
-								}
-								if ($dom[($dom[$key]['parent'])]['rowspans'][$k]['trid'] == $trkey) {
-									$dom[($dom[$key]['parent'])]['rowspans'][$k]['mrowspan'] -= 1;
+								if (($trwsp['trid'] == $prevtrkey) AND ($trwsp['mrowspan'] >= 0) AND ($trwsp['endpage'] == $dom[$prevtrkey]['endpage'])) {
+									$dom[($dom[$key]['parent'])]['rowspans'][$k]['endy'] = $pgendy;
+									$dom[($dom[$key]['parent'])]['rowspans'][$k]['mrowspan'] = -1;
 								}
 							}
 						}
-						if (isset($prevtrkey) AND ($dom[$trkey]['startpage'] > $dom[$prevtrkey]['endpage'])) {
-							$pgendy = $this->pagedim[$dom[$prevtrkey]['endpage']]['hk'] - $this->pagedim[$dom[$prevtrkey]['endpage']]['bm'];
-							$dom[$prevtrkey]['endy'] = $pgendy;
-							// update row-spanned cells
-							if (isset($dom[($dom[$key]['parent'])]['rowspans'])) {
-								foreach ($dom[($dom[$key]['parent'])]['rowspans'] as $k => $trwsp) {
-									if (($trwsp['trid'] == $prevtrkey) AND ($trwsp['mrowspan'] >= 0) AND ($trwsp['endpage'] == $dom[$prevtrkey]['endpage'])) {
-										$dom[($dom[$key]['parent'])]['rowspans'][$k]['endy'] = $pgendy;
-										$dom[($dom[$key]['parent'])]['rowspans'][$k]['mrowspan'] = -1;
-									}
-								}
-							}
-						}
-						$prevtrkey = $trkey;
-						$table_el = $dom[($dom[$key]['parent'])];
 					}
-					// for each row
-					if (count($table_el['trids']) > 0) {
-						unset($xmax);
+					$prevtrkey = $trkey;
+					$table_el = $dom[($dom[$key]['parent'])];
+				}
+				// for each row
+				if (!empty($table_el['trids'])) {
+					unset($xmax);
+				}
+				foreach ($table_el['trids'] as $j => $trkey) {
+					$parent = $dom[$trkey];
+					if (!isset($xmax)) {
+						$xmax = $parent['cellpos'][(count($parent['cellpos']) - 1)]['endx'];
 					}
-					foreach ($table_el['trids'] as $j => $trkey) {
-						$parent = $dom[$trkey];
-						if (!isset($xmax)) {
-							$xmax = $parent['cellpos'][(count($parent['cellpos']) - 1)]['endx'];
+					// for each cell on the row
+					foreach ($parent['cellpos'] as $k => $cellpos) {
+						if (isset($cellpos['rowspanid']) AND ($cellpos['rowspanid'] >= 0)) {
+							$cellpos['startx'] = $table_el['rowspans'][($cellpos['rowspanid'])]['startx'];
+							$cellpos['endx'] = $table_el['rowspans'][($cellpos['rowspanid'])]['endx'];
+							$endy = $table_el['rowspans'][($cellpos['rowspanid'])]['endy'];
+							$startpage = $table_el['rowspans'][($cellpos['rowspanid'])]['startpage'];
+							$endpage = $table_el['rowspans'][($cellpos['rowspanid'])]['endpage'];
+							$startcolumn = $table_el['rowspans'][($cellpos['rowspanid'])]['startcolumn'];
+							$endcolumn = $table_el['rowspans'][($cellpos['rowspanid'])]['endcolumn'];
+						} else {
+							$endy = $parent['endy'];
+							$startpage = $parent['startpage'];
+							$endpage = $parent['endpage'];
+							$startcolumn = $parent['startcolumn'];
+							$endcolumn = $parent['endcolumn'];
 						}
-						// for each cell on the row
-						foreach ($parent['cellpos'] as $k => $cellpos) {
-							if (isset($cellpos['rowspanid']) AND ($cellpos['rowspanid'] >= 0)) {
-								$cellpos['startx'] = $table_el['rowspans'][($cellpos['rowspanid'])]['startx'];
-								$cellpos['endx'] = $table_el['rowspans'][($cellpos['rowspanid'])]['endx'];
-								$endy = $table_el['rowspans'][($cellpos['rowspanid'])]['endy'];
-								$startpage = $table_el['rowspans'][($cellpos['rowspanid'])]['startpage'];
-								$endpage = $table_el['rowspans'][($cellpos['rowspanid'])]['endpage'];
-								$startcolumn = $table_el['rowspans'][($cellpos['rowspanid'])]['startcolumn'];
-								$endcolumn = $table_el['rowspans'][($cellpos['rowspanid'])]['endcolumn'];
-							} else {
-								$endy = $parent['endy'];
-								$startpage = $parent['startpage'];
-								$endpage = $parent['endpage'];
-								$startcolumn = $parent['startcolumn'];
-								$endcolumn = $parent['endcolumn'];
+						if ($this->num_columns == 0) {
+							$this->num_columns = 1;
+						}
+						if (isset($cellpos['border'])) {
+							$border = $cellpos['border'];
+						}
+						if (isset($cellpos['bgcolor']) AND ($cellpos['bgcolor']) !== false) {
+							$this->setFillColorArray($cellpos['bgcolor']);
+							$fill = true;
+						} else {
+							$fill = false;
+						}
+						$x = $cellpos['startx'];
+						$y = $parent['starty'];
+						$starty = $y;
+						$w = abs($cellpos['endx'] - $cellpos['startx']);
+						// get border modes
+						$border_start = TCPDF_STATIC::getBorderMode($border, $position='start', $this->opencell);
+						$border_end = TCPDF_STATIC::getBorderMode($border, $position='end', $this->opencell);
+						$border_middle = TCPDF_STATIC::getBorderMode($border, $position='middle', $this->opencell);
+						// design borders around HTML cells.
+						for ($page = $startpage; $page <= $endpage; ++$page) { // for each page
+							$ccode = '';
+							$this->setPage($page);
+							if ($this->num_columns < 2) {
+								// single-column mode
+								$this->x = $x;
+								$this->y = $this->tMargin;
 							}
-							if ($this->num_columns == 0) {
-								$this->num_columns = 1;
-							}
-							if (isset($cellpos['border'])) {
-								$border = $cellpos['border'];
-							}
-							if (isset($cellpos['bgcolor']) AND ($cellpos['bgcolor']) !== false) {
-								$this->SetFillColorArray($cellpos['bgcolor']);
-								$fill = true;
-							} else {
-								$fill = false;
-							}
-							$x = $cellpos['startx'];
-							$y = $parent['starty'];
-							$starty = $y;
-							$w = abs($cellpos['endx'] - $cellpos['startx']);
-							// get border modes
-							$border_start = TCPDF_STATIC::getBorderMode($border, $position='start', $this->opencell);
-							$border_end = TCPDF_STATIC::getBorderMode($border, $position='end', $this->opencell);
-							$border_middle = TCPDF_STATIC::getBorderMode($border, $position='middle', $this->opencell);
-							// design borders around HTML cells.
-							for ($page = $startpage; $page <= $endpage; ++$page) { // for each page
-								$ccode = '';
-								$this->setPage($page);
-								if ($this->num_columns < 2) {
-									// single-column mode
-									$this->x = $x;
-									$this->y = $this->tMargin;
+							// account for margin changes
+							if ($page > $startpage) {
+								if (($this->rtl) AND ($this->pagedim[$page]['orm'] != $this->pagedim[$startpage]['orm'])) {
+									$this->x -= ($this->pagedim[$page]['orm'] - $this->pagedim[$startpage]['orm']);
+								} elseif ((!$this->rtl) AND ($this->pagedim[$page]['olm'] != $this->pagedim[$startpage]['olm'])) {
+									$this->x += ($this->pagedim[$page]['olm'] - $this->pagedim[$startpage]['olm']);
 								}
-								// account for margin changes
-								if ($page > $startpage) {
-									if (($this->rtl) AND ($this->pagedim[$page]['orm'] != $this->pagedim[$startpage]['orm'])) {
-										$this->x -= ($this->pagedim[$page]['orm'] - $this->pagedim[$startpage]['orm']);
-									} elseif ((!$this->rtl) AND ($this->pagedim[$page]['olm'] != $this->pagedim[$startpage]['olm'])) {
-										$this->x += ($this->pagedim[$page]['olm'] - $this->pagedim[$startpage]['olm']);
-									}
-								}
-								if ($startpage == $endpage) { // single page
-									$deltacol = 0;
-									$deltath = 0;
-									for ($column = $startcolumn; $column <= $endcolumn; ++$column) { // for each column
-										$this->selectColumn($column);
-										if ($startcolumn == $endcolumn) { // single column
-											$cborder = $border;
-											$h = $endy - $parent['starty'];
-											$this->y = $y;
-											$this->x = $x;
-										} elseif ($column == $startcolumn) { // first column
-											$cborder = $border_start;
-											$this->y = $starty;
-											$this->x = $x;
-											$h = $this->h - $this->y - $this->bMargin;
-											if ($this->rtl) {
-												$deltacol = $this->x + $this->rMargin - $this->w;
-											} else {
-												$deltacol = $this->x - $this->lMargin;
-											}
-										} elseif ($column == $endcolumn) { // end column
-											$cborder = $border_end;
-											if (isset($this->columns[$column]['th']['\''.$page.'\''])) {
-												$this->y = $this->columns[$column]['th']['\''.$page.'\''];
-											}
-											$this->x += $deltacol;
-											$h = $endy - $this->y;
-										} else { // middle column
-											$cborder = $border_middle;
-											if (isset($this->columns[$column]['th']['\''.$page.'\''])) {
-												$this->y = $this->columns[$column]['th']['\''.$page.'\''];
-											}
-											$this->x += $deltacol;
-											$h = $this->h - $this->y - $this->bMargin;
+							}
+							if ($startpage == $endpage) { // single page
+								$deltacol = 0;
+								$deltath = 0;
+								for ($column = $startcolumn; $column <= $endcolumn; ++$column) { // for each column
+									$this->selectColumn($column);
+									if ($startcolumn == $endcolumn) { // single column
+										$cborder = $border;
+										$h = $endy - $parent['starty'];
+										$this->y = $y;
+										$this->x = $x;
+									} elseif ($column == $startcolumn) { // first column
+										$cborder = $border_start;
+										$this->y = $starty;
+										$this->x = $x;
+										$h = $this->h - $this->y - $this->bMargin;
+										if ($this->rtl) {
+											$deltacol = $this->x + $this->rMargin - $this->w;
+										} else {
+											$deltacol = $this->x - $this->lMargin;
 										}
-										$ccode .= $this->getCellCode($w, $h, '', $cborder, 1, '', $fill, '', 0, true)."\n";
-									} // end for each column
-								} elseif ($page == $startpage) { // first page
-									$deltacol = 0;
-									$deltath = 0;
-									for ($column = $startcolumn; $column < $this->num_columns; ++$column) { // for each column
-										$this->selectColumn($column);
-										if ($column == $startcolumn) { // first column
-											$cborder = $border_start;
-											$this->y = $starty;
-											$this->x = $x;
-											$h = $this->h - $this->y - $this->bMargin;
-											if ($this->rtl) {
-												$deltacol = $this->x + $this->rMargin - $this->w;
-											} else {
-												$deltacol = $this->x - $this->lMargin;
-											}
-										} else { // middle column
-											$cborder = $border_middle;
-											if (isset($this->columns[$column]['th']['\''.$page.'\''])) {
-												$this->y = $this->columns[$column]['th']['\''.$page.'\''];
-											}
-											$this->x += $deltacol;
-											$h = $this->h - $this->y - $this->bMargin;
+									} elseif ($column == $endcolumn) { // end column
+										$cborder = $border_end;
+										if (isset($this->columns[$column]['th']['\''.$page.'\''])) {
+											$this->y = $this->columns[$column]['th']['\''.$page.'\''];
 										}
-										$ccode .= $this->getCellCode($w, $h, '', $cborder, 1, '', $fill, '', 0, true)."\n";
-									} // end for each column
-								} elseif ($page == $endpage) { // last page
-									$deltacol = 0;
-									$deltath = 0;
-									for ($column = 0; $column <= $endcolumn; ++$column) { // for each column
-										$this->selectColumn($column);
-										if ($column == $endcolumn) { // end column
-											$cborder = $border_end;
-											if (isset($this->columns[$column]['th']['\''.$page.'\''])) {
-												$this->y = $this->columns[$column]['th']['\''.$page.'\''];
-											}
-											$this->x += $deltacol;
-											$h = $endy - $this->y;
-										} else { // middle column
-											$cborder = $border_middle;
-											if (isset($this->columns[$column]['th']['\''.$page.'\''])) {
-												$this->y = $this->columns[$column]['th']['\''.$page.'\''];
-											}
-											$this->x += $deltacol;
-											$h = $this->h - $this->y - $this->bMargin;
-										}
-										$ccode .= $this->getCellCode($w, $h, '', $cborder, 1, '', $fill, '', 0, true)."\n";
-									} // end for each column
-								} else { // middle page
-									$deltacol = 0;
-									$deltath = 0;
-									for ($column = 0; $column < $this->num_columns; ++$column) { // for each column
-										$this->selectColumn($column);
+										$this->x += $deltacol;
+										$h = $endy - $this->y;
+									} else { // middle column
 										$cborder = $border_middle;
 										if (isset($this->columns[$column]['th']['\''.$page.'\''])) {
 											$this->y = $this->columns[$column]['th']['\''.$page.'\''];
 										}
 										$this->x += $deltacol;
 										$h = $this->h - $this->y - $this->bMargin;
-										$ccode .= $this->getCellCode($w, $h, '', $cborder, 1, '', $fill, '', 0, true)."\n";
-									} // end for each column
-								}
-								if (!empty($cborder) OR !empty($fill)) {
-									$offsetlen = strlen($ccode);
-									// draw border and fill
-									if ($this->inxobj) {
-										// we are inside an XObject template
-										if (end($this->xobjects[$this->xobjid]['transfmrk']) !== false) {
-											$pagemarkkey = key($this->xobjects[$this->xobjid]['transfmrk']);
-											$pagemark = $this->xobjects[$this->xobjid]['transfmrk'][$pagemarkkey];
-											$this->xobjects[$this->xobjid]['transfmrk'][$pagemarkkey] += $offsetlen;
-										} else {
-											$pagemark = $this->xobjects[$this->xobjid]['intmrk'];
-											$this->xobjects[$this->xobjid]['intmrk'] += $offsetlen;
-										}
-										$pagebuff = $this->xobjects[$this->xobjid]['outdata'];
-										$pstart = substr($pagebuff, 0, $pagemark);
-										$pend = substr($pagebuff, $pagemark);
-										$this->xobjects[$this->xobjid]['outdata'] = $pstart.$ccode.$pend;
-									} else {
-										// draw border and fill
-										if (end($this->transfmrk[$this->page]) !== false) {
-											$pagemarkkey = key($this->transfmrk[$this->page]);
-											$pagemark = $this->transfmrk[$this->page][$pagemarkkey];
-										} elseif ($this->InFooter) {
-											$pagemark = $this->footerpos[$this->page];
-										} else {
-											$pagemark = $this->intmrk[$this->page];
-										}
-										$pagebuff = $this->getPageBuffer($this->page);
-										$pstart = substr($pagebuff, 0, $pagemark);
-										$pend = substr($pagebuff, $pagemark);
-										$this->setPageBuffer($this->page, $pstart.$ccode.$pend);
 									}
+									$ccode .= $this->getCellCode($w, $h, '', $cborder, 1, '', $fill, '', 0, true)."\n";
+								} // end for each column
+							} elseif ($page == $startpage) { // first page
+								$deltacol = 0;
+								$deltath = 0;
+								for ($column = $startcolumn; $column < $this->num_columns; ++$column) { // for each column
+									$this->selectColumn($column);
+									if ($column == $startcolumn) { // first column
+										$cborder = $border_start;
+										$this->y = $starty;
+										$this->x = $x;
+										$h = $this->h - $this->y - $this->bMargin;
+										if ($this->rtl) {
+											$deltacol = $this->x + $this->rMargin - $this->w;
+										} else {
+											$deltacol = $this->x - $this->lMargin;
+										}
+									} else { // middle column
+										$cborder = $border_middle;
+										if (isset($this->columns[$column]['th']['\''.$page.'\''])) {
+											$this->y = $this->columns[$column]['th']['\''.$page.'\''];
+										}
+										$this->x += $deltacol;
+										$h = $this->h - $this->y - $this->bMargin;
+									}
+									$ccode .= $this->getCellCode($w, $h, '', $cborder, 1, '', $fill, '', 0, true)."\n";
+								} // end for each column
+							} elseif ($page == $endpage) { // last page
+								$deltacol = 0;
+								$deltath = 0;
+								for ($column = 0; $column <= $endcolumn; ++$column) { // for each column
+									$this->selectColumn($column);
+									if ($column == $endcolumn) { // end column
+										$cborder = $border_end;
+										if (isset($this->columns[$column]['th']['\''.$page.'\''])) {
+											$this->y = $this->columns[$column]['th']['\''.$page.'\''];
+										}
+										$this->x += $deltacol;
+										$h = $endy - $this->y;
+									} else { // middle column
+										$cborder = $border_middle;
+										if (isset($this->columns[$column]['th']['\''.$page.'\''])) {
+											$this->y = $this->columns[$column]['th']['\''.$page.'\''];
+										}
+										$this->x += $deltacol;
+										$h = $this->h - $this->y - $this->bMargin;
+									}
+									$ccode .= $this->getCellCode($w, $h, '', $cborder, 1, '', $fill, '', 0, true)."\n";
+								} // end for each column
+							} else { // middle page
+								$deltacol = 0;
+								$deltath = 0;
+								for ($column = 0; $column < $this->num_columns; ++$column) { // for each column
+									$this->selectColumn($column);
+									$cborder = $border_middle;
+									if (isset($this->columns[$column]['th']['\''.$page.'\''])) {
+										$this->y = $this->columns[$column]['th']['\''.$page.'\''];
+									}
+									$this->x += $deltacol;
+									$h = $this->h - $this->y - $this->bMargin;
+									$ccode .= $this->getCellCode($w, $h, '', $cborder, 1, '', $fill, '', 0, true)."\n";
+								} // end for each column
+							}
+							if (!empty($cborder) OR !empty($fill)) {
+								$offsetlen = strlen($ccode);
+								// draw border and fill
+								if ($this->inxobj) {
+									// we are inside an XObject template
+									if (end($this->xobjects[$this->xobjid]['transfmrk']) !== false) {
+										$pagemarkkey = key($this->xobjects[$this->xobjid]['transfmrk']);
+										$pagemark = $this->xobjects[$this->xobjid]['transfmrk'][$pagemarkkey];
+										$this->xobjects[$this->xobjid]['transfmrk'][$pagemarkkey] += $offsetlen;
+									} else {
+										$pagemark = $this->xobjects[$this->xobjid]['intmrk'];
+										$this->xobjects[$this->xobjid]['intmrk'] += $offsetlen;
+									}
+									$pagebuff = $this->xobjects[$this->xobjid]['outdata'];
+									$pstart = substr($pagebuff, 0, $pagemark);
+									$pend = substr($pagebuff, $pagemark);
+									$this->xobjects[$this->xobjid]['outdata'] = $pstart.$ccode.$pend;
+								} else {
+									// draw border and fill
+									if (end($this->transfmrk[$this->page]) !== false) {
+										$pagemarkkey = key($this->transfmrk[$this->page]);
+										$pagemark = $this->transfmrk[$this->page][$pagemarkkey];
+									} elseif ($this->InFooter) {
+										$pagemark = $this->footerpos[$this->page];
+									} else {
+										$pagemark = $this->intmrk[$this->page];
+									}
+									$pagebuff = $this->getPageBuffer($this->page);
+									$pstart = substr($pagebuff, 0, $pagemark);
+									$pend = substr($pagebuff, $pagemark);
+									$this->setPageBuffer($this->page, $pstart.$ccode.$pend);
 								}
-							} // end for each page
-							// restore default border
-							$border = $default_border;
-						} // end for each cell on the row
-						if (isset($table_el['attribute']['cellspacing'])) {
-							$this->y += $this->getHTMLUnitToUnits($table_el['attribute']['cellspacing'], 1, 'px');
-						} elseif (isset($table_el['border-spacing'])) {
-							$this->y += $table_el['border-spacing']['V'];
-						}
-						$this->Ln(0, $cell);
-						$this->x = $parent['startx'];
-						if ($endpage > $startpage) {
-							if (($this->rtl) AND ($this->pagedim[$endpage]['orm'] != $this->pagedim[$startpage]['orm'])) {
-								$this->x += ($this->pagedim[$endpage]['orm'] - $this->pagedim[$startpage]['orm']);
-							} elseif ((!$this->rtl) AND ($this->pagedim[$endpage]['olm'] != $this->pagedim[$startpage]['olm'])) {
-								$this->x += ($this->pagedim[$endpage]['olm'] - $this->pagedim[$startpage]['olm']);
 							}
+						} // end for each page
+						// restore default border
+						$border = $default_border;
+					} // end for each cell on the row
+					if (isset($table_el['attribute']['cellspacing'])) {
+						$this->y += $this->getHTMLUnitToUnits($table_el['attribute']['cellspacing'], 1, 'px');
+					} elseif (isset($table_el['border-spacing'])) {
+						$this->y += $table_el['border-spacing']['V'];
+					}
+					$this->Ln(0, $cell);
+					$this->x = $parent['startx'];
+					if ($endpage > $startpage) {
+						if (($this->rtl) AND ($this->pagedim[$endpage]['orm'] != $this->pagedim[$startpage]['orm'])) {
+							$this->x += ($this->pagedim[$endpage]['orm'] - $this->pagedim[$startpage]['orm']);
+						} elseif ((!$this->rtl) AND ($this->pagedim[$endpage]['olm'] != $this->pagedim[$startpage]['olm'])) {
+							$this->x += ($this->pagedim[$endpage]['olm'] - $this->pagedim[$startpage]['olm']);
 						}
 					}
-					if (!$in_table_head) { // we are not inside a thead section
-						$this->cell_padding = $table_el['old_cell_padding'];
-						// reset row height
-						$this->resetLastH();
-						if (($this->page == ($this->numpages - 1)) AND ($this->pageopen[$this->numpages])) {
-							$plendiff = ($this->pagelen[$this->numpages] - $this->emptypagemrk[$this->numpages]);
-							if (($plendiff > 0) AND ($plendiff < 60)) {
-								$pagediff = substr($this->getPageBuffer($this->numpages), $this->emptypagemrk[$this->numpages], $plendiff);
-								if (substr($pagediff, 0, 5) == 'BT /F') {
-									// the difference is only a font setting
-									$plendiff = 0;
-								}
-							}
-							if ($plendiff == 0) {
-								// remove last blank page
-								$this->deletePage($this->numpages);
-							}
-						}
-						if (isset($this->theadMargins['top'])) {
-							// restore top margin
-							$this->tMargin = $this->theadMargins['top'];
-						}
-						if (!isset($table_el['attribute']['nested']) OR ($table_el['attribute']['nested'] != 'true')) {
-							// reset main table header
-							$this->thead = '';
-							$this->theadMargins = array();
-							$this->pagedim[$this->page]['tm'] = $this->tMargin;
-						}
-					}
-					$parent = $table_el;
-					break;
 				}
-				case 'a': {
-					$this->HREF = array();
-					break;
-				}
-				case 'sup': {
-					$this->SetXY($this->GetX(), $this->GetY() + ((0.7 * $parent['fontsize']) / $this->k));
-					break;
-				}
-				case 'sub': {
-					$this->SetXY($this->GetX(), $this->GetY() - ((0.3 * $parent['fontsize']) / $this->k));
-					break;
-				}
-				case 'div': {
-					$this->addHTMLVertSpace($hbz, $hb, $cell, false, $lasttag);
-					break;
-				}
-				case 'blockquote': {
-					if ($this->rtl) {
-						$this->rMargin -= $this->listindent;
-					} else {
-						$this->lMargin -= $this->listindent;
-					}
-					--$this->listindentlevel;
-					$this->addHTMLVertSpace($hbz, $hb, $cell, false, $lasttag);
-					break;
-				}
-				case 'p': {
-					$this->addHTMLVertSpace($hbz, $hb, $cell, false, $lasttag);
-					break;
-				}
-				case 'pre': {
-					$this->addHTMLVertSpace($hbz, $hb, $cell, false, $lasttag);
-					$this->premode = false;
-					break;
-				}
-				case 'dl': {
-					--$this->listnum;
-					if ($this->listnum <= 0) {
-						$this->listnum = 0;
-						$this->addHTMLVertSpace($hbz, $hb, $cell, false, $lasttag);
-					} else {
-						$this->addHTMLVertSpace(0, 0, $cell, false, $lasttag);
-					}
+				if (!$in_table_head) { // we are not inside a thead section
+					$this->cell_padding = isset($table_el['old_cell_padding']) ? $table_el['old_cell_padding'] : null;
+					// reset row height
 					$this->resetLastH();
-					break;
-				}
-				case 'dt': {
-					$this->lispacer = '';
-					$this->addHTMLVertSpace(0, 0, $cell, false, $lasttag);
-					break;
-				}
-				case 'dd': {
-					$this->lispacer = '';
-					if ($this->rtl) {
-						$this->rMargin -= $this->listindent;
-					} else {
-						$this->lMargin -= $this->listindent;
+					if (($this->page == ($this->numpages - 1)) AND ($this->pageopen[$this->numpages])) {
+						$plendiff = ($this->pagelen[$this->numpages] - $this->emptypagemrk[$this->numpages]);
+						if (($plendiff > 0) AND ($plendiff < 60)) {
+							$pagediff = substr($this->getPageBuffer($this->numpages), $this->emptypagemrk[$this->numpages], $plendiff);
+							if (substr($pagediff, 0, 5) == 'BT /F') {
+								// the difference is only a font setting
+								$plendiff = 0;
+							}
+						}
+						if ($plendiff == 0) {
+							// remove last blank page
+							$this->deletePage($this->numpages);
+						}
 					}
-					--$this->listindentlevel;
-					$this->addHTMLVertSpace(0, 0, $cell, false, $lasttag);
-					break;
-				}
-				case 'ul':
-				case 'ol': {
-					--$this->listnum;
-					$this->lispacer = '';
-					if ($this->rtl) {
-						$this->rMargin -= $this->listindent;
-					} else {
-						$this->lMargin -= $this->listindent;
+					if (isset($this->theadMargins['top'])) {
+						// restore top margin
+						$this->tMargin = $this->theadMargins['top'];
 					}
-					--$this->listindentlevel;
-					if ($this->listnum <= 0) {
-						$this->listnum = 0;
-						$this->addHTMLVertSpace($hbz, $hb, $cell, false, $lasttag);
-					} else {
-						$this->addHTMLVertSpace(0, 0, $cell, false, $lasttag);
+					if (!isset($table_el['attribute']['nested']) OR ($table_el['attribute']['nested'] != 'true')) {
+						// reset main table header
+						$this->thead = '';
+						$this->theadMargins = array();
+						$this->pagedim[$this->page]['tm'] = $this->tMargin;
 					}
-					$this->resetLastH();
-					break;
 				}
-				case 'li': {
-					$this->lispacer = '';
-					$this->addHTMLVertSpace(0, 0, $cell, false, $lasttag);
-					break;
+				$parent = $table_el;
+				break;
+			}
+			case 'a': {
+				$this->HREF = array();
+				break;
+			}
+			case 'sup': {
+				$this->setXY($this->GetX(), $this->GetY() + ((0.7 * $parent['fontsize']) / $this->k));
+				break;
+			}
+			case 'sub': {
+				$this->setXY($this->GetX(), $this->GetY() - ((0.3 * $parent['fontsize']) / $this->k));
+				break;
+			}
+			case 'div': {
+				$this->addHTMLVertSpace($hbz, $hb, $cell, false, $lasttag);
+				break;
+			}
+			case 'blockquote': {
+				if ($this->rtl) {
+					$this->rMargin -= $this->listindent;
+				} else {
+					$this->lMargin -= $this->listindent;
 				}
-				case 'h1':
-				case 'h2':
-				case 'h3':
-				case 'h4':
-				case 'h5':
-				case 'h6': {
+				--$this->listindentlevel;
+				$this->addHTMLVertSpace($hbz, $hb, $cell, false, $lasttag);
+				break;
+			}
+			case 'p': {
+				$this->addHTMLVertSpace($hbz, $hb, $cell, false, $lasttag);
+				break;
+			}
+			case 'pre': {
+				$this->addHTMLVertSpace($hbz, $hb, $cell, false, $lasttag);
+				$this->premode = false;
+				break;
+			}
+			case 'dl': {
+				--$this->listnum;
+				if ($this->listnum <= 0) {
+					$this->listnum = 0;
 					$this->addHTMLVertSpace($hbz, $hb, $cell, false, $lasttag);
-					break;
+				} else {
+					$this->addHTMLVertSpace(0, 0, $cell, false, $lasttag);
 				}
-				// Form fields (since 4.8.000 - 2009-09-07)
-				case 'form': {
-					$this->form_action = '';
-					$this->form_enctype = 'application/x-www-form-urlencoded';
-					break;
+				$this->resetLastH();
+				break;
+			}
+			case 'dt': {
+				$this->lispacer = '';
+				$this->addHTMLVertSpace(0, 0, $cell, false, $lasttag);
+				break;
+			}
+			case 'dd': {
+				$this->lispacer = '';
+				if ($this->rtl) {
+					$this->rMargin -= $this->listindent;
+				} else {
+					$this->lMargin -= $this->listindent;
 				}
-				default : {
-					break;
+				--$this->listindentlevel;
+				$this->addHTMLVertSpace(0, 0, $cell, false, $lasttag);
+				break;
+			}
+			case 'ul':
+			case 'ol': {
+				--$this->listnum;
+				$this->lispacer = '';
+				if ($this->rtl) {
+					$this->rMargin -= $this->listindent;
+				} else {
+					$this->lMargin -= $this->listindent;
 				}
+				--$this->listindentlevel;
+				if ($this->listnum <= 0) {
+					$this->listnum = 0;
+					$this->addHTMLVertSpace($hbz, $hb, $cell, false, $lasttag);
+				} else {
+					$this->addHTMLVertSpace(0, 0, $cell, false, $lasttag);
+				}
+				$this->resetLastH();
+				break;
+			}
+			case 'li': {
+				$this->lispacer = '';
+				$this->addHTMLVertSpace(0, 0, $cell, false, $lasttag);
+				break;
+			}
+			case 'h1':
+			case 'h2':
+			case 'h3':
+			case 'h4':
+			case 'h5':
+			case 'h6': {
+				$this->addHTMLVertSpace($hbz, $hb, $cell, false, $lasttag);
+				break;
+			}
+			// Form fields (since 4.8.000 - 2009-09-07)
+			case 'form': {
+				$this->form_action = '';
+				$this->form_enctype = 'application/x-www-form-urlencoded';
+				break;
+			}
+			default : {
+				break;
+			}
 		}
 		// draw border and background (if any)
 		$this->drawHTMLTagBorder($parent, $xmax);
@@ -20323,15 +20159,14 @@ class TCPDF
 
 	/**
 	 * Add vertical spaces if needed.
-	 * @param $hbz (string) Distance between current y and line bottom.
-	 * @param $hb (string) The height of the break.
-	 * @param $cell (boolean) if true add the default left (or right if RTL) padding to each new line (default false).
-	 * @param $firsttag (boolean) set to true when the tag is the first.
-	 * @param $lasttag (boolean) set to true when the tag is the last.
+	 * @param string $hbz Distance between current y and line bottom.
+	 * @param string $hb The height of the break.
+	 * @param boolean $cell if true add the default left (or right if RTL) padding to each new line (default false).
+	 * @param boolean $firsttag set to true when the tag is the first.
+	 * @param boolean $lasttag set to true when the tag is the last.
 	 * @protected
 	 */
-	protected function addHTMLVertSpace($hbz = 0, $hb = 0, $cell = false, $firsttag = false, $lasttag = false)
-	{
+	protected function addHTMLVertSpace($hbz=0, $hb=0, $cell=false, $firsttag=false, $lasttag=false) {
 		if ($firsttag) {
 			$this->Ln(0, $cell);
 			$this->htmlvspace = 0;
@@ -20357,8 +20192,7 @@ class TCPDF
 	 * @protected
 	 * @since 5.7.000 (2010-08-03)
 	 */
-	protected function getBorderStartPosition()
-	{
+	protected function getBorderStartPosition() {
 		if ($this->rtl) {
 			$xmax = $this->lMargin;
 		} else {
@@ -20369,13 +20203,12 @@ class TCPDF
 
 	/**
 	 * Draw an HTML block border and fill
-	 * @param $tag (array) array of tag properties.
-	 * @param $xmax (int) end X coordinate for border.
+	 * @param array $tag array of tag properties.
+	 * @param int $xmax end X coordinate for border.
 	 * @protected
 	 * @since 5.7.000 (2010-08-03)
 	 */
-	protected function drawHTMLTagBorder($tag, $xmax)
-	{
+	protected function drawHTMLTagBorder($tag, $xmax) {
 		if (!isset($tag['borderposition'])) {
 			// nothing to draw
 			return;
@@ -20397,7 +20230,7 @@ class TCPDF
 		if (isset($tag['bgcolor']) AND ($tag['bgcolor'] !== false)) {
 			// get background color
 			$old_bgcolor = $this->bgcolor;
-			$this->SetFillColorArray($tag['bgcolor']);
+			$this->setFillColorArray($tag['bgcolor']);
 			$fill = true;
 		}
 		if (!$border AND !$fill) {
@@ -20563,7 +20396,7 @@ class TCPDF
 		$this->page_regions = $temp_page_regions;
 		if (isset($old_bgcolor)) {
 			// restore background color
-			$this->SetFillColorArray($old_bgcolor);
+			$this->setFillColorArray($old_bgcolor);
 		}
 		// restore pointer position
 		$this->x = $prev_x;
@@ -20573,12 +20406,11 @@ class TCPDF
 
 	/**
 	 * Set the default bullet to be used as LI bullet symbol
-	 * @param $symbol (string) character or string to be used (legal values are: '' = automatic, '!' = auto bullet, '#' = auto numbering, 'disc', 'disc', 'circle', 'square', '1', 'decimal', 'decimal-leading-zero', 'i', 'lower-roman', 'I', 'upper-roman', 'a', 'lower-alpha', 'lower-latin', 'A', 'upper-alpha', 'upper-latin', 'lower-greek', 'img|type|width|height|image.ext')
+	 * @param string $symbol character or string to be used (legal values are: '' = automatic, '!' = auto bullet, '#' = auto numbering, 'disc', 'disc', 'circle', 'square', '1', 'decimal', 'decimal-leading-zero', 'i', 'lower-roman', 'I', 'upper-roman', 'a', 'lower-alpha', 'lower-latin', 'A', 'upper-alpha', 'upper-latin', 'lower-greek', 'img|type|width|height|image.ext')
 	 * @public
 	 * @since 4.0.028 (2008-09-26)
 	 */
-	public function setLIsymbol($symbol = '!')
-	{
+	public function setLIsymbol($symbol='!') {
 		// check for custom image symbol
 		if (substr($symbol, 0, 4) == 'img|') {
 			$this->lisymbol = $symbol;
@@ -20595,14 +20427,13 @@ class TCPDF
 
 	/**
 	 * Set the booklet mode for double-sided pages.
-	 * @param $booklet (boolean) true set the booklet mode on, false otherwise.
-	 * @param $inner (float) Inner page margin.
-	 * @param $outer (float) Outer page margin.
+	 * @param boolean $booklet true set the booklet mode on, false otherwise.
+	 * @param float $inner Inner page margin.
+	 * @param float $outer Outer page margin.
 	 * @public
 	 * @since 4.2.000 (2008-10-29)
 	 */
-	public function SetBooklet($booklet = true, $inner = -1, $outer = -1)
-	{
+	public function setBooklet($booklet=true, $inner=-1, $outer=-1) {
 		$this->booklet = $booklet;
 		if ($inner >= 0) {
 			$this->lMargin = $inner;
@@ -20614,12 +20445,11 @@ class TCPDF
 
 	/**
 	 * Swap the left and right margins.
-	 * @param $reverse (boolean) if true swap left and right margins.
+	 * @param boolean $reverse if true swap left and right margins.
 	 * @protected
 	 * @since 4.2.000 (2008-10-29)
 	 */
-	protected function swapMargins($reverse = true)
-	{
+	protected function swapMargins($reverse=true) {
 		if ($reverse) {
 			// swap left and right margins
 			$mtemp = $this->original_lMargin;
@@ -20639,62 +20469,57 @@ class TCPDF
 	 * the second level contains 0 for opening tags or 1 for closing tags,
 	 * the third level contains the vertical space unit (h) and the number spaces to add (n).
 	 * If the h parameter is not specified, default values are used.
-	 * @param $tagvs (array) array of tags and relative vertical spaces.
+	 * @param array $tagvs array of tags and relative vertical spaces.
 	 * @public
 	 * @since 4.2.001 (2008-10-30)
 	 */
-	public function setHtmlVSpace($tagvs)
-	{
+	public function setHtmlVSpace($tagvs) {
 		$this->tagvspaces = $tagvs;
 	}
 
 	/**
 	 * Set custom width for list indentation.
-	 * @param $width (float) width of the indentation. Use negative value to disable it.
+	 * @param float $width width of the indentation. Use negative value to disable it.
 	 * @public
 	 * @since 4.2.007 (2008-11-12)
 	 */
-	public function setListIndentWidth($width)
-	{
+	public function setListIndentWidth($width) {
 		return $this->customlistindent = floatval($width);
 	}
 
 	/**
 	 * Set the top/bottom cell sides to be open or closed when the cell cross the page.
-	 * @param $isopen (boolean) if true keeps the top/bottom border open for the cell sides that cross the page.
+	 * @param boolean $isopen if true keeps the top/bottom border open for the cell sides that cross the page.
 	 * @public
 	 * @since 4.2.010 (2008-11-14)
 	 */
-	public function setOpenCell($isopen)
-	{
+	public function setOpenCell($isopen) {
 		$this->opencell = $isopen;
 	}
 
 	/**
 	 * Set the color and font style for HTML links.
-	 * @param $color (array) RGB array of colors
-	 * @param $fontstyle (string) additional font styles to add
+	 * @param array $color RGB array of colors
+	 * @param string $fontstyle additional font styles to add
 	 * @public
 	 * @since 4.4.003 (2008-12-09)
 	 */
-	public function setHtmlLinksStyle($color = array(0,0,255), $fontstyle = 'U')
-	{
+	public function setHtmlLinksStyle($color=array(0,0,255), $fontstyle='U') {
 		$this->htmlLinkColorArray = $color;
 		$this->htmlLinkFontStyle = $fontstyle;
 	}
 
 	/**
 	 * Convert HTML string containing value and unit of measure to user's units or points.
-	 * @param $htmlval (string) String containing values and unit.
-	 * @param $refsize (string) Reference value in points.
-	 * @param $defaultunit (string) Default unit (can be one of the following: %, em, ex, px, in, mm, pc, pt).
-	 * @param $points (boolean) If true returns points, otherwise returns value in user's units.
+	 * @param string $htmlval String containing values and unit.
+	 * @param string $refsize Reference value in points.
+	 * @param string $defaultunit Default unit (can be one of the following: %, em, ex, px, in, mm, pc, pt).
+	 * @param boolean $points If true returns points, otherwise returns value in user's units.
 	 * @return float value in user's unit or point if $points=true
 	 * @public
 	 * @since 4.4.004 (2008-12-10)
 	 */
-	public function getHTMLUnitToUnits($htmlval, $refsize = 1, $defaultunit = 'px', $points = false)
-	{
+	public function getHTMLUnitToUnits($htmlval, $refsize=1, $defaultunit='px', $points=false) {
 		$supportedunits = array('%', 'em', 'ex', 'px', 'in', 'cm', 'mm', 'pc', 'pt');
 		$retval = 0;
 		$value = 0;
@@ -20772,14 +20597,13 @@ class TCPDF
 
 	/**
 	 * Output an HTML list bullet or ordered item symbol
-	 * @param $listdepth (int) list nesting level
-	 * @param $listtype (string) type of list
-	 * @param $size (float) current font size
+	 * @param int $listdepth list nesting level
+	 * @param string $listtype type of list
+	 * @param float $size current font size
 	 * @protected
 	 * @since 4.4.004 (2008-12-10)
 	 */
-	protected function putHtmlListBullet($listdepth, $listtype = '', $size = 10)
-	{
+	protected function putHtmlListBullet($listdepth, $listtype='', $size=10) {
 		if ($this->state != 2) {
 			return;
 		}
@@ -20970,9 +20794,9 @@ class TCPDF
 		$this->x = $tmpx;
 		$this->lispacer = '^';
 		// restore colors
-		$this->SetFillColorArray($bgcolor);
-		$this->SetDrawColorArray($strokecolor);
-		$this->SettextColorArray($color);
+		$this->setFillColorArray($bgcolor);
+		$this->setDrawColorArray($strokecolor);
+		$this->settextColorArray($color);
 	}
 
 	/**
@@ -20981,8 +20805,7 @@ class TCPDF
 	 * @protected
 	 * @since 4.2.010 (2008-11-14)
 	 */
-	protected function getGraphicVars()
-	{
+	protected function getGraphicVars() {
 		$grapvars = array(
 			'FontFamily' => $this->FontFamily,
 			'FontStyle' => $this->FontStyle,
@@ -21038,13 +20861,12 @@ class TCPDF
 
 	/**
 	 * Set graphic variables.
-	 * @param $gvars (array) array of graphic variablesto restore
-	 * @param $extended (boolean) if true restore extended graphic variables
+	 * @param array $gvars array of graphic variablesto restore
+	 * @param boolean $extended if true restore extended graphic variables
 	 * @protected
 	 * @since 4.2.010 (2008-11-14)
 	 */
-	protected function setGraphicVars($gvars, $extended = false)
-	{
+	protected function setGraphicVars($gvars, $extended=false) {
 		if ($this->state != 2) {
 			 return;
 		}
@@ -21100,7 +20922,7 @@ class TCPDF
 		}
 		$this->_out(''.$this->linestyleWidth.' '.$this->linestyleCap.' '.$this->linestyleJoin.' '.$this->linestyleDash.' '.$this->DrawColor.' '.$this->FillColor.'');
 		if (!TCPDF_STATIC::empty_string($this->FontFamily)) {
-			$this->SetFont($this->FontFamily, $this->FontStyle, $this->FontSizePt);
+			$this->setFont($this->FontFamily, $this->FontStyle, $this->FontSizePt);
 		}
 	}
 
@@ -21108,8 +20930,7 @@ class TCPDF
 	 * Outputs the "save graphics state" operator 'q'
 	 * @protected
 	 */
-	protected function _outSaveGraphicsState()
-	{
+	protected function _outSaveGraphicsState() {
 		$this->_out('q');
 	}
 
@@ -21117,31 +20938,28 @@ class TCPDF
 	 * Outputs the "restore graphics state" operator 'Q'
 	 * @protected
 	 */
-	protected function _outRestoreGraphicsState()
-	{
+	protected function _outRestoreGraphicsState() {
 		$this->_out('Q');
 	}
 
 	/**
 	 * Set buffer content (always append data).
-	 * @param $data (string) data
+	 * @param string $data data
 	 * @protected
 	 * @since 4.5.000 (2009-01-02)
 	 */
-	protected function setBuffer($data)
-	{
+	protected function setBuffer($data) {
 		$this->bufferlen += strlen($data);
 		$this->buffer .= $data;
 	}
 
 	/**
 	 * Replace the buffer content
-	 * @param $data (string) data
+	 * @param string $data data
 	 * @protected
 	 * @since 5.5.000 (2010-06-22)
 	 */
-	protected function replaceBuffer($data)
-	{
+	protected function replaceBuffer($data) {
 		$this->bufferlen = strlen($data);
 		$this->buffer = $data;
 	}
@@ -21152,21 +20970,19 @@ class TCPDF
 	 * @protected
 	 * @since 4.5.000 (2009-01-02)
 	 */
-	protected function getBuffer()
-	{
+	protected function getBuffer() {
 		return $this->buffer;
 	}
 
 	/**
 	 * Set page buffer content.
-	 * @param $page (int) page number
-	 * @param $data (string) page data
-	 * @param $append (boolean) if true append data, false replace.
+	 * @param int $page page number
+	 * @param string $data page data
+	 * @param boolean $append if true append data, false replace.
 	 * @protected
 	 * @since 4.5.000 (2008-12-31)
 	 */
-	protected function setPageBuffer($page, $data, $append = false)
-	{
+	protected function setPageBuffer($page, $data, $append=false) {
 		if ($append) {
 			$this->pages[$page] .= $data;
 		} else {
@@ -21181,13 +20997,12 @@ class TCPDF
 
 	/**
 	 * Get page buffer content.
-	 * @param $page (int) page number
+	 * @param int $page page number
 	 * @return string page buffer content or false in case of error
 	 * @protected
 	 * @since 4.5.000 (2008-12-31)
 	 */
-	protected function getPageBuffer($page)
-	{
+	protected function getPageBuffer($page) {
 		if (isset($this->pages[$page])) {
 			return $this->pages[$page];
 		}
@@ -21196,15 +21011,14 @@ class TCPDF
 
 	/**
 	 * Set image buffer content.
-	 * @param $image (string) image key
-	 * @param $data (array) image data
+	 * @param string $image image key
+	 * @param array $data image data
 	 * @return int image index number
 	 * @protected
 	 * @since 4.5.000 (2008-12-31)
 	 */
-	protected function setImageBuffer($image, $data)
-	{
-		if (($data['i'] = array_search($image, $this->imagekeys)) === false) {
+	protected function setImageBuffer($image, $data) {
+		if (($data['i'] = array_search($image, $this->imagekeys)) === FALSE) {
 			$this->imagekeys[$this->numimages] = $image;
 			$data['i'] = $this->numimages;
 			++$this->numimages;
@@ -21215,14 +21029,13 @@ class TCPDF
 
 	/**
 	 * Set image buffer content for a specified sub-key.
-	 * @param $image (string) image key
-	 * @param $key (string) image sub-key
-	 * @param $data (array) image data
+	 * @param string $image image key
+	 * @param string $key image sub-key
+	 * @param array $data image data
 	 * @protected
 	 * @since 4.5.000 (2008-12-31)
 	 */
-	protected function setImageSubBuffer($image, $key, $data)
-	{
+	protected function setImageSubBuffer($image, $key, $data) {
 		if (!isset($this->images[$image])) {
 			$this->setImageBuffer($image, array());
 		}
@@ -21231,13 +21044,12 @@ class TCPDF
 
 	/**
 	 * Get image buffer content.
-	 * @param $image (string) image key
-	 * @return string image buffer content or false in case of error
+	 * @param string $image image key
+	 * @return string|false image buffer content or false in case of error
 	 * @protected
 	 * @since 4.5.000 (2008-12-31)
 	 */
-	protected function getImageBuffer($image)
-	{
+	protected function getImageBuffer($image) {
 		if (isset($this->images[$image])) {
 			return $this->images[$image];
 		}
@@ -21246,13 +21058,12 @@ class TCPDF
 
 	/**
 	 * Set font buffer content.
-	 * @param $font (string) font key
-	 * @param $data (array) font data
+	 * @param string $font font key
+	 * @param array $data font data
 	 * @protected
 	 * @since 4.5.000 (2009-01-02)
 	 */
-	protected function setFontBuffer($font, $data)
-	{
+	protected function setFontBuffer($font, $data) {
 		$this->fonts[$font] = $data;
 		if (!in_array($font, $this->fontkeys)) {
 			$this->fontkeys[] = $font;
@@ -21265,14 +21076,13 @@ class TCPDF
 
 	/**
 	 * Set font buffer content.
-	 * @param $font (string) font key
-	 * @param $key (string) font sub-key
-	 * @param $data (array) font data
+	 * @param string $font font key
+	 * @param string $key font sub-key
+	 * @param mixed $data font data
 	 * @protected
 	 * @since 4.5.000 (2009-01-02)
 	 */
-	protected function setFontSubBuffer($font, $key, $data)
-	{
+	protected function setFontSubBuffer($font, $key, $data) {
 		if (!isset($this->fonts[$font])) {
 			$this->setFontBuffer($font, array());
 		}
@@ -21281,13 +21091,12 @@ class TCPDF
 
 	/**
 	 * Get font buffer content.
-	 * @param $font (string) font key
-	 * @return string font buffer content or false in case of error
+	 * @param string $font font key
+	 * @return string|false font buffer content or false in case of error
 	 * @protected
 	 * @since 4.5.000 (2009-01-02)
 	 */
-	protected function getFontBuffer($font)
-	{
+	protected function getFontBuffer($font) {
 		if (isset($this->fonts[$font])) {
 			return $this->fonts[$font];
 		}
@@ -21296,14 +21105,13 @@ class TCPDF
 
 	/**
 	 * Move a page to a previous position.
-	 * @param $frompage (int) number of the source page
-	 * @param $topage (int) number of the destination page (must be less than $frompage)
-	 * @return true in case of success, false in case of error.
+	 * @param int $frompage number of the source page
+	 * @param int $topage number of the destination page (must be less than $frompage)
+	 * @return bool true in case of success, false in case of error.
 	 * @public
 	 * @since 4.5.000 (2009-01-02)
 	 */
-	public function movePage($frompage, $topage)
-	{
+	public function movePage($frompage, $topage) {
 		if (($frompage > $this->numpages) OR ($frompage <= $topage)) {
 			return false;
 		}
@@ -21447,7 +21255,7 @@ class TCPDF
 		$jfrompage = $frompage;
 		$jtopage = $topage;
 		if (preg_match_all('/this\.addField\(\'([^\']*)\',\'([^\']*)\',([0-9]+)/', $this->javascript, $pamatch) > 0) {
-			foreach ($pamatch[0] as $pk => $pmatch) {
+			foreach($pamatch[0] as $pk => $pmatch) {
 				$pagenum = intval($pamatch[3][$pk]) + 1;
 				if (($pagenum >= $jtopage) AND ($pagenum < $jfrompage)) {
 					$newpage = ($pagenum + 1);
@@ -21469,13 +21277,12 @@ class TCPDF
 
 	/**
 	 * Remove the specified page.
-	 * @param $page (int) page to remove
-	 * @return true in case of success, false in case of error.
+	 * @param int $page page to remove
+	 * @return bool true in case of success, false in case of error.
 	 * @public
 	 * @since 4.6.004 (2009-04-23)
 	 */
-	public function deletePage($page)
-	{
+	public function deletePage($page) {
 		if (($page < 1) OR ($page > $this->numpages)) {
 			return false;
 		}
@@ -21487,7 +21294,7 @@ class TCPDF
 		unset($this->bordermrk[$page]);
 		unset($this->cntmrk[$page]);
 		foreach ($this->pageobjects[$page] as $oid) {
-			if (isset($this->offsets[$oid])) {
+			if (isset($this->offsets[$oid])){
 				unset($this->offsets[$oid]);
 			}
 		}
@@ -21568,7 +21375,7 @@ class TCPDF
 			unset($this->bordermrk[$this->numpages]);
 			unset($this->cntmrk[$this->numpages]);
 			foreach ($this->pageobjects[$this->numpages] as $oid) {
-				if (isset($this->offsets[$oid])) {
+				if (isset($this->offsets[$oid])){
 					unset($this->offsets[$oid]);
 				}
 			}
@@ -21636,7 +21443,7 @@ class TCPDF
 		// adjust javascript
 		$jpage = $page;
 		if (preg_match_all('/this\.addField\(\'([^\']*)\',\'([^\']*)\',([0-9]+)/', $this->javascript, $pamatch) > 0) {
-			foreach ($pamatch[0] as $pk => $pmatch) {
+			foreach($pamatch[0] as $pk => $pmatch) {
 				$pagenum = intval($pamatch[3][$pk]) + 1;
 				if ($pagenum >= $jpage) {
 					$newpage = ($pagenum - 1);
@@ -21660,13 +21467,12 @@ class TCPDF
 
 	/**
 	 * Clone the specified page to a new page.
-	 * @param $page (int) number of page to copy (0 = current page)
-	 * @return true in case of success, false in case of error.
+	 * @param int $page number of page to copy (0 = current page)
+	 * @return bool true in case of success, false in case of error.
 	 * @public
 	 * @since 4.9.015 (2010-04-20)
 	 */
-	public function copyPage($page = 0)
-	{
+	public function copyPage($page=0) {
 		if ($page == 0) {
 			// default value
 			$page = $this->page;
@@ -21732,19 +21538,18 @@ class TCPDF
 	 * Before calling this method you have to open the page using the addTOCPage() method.
 	 * After calling this method you have to call endTOCPage() to close the TOC page.
 	 * You can override this method to achieve different styles.
-	 * @param $page (int) page number where this TOC should be inserted (leave empty for current page).
-	 * @param $numbersfont (string) set the font for page numbers (please use monospaced font for better alignment).
-	 * @param $filler (string) string used to fill the space between text and page number.
-	 * @param $toc_name (string) name to use for TOC bookmark.
-	 * @param $style (string) Font style for title: B = Bold, I = Italic, BI = Bold + Italic.
-	 * @param $color (array) RGB color array for bookmark title (values from 0 to 255).
+	 * @param int|null $page page number where this TOC should be inserted (leave empty for current page).
+	 * @param string $numbersfont set the font for page numbers (please use monospaced font for better alignment).
+	 * @param string $filler string used to fill the space between text and page number.
+	 * @param string $toc_name name to use for TOC bookmark.
+	 * @param string $style Font style for title: B = Bold, I = Italic, BI = Bold + Italic.
+	 * @param array $color RGB color array for bookmark title (values from 0 to 255).
 	 * @public
 	 * @author Nicola Asuni
 	 * @since 4.5.000 (2009-01-02)
 	 * @see addTOCPage(), endTOCPage(), addHTMLTOC()
 	 */
-	public function addTOC($page = '', $numbersfont = '', $filler = '.', $toc_name = 'TOC', $style = '', $color = array(0,0,0))
-	{
+	public function addTOC($page=null, $numbersfont='', $filler='.', $toc_name='TOC', $style='', $color=array(0,0,0)) {
 		$fontsize = $this->FontSizePt;
 		$fontfamily = $this->FontFamily;
 		$fontstyle = $this->FontStyle;
@@ -21772,7 +21577,7 @@ class TCPDF
 				$page = 1;
 			}
 		}
-		$this->SetFont($numbersfont, $fontstyle, $fontsize);
+		$this->setFont($numbersfont, $fontstyle, $fontsize);
 		$numwidth = $this->GetStringWidth('00000');
 		$maxpage = 0; //used for pages on attached documents
 		foreach ($this->outlines as $key => $outline) {
@@ -21788,11 +21593,11 @@ class TCPDF
 				$alignnum = 'R';
 			}
 			if ($outline['l'] == 0) {
-				$this->SetFont($fontfamily, $outline['s'].'B', $fontsize);
+				$this->setFont($fontfamily, $outline['s'].'B', $fontsize);
 			} else {
-				$this->SetFont($fontfamily, $outline['s'], $fontsize - $outline['l']);
+				$this->setFont($fontfamily, $outline['s'], $fontsize - $outline['l']);
 			}
-			$this->SetTextColorArray($outline['c']);
+			$this->setTextColorArray($outline['c']);
 			// check for page break
 			$this->checkPageBreak(2 * $this->getCellHeight($this->FontSize));
 			// set margins and X position
@@ -21812,7 +21617,7 @@ class TCPDF
 				$current_page = $this->page;
 				$current_column = $this->current_column;
 			}
-			$this->SetX($x_start);
+			$this->setX($x_start);
 			$indent = ($spacer * $outline['l']);
 			if ($this->rtl) {
 				$this->x -= $indent;
@@ -21822,7 +21627,7 @@ class TCPDF
 				$this->lMargin = $this->x;
 			}
 			$link = $this->AddLink();
-			$this->SetLink($link, $outline['y'], $outline['p']);
+			$this->setLink($link, $outline['y'], $outline['p']);
 			// write the text
 			if ($this->rtl) {
 				$txt = ' '.$outline['t'];
@@ -21835,7 +21640,7 @@ class TCPDF
 			} else {
 				$tw = $this->w - $this->rMargin - $this->x;
 			}
-			$this->SetFont($numbersfont, $fontstyle, $fontsize);
+			$this->setFont($numbersfont, $fontstyle, $fontsize);
 			if (TCPDF_STATIC::empty_string($page)) {
 				$pagenum = $outline['p'];
 			} else {
@@ -21943,19 +21748,18 @@ class TCPDF
 	 * This method must be called after all Bookmarks were set.
 	 * Before calling this method you have to open the page using the addTOCPage() method.
 	 * After calling this method you have to call endTOCPage() to close the TOC page.
-	 * @param $page (int) page number where this TOC should be inserted (leave empty for current page).
-	 * @param $toc_name (string) name to use for TOC bookmark.
-	 * @param $templates (array) array of html templates. Use: "#TOC_DESCRIPTION#" for bookmark title, "#TOC_PAGE_NUMBER#" for page number.
-	 * @param $correct_align (boolean) if true correct the number alignment (numbers must be in monospaced font like courier and right aligned on LTR, or left aligned on RTL)
-	 * @param $style (string) Font style for title: B = Bold, I = Italic, BI = Bold + Italic.
-	 * @param $color (array) RGB color array for title (values from 0 to 255).
+	 * @param int|null $page page number where this TOC should be inserted (leave empty for current page).
+	 * @param string $toc_name name to use for TOC bookmark.
+	 * @param array $templates array of html templates. Use: "#TOC_DESCRIPTION#" for bookmark title, "#TOC_PAGE_NUMBER#" for page number.
+	 * @param boolean $correct_align if true correct the number alignment (numbers must be in monospaced font like courier and right aligned on LTR, or left aligned on RTL)
+	 * @param string $style Font style for title: B = Bold, I = Italic, BI = Bold + Italic.
+	 * @param array $color RGB color array for title (values from 0 to 255).
 	 * @public
 	 * @author Nicola Asuni
 	 * @since 5.0.001 (2010-05-06)
 	 * @see addTOCPage(), endTOCPage(), addTOC()
 	 */
-	public function addHTMLTOC($page = '', $toc_name = 'TOC', $templates = array(), $correct_align = true, $style = '', $color = array(0,0,0))
-	{
+	public function addHTMLTOC($page=null, $toc_name='TOC', $templates=array(), $correct_align=true, $style='', $color=array(0,0,0)) {
 		$filler = ' ';
 		$prev_htmlLinkColorArray = $this->htmlLinkColorArray;
 		$prev_htmlLinkFontStyle = $this->htmlLinkFontStyle;
@@ -21971,12 +21775,12 @@ class TCPDF
 			$dom = $this->getHtmlDomArray($html);
 			foreach ($dom as $key => $value) {
 				if ($value['value'] == '#TOC_PAGE_NUMBER#') {
-					$this->SetFont($dom[($key - 1)]['fontname']);
+					$this->setFont($dom[($key - 1)]['fontname']);
 					$templates['F'.$level] = $this->isUnicodeFont();
 				}
 			}
 		}
-		$this->SetFont($current_font);
+		$this->setFont($current_font);
 		$maxpage = 0; //used for pages on attached documents
 		foreach ($this->outlines as $key => $outline) {
 			// get HTML template
@@ -22088,8 +21892,7 @@ class TCPDF
 	 * @public
 	 * @since 4.5.029 (2009-03-19)
 	 */
-	public function startTransaction()
-	{
+	public function startTransaction() {
 		if (isset($this->objcopy)) {
 			// remove previous copy
 			$this->commitTransaction();
@@ -22106,48 +21909,53 @@ class TCPDF
 	 * @public
 	 * @since 4.5.029 (2009-03-19)
 	 */
-	public function commitTransaction()
-	{
+	public function commitTransaction() {
 		if (isset($this->objcopy)) {
 			$this->objcopy->_destroy(true, true);
+			/* The unique file_id should not be used during cleanup again */
+			$this->objcopy->file_id = NULL;
 			unset($this->objcopy);
 		}
 	}
 
 	/**
 	 * This method allows to undo the latest transaction by returning the latest saved TCPDF object with startTransaction().
-	 * @param $self (boolean) if true restores current class object to previous state without the need of reassignment via the returned value.
+	 * @param boolean $self if true restores current class object to previous state without the need of reassignment via the returned value.
 	 * @return TCPDF object.
 	 * @public
 	 * @since 4.5.029 (2009-03-19)
 	 */
-	public function rollbackTransaction($self = false)
-	{
-		if (isset($this->objcopy)) {
-			$this->_destroy(true, true);
-			if ($self) {
-				$objvars = get_object_vars($this->objcopy);
-				foreach ($objvars as $key => $value) {
-					$this->$key = $value;
-				}
-			}
-			return $this->objcopy;
+	public function rollbackTransaction($self=false) {
+		if (!isset($this->objcopy)) {
+			return $this;
 		}
-		return $this;
+		$file_id = $this->file_id;
+		$objcopy = $this->objcopy;
+		$this->_destroy(true, true);
+		if ($self) {
+			$objvars = get_object_vars($objcopy);
+			foreach ($objvars as $key => $value) {
+				$this->$key = $value;
+			}
+			$objcopy->_destroy(true, true);
+			unset($objcopy);
+			return $this;
+		}
+		$this->file_id = $file_id;
+		return $objcopy;
 	}
 
 	// --- MULTI COLUMNS METHODS -----------------------
 
 	/**
 	 * Set multiple columns of the same size
-	 * @param $numcols (int) number of columns (set to zero to disable columns mode)
-	 * @param $width (int) column width
-	 * @param $y (int) column starting Y position (leave empty for current Y position)
+	 * @param int $numcols number of columns (set to zero to disable columns mode)
+	 * @param int $width column width
+	 * @param int|null $y column starting Y position (leave empty for current Y position)
 	 * @public
 	 * @since 4.9.001 (2010-03-28)
 	 */
-	public function setEqualColumns($numcols = 0, $width = 0, $y = '')
-	{
+	public function setEqualColumns($numcols=0, $width=0, $y=null) {
 		$this->columns = array();
 		if ($numcols < 2) {
 			$numcols = 0;
@@ -22179,8 +21987,7 @@ class TCPDF
 	 * @public
 	 * @since 5.9.072 (2011-04-26)
 	 */
-	public function resetColumns()
-	{
+	public function resetColumns() {
 		$this->lMargin = $this->original_lMargin;
 		$this->rMargin = $this->original_rMargin;
 		$this->setEqualColumns();
@@ -22189,12 +21996,11 @@ class TCPDF
 	/**
 	 * Set columns array.
 	 * Each column is represented by an array of arrays with the following keys: (w = width, s = space between columns, y = column top position).
-	 * @param $columns (array)
+	 * @param array $columns
 	 * @public
 	 * @since 4.9.001 (2010-03-28)
 	 */
-	public function setColumnsArray($columns)
-	{
+	public function setColumnsArray($columns) {
 		$this->columns = $columns;
 		$this->num_columns = count($columns);
 		$this->current_column = 0;
@@ -22204,13 +22010,12 @@ class TCPDF
 
 	/**
 	 * Set position at a given column
-	 * @param $col (int) column number (from 0 to getNumberOfColumns()-1); empty string = current column.
+	 * @param int|null $col column number (from 0 to getNumberOfColumns()-1); empty string = current column.
 	 * @public
 	 * @since 4.9.001 (2010-03-28)
 	 */
-	public function selectColumn($col = '')
-	{
-		if (is_string($col)) {
+	public function selectColumn($col=null) {
+		if (TCPDF_STATIC::empty_string($col)) {
 			$col = $this->current_column;
 		} elseif ($col >= $this->num_columns) {
 			$col = 0;
@@ -22288,8 +22093,7 @@ class TCPDF
 	 * @public
 	 * @since 5.5.011 (2010-07-08)
 	 */
-	public function getColumn()
-	{
+	public function getColumn() {
 		return $this->current_column;
 	}
 
@@ -22299,24 +22103,22 @@ class TCPDF
 	 * @public
 	 * @since 5.8.018 (2010-08-25)
 	 */
-	public function getNumberOfColumns()
-	{
+	public function getNumberOfColumns() {
 		return $this->num_columns;
 	}
 
 	/**
 	 * Set Text rendering mode.
-	 * @param $stroke (int) outline size in user units (0 = disable).
-	 * @param $fill (boolean) if true fills the text (default).
-	 * @param $clip (boolean) if true activate clipping mode
+	 * @param int $stroke outline size in user units (0 = disable).
+	 * @param boolean $fill if true fills the text (default).
+	 * @param boolean $clip if true activate clipping mode
 	 * @public
 	 * @since 4.9.008 (2009-04-02)
 	 */
-	public function setTextRenderingMode($stroke = 0, $fill = true, $clip = false)
-	{
+	public function setTextRenderingMode($stroke=0, $fill=true, $clip=false) {
 		// Ref.: PDF 32000-1:2008 - 9.3.6 Text Rendering Mode
 		// convert text rendering parameters
-		if ($stroke < 0) {
+		if ($stroke < 0 || !is_numeric($stroke)) {
 			$stroke = 0;
 		}
 		if ($fill === true) {
@@ -22364,12 +22166,11 @@ class TCPDF
 
 	/**
 	 * Set parameters for drop shadow effect for text.
-	 * @param $params (array) Array of parameters: enabled (boolean) set to true to enable shadow; depth_w (float) shadow width in user units; depth_h (float) shadow height in user units; color (array) shadow color or false to use the stroke color; opacity (float) Alpha value: real value from 0 (transparent) to 1 (opaque); blend_mode (string) blend mode, one of the following: Normal, Multiply, Screen, Overlay, Darken, Lighten, ColorDodge, ColorBurn, HardLight, SoftLight, Difference, Exclusion, Hue, Saturation, Color, Luminosity.
+	 * @param array $params Array of parameters: enabled (boolean) set to true to enable shadow; depth_w (float) shadow width in user units; depth_h (float) shadow height in user units; color (array) shadow color or false to use the stroke color; opacity (float) Alpha value: real value from 0 (transparent) to 1 (opaque); blend_mode (string) blend mode, one of the following: Normal, Multiply, Screen, Overlay, Darken, Lighten, ColorDodge, ColorBurn, HardLight, SoftLight, Difference, Exclusion, Hue, Saturation, Color, Luminosity.
 	 * @since 5.9.174 (2012-07-25)
 	 * @public
 	*/
-	public function setTextShadow($params = array('enabled'=>false, 'depth_w'=>0, 'depth_h'=>0, 'color'=>false, 'opacity'=>1, 'blend_mode'=>'Normal'))
-	{
+	public function setTextShadow($params=array('enabled'=>false, 'depth_w'=>0, 'depth_h'=>0, 'color'=>false, 'opacity'=>1, 'blend_mode'=>'Normal')) {
 		if (isset($params['enabled'])) {
 			$this->txtshadow['enabled'] = $params['enabled']?true:false;
 		} else {
@@ -22407,31 +22208,29 @@ class TCPDF
 
 	/**
 	 * Return the text shadow parameters array.
-	 * @return Array of parameters.
+	 * @return array array of parameters.
 	 * @since 5.9.174 (2012-07-25)
 	 * @public
 	 */
-	public function getTextShadow()
-	{
+	public function getTextShadow() {
 		return $this->txtshadow;
 	}
 
 	/**
 	 * Returns an array of chars containing soft hyphens.
-	 * @param $word (array) array of chars
-	 * @param $patterns (array) Array of hypenation patterns.
-	 * @param $dictionary (array) Array of words to be returned without applying the hyphenation algorithm.
-	 * @param $leftmin (int) Minimum number of character to leave on the left of the word without applying the hyphens.
-	 * @param $rightmin (int) Minimum number of character to leave on the right of the word without applying the hyphens.
-	 * @param $charmin (int) Minimum word length to apply the hyphenation algorithm.
-	 * @param $charmax (int) Maximum length of broken piece of word.
+	 * @param array $word array of chars
+	 * @param array $patterns Array of hypenation patterns.
+	 * @param array $dictionary Array of words to be returned without applying the hyphenation algorithm.
+	 * @param int $leftmin Minimum number of character to leave on the left of the word without applying the hyphens.
+	 * @param int $rightmin Minimum number of character to leave on the right of the word without applying the hyphens.
+	 * @param int $charmin Minimum word length to apply the hyphenation algorithm.
+	 * @param int $charmax Maximum length of broken piece of word.
 	 * @return array text with soft hyphens
 	 * @author Nicola Asuni
 	 * @since 4.9.012 (2010-04-12)
 	 * @protected
 	 */
-	protected function hyphenateWord($word, $patterns, $dictionary = array(), $leftmin = 1, $rightmin = 2, $charmin = 1, $charmax = 8)
-	{
+	protected function hyphenateWord($word, $patterns, $dictionary=array(), $leftmin=1, $rightmin=2, $charmin=1, $charmax=8) {
 		$hyphenword = array(); // hyphens positions
 		$numchars = count($word);
 		if ($numchars <= $charmin) {
@@ -22499,20 +22298,19 @@ class TCPDF
 
 	/**
 	 * Returns text with soft hyphens.
-	 * @param $text (string) text to process
-	 * @param $patterns (mixed) Array of hypenation patterns or a TEX file containing hypenation patterns. TEX patterns can be downloaded from http://www.ctan.org/tex-archive/language/hyph-utf8/tex/generic/hyph-utf8/patterns/
-	 * @param $dictionary (array) Array of words to be returned without applying the hyphenation algorithm.
-	 * @param $leftmin (int) Minimum number of character to leave on the left of the word without applying the hyphens.
-	 * @param $rightmin (int) Minimum number of character to leave on the right of the word without applying the hyphens.
-	 * @param $charmin (int) Minimum word length to apply the hyphenation algorithm.
-	 * @param $charmax (int) Maximum length of broken piece of word.
-	 * @return array text with soft hyphens
+	 * @param string $text text to process
+	 * @param mixed $patterns Array of hypenation patterns or a TEX file containing hypenation patterns. TEX patterns can be downloaded from http://www.ctan.org/tex-archive/language/hyph-utf8/tex/generic/hyph-utf8/patterns/
+	 * @param array $dictionary Array of words to be returned without applying the hyphenation algorithm.
+	 * @param int $leftmin Minimum number of character to leave on the left of the word without applying the hyphens.
+	 * @param int $rightmin Minimum number of character to leave on the right of the word without applying the hyphens.
+	 * @param int $charmin Minimum word length to apply the hyphenation algorithm.
+	 * @param int $charmax Maximum length of broken piece of word.
+	 * @return string text with soft hyphens
 	 * @author Nicola Asuni
 	 * @since 4.9.012 (2010-04-12)
 	 * @public
 	 */
-	public function hyphenateText($text, $patterns, $dictionary = array(), $leftmin = 1, $rightmin = 2, $charmin = 1, $charmax = 8)
-	{
+	public function hyphenateText($text, $patterns, $dictionary=array(), $leftmin=1, $rightmin=2, $charmin=1, $charmax=8) {
 		$text = $this->unhtmlentities($text);
 		$word = array(); // last word
 		$txtarr = array(); // text to be returned
@@ -22572,24 +22370,22 @@ class TCPDF
 
 	/**
 	 * Enable/disable rasterization of vector images using ImageMagick library.
-	 * @param $mode (boolean) if true enable rasterization, false otherwise.
+	 * @param boolean $mode if true enable rasterization, false otherwise.
 	 * @public
 	 * @since 5.0.000 (2010-04-27)
 	 */
-	public function setRasterizeVectorImages($mode)
-	{
+	public function setRasterizeVectorImages($mode) {
 		$this->rasterize_vector_images = $mode;
 	}
 
 	/**
 	 * Enable or disable default option for font subsetting.
-	 * @param $enable (boolean) if true enable font subsetting by default.
+	 * @param boolean $enable if true enable font subsetting by default.
 	 * @author Nicola Asuni
 	 * @public
 	 * @since 5.3.002 (2010-06-07)
 	 */
-	public function setFontSubsetting($enable = true)
-	{
+	public function setFontSubsetting($enable=true) {
 		if ($this->pdfa_mode) {
 			$this->font_subsetting = false;
 		} else {
@@ -22599,55 +22395,51 @@ class TCPDF
 
 	/**
 	 * Return the default option for font subsetting.
-	 * @return boolean default font subsetting state.
+	 * @return bool default font subsetting state.
 	 * @author Nicola Asuni
 	 * @public
 	 * @since 5.3.002 (2010-06-07)
 	 */
-	public function getFontSubsetting()
-	{
+	public function getFontSubsetting() {
 		return $this->font_subsetting;
 	}
 
 	/**
 	 * Left trim the input string
-	 * @param $str (string) string to trim
-	 * @param $replace (string) string that replace spaces.
-	 * @return left trimmed string
+	 * @param string $str string to trim
+	 * @param string $replace string that replace spaces.
+	 * @return string left trimmed string
 	 * @author Nicola Asuni
 	 * @public
 	 * @since 5.8.000 (2010-08-11)
 	 */
-	public function stringLeftTrim($str, $replace = '')
-	{
+	public function stringLeftTrim($str, $replace='') {
 		return preg_replace('/^'.$this->re_space['p'].'+/'.$this->re_space['m'], $replace, $str);
 	}
 
 	/**
 	 * Right trim the input string
-	 * @param $str (string) string to trim
-	 * @param $replace (string) string that replace spaces.
-	 * @return right trimmed string
+	 * @param string $str string to trim
+	 * @param string $replace string that replace spaces.
+	 * @return string right trimmed string
 	 * @author Nicola Asuni
 	 * @public
 	 * @since 5.8.000 (2010-08-11)
 	 */
-	public function stringRightTrim($str, $replace = '')
-	{
+	public function stringRightTrim($str, $replace='') {
 		return preg_replace('/'.$this->re_space['p'].'+$/'.$this->re_space['m'], $replace, $str);
 	}
 
 	/**
 	 * Trim the input string
-	 * @param $str (string) string to trim
-	 * @param $replace (string) string that replace spaces.
-	 * @return trimmed string
+	 * @param string $str string to trim
+	 * @param string $replace string that replace spaces.
+	 * @return string trimmed string
 	 * @author Nicola Asuni
 	 * @public
 	 * @since 5.8.000 (2010-08-11)
 	 */
-	public function stringTrim($str, $replace = '')
-	{
+	public function stringTrim($str, $replace='') {
 		$str = $this->stringLeftTrim($str, $replace);
 		$str = $this->stringRightTrim($str, $replace);
 		return $str;
@@ -22655,26 +22447,24 @@ class TCPDF
 
 	/**
 	 * Return true if the current font is unicode type.
-	 * @return true for unicode font, false otherwise.
+	 * @return bool true for unicode font, false otherwise.
 	 * @author Nicola Asuni
 	 * @public
 	 * @since 5.8.002 (2010-08-14)
 	 */
-	public function isUnicodeFont()
-	{
+	public function isUnicodeFont() {
 		return (($this->CurrentFont['type'] == 'TrueTypeUnicode') OR ($this->CurrentFont['type'] == 'cidfont0'));
 	}
 
 	/**
 	 * Return normalized font name
-	 * @param $fontfamily (string) property string containing font family names
+	 * @param string $fontfamily property string containing font family names
 	 * @return string normalized font name
 	 * @author Nicola Asuni
 	 * @public
 	 * @since 5.8.004 (2010-08-17)
 	 */
-	public function getFontFamilyName($fontfamily)
-	{
+	public function getFontFamilyName($fontfamily) {
 		// remove spaces and symbols
 		$fontfamily = preg_replace('/[^a-z0-9_\,]/', '', strtolower($fontfamily));
 		// extract all font names
@@ -22709,17 +22499,16 @@ class TCPDF
 	 * An XObject Template is a PDF block that is a self-contained description of any sequence of graphics objects (including path objects, text objects, and sampled images).
 	 * An XObject Template may be painted multiple times, either on several pages or at several locations on the same page and produces the same results each time, subject only to the graphics state at the time it is invoked.
 	 * Note: X,Y coordinates will be reset to 0,0.
-	 * @param $w (int) Template width in user units (empty string or zero = page width less margins).
-	 * @param $h (int) Template height in user units (empty string or zero = page height less margins).
-	 * @param $group (mixed) Set transparency group. Can be a boolean value or an array specifying optional parameters: 'CS' (solour space name), 'I' (boolean flag to indicate isolated group) and 'K' (boolean flag to indicate knockout group).
-	 * @return int the XObject Template ID in case of success or false in case of error.
+	 * @param int $w Template width in user units (empty string or zero = page width less margins).
+	 * @param int $h Template height in user units (empty string or zero = page height less margins).
+	 * @param mixed $group Set transparency group. Can be a boolean value or an array specifying optional parameters: 'CS' (solour space name), 'I' (boolean flag to indicate isolated group) and 'K' (boolean flag to indicate knockout group).
+	 * @return string|false the XObject Template ID in case of success or false in case of error.
 	 * @author Nicola Asuni
 	 * @public
 	 * @since 5.8.017 (2010-08-24)
 	 * @see endTemplate(), printTemplate()
 	 */
-	public function startTemplate($w = 0, $h = 0, $group = false)
-	{
+	public function startTemplate($w=0, $h=0, $group=false) {
 		if ($this->inxobj) {
 			// we are already inside an XObject template
 			return false;
@@ -22746,7 +22535,7 @@ class TCPDF
 		// set new environment
 		$this->num_columns = 1;
 		$this->current_column = 0;
-		$this->SetAutoPageBreak(false);
+		$this->setAutoPageBreak(false);
 		if (($w === '') OR ($w <= 0)) {
 			$w = $this->w - $this->lMargin - $this->rMargin;
 		}
@@ -22778,14 +22567,13 @@ class TCPDF
 	 * End the current XObject Template started with startTemplate() and restore the previous graphic state.
 	 * An XObject Template is a PDF block that is a self-contained description of any sequence of graphics objects (including path objects, text objects, and sampled images).
 	 * An XObject Template may be painted multiple times, either on several pages or at several locations on the same page and produces the same results each time, subject only to the graphics state at the time it is invoked.
-	 * @return int the XObject Template ID in case of success or false in case of error.
+	 * @return string|false the XObject Template ID in case of success or false in case of error.
 	 * @author Nicola Asuni
 	 * @public
 	 * @since 5.8.017 (2010-08-24)
 	 * @see startTemplate(), printTemplate()
 	 */
-	public function endTemplate()
-	{
+	public function endTemplate() {
 		if (!$this->inxobj) {
 			// we are not inside a template
 			return false;
@@ -22801,21 +22589,20 @@ class TCPDF
 	 * You can print an XObject Template inside the currently opened Template.
 	 * An XObject Template is a PDF block that is a self-contained description of any sequence of graphics objects (including path objects, text objects, and sampled images).
 	 * An XObject Template may be painted multiple times, either on several pages or at several locations on the same page and produces the same results each time, subject only to the graphics state at the time it is invoked.
-	 * @param $id (string) The ID of XObject Template to print.
-	 * @param $x (int) X position in user units (empty string = current x position)
-	 * @param $y (int) Y position in user units (empty string = current y position)
-	 * @param $w (int) Width in user units (zero = remaining page width)
-	 * @param $h (int) Height in user units (zero = remaining page height)
-	 * @param $align (string) Indicates the alignment of the pointer next to template insertion relative to template height. The value can be:<ul><li>T: top-right for LTR or top-left for RTL</li><li>M: middle-right for LTR or middle-left for RTL</li><li>B: bottom-right for LTR or bottom-left for RTL</li><li>N: next line</li></ul>
-	 * @param $palign (string) Allows to center or align the template on the current line. Possible values are:<ul><li>L : left align</li><li>C : center</li><li>R : right align</li><li>'' : empty string : left for LTR or right for RTL</li></ul>
-	 * @param $fitonpage (boolean) If true the template is resized to not exceed page dimensions.
+	 * @param string $id The ID of XObject Template to print.
+	 * @param float|null $x X position in user units (empty string = current x position)
+	 * @param float|null $y Y position in user units (empty string = current y position)
+	 * @param float $w Width in user units (zero = remaining page width)
+	 * @param float $h Height in user units (zero = remaining page height)
+	 * @param string $align Indicates the alignment of the pointer next to template insertion relative to template height. The value can be:<ul><li>T: top-right for LTR or top-left for RTL</li><li>M: middle-right for LTR or middle-left for RTL</li><li>B: bottom-right for LTR or bottom-left for RTL</li><li>N: next line</li></ul>
+	 * @param string $palign Allows to center or align the template on the current line. Possible values are:<ul><li>L : left align</li><li>C : center</li><li>R : right align</li><li>'' : empty string : left for LTR or right for RTL</li></ul>
+	 * @param boolean $fitonpage If true the template is resized to not exceed page dimensions.
 	 * @author Nicola Asuni
 	 * @public
 	 * @since 5.8.017 (2010-08-24)
 	 * @see startTemplate(), endTemplate()
 	 */
-	public function printTemplate($id, $x = '', $y = '', $w = 0, $h = 0, $align = '', $palign = '', $fitonpage = false)
-	{
+	public function printTemplate($id, $x=null, $y=null, $w=0, $h=0, $align='', $palign='', $fitonpage=false) {
 		if ($this->state != 2) {
 			 return;
 		}
@@ -22832,10 +22619,10 @@ class TCPDF
 			}
 		}
 		// set default values
-		if ($x === '') {
+		if (TCPDF_STATIC::empty_string($x)) {
 			$x = $this->x;
 		}
-		if ($y === '') {
+		if (TCPDF_STATIC::empty_string($y)) {
 			$y = $this->y;
 		}
 		// check page for no-write regions and adapt page margins if necessary
@@ -22915,7 +22702,7 @@ class TCPDF
 			}
 		}
 		// set pointer to align the next text/objects
-		switch ($align) {
+		switch($align) {
 			case 'T': {
 				$this->y = $y;
 				$this->x = $rb_x;
@@ -22932,7 +22719,7 @@ class TCPDF
 				break;
 			}
 			case 'N': {
-				$this->SetY($rb_y);
+				$this->setY($rb_y);
 				break;
 			}
 			default:{
@@ -22943,13 +22730,12 @@ class TCPDF
 
 	/**
 	 * Set the percentage of character stretching.
-	 * @param $perc (int) percentage of stretching (100 = no stretching)
+	 * @param int $perc percentage of stretching (100 = no stretching)
 	 * @author Nicola Asuni
 	 * @public
 	 * @since 5.9.000 (2010-09-29)
 	 */
-	public function setFontStretching($perc = 100)
-	{
+	public function setFontStretching($perc=100) {
 		$this->font_stretching = $perc;
 	}
 
@@ -22960,20 +22746,18 @@ class TCPDF
 	 * @public
 	 * @since 5.9.000 (2010-09-29)
 	 */
-	public function getFontStretching()
-	{
+	public function getFontStretching() {
 		return $this->font_stretching;
 	}
 
 	/**
 	 * Set the amount to increase or decrease the space between characters in a text.
-	 * @param $spacing (float) amount to increase or decrease the space between characters in a text (0 = default spacing)
+	 * @param float $spacing amount to increase or decrease the space between characters in a text (0 = default spacing)
 	 * @author Nicola Asuni
 	 * @public
 	 * @since 5.9.000 (2010-09-29)
 	 */
-	public function setFontSpacing($spacing = 0)
-	{
+	public function setFontSpacing($spacing=0) {
 		$this->font_spacing = $spacing;
 	}
 
@@ -22984,8 +22768,7 @@ class TCPDF
 	 * @public
 	 * @since 5.9.000 (2010-09-29)
 	 */
-	public function getFontSpacing()
-	{
+	public function getFontSpacing() {
 		return $this->font_spacing;
 	}
 
@@ -22997,8 +22780,7 @@ class TCPDF
 	 * @since 5.9.003 (2010-10-13)
 	 * @see setPageRegions(), addPageRegion()
 	 */
-	public function getPageRegions()
-	{
+	public function getPageRegions() {
 		return $this->page_regions;
 	}
 
@@ -23007,14 +22789,13 @@ class TCPDF
 	 * A no-write region is a portion of the page with a rectangular or trapezium shape that will not be covered when writing text or html code.
 	 * A region is always aligned on the left or right side of the page ad is defined using a vertical segment.
 	 * You can set multiple regions for the same page.
-	 * @param $regions (array) array of no-write regions. For each region you can define an array as follow: ('page' => page number or empy for current page, 'xt' => X top, 'yt' => Y top, 'xb' => X bottom, 'yb' => Y bottom, 'side' => page side 'L' = left or 'R' = right). Omit this parameter to remove all regions.
+	 * @param array $regions array of no-write regions. For each region you can define an array as follow: ('page' => page number or empy for current page, 'xt' => X top, 'yt' => Y top, 'xb' => X bottom, 'yb' => Y bottom, 'side' => page side 'L' = left or 'R' = right). Omit this parameter to remove all regions.
 	 * @author Nicola Asuni
 	 * @public
 	 * @since 5.9.003 (2010-10-13)
 	 * @see addPageRegion(), getPageRegions()
 	 */
-	public function setPageRegions($regions = array())
-	{
+	public function setPageRegions($regions=array()) {
 		// empty current regions array
 		$this->page_regions = array();
 		// add regions
@@ -23028,14 +22809,13 @@ class TCPDF
 	 * A no-write region is a portion of the page with a rectangular or trapezium shape that will not be covered when writing text or html code.
 	 * A region is always aligned on the left or right side of the page ad is defined using a vertical segment.
 	 * You can set multiple regions for the same page.
-	 * @param $region (array) array of a single no-write region array: ('page' => page number or empy for current page, 'xt' => X top, 'yt' => Y top, 'xb' => X bottom, 'yb' => Y bottom, 'side' => page side 'L' = left or 'R' = right).
+	 * @param array $region array of a single no-write region array: ('page' => page number or empy for current page, 'xt' => X top, 'yt' => Y top, 'xb' => X bottom, 'yb' => Y bottom, 'side' => page side 'L' = left or 'R' = right).
 	 * @author Nicola Asuni
 	 * @public
 	 * @since 5.9.003 (2010-10-13)
 	 * @see setPageRegions(), getPageRegions()
 	 */
-	public function addPageRegion($region)
-	{
+	public function addPageRegion($region) {
 		if (!isset($region['page']) OR empty($region['page'])) {
 			$region['page'] = $this->page;
 		}
@@ -23048,14 +22828,13 @@ class TCPDF
 
 	/**
 	 * Remove a single no-write region.
-	 * @param $key (int) region key
+	 * @param int $key region key
 	 * @author Nicola Asuni
 	 * @public
 	 * @since 5.9.003 (2010-10-13)
 	 * @see setPageRegions(), getPageRegions()
 	 */
-	public function removePageRegion($key)
-	{
+	public function removePageRegion($key) {
 		if (isset($this->page_regions[$key])) {
 			unset($this->page_regions[$key]);
 		}
@@ -23065,16 +22844,15 @@ class TCPDF
 	 * Check page for no-write regions and adapt current coordinates and page margins if necessary.
 	 * A no-write region is a portion of the page with a rectangular or trapezium shape that will not be covered when writing text or html code.
 	 * A region is always aligned on the left or right side of the page ad is defined using a vertical segment.
-	 * @param $h (float) height of the text/image/object to print in user units
-	 * @param $x (float) current X coordinate in user units
-	 * @param $y (float) current Y coordinate in user units
-	 * @return array($x, $y)
+	 * @param float $h height of the text/image/object to print in user units
+	 * @param float $x current X coordinate in user units
+	 * @param float $y current Y coordinate in user units
+	 * @return float[] array($x, $y)
 	 * @author Nicola Asuni
 	 * @protected
 	 * @since 5.9.003 (2010-10-13)
 	 */
-	protected function checkPageRegions($h, $x, $y)
-	{
+	protected function checkPageRegions($h, $x, $y) {
 		// set default values
 		if ($x === '') {
 			$x = $this->x;
@@ -23163,22 +22941,21 @@ class TCPDF
 	/**
 	 * Embedd a Scalable Vector Graphics (SVG) image.
 	 * NOTE: SVG standard is not yet fully implemented, use the setRasterizeVectorImages() method to enable/disable rasterization of vector images using ImageMagick library.
-	 * @param $file (string) Name of the SVG file or a '@' character followed by the SVG data string.
-	 * @param $x (float) Abscissa of the upper-left corner.
-	 * @param $y (float) Ordinate of the upper-left corner.
-	 * @param $w (float) Width of the image in the page. If not specified or equal to zero, it is automatically calculated.
-	 * @param $h (float) Height of the image in the page. If not specified or equal to zero, it is automatically calculated.
-	 * @param $link (mixed) URL or identifier returned by AddLink().
-	 * @param $align (string) Indicates the alignment of the pointer next to image insertion relative to image height. The value can be:<ul><li>T: top-right for LTR or top-left for RTL</li><li>M: middle-right for LTR or middle-left for RTL</li><li>B: bottom-right for LTR or bottom-left for RTL</li><li>N: next line</li></ul> If the alignment is an empty string, then the pointer will be restored on the starting SVG position.
-	 * @param $palign (string) Allows to center or align the image on the current line. Possible values are:<ul><li>L : left align</li><li>C : center</li><li>R : right align</li><li>'' : empty string : left for LTR or right for RTL</li></ul>
-	 * @param $border (mixed) Indicates if borders must be drawn around the cell. The value can be a number:<ul><li>0: no border (default)</li><li>1: frame</li></ul> or a string containing some or all of the following characters (in any order):<ul><li>L: left</li><li>T: top</li><li>R: right</li><li>B: bottom</li></ul> or an array of line styles for each border group - for example: array('LTRB' => array('width' => 2, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => array(0, 0, 0)))
-	 * @param $fitonpage (boolean) if true the image is resized to not exceed page dimensions.
+	 * @param string $file Name of the SVG file or a '@' character followed by the SVG data string.
+	 * @param float|null $x Abscissa of the upper-left corner.
+	 * @param float|null $y Ordinate of the upper-left corner.
+	 * @param float $w Width of the image in the page. If not specified or equal to zero, it is automatically calculated.
+	 * @param float $h Height of the image in the page. If not specified or equal to zero, it is automatically calculated.
+	 * @param mixed $link URL or identifier returned by AddLink().
+	 * @param string $align Indicates the alignment of the pointer next to image insertion relative to image height. The value can be:<ul><li>T: top-right for LTR or top-left for RTL</li><li>M: middle-right for LTR or middle-left for RTL</li><li>B: bottom-right for LTR or bottom-left for RTL</li><li>N: next line</li></ul> If the alignment is an empty string, then the pointer will be restored on the starting SVG position.
+	 * @param string $palign Allows to center or align the image on the current line. Possible values are:<ul><li>L : left align</li><li>C : center</li><li>R : right align</li><li>'' : empty string : left for LTR or right for RTL</li></ul>
+	 * @param mixed $border Indicates if borders must be drawn around the cell. The value can be a number:<ul><li>0: no border (default)</li><li>1: frame</li></ul> or a string containing some or all of the following characters (in any order):<ul><li>L: left</li><li>T: top</li><li>R: right</li><li>B: bottom</li></ul> or an array of line styles for each border group - for example: array('LTRB' => array('width' => 2, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => array(0, 0, 0)))
+	 * @param boolean $fitonpage if true the image is resized to not exceed page dimensions.
 	 * @author Nicola Asuni
 	 * @since 5.0.000 (2010-05-02)
 	 * @public
 	 */
-	public function ImageSVG($file, $x = '', $y = '', $w = 0, $h = 0, $link = '', $align = '', $palign = '', $border = 0, $fitonpage = false)
-	{
+	public function ImageSVG($file, $x=null, $y=null, $w=0, $h=0, $link='', $align='', $palign='', $border=0, $fitonpage=false) {
 		if ($this->state != 2) {
 			 return;
 		}
@@ -23202,15 +22979,15 @@ class TCPDF
 			$svgdata = substr($file, 1);
 		} else { // SVG file
 			$this->svgdir = dirname($file);
-			$svgdata = TCPDF_STATIC::fileGetContents($file);
+            $svgdata = $this->getCachedFileContents($file);
 		}
-		if ($svgdata === false) {
+		if ($svgdata === FALSE) {
 			$this->Error('SVG file not found: '.$file);
 		}
-		if ($x === '') {
+		if (TCPDF_STATIC::empty_string($x)) {
 			$x = $this->x;
 		}
-		if ($y === '') {
+		if (TCPDF_STATIC::empty_string($y)) {
 			$y = $this->y;
 		}
 		// check page for no-write regions and adapt page margins if necessary
@@ -23401,8 +23178,8 @@ class TCPDF
 		$page_break_mode = $this->AutoPageBreak;
 		$page_break_margin = $this->getBreakMargin();
 		$cell_padding = $this->cell_padding;
-		$this->SetCellPadding(0);
-		$this->SetAutoPageBreak(false);
+		$this->setCellPadding(0);
+		$this->setAutoPageBreak(false);
 		// save the current graphic state
 		$this->_out('q'.$this->epsmarker);
 		// set initial clipping mask
@@ -23412,22 +23189,26 @@ class TCPDF
 		$f = ($this->h - $oy) * $this->k * (1 - $svgscale_y);
 		$this->_out(sprintf('%F %F %F %F %F %F cm', $svgscale_x, 0, 0, $svgscale_y, ($e + $svgoffset_x), ($f + $svgoffset_y)));
 		// creates a new XML parser to be used by the other XML functions
-		$this->parser = xml_parser_create('UTF-8');
+		$parser = xml_parser_create('UTF-8');
 		// the following function allows to use parser inside object
-		xml_set_object($this->parser, $this);
+		xml_set_object($parser, $this);
 		// disable case-folding for this XML parser
-		xml_parser_set_option($this->parser, XML_OPTION_CASE_FOLDING, 0);
+		xml_parser_set_option($parser, XML_OPTION_CASE_FOLDING, 0);
 		// sets the element handler functions for the XML parser
-		xml_set_element_handler($this->parser, 'startSVGElementHandler', 'endSVGElementHandler');
+		xml_set_element_handler($parser, 'startSVGElementHandler', 'endSVGElementHandler');
 		// sets the character data handler function for the XML parser
-		xml_set_character_data_handler($this->parser, 'segSVGContentHandler');
+		xml_set_character_data_handler($parser, 'segSVGContentHandler');
 		// start parsing an XML document
-		if (!xml_parse($this->parser, $svgdata)) {
-			$error_message = sprintf('SVG Error: %s at line %d', xml_error_string(xml_get_error_code($this->parser)), xml_get_current_line_number($this->parser));
+		if (!xml_parse($parser, $svgdata)) {
+			$error_message = sprintf('SVG Error: %s at line %d', xml_error_string(xml_get_error_code($parser)), xml_get_current_line_number($parser));
 			$this->Error($error_message);
 		}
 		// free this XML parser
-		xml_parser_free($this->parser);
+		xml_parser_free($parser);
+
+		// >= PHP 7.0.0 "explicitly unset the reference to parser to avoid memory leaks"
+		unset($parser);
+
 		// restore previous graphic state
 		$this->_out($this->epsmarker.'Q');
 		// restore graphic vars
@@ -23449,7 +23230,7 @@ class TCPDF
 			$this->Link($ximg, $y, $w, $h, $link, 0);
 		}
 		// set pointer to align the next text/objects
-		switch ($align) {
+		switch($align) {
 			case 'T':{
 				$this->y = $y;
 				$this->x = $this->img_rb_x;
@@ -23466,7 +23247,7 @@ class TCPDF
 				break;
 			}
 			case 'N':{
-				$this->SetY($this->img_rb_y);
+				$this->setY($this->img_rb_y);
 				break;
 			}
 			default:{
@@ -23488,19 +23269,18 @@ class TCPDF
 		}
 		$this->endlinex = $this->img_rb_x;
 		// restore page break
-		$this->SetAutoPageBreak($page_break_mode, $page_break_margin);
+		$this->setAutoPageBreak($page_break_mode, $page_break_margin);
 		$this->cell_padding = $cell_padding;
 	}
 
 	/**
 	 * Convert SVG transformation matrix to PDF.
-	 * @param $tm (array) original SVG transformation matrix
+	 * @param array $tm original SVG transformation matrix
 	 * @return array transformation matrix
 	 * @protected
 	 * @since 5.0.000 (2010-05-02)
 	 */
-	protected function convertSVGtMatrix($tm)
-	{
+	protected function convertSVGtMatrix($tm) {
 		$a = $tm[0];
 		$b = -$tm[1];
 		$c = -$tm[2];
@@ -23516,32 +23296,30 @@ class TCPDF
 
 	/**
 	 * Apply SVG graphic transformation matrix.
-	 * @param $tm (array) original SVG transformation matrix
+	 * @param array $tm original SVG transformation matrix
 	 * @protected
 	 * @since 5.0.000 (2010-05-02)
 	 */
-	protected function SVGTransform($tm)
-	{
+	protected function SVGTransform($tm) {
 		$this->Transform($this->convertSVGtMatrix($tm));
 	}
 
 	/**
 	 * Apply the requested SVG styles (*** TO BE COMPLETED ***)
-	 * @param $svgstyle (array) array of SVG styles to apply
-	 * @param $prevsvgstyle (array) array of previous SVG style
-	 * @param $x (int) X origin of the bounding box
-	 * @param $y (int) Y origin of the bounding box
-	 * @param $w (int) width of the bounding box
-	 * @param $h (int) height of the bounding box
-	 * @param $clip_function (string) clip function
-	 * @param $clip_params (array) array of parameters for clipping function
-	 * @return object style
+	 * @param array $svgstyle array of SVG styles to apply
+	 * @param array $prevsvgstyle array of previous SVG style
+	 * @param int $x X origin of the bounding box
+	 * @param int $y Y origin of the bounding box
+	 * @param int $w width of the bounding box
+	 * @param int $h height of the bounding box
+	 * @param string $clip_function clip function
+	 * @param array $clip_params array of parameters for clipping function
+	 * @return string style
 	 * @author Nicola Asuni
 	 * @since 5.0.000 (2010-05-02)
 	 * @protected
 	 */
-	protected function setSVGStyles($svgstyle, $prevsvgstyle, $x = 0, $y = 0, $w = 1, $h = 1, $clip_function = '', $clip_params = array())
-	{
+	protected function setSVGStyles($svgstyle, $prevsvgstyle, $x=0, $y=0, $w=1, $h=1, $clip_function='', $clip_params=array()) {
 		if ($this->state != 2) {
 			 return;
 		}
@@ -23564,10 +23342,10 @@ class TCPDF
 		}
 		// color
 		$fill_color = TCPDF_COLORS::convertHTMLColorToDec($svgstyle['color'], $this->spot_colors);
-		$this->SetFillColorArray($fill_color);
+		$this->setFillColorArray($fill_color);
 		// text color
 		$text_color = TCPDF_COLORS::convertHTMLColorToDec($svgstyle['text-color'], $this->spot_colors);
-		$this->SetTextColorArray($text_color);
+		$this->setTextColorArray($text_color);
 		// clip
 		if (preg_match('/rect\(([a-z0-9\-\.]*)[\s]*([a-z0-9\-\.]*)[\s]*([a-z0-9\-\.]*)[\s]*([a-z0-9\-\.]*)\)/si', $svgstyle['clip'], $regs)) {
 			$top = (isset($regs[1])?$this->getHTMLUnitToUnits($regs[1], 0, $this->svgunit, false):0);
@@ -23656,7 +23434,7 @@ class TCPDF
 				$gradient['coords'][3] = (($gradient['coords'][3] - $y) / $h);
 				$gradient['coords'][4] /= $w;
 			} elseif ($gradient['mode'] == 'percentage') {
-				foreach ($gradient['coords'] as $key => $val) {
+				foreach($gradient['coords'] as $key => $val) {
 					$gradient['coords'][$key] = (intval($val) / 100);
 					if ($val < 0) {
 						$gradient['coords'][$key] = 0;
@@ -23694,7 +23472,7 @@ class TCPDF
 			if ($svgstyle['fill-opacity'] != 1) {
 				$this->setAlpha($this->alpha['CA'], 'Normal', $svgstyle['fill-opacity'], false);
 			}
-			$this->SetFillColorArray($fill_color);
+			$this->setFillColorArray($fill_color);
 			if ($svgstyle['fill-rule'] == 'evenodd') {
 				$objstyle .= 'F*';
 			} else {
@@ -23717,7 +23495,7 @@ class TCPDF
 			if (isset($svgstyle['stroke-dasharray']) AND !empty($svgstyle['stroke-dasharray']) AND ($svgstyle['stroke-dasharray'] != 'none')) {
 				$stroke_style['dash'] = $svgstyle['stroke-dasharray'];
 			}
-			$this->SetLineStyle($stroke_style);
+			$this->setLineStyle($stroke_style);
 			$objstyle .= 'D';
 		}
 		// font
@@ -23812,7 +23590,7 @@ class TCPDF
 				break;
 			}
 		}
-		$this->SetFont($font_family, $font_style, $font_size);
+		$this->setFont($font_family, $font_style, $font_size);
 		$this->setFontStretching($font_stretch);
 		$this->setFontSpacing($font_spacing);
 		return $objstyle;
@@ -23820,26 +23598,25 @@ class TCPDF
 
 	/**
 	 * Draws an SVG path
-	 * @param $d (string) attribute d of the path SVG element
-	 * @param $style (string) Style of rendering. Possible values are:
-	 *               <ul>
-	 *               <li>D or empty string: Draw (default).</li>
-	 *               <li>F: Fill.</li>
-	 *               <li>F*: Fill using the even-odd rule to determine which regions lie inside the clipping path.</li>
-	 *               <li>DF or FD: Draw and fill.</li>
-	 *               <li>DF* or FD*: Draw and fill using the even-odd rule to determine which regions lie inside the clipping path.</li>
-	 *               <li>CNZ: Clipping mode (using the even-odd rule to determine which regions lie inside the clipping path).</li>
-	 *               <li>CEO: Clipping mode (using the nonzero winding number rule to determine which regions lie inside the clipping path).</li>
-	 *               </ul>
+	 * @param string $d attribute d of the path SVG element
+	 * @param string $style Style of rendering. Possible values are:
+	 * <ul>
+	 *	 <li>D or empty string: Draw (default).</li>
+	 *	 <li>F: Fill.</li>
+	 *	 <li>F*: Fill using the even-odd rule to determine which regions lie inside the clipping path.</li>
+	 *	 <li>DF or FD: Draw and fill.</li>
+	 *	 <li>DF* or FD*: Draw and fill using the even-odd rule to determine which regions lie inside the clipping path.</li>
+	 *	 <li>CNZ: Clipping mode (using the even-odd rule to determine which regions lie inside the clipping path).</li>
+	 *	 <li>CEO: Clipping mode (using the nonzero winding number rule to determine which regions lie inside the clipping path).</li>
+	 * </ul>
 	 * @return array of container box measures (x, y, w, h)
 	 * @author Nicola Asuni
 	 * @since 5.0.000 (2010-05-02)
 	 * @protected
 	 */
-	protected function SVGPath($d, $style = '')
-	{
+	protected function SVGPath($d, $style='') {
 		if ($this->state != 2) {
-			 return;
+			return;
 		}
 		// set fill/stroke style
 		$op = TCPDF_STATIC::getPathPaintOperator($style, '');
@@ -23848,6 +23625,7 @@ class TCPDF
 		}
 		$paths = array();
 		$d = preg_replace('/([0-9ACHLMQSTVZ])([\-\+])/si', '\\1 \\2', $d);
+		$d = preg_replace('/(\.[0-9]+)(\.)/s', '\\1 \\2', $d);
 		preg_match_all('/([ACHLMQSTVZ])[\s]*([^ACHLMQSTVZ\"]*)/si', $d, $paths, PREG_SET_ORDER);
 		$x = 0;
 		$y = 0;
@@ -23859,6 +23637,8 @@ class TCPDF
 		$xmax = 0;
 		$ymin = 2147483647;
 		$ymax = 0;
+		$xinitial = 0;
+		$yinitial = 0;
 		$relcoord = false;
 		$minlen = (0.01 / $this->k); // minimum acceptable length (3 point)
 		$firstcmd = true; // used to print first point
@@ -23903,6 +23683,8 @@ class TCPDF
 								if ($ck == 1) {
 									$this->_outPoint($x, $y);
 									$firstcmd = false;
+									$xinitial = $x;
+									$yinitial = $y;
 								} else {
 									$this->_outLine($x, $y);
 								}
@@ -24090,8 +23872,8 @@ class TCPDF
 						if ((($ck + 1) % 7) == 0) {
 							$x0 = $x;
 							$y0 = $y;
-							$rx = abs($params[($ck - 6)]);
-							$ry = abs($params[($ck - 5)]);
+							$rx = max(abs($params[($ck - 6)]), .000000001);
+							$ry = max(abs($params[($ck - 5)]), .000000001);
 							$ang = -$rawparams[($ck - 4)];
 							$angle = deg2rad($ang);
 							$fa = $rawparams[($ck - 3)]; // large-arc-flag
@@ -24128,7 +23910,7 @@ class TCPDF
 								} else {
 									$root = sqrt($numerator / (($rx2 * $ya2) + ($ry2 * $xa2)));
 								}
-								if ($fa == $fs) {
+								if ($fa == $fs){
 									$root *= -1;
 								}
 								$cax = $root * (($rx * $ya) / $ry);
@@ -24178,25 +23960,24 @@ class TCPDF
 				}
 				case 'Z': {
 					$this->_out('h');
+					$x = $x0 = $xinitial;
+					$y = $y0 = $yinitial;
 					break;
 				}
 			}
 			$firstcmd = false;
 		} // end foreach
-		if (!empty($op)) {
-			$this->_out($op);
-		}
+		$this->_out($op);
 		return array($xmin, $ymin, ($xmax - $xmin), ($ymax - $ymin));
 	}
 
 	/**
 	 * Return the tag name without the namespace
-	 * @param $name (string) Tag name
+	 * @param string $name Tag name
 	 * @protected
 	 */
-	protected function removeTagNamespace($name)
-	{
-		if (strpos($name, ':') !== false) {
+	protected function removeTagNamespace($name) {
+		if(strpos($name, ':') !== false) {
 			$parts = explode(':', $name);
 			return $parts[(sizeof($parts) - 1)];
 		}
@@ -24205,16 +23986,15 @@ class TCPDF
 
 	/**
 	 * Sets the opening SVG element handler function for the XML parser. (*** TO BE COMPLETED ***)
-	 * @param $parser (resource) The first parameter, parser, is a reference to the XML parser calling the handler.
-	 * @param $name (string) The second parameter, name, contains the name of the element for which this handler is called. If case-folding is in effect for this parser, the element name will be in uppercase letters.
-	 * @param $attribs (array) The third parameter, attribs, contains an associative array with the element's attributes (if any). The keys of this array are the attribute names, the values are the attribute values. Attribute names are case-folded on the same criteria as element names. Attribute values are not case-folded. The original order of the attributes can be retrieved by walking through attribs the normal way, using each(). The first key in the array was the first attribute, and so on.
-	 * @param $ctm (array) tranformation matrix for clipping mode (starting transformation matrix).
+	 * @param resource|string $parser The first parameter, parser, is a reference to the XML parser calling the handler.
+	 * @param string $name The second parameter, name, contains the name of the element for which this handler is called. If case-folding is in effect for this parser, the element name will be in uppercase letters.
+	 * @param array $attribs The third parameter, attribs, contains an associative array with the element's attributes (if any). The keys of this array are the attribute names, the values are the attribute values. Attribute names are case-folded on the same criteria as element names. Attribute values are not case-folded. The original order of the attributes can be retrieved by walking through attribs the normal way, using each(). The first key in the array was the first attribute, and so on.
+	 * @param array $ctm tranformation matrix for clipping mode (starting transformation matrix).
 	 * @author Nicola Asuni
 	 * @since 5.0.000 (2010-05-02)
 	 * @protected
 	 */
-	protected function startSVGElementHandler($parser, $name, $attribs, $ctm = array())
-	{
+	protected function startSVGElementHandler($parser, $name, $attribs, $ctm=array()) {
 		$name = $this->removeTagNamespace($name);
 		// check if we are in clip mode
 		if ($this->svgclipmode) {
@@ -24227,7 +24007,7 @@ class TCPDF
 				$this->svgdefs[$attribs['id']] = array('name' => $name, 'attribs' => $attribs);
 				return;
 			}
-			if (end($this->svgdefs) !== false) {
+			if (end($this->svgdefs) !== FALSE) {
 				$last_svgdefs_id = key($this->svgdefs);
 				if (isset($this->svgdefs[$last_svgdefs_id]['attribs']['child_elements'])) {
 					$attribs['id'] = 'DF_'.(count($this->svgdefs[$last_svgdefs_id]['attribs']['child_elements']) + 1);
@@ -24243,7 +24023,7 @@ class TCPDF
 			$clipping = true;
 		}
 		// get styling properties
-		$prev_svgstyle = $this->svgstyles[max(0, (count($this->svgstyles) - 1))]; // previous style
+		$prev_svgstyle = $this->svgstyles[max(0,(count($this->svgstyles) - 1))]; // previous style
 		$svgstyle = $this->svgstyles[0]; // set default style
 		if ($clipping AND !isset($attribs['fill']) AND (!isset($attribs['style']) OR (!preg_match('/[;\"\s]{1}fill[\s]*:[\s]*([^;\"]*)/si', $attribs['style'], $attrval)))) {
 			// default fill attribute for clipping
@@ -24293,7 +24073,7 @@ class TCPDF
 			$invisible = true;
 		}
 		// process tag
-		switch ($name) {
+		switch($name) {
 			case 'defs': {
 				$this->svgdefsmode = true;
 				break;
@@ -24314,7 +24094,7 @@ class TCPDF
 			}
 			case 'svg': {
 				// start of SVG object
-				if (++$this->svg_tag_depth <= 1) {
+				if(++$this->svg_tag_depth <= 1) {
 					break;
 				}
 				// inner SVG
@@ -24350,7 +24130,7 @@ class TCPDF
 						$aspectY = 'YMid';
 						$fit = 'meet';
 						if (isset($attribs['preserveAspectRatio'])) {
-							if ($attribs['preserveAspectRatio'] == 'none') {
+							if($attribs['preserveAspectRatio'] == 'none') {
 								$fit = 'none';
 							} else {
 								preg_match_all('/[a-zA-Z]+/', $attribs['preserveAspectRatio'], $tmp);
@@ -24404,7 +24184,7 @@ class TCPDF
 				break;
 			}
 			case 'linearGradient': {
-				if ($this->pdfa_mode) {
+				if ($this->pdfa_mode && $this->pdfa_version < 2) {
 					break;
 				}
 				if (!isset($attribs['id'])) {
@@ -24444,7 +24224,7 @@ class TCPDF
 				break;
 			}
 			case 'radialGradient': {
-				if ($this->pdfa_mode) {
+				if ($this->pdfa_mode && $this->pdfa_version < 2) {
 					break;
 				}
 				if (!isset($attribs['id'])) {
@@ -24846,7 +24626,7 @@ class TCPDF
 						}
 						if (!empty($use['attribs']['style'])) {
 							// merge styles
-							$attribs['style'] = str_replace(';;', ';', ';'.$use['attribs']['style'].$attribs['style']);
+							$attribs['style'] = str_replace(';;',';',';'.$use['attribs']['style'].$attribs['style']);
 						}
 						$attribs = array_merge($use['attribs'], $attribs);
 						$this->startSVGElementHandler($parser, $use['name'], $attribs);
@@ -24863,7 +24643,7 @@ class TCPDF
 		if (!empty($attribs['child_elements'])) {
 			$child_elements = $attribs['child_elements'];
 			unset($attribs['child_elements']);
-			foreach ($child_elements as $child_element) {
+			foreach($child_elements as $child_element) {
 				if (empty($child_element['attribs']['closing_tag'])) {
 					$this->startSVGElementHandler('child-tag', $child_element['name'], $child_element['attribs']);
 				} else {
@@ -24878,34 +24658,33 @@ class TCPDF
 
 	/**
 	 * Sets the closing SVG element handler function for the XML parser.
-	 * @param $parser (resource) The first parameter, parser, is a reference to the XML parser calling the handler.
-	 * @param $name (string) The second parameter, name, contains the name of the element for which this handler is called. If case-folding is in effect for this parser, the element name will be in uppercase letters.
+	 * @param resource|string $parser The first parameter, parser, is a reference to the XML parser calling the handler.
+	 * @param string $name The second parameter, name, contains the name of the element for which this handler is called. If case-folding is in effect for this parser, the element name will be in uppercase letters.
 	 * @author Nicola Asuni
 	 * @since 5.0.000 (2010-05-02)
 	 * @protected
 	 */
-	protected function endSVGElementHandler($parser, $name)
-	{
+	protected function endSVGElementHandler($parser, $name) {
 		$name = $this->removeTagNamespace($name);
 		if ($this->svgdefsmode AND !in_array($name, array('defs', 'clipPath', 'linearGradient', 'radialGradient', 'stop'))) {;
-			if (end($this->svgdefs) !== false) {
+			if (end($this->svgdefs) !== FALSE) {
 				$last_svgdefs_id = key($this->svgdefs);
 				if (isset($this->svgdefs[$last_svgdefs_id]['attribs']['child_elements'])) {
-					foreach ($this->svgdefs[$last_svgdefs_id]['attribs']['child_elements'] as $child_element) {
+					foreach($this->svgdefs[$last_svgdefs_id]['attribs']['child_elements'] as $child_element) {
 						if (isset($child_element['attribs']['id']) AND ($child_element['name'] == $name)) {
-							$this->svgdefs[$last_svgdefs_id]['attribs']['child_elements'][$child_element['attribs']['id'].'_CLOSE'] = array('name' => $name, 'attribs' => array('closing_tag' => true, 'content' => $this->svgtext));
+							$this->svgdefs[$last_svgdefs_id]['attribs']['child_elements'][$child_element['attribs']['id'].'_CLOSE'] = array('name' => $name, 'attribs' => array('closing_tag' => TRUE, 'content' => $this->svgtext));
 							return;
 						}
 					}
 					if ($this->svgdefs[$last_svgdefs_id]['name'] == $name) {
-						$this->svgdefs[$last_svgdefs_id]['attribs']['child_elements'][$last_svgdefs_id.'_CLOSE'] = array('name' => $name, 'attribs' => array('closing_tag' => true, 'content' => $this->svgtext));
+						$this->svgdefs[$last_svgdefs_id]['attribs']['child_elements'][$last_svgdefs_id.'_CLOSE'] = array('name' => $name, 'attribs' => array('closing_tag' => TRUE, 'content' => $this->svgtext));
 						return;
 					}
 				}
 			}
 			return;
 		}
-		switch ($name) {
+		switch($name) {
 			case 'defs': {
 				$this->svgdefsmode = false;
 				break;
@@ -24986,18 +24765,45 @@ class TCPDF
 
 	/**
 	 * Sets the character data handler function for the XML parser.
-	 * @param $parser (resource) The first parameter, parser, is a reference to the XML parser calling the handler.
-	 * @param $data (string) The second parameter, data, contains the character data as a string.
+	 * @param resource $parser The first parameter, parser, is a reference to the XML parser calling the handler.
+	 * @param string $data The second parameter, data, contains the character data as a string.
 	 * @author Nicola Asuni
 	 * @since 5.0.000 (2010-05-02)
 	 * @protected
 	 */
-	protected function segSVGContentHandler($parser, $data)
-	{
+	protected function segSVGContentHandler($parser, $data) {
 		$this->svgtext .= $data;
 	}
 
 	// --- END SVG METHODS -----------------------------------------------------
+
+    /**
+     * Keeps files in memory, so it doesn't need to downloaded everytime in a loop
+     * @param string $file
+     * @return string
+     */
+    protected function getCachedFileContents($file)
+    {
+        if (!isset($this->fileContentCache[$file])) {
+            $this->fileContentCache[$file] = TCPDF_STATIC::fileGetContents($file);
+        }
+        return $this->fileContentCache[$file];
+    }
+
+    /**
+     * Avoid multiple calls to an external server to see if a file exists
+     * @param string $file
+     * @return bool
+     */
+    protected function fileExists($file)
+    {
+        if (isset($this->fileContentCache[$file]) || false !== $this->getImageBuffer($file)) {
+            return true;
+        }
+
+        return TCPDF_STATIC::file_exists($file);
+    }
+
 } // END OF TCPDF CLASS
 
 //============================================================+

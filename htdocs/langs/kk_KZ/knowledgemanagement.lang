@@ -4,41 +4,27 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see .
 
-#
 # Generic
-#
-
 # Module label 'ModuleKnowledgeManagementName'
 ModuleKnowledgeManagementName = Білімді басқару жүйесі
 # Module description 'ModuleKnowledgeManagementDesc'
 ModuleKnowledgeManagementDesc=Білім менеджментін (KM) немесе анықтама үстелін басқарыңыз
-
-#
 # Admin page
-#
 KnowledgeManagementSetup = Білімді басқару жүйесін орнату
-Settings = Параметрлер
 KnowledgeManagementSetupPage = Білімді басқару жүйесін орнату беті
-
-
-#
 # About page
-#
-About = Туралы
 KnowledgeManagementAbout = Білімді басқару туралы
 KnowledgeManagementAboutPage = Беттер туралы білімді басқару
-
 KnowledgeManagementArea = Білімді басқару
 MenuKnowledgeRecord = Білім қоры
+MenuKnowledgeRecordShort = Білім базасы
 ListKnowledgeRecord = Мақалалар тізімі
 NewKnowledgeRecord = Жаңа мақала
 ValidateReply = Шешімді тексеру
@@ -46,9 +32,14 @@ KnowledgeRecords = Мақалалар
 KnowledgeRecord = Мақала
 KnowledgeRecordExtraFields = Мақалаға арналған экстра өрістер
 GroupOfTicket=Билеттер тобы
-YouCanLinkArticleToATicketCategory=You can link the article to a ticket group (so the article will be highlighted on any tickets in this group)
-SuggestedForTicketsInGroup=Suggested for tickets when group is
-
-SetObsolete=Set as obsolete
-ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
-ConfirmReopenKM=Do you want to restore this article to status "Validated" ?
+YouCanLinkArticleToATicketCategory=Сіз мақаланы билеттер тобына байланыстыра аласыз (сондықтан мақала осы топтағы кез келген билеттерде бөлектелетін болады)
+SuggestedForTicketsInGroup=Билеттер жасау ұсынылады
+SetObsolete=Ескірген ретінде орнату
+ConfirmCloseKM=Сіз бұл мақаланың ескірген деп жабылуын растайсыз ба?
+ConfirmReopenKM=Осы мақаланы "Тексерілген" күйіне қайтарғыңыз келе ме?
+BoxLastKnowledgerecordDescription=Соңғы %s мақалалар
+BoxLastKnowledgerecord=Соңғы мақалалар
+BoxLastKnowledgerecordContent=Соңғы мақалалар
+BoxLastKnowledgerecordModifiedContent=Соңғы өзгертілген мақалалар
+BoxLastModifiedKnowledgerecordDescription=Соңғы %s өзгертілген мақалалар
+BoxLastModifiedKnowledgerecord=Соңғы өзгертілген мақалалар

@@ -117,7 +117,7 @@ class AccountancySystem
 	 *
 	 * @param 	int 	$rowid 				   Id
 	 * @param 	string 	$ref             	   ref
-	 * @return 	int                            <0 if KO, Id of record if OK and found
+	 * @return 	int                            Return integer <0 if KO, Id of record if OK and found
 	 */
 	public function fetch($rowid = 0, $ref = '')
 	{

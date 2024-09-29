@@ -22,7 +22,8 @@ ToOfferALinkForOnlinePaymentOnContractLine=URL i gynnig tudalen dalu ar-lein %s 
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL i gynnig tudalen talu ar-lein %s o unrhyw swm heb unrhyw wrthrych yn bodoli
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL i gynnig tudalen dalu ar-lein %s ar gyfer tanysgrifiad aelod
 ToOfferALinkForOnlinePaymentOnDonation=URL i gynnig tudalen dalu ar-lein %s ar gyfer talu rhodd
-YouCanAddTagOnUrl=Gallwch hefyd ychwanegu paramedr url <b> &tag= <i> value </i> </b> i unrhyw un o'r URLau hynny (gorfodol yn unig ar gyfer taliad nad yw'n gysylltiedig â gwrthrych) i ychwanegu eich tag talu eich hun. <br> Ar gyfer URL taliadau heb unrhyw wrthrych yn bodoli, gallwch hefyd ychwanegu'r paramedr <strong> &noidempotency=1 </strong> fel y gellir defnyddio'r un cyswllt gyda'r un tag sawl gwaith (gall rhai dull talu gyfyngu'r taliad i 1 ar gyfer pob cyswllt gwahanol heb hwn paramedr)
+YouCanAddTagOnUrl=You can also add url parameter <b>&tag=value</b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
+YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful of failed online payment.
 SetupStripeToHavePaymentCreatedAutomatically=Gosodwch eich Stripe gydag url <b> %s </b> i gael taliad wedi'i greu'n awtomatig pan gaiff ei ddilysu gan Stripe.
 AccountParameter=Paramedrau cyfrif
 UsageParameter=Paramedrau defnydd
@@ -41,8 +42,8 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhook allwedd byw
 ONLINE_PAYMENT_WAREHOUSE=Stoc i'w ddefnyddio ar gyfer gostyngiad stoc pan wneir taliad ar-lein <br> (TODO Pan fydd opsiwn i leihau stoc yn cael ei wneud ar weithred ar anfoneb a'r taliad ar-lein yn cynhyrchu'r anfoneb ei hun ?)
 StripeLiveEnabled=Stripe live wedi'i alluogi (modd prawf / blwch tywod fel arall)
 StripeImportPayment=Mewnforio taliadau Stripe
-ExampleOfTestCreditCard=Example of credit card for SEPA test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
-ExampleOfTestBankAcountForSEPA=Example of bank account BAN for direct debit test: %s
+ExampleOfTestCreditCard=Enghraifft o gerdyn credyd ar gyfer taliad prawf: %s => dilys, %s => gwall CVC, %s => wedi dod i ben, %s => tâl yn methu
+ExampleOfTestBankAcountForSEPA=Enghraifft o BAN cyfrif banc ar gyfer prawf debyd uniongyrchol: %s
 StripeGateways=Pyrth streipen
 OAUTH_STRIPE_TEST_ID=ID Cleient Stripe Connect (ca_...)
 OAUTH_STRIPE_LIVE_ID=ID Cleient Stripe Connect (ca_...)
@@ -51,6 +52,7 @@ StripeAccount=Cyfrif stripe
 StripeChargeList=Rhestr o daliadau Stripe
 StripeTransactionList=Rhestr o drafodion Stripe
 StripeCustomerId=ID cwsmer stripe
+StripePaymentId=ID taliad strip
 StripePaymentModes=Dulliau talu streipen
 LocalID=ID lleol
 StripeID=ID streipen
@@ -62,7 +64,7 @@ DeleteACard=Dileu Cerdyn
 ConfirmDeleteCard=Ydych chi'n siŵr eich bod am ddileu'r cerdyn Credyd neu Ddebyd hwn?
 CreateCustomerOnStripe=Creu cwsmer ar Stripe
 CreateCardOnStripe=Creu cerdyn ar Stripe
-CreateBANOnStripe=Create bank on Stripe
+CreateBANOnStripe=Creu banc ar Stripe
 ShowInStripe=Dangos yn Stripe
 StripeUserAccountForActions=Cyfrif defnyddiwr i'w ddefnyddio ar gyfer hysbysiad e-bost o rai digwyddiadau Stripe (taliadau Stripe)
 StripePayoutList=Rhestr o daliadau Stripe
@@ -71,8 +73,18 @@ ToOfferALinkForLiveWebhook=Dolen i'r gosodiad Stripe WebHook i ffonio'r IPN (mod
 PaymentWillBeRecordedForNextPeriod=Bydd taliad yn cael ei gofnodi ar gyfer y cyfnod nesaf.
 ClickHereToTryAgain= <a href="%s"> Cliciwch yma i geisio eto... </a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Oherwydd rheolau Dilysu Cwsmeriaid Cryf, rhaid creu cerdyn o swyddfa gefn Stripe. Gallwch glicio yma i droi cofnod cwsmer Stripe ymlaen: %s
-STRIPE_CARD_PRESENT=Card Present for Stripe Terminals
-TERMINAL_LOCATION=Location (address) for Stripe Terminals
-RequestDirectDebitWithStripe=Request Direct Debit with Stripe
-STRIPE_SEPA_DIRECT_DEBIT=Enable the Direct Debit payments through Stripe
-
+STRIPE_CARD_PRESENT=Cerdyn yn Bresennol ar gyfer Terfynellau Stripe
+TERMINAL_LOCATION=Lleoliad (cyfeiriad) ar gyfer Terfynellau Stripe
+RequestDirectDebitWithStripe=Gofynnwch am Ddebyd Uniongyrchol gyda Stripe
+RequesCreditTransferWithStripe=Cais am Drosglwyddiad Credyd gyda Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Galluogi'r taliadau Debyd Uniongyrchol trwy Stripe
+STRIPE_KLARNA=Enable the payments using Klarna
+STRIPE_BANCONTACT=Enable the payments using BANCONTACT
+STRIPE_IDEAL=Enable the payments using IDEAL
+STRIPE_GIROPAY=Enable the payments using GIROPAY
+STRIPE_SOFORT=Enable the payments using SOFORT
+StripeConnect_Mode=Modd Stripe Connect
+ExampleOnlyForBECustomers=Only for belgium customers
+ExampleOnlyForDECustomers=Only for german customers
+ExampleOnlyForNLCustomers=Only for dutch customers
+ExampleOnlyForATBEDEITNLESCustomers=Only for customers from Austria, Belgium, Germany, Italy, Netherlands, Spain
