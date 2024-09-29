@@ -593,7 +593,7 @@ print '</td></tr>';
 print '<tr class="oddeven"><td>';
 print $langs->trans("SecurityTokenIsUnique").'</td><td>';
 if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('PAYMENT_SECURITY_TOKEN_UNIQUE', null, null, 0, 0, 1);
+	print ajax_constantonoff('PAYMENT_SECURITY_TOKEN_UNIQUE', array(), null, 0, 0, 1);
 } else {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
 	print $form->selectarray("PAYMENT_SECURITY_TOKEN_UNIQUE", $arrval, $conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE);
