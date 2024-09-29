@@ -70,7 +70,7 @@ parameters:
 		- '#\$httpStatusCode of class Luracast\\Restler\\RestException constructor expects string, int given.#'
 		- '#(?:(?:s(?:(?:et_error_handl|pl_autoload_regist)er)|array_filter)) expects \(callable#'
 		- '# (dol_print_date|correctExifImageOrientation) expects bool\|string#'
-		- '# (getRandomPassword|vatrate|DolEditor constructor) expects bool, int#'
+		- '# (vatrate|DolEditor constructor) expects bool, int#'
 		- '# SMTPs::(getFrom|getErrorsTo|getReplyTo)\(\) expects bool, string given.#'
 		- '# (dolibarr_set_const|getLocalTaxesFromRate) expects int\|string#'
 		- '#::(options)\(\) expects int\|string#'
