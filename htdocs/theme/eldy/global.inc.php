@@ -2483,9 +2483,6 @@ body.onlinepaymentbody div.fiche {	/* For online payment page */
 div.fiche>table:first-child {
 	margin-bottom: 15px;
 }
-div.fiche>table.table-fiche-title {
-	margin-bottom: 12px;
-}
 div.fichecenter {
 	width: 100%;
 	clear: both;	/* This is to have div fichecenter that are true rectangles */
@@ -5316,8 +5313,11 @@ div.titre {
 table.table-fiche-title .col-title div.titre, .col-center .btnTitle-icon, .col-right .btnTitle-icon {
 	line-height: 40px;
 }
-table.table-fiche-title {
-	margin-bottom: 16px;
+table.table-fiche-title .col-title div.titre span {
+	line-height: normal;
+}
+table.table-fiche-title, div.fiche>table.table-fiche-title {
+	margin-bottom: 18px;
 }
 .fichehalfleft table.table-fiche-title, .fichehalfright table.table-fiche-title {
 	margin-bottom: 8px;
