@@ -55,8 +55,17 @@ if ($action == 'convertutf8') {
 				$sql = "ALTER TABLE ".$db->sanitize($table)." MODIFY ".$db->sanitize($row[0])." ".$row[1]." CHARACTER SET utf8";		// We must not sanitize the $row[1]
 				$db->query($sql);
 
-				$sql = "ALTER TABLE ".$db->sanitize($table)." MODIFY ".$db->sanitize($row[0])." ".$row[1]." COLLATE utf8_unicode_ci";	// We must not sanitize the $row[1]
-				$db->query($sql);
+				$collation = 'utf8_unicode_ci';
+				$defaultcollation = $db->getDefaultCollationDatabase();
+				if (preg_match('/general/', $defaultcollation)) {
+					$collation = 'utf8_general_ci';
+				}
+
+				$sql = "ALTER TABLE ".$db->sanitize($table)." MODIFY ".$db->sanitize($row[0])." ".$row[1]." COLLATE ".$db->sanitize($collation);	// We must not sanitize the $row[1]
+				$reslq2 = $db->query($sql);
+				if (!$resql2) {
+					setEventMessages($db->lasterror(), null, 'warnings');
+				}
 
 				break;
 			}
@@ -76,8 +85,17 @@ if ($action == 'convertutf8mb4') {
 				$sql = "ALTER TABLE ".$db->sanitize($table)." MODIFY ".$db->sanitize($row[0])." ".$row[1]." CHARACTER SET utf8mb4";		// We must not sanitize the $row[1]
 				$db->query($sql);
 
-				$sql = "ALTER TABLE ".$db->sanitize($table)." MODIFY ".$db->sanitize($row[0])." ".$row[1]." COLLATE utf8mb4_unicode_ci";	// We must not sanitize the $row[1]
-				$db->query($sql);
+				$collation = 'utf8mb4_unicode_ci';
+				$defaultcollation = $db->getDefaultCollationDatabase();
+				if (preg_match('/general/', $defaultcollation)) {
+					$collation = 'utf8mb4_general_ci';
+				}
+
+				$sql = "ALTER TABLE ".$db->sanitize($table)." MODIFY ".$db->sanitize($row[0])." ".$row[1]." COLLATE ".$db->sanitize($collation);	// We must not sanitize the $row[1]
+				$resql2 = $db->query($sql);
+				if (!$resql2) {
+					setEventMessages($db->lasterror(), null, 'warnings');
+				}
 
 				break;
 			}

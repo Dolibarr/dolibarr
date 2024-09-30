@@ -105,6 +105,8 @@ class DoliDBMysqli extends DoliDB
 			dol_syslog(get_class($this)."::DoliDBMysqli Connect error: ".$this->error, LOG_ERR);
 		}
 
+		$disableforcecharset = 0;	// Set to 1 to test without charset forcing
+
 		// If server connection is ok, we try to connect to the database
 		if ($this->connected && $name) {
 			if ($this->select_db($name)) {
@@ -118,7 +120,6 @@ class DoliDBMysqli extends DoliDB
 					$clientmustbe = 'utf8';
 				}
 
-				$disableforcecharset = 0;	// Set to 1 to test without charset forcing
 				if (empty($disableforcecharset) && $this->db->character_set_name() != $clientmustbe) {
 					try {
 						dol_syslog(get_class($this)."::DoliDBMysqli You should set the \$dolibarr_main_db_character_set and \$dolibarr_main_db_collation for the PHP to the same as the database default, so to ".$this->db->character_set_name(). " or upgrade database default to ".$clientmustbe.".", LOG_WARNING);
@@ -173,7 +174,7 @@ class DoliDBMysqli extends DoliDB
 					$clientmustbe = 'utf8';
 				}
 
-				if ($this->db->character_set_name() != $clientmustbe) {
+				if (empty($disableforcecharset) && $this->db->character_set_name() != $clientmustbe) {
 					$this->db->set_charset($clientmustbe); // This set utf8_unicode_ci
 
 					$collation = $conf->db->dolibarr_main_db_collation;
