@@ -114,7 +114,6 @@ parameters:
 		- '# (?:pg_(?:affected_rows|f(?:etch_(?:array|object|row)|ree_result)|num_rows)) expects PgSql\\Result#'
 		- '# (?:Holiday::getNextNumRef\(\)|get_localtax|pdf_pagefoot) expects Societe#'
 		- '# (?:get_next_value) expects ..\|Societe#'
-		- '# (?:Common(?:DocGenerator::get(?:(?:ExtrafieldsInHtml|_substitutionarray_lines)\(\))|Object::printO(?:(?:bject|rigin)Line\(\)))) expects CommonObjectLine#'
 		- '#colorHexToHsl expects float\|false, true#'
 	internalErrorsCountLimit: 50
 	cache:
