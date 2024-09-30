@@ -59,13 +59,13 @@ print '<tr class="oddeven"><td width="300">'.$langs->trans("User").'</td><td>'.$
 print '<tr class="oddeven"><td width="300">'.$langs->trans("Password").'</td><td>'.preg_replace('/./i', '*', $dolibarr_main_db_pass).'</td></tr>'."\n";
 print '<tr class="oddeven"><td width="300">'.$langs->trans("DBStoringCharset").'</td><td>'.$db->getDefaultCharacterSetDatabase();
 if ($db->type == 'mysqli') {
-	print ' '.$form->textwithpicto('', $langs->transnoentitiesnoconv("HelpMariaDBToGetPossibleValues", "SHOW CHARSET"));
+	print ' '.$form->textwithpicto('', $langs->transnoentitiesnoconv("HelpMariaDBToGetValue", "SHOW VARIABLES LIKE 'character_set_database'").'<br>'.$langs->transnoentitiesnoconv("HelpMariaDBToGetPossibleValues", "SHOW CHARSET"));
 	// We can use $db->getDefaultCharacterSetDatabase(),  $db->getListOfCharacterSet(),
 }
 print '</td></tr>'."\n";
 print '<tr class="oddeven"><td width="300">'.$langs->trans("DBSortingCharset").'</td><td>'.$db->getDefaultCollationDatabase();
 if ($db->type == 'mysqli') {
-	print ' '.$form->textwithpicto('', $langs->transnoentitiesnoconv("HelpMariaDBToGetPossibleValues", "SHOW COLLATION"));
+	print ' '.$form->textwithpicto('', $langs->transnoentitiesnoconv("HelpMariaDBToGetValue", "SHOW VARIABLES LIKE 'collation_database'").'<br>'.$langs->transnoentitiesnoconv("HelpMariaDBToGetPossibleValues", "SHOW COLLATION"));
 	// We can use $db->getDefaultCollationDatabase(), $db->getListOfCollation();
 }
 print '</td></tr>'."\n";
