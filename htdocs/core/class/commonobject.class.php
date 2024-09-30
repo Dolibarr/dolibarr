@@ -5278,7 +5278,7 @@ abstract class CommonObject
 	 *	TODO Move this into an output class file (htmlline.class.php)
 	 *
 	 *	@param	string      		$action				GET/POST action
-	 *	@param  CommonObjectLine 	$line			    Selected object line to output
+	 *	@param  CommonObject|CommonObjectLine 	$line	Selected object line to output
 	 *	@param  ''		    		$var               	Not used
 	 *	@param  int		    		$num               	Number of line (0)
 	 *	@param  int		    		$i					I
