@@ -663,7 +663,7 @@ class Documents extends DolibarrApi
 	 * @param   int 	$overwriteifexists  	Overwrite file if exists (1 by default)
 	 * @param   int 	$createdirifnotexists  	Create subdirectories if the doesn't exists (1 by default)
 	 * @param   int     $position               Position
-	 * @param   array   $array_options          array of options
+	 * @param   array<string,mixed>   $array_options          array of options
 	 * @return  string
 	 *
 	 * @url POST /upload
