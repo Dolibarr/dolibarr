@@ -1023,7 +1023,7 @@ function getNbOfImagePublicURLOfObject($object)
  * @param	int		$no				Numero of image (if there is several images. 1st one by default)
  * @param   string  $extName        Extension to differentiate thumb file name ('', '_small', '_mini')
  * @return  string					HTML img content or '' if no image found
- * @see getNbOfImagePublicURLOfObject()
+ * @see getNbOfImagePublicURLOfObject(), getImageFromHtmlContent()
  */
 function getImagePublicURLOfObject($object, $no = 1, $extName = '')
 {
@@ -1313,6 +1313,48 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 	}
 
 	return $arrayresult;
+}
+
+/**
+ * Return the URL of an image found into a HTML content.
+ * To get image from an external URL to download first, see getAllImages()
+ *
+ * @param	string		$htmlContent	HTML content
+ * @param	int			$imageNumber	The position of image. 1 by default = first image found
+ * @return	string						URL of image or '' if not foud
+ * @see getImagePublicURLOfObject()
+ */
+function getImageFromHtmlContent($htmlContent, $imageNumber = 1)
+{
+	$dom = new DOMDocument();
+
+	libxml_use_internal_errors(false);	// Avoid to fill memory with xml errors
+	if (LIBXML_VERSION < 20900) {
+		// Avoid load of external entities (security problem).
+		// Required only if LIBXML_VERSION < 20900
+		// @phan-suppress-next-line PhanDeprecatedFunctionInternal
+		libxml_disable_entity_loader(true);
+	}
+
+	// Load HTML content into object
+	$dom->loadHTML($htmlContent);
+
+	// Re-enable HTML load errors
+	libxml_clear_errors();
+
+	// Load all img tags
+	$images = $dom->getElementsByTagName('img');
+
+	// Check if nb of image is valid
+	if ($imageNumber > 0 && $imageNumber <= $images->length) {
+		// Récupère l'image correspondante (index - 1 car $imageNumber est 1-based)
+		$img = $images->item($imageNumber - 1);
+		if ($img instanceof DOMElement) {
+			return $img->getAttribute('src');
+		}
+	}
+
+	return '';
 }
 
 /**
