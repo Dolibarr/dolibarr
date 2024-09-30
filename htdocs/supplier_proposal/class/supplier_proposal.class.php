@@ -165,6 +165,10 @@ class SupplierProposal extends CommonObject
 	 * @var array<string,string>  (Encoded as JSON in database)
 	 */
 	public $extraparams = array();
+
+	/**
+	 * @var SupplierProposalLine[]
+	 */
 	public $lines = array();
 	public $line;
 
