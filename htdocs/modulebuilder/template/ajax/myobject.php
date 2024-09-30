@@ -77,7 +77,7 @@ top_httphead();
 
 // Update the object field with the new value
 if ($objectId && $field && isset($value)) {
-	$object->fetch($object_id);
+	$object->fetch($objectId);
 	if ($object->id > 0) {
 		$object->$field = $value;
 	}
