@@ -3973,7 +3973,7 @@ class Propal extends CommonObject
 	public static function replaceProduct(DoliDB $db, $origin_id, $dest_id)
 	{
 		$tables = array(
-			$this->table_element_line
+			'propaldet'
 		);
 
 		return CommonObject::commonReplaceProduct($db, $origin_id, $dest_id, $tables);
