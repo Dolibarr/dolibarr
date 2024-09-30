@@ -123,6 +123,9 @@ class pdf_standard_actions
 	 */
 	public $page_largeur;
 
+	/**
+	 * @var int corner radius
+	 */
 	public $corner_radius;
 
 	/**
