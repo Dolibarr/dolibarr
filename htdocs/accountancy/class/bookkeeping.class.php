@@ -2462,7 +2462,7 @@ class BookKeeping extends CommonObject
 	}
 
 	/**
-	 * Get list of fiscal period
+	 * Get list of fiscal period ordered by start date.
 	 *
 	 * @param 	string	$filter		Filter
 	 * @return 	array|int			Return integer <0 if KO, Fiscal periods : [[id, date_start, date_end, label], ...]
