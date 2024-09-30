@@ -3676,6 +3676,7 @@ abstract class CommonObject
 
 		$sql = "UPDATE ".$this->db->prefix().$this->table_element;
 		$sql .= " SET ref_ext = '".$this->db->escape($ref_ext)."'";
+		// @phan-suppress-next-line PhanUndeclaredProperty
 		$sql .= " WHERE ".(isset($this->table_rowid) ? $this->table_rowid : 'rowid')." = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update_ref_ext", LOG_DEBUG);
@@ -4036,7 +4037,9 @@ abstract class CommonObject
 			}
 
 			// Add revenue stamp to total
+			// @phan-suppress-next-line PhanUndeclaredProperty
 			$this->total_ttc += isset($this->revenuestamp) ? $this->revenuestamp : 0;
+			// @phan-suppress-next-line PhanUndeclaredProperty
 			$this->multicurrency_total_ttc += isset($this->revenuestamp) ? ($this->revenuestamp * $multicurrency_tx) : 0;
 
 			// Situations totals
@@ -5472,6 +5475,7 @@ abstract class CommonObject
 
 		//var_dump($line);
 		if (!empty($line->date_start)) {
+			// @phan-suppress-next-line PhanUndeclaredProperty
 			$date_start = $line->date_start;
 		} else {
 			$date_start = $line->date_debut_prevue;
@@ -5480,6 +5484,7 @@ abstract class CommonObject
 			}
 		}
 		if (!empty($line->date_end)) {
+			// @phan-suppress-next-line PhanUndeclaredProperty
 			$date_end = $line->date_end;
 		} else {
 			$date_end = $line->date_fin_prevue;
@@ -9371,6 +9376,21 @@ abstract class CommonObject
 	 */
 	public static function commonReplaceThirdparty(DoliDB $dbs, $origin_id, $dest_id, array $tables, $ignoreerrors = 0)
 	{
+		global $hookmanager;
+
+		$hookmanager->initHooks(array('commonobject'));
+		$parameters = array(
+			'origin_id' => $origin_id,
+			'dest_id' => $dest_id,
+			'tables' => $tables,
+		);
+		$reshook = $hookmanager->executeHooks('commonReplaceThirdparty', $parameters);
+		if ($reshook) {
+			return true; // replacement code
+		} elseif ($reshook < 0) {
+			return $ignoreerrors === 1; // failure
+		} // reshook = 0 => execute normal code
+
 		foreach ($tables as $table) {
 			$sql = 'UPDATE '.$dbs->prefix().$table.' SET fk_soc = '.((int) $dest_id).' WHERE fk_soc = '.((int) $origin_id);
 
