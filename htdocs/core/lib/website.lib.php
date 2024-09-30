@@ -1033,7 +1033,7 @@ function getNbOfImagePublicURLOfObject($object)
  * @param	int		$no				Numero of image (if there is several images. 1st one by default)
  * @param   string  $extName        Extension to differentiate thumb file name ('', '_small', '_mini')
  * @return  string					HTML img content or '' if no image found
- * @see getNbOfImagePublicURLOfObject(), getPublicFilesOfObject()
+ * @see getNbOfImagePublicURLOfObject(), getPublicFilesOfObject(), getImageFromHtmlContent()
  */
 function getImagePublicURLOfObject($object, $no = 1, $extName = '')
 {
@@ -1334,6 +1334,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
  * @param	string		$htmlContent	HTML content
  * @param	int			$imageNumber	The position of image. 1 by default = first image found
  * @return	string						URL of image or '' if not foud
+ * @see getImagePublicURLOfObject()
  */
 function getImageFromHtmlContent($htmlContent, $imageNumber = 1)
 {
