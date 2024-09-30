@@ -169,7 +169,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $permissiontoadd) {
 } elseif ($action == 'reopen' && $permissiontoadd && getDolGlobalString('ACCOUNTING_CAN_REOPEN_CLOSED_PERIOD')) {
 	$result = $object->fetch($id);
 
-	$object->status = GETPOST('status', 'int');
+	$object->status = GETPOSTINT('status');
 	$result = $object->update($user);
 
 	if ($result > 0) {
