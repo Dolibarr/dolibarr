@@ -149,7 +149,7 @@ if (empty($reshook)) {
 		$action = 'create_ticket';
 	}
 
-	if ($action == 'create_ticket' && GETPOST('save', 'alpha')) {
+	if ($action == 'create_ticket' && GETPOST('save', 'alpha')) {	// Test on permission not required. This is a public form. Security is managed by mitigation.
 		$error = 0;
 		$origin_email = GETPOST('email', 'email');
 		if (empty($origin_email)) {

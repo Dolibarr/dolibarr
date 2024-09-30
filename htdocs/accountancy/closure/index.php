@@ -103,8 +103,8 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	if (isset($current_fiscal_period) && $user->hasRight('accounting', 'fiscalyear', 'write')) {
-		if ($action == 'confirm_step_1' && $confirm == "yes") {
+	if (isset($current_fiscal_period)) {
+		if ($action == 'confirm_step_1' && $confirm == "yes" && $user->hasRight('accounting', 'fiscalyear', 'write')) {
 			$date_start = dol_mktime(0, 0, 0, GETPOSTINT('date_startmonth'), GETPOSTINT('date_startday'), GETPOSTINT('date_startyear'));
 			$date_end = dol_mktime(23, 59, 59, GETPOSTINT('date_endmonth'), GETPOSTINT('date_endday'), GETPOSTINT('date_endyear'));
 
@@ -119,7 +119,7 @@ if (empty($reshook)) {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$action = '';
 			}
-		} elseif ($action == 'confirm_step_2' && $confirm == "yes") {
+		} elseif ($action == 'confirm_step_2' && $confirm == "yes" && $user->hasRight('accounting', 'fiscalyear', 'write')) {
 			$new_fiscal_period_id = GETPOSTINT('new_fiscal_period_id');
 			$separate_auxiliary_account = GETPOST('separate_auxiliary_account', 'aZ09');
 			$generate_bookkeeping_records = GETPOST('generate_bookkeeping_records', 'aZ09');
@@ -147,7 +147,7 @@ if (empty($reshook)) {
 					exit;
 				}
 			}
-		} elseif ($action == 'confirm_step_3' && $confirm == "yes") {
+		} elseif ($action == 'confirm_step_3' && $confirm == "yes" && $user->hasRight('accounting', 'fiscalyear', 'write')) {
 			$inventory_journal_id = GETPOSTINT('inventory_journal_id');
 			$new_fiscal_period_id = GETPOSTINT('new_fiscal_period_id');
 			$date_start = dol_mktime(0, 0, 0, GETPOSTINT('date_startmonth'), GETPOSTINT('date_startday'), GETPOSTINT('date_startyear'));

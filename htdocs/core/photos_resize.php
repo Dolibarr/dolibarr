@@ -346,7 +346,7 @@ if ($cancel) {
 	}
 }
 
-if ($action == 'confirm_resize' && GETPOSTISSET("file") && GETPOSTISSET("sizex") && GETPOSTISSET("sizey")) {
+if ($action == 'confirm_resize' && GETPOSTISSET("file") && GETPOSTISSET("sizex") && GETPOSTISSET("sizey")) {	// Test on permission already done
 	if (empty($dir)) {
 		dol_print_error(null, 'Bug: Value for $dir could not be defined.');
 		exit;

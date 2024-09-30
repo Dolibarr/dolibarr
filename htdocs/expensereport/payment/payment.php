@@ -46,12 +46,14 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
+$permissiontoadd = $user->hasRight('expensereport', 'creer');
+
 
 /*
  * Actions
  */
 
-if ($action == 'add_payment') {
+if ($action == 'add_payment' && $permissiontoadd) {
 	$error = 0;
 
 	if ($cancel) {
