@@ -2431,6 +2431,47 @@ class BookKeeping extends CommonObject
 	}
 
 	/**
+	 * Generate label operation when operation is transfered into accounting
+	 *
+	 * @param 	string  $thirdpartyname         Thirdparty name
+	 * @param 	string  $reference              Reference of the element
+	 * @param 	string  $labelaccount           Label of the accounting account
+	 * @return	string                          Label of the operation
+	 */
+	public function accountingLabelForOperation($thirdpartyname, $reference, $labelaccount)
+	{
+		global $conf;
+
+		$accountingLabelOperation = '';
+
+		if (!getDolGlobalString('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER') || getDolGlobalString('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER') == 0) {
+			$truncThirdpartyName = 16;
+			// Avoid trunc with dot in accountancy for the compatibility with another accounting software
+			$accountingLabelOperation = dol_trunc($thirdpartyname, $truncThirdpartyName, 'right', 'UTF-8', 1);
+			if (!empty($reference)) {
+				$accountingLabelOperation .= ' - '. $reference;
+			}
+			if (!empty($labelaccount)) {
+				$accountingLabelOperation .= ' - '. $labelaccount;
+			}
+		} elseif (getDolGlobalString('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER') == 1) {
+			$truncThirdpartyName = 32;
+			// Avoid trunc with dot in accountancy for the compatibility with another accounting software
+			$accountingLabelOperation = dol_trunc($thirdpartyname, $truncThirdpartyName, 'right', 'UTF-8', 1);
+			if (!empty($reference)) {
+				$accountingLabelOperation .= ' - '. $reference;
+			}
+		} elseif (getDolGlobalString('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER') == 2) {
+			$truncThirdpartyName = 64;
+			// Avoid trunc with dot in accountancy for the compatibility with another accounting software
+			$accountingLabelOperation = dol_trunc($thirdpartyname, $truncThirdpartyName, 'right', 'UTF-8', 1);
+		}
+		dol_syslog('label'.$accountingLabelOperation, LOG_ERR);
+
+		return $accountingLabelOperation;
+	}
+
+	/**
 	 * Is the bookkeeping date valid (on an open period or not on a closed period) ?
 	 *
 	 * @param 	int		$date		Bookkeeping date
