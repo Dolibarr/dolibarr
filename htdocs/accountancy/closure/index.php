@@ -151,11 +151,10 @@ if (empty($reshook)) {
 			if ($generate_bookkeeping_records) {
 				if (!getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT')) {
 					$error++;
-					setEventMessages($langs->trans("ErrorModuleSetupNotComplete"), null, 'errors');
-				}
-				if (!getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT')) {
+					setEventMessages($langs->trans("ErrorAccountingClosureSetupNotComplete"), null, 'errors');
+				} elseif (!getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT')) {
 					$error++;
-					setEventMessages($langs->trans("ErrorModuleSetupNotComplete"), null, 'errors');
+					setEventMessages($langs->trans("ErrorAccountingClosureSetupNotComplete"), null, 'errors');
 				}
 			}
 
@@ -405,7 +404,7 @@ if (empty($current_fiscal_period)) {
 	if (empty($count_by_month['total']) && empty($current_fiscal_period['status'])) {
 		$button = '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=step_2&fiscal_period_id=' . $current_fiscal_period['id'] . '">' . $langs->trans("AccountancyClosureClose") . '</a>';
 	} else {
-		$button = '<a class="butActionRefused classfortooltip" href="#">' . $langs->trans("AccountancyClosureClose") . '</a>';
+		$button = '<a class="butActionRefused classfortooltip" href="#" title="This fiscal period already has the status Closed. Feature disabled.">' . $langs->trans("AccountancyClosureClose") . '</a>';
 	}
 	print_barre_liste('', '', '', '', '', '', '', -1, '', '', 0, $button, '', 0, 1, 0);
 
