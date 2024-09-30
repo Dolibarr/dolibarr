@@ -180,7 +180,7 @@ class Facture extends CommonInvoice
 	 */
 	public $module_source;
 	/**
-	 * @var int key of pos source ('0', '1', ...)
+	 * @var string key of pos source ('0', '1', ...)
 	 */
 	public $pos_source;
 	/**

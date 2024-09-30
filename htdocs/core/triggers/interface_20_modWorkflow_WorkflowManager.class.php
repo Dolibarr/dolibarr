@@ -71,7 +71,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 		$ret = 0;
 
 		// Proposals to order
-		if ($action == 'PROPAL_CLOSE_SIGNED') {
+		if ($action == 'PROPAL_CLOSE_SIGNED' && $object instanceof Propal) {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (isModEnabled('order') && getDolGlobalString('WORKFLOW_PROPAL_AUTOCREATE_ORDER')) {
 				$object->fetchObjectLinked();
