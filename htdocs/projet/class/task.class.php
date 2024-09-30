@@ -288,6 +288,11 @@ class Task extends CommonObjectLine
 	public $project_budget_amount;
 
 	/**
+	 * @var TaskLine[]
+	 */
+	public $lines;
+
+	/**
 	 * Draft status
 	 */
 	const STATUS_DRAFT = 0;
@@ -1684,18 +1689,18 @@ class Task extends CommonObjectLine
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 
-				$newobj = new stdClass();
+				$newobj = new TaskLine($this->db);
 
-				$newobj->socid              = $obj->socid;
-				$newobj->thirdparty_name    = $obj->thirdparty_name;
-				$newobj->thirdparty_email   = $obj->thirdparty_email;
+				$newobj->socid = $obj->socid;
+				$newobj->thirdparty_name = $obj->thirdparty_name;
+				$newobj->thirdparty_email = $obj->thirdparty_email;
 
-				$newobj->fk_project			= $obj->project_id;
-				$newobj->project_ref		= $obj->project_ref;
+				$newobj->fk_project = $obj->project_id;
+				$newobj->project_ref = $obj->project_ref;
 				$newobj->project_label = $obj->project_label;
-				$newobj->public				= $obj->project_public;
+				$newobj->public = $obj->project_public;
 
-				$newobj->fk_task			= $obj->task_id;
+				$newobj->fk_task = $obj->task_id;
 				$newobj->task_ref = $obj->task_ref;
 				$newobj->task_label = $obj->task_label;
 
@@ -2807,4 +2812,12 @@ class Task extends CommonObjectLine
 
 		return -1;
 	}
+}
+
+/**
+ * 	Class to manage tasks
+ */
+class TaskLine extends CommonObjectLine
+{
+
 }

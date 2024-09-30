@@ -631,18 +631,17 @@ class Documents extends DolibarrApi
 	}
 
 
-	/**
-	 * Return a document.
-	 *
-	 * @param   int         $id          ID of document
-	 * @return  array                    Array with data of file
-	 *
-	 * @throws RestException
-	 */
-	/*
-	public function get($id) {
-		return array('note'=>'xxx');
-	}*/
+	// /**
+	//  * Return a document.
+	//  *
+	//  * @param   int         $id          ID of document
+	//  * @return  array                    Array with data of file
+	//  *
+	//  * @throws RestException
+	//  */
+	// public function get($id) {
+	// 	return array('note'=>'xxx');
+	// }
 
 
 	/**
