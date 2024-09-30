@@ -58,7 +58,7 @@ return [
         'htdocs/adherents/stats/index.php' => ['PhanTypeInvalidDimOffset'],
         'htdocs/admin/fckeditor.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/api/class/api_access.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanUndeclaredProperty'],
-        'htdocs/api/class/api_documents.class.php' => ['PhanPluginDuplicateExpressionBinaryOp', 'PhanPluginUnknownArrayMethodReturnType', 'PhanPossiblyUndeclaredVariable'],
+        'htdocs/api/class/api_documents.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginDuplicateExpressionBinaryOp', 'PhanPluginUnknownArrayMethodReturnType', 'PhanPossiblyUndeclaredVariable'],
         'htdocs/api/class/api_login.class.php' => ['PhanPluginUnknownArrayMethodReturnType'],
         'htdocs/api/class/api_setup.class.php' => ['PhanPluginUnknownArrayMethodReturnType'],
         'htdocs/api/class/api_status.class.php' => ['PhanPluginUnknownArrayMethodReturnType'],

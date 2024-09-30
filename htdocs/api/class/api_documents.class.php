@@ -671,15 +671,11 @@ class Documents extends DolibarrApi
 	 * @throws	RestException	400		Bad Request
 	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	404		Object not found
-	 * @throws	RestException	500		Error on file operationw
+	 * @throws	RestException	500		Error on file operation
 	 */
 	public function post($filename, $modulepart, $ref = '', $subdir = '', $filecontent = '', $fileencoding = '', $overwriteifexists = 0, $createdirifnotexists = 1, $position = 0, $array_options = [])
 	{
 		global $conf;
-
-		//var_dump($modulepart);
-		//var_dump($filename);
-		//var_dump($filecontent);exit;
 
 		$modulepartorig = $modulepart;
 
