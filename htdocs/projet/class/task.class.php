@@ -1707,7 +1707,7 @@ class Task extends CommonObjectLine
 				$newobj->timespent_line_id = $obj->rowid;
 				$newobj->timespent_line_ref_ext = $obj->ref_ext;
 				$newobj->timespent_line_date = $this->db->jdate($obj->task_date);
-				$newobj->timespent_line_datehour	= $this->db->jdate($obj->task_datehour);
+				$newobj->timespent_line_datehour = $this->db->jdate($obj->task_datehour);
 				$newobj->timespent_line_withhour = $obj->task_date_withhour;
 				$newobj->timespent_line_duration = $obj->task_duration;
 				$newobj->timespent_line_fk_user = $obj->fk_user;
