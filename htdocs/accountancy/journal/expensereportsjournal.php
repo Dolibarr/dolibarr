@@ -264,10 +264,6 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 	$userstatic = new User($db);
 	$bookkeepingstatic = new BookKeeping($db);
 
-	$userstatic->id = $tabuser[$key]['id'];
-	$userstatic->name = $tabuser[$key]['name'];
-	$userstatic->accountancy_code = $tabuser[$key]['code_compta'];
-
 	$accountingaccountexpense = new AccountingAccount($db);
 	$accountingaccountexpense->fetch(0, getDolGlobalString('ACCOUNTING_ACCOUNT_EXPENSEREPORT'), true);
 
@@ -278,6 +274,10 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 		$totaldebit = 0;
 
 		$db->begin();
+
+		$userstatic->id = $tabuser[$key]['id'];
+		$userstatic->name = $tabuser[$key]['name'];
+		$userstatic->accountancy_code = $tabuser[$key]['user_accountancy_code'];
 
 		// Error if some lines are not binded/ready to be journalized
 		if (!empty($errorforinvoice[$key]) && $errorforinvoice[$key] == 'somelinesarenotbound') {
@@ -566,8 +566,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 				print '"'.$date.'"'.$sep;
 				print '"'.$val["ref"].'"'.$sep;
 				print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
-				print '"'.dol_trunc($langs->trans("VAT")).'"'.$sep;
-				print '"'.mb_convert_encoding($bookkeepingstatic->accountingLabelForOperation($userstatic->name, '', $langs->trans("VAT").implode($def_tva[$key][$k]).' %'.($numtax ? ' - Localtax '.$numtax : '')), 'ISO-8859-1').'"'.$sep;
+				print '"'.mb_convert_encoding($bookkeepingstatic->accountingLabelForOperation($userstatic->name, '', $langs->trans("VAT").implode($def_tva[$key][$k]).' %'), 'ISO-8859-1').'"'.$sep;
 				print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;
 				print '"'.($mt < 0 ? price(-$mt) : '').'"';
 				print "\n";
