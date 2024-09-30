@@ -2819,5 +2819,26 @@ class Task extends CommonObjectLine
  */
 class TaskLine extends CommonObjectLine
 {
+	public $socid;
+	public $thirdparty_name;
+	public $thirdparty_email;
 
+	public $fk_project;
+	public $project_ref;
+	public $project_label;
+	public $public;
+
+	public $fk_task;
+	public $task_ref;
+	public $task_label;
+
+	public $timespent_line_id;
+	public $timespent_line_ref_ext;
+	public $timespent_line_date;
+	public $timespent_line_datehour;
+	public $timespent_line_withhour;
+	public $timespent_line_duration;
+	public $timespent_line_fk_user;
+	public $timespent_line_thm;	// hourly rate
+	public $timespent_line_note;
 }
