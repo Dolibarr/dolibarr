@@ -53,11 +53,11 @@ if ($action == 'convert') {	// Convert engine into innodb
 	$db->query($sql);
 }
 if ($action == 'convertutf8') {
-	$sql = "ALTER TABLE ".$db->sanitize($table)." CHARACTER SET utf8 COLLATE utf8_unicode_ci";
+	$sql = "ALTER TABLE ".$db->sanitize($table)." CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci";
 	$db->query($sql);
 }
 if ($action == 'convertutf8mb4') {
-	$sql = "ALTER TABLE ".$db->sanitize($table)." CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci";
+	$sql = "ALTER TABLE ".$db->sanitize($table)." CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci";
 	$db->query($sql);
 }
 if ($action == 'convertdynamic') {
