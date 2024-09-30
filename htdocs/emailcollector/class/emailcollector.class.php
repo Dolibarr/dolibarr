@@ -2680,7 +2680,7 @@ class EmailCollector extends CommonObject
 
 											// Create thirdparty
 											$thirdpartystatic = new Societe($db);
-											$thirdpartystatic->name = (string) (string) $nametouseforthirdparty;
+											$thirdpartystatic->name = (string) $nametouseforthirdparty;
 											if (!empty($namealiastouseforthirdparty)) {
 												if ($namealiastouseforthirdparty != $nametouseforthirdparty) {
 													$thirdpartystatic->name_alias = $namealiastouseforthirdparty;
