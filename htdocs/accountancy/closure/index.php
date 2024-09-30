@@ -61,29 +61,53 @@ if (!is_array($fiscal_periods)) {
 	setEventMessages($object->error, $object->errors, 'errors');
 }
 
+// Define the arrays of fiscal periods
 $active_fiscal_periods = array();
+$first_active_fiscal_period = null;
 $last_fiscal_period = null;
 $current_fiscal_period = null;
 $next_fiscal_period = null;
 $next_active_fiscal_period = null;
 if (is_array($fiscal_periods)) {
-	foreach ($fiscal_periods as $fiscal_period) {
-		if (empty($fiscal_period['status'])) {
+	foreach ($fiscal_periods as $fiscal_period) {		// List of fiscal periods sorted by date start
+		if (empty($first_active_fiscal_period) && empty($fiscal_period['status'])) {
+			$first_active_fiscal_period = $fiscal_period;
+		}
+		if (empty($fiscal_period['status'])) {	// if not closed
 			$active_fiscal_periods[] = $fiscal_period;
 		}
-		if (isset($current_fiscal_period)) {
+		if (isset($current_fiscal_period)) {	// If we already reach then current fiscal period, then this one is the next one just after
 			if (!isset($next_fiscal_period)) {
 				$next_fiscal_period = $fiscal_period;
 			}
 			if (!isset($next_active_fiscal_period) && empty($fiscal_period['status'])) {
 				$next_active_fiscal_period = $fiscal_period;
 			}
-		} else {
+		} else {								// If we did not found the current fiscal period
 			if ($fiscal_period_id == $fiscal_period['id'] || (empty($fiscal_period_id) && $fiscal_period['date_start'] <= $now && $now <= $fiscal_period['date_end'])) {
 				$current_fiscal_period = $fiscal_period;
 			} else {
-				$last_fiscal_period = $fiscal_period;
+				$last_fiscal_period = $fiscal_period;	// $last_fiscal_period is in fact $previous_fiscal_period
 			}
+		}
+	}
+}
+
+// If a current fiscal period open with an end and start date was not found, we autoselect the first one that is open and has a start and end date defined
+if (empty($current_fiscal_period) && !empty($first_active_fiscal_period)) {
+	$current_fiscal_period = $first_active_fiscal_period;
+	$last_fiscal_period = null;
+	$foundcurrent = false;
+	foreach ($fiscal_periods as $fiscal_period) {		// List of fiscal periods sorted by date start
+		if ($foundcurrent) {
+			$next_fiscal_period = $fiscal_period;
+			break;
+		}
+		if ($fiscal_period['id'] == $current_fiscal_period['id']) {
+			$foundcurrent = true;
+		}
+		if (!$foundcurrent) {
+			$last_fiscal_period = $fiscal_period;
 		}
 	}
 }
@@ -316,9 +340,7 @@ print load_fiche_titre($langs->trans("Closure") . " - " . $fiscal_period_nav_tex
 
 if (empty($current_fiscal_period)) {
 	print $langs->trans('ErrorNoFiscalPeriodActiveFound', $langs->transnoentitiesnoconv("Accounting"), $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("FiscalPeriod"));
-}
-
-if (isset($current_fiscal_period)) {
+} else {
 	// Step 1
 	$head = array();
 	$head[0][0] = DOL_URL_ROOT . '/accountancy/closure/index.php?fiscal_period_id=' . $current_fiscal_period['id'];
