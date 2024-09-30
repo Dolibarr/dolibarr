@@ -618,7 +618,6 @@ class Documents extends DolibarrApi
 					$count = count($filearray);
 					for ($i = 0 ; $i < $count ; $i++) {
 						foreach ($ecmfile->lines as $line) {
-							/** @var EcmFilesLine $line */
 							if ($filearray[$i]['name'] == $line->filename) {
 								$filearray[$i] = array_merge($filearray[$i], (array) $line);
 							}
