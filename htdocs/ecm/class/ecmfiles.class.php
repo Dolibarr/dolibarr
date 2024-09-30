@@ -29,7 +29,7 @@
 
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 /**
  * Class to manage ECM files
  */
@@ -1033,7 +1033,7 @@ class EcmFiles extends CommonObject
 /**
  * Class of an index line of a document
  */
-class EcmFilesLine
+class EcmFilesLine extends CommonObjectLine
 {
 	/**
 	 * @var string ECM files line label
@@ -1045,8 +1045,19 @@ class EcmFilesLine
 	 */
 	public $entity;
 
+	/**
+	 * @var string filename
+	 */
 	public $filename;
+
+	/**
+	 * @var string filepath
+	 */
 	public $filepath;
+
+	/**
+	 * @var string fullpath origin
+	 */
 	public $fullpath_orig;
 
 	/**
@@ -1056,6 +1067,10 @@ class EcmFilesLine
 
 	public $keywords;
 	public $cover;
+
+	/**
+	 * @var int position
+	 */
 	public $position;
 	public $gen_or_uploaded; // can be 'generated', 'uploaded', 'unknown'
 	public $extraparams;
