@@ -450,7 +450,7 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 
 	$companystatic = new Societe($db);
 	$invoicestatic = new Facture($db);
-    $bookkeepingstatic = new BookKeeping($db);
+	$bookkeepingstatic = new BookKeeping($db);
 
 	$accountingaccountcustomer = new AccountingAccount($db);
 	$accountingaccountcustomer->fetch(0, getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER'), true);
@@ -719,7 +719,7 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 						$tmpvatrate = (empty($def_tva[$key][$k]) ? (empty($arrayofvat[$key][$k]) ? '' : $arrayofvat[$key][$k]) : implode(', ', $def_tva[$key][$k]));
 						$labelvataccount = $langs->trans("Taxes").' '.$tmpvatrate.' %';
 						$labelvataccount .= ($numtax ? ' - Localtax '.$numtax : '');
-                        $bookkeeping->label_operation = $bookkeepingstatic->accountingLabelForOperation($companystatic->name, $invoicestatic->ref, $labelvataccount);
+						$bookkeeping->label_operation = $bookkeepingstatic->accountingLabelForOperation($companystatic->name, $invoicestatic->ref, $labelvataccount);
 
 						$bookkeeping->montant = $mt;
 						$bookkeeping->sens = ($mt < 0) ? 'D' : 'C';
@@ -874,7 +874,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 
 	$companystatic = new Client($db);
 	$invoicestatic = new Facture($db);
-    $bookkeepingstatic = new BookKeeping($db);
+	$bookkeepingstatic = new BookKeeping($db);
 
 	foreach ($tabfac as $key => $val) {
 		$companystatic->id = $tabcompany[$key]['id'];
@@ -959,7 +959,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 			print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
 			print '""'.$sep;
 			print '"'.mb_convert_encoding(dol_trunc($accountingaccount->label, 32), 'ISO-8859-1').'"'.$sep;
-            print '"'.mb_convert_encoding($bookkeepingstatic->accountingLabelForOperation($companystatic->name, $invoicestatic->ref, dol_trunc($accountingaccount->label, 32)), 'ISO-8859-1').'"'.$sep;
+			print '"'.mb_convert_encoding($bookkeepingstatic->accountingLabelForOperation($companystatic->name, $invoicestatic->ref, dol_trunc($accountingaccount->label, 32)), 'ISO-8859-1').'"'.$sep;
 			print '"'.($mt < 0 ? price(-$mt) : '').'"'.$sep;
 			print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;
 			print '"'.$journal.'"';
@@ -1009,7 +1009,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 				print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
 				print '""'.$sep;
 				print '"'.$langs->trans("RevenueStamp").'"'.$sep;
-                print '"'.mb_convert_encoding($bookkeepingstatic->accountingLabelForOperation($companystatic->name, $invoicestatic->ref, $langs->trans("RevenueStamp")), 'ISO-8859-1').'"'.$sep;
+				print '"'.mb_convert_encoding($bookkeepingstatic->accountingLabelForOperation($companystatic->name, $invoicestatic->ref, $langs->trans("RevenueStamp")), 'ISO-8859-1').'"'.$sep;
 				print '"'.($mt < 0 ? price(-$mt) : '').'"'.$sep;
 				print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;
 				print '"'.$journal.'"';
@@ -1127,7 +1127,7 @@ if (empty($action) || $action == 'view') {
 
 	$companystatic = new Client($db);
 	$invoicestatic = new Facture($db);
-    $bookkeepingstatic = new BookKeeping($db);
+	$bookkeepingstatic = new BookKeeping($db);
 
 	foreach ($tabfac as $key => $val) {
 		$companystatic->id = $tabcompany[$key]['id'];
@@ -1339,7 +1339,7 @@ if (empty($action) || $action == 'view') {
 					$tmpvatrate = (empty($def_tva[$key][$k]) ? (empty($arrayofvat[$key][$k]) ? '' : $arrayofvat[$key][$k]) : implode(', ', $def_tva[$key][$k]));
 					$labelvatrate = $langs->trans("Taxes").' '.$tmpvatrate.' %';
 					$labelvatrate .= ($numtax ? ' - Localtax '.$numtax : '');
-                    print "<td>" . $bookkeepingstatic->accountingLabelForOperation($companystatic->getNomUrl(0, 'customer'), $invoicestatic->ref, $labelvatrate) . "</td>";
+					print "<td>" . $bookkeepingstatic->accountingLabelForOperation($companystatic->getNomUrl(0, 'customer'), $invoicestatic->ref, $labelvatrate) . "</td>";
 					print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
 					print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";
 					print "</tr>";
