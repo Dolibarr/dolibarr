@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2021-2024  Alexandre Spangaro  <alexandre@inovea-conseil.com>
+/* Copyright (C) 2021-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
