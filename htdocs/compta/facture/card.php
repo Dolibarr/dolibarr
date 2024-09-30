@@ -3302,7 +3302,7 @@ if ($action == 'create') {
 				$classname = ucfirst($subelem);
 
 				$expesrc = new $classname($db);
-				'@phan-var-force Facture|Commande $expesrc';
+				'@phan-var-force Expedition $expesrc';
 				$expesrc->fetch($expeoriginid);
 
 				$cond_reglement_id 	= (!empty($expesrc->cond_reglement_id) ? $expesrc->cond_reglement_id : (!empty($soc->cond_reglement_id) ? $soc->cond_reglement_id : 1));
