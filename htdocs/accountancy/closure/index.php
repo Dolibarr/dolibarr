@@ -381,7 +381,7 @@ if (isset($current_fiscal_period)) {
 	if (empty($count_by_month['total']) && empty($current_fiscal_period['status'])) {
 		$button = '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=step_2&fiscal_period_id=' . $current_fiscal_period['id'] . '">' . $langs->trans("AccountancyClosureClose") . '</a>';
 	} else {
-		$button = '<a class="butActionRefused classfortooltip" href="#">' . $langs->trans("AccountancyClosureClose") . '</a>';
+		$button = '<a class="butActionRefused classfortooltip" href="#" title="This fiscal period alread has the status Closed. Feature disabled.">' . $langs->trans("AccountancyClosureClose") . '</a>';
 	}
 	print_barre_liste('', '', '', '', '', '', '', -1, '', '', 0, $button, '', 0, 1, 0);
 
