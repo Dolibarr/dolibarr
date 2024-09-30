@@ -1181,11 +1181,11 @@ class ExpenseReport extends CommonObject
 	/**
 	 * Delete object in database
 	 *
-	 * @param   User|null   $user       User that delete
-	 * @param 	int 		$notrigger  0=launch triggers after, 1=disable triggers
+	 * @param   ?User		$user       User that delete
+	 * @param 	int<0,1>	$notrigger  0=launch triggers after, 1=disable triggers
 	 * @return  int         	        Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user = null, $notrigger = 0)
+	public function delete($user = null, $notrigger = 0)
 	{
 		global $conf;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -2790,6 +2790,7 @@ class ExpenseReport extends CommonObject
 
 				for ($i = 0; $i < $num; $i++) {
 					if ($i < ($num - 1)) {
+						// @phan-suppress-next-line PhanTypeInvalidDimOffset
 						if ($qty > $ranges[$i]->range_ik && $qty < $ranges[$i + 1]->range_ik) {
 							$coef = $ranges[$i]->coef;
 							$offset = $ranges[$i]->ikoffset;

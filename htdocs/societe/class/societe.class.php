@@ -2194,11 +2194,11 @@ class Societe extends CommonObject
 	 *    Delete a third party from database and all its dependencies (contacts, rib...)
 	 *
 	 *    @param	int			$id             Id of third party to delete
-	 *    @param    User|null   $fuser          User who ask to delete thirdparty
-	 *    @param    int			$call_trigger   0=No, 1=yes
+	 *    @param    ?User		$fuser          User who ask to delete thirdparty
+	 *    @param    int<0,1>	$call_trigger   0=No, 1=yes
 	 *    @return	int							Return integer <0 if KO, 0 if nothing done, >0 if OK
 	 */
-	public function delete($id, User $fuser = null, $call_trigger = 1)
+	public function delete($id, $fuser = null, $call_trigger = 1)
 	{
 		global $conf, $user;
 
