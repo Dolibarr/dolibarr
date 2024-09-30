@@ -36,6 +36,9 @@
  */
 class FormFile
 {
+	/**
+	 * @var DoliDB
+	 */
 	private $db;
 
 	/**
@@ -43,8 +46,14 @@ class FormFile
 	 */
 	public $error;
 
+	/**
+	 * @var int
+	 */
 	public $numoffiles;
-	public $infofiles; // Used to return information by function getDocumentsLink
+	/**
+	 * @var array{nboffiles:int,extensions:array<string,int>,files:string[]} Used to return information by function getDocumentsLink
+	 */
+	public $infofiles;
 
 
 	/**
@@ -1114,8 +1123,8 @@ class FormFile
 
 				$this->infofiles['nboffiles']++;
 				$this->infofiles['files'][] = $file['fullname'];
-				$ext = pathinfo($file["name"], PATHINFO_EXTENSION);
-				if (empty($this->infofiles[$ext])) {
+				$ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+				if (empty($this->infofiles['extensions'][$ext])) {
 					$this->infofiles['extensions'][$ext] = 1;
 				} else {
 					$this->infofiles['extensions'][$ext]++;

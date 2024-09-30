@@ -4363,7 +4363,7 @@ function migrate_reload_menu($db, $langs, $conf)
 		$dir = DOL_DOCUMENT_ROOT."/core/menus/";
 		$file = 'init_menu_'.$key.'.sql';
 		if (file_exists($dir.$file)) {
-			$result = run_sql($dir.$file, 1, '', 1, $key);
+			$result = run_sql($dir.$file, 1, 0, 1, $key);
 		}
 
 		print '</td></tr>';

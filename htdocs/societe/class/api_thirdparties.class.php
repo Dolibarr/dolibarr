@@ -95,7 +95,7 @@ class Thirdparties extends DolibarrApi
 	 */
 	public function getByEmail($email)
 	{
-		return $this->_fetch('', '', '', '', '', '', '', '', '', '', $email);
+		return $this->_fetch(null, '', '', '', '', '', '', '', '', '', $email);
 	}
 
 	/**
@@ -112,7 +112,7 @@ class Thirdparties extends DolibarrApi
 	 */
 	public function getByBarcode($barcode)
 	{
-		return $this->_fetch('', '', '', $barcode);
+		return $this->_fetch(null, '', '', $barcode);
 	}
 
 	/**
@@ -2099,7 +2099,7 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * Return an array with thirdparty information
 	 *
-	 * @param    int	$rowid      Id of third party to load (Use 0 to get a specimen record, use null to use other search criteria)
+	 * @param    ?int	$rowid      Id of third party to load (Use 0 to get a specimen record, use null to use other search criteria)
 	 * @param    string	$ref        Reference of third party, name (Warning, this can return several records)
 	 * @param    string	$ref_ext    External reference of third party (Warning, this information is a free field not provided by Dolibarr)
 	 * @param    string	$barcode    Barcode of third party to load
@@ -2117,8 +2117,6 @@ class Thirdparties extends DolibarrApi
 	 */
 	private function _fetch($rowid, $ref = '', $ref_ext = '', $barcode = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '')
 	{
-		global $conf;
-
 		if (!DolibarrApiAccess::$user->hasRight('societe', 'lire')) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login.'. No read permission on thirdparties.');
 		}

@@ -39,7 +39,7 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonorder.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.ligne.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.orderline.class.php';
 require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 if (isModEnabled('productbatch')) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
@@ -3420,16 +3420,17 @@ class CommandeFournisseur extends CommonOrder
 			return '';
 		}
 
-		$obj = new ProductFournisseur($this->db);
+		$tmpproductfourn = new ProductFournisseur($this->db);
 
 		$nb = 0;
 		foreach ($this->lines as $line) {
 			if ($line->fk_product > 0) {
-				$idp = $obj->find_min_price_product_fournisseur($line->fk_product, $line->qty);
-				if ($idp) {
-					$obj->fetch($idp);
-					if ($obj->delivery_time_days > $nb) {
-						$nb = $obj->delivery_time_days;
+				// Load delivery_time_days, return id into product_fournisseur_price
+				$idp = $tmpproductfourn->find_min_price_product_fournisseur($line->fk_product, $line->qty, $this->thirdparty->id);
+				if ($idp > 0) {
+					//$tmpproductfourn->fetch_product_fournisseur_price($idp);
+					if ($tmpproductfourn->delivery_time_days > $nb) {
+						$nb = $tmpproductfourn->delivery_time_days;
 					}
 				}
 			}
@@ -3438,7 +3439,7 @@ class CommandeFournisseur extends CommonOrder
 		if ($nb === 0) {
 			return '';
 		} else {
-			return $nb.' '.$langs->trans('Days');
+			return $nb.' '.$langs->trans('days');
 		}
 	}
 
@@ -3632,7 +3633,7 @@ class CommandeFournisseur extends CommonOrder
 
 							//scan the array of results
 							foreach ($diff_array as $key => $value) {
-								//if the quantity delivered is greater or equal to wish quantity
+								//if the quantity delivered is greater or equal to wish quantity  @phan-suppress-next-line PhanTypeInvalidDimOffset
 								if ($qtydelivered[$key] >= $qtywished[$key]) {
 									$close++;
 								}

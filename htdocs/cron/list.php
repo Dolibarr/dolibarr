@@ -568,7 +568,7 @@ if ($num > 0) {
 		print '</td>';
 
 		// Label
-		print '<td class="minwidth125">';
+		print '<td class="minwidth150">';
 		if (!empty($object->label)) {
 			$object->ref = $langs->trans($object->label);
 			print '<div class="small twolinesmax minwidth150 maxwidth250 classfortooltip" title="'.dol_escape_htmltag($langs->trans($object->label), 0, 0).'">';

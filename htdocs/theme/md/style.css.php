@@ -2091,6 +2091,7 @@ tr.nobottom td {
 .titlefieldcreate { width: 20%; }
 .titlefield       { /* width: 25%; */ min-width: 150px; width: 25%; }
 .titlefieldmiddle { width: 50%; }
+.titlefieldmax45 { max-width: 45%; min-width: 180px; }
 .imgmaxwidth180 { max-width: 180px; }
 .imgmaxheight50 { max-height: 50px; }
 
@@ -2128,6 +2129,7 @@ tr.nobottom td {
 /* Force values for small screen 1000 */
 @media only screen and (max-width: 1000px)
 {
+	.titlefieldmax45 { min-width: 100px; }
 	.maxwidthonsmartphone { max-width: 100px; }
 	.minwidth50imp  { min-width: 50px !important; }
 	.minwidth75imp  { min-width: 70px !important; }
@@ -2299,6 +2301,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	.maxwidth250onsmartphone { max-width: 250px; }
 	.maxwidth300onsmartphone { max-width: 300px; }
 	.maxwidth400onsmartphone { max-width: 400px; }
+	.minwidth150 { min-width: 110px !important; }
 	.minwidth50imp  { min-width: 50px !important; }
 	.minwidth75imp  { min-width: 75px !important; }
 	.minwidth100imp { min-width: 100px !important; }
@@ -3494,7 +3497,7 @@ div.login a:hover {
 	text-decoration:underline;
 }
 div.login_block_user, div.login_block_other { clear: both; }
-div.login_block_other { padding-top: 15px; }
+div.login_block_other, div.login_block_tools { padding-top: 15px; }
 
 .topnav div.login_block_user {
 	display: inline-block;
@@ -5321,7 +5324,7 @@ div.titre {
 }
 
 table.notopnoleftnoright.table-fiche-title {
-	margin-bottom: 14px;
+	margin-bottom: 15px;
 }
 .fichehalfleft table.table-fiche-title, .fichehalfright table.table-fiche-title {
 	margin-bottom: 8px;
@@ -5330,6 +5333,9 @@ table.notopnoleftnoright.table-fiche-title {
 
 table.table-fiche-title .col-title div.titre, .col-center .btnTitle-icon, .col-right .btnTitle-icon {
 	line-height: 40px;
+}
+table.table-fiche-title .col-title div.titre span {
+	line-height: normal;
 }
 
 div.backgreypublicpayment {
@@ -8283,6 +8289,10 @@ table.jPicker {
 	div.login_block {
 		border-right: 1px solid rgba(0,0,0,0.3);
 	}
+	div.login_block_other, div.login_block_tools {
+		display: inline-block;
+	}
+
 	.loginbuttonexternal {
 		width: 260px;
 	}

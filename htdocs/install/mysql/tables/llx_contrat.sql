@@ -49,7 +49,7 @@ create table llx_contrat
   total_ht					double(24,8)     DEFAULT 0,		-- total without tax
   total_ttc					double(24,8)     DEFAULT 0,		-- total with tax
 
-  denormalized_lower_planned_end_date datetime,
+  denormalized_lower_planned_end_date datetime,             -- DENORMALIZED FIELD to store end date of last subscription
 
   signed_status        		smallint DEFAULT NULL,          -- signed status NULL, 0 or 1
   online_sign_ip			varchar(48),

@@ -292,7 +292,9 @@ a.btnTitle.btnTitleSelected {
 	display: block;
 }
 
-div.pagination li:first-child a.btnTitle, div.pagination li.paginationafterarrows a.btnTitle {
+div.pagination li:first-child a.btnTitle, div.pagination li.paginationafterarrows a.btnTitle,
+table.table-fiche-title tr.titre td.col-center div.nowraponall a.btnTitle,
+table.table-fiche-title tr.titre td.col-right a.btnTitle {
 	margin-<?php echo $left; ?>: 10px;
 }
 

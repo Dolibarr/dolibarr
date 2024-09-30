@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017-2019  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -104,7 +105,7 @@ foreach ($object->fields as $key => $val) {
 	} else {
 		if ($key == 'lang') {
 			print img_picto('', 'language', 'class="pictofixedwidth"');
-			print $formadmin->select_language($value, $key, 0, null, 1, 0, 0, 'minwidth300', 2);
+			print $formadmin->select_language($value, $key, 0, array(), 1, 0, 0, 'minwidth300', 2);
 		} else {
 			print $object->showInputField($val, $key, $value, '', '', '', 0);
 		}

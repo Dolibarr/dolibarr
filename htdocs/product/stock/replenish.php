@@ -201,7 +201,7 @@ if ($action == 'order' && GETPOST('valid') && $user->hasRight('fournisseur', 'co
 						// If we use multicurrency
 						if (isModEnabled('multicurrency') && !empty($productsupplier->fourn_multicurrency_code) && $productsupplier->fourn_multicurrency_code != $conf->currency) {
 							$line->multicurrency_code = $productsupplier->fourn_multicurrency_code;
-							$line->fk_multicurrency = $productsupplier->fourn_multicurrency_id;
+							$line->fk_multicurrency = (int) $productsupplier->fourn_multicurrency_id;
 							$line->multicurrency_subprice = $productsupplier->fourn_multicurrency_unitprice;
 						}
 

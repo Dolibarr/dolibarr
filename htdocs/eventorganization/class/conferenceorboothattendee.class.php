@@ -293,6 +293,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 
 		// Clear fields
 		if (property_exists($object, 'ref')) {
+			// @phan-suppress-next-line PhanTypeInvalidDimOffset
 			$object->ref = empty($this->fields['ref']['default']) ? "(PROV)" : $this->fields['ref']['default'];
 		}
 		if (property_exists($object, 'label')) {

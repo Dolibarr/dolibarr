@@ -210,7 +210,7 @@ repos:
           - -x
           - dev/tools/codespell/codespell-lines-ignore.txt
         exclude_types: [image]
-        exclude: (?x)^(.phan/stubs/.*)$
+        exclude: (?x)^(.phan/stubs/.*|phpstan\.neon.*)$
         additional_dependencies: [tomli]
       - alias: codespell-lang-en_US
         # Only for translations with specialised exceptions

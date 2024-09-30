@@ -831,7 +831,7 @@ if (!empty($date_start) && !empty($date_stop)) {
 			} elseif ($data['item'] == 'ExpenseReport') {
 				$expensereport->id = $data['id'];
 				$expensereport->ref = $data['ref'];
-				print $expensereport->getNomUrl(1, 0, 0, '', 0, 0);
+				print $expensereport->getNomUrl(1, 0, 0, 0, 0, 0);
 			} elseif ($data['item'] == 'SalaryPayment') {
 				$salary_payment->id = $data['id'];
 				$salary_payment->ref = $data['ref'];

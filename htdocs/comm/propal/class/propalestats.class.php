@@ -42,12 +42,34 @@ class PropaleStats extends Stats
 	 */
 	public $table_element;
 
+	/**
+	 * @var int ID
+	 */
 	public $socid;
+
+	/**
+	 * @var int ID
+	 */
 	public $userid;
 
+	/**
+	 * @var string sql from
+	 */
 	public $from;
+
+	/**
+	 * @var string sql fields
+	 */
 	public $field;
+
+	/**
+	 * @var string sql where
+	 */
 	public $where;
+
+	/**
+	 * @var string sql join
+	 */
 	public $join;
 
 

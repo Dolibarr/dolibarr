@@ -2085,7 +2085,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 		print '<td class="right">'.$langs->trans("MinPrice").' '.$langs->trans("HT").'</td>';
 		print '<td class="right">'.$langs->trans("MinPrice").' '.$langs->trans("TTC").'</td>';
 		print '<td class="right">'.$langs->trans("PriceLabel").'</td>';
-		print '<td class="right">'.$langs->trans("ChangedBy").'</td>';
+		print '<td>'.$langs->trans("ChangedBy").'</td>';
 		print '<td></td>';
 		print '</tr>';
 
@@ -2231,7 +2231,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 				$userstatic = new User($db);
 				$userstatic->fetch($line->fk_user);
 				// @TODO Add a cache on $users object
-				print '<td class="right">';
+				print '<td>';
 				print $userstatic->getNomUrl(-1, '', 0, 0, 24, 0, 'login');
 				print '</td>';
 
@@ -2351,7 +2351,7 @@ if ((!getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || $action == 'showlog_defau
 			print '<td class="right">'.$langs->trans("MinPrice").' '.$langs->trans("HT").'</td>';
 			print '<td class="right">'.$langs->trans("MinPrice").' '.$langs->trans("TTC").'</td>';
 			print '<td class="right">'.$langs->trans("Label").'</td>';
-			print '<td class="right">'.$langs->trans("ChangedBy").'</td>';
+			print '<td>'.$langs->trans("ChangedBy").'</td>';
 			if ($user->hasRight('produit', 'supprimer')) {
 				print '<td class="right">&nbsp;</td>';
 			}
@@ -2486,11 +2486,11 @@ if ((!getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || $action == 'showlog_defau
 				print '</td>';
 
 				// User
-				print '<td class="right">';
+				print '<td>';
 				if ($objp->user_id > 0) {
 					$userstatic = new User($db);
 					$userstatic->fetch($objp->user_id);
-					print $userstatic->getNomUrl(1, '', 0, 0, 24, 0, 'login');
+					print $userstatic->getNomUrl(-1, '', 0, 0, 24, 0, 'login');
 				}
 				print '</td>';
 

@@ -255,7 +255,7 @@ class FichinterRec extends Fichinter
 						$fichintsrc->lines[$i]->remise_percent,
 						'HT',
 						0,
-						'',
+						0,
 						0,
 						$fichintsrc->lines[$i]->product_type,
 						$fichintsrc->lines[$i]->special_code,

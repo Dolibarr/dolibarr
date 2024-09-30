@@ -637,6 +637,7 @@ print $hookmanager->resPrint;
 
 $key = 'nb_of_values';
 if (!empty($arrayfields[$key]['checked'])) {
+	// @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print getTitleFieldOfList($arrayfields[$key]['label'], 0, $_SERVER['PHP_SELF'], $key, '', $param, 'class="center"', $sortfield, $sortorder, 'center ')."\n";
 	$totalarray['nbfield']++;
 }

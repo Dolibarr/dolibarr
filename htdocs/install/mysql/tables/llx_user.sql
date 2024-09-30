@@ -103,11 +103,11 @@ create table llx_user
   thm                     double(24,8),
   tjm                     double(24,8),
 
-  salary                  double(24,8),                       -- denormalized value coming from llx_user_employment
-  salaryextra             double(24,8),                       -- denormalized value coming from llx_user_employment
-  dateemployment          date,                               -- denormalized value coming from llx_user_employment
-  dateemploymentend       date,                               -- denormalized value coming from llx_user_employment
-  weeklyhours             double(16,8),                       -- denormalized value coming from llx_user_employment
+  salary                  double(24,8),                       -- DENORMALIZED FIELD. Value coming from llx_user_employment
+  salaryextra             double(24,8),                       -- DENORMALIZED FIELD. Value coming from llx_user_employment
+  dateemployment          date,                               -- DENORMALIZED FIELD. Value coming from llx_user_employment
+  dateemploymentend       date,                               -- DENORMALIZED FIELD. Value coming from llx_user_employment
+  weeklyhours             double(16,8),                       -- DENORMALIZED FIELD. Value coming from llx_user_employment
 
   import_key             varchar(14),                         -- import key
   default_range          integer,
