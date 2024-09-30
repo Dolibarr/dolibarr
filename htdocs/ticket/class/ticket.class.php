@@ -1706,8 +1706,10 @@ class Ticket extends CommonObject
 
 		if ($this->status != self::STATUS_CANCELED) { // no closed
 			$this->oldcopy = dol_clone($this, 2);
-
 			$this->db->begin();
+
+			$oldStatus = $this->fk_statut;
+			$this->fk_statut = Ticket::STATUS_READ;
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."ticket";
 			$sql .= " SET fk_statut = ".Ticket::STATUS_READ.", date_read = '".$this->db->idate(dol_now())."'";
@@ -1723,6 +1725,7 @@ class Ticket extends CommonObject
 					// Call trigger
 					$result = $this->call_trigger('TICKET_MODIFY', $user);
 					if ($result < 0) {
+						$this->fk_statut = $oldStatus;
 						$error++;
 					}
 					// End call triggers
@@ -1732,12 +1735,14 @@ class Ticket extends CommonObject
 					$this->db->commit();
 					return 1;
 				} else {
+					$this->fk_statut = $oldStatus;
 					$this->db->rollback();
 					$this->error = implode(',', $this->errors);
 					dol_syslog(get_class($this)."::markAsRead ".$this->error, LOG_ERR);
 					return -1;
 				}
 			} else {
+				$this->fk_statut = $oldStatus;
 				$this->db->rollback();
 				$this->error = $this->db->lasterror();
 				dol_syslog(get_class($this)."::markAsRead ".$this->error, LOG_ERR);
