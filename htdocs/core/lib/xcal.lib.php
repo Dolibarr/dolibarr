@@ -403,7 +403,7 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 						if ($tmpimage) {
 							if (strpos($tmpimage, '/') === 0) {				// If $tmpimage is an absolute path
 								$tmpevent['image'] = $GLOBALS['website']->virtualhost.$tmpimage;
-							} elseif (stripos($tmpimage, 'http:') === 0) {	// If $tmpimage is a full URI
+							} elseif (stripos($tmpimage, 'http') === 0) {	// If $tmpimage is a full URI
 								$tmpevent['image'] = $tmpimage;
 							} else {
 								$tmpevent['image'] = $GLOBALS['website']->virtualhost.'/medias/'.$tmpimage;
