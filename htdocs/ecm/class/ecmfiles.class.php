@@ -613,7 +613,7 @@ class EcmFiles extends CommonObject
 			$num = $this->db->num_rows($resql);
 
 			while ($obj = $this->db->fetch_object($resql)) {
-				$line = new EcmFilesLine();
+				$line = new EcmFilesLine($this->db);
 
 				$line->id = $obj->rowid;
 				$line->ref = $obj->rowid;
@@ -1002,7 +1002,7 @@ class EcmFiles extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
-		global $conf, $user;
+		global $user;
 
 		$this->id = 0;
 		$this->specimen = 1;
@@ -1065,6 +1065,9 @@ class EcmFilesLine extends CommonObjectLine
 	 */
 	public $description;
 
+	/**
+	 * @var string keywords
+	 */
 	public $keywords;
 	public $cover;
 
