@@ -2823,8 +2823,14 @@ class TaskLine extends CommonObjectLine
 	public $thirdparty_name;
 	public $thirdparty_email;
 
-	public $fk_project;
+	/**
+	 * @var string Ref project
+	 */
 	public $project_ref;
+
+	/**
+	 * @var string Label project
+	 */
 	public $project_label;
 	public $public;
 
