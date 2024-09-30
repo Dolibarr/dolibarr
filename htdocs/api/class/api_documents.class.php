@@ -662,6 +662,8 @@ class Documents extends DolibarrApi
 	 * @param   string  $fileencoding       	File encoding (''=no encoding, 'base64'=Base 64)
 	 * @param   int 	$overwriteifexists  	Overwrite file if exists (1 by default)
 	 * @param   int 	$createdirifnotexists  	Create subdirectories if the doesn't exists (1 by default)
+	 * @param   int     $position               Position
+	 * @param   array   $array_options          array of options
 	 * @return  string
 	 *
 	 * @url POST /upload
@@ -671,7 +673,7 @@ class Documents extends DolibarrApi
 	 * @throws	RestException	404		Object not found
 	 * @throws	RestException	500		Error on file operationw
 	 */
-	public function post($filename, $modulepart, $ref = '', $subdir = '', $filecontent = '', $fileencoding = '', $overwriteifexists = 0, $createdirifnotexists = 1)
+	public function post($filename, $modulepart, $ref = '', $subdir = '', $filecontent = '', $fileencoding = '', $overwriteifexists = 0, $createdirifnotexists = 1, $position = 0, $array_options = [])
 	{
 		global $conf;
 
@@ -938,6 +940,12 @@ class Documents extends DolibarrApi
 		if (!empty($object) && is_object($object) && $object->id > 0) {
 			$moreinfo['src_object_type'] = $object->table_element;
 			$moreinfo['src_object_id'] = $object->id;
+		}
+		if (!empty($array_options)) {
+			$moreinfo = array_merge($moreinfo, ["array_options" => $array_options]);
+		}
+		if (!empty($position)) {
+			$moreinfo = array_merge($moreinfo, ["position" => $position]);
 		}
 
 		// Move the temporary file at its final emplacement
