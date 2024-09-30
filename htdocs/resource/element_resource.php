@@ -4,6 +4,7 @@
  * Copyright (C) 2019		Josep Lluís Amador	<joseplluis@lliuretic.cat>
  * Copyright (C) 2021-2024	Frédéric France		<frederic.france@free.fr>
  * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -286,7 +287,7 @@ if (empty($reshook)) {
 	}
 }
 
-$parameters = array('resource_id'=>$resource_id);
+$parameters = array('resource_id' => $resource_id);
 $reshook = $hookmanager->executeHooks('getElementResources', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -331,6 +332,7 @@ if (!$ret) {
 
 		$act = fetchObjectByElement($element_id, $element, $element_ref);
 		if (is_object($act)) {
+			'@phan-var-force ActionComm $act';
 			$head = actions_prepare_head($act);
 
 			print dol_get_fiche_head($head, 'resources', $langs->trans("Action"), -1, 'action');
@@ -459,7 +461,7 @@ if (!$ret) {
 			$listofuserid = array();
 			if (empty($donotclearsession)) {
 				if ($act->userownerid > 0) {
-					$listofuserid[$act->userownerid] = array('id'=>$act->userownerid, 'transparency'=>$act->transparency); // Owner first
+					$listofuserid[$act->userownerid] = array('id' => $act->userownerid, 'transparency' => $act->transparency); // Owner first
 				}
 				if (!empty($act->userassigned)) {	// Now concat assigned users
 					// Restore array with key with same value than param 'id'
@@ -502,6 +504,7 @@ if (!$ret) {
 	if (($element_id || $element_ref) && $element == 'societe') {
 		$socstatic = fetchObjectByElement($element_id, $element, $element_ref);
 		if (is_object($socstatic)) {
+			'@phan-var-force Societe $socstatic';
 			$savobject = $object;
 			$object = $socstatic;
 
@@ -554,8 +557,8 @@ if (!$ret) {
 			// Ref customer
 			//$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $fichinter->ref_client, $fichinter, $user->rights->ficheinter->creer, 'string', '', 0, 1);
 			//$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $fichinter->ref_client, $fichinter, $user->rights->ficheinter->creer, 'string', '', null, null, '', 1);
-			$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $fichinter->ref_client, $fichinter, 0, 'string', '', 0, 1);
-			$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $fichinter->ref_client, $fichinter, 0, 'string', '', null, null, '', 1);
+			$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $fichinter->ref_client, $fichinter, 0, 'string', '', 0, 1);
+			$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $fichinter->ref_client, $fichinter, 0, 'string', '', null, null, '', 1);
 			// Thirdparty
 			$morehtmlref .= '<br>'.$fichinter->thirdparty->getNomUrl(1, 'customer');
 			// Project
@@ -613,7 +616,7 @@ if (!$ret) {
 
 
 	// hook for other elements linked
-	$parameters = array('element'=>$element, 'element_id'=>$element_id, 'element_ref'=>$element_ref);
+	$parameters = array('element' => $element, 'element_id' => $element_id, 'element_ref' => $element_ref);
 	$reshook = $hookmanager->executeHooks('printElementTab', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 	if ($reshook < 0) {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');

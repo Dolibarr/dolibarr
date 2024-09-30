@@ -43,6 +43,15 @@ if (empty($objectclass) || empty($uploaddir)) {
 	exit;
 }
 
+'
+@phan-var-force string $massaction
+@phan-var-force string $objectclass
+@phan-var-force ?string $diroutputmassaction
+@phan-var-force ?string $uploaddir
+@phan-var-force string[] $toselect
+@phan-var-force array<string,mixed> $parameters
+';
+
 // Mass actions. Controls on number of lines checked.
 $maxformassaction = (!getDolGlobalString('MAIN_LIMIT_FOR_MASS_ACTIONS') ? 1000 : $conf->global->MAIN_LIMIT_FOR_MASS_ACTIONS);
 if (!empty($massaction) && is_array($toselect) && count($toselect) < 1) {
@@ -93,6 +102,7 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 		}
 	}
 	'@phan-var-force CommonObject $objecttmp';
+	'@phan-var-force array<string,CommonObject> $listofselectedref';
 
 	// Check mandatory parameters
 	if (GETPOST('fromtype', 'alpha') === 'user' && empty($user->email)) {

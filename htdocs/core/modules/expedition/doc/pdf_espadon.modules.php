@@ -69,8 +69,17 @@ class pdf_espadon extends ModelePdfExpedition
 	 */
 	public $version = 'dolibarr';
 
+	/**
+	 * @var int|float
+	 */
 	public $posxweightvol;
+	/**
+	 * @var int|float
+	 */
 	public $posxqtytoship;
+	/**
+	 * @var int|float
+	 */
 	public $posxqtyordered;
 
 
@@ -865,7 +874,7 @@ class pdf_espadon extends ModelePdfExpedition
 			$totalVolumetoshow = showDimensionInBestUnit($totalVolume, 0, "volume", $outputlangs, -1, 'no', 1);
 		}
 		if (!empty($object->trueWeight)) {
-			$totalWeighttoshow = showDimensionInBestUnit($object->trueWeight, $object->weight_units, "weight", $outputlangs);
+			$totalWeighttoshow = showDimensionInBestUnit($object->trueWeight, (int) $object->weight_units, "weight", $outputlangs);
 		}
 		if (!empty($object->trueVolume)) {
 			if ($object->volume_units < 50) {
@@ -967,7 +976,7 @@ class pdf_espadon extends ModelePdfExpedition
 	 *
 	 *  @param	TCPDF		$pdf     		Object PDF
 	 *  @param  Expedition	$object     	Object to show
-	 *  @param  int	    	$showaddress    0=no, 1=yes
+	 *  @param  int<0,1>  	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @return	float|int                   Return topshift value
 	 */
@@ -1066,6 +1075,7 @@ class pdf_espadon extends ModelePdfExpedition
 
 			$classname = ucfirst($origin);
 			$linkedobject = new $classname($this->db);
+			'@phan-var-force Commande|Facture $linkedobject';
 			$result = $linkedobject->fetch($origin_id);
 			if ($result >= 0) {
 				//$linkedobject->fetchObjectLinked()   Get all linked object to the $linkedobject (commonly order) into $linkedobject->linkedObjects

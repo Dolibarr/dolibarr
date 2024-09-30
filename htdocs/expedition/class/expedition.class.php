@@ -100,6 +100,9 @@ class Expedition extends CommonObject
 	 */
 	public $fk_user_author;
 
+	/**
+	 * @var int
+	 */
 	public $socid;
 
 	/**
@@ -128,6 +131,9 @@ class Expedition extends CommonObject
 	 * @var string Tracking url
 	 */
 	public $tracking_url;
+	/**
+	 * @var int<0,1>
+	 */
 	public $billed;
 
 	/**
@@ -135,32 +141,76 @@ class Expedition extends CommonObject
 	 */
 	public $model_pdf;
 
+	/**
+	 * @var int|string
+	 */
 	public $trueWeight;
+	/**
+	 * @var int
+	 */
 	public $weight_units;
+	/**
+	 * @var int|string
+	 */
 	public $trueWidth;
+	/**
+	 * @var string
+	 */
 	public $width_units;
+	/**
+	 * @var int|string
+	 */
 	public $trueHeight;
+	/**
+	 * @var string
+	 */
 	public $height_units;
+	/**
+	 * @var int|string
+	 */
 	public $trueDepth;
+	/**
+	 * @var string
+	 */
 	public $depth_units;
-	// A denormalized value
+	/**
+	 * @var string A denormalized value
+	 */
 	public $trueSize;
 
+	/**
+	 * @var int
+	 */
 	public $livraison_id;
 
 	/**
-	 * @var double
+	 * @var float
 	 */
 	public $multicurrency_subprice;
 
+	/**
+	 * @var int|string
+	 */
 	public $size_units;
 
+	/**
+	 * @var int|string
+	 */
 	public $sizeH;
 
+	/**
+	 * @var int|string
+	 */
 	public $sizeS;
 
+	/**
+	 * @var int|string
+	 */
 	public $sizeW;
 
+	/**
+	 * @var int|string
+	 */
 	public $weight;
 
 	/**
@@ -169,13 +219,15 @@ class Expedition extends CommonObject
 	public $date_delivery;
 
 	/**
-	 * @deprecated
+	 * @var int|string
+	 * @deprecated Use $dateshipping
 	 * @see $date_shipping
 	 */
 	public $date;
 
 	/**
-	 * @deprecated
+	 * @var int|string
+	 * @deprecated Use $dateshipping
 	 * @see $date_shipping
 	 */
 	public $date_expedition;
@@ -191,7 +243,13 @@ class Expedition extends CommonObject
 	 */
 	public $date_valid;
 
+	/**
+	 * @var string[]
+	 */
 	public $meths;
+	/**
+	 * @var array<array<string,string>>
+	 */
 	public $listmeths; // List of carriers
 
 	/**
@@ -219,9 +277,21 @@ class Expedition extends CommonObject
 	 * @var string multicurrency code
 	 */
 	public $multicurrency_code;
+	/**
+	 * @var float
+	 */
 	public $multicurrency_tx;
+	/**
+	 * @var float
+	 */
 	public $multicurrency_total_ht;
+	/**
+	 * @var float
+	 */
 	public $multicurrency_total_tva;
+	/**
+	 * @var float
+	 */
 	public $multicurrency_total_ttc;
 
 	/**
@@ -506,7 +576,7 @@ class Expedition extends CommonObject
 	 * @param 	int		$origin_line_id		Id of source line
 	 * @param 	float	$qty				Quantity
 	 * @param 	int		$rang				Rang
-	 * @param	array	$array_options		extrafields array
+	 * @param	array<string,mixed>	$array_options		extrafields array
 	 * @return	int							Return integer <0 if KO, line_id if OK
 	 */
 	public function create_line($entrepot_id, $origin_line_id, $qty, $rang = 0, $array_options = [])
@@ -534,8 +604,8 @@ class Expedition extends CommonObject
 	/**
 	 * Create the detail of the expedition line. Create 1 record into expeditiondet for each warehouse and n record for each lot in this warehouse into expeditiondet_batch.
 	 *
-	 * @param 	object		$line_ext			Object with full information of line. $line_ext->detail_batch must be an array of ExpeditionLineBatch
-	 * @param	array		$array_options		extrafields array
+	 * @param 	ExpeditionLigne		$line_ext			Object with full information of line. $line_ext->detail_batch must be an array of ExpeditionLineBatch
+	 * @param	array<string,mixed>		$array_options		extrafields array
 	 * @return	int								Return integer <0 if KO, >0 if OK
 	 */
 	public function create_line_batch($line_ext, $array_options = [])
@@ -912,7 +982,7 @@ class Expedition extends CommonObject
 	 * @param 	int		$entrepot_id		Id of warehouse
 	 * @param 	int		$id					Id of source line (order line)
 	 * @param 	float	$qty				Quantity
-	 * @param	array	$array_options		extrafields array
+	 * @param	array<string,mixed>	$array_options		extrafields array
 	 * @return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function addline($entrepot_id, $id, $qty, $array_options = [])
@@ -995,8 +1065,8 @@ class Expedition extends CommonObject
 	/**
 	 * Add a shipment line with batch record
 	 *
-	 * @param 	array		$dbatch		Array of value (key 'detail' -> Array, key 'qty' total quantity for line, key ix_l : original line index)
-	 * @param	array		$array_options		extrafields array
+	 * @param 	array{detail:array<array{id_batch:int,q:int|float}>,qty:int|float,ix_l:int}	$dbatch		Array of value (key 'detail' -> Array, key 'qty' total quantity for line, key ix_l : original line index)
+	 * @param	array<string,mixed>		$array_options		extrafields array
 	 * @return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function addline_batch($dbatch, $array_options = [])
@@ -1064,9 +1134,9 @@ class Expedition extends CommonObject
 	/**
 	 *  Update database
 	 *
-	 *  @param	User	$user        	User that modify
-	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *  @return int 			       	Return integer <0 if KO, >0 if OK
+	 *  @param	User		$user        	User that modifies the record
+	 *  @param  int<0,1>	$notrigger	    0=launch triggers after, 1=disable triggers
+	 *  @return int 			  	     	Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
@@ -1118,7 +1188,7 @@ class Expedition extends CommonObject
 			$this->size_units = trim($this->size_units);
 		}
 		if (isset($this->weight_units)) {
-			$this->weight_units = trim($this->weight_units);
+			$this->weight_units = (int) $this->weight_units;
 		}
 		if (isset($this->trueWeight)) {
 			$this->weight = trim((string) $this->trueWeight);
@@ -2586,7 +2656,7 @@ class Expedition extends CommonObject
 	 *  @param      int			$hidedetails    Hide details of lines
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
-	 *  @param      null|array  $moreparams     Array to provide more information
+	 *  @param      ?array<string,mixed>	$moreparams     Array to provide more information
 	 *  @return     int         				0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
