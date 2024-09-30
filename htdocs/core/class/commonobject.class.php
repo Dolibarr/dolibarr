@@ -9378,7 +9378,6 @@ abstract class CommonObject
 	{
 		global $hookmanager;
 
-		$hookmanager->initHooks(array('commonobject'));
 		$parameters = array(
 			'origin_id' => $origin_id,
 			'dest_id' => $dest_id,
