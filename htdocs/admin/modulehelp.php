@@ -350,8 +350,6 @@ if ($mode == 'desc') {
 
 	$text .= '<br><span class="opacitymedium">'.$langs->trans("IdModule").':</span> '.$objMod->numero;
 
-	$text .= '<br><span class="opacitymedium">'.$langs->trans("Version").':</span> '.$version;
-
 	$textexternal = '';
 	if ($objMod->isCoreOrExternalModule() == 'external') {
 		$tmpdirofmoduletoshow = preg_replace('/^'.preg_quote(DOL_DOCUMENT_ROOT, '/').'/', '', (string) $dirofmodule);
@@ -381,8 +379,10 @@ if ($mode == 'desc') {
 		} elseif (!empty($objMod->enabled_bydefault)) {
 			$text .= ' &nbsp; <span class="italic opacitymedium">('.$langs->trans("EnabledByDefaultAtInstall").')</span>';
 		}
-		$text .= '<br>';
 	}
+
+	$text .= '<br><span class="opacitymedium">'.$langs->trans("Version").':</span> '.$version;
+
 	$text .= '<br>';
 
 	$moduledesclong = $objMod->getDescLong();

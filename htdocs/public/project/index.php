@@ -110,7 +110,7 @@ if (empty($conf->project->enabled)) {
  */
 function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
 {
-	global $user, $conf, $langs, $mysoc;
+	global $conf, $langs, $mysoc;
 
 	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss); // Show html headers
 
@@ -190,8 +190,6 @@ if (GETPOST('viewandvote')) {
 }
 
 
-
-
 /*
  * View
  */
@@ -209,7 +207,6 @@ $replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
 //llxHeader($head, $langs->trans("SuggestForm"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea);
 
 llxHeaderVierge($langs->trans("SuggestForm"));
-
 
 
 print '<span id="dolpaymentspan"></span>'."\n";
