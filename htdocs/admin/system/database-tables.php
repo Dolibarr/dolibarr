@@ -53,12 +53,17 @@ if ($action == 'convert') {	// Convert engine into innodb
 	$db->query($sql);
 }
 if ($action == 'convertutf8') {
-	$sql = "ALTER TABLE ".$db->sanitize($table)." CHARACTER SET utf8 COLLATE utf8_unicode_ci";	// Set the default value on table
+	$collation = 'utf8_unicode_ci';
+	$defaultcollation = $db->getDefaultCollationDatabase();
+	if (preg_match('/general/', $defaultcollation)) {
+		$collation = 'utf8_general_ci';
+	}
+	$sql = "ALTER TABLE ".$db->sanitize($table)." CHARACTER SET utf8 COLLATE ".$db->sanitize($collation);	// Set the default value on table
 	$resql1 = $db->query($sql);
 	if (!$resql1) {
 		setEventMessages($db->lasterror(), null, 'warnings');
 	} else {
-		$sql = "ALTER TABLE ".$db->sanitize($table)." CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci";	// Switch fields (may fails due to foreign key)
+		$sql = "ALTER TABLE ".$db->sanitize($table)." CONVERT TO CHARACTER SET utf8 COLLATE ".$db->sanitize($collation);	// Switch fields (may fails due to foreign key)
 		$resql2 = $db->query($sql);
 		if (!$resql2) {
 			setEventMessages($db->lasterror(), null, 'warnings');
@@ -66,12 +71,17 @@ if ($action == 'convertutf8') {
 	}
 }
 if ($action == 'convertutf8mb4') {
-	$sql = "ALTER TABLE ".$db->sanitize($table)." CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci";	// Set the default value on table
+	$collation = 'utf8mb4_unicode_ci';
+	$defaultcollation = $db->getDefaultCollationDatabase();
+	if (preg_match('/general/', $defaultcollation)) {
+		$collation = 'utf8mb4_general_ci';
+	}
+	$sql = "ALTER TABLE ".$db->sanitize($table)." CHARACTER SET utf8mb4 COLLATE ".$db->sanitize($collation);	// Set the default value on table
 	$resql1 = $db->query($sql);
 	if (!$resql1) {
 		setEventMessages($db->lasterror(), null, 'warnings');
 	} else {
-		$sql = "ALTER TABLE ".$db->sanitize($table)." CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci";	// Switch fields (may fails due to foreign key)
+		$sql = "ALTER TABLE ".$db->sanitize($table)." CONVERT TO CHARACTER SET utf8mb4 COLLATE ".$db->sanitize($collation);	// Switch fields (may fails due to foreign key)
 		$resql2 = $db->query($sql);
 		if (!$resql2) {
 			setEventMessages($db->lasterror(), null, 'warnings');
