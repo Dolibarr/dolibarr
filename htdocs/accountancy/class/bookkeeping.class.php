@@ -2431,7 +2431,7 @@ class BookKeeping extends CommonObject
 	}
 
 	/**
-	 * Generate label operation when operation is transfered into accounting
+	 * Generate label operation when operation is transferred into accounting
 	 *
 	 * @param 	string  $thirdpartyname         Thirdparty name
 	 * @param 	string  $reference              Reference of the element
