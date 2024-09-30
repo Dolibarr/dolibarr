@@ -59,6 +59,9 @@ class Holiday extends CommonObject
 	 */
 	public $fk_user;
 
+	/**
+	 * @var int|string
+	 */
 	public $date_create = '';
 
 	/**
@@ -161,9 +164,19 @@ class Holiday extends CommonObject
 	public $events = array();
 	public $logs = array();
 
+
+	/**
+	 * @var string
+	 */
 	public $optName = '';
+	/**
+	 * @var string
+	 */
 	public $optValue = '';
-	public $optRowid = '';
+	/**
+	 * @var int
+	 */
+	public $optRowid = 0;
 
 	/**
 	 * Draft status
@@ -204,7 +217,7 @@ class Holiday extends CommonObject
 	 *  Returns the reference to the following non used Order depending on the active numbering module
 	 *  defined into HOLIDAY_ADDON
 	 *
-	 *	@param	Societe		$objsoc     third party object
+	 *	@param	?Societe	$objsoc     third party object
 	 *  @return string      			Holiday free reference
 	 */
 	public function getNextNumRef($objsoc)
@@ -1826,7 +1839,7 @@ class Holiday extends CommonObject
 	 *	@param	boolean		$stringlist	    If true return a string list of id. If false, return an array with detail.
 	 *	@param	boolean		$type			If true, read Dolibarr user list, if false, return vacation balance list.
 	 *	@param	string		$filters        Filters. Warning: This must not contains data from user input.
-	 *	@return array{rowid:int,id:int,name:string,lastname:string,firstname:string,gender:string,status:string,employee:string,photo:string,fk_user:int,type?:int,nb_holiday?:int}|string|int<-1,-1>	Return an array
+	 *	@return array<array{rowid:int,id:int,name:string,lastname:string,firstname:string,gender:string,status:int,employee:string,photo:string,fk_user:int,type?:int,nb_holiday?:int}>|string|int<-1,-1>	Return an array
 	 */
 	public function fetchUsers($stringlist = true, $type = true, $filters = '')
 	{
@@ -1961,16 +1974,16 @@ class Holiday extends CommonObject
 					while ($i < $num) {
 						$obj = $this->db->fetch_object($resql);
 
-						$tab_result[$i]['rowid'] = $obj->rowid; // rowid of user
-						$tab_result[$i]['id'] = $obj->rowid; // id of user
+						$tab_result[$i]['rowid'] = (int) $obj->rowid; // rowid of user
+						$tab_result[$i]['id'] = (int) $obj->rowid; // id of user
 						$tab_result[$i]['name'] = $obj->lastname; // deprecated
 						$tab_result[$i]['lastname'] = $obj->lastname;
 						$tab_result[$i]['firstname'] = $obj->firstname;
 						$tab_result[$i]['gender'] = $obj->gender;
-						$tab_result[$i]['status'] = $obj->status;
+						$tab_result[$i]['status'] = (int) $obj->status;
 						$tab_result[$i]['employee'] = $obj->employee;
 						$tab_result[$i]['photo'] = $obj->photo;
-						$tab_result[$i]['fk_user'] = $obj->fk_user; // rowid of manager
+						$tab_result[$i]['fk_user'] = (int) $obj->fk_user; // rowid of manager
 						//$tab_result[$i]['type'] = $obj->type;
 						//$tab_result[$i]['nb_holiday'] = $obj->nb_holiday;
 
@@ -2037,7 +2050,7 @@ class Holiday extends CommonObject
 	 * Return list of people with permission to validate leave requests.
 	 * Search for permission "approve leave requests"
 	 *
-	 * @return  array|int       Array of user ids or -1 if error
+	 * @return  int[]|int<-1,-1>	Array of user ids or -1 if error
 	 */
 	public function fetch_users_approver_holiday()
 	{
@@ -2266,9 +2279,9 @@ class Holiday extends CommonObject
 	/**
 	 *  Return array with list of types
 	 *
-	 *  @param		int		$active		Status of type. -1 = Both
-	 *  @param		int		$affect		Filter on affect (a request will change sold or not). -1 = Both
-	 *  @return     array	    		Return array with list of types
+	 *  @param	int		$active		Status of type. -1 = Both
+	 *  @param	int		$affect		Filter on affect (a request will change sold or not). -1 = Both
+	 *	@return	array<int,array{id:int,rowid:int,code:string,label:string,affect:int,delay:int,newbymonth:int}>		Return array with list of types
 	 */
 	public function getTypes($active = -1, $affect = -1)
 	{

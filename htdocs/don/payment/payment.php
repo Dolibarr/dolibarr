@@ -44,12 +44,16 @@ if ($user->socid > 0) {
 
 $object = new Don($db);
 
+$permissiontoread = $user->hasRight('don', 'lire');
+$permissiontoadd = $user->hasRight('don', 'creer');
+$permissiontodelete = $user->hasRight('don', 'supprimer');
+
 
 /*
  * Actions
  */
 
-if ($action == 'add_payment') {
+if ($action == 'add_payment' && $permissiontoadd) {
 	$error = 0;
 
 	if ($cancel) {
