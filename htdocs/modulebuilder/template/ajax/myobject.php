@@ -60,7 +60,7 @@ $objectId = GETPOST('objectId', 'aZ09');
 $field = GETPOST('field', 'aZ09');
 $value = GETPOST('value', 'aZ09');
 
-$object = new myobject($db);
+$object = new Myobject($db);
 
 // Security check
 if (!$user->hasRight('mymodule', 'myobject', 'write')) {
@@ -77,7 +77,7 @@ top_httphead();
 
 // Update the object field with the new value
 if ($objectId && $field && isset($value)) {
-	$object->fetch($object_id);
+	$object->fetch($objectId);
 	if ($object->id > 0) {
 		$object->$field = $value;
 	}
