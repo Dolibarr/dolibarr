@@ -112,7 +112,7 @@ function first_execution() {
 function check_events() {
 	var result = 0;
 	dolnotif_nb_test_for_page += 1;
-	var methodfornotification = '<?php print getDolUserString('AGENDA_NOTIFICATION_METHOD', getDolGlobalString('AGENDA_NOTIFICATION_METHOD', 'jnotify')); ?>';
+	var methodfornotification = '<?php print getDolUserString('AGENDA_NOTIFICATION_METHOD', getDolGlobalString('AGENDA_NOTIFICATION_METHOD', 'jsnotification')); ?>';
 
 	permissionok = 0;
 	if (methodfornotification == "jsnotification" && Notification.permission == "granted") {
