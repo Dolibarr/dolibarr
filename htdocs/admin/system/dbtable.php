@@ -5,6 +5,7 @@
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,7 +64,7 @@ if ($action == 'convertutf8') {
 				}
 
 				$sql = "ALTER TABLE ".$db->sanitize($table)." MODIFY ".$db->sanitize($row[0])." ".$row[1]." COLLATE ".$db->sanitize($collation);	// We must not sanitize the $row[1]
-				$reslq2 = $db->query($sql);
+				$resql2 = $db->query($sql);
 				if (!$resql2) {
 					setEventMessages($db->lasterror(), null, 'warnings');
 				}
