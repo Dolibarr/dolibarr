@@ -60,6 +60,7 @@ $objectId = GETPOST('objectId', 'aZ09');
 $field = GETPOST('field', 'aZ09');
 $value = GETPOST('value', 'aZ09');
 
+// @phan-suppress-next-line PhanUndeclaredClass
 $object = new Myobject($db);
 
 // Security check
