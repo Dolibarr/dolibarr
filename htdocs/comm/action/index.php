@@ -136,6 +136,9 @@ if (GETPOST('search_actioncode', 'array:aZ09')) {
 } else {
 	$actioncode = GETPOST("search_actioncode", "alpha", 3) ? GETPOST("search_actioncode", "alpha", 3) : (GETPOST("search_actioncode") == '0' ? '0' : ((!getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE') || $disabledefaultvalues) ? '' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE')));
 }
+if (is_scalar($actioncode) && $actioncode == '-1') {
+	$actioncode = '';
+}
 
 if ($status == '' && !GETPOSTISSET('search_status')) {
 	$status = ((!getDolGlobalString('AGENDA_DEFAULT_FILTER_STATUS') || $disabledefaultvalues) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_STATUS);
