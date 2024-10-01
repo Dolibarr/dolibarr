@@ -99,6 +99,28 @@ if ($cancel) {
 	exit;
 }
 
+
+/*
+ * View
+ */
+
+$form = new Form($db);
+$user_assign = new User($db);
+$user_create = new User($db);
+$formTicket = new FormTicket($db);
+
+if (!getDolGlobalString('TICKET_ENABLE_PUBLIC_INTERFACE')) {
+	print '<div class="error">'.$langs->trans('TicketPublicInterfaceForbidden').'</div>';
+	$db->close();
+	exit();
+}
+
+$arrayofjs = array();
+$arrayofcss = array(getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', '/public/ticket/').'css/styles.css.php');
+
+llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
+
+// Load the ticket from track_id
 if ($action == "view_ticketlist") {
 	$error = 0;
 	$display_ticket_list = false;
@@ -167,31 +189,11 @@ if ($action == "view_ticketlist") {
 		}
 	}
 
-	if ($error || $errors) {
+	if ($error) {
 		setEventMessages($object->error, $object->errors, 'errors');
 		$action = '';
 	}
 }
-
-/*
- * View
- */
-
-$form = new Form($db);
-$user_assign = new User($db);
-$user_create = new User($db);
-$formTicket = new FormTicket($db);
-
-if (!getDolGlobalString('TICKET_ENABLE_PUBLIC_INTERFACE')) {
-	print '<div class="error">'.$langs->trans('TicketPublicInterfaceForbidden').'</div>';
-	$db->close();
-	exit();
-}
-
-$arrayofjs = array();
-$arrayofcss = array(getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', '/public/ticket/').'css/styles.css.php');
-
-llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
 
 
 if ($action == "view_ticketlist") {

@@ -1137,6 +1137,12 @@ function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
 					if (!empty($moreinfo) && !empty($moreinfo['src_object_id'])) {
 						$ecmfile->src_object_id = $moreinfo['src_object_id'];
 					}
+					if (!empty($moreinfo) && !empty($moreinfo['position'])) {
+						$ecmfile->position = $moreinfo['position'];
+					}
+					if (!empty($moreinfo) && !empty($moreinfo['cover'])) {
+						$ecmfile->cover = $moreinfo['cover'];
+					}
 
 					$resultecm = $ecmfile->create($user);
 					if ($resultecm < 0) {

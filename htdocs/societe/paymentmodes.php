@@ -1739,7 +1739,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 			// Show online signature link
 			if (!getDolGlobalInt('SOCIETE_DISABLE_BANKACCOUNT') && getDolGlobalInt("SOCIETE_RIB_ALLOW_ONLINESIGN")) {
-				print '<td class="width200">';
+				print '<td class="minwidth200 width200">';
 				$useonlinesignature = 1;
 				if ($useonlinesignature) {
 					require_once DOL_DOCUMENT_ROOT . '/core/lib/signature.lib.php';

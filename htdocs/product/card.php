@@ -1365,6 +1365,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '<script type="text/javascript">';
 			print '$(document).ready(function () {
                         $("#selectcountry_id").change(function() {
+							console.log("selectcountry_id change");
                         	document.formprod.action.value="create";
                         	document.formprod.submit();
                         });

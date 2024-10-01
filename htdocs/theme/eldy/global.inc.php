@@ -3499,7 +3499,7 @@ div.vmenu, td.vmenu {
 
 .vmenu {
 	width: <?php echo $leftmenuwidth; ?>px;
-	margin-left: 6px;
+	margin-left: 8px;
 	<?php if (GETPOST('optioncss', 'aZ09') == 'print') { ?>
 	display: none;
 	<?php } ?>
@@ -3593,10 +3593,23 @@ div.blockvmenusearchphone
 {
 	margin: 0 0 8px 2px;
 }
-.vmenu div.blockvmenusearch
-{
-	padding-bottom: 13px;
+.vmenu div.blockvmenusearch {
+	margin-top: 5px;
+	margin-bottom: 15px;
 }
+/*
+.vmenu div.blockvmenusearch {
+	border: 1px solid #888;
+	padding-top: 8px;
+	padding-bottom: 8px;
+	padding-left: 0;
+	padding-right: 0;
+	border-radius: 6px;
+	box-sizing: border-box;
+	margin-left: 3px;
+	margin-left: 3px;
+}
+*/
 .vmenu div.blockvmenuend
 {
 	padding-bottom: 5px;
@@ -5446,7 +5459,11 @@ div#card-errors {
 	border: 1px solid #e0e0e0;
 	border-radius: 6px;
 }
-
+.ui-dialog {
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-top: 10px;
+}
 
 /* ============================================================================== */
 /* For content of image preview                                                   */
@@ -6910,7 +6927,7 @@ input.select2-input {
 .select2-dropdown {
 	/*background-color: var(--colorbackvmenu1);
 	border: 1px solid var(--colorbackvmenu1); */
-	box-shadow: 1px 2px 10px var(--colorbackvmenu1);
+	box-shadow: 1px 2px 10px #8884;
 	background-color: var(--colorbackbody);
 	color: var(--colortext);
 }
@@ -7078,9 +7095,14 @@ span#select2-boxbookmark-container {
   cursor: text;
   overflow: hidden;
 }
-
-ul.select2-results__options li {
-	font-size: 0.95em;
+.select2-results__option {
+	padding: 8px;
+}
+span.select2-dropdown--below {
+	margin-top: -1px;
+}
+span.select2-dropdown--above {
+	margin-bottom: -1px;
 }
 
 .parentonrightofpage {

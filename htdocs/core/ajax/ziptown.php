@@ -143,7 +143,7 @@ if (GETPOST('zipcode') || GETPOST('town')) {
 	top_httphead('text/html');
 
 	$formcompany = new FormCompany($db);
-	print $formcompany->select_state(GETPOSTINT('selected', 1), GETPOSTINT('country_codeid', 1), GETPOSTINT('htmlname', 1), GETPOSTINT('morecss', 1));
+	print $formcompany->select_state(GETPOSTINT('selected', 1), GETPOSTINT('country_codeid', 1), GETPOST('htmlname', 'alpha', 1), GETPOST('morecss', 'alpha', 1));
 }
 
 $db->close();

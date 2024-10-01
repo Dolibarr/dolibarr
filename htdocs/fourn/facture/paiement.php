@@ -110,6 +110,7 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 
 $arrayfields = array();
 
+$permissiontoadd = ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"));
 
 
 /*
@@ -148,7 +149,7 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	if ($action == 'add_paiement' || ($action == 'confirm_paiement' && $confirm == 'yes')) {
+	if (($action == 'add_paiement' || ($action == 'confirm_paiement' && $confirm == 'yes')) && $permissiontoadd) {
 		$error = 0;
 
 		$datepaye = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
