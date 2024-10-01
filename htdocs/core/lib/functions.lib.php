@@ -12291,6 +12291,34 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 
 	// If $url is an array, we must build a dropdown button or recursively iterate over each value
 	if (is_array($url)) {
+		// An anonymous function to complette dropdown url
+		$completeUrl = function ($url) use ($params) {
+			if (empty($url)) {
+				return '';
+			}
+
+			$parsedUrl = parse_url($url);
+			if (isset($parsedUrl['scheme']) && $parsedUrl['scheme'] === 'javascript') {
+				return $url;
+			}
+
+			if (!empty($parsedUrl['query'])) {
+				// Use parse_str() function to parse the string passed via URL
+				parse_str($parsedUrl['query'], $urlQuery);
+				if (!isset($urlQuery['backtopage']) && isset($params['backtopage'])) {
+					$url.= '&amp;backtopage='.urlencode($params['backtopage']);
+				}
+			}
+
+			// TODO : this is a first fix of button behavior : external module will needs to use http:// or https:// prefix on there Urls
+			if (!isset($parsedUrl['scheme'])) {
+				$url = DOL_URL_ROOT.$url;
+			}
+
+			return $url;
+		};
+
+
 		// Loop on $url array to remove entries of disabled modules
 		foreach ($url as $key => $subbutton) {
 			if (isset($subbutton['enabled']) && empty($subbutton['enabled'])) {
@@ -12311,12 +12339,14 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 				$tmpUrl = DOL_URL_ROOT.$button['url'].(empty($params['backtopage']) ? '' : '&amp;backtopage='.urlencode($params['backtopage']));
 				$id = $button['id'] ?? '';
 				$userRight = $button['perm'] ?? 1;
-				$params = $button['params'] ?? [];
+				$button['params'] = $button['params'] ?? [];
 
-				$out .= dolGetButtonAction($label, $text, $actionType, $tmpUrl, $id, $userRight, $params);
+				$out .= dolGetButtonAction($label, $text, $actionType, $tmpUrl, $id, $userRight, $button['params']);
 			}
 			return $out;
 		}
+
+
 
 		if (count($url) > 1) {
 			$out .= '<div class="dropdown inline-block dropdown-holder">';
@@ -12326,8 +12356,12 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 				if (!empty($subbutton['lang'])) {
 					$langs->load($subbutton['lang']);
 				}
-				$tmpurl = DOL_URL_ROOT.$subbutton['url'].(empty($params['backtopage']) ? '' : '&amp;backtopage='.urlencode($params['backtopage']));
-				$out .= dolGetButtonAction('', $langs->trans($subbutton['label']), 'default', $tmpurl, '', $subbutton['perm'], array('isDropDown' => true));
+
+				if (!isset($subbutton['params'])) {
+					$subbutton['params'] = array();
+				}
+				$subbutton['params']['isDropdown'] = true;
+				$out .= dolGetButtonAction('', $langs->trans($subbutton['label']), 'default', $completeUrl($subbutton['url']), $subbutton['id'] ?? '', $subbutton['perm'], $subbutton['params']);
 			}
 			$out .= "</div>";
 			$out .= "</div>";
@@ -12336,8 +12370,7 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 				if (!empty($subbutton['lang'])) {
 					$langs->load($subbutton['lang']);
 				}
-				$tmpurl = DOL_URL_ROOT.$subbutton['url'].(empty($params['backtopage']) ? '' : '&amp;backtopage='.urlencode($params['backtopage']));
-				$out .= dolGetButtonAction('', $langs->trans($subbutton['label']), 'default', $tmpurl, '', $subbutton['perm']);
+				$out .= dolGetButtonAction('', $langs->trans($subbutton['label']), 'default', $completeUrl($subbutton['url']), '', $subbutton['perm']);
 			}
 		}
 
@@ -12345,7 +12378,6 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 	}
 
 	// Here, $url is a simple link
-
 	if (!empty($params['isDropdown'])) {
 		$class = "dropdown-item";
 	} else {
