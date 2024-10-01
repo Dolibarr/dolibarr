@@ -1625,8 +1625,6 @@ if ($dirins && $action == 'initobject' && $module && $objectname && $user->hasRi
 				'htdocs/modulebuilder/template/' => strtolower($modulename),
 				'myobject' => strtolower($objectname),
 				'MyObject' => $objectname,
-				'Myobject' => ucfirst($objectname),
-				'// @phan-suppress-next-line PhanUndeclaredClass' => '',
 				//'MYOBJECT' => strtoupper($objectname),
 				'---Replace with your own copyright and developer email---' => getLicenceHeader($user, $langs, $now)
 			);
