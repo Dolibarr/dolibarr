@@ -286,7 +286,7 @@ if (!getDolGlobalString('AGENDA_DISABLE_EXT')) {
 }
 
 // Define list of external calendars (user setup)
-if (empty($user->conf->AGENDA_DISABLE_EXT)) {
+if (!getDolUserString('AGENDA_DISABLE_EXT')) {
 	$i = 0;
 	while ($i < $MAXAGENDA) {
 		$i++;
