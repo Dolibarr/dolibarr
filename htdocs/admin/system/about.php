@@ -65,7 +65,7 @@ print '<div class="divsection wordwrap">';
 print '<div class="float paddingright">'.img_picto_common('', 'dolibarr_box.png', 'height="100"').'</div>';
 print $langs->trans("DolibarrLicense").' : ';
 print '<ul><li>';
-print '<a href="https://www.gnu.org/copyleft/gpl.html">GNU-GPL v3+</a></li>';
+print '<a href="https://www.gnu.org/copyleft/gpl.html" target="_blank">GNU-GPL v3+</a></li>';
 print '</li></ul>';
 print'</div>';
 
