@@ -979,7 +979,7 @@ class FormWebPortal extends Form
 	 * Return HTML string to show a field into a page
 	 *
 	 * @param CommonObject $object Common object
-	 * @param array $val Array of properties of field to show
+	 * @param array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$val	Array of properties of field to show
 	 * @param string $key Key of attribute
 	 * @param string|string[] $value Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
 	 * @param string $moreparam To add more parameters on html input tag
@@ -1219,7 +1219,7 @@ class FormWebPortal extends Form
 				dol_syslog(__METHOD__ . ' error ' . $this->db->lasterror(), LOG_WARNING);
 			}
 		} elseif ($type == 'radio') {
-			$value = $param['options'][$value];
+			$value = (string) $param['options'][$value];
 		} elseif ($type == 'checkbox') {
 			$value_arr = explode(',', $value);
 			$value = '';

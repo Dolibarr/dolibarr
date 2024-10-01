@@ -21,6 +21,7 @@ thoose->those
 # fiche->card
 nempty->an empty, empty, not empty,
 mot de passe->password
+multicurreny->multicurrency
 not de passe->password
 nothtml->nohtml
 shippin->shipping

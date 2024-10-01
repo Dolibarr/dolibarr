@@ -128,6 +128,10 @@ $result = restrictedArea($user, 'expedition', $object->id, '');
 $permissiondellink = $user->hasRight('expedition', 'delivery', 'creer'); // Used by the include of actions_dellink.inc.php
 $permissiontoadd = $user->hasRight('expedition', 'creer');
 
+$editColspan = 0;
+$objectsrc = null;
+$typeobject = null;
+
 
 /*
  * Actions
@@ -249,7 +253,7 @@ if (empty($reshook)) {
 		// We will loop on each line of the original document to complete the shipping object with various info and quantity to deliver
 		$classname = ucfirst($object->origin);
 		$objectsrc = new $classname($db);
-		'@phan-var-force Facture|Commande $object';
+		'@phan-var-force Facture|Commande $objectsrc';
 		$objectsrc->fetch($object->origin_id);
 
 		$object->socid = $objectsrc->socid;

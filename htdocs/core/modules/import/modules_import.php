@@ -302,7 +302,7 @@ class ModeleImports
 	/**
 	 *  Return picto of import driver
 	 *
-	 *	@param	int	$key	Key
+	 *	@param	string	$key	Key
 	 *	@return	string
 	 */
 	public function getPictoForKey($key)

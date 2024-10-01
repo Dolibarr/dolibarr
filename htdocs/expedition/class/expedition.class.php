@@ -1075,6 +1075,7 @@ class Expedition extends CommonObject
 		global $conf, $langs;
 
 		$num = count($this->lines);
+		$linebatch = null;
 		if ($dbatch['qty'] > 0 || ($dbatch['qty'] == 0 && getDolGlobalString('SHIPMENT_GETS_ALL_ORDER_PRODUCTS'))) {
 			$line = new ExpeditionLigne($this->db);
 			$tab = array();
@@ -1113,7 +1114,9 @@ class Expedition extends CommonObject
 					//var_dump($linebatch);
 				}
 			}
-			$line->entrepot_id = $linebatch->entrepot_id;
+			if (is_object($linebatch)) {
+				$line->entrepot_id = $linebatch->entrepot_id;
+			}
 			$line->origin_line_id = $dbatch['ix_l']; // deprecated
 			$line->fk_elementdet = $dbatch['ix_l'];
 			$line->qty = $dbatch['qty'];
@@ -1160,7 +1163,8 @@ class Expedition extends CommonObject
 		if (isset($this->fk_user_author)) {
 			$this->fk_user_author = (int) $this->fk_user_author;
 		}
-		if (isset($this->fk_user_valid)) {
+		if (isset($this->fk_user_valid)) { // @phan-ignore-current-line PhanUndeclaredProperty
+			// If set, then accept @phan-ignore-next-line PhanUndeclaredProperty
 			$this->fk_user_valid = (int) $this->fk_user_valid;
 		}
 		if (isset($this->fk_delivery_address)) {
@@ -1402,12 +1406,14 @@ class Expedition extends CommonObject
 					if ($this->db->query($sql)) {
 						if (!empty($this->origin) && $this->origin_id > 0) {
 							$this->fetch_origin();
-							if ($this->origin_object->statut == Commande::STATUS_SHIPMENTONPROCESS) {     // If order source of shipment is "shipment in progress"
+							$origin_object = $this->origin_object;
+							'@phan-var-force Facture|Commande $origin_object';
+							if ($origin_object->statut == Commande::STATUS_SHIPMENTONPROCESS) {     // If order source of shipment is "shipment in progress"
 								// Check if there is no more shipment. If not, we can move back status of order to "validated" instead of "shipment in progress"
-								$this->origin_object->loadExpeditions();
+								$origin_object->loadExpeditions();
 								//var_dump($this->$origin->expeditions);exit;
-								if (count($this->origin_object->expeditions) <= 0) {
-									$this->origin_object->setStatut(Commande::STATUS_VALIDATED);
+								if (count($origin_object->expeditions) <= 0) {
+									$origin_object->setStatut(Commande::STATUS_VALIDATED);
 								}
 							}
 						}
@@ -1603,12 +1609,14 @@ class Expedition extends CommonObject
 					if ($this->db->query($sql)) {
 						if (!empty($this->origin) && $this->origin_id > 0) {
 							$this->fetch_origin();
-							if ($this->origin_object->statut == Commande::STATUS_SHIPMENTONPROCESS) {     // If order source of shipment is "shipment in progress"
+							$origin_object = $this->origin_object;
+							'@phan-var-force Facture|Commande $origin_object';
+							if ($origin_object->statut == Commande::STATUS_SHIPMENTONPROCESS) {     // If order source of shipment is "shipment in progress"
 								// Check if there is no more shipment. If not, we can move back status of order to "validated" instead of "shipment in progress"
-								$this->origin_object->loadExpeditions();
+								$origin_object->loadExpeditions();
 								//var_dump($this->$origin->expeditions);exit;
-								if (count($this->origin_object->expeditions) <= 0) {
-									$this->origin_object->setStatut(Commande::STATUS_VALIDATED);
+								if (count($origin_object->expeditions) <= 0) {
+									$origin_object->setStatut(Commande::STATUS_VALIDATED);
 								}
 							}
 						}
