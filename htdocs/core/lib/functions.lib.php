@@ -12309,9 +12309,9 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 				$text = $button['text'] ?? '';
 				$actionType = $button['actionType'] ?? '';
 				$tmpUrl = DOL_URL_ROOT.$button['url'].(empty($params['backtopage']) ? '' : '&amp;backtopage='.urlencode($params['backtopage']));
-				$id = $button['$id'] ?? '';
+				$id = $button['id'] ?? '';
 				$userRight = $button['perm'] ?? 1;
-				$params = $button['$params'] ?? [];
+				$params = $button['params'] ?? [];
 
 				$out .= dolGetButtonAction($label, $text, $actionType, $tmpUrl, $id, $userRight, $params);
 			}
