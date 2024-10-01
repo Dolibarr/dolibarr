@@ -107,7 +107,7 @@ class DoliStorage implements TokenStorageInterface
 
 		//var_dump("storeAccessToken");
 		//var_dump($token);
-		dol_syslog("storeAccessToken service=".$service);
+		dol_syslog(__METHOD__." storeAccessToken service=".$service);
 
 		$servicepluskeyforprovider = $service;
 		if (!empty($this->keyforprovider)) {
