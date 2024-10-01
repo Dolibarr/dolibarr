@@ -745,7 +745,7 @@ function createInvoiceFromOrder($authentication, $id_order = '', $ref_order = ''
  * Update an invoice, only change the state of an invoice
  *
  * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}	$authentication		Array of authentication information
- * @param	array{id:string,ref:string,ref_ext:string,status?:string}			$invoice			Invoice
+ * @param	array{id:string,ref:string,ref_ext:string,status?:string,close_code?:int,close_note?:int}	$invoice			Invoice
  * @return	array{result:array{result_code:string,result_label:string},id?:int,ref?:string,ref_ext?:string}	Array result
  */
 function updateInvoice($authentication, $invoice)

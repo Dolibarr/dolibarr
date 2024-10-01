@@ -1097,6 +1097,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 	}
 	// print '<td>'.$langs->trans("Project").'</td>';
 	if (!empty($arrayfields['t.ref']['checked'])) {
+		// @phan-suppress-next-line PhanTypeInvalidDimOffset
 		print_liste_field_titre($arrayfields['t.ref']['label'], $_SERVER["PHP_SELF"], 't.ref', '', $param, '', $sortfield, $sortorder, '');
 	}
 	if (!empty($arrayfields['t.label']['checked'])) {

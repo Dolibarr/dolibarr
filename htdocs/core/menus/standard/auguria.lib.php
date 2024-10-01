@@ -83,9 +83,9 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 		$showmode = dol_auguria_showmenu($type_user, $newTabMenu[$i], $listofmodulesforexternal);
 		if ($showmode == 1) {
 			$newTabMenu[$i]['url'] = make_substitutions($newTabMenu[$i]['url'], $substitarray);
-
 			// url = url from host, shorturl = relative path into dolibarr sources
 			$url = $shorturl = $newTabMenu[$i]['url'];
+
 			if (!preg_match("/^(http:\/\/|https:\/\/)/i", $newTabMenu[$i]['url'])) {	// Do not change url content for external links
 				$tmp = explode('?', $newTabMenu[$i]['url'], 2);
 				$url = $shorturl = $tmp[0];
@@ -109,6 +109,9 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 				}
 			}
 
+			// Phan issue #4881 requires that we reforce the type
+			'@phan-var-force array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,prefix:string}> $newTabMenu';
+
 			// TODO Find a generic solution
 			if (preg_match('/search_project_user=__search_project_user__/', $shorturl)) {
 				$search_project_user = GETPOSTINT('search_project_user');
@@ -118,6 +121,9 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 					$shorturl = preg_replace('/search_project_user=__search_project_user__/', '', $shorturl);
 				}
 			}
+
+			// Phan issue #4881 requires that we reforce the type
+			'@phan-var-force array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,prefix:string}> $newTabMenu';
 
 			// Define the class (top menu selected or not)
 			if (!empty($_SESSION['idmenu']) && $newTabMenu[$i]['rowid'] == $_SESSION['idmenu']) {
@@ -690,7 +696,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
  * Function to test if an entry is enabled or not
  *
  * @param	int		$type_user					0=We need backoffice menu, 1=We need frontoffice menu
- * @param	array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level:int,prefix:string}	$menuentry	Array for menu entry
+ * @param	array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level:int,prefix:string,module:string}	$menuentry	Array for menu entry
  * @param	string[]	$listofmodulesforexternal	Array with list of modules allowed to external users
  * @return	int<0,2>								0=Hide, 1=Show, 2=Show gray
  */

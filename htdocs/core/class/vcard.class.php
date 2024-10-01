@@ -67,7 +67,7 @@ function dol_quoted_printable_encode($input, $line_max = 76)
 			} elseif (($dec == 61) || ($dec < 32) || ($dec > 126)) { // always encode "\t", which is *not* required
 				$h2 = floor($dec / 16);
 				$h1 = floor($dec % 16);
-				$c = $escape.$hex["$h2"].$hex["$h1"];
+				$c = $escape.$hex[(int) $h2].$hex[(int) $h1];
 			}
 			if ((strlen($newline) + strlen($c)) >= $line_max) { // CRLF is not counted
 				$output .= $newline.$escape.$eol; // soft line break; " =\r\n" is okay
@@ -90,7 +90,7 @@ function dol_quoted_printable_encode($input, $line_max = 76)
 class vCard
 {
 	/**
-	 * @var array array of properties
+	 * @var array<string,?string> array of properties
 	 */
 	public $properties;
 
@@ -388,8 +388,8 @@ class vCard
 	 * Return a VCARD string
 	 * See RFC https://datatracker.ietf.org/doc/html/rfc6350
 	 *
-	 * @param	Object			$object		Object (User or Contact)
-	 * @param	Societe|null	$company	Company. May be null.
+	 * @param	User|Contact	$object		Object (User or Contact)
+	 * @param	?Societe		$company	Company. May be null.
 	 * @param	Translate		$langs		Lang object
 	 * @param	string			$urlphoto	Full public URL of photo
 	 * @param	string			$outdir		Directory where to store the temporary file

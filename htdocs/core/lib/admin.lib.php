@@ -861,6 +861,11 @@ function security_prepare_head()
 	$head[$h][2] = 'misc';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT."/admin/security_captcha.php";
+	$head[$h][1] = $langs->trans("Captcha");
+	$head[$h][2] = 'captcha';
+	$h++;
+
 	$head[$h][0] = DOL_URL_ROOT."/admin/security.php";
 	$head[$h][1] = $langs->trans("Passwords");
 	$head[$h][2] = 'passwords';
@@ -2085,6 +2090,11 @@ function company_admin_prepare_head()
 	$head[$h][2] = 'company';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT."/admin/company_socialnetworks.php";
+	$head[$h][1] = $langs->trans("SocialNetworksInformation");
+	$head[$h][2] = 'socialnetworks';
+
+	$h++;
 	$head[$h][0] = DOL_URL_ROOT."/admin/openinghours.php";
 	$head[$h][1] = $langs->trans("OpeningHours");
 	$head[$h][2] = 'openinghours';
@@ -2093,11 +2103,6 @@ function company_admin_prepare_head()
 	$head[$h][0] = DOL_URL_ROOT."/admin/accountant.php";
 	$head[$h][1] = $langs->trans("Accountant");
 	$head[$h][2] = 'accountant';
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT."/admin/company_socialnetworks.php";
-	$head[$h][1] = $langs->trans("SocialNetworksInformation");
-	$head[$h][2] = 'socialnetworks';
 	$h++;
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'mycompany_admin', 'add');

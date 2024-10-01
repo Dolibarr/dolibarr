@@ -51,17 +51,17 @@ class Dolresource extends CommonObject
 	public $picto = 'resource';
 
 	/**
-	 * @var string description
+	 * @var string 		Description
 	 */
 	public $description;
 
 	/**
-	 * @var string telephone number
+	 * @var string		Phone number
 	 */
 	public $phone;
 
 	/**
-	 * @var int Maximum users
+	 * @var int|null 	Maximum users
 	 */
 	public $max_users;
 
@@ -337,11 +337,11 @@ class Dolresource extends CommonObject
 	/**
 	 * Update object in database
 	 *
-	 * @param	User|null	$user		User that modifies
-	 * @param	int			$notrigger	0=launch triggers after, 1=disable triggers
+	 * @param	?User		$user		User that modifies
+	 * @param	int<0,1>	$notrigger	0=launch triggers after, 1=disable triggers
 	 * @return	int						if KO: <0 || if OK: >0
 	 */
-	public function update(User $user = null, int $notrigger = 0)
+	public function update($user = null, int $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error = 0;
@@ -374,9 +374,6 @@ class Dolresource extends CommonObject
 		}
 		if (isset($this->email)) {
 			$this->email = trim($this->email);
-		}
-		if (!is_numeric($this->max_users)) {
-			$this->max_users = 0;
 		}
 		if (isset($this->url)) {
 			$this->url = trim($this->url);
@@ -715,11 +712,11 @@ class Dolresource extends CommonObject
 	/**
 	 * Update element resource in database
 	 *
-	 * @param	User|null	$user		User that modifies
-	 * @param	int			$notrigger	0=launch triggers after, 1=disable triggers
+	 * @param	?User		$user		User that modifies
+	 * @param	int<0,1>	$notrigger	0=launch triggers after, 1=disable triggers
 	 * @return	int						if KO: <0 || if OK: >0
 	 */
-	public function updateElementResource(User $user = null, int $notrigger = 0)
+	public function updateElementResource($user = null, int $notrigger = 0)
 	{
 		$error = 0;
 		$this->date_modification = dol_now();

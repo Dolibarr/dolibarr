@@ -896,7 +896,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if (!empty($socid)) {
 				print '<tr><td>'.$langs->trans("ContactByDefaultFor").'</td>';
 				print '<td colspan="3">';
-				$contactType = $object->listeTypeContacts('external', '', 1);
+				$contactType = $object->listeTypeContacts('external', 0, 1);
 				print img_picto('', 'contact', 'class="pictofixedwidth"').$form->multiselectarray('roles', $contactType, array(), 0, 0, '', 0, '90%');
 				print '</td></tr>';
 			}

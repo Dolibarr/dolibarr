@@ -31,7 +31,7 @@
 /**
  *  Return an array with timezone values
  *
- *  @return     array<int,string>   Array with timezone values
+ *  @return     array<int<-11,13>,string>   Array with timezone values
  */
 function get_tz_array()
 {
@@ -478,7 +478,7 @@ function dol_stringtotime($string, $gm = 1)
  *  @param      int			$day     	Day
  *  @param      int			$month   	Month
  *  @param      int			$year    	Year
- *  @return     array   				Previous year,month,day
+ *  @return     array{year:int,month:int,day:int}	Previous year,month,day
  */
 function dol_get_prev_day($day, $month, $year)
 {
@@ -494,7 +494,7 @@ function dol_get_prev_day($day, $month, $year)
  *  @param      int			$day    	Day
  *  @param      int			$month  	Month
  *  @param      int			$year   	Year
- *  @return     array   				Next year,month,day
+ *  @return     array{year:int,month:int,day:int}	Next year,month,day
  */
 function dol_get_next_day($day, $month, $year)
 {
@@ -509,7 +509,7 @@ function dol_get_next_day($day, $month, $year)
  *
  *	@param		int			$month		Month
  *	@param		int			$year		Year
- *	@return		array					Previous year,month
+ *	@return		array{year:int,month:int}	Previous year,month
  */
 function dol_get_prev_month($month, $year)
 {
@@ -528,7 +528,7 @@ function dol_get_prev_month($month, $year)
  *
  *	@param		int			$month		Month
  *	@param		int			$year		Year
- *	@return		array					Next year,month
+ *	@return		array{year:int,month:int}	Next year,month
  */
 function dol_get_next_month($month, $year)
 {
@@ -549,7 +549,7 @@ function dol_get_next_month($month, $year)
  *  @param      int			$week    	Week
  *  @param      int			$month   	Month
  *	@param		int			$year		Year
- *	@return		array					Previous year,month,day
+ *	@return		array{year:int,month:int,day:int}	Previous year,month,day
  */
 function dol_get_prev_week($day, $week, $month, $year)
 {
@@ -568,7 +568,7 @@ function dol_get_prev_week($day, $week, $month, $year)
  *  @param      int			$week    	Week
  *  @param      int			$month   	Month
  *	@param		int			$year		Year
- *	@return		array					Next year,month,day
+ *	@return		array{year:int,month:int,day:int}		Next year,month,day
  */
 function dol_get_next_week($day, $week, $month, $year)
 {
@@ -663,9 +663,9 @@ function dol_get_first_hour($date, $gm = 'tzserver')
  *	@param		int		$day		Day
  * 	@param		int		$month		Month
  *  @param		int		$year		Year
- * 	@param		bool|int|string	$gm	False or 0 or 'tzserver' = Return date to compare with server TZ,
- * 									True or 1 or 'gmt' to compare with GMT date.
- *	@return		array				year,month,week,first_day,first_month,first_year,prev_day,prev_month,prev_year
+ * 	@param		bool|int|'tzserver'	$gm	False or 0 or 'tzserver' = Return date to compare with server TZ,
+ *                                      True or 1 or 'gmt' to compare with GMT date.
+ *	@return	array{year:int,month:int,week:string,first_day:int,first_month:int,first_year:int,prev_year:int,prev_month:int,prev_day:int}
  */
 function dol_get_first_day_week($day, $month, $year, $gm = false)
 {

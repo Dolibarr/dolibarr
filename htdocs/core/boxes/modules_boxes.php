@@ -52,12 +52,12 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 	public $param;
 
 	/**
-	 * @var array box info heads. Example: array('text' => $langs->trans("BoxScheduledJobs", $max), 'nbcol' => 4);
+	 * @var array<array{text:string,nbcol?:int,limit?:int,graph?:int<0,1>,sublink?:string,subtext?:string,picto?:string,target?:string,td?:string}>|array{text:string,nbcol?:int,limit?:int,graph?:int<0,1>,sublink?:string,subtext?:string,picto?:string,target?:string,td?:string} box info heads. Example: array('text' => $langs->trans("BoxScheduledJobs", $max), 'nbcol' => 4);
 	 */
 	public $info_box_head = array();
 
 	/**
-	 * @var array box info content
+	 * @var array<array<array{td?:string,text:string,asis?:int<0,1>,maxlength?:int}>>|array<array{td?:string,text:string,asis?:int<0,1>,maxlength?:int}> box info content
 	 */
 	public $info_box_contents = array();
 
@@ -172,6 +172,22 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 		$this->db = $db;
 	}
 
+
+
+	/**
+	 *  Load data for box to show them later
+	 *
+	 *  @param	int		$max        Maximum number of records to load
+	 *  @return	void
+	 */
+	public function loadBox($max = 5)
+	{
+		// Must be implemented in derived classes
+		$msg = get_class($this)."::".__FUNCTION__." not implemented";
+		dol_syslog($msg, LOG_ERR);
+	}
+
+
 	/**
 	 * Return last error message
 	 *
@@ -224,8 +240,8 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 	/**
 	 * Standard method to show a box (usage by boxes not mandatory, a box can still use its own showBox function)
 	 *
-	 * @param   ?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}   $head       Array with properties of box title
-	 * @param   ?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>   $contents   Array with properties of box lines
+	 * @param   ?array<array{text?:string,sublink?:string,subtext?:string,subpicto?:?string,picto?:string,nbcol?:int,limit?:int,subclass?:string,graph?:int<0,1>,target?:string}>   $head       Array with properties of box title
+	 * @param   ?array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:int,asis?:int<0,1>}>   $contents   Array with properties of box lines
 	 * @param	int<0,1>	$nooutput	No print, only return string
 	 * @return  string
 	 */
@@ -284,7 +300,7 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 					//$out.= '<table summary="" class="nobordernopadding" width="100%"><tr><td class="tdoverflowmax150 maxwidth150onsmartphone">';
 					$out .= '<div class="tdoverflowmax400 maxwidth250onsmartphone float">';
 				}
-				if (!empty($head['text'])) {
+				if (!empty($head['text']) && !is_array($head['text'])) {
 					$s = dol_trunc($head['text'], isset($head['limit']) ? $head['limit'] : $MAXLENGTHBOX);
 					$out .= $s;
 				}
@@ -298,7 +314,7 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 					if (!empty($head['sublink'])) {
 						$sublink .= '<a href="'.$head['sublink'].'"'.(empty($head['target']) ? '' : ' target="'.$head['target'].'"').'>';
 					}
-					if (!empty($head['subpicto'])) {
+					if (!empty($head['subpicto']) && !is_array($head['subtext']) && !is_array($head['subpicto'])) {
 						$sublink .= img_picto($head['subtext'], $head['subpicto'], 'class="opacitymedium marginleftonly '.(empty($head['subclass']) ? '' : $head['subclass']).'" id="idsubimg'.$this->boxcode.'"');
 					}
 					if (!empty($head['sublink'])) {

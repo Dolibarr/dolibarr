@@ -784,7 +784,7 @@ class Reception extends CommonObject
 						// there are some difference between the two arrays
 						// scan the array of results
 						foreach ($diff_array as $key => $value) {
-							// if the quantity delivered is greater or equal to ordered quantity
+							// if the quantity delivered is greater or equal to ordered quantity @phan-suppress-next-line PhanTypeInvalidDimOffset
 							if ($qty_received[$key] >= $qty_wished[$key]) {
 								$close++;
 							}

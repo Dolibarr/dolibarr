@@ -475,7 +475,6 @@ ExtrafieldParamHelpselect=Die Liste der Werte muss aus Zeilen mit dem Format Sch
 ExtrafieldParamHelpcheckbox=Die Liste der Werte muss aus Zeilen mit dem Format Schlüssel, Wert bestehen (wobei Schlüssel nicht '0' sein darf) <br><br> zum Beispiel: <br> 1, value1 <br> 2, value2 <br> 3, value3 <br> ...
 ExtrafieldParamHelpradio=Die Liste der Werte muss aus Zeilen mit dem Format Schlüssel, Wert bestehen (wobei Schlüssel nicht '0' sein darf) <br><br> zum Beispiel: <br> 1, value1 <br> 2, value2 <br> 3, value3 <br> ...
 ExtrafieldParamHelpsellist=Liste von Werten aus einer Tabelle<br>Syntax: table_name:label_field:id_field::filtersql<br>Beispiel: c_typent:libelle:id::filtersql<br><br>- id_field ist notwendigerweise ein primärer int-Schlüssel<br>- filtersql ist eine Bedingung. Es muss die USF-Syntax verwendet werden. Beispiel: (aktiv:=:1) um nur aktive Werte zu zeigen<br>Sie können auch $ID$ im Filter verwenden, das die aktuelle ID des aktuellen Objekts ist<br>Wenn Sie nach Extrafeldern filtern möchten, verwenden Sie die Syntax extra.fieldcode=... (wobei fieldcode der Code des Extrafelds ist)<br><br>Wenn die Liste von einer anderen Liste mit komplementären Attributen abhängig ist:<br>c_typent:libelle:ID:options_<i>parent_list_code</i>|parent_column:filter <br><br>Um die Liste von einem anderen Liste abhängig zu machen:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
-ExtrafieldParamHelpchkbxlst=Liste von Werten stammt aus einer Tabelle<br>Syntax: table_name:label_field:id_field::filtersql<br>Beispiel: c_typent:libelle:ID::filtersql<br><br>Filter kann ein einfacher Test sein (z. B. active=1 um nur aktive Werte zu zeigen)<br>Sie können auch $ID$ im Filter verwenden, das ist die id des aktuellen Objekts<br>Um ein SELECT im Filter durchzuführen, verwenden Sie $SEL$<br>wenn Sie nach Extrafeldern filtern möchten, verwenden Sie die Syntax extra.fieldcode=... (wobei fieldcode der Code des Extrafelds ist)<br><br>Damit die Liste von einer anderen ergänzenden Attributliste abhängt:<br>c_typent:libelle:ID:options_<i>parent_list_code</i>|parent_column:filter <br><br>Um die Liste von einer anderen Liste abhängig zu machen:<br>c_typent:libelle:id:<i>übergeordneter_Listencode</i>|parent_column:filter
 ExtrafieldParamHelplink=Parameter müssen Objektname:Klassenpfad sein.<br> Syntax: ObjektName:Classpath
 ExtrafieldParamHelpSeparator=Für ein einfaches Trennzeichen leer lassen <br> Setzen Sie diesen Wert für ein ausblendendes Trennzeichen auf 1 (standardmäßig für eine neue Sitzung geöffnet, der Status wird für jede Benutzersitzung beibehalten) <br> Setzen Sie diesen Wert für ein ausblendendes Trennzeichen auf 2 (standardmäßig für ausgeblendet) neue Sitzung, dann bleibt der Status für jede Benutzersitzung erhalten)
 LibraryToBuildPDF=Bibliothek zum Erstellen von PDF-Dateien
@@ -514,17 +513,17 @@ ModuleCompanyCodeCustomerDigitaria=%s, gefolgt vom abgeschnittenen Kundennamen u
 ModuleCompanyCodeSupplierDigitaria=%s, gefolgt vom verkürzten Lieferantennamen und der Anzahl der Zeichen: %s für das Lieferantenbuchungskonto (Kreditorenkonto).
 Use3StepsApproval=Standardmäßig, Einkaufsaufträge müssen durch zwei unterschiedlichen Benutzer erstellt und freigegeben werden (ein Schritt/Benutzer zu erstellen und ein Schritt/Benutzer für die Freigabe). Beachten Sie wenn ein Benutzer beide Rechte hat - zum erstellen und freigeben, dann reicht ein Benutzer für diesen Vorgang. Optional können Sie ein zusätzlicher Schritt/User für die Freigabe einrichten, wenn der Betrag einen bestimmten dedizierten Wert übersteigt (wenn der Betrag übersteigt wird, werden 3 Stufen notwendig: 1=Validierung, 2=erste Freigabe und 3=Gegenfreigabe.<br>Lassen Sie den Feld leer wenn eine Freigabe (2 Schritte) ausreicht; Tragen Sie einen sehr niedrigen Wert (0.1) wenn eine zweite Freigabe notwendig ist.
 UseDoubleApproval=3-Stufen-Genehmigung durchführen, wenn der Betrag (ohne Steuern) höher ist als ...
-WarningPHPMail=NOTICE: The setup to send emails from the application is using the default generic setup (called "%s"). This choice needs no technical knowledge and no particular setup.<br>However, it is often better to setup outgoing emails to use the other method (called "%s") to use the email server of your Email Service Provider, instead of the default setup for several reasons:
+WarningPHPMail=HINWEIS: Die Konfiguration zum Senden von E-Mails aus dieser Anwendung verwendet die Standardeinstellung (bezeichnet als „%s“). Diese Auswahl erfordert keine technischen Kenntnisse und keine besonderen Konfigurationen.<br>Allerdings ist es oft besser, ausgehende E-Mails mit einer  anderen Methode (bezeichnet als "%s") zu versenden, um den E-Mail-Server Ihres E-Mail-Anbieters für den Versand zu verwenden, und zwar aus mehreren Gründen:
 WarningPHPMailA=- Die Verwendung des Server des E-Mail Leistung-Providers erhöht die Vertrauenswürdigkeit Ihres E-Mail und verbessert somit die Zustellbarkeit, ohne als SPAM gekennzeichnet zu werden.
-WarningPHPMailB=- If the domain of your email (the part mymaildomain.com into myname@mymaildomain.com) is protected by a SPF + a DMARC record, your email may be flagged as SPAM because your DMARC rule defined into DNS zone of the domain of the sender (mymaildomain.com) does not allow the sending as a generic sender. In such a case, you must disable the DMARC for the domain (or set it to p=none like done by @gmail.com) or, better, if you have the technical knowledge, use the other method to send emails using the SMTP server of your own email provider.
+WarningPHPMailB=- Wenn die Domain Ihrer E-Mail-Adresse (der Teil mymaildomain.com in myname@mymaildomain.com) durch einen SPF und einen DMARC-Eintrag geschützt ist, wird Ihr E-Mail möglicherweise als SPAM gekennzeichnet, da Ihre in der DNS-Zone der Domäne des Absenders (mymaildomain.com) definierte DMARC-Regel das Senden über generische Absender nicht zulässt. In einem solchen Fall müssen Sie DMARC für die Domäne deaktivieren (oder es auf p=none setzen, wie es bei @gmail.com der Fall ist) oder, besser noch, wenn Sie über die technischen Kenntnisse verfügen, die alternative Methode verwenden, um E-Mails über den SMTP-Server Ihres eigenen E-Mail-Anbieters zu senden.
 WarningPHPMailC=- Interessant ist auch die Verwendung des SMTP-Servers Ihres eigenen E-Mail-Dienstanbieters zum Senden von E-Mails, sodass alle von der Anwendung gesendeten E-Mails auch in dem Verzeichnis "Gesendet" Ihrer Mailbox gespeichert werden.
 WarningPHPMailD=Es wird daher empfohlen, die Versandart von E-Mails auf den Wert „SMTP“ zu ändern.
 WarningPHPMailDbis=Wenn Sie wirklich die standardmäßige "PHP"-Methode zum Senden von E-Mails beibehalten möchten, ignorieren Sie einfach diese Warnung oder entfernen Sie sie, indem Sie %shier klicken%s.
 WarningPHPMail2=Wenn Ihr E-Mail-SMTP-Anbieter den E-Mail-Client auf einige IP-Adressen beschränken muss (sehr selten), dann ist dies die IP-Adresse des Mail User Agent (MUA) für ihr Dolibarr-System: <strong>%s</strong>.
-WarningPHPMailSPF=If the domain name in your sender email address is protected by a SPF record (ask your domain name registar), you must add the following IPs or entry in the SPF record of the DNS of your domain: <strong>%s</strong>.
-WarningPHPMailSPFDMARC=If the domain name in your sender email address is protected by a DMARC record different than p=none (ask your domain name registar), you must remove your DMARC record, or set it to p=none like do @gmail.com) or use sending another method.
-SPFAndDMARCInformation=SPF and DMARC DNS record for main email addresses
-ActualMailDNSRecordFound=Actual %s record found (for email %s) : %s
+WarningPHPMailSPF=Wenn der Domänenname in Ihrer E-Mail-Absenderadresse durch einen SPF-Eintrag geschützt ist (fragen Sie Ihren Domain-Registrar), müssen Sie die folgende IP-Adressen oder Einträge im SPF-Eintrag des DNS Ihrer Domain hinzufügen: <strong>%s</strong>.
+WarningPHPMailSPFDMARC=Wenn der Domain-Name in Ihrer  E-Mail-Absenderadresse durch einen anderen DMARC-Eintrag als p=none geschützt ist (fragen Sie Ihren Domain-Registrar), müssen Sie Ihren DMARC-Eintrag entfernen oder ihn auf p=none setzen (z. B. @gmail.com) oder eine andere Sendemethode verwenden.
+SPFAndDMARCInformation=SPF und DMARC DNS-Eintrag für E-Mail-Hauptadresse
+ActualMailDNSRecordFound=Tatsächlich gefundener %s-Datensatz (für E-Mail %s): %s
 ClickToShowDescription=Klicke um die Beschreibung zu sehen
 DependsOn=Diese Modul benötigt folgenden Module
 RequiredBy=Diese Modul ist für folgende Module notwendig
@@ -2147,7 +2146,7 @@ COMPANY_DIGITARIA_CLEAN_REGEX=Regex-Filter zum Bereinigen des Werts (COMPANY_DIG
 DuplicateForbidden=Duplizieren nicht zulässig
 RemoveSpecialWords=Löschen Sie bestimmte Wörter, wenn Sie Buchungskonten für Kunden oder Lieferanten erstellen
 RemoveSpecialWordsHelp=Geben Sie die vor der Benennung des Kunden- oder Lieferantenkontos zu entfernenden Wörter an. Ein ";" zwischen jedem Wort verwenden.
-GDPRContact=Datenschutzbeauftragte(r)
+GDPRContact=Datenschutzbeauftragter (Data Protection Officer DPO, Datenschutz- oder DSGVO-Kontakt, …)
 GDPRContactDesc=Wenn Sie personenbezogene Daten in Ihrem Informationssystem speichern, können Sie hier den für die Datenschutz-Grundverordnung (DSGVO) zuständigen Ansprechpartner benennen
 HelpOnTooltip=Anzeigen des Hilfetextes im Tooltip
 HelpOnTooltipDesc=Fügen Sie hier Text oder einen Übersetzungsschlüssel ein, damit der Text in einer QuickInfo angezeigt wird, wenn dieses Feld in einem Formular angezeigt wird
@@ -2290,7 +2289,7 @@ THIRDPARTY_ALIAS=Name des Geschäftspartners - Alias des Geschäftspartners
 ALIAS_THIRDPARTY=Alias des Geschäftspartners – Name des Geschäftspartners
 PDFIn2Languages=Bezeichnungen im PDF in zwei verschiedenen Sprachen anzeigen (diese Funktion funktioniert möglicherweise bei einigen Sprachen nicht)
 PDF_USE_ALSO_LANGUAGE_CODE=Wenn Sie möchten, dass einige Texte in Ihrem PDF in 2 verschiedenen Sprachen in demselben generierten PDF dupliziert werden, müssen Sie hier diese zweite Sprache festlegen, damit das generierte PDF zwei verschiedene Sprachen auf derselben Seite enthält, die beim Generieren von PDF ausgewählte und diese (dies wird nur von wenigen PDF-Vorlagen unterstützt). Für 1 Sprache pro PDF leer halten.
-PDF_USE_A=PDF-Dokumente im Format PDF/A erstellen anstelle des Standardformats PDF
+PDF_USE_A=PDF-Dokumentenformat
 FafaIconSocialNetworksDesc=Geben Sie hier den Code für ein FontAwesome-Icon ein. Wenn Sie FontAwesome nicht kennen, können Sie den Standard 'fa-address-book' benutzen.
 RssNote=Hinweis: Jede RSS-Feed-Definition enthält ein Widget, das Sie aktivieren müssen, damit es im Dashboard verfügbar ist
 JumpToBoxes=Wechseln Sie zu Einstellungen -> Widgets
@@ -2555,3 +2554,8 @@ MenuDict=Dictionary
 AddMoreParams=Weitere Verbindungsparameter hinzufügen (Cookies, Tokens, ...)<br> Beispiel: token : value token
 ParamName=Name des Parameters
 ParamValue=Wert des Parameters
+ConfirmDeleteParamOfSocialNetwork=Sind Sie sicher, dass Sie diesen Parameter löschen wollen?
+HelpMariaDBToGetPossibleValues=Sie können eine Liste aller möglicher Werte abrufen, indem Sie den folgenden SQL-Befehl ausführen: %s
+Captcha=Captcha
+CaptchaDesc=Wenn Sie Ihre Anmeldeseite mit einem Captcha schützen möchten, können Sie hier auswählen, welches Sie verwenden möchten
+DolibarrStandardCaptcha=Ein natives Captcha, generiert von Dolibarr

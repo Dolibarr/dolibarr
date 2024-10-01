@@ -1207,8 +1207,7 @@ span.fa.fa-plus-circle.paddingleft {
 .fa-toggle-on, .fa-toggle-off, .size2x { font-size: 2em; }
 .websiteselectionsection .fa-toggle-on, .websiteselectionsection .fa-toggle-off,
 .asetresetmodule .fa-toggle-on, .asetresetmodule .fa-toggle-off,
-.tdwebsitesearchresult .fa-toggle-on, .tdwebsitesearchresult .fa-toggle-off
-{
+.tdwebsitesearchresult .fa-toggle-on, .tdwebsitesearchresult .fa-toggle-off {
 	font-size: 1.5em;
 	vertical-align: text-bottom;
 }
@@ -1899,7 +1898,7 @@ maxscreenheightless200 {
 .titlefieldcreate { width: 20%; }
 .titlefield       { /* width: 25%; */ min-width: 150px; width: 25%; }
 .titlefieldmiddle { width: 45%; }
-.titlefieldmax45 { max-width: 45%; }
+.titlefieldmax45 { max-width: 45%; min-width: 180px; }
 .imgmaxwidth180 { max-width: 180px; }
 .imgmaxheight50 { max-height: 50px; }
 
@@ -1937,6 +1936,7 @@ maxscreenheightless200 {
 /* Force values for small screen 1000 */
 @media only screen and (max-width: 1000px)
 {
+	.titlefieldmax45 { min-width: 100px; }
 	.maxwidthonsmartphone { max-width: 100px; }
 	.minwidth50imp  { min-width: 50px !important; }
 	.minwidth75imp  { min-width: 75px !important; }
@@ -2182,6 +2182,10 @@ datalist {
 
 	input.buttonpayment {
 		min-width: 300px;
+	}
+
+	.colorblack.totalnboflines {
+		margin-left: 4px !important;
 	}
 }
 
@@ -2478,9 +2482,6 @@ body.onlinepaymentbody div.fiche {	/* For online payment page */
 }
 div.fiche>table:first-child {
 	margin-bottom: 15px;
-}
-div.fiche>table.table-fiche-title {
-	margin-bottom: 12px;
 }
 div.fichecenter {
 	width: 100%;
@@ -3358,7 +3359,7 @@ div.login a:hover {
 .login_block_elem a span.atoplogin, .login_block_elem span.atoplogin {
 	vertical-align: middle;
 }
-div.login_block_user {
+div.login_block_tools, div.login_block_user {
 	display: inline-block;
 	vertical-align: middle;
 	line-height: <?php echo $disableimages ? '25' : '51'; ?>px;
@@ -3389,7 +3390,7 @@ div.login_block_other {
 .login_block_getinfo {
 	text-align: center;
 }
-.login_block_getinfo div.login_block_user {
+.login_block_getinfo div.login_block_tools, .login_block_getinfo div.login_block_user {
 	display: block;
 }
 .login_block_getinfo .atoplogin, .login_block_getinfo .atoplogin:hover {
@@ -3498,7 +3499,7 @@ div.vmenu, td.vmenu {
 
 .vmenu {
 	width: <?php echo $leftmenuwidth; ?>px;
-	margin-left: 6px;
+	margin-left: 8px;
 	<?php if (GETPOST('optioncss', 'aZ09') == 'print') { ?>
 	display: none;
 	<?php } ?>
@@ -3592,10 +3593,23 @@ div.blockvmenusearchphone
 {
 	margin: 0 0 8px 2px;
 }
-.vmenu div.blockvmenusearch
-{
-	padding-bottom: 13px;
+.vmenu div.blockvmenusearch {
+	margin-top: 5px;
+	margin-bottom: 15px;
 }
+/*
+.vmenu div.blockvmenusearch {
+	border: 1px solid #888;
+	padding-top: 8px;
+	padding-bottom: 8px;
+	padding-left: 0;
+	padding-right: 0;
+	border-radius: 6px;
+	box-sizing: border-box;
+	margin-left: 3px;
+	margin-left: 3px;
+}
+*/
 .vmenu div.blockvmenuend
 {
 	padding-bottom: 5px;
@@ -5312,8 +5326,11 @@ div.titre {
 table.table-fiche-title .col-title div.titre, .col-center .btnTitle-icon, .col-right .btnTitle-icon {
 	line-height: 40px;
 }
-table.table-fiche-title {
-	margin-bottom: 16px;
+table.table-fiche-title .col-title div.titre span {
+	line-height: normal;
+}
+table.table-fiche-title, div.fiche>table.table-fiche-title {
+	margin-bottom: 18px;
 }
 .fichehalfleft table.table-fiche-title, .fichehalfright table.table-fiche-title {
 	margin-bottom: 8px;
@@ -5442,7 +5459,11 @@ div#card-errors {
 	border: 1px solid #e0e0e0;
 	border-radius: 6px;
 }
-
+.ui-dialog {
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-top: 10px;
+}
 
 /* ============================================================================== */
 /* For content of image preview                                                   */
@@ -6906,7 +6927,7 @@ input.select2-input {
 .select2-dropdown {
 	/*background-color: var(--colorbackvmenu1);
 	border: 1px solid var(--colorbackvmenu1); */
-	box-shadow: 1px 2px 10px var(--colorbackvmenu1);
+	box-shadow: 1px 2px 10px #8884;
 	background-color: var(--colorbackbody);
 	color: var(--colortext);
 }
@@ -7074,9 +7095,14 @@ span#select2-boxbookmark-container {
   cursor: text;
   overflow: hidden;
 }
-
-ul.select2-results__options li {
-	font-size: 0.95em;
+.select2-results__option {
+	padding: 8px;
+}
+span.select2-dropdown--below {
+	margin-top: -1px;
+}
+span.select2-dropdown--above {
+	margin-bottom: -1px;
 }
 
 .parentonrightofpage {
@@ -8412,6 +8438,10 @@ table.jPicker {
 		min-width: 0;
 		width: 100%;
 	}
+	div.login_block_tools, div.login_block_user {
+		line-height: unset;
+		height: unset;
+	}
 	div.login_block a {
 		color: unset;
 	}
@@ -8444,7 +8474,8 @@ table.jPicker {
 	div.login_block_other {
 		margin-right: unset;
 	}
-	div.login_block_user, div.login_block_other { clear: both; }
+	div.login_block_tools, div.login_block_user, div.login_block_other { clear: both; }
+
 	.atoplogin, .atoplogin:hover
 	{
 		color:unset !important;

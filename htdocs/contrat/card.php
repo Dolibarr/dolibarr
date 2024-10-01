@@ -93,6 +93,8 @@ $hookmanager->initHooks(array('contractcard', 'globalcard'));
 $object = new Contrat($db);
 $extrafields = new ExtraFields($db);
 $ret = 0;
+$pu_ht = null;  // Init for static analysis
+$pu_ttc = null;  // Init for static analysis
 
 // Load object
 if ($id > 0 || !empty($ref) && $action != 'add') {
