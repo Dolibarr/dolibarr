@@ -66,4 +66,4 @@ ConfirmCloseAsk=Are you sure you want to cancel this recruitment candidature
 Recruitment=Recruitment
 ApplyJobCandidature=Apply for this job
 ErrorRecruitmmentCandidatureAlreadyExists= Recruitment candidature already exists with email %s
-RecruitementCandidatureSaved=Recruitement candidature successfully saved
+RecruitmentCandidatureSaved=Recruitement candidature successfully saved

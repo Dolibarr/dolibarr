@@ -183,7 +183,7 @@ if ($action == "dosubmit") {	// Test on permission not required here (anonymous 
 
 	if (!$error) {
 		$db->commit();
-		setEventMessages($langs->trans("RecruitementCandidatureSaved"), null);
+		setEventMessages($langs->trans("RecruitmentCandidatureSaved"), null);
 		header("Location: " . $backtopage);
 		exit;
 	} else {
