@@ -42,7 +42,6 @@ if (empty($keyforprovider) && !empty($_SESSION["oauthkeyforproviderbeforeoauthju
 }
 $genericstring = 'MICROSOFT';
 
-
 /**
  * Create a new instance of the URI class with the current URI, stripping the query string
  */
@@ -94,7 +93,8 @@ if ($action != 'delete' && empty($requestedpermissionsarray)) {
 // $requestedpermissionsarray contains list of scopes.
 // Conversion into URL is done by Reflection on constant with name SCOPE_scope_in_uppercase
 try {
-	$apiService = $serviceFactory->createService(ucfirst(strtolower($genericstring)), $credentials, $storage, $requestedpermissionsarray);
+	$nameofservice = ucfirst(strtolower($genericstring));
+	$apiService = $serviceFactory->createService($nameofservice, $credentials, $storage, $requestedpermissionsarray);
 } catch (Exception $e) {
 	print $e->getMessage();
 	exit;
@@ -122,6 +122,9 @@ if (!getDolGlobalString($keyforparamid)) {
 if (!getDolGlobalString($keyforparamsecret)) {
 	accessforbidden('Setup of service is not complete. Secret key is missing');
 }
+if (!getDolGlobalString($keyforparamtenant)) {
+	accessforbidden('Setup of service is not complete. Tenant/Annuary ID key is missing');
+}
 
 
 /*
@@ -148,7 +151,7 @@ if (GETPOST('code') || GETPOST('error')) {     // We are coming from oauth provi
 	// We should have
 	//$_GET=array('code' => string 'aaaaaaaaaaaaaa' (length=20), 'state' => string 'user,public_repo' (length=16))
 
-	dol_syslog("We are coming from the oauth provider page code=".dol_trunc(GETPOST('code'), 5)." error=".GETPOST('error'));
+	dol_syslog(basename(__FILE__)." We are coming from the oauth provider page code=".dol_trunc(GETPOST('code'), 5)." error=".GETPOST('error'));
 
 	// This was a callback request from service, get the token
 	try {
