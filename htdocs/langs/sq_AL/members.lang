@@ -13,7 +13,7 @@ MembersTickets=Fleta e adresës së anëtarësimit
 FundationMembers=Anëtarët e fondacionit
 ListOfValidatedPublicMembers=Lista e anëtarëve publikë të vërtetuar
 ErrorThisMemberIsNotPublic=Ky anëtar nuk është publik
-ErrorMemberIsAlreadyLinkedToThisThirdParty=Një anëtar tjetër (emri: <b>%s</b>, <span>, classlog ='notranslate'><b></span>%s</b>) është tashmë i lidhur me një palë të tretë class='notranslate '><b></span>%s</b>. Hiqe fillimisht këtë lidhje sepse një palë e tretë nuk mund të lidhet vetëm me një anëtar (dhe anasjelltas).
+ErrorMemberIsAlreadyLinkedToThisThirdParty=Another member (name: <b>%s</b>, login: <b>%s</b>) is already linked to a third party <b>%s</b>. Remove this link first because a third party can't be linked to only a member (and vice versa).
 ErrorUserPermissionAllowsToLinksToItselfOnly=Për arsye sigurie, duhet t'ju jepen lejet për të modifikuar të gjithë përdoruesit që të mund të lidhni një anëtar me një përdorues që nuk është i juaji.
 SetLinkToUser=Lidhje me një përdorues të Dolibarr
 SetLinkToThirdParty=Lidhja me një palë të tretë të Dolibarr
@@ -200,9 +200,9 @@ MembersStatisticsDesc=Zgjidhni statistikat që dëshironi të lexoni...
 MenuMembersStats=Statistikat
 LastMemberDate=Data e fundit e anëtarësimit
 LatestSubscriptionDate=Data e fundit e kontributit
-MemberNature=Natyra e anëtarit
-MembersNature=Natyra e anëtarëve
-Public=%s mund të publikojë anëtarësimin tim në <a target="_blank" href="%s">regjistrin publik<span class='notranslate'></a></s>
+MemberNature=Nature of member
+MembersNature=Nature of members
+Public=%s can publish my membership in <a target="_blank" href="%s">the public register</a>
 MembershipPublic=Anëtarësimi publik
 NewMemberbyWeb=U shtua një anëtar i ri. Në pritje të miratimit
 NewMemberForm=Formulari i ri i anëtarësimit
@@ -239,10 +239,11 @@ MemberLastname=Mbiemri i anëtarit
 MemberCodeDesc=Kodi i Anëtarit, unik për të gjithë anëtarët
 MemberSubscriptionStartFirstDayOf=Data e fillimit të anëtarësimit korrespondon me ditën e parë të a
 MemberSubscriptionStartAfter=Periudha minimale para hyrjes në fuqi të datës së fillimit të një abonimi, përveç rinovimeve (shembull +3m = +3 muaj, -5d = -5 ditë, +1Y = +1 vit)
-SubscriptionLinkedToConciliatedTransaction=Membership is linked to a conciliated transaction so this modification is not allowed.
-ConfirmMassSubsriptionCreation=Confirm subscription creation
-ConfirmMassSubsriptionCreationQuestion=Are you sure you want to create the %s selected subscription(s)?
-XSubsriptionCreated=%s subscription(s) created
-XSubsriptionErrors=%s subscription(s) where in error
-CreateSubscription=Create subscription
-WarningNoComplementaryActionDone=No Complementary action on recording will be executed with this massaction
+SubscriptionLinkedToConciliatedTransaction=Anëtarësimi është i lidhur me një transaksion të pajtimit, kështu që ky modifikim nuk lejohet.
+ConfirmMassSubsriptionCreation=Konfirmo krijimin e abonimit
+ConfirmMassSubsriptionCreationQuestion=Jeni i sigurt që dëshironi të krijoni abonimin(et) e zgjedhura %s?
+XSubsriptionCreated=%s abonim(a) u krijua
+XSubsriptionErrors=%s abonim(a) ku është gabim
+CreateSubscription=Krijo abonim
+WarningNoComplementaryActionDone=Asnjë veprim plotësues në regjistrim nuk do të ekzekutohet me këtë masakër
+NewMembership=Anëtarësimi i ri

@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
-# About page
-# Right
+# Permissions
 Permission23101 = Voir les tâches planifiées
 Permission23102 = Créer/Modifier des tâches planifiées
 Permission23103 = Supprimer une tâche planifiée
@@ -30,7 +29,8 @@ CronExecute=Lancer maintenant
 CronConfirmExecute=Etes-vous sûr que vous voulez exécuter ces travaux planifiées maintenant?
 CronInfo=Le module de taches planifiés permet de planifier des tâches à exécuter automatiquement. Les travaux planifiés peuvent aussi être lancés manuellement.
 CronTask=Travail planifié
-CronNone=Aucun(e)
+CronNone=Prochaine exécution des tâches planifiées
+CronNotYetRan=Jamais exécuté
 CronDtStart=Pas avant
 CronDtEnd=Pas après
 CronDtNextLaunch=Prochaine exécution
@@ -49,8 +49,8 @@ CronEach=Tous les
 JobFinished=Travail lancé et terminé
 Scheduled=Programmé
 #Page card
-CronAdd= Ajoutez des travaux
-CronEvery=Exécuter chaque tâche
+CronAdd=Ajoutez des travaux
+CronEvery=Exécuter le traitement tous les
 CronObject=Instance/objet à créer
 CronArgs=Paramètres
 CronSaveSucess=Mise à jour effectuée avec succès.

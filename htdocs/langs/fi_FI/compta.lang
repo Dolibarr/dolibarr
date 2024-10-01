@@ -27,10 +27,10 @@ Profit=Voitto
 AccountingResult=Kirjanpito tulos
 BalanceBefore=saldo (ennen)
 Balance=Saldo
-Debit=Debet
-Credit=Credit
-AccountingDebit=Debet
-AccountingCredit=Credit
+Debit=Debet +
+Credit=Credit -
+AccountingDebit=Debet +
+AccountingCredit=Credit -
 Piece=Kirjanpito Asiakirja.
 AmountHTVATRealReceived=HT kerätty
 AmountHTVATRealPaid=HT maksetaan
@@ -65,9 +65,8 @@ LT2SupplierES=IRPF ostot
 LT2CustomerIN=SGST myynti
 LT2SupplierIN=SGST-ostokset
 VATCollected=Alv
-StatusToPay=Maksaa
 SpecialExpensesArea=Alue kaikille erityismaksuille
-VATExpensesArea=Alue kaikille TVA-maksuille
+VATExpensesArea=Alue kaikille ALV-maksuille
 SocialContribution=Sosiaalinen tai verotus vero
 SocialContributions=Sosiaalinen tai verotus Verot
 SocialContributionsDeductibles=Vähennettävä sosiaalinen tai verotus Verot
@@ -165,32 +164,32 @@ CalcModeEngagement=Tunnettujen kirjattujen maksujen analyysi
 CalcModePayment=Tunnettujen kirjattujen maksujen analyysi
 CalcModeBookkeeping=Kirjanpitorekisteritaulukkoon kirjattujen tietojen analyysi.
 CalcModeNoBookKeeping=Vaikka niitä ei vielä ole kirjattu Ledgeriin
-CalcModeLT1= Tila <b>%sRE asiakaslaskuissa – Toimittajat class= laskut 'notranslate'>%s</span></b>
+CalcModeLT1= Mode <b>%sRE on customer invoices - suppliers invoices%s</b>
 CalcModeLT1Debt=Tila <b>%sRE asiakaslaskuissa%s</b>
 CalcModeLT1Rec= Tila <b>%sRE Toimittajat laskuissa%s</b>
-CalcModeLT2= Tila <b>%sIRPF asiakaslaskuissa – Toimittajat class= laskut 'notranslate'>%s</span></b>
+CalcModeLT2= Mode <b>%sIRPF on customer invoices - suppliers invoices%s</b>
 CalcModeLT2Debt=Tila <b>%sIRPF asiakaslaskuissa%s</b>
 CalcModeLT2Rec= Tila <b>%sIRPF Toimittajat laskuissa%s</b>
 AnnualSummaryDueDebtMode=saldo tuloista ja kuluista, vuosiyhteenveto
 AnnualSummaryInputOutputMode=saldo tuloista ja kuluista, vuosiyhteenveto
 AnnualByCompanies=saldo tuloista ja kuluista ennalta määritettyjen tiliryhmien mukaan
-AnnualByCompaniesDueDebtMode=saldo tuloista ja kuluista, yksityiskohtaiset tiedot ennalta määritettyjen ryhmien mukaan, tila <b> span class='notranslate'>%sClaims-Debts%s</b> sanoi <span class='no <b></span>Sitoumuskirjanpito</b>.
-AnnualByCompaniesInputOutputMode=saldo tuloista ja kuluista, yksityiskohtaiset tiedot ennalta määritettyjen ryhmien mukaan, tila <b> span class='notranslate'>%sTulot ja kulut%s</b> sanoi <span class='no <b></span>kassakirjanpito</b>.
+AnnualByCompaniesDueDebtMode=Balance of income and expenses, detail by predefined groups, mode <b>%sClaims-Debts%s</b> said <b>Commitment accounting</b>.
+AnnualByCompaniesInputOutputMode=Balance of income and expenses, detail by predefined groups, mode <b>%sIncomes-Expenses%s</b> said <b>cash accounting</b>.
 SeeReportInInputOutputMode=Katso <b>%smaksuanalyysi%s</b> laskelmaan, joka perustuu <b>kirjattuihin maksuihin</b>, vaikka niitä ei olisi vielä kirjattu Ledgerissä
 SeeReportInDueDebtMode=Katso <b>%s tallennettujen asiakirjojen analyysi%s</b> laskelmaan, joka perustuu tunnettuihin <b>tallennettuihin asiakirjoihin</b>, vaikka niitä ei vielä ole kirjattu Ledgerissä
 SeeReportInBookkeepingMode=Katso <b>%skirjanpitotaulukon analyysi%s</b> raportille, joka perustuu <b>Kirjakirjanpitotaulukkoon</b>
 RulesAmountWithTaxIncluded=- Näytetyt määrät sisältävät kaikki Verot
 RulesAmountWithTaxExcluded=- Näytetyt laskujen määrät on jätetty pois kaikki Verot
-RulesResultDue=- Se sisältää kaikki laskut, kulut, ALV, lahjoitukset, palkat riippumatta siitä, onko ne maksettu vai ei.<br>- Se perustuu laskutukseen päiväys  laskuista ja eräpäivänä päiväys tai b0e7a3c6c47b29 > maksuja. Palkkojen osalta käytetään kauden lopun <span class='notranslate'>päiväys.
+RulesResultDue=- It includes all invoices, expenses, VAT, donations, salaries, whether they are paid or not.<br>- It is based on the billing date of invoices and on the due date for expenses or tax payments. For salaries, the date of end of period is used.
 RulesResultInOut=- Se sisältää todelliset laskut, kulut, arvonlisäveron ja palkat. <br> – Se perustuu maksu päivämäärät laskuihin, kuluihin , ALV, lahjoitukset ja palkat.
 RulesCADue=- Se sisältää asiakkaan erääntyneet laskut riippumatta siitä, onko ne maksettu vai ei. <br> – Se perustuu näiden laskujen päiväys laskutukseen.<br>
-RulesCAIn=- Se sisältää kaikki osoitteesta asiakkaat saatujen laskujen maksut.<br> - Se perustuu <span class='notranslateen '>maksu</span> päiväys näistä laskuista<br>
+RulesCAIn=- It includes all the effective payments of invoices received from customers.<br>- It is based on the payment date of these invoices<br>
 RulesCATotalSaleJournal=Se sisältää kaikki myyntipäiväkirjan luottorajat.
 RulesSalesTurnoverOfIncomeAccounts=Se sisältää (hyvitys-veloitus) tuotetilien rivejä kohdassa ryhmä TULOT
 RulesAmountOnInOutBookkeepingRecord=Se sisältää Reskontrasi tietueen kirjanpitotilit, jossa on ryhmä "KULUT" tai "TULO"
 RulesResultBookkeepingPredefined=Se sisältää Reskontrasi tietueen kirjanpitotilit, jossa on ryhmä "KULUT" tai "TULO"
-RulesResultBookkeepingPersonalized=Se näyttää kirjanpidossasi tietueen kirjanpitotilit <b>ryhmiteltynä henkilökohtaisten ryhmien mukaan<span class='notranslate'>b09a4b739f17f8
-SeePageForSetup=Katso valikko <a href="%s">%s<span class='notranslate'>b0c0e470 /span> määritystä varten
+RulesResultBookkeepingPersonalized=It show record in your Ledger with accounting accounts <b>grouped by personalized groups</b>
+SeePageForSetup=See menu <a href="%s">%s</a> for setup
 DepositsAreNotIncluded=- osamaksu laskut eivät sisälly
 DepositsAreIncluded=- osamaksu laskut sisältyvät
 LT1ReportByMonth=vero 2 raportti kuukausittain
@@ -247,7 +246,7 @@ LinkedOrder=Linkki Tilauksiin
 Mode1=Menetelmä 1
 Mode2=Menetelmä 2
 CalculationRuleDesc=Kokonaisarvonlisäveron laskemiseen on kaksi menetelmää:<br>Menetelmä 1 pyöristää kunkin rivin alv:t ja laskee ne sitten yhteen.<br>Menetelmä 2 laskee yhteen jokaisen rivin alv:t ja pyöristää sitten tuloksen.<br>Lopullinen tulos voi poiketa muutamasta sentistä. oletus tila on tila <b>%s </b>.
-CalculationRuleDescSupplier=Valitse Toimittaja mukaan sopiva menetelmä saman laskentasäännön soveltamiseksi. ja saat saman tuloksen, jota <span class='notranslate' odottaa. >Toimittaja</span>.
+CalculationRuleDescSupplier=According to vendor, choose appropriate method to apply same calculation rule and get same result expected by your vendor.
 TurnoverPerProductInCommitmentAccountingNotRelevant=Tuotekohtaisesti kerätty liikevaihtoraportti ei ole saatavilla. Tämä raportti on saatavilla vain laskutetulle liikevaihdolle.
 TurnoverPerSaleTaxRateInCommitmentAccountingNotRelevant=Raportti liikevaihdosta, joka on kerätty myyntiä kohden vero, ei ole saatavilla. Tämä raportti on saatavilla vain laskutetulle liikevaihdolle.
 CalculationMode=Laskentatila
@@ -275,7 +274,7 @@ SameCountryCustomersWithVAT=Kansallinen asiakkaat -raportti
 BasedOnTwoFirstLettersOfVATNumberBeingTheSameAsYourCompanyCountry=Perustuu siihen, että ALV-numeron kaksi ensimmäistä kirjainta ovat samat kuin oma Yritys maakoodisi
 LinkedFichinter=Linkki interventioon
 ImportDataset_tax_contrib=Sosiaalinen / verotus Verot
-ImportDataset_tax_vat=ALV-maksut
+ImportDataset_tax_vat=ALV maksut
 ErrorBankAccountNotFound=Virhe: pankkitili ei löydy
 FiscalPeriod=Tilikausi
 ListSocialContributionAssociatedProject=Luettelo hankkeeseen liittyvistä sosiaalisista maksuista
@@ -294,7 +293,7 @@ LabelToShow=Lyhyt etiketti
 PurchaseTurnover=Hankinta liikevaihto
 PurchaseTurnoverCollected=Hankinta liikevaihto kerätty
 RulesPurchaseTurnoverDue=- Se sisältää toimittaja:n erääntyneet laskut riippumatta siitä, onko ne maksettu vai ei. <br> – Se perustuu näiden laskujen päiväys laskuun.<br>
-RulesPurchaseTurnoverIn=- Se sisältää kaikki tehokkaat laskujen maksut numeroon Toimittajat.<br> - Se perustuu <span class='notranslateen '>maksu</span> päiväys näistä laskuista<br>
+RulesPurchaseTurnoverIn=- It includes all the effective payments of invoices done to suppliers.<br>- It is based on the payment date of these invoices<br>
 RulesPurchaseTurnoverTotalPurchaseJournal=Se sisältää kaikki veloitusrivit Hankinta päiväkirjasta.
 RulesPurchaseTurnoverOfExpenseAccounts=Se sisältää (veloitus - hyvitys) tuotetilien rivejä ryhmä EXPENSE
 ReportPurchaseTurnover=Hankinta liikevaihto laskutettu

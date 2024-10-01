@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2005-2012 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +61,7 @@ class mailing_xinputuser extends MailingTargets
 	 *	array of SQL request that returns two field:
 	 *	One called "label", One called "nb".
 	 *
-	 *	@return		array		Array with SQL requests
+	 *	@return		string[]		Array with SQL requests
 	 */
 	public function getSqlArrayForStats()
 	{
@@ -87,10 +88,10 @@ class mailing_xinputuser extends MailingTargets
 
 
 	/**
-	 *  Renvoie url lien vers fiche de la source du destinataire du mailing
+	 *  Provide the URL to the car of the source information of the recipient for the mailing
 	 *
 	 *  @param	int		$id		ID
-	 *  @return string      	Url lien
+	 *  @return string      	URL link
 	 */
 	public function url($id)
 	{
@@ -135,7 +136,7 @@ class mailing_xinputuser extends MailingTargets
 
 		$cibles = array();
 		if (!empty($email)) {
-			if (isValidEMail($email)) {
+			if (isValidEmail($email)) {
 				$cibles[] = array(
 					'email' => $email,
 					'lastname' => $lastname,

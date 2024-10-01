@@ -4,18 +4,14 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 NewAsset=Yangi aktiv
 AccountancyCodeAsset=Buxgalteriya kodi (aktiv)
 AccountancyCodeDepreciationAsset=Buxgalteriya kodi (amortizatsiya aktivlari hisobi)
@@ -25,50 +21,34 @@ DeleteType=O'chirish
 DeleteAnAssetType=Obyekt modelini o‘chirish
 ConfirmDeleteAssetType=Haqiqatan ham ushbu obyekt modelini o‘chirib tashlamoqchimisiz?
 ShowTypeCard=“%s” modelini ko‘rsatish
-
 # Module label 'ModuleAssetsName'
 ModuleAssetsName=Aktivlar
 # Module description 'ModuleAssetsDesc'
 ModuleAssetsDesc=Aktivlarning tavsifi
-
-#
 # Admin page
-#
 AssetSetup=Aktivlarni sozlash
 AssetSetupPage=Aktivlarni sozlash sahifasi
 ExtraFieldsAssetModel=Qo'shimcha atributlar (Aktiv modeli)
-
 AssetsType=Aktiv modeli
 AssetsTypeId=Obyekt modeli identifikatori
 AssetsTypeLabel=Obyekt modeli yorlig‘i
 AssetsTypes=Aktivlar modellari
 ASSET_ACCOUNTANCY_CATEGORY=Asosiy vositalarni hisobga olish guruhi
-
-#
+ASSET_DEPRECIATION_DURATION_PER_YEAR=Proportional period in days for calculating amortization over one year
 # Menu
-#
 MenuAssets=Aktivlar
 MenuNewAsset=Yangi aktiv
 MenuAssetModels=Model aktivlari
 MenuListAssets=Ro'yxat
 MenuNewAssetModel=Yangi aktiv modeli
 MenuListAssetModels=Roʻyxat
-
-#
 # Module
-#
 ConfirmDeleteAsset=Haqiqatan ham bu obyektni olib tashlamoqchimisiz?
-
-#
 # Tab
-#
 AssetDepreciationOptions=Amortizatsiya variantlari
 AssetAccountancyCodes=Accounting accounts
 AssetDepreciation=Amortizatsiya
-
-#
 # Asset
-#
 Asset=Aktiv
 Assets=Aktivlar
 AssetReversalAmountHT=Orqaga qaytarish summasi (soliqlarsiz)
@@ -89,32 +69,20 @@ AssetNotDepreciated=Amortizatsiyalanmagan
 AssetDisposal=Utilizatsiya qilish
 AssetConfirmDisposalAsk=Haqiqatan ham <b> %s </b> aktivini utilizatsiya qilmoqchimisiz?
 AssetConfirmReOpenAsk=Haqiqatan ham <b> %s </b> aktivini qayta ochmoqchimisiz?
-
-#
 # Asset status
-#
 AssetInProgress=Jarayonda
 AssetDisposed=Utilizatsiya qilingan
 AssetRecorded=Hisoblangan
-
-#
 # Asset disposal
-#
 AssetDisposalDate=Utilizatsiya qilingan sana
 AssetDisposalAmount=Yo'q qilish qiymati
 AssetDisposalType=Yo'q qilish turi
 AssetDisposalDepreciated=O'tkazma yilini amortizatsiya qiling
 AssetDisposalSubjectToVat=Utilizatsiya QQS evaziga
-
-#
 # Asset model
-#
 AssetModel=Aktiv modeli
 AssetModels=Aktiv modellari
-
-#
 # Asset depreciation options
-#
 AssetDepreciationOptionEconomic=Iqtisodiy amortizatsiya
 AssetDepreciationOptionAcceleratedDepreciation=Tezlashtirilgan amortizatsiya (soliq)
 AssetDepreciationOptionDepreciationType=Amortizatsiya turi
@@ -122,7 +90,6 @@ AssetDepreciationOptionDepreciationTypeLinear=Chiziqli
 AssetDepreciationOptionDepreciationTypeDegressive=Degressiv
 AssetDepreciationOptionDepreciationTypeExceptional=Istisno
 AssetDepreciationOptionDegressiveRate=Degressiv stavka
-AssetDepreciationOptionAcceleratedDepreciation=Tezlashtirilgan amortizatsiya (soliq)
 AssetDepreciationOptionDuration=Davomiyligi
 AssetDepreciationOptionDurationType=Tur muddati
 AssetDepreciationOptionDurationTypeAnnual=Yillik
@@ -132,10 +99,7 @@ AssetDepreciationOptionRate=Baho (%%)
 AssetDepreciationOptionAmountBaseDepreciationHT=Amortizatsiya bazasi (QQSdan tashqari)
 AssetDepreciationOptionAmountBaseDeductibleHT=Chegiriladigan baza (QQSdan tashqari)
 AssetDepreciationOptionTotalAmountLastDepreciationHT=Oxirgi amortizatsiyaning umumiy summasi (QQSdan tashqari)
-
-#
 # Asset accountancy codes
-#
 AssetAccountancyCodeDepreciationEconomic=Iqtisodiy amortizatsiya
 AssetAccountancyCodeAsset=Aktiv
 AssetAccountancyCodeDepreciationAsset=Amortizatsiya
@@ -149,10 +113,7 @@ AssetAccountancyCodeDepreciationAcceleratedDepreciation=Tezlashtirilgan amortiza
 AssetAccountancyCodeAcceleratedDepreciation=Account
 AssetAccountancyCodeEndowmentAcceleratedDepreciation=Amortizatsiya xarajatlari
 AssetAccountancyCodeProvisionAcceleratedDepreciation=Qayta egalik qilish/ta'minlash
-
-#
 # Asset depreciation
-#
 AssetBaseDepreciationHT=Amortizatsiya asosi (QQSdan tashqari)
 AssetDepreciationBeginDate=Amortizatsiyaning boshlanishi
 AssetDepreciationDuration=Davomiyligi
@@ -164,10 +125,7 @@ AssetResidualHT=Qoldiq qiymat (QQSdan tashqari)
 AssetDispatchedInBookkeeping=Amortizatsiya qayd etilgan
 AssetFutureDepreciationLine=Kelajakdagi amortizatsiya
 AssetDepreciationReversal=Orqaga qaytish
-
-#
 # Errors
-#
 AssetErrorAssetOrAssetModelIDNotProvide=Obyekt identifikatori yoki topilgan model taqdim etilmagan
 AssetErrorFetchAccountancyCodesForMode="%s" amortizatsiya rejimi uchun buxgalteriya hisoblarini olishda xatolik yuz berdi
 AssetErrorDeleteAccountancyCodesForMode=Buxgalteriya hisoblarini "%s" amortizatsiya rejimidan o'chirishda xatolik yuz berdi

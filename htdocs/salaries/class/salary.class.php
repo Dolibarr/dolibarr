@@ -2,6 +2,8 @@
 /* Copyright (C) 2011-2022  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2021       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,12 +49,10 @@ class Salary extends CommonObject
 	 */
 	public $picto = 'salary';
 
-	public $tms;
-
-	// /**
-	//  * @var array	List of child tables. To test if we can delete object.
-	//  */
-	protected $childtables = array('payment_salary' => array('name'=>'SalaryPayment', 'fk_element'=>'fk_salary'));
+	/**
+	 * @var array<string, array<string>>	List of child tables. To test if we can delete object.
+	 */
+	protected $childtables = array('payment_salary' => array('name' => 'SalaryPayment', 'fk_element' => 'fk_salary'));
 
 	// /**
 	//  * @var array    List of child tables. To know object to delete on cascade.
@@ -72,12 +72,14 @@ class Salary extends CommonObject
 
 	public $salary;
 	public $amount;
+
 	/**
 	 * @var int ID
 	 */
 	public $fk_project;
 
-	public $type_payment;
+	public $type_payment;	// TODO Rename into type_payment_id
+	public $type_payment_code;
 
 	/**
 	 * @var string salary payments label
@@ -119,12 +121,41 @@ class Salary extends CommonObject
 	public $user;
 
 	/**
-	 * 1 if salary paid COMPLETELY, 0 otherwise (do not use it anymore, use statut and close_code)
+	 * @var int 1 if salary paid COMPLETELY, 0 otherwise (do not use it anymore, use statut and close_code)
+	 * @deprecated
 	 */
 	public $paye;
 
 	const STATUS_UNPAID = 0;
 	const STATUS_PAID = 1;
+
+	public $resteapayer;
+
+	public $fields = array(
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
+		'ref' => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'position' => 10, 'visible' => 1, 'index' => 1, 'comment' => "Reference of object"),
+		'label' => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'position' => 12, 'notnull' => 0, 'visible' => 1),
+		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => 0, 'position' => 30),
+		'datep' => array('type' => 'date', 'label' => 'Date', 'enabled' => 1, 'visible' => 0, 'position' => 40, 'comment' => 'Date'),
+		'datev' => array('type' => 'date', 'label' => 'Date', 'enabled' => 1, 'visible' => 0,  'position' => 50, 'comment' => 'Date'),
+		'fk_user' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Employee', 'enabled' => 1, 'position' => 15, 'notnull' => 1, 'visible' => 1, 'picto' => 'user'),
+		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'position' => 20),
+		'salary' => array('type' => 'double(24,8)', 'label' => 'salary', 'enabled' => 1, 'visible' => 0, 'position' => 70),
+		'amount' => array('type' => 'double(24,8)', 'label' => 'Amount', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 80),
+		'fk_projet' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Project', 'enabled' => "isModEnabled('project')", 'visible' => 0, 'position' => 90),
+		'fk_typepayment' => array('type' => 'typepayment', 'label' => 'DefaultPaymentMode', 'enabled' => 1, 'visible' => 1, 'position' => 100, 'comment' => 'Payment type'),
+		'num_payment' => array('type' => 'string', 'label' => 'Reference', 'enabled' => 1, 'visible' => 0, 'position' => 110, 'comment' => 'Reference'),
+		'datesp' => array('type' => 'date', 'label' => 'DateStart', 'enabled' => 1, 'visible' => 1, 'position' => 130, 'comment' => 'Date'),
+		'dateep' => array('type' => 'date', 'label' => 'DateEnd', 'enabled' => 1, 'visible' => 1, 'position' => 140, 'comment' => 'Date'),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => 0, 'position' => 150, 'index' => 1),
+		'note' => array('type' => 'text', 'label' => 'Note', 'enabled' => 1, 'position' => 160, 'visible' => 0,),
+		'fk_bank' => array('type' => 'integer', 'label' => 'BankId', 'enabled' => 1, 'visible' => 0, 'position' => 170),
+		'paye' => array('type' => 'smallint(6)', 'label' => 'Status', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 180),
+		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => 0, 'position' => 190),
+		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'position' => 200, 'visible' => 0,),
+		'ref_ext' => array('type' => 'varchar(128)', 'label' => 'Ref ext', 'enabled' => 1, 'visible' => 0, 'position' => 210),
+		'note_public' => array('type' => 'text', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 220),
+	);
 
 
 	/**
@@ -154,6 +185,8 @@ class Salary extends CommonObject
 		$this->amount = trim($this->amount);
 		$this->label = trim($this->label);
 		$this->note = trim($this->note);
+		$this->note_private = trim($this->note_private);
+		$this->note_public = trim($this->note_public);
 
 		// Check parameters
 		if (empty($this->fk_user) || $this->fk_user < 0) {
@@ -190,11 +223,9 @@ class Salary extends CommonObject
 
 		// Update extrafield
 		if (!$error) {
-			if (!$error) {
-				$result = $this->insertExtraFields();
-				if ($result < 0) {
-					$error++;
-				}
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
 			}
 		}
 
@@ -238,17 +269,21 @@ class Salary extends CommonObject
 		$sql .= " s.label,";
 		$sql .= " s.datesp,";
 		$sql .= " s.dateep,";
-		$sql .= " s.note,";
+		$sql .= " s.note as note_private,";
+		$sql .= " s.note_public,";
 		$sql .= " s.paye,";
 		$sql .= " s.fk_bank,";
 		$sql .= " s.fk_user_author,";
 		$sql .= " s.fk_user_modif,";
-		$sql .= " s.fk_account";
+		$sql .= " s.fk_account,";
+		$sql .= " cp.code as type_payment_code";
 		$sql .= " FROM ".MAIN_DB_PREFIX."salary as s";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON s.fk_bank = b.rowid";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON s.fk_typepayment = cp.id";
 		$sql .= " WHERE s.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($this->db->num_rows($resql)) {
@@ -263,10 +298,13 @@ class Salary extends CommonObject
 				$this->amount           = $obj->amount;
 				$this->fk_project       = $obj->fk_project;
 				$this->type_payment     = $obj->fk_typepayment;
+				$this->type_payment_code = $obj->type_payment_code;
 				$this->label			= $obj->label;
 				$this->datesp			= $this->db->jdate($obj->datesp);
 				$this->dateep			= $this->db->jdate($obj->dateep);
-				$this->note				= $obj->note;
+				$this->note				= $obj->note_private;
+				$this->note_private		= $obj->note_private;
+				$this->note_public		= $obj->note_public;
 				$this->paye 			= $obj->paye;
 				$this->status 			= $obj->paye;
 				$this->fk_bank          = $obj->fk_bank;
@@ -293,7 +331,7 @@ class Salary extends CommonObject
 	 *  Delete object in database
 	 *
 	 *	@param	User	$user       User that delete
-	 *  @param  bool 	$notrigger 	false=launch triggers after, true=disable triggers
+	 *  @param  int 	$notrigger 	0=launch triggers after, 1=disable triggers
 	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
@@ -307,14 +345,14 @@ class Salary extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
 		$this->id = 0;
 
-		$this->tms = '';
-		$this->fk_user = '';
+		$this->tms = dol_now();
+		$this->fk_user = 0;
 		$this->datep = '';
 		$this->datev = '';
 		$this->amount = '';
@@ -322,9 +360,11 @@ class Salary extends CommonObject
 		$this->datesp = '';
 		$this->dateep = '';
 		$this->note = '';
-		$this->fk_bank = '';
-		$this->fk_user_author = '';
-		$this->fk_user_modif = '';
+		$this->fk_bank = 0;
+		$this->fk_user_author = 0;
+		$this->fk_user_modif = 0;
+
+		return 1;
 	}
 
 	/**
@@ -344,11 +384,11 @@ class Salary extends CommonObject
 		$this->amount = price2num(trim($this->amount));
 		$this->label = trim($this->label);
 		$this->note = trim($this->note);
-		$this->fk_bank = trim($this->fk_bank);
-		$this->fk_user_author = trim($this->fk_user_author);
-		$this->fk_user_modif = trim($this->fk_user_modif);
-		$this->accountid = trim($this->accountid);
-		$this->paye = trim($this->paye);
+		$this->fk_bank = (int) $this->fk_bank;
+		$this->fk_user_author = (int) $this->fk_user_author;
+		$this->fk_user_modif = (int) $this->fk_user_modif;
+		$this->accountid = (int) $this->accountid;
+		$this->paye = (int) $this->paye;
 
 		// Check parameters
 		if (!$this->label) {
@@ -363,16 +403,6 @@ class Salary extends CommonObject
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount"));
 			return -5;
 		}
-		/* if (isModEnabled("banque") && (empty($this->accountid) || $this->accountid <= 0))
-		{
-			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Account"));
-			return -6;
-		}
-		if (isModEnabled("banque") && (empty($this->type_payment) || $this->type_payment <= 0))
-		{
-			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode"));
-			return -7;
-		}*/
 
 		$this->db->begin();
 
@@ -425,11 +455,9 @@ class Salary extends CommonObject
 			if ($this->id > 0) {
 				// Update extrafield
 				if (!$error) {
-					if (!$error) {
-						$result = $this->insertExtraFields();
-						if ($result < 0) {
-							$error++;
-						}
+					$result = $this->insertExtraFields();
+					if ($result < 0) {
+						$error++;
 					}
 				}
 
@@ -480,10 +508,9 @@ class Salary extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 *
-	 * @param array 	$params 		params to construct tooltip data
+	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
-	 * @return array
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -509,7 +536,7 @@ class Salary extends CommonObject
 	}
 
 	/**
-	 *	Send name clicable (with possibly the picto)
+	 *	Send name clickable (with possibly the picto)
 	 *
 	 *	@param	int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@param	string	$option						link option
@@ -583,7 +610,7 @@ class Salary extends CommonObject
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('salarypayment'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -610,7 +637,7 @@ class Salary extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX.$table;
 		$sql .= " WHERE ".$field." = ".((int) $this->id);
 
-		dol_syslog(get_class($this)."::getSommePaiement", LOG_DEBUG);
+		dol_syslog(get_class($this)."::getSommePaiement for salary id=".((int) $this->id), LOG_DEBUG);
 
 		$resql = $this->db->query($sql);
 
@@ -676,7 +703,7 @@ class Salary extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *    Tag social contribution as payed completely
+	 *    Tag social contribution as paid completely
 	 *
 	 *	  @deprecated
 	 *    @see setPaid()
@@ -691,7 +718,7 @@ class Salary extends CommonObject
 	}
 
 	/**
-	 *    Tag social contribution as payed completely
+	 *    Tag social contribution as paid completely
 	 *
 	 *    @param    User    $user       Object user making change
 	 *    @return   int					Return integer <0 if KO, >0 if OK
@@ -714,7 +741,7 @@ class Salary extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *    Remove tag payed on social contribution
+	 *    Remove tag paid on social contribution
 	 *
 	 *    @param	User	$user       Object user making change
 	 *    @return	int					Return integer <0 if KO, >0 if OK
@@ -741,7 +768,7 @@ class Salary extends CommonObject
 	 * Return label of current status
 	 *
 	 * @param	int			$mode       	0=label long, 1=labels short, 2=Picto + Label short, 3=Picto, 4=Picto + Label long, 5=Label short + Picto
-	 * @param   double		$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
+	 * @param   double		$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommend to put here amount paid if you have it, 1 otherwise)
 	 * @return  string						Label
 	 */
 	public function getLibStatut($mode = 0, $alreadypaid = -1)
@@ -755,7 +782,7 @@ class Salary extends CommonObject
 	 *
 	 *  @param	int		$status        	Id status
 	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
-	 *  @param  double	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
+	 *  @param  double	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommend to put here amount paid if you have it, 1 otherwise)
 	 *  @return string        			Label
 	 */
 	public function LibStatut($status, $mode = 0, $alreadypaid = -1)
@@ -797,11 +824,11 @@ class Salary extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
@@ -820,7 +847,7 @@ class Salary extends CommonObject
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
 		if (!empty($arraydata['user']) && is_object($arraydata['user'])) {
-			$return .= '<br><span class="info-box-label">'.$arraydata['user']->getNomUrl(1, '', 0, 0, 16, 0, '', 'maxwidth100').'</span>';
+			$return .= '<br><span class="info-box-label">'.$arraydata['user']->getNomUrl(empty($arraydata['user']->photo) ? 1 : -1, '', 0, 0, 16, 0, '', 'maxwidth100').'</span>';
 		}
 		if (property_exists($this, 'amount')) {
 			$return .= '<br><span class="info-box-label amount">'.price($this->amount).'</span>';
@@ -835,7 +862,7 @@ class Salary extends CommonObject
 			}
 		}
 		if (method_exists($this, 'LibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3, $this->alreadypaid).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3, isset($this->alreadypaid) ? $this->alreadypaid : $this->totalpaid).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';
@@ -866,7 +893,8 @@ class Salary extends CommonObject
 		if ($this->paye == 0) {
 			require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 			$bac = new CompanyBankAccount($this->db);
-			$bac->fetch(0, $mysoc->id);
+			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
+			$bac->fetch(0, '', $mysoc->id);
 
 			$sql = "SELECT count(rowid) as nb";
 			$sql .= " FROM ".$this->db->prefix()."prelevement_demande";

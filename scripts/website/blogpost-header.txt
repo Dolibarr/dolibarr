@@ -1,4 +1,0 @@
-<?php includeContainer('blogpost-header'); ?>
-<h1><?php echo $websitepage->title ?></h1>
-
-<!-- After this is the imported content -->

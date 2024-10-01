@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
 * This file is an example to follow to add your own email selector inside
 * the Dolibarr email tool.
@@ -88,7 +89,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
 		global $conf;
 
 		// phpcs:enable
-		$key = GETPOST('filter', 'int');
+		$key = GETPOSTINT('filter');
 
 		$cibles = array();
 		$j = 0;
@@ -97,7 +98,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
 		if ($key == '0') {
 			$this->error = "Error: You must choose a filter";
 			$this->errors[] = $this->error;
-			return $this->error;
+			return -1;
 		}
 
 		$product = $this->arrayofproducts[$key];
@@ -167,7 +168,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
 	 *	array of SQL request that returns two field:
 	 *	One called "label", One called "nb".
 	 *
-	 *	@return		array		Array with SQL requests
+	 *	@return		string[]		Array with SQL requests
 	 */
 	public function getSqlArrayForStats()
 	{
@@ -201,7 +202,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
 		$sql .= " WHERE s.entity IN (".getEntity('societe').")";
 		$sql .= " AND s.rowid = c.fk_soc AND cd.fk_contrat = c.rowid AND s.email != ''";
 		$sql .= " AND cd.statut= 4 AND cd.fk_product=p.rowid";
-		$sql .= " AND p.ref IN (".$this->db->sanitize("'".join("','", $this->arrayofproducts)."'", 1).")";
+		$sql .= " AND p.ref IN (".$this->db->sanitize("'".implode("','", $this->arrayofproducts)."'", 1).")";
 		$sql .= " AND cd.date_fin_validite < '".$this->db->idate($now)."'";
 		if (empty($this->evenunsubscribe)) {
 			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = s.email and mu.entity = ".((int) $conf->entity).")";

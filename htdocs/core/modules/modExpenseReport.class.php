@@ -1,7 +1,9 @@
 <?php
-/* Copyright (C) 2011  Dimitri Mouillard    <dmouillard@teclib.com>
- * Copyright (C) 2015  Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2023  Alexandre Spangaro   <aspangaro@easya.solutions>
+/* Copyright (C) 2011  		Dimitri Mouillard    		<dmouillard@teclib.com>
+ * Copyright (C) 2015  		Laurent Destailleur  		<eldy@users.sourceforge.net>
+ * Copyright (C) 2023  		Alexandre Spangaro   		<aspangaro@easya.solutions>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +37,7 @@ class modExpenseReport extends DolibarrModules
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
-	 *   @param		DoliDb	$db      Database handler
+	 *   @param		DoliDB	$db      Database handler
 	 */
 	public function __construct($db)
 	{
@@ -182,41 +184,41 @@ class modExpenseReport extends DolibarrModules
 		$this->export_icon[$r] = 'trip';
 		$this->export_permission[$r] = array(array("expensereport", "export"));
 		$this->export_fields_array[$r] = array(
-			'd.rowid'=>"TripId", 'd.ref'=>'Ref', 'd.date_debut'=>'DateStart', 'd.date_fin'=>'DateEnd', 'd.date_create'=>'DateCreation', 'd.date_approve'=>'DateApprove',
-			'd.total_ht'=>"TotalHT", 'd.total_tva'=>'TotalVAT', 'd.total_ttc'=>'TotalTTC',
-			'd.fk_statut'=>'Status', 'd.paid'=>'Paid',
-			'd.note_private'=>'NotePrivate', 'd.note_public'=>'NotePublic', 'd.detail_cancel'=>'MOTIF_CANCEL', 'd.detail_refuse'=>'MOTIF_REFUS',
-			'ed.rowid'=>'LineId', 'tf.code'=>'Type', 'ed.date'=>'Date', 'ed.tva_tx'=>'VATRate',
-			'ed.qty'=>"Quantity", 'ed.value_unit'=>"UnitPriceHT",
-			'ed.total_ht'=>'TotalHT', 'ed.total_tva'=>'TotalVAT', 'ed.total_ttc'=>'TotalTTC', 'ed.comments'=>'Comment', 'p.rowid'=>'ProjectId', 'p.ref'=>'Ref',
-			'u.lastname'=>'Lastname', 'u.firstname'=>'Firstname', 'u.login'=>"Login",
+			'd.rowid' => "TripId", 'd.ref' => 'Ref', 'd.date_debut' => 'DateStart', 'd.date_fin' => 'DateEnd', 'd.date_create' => 'DateCreation', 'd.date_approve' => 'DateApprove',
+			'd.total_ht' => "TotalHT", 'd.total_tva' => 'TotalVAT', 'd.total_ttc' => 'TotalTTC',
+			'd.fk_statut' => 'Status', 'd.paid' => 'Paid',
+			'd.note_private' => 'NotePrivate', 'd.note_public' => 'NotePublic', 'd.detail_cancel' => 'MOTIF_CANCEL', 'd.detail_refuse' => 'MOTIF_REFUS',
+			'ed.rowid' => 'LineId', 'tf.code' => 'Type', 'ed.date' => 'Date', 'ed.tva_tx' => 'VATRate',
+			'ed.qty' => "Quantity", 'ed.value_unit' => "UnitPriceHT",
+			'ed.total_ht' => 'TotalHT', 'ed.total_tva' => 'TotalVAT', 'ed.total_ttc' => 'TotalTTC', 'ed.comments' => 'Comment', 'p.rowid' => 'ProjectId', 'p.ref' => 'Ref',
+			'u.lastname' => 'Lastname', 'u.firstname' => 'Firstname', 'u.login' => "Login",
 			'user_rib.iban_prefix' => 'IBAN', 'user_rib.bic' => 'BIC', 'user_rib.code_banque' => 'BankCode', 'user_rib.bank' => 'BankName', 'user_rib.proprio' => 'BankAccountOwner',
 			'user_rib.owner_address' => 'BankAccountOwnerAddress'
 		);
 		$this->export_TypeFields_array[$r] = array(
-			'd.rowid'=>'Numeric', 'd.ref'=>'Text', 'd.date_debut'=>'Date', 'd.date_fin'=>'Date', 'd.date_create'=>'Date', 'd.date_approve'=>'Date',
-			'd.total_ht'=>"Numeric", 'd.total_tva'=>'Numeric', 'd.total_ttc'=>'Numeric',
-			'd.fk_statut'=>"Numeric", 'd.paid'=>'Numeric',
-			'd.note_private'=>'Text', 'd.note_public'=>'Text', 'd.detail_cancel'=>'Text', 'd.detail_refuse'=>'Text',
-			'ed.rowid'=>'Numeric', 'tf.code'=>'Code', 'ed.date'=>'Date', 'ed.tva_tx'=>'Numeric',
-			'ed.qty'=>'Numeric', 'ed.value_unit'=>'Numeric',
-			'ed.total_ht'=>'Numeric', 'ed.total_tva'=>'Numeric', 'ed.total_ttc'=>'Numeric', 'ed.comments'=>'Text', 'p.rowid'=>'Numeric', 'p.ref'=>'Text',
-			'u.lastname'=>'Text', 'u.firstname'=>'Text', 'u.login'=>"Text",
+			'd.rowid' => 'Numeric', 'd.ref' => 'Text', 'd.date_debut' => 'Date', 'd.date_fin' => 'Date', 'd.date_create' => 'Date', 'd.date_approve' => 'Date',
+			'd.total_ht' => "Numeric", 'd.total_tva' => 'Numeric', 'd.total_ttc' => 'Numeric',
+			'd.fk_statut' => "Numeric", 'd.paid' => 'Numeric',
+			'd.note_private' => 'Text', 'd.note_public' => 'Text', 'd.detail_cancel' => 'Text', 'd.detail_refuse' => 'Text',
+			'ed.rowid' => 'Numeric', 'tf.code' => 'Code', 'ed.date' => 'Date', 'ed.tva_tx' => 'Numeric',
+			'ed.qty' => 'Numeric', 'ed.value_unit' => 'Numeric',
+			'ed.total_ht' => 'Numeric', 'ed.total_tva' => 'Numeric', 'ed.total_ttc' => 'Numeric', 'ed.comments' => 'Text', 'p.rowid' => 'Numeric', 'p.ref' => 'Text',
+			'u.lastname' => 'Text', 'u.firstname' => 'Text', 'u.login' => "Text",
 			'user_rib.iban_prefix' => 'Text', 'user_rib.bic' => 'Text', 'user_rib.code_banque' => 'Text', 'user_rib.bank' => 'Text', 'user_rib.proprio' => 'Text',
 			'user_rib.owner_address' => 'Text'
 		);
 		$this->export_entities_array[$r] = array(
-			'ed.rowid'=>'expensereport_line', 'ed.date'=>'expensereport_line',
-			'ed.qty'=>'expensereport_line', 'ed.value_unit'=>'expensereport_line',
-			'ed.tva_tx'=>'expensereport_line', 'ed.total_ht'=>'expensereport_line', 'ed.total_tva'=>'expensereport_line', 'ed.total_ttc'=>'expensereport_line',
-			'ed.comments'=>'expensereport_line', 'tf.code'=>'expensereport_line', 'p.project_ref'=>'expensereport_line', 'p.rowid'=>'project', 'p.ref'=>'project',
-			'u.lastname'=>'user', 'u.firstname'=>'user', 'u.login'=>'user',
+			'ed.rowid' => 'expensereport_line', 'ed.date' => 'expensereport_line',
+			'ed.qty' => 'expensereport_line', 'ed.value_unit' => 'expensereport_line',
+			'ed.tva_tx' => 'expensereport_line', 'ed.total_ht' => 'expensereport_line', 'ed.total_tva' => 'expensereport_line', 'ed.total_ttc' => 'expensereport_line',
+			'ed.comments' => 'expensereport_line', 'tf.code' => 'expensereport_line', 'p.project_ref' => 'expensereport_line', 'p.rowid' => 'project', 'p.ref' => 'project',
+			'u.lastname' => 'user', 'u.firstname' => 'user', 'u.login' => 'user',
 			'user_rib.iban_prefix' => 'user', 'user_rib.bic' => 'user', 'user_rib.code_banque' => 'user', 'user_rib.bank' => 'user', 'user_rib.proprio' => 'user',
 			'user_rib.owner_address' => 'user'
 
 		);
 		//$this->export_alias_array[$r] = array('d.rowid'=>"idtrip", 'd.type'=>"type", 'd.note_private'=>'note_private', 'd.note_public'=>'note_public', 'u.lastname'=>'name', 'u.firstname'=>'firstname', 'u.login'=>'login');
-		$this->export_dependencies_array[$r] = array('expensereport_line'=>'ed.rowid', 'type_fees'=>'tf.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
+		$this->export_dependencies_array[$r] = array('expensereport_line' => 'ed.rowid', 'type_fees' => 'tf.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
 
 		$keyforselect = 'expensereport';
 		$keyforelement = 'expensereport';
@@ -260,8 +262,8 @@ class modExpenseReport extends DolibarrModules
 		$this->remove($options);
 
 		$sql = array(
-			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'standard' AND type='expensereport' AND entity = ".((int) $conf->entity),
-			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('standard','expensereport',".((int) $conf->entity).")"
+			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'standard_expensereport' AND type='expensereport' AND entity = ".((int) $conf->entity),
+			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('standard_expensereport','expensereport',".((int) $conf->entity).")"
 		);
 
 		return $this->_init($sql, $options);

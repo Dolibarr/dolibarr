@@ -97,7 +97,7 @@ ReceiptPrinterMethodDescription=Çox parametrləri olan güclü üsul. Şablonla
 ByTerminal=Terminalla
 TakeposNumpadUsePaymentIcon=Numpad-in ödəniş düymələrində mətn əvəzinə ikonadan istifadə edin
 CashDeskRefNumberingModules=POS satışları üçün nömrələmə modulu
-CashDeskGenericMaskCodes6 = <br><b>{TN}<span class='notranslate'4</span>71f span> etiketi terminal nömrəsini əlavə etmək üçün istifadə olunur
+CashDeskGenericMaskCodes6 = <br><b>{TN}</b> tag is used to add the terminal number
 TakeposGroupSameProduct=Eyni məhsulların xətlərini birləşdirin
 StartAParallelSale=Yeni paralel satışa başlayın
 SaleStartedAt=Satış %s tarixində başladı
@@ -136,7 +136,7 @@ PrintWithoutDetailsLabelDefault=Təfərrüatlar olmadan çapda standart olaraq x
 PrintWithoutDetails=Təfərrüatlar olmadan çap edin
 YearNotDefined=İl müəyyən edilməyib
 TakeposBarcodeRuleToInsertProduct=Məhsul daxil etmək üçün barkod qaydası
-TakeposBarcodeRuleToInsertProductDesc=Skan edilmiş barkoddan məhsul arayışı + kəmiyyət çıxarmaq qaydası.<br>Boşdursa (defolt dəyər), proqram məhsulu tapmaq üçün skan edilmiş tam barkoddan istifadə edəcək.<br><br>Müəyyən edilibsə, sintaksis belə olmalıdır:<br><span><span'>notranslate <b></span>ref:NB+qu:NB+qd:NB+digər:NB</b><br> haradadır skan edilmiş barkoddan məlumat çıxarmaq üçün istifadə ediləcək simvolların sayı:<br><b>refb09a4b78z1f  : məhsul arayışı<br><b>qu</b>: element (vahidlər) daxil edərkən təyin edin<br><b>qdb09a4b739f17f8z></spanity element daxil edərkən təyin edin (ondalıqlar)<span class='notranslate'><br><b>digərb09a4b739f17f8>ss.
+TakeposBarcodeRuleToInsertProductDesc=Rule to extract the product reference + a quantity from a scanned barcode.<br>If empty (default value), application will use the full barcode scanned to find the product.<br><br>If defined, syntax must be:<br><b>ref:NB+qu:NB+qd:NB+other:NB</b><br>where NB is the number of characters to use to extract data from the scanned barcode with:<br><b>ref</b> : product reference<br><b>qu</b> : quantity to set when inserting item (units)<br><b>qd</b> : quantity to set when inserting item (decimals)<br><b>other</b> : others characters
 AlreadyPrinted=Artıq çap olunub
 HideCategories=Kateqoriya seçiminin bütün bölməsini gizlədin
 HideStockOnLine=Onlayn ehtiyatı gizlədin

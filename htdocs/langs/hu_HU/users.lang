@@ -132,5 +132,7 @@ ShowAllPerms=Az összes engedélysor megjelenítése
 HideAllPerms=Az összes engedélysor elrejtése
 UserPublicPageDesc=Engedélyezhet egy virtuális kártyát ennél a felhasználónál. Egy url a felhasználói profillal és egy vonalkóddal elérhető lesz, így bárki, aki okostelefonnal rendelkezik, beszkennelheti és felveheti a névjegyét a címjegyzékébe.
 EnablePublicVirtualCard=Engedélyezze a felhasználó virtuális névjegykártyáját
+ExcludedByFilter=A szűrők nem minősítik, de láthatók a hierarchiája
 UserEnabledDisabled=A felhasználói állapot megváltozott: %s
 AlternativeEmailForOAuth2=Alternatív e-mail az OAuth2 bejelentkezéshez
+ErrorUpdateCanceledDueToDuplicatedUniqueValue=Hiba: A frissítés megszakadt, mert az egyik adatrész, amelynek egyedinek kell lennie, már létezik

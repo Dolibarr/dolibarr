@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2023 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +57,7 @@ $flowChunkNumber = GETPOST('flowChunkNumber', 'alpha');
 $flowChunkSize = GETPOST('flowChunkSize', 'alpha');
 $flowTotalSize = GETPOST('flowTotalSize', 'alpha');
 
-$result = restrictedArea($user, $module, 0, '', 0, 'fk_soc', 'rowid', 0, 1);	// Call with mode return
+$result = restrictedArea($user, $module, 0, '', '', 'fk_soc', 'rowid', 0, 1);	// Call with mode return
 
 if ($action != 'upload') {
 	httponly_accessforbidden("Param action must be 'upload'");
@@ -72,8 +74,6 @@ if (!empty($conf->$module->dir_temp)) {
  */
 
 top_httphead();
-
-dol_syslog(join(',', $_GET));
 
 $result = false;
 
@@ -162,10 +162,10 @@ function createFileFromChunks($temp_dir, $upload_dir, $fileName, $chunkSize, $to
 
 	// check that all the parts are present
 	// the size of the last part is between chunkSize and 2*$chunkSize
-	if ($total_files * $chunkSize >=  ($totalSize - $chunkSize + 1)) {
+	if ($total_files * (float) $chunkSize >=  ((float) $totalSize - (float) $chunkSize + 1)) {
 		// create the final destination file
 		if (($fp = fopen($upload_dir.'/'.$fileName, 'w')) !== false) {
-			for ($i=1; $i<=$total_files; $i++) {
+			for ($i = 1; $i <= $total_files; $i++) {
 				fwrite($fp, file_get_contents($temp_dir.'/'.$fileName.'.part'.$i));
 				dol_syslog('writing chunk '.$i);
 			}

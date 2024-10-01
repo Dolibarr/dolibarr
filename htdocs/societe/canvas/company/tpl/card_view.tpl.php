@@ -18,7 +18,7 @@
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 
@@ -111,6 +111,8 @@ print dol_get_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company
 <tr>
 	<td><?php echo $langs->trans('Phone'); ?></td>
 	<td><?php echo $this->control->tpl['phone']; ?></td>
+	<td><?php echo $langs->trans('PhoneMobile'); ?></td>
+	<td><?php echo $this->control->tpl['phone_mobile']; ?></td>
 	<td><?php echo $langs->trans('Fax'); ?></td>
 	<td><?php echo $this->control->tpl['fax']; ?></td>
 </tr>
@@ -247,7 +249,7 @@ for ($i = 1; $i <= 4; $i++) {
 	<td colspan="3"><?php echo $this->control->tpl['sales_representatives']; ?></td>
 </tr>
 
-<?php if (isModEnabled('adherent')) { ?>
+<?php if (isModEnabled('member')) { ?>
 <tr>
 	<td width="25%" valign="top"><?php echo $langs->trans("LinkedToDolibarrMember"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['linked_member']; ?></td>

@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+/* Copyright (C) 2001-2005	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2015	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +34,8 @@ $langs->loadLangs(array("eventorganization"));
 
 $action = GETPOST('action', 'aZ09');
 
-$max = 5;
+$NBMAX = getDolGlobalString('MAIN_SIZE_SHORTLIST_LIMIT', 5);
+$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
 $now = dol_now();
 
 // Security check
@@ -61,8 +63,9 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 
 $title = $langs->trans('EventOrganizationArea');
+$help_url='EN:Module_Event_Organization';
 
-llxHeader('', $title, '');
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-eventorganization page-index');
 
 print load_fiche_titre($langs->trans("EventOrganizationArea"), '', 'eventorganization.png@eventorganization');
 
@@ -146,9 +149,6 @@ END MODULEBUILDER DRAFT MYOBJECT */
 
 print '</div><div class="fichetwothirdright">';
 
-
-$NBMAX = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
-$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT');
 
 /* BEGIN MODULEBUILDER LASTMODIFIED MYOBJECT
 // Last modified myobject

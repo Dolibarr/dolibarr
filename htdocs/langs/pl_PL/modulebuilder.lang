@@ -148,7 +148,7 @@ CSSListClass=CSS dla listy
 NotEditable=Nie można edytować
 ForeignKey=Klucz obcy
 ForeignKeyDesc=Jeśli wartość tego pola musi być gwarantowana w innej tabeli. Wprowadź tutaj składnię pasującą do wartości: nazwa tabeli.pole nadrzędne do sprawdzenia
-TypeOfFieldsHelp=Przykład:<br>varchar(99)<br>e-mail<br>telefon<span klasa ='notranslate'><br></span>ip<br>url<br>hasło<br>double(24,8)<br>real<br>text<br>html <br>data<br>datetime<br>znacznik czasu <br>integer<br>integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br><br>'1' oznacza, że dodajemy przycisk + po kombinacji, aby utworzyć rekord<br>'filtr' to Warunek składni filtra uniwersalnego, przykład: '((status:=:1) AND (fk_user:=:__USER_ID__) AND (entity:IN:(__SHARED_ENTITIES__))'
+TypeOfFieldsHelp=Example:<br>varchar(99)<br>email<br>phone<br>ip<br>url<br>password<br>double(24,8)<br>real<br>text<br>html<br>date<br>datetime<br>timestamp<br>integer<br>integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br><br>'1' means we add a + button after the combo to create the record<br>'filter' is an Universal Filter syntax condition, example: '((status:=:1) AND (fk_user:=:__USER_ID__) AND (entity:IN:(__SHARED_ENTITIES__))'
 TypeOfFieldsHelpIntro=To jest typ pola/atrybutu.
 AsciiToHtmlConverter=Konwerter Ascii na HTML
 AsciiToPdfConverter=Konwerter ASCII na PDF
@@ -180,7 +180,7 @@ FailedToAddCodeIntoDescriptor=Nie udało się dodać kodu do deskryptora. Sprawd
 DictionariesCreated=Słownik <b>%s</b> pomyślnie utworzono
 DictionaryDeleted=Słownik <b>%s</b> pomyślnie usunięto
 PropertyModuleUpdated=Właściwość <b>%s</b> została pomyślnie zaktualizowana
-InfoForApiFile=* Kiedy wygenerujesz plik po raz pierwszy, wszystkie metody zostaną utworzone <strong>dla każdego obiektu.</strong><br>* Klikając <strong>usuń</strong>, po prostu usuwasz wszystkie metody dla klasy <span ='notranslate'><strong></span>wybrany obiekt</strong>.
+InfoForApiFile=* When you generate file for the first time then all methods will be created <strong>for each object.</strong><br>* When you click in <strong>remove</strong> you just remove all methods for the <strong>selected object</strong>.
 SetupFile=Strona konfiguracji modułu
 EmailingSelectors=Emails selectors
 EmailingSelectorDesc=You can generate and edit here the class files to provide new email target selectors for the mass emailing module

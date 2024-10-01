@@ -4,18 +4,14 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModulePartnershipName=Серіктестікті басқару
 PartnershipDescription=Серіктестікті басқару модулі
 PartnershipDescriptionLong= Серіктестікті басқару модулі
@@ -24,17 +20,11 @@ Partnerships=Серіктестік
 AddPartnership=Серіктестік қосу
 CancelPartnershipForExpiredMembers=Серіктестік: жазылу мерзімі өткен мүшелердің серіктестігін тоқтату
 PartnershipCheckBacklink=Серіктестік: сілтеме бойынша сілтемені тексеріңіз
-
-#
 # Menu
-#
 NewPartnership=Жаңа серіктестік
 NewPartnershipbyWeb=Серіктестік сұрауыңыз сәтті қосылды. Жақын арада сізбен байланысуымыз мүмкін...
 ListOfPartnerships=Серіктестік тізімі
-
-#
 # Admin page
-#
 PartnershipSetup=Серіктестік орнату
 PartnershipAbout=Серіктестік туралы
 PartnershipAboutPage=Бет туралы серіктестік
@@ -45,17 +35,14 @@ PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Жазылымның м
 ReferingWebsiteCheck=Сайтқа сілтеме жасауды тексеру
 ReferingWebsiteCheckDesc=Сіз серіктестердің жеке веб -сайттағы веб -сайт домендеріне кері сілтеме қосқанын тексеру мүмкіндігін қосуға болады.
 PublicFormRegistrationPartnerDesc=Dolibarr сізге сыртқы келушілерге серіктестік бағдарламасының бөлігі болуды сұрауға мүмкіндік беру үшін жалпыға қолжетімді URL/веб-сайтты ұсына алады.
-
-#
 # Object
-#
 DeletePartnership=Серіктестікті жою
 PartnershipDedicatedToThisThirdParty=Бұл үшінші тарапқа арналған серіктестік
 PartnershipDedicatedToThisMember=Бұл мүшеге арналған серіктестік
 DatePartnershipStart=Басталатын күн
 DatePartnershipEnd=Аяқталу күні
 ReasonDecline=Бас тарту себебі
-ReasonDeclineOrCancel=Reason for refusal or cancellation
+ReasonDeclineOrCancel=Бас тарту немесе бас тарту себебі
 PartnershipAlreadyExist=Серіктестік қазірдің өзінде бар
 ManagePartnership=Серіктестікті басқару
 BacklinkNotFoundOnPartnerWebsite=Серіктестің веб -сайтында кері сілтеме табылмады
@@ -68,31 +55,22 @@ PartnershipAccepted=Қабылданды
 PartnershipRefused=Бас тартылды
 PartnershipCanceled=Бас тартылды
 PartnershipManagedFor=Серіктестер
-
-#
 # Template Mail
-#
 SendingEmailOnPartnershipWillSoonBeCanceled=Серіктестік жақын арада жойылады
 SendingEmailOnPartnershipRefused=Серіктестік бас тартты
 SendingEmailOnPartnershipAccepted=Серіктестік қабылданды
 SendingEmailOnPartnershipCanceled=Серіктестік жойылды
-
 YourPartnershipWillSoonBeCanceledTopic=Серіктестік жақын арада жойылады
 YourPartnershipRefusedTopic=Серіктестік бас тартты
 YourPartnershipAcceptedTopic=Серіктестік қабылданды
 YourPartnershipCanceledTopic=Серіктестік жойылды
-
 YourPartnershipWillSoonBeCanceledContent=Жақында серіктестігіміз тоқтатылатынын хабарлаймыз (біз ұзартпадық немесе серіктестіктің алғы шарты орындалмады). Егер сіз оны қатеге байланысты алсаңыз, бізге хабарласыңыз.
 YourPartnershipRefusedContent=Серіктестік туралы өтінішіңіз қабылданбағанын хабарлаймыз. Алғышарттар орындалмаған. Қосымша ақпарат қажет болса, бізге хабарласыңыз.
 YourPartnershipAcceptedContent=Сіздің серіктестік туралы өтінішіңіз қабылданғанын хабарлаймыз.
 YourPartnershipCanceledContent=Біздің серіктестігіміз тоқтатылғанын хабарлаймыз. Қосымша ақпарат қажет болса, бізге хабарласыңыз.
-
 CountLastUrlCheckError=URL -ді соңғы тексеруге қателер саны
 LastCheckBacklink=URL мекенжайын соңғы тексеру күні
-
 NewPartnershipRequest=Жаңа серіктестік сұрауы
-NewPartnershipRequestDesc=Бұл пішін серіктестік бағдарламамыздың бір бөлігі болуды сұрауға мүмкіндік береді. Бұл пішінді толтыру үшін көмек қажет болса, электрондық пошта арқылы хабарласыңыз <b>%s<span class='notranslate'></b> аралығы>.
+NewPartnershipRequestDesc=This form allows you to request to be part of one of our partnership program. If you need help to fill this form, please contact by email <b>%s</b>.
 ThisUrlMustContainsAtLeastOneLinkToWebsite=Бұл бетте келесі домендердің біріне кемінде бір сілтеме болуы керек: %s
-
 IPOfApplicant=Өтініш берушінің IP
-

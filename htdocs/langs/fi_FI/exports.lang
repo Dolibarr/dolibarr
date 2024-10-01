@@ -72,7 +72,7 @@ FieldsTarget=Kohdennettu kentät
 FieldTarget=Alalta
 FieldSource=Lähde kenttä
 NbOfSourceLines=Määrä riviä lähdetiedoston
-NowClickToTestTheImport=Tarkista, että merkkijonojen tiedosto muoto (Kenttä ja) span class='notranslate'>tiedosto</span> vastaa näytettyjä vaihtoehtoja ja, että olet jättänyt otsikkorivin pois, tai ne merkitään virheiksi seuraavassa simulaatiossa.<br>Klikkaa <b>%s </b>" -painike suorittaa tiedosto rakenteen/sisällön tarkistuksen ja simuloi tuontiprosessia.<span class. ='notranslate'><br></span><b>Tietokannassasi ei muuteta tietoja</b>.
+NowClickToTestTheImport=Check that the file format (field and string delimiters) of your file matches the options shown and that you have omitted the header line, or these will be flagged as errors in the following simulation.<br>Click on the "<b>%s</b>" button to run a check of the file structure/contents and simulate the import process.<br><b>No data will be changed in your database</b>.
 RunSimulateImportFile=Suorita tuontisimulaatio
 FieldNeedSource=Tämä Kenttä vaatii tietoja lähteestä tiedosto
 SomeMandatoryFieldHaveNoSource=Jotkut pakolliset kentät eivät lähde tiedosto
@@ -103,18 +103,18 @@ SourceRequired=Tiedon arvo on pakollinen
 SourceExample=Esimerkki mahdollisesta tietojen arvo
 ExampleAnyRefFoundIntoElement=Jos ref löytynyt elementin <b>%s</b>
 ExampleAnyCodeOrIdFoundIntoDictionary=Mikä tahansa sanakirjasta löytyvä koodi (tai tunnus) <b>%s</b>
-CSVFormatDesc=<b>Pilkuilla erotettu arvo</b> tiedosto muoto (.csv). class='notranslate'><br></span>Tämä on tiedosto tekstimuoto, jossa kentät erotetaan erottimella [ %s ]. Jos erotin löytyy Kenttä-sisällöstä, Kenttä pyöristetään pyöreällä merkillä [ %s ]. Esc-merkki pyöreäksi merkiksi on [ %s ].
+CSVFormatDesc=<b>Comma Separated Value</b> file format (.csv).<br>This is a text file format where fields are separated by a separator [ %s ]. If separator is found inside a field content, field is rounded by round character [ %s ]. Escape character to escape round character is [ %s ].
 Excel95FormatDesc=<b>Excel</b> tiedosto muoto (.xls)<br>Tämä on alkuperäinen Excel 95 -muoto (BIFF5).
 Excel2007FormatDesc=<b>Excel</b> tiedosto muoto (.xlsx)<br>Tämä on alkuperäinen Excel 2007 -muoto (SpreadsheetML).
-TsvFormatDesc=<b>Sarkaimella erotettu arvo</b> tiedosto muoto (.tsv) ='notranslate'><br></span>Tämä on tiedosto tekstimuoto, jossa kentät on erotettu tabulaattorilla [sarkain].
+TsvFormatDesc=<b>Tab Separated Value</b> file format (.tsv)<br>This is a text file format where fields are separated by a tabulator [tab].
 ExportFieldAutomaticallyAdded=Kenttä <b>%sb09f4b730 span> lisättiin automaattisesti. Näin vältytään siltä, että samankaltaisia rivejä käsitellään päällekkäisinä tietueina (kun tämä Kenttä lisätään, kaikki rivit omistavat oman tunnuksensa ja span> vaihtelee).
 CsvOptions=CSV-muotoasetukset
 Separator=Kenttä Erotin
 Enclosure=Merkkijonojen erotin
 SpecialCode=Erikoiskoodi
 ExportStringFilter=%% sallii yhden tai useamman merkin korvaamisen tekstissä
-ExportDateFilter=VVVV, VVVVKK, VVVVKKPP: suodattaa yhden vuoden/kuukauden/päivän mukaan<br>YYYY+YYYY, YYYYMM+YYYYMM, YYYYMMDD+YYYYMMDD: suodattaa <kuukausi ajanjaksolla/vuosi/päivä span class='notranslate'><br></span> > VVVV, > VVVVKK, > VVVVKKPP: suodattaa kaikille seuraaville vuosille/kuukausille/päiville<br> < VVVVKK, <VVV VVVVKKPP: suodattaa kaikki edelliset vuodet/kuukaudet/päivät
-ExportNumericFilter=NNNNN suodattaa yhdellä arvolla<br>NNNNN+NNNNN suodattaa arvoalueen yli<br><span class='notranslate'>b08912a27ede2 /span>> NNNNN suodattaa korkeammilla arvoilla
+ExportDateFilter=YYYY, YYYYMM, YYYYMMDD: filters by one year/month/day<br>YYYY+YYYY, YYYYMM+YYYYMM, YYYYMMDD+YYYYMMDD: filters over a range of years/months/days<br> > YYYY, > YYYYMM, > YYYYMMDD: filters on all following years/months/days<br> < YYYY, < YYYYMM, < YYYYMMDD: filters on all previous years/months/days
+ExportNumericFilter=NNNNN filters by one value<br>NNNNN+NNNNN filters over a range of values<br>< NNNNN filters by lower values<br>> NNNNN filters by higher values
 ImportFromLine=Tuo rivin numerosta alkaen
 EndAtLineNb=Lopeta rivin numeroon
 ImportFromToLine=Rajoitusalue (Alkaen - Mihin). Esim. ohittaaksesi otsikkorivit.

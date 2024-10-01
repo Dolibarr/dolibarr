@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - marque pages / bookmarks
 
 AddThisPageToBookmarks = Aktuelle Ansicht zu Lesezeichen hinzufügen
-BehaviourOnClick = Öffnungsverhalten
+BehaviourOnClick = Verhalten, wenn eine Lesezeichen-URL ausgewählt wird
 Bookmark = Lesezeichen
 Bookmarks = Lesezeichen
 BookmarkTargetNewWindowShort = Neuer Tab

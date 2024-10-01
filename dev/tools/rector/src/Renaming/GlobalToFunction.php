@@ -4,7 +4,9 @@ namespace Dolibarr\Rector\Renaming;
 
 use PhpParser\Node;
 use PhpParser\Node\Arg;
+use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Expr\ArrayDimFetch;
+use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\BinaryOp\BooleanAnd;
 use PhpParser\Node\Expr\BinaryOp\Concat;
 use PhpParser\Node\Expr\BinaryOp\Equal;
@@ -62,8 +64,8 @@ class GlobalToFunction extends AbstractRector
 			[new CodeSample(
 				'$conf->global->CONSTANT',
 				'getDolGlobalInt(\'CONSTANT\')'
-			)]
-		);
+				)]
+			);
 	}
 
 	/**
@@ -73,7 +75,7 @@ class GlobalToFunction extends AbstractRector
 	 */
 	public function getNodeTypes(): array
 	{
-		return [FuncCall::class, MethodCall::class, Equal::class, NotEqual::class, Greater::class, GreaterOrEqual::class, Smaller::class, SmallerOrEqual::class, NotIdentical::class, BooleanAnd::class, Concat::class, ArrayDimFetch::class];
+		return [Assign::class, FuncCall::class, MethodCall::class, Equal::class, NotEqual::class, Greater::class, GreaterOrEqual::class, Smaller::class, SmallerOrEqual::class, NotIdentical::class, BooleanAnd::class, Concat::class, ArrayItem::class, ArrayDimFetch::class];
 	}
 
 	/**
@@ -85,6 +87,40 @@ class GlobalToFunction extends AbstractRector
 	 */
 	public function refactor(Node $node)
 	{
+		if ($node instanceof Node\Expr\Assign) {
+			// var is left of = and expr is right
+			if (!isset($node->var)) {
+				return;
+			}
+			if ($this->isGlobalVar($node->expr)) {
+				$constName = $this->getConstName($node->expr);
+				if (empty($constName)) {
+					return;
+				}
+				$node->expr = new FuncCall(
+					new Name('getDolGlobalString'),
+					[new Arg($constName)]
+					);
+			}
+			return $node;
+		}
+		if ($node instanceof Node\Expr\ArrayItem) {
+			if (!isset($node->key)) {
+				return;
+			}
+			if ($this->isGlobalVar($node->value)) {
+				$constName = $this->getConstName($node->value);
+				if (empty($constName)) {
+					return;
+				}
+				$node->value = new FuncCall(
+					new Name('getDolGlobalString'),
+					[new Arg($constName)]
+					);
+			}
+			return $node;
+		}
+
 		if ($node instanceof Node\Expr\ArrayDimFetch) {
 			if (!isset($node->dim)) {
 				return;
@@ -97,7 +133,7 @@ class GlobalToFunction extends AbstractRector
 				$node->dim = new FuncCall(
 					new Name('getDolGlobalString'),
 					[new Arg($constName)]
-				);
+					);
 			}
 			return $node;
 		}
@@ -105,7 +141,7 @@ class GlobalToFunction extends AbstractRector
 		if ($node instanceof FuncCall) {
 			$tmpfunctionname = $this->getName($node);
 			// If function is ok. We must avoid a lot of cases like isset(), empty()
-			if (in_array($tmpfunctionname, array('dol_escape_htmltag', 'dol_hash', 'make_substitutions', 'min', 'max', 'explode'))) {
+			if (in_array($tmpfunctionname, array('dol_escape_htmltag', 'dol_hash', 'explode', 'is_numeric', 'length_accountg', 'length_accounta', 'make_substitutions', 'min', 'max', 'trunc', 'urlencode', 'yn'))) {
 				//print "tmpfunctionname=".$tmpfunctionname."\n";
 				$args = $node->getArgs();
 				$nbofparam = count($args);
@@ -135,7 +171,7 @@ class GlobalToFunction extends AbstractRector
 		if ($node instanceof MethodCall) {
 			$tmpmethodname = $this->getName($node->name);
 			// If function is ok. We must avoid a lot of cases
-			if (in_array($tmpmethodname, array('idate'))) {
+			if (in_array($tmpmethodname, array('fetch', 'idate', 'sanitize', 'select_language', 'trans'))) {
 				//print "tmpmethodname=".$tmpmethodname."\n";
 				$expr = $node->var;
 				$args = $node->getArgs();
@@ -172,7 +208,7 @@ class GlobalToFunction extends AbstractRector
 				$leftConcat = new FuncCall(
 					new Name('getDolGlobalString'),
 					[new Arg($constName)]
-				);
+					);
 				$rightConcat = $node->right;
 			}
 			if ($this->isGlobalVar($node->right)) {
@@ -183,7 +219,7 @@ class GlobalToFunction extends AbstractRector
 				$rightConcat = new FuncCall(
 					new Name('getDolGlobalString'),
 					[new Arg($constName)]
-				);
+					);
 				$leftConcat = $node->left;
 			}
 			if (!isset($leftConcat, $rightConcat)) {
@@ -201,6 +237,7 @@ class GlobalToFunction extends AbstractRector
 			/** @var Equal $node */
 			$node = $nodes->getFirstExpr();
 		}
+
 
 		// Now process all comparison like:
 		// $conf->global->... Operator Value
@@ -228,11 +265,14 @@ class GlobalToFunction extends AbstractRector
 			$typeofcomparison = 'NotIdentical';
 			//var_dump($node->left);
 		}
+
 		if (empty($typeofcomparison)) {
 			return;
 		}
 
-		if (!$this->isGlobalVar($node->left)) {
+		$isconfglobal = $this->isGlobalVar($node->left);
+		if (!$isconfglobal) {
+			// The left side is not conf->global->xxx, so we leave
 			return;
 		}
 
@@ -246,7 +286,8 @@ class GlobalToFunction extends AbstractRector
 				$funcName = 'getDolGlobalString';
 				break;
 			default:
-				return;
+				$funcName = 'getDolGlobalString';
+				break;
 		}
 
 		$constName = $this->getConstName($node->left);
@@ -259,9 +300,9 @@ class GlobalToFunction extends AbstractRector
 				new FuncCall(
 					new Name($funcName),
 					[new Arg($constName)]
-				),
+					),
 				$node->right
-			);
+				);
 		}
 		if ($typeofcomparison == 'NotEqual') {
 			return new NotEqual(
@@ -277,36 +318,36 @@ class GlobalToFunction extends AbstractRector
 				new FuncCall(
 					new Name($funcName),
 					[new Arg($constName)]
-				),
+					),
 				$node->right
-			);
+				);
 		}
 		if ($typeofcomparison == 'GreaterOrEqual') {
 			return new GreaterOrEqual(
 				new FuncCall(
 					new Name($funcName),
 					[new Arg($constName)]
-				),
+					),
 				$node->right
-			);
+				);
 		}
 		if ($typeofcomparison == 'Smaller') {
 			return new Smaller(
 				new FuncCall(
 					new Name($funcName),
 					[new Arg($constName)]
-				),
+					),
 				$node->right
-			);
+				);
 		}
 		if ($typeofcomparison == 'SmallerOrEqual') {
 			return new SmallerOrEqual(
 				new FuncCall(
 					new Name($funcName),
 					[new Arg($constName)]
-				),
+					),
 				$node->right
-			);
+				);
 		}
 		if ($typeofcomparison == 'NotIdentical') {
 			return new NotIdentical(
@@ -346,7 +387,7 @@ class GlobalToFunction extends AbstractRector
 				}
 				return \true;
 			}
-		);
+			);
 	}
 
 	/**

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2020 Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +17,7 @@
  */
 
 /**
- * \file    workstation/lib/workstation.lib.php
+ * \file    htdocs/workstation/lib/workstation.lib.php
  * \ingroup workstation
  * \brief   Library files with common functions for Workstation
  */

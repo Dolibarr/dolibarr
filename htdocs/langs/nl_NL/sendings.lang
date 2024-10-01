@@ -39,7 +39,7 @@ StatusSendingValidatedShort=Gevalideerd
 StatusSendingProcessedShort=Verwerkt
 SendingSheet=Verzendings blad
 ConfirmDeleteSending=Weet u zeker dat u deze zending wilt verwijderen?
-ConfirmValidateSending=Are you sure you want to validate this shipment with the reference <b>%s</b>?
+ConfirmValidateSending=Weet u zeker dat u deze zending wilt valideren met de referentie <b>%s</b>?
 ConfirmCancelSending=Weet u zeker dat u deze verzending wilt annuleren?
 DocumentModelMerou=Merou A5 model
 WarningNoQtyLeftToSend=Waarschuwing, geen producten die op verzending wachten.
@@ -63,6 +63,9 @@ NoProductToShipFoundIntoStock=Geen product te verzenden in het magazijn <b> %s <
 WeightVolShort=Gewicht / Vol.
 ValidateOrderFirstBeforeShipment=U moet eerst de bestelling valideren voordat u zendingen kunt maken.
 NoLineGoOnTabToAddSome=Geen regel. Ga naar tabblad "%s" om toe te voegen
+CreateInvoiceForThisCustomerFromSendings=Create Bills
+IfValidateInvoiceIsNoSendingStayUnbilled=Als de Factuur-validatie 'Nee' is, blijft de verzending op de status 'Niet gefactureerd' totdat de Factuur is gevalideerd.
+OptionToSetSendingBilledNotEnabled=De optie uit de module Workflow, om het verzenden automatisch naar 'Gefactureerd' in te stellen wanneer Factuur is gevalideerd, is niet ingeschakeld, dus u zult de status van verzendingen daarna handmatig moeten instellen op 'Gefactureerd' de Factuur is gegenereerd.
 
 # Sending methods
 # ModelDocument
@@ -71,16 +74,12 @@ DocumentModelStorm=Compleet documentmodel voor ontvangstbewijzen en compatibilit
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constant EXPEDITION_ADDON_NUMBER niet gedefinieerd
 SumOfProductVolumes=Som van alle productvolumes
 SumOfProductWeights=Som van product-gewichten
-
 # warehouse details
 DetailWarehouseNumber= Magazijn informatie
 DetailWarehouseFormat= W: %s (Aantal: %d)
 SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Laatst ingevoerde datum weergeven in voorraad tijdens het aanmaken van de zending voor serienummer of batch
 CreationOptions=Beschikbare opties tijdens het aanmaken van de zending
-
 ShipmentDistribution=Zending distributie
-
 ErrorTooManyCombinationBatchcode=Geen verzending voor regel %s omdat er te veel combinaties van magazijn-, product- en batchcode zijn gevonden (%s).
 ErrorNoCombinationBatchcode=Kan de regel %s niet opslaan als de combinatie van magazijn-product-lot/serieel (%s, %s, %s) is niet gevonden in voorraad.
-
 ErrorTooMuchShipped=Het verzonden aantal mag niet groter zijn dan het bestelde aantal voor regel %s

@@ -200,8 +200,8 @@ MembersStatisticsDesc=Виберіть статистику, яку хочете
 MenuMembersStats=Статистика
 LastMemberDate=Остання дата членства
 LatestSubscriptionDate=Остання дата внеску
-MemberNature=Характер члена
-MembersNature=Характер членів
+MemberNature=Nature of member
+MembersNature=Nature of members
 Public=%s може опублікувати моє членство в <a target="_blank" href="%s">публічному реєстрі</a>
 MembershipPublic=Громадське членство
 NewMemberbyWeb=Додано нового учасника. Очікує Схвалення
@@ -240,9 +240,10 @@ MemberCodeDesc=Код учасника, унікальний для всіх у�
 MemberSubscriptionStartFirstDayOf=Дата початку членства відповідає першому дню а
 MemberSubscriptionStartAfter=Мінімальний період перед набуттям чинності дати початку підписки, за винятком поновлення (приклад: +3m = +3 місяці, -5d = -5 днів, +1Y = +1 рік)
 SubscriptionLinkedToConciliatedTransaction=Членство пов’язане з узгодженою транзакцією, тому ця зміна не дозволяється.
-ConfirmMassSubsriptionCreation=Confirm subscription creation
-ConfirmMassSubsriptionCreationQuestion=Are you sure you want to create the %s selected subscription(s)?
-XSubsriptionCreated=%s subscription(s) created
-XSubsriptionErrors=%s subscription(s) where in error
-CreateSubscription=Create subscription
-WarningNoComplementaryActionDone=No Complementary action on recording will be executed with this massaction
+ConfirmMassSubsriptionCreation=Підтвердити створення підписки
+ConfirmMassSubsriptionCreationQuestion=Ви впевнені, що хочете створити %s вибрану(і) підписку(и)?
+XSubsriptionCreated=Створено %s підписки
+XSubsriptionErrors=%s підписки, де помилка
+CreateSubscription=Створити підписку
+WarningNoComplementaryActionDone=Жодна додаткова дія щодо запису не буде виконана з цією масою
+NewMembership=New membership

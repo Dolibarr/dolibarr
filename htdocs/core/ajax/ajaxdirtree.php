@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,7 +75,7 @@ if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 }
 
 $websitekey = GETPOST('websitekey', 'alpha');
-$pageid = GETPOST('pageid', 'int');
+$pageid = GETPOSTINT('pageid');
 
 // Load translation files required by the page
 $langs->load("ecm");
@@ -95,7 +96,7 @@ if ($modulepart == 'ecm') {
 if (preg_match('/\.\./', $fullpathselecteddir) || preg_match('/[<>|]/', $fullpathselecteddir)) {
 	dol_syslog("Refused to deliver file ".$original_file);
 	// Do no show plain path in shown error message
-	dol_print_error(0, $langs->trans("ErrorFileNameInvalid", GETPOST("file")));
+	dol_print_error(null, $langs->trans("ErrorFileNameInvalid", GETPOST("file")));
 	exit;
 }
 
@@ -113,6 +114,7 @@ if ($modulepart == 'ecm') {
 } else {
 	accessforbidden();
 }
+
 
 /*
  * Actions
@@ -149,6 +151,7 @@ foreach ($sqltree as $keycursor => $val) {
 }
 
 if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_ECM_DISABLE_JS')) {
+	//
 	treeOutputForAbsoluteDir($sqltree, $selecteddir, $fullpathselecteddir, $modulepart, $websitekey, $pageid, $preopened, $fullpathpreopened);
 
 	// TODO Find a solution to not output this code for each leaf we open
@@ -159,7 +162,7 @@ if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_ECM_DISABLE_
 	            	jQuery(document).ready(function () {
 	            		jQuery(".classfortooltip").tooltip({
 							show: { collision: "flipfit", effect:\'toggle\', delay:50 },
-							hide: { delay: 50 }, 	/* If I enable effect:\'toggle\' here, a bug appears: the tooltip is shown when collpasing a new dir if it was shown before */
+							hide: { delay: 50 }, 	/* If I enable effect:\'toggle\' here, a bug appears: the tooltip is shown when collapsing a new dir if it was shown before */
 							tooltipClass: "mytooltip",
 							content: function () {
 	              				return $(this).prop(\'title\');		/* To force to get title as is */
@@ -212,17 +215,18 @@ if (empty($conf->use_javascript_ajax) || getDolGlobalString('MAIN_ECM_DISABLE_JS
 				$expandedsectionarray[] = $idcursor;
 			}
 		}
-		$_SESSION['dol_ecmexpandedsectionarray'] = join(',', $expandedsectionarray);
+		$_SESSION['dol_ecmexpandedsectionarray'] = implode(',', $expandedsectionarray);
 	}
 	if ($section && GETPOST('sectionexpand') == 'false') {
 		// We removed all expanded sections that are child of the closed section
 		$oldexpandedsectionarray = $expandedsectionarray;
 		$expandedsectionarray = array(); // Reset
+		// @phan-suppress-next-line PhanEmptyForeachBody
 		foreach ($oldexpandedsectionarray as $sectioncursor) {
 			// TODO is_in_subtree(fulltree,sectionparent,sectionchild) does nox exists. Enable or remove this...
 			//if ($sectioncursor && ! is_in_subtree($sqltree,$section,$sectioncursor)) $expandedsectionarray[]=$sectioncursor;
 		}
-		$_SESSION['dol_ecmexpandedsectionarray'] = join(',', $expandedsectionarray);
+		$_SESSION['dol_ecmexpandedsectionarray'] = implode(',', $expandedsectionarray);
 	}
 	//print $_SESSION['dol_ecmexpandedsectionarray'].'<br>';
 
@@ -306,7 +310,7 @@ if (empty($conf->use_javascript_ajax) || getDolGlobalString('MAIN_ECM_DISABLE_JS
 			print '<td class="center">';
 			$userstatic->id = $val['fk_user_c'];
 			$userstatic->lastname = $val['login_c'];
-			$userstatic->statut = $val['statut_c'];
+			$userstatic->status = $val['statut_c'];
 			$htmltooltip = '<b>'.$langs->trans("ECMSection").'</b>: '.$val['label'].'<br>';
 			$htmltooltip = '<b>'.$langs->trans("Type").'</b>: '.$langs->trans("ECMSectionManual").'<br>';
 			$htmltooltip .= '<b>'.$langs->trans("ECMCreationUser").'</b>: '.$userstatic->getNomUrl(1, '', false, 1).'<br>';
@@ -368,7 +372,7 @@ if ((!isset($mode) || $mode != 'noajax') && is_object($db)) {
  */
 function treeOutputForAbsoluteDir($sqltree, $selecteddir, $fullpathselecteddir, $modulepart, $websitekey, $pageid, $preopened, $fullpathpreopened, $depth = 0)
 {
-	global $conf, $db, $langs, $form;
+	global $conf, $db, $langs, $form, $user;
 	global $dolibarr_main_data_root;
 
 	$ecmdirstatic = new EcmDirectory($db);
@@ -377,15 +381,23 @@ function treeOutputForAbsoluteDir($sqltree, $selecteddir, $fullpathselecteddir, 
 	if (file_exists($fullpathselecteddir)) {
 		$files = @scandir($fullpathselecteddir);
 
-		if (!empty($files)) {
+		if (!empty($files)) {	// array should have at least . and ..
 			natcasesort($files);
 			if (count($files) > 2) {    /* The 2 accounts for . and .. */
 				echo '<ul class="ecmjqft" style="display: none;">'."\n";
 
 				// All dirs
-				foreach ($files as $file) {    // $file can be '.', '..', or 'My dir' or 'My file'
-					if ($file == 'temp') {
+				$nboflinesshown = 0;
+				foreach ($files as $file) {
+					// $file can be '.', '..', 'temp', or 'My dir' or 'My file'
+					if (in_array($file, array('temp', '.', '..'))) {
 						continue;
+					}
+
+					// External users are not allowed to see manual directories so we quit.
+					// TODO Implement acl on directory for user groups.
+					if ($user->socid > 0) {
+						break;
 					}
 
 					$nbofsubdir = 0;
@@ -417,7 +429,7 @@ function treeOutputForAbsoluteDir($sqltree, $selecteddir, $fullpathselecteddir, 
 					}
 
 					//print 'modulepart='.$modulepart.' fullpathselecteddir='.$fullpathselecteddir.' - val[fullrelativename] (in database)='.$val['fullrelativename'].' - val[id]='.$val['id'].' - is_dir='.dol_is_dir($fullpathselecteddir . $file).' - file='.$file."\n";
-					if ($file != '.' && $file != '..' && ((!empty($val['fullrelativename']) && $val['id'] >= 0) || dol_is_dir($fullpathselecteddir.(preg_match('/\/$/', $fullpathselecteddir) ? '' : '/').$file))) {
+					if ((!empty($val['fullrelativename']) && $val['id'] >= 0) || dol_is_dir($fullpathselecteddir.(preg_match('/\/$/', $fullpathselecteddir) ? '' : '/').$file)) {
 						if (empty($val['fullrelativename'])) {	// If we did not find entry into database, but found a directory (dol_is_dir was ok at previous test)
 							$val['fullrelativename'] = (($selecteddir && $selecteddir != '/') ? $selecteddir.'/' : '').$file;
 							$val['id'] = 0;
@@ -430,6 +442,9 @@ function treeOutputForAbsoluteDir($sqltree, $selecteddir, $fullpathselecteddir, 
 						if (preg_match('/^'.preg_quote($val['fullrelativename'].'/', '/').'/', $preopened)) {
 							$collapsedorexpanded = 'expanded';
 						}
+
+						$nboflinesshown++;
+
 						print '<li class="directory '.$collapsedorexpanded.' lidirecm">'; // collapsed is opposite if expanded
 
 						//print '<div class="divfmdirlia inline-block">';	// Disabled, this break the javascrip component
@@ -480,7 +495,7 @@ function treeOutputForAbsoluteDir($sqltree, $selecteddir, $fullpathselecteddir, 
 							print '<td class="right" width="18">';
 							$userstatic->id = isset($val['fk_user_c']) ? $val['fk_user_c'] : 0;
 							$userstatic->lastname = isset($val['login_c']) ? $val['login_c'] : 0;
-							$userstatic->statut = isset($val['statut_c']) ? $val['statut_c'] : 0;
+							$userstatic->status = isset($val['statut_c']) ? $val['statut_c'] : 0;
 							$htmltooltip = '<b>'.$langs->trans("ECMSection").'</b>: '.$val['label'].'<br>';
 							$htmltooltip = '<b>'.$langs->trans("Type").'</b>: '.$langs->trans("ECMSectionManual").'<br>';
 							$htmltooltip .= '<b>'.$langs->trans("ECMCreationUser").'</b>: '.$userstatic->getNomUrl(1, '', false, 1).'<br>';
@@ -517,6 +532,11 @@ function treeOutputForAbsoluteDir($sqltree, $selecteddir, $fullpathselecteddir, 
 
 						print "</li>\n";
 					}
+				}
+
+				if ($user->socid > 0 && empty($nboflinesshown)) {
+					// External users are not allowed to see manual directories
+					print '<li>Not directory allowed to external users.<br>ACL for external users not yet implemented.</li>';
 				}
 
 				echo "</ul>\n";

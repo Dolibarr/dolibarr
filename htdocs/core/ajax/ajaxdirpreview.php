@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010	   Pierre Morin         <pierre.morin@auguria.net>
  * Copyright (C) 2013      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2024      MDW                  <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,10 +54,10 @@ if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 	$urlsource = GETPOST("urlsource", 'alpha');
 	$search_doc_ref = GETPOST('search_doc_ref', 'alpha');
 
-	$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+	$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 	$sortfield = GETPOST("sortfield", 'aZ09comma');
 	$sortorder = GETPOST("sortorder", 'aZ09comma');
-	$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+	$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 	if (empty($page) || $page == -1) {
 		$page = 0;
 	}     // If $page is not defined, or '' or -1
@@ -77,13 +78,18 @@ if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 	$ecmdir = new EcmDirectory($db);
 	if ($section > 0) {
 		$result = $ecmdir->fetch($section);
-		if (!($result > 0)) {
-			//dol_print_error($db,$ecmdir->error);
-			//exit;
-		}
+		//if (!($result > 0)) {
+		//dol_print_error($db,$ecmdir->error);
+		//exit;
+		//}
 	}
 } else {
-	// For no ajax call
+	// When no an ajax call (include from other file)
+	'
+	@phan-var-force int $section
+	@phan-var-force string $module
+	@phan-var-force string $showonrightsize
+	';
 	$rootdirfordoc = $conf->ecm->dir_output;
 
 	$ecmdir = new EcmDirectory($db);
@@ -129,7 +135,7 @@ if ($user->socid > 0) {
 if (preg_match('/\.\./', $upload_dir) || preg_match('/[<>|]/', $upload_dir)) {
 	dol_syslog("Refused to deliver file ".$upload_dir);
 	// Do no show plain path in shown error message
-	dol_print_error(0, $langs->trans("ErrorFileNameInvalid", $upload_dir));
+	dol_print_error(null, $langs->trans("ErrorFileNameInvalid", $upload_dir));
 	exit;
 }
 // Check permissions
@@ -182,7 +188,7 @@ if (!empty($websitekey)) {
 	$param .= '&website='.urlencode($websitekey);
 }
 if (!empty($pageid)) {
-	$param .= '&pageid='.urlencode($pageid);
+	$param .= '&pageid='.((int) $pageid);
 }
 
 
@@ -220,7 +226,7 @@ if ($type == 'directory') {
 		'mrp-mo'
 	);
 
-	$parameters = array('modulepart'=>$module);
+	$parameters = array('modulepart' => $module);
 	$reshook = $hookmanager->executeHooks('addSectionECMAuto', $parameters);
 	if ($reshook > 0 && is_array($hookmanager->resArray) && count($hookmanager->resArray) > 0) {
 		$automodules[] = $hookmanager->resArray['module'];
@@ -274,7 +280,7 @@ if ($type == 'directory') {
 	} elseif ($module == 'mrp-mo') {
 		$upload_dir = $conf->mrp->dir_output;
 	} else {
-		$parameters = array('modulepart'=>$module);
+		$parameters = array('modulepart' => $module);
 		$reshook = $hookmanager->executeHooks('addSectionECMAuto', $parameters);
 		if ($reshook > 0 && is_array($hookmanager->resArray) && count($hookmanager->resArray) > 0) {
 			$upload_dir = $hookmanager->resArray['directory'];
@@ -290,10 +296,26 @@ if ($type == 'directory') {
 
 		$textifempty = ($section ? $langs->trans("NoFileFound") : ($showonrightsize == 'featurenotyetavailable' ? $langs->trans("FeatureNotYetAvailable") : $langs->trans("NoFileFound")));
 
-		$filter = preg_quote($search_doc_ref, '/');
+		$filter = preg_quote((string) $search_doc_ref, '/');
 		$filearray = dol_dir_list($upload_dir, "files", 1, $filter, $excludefiles, $sortfield, $sorting, 1);
 
-		$perm = $user->rights->ecm->upload;
+		// To allow external users,we must restrict $filearray to entries the user is a thirdparty.
+		// This can be done by filtering on entries found into llx_ecm
+		if ($user->socid > 0) {
+			$filearrayallowedtoexternal = array();	// 'fullpath' => array(...)
+
+			// Search files in ECM with select filepath.filename where src_object_type = $module and src_object_type EXISTS in (select rowid from $objecttablename WERE fk_soc = '.$user->socid.' and entity in getEntity($objecttbalename)
+			// TODO
+
+			// Now clean $filearray to keep only record also found into $filearrayallowedtoexternal.
+			foreach ($filearray as $key => $val) {
+				if (!in_array($upload_dir.'/'.$val['relativename'], $filearrayallowedtoexternal)) {
+					unset($filearray[$key]);
+				}
+			}
+		}
+
+		$perm = $user->hasRight('ecm', 'upload');
 
 		$formfile->list_of_autoecmfiles($upload_dir, $filearray, $module, $param, 1, '', $perm, 1, $textifempty, $maxlengthname, $url, 1);
 	} else {
@@ -321,7 +343,7 @@ if ($type == 'directory') {
 					$param .= '&website='.urlencode(GETPOST('website', 'alpha'));
 				}
 				if (!preg_match('/pageid=/', $param)) {
-					$param .= '&pageid='.urlencode(GETPOST('pageid', 'int'));
+					$param .= '&pageid='.GETPOSTINT('pageid');
 				}
 				//if (!preg_match('/backtopage=/',$param)) $param.='&backtopage='.urlencode($_SERVER["PHP_SELF"].'?file_manager=1&website='.$websitekey.'&pageid='.$pageid);
 			}
@@ -354,6 +376,7 @@ if ($type == 'directory') {
 			$textifempty = ($showonrightsize == 'featurenotyetavailable' ? $langs->trans("FeatureNotYetAvailable") : $langs->trans("ECMSelectASection"));
 		}
 
+		$useinecm = null;
 		if ($module == 'medias') {
 			$useinecm = 6;
 			$modulepart = 'medias';
@@ -387,7 +410,7 @@ if ($type == 'directory') {
 
 		// When we show list of files for ECM files, $filearray contains file list, and directory is defined with modulepart + section into $param
 		// When we show list of files for a directory, $filearray ciontains file list, and directory is defined with modulepart + $relativepath
-		//var_dump("section=".$section." title=".$title." modulepart=".$modulepart." useinecm=".$useinecm." perm=".$perm." relativepath=".$relativepath." param=".$param." url=".$url);
+		// var_dump("section=".$section." title=".$title." modulepart=".$modulepart." useinecm=".$useinecm." perm(permtoeditline)=".$perm." relativepath=".$relativepath." param=".$param." url=".$url);
 		$formfile->list_of_documents($filearray, '', $modulepart, $param, 1, $relativepath, $perm, $useinecm, $textifempty, $maxlengthname, $title, $url, 0, $perm, '', $sortfield, $sortorder);
 	}
 }
@@ -422,20 +445,21 @@ if ($useajax || $action == 'deletefile') {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 	$form = new Form($db);
-	$formquestion['urlfile'] = array('type'=>'hidden', 'value'=>$urlfile, 'name'=>'urlfile'); // We must always put field, even if empty because it is filled by javascript later
-	$formquestion['section'] = array('type'=>'hidden', 'value'=>$section, 'name'=>'section'); // We must always put field, even if empty because it is filled by javascript later
-	$formquestion['section_id'] = array('type'=>'hidden', 'value'=>$section_id, 'name'=>'section_id'); // We must always put field, even if empty because it is filled by javascript later
-	$formquestion['section_dir'] = array('type'=>'hidden', 'value'=>$section_dir, 'name'=>'section_dir'); // We must always put field, even if empty because it is filled by javascript later
-	$formquestion['sortfield'] = array('type'=>'hidden', 'value'=>$sortfield, 'name'=>'sortfield'); // We must always put field, even if empty because it is filled by javascript later
-	$formquestion['sortorder'] = array('type'=>'hidden', 'value'=>$sortorder, 'name'=>'sortorder'); // We must always put field, even if empty because it is filled by javascript later
+	$formquestion = array();
+	$formquestion['urlfile'] = array('type' => 'hidden', 'value' => $urlfile, 'name' => 'urlfile'); // We must always put field, even if empty because it is filled by javascript later
+	$formquestion['section'] = array('type' => 'hidden', 'value' => $section, 'name' => 'section'); // We must always put field, even if empty because it is filled by javascript later
+	$formquestion['section_id'] = array('type' => 'hidden', 'value' => $section_id, 'name' => 'section_id'); // We must always put field, even if empty because it is filled by javascript later
+	$formquestion['section_dir'] = array('type' => 'hidden', 'value' => $section_dir, 'name' => 'section_dir'); // We must always put field, even if empty because it is filled by javascript later
+	$formquestion['sortfield'] = array('type' => 'hidden', 'value' => $sortfield, 'name' => 'sortfield'); // We must always put field, even if empty because it is filled by javascript later
+	$formquestion['sortorder'] = array('type' => 'hidden', 'value' => $sortorder, 'name' => 'sortorder'); // We must always put field, even if empty because it is filled by javascript later
 	if (!empty($action) && $action == 'file_manager') {
-		$formquestion['file_manager'] = array('type'=>'hidden', 'value'=>1, 'name'=>'file_manager');
+		$formquestion['file_manager'] = array('type' => 'hidden', 'value' => 1, 'name' => 'file_manager');
 	}
 	if (!empty($websitekey)) {
-		$formquestion['website'] = array('type'=>'hidden', 'value'=>$websitekey, 'name'=>'website');
+		$formquestion['website'] = array('type' => 'hidden', 'value' => $websitekey, 'name' => 'website');
 	}
 	if (!empty($pageid) && $pageid > 0) {
-		$formquestion['pageid'] = array('type'=>'hidden', 'value'=>$pageid, 'name'=>'pageid');
+		$formquestion['pageid'] = array('type' => 'hidden', 'value' => $pageid, 'name' => 'pageid');
 	}
 
 	print $form->formconfirm($url, $langs->trans("DeleteFile"), $langs->trans("ConfirmDeleteFile"), 'confirm_deletefile', $formquestion, "no", ($useajax ? 'deletefile' : 0));

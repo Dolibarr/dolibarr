@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2020      Maxime DEMAREST      <maxime@indelog.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +22,7 @@
 
 /**
  *  \file       htdocs/commande/class/commandestats.class.php
- *  \ingroup    commandes
+ *  \ingroup    orders
  *  \brief      File of class to manage order statistics
  */
 include_once DOL_DOCUMENT_ROOT.'/core/class/stats.class.php';
@@ -40,15 +41,49 @@ class CommandeStats extends Stats
 	 */
 	public $table_element;
 
+	/**
+	 * @var int ID
+	 */
 	public $socid;
+
+	/**
+	 * @var int ID
+	 */
 	public $userid;
 
+	/**
+	 * @var string	To store the FROM part of the main table of the SQL request
+	 */
 	public $from;
+
+	/**
+	 * @var string	To store the FROM part of the lines table of the SQL request
+	 */
 	public $from_line;
+
+	/**
+	 * @var string	To store the field
+	 */
 	public $field;
+
+	/**
+	 * @var string	To store the field of the line table of the SQL request
+	 */
 	public $field_line;
+
+	/**
+	 * @var string	To store the FROM part of the categorie table of the SQL request
+	 */
 	public $categ_link;
-	public $where;
+
+	/**
+	 * @var string	To store the WHERE part of the main table of the SQL request
+	 */
+	public $where = '';
+
+	/**
+	 * @var string	To store the join
+	 */
 	public $join;
 
 
@@ -123,7 +158,7 @@ class CommandeStats extends Stats
 
 		$sql = "SELECT date_format(c.date_commande,'%m') as dm, COUNT(*) as nb";
 		$sql .= " FROM ".$this->from;
-		if (!$user->hasRight('societe', 'client', 'voir') && !$this->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= "  INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$sql .= $this->join;
@@ -148,7 +183,7 @@ class CommandeStats extends Stats
 
 		$sql = "SELECT date_format(c.date_commande,'%Y') as dm, COUNT(*) as nb, SUM(c.".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		if (!$user->hasRight('societe', 'client', 'voir') && !$this->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= "  INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$sql .= $this->join;
@@ -172,7 +207,7 @@ class CommandeStats extends Stats
 
 		$sql = "SELECT date_format(c.date_commande,'%m') as dm, SUM(c.".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		if (!$user->hasRight('societe', 'client', 'voir') && !$this->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= "  INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$sql .= $this->join;
@@ -197,7 +232,7 @@ class CommandeStats extends Stats
 
 		$sql = "SELECT date_format(c.date_commande,'%m') as dm, AVG(c.".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		if (!$user->hasRight('societe', 'client', 'voir') && !$this->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= "  INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$sql .= $this->join;
@@ -220,7 +255,7 @@ class CommandeStats extends Stats
 
 		$sql = "SELECT date_format(c.date_commande,'%Y') as year, COUNT(*) as nb, SUM(c.".$this->field.") as total, AVG(".$this->field.") as avg";
 		$sql .= " FROM ".$this->from;
-		if (!$user->hasRight('societe', 'client', 'voir') && !$this->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= "  INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$sql .= $this->join;
@@ -246,7 +281,7 @@ class CommandeStats extends Stats
 		$sql .= " FROM ".$this->from;
 		$sql .= " INNER JOIN ".$this->from_line." ON c.rowid = tl.fk_commande";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."product as product ON tl.fk_product = product.rowid";
-		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= "  INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$sql .= $this->join;

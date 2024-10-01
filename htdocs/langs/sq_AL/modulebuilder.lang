@@ -5,7 +5,7 @@ EnterNameOfModuleDesc=Futni emrin e modulit/aplikacionit për të krijuar pa hap
 EnterNameOfObjectDesc=Futni emrin e objektit për të krijuar pa hapësira. Përdorni shkronja të mëdha për të ndarë fjalët (Për shembull: Objekti im, Student, Mësues...). Do të krijohen skedari i klasës CRUD, faqet për të renditur/shtuar/redaktuar/fshirë objektin dhe skedarët SQL.
 EnterNameOfDictionaryDesc=Futni emrin e fjalorit për të krijuar pa hapësira. Përdorni shkronja të mëdha për të ndarë fjalët (Për shembull: MyDico...). Do të gjenerohet skedari i klasës, por edhe skedari SQL.
 ModuleBuilderDesc2=Rruga ku gjenerohen/redaktohen modulet (drejtoria e parë për modulet e jashtme e përcaktuar në %s): <strong>%s</strong>
-ModuleBuilderDesc3=Module të gjeneruara/të redaktueshme u gjetën: <strong>%s<span class='notranslate'>b0a65d071f6fc9>z0
+ModuleBuilderDesc3=Generated/editable modules found: <strong>%s</strong>
 ModuleBuilderDesc4=Një modul zbulohet si "modul për ndërtuesin e modulit" kur skedari <strong>%sb0f065  ekziston në rrënjën e drejtorisë së modulit
 NewModule=Moduli i ri
 NewObjectInModulebuilder=Objekti i ri
@@ -27,7 +27,7 @@ ModuleBuilderDeschooks=Kjo skedë është e dedikuar për grepa.
 ModuleBuilderDescwidgets=Kjo skedë është e dedikuar për të menaxhuar/ndërtuar miniaplikacione.
 ModuleBuilderDescbuildpackage=Këtu mund të gjeneroni një skedar paketë "gati për t'u shpërndarë" (një skedar .zip i normalizuar) të modulit tuaj dhe një skedar dokumentacioni "gati për t'u shpërndarë". Thjesht klikoni në butonin për të ndërtuar skedarin e paketës ose dokumentacionit.
 EnterNameOfModuleToDeleteDesc=Ju mund të fshini modulin tuaj. PARALAJMËRIM: Të gjithë skedarët e kodimit të modulit (të krijuara ose të krijuara me dorë) DHE të dhënat dhe dokumentacioni i strukturuar do të fshihen!
-EnterNameOfObjectToDeleteDesc=You can delete an object. WARNING: All coding files (generated or created manually) related to the object will be deleted!
+EnterNameOfObjectToDeleteDesc=Ju mund të fshini një objekt. PARALAJMËRIM: Të gjithë skedarët e kodimit (të krijuara ose të krijuara manualisht) që lidhen me objektin do të fshihen!
 DangerZone=Zone e rrezikshme
 BuildPackage=Ndërtoni paketën
 BuildPackageDesc=Ju mund të gjeneroni një paketë zip të aplikacionit tuaj në mënyrë që të jeni gati ta shpërndani atë në çdo Dolibarr. Mund ta shpërndani ose ta shisni gjithashtu në treg si <a href="https://www.dolistore.com">DoliStore.com</a>.
@@ -58,7 +58,7 @@ LanguageFile=Skedari për gjuhën
 ObjectProperties=Vetitë e objektit
 Property=Prona
 PropertyDesc=Një veti është një atribut që karakterizon një objekt. Ky atribut ka një kod, një etiketë dhe një lloj me disa opsione.
-ConfirmDeleteProperty=Jeni i sigurt që dëshironi të fshini pronën <strong>%s<span class='notranslate'></strong></s? Kjo do të ndryshojë kodin në klasën PHP, por gjithashtu do të heqë kolonën nga përkufizimi i tabelës së objektit.
+ConfirmDeleteProperty=Are you sure you want to delete the property <strong>%s</strong>? This will change code in PHP class but also remove column from table definition of object.
 NotNull=Jo NULL
 NotNullDesc=1=Cakto bazën e të dhënave në NOT NULL, 0=Lejo vlerat null, -1=Lejo vlerat null duke e detyruar vlerën në NULL nëse është bosh ('' ose 0)
 SearchAll=Përdoret për 'kërko të gjitha'
@@ -91,10 +91,10 @@ ListOfMenusEntries=Lista e hyrjeve në menu
 ListOfDictionariesEntries=Lista e hyrjeve të fjalorëve
 ListOfPermissionsDefined=Lista e lejeve të përcaktuara
 SeeExamples=Shikoni shembuj këtu
-EnabledDesc=Kusht për ta pasur këtë fushë aktive.<br><br>Shembuj:b0342fccfda19>bz0</s span class='notranslate'><br>isModEnabled('anothermodule')<br>getDolGlobalString('MYMODULE_OPTION')==2
+EnabledDesc=Condition to have this field active.<br><br>Examples:<br>1<br>isModEnabled('anothermodule')<br>getDolGlobalString('MYMODULE_OPTION')==2
 VisibleDesc=A është fusha e dukshme? (Shembuj: 0=Asnjëherë i dukshëm, 1=I dukshëm në listë dhe krijo/përditëso/shiko formularët, 2=Duket vetëm në listë, 3=Duket vetëm në formën e krijimit/përditësimit/shikimit (jo në lista), 4=I dukshëm në lista dhe përditëso/shiko vetëm formularin (jo krijo), 5=Duket në listë dhe shiko vetëm formularin (jo krijo, jo përditësoi).<br><br> Përdorimi i një vlere negative do të thotë që fusha nuk shfaqet si parazgjedhje në listë, por mund të zgjidhet për t'u parë).
 ItCanBeAnExpression=Mund të jetë një shprehje. Shembull:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>$er ->hasRight('pushime', 'define_pushime')?1:5
-DisplayOnPdfDesc=Shfaqni këtë fushë në dokumente të përputhshme PDF, ju mund të menaxhoni pozicionin me fushën "Pozicioni".<br><strong>Për dokumentin :</strong><br>0 = nuk shfaqet <br>1 = nuk shfaq<span' class=' ><br></span>2 = shfaq vetëm nëse nuk është bosh<br><br><span class='notranslate'430</b947c span>Për linjat e dokumentit:</strong><br>0 = nuk shfaqet b0342fccfdaspan19>0 = shfaqet në një kolonë<span class='notranslate'><br>3 = shfaq në kolonën e përshkrimit të rreshtit pas përshkrimit<br>4 = shfaq në kolonën e përshkrimit pas përshkrimit vetëm nëse jo bosh
+DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br><strong>For document :</strong><br>0 = not displayed <br>1 = display<br>2 = display only if not empty<br><br><strong>For document lines :</strong><br>0 = not displayed <br>1 = displayed in a column<br>3 = display in line description column after the description<br>4 = display in description column after the description only if not empty
 DisplayOnPdf=Në PDF
 IsAMeasureDesc=A mund të grumbullohet vlera e fushës për të futur një total në listë? (Shembuj: 1 ose 0)
 SearchAllDesc=A përdoret fusha për të bërë një kërkim nga mjeti i kërkimit të shpejtë? (Shembuj: 1 ose 0)
@@ -111,7 +111,7 @@ TriggerDefDesc=Përcaktoni në skedarin e aktivizimit kodin që dëshironi të e
 SeeIDsInUse=Shikoni ID-të në përdorim në instalimin tuaj
 SeeReservedIDsRangeHere=Shikoni gamën e ID-ve të rezervuara
 ToolkitForDevelopers=Paketa e veglave për zhvilluesit e Dolibarr
-TryToUseTheModuleBuilder=Nëse keni njohuri për SQL dhe PHP, mund të përdorni magjistarin e ndërtuesit të moduleve.<br>Aktivizo modulin <strong>%s</strong> dhe përdor magjistarin duke klikuar <span class="fa fa-bug"></spannotranslate' class='notranslate' ></span> në menynë lart djathtas.<br>Kujdes: Ky është një veçori e avancuar e zhvilluesit, bëni b0aee83365837>t<0z span class='notranslate'></b> eksperiment në faqen tuaj të prodhimit!
+TryToUseTheModuleBuilder=If you have knowledge of SQL and PHP, you may use the native module builder wizard.<br>Enable the module <strong>%s</strong> and use the wizard by clicking the <span class="fa fa-bug"></span> on the top right menu.<br>Warning: This is an advanced developer feature, do <b>not</b> experiment on your production site!
 SeeTopRightMenu=Shiko <span class="fa fa-bug"></span> në menynë lart djathtas
 AddLanguageFile=Shto skedarin e gjuhës
 YouCanUseTranslationKey=Këtu mund të përdorni një çelës që është çelësi i përkthimit që gjendet në skedarin e gjuhës (shih skedën "Gjuhët")
@@ -148,7 +148,7 @@ CSSListClass=CSS për listën
 NotEditable=E pa modifikueshme
 ForeignKey=Çelësi i huaj
 ForeignKeyDesc=Nëse vlera e kësaj fushe duhet të garantohet se ekziston në një tabelë tjetër. Fut këtu një sintaksë që përputhet me vlerën: emri i tabelës.parentfieldtocheck
-TypeOfFieldsHelp=Shembull:<br>varchar(99)<br>email<br>-telefon<pans0</s ='notranslate'><br>ip<br>url<br>fjalëkalimi<span class='notranslate'0342fccfda19bz0</span> span>double(24,8)<br>reale<br>tekstb0342fccfda19>b0342fccfda19>z <span class='notranslate'><br>data<br>datetime<br>class='notranslate'span <br></span>integer<br>integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<span class='notranslate' /span><br>'1' do të thotë se ne shtojmë një buton + pas kombinimit për të krijuar rekordin<br>'filtri' është një Kushti i sintaksës së filtrit universal, shembull: '((statusi:=:1) AND (fk_user:=:__USER_ID__) AND (entiteti:IN:(__SHARED_ENTITIES__))'
+TypeOfFieldsHelp=Example:<br>varchar(99)<br>email<br>phone<br>ip<br>url<br>password<br>double(24,8)<br>real<br>text<br>html<br>date<br>datetime<br>timestamp<br>integer<br>integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br><br>'1' means we add a + button after the combo to create the record<br>'filter' is an Universal Filter syntax condition, example: '((status:=:1) AND (fk_user:=:__USER_ID__) AND (entity:IN:(__SHARED_ENTITIES__))'
 TypeOfFieldsHelpIntro=Ky është lloji i fushës/atributit.
 AsciiToHtmlConverter=Konvertuesi Ascii në HTML
 AsciiToPdfConverter=Konvertuesi Ascii në PDF
@@ -173,6 +173,7 @@ PermissionAddedSuccesfuly=Leja është shtuar me sukses
 MenuDeletedSuccessfuly=Menyja është fshirë me sukses
 MenuAddedSuccessfuly=Menyja është shtuar me sukses
 MenuUpdatedSuccessfuly=Menyja është përditësuar me sukses
+AddAPIsForThisObject=Shto API për këtë objekt
 ApiObjectDeleted=API për objektin %s është fshirë me sukses
 CRUDRead=Lexoni
 CRUDCreateWrite=Krijo ose Përditëso
@@ -180,9 +181,9 @@ FailedToAddCodeIntoDescriptor=Shtimi i kodit në përshkrues dështoi. Kontrollo
 DictionariesCreated=Fjalori <b>%s</b> u krijua me sukses
 DictionaryDeleted=Fjalori <b>%s</b> u hoq me sukses
 PropertyModuleUpdated=Vetia <b>%s</b> është përditësuar me sukses
-InfoForApiFile=* Kur gjeneroni skedar për herë të parë, atëherë të gjitha metodat do të krijohen <strong>për çdo objekt.</strong><br>* Kur klikoni në <strong>hiq</strong> ju thjesht hiqni të gjitha metodat e klasës ='notranslate'><strong></span>objekt i zgjedhur</strong>.
+InfoForApiFile=* When you generate file for the first time then all methods will be created <strong>for each object.</strong><br>* When you click in <strong>remove</strong> you just remove all methods for the <strong>selected object</strong>.
 SetupFile=Faqe për konfigurimin e modulit
-EmailingSelectors=Emails selectors
+EmailingSelectors=Zgjedhësit e emaileve
 EmailingSelectorDesc=Ju mund të gjeneroni dhe modifikoni këtu skedarët e klasës për të siguruar përzgjedhës të rinj të synimeve të postës elektronike për modulin e dërgimit masiv të postës elektronike
 EmailingSelectorFile=Skedari i përzgjedhësit të emaileve
 NoEmailingSelector=Nuk ka skedar përzgjedhës të postës elektronike

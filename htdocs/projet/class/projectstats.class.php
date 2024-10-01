@@ -1,6 +1,7 @@
 <?php
 /* Lead
  * Copyright (C) 2014-2015 Florian HENRY <florian.henry@open-concept.pro>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,7 +58,7 @@ class ProjectStats extends Stats
 			$this->where .= " AND fk_soc = ".((int) $this->socid);
 		}
 		if (is_array($this->userid) && count($this->userid) > 0) {
-			$this->where .= ' AND fk_user IN ('.$this->db->sanitize(join(',', $this->userid)).')';
+			$this->where .= ' AND fk_user IN ('.$this->db->sanitize(implode(',', $this->userid)).')';
 		} elseif ($this->userid > 0) {
 			$this->where .= " AND fk_user = ".((int) $this->userid);
 		}
@@ -81,14 +82,14 @@ class ProjectStats extends Stats
 		$sql = "SELECT";
 		$sql .= " SUM(t.opp_amount), t.fk_opp_status, cls.code, cls.label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet as t";
-		// No check is done on company permission because readability is managed by public status of project and assignement.
+		// No check is done on company permission because readability is managed by public status of project and assignment.
 		//if (! $user->rights->societe->client->voir && ! $user->socid)
 		//	$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "societe_commerciaux as sc ON sc.fk_soc=t.fk_soc AND sc.fk_user = ".((int) $user->id);
 		$sql .= ", ".MAIN_DB_PREFIX."c_lead_status as cls";
 		$sql .= $this->buildWhere();
-		// For external user, no check is done on company permission because readability is managed by public status of project and assignement.
+		// For external user, no check is done on company permission because readability is managed by public status of project and assignment.
 		//if ($socid > 0) $sql.= " AND t.fk_soc = ".((int) $socid);
-		// No check is done on company permission because readability is managed by public status of project and assignement.
+		// No check is done on company permission because readability is managed by public status of project and assignment.
 		//if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id).") OR (s.rowid IS NULL))";
 		$sql .= " AND t.fk_opp_status = cls.rowid";
 		$sql .= " AND t.fk_statut <> 0"; // We want historic also, so all projects not draft
@@ -147,13 +148,13 @@ class ProjectStats extends Stats
 		$sql = "SELECT date_format(t.datec,'%Y') as year, COUNT(t.rowid) as nb, SUM(t.opp_amount) as total, AVG(t.opp_amount) as avg,";
 		$sql .= " SUM(t.opp_amount * ".$this->db->ifsql("t.opp_percent IS NULL".($wonlostfilter ? " OR cls.code IN ('WON','LOST')" : ""), '0', 't.opp_percent')." / 100) as weighted";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet as t LEFT JOIN ".MAIN_DB_PREFIX."c_lead_status as cls ON cls.rowid = t.fk_opp_status";
-		// No check is done on company permission because readability is managed by public status of project and assignement.
+		// No check is done on company permission because readability is managed by public status of project and assignment.
 		//if (! $user->rights->societe->client->voir && ! $user->soc_id)
 		//	$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "societe_commerciaux as sc ON sc.fk_soc=t.fk_soc AND sc.fk_user = ".((int) $user->id);
 		$sql .= $this->buildWhere();
-		// For external user, no check is done on company permission because readability is managed by public status of project and assignement.
+		// For external user, no check is done on company permission because readability is managed by public status of project and assignment.
 		//if ($socid > 0) $sql.= " AND t.fk_soc = ".((int) $socid);
-		// No check is done on company permission because readability is managed by public status of project and assignement.
+		// No check is done on company permission because readability is managed by public status of project and assignment.
 		//if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id).") OR (s.rowid IS NULL))";
 		$sql .= " GROUP BY year";
 		$sql .= $this->db->order('year', 'DESC');
@@ -187,7 +188,7 @@ class ProjectStats extends Stats
 			$sqlwhere[] = ' t.fk_user_resp = '.((int) $this->userid);
 		}
 
-		// Forced filter on socid is similar to forced filter on project. TODO Use project assignement to allow to not use filter on project
+		// Forced filter on socid is similar to forced filter on project. TODO Use project assignment to allow to not use filter on project
 		if (!empty($this->socid)) {
 			$sqlwhere[] = ' t.fk_soc = '.((int) $this->socid);
 		}
@@ -244,7 +245,7 @@ class ProjectStats extends Stats
 
 		$sql = "SELECT date_format(t.datec,'%m') as dm, COUNT(*) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet as t";
-		// No check is done on company permission because readability is managed by public status of project and assignement.
+		// No check is done on company permission because readability is managed by public status of project and assignment.
 		//if (! $user->rights->societe->client->voir && ! $user->soc_id)
 		//	$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "societe_commerciaux as sc ON sc.fk_soc=t.fk_soc AND sc.fk_user = ".((int) $user->id);
 		$sql .= $this->buildWhere();
@@ -269,7 +270,7 @@ class ProjectStats extends Stats
 
 		$sql = "SELECT date_format(t.datec,'%m') as dm, SUM(t.opp_amount)";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet as t";
-		// No check is done on company permission because readability is managed by public status of project and assignement.
+		// No check is done on company permission because readability is managed by public status of project and assignment.
 		//if (! $user->rights->societe->client->voir && ! $user->soc_id)
 		//	$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "societe_commerciaux as sc ON sc.fk_soc=t.fk_soc AND sc.fk_user = ".((int) $user->id);
 		$sql .= $this->buildWhere();
@@ -289,7 +290,7 @@ class ProjectStats extends Stats
 	 * @param	int		$startyear		End year
 	 * @param	int		$cachedelay		Delay we accept for cache file (0=No read, no save of cache, -1=No read but save)
 	 * @param   int     $wonlostfilter  Add a filter on status won/lost
-	 * @return 	array|int				Array of values or <0 if error
+	 * @return 	array|int<-1,-1>		Array of values or <0 if error
 	 */
 	public function getWeightedAmountByMonthWithPrevYear($endyear, $startyear, $cachedelay = 0, $wonlostfilter = 1)
 	{
@@ -304,7 +305,6 @@ class ProjectStats extends Stats
 		// Search into cache
 		if (!empty($cachedelay)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-			include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 		}
 
 		$newpathofdestfile = $conf->user->dir_temp.'/'.get_class($this).'_'.__FUNCTION__.'_'.(empty($this->cachefilesuffix) ? '' : $this->cachefilesuffix.'_').$langs->defaultlang.'_user'.$user->id.'.cache';
@@ -328,6 +328,7 @@ class ProjectStats extends Stats
 		if ($foundintocache) {    // Cache file found and is not too old
 			dol_syslog(get_class($this).'::'.__FUNCTION__." read data from cache file ".$newpathofdestfile." ".$filedate.".");
 			$data = json_decode(file_get_contents($newpathofdestfile), true);
+			'@phan-var-force array $data';  // Phan can not interpret json_decode
 		} else {
 			$year = $startyear;
 			while ($year <= $endyear) {
@@ -381,7 +382,7 @@ class ProjectStats extends Stats
 
 		$sql = "SELECT date_format(t.datec,'%m') as dm, SUM(t.opp_amount * ".$this->db->ifsql("t.opp_percent IS NULL".($wonlostfilter ? " OR cls.code IN ('WON','LOST')" : ""), '0', 't.opp_percent')." / 100)";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet as t LEFT JOIN ".MAIN_DB_PREFIX.'c_lead_status as cls ON t.fk_opp_status = cls.rowid';
-		// No check is done on company permission because readability is managed by public status of project and assignement.
+		// No check is done on company permission because readability is managed by public status of project and assignment.
 		//if (! $user->rights->societe->client->voir && ! $user->soc_id)
 		//	$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "societe_commerciaux as sc ON sc.fk_soc=t.fk_soc AND sc.fk_user = ".((int) $user->id);
 		$sql .= $this->buildWhere();
@@ -414,7 +415,6 @@ class ProjectStats extends Stats
 		// Search into cache
 		if (!empty($cachedelay)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-			include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 		}
 
 		$newpathofdestfile = $conf->user->dir_temp.'/'.get_class($this).'_'.__FUNCTION__.'_'.(empty($this->cachefilesuffix) ? '' : $this->cachefilesuffix.'_').$langs->defaultlang.'_user'.$user->id.'.cache';
@@ -438,6 +438,7 @@ class ProjectStats extends Stats
 		if ($foundintocache) { // Cache file found and is not too old
 			dol_syslog(get_class($this).'::'.__FUNCTION__." read data from cache file ".$newpathofdestfile." ".$filedate.".");
 			$data = json_decode(file_get_contents($newpathofdestfile), true);
+			'@phan-var-force array $data';  // Phan can not interpret json_decode
 		} else {
 			$year = $startyear;
 			while ($year <= $endyear) {
@@ -489,7 +490,7 @@ class ProjectStats extends Stats
 
 		$sql = "SELECT date_format(t.datec,'%m') as dm, count(t.opp_amount)";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet as t";
-		// No check is done on company permission because readability is managed by public status of project and assignement.
+		// No check is done on company permission because readability is managed by public status of project and assignment.
 		//if (! $user->rights->societe->client->voir && ! $user->soc_id)
 		//	$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "societe_commerciaux as sc ON sc.fk_soc=t.fk_soc AND sc.fk_user = ".((int) $user->id);
 		$sql .= $this->buildWhere();
@@ -502,7 +503,7 @@ class ProjectStats extends Stats
 
 		$sql = "SELECT date_format(t.datec,'%m') as dm, count(t.opp_amount)";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet as t";
-		// No check is done on company permission because readability is managed by public status of project and assignement.
+		// No check is done on company permission because readability is managed by public status of project and assignment.
 		//if (! $user->rights->societe->client->voir && ! $user->soc_id)
 		//	$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "societe_commerciaux as sc ON sc.fk_soc=t.fk_soc AND sc.fk_user = ".((int) $user->id);
 		$sql .= $this->buildWhere();

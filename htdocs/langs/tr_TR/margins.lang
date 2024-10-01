@@ -6,6 +6,7 @@ TotalMargin=Toplam Kar Oranı
 MarginOnProducts=Kar Oranı / Ürünler
 MarginOnServices=Kar Oranı / Hizmetler
 MarginRate=Kar Oranı değeri
+ModifyMarginRates=Marj oranlarını değiştirin
 MarkRate=Yayınlanmış fiyat
 DisplayMarginRates=Kar oran değerlerini göster
 DisplayMarkRates=Yayınlanmış fiyatları göster
@@ -22,22 +23,22 @@ ProductService=Ürün veya Hizmet
 AllProducts=Bütün ürünler ve hizmetler
 ChooseProduct/Service=Ürün veya hizmet seç
 ForceBuyingPriceIfNull=Eğer tanımlanmamışsa alış/maliyet fiyatını satış fiyatına zorla
-ForceBuyingPriceIfNullDetails=If buying/cost price not provided when we add a new line, and this option is "ON", the margin will be 0%% on the new line (buying/cost price = selling price). If this option is "OFF" (recommended), margin will be equal to the value suggested by default (and may be 100%% if no default value can be found).
+ForceBuyingPriceIfNullDetails=Yeni bir satır eklediğimizde satın alma/maliyet fiyatı sağlanmadıysa ve bu seçenek "AÇIK" ise, yeni satırdaki marj 0%% olacaktır (satın alma/maliyet fiyatı = satış fiyatı). Bu seçenek "KAPALI" ise (önerilir), kenar boşluğu varsayılan olarak önerilen değere eşit olacaktır (ve varsayılan değer bulunamazsa 100%% olabilir).
 MARGIN_METHODE_FOR_DISCOUNT=Genel indirimler için kar oranı yöntemi
 UseDiscountAsProduct=Ürün olarak
 UseDiscountAsService=Hizmet olarak
 UseDiscountOnTotal=Ara toplamla
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Genel bir indirimin, kar oranı hesaplaması için bir ürün, hizmet ya da yalnızca ara toplam olarak mı değerlendirildiğini tanımlayın.
 MARGIN_TYPE=Kar oranı hesaplaması için varsayılan olarak önerilen Satınalma/Maliyet fiyatı
-MargeType1=Margin on Best vendor price
+MargeType1=En iyi satıcı fiyatı marjı
 MargeType2=Ağırlıklı Ortalama Fiyatta Kar Oranı (AOF)
 MargeType3=Maliyet Fiyatı karı
-MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best vendor price if WAP not yet defined
+MarginTypeDesc=* En iyi satın alma fiyatı marjı = Satış fiyatı - Ürün kartında tanımlanan en iyi satıcı fiyatı<br>* Ağırlıklı Ortalama Fiyat Marjı (WAP) = Satış fiyatı - Ürün Ağırlıklı Ortalama Fiyat (WAP) veya WAP henüz tanımlanmamışsa en iyi satıcı fiyatı<br>* Maliyet fiyatı marjı = Satış fiyatı - Maliyet fiyatı tanımlanmamışsa ürün kartında veya WAP'ta tanımlanan maliyet fiyatı veya eğer varsa en iyi satıcı fiyatı WAP henüz tanımlanmadı
 CostPrice=Maliyet fiyatı
 UnitCharges=Birim masrafları
 Charges=Masraflar
 AgentContactType=Ticari temsilci ilgili tipi
-AgentContactTypeDetails=Define what contact type (linked on invoices) will be used for margin report per contact/address. Note that reading statistics on a contact is not reliable since in most cases the contact may not be defined explicitely on the invoices.
+AgentContactTypeDetails=Kişi/adres başına marj raporu için hangi iletişim türünün (faturalarda bağlantılı) kullanılacağını tanımlayın. Çoğu durumda ilgili kişi faturalarda açıkça tanımlanmayabileceğinden, bir kişiyle ilgili istatistiklerin okunmasının güvenilir olmadığını unutmayın.
 rateMustBeNumeric=Kar oran sayısal bir değer olmalı
 markRateShouldBeLesserThan100=Yayınlanmış kar oranı 100 den daha düşük olmalı
 ShowMarginInfos=Kar oranı bilgisi göster

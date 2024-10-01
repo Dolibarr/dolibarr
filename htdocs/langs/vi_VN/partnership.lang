@@ -4,18 +4,14 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModulePartnershipName=Quản lý quan hệ đối tác
 PartnershipDescription=Mô-đun quản lý quan hệ đối tác
 PartnershipDescriptionLong= Mô-đun quản lý quan hệ đối tác
@@ -24,17 +20,11 @@ Partnerships=Quan hệ đối tác
 AddPartnership=Thêm quan hệ đối tác
 CancelPartnershipForExpiredMembers=Quan hệ đối tác: Hủy quan hệ đối tác của các thành viên với đăng ký đã hết hạn
 PartnershipCheckBacklink=Quan hệ đối tác: Kiểm tra backlink giới thiệu
-
-#
 # Menu
-#
 NewPartnership=Quan hệ đối tác mới
 NewPartnershipbyWeb=Yêu cầu hợp tác của bạn đã được thêm thành công. Chúng tôi có thể liên hệ với bạn sớm...
 ListOfPartnerships=Danh sách hợp tác
-
-#
 # Admin page
-#
 PartnershipSetup=Thiết lập quan hệ đối tác
 PartnershipAbout=Giới thiệu về quan hệ đối tác
 PartnershipAboutPage=Quan hệ đối tác về trang
@@ -45,17 +35,14 @@ PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb ngày trước khi h
 ReferingWebsiteCheck=Kiểm tra trang web giới thiệu
 ReferingWebsiteCheckDesc=Bạn có thể bật tính năng để kiểm tra xem đối tác của bạn đã thêm liên kết ngược vào tên miền trang web của bạn trên trang web riêng của họ chưa.
 PublicFormRegistrationPartnerDesc=Dolibarr có thể cung cấp cho bạn URL/trang web công khai để cho phép khách truy cập bên ngoài yêu cầu tham gia chương trình hợp tác.
-
-#
 # Object
-#
 DeletePartnership=Xóa quan hệ đối tác
 PartnershipDedicatedToThisThirdParty=Quan hệ đối tác dành riêng cho bên thứ ba này
 PartnershipDedicatedToThisMember=Quan hệ đối tác dành riêng cho thành viên này
 DatePartnershipStart=Ngày bắt đầu
 DatePartnershipEnd=Ngày kết thúc
 ReasonDecline=Lý do từ chối
-ReasonDeclineOrCancel=Reason for refusal or cancellation
+ReasonDeclineOrCancel=Lý do từ chối hoặc hủy bỏ
 PartnershipAlreadyExist=Quan hệ đối tác đã tồn tại
 ManagePartnership=Quản lý quan hệ đối tác
 BacklinkNotFoundOnPartnerWebsite=Không tìm thấy backlink trên trang web đối tác
@@ -68,31 +55,22 @@ PartnershipAccepted=Đã được chấp nhận
 PartnershipRefused=Bị từ chối
 PartnershipCanceled=Đã hủy
 PartnershipManagedFor=Đối tác là
-
-#
 # Template Mail
-#
 SendingEmailOnPartnershipWillSoonBeCanceled=Quan hệ đối tác sẽ sớm bị hủy bỏ
 SendingEmailOnPartnershipRefused=Quan hệ đối tác bị từ chối
 SendingEmailOnPartnershipAccepted=Đã chấp nhận quan hệ đối tác
 SendingEmailOnPartnershipCanceled=Đã hủy quan hệ đối tác
-
 YourPartnershipWillSoonBeCanceledTopic=Quan hệ đối tác sẽ sớm bị hủy bỏ
 YourPartnershipRefusedTopic=Quan hệ đối tác bị từ chối
 YourPartnershipAcceptedTopic=Đã chấp nhận quan hệ đối tác
 YourPartnershipCanceledTopic=Đã hủy quan hệ đối tác
-
 YourPartnershipWillSoonBeCanceledContent=Chúng tôi muốn thông báo cho bạn rằng mối quan hệ hợp tác của chúng tôi sẽ sớm bị hủy bỏ (chúng tôi chưa được gia hạn hoặc chưa đáp ứng được điều kiện tiên quyết cho mối quan hệ hợp tác của chúng tôi). Vui lòng liên hệ với chúng tôi nếu bạn nhận được thông tin này do nhầm lẫn.
 YourPartnershipRefusedContent=Chúng tôi muốn thông báo cho bạn rằng yêu cầu hợp tác của bạn đã bị từ chối. Điều kiện tiên quyết chưa được đáp ứng. Vui lòng liên hệ với chúng tôi nếu bạn cần thêm thông tin.
 YourPartnershipAcceptedContent=Chúng tôi muốn thông báo cho bạn rằng yêu cầu hợp tác của bạn đã được chấp nhận.
 YourPartnershipCanceledContent=Chúng tôi muốn thông báo cho bạn rằng quan hệ đối tác của chúng tôi đã bị hủy bỏ. Vui lòng liên hệ với chúng tôi nếu bạn cần thêm thông tin.
-
 CountLastUrlCheckError=Số lỗi trong lần kiểm tra URL cuối cùng
 LastCheckBacklink=Ngày kiểm tra URL lần cuối
-
 NewPartnershipRequest=Yêu cầu hợp tác mới
-NewPartnershipRequestDesc=Biểu mẫu này cho phép bạn yêu cầu tham gia một trong các chương trình hợp tác của chúng tôi. Nếu bạn cần trợ giúp để điền vào biểu mẫu này, vui lòng liên hệ qua email <b>%s<span class='notranslate'></b></ khoảng>.
+NewPartnershipRequestDesc=This form allows you to request to be part of one of our partnership program. If you need help to fill this form, please contact by email <b>%s</b>.
 ThisUrlMustContainsAtLeastOneLinkToWebsite=Trang này phải chứa ít nhất một liên kết đến một trong các tên miền sau: %s
-
 IPOfApplicant=IP của người nộp đơn
-

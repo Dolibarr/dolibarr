@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2008-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 
 /**
  *      \file       htdocs/core/class/html.formbarcode.class.php
- *      \brief      Fichier de la classe des fonctions predefinie de composants html
+ *      \brief      Fichier de la class des functions predefinie de composants html
  */
 
 
@@ -57,7 +57,7 @@ class FormBarCode
 	 *  @param	int		$selected       Id code pre-selected
 	 *  @param 	array	$barcodelist	Array of barcodes generators
 	 *  @param  int		$code_id        Id du code barre
-	 *  @param  int		$idForm			Id du formulaire
+	 *  @param  string	$idForm			Id of html form, ex id="idform"
 	 * 	@return	string					HTML select string
 	 */
 	public function setBarcodeEncoder($selected, $barcodelist, $code_id, $idForm = 'formbarcode')
@@ -118,7 +118,7 @@ class FormBarCode
 	 *  @return void
 	 *  @deprecated
 	 */
-	public function select_barcode_type($selected = '', $htmlname = 'barcodetype_id', $useempty = 0)
+	public function select_barcode_type($selected = 0, $htmlname = 'barcodetype_id', $useempty = 0)
 	{
 		// phpcs:enable
 		print $this->selectBarcodeType($selected, $htmlname, $useempty);
@@ -132,7 +132,7 @@ class FormBarCode
 	 *  @param  int     $useempty          Display empty value in select
 	 *  @return string
 	 */
-	public function selectBarcodeType($selected = '', $htmlname = 'barcodetype_id', $useempty = 0)
+	public function selectBarcodeType($selected = 0, $htmlname = 'barcodetype_id', $useempty = 0)
 	{
 		global $langs, $conf;
 
@@ -187,7 +187,7 @@ class FormBarCode
 	 *  @return	void
 	 *  @deprecated
 	 */
-	public function form_barcode_type($page, $selected = '', $htmlname = 'barcodetype_id')
+	public function form_barcode_type($page, $selected = 0, $htmlname = 'barcodetype_id')
 	{
 		// phpcs:enable
 		print $this->formBarcodeType($page, $selected, $htmlname);
@@ -201,7 +201,7 @@ class FormBarCode
 	 *  @param  string      $htmlname       Nom du formulaire select
 	 *  @return string
 	 */
-	public function formBarcodeType($page, $selected = '', $htmlname = 'barcodetype_id')
+	public function formBarcodeType($page, $selected = 0, $htmlname = 'barcodetype_id')
 	{
 		global $langs, $conf;
 		$out = '';

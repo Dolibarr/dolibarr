@@ -30,13 +30,14 @@ global $conf,$user,$langs,$db;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/geturl.lib.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
 	$user->getrights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**
@@ -46,88 +47,8 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class GetUrlLibTest extends PHPUnit\Framework\TestCase
+class GetUrlLibTest extends CommonClassTest
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
-
-	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @param 	string	$name		Name
-	 * @return FilesLibTest
-	 */
-	public function __construct($name = '')
-	{
-		parent::__construct($name);
-
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
-
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
-
-	/**
-	 * setUpBeforeClass
-	 *
-	 * @return void
-	 */
-	public static function setUpBeforeClass(): void
-	{
-		global $conf,$user,$langs,$db;
-		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * tearDownAfterClass
-	 *
-	 * @return	void
-	 */
-	public static function tearDownAfterClass(): void
-	{
-		global $conf,$user,$langs,$db;
-		$db->rollback();
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * Init phpunit tests
-	 *
-	 * @return	void
-	 */
-	protected function setUp(): void
-	{
-		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-		print __METHOD__."\n";
-	}
-	/**
-	 * End phpunit tests
-	 *
-	 * @return	void
-	 */
-	protected function tearDown(): void
-	{
-		print __METHOD__."\n";
-	}
-
-
 	/**
 	 * testGetRootURLFromURL
 	 *
@@ -136,40 +57,40 @@ class GetUrlLibTest extends PHPUnit\Framework\TestCase
 	public function testGetRootURLFromURL()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$result=getRootURLFromURL('http://www.dolimed.com/screenshots/afile');
+		$result = getRootURLFromURL('http://www.dolimed.com/screenshots/afile');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('http://www.dolimed.com', $result, 'Test 1');
 
-		$result=getRootURLFromURL('https://www.dolimed.com/screenshots/afile');
+		$result = getRootURLFromURL('https://www.dolimed.com/screenshots/afile');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('https://www.dolimed.com', $result, 'Test 2');
 
-		$result=getRootURLFromURL('http://www.dolimed.com/screenshots');
+		$result = getRootURLFromURL('http://www.dolimed.com/screenshots');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('http://www.dolimed.com', $result);
 
-		$result=getRootURLFromURL('https://www.dolimed.com/screenshots');
+		$result = getRootURLFromURL('https://www.dolimed.com/screenshots');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('https://www.dolimed.com', $result);
 
-		$result=getRootURLFromURL('http://www.dolimed.com/');
+		$result = getRootURLFromURL('http://www.dolimed.com/');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('http://www.dolimed.com', $result);
 
-		$result=getRootURLFromURL('https://www.dolimed.com/');
+		$result = getRootURLFromURL('https://www.dolimed.com/');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('https://www.dolimed.com', $result);
 
-		$result=getRootURLFromURL('http://www.dolimed.com');
+		$result = getRootURLFromURL('http://www.dolimed.com');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('http://www.dolimed.com', $result);
 
-		$result=getRootURLFromURL('https://www.dolimed.com');
+		$result = getRootURLFromURL('https://www.dolimed.com');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('https://www.dolimed.com', $result);
 
@@ -184,64 +105,64 @@ class GetUrlLibTest extends PHPUnit\Framework\TestCase
 	public function testGetDomainFromURL()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		// Tests with param 0
 
-		$result=getDomainFromURL('http://localhost');
+		$result = getDomainFromURL('http://localhost');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('localhost', $result, 'Test localhost 0');
 
-		$result=getDomainFromURL('http://localhost', 1);
+		$result = getDomainFromURL('http://localhost', 1);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('localhost', $result, 'Test localhost 1');
 
-		$result=getDomainFromURL('https://dolimed.com');
+		$result = getDomainFromURL('https://dolimed.com');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('dolimed', $result, 'Test dolimed.com 0');
 
-		$result=getDomainFromURL('http://www.dolimed.com/screenshots/afile');
+		$result = getDomainFromURL('http://www.dolimed.com/screenshots/afile');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('dolimed', $result, 'Test dolimed.com/... 0');
 
-		$result=getDomainFromURL('http://www.with.dolimed.com/screenshots/afile');
+		$result = getDomainFromURL('http://www.with.dolimed.com/screenshots/afile');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('dolimed', $result, 'Test ...dolimed.com/ 0');
 
 		// Tests with param 1
 
-		$result=getDomainFromURL('https://dolimed.com', 1);
+		$result = getDomainFromURL('https://dolimed.com', 1);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('dolimed.com', $result, 'Test dolimed.com 1');
 
-		$result=getDomainFromURL('http://www.dolimed.com/screenshots/afile', 1);
+		$result = getDomainFromURL('http://www.dolimed.com/screenshots/afile', 1);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('dolimed.com', $result, 'Test dolimed.com/... 1');
 
-		$result=getDomainFromURL('http://www.with.dolimed.com/screenshots/afile', 1);
+		$result = getDomainFromURL('http://www.with.dolimed.com/screenshots/afile', 1);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('dolimed.com', $result, 'Test .../dolimed.com 1');
 
 		// Tests with param 2
 
-		$result=getDomainFromURL('http://www.with.dolimed.com/screenshots/afile', 2);
+		$result = getDomainFromURL('http://www.with.dolimed.com/screenshots/afile', 2);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('with.dolimed.com', $result, 'Test .../dolimed.com 2');
 
 		// For domains with top domain on 2 levels
 
-		$result=getDomainFromURL('https://www.with.dolimed.com.mx', 0);
+		$result = getDomainFromURL('https://www.with.dolimed.com.mx', 0);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('dolimed', $result, 'Test dolimed.com.mx 0');
 
-		$result=getDomainFromURL('https://www.with.dolimed.com.mx', 1);
+		$result = getDomainFromURL('https://www.with.dolimed.com.mx', 1);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('dolimed.com.mx', $result, 'Test dolimed.com.mx 1');
 
-		$result=getDomainFromURL('https://www.with.dolimed.com.mx', 2);
+		$result = getDomainFromURL('https://www.with.dolimed.com.mx', 2);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('with.dolimed.com.mx', $result, 'Test dolimed.com.mx 2');
 
@@ -256,16 +177,16 @@ class GetUrlLibTest extends PHPUnit\Framework\TestCase
 	public function testRemoveHtmlComment()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$result=removeHtmlComment('abc<!--[if lt IE 8]>aaaa<![endif]-->def');
+		$result = removeHtmlComment('abc<!--[if lt IE 8]>aaaa<![endif]-->def');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('abcdef', $result, 'Test 1');
 
-		$result=removeHtmlComment('abc<!--[if lt IE 8]>aa-->bb<!--aa<![endif]-->def');
+		$result = removeHtmlComment('abc<!--[if lt IE 8]>aa-->bb<!--aa<![endif]-->def');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('abcbbdef', $result, 'Test 1');
 

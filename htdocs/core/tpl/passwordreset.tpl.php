@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2022 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +26,7 @@ if (!defined('NOBROWSERNOTIF')) {
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 // DDOS protection
@@ -84,8 +85,8 @@ $colorbackhmenu1 = '60,70,100'; // topmenu
 if (!isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) {
 	$conf->global->THEME_ELDY_TOPMENU_BACK1 = $colorbackhmenu1;
 }
-$colorbackhmenu1 = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_TOPMENU_BACK1') ? $colorbackhmenu1 : $conf->global->THEME_ELDY_TOPMENU_BACK1) : (empty($user->conf->THEME_ELDY_TOPMENU_BACK1) ? $colorbackhmenu1 : $user->conf->THEME_ELDY_TOPMENU_BACK1);
-$colorbackhmenu1 = join(',', colorStringToArray($colorbackhmenu1)); // Normalize value to 'x,y,z'
+$colorbackhmenu1 = getDolUserString('THEME_ELDY_ENABLE_PERSONALIZED') ? getDolUserString('THEME_ELDY_TOPMENU_BACK1', $colorbackhmenu1) : getDolGlobalString('THEME_ELDY_TOPMENU_BACK1', $colorbackhmenu1);
+$colorbackhmenu1 = implode(',', colorStringToArray($colorbackhmenu1)); // Normalize value to 'x,y,z'
 
 
 $edituser = new User($db);
@@ -93,7 +94,7 @@ $edituser = new User($db);
 
 // Validate parameters
 if ($setnewpassword && $username && $passworduidhash) {
-	$result = $edituser->fetch('', $username);
+	$result = $edituser->fetch(0, $username);
 	if ($result < 0) {
 		$message = '<div class="error">'.dol_escape_htmltag($langs->trans("ErrorTechnicalError")).'</div>';
 	} else {
@@ -300,7 +301,7 @@ if ($mode == 'dolibarr' || !$disabled) {
 
 <?php if (!empty($message)) { ?>
 	<div class="center login_main_message">
-	<?php dol_htmloutput_mesg($message, '', '', 1); ?>
+	<?php dol_htmloutput_mesg($message, [], '', 1); ?>
 	</div>
 <?php } ?>
 

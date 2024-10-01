@@ -64,18 +64,15 @@ MainAccountForVatPaymentNotDefined=Account (from the Chart of Account) for VAT p
 MainAccountForSubscriptionPaymentNotDefined=Account (from the Chart of Account) for membership payment not defined in setup
 MainAccountForRetainedWarrantyNotDefined=Account (from the Chart of Account) for the retained warranty not defined in setup
 UserAccountNotDefined=Accounting account for user not defined in setup
-
 AccountancyArea=بخش حساب‌داری
 AccountancyAreaDescIntro=استفاده از بخش حساب‌داری در گام‌های متعددی انجام می‌پذیرد:
 AccountancyAreaDescActionOnce=عملیات زیر معمولا فقط یک بار انجام می‌شود، یا یک بار در سال...
 AccountancyAreaDescActionOnceBis=Next steps should be done to save you time in future by suggesting you automatically the correct default accounting account when transferring data in accounting
 AccountancyAreaDescActionFreq=عملیات زیر معمولا هر ماه یا هر هفته یا بار یا حتی هر روز یک بار برای شرکت‌های بسیار بزرگ انجام می‌پذیرد....
-
 AccountancyAreaDescJournalSetup=STEP %s: Check content of your journal list from menu %s
 AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists or create one from menu %s
 AccountancyAreaDescChart=STEP %s: Select and|or complete your chart of account from menu %s
-
-AccountancyAreaDescFiscalPeriod=STEP %s: Define a fiscal year by default on which to integrate your accounting entries. For this, use the menu entry %s.
+AccountancyAreaDescFiscalPeriod=STEP %s: Define a fiscal year by default on which to integrate your accounting entries, from menu %s.
 AccountancyAreaDescVat=گام %s: تعریف حساب‌های حساب‌داری برای هر یک از انواع ضریب‌های مالیات بر ارزش افزوده. برای این کار از گزینۀ %s استفاده نمائید.
 AccountancyAreaDescDefault=گام %s: تعریف حساب‌های حساب‌داری پیش‌فرض. برای این، از گزینۀ %s استفاده نمائید.
 AccountancyAreaDescExpenseReport=STEP %s: Define default accounting accounts for each type of Expense report. For this, use the menu entry %s.
@@ -87,16 +84,14 @@ AccountancyAreaDescMisc=STEP %s: Define mandatory default accounts and default a
 AccountancyAreaDescLoan=گام %s: تعریف حساب‌‌های حساب‌داری پیش‌فرض برای وام‌ها. برای این از گزینۀ %s استفاده نمائید.
 AccountancyAreaDescBank=گام %s: تعریف حساب‌های حساب‌داری و شمارۀ‌دفتر برای هر بانک و حساب‌های مالی. برای این‌کار از گزینۀ %s استفاده نمائید.
 AccountancyAreaDescProd=STEP %s: Define accounting accounts on your Products/Services. For this, use the menu entry %s.
-
 AccountancyAreaDescBind=گام %s: بندهای میان سطور موجود %s و حساب حساب‌داری بررسی شده است، بنابراین برنامه خواهد توانست که تراکنش‌ها را با یک کلیک در دفترکل  بنویسد. بندهای مفقود را کامل کنید. برای این‌کار، از گزینۀ %s استفاده نمائید.
 AccountancyAreaDescWriteRecords=گام %s: نوشتن تراکنش‌ها در دفتر کل. برای این‌کار، به فهرست <strong>%s</strong> مراجعه کرده و روی کلید <strong>%s</strong> کلیک نمائید.
-AccountancyAreaDescAnalyze=گام %s: تراکنش‌های موجود را اضافه یا ویرایش نمائید و گزارش بگیرید یا صادر کنید.
-
-AccountancyAreaDescClosePeriod=گام %s: بازۀ زمانی را ببندید تا دیگر در آینده قابل ویرایش نباشد.
-
+AccountancyAreaDescAnalyze=STEP %s: Read reportings or generate export files for other bookkeepers.
+AccountancyAreaDescClosePeriod=STEP %s: Close period so we can't transfer anymore data in the same period in a future.
 TheFiscalPeriodIsNotDefined=A mandatory step in setup has not been completed (Fiscal period is not defined)
 TheJournalCodeIsNotDefinedOnSomeBankAccount=A mandatory step in setup has not been completed (accounting code journal not defined for all bank accounts)
 Selectchartofaccounts=انتخاب نمودار فعالی از حساب‌ها
+CurrentChartOfAccount=Current active chart of account
 ChangeAndLoad=تغییر و بارگذاری
 Addanaccount=افزودن یک حساب حسابداری
 AccountAccounting=حساب حسابداری
@@ -111,7 +106,7 @@ DataUsedToSuggestAccount=Data used to suggest account
 AccountAccountingSuggest=Account suggested
 MenuDefaultAccounts=حساب‌های پیش‌فرض
 MenuBankAccounts=حسابهای بانکی
-MenuVatAccounts=حساب‌های مالیات بر ارزش افزوده
+MenuVatAccounts=VAT accounts
 MenuTaxAccounts=حساب‌های مالیات
 MenuExpenseReportAccounts=حساب‌های گزارش هزینه‌ها
 MenuLoanAccounts=حساب‌های وام
@@ -144,8 +139,6 @@ ExpenseReportLines=سطور گزارش هزینه‌ها که باید بند ش
 ExpenseReportLinesDone=سطور بندشدۀ گزارش هزینه‌ها
 IntoAccount=بندکردن سطر به حساب حسابداری
 TotalForAccount=Total accounting account
-
-
 Ventilate=بندکردن
 LineId=سطر شناسه
 Processing=پردازش
@@ -158,22 +151,21 @@ VentilatedinAccount=به دقت به حساب حسابداری بند شد
 NotVentilatedinAccount=به حساب حسابداری بند نشد
 XLineSuccessfullyBinded=محصول/خدمت %s‌ با موفقیت به حساب حساب‌داری بند شد
 XLineFailedToBeBinded=محصول/خدمت %s به حساب حساب‌داری بند نشد
-
 ACCOUNTING_LIMIT_LIST_VENTILATION=Maximum number of lines on list and bind page (recommended: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=آغاز مرتب‌کردن صفحۀ "بندکردن برای انجام" بواسطۀ عناصر اخیر
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=آغاز مرتب‌کردن صفحۀ "بندکردن انجام شد" بواسطۀ عناصر اخیر
-
 ACCOUNTING_LENGTH_DESCRIPTION=حذف توضیحات محصولات و خدمات در فهرست‌ها بعد از چند حرف (بهترین مقدار= 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=حذف توضیحات‌حساب محصولات و خدمات در فهرست‌ها بعد از چند حرف (بهترین مقدار= 50)
 ACCOUNTING_LENGTH_GACCOUNT=طول حساب‌های عمومی حساب‌داری (در صورتی که عدد 6 را اینجا تنظیم کنید، حساب "706" روی صفحه به شکل "706000" نمایش داده خواهد شد)
 ACCOUNTING_LENGTH_AACCOUNT=طول حساب‌های حساب‌داری شخص‌سوم  (در صورتی که عدد 6 را اینجا تنظیم کنید، حساب "401" روی صفحه به شکل "401000" نمایش داده خواهد شد)
 ACCOUNTING_MANAGE_ZERO=امکان تغییر تعداد دیگری از صفر در انتخای حساب حساب‌داری. در برخی کشورها (مثل سوئیس) مورد احتیاج است. در صورتی که خاموش باشد (پیش‌فرض)، شما می‌توانید دو گزینۀ مقابل را تنظیم کنید تا از برنامه بخواهید صفرهای مجازی اضافه کند.
+ACCOUNTING_BANK_CONCILIATED=Transfer into accounting only the lines reconciliated in bank statements (by default, could be unchecked on each transfer)
 BANK_DISABLE_DIRECT_INPUT=غیرفعال کردن ثبت مستقیم تراکنش در حساب بانکی
+ACCOUNTANCY_ER_DATE_RECORD=Use the end date of the period of an expense report as the date for the transfer to accounting, instead of the date of the expense
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=فعال کردن خروجی پیش‌نویس از دفتر
 ACCOUNTANCY_COMBO_FOR_AUX=Enable combo list for subsidiary account (may be slow if you have a lot of third parties, break ability to search on a part of value)
 ACCOUNTING_DATE_START_BINDING=Disable binding & transfer in accountancy when date is below this date (the transactions before this date will be excluded by default)
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On the page to transfer data into accountancy, what is the period selected by default
-
 ACCOUNTING_SELL_JOURNAL=Sales journal - sales and returns
 ACCOUNTING_PURCHASE_JOURNAL=Purchase journal - purchase and returns
 ACCOUNTING_BANK_JOURNAL=Cash journal - receipts and disbursements
@@ -182,40 +174,33 @@ ACCOUNTING_MISCELLANEOUS_JOURNAL=General journal
 ACCOUNTING_HAS_NEW_JOURNAL=دفتر جدید دارد
 ACCOUNTING_INVENTORY_JOURNAL=Inventory journal
 ACCOUNTING_SOCIAL_JOURNAL=دفتر اجتماعی
-
 ACCOUNTING_RESULT_PROFIT=نتیجۀ حساب حساب‌داری (سود)
 ACCOUNTING_RESULT_LOSS=نتیجۀ حساب حساب‌داری (ضرر)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=دفتر خاتمه
 ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT=Accounting groups used for the balance sheet account (separate by comma)
 ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT=Accounting groups used for the income statement (separate by comma)
-
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Account (from the Chart Of Account) to be used as the account for transitional bank transfers
 TransitionalAccount=Transitional bank transfer account
-
 ACCOUNTING_ACCOUNT_SUSPENSE=Account (from the Chart Of Account) to be used as the account for unallocated funds either received or paid i.e. funds in "wait[ing]"
 DONATION_ACCOUNTINGACCOUNT=Account (from the Chart Of Account) to be used to register donations (Donation module)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Account (from the Chart Of Account) to be used to register memberships subscriptions (Membership module - if membership recorded without invoice)
-
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register customer deposit
 UseAuxiliaryAccountOnCustomerDeposit=Store customer account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default
 UseAuxiliaryAccountOnSupplierDeposit=Store supplier account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Accounting account by default to register customer retained warranty
-
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased within same country (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased from EEC to another EEC country (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased and imported from any other foreign country (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the sold products (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products sold from EEC to another EEC country (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products sold and exported to any other foreign country (used if not defined in the product sheet)
-
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the services purchased within same country (used if not defined in the service sheet)
 ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the services purchased from EEC to another EEC country (used if not defined in the service sheet)
 ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the services purchased and imported from other foreign country (used if not defined in the service sheet)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the sold services (used if not defined in the service sheet)
 ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the services sold from EEC to another EEC country (used if not defined in the service sheet)
 ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the services sold and exported to any other foreign country (used if not defined in the service sheet)
-
 Doctype=نوع سند
 Docdate=تاریخ
 Docref=مرجع
@@ -237,7 +222,6 @@ AccountingAccountGroupsDesc=در این قسمت می‌توانید گروه‌
 ByAccounts=به واسطۀ حساب‌ها
 ByPredefinedAccountGroups=به واسطۀ  گروه‌های از پیش‌تعریف شده
 ByPersonalizedAccountGroups=به واسطۀ گروه‌های دل‌خواه
-ByYear=به واسطۀ سال
 NotMatch=تعیین نشده
 DeleteMvt=Delete some lines from accounting
 DelMonth=Month to delete
@@ -276,16 +260,12 @@ OpeningBalance=Opening balance
 ShowOpeningBalance=Show opening balance
 HideOpeningBalance=Hide opening balance
 ShowSubtotalByGroup=Show subtotal by level
-
 Pcgtype=گروه حساب
 PcgtypeDesc=Group of account are used as predefined 'filter' and 'grouping' criteria for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
 AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease filter use or building of custom reports.
-
 Reconcilable=Reconcilable
-
 TotalVente=جمع گردش‌مالی پیش‌از محاسبۀ مالیات
 TotalMarge=حاشیه فروش کل
-
 DescVentilCustomer=Consult here the list of customer invoice lines bound (or not) to a product account from chart of account
 DescVentilMore=In most cases, if you use predefined products or services and you set the account (from chart of account) on the product/service card, the application will be able to make all the binding between your invoice lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on product/service cards or if you still have some lines not bound to an account, you will have to make a manual binding from the menu "<strong>%s</strong>".
 DescVentilDoneCustomer=Consult here the list of the lines of invoices customers and their product account from chart of account
@@ -298,7 +278,6 @@ DescVentilTodoExpenseReport=بندکردن سطور گزارش هزینه‌ها
 DescVentilExpenseReport=در این قسمت فهرستی از سطور گزارش هزینه‌هائی را که به یک حساب‌حساب‌داری پرداخت بندشده‌اند (یا نشده‌اند) را ملاحظه کنید
 DescVentilExpenseReportMore=در صورتی‌که شما حساب‌حساب‌داری را از نوع سطور گزارش هزینه تنظیم می‌کنید، برنامه قادر خواهد بود همۀ بندهای لازم را بین سطور گزارش هزینه‌های شما و حساب حساب‌داری شما در ساختار حساب‌های‌تان را ایجاد نماید، فقط با یک کلیک بر روی کلید <strong>"%s"</strong>. در صورتی‌که حساب بر روی واژه‌نامۀ پرداخت‌ها ثبت نشده باشد یا هنوز سطوری داشته باشید که به هیچ حسابی متصل نباشد، باید بندها را به شکل دستی از فهرست "<strong>%s</strong>: ایجاد نمائید.
 DescVentilDoneExpenseReport=در این قسمت فهرستی از سطور گزارشات هزینه و حساب‌حساب‌داری پرداخت آن‌ها را داشته باشید
-
 Closure=Annual closure
 AccountancyClosureStep1Desc=Consult here the number of movements by month not yet validated & locked
 OverviewOfMovementsNotValidated=Overview of movements not validated and locked
@@ -306,11 +285,9 @@ AllMovementsWereRecordedAsValidated=All movements were recorded as validated and
 NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated and locked
 ValidateMovements=Validate and lock movements
 DescValidateMovements=Any modification or deletion of writing, lettering and deletes will be prohibited. All entries for an exercise must be validated otherwise closing will not be possible
-
 ValidateHistory=بندکردن خودکار
 AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
 DoManualBindingForFailedRecord=You have to do a manual link for the %s row(s) not linked automatically.
-
 ErrorAccountancyCodeIsAlreadyUse=Error, you cannot remove or disable this account of chart of account because it is used
 MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s & Credit = %s
 Balancing=تعدیل
@@ -323,19 +300,18 @@ ChangeBinding=تغییر بند‌شدن‌ها
 Accounted=در دفترکل حساب‌شده است
 NotYetAccounted=Not yet transferred to accounting
 ShowTutorial=Show Tutorial
+ClickOnUseTutorialForHelp=Welcome on the section to generate your accountancy. Click on the link "%s" to get advices on how to use it.
 NotReconciled=وفق داده نشده
 WarningRecordWithoutSubledgerAreExcluded=Warning, all lines without subledger account defined are filtered and excluded from this view
 AccountRemovedFromCurrentChartOfAccount=Accounting account that does not exist in the current chart of accounts
-
 ## Admin
-BindingOptions=Binding options
+BindingOptions=Options for the transfer in accountancy
 ApplyMassCategories=انتساب دست‌جمعی دسته‌بندی
 AddAccountFromBookKeepingWithNoCategories=حساب فعال هنوز در یک گروه‌ شخصی‌سازی‌شده نیست
 CategoryDeleted=دسته‌بندی حساب حساب‌داری حذف شد
 AccountingJournals=دفترهای حساب‌داری
 AccountingJournal=دفتر حساب‌داری
 NewAccountingJournal=دفتر حساب‌داری جدید
-ShowAccountingJournal=نمایش دفترنویسی حساب‌داری
 NatureOfJournal=Nature of Journal
 AccountingJournalType1=فعالیت‌های متفرقه
 AccountingJournalType2=فروش
@@ -362,7 +338,6 @@ ACCOUNTING_LETTERING_NBLETTERS_DESC=Some accounting software only accepts a two-
 OptionsAdvanced=Advanced options
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Activate the management of VAT reverse charge on supplier purchases
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=When this option is enabled, you can define that a supplier or a given vendor invoice must be transferred into accountancy differently: A additional debit and a credit line will generated into the accounting on 2 given accounts from the chart of account defined into the "%s" setup page.
-
 ## Export
 NotExportLettering=Do not export the lettering when generating the file
 NotifiedExportDate=Flag not yet exported lines as Exported <span class="warning">(to modify a line flagged as exported, you will need to delete the whole transaction and re-transfert it into accounting)</span>
@@ -372,7 +347,7 @@ DateValidationAndLock=Date validation and lock
 ConfirmExportFile=Confirmation of the generation of the accounting export file ?
 ExportDraftJournal=صادرکردن پیش‌نویس دفتر
 Modelcsv=نوع صادرات
-Selectmodelcsv=انتخاب مدل صادرات
+Selectmodelcsv=Select the default format for export
 Modelcsv_normal=صادرات سنتی
 Modelcsv_CEGID=صادرات بر اساس CEGID Expert Comptabilité
 Modelcsv_COALA=صدور برای Sage Coala
@@ -394,7 +369,6 @@ Modelcsv_Gestinumv3=Export for Gestinum (v3)
 Modelcsv_Gestinumv5=Export for Gestinum (v5)
 Modelcsv_charlemagne=Export for Aplim Charlemagne
 ChartofaccountsId=ساختار شناسۀ حساب‌‌ها
-
 ## Tools - Init accounting account on product / service
 InitAccountancy=حساب‌داری اولیه
 InitAccountancyDesc=این صفحه برای مقداردهی اولیۀ یک حساب حساب‌داری برای محصولات/خدماتی قابل استفاده است که حساب حساب‌داری تعریف‌شده‌ای برای خرید و فروش ندارند
@@ -427,14 +401,15 @@ SaleEECWithVAT=Sale in EEC with a VAT not null, so we suppose this is NOT an int
 SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of third party is not defined. We fall back on the account for standard sales. You can fix the VAT ID of the third party, or change the product account suggested for binding if needed.
 ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
 ForbiddenTransactionAlreadyValidated=Forbidden: The transaction has been validated.
+DataMustHaveBeenTransferredInAccounting=The transfer of data in accounting must have been done
 ## Dictionary
 Range=بازۀ حساب حساب‌داری
 Calculated=محاسبه‌شده
 Formula=فرمول
-
 ## Reconcile
 LetteringAuto=Reconcile auto
 LetteringManual=Reconcile manual
+LetteringPartial=Reconcile partial
 Unlettering=Unreconcile
 UnletteringAuto=Unreconcile auto
 UnletteringManual=Unreconcile manual
@@ -444,10 +419,9 @@ AccountancyLetteringModifiedSuccessfully=%s reconcile successfully modified
 AccountancyNoUnletteringModified=No unreconcile modified
 AccountancyOneUnletteringModifiedSuccessfully=One unreconcile successfully modified
 AccountancyUnletteringModifiedSuccessfully=%s unreconcile successfully modified
-
 ## Closure
-AccountancyClosureStep1=Step 1 : Validate and lock movements
-AccountancyClosureStep2=Step 2 : Close fiscal period
+AccountancyClosureStep1=Step 1 : Validate and lock the movements
+AccountancyClosureStep2=Step 2 : Close the fiscal period
 AccountancyClosureStep3=Step 3 : Extract entries (Optional)
 AccountancyClosureClose=Close fiscal period
 AccountancyClosureAccountingReversal=Extract and record "Retained earnings" entries
@@ -456,7 +430,6 @@ AccountancyClosureGenerateClosureBookkeepingRecords=Generate "Retained earnings"
 AccountancyClosureSeparateAuxiliaryAccounts=When generating the "Retained earnings" entries, detail the sub-ledger accounts
 AccountancyClosureCloseSuccessfully=Fiscal period has been closed successfully
 AccountancyClosureInsertAccountingReversalSuccessfully=Bookkeeping entries for "Retained earnings" has been inserted successfully
-
 ## Confirm box
 ConfirmMassUnletteringAuto=Bulk auto unreconcile confirmation
 ConfirmMassUnletteringManual=Bulk manual unreconcile confirmation
@@ -465,7 +438,6 @@ ConfirmMassDeleteBookkeepingWriting=تائید حذف گروهی
 ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all line entries related to the same transaction will be deleted). Are you sure you want to delete the %s selected entries?
 AccountancyClosureConfirmClose=Are you sure you want to close the current fiscal period ? <span class="warning">You understand that closing the fiscal period is an irreversible action and will permanently block any modification or deletion of entries over this period</span>.
 AccountancyClosureConfirmAccountingReversal=Are you sure you want to record entries for the "Retained earnings" ?
-
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=برخی گام‌های اجباری برپاسازی انجام نشده است، لطفا تکمیل کنید
 ErrorNoAccountingCategoryForThisCountry=No accounting account group available for country %s (See %s - %s - %s)
@@ -483,10 +455,9 @@ AccountancyErrorMismatchBalanceAmount=The balance (%s) is not equal to 0
 AccountancyErrorLetteringBookkeeping=Errors have occurred concerning the transactions: %s
 ErrorAccountNumberAlreadyExists=The accounting number %s already exists
 ErrorArchiveAddFile=Can't put "%s" file in archive
-ErrorNoFiscalPeriodActiveFound=No active fiscal period found
+ErrorNoFiscalPeriodActiveFound=No active fiscal period found. You can create one from menu %s - %s - %s.
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=The bookkeeping doc date is not inside the active fiscal period
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=The bookkeeping doc date is inside a closed fiscal period
-
 ## Import
 ImportAccountingEntries=ورودی‌های حساب‌داری
 ImportAccountingEntriesFECFormat=Accounting entries - FEC format
@@ -508,11 +479,9 @@ FECFormatReconcilableDate=Reconcilable date (DateLet)
 FECFormatValidateDate=Piece date validated (ValidDate)
 FECFormatMulticurrencyAmount=Multicurrency amount (Montantdevise)
 FECFormatMulticurrencyCode=Multicurrency code (Idevise)
-
 DateExport=Date export
 WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contain transactions modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
 ExpenseReportJournal=دفتر گزارش هزینه‌ها
 DocsAlreadyExportedAreIncluded=Docs already exported are included
 ClickToShowAlreadyExportedLines=Click to show already exported lines
-
 NAccounts=%s accounts

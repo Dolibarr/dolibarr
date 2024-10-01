@@ -17,7 +17,7 @@
 --
 -- ===================================================================
 
-create table llx_bank_categ
+create table llx_category_bank
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   label           varchar(255),

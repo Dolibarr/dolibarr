@@ -27,7 +27,7 @@ ModuleBuilderDeschooks=Бұл қойынды ілгектерге арналға
 ModuleBuilderDescwidgets=Бұл қойынды виджеттерді басқаруға/құруға арналған.
 ModuleBuilderDescbuildpackage=Сіз мұнда модульдің «таратуға дайын» пакеттік файлын (қалыпқа келтірілген .zip файлы) және «таратуға дайын» құжаттама файлын жасай аласыз. Пакетті немесе құжаттама файлын құру үшін батырманы басыңыз.
 EnterNameOfModuleToDeleteDesc=Сіз модульді жоя аласыз. ЕСКЕРТУ: Модульдің барлық кодтау файлдары (қолмен жасалады немесе жасалады) ЖӘНЕ құрылымдалған деректер мен құжаттама жойылады!
-EnterNameOfObjectToDeleteDesc=You can delete an object. WARNING: All coding files (generated or created manually) related to the object will be deleted!
+EnterNameOfObjectToDeleteDesc=Объектіні жоюға болады. ЕСКЕРТУ: Нысанға қатысты барлық кодтау файлдары (қолмен жасалған немесе жасалған) жойылады!
 DangerZone=Қауіпті аймақ
 BuildPackage=Пакет құрастыру
 BuildPackageDesc=Сіз өзіңіздің қосымшаңыздың zip пакетін жасай аласыз, сондықтан сіз оны кез келген Dolibarr -да таратуға дайынсыз. Сіз оны <a href="https://www.dolistore.com"> DoliStore.com </a> сияқты таратуға немесе нарықта сатуға болады.
@@ -94,7 +94,7 @@ SeeExamples=Мысалдарды мына жерден қараңыз
 EnabledDesc=Бұл өрістің белсенді болуы шарты.<br><br>Мысалдар:<br>1<br>isModEnabled('anothermodule')<br>getDolGlobalString('MYMODULE_OPTION')==2
 VisibleDesc=Өріс көрінеді ме? (Мысалдар: 0=Ешқашан көрінбейді, 1=Тізімде көрінеді және пішіндерді жасау/жаңарту/қарау, 2=Тек тізімде көрінеді, 3=Тек пішінді жасау/жаңарту/қарау кезінде көрінеді (тізімде емес), 4=Тізімде көрінеді және тек пішінді жаңарту/қарау (жасау емес), 5=Тізімде көрінеді және пішінді ғана қарау (жасау емес, жаңарту емес).<br><br> Теріс мәнді пайдалану өрістің тізімде әдепкі бойынша көрсетілмейтінін, бірақ оны көру үшін таңдауға болатынын білдіреді).
 ItCanBeAnExpression=Бұл өрнек болуы мүмкін. Мысал:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>$user ->hasRight('holiday', 'define_holiday')?1:5
-DisplayOnPdfDesc=Бұл өрісті үйлесімді PDF құжаттарында көрсетіңіз, орынды "Орын" өрісімен басқара аласыз.<br><strong>Құжат үшін:</strong><br>0 = көрсетілмейді <br>1 = display<spante class='translate ><br></span>2 = бос болмаса ғана көрсету<br><br>b09bz80 span>Құжат жолдары үшін :<span class='notranslate'></strong><br>0 = көрсетілмейді <br> = бағанда көрсетіледі<br>3 = сипаттамадан кейін жол сипаттамасы бағанында көрсетіледі<br>4 = сипаттамадан кейін сипаттама бағанында көрсетіледі бос болмаса ғана
+DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br><strong>For document :</strong><br>0 = not displayed <br>1 = display<br>2 = display only if not empty<br><br><strong>For document lines :</strong><br>0 = not displayed <br>1 = displayed in a column<br>3 = display in line description column after the description<br>4 = display in description column after the description only if not empty
 DisplayOnPdf=PDF форматында
 IsAMeasureDesc=Тізімге жиынтық алу үшін өрістің мәні жинақталуы мүмкін бе? (Мысалдар: 1 немесе 0)
 SearchAllDesc=Өріс жылдам іздеу құралынан іздеу үшін пайдаланылады ма? (Мысалдар: 1 немесе 0)
@@ -148,7 +148,7 @@ CSSListClass=Тізімге арналған CSS
 NotEditable=Өңдеуге болмайды
 ForeignKey=Сыртқы кілт
 ForeignKeyDesc=Егер бұл өрістің мәні басқа кестеде бар екеніне кепілдік беру керек болса. Мұнда мәнге сәйкес келетін синтаксисті енгізіңіз: tablename.parentfieldtocheck
-TypeOfFieldsHelp=Мысал:<br>varchar(99)<br>электрондық пошта<br>телефон ='notranslate'><br></span>ip<br>url<br>құпия сөз<span class='notranslate319b>b span>double(24,8)<br>нақты<br>мәтін<br> <span class='notranslate'><br>күн<br>datetime<br>уақыт белгісі<spante class='no <br></span>integer<br>integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]cc039<span /span><span class='notranslate'><br>'1' жазба жасау үшін комбодан кейін + түймесін қосамыз дегенді білдіреді<br>'сүзгі' Әмбебап сүзгі синтаксисі шарты, мысал: '((күйі:=:1) ЖӘНЕ (fk_user:=:__USER_ID__) ЖӘНЕ (нысан:IN:(__SHARED_ENTITIES__))'
+TypeOfFieldsHelp=Example:<br>varchar(99)<br>email<br>phone<br>ip<br>url<br>password<br>double(24,8)<br>real<br>text<br>html<br>date<br>datetime<br>timestamp<br>integer<br>integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br><br>'1' means we add a + button after the combo to create the record<br>'filter' is an Universal Filter syntax condition, example: '((status:=:1) AND (fk_user:=:__USER_ID__) AND (entity:IN:(__SHARED_ENTITIES__))'
 TypeOfFieldsHelpIntro=Бұл өрістің/атрибуттың түрі.
 AsciiToHtmlConverter=Ascii - HTML түрлендіргіші
 AsciiToPdfConverter=Ascii - PDF түрлендіргіші
@@ -173,6 +173,7 @@ PermissionAddedSuccesfuly=Рұқсат сәтті қосылды
 MenuDeletedSuccessfuly=Мәзір сәтті жойылды
 MenuAddedSuccessfuly=Мәзір сәтті қосылды
 MenuUpdatedSuccessfuly=Мәзір сәтті жаңартылды
+AddAPIsForThisObject=Осы нысан үшін API қосыңыз
 ApiObjectDeleted=%s нысанына арналған API сәтті жойылды
 CRUDRead=Оқы
 CRUDCreateWrite=Жасау немесе жаңарту
@@ -180,9 +181,9 @@ FailedToAddCodeIntoDescriptor=Дескрипторға код қосылмады
 DictionariesCreated=<b>%s</b> сөздігі сәтті жасалды.
 DictionaryDeleted=<b>%s</b> сөздігі жойылды
 PropertyModuleUpdated=<b>%s</b> сипаты сәтті жаңартылды
-InfoForApiFile=* Файлды бірінші рет жасағанда, әрбір нысан үшін барлық әдістер <strong>құрылады.</strong><br>* <strong>жоюды басқанда</strong> <span> сыныптың барлық әдістерін ғана алып тастайсыз. ='notranslate'><strong></span>таңдалған нысан</strong>.
+InfoForApiFile=* When you generate file for the first time then all methods will be created <strong>for each object.</strong><br>* When you click in <strong>remove</strong> you just remove all methods for the <strong>selected object</strong>.
 SetupFile=Модульді орнату беті
-EmailingSelectors=Emails selectors
+EmailingSelectors=Электрондық пошта селекторлары
 EmailingSelectorDesc=Жаппай электрондық пошта жіберу модулі үшін жаңа электрондық пошта мақсатты таңдаушыларын қамтамасыз ету үшін осы жерде сынып файлдарын жасауға және өңдеуге болады
 EmailingSelectorFile=Электрондық поштаны таңдау файлы
 NoEmailingSelector=Электрондық поштаны таңдау файлы жоқ

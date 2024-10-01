@@ -96,10 +96,10 @@ class CalendarHome implements DAV\IExtendedCollection, DAVACL\IACL
      *
      * This is currently not allowed
      *
-     * @param string   $filename
+     * @param string   $name
      * @param resource $data
      */
-    public function createFile($filename, $data = null)
+    public function createFile($name, $data = null)
     {
         throw new DAV\Exception\MethodNotAllowed('Creating new files in this collection is not supported');
     }

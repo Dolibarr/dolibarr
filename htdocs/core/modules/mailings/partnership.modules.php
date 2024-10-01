@@ -2,6 +2,7 @@
 /* Copyright (C) 2018-2018 Andre Schild        <a.schild@aarboard.ch>
  * Copyright (C) 2005-2010 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin       <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This file is an example to follow to add your own email selector inside
  * the Dolibarr email tool.
@@ -78,8 +79,8 @@ class mailing_partnership extends MailingTargets
 		$sql .= " AND s.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".((int) $mailing_id).")";
 		$sql .= " AND p.fk_soc = s.rowid";
 		$sql .= " AND pt.rowid = p.fk_type";
-		if (GETPOST('filter', 'int') > 0) {
-			$sql .= " AND pt.rowid=".((int) GETPOST('filter', 'int'));
+		if (GETPOSTINT('filter') > 0) {
+			$sql .= " AND pt.rowid=".(GETPOSTINT('filter'));
 		}
 		if (GETPOSTISSET('filter_status_partnership') && GETPOSTINT('filter_status_partnership') >= 0) {
 			$sql .= " AND p.status = ".GETPOSTINT('filter_status_partnership');
@@ -97,8 +98,8 @@ class mailing_partnership extends MailingTargets
 		$sql .= " AND s.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".((int) $mailing_id).")";
 		$sql .= " AND p.fk_member = s.rowid";
 		$sql .= " AND pt.rowid = p.fk_type";
-		if (GETPOST('filter', 'int') > 0) {
-			$sql .= " AND pt.rowid=".((int) GETPOST('filter', 'int'));
+		if (GETPOSTINT('filter') > 0) {
+			$sql .= " AND pt.rowid=".(GETPOSTINT('filter'));
 		}
 		if (GETPOSTISSET('filter_status_partnership') && GETPOSTINT('filter_status_partnership') >= 0) {
 			$sql .= " AND p.status = ".GETPOSTINT('filter_status_partnership');
@@ -159,11 +160,11 @@ class mailing_partnership extends MailingTargets
 	 *	array of SQL request that returns two field:
 	 *	One called "label", One called "nb".
 	 *
-	 *	@return		array		Array with SQL requests
+	 *	@return		string[]		Array with SQL requests
 	 */
 	public function getSqlArrayForStats()
 	{
-		// CHANGE THIS: Optionnal
+		// CHANGE THIS: Optional
 
 		//var $statssql=array();
 		//$this->statssql[0]="SELECT field1 as label, count(distinct(email)) as nb FROM mytable WHERE email IS NOT NULL";

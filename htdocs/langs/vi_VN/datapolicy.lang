@@ -4,12 +4,10 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
@@ -17,13 +15,10 @@
 Module4100Name = Chính sách bảo mật dữ liệu
 # Module description 'ModuledatapolicyDesc'
 Module4100Desc = Mô-đun quản lý quyền riêng tư dữ liệu (Tuân thủ GDPR)
-
-#
 # Administration page
-#
 datapolicySetup = Thiết lập chính sách bảo mật dữ liệu mô-đun
 Deletion = Xóa dữ liệu
-datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without events (the duration which you will have indicated below).
+datapolicySetupPage = Tùy thuộc vào luật pháp của quốc gia bạn (Ví dụ <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Điều 5</a> của GDPR), dữ liệu cá nhân phải được lưu giữ trong một khoảng thời gian không vượt quá khoảng thời gian dữ liệu cần thiết cho mục đích thu thập dữ liệu, ngoại trừ mục đích lưu trữ.<br>Việc xóa sẽ được thực hiện tự động sau một khoảng thời gian nhất định mà không có sự kiện (khoảng thời gian mà bạn sẽ chỉ ra dưới đây).
 NB_MONTHS = %s tháng
 ONE_YEAR = 1 năm
 NB_YEARS = %s năm
@@ -38,51 +33,19 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = Khách hàng tiềm năng
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Cũng không phải khách hàng tiềm năng/Cũng không phải khách hàng
 DATAPOLICY_CONTACT_FOURNISSEUR = Nhà cung cấp
 DATAPOLICY_ADHERENT = Thành viên
-DATAPOLICY_Tooltip_SETUP = Loại liên hệ - Cho biết các lựa chọn của bạn cho từng loại.
-DATAPOLICYMail = Cài đặt email
-DATAPOLICYSUBJECTMAIL = Subject of the email
-DATAPOLICYCONTENTMAIL = Nội dung của email
-DATAPOLICYSUBSITUTION = Bạn có thể sử dụng các biến sau trong email của mình (LINKACCEPT cho phép tạo liên kết ghi lại sự đồng ý của người đó, LINKREFUSED cho phép ghi lại lời từ chối của người đó):
-DATAPOLICYACCEPT = Tin nhắn sau khi thỏa thuận
-DATAPOLICYREFUSE = Message after disagreement
+DATAPOLICY_Tooltip_SETUP=Define the delay with no interaction after which you want the record to be automatically purged.
 SendAgreementText = Bạn có thể gửi email GDPR đến tất cả các địa chỉ liên hệ có liên quan của mình (những người chưa nhận được email và bạn chưa đăng ký bất kỳ điều gì về thỏa thuận GDPR của họ). Để thực hiện việc này, hãy sử dụng nút sau.
 SendAgreement = Gửi email
 AllAgreementSend = Tất cả các email đã được gửi
 TXTLINKDATAPOLICYACCEPT = Văn bản cho liên kết "thỏa thuận"
-TXTLINKDATAPOLICYREFUSE = Text for the link "disagreement"
-
-
-#
+TXTLINKDATAPOLICYREFUSE = Văn bản cho liên kết "bất đồng"
 # Extrafields
-#
 DATAPOLICY_BLOCKCHECKBOX = GDPR: Xử lý dữ liệu cá nhân
 DATAPOLICY_consentement = Đã có sự đồng ý cho việc xử lý dữ liệu cá nhân
-DATAPOLICY_opposition_traitement = Opposes to the processing of his personal data
-DATAPOLICY_opposition_prospection = Opposes to the processing of his personal data for the purposes of prospecting
-
-#
-# Popup
-#
-DATAPOLICY_POPUP_ANONYME_TITLE = Ẩn danh bên thứ ba
-DATAPOLICY_POPUP_ANONYME_TEXTE = Bạn không thể xóa liên hệ này khỏi Dolibarr vì có các mục liên quan. Theo GDPR, bạn sẽ ẩn danh tất cả dữ liệu này để tôn trọng nghĩa vụ của mình. Bạn có muốn tiếp tục không ?
-
-#
-# Button for portability
-#
-DATAPOLICY_PORTABILITE = Tính di động GDPR
-DATAPOLICY_PORTABILITE_TITLE = Xuất dữ liệu cá nhân
-DATAPOLICY_PORTABILITE_CONFIRMATION = Bạn muốn xuất dữ liệu cá nhân của liên hệ này. Bạn có chắc không ?
-
-#
+DATAPOLICY_opposition_traitement = Phản đối việc xử lý dữ liệu cá nhân của anh ấy
+DATAPOLICY_opposition_prospection = Phản đối việc xử lý dữ liệu cá nhân của anh ấy cho mục đích tìm kiếm
 # Notes added during an anonymization
-#
-ANONYMISER_AT = Ẩn danh %s
-
-DATAPOLICY_date = Date of agreement/disagreement GDPR
-DATAPOLICY_send = Date agreement email sent
-DATAPOLICY_SEND = Gửi email GDPR
+DATAPOLICY_date = Ngày đồng ý/không đồng ý GDPR
+DATAPOLICY_send = Ngày gửi email thỏa thuận
 MailSent = Email đã được gửi
-
-# ERROR
-=Due to a technical problem, we were unable to register your choice. We apologize for that. Contact us to notify us your choice.
-NUMBER_MONTH_BEFORE_DELETION = Number of months before deletion
+NUMBER_MONTH_BEFORE_DELETION = Số tháng trước khi xóa

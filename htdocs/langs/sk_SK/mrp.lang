@@ -47,7 +47,7 @@ DateEndPlannedMo=Plánovaný dátum ukončenia
 KeepEmptyForAsap=Prázdne znamená „Akonáhle to bude možné“
 EstimatedDuration=Odhadované trvanie
 EstimatedDurationDesc=Odhadované trvanie výroby (alebo demontáže) tohto produktu pomocou tohto kusovníka
-ConfirmValidateBom=Naozaj chcete overiť kusovník pomocou odkazu <strong>%s<span class='notranslate'></strong> > (budete ho môcť použiť na vytváranie nových výrobných objednávok)
+ConfirmValidateBom=Are you sure you want to validate the BOM with the reference <strong>%s</strong> (you will be able to use it to build new Manufacturing Orders)
 ConfirmCloseBom=Ste si istý, že chcete zrušiť tento kusovník (už ho nebudete môcť použiť na vytváranie nových výrobných objednávok)?
 ConfirmReopenBom=Ste si istý, že chcete znovu otvoriť tento kusovník (budete ho môcť použiť na vytvorenie nových výrobných objednávok)
 StatusMOProduced=Vyrobené
@@ -136,4 +136,3 @@ NoRemainQtyToDispatch=Nezostáva žiadne množstvo na rozdelenie
 
 THMOperatorEstimatedHelp=Odhadované náklady operátora na hodinu. Použije sa na odhad nákladov na kusovník pomocou tejto pracovnej stanice.
 THMMachineEstimatedHelp=Odhadovaná cena stroja za hodinu. Použije sa na odhad nákladov na kusovník pomocou tejto pracovnej stanice.
-

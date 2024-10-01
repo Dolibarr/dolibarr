@@ -3,6 +3,8 @@
 #
 # see: dh_installdeb(1)
 
+# shellcheck disable=1091,2006,2034,2086,2089,2090
+
 #set -e
 set +e
 
@@ -30,8 +32,8 @@ lighttpd_remove() {
 		fi
 		# See bug #448682
 		if [ -h /etc/lighttpd/conf-enabled/50-dolibarr.conf ] ; then
-		    echo "postrm Manually deleting lighttpd/dolibarr configuration link"
-		    rm /etc/lighttpd/conf-enabled/50-dolibarr.conf
+			echo "postrm Manually deleting lighttpd/dolibarr configuration link"
+			rm /etc/lighttpd/conf-enabled/50-dolibarr.conf
 		fi
 	fi
 }
@@ -46,7 +48,7 @@ apache_remove() {
 
 
 if [ -f /usr/share/debconf/confmodule ]; then
-    . /usr/share/debconf/confmodule
+	. /usr/share/debconf/confmodule
 fi
 
 db_version 2.0
@@ -62,12 +64,12 @@ lockfile="$docdir/install.lock"
 
 case "$1" in
 
-    # Call when we upgrade
+		# Call when we upgrade
 	upgrade)
 		echo "postrm upgrade"
-	;;
+		;;
 
-    # Call when we uninstall
+		# Call when we uninstall
 	remove)
 		echo "postrm remove"
 		rm -f $lockfile
@@ -85,7 +87,7 @@ case "$1" in
 			else
 				apache_remove $webserver
 			fi
-			# Redirection of 3 is needed because Debconf uses it and it might 
+			# Redirection of 3 is needed because Debconf uses it and it might
 			# be inherited by webserver. See bug #446324.
 			if [ -f /etc/init.d/$webserver ] ; then
 				if [ -x /usr/sbin/invoke-rc.d ]; then
@@ -95,9 +97,9 @@ case "$1" in
 				fi
 			fi
 		done
-	;;
+		;;
 
-    # Call when we uninstall and purge
+		# Call when we uninstall and purge
 	purge)
 		echo "postrm purge"
 
@@ -111,7 +113,7 @@ case "$1" in
 		set +e
 		db_get dolibarr/postrm
 		set -e
-	
+
 		if [ "$RET" = "true" ] ; then
 			echo postrm Mysql database deletion
 			# Get database configuration
@@ -131,7 +133,7 @@ case "$1" in
 			dbadmin="$superuserlogin"
 			dbadmpass="$superuserpassword"
 			dbtype="mysql"
-			
+
 			# To delete a mysql user (disabled)
 			# Needs:        $dbuser    - the user name to create (or replace).
 			#               $dballow   - what hosts to allow (defaults to %).
@@ -144,7 +146,7 @@ case "$1" in
 			#               mysql
 			#               /usr/share/wwwconfig-coomon/mysql.get
 			#. /usr/share/wwwconfig-common/${dbtype}-dropuser.sh
-			
+
 			# To delete database
 			# Needs:        $dbname    - the database that user should have access to.
 			#               $dbserver  - the server to connect to.
@@ -158,85 +160,85 @@ case "$1" in
 			# Define mysqlcmd
 			if [ -z "$dbserver" ] || [ "$dbserver" = "localhost" ]; then
 				hostopt=""
-			    dbserver=localhost
+				dbserver=localhost
 			else
-			    case "$dbserver" in
-				:*)
-				    dbsocket=`echo $dbserver | sed -e 's/^://'`
-				    hostopt="-S $dbsocket"
-				    ;;
-				*)
-				    hostopt="-h $dbserver"
-				    ;;
-			    esac
+				case "$dbserver" in
+					:*)
+						dbsocket=`echo $dbserver | sed -e 's/^://'`
+						hostopt="-S $dbsocket"
+						;;
+					*)
+						hostopt="-h $dbserver"
+						;;
+				esac
 			fi
 			if [ -z "$dbadmpass" ] ; then
-			    log="${log}No password used."
-			    passopt=""
+				log="${log}No password used."
+				passopt=""
 			else
-			    passopt="--password='"`echo "$dbadmpass" | sed -e "s/'/'"'"'"'"'"'"'/g"`"'"
+				passopt="--password='"`echo "$dbadmpass" | sed -e "s/'/'"'"'"'"'"'"'/g"`"'"
 			fi
 			mysqlcmd="mysql $hostopt $passopt -u $dbadmin"
 			mysqlcmdnopass="mysql $hostopt -u $dbadmin"
-			
-		    # Now run the drop user
+
+			# Now run the drop user
 			if eval $mysqlcmd -f -e "\"DROP USER '$dbuser'@'localhost';\"" ; then
 				echo postrm Database login $dbuser@localhost removed
 			else
-			    error="Unable to run $mysqlcmdnopass -f -e \"DROP USER '$dbuser'@'localhost';\""
+				error="Unable to run $mysqlcmdnopass -f -e \"DROP USER '$dbuser'@'localhost';\""
 				echo postrm $error
 			fi
 			if eval $mysqlcmd -f -e "\"DROP USER '$dbuser'@'%';\"" ; then
 				echo postrm Database login $dbuser@% removed
 			else
-			    error="Unable to run $mysqlcmdnopass -f -e \"DROP USER '$dbuser'@'%';\""
+				error="Unable to run $mysqlcmdnopass -f -e \"DROP USER '$dbuser'@'%';\""
 				echo postrm $error
 			fi
 
-		    # Now run the drop commands
-		    if eval $mysqlcmd -f -e "\"show databases;\"" | grep -e "^$dbname" > /dev/null 2>&1 ; then
-				log="${log}Droping database $dbname."
+			# Now run the drop commands
+			if eval $mysqlcmd -f -e "\"show databases;\"" | grep -e "^$dbname" > /dev/null 2>&1 ; then
+				log="${log}Dropping database $dbname."
 				if eval $mysqlcmd -f -e "\"DROP DATABASE $dbname;\"" ; then
-				    if eval $mysqlcmd -f -e "\"show databases;\"" | grep -e "^$dbname" > /dev/null 2>&1 ; then
-					error="Database $dbname NOT successfully droped. You have to do it manually."
-					echo postrm $error
-				    else
-					status=drop
-				    fi
+					if eval $mysqlcmd -f -e "\"show databases;\"" | grep -e "^$dbname" > /dev/null 2>&1 ; then
+						error="Database $dbname NOT successfully dropped. You have to do it manually."
+						echo postrm $error
+					else
+						status=drop
+					fi
 				else
-				    error="Unable to run the drop database script."
+					error="Unable to run the drop database script."
 					echo postrm $error
 				fi
-		    else
+			else
 				status=nothing
 				log="${log}Database $dbname already not exists."
-		    fi
+			fi
 
-		    echo "postrm Remove directory $docdir"
-		    rm -rf $docdir ; 
- 
+			echo "postrm Remove directory $docdir"
+			rm -rf $docdir ;
+
 		else
-			echo "postrm Delete of dolibarr database and uploaded files not wanted" 
+			echo "postrm Delete of dolibarr database and uploaded files not wanted"
 		fi
-	
+
 		rm -rf /etc/dolibarr
 
 		# We clean variable (we ignore errors because db_reset can fails if var was never set)
-        set +e
+		set +e
 		db_reset dolibarr/reconfigure-webserver
 		db_reset dolibarr/postrm
-        set -e
+		set -e
 
 		#db_purge
-	;;
+		;;
 
 	failed-upgrade|abort-install|abort-upgrade|disappear)
-	;;
+		;;
 
 	*)
 		echo "postrm called with unknown argument $1" >&2
 		exit 0
-	;;
+		;;
 esac
 
 #DEBHELPER#

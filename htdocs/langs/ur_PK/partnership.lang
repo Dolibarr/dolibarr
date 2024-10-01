@@ -91,8 +91,7 @@ CountLastUrlCheckError=آخری URL چیک کے لیے غلطیوں کی تعد�
 LastCheckBacklink=آخری URL چیک کی تاریخ
 
 NewPartnershipRequest=نئی شراکت داری کی درخواست
-NewPartnershipRequestDesc=یہ فارم آپ کو ہمارے شراکتی پروگرام میں سے کسی ایک کا حصہ بننے کی درخواست کرنے کی اجازت دیتا ہے۔ اگر آپ کو اس فارم کو پُر کرنے میں مدد کی ضرورت ہو تو، براہ کرم ای میل کے ذریعے رابطہ کریں <b>%s<span class='notranslate'></b></span span>
+NewPartnershipRequestDesc=This form allows you to request to be part of one of our partnership program. If you need help to fill this form, please contact by email <b>%s</b>.
 ThisUrlMustContainsAtLeastOneLinkToWebsite=اس صفحہ میں درج ذیل ڈومین میں سے کسی ایک کا کم از کم ایک لنک ہونا چاہیے: %s
 
 IPOfApplicant=درخواست دہندہ کا IP
-

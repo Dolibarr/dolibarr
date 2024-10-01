@@ -1,12 +1,13 @@
 <?php
-/* Copyright (C) 2003-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005       Marc Barilley / Ocebo   <marc@ocebo.com>
- * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2005       Simon TOSSER            <simon@kornog-computing.com>
- * Copyright (C) 2011-2012  Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
- * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
+/* Copyright (C) 2003-2007  Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2010  Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005       Marc Barilley / Ocebo		<marc@ocebo.com>
+ * Copyright (C) 2005-2009  Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2005       Simon TOSSER				<simon@kornog-computing.com>
+ * Copyright (C) 2011-2012  Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2013       Cédric Salvador				<csalvador@gpcsolutions.fr>
+ * Copyright (C) 2018-2024  Frédéric France         	<frederic.france@free.fr>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,8 +25,8 @@
 
 /**
  *       \file       htdocs/holiday/document.php
- *       \ingroup    fichinter
- *       \brief      Page des documents joints sur les contrats
+ *       \ingroup    holiday
+ *       \brief      Page of linked files onto holiday
  */
 
 // Load Dolibarr environment
@@ -40,16 +41,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('other', 'holiday', 'companies'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
 // Get parameters
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -104,7 +105,7 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'holiday', $object->id, 'holiday');
 
-$permissiontoadd = $user->rights->holiday->write; // Used by the include of actions_setnotes.inc.php
+$permissiontoadd = $user->hasRight('holiday', 'write'); // Used by the include of actions_setnotes.inc.php
 
 
 /*
@@ -122,8 +123,9 @@ $form = new Form($db);
 
 $listhalfday = array('morning'=>$langs->trans("Morning"), "afternoon"=>$langs->trans("Afternoon"));
 $title = $langs->trans("Leave").' - '.$langs->trans("Files");
+$help_url = 'EN:Module_Holiday';
 
-llxHeader('', $title);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-holiday page-card_documents');
 
 if ($object->id) {
 	$valideur = new User($db);
@@ -167,8 +169,12 @@ if ($object->id) {
 	print '<td>'.$langs->trans("Type").'</td>';
 	print '<td>';
 	$typeleaves = $object->getTypes(1, -1);
-	$labeltoshow = (($typeleaves[$object->fk_type]['code'] && $langs->trans($typeleaves[$object->fk_type]['code']) != $typeleaves[$object->fk_type]['code']) ? $langs->trans($typeleaves[$object->fk_type]['code']) : $typeleaves[$object->fk_type]['label']);
-	print empty($labeltoshow) ? $langs->trans("TypeWasDisabledOrRemoved", $object->fk_type) : $labeltoshow;
+	if (empty($typeleaves[$object->fk_type])) {
+		$labeltoshow = $langs->trans("TypeWasDisabledOrRemoved", $object->fk_type);
+	} else {
+		$labeltoshow = (($typeleaves[$object->fk_type]['code'] && $langs->trans($typeleaves[$object->fk_type]['code']) != $typeleaves[$object->fk_type]['code']) ? $langs->trans($typeleaves[$object->fk_type]['code']) : $typeleaves[$object->fk_type]['label']);
+	}
+	print $labeltoshow;
 	print '</td>';
 	print '</tr>';
 
@@ -212,7 +218,7 @@ if ($object->id) {
 	print '<td>'.num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday).'</td>';
 	print '</tr>';
 
-	if ($object->statut == 5) {
+	if ($object->status == Holiday::STATUS_REFUSED) {
 		print '<tr>';
 		print '<td>'.$langs->trans('DetailRefusCP').'</td>';
 		print '<td>'.$object->detail_refuse.'</td>';
@@ -258,19 +264,19 @@ if ($object->id) {
 	print '<td>'.$langs->trans('DateCreation').'</td>';
 	print '<td>'.dol_print_date($object->date_create,'dayhour').'</td>';
 	print '</tr>';
-	if ($object->statut == 3) {
+	if ($object->status == 3) {
 		print '<tr>';
 		print '<td>'.$langs->trans('DateValidCP').'</td>';
 		print '<td>'.dol_print_date($object->date_valid,'dayhour').'</td>';
 		print '</tr>';
 	}
-	if ($object->statut == 4) {
+	if ($object->status == 4) {
 		print '<tr>';
 		print '<td>'.$langs->trans('DateCancelCP').'</td>';
 		print '<td>'.dol_print_date($object->date_cancel,'dayhour').'</td>';
 		print '</tr>';
 	}
-	if ($object->statut == 5) {
+	if ($object->status == 5) {
 		print '<tr>';
 		print '<td>'.$langs->trans('DateRefusCP').'</td>';
 		print '<td>'.dol_print_date($object->date_refuse,'dayhour').'</td>';
@@ -286,8 +292,8 @@ if ($object->id) {
 
 	print dol_get_fiche_end();
 
-	$permissiontoadd = $user->rights->holiday->write;
-	$permtoedit = $user->rights->holiday->write;
+	$permissiontoadd = $user->hasRight('holiday', 'write');
+	$permtoedit = $user->hasRight('holiday', 'write');
 	$param = '&id='.$object->id;
 	$relativepathwithnofile = dol_sanitizeFileName($object->ref).'/';
 	$savingdocmask = dol_sanitizeFileName($object->ref).'-__file__';

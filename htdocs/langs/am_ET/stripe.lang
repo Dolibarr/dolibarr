@@ -22,8 +22,9 @@ ToOfferALinkForOnlinePaymentOnContractLine=ዩአርኤል ለኮንትራት �
 ToOfferALinkForOnlinePaymentOnFreeAmount=ምንም አይነት ነገር ሳይኖር የ%s የመስመር ላይ ክፍያ ገጽ ለማቅረብ URL.
 ToOfferALinkForOnlinePaymentOnMemberSubscription=ለአባል ምዝገባ %s የመስመር ላይ ክፍያ ገጽ ለማቅረብ URL.
 ToOfferALinkForOnlinePaymentOnDonation=ዩአርኤል ለልገሳ ክፍያ %s የመስመር ላይ መክፈያ ገጽ ለማቅረብ
-YouCanAddTagOnUrl=እንዲሁም url መለኪያ ማከል ይችላሉ <b>&tag=<i>እሴትb0ae647358bac class='notranslate'></b> ወደ ማንኛቸውም ዩአርኤል (ከነገር ጋር ያልተገናኘ ክፍያ ብቻ የግዴታ) የራስዎን የክፍያ አስተያየት መለያ ለመጨመር።<br>ለ የክፍያ ዩአርኤል ያለ ምንም ነባር ነገር፣ ልኬቱን ማከል ይችላሉ <strong>&noidempotency=1</strong> ስለዚህ ተመሳሳይ አገናኝ ከተመሳሳይ መለያ ጋር ብዙ ጊዜ ጥቅም ላይ ሊውል ይችላል (አንዳንድ የክፍያ ሁነታ ያለዚህ ግቤት ለእያንዳንዱ የተለየ አገናኝ ክፍያውን 1 ሊገድበው ይችላል)
-SetupStripeToHavePaymentCreatedAutomatically=ስትሪፕህን በ url <b>%s<span class='notranslate'></b> ለመክፈል በራስ ሰር ያዋቅሩ። በ Stripe የተረጋገጠ.
+YouCanAddTagOnUrl=You can also add url parameter <b>&tag=value</b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
+YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful of failed online payment.
+SetupStripeToHavePaymentCreatedAutomatically=Setup your Stripe with url <b>%s</b> to have payment created automatically when validated by Stripe.
 AccountParameter=የመለያ መለኪያዎች
 UsageParameter=የአጠቃቀም መለኪያዎች
 InformationToFindParameters=የእርስዎን %s መለያ መረጃ ለማግኘት ያግዙ
@@ -77,4 +78,13 @@ TERMINAL_LOCATION=ለ Stripe ተርሚናሎች ቦታ (አድራሻ)
 RequestDirectDebitWithStripe=ቀጥታ ዴቢትን በ Stripe ይጠይቁ
 RequesCreditTransferWithStripe=በ Stripe የብድር ማስተላለፍ ይጠይቁ
 STRIPE_SEPA_DIRECT_DEBIT=የቀጥታ ዴቢት ክፍያዎችን በStripe በኩል ያንቁ
+STRIPE_KLARNA=Enable the payments using Klarna
+STRIPE_BANCONTACT=Enable the payments using BANCONTACT
+STRIPE_IDEAL=Enable the payments using IDEAL
+STRIPE_GIROPAY=Enable the payments using GIROPAY
+STRIPE_SOFORT=Enable the payments using SOFORT
 StripeConnect_Mode=Stripe Connect ሁነታ
+ExampleOnlyForBECustomers=Only for belgium customers
+ExampleOnlyForDECustomers=Only for german customers
+ExampleOnlyForNLCustomers=Only for dutch customers
+ExampleOnlyForATBEDEITNLESCustomers=Only for customers from Austria, Belgium, Germany, Italy, Netherlands, Spain

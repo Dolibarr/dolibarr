@@ -21,7 +21,6 @@ MenuDoneMyActions=Ολοκληρωμένες ενέργειες
 ListOfEvents=Λίστα συμβάντων (προεπιλεγμένο ημερολόγιο)
 ActionsAskedBy=Ενέργειες που ανατέθηκαν από
 ActionsToDoBy=Ενέργειες που ανατέθηκαν σε
-ActionsDoneBy=Ενέργειες που ολοκληρώθηκαν από
 ActionAssignedTo=Ενέργεια ανατεθειμένη σε
 ViewCal=Μηνιαία προβολή
 ViewDay=Προβολή ημέρας
@@ -55,7 +54,7 @@ MemberValidatedInDolibarr=Το μέλος %s επικυρώθηκε
 MemberModifiedInDolibarr=Το μέλος %s τροποποιήθηκε
 MemberResiliatedInDolibarr=Το μέλος %s διαγράφηκε
 MemberDeletedInDolibarr=Το μέλος %s διαγράφηκε
-MemberExcludedInDolibarr=Το μέλος %sεξαιρέθηκε 
+MemberExcludedInDolibarr=Το μέλος %sεξαιρέθηκε
 MemberSubscriptionAddedInDolibarr=Προστέθηκε συνδρομή %s για το μέλος %s
 MemberSubscriptionModifiedInDolibarr=Η συνδρομή %s για το μέλος %s τροποποιήθηκε
 MemberSubscriptionDeletedInDolibarr=Η συνδρομή %s για το μέλος %s διαγράφηκε
@@ -135,12 +134,14 @@ AgendaModelModule=Πρότυπα εγγράφων για συμβάν
 DateActionStart=Ημερομηνία έναρξης
 DateActionEnd=Ημερομηνία λήξης
 AgendaUrlOptions1=Μπορείτε ακόμη να προσθέσετε τις ακόλουθες παραμέτρους για να φιλτράρετε τα αποτέλεσμα:
-AgendaUrlOptions3= <b> logina= </b> για περιορισμό της εξόδου σε ενέργειες που ανήκουν σε έναν χρήστη <b>%s</b>.
-AgendaUrlOptionsNotAdmin= <b> logina=! </b> για περιορισμό της εξόδου σε ενέργειες που δεν ανήκουν στον χρήστη <b>%s</b>.
+AgendaUrlOptions3= <b> logina=%s </b> για περιορισμό της εξόδου σε ενέργειες που ανήκουν σε έναν χρήστη <b>%s</b>(χρησιμοποιήστε <b>logina=!%s</b>για συμβάντα που ανήκουν στο χρήστη).
 AgendaUrlOptions4= <b> logint= </b> για περιορισμό της εξόδου σε ενέργειες που έχουν ανατεθεί στον χρήστη <b>%s</b>(ιδιοκτήτης και άλλοι)
 AgendaUrlOptionsProject= <b> έργο=__PROJECT_ID__ </b> για περιορισμό της εξόδου σε ενέργειες που συνδέονται με το έργο <b> __PROJECT_ID__ </b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype = systemauto</b> για την εξαίρεση αυτόματων συμβάντων.
+AgendaUrlOptionsType=<b>actiontype=%s</b> είτε αυτόματη είτε μη αυτόματη λήψη
+AgendaUrlOptionsCode=<b>actioncode=%s</b> για να λάβετε μόνο συμβάντα με ένα κωδικό
 AgendaUrlOptionsIncludeHolidays= <b> includeholidays=1 </b> για να συμπεριληφθούν εκδηλώσεις εορτών.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> για περιορισμό στα συμβάντα των τελευταίων %s ημερών (η προεπιλογή είναι %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> για περιορισμό στα τελευταία 50 συμβάντα (προεπιλογή και  μέγιστο είναι%s).
 AgendaShowBirthdayEvents=Γενέθλια επαφών
 AgendaHideBirthdayEvents=Απόκρυψη γενεθλίων των επαφών
 Busy=Απασχολημένος
@@ -201,4 +202,6 @@ AppointmentDuration = Διάρκεια ραντεβού : %s
 BookingSuccessfullyBooked=Η κράτηση σας έχει αποθηκευτεί
 BookingReservationHourAfter=Επιβεβαιώνουμε την κράτηση της συνάντησής μας στην ημερομηνία %s
 BookcalBookingTitle=Διαδικτυακό ραντεβού
-Transparency = Transparency
+Transparency = Διαφάνεια
+ReadMore = Διαβάστε περισσότερα
+ReadLess = Διαβάστε λιγότερα

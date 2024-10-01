@@ -21,7 +21,6 @@ MenuDoneMyActions=Ev. mele terminate
 ListOfEvents=Listă evenimente (calendar implicit)
 ActionsAskedBy=Ev. înregistrate de
 ActionsToDoBy=Ev. atribuite lui
-ActionsDoneBy=Ev. efectuate de
 ActionAssignedTo=Eveniment atribuit lui
 ViewCal=Vedere lunară
 ViewDay=Vedere zilnică
@@ -135,12 +134,14 @@ AgendaModelModule=Șabloane de documente pentru eveniment
 DateActionStart=Data începerii
 DateActionEnd=Data terminării
 AgendaUrlOptions1=Puteţi, de asemenea, să adăugaţi următorii parametri pentru  filtrarea rezultatelor:
-AgendaUrlOptions3=<b>logina=%s</b> ​​pentru a limita afişarea de acțiuni efectuate de utilizatorul <b>%s</b>
-AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> ​​pentru a limita afişarea de acțiuni neefectuate de utilizatorul  <b>%s</b>.
+AgendaUrlOptions3=<b>logina=%s</b> pentru a restricționa afișarea acțiunilor deținute de utilizator <b>%s</b> (folosește <b>logina=!%s</b> pentru evenimente nedeținute de utilizator).
 AgendaUrlOptions4=<b>logint=%s</b> ​​pentru a limita exportul de acțiuni atribuite utilizatorului <b>%s</b>( proprietari sau alţii).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> pentru a restricționa afişarea la acțiunile legate de proiectul <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype = systemauto</b> pentru a exclude evenimentele automate.
+AgendaUrlOptionsType=<b>actiontype=%s</b> pentru a obține evenimente automate sau manuale
+AgendaUrlOptionsCode=<b>actioncode=%s</b> pentru a obține doar evenimente cu un anumit cod introdus
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> pentru a include evenimentele din zilele libere.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> pentru a limita evenimentele  la ultimile %s zile (implicit %s).
+AgendaUrlOptionsLimit=<b>limită=50</b> pentru a limita la ultimile 50 de evenimente (implicit și maximum este %s).
 AgendaShowBirthdayEvents=Zilele de naştere ale contactelor
 AgendaHideBirthdayEvents=Ascunde ziua de naştere a contactelor
 Busy=Ocupat
@@ -202,3 +203,5 @@ BookingSuccessfullyBooked=Programarea ta a fost salvată
 BookingReservationHourAfter=Confirmăm rezervarea întâlnirii noastre la data de %s
 BookcalBookingTitle=Programare online
 Transparency = Transparență
+ReadMore = Citește mai mult
+ReadLess = Citește mai puțin

@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2014-2023  Alexandre Spangaro   <aspangaro@easya.solutions>
- * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
- * Copyright (C) 2017       Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2020       Maxime DEMAREST      <maxime@indelog.fr>
+/* Copyright (C) 2014-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2015		Frederic France				<frederic.france@free.fr>
+ * Copyright (C) 2017		Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2020		Maxime DEMAREST				<maxime@indelog.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,23 +46,24 @@ if (isModEnabled('project')) {
 // Load translation files required by the page
 $langs->loadLangs(array("bills", "compta", "loan"));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm');
 $cancel = GETPOST('cancel', 'alpha');
 
-$projectid = GETPOST('projectid', 'int');
+$projectid = GETPOSTINT('projectid');
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
+$hookmanager->initHooks(array('loancard', 'globalcard'));
 $result = restrictedArea($user, 'loan', $id, '', '');
 
 $object = new Loan($db);
 
-$hookmanager->initHooks(array('loancard', 'globalcard'));
+$permissiontoadd = $user->hasRight('loan', 'write');
 
 $error = 0;
 
@@ -78,7 +79,7 @@ if ($reshook < 0) {
 }
 if (empty($reshook)) {
 	// Classify paid
-	if ($action == 'confirm_paid' && $confirm == 'yes' && $user->hasRight('loan', 'write')) {
+	if ($action == 'confirm_paid' && $confirm == 'yes' && $permissiontoadd) {
 		$object->fetch($id);
 		$result = $object->setPaid($user);
 		if ($result > 0) {
@@ -89,7 +90,7 @@ if (empty($reshook)) {
 	}
 
 	// Delete loan
-	if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('loan', 'write')) {
+	if ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontoadd) {
 		$object->fetch($id);
 		$result = $object->delete($user);
 		if ($result > 0) {
@@ -102,10 +103,10 @@ if (empty($reshook)) {
 	}
 
 	// Add loan
-	if ($action == 'add' && $user->hasRight('loan', 'write')) {
+	if ($action == 'add' && $permissiontoadd) {
 		if (!$cancel) {
-			$datestart = dol_mktime(12, 0, 0, GETPOST('startmonth', 'int'), GETPOST('startday', 'int'), GETPOST('startyear', 'int'));
-			$dateend = dol_mktime(12, 0, 0, GETPOST('endmonth', 'int'), GETPOST('endday', 'int'), GETPOST('endyear', 'int'));
+			$datestart = dol_mktime(12, 0, 0, GETPOSTINT('startmonth'), GETPOSTINT('startday'), GETPOSTINT('startyear'));
+			$dateend = dol_mktime(12, 0, 0, GETPOSTINT('endmonth'), GETPOSTINT('endday'), GETPOSTINT('endyear'));
 			$capital = price2num(GETPOST('capital'));
 			$rate = price2num(GETPOST('rate'));
 
@@ -132,7 +133,7 @@ if (empty($reshook)) {
 
 			if (!$error) {
 				$object->label = GETPOST('label');
-				$object->fk_bank = GETPOST('accountid');
+				$object->fk_bank = GETPOSTINT('accountid');
 				$object->capital = $capital;
 				$object->datestart = $datestart;
 				$object->dateend = $dateend;
@@ -140,8 +141,8 @@ if (empty($reshook)) {
 				$object->rate = $rate;
 				$object->note_private = GETPOST('note_private', 'restricthtml');
 				$object->note_public = GETPOST('note_public', 'restricthtml');
-				$object->fk_project = GETPOST('projectid', 'int');
-				$object->insurance_amount = GETPOST('insurance_amount', 'int');
+				$object->fk_project = GETPOSTINT('projectid');
+				$object->insurance_amount = GETPOSTINT('insurance_amount');
 
 				$accountancy_account_capital = GETPOST('accountancy_account_capital');
 				$accountancy_account_insurance = GETPOST('accountancy_account_insurance');
@@ -174,13 +175,13 @@ if (empty($reshook)) {
 			header("Location: list.php");
 			exit();
 		}
-	} elseif ($action == 'update' && $user->hasRight('loan', 'write')) {
+	} elseif ($action == 'update' && $permissiontoadd) {
 		// Update record
 		if (!$cancel) {
 			$result = $object->fetch($id);
 
-			$datestart = dol_mktime(12, 0, 0, GETPOST('startmonth', 'int'), GETPOST('startday', 'int'), GETPOST('startyear', 'int'));
-			$dateend = dol_mktime(12, 0, 0, GETPOST('endmonth', 'int'), GETPOST('endday', 'int'), GETPOST('endyear', 'int'));
+			$datestart = dol_mktime(12, 0, 0, GETPOSTINT('startmonth'), GETPOSTINT('startday'), GETPOSTINT('startyear'));
+			$dateend = dol_mktime(12, 0, 0, GETPOSTINT('endmonth'), GETPOSTINT('endday'), GETPOSTINT('endyear'));
 			$capital = price2num(GETPOST('capital'));
 
 			if (!$capital) {
@@ -190,9 +191,9 @@ if (empty($reshook)) {
 				$object->datestart = $datestart;
 				$object->dateend = $dateend;
 				$object->capital = $capital;
-				$object->nbterm = GETPOST("nbterm", 'int');
+				$object->nbterm = GETPOSTINT("nbterm");
 				$object->rate = price2num(GETPOST("rate", 'alpha'));
-				$object->insurance_amount = price2num(GETPOST('insurance_amount', 'int'));
+				$object->insurance_amount = price2num(GETPOSTINT('insurance_amount'));
 
 				$accountancy_account_capital = GETPOST('accountancy_account_capital');
 				$accountancy_account_insurance = GETPOST('accountancy_account_insurance');
@@ -231,7 +232,7 @@ if (empty($reshook)) {
 	}
 
 	// Link to a project
-	if ($action == 'classin' && $user->hasRight('loan', 'write')) {
+	if ($action == 'classin' && $permissiontoadd) {
 		$object->fetch($id);
 		$result = $object->setProject($projectid);
 		if ($result < 0) {
@@ -239,7 +240,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'setlabel' && $user->hasRight('loan', 'write')) {
+	if ($action == 'setlabel' && $permissiontoadd) {
 		$object->fetch($id);
 		$result = $object->setValueFrom('label', GETPOST('label'), '', '', 'text', '', $user, 'LOAN_MODIFY');
 		if ($result < 0) {
@@ -258,7 +259,7 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 $formproject = new FormProjets($db);
-$morehtmlright = '';
+$morehtmlstatus = '';
 $outputlangs = $langs;
 if (isModEnabled('accounting')) {
 	$formaccounting = new FormAccounting($db);
@@ -266,7 +267,8 @@ if (isModEnabled('accounting')) {
 
 $title = $langs->trans("Loan").' - '.$langs->trans("Card");
 $help_url = 'EN:Module_Loan|FR:Module_Emprunt';
-llxHeader("", $title, $help_url);
+
+llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-loan page-card');
 
 
 // Create mode
@@ -276,7 +278,7 @@ if ($action == 'create') {
 
 	print load_fiche_titre($langs->trans("NewLoan"), '', 'money-bill-alt');
 
-	$datec = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+	$datec = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 
 	print '<form name="loan" method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -290,12 +292,12 @@ if ($action == 'create') {
 	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("Label").'</td><td><input name="label" class="minwidth300" maxlength="255" value="'.dol_escape_htmltag(GETPOST('label')).'" autofocus="autofocus"></td></tr>';
 
 	// Bank account
-	if (isModEnabled("banque")) {
-		print '<tr><td class="fieldrequired">'.$langs->trans("Account").'</td><td>';
+	if (isModEnabled("bank")) {
+		print '<tr><td class="fieldrequired">'.$langs->trans("BankAccount").'</td><td>';
 		$form->select_comptes(GETPOST("accountid"), "accountid", 0, "courant=1", 1); // Show list of bank account with courant
 		print '</td></tr>';
 	} else {
-		print '<tr><td>'.$langs->trans("Account").'</td><td>';
+		print '<tr><td>'.$langs->trans("BankAccount").'</td><td>';
 		print $langs->trans("NoBankAccountDefined");
 		print '</td></tr>';
 	}
@@ -306,13 +308,13 @@ if ($action == 'create') {
 	// Date Start
 	print "<tr>";
 	print '<td class="fieldrequired">'.$langs->trans("DateStart").'</td><td>';
-	print $form->selectDate(!empty($datestart) ? $datestart : -1, 'start', '', '', '', 'add', 1, 1);
+	print $form->selectDate(!empty($datestart) ? $datestart : -1, 'start', 0, 0, 0, 'add', 1, 1);
 	print '</td></tr>';
 
 	// Date End
 	print "<tr>";
 	print '<td class="fieldrequired">'.$langs->trans("DateEnd").'</td><td>';
-	print $form->selectDate(!empty($dateend) ? $dateend : -1, 'end', '', '', '', 'add', 1, 1);
+	print $form->selectDate(!empty($dateend) ? $dateend : -1, 'end', 0, 0, 0, 'add', 1, 1);
 	print '</td></tr>';
 
 	// Number of terms
@@ -474,7 +476,7 @@ if ($id > 0) {
 
 		$object->totalpaid = $totalpaid; // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
-		dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
+		dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlstatus);
 
 		print '<div class="fichecenter">';
 		print '<div class="fichehalfleft">';
@@ -668,7 +670,7 @@ if ($id > 0) {
 			$total_interest = 0;
 			$total_capital = 0;
 
-			print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+			print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 			print '<table class="noborder paymenttable">';
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("RefPayment").'</td>';
@@ -774,7 +776,7 @@ if ($id > 0) {
 		}
 	} else {
 		// Loan not found
-		dol_print_error('', $object->error);
+		dol_print_error(null, $object->error);
 	}
 }
 

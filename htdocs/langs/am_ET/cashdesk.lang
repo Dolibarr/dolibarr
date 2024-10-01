@@ -58,7 +58,7 @@ Numberspad=የቁጥሮች ፓድ
 BillsCoinsPad=ሳንቲሞች እና የባንክ ኖቶች ፓድ
 DolistorePosCategory=የ TakePOS ሞጁሎች እና ሌሎች የ POS መፍትሄዎች ለ Dolibarr
 TakeposNeedsCategories=TakePOS ለመስራት ቢያንስ አንድ የምርት ምድብ ያስፈልገዋል
-TakeposNeedsAtLeastOnSubCategoryIntoParentCategory=TakePOS በ<b>%s<span class='notranslate'></b> ምድብ ስር ቢያንስ 1 የምርት ምድብ ያስፈልገዋል። ሥራ
+TakeposNeedsAtLeastOnSubCategoryIntoParentCategory=TakePOS needs at least 1 product category under the category <b>%s</b> to work
 OrderNotes=በእያንዳንዱ የታዘዙ ዕቃዎች ላይ አንዳንድ ማስታወሻዎችን ማከል ይችላል።
 CashDeskBankAccountFor=ለክፍያዎች የሚውል ነባሪ መለያ
 NoPaimementModesDefined=በ TakePOS ውቅረት ውስጥ ምንም ዓይነት የመዳኛ ሁነታ አልተገለጸም።
@@ -136,7 +136,7 @@ PrintWithoutDetailsLabelDefault=ያለ ዝርዝሮች በማተም ላይ የ�
 PrintWithoutDetails=ያለ ዝርዝሮች አትም
 YearNotDefined=ዓመት አልተገለጸም።
 TakeposBarcodeRuleToInsertProduct=ምርት ለማስገባት የአሞሌ ኮድ
-TakeposBarcodeRuleToInsertProductDesc=የምርት ማመሳከሪያውን + ብዛት ከተቃኘ ባርኮድ ለማውጣት ደንብ።<br>ባዶ ከሆነ (ነባሪ እሴት) ትግበራ ምርቱን ለማግኘት የተቃኘውን ሙሉ ባርኮድ ይጠቀማል።<br><br>ከተገለጸ አገባብ የሚከተለው መሆን አለበት፡<br><spanlate'='notranslate'='notranslate <b></span>ref:NB+qu:NB+qd:NB+other:NB</b><br> የት ነው NB ከተቃኘው ባር ኮድ ለማውጣት የሚጠቀሙባቸው የቁምፊዎች ብዛት፡-<span class='notranslate'><br><b>refb09a4f739f ፡ የምርት ማጣቀሻ<br><b>qu</b>s ንጥል (ዩኒቶች) በሚያስገቡበት ጊዜ ያቀናብሩ<span class='notranslate'><br><b>qdb09a4b739f17f80: qud ንጥል ሲያስገቡ ይዘጋጃሉ (አስርዮሽ)<span class='notranslate'><br><b>ሌላ<span class='notranslate'>b09a4b739f17f>ሌሎችም:09a4b739f17f8z
+TakeposBarcodeRuleToInsertProductDesc=Rule to extract the product reference + a quantity from a scanned barcode.<br>If empty (default value), application will use the full barcode scanned to find the product.<br><br>If defined, syntax must be:<br><b>ref:NB+qu:NB+qd:NB+other:NB</b><br>where NB is the number of characters to use to extract data from the scanned barcode with:<br><b>ref</b> : product reference<br><b>qu</b> : quantity to set when inserting item (units)<br><b>qd</b> : quantity to set when inserting item (decimals)<br><b>other</b> : others characters
 AlreadyPrinted=አስቀድሞ ታትሟል
 HideCategories=የምድብ ምርጫውን ሙሉውን ክፍል ደብቅ
 HideStockOnLine=በመስመር ላይ ክምችትን ደብቅ

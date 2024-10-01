@@ -6,6 +6,7 @@
  * Copyright (C) 2013-2014  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -228,13 +229,13 @@ if ($memmaxorig != '') {
 	preg_match('/([0-9]+)([a-zA-Z]*)/i', $memmax, $reg);
 	if ($reg[2]) {
 		if (strtoupper($reg[2]) == 'G') {
-			$memmax = $reg[1] * 1024 * 1024 * 1024;
+			$memmax = (int) $reg[1] * 1024 * 1024 * 1024;
 		}
 		if (strtoupper($reg[2]) == 'M') {
-			$memmax = $reg[1] * 1024 * 1024;
+			$memmax = (int) $reg[1] * 1024 * 1024;
 		}
 		if (strtoupper($reg[2]) == 'K') {
-			$memmax = $reg[1] * 1024;
+			$memmax = (int) $reg[1] * 1024;
 		}
 	}
 	if ($memmax >= $memrequired || $memmax == -1) {
@@ -275,7 +276,7 @@ if (is_readable($conffile) && filesize($conffile) > 8) {
 		$fp = @fopen($conffile, "w");
 		if ($fp) {
 			@fwrite($fp, '<?php');
-			@fputs($fp, "\n");
+			@fwrite($fp, "\n");
 			fclose($fp);
 		} else {
 			dolibarr_install_syslog("check: failed to create a new file ".$conffile." into current dir ".getcwd().". Please check permissions.", LOG_ERR);
@@ -347,7 +348,7 @@ if (!file_exists($conffile)) {
 					if (preg_match('/crypted:/i', $dolibarr_main_db_pass) || !empty($dolibarr_main_db_encrypted_pass)) {
 						require_once $dolibarr_main_document_root.'/core/lib/security.lib.php';
 						if (preg_match('/crypted:/i', $dolibarr_main_db_pass)) {
-							$dolibarr_main_db_encrypted_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass); // We need to set this as it is used to know the password was initially crypted
+							$dolibarr_main_db_encrypted_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass); // We need to set this as it is used to know the password was initially encrypted
 							$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
 						} else {
 							$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);

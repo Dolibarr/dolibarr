@@ -5,35 +5,27 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 Module56000Name=Biletat
 Module56000Desc=Sistemi i biletave për menaxhimin e lëshimit ose kërkesës
-
 Permission56001=Shihni biletat
 Permission56002=Ndrysho biletat
 Permission56003=Fshini biletat
 Permission56004=Menaxhoni biletat
 Permission56005=Shikoni biletat e të gjitha palëve të treta (jo efektive për përdoruesit e jashtëm, kufizohuni gjithmonë tek pala e tretë nga e cila ata varen)
 Permission56006=Biletat e eksportit
-
 Tickets=Biletat
 TicketDictType=Bileta - Llojet
 TicketDictCategory=Bileta - Grupet
 TicketDictSeverity=Bileta - Ashpërsitë
 TicketDictResolution=Bileta - Rezoluta
-
 TicketTypeShortCOM=Pyetje komerciale
 TicketTypeShortHELP=Kërkesë për ndihmë funksionale
 TicketTypeShortISSUE=Problem ose defekt
@@ -41,51 +33,39 @@ TicketTypeShortPROBLEM=Problem
 TicketTypeShortREQUEST=Kërkesë për ndryshim ose përmirësim
 TicketTypeShortPROJET=Projekti
 TicketTypeShortOTHER=Tjetër
-
 TicketSeverityShortLOW=E ulët
 TicketSeverityShortNORMAL=Normale
 TicketSeverityShortHIGH=Lartë
 TicketSeverityShortBLOCKING=Kritike, Bllokim
-
 TicketCategoryShortOTHER=Tjetër
-
 ErrorBadEmailAddress=Fusha '%s' është e pasaktë
 MenuTicketMyAssign=Biletat e mia
 MenuTicketMyAssignNonClosed=Biletat e mia të hapura
 MenuListNonClosed=Biletat e hapura
-
 TypeContact_ticket_internal_CONTRIBUTOR=Kontribues
 TypeContact_ticket_internal_SUPPORTTEC=Përdorues i caktuar
 TypeContact_ticket_external_SUPPORTCLI=Kontakti me klientin / gjurmimi i incidentit
 TypeContact_ticket_external_CONTRIBUTOR=Kontribues i jashtëm
-
 OriginEmail=Email-i i gazetarit
+EmailReplyto=Reply to in Email
+EmailReferences=References in Emails
 Notify_TICKET_SENTBYMAIL=Dërgo mesazh biletë me email
-
 ExportDataset_ticket_1=Biletat
-
 # Status
 Read=Lexoni
 Assigned=Caktuar
 NeedMoreInformation=Në pritje të komenteve të gazetarëve
 NeedMoreInformationShort=Në pritje të komenteve
-TicketAnswered=Answered
 Waiting=Ne pritje
 SolvedClosed=E zgjidhur
 Deleted=U fshi
-
 # Dict
-Type=Lloji
 Severity=Ashpërsia
 TicketGroupIsPublic=Grupi është publik
 TicketGroupIsPublicDesc=Nëse një grup biletash është publik, ai do të jetë i dukshëm në formën kur krijoni një biletë nga ndërfaqja publike
-
 # Email templates
 MailToSendTicketMessage=Për të dërguar email nga mesazhi i biletës
-
-#
 # Admin page
-#
 TicketSetup=Konfigurimi i modulit të biletave
 TicketSettings=Cilësimet
 TicketPublicAccess=Një ndërfaqe publike që nuk kërkon identifikim është e disponueshme në url-në e mëposhtme
@@ -157,10 +137,7 @@ TicketUseCaptchaCode=Përdorni kodin grafik (CAPTCHA) kur krijoni një biletë
 TicketUseCaptchaCodeHelp=Shton verifikimin CAPTCHA kur krijon një biletë të re.
 TicketsAllowClassificationModificationIfClosed=Lejoni të modifikoni klasifikimin e biletave të mbyllura
 TicketsAllowClassificationModificationIfClosedHelp=Lejoni të modifikoni klasifikimin (lloji, grupi i biletave, ashpërsia) edhe nëse biletat janë të mbyllura.
-
-#
 # Index & list page
-#
 TicketsIndex=Zona e biletave
 TicketList=Lista e biletave
 TicketAssignedToMeInfos=Kjo faqe shfaq listën e biletave të krijuar nga ose të caktuar për përdoruesin aktual
@@ -175,10 +152,7 @@ ShowAsConversation=Shfaq si listë bisedash
 MessageListViewType=Shfaq si listë tabele
 ConfirmMassTicketClosingSendEmail=Dërgoni automatikisht email kur mbyllni biletat
 ConfirmMassTicketClosingSendEmailQuestion=Dëshironi të njoftoni palët e treta kur mbyllni këto bileta?
-
-#
 # Ticket card
-#
 Ticket=Biletë
 TicketCard=Karta e biletës
 CreateTicket=Krijo biletë
@@ -233,7 +207,7 @@ TicketMessageMailIntroText=Përshëndetje,<br>Një përgjigje e re është shtua
 TicketMessageMailIntroHelpAdmin=Ky tekst do të futet përpara përgjigjes kur i përgjigjeni një bilete nga Dolibarr
 TicketMessageMailFooter=Fundi i mesazhit
 TicketMessageMailFooterHelp=Ky tekst shtohet vetëm në fund të mesazhit të dërguar me email dhe nuk do të ruhet.
-TicketMessageMailFooterText=Mesazh i dërguar nga <b>%s<span class='notranslate'></b></spanr> nëpërmjet
+TicketMessageMailFooterText=Message sent by <b>%s</b> via Dolibarr
 TicketMessageMailFooterHelpAdmin=Ky tekst do të futet pas mesazhit të përgjigjes.
 TicketMessageHelp=Vetëm ky tekst do të ruhet në listën e mesazheve në kartën e biletës.
 TicketMessageSubstitutionReplacedByGenericValues=Variablat e zëvendësimeve zëvendësohen me vlera gjenerike.
@@ -278,20 +252,14 @@ TicketsDelayFromLastResponseTooLong=Ka kaluar shumë kohë nga përgjigja e fund
 TicketNoContractFoundToLink=Nuk u gjet asnjë kontratë që të lidhej automatikisht me këtë biletë. Lidhni një kontratë manualisht.
 TicketManyContractsLinked=Shumë kontrata janë lidhur automatikisht me këtë biletë. Sigurohuni që të verifikoni se cila duhet të zgjidhet.
 TicketRefAlreadyUsed=Referenca [%s] është përdorur tashmë, referenca juaj e re është [%s]
-
-#
 # Logs
-#
 TicketLogMesgReadBy=Bileta %s e lexuar nga %s
 NoLogForThisTicket=Nuk ka ende regjistër për këtë biletë
 TicketLogAssignedTo=Bileta %s i caktuar për %s
 TicketLogPropertyChanged=Bileta %s u modifikua: klasifikimi nga %s në %s
 TicketLogClosedBy=Bileta %s u mbyll nga %s
 TicketLogReopen=Bileta %s rihapet
-
-#
 # Public pages
-#
 TicketSystem=Sistemi i biletave
 ShowListTicketWithTrackId=Shfaq listën e biletave nga ID-ja e pista
 ShowTicketWithTrackId=Shfaq biletën nga ID-ja e pista
@@ -306,13 +274,13 @@ TicketNewEmailBodyCustomer=Ky është një email automatik për të konfirmuar s
 TicketNewEmailBodyInfosTicket=Informacion për monitorimin e biletës
 TicketNewEmailBodyInfosTrackId=Numri i ndjekjes së biletës: %s
 TicketNewEmailBodyInfosTrackUrl=Ecurinë e biletës mund ta shikoni duke klikuar linkun e mëposhtëm
-TicketNewEmailBodyInfosTrackUrlCustomer=Ju mund të shikoni ecurinë e biletës në ndërfaqen specifike duke klikuar lidhjen e mëposhtme
+TicketNewEmailBodyInfosTrackUrlCustomer=You can view the progress of the ticket in the public ticket portal by clicking the following link
 TicketCloseEmailBodyInfosTrackUrlCustomer=Ju mund të konsultoni historinë e kësaj bilete duke klikuar lidhjen e mëposhtme
 TicketEmailPleaseDoNotReplyToThisEmail=Ju lutemi, mos iu përgjigj direkt këtij emaili! Përdorni lidhjen për t'iu përgjigjur ndërfaqes.
 TicketPublicInfoCreateTicket=Ky formular ju lejon të regjistroni një biletë mbështetëse në sistemin tonë të menaxhimit.
 TicketPublicPleaseBeAccuratelyDescribe=Ju lutemi përshkruani me saktësi kërkesën tuaj. Jepni sa më shumë informacion të mundshëm për të na lejuar të identifikojmë saktë kërkesën tuaj.
 TicketPublicMsgViewLogIn=Ju lutemi shkruani ID-në e gjurmimit të biletës
-TicketTrackId=ID-ja e ndjekjes publike
+TicketTrackId=Tracking ID
 OneOfTicketTrackId=Një nga ID-të tuaja të gjurmimit
 ErrorTicketNotFound=Bileta me ID-në gjurmuese %s nuk u gjet!
 Subject=Subjekti
@@ -320,7 +288,7 @@ ViewTicket=Shiko biletën
 ViewMyTicketList=Shikoni listën time të biletave
 ErrorEmailMustExistToCreateTicket=Gabim: adresa e emailit nuk u gjet në bazën tonë të të dhënave
 TicketNewEmailSubjectAdmin=Bileta e re u krijua - Ref %s (ID-ja e biletës publike %s)
-TicketNewEmailBodyAdmin=<p>Bileta sapo është krijuar me ID #%s, shiko informacionin:<span class='notranslate'>b0679c9z3a6a64 >
+TicketNewEmailBodyAdmin=<p>Ticket has just been created with ID #%s, see information:</p>
 SeeThisTicketIntomanagementInterface=Shihni biletën në ndërfaqen e menaxhimit
 TicketPublicInterfaceForbidden=Ndërfaqja publike për biletat nuk u aktivizua
 ErrorEmailOrTrackingInvalid=Vlera e keqe për ndjekjen e ID-së ose emailit
@@ -330,7 +298,6 @@ NumberOfTicketsByMonth=Numri i biletave në muaj
 NbOfTickets=Numri i biletave
 ExternalContributors=Kontribues të jashtëm
 AddContributor=Shto një kontribues të jashtëm
-
 # notifications
 TicketCloseEmailSubjectCustomer=Bileta e mbyllur
 TicketCloseEmailBodyCustomer=Ky është një mesazh automatik për t'ju njoftuar se bileta %s sapo është mbyllur.
@@ -342,12 +309,8 @@ TicketNotificationRecipient=Marrësi i njoftimit
 TicketNotificationLogMessage=Mesazh i regjistrit
 TicketNotificationEmailBodyInfosTrackUrlinternal=Shikoni biletën në ndërfaqe
 TicketNotificationNumberEmailSent=Email njoftimi u dërgua: %s
-
 ActionsOnTicket=Ngjarjet në biletë
-
-#
 # Boxes
-#
 BoxLastTicket=Biletat e krijuara më së fundi
 BoxLastTicketDescription=Biletat e fundit të krijuara %s
 BoxLastTicketContent=

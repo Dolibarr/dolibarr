@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - mails
-MailTitle=Beschreibung
 MailText=Nachricht
 ResetMailing=E-Mail-Kampagne erneut senden
 MailingStatusValidated=Bestätigt

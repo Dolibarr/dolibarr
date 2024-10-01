@@ -5,7 +5,6 @@ TicketDictSeverity=Ticket - Gravedad
 TypeContact_ticket_internal_CONTRIBUTOR=Contribuyente
 Notify_TICKET_SENTBYMAIL=Enviar mensaje del ticket por correo electrónico
 Read=Leer
-Type=Tipo
 MailToSendTicketMessage=Para enviar un correo electrónico desde un ticket
 TicketSettings=Configuración
 TicketSetupDictionaries=El tipo de ticket, prioridad y códigos analíticos son configurables desde los diccionarios.

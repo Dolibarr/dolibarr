@@ -99,14 +99,14 @@ ListOfOrders=আদেশের তালিকা
 ListOrderLigne=আদেশের লাইন
 productobuy=পণ্য শুধুমাত্র কিনতে
 productonly=শুধুমাত্র পণ্য
-disablelinefree=কোন বিনামূল্যে লাইন
+disablelinefree=Predefined products only
 CloseOrder=অর্ডার বন্ধ করুন
 ConfirmCloseOrder=আপনি কি নিশ্চিত যে আপনি এই অর্ডারটি বিতরণে সেট করতে চান? একবার একটি অর্ডার বিতরণ করা হয়, এটি বিল সেট করা যেতে পারে.
 ConfirmDeleteOrder=আপনি কি এই অর্ডারটি মুছতে চান?
 ConfirmValidateOrder=আপনি কি <b>%s</b> নামে এই অর্ডারটি যাচাই করার বিষয়ে নিশ্চিত? ?
 ConfirmUnvalidateOrder=আপনি কি নিশ্চিত যে আপনি অর্ডার <b>%s</b> খসড়া স্থিতিতে পুনরুদ্ধার করতে চান ?
 ConfirmCancelOrder=আপনি কি নিশ্চিত আপনি এই অর্ডার বাতিল করতে চান?
-ConfirmMakeOrder=আপনি কি নিশ্চিত করতে চান যে আপনি এই অর্ডারটি <b>%s<span class='notranslate'></b></span-এ করেছেন। >?
+ConfirmMakeOrder=Are you sure you want to confirm you made this order on <b>%s</b>?
 GenerateBill=চালান তৈরি করুন
 ClassifyShipped=বিতরিত শ্রেণীবদ্ধ
 PassedInShippedStatus=শ্রেণীবদ্ধ বিতরণ

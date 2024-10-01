@@ -5,32 +5,22 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModuleEventOrganizationName = Organización de evento
 EventOrganizationDescription = Organización de eventos a través del proyecto de módulo
 EventOrganizationDescriptionLong= Administre la organización de eventos (conferencias, asistentes, oradores y asistentes, con una página de suscripción pública)
-#
-# Menu
-#
 EventOrganizationMenuLeft = Eventos organizados
 EventOrganizationConferenceOrBoothMenuLeft = Conferencia o cabina
-
 PaymentEvent=Pago del evento
-
-#
+EventFee=Tarifa del evento
 # Admin page
-#
 NewRegistration=Registro
 EventOrganizationSetup=Configuración de organización de eventos
 EventOrganization=Organización del evento
@@ -48,13 +38,10 @@ EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Plantilla de correo electrónico
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Plantilla de correo electrónico para usar al enviar correos electrónicos de la masa "Enviar correos electrónicos" en la lista de asistentes
 EVENTORGANIZATION_FILTERATTENDEES_CAT = En el formulario para crear/agregar un asistente, restringe la lista de terceros a terceros en la categoría
 EVENTORGANIZATION_FILTERATTENDEES_TYPE = En el formulario para crear/agregar un asistente, restringe la lista de terceros a terceros con la naturaleza
-
-#
 # Object
-#
 OrganizedEvent=Evento organizado
 EventOrganizationConfOrBooth= Conferencia o cabina
-EventOrganizationConfOrBoothes=Conferencias o Stands
+EventOrganizationConfOrBoothes=Conferences or Booths
 ManageOrganizeEvent = Gestionar la organización de eventos
 ConferenceOrBooth = Conferencia o cabina
 ConferenceOrBoothTab = Conferencia o cabina
@@ -63,10 +50,7 @@ DateOfRegistration = Fecha de registro
 ConferenceOrBoothAttendee = Asistente a la conferencia o al stand
 ApplicantOrVisitor=Solicitante o visitante
 Speaker=Altavoz
-
-#
 # Template Mail
-#
 YourOrganizationEventConfRequestWasReceived = Se recibió su solicitud de conferencia
 YourOrganizationEventBoothRequestWasReceived = Se recibió su solicitud de stand
 EventOrganizationEmailAskConf = Solicitud de conferencia
@@ -76,10 +60,7 @@ EventOrganizationEmailRegistrationPayment = Registro para un evento
 EventOrganizationMassEmailAttendees = Comunicación a los asistentes
 EventOrganizationMassEmailSpeakers = Comunicación a los ponentes
 ToSpeakers=A los ponentes
-
-#
 # Event
-#
 AllowUnknownPeopleSuggestConf=Permitir que personas desconocidas sugieran conferencias
 AllowUnknownPeopleSuggestConfHelp=Permitir que personas desconocidas sugieran una conferencia que quieran hacer
 AllowUnknownPeopleSuggestBooth=Permitir que personas desconocidas sugieran stand
@@ -88,29 +69,29 @@ PriceOfRegistration=Precio de inscripción
 PriceOfRegistrationHelp=Precio a pagar por registrarse o participar en el evento
 PriceOfBooth=Precio de suscripción para hacer stand
 PriceOfBoothHelp=Precio de suscripción para hacer stand
+EventOrganizationICSLinkProject=Enlace ICS para el evento
 EventOrganizationICSLink=Enlace ICS para conferencias
 ConferenceOrBoothInformation=Información sobre conferencias o stands
+ConferenceOrBoothFormat=Conference or booth mode
+ConferenceOrBoothFormatID=ID of conference or booth mode
+ConferenceOrBoothFormatCode=Code of conference or booth mode
+ConferenceOrBoothFormatLabel=Label of conference or booth mode
 Attendees=Asistentes
-ListOfAttendeesOfEvent=Lista de asistentes al proyecto del evento
+ListOfAttendeesOfEvent=List of attendees of event projects
+ListOfConfOrBoothOfEvent=List of conferences or booths of event projects
 DownloadICSLink = Descargar enlace ICS
 EVENTORGANIZATION_SECUREKEY = Semilla para asegurar la clave de la página de registro público para sugerir una conferencia
 SERVICE_BOOTH_LOCATION = Servicio utilizado para la fila de facturas sobre la ubicación de un stand
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Servicio utilizado para la fila de la factura sobre la suscripción de un asistente a un evento
 NbVotes=Número de votos
-
-#
 # Status
-#
 EvntOrgDraft = Borrador
 EvntOrgSuggested = Sugirió
 EvntOrgConfirmed = Confirmado
 EvntOrgNotQualified = No calificado
 EvntOrgDone = Realizadas
 EvntOrgCancelled = Anulado
-
-#
 # Other
-#
 SuggestForm = Página de sugerencias
 SuggestOrVoteForConfOrBooth = Página para sugerencia o voto
 EvntOrgRegistrationHelpMessage = Aquí puede votar por una conferencia o sugerir una nueva para el evento. También puede solicitar tener un stand durante el evento.
@@ -133,6 +114,7 @@ EventType = Tipo de evento
 LabelOfBooth=Etiqueta de stand
 LabelOfconference=Etiqueta de conferencia
 ConferenceIsNotConfirmed=La inscripción no está disponible, la conferencia aún no está confirmada.
+EventRegistrationAreClosed=Event registrations are closed
 DateMustBeBeforeThan=%s debe ser anterior a %s
 DateMustBeAfterThan=%s debe ser posterior a %s
 MaxNbOfAttendeesReached=Se ha alcanzado el número máximo de participantes
@@ -173,7 +155,8 @@ DateStartEvent=Fecha de inicio del evento
 DateEndEvent=Fecha de finalización del evento
 ModifyStatus=Modificar estado
 ConfirmModifyStatus=Confirmar modificación de estado
-ConfirmModifyStatusQuestion=¿Está seguro de que desea modificar el <span class='notranslate'>%s</span>? registro(s) seleccionado(s)?
-RecordsUpdated = %s Registros actualizados
-RecordUpdated = Registro actualizado
-NoRecordUpdated = Sin registro actualizado
+ConfirmModifyStatusQuestion=Are you sure you want to modify the %s selected record(s)?
+RecordsUpdated=%s Registros actualizados
+RecordUpdated=Registro actualizado
+NoRecordUpdated=Sin registro actualizado
+ProfitPerValidatedAttendee=Beneficio por asistente

@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 $hookmanager = new HookManager($db);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('mailingindex'));
 
 // Load translation files required by the page
@@ -54,9 +55,13 @@ llxHeader('', $title, $help_url);
 
 print load_fiche_titre($title);
 
-//print '<table class="notopnoleftnoright" width="100%">';
-//print '<tr><td valign="top" width="30%" class="notopnoleft">';
-print '<div class="fichecenter"><div class="fichethirdleft">';
+
+print '<div class="fichecenter">';
+
+print '<div class="twocolumns">';
+
+print '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
+
 
 $titlesearch = $langs->trans("SearchAMailing");
 if (getDolGlobalInt('EMAILINGS_SUPPORT_ALSO_SMS')) {
@@ -101,6 +106,7 @@ if (is_resource($handle)) {
 				$classname = "mailing_".$modulename;
 				require_once $file;
 				$mailmodule = new $classname($db);
+				'@phan-var-force MailingTargets $mailmodule';
 
 				$qualified = 1;
 				foreach ($mailmodule->require_module as $key) {
@@ -145,14 +151,15 @@ if (is_resource($handle)) {
 print "</table><br>";
 
 
-print '</div><div class="fichetwothirdright">';
+print '</div><div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
 
 
 /*
  * List of last emailings
  */
+
 $limit = 10;
-$sql  = "SELECT m.rowid, m.titre as title, m.nbemail, m.statut as status, m.date_creat";
+$sql  = "SELECT m.rowid, m.titre as title, m.nbemail, m.statut as status, m.date_creat, m.messtype";
 $sql .= " FROM ".MAIN_DB_PREFIX."mailing as m";
 $sql .= " WHERE m.entity = ".$conf->entity;
 $sql .= " ORDER BY m.date_creat DESC";
@@ -163,9 +170,18 @@ if ($result) {
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td colspan="2">'.$langs->trans("LastMailings", $limit).'</td>';
+	if (getDolGlobalInt('EMAILINGS_SUPPORT_ALSO_SMS')) {
+		print '<td class="center">'.$langs->trans("Type").'</td>';
+	}
 	print '<td class="center">'.$langs->trans("DateCreation").'</td>';
-	print '<td class="center">'.$langs->trans("NbOfEMails").'</td>';
-	print '<td class="right"><a href="'.DOL_URL_ROOT.'/comm/mailing/list.php">'.$langs->trans("AllEMailings").'</a></td></tr>';
+	print '<td class="center">';
+	print $langs->trans("NbOfEMails");
+	if (getDolGlobalInt('EMAILINGS_SUPPORT_ALSO_SMS')) {
+		print ' | '.$langs->trans("Phone");
+	}
+	print '</td>';
+	print '<td class="right"><a href="'.DOL_URL_ROOT.'/comm/mailing/list.php">'.$langs->trans("AllEMailings").'</a></td>';
+	print '</tr>';
 
 	$num = $db->num_rows($result);
 	if ($num > 0) {
@@ -176,12 +192,16 @@ if ($result) {
 			$mailstatic = new Mailing($db);
 			$mailstatic->id = $obj->rowid;
 			$mailstatic->ref = $obj->rowid;
+			$mailstatic->messtype = $obj->messtype;
 
 			print '<tr class="oddeven">';
 			print '<td class="nowrap">'.$mailstatic->getNomUrl(1).'</td>';
-			print '<td>'.(!empty($obj->title) ? dol_trunc($obj->title, 38) : '').'</td>';
+			print '<td class="tdoverflowmax100">'.dol_escape_htmltag($obj->title).'</td>';
+			if (getDolGlobalInt('EMAILINGS_SUPPORT_ALSO_SMS')) {
+				print '<td class="center">'.dol_escape_htmltag($obj->messtype).'</td>';
+			}
 			print '<td class="center">'.dol_print_date($db->jdate($obj->date_creat), 'day').'</td>';
-			print '<td class="center">'.($obj->nbemail ? $obj->nbemail : "0").'</td>';
+			print '<td class="center">'.($obj->nbemail ? (int) $obj->nbemail : "0").'</td>';
 			print '<td class="right">'.$mailstatic->LibStatut($obj->status, 5).'</td>';
 			print '</tr>';
 			$i++;
@@ -196,7 +216,7 @@ if ($result) {
 }
 
 
-print '</div></div>';
+print '</div></div></div>';
 
 
 $parameters = array('user' => $user);

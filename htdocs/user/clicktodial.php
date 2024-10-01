@@ -30,7 +30,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 $langs->loadLangs(array('users', 'admin'));
 
 $action = (string) GETPOST('action', 'aZ09');
-$id = (int) GETPOST('id', 'int');
+$cancel = GETPOST('cancel', 'aZ09');
+
+$id = GETPOSTINT('id');
 
 // Security check
 $socid = 0;
@@ -39,10 +41,17 @@ if ($user->socid > 0) {
 }
 $feature2 = (($socid && $user->hasRight('user', 'self', 'creer')) ? '' : 'user');
 
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('usercard', 'globalcard'));
+
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('usercard', 'globalcard'));
+// Define value to know what current user can do on properties of edited user
+$canedituser = 0;
+if ($id > 0) {
+	// $user is the current logged user, $id is the user we want to edit
+	$canedituser = (($user->id == $id) && $user->hasRight("user", "self", "write")) || (($user->id != $id) && $user->hasRight("user", "user", "write"));
+}
 
 
 /*
@@ -56,7 +65,7 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	if ($action == 'update' && !GETPOST('cancel', 'alpha')) {
+	if ($action == 'update' && !$cancel && $canedituser) {
 		$edituser = new User($db);
 		$edituser->fetch($id);
 
@@ -76,18 +85,19 @@ if (empty($reshook)) {
 /*
  * View
  */
+
 $form = new Form($db);
 
 if ($id > 0) {
 	$object = new User($db);
 	$object->fetch($id, '', '', 1);
-	$object->getrights();
+	$object->loadRights();
 	$object->fetch_clicktodial();
 
 	$person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firstname : $object->lastname;
 	$title = $person_name." - ".$langs->trans('ClickToDial');
 	$help_url = '';
-	llxHeader('', $title, $help_url);
+	llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-user page-clicktodial');
 
 	$head = user_prepare_head($object);
 
@@ -159,7 +169,7 @@ if ($id > 0) {
 			print '<tr><td class="">ClickToDial URL</td>';
 			print '<td class="valeur">';
 			if (getDolGlobalString('CLICKTODIAL_URL')) {
-				$url = $conf->global->CLICKTODIAL_URL;
+				$url = getDolGlobalString('CLICKTODIAL_URL');
 			}
 			if (!empty($object->clicktodial_url)) {
 				$url = $object->clicktodial_url;

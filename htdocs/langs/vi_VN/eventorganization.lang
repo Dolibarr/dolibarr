@@ -5,32 +5,22 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModuleEventOrganizationName = Tổ chức sự kiện
 EventOrganizationDescription = Tổ chức sự kiện thông qua dự án module
 EventOrganizationDescriptionLong= Quản lý việc tổ chức một sự kiện (chương trình, hội nghị, người tham dự hoặc diễn giả, với các trang công khai để gợi ý, bình chọn hoặc đăng ký)
-#
-# Menu
-#
 EventOrganizationMenuLeft = Sự kiện đã tổ chức
 EventOrganizationConferenceOrBoothMenuLeft = Hội nghị hoặc gian hàng
-
 PaymentEvent=thanh toán của sự kiện
-
-#
+EventFee=Event fee
 # Admin page
-#
 NewRegistration=Sự đăng ký
 EventOrganizationSetup=Thiết lập tổ chức sự kiện
 EventOrganization=Tổ chức sự kiện
@@ -48,13 +38,10 @@ EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Mẫu email sử dụng khi gử
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Mẫu email sử dụng khi gửi email từ sự kiện "Gửi email" trên danh sách người tham dự
 EVENTORGANIZATION_FILTERATTENDEES_CAT = Trong biểu mẫu tạo/thêm người tham dự, giới hạn danh sách bên thứ ba đối với các bên thứ ba trong danh mục
 EVENTORGANIZATION_FILTERATTENDEES_TYPE = Trong hình thức tạo/thêm người tham dự, hạn chế danh sách bên thứ ba đối với bên thứ ba với tính chất
-
-#
 # Object
-#
 OrganizedEvent=Sự kiện được tổ chức
 EventOrganizationConfOrBooth= Hội nghị hoặc gian hàng
-EventOrganizationConfOrBoothes=Hội nghị hoặc gian hàng
+EventOrganizationConfOrBoothes=Conferences or Booths
 ManageOrganizeEvent = Quản lý việc tổ chức một sự kiện
 ConferenceOrBooth = Hội nghị hoặc gian hàng
 ConferenceOrBoothTab = Hội nghị hoặc gian hàng
@@ -63,10 +50,7 @@ DateOfRegistration = Ngày đăng ký
 ConferenceOrBoothAttendee = Người tham dự hội nghị hoặc gian hàng
 ApplicantOrVisitor=Người nộp đơn hoặc khách truy cập
 Speaker=Loa
-
-#
 # Template Mail
-#
 YourOrganizationEventConfRequestWasReceived = Yêu cầu hội nghị của bạn đã được nhận
 YourOrganizationEventBoothRequestWasReceived = Yêu cầu gian hàng của bạn đã được nhận
 EventOrganizationEmailAskConf = Yêu cầu hội nghị
@@ -76,10 +60,7 @@ EventOrganizationEmailRegistrationPayment = Đăng ký cho một sự kiện
 EventOrganizationMassEmailAttendees = Truyền thông tới người tham dự
 EventOrganizationMassEmailSpeakers = Giao tiếp với diễn giả
 ToSpeakers=Tới loa
-
-#
 # Event
-#
 AllowUnknownPeopleSuggestConf=Cho phép mọi người đề xuất hội nghị
 AllowUnknownPeopleSuggestConfHelp=Cho phép những người chưa biết đề xuất một cuộc hội thảo mà họ muốn thực hiện
 AllowUnknownPeopleSuggestBooth=Cho phép mọi người đăng ký gian hàng
@@ -88,29 +69,29 @@ PriceOfRegistration=Giá đăng ký
 PriceOfRegistrationHelp=Giá phải trả để đăng ký hoặc tham gia sự kiện
 PriceOfBooth=Giá đăng ký đứng gian hàng
 PriceOfBoothHelp=Giá đăng ký đứng gian hàng
+EventOrganizationICSLinkProject=Liên kết ICS cho sự kiện
 EventOrganizationICSLink=Liên kết ICS cho hội nghị
 ConferenceOrBoothInformation=Thông tin hội nghị hoặc gian hàng
+ConferenceOrBoothFormat=Conference or booth mode
+ConferenceOrBoothFormatID=ID of conference or booth mode
+ConferenceOrBoothFormatCode=Code of conference or booth mode
+ConferenceOrBoothFormatLabel=Label of conference or booth mode
 Attendees=Người tham dự
-ListOfAttendeesOfEvent=Danh sách người tham dự dự án sự kiện
+ListOfAttendeesOfEvent=List of attendees of event projects
+ListOfConfOrBoothOfEvent=List of conferences or booths of event projects
 DownloadICSLink = Tải xuống liên kết ICS
 EVENTORGANIZATION_SECUREKEY = Seed để bảo mật key cho trang đăng ký công khai để đề xuất hội nghị
 SERVICE_BOOTH_LOCATION = Dịch vụ sử dụng cho dòng hóa đơn về địa điểm gian hàng
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Dịch vụ được sử dụng cho hàng hóa đơn về việc đăng ký người tham dự một sự kiện
 NbVotes=Số phiếu bầu
-
-#
 # Status
-#
 EvntOrgDraft = Dự thảo
 EvntOrgSuggested = được đề xuất
 EvntOrgConfirmed = Đã xác nhận
 EvntOrgNotQualified = Không chất lượng
 EvntOrgDone = Đã hoàn thành
 EvntOrgCancelled = Đã hủy
-
-#
 # Other
-#
 SuggestForm = Trang gợi ý
 SuggestOrVoteForConfOrBooth = Trang để gợi ý hoặc bình chọn
 EvntOrgRegistrationHelpMessage = Tại đây, bạn có thể bỏ phiếu cho một hội nghị hoặc đề xuất một hội nghị mới cho sự kiện. Bạn cũng có thể đăng ký để có một gian hàng trong sự kiện.
@@ -133,6 +114,7 @@ EventType = Loại sự kiện
 LabelOfBooth=Nhãn gian hàng
 LabelOfconference=Nhãn hội nghị
 ConferenceIsNotConfirmed=Đăng ký không có sẵn, hội nghị chưa được xác nhận
+EventRegistrationAreClosed=Event registrations are closed
 DateMustBeBeforeThan=%s phải trước %s
 DateMustBeAfterThan=%s phải sau %s
 MaxNbOfAttendeesReached=Đã đạt đến số lượng người tham gia tối đa
@@ -174,6 +156,7 @@ DateEndEvent=Ngày kết thúc sự kiện
 ModifyStatus=Sửa đổi trạng thái
 ConfirmModifyStatus=Xác nhận sửa đổi trạng thái
 ConfirmModifyStatusQuestion=Bạn có chắc chắn muốn sửa đổi (các) bản ghi đã chọn %s không?
-RecordsUpdated = %s Đã cập nhật bản ghi
-RecordUpdated = Đã cập nhật bản ghi
-NoRecordUpdated = Không có bản ghi nào được cập nhật
+RecordsUpdated=%s Đã cập nhật bản ghi
+RecordUpdated=Đã cập nhật bản ghi
+NoRecordUpdated=Không có bản ghi nào được cập nhật
+ProfitPerValidatedAttendee=Profit per attendee

@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 
 $hookmanager = new HookManager($db);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('stockindex'));
 
 // Load translation files required by the page
@@ -51,7 +51,7 @@ $producttmp = new Product($db);
 $warehouse = new Entrepot($db);
 
 $help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
-llxHeader("", $langs->trans("Stocks"), $help_url);
+llxHeader("", $langs->trans("Stocks"), $help_url, '', 0, 0, '', '', '', 'mod-product page-stock');
 
 print load_fiche_titre($langs->trans("StocksArea"), '', 'stock');
 

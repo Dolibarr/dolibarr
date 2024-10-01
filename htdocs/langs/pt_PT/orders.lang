@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - orders
-OrderExists=Um encomenda já estava abrir vinculado a este orçamento, então nenhum outro orçamento span class='notranslate'>encomenda</span> foi criado automaticamente
+OrderExists=An order was already open linked to this proposal, so no other order was created automatically
 OrdersArea=Área de encomendas de clientes
 SuppliersOrdersArea=Área de encomendas de compra
 OrderCard=Ficha da encomenda
@@ -99,7 +99,7 @@ ListOfOrders=Lista de encomendas
 ListOrderLigne=Linhas de pedidos
 productobuy=Produtos apenas para comprar
 productonly=Apenas produtos
-disablelinefree=Sem linhas gratuitas
+disablelinefree=Predefined products only
 CloseOrder=Fechar encomenda
 ConfirmCloseOrder=Tem a certeza que pretende para definir este encomenda como entregue? Depois que um encomenda for entregue, ele poderá ser definido como faturado.
 ConfirmDeleteOrder=Tem a certeza que deseja eliminar esta encomenda?

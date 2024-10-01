@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012      JF FERRY             <jfefe@aternatik.fr>
- * Copyright (C) 2020-2023	Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2020-2024  Frédéric France		<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -159,7 +159,7 @@ $elementtype = 'product';
 $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($elementtype, true);
 $extrafield_array = null;
-if (is_array($extrafields) && count($extrafields) > 0) {
+if (is_array($extrafields->attributes) && $extrafields->attributes[$elementtype]['count'] > 0) {
 	$extrafield_array = array();
 }
 if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
@@ -392,7 +392,7 @@ function getProductOrService($authentication, $id = 0, $ref = '', $ref_ext = '',
 		$langcode = ($lang ? $lang : (!getDolGlobalString('MAIN_LANG_DEFAULT') ? 'auto' : $conf->global->MAIN_LANG_DEFAULT));
 		$langs->setDefaultLang($langcode);
 
-		$fuser->getrights();
+		$fuser->loadRights();
 
 		$nbmax = 10;
 		if ($fuser->hasRight('produit', 'lire') || $fuser->hasRight('service', 'lire')) {
@@ -499,7 +499,7 @@ function getProductOrService($authentication, $id = 0, $ref = '', $ref_ext = '',
  * Create an invoice
  *
  * @param	array		$authentication		Array of authentication information
- * @param	Product		$product			Product
+ * @param	array		$product			Product
  * @return	array							Array result
  */
 function createProductOrService($authentication, $product)
@@ -572,7 +572,7 @@ function createProductOrService($authentication, $product)
 
 		$newobject->country_id = isset($product['country_id']) ? $product['country_id'] : 0;
 		if (!empty($product['country_code'])) {
-			$newobject->country_id = getCountry($product['country_code'], 3);
+			$newobject->country_id = getCountry($product['country_code'], '3');
 		}
 		$newobject->customcode = isset($product['customcode']) ? $product['customcode'] : '';
 
@@ -665,7 +665,7 @@ function createProductOrService($authentication, $product)
  * Update a product or service
  *
  * @param	array		$authentication		Array of authentication information
- * @param	Product		$product			Product
+ * @param	array		$product			Product
  * @return	array							Array result
  */
 function updateProductOrService($authentication, $product)
@@ -742,7 +742,7 @@ function updateProductOrService($authentication, $product)
 
 		$newobject->country_id = isset($product['country_id']) ? $product['country_id'] : 0;
 		if (!empty($product['country_code'])) {
-			$newobject->country_id = getCountry($product['country_code'], 3);
+			$newobject->country_id = getCountry($product['country_code'], '3');
 		}
 		$newobject->customcode = isset($product['customcode']) ? $product['customcode'] : '';
 
@@ -908,7 +908,7 @@ function deleteProductOrService($authentication, $listofidstring)
 		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel), 'nbdeleted'=>0);
 	} elseif (count($listofiddeleted) == 0) {
 		//$objectresp=array('result'=>array('result_code'=>'NOT_FOUND', 'result_label'=>'No product or service with id '.join(',',$listofid).' found'), 'listofid'=>$listofiddeleted);
-		$objectresp = array('result'=>array('result_code'=>'NOT_FOUND', 'result_label'=>'No product or service with id '.join(',', $listofid).' found'), 'nbdeleted'=>0);
+		$objectresp = array('result'=>array('result_code'=>'NOT_FOUND', 'result_label'=>'No product or service with id '.implode(',', $listofid).' found'), 'nbdeleted'=>0);
 	}
 
 	return $objectresp;
@@ -1029,7 +1029,7 @@ function getProductsForCategory($authentication, $id, $lang = '')
 		$langcode = ($lang ? $lang : (!getDolGlobalString('MAIN_LANG_DEFAULT') ? 'auto' : $conf->global->MAIN_LANG_DEFAULT));
 		$langs->setDefaultLang($langcode);
 
-		$fuser->getrights();
+		$fuser->loadRights();
 
 		$nbmax = 10;
 		if ($fuser->hasRight('produit', 'lire')) {

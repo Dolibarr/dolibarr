@@ -5,8 +5,6 @@ RefReception=Viite. vastaanotto
 Reception=Prosessissa
 Receptions=Vastaanotot
 AllReceptions=Kaikki vastaanotot
-Reception=Prosessissa
-Receptions=Vastaanotot
 ShowReception=Näytä vastaanotot
 ReceptionsArea=Vastaanottoalue
 ListOfReceptions=Luettelo vastaanotoista
@@ -36,7 +34,7 @@ ValidateReception=Vahvista vastaanotto
 ConfirmDeleteReception=Haluatko varmasti poistaa tämän vastaanoton?
 ConfirmValidateReception=Haluatko varmasti vahvistaa tämän vastaanoton viitteellä <b>%s</b>?
 ConfirmCancelReception=Haluatko varmasti peruuttaa tämän vastaanoton?
-StatsOnReceptionsOnlyValidated=Tilastot on tehty vain validoiduista vastaanotoista. päiväys on päiväys vastaanoton validoinnista (suunniteltu toimitus <span> ='notranslate'>päiväys</span> ei ole aina tiedossa).
+StatsOnReceptionsOnlyValidated=Statistics conducted on validated only receptions. Date used is date of validation of reception (planned delivery date is not always known).
 SendReceptionByEMail=Lähetä vastaanotto sähköpostitse
 SendReceptionRef=Vastaanoton lähettäminen %s
 ActionsOnReception=Tapahtumat vastaanotossa

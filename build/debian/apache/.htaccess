@@ -8,7 +8,7 @@ Denied from all
 </IfVersion>
 
 
-# OPTIMIZE: To use cache on static pages (A259200 = 1 month, A7200 = 2 hours, A691600 = 8 days = recommanded for static resources).
+# OPTIMIZE: To use cache on static pages (A259200 = 1 month, A7200 = 2 hours, A691600 = 8 days = recommended for static resources).
 # Note that you must also enable the module mod_expires.
 #ExpiresActive On
 #ExpiresByType image/x-icon A2592000

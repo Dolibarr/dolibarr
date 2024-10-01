@@ -21,7 +21,7 @@
 
 /**
  *       \file       htdocs/fourn/commande/contact.php
- *       \ingroup    commande
+ *       \ingroup    order
  *       \brief      Onglet de gestion des contacts de commande
  */
 
@@ -38,7 +38,7 @@ if (isModEnabled('project')) {
 // Load translation files required by the page
 $langs->loadLangs(array("facture", "orders", "sendings", "companies"));
 
-$id		= GETPOST('id', 'int');
+$id		= GETPOSTINT('id');
 $ref	= GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
@@ -46,8 +46,8 @@ $action = GETPOST('action', 'aZ09');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
 $hookmanager->initHooks(array('ordersuppliercardcontact', 'ordersuppliercontactcard', 'globalcard'));
+$result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
 
 $object = new CommandeFournisseur($db);
 
@@ -92,14 +92,14 @@ if (empty($reshook)) {
 	} elseif ($action == 'swapstatut' && ($user->hasRight("fournisseur", "commande", "creer") || $user->hasRight("supplier_order", "creer"))) {
 		// Toggle the status of a contact
 		if ($object->fetch($id)) {
-			$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
+			$result = $object->swapContactStatus(GETPOSTINT('ligne'));
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'deletecontact' && ($user->hasRight("fournisseur", "commande", "creer") || $user->hasRight("supplier_order", "creer"))) {
 		// Deleting a contact
 		$object->fetch($id);
-		$result = $object->delete_contact(GETPOST("lineid", 'int'));
+		$result = $object->delete_contact(GETPOSTINT("lineid"));
 
 		if ($result >= 0) {
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
@@ -123,7 +123,7 @@ $userstatic = new User($db);
 
 /* *************************************************************************** */
 /*                                                                             */
-/* Mode vue et edition                                                         */
+/* Card view and edit mode                                                       */
 /*                                                                             */
 /* *************************************************************************** */
 
@@ -135,7 +135,7 @@ if ($id > 0 || !empty($ref)) {
 
 		$title = $object->ref." - ".$langs->trans('ContactsAddresses');
 		$help_url = 'EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
-		llxHeader('', $title, $help_url);
+		llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-supplier-order page-card_contact');
 
 		$head = ordersupplier_prepare_head($object);
 		print dol_get_fiche_head($head, 'contact', $langs->trans("SupplierOrder"), -1, 'order');

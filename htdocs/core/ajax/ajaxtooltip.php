@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2023  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +35,10 @@ if (!defined('NOREQUIREHTML')) {
 if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', '1');
 }
+if (!defined('NOHEADERNOFOOTER')) {
+	define('NOHEADERNOFOOTER', '1');
+}
+
 include '../../main.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
@@ -43,7 +48,7 @@ $objecttype = GETPOST('objecttype', 'aZ09arobase');	// 'module' or 'myobject@mym
 
 $params = array('fromajaxtooltip' => 1);
 if (GETPOSTISSET('infologin')) {
-	$params['infologin'] = GETPOST('infologin', 'int');
+	$params['infologin'] = GETPOSTINT('infologin');
 }
 if (GETPOSTISSET('option')) {
 	$params['option'] = GETPOST('option', 'restricthtml');
@@ -78,10 +83,11 @@ top_httphead();
 $html = '';
 
 if (is_object($object)) {
+	'@phan-var-force CommonObject $object';
 	if ($object->id > 0 || !empty($object->ref)) {
 		/** @var CommonObject $object */
 		$html = $object->getTooltipContent($params);
-	} elseif ($res == 0) {
+	} elseif ($id > 0) {
 		$html = $langs->trans('Deleted');
 	}
 	unset($object);

@@ -3,33 +3,34 @@ WorkflowSetup=Workflow-moduuli asennus
 WorkflowDesc=Tämä moduuli tarjoaa joitain automaattisia toimintoja. Tekijän oletus työnkulku on auki (voit tehdä asioita haluamassasi järjestyksessä), mutta täällä voit aktivoida joitain automaattisia toimintoja.
 ThereIsNoWorkflowToModify=Aktivoiduilla moduuleilla ei ole käytettävissä työnkulun muutoksia.
 # Autocreate
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automaattisesti luo myyntitilaus, kun Tarjouspyyntö on allekirjoitettu (uuden tilauksen summa on sama kuin <span class='notranslatessa '>tarjous</span>)
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Automaattisesti luo asiakkaan lasku, kun Tarjouspyyntö on allekirjoitettu (uudessa laskussa on sama summa kuin <span class='notranslatessa '>tarjous</span>)
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatically create a sales order after a commercial proposal is signed (the new order will have same amount as the proposal)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Automatically create a customer invoice after a commercial proposal is signed (the new invoice will have same amount as the proposal)
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=luo asiakkaan lasku automaattisesti, kun sopimus on vahvistettu
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Automaattisesti luo asiakkaan lasku myyntitilauksen sulkemisen jälkeen (uudessa laskussa on sama summa kuin tilauksessa)
 descWORKFLOW_TICKET_CREATE_INTERVENTION=Lippua luotaessa automaattisesti luo väliintulo.
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Luokittele linkitetyt lähdeehdotukset laskutetuiksi, kun myyntitilauksen arvo on laskutettu (ja, jos tilauksen summa on sama kuin allekirjoitettujen linkitettyjen ehdotusten kokonaissumma)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Luokittele linkitetyt lähdeehdotukset laskutetuiksi, kun asiakkaan lasku vahvistetaan (ja, jos laskun summa on sama kuin allekirjoitettujen linkitettyjen ehdotusten kokonaissumma)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Luokittele linkitetyn lähteen myyntitilaus laskutettavaksi, kun asiakkaan lasku vahvistetaan (ja, jos laskun summa on sama kuin linkitettyjen myyntitilausten kokonaissumma). Jos sinulla on 1 vahvistettu lasku n tilaukselle, tämä voi asettaa myös kaikki tilaukset laskutetuiksi.
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Luokittele linkitetyt lähdemyyntitilaukset laskutetuiksi, kun asiakkaan lasku on maksettu (ja, jos laskun summa on sama kuin linkitettyjen myyntitilausten kokonaissumma). Jos sinulla on n tilaukselle laskutettu yksi lasku, tämä saattaa myös asettaa kaikki tilaukset laskutetuiksi.
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Luokittele linkitetyt lähdemyyntitilaukset toimitetuiksi, kun lähetys vahvistetaan (ja, jos kaikkien lähetysten toimitettu määrä on sama kuin päivitettävässä tilauksessa)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Luokittele linkitetyn lähteen myyntitilaus lähetetyksi, kun lähetys on suljettu (ja, jos kaikkien lähetysten lähetysmäärä on sama kuin päivitettävässä tilauksessa)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=When a sales order is set to billed, classify linked source proposals as billed (and if the amount of the order is the same as the total amount of the signed linked proposals)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=When a customer invoice is validated, classify linked source proposals as billed (and if the amount of the invoice is the same as the total amount of the signed linked proposals)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=When a customer invoice is set to paid, classify linked source sales orders as billed (and if the amount of the invoice is the same as the total amount of the linked sales orders). If you generate 1 invoice for n orders, this may set all orders to billed too.
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=When a customer invoice is validated, classify all the linked source sales orders as billed (and if the amount of the invoice is the same as the total amount of the linked source sales orders). If you generate 1 common invoice for n orders, this may set all source orders to billed.
+descWORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER=When a customer invoice is validated, classify the linked sales order (if there is only one) as billed, if the total amount of the linked sale order is equal to the total amount of all invoices issued from it. If you generate n invoices for 1 order, this allow to set the order to billed as soon as all invoices are validated.
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=When a shipment is validated, classify linked source sales orders as shipped (and if the quantity shipped by all shipments is the same as in the order to update)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=When a shipment is closed, classify linked source sales order as shipped (and if the quantity shipped by all shipments is the same as in the order to update)
 # Autoclassify purchase proposal
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Luokittele linkitetty lähde Toimittaja tarjous laskutetuksi, kun ostolasku on vahvistettu (<span> class='notranslate'>ja</span>, jos laskun summa on sama kuin linkitettyjen ehdotusten kokonaissumma)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=When a vendor invoice is validated, classify linked source vendor proposal as billed (and if the amount of the invoice is the same as the total amount of the linked proposals)
 # Autoclassify purchase order
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Luokittele linkitetty lähde Hankinta tilaus laskutetuksi, kun ostolasku on vahvistettu (<span class='notranslate'>ja laskun summa on sama kuin linkitettyjen tilausten kokonaissumma)
-descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Luokittele linkitetyn lähteen Hankinta tilaus vastaanotetuksi, kun vastaanotto on vahvistettu (ja, jos kaikkien vastaanottojen vastaanottama määrä on sama kuin kohdassa Hankinta päivitysjärjestys)
-descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Luokittele linkitetyn lähteen Hankinta tilaus vastaanotetuksi, kun vastaanotto suljetaan (ja, jos kaikkien vastaanottojen vastaanottama määrä on sama kuin kohdassa Hankinta päivitysjärjestys)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=When a vendor invoice is validated, classify linked source purchase order as billed (and if the amount of the invoice is the same as the total amount of the linked orders)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=When a reception is validated, classify linked source purchase order as received (and if the quantity received by all receptions is the same as in the purchase order to update)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=When a reception is closed, classify linked source purchase orders as received (and if the quantity received by all receptions issued from the purchase order is the same as in the purchase order to update)
 # Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Luokittele linkitetyn lähdelähetyksen suljetuksi, kun asiakkaan lasku vahvistetaan (ja, jos laskun summa on sama kuin linkitettyjen toimitusten kokonaissumma)
-descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=Luokittele linkitetyn lähdelähetyksen laskutettavaksi, kun asiakkaan lasku vahvistetaan (ja, jos laskun summa on sama kuin linkitettyjen toimitusten kokonaissumma)
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=When a customer invoice is validated, classify the linked source shipment as closed (and if the amount of the invoice is the same as the total amount of the linked shipments)
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=When a customer invoice is validated, classify the linked source shipment as billed (and if the amount of the invoice is the same as the total amount of the linked shipments)
 # Autoclassify receptions
-descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Luokittele linkitetyt lähdevastaanot laskutetuiksi, kun Hankinta-lasku on vahvistettu (ja, jos laskun summa on sama kuin kokonaissumma linkitettyjen vastaanottojen määrä)
-descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=Luokittele linkitetyt lähdevastaanot laskutetuiksi, kun Hankinta-lasku on vahvistettu (ja, jos laskun summa on sama kuin kokonaissumma linkitettyjen vastaanottojen määrä)
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=When a purchase invoice is validated, classify linked source receptions as closed (and if the amount of the invoice is the same as the total amount of the linked receptions)
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=When a purchase invoice is validated, classify linked source receptions as billed (and if the amount of the invoice is the same as the total amount of the linked receptions)
 # Automatically link ticket to contract
-descWORKFLOW_TICKET_LINK_CONTRACT=Kun luot lippua, linkitä kaikki saatavilla olevat vastaavien kolmansien osapuolten sopimukset
-descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Kun linkität sopimuksia, etsi emoyhtiöiden joukosta
+descWORKFLOW_TICKET_LINK_CONTRACT=When a ticket is created, link it with available contracts, matching the same third party than the ticket
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=When linking automatically a ticket with contracts, search contracts among those of the parents companies
 # Autoclose intervention
 descWORKFLOW_TICKET_CLOSE_INTERVENTION=Sulje kaikki lippuun liittyvät interventiot, kun lippu suljetaan
 AutomaticCreation=Automaattinen luonti

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,8 +35,8 @@ $langs->loadLangs(array('banks', 'categories', 'companies'));
 
 
 // Get Parameters
-$id = GETPOST("rowid", 'int');
-$accountid = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('account', 'int'));
+$id = GETPOSTINT("rowid");
+$accountid = (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('account'));
 $ref = GETPOST('ref', 'alpha');
 
 
@@ -66,13 +67,14 @@ $object->info($id);
 
 $h = 0;
 
+$head = array();
 $head[$h][0] = DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$id;
 $head[$h][1] = $langs->trans("BankTransaction");
 $h++;
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/bank/info.php?rowid='.$id;
 $head[$h][1] = $langs->trans("Info");
-$hselected = $h;
+$hselected = (string) $h;
 $h++;
 
 

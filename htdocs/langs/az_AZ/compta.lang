@@ -65,9 +65,8 @@ LT2SupplierES=IRPF alışları
 LT2CustomerIN=SGST satışları
 LT2SupplierIN=SGST alışları
 VATCollected=ƏDV yığılıb
-StatusToPay=Ödəmək
 SpecialExpensesArea=Bütün xüsusi ödənişlər üçün sahə
-VATExpensesArea=Bütün TVA ödənişləri üçün sahə
+VATExpensesArea=Area for all VAT payments
 SocialContribution=Sosial və ya fiskal vergi
 SocialContributions=Sosial və ya fiskal vergilər
 SocialContributionsDeductibles=Çıxarılan sosial və ya fiskal vergilər
@@ -165,20 +164,20 @@ CalcModeEngagement=Məlum qeydə alınmış ödənişlərin təhlili
 CalcModePayment=Məlum qeydə alınmış ödənişlərin təhlili
 CalcModeBookkeeping=Mühasibat uçotu cədvəlində jurnallaşdırılmış məlumatların təhlili.
 CalcModeNoBookKeeping=Onlar hələ Ledger-də uçota alınmasa belə
-CalcModeLT1= Rejim <b>%sMüştəri fakturaları üzrə RE - təchizatçı fakturalarıb0ecb2ec87f49fz<span>fz0 ='notranslate'></b></span>
-CalcModeLT1Debt=Müştəri fakturalarında <b>%sRE rejimi%s<spante class='notranslate '></b></span>
+CalcModeLT1= Mode <b>%sRE on customer invoices - suppliers invoices%s</b>
+CalcModeLT1Debt=Mode <b>%sRE on customer invoices%s</b>
 CalcModeLT1Rec= Rejim <b>%stəchizatçı fakturaları üzrə RE%s<spanno'translate= '></b></span>
-CalcModeLT2= Rejim <b>%sMüştəri fakturaları üzrə IRPF - təchizatçı fakturalarıb0ecb2ec87f49f<span0f ='notranslate'></b></span>
+CalcModeLT2= Mode <b>%sIRPF on customer invoices - suppliers invoices%s</b>
 CalcModeLT2Debt=Rejim <b>%sMüştəri fakturalarında IRPF%s<spanlate '></b></span>
-CalcModeLT2Rec= Rejim <b>%sTəchizatçı fakturaları üzrə IRPF%s='notranslate '></b>
+CalcModeLT2Rec= Mode <b>%sIRPF on suppliers invoices%s</b>
 AnnualSummaryDueDebtMode=Gəlir və xərclər balansı, illik xülasə
 AnnualSummaryInputOutputMode=Gəlir və xərclər balansı, illik xülasə
 AnnualByCompanies=Əvvəlcədən müəyyən edilmiş hesab qrupları üzrə gəlir və xərclərin balansı
-AnnualByCompaniesDueDebtMode=Gəlir və xərclər balansı, əvvəlcədən müəyyən edilmiş qruplar üzrə təfərrüat, rejim <b>%sİddialar-Borclar<span class='notranslate'ec>80ec </span></b> dedi <b>Öhdəlik uçotu</b>.
-AnnualByCompaniesInputOutputMode=Gəlir və xərclər balansı, əvvəlcədən müəyyən edilmiş qruplar üzrə təfərrüat, rejim <b>%sGəlir-Xərclər<span class='notranslate'ec802f </span></b> dedi: <b>nağd uçotu</b>.
-SeeReportInInputOutputMode=<b>%södənişlərin təhlilinə baxın%s<spante class='notranslate ></b></span> <b>qeyd edilmiş ödənişlərə əsaslanan hesablama üçün</b>, hətta L-də hələ də hesaba daxil edilməmişlər
+AnnualByCompaniesDueDebtMode=Balance of income and expenses, detail by predefined groups, mode <b>%sClaims-Debts%s</b> said <b>Commitment accounting</b>.
+AnnualByCompaniesInputOutputMode=Balance of income and expenses, detail by predefined groups, mode <b>%sIncomes-Expenses%s</b> said <b>cash accounting</b>.
+SeeReportInInputOutputMode=See <b>%sanalysis of payments%s</b> for a calculation based on <b>recorded payments</b> made even if they are not yet accounted in Ledger
 SeeReportInDueDebtMode=<b>%sqeyd edilmiş sənədlərin təhlilinə baxın%s</b>, məlum <b>qeydə alınmış sənədlərə əsaslanan hesablama üçün</b> hələ də daxil edilməsələr belə
-SeeReportInBookkeepingMode=<b>%smühasibat uçotu cədvəlinin təhlilinə baxın%s<span='notranslate'> <b>Mühasibat Kitabı cədvəli</b> əsasında hesabat üçün notranslate'></b></span>
+SeeReportInBookkeepingMode=See <b>%sanalysis of bookkeeping ledger table%s</b> for a report based on <b>Bookkeeping Ledger table</b>
 RulesAmountWithTaxIncluded=- Göstərilən məbləğlər bütün vergilər daxildir
 RulesAmountWithTaxExcluded=- Göstərilən fakturaların məbləğləri bütün vergilər istisna olmaqla
 RulesResultDue=- Buraya bütün hesab-fakturalar, xərclər, ƏDV, ianələr, maaşlar, onların ödənilib-ödənilməməsindən asılı olmayaraq daxildir.<br>- O, fakturaların hesablaşma tarixinə və ödəmə tarixinə əsaslanır. xərclər və ya vergi ödənişləri. Əmək haqqı üçün müddətin bitmə tarixindən istifadə olunur.
@@ -275,7 +274,7 @@ SameCountryCustomersWithVAT=Milli müştərilərin hesabatı
 BasedOnTwoFirstLettersOfVATNumberBeingTheSameAsYourCompanyCountry=ƏDV nömrəsinin ilk iki hərfinin öz şirkətinizin ölkə kodu ilə eyni olmasına əsaslanır
 LinkedFichinter=Müdaxilə ilə əlaqə
 ImportDataset_tax_contrib=Sosial/fiskal vergilər
-ImportDataset_tax_vat=ƏDV ödənişləri
+ImportDataset_tax_vat=VAT payments
 ErrorBankAccountNotFound=Xəta: Bank hesabı tapılmadı
 FiscalPeriod=Hesabat dövrü
 ListSocialContributionAssociatedProject=Layihə ilə bağlı sosial yardımların siyahısı

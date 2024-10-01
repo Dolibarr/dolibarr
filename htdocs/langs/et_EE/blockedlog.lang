@@ -53,6 +53,6 @@ logMODULE_SET=Module BlockedLog was enabled
 logPAYMENT_ADD_TO_BANK=Payment added to bank
 logPAYMENT_CUSTOMER_CREATE=Customer payment created
 logPAYMENT_CUSTOMER_DELETE=Customer payment logical deletion
-logPAYMENT_VARIOUS_CREATE=Payment (not assigned to an invoice) created
+logPAYMENT_VARIOUS_CREATE=Makse (ei ole seotud arvega) loodud
 logPAYMENT_VARIOUS_DELETE=Payment (not assigned to an invoice) logical deletion
 logPAYMENT_VARIOUS_MODIFY=Payment (not assigned to an invoice) modified

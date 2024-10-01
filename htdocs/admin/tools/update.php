@@ -66,6 +66,7 @@ if ($action == 'getlastversion') {
 		if (LIBXML_VERSION < 20900) {
 			// Avoid load of external entities (security problem).
 			// Required only if LIBXML_VERSION < 20900
+			// @phan-suppress-next-line PhanDeprecatedFunctionInternal
 			libxml_disable_entity_loader(true);
 		}
 
@@ -81,7 +82,7 @@ if ($action == 'getlastversion') {
  */
 
 $wikihelp = 'EN:Installation_-_Upgrade|FR:Installation_-_Mise_à_jour|ES:Instalación_-_Actualización';
-llxHeader('', $langs->trans("Upgrade"), $wikihelp);
+llxHeader('', $langs->trans("Upgrade"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-tools_update');
 
 print load_fiche_titre($langs->trans("Upgrade"), '', 'title_setup');
 

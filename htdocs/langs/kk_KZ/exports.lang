@@ -46,10 +46,16 @@ LineLabel=Сызық белгісі
 LineDescription=Сызық сипаттамасы
 LineUnitPrice=Жолдың бірлік бағасы
 LineVATRate=ҚҚС Қатысу жылдамдығы
+LineLT1Rate=Жол үшін салық 2 ставкасы
+LineLT2Rate=Жол үшін салық 3 ставкасы
+LineLT1Type=Салық 2 түрі жол үшін
+LineLT2Type=Салықтың 3 түрі жол үшін
 LineQty=Жолдың саны
 LineTotalHT=Сомасы қоспағанда сызық үшін салық
 LineTotalTTC=Жол үшін салық қосылған сома
 LineTotalVAT=Жол үшін ҚҚС сомасы
+LineTotalLT1=Салық сомасы 2 жол үшін
+LineTotalLT2=Салық сомасы 3 жол үшін
 TypeOfLineServiceOrProduct=Жол түрі (0 = өнім, 1 = қызмет)
 FileWithDataToImport=Импортталатын деректер бар файл
 FileToImport=Импортталатын бастапқы файл
@@ -94,8 +100,8 @@ NbOfLinesOK=Қатесіз және ескертусіз жолдар саны: 
 NbOfLinesImported=Сәтті импортталған жолдар саны: <b> %s </b>.
 DataComeFromNoWhere=Кірістіру мәні бастапқы файлдың ешқайсысынан болмайды.
 DataComeFromFileFieldNb=Енгізілетін мән бастапқы файлдағы <b>%s</b> бағанынан алынады.
-DataComeFromIdFoundFromRef=Бастапқы файлдан келетін мән пайдаланылатын негізгі нысанның идентификаторын табу үшін пайдаланылады (сондықтан <b>%s</span нысаны ><span class='notranslate'></b> бастапқы файлдан алынған сілтеме дерекқорда болуы керек).
-DataComeFromIdFoundFromCodeId=Бастапқы файлдан келетін кодтың мәні пайдаланылатын негізгі нысанның идентификаторын табу үшін пайдаланылады (сондықтан бастапқы файлдағы код <b><span сынып сөздігінде болуы керек. ='notranslate'>%s</span></b>). Идентификаторды білсеңіз, оны кодтың орнына бастапқы файлда да пайдалануға болатынын ескеріңіз. Импорт екі жағдайда да жұмыс істеуі керек.
+DataComeFromIdFoundFromRef=The value that comes from the source file will be used to find the id of the parent object to use (so the object <b>%s</b> that has the ref. from source file must exist in the database).
+DataComeFromIdFoundFromCodeId=The value of code that comes from source file will be used to find the id of the parent object to use (so the code from source file must exist in the dictionary <b>%s</b>). Note that if you know the id, you can also use it in the source file instead of the code. Import should work in both cases.
 DataIsInsertedInto=Бастапқы файлдан алынған деректер келесі өріске енгізіледі:
 DataIDSourceIsInsertedInto=Бастапқы файлдағы деректерді пайдалану арқылы табылған негізгі нысанның идентификаторы келесі өріске кірістіріледі:
 DataCodeIDSourceIsInsertedInto=Кодтан табылған ата-аналық жолдың идентификаторы келесі өріске енгізіледі:

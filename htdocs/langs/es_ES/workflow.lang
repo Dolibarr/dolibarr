@@ -9,27 +9,28 @@ descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Crear una factura a cliente automática
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Crear automáticamente una factura a cliente al cierre del pedido de cliente (la nueva factura tendrá el mismo importe que el pedido)
 descWORKFLOW_TICKET_CREATE_INTERVENTION=En la creación del ticket, crea automáticamente una intervención.
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposals as billed when a sales order is set to billed (and if the amount of the order is the same as the total amount of the signed linked proposals)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposals as billed when a customer invoice is validated (and if the amount of the invoice is the same as the total amount of the signed linked proposals)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source sales order as billed when a customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked sales orders). If you have 1 invoice validated for n orders, this may set all orders to billed too.
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source sales orders as billed when a customer invoice is set to paid (and if the amount of the invoice is the same as the total amount of the linked sales orders). If you have 1 invoice set billed for n orders, this may set all orders to billed too.
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source sales orders as shipped when a shipment is validated (and if the quantity shipped by all shipments is the same as in the order to update)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Clasificar el pedido de venta de origen vinculado como enviado cuando se cierra un envío (y si la cantidad enviada por todos los envíos es la misma que en el pedido para actualizar)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Cuando un pedido de ventas está configurado como facturado, clasificar las propuestas de origen vinculadas como facturadas (y si el monto del pedido es el mismo que el monto total de las propuestas vinculadas firmadas)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Cuando se valida una factura de cliente, clasificar las propuestas de origen vinculadas como facturadas (y si el monto de la factura es igual al monto total de las propuestas vinculadas firmadas)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Cuando la factura de un cliente está configurada como pagada, clasifique los pedidos de ventas de origen vinculados como facturados (y si el monto de la factura es el mismo que el monto total de los pedidos de ventas vinculados). Si genera 1 factura para n pedidos, esto puede configurar que todos los pedidos también se facturen.
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Cuando se valida una factura de cliente, clasifique todos los pedidos de venta de origen vinculados como facturados (y si el monto de la factura es el mismo que el monto total de los pedidos de venta de origen vinculados). Si genera 1 factura común para n pedidos, esto puede configurar todos los pedidos de origen como facturados.
+descWORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER=Cuando se valida una factura de cliente, clasificar el pedido de venta vinculado (si solo hay uno) como facturado, si el monto total del pedido de venta vinculado es igual al monto total de todas las facturas emitidas a partir de él. Si genera n facturas para 1 pedido, esto permitirá configurar el pedido como facturado tan pronto como se validen todas las facturas.
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Cuando se valida un envío, clasificar los pedidos de ventas de origen vinculados como enviados (y si la cantidad enviada por todos los envíos es la misma que en el pedido a actualizar)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Cuando se cierra un envío, clasificar el pedido de ventas de origen vinculado como enviado (y si la cantidad enviada por todos los envíos es la misma que en el pedido a actualizar)
 # Autoclassify purchase proposal
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source vendor proposal as billed when vendor invoice is validated (and if the amount of the invoice is the same as the total amount of the linked proposals)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Cuando se valida una factura de proveedor, clasificar la propuesta del proveedor de origen vinculado como facturada (y si el monto de la factura es el mismo que el monto total de las propuestas vinculadas)
 # Autoclassify purchase order
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classify linked source purchase order as billed when vendor invoice is validated (and if the amount of the invoice is the same as the total amount of the linked orders)
-descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Clasifique la orden de compra de fuente vinculada como recibida cuando se valida una recepción (y si la cantidad recibida por todas las recepciones es la misma que en la orden de compra para actualizar)
-descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Clasifique la orden de compra de fuente vinculada como recibida cuando una recepción está cerrada (y si la cantidad recibida por todas las recepciones es la misma que en la orden de compra para actualizar)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Cuando se valida una factura de proveedor, clasificar la orden de compra de origen vinculada como facturada (y si el monto de la factura es igual al monto total de las órdenes vinculadas)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Cuando se valida una recepción, clasificar la orden de compra de origen vinculado como recibida (y si la cantidad recibida por todas las recepciones es la misma que en la orden de compra a actualizar)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Cuando se cierra una recepción, clasificar las órdenes de compra de origen vinculado como recibidas (y si la cantidad recibida por todas las recepciones emitidas desde la orden de compra es la misma que en la orden de compra a actualizar)
 # Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when a customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked shipments)
-descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=Classify linked source shipment as billed when a customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked shipments)
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Cuando se valida una factura de cliente, clasificar el envío de origen vinculado como cerrado (y si el monto de la factura es igual al monto total de los envíos vinculados)
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=Cuando se valida una factura de cliente, clasificar el envío de origen vinculado como facturado (y si el monto de la factura es igual al monto total de los envíos vinculados)
 # Autoclassify receptions
-descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Classify linked source receptions as billed when a purchase invoice is validated (and if the amount of the invoice is the same as the total amount of the linked receptions)
-descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=Classify linked source receptions as billed when a purchase invoice is validated (and if the amount of the invoice is the same as the total amount of the linked receptions)
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Cuando se valida una factura de compra, clasificar las recepciones de origen vinculadas como cerradas (y si el importe de la factura es igual al importe total de las recepciones vinculadas)
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=Cuando se valida una factura de compra, clasificar las recepciones de origen vinculadas como facturadas (y si el importe de la factura es igual al importe total de las recepciones vinculadas)
 # Automatically link ticket to contract
-descWORKFLOW_TICKET_LINK_CONTRACT=When creating a ticket, link all available contracts of matching third parties
-descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=A la hora de vincular contratos, buscar entre los de las casas matrices
+descWORKFLOW_TICKET_LINK_CONTRACT=Cuando se crea un ticket, vincúlelo con contratos disponibles, haciendo coincidir al mismo tercero que el ticket
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Al vincular automáticamente un ticket con contratos, busca contratos entre los de las empresas matrices
 # Autoclose intervention
 descWORKFLOW_TICKET_CLOSE_INTERVENTION=Cerrar todas las intervenciones vinculadas al ticket cuando se cierra un ticket
 AutomaticCreation=Creación automática

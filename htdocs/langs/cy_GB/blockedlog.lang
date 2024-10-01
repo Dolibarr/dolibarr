@@ -18,7 +18,7 @@ BlockedlogInfoDialog=Manylion Log
 ListOfTrackedEvents=Rhestr o ddigwyddiadau wedi'u tracio
 Fingerprint=Olion bysedd
 DownloadLogCSV=Allforio logiau wedi'u harchifo (CSV)
-DataOfArchivedEvent=Full data of archived event
+DataOfArchivedEvent=Data llawn o'r digwyddiad a archifwyd
 ImpossibleToReloadObject=Gwrthrych gwreiddiol (math %s, id %s) heb ei gysylltu (gweler y golofn 'Data llawn' i gael data sydd wedi'i gadw na ellir ei newid)
 BlockedLogAreRequiredByYourCountryLegislation=Mae'n bosibl y bydd angen modiwl Logiau na ellir eu newid yn ôl deddfwriaeth eich gwlad. Gallai analluogi’r modiwl hwn wneud unrhyw drafodion yn y dyfodol yn annilys o ran y gyfraith a’r defnydd o feddalwedd gyfreithiol gan na allant gael eu dilysu gan archwiliad treth.
 BlockedLogActivatedBecauseRequiredByYourCountryLegislation=Gweithredwyd modiwl Logiau Unalterable oherwydd deddfwriaeth eich gwlad. Gallai analluogi’r modiwl hwn wneud unrhyw drafodion yn y dyfodol yn annilys o ran y gyfraith a’r defnydd o feddalwedd gyfreithiol gan na ellir eu dilysu gan archwiliad treth.
@@ -29,7 +29,7 @@ RestrictYearToExport=Cyfyngu mis / blwyddyn i allforio
 BlockedLogEnabled=Mae system i olrhain digwyddiadau i mewn i logiau na ellir eu newid wedi'i galluogi
 BlockedLogDisabled=Mae'r system i olrhain digwyddiadau i mewn i logiau na ellir eu newid wedi'i hanalluogi ar ôl i rywfaint o recordio gael ei wneud. Rydym yn arbed Olion Bysedd arbennig i olrhain y gadwyn fel torri
 BlockedLogDisabledBis=Mae'r system i olrhain digwyddiadau i mewn i logiau na ellir eu newid wedi'i hanalluogi. Mae hyn yn bosibl oherwydd ni wnaed unrhyw gofnod eto.
-LinkHasBeenDisabledForPerformancePurpose=For performance purpose, direct link to the document is not shown after the 100th line.
+LinkHasBeenDisabledForPerformancePurpose=At ddibenion perfformiad, ni ddangosir cyswllt uniongyrchol â'r ddogfen ar ôl y 100fed llinell.
 
 ## logTypes
 logBILL_DELETE=Anfoneb cwsmer wedi'i dileu yn rhesymegol

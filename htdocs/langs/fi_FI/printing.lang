@@ -32,6 +32,7 @@ PRINTIPP_HOST=Tulostuspalvelin
 PRINTIPP_PORT=Port
 PRINTIPP_USER=Kirjautuminen
 PRINTIPP_PASSWORD=Salasana
+PRINTIPP_SSL=Käytä SSL
 NoDefaultPrinterDefined=Tulostinta ei ole määritetty oletus
 DefaultPrinter=oletus tulostin
 Printer=Tulostin
@@ -52,3 +53,4 @@ PrintingDriverDescprintgcp=Tulostusohjaimen Google Cloud Printin määritysmuutt
 PrintingDriverDescprintipp=Konfiguraatiomuuttujat tulostinohjaimen kupit.
 PrintTestDescprintgcp=Luettelo Google Cloud Printin tulostimista.
 PrintTestDescprintipp=Luettelo kuppien tulostimista.
+Testbbbb

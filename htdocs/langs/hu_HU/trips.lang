@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - trips
+# Dolibarr language file - Source file is en_US - trips.lang
 AUTHOR=Rögzítette
 AUTHORPAIEMENT=Fizetett
 AddTrip=Költségjelentés készítése
@@ -13,6 +13,8 @@ byEX_EXP=sor szerint (korlátozás: %s)
 byEX_MON=hónaponként (korlátozás: %s)
 byEX_YEA=évenként (korlátozás: %s)
 CANCEL_USER=Törölte
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Számla (a Számlatervből) alapértelmezés szerint a „felhasználók” számára használatos a költségjelentésekben
+ACCOUNTING_ACCOUNT_EXPENSEREPORT_Desc=A felhasználói kártyán meghatározott dedikált számla kizárólag Alkönyvelésre szolgál. Ez lesz a főkönyvnél, és az alkönyvi könyvelés alapértelmezett értékeként is használható, ha nincs dedikált könyvelési számla a felhasználónál.
 CarCategory=Járműkategória
 ClassifyRefunded=„Visszatérített” besorolás
 CompanyVisited=A felkeresett vállalat/szervezet
@@ -70,7 +72,8 @@ ExpenseReportRulesDesc=Meghatározhatja a költségjelentések maximális össze
 ExpenseReportWaitingForApproval=Új költségjelentést nyújtottak be jóváhagyásra
 ExpenseReportWaitingForApprovalMessage=Új költségjelentés elküldve, és jóváhagyásra vár.<br> - Felhasználó: %s<br> - Időszak: %s<br>Az érvényesítéshez kattintson ide: %s
 ExpenseReportWaitingForReApproval=Egy költségjelentést elküldtek újra jóváhagyásra
-ExpenseReportWaitingForReApprovalMessage=Költségjelentés elküldve, és újbóli jóváhagyásra vár.<br>A %s, Ön a következő okból tagadta meg a költségjelentés jóváhagyását: %s.<br>Új verziót javasoltak, és az Ön jóváhagyására vár.<br> - Felhasználó: %s<br> - Időszak: %s<br>Az érvényesítéshez kattintson ide: %s
+ExpenseReportWaitingForReApprovalMessage=An expense report has been submitted and is waiting for re-approval.<br>The %s, you refused to approve the expense report for this reason: %s.<br>A new version has been proposed and waiting for your approval.<br> - User: %s<br> - Period: %s<br>
+ExpenseReportWaitingForReApprovalMessage2=Click here to validate: %s
 ExpenseReportsIk=A kilométerdíjak konfigurálása
 ExpenseReportsRules=Költségjelentési szabályok
 ExpenseReportsToApprove=Jóváhagyandó költségjelentések
@@ -93,7 +96,7 @@ nolimitbyEX_YEA=évenként (korlátozás nélkül)
 NoTripsToExportCSV=Nincs exportálható költségjelentés erre az időszakra.
 NOT_AUTHOR=Nem Ön ennek a költségjelentésnek a szerzője. A művelet megszakítva.
 OnExpense=Költségsor
-PDFStandardExpenseReports=Szabvány sablon PDF dokumentum generálása költségjelentéshez
+PDFStandardExpenseReports=Szabványsablon PDF-dokumentum létrehozásához költségjelentéshez
 PaidTrip=Költségjelentés fizetése
 REFUSEUR=Tagadta
 RangeIk=Kifutási tartomány
@@ -115,6 +118,10 @@ VALIDOR=Jóváhagyta
 ValidateAndSubmit=Érvényesítés és elküldés jóváhagyásra
 ValidatedWaitingApproval=Érvényesítve (jóváhagyásra vár)
 ValideTrip=Költségjelentés jóváhagyása
+ExpenseReportPayments=Költségjelentés kifizetések
+TaxUndefinedForThisCategory = Az adó ebben a kategóriában nincs meghatározva
+errorComputeTtcOnMileageExpense=Hiba a kilométerköltség kiszámításakor
+ErrorOnlyDraftStatusCanBeDeletedInMassAction=Csak a piszkozat állapotú elemek törölhetők tömeges akcióban
 
 ## Dictionary
 EX_BRE=Reggeli

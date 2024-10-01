@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
-# About page
-# Right
+# Permissions
 Permission23101 = Lue Ajastettu työ
 Permission23102 = luo/update Suunniteltu työ
 Permission23103 = Poista Ajastettu työ
@@ -30,7 +29,8 @@ CronExecute=Käynnistä nyt
 CronConfirmExecute=Haluatko varmasti suorittaa nämä ajoitetut työt nyt?
 CronInfo=Ajoitettu työmoduuli mahdollistaa töiden ajoituksen suorittamaan ne automaattisesti. Työt voidaan aloittaa myös manuaalisesti.
 CronTask=Job
-CronNone=Ei mitään
+CronNone=Next run of scheduled task
+CronNotYetRan=Never executed
 CronDtStart=Ei ennen
 CronDtEnd=Ei sen jälkeen
 CronDtNextLaunch=Seuraava suoritus
@@ -49,8 +49,8 @@ CronEach=Joka
 JobFinished=Työ aloitettu ja valmis
 Scheduled=Aikataulutettu
 #Page card
-CronAdd= Lisää työpaikkoja
-CronEvery=Suorita jokainen työ
+CronAdd=Lisää työpaikkoja
+CronEvery=Run job every
 CronObject=Ilmentymä/objekti luo
 CronArgs=Parametrit
 CronSaveSucess=Tallennus onnistui
@@ -78,7 +78,7 @@ CronType_method=PHP-luokan kutsumenetelmä
 CronType_command=Shell-komento
 CronCannotLoadClass=Luokkaa tiedosto %s ei voi ladata (käytä luokkaa %s)
 CronCannotLoadObject=Luokka tiedosto %s ladattiin, mutta objektia %s ei löytynyt siitä
-UseMenuModuleToolsToAddCronJobs=Siirry kohtaan valikko "<a href="%s">Etusivu - Pääkäyttäjä -työtyökalut - <spanuloidut class='notranslate'></a></span>" nähdäksesi ja muokkaa ajoitettuja töitä.
+UseMenuModuleToolsToAddCronJobs=Go into menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
 JobDisabled=Työ estetty
 MakeLocalDatabaseDumpShort=Paikallinen tietokanta varmuuskopio
 MakeLocalDatabaseDump=luo paikallinen tietokanta kaatopaikka. Parametrit ovat: pakkaus ('gz' tai 'bz' tai 'none'), varmuuskopion tyyppi ('mysql', 'pgsql', 'auto'), 1, 'auto' tai rakennettava tiedostonimi, säilytettävien varmuuskopiotiedostojen määrä

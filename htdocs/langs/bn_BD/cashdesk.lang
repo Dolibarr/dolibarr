@@ -97,7 +97,7 @@ ReceiptPrinterMethodDescription=অনেক পরামিতি সহ শক
 ByTerminal=টার্মিনাল দ্বারা
 TakeposNumpadUsePaymentIcon=নমপ্যাডের পেমেন্ট বোতামে টেক্সটের পরিবর্তে আইকন ব্যবহার করুন
 CashDeskRefNumberingModules=POS বিক্রয়ের জন্য সংখ্যায়ন মডিউল
-CashDeskGenericMaskCodes6 = <br><b>{TN}b09f870<span class='notranslate' টার্মিনাল নম্বর যোগ করতে span> ট্যাগ ব্যবহার করা হয়
+CashDeskGenericMaskCodes6 = <br><b>{TN}</b> tag is used to add the terminal number
 TakeposGroupSameProduct=একই পণ্যের লাইন মার্জ করুন
 StartAParallelSale=একটি নতুন সমান্তরাল বিক্রয় শুরু করুন
 SaleStartedAt=%s এ বিক্রি শুরু হয়েছে

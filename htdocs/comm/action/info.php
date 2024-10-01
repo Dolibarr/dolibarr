@@ -19,7 +19,7 @@
 /**
  *      \file       htdocs/comm/action/info.php
  *      \ingroup    agenda
- *		\brief      Page des informations d'une action
+ *		\brief      Page des information d'une action
  */
 
 // Load Dolibarr environment
@@ -37,9 +37,9 @@ if (isModEnabled('project')) {
 // Load translation files required by the page
 $langs->load("commercial");
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('actioncard', 'globalcard'));
 
 // Security check

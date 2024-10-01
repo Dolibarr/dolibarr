@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2011-2014		Juanjo Menent <jmenent@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,16 +29,16 @@ require_once DOL_DOCUMENT_ROOT.'/compta/localtax/class/localtax.class.php';
 // Load translation files required by the page
 $langs->load("compta");
 
-$limit = GETPOST('limit', 'int');
+$limit = GETPOSTINT('limit');
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
 
 $result = restrictedArea($user, 'tax', '', '', 'charges');
-$ltt = GETPOST("localTaxType", 'int');
+$ltt = GETPOSTINT("localTaxType");
 $mode = GETPOST('mode', 'alpha');
 
 
@@ -58,8 +59,8 @@ if (!empty($mode)) {
 	$param .= '&mode='.urlencode($mode);
 }
 $newcardbutton = '';
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?localTaxType='.$ltt.'&mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?localTaxType='.$ltt.'&mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?localTaxType='.$ltt.'&mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?localTaxType='.$ltt.'&mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewLocalTaxPayment', ($ltt + 1)), '', 'fa fa-plus-circle', $url, '', $user->hasRight('tax', 'charges', 'creer'));
 
@@ -76,7 +77,7 @@ if ($result) {
 	$i = 0;
 	$total = 0;
 
-	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td class="nowrap" align="left">'.$langs->trans("Ref").'</td>';
@@ -99,7 +100,7 @@ if ($result) {
 		$localtax_static->datep = $obj->datep;
 		$localtax_static->amount = $obj->amount;
 
-		$total = $total + $obj->amount;
+		$total += $obj->amount;
 
 		if ($mode == 'kanban') {
 			if ($i == 0) {

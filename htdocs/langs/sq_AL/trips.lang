@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - trips
+# Dolibarr language file - Source file is en_US - trips.lang
 AUTHOR=Regjistruar nga
 AUTHORPAIEMENT=E paguar nga
 AddTrip=Krijoni raportin e shpenzimeve
@@ -13,6 +13,8 @@ byEX_EXP=sipas rreshtit (kufizim në %s)
 byEX_MON=sipas muajit (kufizim në %s)
 byEX_YEA=sipas vitit (kufizim në %s)
 CANCEL_USER=Fshirë nga
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Account (from the Chart of Account) used by default for "users" on expense reports
+ACCOUNTING_ACCOUNT_EXPENSEREPORT_Desc=Llogaria e dedikuar e përcaktuar në kartën e përdoruesit do të përdoret vetëm për kontabilitetin Subledger. Kjo do të përdoret për Librin Kryesor, dhe gjithashtu si vlera e paracaktuar e kontabilitetit të Subledger nëse përdoruesi nuk është përcaktuar asnjë llogari kontabël e dedikuar.
 CarCategory=Kategoria e automjetit
 ClassifyRefunded=Klasifiko 'të rimbursuara'
 CompanyVisited=Kompania/organizata e vizituar
@@ -45,11 +47,11 @@ expenseReportRangeMoreThan=më shumë se %d
 expenseReportTotalForFive=Shembull me <u>d</u> = 5
 ExpenseReportApplyTo=Aplikoni në
 ExpenseReportApproved=U miratua një raport shpenzimesh
-ExpenseReportApprovedMessage=Raporti i shpenzimeve %s u miratua.<br> - Përdoruesi: %s<s class='notranslate'><br></span> - Miratuar nga: %s<br>Kliko këtu për të shfaqur raportin e shpenzimeve span class='notranslate'>%s</span>
+ExpenseReportApprovedMessage=The expense report %s was approved.<br> - User: %s<br> - Approved by: %s<br>Click here to show the expense report: %s
 ExpenseReportCanceled=Një raport shpenzimesh u anulua
-ExpenseReportCanceledMessage=Raporti i shpenzimeve %s u anulua.<br> - Përdoruesi: %s</span class='notranslate'><br> - Anuluar nga: %s<br> - Motivi për anulim class=: 'notranslate'>%s</span><br>Kliko këtu për të shfaqur raportin e shpenzimeve: %s
-ExpenseReportConstraintViolationError=Shuma maksimale e tejkaluar (rregulli %s): %s është më i lartë se <span class='notranslate'>%s</s> Tejkalimi i ndaluar)
-ExpenseReportConstraintViolationWarning=Shuma maksimale e tejkaluar (rregulli %s): %s është më i lartë se <span class='notranslate'>%s</s> Tejkalimi i autorizimit)
+ExpenseReportCanceledMessage=The expense report %s was canceled.<br> - User: %s<br> - Canceled by: %s<br> - Motive for cancellation: %s<br>Click here to show the expense report: %s
+ExpenseReportConstraintViolationError=Max amount exceeded (rule %s): %s is higher than %s (Exceeding forbidden)
+ExpenseReportConstraintViolationWarning=Max amount exceeded (rule %s): %s is higher than %s (Exceeding authorized)
 ExpenseReportDateEnd=Data e fundit
 ExpenseReportDateStart=Data e fillimit
 ExpenseReportDomain=Domain për të aplikuar
@@ -58,19 +60,19 @@ ExpenseReportLimitAmount=Shuma maksimale
 ExpenseReportLimitOn=Kufizojeni
 ExpenseReportLine=Linja e raportit të shpenzimeve
 ExpenseReportPaid=U pagua një raport shpenzimesh
-ExpenseReportPaidMessage=Raporti i shpenzimeve %s u pagua.<br> - Përdoruesi: %s<s class='notranslate'><br></span> - Paguar nga: %s<br>Kliko këtu për të shfaqur raportin e shpenzimeve: span class='notranslate'>%s</span>
+ExpenseReportPaidMessage=The expense report %s was paid.<br> - User: %s<br> - Paid by: %s<br>Click here to show the expense report: %s
 ExpenseReportPayment=Pagesa e raportit të shpenzimeve
 ExpenseReportRef=Ref. raporti i shpenzimeve
 ExpenseReportRefused=Një raport shpenzimesh u refuzua
-ExpenseReportRefusedMessage=Raporti i shpenzimeve %s u refuzua.<br> - Përdoruesi: %s class='notranslate'><br></span> - Refuzuar nga: %s<br> - Motivi për refuzim: <span class=: 'notranslate'>%s</span><br>Kliko këtu për të shfaqur raportin e shpenzimeve: %s
+ExpenseReportRefusedMessage=The expense report %s was refused.<br> - User: %s<br> - Refused by: %s<br> - Motive for refusal: %s<br>Click here to show the expense report: %s
 ExpenseReportRestrictive=Tejkalimi i ndaluar
 ExpenseReportRuleErrorOnSave=Gabim: %s
 ExpenseReportRuleSave=Rregulli i raportit të shpenzimeve u ruajt
 ExpenseReportRulesDesc=Ju mund të përcaktoni rregullat e shumës maksimale për raportet e shpenzimeve. Këto rregulla do të zbatohen kur një shpenzim i ri shtohet në një raport shpenzimesh
 ExpenseReportWaitingForApproval=Një raport i ri i shpenzimeve është dorëzuar për miratim
-ExpenseReportWaitingForApprovalMessage=Një raport i ri shpenzimesh është dorëzuar dhe është në pritje për miratim.<br> - Përdoruesi: %s <br> - Periudha: %s<br>Kliko këtu për të vërtetuar: <span class='notranslate span>
+ExpenseReportWaitingForApprovalMessage=A new expense report has been submitted and is waiting for approval.<br> - User: %s<br> - Period: %s<br>Click here to validate: %s
 ExpenseReportWaitingForReApproval=Një raport shpenzimesh është dorëzuar për ri-miratim
-ExpenseReportWaitingForReApprovalMessage=Një raport shpenzimesh është dorëzuar dhe është në pritje të ri-miratimit.<br>%s, ju refuzuat të miratoni raportin e shpenzimeve për kjo arsye: %s.<br>Një version i ri është propozuar dhe pret miratimin tuaj. <br> - Përdoruesi: %s<br> - Periudha: <span class='notranslate'8</7>b0cb2ec87f49fz0 <br>Kliko këtu për të vërtetuar: %s
+ExpenseReportWaitingForReApprovalMessage=An expense report has been submitted and is waiting for re-approval.<br>The %s, you refused to approve the expense report for this reason: %s.<br>A new version has been proposed and waiting for your approval.<br> - User: %s<br> - Period: %s<br>Click here to validate: %s
 ExpenseReportsIk=Konfigurimi i tarifave për kilometrazhin
 ExpenseReportsRules=Rregullat e raportit të shpenzimeve
 ExpenseReportsToApprove=Raportet e shpenzimeve për të miratuar
@@ -93,7 +95,7 @@ nolimitbyEX_YEA=sipas vitit (pa kufizim)
 NoTripsToExportCSV=Nuk ka raport shpenzimesh për eksport për këtë periudhë.
 NOT_AUTHOR=Ju nuk jeni autori i këtij raporti të shpenzimeve. Operacioni u anulua.
 OnExpense=Linja e shpenzimeve
-PDFStandardExpenseReports=Model standard për të gjeneruar një dokument PDF për raportin e shpenzimeve
+PDFStandardExpenseReports=Standard template to generate a PDF document for an expense report
 PaidTrip=Paguani një raport shpenzimesh
 REFUSEUR=Mohuar nga
 RangeIk=Gama e kilometrazhit
@@ -115,6 +117,10 @@ VALIDOR=E miratuar nga
 ValidateAndSubmit=Vërtetoni dhe dorëzoni për miratim
 ValidatedWaitingApproval=Vleruar (në pritje të miratimit)
 ValideTrip=Mirato raportin e shpenzimeve
+ExpenseReportPayments=Pagesat e raportit të shpenzimeve
+TaxUndefinedForThisCategory = Tax is undefined for this category
+errorComputeTtcOnMileageExpense=Gabim në llogaritjen e shpenzimeve të kilometrazhit
+ErrorOnlyDraftStatusCanBeDeletedInMassAction=Only elements in draft status can be deleted in mass action
 
 ## Dictionary
 EX_BRE=Mëngjesi

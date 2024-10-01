@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2021 SuperAdmin
+/* Copyright (C) 2004-2017 	Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,7 @@ global $langs, $user;
 // Libraries
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT."/knowledgemanagement/lib/knowledgemanagement.lib.php";
+require_once DOL_DOCUMENT_ROOT."/knowledgemanagement/class/knowledgerecord.class.php";
 
 // Translations
 $langs->loadLangs(array("admin", "knowledgemanagement"));
@@ -45,7 +47,7 @@ $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'knowledgemanagement';
 
 $arrayofparameters = array(
-	'KNOWLEDGEMANAGEMENT_MYPARAM1'=>array('type'=>'string', 'css'=>'minwidth500' ,'enabled'=>0),
+	//'KNOWLEDGEMANAGEMENT_MYPARAM1' => array('type' => 'string', 'css' => 'minwidth500' ,'enabled' => 0),
 	//'KNOWLEDGEMANAGEMENT_MYPARAM2'=>array('type'=>'textarea','enabled'=>1),
 	//'KNOWLEDGEMANAGEMENT_MYPARAM3'=>array('type'=>'category:'.Categorie::TYPE_CUSTOMER, 'enabled'=>1),
 	//'KNOWLEDGEMANAGEMENT_MYPARAM4'=>array('type'=>'emailtemplate:thirdparty', 'enabled'=>1),
@@ -61,6 +63,20 @@ if (!$user->admin) {
 	accessforbidden();
 }
 
+if (!getDolGlobalString('KNOWLEDGEMANAGEMENT_KNOWLEDGERECORD_ADDON')) {
+	$conf->global->KNOWLEDGEMANAGEMENT_KNOWLEDGERECORD_ADDON = 'mod_knowledgerecord_standard';
+}
+
+$moduledir = 'knowledgemanagement';
+$myTmpObjects = array();
+// TODO Scan list of objects to fill this array
+$myTmpObjects['knowledgemanagement'] = array('label' => 'KnowledgeManagement', 'includerefgeneration' => 1, 'includedocgeneration' => 0, 'class' => 'KnowledgeRecord');
+
+$tmpobjectkey = GETPOST('object', 'aZ09');
+if ($tmpobjectkey && !array_key_exists($tmpobjectkey, $myTmpObjects)) {
+	accessforbidden('Bad value for object. Hack attempt ?');
+}
+
 
 /*
  * Actions
@@ -70,10 +86,10 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask') {
 	$maskconst = GETPOST('maskconst', 'aZ09');
-	$maskorder = GETPOST('maskorder', 'alpha');
+	$maskdata = GETPOST('maskKnowledgeRecord', 'alpha');
 
 	if ($maskconst && preg_match('/_MASK$/', $maskconst)) {
-		$res = dolibarr_set_const($db, $maskconst, $maskorder, 'chaine', 0, '', $conf->entity);
+		$res = dolibarr_set_const($db, $maskconst, $maskdata, 'chaine', 0, '', $conf->entity);
 		if (!($res > 0)) {
 			$error++;
 		}
@@ -84,31 +100,30 @@ if ($action == 'updateMask') {
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
-} elseif ($action == 'specimen') {
+} elseif ($action == 'specimen' && $tmpobjectkey) {
 	$modele = GETPOST('module', 'alpha');
-	$tmpobjectkey = GETPOST('object');
 
-	$tmpobject = new $tmpobjectkey($db);
+	$className = $myTmpObjects[$tmpobjectkey]['class'];
+	$tmpobject = new $className($db);
 	$tmpobject->initAsSpecimen();
 
 	// Search template files
 	$file = '';
-	$classname = '';
-	$filefound = 0;
+	$className = '';
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/knowledgemanagement/doc/pdf_".$modele."_".strtolower($tmpobjectkey).".modules.php", 0);
 		if (file_exists($file)) {
-			$filefound = 1;
-			$classname = "pdf_".$modele;
+			$className = "pdf_".$modele;
 			break;
 		}
 	}
 
-	if ($filefound) {
+	if ($className !== '') {
 		require_once $file;
 
-		$module = new $classname($db);
+		$module = new $className($db);
+		'@phan-var-force ModelePDFKnowledgeRecord $module';
 
 		if ($module->write_file($tmpobject, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=".strtolower($tmpobjectkey)."&file=SPECIMEN.pdf");
@@ -123,7 +138,6 @@ if ($action == 'updateMask') {
 	}
 } elseif ($action == 'setmod') {
 	// TODO Check if numbering module chosen can be activated by calling method canBeActivated
-	$tmpobjectkey = GETPOST('object');
 	if (!empty($tmpobjectkey)) {
 		$constforval = 'KNOWLEDGEMANAGEMENT_'.strtoupper($tmpobjectkey)."_ADDON";
 		dolibarr_set_const($db, $constforval, $value, 'chaine', 0, '', $conf->entity);
@@ -134,7 +148,7 @@ if ($action == 'updateMask') {
 } elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		$tmpobjectkey = GETPOST('object');
+		$tmpobjectkey = GETPOST('object', 'aZ09');
 		if (!empty($tmpobjectkey)) {
 			$constforval = 'KNOWLEDGEMANAGEMENT_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
 			if (getDolGlobalString($constforval) == "$value") {
@@ -144,7 +158,6 @@ if ($action == 'updateMask') {
 	}
 } elseif ($action == 'setdoc') {
 	// Set or unset default model
-	$tmpobjectkey = GETPOST('object');
 	if (!empty($tmpobjectkey)) {
 		$constforval = 'KNOWLEDGEMANAGEMENT_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
 		if (dolibarr_set_const($db, $constforval, $value, 'chaine', 0, '', $conf->entity)) {
@@ -160,7 +173,6 @@ if ($action == 'updateMask') {
 		}
 	}
 } elseif ($action == 'unsetdoc') {
-	$tmpobjectkey = GETPOST('object');
 	if (!empty($tmpobjectkey)) {
 		$constforval = 'KNOWLEDGEMANAGEMENT_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
 		dolibarr_del_const($db, $constforval, $conf->entity);
@@ -178,7 +190,7 @@ $form = new Form($db);
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 $page_name = "KnowledgeManagementSetup";
-llxHeader('', $langs->trans($page_name));
+llxHeader('', $langs->trans($page_name), '', '', 0, 0, '', '', '', 'mod-admin page-knowledgemanagement');
 
 // Subheader
 $linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.$langs->trans("BackToModuleList").'</a>';
@@ -201,8 +213,9 @@ if ($action == 'edit') {
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
+	// @phan-suppress-next-line PhanEmptyForeach
 	foreach ($arrayofparameters as $constname => $val) {
-		if ($val['enabled']==1) {
+		if ($val['enabled'] == 1) {
 			$setupnotempty++;
 			print '<tr class="oddeven"><td>';
 			$tooltiphelp = (($langs->trans($constname . 'Tooltip') != $constname . 'Tooltip') ? $langs->trans($constname . 'Tooltip') : '');
@@ -268,8 +281,9 @@ if ($action == 'edit') {
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
+		// @phan-suppress-next-line PhanEmptyForeach
 		foreach ($arrayofparameters as $constname => $val) {
-			if ($val['enabled']==1) {
+			if ($val['enabled'] == 1) {
 				$setupnotempty++;
 				print '<tr class="oddeven"><td>';
 				$tooltiphelp = (($langs->trans($constname . 'Tooltip') != $constname . 'Tooltip') ? $langs->trans($constname . 'Tooltip') : '');
@@ -278,7 +292,7 @@ if ($action == 'edit') {
 
 				if ($val['type'] == 'textarea') {
 					print dol_nl2br(getDolGlobalString($constname));
-				} elseif ($val['type']== 'html') {
+				} elseif ($val['type'] == 'html') {
 					print getDolGlobalString($constname);
 				} elseif ($val['type'] == 'yesno') {
 					print ajax_constantonoff($constname);
@@ -289,7 +303,7 @@ if ($action == 'edit') {
 					$tmp = explode(':', $val['type']);
 
 					$template = $formmail->getEMailTemplate($db, $tmp[1], $user, $langs, getDolGlobalString($constname));
-					if ($template<0) {
+					if ($template < 0) {
 						setEventMessages(null, $formmail->errors, 'errors');
 					}
 					print $langs->trans($template->label);
@@ -299,20 +313,20 @@ if ($action == 'edit') {
 					if ($result < 0) {
 						setEventMessages(null, $c->errors, 'errors');
 					}
-					$ways = $c->print_all_ways(' &gt;&gt; ', 'none', 0, 1); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formated text
+					$ways = $c->print_all_ways(' &gt;&gt; ', 'none', 0, 1); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formatted text
 					$toprint = array();
 					foreach ($ways as $way) {
 						$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"' . ($c->color ? ' style="background: #' . $c->color . ';"' : ' style="background: #bbb"') . '>' . $way . '</li>';
 					}
 					print '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">' . implode(' ', $toprint) . '</ul></div>';
 				} elseif (preg_match('/thirdparty_type/', $val['type'])) {
-					if (getDolGlobalString($constname)==2) {
+					if (getDolGlobalString($constname) == 2) {
 						print $langs->trans("Prospect");
-					} elseif (getDolGlobalString($constname)==3) {
+					} elseif (getDolGlobalString($constname) == 3) {
 						print $langs->trans("ProspectCustomer");
-					} elseif (getDolGlobalInt($constname)==1) {
+					} elseif (getDolGlobalInt($constname) == 1) {
 						print $langs->trans("Customer");
-					} elseif (getDolGlobalInt($constname)==0) {
+					} elseif (getDolGlobalInt($constname) == 0) {
 						print $langs->trans("NorProspectNorCustomer");
 					}
 				} else {
@@ -333,16 +347,8 @@ if ($action == 'edit') {
 }
 
 
-$moduledir = 'knowledgemanagement';
-$myTmpObjects = array();
-$myTmpObjects['MyObject'] = array('includerefgeneration'=>0, 'includedocgeneration'=>0);
-
-
 foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
-	if ($myTmpObjectKey == 'MyObject') {
-		continue;
-	}
-	if ($myTmpObjectArray['includerefgeneration']) {
+	if (!empty($myTmpObjectArray['includerefgeneration'])) {
 		/*
 		 * Orders Numbering model
 		 */
@@ -368,12 +374,14 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 				$handle = opendir($dir);
 				if (is_resource($handle)) {
 					while (($file = readdir($handle)) !== false) {
-						if (strpos($file, 'mod_'.strtolower($myTmpObjectKey).'_') === 0 && substr($file, dol_strlen($file) - 3, 3) == 'php') {
+						if (strpos($file, 'mod_'.strtolower($myTmpObjectArray['class']).'_') === 0 && substr($file, dol_strlen($file) - 3, 3) == 'php') {
 							$file = substr($file, 0, dol_strlen($file) - 4);
 
 							require_once $dir.'/'.$file.'.php';
 
 							$module = new $file($db);
+
+							'@phan-var-force ModeleNumRefKnowledgeRecord $module';
 
 							// Show modules according to features level
 							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -404,17 +412,18 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 								print '</td>'."\n";
 
 								print '<td class="center">';
-								$constforvar = 'KNOWLEDGEMANAGEMENT_'.strtoupper($myTmpObjectKey).'_ADDON';
+								$constforvar = 'KNOWLEDGEMANAGEMENT_'.strtoupper($myTmpObjectArray['class']).'_ADDON';
 								if (getDolGlobalString($constforvar) == $file) {
 									print img_picto($langs->trans("Activated"), 'switch_on');
 								} else {
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&object='.strtolower($myTmpObjectKey).'&value='.urlencode($file).'">';
+									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&object='.strtolower($myTmpObjectArray['class']).'&value='.urlencode($file).'">';
 									print img_picto($langs->trans("Disabled"), 'switch_off');
 									print '</a>';
 								}
 								print '</td>';
 
-								$mytmpinstance = new $myTmpObjectKey($db);
+								$className = $myTmpObjectArray['class'];
+								$mytmpinstance = new $className($db);
 								$mytmpinstance->initAsSpecimen();
 
 								// Info
@@ -449,7 +458,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 		print "</table><br>\n";
 	}
 
-	if ($myTmpObjectArray['includedocgeneration']) {
+	if (!empty($myTmpObjectArray['includedocgeneration'])) {
 		/*
 		 * Document templates generators
 		 */
@@ -470,7 +479,9 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 			$num_rows = $db->num_rows($resql);
 			while ($i < $num_rows) {
 				$array = $db->fetch_array($resql);
-				array_push($def, $array[0]);
+				if (is_array($array)) {
+					array_push($def, $array[0]);
+				}
 				$i++;
 			}
 		} else {
@@ -497,6 +508,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 				if (is_dir($dir)) {
 					$handle = opendir($dir);
 					if (is_resource($handle)) {
+						$filelist = array();
 						while (($file = readdir($handle)) !== false) {
 							$filelist[] = $file;
 						}
@@ -507,10 +519,12 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 							if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
 								if (file_exists($dir.'/'.$file)) {
 									$name = substr($file, 4, dol_strlen($file) - 16);
-									$classname = substr($file, 0, dol_strlen($file) - 12);
+									$className = substr($file, 0, dol_strlen($file) - 12);
 
 									require_once $dir.'/'.$file;
-									$module = new $classname($db);
+									$module = new $className($db);
+
+									'@phan-var-force ModelePDFKnowledgeRecord $module';
 
 									$modulequalified = 1;
 									if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -525,7 +539,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 										print(empty($module->name) ? $name : $module->name);
 										print "</td><td>\n";
 										if (method_exists($module, 'info')) {
-											print $module->info($langs);
+											print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
 										} else {
 											print $module->description;
 										}

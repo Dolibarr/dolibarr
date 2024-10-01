@@ -1,6 +1,7 @@
 <?php
-/* Advance Targeting Emailling for mass emailing module
- * Copyright (C) 2013  Florian Henry <florian.henry@open-concept.pro>
+/* Advance Targeting Emailing for mass emailing module
+ * Copyright (C) 2013  		Florian Henry 			<florian.henry@open-concept.pro>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +18,7 @@
  */
 
 /**
- * 	\file		comm/mailing/class/advtargetemailing.class.php
+ * 	\file		htdocs/comm/mailing/class/advtargetemailing.class.php
  * 	\ingroup	mailing
  * 	\brief		This file is an example CRUD class file (Create/Read/Update/Delete)
  */
@@ -84,11 +85,6 @@ class AdvanceTargetingMailing extends CommonObject
 	public $fk_user_mod;
 
 	/**
-	 * @var int|string tms
-	 */
-	public $tms = '';
-
-	/**
 	 * @var array select target type
 	 */
 	public $select_target_type = array();
@@ -97,14 +93,22 @@ class AdvanceTargetingMailing extends CommonObject
 	 * @var array type status comm prospect
 	 */
 	public $type_statuscommprospect = array();
+
+	/**
+	 * @var int[]
+	 */
 	public $thirdparty_lines;
+
+	/**
+	 * @var int[]
+	 */
 	public $contact_lines;
 
 
 	/**
 	 *  Constructor
 	 *
-	 *  @param  DoliDb		$db		Database handler
+	 *  @param  DoliDB		$db		Database handler
 	 */
 	public function __construct($db)
 	{
@@ -546,10 +550,10 @@ class AdvanceTargetingMailing extends CommonObject
 
 		if (count($arrayquery) > 0) {
 			if (array_key_exists('cust_saleman', $arrayquery)) {
-				$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as saleman ON saleman.fk_soc=t.rowid ";
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as saleman ON saleman.fk_soc = t.rowid";
 			}
 			if (array_key_exists('cust_categ', $arrayquery)) {
-				$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_societe as custcateg ON custcateg.fk_soc=t.rowid ";
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_societe as custcateg ON custcateg.fk_soc = t.rowid";
 			}
 
 			if (!empty($arrayquery['cust_name'])) {
@@ -588,6 +592,9 @@ class AdvanceTargetingMailing extends CommonObject
 			}
 			if (!empty($arrayquery['cust_saleman']) && count($arrayquery['cust_saleman']) > 0) {
 				$sqlwhere[] = " (saleman.fk_user IN (".$this->db->sanitize(implode(',', $arrayquery['cust_saleman']))."))";
+			}
+			if (!empty($arrayquery['cust_state']) && count($arrayquery['cust_state']) > 0) {
+				$sqlwhere[] = " (t.fk_departement IN (".$this->db->sanitize(implode(',', $arrayquery['cust_state']))."))";
 			}
 			if (!empty($arrayquery['cust_country']) && count($arrayquery['cust_country']) > 0) {
 				$sqlwhere[] = " (t.fk_pays IN (".$this->db->sanitize(implode(',', $arrayquery['cust_country']))."))";
@@ -787,10 +794,10 @@ class AdvanceTargetingMailing extends CommonObject
 
 				if (!empty($withThirdpartyFilter)) {
 					if (array_key_exists('cust_saleman', $arrayquery)) {
-						$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as saleman ON saleman.fk_soc=ts.rowid ";
+						$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as saleman ON saleman.fk_soc = ts.rowid";
 					}
 					if (array_key_exists('cust_categ', $arrayquery)) {
-						$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_societe as custcateg ON custcateg.fk_soc=ts.rowid ";
+						$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_societe as custcateg ON custcateg.fk_soc = ts.rowid";
 					}
 
 					if (!empty($arrayquery['cust_name'])) {
@@ -829,6 +836,12 @@ class AdvanceTargetingMailing extends CommonObject
 					}
 					if (!empty($arrayquery['cust_saleman']) && count($arrayquery['cust_saleman']) > 0) {
 						$sqlwhere[] = " (saleman.fk_user IN (".$this->db->sanitize(implode(',', $arrayquery['cust_saleman']))."))";
+					}
+					//if (!empty($arrayquery['cust_state'])) {
+					//	$sqlwhere[] = $this->transformToSQL('tsd.nom', $arrayquery['cust_state']);
+					//}
+					if (!empty($arrayquery['cust_state']) && count($arrayquery['cust_state']) > 0) {
+						$sqlwhere[] = " (t.fk_departement IN (".$this->db->sanitize(implode(',', $arrayquery['cust_state']))."))";
 					}
 					if (!empty($arrayquery['cust_country']) && count($arrayquery['cust_country']) > 0) {
 						$sqlwhere[] = " (ts.fk_pays IN (".$this->db->sanitize(implode(',', $arrayquery['cust_country']))."))";
@@ -918,12 +931,12 @@ class AdvanceTargetingMailing extends CommonObject
 
 
 	/**
-	 * Parse criteria to return a SQL qury formated
+	 * Parse criteria to return a SQL query formatted
 	 *
 	 * 	@param		string		$column_to_test	column to test
-	 *  @param		string		$criteria	Use %% as magic caracters. For exemple to find all item like <b>jean, joe, jim</b>, you can input <b>j%%</b>, you can also use ; as separator for value,
+	 *  @param		string		$criteria	Use %% as magic characters. For example to find all item like <b>jean, joe, jim</b>, you can input <b>j%%</b>, you can also use ; as separator for value,
 	 *  									and use ! for except this value.
-	 *  									For exemple  jean;joe;jim%%;!jimo;!jima%> will target all jean, joe, start with jim but not jimo and not everythnig taht start by jima
+	 *  									For example  jean;joe;jim%%;!jimo;!jima%> will target all jean, joe, start with jim but not jimo and not everythnig that start by jima
 	 * 	@return		string		Sql to use for the where condition
 	 */
 	public function transformToSQL($column_to_test, $criteria)

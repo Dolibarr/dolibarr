@@ -38,11 +38,7 @@ $extrafields = new ExtraFields($db);
 $form = new Form($db);
 
 // List of supported format
-$tmptype2label = ExtraFields::$type2label;
-$type2label = array('');
-foreach ($tmptype2label as $key => $val) {
-	$type2label[$key] = $langs->transnoentitiesnoconv($val);
-}
+$type2label = ExtraFields::getListOfTypesLabels();
 
 $action = GETPOST('action', 'aZ09');
 $attrname = GETPOST('attrname', 'alpha');
@@ -68,7 +64,7 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
 $help_url = '';
 $page_name = "BankSetupModule";
 
-llxHeader('', $langs->trans("BankSetupModule"), $help_url);
+llxHeader('', $langs->trans("BankSetupModule"), $help_url, '', 0, 0, '', '', '', 'mod-admin page-bank_extrafields');
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';

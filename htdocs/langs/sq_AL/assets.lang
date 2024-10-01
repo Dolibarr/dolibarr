@@ -87,8 +87,8 @@ AssetTypeInProgress=Në vazhdim
 AssetTypeFinancial=Financiare
 AssetNotDepreciated=I pa amortizuar
 AssetDisposal=Asgjesimi
-AssetConfirmDisposalAsk=Jeni i sigurt që dëshironi të asgjësoni aktivin <b> %s<span class='notranslate'>b09a4b739f17f>z?
-AssetConfirmReOpenAsk=Jeni i sigurt që dëshironi të rihapni aktivin <b> %s<span class='notranslate'>b09a4b739f17f>z?
+AssetConfirmDisposalAsk=Are you sure you want to dispose of the asset <b> %s</b>?
+AssetConfirmReOpenAsk=Are you sure you want to reopen the asset <b> %s</b>?
 
 #
 # Asset status
@@ -122,7 +122,6 @@ AssetDepreciationOptionDepreciationTypeLinear=Linear
 AssetDepreciationOptionDepreciationTypeDegressive=Degresive
 AssetDepreciationOptionDepreciationTypeExceptional=Të jashtëzakonshme
 AssetDepreciationOptionDegressiveRate=Shkalla degresive
-AssetDepreciationOptionAcceleratedDepreciation=Amortizimi i përshpejtuar (taksa)
 AssetDepreciationOptionDuration=Kohëzgjatja
 AssetDepreciationOptionDurationType=Kohëzgjatja e llojit
 AssetDepreciationOptionDurationTypeAnnual=Vjetore

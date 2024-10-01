@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 $langs->loadLangs(array("suppliers", "orders", "companies"));
 
 // Security check
-$socid = GETPOST("socid", 'int');
+$socid = GETPOSTINT("socid");
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -47,7 +47,7 @@ $commandestatic = new CommandeFournisseur($db);
 $facturestatic = new FactureFournisseur($db);
 $companystatic = new Societe($db);
 
-llxHeader("", $langs->trans("SuppliersArea"));
+llxHeader("", $langs->trans("SuppliersArea"), '', '', 0, 0, '', '', '', 'mod-fourn-facture page-index');
 
 print load_fiche_titre($langs->trans("SuppliersArea"));
 

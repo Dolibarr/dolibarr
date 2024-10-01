@@ -9,27 +9,28 @@ descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=إنشاء فاتورة العميل ت
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=إنشاء فاتورة العميل تلقائيًا بعد إغلاق أمر المبيعات (الفاتورة الجديدة سيكون لها نفس مبلغ الأمر)
 descWORKFLOW_TICKET_CREATE_INTERVENTION=عند إنشاء التذكرة ، قم بإنشاء تدخل تلقائيًا.
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=تصنيف مقترحات المصادر المرتبطة على أنها مفوترة عند تعيين مبيعات طلب على فاتورة (و إذا كان مبلغ طلب هو نفس المبلغ الإجمالي للمقترحات المرتبطة الموقعة)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=تصنيف مقترحات المصادر المرتبطة على أنها مفوترة عند التحقق من صحة العميل فاتورة (و إذا كان مبلغ فاتورة هو نفس المبلغ الإجمالي للمقترحات المرتبطة الموقعة)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=تصنيف مبيعات المصدر المرتبطة طلب على أنها مفوترة عند التحقق من صحة العميل فاتورة ( و إذا كان مبلغ فاتورة هو نفس المبلغ الإجمالي لأوامر المبيعات المرتبطة). إذا كان لديك فاتورة واحد تم التحقق من صحته لعدد n من الطلبات، فقد يؤدي هذا إلى تعيين جميع الطلبات ليتم تحرير فواتير لها أيضًا.
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=تصنيف أوامر المبيعات المصدر المرتبطة على أنها مفوترة عند تعيين العميل فاتورة على مدفوع (و إذا كان مبلغ فاتورة هو نفس المبلغ الإجمالي لأوامر المبيعات المرتبطة). إذا كان لديك مجموعة واحدة فاتورة تم تحرير فاتورة بها لعدد n من الطلبات، فقد يؤدي هذا إلى تعيين جميع الطلبات ليتم تحرير فاتورة بها أيضًا.
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=قم بتصنيف أوامر المبيعات المصدر المرتبطة على أنها مشحونة عندما يتم التحقق من صحة الشحنة (و إذا كانت الكمية المشحونة بواسطة جميع الشحنات هي نفسها كما في <span class='notranslate'>طلب</ تمتد> للتحديث)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=تصنيف أمر مبيعات المصدر المرتبط على أنه مشحون عند إغلاق الشحنة (وإذا كانت الكمية المشحونة بواسطة جميع الشحنات هي نفسها الموجودة في أمر التحديث)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=When a sales order is set to billed, classify linked source proposals as billed (and if the amount of the order is the same as the total amount of the signed linked proposals)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=When a customer invoice is validated, classify linked source proposals as billed (and if the amount of the invoice is the same as the total amount of the signed linked proposals)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=When a customer invoice is set to paid, classify linked source sales orders as billed (and if the amount of the invoice is the same as the total amount of the linked sales orders). If you generate 1 invoice for n orders, this may set all orders to billed too.
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=When a customer invoice is validated, classify all the linked source sales orders as billed (and if the amount of the invoice is the same as the total amount of the linked source sales orders). If you generate 1 common invoice for n orders, this may set all source orders to billed.
+descWORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER=When a customer invoice is validated, classify the linked sales order (if there is only one) as billed, if the total amount of the linked sale order is equal to the total amount of all invoices issued from it. If you generate n invoices for 1 order, this allow to set the order to billed as soon as all invoices are validated.
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=When a shipment is validated, classify linked source sales orders as shipped (and if the quantity shipped by all shipments is the same as in the order to update)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=When a shipment is closed, classify linked source sales order as shipped (and if the quantity shipped by all shipments is the same as in the order to update)
 # Autoclassify purchase proposal
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=تصنيف اقتراح المصدر المرتبط المورد على أنه تمت فوترته عند التحقق من صحة فاتورة مورد (و إذا مبلغ فاتورة هو نفس المبلغ الإجمالي للمقترحات المرتبطة)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=When a vendor invoice is validated, classify linked source vendor proposal as billed (and if the amount of the invoice is the same as the total amount of the linked proposals)
 # Autoclassify purchase order
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=تصنيف عملية شراء المصدر المرتبط طلب على أنها تتم محاسبتها عند التحقق من صحة فاتورة مورد (و إذا مبلغ فاتورة هو نفس المبلغ الإجمالي للطلبات المرتبطة)
-descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=تصنيف أمر شراء المصدر المرتبط على أنه تم استلامه عند التحقق من صحة الاستلام (وإذا كانت الكمية المستلمة من قبل جميع الاستقبالات هي نفسها الموجودة في أمر الشراء للتحديث)
-descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=تصنيف أمر شراء المصدر المرتبط كما تم استلامه عند إغلاق الاستلام (وإذا كانت الكمية المستلمة من قبل جميع الاستدعاءات هي نفسها الموجودة في أمر الشراء للتحديث)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=When a vendor invoice is validated, classify linked source purchase order as billed (and if the amount of the invoice is the same as the total amount of the linked orders)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=When a reception is validated, classify linked source purchase order as received (and if the quantity received by all receptions is the same as in the purchase order to update)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=When a reception is closed, classify linked source purchase orders as received (and if the quantity received by all receptions issued from the purchase order is the same as in the purchase order to update)
 # Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=تصنيف الشحنة المصدر المرتبطة على أنها مغلقة عند التحقق من صحة العميل فاتورة (و إذا كان مبلغ فاتورة هو نفس المبلغ الإجمالي للشحنات المرتبطة)
-descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=تصنيف الشحنة المصدر المرتبطة على أنها مفوترة عند التحقق من صحة العميل فاتورة (و إذا كان مبلغ فاتورة هو نفس المبلغ الإجمالي للشحنات المرتبطة)
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=When a customer invoice is validated, classify the linked source shipment as closed (and if the amount of the invoice is the same as the total amount of the linked shipments)
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=When a customer invoice is validated, classify the linked source shipment as billed (and if the amount of the invoice is the same as the total amount of the linked shipments)
 # Autoclassify receptions
-descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=تصنيف عمليات الاستقبال المصدر المرتبطة على أنها مفوترة عند التحقق من صحة عملية الشراء فاتورة (و إذا كان مبلغ فاتورة هو نفس المبلغ الإجمالي لعمليات الاستقبال المرتبطة)
-descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=تصنيف عمليات الاستقبال المصدر المرتبطة على أنها مفوترة عند التحقق من صحة عملية الشراء فاتورة (و إذا كان مبلغ فاتورة هو نفس المبلغ الإجمالي لعمليات الاستقبال المرتبطة)
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=When a purchase invoice is validated, classify linked source receptions as closed (and if the amount of the invoice is the same as the total amount of the linked receptions)
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=When a purchase invoice is validated, classify linked source receptions as billed (and if the amount of the invoice is the same as the total amount of the linked receptions)
 # Automatically link ticket to contract
-descWORKFLOW_TICKET_LINK_CONTRACT=عند إنشاء تذكرة، قم بربط جميع العقود المتاحة للأطراف الثالثة المطابقة
-descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=عند ربط العقود ، ابحث بين تلك الخاصة بالشركات الأم
+descWORKFLOW_TICKET_LINK_CONTRACT=When a ticket is created, link it with available contracts, matching the same third party than the ticket
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=When linking automatically a ticket with contracts, search contracts among those of the parents companies
 # Autoclose intervention
 descWORKFLOW_TICKET_CLOSE_INTERVENTION=إغلاق جميع المداخلات المرتبطة بالتذكرة عند إغلاق التذكرة
 AutomaticCreation=إنشاء تلقائي

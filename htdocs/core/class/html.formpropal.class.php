@@ -50,7 +50,7 @@ class FormPropal
 	}
 
 	/**
-	 *    Return combo list of differents status of a proposal
+	 *    Return combo list of different statuses of a proposal
 	 *    Values are id of table c_propalst
 	 *
 	 *    @param	string	$selected   	Preselected value

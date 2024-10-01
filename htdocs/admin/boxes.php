@@ -3,6 +3,8 @@
  * Copyright (C) 2004-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +38,7 @@ if (!$user->admin) {
 	accessforbidden();
 }
 
-$rowid = GETPOST('rowid', 'int');
+$rowid = GETPOSTINT('rowid');
 $action = GETPOST('action', 'aZ09');
 
 
@@ -50,7 +52,6 @@ $boxes = array();
  */
 
 if ($action == 'addconst') {
-	dolibarr_set_const($db, "MAIN_BOXES_MAXLINES", GETPOST("MAIN_BOXES_MAXLINES", 'int'), '', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_ACTIVATE_FILECACHE", GETPOST("MAIN_ACTIVATE_FILECACHE", 'alpha'), 'chaine', 0, '', $conf->entity);
 }
 
@@ -165,10 +166,10 @@ if ($action == 'switch') {
 	$db->begin();
 
 	$objfrom = new ModeleBoxes($db);
-	$objfrom->fetch(GETPOST("switchfrom", 'int'));
+	$objfrom->fetch(GETPOSTINT("switchfrom"));
 
 	$objto = new ModeleBoxes($db);
-	$objto->fetch(GETPOST('switchto', 'int'));
+	$objto->fetch(GETPOSTINT('switchto'));
 
 	$resultupdatefrom = 0;
 	$resultupdateto = 0;
@@ -177,7 +178,7 @@ if ($action == 'switch') {
 		$newsecond = $objfrom->box_order;
 		if ($newfirst == $newsecond) {
 			$newsecondchar = preg_replace('/[0-9]+/', '', $newsecond);
-			$newsecondnum = preg_replace('/[a-zA-Z]+/', '', $newsecond);
+			$newsecondnum = (int) preg_replace('/[a-zA-Z]+/', '', $newsecond);
 			$newsecond = sprintf("%s%02d", $newsecondchar ? $newsecondchar : 'A', $newsecondnum + 1);
 		}
 
@@ -210,11 +211,12 @@ if ($action == 'switch') {
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("Boxes"));
+llxHeader('', $langs->trans("Boxes"), '', '', 0, 0, '', '', '', 'mod-admin page-boxes');
 
 print load_fiche_titre($langs->trans("Boxes"), '', 'title_setup');
 
 print '<span class="opacitymedium">'.$langs->trans("BoxesDesc")." ".$langs->trans("OnlyActiveElementsAreShown")."</span><br>\n";
+print '<br>';
 
 /*
  * Search for the default active boxes for each possible position
@@ -402,7 +404,7 @@ foreach ($boxactivated as $key => $box) {
 	$langs->load("errors");
 	print '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($box->note == '(WarningUsingThisBoxSlowDown)' ? $langs->trans("WarningUsingThisBoxSlowDown") : $box->note).'">';
 	if ($box->note == '(WarningUsingThisBoxSlowDown)') {
-		print img_warning('', 0).' '.$langs->trans("WarningUsingThisBoxSlowDown");
+		print img_warning('', '').' '.$langs->trans("WarningUsingThisBoxSlowDown");
 	} else {
 		print($box->note ? $box->note : '&nbsp;');
 	}
@@ -446,15 +448,6 @@ print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td class="liste_titre">'.$langs->trans("Parameter").'</td>';
 print '<td class="liste_titre">'.$langs->trans("Value").'</td>';
-print '</tr>';
-
-print '<tr class="oddeven">';
-print '<td>';
-print $langs->trans("MaxNbOfLinesForBoxes");
-print '</td>'."\n";
-print '<td>';
-print '<input type="text" class="flat" size="6" name="MAIN_BOXES_MAXLINES" value="'.(getDolGlobalString('MAIN_BOXES_MAXLINES')).'">';
-print '</td>';
 print '</tr>';
 
 // Activate FileCache (so content of file boxes are stored into a cache file int boxes/temp for 3600 seconds)

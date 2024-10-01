@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2005      Patrick Rouillon     <patrick@rouillon.net>
- * Copyright (C) 2005-2018 Destailleur Laurent  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
- * Copyright (C) 2023      Christian Foellmann  <christian@foellmann.de>
+/* Copyright (C) 2005		Patrick Rouillon			<patrick@rouillon.net>
+ * Copyright (C) 2005-2018	Destailleur Laurent			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2017		Ferran Marcet				<fmarcet@2byte.es>
+ * Copyright (C) 2023		Christian Foellmann			<christian@foellmann.de>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class
 // Load translation files required by the page
 $langs->loadLangs(array("propal", "supplier_proposal", "facture", "orders", "sendings", "companies"));
 
-$id		= GETPOST('id', 'int');
+$id		= GETPOSTINT('id');
 $ref	= GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
@@ -46,13 +47,14 @@ $action = GETPOST('action', 'aZ09');
 if ($user->socid) {
 	$socid = $user->socid;
 }
+
+$hookmanager->initHooks(array('supplier_proposalcontactcard', 'globalcard'));
+
 $result = restrictedArea($user, 'supplier_proposal', $id, 'supplier_proposal', '');
 
 $object = new SupplierProposal($db);
 
 $permissiontoedit = $user->hasRight('supplier_proposal', 'creer');
-
-$hookmanager->initHooks(array('supplier_proposalcontactcard', 'globalcard'));
 
 
 /*
@@ -92,14 +94,14 @@ if (empty($reshook)) {
 	} elseif ($action == 'swapstatut' && $permissiontoedit) {
 		// Toggle the status of a contact
 		if ($object->fetch($id)) {
-			$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
+			$result = $object->swapContactStatus(GETPOSTINT('ligne'));
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'deletecontact' && $permissiontoedit) {
 		// Deleting a contact
 		$object->fetch($id);
-		$result = $object->delete_contact(GETPOST("lineid", 'int'));
+		$result = $object->delete_contact(GETPOSTINT("lineid"));
 
 		if ($result >= 0) {
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
@@ -122,7 +124,7 @@ $userstatic = new User($db);
 
 /* *************************************************************************** */
 /*                                                                             */
-/* Mode vue et edition                                                         */
+/* Card view and edit mode                                                     */
 /*                                                                             */
 /* *************************************************************************** */
 
@@ -134,7 +136,8 @@ if ($id > 0 || !empty($ref)) {
 
 		$title = $object->ref." - ".$langs->trans('ContactsAddresses');
 		$help_url = 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
-		llxHeader('', $title, $help_url);
+
+		llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-supplierproposal page-card_contact');
 
 		$head = supplier_proposal_prepare_head($object);
 		print dol_get_fiche_head($head, 'contact', $langs->trans("CommRequest"), -1, 'supplier_proposal');

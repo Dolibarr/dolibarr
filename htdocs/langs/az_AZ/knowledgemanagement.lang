@@ -4,37 +4,24 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see .
 
-#
 # Generic
-#
-
 # Module label 'ModuleKnowledgeManagementName'
 ModuleKnowledgeManagementName = Bilik İdarəetmə Sistemi
 # Module description 'ModuleKnowledgeManagementDesc'
 ModuleKnowledgeManagementDesc=Bilik İdarəetmə (KM) və ya Yardım Masası bazasını idarə edin
-
-#
 # Admin page
-#
 KnowledgeManagementSetup = Bilik İdarəetmə Sisteminin qurulması
 KnowledgeManagementSetupPage = Bilik İdarəetmə Sistemi quraşdırma səhifəsi
-
-
-#
 # About page
-#
 KnowledgeManagementAbout = Biliklərin idarə edilməsi haqqında
 KnowledgeManagementAboutPage = Səhifə haqqında biliklərin idarə edilməsi
-
 KnowledgeManagementArea = Bilik İdarəetmə
 MenuKnowledgeRecord = Bilik bazası
 MenuKnowledgeRecordShort = Bilik bazası
@@ -46,8 +33,7 @@ KnowledgeRecord = Məqalə
 KnowledgeRecordExtraFields = Məqalə üçün əlavə sahələr
 GroupOfTicket=Biletlər qrupu
 YouCanLinkArticleToATicketCategory=Məqaləni bilet qrupuna bağlaya bilərsiniz (beləliklə, məqalə bu qrupdakı istənilən biletlərdə vurğulanacaq)
-SuggestedForTicketsInGroup=Biletin yaradılması təklif olunur
-
+SuggestedForTicketsInGroup=Suggested on tickets creation
 SetObsolete=Köhnəlmiş kimi təyin edin
 ConfirmCloseKM=Bu məqalənin köhnəldiyini təsdiqləyirsinizmi?
 ConfirmReopenKM=Bu məqaləni "Təsdiqlənmiş" statusuna qaytarmaq istəyirsiniz?

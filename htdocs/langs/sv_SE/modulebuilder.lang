@@ -27,7 +27,7 @@ ModuleBuilderDeschooks=Den här fliken är avsedd för krokar.
 ModuleBuilderDescwidgets=Den här fliken är avsedd att hantera / bygga widgets.
 ModuleBuilderDescbuildpackage=Du kan generera här en "färdig att distribuera" paketfil (en normaliserad .zip-fil) av din modul och en "färdig att distribuera" dokumentationsfil. Klicka bara på knappen för att bygga paketet eller dokumentationsfilen.
 EnterNameOfModuleToDeleteDesc=Du kan radera din modul. VARNING: Alla kodningsfiler för modulen (genereras eller skapas manuellt) OCH strukturerad data och dokumentation raderas!
-EnterNameOfObjectToDeleteDesc=You can delete an object. WARNING: All coding files (generated or created manually) related to the object will be deleted!
+EnterNameOfObjectToDeleteDesc=Du kan ta bort ett objekt. VARNING: Alla kodningsfiler (genererade eller skapade manuellt) relaterade till objektet kommer att raderas!
 DangerZone=Farozon
 BuildPackage=Bygg paketet
 BuildPackageDesc=Du kan skapa ett zip-paket av din applikation så att du är redo att distribuera den på valfri Dolibarr. Du kan också distribuera den eller sälja den på marknadsplatsen som <a href="https://www.dolistore.com"> DoliStore.com </a>.
@@ -148,7 +148,7 @@ CSSListClass=CSS för lista
 NotEditable=Ej redigerbar
 ForeignKey=Främmande nyckel
 ForeignKeyDesc=Om värdet på detta fält måste garanteras existera i en annan tabell. Ange här ett värde som matchar syntaxen: tablename.parentfieldtocheck
-TypeOfFieldsHelp=Exempel:<br>varchar(99)<br>e-post<br>telefon<br>ip<br>url<br>lösenordbzcc</031492 span>double(24,8)<span class='notranslate'><br>real<br>text<br>html <br>date<br>datetime<br>tidsstämpel <br>integer<br>integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]b0342fccfda19b /span><span class='notranslate'><br>'1' betyder att vi lägger till en +-knapp efter kombinationen för att skapa posten<br>'filter' är ett Syntaxvillkor för universellt filter, exempel: '((status:=:1) AND (fk_user:=:__USER_ID__) AND (entity:IN:(__SHARED_ENTITIES__))'
+TypeOfFieldsHelp=Example:<br>varchar(99)<br>email<br>phone<br>ip<br>url<br>password<br>double(24,8)<br>real<br>text<br>html<br>date<br>datetime<br>timestamp<br>integer<br>integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br><br>'1' means we add a + button after the combo to create the record<br>'filter' is an Universal Filter syntax condition, example: '((status:=:1) AND (fk_user:=:__USER_ID__) AND (entity:IN:(__SHARED_ENTITIES__))'
 TypeOfFieldsHelpIntro=Detta är typen av fält/attribut.
 AsciiToHtmlConverter=Ascii till HTML-omvandlare
 AsciiToPdfConverter=Ascii till PDF-omvandlare
@@ -173,6 +173,7 @@ PermissionAddedSuccesfuly=Behörighet har lagts till
 MenuDeletedSuccessfuly=Menyn har raderats
 MenuAddedSuccessfuly=Menyn har lagts till
 MenuUpdatedSuccessfuly=Menyn har uppdaterats
+AddAPIsForThisObject=Add APIs for this object
 ApiObjectDeleted=API för objekt %s har tagits bort
 CRUDRead=Läsa
 CRUDCreateWrite=Skapa eller uppdatera
@@ -180,9 +181,9 @@ FailedToAddCodeIntoDescriptor=Det gick inte att lägga till kod i beskrivningen.
 DictionariesCreated=Ordbok <b>%s</b> skapad framgångsrikt
 DictionaryDeleted=Ordbok <b>%s</b> har tagits bort framgångsrikt
 PropertyModuleUpdated=Egendomen <b>%s</b> har uppdaterats framgångsrikt
-InfoForApiFile=* När du genererar fil för första gången kommer alla metoder att skapas <strong>för varje objekt.</strong><br>* När du klickar i <strong>remove</strong> tar du bara bort alla klassmetoder för <span> ='notranslate'><strong></span>valt objekt</strong>.
+InfoForApiFile=* When you generate file for the first time then all methods will be created <strong>for each object.</strong><br>* When you click in <strong>remove</strong> you just remove all methods for the <strong>selected object</strong>.
 SetupFile=Sida för modulinställning
-EmailingSelectors=Emails selectors
-EmailingSelectorDesc=You can generate and edit here the class files to provide new email target selectors for the mass emailing module
-EmailingSelectorFile=Emails selector file
-NoEmailingSelector=No emails selector file
+EmailingSelectors=E-postväljare
+EmailingSelectorDesc=Du kan generera och redigera klassfilerna här för att tillhandahålla nya e-postmålväljare för masse-postmodulen
+EmailingSelectorFile=E-postväljarfil
+NoEmailingSelector=Ingen e-postväljarfil

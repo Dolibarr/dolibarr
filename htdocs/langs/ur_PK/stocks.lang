@@ -100,7 +100,8 @@ VirtualStock=ورچوئل اسٹاک
 VirtualStockAtDate=مستقبل کی تاریخ پر ورچوئل اسٹاک
 VirtualStockAtDateDesc=ورچوئل اسٹاک ایک بار تمام زیر التواء آرڈرز جن پر عمل درآمد کی منصوبہ بندی کی گئی ہے منتخب تاریخ سے پہلے ختم ہو جائے گی۔
 VirtualStockDesc=ورچوئل اسٹاک وہ اسٹاک ہے جو تمام کھلی/ زیر التواء کارروائیوں (جو اسٹاک کو متاثر کرتا ہے) انجام دینے کے بعد باقی رہے گا (خریداری کے آرڈر موصول ہوئے، سیلز آرڈر بھیجے گئے، مینوفیکچرنگ آرڈرز تیار کیے گئے، وغیرہ)
-AtDate=تاریخ میں
+QtyAtDate=Quantity in stock at date
+MovementsSinceDate=Movements since the date
 IdWarehouse=آئی ڈی گودام
 DescWareHouse=تفصیل گودام
 LieuWareHouse=لوکلائزیشن گودام
@@ -245,7 +246,7 @@ AlwaysShowFullArbo=گودام کے لنکس کے پاپ اپ پر گودام (و
 StockAtDatePastDesc=آپ یہاں ماضی میں دی گئی تاریخ پر اسٹاک (اصلی اسٹاک) دیکھ سکتے ہیں۔
 StockAtDateFutureDesc=آپ یہاں مستقبل میں دی گئی تاریخ پر اسٹاک (ورچوئل اسٹاک) دیکھ سکتے ہیں۔
 CurrentStock=موجودہ اسٹاک
-InventoryRealQtyHelp=qty <br> کو ری سیٹ کرنے کے لیے قدر کو 0 پر سیٹ کریں فیلڈ کو خالی رکھیں یا لائن کو ہٹا دیں، کوئی تبدیلی نہیں
+InventoryRealQtyHelp=The quantity you found in stock when making the inventory. Set value to 0 to reset qty<br>Keep field empty, or remove line, to keep unchanged
 UpdateByScaning=اسکین کرکے اصلی مقدار کو مکمل کریں۔
 UpdateByScaningProductBarcode=اسکین کے ذریعے اپ ڈیٹ کریں (پروڈکٹ بارکوڈ)
 UpdateByScaningLot=اسکین کے ذریعے اپ ڈیٹ کریں (لاٹ | سیریل بارکوڈ)
@@ -255,7 +256,6 @@ ChooseFileToImport=فائل اپ لوڈ کریں پھر %s آئیکن پر کل�
 SelectAStockMovementFileToImport=درآمد کرنے کے لیے اسٹاک موومنٹ فائل منتخب کریں۔
 InfoTemplateImport=اپ لوڈ کردہ فائل میں یہ فارمیٹ ہونا ضروری ہے (* لازمی فیلڈز ہیں): <br> Source Warehouse* | ہدف گودام* | پروڈکٹ* | مقدار* | لاٹ/سیریل نمبر <br> CSV کریکٹر الگ کرنے والا "<b> %s </b>" ہونا چاہیے
 LabelOfInventoryMovemement=انوینٹری %s
-ReOpen=دوبارہ کھولیں۔
 ConfirmFinish=کیا آپ انوینٹری کے بند ہونے کی تصدیق کرتے ہیں؟ یہ آپ کے اسٹاک کو آپ کی انوینٹری میں داخل کردہ اصلی مقدار میں اپ ڈیٹ کرنے کے لیے تمام اسٹاک کی نقل و حرکت پیدا کرے گا۔
 ObjectNotFound=%s نہیں ملا
 MakeMovementsAndClose=نقل و حرکت پیدا کریں اور بند کریں۔
@@ -278,11 +278,12 @@ QtyWasAddedToTheScannedBarcode=کامیابی !! مقدار کو تمام درخ
 StockChangeDisabled=اسٹاک کی تبدیلی غیر فعال ہے۔
 NoWarehouseDefinedForTerminal=ٹرمینل کے لیے کوئی گودام متعین نہیں ہے۔
 ClearQtys=تمام مقداریں صاف کریں۔
+ProductValuesUsedBecauseNoValuesForThisWarehouse=No value has been defined for this warehouse so we assume it is zero (no need for this product into the warehouse)
 ModuleStockTransferName=اعلی درجے کی اسٹاک کی منتقلی
 ModuleStockTransferDesc=ٹرانسفر شیٹ کی نسل کے ساتھ اسٹاک ٹرانسفر کا جدید انتظام
 StockTransferNew=نیا اسٹاک ٹرانسفر
 StockTransferList=اسٹاک کی منتقلی کی فہرست
-ConfirmValidateStockTransfer=کیا آپ واقعی <b>%s</b><span class='notranslate'> حوالہ کے ساتھ اس اسٹاک کی منتقلی کی توثیق کرنا چاہتے ہیں span>؟
+ConfirmValidateStockTransfer=Are you sure you want to validate this stocks transfer with the reference <b>%s</b> ?
 ConfirmDestock=منتقلی کے ساتھ اسٹاک کی کمی %s
 ConfirmDestockCancel=منتقلی کے ساتھ اسٹاک کی کمی کو منسوخ کریں %s
 DestockAllProduct=اسٹاک کی کمی
@@ -332,3 +333,7 @@ ConfirmDeleteBatch=کیا آپ واقعی لاٹ/سیریل کو حذف کرنا
 WarehouseUsage=گودام کا استعمال
 InternalWarehouse=اندرونی گودام
 ExternalWarehouse=بیرونی گودام
+LatestModifiedWarehouses=Latest %s modified warehouses
+LatestStockMovements=Latest %s stock movements
+QtyCurrentlyKnownInStock=System estimated quantity you have in stock. As long as the inventory is not closed, this is a realtime value and it may change if you continue to make stock movement during the inventory (not recommended).
+QtyInStockWhenInventoryWasValidated=System estimated quantity you had in stock when the inventory was validated (before the stock correction)

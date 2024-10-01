@@ -2,6 +2,7 @@
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,7 +78,7 @@ class modExternalSite extends DolibarrModules
 		// Example: $this->const=array(0=>array('MYMODULE_MYNEWCONST1','chaine','myvalue','This is a constant to add',1),
 		//                             1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0)
 		// );
-		$this->const = array(0=>array('EXTERNALSITE_LABEL', 'chaine', 'ExternalSite', 'To declare label to use into external site menu entry', 0));
+		$this->const = array(0 => array('EXTERNALSITE_LABEL', 'chaine', 'ExternalSite', 'To declare label to use into external site menu entry', 0));
 
 		// Boxes
 		$this->boxes = array(); // List of boxes
@@ -94,23 +95,27 @@ class modExternalSite extends DolibarrModules
 		$this->rights_class = 'externalsite'; // Permission key
 		$this->rights = array(); // Permission array used by this module
 
+		$this->module_parts = array(
+			'moduleforexternal' => 1 // allow access to external users
+		);
+
 		// Menus
 		//------
 		$r = 0;
 
 		$this->menu[$r] = array(
-			'fk_menu'=>0,
-			'type'=>'top',
-			'titre'=>'__[EXTERNALSITE_LABEL]__',
+			'fk_menu' => 0,
+			'type' => 'top',
+			'titre' => '__[EXTERNALSITE_LABEL]__',
 			'prefix' => img_picto('', $this->picto, 'class="pictofixedwidth em092"'),
-			'mainmenu'=>'externalsite',
-			'url'=>'/externalsite/frames.php',
-			'langs'=>'other',
-			'position'=>100,
-			'perms'=>'',
-			'enabled'=>'$conf->externalsite->enabled',
-			'target'=>'',
-			'user'=>0
+			'mainmenu' => 'externalsite',
+			'url' => '/externalsite/frames.php',
+			'langs' => 'other',
+			'position' => 100,
+			'perms' => '',
+			'enabled' => '$conf->externalsite->enabled',
+			'target' => '',
+			'user' => 2
 		);
 		$r++;
 	}

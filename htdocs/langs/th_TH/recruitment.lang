@@ -4,38 +4,25 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
 ModuleRecruitmentName = รับสมัคร
 # Module description 'ModuleRecruitmentDesc'
 ModuleRecruitmentDesc = จัดการและติดตามการรณรงค์จัดหางานในตำแหน่งงานใหม่
-
-#
 # Admin page
-#
 RecruitmentSetup = การตั้งค่าการสรรหาบุคลากร
 RecruitmentSetupPage = ป้อนการตั้งค่าตัวเลือกหลักสำหรับโมดูลการสรรหาบุคลากรที่นี่
 RecruitmentArea=พื้นที่รับสมัคร
 PublicInterfaceRecruitmentDesc=หน้าสาธารณะของงานคือ URL สาธารณะที่จะแสดงและตอบงานที่เปิดอยู่ มีลิงค์ที่แตกต่างกันหนึ่งลิงค์สำหรับงานที่เปิดอยู่แต่ละงาน ซึ่งพบได้ในแต่ละเรกคอร์ดงาน
 EnablePublicRecruitmentPages=เปิดใช้งานหน้าสาธารณะของงานที่เปิดอยู่
 
-#
-# About page
-#
-RecruitmentAbout = เกี่ยวกับการสรรหาบุคลากร
-RecruitmentAboutPage = รับสมัครเกี่ยวกับเพจ
 NbOfEmployeesExpected=คาดว่าจะมีพนักงานจำนวนไม่มาก
 JobLabel=ป้ายตำแหน่งงาน
 WorkPlace=สถานที่ทำงาน
@@ -47,7 +34,6 @@ PositionToBeFilled=ตำแหน่ง
 PositionsToBeFilled=ตำแหน่งงาน
 ListOfPositionsToBeFilled=รายชื่อตำแหน่งงาน
 NewPositionToBeFilled=ตำแหน่งงานใหม่
-
 JobOfferToBeFilled=ตำแหน่งงานที่ต้องการเติมเต็ม
 ThisIsInformationOnJobPosition=ข้อมูลตำแหน่งงานที่ต้องการกรอก
 ContactForRecruitment=ติดต่อสมัครงาน
@@ -77,4 +63,4 @@ WeAreRecruiting=เรากำลังรับสมัครงาน. น�
 NoPositionOpen=ไม่มีตำแหน่งที่เปิดอยู่ในขณะนี้
 ConfirmClose=ยืนยันการยกเลิก
 ConfirmCloseAsk=คุณแน่ใจหรือไม่ว่าต้องการยกเลิกผู้สมัครรับสมัครงานรายนี้
-recruitment=Recruitment
+Recruitment=Recruitment

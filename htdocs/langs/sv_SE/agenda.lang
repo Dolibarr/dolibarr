@@ -21,7 +21,6 @@ MenuDoneMyActions=Min avslutade händelser
 ListOfEvents=Händelselista (standardkalender)
 ActionsAskedBy=Händelser rapporterade av
 ActionsToDoBy=Händelser tilldelade
-ActionsDoneBy=Händelser utförda av
 ActionAssignedTo=Händelse tilldelad
 ViewCal=Månadsvy
 ViewDay=Dagsvy
@@ -88,7 +87,7 @@ ShippingValidated= Leverans %s bekräftad
 InterventionSentByEMail=Intervention %s skickades via e-post
 ProjectSentByEMail=Projekt %s skickades via e-post
 ProjectDeletedInDolibarr=Projekt %s raderad
-ProjectClosedInDolibarr=Project %s closed
+ProjectClosedInDolibarr=Projekt %s stängt
 ProposalDeleted=Offert raderad
 OrderDeleted=Order raderad
 InvoiceDeleted=Faktura raderad
@@ -135,12 +134,14 @@ AgendaModelModule=Dokumentmallar för händelser
 DateActionStart=Startdatum
 DateActionEnd=Slutdatum
 AgendaUrlOptions1=Du kan också lägga till följande parametrar för att filtrera:
-AgendaUrlOptions3=<b>Logina =%s</b> ​​att begränsa till åtgärder som ägs av en användare<b>%s</b>.
-AgendaUrlOptionsNotAdmin=<b> logina =! %s </b> för att begränsa till åtgärder som inte ägs av användare <b> %s </b>.
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
 AgendaUrlOptions4=<b>logint=</b> för att begränsa till åtgärder som tilldelats användare <b>%s</b> (ägare och andra)
 AgendaUrlOptionsProject=<b> project = __ PROJECT_ID__ </b> för att begränsa till åtgärder länkade till projekt <b> __PROJECT_ID__ </b>.
-AgendaUrlOptionsNotAutoEvent=<b> notactiontype = systemauto </b> för att utesluta automatiska händelser.
+AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
+AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> för att inkludera helgdagar
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
 AgendaShowBirthdayEvents=Kontakters födelsedagar
 AgendaHideBirthdayEvents=Dölj kontakters födelsedagar
 Busy=Upptagen
@@ -201,4 +202,6 @@ AppointmentDuration = Utnämningslängd : %s
 BookingSuccessfullyBooked=Din bokning har sparats
 BookingReservationHourAfter=Vi bekräftar bokningen av vårt möte vid datumet %s
 BookcalBookingTitle=Onlinebokning
-Transparency = Transparency
+Transparency = Genomskinlighet
+ReadMore = Read more
+ReadLess = Read less

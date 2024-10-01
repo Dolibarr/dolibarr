@@ -67,7 +67,7 @@ function get_avatar_from_service(service, userid, size) {
 	// implemented services: google profiles, facebook, gravatar, twitter, tumblr, default fallback
 	// for google   use get_avatar_from_service('google', profile-name or user-id , size-in-px )
 	// for facebook use get_avatar_from_service('facebook', vanity url or user-id , size-in-px or size-as-word )
-	// for gravatar use get_avatar_from_service('gravatar', md5 hash email@adress, size-in-px )
+	// for gravatar use get_avatar_from_service('gravatar', md5 hash email@address, size-in-px )
 	// for twitter  use get_avatar_from_service('twitter', username, size-in-px or size-as-word )
 	// for tumblr   use get_avatar_from_service('tumblr', blog-url, size-in-px )
 	// everything else will go to the fallback

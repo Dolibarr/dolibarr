@@ -4,18 +4,14 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 NewAsset=Tài sản mới
 AccountancyCodeAsset=Mã kế toán (tài sản)
 AccountancyCodeDepreciationAsset=Mã kế toán (tài khoản khấu hao tài sản)
@@ -25,50 +21,34 @@ DeleteType=Xóa
 DeleteAnAssetType=Xóa một mô hình tài sản
 ConfirmDeleteAssetType=Bạn có chắc muốn xóa mô hình tài sản này?
 ShowTypeCard=Hiển thị mô hình '%s'
-
 # Module label 'ModuleAssetsName'
 ModuleAssetsName=Tài sản
 # Module description 'ModuleAssetsDesc'
 ModuleAssetsDesc=Mô tả tài sản
-
-#
 # Admin page
-#
 AssetSetup=Thiết lập tài sản
 AssetSetupPage=Trang thiết lập tài sản
 ExtraFieldsAssetModel=Thuộc tính bổ sung (Mô hình tài sản)
-
 AssetsType=Mô hình tài sản
 AssetsTypeId=ID mô hình tài sản
 AssetsTypeLabel=Nhãn mô hình nội dung
 AssetsTypes=Mô hình tài sản
 ASSET_ACCOUNTANCY_CATEGORY=Nhóm kế toán tài sản cố định
-
-#
+ASSET_DEPRECIATION_DURATION_PER_YEAR=Proportional period in days for calculating amortization over one year
 # Menu
-#
 MenuAssets=Tài sản
 MenuNewAsset=Tài sản mới
 MenuAssetModels=Nội dung mô hình
 MenuListAssets=Danh sách
 MenuNewAssetModel=Mô hình tài sản mới
 MenuListAssetModels=Danh sách
-
-#
 # Module
-#
 ConfirmDeleteAsset=Bạn có thực sự muốn xóa nội dung này không?
-
-#
 # Tab
-#
 AssetDepreciationOptions=Tùy chọn khấu hao
 AssetAccountancyCodes=Tài khoản kế toán
 AssetDepreciation=Khấu hao
-
-#
 # Asset
-#
 Asset=Tài sản
 Assets=Tài sản
 AssetReversalAmountHT=Số tiền hoàn lại (không có thuế)
@@ -86,35 +66,23 @@ AssetTypeTangible=Hữu hình
 AssetTypeInProgress=Trong tiến trình xử lý
 AssetTypeFinancial=Tài chính
 AssetNotDepreciated=Không khấu hao
-AssetDisposal=Xử lý
+AssetDisposal=Thanh lý
 AssetConfirmDisposalAsk=Bạn có chắc chắn muốn thanh lý nội dung <b> %s</b> không?
 AssetConfirmReOpenAsk=Bạn có chắc chắn muốn mở lại nội dung <b> %s</b> không?
-
-#
 # Asset status
-#
 AssetInProgress=Trong tiến trình xử lý
 AssetDisposed=xử lý
 AssetRecorded=Đã hạch toán
-
-#
 # Asset disposal
-#
 AssetDisposalDate=Ngày xử lý
 AssetDisposalAmount=Giá trị thải bỏ
 AssetDisposalType=Loại xử lý
 AssetDisposalDepreciated=Khấu hao năm chuyển nhượng
 AssetDisposalSubjectToVat=Việc thải bỏ phải chịu thuế VAT
-
-#
 # Asset model
-#
 AssetModel=Mô hình tài sản
 AssetModels=Mô hình tài sản
-
-#
 # Asset depreciation options
-#
 AssetDepreciationOptionEconomic=Khấu hao kinh tế
 AssetDepreciationOptionAcceleratedDepreciation=Khấu hao nhanh (thuế)
 AssetDepreciationOptionDepreciationType=Loại khấu hao
@@ -122,7 +90,6 @@ AssetDepreciationOptionDepreciationTypeLinear=tuyến tính
 AssetDepreciationOptionDepreciationTypeDegressive=thoái hóa
 AssetDepreciationOptionDepreciationTypeExceptional=Đặc biệt
 AssetDepreciationOptionDegressiveRate=Tỷ lệ giảm dần
-AssetDepreciationOptionAcceleratedDepreciation=Khấu hao nhanh (thuế)
 AssetDepreciationOptionDuration=Thời hạn
 AssetDepreciationOptionDurationType=Loại thời lượng
 AssetDepreciationOptionDurationTypeAnnual=Hàng năm
@@ -132,10 +99,7 @@ AssetDepreciationOptionRate=Tỷ lệ (%%)
 AssetDepreciationOptionAmountBaseDepreciationHT=Căn cứ khấu hao (chưa bao gồm VAT)
 AssetDepreciationOptionAmountBaseDeductibleHT=Căn cứ khấu trừ (chưa bao gồm VAT)
 AssetDepreciationOptionTotalAmountLastDepreciationHT=Tổng số tiền khấu hao gần đây nhất (chưa bao gồm VAT)
-
-#
 # Asset accountancy codes
-#
 AssetAccountancyCodeDepreciationEconomic=Khấu hao kinh tế
 AssetAccountancyCodeAsset=Tài sản
 AssetAccountancyCodeDepreciationAsset=Khấu hao
@@ -149,10 +113,7 @@ AssetAccountancyCodeDepreciationAcceleratedDepreciation=Khấu hao nhanh (thuế
 AssetAccountancyCodeAcceleratedDepreciation=Tài khoản
 AssetAccountancyCodeEndowmentAcceleratedDepreciation=Chi phí khấu hao
 AssetAccountancyCodeProvisionAcceleratedDepreciation=Thu hồi/Cung cấp
-
-#
 # Asset depreciation
-#
 AssetBaseDepreciationHT=Cơ sở khấu hao (chưa bao gồm VAT)
 AssetDepreciationBeginDate=Bắt đầu khấu hao vào
 AssetDepreciationDuration=Thời hạn
@@ -164,10 +125,7 @@ AssetResidualHT=Giá trị còn lại (chưa bao gồm VAT)
 AssetDispatchedInBookkeeping=Khấu hao được ghi nhận
 AssetFutureDepreciationLine=Khấu hao trong tương lai
 AssetDepreciationReversal=Đảo ngược
-
-#
 # Errors
-#
 AssetErrorAssetOrAssetModelIDNotProvide=Id của nội dung hoặc mô hình được tìm thấy chưa được cung cấp
 AssetErrorFetchAccountancyCodesForMode=Lỗi khi truy xuất tài khoản kế toán ở chế độ khấu hao '%s'
 AssetErrorDeleteAccountancyCodesForMode=Lỗi khi xóa tài khoản kế toán khỏi chế độ khấu hao '%s'

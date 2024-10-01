@@ -5,35 +5,27 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 Module56000Name=Biletlər
 Module56000Desc=Emissiya və ya sorğunun idarə edilməsi üçün bilet sistemi
-
 Permission56001=Biletlərə baxın
 Permission56002=Biletləri dəyişdirin
 Permission56003=Biletləri silin
 Permission56004=Biletləri idarə edin
 Permission56005=Bütün üçüncü tərəflərin biletlərinə baxın (xarici istifadəçilər üçün təsirli deyil, həmişə onların asılı olduğu üçüncü tərəflə məhdudlaşın)
 Permission56006=Biletləri ixrac edin
-
 Tickets=Biletlər
 TicketDictType=Bilet - növləri
 TicketDictCategory=Bilet - Qruplar
 TicketDictSeverity=Bilet - Ağırlıqlar
 TicketDictResolution=Bilet - Qətnamə
-
 TicketTypeShortCOM=Kommersiya sualı
 TicketTypeShortHELP=Funksional yardım üçün sorğu
 TicketTypeShortISSUE=Problem və ya səhv
@@ -41,51 +33,39 @@ TicketTypeShortPROBLEM=Problem
 TicketTypeShortREQUEST=Dəyişiklik və ya təkmilləşdirmə tələbi
 TicketTypeShortPROJET=Layihə
 TicketTypeShortOTHER=Digər
-
 TicketSeverityShortLOW=Aşağı
 TicketSeverityShortNORMAL=Normal
 TicketSeverityShortHIGH=Yüksək
 TicketSeverityShortBLOCKING=Kritik, Bloklama
-
 TicketCategoryShortOTHER=Digər
-
 ErrorBadEmailAddress='%s' sahəsi səhvdir
 MenuTicketMyAssign=Biletlərim
 MenuTicketMyAssignNonClosed=Açıq biletlərim
 MenuListNonClosed=Açıq biletlər
-
 TypeContact_ticket_internal_CONTRIBUTOR=Töhfəçi
 TypeContact_ticket_internal_SUPPORTTEC=Təyin edilmiş istifadəçi
 TypeContact_ticket_external_SUPPORTCLI=Müştəri ilə əlaqə / hadisənin izlənməsi
 TypeContact_ticket_external_CONTRIBUTOR=Xarici töhfəçi
-
 OriginEmail=Müxbir E-poçtu
+EmailReplyto=Reply to in Email
+EmailReferences=References in Emails
 Notify_TICKET_SENTBYMAIL=E-poçt ilə bilet mesajı göndərin
-
 ExportDataset_ticket_1=Biletlər
-
 # Status
 Read=Oxuyun
 Assigned=Təyin edilmişdir
 NeedMoreInformation=Jurnalist rəyini gözləyirik
 NeedMoreInformationShort=Əlaqə gözləyirik
-TicketAnswered=Answered
 Waiting=Gözləyirəm
 SolvedClosed=Həll olundu
 Deleted=Silindi
-
 # Dict
-Type=Növ
 Severity=Ciddilik
 TicketGroupIsPublic=Qrup ictimaidir
 TicketGroupIsPublicDesc=Bilet qrupu ictimaidirsə, ictimai interfeysdən bilet yaratarkən o, formada görünəcək
-
 # Email templates
 MailToSendTicketMessage=Bilet mesajından e-poçt göndərmək üçün
-
-#
 # Admin page
-#
 TicketSetup=Bilet modulunun qurulması
 TicketSettings=Parametrlər
 TicketPublicAccess=Heç bir identifikasiya tələb olunmayan ictimai interfeys aşağıdakı url-də mövcuddur
@@ -157,10 +137,7 @@ TicketUseCaptchaCode=Bilet yaradarkən qrafik kodundan (CAPTCHA) istifadə edin
 TicketUseCaptchaCodeHelp=Yeni bilet yaradan zaman CAPTCHA doğrulaması əlavə edir.
 TicketsAllowClassificationModificationIfClosed=Qapalı biletlərin təsnifatını dəyişdirməyə icazə verin
 TicketsAllowClassificationModificationIfClosedHelp=Biletlər bağlı olsa belə təsnifatı (növ, bilet qrupu, ciddilik) dəyişdirməyə icazə verin.
-
-#
 # Index & list page
-#
 TicketsIndex=Bilet sahəsi
 TicketList=Biletlərin siyahısı
 TicketAssignedToMeInfos=Bu səhifə cari istifadəçi tərəfindən yaradılmış və ya ona təyin edilmiş bilet siyahısını göstərir
@@ -175,10 +152,7 @@ ShowAsConversation=Söhbət siyahısı kimi göstərin
 MessageListViewType=Cədvəl siyahısı kimi göstərin
 ConfirmMassTicketClosingSendEmail=Biletləri bağlayarkən avtomatik olaraq e-poçt göndərin
 ConfirmMassTicketClosingSendEmailQuestion=Bu biletləri bağlayarkən üçüncü tərəfləri xəbərdar etmək istəyirsiniz?
-
-#
 # Ticket card
-#
 Ticket=Bilet
 TicketCard=Bilet kartı
 CreateTicket=Bilet yaradın
@@ -278,20 +252,14 @@ TicketsDelayFromLastResponseTooLong=Bu biletdəki son cavabdan çox vaxt keçdi.
 TicketNoContractFoundToLink=Bu biletlə avtomatik əlaqələndirilmiş müqavilə tapılmadı. Müqaviləni əl ilə əlaqələndirin.
 TicketManyContractsLinked=Bir çox müqavilələr avtomatik olaraq bu biletlə əlaqələndirilib. Hansının seçilməli olduğunu yoxlamağa əmin olun.
 TicketRefAlreadyUsed=[%s] arayışı artıq istifadə olunub, yeni istinadınız [%s]
-
-#
 # Logs
-#
 TicketLogMesgReadBy=Bilet %s oxuyub %s
 NoLogForThisTicket=Bu bilet üçün hələ qeyd yoxdur
 TicketLogAssignedTo=%s bileti %s-a təyin edildi
 TicketLogPropertyChanged=Bilet %s dəyişdirildi: təsnifat %s-dan %s-a
 TicketLogClosedBy=Bilet %s %s tərəfindən bağlanıb
 TicketLogReopen=Bilet %s yenidən açılır
-
-#
 # Public pages
-#
 TicketSystem=Bilet sistemi
 ShowListTicketWithTrackId=Trek ID-dən bilet siyahısını göstərin
 ShowTicketWithTrackId=Trek ID-dən bileti göstərin
@@ -306,13 +274,13 @@ TicketNewEmailBodyCustomer=Bu, hesabınızda yeni bilet yaradıldığını təsd
 TicketNewEmailBodyInfosTicket=Biletin monitorinqi üçün məlumat
 TicketNewEmailBodyInfosTrackId=Bilet izləmə nömrəsi: %s
 TicketNewEmailBodyInfosTrackUrl=Biletin gedişatına aşağıdakı linkə daxil olaraq baxa bilərsiniz
-TicketNewEmailBodyInfosTrackUrlCustomer=Aşağıdakı linkə klikləməklə, xüsusi interfeysdə biletin gedişatına baxa bilərsiniz
+TicketNewEmailBodyInfosTrackUrlCustomer=You can view the progress of the ticket in the public ticket portal by clicking the following link
 TicketCloseEmailBodyInfosTrackUrlCustomer=Aşağıdakı linkə daxil olaraq bu biletin tarixçəsi ilə tanış ola bilərsiniz
 TicketEmailPleaseDoNotReplyToThisEmail=Zəhmət olmasa bu e-poçta birbaşa cavab verməyin! İnterfeysdə cavab vermək üçün linkdən istifadə edin.
 TicketPublicInfoCreateTicket=Bu forma sizə idarəetmə sistemimizdə dəstək biletini qeyd etməyə imkan verir.
 TicketPublicPleaseBeAccuratelyDescribe=Zəhmət olmasa sorğunuzu dəqiq təsvir edin. Sorğunuzu düzgün müəyyən etməyimiz üçün mümkün olan ən çox məlumatı təqdim edin.
 TicketPublicMsgViewLogIn=Bilet izləmə ID-ni daxil edin
-TicketTrackId=İctimai İzləmə ID
+TicketTrackId=Tracking ID
 OneOfTicketTrackId=İzləmə ID-nizdən biri
 ErrorTicketNotFound=İzləmə ID %s olan bilet tapılmadı!
 Subject=Mövzu
@@ -320,7 +288,7 @@ ViewTicket=Biletə baxın
 ViewMyTicketList=Bilet siyahıma baxın
 ErrorEmailMustExistToCreateTicket=Xəta: e-poçt ünvanı verilənlər bazamızda tapılmadı
 TicketNewEmailSubjectAdmin=Yeni bilet yaradıldı - Ref %s (ictimai bilet ID %s)
-TicketNewEmailBodyAdmin=<p>Bilet indicə ID #%s ilə yaradılıb, məlumata baxın:<span class='notranslate'>b0679c9a6a6spand430 >
+TicketNewEmailBodyAdmin=<p>Ticket has just been created with ID #%s, see information:</p>
 SeeThisTicketIntomanagementInterface=İdarəetmə interfeysində biletə baxın
 TicketPublicInterfaceForbidden=Biletlər üçün ictimai interfeys aktiv edilmədi
 ErrorEmailOrTrackingInvalid=İzləmə ID və ya e-poçt üçün pis dəyər
@@ -330,7 +298,6 @@ NumberOfTicketsByMonth=Aylıq biletlərin sayı
 NbOfTickets=Biletlərin sayı
 ExternalContributors=Xarici ianəçilər
 AddContributor=Xarici töhfəçi əlavə edin
-
 # notifications
 TicketCloseEmailSubjectCustomer=Bilet bağlandı
 TicketCloseEmailBodyCustomer=Bu, %s biletinin indicə bağlandığını bildirən avtomatik mesajdır.
@@ -342,12 +309,8 @@ TicketNotificationRecipient=Bildiriş alıcısı
 TicketNotificationLogMessage=Giriş mesajı
 TicketNotificationEmailBodyInfosTrackUrlinternal=İnterfeysdə biletə baxın
 TicketNotificationNumberEmailSent=Bildiriş e-poçtu göndərildi: %s
-
 ActionsOnTicket=Biletdəki hadisələr
-
-#
 # Boxes
-#
 BoxLastTicket=Ən son yaradılmış biletlər
 BoxLastTicketDescription=Ən son %s yaradılmış biletlər
 BoxLastTicketContent=

@@ -139,7 +139,7 @@ KeepDefaultValuesDeb=Ви використовували майстер нала
 KeepDefaultValuesMamp=Ви використовували майстер налаштування Dolibarr від DoliMamp, тому запропоновані тут значення вже оптимізовані. Змінюйте їх, тільки якщо знаєте, що робите.
 KeepDefaultValuesProxmox=Ви використовували майстер налаштування Dolibarr з віртуального пристрою Proxmox, тому запропоновані тут значення вже оптимізовані. Змінюйте їх, тільки якщо знаєте, що робите.
 UpgradeExternalModule=Запустіть спеціальний процес оновлення зовнішнього модуля
-SetAtLeastOneOptionAsUrlParameter=Встановіть принаймні один параметр як параметр в URL-адресі. Наприклад: '...repair.php?standard=confirmed'
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL with value 'test' or 'confirmed'. For example:  '...repair.php?standard=confirmed'
 NothingToDelete=Чистити/видаляти нічого
 NothingToDo=Нічого робити
 #########
@@ -211,7 +211,7 @@ YouTryInstallDisabledByFileLock=Програма намагалася самос
 YouTryUpgradeDisabledByMissingFileUnLock=Програма спробувала самостійно оновитися, але процес оновлення наразі заборонено.<br>
 ClickHereToGoToApp=Натисніть тут, щоб перейти до вашої програми
 ClickOnLinkOrRemoveManualy=Якщо оновлення триває, зачекайте. Якщо ні, натисніть на наступне посилання. Якщо ви завжди бачите цю саму сторінку, ви повинні видалити/перейменувати файл install.lock у каталозі документів.
-ClickOnLinkOrCreateUnlockFileManualy=Якщо оновлення триває, зачекайте... Якщо ні, вам потрібно видалити файл install.lock або створити файл upgrade.unlock у каталозі документів Dolibarr.
+ClickOnLinkOrCreateUnlockFileManualy=If an upgrade is in progress, please wait... If not, you must remove the file install.lock (or create a file upgrade.unlock for upgrade) into the Dolibarr documents directory.
 Loaded=Завантажено
 FunctionTest=Функціональний тест
 NodoUpgradeAfterDB=Після оновлення бази даних зовнішні модулі не вимагали дії

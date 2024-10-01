@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
  * Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,11 +32,16 @@
  * @param	array	$fulltree		Array of entries in correct order
  * @param 	string	$key			Key of entry into fulltree to show picto
  * @param	int		$silent			Do not output indent and picto, returns only value
- * @return	integer[]					array(0 or 1 if at least one of this level after, 0 or 1 if at least one of higher level after, nbofdirinsub, nbofdocinsub)
+ * @return	array{0:int,1:int,2:int}	array(0 or 1 if at least one of this level after, 0 or 1 if at least one of higher level after, nbofdirinsub, nbofdocinsub)
  */
 function tree_showpad(&$fulltree, $key, $silent = 0)
 {
 	$pos = 1;
+
+	// Initialise in case no items to loop on.
+	$atleastoneofthislevelafter = 0;
+	$nbofdirinsub = 0;
+	$nbofdocinsub = 0;
 
 	// Loop on each pos, because we will output an img for each pos
 	while ($pos <= $fulltree[$key]['level'] && $fulltree[$key]['level'] > 0) {
@@ -106,7 +112,7 @@ function tree_showpad(&$fulltree, $key, $silent = 0)
  *  @param  array   $pere   					Array with parent ids ('rowid'=>,'mainmenu'=>,'leftmenu'=>,'fk_mainmenu'=>,'fk_leftmenu'=>)
  *  @param  int	    $rang   					Level of element
  *  @param	string	$iddivjstree				Id to use for parent ul element
- *  @param  int     $donoresetalreadyloaded     Do not reset global array $donoresetalreadyloaded used to avoid to go down on an aleady processed record
+ *  @param  int     $donoresetalreadyloaded     Do not reset global array $donoresetalreadyloaded used to avoid to go down on an already processed record
  *  @param  int     $showfk         			1=show fk_links to parent into label  (used by menu editor only)
  *  @param	string	$moreparam					Add more param on url of elements
  *  @return	void

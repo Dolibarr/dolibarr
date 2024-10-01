@@ -1,0 +1,3 @@
+# Dolibarr language file - Source file is en_US - cashdesk
+NoVAT=Pas de TPS pour cette vente
+TicketVatGrouped=Grouper la TPS par taux sur les tickets / reçus

@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Antoine Iauch           <aiauch@gpcsolutions.fr>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,21 +34,21 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 // Load translation files required by the page
 $langs->load("accountancy");
 
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 
 // Security check
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
+$hookmanager->initHooks(['cabyuserreportlist']);
 if (isModEnabled('comptabilite')) {
 	$result = restrictedArea($user, 'compta', '', '', 'resultat');
 }
 if (isModEnabled('accounting')) {
 	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
 }
-$hookmanager->initHooks(['cabyuserreportlist']);
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
-$modecompta = $conf->global->ACCOUNTING_MODE;
+$modecompta = getDolGlobalString('ACCOUNTING_MODE');
 if (GETPOST("modecompta")) {
 	$modecompta = GETPOST("modecompta");
 }
@@ -63,14 +63,14 @@ if (!$sortfield) {
 }
 
 // Date range
-$year = GETPOST("year", 'int');
-$month = GETPOST("month", 'int');
-$date_startyear = GETPOST("date_startyear", 'int');
-$date_startmonth = GETPOST("date_startmonth", 'int');
-$date_startday = GETPOST("date_startday", 'int');
-$date_endyear = GETPOST("date_endyear", 'int');
-$date_endmonth = GETPOST("date_endmonth", 'int');
-$date_endday = GETPOST("date_endday", 'int');
+$year = GETPOSTINT("year");
+$month = GETPOSTINT("month");
+$date_startyear = GETPOSTINT("date_startyear");
+$date_startmonth = GETPOSTINT("date_startmonth");
+$date_startday = GETPOSTINT("date_startday");
+$date_endyear = GETPOSTINT("date_endyear");
+$date_endmonth = GETPOSTINT("date_endmonth");
+$date_endday = GETPOSTINT("date_endday");
 if (empty($year)) {
 	$year_current = dol_print_date(dol_now(), '%Y');
 	$month_current = dol_print_date(dol_now(), '%m');
@@ -166,7 +166,7 @@ $allparams = array_merge($commonparams, $headerparams, $tableparams);
 $headerparams = array_merge($commonparams, $headerparams);
 $tableparams = array_merge($commonparams, $tableparams);
 
-$paramslink="";
+$paramslink = "";
 foreach ($allparams as $key => $value) {
 	$paramslink .= '&'.$key.'='.$value;
 }
@@ -187,8 +187,8 @@ if ($modecompta == "BOOKKEEPINGCOLLECTED") {
 	$modecompta = "RECETTES-DEPENSES";
 }
 
-$exportlink="";
-$namelink="";
+$exportlink = "";
+$namelink = "";
 
 // Show report header
 if ($modecompta == "CREANCES-DETTES") {
@@ -205,7 +205,7 @@ if ($modecompta == "CREANCES-DETTES") {
 	//$exportlink=$langs->trans("NotYetAvailable");
 } elseif ($modecompta == "RECETTES-DEPENSES") {
 	$name = $langs->trans("TurnoverCollected").', '.$langs->trans("ByUserAuthorOfInvoice");
-	$calcmode = $langs->trans("CalcModeEngagement");
+	$calcmode = $langs->trans("CalcModePayment");
 	//$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
 	$description = $langs->trans("RulesCAIn");
 	$description .= $langs->trans("DepositsAreIncluded");
@@ -233,7 +233,7 @@ if (!empty($modecompta)) {
 report_header($name, $namelink, $period, $periodlink, $description, $builddate, $exportlink, $moreparam, $calcmode);
 
 if (isModEnabled('accounting') && $modecompta != 'BOOKKEEPING') {
-	print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
+	print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, '1');
 }
 
 
@@ -288,6 +288,7 @@ $sql .= " GROUP BY u.rowid, u.lastname, u.firstname";
 $sql .= " ORDER BY u.rowid";
 
 $amount = array();
+$amount_ht = array();
 
 dol_syslog("cabyuser", LOG_DEBUG);
 $result = $db->query($sql);
@@ -503,10 +504,10 @@ if (count($amount)) {
 		if (isModEnabled("propal") && $key > 0) {
 			print '&nbsp;<a href="'.DOL_URL_ROOT.'/comm/propal/stats/index.php?userid='.$key.'">'.img_picto($langs->trans("ProposalStats"), "stats").'</a>&nbsp;';
 		}
-		if (isModEnabled('commande') && $key > 0) {
+		if (isModEnabled('order') && $key > 0) {
 			print '&nbsp;<a href="'.DOL_URL_ROOT.'/commande/stats/index.php?userid='.$key.'">'.img_picto($langs->trans("OrderStats"), "stats").'</a>&nbsp;';
 		}
-		if (isModEnabled('facture') && $key > 0) {
+		if (isModEnabled('invoice') && $key > 0) {
 			print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/facture/stats/index.php?userid='.$key.'">'.img_picto($langs->trans("InvoiceStats"), "stats").'</a>&nbsp;';
 		}
 		print '</td>';

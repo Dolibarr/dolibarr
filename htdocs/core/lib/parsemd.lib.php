@@ -26,7 +26,7 @@
  *
  * @param	string	  $content			    MD content
  * @param   string    $parser               'parsedown' or 'nl2br'
- * @param   string    $replaceimagepath     Replace path to image with another path. Exemple: ('doc/'=>'xxx/aaa/')
+ * @param   string    $replaceimagepath     Replace path to image with another path. Example: ('doc/'=>'xxx/aaa/')
  * @return	string                          Parsed content
  */
 function dolMd2Html($content, $parser = 'parsedown', $replaceimagepath = null)
@@ -36,7 +36,7 @@ function dolMd2Html($content, $parser = 'parsedown', $replaceimagepath = null)
 	//$content = preg_replace('/<a href="([^"]+)" target="([^"]+)">([^<]+)<\/a>/', '[\3](\1){:target="\2"}', $content);
 	$content = preg_replace('/<a href="([^"]+)" target="([^"]+)">([^<]+)<\/a>/', '[\3](\1)', $content);
 
-	// Replace HTML coments
+	// Replace HTML comments
 	$content = preg_replace('/<!--.*-->/Ums', '', $content);	// We remove HTML comment that are not MD comment because they will be escaped and output when setSafeMode is set to true.
 
 	if (is_array($replaceimagepath)) {
@@ -50,7 +50,15 @@ function dolMd2Html($content, $parser = 'parsedown', $replaceimagepath = null)
 		include_once DOL_DOCUMENT_ROOT.'/includes/parsedown/Parsedown.php';
 		$parsedown = new Parsedown();
 		$parsedown->setSafeMode(true);		// This will escape HTML link <a href=""> into html entities but markdown links are ok
+
+		// Because HTML will be HTML entity encoded, we replace tag we want to keep
+		$content = preg_replace('/<span style="([^"]+)">/', '<!-- SPAN_STYLE_\1 -->', $content);
+		$content = preg_replace('/<\/span>/', '<!-- SPAN_END -->', $content);
+
 		$content = $parsedown->text($content);
+
+		$content = preg_replace('/&lt;!-- SPAN_STYLE_([^-]+) --&gt;/', '<span style="\1">', $content);
+		$content = preg_replace('/&lt;!-- SPAN_END --&gt;/', '</span>', $content);
 	} else {
 		$content = nl2br($content);
 	}
@@ -64,7 +72,7 @@ function dolMd2Html($content, $parser = 'parsedown', $replaceimagepath = null)
  *
  * @param	string	  $content			    MD content
  * @param   string    $parser               'dolibarr'
- * @param   string    $replaceimagepath     Replace path to image with another path. Exemple: ('doc/'=>'xxx/aaa/')
+ * @param   string    $replaceimagepath     Replace path to image with another path. Example: ('doc/'=>'xxx/aaa/')
  * @return	string                          Parsed content
  */
 function dolMd2Asciidoc($content, $parser = 'dolibarr', $replaceimagepath = null)

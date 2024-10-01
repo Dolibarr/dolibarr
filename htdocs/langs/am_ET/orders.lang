@@ -99,14 +99,14 @@ ListOfOrders=የትዕዛዝ ዝርዝር
 ListOrderLigne=የትዕዛዝ መስመሮች
 productobuy=የሚገዙ ምርቶች ብቻ
 productonly=ምርቶች ብቻ
-disablelinefree=ነፃ መስመሮች የሉም
+disablelinefree=Predefined products only
 CloseOrder=ትእዛዝ ዝጋ
 ConfirmCloseOrder=እርግጠኛ ነዎት ይህን ትዕዛዝ እንዲደርስ ማዋቀር ይፈልጋሉ? አንዴ ትእዛዝ ከደረሰ፣ እንዲከፍል ሊዋቀር ይችላል።
 ConfirmDeleteOrder=እርግጠኛ ነዎት ይህን ትዕዛዝ መሰረዝ ይፈልጋሉ?
-ConfirmValidateOrder=እርግጠኛ ነህ ይህን ትዕዛዝ በስም <b>%s</b><span class='notranslate'></b> ?
+ConfirmValidateOrder=Are you sure you want to validate this order under name <b>%s</b>?
 ConfirmUnvalidateOrder=እርግጠኛ ነህ <b>%s</b> ሁኔታን ወደ ረቂቅ ሁኔታ መመለስ ትፈልጋለህ? ?
 ConfirmCancelOrder=እርግጠኛ ነዎት ይህን ትዕዛዝ መሰረዝ ይፈልጋሉ?
-ConfirmMakeOrder=እርግጠኛ ነዎት ይህንን ትዕዛዝ በ<b>%s</b><span class='notranslate'></b> ላይ ማረጋገጥ ትፈልጋለህ። >?
+ConfirmMakeOrder=Are you sure you want to confirm you made this order on <b>%s</b>?
 GenerateBill=የክፍያ መጠየቂያ ማመንጨት
 ClassifyShipped=ደርሷል
 PassedInShippedStatus=ተመድቧል

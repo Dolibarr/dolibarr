@@ -1,5 +1,7 @@
 <?php
-/* Copyright (C) 2009-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2009-2013  Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +20,7 @@
 
 /**
  *      \file       htdocs/core/lib/invoice2.lib.php
- *      \ingroup    facture
+ *      \ingroup    invoice
  *      \brief      Function to rebuild PDF and merge PDF files into one
  */
 
@@ -40,14 +42,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
  * @param 	integer		$paymentdateafter		Payment after date (must includes hour)
  * @param 	integer		$paymentdatebefore		Payment before date (must includes hour)
  * @param	int			$usestdout				Add information onto standard output
- * @param	int			$regenerate				''=Use existing PDF files, 'nameofpdf'=Regenerate all PDF files using the template
+ * @param	string		$regenerate				''=Use existing PDF files, 'nameofpdf'=Regenerate all PDF files using the template
  * @param	string		$filesuffix				Suffix to add into file name of generated PDF
  * @param	string		$paymentbankid			Only if payment on this bank account id
  * @param	array		$thirdpartiesid			List of thirdparties id when using filter=excludethirdpartiesid	or filter=onlythirdpartiesid
  * @param	string		$fileprefix				Prefix to add into filename of generated PDF
  * @return	int									Error code
  */
-function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filter, $dateafterdate, $datebeforedate, $paymentdateafter, $paymentdatebefore, $usestdout, $regenerate = 0, $filesuffix = '', $paymentbankid = '', $thirdpartiesid = '', $fileprefix = 'mergedpdf')
+function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filter, $dateafterdate, $datebeforedate, $paymentdateafter, $paymentdatebefore, $usestdout, $regenerate = '', $filesuffix = '', $paymentbankid = '', $thirdpartiesid = [], $fileprefix = 'mergedpdf')
 {
 	$sql = "SELECT DISTINCT f.rowid, f.ref";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
@@ -130,7 +132,7 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 		} else {
 			$sqlwhere .= " AND";
 		}
-		$sqlwhere .= ' f.fk_soc NOT IN ('.$db->sanitize(join(',', $thirdpartiesid)).')';
+		$sqlwhere .= ' f.fk_soc NOT IN ('.$db->sanitize(implode(',', $thirdpartiesid)).')';
 	}
 	if (in_array('onlythirdparties', $filter) && is_array($thirdpartiesid)) {
 		if (empty($sqlwhere)) {
@@ -138,7 +140,7 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 		} else {
 			$sqlwhere .= " AND";
 		}
-		$sqlwhere .= ' f.fk_soc IN ('.$db->sanitize(join(',', $thirdpartiesid)).')';
+		$sqlwhere .= ' f.fk_soc IN ('.$db->sanitize(implode(',', $thirdpartiesid)).')';
 	}
 	if ($sqlwhere) {
 		$sql .= $sqlwhere;
@@ -222,9 +224,9 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 			$format = array($page_largeur, $page_hauteur);
 
 			if ($usestdout) {
-				print "Using output PDF format ".join('x', $format)."\n";
+				print "Using output PDF format ".implode('x', $format)."\n";
 			} else {
-				dol_syslog("Using output PDF format ".join('x', $format), LOG_ERR);
+				dol_syslog("Using output PDF format ".implode('x', $format), LOG_ERR);
 			}
 
 

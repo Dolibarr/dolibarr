@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Livraison
 DeliveryRef=Référence de livraison
-DeliveryCard=Réception de stock
+DeliveryCard=Bon de réception
 DeliveryOrder=Bon de réception
 DeliveryDate=Date de livraison
 CreateDeliveryOrder=Générer bon de réception

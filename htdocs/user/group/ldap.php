@@ -20,7 +20,7 @@
 /**
  *       \file       htdocs/user/group/ldap.php
  *       \ingroup    ldap
- *       \brief      Page fiche LDAP groupe
+ *       \brief      Page Record LDAP Group
  */
 
 // Load Dolibarr environment
@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
 // Load translation files required by page
 $langs->loadLangs(array('companies', 'ldap', 'users', 'admin'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
 
 $socid = 0;
@@ -44,16 +44,16 @@ if ($user->socid > 0) {
 
 $object = new UserGroup($db);
 $object->fetch($id, '', true);
-$object->getrights();
+$object->loadRights();
 
 // Users/Groups management only in master entity if transverse mode
 if (isModEnabled('multicompany') && $conf->entity > 1 && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 	accessforbidden();
 }
 
-$canreadperms = true;
+$permissiontoread = true;
 if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
-	$canreadperms = (!empty($user->admin) || !empty($user->rights->user->group_advance->read));
+	$permissiontoread = (!empty($user->admin) || $user->hasRight('user', 'group_advance', 'read'));
 }
 
 
@@ -63,7 +63,7 @@ if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 
 if ($action == 'dolibarr2ldap') {
 	$ldap = new Ldap();
-	$result = $ldap->connect_bind();
+	$result = $ldap->connectBind();
 
 	if ($result > 0) {
 		$info = $object->_load_ldap_info();
@@ -95,7 +95,7 @@ $form = new Form($db);
 
 $title = $object->name." - ".$langs->trans('LDAP');
 $help_url = '';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-user page-group_ldap');
 
 $head = group_prepare_head($object);
 
@@ -162,7 +162,7 @@ if (getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
 
 
 
-// Affichage attributs LDAP
+// Affichage attributes LDAP
 print load_fiche_titre($langs->trans("LDAPInformationsForThisGroup"));
 
 print '<table class="noborder centpercent">';
@@ -174,7 +174,7 @@ print '</tr>';
 
 // Lecture LDAP
 $ldap = new Ldap();
-$result = $ldap->connect_bind();
+$result = $ldap->connectBind();
 if ($result > 0) {
 	$info = $object->_load_ldap_info();
 	$dn = $object->_load_ldap_dn($info, 1);

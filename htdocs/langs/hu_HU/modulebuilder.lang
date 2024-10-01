@@ -27,7 +27,7 @@ ModuleBuilderDeschooks=Ez a lap a horgoknak van szentelve.
 ModuleBuilderDescwidgets=Ez a lap widgetek kezelésére/készítésére szolgál.
 ModuleBuilderDescbuildpackage=Itt létrehozhat egy "terjesztésre kész" csomagfájlt (egy normalizált .zip fájlt) a moduljáról és egy "terjesztésre kész" dokumentációs fájlt. Csak kattintson a gombra a csomag vagy a dokumentációs fájl elkészítéséhez.
 EnterNameOfModuleToDeleteDesc=Törölheti a modult. FIGYELMEZTETÉS: A modul összes kódolási fájlja (generált vagy manuálisan létrehozott) ÉS strukturált adata és dokumentációja törlődik!
-EnterNameOfObjectToDeleteDesc=You can delete an object. WARNING: All coding files (generated or created manually) related to the object will be deleted!
+EnterNameOfObjectToDeleteDesc=Törölhet egy objektumot. FIGYELMEZTETÉS: Az objektumhoz kapcsolódó összes (generált vagy manuálisan létrehozott) kódfájl törlődik!
 DangerZone=Veszélyzóna
 BuildPackage=Csomag összeállítása
 BuildPackageDesc=Létrehozhat egy zip-csomagot az alkalmazásból, így készen áll arra, hogy bármely Dolibarron terjeszthesse. Terjesztheti vagy értékesítheti olyan piacon is, mint a <a href="https://www.dolistore.com">DoliStore.com</a>.
@@ -94,7 +94,7 @@ SeeExamples=Példákat lásd itt
 EnabledDesc=Feltétel, hogy ez a mező aktív legyen.<br><br>Példák:<br>1<br>isModEnabled('anothermodule')<br>getDolGlobalString('MYMODULE_OPTION')==2
 VisibleDesc=Látható a mező? (Példák: 0=soha nem látható, 1=látható a listán és az űrlapok létrehozása/frissítése/megtekintése, 2=csak a listán látható, 3=csak a létrehozási/frissítési/megtekintési űrlapon látható (nem a listákon), 4=látható a listákon és csak az űrlap frissítése/megtekintése (nem létrehozás), 5=Csak a listán és a megtekintési űrlapon látható (nem létrehozás, nem frissítés).<br><br> Negatív érték használata azt jelenti, hogy a mező alapértelmezés szerint nem jelenik meg a listán, de kiválasztható megtekintésre).
 ItCanBeAnExpression=Ez lehet egy kifejezés. Példa:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>$user ->hasRight('holiday', 'define_holiday')?1:5
-DisplayOnPdfDesc=Jelenítse meg ezt a mezőt a kompatibilis PDF dokumentumokon, a pozíciót a „Pozíció” mezővel kezelheti.<br><strong>A következő dokumentumhoz:</strong><br>0 = nincs megjelenítve <br>1 = megjelenítés<br>2 = csak akkor jelenik meg, ha nem üres<br><br>b0e7843947 span>Dokumentumsorok esetén:<span class='notranslate'></strong><br>0 = nincs megjelenítve <br>1 = megjelenik egy oszlopban<br>3 = megjelenítés a sorleíró oszlopban a leírás után<br>4 = megjelenítés a leírás utáni oszlopban csak ha nem üres
+DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br><strong>For document :</strong><br>0 = not displayed <br>1 = display<br>2 = display only if not empty<br><br><strong>For document lines :</strong><br>0 = not displayed <br>1 = displayed in a column<br>3 = display in line description column after the description<br>4 = display in description column after the description only if not empty
 DisplayOnPdf=PDF-en
 IsAMeasureDesc=A mező értéke összesíthető, hogy a listába kerüljön az összeg? (Példák: 1 vagy 0)
 SearchAllDesc=Használják a mezőt a gyorskereső eszközből történő kereséshez? (Példák: 1 vagy 0)
@@ -148,7 +148,7 @@ CSSListClass=CSS a listához
 NotEditable=Nem szerkeszthető
 ForeignKey=Idegen kulcs
 ForeignKeyDesc=Ha ennek a mezőnek az értékét garantálni kell egy másik táblába. Adja meg a következő szintaxisnak megfelelő értéket: tablename.parentfieldtocheck
-TypeOfFieldsHelp=Példa:<br>varchar(99)<br>e-mail<br>telefon<br>ip<br>url<br>jelszóccfda149bfz0 b03 span>double(24,8)<span class='notranslate'><br>real<br>text<br>html <br>dátum<br>dátumidő<br>időbélyeg <br>egész<br>integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]b0342bccfda<19bcc0 /span><span class='notranslate'><br>"1" azt jelenti, hogy a kombó után hozzáadunk egy + gombot a rekord létrehozásához.<br>"szűrő" Univerzális szűrő szintaktikai feltétele, példa: '((status:=:1) AND (fk_user:=:__USER_ID__) AND (entity:IN:(__SHARED_ENTITIES__))'
+TypeOfFieldsHelp=Example:<br>varchar(99)<br>email<br>phone<br>ip<br>url<br>password<br>double(24,8)<br>real<br>text<br>html<br>date<br>datetime<br>timestamp<br>integer<br>integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br><br>'1' means we add a + button after the combo to create the record<br>'filter' is an Universal Filter syntax condition, example: '((status:=:1) AND (fk_user:=:__USER_ID__) AND (entity:IN:(__SHARED_ENTITIES__))'
 TypeOfFieldsHelpIntro=Ez a mező/attribútum típusa.
 AsciiToHtmlConverter=Ascii-HTML konverter
 AsciiToPdfConverter=Ascii PDF konvertáló
@@ -173,6 +173,7 @@ PermissionAddedSuccesfuly=Az engedély sikeresen hozzáadva
 MenuDeletedSuccessfuly=A menü sikeresen törölve
 MenuAddedSuccessfuly=A menü sikeresen hozzáadva
 MenuUpdatedSuccessfuly=A menü frissítése sikeresen megtörtént
+AddAPIsForThisObject=Adjon hozzá API-kat ehhez az objektumhoz
 ApiObjectDeleted=A(z) %s objektum API sikeresen törölve
 CRUDRead=Olvasás
 CRUDCreateWrite=Létrehozás vagy frissítés
@@ -180,9 +181,9 @@ FailedToAddCodeIntoDescriptor=Nem sikerült kódot adni a leíróhoz. Ellenőriz
 DictionariesCreated=A szótár <b>%s</b> sikeresen létrehozva
 DictionaryDeleted=Szótár <b>%s</b>
 PropertyModuleUpdated=A <b>%s</b> tulajdon frissítése sikeresen megtörtént
-InfoForApiFile=* Amikor először generál fájlt, az összes metódus létrejön <strong> minden objektumhoz.</strong><br>* Ha rákattint a <strong>remove</strong> gombra, akkor csak eltávolítja a <span osztály összes metódusát. ='notranslate'><strong></span>kijelölt objektum</strong>.
+InfoForApiFile=* When you generate file for the first time then all methods will be created <strong>for each object.</strong><br>* When you click in <strong>remove</strong> you just remove all methods for the <strong>selected object</strong>.
 SetupFile=Oldal a modul beállításához
-EmailingSelectors=Emails selectors
+EmailingSelectors=E-mail-választók
 EmailingSelectorDesc=Itt létrehozhatja és szerkesztheti az osztályfájlokat, hogy új e-mail célválasztókat biztosítson a tömeges e-mail modulhoz
 EmailingSelectorFile=E-mail-választó fájl
 NoEmailingSelector=Nincs e-mail-választó fájl

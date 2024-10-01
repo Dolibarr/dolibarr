@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,14 +46,14 @@ $langs->loadLangs(array('receptions', 'companies', 'other'));
 
 $action		= GETPOST('action', 'aZ09');
 $confirm	= GETPOST('confirm');
-$id			= GETPOST('id', 'int');
+$id			= GETPOSTINT('id');
 $ref		= GETPOST('ref');
 
 // Get parameters
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -73,21 +74,21 @@ if ($id > 0 || !empty($ref)) {
 
 	if (!empty($object->origin)) {
 		$origin = $object->origin;
+		$typeobject = $object->origin;
 
 		$object->fetch_origin();
-		$typeobject = $object->origin;
 	}
 
 	// Linked documents
-	if ($origin == 'order_supplier' && $object->$typeobject->id && isModEnabled("supplier_order")) {
+	if ($origin == 'order_supplier' && $object->origin_object->id && isModEnabled("supplier_order")) {
 		$objectsrc = new CommandeFournisseur($db);
-		$objectsrc->fetch($object->$typeobject->id);
+		$objectsrc->fetch($object->origin_object->id);
 	}
 
 	$upload_dir = $conf->reception->dir_output."/".dol_sanitizeFileName($object->ref);
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('receptiondocument'));
 
 // Security check
@@ -97,17 +98,17 @@ if ($user->socid > 0) {
 $result = restrictedArea($user, 'reception', $object->id, '');
 
 if (isModEnabled("reception")) {
-	$permissiontoread = $user->rights->reception->lire;
-	$permissiontoadd = $user->rights->reception->creer;
-	$permissiondellink = $user->rights->reception->creer; // Used by the include of actions_dellink.inc.php
-	$permissiontovalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->reception->creer)) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->reception->reception_advance->validate)));
-	$permissiontodelete = $user->rights->reception->supprimer;
+	$permissiontoread = $user->hasRight('reception', 'lire');
+	$permissiontoadd = $user->hasRight('reception', 'creer');
+	$permissiondellink = $user->hasRight('reception', 'creer'); // Used by the include of actions_dellink.inc.php
+	$permissiontovalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('reception', 'creer')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('reception', 'reception_advance', 'validate')));
+	$permissiontodelete = $user->hasRight('reception', 'supprimer');
 } else {
-	$permissiontoread = $user->rights->fournisseur->commande->receptionner;
-	$permissiontoadd = $user->rights->fournisseur->commande->receptionner;
-	$permissiondellink = $user->rights->fournisseur->commande->receptionner; // Used by the include of actions_dellink.inc.php
-	$permissiontovalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->fournisseur->commande->receptionner)) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->fournisseur->commande_advance->check)));
-	$permissiontodelete = $user->rights->fournisseur->commande->receptionner;
+	$permissiontoread = $user->hasRight('fournisseur', 'commande', 'receptionner');
+	$permissiontoadd = $user->hasRight('fournisseur', 'commande', 'receptionner');
+	$permissiondellink = $user->hasRight('fournisseur', 'commande', 'receptionner'); // Used by the include of actions_dellink.inc.php
+	$permissiontovalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('fournisseur', 'commande', 'receptionner')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('fournisseur', 'commande_advance', 'check')));
+	$permissiontodelete = $user->hasRight('fournisseur', 'commande', 'receptionner');
 }
 
 
@@ -122,7 +123,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
  * View
  */
 
-llxHeader('', $langs->trans('Reception'), '');
+llxHeader('', $langs->trans('Reception'), '', '', 0, 0, '', '', '', 'mod-reception page-card_documents');
 
 $form = new Form($db);
 
@@ -198,8 +199,8 @@ if ($id > 0 || !empty($ref)) {
 		print dol_get_fiche_end();
 
 		$modulepart = 'reception';
-		$permissiontoadd = $user->rights->reception->creer;
-		$permtoedit = $user->rights->reception->creer;
+		$permissiontoadd = $user->hasRight('reception', 'creer');
+		$permtoedit = $user->hasRight('reception', 'creer');
 		$param = '&id='.$object->id;
 		include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 	} else {

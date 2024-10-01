@@ -27,7 +27,7 @@ MembersListNotUpToDate=Список действительных участни�
 MembersListExcluded=Список исключенных участников
 MembersListResiliated=Список прекращенных участников
 MembersListQualified=Список квалифицированных участников
-MembersShowMembershipTypesTable=Показать таблица всех доступных типов членства (если нет, Показать непосредственно регистрация <span class='notranslate'>форма< /пролет>)
+MembersShowMembershipTypesTable=Show a table of all available membership types (if no, show directly the registration form)
 MembersShowVotesAllowed=Показать разрешено ли голосование, в таблице типов членства
 MenuMembersToValidate=Проект участники
 MenuMembersValidated=Подтвержденные участники
@@ -171,7 +171,7 @@ HTPasswordExport=htpassword файл поколения
 NoThirdPartyAssociatedToMember=Никакая третья сторона не связана с этим участником
 MembersAndSubscriptions=Члены и взносы
 MoreActions=Дополнительные меры по записи
-MoreActionsOnSubscription=Дополнительное действие, предложенное по умолчанию при записи вклада, также выполняется автоматически в Интернете <span class='notranslate'>платеж</ диапазон> вклада
+MoreActionsOnSubscription=Complementary action suggested by default when recording a contribution, also done automatically on online payment of a contribution
 MoreActionBankDirect=Создайте прямую запись на банковский счет
 MoreActionBankViaInvoice=Создайте счет-фактуру и оплату на банковский счет
 MoreActionInvoiceOnly=Создание счета без каких-либо оплаты
@@ -200,8 +200,8 @@ MembersStatisticsDesc=Выберите статистику вы хотите п
 MenuMembersStats=Статистика
 LastMemberDate=Дата последнего членства
 LatestSubscriptionDate=Дата последнего взноса
-MemberNature=Природа члена
-MembersNature=Природа участников
+MemberNature=Nature of member
+MembersNature=Nature of members
 Public=%s может опубликовать мое членство в <a target="_blank" href="%s"> публичном реестре </a>
 MembershipPublic=Общественное членство
 NewMemberbyWeb=Новый участник добавил. В ожидании утверждения
@@ -246,3 +246,4 @@ XSubsriptionCreated=%s subscription(s) created
 XSubsriptionErrors=%s subscription(s) where in error
 CreateSubscription=Создать подписку
 WarningNoComplementaryActionDone=No Complementary action on recording will be executed with this massaction
+NewMembership=New membership

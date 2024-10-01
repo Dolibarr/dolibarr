@@ -2,19 +2,19 @@
 InstallEasy=Seuraa ohjeita askel askeleelta.
 MiscellaneousChecks=Ehtojen tarkistus
 ConfFileExists=Asetustiedosto <b>%s</b> on olemassa.
-ConfFileDoesNotExistsAndCouldNotBeCreated=Kokoonpano tiedosto <b>%s<span class='notranslate7f8<z0f17f8 /span> ei ole olemassa ja ei voitu luoda!
+ConfFileDoesNotExistsAndCouldNotBeCreated=Configuration file <b>%s</b> does not exist and could not be created!
 ConfFileCouldBeCreated=Asetustiedosto <b>%s</b> voitaisiin luoda.
-ConfFileIsNotWritable=Kokoonpano tiedosto <b>%s<span class='notranslate7f8<z0f17f8 /span> ei ole kirjoitettava. Tarkista käyttöoikeudet. Ensiasennuksessa verkkopalvelimesi on kyettävä kirjoittamaan tähän tiedosto määritysprosessin aikana ("chmod 666" esimerkiksi Unix-tyyppisessä käyttöjärjestelmässä).
+ConfFileIsNotWritable=Configuration file <b>%s</b> is not writable. Check permissions. For first install, your web server must be able to write into this file during configuration process ("chmod 666" for example on a Unix like OS).
 ConfFileIsWritable=Configuration <b>file %s</b> on kirjoitettavissa.
-ConfFileMustBeAFileNotADir=Kokoonpano tiedosto <b>%s<span class='notranslate7f8<z0f17f8 /span> on oltava tiedosto, ei hakemisto.
-ConfFileReload=Ladataan parametreja uudelleen määrityksestä tiedosto.
+ConfFileMustBeAFileNotADir=Configuration file <b>%s</b> must be a file, not a directory.
+ConfFileReload=Ladataan parametreja konfiguraatiotiedostosta.
 NoReadableConfFileSoStartInstall=Määritystä tiedosto <b>conf/conf.php</b> ei ole olemassa. ei ole luettavissa. Suoritamme asennusprosessin ja yritämme alustaa sen.
 PHPSupportPOSTGETOk=Tämä PHP tukee muuttujat POST ja GET.
 PHPSupportPOSTGETKo=On mahdollista, että PHP-asetuksesi ei tue muuttujia POST ja/tai GET. Tarkista parametri <b>variables_order</b> tiedostosta php.ini.
 PHPSupportSessions=Tämä PHP tukee istuntoja.
 PHPSupport=Tämä PHP tukee %s-toimintoja.
 PHPMemoryOK=Sinun PHP max istuntojakson muisti on <b>asetettu %s.</b> Tämän pitäisi olla tarpeeksi.
-PHPMemoryTooLow=PHP max -istuntomuistisi on <b>%s</b> tavua. Tämä on liian alhainen. Muuta <b>php.ini</b> määrittämään <b><span class_limit ='notranslate'></b></span> -parametrin arvoksi vähintään <b>%s<span class='notranslate'>b09a4f78<z09a /span> tavua.
+PHPMemoryTooLow=Your PHP max session memory is set to <b>%s</b> bytes. This is too low. Change your <b>php.ini</b> to set <b>memory_limit</b> parameter to at least <b>%s</b> bytes.
 Recheck=Napsauta tätä saadaksesi tarkemman testin
 ErrorPHPDoesNotSupportSessions=PHP-asennus ei tue istuntoja. Tämä ominaisuus tarvitaan, jotta Dolibarr toimii. Tarkista istuntohakemiston PHP-asetusten ja käyttöoikeudet.
 ErrorPHPDoesNotSupport=PHP-asennus ei tue %s-toimintoja.
@@ -56,7 +56,7 @@ CreateDatabase=Luo tietokanta
 CreateUser=luo käyttäjätili tai myönnä käyttäjätiliin käyttöoikeus Dolibarrissa tietokanta
 DatabaseSuperUserAccess=Tietokanta - SuperUser pääsy
 CheckToCreateDatabase=Valitse valintaruutu, jos tietokanta ei ole vielä olemassa ja, joten se on luotava.<br>Tässä tapauksessa sinun on myös täytettävä tämän sivun alareunaan pääkäyttäjätilin käyttäjänimi ja.
-CheckToCreateUser=Valitse valintaruutu, jos:<br>tietokanta käyttäjätiliä ei vielä ole olemassa ja > joten se on luotava tai<br>jos käyttäjätili on olemassa, mutta tietokanta ei ole olemassa ja käyttöoikeudet on myönnettävä.<br>Tässä tapauksessa sinun on annettava käyttäjätili ja salasana ja <b>myös</b> pääkäyttäjätilin nimi <span class='notranslate' class=' ja</span> salasana tämän sivun alareunassa. Jos tätä valintaruutua ei ole valittu, tietokanta omistajan ja salasanan on oltava jo olemassa.
+CheckToCreateUser=Check the box if:<br>the database user account does not yet exist and so must be created, or<br>if the user account exists but the database does not exist and permissions must be granted.<br>In this case, you must enter the user account and password and <b>also</b> the superuser account name and password at the bottom of this page. If this box is unchecked, database owner and password must already exist.
 DatabaseRootLoginDescription=Pääkäyttäjätilin nimi (luo uuteen tietokantaan tai uusiin käyttäjiin), pakollinen, jos tietokanta tai sen omistajaa ei vielä ole olemassa.
 KeepEmptyIfNoPassword=Jätä tyhjäksi, jos pääkäyttäjällä ei ole salasanaa (EI suositella)
 SaveConfigurationFile=Tallennetaan parametreja kohteeseen
@@ -109,7 +109,7 @@ ServerVersion=Tietokanta Serverin versio
 YouMustCreateItAndAllowServerToWrite=Sinun on luotava tähän hakemistoon ja mahdollistaa web-palvelin voi kirjoittaa sitä.
 DBSortingCollation=Luonne lajittelu jotta
 YouAskDatabaseCreationSoDolibarrNeedToConnect=Valitsit luo tietokanta <b>0ec4b9fec80 </b>, mutta tätä varten Dolibarrin on muodostettava yhteys palvelimeen <b>%s </b> superkäyttäjän kanssa <b>%s</b> -käyttöoikeudet.
-YouAskLoginCreationSoDolibarrNeedToConnect=Valitsit luo tietokanta käyttäjän <b> %s</b>, mutta tätä varten Dolibarrin on muodostettava yhteys palvelimeen <b> %s</b> superkäyttäjän kanssa <b>b0ecb2ec87f49f classz ='notranslate'></b> käyttöoikeudet.
+YouAskLoginCreationSoDolibarrNeedToConnect=You selected create database user <b>%s</b>, but for this, Dolibarr needs to connect to server <b>%s</b> with super user <b>%s</b> permissions.
 BecauseConnectionFailedParametersMayBeWrong=Yhteys tietokanta epäonnistui: isäntä- tai pääkäyttäjäparametrien on oltava väärät.
 OrphelinsPaymentsDetectedByMethod=Orphelins maksu havaittu menetelmä %s
 RemoveItManuallyAndPressF5ToContinue=Poistaa sen manuaalisesti ja paina F5 jatkaa.
@@ -132,14 +132,14 @@ MigrationFinished=Muuttoliike valmis
 LastStepDesc=<strong>Viimeinen vaihe</strong>: Määritä tähän kirjautumissalasana, ja käytä yhteyden muodostamiseen Dolibarriin. <b>Älä hukkaa tätä, sillä se on päätili kaikkien muiden/lisäkäyttäjätilien hallinnassa.</b>
 ActivateModule=Aktivoi moduuli %s
 ShowEditTechnicalParameters=Klikkaa tästä näyttääksesi/muuttaaksesi edistyneemmät parametrit (asiantuntija tila)
-WarningUpgrade=Varoitus:\nTeitkö tietokanta varmuuskopion ensin?\nTämä on erittäin suositeltavaa. Tietojen katoaminen (esimerkiksi mysql-version 5.5.40/41/42/43 virheiden vuoksi) voi olla mahdollista tämän prosessin aikana, joten on tärkeää tehdä täydellinen vedos <span class='notranslate'>tietokanta</span> ennen kuin aloitat siirron.\n\nNapsauta OK aloittaaksesi siirtoprosessin...
+WarningUpgrade=Warning:\nDid you run a database backup first?\nThis is highly recommended. Loss of data (due to for example bugs in mysql version 5.5.40/41/42/43) may be possible during this process, so it is essential to take a complete dump of your database before starting any migration.\n\nClick OK to start migration process...
 ErrorDatabaseVersionForbiddenForMigration=Versiosi tietokanta on %s. Siinä on kriittinen virhe, joka mahdollistaa tietojen menetyksen, jos teet siirtoprosessin edellyttämiä rakenteellisia muutoksia tietokanta. Tästä syystä siirtoa ei sallita, ennen kuin päivität tietokanta-laitteesi tasoversioksi (korjattu) (luettelo tunnetuista bugiisista versioista: %s)
 KeepDefaultValuesWamp=Käytit DoliWampin Dolibarrin ohjattua asennustoimintoa, joten tässä ehdotetut arvot on jo optimoitu. Muuta niitä vain, jos tiedät mitä olet tekemässä.
 KeepDefaultValuesDeb=Käytit Dolibarrin ohjattua asennustoimintoa Linux-paketista (Ubuntu, Debian, Fedora...), joten tässä ehdotetut arvot on jo optimoitu. Vain tietokanta omistajan salasana luo on annettava. Muuta muita parametreja vain, jos tiedät mitä olet tekemässä.
 KeepDefaultValuesMamp=Käytit DoliMampin ohjattua Dolibarrin asennustoimintoa, joten tässä ehdotetut arvot on jo optimoitu. Muuta niitä vain, jos tiedät mitä olet tekemässä.
 KeepDefaultValuesProxmox=Käytit Dolibarrin ohjattua asennustoimintoa Proxmox-virtuaalilaitteistosta, joten tässä ehdotetut arvot on jo optimoitu. Muuta niitä vain, jos tiedät mitä olet tekemässä.
 UpgradeExternalModule=Suorita ulkoisen moduulin oma päivitysprosessi
-SetAtLeastOneOptionAsUrlParameter=Aseta vähintään yksi vaihtoehto parametriksi URL-osoitteessa. Esimerkki: '...repair.php?standard=confirmed'
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL with value 'test' or 'confirmed'. For example:  '...repair.php?standard=confirmed'
 NothingToDelete=Ei mitään puhdistettavaa/poistettavaa
 NothingToDo=Ei mitään tehtävää
 #########
@@ -211,7 +211,7 @@ YouTryInstallDisabledByFileLock=Sovellus yritti päivittää itse, mutta asennus
 YouTryUpgradeDisabledByMissingFileUnLock=Sovellus yritti päivittää itse, mutta päivitysprosessi ei ole tällä hetkellä sallittu.<br>
 ClickHereToGoToApp=Napsauta tästä siirtyäksesi hakemukseesi
 ClickOnLinkOrRemoveManualy=Jos päivitys on käynnissä, odota. Jos ei, napsauta seuraavaa linkkiä. Jos näet aina tämän saman sivun, sinun on poistettava tai nimettävä uudelleen tiedosto install.lock asiakirjahakemistosta.
-ClickOnLinkOrCreateUnlockFileManualy=Jos päivitys on käynnissä, odota... Jos ei, sinun on poistettava tiedosto install.lock tai luo a tiedosto upgrade.unlock Dolibarrin asiakirjahakemistoon.
+ClickOnLinkOrCreateUnlockFileManualy=If an upgrade is in progress, please wait... If not, you must remove the file install.lock (or create a file upgrade.unlock for upgrade) into the Dolibarr documents directory.
 Loaded=Ladattu
 FunctionTest=Toimivuustesti
 NodoUpgradeAfterDB=Ulkoiset moduulit eivät ole pyytäneet toimenpiteitä tietokanta-päivityksen jälkeen

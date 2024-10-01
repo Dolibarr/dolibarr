@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2021 Alexis LAURIER <contact@alexislaurier.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,17 +43,6 @@ class ProductFournisseurPrice extends CommonObject
 	public $table_element = 'product_fournisseur_price';
 
 	/**
-	 * @var int  Does this object support multicompany module ?
-	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 1;
-
-	/**
 	 * @var string String with name of icon for productfournisseurprice. Must be the part after the 'object_' into object_productfournisseurprice.png
 	 */
 	public $picto = 'productfournisseurprice@buypricehistory';
@@ -67,14 +58,14 @@ class ProductFournisseurPrice extends CommonObject
 	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
-	 *  'enabled' is a condition when the field must be managed (Example: 1 or '$conf->global->MY_SETUP_PARAM)
+	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString("MY_SETUP_PARAM")'
 	 *  'position' is the sort order of field.
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
 	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
-	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
 	 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
 	 *  'css' and 'cssview' and 'csslist' is the CSS style to use on field. 'css' is used in creation and update. 'cssview' is used in view mode. 'csslist' is used for columns in lists. For example: 'maxwidth200', 'wordbreak', 'tdoverflowmax200'
@@ -90,49 +81,48 @@ class ProductFournisseurPrice extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields=array(
-		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>0,),
-		'entity' => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>'1', 'position'=>15, 'notnull'=>1, 'visible'=>-2, 'default'=>'1', 'index'=>1,),
-		'datec' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>20, 'notnull'=>0, 'visible'=>-1,),
-		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>'1', 'position'=>25, 'notnull'=>1, 'visible'=>-1,),
-		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php:1', 'label'=>'Fkproduct', 'enabled'=>'1', 'position'=>30, 'notnull'=>0, 'visible'=>-1,),
-		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>'1', 'position'=>35, 'notnull'=>0, 'visible'=>-1,),
-		'ref_fourn' => array('type'=>'varchar(255)', 'label'=>'Reffourn', 'enabled'=>'1', 'position'=>40, 'notnull'=>0, 'visible'=>-1,),
-		'desc_fourn' => array('type'=>'text', 'label'=>'Descfourn', 'enabled'=>'1', 'position'=>45, 'notnull'=>0, 'visible'=>-1,),
-		'fk_availability' => array('type'=>'integer', 'label'=>'Fkavailability', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>-1,),
-		'price' => array('type'=>'double(24,8)', 'label'=>'Price', 'enabled'=>'1', 'position'=>55, 'notnull'=>0, 'visible'=>-1,),
-		'quantity' => array('type'=>'double', 'label'=>'Quantity', 'enabled'=>'1', 'position'=>60, 'notnull'=>0, 'visible'=>-1,),
-		'remise_percent' => array('type'=>'double', 'label'=>'Remisepercent', 'enabled'=>'1', 'position'=>65, 'notnull'=>1, 'visible'=>-1,),
-		'remise' => array('type'=>'double', 'label'=>'Remise', 'enabled'=>'1', 'position'=>70, 'notnull'=>1, 'visible'=>-1,),
-		'unitprice' => array('type'=>'double(24,8)', 'label'=>'Unitprice', 'enabled'=>'1', 'position'=>75, 'notnull'=>0, 'visible'=>-1,),
-		'charges' => array('type'=>'double(24,8)', 'label'=>'Charges', 'enabled'=>'1', 'position'=>80, 'notnull'=>0, 'visible'=>-1,),
-		'default_vat_code' => array('type'=>'varchar(10)', 'label'=>'Defaultvatcode', 'enabled'=>'1', 'position'=>85, 'notnull'=>0, 'visible'=>-1,),
-		'tva_tx' => array('type'=>'double(6,3)', 'label'=>'Tvatx', 'enabled'=>'1', 'position'=>90, 'notnull'=>1, 'visible'=>-1,),
-		'info_bits' => array('type'=>'integer', 'label'=>'Infobits', 'enabled'=>'1', 'position'=>95, 'notnull'=>1, 'visible'=>-1,),
-		'fk_user' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fkuser', 'enabled'=>'1', 'position'=>100, 'notnull'=>0, 'visible'=>-1,),
-		'fk_supplier_price_expression' => array('type'=>'integer', 'label'=>'Fksupplierpriceexpression', 'enabled'=>'1', 'position'=>105, 'notnull'=>0, 'visible'=>-1,),
-		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>'1', 'position'=>900, 'notnull'=>0, 'visible'=>-2,),
-		'delivery_time_days' => array('type'=>'integer', 'label'=>'Deliverytimedays', 'enabled'=>'1', 'position'=>115, 'notnull'=>0, 'visible'=>-1,),
-		'supplier_reputation' => array('type'=>'varchar(10)', 'label'=>'Supplierreputation', 'enabled'=>'1', 'position'=>120, 'notnull'=>0, 'visible'=>-1,),
-		'fk_multicurrency' => array('type'=>'integer', 'label'=>'Fkmulticurrency', 'enabled'=>'1', 'position'=>125, 'notnull'=>0, 'visible'=>-1,),
-		'multicurrency_code' => array('type'=>'varchar(255)', 'label'=>'Multicurrencycode', 'enabled'=>'1', 'position'=>130, 'notnull'=>0, 'visible'=>-1,),
-		'multicurrency_tx' => array('type'=>'double(24,8)', 'label'=>'Multicurrencytx', 'enabled'=>'1', 'position'=>135, 'notnull'=>0, 'visible'=>-1,),
-		'multicurrency_price' => array('type'=>'double(24,8)', 'label'=>'Multicurrencyprice', 'enabled'=>'1', 'position'=>140, 'notnull'=>0, 'visible'=>-1,),
-		'multicurrency_unitprice' => array('type'=>'double(24,8)', 'label'=>'Multicurrencyunitprice', 'enabled'=>'1', 'position'=>145, 'notnull'=>0, 'visible'=>-1,),
-		'localtax1_tx' => array('type'=>'double(6,3)', 'label'=>'Localtax1tx', 'enabled'=>'1', 'position'=>150, 'notnull'=>0, 'visible'=>-1,),
-		'localtax1_type' => array('type'=>'varchar(10)', 'label'=>'Localtax1type', 'enabled'=>'1', 'position'=>155, 'notnull'=>1, 'visible'=>-1,),
-		'localtax2_tx' => array('type'=>'double(6,3)', 'label'=>'Localtax2tx', 'enabled'=>'1', 'position'=>160, 'notnull'=>0, 'visible'=>-1,),
-		'localtax2_type' => array('type'=>'varchar(10)', 'label'=>'Localtax2type', 'enabled'=>'1', 'position'=>165, 'notnull'=>1, 'visible'=>-1,),
-		'barcode' => array('type'=>'varchar(180)', 'label'=>'Barcode', 'enabled'=>'1', 'position'=>170, 'notnull'=>0, 'visible'=>-1,),
-		'fk_barcode_type' => array('type'=>'integer', 'label'=>'Fkbarcodetype', 'enabled'=>'1', 'position'=>175, 'notnull'=>0, 'visible'=>-1,),
-		'packaging' => array('type'=>'varchar(64)', 'label'=>'Packaging', 'enabled'=>'1', 'position'=>180, 'notnull'=>0, 'visible'=>-1,),
+	public $fields = array(
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => '1', 'position' => 10, 'notnull' => 1, 'visible' => 0,),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'enabled' => '1', 'position' => 15, 'notnull' => 1, 'visible' => -2, 'default' => '1', 'index' => 1,),
+		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => '1', 'position' => 20, 'notnull' => 0, 'visible' => -1,),
+		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => '1', 'position' => 25, 'notnull' => 1, 'visible' => -1,),
+		'fk_product' => array('type' => 'integer:Product:product/class/product.class.php:1', 'label' => 'Fkproduct', 'enabled' => '1', 'position' => 30, 'notnull' => 0, 'visible' => -1,),
+		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'enabled' => '1', 'position' => 35, 'notnull' => 0, 'visible' => -1,),
+		'ref_fourn' => array('type' => 'varchar(255)', 'label' => 'Reffourn', 'enabled' => '1', 'position' => 40, 'notnull' => 0, 'visible' => -1,),
+		'desc_fourn' => array('type' => 'text', 'label' => 'Descfourn', 'enabled' => '1', 'position' => 45, 'notnull' => 0, 'visible' => -1,),
+		'fk_availability' => array('type' => 'integer', 'label' => 'Fkavailability', 'enabled' => '1', 'position' => 50, 'notnull' => 0, 'visible' => -1,),
+		'price' => array('type' => 'double(24,8)', 'label' => 'Price', 'enabled' => '1', 'position' => 55, 'notnull' => 0, 'visible' => -1,),
+		'quantity' => array('type' => 'double', 'label' => 'Quantity', 'enabled' => '1', 'position' => 60, 'notnull' => 0, 'visible' => -1,),
+		'remise_percent' => array('type' => 'double', 'label' => 'Remisepercent', 'enabled' => '1', 'position' => 65, 'notnull' => 1, 'visible' => -1,),
+		'remise' => array('type' => 'double', 'label' => 'Remise', 'enabled' => '1', 'position' => 70, 'notnull' => 1, 'visible' => -1,),
+		'unitprice' => array('type' => 'double(24,8)', 'label' => 'Unitprice', 'enabled' => '1', 'position' => 75, 'notnull' => 0, 'visible' => -1,),
+		'charges' => array('type' => 'double(24,8)', 'label' => 'Charges', 'enabled' => '1', 'position' => 80, 'notnull' => 0, 'visible' => -1,),
+		'default_vat_code' => array('type' => 'varchar(10)', 'label' => 'Defaultvatcode', 'enabled' => '1', 'position' => 85, 'notnull' => 0, 'visible' => -1,),
+		'tva_tx' => array('type' => 'double(6,3)', 'label' => 'Tvatx', 'enabled' => '1', 'position' => 90, 'notnull' => 1, 'visible' => -1,),
+		'info_bits' => array('type' => 'integer', 'label' => 'Infobits', 'enabled' => '1', 'position' => 95, 'notnull' => 1, 'visible' => -1,),
+		'fk_user' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Fkuser', 'enabled' => '1', 'position' => 100, 'notnull' => 0, 'visible' => -1,),
+		'fk_supplier_price_expression' => array('type' => 'integer', 'label' => 'Fksupplierpriceexpression', 'enabled' => '1', 'position' => 105, 'notnull' => 0, 'visible' => -1,),
+		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => '1', 'position' => 900, 'notnull' => 0, 'visible' => -2,),
+		'delivery_time_days' => array('type' => 'integer', 'label' => 'Deliverytimedays', 'enabled' => '1', 'position' => 115, 'notnull' => 0, 'visible' => -1,),
+		'supplier_reputation' => array('type' => 'varchar(10)', 'label' => 'Supplierreputation', 'enabled' => '1', 'position' => 120, 'notnull' => 0, 'visible' => -1,),
+		'fk_multicurrency' => array('type' => 'integer', 'label' => 'Fkmulticurrency', 'enabled' => '1', 'position' => 125, 'notnull' => 0, 'visible' => -1,),
+		'multicurrency_code' => array('type' => 'varchar(255)', 'label' => 'Multicurrencycode', 'enabled' => '1', 'position' => 130, 'notnull' => 0, 'visible' => -1,),
+		'multicurrency_tx' => array('type' => 'double(24,8)', 'label' => 'Multicurrencytx', 'enabled' => '1', 'position' => 135, 'notnull' => 0, 'visible' => -1,),
+		'multicurrency_price' => array('type' => 'double(24,8)', 'label' => 'Multicurrencyprice', 'enabled' => '1', 'position' => 140, 'notnull' => 0, 'visible' => -1,),
+		'multicurrency_unitprice' => array('type' => 'double(24,8)', 'label' => 'Multicurrencyunitprice', 'enabled' => '1', 'position' => 145, 'notnull' => 0, 'visible' => -1,),
+		'localtax1_tx' => array('type' => 'double(6,3)', 'label' => 'Localtax1tx', 'enabled' => '1', 'position' => 150, 'notnull' => 0, 'visible' => -1,),
+		'localtax1_type' => array('type' => 'varchar(10)', 'label' => 'Localtax1type', 'enabled' => '1', 'position' => 155, 'notnull' => 1, 'visible' => -1,),
+		'localtax2_tx' => array('type' => 'double(6,3)', 'label' => 'Localtax2tx', 'enabled' => '1', 'position' => 160, 'notnull' => 0, 'visible' => -1,),
+		'localtax2_type' => array('type' => 'varchar(10)', 'label' => 'Localtax2type', 'enabled' => '1', 'position' => 165, 'notnull' => 1, 'visible' => -1,),
+		'barcode' => array('type' => 'varchar(180)', 'label' => 'Barcode', 'enabled' => '1', 'position' => 170, 'notnull' => 0, 'visible' => -1,),
+		'fk_barcode_type' => array('type' => 'integer', 'label' => 'Fkbarcodetype', 'enabled' => '1', 'position' => 175, 'notnull' => 0, 'visible' => -1,),
+		'packaging' => array('type' => 'varchar(64)', 'label' => 'Packaging', 'enabled' => '1', 'position' => 180, 'notnull' => 0, 'visible' => -1,),
 	);
 	public $rowid;
 	public $entity;
 	public $datec;
-	public $tms;
 	public $fk_product;
 	public $fk_soc;
 	public $ref_fourn;
@@ -169,13 +159,16 @@ class ProductFournisseurPrice extends CommonObject
 	/**
 	 * Constructor
 	 *
-	 * @param DoliDb $db Database handler
+	 * @param DoliDB $db Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{
 		global $conf, $langs;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 1;
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
@@ -196,10 +189,10 @@ class ProductFournisseurPrice extends CommonObject
 	 * Create object into database
 	 *
 	 * @param  User $user      User that creates
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
 	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
-	public function create(User $user, $notrigger = false)
+	public function create(User $user, $notrigger = 0)
 	{
 		return $this->createCommon($user, $notrigger);
 	}
@@ -318,18 +311,16 @@ class ProductFournisseurPrice extends CommonObject
 	/**
 	 * Load list of objects in memory from the database.
 	 *
-	 * @param  string      $sortorder    Sort Order
-	 * @param  string      $sortfield    Sort field
-	 * @param  int         $limit        limit
-	 * @param  int         $offset       Offset
-	 * @param  array       $filter       Filter array. Example array('field'=>'valueforlike', 'customurl'=>...)
-	 * @param  string      $filtermode   Filter mode (AND or OR)
-	 * @return array|int                 int <0 if KO, array of pages if OK
+	 * @param  string      		$sortorder    	Sort Order
+	 * @param  string      		$sortfield    	Sort field
+	 * @param  int         		$limit        	Limit
+	 * @param  int         		$offset       	Offset
+	 * @param  string|array     $filter       	Filter USF.
+	 * @param  string      		$filtermode   	Filter mode (AND or OR)
+	 * @return array|int                 		int <0 if KO, array of pages if OK
 	 */
-	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
-		global $conf;
-
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$records = array();
@@ -342,25 +333,37 @@ class ProductFournisseurPrice extends CommonObject
 		} else {
 			$sql .= " WHERE 1 = 1";
 		}
+
 		// Manage filter
-		$sqlwhere = array();
-		if (count($filter) > 0) {
-			foreach ($filter as $key => $value) {
-				if ($key == 't.rowid') {
-					$sqlwhere[] = $key." = ".((int) $value);
-				} elseif (array_key_exists($key, $this->fields) && in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
-					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
-				} elseif ($key == 'customsql') {
-					$sqlwhere[] = $value;
-				} elseif (strpos($value, '%') === false) {
-					$sqlwhere[] = $key.' IN ('.$this->db->sanitize($this->db->escape($value)).')';
-				} else {
-					$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
+		if (is_array($filter)) {
+			$sqlwhere = array();
+			if (count($filter) > 0) {
+				foreach ($filter as $key => $value) {
+					if ($key == 't.rowid') {
+						$sqlwhere[] = $key." = ".((int) $value);
+					} elseif (array_key_exists($key, $this->fields) && in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
+						$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
+					} elseif (strpos($value, '%') === false) {
+						$sqlwhere[] = $key.' IN ('.$this->db->sanitize($this->db->escape($value)).')';
+					} else {
+						$sqlwhere[] = $key." LIKE '%".$this->db->escape($this->db->escapeforlike($value))."%'";
+					}
 				}
 			}
+			if (count($sqlwhere) > 0) {
+				$sql .= ' AND ('.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
+			}
+
+			$filter = '';
 		}
-		if (count($sqlwhere) > 0) {
-			$sql .= ' AND ('.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
+
+		// Manage filter
+		$errormessage = '';
+		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+		if ($errormessage) {
+			$this->errors[] = $errormessage;
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+			return -1;
 		}
 
 		if (!empty($sortfield)) {
@@ -389,7 +392,7 @@ class ProductFournisseurPrice extends CommonObject
 			return $records;
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
@@ -399,10 +402,10 @@ class ProductFournisseurPrice extends CommonObject
 	 * Update object into database
 	 *
 	 * @param  User $user      User that modifies
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
 	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
-	public function update(User $user, $notrigger = false)
+	public function update(User $user, $notrigger = 0)
 	{
 		return $this->updateCommon($user, $notrigger);
 	}
@@ -410,11 +413,11 @@ class ProductFournisseurPrice extends CommonObject
 	/**
 	 * Delete object in database
 	 *
-	 * @param User $user       User that deletes
-	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             Return integer <0 if KO, >0 if OK
+	 * @param User $user       	User that deletes
+	 * @param int 	$notrigger  0=launch triggers after, 1=disable triggers
+	 * @return int             	Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user, $notrigger = false)
+	public function delete(User $user, $notrigger = 0)
 	{
 		return $this->deleteCommon($user, $notrigger);
 	}
@@ -436,7 +439,7 @@ class ProductFournisseurPrice extends CommonObject
 
 		// Protection
 		if ($this->status == self::STATUS_VALIDATED) {
-			dol_syslog(get_class($this)."::validate action abandonned: already validated", LOG_WARNING);
+			dol_syslog(get_class($this)."::validate action abandoned: already validated", LOG_WARNING);
 			return 0;
 		}
 
@@ -596,7 +599,7 @@ class ProductFournisseurPrice extends CommonObject
 	}
 
 	/**
-	 *  Return a link to the object card (with optionaly the picto)
+	 *  Return a link to the object card (with optionally the picto)
 	 *
 	 *  @param  int     $withpicto                  Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
 	 *  @param  string  $option                     On what the link point to ('nolink', ...)
@@ -691,7 +694,7 @@ class ProductFournisseurPrice extends CommonObject
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('productfournisseurpricedao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -780,11 +783,11 @@ class ProductFournisseurPrice extends CommonObject
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @return void
+	 * @return int
 	 */
 	public function initAsSpecimen()
 	{
-		$this->initAsSpecimenCommon();
+		return $this->initAsSpecimenCommon();
 	}
 
 	/**
@@ -805,7 +808,7 @@ class ProductFournisseurPrice extends CommonObject
 			$mybool = false;
 
 			$file = getDolGlobalString('BUYPRICEHISTORY_PRODUCTFOURNISSEURPRICE_ADDON') . ".php";
-			$classname = $conf->global->BUYPRICEHISTORY_PRODUCTFOURNISSEURPRICE_ADDON;
+			$classname = getDolGlobalString('BUYPRICEHISTORY_PRODUCTFOURNISSEURPRICE_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -813,11 +816,11 @@ class ProductFournisseurPrice extends CommonObject
 				$dir = dol_buildpath($reldir."core/modules/buypricehistory/");
 
 				// Load file with numbering class (if found)
-				$mybool |= @include_once $dir.$file;
+				$mybool = ((bool) @include_once $dir.$file) || $mybool;
 			}
 
-			if ($mybool === false) {
-				dol_print_error('', "Failed to include file ".$file);
+			if (!$mybool) {
+				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 
@@ -846,7 +849,7 @@ class ProductFournisseurPrice extends CommonObject
 	 *  Create a document onto disk according to template module.
 	 *
 	 *  @param	    string		$modele			Force template to use ('' to not force)
-	 *  @param		Translate	$outputlangs	objet lang a utiliser pour traduction
+	 *  @param		Translate	$outputlangs	object lang a utiliser pour traduction
 	 *  @param      int			$hidedetails    Hide details of lines
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
@@ -868,7 +871,7 @@ class ProductFournisseurPrice extends CommonObject
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('PRODUCTFOURNISSEURPRICE_ADDON_PDF')) {
-				$modele = $conf->global->PRODUCTFOURNISSEURPRICE_ADDON_PDF;
+				$modele = getDolGlobalString('PRODUCTFOURNISSEURPRICE_ADDON_PDF');
 			}
 		}
 

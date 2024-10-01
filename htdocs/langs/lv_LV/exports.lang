@@ -46,10 +46,16 @@ LineLabel=Label of line
 LineDescription=Līnijas apraksts
 LineUnitPrice=Vienības cenas līnija
 LineVATRate=PVN likme līnijas
+LineLT1Rate=Nodokļa 2 likme rindai
+LineLT2Rate=Nodokļa 3 likme rindai
+LineLT1Type=Nodokļa 2 veids rindai
+LineLT2Type=Nodokļa 3 veids rindai
 LineQty=Daudzums līnijas
 LineTotalHT=Summa, neskaitot nodoklis par līniju
 LineTotalTTC=Summa ar nodokļiem līniju
 LineTotalVAT=PVN summu, par līnijas
+LineTotalLT1=Nodokļa summa 2 par rindu
+LineTotalLT2=Nodokļa summa 3 par rindu
 TypeOfLineServiceOrProduct=Veids (0=produkts, 1=pakalpojums)
 FileWithDataToImport=Fails ar datiem, lai importētu
 FileToImport=Avota fails, kas jāimportē

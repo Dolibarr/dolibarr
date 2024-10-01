@@ -5,8 +5,6 @@ RefReception=রেফ. অভ্যর্থনা
 Reception=অভ্যর্থনা
 Receptions=অভ্যর্থনা
 AllReceptions=সমস্ত অভ্যর্থনা
-Reception=অভ্যর্থনা
-Receptions=অভ্যর্থনা
 ShowReception=অভ্যর্থনা দেখান
 ReceptionsArea=অভ্যর্থনা এলাকা
 ListOfReceptions=অভ্যর্থনা তালিকা
@@ -34,7 +32,7 @@ StatusReceptionProcessedShort=প্রক্রিয়াকৃত
 ReceptionSheet=অভ্যর্থনা শীট
 ValidateReception=অভ্যর্থনা যাচাই
 ConfirmDeleteReception=আপনি কি নিশ্চিত আপনি এই অভ্যর্থনা মুছে দিতে চান?
-ConfirmValidateReception=আপনি কি <b>%s</b><span class='notranslate'>রেফারেন্স সহ এই অভ্যর্থনাটি যাচাই করতে চান >?
+ConfirmValidateReception=Are you sure you want to validate this reception with the reference <b>%s</b>?
 ConfirmCancelReception=আপনি কি নিশ্চিত আপনি এই অভ্যর্থনা বাতিল করতে চান?
 StatsOnReceptionsOnlyValidated=পরিসংখ্যান শুধুমাত্র বৈধ অভ্যর্থনা উপর পরিচালিত. ব্যবহৃত তারিখ হল অভ্যর্থনার বৈধতার তারিখ (পরিকল্পিত ডেলিভারির তারিখ সবসময় জানা যায় না)।
 SendReceptionByEMail=ইমেল দ্বারা অভ্যর্থনা পাঠান

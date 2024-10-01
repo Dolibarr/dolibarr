@@ -40,6 +40,7 @@ if (!defined('NOBROWSERNOTIF')) {
 
 // For MultiCompany module
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
+// Because 2 entities can have the same ref.
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
@@ -81,7 +82,7 @@ if (!getDolGlobalString('TICKET_ENABLE_PUBLIC_INTERFACE')) {
 }
 
 $arrayofjs = array();
-$arrayofcss = array(getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', '/ticket/').'css/styles.css.php');
+$arrayofcss = array(getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', '/public/ticket/').'css/styles.css.php');
 
 llxHeaderTicket($langs->trans('Tickets'), "", 0, 0, $arrayofjs, $arrayofcss);
 

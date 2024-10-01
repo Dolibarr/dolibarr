@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2014-2015 Florian HENRY <florian.henry@open-concept.pro>
+/* Copyright (C) 2014-2015  Florian HENRY               <florian.henry@open-concept.pro>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,8 +25,16 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  */
 class TaskStats extends Stats
 {
-	private $project;
+	private $project; // @phpstan-ignore-line
+
+	/**
+	 * @var int ID of User
+	 */
 	public $userid;
+
+	/**
+	 * @var int ID of Societe
+	 */
 	public $socid;
 
 	/**
@@ -36,7 +45,7 @@ class TaskStats extends Stats
 	/**
 	 * Constructor of the class
 	 *
-	 * @param   DoliDb  $db     Database handler
+	 * @param   DoliDB  $db     Database handler
 	 */
 	public function __construct($db)
 	{
@@ -58,8 +67,8 @@ class TaskStats extends Stats
 		$sql = "SELECT";
 		$sql .= " COUNT(t.rowid), t.priority";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task as t INNER JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = t.fk_projet";
-		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
-			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc=p.fk_soc AND sc.fk_user=".((int) $user->id);
+		if (!$user->hasRight('societe', 'client', 'voir')) {
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = p.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$sql .= $this->buildWhere();
 		//$sql .= " AND t.fk_statut <> 0";     // We want historic also, so all task not draft
@@ -112,8 +121,8 @@ class TaskStats extends Stats
 
 		$sql = "SELECT date_format(t.datec,'%Y') as year, COUNT(t.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task as t INNER JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = t.fk_projet";
-		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
-			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc=p.fk_soc AND sc.fk_user=".((int) $user->id);
+		if (!$user->hasRight('societe', 'client', 'voir')) {
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = p.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$sql .= $this->buildWhere();
 		$sql .= " GROUP BY year";
@@ -138,7 +147,7 @@ class TaskStats extends Stats
 		if (!empty($this->userid)) {
 			$sqlwhere[] = ' t.fk_user_resp = '.((int) $this->userid);
 		}
-		// Forced filter on socid is similar to forced filter on project. TODO Use project assignement to allow to not use filter on project
+		// Forced filter on socid is similar to forced filter on project. TODO Use project assignment to allow to not use filter on project
 		if (!empty($this->socid)) {
 			$sqlwhere[] = ' p.fk_soc = '.((int) $this->socid); // Link on thirdparty is on project, not on task
 		}
@@ -174,7 +183,7 @@ class TaskStats extends Stats
 
 		$sql = "SELECT date_format(t.datec,'%m') as dm, COUNT(t.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task as t INNER JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = t.fk_projet";
-		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc=p.fk_soc AND sc.fk_user=".((int) $user->id);
 		}
 		$sql .= $this->buildWhere();

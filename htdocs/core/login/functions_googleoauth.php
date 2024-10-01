@@ -39,7 +39,7 @@
  */
 function check_user_password_googleoauth($usertotest, $passwordtotest, $entitytotest)
 {
-	global $_POST, $conf;
+	global $conf;
 
 	dol_syslog("functions_googleoauth::check_user_password_googleoauth usertotest=".$usertotest." GETPOST('actionlogin')=".GETPOST('actionlogin'));
 
@@ -53,7 +53,7 @@ function check_user_password_googleoauth($usertotest, $passwordtotest, $entityto
 
 			// We save data of form into a variable
 			$_SESSION['datafromloginform'] = array(
-				'entity'=>GETPOST('entity', 'int'),
+				'entity'=>GETPOSTINT('entity'),
 				'backtopage'=>GETPOST('backtopage'),
 				'tz'=>GETPOST('tz'),
 				'tz_string'=>GETPOST('tz_string'),
@@ -113,7 +113,7 @@ function check_user_password_googleoauth($usertotest, $passwordtotest, $entityto
 				$_POST['dol_use_jmobile'] = $tmparray['dol_use_jmobile'];
 			}
 
-			// If googleoauth_login has been set (by google_oauthcallback after a successfull OAUTH2 request on openid scope
+			// If googleoauth_login has been set (by google_oauthcallback after a successful OAUTH2 request on openid scope
 			if (!empty($_SESSION['googleoauth_receivedlogin']) && dol_verifyHash($conf->file->instance_unique_id.$usertotest, $_SESSION['googleoauth_receivedlogin'], '0')) {
 				dol_syslog("Login received by Google OAuth was validated by callback page and saved crypted into session. This login is ".$usertotest);
 				unset($_SESSION['googleoauth_receivedlogin']);

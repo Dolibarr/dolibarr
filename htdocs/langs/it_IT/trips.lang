@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - trips
+# Dolibarr language file - Source file is en_US - trips.lang
 AUTHOR=Registrata da
 AUTHORPAIEMENT=Pagata da
 AddTrip=Crea nota spese
@@ -13,6 +13,8 @@ byEX_EXP=by line (limitation to %s)
 byEX_MON=by month (limitation to %s)
 byEX_YEA=by year (limitation to %s)
 CANCEL_USER=Cancellata da
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=conto (dalla tabella di conto) utilizzato da default per "utenti "sulle note spese
+ACCOUNTING_ACCOUNT_EXPENSEREPORT_Desc=The dedicated account defined on the user card will be used for Subledger accounting only. This one will be used for General Ledger, and also as the default value of Subledger accounting if no dedicated accounting account is not defined on the user.
 CarCategory=Categoria veicoli
 ClassifyRefunded=Classifica come "Rimborsata"
 CompanyVisited=Azienda / organizzazione visitata
@@ -24,7 +26,7 @@ ConfirmPaidTrip=Vuoi davvero modificare lo stato di questa nota spese in "liquid
 ConfirmRefuseTrip=Vuoi davvero rifiutare questa nota spese?
 ConfirmSaveTrip=Vuoi davvero convalidare questa nota spese?
 ConfirmValideTrip=Vuoi davvero approvare questa nota spese?
-DATE_CANCEL=Eliminata in data
+DATE_CANCEL=Cancellazione data
 DATE_PAIEMENT=Liquidata in data
 DATE_REFUS=Rifiutata in data
 DATE_SAVE=Convalidata in data
@@ -39,7 +41,7 @@ expenseReportCoef=Coefficiente
 expenseReportCoefUndefined=(Valore non definito)
 expenseReportOffset=Scostamento
 expenseReportPrintExample=offset + (d x coef) = %s
-expenseReportRangeDisabled=Range disabled - see the c_exp_tax_range dictionay
+expenseReportRangeDisabled=Intervallo Disabilitato: consulta il dizionario c_exp_tax_range
 expenseReportRangeFromTo=from %d to %d
 expenseReportRangeMoreThan=più di %d
 expenseReportTotalForFive=Example with <u>d</u> = 5
@@ -93,7 +95,7 @@ nolimitbyEX_YEA=per anno (illimitato)
 NoTripsToExportCSV=Nessuna nota spese da esportare per il periodo
 NOT_AUTHOR=Non sei l'autore di questa nota spese. Operazione annullata.
 OnExpense=Riga nota spese
-PDFStandardExpenseReports=Template standard per la generazione dei PDF delle not spese
+PDFStandardExpenseReports=Modello standard per generare un PDF documento per una nota spese
 PaidTrip=Liquida una nota spese
 REFUSEUR=Rifiutata da
 RangeIk=Mileage range
@@ -103,7 +105,7 @@ ShowExpenseReport=Mostra note spese
 ShowTrip=Mostra note spese
 TripCard=Scheda nota spese
 TripId=ID nota spese
-TripNDF=Informazioni nota spese
+TripNDF=Nota informativa sulle spese
 TripSociete=Informazioni azienda
 Trips=Note spese
 TripsAndExpenses=Note spese
@@ -115,6 +117,10 @@ VALIDOR=Approvata da
 ValidateAndSubmit=Convalida e proponi per l'approvazione
 ValidatedWaitingApproval=Convalidata (in attesa di approvazione)
 ValideTrip=Approva la nota spese
+ExpenseReportPayments=Pagamenti note spese
+TaxUndefinedForThisCategory = imposte non è definito per questo categorie
+errorComputeTtcOnMileageExpense=Errore nel calcolo della spesa chilometrica
+ErrorOnlyDraftStatusCanBeDeletedInMassAction=Solo gli elementi con stato Bozza possono essere eliminati nell'azione di massa
 
 ## Dictionary
 EX_BRE=Colazione

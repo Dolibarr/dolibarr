@@ -72,7 +72,7 @@ FieldsTarget=টার্গেটেড ক্ষেত্র
 FieldTarget=টার্গেটেড ক্ষেত্র
 FieldSource=উৎস ক্ষেত্র
 NbOfSourceLines=উৎস ফাইলে লাইনের সংখ্যা
-NowClickToTestTheImport=আপনার ফাইলের ফাইল ফরম্যাট (ক্ষেত্র এবং স্ট্রিং ডিলিমিটার) দেখানো বিকল্পগুলির সাথে মেলে এবং আপনি হেডার লাইনটি বাদ দিয়েছেন কিনা তা পরীক্ষা করে দেখুন, অথবা এইগুলি নিম্নলিখিত সিমুলেশনে ত্রুটি হিসাবে ফ্ল্যাগ করা হবে।<br></span span>একটি চালানোর জন্য "<span class='notranslate'><b>%s</b>" বোতামে ক্লিক করুন ফাইলের গঠন/বিষয়বস্তু পরীক্ষা করুন এবং আমদানি প্রক্রিয়া অনুকরণ করুন।<br><b>আপনার ডাটাবেসে কোনো ডেটা পরিবর্তন করা হবে না</b>।
+NowClickToTestTheImport=Check that the file format (field and string delimiters) of your file matches the options shown and that you have omitted the header line, or these will be flagged as errors in the following simulation.<br>Click on the "<b>%s</b>" button to run a check of the file structure/contents and simulate the import process.<br><b>No data will be changed in your database</b>.
 RunSimulateImportFile=আমদানি সিমুলেশন চালান
 FieldNeedSource=এই ক্ষেত্রের উৎস ফাইল থেকে ডেটা প্রয়োজন
 SomeMandatoryFieldHaveNoSource=কিছু বাধ্যতামূলক ক্ষেত্র ডেটা ফাইল থেকে কোন উৎস নেই
@@ -83,19 +83,19 @@ SelectFormat=এই আমদানি ফাইল বিন্যাস নি
 RunImportFile=তথ্য আমদানি
 NowClickToRunTheImport=আমদানি সিমুলেশন ফলাফল পরীক্ষা করুন. কোনো ত্রুটি সংশোধন করুন এবং পুনরায় পরীক্ষা করুন।<br>যখন সিমুলেশন কোনো ত্রুটির প্রতিবেদন করে না আপনি ডাটাবেসে ডেটা আমদানি করতে এগিয়ে যেতে পারেন।
 DataLoadedWithId=এই আমদানি আইডি সহ প্রতিটি ডাটাবেস টেবিলে আমদানি করা ডেটার একটি অতিরিক্ত ক্ষেত্র থাকবে: <b>%s</b>, এই আমদানির সাথে সম্পর্কিত একটি সমস্যা তদন্তের ক্ষেত্রে এটি অনুসন্ধানযোগ্য হওয়ার অনুমতি দিতে৷
-ErrorMissingMandatoryValue=<b>%s</b><span class='notranslate'> কলামের উৎস ফাইলে বাধ্যতামূলক ডেটা খালি।
+ErrorMissingMandatoryValue=Mandatory data is empty in the source file in column <b>%s</b>.
 TooMuchErrors=এখনও <b>%s</b> ত্রুটি সহ অন্যান্য উত্স লাইন আছে কিন্তু আউটপুট আছে সীমিত করা হয়েছে।
 TooMuchWarnings=এখনও <b>%s</b> সতর্কতা সহ অন্যান্য উত্স লাইন আছে কিন্তু আউটপুট আছে সীমিত করা হয়েছে।
 EmptyLine=খালি লাইন (বাদ দেওয়া হবে)
-CorrectErrorBeforeRunningImport=আপনাকে <b>অবশ্যই</b> সমস্ত ত্রুটি সংশোধন করতে হবে <b>আগে<span> notranslate'></b></span> নিশ্চিত আমদানি চলছে৷
+CorrectErrorBeforeRunningImport=You <b>must</b> correct all errors <b>before</b> running the definitive import.
 FileWasImported=<b>%s</b> নম্বর সহ ফাইল আমদানি করা হয়েছে৷
-YouCanUseImportIdToFindRecord=আপনি <b>import_key='%s'<span class='notranslate' ফিল্টার করে আপনার ডাটাবেসের সমস্ত আমদানি করা রেকর্ড খুঁজে পেতে পারেন '></b></span>।
+YouCanUseImportIdToFindRecord=You can find all the imported records in your database by filtering on field <b>import_key='%s'</b>.
 NbOfLinesOK=কোনো ত্রুটি এবং কোনো সতর্কতা ছাড়াই লাইনের সংখ্যা: <b>%s</b>
 NbOfLinesImported=লাইনের সংখ্যা সফলভাবে আমদানি করা হয়েছে: <b>%s</b>।
 DataComeFromNoWhere=সন্নিবেশ করার মান উৎস ফাইলের কোথাও থেকে আসে।
 DataComeFromFileFieldNb=সন্নিবেশ করার মান উৎস ফাইলে <b>%s</b> থেকে আসে।
 DataComeFromIdFoundFromRef=সোর্স ফাইল থেকে আসা মানটি ব্যবহার করার জন্য মূল বস্তুর আইডি খুঁজে পেতে ব্যবহার করা হবে (তাই বস্তুটি <b>%s</b> যার রেফ. ফ্রম সোর্স ফাইলটি ডাটাবেসে বিদ্যমান থাকতে হবে)।
-DataComeFromIdFoundFromCodeId=সোর্স ফাইল থেকে আসা কোডের মান ব্যবহার করা হবে প্যারেন্ট অবজেক্টের আইডি খুঁজে বের করার জন্য (সুতরাং সোর্স ফাইলের কোডটি ডিকশনারিতে থাকা আবশ্যক <b><span ক্লাস ='notranslate'>%s</span></b>)। মনে রাখবেন যে আপনি যদি আইডিটি জানেন তবে আপনি কোডের পরিবর্তে সোর্স ফাইলে এটি ব্যবহার করতে পারেন। আমদানি উভয় ক্ষেত্রেই কাজ করা উচিত।
+DataComeFromIdFoundFromCodeId=The value of code that comes from source file will be used to find the id of the parent object to use (so the code from source file must exist in the dictionary <b>%s</b>). Note that if you know the id, you can also use it in the source file instead of the code. Import should work in both cases.
 DataIsInsertedInto=উৎস ফাইল থেকে আসা ডেটা নিম্নলিখিত ক্ষেত্রে সন্নিবেশ করা হবে:
 DataIDSourceIsInsertedInto=মূল বস্তুর আইডি, যা উৎস ফাইলের ডেটা ব্যবহার করে পাওয়া গেছে, নিম্নলিখিত ক্ষেত্রে সন্নিবেশ করা হবে:
 DataCodeIDSourceIsInsertedInto=প্যারেন্ট লাইনের আইডি, যা কোড থেকে পাওয়া গেছে, নিম্নলিখিত ক্ষেত্রে ঢোকানো হবে:
@@ -113,8 +113,8 @@ Separator=ক্ষেত্র বিভাজক
 Enclosure=স্ট্রিং ডিলিমিটার
 SpecialCode=বিশেষ কোড
 ExportStringFilter=%% পাঠ্যের এক বা একাধিক অক্ষর প্রতিস্থাপনের অনুমতি দেয়
-ExportDateFilter=YYYY, YYYYMM, YYYYMMDD: এক বছর/মাস/দিনের দ্বারা ফিল্টার করুন<br>YYYY+YYYY, YYYYMM+YYYYMM, YYYYMMDD+YYYYMMDD+YYYYMMDD বছর/মাস/মাস রেঞ্জের বেশি বছর span class='notranslate'><br></span> > YYYY, > YYYYMM, > YYYYMMDD: পরবর্তী সমস্ত বছর/মাস/দিনে ফিল্টার<br> < YYYY, <YYYY, YYYYMMDD: আগের সমস্ত বছর/মাস/দিনে ফিল্টার
-ExportNumericFilter=একটি মান দ্বারা NNNNN ফিল্টার<br>NNNNN+NNNNN ফিল্টারগুলি বিভিন্ন মানের পরিসরে<br><span class='notranslate'02127bz0 </span>> NNNNN উচ্চতর মান দ্বারা ফিল্টার
+ExportDateFilter=YYYY, YYYYMM, YYYYMMDD: filters by one year/month/day<br>YYYY+YYYY, YYYYMM+YYYYMM, YYYYMMDD+YYYYMMDD: filters over a range of years/months/days<br> > YYYY, > YYYYMM, > YYYYMMDD: filters on all following years/months/days<br> < YYYY, < YYYYMM, < YYYYMMDD: filters on all previous years/months/days
+ExportNumericFilter=NNNNN filters by one value<br>NNNNN+NNNNN filters over a range of values<br>< NNNNN filters by lower values<br>> NNNNN filters by higher values
 ImportFromLine=লাইন নম্বর থেকে শুরু করে আমদানি
 EndAtLineNb=লাইন নম্বরে শেষ করুন
 ImportFromToLine=সীমা পরিসীমা (থেকে - থেকে)। যেমন হেডার লাইন(গুলি) বাদ দিতে।

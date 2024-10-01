@@ -3,6 +3,7 @@
  * Copyright (C) 2018-2019  Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2019-2022  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2021 		Gauthier VERDOL 		<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -109,7 +110,7 @@ class modStockTransfer extends DolibarrModules
 			),
 			// Set this to 1 if features of module are opened to external users
 			'moduleforexternal' => 0,
-			'contactelement'=>1
+			'contactelement' => 1
 		);
 		// Data directories to create when module is enabled.
 		// Example: this->dirs = array("/stocktransfer/temp","/stocktransfer/subdir");
@@ -157,7 +158,7 @@ class modStockTransfer extends DolibarrModules
 		// 'intervention'     to add a tab in intervention view
 		// 'invoice'          to add a tab in customer invoice view
 		// 'invoice_supplier' to add a tab in supplier invoice view
-		// 'member'           to add a tab in fundation member view
+		// 'member'           to add a tab in foundation member view
 		// 'opensurveypoll'	  to add a tab in opensurvey poll view
 		// 'order'            to add a tab in sales order view
 		// 'order_supplier'   to add a tab in supplier order view
@@ -438,21 +439,21 @@ class modStockTransfer extends DolibarrModules
 		// Roles
 		$resql = $this->db->query("SELECT rowid FROM ".MAIN_DB_PREFIX."c_type_contact WHERE code = 'STDEST' AND element = 'stocktransfer' AND source = 'internal'");
 		$res = $this->db->fetch_object($resql);
-		$nextid=$this->getNextId();
+		$nextid = $this->getNextId();
 		if (empty($res)) {
 			$this->db->query("INSERT INTO ".MAIN_DB_PREFIX."c_type_contact(rowid, element, source, code, libelle, active, module, position) VALUES(".((int) $nextid).", 'stocktransfer', 'internal', 'STRESP', 'Responsible for stock transfers', 1, NULL, 0)");
 		}
 
 		$resql = $this->db->query("SELECT rowid FROM ".MAIN_DB_PREFIX."c_type_contact WHERE code = 'STFROM' AND element = 'stocktransfer' AND source = 'external'");
 		$res = $this->db->fetch_object($resql);
-		$nextid=$this->getNextId();
+		$nextid = $this->getNextId();
 		if (empty($res)) {
 			$this->db->query("INSERT INTO ".MAIN_DB_PREFIX."c_type_contact(rowid, element, source, code, libelle, active, module, position) VALUES(".((int) $nextid).", 'stocktransfer', 'external', 'STFROM', 'Contact sending the stock transfer', 1, NULL, 0)");
 		}
 
 		$resql = $this->db->query("SELECT rowid FROM ".MAIN_DB_PREFIX."c_type_contact WHERE code = 'STDEST' AND element = 'stocktransfer' AND source = 'external'");
 		$res = $this->db->fetch_object($resql);
-		$nextid=$this->getNextId();
+		$nextid = $this->getNextId();
 		if (empty($res)) {
 			$this->db->query("INSERT INTO ".MAIN_DB_PREFIX."c_type_contact(rowid, element, source, code, libelle, active, module, position) VALUES(".((int) $nextid).", 'stocktransfer', 'external', 'STDEST', 'Contact receiving the stock transfer', 1, NULL, 0)");
 		}

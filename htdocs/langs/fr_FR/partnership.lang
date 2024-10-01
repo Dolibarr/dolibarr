@@ -4,18 +4,14 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModulePartnershipName=Gestion des partenariats
 PartnershipDescription=Module de gestion des partenariats
 PartnershipDescriptionLong= Module de gestion des partenariats
@@ -24,17 +20,11 @@ Partnerships=Partenariats
 AddPartnership=Ajouter un partenariat
 CancelPartnershipForExpiredMembers=Partenariat : annuler le partenariat des adhérents dont les cotisations ont expirés
 PartnershipCheckBacklink=Partenariat : Vérifiez le backlink référent
-
-#
 # Menu
-#
 NewPartnership=Nouveau partenariat
 NewPartnershipbyWeb=Votre demande de partenariat a été ajoutée avec succès. Nous pourrions vous contacter bientôt...
 ListOfPartnerships=Listes des partenariats
-
-#
 # Admin page
-#
 PartnershipSetup=Page de configuration du module Partenariat
 PartnershipAbout=À propos de Partenariat
 PartnershipAboutPage=Page d'informations du module Partenariat
@@ -45,17 +35,14 @@ PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb de jours avant l'ann
 ReferingWebsiteCheck=Vérification du site référent
 ReferingWebsiteCheckDesc=Vous pouvez activer une fonctionnalité pour vérifier que vos partenaires ont ajouté un rétrolien vers les domaines de votre site Web sur leur propre site Web.
 PublicFormRegistrationPartnerDesc=Dolibarr peut vous fournir une URL/un site Web public pour permettre aux visiteurs externes de demander à faire partie du programme de partenariat.
-
-#
 # Object
-#
 DeletePartnership=Supprimer un partenariat
 PartnershipDedicatedToThisThirdParty=Partenariat dédié à ce tiers
 PartnershipDedicatedToThisMember=Partenariat dédié à cet adhérent
 DatePartnershipStart=Date de début
 DatePartnershipEnd=Date de fin
 ReasonDecline=Raison du refus
-ReasonDeclineOrCancel=Reason for refusal or cancellation
+ReasonDeclineOrCancel=Raison du refus ou de l'annulation
 PartnershipAlreadyExist=Partenariat déjà existant
 ManagePartnership=Gestion de partenariat
 BacklinkNotFoundOnPartnerWebsite=Lien de retour non trouvé sur le site web partenaire
@@ -68,31 +55,22 @@ PartnershipAccepted=Accepté
 PartnershipRefused=Refusé
 PartnershipCanceled=Annulé
 PartnershipManagedFor=Les partenaires sont
-
-#
 # Template Mail
-#
 SendingEmailOnPartnershipWillSoonBeCanceled=Le partenariat sera bientôt annulé
 SendingEmailOnPartnershipRefused=Partenariat refusé
 SendingEmailOnPartnershipAccepted=Partenariat accepté
 SendingEmailOnPartnershipCanceled=Partenariat annulé
-
 YourPartnershipWillSoonBeCanceledTopic=Le partenariat sera bientôt annulé
 YourPartnershipRefusedTopic=Partenariat refusé
 YourPartnershipAcceptedTopic=Partenariat accepté
 YourPartnershipCanceledTopic=Partenariat annulé
-
 YourPartnershipWillSoonBeCanceledContent=Nous vous informons que notre partenariat sera bientôt annulé (nous n'avons pas obtenu le renouvellement ou une condition préalable à notre partenariat n'a pas été remplie). Veuillez nous contacter si vous avez reçu ce message par erreur.
 YourPartnershipRefusedContent=Nous vous informons que votre demande de partenariat a été refusée. Les conditions préalables ne sont pas remplies. Veuillez nous contacter si vous avez besoin de plus d'informations.
 YourPartnershipAcceptedContent=Nous vous informons que votre demande de partenariat a été acceptée.
 YourPartnershipCanceledContent=Nous vous informons que votre partenariat a été annulé. Contactez-nous si vous avez besoin de plus d'informations.
-
 CountLastUrlCheckError=Nombre d'erreurs lors de la dernière vérification d'URL
 LastCheckBacklink=Date de la dernière vérification d'URL
-
 NewPartnershipRequest=Nouvelle demande de partenariat
 NewPartnershipRequestDesc=Ce formulaire vous permet de demander à faire partie de l'un de nos programmes de partenariat. Si vous avez besoin d'aide pour remplir ce formulaire, veuillez contacter par email <b>%s</b> .
 ThisUrlMustContainsAtLeastOneLinkToWebsite=Cette page doit contenir au moins un lien vers l'un des domaines suivants: %s
-
 IPOfApplicant=IP du demandeur
-

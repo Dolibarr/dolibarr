@@ -26,10 +26,10 @@ ExportDataset_fournisseur_1=Faturat e shitësit dhe detajet e faturës
 ExportDataset_fournisseur_2=Faturat dhe pagesat e shitësit
 ExportDataset_fournisseur_3=Porositë e blerjeve dhe detajet e porosisë
 ApproveThisOrder=Mirato këtë urdhër
-ConfirmApproveThisOrder=Jeni i sigurt që dëshironi të miratoni porosinë <b>%s<span class='notranslate'></b></s?
+ConfirmApproveThisOrder=Are you sure you want to approve order <b>%s</b>?
 DenyingThisOrder=Refuzoni këtë urdhër
-ConfirmDenyingThisOrder=Jeni të sigurt që dëshironi ta refuzoni këtë porosi <b>%s<span class='notranslate'></b></s?
-ConfirmCancelThisOrder=Jeni i sigurt që dëshironi ta anuloni këtë porosi <b>%s<span class='notranslate'></b></s?
+ConfirmDenyingThisOrder=Are you sure you want to deny this order <b>%s</b>?
+ConfirmCancelThisOrder=Are you sure you want to cancel this order <b>%s</b>?
 AddSupplierOrder=Krijo Urdhër Blerje
 AddSupplierInvoice=Krijo faturë shitësi
 ListOfSupplierProductForSupplier=Lista e produkteve dhe çmimet për shitësin <b>%s</b>

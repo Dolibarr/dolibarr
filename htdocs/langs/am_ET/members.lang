@@ -13,7 +13,7 @@ MembersTickets=የአባልነት አድራሻ ሉህ
 FundationMembers=የመሠረት አባላት
 ListOfValidatedPublicMembers=የተረጋገጡ የህዝብ አባላት ዝርዝር
 ErrorThisMemberIsNotPublic=ይህ አባል ይፋዊ አይደለም።
-ErrorMemberIsAlreadyLinkedToThisThirdParty=ሌላ አባል (ስም፦ <b>%s</b>፣ ይግቡ ='notranslate'><b></span>%s</b>) አስቀድሞ ከሦስተኛ ወገን ጋር ተገናኝቷል <span class=' '><b></span>%s</b>። ሶስተኛ ወገን ከአባል ጋር ብቻ ሊገናኝ ስለማይችል (እና በተገላቢጦሽ) ይህን አገናኝ መጀመሪያ ያስወግዱት።
+ErrorMemberIsAlreadyLinkedToThisThirdParty=Another member (name: <b>%s</b>, login: <b>%s</b>) is already linked to a third party <b>%s</b>. Remove this link first because a third party can't be linked to only a member (and vice versa).
 ErrorUserPermissionAllowsToLinksToItselfOnly=ለደህንነት ሲባል፣ አባልን የአንተ ካልሆነ ተጠቃሚ ጋር ማገናኘት እንድትችል ሁሉንም ተጠቃሚዎች ለማርትዕ ፈቃድ ሊሰጥህ ይገባል።
 SetLinkToUser=ከ Dolibarr ተጠቃሚ ጋር አገናኝ
 SetLinkToThirdParty=ወደ Dolibarr ሶስተኛ ወገን አገናኝ
@@ -200,8 +200,8 @@ MembersStatisticsDesc=ለማንበብ የሚፈልጉትን ስታቲስቲክ�
 MenuMembersStats=ስታትስቲክስ
 LastMemberDate=የቅርብ ጊዜ የአባልነት ቀን
 LatestSubscriptionDate=የቅርብ ጊዜ መዋጮ ቀን
-MemberNature=የአባሉ ተፈጥሮ
-MembersNature=የአባላት ተፈጥሮ
+MemberNature=Nature of member
+MembersNature=Nature of members
 Public=%s አባልነቴን በ<a target="_blank" href="%s">የህዝብ መዝገብ</a> ማተም እችላለሁ።
 MembershipPublic=የህዝብ አባልነት
 NewMemberbyWeb=አዲስ አባል ታክሏል። መጽደቅን በመጠባበቅ ላይ
@@ -246,3 +246,4 @@ XSubsriptionCreated=%s subscription(s) created
 XSubsriptionErrors=%s subscription(s) where in error
 CreateSubscription=Create subscription
 WarningNoComplementaryActionDone=No Complementary action on recording will be executed with this massaction
+NewMembership=New membership

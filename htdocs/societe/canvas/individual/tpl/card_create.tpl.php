@@ -19,7 +19,7 @@
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 ?>
@@ -122,7 +122,7 @@ if (isModEnabled('barcode')) { ?>
 
 <tr>
 	<td class="tdtop"><?php echo $langs->trans('Address'); ?></td>
-	<td colspan="3"><textarea name="adresse" cols="40" rows="3"><?php echo $this->control->tpl['address']; ?></textarea></td>
+	<td colspan="3"><textarea name="address" cols="40" rows="3"><?php echo $this->control->tpl['address']; ?></textarea></td>
 </tr>
 
 <tr>
@@ -144,7 +144,9 @@ if (isModEnabled('barcode')) { ?>
 
 <tr>
 	<td><?php echo $langs->trans('Phone'); ?></td>
-	<td><input type="text" name="tel" value="<?php echo $this->control->tpl['tel']; ?>"></td>
+	<td><input type="text" name="phone" value="<?php echo $this->control->tpl['phone']; ?>"></td>
+	<td><?php echo $langs->trans('PhoneMobile'); ?></td>
+	<td><input type="text" name="phone_mobile" value="<?php echo $this->control->tpl['phone_mobile']; ?>"></td>
 	<td><?php echo $langs->trans('Fax'); ?></td>
 	<td><input type="text" name="fax" value="<?php echo $this->control->tpl['fax']; ?>"></td>
 </tr>

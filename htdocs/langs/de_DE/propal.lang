@@ -69,7 +69,7 @@ ProposalLines=Angebotszeilen
 AvailabilityPeriod=Gültig bis
 SetAvailability=Gültigkeitszeitraum definieren
 AfterOrder=nach Bestellung
-OtherProposals=Zeige weitere Angebote für diesen Geschäftspartner
+OtherProposals=weitere Angebote für diesen Geschäftspartner
 
 ##### Availability #####
 AvailabilityTypeAV_NOW=Sofort
@@ -77,13 +77,11 @@ AvailabilityTypeAV_1W=7 Tage
 AvailabilityTypeAV_2W=14 Tage
 AvailabilityTypeAV_3W=3 Wochen
 AvailabilityTypeAV_1M=1 Monat
-
 ##### Types ofe contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Vertreter für Angebot
 TypeContact_propal_external_BILLING=Kontakt für Kundenrechnungen
 TypeContact_propal_external_CUSTOMER=Kundenkontakt für Angebot
 TypeContact_propal_external_SHIPPING=Kundenkontakt für Lieferung
-
 # Document models
 CantBeNoSign=Kann nicht auf "abgelehnt" gesetzt werden
 CaseFollowedBy=Fall gefolgt von
@@ -122,3 +120,5 @@ SignSociete_rib=Mandat unterzeichnen
 SignPropal=Angebot annehmen
 Signed=beauftragt
 SignedOnly=nur signiert
+ExpeditionSigned=Sendung unterzeichnet 
+SignExpedition=Sendung unterzeichnen

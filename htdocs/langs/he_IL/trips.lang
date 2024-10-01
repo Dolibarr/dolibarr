@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - trips
+# Dolibarr language file - Source file is en_US - trips.lang
 AUTHOR=הוקלט על ידי
 AUTHORPAIEMENT=שולם על ידי
 AddTrip=צור דו"ח הוצאות
@@ -13,6 +13,8 @@ byEX_EXP=לפי שורה (הגבלה ל-%s)
 byEX_MON=לפי חודש (הגבלה ל-%s)
 byEX_YEA=לפי שנה (הגבלה ל-%s)
 CANCEL_USER=נמחק על ידי
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Account (from the Chart of Account) used by default for "users" on expense reports
+ACCOUNTING_ACCOUNT_EXPENSEREPORT_Desc=The dedicated account defined on the user card will be used for Subledger accounting only. This one will be used for General Ledger, and also as the default value of Subledger accounting if no dedicated accounting account is not defined on the user.
 CarCategory=קטגוריית רכב
 ClassifyRefunded=סיווג 'מוחזר'
 CompanyVisited=חברה/ארגון ביקרו
@@ -68,9 +70,9 @@ ExpenseReportRuleErrorOnSave=שגיאה: %s
 ExpenseReportRuleSave=כלל דוח ההוצאות נשמר
 ExpenseReportRulesDesc=ניתן להגדיר כללי סכום מקסימלי עבור דוחות הוצאות. כללים אלה יחולו כאשר הוצאה חדשה תתווסף לדוח הוצאות
 ExpenseReportWaitingForApproval=דו"ח הוצאות חדש הוגש לאישור
-ExpenseReportWaitingForApprovalMessage=דוח הוצאות חדש הוגש והוא ממתין לאישור.<br> - משתמש: %s <br> - תקופה: %s<br>לחץ כאן כדי לאמת: <span class='notranslate'>b0ecfda19bz8 span>
+ExpenseReportWaitingForApprovalMessage=A new expense report has been submitted and is waiting for approval.<br> - User: %s<br> - Period: %s<br>Click here to validate: %s
 ExpenseReportWaitingForReApproval=דו"ח הוצאות הוגש לאישור מחדש
-ExpenseReportWaitingForReApprovalMessage=דוח הוצאות הוגש והוא ממתין לאישור מחדש.<br>את %s, סירבת לאשר את דוח ההוצאות עבור סיבה זו: %s.<br>גרסה חדשה הוצעה ומחכה לאישורך. <br> - משתמש: %s<br> - תקופה: b0ecb2ec87f49 <span class='notranslate'><br>לחץ כאן כדי לאמת: %s
+ExpenseReportWaitingForReApprovalMessage=An expense report has been submitted and is waiting for re-approval.<br>The %s, you refused to approve the expense report for this reason: %s.<br>A new version has been proposed and waiting for your approval.<br> - User: %s<br> - Period: %s<br>Click here to validate: %s
 ExpenseReportsIk=הגדרת דמי קילומטראז'
 ExpenseReportsRules=כללי דוח הוצאות
 ExpenseReportsToApprove=דוחות הוצאות לאישור
@@ -93,7 +95,7 @@ nolimitbyEX_YEA=לפי שנה (ללא הגבלה)
 NoTripsToExportCSV=אין דוח הוצאות לייצוא לתקופה זו.
 NOT_AUTHOR=אינך המחבר של דוח הוצאות זה. הפעולה בוטלה.
 OnExpense=שורת הוצאות
-PDFStandardExpenseReports=תבנית סטנדרטית להפקת מסמך PDF לדוח הוצאות
+PDFStandardExpenseReports=Standard template to generate a PDF document for an expense report
 PaidTrip=שלם דוח הוצאות
 REFUSEUR=נדחה על ידי
 RangeIk=טווח קילומטרים
@@ -106,7 +108,7 @@ TripId=דוח הוצאות תעודת זהות
 TripNDF=דוח הוצאות מידע
 TripSociete=חברת מידע
 Trips=דוחות הוצאות
-TripsAndExpenses=דוחות הוצאות
+TripsAndExpenses=Expense reports
 TripsAndExpensesStatistics=סטטיסטיקות דוחות הוצאות
 TypeFees=סוגי עמלות
 UploadANewFileNow=העלה מסמך חדש עכשיו
@@ -115,6 +117,10 @@ VALIDOR=מאושר על ידי
 ValidateAndSubmit=תאמת והגשה לאישור
 ValidatedWaitingApproval=מאומת (מחכה לאישור)
 ValideTrip=אישור דוח הוצאות
+ExpenseReportPayments=Expense report payments
+TaxUndefinedForThisCategory = Tax is undefined for this category
+errorComputeTtcOnMileageExpense=Error on computing mileage expense
+ErrorOnlyDraftStatusCanBeDeletedInMassAction=Only elements in draft status can be deleted in mass action
 
 ## Dictionary
 EX_BRE=ארוחת בוקר

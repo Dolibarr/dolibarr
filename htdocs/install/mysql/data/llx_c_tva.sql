@@ -24,19 +24,19 @@
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 
--- 
+--
 -- Ne pas placer de commentaire en fin de ligne, ce fichier est parsé lors
 -- de l'install et tous les sigles '--' sont supprimés.
 --
 
 --
 -- FR:
--- Taux TVA 
+-- Taux TVA
 -- Source des taux: https://fr.wikipedia.org/wiki/Taxe_sur_la_valeur_ajout%C3%A9e
 --
 -- EN:
--- VAT - value-added tax 
--- Source:  https://en.wikipedia.org/wiki/Value-added_tax 
+-- VAT - value-added tax
+-- Source:  https://en.wikipedia.org/wiki/Value-added_tax
 --
 
 
@@ -133,6 +133,16 @@ insert into llx_c_tva(rowid,fk_pays,taux,code,recuperableonly,note,active)      
 insert into llx_c_tva(rowid,fk_pays,taux,code,recuperableonly,note,active)                                                   values (17, 1, '8.5', '85NPR',      '1', 'VAT rate - standard (DOM sauf Guyane et Saint-Martin), non perçu par le vendeur mais récupérable par acheteur',0);
 insert into llx_c_tva(rowid,fk_pays,taux,code,recuperableonly,localtax1,localtax1_type,note,active)                          values (18, 1, '8.5', '85NPROM',    '1', 2, 3, 'VAT rate - standard (DOM sauf Guyane et Saint-Martin), NPR, Octroi de Mer',0);
 insert into llx_c_tva(rowid,fk_pays,taux,code,recuperableonly,localtax1,localtax1_type,localtax2,localtax2_type,note,active) values (19, 1, '8.5', '85NPROMOMR', '1', 2, 3, 2.5, 3, 'VAT rate - standard (DOM sauf Guyane et Saint-Martin), NPR, Octroi de Mer et Octroi de Mer Regional',0);
+
+-- GABON (id country=16)
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (161, 16,    '0','0','VAT rate 0',1);
+insert into llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (162, 16, 'TPS95',  10,   0, '0', 0, '0', 0, 'VAT 9.5', 1);
+insert into llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (163, 16, 'TPS95C', 10,   1, '1', 0, '0', 0, 'VAT 9.5+CSS', 1);
+insert into llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (164, 16, 'TPS10',  10,   0, '0', 0, '0', 0, 'VAT 10', 1);
+insert into llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (165, 16, 'TPS10C', 10,   1, '1', 0, '0', 0, 'VAT 10+CSS', 1);
+insert into llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (166, 16, 'TPS18',  18,   0, '0', 0, '0', 0, 'VAT 18', 1);
+insert into llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (167, 16, 'TPS18C', 18,   1, '1', 0, '0', 0, 'VAT 18+CSS', 1);
+
 
 -- GERMANY (id country=5)
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 51,  5,     '0','0','No VAT', 1);
@@ -267,7 +277,7 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (18
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 251,  25,   '0','0','VAT rate 0', 1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 252,  25,  '13','0','VAT rate - reduced',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 253,  25,  '23','0','VAT rate - standard',1);
-insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 254,  25,   '6','0','VAT rate - reduced',1); 
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 254,  25,   '6','0','VAT rate - reduced',1);
 
 -- ROMANIA (id country=188)
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1881, 188,   '0','0','VAT rate 0', 1);
