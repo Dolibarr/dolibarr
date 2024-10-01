@@ -29,10 +29,33 @@ require '../../main.inc.php';
 
 $langs->load("admin");
 
+$action = GETPOST('action', 'aZ09');
+
 if (!$user->admin) {
 	accessforbidden();
 }
 
+
+/*
+ * Actions
+ */
+
+if ($action == 'convertutf8unicode') {			// Test on permission already done.
+	$sql = "ALTER DATABASE ".$db->sanitize($table[0])." CHARACTER SET utf8 COLLATE utf8_unicode_ci";
+	$db->query($sql);
+}
+if ($action == 'convertutf8mb4unicode') {		// Test on permission already done.
+	$sql = "ALTER DATABASE ".$db->sanitize($table[0])." CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci";
+	$db->query($sql);
+}
+if ($action == 'convertutf8general') {			// Test on permission already done.
+	$sql = "ALTER DATABASE ".$db->sanitize($table[0])." CHARACTER SET utf8 COLLATE utf8_general_ci";
+	$db->query($sql);
+}
+if ($action == 'convertutf8mb4general') {		// Test on permission already done.
+	$sql = "ALTER DATABASE ".$db->sanitize($table[0])." CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci";
+	$db->query($sql);
+}
 
 
 /*
@@ -59,14 +82,33 @@ print '<tr class="oddeven"><td width="300">'.$langs->trans("User").'</td><td>'.$
 print '<tr class="oddeven"><td width="300">'.$langs->trans("Password").'</td><td>'.preg_replace('/./i', '*', $dolibarr_main_db_pass).'</td></tr>'."\n";
 print '<tr class="oddeven"><td width="300">'.$langs->trans("DBStoringCharset").'</td><td>'.$db->getDefaultCharacterSetDatabase();
 if ($db->type == 'mysqli') {
-	print ' '.$form->textwithpicto('', $langs->transnoentitiesnoconv("HelpMariaDBToGetValue", "SHOW VARIABLES LIKE 'character_set_database'").'<br>'.$langs->transnoentitiesnoconv("HelpMariaDBToGetPossibleValues", "SHOW CHARSET"));
+	print ' '.$form->textwithpicto('', $langs->transnoentitiesnoconv("HelpMariaDBToGetValue", "<br>SHOW VARIABLES LIKE 'character_set_database' (cached)<br>You can avoid cache effect with:<br>SELECT DEFAULT_CHARACTER_SET_NAME FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = '".$db->escape($conf->db->name)."'").'<br>'.$langs->transnoentitiesnoconv("HelpMariaDBToGetPossibleValues", "<br>SHOW CHARSET"));
 	// We can use $db->getDefaultCharacterSetDatabase(),  $db->getListOfCharacterSet(),
 }
 print '</td></tr>'."\n";
-print '<tr class="oddeven"><td width="300">'.$langs->trans("DBSortingCharset").'</td><td>'.$db->getDefaultCollationDatabase();
+print '<tr class="oddeven"><td width="300">'.$langs->trans("DBSortingCharset").'</td><td>';
+$defaultcollation = $db->getDefaultCollationDatabase();
+print dolPrintHTML($defaultcollation);
 if ($db->type == 'mysqli') {
-	print ' '.$form->textwithpicto('', $langs->transnoentitiesnoconv("HelpMariaDBToGetValue", "SHOW VARIABLES LIKE 'collation_database'").'<br>'.$langs->transnoentitiesnoconv("HelpMariaDBToGetPossibleValues", "SHOW COLLATION"));
+	if ($defaultcollation != $dolibarr_main_db_collation) {
+		print img_warning('The database default value of collation '.$defaultcollation.' differs from conf setup '.$dolibarr_main_db_collation);
+	}
+	print ' '.$form->textwithpicto('', $langs->transnoentitiesnoconv("HelpMariaDBToGetValue", "<br>SHOW VARIABLES LIKE 'collation_database' (cached)<br>You can avoid cache effect with:<br>SELECT DEFAULT_COLLATION_NAME FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = '".$db->escape($conf->db->name)."'").'<br>'.$langs->transnoentitiesnoconv("HelpMariaDBToGetPossibleValues", "<br>SHOW COLLATION"));
 	// We can use $db->getDefaultCollationDatabase(), $db->getListOfCollation();
+
+	print ' &nbsp; &nbsp; &nbsp; <span class="opacitymedium small">'.$langs->trans("ConvertInto");
+	if (!in_array($defaultcollation, array("utf8_unicode_ci"))) {
+		print ' &nbsp; <a class="reposition" href="'.DOL_URL_ROOT.'/admin/system/database.php?action=convertutf8unicode&token='.newToken().'">utf8 unicode</a>';
+	}
+	if (!in_array($defaultcollation, array("utf8_general_ci"))) {
+		print ' &nbsp;  <a class="reposition" href="'.DOL_URL_ROOT.'/admin/system/database.php?action=convertutf8general&token='.newToken().'">utf8 general</a>';
+	}
+	if (!in_array($defaultcollation, array("utf8mb4_unicode_ci"))) {
+		print ' &nbsp; <a class="reposition" href="'.DOL_URL_ROOT.'/admin/system/database.php?action=convertutf8mb4unicode&&token='.newToken().'">utf8mb4 unicode</a>';
+	}
+	if (!in_array($defaultcollation, array("utf8mb4_general_ci"))) {
+		print ' &nbsp; <a class="reposition" href="'.DOL_URL_ROOT.'/admin/system/database.php?action=convertutf8mb4general&&token='.newToken().'">utf8mb4 general</a>';
+	}
 }
 print '</td></tr>'."\n";
 print '</table>';
