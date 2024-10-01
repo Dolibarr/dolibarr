@@ -513,15 +513,15 @@ ModuleCompanyCodeCustomerDigitaria=%s seguido do nome de cliente acortado polo n
 ModuleCompanyCodeSupplierDigitaria=%s seguido do nome do provedor acortado polo número de caracteres:%s para o código de contabilidade do provedor.
 Use3StepsApproval=De forma predeterminada, os pedimentos a provedor teñen que ser creados e aprobados por 2 usuarios diferentes (un paso/usuario para crear e un paso/usuario para aprobar. Teña conta de que se o usuario ten tanto o permiso para crear e aprobar, un paso/usuario será suficiente. Pode pedir con esta opción introducir unha terceira etapa de aprobación/usuario, se a cantidade é superior a un valor específico (polo que serán precisos 3 pasos: 1 validación, 2=primeira aprobación e 3=segunda aprobación se a cantidade é suficiente).<br>Deixe baleiro se unha aprobación (2 pasos) é suficiente, se establece un valor moi baixo (0,1) requírese unha segunda aprobación sempre (3 pasos).
 UseDoubleApproval=Usar 3 pasos de aprobación se o importe (sen IVE) é maior que...
-WarningPHPMail=NOTICE: The setup to send emails from the application is using the default generic setup (called "%s"). This choice needs no technical knowledge and no particular setup.<br>However, it is often better to setup outgoing emails to use the other method (called "%s") to use the email server of your Email Service Provider, instead of the default setup for several reasons:
+WarningPHPMail=AVISO: a configuración para enviar correos electrónicos desde a aplicación utiliza a configuración xenérica predeterminada (chamada "%s"). Esta opción non precisa ningún coñecemento técnico e ningunha configuración particular.<br>Porén, moitas veces é mellor configurar os correos electrónicos de saída para usar o outro método (chamado " %s") para utilizar o servidor de correo electrónico do seu provedor de servizos de correo electrónico, en lugar da configuración predeterminada por varios motivos:
 WarningPHPMailA=- Usar o servidor do provedor de servizos de correo electrónico aumenta a fiabilidade do seu correo electrónico, polo que aumenta a capacidade de entrega sen ser marcado como SPAM
-WarningPHPMailB=- If the domain of your email (the part mymaildomain.com into myname@mymaildomain.com) is protected by a SPF + a DMARC record, your email may be flagged as SPAM because your DMARC rule defined into DNS zone of the domain of the sender (mymaildomain.com) does not allow the sending as a generic sender. In such a case, you must disable the DMARC for the domain (or set it to p=none like done by @gmail.com) or, better, if you have the technical knowledge, use the other method to send emails using the SMTP server of your own email provider.
+WarningPHPMailB=- Se o dominio do seu correo electrónico (a parte mymaildomain.com en myname@mymaildomain.com) está protexido por un rexistro SPF + DMARC, o seu correo electrónico pode marcarse como SPAM porque a súa regra DMARC definiuse na zona DNS do dominio do seu correo electrónico. remitente (mymaildomain.com) non permite o envío como remitente xenérico. Neste caso, debe desactivar o DMARC para o dominio (ou configuralo en p=none como o fixo @gmail.com) ou, mellor, se ten coñecementos técnicos, utilice o outro método para enviar correos electrónicos mediante SMTP. servidor do seu propio provedor de correo electrónico.
 WarningPHPMailC=- Tamén é interesante usar o servidor SMTP do seu propio fornecedor de servizos de correo electrónico para enviar correos electrónicos, polo que todos os correos electrónicos enviados desde a aplicación tamén se gardarán no directorio "Enviado" da súa caixa de correo.
 WarningPHPMailD=Polo tanto, recoméndase cambiar o método de envío dos correos electrónicos co valor "SMTP".
 WarningPHPMailDbis=Se realmente quere manter o método "PHP" predeterminado para enviar correos electrónicos, só ten que ignorar este aviso ou elimínao premendo %sprema aquí %s
 WarningPHPMail2=Se o seu fornecedorr SMTP de correo electrónico precisa restrinxir o cliente de correo electrónico a algúns enderezos IP (moi raro), este é o seu enderezo IP do seu axente de usuario de correo (MUA) da súa aplicación ERP CRM: <strong>%s</strong>.
-WarningPHPMailSPF=If the domain name in your sender email address is protected by a SPF record (ask your domain name registar), you must add the following IPs or entry in the SPF record of the DNS of your domain: <strong>%s</strong>.
-WarningPHPMailSPFDMARC=If the domain name in your sender email address is protected by a DMARC record different than p=none (ask your domain name registar), you must remove your DMARC record, or set it to p=none like do @gmail.com) or use sending another method.
+WarningPHPMailSPF=Se o nome de dominio do enderezo de correo electrónico do seu remitente está protexido por un rexistro SPF (pregúntelle ao rexistrador do seu nome de dominio), debe engadir as seguintes IP ou entrada no rexistro SPF do DNS do seu dominio:  <strong>%s</strong>.
+WarningPHPMailSPFDMARC=Se o nome de dominio do enderezo de correo electrónico do seu remitente está protexido por un rexistro DMARC diferente de p=none (pregúntelle ao rexistrador do seu nome de dominio), debe eliminar o seu rexistro DMARC ou configuralo en p=none como fai @gmail.com) ou use o envío doutro método.
 SPFAndDMARCInformation=Rexistro DNS SPF e DMARC para os enderezos de correo electrónico principais
 ActualMailDNSRecordFound=Atopouse o rexistro actual de %s (para o correo electrónico %s): %s
 ClickToShowDescription=Clic para ver a descrición
@@ -2146,7 +2146,7 @@ COMPANY_DIGITARIA_CLEAN_REGEX=Filtro de rexistro para limpar o valor (COMPANY_DI
 DuplicateForbidden=Prohibido duplicar
 RemoveSpecialWords=Limpe determinadas palabras ao xerar subcontas para clientes ou provedores
 RemoveSpecialWordsHelp=Especifique as palabras a limpar antes de calcular a conta de cliente ou provedor. Use un ";" entre cada palabra
-GDPRContact=Responsable de protección de datos (DPO, privacidade de datos ou contacto GDPR)
+GDPRContact=Delegado de Protección de Datos (DPD, Privacidade de datos ou contacto RGPD,...)
 GDPRContactDesc=Se almacena datos persoais no seu Sistema de Información, pode nomear aquí o contacto responsable do Regulamento Xeral de Protección de Datos
 HelpOnTooltip=Texto de axuda para amosar na información de ferramentas
 HelpOnTooltipDesc=​​= Poner aquí o texto ou unha chave de tradución para que o texto apareza nunha tip sobre ferramentas cando este campo aparece nun formulario
@@ -2289,7 +2289,7 @@ THIRDPARTY_ALIAS=Nome de Terceiros: Alias de terceiros
 ALIAS_THIRDPARTY=Alias de Terceiros: Nome de Terceiros
 PDFIn2Languages=Amosa etiquetas no PDF en dous idiomas diferentes (pode que esta opción non funcione nalgúns idiomas)
 PDF_USE_ALSO_LANGUAGE_CODE=Se desexa ter algúns textos no seu PDF duplicados en 2 idiomas diferentes no mesmo PDF xerado, debe configurar aquí este segundo idioma para que o PDF xerado conteña 2 idiomas diferentes na mesma páxina, o elixido ao xerar PDF e este (só algúns modelos PDF soportan isto). Mantéñase baleiro por un idioma por PDF.
-PDF_USE_A=Xera documentos PDF co formato PDF/A en lugar do formato PDF predeterminado
+PDF_USE_A=Formato de documentos PDF
 FafaIconSocialNetworksDesc=Introduza aquí o código dunha icona FontAwesome. Se non sabe o que é FontAwesome, pode usar o valor xenérico fa-address-book.
 RssNote=Nota: Cada definición de fonte RSS proporciona un widget que debes habilitar para que estexa dispoñible no panel
 JumpToBoxes=Ir a Configuración -> Widgets
@@ -2554,3 +2554,8 @@ MenuDict=Dicionario
 AddMoreParams=Engadir máis parámetros para a conexión (cookies, tokens,...)<br> Exemplo: token : token de valor
 ParamName=Nome do parámetro
 ParamValue=Valor do parámetro
+ConfirmDeleteParamOfSocialNetwork=Está certo de querer eliminar este parámetro?
+HelpMariaDBToGetPossibleValues=Pode obter unha lista de valores posibles executando o seguinte comando SQL: %s
+Captcha=Captcha
+CaptchaDesc=Se quere protexer a súa páxina de inicio de sesión cun Captcha, pode escoller cal usar aquí
+DolibarrStandardCaptcha=Un captcha nativo xerado por Dolibarr
