@@ -4083,6 +4083,7 @@ if ($module == 'initmodule') {
 						print '<option>date</option>';
 						print '<option>datetime</option>';
 						print '<option>integer</option>';
+						print '<option>stars(5)</option>';
 						print '<option>double(28,4)</option>';
 						print '<option>real</option>';
 						print '<option>integer:ClassName:RelativePath/To/ClassFile.class.php[:1[:FILTER]]</option>';
@@ -4650,6 +4651,8 @@ if ($module == 'initmodule') {
 											$pictoType = 'datetime';
 										} elseif (strpos($proptype, 'real') === 0) {
 											$pictoType = 'double';
+										} elseif (strpos($proptype, 'stars') === 0) {
+											$pictoType = 'stars';
 										}
 										print(!empty($pictoType) ? getPictoForType($pictoType) : getPictoForType($proptype)).'<span title="'.dol_escape_htmltag($proptype).'">'.dol_escape_htmltag($proptype).'</span>';
 										print '</td>';
