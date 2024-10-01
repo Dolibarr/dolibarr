@@ -12291,7 +12291,12 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 
 	// If $url is an array, we must build a dropdown button or recursively iterate over each value
 	if (is_array($url)) {
-		// An anonymous function to complete dropdown url
+
+		/**
+		 * An anonymous function to complete dropdown url
+		 * @param string $url
+		 * @return string
+		 */
 		$completeUrl = function ($url) use ($params) {
 			if (empty($url)) {
 				return '';
