@@ -58,7 +58,6 @@ $birthday    = GETPOST('birthday', 'alpha');
 $phone    	 = GETPOST('phone', 'alpha');
 $message	 = GETPOST('message', 'alpha');
 $requestedremuneration = GETPOST('requestedremuneration', 'alpha');
-$backtopage = '/public/recruitment/index.php';
 
 $ref = GETPOST('ref', 'alpha');
 
@@ -74,8 +73,6 @@ $object = new RecruitmentJobPosition($db);
 if (!$ref) {
 	print $langs->trans('ErrorBadParameters')." - ref missing";
 	exit;
-} else {
-	$object->fetch('', $ref);
 }
 
 
@@ -83,12 +80,15 @@ if (!$ref) {
 //$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
 //$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 $urlwithroot = DOL_MAIN_URL_ROOT; // This is to use same domain name than current. For Paypal payment, we can use internal URL like localhost.
+$backtopage = $urlwithroot.'/public/recruitment/index.php';
 
 // Security check
 if (empty($conf->recruitment->enabled)) {
 	httponly_accessforbidden('Module Recruitment not enabled');
 }
 
+$object->fetch('', $ref);
+$user->loadDefaultValues();
 
 /*
  * Actions
@@ -102,9 +102,9 @@ if ($cancel) {
 	$action = 'view';
 }
 
-if ($action == "presend" || $action == "dosubmit") {	// Test on permission not required here (anonymous action protected by mitigation of /public/... urls)
+if ($action == "dosubmit") {	// Test on permission not required here (anonymous action protected by mitigation of /public/... urls)
 	$error = 0;
-	$display_ticket = false;
+	$db->begin();
 	if (!strlen($ref)) {
 		$error++;
 		array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("Ref")));
@@ -128,10 +128,23 @@ if ($action == "presend" || $action == "dosubmit") {	// Test on permission not r
 	}
 
 	if (!$error) {
-		$ret = $object->fetch('', $ref);
+		$sql = "SELECT rrc.rowid FROM ".MAIN_DB_PREFIX."recruitment_recruitmentcandidature as rrc";
+		$sql .= " WHERE rrc.email = '". $db->escape($email)."'";
+		$sql .= " AND rrc.entity = ". getEntity($object->element, 0);
+		$resql = $db->query($sql);
+		if ($resql) {
+			$num = $db->num_rows($resql);
+			if ($num > 0) {
+				$error++;
+				setEventMessages($langs->trans("ErrorRecruitmmentCandidatureAlreadyExists", $email), null, 'errors');
+			}
+		} else {
+			dol_print_error($db);
+			$error++;
+		}
 	}
 
-	if (!$error && $action == "dosubmit") {	// Test on permission not required here (anonymous action protected by mitigation of /public/... urls)
+	if (!$error) {	// Test on permission not required here (anonymous action protected by mitigation of /public/... urls)
 		$candidature = new RecruitmentCandidature($db);
 
 		$candidature->firstname = GETPOST('firstname', 'alpha');
@@ -141,6 +154,7 @@ if ($action == "presend" || $action == "dosubmit") {	// Test on permission not r
 		$candidature->date_birth = GETPOST('birthday', 'alpha');
 		$candidature->requestedremuneration = GETPOST('requestedremuneration', 'alpha');
 		$candidature->description = GETPOST('message', 'alpha');
+		$candidature->fk_recruitmentjobposition = $object->id;
 
 		$candidature->ip = getUserRemoteIP();
 
@@ -158,20 +172,23 @@ if ($action == "presend" || $action == "dosubmit") {	// Test on permission not r
 				$errmsg .= implode('<br>', $candidature->errors);
 			}
 		}
-		//TODO: test creation and make after creation
-
 		if (!$error) {
-			$action = 'view';
+			$candidature->validate($user);
+			if ($result <= 0) {
+				$error++;
+				$errmsg .= implode('<br>', $candidature->errors);
+			}
 		}
 	}
 
-	if ($error || $errors) {
-		setEventMessages($object->error, $object->errors, 'errors');
-		if ($action == "dosubmit") {	// Test on permission not required here
-			$action = 'presend';
-		} else {
-			$action = '';
-		}
+	if (!$error) {
+		$db->commit();
+		setEventMessages($langs->trans("RecruitementCandidatureSaved"), null);
+		header("Location: " . $backtopage);
+		exit;
+	} else {
+		$db->rollback();
+		$action = "view";
 	}
 }
 
