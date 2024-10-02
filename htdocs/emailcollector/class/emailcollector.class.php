@@ -1214,13 +1214,15 @@ class EmailCollector extends CommonObject
 					$OAUTH_SERVICENAME = 'Unknown';
 				}
 
+				$keyforparamtenant = 'OAUTH_'.strtoupper(empty($supportedoauth2array[$keyforsupportedoauth2array]['callbackfile']) ? 'Unknown' : $supportedoauth2array[$keyforsupportedoauth2array]['callbackfile']).($keyforprovider ? '-'.$keyforprovider : '').'_TENANT';
+
 				require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
 				//$debugtext = "Host: ".$this->host."<br>Port: ".$this->port."<br>Login: ".$this->login."<br>Password: ".$this->password."<br>access type: ".$this->acces_type."<br>oauth service: ".$this->oauth_service."<br>Max email per collect: ".$this->maxemailpercollect;
 				//dol_syslog($debugtext);
 
 				$token = '';
 
-				$storage = new DoliStorage($db, $conf, $keyforprovider);
+				$storage = new DoliStorage($db, $conf, $keyforprovider, getDolGlobalString($keyforparamtenant));
 
 				try {
 					$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
