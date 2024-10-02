@@ -1081,9 +1081,11 @@ class CMailFile
 						$OAUTH_SERVICENAME = 'Unknown';
 					}
 
+					$keyforparamtenant = 'OAUTH_'.strtoupper(empty($supportedoauth2array[$keyforsupportedoauth2array]['callbackfile']) ? 'Unknown' : $supportedoauth2array[$keyforsupportedoauth2array]['callbackfile']).($keyforprovider ? '-'.$keyforprovider : '').'_TENANT';
+
 					require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
 
-					$storage = new DoliStorage($db, $conf, $keyforprovider);
+					$storage = new DoliStorage($db, $conf, $keyforprovider, getDolGlobalString($keyforparamtenant));
 					try {
 						$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
 
@@ -1240,9 +1242,11 @@ class CMailFile
 						$OAUTH_SERVICENAME = 'Unknown';
 					}
 
+					$keyforparamtenant = 'OAUTH_'.strtoupper(empty($supportedoauth2array[$keyforsupportedoauth2array]['callbackfile']) ? 'Unknown' : $supportedoauth2array[$keyforsupportedoauth2array]['callbackfile']).($keyforprovider ? '-'.$keyforprovider : '').'_TENANT';
+
 					require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
 
-					$storage = new DoliStorage($db, $conf, $keyforprovider);
+					$storage = new DoliStorage($db, $conf, $keyforprovider, getDolGlobalString($keyforparamtenant));
 
 					try {
 						$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
