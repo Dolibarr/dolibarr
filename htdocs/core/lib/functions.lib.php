@@ -13336,7 +13336,7 @@ function forgeSQLFromUniversalSearchCriteria($filter, &$errorstr = '', $noand = 
 {
 	global $db, $user;
 
-	if (is_null($filter) || $filter === '') {
+	if (is_null($filter) || is_array($filter) || $filter === '') {
 		return '';
 	}
 	if (!preg_match('/^\(.*\)$/', $filter)) {    // If $filter does not start and end with ()
