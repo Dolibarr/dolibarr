@@ -174,6 +174,7 @@ if (getDolGlobalString('RECRUITMENT_IMAGE_PUBLIC_INTERFACE')) {
 
 $results = $object->fetchAll($sortorder, $sortfield, 0, 0, '(status:=:1)');
 $now = dol_now();
+$params = array();
 
 if (is_array($results)) {
 	if (empty($results)) {

@@ -83,12 +83,13 @@ $urlwithroot = DOL_MAIN_URL_ROOT; // This is to use same domain name than curren
 $backtopage = $urlwithroot.'/public/recruitment/index.php';
 
 // Security check
-if (empty($conf->recruitment->enabled)) {
+if (!isModEnabled("recruitment")) {
 	httponly_accessforbidden('Module Recruitment not enabled');
 }
 
 $object->fetch('', $ref);
 $user->loadDefaultValues();
+$errmsg = "";
 
 /*
  * Actions
