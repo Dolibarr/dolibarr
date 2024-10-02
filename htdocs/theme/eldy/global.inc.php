@@ -5460,9 +5460,10 @@ div#card-errors {
 	border-radius: 6px;
 }
 .ui-dialog {
-	padding-left: 10px;
-	padding-right: 10px;
-	padding-top: 10px;
+	padding-left: 5px;
+	padding-right: 5px;
+	padding-top: 5px;
+	padding-top: 5px;
 }
 
 /* ============================================================================== */
