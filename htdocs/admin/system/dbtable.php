@@ -21,7 +21,7 @@
 
 /**
  *  \file           htdocs/admin/system/dbtable.php
- *  \brief          Page d'info des contraintes d'une table
+ *  \brief          Page with information about a database table
  */
 
 // Load Dolibarr environment
@@ -153,6 +153,7 @@ if (!$base) {
 			}
 		}
 
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Fields").'</td>';
@@ -231,13 +232,14 @@ if (!$base) {
 				print "<td>".(isset($link[$row[0]][0]) ? $link[$row[0]][0] : '').".";
 				print(isset($link[$row[0]][1]) ? $link[$row[0]][1] : '')."</td>";
 
-				print '<!-- ALTER TABLE '.$table.' MODIFY '.$row[0].' '.$row[1].' COLLATE utf8_unicode_ci; -->';
-				print '<!-- ALTER TABLE '.$table.' MODIFY '.$row[0].' '.$row[1].' CHARACTER SET utf8; -->';
+				print '<!-- ALTER TABLE '.$table.' MODIFY '.$row[0].' '.$row[1].' COLLATE utf8mb4_unicode_ci; -->';
+				print '<!-- ALTER TABLE '.$table.' MODIFY '.$row[0].' '.$row[1].' CHARACTER SET utf8mb4; -->';
 				print '</tr>';
 				$i++;
 			}
 		}
 		print '</table>';
+		print '</div>';
 	}
 }
 
