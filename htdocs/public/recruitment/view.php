@@ -100,7 +100,6 @@ if ($cancel) {
 		header("Location: ".$backtopage);
 		exit;
 	}
-	$action = 'view';
 }
 
 if ($action == "dosubmit") {	// Test on permission not required here (anonymous action protected by mitigation of /public/... urls)
