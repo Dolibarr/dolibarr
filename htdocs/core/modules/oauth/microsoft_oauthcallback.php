@@ -64,13 +64,14 @@ $httpClient = new \OAuth\Common\Http\Client\CurlClient();
 //$httpClient->setCurlParameters($params);
 $serviceFactory->setHttpClient($httpClient);
 
-// Dolibarr storage
-$storage = new DoliStorage($db, $conf, $keyforprovider);
-
 // Setup the credentials for the requests
 $keyforparamid = 'OAUTH_'.$genericstring.($keyforprovider ? '-'.$keyforprovider : '').'_ID';
 $keyforparamsecret = 'OAUTH_'.$genericstring.($keyforprovider ? '-'.$keyforprovider : '').'_SECRET';
 $keyforparamtenant = 'OAUTH_'.$genericstring.($keyforprovider ? '-'.$keyforprovider : '').'_TENANT';
+
+// Dolibarr storage
+$storage = new DoliStorage($db, $conf, $keyforprovider, getDolGlobalString($keyforparamtenant));
+
 $credentials = new Credentials(
 	getDolGlobalString($keyforparamid),
 	getDolGlobalString($keyforparamsecret),

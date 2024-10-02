@@ -338,7 +338,7 @@ function getSupportedOauth2Array()
 		'urlforcredentials' => 'https://portal.azure.com/',
 		// User.Read is a microsoftgraph scope, if it's not working, do not select it
 		'availablescopes' => 'openid,offline_access,profile,email,User.Read,https://outlook.office.com/.default',
-		'returnurl' => '/core/modules/oauth/microsoft_oauthcallback.php'
+		'returnurl' => '/core/modules/oauth/microsoft2_oauthcallback.php'
 	);
 
 	// Add a generic Oauth token handler. Tested with Mastodon.
