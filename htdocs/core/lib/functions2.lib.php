@@ -3075,3 +3075,53 @@ function removeEmoji($text, $allowedemoji = 1)
 
 	return $text;
 }
+
+
+/**
+ * Clean a cell to respect rules of CSV file cells
+ *
+ * @param 	string	$newvalue	String to clean
+ * @param	string	$charset	Input AND Output character set
+ * @param	string	$separator	CSV char separator (often ',' or ';'). Default '' will use the value into EXPORT_CSV_SEPARATOR_TO_USE.
+ * @return 	string				Value cleaned
+ */
+function csvClean($newvalue, $charset, $separator = '')
+{
+	$addquote = 0;
+
+	if (empty($separator)) {
+		$separator = getDolGlobalString('EXPORT_CSV_SEPARATOR_TO_USE');
+	}
+
+	// Rule Dolibarr: No HTML
+	//print $charset.' '.$newvalue."\n";
+	//$newvalue=dol_string_nohtmltag($newvalue,0,$charset);
+	$newvalue = dol_htmlcleanlastbr($newvalue);
+	//print $charset.' '.$newvalue."\n";
+
+	// Rule 1 CSV: No CR, LF in cells (except if USE_STRICT_CSV_RULES is 1, we can keep record as it is but we must add quotes)
+	$oldvalue = $newvalue;
+	$newvalue = str_replace("\r", '', $newvalue);
+	$newvalue = str_replace("\n", '\n', $newvalue);
+	if (getDolGlobalString('USE_STRICT_CSV_RULES') && $oldvalue != $newvalue) {
+		// If we must use enclusure on text with CR/LF)
+		if (getDolGlobalInt('USE_STRICT_CSV_RULES') == 1) {
+			// If we use strict CSV rules (original value must remain but we add quote)
+			$newvalue = $oldvalue;
+		}
+		$addquote = 1;
+	}
+
+	// Rule 2 CSV: If value contains ", we must escape with ", and add "
+	if (preg_match('/"/', $newvalue)) {
+		$addquote = 1;
+		$newvalue = str_replace('"', '""', $newvalue);
+	}
+
+	// Rule 3 CSV: If value contains separator, we must add "
+	if (preg_match('/'.$separator.'/', $newvalue)) {
+		$addquote = 1;
+	}
+
+	return ($addquote ? '"' : '').$newvalue.($addquote ? '"' : '');
+}
