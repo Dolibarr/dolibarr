@@ -338,9 +338,9 @@ llxHeader(
 	0,
 	0,
 	array(
-	'/includes/ace/src/ace.js',
-	'/includes/ace/src/ext-statusbar.js',
-	'/includes/ace/src/ext-language_tools.js',
+		'/includes/ace/src/ace.js',
+		'/includes/ace/src/ext-statusbar.js',
+		'/includes/ace/src/ext-language_tools.js',
 	),
 	array(),
 	'',
@@ -456,36 +456,28 @@ if ($mode == 'other') {
 	print '</td>';
 	print '</tr>';
 
-	// show input border
-	/*
-	 print '<tr><td>'.$langs->trans("showInputBorder").'</td><td>';
-	 print $form->selectyesno('main_showInputBorder',isset($conf->global->THEME_ELDY_SHOW_BORDER_INPUT)?$conf->global->THEME_ELDY_SHOW_BORDER_INPUT:0,1);
-	 print '</td>';
-	 print '</tr>';
-	 */
-
 	// First day for weeks
 	print '<tr class="oddeven"><td>' . $langs->trans("WeekStartOnDay") . '</td><td>';
-	print $formother->select_dayofweek((isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : '1'), 'MAIN_START_WEEK', 0);
+	print $formother->select_dayofweek(getDolGlobalString('MAIN_START_WEEK', '1'), 'MAIN_START_WEEK', 0);
 	print '</td>';
 	print '</tr>';
 
 	// DefaultWorkingDays
 	print '<tr class="oddeven"><td>' . $langs->trans("DefaultWorkingDays") . '</td><td>';
-	print '<input type="text" name="MAIN_DEFAULT_WORKING_DAYS" size="5" value="' . (isset($conf->global->MAIN_DEFAULT_WORKING_DAYS) ? $conf->global->MAIN_DEFAULT_WORKING_DAYS : '1-5') . '">';
+	print '<input type="text" name="MAIN_DEFAULT_WORKING_DAYS" size="5" value="' . getDolGlobalString('MAIN_DEFAULT_WORKING_DAYS', '1-5') . '">';
 	print '</td>';
 	print '</tr>';
 
 	// DefaultWorkingHours
 	print '<tr class="oddeven"><td>' . $langs->trans("DefaultWorkingHours") . '</td><td>';
-	print '<input type="text" name="MAIN_DEFAULT_WORKING_HOURS" size="5" value="' . (isset($conf->global->MAIN_DEFAULT_WORKING_HOURS) ? $conf->global->MAIN_DEFAULT_WORKING_HOURS : '9-18') . '">';
+	print '<input type="text" name="MAIN_DEFAULT_WORKING_HOURS" size="5" value="' . getDolGlobalString('MAIN_DEFAULT_WORKING_HOURS', '9-18') . '">';
 	print '</td>';
 	print '</tr>';
 
 	// Firstname/Name
 	print '<tr class="oddeven"><td>' . $langs->trans("FirstnameNamePosition") . '</td><td>';
 	$array = array(0 => $langs->trans("Firstname") . ' ' . $langs->trans("Lastname"), 1 => $langs->trans("Lastname") . ' ' . $langs->trans("Firstname"));
-	print $form->selectarray('MAIN_FIRSTNAME_NAME_POSITION', $array, (isset($conf->global->MAIN_FIRSTNAME_NAME_POSITION) ? $conf->global->MAIN_FIRSTNAME_NAME_POSITION : 0));
+	print $form->selectarray('MAIN_FIRSTNAME_NAME_POSITION', $array, getDolGlobalInt('MAIN_FIRSTNAME_NAME_POSITION', 0));
 	print '</td>';
 	print '</tr>';
 
@@ -523,7 +515,7 @@ if ($mode == 'other') {
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("ShowBugTrackLink", $langs->transnoentitiesnoconv("FindBug")), $langs->trans("ShowBugTrackLinkDesc"));
 	print '</td><td>';
-	print '<input type="text" name="MAIN_BUGTRACK_ENABLELINK" value="' . (!getDolGlobalString('MAIN_BUGTRACK_ENABLELINK') ? '' : $conf->global->MAIN_BUGTRACK_ENABLELINK) . '">';
+	print '<input type="text" name="MAIN_BUGTRACK_ENABLELINK" value="' . getDolGlobalString('MAIN_BUGTRACK_ENABLELINK') . '">';
 	print '</td>';
 	print '</tr>';
 
@@ -561,17 +553,10 @@ if ($mode == 'dashboard') {
 
 	print '</td><td>';
 
-	$doleditor = new DolEditor('main_motd', (isset($conf->global->MAIN_MOTD) ? $conf->global->MAIN_MOTD : ''), '', 142, 'dolibarr_notes', 'In', false, true, true, ROWS_4, '90%');
+	$doleditor = new DolEditor('main_motd', getDolGlobalString('MAIN_MOTD'), '', 142, 'dolibarr_notes', 'In', false, true, true, ROWS_4, '90%');
 	$doleditor->Create();
 
-	print '</td></tr>' . "\n";
-
-	/* no more need for this option. It is now a widget already controlled by end user
-	 print '<tr class="oddeven"><td>' . $langs->trans('BoxstatsDisableGlobal') . '</td><td>';
-	 print ajax_constantonoff("MAIN_DISABLE_GLOBAL_BOXSTATS", array(), $conf->entity, 0, 0, 1, 0);
-	 print '</td>';
-	 print '</tr>';
-	 */
+	print '</td></tr>'."\n";
 
 	print '</table>';
 	print '</div>';
