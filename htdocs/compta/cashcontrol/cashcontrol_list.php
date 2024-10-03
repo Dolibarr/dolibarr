@@ -583,9 +583,10 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 		$object->posmodule = $obj->posmodule;
 		$object->cash = $obj->cash;
+		$object->cheque = $obj->cheque;
+		$object->card = $obj->card;
 		$object->opening = $obj->opening;
 		$object->year_close = $obj->year_close;
-		$object->cheque = $obj->cheque;
 
 		// Output Kanban
 		$selected = -1;

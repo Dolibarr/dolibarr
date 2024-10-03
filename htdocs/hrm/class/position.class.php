@@ -108,18 +108,57 @@ class Position extends CommonObject
 		'fk_user_creat' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'position' => 510, 'notnull' => 1, 'visible' => -2, 'foreignkey' => 'user.rowid',),
 		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'position' => 511, 'notnull' => -1, 'visible' => -2,),
 	);
+	/**
+	 * @var int
+	 */
 	public $rowid;
+	/**
+	 * @var string
+	 */
 	public $ref;
+	/**
+	 * @var string
+	 */
 	public $description;
+	/**
+	 * @var int
+	 */
 	public $fk_contrat;
+	/**
+	 * @var int
+	 */
 	public $fk_user;
+	/**
+	 * @var int
+	 */
 	public $fk_job;
+	/**
+	 * @var int|string
+	 */
 	public $date_start;
+	/**
+	 * @var int|string
+	 */
 	public $date_end;
+	/**
+	 * @var string
+	 */
 	public $abort_comment;
+	/**
+	 * @var string
+	 */
 	public $note_public;
+	/**
+	 * @var string
+	 */
 	public $note_private;
+	/**
+	 * @var int
+	 */
 	public $fk_user_creat;
+	/**
+	 * @var int
+	 */
 	public $fk_user_modif;
 
 
@@ -175,9 +214,9 @@ class Position extends CommonObject
 		$this->ismultientitymanaged = 0;
 		$this->isextrafieldmanaged = 0;
 
-		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
-			//$this->fields['rowid']['visible'] = 0;
-		}
+		//if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
+		//$this->fields['rowid']['visible'] = 0;
+		//}
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
 			$this->fields['entity']['enabled'] = 0;
 		}
@@ -879,7 +918,7 @@ class Position extends CommonObject
 	 * Return HTML string to show a field into a page
 	 * Code very similar with showOutputField of extra fields
 	 *
-	 * @param  array   $val		       Array of properties of field to show
+	 * @param array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$val	Array of properties of field to show
 	 * @param  string  $key            Key of attribute
 	 * @param  string  $value          Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
 	 * @param  string  $moreparam      To add more parameters on html input tag
@@ -1002,6 +1041,7 @@ class Position extends CommonObject
 
 			if (class_exists($classname)) {
 				$obj = new $classname();
+				'@phan-var-force ModeleNumRefEvaluation $obj';
 				$numref = $obj->getNextValue($this);
 
 				if ($numref != '' && $numref != '-1') {
@@ -1039,13 +1079,13 @@ class Position extends CommonObject
 	/**
 	 * Create a document onto disk according to template module.
 	 *
-	 * @param string $modele Force template to use ('' to not force)
-	 * @param Translate $outputlangs object lang a utiliser pour traduction
-	 * @param int $hidedetails Hide details of lines
-	 * @param int $hidedesc Hide description
-	 * @param int $hideref Hide ref
-	 * @param null|array $moreparams Array to provide more information
-	 * @return     int                        0 if KO, 1 if OK
+	 * @param string	$modele			Force template to use ('' to not force)
+	 * @param Translate	$outputlangs	object lang a utiliser pour traduction
+	 * @param int<0,1>	$hidedetails	Hide details of lines
+	 * @param int<0,1>	$hidedesc		Hide description
+	 * @param int<0,1>	$hideref		Hide ref
+	 * @param ?array<string,mixed> $moreparams Array to provide more information
+	 * @return	int						0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
