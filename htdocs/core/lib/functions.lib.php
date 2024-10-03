@@ -1407,13 +1407,11 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 				//print $key.'-'.$dirroot.'/'.$path.'-'.$conf->file->dol_url_root[$type].'<br>'."\n";
 				//if (file_exists($dirroot.'/'.$regs[1])) {
 				if (@file_exists($dirroot.'/'.$regs[1])) {	// avoid [php:warn]
-					if ($type == 1 || $type == 4) {
+					if ($type == 1) {
 						$res = (preg_match('/^http/i', $conf->file->dol_url_root[$key]) ? '' : DOL_URL_ROOT).$conf->file->dol_url_root[$key].'/'.$path;
-					}
-					if ($type == 2) {
+					} elseif ($type == 2) {
 						$res = (preg_match('/^http/i', $conf->file->dol_url_root[$key]) ? '' : DOL_MAIN_URL_ROOT).$conf->file->dol_url_root[$key].'/'.$path;
-					}
-					if ($type == 3) {
+					} elseif ($type == 3) {
 						/*global $dolibarr_main_url_root;*/
 
 						// Define $urlwithroot
