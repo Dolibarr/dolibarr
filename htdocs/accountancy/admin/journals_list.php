@@ -438,7 +438,7 @@ if ($id) {
 		print '</tr>';
 
 		// Line to enter new values
-		print '<tr class="oddeven nodrag nodrap nohover">';
+		print '<tr class="oddeven nodrag nodrop nohover">';
 
 		$obj = new stdClass();
 		// If data was already input, we define them in obj to populate input fields.

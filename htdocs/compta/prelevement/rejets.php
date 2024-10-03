@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2013 Juanjo Menent 		<jmenent@2byte.es>
  * Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -172,7 +173,7 @@ if ($result) {
 				$thirdpartystatic->id = $obj->socid;
 				$thirdpartystatic->name = $obj->name;
 
-				print '<td class="tdoverlowmax200"><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.$thirdpartystatic->getNomUrl(1)."</a></td>\n";
+				print '<td class="tdoverflowmax200"><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.$thirdpartystatic->getNomUrl(1)."</a></td>\n";
 			}
 
 			print '<td>'.$rej->motifs[$obj->motif].'</td>';
