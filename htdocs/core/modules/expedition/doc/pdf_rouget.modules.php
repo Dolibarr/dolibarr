@@ -69,8 +69,17 @@ class pdf_rouget extends ModelePdfExpedition
 	 */
 	public $version = 'dolibarr';
 
+	/**
+	 * @var float|int
+	 */
 	public $posxweightvol;
+	/**
+	 * @var float|int
+	 */
 	public $posxqtytoship;
+	/**
+	 * @var float|int
+	 */
 	public $posxqtyordered;
 
 
@@ -757,7 +766,7 @@ class pdf_rouget extends ModelePdfExpedition
 			$totalVolumetoshow = showDimensionInBestUnit($totalVolume, 0, "volume", $outputlangs, -1, 'no', 1);
 		}
 		if (!empty($object->trueWeight)) {
-			$totalWeighttoshow = showDimensionInBestUnit($object->trueWeight, $object->weight_units, "weight", $outputlangs);
+			$totalWeighttoshow = showDimensionInBestUnit($object->trueWeight, (int) $object->weight_units, "weight", $outputlangs);
 		}
 		if (!empty($object->trueVolume)) {
 			$totalVolumetoshow = showDimensionInBestUnit($object->trueVolume, $object->volume_units, "volume", $outputlangs);
@@ -999,6 +1008,7 @@ class pdf_rouget extends ModelePdfExpedition
 
 			$classname = ucfirst($origin);
 			$linkedobject = new $classname($this->db);
+			'@phan-var-force Commande|Facture $linkedobject';
 			$result = $linkedobject->fetch($origin_id);
 			if ($result >= 0) {
 				//$linkedobject->fetchObjectLinked()   Get all linked object to the $linkedobject (commonly order) into $linkedobject->linkedObjects

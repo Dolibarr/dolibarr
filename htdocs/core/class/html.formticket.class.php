@@ -804,6 +804,8 @@ class FormTicket
 			print dol_get_fiche_end();
 		}
 
+		print '<br>';
+
 		if ($mode == 'create') {
 			print $form->buttonsSaveCancel(((isset($this->withreadid) && $this->withreadid > 0) ? "SendResponse" : "CreateTicket"), ($this->withcancel ? "Cancel" : ""));
 		} else {

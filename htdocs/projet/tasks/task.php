@@ -531,7 +531,7 @@ if ($id > 0 || !empty($ref)) {
 
 
 		print '<tr><td>'.$langs->trans("Budget").'</td>';
-		print '<td><input class="with75" type="text" name="budget_amount" value="'.dol_escape_htmltag(GETPOSTISSET('budget_amount') ? GETPOST('budget_amount') : price2num($object->budget_amount)).'"></td>';
+		print '<td><input class="width75" type="text" name="budget_amount" value="'.dol_escape_htmltag(GETPOSTISSET('budget_amount') ? GETPOST('budget_amount') : price2num($object->budget_amount)).'"></td>';
 		print '</tr>';
 
 		// Other options
