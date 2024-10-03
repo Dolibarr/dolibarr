@@ -112,6 +112,9 @@ class Skill extends CommonObject
 		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'position' => 70, 'notnull' => 0, 'visible' => 0,),
 		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'position' => 71, 'notnull' => 0, 'visible' => 0,),
 	);
+	/**
+	 * @var int
+	 */
 	public $rowid;
 	/**
 	 * @var string
