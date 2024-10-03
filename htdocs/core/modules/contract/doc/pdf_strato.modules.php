@@ -549,6 +549,7 @@ class pdf_strato extends ModelePDFContract
 
 	/**
 	 * Show footer signature of page
+	 *
 	 * @param   TCPDF       $pdf            Object PDF
 	 * @param   int         $tab_top        tab height position
 	 * @param   int         $tab_height     tab height
@@ -561,17 +562,21 @@ class pdf_strato extends ModelePDFContract
 		$posmiddle = $this->marge_gauche + round(($this->page_largeur - $this->marge_gauche - $this->marge_droite) / 2);
 		$posy = $tab_top + $tab_height + 3 + 3;
 
-		$pdf->SetXY($this->marge_gauche, $posy);
-		$pdf->MultiCell($posmiddle - $this->marge_gauche - 5, 5, $outputlangs->transnoentities("ContactNameAndSignature", $this->emetteur->name), 0, 'L', 0);
+		if (!getDolGlobalString('CONTRACT_HIDE_MYCOMPANY_SIGNATURE_SECTION_PDF')) {
+			$pdf->SetXY($this->marge_gauche, $posy);
+			$pdf->MultiCell($posmiddle - $this->marge_gauche - 5, 5, $outputlangs->transnoentities("ContactNameAndSignature", $this->emetteur->name), 0, 'L', 0);
 
-		$pdf->SetXY($this->marge_gauche, $posy + 5);
-		$pdf->RoundedRect($this->marge_gauche, $posy + 5, $posmiddle - $this->marge_gauche - 5, 20, $this->corner_radius, '1234', 'D');
+		  $pdf->SetXY($this->marge_gauche, $posy + 5);
+		  $pdf->RoundedRect($this->marge_gauche, $posy + 5, $posmiddle - $this->marge_gauche - 5, 20, $this->corner_radius, '1234', 'D');
+		}
 
-		$pdf->SetXY($posmiddle + 5, $posy);
-		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $posmiddle - 5, 5, $outputlangs->transnoentities("ContactNameAndSignature", $this->recipient->name), 0, 'L', 0);
+		if (!getDolGlobalString('CONTRACT_HIDE_THIRPARTY_SIGNATURE_SECTION_PDF')) {
+			$pdf->SetXY($posmiddle + 5, $posy);
+			$pdf->MultiCell($this->page_largeur - $this->marge_droite - $posmiddle - 5, 5, $outputlangs->transnoentities("ContactNameAndSignature", $this->recipient->name), 0, 'L', 0);
 
-		$pdf->SetXY($posmiddle + 5, $posy + 5);
-		$pdf->RoundedRect($posmiddle + 5, $posy + 5, $this->page_largeur - $this->marge_droite - $posmiddle - 5, 20, $this->corner_radius, '1234', 'D');
+		  $pdf->SetXY($posmiddle + 5, $posy + 5);
+		  $pdf->RoundedRect($posmiddle + 5, $posy + 5, $this->page_largeur - $this->marge_droite - $posmiddle - 5, 20, $this->corner_radius, '1234', 'D');
+		}
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
