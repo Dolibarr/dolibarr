@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2003-2007  Rodolphe Quiedeville 	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2014  Laurent Destailleur  	<eldy@users.sourceforge.net>
+ * Copyright (C) 2004       Sebastien Di Cintio  	<sdicintio@ressource-toi.org>
+ * Copyright (C) 2004       Benoit Mortier       	<benoit.mortier@opensides.be>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,19 +42,19 @@ if (!$user->admin) {
  */
 
 if ($action == 'convertutf8unicode') {			// Test on permission already done.
-	$sql = "ALTER DATABASE ".$db->sanitize($table[0])." CHARACTER SET utf8 COLLATE utf8_unicode_ci";
+	$sql = "ALTER DATABASE CHARACTER SET utf8 COLLATE utf8_unicode_ci";
 	$db->query($sql);
 }
 if ($action == 'convertutf8mb4unicode') {		// Test on permission already done.
-	$sql = "ALTER DATABASE ".$db->sanitize($table[0])." CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci";
+	$sql = "ALTER DATABASE CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci";
 	$db->query($sql);
 }
 if ($action == 'convertutf8general') {			// Test on permission already done.
-	$sql = "ALTER DATABASE ".$db->sanitize($table[0])." CHARACTER SET utf8 COLLATE utf8_general_ci";
+	$sql = "ALTER DATABASE CHARACTER SET utf8 COLLATE utf8_general_ci";
 	$db->query($sql);
 }
 if ($action == 'convertutf8mb4general') {		// Test on permission already done.
-	$sql = "ALTER DATABASE ".$db->sanitize($table[0])." CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci";
+	$sql = "ALTER DATABASE CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci";
 	$db->query($sql);
 }
 
@@ -90,6 +91,7 @@ print '</td></tr>'."\n";
 print '<tr class="oddeven"><td width="300">'.$langs->trans("DBSortingCharset").'</td><td>';
 $defaultcollation = $db->getDefaultCollationDatabase();
 print dolPrintHTML($defaultcollation);
+global $dolibarr_main_db_collation;
 if ($db->type == 'mysqli') {
 	if ($defaultcollation != $dolibarr_main_db_collation) {
 		print img_warning('The database default value of collation '.$defaultcollation.' differs from conf setup '.$dolibarr_main_db_collation);
