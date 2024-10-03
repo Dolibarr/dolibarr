@@ -17,9 +17,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
- use Luracast\Restler\RestException;
+use Luracast\Restler\RestException;
 
- require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
+require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 
 /**
  * API class for contracts
@@ -364,7 +364,7 @@ class Contracts extends DolibarrApi
 		$this->contractLine->info_bits = $request_data->info_bits;
 		$this->contractLine->fk_fournprice = $request_data->fk_fourn_price;
 		$this->contractLine->pa_ht = $request_data->pa_ht;
-		$this->contractLine->array_options = $request_data->array_options;
+		$this->contractLine->array_options = $request_data->array_options ?? $this->contractLine->array_options;
 		$this->contractLine->fk_unit = $request_data->fk_unit;
 
 		$updateRes = $this->contractLine->update(DolibarrApiAccess::$user);
@@ -502,7 +502,7 @@ class Contracts extends DolibarrApi
 		if ($updateRes > 0) {
 			return $this->get($id);
 		} else {
-			  throw new RestException(405, $this->contractLine->error);
+			throw new RestException(405, $this->contractLine->error);
 		}
 	}
 
