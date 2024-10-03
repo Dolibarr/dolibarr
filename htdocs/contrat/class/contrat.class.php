@@ -3709,6 +3709,5 @@ class ContratLigne extends CommonObjectLine
 			$this->db->commit();
 			return 1;
 		}
-
 	}
 }
