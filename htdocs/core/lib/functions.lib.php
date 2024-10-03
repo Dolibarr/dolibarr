@@ -12346,7 +12346,7 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 
 	// Here, $url is a simple link
 
-	if (!empty($params['isDropdown'])) {
+	if (!empty($params['isDropdown']) || !empty($params['isDropDown'])) {
 		$class = "dropdown-item";
 	} else {
 		$class = 'butAction';
