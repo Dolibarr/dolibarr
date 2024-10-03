@@ -340,7 +340,7 @@ $formadmin = new FormAdmin($db);
 
 $help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
 
-llxHeader('', $langs->trans("Pcg_version"), $help_url);
+llxHeader('', $langs->trans("Pcg_version"), $help_url, '', 0, 0, '', '', '', 'mod-accountancy page-admin_accountmodel');
 
 $titre = $langs->trans($tablib[$id]);
 $linkback = '';
@@ -657,7 +657,7 @@ $db->close();
  *	Show fields in insert/edit mode
  *
  * 	@param		string[]	$fieldlist		Array of fields
- * 	@param		stdClass	$obj			If we show a particular record, obj is filled with record fields
+ * 	@param		?stdClass	$obj			If we show a particular record, obj is filled with record fields
  *  @param		string		$tabname		Name of SQL table
  *  @param		string		$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we don't want it to be rendered
  *	@return		void

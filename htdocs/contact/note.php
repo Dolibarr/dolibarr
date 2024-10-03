@@ -49,15 +49,13 @@ if ($user->socid > 0) {
 		accessforbidden();
 	}
 }
-$result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
-
-
-$permissionnote = $user->hasRight('societe', 'creer'); // Used by the include of actions_setnotes.inc.php
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-// $hookmanager->initHooks(array('contactcard')); -> Name conflict with product/card.php
 $hookmanager->initHooks(array('contactnote'));
 
+$result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
+
+$permissionnote = $user->hasRight('societe', 'creer'); // Used by the include of actions_setnotes.inc.php
 
 /*
  * Actions

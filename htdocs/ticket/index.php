@@ -402,8 +402,8 @@ if ($user->hasRight('ticket', 'read')) {
 				print "</td>";
 
 				// Subject
-				print '<td class="nowrap">';
-				print '<a href="card.php?track_id='.$objp->track_id.'">'.dol_trunc($objp->subject, 30).'</a>';
+				print '<td class="nowrap tdoverflowmax150">';
+				print '<a href="card.php?track_id='.$objp->track_id.'" title="'.dolPrintHTMLForAttribute($objp->subject).'">'.dol_trunc($objp->subject, 30).'</a>';
 				print "</td>\n";
 
 				// Type
@@ -422,7 +422,7 @@ if ($user->hasRight('ticket', 'read')) {
 				print "</td>";
 
 				// Severity = Priority
-				print '<td class="nowrap">';
+				print '<td class="nowrap" title="'.$langs->trans("Priority").'">';
 				$s = $langs->getLabelFromKey($db, 'TicketSeverityShort'.$objp->severity_code, 'c_ticket_severity', 'code', 'label', $objp->severity_code);
 				print '<span title="'.dol_escape_htmltag($s).'">'.$s.'</span>';
 				//print $objp->severity_label;

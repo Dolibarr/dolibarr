@@ -62,7 +62,7 @@ if ($cancel) {
 	}
 }
 
-if ($action == 'setremise') {
+if ($action == 'setremise' && $user->hasRight('societe', 'lire')) {
 	$object = new Societe($db);
 	$object->fetch($id);
 

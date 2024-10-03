@@ -47,7 +47,7 @@ class mod_syslog_syslog extends LogHandler
 	/**
 	 * Is the logger active ?
 	 *
-	 * @return int		1 if logger enabled
+	 * @return int<0,1>		1 if logger enabled
 	 */
 	public function isActive()
 	{
@@ -62,7 +62,7 @@ class mod_syslog_syslog extends LogHandler
 	/**
 	 * 	Return array of configuration data
 	 *
-	 * 	@return	array		Return array of configuration data
+	 * 	@return	array<array{name:string,constant:string,default:string,css?:string}>	Return array of configuration data
 	 */
 	public function configure()
 	{
@@ -105,7 +105,7 @@ class mod_syslog_syslog extends LogHandler
 	/**
 	 * Export the message
 	 *
-	 * @param   array   $content            Array containing the info about the message
+	 * @param	array{level:int,ip:string,ospid:string,osuser:string,message:string}	$content 	Array containing the info about the message
 	 * @param   string  $suffixinfilename   When output is a file, append this suffix into default log filename.
 	 * @return  void
 	 */

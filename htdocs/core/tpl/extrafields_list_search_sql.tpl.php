@@ -32,11 +32,11 @@ if (!empty($extrafieldsobjectkey) && !empty($search_array_options) && is_array($
 				}
 				$sql .= " AND ".$extrafieldsobjectprefix.$tmpkey." = '".$db->idate($crit)."'";
 			} elseif (is_array($crit)) {
-				if ($crit['start'] !== '' && $crit['end'] !== '') {
+				if (!is_null($crit['start']) && $crit['start'] !== '' && !is_null($crit['end']) && $crit['end'] !== '') {
 					$sql .= " AND (".$extrafieldsobjectprefix.$tmpkey." BETWEEN '". $db->idate($crit['start']). "' AND '".$db->idate($crit['end']) . "')";
-				} elseif ($crit['start'] !== '') {
+				} elseif (!is_null($crit['start']) && $crit['start'] !== '') {
 					$sql .= " AND (".$extrafieldsobjectprefix.$tmpkey." >= '". $db->idate($crit['start'])."')";
-				} elseif ($crit['end'] !== '') {
+				} elseif (!is_null($crit['end']) && $crit['end'] !== '') {
 					$sql .= " AND (".$extrafieldsobjectprefix.$tmpkey." <= '". $db->idate($crit['end'])."')";
 				}
 			}

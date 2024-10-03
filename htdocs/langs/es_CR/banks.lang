@@ -97,7 +97,6 @@ FutureTransaction=Transacción futura. Incapaz de conciliarse.
 SelectPaymentTransactionAndGenerate=Seleccione/filtre los documentos que se incluirán en el recibo de depósito del   1%s. luego haz click en crear.
 InputReceiptNumber=Elija el extracto bancario relacionado con la conciliación. Use un valor numérico ordenable
 InputReceiptNumberBis=Año/Mes o Año/Mes/Dia
-EventualyAddCategory=Eventualmente, especifique una categoría en la que clasificar los registros
 ToConciliate=¿Para conciliar?
 ThenCheckLinesAndConciliate=Luego, verifique las líneas presentes en el extracto bancario y haga clic
 DefaultRIB=BAN predeterminado

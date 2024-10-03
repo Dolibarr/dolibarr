@@ -140,7 +140,7 @@ function getPublicJobPositionUrl($mode, $ref = '', $localorexternal = 0)
 	/*if (!empty($conf->global->RECRUITMENT_SECURITY_TOKEN))
 	{
 		if (empty($conf->global->RECRUITMENT_SECURITY_TOKEN)) $out .= '&securekey='.urlencode($conf->global->RECRUITMENT_SECURITY_TOKEN);
-		else $out .= '&securekey='.urlencode(dol_hash($conf->global->RECRUITMENT_SECURITY_TOKEN, 2));
+		else $out .= '&securekey='.urlencode(dol_hash($conf->global->RECRUITMENT_SECURITY_TOKEN, '2'));
 	}*/
 
 	// For multicompany

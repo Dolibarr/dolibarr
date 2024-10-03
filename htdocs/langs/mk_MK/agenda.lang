@@ -140,7 +140,7 @@ AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> за да се огран�
 AgendaUrlOptionsType=<b>actiontype=%s</b> или автоматски или рачни настани
 AgendaUrlOptionsCode=<b>actioncode=%s</b> само настани со даден код
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> за да вклучи настани од празници.
-AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> се ограничи на последните настани во <span> class='notranslate'>%s дена (стандардно е %s).
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
 AgendaUrlOptionsLimit=<b>limit=50</b> за да се ограничи на најновите 50 настани (стандардно, а максимумот е <span class='nobec28f9z8>70b </span>).
 AgendaShowBirthdayEvents=Родендени на контакти
 AgendaHideBirthdayEvents=Скриј родендени на контакти
@@ -162,7 +162,7 @@ AddEvent=Креирај настан
 MyAvailability=Моја достапност
 ActionType=Тип на настан
 DateActionBegin=Датум на почеток на настанот
-ConfirmCloneEvent=Дали сте сигурни дека сакате да го клонирате настанот <b>%s<span class='notranslate'>b09a4b739f17f8z>s?
+ConfirmCloneEvent=Are you sure you want to clone the event <b>%s</b>?
 RepeatEvent=Повторете го настанот
 OnceOnly=Само еднаш
 EveryDay=Секој ден

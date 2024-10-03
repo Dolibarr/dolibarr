@@ -1,4 +1,6 @@
 <?php
+/* Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ */
 
 '@phan-var-force array{nbfield:int,type?:array<int,string>,pos?:array<int,int>,val?:array<int,float>} $totalarray';
 
@@ -102,7 +104,7 @@ function printTotalValCell($type, $val)
 	switch ($type) {
 		case 'duration':
 			print '<td class="right">';
-			print(!empty($val) ? convertSecondToTime($val, 'allhourmin') : 0);
+			print(!empty($val) ? convertSecondToTime((int) $val, 'allhourmin') : 0);
 			print '</td>';
 			break;
 		case 'string':	// This type is no more used. type is now varchar(x)

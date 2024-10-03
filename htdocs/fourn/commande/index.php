@@ -256,7 +256,7 @@ if ($resql) {
 
 		$userstatic = new User($db);
 		$userstatic->id = $obj->rowid;
-		$userstatic->getrights('fournisseur');
+		$userstatic->loadRights('fournisseur');
 
 		if ($userstatic->hasRight('fournisseur', 'commande', 'approuver')) {
 			print '<tr class="oddeven">';

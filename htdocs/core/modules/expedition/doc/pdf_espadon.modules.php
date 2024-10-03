@@ -65,12 +65,21 @@ class pdf_espadon extends ModelePdfExpedition
 
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr';
 
+	/**
+	 * @var int|float
+	 */
 	public $posxweightvol;
+	/**
+	 * @var int|float
+	 */
 	public $posxqtytoship;
+	/**
+	 * @var int|float
+	 */
 	public $posxqtyordered;
 
 
@@ -113,15 +122,15 @@ class pdf_espadon extends ModelePdfExpedition
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Function to build pdf onto disk
+	 *  Function to build pdf onto disk
 	 *
 	 *	@param		Expedition	$object			    Object shipping to generate (or id if old method)
-	 *	@param		Translate	$outputlangs		Lang output object
+	 *  @param		Translate	$outputlangs		Lang output object
 	 *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file
-	 *  @param		int			$hidedetails		Do not show line details
-	 *  @param		int			$hidedesc			Do not show desc
-	 *  @param		int			$hideref			Do not show ref
-	 *  @return     int         	    			1=OK, 0=KO
+	 *  @param		int<0,1>	$hidedetails		Do not show line details
+	 *  @param		int<0,1>	$hidedesc			Do not show desc
+	 *  @param		int<0,1>	$hideref			Do not show ref
+	 *  @return		int<-1,1>						1 if OK, <=0 if KO
 	 */
 	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
@@ -264,7 +273,7 @@ class pdf_espadon extends ModelePdfExpedition
 				$pdf->SetDrawColor(128, 128, 128);
 
 				if (method_exists($pdf, 'AliasNbPages')) {
-					$pdf->AliasNbPages();
+					$pdf->AliasNbPages();  // @phan-suppress-current-line PhanUndeclaredMethod
 				}
 
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
@@ -496,7 +505,7 @@ class pdf_espadon extends ModelePdfExpedition
 							}
 						}
 
-						$tab_height = $tab_height - $height_note;
+						$tab_height -= $height_note;
 						$tab_top = $posyafter + 6;
 					} else {
 						$height_note = 0;
@@ -770,7 +779,7 @@ class pdf_espadon extends ModelePdfExpedition
 				// Pagefoot
 				$this->_pagefoot($pdf, $object, $outputlangs);
 				if (method_exists($pdf, 'AliasNbPages')) {
-					$pdf->AliasNbPages();
+					$pdf->AliasNbPages();  // @phan-suppress-current-line PhanUndeclaredMethod
 				}
 
 				$pdf->Close();
@@ -865,7 +874,7 @@ class pdf_espadon extends ModelePdfExpedition
 			$totalVolumetoshow = showDimensionInBestUnit($totalVolume, 0, "volume", $outputlangs, -1, 'no', 1);
 		}
 		if (!empty($object->trueWeight)) {
-			$totalWeighttoshow = showDimensionInBestUnit($object->trueWeight, $object->weight_units, "weight", $outputlangs);
+			$totalWeighttoshow = showDimensionInBestUnit($object->trueWeight, (int) $object->weight_units, "weight", $outputlangs);
 		}
 		if (!empty($object->trueVolume)) {
 			if ($object->volume_units < 50) {
@@ -967,7 +976,7 @@ class pdf_espadon extends ModelePdfExpedition
 	 *
 	 *  @param	TCPDF		$pdf     		Object PDF
 	 *  @param  Expedition	$object     	Object to show
-	 *  @param  int	    	$showaddress    0=no, 1=yes
+	 *  @param  int<0,1>  	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @return	float|int                   Return topshift value
 	 */
@@ -1066,6 +1075,7 @@ class pdf_espadon extends ModelePdfExpedition
 
 			$classname = ucfirst($origin);
 			$linkedobject = new $classname($this->db);
+			'@phan-var-force Commande|Facture $linkedobject';
 			$result = $linkedobject->fetch($origin_id);
 			if ($result >= 0) {
 				//$linkedobject->fetchObjectLinked()   Get all linked object to the $linkedobject (commonly order) into $linkedobject->linkedObjects
@@ -1075,10 +1085,10 @@ class pdf_espadon extends ModelePdfExpedition
 				if (isset($linkedobject->ref_client) && !empty($linkedobject->ref_client)) {
 					$text .= ' ('.$linkedobject->ref_client.')';
 				}
-				$Yoff = $Yoff + 8;
+				$Yoff += 8;
 				$pdf->SetXY($this->page_largeur - $this->marge_droite - $w, $Yoff);
 				$pdf->MultiCell($w, 2, $outputlangs->transnoentities("RefOrder")." : ".$outputlangs->transnoentities($text), 0, 'R');
-				$Yoff = $Yoff + 3;
+				$Yoff += 3;
 				$pdf->SetXY($this->page_largeur - $this->marge_droite - $w, $Yoff);
 				$pdf->MultiCell($w, 2, $outputlangs->transnoentities("OrderDate")." : ".dol_print_date($linkedobject->date, "day", false, $outputlangs, true), 0, 'R');
 			}
@@ -1288,7 +1298,7 @@ class pdf_espadon extends ModelePdfExpedition
 			),
 		);
 
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['photo'] = array(
 			'rank' => $rank,
 			'width' => getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH', 20), // in mm
@@ -1307,7 +1317,7 @@ class pdf_espadon extends ModelePdfExpedition
 			$this->cols['photo']['status'] = true;
 		}
 
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['weight'] = array(
 			'rank' => $rank,
 			'width' => 30, // in mm
@@ -1319,7 +1329,7 @@ class pdf_espadon extends ModelePdfExpedition
 		);
 
 
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['subprice'] = array(
 			'rank' => $rank,
 			'width' => 19, // in mm
@@ -1330,7 +1340,7 @@ class pdf_espadon extends ModelePdfExpedition
 			'border-left' => true, // add left line separator
 		);
 
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['totalexcltax'] = array(
 			'rank' => $rank,
 			'width' => 26, // in mm
@@ -1341,7 +1351,7 @@ class pdf_espadon extends ModelePdfExpedition
 			'border-left' => true, // add left line separator
 		);
 
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['qty_asked'] = array(
 			'rank' => $rank,
 			'width' => 30, // in mm
@@ -1355,7 +1365,7 @@ class pdf_espadon extends ModelePdfExpedition
 			),
 		);
 
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['unit_order'] = array(
 			'rank' => $rank,
 			'width' => 15, // in mm
@@ -1369,7 +1379,7 @@ class pdf_espadon extends ModelePdfExpedition
 			),
 		);
 
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['qty_shipped'] = array(
 			'rank' => $rank,
 			'width' => 30, // in mm

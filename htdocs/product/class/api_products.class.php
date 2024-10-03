@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2019   Cedric Ancelin          <icedo.anc@gmail.com>
+/* Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2019       Cedric Ancelin          <icedo.anc@gmail.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -106,7 +107,7 @@ class Products extends DolibarrApi
 	 */
 	public function getByRef($ref, $includestockdata = 0, $includesubproducts = false, $includeparentid = false, $includetrans = false)
 	{
-		return $this->_fetch('', $ref, '', '', $includestockdata, $includesubproducts, $includeparentid, false, $includetrans);
+		return $this->_fetch(0, $ref, '', '', $includestockdata, $includesubproducts, $includeparentid, false, $includetrans);
 	}
 
 	/**
@@ -130,7 +131,7 @@ class Products extends DolibarrApi
 	 */
 	public function getByRefExt($ref_ext, $includestockdata = 0, $includesubproducts = false, $includeparentid = false, $includetrans = false)
 	{
-		return $this->_fetch('', '', $ref_ext, '', $includestockdata, $includesubproducts, $includeparentid, false, $includetrans);
+		return $this->_fetch(0, '', $ref_ext, '', $includestockdata, $includesubproducts, $includeparentid, false, $includetrans);
 	}
 
 	/**
@@ -154,7 +155,7 @@ class Products extends DolibarrApi
 	 */
 	public function getByBarcode($barcode, $includestockdata = 0, $includesubproducts = false, $includeparentid = false, $includetrans = false)
 	{
-		return $this->_fetch('', '', '', $barcode, $includestockdata, $includesubproducts, $includeparentid, false, $includetrans);
+		return $this->_fetch(0, '', '', $barcode, $includestockdata, $includesubproducts, $includeparentid, false, $includetrans);
 	}
 
 	/**
@@ -1972,7 +1973,7 @@ class Products extends DolibarrApi
 	 *
 	 * @param  int $id ID of Product
 	 * @param  int $selected_warehouse_id ID of warehouse
-	 * @return array
+	 * @return array|mixed                 Data without useless information
 	 *
 	 * @throws RestException 500	System error
 	 * @throws RestException 403
@@ -1995,6 +1996,7 @@ class Products extends DolibarrApi
 		$product_model->load_stock();
 
 		$stockData = $this->_cleanObjectDatas($product_model)->stock_warehouse;
+
 		if ($selected_warehouse_id) {
 			foreach ($stockData as $warehouse_id => $warehouse) {
 				if ($warehouse_id != $selected_warehouse_id) {
@@ -2002,8 +2004,10 @@ class Products extends DolibarrApi
 				}
 			}
 		}
+		$obj_ret = $this->_filterObjectProperties($this->_cleanObjectDatas($product_model), 'stock_warehouses,stock_reel,stock_theorique');
+		$obj_ret->stock_warehouses = $stockData;
 
-		return array('stock_warehouses'=>$stockData);
+		return $obj_ret;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
@@ -2155,7 +2159,7 @@ class Products extends DolibarrApi
 				$children[] = array_combine($keys, $values);
 			}
 
-			$this->product->sousprods = $children;
+			$this->product->sousprods = $children;  // @phpstan-ignore-line
 		}
 
 		if ($includeparentid) {

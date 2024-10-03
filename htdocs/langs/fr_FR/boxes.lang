@@ -116,6 +116,8 @@ BoxTitleLastCustomerShipments=Les %s dernières expéditions clients modifiées
 BoxTitleLastLeaveRequests=Les %s dernières demandes de congés modifiées
 NoRecordedShipments=Aucune expédition client
 BoxCustomersOutstandingBillReached=Clients dont l'en-cours de facturation est dépassé
+BoxTitleLastFediverseInfos=Les %s derniers messages de %s
+BoxLastFediverseInfos=Dernières mises à jour de Fediverse : Actualités et Tendances
 # Pages
 UsersHome=Accueil des utilisateurs et groupes
 MembersHome=Accueil des adhérents

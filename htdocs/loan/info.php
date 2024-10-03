@@ -47,6 +47,13 @@ $result = restrictedArea($user, 'loan', $id, '', '');
 
 
 /*
+ * Actions
+ */
+
+// None
+
+
+/*
  * View
  */
 

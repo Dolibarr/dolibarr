@@ -2,6 +2,7 @@
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,6 +63,15 @@ if (!$sortorder) {
 	$sortorder = "ASC";
 }
 
+/*
+ * Action
+ */
+
+if ($action == 'note' && $user->hasRight('societe', 'lire')) {
+	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET note = '".$db->escape($note)."' WHERE rowid=".((int) $socid);
+	$result = $db->query($sql);
+}
+
 
 /*
  * View
@@ -70,11 +80,6 @@ if (!$sortorder) {
 llxHeader();
 
 $thirdpartystatic = new Societe($db);
-
-if ($action == 'note') {
-	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET note='".$db->escape($note)."' WHERE rowid=".((int) $socid);
-	$result = $db->query($sql);
-}
 
 if ($mode == 'search') {
 	$resql = $db->query($sql);
@@ -88,11 +93,10 @@ if ($mode == 'search') {
 }
 
 
-
 // Mode List
 
 $sql = "SELECT s.rowid, s.nom as name, s.client, s.town, s.datec, s.datea";
-$sql .= ", st.libelle as stcomm, s.prefix_comm, s.code_client, s.code_compta ";
+$sql .= ", st.libelle as stcomm, s.prefix_comm, s.code_client as code_client_compta, s.code_compta ";
 if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= ", sc.fk_soc, sc.fk_user ";
 }
@@ -120,7 +124,7 @@ if (GETPOST("search_code_client")) {
 if ($socid) {
 	$sql .= " AND s.rowid = ".((int) $socid);
 }
-$sql .= " ORDER BY $sortfield $sortorder";
+$sql .= $db->order($sortfield, $sortorder);
 $sql .= $db->plimit($conf->liste_limit + 1, $offset);
 //print $sql;
 
@@ -162,7 +166,7 @@ if ($resql) {
 	print '</td>';
 
 	print '<td colspan="2" class="liste_titre right">';
-	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"), 'search.png', '', 0, 1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '</td>';
 	print "</tr>\n";
 
@@ -176,9 +180,9 @@ if ($resql) {
 		$thirdpartystatic->client = $obj->client;
 		print $thirdpartystatic->getNomUrl(1, 'compta');
 		print '</td>';
-		print '<td>'.$obj->town.'&nbsp;</td>';
-		print '<td class="left">'.$obj->code_client.'&nbsp;</td>';
-		print '<td class="left">'.$obj->code_compta.'&nbsp;</td>';
+		print '<td>'.dolPrintLabel($obj->town).'</td>';
+		print '<td class="left">'.dolPrintLabel($obj->code_client).'</td>';
+		print '<td class="left">'.dolPrintLabel($obj->code_compta_client).'</td>';
 		print '<td class="right">'.dol_print_date($db->jdate($obj->datec)).'</td>';
 		print "</tr>\n";
 		$i++;

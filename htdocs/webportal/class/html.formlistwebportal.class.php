@@ -48,7 +48,7 @@ class FormListWebPortal
 	public $db;
 
 	/**
-	 * @var Form  Instance of the Form
+	 * @var FormWebPortal  Instance of the Form
 	 */
 	public $form;
 
@@ -158,6 +158,7 @@ class FormListWebPortal
 				$search[$key] = GETPOST('search_' . $key, 'alpha');
 			}
 			if (preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
+				/* Fix: this is not compatible with multilangage date format, replaced with dolibarr method
 				$postDateStart = GETPOST('search_' . $key . '_dtstart', 'alphanohtml');
 				$postDateEnd = GETPOST('search_' . $key . '_dtend', 'alphanohtml');
 				// extract date YYYY-MM-DD for year, month and day
@@ -175,6 +176,13 @@ class FormListWebPortal
 					$dateEndDay = (int) $dateEndArr[2];
 					$search[$key . '_dtend'] = dol_mktime(23, 59, 59, $dateEndMonth, $dateEndDay, $dateEndYear);
 				}
+				*/
+				$search[$key . '_dtstartmonth'] = GETPOSTINT('search_' . $key . '_dtstartmonth');
+				$search[$key . '_dtstartday'] = GETPOSTINT('search_' . $key . '_dtstartday');
+				$search[$key . '_dtstartyear'] = GETPOSTINT('search_' . $key . '_dtstartyear');
+				$search[$key . '_dtendmonth'] = GETPOSTINT('search_' . $key . '_dtendmonth');
+				$search[$key . '_dtendday'] = GETPOSTINT('search_' . $key . '_dtendday');
+				$search[$key . '_dtendyear'] = GETPOSTINT('search_' . $key . '_dtendyear');
 			}
 		}
 		$this->search = $search;
@@ -187,7 +195,7 @@ class FormListWebPortal
 		foreach ($object->fields as $key => $val) {
 			// If $val['visible']==0, then we never show the field
 			if (!empty($val['visible'])) {
-				$visible = (int) dol_eval($val['visible'], 1);
+				$visible = (int) dol_eval((string) $val['visible'], 1);
 				$arrayfields['t.' . $key] = array(
 					'label' => $val['label'],
 					'checked' => (($visible < 0) ? 0 : 1),
@@ -227,8 +235,14 @@ class FormListWebPortal
 			foreach ($object->fields as $key => $val) {
 				$search[$key] = '';
 				if (preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
-					$search[$key . '_dtstart'] = '';
-					$search[$key . '_dtend'] = '';
+					//$search[$key . '_dtstart'] = '';
+					//$search[$key . '_dtend'] = '';
+					$search[$key . '_dtstartmonth'] = '';
+					$search[$key . '_dtendmonth'] = '';
+					$search[$key . '_dtstartday'] = '';
+					$search[$key . '_dtendday'] = '';
+					$search[$key . '_dtstartyear'] = '';
+					$search[$key . '_dtendyear'] = '';
 				}
 			}
 			$this->search = $search;
@@ -487,13 +501,13 @@ class FormListWebPortal
 				if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
 					$html .= $this->form->selectarray('search_' . $key, $val['arrayofkeyval'], (isset($search[$key]) ? $search[$key] : ''), $val['notnull'], 0, 0, '', 1, 0, 0, '', '');
 				} elseif (preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
-					$postDateStart = GETPOST('search_' . $key . '_dtstart', 'alphanohtml');
-					$postDateEnd = GETPOST('search_' . $key . '_dtend', 'alphanohtml');
+					$postDateStart = dol_mktime(0, 0, 0, $search[$key . '_dtstartmonth'], $search[$key . '_dtstartday'], $search[$key . '_dtstartyear']);
+					$postDateEnd = dol_mktime(0, 0, 0, $search[$key . '_dtendmonth'], $search[$key . '_dtendday'], $search[$key . '_dtendyear']);
 
-					$html .= '<div class="grid">';
+					$html .= '<div class="grid width150">';
 					$html .= $this->form->inputDate('search_' . $key . '_dtstart', $postDateStart ? $postDateStart : '', $langs->trans('From'));
 					$html .= '</div>';
-					$html .= '<div class="grid">';
+					$html .= '<div class="grid width150">';
 					$html .= $this->form->inputDate('search_' . $key . '_dtend', $postDateEnd ? $postDateEnd : '', $langs->trans('to'));
 					$html .= '</div>';
 				} else {
@@ -516,7 +530,6 @@ class FormListWebPortal
 			$html .= '<td data-label="' . $arrayfields['download_link']['label'] . '">';
 			$html .= '</td>';
 		}
-		$html .= '</tr>';
 		// Signature link
 		if ($elementEn == "propal" && getDolGlobalString("PROPOSAL_ALLOW_ONLINESIGN") != 0) {
 			if (!empty($arrayfields['signature_link']['checked'])) {
@@ -524,6 +537,7 @@ class FormListWebPortal
 				$html .= '</td>';
 			}
 		}
+		$html .= '</tr>';
 
 		$totalarray = array();
 		$totalarray['nbfield'] = 0;

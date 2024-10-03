@@ -42,6 +42,9 @@ if ($user->socid > 0) {
 	$id = $user->socid;
 }
 
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('recapcomptacard', 'globalcard'));
+
 $result = restrictedArea($user, 'societe', $id, '&societe');
 
 $object = new Societe($db);
@@ -49,8 +52,6 @@ if ($id > 0) {
 	$object->fetch($id);
 }
 
-// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-$hookmanager->initHooks(array('recapcomptacard', 'globalcard'));
 
 // Load variable for pagination
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -162,7 +163,10 @@ if ($id > 0) {
 					print $fac->error."<br>";
 					continue;
 				}
-				$totalpaid = $fac->getSommePaiement();
+
+				$alreadypaid = $fac->getSommePaiement();
+				$alreadypaid += $fac->getSumDepositsUsed();
+				$alreadypaid += $fac->getSumCreditNotesUsed();
 
 				$userstatic->id = $objf->userid;
 				$userstatic->login = $objf->login;
@@ -172,7 +176,7 @@ if ($id > 0) {
 					'date' => $fac->date,
 					'datefieldforsort' => $fac->date.'-'.$fac->ref,
 					'link' => $fac->getNomUrl(1),
-					'status' => $fac->getLibStatut(2, $totalpaid),
+					'status' => $fac->getLibStatut(2, $alreadypaid),
 					'amount' => $fac->total_ttc,
 					'author' => $userstatic->getLoginUrl(1)
 				);

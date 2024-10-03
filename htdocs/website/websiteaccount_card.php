@@ -143,7 +143,7 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	$backurlforlist = dol_buildpath('/societe/website.php', 1).'?id='.$object->fk_soc;
 
-	if ($action == 'add' && !GETPOST('site')) {
+	if ($action == 'add' && !GETPOST('site')) {		// Test on permission not required
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Website")), null, 'errors');
 		$action = 'create';
 	}
@@ -172,7 +172,7 @@ $formfile = new FormFile($db);
 $title = $langs->trans("WebsiteAccount");
 $help_url = '';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-website page-card_websiteaccount');
 
 // prepare output js
 $out_js = '';

@@ -87,7 +87,7 @@ function dol_session_regenerate_id()
  * Destroy and recreate a new session without losing content.
  * Not used yet.
  *
- * @param  $sessionname		string		Session name
+ * @param  string	$sessionname	Session name
  * @return void
  */
 function dol_session_rotate($sessionname = '')

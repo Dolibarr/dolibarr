@@ -15,7 +15,7 @@
 # Module label 'ModuleRecruitmentName'
 ModuleRecruitmentName = Recrutare personal
 # Module description 'ModuleRecruitmentDesc'
-ModuleRecruitmentDesc =  Gestionează și urmărește campaniile de recrutare pentru joburile noi 
+ModuleRecruitmentDesc =  Gestionează și urmărește campaniile de recrutare pentru joburile noi
 # Admin page
 RecruitmentSetup = Configurare modul Recrutare personal
 RecruitmentSetupPage = Introdu aici setările pentru opţiunile principale ale modulului Recrutare personal

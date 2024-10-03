@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2024  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +41,14 @@ if (empty($htmlname)) {
 <!-- BEGIN PHP TEMPLATE formlayoutai.tpl.php -->
 <?php
 
+'
+@phan-var-force ?FormWebSite $formwebsite
+@phan-var-force ?FormMail $formmail
+';
+
+if (!isset($out)) {
+	$out = '';
+}
 // Add link to add layout
 if ($showlinktolayout) {
 	$out .= '<a href="#" id="linkforlayouttemplates" class="reposition notasortlink inline-block alink marginrightonly">';
@@ -92,9 +101,13 @@ if ($showlinktolayout) {
 	} else {
 		$out .= $formmail->getModelEmailTemplate($htmlname);
 	}
+} else {
+	$out .= '<!-- No link to the layout feature, $formmail->withlayout must be set to 1, module WYSIWYG must be enabled and MAIN_EMAIL_USE_LAYOUT must be set -->';
 }
 if ($showlinktoai) {
 	$out .= $formmail->getSectionForAIPrompt($showlinktoai, $formmail->withaiprompt, $htmlname);
+} else {
+	$out .= '<!-- No link to the AI feature, $formmail->withaiprompt must be set to the ai feature and module ai must be enabled -->';
 }
 
 ?>

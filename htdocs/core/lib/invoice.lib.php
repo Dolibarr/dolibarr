@@ -592,6 +592,7 @@ function getCustomerInvoiceDraftTable($maxCount = 500, $socid = 0)
 					$companystatic->code_client = $obj->code_client;
 					$companystatic->code_fournisseur = $obj->code_fournisseur;
 					$companystatic->code_compta = $obj->code_compta;
+					$companystatic->code_compta_client = $obj->code_compta;
 					$companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 
 					$result .= '<tr class="oddeven">';
@@ -726,6 +727,7 @@ function getDraftSupplierTable($maxCount = 500, $socid = 0)
 					$companystatic->code_client = $obj->code_client;
 					$companystatic->code_fournisseur = $obj->code_fournisseur;
 					$companystatic->code_compta = $obj->code_compta;
+					$companystatic->code_compta_client = $obj->code_compta;
 					$companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 
 					$result .= '<tr class="oddeven">';
@@ -1096,6 +1098,7 @@ function getCustomerInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 					$societestatic->code_client = $obj->code_client;
 					$societestatic->code_fournisseur = $obj->code_fournisseur;
 					$societestatic->code_compta = $obj->code_compta;
+					$societestatic->code_compta_client = $obj->code_compta;
 					$societestatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 
 					print '<tr class="oddeven">';
@@ -1283,6 +1286,7 @@ function getPurchaseInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 					$societestatic->code_client = $obj->code_client;
 					$societestatic->code_fournisseur = $obj->code_fournisseur;
 					$societestatic->code_compta = $obj->code_compta;
+					$societestatic->code_compta_client = $obj->code_compta;
 					$societestatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 
 					print '<tr class="oddeven">';

@@ -235,7 +235,7 @@ class InterfaceStripe extends DolibarrTriggers
 								$card->save();
 							} catch (Exception $e) {
 								$ok = -1;
-								$this->errors[] = $e->getMessages();
+								$this->errors[] = $e->getMessage();
 							}
 						}
 					}

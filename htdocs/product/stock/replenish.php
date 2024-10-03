@@ -4,9 +4,10 @@
  * Copyright (C) 2014		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2016		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2016		ATM Consulting		<support@atm-consulting.fr>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021		Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2021		Antonin MARCHAL		<antonin@letempledujeu.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,10 +45,11 @@ $langs->loadLangs(array('products', 'stocks', 'orders'));
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'produit|service');
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('stockreplenishlist'));
+
+$result = restrictedArea($user, 'produit|service');
 
 //checks if a product has been ordered
 
@@ -120,7 +122,7 @@ if (getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT')
 }
 
 if ($virtualdiffersfromphysical) {
-	$usevirtualstock = !getDolGlobalString('STOCK_USE_REAL_STOCK_BY_DEFAULT_FOR_REPLENISHMENT') ? 1 : 0;
+	$usevirtualstock = getDolGlobalString('STOCK_USE_REAL_STOCK_BY_DEFAULT_FOR_REPLENISHMENT') ? 0 : 1;
 } else {
 	$usevirtualstock = 0;
 }
@@ -155,8 +157,8 @@ if ($draftorder == 'on') {
 	$draftchecked = "checked";
 }
 
-// Create orders
-if ($action == 'order' && GETPOST('valid')) {
+// Create purchase orders
+if ($action == 'order' && GETPOST('valid') && $user->hasRight('fournisseur', 'commande', 'creer')) {
 	$linecount = GETPOSTINT('linecount');
 	$box = 0;
 	$errorQty = 0;
@@ -200,16 +202,25 @@ if ($action == 'order' && GETPOST('valid')) {
 							// TODO Get desc in language of thirdparty
 						}
 
+						// If we use multicurrency
+						if (isModEnabled('multicurrency') && !empty($productsupplier->fourn_multicurrency_code) && $productsupplier->fourn_multicurrency_code != $conf->currency) {
+							$line->multicurrency_code = $productsupplier->fourn_multicurrency_code;
+							$line->fk_multicurrency = (int) $productsupplier->fourn_multicurrency_id;
+							$line->multicurrency_subprice = $productsupplier->fourn_multicurrency_unitprice;
+						}
+
 						$line->tva_tx = $productsupplier->vatrate_supplier;
 						$line->subprice = $productsupplier->fourn_pu;
 						$line->total_ht = $productsupplier->fourn_pu * $qty;
 						$tva = $line->tva_tx / 100;
 						$line->total_tva = $line->total_ht * $tva;
 						$line->total_ttc = $line->total_ht + $line->total_tva;
-						$line->remise_percent = $productsupplier->remise_percent;
-						$line->ref_fourn = $productsupplier->ref_supplier;
+						$line->remise_percent = (float) $productsupplier->remise_percent;
+						$line->ref_fourn = $productsupplier->ref_supplier;	// deprecated
+						$line->ref_supplier = $productsupplier->ref_supplier;
 						$line->type = $productsupplier->type;
 						$line->fk_unit = $productsupplier->fk_unit;
+
 						$suppliers[$productsupplier->fourn_socid]['lines'][] = $line;
 					}
 				} elseif ($idprod == -1) {
@@ -247,7 +258,7 @@ if ($action == 'order' && GETPOST('valid')) {
 
 				foreach ($supplier['lines'] as $line) {
 					if (empty($line->remise_percent)) {
-						$line->remise_percent = $order->thirdparty->remise_supplier_percent;
+						$line->remise_percent = (float) $order->thirdparty->remise_supplier_percent;
 					}
 					$result = $order->addline(
 						$line->desc,
@@ -268,7 +279,8 @@ if ($action == 'order' && GETPOST('valid')) {
 						null,
 						null,
 						0,
-						$line->fk_unit
+						$line->fk_unit,
+						$line->multicurrency_subprice
 					);
 				}
 				if ($result < 0) {
@@ -283,18 +295,19 @@ if ($action == 'order' && GETPOST('valid')) {
 			} else {
 				$order->socid = $suppliersid[$i];
 				$order->fetch_thirdparty();
+				$order->multicurrency_code = $order->thirdparty->multicurrency_code;
 
 				// Trick to know which orders have been generated using the replenishment feature
 				$order->source = $order::SOURCE_ID_REPLENISHMENT;
 
 				foreach ($supplier['lines'] as $line) {
 					if (empty($line->remise_percent)) {
-						$line->remise_percent = $order->thirdparty->remise_supplier_percent;
+						$line->remise_percent = (float) $order->thirdparty->remise_supplier_percent;
 					}
 					$order->lines[] = $line;
 				}
-				$order->cond_reglement_id = $order->thirdparty->cond_reglement_supplier_id;
-				$order->mode_reglement_id = $order->thirdparty->mode_reglement_supplier_id;
+				$order->cond_reglement_id = (int) $order->thirdparty->cond_reglement_supplier_id;
+				$order->mode_reglement_id = (int) $order->thirdparty->mode_reglement_supplier_id;
 
 				$id = $order->create($user);
 				if ($id < 0) {
@@ -388,7 +401,7 @@ if ($sall) {
 	$sql .= natural_search(array('p.ref', 'p.label', 'p.description', 'p.note'), $sall);
 }
 // if the type is not 1, we show all products (type = 0,2,3)
-if (dol_strlen($type)) {
+if (dol_strlen((string) $type)) {
 	if ($type == 1) {
 		$sql .= ' AND p.fk_product_type = 1';
 	} else {

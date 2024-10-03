@@ -101,7 +101,7 @@ $form = new Form($db);
 //$help_url='EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes';
 $help_url = '';
 $title = $langs->trans('Availabilities').' - '.$langs->trans("Notes");
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-bookcal page-card_availabilities_note');
 
 if ($id > 0 || !empty($ref)) {
 	$object->fetch_thirdparty();

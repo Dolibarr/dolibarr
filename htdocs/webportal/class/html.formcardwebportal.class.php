@@ -482,6 +482,7 @@ class FormCardWebPortal
 		}
 		$html .= '<div><strong>';
 		if ($object->element == 'member') {
+			'@phan-var-force Adherent $object';
 			if ($object->morphy == 'mor' && !empty($object->societe)) {
 				$html .= dol_htmlentities($object->societe);
 				$html .= (!empty($fullname) && $object->societe != $fullname) ? ' (' . dol_htmlentities($fullname) . $addgendertxt . ')' : '';
@@ -617,7 +618,7 @@ class FormCardWebPortal
 					$cardRight = true;
 				}
 			}
-			if ($cardRight === true) {
+			if ($cardRight) {
 				$html .= '</div>';
 				$html .= '<div class="card-right">';
 			}

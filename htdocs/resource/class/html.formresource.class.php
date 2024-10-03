@@ -3,6 +3,7 @@
  * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -174,9 +175,11 @@ class FormResource
 	 *  @param  int		$empty			1=peut etre vide, 0 sinon
 	 *  @param	int		$noadmininfo	0=Add admin info, 1=Disable admin info
 	 *  @param  int		$maxlength      Max length of label
+	 *  @param	int		$usejscombo		1=Use jscombo, 0=No js combo
+	 *  @param	string	$morecss		Add more css
 	 * 	@return	void
 	 */
-	public function select_types_resource($selected = '', $htmlname = 'type_resource', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0)
+	public function select_types_resource($selected = '', $htmlname = 'type_resource', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0, $usejscombo = 0, $morecss = 'minwidth100')
 	{
 		// phpcs:enable
 		global $langs, $user;
@@ -192,7 +195,7 @@ class FormResource
 		}
 
 		$resourcestat->loadCacheCodeTypeResource();
-		print '<select id="select'.$htmlname.'" class="flat maxwidthonsmartphone select_'.$htmlname.'" name="'.$htmlname.'">';
+		print '<select id="select'.$htmlname.'" class="flat maxwidthonsmartphone select_'.$htmlname.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'">';
 		if ($empty) {
 			print '<option value="">&nbsp;</option>';
 		}
@@ -236,6 +239,10 @@ class FormResource
 			}
 		}
 		print '</select>';
+		if ($usejscombo) {
+			print ajax_combobox("select".$htmlname);
+		}
+
 		if ($user->admin && !$noadmininfo) {
 			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
@@ -247,7 +254,7 @@ class FormResource
 	 *
 	 *    @param	string		$selected				Preselected value
 	 *    @param    string		$htmlname				HTML select name
-	 *    @param    array		$fields					Array with key of fields to refresh after selection
+	 *    @param    string[]	$fields					Array with key of fields to refresh after selection
 	 *    @param    int			$fieldsize				Field size
 	 *    @param    int			$disableautocomplete    1 To disable ajax autocomplete features (browser autocomplete may still occurs)
 	 *    @param	string		$moreattrib				Add more attribute on HTML input field

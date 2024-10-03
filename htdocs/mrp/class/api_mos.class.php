@@ -415,7 +415,7 @@ class Mos extends DolibarrApi
 								$moline->qty = $qtytoprocess;
 								$moline->batch = (string) $tmpproduct->status_batch;
 								$moline->role = 'toproduce';
-								$moline->fk_mrp_production = "";
+								$moline->fk_mrp_production = 0;
 								$moline->fk_stock_movement = $idstockmove;
 								$moline->fk_user_creat = DolibarrApiAccess::$user->id;
 
@@ -434,7 +434,7 @@ class Mos extends DolibarrApi
 								$moline->qty = $qtytoprocess;
 								$moline->batch = (string) $tmpproduct->status_batch;
 								$moline->role = 'toconsume';
-								$moline->fk_mrp_production = "";
+								$moline->fk_mrp_production = 0;
 								$moline->fk_stock_movement = $idstockmove;
 								$moline->fk_user_creat = DolibarrApiAccess::$user->id;
 
@@ -464,7 +464,7 @@ class Mos extends DolibarrApi
 							} else {
 								$moline->role = 'produced';
 							}
-							$moline->fk_mrp_production = "";
+							$moline->fk_mrp_production = 0;
 							$moline->fk_stock_movement = $idstockmove;
 							$moline->fk_user_creat = DolibarrApiAccess::$user->id;
 

@@ -355,7 +355,9 @@ PHP PARSEDOWN
 
 PHP OAUTH
 ---------
-Add into Class Google of file OAuth2/Service/Google:
+Restore old OAuth2/Service/Google.php file and OAuth2/Service/Microsoft.php and OAuth2/Service/Microsoft2.php
+
+Or add into Class Google of file OAuth2/Service/Google:
 
     // LDR CHANGE Add approval_prompt to force the prompt if value is set to 'force' so it force return of a "refresh token" in addition to "standard token"
     public $approvalPrompt='auto';
@@ -367,6 +369,17 @@ Add into Class Google of file OAuth2/Service/Google:
         }
         $this->approvalPrompt = $prompt;
     }
+
+
+Modify function
+
+    public function getAuthorizationEndpoint()
+    {
+		// LDR CHANGE Add approval_prompt to force the prompt if value is set to 'force' so it force return of a "refresh token" in addition to "standard token"
+		//return new Uri('https://accounts.google.com/o/oauth2/auth?access_type='.$this->accessType);
+		$url = 'https://accounts.google.com/o/oauth2/auth?'.($this->approvalPrompt?'approval_prompt='.$this->approvalPrompt.'&':'').'access_type='.$this->accessType;
+		return new Uri($url);
+	}
 
 
 

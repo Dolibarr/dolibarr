@@ -1,34 +1,38 @@
-Module68000Name = Intracomm report
-Module68000Desc = Intracomm report management (Support for French DEB/DES format)
-IntracommReportSetup = Intracommreport module setup
-IntracommReportAbout = About intracommreport
+IntraCommReport=內部通信報告
+IntraCommReports=內部通信報告
+
+Module68000Name = 內部通信報告
+Module68000Desc = 內部報告管理（支持法國DEB/DES格式）
+IntracommReportSetup = 內部報告模組設置
+IntracommReportAbout = 關於內部通信報告
 
 # Setup
-INTRACOMMREPORT_NUM_AGREMENT=Numéro d'agrément (délivré par le CISD de rattachement)
-INTRACOMMREPORT_TYPE_ACTEUR=Type d'acteur
-INTRACOMMREPORT_ROLE_ACTEUR=Rôle joué par l'acteur
-INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les introductions
-INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expéditions
-INTRACOMMREPORT_CATEG_FRAISDEPORT=Catégorie de services de type "Frais de port"
-INTRACOMMREPORT_NUM_DECLARATION=Numéro de déclarant
+INTRACOMMREPORT_NUM_AGREMENT=許可證號（由負責的CISD發放）
+INTRACOMMREPORT_TYPE_ACTEUR=參與者類型
+INTRACOMMREPORT_ROLE_ACTEUR=參與者扮演的角色
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=引導入的義務級別
+INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=對運輸的義務等級
+INTRACOMMREPORT_CATEG_FRAISDEPORT=服務類別 "運輸費用"
+INTRACOMMREPORT_NUM_DECLARATION=申報人編號
 # Menu
-MenuIntracommReport=Intracomm report
-MenuIntracommReportNew=New declaration
+MenuIntracommReport=內部通信報告
+MenuIntracommReportNew=新申報
 MenuIntracommReportList=清單
 # View
-NewDeclaration=New declaration
-Declaration=Declaration
-AnalysisPeriod=Analysis period
-TypeOfDeclaration=Type of declaration
-DEB=Goods exchange declaration (DEB)
-DES=Services exchange declaration (DES)
+NewDeclaration=新申報
+Declaration=申報
+AnalysisPeriod=分析期間
+TypeOfDeclaration=申報類型
+DEB=貨物交換申報（DEB）
+DES=服務交換申報（DES）
 # Export page
-IntracommReportTitle=Preparation of an XML file in ProDouane format
+IntracommReportTitle=準備ProDouane格式的XML文件
 # List
-IntracommReportList=List of generated declarations
-IntracommReportNumber=Numero of declaration
-IntracommReportPeriod=Period of analysis
-IntracommReportTypeDeclaration=Type of declaration
-IntracommReportDownload=download XML file
+IntracommReportList=已生成申報的清單
+IntracommReportNumber=申報編號
+IntracommReportPeriod=分析期間
+IntracommReportTypeDeclaration=申報類型
+IntracommReportDownload=下載XML文件
 # Invoice
-IntracommReportTransportMode=Transport mode
+IntracommReportTransportMode=運輸方式
+DeleteIntraCommReport=刪除內部通信報告

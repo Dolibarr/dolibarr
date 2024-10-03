@@ -295,8 +295,8 @@ CurrencyXPF=פרנק CFP
 CurrencySingXPF=פרנק CFP
 CurrencyCentEUR=סנטים
 CurrencyCentSingEUR=סֶנט
-CurrencyCentINR=פאיסה
-CurrencyCentSingINR=paise
+CurrencyCentINR=paise
+CurrencyCentSingINR=paisa
 CurrencyThousandthSingTND=אָלְפִּית
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=מרשתת

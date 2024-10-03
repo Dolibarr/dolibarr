@@ -87,7 +87,9 @@ $upload_dir = $conf->don->dir_output;
 // Security check
 $result = restrictedArea($user, 'don', $object->id);
 
+$permissiontoread = $user->hasRight('don', 'lire');
 $permissiontoadd = $user->hasRight('don', 'creer');
+$permissiontodelete = $user->hasRight('don', 'supprimer');
 
 
 /*
@@ -163,7 +165,7 @@ if (empty($reshook)) {
 
 
 	// Action update object
-	if ($action == 'update') {
+	if ($action == 'update' && $permissiontoadd) {
 		if (!empty($cancel)) {
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".urlencode((string) ($id)));
 			exit;
@@ -218,7 +220,7 @@ if (empty($reshook)) {
 
 
 	// Action add/create object
-	if ($action == 'add') {
+	if ($action == 'add' && $permissiontoadd) {
 		if (!empty($cancel)) {
 			header("Location: index.php");
 			exit;
@@ -279,7 +281,7 @@ if (empty($reshook)) {
 	}
 
 	// Action delete object
-	if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $user->hasRight('don', 'supprimer')) {
+	if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $permissiontodelete) {
 		$object->fetch($id);
 		$result = $object->delete($user);
 		if ($result > 0) {
@@ -292,7 +294,7 @@ if (empty($reshook)) {
 	}
 
 	// Action validation
-	if ($action == 'valid_promesse') {
+	if ($action == 'valid_promesse' && $permissiontoadd) {
 		$object->fetch($id);
 		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		if ($object->valid_promesse($id, $user->id) >= 0) {
@@ -304,7 +306,7 @@ if (empty($reshook)) {
 	}
 
 	// Action cancel
-	if ($action == 'set_cancel') {
+	if ($action == 'set_cancel' && $permissiontoadd) {
 		$object->fetch($id);
 		if ($object->set_cancel($id) >= 0) {
 			$action = '';
@@ -314,7 +316,9 @@ if (empty($reshook)) {
 	}
 
 	// Action set paid
-	if ($action == 'set_paid') {
+	if ($action == 'set_paid' && $permissiontoadd) {
+		$modepayment = GETPOSTINT('modepayment');
+
 		$object->fetch($id);
 		if ($object->setPaid($id, $modepayment) >= 0) {
 			$action = '';
@@ -326,7 +330,7 @@ if (empty($reshook)) {
 		$object->setProject($projectid);
 	}
 
-	if ($action == 'update_extras') {
+	if ($action == 'update_extras' && $permissiontoadd) {
 		$object->fetch($id);
 
 		$object->oldcopy = dol_clone($object, 2);
@@ -353,59 +357,6 @@ if (empty($reshook)) {
 
 	// Actions to build doc
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
-
-
-	// Remove file in doc form
-	/*if ($action == 'remove_file')
-	{
-		$object = new Don($db, 0, GETPOST('id', 'int'));
-		if ($object->fetch($id))
-		{
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
-			$object->fetch_thirdparty();
-
-			$langs->load("other");
-			$upload_dir = $conf->don->dir_output;
-			$file = $upload_dir . '/' . GETPOST('file');
-			$ret=dol_delete_file($file,0,0,0,$object);
-			if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
-			else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
-			$action='';
-		}
-	}
-	*/
-
-	/*
-	 * Build doc
-	 */
-	/*
-	if ($action == 'builddoc')
-	{
-		$object = new Don($db);
-		$result=$object->fetch($id);
-
-		// Save last template used to generate document
-		if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
-
-		// Define output language
-		$outputlangs = $langs;
-		$newlang='';
-		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && !empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) $newlang=$object->thirdparty->default_lang;
-		if (!empty($newlang))
-		{
-			$outputlangs = new Translate("",$conf);
-			$outputlangs->setDefaultLang($newlang);
-		}
-		$result=don_create($db, $object->id, '', $object->model_pdf, $outputlangs);
-		if ($result <= 0)
-		{
-			dol_print_error($db,$result);
-			exit;
-		}
-	}
-	*/
 }
 
 
@@ -436,7 +387,7 @@ if ($action == 'create') {
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-	print dol_get_fiche_head('');
+	print dol_get_fiche_head([]);
 
 	print '<table class="border centpercent">';
 	print '<tbody>';
@@ -995,8 +946,8 @@ if (!empty($id) && $action != 'edit') {
 	/*
 	 * Generated documents
 	 */
-	$filename = dol_sanitizeFileName($object->id);
-	$filedir = $conf->don->dir_output."/".dol_sanitizeFileName($object->id);
+	$filename = dol_sanitizeFileName((string) $object->id);
+	$filedir = $conf->don->dir_output."/".dol_sanitizeFileName((string) $object->id);
 	$urlsource = $_SERVER['PHP_SELF'].'?rowid='.$object->id;
 	$genallowed	= (($object->paid == 0 || $user->admin) && $user->hasRight('don', 'lire'));
 	$delallowed	= $user->hasRight('don', 'creer');

@@ -116,6 +116,8 @@ BoxTitleLastCustomerShipments=Neueste %s geänderte Kundenlieferungen
 BoxTitleLastLeaveRequests=Zuletzt bearbeitete Urlaubsanträge (maximal %s)
 NoRecordedShipments=Keine erfasste Kundensendung
 BoxCustomersOutstandingBillReached=Kunden mit erreichtem Aussenstände-Limit
+BoxTitleLastFediverseInfos=Letzte %s Beiträge von %s
+BoxLastFediverseInfos=Neueste Fediverse-Updates: Neuigkeiten und Trends
 # Pages
 UsersHome=Startseite Benutzer und Gruppen
 MembersHome=Startseite Mitgliedschaft

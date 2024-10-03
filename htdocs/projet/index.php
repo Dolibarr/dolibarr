@@ -73,7 +73,7 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 if (empty($reshook)) {
-	if ($action == 'refresh_search_project_user') {
+	if ($action == 'refresh_search_project_user' && $user->hasRight('projet', 'lire')) {
 		$search_project_user = GETPOSTINT('search_project_user');
 		$tabparam = array("MAIN_SEARCH_PROJECT_USER_PROJECTSINDEX" => $search_project_user);
 
@@ -374,6 +374,7 @@ if ($resql) {
 			$companystatic->name_alias = $obj->name_alias;
 			$companystatic->code_client = $obj->code_client;
 			$companystatic->code_compta = $obj->code_compta;
+			$companystatic->code_compta_client = $obj->code_compta;
 			$companystatic->client = $obj->client;
 			$companystatic->code_fournisseur = $obj->code_fournisseur;
 			$companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;

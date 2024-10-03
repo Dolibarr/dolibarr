@@ -79,7 +79,7 @@ $langs->load("exports");
 
 // Check exportkey
 if (empty($datatoimport)) {
-	$user->getrights();
+	$user->loadRights();
 
 	llxHeader();
 	print '<div class="error">Bad value for datatoimport.</div>';

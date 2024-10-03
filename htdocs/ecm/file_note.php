@@ -126,7 +126,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be 'include'
  * View
  */
 
-llxHeader('', $langs->trans('EcmFiles'));
+llxHeader('', $langs->trans('EcmFiles'), '', '', 0, 0, '', '', '', 'mod-ecm page-file_note');
 
 $form = new Form($db);
 

@@ -19,10 +19,11 @@
  */
 
 /**
- * \file htdocs/margin/checkMargins.php
+ * \file 	htdocs/margin/checkMargins.php
  * \ingroup margin
- * \brief Check margins
+ * \brief 	Check margins
  */
+
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -76,6 +77,8 @@ if (GETPOST("button_search_x") || GETPOST("button_search")) {
 	$action = 'update';
 }
 
+$permissiontocreate = $user->hasRight('facture', 'creer');
+
 
 /*
  * Actions
@@ -99,7 +102,7 @@ if (empty($reshook)) {
 	// Selection of new fields
 	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
-	if ($action == 'update') {
+	if ($action == 'update' && $permissiontocreate) {
 		$datapost = $_POST;
 
 		foreach ($datapost as $key => $value) {
@@ -154,7 +157,7 @@ $form = new Form($db);
 
 $title = $langs->trans("MarginDetails");
 
-llxHeader('', $title);
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-margin page-checkmargins');
 
 // print load_fiche_titre($text);
 

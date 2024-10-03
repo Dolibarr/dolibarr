@@ -206,3 +206,4 @@ StatusSupplierOrderReceivedPartially=Delvis fått
 StatusSupplierOrderReceivedAll=Alla produkter mottagna
 NeedAtLeastOneInvoice = Det måste finnas minst en faktura
 LineAlreadyDispatched = Orderraden är redan mottagen.
+OrderStatusMakeOperationForbidden = Order status forbidden for this operation.

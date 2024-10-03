@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2021 Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2014      Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2019      Eric Seigne          <eric.seigne@cap-rel.fr>
- * Copyright (C) 2021-2024 Frédéric France      <frederic.france@netlogic.fr>
+/* Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
+ * Copyright (C) 2013-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2014       Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2019       Eric Seigne             <eric.seigne@cap-rel.fr>
+ * Copyright (C) 2021-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,14 +31,14 @@
  *	Check if a value is empty with some options
  *
  * @author	Michael - https://www.php.net/manual/fr/function.empty.php#90767
- * @param	mixed		$var			Value to test
+ * @param	?mixed		$var			Value to test
  * @param	boolean     $allow_false 	Setting this to true will make the function consider a boolean value of false as NOT empty. This parameter is false by default.
  * @param	boolean     $allow_ws 		Setting this to true will make the function consider a string with nothing but white space as NOT empty. This parameter is false by default.
  * @return	boolean				  		True of False
  */
 function is_empty($var, $allow_false = false, $allow_ws = false)
 {
-	if (!isset($var) || is_null($var) || ($allow_ws == false && trim($var) == "" && !is_bool($var)) || ($allow_false === false && is_bool($var) && $var === false) || (is_array($var) && empty($var))) {
+	if (is_null($var) || !isset($var) || ($allow_ws == false && trim($var) == "" && !is_bool($var)) || ($allow_false === false && $var === false) || (is_array($var) && empty($var))) {
 		return true;
 	}
 	return false;
@@ -47,7 +48,7 @@ function is_empty($var, $allow_false = false, $allow_ws = false)
  *	Prepare array with list of tabs
  *
  *	@param	AccountingAccount	$object		Accounting account
- *	@return	array				Array of tabs to show
+ *	@return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function accounting_prepare_head(AccountingAccount $object)
 {
@@ -303,9 +304,9 @@ function getDefaultDatesForTransfer()
 			$date_end = $db->jdate($obj->date_end);
 		} else {
 			$month_start = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
-			$year_start = dol_print_date(dol_now(), '%Y');
-			if ($month_start > dol_print_date(dol_now(), '%m')) {
-				$year_start = $year_start - 1;
+			$year_start = (int) dol_print_date(dol_now(), '%Y');
+			if ($month_start > (int) dol_print_date(dol_now(), '%m')) {
+				$year_start -= 1;
 			}
 			$year_end = $year_start + 1;
 			$month_end = $month_start - 1;
@@ -346,7 +347,7 @@ function getDefaultDatesForTransfer()
  * Get current period of fiscal year
  *
  * @param 	DoliDB		$db				Database handler
- * @param 	stdClass	$conf			Config
+ * @param 	Conf		$conf			Config
  * @param 	int 		$from_time		[=null] Get current time or set time to find fiscal period
  * @return 	array		Period of fiscal year : [date_start, date_end]
  */
@@ -377,7 +378,7 @@ function getCurrentPeriodOfFiscalYear($db, $conf, $from_time = null)
 		}
 		$year_start = $now_arr['year'];
 		if ($conf_fiscal_month_start > $now_arr['mon']) {
-			$year_start = $year_start - 1;
+			$year_start -= 1;
 		}
 		$year_end = $year_start + 1;
 		$month_end = $month_start - 1;

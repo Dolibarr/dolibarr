@@ -69,8 +69,8 @@ if ($id > 0 || !empty($ref)) {
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'expedition', $object->id, '');
 $hookmanager->initHooks(array('shipmentcontactcard', 'globalcard'));
+$result = restrictedArea($user, 'expedition', $object->id, '');
 
 /*
  * Actions

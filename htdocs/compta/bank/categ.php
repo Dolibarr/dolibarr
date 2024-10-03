@@ -77,7 +77,7 @@ if ($categid) {
 			$bankcateg->update($user);
 		}
 		//Delete category
-		if ($action == 'delete') {
+		if ($action == 'delete' && $user->hasRight('banque', 'configurer')) {
 			$bankcateg->delete($user);
 		}
 	}

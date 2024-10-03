@@ -98,24 +98,75 @@ class CashControl extends CommonObject
 	 * @var int Object Id
 	 */
 	public $id;
+
+	/**
+	 * @var string Label
+	 */
 	public $label;
+
+	/**
+	 * @var float Amount at opening
+	 */
 	public $opening;
+
+	/**
+	 * @var int Status
+	 */
 	public $status;
+
+	/**
+	 * @var int Year close
+	 */
 	public $year_close;
+
+	/**
+	 * @var int Month close
+	 */
 	public $month_close;
+
+	/**
+	 * @var int Day close
+	 */
 	public $day_close;
+
+	/**
+	 * @var string posmodule
+	 */
 	public $posmodule;
+
+	/**
+	 * @var string posnumber
+	 */
 	public $posnumber;
+
+	/**
+	 * @var float Cash amount
+	 */
 	public $cash;
+
+	/**
+	 * @var float cheque amount
+	 */
 	public $cheque;
+
+	/**
+	 * @var float Card amountS
+	 */
 	public $card;
 
+	/**
+	 * @var int User ID create
+	 */
 	public $fk_user_creat;
 
 	/**
-	 * @var integer|string $date_valid
+	 * @var int|'' $date_valid
 	 */
 	public $date_valid;
+
+	/**
+	 * @var int User ID
+	 */
 	public $fk_user_valid;
 
 
@@ -370,7 +421,7 @@ class CashControl extends CommonObject
 	}
 
 	/**
-	 *  Return clicable link of object (with eventually picto)
+	 *  Return clickable link of object (with eventually picto)
 	 *
 	 *  @param  int     $withpicto                  Add picto into link
 	 *  @param  string  $option                     On what the link point to ('nolink', ...)
@@ -448,11 +499,11 @@ class CashControl extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
@@ -467,7 +518,7 @@ class CashControl extends CommonObject
 		//var_dump($this->fields['rowid']);exit;
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1, 1) : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1, '', 1) : $this->ref).'</span>';
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}

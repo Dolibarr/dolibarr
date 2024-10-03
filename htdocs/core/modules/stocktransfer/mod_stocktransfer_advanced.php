@@ -5,6 +5,7 @@
  * Copyright (C) 2008       Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2019-2024  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2021 		Gauthier VERDOL 			<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +38,7 @@ class mod_stocktransfer_advanced extends ModeleNumRefStockTransfer
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
@@ -78,6 +79,7 @@ class mod_stocktransfer_advanced extends ModeleNumRefStockTransfer
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("StockTransfer"), $langs->transnoentities("StockTransfer"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
+		//$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
@@ -125,7 +127,7 @@ class mod_stocktransfer_advanced extends ModeleNumRefStockTransfer
 	 * 	Return next free value
 	 *
 	 *  @param  StockTransfer	$object		Object we need next value for
-	 *  @return string|0      				Value if OK, 0 if KO
+	 *  @return string|int<-1,0>			Value if OK, 0 if KO
 	 */
 	public function getNextValue($object)
 	{

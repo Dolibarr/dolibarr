@@ -71,3 +71,4 @@ SignatureProposalRef=Assinatura da cotação / proposta comercial %s
 SignatureContractRef=Assinatura do contrato %s
 SignatureFichinterRef=Assinatura da intervenção %s
 FeatureOnlineSignDisabled=Recurso para assinatura online desabilitado ou documento gerado antes que o recurso fosse ativado
+NoSignature=Sem Assinar

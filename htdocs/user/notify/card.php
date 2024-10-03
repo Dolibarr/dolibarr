@@ -5,6 +5,7 @@
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2016      Abbes Bahfir         <contact@dolibarrpar.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,7 +70,7 @@ $now = dol_now();
 $object = new User($db);
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref, '', 1);
-	$object->getrights();
+	$object->loadRights();
 }
 
 $permissiontoadd = (($object->id == $user->id) || ($user->hasRight('user', 'user', 'lire')));
@@ -90,7 +91,7 @@ if (GETPOST('cancel', 'alpha')) {
 }
 
 // Add a notification
-if ($action == 'add') {
+if ($action == 'add' && $permissiontoadd) {
 	$error = 0;
 
 	if ($actionid <= 0) {
@@ -103,7 +104,7 @@ if ($action == 'add') {
 		$db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def";
-		$sql .= " WHERE fk_user=".((int) $id)." AND fk_action=".((int) $actionid);
+		$sql .= " WHERE fk_user = ".((int) $id)." AND fk_action = ".((int) $actionid);
 		if ($db->query($sql)) {
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify_def (datec, fk_user, fk_action)";
 			$sql .= " VALUES ('".$db->idate($now)."', ".((int) $id).", ".((int) $actionid).")";
@@ -125,9 +126,9 @@ if ($action == 'add') {
 	}
 }
 
-// Remove a notification
-if ($action == 'delete') {
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def where rowid=".GETPOSTINT("actid");
+// Remove a notification (edit a user)
+if ($action == 'delete' && $permissiontoadd) {
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def where rowid = ".GETPOSTINT("actid");
 	$db->query($sql);
 }
 
@@ -141,7 +142,7 @@ $form = new Form($db);
 
 $object = new User($db);
 $result = $object->fetch($id, '', '', 1);
-$object->getrights();
+$object->loadRights();
 
 $title = $langs->trans("ThirdParty").' - '.$langs->trans("Notification");
 if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
@@ -270,7 +271,7 @@ if ($result > 0) {
 	}
 
 	$newcardbutton = '';
-	$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
+	$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', (int) $permissiontoadd);
 
 	$titlelist = $langs->trans("ListOfActiveNotifications");
 
@@ -311,7 +312,7 @@ if ($result > 0) {
 			}
 			print '</td>';
 			print '<td>';
-			print img_picto('', 'object_action', '', false, 0, 0, '', 'paddingright').$form->selectarray("actionid", $actions, '', 1);
+			print img_picto('', 'object_action', '', 0, 0, 0, '', 'paddingright').$form->selectarray("actionid", $actions, '', 1);
 			print '</td>';
 			print '<td>';
 			$type = array('email' => $langs->trans("EMail"));
@@ -356,7 +357,7 @@ if ($result > 0) {
 				print '</td>';
 				print '<td>';
 				$label = ($langs->trans("Notify_".$obj->code) != "Notify_".$obj->code ? $langs->trans("Notify_".$obj->code) : $obj->label);
-				print img_picto('', 'object_action', '', false, 0, 0, '', 'paddingright').$label;
+				print img_picto('', 'object_action', '', 0, 0, 0, '', 'paddingright').$label;
 				print '</td>';
 				print '<td>';
 				if ($obj->type == 'email') {

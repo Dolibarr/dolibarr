@@ -666,11 +666,11 @@ class Translate
 	 *  If there is no match for this text, we look in alternative file and if still not found, it is returned as it is.
 	 *  The parameters of this method should not contain HTML tags. If there is, they will be htmlencoded to have no effect.
 	 *
-	 *  @param	string	$key        Key to translate
-	 *  @param  string	$param1     param1 string
-	 *  @param  string	$param2     param2 string
-	 *  @param  string	$param3     param3 string
-	 *  @param  string	$param4     param4 string
+	 *  @param	string		$key        Key to translate
+	 *  @param  string|int	$param1     param1 string
+	 *  @param  string|int	$param2     param2 string
+	 *  @param  string|int	$param3     param3 string
+	 *  @param  string|int	$param4     param4 string
 	 *	@param	int		$maxsize	Max length of text. Warning: Will not work if paramX has HTML content. deprecated.
 	 *  @return string      		Translated string (encoded into HTML entities and UTF8)
 	 */
@@ -1025,7 +1025,7 @@ class Translate
 	 * 		@param	string	$fieldlabel		Field for label. This value must always be a hardcoded string and not a value coming from user input.
 	 *      @param	string	$keyforselect	Use another value than the translation key for the where into select
 	 *      @param  int		$filteronentity	Use a filter on entity
-	 *      @return string|int				Label in UTF8 (but without entities) or -1 if error
+	 *      @return string|int				Label in UTF8 (not HTML entity encoded) or -1 if error
 	 *      @see dol_getIdFromCode()
 	 */
 	public function getLabelFromKey($db, $key, $tablename, $fieldkey, $fieldlabel, $keyforselect = '', $filteronentity = 0)

@@ -86,7 +86,7 @@ class CompanyBankAccount extends Account
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 10, 'notnull' => 1, 'visible' => -1,),
@@ -302,11 +302,11 @@ class CompanyBankAccount extends Account
 	/**
 	 * Create bank information record.
 	 *
-	 * @param   User|null   $user		User
-	 * @param   int    		$notrigger  1=Disable triggers
+	 * @param     	$user		User
+	 * @param   int<0,1>   	$notrigger  1=Disable triggers
 	 * @return	int						Return integer <0 if KO, > 0 if OK (ID of newly created company bank account information)
 	 */
-	public function create(User $user = null, $notrigger = 0)
+	public function create($user = null, $notrigger = 0)
 	{
 		$now = dol_now();
 
@@ -376,11 +376,11 @@ class CompanyBankAccount extends Account
 	/**
 	 *	Update bank account
 	 *
-	 *	@param	User|null	$user	     Object user
-	 *  @param  int     	$notrigger   1=Disable triggers
+	 *	@param	?User		$user	     Object user
+	 *  @param  int<0,1>   	$notrigger   1=Disable triggers
 	 *	@return	int					     Return integer <=0 if KO, >0 if OK
 	 */
-	public function update(User $user = null, $notrigger = 0)
+	public function update($user = null, $notrigger = 0)
 	{
 		global $langs;
 
@@ -548,11 +548,11 @@ class CompanyBankAccount extends Account
 	/**
 	 *  Delete a rib from database
 	 *
-	 *	@param		User|null	$user		User deleting
-	 *	@param  	int			$notrigger	1=Disable triggers
+	 *	@param		?User		$user		User deleting
+	 *	@param  	int<0,1>	$notrigger	1=Disable triggers
 	 *  @return		int		    	        Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user = null, $notrigger = 0)
+	public function delete($user = null, $notrigger = 0)
 	{
 		$error = 0;
 

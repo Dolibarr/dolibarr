@@ -18,22 +18,22 @@ Module4100Desc = 數據隱私管理的模塊（符合GDPR）
 # Administration page
 datapolicySetup = 模組數據隱私政策設置
 Deletion = 刪除資料
-datapolicySetupPage = 據您所在國家/地區的法律（例如 GDPR <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5  </a> )， 個人資料的保存期限不得超過資料收集目的所需的期限（存檔目的除外）。<br> 在一定時間內無事件發生後，將自動刪除數據（您在下方指示的期限）。
-NB_MONTHS = 1 %s 月份
+datapolicySetupPage = 取決於您所在國家/地區的法律（例<a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">GDPR 第 5 條</a>），個人資料的保存期限不得超過收集資料的目的所需的期限，存檔目的除外。<br>在沒有事件發生的一段時間內（您將在下面指定的持續時間），刪除將自動完成。
+NB_MONTHS = %s 月份
 ONE_YEAR = 1 年
-NB_YEARS = 1%s 年
+NB_YEARS = %s 年
 DATAPOLICY_TIERS_CLIENT = 顧客
-DATAPOLICY_TIERS_PROSPECT = 可能性
-DATAPOLICY_TIERS_PROSPECT_CLIENT = 潛在客戶/顧客
-DATAPOLICY_TIERS_NIPROSPECT_NICLIENT = 非潛在客戶/非顧客
+DATAPOLICY_TIERS_PROSPECT = 潛在客戶
+DATAPOLICY_TIERS_PROSPECT_CLIENT = 潛在客戶 / 顧客
+DATAPOLICY_TIERS_NIPROSPECT_NICLIENT = 非潛在客戶 / 非顧客
 DATAPOLICY_TIERS_FOURNISSEUR = 供應商
 DATAPOLICY_CONTACT_CLIENT = 顧客
-DATAPOLICY_CONTACT_PROSPECT = 可能性
-DATAPOLICY_CONTACT_PROSPECT_CLIENT = 潛在客戶/客戶
-DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = 非潛在客戶/非顧客
+DATAPOLICY_CONTACT_PROSPECT = 潛在客戶
+DATAPOLICY_CONTACT_PROSPECT_CLIENT = 潛在客戶 / 客戶
+DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = 非潛在客戶 / 非顧客
 DATAPOLICY_CONTACT_FOURNISSEUR = 供應商
 DATAPOLICY_ADHERENT = 會員
-DATAPOLICY_Tooltip_SETUP = 聯絡類型 - 展示你選擇的每種類型。
+DATAPOLICY_Tooltip_SETUP=定義沒有互動的延遲，在此之後您希望自動清除記錄。
 SendAgreementText = 您可以向所有相關聯絡人（尚未收到電子郵件且您尚未為其註冊任何有關 GDPR 協議的聯絡人）發送 GDPR 電子郵件。為此，請使用以下按鈕。
 SendAgreement = 發電郵
 AllAgreementSend = 所有電郵已經發送

@@ -239,7 +239,7 @@ class FunctionsLibTest extends CommonClassTest
 		// A real search string
 		$filter = "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.date_creation:<:'2016-01-01 12:30:00') or (t.nature:is:NULL)";
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
-		$this->assertEquals(" AND ((t.ref LIKE 'SO-%') or (t.date_creation < '20160101') or (t.date_creation < 0) or (t.nature IS NULL))", $sql);
+		$this->assertEquals(" AND ((t.ref LIKE 'SO-%') or (t.date_creation < '20160101') or (t.date_creation < '2016-01-01 12:30:00') or (t.nature IS NULL))", $sql);
 
 		// A real search string
 		$filter = "(t.fieldstring:=:'aaa ttt')";
@@ -351,6 +351,11 @@ class FunctionsLibTest extends CommonClassTest
 		$this->assertFalse($result, 'Check isValidEmail '.$input);
 
 		$input = "1234.abcdefg@domainame.com.br";
+		$result = isValidEmail($input);
+		print __METHOD__." result=".$result."\n";
+		$this->assertTrue($result, 'Check isValidEmail '.$input);
+
+		$input = "1234.abcdefg@domainame.entreprises";
 		$result = isValidEmail($input);
 		print __METHOD__." result=".$result."\n";
 		$this->assertTrue($result, 'Check isValidEmail '.$input);
@@ -1194,19 +1199,19 @@ class FunctionsLibTest extends CommonClassTest
 
 		$object->country_code = 'FR';
 		$phone = dol_print_phone('1234567890', $object->country_code);
-		$this->assertEquals('<span style="margin-right: 10px;">12&nbsp;34&nbsp;56&nbsp;78&nbsp;90</span>', $phone, 'Phone for FR 1');
+		$this->assertEquals('<span class="paddingright">12&nbsp;34&nbsp;56&nbsp;78&nbsp;90</span>', $phone, 'Phone for FR 1');
 
 		$object->country_code = 'FR';
 		$phone = dol_print_phone('1234567890', $object->country_code, 0, 0, 0, '');
-		$this->assertEquals('<span style="margin-right: 10px;">1234567890</span>', $phone, 'Phone for FR 2');
+		$this->assertEquals('<span class="paddingright">1234567890</span>', $phone, 'Phone for FR 2');
 
 		$object->country_code = 'FR';
 		$phone = dol_print_phone('1234567890', $object->country_code, 0, 0, 0, ' ');
-		$this->assertEquals('<span style="margin-right: 10px;">12 34 56 78 90</span>', $phone, 'Phone for FR 3');
+		$this->assertEquals('<span class="paddingright">12 34 56 78 90</span>', $phone, 'Phone for FR 3');
 
 		$object->country_code = 'CA';
 		$phone = dol_print_phone('1234567890', $object->country_code, 0, 0, 0, ' ');
-		$this->assertEquals('<span style="margin-right: 10px;">(123) 456-7890</span>', $phone, 'Phone for CA 1');
+		$this->assertEquals('<span class="paddingright">(123) 456-7890</span>', $phone, 'Phone for CA 1');
 	}
 
 

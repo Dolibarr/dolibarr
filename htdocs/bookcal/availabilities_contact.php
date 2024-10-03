@@ -116,7 +116,7 @@ if ($action == 'addcontact' && $permission) {
 $title = $langs->trans('Availabilities')." - ".$langs->trans('ContactsAddresses');
 $help_url = '';
 //$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-bookcal page-card_availabilities_contact');
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);

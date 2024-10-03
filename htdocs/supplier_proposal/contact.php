@@ -47,13 +47,14 @@ $action = GETPOST('action', 'aZ09');
 if ($user->socid) {
 	$socid = $user->socid;
 }
+
+$hookmanager->initHooks(array('supplier_proposalcontactcard', 'globalcard'));
+
 $result = restrictedArea($user, 'supplier_proposal', $id, 'supplier_proposal', '');
 
 $object = new SupplierProposal($db);
 
 $permissiontoedit = $user->hasRight('supplier_proposal', 'creer');
-
-$hookmanager->initHooks(array('supplier_proposalcontactcard', 'globalcard'));
 
 
 /*

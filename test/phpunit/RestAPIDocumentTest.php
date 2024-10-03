@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+/* Copyright (C) 2010 		Laurent Destailleur  	<eldy@users.sourceforge.net>
+ * Copyright (C) 2023 		Alexandre Janniaux   	<alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -131,7 +132,8 @@ class RestAPIDocumentTest extends CommonClassTest
 			'filecontent' => "content text",
 			'fileencoding' => "",
 			'overwriteifexists' => 0,
-			'createdirifnotexists' => 0
+			'createdirifnotexists' => 0,
+			'position' => 0,
 		);
 
 		$param = '';
@@ -161,7 +163,8 @@ class RestAPIDocumentTest extends CommonClassTest
 			'filecontent' => "content text",
 			'fileencoding' => "",
 			'overwriteifexists' => 0,
-			'createdirifnotexists' => 0
+			'createdirifnotexists' => 0,
+			'position' => 0,
 		);
 
 		$param = '';
@@ -189,7 +192,8 @@ class RestAPIDocumentTest extends CommonClassTest
 			'filecontent' => "content text",
 			'fileencoding' => "",
 			'overwriteifexists' => 0,
-			'createdirifnotexists' => 1
+			'createdirifnotexists' => 1,
+			'position' => 0,
 		);
 
 		$param = '';

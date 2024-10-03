@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -403,7 +404,7 @@ foreach ($boxactivated as $key => $box) {
 	$langs->load("errors");
 	print '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($box->note == '(WarningUsingThisBoxSlowDown)' ? $langs->trans("WarningUsingThisBoxSlowDown") : $box->note).'">';
 	if ($box->note == '(WarningUsingThisBoxSlowDown)') {
-		print img_warning('', 0).' '.$langs->trans("WarningUsingThisBoxSlowDown");
+		print img_warning('', '').' '.$langs->trans("WarningUsingThisBoxSlowDown");
 	} else {
 		print($box->note ? $box->note : '&nbsp;');
 	}

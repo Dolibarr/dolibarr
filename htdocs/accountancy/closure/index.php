@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2019-2023  Open-DSI    	    <support@open-dsi.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,29 +61,53 @@ if (!is_array($fiscal_periods)) {
 	setEventMessages($object->error, $object->errors, 'errors');
 }
 
+// Define the arrays of fiscal periods
 $active_fiscal_periods = array();
+$first_active_fiscal_period = null;
 $last_fiscal_period = null;
 $current_fiscal_period = null;
 $next_fiscal_period = null;
 $next_active_fiscal_period = null;
 if (is_array($fiscal_periods)) {
-	foreach ($fiscal_periods as $fiscal_period) {
-		if (empty($fiscal_period['status'])) {
+	foreach ($fiscal_periods as $fiscal_period) {		// List of fiscal periods sorted by date start
+		if (empty($first_active_fiscal_period) && empty($fiscal_period['status'])) {
+			$first_active_fiscal_period = $fiscal_period;
+		}
+		if (empty($fiscal_period['status'])) {	// if not closed
 			$active_fiscal_periods[] = $fiscal_period;
 		}
-		if (isset($current_fiscal_period)) {
+		if (isset($current_fiscal_period)) {	// If we already reach then current fiscal period, then this one is the next one just after
 			if (!isset($next_fiscal_period)) {
 				$next_fiscal_period = $fiscal_period;
 			}
 			if (!isset($next_active_fiscal_period) && empty($fiscal_period['status'])) {
 				$next_active_fiscal_period = $fiscal_period;
 			}
-		} else {
+		} else {								// If we did not found the current fiscal period
 			if ($fiscal_period_id == $fiscal_period['id'] || (empty($fiscal_period_id) && $fiscal_period['date_start'] <= $now && $now <= $fiscal_period['date_end'])) {
 				$current_fiscal_period = $fiscal_period;
 			} else {
-				$last_fiscal_period = $fiscal_period;
+				$last_fiscal_period = $fiscal_period;	// $last_fiscal_period is in fact $previous_fiscal_period
 			}
+		}
+	}
+}
+
+// If a current fiscal period open with an end and start date was not found, we autoselect the first one that is open and has a start and end date defined
+if (empty($current_fiscal_period) && !empty($first_active_fiscal_period)) {
+	$current_fiscal_period = $first_active_fiscal_period;
+	$last_fiscal_period = null;
+	$foundcurrent = false;
+	foreach ($fiscal_periods as $fiscal_period) {		// List of fiscal periods sorted by date start
+		if ($foundcurrent) {
+			$next_fiscal_period = $fiscal_period;
+			break;
+		}
+		if ($fiscal_period['id'] == $current_fiscal_period['id']) {
+			$foundcurrent = true;
+		}
+		if (!$foundcurrent) {
+			$last_fiscal_period = $fiscal_period;
 		}
 	}
 }
@@ -102,8 +127,8 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	if (isset($current_fiscal_period) && $user->hasRight('accounting', 'fiscalyear', 'write')) {
-		if ($action == 'confirm_step_1' && $confirm == "yes") {
+	if (isset($current_fiscal_period)) {
+		if ($action == 'confirm_step_1' && $confirm == "yes" && $user->hasRight('accounting', 'fiscalyear', 'write')) {
 			$date_start = dol_mktime(0, 0, 0, GETPOSTINT('date_startmonth'), GETPOSTINT('date_startday'), GETPOSTINT('date_startyear'));
 			$date_end = dol_mktime(23, 59, 59, GETPOSTINT('date_endmonth'), GETPOSTINT('date_endday'), GETPOSTINT('date_endyear'));
 
@@ -118,21 +143,34 @@ if (empty($reshook)) {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$action = '';
 			}
-		} elseif ($action == 'confirm_step_2' && $confirm == "yes") {
+		} elseif ($action == 'confirm_step_2' && $confirm == "yes" && $user->hasRight('accounting', 'fiscalyear', 'write')) {
 			$new_fiscal_period_id = GETPOSTINT('new_fiscal_period_id');
 			$separate_auxiliary_account = GETPOST('separate_auxiliary_account', 'aZ09');
 			$generate_bookkeeping_records = GETPOST('generate_bookkeeping_records', 'aZ09');
 
-			$result = $object->closeFiscalPeriod($current_fiscal_period['id'], $new_fiscal_period_id, $separate_auxiliary_account, $generate_bookkeeping_records);
-			if ($result < 0) {
-				setEventMessages($object->error, $object->errors, 'errors');
-			} else {
-				setEventMessages($langs->trans("AccountancyClosureCloseSuccessfully"), null, 'mesgs');
-
-				header("Location: " . $_SERVER['PHP_SELF'] . (isset($current_fiscal_period) ? '?fiscal_period_id=' . $current_fiscal_period['id'] : ''));
-				exit;
+			$error = 0;
+			if ($generate_bookkeeping_records) {
+				if (!getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT')) {
+					$error++;
+					setEventMessages($langs->trans("ErrorAccountingClosureSetupNotComplete"), null, 'errors');
+				} elseif (!getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT')) {
+					$error++;
+					setEventMessages($langs->trans("ErrorAccountingClosureSetupNotComplete"), null, 'errors');
+				}
 			}
-		} elseif ($action == 'confirm_step_3' && $confirm == "yes") {
+
+			if (!$error) {
+				$result = $object->closeFiscalPeriod($current_fiscal_period['id'], $new_fiscal_period_id, $separate_auxiliary_account, $generate_bookkeeping_records);
+				if ($result < 0) {
+					setEventMessages($object->error, $object->errors, 'errors');
+				} else {
+					setEventMessages($langs->trans("AccountancyClosureCloseSuccessfully"), null, 'mesgs');
+
+					header("Location: " . $_SERVER['PHP_SELF'] . (isset($current_fiscal_period) ? '?fiscal_period_id=' . $current_fiscal_period['id'] : ''));
+					exit;
+				}
+			}
+		} elseif ($action == 'confirm_step_3' && $confirm == "yes" && $user->hasRight('accounting', 'fiscalyear', 'write')) {
 			$inventory_journal_id = GETPOSTINT('inventory_journal_id');
 			$new_fiscal_period_id = GETPOSTINT('new_fiscal_period_id');
 			$date_start = dol_mktime(0, 0, 0, GETPOSTINT('date_startmonth'), GETPOSTINT('date_startday'), GETPOSTINT('date_startyear'));
@@ -163,7 +201,7 @@ $title = $langs->trans('Closure');
 
 $help_url = 'EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#Cl.C3.B4ture_annuelle';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-accountancy page-closure-index');
 
 $formconfirm = '';
 
@@ -255,7 +293,7 @@ if (isset($current_fiscal_period)) {
 			'name' => 'date_start',
 			'type' => 'date',
 			'label' => $langs->trans('DateStart'),
-			'value' => dol_time_plus_duree($current_fiscal_period['date_end'], -1, 'm')
+			'value' => dol_time_plus_duree((int) $current_fiscal_period['date_end'], -1, 'm')
 		);
 		$form_question['date_end'] = array(
 			'name' => 'date_end',
@@ -300,10 +338,8 @@ if (!empty($current_fiscal_period)) {
 print load_fiche_titre($langs->trans("Closure") . " - " . $fiscal_period_nav_text, '', 'title_accountancy');
 
 if (empty($current_fiscal_period)) {
-	print $langs->trans('ErrorNoFiscalPeriodActiveFound', $langs->trans("Accounting"), $langs->trans("Setup"), $langs->trans("FiscalPeriod"));
-}
-
-if (isset($current_fiscal_period)) {
+	print $langs->trans('ErrorNoFiscalPeriodActiveFound', $langs->transnoentitiesnoconv("Accounting"), $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("FiscalPeriod"));
+} else {
 	// Step 1
 	$head = array();
 	$head[0][0] = DOL_URL_ROOT . '/accountancy/closure/index.php?fiscal_period_id=' . $current_fiscal_period['id'];
@@ -369,7 +405,7 @@ if (isset($current_fiscal_period)) {
 	if (empty($count_by_month['total']) && empty($current_fiscal_period['status'])) {
 		$button = '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=step_2&fiscal_period_id=' . $current_fiscal_period['id'] . '">' . $langs->trans("AccountancyClosureClose") . '</a>';
 	} else {
-		$button = '<a class="butActionRefused classfortooltip" href="#">' . $langs->trans("AccountancyClosureClose") . '</a>';
+		$button = '<a class="butActionRefused classfortooltip" href="#" title="This fiscal period already has the status Closed. Feature disabled.">' . $langs->trans("AccountancyClosureClose") . '</a>';
 	}
 	print_barre_liste('', '', '', '', '', '', '', -1, '', '', 0, $button, '', 0, 1, 0);
 

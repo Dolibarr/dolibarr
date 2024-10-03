@@ -48,6 +48,7 @@ $batch = GETPOST('batch', 'alphanohtml');
 // Security check
 restrictedArea($user, 'produit|service', $productId, 'product&product');
 
+$permissiontoread = $user->hasRight('stock', 'lire');
 
 /*
  * View
@@ -57,7 +58,7 @@ top_httphead('application/json');
 
 $rows = array();
 
-if ($action == 'search' && $batch != '') {
+if ($action == 'search' && $batch != '' && $permissiontoread) {
 	$productLot = new Productlot($db);
 	$result = $productLot->fetch('', $productId, $batch);
 

@@ -29,7 +29,7 @@ DescCP=Description
 SendRequestCP=Create leave request
 DelayToRequestCP=Leave requests must be made at least <b>%s day(s)</b> before them.
 MenuConfCP=Биланс на отсуство
-SoldeCPUser=Оставете салдо (во денови) : <b>%s<span class='notranslate'></b></s>
+SoldeCPUser=Leave balance (in days) : <b>%s</b>
 ErrorEndDateCP=You must select an end date greater than the start date.
 ErrorSQLCreateCP=An SQL error occurred during the creation:
 ErrorIDFicheCP=An error has occurred, the leave request does not exist.

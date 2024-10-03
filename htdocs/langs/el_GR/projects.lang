@@ -132,6 +132,7 @@ AlsoCloseAProjectTooltip=Αφήστε το ανοιχτό εάν χρειάζε�
 ReOpenAProject=Άνοιγμα έργου
 ConfirmReOpenAProject=Είστε σίγουροι ότι θέλετε να ανοίξετε ξανά αυτό το έργο;
 ProjectContact=Επαφές έργου
+ProjectContactTypeManager=Ορισμός ως επαφή με τον τύπο
 TaskContact=Επαφές εργασιών
 ActionsOnProject=Ενέργειες για το έργο
 YouAreNotContactOfProject=Δεν είστε επαφή αυτού του ιδιωτικού έργου

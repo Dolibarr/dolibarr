@@ -15,8 +15,8 @@ ValidateProp=Потврдете го комерцијалниот предлог
 CancelPropal=Cancel
 AddProp=Креирај предлог
 ConfirmDeleteProp=Дали сте сигурни дека сакате да го избришете овој комерцијален предлог?
-ConfirmValidateProp=Дали сте сигурни дека сакате да го потврдите овој комерцијален предлог под името <b>%s<span class='notranslate'>b09a4b739f17f8z >?
-ConfirmCancelPropal=Дали сте сигурни дека сакате да го откажете комерцијалниот предлог <b>%s<span class='notranslate'></b></s?
+ConfirmValidateProp=Are you sure you want to validate this commercial proposal under name <b>%s</b>?
+ConfirmCancelPropal=Are you sure you want to cancel commercial proposal <b>%s</b>?
 LastPropals=Најнови %s предлози
 LastModifiedProposals=Најнови %sизменети понуди
 AllPropals=Сите предлози
@@ -61,8 +61,8 @@ DefaultProposalDurationValidity=Стандардно времетраење на
 DefaultPuttingPricesUpToDate=Стандардно ажурирајте ги цените со тековните познати цени при клонирање на предлог
 DefaultPuttingDescUpToDate=Стандардно ажурирајте ги описите со тековните познати описи за клонирање предлог
 UseCustomerContactAsPropalRecipientIfExist=Користете контакт/адреса со тип „Предлог за следење на контакт“ ако е дефинирано наместо адреса на трета страна како адреса на примачот на предлогот
-ConfirmClonePropal=Дали сте сигурни дека сакате да го клонирате комерцијалниот предлог <b>%s<span class='notranslate'>b09a4b739f17f8z?
-ConfirmReOpenProp=Дали сте сигурни дека сакате да го отворите комерцијалниот предлог <b>%s<span class='notranslate'>b09a4b739f17panf8z</s0 ?
+ConfirmClonePropal=Are you sure you want to clone the commercial proposal <b>%s</b>?
+ConfirmReOpenProp=Are you sure you want to open back the commercial proposal <b>%s</b>?
 ProposalsAndProposalsLines=Комерцијален предлог и линии
 ProposalLine=Линија за предлог
 ProposalLines=Предлог линии

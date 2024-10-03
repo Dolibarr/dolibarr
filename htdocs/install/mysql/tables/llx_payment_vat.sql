@@ -1,6 +1,6 @@
 -- ===================================================================
 -- Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+-- Copyright (C) 2021      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by

@@ -295,8 +295,8 @@ CurrencyXPF=Франки CFP
 CurrencySingXPF=CFP Франк
 CurrencyCentEUR=сент
 CurrencyCentSingEUR=сент
-CurrencyCentINR=пайса
-CurrencyCentSingINR=таваққуф
+CurrencyCentINR=paise
+CurrencyCentSingINR=paisa
 CurrencyThousandthSingTND=ҳазорум
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=интернет

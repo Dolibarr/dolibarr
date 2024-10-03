@@ -295,8 +295,8 @@ CurrencyXPF=CFPフラン
 CurrencySingXPF=CFPフラン
 CurrencyCentEUR=セント
 CurrencyCentSingEUR=セント
-CurrencyCentINR=パイサ
-CurrencyCentSingINR=パイサ(複数)
+CurrencyCentINR=パイサ(複数)
+CurrencyCentSingINR=パイサ
 CurrencyThousandthSingTND=千分の一
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=インターネット

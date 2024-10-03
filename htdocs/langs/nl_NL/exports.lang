@@ -67,7 +67,7 @@ ChooseFormatOfFileToImport=Kies de bestandsindeling die u als importbestandsinde
 ChooseFileToImport=Upload het bestand en klik vervolgens op het pictogram %s om het bestand te selecteren als bronimportbestand ...
 SourceFileFormat=Bestandsformaat van het bronbestand
 FieldsInSourceFile=Velden in het bronbestand
-FieldsInTargetDatabase=Doelvelden in Dolibarr databank (vet=verplicht)
+FieldsInTargetDatabase=Doelvelden in de Dolibarr-database
 NoFields=Geen velden
 MoveField=Verplaats veld kolomnummer %s
 ExampleOfImportFile=Voorbeeld van importeerbestand

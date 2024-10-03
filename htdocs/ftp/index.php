@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2008-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2009  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,12 +32,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ftp.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'other'));
-
-// Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'ftp', '');
 
 // Get parameters
 $action = GETPOST('action', 'aZ09');
@@ -85,20 +79,25 @@ if (empty($ftp_port)) {
 }
 $ftp_user = getDolGlobalString($s_ftp_user);
 $ftp_password = getDolGlobalString($s_ftp_password);
-$ftp_passive = getDolGlobalString($s_ftp_passive);
+$ftp_passive = getDolGlobalInt($s_ftp_passive);
 
 // For result on connection
 $ok = 0;
 $conn_id = null; // FTP connection ID
 $mesg = '';
 
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'ftp', '');
 
 
 /*
  * ACTIONS
  */
 
-if ($action == 'uploadfile') {
+if ($action == 'uploadfile' && $user->hasRight('ftp', 'write')) {
 	// set up a connection or die
 	if (!$conn_id) {
 		$newsectioniso = mb_convert_encoding($section, 'ISO-8859-1');
@@ -128,7 +127,7 @@ if ($action == 'uploadfile') {
 	}
 }
 
-if ($action == 'addfolder') {
+if ($action == 'addfolder' && $user->hasRight('ftp', 'write')) {
 	// set up a connection or die
 	if (!$conn_id) {
 		$newsectioniso = mb_convert_encoding($section, 'ISO-8859-1');
@@ -153,7 +152,7 @@ if ($action == 'addfolder') {
 }
 
 // Action ajout d'un rep
-if ($action == 'add' && $user->hasRight('ftp', 'setup')) {
+if ($action == 'add' && $user->hasRight('ftp', 'write')) {
 	$ecmdir = new EcmDirectory($db);
 	$ecmdir->ref                = GETPOST("ref");
 	$ecmdir->label              = GETPOST("label");
@@ -170,7 +169,7 @@ if ($action == 'add' && $user->hasRight('ftp', 'setup')) {
 }
 
 // Remove 1 file
-if ($action == 'confirm_deletefile' && GETPOST('confirm') == 'yes') {
+if ($action == 'confirm_deletefile' && GETPOST('confirm') == 'yes' && $user->hasRight('ftp', 'write')) {
 	// set up a connection or die
 	if (!$conn_id) {
 		$newsectioniso = mb_convert_encoding($section, 'ISO-8859-1');
@@ -198,7 +197,7 @@ if ($action == 'confirm_deletefile' && GETPOST('confirm') == 'yes') {
 }
 
 // Delete several lines at once
-if (GETPOST("const", 'array') && GETPOST("delete") && GETPOST("delete") == $langs->trans("Delete")) {
+if (GETPOST("const", 'array') && GETPOST("delete") && GETPOST("delete") == $langs->trans("Delete") && $user->hasRight('ftp', 'write')) {
 	// set up a connection or die
 	if (!$conn_id) {
 		$newsectioniso = mb_convert_encoding($section, 'ISO-8859-1');
@@ -237,7 +236,7 @@ if (GETPOST("const", 'array') && GETPOST("delete") && GETPOST("delete") == $lang
 }
 
 // Remove directory
-if ($action == 'confirm_deletesection' && $confirm == 'yes') {
+if ($action == 'confirm_deletesection' && $confirm == 'yes' && $user->hasRight('ftp', 'write')) {
 	// set up a connection or die
 	if (!$conn_id) {
 		$newsectioniso = mb_convert_encoding($section, 'ISO-8859-1');
@@ -267,7 +266,7 @@ if ($action == 'confirm_deletesection' && $confirm == 'yes') {
 }
 
 // Download directory
-if ($action == 'download') {
+if ($action == 'download' && $user->hasRight('ftp', 'read')) {
 	// set up a connection or die
 	if (!$conn_id) {
 		$newsectioniso = mb_convert_encoding($section, 'ISO-8859-1');
@@ -326,8 +325,6 @@ if ($action == 'download') {
 
 	//ftp_close($conn_id);	Close later
 }
-
-
 
 
 /*
@@ -620,7 +617,7 @@ if (!function_exists('ftp_connect')) {
 		print "</form>";
 
 		if ($user->hasRight('ftp', 'write')) {
-			print load_fiche_titre($langs->trans("AttachANewFile"), null, null);
+			print load_fiche_titre($langs->trans("AttachANewFile"), '', '');
 			print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="numero_ftp" value="'.$numero_ftp.'">';
@@ -633,7 +630,7 @@ if (!function_exists('ftp_connect')) {
 
 			print '<br><br>';
 
-			print load_fiche_titre($langs->trans("AddFolder"), null, null);
+			print load_fiche_titre($langs->trans("AddFolder"), '', '');
 			print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="numero_ftp" value="'.$numero_ftp.'">';

@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +40,7 @@ $action = GETPOST("action", "alpha");
 $title = (string) GETPOST("title", "alpha");
 $url = (string) GETPOST("url", "alpha");
 $urlsource = GETPOST("urlsource", "alpha");
-$target = GETPOSTINT("target");
+$target = GETPOST("target", "alpha");
 $userid = GETPOSTINT("userid");
 $position = GETPOSTINT("position");
 $backtopage = GETPOST('backtopage', 'alpha');
@@ -56,7 +57,7 @@ restrictedArea($user, 'bookmark', $object);
 
 $permissiontoread = $user->hasRight('bookmark', 'lire');
 $permissiontoadd = $user->hasRight('bookmark', 'creer');
-$permissiontodelete = $user->hasRight('bookmark', 'supprimer');
+$permissiontodelete = ($user->hasRight('bookmark', 'supprimer') || ($permissiontoadd && $object->fk_user == $user->id));	// Can always delete its own bookmark
 
 
 
@@ -64,8 +65,8 @@ $permissiontodelete = $user->hasRight('bookmark', 'supprimer');
  * Actions
  */
 
-if ($action == 'add' || $action == 'addproduct' || $action == 'update') {
-	if ($action == 'update') {
+if (($action == 'add' || $action == 'addproduct' || $action == 'update') && $permissiontoadd) {
+	if ($action == 'update') {	// Test on permission already done
 		$invertedaction = 'edit';
 	} else {
 		$invertedaction = 'create';
@@ -81,7 +82,7 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update') {
 		exit;
 	}
 
-	if ($action == 'update') {
+	if ($action == 'update') {	// Test on permission already done
 		$object->fetch(GETPOSTINT("id"));
 	}
 	// Check if null because user not admin can't set an user and send empty value here.
@@ -106,7 +107,7 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update') {
 	if (!$error) {
 		$object->favicon = 'none';
 
-		if ($action == 'update') {
+		if ($action == 'update') {	// Test on permission already done
 			$res = $object->update();
 		} else {
 			$res = $object->create();
@@ -166,7 +167,7 @@ if ($action == 'create') {
 
 	print load_fiche_titre($langs->trans("NewBookmark"), '', 'bookmark');
 
-	print dol_get_fiche_head(null, 'bookmark', '', 0, '');
+	print dol_get_fiche_head([], 'bookmark', '', 0, '');
 
 	print '<table class="border centpercent tableforfieldcreate">';
 
@@ -273,10 +274,10 @@ if ($id > 0 && !preg_match('/^add/i', $action)) {
 		$liste = array(1=>$langs->trans("OpenANewWindow"), 0=>$langs->trans("ReplaceWindow"));
 		print $form->selectarray('target', $liste, GETPOSTISSET("target") ? GETPOST("target") : $object->target);
 	} else {
-		if ($object->target == 0) {
+		if ($object->target == '0') {
 			print $langs->trans("ReplaceWindow");
 		}
-		if ($object->target == 1) {
+		if ($object->target == '1') {
 			print $langs->trans("OpenANewWindow");
 		}
 	}
@@ -325,7 +326,7 @@ if ($id > 0 && !preg_match('/^add/i', $action)) {
 
 	// Buttons
 
-	print "<div class=\"tabsAction\">\n";
+	print '<div class="tabsAction">'."\n";
 
 	// Edit
 	if ($permissiontoadd && $action != 'edit') {

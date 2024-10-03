@@ -230,6 +230,7 @@ if (empty($reshook)) {
  */
 
 $form = new Form($db);
+$proj = null;
 if ($arrayfields['account']['checked'] || $arrayfields['subledger']['checked']) {
 	$formaccounting = new FormAccounting($db);
 }
@@ -648,6 +649,7 @@ if ($arrayfields['entry']['checked']) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['account']['checked'])) {
+	// False positive @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['account']['label'], $_SERVER["PHP_SELF"], 'v.accountancy_code', '', $param, '', $sortfield, $sortorder, 'left ');
 	$totalarray['nbfield']++;
 }
@@ -701,7 +703,7 @@ while ($i < $imaxinloop) {
 	$variousstatic->fk_bank = $bankline->getNomUrl(1);
 	$variousstatic->amount = $obj->amount;
 
-	$accountingaccount->fetch('', $obj->accountancy_code, 1);
+	$accountingaccount->fetch(0, $obj->accountancy_code, 1);
 	$variousstatic->accountancy_code = $accountingaccount->getNomUrl(0, 0, 1, $obj->accountingaccount, 1);
 
 	if ($mode == 'kanban') {
@@ -782,7 +784,7 @@ while ($i < $imaxinloop) {
 		// Project
 		if ($arrayfields['project']['checked']) {
 			print '<td class="nowraponall">';
-			if ($obj->fk_project > 0) {
+			if ($obj->fk_project > 0 && is_object($proj)) {
 				$proj->fetch($obj->fk_project);
 				print $proj->getNomUrl(1);
 			}
@@ -829,7 +831,7 @@ while ($i < $imaxinloop) {
 		// Accounting account
 		if (!empty($arrayfields['account']['checked'])) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-			$result = $accountingaccount->fetch('', $obj->accountancy_code, 1);
+			$result = $accountingaccount->fetch(0, $obj->accountancy_code, 1);
 			if ($result > 0) {
 				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->accountancy_code.' '.$accountingaccount->label).'">'.$accountingaccount->getNomUrl(0, 1, 1, '', 1).'</td>';
 			} else {

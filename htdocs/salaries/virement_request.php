@@ -74,7 +74,6 @@ if ($user->socid) {
 }
 
 
-
 $object = new Salary($db);
 $extrafields = new ExtraFields($db);
 
@@ -153,7 +152,7 @@ if ($reshook < 0) {
 }
 
 
-if ($action == "new") {
+if ($action == "add" && $permissiontoadd) {
 	//var_dump($object);exit;
 	if ($object->id > 0) {
 		$db->begin();
@@ -185,8 +184,6 @@ if ($action == "delete" && $permissiontodelete) {
 		}
 	}
 }
-
-
 
 
 /*
@@ -475,7 +472,7 @@ if ($object->paye == 0 && $hadRequest == 0) {
 			print '<input type="hidden" name="token" value="'.newToken().'" />';
 			print '<input type="hidden" name="id" value="'.$object->id.'" />';
 			print '<input type="hidden" name="type" value="'.$type.'" />';
-			print '<input type="hidden" name="action" value="new" />';
+			print '<input type="hidden" name="action" value="add" />';
 			print '<label for="withdraw_request_amount">'.$langs->trans('BankTransferAmount').' </label>';
 			print '<input type="text" id="withdraw_request_amount" name="request_transfer" value="'.price($resteapayer, 0, $langs, 1, -1, -1).'" size="9" />';
 			print '<input type="submit" class="butAction" value="'.$buttonlabel.'" />';
@@ -490,7 +487,7 @@ if ($object->paye == 0 && $hadRequest == 0) {
 				print '<input type="hidden" name="token" value="'.newToken().'" />';
 				print '<input type="hidden" name="id" value="'.$object->id.'" />';
 				print '<input type="hidden" name="type" value="'.$type.'" />';
-				print '<input type="hidden" name="action" value="new" />';
+				print '<input type="hidden" name="action" value="add" />';
 				print '<input type="hidden" name="paymenservice" value="stripesepa" />';
 				print '<label for="withdraw_request_amount">'.$langs->trans('BankTransferAmount').' </label>';
 				print '<input type="text" id="withdraw_request_amount" name="request_transfer" value="'.price($resteapayer, 0, $langs, 1, -1, -1).'" size="9" />';
@@ -520,14 +517,8 @@ print '</div>';
 print '<div>';
 
 
-/*
- * Withdraw receipts
- */
 $bprev = new BonPrelevement($db);
 
-/*
-	 * Withdrawals
-	 */
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';

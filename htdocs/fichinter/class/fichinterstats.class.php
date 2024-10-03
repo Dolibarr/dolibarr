@@ -3,6 +3,7 @@
  * Copyright (c) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -202,11 +203,11 @@ class FichinterStats extends Stats
 	}
 
 	/**
-	 *  Return nb, amount of predefined product for year
+	 *	Return nb, amount of predefined product for year
 	 *
-	 *  @param	int		$year			Year to scan
-	 *  @param  int     $limit      	Limit
-	 *  @return	array					Array of values
+	 *	@param	int		$year		Year to scan
+	 *  @param  int     $limit      Limit
+	 *	@return	array<int<0,11>,array{0:int<1,12>,1:int|float}>	Array of values
 	 */
 	public function getAllByProduct($year, $limit = 0)
 	{

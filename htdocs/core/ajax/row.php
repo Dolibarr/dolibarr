@@ -57,6 +57,7 @@ $roworder = GETPOST('roworder', 'alpha', 3);
 $table_element_line = GETPOST('table_element_line', 'aZ09', 3);
 $fk_element = GETPOST('fk_element', 'aZ09', 3);
 $element_id = GETPOSTINT('element_id', 3);
+$action = 'edit';
 
 
 // Security check
@@ -120,6 +121,8 @@ if (GETPOST('roworder', 'alpha', 3) && GETPOST('table_element_line', 'aZ09', 3)
 		$perm = 1;
 	} elseif ($table_element_line == 'contratdet' && $fk_element == 'fk_contrat' && $user->hasRight('contrat', 'creer')) {
 		$perm = 1;
+	} elseif ($table_element_line == 'stocktransfer_stocktransferline' && $fk_element == 'fk_stocktransfer' && $user->hasRight('stocktransfer', 'stocktransfer', 'write')) {
+		$perm = 1;
 	} else {
 		$tmparray = explode('_', $table_element_line);
 		$tmpmodule = $tmparray[0];
@@ -128,6 +131,7 @@ if (GETPOST('roworder', 'alpha', 3) && GETPOST('table_element_line', 'aZ09', 3)
 			$perm = 1;
 		}
 	}
+	// Overwrite $perm by hook
 	$parameters = array('roworder' => &$roworder, 'table_element_line' => &$table_element_line, 'fk_element' => &$fk_element, 'element_id' => &$element_id, 'perm' => &$perm);
 	$row = new GenericObject($db);
 	$row->table_element_line = $table_element_line;
@@ -137,12 +141,14 @@ if (GETPOST('roworder', 'alpha', 3) && GETPOST('table_element_line', 'aZ09', 3)
 	if ($reshook > 0) {
 		$perm = $hookmanager->resArray['perm'];
 	}
+
 	if (! $perm) {
 		// We should not be here. If we are not allowed to reorder rows, feature should not be visible on script.
 		// If we are here, it is a hack attempt, so we report a warning.
 		print 'Bad permission to modify position of lines for object in table '.$table_element_line;
 		dol_syslog('Bad permission to modify position of lines for object in table='.$table_element_line.', fk_element='.$fk_element, LOG_WARNING);
-		accessforbidden('Bad permission to modify position of lines for object in table '.$table_element_line);
+		//accessforbidden('Bad permission to modify position of lines for object in table '.$table_element_line);
+		httponly_accessforbidden('Bad permission to modify position of lines for object in table '.$table_element_line);
 	}
 
 	$rowordertab = explode(',', $roworder);

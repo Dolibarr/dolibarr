@@ -22,7 +22,7 @@ ToOfferALinkForOnlinePaymentOnContractLine=URL لتقديم صفحة دفع عب
 ToOfferALinkForOnlinePaymentOnFreeAmount=عنوان URL لعرض صفحة دفع عبر الإنترنت %s بأي مبلغ مع عدم وجود عنصر موجود
 ToOfferALinkForOnlinePaymentOnMemberSubscription=عنوان URL لتقديم صفحة دفع عبر الإنترنت %s لاشتراك عضو
 ToOfferALinkForOnlinePaymentOnDonation=عنوان URL لعرض صفحة دفع عبر الإنترنت %s لدفع تبرع
-YouCanAddTagOnUrl=يمكنك أيضًا إضافة معلمة url <b> & tag = <i> قيمة </i> </b> إلى أي من عناوين URL هذه (إلزامي فقط للدفع غير المرتبط بكائن) لإضافة علامة تعليق الدفع الخاصة بك. <br> بالنسبة إلى عنوان URL للدفعات التي لا تحتوي على كائن موجود ، يمكنك أيضًا إضافة المعلمة <strong> & noidempotency = 1 </strong> بحيث يمكن استخدام نفس الرابط مع نفس العلامة عدة مرات (قد تقصر بعض أوضاع الدفع الدفع على 1 لكل رابط مختلف بدون ذلك معامل)
+YouCanAddTagOnUrl=You can also add url parameter <b>&tag=value</b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
 YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful of failed online payment.
 SetupStripeToHavePaymentCreatedAutomatically=قم بإعداد Stripe باستخدام عنوان url <b> %s </b> ليتم إنشاء الدفع تلقائيًا عند التحقق من صحته بواسطة Stripe.
 AccountParameter=حساب المعلمات

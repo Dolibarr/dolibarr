@@ -108,7 +108,7 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
-	if ($action == "update") {
+	if ($action == "update" && $permissiontoadd) {
 		$assetaccountancycodes->setAccountancyCodesFromPost();
 
 		$result = $assetaccountancycodes->updateAccountancyCodes($user, 0, $object->id);

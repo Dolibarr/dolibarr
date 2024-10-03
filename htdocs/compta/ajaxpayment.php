@@ -119,7 +119,7 @@ if ($currentInvId) {																	// Here to breakdown
 	$toJsonArray['amount_'.$currentInvId] = price2num($currentAmount); // Param will exist only if an img has been clicked
 }
 
-$toJsonArray['makeRed'] = ($totalRemaining < price2num($result) || price2num($result) < 0) ? true : false;
+$toJsonArray['makeRed'] = ($totalRemaining < price2num($result) || price2num($result) < 0);
 $toJsonArray['result'] = price($result); // Return value to user format
 $toJsonArray['resultnum'] = price2num($result); // Return value to numeric format
 
