@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/api_projects.class.php';
 class Categories extends DolibarrApi
 {
 	/**
-	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var string[]   $FIELDS     Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'label',

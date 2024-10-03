@@ -5808,7 +5808,7 @@ class Form
 			$formconfirm .= "\n<!-- begin formconfirm page=" . dol_escape_htmltag($page) . " -->\n";
 
 			if (empty($disableformtag)) {
-				$formconfirm .= '<form method="POST" action="' . $page . '" class="notoptoleftroright">' . "\n";
+				$formconfirm .= '<form method="POST" action="' . $page . '" class="notoptoleftnoright">' . "\n";
 			}
 
 			$formconfirm .= '<input type="hidden" name="action" value="' . $action . '">' . "\n";
