@@ -2660,7 +2660,7 @@ class EmailCollector extends CommonObject
 
 										$thirdpartystatic->fetch($result);
 
-										$operationslog .= '<br>Thirdparty already exists with id = '.dol_escape_htmltag($thirdpartystatic->id)." and name ".dol_escape_all($thirdpartystatic->name);
+										$operationslog .= '<br>Thirdparty already exists with id = '.dol_escape_htmltag($thirdpartystatic->id)." and name ".dol_escape_htmltag($thirdpartystatic->name);
 									}
 								}
 							}
