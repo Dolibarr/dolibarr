@@ -91,8 +91,8 @@ print '<tr class="oddeven"><td width="300">'.$langs->trans("DBSortingCharset").'
 $defaultcollation = $db->getDefaultCollationDatabase();
 print dolPrintHTML($defaultcollation);
 if ($db->type == 'mysqli') {
-	if ($defaultcollation != $dolibarr_main_db_collation) {
-		print img_warning('The database default value of collation '.$defaultcollation.' differs from conf setup '.$dolibarr_main_db_collation);
+	if ($defaultcollation != $conf->db->dolibarr_main_db_collation) {
+		print img_warning('The database default value of collation '.$defaultcollation.' differs from conf setup '.$conf->db->dolibarr_main_db_collation);
 	}
 	$tooltipexample = "<br>SHOW VARIABLES LIKE 'collation_database' (cached)<br>You can avoid cache effect with:<br>SELECT DEFAULT_COLLATION_NAME FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = '".$db->escape($conf->db->name)."'";
 	print ' '.$form->textwithpicto('', $langs->transnoentitiesnoconv("HelpMariaDBToGetValue", $tooltipexample.'<br>'.$langs->transnoentitiesnoconv("HelpMariaDBToGetPossibleValues", "<br>SHOW COLLATION")));
