@@ -98,24 +98,75 @@ class CashControl extends CommonObject
 	 * @var int Object Id
 	 */
 	public $id;
+
+	/**
+	 * @var string Label
+	 */
 	public $label;
+
+	/**
+	 * @var float Amount at opening
+	 */
 	public $opening;
+
+	/**
+	 * @var int Status
+	 */
 	public $status;
+
+	/**
+	 * @var int Year close
+	 */
 	public $year_close;
+
+	/**
+	 * @var int Month close
+	 */
 	public $month_close;
+
+	/**
+	 * @var int Day close
+	 */
 	public $day_close;
+
+	/**
+	 * @var string posmodule
+	 */
 	public $posmodule;
+
+	/**
+	 * @var string posnumber
+	 */
 	public $posnumber;
+
+	/**
+	 * @var float Cash amount
+	 */
 	public $cash;
+
+	/**
+	 * @var float cheque amount
+	 */
 	public $cheque;
+
+	/**
+	 * @var float Card amountS
+	 */
 	public $card;
 
+	/**
+	 * @var int User ID create
+	 */
 	public $fk_user_creat;
 
 	/**
-	 * @var int|string $date_valid
+	 * @var int|'' $date_valid
 	 */
 	public $date_valid;
+
+	/**
+	 * @var int User ID
+	 */
 	public $fk_user_valid;
 
 

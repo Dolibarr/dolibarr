@@ -44,6 +44,7 @@ PropalClosedRefusedInDolibarr=Proposal %s refused
 PropalValidatedInDolibarr=Proposal %s validated
 PropalBackToDraftInDolibarr=Proposal %s go back to draft status
 PropalClassifiedBilledInDolibarr=Proposal %s classified billed
+InvoiceCreatedInDolibarr=Invoice %s created
 InvoiceValidatedInDolibarr=Invoice %s validated
 InvoiceValidatedInDolibarrFromPos=Invoice %s validated from POS
 InvoiceBackToDraftInDolibarr=Invoice %s go back to draft status

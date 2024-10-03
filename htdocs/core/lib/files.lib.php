@@ -1525,7 +1525,8 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 			$ok = true;
 			$globencoded = str_replace('[', '\[', $file_osencoded);
 			$globencoded = str_replace(']', '\]', $globencoded);
-			$listofdir = glob($globencoded);
+			$listofdir = glob($globencoded);	// This scan dir for files. If file does not exists, return empty.
+
 			if (!empty($listofdir) && is_array($listofdir)) {
 				foreach ($listofdir as $filename) {
 					if ($nophperrors) {
