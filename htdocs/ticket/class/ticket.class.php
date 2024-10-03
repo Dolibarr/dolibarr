@@ -1895,26 +1895,37 @@ class Ticket extends CommonObject
 
 		if ($actionid > 0) {
 			if (is_array($attachedfiles) && array_key_exists('paths', $attachedfiles) && count($attachedfiles['paths']) > 0) {
+				// If there is some files, we must now link them to the event, so we can show them per event.
 				foreach ($attachedfiles['paths'] as $key => $filespath) {
-					$destdir = $conf->agenda->dir_output.'/'.$actionid;
-					$destfile = $destdir.'/'.$attachedfiles['names'][$key];
-					if (dol_mkdir($destdir) >= 0) {
-						require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-						dol_move($filespath, $destfile);
-						if (in_array($actioncomm->code, array('TICKET_MSG', 'TICKET_MSG_SENTBYMAIL'))) {
-							$ecmfile = new EcmFiles($this->db);
-							$destdir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $destdir);
-							$destdir = preg_replace('/[\\/]$/', '', $destdir);
-							$destdir = preg_replace('/^[\\/]/', '', $destdir);
-							$ecmfile->fetch(0, '', $destdir.'/'.$attachedfiles['names'][$key]);
-							require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-							$ecmfile->share = getRandomPassword(true);
+					// Disabled the move into another directory, Files for a ticket should be stored into ticket directory. It generates too much troubles.
+					$destdir = $conf->ticket->dir_output.'/'.$this->ref;
+					//$destfile = $destdir.'/'.$attachedfiles['names'][$key];
+					//if (dol_mkdir($destdir) >= 0) {
+					//require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+					//dol_move($filespath, $destfile);	// Disabled, a file for a ticket should be stored into ticket directory. It generates big trouble.
+					if (in_array($actioncomm->code,  array('TICKET_MSG', 'TICKET_MSG_SENTBYMAIL'))) {
+						$ecmfile = new EcmFiles($this->db);
+						$destdir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $destdir);
+						$destdir = preg_replace('/[\\/]$/', '', $destdir);
+						$destdir = preg_replace('/^[\\/]/', '', $destdir);
+
+						$result = $ecmfile->fetch(0, '', $destdir.'/'.$attachedfiles['names'][$key]);
+
+						// TODO We must add a column into ecm_files table agenda_id to store the ID of event.
+						// $ecmfile->agenda_id = $actionid;
+
+						// Disabled, serious security hole. A file published into the ERP should not become public for everybody.
+						//require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+						//$ecmfile->share = getRandomPassword(true);
+
+						if ($result > 0) {
 							$result = $ecmfile->update($user);
 							if ($result < 0) {
 								setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
 							}
 						}
 					}
+					//}
 				}
 			}
 		}
@@ -2569,7 +2580,9 @@ class Ticket extends CommonObject
 			}
 
 			$moreinfo = array('description' => 'File saved by copyFilesForTicket', 'src_object_type' => $this->element, 'src_object_id' => $this->id);
+
 			$res = dol_move($filepath[$i], $destfile, '0', 1, 0, 1, $moreinfo);
+
 			if (!$res) {
 				// Move has failed
 				$this->error = "Failed to move file ".dirbasename($filepath[$i])." into ".dirbasename($destfile);
