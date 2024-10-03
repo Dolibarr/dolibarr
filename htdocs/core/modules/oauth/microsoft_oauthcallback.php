@@ -63,13 +63,14 @@ $httpClient = new \OAuth\Common\Http\Client\CurlClient();
 //$httpClient->setCurlParameters($params);
 $serviceFactory->setHttpClient($httpClient);
 
-// Dolibarr storage
-$storage = new DoliStorage($db, $conf, $keyforprovider);
-
 // Setup the credentials for the requests
 $keyforparamid = 'OAUTH_'.$genericstring.($keyforprovider ? '-'.$keyforprovider : '').'_ID';
 $keyforparamsecret = 'OAUTH_'.$genericstring.($keyforprovider ? '-'.$keyforprovider : '').'_SECRET';
 $keyforparamtenant = 'OAUTH_'.$genericstring.($keyforprovider ? '-'.$keyforprovider : '').'_TENANT';
+
+// Dolibarr storage
+$storage = new DoliStorage($db, $conf, $keyforprovider, getDolGlobalString($keyforparamtenant));
+
 $credentials = new Credentials(
 	getDolGlobalString($keyforparamid),
 	getDolGlobalString($keyforparamsecret),
@@ -168,7 +169,7 @@ if (GETPOST('code') || GETPOST('error')) {     // We are coming from oauth provi
 			// Microsoft is a service that does not need state to be stored as second parameter of requestAccessToken
 
 			//print $token->getAccessToken().'<br><br>';
-			//print $token->getExtraParams()['id_token'].'<br>';
+			//print $token->getExtraParams()['id_token'].'<br><br>';
 			//print $token->getRefreshToken().'<br>';exit;
 
 			setEventMessages($langs->trans('NewTokenStored'), null, 'mesgs'); // Stored into object managed by class DoliStorage so into table oauth_token
