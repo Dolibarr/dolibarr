@@ -205,3 +205,4 @@ BookcalBookingTitle=Online appointment
 Transparency = Transparency
 ReadMore = Read more
 ReadLess = Read less
+InvoiceCreatedInDolibarr= Invoice %s has been created in dolibarr 
