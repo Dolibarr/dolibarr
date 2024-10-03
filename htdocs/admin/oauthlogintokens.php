@@ -179,8 +179,11 @@ if ($mode == 'setup' && $user->admin) {
 			$keyforsupportedoauth2array = preg_replace('/-.*$/', '', $keyforsupportedoauth2array);
 			$keyforsupportedoauth2array = 'OAUTH_'.$keyforsupportedoauth2array.'_NAME';
 
+			$nameofservice = ucfirst(strtolower(empty($supportedoauth2array[$keyforsupportedoauth2array]['callbackfile']) ? 'Unknown' : $supportedoauth2array[$keyforsupportedoauth2array]['callbackfile']));
+			$nameofservice .= ($keyforprovider ? '-'.$keyforprovider : '');
+			$OAUTH_SERVICENAME = $nameofservice;
 
-			$OAUTH_SERVICENAME = (empty($supportedoauth2array[$keyforsupportedoauth2array]['name']) ? 'Unknown' : $supportedoauth2array[$keyforsupportedoauth2array]['name'].($keyforprovider ? '-'.$keyforprovider : ''));
+			$keyforparamtenant = 'OAUTH_'.strtoupper(empty($supportedoauth2array[$keyforsupportedoauth2array]['callbackfile']) ? 'Unknown' : $supportedoauth2array[$keyforsupportedoauth2array]['callbackfile']).($keyforprovider ? '-'.$keyforprovider : '').'_TENANT';
 
 			$shortscope = '';
 			if (getDolGlobalString($key[4])) {
@@ -226,7 +229,7 @@ if ($mode == 'setup' && $user->admin) {
 			// Token
 			require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
 			// Dolibarr storage
-			$storage = new DoliStorage($db, $conf, $keyforprovider);
+			$storage = new DoliStorage($db, $conf, $keyforprovider, getDolGlobalString($keyforparamtenant));
 			try {
 				// $OAUTH_SERVICENAME is for example 'Google-keyforprovider'
 				print '<!-- '.$OAUTH_SERVICENAME.' -->'."\n";

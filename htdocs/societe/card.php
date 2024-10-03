@@ -1193,6 +1193,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					}
 
                     $("#selectcountry_id").change(function() {
+						console.log("selectcountry_id change");
                        	document.formsoc.action.value="create";
                        	document.formsoc.submit();
                     });
@@ -1202,7 +1203,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 		dol_htmloutput_mesg(is_numeric($error) ? '' : $error, $errors, 'error');
 
-		print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formsoc" autocomplete="off">'; // Chrome ignor autocomplete
+		print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formsoc" autocomplete="off">'; // Chrome ignores autocomplete
 
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -2036,6 +2037,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				}
 
        			$("#selectcountry_id").change(function() {
+					console.log("selectcountry_id change");
        				document.formsoc.action.value="edit";
       				document.formsoc.submit();
         			});
