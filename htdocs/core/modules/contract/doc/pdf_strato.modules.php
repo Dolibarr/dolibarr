@@ -566,16 +566,16 @@ class pdf_strato extends ModelePDFContract
 			$pdf->SetXY($this->marge_gauche, $posy);
 			$pdf->MultiCell($posmiddle - $this->marge_gauche - 5, 5, $outputlangs->transnoentities("ContactNameAndSignature", $this->emetteur->name), 0, 'L', 0);
 
-		  $pdf->SetXY($this->marge_gauche, $posy + 5);
-		  $pdf->RoundedRect($this->marge_gauche, $posy + 5, $posmiddle - $this->marge_gauche - 5, 20, $this->corner_radius, '1234', 'D');
+			$pdf->SetXY($this->marge_gauche, $posy + 5);
+			$pdf->RoundedRect($this->marge_gauche, $posy + 5, $posmiddle - $this->marge_gauche - 5, 20, $this->corner_radius, '1234', 'D');
 		}
 
 		if (!getDolGlobalString('CONTRACT_HIDE_THIRPARTY_SIGNATURE_SECTION_PDF')) {
 			$pdf->SetXY($posmiddle + 5, $posy);
 			$pdf->MultiCell($this->page_largeur - $this->marge_droite - $posmiddle - 5, 5, $outputlangs->transnoentities("ContactNameAndSignature", $this->recipient->name), 0, 'L', 0);
 
-		  $pdf->SetXY($posmiddle + 5, $posy + 5);
-		  $pdf->RoundedRect($posmiddle + 5, $posy + 5, $this->page_largeur - $this->marge_droite - $posmiddle - 5, 20, $this->corner_radius, '1234', 'D');
+			$pdf->SetXY($posmiddle + 5, $posy + 5);
+			$pdf->RoundedRect($posmiddle + 5, $posy + 5, $this->page_largeur - $this->marge_droite - $posmiddle - 5, 20, $this->corner_radius, '1234', 'D');
 		}
 	}
 
