@@ -1,0 +1,54 @@
+# Copyright (C) 2024 Johnson
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see .
+
+#
+# Generic
+#
+
+# Module label 'ModulePreopportunityName'
+ModulePreopportunityName = Preo-Oportunity
+# Module description 'ModulePreopportunityDesc'
+ModulePreopportunityDesc = Pre-Opportunity description
+
+#
+# Admin page
+#
+PreopportunitySetup = Pre-Opportunity setup
+Settings = Settings
+PreopportunitySetupPage = Pre-Opportunity setup page
+PREOPPORTUNITY_MYPARAM1 = My param 1
+PREOPPORTUNITY_MYPARAM1Tooltip = My param 1 tooltip
+PREOPPORTUNITY_MYPARAM2=My param 2
+PREOPPORTUNITY_MYPARAM2Tooltip=My param 2 tooltip
+
+
+#
+# About page
+#
+About = About
+PreopportunityAbout = About Pre-Opportunity
+PreopportunityAboutPage = Pre-Opportunity about page
+
+#
+# Sample page
+#
+PreopportunityArea = Home Pre-Opportunity
+MyPageName = My page name
+
+#
+# Sample widget
+#
+MyWidget = My widget
+MyWidgetDescription = My widget description
