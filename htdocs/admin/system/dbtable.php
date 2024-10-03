@@ -62,7 +62,7 @@ if ($action == 'convertutf8') {
 				}
 
 				$sql = "ALTER TABLE ".$db->sanitize($table)." MODIFY ".$db->sanitize($row[0])." ".$row[1]." COLLATE ".$db->sanitize($collation);	// We must not sanitize the $row[1]
-				$reslq2 = $db->query($sql);
+				$resql2 = $db->query($sql);
 				if (!$resql2) {
 					setEventMessages($db->lasterror(), null, 'warnings');
 				}
