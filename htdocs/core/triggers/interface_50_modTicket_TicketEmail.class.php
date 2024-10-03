@@ -387,8 +387,12 @@ class InterfaceTicketEmail extends DolibarrTriggers
 		$mimetype = array();
 
 		$appli = $mysoc->name;
+		if (getDolGlobalInt('ADD_TICKET_TITLE_SUBJECT')) {
+			$subject = '['.$appli.'] '.$object->subject;
+		} else {
+			$subject = '['.$appli.'] '.$langs->transnoentities($base_subject);
+		}
 
-		$subject = '['.$appli.'] '.$langs->transnoentities($base_subject);
 		$message_customer = $langs->transnoentities($body, $object->track_id).'<br>';
 		$message_customer .= '<ul><li>'.$langs->trans('Title').' : '.$object->subject.'</li>';
 		$message_customer .= '<li>'.$langs->trans('Type').' : '.$langs->getLabelFromKey($this->db, 'TicketTypeShort'.$object->type_code, 'c_ticket_type', 'code', 'label', $object->type_code).'</li>';
