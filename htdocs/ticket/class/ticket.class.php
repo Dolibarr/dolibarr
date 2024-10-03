@@ -247,7 +247,7 @@ class Ticket extends CommonObject
 	public $ip;
 
 	/**
-	 * @var static $oldcopy  State of this ticket as it was stored before an update operation (for triggers)
+	 * @var Ticket 	Save the ticket before an update operation (for triggers)
 	 */
 	public $oldcopy;
 
@@ -1709,6 +1709,8 @@ class Ticket extends CommonObject
 
 			$this->db->begin();
 
+			$this->status = Ticket::STATUS_READ;
+
 			$sql = "UPDATE ".MAIN_DB_PREFIX."ticket";
 			$sql .= " SET fk_statut = ".Ticket::STATUS_READ.", date_read = '".$this->db->idate(dol_now())."'";
 			$sql .= " WHERE rowid = ".((int) $this->id);
@@ -1732,12 +1734,16 @@ class Ticket extends CommonObject
 					$this->db->commit();
 					return 1;
 				} else {
+					$this->status = $this->oldcopy->status;
+
 					$this->db->rollback();
 					$this->error = implode(',', $this->errors);
 					dol_syslog(get_class($this)."::markAsRead ".$this->error, LOG_ERR);
 					return -1;
 				}
 			} else {
+				$this->status = $this->oldcopy->status;
+
 				$this->db->rollback();
 				$this->error = $this->db->lasterror();
 				dol_syslog(get_class($this)."::markAsRead ".$this->error, LOG_ERR);
