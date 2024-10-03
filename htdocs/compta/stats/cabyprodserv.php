@@ -409,7 +409,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	}
 	if ($selected_commercial > 0) {
 		$sql.= " AND EXISTS (SELECT sc.rowid FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE f.fk_soc = sc.fk_soc";
-		$sql.= " AND sc.fk_user = ".$selected_commercial.")";
+		$sql.= " AND sc.fk_user = ".strval($selected_commercial).")";
 	}
 	$sql .= " AND f.entity IN (".getEntity('invoice').")";
 
