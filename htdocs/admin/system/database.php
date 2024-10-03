@@ -41,19 +41,19 @@ if (!$user->admin) {
  */
 
 if ($action == 'convertutf8unicode') {			// Test on permission already done.
-	$sql = "ALTER DATABASE ".$db->sanitize($table[0])." CHARACTER SET utf8 COLLATE utf8_unicode_ci";
+	$sql = "ALTER DATABASE ".$db->sanitize($db->database_name)." CHARACTER SET utf8 COLLATE utf8_unicode_ci";
 	$db->query($sql);
 }
 if ($action == 'convertutf8mb4unicode') {		// Test on permission already done.
-	$sql = "ALTER DATABASE ".$db->sanitize($table[0])." CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci";
+	$sql = "ALTER DATABASE ".$db->sanitize($db->database_name)." CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci";
 	$db->query($sql);
 }
 if ($action == 'convertutf8general') {			// Test on permission already done.
-	$sql = "ALTER DATABASE ".$db->sanitize($table[0])." CHARACTER SET utf8 COLLATE utf8_general_ci";
+	$sql = "ALTER DATABASE ".$db->sanitize($db->database_name)." CHARACTER SET utf8 COLLATE utf8_general_ci";
 	$db->query($sql);
 }
 if ($action == 'convertutf8mb4general') {		// Test on permission already done.
-	$sql = "ALTER DATABASE ".$db->sanitize($table[0])." CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci";
+	$sql = "ALTER DATABASE ".$db->sanitize($db->database_name)." CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci";
 	$db->query($sql);
 }
 
