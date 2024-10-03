@@ -4011,12 +4011,13 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 	padding-left: 7px !important;
 	padding-right: 7px !important;
 }
+input.button.smallpaddingimp, input.buttonreset.smallpaddingimp {
+	font-size: 0.8em;
+	font-weight: normal !important;
+}
 input.button[name="upload"] {
 	padding: 5px !important;
 	font-size: 0.9em;
-}
-input.button.smallpaddingimp, input.buttonreset.smallpaddingimp {
-	font-size: 0.8em;
 }
 input.buttonlink {
 	color: var(--colortextlink);
