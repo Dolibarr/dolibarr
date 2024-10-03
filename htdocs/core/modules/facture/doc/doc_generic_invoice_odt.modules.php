@@ -318,7 +318,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				}
 
 				// Fetch info for linked propal
-				$object->fetchObjectLinked('', '', '', '');
+				$object->fetchObjectLinked(0, '', null, '');
 				//print_r($object->linkedObjects['propal']); exit;
 
 				$propal_object = null;

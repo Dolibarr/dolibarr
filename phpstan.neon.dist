@@ -99,7 +99,6 @@ parameters:
 		- '# getCommonSubstitutionArray expects array#'
 		- '# ldap_search expects array\|LDAP#'
 		- '# ajax_combobox expects array#'
-		- '# Context::setError\(\) expects array, string#'
 		- '# FormWebPortal::selectForForms\(\) expects int, array#'
 		- '# Lettering::getBankLinesFromFkDocAndDocType\(\) expects array#'
 		- '# (Odf) constructor expects #'
@@ -112,8 +111,7 @@ parameters:
 		- '# (?:pdf_(?:(?:eagle_proforma::drawTotalTable|muscadet::_tableau_tot)\(\))) expects Facture#'
 		- '# (?:salaries_prepare_head) expects Paiement#'
 		- '# (?:pg_(?:affected_rows|f(?:etch_(?:array|object|row)|ree_result)|num_rows)) expects PgSql\\Result#'
-		- '# (?:Holiday::getNextNumRef\(\)|get_localtax|pdf_pagefoot) expects Societe#'
-		- '# (?:get_next_value) expects ..\|Societe#'
+		- '# (?:Holiday::getNextNumRef\(\)|get_localtax|pdf_pagefoot|societe_prepare_head) expects Societe#'
 		- '# (?:Common(?:DocGenerator::get(?:(?:ExtrafieldsInHtml|_substitutionarray_lines)\(\))|Object::printO(?:(?:bject|rigin)Line\(\)))) expects CommonObjectLine#'
 		- '#colorHexToHsl expects float\|false, true#'
 	internalErrorsCountLimit: 50

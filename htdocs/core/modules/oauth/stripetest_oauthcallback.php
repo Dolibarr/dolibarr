@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2022       Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,9 +51,12 @@ $uriFactory = new \OAuth\Common\Http\Uri\UriFactory();
 //$currentUri->setQuery('');
 $currentUri = $uriFactory->createFromAbsolute($urlwithroot.'/core/modules/oauth/stripetest_oauthcallback.php');
 
+$state = null;
+$apiService = null;
+
 
 /**
- * Load the credential for the service
+ * Load the credentials for the service
  */
 
 /** @var \OAuth\ServiceFactory $serviceFactory An OAuth service factory. */
@@ -128,6 +132,7 @@ if (GETPOST('code')) {     // We are coming from oauth provider page
 
 	// This was a callback request from service, get the token
 	try {
+		'@phan-var-force OAuth\OAuth2\Service\AbstractService|OAuth\OAuth1\Service\AbstractService $apiService';
 		//var_dump($state);
 		//var_dump($apiService);      // OAuth\OAuth2\Service\Stripe
 
@@ -157,7 +162,12 @@ if (GETPOST('code')) {     // We are coming from oauth provider page
 	// This may create record into oauth_state before the header redirect.
 	// Creation of record with state in this tables depend on the Provider used (see its constructor).
 	if (GETPOST('state')) {
-		$url = $apiService->getAuthorizationUri(array('state'=>GETPOST('state')));
+		if (is_object($apiService)) {  // @phpstan-ignore-line
+			'@phan-var-force OAuth\OAuth2\Service\AbstractService|OAuth\OAuth1\Service\AbstractService $apiService';
+			$url = $apiService->getAuthorizationUri(array('state' => GETPOST('state')));
+		} else {
+			$url = null;
+		}
 	} else {
 		//$url = $apiService->getAuthorizationUri();      // Parameter state will be randomly generated
 		//https://connect.stripe.com/oauth/authorize?response_type=code&client_id=ca_AX27ut70tJ1j6eyFCV3ObEXhNOo2jY6V&scope=read_write
