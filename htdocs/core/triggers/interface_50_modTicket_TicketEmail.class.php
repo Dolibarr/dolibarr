@@ -388,7 +388,6 @@ class InterfaceTicketEmail extends DolibarrTriggers
 
 		$appli = $mysoc->name;
 
-
 		$subject = '['.$appli.'] '.$langs->transnoentities($base_subject);
 		$message_customer = $langs->transnoentities($body, $object->track_id).'<br>';
 		$message_customer .= '<ul><li>'.$langs->trans('Title').' : '.$object->subject.'</li>';
