@@ -191,7 +191,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 				}
 
 				// Send email to customer
-				if (!getDolGlobalString('TICKET_DISABLE_CUSTOMER_MAILS') && empty($object->context['disableticketemail']) && $object->notify_tiers_at_create) {
+				if (!getDolGlobalInt('TICKET_DISABLE_CUSTOMER_MAILS') && empty($object->context['disableticketemail']) && $object->notify_tiers_at_create) {
 					$sendto = '';
 
 					// if contact selected send to email's contact else send to email's thirdparty
@@ -387,6 +387,12 @@ class InterfaceTicketEmail extends DolibarrTriggers
 		$mimetype = array();
 
 		$appli = $mysoc->name;
+		if (getDolGlobalString('ADD_TICKET_TITLE_SUBJECT')) {
+			$base_subject = $object->subject;
+		}
+
+//        $subject = '['.$conf->global->MAIN_INFO_SOCIETE_NOM.' - Ticket '.$object->ref.'] '.$langs->transnoentities($base_subject);
+
 
 		$subject = '['.$appli.'] '.$langs->transnoentities($base_subject);
 		$message_customer = $langs->transnoentities($body, $object->track_id).'<br>';
