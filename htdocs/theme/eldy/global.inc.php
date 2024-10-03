@@ -6266,6 +6266,16 @@ div.cke_notifications_area .cke_notification_warning {
 	visibility: hidden;
 }
 
+/* CSS To hide the picto menu on smartphone, except when maximize */
+@media only screen and (max-width: 768px)
+{
+	.cke_inner:not(.cke_maximized) .cke_toolbar_separator,
+	.cke_inner:not(.cke_maximized) .cke_combo,
+	.cke_inner:not(.cke_maximized) .cke_button:not(.cke_button__maximize) {
+		display: none;
+	}
+}
+
 
 /* ============================================================================== */
 /*  ACE editor                                                                    */
