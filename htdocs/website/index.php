@@ -3721,6 +3721,7 @@ if (!GETPOST('hide_websitemenu')) {
 			$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource1", $url);
 			$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource2", $url);
 			$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource3", $url);
+			$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource4", $url);
 			$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSourceMore", $url);
 			$htmltext .= '<br>';
 			$htmltext .= '</small>';
@@ -4656,6 +4657,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource1", $url);
 	$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource2", $url);
 	$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource3", $url);
+	$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource4", $url);
 	$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSourceMore", $url);
 	$htmltext .= '<br>';
 	$htmltext .= '</small>';

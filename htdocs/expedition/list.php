@@ -1577,7 +1577,7 @@ while ($i < $imaxinloop) {
 				print $form->textwithpicto('', $langs->trans('EstimatedWeight'), 1);
 			} else {
 				print $object->trueWeight;
-				print ($object->trueWeight && $object->weight_units != '') ? ' '.measuringUnitString(0, "weight", $object->weight_units) : '';
+				print ($object->trueWeight && $object->weight_units != '') ? ' '.measuringUnitString(0, "weight", (string) $object->weight_units) : '';
 			}
 			print '</td>';
 			if (!$i) {

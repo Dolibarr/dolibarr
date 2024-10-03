@@ -115,13 +115,37 @@ class EvaluationLine extends CommonObjectLine
 		'required_rank' => array('type' => 'integer', 'label' => 'requiredRank', 'enabled' => 1, 'position' => 5, 'notnull' => 1, 'visible' => 1,),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'position' => 1000, 'notnull' => -1, 'visible' => -2,),
 	);
+	/**
+	 * @var int
+	 */
 	public $rowid;
+	/**
+	 * @var int
+	 */
 	public $fk_user_creat;
+	/**
+	 * @var int
+	 */
 	public $fk_user_modif;
+	/**
+	 * @var int
+	 */
 	public $fk_skill;
+	/**
+	 * @var int
+	 */
 	public $fk_evaluation;
+	/**
+	 * @var int
+	 */
 	public $fk_rank;
+	/**
+	 * @var int
+	 */
 	public $required_rank;
+	/**
+	 * @var string
+	 */
 	public $import_key;
 	// END MODULEBUILDER PROPERTIES
 
@@ -933,6 +957,7 @@ class EvaluationLine extends CommonObjectLine
 
 			if (class_exists($classname)) {
 				$obj = new $classname();
+				'@phan-var-force ModeleNumRefEvaluation $obj';
 				$numref = $obj->getNextValue($this);
 
 				if ($numref != '' && $numref != '-1') {
@@ -955,13 +980,13 @@ class EvaluationLine extends CommonObjectLine
 	/**
 	 *  Create a document onto disk according to template module.
 	 *
-	 *  @param	    string		$modele			Force template to use ('' to not force)
-	 *  @param		Translate	$outputlangs	object lang a utiliser pour traduction
-	 *  @param      int			$hidedetails    Hide details of lines
-	 *  @param      int			$hidedesc       Hide description
-	 *  @param      int			$hideref        Hide ref
-	 *  @param      null|array  $moreparams     Array to provide more information
-	 *  @return     int         				0 if KO, 1 if OK
+	 *  @param	string		$modele			Force template to use ('' to not force)
+	 *  @param	Translate	$outputlangs	object lang a utiliser pour traduction
+	 *  @param 	int<0,1>	$hidedetails    Hide details of lines
+	 *  @param	int<0,1>	$hidedesc       Hide description
+	 *  @param	int<0,1>	$hideref        Hide ref
+	 *  @param	?array<string,mixed>	$moreparams     Array to provide more information
+	 *  @return	int         				0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{

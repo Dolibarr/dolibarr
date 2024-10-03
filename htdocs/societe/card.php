@@ -1294,6 +1294,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					}
 
                     $("#selectcountry_id").change(function() {
+						console.log("selectcountry_id change");
                        	document.formsoc.action.value="create";
                        	document.formsoc.submit();
                     });
@@ -1303,7 +1304,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 		dol_htmloutput_mesg(is_numeric($error) ? '' : $error, $errors, 'error');
 
-		print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formsoc" autocomplete="off">'; // Chrome ignor autocomplete
+		print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formsoc" autocomplete="off">'; // Chrome ignores autocomplete
 
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -2237,6 +2238,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				}
 
        			$("#selectcountry_id").change(function() {
+					console.log("selectcountry_id change");
        				document.formsoc.action.value="edit";
       				document.formsoc.submit();
         			});
@@ -2389,6 +2391,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				$s = $modCodeClient->getToolTip($langs, $object, 0);
 				print $form->textwithpicto('', $s, 1);
 				print '</td></tr></table>';
+				print '</td>';
+
+				if ($conf->browser->layout == 'phone') {
+					print '</tr><tr>';
+				}
 
 				print '<td>'.$form->editfieldkey('SupplierCode', 'supplier_code', '', $object, 0).'</td><td>';
 
@@ -2412,7 +2419,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '<tr><td class="tdtop">'.$form->editfieldkey('Gencod', 'barcode', '', $object, 0).'</td>';
 					print '<td colspan="3">';
 					print img_picto('', 'barcode', 'class="pictofixedwidth"');
-					print '<input type="text" name="barcode" id="barcode" value="'.dol_escape_htmltag($object->barcode).'">';
+					print '<input type="text" class="minwidth100 maxwidth200 widthcentpercentminusx" name="barcode" id="barcode" value="'.dol_escape_htmltag($object->barcode).'">';
 					print '</td></tr>';
 				}
 
@@ -2447,7 +2454,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				// Country
 				print '<tr><td>'.$form->editfieldkey('Country', 'selectcounty_id', '', $object, 0).'</td><td colspan="3">';
 				print img_picto('', 'globe-americas', 'class="pictofixedwidth"');
-				print $form->select_country((GETPOSTISSET('country_id') ? GETPOST('country_id') : $object->country_id), 'country_id', '', 0, 'minwidth300 maxwidth500 widthcentpercentminusx');
+				print $form->select_country((GETPOSTISSET('country_id') ? GETPOST('country_id') : $object->country_id), 'country_id', '', 0, 'minwidth200 maxwidth400 widthcentpercentminusx');
 				if ($user->admin) {
 					print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 				}
@@ -2462,7 +2469,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					}
 
 					print img_picto('', 'state', 'class="pictofixedwidth"');
-					print $formcompany->select_state($object->state_id, $object->country_code);
+					print $formcompany->select_state($object->state_id, $object->country_code, 'state_id', 'minwidth200 maxwidth400 widthcentpercentminusx');
 					print '</td></tr>';
 				}
 

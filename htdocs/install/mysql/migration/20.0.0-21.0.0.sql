@@ -131,3 +131,5 @@ ALTER TABLE llx_product_attribute_combination2val ADD INDEX idx_product_att_com2
 ALTER TABLE llx_societe ADD COLUMN ip varchar(250);
 ALTER TABLE llx_recruitment_recruitmentcandidature ADD COLUMN ip varchar(250);
 ALTER TABLE llx_socpeople ADD COLUMN ip varchar(250);
+
+ALTER TABLE llx_ecm_files ADD COLUMN agenda_id integer;

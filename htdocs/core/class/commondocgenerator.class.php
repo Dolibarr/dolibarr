@@ -914,7 +914,7 @@ abstract class CommonDocGenerator
 			$array_key.'_tracking_number' => $object->tracking_number,
 			$array_key.'_tracking_url' => $object->tracking_url,
 			$array_key.'_shipping_method' => $object->listmeths[0]['libelle'],
-			$array_key.'_weight' => $object->trueWeight.' '.measuringUnitString(0, 'weight', $object->weight_units),
+			$array_key.'_weight' => $object->trueWeight.' '.measuringUnitString(0, 'weight', (string) $object->weight_units),
 			$array_key.'_width' => $object->trueWidth.' '.measuringUnitString(0, 'size', $object->width_units),
 			$array_key.'_height' => $object->trueHeight.' '.measuringUnitString(0, 'size', $object->height_units),
 			$array_key.'_depth' => $object->trueDepth.' '.measuringUnitString(0, 'size', $object->depth_units),

@@ -58,7 +58,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	print '<td class="linkedcol-element tdoverflowmax100">'.$langs->trans("Proposal");
 	if (!empty($showImportButton) && $conf->global->MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES) {
 		$url = DOL_URL_ROOT.'/comm/propal/card.php?id='.$objectlink->id;
-		print '<a class="objectlinked_importbtn" href="'.$url.'&amp;action=selectlines"  data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a>';
+		print '<a class="objectlinked_importbtn" href="'.$url.'&amp;action=selectlines&amp;token='.newToken().'"  data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a>';
 	}
 	print '</td>';
 	print '<td class="linkedcol-name tdoverflowmax150">'.$objectlink->getNomUrl(1).'</td>';
