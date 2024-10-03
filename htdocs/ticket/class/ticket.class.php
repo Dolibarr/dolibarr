@@ -247,7 +247,7 @@ class Ticket extends CommonObject
 	public $ip;
 
 	/**
-	 * @var Ticket 	Save the ticket before an update operation (for triggers)
+	 * @var static 	Save the ticket before an update operation (for triggers)
 	 */
 	public $oldcopy;
 
