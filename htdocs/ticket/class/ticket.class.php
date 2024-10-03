@@ -1898,7 +1898,7 @@ class Ticket extends CommonObject
 				// If there is some files, we must now link them to the event, so we can show them per event.
 				foreach ($attachedfiles['paths'] as $key => $filespath) {
 					// Disabled the move into another directory, Files for a ticket should be stored into ticket directory. It generates too much troubles.
-					//$destdir = $conf->agenda->dir_output.'/'.$actionid;
+					$destdir = $conf->ticket->dir_output.'/'.$this->ref;
 					//$destfile = $destdir.'/'.$attachedfiles['names'][$key];
 					//if (dol_mkdir($destdir) >= 0) {
 					//require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -1909,7 +1909,7 @@ class Ticket extends CommonObject
 						$destdir = preg_replace('/[\\/]$/', '', $destdir);
 						$destdir = preg_replace('/^[\\/]/', '', $destdir);
 
-						$ecmfile->fetch(0, '', $destdir.'/'.$attachedfiles['names'][$key]);
+						$result = $ecmfile->fetch(0, '', $destdir.'/'.$attachedfiles['names'][$key]);
 
 						// TODO We must add a column into ecm_files table agenda_id to store the ID of event.
 						// $ecmfile->agenda_id = $actionid;
@@ -1918,9 +1918,11 @@ class Ticket extends CommonObject
 						//require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 						//$ecmfile->share = getRandomPassword(true);
 
-						$result = $ecmfile->update($user);
-						if ($result < 0) {
-							setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
+						if ($result > 0) {
+							$result = $ecmfile->update($user);
+							if ($result < 0) {
+								setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
+							}
 						}
 					}
 					//}
