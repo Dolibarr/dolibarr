@@ -1173,7 +1173,7 @@ class Contact extends CommonObject
 	 *  @param		string	$email			Email
 	 *  @param		string	$ref_alias		Name alias (TODO Not yet implemented)
 	 *  @param		int		$socid			Filter on thirdparty id
-	 *  @return     int     		    	>0 if OK, <0 if KO or if two records found for same ref or idprof, 0 if not found.
+	 *  @return     int     		    	ID of contact if OK, <0 if KO or if two records found for same ref or idprof, 0 if not found.
 	 */
 	public function findNearest($id = 0, $lastname = '', $firstname = '', $ref_ext = '', $email = '', $ref_alias = '', $socid = 0)
 	{
