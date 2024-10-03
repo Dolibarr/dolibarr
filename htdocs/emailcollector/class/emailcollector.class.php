@@ -2655,7 +2655,7 @@ class EmailCollector extends CommonObject
 												}
 											}
 										}
-									} else {
+									} else {	// $result > 0 is ID of thirdparty
 										dol_syslog("One and only one existing third party has been found");
 
 										$thirdpartystatic->fetch($result);
