@@ -9537,8 +9537,8 @@ class Form
 	 *  Show block with links "to link to" other objects.
 	 *
 	 * @param 	CommonObject 	$object 			Object we want to show links to
-	 * @param 	string[] 		$restrictlinksto 	Restrict links to some elements, for example array('order') or array('supplier_order'). null or array() if no restriction.
-	 * @param 	string[] 		$excludelinksto 	Do not show links of this type, for example array('order') or array('supplier_order'). null or array() if no exclusion.
+	 * @param 	string[]|null	$restrictlinksto 	Restrict links to some elements, for example array('order') or array('supplier_order'). null or array() if no restriction.
+	 * @param 	string[]|null	$excludelinksto 	Do not show links of this type, for example array('order') or array('supplier_order'). null or array() if no exclusion.
 	 * @param	int<0,1>		$nooutput			1=Return array with content instead of printing it.
 	 * @return  array{linktoelem:string,htmltoenteralink:string}|string                              HTML block
 	 */

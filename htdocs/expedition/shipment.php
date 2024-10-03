@@ -5,6 +5,7 @@
  * Copyright (C) 2012-2015	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018-2022  Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -207,7 +208,7 @@ if (empty($reshook)) {
 
 	if ($action == 'set_thirdparty' && $permissiontoadd) {
 		$object->fetch($id);
-		$object->setValueFrom('fk_soc', $socid, '', '', 'date', '', $user, 'ORDER_MODIFY');
+		$object->setValueFrom('fk_soc', $socid, '', null, 'date', '', $user, 'ORDER_MODIFY');
 
 		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
 		exit();

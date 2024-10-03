@@ -25,6 +25,7 @@ maxwidthonspartphone->maxwidthonsmartphone
 minwith100->minwidth100
 minwith200->minwidth200
 mot de passe->password
+multicurreny->multicurrency
 nempty->an empty, empty, not empty,
 nocellnopadding->nocellnopadd
 nodrap->nodrag, nodrop,

@@ -269,7 +269,7 @@ class Product extends CommonObject
 	public $tva_tx;
 
 	/**
-	 * @var int	French VAT NPR is used (0 or 1)
+	 * @var int<0,1>	French VAT NPR is used (0 or 1)
 	 */
 	public $tva_npr = 0;
 

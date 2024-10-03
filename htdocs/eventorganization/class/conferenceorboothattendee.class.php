@@ -398,10 +398,10 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 * @param  string      	$sortfield    	Sort field
 	 * @param  int         	$limit        	limit
 	 * @param  int         	$offset       	Offset
-	 * @param  string|array	$filter       	Filter as an Universal Search string.
-	 * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
+	 * @param  string|array<string,mixed>	$filter		Filter as an Universal Search string.
+	 *                                                  Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
 	 * @param  string      	$filtermode   	No more used
-	 * @return array|int                 	int <0 if KO, array of pages if OK
+	 * @return ConferenceOrBoothAttendee[]|int<-1,-1>		int <0 if KO, array of pages if OK
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
@@ -489,9 +489,9 @@ class ConferenceOrBoothAttendee extends CommonObject
 	/**
 	 * Update object into database
 	 *
-	 * @param  User $user      User that modifies
-	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
-	 * @return int             Return integer <0 if KO, >0 if OK
+	 * @param  User		$user		User that modifies
+	 * @param  int<0,1>	$notrigger	0=launch triggers after, 1=disable triggers
+	 * @return int					Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
@@ -501,9 +501,9 @@ class ConferenceOrBoothAttendee extends CommonObject
 	/**
 	 * Delete object in database
 	 *
-	 * @param User 	$user       User that deletes
-	 * @param int 	$notrigger  0=launch triggers after, 1=disable triggers
-	 * @return int             	Return integer <0 if KO, >0 if OK
+	 * @param User		$user       User that deletes
+	 * @param int<0,1> 	$notrigger  0=launch triggers after, 1=disable triggers
+	 * @return int     	        	Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = 0)
 	{
@@ -514,10 +514,10 @@ class ConferenceOrBoothAttendee extends CommonObject
 	/**
 	 *  Delete a line of object in database
 	 *
-	 *	@param  User	$user       User that delete
-	 *  @param	int		$idline		Id of line to delete
-	 *  @param 	int 	$notrigger  0=launch triggers after, 1=disable triggers
-	 *  @return int         		>0 if OK, <0 if KO
+	 *	@param  User		$user       User that delete
+	 *  @param	int			$idline		Id of line to delete
+	 *  @param 	int<0,1>	$notrigger  0=launch triggers after, 1=disable triggers
+	 *  @return int						>0 if OK, <0 if KO
 	 */
 	public function deleteLine(User $user, $idline, $notrigger = 0)
 	{
@@ -533,9 +533,9 @@ class ConferenceOrBoothAttendee extends CommonObject
 	/**
 	 *	Validate object
 	 *
-	 *	@param		User	$user     		User making status change
-	 *  @param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 *	@return  	int						Return integer <=0 if OK, 0=Nothing done, >0 if KO
+	 *	@param	User		$user     	User making status change
+	 *  @param	int<0,1>	$notrigger	1=Does not execute triggers, 0= execute triggers
+	 *	@return	int						Return integer <=0 if OK, 0=Nothing done, >0 if KO
 	 */
 	public function validate($user, $notrigger = 0)
 	{
@@ -1025,7 +1025,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 *  @param      int			$hidedetails    Hide details of lines
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
-	 *  @param      null|array  $moreparams     Array to provide more information
+	 *  @param      ?array<string,mixed>  $moreparams     Array to provide more information
 	 *  @return     int         				0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)

@@ -139,6 +139,9 @@ class ProductFournisseur extends Product
 	 */
 	public $fourn_remise;
 
+	/**
+	 * @var ?float
+	 */
 	public $fourn_charges;	// when getDolGlobalString('PRODUCT_CHARGES') is set
 
 	/**
@@ -146,6 +149,9 @@ class ProductFournisseur extends Product
 	 */
 	public $product_fourn_id;
 
+	/**
+	 * @var string
+	 */
 	public $product_fourn_entity;
 
 	/**
@@ -158,9 +164,21 @@ class ProductFournisseur extends Product
 	 */
 	public $fk_availability;
 
+	/**
+	 * @var int|string
+	 */
 	public $fourn_unitprice;
+	/**
+	 * @var float|int
+	 */
 	public $fourn_unitprice_with_discount;	// not saved into database
+	/**
+	 * @var string
+	 */
 	public $fourn_tva_tx;
+	/**
+	 * @var int<0,1>
+	 */
 	public $fourn_tva_npr;
 
 	/**
@@ -178,20 +196,33 @@ class ProductFournisseur extends Product
 	 */
 	public $reputations = array();
 
-	// Multicurreny
+	// Multicurrency
 
 	/**
 	 * @var int		ID of multicurrency
 	 */
 	public $fourn_multicurrency_id;
 
+	/**
+	 * @var string
+	 */
 	public $fourn_multicurrency_code;
+	/**
+	 * @var int|float|string
+	 */
 	public $fourn_multicurrency_tx;
+	/**
+	 * @var int|string
+	 */
 	public $fourn_multicurrency_price;
+	/**
+	 * @var int|string
+	 */
 	public $fourn_multicurrency_unitprice;
 
 	/**
-	 * @deprecated
+	 * @var string
+	 * @deprecated Use $supplier_barcode
 	 * @see $supplier_barcode
 	 */
 	public $fourn_barcode;
@@ -202,7 +233,8 @@ class ProductFournisseur extends Product
 	public $supplier_barcode;
 
 	/**
-	 * @deprecated
+	 * @var int
+	 * @deprecated Use $supplier_fk_barcode_type
 	 * @see $supplier_fk_barcode_type
 	 */
 	public $fourn_fk_barcode_type;
@@ -212,9 +244,18 @@ class ProductFournisseur extends Product
 	 */
 	public $supplier_fk_barcode_type;
 
+	/**
+	 * @var float
+	 */
 	public $packaging;
 
+	/**
+	 * @var array<int,string>
+	 */
 	public $labelStatusShort;
+	/**
+	 * @var array<int,string>
+	 */
 	public $labelStatus;
 
 	const STATUS_OPEN = 1;
@@ -332,7 +373,7 @@ class ProductFournisseur extends Product
 	 *    @param  	int			$newnpr				            Set NPR or not
 	 *    @param	int			$delivery_time_days	            Delay in days for delivery (max). May be '' if not defined.
 	 * 	  @param    string      $supplier_reputation            Reputation with this product to the defined supplier (empty, FAVORITE, DONOTORDER)
-	 *	  @param    array		$localtaxes_array	            Array with localtaxes info array('0'=>type1,'1'=>rate1,'2'=>type2,'3'=>rate2) (loaded by getLocalTaxesFromRate(vatrate, 0, ...) function).
+	 *	  @param	array{0:string,1:float|int,2:string,3:float|int}|array{}	$localtaxes_array	Array with localtaxes info array('0'=>type1,'1'=>rate1,'2'=>type2,'3'=>rate2) (loaded by getLocalTaxesFromRate(vatrate, 0, ...) function).
 	 *    @param    string  	$newdefaultvatcode              Default vat code
 	 *    @param  	float		$multicurrency_buyprice 	    Purchase price for the quantity min in currency
 	 *    @param  	string		$multicurrency_price_base_type	HT or TTC in currency
@@ -341,7 +382,7 @@ class ProductFournisseur extends Product
 	 *    @param  	string		$desc_fourn     	            Custom description for product_fourn_price
 	 *    @param  	string		$barcode     	                Barcode
 	 *    @param  	int		    $fk_barcode_type     	        Barcode type
-	 *    @param  	array		$options		     	       	Extrafields of product fourn price
+	 *    @param  	array<string,mixed>	$options     	       	Extrafields of product fourn price
 	 *    @return	int											Return integer <0 if KO, >=0 if OK
 	 */
 	public function update_buyprice(
@@ -861,7 +902,8 @@ class ProductFournisseur extends Product
 					$price_result = $priceparser->parseProductSupplier($prodfourn);
 					if ($price_result >= 0) {
 						$prodfourn->fourn_price = $price_result;
-						$prodfourn->fourn_unitprice = null; //force recalculation of unitprice, as probably the price changed...
+						// Set to null on purpose an will have non-null value before method return @phan-suppress-next-line PhanTypeMismatchPropertyProbablyReal
+						$prodfourn->fourn_unitprice = null; //force recalculation of unitprice, as probably the price changed... @phpstan-ignore-line
 					}
 				}
 
@@ -1000,6 +1042,7 @@ class ProductFournisseur extends Product
 						$this->fourn_id                 = $record["fourn_id"];	// thirdparty id
 						$this->fourn_name               = $record["supplier_name"];
 						$this->delivery_time_days = $record["delivery_time_days"];
+						// False positive @phan-suppress-next-line PhanTypeMismatchProperty
 						$this->fk_supplier_price_expression = $record["fk_supplier_price_expression"];
 						$this->fourn_multicurrency_price       = $record["multicurrency_price"];
 						$this->fourn_multicurrency_unitprice   = $record["multicurrency_unitprice"];
@@ -1074,12 +1117,12 @@ class ProductFournisseur extends Product
 	/**
 	 *	Display price of product
 	 *
-	 *  @param  int     $showunitprice    Show "Unit price" into output string
-	 *  @param  int     $showsuptitle     Show "Supplier" into output string
-	 *  @param  int     $maxlen           Max length of name
-	 *  @param  integer $notooltip        1=Disable tooltip
-	 *  @param  array   $productFournList list of ProductFournisseur objects
-	 *                                    to display in table format.
+	 *  @param  int<0,1>	$showunitprice    Show "Unit price" into output string
+	 *  @param  int<0,1>	$showsuptitle     Show "Supplier" into output string
+	 *  @param  int			$maxlen           Max length of name
+	 *  @param  int<0,1>	$notooltip        1=Disable tooltip
+	 *  @param  ProductFournisseur[]	$productFournList list of ProductFournisseur objects
+	 *                                                    to display in table format.
 	 *  @return string                    String with supplier price
 	 */
 	public function display_price_product_fournisseur($showunitprice = 1, $showsuptitle = 1, $maxlen = 0, $notooltip = 0, $productFournList = array())
@@ -1152,7 +1195,7 @@ class ProductFournisseur extends Product
 	 *    @param	string  $sortorder              Sort order
 	 *    @param	int     $limit                  Limit
 	 *    @param	int     $offset                 Offset
-	 *    @return	array|int   Array of Log prices
+	 *    @return	array<array{rowid:int,supplier_ref:int,datec:int,lastname:string,price:float,quantity:float,fk_multicurrency:int,multicurrency_code:string,multicurrency_tx:string,multicurrency_price:string,multicurrency_unitprice:string}>|int<-1,-1>   Array of Log prices
 	 */
 	public function listProductFournisseurPriceLog($product_fourn_price_id, $sortfield = '', $sortorder = '', $limit = 0, $offset = 0)
 	{
@@ -1208,8 +1251,8 @@ class ProductFournisseur extends Product
 	/**
 	 *	Display log price of product supplier price
 	 *
-	 *  @param  array   $productFournLogList    list of ProductFournisseur price log objects
-	 *                                          to display in table format.
+	 *  @param	array<array{rowid:int,supplier_ref:int,datec:int,lastname:string,price:float,quantity:float,fk_multicurrency:int,multicurrency_code:string,multicurrency_tx:string,multicurrency_price:string,multicurrency_unitprice:string}>|int<-1,-1>	$productFournLogList    list of ProductFournisseur price log objects
+	 *                                                                                                                                                                                                                                                                              to display in table format.
 	 *  @return string  HTML String with supplier price
 	 */
 	public function displayPriceProductFournisseurLog($productFournLogList = array())
