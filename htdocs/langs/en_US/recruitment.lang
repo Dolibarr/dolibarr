@@ -67,3 +67,4 @@ Recruitment=Recruitment
 ApplyJobCandidature=Apply for this job
 ErrorRecruitmmentCandidatureAlreadyExists= Recruitment candidature already exists with email %s
 RecruitmentCandidatureSaved=Recruitement candidature successfully saved
+NoOpenJobOffer=No open job offers at the moment

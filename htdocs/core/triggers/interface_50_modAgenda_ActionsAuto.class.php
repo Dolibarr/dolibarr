@@ -925,6 +925,23 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			}
 
 			$object->sendtoid = array();
+		} elseif ($action == 'BILL_SUPPLIER_CREATE') {
+			'@phan-var-force FactureFournisseur $object';
+			// Load translation files required by the page
+			$langs->loadLangs(array("agenda", "other", "orders"));
+
+			if (empty($object->actionmsg2)) {
+				if (empty($object->context['actionmsg2'])) {
+					$object->actionmsg2 = $langs->transnoentities("InvoiceCreatedInDolibarr", ($object->newref ? $object->newref : $object->ref));
+				} else {
+					$object->actionmsg2 = $object->context['actionmsg2'];
+				}
+			}
+			if (empty($object->actionmsg)) {
+				$object->actionmsg = $langs->transnoentities("InvoiceCreatedInDolibarr", ($object->newref ? $object->newref : $object->ref));
+			}
+
+			$object->sendtoid = array();
 		} elseif ($action == 'BILL_SUPPLIER_VALIDATE') {
 			// Load translation files required by the page
 			$langs->loadLangs(array("agenda", "other", "bills"));
