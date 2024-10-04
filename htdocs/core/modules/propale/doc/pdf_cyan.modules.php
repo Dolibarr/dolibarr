@@ -563,8 +563,11 @@ class pdf_cyan extends ModelePDFPropales
 					$pdf->setTopMargin($tab_top_newpage);
 					$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforsignature + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
 					$pageposbefore = $pdf->getPage();
+					$curYBefore = $curY;
 
-					$showpricebeforepagebreak = 1;
+					// Allows data in the first page if description is long enough to break in multiples pages
+					$showpricebeforepagebreak = getDolGlobalInt('MAIN_PDF_DATA_ON_FIRST_PAGE');
+
 					$posYAfterImage = 0;
 					$posYAfterDescription = 0;
 
@@ -572,10 +575,12 @@ class pdf_cyan extends ModelePDFPropales
 						$this->printStdColumnContent($pdf, $curY, 'position', $i + 1);
 					}
 
+					$newPageAddedForPhoto = false;
 					if ($this->getColumnStatus('photo')) {
 						// We start with Photo of product line
-						if (isset($imglinesize['width']) && isset($imglinesize['height']) && ($curY + $imglinesize['height']) > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforsignature + $heightforinfotot))) {	// If photo too high, we moved completely on new page
+						if (isset($imglinesize['width']) && isset($imglinesize['height']) && ($curY + $imglinesize['height']) > ($this->page_hauteur - ($heightforfooter + $heightforfreetext))) {	// If photo too high, we moved completely on new page
 							$pdf->AddPage('', '', true);
+							$newPageAddedForPhoto = true;
 							if (!empty($tplidx)) {
 								$pdf->useTemplate($tplidx);
 							}
@@ -583,23 +588,28 @@ class pdf_cyan extends ModelePDFPropales
 
 							$curY = $tab_top_newpage;
 
-							// Allows data in the first page if description is long enough to break in multiples pages
-							if (getDolGlobalString('MAIN_PDF_DATA_ON_FIRST_PAGE')) {
-								$showpricebeforepagebreak = 1;
-							} else {
-								$showpricebeforepagebreak = 0;
-							}
+							// disable MAIN_PDF_DATA_ON_FIRST_PAGE near page break limit to anticipate auto page break jump before add line due to padding
+							// (ex: description is on page 2 and price on page 1)
+							$showpricebeforepagebreak = 0;
 						}
 
-
+						$pdf->setPageOrientation('', 0, $heightforfooter + $heightforfreetext); // The only function to edit the bottom margin of current page to set it.
 						if (!empty($this->cols['photo']) && isset($imglinesize['width']) && isset($imglinesize['height'])) {
 							$pdf->Image($realpatharray[$i], $this->getColumnContentXStart('photo'), $curY + 1, $imglinesize['width'], $imglinesize['height'], '', '', '', 2, 300); // Use 300 dpi
 							// $pdf->Image does not increase value return by getY, so we save it manually
 							$posYAfterImage = $curY + $imglinesize['height'];
 						}
+
+						$pageposafter = $pdf->getPage();
+						if ($pageposafter > $pageposbefore) {    // There is a pagebreak
+							$pdf->setPage($pageposbefore+1);
+						}
+
+						// restore page bottom margin
+						$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforsignature + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
 					}
 
-					// Description of product line
+					$newPageAddedForDescription = false;
 					if ($this->getColumnStatus('desc')) {
 						$pdf->startTransaction();
 
@@ -608,6 +618,7 @@ class pdf_cyan extends ModelePDFPropales
 
 						if ($pageposafter > $pageposbefore) {	// There is a pagebreak
 							$pdf->rollbackTransaction(true);
+							$newPageAddedForDescription = true;
 
 							$pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
 
@@ -624,14 +635,6 @@ class pdf_cyan extends ModelePDFPropales
 									}
 									$pdf->setPage($pageposafter + 1);
 								}
-							} else {
-								// We found a page break
-								// Allows data in the first page if description is long enough to break in multiples pages
-								if (getDolGlobalString('MAIN_PDF_DATA_ON_FIRST_PAGE')) {
-									$showpricebeforepagebreak = 1;
-								} else {
-									$showpricebeforepagebreak = 0;
-								}
 							}
 						} else { // No pagebreak
 							$pdf->commitTransaction();
@@ -640,6 +643,12 @@ class pdf_cyan extends ModelePDFPropales
 					}
 
 					$nexY = $pdf->GetY();
+
+					// check if image height is more than description height
+					if (!$newPageAddedForPhoto && $posYAfterImage) {
+						$nexY = max($posYAfterImage, $nexY);
+					}
+
 					$pageposafter = $pdf->getPage();
 
 					$pdf->setPage($pageposbefore);
@@ -650,6 +659,8 @@ class pdf_cyan extends ModelePDFPropales
 					if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {
 						$pdf->setPage($pageposafter);
 						$curY = $tab_top_newpage;
+					} else {
+						$curY = $curYBefore;
 					}
 
 					$pdf->SetFont('', '', $default_font_size - 1); // We reposition the default font
@@ -794,8 +805,22 @@ class pdf_cyan extends ModelePDFPropales
 					}
 					$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')] = array('vatrate' => $vatrate, 'vatcode' => $vatcode, 'amount' => $this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] + $tvaligne);
 
-					if ($posYAfterImage > $posYAfterDescription) {
-						$nexY = max($nexY, $posYAfterImage);
+
+					// if new pages have been added, we need to check whether they were created by the image display script or the description display script
+					if ($pageposafter > $pageposbefore && !empty($showpricebeforepagebreak)) {
+						$pdf->setPage($pageposafter);
+
+						if ($pageposafter - $pageposbefore > 2 && $newPageAddedForDescription) {
+							// photo can't add 2 pages, so it must be description who break others pages
+							$nexY = $posYAfterDescription;
+						} elseif ($newPageAddedForPhoto && $newPageAddedForDescription) {
+							// if break page is detect for photo and description we need to take the bigger Y
+							$nexY = max($posYAfterImage, $posYAfterDescription);
+						} elseif ($newPageAddedForPhoto) {
+							$nexY = $posYAfterImage;
+						} else {
+							$nexY = $posYAfterDescription;
+						}
 					}
 
 					// Add line
