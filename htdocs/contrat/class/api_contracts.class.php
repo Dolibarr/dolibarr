@@ -384,6 +384,7 @@ class Contracts extends DolibarrApi
 
 		if ($updateRes > 0) {
 			$result = $this->get($id);
+			unset($result->line);
 			return $this->_cleanObjectDatas($result);
 		}
 
