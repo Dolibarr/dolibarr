@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2008-2024 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,9 +58,15 @@ if (!defined('NOIPCHECK')) {
 /**
  * Header function
  *
+ * @param 	string		$title				Title
+ * @param 	string		$head				Head array
+ * @param 	int    		$disablejs			More content into html header
+ * @param 	int    		$disablehead		More content into html header
+ * @param 	array  		$arrayofjs			Array of complementary js files
+ * @param 	array  		$arrayofcss			Array of complementary css files
  * @return	void
  */
-function llxHeaderVierge()
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
 {
 	print '<html><title>Export agenda cal</title><body>';
 }
