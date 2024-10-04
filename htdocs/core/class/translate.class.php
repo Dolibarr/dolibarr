@@ -871,8 +871,6 @@ class Translate
 	public function get_available_languages($langdir = DOL_DOCUMENT_ROOT, $maxlength = 0, $usecode = 0, $mainlangonly = 0)
 	{
 		// phpcs:enable
-		global $conf;
-
 		$this->load("languages");
 
 		// We scan directory langs to detect available languages

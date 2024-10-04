@@ -68,6 +68,7 @@ if ($action == 'specimen') {
 
 		$classname = (string) $modele;
 		$obj = new $classname($db);
+		'@phan-var-force ModeleDon $obj';
 
 		if ($obj->write_file($don, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=donation&file=SPECIMEN.html");
@@ -231,6 +232,7 @@ if (is_resource($handle)) {
 
 			require_once $dir.'/'.$file;
 			$module = new $classname($db);
+			'@phan-var-force ModeleDon $module';
 
 			// Show modules according to features level
 			if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -341,7 +343,7 @@ $label = $langs->trans("AccountAccounting");
 print '<label for="DONATION_ACCOUNTINGACCOUNT">'.$label.'</label></td>';
 print '<td class="center">';
 if (isModEnabled('accounting')) {
-	print $formaccounting->select_account($conf->global->DONATION_ACCOUNTINGACCOUNT, 'DONATION_ACCOUNTINGACCOUNT', 1, '', 1, 1);
+	print $formaccounting->select_account($conf->global->DONATION_ACCOUNTINGACCOUNT, 'DONATION_ACCOUNTINGACCOUNT', 1, array(), 1, 1);
 } else {
 	print '<input type="text" size="10" id="DONATION_ACCOUNTINGACCOUNT" name="DONATION_ACCOUNTINGACCOUNT" value="' . getDolGlobalString('DONATION_ACCOUNTINGACCOUNT').'">';
 }

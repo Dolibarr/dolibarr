@@ -52,7 +52,11 @@ function checkNbPostsForASpeceificIp($object, $nb_post_max)
 		$sql = "SELECT COUNT(".(!empty($object->table_rowid) ? $object->table_rowid : 'rowid').") as nb_posts";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element;
 		$sql .= " WHERE ip = '".$db->escape($object->ip)."'";
-		$sql .= " AND datec > '".$db->idate($minmonthpost)."'";
+		if (array_key_exists('date_creation', $object->fields)) {
+			$sql .= " AND date_creation > '".$db->idate($minmonthpost)."'";
+		} else {
+			$sql .= " AND datec > '".$db->idate($minmonthpost)."'";
+		}
 		$resql = $db->query($sql);
 		if ($resql) {
 			$num = $db->num_rows($resql);

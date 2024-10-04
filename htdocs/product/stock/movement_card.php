@@ -1081,7 +1081,7 @@ if ($resql) {
 		}
 		if (!empty($arrayfields['m.label']['checked'])) {
 			// Label of movement
-			print '<td class="tdoverflowmax100aaa">'.$objp->label.'</td>';
+			print '<td class="tdoverflowmax100">'.$objp->label.'</td>';
 		}
 		if (!empty($arrayfields['m.type_mouvement']['checked'])) {
 			// Type of movement

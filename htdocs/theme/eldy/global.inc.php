@@ -1003,11 +1003,23 @@ td.wordbreak img, td.wordbreakimp img {
 .nopaddingright {
 	padding-<?php print $right; ?>: 0;
 }
+.nopaddingtop {
+	padding-top: 0;
+}
+.nopaddingbottom {
+	padding-bottom: 0;
+}
 .nopaddingleftimp {
 	padding-<?php print $left; ?>: 0 !important;
 }
 .nopaddingrightimp {
 	padding-<?php print $right; ?>: 0 !important;
+}
+.nopaddingtopimp {
+	padding-top: 0 !important;
+}
+.nopaddingbottomimp {
+	padding-bottom: 0 !important;
 }
 .paddingleft {
 	padding-<?php print $left; ?>: 4px;
@@ -2267,7 +2279,7 @@ td.showDragHandle {
 	float: <?php echo $left; ?>;
 }
 .classforhorizontalscrolloftabs #id-right {
-	width: calc(100% - <?php echo $leftmenuwidth + 20 ?>px);
+	width: calc(100% - <?php echo $leftmenuwidth + 30 ?>px);
 	display: inline-block;
 }
 
@@ -3499,7 +3511,7 @@ div.vmenu, td.vmenu {
 
 .vmenu {
 	width: <?php echo $leftmenuwidth; ?>px;
-	margin-left: 6px;
+	margin-left: 8px;
 	<?php if (GETPOST('optioncss', 'aZ09') == 'print') { ?>
 	display: none;
 	<?php } ?>
@@ -3593,10 +3605,23 @@ div.blockvmenusearchphone
 {
 	margin: 0 0 8px 2px;
 }
-.vmenu div.blockvmenusearch
-{
-	padding-bottom: 13px;
+.vmenu div.blockvmenusearch {
+	margin-top: 5px;
+	margin-bottom: 15px;
 }
+/*
+.vmenu div.blockvmenusearch {
+	border: 1px solid #888;
+	padding-top: 8px;
+	padding-bottom: 8px;
+	padding-left: 0;
+	padding-right: 0;
+	border-radius: 6px;
+	box-sizing: border-box;
+	margin-left: 3px;
+	margin-left: 3px;
+}
+*/
 .vmenu div.blockvmenuend
 {
 	padding-bottom: 5px;
@@ -3862,10 +3887,11 @@ a.tabTitle {
 .imgTabTitle {
 	max-height: 14px;
 }
+/*
 div.tabs div.tabsElem:first-of-type a.tab {
 	margin-left: 0px !important;
 }
-
+*/
 a.tabunactive {
 	color: var(--colortextlink) !important;
 }
@@ -3986,12 +4012,13 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 	padding-left: 7px !important;
 	padding-right: 7px !important;
 }
+input.button.smallpaddingimp, input.buttonreset.smallpaddingimp {
+	font-size: 0.8em;
+	font-weight: normal !important;
+}
 input.button[name="upload"] {
 	padding: 5px !important;
 	font-size: 0.9em;
-}
-input.button.smallpaddingimp, input.buttonreset.smallpaddingimp {
-	font-size: 0.8em;
 }
 input.buttonlink {
 	color: var(--colortextlink);
@@ -5116,6 +5143,18 @@ img.boxhandle, img.boxclose {
 	padding: 16px;
 }
 
+.star-selection {
+	font-size: 1rem;
+	cursor: pointer;
+	display: flex;
+}
+.star {
+	color: #ccc;
+	transition: color 0.4s;
+}
+.star:hover, .star.active {
+	color: <?php echo $badgeWarning ?>;
+}
 
 /*
  *   Ok, Warning, Error
@@ -5446,7 +5485,12 @@ div#card-errors {
 	border: 1px solid #e0e0e0;
 	border-radius: 6px;
 }
-
+.ui-dialog {
+	padding-left: 5px;
+	padding-right: 5px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
 
 /* ============================================================================== */
 /* For content of image preview                                                   */
@@ -6236,6 +6280,16 @@ div.cke_notifications_area .cke_notification_warning {
 	visibility: hidden;
 }
 
+/* CSS To hide the picto menu on smartphone, except when maximize */
+@media only screen and (max-width: 768px)
+{
+	.cke_inner:not(.cke_maximized) .cke_toolbar_separator,
+	.cke_inner:not(.cke_maximized) .cke_combo,
+	.cke_inner:not(.cke_maximized) .cke_button:not(.cke_button__maximize) {
+		display: none;
+	}
+}
+
 
 /* ============================================================================== */
 /*  ACE editor                                                                    */
@@ -6910,7 +6964,7 @@ input.select2-input {
 .select2-dropdown {
 	/*background-color: var(--colorbackvmenu1);
 	border: 1px solid var(--colorbackvmenu1); */
-	box-shadow: 1px 2px 10px var(--colorbackvmenu1);
+	box-shadow: 1px 2px 10px #8884;
 	background-color: var(--colorbackbody);
 	color: var(--colortext);
 }
@@ -7078,9 +7132,14 @@ span#select2-boxbookmark-container {
   cursor: text;
   overflow: hidden;
 }
-
-ul.select2-results__options li {
-	font-size: 0.95em;
+.select2-results__option {
+	padding: 8px;
+}
+span.select2-dropdown--below {
+	margin-top: -1px;
+}
+span.select2-dropdown--above {
+	margin-bottom: -1px;
 }
 
 .parentonrightofpage {
