@@ -144,7 +144,7 @@ if (empty($reshook)) {
 
 
 	if ($action == 'set_thirdparty' && $permissiontoadd) {
-		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', '', 'date', '', $user, $triggermodname);
+		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', null, 'date', '', $user, $triggermodname);
 	}
 	if ($action == 'classin' && $permissiontoadd) {
 		$object->setProject(GETPOSTINT('projectid'));
@@ -171,6 +171,7 @@ if (empty($reshook)) {
 		// save evaldet lines to user;
 		$sk = new SkillRank($db);
 		$SkillrecordsForActiveUser = $sk->fetchAll('ASC', 'fk_skill', 0, 0, "(fk_object:=:".((int) $object->fk_user).") AND (objecttype:=:'".$db->escape(SkillRank::SKILLRANK_TYPE_USER)."')", 'AND');
+		'@phan-var-force SkillRank[] $SkillrecordsForActiveUser';
 
 		$errors = 0;
 		// we go through the evaldets of the eval
@@ -182,7 +183,7 @@ if (empty($reshook)) {
 
 				if ($resCreate <= 0) {
 					$errors++;
-					setEventMessage($langs->trans('ErrorCreateUserSkill'), $line->fk_skill);
+					setEventMessage($langs->trans('ErrorCreateUserSkill', $line->fk_skill));
 				}
 			} else {
 				//check if the skill is present to use it

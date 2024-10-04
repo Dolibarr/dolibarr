@@ -554,13 +554,15 @@ class Facture extends CommonInvoice
 		if ($this->fac_rec > 0) {
 			$this->fk_fac_rec_source = $this->fac_rec;
 
-			if (getDolGlobalString('MODEL_FAC_REC_AUTHOR')) {
-				$origin_user_author_id = ($this->fk_user_author > 0 ? $this->fk_user_author : $origin_user_author_id);
-			}
 			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 			$_facrec = new FactureRec($this->db);
 			$result = $_facrec->fetch($this->fac_rec);
 			$result = $_facrec->fetchObjectLinked(null, '', null, '', 'OR', 1, 'sourcetype', 0); // This load $_facrec->linkedObjectsIds
+
+			if (getDolGlobalString('MODEL_FAC_REC_AUTHOR')) {
+				// If option MODEL_FAC_REC_AUTHOR is set, we want the same author than the author of recurring invoice instead of current user
+				$origin_user_author_id = ($_facrec->user_creation_id > 0 ? $_facrec->user_creation_id : $origin_user_author_id);
+			}
 
 			// Define some dates
 			$originaldatewhen = $_facrec->date_when;

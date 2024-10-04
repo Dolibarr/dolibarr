@@ -497,7 +497,7 @@ print '</td></tr>';
 if (!$object->fk_user_creat) {
 	print '<tr><td>'.$langs->trans("EMail").'</td><td>';
 	if ($action == 'edit') {
-		print '<input type="text" name="nouvelleadresse" class="minwith200" value="'.$object->mail_admin.'">';
+		print '<input type="text" name="nouvelleadresse" class="minwidth200" value="'.$object->mail_admin.'">';
 	} else {
 		print dol_print_email($object->mail_admin, 0, 0, 1, 0, 1, 1);
 	}

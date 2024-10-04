@@ -109,6 +109,7 @@ function ticket_prepare_head($object)
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	$upload_dir = $conf->ticket->dir_output."/".$object->ref;
 	$nbFiles = count(dol_dir_list($upload_dir, 'files'));
+	/* disabled. Too many bugs. All file of a ticket must be stored into ticket. File must be linked to an event by column agenda_id into llx_ecmfiles.
 	$sql = 'SELECT id FROM '.MAIN_DB_PREFIX.'actioncomm';
 	$sql .= " WHERE fk_element = ".(int) $object->id." AND elementtype = 'ticket'";
 	$resql = $db->query($sql);
@@ -119,6 +120,7 @@ function ticket_prepare_head($object)
 			$nbFiles += count(dol_dir_list($upload_msg_dir, "files"));
 		}
 	}
+	*/
 	$head[$h][0] = DOL_URL_ROOT.'/ticket/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Documents");
 	if ($nbFiles > 0) {

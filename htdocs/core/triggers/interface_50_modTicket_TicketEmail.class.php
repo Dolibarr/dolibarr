@@ -191,7 +191,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 				}
 
 				// Send email to customer
-				if (!getDolGlobalString('TICKET_DISABLE_CUSTOMER_MAILS') && empty($object->context['disableticketemail']) && $object->notify_tiers_at_create) {
+				if (!getDolGlobalInt('TICKET_DISABLE_CUSTOMER_MAILS') && empty($object->context['disableticketemail']) && $object->notify_tiers_at_create) {
 					$sendto = '';
 
 					// if contact selected send to email's contact else send to email's thirdparty

@@ -27,7 +27,7 @@
 /**
  * Prepare array with list of tabs
  *
- * @param   object	$object		Object related to tabs
+ * @param   Propal	$object		Object related to tabs
  * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function propal_prepare_head($object)
@@ -154,7 +154,7 @@ function propal_prepare_head($object)
 /**
  *  Return array head with list of tabs to view object information.
  *
- *  @return	array   	        head array with tabs
+ *  @return	array<array{0:string,1:string,2:string}>	head array with tabs
  */
 function propal_admin_prepare_head()
 {
