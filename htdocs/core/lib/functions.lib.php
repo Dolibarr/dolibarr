@@ -12305,7 +12305,7 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 			}
 
 			$parsedUrl = parse_url($url);
-			if ((isset($parsedUrl['scheme']) && in_array($parsedUrl['scheme'], ['javascript', 'email', 'tel'])) || strpos($url, '#') === 0) {
+			if ((isset($parsedUrl['scheme']) && in_array($parsedUrl['scheme'], ['javascript', 'mailto', 'tel'])) || strpos($url, '#') === 0) {
 				return $url;
 			}
 
