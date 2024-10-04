@@ -120,6 +120,10 @@ class WebPortalOrder extends Commande
 	//public $multicurrency_total_ht;
 	//public $multicurrency_total_tva;
 	//public $multicurrency_total_ttc;
+
+	/**
+	 * @var int status
+	 */
 	public $fk_statut;
 	// END MODULEBUILDER PROPERTIES
 

@@ -146,6 +146,7 @@ $categories = $categorie->get_full_arbo('product', ((getDolGlobalInt('TAKEPOS_RO
 $levelofrootcategory = 0;
 if (getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID') > 0) {
 	foreach ($categories as $key => $categorycursor) {
+		// @phan-suppress-next-line PhanTypeInvalidDimOffset
 		if ($categorycursor['id'] == getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID')) {
 			$levelofrootcategory = $categorycursor['level'];
 			break;
@@ -1470,11 +1471,11 @@ if ($r % 3 == 2) {
 }
 
 if (getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR')) {
-	$menus[$r++] = array('title' => '<span class="fa fa-sign-out-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("Logout").'</div>', 'action' => 'window.location.href=\''.DOL_URL_ROOT.'/user/logout.php?token='.newToken().'\';');
+	$menus[$r++] = array('title' => '<span class="fa fa-sign-out-alt pictofixedwidth"></span><div class="trunc">'.$langs->trans("Logout").'</div>', 'action' => 'window.location.href=\''.DOL_URL_ROOT.'/user/logout.php?token='.newToken().'\';');
 }
 
 if (getDolGlobalString('TAKEPOS_WEIGHING_SCALE')) {
-	$menus[$r++] = array('title' => '<span class="fa fa-balance-scale paddingrightonly"></span><div class="trunc">'.$langs->trans("WeighingScale").'</div>', 'action' => 'WeighingScale();');
+	$menus[$r++] = array('title' => '<span class="fa fa-balance-scale pictofixedwidth"></span><div class="trunc">'.$langs->trans("WeighingScale").'</div>', 'action' => 'WeighingScale();');
 }
 
 ?>
@@ -1560,14 +1561,14 @@ if (getDolGlobalString('TAKEPOS_WEIGHING_SCALE')) {
 	$count = 0;
 	while ($count < $MAXPRODUCT) {
 		print '<div class="wrapper2 arrow" id="prodiv'.$count.'"  '; ?>
-								<?php if ($count == ($MAXPRODUCT - 2)) {
-									?> onclick="MoreProducts('less')" <?php
-								}
-								if ($count == ($MAXPRODUCT - 1)) {
-									?> onclick="MoreProducts('more')" <?php
-								} else {
-									echo 'onclick="ClickProduct('.$count.')"';
-								} ?>>
+										<?php if ($count == ($MAXPRODUCT - 2)) {
+											?> onclick="MoreProducts('less')" <?php
+										}
+										if ($count == ($MAXPRODUCT - 1)) {
+											?> onclick="MoreProducts('more')" <?php
+										} else {
+											echo 'onclick="ClickProduct('.$count.')"';
+										} ?>>
 					<?php
 					if ($count == ($MAXPRODUCT - 2)) {
 						//echo '<img class="imgwrapper" src="img/arrow-prev-top.png" height="100%" id="proimg'.$count.'" />';
@@ -1592,8 +1593,8 @@ if (getDolGlobalString('TAKEPOS_WEIGHING_SCALE')) {
 						<?php } ?>
 					<div class="catwatermark" id='prowatermark<?php echo $count; ?>'>...</div>
 				</div>
-					<?php
-					$count++;
+						<?php
+						$count++;
 	}
 	?>
 				<input type="hidden" id="search_start_less" value="0">

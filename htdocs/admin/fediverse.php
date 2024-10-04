@@ -206,7 +206,7 @@ if ($action == 'updatesocialnetwork') {
 		}
 	}
 
-	 // Add new key, value if changed
+	// Add new key, value if changed
 	foreach ($mergedParams as $newKey => $newValue) {
 		if (!isset($socialNetworkData[$newKey]) || $socialNetworkData[$newKey] !== $newValue) {
 			$socialNetworkData[$newKey] = $newValue;
@@ -295,8 +295,26 @@ print '<td>https://mastodon.social/api/v1/accounts/id_user</td>';
 print '</tr>';
 $vartosmtpstype = 'MAIN_MAIL_SMTPS_AUTH_TYPE_EMAILING';
 
+print '<script>
+$(document).ready(function() {
+    function toggleOAuthServiceDisplay() {
+        if ($("#radio_oauth").is(":checked")) {
+            $("#oauth_service_div").show();
+        } else {
+            $("#oauth_service_div").hide();
+        }
+    }
+
+    toggleOAuthServiceDisplay();
+
+    $("input[name=\"'.$vartosmtpstype.'\"]").change(function() {
+        toggleOAuthServiceDisplay();
+    });
+});
+</script>';
+
 // Methods oauth
-print '<td>'.$langs->trans("MAIN_MAIL_SMTPS_AUTH_TYPE").'</td>';
+print '<tr><td>'.$langs->trans("MAIN_MAIL_SMTPS_AUTH_TYPE").'</td>';
 print '<td>';
 print '<input type="radio" id="radio_oauth" name="'.$vartosmtpstype.'" value="XOAUTH2"'.(getDolGlobalString($vartosmtpstype) == 'XOAUTH2' ? ' checked' : '').(isModEnabled('oauth') ? '' : ' disabled').'>';
 print '<label for="radio_oauth">'.$form->textwithpicto($langs->trans("UseOauth"), $langs->trans("OauthNotAvailableForAllAndHadToBeCreatedBefore")).'</label>';
@@ -466,7 +484,7 @@ if ($resql) {
 		print '<table class="noborder centpercent">'."\n";
 
 		print '<tr class="liste_titre">';
-		print "<td>".$langs->trans("SocialNetworks")." ".($i+1)."</td>";
+		print "<td>".$langs->trans("SocialNetworks")." ".($i + 1)."</td>";
 		print '<td class="right">';
 		print '<a class="viewfielda reposition marginleftonly marginrighttonly showInputBtn" href="'.$_SERVER["PHP_SELF"].'?action=editsocialnetwork&token='.newToken().'&key='.urlencode($socialNetworkId).'">'.img_edit().'</a>';
 		print '<a class="deletefielda reposition marginleftonly right" href="'.$_SERVER["PHP_SELF"].'?action=deletesocialnetwork&token='.newToken().'&key='.urlencode($socialNetworkId).'">'.img_delete().'</a>';
@@ -564,8 +582,8 @@ $db->close();
 /**
  * Check if the given fediverse feed if inside the list of boxes/widgets
  *
- * @param	int		$id		The id of the socialnetwork
- * @param array<int, stdClass> $boxlist A list with boxes/widgets (array of stdClass objects).
+ * @param	int				$id			The id of the socialnetwork
+ * @param	ModeleBoxes[]	$boxlist	A list with boxes/widgets
  * @return	bool					True if the socialnetwork is inside the box/widget list, otherwise false
  */
 function _isInBoxListFediverse(int $id, array $boxlist)

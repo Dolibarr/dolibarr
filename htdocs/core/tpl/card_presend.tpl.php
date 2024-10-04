@@ -31,6 +31,14 @@
  * $arrayoffamiliestoexclude=array('system', 'mycompany', 'object', 'objectamount', 'date', 'user', ...);
  * $file
  */
+'
+@phan-var-force int<0,1> $diroutput
+@phan-var-force string $defaulttopic
+@phan-var-force string $defaulttopiclang
+@phan-var-force string[] $arrayoffamiliestoexclude
+@phan-var-force string $file
+@phan-var-force CommonObject $object
+';
 
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
@@ -46,9 +54,6 @@ if ($action == 'presend') {
 	$titreform = 'SendMail';
 
 	$object->fetch_projet();
-	if (!isset($file)) {
-		$file = null;
-	}
 	$ref = dol_sanitizeFileName($object->ref);
 	if (!in_array($object->element, array('user', 'member'))) {
 		//$fileparams['fullname'] can be filled from the card
@@ -198,22 +203,28 @@ if ($action == 'presend') {
 	// Define $liste, a list of recipients with email inside <>.
 	$liste = array();
 	if ($object->element == 'expensereport') {
+		'@phan-var-force ExpenseReport $object';
 		$fuser = new User($db);
 		$fuser->fetch($object->fk_user_author);
 		$liste['thirdparty'] = $fuser->getFullName($outputlangs)." <".$fuser->email.">";
 	} elseif ($object->element == 'partnership' && getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') {
+		'@phan-var-force Partnership $object';
 		$fadherent = new Adherent($db);
 		$fadherent->fetch($object->fk_member);
 		$liste['member'] = $fadherent->getFullName($outputlangs)." <".$fadherent->email.">";
 	} elseif ($object->element == 'societe') {
+		'@phan-var-force Societe $object';
 		foreach ($object->thirdparty_and_contact_email_array(1) as $key => $value) {
 			$liste[$key] = $value;
 		}
 	} elseif ($object->element == 'contact') {
+		'@phan-var-force Contact $object';
 		$liste['contact'] = $object->getFullName($outputlangs)." <".$object->email.">";
 	} elseif ($object->element == 'user' || $object->element == 'member') {
+		'@phan-var-force User|Adherent $object';
 		$liste['thirdparty'] = $object->getFullName($outputlangs)." <".$object->email.">";
 	} elseif ($object->element == 'salary') {
+		'@phan-var-force Salary $object';
 		$fuser = new User($db);
 		$fuser->fetch($object->fk_user);
 		$liste['thirdparty'] = $fuser->getFullName($outputlangs)." <".$fuser->email.">";
@@ -258,6 +269,7 @@ if ($action == 'presend') {
 	}
 	$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, $arrayoffamiliestoexclude, $object);
 
+	$emailsendersignature = null;
 	// Overwrite __SENDEREMAIL_SIGNATURE__ with value select into form
 	if ($formmail->fromtype) {
 		$reg = array();
@@ -282,6 +294,7 @@ if ($action == 'presend') {
 	$substitutionarray['__CHECK_READ__'] = "";
 	if (is_object($object) && is_object($object->thirdparty)) {
 		$checkRead = '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php';
+		// @phan-suppress-next-line PhanUndeclaredProperty;
 		$checkRead .= '?tag='.(!empty($object->thirdparty->tag) ? urlencode($object->thirdparty->tag) : "");
 		$checkRead .= '&securitykey='.(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY') ? urlencode(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY')) : "");
 		$checkRead .= '" width="1" height="1" style="width:1px;height:1px" border="0"/>';
@@ -334,6 +347,7 @@ if ($action == 'presend') {
 			dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
 			$classname = ucfirst($origin);
 			$objectsrc = new $classname($db);
+			'@phan-var-force Commande|Facture $objectsrc';
 			$objectsrc->fetch($origin_id);
 
 			$tmpobject = $objectsrc;

@@ -1,6 +1,8 @@
 Mrp=Manufacturing Orders
 MOs=Manufacturing orders
 ManufacturingOrder=Manufacturing Order
+ManufacturingOrderLine=Line of Manufacturing Order (consumption/production)
+ConsumptionAndProductionInMos=Manufacturing Orders and lines of Consumption and Production
 MRPDescription=Module to manage production and Manufacturing Orders (MO).
 MRPArea=MRP Area
 MrpSetupPage=Setup of module MRP

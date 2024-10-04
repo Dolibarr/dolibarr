@@ -1016,7 +1016,7 @@ if (empty($reshook)) {
 			$line->multicurrency_total_tva = $line->tva_tx * $line->qty * (float) $subprice * $line->multicurrency_subprice / $line->subprice;
 			$line->multicurrency_total_ttc = (1 + $line->tva_tx) * $line->qty * (float) $subprice * $line->multicurrency_subprice / $line->subprice;
 			// Used previous $line->subprice and $line->multicurrency_subprice above, now they can be set to their new values
-			$line->subprice = $subprice;
+			$line->subprice = (float) $subprice;
 			$line->multicurrency_subprice = $multicurrency_subprice;
 		}
 	} elseif ($action == 'addline' && !GETPOST('submitforalllines', 'alpha') && !GETPOST('submitforallmargins', 'alpha') && $usercancreate) {		// Add line
@@ -1170,7 +1170,7 @@ if (empty($reshook)) {
 						}
 					}
 
-					if ( !$pricebycustomerexist && $object->thirdparty->price_level) { // If price per segment
+					if (!$pricebycustomerexist && $object->thirdparty->price_level) { // If price per segment
 						$pu_ht = $prod->multiprices[$object->thirdparty->price_level];
 						$pu_ttc = $prod->multiprices_ttc[$object->thirdparty->price_level];
 						$price_min = $prod->multiprices_min[$object->thirdparty->price_level];
@@ -2714,7 +2714,7 @@ if ($action == 'create') {
 
 		// Payment term
 		print '<tr><td>';
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
+		print '<table class="nobordernopadding centpercent"><tr><td>';
 		print $langs->trans('PaymentConditionsShort');
 		print '</td>';
 		if ($action != 'editconditions' && $usercancreate && $caneditfield) {

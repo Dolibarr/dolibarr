@@ -1092,12 +1092,12 @@ if ($action == 'edit') {
 						if (($dnstype == 'SPF' && stripos($info['txt'], 'v=spf') !== false)
 							|| ($dnstype == 'DMARC' && stripos($info['txt'], 'v=dmarc') !== false)) {
 							$foundforemail++;
-							$text .= ($text ? '<br>' : '').$langs->trans("ActualMailDNSRecordFound", $dnstype, implode(', ', $listofemails), $info['txt']);
+							$text .= ($text ? '<br>' : '').'- '.$langs->trans("ActualMailDNSRecordFound", '<b>'.$dnstype.'</b>', '<b>'.implode(', ', $listofemails).'</b>', '<span class="opacitylow">'.$info['txt'].'</span>');
 						}
 					}
 				}
 				if (!$foundforemail) {
-					$text .= ($text ? '<br>' : '').$langs->trans("ActualMailDNSRecordFound", $dnstype, implode(', ', $listofemails), '<span class="opacitymedium">'.$langs->transnoentitiesnoconv("None").'</span>');
+					$text .= ($text ? '<br>' : '').'- '.$langs->trans("ActualMailDNSRecordFound", '<b>'.$dnstype.'</b>', '<b>'.implode(', ', $listofemails).'</b>', '<span class="opacitymedium">'.$langs->transnoentitiesnoconv("None").'</span>');
 				}
 			}
 		}

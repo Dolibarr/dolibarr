@@ -82,7 +82,7 @@ class box_graph_nb_ticket_last_x_days extends ModeleBoxes
 		$this->max = $max;
 
 
-		$param_day = 'DOLUSERCOOKIE_ticket_last_days';
+		$param_day = 'DOLUSER_ticket_last_days';
 		if (GETPOST($param_day)) {
 			if (GETPOST($param_day) >= 15) {
 				$days = 14;
@@ -93,7 +93,7 @@ class box_graph_nb_ticket_last_x_days extends ModeleBoxes
 			$days = 7;
 		}
 		require_once DOL_DOCUMENT_ROOT."/ticket/class/ticket.class.php";
-		$text = $langs->trans("BoxTicketLastXDays", $days).'&nbsp;'.img_picto('', 'filter.png', 'id="idsubimgDOLUSERCOOKIE_ticket_last_days" class="linkobject"');
+		$text = $langs->trans("BoxTicketLastXDays", $days).'&nbsp;'.img_picto('', 'filter.png', 'id="idsubimgDOLUSER_ticket_last_days" class="linkobject"');
 		$this->info_box_head = array(
 			'text' => $text,
 			'limit' => dol_strlen($text)
@@ -137,16 +137,16 @@ class box_graph_nb_ticket_last_x_days extends ModeleBoxes
 			$stringtoshow = '<div class="div-table-responsive-no-min">';
 			$stringtoshow .= '<script nonce="'.getNonce().'" type="text/javascript">
 				jQuery(document).ready(function() {
-					jQuery("#idsubimgDOLUSERCOOKIE_ticket_last_days").click(function() {
-						jQuery("#idfilterDOLUSERCOOKIE_ticket_last_days").toggle();
+					jQuery("#idsubimgDOLUSER_ticket_last_days").click(function() {
+						jQuery("#idfilterDOLUSER_ticket_last_days").toggle();
 					});
 				});
 				</script>';
-			$stringtoshow .= '<div class="center hideobject" id="idfilterDOLUSERCOOKIE_ticket_last_days">'; // hideobject is to start hidden
+			$stringtoshow .= '<div class="center hideobject" id="idfilterDOLUSER_ticket_last_days">'; // hideobject is to start hidden
 			$stringtoshow .= '<form class="flat formboxfilter" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 			$stringtoshow .= '<input type="hidden" name="token" value="'.newToken().'">';
 			$stringtoshow .= '<input type="hidden" name="action" value="refresh">';
-			$stringtoshow .= '<input type="hidden" name="DOL_AUTOSET_COOKIE" value="DOLUSERCOOKIE_ticket_last_days:days">';
+			$stringtoshow .= '<input type="hidden" name="DOL_AUTOSET_COOKIE" value="DOLUSER_ticket_last_days:days">';
 			$stringtoshow .= ' <input class="flat" size="4" type="text" name="'.$param_day.'" value="'.$days.'">'.$langs->trans("Days");
 			$stringtoshow .= '<input type="image" alt="'.$langs->trans("Refresh").'" src="'.img_picto($langs->trans("Refresh"), 'refresh.png', '', 0, 1).'">';
 			$stringtoshow .= '</form>';
@@ -201,13 +201,15 @@ class box_graph_nb_ticket_last_x_days extends ModeleBoxes
 		}
 	}
 
+
+
 	/**
-	 *     Method to show box
+	 *	Method to show box.  Called when the box needs to be displayed.
 	 *
-	 *	@param	?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}	$head	Array with properties of box title
-	 *	@param	?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>	$contents	Array with properties of box lines
+	 *	@param	?array<array{text?:string,sublink?:string,subtext?:string,subpicto?:?string,picto?:string,nbcol?:int,limit?:int,subclass?:string,graph?:int<0,1>,target?:string}>   $head       Array with properties of box title
+	 *	@param	?array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:int,asis?:int<0,1>}>   $contents   Array with properties of box lines
 	 *	@param	int<0,1>	$nooutput	No print, only return string
-	 *     @return string
+	 *	@return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)
 	{

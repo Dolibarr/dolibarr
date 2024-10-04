@@ -4,6 +4,7 @@
  * Copyright (C) 2016-2018  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2017-2022  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021       Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,7 +64,7 @@ $fk_project = (GETPOST('fk_project') ? GETPOSTINT('fk_project') : 0);
 $dateech = dol_mktime(GETPOST('echhour'), GETPOST('echmin'), GETPOST('echsec'), GETPOST('echmonth'), GETPOST('echday'), GETPOST('echyear'));
 $dateperiod = dol_mktime(GETPOST('periodhour'), GETPOST('periodmin'), GETPOST('periodsec'), GETPOST('periodmonth'), GETPOST('periodday'), GETPOST('periodyear'));
 $label = GETPOST('label', 'alpha');
-$actioncode = GETPOST('actioncode');
+$actioncode = GETPOSTINT('actioncode');
 $fk_user = GETPOSTINT('userid') > 0 ? GETPOSTINT('userid') : 0;
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
@@ -138,7 +139,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'setlib' && $permissiontoadd) {
-		$result = $object->setValueFrom('libelle', GETPOST('lib'), '', '', 'text', '', $user, 'TAX_MODIFY');
+		$result = $object->setValueFrom('libelle', GETPOST('lib'), '', null, 'text', '', $user, 'TAX_MODIFY');
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -374,7 +375,7 @@ if ($action == 'create') {
 	print $langs->trans("Type");
 	print '</td>';
 	print '<td>';
-	$formsocialcontrib->select_type_socialcontrib(GETPOST("actioncode", 'alpha') ? GETPOST("actioncode", 'alpha') : '', 'actioncode', 1);
+	$formsocialcontrib->select_type_socialcontrib(GETPOST('actioncode', 'alpha') ? GETPOST('actioncode', 'alpha') : '', 'actioncode', 1);
 	print '</td>';
 	print '</tr>';
 
@@ -463,12 +464,12 @@ if ($id > 0) {
 		// Clone confirmation
 		if ($action === 'clone') {
 			$formquestion = array(
-				array('type' => 'text', 'name' => 'clone_label', 'label' => $langs->trans("Label"), 'value' => $langs->trans("CopyOf").' '.$object->label, 'tdclass'=>'fieldrequired'),
+				array('type' => 'text', 'name' => 'clone_label', 'label' => $langs->trans("Label"), 'value' => $langs->trans("CopyOf").' '.$object->label, 'tdclass' => 'fieldrequired'),
 			);
 			if (getDolGlobalString('TAX_ADD_CLONE_FOR_NEXT_MONTH_CHECKBOX')) {
 				$formquestion[] = array('type' => 'checkbox', 'name' => 'clone_for_next_month', 'label' => $langs->trans("CloneTaxForNextMonth"), 'value' => 1);
 			} else {
-				$formquestion[] = array('type' => 'date', 'datenow'=>1, 'name' => 'clone_date_ech', 'label' => $langs->trans("Date"), 'value' => -1);
+				$formquestion[] = array('type' => 'date', 'datenow' => 1, 'name' => 'clone_date_ech', 'label' => $langs->trans("Date"), 'value' => -1);
 				$formquestion[] = array('type' => 'date', 'name' => 'clone_period', 'label' => $langs->trans("PeriodEndDate"), 'value' => -1);
 				$formquestion[] = array('type' => 'text', 'name' => 'amount', 'label' => $langs->trans("Amount"), 'value' => price($object->amount), 'morecss' => 'width100');
 			}
@@ -587,7 +588,8 @@ if ($id > 0) {
 		print '<tr><td class="titlefieldmiddle">';
 		print $langs->trans("Type")."</td><td>";
 		if ($action == 'edit' && $object->getSommePaiement() == 0) {
-			$formsocialcontrib->select_type_socialcontrib(GETPOST("actioncode", 'alpha') ? GETPOST("actioncode", 'alpha') : $object->type, 'actioncode', 1);
+			$actionPostValue = GETPOSTINT('actioncode');
+			$formsocialcontrib->select_type_socialcontrib($actionPostValue ? $actionPostValue : $object->type, 'actioncode', 1);
 		} else {
 			print $object->type_label;
 		}

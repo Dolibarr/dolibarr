@@ -180,7 +180,7 @@ class FormMail extends Form
 	public $substit = array();
 	public $substit_lines = array();
 	/**
-	 * @var array{}|array{models:string,langmodels?:string,fileinit?:string[],returnurl:string}
+	 * @var array{}|array{models:string,langsmodels?:string,fileinit?:string[],returnurl:string}
 	 */
 	public $param = array();
 
@@ -1946,8 +1946,8 @@ class FormMail extends Form
 					'__PRODUCT_DESCRIPTION__' => isset($line->product_desc) ? $line->product_desc : '',
 					'__LABEL__' => isset($line->label) ? $line->label : '',
 					'__DESCRIPTION__' => isset($line->desc) ? $line->desc : '',
-					'__DATE_START_YMD__' => dol_print_date($line->date_start, 'day', 0, $outputlangs),
-					'__DATE_END_YMD__' => dol_print_date($line->date_end, 'day', 0, $outputlangs),
+					'__DATE_START_YMD__' => dol_print_date($line->date_start, 'day', false, $outputlangs),
+					'__DATE_END_YMD__' => dol_print_date($line->date_end, 'day', false, $outputlangs),
 					'__QUANTITY__' => $line->qty,
 					'__SUBPRICE__' => price($line->subprice),
 					'__AMOUNT__' => price($line->total_ttc),

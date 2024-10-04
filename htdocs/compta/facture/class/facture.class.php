@@ -180,7 +180,7 @@ class Facture extends CommonInvoice
 	 */
 	public $module_source;
 	/**
-	 * @var int key of pos source ('0', '1', ...)
+	 * @var string key of pos source ('0', '1', ...)
 	 */
 	public $pos_source;
 	/**
@@ -554,13 +554,15 @@ class Facture extends CommonInvoice
 		if ($this->fac_rec > 0) {
 			$this->fk_fac_rec_source = $this->fac_rec;
 
-			if (getDolGlobalString('MODEL_FAC_REC_AUTHOR')) {
-				$origin_user_author_id = ($this->fk_user_author > 0 ? $this->fk_user_author : $origin_user_author_id);
-			}
 			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 			$_facrec = new FactureRec($this->db);
 			$result = $_facrec->fetch($this->fac_rec);
 			$result = $_facrec->fetchObjectLinked(null, '', null, '', 'OR', 1, 'sourcetype', 0); // This load $_facrec->linkedObjectsIds
+
+			if (getDolGlobalString('MODEL_FAC_REC_AUTHOR')) {
+				// If option MODEL_FAC_REC_AUTHOR is set, we want the same author than the author of recurring invoice instead of current user
+				$origin_user_author_id = ($_facrec->user_creation_id > 0 ? $_facrec->user_creation_id : $origin_user_author_id);
+			}
 
 			// Define some dates
 			$originaldatewhen = $_facrec->date_when;
@@ -1979,11 +1981,16 @@ class Facture extends CommonInvoice
 
 			// Complete datas
 			if (!empty($params['fromajaxtooltip']) && !isset($this->totalpaid)) {
-				// Load the totalpaid field
 				$this->totalpaid = $this->getSommePaiement(0);
 			}
-			if (isset($this->status) && isset($this->totalpaid)) {
-				$datas['picto'] .= ' '.$this->getLibStatut(5, $this->totalpaid);
+			if (!empty($params['fromajaxtooltip']) && !isset($this->totalcreditnotes)) {
+				$this->totalcreditnotes = $this->getSumCreditNotesUsed(0);
+			}
+			if (!empty($params['fromajaxtooltip']) && !isset($this->totaldeposits)) {
+				$this->totaldeposits = $this->getSumDepositsUsed(0);
+			}
+			if (isset($this->status) && isset($this->totalpaid) && isset($this->totalcreditnotes) && isset($this->totaldeposits)) {
+				$datas['picto'] .= ' '.$this->getLibStatut(5, $this->totalpaid + $this->totalcreditnotes + $this->totaldeposits);
 			}
 			if ($moretitle) {
 				$datas['picto'] .= ' - '.$moretitle;
@@ -3624,7 +3631,7 @@ class Facture extends CommonInvoice
 						$line = $this->lines[$i];
 						'@phan-var-force FactureLigne $line';
 						if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
-							$previousprogress = $line->get_allprev_progress($line->fk_facture);
+							$previousprogress = $line->getAllPrevProgress($line->fk_facture);
 							$current_progress = (float) $line->situation_percent;
 							$full_progress = $previousprogress + $current_progress;
 							$final = ($full_progress == 100);
@@ -4394,7 +4401,7 @@ class Facture extends CommonInvoice
 			$percent = 100;
 		}
 		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
-			$previous_progress = $line->get_allprev_progress($line->fk_facture);
+			$previous_progress = $line->getAllPrevProgress($line->fk_facture);
 			$current_progress = $percent - $previous_progress;
 			$line->situation_percent = $current_progress;
 			$tabprice = calcul_price_total($line->qty, $line->subprice, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 0, 'HT', 0, $line->product_type, $mysoc, array(), $current_progress);
