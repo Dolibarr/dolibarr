@@ -271,3 +271,14 @@ if (!defined('NOREQUIRETRAN')) {
 if (!defined('MAIN_LABEL_MENTION_NPR')) {
 	define('MAIN_LABEL_MENTION_NPR', 'NPR');
 }
+
+// Define ANSI color constant to use colors and bold in CLI script
+define('DOL_COLOR_RESET', "\033[0m");		// Restore color
+define('DOL_COLOR_BOLD', "\033[1m");			// Bold
+define('DOL_COLOR_RED', "\033[31m");
+define('DOL_COLOR_GREEN', "\033[32m");
+define('DOL_COLOR_YELLOW', "\033[33m");
+define('DOL_COLOR_BLUE', "\033[34m");
+define('DOL_COLOR_MAGENTA', "\033[35m");
+define('DOL_COLOR_CYAN', "\033[36m");
+define('DOL_COLOR_WHITE', "\033[37m");
