@@ -813,7 +813,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		if ($pathoffile) {     // Mostly for external modules
 			$content = file_get_contents($pathoffile, false, null, 0, 1024 * 1024);	// Max size loaded 1Mb
 
-			if ((float) DOL_VERSION >= 6.0) {
+			if ((float) DOL_VERSION >= 6.0) {  // @phpstan-ignore-line
 				@include_once DOL_DOCUMENT_ROOT.'/core/lib/parsemd.lib.php';
 
 				$content = dolMd2Html(
@@ -914,7 +914,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		if ($filefound) {     // Mostly for external modules
 			$content = file_get_contents($pathoffile);
 
-			if ((float) DOL_VERSION >= 6.0) {
+			if ((float) DOL_VERSION >= 6.0) {  // @phpstan-ignore-line
 				@include_once DOL_DOCUMENT_ROOT.'/core/lib/parsemd.lib.php';
 
 				$content = dolMd2Html($content, 'parsedown', array('doc/' => dol_buildpath(strtolower($this->name).'/doc/', 1)));

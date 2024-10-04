@@ -12452,7 +12452,7 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 
 		$out = '';
 
-		if (isset($params["areDropdownButtons"]) && $params["areDropdownButtons"] === false) {
+		if (array_key_exists('areDropdownButtons', $params) && $params["areDropdownButtons"] === false) {  // @phan-suppress-current-line PhanTypeInvalidDimOffset
 			foreach ($url as $button) {
 				if (!empty($button['lang'])) {
 					$langs->load($button['lang']);
@@ -12463,7 +12463,7 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 				$tmpUrl = DOL_URL_ROOT.$button['url'].(empty($params['backtopage']) ? '' : '&amp;backtopage='.urlencode($params['backtopage']));
 				$id = $button['id'] ?? '';
 				$userRight = $button['perm'] ?? 1;
-				$button['params'] = $button['params'] ?? [];
+				$button['params'] = $button['params'] ?? [];  // @phan-suppress-current-line PhanPluginDuplicateExpressionAssignmentOperation
 
 				$out .= dolGetButtonAction($label, $text, $actionType, $tmpUrl, $id, $userRight, $button['params']);
 			}
