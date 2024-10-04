@@ -804,7 +804,7 @@ if (empty($reshook)) {
 						$line['fk_fournprice'] = $pf->product_fourn_price_id;
 						$line['pa_ht'] = $pf->fourn_unitprice_with_discount;
 						if (getDolGlobalString('PRODUCT_CHARGES') && $pf->fourn_charges > 0) {
-							$line['pa_ht'] += $pf->fourn_charges / $pf->fourn_qty;
+							$line['pa_ht'] += (float) $pf->fourn_charges / $pf->fourn_qty;
 						}
 					}
 				}

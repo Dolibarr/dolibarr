@@ -53,7 +53,7 @@ if (empty($date_start) || empty($date_end)) { // We define date_start and date_e
 	$q = GETPOST("q");
 	if (empty($q)) {
 		if (GETPOST("month")) {
-			$date_start = dol_get_first_day($year_start, GETPOST("month"), false);
+			$date_start = dol_get_first_day($year_start, GETPOSTINT("month"), false);
 			$date_end = dol_get_last_day($year_start, GETPOSTINT("month"), false);
 		} else {
 			$date_start = dol_get_first_day($year_start, !getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START, false);

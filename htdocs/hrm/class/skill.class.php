@@ -112,14 +112,41 @@ class Skill extends CommonObject
 		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'position' => 70, 'notnull' => 0, 'visible' => 0,),
 		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'position' => 71, 'notnull' => 0, 'visible' => 0,),
 	);
+	/**
+	 * @var int
+	 */
 	public $rowid;
+	/**
+	 * @var string
+	 */
 	public $label;
+	/**
+	 * @var string
+	 */
 	public $description;
+	/**
+	 * @var int
+	 */
 	public $fk_user_creat;
+	/**
+	 * @var int
+	 */
 	public $fk_user_modif;
+	/**
+	 * @var int
+	 */
 	public $required_level;
-	public $date_validite;
+	/**
+	 * @var int|string
+	 */
+	public $date_validite;  // Note: misspelled!
+	/**
+	 * @var float
+	 */
 	public $temps_theorique;
+	/**
+	 * @var int
+	 */
 	public $skill_type;
 	// END MODULEBUILDER PROPERTIES
 
@@ -313,6 +340,7 @@ class Skill extends CommonObject
 			$object->ref = empty($this->fields['ref']['default']) ? "Copy_Of_".$object->ref : $this->fields['ref']['default'];
 		}
 		if (property_exists($object, 'label')) {
+			// @phan-suppress-next-line PhanTypeInvalidDimOffset
 			$object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
 		}
 		if (property_exists($object, 'status')) {
@@ -1002,6 +1030,7 @@ class Skill extends CommonObject
 
 			if (class_exists($classname)) {
 				$obj = new $classname();
+				'@phan-var-force ModeleNumRefEvaluation $obj';
 				$numref = $obj->getNextValue($this);
 
 				if ($numref != '' && $numref != '-1') {
@@ -1026,10 +1055,10 @@ class Skill extends CommonObject
 	 *
 	 *  @param	    string		$modele			Force template to use ('' to not force)
 	 *  @param		Translate	$outputlangs	object lang a utiliser pour traduction
-	 *  @param      int			$hidedetails    Hide details of lines
-	 *  @param      int			$hidedesc       Hide description
-	 *  @param      int			$hideref        Hide ref
-	 *  @param      null|array  $moreparams     Array to provide more information
+	 *  @param      int<0,1>	$hidedetails    Hide details of lines
+	 *  @param      int<0,1>	$hidedesc       Hide description
+	 *  @param      int<0,1>	$hideref        Hide ref
+	 *  @param      array<string,mixed>	$moreparams     Array to provide more information
 	 *  @return     int         				0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)

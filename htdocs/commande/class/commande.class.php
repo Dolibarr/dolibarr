@@ -203,7 +203,7 @@ class Commande extends CommonOrder
 	public $date_commande;
 
 	/**
-	 * @var null|int|''	Date expected of shipment (date of start of shipment, not the reception that occurs some days after)
+	 * @var null|int|''	Expected shipment date (date of start of shipment, not the reception that occurs some days after)
 	 */
 	public $delivery_date;
 
@@ -213,10 +213,14 @@ class Commande extends CommonOrder
 	public $fk_remise_except;
 
 	/**
-	 * @deprecated
+	 * @var string
+	 * @deprecated See $fk_remise_except
 	 */
 	public $remise_percent;
 
+	/**
+	 * @var int
+	 */
 	public $source; // Order mode. How we received order (by phone, by email, ...)
 
 	/**
@@ -253,13 +257,17 @@ class Commande extends CommonOrder
 	public $lines = array();
 
 
-	//! key of module source when order generated from a dedicated module ('cashdesk', 'takepos', ...)
+	/**
+	 * @var string key of module source when order generated from a dedicated module ('cashdesk', 'takepos', ...)
+	 */
 	public $module_source;
-	//! key of pos source ('0', '1', ...)
+	/**
+	 * @var string key of pos source ('0', '1', ...)
+	 */
 	public $pos_source;
 
 	/**
-	 * @var array	Array with line of all shipments
+	 * @var array<int,float>	Array with lines of all shipments (qty)
 	 */
 	public $expeditions;
 
@@ -1325,7 +1333,7 @@ class Commande extends CommonOrder
 	/**
 	 *  Load an object from a proposal and create a new order into database
 	 *
-	 *  @param      Object			$object 	        Object source
+	 *  @param      Propal			$object 	        Object source
 	 *  @param		User			$user				User making creation
 	 *  @return     int             					Return integer <0 if KO, 0 if nothing done, 1 if OK
 	 */
@@ -1506,11 +1514,11 @@ class Commande extends CommonOrder
 	 *  @param		int				$fk_fournprice		Id supplier price
 	 *  @param		int				$pa_ht				Buying price (without tax)
 	 *  @param		string			$label				Label
-	 *  @param		array			$array_options		extrafields array. Example array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
-	 * 	@param 		int|null		$fk_unit 			Code of the unit to use. Null to use the default one
+	 *  @param		array<string,mixed>	$array_options		extrafields array. Example array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
+	 * 	@param 		?int			$fk_unit 			Code of the unit to use. Null to use the default one
 	 * 	@param		string		    $origin				Depend on global conf MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION can be 'orderdet', 'propaldet'..., else 'order','propal,'....
 	 *  @param		int			    $origin_id			Depend on global conf MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION can be Id of origin object (aka line id), else object id
-	 * 	@param		double			$pu_ht_devise		Unit price in currency
+	 * 	@param		float			$pu_ht_devise		Unit price in currency
 	 * 	@param		string			$ref_ext		    line external reference
 	 *  @param		int				$noupdateafterinsertline	No update after insert of line
 	 *	@return     int             					>0 if OK, <0 if KO
@@ -3116,12 +3124,12 @@ class Commande extends CommonOrder
 	 *  @param		int				$pa_ht				Price (without tax) of product when it was bought
 	 *  @param		string			$label				Label
 	 *  @param		int				$special_code		Special code (also used by externals modules!)
-	 *  @param		array			$array_options		extrafields array
-	 * 	@param 		int|null		$fk_unit 			Code of the unit to use. Null to use the default one
-	 *  @param		double			$pu_ht_devise		Amount in currency
+	 *  @param		array<string,mixed>	$array_options	extrafields array
+	 * 	@param 		?int			$fk_unit 			Code of the unit to use. Null to use the default one
+	 *  @param		float			$pu_ht_devise		Amount in currency
 	 * 	@param		int				$notrigger			disable line update trigger
 	 * 	@param		string			$ref_ext			external reference
-	 * @param       integer $rang   line rank
+	 *	@param		int				$rang				line rank
 	 *  @return   	int              					Return integer < 0 if KO, > 0 if OK
 	 */
 	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $price_base_type = 'HT', $info_bits = 0, $date_start = '', $date_end = '', $type = 0, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = null, $pa_ht = 0, $label = '', $special_code = 0, $array_options = array(), $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $ref_ext = '', $rang = 0)
@@ -4132,11 +4140,11 @@ class Commande extends CommonOrder
 	 *
 	 *  @param	    string		$modele			Force template to use ('' to not force)
 	 *  @param		Translate	$outputlangs	object lang a utiliser pour traduction
-	 *  @param      int			$hidedetails    Hide details of lines
-	 *  @param      int			$hidedesc       Hide description
-	 *  @param      int			$hideref        Hide ref
-	 *  @param      null|array  $moreparams     Array to provide more information
-	 *  @return     int         				0 if KO, 1 if OK
+	 *  @param      int<0,1>	$hidedetails    Hide details of lines
+	 *  @param      int<0,1>	$hidedesc       Hide description
+	 *  @param      int<0,1>	$hideref        Hide ref
+	 *  @param      array<string,mixed>  $moreparams     Array to provide more information
+	 *  @return     int<0,1>       				0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
@@ -4235,10 +4243,10 @@ class Commande extends CommonOrder
 	/**
 	 * Set signed status
 	 *
-	 * @param  User   $user        Object user that modify
-	 * @param  int    $status      Newsigned  status to set (often a constant like self::STATUS_XXX)
-	 * @param  int    $notrigger   1 = Does not execute triggers, 0 = Execute triggers
-	 * @param  string $triggercode Trigger code to use
+	 * @param  User		$user        Object user that modify
+	 * @param  int		$status      Newsigned  status to set (often a constant like self::STATUS_XXX)
+	 * @param  int<0,1>	$notrigger   1 = Does not execute triggers, 0 = Execute triggers
+	 * @param  string	$triggercode Trigger code to use
 	 * @return int                 0 < if KO, > 0 if OK
 	 */
 	public function setSignedStatus(User $user, int $status = 0, int $notrigger = 0, $triggercode = ''): int

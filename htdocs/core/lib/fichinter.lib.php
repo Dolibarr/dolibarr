@@ -31,7 +31,7 @@
 /**
  * Prepare array with list of tabs
  *
- * @param   Object	$object		Object related to tabs
+ * @param   CommonObject	$object		Object related to tabs
  * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function fichinter_prepare_head($object)
@@ -165,7 +165,7 @@ function fichinter_prepare_head($object)
 /**
  *  Return array head with list of tabs to view object information.
  *
- *  @return	array   	        head array with tabs
+ *  @return	array<array{0:string,1:string,2:string}>	head array with tabs
  */
 function fichinter_admin_prepare_head()
 {

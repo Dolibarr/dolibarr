@@ -1477,6 +1477,7 @@ if (!empty($arrayfields['s.nom']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.name_alias']['checked'])) {
+	// @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['s.name_alias']['label'], $_SERVER["PHP_SELF"], "s.name_alias", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
@@ -1707,8 +1708,12 @@ while ($i < $imaxinloop) {
 				}
 				foreach ($groupbyvalues as $tmpcursor => $tmpgroupbyvalue) {
 					//var_dump("tmpcursor=".$tmpcursor." groupbyold=".$groupbyold." groupbyvalue=".$groupbyvalue);
-					if (!is_null($groupbyold) && ($tmpcursor <= $groupbyold)) { continue; }
-					if ($tmpcursor >= $groupbyvalue) { continue; }
+					if (!is_null($groupbyold) && ($tmpcursor <= $groupbyold)) {
+						continue;
+					}
+					if ($tmpcursor >= $groupbyvalue) {
+						continue;
+					}
 					// We found a possible column with no value, we output the empty column
 					print '<div class="box-flex-container-column kanban column';
 					if (in_array($tmpcursor, $groupofcollpasedvalues)) {
@@ -1745,7 +1750,9 @@ while ($i < $imaxinloop) {
 				print '</div>';	// end box-flex-container
 				foreach ($groupbyvalues as $tmpcursor => $tmpgroupbyvalue) {
 					//var_dump("tmpcursor=".$tmpcursor." groupbyold=".$groupbyold." groupbyvalue=".$groupbyvalue);
-					if ($tmpcursor <= $groupbyvalue) { continue; }
+					if ($tmpcursor <= $groupbyvalue) {
+						continue;
+					}
 					// We found a possible column with no value, we output the empty column
 					print '<div class="box-flex-container-column kanban column';
 					if (in_array($tmpcursor, $groupofcollpasedvalues)) {

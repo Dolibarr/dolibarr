@@ -269,7 +269,7 @@ class Product extends CommonObject
 	public $tva_tx;
 
 	/**
-	 * @var int	French VAT NPR is used (0 or 1)
+	 * @var int<0,1>	French VAT NPR is used (0 or 1)
 	 */
 	public $tva_npr = 0;
 
@@ -1972,6 +1972,7 @@ class Product extends CommonObject
 					$sql2 .= " label = '".$this->db->escape($this->multilangs["$key"]["label"])."',";
 					$sql2 .= " description = '".$this->db->escape($this->multilangs["$key"]["description"])."'";
 					if (getDolGlobalString('PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION')) {
+						// @phan-suppress-next-line PhanTypeInvalidDimOffset
 						$sql2 .= ", note = '".$this->db->escape($this->multilangs["$key"]["other"])."'";
 					}
 					$sql2 .= " WHERE fk_product = ".((int) $this->id)." AND lang = '".$this->db->escape($key)."'";
@@ -1984,6 +1985,7 @@ class Product extends CommonObject
 					$sql2 .= " VALUES(".((int) $this->id).",'".$this->db->escape($key)."','".$this->db->escape($this->multilangs["$key"]["label"])."',";
 					$sql2 .= " '".$this->db->escape($this->multilangs["$key"]["description"])."'";
 					if (getDolGlobalString('PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION')) {
+						// @phan-suppress-next-line PhanTypeInvalidDimOffset
 						$sql2 .= ", '".$this->db->escape($this->multilangs["$key"]["other"])."'";
 					}
 					$sql2 .= ")";
@@ -2307,7 +2309,7 @@ class Product extends CommonObject
 				}
 			}
 
-			if ( !$pricebycustomerexist && !empty($thirdparty_buyer->price_level)) {
+			if (!$pricebycustomerexist && !empty($thirdparty_buyer->price_level)) {
 				$pu_ht = $this->multiprices[$thirdparty_buyer->price_level];
 				$pu_ttc = $this->multiprices_ttc[$thirdparty_buyer->price_level];
 				$price_min = $this->multiprices_min[$thirdparty_buyer->price_level];

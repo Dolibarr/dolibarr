@@ -2169,7 +2169,7 @@ class Societe extends CommonObject
 	 *    @param    string	$ref_alias 		Name_alias of third party (Warning, this can return several records)
 	 * 	  @param	int		$is_client		Only client third party
 	 *    @param	int		$is_supplier	Only supplier third party
-	 *    @return   int						>0 if OK, <0 if KO or if two records found, 0 if not found.
+	 *    @return   int						ID of thirdparty found if OK, <0 if KO or if two records found, 0 if not found.
 	 */
 	public function findNearest($rowid = 0, $ref = '', $ref_ext = '', $barcode = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '', $is_client = 0, $is_supplier = 0)
 	{
@@ -2194,11 +2194,11 @@ class Societe extends CommonObject
 	 *    Delete a third party from database and all its dependencies (contacts, rib...)
 	 *
 	 *    @param	int			$id             Id of third party to delete
-	 *    @param    User|null   $fuser          User who ask to delete thirdparty
-	 *    @param    int			$call_trigger   0=No, 1=yes
+	 *    @param    ?User		$fuser          User who ask to delete thirdparty
+	 *    @param    int<0,1>	$call_trigger   0=No, 1=yes
 	 *    @return	int							Return integer <0 if KO, 0 if nothing done, >0 if OK
 	 */
-	public function delete($id, User $fuser = null, $call_trigger = 1)
+	public function delete($id, $fuser = null, $call_trigger = 1)
 	{
 		global $conf, $user;
 

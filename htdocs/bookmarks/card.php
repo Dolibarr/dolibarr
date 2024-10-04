@@ -40,7 +40,7 @@ $action = GETPOST("action", "alpha");
 $title = (string) GETPOST("title", "alpha");
 $url = (string) GETPOST("url", "alpha");
 $urlsource = GETPOST("urlsource", "alpha");
-$target = GETPOSTINT("target");
+$target = GETPOST("target", "alpha");
 $userid = GETPOSTINT("userid");
 $position = GETPOSTINT("position");
 $backtopage = GETPOST('backtopage', 'alpha');
@@ -274,10 +274,10 @@ if ($id > 0 && !preg_match('/^add/i', $action)) {
 		$liste = array(1=>$langs->trans("OpenANewWindow"), 0=>$langs->trans("ReplaceWindow"));
 		print $form->selectarray('target', $liste, GETPOSTISSET("target") ? GETPOST("target") : $object->target);
 	} else {
-		if ($object->target == 0) {
+		if ($object->target == '0') {
 			print $langs->trans("ReplaceWindow");
 		}
-		if ($object->target == 1) {
+		if ($object->target == '1') {
 			print $langs->trans("OpenANewWindow");
 		}
 	}

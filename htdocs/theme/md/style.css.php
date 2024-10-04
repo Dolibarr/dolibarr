@@ -1225,11 +1225,23 @@ td.wordbreak img, td.wordbreakimp img {
 .nopaddingright {
 	padding-<?php print $right; ?>: 0;
 }
+.nopaddingtop {
+	padding-top: 0;
+}
+.nopaddingbottom {
+	padding-bottom: 0;
+}
 .nopaddingleftimp {
 	padding-<?php print $left; ?>: 0 !important;
 }
 .nopaddingrightimp {
 	padding-<?php print $right; ?>: 0 !important;
+}
+.nopaddingtopimp {
+	padding-top: 0 !important;
+}
+.nopaddingbottomimp {
+	padding-bottom: 0 !important;
 }
 .paddingleft {
 	padding-<?php print $left; ?>: 4px;
@@ -2091,6 +2103,7 @@ tr.nobottom td {
 .titlefieldcreate { width: 20%; }
 .titlefield       { /* width: 25%; */ min-width: 150px; width: 25%; }
 .titlefieldmiddle { width: 50%; }
+.titlefieldmax45 { max-width: 45%; min-width: 180px; }
 .imgmaxwidth180 { max-width: 180px; }
 .imgmaxheight50 { max-height: 50px; }
 
@@ -2128,6 +2141,7 @@ tr.nobottom td {
 /* Force values for small screen 1000 */
 @media only screen and (max-width: 1000px)
 {
+	.titlefieldmax45 { min-width: 100px; }
 	.maxwidthonsmartphone { max-width: 100px; }
 	.minwidth50imp  { min-width: 50px !important; }
 	.minwidth75imp  { min-width: 70px !important; }
@@ -3495,7 +3509,7 @@ div.login a:hover {
 	text-decoration:underline;
 }
 div.login_block_user, div.login_block_other { clear: both; }
-div.login_block_other { padding-top: 15px; }
+div.login_block_other, div.login_block_tools { padding-top: 15px; }
 
 .topnav div.login_block_user {
 	display: inline-block;
@@ -3558,10 +3572,10 @@ img.login, img.printer, img.entity {
 }
 .userimg.atoplogin img.userphoto, .userimgatoplogin img.userphoto {		/* size for user photo in login bar */
 	/* border-radius: 8px; */
-	width: 20px;
-	height: 20px;
+	width: <?php echo $disableimages ? '26' : '30'; ?>px;
+	height: <?php echo $disableimages ? '26' : '30'; ?>px;
+	border-radius: 50%;
 	background-size: contain;
-	vertical-align: text-bottom;
 	background-color: #FFF;
 }
 img.userphoto {			/* size for user photo in lists */
@@ -4115,7 +4129,14 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 
 .smallpaddingimp {
 	padding: 4px !important;
+	padding-left: 7px !important;
+	padding-right: 7px !important;
 }
+input.button.smallpaddingimp, input.buttonreset.smallpaddingimp {
+	font-size: 0.8em;
+	font-weight: normal !important;
+}
+
 input.buttonlink {
 	color: var(--colortextlink);
 	background-color: transparent;
@@ -5322,7 +5343,7 @@ div.titre {
 }
 
 table.notopnoleftnoright.table-fiche-title {
-	margin-bottom: 14px;
+	margin-bottom: 15px;
 }
 .fichehalfleft table.table-fiche-title, .fichehalfright table.table-fiche-title {
 	margin-bottom: 8px;
@@ -5331,6 +5352,9 @@ table.notopnoleftnoright.table-fiche-title {
 
 table.table-fiche-title .col-title div.titre, .col-center .btnTitle-icon, .col-right .btnTitle-icon {
 	line-height: 40px;
+}
+table.table-fiche-title .col-title div.titre span {
+	line-height: normal;
 }
 
 div.backgreypublicpayment {
@@ -6221,6 +6245,16 @@ a.cke_button, a.cke_combo_button {
 }
 div.cke_notifications_area .cke_notification_warning {
 	visibility: hidden;
+}
+
+/* CSS To hide the picto menu on smartphone, except when maximize */
+@media only screen and (max-width: 768px)
+{
+	.cke_inner:not(.cke_maximized) .cke_toolbar_separator,
+	.cke_inner:not(.cke_maximized) .cke_combo,
+	.cke_inner:not(.cke_maximized) .cke_button:not(.cke_button__maximize) {
+		display: none;
+	}
 }
 
 
@@ -8284,6 +8318,10 @@ table.jPicker {
 	div.login_block {
 		border-right: 1px solid rgba(0,0,0,0.3);
 	}
+	div.login_block_other, div.login_block_tools {
+		display: inline-block;
+	}
+
 	.loginbuttonexternal {
 		width: 260px;
 	}

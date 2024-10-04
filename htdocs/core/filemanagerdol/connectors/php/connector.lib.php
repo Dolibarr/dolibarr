@@ -305,7 +305,7 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 	$sErrorNumber = '0';
 	$sFileName = '';
 
-	if (isset($_FILES['NewFile']) && !is_null($_FILES['NewFile']['tmp_name']) || (isset($_FILES['upload']) && !is_null($_FILES['upload']['tmp_name']))) {
+	if (isset($_FILES['NewFile']) && !is_null($_FILES['NewFile']['tmp_name']) && !is_null($_FILES['NewFile']['name']) || (isset($_FILES['upload']) && !is_null($_FILES['upload']['tmp_name']) && !is_null($_FILES['upload']['name']))) {
 		global $Config;
 
 		$oFile = isset($_FILES['NewFile']) ? $_FILES['NewFile'] : $_FILES['upload'];

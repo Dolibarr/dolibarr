@@ -1975,7 +1975,7 @@ if ($action == 'create') {
 					$paymentexpensereportstatic->type_code = $objp->payment_code;
 					$paymentexpensereportstatic->type_label = $objp->payment_type;
 
-					print '<tr class="oddseven">';
+					print '<tr class="oddeven">';
 					print '<td>';
 					print $paymentexpensereportstatic->getNomUrl(1);
 					print '</td>';

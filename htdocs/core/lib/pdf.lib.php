@@ -83,7 +83,7 @@ function pdf_admin_prepare_head()
  *  @param		'setup'|'auto'	$mode				'setup' = Use setup, 'auto' = Force autodetection whatever is setup
  *  @return     array{width:float|int,height:float|int,unit:string}		Array('width'=>w,'height'=>h,'unit'=>u);
  */
-function pdf_getFormat(Translate $outputlangs = null, $mode = 'setup')
+function pdf_getFormat($outputlangs = null, $mode = 'setup')
 {
 	global $conf, $db, $langs;
 
@@ -1008,7 +1008,7 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
  *	@param	TCPDF		$pdf     		The PDF factory
  *  @param  Translate	$outputlangs	Object lang for output
  * 	@param	string		$paramfreetext	Constant name of free text
- * 	@param	Societe		$fromcompany	Object company
+ * 	@param	?Societe	$fromcompany	Object company
  * 	@param	int			$marge_basse	Margin bottom we use for the autobreak
  * 	@param	int			$marge_gauche	Margin left (no more used)
  * 	@param	int			$page_hauteur	Page height
@@ -1034,8 +1034,10 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 	if (empty($hidefreetext) && getDolGlobalString($paramfreetext)) {
 		$substitutionarray = pdf_getSubstitutionArray($outputlangs, null, $object);
 		// More substitution keys
-		$substitutionarray['__FROM_NAME__'] = $fromcompany->name;
-		$substitutionarray['__FROM_EMAIL__'] = $fromcompany->email;
+		if (is_object($fromcompany)) {
+			$substitutionarray['__FROM_NAME__'] = $fromcompany->name;
+			$substitutionarray['__FROM_EMAIL__'] = $fromcompany->email;
+		}
 		complete_substitutions_array($substitutionarray, $outputlangs, $object);
 		$newfreetext = make_substitutions(getDolGlobalString($paramfreetext), $substitutionarray, $outputlangs);
 
@@ -1054,7 +1056,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 	$line3 = "";
 	$line4 = "";
 
-	if ($showdetails == 1 || $showdetails == 3) {
+	if (is_object($fromcompany) && in_array($showdetails, array(1, 3))) {
 		// Company name
 		if ($fromcompany->name) {
 			$line1 .= ($line1 ? " - " : "").$outputlangs->transnoentities("RegisteredOffice").": ".$fromcompany->name;
