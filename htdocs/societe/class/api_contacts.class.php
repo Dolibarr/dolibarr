@@ -365,7 +365,7 @@ class Contacts extends DolibarrApi
 		}
 		$this->contact->oldcopy = clone $this->contact;
 
-		if ($this->contact->delete(DolibarrApiAccess::$user) <= 0) {
+		if ($this->contact->delete() <= 0) {
 			throw new RestException(500, 'Error when delete contact ' . $this->contact->error);
 		}
 
