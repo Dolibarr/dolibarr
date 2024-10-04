@@ -5154,6 +5154,18 @@ img.boxhandle, img.boxclose {
 	border: 1px solid #888;
 	padding: 16px;
 }
+.star-selection {
+	font-size: 1rem;
+	cursor: pointer;
+	display: flex;
+}
+.star {
+	color: #ccc;
+	transition: color 0.4s;
+}
+.star:hover, .star.active {
+	color: <?php echo $badgeWarning ?>;
+}
 
 
 

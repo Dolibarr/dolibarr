@@ -4879,6 +4879,7 @@ function getPictoForType($key, $morecss = '')
 		'ip' => 'country',
 		'select' => 'list',
 		'sellist' => 'list',
+		'stars' => 'fontawesome_star_fas',
 		'radio' => 'check-circle',
 		'checkbox' => 'list',
 		'chkbxlst' => 'list',
