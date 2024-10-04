@@ -2511,9 +2511,11 @@ if ($id > 0) {
 		}
 
 		// Priority
-		print '<tr><td class="nowrap" class="titlefield">'.$langs->trans("Priority").'</td><td>';
-		print($object->priority ? $object->priority : '');
-		print '</td></tr>';
+		if (getDolGlobalString('AGENDA_SUPPORT_PRIORITY_IN_EVENTS')) {
+			print '<tr><td class="nowrap" class="titlefield">' . $langs->trans("Priority") . '</td><td>';
+			print($object->priority ? $object->priority : '');
+			print '</td></tr>';
+		}
 
 		// Object linked (if link is for thirdparty, contact, project it is a recording error. We should not have links in link table
 		// for such objects because there is already a dedicated field into table llx_actioncomm.
