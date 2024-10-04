@@ -275,7 +275,7 @@ if ($shortfilename == 'dolibarrcalendar') {
 
 	top_httphead();
 
-	llxHeaderVierge();
+	llxHeaderVierge("");
 	print '<div class="error">'.$langs->trans("ErrorWrongValueForParameterX", 'format').'</div>';
 	llxFooterVierge();
 	exit;
@@ -400,6 +400,6 @@ if ($format == 'rss') {
 
 top_httphead();
 
-llxHeaderVierge();
+llxHeaderVierge("");
 print '<div class="error">'.$agenda->error.'</div>';
 llxFooterVierge();

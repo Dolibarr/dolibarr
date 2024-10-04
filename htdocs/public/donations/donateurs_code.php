@@ -74,7 +74,7 @@ $langs->load("donations");
  * View
  */
 
-llxHeaderVierge();
+llxHeaderVierge("");
 
 $sql = "SELECT d.datedon as datedon, d.lastname, d.firstname, d.amount, d.public, d.societe";
 $sql .= " FROM ".MAIN_DB_PREFIX."don as d";
