@@ -266,12 +266,6 @@ if (!defined('NOREQUIRETRAN')) {
 	$langs->setDefaultLang($langcode);
 }
 
-
-
-if (!defined('MAIN_LABEL_MENTION_NPR')) {
-	define('MAIN_LABEL_MENTION_NPR', 'NPR');
-}
-
 // Define ANSI color constant to use colors and bold in CLI script
 define('DOL_COLOR_RESET', "\033[0m");		// Restore color
 define('DOL_COLOR_BOLD', "\033[1m");			// Bold
