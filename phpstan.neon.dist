@@ -71,7 +71,7 @@ parameters:
 		- '# SMTPs::(getFrom|getErrorsTo|getReplyTo)\(\) expects bool, string given.#'
 		- '# getLocalTaxesFromRate expects int\|string#'
 		- '#::(options)\(\) expects int\|string#'
-		- '# (print_barre_liste|dol_substr) expects int\|null#'
+		- '# print_barre_liste expects int\|null#'
 		- '#(?:colorAdjustBrightness|imap_(?:(?:fetch)?body|fetchstructure)) expects int, string#'
 		- '#(sendTicketMessageByEmail|addItemsFact|update_price|recur|addDepreciationLine|addline|generate|update|getSelectConditionsPaiements|select_state|listBoxes|literalBarcodeType)\(\) expects int, string#'
 		- '#on array{url: mixed} in empty\(\) does not exist.#'
