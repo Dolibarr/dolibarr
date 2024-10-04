@@ -70,6 +70,7 @@ jobs:
           path: |
             ./db_init.sql
             ./db_init.sql.md5
+            ./.cache/mariadb
           key: ${{ env.KEY_ROOT }}-${{ env.HASH }}-${{ env.CACHE_KEY_PART }}-${{ github.run_id }}
           restore-keys: |
             ${{ env.KEY_ROOT }}-${{ env.HASH }}-${{ env.CACHE_KEY_PART }}-
@@ -192,3 +193,4 @@ jobs:
           path: |
             ./db_init.sql
             ./db_init.sql.md5
+            ./.cache/mariadb
