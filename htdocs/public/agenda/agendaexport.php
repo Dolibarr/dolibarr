@@ -173,7 +173,7 @@ if (!getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY')) {
 
 	top_httphead();
 
-	llxHeaderVierge();
+	llxHeaderVierge("");
 	print '<div class="error">Module Agenda was not configured properly.</div>';
 	llxFooterVierge();
 	exit;
@@ -186,7 +186,7 @@ $reshook = $hookmanager->executeHooks('doActions', $filters); // Note that $acti
 if ($reshook < 0) {
 	top_httphead();
 
-	llxHeaderVierge();
+	llxHeaderVierge("");
 	if (!empty($hookmanager->errors) && is_array($hookmanager->errors)) {
 		print '<div class="error">'.implode('<br>', $hookmanager->errors).'</div>';
 	} else {
@@ -200,7 +200,7 @@ if ($reshook < 0) {
 
 		top_httphead();
 
-		llxHeaderVierge();
+		llxHeaderVierge("");
 		print '<div class="error">Bad value for key.</div>';
 		llxFooterVierge();
 		exit;
