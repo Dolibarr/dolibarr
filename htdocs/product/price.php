@@ -2444,7 +2444,11 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 		print '<table class="liste centpercent">'."\n";
 
 		if (count($prodcustprice->lines) > 0 || $search_soc) {
-			$colspan = 11;
+			if(getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
+				$colspan = 10;
+			} else {
+				$colspan = 11;
+			}
 			if ($mysoc->localtax1_assuj == "1" || $mysoc->localtax2_assuj == "1") {
 				$colspan++;
 			}
