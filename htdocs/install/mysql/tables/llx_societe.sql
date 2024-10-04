@@ -129,5 +129,7 @@ create table llx_societe
   fk_multicurrency		   integer,
   multicurrency_code	   varchar(3),
 
+  ip                     varchar(250),                              --ip used to create record (for public submission page)
+
   import_key               varchar(14)                          		-- import key
 )ENGINE=innodb;

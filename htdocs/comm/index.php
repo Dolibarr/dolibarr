@@ -6,6 +6,7 @@
  * Copyright (C) 2019		Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2020		Pierre Ardoin			<mapiolca@me.com>
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,6 +64,7 @@ if (isset($user->socid) && $user->socid > 0) {
 	$socid = $user->socid;
 }
 
+$total = 0;
 
 $max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
 $maxofloop = (!getDolGlobalString('MAIN_MAXLIST_OVERLOAD') ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD);
@@ -90,6 +92,11 @@ if (!$user->hasRight('propal', 'read') && !$user->hasRight('supplier_proposal', 
 $form = new Form($db);
 $formfile = new FormFile($db);
 $companystatic = new Societe($db);
+$propalstatic = null;
+$supplierproposalstatic = null;
+$orderstatic = null;
+$supplierorderstatic = null;
+$fichinterstatic = null;
 if (isModEnabled("propal")) {
 	$propalstatic = new Propal($db);
 }
@@ -131,7 +138,7 @@ if ($tmp) {
  * Draft customer proposals
  */
 
-if (isModEnabled("propal") && $user->hasRight("propal", "lire")) {
+if (isModEnabled("propal") && $user->hasRight("propal", "lire") && is_object($propalstatic)) {
 	$sql = "SELECT p.rowid, p.ref, p.ref_client, p.total_ht, p.total_tva, p.total_ttc, p.fk_statut as status";
 	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta as code_compta_client, s.client";
@@ -231,7 +238,7 @@ if (isModEnabled("propal") && $user->hasRight("propal", "lire")) {
  * Draft supplier proposals
  */
 
-if (isModEnabled('supplier_proposal') && $user->hasRight("supplier_proposal", "lire")) {
+if (isModEnabled('supplier_proposal') && $user->hasRight("supplier_proposal", "lire") && is_object($supplierproposalstatic)) {
 	$sql = "SELECT p.rowid, p.ref, p.total_ht, p.total_tva, p.total_ttc, p.fk_statut as status";
 	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta as code_compta_client, s.client";
@@ -329,7 +336,7 @@ if (isModEnabled('supplier_proposal') && $user->hasRight("supplier_proposal", "l
  * Draft sales orders
  */
 
-if (isModEnabled('order') && $user->hasRight('commande', 'lire')) {
+if (isModEnabled('order') && $user->hasRight('commande', 'lire') && is_object($orderstatic)) {
 	$sql = "SELECT c.rowid, c.ref, c.ref_client, c.total_ht, c.total_tva, c.total_ttc, c.fk_statut as status";
 	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta as code_compta_client, s.client";
@@ -528,7 +535,7 @@ if ((isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMO
 /*
  * Draft interventions
  */
-if (isModEnabled('intervention')) {
+if (isModEnabled('intervention') && is_object($fichinterstatic)) {
 	$sql = "SELECT f.rowid, f.ref, s.nom as name, f.fk_statut, f.duree as duration";
 	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta as code_compta_client, s.client";
@@ -565,9 +572,9 @@ if (isModEnabled('intervention')) {
 			while ($i < $nbofloop) {
 				$obj = $db->fetch_object($resql);
 
-				$fichinterstatic->id=$obj->rowid;
-				$fichinterstatic->ref=$obj->ref;
-				$fichinterstatic->statut=$obj->fk_statut;
+				$fichinterstatic->id = $obj->rowid;
+				$fichinterstatic->ref = $obj->ref;
+				$fichinterstatic->statut = $obj->fk_statut;
 
 				$companystatic->id = $obj->socid;
 				$companystatic->name = $obj->name;
@@ -721,7 +728,7 @@ if (isModEnabled("societe") && $user->hasRight('societe', 'lire')) {
  * Last modified proposals
  */
 
-if (isModEnabled('propal')) {
+if (isModEnabled('propal') && is_object($propalstatic)) {
 	$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut as status, c.tms as datem,";
 	$sql .= " s.nom as socname, s.rowid as socid, s.canvas, s.client, s.email, s.code_compta as code_compta_client";
 	$sql .= " FROM ".MAIN_DB_PREFIX."propal as c,";
@@ -1216,7 +1223,7 @@ if (isModEnabled("propal") && $user->hasRight("propal", "lire")) {
 /*
  * Opened (validated) order
  */
-if (isModEnabled('order') && $user->hasRight('commande', 'lire')) {
+if (isModEnabled('order') && $user->hasRight('commande', 'lire') && is_object($orderstatic)) {
 	$sql = "SELECT c.rowid as commandeid, c.total_ttc, c.total_ht, c.total_tva, c.ref, c.ref_client, c.fk_statut, c.date_valid as dv, c.facture as billed";
 	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta as code_compta_client, s.client";

@@ -218,7 +218,7 @@ if (empty($reshook)) {
 			$object->title                = GETPOST('title', 'alphanohtml');
 			$object->socid                = GETPOSTINT('socid');
 			$object->description          = GETPOST('description', 'restricthtml'); // Do not use 'alpha' here, we want field as it is
-			$object->public               = GETPOST('public', 'alphanohtml');
+			$object->public               = GETPOSTINT('public') ? 1 : 0;
 			$object->opp_amount           = GETPOSTFLOAT('opp_amount');
 			$object->budget_amount        = GETPOSTFLOAT('budget_amount');
 			$object->date_c               = dol_now();
@@ -319,7 +319,7 @@ if (empty($reshook)) {
 			$object->status       = GETPOSTINT('status');
 			$object->socid        = GETPOSTINT('socid');
 			$object->description  = GETPOST('description', 'restricthtml'); // Do not use 'alpha' here, we want field as it is
-			$object->public       = GETPOST('public', 'alpha');
+			$object->public       = GETPOSTINT('public') ? 1 : 0;
 			$object->date_start   = (!GETPOST('projectstart')) ? '' : $date_start;
 			$object->date_end     = (!GETPOST('projectend')) ? '' : $date_end;
 			$object->date_start_event = (!GETPOST('date_start_event')) ? '' : $date_start_event;
@@ -549,7 +549,7 @@ if (empty($reshook)) {
 			$action = 'view';
 			$comefromclone = true;
 
-			setEventMessages($langs->trans("ProjectCreatedInDolibarr", $newobject->ref), "", 'mesgs');
+			setEventMessages($langs->trans("ProjectCreatedInDolibarr", $newobject->ref), null, 'mesgs');
 			//var_dump($newobject); exit;
 		}
 	}
@@ -817,11 +817,11 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 	}
 
 	if (count($array) > 0) {
-		print $form->selectarray('public', $array, GETPOST('public'), 0, 0, 0, '', 0, 0, 0, '', '', 1);
+		print $form->selectarray('public', $array, GETPOSTINT('public') ? 1 : 0, 0, 0, 0, '', 0, 0, 0, '', '', 1);
 	} else {
-		print '<input type="hidden" name="public" id="public" value="'.GETPOST('public').'">';
+		print '<input type="hidden" name="public" id="public" value="'.(GETPOSTINT('public') ? 1 : 0).'">';
 
-		if (GETPOST('public') == 0) {
+		if (GETPOSTINT('public') == 0) {
 			print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
 			print $langs->trans("PrivateProject");
 		} else {
@@ -1659,9 +1659,11 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 				}
 			}
 
+
 			// Buttons Create
 			if (!getDolGlobalString('PROJECT_HIDE_CREATE_OBJECT_BUTTON')) {
 				$arrayforbutaction = array(
+					//1 => array('lang' => 'propal', 'enabled' => 1, 'perm' => 1, 'label' => 'XXX'),
 					10 => array('lang' => 'propal', 'enabled' => isModEnabled("propal"), 'perm' => $user->hasRight('propal', 'creer'), 'label' => 'AddProp', 'url' => '/comm/propal/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
 					20 => array('lang' => 'orders', 'enabled' => isModEnabled("order"), 'perm' => $user->hasRight('commande', 'creer'), 'label' => 'CreateOrder', 'url' => '/commande/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
 					30 => array('lang' => 'bills', 'enabled' => isModEnabled("invoice"), 'perm' => $user->hasRight('facture', 'creer'), 'label' => 'CreateBill', 'url' => '/compta/facture/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
@@ -1671,10 +1673,11 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 					70 => array('lang' => 'interventions', 'enabled' => isModEnabled("intervention"), 'perm' => $user->hasRight('fichinter', 'creer'), 'label' => 'AddIntervention', 'url' => '/fichinter/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
 					80 => array('lang' => 'contracts', 'enabled' => isModEnabled("contract"), 'perm' => $user->hasRight('contrat', 'creer'), 'label' => 'AddContract', 'url' => '/contrat/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
 					90 => array('lang' => 'trips', 'enabled' => isModEnabled("expensereport"), 'perm' => $user->hasRight('expensereport', 'creer'), 'label' => 'AddTrip', 'url' => '/expensereport/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
-				   100 => array('lang' => 'donations', 'enabled' => isModEnabled("don"), 'perm' => $user->hasRight('don', 'creer'), 'label' => 'AddDonation', 'url' => '/don/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
+					100 => array('lang' => 'donations', 'enabled' => isModEnabled("don"), 'perm' => $user->hasRight('don', 'creer'), 'label' => 'AddDonation', 'url' => '/don/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
 				);
 
 				$params = array('backtopage' => $_SERVER["PHP_SELF"].'?id='.$object->id);
+				//$params = array('backtopage' => $_SERVER["PHP_SELF"].'?id='.$object->id, 'isDropDown' => true);
 
 				print dolGetButtonAction('', $langs->trans("Create"), 'default', $arrayforbutaction, '', 1, $params);
 			}

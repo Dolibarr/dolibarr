@@ -58,7 +58,7 @@ foreach ($object->fields as $key => $val) {
 	$value = $object->$key;
 
 	print '<tr class="field_'.$key.'"><td';
-	print ' class="'.(empty($val['tdcss']) ? 'titlefield' : $val['tdcss']).' fieldname_'.$key;
+	print ' class="'.(empty($val['tdcss']) ? 'titlefieldmiddle' : $val['tdcss']).' fieldname_'.$key;
 	//if ($val['notnull'] > 0) print ' fieldrequired';     // No fieldrequired on the view output
 	if ($val['type'] == 'text' || $val['type'] == 'html') {
 		print ' tdtop';

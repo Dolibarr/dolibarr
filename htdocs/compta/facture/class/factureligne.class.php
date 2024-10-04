@@ -890,7 +890,7 @@ class FactureLigne extends CommonInvoiceLine
 	 * @return float                   >= 0
 	 * @see get_prev_progress()
 	 */
-	public function get_allprev_progress($invoiceid, $include_credit_note = true)
+	public function getAllPrevProgress($invoiceid, $include_credit_note = true)
 	{
 		// phpcs:enable
 		global $invoicecache;

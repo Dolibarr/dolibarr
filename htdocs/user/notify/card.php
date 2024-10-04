@@ -312,7 +312,7 @@ if ($result > 0) {
 			}
 			print '</td>';
 			print '<td>';
-			print img_picto('', 'object_action', '', false, 0, 0, '', 'paddingright').$form->selectarray("actionid", $actions, '', 1);
+			print img_picto('', 'object_action', '', 0, 0, 0, '', 'paddingright').$form->selectarray("actionid", $actions, '', 1);
 			print '</td>';
 			print '<td>';
 			$type = array('email' => $langs->trans("EMail"));
@@ -357,7 +357,7 @@ if ($result > 0) {
 				print '</td>';
 				print '<td>';
 				$label = ($langs->trans("Notify_".$obj->code) != "Notify_".$obj->code ? $langs->trans("Notify_".$obj->code) : $obj->label);
-				print img_picto('', 'object_action', '', false, 0, 0, '', 'paddingright').$label;
+				print img_picto('', 'object_action', '', 0, 0, 0, '', 'paddingright').$label;
 				print '</td>';
 				print '<td>';
 				if ($obj->type == 'email') {

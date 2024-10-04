@@ -80,6 +80,7 @@ if ($complete == 'na' || $complete == -2) {
 	$complete = -1;
 }
 
+$tzforfullday = null;
 if ($fulldayevent) {
 	$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
 	// For "full day" events, we must store date in GMT (It must be viewed as same moment everywhere)
@@ -123,6 +124,7 @@ $formactions = new FormActions($db);
 // Load object
 if ($id > 0 && $action != 'add') {
 	$ret = $object->fetch($id);
+	$ret1 = 0;
 	if ($ret > 0) {
 		$ret = $object->fetch_optionals();
 		$ret1 = $object->fetch_userassigned();
@@ -329,6 +331,8 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 		$datep = dol_mktime(GETPOSTINT("aphour"), GETPOSTINT("apmin"), GETPOSTINT("apsec"), GETPOSTINT("apmonth"), GETPOSTINT("apday"), GETPOSTINT("apyear"), 'tzuserrel');
 		$datef = dol_mktime(GETPOSTINT("p2hour"), GETPOSTINT("p2min"), GETPOSTINT("apsec"), GETPOSTINT("p2month"), GETPOSTINT("p2day"), GETPOSTINT("p2year"), 'tzuserrel');
 	}
+	//set end date to now if percentage is set to 100 and end date not set
+	$datef = (!$datef && $percentage == 100)?dol_now():$datef;
 
 	// Check parameters
 	if (!$datef && $percentage == 100) {
@@ -517,6 +521,7 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 
 		// Creation of action/event
 		$idaction = $object->create($user);
+		$moreparam = '';
 
 		if ($idaction > 0) {
 			if (!$object->error) {
@@ -526,7 +531,6 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 
 				unset($_SESSION['assignedtouser']);
 
-				$moreparam = '';
 				if ($user->id != $object->userownerid) {
 					$moreparam = "filtert=-1"; // We force to remove filter so created record is visible when going back to per user view.
 				}
@@ -604,6 +608,8 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 		}
 
 		if ($eventisrecurring) {
+			$dayoffset = 0;
+			$monthoffset = 0;
 			// We set first date of recurrence and offsets
 			if ($selectedrecurrulefreq == 'WEEKLY' && !empty($selectedrecurrulebyday)) {
 				$firstdatearray = dol_get_first_day_week(GETPOSTINT("apday"), GETPOSTINT("apmonth"), GETPOSTINT("apyear"));
@@ -718,9 +724,9 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 
 				// increment date for recurrent events
 				$datep = dol_time_plus_duree($datep, $dayoffset, 'd');
-				$datep = dol_time_plus_duree($datep, $monthoffset, 'm');
+				$datep = dol_time_plus_duree($datep, $monthoffset, 'm');  // @phan-suppress-current-line PhanPluginSuspiciousParamOrder
 				$datef = dol_time_plus_duree($datef, $dayoffset, 'd');
-				$datef = dol_time_plus_duree($datef, $monthoffset, 'm');
+				$datef = dol_time_plus_duree($datef, $monthoffset, 'm');  // @phan-suppress-current-line PhanPluginSuspiciousParamOrder
 			}
 		}
 		if (!empty($backtopage) && !$error) {
@@ -775,7 +781,7 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 			$datef = dol_mktime(GETPOST("p2hour", 'int'), GETPOST("p2min", 'int'), GETPOST("apsec", 'int'), GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'), 'tzuserrel');
 		}
 		//set end date to now if percentage is set to 100 and end date not set
-		$datef = (!$datef && $percentage == 100)?dol_now():$datef;
+		$datef = (!$datef && $percentage == 100) ? dol_now() : $datef;
 
 		if ($object->elementtype == 'ticket') {	// code should be TICKET_MSG, TICKET_MSG_PRIVATE, TICKET_MSG_SENTBYMAIL, TICKET_MSG_PRIVATE_SENTBYMAIL
 			if ($private) {
@@ -1221,7 +1227,29 @@ if ($action == 'create') {
 						console.log("setdatefields");
                         setdatefields();
                     });
-
+					var old_startdate = null;
+					$("#ap").focus(function() {
+						old_startdate = new Date($("#apyear").val(), $("#apmonth").val() - 1, $("#apday").val());
+					});
+					$("#ap").next(".ui-datepicker-trigger").click(function() {
+						old_startdate = new Date($("#apyear").val(), $("#apmonth").val() - 1, $("#apday").val());
+					});
+					$("#ap").change(function() {
+						setTimeout(function() {
+							if ($("#p2").val() !== "") {
+								var new_startdate = new Date($("#apyear").val(), $("#apmonth").val() - 1, $("#apday").val());
+								var old_enddate = new Date($("#p2year").val(), $("#p2month").val() - 1, $("#p2day").val());
+								if (new_startdate > old_enddate) {
+									var timeDiff = old_enddate - old_startdate;
+									var new_enddate = new Date(new_startdate.getTime() + timeDiff);
+									$("#p2").val(formatDate(new_enddate, "' . $langs->trans('FormatDateShortJavaInput') . '"));
+									$("#p2day").val(new_enddate.getDate());
+									$("#p2month").val(new_enddate.getMonth() + 1);
+									$("#p2year").val(new_enddate.getFullYear());
+								}
+							}
+						}, 0);
+					});
                     $("#actioncode").change(function() {
                         if ($("#actioncode").val() == \'AC_RDV\') $("#dateend").addClass("fieldrequired");
                         else $("#dateend").removeClass("fieldrequired");
@@ -1371,15 +1399,15 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	$datep = ($datep ? $datep : (is_null($object->datep) ? '' : $object->datep));
-	if (GETPOSTINT('datep', 1)) {
-		$datep = dol_stringtotime((string) GETPOSTINT('datep', 1), 'tzuserrel');
+	if (GETPOST('datep', 'alpha', 1)) {
+		$datep = dol_stringtotime(GETPOST('datep', 'alpha', 1), 'tzuserrel');
 	}
 	$datef = ($datef ? $datef : $object->datef);
-	if (GETPOSTINT('datef', 1)) {
-		$datef = dol_stringtotime((string) GETPOSTINT('datef', 1), 'tzuserrel');
+	if (GETPOST('datef', 'alpha', 1)) {
+		$datef = dol_stringtotime(GETPOST('datef', 'alpha', 1), 'tzuserrel');
 	}
 	if (empty($datef) && !empty($datep)) {
-		if (GETPOST("actioncode", 'aZ09') == 'AC_RDV' || !getDolGlobalString('AGENDA_USE_EVENT_TYPE_DEFAULT')) {
+		if (GETPOST("actioncode", 'aZ09') == 'AC_RDV' || (!getDolGlobalString('AGENDA_USE_EVENT_TYPE_DEFAULT') || getDolGlobalString('AGENDA_USE_EVENT_TYPE_DEFAULT') == '-1')) {
 			$datef = dol_time_plus_duree($datep, getDolGlobalInt('AGENDA_AUTOSET_END_DATE_WITH_DELTA_HOURS', 1), 'h');
 		}
 	}
@@ -1813,6 +1841,29 @@ if ($id > 0) {
 	            		$("#fullday").change(function() {
 	            			setdatefields();
 	            		});
+						var old_startdate = null;
+						$("#ap").focus(function() {
+							old_startdate = new Date($("#apyear").val(), $("#apmonth").val() - 1, $("#apday").val());
+						});
+						$("#ap").next(".ui-datepicker-trigger").click(function() {
+							old_startdate = new Date($("#apyear").val(), $("#apmonth").val() - 1, $("#apday").val());
+						});
+						$("#ap").change(function() {
+							setTimeout(function() {
+								if ($("#p2").val() !== "") {
+									var new_startdate = new Date($("#apyear").val(), $("#apmonth").val() - 1, $("#apday").val());
+									var old_enddate = new Date($("#p2year").val(), $("#p2month").val() - 1, $("#p2day").val());
+									if (new_startdate > old_enddate) {
+										var timeDiff = old_enddate - old_startdate;
+										var new_enddate = new Date(new_startdate.getTime() + timeDiff);
+										$("#p2").val(formatDate(new_enddate, "' . $langs->trans('FormatDateShortJavaInput') . '"));
+										$("#p2day").val(new_enddate.getDate());
+										$("#p2month").val(new_enddate.getMonth() + 1);
+										$("#p2year").val(new_enddate.getFullYear());
+									}
+								}
+							}, 0);
+						});
 	            		$("#actioncode").change(function() {
                         	if ($("#actioncode").val() == \'AC_RDV\') $("#dateend").addClass("fieldrequired");
                         	else $("#dateend").removeClass("fieldrequired");
@@ -2330,12 +2381,13 @@ if ($id > 0) {
 		// Type
 		if (getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
 			print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td>';
-			$labeltoshow = $langs->trans("Action".$object->type_code);
+			$labeltype = ($langs->transnoentities("Action".$object->type_code) != "Action".$object->type_code) ? $langs->transnoentities("Action".$object->type_code) : $object->type_label;
+			$labeltoshow = $labeltype;
 			if ($object->code) {
 				$labeltoshow .= ' ('.$object->code.')';
 			}
 			print $object->getTypePicto('pictofixedwidth paddingright', $labeltoshow);
-			print $langs->trans("Action".$object->type_code);
+			print $labeltype;
 			print '</td></tr>';
 		}
 

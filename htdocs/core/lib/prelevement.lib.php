@@ -2,6 +2,7 @@
 /* Copyright (C) 2010-2011 	Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2010		Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2011      	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +30,7 @@
  * Prepare array with list of tabs
  *
  * @param   BonPrelevement	$object		Object related to tabs
- * @return  array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function prelevement_prepare_head(BonPrelevement $object)
 {
@@ -116,7 +117,7 @@ function prelevement_check_config($type = 'direct-debit')
 	return 0;
 }
 
-	/**
+/**
  *  Return array head with list of tabs to view object information
  *
  *  @param	BonPrelevement	$object         	Member

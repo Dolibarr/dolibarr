@@ -2,6 +2,7 @@
 /* Copyright (C) 2013-2015 Jean-François FERRY <hello@librethic.io>
  * Copyright (C) 2016      Christophe Battarel <christophe@altairis.fr>
  * Copyright (C) 2024      Destailleur Laurent <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -490,7 +491,7 @@ class ActionsTicket extends CommonHookActions
 
 				print '<a class="butAction butStatus marginbottomonly" href="'.$urlforbutton.'">';
 				print $object->LibStatut($status, 3, 1).' ';
-				//print img_picto($langs->trans($object->labelStatusShort[$status]), 'statut'.$status.'.png@ticket', '', false, 0, 0, '', 'valignmiddle').' ';
+				//print img_picto($langs->trans($object->labelStatusShort[$status]), 'statut'.$status.'.png@ticket', '', 0, 0, 0, '', 'valignmiddle').' ';
 				print $langs->trans($object->labelStatusShort[$status]);
 				print '</a>';
 				print '</div>';

@@ -1763,7 +1763,7 @@ if (!$error && ($massaction == 'increaseholiday' || ($action == 'increaseholiday
 	$nbdaysholidays = GETPOSTFLOAT('nbdaysholidays');	// May be 1.5
 
 	if ($nbdaysholidays <= 0) {
-		setEventMessages($langs->trans("WrongAmount"), "", 'errors');
+		setEventMessages($langs->trans("WrongAmount"), null, 'errors');
 		$error++;
 	}
 
@@ -1869,7 +1869,7 @@ if (!$error && ($massaction == 'clonetasks' || ($action == 'clonetasks' && $conf
 				} else {
 					if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 						$langs->load("projects");
-						setEventMessages($langs->trans('NewTaskRefSuggested'), '', 'warnings');
+						setEventMessages($langs->trans('NewTaskRefSuggested'), null, 'warnings');
 						$duplicate_code_error = true;
 					} else {
 						setEventMessages($clone_task->error, $clone_task->errors, 'errors');

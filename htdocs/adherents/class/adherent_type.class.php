@@ -107,7 +107,9 @@ class AdherentType extends CommonObject
 	/** @var string 	Public note */
 	public $note_public;
 
-	/** @var integer	Can vote */
+	/**
+	 * @var int<0,1>	Can vote
+	 */
 	public $vote;
 
 	/** @var string Email sent during validation of member */
@@ -683,7 +685,7 @@ class AdherentType extends CommonObject
 	 * getTooltipContentArray
 	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
-	 * @return array{picto:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{

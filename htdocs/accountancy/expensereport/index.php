@@ -78,17 +78,17 @@ if (!$user->hasRight('accounting', 'bind', 'write')) {
  */
 
 if (($action == 'clean' || $action == 'validatehistory') && $user->hasRight('accounting', 'bind', 'write')) {
-	// Clean database
+	// Clean database by removing binding done on non existing or no more existing accounts
 	$db->begin();
-	$sql1 = "UPDATE ".MAIN_DB_PREFIX."expensereport_det as erd";
+	$sql1 = "UPDATE ".$db->prefix()."expensereport_det as erd";
 	$sql1 .= " SET fk_code_ventilation = 0";
 	$sql1 .= ' WHERE erd.fk_code_ventilation NOT IN';
 	$sql1 .= '	(SELECT accnt.rowid ';
-	$sql1 .= '	FROM '.MAIN_DB_PREFIX.'accounting_account as accnt';
-	$sql1 .= '	INNER JOIN '.MAIN_DB_PREFIX.'accounting_system as syst';
+	$sql1 .= '	FROM '.$db->prefix().'accounting_account as accnt';
+	$sql1 .= '	INNER JOIN '.$db->prefix().'accounting_system as syst';
 	$sql1 .= '	ON accnt.fk_pcg_version = syst.pcg_version AND syst.rowid='.((int) getDolGlobalInt('CHARTOFACCOUNTS')).' AND accnt.entity = '.((int) $conf->entity).')';
-	$sql1 .= ' AND erd.fk_expensereport IN (SELECT rowid FROM '.MAIN_DB_PREFIX.'expensereport WHERE entity = '.((int) $conf->entity).')';
-	$sql1 .= ' AND fk_code_ventilation <> 0';
+	$sql1 .= ' AND erd.fk_expensereport IN (SELECT rowid FROM '.$db->prefix().'expensereport WHERE entity = '.((int) $conf->entity).')';
+	$sql1 .= " AND fk_code_ventilation <> 0";
 	dol_syslog("htdocs/accountancy/customer/index.php fixaccountancycode", LOG_DEBUG);
 	$resql1 = $db->query($sql1);
 	if (!$resql1) {
@@ -195,7 +195,7 @@ print '</span><br>';
 
 $y = $year_current;
 
-$buttonbind = '<a class="button small" href="'.$_SERVER['PHP_SELF'].'?action=validatehistory&token='.newToken().'&year='.$year_current.'">'.img_picto('', 'link', 'class="paddingright fa-color-unset"').$langs->trans("ValidateHistory").'</a>';
+$buttonbind = '<a class="button small" href="'.$_SERVER['PHP_SELF'].'?action=validatehistory&token='.newToken().'&year='.$year_current.'">'.img_picto($langs->trans("ValidateHistory"), 'link', 'class="pictofixedwidth fa-color-unset"').$langs->trans("ValidateHistory").'</a>';
 
 
 print_barre_liste(img_picto('', 'unlink', 'class="paddingright fa-color-unset"').$langs->trans("OverviewOfAmountOfLinesNotBound"), '', '', '', '', '', '', -1, '', '', 0, '', '', 0, 1, 1, 0, $buttonbind);
@@ -239,8 +239,9 @@ for ($i = 1; $i <= 12; $i++) {
 		$j -= 12;
 	}
 	$sql .= "  SUM(".$db->ifsql("MONTH(er.date_debut) = ".((int) $j), "erd.total_ht", "0").") AS month".str_pad((string) $j, 2, "0", STR_PAD_LEFT).",";
+	$sql .= "  SUM(".$db->ifsql("MONTH(er.date_debut) = ".((string) $j), "1", "0").") AS nbmonth".str_pad((string) $j, 2, "0", STR_PAD_LEFT).",";
 }
-$sql .= " SUM(erd.total_ht) as total";
+$sql .= " SUM(erd.total_ht) as total, COUNT(erd.rowid) as nb";
 $sql .= " FROM ".MAIN_DB_PREFIX."expensereport_det as erd";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."expensereport as er ON er.rowid = erd.fk_expensereport";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON aa.rowid = erd.fk_code_ventilation";
@@ -295,17 +296,17 @@ if ($resql) {
 			$cursoryear = ($cursormonth < getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1)) ? $y + 1 : $y;
 			$tmp = dol_getdate(dol_get_last_day($cursoryear, $cursormonth, 'gmt'), false, 'gmt');
 
-			print '<td class="right nowraponall amount">';
-			print price($row[$i]);
+			print '<td class="right nowraponall amount" title="'.price($row[2*$i - 2]).' - '.$row[2*$i - 1].' lines">';
+			print price($row[2*$i - 2]);
 			// Add link to make binding
-			if (!empty(price2num($row[$i]))) {
+			if (!empty(price2num($row[2*$i - 2])) || !empty($row[2*$i - 1])) {
 				print '<a href="'.$_SERVER['PHP_SELF'].'?action=validatehistory&year='.$y.'&validatemonth='.((int) $cursormonth).'&validateyear='.((int) $cursoryear).'&token='.newToken().'">';
 				print img_picto($langs->trans("ValidateHistory").' ('.$langs->trans('Month'.str_pad((string) $cursormonth, 2, '0', STR_PAD_LEFT)).' '.$cursoryear.')', 'link', 'class="marginleft2"');
 				print '</a>';
 			}
 			print '</td>';
 		}
-		print '<td class="right nowraponall amount"><b>'.price($row[14]).'</b></td>';
+		print '<td class="right nowraponall amount"><b>'.price($row[26]).'</b></td>';
 		print '</tr>';
 	}
 	$db->free($resql);
@@ -372,14 +373,12 @@ if ($resql) {
 
 	while ($row = $db->fetch_row($resql)) {
 		print '<tr class="oddeven">';
-		print '<td>';
+		print '<td class="tdoverflowmax300"'.(empty($row[1]) ? '' : ' title="'.dol_escape_htmltag($row[1]).'"').'>';
 		if ($row[0] == 'tobind') {
 			//print '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>';
 		} else {
 			print length_accountg($row[0]).' - ';
 		}
-		//print '</td>';
-		//print '<td>';
 		if ($row[0] == 'tobind') {
 			print $langs->trans("UseMenuToSetBindindManualy", DOL_URL_ROOT.'/accountancy/expensereport/list.php?search_year='.((int) $y), $langs->transnoentitiesnoconv("ToBind"));
 		} else {

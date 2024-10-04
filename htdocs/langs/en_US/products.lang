@@ -441,3 +441,4 @@ StockableProduct=Stock management
 StockableProductDescription=If this option is enabled, the stock modification for this element is retained. If disabled, the stock modification for this element is not retained.
 StockDisabled=Stock disabled
 StockEnabled=Stock enabled
+PriceByCustomeAndMultiPricesAbility=Different prices for each customer + Multiple price segments per product/service (each customer is in one price segment)

@@ -167,10 +167,10 @@ class box_scheduled_jobs extends ModeleBoxes
 				);
 				$textnoformat = '';
 				if ($nbjobsnotfinished) {
-					$textnoformat .= '<a class="inline-block paddingleft paddingright marginleftonly marginrightonly minwidth25 nounderlineimp" href="'.DOL_URL_ROOT.'/cron/list.php" title="'.$langs->trans("NumberScheduledJobNeverFinished").'"><div class="center badge badge-warning nounderlineimp"><i class="fa fa-exclamation-triangle"></i> '.$nbjobsnotfinished.'</div></a>';
+					$textnoformat .= '<a class="inline-block paddingleft paddingright marginleftonly'.($nbjobsinerror ? ' marginrightonly' : '').' minwidth25 nounderlineimp" href="'.DOL_URL_ROOT.'/cron/list.php" title="'.$langs->trans("NumberScheduledJobNeverFinished").'"><div class="center badge badge-warning nounderlineimp"><i class="fa fa-exclamation-triangle"></i> '.$nbjobsnotfinished.'</div></a>';
 				}
 				if ($nbjobsinerror) {
-					$textnoformat .= '<a class="inline-block paddingleft paddingright marginleftonly marginrightonly minwidth25 nounderlineimp" href="'.DOL_URL_ROOT.'/cron/list.php?search_lastresult='.urlencode('<>0').'" title="'.$langs->trans("NumberScheduledJobError").'"><div class="badge badge-danger nounderlineimp"><i class="fa fa-exclamation-triangle"></i> '.$nbjobsinerror.'</div></a>';
+					$textnoformat .= '<a class="inline-block paddingleft paddingright marginleftonly minwidth25 nounderlineimp" href="'.DOL_URL_ROOT.'/cron/list.php?search_lastresult='.urlencode('<>0').'" title="'.$langs->trans("NumberScheduledJobError").'"><div class="badge badge-danger nounderlineimp"><i class="fa fa-exclamation-triangle"></i> '.$nbjobsinerror.'</div></a>';
 				}
 				if (empty($nbjobsnotfinished) && empty($nbjobsinerror)) {
 					$textnoformat .= '<a class="inline-block paddingleft marginleftonly minwidth25 nounderlineimp" href="'.DOL_URL_ROOT.'/cron/list.php"><div class="center badge badge-status4 nounderline">0</div></a>';
@@ -194,11 +194,13 @@ class box_scheduled_jobs extends ModeleBoxes
 		}
 	}
 
+
+
 	/**
-	 *	Method to show box
+	 *	Method to show box.  Called when the box needs to be displayed.
 	 *
-	 *	@param	?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}	$head	Array with properties of box title
-	 *	@param	?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>	$contents	Array with properties of box lines
+	 *	@param	?array<array{text?:string,sublink?:string,subtext?:string,subpicto?:?string,picto?:string,nbcol?:int,limit?:int,subclass?:string,graph?:int<0,1>,target?:string}>   $head       Array with properties of box title
+	 *	@param	?array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:int,asis?:int<0,1>}>   $contents   Array with properties of box lines
 	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *	@return	string
 	 */

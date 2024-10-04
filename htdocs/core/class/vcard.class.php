@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C)           Kai Blankenhorn      <kaib@bitfolge.de>
- * Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.org>
- * Copyright (C) 2020		Tobias Sekan		<tobias.sekan@startmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C)            Kai Blankenhorn      	<kaib@bitfolge.de>
+ * Copyright (C) 2005-2017  Laurent Destailleur  	<eldy@users.sourceforge.org>
+ * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,7 +67,7 @@ function dol_quoted_printable_encode($input, $line_max = 76)
 			} elseif (($dec == 61) || ($dec < 32) || ($dec > 126)) { // always encode "\t", which is *not* required
 				$h2 = floor($dec / 16);
 				$h1 = floor($dec % 16);
-				$c = $escape.$hex["$h2"].$hex["$h1"];
+				$c = $escape.$hex[(int) $h2].$hex[(int) $h1];
 			}
 			if ((strlen($newline) + strlen($c)) >= $line_max) { // CRLF is not counted
 				$output .= $newline.$escape.$eol; // soft line break; " =\r\n" is okay
@@ -89,7 +90,7 @@ function dol_quoted_printable_encode($input, $line_max = 76)
 class vCard
 {
 	/**
-	 * @var array array of properties
+	 * @var array<string,?string> array of properties
 	 */
 	public $properties;
 
@@ -107,7 +108,7 @@ class vCard
 	/**
 	 *  Format phone number.
 	 *
-	 *  @param	int		$number		numero de telephone
+	 *  @param	string	$number		numero de telephone
 	 *  @param	string	$type		Type ('cell')
 	 *  @return	void
 	 */
@@ -387,8 +388,8 @@ class vCard
 	 * Return a VCARD string
 	 * See RFC https://datatracker.ietf.org/doc/html/rfc6350
 	 *
-	 * @param	Object			$object		Object (User or Contact)
-	 * @param	Societe|null	$company	Company. May be null.
+	 * @param	User|Contact	$object		Object (User or Contact)
+	 * @param	?Societe		$company	Company. May be null.
 	 * @param	Translate		$langs		Lang object
 	 * @param	string			$urlphoto	Full public URL of photo
 	 * @param	string			$outdir		Directory where to store the temporary file

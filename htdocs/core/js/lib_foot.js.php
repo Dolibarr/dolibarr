@@ -221,6 +221,7 @@ if (!defined('JS_JQUERY_DISABLE_DROPDOWN')) {
 if ($conf->browser->layout != 'phone') {
 	print "\n/* JS CODE TO ENABLE document_preview */\n"; // Function document_preview is into header
 	print '		jQuery(document).ready(function () {
+					// Click on the preview picto
 			        jQuery(".documentpreview").click(function () {
             		    console.log("We click on preview for element with href="+$(this).attr(\'href\')+" mime="+$(this).attr(\'mime\'));
             		    document_preview($(this).attr(\'href\'), $(this).attr(\'mime\'), \''.dol_escape_js($langs->transnoentities("Preview")).'\');
@@ -387,15 +388,15 @@ print '
 						text: confirmActionBtnLabel,
 						"class": \'ui-state-information\',
 						click: function () {
-						window.location.replace(confirmUrl);
-					}
+							window.location.replace(confirmUrl);
+						}
 					},
 					{
 						text: confirmCancelBtnLabel,
 						"class": \'ui-state-information\',
 						click: function () {
-						$(this).dialog("close");
-					}
+							$(this).dialog("close");
+						}
 					}
 				],
 				close: function( event, ui ) {

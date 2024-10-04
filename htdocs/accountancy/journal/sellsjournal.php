@@ -236,7 +236,14 @@ if ($result) {
 		if (array_key_exists($tax_id, $vatdata_cache)) {
 			$vatdata = $vatdata_cache[$tax_id];
 		} else {
-			$vatdata = getTaxesFromId($tax_id, $mysoc, $mysoc, 0);
+			if (getDolGlobalString('SERVICE_ARE_ECOMMERCE_200238EC')) {
+				$buyer = new Societe($db);
+				$buyer->fetch($obj->socid);
+			} else {
+				$buyer = null;	// We don't need the buyer in this case
+			}
+			$seller = $mysoc;
+			$vatdata = getTaxesFromId($tax_id, $buyer, $seller, 0);
 			$vatdata_cache[$tax_id] = $vatdata;
 		}
 		$compta_tva = (!empty($vatdata['accountancy_code_sell']) ? $vatdata['accountancy_code_sell'] : $cpttva);
@@ -374,6 +381,20 @@ if ($result) {
 	}
 
 	// After the loop on each line
+	$parameters = array(
+		'tabfac' => &$tabfac,
+		'tabht' => &$tabht,
+		'tabtva' => &$tabtva,
+		'def_tva' => &$def_tva,
+		'tabwarranty' => &$tabwarranty,
+		'tabrevenuestamp' => &$tabrevenuestamp,
+		'tabttc' => &$tabttc,
+		'tablocaltax1' => &$tablocaltax1,
+		'tablocaltax2' => &$tablocaltax2,
+		'tabcompany' => &$tabcompany,
+		'vatdata_cache' => &$vatdata_cache,
+	);
+	$reshook = $hookmanager->executeHooks('processedJournalData', $parameters); // Note that $action and $object may have been modified by hook
 } else {
 	dol_print_error($db);
 }

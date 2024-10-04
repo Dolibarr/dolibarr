@@ -247,7 +247,7 @@ class Ticket extends CommonObject
 	public $ip;
 
 	/**
-	 * @var static $oldcopy  State of this ticket as it was stored before an update operation (for triggers)
+	 * @var static 	Save the ticket before an update operation (for triggers)
 	 */
 	public $oldcopy;
 
@@ -1570,10 +1570,9 @@ class Ticket extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 *
-	 * @param array<string> $params ex option, infologin
+	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
-	 * @return array
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -1710,6 +1709,8 @@ class Ticket extends CommonObject
 
 			$this->db->begin();
 
+			$this->status = Ticket::STATUS_READ;
+
 			$sql = "UPDATE ".MAIN_DB_PREFIX."ticket";
 			$sql .= " SET fk_statut = ".Ticket::STATUS_READ.", date_read = '".$this->db->idate(dol_now())."'";
 			$sql .= " WHERE rowid = ".((int) $this->id);
@@ -1733,12 +1734,16 @@ class Ticket extends CommonObject
 					$this->db->commit();
 					return 1;
 				} else {
+					$this->status = $this->oldcopy->status;
+
 					$this->db->rollback();
 					$this->error = implode(',', $this->errors);
 					dol_syslog(get_class($this)."::markAsRead ".$this->error, LOG_ERR);
 					return -1;
 				}
 			} else {
+				$this->status = $this->oldcopy->status;
+
 				$this->db->rollback();
 				$this->error = $this->db->lasterror();
 				dol_syslog(get_class($this)."::markAsRead ".$this->error, LOG_ERR);
@@ -1859,7 +1864,10 @@ class Ticket extends CommonObject
 		$actioncomm->fk_element = $this->id;
 		$actioncomm->fk_project = $this->fk_project;
 
-		// add contact id from author email on public interface
+		// Add first contact id found in database from submitter email entered into public interface
+		// Feature disabled: This has a security trouble. The public interface is a no login interface, so being able to show the contact info from an
+		// email decided by the submiter allows anybody to get information on any contact (customer or supplier) in Dolibarr database.
+		// He can even check if contact exists by trying any email if this feature is enabled.
 		if ($public_area && !empty($this->origin_email) && getDolGlobalString('TICKET_ASSIGN_CONTACT_TO_MESSAGE')) {
 			$contacts = $this->searchContactByEmail($this->origin_email);
 			if (!empty($contacts)) {
@@ -1893,26 +1901,37 @@ class Ticket extends CommonObject
 
 		if ($actionid > 0) {
 			if (is_array($attachedfiles) && array_key_exists('paths', $attachedfiles) && count($attachedfiles['paths']) > 0) {
+				// If there is some files, we must now link them to the event, so we can show them per event.
 				foreach ($attachedfiles['paths'] as $key => $filespath) {
-					$destdir = $conf->agenda->dir_output.'/'.$actionid;
-					$destfile = $destdir.'/'.$attachedfiles['names'][$key];
-					if (dol_mkdir($destdir) >= 0) {
-						require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-						dol_move($filespath, $destfile);
-						if (in_array($actioncomm->code, array('TICKET_MSG', 'TICKET_MSG_SENTBYMAIL'))) {
-							$ecmfile = new EcmFiles($this->db);
-							$destdir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $destdir);
-							$destdir = preg_replace('/[\\/]$/', '', $destdir);
-							$destdir = preg_replace('/^[\\/]/', '', $destdir);
-							$ecmfile->fetch(0, '', $destdir.'/'.$attachedfiles['names'][$key]);
-							require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-							$ecmfile->share = getRandomPassword(true);
+					// Disabled the move into another directory, Files for a ticket should be stored into ticket directory. It generates too much troubles.
+					$destdir = $conf->ticket->dir_output.'/'.$this->ref;
+					//$destfile = $destdir.'/'.$attachedfiles['names'][$key];
+					//if (dol_mkdir($destdir) >= 0) {
+					//require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+					//dol_move($filespath, $destfile);	// Disabled, a file for a ticket should be stored into ticket directory. It generates big trouble.
+					if (in_array($actioncomm->code, array('TICKET_MSG', 'TICKET_MSG_SENTBYMAIL'))) {
+						$ecmfile = new EcmFiles($this->db);
+						$destdir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $destdir);
+						$destdir = preg_replace('/[\\/]$/', '', $destdir);
+						$destdir = preg_replace('/^[\\/]/', '', $destdir);
+
+						$result = $ecmfile->fetch(0, '', $destdir.'/'.$attachedfiles['names'][$key]);
+
+						// TODO We must add a column into ecm_files table agenda_id to store the ID of event.
+						// $ecmfile->agenda_id = $actionid;
+
+						// Disabled, serious security hole. A file published into the ERP should not become public for everybody.
+						//require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+						//$ecmfile->share = getRandomPassword(true);
+
+						if ($result > 0) {
 							$result = $ecmfile->update($user);
 							if ($result < 0) {
 								setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
 							}
 						}
 					}
+					//}
 				}
 			}
 		}
@@ -2567,7 +2586,9 @@ class Ticket extends CommonObject
 			}
 
 			$moreinfo = array('description' => 'File saved by copyFilesForTicket', 'src_object_type' => $this->element, 'src_object_id' => $this->id);
+
 			$res = dol_move($filepath[$i], $destfile, '0', 1, 0, 1, $moreinfo);
+
 			if (!$res) {
 				// Move has failed
 				$this->error = "Failed to move file ".dirbasename($filepath[$i])." into ".dirbasename($destfile);

@@ -463,15 +463,11 @@ class BookKeeping extends CommonObject
 			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 		}
 
-		// Uncomment this and change MYOBJECT to your own tag if you
-		// want this action to call a trigger.
-		//if (! $error && ! $notrigger) {
-
-		// // Call triggers
-		// $result=$this->call_trigger('MYOBJECT_CREATE',$user);
-		// if ($result < 0) $error++;
-		// // End call triggers
-		//}
+		// Call triggers
+		if (! $error && ! $notrigger) {
+			$result=$this->call_trigger('BOOKKEEPING_CREATE', $user);
+			if ($result < 0) $error++;
+		}
 
 		// Commit or rollback
 		if ($error) {
@@ -716,6 +712,11 @@ class BookKeeping extends CommonObject
 
 		if (!$error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element.$mode);
+			// Call triggers
+			if (! $notrigger) {
+				$result=$this->call_trigger('BOOKKEEPING_CREATE', $user);
+				if ($result < 0) $error++;
+			}
 		}
 
 		// Commit or rollback
@@ -1477,15 +1478,11 @@ class BookKeeping extends CommonObject
 			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 		}
 
-		// Uncomment this and change MYOBJECT to your own tag if you
-		// want this action calls a trigger.
-		//if (! $error && ! $notrigger) {
-
-		// // Call triggers
-		// $result=$this->call_trigger('MYOBJECT_MODIFY',$user);
-		// if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-		// // End call triggers
-		//}
+		// Call triggers
+		if (! $error && ! $notrigger) {
+			$result=$this->call_trigger('BOOKKEEPING_MODIFY', $user);
+			if ($result < 0) $error++;
+		}
 
 		// Commit or rollback
 		if ($error) {
@@ -1572,15 +1569,11 @@ class BookKeeping extends CommonObject
 
 		$this->db->begin();
 
-		// Uncomment this and change MYOBJECT to your own tag if you
-		// want this action calls a trigger.
-		//if (! $error && ! $notrigger) {
-
-		// // Call triggers
-		// $result=$this->call_trigger('MYOBJECT_DELETE',$user);
-		// if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-		// // End call triggers
-		//}
+		// Call triggers
+		if (! $error && ! $notrigger) {
+			$result=$this->call_trigger('BOOKKEEPING_DELETE', $user);
+			if ($result < 0) $error++;
+		}
 
 		if (!$error) {
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element.$mode;
@@ -1706,7 +1699,7 @@ class BookKeeping extends CommonObject
 	 *
 	 * @param 	int 	$piecenum 	Piecenum to delete
 	 * @param 	string 	$mode 		Mode ('' or '_tmp')
-	 * @return 	int 				Result
+	 * @return 	int 				Nb of record deleted
 	 */
 	public function deleteMvtNum($piecenum, $mode = '')
 	{
@@ -1716,6 +1709,8 @@ class BookKeeping extends CommonObject
 		if (!isset($sql_filter)) {
 			return -1;
 		}
+
+		$nbprocessed = 0;
 
 		$this->db->begin();
 
@@ -1737,10 +1732,13 @@ class BookKeeping extends CommonObject
 			}
 			$this->db->rollback();
 			return -1;
+		} else {
+			$nbprocessed = $this->db->affected_rows($resql);
 		}
 
 		$this->db->commit();
-		return 1;
+
+		return $nbprocessed;
 	}
 
 	/**
@@ -2349,12 +2347,20 @@ class BookKeeping extends CommonObject
 
 			$sql_list = array();
 			if (!empty($conf->cache['active_fiscal_period_cached']) && is_array($conf->cache['active_fiscal_period_cached'])) {
+				$i = 0;
 				foreach ($conf->cache['active_fiscal_period_cached'] as $fiscal_period) {
-					$sql_list[] = "('" . $this->db->idate($fiscal_period['date_start']) . "' <= ".$this->db->sanitize($alias)."doc_date AND ".$this->db->sanitize($alias)."doc_date <= '" . $this->db->idate($fiscal_period['date_end']) . "')";
+					$sql_list[$i] = "(";
+					$sql_list[$i] .= "'".$this->db->idate($fiscal_period['date_start']) . "' <= ".$this->db->sanitize($alias)."doc_date";
+					if (!empty($fiscal_period['date_end'])) {
+						$sql_list[$i] .= " AND ";
+						$sql_list[$i] .= $this->db->sanitize($alias)."doc_date <= '" . $this->db->idate($fiscal_period['date_end'])."'";
+					}
+					$sql_list[$i] .= ")";
+					$i++;
 				}
 			}
 			$sqlsanitized = implode(' OR ', $sql_list);
-			self::$can_modify_bookkeeping_sql_cached[$alias] = !empty($sql_list) ? " AND (".$sqlsanitized.")" : "";
+			self::$can_modify_bookkeeping_sql_cached[$alias] = empty($sql_list) ? "" : " AND (".$sqlsanitized.")";
 		}
 
 		return self::$can_modify_bookkeeping_sql_cached[$alias];
@@ -2523,7 +2529,7 @@ class BookKeeping extends CommonObject
 	}
 
 	/**
-	 * Get list of fiscal period
+	 * Get list of fiscal period ordered by start date.
 	 *
 	 * @param 	string	$filter		Filter
 	 * @return 	array<array{id:int,label:string,date_start:string,date_end:string,status:int}>|int			Return integer <0 if KO, Fiscal periods : [[id, date_start, date_end, label], ...]

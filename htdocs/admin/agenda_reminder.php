@@ -82,6 +82,8 @@ if ($action == 'set') {
 
 	$commande = new CommandeFournisseur($db);
 	$commande->initAsSpecimen();
+	$specimenthirdparty = new Societe($db);
+	$specimenthirdparty->initAsSpecimen();
 	$commande->thirdparty = $specimenthirdparty;
 
 	// Search template files
@@ -188,6 +190,7 @@ if (!getDolGlobalString('AGENDA_REMINDER_BROWSER')) {
 	print '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_BROWSER&token='.newToken().'">'.img_picto($langs->trans('Enabled'), 'switch_on').'</a>';
 	print '</td></tr>'."\n";
 
+	/* This feature need to use the old method AGENDA_NOTIFICATION_METHOD =  'jsnotification' that is broken on a lot of browser setup
 	print '<tr class="oddeven">'."\n";
 	print '<td>'.$langs->trans('AGENDA_REMINDER_BROWSER_SOUND').'</td>'."\n";
 	print '<td class="center">&nbsp;</td>'."\n";
@@ -200,6 +203,7 @@ if (!getDolGlobalString('AGENDA_REMINDER_BROWSER')) {
 	}
 
 	print '</td></tr>'."\n";
+	*/
 }
 
 $job = new Cronjob($db);

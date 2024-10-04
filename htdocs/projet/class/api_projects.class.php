@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,10 +17,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
- use Luracast\Restler\RestException;
+use Luracast\Restler\RestException;
 
- require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
- require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 
 /**
  * API class for projects
@@ -106,7 +107,7 @@ class Projects extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		$result = $this->project->fetch('', $ref);
+		$result = $this->project->fetch(0, $ref);
 		if (!$result) {
 			throw new RestException(404, 'Project with supplied ref not found');
 		}
@@ -137,7 +138,7 @@ class Projects extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		$result = $this->project->fetch('', '', $ref_ext);
+		$result = $this->project->fetch(0, '', $ref_ext);
 		if (!$result) {
 			throw new RestException(404, 'Project with supplied ref_ext not found');
 		}
@@ -168,7 +169,7 @@ class Projects extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		$result = $this->project->fetch('', '', '', $email_msgid);
+		$result = $this->project->fetch(0, '', '', $email_msgid);
 		if (!$result) {
 			throw new RestException(404, 'Project with supplied email_msgid not found');
 		}

@@ -104,6 +104,7 @@ if ($action == 'updateMask') {
 		$module = new $classname($db);
 		'@phan-var-force ModelePDFCommandes $module';
 
+		/** @var ModelePDFCommandes $module */
 		if ($module->write_file($commande, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=commande&file=SPECIMEN.pdf");
 			return;

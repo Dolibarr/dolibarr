@@ -3,6 +3,7 @@
  * Copyright (C) 2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2016 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -171,11 +172,11 @@ class BankCateg // extends CommonObject
 	/**
 	 * Update database
 	 *
-	 * @param  User|null	$user 		User that modify
-	 * @param  int 			$notrigger 	0=launch triggers after, 1=disable triggers
+	 * @param  ?User		$user 		User that modify
+	 * @param  int<0,1>		$notrigger 	0=launch triggers after, 1=disable triggers
 	 * @return int          	        Return integer <0 if KO, >0 if OK
 	 */
-	public function update(User $user = null, $notrigger = 0)
+	public function update($user = null, $notrigger = 0)
 	{
 		global $conf;
 		$error = 0;

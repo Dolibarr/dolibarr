@@ -149,7 +149,7 @@ if (empty($reshook)) {
 		$action = 'create_ticket';
 	}
 
-	if ($action == 'create_ticket' && GETPOST('save', 'alpha')) {
+	if ($action == 'create_ticket' && GETPOST('save', 'alpha')) {	// Test on permission not required. This is a public form. Security is managed by mitigation.
 		$error = 0;
 		$origin_email = GETPOST('email', 'email');
 		if (empty($origin_email)) {
@@ -212,16 +212,16 @@ if (empty($reshook)) {
 			}
 		}
 
-		if (!GETPOST("subject", "alphanohtml")) {
-			$error++;
-			array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("Subject")));
-			$action = '';
-		}
-		if (!GETPOST("message", "restricthtml")) {
-			$error++;
-			array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("Message")));
-			$action = '';
-		}
+
+		$fieldsToCheck = [
+			'type_code' => ['check' => 'alpha', 'langs' => 'TicketTypeRequest'],
+			'category_code' => ['check' => 'alpha', 'langs' => 'TicketCategory'],
+			'severity_code' => ['check' => 'alpha', 'langs' => 'TicketSeverity'],
+			'subject' => ['check' => 'alphanohtml', 'langs' => 'Subject'],
+			'message' => ['check' => 'restricthtml', 'langs' => 'Message']
+		];
+
+		FormTicket::checkRequiredFields($fieldsToCheck, $error);
 
 		// Check email address
 		if (!empty($origin_email) && !isValidEmail($origin_email)) {

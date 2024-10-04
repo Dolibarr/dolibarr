@@ -32,7 +32,7 @@
  * Prepare array with list of tabs
  *
  * @param   FactureFournisseur	$object		Object related to tabs
- * @return  array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function facturefourn_prepare_head(FactureFournisseur $object)
 {
@@ -170,7 +170,7 @@ function facturefourn_prepare_head(FactureFournisseur $object)
  * Prepare array with list of tabs
  *
  * @param   CommandeFournisseur	$object		Object related to tabs
- * @return  array							Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function ordersupplier_prepare_head(CommandeFournisseur $object)
 {
