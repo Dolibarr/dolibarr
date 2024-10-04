@@ -5476,7 +5476,7 @@ div#card-errors {
 	padding-left: 5px;
 	padding-right: 5px;
 	padding-top: 5px;
-	padding-top: 5px;
+	padding-bottom: 5px;
 }
 
 /* ============================================================================== */
