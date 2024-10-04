@@ -47,7 +47,6 @@ parameters:
 	reportMagicProperties: false
 	treatPhpDocTypesAsCertain: false
 	ignoreErrors:
-		- '#Function llxHeaderVierge invoked with 0 parameters, 1-6 required#'
 		- '#Offset .* (?:isset\(\)) always exists and is not nullable#'
 		- '#(?:Variable \$(?:_(?:FILES|POST|SERVER)|array_propal_object|baseUri|current_fiscal_period|d(?:b_create_(?:database|user)|olibarr_main_(?:db_prefix|url_root)|raftchecked)|erreur_ajout_date|isImageValid|keyforstripeterminalbank|(?:lo|mar)gin|max|n(?:ewProperty|um)|p(?:ermsgroupbyentitypluszero|ro(?:gressCalculated|parrayofkeyval)|ublic)|t(?:(?:itl|otal_tim)e|va_tx)|var)) in isset\(\) always exists and is not nullable#'
 		- '#(?:Property CommonOrderLine::\$multicurrency_subprice \(float\) on left side of \?\?|isset\(\)) is not nullable#'
@@ -67,7 +66,6 @@ parameters:
 		- '#Constructor of class (?:Dol(?:Editor|iDB(?:Mysqli|Pgsql|Sqlite3))|(?:ModeleBox|box_accountancy_last_manual_entri)es|box_(?:ac(?:countancy_suspense_account|ti(?:ons(?:_future)?|vity))|b(?:irthdays(?:_members)?|o(?:(?:okmark|m)s))|c(?:(?:lient|o(?:m(?:(?:mand|pt)e)|nt(?:r?act)))s|ustomers_outstanding_bill_reached)|dolibarr_state_board|f(?:actures(?:_(?:fourn(?:_imp)?|imp))?|icheinter|ournisseurs|unnel_of_prospection)|g(?:oodcustomers|raph_(?:invoices_(?:per(?:month|year)|supplier_permonth)|n(?:b_ticket(?:_last_x_days|s_type)|ew_vs_close_ticket)|orders_(?:(?:supplier_)?permonth)|pro(?:duct_distribution|pales_permonth)|ticket_by_severity))|last(?:_(?:(?:modified_)?knowledgerecord|(?:modified_)?ticket)|login)|m(?:embers_(?:by_t(?:ags|ype)|last_(?:modified|subscriptions)|subscriptions_by_year)|os)|pro(?:duits(?:_alerte_stock)?|ject(?:_opportunities)?|pales|spect)|s(?:(?:cheduled_job|ervices_contract)s|ervices_expired|(?:hipment|upplier_order)s|upplier_orders_awaiting_reception)|task|validated_projects)).* has an unused parameter #'
 		- '#Dead catch - Exception is never thrown in the try block#'
 		- '#.*phan-var#'
-		- '#\$httpStatusCode of class Luracast\\Restler\\RestException constructor expects string, int given.#'
 		- '#(?:(?:s(?:(?:et_error_handl|pl_autoload_regist)er)|array_filter)) expects \(callable#'
 		- '# (vatrate|DolEditor constructor) expects bool, int#'
 		- '# SMTPs::(getFrom|getErrorsTo|getReplyTo)\(\) expects bool, string given.#'
@@ -114,6 +112,8 @@ parameters:
 		- '# (?:Holiday::getNextNumRef\(\)|get_localtax|pdf_pagefoot|societe_prepare_head) expects Societe#'
 		- '# (?:Common(?:DocGenerator::get(?:(?:ExtrafieldsInHtml|_substitutionarray_lines)\(\))|Object::printO(?:(?:bject|rigin)Line\(\)))) expects CommonObjectLine#'
 		- '#colorHexToHsl expects float\|false, true#'
+		- '#function dolGetButtonAction expects array\{confirm\?: array.*confirm: true} given.#'
+
 	internalErrorsCountLimit: 50
 	cache:
 		nodesByFileCountMax: 512
