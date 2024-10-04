@@ -47,7 +47,6 @@ parameters:
 	reportMagicProperties: false
 	treatPhpDocTypesAsCertain: false
 	ignoreErrors:
-		- '#Function llxHeaderVierge invoked with 0 parameters, 1-6 required#'
 		- '#Offset .* (?:isset\(\)) always exists and is not nullable#'
 		- '#(?:Variable \$(?:_(?:FILES|POST|SERVER)|array_propal_object|baseUri|current_fiscal_period|d(?:b_create_(?:database|user)|olibarr_main_(?:db_prefix|url_root)|raftchecked)|erreur_ajout_date|isImageValid|keyforstripeterminalbank|(?:lo|mar)gin|max|n(?:ewProperty|um)|p(?:ermsgroupbyentitypluszero|ro(?:gressCalculated|parrayofkeyval)|ublic)|t(?:(?:itl|otal_tim)e|va_tx)|var)) in isset\(\) always exists and is not nullable#'
 		- '#(?:Property CommonOrderLine::\$multicurrency_subprice \(float\) on left side of \?\?|isset\(\)) is not nullable#'
