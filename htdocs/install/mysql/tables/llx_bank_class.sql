@@ -17,6 +17,7 @@
 -- Table to link bank tag/categories with bank lines
 -- ===================================================================
 
+-- TODO : Remove this file, This table is replaced with llx_categorie_bank
 create table llx_category_bankline
 (
   lineid   integer NOT NULL,

@@ -1,5 +1,6 @@
 -- ===================================================================
--- Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -16,5 +17,9 @@
 --
 -- ===================================================================
 
--- TODO : Remove this file, This table is replaced with llx_categorie_bank
-ALTER TABLE llx_category_bankline ADD UNIQUE INDEX uk_category_bankline_lineid (lineid, fk_categ);
+create table llx_categorie_bank
+(
+  fk_categorie  integer NOT NULL,
+  fk_bank  integer NOT NULL,
+  import_key    varchar(14)
+)ENGINE=innodb;

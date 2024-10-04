@@ -100,6 +100,64 @@ ALTER TABLE llx_prelevement_demande ADD COLUMN fk_societe_rib integer DEFAULT NU
 ALTER TABLE llx_bank_categ RENAME TO llx_category_bank;		-- TODO Move content into llx_categorie instead of renaming it
 ALTER TABLE llx_bank_class RENAME TO llx_category_bankline;
 
+-- Move content from llx_category_bank to llx_categorie
+-- Copy categories from llx_category_bank into llx_categorie
+INSERT INTO llx_categorie (entity, fk_parent, label, type, description, color, position, visible, date_creation)
+SELECT
+  llx_category_bank.entity,
+  0 AS fk_parent,
+  llx_category_bank.label,
+  8 AS type,  -- '8' is the value of bankline category type
+  '' AS description,
+  '' AS color,
+  0 AS position,
+  1 AS visible,
+  NOW() AS date_creation
+FROM llx_category_bank
+LEFT JOIN llx_categorie
+  ON llx_category_bank.label = llx_categorie.label
+  AND llx_category_bank.entity = llx_categorie.entity
+  AND llx_categorie.type = 8
+WHERE llx_categorie.rowid IS NULL;
+
+-- Update llx_category_bankline with the new rowid from llx_categorie
+UPDATE llx_category_bankline AS bl
+JOIN llx_category_bank AS b
+  ON bl.fk_categ = b.rowid
+JOIN llx_categorie AS c
+  ON (b.label = c.label
+  AND b.entity = c.entity
+  AND c.type = 8)
+SET bl.fk_categ = c.rowid
+WHERE c.rowid IS NOT NULL;
+
+-- Create the llx_categorie_bank table
+CREATE TABLE llx_categorie_bank (
+  fk_categorie  INTEGER NOT NULL,
+  fk_bank       INTEGER NOT NULL,
+  import_key    VARCHAR(14)
+) ENGINE=InnoDB;
+
+-- Add primary key and foreign key constraints
+ALTER TABLE llx_categorie_bank ADD PRIMARY KEY pk_categorie_bank (fk_categorie, fk_bank);
+ALTER TABLE llx_categorie_bank ADD INDEX idx_categorie_bank_fk_categorie (fk_categorie);
+ALTER TABLE llx_categorie_bank ADD INDEX idx_categorie_bank_fk_bank (fk_bank);
+ALTER TABLE llx_categorie_bank ADD CONSTRAINT fk_categorie_bank_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_categorie_bank ADD CONSTRAINT fk_categorie_bank_fk_bank FOREIGN KEY (fk_bank) REFERENCES llx_bank (rowid);
+
+-- Insert the updated content from llx_category_bankline into llx_categorie_bank
+INSERT INTO llx_categorie_bank (fk_categorie, fk_bank)
+SELECT
+  llx_category_bankline.fk_categ,
+  llx_category_bankline.lineid
+FROM llx_category_bankline;
+
+-- Remove llx_category_bank (Content has been moved to llx_categorie)
+-- DROP TABLE IF EXISTS llx_category_bank;
+
+-- Remove llx_category_bankline (Replaced by llx_categorie_bank)
+-- DROP TABLE IF EXISTS llx_category_bankline;
+
 
 create table llx_paymentexpensereport_expensereport
 (
