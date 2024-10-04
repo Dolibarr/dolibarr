@@ -729,7 +729,9 @@ class ContratLigne extends CommonObjectLine
 		$sql .= " total_ttc = ".$this->total_ttc.",";
 		$sql .= " fk_product_fournisseur_price = ".(!empty($this->fk_fournprice) ? $this->fk_fournprice : "NULL").",";
 		$sql .= " buy_price_ht = '".price2num($this->pa_ht)."',";
-		$sql .= " info_bits = '".$this->db->escape($this->info_bits)."',";
+		if (!empty($this->info_bits)) {
+			$sql .= " info_bits = '".$this->db->escape($this->info_bits)."',";
+		}
 		$sql .= " fk_user_author = ".($this->fk_user_author >= 0 ? $this->fk_user_author : "NULL").",";
 		$sql .= " fk_user_ouverture = ".($this->fk_user_ouverture > 0 ? $this->fk_user_ouverture : "NULL").",";
 		$sql .= " fk_user_cloture = ".($this->fk_user_cloture > 0 ? $this->fk_user_cloture : "NULL").",";
@@ -1035,6 +1037,52 @@ class ContratLigne extends CommonObjectLine
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return -1;
+		}
+	}
+
+	/**
+	 * 	Delete line in database
+	 *
+	 *  @param		User		$user		Object user
+	 *  @param		bool		$notrigger	Disable triggers
+	 *	@return		int			<0 if KO, >0 if OK
+	 */
+	public function delete($user, $notrigger = false)
+	{
+		$error = 0;
+
+		$this->db->begin();
+
+		if (!$notrigger) {
+			$result = $this->call_trigger('LINECONTRACT_DELETE', $user);
+			if ($result < 0) {
+				$error++;
+			}
+		}
+
+		if (!$error) {
+			$result = $this->deleteExtraFields();
+			if ($result < 0) {
+				$error++;
+			}
+		}
+
+		if (!$error) {
+			$sql = "DELETE FROM " . $this->db->prefix() . $this->table_element . " WHERE rowid = " . $this->id;
+
+			$res = $this->db->query($sql);
+			if (!$res) {
+				$error++;
+				$this->errors[] = $this->db->lasterror();
+			}
+		}
+
+		if ($error) {
+			$this->db->rollback();
+			return -1;
+		} else {
+			$this->db->commit();
+			return 1;
 		}
 	}
 }
