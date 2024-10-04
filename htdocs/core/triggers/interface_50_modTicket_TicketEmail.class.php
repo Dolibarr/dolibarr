@@ -164,6 +164,10 @@ class InterfaceTicketEmail extends DolibarrTriggers
 
 						// If recipients, we send the email
 						if ($sendto) {
+							if (getDolGlobalInt('ADD_TICKET_TITLE_SUBJECT')) {
+								$subject_customer = $object->subject;
+							}
+							
 							$this->composeAndSendCustomerMessage($sendto, $subject_customer, $body_customer, $see_ticket_customer, $object, $langs);
 						}
 					}
@@ -212,6 +216,10 @@ class InterfaceTicketEmail extends DolibarrTriggers
 					}
 
 					if ($sendto) {
+						if (getDolGlobalInt('ADD_TICKET_TITLE_SUBJECT')) {
+							$subject_customer = $object->subject;
+						}
+
 						$this->composeAndSendCustomerMessage($sendto, $subject_customer, $body_customer, $see_ticket_customer, $object, $langs);
 					}
 				}
@@ -285,6 +293,10 @@ class InterfaceTicketEmail extends DolibarrTriggers
 						unset($linked_contacts);
 					}
 					if ($sendto) {
+						if (getDolGlobalInt('ADD_TICKET_TITLE_SUBJECT')) {
+							$subject_customer = $object->subject;
+						}
+
 						$this->composeAndSendCustomerMessage($sendto, $subject_customer, $body_customer, $see_ticket_customer, $object, $langs);
 					}
 				}
@@ -387,7 +399,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 		$mimetype = array();
 
 		$appli = $mysoc->name;
-
+		
 		$subject = '['.$appli.'] '.$langs->transnoentities($base_subject);
 		$message_customer = $langs->transnoentities($body, $object->track_id).'<br>';
 		$message_customer .= '<ul><li>'.$langs->trans('Title').' : '.$object->subject.'</li>';
