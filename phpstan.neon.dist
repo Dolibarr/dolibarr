@@ -114,6 +114,8 @@ parameters:
 		- '# (?:Holiday::getNextNumRef\(\)|get_localtax|pdf_pagefoot|societe_prepare_head) expects Societe#'
 		- '# (?:Common(?:DocGenerator::get(?:(?:ExtrafieldsInHtml|_substitutionarray_lines)\(\))|Object::printO(?:(?:bject|rigin)Line\(\)))) expects CommonObjectLine#'
 		- '#colorHexToHsl expects float\|false, true#'
+		- '#function dolGetButtonAction expects array\{confirm\?: array.*confirm: true} given.#'
+
 	internalErrorsCountLimit: 50
 	cache:
 		nodesByFileCountMax: 512
