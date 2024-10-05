@@ -1730,6 +1730,43 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
+	 * Get a specific thirdparty by account
+	 *
+	 * @param string $site Site key
+	 * @param string key_account Key of account
+	 *
+	 * @return array|mixed
+	 * @throws RestException 401 Unauthorized: User does not have permission to read thirdparties
+	 * @throws RestException 404 Not Found: Specified thirdparty ID does not belongs to an existing thirdparty
+	 *
+	 * @url GET /accounts/{site}/{key_account}
+	 */
+	public function getSocieteByAccounts($site, $key_account)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'lire')) {
+			throw new RestException(403);
+		}
+
+		$sql = "SELECT rowid, fk_soc, key_account, site, date_creation, tms FROM ".MAIN_DB_PREFIX."societe_account";
+		$sql .= " WHERE site = '".$site."' AND key_account = '".$key_account."'";
+
+		$result = $this->db->query($sql);
+	
+		if ($result && $this->db->num_rows($result) == 1) {
+				$obj = $this->db->fetch_object($result);
+				$returnThirdparty = $this->_fetch($obj->fk_soc);
+		} else {
+				throw new RestException(404, 'This account have many thirdparties attached or does not exist.');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('societe', $returnThirdparty->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		return $returnThirdparty;
+	}
+
+	/**
 	 * Create and attach a new account to an existing thirdparty
 	 *
 	 * Possible fields for request_data (request body) are specified in <code>llx_societe_account</code> table.<br>
