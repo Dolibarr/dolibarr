@@ -208,8 +208,6 @@ class ExportCsv extends ModeleExports
 				continue;
 			}
 
-			$newvalue = $outputlangs->transnoentities($array_export_fields_label[$code]); // newvalue is now $outputlangs->charset_output encoded
-
 			// Clean data and add encloser if required (depending on value of USE_STRICT_CSV_RULES)
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 			$newvalue = csvClean($newvalue, $outputlangs->charset_output, $this->separator);
@@ -261,7 +259,7 @@ class ExportCsv extends ModeleExports
 				continue;
 			}
 
-			$newvalue = $outputlangs->convToOutputCharset($objp->$alias); // objp->$alias must be utf8 encoded as any var in memory	// newvalue is now $outputlangs->charset_output encoded
+			$newvalue = $objp->$alias;
 			$typefield = isset($array_types[$code]) ? $array_types[$code] : '';
 
 			// Translation newvalue
