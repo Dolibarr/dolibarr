@@ -125,7 +125,7 @@ UPDATE llx_category_bankline AS bl
 INNER JOIN llx_category_bank AS b
   ON bl.fk_categ = b.rowid
 INNER JOIN llx_categorie AS c
-  ON b.rowid = c.rowid
+  ON b.label = c.label
   AND b.entity = c.entity
   AND c.type = 8
 SET bl.fk_categ = c.rowid
