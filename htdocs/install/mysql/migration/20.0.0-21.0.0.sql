@@ -122,12 +122,12 @@ WHERE llx_categorie.rowid IS NULL;
 
 -- Update llx_category_bankline with the new rowid from llx_categorie
 UPDATE llx_category_bankline AS bl
-JOIN llx_category_bank AS b
+INNER JOIN llx_category_bank AS b
   ON bl.fk_categ = b.rowid
-JOIN llx_categorie AS c
-  ON (b.label = c.label
+INNER JOIN llx_categorie AS c
+  ON b.rowid = c.rowid
   AND b.entity = c.entity
-  AND c.type = 8)
+  AND c.type = 8
 SET bl.fk_categ = c.rowid
 WHERE c.rowid IS NOT NULL;
 
@@ -139,7 +139,7 @@ CREATE TABLE llx_categorie_bank (
 ) ENGINE=InnoDB;
 
 -- Add primary key and foreign key constraints
-ALTER TABLE llx_categorie_bank ADD PRIMARY KEY pk_categorie_bank (fk_categorie, fk_bank);
+ALTER TABLE llx_categorie_bank ADD CONSTRAINT pk_categorie_bank PRIMARY KEY (fk_categorie, fk_bank);
 ALTER TABLE llx_categorie_bank ADD INDEX idx_categorie_bank_fk_categorie (fk_categorie);
 ALTER TABLE llx_categorie_bank ADD INDEX idx_categorie_bank_fk_bank (fk_bank);
 ALTER TABLE llx_categorie_bank ADD CONSTRAINT fk_categorie_bank_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
