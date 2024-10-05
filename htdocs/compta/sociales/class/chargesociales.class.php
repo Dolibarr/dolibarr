@@ -65,20 +65,43 @@ class ChargeSociales extends CommonObject
 	 * @var string label
 	 */
 	public $label;
+	/**
+	 * @var int
+	 */
 	public $type;
+	/**
+	 * @var string
+	 */
 	public $type_label;
+	/**
+	 * @var string
+	 */
 	public $type_code;
+	/**
+	 * @var string
+	 */
 	public $type_accountancy_code;
 
+	/**
+	 * @var int|string
+	 */
 	public $amount;
+	/**
+	 * @var int<0,1>
+	 */
 	public $paye;
 	/**
-	 * @deprecated
+	 * @deprecated Use $period
+	 * @var int|string
 	 */
 	public $periode;
+	/**
+	 * @var int|string
+	 */
 	public $period;
 
 	/**
+	 * @var string
 	 * @deprecated Use label instead
 	 */
 	public $lib;
@@ -102,7 +125,13 @@ class ChargeSociales extends CommonObject
 	 * @var int ID
 	 */
 	public $mode_reglement_id;
+	/**
+	 * @var string
+	 */
 	public $mode_reglement_code;
+	/**
+	 * @var string
+	 */
 	public $mode_reglement;
 
 	/**
@@ -301,7 +330,7 @@ class ChargeSociales extends CommonObject
 		// Get bank transaction lines for this social contributions
 		include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 		$account = new Account($this->db);
-		$lines_url = $account->get_url('', $this->id, 'sc');
+		$lines_url = $account->get_url(0, $this->id, 'sc');
 
 		// Delete bank urls
 		foreach ($lines_url as $line_url) {
@@ -520,8 +549,8 @@ class ChargeSociales extends CommonObject
 	/**
 	 *  Retourne le libelle du statut d'une charge (impaye, payee)
 	 *
-	 *  @param	int		$mode       	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
-	 *  @param  double	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommend to put here amount paid if you have it, 1 otherwise)
+	 *  @param	int<0,6>	$mode       	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
+	 *  @param  float		$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommend to put here amount paid if you have it, 1 otherwise)
 	 *  @return	string        			Label
 	 */
 	public function getLibStatut($mode = 0, $alreadypaid = -1)
@@ -535,7 +564,7 @@ class ChargeSociales extends CommonObject
 	 *
 	 *  @param	int		$status        	Id status
 	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
-	 *  @param  double	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommend to put here amount paid if you have it, 1 otherwise)
+	 *  @param  float	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommend to put here amount paid if you have it, 1 otherwise)
 	 *  @return string        			Label
 	 */
 	public function LibStatut($status, $mode = 0, $alreadypaid = -1)
@@ -792,7 +821,7 @@ class ChargeSociales extends CommonObject
 		if (property_exists($this, 'label')) {
 			$return .= ' &nbsp; <div class="inline-block opacitymedium valignmiddle tdoverflowmax100">'.$this->label.'</div>';
 		}
-		if (!empty($arraydata['project']) && $arraydata['project']->id > 0) {
+		if (!empty($arraydata['project']) && $arraydata['project'] instanceof Project && $arraydata['project']->id > 0) {
 			$return .= '<br><span class="info-box-label">'.$arraydata['project']->getNomUrl(1).'</span>';
 		}
 		if (property_exists($this, 'date_ech')) {

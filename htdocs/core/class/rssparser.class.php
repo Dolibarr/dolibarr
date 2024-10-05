@@ -261,7 +261,7 @@ class RssParser
 	/**
 	 * getItems
 	 *
-	 * @return array
+	 * @return array<array{link:string,title:string,description:string,pubDate:string,category:string,id:string,author:string}>
 	 */
 	public function getItems()
 	{

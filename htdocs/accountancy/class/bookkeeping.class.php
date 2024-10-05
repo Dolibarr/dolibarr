@@ -463,15 +463,11 @@ class BookKeeping extends CommonObject
 			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 		}
 
-		// Uncomment this and change MYOBJECT to your own tag if you
-		// want this action to call a trigger.
-		//if (! $error && ! $notrigger) {
-
-		// // Call triggers
-		// $result=$this->call_trigger('MYOBJECT_CREATE',$user);
-		// if ($result < 0) $error++;
-		// // End call triggers
-		//}
+		// Call triggers
+		if (! $error && ! $notrigger) {
+			$result=$this->call_trigger('BOOKKEEPING_CREATE', $user);
+			if ($result < 0) $error++;
+		}
 
 		// Commit or rollback
 		if ($error) {
@@ -716,6 +712,11 @@ class BookKeeping extends CommonObject
 
 		if (!$error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element.$mode);
+			// Call triggers
+			if (! $notrigger) {
+				$result=$this->call_trigger('BOOKKEEPING_CREATE', $user);
+				if ($result < 0) $error++;
+			}
 		}
 
 		// Commit or rollback
@@ -1477,15 +1478,11 @@ class BookKeeping extends CommonObject
 			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 		}
 
-		// Uncomment this and change MYOBJECT to your own tag if you
-		// want this action calls a trigger.
-		//if (! $error && ! $notrigger) {
-
-		// // Call triggers
-		// $result=$this->call_trigger('MYOBJECT_MODIFY',$user);
-		// if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-		// // End call triggers
-		//}
+		// Call triggers
+		if (! $error && ! $notrigger) {
+			$result=$this->call_trigger('BOOKKEEPING_MODIFY', $user);
+			if ($result < 0) $error++;
+		}
 
 		// Commit or rollback
 		if ($error) {
@@ -1572,15 +1569,11 @@ class BookKeeping extends CommonObject
 
 		$this->db->begin();
 
-		// Uncomment this and change MYOBJECT to your own tag if you
-		// want this action calls a trigger.
-		//if (! $error && ! $notrigger) {
-
-		// // Call triggers
-		// $result=$this->call_trigger('MYOBJECT_DELETE',$user);
-		// if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-		// // End call triggers
-		//}
+		// Call triggers
+		if (! $error && ! $notrigger) {
+			$result=$this->call_trigger('BOOKKEEPING_DELETE', $user);
+			if ($result < 0) $error++;
+		}
 
 		if (!$error) {
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element.$mode;
@@ -2577,7 +2570,7 @@ class BookKeeping extends CommonObject
 	}
 
 	/**
-	 * Get list of fiscal period
+	 * Get list of fiscal period ordered by start date.
 	 *
 	 * @param 	string	$filter		Filter
 	 * @return 	array<array{id:int,label:string,date_start:string,date_end:string,status:int}>|int			Return integer <0 if KO, Fiscal periods : [[id, date_start, date_end, label], ...]

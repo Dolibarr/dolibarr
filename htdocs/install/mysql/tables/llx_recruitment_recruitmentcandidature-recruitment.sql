@@ -25,7 +25,7 @@ CREATE TABLE llx_recruitment_recruitmentcandidature(
 	note_private text, 
 	date_creation datetime NOT NULL,
 	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
-	fk_user_creat integer NOT NULL, 
+	fk_user_creat integer, 
 	fk_user_modif integer, 
 	fk_user integer, 						-- Id of user created from the job application
 	import_key varchar(14), 

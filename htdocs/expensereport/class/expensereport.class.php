@@ -109,7 +109,7 @@ class ExpenseReport extends CommonObject
 	 * 0=draft, 2=validated (attente approb), 4=canceled, 5=approved, 6=paid, 99=denied
 	 *
 	 * @var int		Status
-	 * @deprecated
+	 * @deprecated Use $status
 	 */
 	public $fk_statut;
 
@@ -123,6 +123,9 @@ class ExpenseReport extends CommonObject
 	 */
 	public $modepaymentid;
 
+	/**
+	 * @var int
+	 */
 	public $paid;
 
 	// Paiement
@@ -141,6 +144,9 @@ class ExpenseReport extends CommonObject
 	 */
 	public $user_validator_infos;
 
+	/**
+	 * @var string
+	 */
 	public $rule_warning_message;
 
 	// ACTIONS
@@ -244,7 +250,15 @@ class ExpenseReport extends CommonObject
 	 */
 	public $fk_user_approve;
 
+	/**
+	 * @var float|int
+	 * @deprecated See $total_localtax1
+	 */
 	public $localtax1;	// for backward compatibility (real field should be total_localtax1 defined into CommonObject)
+	/**
+	 * @var float|int
+	 * @deprecated See $total_localtax2
+	 */
 	public $localtax2;	// for backward compatibility (real field should be total_localtax2 defined into CommonObject)
 
 	/**
@@ -1787,13 +1801,13 @@ class ExpenseReport extends CommonObject
 	/**
 	 *  Return clickable name (with picto eventually)
 	 *
-	 *	@param		int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
-	 *  @param  	string 	$option                		Where point the link ('', 'document', ..)
-	 *	@param		int		$max						Max length of shown ref
-	 *	@param		int		$short						1=Return just URL
-	 *	@param		string	$moretitle					Add more text to title tooltip
-	 *	@param		int		$notooltip					1=Disable tooltip
-	 *  @param  	int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *	@param		int<0,2>	$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
+	 *  @param  	string		$option                		Where points the link ('', 'document', ..)
+	 *	@param		int			$max						Max length of shown ref
+	 *	@param		int<0,1>	$short						1=Return just URL
+	 *	@param		string		$moretitle					Add more text to title tooltip
+	 *	@param		int<0,1>	$notooltip					1=Disable tooltip
+	 *  @param  	int<-1,1>	$save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return		string								String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $moretitle = '', $notooltip = 0, $save_lastsearch_value = -1)
@@ -2430,7 +2444,7 @@ class ExpenseReport extends CommonObject
 	 * Return list of people with permission to validate expense reports.
 	 * Search for permission "approve expense report"
 	 *
-	 * @return  array|int       Array of user ids, <0 if KO
+	 * @return  int[]|int<-1,-1>	Array of user ids, <0 if KO
 	 */
 	public function fetch_users_approver_expensereport()
 	{
@@ -2469,10 +2483,10 @@ class ExpenseReport extends CommonObject
 	 *
 	 *  @param      string      $modele         Force le mnodele a utiliser ('' to not force)
 	 *  @param      Translate   $outputlangs    object lang a utiliser pour traduction
-	 *  @param      int         $hidedetails    Hide details of lines
-	 *  @param      int         $hidedesc       Hide description
-	 *  @param      int         $hideref        Hide ref
-	 *  @param  	?array  $moreparams     Array to provide more information
+	 *  @param      int<0,1>	$hidedetails    Hide details of lines
+	 *  @param      int<0,1>	$hidedesc       Hide description
+	 *  @param      int<0,1>	$hideref        Hide ref
+	 *  @param  	?array<string,mixed>  $moreparams     Array to provide more information
 	 *  @return     int                         0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
@@ -2499,8 +2513,8 @@ class ExpenseReport extends CommonObject
 	/**
 	 * List of types
 	 *
-	 * @param   int     $active     Active or not
-	 * @return  array
+	 * @param   int<0,1>	$active     Active or not
+	 * @return  array<string,string>
 	 */
 	public function listOfTypes($active = 1)
 	{
@@ -2786,7 +2800,7 @@ class ExpenseReport extends CommonObject
 
 					$ranges[$i] = $obj;
 				}
-
+				'@phan-var-force Object[] $ranges';
 
 				for ($i = 0; $i < $num; $i++) {
 					if ($i < ($num - 1)) {
@@ -2838,7 +2852,7 @@ class ExpenseReport extends CommonObject
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
-		if (array_key_exists('userauthor', $arraydata)) {
+		if (array_key_exists('userauthor', $arraydata) && $arraydata['userauthor'] instanceof User) {
 			$return .= '<br><span class="info-box-label">'.$arraydata['userauthor']->getNomUrl(-1).'</span>';
 		}
 		if (property_exists($this, 'date_debut') && property_exists($this, 'date_fin')) {

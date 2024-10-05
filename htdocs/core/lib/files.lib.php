@@ -1137,6 +1137,12 @@ function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
 					if (!empty($moreinfo) && !empty($moreinfo['src_object_id'])) {
 						$ecmfile->src_object_id = $moreinfo['src_object_id'];
 					}
+					if (!empty($moreinfo) && !empty($moreinfo['position'])) {
+						$ecmfile->position = $moreinfo['position'];
+					}
+					if (!empty($moreinfo) && !empty($moreinfo['cover'])) {
+						$ecmfile->cover = $moreinfo['cover'];
+					}
 
 					$resultecm = $ecmfile->create($user);
 					if ($resultecm < 0) {
@@ -1519,7 +1525,8 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 			$ok = true;
 			$globencoded = str_replace('[', '\[', $file_osencoded);
 			$globencoded = str_replace(']', '\]', $globencoded);
-			$listofdir = glob($globencoded);
+			$listofdir = glob($globencoded);	// This scan dir for files. If file does not exists, return empty.
+
 			if (!empty($listofdir) && is_array($listofdir)) {
 				foreach ($listofdir as $filename) {
 					if ($nophperrors) {

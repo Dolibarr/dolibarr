@@ -33,9 +33,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
 
 $langs->loadLangs(array("bills", "loan"));
 
-$chid = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
+$confirm	= GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
+
+$chid = GETPOSTINT('id');
 $datepaid = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 
 // Security check
@@ -84,12 +86,14 @@ if (!empty($line_id)) {
 	}
 }
 
+$permissiontoadd = $user->hasRight('loan', 'write');
+
 
 /*
  * Actions
  */
 
-if ($action == 'add_payment') {
+if ($action == 'add_payment' && $permissiontoadd) {
 	$error = 0;
 
 	if ($cancel) {

@@ -20,15 +20,15 @@
  */
 
 /**
- *	\file       htdocs/core/lib/propal.lib.php
- *	\brief      Ensemble de functions de base pour le module propal
- *	\ingroup    propal
+ *	\file       htdocs/core/lib/supplier_proposal.lib.php
+ *	\brief      Ensemble de functions de base pour le module supplier_proposal
+ *	\ingroup    supplier_proposal
  */
 
 /**
  * Prepare array with list of tabs
  *
- * @param   object	$object		Object related to tabs
+ * @param   SupplierProposal	$object		Object related to tabs
  * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function supplier_proposal_prepare_head($object)
@@ -108,7 +108,7 @@ function supplier_proposal_prepare_head($object)
 /**
  *  Return array head with list of tabs to view object information.
  *
- *  @return	array   	        head array with tabs
+ *  @return	array<array{0:string,1:string,2:string}>	head array with tabs
  */
 function supplier_proposal_admin_prepare_head()
 {

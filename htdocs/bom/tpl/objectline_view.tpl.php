@@ -192,6 +192,16 @@ if ($filtertype == 1 && isModEnabled('workstation')) {
 	print '<td class="linecolworkstation nowrap">';
 	$coldisplay++;
 	if ($res > 0) {
+		$unit = new CUnits($object->db);
+		$fk_defaultUnit = $unit->getUnitFromCode('h', 'short_label', 'time');
+		$nbPlannedHour = $unit->unitConverter($line->qty, $line->fk_unit, $fk_defaultUnit);
+		$line->total_cost = 0;
+		if ($workstation->thm_machine_estimated) {
+			$line->total_cost += $nbPlannedHour * $workstation->thm_machine_estimated;
+		}
+		if ($workstation->thm_operator_estimated) {
+			$line->total_cost += $nbPlannedHour * $workstation->thm_operator_estimated;
+		}
 		echo $workstation->getNomUrl(1);
 	}
 	print '</td>';
@@ -199,6 +209,7 @@ if ($filtertype == 1 && isModEnabled('workstation')) {
 
 // Cost
 $total_cost = 0;
+
 $tmpbom->calculateCosts();
 print '<td id="costline_'.$line->id.'" class="linecolcost nowrap right">';
 $coldisplay++;
