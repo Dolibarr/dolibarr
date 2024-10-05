@@ -482,7 +482,7 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 				$bookkeeping->numero_compte = getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER');
 				$bookkeeping->label_compte = $accountingaccountsupplier->label;
 
-				$bookkeeping->label_operation = $bookkeepingstatic->accountingLabelForOperation($companystatic->name, $invoicestatic->ref, $langs->trans("SubledgerAccount"));
+				$bookkeeping->label_operation = $bookkeepingstatic->accountingLabelForOperation($companystatic->name, $invoicestatic->ref_supplier, $langs->trans("SubledgerAccount"));
 				$bookkeeping->montant = $mt;
 				$bookkeeping->sens = ($mt >= 0) ? 'C' : 'D';
 				$bookkeeping->debit = ($mt <= 0) ? -$mt : 0;
@@ -560,7 +560,7 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 					$bookkeeping->numero_compte = $k;
 					$bookkeeping->label_compte = $label_account;
 
-					$bookkeeping->label_operation = $bookkeepingstatic->accountingLabelForOperation($companystatic->name, $invoicestatic->ref, $label_account);
+					$bookkeeping->label_operation = $bookkeepingstatic->accountingLabelForOperation($companystatic->name, $invoicestatic->ref_supplier, $label_account);
 					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
 					$bookkeeping->debit = ($mt > 0) ? $mt : 0;
@@ -651,7 +651,7 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 						$tmpvatrate = (empty($def_tva[$key][$k]) ? (empty($arrayofvat[$key][$k]) ? '' : $arrayofvat[$key][$k]) : implode(', ', $def_tva[$key][$k]));
 						$labelvataccount = $langs->trans("Taxes").' '.$tmpvatrate.' %';
 						$labelvataccount .= ($numtax ? ' - Localtax '.$numtax : '');
-						$bookkeeping->label_operation = $bookkeepingstatic->accountingLabelForOperation($companystatic->name, $invoicestatic->ref, $labelvataccount);
+						$bookkeeping->label_operation = $bookkeepingstatic->accountingLabelForOperation($companystatic->name, $invoicestatic->ref_supplier, $labelvataccount);
 
 						$bookkeeping->montant = $mt;
 						$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
@@ -704,7 +704,7 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 
 					$bookkeeping->numero_compte = $k;
 
-					$bookkeeping->label_operation = $bookkeepingstatic->accountingLabelForOperation($companystatic->name, $invoicestatic->ref, $langs->trans("VAT").' NPR');
+					$bookkeeping->label_operation = $bookkeepingstatic->accountingLabelForOperation($companystatic->name, $invoicestatic->ref_supplier, $langs->trans("VAT").' NPR');
 					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
 					$bookkeeping->debit = ($mt > 0) ? $mt : 0;
@@ -1286,7 +1286,6 @@ if (empty($action) || $action == 'view') {
 					print "<td>";
 					print '</td>';
 					print "<td>" . $bookkeepingstatic->accountingLabelForOperation($companystatic->getNomUrl(0, 'supplier'), $invoicestatic->ref_supplier, $langs->trans("VAT")." NPR (counterpart)") . "</td>";
-					print "<td>".$companystatic->getNomUrl(0, 'supplier', 16).' - '.$invoicestatic->ref_supplier.' - '.$langs->trans("VAT")." NPR (counterpart)</td>";
 					print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
 					print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";
 					print "</tr>";
