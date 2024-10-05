@@ -1733,7 +1733,7 @@ class Thirdparties extends DolibarrApi
 	 * Get a specific thirdparty by account
 	 *
 	 * @param string $site Site key
-	 * @param string key_account Key of account
+	 * @param string $key_account Key of account
 	 *
 	 * @return array|mixed
 	 * @throws RestException 401 Unauthorized: User does not have permission to read thirdparties
@@ -1751,7 +1751,7 @@ class Thirdparties extends DolibarrApi
 		$sql .= " WHERE site = '".$site."' AND key_account = '".$key_account."'";
 
 		$result = $this->db->query($sql);
-	
+
 		if ($result && $this->db->num_rows($result) == 1) {
 				$obj = $this->db->fetch_object($result);
 				$returnThirdparty = $this->_fetch($obj->fk_soc);
