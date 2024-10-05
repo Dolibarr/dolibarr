@@ -1749,6 +1749,7 @@ class Thirdparties extends DolibarrApi
 
 		$sql = "SELECT rowid, fk_soc, key_account, site, date_creation, tms FROM ".MAIN_DB_PREFIX."societe_account";
 		$sql .= " WHERE site = '".$this->db->escape($site)."' AND key_account = '".$this->db->escape($key_account)."'";
+		$sql .= " AND entity IN (".getEntity('societe').")";
 
 		$result = $this->db->query($sql);
 
