@@ -95,6 +95,7 @@ foreach ($object->fields as $key => $val) {
 	} elseif ($val['type'] == 'price') {
 		$value = GETPOSTISSET($key) ? price2num(GETPOST($key)) : price2num($object->$key);
 	} elseif ($key == 'lang') {
+		// @phan-suppress-next-line PhanUndeclaredProperty
 		$value = GETPOSTISSET($key) ? GETPOST($key, 'aZ09') : $object->lang;
 	} else {
 		$value = GETPOSTISSET($key) ? GETPOST($key, 'alpha') : $object->$key;

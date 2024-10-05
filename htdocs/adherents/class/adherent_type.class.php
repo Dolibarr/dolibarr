@@ -143,6 +143,28 @@ class AdherentType extends CommonObject
 	public $multilangs = array();
 
 
+	// BEGIN MODULEBUILDER PROPERTIES
+	/**
+	 * @inheritdoc
+	 * Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 */
+	public $fields = array(
+		"rowid" => array("type" => "integer", "label" => "TechnicalID", "enabled" => "1", 'position' => 10, 'notnull' => 1, "visible" => "-1",),
+		"tms" => array("type" => "timestamp", "label" => "DateModification", "enabled" => "1", 'position' => 20, 'notnull' => 1, "visible" => "-1",),
+		"statut" => array("type" => "smallint(6)", "label" => "Statut", "enabled" => "1", 'position' => 500, 'notnull' => 1, "visible" => "-1",),
+		"libelle" => array("type" => "varchar(50)", "label" => "Label", "enabled" => "1", 'position' => 30, 'notnull' => 1, "visible" => "-1",),
+		"subscription" => array("type" => "varchar(3)", "label" => "Subscription", "enabled" => "1", 'position' => 35, 'notnull' => 1, "visible" => "-1",),
+		"amount" => array("type" => "double(24,8)", "label" => "Amount", "enabled" => "1", 'position' => 40, 'notnull' => 0, "visible" => "-1",),
+		"caneditamount" => array("type" => "integer", "label" => "Caneditamount", "enabled" => "1", 'position' => 45, 'notnull' => 0, "visible" => "-1",),
+		"vote" => array("type" => "varchar(3)", "label" => "Vote", "enabled" => "1", 'position' => 50, 'notnull' => 1, "visible" => "-1",),
+		"note" => array("type" => "longtext", "label" => "Note", "enabled" => "1", 'position' => 55, 'notnull' => 0, "visible" => "-1",),
+		"mail_valid" => array("type" => "longtext", "label" => "Mailvalid", "enabled" => "1", 'position' => 60, 'notnull' => 0, "visible" => "-1",),
+		"morphy" => array("type" => "varchar(3)", "label" => "Morphy", "enabled" => "1", 'position' => 65, 'notnull' => 0, "visible" => "-1",),
+		"duration" => array("type" => "varchar(6)", "label" => "Duration", "enabled" => "1", 'position' => 70, 'notnull' => 0, "visible" => "-1",),
+	);
+	// END MODULEBUILDER PROPERTIES
+
+
 	/**
 	 *	Constructor
 	 *

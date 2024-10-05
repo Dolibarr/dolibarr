@@ -68,8 +68,8 @@ $serviceFactory->setHttpClient($httpClient);
 $storage = new DoliStorage($db, $conf, $keyforprovider);
 
 // Setup the credentials for the requests
-$keyforparamid = 'OAUTH_STRIPE_LIVE'.($keyforprovider ? '-'.$keyforprovider : '').'_ID';
-$keyforparamsecret = 'OAUTH_STRIPE_LIVE'.($keyforprovider ? '-'.$keyforprovider : '').'_SECRET';
+$keyforparamid = 'OAUTH_STRIPELIVE'.($keyforprovider ? '-'.$keyforprovider : '').'_ID';
+$keyforparamsecret = 'OAUTH_STRIPELIVE'.($keyforprovider ? '-'.$keyforprovider : '').'_SECRET';
 $credentials = new Credentials(
 	getDolGlobalString($keyforparamid),
 	getDolGlobalString($keyforparamsecret),
@@ -131,7 +131,7 @@ if (GETPOST('code')) {     // We are coming from oauth provider page
 	// We should have
 	//$_GET=array('code' => string 'aaaaaaaaaaaaaa' (length=20), 'state' => string 'user,public_repo' (length=16))
 
-	dol_syslog("We are coming from the oauth provider page code=".dol_trunc(GETPOST('code'), 5));
+	dol_syslog(basename(__FILE__)." We are coming from the oauth provider page code=".dol_trunc(GETPOST('code'), 5));
 
 	// This was a callback request from service, get the token
 	if ($apiService === null) {
@@ -168,6 +168,7 @@ if (GETPOST('code')) {     // We are coming from oauth provider page
 		if ($apiService === null) {
 			dol_syslog("No API Service", LOG_ERR);
 		} else {
+			'@phan-var-force OAuth\OAuth2\Service\AbstractService|OAuth\OAuth1\Service\AbstractService $apiService';
 			$url = $apiService->getAuthorizationUri(array('state' => GETPOST('state')));
 		}
 	} else {
