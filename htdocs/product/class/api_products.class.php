@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2019       Cedric Ancelin          <icedo.anc@gmail.com>
+ * Copyright (C) 2019		Cedric Ancelin			<icedo.anc@gmail.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -291,7 +292,7 @@ class Products extends DolibarrApi
 			$obj_ret['pagination'] = array(
 				'total' => (int) $total,
 				'page' => $page, //count starts from 0
-				'page_count' => ceil((int) $total/$limit),
+				'page_count' => ceil((int) $total / $limit),
 				'limit' => $limit
 			);
 		}
@@ -466,13 +467,23 @@ class Products extends DolibarrApi
 				if ($this->product->multiprices_base_type[$key] != $oldproduct->multiprices_base_type[$key]) {
 					$pricemodified = true;
 				} else {
-					if ($this->product->multiprices_tva_tx[$key] != $oldproduct->multiprices_tva_tx[$key]) $pricemodified = true;
+					if ($this->product->multiprices_tva_tx[$key] != $oldproduct->multiprices_tva_tx[$key]) {
+						$pricemodified = true;
+					}
 					if ($this->product->multiprices_base_type[$key] == 'TTC') {
-						if ($this->product->multiprices_ttc[$key] != $oldproduct->multiprices_ttc[$key]) $pricemodified = true;
-						if ($this->product->multiprices_min_ttc[$key] != $oldproduct->multiprices_min_ttc[$key]) $pricemodified = true;
+						if ($this->product->multiprices_ttc[$key] != $oldproduct->multiprices_ttc[$key]) {
+							$pricemodified = true;
+						}
+						if ($this->product->multiprices_min_ttc[$key] != $oldproduct->multiprices_min_ttc[$key]) {
+							$pricemodified = true;
+						}
 					} else {
-						if ($this->product->multiprices[$key] != $oldproduct->multiprices[$key]) $pricemodified = true;
-						if ($this->product->multiprices_min[$key] != $oldproduct->multiprices[$key]) $pricemodified = true;
+						if ($this->product->multiprices[$key] != $oldproduct->multiprices[$key]) {
+							$pricemodified = true;
+						}
+						if ($this->product->multiprices_min[$key] != $oldproduct->multiprices[$key]) {
+							$pricemodified = true;
+						}
 					}
 				}
 				if ($pricemodified && $result > 0) {
@@ -700,12 +711,12 @@ class Products extends DolibarrApi
 		}
 
 		return array(
-			'multiprices'=>$this->product->multiprices,
-			'multiprices_inc_tax'=>$this->product->multiprices_ttc,
-			'multiprices_min'=>$this->product->multiprices_min,
-			'multiprices_min_inc_tax'=>$this->product->multiprices_min_ttc,
-			'multiprices_vat'=>$this->product->multiprices_tva_tx,
-			'multiprices_base_type'=>$this->product->multiprices_base_type,
+			'multiprices' => $this->product->multiprices,
+			'multiprices_inc_tax' => $this->product->multiprices_ttc,
+			'multiprices_min' => $this->product->multiprices_min,
+			'multiprices_min_inc_tax' => $this->product->multiprices_min_ttc,
+			'multiprices_vat' => $this->product->multiprices_tva_tx,
+			'multiprices_base_type' => $this->product->multiprices_base_type,
 			//'multiprices_default_vat_code'=>$this->product->multiprices_default_vat_code
 		);
 	}
@@ -791,8 +802,8 @@ class Products extends DolibarrApi
 		}
 
 		return array(
-			'prices_by_qty'=>$this->product->prices_by_qty[0], // 1 if price by quantity was activated for the product
-			'prices_by_qty_list'=>$this->product->prices_by_qty_list[0]
+			'prices_by_qty' => $this->product->prices_by_qty[0], // 1 if price by quantity was activated for the product
+			'prices_by_qty_list' => $this->product->prices_by_qty_list[0]
 		);
 	}
 

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015   	Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2018   	Pierre Chéné            <pierre.chene44@gmail.com>
- * Copyright (C) 2019   	Cedric Ancelin          <icedo.anc@gmail.com>
+ * Copyright (C) 2019		Cedric Ancelin			<icedo.anc@gmail.com>
  * Copyright (C) 2020-2024  Frédéric France     	<frederic.france@free.fr>
  * Copyright (C) 2023       Alexandre Janniaux  	<alexandre.janniaux@gmail.com>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
