@@ -1,16 +1,16 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville        <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2020 Laurent Destailleur         <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Eric Seigne                 <eric.seigne@ryxeo.com>
- * Copyright (C) 2006      Andre Cianfarani            <acianfa@free.fr>
- * Copyright (C) 2005-2017 Regis Houssin               <regis.houssin@inodbox.com>
- * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2020 Juanjo Menent               <jmenent@2byte.es>
- * Copyright (C) 2013      Alexandre Spangaro          <aspangaro@open-dsi.fr>
- * Copyright (C) 2021-2024  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2015      Marcos García               <marcosgdf@gmail.com>
- * Copyright (C) 2020      Open-Dsi         		   <support@open-dsi.fr>
- * Copyright (C) 2022      Anthony Berton     			<anthony.berton@bb2a.fr>
+/* Copyright (C) 2001-2005	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2020	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2004		Eric Seigne					<eric.seigne@ryxeo.com>
+ * Copyright (C) 2006		Andre Cianfarani			<acianfa@free.fr>
+ * Copyright (C) 2005-2017	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
+ * Copyright (C) 2010-2020	Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2013-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2021-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
+ * Copyright (C) 2020		Open-Dsi					<support@open-dsi.fr>
+ * Copyright (C) 2022		Anthony Berton				<anthony.berton@bb2a.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -159,6 +159,16 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	if ($cancel) {
 		$action = "";
+	}
+
+	// set accountancy code
+	if ($action == 'setcustomeraccountancycodegeneral') {
+		$result = $object->fetch($id);
+		$object->accountancy_code_customer_general = GETPOST("customeraccountancycodegeneral");
+		$result = $object->update($object->id, $user, 1, 1, 0);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 	// Set accountancy code
@@ -361,6 +371,18 @@ if ($object->id > 0) {
 			print ' <span class="error">('.$langs->trans("WrongCustomerCode").')</span>';
 		}
 		print '</td></tr>';
+
+		if (!empty($conf->accounting->enabled)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+			print '<tr>';
+			print '<td>';
+			print $form->editfieldkey("CustomerAccountancyCodeGeneral", 'customeraccountancycodegeneral', length_accountg($object->accountancy_code_customer_general), $object, $user->hasRight('societe', 'creer'));
+			print '</td><td>';
+			print $form->editfieldval("CustomerAccountancyCodeGeneral", 'customeraccountancycodegeneral', length_accountg($object->accountancy_code_customer_general), $object, $user->hasRight('societe', 'creer'));
+			$accountingAccountByDefault = " (" . $langs->trans("AccountingAccountByDefaultShort") . ": " . length_accountg(getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER')) . ")";
+			print (getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') ? $accountingAccountByDefault : '');
+			print '</td>';
+		}
 
 		print '<tr>';
 		print '<td>';
