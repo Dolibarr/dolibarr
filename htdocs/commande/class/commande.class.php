@@ -2741,15 +2741,15 @@ class Commande extends CommonOrder
 	/**
 	 *  Return list of orders (eventuelly filtered on a user) into an array
 	 *
-	 *  @param		int		$shortlist		0=Return array[id]=ref, 1=Return array[](id=>id,ref=>ref,name=>name)
-	 *  @param      int		$draft      	0=not draft, 1=draft
-	 *  @param      User	$excluser      	Object user to exclude
-	 *  @param    	int		$socid			Id third party
-	 *  @param    	int		$limit			For pagination
-	 *  @param    	int		$offset			For pagination
-	 *  @param    	string	$sortfield		Sort criteria
-	 *  @param    	string	$sortorder		Sort order
-	 *  @return     int|array             		-1 if KO, array with result if OK
+	 *  @param		int<0,1>	$shortlist		0=Return array[id]=ref, 1=Return array[](id=>id,ref=>ref,name=>name)
+	 *  @param      int<0,1>	$draft      	0=not draft, 1=draft
+	 *  @param      ?User		$excluser      	Object user to exclude
+	 *  @param    	int			$socid			Id third party
+	 *  @param    	int			$limit			For pagination
+	 *  @param    	int			$offset			For pagination
+	 *  @param    	string		$sortfield		Sort criteria
+	 *  @param    	string		$sortorder		Sort order
+	 *  @return     array<int,string>|array<int,array{id:int,ref:string,name:string}>|int<-1,-1>	-1 if KO, array with result if OK
 	 */
 	public function liste_array($shortlist = 0, $draft = 0, $excluser = null, $socid = 0, $limit = 0, $offset = 0, $sortfield = 'c.date_commande', $sortorder = 'DESC')
 	{

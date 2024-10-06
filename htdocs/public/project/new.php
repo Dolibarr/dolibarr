@@ -263,6 +263,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 		// Search template files
 		$file = '';
 		$classname = '';
+		$reldir = '';
 		$filefound = 0;
 		$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 		foreach ($dirmodels as $reldir) {
@@ -278,6 +279,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 			$result = dol_include_once($reldir."core/modules/project/".$modele.'.php');
 			if (class_exists($classname)) {
 				$modProject = new $classname();
+				'@phan-var-force ModeleNumRefProjects $modProject';
 
 				$defaultref = $modProject->getNextValue($thirdparty, $object);
 			}

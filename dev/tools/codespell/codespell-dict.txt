@@ -43,7 +43,8 @@ tableau de bord->state board
 tagret->target
 tdoverflowmax100aaa->tdoverflowmax100
 tdoverlowmax200->tdoverflowmax200
-thridparty->thirdparty
+thirparty->thirdparty, third party,
+thridparty->thirdparty, third party,
 with100->width100
 with75->width75
 wysiwig->wysiwyg
