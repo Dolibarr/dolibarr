@@ -119,7 +119,7 @@ class Members extends DolibarrApi
 
 		return $this->_cleanObjectDatas($member);
 	}
-	
+
 	/**
 	 * Get properties of a member object by linked thirdparty account
 	 *
@@ -143,21 +143,21 @@ class Members extends DolibarrApi
 		$sql .= " AND entity IN (".getEntity('adherent').")";
 
 		$result = $this->db->query($sql);
-	
+
 		if ($result && $this->db->num_rows($result) == 1) {
-				$obj = $this->db->fetch_object($result);
-				$thirdparty = new Societe($this->db);
-				$thirdparty->fetch($obj->fk_soc);
+			$obj = $this->db->fetch_object($result);
+			$thirdparty = new Societe($this->db);
+			$thirdparty->fetch($obj->fk_soc);
 
-				if (!$result) {
-					throw new RestException(404, 'thirdparty not found');
-				}
+			if (!$result) {
+				throw new RestException(404, 'thirdparty not found');
+			}
 
-				$member = new Adherent($this->db);
-				$result = $member->fetch(0, '', $thirdparty->id);
-				if (!$result) {
-					throw new RestException(404, 'member not found');
-				}
+			$member = new Adherent($this->db);
+			$result = $member->fetch(0, '', $thirdparty->id);
+			if (!$result) {
+				throw new RestException(404, 'member not found');
+			}
 		} else {
 				throw new RestException(404, 'This account have many thirdparties attached or does not exist.');
 		}
