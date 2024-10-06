@@ -93,7 +93,7 @@ if (empty($reshook)) {
 	// Validate new password
 	if ($action == 'validatenewpassword' && $username && $passworduidhash) {	// Test on permission not required here. Security is managed by $passworduihash
 		$edituser = new User($db);
-		$result = $edituser->fetch('', $username, '', 0, $conf->entity);
+		$result = $edituser->fetch(0, $username, '', 0, $conf->entity);
 		if ($result < 0) {
 			$message = '<div class="error">'.dol_escape_htmltag($langs->trans("ErrorTechnicalError")).'</div>';
 		} else {
@@ -129,9 +129,9 @@ if (empty($reshook)) {
 			$isanemail = preg_match('/@/', $username);
 
 			$edituser = new User($db);
-			$result = $edituser->fetch('', $username, '', 1, $conf->entity);
+			$result = $edituser->fetch(0, $username, '', 1, $conf->entity);
 			if ($result == 0 && $isanemail) {
-				$result = $edituser->fetch('', '', '', 1, $conf->entity, $username);
+				$result = $edituser->fetch(0, '', '', 1, $conf->entity, $username);
 			}
 
 			// Set the message to show (must be the same if login/email exists or not

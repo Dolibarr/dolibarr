@@ -190,6 +190,13 @@ $hookmanager->initHooks(array('projectOverview'));
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
 $result = restrictedArea($user, 'projet', $object->id, 'projet&project');
 
+$total_duration = 0;
+$total_ttc_by_line = 0;
+$total_ht_by_line = 0;
+$expensereport = null;
+$othermessage = '';
+$tmpprojtime = array();
+$nbAttendees = 0;
 
 /*
  * Actions
@@ -1707,14 +1714,16 @@ function canApplySubtotalOn($tablename)
 /**
  * sortElementsByClientName
  *
- * @param 	array		$elementarray	Element array
- * @return	array						Element array sorted
+ * @param 	int[]		$elementarray	Element array
+ * @return	int[]						Element array sorted
  */
 function sortElementsByClientName($elementarray)
 {
 	global $db, $classname;
+	'@phan-var-force string $classname';
 
 	$element = new $classname($db);
+	'@phan-var-force CommonObject $element';
 
 	$clientname = array();
 	foreach ($elementarray as $key => $id) {	// id = id of object
