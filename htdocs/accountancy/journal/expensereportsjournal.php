@@ -553,7 +553,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 				print '"'.$date.'"'.$sep;
 				print '"'.$val["ref"].'"'.$sep;
 				print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
-				print '"'.mb_convert_encoding($bookkeepingstatic->accountingLabelForOperation($userstatic->name, '', $accountingaccount->label), 'ISO-8859-1').'"'.$sep;
+				print '"'.csvClean($bookkeepingstatic->accountingLabelForOperation($userstatic->name, '', $accountingaccount->label)).'"'.$sep;
 				print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;
 				print '"'.($mt < 0 ? price(-$mt) : '').'"';
 				print "\n";
@@ -566,7 +566,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 				print '"'.$date.'"'.$sep;
 				print '"'.$val["ref"].'"'.$sep;
 				print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
-				print '"'.mb_convert_encoding($bookkeepingstatic->accountingLabelForOperation($userstatic->name, '', $langs->trans("VAT").implode($def_tva[$key][$k]).' %'), 'ISO-8859-1').'"'.$sep;
+				print '"'.csvClean($bookkeepingstatic->accountingLabelForOperation($userstatic->name, '', $langs->trans("VAT").implode($def_tva[$key][$k]).' %')).'"'.$sep;
 				print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;
 				print '"'.($mt < 0 ? price(-$mt) : '').'"';
 				print "\n";
@@ -578,7 +578,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 			print '"'.$date.'"'.$sep;
 			print '"'.$val["ref"].'"'.$sep;
 			print '"'.length_accounta(html_entity_decode($k)).'"'.$sep;
-			print '"'.mb_convert_encoding($bookkeepingstatic->accountingLabelForOperation($userstatic->name, '', $langs->trans("Thirdparty")), 'ISO-8859-1').'"'.$sep;
+			print '"'.csvClean($bookkeepingstatic->accountingLabelForOperation($userstatic->name, '', $langs->trans("Thirdparty"))).'"'.$sep;
 			print '"'.($mt < 0 ? price(-$mt) : '').'"'.$sep;
 			print '"'.($mt >= 0 ? price($mt) : '').'"';
 		}
