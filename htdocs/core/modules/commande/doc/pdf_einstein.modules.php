@@ -324,13 +324,6 @@ class pdf_einstein extends ModelePDFCommandes
 
 				$tab_top = 90 + $top_shift + $shipp_shift;
 				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 + $top_shift : 10);
-				$this->tab_top += $extra_under_address_shift;
-				$this->tab_top_newpage += 0;
-
-				// Define height of table for lines (for first page)
-				$tab_height = $this->page_hauteur - $this->tab_top - $this->heightforfooter - $this->heightforfreetext;
-
-				$nexY = $this->tab_top - 1;
 
 				// Incoterm
 				$height_incoterms = 0;
@@ -1282,7 +1275,7 @@ class pdf_einstein extends ModelePDFCommandes
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @param  Translate	$outputlangsbis	Object lang for output bis
 	 *  @param	string		$titlekey		Translation key to show as title of document
-	 *  @return	float|int                   Return topshift value
+	 *  @return	array						top shift of linked object lines
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $outputlangsbis = null, $titlekey = "PdfOrderTitle")
 	{
