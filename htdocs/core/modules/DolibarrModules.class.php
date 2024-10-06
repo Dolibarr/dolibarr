@@ -119,7 +119,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 *		(0:name,1:type,2:val,3:note,4:visible,5:entity,6:deleteonunactive)
 	 */
 	public $const = array();
-	
+
 	/**
 	 * @var array Module overwrite translations
 	 */
