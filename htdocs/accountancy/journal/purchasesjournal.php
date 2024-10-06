@@ -863,7 +863,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 			print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
 			print '""'.$sep;
 			print '"'.csvClean(dol_trunc($accountingaccount->label, 32)).'"'.$sep;
-			print '"'.mb_convert_encoding($bookkeepingstatic->accountingLabelForOperation($companystatic->name, $val["refsuppliersologest"], $accountingaccount->label)).'"'.$sep;
+			print '"'.csvClean($bookkeepingstatic->accountingLabelForOperation($companystatic->name, $val["refsuppliersologest"], $accountingaccount->label)).'"'.$sep;
 			print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;
 			print '"'.($mt < 0 ? price(-$mt) : '').'"'.$sep;
 			print '"'.$journal.'"';
