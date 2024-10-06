@@ -9,33 +9,33 @@
  */
 return [
     // # Issue statistics:
-    // PhanPluginUnknownPropertyType : 1200+ occurrences
+    // PhanPluginUnknownPropertyType : 1070+ occurrences
     // PhanUndeclaredProperty : 840+ occurrences
-    // PhanPossiblyUndeclaredGlobalVariable : 680+ occurrences
-    // PhanTypeMismatchArgumentProbablyReal : 550+ occurrences
-    // PhanUndeclaredGlobalVariable : 430+ occurrences
-    // PhanPluginUnknownArrayMethodReturnType : 420+ occurrences
-    // PhanPluginUnknownArrayMethodParamType : 310+ occurrences
-    // PhanPossiblyUndeclaredVariable : 270+ occurrences
+    // PhanPossiblyUndeclaredGlobalVariable : 640+ occurrences
+    // PhanTypeMismatchArgumentProbablyReal : 480+ occurrences
+    // PhanUndeclaredGlobalVariable : 420+ occurrences
+    // PhanPluginUnknownArrayMethodReturnType : 400+ occurrences
+    // PhanPluginUnknownArrayMethodParamType : 300+ occurrences
+    // PhanPossiblyUndeclaredVariable : 260+ occurrences
     // PhanTypeMismatchProperty : 180+ occurrences
-    // PhanPluginUnknownArrayFunctionParamType : 140+ occurrences
     // PhanPluginUnknownArrayFunctionReturnType : 140+ occurrences
-    // PhanTypeMismatchArgumentNullableInternal : 75+ occurrences
-    // PhanPluginUnknownArrayPropertyType : 70+ occurrences
-    // PhanPluginUnknownObjectMethodCall : 70+ occurrences
+    // PhanPluginUnknownArrayFunctionParamType : 120+ occurrences
+    // PhanTypeMismatchArgumentNullableInternal : 70+ occurrences
     // PhanPluginUndeclaredVariableIsset : 65+ occurrences
+    // PhanPluginUnknownArrayPropertyType : 65+ occurrences
     // PhanPluginEmptyStatementIf : 50+ occurrences
     // PhanRedefineFunction : 50+ occurrences
     // PhanTypeSuspiciousNonTraversableForeach : 50+ occurrences
+    // PhanPluginUnknownObjectMethodCall : 35+ occurrences
     // PhanTypeInvalidDimOffset : 35+ occurrences
-    // PhanTypeMismatchDimFetch : 35+ occurrences
+    // PhanTypeMismatchDimFetch : 30+ occurrences
     // PhanTypeExpectedObjectPropAccess : 25+ occurrences
-    // PhanPossiblyNullTypeMismatchProperty : 15+ occurrences
     // PhanTypeComparisonFromArray : 15+ occurrences
     // PhanUndeclaredConstant : 15+ occurrences
     // PhanEmptyForeach : 10+ occurrences
     // PhanPluginConstantVariableNull : 10+ occurrences
     // PhanPluginSuspiciousParamPosition : 10+ occurrences
+    // PhanPossiblyNullTypeMismatchProperty : 10+ occurrences
     // PhanTypeMismatchDimFetchNullable : 10+ occurrences
     // PhanUndeclaredMethod : 10+ occurrences
     // PhanPluginBothLiteralsBinaryOp : 8 occurrences
@@ -46,6 +46,7 @@ return [
     // PhanEmptyFQSENInClasslike : 3 occurrences
     // PhanInvalidFQSENInClasslike : 3 occurrences
     // PhanAccessMethodProtected : 1 occurrence
+    // PhanTypeMismatchArgumentInternal : 1 occurrence
 
     // Currently, file_suppressions and directory_suppressions are the only supported suppressions
     'file_suppressions' => [
@@ -120,6 +121,7 @@ return [
         'htdocs/comm/mailing/class/html.formadvtargetemailing.class.php' => ['PhanPluginUnknownArrayMethodParamType'],
         'htdocs/comm/mailing/class/mailing.class.php' => ['PhanPluginUnknownArrayPropertyType'],
         'htdocs/comm/mailing/index.php' => ['PhanUndeclaredProperty'],
+        'htdocs/comm/propal/card.php' => ['PhanTypeMismatchProperty'],
         'htdocs/comm/propal/class/api_proposals.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType'],
         'htdocs/comm/propal/class/propal.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType', 'PhanPluginUnknownPropertyType'],
         'htdocs/comm/propal/class/propalestats.class.php' => ['PhanPluginUnknownArrayMethodReturnType'],
@@ -152,7 +154,6 @@ return [
         'htdocs/compta/bank/various_payment/list.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchProperty'],
         'htdocs/compta/cashcontrol/cashcontrol_card.php' => ['PhanPluginDuplicateExpressionBinaryOp', 'PhanPossiblyUndeclaredGlobalVariable'],
         'htdocs/compta/cashcontrol/cashcontrol_list.php' => ['PhanTypeMismatchProperty'],
-        'htdocs/compta/cashcontrol/class/cashcontrol.class.php' => ['PhanPluginUnknownPropertyType'],
         'htdocs/compta/charges/index.php' => ['PhanTypeMismatchArgumentNullableInternal'],
         'htdocs/compta/clients.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanUndeclaredGlobalVariable'],
         'htdocs/compta/deplacement/class/deplacement.class.php' => ['PhanPluginUnknownArrayMethodReturnType', 'PhanPluginUnknownPropertyType'],
@@ -337,7 +338,7 @@ return [
         'htdocs/core/extrafieldsinimport.inc.php' => ['PhanTypeMismatchArgumentNullableInternal'],
         'htdocs/core/filemanagerdol/connectors/php/connector.lib.php' => ['PhanPluginConstantVariableNull', 'PhanPluginUnknownArrayFunctionParamType', 'PhanTypeInvalidDimOffset'],
         'htdocs/core/lib/accounting.lib.php' => ['PhanPluginUnknownArrayFunctionParamType', 'PhanPluginUnknownArrayFunctionReturnType'],
-        'htdocs/core/lib/admin.lib.php' => ['PhanPluginUnknownArrayFunctionParamType', 'PhanPluginUnknownArrayFunctionReturnType', 'PhanPossiblyUndeclaredVariable', 'PhanUndeclaredProperty'],
+        'htdocs/core/lib/admin.lib.php' => ['PhanPluginUnknownArrayFunctionParamType', 'PhanPluginUnknownArrayFunctionReturnType', 'PhanUndeclaredProperty'],
         'htdocs/core/lib/agenda.lib.php' => ['PhanPluginConstantVariableNull', 'PhanPluginUnknownArrayFunctionReturnType', 'PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/core/lib/ajax.lib.php' => ['PhanPluginUnknownArrayFunctionParamType'],
         'htdocs/core/lib/asset.lib.php' => ['PhanPluginUnknownArrayFunctionReturnType'],
@@ -396,8 +397,7 @@ return [
         'htdocs/core/menus/standard/eldy_menu.php' => ['PhanTypeInvalidDimOffset'],
         'htdocs/core/modules/DolibarrModules.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType', 'PhanPluginUnknownArrayPropertyType', 'PhanPluginUnknownPropertyType', 'PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/core/modules/action/doc/pdf_standard_actions.class.php' => ['PhanPluginUnknownArrayPropertyType'],
-        'htdocs/core/modules/action/modules_action.php' => ['PhanPluginUnknownArrayMethodReturnType'],
-        'htdocs/core/modules/asset/doc/pdf_standard_asset.modules.php' => ['PhanPluginUnknownArrayMethodReturnType', 'PhanPossiblyUndeclaredVariable', 'PhanTypeMismatchArgumentProbablyReal'],
+        'htdocs/core/modules/asset/doc/pdf_standard_asset.modules.php' => ['PhanPossiblyUndeclaredVariable', 'PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/core/modules/asset/mod_asset_advanced.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/modules/barcode/doc/phpbarcode.modules.php' => ['PhanPossiblyNullTypeMismatchProperty', 'PhanPossiblyUndeclaredVariable'],
         'htdocs/core/modules/barcode/mod_barcode_product_standard.php' => ['PhanPluginUnknownPropertyType'],
@@ -412,7 +412,6 @@ return [
         'htdocs/core/modules/delivery/doc/pdf_storm.modules.php' => ['PhanPossiblyUndeclaredVariable', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredProperty'],
         'htdocs/core/modules/delivery/doc/pdf_typhon.modules.php' => ['PhanPluginUnknownPropertyType', 'PhanUndeclaredProperty'],
         'htdocs/core/modules/delivery/mod_delivery_saphir.php' => ['PhanUndeclaredProperty'],
-        'htdocs/core/modules/dons/modules_don.php' => ['PhanPluginUnknownArrayMethodReturnType'],
         'htdocs/core/modules/expedition/doc/pdf_espadon.modules.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/modules/expedition/doc/pdf_merou.modules.php' => ['PhanPluginUnknownPropertyType', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredProperty'],
         'htdocs/core/modules/expedition/doc/pdf_rouget.modules.php' => ['PhanUndeclaredProperty'],
@@ -432,7 +431,7 @@ return [
         'htdocs/core/modules/mailings/thirdparties.modules.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/core/modules/member/doc/doc_generic_member_odt.class.php' => ['PhanPluginUnknownArrayMethodReturnType', 'PhanPossiblyUndeclaredVariable', 'PhanTypeSuspiciousNonTraversableForeach'],
         'htdocs/core/modules/member/doc/pdf_standard_member.class.php' => ['PhanPluginUnknownArrayMethodParamType'],
-        'htdocs/core/modules/member/modules_cards.php' => ['PhanPluginUnknownArrayFunctionParamType', 'PhanPluginUnknownArrayMethodReturnType'],
+        'htdocs/core/modules/member/modules_cards.php' => ['PhanPluginUnknownArrayFunctionParamType'],
         'htdocs/core/modules/movement/doc/pdf_standard_movementstock.modules.php' => ['PhanPluginDuplicateExpressionBinaryOp', 'PhanPluginEmptyStatementIf', 'PhanPluginUnknownPropertyType', 'PhanPossiblyUndeclaredVariable'],
         'htdocs/core/modules/mrp/doc/pdf_vinci.modules.php' => ['PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredProperty'],
         'htdocs/core/modules/mrp/mod_mo_advanced.php' => ['PhanUndeclaredProperty'],
@@ -616,7 +615,6 @@ return [
         'htdocs/fourn/facture/tpl/linkedobjectblock.tpl.php' => ['PhanUndeclaredProperty'],
         'htdocs/fourn/paiement/card.php' => ['PhanPossiblyUndeclaredGlobalVariable'],
         'htdocs/fourn/paiement/document.php' => ['PhanTypeMismatchArgumentProbablyReal'],
-        'htdocs/fourn/product/list.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/ftp/admin/ftpclient.php' => ['PhanPossiblyUndeclaredGlobalVariable'],
         'htdocs/ftp/index.php' => ['PhanPossiblyUndeclaredGlobalVariable'],
         'htdocs/holiday/card.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentProbablyReal', 'PhanTypeMismatchProperty'],
@@ -676,18 +674,19 @@ return [
         'htdocs/loan/payment/payment.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
         'htdocs/loan/schedule.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/mailmanspip/class/mailmanspip.class.php' => ['PhanPluginUnknownArrayPropertyType'],
+        'htdocs/main.inc.php' => ['PhanTypeMismatchArgumentInternal'],
         'htdocs/margin/customerMargins.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/margin/lib/margins.lib.php' => ['PhanPluginUnknownArrayFunctionReturnType'],
         'htdocs/margin/productMargins.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/master.inc.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/mrp/class/api_mos.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType'],
-        'htdocs/mrp/class/mo.class.php' => ['PhanPossiblyUndeclaredVariable', 'PhanTypeMismatchProperty'],
+        'htdocs/mrp/class/mo.class.php' => ['PhanTypeMismatchProperty'],
         'htdocs/mrp/lib/mrp.lib.php' => ['PhanPluginUnknownArrayFunctionReturnType'],
         'htdocs/mrp/lib/mrp_mo.lib.php' => ['PhanPluginUnknownArrayFunctionReturnType'],
         'htdocs/mrp/mo_card.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentProbablyReal'],
-        'htdocs/mrp/mo_movements.php' => ['PhanPluginUnknownObjectMethodCall', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredGlobalVariable'],
+        'htdocs/mrp/mo_movements.php' => ['PhanPluginUnknownObjectMethodCall', 'PhanUndeclaredGlobalVariable'],
         'htdocs/mrp/mo_production.php' => ['PhanTypeMismatchArgumentProbablyReal'],
-        'htdocs/mrp/tpl/linkedobjectblock.tpl.php' => ['PhanPluginUnknownObjectMethodCall', 'PhanTypeMismatchArgumentProbablyReal'],
+        'htdocs/mrp/tpl/linkedobjectblock.tpl.php' => ['PhanUndeclaredProperty'],
         'htdocs/mrp/tpl/originproductline.tpl.php' => ['PhanUndeclaredProperty'],
         'htdocs/multicurrency/class/api_multicurrencies.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType', 'PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/multicurrency/class/multicurrency.class.php' => ['PhanPluginUnknownArrayMethodReturnType', 'PhanTypeExpectedObjectPropAccess', 'PhanTypeMismatchArgumentProbablyReal'],
@@ -700,31 +699,26 @@ return [
         'htdocs/opensurvey/wizard/choix_date.php' => ['PhanPossiblyUndeclaredGlobalVariable'],
         'htdocs/opensurvey/wizard/create_survey.php' => ['PhanPossiblyUndeclaredGlobalVariable'],
         'htdocs/partnership/class/api_partnerships.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType'],
-        'htdocs/partnership/class/partnership.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownObjectMethodCall', 'PhanPluginUnknownPropertyType', 'PhanUndeclaredProperty'],
-        'htdocs/partnership/class/partnership_type.class.php' => ['PhanPluginUnknownPropertyType'],
-        'htdocs/partnership/class/partnershiputils.class.php' => ['PhanPluginUnknownObjectMethodCall', 'PhanPluginUnknownPropertyType', 'PhanPossiblyUndeclaredVariable'],
-        'htdocs/partnership/core/modules/partnership/modules_partnership.php' => ['PhanPluginUnknownArrayMethodReturnType'],
+        'htdocs/partnership/class/partnership.class.php' => ['PhanUndeclaredProperty'],
+        'htdocs/partnership/class/partnershiputils.class.php' => ['PhanPluginUnknownObjectMethodCall'],
+        'htdocs/partnership/core/modules/partnership/mod_partnership_advanced.php' => ['PhanUndeclaredProperty'],
         'htdocs/partnership/lib/partnership.lib.php' => ['PhanPluginUnknownArrayFunctionReturnType'],
-        'htdocs/partnership/partnership_card.php' => ['PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredGlobalVariable'],
+        'htdocs/partnership/partnership_card.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/partnership/partnership_list.php' => ['PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredProperty'],
         'htdocs/paypal/lib/paypal.lib.php' => ['PhanPluginUnknownArrayFunctionReturnType'],
-        'htdocs/printing/admin/printing.php' => ['PhanPluginUnknownObjectMethodCall', 'PhanTypeMismatchDimFetch'],
         'htdocs/printing/index.php' => ['PhanUndeclaredProperty'],
         'htdocs/printing/lib/printing.lib.php' => ['PhanPluginUnknownArrayFunctionReturnType'],
         'htdocs/product/admin/product.php' => ['PhanPluginEmptyStatementIf', 'PhanTypeMismatchArgumentProbablyReal'],
-        'htdocs/product/admin/product_lot.php' => ['PhanPluginUnknownObjectMethodCall'],
-        'htdocs/product/admin/product_tools.php' => ['PhanTypeMismatchArgumentProbablyReal'],
-        'htdocs/product/ajax/product_lot.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/product/ajax/products.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentProbablyReal'],
-        'htdocs/product/canvas/product/actions_card_product.class.php' => ['PhanPluginUnknownObjectMethodCall', 'PhanPluginUnknownPropertyType', 'PhanTypeMismatchArgumentProbablyReal', 'PhanTypeSuspiciousNonTraversableForeach'],
+        'htdocs/product/canvas/product/actions_card_product.class.php' => ['PhanTypeSuspiciousNonTraversableForeach'],
         'htdocs/product/canvas/service/actions_card_service.class.php' => ['PhanPluginUnknownPropertyType', 'PhanTypeMismatchArgumentProbablyReal', 'PhanTypeSuspiciousNonTraversableForeach'],
-        'htdocs/product/card.php' => ['PhanPluginUnknownObjectMethodCall', 'PhanPossiblyNullTypeMismatchProperty', 'PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentProbablyReal', 'PhanTypeMismatchProperty', 'PhanUndeclaredGlobalVariable'],
+        'htdocs/product/card.php' => ['PhanPossiblyNullTypeMismatchProperty', 'PhanTypeMismatchProperty', 'PhanUndeclaredGlobalVariable'],
         'htdocs/product/class/api_products.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType', 'PhanTypeSuspiciousNonTraversableForeach', 'PhanUndeclaredProperty'],
         'htdocs/product/class/html.formproduct.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredProperty'],
         'htdocs/product/class/product.class.php' => ['PhanPluginUnknownArrayMethodParamType'],
         'htdocs/product/class/productbatch.class.php' => ['PhanPluginEmptyStatementIf', 'PhanPluginUnknownPropertyType'],
         'htdocs/product/class/productcustomerprice.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownPropertyType'],
-        'htdocs/product/class/productfournisseurprice.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownObjectMethodCall', 'PhanPluginUnknownPropertyType', 'PhanUndeclaredProperty'],
+        'htdocs/product/class/productfournisseurprice.class.php' => ['PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
         'htdocs/product/class/propalmergepdfproduct.class.php' => ['PhanPluginUnknownPropertyType'],
         'htdocs/product/document.php' => ['PhanPossiblyNullTypeMismatchProperty', 'PhanPossiblyUndeclaredGlobalVariable'],
         'htdocs/product/dynamic_price/class/price_global_variable.class.php' => ['PhanPluginEmptyStatementIf', 'PhanPluginUnknownPropertyType'],
@@ -749,7 +743,6 @@ return [
         'htdocs/product/stock/class/productstockentrepot.class.php' => ['PhanPluginUnknownPropertyType'],
         'htdocs/product/stock/info.php' => ['PhanPluginUnknownObjectMethodCall', 'PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
         'htdocs/product/stock/list.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredProperty'],
-        'htdocs/product/stock/massstockmove.php' => ['PhanPluginUnknownObjectMethodCall', 'PhanTypeMismatchArgumentNullableInternal'],
         'htdocs/product/stock/movement_card.php' => ['PhanPluginUndeclaredVariableIsset', 'PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
         'htdocs/product/stock/movement_list.php' => ['PhanPluginBothLiteralsBinaryOp', 'PhanPluginUndeclaredVariableIsset', 'PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentProbablyReal', 'PhanTypeMismatchProperty', 'PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
         'htdocs/product/stock/product.php' => ['PhanPossiblyUndeclaredGlobalVariable'],
@@ -761,28 +754,24 @@ return [
         'htdocs/product/stock/stats/mo.php' => ['PhanUndeclaredProperty'],
         'htdocs/product/stock/stats/reception.php' => ['PhanUndeclaredProperty'],
         'htdocs/product/stock/stockatdate.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentProbablyReal'],
-        'htdocs/product/stock/stocktransfer/class/stocktransfer.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownObjectMethodCall', 'PhanPluginUnknownPropertyType'],
-        'htdocs/product/stock/stocktransfer/class/stocktransferline.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownObjectMethodCall', 'PhanPluginUnknownPropertyType', 'PhanUndeclaredProperty'],
+        'htdocs/product/stock/stocktransfer/class/stocktransferline.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/product/stock/stocktransfer/lib/stocktransfer.lib.php' => ['PhanPluginUnknownArrayFunctionReturnType'],
-        'htdocs/product/stock/stocktransfer/lib/stocktransfer_stocktransfer.lib.php' => ['PhanPluginUnknownArrayFunctionReturnType'],
-        'htdocs/product/stock/stocktransfer/stocktransfer_card.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredGlobalVariable'],
+        'htdocs/product/stock/stocktransfer/stocktransfer_card.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/product/stock/stocktransfer/stocktransfer_list.php' => ['PhanTypeMismatchArgumentProbablyReal'],
-        'htdocs/product/stock/tpl/stockcorrection.tpl.php' => ['PhanPluginUnknownObjectMethodCall', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
-        'htdocs/product/stock/tpl/stocktransfer.tpl.php' => ['PhanPluginUnknownObjectMethodCall', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredProperty'],
-        'htdocs/projet/activity/index.php' => ['PhanPluginUnknownObjectMethodCall', 'PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeExpectedObjectPropAccessButGotNull', 'PhanUndeclaredGlobalVariable'],
+        'htdocs/product/stock/tpl/stockcorrection.tpl.php' => ['PhanUndeclaredProperty'],
+        'htdocs/product/stock/tpl/stocktransfer.tpl.php' => ['PhanUndeclaredProperty'],
+        'htdocs/projet/activity/index.php' => ['PhanPluginUnknownObjectMethodCall', 'PhanTypeExpectedObjectPropAccessButGotNull', 'PhanUndeclaredGlobalVariable'],
         'htdocs/projet/activity/perday.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/projet/activity/perweek.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentProbablyReal'],
-        'htdocs/projet/admin/project.php' => ['PhanPluginUnknownObjectMethodCall', 'PhanTypeMismatchArgumentProbablyReal'],
+        'htdocs/projet/admin/project.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/projet/ajax/projects.php' => ['PhanTypeMismatchArgumentProbablyReal'],
-        'htdocs/projet/card.php' => ['PhanPluginUnknownObjectMethodCall', 'PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredGlobalVariable'],
-        'htdocs/projet/class/api_projects.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType', 'PhanPluginUnknownObjectMethodCall'],
+        'htdocs/projet/card.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/projet/class/api_tasks.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType'],
-        'htdocs/projet/class/project.class.php' => ['PhanPossiblyUndeclaredVariable'],
         'htdocs/projet/class/projectstats.class.php' => ['PhanPluginUnknownArrayMethodReturnType', 'PhanPluginUnknownPropertyType', 'PhanPossiblyUndeclaredVariable'],
         'htdocs/projet/class/task.class.php' => ['PhanPluginEmptyStatementIf', 'PhanPluginUnknownArrayMethodReturnType', 'PhanPluginUnknownPropertyType'],
         'htdocs/projet/class/taskstats.class.php' => ['PhanPluginUnknownArrayMethodReturnType', 'PhanPluginUnknownPropertyType'],
         'htdocs/projet/contact.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeComparisonFromArray', 'PhanTypeMismatchArgumentProbablyReal'],
-        'htdocs/projet/element.php' => ['PhanPluginUnknownArrayFunctionParamType', 'PhanPluginUnknownArrayFunctionReturnType', 'PhanPluginUnknownObjectMethodCall', 'PhanPossiblyUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
+        'htdocs/projet/element.php' => ['PhanUndeclaredProperty'],
         'htdocs/projet/ganttchart.inc.php' => ['PhanPluginUnknownArrayFunctionParamType', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredGlobalVariable'],
         'htdocs/projet/ganttview.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/projet/graph_opportunities.inc.php' => ['PhanPluginUndeclaredVariableIsset', 'PhanUndeclaredGlobalVariable'],
@@ -799,27 +788,27 @@ return [
         'htdocs/projet/tasks/time.php' => ['PhanEmptyForeach', 'PhanPluginUndeclaredVariableIsset', 'PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeInvalidDimOffset', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredProperty'],
         'htdocs/projet/tasks/tpl/linkedobjectblock.tpl.php' => ['PhanUndeclaredProperty'],
         'htdocs/public/agenda/agendaexport.php' => ['PhanRedefineFunction'],
-        'htdocs/public/bookcal/index.php' => ['PhanPluginUnknownArrayFunctionParamType', 'PhanRedefineFunction'],
-        'htdocs/public/company/new.php' => ['PhanPluginUnknownArrayFunctionParamType', 'PhanRedefineFunction', 'PhanUndeclaredGlobalVariable'],
-        'htdocs/public/cron/cron_run_jobs_by_url.php' => ['PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredProperty'],
+        'htdocs/public/bookcal/index.php' => ['PhanRedefineFunction'],
+        'htdocs/public/company/new.php' => ['PhanRedefineFunction', 'PhanUndeclaredGlobalVariable'],
+        'htdocs/public/cron/cron_run_jobs_by_url.php' => ['PhanUndeclaredProperty'],
         'htdocs/public/demo/index.php' => ['PhanRedefineFunction'],
         'htdocs/public/donations/donateurs_code.php' => ['PhanRedefineFunction'],
         'htdocs/public/emailing/mailing-read.php' => ['PhanRedefineFunction'],
-        'htdocs/public/eventorganization/attendee_new.php' => ['PhanPluginUnknownArrayFunctionParamType', 'PhanPluginUnknownObjectMethodCall', 'PhanPossiblyUndeclaredGlobalVariable', 'PhanRedefineFunction', 'PhanTypeMismatchArgumentProbablyReal'],
-        'htdocs/public/eventorganization/subscriptionok.php' => ['PhanPluginUnknownArrayFunctionParamType', 'PhanRedefineFunction', 'PhanUndeclaredGlobalVariable'],
-        'htdocs/public/members/new.php' => ['PhanPluginUnknownArrayFunctionParamType', 'PhanRedefineFunction', 'PhanUndeclaredGlobalVariable'],
+        'htdocs/public/eventorganization/attendee_new.php' => ['PhanRedefineFunction'],
+        'htdocs/public/eventorganization/subscriptionok.php' => ['PhanRedefineFunction', 'PhanUndeclaredGlobalVariable'],
+        'htdocs/public/members/new.php' => ['PhanRedefineFunction', 'PhanUndeclaredGlobalVariable'],
         'htdocs/public/members/public_card.php' => ['PhanRedefineFunction'],
         'htdocs/public/members/public_list.php' => ['PhanRedefineFunction'],
         'htdocs/public/onlinesign/newonlinesign.php' => ['PhanTypeMismatchArgumentNullableInternal'],
         'htdocs/public/opensurvey/studs.php' => ['PhanPossiblyUndeclaredGlobalVariable'],
-        'htdocs/public/partnership/new.php' => ['PhanPluginUnknownArrayFunctionParamType', 'PhanRedefineFunction'],
+        'htdocs/public/partnership/new.php' => ['PhanRedefineFunction'],
         'htdocs/public/payment/newpayment.php' => ['PhanUndeclaredProperty'],
         'htdocs/public/payment/paymentko.php' => ['PhanPluginEmptyStatementIf', 'PhanPossiblyUndeclaredGlobalVariable'],
         'htdocs/public/payment/paymentok.php' => ['PhanPluginSuspiciousParamPosition', 'PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeExpectedObjectPropAccess', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredGlobalVariable'],
-        'htdocs/public/project/index.php' => ['PhanPluginUnknownArrayFunctionParamType', 'PhanRedefineFunction', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredGlobalVariable'],
-        'htdocs/public/project/new.php' => ['PhanPluginUnknownArrayFunctionParamType', 'PhanPluginUnknownObjectMethodCall', 'PhanPossiblyUndeclaredGlobalVariable', 'PhanRedefineFunction', 'PhanUndeclaredProperty'],
-        'htdocs/public/project/suggestbooth.php' => ['PhanPluginUnknownArrayFunctionParamType', 'PhanPluginUnknownObjectMethodCall', 'PhanPossiblyUndeclaredGlobalVariable', 'PhanRedefineFunction', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
-        'htdocs/public/project/suggestconference.php' => ['PhanPluginUnknownArrayFunctionParamType', 'PhanPluginUnknownObjectMethodCall', 'PhanPossiblyUndeclaredGlobalVariable', 'PhanRedefineFunction', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
+        'htdocs/public/project/index.php' => ['PhanRedefineFunction', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredGlobalVariable'],
+        'htdocs/public/project/new.php' => ['PhanRedefineFunction', 'PhanUndeclaredProperty'],
+        'htdocs/public/project/suggestbooth.php' => ['PhanPluginUnknownObjectMethodCall', 'PhanPossiblyUndeclaredGlobalVariable', 'PhanRedefineFunction', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
+        'htdocs/public/project/suggestconference.php' => ['PhanPluginUnknownObjectMethodCall', 'PhanPossiblyUndeclaredGlobalVariable', 'PhanRedefineFunction', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
         'htdocs/public/project/viewandvote.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredGlobalVariable'],
         'htdocs/public/recruitment/view.php' => ['PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredGlobalVariable'],
         'htdocs/public/stripe/ipn.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentProbablyReal', 'PhanTypeMismatchProperty', 'PhanUndeclaredGlobalVariable'],
@@ -850,7 +839,7 @@ return [
         'htdocs/recruitment/class/api_recruitments.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType'],
         'htdocs/recruitment/class/recruitmentcandidature.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownObjectMethodCall', 'PhanPluginUnknownPropertyType', 'PhanUndeclaredProperty'],
         'htdocs/recruitment/class/recruitmentjobposition.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownObjectMethodCall', 'PhanPluginUnknownPropertyType', 'PhanUndeclaredProperty'],
-        'htdocs/recruitment/core/modules/recruitment/doc/pdf_standard_recruitmentjobposition.modules.php' => ['PhanPluginUnknownArrayMethodReturnType', 'PhanPluginUnknownArrayPropertyType', 'PhanPossiblyUndeclaredVariable', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredProperty'],
+        'htdocs/recruitment/core/modules/recruitment/doc/pdf_standard_recruitmentjobposition.modules.php' => ['PhanPluginUnknownArrayPropertyType', 'PhanPossiblyUndeclaredVariable', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredProperty'],
         'htdocs/recruitment/core/modules/recruitment/mod_recruitmentcandidature_advanced.php' => ['PhanUndeclaredProperty'],
         'htdocs/recruitment/core/modules/recruitment/mod_recruitmentjobposition_advanced.php' => ['PhanUndeclaredProperty'],
         'htdocs/recruitment/index.php' => ['PhanUndeclaredGlobalVariable'],
@@ -945,11 +934,10 @@ return [
         'htdocs/ticket/tpl/linkedobjectblock.tpl.php' => ['PhanUndeclaredProperty'],
         'htdocs/user/bank.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanUndeclaredGlobalVariable'],
         'htdocs/user/card.php' => ['PhanTypeMismatchProperty', 'PhanUndeclaredGlobalVariable'],
-        'htdocs/user/class/api_users.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType', 'PhanTypeMismatchArgumentProbablyReal', 'PhanTypeMismatchProperty'],
-        'htdocs/user/class/user.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType', 'PhanPluginUnknownArrayPropertyType', 'PhanPluginUnknownObjectMethodCall', 'PhanPluginUnknownPropertyType', 'PhanPossiblyNullTypeMismatchProperty', 'PhanPossiblyUndeclaredVariable', 'PhanTypeMismatchProperty', 'PhanUndeclaredProperty'],
+        'htdocs/user/class/api_users.class.php' => ['PhanTypeMismatchProperty'],
+        'htdocs/user/class/user.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/user/class/usergroup.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType', 'PhanPluginUnknownPropertyType', 'PhanUndeclaredProperty'],
         'htdocs/user/param_ihm.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentProbablyReal'],
-        'htdocs/user/passwordforgotten.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/variants/ajax/get_attribute_values.php' => ['PhanTypeComparisonFromArray'],
         'htdocs/variants/class/ProductAttribute.class.php' => ['PhanPluginUnknownArrayMethodParamType'],
         'htdocs/variants/class/ProductCombination.class.php' => ['PhanPluginSuspiciousParamPosition'],
@@ -982,7 +970,7 @@ return [
         'htdocs/webservices/server_project.php' => ['PhanPluginUnknownArrayFunctionParamType', 'PhanPluginUnknownArrayFunctionReturnType', 'PhanTypeMismatchProperty', 'PhanUndeclaredProperty'],
         'htdocs/webservices/server_supplier_invoice.php' => ['PhanPluginUnknownArrayFunctionParamType', 'PhanPluginUnknownArrayFunctionReturnType', 'PhanUndeclaredProperty'],
         'htdocs/webservices/server_thirdparty.php' => ['PhanPluginUnknownArrayFunctionParamType', 'PhanPluginUnknownArrayFunctionReturnType', 'PhanTypeMismatchProperty', 'PhanUndeclaredProperty'],
-        'htdocs/webservices/server_user.php' => ['PhanPluginUnknownArrayFunctionParamType', 'PhanPluginUnknownArrayFunctionReturnType', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredProperty'],
+        'htdocs/webservices/server_user.php' => ['PhanPluginUnknownArrayFunctionParamType', 'PhanPluginUnknownArrayFunctionReturnType', 'PhanUndeclaredProperty'],
         'htdocs/website/class/website.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType', 'PhanPossiblyNullTypeMismatchProperty', 'PhanPossiblyUndeclaredVariable', 'PhanTypeMismatchArgumentNullableInternal'],
         'htdocs/website/index.php' => ['PhanPluginEmptyStatementIf', 'PhanPluginUnknownObjectMethodCall', 'PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/website/lib/websiteaccount.lib.php' => ['PhanPluginUnknownArrayFunctionReturnType'],

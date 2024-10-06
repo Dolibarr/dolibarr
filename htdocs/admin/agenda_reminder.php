@@ -171,7 +171,10 @@ print '</tr>'."\n";
 
 // AGENDA REMINDER BROWSER
 print '<tr class="oddeven">'."\n";
-print '<td>'.$langs->trans('AGENDA_REMINDER_BROWSER').'</td>'."\n";
+print '<td>';
+print $langs->trans('AGENDA_REMINDER_BROWSER').'<br>';
+print '<span class="opacitymedium">'.$langs->trans('AGENDA_REMINDER_BROWSERHelp').'</span>';
+print '</td>'."\n";
 print '<td class="center">&nbsp;</td>'."\n";
 print '<td class="right nowraponall">'."\n";
 
@@ -211,7 +214,8 @@ $job->fetch(0, 'ActionComm', 'sendEmailsReminder');
 
 // AGENDA REMINDER EMAIL
 print '<tr class="oddeven">'."\n";
-print '<td>'.$langs->trans('AGENDA_REMINDER_EMAIL', $langs->transnoentities("Module2300Name"));
+print '<td>';
+print $langs->trans('AGENDA_REMINDER_EMAIL', $langs->transnoentities("Module2300Name"));
 if (isModEnabled('cron')) {
 	if (getDolGlobalString('AGENDA_REMINDER_EMAIL')) {
 		if ($job->id > 0) {

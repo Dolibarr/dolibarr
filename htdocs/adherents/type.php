@@ -100,6 +100,25 @@ $hookmanager->initHooks(array('membertypecard', 'globalcard'));
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
+
+// Definition of array of fields for columns
+$tableprefix = 't';
+$arrayfields = array();
+foreach ($object->fields as $key => $val) {
+	// If $val['visible']==0, then we never show the field
+	if (!empty($val['visible'])) {
+		$visible = (int) dol_eval((string) $val['visible'], 1);
+		$arrayfields[$tableprefix.'.'.$key] = array(
+			'label' => $val['label'],
+			'checked' => (($visible < 0) ? 0 : 1),
+			'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
+			'position' => $val['position'],
+			'help' => isset($val['help']) ? $val['help'] : ''
+		);
+	}
+}
+
+
 // Security check
 $result = restrictedArea($user, 'adherent', $rowid, 'adherent_type');
 
@@ -420,16 +439,18 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			$i++;
 		}
 
+		// Show total line
+		include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
+
 		// If no record found
 		if ($num == 0) {
-			/*$colspan = 1;
+			$colspan = 1;
 			foreach ($arrayfields as $key => $val) {
-				if (!empty($val['checked'])) {
+				//if (!empty($val['checked'])) {
 					$colspan++;
-				}
-			}*/
-			$colspan = 9;
-			print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
+				//}
+			}
+			print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 		}
 
 		print "</table>";

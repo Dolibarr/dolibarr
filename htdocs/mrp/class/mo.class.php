@@ -759,6 +759,7 @@ class Mo extends CommonObject
 					$moline->role = 'toproduce';
 				}
 			} else {
+				$bom = null;
 				if ($this->mrptype == 1) {
 					$moline->role = 'toconsume';
 				} else {
@@ -773,7 +774,7 @@ class Mo extends CommonObject
 				$this->errors = $moline->errors;
 			}
 
-			if ($this->fk_bom > 0) {	// If a BOM is defined, we know what to consume.
+			if ($this->fk_bom > 0 && is_object($bom)) {	// If a BOM is defined, we know what to consume.
 				if ($bom->id > 0) {
 					// Lines to consume
 					if (!$error) {

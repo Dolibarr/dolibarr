@@ -299,7 +299,7 @@ if (empty($reshook)) {
 			$object->fk_user = GETPOSTINT("fk_user") > 0 ? GETPOSTINT("fk_user") : 0;
 			$object->fk_user_expense_validator = GETPOSTINT("fk_user_expense_validator") > 0 ? GETPOSTINT("fk_user_expense_validator") : 0;
 			$object->fk_user_holiday_validator = GETPOSTINT("fk_user_holiday_validator") > 0 ? GETPOSTINT("fk_user_holiday_validator") : 0;
-			$object->employee = GETPOST('employee', 'alphanohtml');
+			$object->employee = GETPOSTINT('employee');
 
 			$object->thm = GETPOST("thm", 'alphanohtml') != '' ? GETPOST("thm", 'alphanohtml') : '';
 			$object->thm = price2num($object->thm);
@@ -804,7 +804,7 @@ if ($object->id > 0) {
 	$person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firstname : $object->lastname;
 	$title = $person_name." - ".$langs->trans('Card');
 } else {
-	if (GETPOST('employee', 'alphanohtml')) {
+	if (GETPOSTINT('employee')) {
 		$title = $langs->trans("NewEmployee");
 	} else {
 		$title = $langs->trans("NewUser");

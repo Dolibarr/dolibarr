@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015   	Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2018   	Pierre Chéné            <pierre.chene44@gmail.com>
- * Copyright (C) 2019   	Cedric Ancelin          <icedo.anc@gmail.com>
+ * Copyright (C) 2019		Cedric Ancelin			<icedo.anc@gmail.com>
  * Copyright (C) 2020-2024  Frédéric France     	<frederic.france@free.fr>
  * Copyright (C) 2023       Alexandre Janniaux  	<alexandre.janniaux@gmail.com>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
@@ -1727,6 +1727,44 @@ class Thirdparties extends DolibarrApi
 		}
 
 		return $returnAccounts;
+	}
+
+	/**
+	 * Get a specific thirdparty by account
+	 *
+	 * @param string $site Site key
+	 * @param string $key_account Key of account
+	 *
+	 * @return array|mixed
+	 * @throws RestException 401 Unauthorized: User does not have permission to read thirdparties
+	 * @throws RestException 404 Not Found: Specified thirdparty ID does not belongs to an existing thirdparty
+	 *
+	 * @url GET /accounts/{site}/{key_account}
+	 */
+	public function getSocieteByAccounts($site, $key_account)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'lire')) {
+			throw new RestException(403);
+		}
+
+		$sql = "SELECT rowid, fk_soc, key_account, site, date_creation, tms FROM ".MAIN_DB_PREFIX."societe_account";
+		$sql .= " WHERE site = '".$this->db->escape($site)."' AND key_account = '".$this->db->escape($key_account)."'";
+		$sql .= " AND entity IN (".getEntity('societe').")";
+
+		$result = $this->db->query($sql);
+
+		if ($result && $this->db->num_rows($result) == 1) {
+				$obj = $this->db->fetch_object($result);
+				$returnThirdparty = $this->_fetch($obj->fk_soc);
+		} else {
+				throw new RestException(404, 'This account have many thirdparties attached or does not exist.');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('societe', $returnThirdparty->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		return $returnThirdparty;
 	}
 
 	/**
