@@ -518,14 +518,14 @@ if (empty($reshook)) {
 			$object->price_base_type	= GETPOST('price_base_type', 'aZ09');
 			$object->mandatory_period	= !empty(GETPOST("mandatoryperiod", 'alpha')) ? 1 : 0;
 			if ($object->price_base_type == 'TTC') {
-				$object->price_ttc = GETPOST('price');
+				$object->price_ttc = GETPOSTFLOAT('price');
 			} else {
-				$object->price = GETPOST('price');
+				$object->price = GETPOSTFLOAT('price');
 			}
 			if ($object->price_base_type == 'TTC') {
-				$object->price_min_ttc = GETPOST('price_min');
+				$object->price_min_ttc = GETPOSTFLOAT('price_min');
 			} else {
-				$object->price_min = GETPOST('price_min');
+				$object->price_min = GETPOSTFLOAT('price_min');
 			}
 
 			$tva_tx_txt = GETPOST('tva_tx', 'alpha'); // tva_tx can be '8.5'  or  '8.5*'  or  '8.5 (XXX)' or '8.5* (XXX)'
@@ -570,13 +570,13 @@ if (empty($reshook)) {
 			$object->localtax2_type = $localtax2_type;
 
 			$object->type               	 = $type;
-			$object->status             	 = GETPOST('statut');
-			$object->status_buy = GETPOST('statut_buy');
-			$object->status_batch = GETPOST('status_batch');
+			$object->status             	 = GETPOSTINT('statut');
+			$object->status_buy = GETPOSTINT('statut_buy');
+			$object->status_batch = GETPOSTINT('status_batch');
 			$object->sell_or_eat_by_mandatory = GETPOSTINT('sell_or_eat_by_mandatory');
 			$object->batch_mask = GETPOST('batch_mask');
 
-			$object->barcode_type = GETPOST('fk_barcode_type');
+			$object->barcode_type = GETPOSTINT('fk_barcode_type');
 			$object->barcode = GETPOST('barcode');
 			// Set barcode_type_xxx from barcode_type id
 			$stdobject = new GenericObject($db);
@@ -821,7 +821,7 @@ if (empty($reshook)) {
 					$object->fk_unit = null;
 				}
 
-				$object->barcode_type = GETPOST('fk_barcode_type');
+				$object->barcode_type = GETPOSTINT('fk_barcode_type');
 				$object->barcode = GETPOST('barcode');
 				// Set barcode_type_xxx from barcode_type id
 				$stdobject = new GenericObject($db);
@@ -1183,7 +1183,7 @@ if (empty($reshook)) {
 					'',
 					'',
 					'',
-					0,
+					array(),
 					$object->fk_unit
 				);
 				if ($result > 0) {
@@ -1344,7 +1344,7 @@ if (isModEnabled('barcode') && getDolGlobalString('BARCODE_PRODUCT_ADDON_NUM')) 
 	}
 	if ($res > 0) {
 		$modBarCodeProduct = new $module();
-		'@phan-var-force ModeleBarCode $modBarCodeProduct';
+		'@phan-var-force ModeleNumRefBarCode $modBarCodeProduct';
 	}
 }
 

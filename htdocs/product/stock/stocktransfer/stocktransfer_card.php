@@ -153,7 +153,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	if ($action == 'set_thirdparty' && $permissiontoadd) {
-		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', '', 'date', '', $user, $triggermodname);
+		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', null, 'date', '', $user, $triggermodname);
 	}
 	if ($action == 'classin' && $permissiontoadd) {
 		$object->setProject(GETPOSTINT('projectid'));
@@ -193,7 +193,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		if ($prod->status_batch==2 && abs($qty)>1) {
+		if ($prod->status_batch == 2 && abs($qty) > 1) {
 			$error++;
 			setEventMessages($langs->transnoentities('TooManyQtyForSerialNumber', $prod->ref), null, 'errors');
 		}
@@ -256,7 +256,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		if ($prod->status_batch==2 && abs($qty)>1) {
+		if ($prod->status_batch == 2 && abs($qty) > 1) {
 			$error++;
 			setEventMessages($langs->transnoentities('TooManyQtyForSerialNumber', $prod->ref), null, 'errors');
 			$action = 'editline';
@@ -547,10 +547,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if ($action == 'deleteline') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_deleteline', '', 0, 1);
 	}
+	$formquestion = array();
 	// Clone confirmation
 	if ($action == 'clone') {
 		// Create an array for form
-		$formquestion = array();
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	} elseif ($action == 'destock') { // Destock confirmation
 		// Create an array for form
