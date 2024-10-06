@@ -2345,10 +2345,6 @@ div.blockvmenulogo
 	max-width: 100px;
 	vertical-align: middle;
 }
-.backgroundforcompanylogo {
-	background-color: rgba(255,255,255,0.2);
-	border-radius: 4px;
-}
 .menulogocontainer img.mycompany {
 	object-fit: contain;
 	width: inherit;
@@ -3887,10 +3883,11 @@ a.tabTitle {
 .imgTabTitle {
 	max-height: 14px;
 }
+/*
 div.tabs div.tabsElem:first-of-type a.tab {
 	margin-left: 0px !important;
 }
-
+*/
 a.tabunactive {
 	color: var(--colortextlink) !important;
 }
@@ -5142,6 +5139,18 @@ img.boxhandle, img.boxclose {
 	padding: 16px;
 }
 
+.star-selection {
+	font-size: 1rem;
+	cursor: pointer;
+	display: flex;
+}
+.star {
+	color: #ccc;
+	transition: color 0.4s;
+}
+.star:hover, .star.active {
+	color: <?php echo $badgeWarning ?>;
+}
 
 /*
  *   Ok, Warning, Error
@@ -5476,7 +5485,7 @@ div#card-errors {
 	padding-left: 5px;
 	padding-right: 5px;
 	padding-top: 5px;
-	padding-top: 5px;
+	padding-bottom: 5px;
 }
 
 /* ============================================================================== */

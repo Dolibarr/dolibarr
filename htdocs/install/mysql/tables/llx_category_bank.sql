@@ -17,6 +17,8 @@
 --
 -- ===================================================================
 
+-- TODO : Remove this file, content of this table has been moved into llx_categories table
+
 create table llx_category_bank
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,

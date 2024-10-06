@@ -88,6 +88,9 @@ if (GETPOST('init')) {
 $listofdata = array();
 if (!empty($_SESSION['massstockmove'])) {
 	$listofdata = json_decode($_SESSION['massstockmove'], true);
+	if (!is_array($listofdata)) {
+		$listofdata = array();
+	}
 }
 
 $error = 0;
@@ -693,17 +696,17 @@ if (getDolGlobalInt('PRODUIT_LIMIT_SIZE') <= 0) {
 	$limit = getDolGlobalString('PRODUIT_LIMIT_SIZE');
 }
 print img_picto($langs->trans("Product"), 'product', 'class="paddingright"');
-print $form->select_produits((isset($id_product)?$id_product:0), 'productid', $filtertype, $limit, 0, -1, 2, '', 1, array(), 0, '1', 0, 'minwidth200imp maxwidth300', 1, '', null, 1);
+print $form->select_produits((isset($id_product) ? $id_product : 0), 'productid', $filtertype, $limit, 0, -1, 2, '', 1, array(), 0, '1', 0, 'minwidth200imp maxwidth300', 1, '', null, 1);
 print '</td>';
 // Batch number
 if (isModEnabled('productbatch')) {
 	print '<td class="nowraponall">';
 	print img_picto($langs->trans("LotSerial"), 'lot', 'class="paddingright"');
-	print '<input type="text" name="batch" class="flat maxwidth75" value="'.dol_escape_htmltag((isset($batch)?$batch:'')).'">';
+	print '<input type="text" name="batch" class="flat maxwidth75" value="'.dol_escape_htmltag((isset($batch) ? $batch : '')).'">';
 	print '</td>';
 }
 // Qty
-print '<td class="right"><input type="text" class="flat maxwidth50 right" name="qty" value="'.price2num((float) (isset($qty)?$qty:0), 'MS').'"></td>';
+print '<td class="right"><input type="text" class="flat maxwidth50 right" name="qty" value="'.price2num((float) (isset($qty) ? $qty : 0), 'MS').'"></td>';
 // Button to add line
 print '<td class="right"><input type="submit" class="button" name="addline" value="'.dol_escape_htmltag($titletoadd).'"></td>';
 
@@ -821,7 +824,7 @@ function startsWith($haystack, $needle)
 /**
  * Fetch object with ref
  *
- * @param Object $static_object static object to fetch
+ * @param CommonObject $static_object static object to fetch
  * @param string $tmp_ref ref of the object to fetch
  * @return int Return integer <0 if Ko or Id of object
  */
@@ -831,6 +834,6 @@ function fetchref($static_object, $tmp_ref)
 		$tmp_ref = str_replace('ref:', '', $tmp_ref);
 	}
 	$static_object->id = 0;
-	$static_object->fetch('', $tmp_ref);
+	$static_object->fetch(0, $tmp_ref);
 	return $static_object->id;
 }

@@ -2184,12 +2184,12 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			if (!empty($arrayfields['p.fk_soc']['checked'])) {
 				print '<td class="tdoverflowmax125">';
 				if ($task_time->fk_soc > 0) {
-					if (empty($conf->cache['thridparty'][$task_time->fk_soc])) {
+					if (empty($conf->cache['thirdparty'][$task_time->fk_soc])) {
 						$tmpsociete = new Societe($db);
 						$tmpsociete->fetch($task_time->fk_soc);
-						$conf->cache['thridparty'][$task_time->fk_soc] = $tmpsociete;
+						$conf->cache['thirdparty'][$task_time->fk_soc] = $tmpsociete;
 					} else {
-						$tmpsociete = $conf->cache['thridparty'][$task_time->fk_soc];
+						$tmpsociete = $conf->cache['thirdparty'][$task_time->fk_soc];
 					}
 					print $tmpsociete->getNomUrl(1, '', 100, 0, 1, empty($arrayfields['s.name_alias']['checked']) ? 0 : 1);
 				}
@@ -2202,12 +2202,12 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			// Thirdparty alias
 			if (!empty($arrayfields['s.name_alias']['checked'])) {
 				if ($task_time->fk_soc > 0) {
-					if (empty($conf->cache['thridparty'][$task_time->fk_soc])) {
+					if (empty($conf->cache['thirdparty'][$task_time->fk_soc])) {
 						$tmpsociete = new Societe($db);
 						$tmpsociete->fetch($task_time->fk_soc);
-						$conf->cache['thridparty'][$task_time->fk_soc] = $tmpsociete;
+						$conf->cache['thirdparty'][$task_time->fk_soc] = $tmpsociete;
 					} else {
-						$tmpsociete = $conf->cache['thridparty'][$task_time->fk_soc];
+						$tmpsociete = $conf->cache['thirdparty'][$task_time->fk_soc];
 					}
 					$valtoshow = $tmpsociete->name_alias;
 				}
