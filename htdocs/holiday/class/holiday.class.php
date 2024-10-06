@@ -1839,7 +1839,7 @@ class Holiday extends CommonObject
 	 *	@param	boolean		$stringlist	    If true return a string list of id. If false, return an array with detail.
 	 *	@param	boolean		$type			If true, read Dolibarr user list, if false, return vacation balance list.
 	 *	@param	string		$filters        Filters. Warning: This must not contains data from user input.
-	 *	@return array<array{rowid:int,id:int,name:string,lastname:string,firstname:string,gender:string,status:int,employee:string,photo:string,fk_user:int,type?:int,nb_holiday?:int}>|string|int<-1,-1>	Return an array
+	 *	@return array<array{rowid:int,id:int,name:string,lastname:string,firstname:string,gender:string,status:int,employee:int,photo:string,fk_user:int,type?:int,nb_holiday?:int}>|string|int<-1,-1>	Return an array
 	 */
 	public function fetchUsers($stringlist = true, $type = true, $filters = '')
 	{
@@ -1981,7 +1981,7 @@ class Holiday extends CommonObject
 						$tab_result[$i]['firstname'] = $obj->firstname;
 						$tab_result[$i]['gender'] = $obj->gender;
 						$tab_result[$i]['status'] = (int) $obj->status;
-						$tab_result[$i]['employee'] = $obj->employee;
+						$tab_result[$i]['employee'] = (int) $obj->employee;
 						$tab_result[$i]['photo'] = $obj->photo;
 						$tab_result[$i]['fk_user'] = (int) $obj->fk_user; // rowid of manager
 						//$tab_result[$i]['type'] = $obj->type;
