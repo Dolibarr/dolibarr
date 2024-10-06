@@ -361,7 +361,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 
 				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
 
-				$nexY = $this->tab_top - 1;
+				$nexY = $tab_top - 1;
 
 				// Incoterm
 				$height_incoterms = 0;
