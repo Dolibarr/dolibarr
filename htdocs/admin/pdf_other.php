@@ -206,7 +206,7 @@ if (isModEnabled('commande')) {
 		print $form->selectarray("SALES_ORDER_SHOW_SHIPPING_ADDRESS", $arrval, $conf->global->SALES_ORDER_SHOW_SHIPPING_ADDRESS);
 	}
 	print '</td></tr>';
-	
+
 	print '</table>';
 	print '</div>';
 }
