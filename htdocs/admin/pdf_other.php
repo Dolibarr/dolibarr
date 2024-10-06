@@ -188,7 +188,7 @@ if (isModEnabled('propal')) {
 }
 
 
-if (isModEnabled('commande')) {
+if (isModEnabled('order')) {
 	$langs->load("orders");
 	print load_fiche_titre($langs->trans('CustomersOrders'), '', 'order');
 
