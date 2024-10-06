@@ -227,6 +227,8 @@ $tabmoreinfo = array();
 @phan-var-force array<array{lib:string,date?:int|string,type_payment?:string,ref?:string,fk_bank?:int,ban_account_ref?:string,fk_bank_account?:int,type?:string,bank_account_ref?:string,paymentid?:int,paymentsupplierid?:int,soclib?:string,paymentscid?:int,paymentdonationid?:int,paymentsubscriptionid?:int,paymentvatid?:int,paymentsalid?:int,paymentexpensereport?:int,paymentvariousid?:int,account_various?:string,paymentloanid?:int}> $tabtp
 ';
 
+$account_customer = 'NotDefined';
+
 //print $sql;
 dol_syslog("accountancy/journal/bankjournal.php", LOG_DEBUG);
 $result = $db->query($sql);
@@ -281,6 +283,7 @@ if ($result) {
 
 		// Set accountancy code for thirdparty (example: '411CU...' or '411' if no subledger account defined on customer)
 		$compta_soc = 'NotDefined';
+		$accountancy_code_general = 'NotDefined';
 		if ($lineisapurchase > 0) {
 			$compta_soc = (($obj->code_compta_fournisseur != "") ? $obj->code_compta_fournisseur : $account_supplier);
 		}
