@@ -148,3 +148,36 @@ ALTER TABLE llx_societe MODIFY COLUMN code_compta varchar(32);
 ALTER TABLE llx_societe MODIFY COLUMN code_compta_fournisseur varchar(32);
 ALTER TABLE llx_societe_perentity MODIFY COLUMN accountancy_code_customer varchar(32);
 ALTER TABLE llx_societe_perentity MODIFY COLUMN accountancy_code_supplier varchar(32);
+
+
+
+-- Copy categories from llx_category_bank into llx_categorie
+
+INSERT INTO llx_categorie (entity, fk_parent, label, type, description, color, position, visible, date_creation)
+SELECT
+  llx_category_bank.entity,
+  0 AS fk_parent,
+  llx_category_bank.label,
+  8 AS type,
+  '' AS description,
+  '' AS color,
+  0 AS position,
+  1 AS visible,
+  NOW() AS date_creation
+FROM llx_category_bank
+LEFT JOIN llx_categorie
+  ON llx_category_bank.label = llx_categorie.label
+  AND llx_category_bank.entity = llx_categorie.entity
+  AND llx_categorie.type = 8
+WHERE llx_categorie.rowid IS NULL;
+
+-- Update llx_category_bankline with the new rowid from llx_categorie
+UPDATE llx_category_bankline AS bl
+INNER JOIN llx_category_bank AS b
+  ON bl.fk_categ = b.rowid
+INNER JOIN llx_categorie AS c
+  ON b.label = c.label
+  AND b.entity = c.entity
+  AND c.type = 8
+SET bl.fk_categ = c.rowid
+WHERE c.rowid IS NOT NULL;
