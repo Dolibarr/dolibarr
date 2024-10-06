@@ -2570,7 +2570,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					}
 					$i++;
 				}
-				if ($NBCOLS > 0 && $j % 2 == 1) {
+				if ($NBCOLS > 0 && ($j % 2) == 1) {
 					print '<td colspan="2"></td></tr>';
 				}
 
