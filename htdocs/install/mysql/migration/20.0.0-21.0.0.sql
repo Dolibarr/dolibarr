@@ -181,3 +181,32 @@ INNER JOIN llx_categorie AS c
   AND c.type = 8
 SET bl.fk_categ = c.rowid
 WHERE c.rowid IS NOT NULL;
+
+INSERT INTO llx_categorie (entity, fk_parent, label, type, description, color, position, visible, date_creation)
+SELECT
+  llx_bank_categ.entity,
+  0 AS fk_parent,
+  llx_bank_categ.label,
+  8 AS type,
+  '' AS description,
+  '' AS color,
+  0 AS position,
+  1 AS visible,
+  NOW() AS date_creation
+FROM llx_bank_categ
+LEFT JOIN llx_categorie
+  ON llx_bank_categ.label = llx_categorie.label
+  AND llx_bank_categ.entity = llx_categorie.entity
+  AND llx_categorie.type = 8
+WHERE llx_categorie.rowid IS NULL;
+
+-- Update llx_category_bankline with the new rowid from llx_categorie
+UPDATE llx_category_bankline AS bl
+INNER JOIN llx_bank_categ AS b
+  ON bl.fk_categ = b.rowid
+INNER JOIN llx_categorie AS c
+  ON b.label = c.label
+  AND b.entity = c.entity
+  AND c.type = 8
+SET bl.fk_categ = c.rowid
+WHERE c.rowid IS NOT NULL;
