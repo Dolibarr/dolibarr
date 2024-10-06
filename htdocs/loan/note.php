@@ -53,6 +53,7 @@ if ($id > 0) {
 }
 
 $permissionnote = $user->hasRight('loan', 'write'); // Used by the include of actions_setnotes.inc.php
+$morehtmlright = '';
 
 
 /*

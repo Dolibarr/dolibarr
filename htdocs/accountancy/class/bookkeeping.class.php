@@ -465,8 +465,10 @@ class BookKeeping extends CommonObject
 
 		// Call triggers
 		if (! $error && ! $notrigger) {
-			$result=$this->call_trigger('BOOKKEEPING_CREATE', $user);
-			if ($result < 0) $error++;
+			$result = $this->call_trigger('BOOKKEEPING_CREATE', $user);
+			if ($result < 0) {
+				$error++;
+			}
 		}
 
 		// Commit or rollback
@@ -714,8 +716,10 @@ class BookKeeping extends CommonObject
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element.$mode);
 			// Call triggers
 			if (! $notrigger) {
-				$result=$this->call_trigger('BOOKKEEPING_CREATE', $user);
-				if ($result < 0) $error++;
+				$result = $this->call_trigger('BOOKKEEPING_CREATE', $user);
+				if ($result < 0) {
+					$error++;
+				}
 			}
 		}
 
@@ -1480,8 +1484,10 @@ class BookKeeping extends CommonObject
 
 		// Call triggers
 		if (! $error && ! $notrigger) {
-			$result=$this->call_trigger('BOOKKEEPING_MODIFY', $user);
-			if ($result < 0) $error++;
+			$result = $this->call_trigger('BOOKKEEPING_MODIFY', $user);
+			if ($result < 0) {
+				$error++;
+			}
 		}
 
 		// Commit or rollback
@@ -1571,8 +1577,10 @@ class BookKeeping extends CommonObject
 
 		// Call triggers
 		if (! $error && ! $notrigger) {
-			$result=$this->call_trigger('BOOKKEEPING_DELETE', $user);
-			if ($result < 0) $error++;
+			$result = $this->call_trigger('BOOKKEEPING_DELETE', $user);
+			if ($result < 0) {
+				$error++;
+			}
 		}
 
 		if (!$error) {
@@ -2337,7 +2345,7 @@ class BookKeeping extends CommonObject
 		global $conf;
 
 		$alias = trim($alias);
-		$alias = !empty($alias) && strpos($alias, '.') < 0 ? $alias . "." : $alias;
+		$alias = !empty($alias) && strpos($alias, '.') === false ? $alias . "." : $alias;
 
 		if (!isset(self::$can_modify_bookkeeping_sql_cached[$alias]) || $force) {
 			$result = $this->loadFiscalPeriods($force, 'active');

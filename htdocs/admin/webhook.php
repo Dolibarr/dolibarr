@@ -165,7 +165,7 @@ print '<span class="opacitymedium">'.$langs->trans("WebhookSetupPage", $langs->t
 
 
 if ($action == 'edit') {
-	if ($useFormSetup && (float) DOL_VERSION >= 15) {
+	if ($useFormSetup && (float) DOL_VERSION >= 15) {  // @phpstan-ignore-line
 		print $formSetup->generateOutput(true);
 	} else {
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -257,7 +257,7 @@ if ($action == 'edit') {
 
 	print '<br>';
 } else {
-	if ($useFormSetup && (float) DOL_VERSION >= 15) {
+	if ($useFormSetup && (float) DOL_VERSION >= 15) {  // @phpstan-ignore-line
 		if (!empty($formSetup->items)) {
 			print $formSetup->generateOutput();
 		}

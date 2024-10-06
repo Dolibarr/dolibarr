@@ -3652,9 +3652,9 @@ if (!GETPOST('hide_websitemenu')) {
 			$realpage = $urlwithroot.'/public/website/index.php?website='.$websitekey.'&pageref='.$websitepage->pageurl;
 			$pagealias = $websitepage->pageurl;
 
-			$htmltext = $langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $realpage, $dataroot);
-			$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("ReadPerm"), '{s1}');
-			$htmltext = str_replace('{s1}', $dataroot.'<br>'.DOL_DATA_ROOT.'/medias<br>'.DOL_DOCUMENT_ROOT, $htmltext);
+			$htmltext = $langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $realpage, $langs->transnoentitiesnoconv("TestDeployOnWeb"));
+			//$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("ReadPerm"), '{s1}');
+			//$htmltext = str_replace('{s1}', $dataroot.'<br>'.DOL_DATA_ROOT.'/medias<br>'.DOL_DOCUMENT_ROOT, $htmltext);
 			//$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), '{s1}');
 			//$htmltext = str_replace('{s1}', DOL_DATA_ROOT.'/medias', $htmltext);
 
