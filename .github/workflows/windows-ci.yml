@@ -36,11 +36,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Setup MariaDB
-        uses: frederic34/setup-mariadb@v1
-        with:
-          # mariadb-version: ${{ matrix.mariadb-version }}
-          database: travis  # Specify your database name
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -78,6 +73,12 @@ jobs:
             ${{ env.KEY_ROOT }}-${{ env.HASH }}-${{ github.base_ref }}-
             ${{ env.KEY_ROOT }}-${{ env.HASH }}-
             ${{ env.KEY_ROOT }}-
+
+      - name: Setup MariaDB
+        uses: frederic34/setup-mariadb@v1
+        with:
+          # mariadb-version: ${{ matrix.mariadb-version }}
+          database: travis  # Specify your database name
 
       - name: Create local php.ini with open_basedir restrictions
         shell: cmd
