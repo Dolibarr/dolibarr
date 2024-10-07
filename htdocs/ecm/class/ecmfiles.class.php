@@ -904,6 +904,27 @@ class EcmFiles extends CommonObject
 	}
 
 	/**
+	 * getTooltipContentArray
+	 * @param array<string,mixed> $params params to construct tooltip data
+	 * @since v18
+	 * @return array{picto?:string,ref?:string,label?:string}|array{optimize:string}
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $conf, $langs, $user;
+
+		$langs->load('ecm');
+		$datas = [];
+		$nofetch = !empty($params['nofetch']);
+
+		if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+			return ['optimize' => $langs->trans("ShowFile")];
+		}
+
+		return $datas;
+	}
+
+	/**
 	 *  Return a link to the object card (with optionally the picto)
 	 *
 	 *	@param	int		$withpicto			Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
@@ -953,7 +974,11 @@ class EcmFiles extends CommonObject
 		$linkend = '</a>';
 
 		if ($withpicto) {
-			$result .= ($linkstart.img_object(($notooltip ? '' : $label), 'label', ($notooltip ? '' : 'class="classfortooltip"')).$linkend);
+			if (empty($this->filename)) {
+				$result .= ($linkstart.img_object(($notooltip ? '' : $label), 'label', ($notooltip ? '' : 'class="classfortooltip"')).$linkend);
+			} else {
+				$result .= ($linkstart.img_mime($this->filename, ($notooltip ? '' : $label), ($notooltip ? '' : 'class="classfortooltip"')).$linkend);
+			}
 			if ($withpicto != 2) {
 				$result .= ' ';
 			}
