@@ -5150,41 +5150,42 @@ class Form
 		if ($result) {
 			$num = $this->db->num_rows($result);
 			$i = 0;
-			if ($num) {
-				$out .= '<select id="select' . $htmlname . '" class="flat selectbankaccount' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '"' . ($moreattrib ? ' ' . $moreattrib : '') . '>';
 
+			$out .= '<select id="select' . $htmlname . '" class="flat selectbankaccount' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '"' . ($moreattrib ? ' ' . $moreattrib : '') . '>';
+
+			if ($num == 0) {
+				if ($status == 0) {
+					$out .= '<option class="opacitymedium" value="-1">' . $langs->trans("NoActiveBankAccountDefined") . '</span>';
+				} else {
+					$out .= '<option class="opacitymedium" value="-1">' . $langs->trans("NoBankAccountFound") . '</span>';
+				}
+			} else {
 				if (!empty($useempty) && !is_numeric($useempty)) {
 					$out .= '<option value="-1">'.$langs->trans($useempty).'</option>';
 				} elseif ($useempty == 1 || ($useempty == 2 && $num > 1)) {
 					$out .= '<option value="-1">&nbsp;</option>';
 				}
-
-				while ($i < $num) {
-					$obj = $this->db->fetch_object($result);
-					if ($selected == $obj->rowid || ($useempty == 2 && $num == 1 && empty($selected))) {
-						$out .= '<option value="' . $obj->rowid . '" data-currency-code="' . $obj->currency_code . '" selected>';
-					} else {
-						$out .= '<option value="' . $obj->rowid . '" data-currency-code="' . $obj->currency_code . '">';
-					}
-					$out .= trim($obj->label);
-					if ($showcurrency) {
-						$out .= ' (' . $obj->currency_code . ')';
-					}
-					if ($status == 2 && $obj->status == 1) {
-						$out .= ' (' . $langs->trans("Closed") . ')';
-					}
-					$out .= '</option>';
-					$i++;
-				}
-				$out .= "</select>";
-				$out .= ajax_combobox('select' . $htmlname);
-			} else {
-				if ($status == 0) {
-					$out .= '<span class="opacitymedium">' . $langs->trans("NoActiveBankAccountDefined") . '</span>';
-				} else {
-					$out .= '<span class="opacitymedium">' . $langs->trans("NoBankAccountFound") . '</span>';
-				}
 			}
+
+			while ($i < $num) {
+				$obj = $this->db->fetch_object($result);
+				if ($selected == $obj->rowid || ($useempty == 2 && $num == 1 && empty($selected))) {
+					$out .= '<option value="' . $obj->rowid . '" data-currency-code="' . $obj->currency_code . '" selected>';
+				} else {
+					$out .= '<option value="' . $obj->rowid . '" data-currency-code="' . $obj->currency_code . '">';
+				}
+				$out .= trim($obj->label);
+				if ($showcurrency) {
+					$out .= ' (' . $obj->currency_code . ')';
+				}
+				if ($status == 2 && $obj->status == 1) {
+					$out .= ' (' . $langs->trans("Closed") . ')';
+				}
+				$out .= '</option>';
+				$i++;
+			}
+			$out .= "</select>";
+			$out .= ajax_combobox('select' . $htmlname);
 		} else {
 			dol_print_error($this->db);
 		}
