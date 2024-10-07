@@ -322,7 +322,7 @@ if ($action == 'create') {
 			print '<table class="border centpercent tableforfield">';
 
 			// Name (already in dol_banner, we keep it to have the GlobalGroup picto, but we should move it in dol_banner)
-			if (!empty($conf->mutlicompany->enabled)) {
+			if (isModEnabled('multicompany')) {
 				print '<tr><td class="titlefield">'.$langs->trans("Name").'</td>';
 				print '<td class="valeur">'.dol_escape_htmltag($object->name);
 				if (empty($object->entity)) {
