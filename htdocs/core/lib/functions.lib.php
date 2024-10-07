@@ -12495,7 +12495,7 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 /**
  * An function to complete dropdown url in dolGetButtonAction
  * @param string $url the Url to complete
- * @param array $params params of dolGetButtonAction function
+ * @param array|array<string $params params of dolGetButtonAction function
  * @param bool $addDolUrlRoot to add root url
  * @return string
  */
