@@ -2148,7 +2148,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 				}
 				if ($enablebrowsernotif) {
 					print '<!-- Includes JS of Dolibarr (browser layout = '.$conf->browser->layout.')-->'."\n";
-					print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/core/js/lib_notification.js.php'.($ext ? '?'.$ext : '').'"></script>'."\n";
+					print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/core/js/lib_notification.js.php?lang='.$langs->defaultlang.($ext ? '&amp;'.$ext : '').'"></script>'."\n";
 				}
 			}
 
@@ -2735,14 +2735,14 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
         <!-- Code to show/hide the user drop-down -->
         <script>
 		function closeTopMenuLoginDropdown() {
-			//console.log("close login dropdown");	// This is call at each click on page, so we disable the log
+			console.log("close login dropdown");	// This is called at each click on page, so we disable the log
 			// Hide the menus.
             jQuery("#topmenu-login-dropdown").removeClass("open");
 		}
         jQuery(document).ready(function() {
             jQuery(document).on("click", function(event) {
-				// console.log("Click somewhere on screen");
                 if (!$(event.target).closest("#topmenu-login-dropdown").length) {
+					/* console.log("click close login - we click outside"); */
 					closeTopMenuLoginDropdown();
                 }
             });
@@ -2821,7 +2821,8 @@ function top_menu_quickadd()
         jQuery(document).ready(function() {
             jQuery(document).on("click", function(event) {
                 if (!$(event.target).closest("#topmenu-quickadd-dropdown").length) {
-                    // Hide the menus.
+                    /* console.log("click close quick add - we click outside"); */
+					// Hide the menus.
                     $("#topmenu-quickadd-dropdown").removeClass("open");
                 }
             });
@@ -3093,7 +3094,7 @@ function top_menu_bookmark()
 	        jQuery(document).ready(function() {
 	            jQuery(document).on("click", function(event) {
 	                if (!$(event.target).closest("#topmenu-bookmark-dropdown").length) {
-						//console.log("close bookmark dropdown - we click outside");
+						/* console.log("close bookmark dropdown - we click outside"); */
 	                    // Hide the menus.
 	                    $("#topmenu-bookmark-dropdown").removeClass("open");
 	                }

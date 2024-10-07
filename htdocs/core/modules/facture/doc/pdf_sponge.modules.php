@@ -12,6 +12,7 @@
  * Copyright (C) 2022		Anthony Berton			<anthony.berton@bb2a.fr>
  * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024	   Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -146,7 +147,7 @@ class pdf_sponge extends ModelePDFFactures
 		$this->marge_droite = getDolGlobalInt('MAIN_PDF_MARGIN_RIGHT', 10);
 		$this->marge_haute = getDolGlobalInt('MAIN_PDF_MARGIN_TOP', 10);
 		$this->marge_basse = getDolGlobalInt('MAIN_PDF_MARGIN_BOTTOM', 10);
-
+		$this->corner_radius = getDolGlobalInt('MAIN_PDF_FRAME_CORNER_RADIUS', 0);
 		$this->option_logo = 1; // Display logo
 		$this->option_tva = 1; // Manage the vat option FACTURE_TVAOPTION
 		$this->option_modereg = 1; // Display payment mode
@@ -531,7 +532,7 @@ class pdf_sponge extends ModelePDFFactures
 
 						// Rect takes a length in 3rd parameter
 						$pdf->SetDrawColor(192, 192, 192);
-						$pdf->Rect($this->marge_gauche, $this->tab_top - 1, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_incoterms + 1);
+						$pdf->RoundedRect($this->marge_gauche, $this->tab_top - 1, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_incoterms + 3, $this->corner_radius, '1234', 'D');
 
 						$this->tab_top = $nexY + 6;
 						$height_incoterms += 4;
@@ -627,10 +628,10 @@ class pdf_sponge extends ModelePDFFactures
 							// Draw note frame
 							if ($i > $pageposbeforenote) {
 								$height_note = $this->page_hauteur - ($this->tab_top_newpage + $this->heightforfooter);
-								$pdf->Rect($this->marge_gauche, $this->tab_top_newpage - 1, $tab_width, $height_note + 1);
+								$pdf->RoundedRect($this->marge_gauche, $this->tab_top_newpage - 1, $tab_width, $height_note + 1, $this->corner_radius, '1234', 'D');
 							} else {
 								$height_note = $this->page_hauteur - ($this->tab_top + $this->heightforfooter);
-								$pdf->Rect($this->marge_gauche, $this->tab_top - 1, $tab_width, $height_note + 1);
+								$pdf->RoundedRect($this->marge_gauche, $this->tab_top - 1, $tab_width, $height_note + 1, $this->corner_radius, '1234', 'D');
 							}
 
 							// Add footer
@@ -649,13 +650,13 @@ class pdf_sponge extends ModelePDFFactures
 							$this->_pagehead($pdf, $object, 0, $outputlangs, $outputlangsbis);
 						}
 						$height_note = $posyafter - $this->tab_top_newpage;
-						$pdf->Rect($this->marge_gauche, $this->tab_top_newpage - 1, $tab_width, $height_note + 1);
+						$pdf->RoundedRect($this->marge_gauche, $this->tab_top_newpage - 1, $tab_width, $height_note + 1, $this->corner_radius, '1234', 'D');
 					} else {
 						// No pagebreak
 						$pdf->commitTransaction();
 						$posyafter = $pdf->GetY();
 						$height_note = $posyafter - $this->tab_top;
-						$pdf->Rect($this->marge_gauche, $this->tab_top - 1, $tab_width, $height_note + 1);
+						$pdf->RoundedRect($this->marge_gauche, $this->tab_top - 1, $tab_width, $height_note + 1, $this->corner_radius, '1234', 'D');
 
 
 						if ($posyafter > ($this->page_hauteur - ($this->heightforfooter + $this->heightforfreetext + 20))) {
@@ -2074,7 +2075,7 @@ class pdf_sponge extends ModelePDFFactures
 
 			//$conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR='230,230,230';
 			if (getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')) {
-				$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, $this->tabTitleHeight, 'F', null, explode(',', getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')));
+				$pdf->RoundedRect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, $this->tabTitleHeight, $this->corner_radius, '1001', 'F', null, explode(',', getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')));
 			}
 		}
 
@@ -2082,7 +2083,7 @@ class pdf_sponge extends ModelePDFFactures
 		$pdf->SetFont('', '', $default_font_size - 1);
 
 		// Output Rect
-		$this->printRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $tab_height, $hidetop, $hidebottom); // Rect takes a length in 3rd parameter and 4th parameter
+		$this->printRoundedRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $tab_height, $this->corner_radius, $hidetop, $hidebottom, 'D'); // Rect takes a length in 3rd parameter and 4th parameter
 
 
 		$this->pdfTabTitles($pdf, $tab_top, $tab_height, $outputlangs, $hidetop);
@@ -2367,7 +2368,7 @@ class pdf_sponge extends ModelePDFFactures
 				$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("BillFrom"), 0, $ltrdirection);
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetFillColor(230, 230, 230);
-				$pdf->MultiCell($widthrecbox, $hautcadre, "", 0, 'R', 1);
+				$pdf->RoundedRect($posx, $posy, $widthrecbox, $hautcadre, $this->corner_radius, '1234', 'F');
 				$pdf->SetTextColor(0, 0, 60);
 			}
 
@@ -2422,7 +2423,7 @@ class pdf_sponge extends ModelePDFFactures
 				$pdf->SetFont('', '', $default_font_size - 2);
 				$pdf->SetXY($posx + 2, $posy - 5);
 				$pdf->MultiCell($widthrecbox - 2, 5, $outputlangs->transnoentities("BillTo"), 0, $ltrdirection);
-				$pdf->Rect($posx, $posy, $widthrecbox, $hautcadre);
+				$pdf->RoundedRect($posx, $posy, $widthrecbox, $hautcadre, $this->corner_radius, '1234', 'D');
 			}
 
 			// Show recipient name
@@ -2462,7 +2463,7 @@ class pdf_sponge extends ModelePDFFactures
 					$pdf->SetXY($posx + 2, $posy - 5);
 					$pdf->SetFont('', '', $default_font_size - 2);
 					$pdf->MultiCell($widthrecbox, '', $outputlangs->transnoentities('ShippingTo'), 0, 'L', 0);
-					$pdf->Rect($posx, $posy, $widthrecbox, $hautcadre);
+					$pdf->RoundedRect($posx, $posy, $widthrecbox, $hautcadre, $this->corner_radius, '1234', 'D');
 
 					// Show shipping name
 					$pdf->SetXY($posx + 2, $posy + 3);

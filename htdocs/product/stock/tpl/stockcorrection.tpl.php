@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +25,13 @@ if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
+
+'
+@phan-var-force Entrepot|MouvementStock $object
+@phan-var-force FormProduct $formproduct
+@phan-var-force FormProjets $formproject
+@phan-var-force string $backtopage
+';
 
 ?>
 
@@ -150,14 +158,14 @@ if ($object->element == 'product') {
 	if (empty($ident) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE')) {
 		$ident = getDolGlobalString('MAIN_DEFAULT_WAREHOUSE');
 	}
-	print img_picto('', 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses($ident, 'id_entrepot', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, null, 'minwidth100 maxwidth300 widthcentpercentminusx');
+	print img_picto('', 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses($ident, 'id_entrepot', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth100 maxwidth300 widthcentpercentminusx');
 	print '</td>';
 }
 if ($object->element == 'stockmouvement') {
 	print '<td class="fieldrequired">'.$langs->trans("Product").'</td>';
 	print '<td>';
 	print img_picto('', 'product');
-	$form->select_produits(GETPOSTINT('product_id'), 'product_id', (!getDolGlobalString('STOCK_SUPPORTS_SERVICES') ? '0' : ''), 0, 0, -1, 2, '', 0, null, 0, 1, 0, 'maxwidth500');
+	$form->select_produits(GETPOSTINT('product_id'), 'product_id', (!getDolGlobalString('STOCK_SUPPORTS_SERVICES') ? '0' : ''), 0, 0, -1, 2, '', 0, array(), 0, 1, 0, 'maxwidth500');
 	print '</td>';
 }
 print '<td class="fieldrequired">'.$langs->trans("NumberOfUnit").'</td>';

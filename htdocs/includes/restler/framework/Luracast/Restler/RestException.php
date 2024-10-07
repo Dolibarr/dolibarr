@@ -72,7 +72,7 @@ class RestException extends Exception
     private $stage;
 
     /**
-     * @param string      $httpStatusCode http status code
+     * @param int         $httpStatusCode http status code
      * @param string|null $errorMessage   error message
      * @param array       $details        any extra detail about the exception
      * @param Exception   $previous       previous exception if any
@@ -136,4 +136,3 @@ class RestException extends Exception
         . $this->getStage() . ' stage';
     }
 }
-

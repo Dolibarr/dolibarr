@@ -925,6 +925,23 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			}
 
 			$object->sendtoid = array();
+		} elseif ($action == 'BILL_SUPPLIER_CREATE') {
+			'@phan-var-force FactureFournisseur $object';
+			// Load translation files required by the page
+			$langs->loadLangs(array("agenda", "other", "orders"));
+
+			if (empty($object->actionmsg2)) {
+				if (empty($object->context['actionmsg2'])) {
+					$object->actionmsg2 = $langs->transnoentities("InvoiceCreatedInDolibarr", ($object->newref ? $object->newref : $object->ref));
+				} else {
+					$object->actionmsg2 = $object->context['actionmsg2'];
+				}
+			}
+			if (empty($object->actionmsg)) {
+				$object->actionmsg = $langs->transnoentities("InvoiceCreatedInDolibarr", ($object->newref ? $object->newref : $object->ref));
+			}
+
+			$object->sendtoid = array();
 		} elseif ($action == 'BILL_SUPPLIER_VALIDATE') {
 			// Load translation files required by the page
 			$langs->loadLangs(array("agenda", "other", "bills"));
@@ -1572,9 +1589,12 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
 		if ($ret > 0 && getDolGlobalString('MAIN_COPY_FILE_IN_EVENT_AUTO')) {
 			if (property_exists($object, 'attachedfiles') && is_array($object->attachedfiles) && array_key_exists('paths', $object->attachedfiles) && count($object->attachedfiles['paths']) > 0) {
+				// Get directory of object
+				$tmpelems = getElementProperties($object->element.($object->module ? '@'.$object->module : ''));
+				$destdir = $tmpelems['dir_output'].'/'.$ret;
+
 				foreach ($object->attachedfiles['paths'] as $key => $filespath) {
 					$srcfile = $filespath;
-					$destdir = $conf->agenda->dir_output.'/'.$ret;
 					$destfile = $destdir.'/'.$object->attachedfiles['names'][$key];
 					if (dol_mkdir($destdir) >= 0) {
 						require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';

@@ -174,6 +174,7 @@ if (getDolGlobalString('RECRUITMENT_IMAGE_PUBLIC_INTERFACE')) {
 
 $results = $object->fetchAll($sortorder, $sortfield, 0, 0, '(status:=:1)');
 $now = dol_now();
+$params = array();
 
 if (is_array($results)) {
 	if (empty($results)) {
@@ -187,6 +188,7 @@ if (is_array($results)) {
 
 		foreach ($results as $job) {
 			$object = $job;
+			$arrayofpostulatebutton = array();
 
 			print '<table id="dolpaymenttable" summary="Job position offer" class="center">'."\n";
 
@@ -274,6 +276,17 @@ if (is_array($results)) {
 			print $text;
 			print '<input type="hidden" name="ref" value="'.$object->ref.'">';
 
+			$arrayofpostulatebutton[] = array(
+				'url' => '/public/recruitment/view.php?ref='.$object->ref,
+				'label' => $langs->trans('ApplyJobCandidature'),
+				'lang' => 'recruitment',
+				'perm' => true,
+				'enabled' => true,
+			);
+
+			print '<div class="center">';
+			print dolGetButtonAction('', $langs->trans("ApplyJobCandidature"), 'default', $arrayofpostulatebutton, 'applicate_'.$object->ref, true, $params);
+			print '</div>';
 			print '</div>'."\n";
 			print "\n";
 

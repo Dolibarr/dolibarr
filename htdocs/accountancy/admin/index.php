@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2024  Alexandre Spangaro      <aspangaro@easya.solutions>
+ * Copyright (C) 2013-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2014-2015  Ari Elbaz (elarifr)     <github@accedinfo.com>
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>
@@ -57,6 +57,7 @@ $list = array(
 $list_binding = array(
 	'ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER',
 	'ACCOUNTING_DATE_START_BINDING',
+	'ACCOUNTING_LABEL_OPERATION_ON_TRANSFER'
 );
 
 $error = 0;
@@ -403,6 +404,13 @@ foreach ($list_binding as $key) {
 	} elseif ($key == 'ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER') {
 		$array = array(0=>$langs->trans("PreviousMonth"), 1=>$langs->trans("CurrentMonth"), 2=>$langs->trans("Fiscalyear"));
 		print $form->selectarray($key, $array, getDolGlobalInt('ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER', 0), 0, 0, 0, '', 0, 0, 0, '', 'onrightofpage width200');
+	} elseif ($key == 'ACCOUNTING_LABEL_OPERATION_ON_TRANSFER') {
+		$array = array(
+			0=>$langs->trans("ThirdPartyName") . ' - ' . $langs->trans("NumPiece") . ' - ' . $langs->trans("LabelAccount"),
+			1=>$langs->trans("ThirdPartyName") . ' - ' . $langs->trans("NumPiece"),
+			2=>$langs->trans("ThirdPartyName")
+		);
+		print $form->selectarray($key, $array, getDolGlobalInt('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER', 0), 0, 0, 0, '', 0, 0, 0, '', 'onrightofpage width200');
 	} else {
 		print '<input type="text" class="maxwidth100" id="'.$key.'" name="'.$key.'" value="'.getDolGlobalString($key).'">';
 	}

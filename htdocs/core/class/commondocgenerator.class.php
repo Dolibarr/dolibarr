@@ -9,6 +9,7 @@
  * Copyright (C) 2020       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  * Copyright (C) 2024		MDW	                    <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Mélina Joum			    <melina.joum@altairis.fr>
+ * Copyright (C) 2024	    Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -123,8 +124,14 @@ abstract class CommonDocGenerator
 	public $marge_basse;
 
 	/**
+	 * @var int corner radius
+	 */
+	public $corner_radius;
+
+	/**
 	 * @var int<0,1> option logo
 	 */
+
 	public $option_logo;
 	public $option_tva;
 	public $option_multilang;
@@ -914,7 +921,7 @@ abstract class CommonDocGenerator
 			$array_key.'_tracking_number' => $object->tracking_number,
 			$array_key.'_tracking_url' => $object->tracking_url,
 			$array_key.'_shipping_method' => $object->listmeths[0]['libelle'],
-			$array_key.'_weight' => $object->trueWeight.' '.measuringUnitString(0, 'weight', $object->weight_units),
+			$array_key.'_weight' => $object->trueWeight.' '.measuringUnitString(0, 'weight', (string) $object->weight_units),
 			$array_key.'_width' => $object->trueWidth.' '.measuringUnitString(0, 'size', $object->width_units),
 			$array_key.'_height' => $object->trueHeight.' '.measuringUnitString(0, 'size', $object->height_units),
 			$array_key.'_depth' => $object->trueDepth.' '.measuringUnitString(0, 'size', $object->depth_units),
@@ -1109,6 +1116,33 @@ abstract class CommonDocGenerator
 		$pdf->line($x, $y + $h, $x, $y);
 	}
 
+	/**
+	 * Print a rounded rectangle on the PDF
+	 *
+	 * @param TCPDF       $pdf          Object PDF
+	 * @param float       $x            Abscissa of first point
+	 * @param float       $y            Ordinate of first point
+	 * @param float       $w            Width of the rectangle
+	 * @param float       $h            Height of the rectangle
+	 * @param float       $r            Corner radius (can be an array for different radii per corner)
+	 * @param int         $hidetop      1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
+	 * @param int         $hidebottom   Hide bottom
+	 * @param string      $style        Draw style (e.g. 'D' for draw, 'F' for fill, 'DF' for both)
+	 * @return void
+	 */
+	public function printRoundedRect($pdf, $x, $y, $w, $h, $r, $hidetop = 0, $hidebottom = 0, $style = 'D')
+	{
+		// Top line
+		if (empty($hidetop) || $hidetop == -1) {
+			$pdf->RoundedRect($x, $y, $w, $h, $r, '1111', $style);
+		} else {
+			// Draw rounded rectangle with hidden top side
+			$pdf->RoundedRect($x, $y, $w, $h, $r, '0111', $style);
+		}
+		if (!empty($hidebottom)) {
+			$pdf->RoundedRect($x, $y, $w, $h, $r, '1101', $style);
+		}
+	}
 
 	/**
 	 *  uasort callback function to Sort columns fields

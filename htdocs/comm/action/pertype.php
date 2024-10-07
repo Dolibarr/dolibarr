@@ -295,7 +295,7 @@ if ($filter) {
 	$param .= "&search_filter=".urlencode($filter);
 }
 if ($filtert) {
-	$param .= "&search_filtert=".urlencode($filtert);
+	$param .= "&search_filtert=".urlencode((string) $filtert);
 }
 if ($usergroup > 0) {
 	$param .= "&search_usergroup=".urlencode((string) ($usergroup));

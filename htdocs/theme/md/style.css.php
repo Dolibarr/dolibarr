@@ -1225,11 +1225,23 @@ td.wordbreak img, td.wordbreakimp img {
 .nopaddingright {
 	padding-<?php print $right; ?>: 0;
 }
+.nopaddingtop {
+	padding-top: 0;
+}
+.nopaddingbottom {
+	padding-bottom: 0;
+}
 .nopaddingleftimp {
 	padding-<?php print $left; ?>: 0 !important;
 }
 .nopaddingrightimp {
 	padding-<?php print $right; ?>: 0 !important;
+}
+.nopaddingtopimp {
+	padding-top: 0 !important;
+}
+.nopaddingbottomimp {
+	padding-bottom: 0 !important;
 }
 .paddingleft {
 	padding-<?php print $left; ?>: 4px;
@@ -3560,10 +3572,10 @@ img.login, img.printer, img.entity {
 }
 .userimg.atoplogin img.userphoto, .userimgatoplogin img.userphoto {		/* size for user photo in login bar */
 	/* border-radius: 8px; */
-	width: 20px;
-	height: 20px;
+	width: <?php echo $disableimages ? '26' : '30'; ?>px;
+	height: <?php echo $disableimages ? '26' : '30'; ?>px;
+	border-radius: 50%;
 	background-size: contain;
-	vertical-align: text-bottom;
 	background-color: #FFF;
 }
 img.userphoto {			/* size for user photo in lists */
@@ -3711,10 +3723,6 @@ div.blockvmenulogo
 	/* width: 100px; */
 	max-width: 100px;
 	vertical-align: middle;
-}
-.backgroundforcompanylogo {
-	background-color: rgba(255,255,255,0.7);
-	border-radius: 5px;
 }
 .menulogocontainer img.mycompany {
 	object-fit: contain;
@@ -4117,7 +4125,14 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 
 .smallpaddingimp {
 	padding: 4px !important;
+	padding-left: 7px !important;
+	padding-right: 7px !important;
 }
+input.button.smallpaddingimp, input.buttonreset.smallpaddingimp {
+	font-size: 0.8em;
+	font-weight: normal !important;
+}
+
 input.buttonlink {
 	color: var(--colortextlink);
 	background-color: transparent;
@@ -5134,6 +5149,18 @@ img.boxhandle, img.boxclose {
 .modulebuilderbox {
 	border: 1px solid #888;
 	padding: 16px;
+}
+.star-selection {
+	font-size: 1rem;
+	cursor: pointer;
+	display: flex;
+}
+.star {
+	color: #ccc;
+	transition: color 0.4s;
+}
+.star:hover, .star.active {
+	color: <?php echo $badgeWarning ?>;
 }
 
 
@@ -6226,6 +6253,16 @@ a.cke_button, a.cke_combo_button {
 }
 div.cke_notifications_area .cke_notification_warning {
 	visibility: hidden;
+}
+
+/* CSS To hide the picto menu on smartphone, except when maximize */
+@media only screen and (max-width: 768px)
+{
+	.cke_inner:not(.cke_maximized) .cke_toolbar_separator,
+	.cke_inner:not(.cke_maximized) .cke_combo,
+	.cke_inner:not(.cke_maximized) .cke_button:not(.cke_button__maximize) {
+		display: none;
+	}
 }
 
 

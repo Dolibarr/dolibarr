@@ -2169,7 +2169,7 @@ class Societe extends CommonObject
 	 *    @param    string	$ref_alias 		Name_alias of third party (Warning, this can return several records)
 	 * 	  @param	int		$is_client		Only client third party
 	 *    @param	int		$is_supplier	Only supplier third party
-	 *    @return   int						>0 if OK, <0 if KO or if two records found, 0 if not found.
+	 *    @return   int						ID of thirdparty found if OK, <0 if KO or if two records found, 0 if not found.
 	 */
 	public function findNearest($rowid = 0, $ref = '', $ref_ext = '', $barcode = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '', $is_client = 0, $is_supplier = 0)
 	{
@@ -5563,7 +5563,7 @@ class Societe extends CommonObject
 					'Account' => '/compta/bank/class/account.class.php',
 					'ConferenceOrBoothAttendee' => '/eventorganization/class/conferenceorboothattendee.class.php',
 					'Societe' => '/societe/class/societe.class.php',
-					//'SocieteAccount', 'SocietePrice', 'SocieteRib',... are processed into the replaceThirparty of Societe.
+					//'SocieteAccount', 'SocietePrice', 'SocieteRib',... are processed into the replaceThirdparty of Societe.
 				);
 				if ($this->db->DDLListTables($conf->db->name, $this->db->prefix().'delivery')) {
 					$objects['Delivery'] = '/delivery/class/delivery.class.php';

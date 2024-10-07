@@ -124,7 +124,7 @@ class Dolresource extends CommonObject
 	public $objelement;
 
 	/**
-	 * @var array	Cache of type of resources. TODO Use $conf->cache['type_of_resources'] instead
+	 * @var array<int,array{code:string,label:string,active:int}>	Cache of type of resources. TODO Use $conf->cache['type_of_resources'] instead
 	 */
 	public $cache_code_type_resource;
 
@@ -602,7 +602,7 @@ class Dolresource extends CommonObject
 	 * @param	string			$sortfield		Sort field
 	 * @param	int				$limit			Limit page
 	 * @param	int				$offset			Offset page
-	 * @param	string|array	$filter			Filter USF.
+	 * @param	string|array<string,mixed>	$filter	Filter USF.
 	 * @return	int								If KO: <0 || if OK number of lines loaded
 	 */
 	public function fetchAll(string $sortorder, string $sortfield, int $limit, int $offset, $filter = '')
@@ -793,7 +793,7 @@ class Dolresource extends CommonObject
 	 * @param	string		$element			Element
 	 * @param	int			$element_id			Id
 	 * @param	string		$resource_type		Type
-	 * @return	array							Array of resources
+	 * @return	array<array{rowid:int,resource_id:int,resource_type:string,busy:int<0,1>,mandatory:int<0,1>}>	Array of resources
 	 */
 	public function getElementResources(string $element, int $element_id, string $resource_type = '')
 	{

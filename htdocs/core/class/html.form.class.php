@@ -254,7 +254,7 @@ class Form
 			}
 			$editmode = ($editaction == 'edit' . $htmlname);
 			if ($editmode) {	// edit mode
-				$ret .= "\n";
+				$ret .= "<!-- formeditfieldval -->\n";
 				$ret .= '<form method="post" action="' . $_SERVER["PHP_SELF"] . ($moreparam ? '?' . $moreparam : '') . '">';
 				$ret .= '<input type="hidden" name="action" value="set' . $htmlname . '">';
 				$ret .= '<input type="hidden" name="token" value="' . newToken() . '">';
@@ -332,11 +332,11 @@ class Form
 					$ret .= '<td>';
 				}
 				//else $ret.='<div class="clearboth"></div>';
-				$ret .= '<input type="submit" class="smallpaddingimp button' . (empty($notabletag) ? '' : ' ') . '" name="modify" value="' . $langs->trans("Modify") . '">';
+				$ret .= '<input type="submit" class="smallpaddingimp nomargingtop nomarginbottom button' . (empty($notabletag) ? '' : ' ') . '" name="modify" value="' . $langs->trans("Modify") . '">';
 				if (preg_match('/ckeditor|textarea/', $typeofdata) && empty($notabletag)) {
 					$ret .= '<br>' . "\n";
 				}
-				$ret .= '<input type="submit" class="smallpaddingimp button button-cancel' . (empty($notabletag) ? '' : ' ') . '" name="cancel" value="' . $langs->trans("Cancel") . '">';
+				$ret .= '<input type="submit" class="smallpaddingimp nomargingtop nomarginbottom button button-cancel' . (empty($notabletag) ? '' : ' ') . '" name="cancel" value="' . $langs->trans("Cancel") . '">';
 				if (empty($notabletag)) {
 					$ret .= '</td>';
 				}
@@ -5150,41 +5150,42 @@ class Form
 		if ($result) {
 			$num = $this->db->num_rows($result);
 			$i = 0;
-			if ($num) {
-				$out .= '<select id="select' . $htmlname . '" class="flat selectbankaccount' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '"' . ($moreattrib ? ' ' . $moreattrib : '') . '>';
 
+			$out .= '<select id="select' . $htmlname . '" class="flat selectbankaccount' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '"' . ($moreattrib ? ' ' . $moreattrib : '') . '>';
+
+			if ($num == 0) {
+				if ($status == 0) {
+					$out .= '<option class="opacitymedium" value="-1">' . $langs->trans("NoActiveBankAccountDefined") . '</span>';
+				} else {
+					$out .= '<option class="opacitymedium" value="-1">' . $langs->trans("NoBankAccountFound") . '</span>';
+				}
+			} else {
 				if (!empty($useempty) && !is_numeric($useempty)) {
 					$out .= '<option value="-1">'.$langs->trans($useempty).'</option>';
 				} elseif ($useempty == 1 || ($useempty == 2 && $num > 1)) {
 					$out .= '<option value="-1">&nbsp;</option>';
 				}
-
-				while ($i < $num) {
-					$obj = $this->db->fetch_object($result);
-					if ($selected == $obj->rowid || ($useempty == 2 && $num == 1 && empty($selected))) {
-						$out .= '<option value="' . $obj->rowid . '" data-currency-code="' . $obj->currency_code . '" selected>';
-					} else {
-						$out .= '<option value="' . $obj->rowid . '" data-currency-code="' . $obj->currency_code . '">';
-					}
-					$out .= trim($obj->label);
-					if ($showcurrency) {
-						$out .= ' (' . $obj->currency_code . ')';
-					}
-					if ($status == 2 && $obj->status == 1) {
-						$out .= ' (' . $langs->trans("Closed") . ')';
-					}
-					$out .= '</option>';
-					$i++;
-				}
-				$out .= "</select>";
-				$out .= ajax_combobox('select' . $htmlname);
-			} else {
-				if ($status == 0) {
-					$out .= '<span class="opacitymedium">' . $langs->trans("NoActiveBankAccountDefined") . '</span>';
-				} else {
-					$out .= '<span class="opacitymedium">' . $langs->trans("NoBankAccountFound") . '</span>';
-				}
 			}
+
+			while ($i < $num) {
+				$obj = $this->db->fetch_object($result);
+				if ($selected == $obj->rowid || ($useempty == 2 && $num == 1 && empty($selected))) {
+					$out .= '<option value="' . $obj->rowid . '" data-currency-code="' . $obj->currency_code . '" selected>';
+				} else {
+					$out .= '<option value="' . $obj->rowid . '" data-currency-code="' . $obj->currency_code . '">';
+				}
+				$out .= trim($obj->label);
+				if ($showcurrency) {
+					$out .= ' (' . $obj->currency_code . ')';
+				}
+				if ($status == 2 && $obj->status == 1) {
+					$out .= ' (' . $langs->trans("Closed") . ')';
+				}
+				$out .= '</option>';
+				$i++;
+			}
+			$out .= "</select>";
+			$out .= ajax_combobox('select' . $htmlname);
 		} else {
 			dol_print_error($this->db);
 		}
@@ -5808,7 +5809,7 @@ class Form
 			$formconfirm .= "\n<!-- begin formconfirm page=" . dol_escape_htmltag($page) . " -->\n";
 
 			if (empty($disableformtag)) {
-				$formconfirm .= '<form method="POST" action="' . $page . '" class="notoptoleftroright">' . "\n";
+				$formconfirm .= '<form method="POST" action="' . $page . '" class="notoptoleftnoright">' . "\n";
 			}
 
 			$formconfirm .= '<input type="hidden" name="action" value="' . $action . '">' . "\n";
@@ -6713,22 +6714,22 @@ class Form
 	 *  Output an HTML select vat rate.
 	 *  The name of this function should be selectVat. We keep bad name for compatibility purpose.
 	 *
-	 *  @param	string	      $htmlname           Name of HTML select field
-	 *  @param  float|string  $selectedrate       Force preselected vat rate. Can be '8.5' or '8.5 (NOO)' for example. Use '' for no forcing.
-	 *  @param  Societe	      $societe_vendeuse   Thirdparty seller
-	 *  @param  Societe	      $societe_acheteuse  Thirdparty buyer
-	 *  @param  int		      $idprod             Id product. O if unknown of NA.
-	 *  @param  int		      $info_bits          Miscellaneous information on line (1 for NPR)
-	 *  @param  int|string    $type               ''=Unknown, 0=Product, 1=Service (Used if idprod not defined)
-	 *                                            If seller not subject to VAT, default VAT=0. End of rule.
-	 *                                            If (seller country==buyer country), then default VAT=product's VAT. End of rule.
-	 *                                            If (seller and buyer in EU) and sold product = new means of transportation (car, boat, airplane), default VAT =0 (VAT must be paid by the buyer to his country's tax office and not the seller). End of rule.
-	 *                                            If (seller and buyer in EU) and buyer=private person, then default VAT=VAT of sold product.  End of rule.
-	 *                                            If (seller and buyer in EU) and buyer=company then default VAT =0. End of rule.
-	 *                                            Else, default proposed VAT==0. End of rule.
-	 *  @param	bool	     $options_only		  Return HTML options lines only (for ajax treatment)
-	 *  @param  int          $mode                0=Use vat rate as key in combo list, 1=Add VAT code after vat rate into key, -1=Use id of vat line as key
-	 *  @param  int          $type_vat            0=All type, 1=VAT rate sale, 2=VAT rate purchase
+	 *  @param	string			$htmlname           Name of HTML select field
+	 *  @param  float|string	$selectedrate       Force preselected vat rate. Can be '8.5' or '8.5 (NOO)' for example. Use '' for no forcing.
+	 *  @param  ?Societe		$societe_vendeuse   Thirdparty seller
+	 *  @param  ?Societe		$societe_acheteuse  Thirdparty buyer
+	 *  @param  int				$idprod             Id product. O if unknown of NA.
+	 *  @param  int				$info_bits          Miscellaneous information on line (1 for NPR)
+	 *  @param  int<0,1>|''		$type               ''=Unknown, 0=Product, 1=Service (Used if idprod not defined)
+	 *                                              If seller not subject to VAT, default VAT=0. End of rule.
+	 *                                              If (seller country==buyer country), then default VAT=product's VAT. End of rule.
+	 *                                              If (seller and buyer in EU) and sold product = new means of transportation (car, boat, airplane), default VAT =0 (VAT must be paid by the buyer to his country's tax office and not the seller). End of rule.
+	 *                                              If (seller and buyer in EU) and buyer=private person, then default VAT=VAT of sold product.  End of rule.
+	 *                                              If (seller and buyer in EU) and buyer=company then default VAT =0. End of rule.
+	 *                                              Else, default proposed VAT==0. End of rule.
+	 *  @param	bool		$options_only			Return HTML options lines only (for ajax treatment)
+	 *  @param  int<-1,1>	$mode					0=Use vat rate as key in combo list, 1=Add VAT code after vat rate into key, -1=Use id of vat line as key
+	 *  @param  int<0,2>	$type_vat				0=All type, 1=VAT rate sale, 2=VAT rate purchase
 	 *  @return	string
 	 */
 	public function load_tva($htmlname = 'tauxtva', $selectedrate = '', $societe_vendeuse = null, $societe_acheteuse = null, $idprod = 0, $info_bits = 0, $type = '', $options_only = false, $mode = 0, $type_vat = 0)
@@ -9537,8 +9538,8 @@ class Form
 	 *  Show block with links "to link to" other objects.
 	 *
 	 * @param 	CommonObject 	$object 			Object we want to show links to
-	 * @param 	string[] 		$restrictlinksto 	Restrict links to some elements, for example array('order') or array('supplier_order'). null or array() if no restriction.
-	 * @param 	string[] 		$excludelinksto 	Do not show links of this type, for example array('order') or array('supplier_order'). null or array() if no exclusion.
+	 * @param 	string[]|null	$restrictlinksto 	Restrict links to some elements, for example array('order') or array('supplier_order'). null or array() if no restriction.
+	 * @param 	string[]|null	$excludelinksto 	Do not show links of this type, for example array('order') or array('supplier_order'). null or array() if no exclusion.
 	 * @param	int<0,1>		$nooutput			1=Return array with content instead of printing it.
 	 * @return  array{linktoelem:string,htmltoenteralink:string}|string                              HTML block
 	 */

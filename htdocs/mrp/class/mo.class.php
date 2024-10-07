@@ -266,7 +266,7 @@ class Mo extends CommonObject
 	public $fk_parent_line;
 
 	/**
-	 * @var array<string,int|string> tpl
+	 @ var array{id:int,label:string,qty_bom:int|float,stock:float,seuil_stock_alerte:float,virtual_stock:float,qty:float,fk_unit:int,qty_frozen:float,disable_stock_change:int<0,1>,efficiency:float}	tpl
 	 */
 	public $tpl = array();
 
@@ -312,8 +312,8 @@ class Mo extends CommonObject
 	/**
 	 * Create object into database
 	 *
-	 * @param  User $user      User that creates
-	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
+	 * @param  User		$user      User that creates
+	 * @param  int<0,1>	$notrigger 0=launch triggers after, 1=disable triggers
 	 * @return int             Return integer <=0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = 0)
@@ -512,7 +512,7 @@ class Mo extends CommonObject
 	 * @param  int         		$offset       	Offset
 	 * @param  string|array     $filter       	Filter USF.
 	 * @param  string      		$filtermode   	Filter mode (AND or OR)
-	 * @return array|int                 		int <0 if KO, array of pages if OK
+	 * @return self[]|int                 		int <0 if KO, array of pages if OK
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
@@ -596,7 +596,7 @@ class Mo extends CommonObject
 	 *
 	 * @param  	string 	$role      	Get lines linked to current line with the selected role ('consumed', 'produced', ...)
 	 * @param	int		$lineid		Id of production line to filter children
-	 * @return 	array             	Array of lines
+	 * @return 	array<array{rowid:int,date:int|string,qty:float,role:string,fk_product:int,fk_warehouse:int,batch:string,fk_stock_movement:int,fk_unit:int}>	Array of lines
 	 */
 	public function fetchLinesLinked($role, $lineid = 0)
 	{
@@ -681,9 +681,9 @@ class Mo extends CommonObject
 	/**
 	 * Update object into database
 	 *
-	 * @param  User $user      User that modifies
-	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
-	 * @return int             Return integer <0 if KO, >0 if OK
+	 * @param  User		$user		User that modifies
+	 * @param  int<0,1>	$notrigger	0=launch triggers after, 1=disable triggers
+	 * @return int					Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
@@ -715,9 +715,9 @@ class Mo extends CommonObject
 	/**
 	 * Erase and update the line to consume and to produce.
 	 *
-	 * @param  User $user      User that modifies
-	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
-	 * @return int             Return integer <0 if KO, >0 if OK
+	 * @param  User		$user		User that modifies
+	 * @param  int<0,1>	$notrigger	0=launch triggers after, 1=disable triggers
+	 * @return int					Return integer <0 if KO, >0 if OK
 	 */
 	public function createProduction(User $user, $notrigger = 0)
 	{
@@ -759,6 +759,7 @@ class Mo extends CommonObject
 					$moline->role = 'toproduce';
 				}
 			} else {
+				$bom = null;
 				if ($this->mrptype == 1) {
 					$moline->role = 'toconsume';
 				} else {
@@ -773,7 +774,7 @@ class Mo extends CommonObject
 				$this->errors = $moline->errors;
 			}
 
-			if ($this->fk_bom > 0) {	// If a BOM is defined, we know what to consume.
+			if ($this->fk_bom > 0 && is_object($bom)) {	// If a BOM is defined, we know what to consume.
 				if ($bom->id > 0) {
 					// Lines to consume
 					if (!$error) {
@@ -834,9 +835,9 @@ class Mo extends CommonObject
 	/**
 	 * Update quantities in lines to consume and/or lines to produce.
 	 *
-	 * @param  User $user      User that modifies
-	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
-	 * @return int             Return integer <0 if KO, >0 if OK
+	 * @param  User		$user		User that modifies
+	 * @param  int<0,1>	$notrigger	0=launch triggers after, 1=disable triggers
+	 * @return int					Return integer <0 if KO, >0 if OK
 	 */
 	public function updateProduction(User $user, $notrigger = 0)
 	{
@@ -887,9 +888,9 @@ class Mo extends CommonObject
 	/**
 	 * Delete object in database
 	 *
-	 * @param	User	$user										User that deletes
-	 * @param	int		$notrigger									0=launch triggers after, 1=disable triggers
-	 * @param	bool	$also_cancel_consumed_and_produced_lines  	true if the consumed and produced lines will be deleted (and stocks incremented/decremented back) (false by default)
+	 * @param	User		$user										User that deletes
+	 * @param	int<0,1>	$notrigger									0=launch triggers after, 1=disable triggers
+	 * @param	bool		$also_cancel_consumed_and_produced_lines  	true if the consumed and produced lines will be deleted (and stocks incremented/decremented back) (false by default)
 	 * @return	int													Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = 0, $also_cancel_consumed_and_produced_lines = false)
@@ -923,11 +924,11 @@ class Mo extends CommonObject
 	/**
 	 *  Delete a line of object in database
 	 *
-	 *	@param  User	$user       	User that delete
-	 *  @param	int		$idline			Id of line to delete
-	 *  @param 	int 	$notrigger  	0=launch triggers after, 1=disable triggers
-	 *  @param	int		$fk_movement	Movement
-	 *  @return int         			Return >0 if OK, <0 if KO
+	 *	@param  User		$user       	User that delete
+	 *  @param	int			$idline			Id of line to delete
+	 *  @param 	int<0,1>	$notrigger  	0=launch triggers after, 1=disable triggers
+	 *  @param	int			$fk_movement	Movement
+	 *  @return int							Return >0 if OK, <0 if KO
 	 */
 	public function deleteLine(User $user, $idline, $notrigger = 0, $fk_movement = 0)
 	{
@@ -1061,6 +1062,7 @@ class Mo extends CommonObject
 			}
 
 			$obj = new $classname();
+			'@phan-var-force ModeleNumRefMos $obj';
 			$numref = $obj->getNextValue($prod, $this);
 
 			if ($numref != "") {
@@ -1557,8 +1559,8 @@ class Mo extends CommonObject
 	/**
 	 *  Return the status
 	 *
-	 *  @param	int		$status        Id status
-	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @param	int			$status		Id status
+	 *  @param  int<0,6>	$mode		0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return string 			       Label of status
 	 */
 	public function LibStatut($status, $mode = 0)
@@ -1647,7 +1649,7 @@ class Mo extends CommonObject
 	 * 	Create an array of lines
 	 *
 	 * 	@param string 		$rolefilter 	string lines role filter
-	 * 	@return array|int					array of lines if OK, <0 if KO
+	 * 	@return MoLine[]|int				array of lines if OK, <0 if KO
 	 */
 	public function getLinesArray($rolefilter = '')
 	{
@@ -1676,10 +1678,10 @@ class Mo extends CommonObject
 	 *
 	 *  @param	    string		$modele			Force template to use ('' to not force)
 	 *  @param		Translate	$outputlangs	object lang a utiliser pour traduction
-	 *  @param      int			$hidedetails    Hide details of lines
-	 *  @param      int			$hidedesc       Hide description
-	 *  @param      int			$hideref        Hide ref
-	 *  @param      null|array  $moreparams     Array to provide more information
+	 *  @param      int<0,1>	$hidedetails    Hide details of lines
+	 *  @param      int<0,1>	$hidedesc       Hide description
+	 *  @param      int<0,1>	$hideref        Hide ref
+	 *  @param      ?array<string,mixed>  $moreparams     Array to provide more information
 	 *  @return     int         				0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
@@ -1714,8 +1716,8 @@ class Mo extends CommonObject
 	 *  If lines are into a template, title must also be into a template
 	 *  But for the moment we don't know if it's possible, so we keep the method available on overloaded objects.
 	 *
-	 *	@param	string		$restrictlist		''=All lines, 'services'=Restrict to services only
-	 *  @param  array       $selectedLines      Array of lines id for selected lines
+	 *	@param	''|'services'	$restrictlist		''=All lines, 'services'=Restrict to services only
+	 *  @param  int[]       $selectedLines      Array of lines id for selected lines
 	 *  @return	void
 	 */
 	public function printOriginLinesList($restrictlist = '', $selectedLines = array())
@@ -1830,6 +1832,7 @@ class Mo extends CommonObject
 		$this->tpl['qty_frozen'] = $line->qty_frozen;
 		$this->tpl['disable_stock_change'] = $line->disable_stock_change;
 		$this->tpl['efficiency'] = $line->efficiency;
+
 
 		global $conf;	// used into template
 		$res = include DOL_DOCUMENT_ROOT.'/mrp/tpl/originproductline.tpl.php';
@@ -1978,12 +1981,13 @@ class Mo extends CommonObject
 	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @param		?array{string,mixed}		$arraydata			Array of data
 	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
 		global $langs;
+		'@phan-var-force array{selected?:int<0,1>,bom?:Bom,product?:product} $arraydata';
 
 		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
 

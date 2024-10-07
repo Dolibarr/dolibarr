@@ -843,14 +843,19 @@ class Translate
 	 *
 	 *  @param	string	$str            String to convert
 	 *  @param	string	$pagecodefrom	Page code of src string
+	 *  @param	string	$pagecodeto		Expected page code of returned string
 	 *  @return string         			Converted string
 	 */
-	public function convToOutputCharset($str, $pagecodefrom = 'UTF-8')
+	public function convToOutputCharset($str, $pagecodefrom = 'UTF-8', $pagecodeto = '')
 	{
-		if ($pagecodefrom == 'ISO-8859-1' && $this->charset_output == 'UTF-8') {
+		if (empty($pagecodeto)) {
+			$pagecodeto = $this->charset_output;
+		}
+
+		if ($pagecodefrom == 'ISO-8859-1' && $pagecodeto == 'UTF-8') {
 			$str = mb_convert_encoding($str, 'UTF-8', 'ISO-8859-1');
 		}
-		if ($pagecodefrom == 'UTF-8' && $this->charset_output == 'ISO-8859-1') {
+		if ($pagecodefrom == 'UTF-8' && $pagecodeto == 'ISO-8859-1') {
 			$str = mb_convert_encoding(str_replace('€', chr(128), $str), 'ISO-8859-1');
 			// TODO Replace with iconv("UTF-8", "ISO-8859-1", str_replace('€', chr(128), $str)); ?
 		}
@@ -871,8 +876,6 @@ class Translate
 	public function get_available_languages($langdir = DOL_DOCUMENT_ROOT, $maxlength = 0, $usecode = 0, $mainlangonly = 0)
 	{
 		// phpcs:enable
-		global $conf;
-
 		$this->load("languages");
 
 		// We scan directory langs to detect available languages
