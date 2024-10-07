@@ -969,7 +969,10 @@ class EcmFiles extends CommonObject
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
 
-		$linkstart = '<a href="'.$url.'"';
+		$linkstart = '<a class="documentdownload paddingright" href="'.$url.'"';
+		if (getDolGlobalInt('MAIN_DISABLE_FORCE_SAVEAS') == 2) {
+			$linkstart .= 'target="_blank" ';
+		}
 		$linkstart .= $linkclose.'>';
 		$linkend = '</a>';
 
