@@ -5347,7 +5347,7 @@ class Form
 			$cate_arbo = array();
 			$sql = "SELECT c.label, c.rowid";
 			$sql .= " FROM " . $this->db->prefix() . "categorie as c";
-			$sql .= " WHERE entity = " . $conf->entity . " AND type = " . $cat->getMapId()[$type];
+			$sql .= " WHERE entity = " . $conf->entity . " AND type = " . ((int) $cat->getMapId()[$type]);
 			$sql .= " ORDER BY c.label";
 			$result = $this->db->query($sql);
 			if ($result) {
