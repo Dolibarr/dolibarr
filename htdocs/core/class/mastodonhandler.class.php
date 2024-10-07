@@ -106,7 +106,6 @@ class MastodonHandler
 				$data = (string) file_get_contents($cacheFile);
 			}
 		}
-		$foundInCache = false;	// To force to not use the cache
 
 		if (!$foundInCache) {
 			$headers = [
@@ -128,7 +127,7 @@ class MastodonHandler
 				return false;
 			}
 		}
-		if (!is_null($data)) {  // Because of force to not use cache, $data is not null, ignore until cache is enabled  @phpstan-ignore-line
+		if (!is_null($data)) {
 			$data = json_decode($data, true);
 			if (is_array($data)) {
 				$this->posts = [];
