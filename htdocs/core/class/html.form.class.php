@@ -3409,14 +3409,14 @@ class Form
 		$labeltoshowhtmlstock = '';
 		if (isModEnabled('stock') && isset($objp->stock) && ($objp->fk_product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES'))) {
 			if ($user->hasRight('stock', 'lire')) {
-				$labeltoshowstock .= ' - ' . $langs->trans("Stock") . ': ' . price(price2num($objp->stock, 'MS'));
+				$labeltoshowstock .= ' - ' . $langs->trans("Stock") . ': ' . price(price2num($objp->stock, 'MS'), 0, $langs, 0, 0);
 
 				if ($objp->stock > 0) {
 					$labeltoshowhtmlstock .= ' - <span class="product_line_stock_ok">';
 				} elseif ($objp->stock <= 0) {
 					$labeltoshowhtmlstock .= ' - <span class="product_line_stock_too_low">';
 				}
-				$labeltoshowhtmlstock .= $langs->transnoentities("Stock") . ': ' . price(price2num($objp->stock, 'MS'));
+				$labeltoshowhtmlstock .= $langs->transnoentities("Stock") . ': ' . price(price2num($objp->stock, 'MS'), 0, $langs, 0, 0);
 				$labeltoshowhtmlstock .= '</span>';
 
 				if (empty($novirtualstock) && getDolGlobalString('STOCK_SHOW_VIRTUAL_STOCK_IN_PRODUCTS_COMBO')) {  // Warning, this option may slow down combo list generation
@@ -3554,7 +3554,6 @@ class Form
 			$outtva_tx = $objp->tva_tx;
 			$outdefault_vat_code = $objp->default_vat_code;
 		}
-
 
 		// Build options
 		$opt = '<option value="' . $objp->rowid . '"';
@@ -3980,7 +3979,7 @@ class Form
 					$novirtualstock = ($showstockinlist == 2);
 
 					if ($user->hasRight('stock', 'lire')) {
-						$outvallabel .= ' - ' . $langs->trans("Stock") . ': ' . price(price2num($objp->stock, 'MS'));
+						$outvallabel .= ' - ' . $langs->trans("Stock") . ': ' . price(price2num($objp->stock, 'MS'), 0, $langs, 0, 0);
 
 						if ($objp->stock > 0) {
 							$optlabel .= ' - <span class="product_line_stock_ok">';
