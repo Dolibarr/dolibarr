@@ -180,7 +180,7 @@ class InfoBox
 								$tmpenabled = 0; // $tmpenabled is used for the '|' test (OR)
 								foreach ($arrayelem as $module) {
 									$tmpmodule = preg_replace('/@[^@]+/', '', $module);
-									if (isModEnabled($tmpmodule)) {
+									if (!empty($tmpmodule) && isModEnabled($tmpmodule)) {
 										$tmpenabled = 1;
 									}
 									//print $boxname.'-'.$module.'-module enabled='.(empty($conf->$tmpmodule->enabled)?0:1).'<br>';
