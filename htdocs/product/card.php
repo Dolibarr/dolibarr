@@ -507,6 +507,12 @@ if (empty($reshook)) {
 			$action = "create";
 			$error++;
 		}
+		$stockable_product = (int) ($type == 0 || ($type == 1 && !empty($conf->global->STOCK_SUPPORTS_SERVICES)));
+		if (GETPOST('status_batch') && $stockable_product == 0 && isModEnabled('stock') && isModEnabled('productbatch')) {
+			setEventMessages($langs->trans('ErrorBatchesNeedStockManagement', $langs->transnoentities('Unit')), null, 'errors');
+			$action = "create";
+			$error++;
+		}
 
 		if (!$error) {
 			$units = GETPOSTINT('units');
@@ -633,8 +639,7 @@ if (empty($reshook)) {
 				$object->fk_unit = null;
 			}
 
-			// managed_in_stock
-			$object->stockable_product = ($type == 0 || ($type == 1 && !empty($conf->global->STOCK_SUPPORTS_SERVICES))) ? 1 : 0;
+			$object->stockable_product = $stockable_product;
 
 			$accountancy_code_sell = GETPOST('accountancy_code_sell', 'alpha');
 			$accountancy_code_sell_intra = GETPOST('accountancy_code_sell_intra', 'alpha');
@@ -2214,9 +2219,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '</td></tr>';
 					*/
 
-					print '<tr><td valign="top">' . $langs->trans("StockableProduct") . '</td>';
-					$checked = $object->stockable_product == 1 ? "checked" : "";
-					print '<td><input type="checkbox" id="stockable_product" name="stockable_product" '. $checked . ' /></td></tr>';
+					if (isModEnabled('productbatch') && $object->hasbatch()) {
+						print '<td><input type="hidden" id="stockable_product" name="stockable_product" value="on" /></td></tr>';
+					} else {
+						print '<tr><td valign="top">' . $langs->trans("StockableProduct") . '</td>';
+						$checked = $object->stockable_product == 1 ? "checked" : "";
+						print '<td><input type="checkbox" id="stockable_product" name="stockable_product" '. $checked . ' /></td></tr>';
+					}
 				}
 
 				if ($object->isService() && isModEnabled('workstation')) {
@@ -2742,7 +2751,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				}
 
 				// View stockable_product
-				if (($object->isProduct() || ($object->isService() && !empty($conf->global->STOCK_SUPPORTS_SERVICES))) && !empty($conf->stock->enabled)) {
+				if (($object->isProduct() || ($object->isService() && !empty($conf->global->STOCK_SUPPORTS_SERVICES))) && isModEnabled('stock') && !$object->hasbatch()) {
 					print '<tr><td valign="top">' . $form->textwithpicto($langs->trans("StockableProduct"), $langs->trans('StockableProductDescription')) . '</td>';
 					print '<td><input type="checkbox" readonly disabled '.($object->stockable_product == 1 ? 'checked' : '').'></td></tr>';
 				}
