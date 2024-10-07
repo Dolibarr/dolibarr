@@ -12293,39 +12293,6 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 
 	// If $url is an array, we must build a dropdown button or recursively iterate over each value
 	if (is_array($url)) {
-
-		/**
-		 * An anonymous function to complete dropdown url
-		 * @param string $url
-		 * @return string
-		 */
-		$completeUrl = function ($url, $addDolUrlRoot = true) use ($params) {
-			if (empty($url)) {
-				return '';
-			}
-
-			$parsedUrl = parse_url($url);
-			if ((isset($parsedUrl['scheme']) && in_array($parsedUrl['scheme'], ['javascript', 'mailto', 'tel'])) || strpos($url, '#') === 0) {
-				return $url;
-			}
-
-			if (!empty($parsedUrl['query'])) {
-				// Use parse_str() function to parse the string passed via URL
-				parse_str($parsedUrl['query'], $urlQuery);
-				if (!isset($urlQuery['backtopage']) && isset($params['backtopage'])) {
-					$url.= '&amp;backtopage='.urlencode($params['backtopage']);
-				}
-			}
-
-			if (!isset($parsedUrl['scheme']) && $addDolUrlRoot) {
-				$url = DOL_URL_ROOT.$url;
-			}
-
-			return $url;
-		};
-
-
-
 		// Loop on $url array to remove entries of disabled modules
 		foreach ($url as $key => $subbutton) {
 			if (isset($subbutton['enabled']) && empty($subbutton['enabled'])) {
@@ -12366,7 +12333,7 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 					$tmpurl = $subbutton['urlraw']; // Use raw url, no url completion, use only what developer send
 				} else {
 					$tmpurl = !empty($subbutton['urlroot']) ? $subbutton['urlroot'] : $subbutton['url'];
-					$tmpurl = $completeUrl($tmpurl, empty($subbutton['urlroot']));
+					$tmpurl = dolCompletUrlForDropdownButton($tmpurl, $params, empty($subbutton['urlroot']));
 				}
 
 				$subbuttonparam = array();
@@ -12389,7 +12356,7 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 					$tmpurl = $subbutton['urlraw']; // Use raw url, no url completion, use only what developer send
 				} else {
 					$tmpurl = !empty($subbutton['urlroot']) ? $subbutton['urlroot'] : $subbutton['url'];
-					$tmpurl = $completeUrl($tmpurl, empty($subbutton['urlroot']));
+					$tmpurl = dolCompletUrlForDropdownButton($tmpurl, $params, empty($subbutton['urlroot']));
 				}
 
 				$out .= dolGetButtonAction('', $langs->trans($subbutton['label']), 'default', $tmpurl, '', $subbutton['perm'], $params);
@@ -12523,6 +12490,41 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 		return $hookmanager->resPrint;
 	}
 }
+
+
+/**
+ * An function to complete dropdown url in dolGetButtonAction
+ * @param string $url the Url to complete
+ * @param array $params params of dolGetButtonAction function
+ * @param bool $addDolUrlRoot to add root url
+ * @return string
+ */
+function dolCompletUrlForDropdownButton(string $url, array $params, bool $addDolUrlRoot = true)
+{
+	if (empty($url)) {
+		return '';
+	}
+
+	$parsedUrl = parse_url($url);
+	if ((isset($parsedUrl['scheme']) && in_array($parsedUrl['scheme'], ['javascript', 'mailto', 'tel'])) || strpos($url, '#') === 0) {
+		return $url;
+	}
+
+	if (!empty($parsedUrl['query'])) {
+		// Use parse_str() function to parse the string passed via URL
+		parse_str($parsedUrl['query'], $urlQuery);
+		if (!isset($urlQuery['backtopage']) && isset($params['backtopage'])) {
+			$url.= '&amp;backtopage='.urlencode($params['backtopage']);
+		}
+	}
+
+	if (!isset($parsedUrl['scheme']) && $addDolUrlRoot) {
+		$url = DOL_URL_ROOT.$url;
+	}
+
+	return $url;
+}
+
 
 /**
  * Add space between dolGetButtonTitle
