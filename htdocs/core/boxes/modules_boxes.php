@@ -431,6 +431,7 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 				}
 			} else {
 				if (!empty($head['text']) || !empty($head['sublink']) || !empty($head['subpicto']) || $nblines) {
+					var_dump(1);
 					$out .= '<tr><td colspan="2" class="center"><span class="opacitymedium">'.$langs->trans("BoxHasNoData").' </span>';
 					if (!empty($this->depends)) {
 						if (count($this->depends) > 1) {
