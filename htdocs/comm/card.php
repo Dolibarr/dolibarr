@@ -1090,7 +1090,7 @@ if ($object->id > 0) {
 				print '<td class="nowraponall">';
 				print $sendingstatic->getNomUrl(1);
 				// Preview
-				$filedir = $conf->expedition->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
+				$filedir = $conf->expedition->multidir_output[$objp->entity].'/sending/'.dol_sanitizeFileName($objp->ref);
 				$file_list = null;
 				if (!empty($filedir)) {
 					$file_list = dol_dir_list($filedir, 'files', 0, '', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
