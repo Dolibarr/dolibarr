@@ -817,7 +817,7 @@ if (empty($reshook)) {
 				}
 
 				// managed_in_stock
-				$object->stockable_product   = GETPOSTISSET('stockable_product');
+				$object->stockable_product   = (int) GETPOSTISSET('stockable_product');
 
 				$units = GETPOSTINT('units');
 				if ($units > 0) {

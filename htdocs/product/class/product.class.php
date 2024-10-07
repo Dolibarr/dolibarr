@@ -772,9 +772,9 @@ class Product extends CommonObject
 	/**
 	 * 0=This service or product is not managed in stock, 1=This service or product is managed in stock
 	 *
-	 * @var boolean
+	 * @var int
 	 */
-	public $stockable_product = true;
+	public $stockable_product = 1;
 
 	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
@@ -953,7 +953,7 @@ class Product extends CommonObject
 			$this->status_buy = 0;
 		}
 		if (empty($this->stockable_product)) {
-			$this->stockable_product = false;
+			$this->stockable_product = 0;
 		}
 
 		$price_ht = 0;
@@ -1399,7 +1399,7 @@ class Product extends CommonObject
 		}
 
 		if (empty($this->stockable_product)) {
-			$this->stockable_product = false;
+			$this->stockable_product = 0;
 		}
 
 		// Barcode value
