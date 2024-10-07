@@ -555,6 +555,12 @@ class pdf_eratosthene extends ModelePDFCommandes
 
 					// Allows data in the first page if description is long enough to break in multiples pages
 					$showpricebeforepagebreak = getDolGlobalInt('MAIN_PDF_DATA_ON_FIRST_PAGE');
+					if ($curYBefore > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + 5))) {
+						// disable MAIN_PDF_DATA_ON_FIRST_PAGE near page break limit to anticipate auto page break jump before add line due to padding
+						// (ex: description is on page 2 and price on page 1)
+						$showpricebeforepagebreak = 0;
+					}
+
 					$posYAfterImage = 0;
 					$posYAfterDescription = 0;
 
@@ -621,14 +627,6 @@ class pdf_eratosthene extends ModelePDFCommandes
 										$pdf->useTemplate($tplidx);
 									}
 									$pdf->setPage($pageposafter + 1);
-								}
-							} else {
-								// We found a page break
-								// Allows data in the first page if description is long enough to break in multiples pages
-								if (getDolGlobalInt('MAIN_PDF_DATA_ON_FIRST_PAGE')) {
-									$showpricebeforepagebreak = 1;
-								} else {
-									$showpricebeforepagebreak = 0;
 								}
 							}
 						} else {	// No pagebreak
@@ -810,7 +808,10 @@ class pdf_eratosthene extends ModelePDFCommandes
 
 
 					// Add line
-					if (getDolGlobalInt('MAIN_PDF_DASH_BETWEEN_LINES') && $i < ($nblines - 1)) {
+					if (getDolGlobalInt('MAIN_PDF_DASH_BETWEEN_LINES')
+						&& $i < ($nblines - 1)
+						&& ($nexY < $this->page_hauteur - ($heightforfooter + $heightforfreetext + 1)) // do not draw line because already done by array frame
+					) {
 						$pdf->setPage($pageposafter);
 						$pdf->SetLineStyle(array('dash' => '1,1', 'color' => array(80, 80, 80)));
 						//$pdf->SetDrawColor(190,190,200);
