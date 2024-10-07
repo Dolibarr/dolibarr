@@ -906,8 +906,8 @@ class EcmFiles extends CommonObject
 	/**
 	 * getTooltipContentArray
 	 * @param array<string,mixed> $params params to construct tooltip data
-	 * @since v18
-	 * @return array{picto?:string,ref?:string,label?:string}|array{optimize:string}
+	 * @since v21
+	 * @return array{picto?:string,ref?:string,gen_or_upload?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -919,6 +919,13 @@ class EcmFiles extends CommonObject
 
 		if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 			return ['optimize' => $langs->trans("ShowFile")];
+		}
+		$datas['picto'] = '<u>'.$langs->trans("ShowFile").'</u>';
+		if (!empty($this->ref)) {
+			$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		}
+		if (!empty($this->gen_or_uploaded)) {
+			$datas['gen_or_upload'] .= '<br><b>'.$langs->trans('GenOrUpload').':</b> '.$this->gen_or_uploaded;
 		}
 
 		return $datas;
