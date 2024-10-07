@@ -6612,10 +6612,11 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 	if (dol_strlen($decpart) > $nbdecimal) {
 		$nbdecimal = dol_strlen($decpart);
 	}
-	// Si on depasse max
-	$max_nbdecimal = (int) str_replace('...', '', getDolGlobalString('MAIN_MAX_DECIMALS_SHOWN'));
-	if ($trunc && $nbdecimal > $max_nbdecimal) {
-		$nbdecimal = $max_nbdecimal;
+
+	// If nbdecimal is higher than max to show
+	$nbdecimalmaxshown = (int) str_replace('...', '', getDolGlobalString('MAIN_MAX_DECIMALS_SHOWN'));
+	if ($trunc && $nbdecimal > $nbdecimalmaxshown) {
+		$nbdecimal = $nbdecimalmaxshown;
 		if (preg_match('/\.\.\./i', getDolGlobalString('MAIN_MAX_DECIMALS_SHOWN'))) {
 			// If output is truncated, we show ...
 			$end = '...';
@@ -12263,6 +12264,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  *                                                                                                                              $arrayforbutaction = array(
  *                                                                                                                              10 => array('attr' => array('class'=>''), 'lang'=>'propal', 'enabled'=>isModEnabled("propal"), 'perm'=>$user->hasRight('propal', 'creer'), 'label' => 'AddProp', 'url'=>'/comm/propal/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
  *                                                                                                                              20 => array('attr' => array('class'=>''), 'lang'=>'mymodule', 'enabled'=>isModEnabled("mymodule"), 'perm'=>$user->hasRight('mymodule', 'write'), 'label' => 'MyModuleAction', 'urlroot'=>dol_build_patch('/mymodule/mypage.php?action=create')),
+ *                                                                                                                              30 => array('attr' => array('class'=>''), 'lang'=>'mymodule', 'enabled'=>isModEnabled("mymodule"), 'perm'=>$user->hasRight('mymodule', 'write'), 'label' => 'MyModuleOtherAction', 'urlraw' => '# || external Url || javascript: || tel: || mailto:' ),
  *                                                                                                                              );                                                                                                               );
  * @param string    	$id         	Attribute id of action button. Example 'action-delete'. This can be used for full ajax confirm if this code is reused into the ->formconfirm() method.
  * @param int|boolean	$userRight  	User action right
@@ -12328,17 +12330,18 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 					$langs->load($subbutton['lang']);
 				}
 
-				if (!empty($subbutton['urlroot'])) {
-					$tmpurl = $subbutton['urlroot'].(empty($params['backtopage']) ? '' : '&amp;backtopage='.urlencode($params['backtopage']));
+				if (!empty($subbutton['urlraw'])) {
+					$tmpurl = $subbutton['urlraw']; // Use raw url, no url completion, use only what developer send
 				} else {
-					$tmpurl = DOL_URL_ROOT.$subbutton['url'].(empty($params['backtopage']) ? '' : '&amp;backtopage='.urlencode($params['backtopage']));
+					$tmpurl = !empty($subbutton['urlroot']) ? $subbutton['urlroot'] : $subbutton['url'];
+					$tmpurl = dolCompletUrlForDropdownButton($tmpurl, $params, empty($subbutton['urlroot']));
 				}
 
 				$subbuttonparam = array();
 				if (!empty($subbutton['attr'])) {
 					$subbuttonparam['attr'] = $subbutton['attr'];
 				}
-				$subbuttonparam['isDropDown'] = (empty($params['isDropDown']) ? $subbutton['isDropDown'] : $params['isDropDown']);
+				$subbuttonparam['isDropDown'] = (empty($params['isDropDown']) ? ($subbutton['isDropDown']??false)  : $params['isDropDown']);
 
 				$out .= dolGetButtonAction('', $langs->trans($subbutton['label']), 'default', $tmpurl, $subbutton['id'] ?? '', $subbutton['perm'], $subbuttonparam);
 			}
@@ -12350,10 +12353,11 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 					$langs->load($subbutton['lang']);
 				}
 
-				if (!empty($subbutton['urlroot'])) {
-					$tmpurl = $subbutton['urlroot'].(empty($params['backtopage']) ? '' : '&amp;backtopage='.urlencode($params['backtopage']));
+				if (!empty($subbutton['urlraw'])) {
+					$tmpurl = $subbutton['urlraw']; // Use raw url, no url completion, use only what developer send
 				} else {
-					$tmpurl = DOL_URL_ROOT.$subbutton['url'].(empty($params['backtopage']) ? '' : '&amp;backtopage='.urlencode($params['backtopage']));
+					$tmpurl = !empty($subbutton['urlroot']) ? $subbutton['urlroot'] : $subbutton['url'];
+					$tmpurl = dolCompletUrlForDropdownButton($tmpurl, $params, empty($subbutton['urlroot']));
 				}
 
 				$out .= dolGetButtonAction('', $langs->trans($subbutton['label']), 'default', $tmpurl, '', $subbutton['perm'], $params);
@@ -12487,6 +12491,42 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 		return $hookmanager->resPrint;
 	}
 }
+
+
+/**
+ * An function to complete dropdown url in dolGetButtonAction
+ *
+ * @param string 				$url 			the Url to complete
+ * @param array|array<string> 	$params 		params of dolGetButtonAction function
+ * @param bool 					$addDolUrlRoot 	to add root url
+ * @return string
+ */
+function dolCompletUrlForDropdownButton(string $url, array $params, bool $addDolUrlRoot = true)
+{
+	if (empty($url)) {
+		return '';
+	}
+
+	$parsedUrl = parse_url($url);
+	if ((isset($parsedUrl['scheme']) && in_array($parsedUrl['scheme'], ['javascript', 'mailto', 'tel'])) || strpos($url, '#') === 0) {
+		return $url;
+	}
+
+	if (!empty($parsedUrl['query'])) {
+		// Use parse_str() function to parse the string passed via URL
+		parse_str($parsedUrl['query'], $urlQuery);
+		if (!isset($urlQuery['backtopage']) && isset($params['backtopage'])) {
+			$url.= '&amp;backtopage='.urlencode($params['backtopage']);
+		}
+	}
+
+	if (!isset($parsedUrl['scheme']) && $addDolUrlRoot) {
+		$url = DOL_URL_ROOT.$url;
+	}
+
+	return $url;
+}
+
 
 /**
  * Add space between dolGetButtonTitle
