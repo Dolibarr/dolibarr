@@ -45,7 +45,7 @@ if (isModEnabled('member')) {
 if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 }
 

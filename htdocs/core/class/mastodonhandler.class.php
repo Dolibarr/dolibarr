@@ -80,12 +80,12 @@ class MastodonHandler
 	/**
 	 * Fetch posts from Mastodon API using the access token.
 	 *
-	 * @param string $urlAPI The URL of the API endpoint
-	 * @param int $maxNb Maximum number of posts to retrieve
-	 * @param int $cacheDelay Cache delay in seconds
-	 * @param string $cacheDir Directory for caching
-	 * @param array $authParams Authentication parameters
-	 * @return array|false Array of posts if successful, False otherwise
+	 * @param string 	$urlAPI 		The URL of the API endpoint
+	 * @param int 		$maxNb 			Maximum number of posts to retrieve
+	 * @param int 		$cacheDelay 	Cache delay in seconds
+	 * @param string 	$cacheDir 		Directory for caching
+	 * @param array 	$authParams 	Authentication parameters
+	 * @return array|false 				Array of posts if successful, False otherwise
 	 */
 	public function fetch($urlAPI, $maxNb = 5, $cacheDelay = 60, $cacheDir = '', $authParams = [])
 	{
@@ -101,9 +101,11 @@ class MastodonHandler
 			$fileDate = dol_filemtime($cacheFile);
 			if ($fileDate >= (dol_now() - $cacheDelay)) {
 				$foundInCache = true;
+				// Read file into cache
 				$data = file_get_contents($cacheFile);
 			}
 		}
+		$foundInCache = false;	// To force to not use the cache
 
 		if (!$foundInCache) {
 			$headers = [
@@ -112,7 +114,8 @@ class MastodonHandler
 			];
 
 			$result = getURLContent($urlAPI, 'GET', '', 1, $headers, array('http', 'https'), 0);
-			if (!empty($result['content'])) {
+
+			if (empty($result['curl_error_no']) && $result['http_code'] == 200 && !empty($result['content'])) {
 				$data = $result['content'];
 
 				if ($cacheDir) {

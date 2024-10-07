@@ -211,7 +211,7 @@ if (!function_exists('dol_loginfunction')) {
 					session_set_cookie_params($sessioncookieparams);
 				}
 
-				setcookie($sessiontimeout, $conf->global->MAIN_SESSION_TIMEOUT, 0, "/", '', !empty($dolibarr_main_force_https), true);
+				setcookie($sessiontimeout, getDolGlobalString('MAIN_SESSION_TIMEOUT'), 0, "/", '', !empty($dolibarr_main_force_https), true);
 			}
 		}
 

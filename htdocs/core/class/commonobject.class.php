@@ -1749,7 +1749,7 @@ abstract class CommonObject
 					} elseif (strpos($obj->element, 'supplier') !== false && $obj->element != 'supplier_proposal') {
 						$modulename = 'fournisseur';
 					}
-					if (!empty($conf->{$modulename}->enabled)) {
+					if (isModEnabled($modulename)) {
 						$libelle_element = $langs->trans('ContactDefault_'.$obj->element);
 						$tmpelement = $obj->element;
 						$transkey = "TypeContact_".$tmpelement."_".$source."_".$obj->code;
