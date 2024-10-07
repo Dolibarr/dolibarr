@@ -263,12 +263,12 @@ class Categorie extends CommonObject
 	public $cats = array();
 
 	/**
-	 * @var array Mother of table
+	 * @var array<int,int> Mother of table
 	 */
 	public $motherof = array();
 
 	/**
-	 * @var array children
+	 * @var Categorie[] children
 	 */
 	public $childs = array();
 
@@ -338,7 +338,7 @@ class Categorie extends CommonObject
 	/**
 	 * Get map list
 	 *
-	 * @return	array
+	 * @return	array<array{id:int,code:string,cat_fk:string,cat_table:string,obj_class:string,obj_table:string}>
 	 */
 	public function getMapList()
 	{
@@ -1105,7 +1105,7 @@ class Categorie extends CommonObject
 	/**
 	 * Return direct children ids of a category into an array
 	 *
-	 * @return	array|int   Return integer <0 KO, array ok
+	 * @return	Categorie[]|int   Return integer <0 KO, array ok
 	 */
 	public function get_filles()
 	{
@@ -1337,14 +1337,14 @@ class Categorie extends CommonObject
 	/**
 	 * 	Returns all categories
 	 *
-	 *	@param	int			$type		Type of category (0, 1, ...)
+	 *	@param	?int		$type		Type of category (0, 1, ...)
 	 *	@param	boolean		$parent		Just parent categories if true
-	 *	@return	array|int				Table of Object Category, -1 on error
+	 *	@return	array<int,Categorie>|int<-1,-1>	Table of Object Category, -1 on error
 	 */
 	public function get_all_categories($type = null, $parent = false)
 	{
 		// phpcs:enable
-		if (!is_numeric($type)) {
+		if (!is_numeric($type) && !is_null($type)) {
 			$type = $this->MAP_ID[$type];
 		}
 
@@ -1376,8 +1376,8 @@ class Categorie extends CommonObject
 	/**
 	 *	Returns the top level categories (which are not child)
 	 *
-	 *	@param		int		$type		Type of category (0, 1, ...)
-	 *	@return		array
+	 *	@param	?int		$type		Type of category (0, 1, ...)
+	 *	@return	array<int,Categorie>|int<-1,-1>	Table of Object Category, -1 on error
 	 */
 	public function get_main_categories($type = null)
 	{
@@ -1443,7 +1443,7 @@ class Categorie extends CommonObject
 	 * @param	string	$url	     Url ('', 'none' or 'urltouse')
 	 * @param   int     $nocolor     0
 	 * @param	int		$addpicto	 Add picto into link
-	 * @return	array
+	 * @return	string[]
 	 */
 	public function print_all_ways($sep = '&gt;&gt;', $url = '', $nocolor = 0, $addpicto = 0)
 	{
@@ -1850,9 +1850,9 @@ class Categorie extends CommonObject
 	/**
 	 *  Add the image uploaded as $file to the directory $sdir/<category>-<id>/photos/
 	 *
-	 *  @param      string	$sdir       Root destination directory
-	 *  @param      array	$file		Uploaded file name
-	 *	@return		void
+	 *  @param	string								$sdir       Root destination directory
+	 *  @param	array{name:string,tmp_name:string}	$file		Uploaded file name
+	 *	@return	void
 	 */
 	public function add_photo($sdir, $file)
 	{
@@ -1898,9 +1898,9 @@ class Categorie extends CommonObject
 	/**
 	 *    Return an array with all photos inside the directory
 	 *
-	 *    @param      string	$dir        Dir to scan
-	 *    @param      int		$nbmax      Nombre maximum de photos (0=pas de max)
-	 *    @return     array       			Tableau de photos
+	 *    @param	string	$dir        Dir to scan
+	 *    @param	int		$nbmax      Nombre maximum de photos (0=pas de max)
+	 *    @return	array<int,array{photo:string,photo_vignette:string}>	Table with images
 	 */
 	public function liste_photos($dir, $nbmax = 0)
 	{
@@ -2179,7 +2179,7 @@ class Categorie extends CommonObject
 	 *
 	 * @param string	$type			The category type (e.g Categorie::TYPE_WAREHOUSE)
 	 * @param string	$rowIdName		The name of the row id inside the whole sql query (e.g. "e.rowid")
-	 * @param Array		$searchList		A list with the selected categories
+	 * @param string[]	$searchList		A list with the selected categories
 	 * @return string					A additional SQL SELECT query
 	 * @deprecated	search on some categories must be done using a WHERE EXISTS or NOT EXISTS and not a LEFT JOIN
 	 */
