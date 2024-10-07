@@ -147,9 +147,9 @@ class Members extends DolibarrApi
 		if ($result && $this->db->num_rows($result) == 1) {
 			$obj = $this->db->fetch_object($result);
 			$thirdparty = new Societe($this->db);
-			$thirdparty->fetch($obj->fk_soc);
+			$result = $thirdparty->fetch($obj->fk_soc);
 
-			if (!$result) {
+			if ($result <= 0) {
 				throw new RestException(404, 'thirdparty not found');
 			}
 
