@@ -355,7 +355,6 @@ print '</tr>';
 print '<tr class="oddeven" id="add_param_row"><td>';
 print $form->textwithpicto($langs->trans("Others"), $langs->trans("AddMoreParams"));
 print '</td><td><button type="button" id="addParamButton">'.img_picto($langs->trans("AddMoreParams"), 'add', 'pictofixedwidth').'</button></td>';
-print $form->renderStarts('rating', 0);
 print '<td>Token : ****<br>Cookie : ****</td>';
 print '</tr>';
 
