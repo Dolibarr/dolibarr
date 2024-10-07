@@ -774,6 +774,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 			print '<td class="liste_titre"></td>';
 			print '<td class="liste_titre"></td>';
 			print '<td class="liste_titre"></td>';
+			print '<td class="liste_titre"></td>';
 			if (!empty($extralabels)) {
 				foreach ($extralabels as $key) {
 					print '<td class="right"></td>';
@@ -807,6 +808,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 				print '<td class="left">'.price($line->price_ttc)."</td>";
 				print '<td class="left">'.price($line->price_min).'</td>';
 				print '<td class="left">'.price($line->price_min_ttc).'</td>';
+				print '<td class="left">'.$line->price_label.'</td>';
 				// User
 				print '<td class="left">';
 				print $userstatic->getNomUrl(-1);
