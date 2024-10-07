@@ -461,8 +461,6 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 											$fileForNewRecord = DOL_DOCUMENT_ROOT.'/'.$classDep.'/card.php';
 											if (dol_is_file($fileForNewRecord)) {
 												$out .= '<a href="'.DOL_URL_ROOT.'/'.$classDep.'/card.php?action=create">'.img_picto($langs->trans("New"), 'add', 'pictofixedwidth').'</a>';
-											} else {
-												$out .= '<span class="opacitymedium">'.$langs->trans("FileNotFoundInClassDep").'</span>';
 											}
 											break;
 										}
@@ -481,8 +479,6 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 										}
 										if ($founded) {
 											$out .= '<a href="'.$fileAdmin.'">'.img_picto($langs->trans("New"), 'add', 'pictofixedwidth').'</a>';
-										} else {
-											$out .= '<span class="opacitymedium">'.$langs->trans("FileNotFoundInAdmin").'</span>';
 										}
 									}
 								}
