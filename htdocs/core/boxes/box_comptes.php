@@ -162,6 +162,13 @@ class box_comptes extends ModeleBoxes
 					$line++;
 				}
 
+				if ($num == 0) {
+					$this->info_box_contents[$line][0] = array(
+						'td' => 'class="center"',
+						'text' => '<span class="opacitymedium">'.$langs->trans("NoRecordedBankAccounts").'</span>'
+					);
+				}
+
 				$this->db->free($result);
 			} else {
 				$this->info_box_contents[0][0] = array(
