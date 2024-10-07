@@ -1321,7 +1321,7 @@ jQuery(document).ready(function() {
 
 
 jQuery(document).ready(function() {
-	jQuery(".butAction.dropdown-toggle").on("click", function(event) {
+	jQuery(document).on("click", ".butAction.dropdown-toggle", function(event) {
 		console.log("Click on .butAction.dropdown-toggle");
 		let parentHolder = jQuery(event.target).parent();
 		let dropDownContent = parentHolder.children(".dropdown-content");

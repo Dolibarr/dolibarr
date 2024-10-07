@@ -153,3 +153,8 @@ CREATE TABLE llx_product_attribute_value_extrafields
 ) ENGINE=innodb;
 
 ALTER TABLE llx_product_attribute_value_extrafields ADD INDEX idx_product_attribute_value_extrafields (fk_object);
+
+ALTER TABLE llx_recruitment_recruitmentcandidature MODIFY fk_user_creat integer NULL;
+
+ALTER TABLE llx_ecm_files ADD COLUMN agenda_id integer;
+
