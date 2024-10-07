@@ -3048,7 +3048,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 			$tmptxt = $object->getLibStatut(5, $totalallpayments);
 		}
 		$morehtmlstatus .= $tmptxt;
-	} elseif (in_array($object->element, array('chargesociales', 'loan', 'tva')))  {
+	} elseif (in_array($object->element, array('chargesociales', 'loan', 'tva'))) {
 		$tmptxt = $object->getLibStatut(6, $object->totalpaid);
 		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) {
 			$tmptxt = $object->getLibStatut(5, $object->totalpaid);
