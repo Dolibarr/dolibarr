@@ -299,6 +299,22 @@ if ($type == 'directory') {
 		$filter = preg_quote((string) $search_doc_ref, '/');
 		$filearray = dol_dir_list($upload_dir, "files", 1, $filter, $excludefiles, $sortfield, $sorting, 1);
 
+		// To allow external users,we must restrict $filearray to entries the user is a thirdparty.
+		// This can be done by filtering on entries found into llx_ecm
+		if ($user->socid > 0) {
+			$filearrayallowedtoexternal = array();	// 'fullpath' => array(...)
+
+			// Search files in ECM with select filepath.filename where src_object_type = $module and src_object_type EXISTS in (select rowid from $objecttablename WERE fk_soc = '.$user->socid.' and entity in getEntity($objecttbalename)
+			// TODO
+
+			// Now clean $filearray to keep only record also found into $filearrayallowedtoexternal.
+			foreach ($filearray as $key => $val) {
+				if (!in_array($upload_dir.'/'.$val['relativename'], $filearrayallowedtoexternal)) {
+					unset($filearray[$key]);
+				}
+			}
+		}
+
 		$perm = $user->hasRight('ecm', 'upload');
 
 		$formfile->list_of_autoecmfiles($upload_dir, $filearray, $module, $param, 1, '', $perm, 1, $textifempty, $maxlengthname, $url, 1);

@@ -1569,7 +1569,7 @@ class Contrat extends CommonObject
 			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
 			$remise = 0;
 			$price = price2num(round($pu_ht, 2));
-			if (dol_strlen($remise_percent) > 0) {
+			if (dol_strlen(price2num($remise_percent)) > 0) {
 				$remise = round(($pu_ht * $remise_percent / 100), 2);
 				$price = $pu_ht - $remise;
 			}
@@ -1731,7 +1731,7 @@ class Contrat extends CommonObject
 
 		$subprice = $price;
 		$remise = 0;
-		if (dol_strlen($remise_percent) > 0) {
+		if (dol_strlen(price2num($remise_percent)) > 0) {
 			$remise = round(($pu * $remise_percent / 100), 2);
 			$price = $pu - $remise;
 		} else {
@@ -1770,7 +1770,7 @@ class Contrat extends CommonObject
 		// Anciens indicateurs: $price, $remise (a ne plus utiliser)
 		$remise = 0;
 		$price = price2num(round($pu, 2));
-		if (dol_strlen($remise_percent) > 0) {
+		if (dol_strlen(price2num($remise_percent)) > 0) {
 			$remise = round(($pu * $remise_percent / 100), 2);
 			$price = $pu - $remise;
 		}

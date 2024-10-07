@@ -56,8 +56,8 @@ div#topmenu-login-dropdown {
 }
 
 #topmenu-global-search-dropdown .dropdown-menu, #topmenu-quickadd-dropdown .dropdown-menu, #topmenu-bookmark-dropdown .dropdown-menu, #topmenu-login-dropdown .dropdown-menu {
-	min-width: 300px;
-	max-width: 360px;
+	min-width: 370px;
+	max-width: 400px;
 }
 
 button.dropdown-item.global-search-item {
@@ -338,6 +338,14 @@ a.top-menu-dropdown-link {
 a.dropdown-item {
 	text-align: start;
 }
+.dropdown-item.bookmark-item {
+	padding-left: 14px;
+	padding-right: 14px;
+}
+.dropdown-item.bookmark-item:before {
+	width: 20px;
+	padding-left: 2px;
+}
 
 .button-top-menu-dropdown {
 	display: inline-block;
@@ -488,9 +496,9 @@ a.dropdown-item {
 }
 
 .quickadd-item {
-	font-size: 1em;
-	padding-top: 6px;
-	padding-bottom: 6px;
+	font-size: 1.1em;
+	padding-top: 8px;
+	padding-bottom: 8px;
 }
 
 .quickadd-item:before {
@@ -543,7 +551,7 @@ div.quickaddblock:focus {
 
 
 /* for the dropdown on action buttons */
-dropdown-holder {
+.dropdown-holder {
 	position: relative;
 	display: inline-block;
 }
@@ -553,11 +561,30 @@ dropdown-holder {
 	position: absolute;
 	z-index: 1;
 	width: 300px;
-	right:10px;	/* will be set with js */
+	right:0;
+	bottom: 0;
+	transform: translateY(100%);
+
 	background: #fff;
 	border: 1px solid #bbb;
-	text-align: <?php echo $left; ?>
+	text-align: <?php echo $left; ?>;
+	-webkit-box-shadow: 5px 5px 0px rgba(0,0,0,0.1);
+	box-shadow: 5px 5px 0px rgba(0,0,0,0.1);
 }
+
+/* dropdown --up variant */
+.dropdown-holder.--up .dropdown-content{
+	bottom: auto;
+	top: 0;
+	transform: translateY(-100%);
+}
+
+/* dropdown --left variant */
+.dropdown-holder.--left .dropdown-content{
+	right: auto;
+	left: 12px;
+}
+
 
 .dropdown-content a {
 	margin-right: auto !important;
@@ -567,13 +594,28 @@ dropdown-holder {
 	background: none;
 	color: #000 !important;
 }
-.dropdown-content a.butAction {
+.dropdown-content a:is(.butAction,.butActionDelete,.butActionRefused) {
 	display: flex;
+	border-radius: 0;
 }
 .dropdown-content .butAction:hover {
 	box-shadow: none;
-	text-decoration: underline;
+	background-color: var(--butactionbg);
+	color: var(--textbutaction) !important;
+	text-decoration: none;
 }
+
+.dropdown-content .butActionDelete{
+	background-color: transparent !important;
+	color: #633 !important;
+}
+.dropdown-content .butActionDelete:hover {
+	box-shadow: none;
+	background-color: var(--butactiondeletebg) !important;
+	color: #633 !important;
+	text-decoration: none;
+}
+
 .dropdown-content .butActionRefused {
 	margin-left: 0;
 	margin-right: 0;
@@ -599,6 +641,21 @@ dropdown-holder {
 	border-color: transparent transparent #ffff transparent;
 	transform: rotate(0deg);
 }
+
+/* dropdown --up variant*/
+.dropdown-holder.--up.open .dropdown-content::before{
+	top: auto;
+	bottom: calc(var(--triangleBorderSize) * -1);
+	border-width: 0 var(--triangleBorderSize) var(--triangleBorderSize) var(--triangleBorderSize);
+	transform: rotate(180deg);
+}
+
+/* dropdown --left variant*/
+.dropdown-holder.--left.open .dropdown-content::before{
+	right: auto;
+	left: 12px;
+}
+
 
 /* smartphone */
 @media only screen and (max-width: 767px)

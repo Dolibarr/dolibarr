@@ -243,7 +243,7 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 
 			// Date payment
 			$datep = $db->jdate($obj->datep);
-			print '<td class="center nowraponalls">' . dol_print_date($datep, 'day') . '</td>';
+			print '<td class="center nowraponall">' . dol_print_date($datep, 'day') . '</td>';
 
 			// Type payment
 			$labelpaymenttype = '';

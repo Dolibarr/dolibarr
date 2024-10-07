@@ -121,7 +121,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-// Initialize a technical objects
+// Initialize technical objects
 $object = new MyObject($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->mymodule->dir_output.'/temp/massgeneration/'.$user->id;
@@ -171,12 +171,13 @@ $fieldstosearchall = array();
 // }
 
 // Definition of array of fields for columns
+$tableprefix = 't';
 $arrayfields = array();
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
 		$visible = (int) dol_eval((string) $val['visible'], 1);
-		$arrayfields['t.'.$key] = array(
+		$arrayfields[$tableprefix.'.'.$key] = array(
 			'label' => $val['label'],
 			'checked' => (($visible < 0) ? 0 : 1),
 			'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
@@ -233,7 +234,7 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
-$parameters = array();
+$parameters = array('arrayfields' => &$arrayfields);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -290,8 +291,8 @@ $morecss = array();
 
 // Build and execute select
 // --------------------------------------------------------------------
-$sql = 'SELECT ';
-$sql .= $object->getFieldList('t');
+$sql = "SELECT";
+$sql .= " ".$object->getFieldList('t');
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -578,6 +579,9 @@ if (empty($reshook)) {
 } else {
 	$moreforfilter = $hookmanager->resPrint;
 }
+$parameters = array(
+	'arrayfields' => &$arrayfields,
+);
 
 if (!empty($moreforfilter)) {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';

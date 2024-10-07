@@ -328,14 +328,14 @@ if ($nb) {
 				print '<option value="RCUR"'.($format == 'RCUR' ? ' selected="selected"' : '').'>'.$langs->trans('SEPARCUR').'</option>';
 				print '</select>';
 			}
-			print '<input type="submit" class="butAction margintoponly maringbottomonly" value="'.$title.'"/>';
+			print '<input type="submit" class="butAction margintoponly marginbottomonly" value="'.$title.'"/>';
 		} else {
 			$title = $langs->trans("CreateAll");
 			if ($type == 'bank-transfer') {
 				$title = $langs->trans("CreateFileForPaymentByBankTransfer");
 			}
 			print '<input type="hidden" name="format" value="ALL">'."\n";
-			print '<input type="submit" class="butAction margintoponly maringbottomonly" value="'.$title.'">'."\n";
+			print '<input type="submit" class="butAction margintoponly marginbottomonly" value="'.$title.'">'."\n";
 		}
 	} else {
 		if ($mysoc->isInEEC()) {
@@ -343,18 +343,18 @@ if ($nb) {
 			if ($type == 'bank-transfer') {
 				$title = $langs->trans("CreateSepaFileForPaymentByBankTransfer");
 			}
-			print '<a class="butActionRefused classfortooltip margintoponly maringbottomonly" href="#" title="'.$langs->trans("AmountMustBePositive").'">'.$title."</a>\n";
+			print '<a class="butActionRefused classfortooltip margintoponly marginbottomonly" href="#" title="'.$langs->trans("AmountMustBePositive").'">'.$title."</a>\n";
 
 			if ($type != 'bank-transfer') {
 				$title = $langs->trans("CreateForSepaRCUR");
-				print '<a class="butActionRefused classfortooltip margintoponly maringbottomonly" href="#" title="'.$langs->trans("AmountMustBePositive").'">'.$title."</a>\n";
+				print '<a class="butActionRefused classfortooltip margintoponly marginbottomonly" href="#" title="'.$langs->trans("AmountMustBePositive").'">'.$title."</a>\n";
 			}
 		} else {
 			$title = $langs->trans("CreateAll");
 			if ($type == 'bank-transfer') {
 				$title = $langs->trans("CreateFileForPaymentByBankTransfer");
 			}
-			print '<a class="butActionRefused classfortooltip margintoponly maringbottomonly" href="#">'.$title."</a>\n";
+			print '<a class="butActionRefused classfortooltip margintoponly marginbottomonly" href="#">'.$title."</a>\n";
 		}
 	}
 } else {
@@ -364,7 +364,7 @@ if ($nb) {
 		$titlefortab = $langs->transnoentitiesnoconv("PaymentByBankTransfers");
 		$title = $langs->trans("CreateFileForPaymentByBankTransfer");
 	}
-	print '<a class="butActionRefused classfortooltip margintoponly maringbottomonly" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NoInvoiceToWithdraw", $titlefortab, $titlefortab)).'">';
+	print '<a class="butActionRefused classfortooltip margintoponly marginbottomonly" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NoInvoiceToWithdraw", $titlefortab, $titlefortab)).'">';
 	print $title;
 	print "</a>\n";
 }

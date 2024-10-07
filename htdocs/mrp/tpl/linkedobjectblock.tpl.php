@@ -33,6 +33,7 @@ global $noMoreLinkedObjectBlockAfter;
 $langs = $GLOBALS['langs'];
 '@phan-var-force Translate $langs';
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
+'@phan-var-force array<CommonObject> $linkedObjectBlock';
 $object = $GLOBALS['object'];
 
 // Load translation files required by the page
@@ -45,8 +46,9 @@ if ($object->element == 'mo') {
 	$mo_static = new Mo($db);
 	$res = $mo_static->fetch($object->id);
 	$TMoChilds = $mo_static->getMoChilds();
+	'@phan-var-force Mo[] $TMoChilds';
 
-	$hookmanager->initHooks('LinesLinkedObjectBlock');
+	$hookmanager->initHooks(array('LinesLinkedObjectBlock'));
 	$parameters = array('TMoChilds' => $TMoChilds);
 	$reshook = $hookmanager->executeHooks('LinesLinkedObjectBlock', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) {
@@ -58,7 +60,7 @@ if ($object->element == 'mo') {
 			echo '<tr class="' . $trclass . '" >';
 			echo '<td class="linkedcol-element tdoverflowmax100">' . $langs->trans("ManufacturingOrder");
 			if (!empty($showImportButton) && $conf->global->MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES) {
-				print '<a class="objectlinked_importbtn" href="' . $objectlink->getNomUrl(0, '', 0, 1) . '&amp;action=selectlines" data-element="' . $objectlink->element . '" data-id="' . $objectlink->id . '"  > <i class="fa fa-indent"></i> </a';
+				print '<a class="objectlinked_importbtn" href="' . $objectlink->getNomUrl(0, '', 0, 1) . '&amp;action=selectlines&amp;token='.newToken().'" data-element="' . $objectlink->element . '" data-id="' . $objectlink->id . '"  > <i class="fa fa-indent"></i> </a';
 			}
 			echo '</td>';
 			echo '<td class="linkedcol-name nowraponall" >' . $objectlink->getNomUrl(1) . '</td>';
@@ -90,7 +92,7 @@ if ($object->element == 'mo') {
 	}
 } else {
 	$linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date', 'desc', 0, 0, 1);
-
+	'@phan-var-force array<CommonObject> $linkedObjectBlock';
 	$total = 0;
 	$ilink = 0;
 	foreach ($linkedObjectBlock as $key => $objectlink) {
@@ -104,7 +106,7 @@ if ($object->element == 'mo') {
 		print '<td class="linkedcol-element tdoverflowmax100">'.$langs->trans("ManufacturingOrder");
 		if (!empty($showImportButton) && $conf->global->MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES) {
 			$url = DOL_URL_ROOT.'/mrp/mo_card.php?id='.$objectlink->id;
-			print '<a class="objectlinked_importbtn" href="'.$url.'&amp;action=selectlines"  data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a>';
+			print '<a class="objectlinked_importbtn" href="'.$url.'&amp;action=selectlines&amp;token='.newToken().'"  data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a>';
 		}
 		print '</td>';
 

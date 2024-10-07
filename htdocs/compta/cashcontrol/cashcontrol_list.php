@@ -429,7 +429,7 @@ $moreforfilter = '';
  $moreforfilter.= '</div>';*/
 
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 if (empty($reshook)) {
 	$moreforfilter .= $hookmanager->resPrint;
 } else {
@@ -583,9 +583,10 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 		$object->posmodule = $obj->posmodule;
 		$object->cash = $obj->cash;
+		$object->cheque = $obj->cheque;
+		$object->card = $obj->card;
 		$object->opening = $obj->opening;
 		$object->year_close = $obj->year_close;
-		$object->cheque = $obj->cheque;
 
 		// Output Kanban
 		$selected = -1;

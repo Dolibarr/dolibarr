@@ -803,19 +803,19 @@ if ($action == "dosign" && empty($cancel)) {
 		if ($object->status == $object::STATUS_SIGNED) {
 			print '<br>';
 			if ($message == 'signed') {
-				print img_picto('', 'check', '', false, 0, 0, '', 'size2x').'<br>';
+				print img_picto('', 'check', '', 0, 0, 0, '', 'size2x').'<br>';
 				print '<span class="ok">'.$langs->trans("PropalSigned").'</span>';
 			} else {
-				print img_picto('', 'check', '', false, 0, 0, '', 'size2x').'<br>';
+				print img_picto('', 'check', '', 0, 0, 0, '', 'size2x').'<br>';
 				print '<span class="ok">'.$langs->trans("PropalAlreadySigned").'</span>';
 			}
 		} elseif ($object->status == $object::STATUS_NOTSIGNED) {
 			print '<br>';
 			if ($message == 'refused') {
-				print img_picto('', 'cross', '', false, 0, 0, '', 'size2x').'<br>';
+				print img_picto('', 'cross', '', 0, 0, 0, '', 'size2x').'<br>';
 				print '<span class="ok">'.$langs->trans("PropalRefused").'</span>';
 			} else {
-				print img_picto('', 'cross', '', false, 0, 0, '', 'size2x').'<br>';
+				print img_picto('', 'cross', '', 0, 0, 0, '', 'size2x').'<br>';
 				print '<span class="warning">'.$langs->trans("PropalAlreadyRefused").'</span>';
 			}
 		} else {

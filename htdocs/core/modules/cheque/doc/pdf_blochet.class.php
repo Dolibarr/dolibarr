@@ -2,8 +2,9 @@
 /* Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2009-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2016      Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024      Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024	   MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024	   Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,6 +87,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$this->marge_droite = getDolGlobalInt('MAIN_PDF_MARGIN_RIGHT', 10);
 		$this->marge_haute = getDolGlobalInt('MAIN_PDF_MARGIN_TOP', 10);
 		$this->marge_basse = getDolGlobalInt('MAIN_PDF_MARGIN_BOTTOM', 10);
+		$this->corner_radius = getDolGlobalInt('MAIN_PDF_FRAME_CORNER_RADIUS', 0);
 
 		// Retrieves transmitter
 		$this->emetteur = $mysoc;
@@ -286,7 +288,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$pdf->SetXY(114, 15);
 		$pdf->MultiCell(40, 2, $outputlangs->transnoentities("Signature"), 0, 'L');
 
-		$pdf->Rect(9, 14, 192, 35);
+		$pdf->RoundedRect(9, 14, 192, 35, $this->corner_radius, '1234', 'D');
 		$pdf->line(9, 19, 112, 19);
 		$pdf->line(9, 25, 112, 25);
 		//$pdf->line(9, 31, 201, 31);
@@ -297,7 +299,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 
 		// Number of cheques
 		$posy = 51;
-		$pdf->Rect(9, $posy, 192, 6);
+		$pdf->RoundedRect(9, $posy, 192, 6, $this->corner_radius, '1234', 'D');
 		$pdf->line(55, $posy, 55, $posy + 6);
 		$pdf->line(140, $posy, 140, $posy + 6);
 		$pdf->line(170, $posy, 170, $posy + 6);
@@ -336,7 +338,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$pdf->MultiCell(20, 2, $outputlangs->transnoentities("Amount"), 0, 'R');
 		$pdf->line(9, $this->tab_top + 8, 201, $this->tab_top + 8);
 
-		$pdf->Rect(9, $this->tab_top, 192, $this->tab_height + 10);
+		$pdf->RoundedRect(9, $this->tab_top, 192, $this->tab_height + 10, $this->corner_radius, '1234', 'D');
 	}
 
 

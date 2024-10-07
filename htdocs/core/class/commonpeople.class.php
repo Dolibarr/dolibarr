@@ -315,6 +315,19 @@ trait CommonPeople
 	 */
 	public function setUpperOrLowerCase()
 	{
+		if (getDolGlobalString('MAIN_TE_PRIVATE_FIRST_AND_LASTNAME_TO_UPPER')) {
+			$this->lastname = dol_ucwords(dol_strtolower($this->lastname));
+			$this->firstname = dol_ucwords(dol_strtolower($this->firstname));
+			if (empty($this->typent_code) || $this->typent_code != "TE_PRIVATE") {
+				$this->name = dol_ucwords(dol_strtolower($this->name));
+			}
+			if (!empty($this->firstname)) {
+				$this->lastname = dol_strtoupper($this->lastname);
+			}
+			if (property_exists($this, 'name_alias')) {
+				$this->name_alias = isset($this->name_alias) ? dol_ucwords(dol_strtolower($this->name_alias)) : '';
+			}
+		}
 		if (getDolGlobalString('MAIN_FIRST_TO_UPPER')) {
 			$this->lastname = dol_ucwords(dol_strtolower($this->lastname));
 			$this->firstname = dol_ucwords(dol_strtolower($this->firstname));

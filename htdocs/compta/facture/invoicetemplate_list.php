@@ -740,6 +740,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['f.titre']['checked'])) {
+	// False positive @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['f.titre']['label'], $_SERVER['PHP_SELF'], "f.titre", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
@@ -859,8 +860,7 @@ while ($i < $imaxinloop) {
 				print $langs->trans("MaxNumberOfGenerationReached");
 			} elseif (empty($objp->frequency) || $db->jdate($objp->date_when) <= $today) {
 				print '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;socid='.$objp->socid.'&amp;fac_rec='.$objp->facid.'">';
-				print img_picto($langs->trans("CreateBill"), 'add', 'class="paddingrightonly"');
-				//print $langs->trans("CreateBill");
+				print img_picto($langs->trans("CreateBill"), 'add', 'class="none"');
 				print '</a>';
 			} else {
 				print $form->textwithpicto('', $langs->trans("DateIsNotEnough"));

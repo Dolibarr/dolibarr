@@ -1003,11 +1003,23 @@ td.wordbreak img, td.wordbreakimp img {
 .nopaddingright {
 	padding-<?php print $right; ?>: 0;
 }
+.nopaddingtop {
+	padding-top: 0;
+}
+.nopaddingbottom {
+	padding-bottom: 0;
+}
 .nopaddingleftimp {
 	padding-<?php print $left; ?>: 0 !important;
 }
 .nopaddingrightimp {
 	padding-<?php print $right; ?>: 0 !important;
+}
+.nopaddingtopimp {
+	padding-top: 0 !important;
+}
+.nopaddingbottomimp {
+	padding-bottom: 0 !important;
 }
 .paddingleft {
 	padding-<?php print $left; ?>: 4px;
@@ -1207,8 +1219,7 @@ span.fa.fa-plus-circle.paddingleft {
 .fa-toggle-on, .fa-toggle-off, .size2x { font-size: 2em; }
 .websiteselectionsection .fa-toggle-on, .websiteselectionsection .fa-toggle-off,
 .asetresetmodule .fa-toggle-on, .asetresetmodule .fa-toggle-off,
-.tdwebsitesearchresult .fa-toggle-on, .tdwebsitesearchresult .fa-toggle-off
-{
+.tdwebsitesearchresult .fa-toggle-on, .tdwebsitesearchresult .fa-toggle-off {
 	font-size: 1.5em;
 	vertical-align: text-bottom;
 }
@@ -1708,6 +1719,11 @@ table.paymenttable td.amountpaymentcomplete, table.paymenttable td.amountremaint
 .fa-15 {
 	font-size: 1.5em;
 }
+
+.fa-map-marked-alt:before {
+	font-size: 0.85em;
+}
+
 .text-security {
 	-webkit-text-security: disc;
 }
@@ -1894,7 +1910,7 @@ maxscreenheightless200 {
 .titlefieldcreate { width: 20%; }
 .titlefield       { /* width: 25%; */ min-width: 150px; width: 25%; }
 .titlefieldmiddle { width: 45%; }
-.titlefieldmax45 { max-width: 45%; }
+.titlefieldmax45 { max-width: 45%; min-width: 180px; }
 .imgmaxwidth180 { max-width: 180px; }
 .imgmaxheight50 { max-height: 50px; }
 
@@ -1932,6 +1948,7 @@ maxscreenheightless200 {
 /* Force values for small screen 1000 */
 @media only screen and (max-width: 1000px)
 {
+	.titlefieldmax45 { min-width: 100px; }
 	.maxwidthonsmartphone { max-width: 100px; }
 	.minwidth50imp  { min-width: 50px !important; }
 	.minwidth75imp  { min-width: 75px !important; }
@@ -2121,6 +2138,7 @@ datalist {
 	.maxwidth250onsmartphone { max-width: 250px; }
 	.maxwidth300onsmartphone { max-width: 300px; }
 	.maxwidth400onsmartphone { max-width: 400px; }
+	.minwidth150 { min-width: 110px !important; }
 	.minwidth50imp  { min-width: 50px !important; }
 	.minwidth75imp  { min-width: 75px !important; }
 	.minwidth100imp { min-width: 100px !important; }
@@ -2176,6 +2194,10 @@ datalist {
 
 	input.buttonpayment {
 		min-width: 300px;
+	}
+
+	.colorblack.totalnboflines {
+		margin-left: 4px !important;
 	}
 }
 
@@ -2257,7 +2279,7 @@ td.showDragHandle {
 	float: <?php echo $left; ?>;
 }
 .classforhorizontalscrolloftabs #id-right {
-	width: calc(100% - <?php echo $leftmenuwidth + 20 ?>px);
+	width: calc(100% - <?php echo $leftmenuwidth + 30 ?>px);
 	display: inline-block;
 }
 
@@ -2322,10 +2344,6 @@ div.blockvmenulogo
 	/* width: 100px; */
 	max-width: 100px;
 	vertical-align: middle;
-}
-.backgroundforcompanylogo {
-	background-color: rgba(255,255,255,0.2);
-	border-radius: 4px;
 }
 .menulogocontainer img.mycompany {
 	object-fit: contain;
@@ -2472,9 +2490,6 @@ body.onlinepaymentbody div.fiche {	/* For online payment page */
 }
 div.fiche>table:first-child {
 	margin-bottom: 15px;
-}
-div.fiche>table.table-fiche-title {
-	margin-bottom: 12px;
 }
 div.fichecenter {
 	width: 100%;
@@ -2678,7 +2693,10 @@ span.widthpictotitle.pictotitle {
 	width: 20px;
 	/* padding-right: 0; */
 }
-
+img.pictofixedwidth {
+	width: 18px;
+	padding-right: 2px;
+}
 
 .colorthumb {
 	padding-left: 1px !important;
@@ -3349,7 +3367,7 @@ div.login a:hover {
 .login_block_elem a span.atoplogin, .login_block_elem span.atoplogin {
 	vertical-align: middle;
 }
-div.login_block_user {
+div.login_block_tools, div.login_block_user {
 	display: inline-block;
 	vertical-align: middle;
 	line-height: <?php echo $disableimages ? '25' : '51'; ?>px;
@@ -3380,7 +3398,7 @@ div.login_block_other {
 .login_block_getinfo {
 	text-align: center;
 }
-.login_block_getinfo div.login_block_user {
+.login_block_getinfo div.login_block_tools, .login_block_getinfo div.login_block_user {
 	display: block;
 }
 .login_block_getinfo .atoplogin, .login_block_getinfo .atoplogin:hover {
@@ -3489,7 +3507,7 @@ div.vmenu, td.vmenu {
 
 .vmenu {
 	width: <?php echo $leftmenuwidth; ?>px;
-	margin-left: 6px;
+	margin-left: 8px;
 	<?php if (GETPOST('optioncss', 'aZ09') == 'print') { ?>
 	display: none;
 	<?php } ?>
@@ -3583,10 +3601,23 @@ div.blockvmenusearchphone
 {
 	margin: 0 0 8px 2px;
 }
-.vmenu div.blockvmenusearch
-{
-	padding-bottom: 13px;
+.vmenu div.blockvmenusearch {
+	margin-top: 5px;
+	margin-bottom: 15px;
 }
+/*
+.vmenu div.blockvmenusearch {
+	border: 1px solid #888;
+	padding-top: 8px;
+	padding-bottom: 8px;
+	padding-left: 0;
+	padding-right: 0;
+	border-radius: 6px;
+	box-sizing: border-box;
+	margin-left: 3px;
+	margin-left: 3px;
+}
+*/
 .vmenu div.blockvmenuend
 {
 	padding-bottom: 5px;
@@ -3852,10 +3883,11 @@ a.tabTitle {
 .imgTabTitle {
 	max-height: 14px;
 }
+/*
 div.tabs div.tabsElem:first-of-type a.tab {
 	margin-left: 0px !important;
 }
-
+*/
 a.tabunactive {
 	color: var(--colortextlink) !important;
 }
@@ -3976,12 +4008,13 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 	padding-left: 7px !important;
 	padding-right: 7px !important;
 }
+input.button.smallpaddingimp, input.buttonreset.smallpaddingimp {
+	font-size: 0.8em;
+	font-weight: normal !important;
+}
 input.button[name="upload"] {
 	padding: 5px !important;
 	font-size: 0.9em;
-}
-input.button.smallpaddingimp, input.buttonreset.smallpaddingimp {
-	font-size: 0.8em;
 }
 input.buttonlink {
 	color: var(--colortextlink);
@@ -4228,15 +4261,16 @@ tr.liste_titre_filter td.liste_titre {
 	padding-top: 1px;
 	padding-bottom: 0px;
 }
-tr.liste_titre_filter td.liste_titre:first-of-type {
-/*	height: 36px; */
-}
 .liste_titre_create td, .liste_titre_create th, .liste_titre_create .tagtd
 {
 	border-bottom-width: 0 !important;
 	border-top-width: 1px;
 	border-top-color: var(--colortopbordertitle1);
 	border-top-style: solid;
+}
+tr.liste_titre_create td {
+	padding-right: 4px !important;
+	padding-left: 4px !important;
 }
 tr#trlinefordates td {
 	border-bottom: 0px !important;
@@ -5105,6 +5139,18 @@ img.boxhandle, img.boxclose {
 	padding: 16px;
 }
 
+.star-selection {
+	font-size: 1rem;
+	cursor: pointer;
+	display: flex;
+}
+.star {
+	color: #ccc;
+	transition: color 0.4s;
+}
+.star:hover, .star.active {
+	color: <?php echo $badgeWarning ?>;
+}
 
 /*
  *   Ok, Warning, Error
@@ -5302,8 +5348,11 @@ div.titre {
 table.table-fiche-title .col-title div.titre, .col-center .btnTitle-icon, .col-right .btnTitle-icon {
 	line-height: 40px;
 }
-table.table-fiche-title {
-	margin-bottom: 16px;
+table.table-fiche-title .col-title div.titre span {
+	line-height: normal;
+}
+table.table-fiche-title, div.fiche>table.table-fiche-title {
+	margin-bottom: 18px;
 }
 .fichehalfleft table.table-fiche-title, .fichehalfright table.table-fiche-title {
 	margin-bottom: 8px;
@@ -5432,7 +5481,12 @@ div#card-errors {
 	border: 1px solid #e0e0e0;
 	border-radius: 6px;
 }
-
+.ui-dialog {
+	padding-left: 5px;
+	padding-right: 5px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
 
 /* ============================================================================== */
 /* For content of image preview                                                   */
@@ -6222,6 +6276,16 @@ div.cke_notifications_area .cke_notification_warning {
 	visibility: hidden;
 }
 
+/* CSS To hide the picto menu on smartphone, except when maximize */
+@media only screen and (max-width: 768px)
+{
+	.cke_inner:not(.cke_maximized) .cke_toolbar_separator,
+	.cke_inner:not(.cke_maximized) .cke_combo,
+	.cke_inner:not(.cke_maximized) .cke_button:not(.cke_button__maximize) {
+		display: none;
+	}
+}
+
 
 /* ============================================================================== */
 /*  ACE editor                                                                    */
@@ -6710,16 +6774,13 @@ div.dataTables_length select {
 	padding-top: 0px !important;
 }
 
+
 /* ============================================================================== */
 /*  Select2                                                                       */
 /* ============================================================================== */
 
 span.select2-selection--single.flat[aria-disabled="true"] span.select2-selection__rendered {
 	opacity: 0.5;
-}
-
-span#select2-taskid-container[title^='--'] {
-	opacity: 0.3;
 }
 
 .select2-container--default .select2-results__option--highlighted[aria-selected] {
@@ -6899,7 +6960,7 @@ input.select2-input {
 .select2-dropdown {
 	/*background-color: var(--colorbackvmenu1);
 	border: 1px solid var(--colorbackvmenu1); */
-	box-shadow: 1px 2px 10px var(--colorbackvmenu1);
+	box-shadow: 1px 2px 10px #8884;
 	background-color: var(--colorbackbody);
 	color: var(--colortext);
 }
@@ -6988,7 +7049,17 @@ a span.select2-chosen
 	max-height: 400px;
 }
 
+/* special case for some select2 component */
+
+.selecttype span.select2-dropdown.ui-dialog {
+	min-width: 200px;
+}
+span#select2-taskid-container[title^='--'] {
+	opacity: 0.3;
+}
+
 /* Special case for the select2 add widget */
+
 #addbox .select2-container .select2-choice > .select2-chosen, #actionbookmark .select2-container .select2-choice > .select2-chosen {
 	text-align: <?php echo $left; ?>;
 	opacity: 0.4;
@@ -7057,9 +7128,14 @@ span#select2-boxbookmark-container {
   cursor: text;
   overflow: hidden;
 }
-
-ul.select2-results__options li {
-	font-size: 0.95em;
+.select2-results__option {
+	padding: 8px;
+}
+span.select2-dropdown--below {
+	margin-top: -1px;
+}
+span.select2-dropdown--above {
+	margin-bottom: -1px;
 }
 
 .parentonrightofpage {
@@ -8395,6 +8471,10 @@ table.jPicker {
 		min-width: 0;
 		width: 100%;
 	}
+	div.login_block_tools, div.login_block_user {
+		line-height: unset;
+		height: unset;
+	}
 	div.login_block a {
 		color: unset;
 	}
@@ -8427,7 +8507,8 @@ table.jPicker {
 	div.login_block_other {
 		margin-right: unset;
 	}
-	div.login_block_user, div.login_block_other { clear: both; }
+	div.login_block_tools, div.login_block_user, div.login_block_other { clear: both; }
+
 	.atoplogin, .atoplogin:hover
 	{
 		color:unset !important;

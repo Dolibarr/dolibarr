@@ -63,7 +63,6 @@ if (!$year_start) {
 }
 
 
-
 /*
  * View
  */
@@ -306,6 +305,7 @@ if ($result < 0) {
 	// CRED PART
 	// Chargement du tableau des années
 	$tblyear = array();
+	'@phan-var-force array<array<string,int|float>> $tblyear';
 	$tblyear[0] = array();
 	$tblyear[1] = array();
 	$tblyear[2] = array();

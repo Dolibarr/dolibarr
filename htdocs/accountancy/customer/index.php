@@ -18,7 +18,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
- *
  */
 
 /**
@@ -40,17 +39,6 @@ $langs->loadLangs(array("compta", "bills", "other", "accountancy"));
 
 $validatemonth = GETPOSTINT('validatemonth');
 $validateyear = GETPOSTINT('validateyear');
-
-// Security check
-if (!isModEnabled('accounting')) {
-	accessforbidden();
-}
-if ($user->socid > 0) {
-	accessforbidden();
-}
-if (!$user->hasRight('accounting', 'bind', 'write')) {
-	accessforbidden();
-}
 
 $accountingAccount = new AccountingAccount($db);
 
@@ -85,7 +73,7 @@ if (!isModEnabled('accounting')) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
+if (!$user->hasRight('accounting', 'bind', 'write')) {
 	accessforbidden();
 }
 
@@ -260,7 +248,7 @@ if ($action == 'validatehistory' && $user->hasRight('accounting', 'bind', 'write
 			}
 
 			if ($suggestedid > 0) {
-				$sqlupdate = "UPDATE ".MAIN_DB_PREFIX."facturedet";
+				$sqlupdate = "UPDATE ".$db->prefix()."facturedet";
 				$sqlupdate .= " SET fk_code_ventilation = ".((int) $suggestedid);
 				$sqlupdate .= " WHERE fk_code_ventilation <= 0 AND product_type <= 2 AND rowid = ".((int) $facture_static_det->id);
 
@@ -321,7 +309,7 @@ if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
 
 $y = $year_current;
 
-$buttonbind = '<a class="button small" href="'.$_SERVER['PHP_SELF'].'?action=validatehistory&token='.newToken().'">'.img_picto($langs->trans("ValidateHistory"), 'link', 'class="pictofixedwidth fa-color-unset"').$langs->trans("ValidateHistory").'</a>';
+$buttonbind = '<a class="button small" href="'.$_SERVER['PHP_SELF'].'?action=validatehistory&token='.newToken().'&year='.$year_current.'">'.img_picto($langs->trans("ValidateHistory"), 'link', 'class="pictofixedwidth fa-color-unset"').$langs->trans("ValidateHistory").'</a>';
 
 print_barre_liste(img_picto('', 'unlink', 'class="paddingright fa-color-unset"').$langs->trans("OverviewOfAmountOfLinesNotBound"), '', '', '', '', '', '', -1, '', '', 0, '', '', 0, 1, 1, 0, $buttonbind);
 //print load_fiche_titre($langs->trans("OverviewOfAmountOfLinesNotBound"), $buttonbind, '');
@@ -363,8 +351,9 @@ for ($i = 1; $i <= 12; $i++) {
 		$j -= 12;
 	}
 	$sql .= "  SUM(".$db->ifsql("MONTH(f.datef) = ".((string) $j), "fd.total_ht", "0").") AS month".str_pad((string) $j, 2, "0", STR_PAD_LEFT).",";
+	$sql .= "  SUM(".$db->ifsql("MONTH(f.datef) = ".((string) $j), "1", "0").") AS nbmonth".str_pad((string) $j, 2, "0", STR_PAD_LEFT).",";
 }
-$sql .= "  SUM(fd.total_ht) as total";
+$sql .= "  SUM(fd.total_ht) as total, COUNT(fd.rowid) as nb";
 $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
 $sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON f.rowid = fd.fk_facture";
 $sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON aa.rowid = fd.fk_code_ventilation";
@@ -421,6 +410,7 @@ if ($resql) {
 			print $row[1];
 		}
 		print '</td>';
+
 		for ($i = 2; $i <= 13; $i++) {
 			$cursormonth = (getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1) + $i - 2);
 			if ($cursormonth > 12) {
@@ -429,17 +419,19 @@ if ($resql) {
 			$cursoryear = ($cursormonth < getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1)) ? $y + 1 : $y;
 			$tmp = dol_getdate(dol_get_last_day($cursoryear, $cursormonth, 'gmt'), false, 'gmt');
 
-			print '<td class="right nowraponall amount">';
-			print price($row[$i]);
+			print '<td class="right nowraponall amount" title="'.price($row[2*$i - 2]).' - '.$row[2*$i - 1].' lines">';
+			print price($row[2*$i - 2]);
 			// Add link to make binding
-			if (!empty(price2num($row[$i]))) {
+			if (!empty(price2num($row[2*$i - 2])) || !empty($row[2*$i - 1])) {
 				print '<a href="'.$_SERVER['PHP_SELF'].'?action=validatehistory&year='.$y.'&validatemonth='.((int) $cursormonth).'&validateyear='.((int) $cursoryear).'&token='.newToken().'">';
 				print img_picto($langs->trans("ValidateHistory").' ('.$langs->trans('Month'.str_pad((string) $cursormonth, 2, '0', STR_PAD_LEFT)).' '.$cursoryear.')', 'link', 'class="marginleft2"');
 				print '</a>';
 			}
 			print '</td>';
 		}
-		print '<td class="right nowraponall amount"><b>'.price($row[14]).'</b></td>';
+
+		print '<td class="right nowraponall amount"><b>'.price($row[26]).'</b></td>';
+
 		print '</tr>';
 	}
 	$db->free($resql);
@@ -585,7 +577,7 @@ if (getDolGlobalString('SHOW_TOTAL_OF_PREVIOUS_LISTS_IN_LIN_PAGE')) { // This pa
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td lass="left">'.$langs->trans("TotalVente").'</td>';
+	print '<tr class="liste_titre"><td class="left">'.$langs->trans("TotalVente").'</td>';
 	for ($i = 1; $i <= 12; $i++) {
 		$j = $i + getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1) - 1;
 		if ($j > 12) {

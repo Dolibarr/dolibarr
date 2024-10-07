@@ -201,7 +201,7 @@ class BlockedLog
 
 		/*
 		// Salary
-		if (!empty($conf->salary->enabled)) {
+		if (isModEnabled('salary')) {
 			$this->trackedevents['PAYMENT_SALARY_CREATE']='BlockedLogSalaryPaymentCreate';
 			$this->trackedevents['PAYMENT_SALARY_MODIFY']='BlockedLogSalaryPaymentCreate';
 			$this->trackedevents['PAYMENT_SALARY_DELETE']='BlockedLogSalaryPaymentCreate';
@@ -1220,7 +1220,7 @@ class BlockedLog
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 
-			$fingerprint = dol_hash(print_r($mysoc, true).getRandomPassword(1), '5');
+			$fingerprint = dol_hash(print_r($mysoc, true).getRandomPassword(true), '5');
 
 			dolibarr_set_const($db, 'BLOCKEDLOG_ENTITY_FINGERPRINT', $fingerprint, 'chaine', 0, 'Numeric Unique Fingerprint', $conf->entity);
 

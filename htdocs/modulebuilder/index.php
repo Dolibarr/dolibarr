@@ -1084,6 +1084,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname && $user->hasRi
 	dol_mkdir($destdir.'/lib');
 	dol_mkdir($destdir.'/scripts');
 	dol_mkdir($destdir.'/sql');
+	dol_mkdir($destdir.'/ajax');
 
 	// Scan dir class to find if an object with the same name already exists.
 	if (!$error) {
@@ -1370,6 +1371,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname && $user->hasRi
 			//'scripts/mymodule.php' => 'scripts/'.strtolower($objectname).'.php',
 			'class/myobject.class.php' => 'class/'.strtolower($objectname).'.class.php',
 			//'class/api_mymodule.class.php' => 'class/api_'.strtolower($module).'.class.php',
+			'ajax/myobject.php' => 'ajax/'.strtolower($objectname).'.php',
 		);
 
 		if (GETPOST('includerefgeneration', 'aZ09')) {
@@ -3283,7 +3285,7 @@ if (is_array($listofmodules) && count($listofmodules) > 0) {
 	// Define $linktoenabledisable to show after module title
 	if (isModEnabled($modulelowercase)) {	// If module is already activated
 		$linktoenabledisable .= '<a class="reposition asetresetmodule valignmiddle" href="'.$_SERVER["PHP_SELF"].'?id='.$moduleobj->numero.'&action=reset&token='.newToken().'&value=mod'.$module.$param.'">';
-		$linktoenabledisable .= img_picto($langs->trans("Activated"), 'switch_on', '', false, 0, 0, '', '', 1);
+		$linktoenabledisable .= img_picto($langs->trans("Activated"), 'switch_on', '', 0, 0, 0, '', '', 1);
 		$linktoenabledisable .= '</a>';
 
 		$linktoenabledisable .= $form->textwithpicto('', $langs->trans("Warning").' : '.$langs->trans("ModuleIsLive"), -1, 'warning');
@@ -3322,7 +3324,7 @@ if (is_array($listofmodules) && count($listofmodules) > 0) {
 	} else {
 		if (is_object($moduleobj)) {
 			$linktoenabledisable .= '<a class="reposition asetresetmodule valignmiddle" href="'.$_SERVER["PHP_SELF"].'?id='.$moduleobj->numero.'&action=set&token='.newToken().'&value=mod'.$module.$param.'">';
-			$linktoenabledisable .= img_picto($langs->trans("ModuleIsNotActive", $urltomodulesetup), 'switch_off', 'style="padding-right: 8px"', false, 0, 0, '', 'classfortooltip', 1);
+			$linktoenabledisable .= img_picto($langs->trans("ModuleIsNotActive", $urltomodulesetup), 'switch_off', 'style="padding-right: 8px"', 0, 0, 0, '', 'classfortooltip', 1);
 			$linktoenabledisable .= "</a>\n";
 		}
 	}
@@ -4083,6 +4085,7 @@ if ($module == 'initmodule') {
 						print '<option>date</option>';
 						print '<option>datetime</option>';
 						print '<option>integer</option>';
+						print '<option>stars(5)</option>';
 						print '<option>double(28,4)</option>';
 						print '<option>real</option>';
 						print '<option>integer:ClassName:RelativePath/To/ClassFile.class.php[:1[:FILTER]]</option>';
@@ -4650,6 +4653,8 @@ if ($module == 'initmodule') {
 											$pictoType = 'datetime';
 										} elseif (strpos($proptype, 'real') === 0) {
 											$pictoType = 'double';
+										} elseif (strpos($proptype, 'stars') === 0) {
+											$pictoType = 'stars';
 										}
 										print(!empty($pictoType) ? getPictoForType($pictoType) : getPictoForType($proptype)).'<span title="'.dol_escape_htmltag($proptype).'">'.dol_escape_htmltag($proptype).'</span>';
 										print '</td>';

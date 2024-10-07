@@ -41,8 +41,9 @@ if (!defined('NOREQUIRETRAN')) {
 require '../../main.inc.php';
 
 //$time = (int) GETPOST('time', 'int'); // Use the time parameter that is always increased by time_update, even if call is late
-$time = dol_now();
 $action = GETPOST('action', 'aZ09');
+
+$time = dol_now();
 $listofreminderids = GETPOST('listofreminderids', 'aZ09');
 
 // Security check

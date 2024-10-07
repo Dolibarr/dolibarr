@@ -4,7 +4,8 @@
  * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +23,7 @@
 
 /**
  *  \file           htdocs/admin/system/dbtable.php
- *  \brief          Page d'info des contraintes d'une table
+ *  \brief          Page with information about a database table
  */
 
 // Load Dolibarr environment
@@ -56,8 +57,17 @@ if ($action == 'convertutf8') {
 				$sql = "ALTER TABLE ".$db->sanitize($table)." MODIFY ".$db->sanitize($row[0])." ".$row[1]." CHARACTER SET utf8";		// We must not sanitize the $row[1]
 				$db->query($sql);
 
-				$sql = "ALTER TABLE ".$db->sanitize($table)." MODIFY ".$db->sanitize($row[0])." ".$row[1]." COLLATE utf8_unicode_ci";	// We must not sanitize the $row[1]
-				$db->query($sql);
+				$collation = 'utf8_unicode_ci';
+				$defaultcollation = $db->getDefaultCollationDatabase();
+				if (preg_match('/general/', $defaultcollation)) {
+					$collation = 'utf8_general_ci';
+				}
+
+				$sql = "ALTER TABLE ".$db->sanitize($table)." MODIFY ".$db->sanitize($row[0])." ".$row[1]." COLLATE ".$db->sanitize($collation);	// We must not sanitize the $row[1]
+				$resql2 = $db->query($sql);
+				if (!$resql2) {
+					setEventMessages($db->lasterror(), null, 'warnings');
+				}
 
 				break;
 			}
@@ -77,8 +87,17 @@ if ($action == 'convertutf8mb4') {
 				$sql = "ALTER TABLE ".$db->sanitize($table)." MODIFY ".$db->sanitize($row[0])." ".$row[1]." CHARACTER SET utf8mb4";		// We must not sanitize the $row[1]
 				$db->query($sql);
 
-				$sql = "ALTER TABLE ".$db->sanitize($table)." MODIFY ".$db->sanitize($row[0])." ".$row[1]." COLLATE utf8mb4_unicode_ci";	// We must not sanitize the $row[1]
-				$db->query($sql);
+				$collation = 'utf8mb4_unicode_ci';
+				$defaultcollation = $db->getDefaultCollationDatabase();
+				if (preg_match('/general/', $defaultcollation)) {
+					$collation = 'utf8mb4_general_ci';
+				}
+
+				$sql = "ALTER TABLE ".$db->sanitize($table)." MODIFY ".$db->sanitize($row[0])." ".$row[1]." COLLATE ".$db->sanitize($collation);	// We must not sanitize the $row[1]
+				$resql2 = $db->query($sql);
+				if (!$resql2) {
+					setEventMessages($db->lasterror(), null, 'warnings');
+				}
 
 				break;
 			}
@@ -137,6 +156,7 @@ if (!$base || $sql === null) {
 			}
 		}
 
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Fields").'</td>';
@@ -215,13 +235,14 @@ if (!$base || $sql === null) {
 				print "<td>".(isset($link[$row[0]][0]) ? $link[$row[0]][0] : '').".";
 				print(isset($link[$row[0]][1]) ? $link[$row[0]][1] : '')."</td>";
 
-				print '<!-- ALTER TABLE '.$table.' MODIFY '.$row[0].' '.$row[1].' COLLATE utf8_unicode_ci; -->';
-				print '<!-- ALTER TABLE '.$table.' MODIFY '.$row[0].' '.$row[1].' CHARACTER SET utf8; -->';
+				print '<!-- ALTER TABLE '.$table.' MODIFY '.$row[0].' '.$row[1].' COLLATE utf8mb4_unicode_ci; -->';
+				print '<!-- ALTER TABLE '.$table.' MODIFY '.$row[0].' '.$row[1].' CHARACTER SET utf8mb4; -->';
 				print '</tr>';
 				$i++;
 			}
 		}
 		print '</table>';
+		print '</div>';
 	}
 }
 

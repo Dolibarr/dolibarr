@@ -109,12 +109,13 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $dirs = array();
 
 	/**
-	 * @var array Module boxes
+	 * @var array<array{file?:string,note?:string,enabledbydefaulton:string,1?:string}> Module boxes
 	 */
 	public $boxes = array();
 
 	/**
-	 * @var array Module constants
+	 * @var	array<array{0:string,1:string,2:string|int,3:string,4?:int<0,1>,5?:string,6?:int<0,1>}> Module constants
+	 *		(0:name,1:type,2:val,3:note,4:visible,5:entity,6:deleteonunactive)
 	 */
 	public $const = array();
 
@@ -812,7 +813,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		if ($pathoffile) {     // Mostly for external modules
 			$content = file_get_contents($pathoffile, false, null, 0, 1024 * 1024);	// Max size loaded 1Mb
 
-			if ((float) DOL_VERSION >= 6.0) {
+			if ((float) DOL_VERSION >= 6.0) {  // @phpstan-ignore-line
 				@include_once DOL_DOCUMENT_ROOT.'/core/lib/parsemd.lib.php';
 
 				$content = dolMd2Html(
@@ -844,7 +845,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			}
 		}
 
-		return $content;
+		return '<div class="moduledesclong">'.$content.'</div>';
 	}
 
 	/**
@@ -913,7 +914,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		if ($filefound) {     // Mostly for external modules
 			$content = file_get_contents($pathoffile);
 
-			if ((float) DOL_VERSION >= 6.0) {
+			if ((float) DOL_VERSION >= 6.0) {  // @phpstan-ignore-line
 				@include_once DOL_DOCUMENT_ROOT.'/core/lib/parsemd.lib.php';
 
 				$content = dolMd2Html($content, 'parsedown', array('doc/' => dol_buildpath(strtolower($this->name).'/doc/', 1)));
@@ -1290,7 +1291,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 								}
 							}
 							if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 4) == 'llx_') {
-								$result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, '', 1);
+								$result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, 0, 1);
 								if ($result <= 0) {
 									$error++;
 								}
@@ -1315,7 +1316,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 								}
 							}
 							if (preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 4) == 'llx_') {
-								$result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, '', 1);
+								$result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, 0, 1);
 								if ($result <= 0) {
 									$error++;
 								}
@@ -1340,7 +1341,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 								}
 							}
 							if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 9) == 'functions') {
-								$result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, '', 1);
+								$result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, 0, 1);
 								if ($result <= 0) {
 									$error++;
 								}
@@ -1365,7 +1366,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 								}
 							}
 							if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 4) == 'data') {
-								$result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, '', 1);
+								$result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, 0, 1);
 								if ($result <= 0) {
 									$error++;
 								}
@@ -1390,7 +1391,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 								}
 							}
 							if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 6) == 'update') {
-								$result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, '', 1);
+								$result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, 0, 1);
 								if ($result <= 0) {
 									$error++;
 								}

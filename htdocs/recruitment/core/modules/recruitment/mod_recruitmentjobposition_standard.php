@@ -38,6 +38,9 @@ class mod_recruitmentjobposition_standard extends ModeleNumRefRecruitmentJobPosi
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
+	/**
+	 * @var string
+	 */
 	public $prefix = 'JOB';
 
 	/**
