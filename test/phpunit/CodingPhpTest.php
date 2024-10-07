@@ -137,6 +137,17 @@ class CodingPhpTest extends CommonClassTest
 
 		$this->verifyIsModuleEnabledOk($filecontent, $report_filepath);
 
+		// Check we do not use the syntax conf->global->enabled->...
+		$ok = true;
+		$matches = array();
+		preg_match_all('/->global->(.*)->enabled/', $filecontent, $matches, PREG_SET_ORDER);
+		foreach ($matches as $key => $val) {
+			$ok = false;
+			break;
+		}
+		//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
+		$this->assertTrue($ok, 'Found a ->global->...->enabled instead of isModEnabled("...") in file '.$file['relativename']);
+
 		if (preg_match('/\.class\.php/', $file['relativename'])
 			|| preg_match('/boxes\/box_/', $file['relativename'])
 			|| preg_match('/modules\/.*\/doc\/(doc|pdf)_/', $file['relativename'])
