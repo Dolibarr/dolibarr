@@ -372,7 +372,7 @@ if ($object->id > 0) {
 		}
 		print '</td></tr>';
 
-		if (!empty($conf->accounting->enabled)) {
+		if (isModEnabled('accounting')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 			print '<tr>';
 			print '<td>';
