@@ -952,8 +952,7 @@ class EcmFiles extends CommonObject
 		$result = '';
 
 		$label = '<u>'.$langs->trans("ShowFile").'</u>';
-		$label .= '<br>';
-		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		if (!empty($this->gen_or_uploaded)) {
 			$label .= '<br><b>'.$langs->trans('GenOrUpload').':</b> '.$this->gen_or_uploaded;
 		}
