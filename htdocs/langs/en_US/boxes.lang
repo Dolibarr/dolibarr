@@ -119,6 +119,7 @@ NoRecordedShipments=No recorded customer shipment
 BoxCustomersOutstandingBillReached=Customers with outstanding limit reached
 BoxTitleLastFediverseInfos=Last %s posts from %s
 BoxLastFediverseInfos=Latest Fediverse Updates: News and Trends
+BoxHasNoData=No records found
 # Pages
 UsersHome=Home users and groups
 MembersHome=Home Membership
