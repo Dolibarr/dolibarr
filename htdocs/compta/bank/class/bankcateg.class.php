@@ -109,7 +109,7 @@ class BankCateg // extends CommonObject
 		$sql .= ") VALUES (";
 		$sql .= " ".(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'");
 		$sql .= ", ".((int) $conf->entity);
-		$sql .= ", ".$catTypeID;
+		$sql .= ", ".((int) $catTypeID);
 		$sql .= ")";
 
 		$this->db->begin();
@@ -159,7 +159,7 @@ class BankCateg // extends CommonObject
 		$sql .= " t.label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie as t";
 		$sql .= " WHERE t.rowid = ".((int) $id);
-		$sql .= " AND t.entity = ".$conf->entity." AND t.type = " . $catTypeID;
+		$sql .= " AND t.entity = ".$conf->entity." AND t.type = " . ((int) $catTypeID);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -349,7 +349,7 @@ class BankCateg // extends CommonObject
 
 		$return = array();
 
-		$sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."categorie WHERE entity = ".$conf->entity." AND type = ".$catTypeID." ORDER BY label";
+		$sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."categorie WHERE entity = ".$conf->entity." AND type = ".((int) $catTypeID)." ORDER BY label";
 		$resql = $this->db->query($sql);
 
 		if ($resql) {
