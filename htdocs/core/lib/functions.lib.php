@@ -13053,6 +13053,13 @@ function getElementProperties($elementType)
 		$classname = 'Ccountry';
 		$table_element = 'c_country';
 		$subelement = '';
+	} elseif ($elementType == 'ecmfiles') {
+		$module = 'ecm';
+		$classpath = 'ecm/class';
+		$classfile = 'ecmfiles';
+		$classname = 'Ecmfiles';
+		$table_element = 'ecmfiles';
+		$subelement = '';
 	} elseif ($elementType == 'knowledgerecord') {
 		$module = '';
 		$classpath = 'knowledgemanagement/class';

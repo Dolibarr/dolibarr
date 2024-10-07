@@ -917,7 +917,7 @@ class FormFile
 					// $out .= img_mime($file["name"], $langs->trans("File").': '.$file["name"]);
 					// $out .= dol_trunc($file["name"], 150);
 					// $out .= '</a>';
-					$out .= $ecmfile->getNomUrl(1, $modulepart);
+					$out .= $ecmfile->getNomUrl(1, $modulepart, 0, 0, ' documentdownload');
 					$out .= '</span>'."\n";
 					$out .= $imgpreview;
 					$out .= '</td>';

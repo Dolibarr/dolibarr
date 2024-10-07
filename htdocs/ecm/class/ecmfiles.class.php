@@ -951,10 +951,20 @@ class EcmFiles extends CommonObject
 
 		$result = '';
 
-		$label = '<u>'.$langs->trans("ShowFile").'</u>';
-		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
-		if (!empty($this->gen_or_uploaded)) {
-			$label .= '<br><b>'.$langs->trans('GenOrUpload').':</b> '.$this->gen_or_uploaded;
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+			'option' => $option,
+			'nofetch' => 1,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
 		}
 
 		if ($option) {
@@ -969,13 +979,13 @@ class EcmFiles extends CommonObject
 				$label = $langs->trans("ShowFile");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
+			$linkclose .= $dataparams.' class="'.$classfortooltip.' '.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
 
-		$linkstart = '<a class="documentdownload paddingright" href="'.$url.'"';
+		$linkstart = '<a href="'.$url.'"';
 		if (getDolGlobalInt('MAIN_DISABLE_FORCE_SAVEAS') == 2) {
 			$linkstart .= 'target="_blank" ';
 		}
@@ -984,9 +994,9 @@ class EcmFiles extends CommonObject
 
 		if ($withpicto) {
 			if (empty($this->filename)) {
-				$result .= ($linkstart.img_object(($notooltip ? '' : $label), 'label', ($notooltip ? '' : 'class="classfortooltip"')).$linkend);
+				$result .= ($linkstart.img_object(($notooltip ? '' : $label), 'label', ($notooltip ? '' : 'class="paddingright"')).$linkend);
 			} else {
-				$result .= ($linkstart.img_mime($this->filename, ($notooltip ? '' : $label), ($notooltip ? '' : 'class="classfortooltip"')).$linkend);
+				$result .= ($linkstart.img_mime($this->filename, ($notooltip ? '' : $label), ($notooltip ? '' : 'class="paddingright"')).$linkend);
 			}
 			if ($withpicto != 2) {
 				$result .= ' ';
