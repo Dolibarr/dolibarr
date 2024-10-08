@@ -3514,7 +3514,7 @@ class Form
 
 		if (isModEnabled('stock') && isset($objp->stock) && ($objp->fk_product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES'))) {
 			if ($user->hasRight('stock', 'lire')) {
-				$opt .= ' - ' . $langs->trans("Stock") . ': ' . price(price2num($objp->stock, 'MS'));
+				$opt .= ' - ' . $langs->trans("Stock") . ': ' . price(price2num($objp->stock, 'MS'), 0, $langs, 0, 0);
 
 				if ($objp->stock > 0) {
 					$outval .= ' - <span class="product_line_stock_ok">';
