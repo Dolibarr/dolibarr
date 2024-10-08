@@ -52,6 +52,20 @@ class ExpeditionLineBatch extends CommonObject
 	public $fk_warehouse;			// warehouse ID
 	public $fk_expeditiondet;
 
+	/**
+	 * Denormalize attribute for serial/batch control
+	 *
+	 * @var int
+	 */
+	public $status_batch = 0;
+
+	/**
+	 * Denormalize attribute for serial/batch control
+	 *
+	 * @var int
+	 */
+	public $fk_product = 0;
+
 
 	/**
 	 *  Constructor
@@ -75,9 +89,12 @@ class ExpeditionLineBatch extends CommonObject
 		$sql .= " pb.batch,";
 		$sql .= " pl.sellby,";
 		$sql .= " pl.eatby,";
-		$sql .= " ps.fk_entrepot";
+		$sql .= " ps.fk_entrepot,";
+		$sql .= " p.tobatch,";
+		$sql .= " p.rowid as fk_product";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_batch as pb";
-		$sql .= " JOIN ".MAIN_DB_PREFIX."product_stock as ps on pb.fk_product_stock=ps.rowid";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."product_stock as ps on pb.fk_product_stock=ps.rowid";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."product as p on p.rowid=ps.fk_product";
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."product_lot as pl on pl.batch = pb.batch AND pl.fk_product = ps.fk_product";
 		$sql .= " WHERE pb.rowid = ".(int) $id_stockdluo;
 
@@ -93,6 +110,9 @@ class ExpeditionLineBatch extends CommonObject
 				$this->batch = $obj->batch;
 				$this->entrepot_id = $obj->fk_entrepot;
 				$this->fk_origin_stock = (int) $id_stockdluo;
+
+				$this->status_batch = (int) $obj->tobatch;
+				$this->fk_product = (int) $obj->fk_product;
 			}
 			$this->db->free($resql);
 
