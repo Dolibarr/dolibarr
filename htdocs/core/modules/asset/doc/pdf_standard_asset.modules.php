@@ -538,8 +538,8 @@ class pdf_standard_asset extends ModelePDFAsset
 						$tvaligne = $sign * $object->lines[$i]->total_tva;
 					}
 
-					$localtax1ligne = $object->lines[$i]->total_localtax1;
-					$localtax2ligne = $object->lines[$i]->total_localtax2;
+					// $localtax1ligne = $object->lines[$i]->total_localtax1;
+					// $localtax2ligne = $object->lines[$i]->total_localtax2;
 					// $localtax1_rate = $object->lines[$i]->localtax1_tx;
 					// $localtax2_rate = $object->lines[$i]->localtax2_tx;
 					// $localtax1_type = $object->lines[$i]->localtax1_type;
