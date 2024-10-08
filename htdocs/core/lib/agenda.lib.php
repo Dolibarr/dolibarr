@@ -512,7 +512,7 @@ function actions_prepare_head($object)
  *  Define head array for tabs of agenda setup pages
  *
  *  @param	string	$param		Parameters to add to url
- *  @return array			    Array of head
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function calendars_prepare_head($param)
 {
