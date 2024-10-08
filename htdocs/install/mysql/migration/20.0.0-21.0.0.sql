@@ -150,7 +150,6 @@ ALTER TABLE llx_societe_perentity MODIFY COLUMN accountancy_code_customer varcha
 ALTER TABLE llx_societe_perentity MODIFY COLUMN accountancy_code_supplier varchar(32);
 
 
-
 -- Copy categories from llx_category_bank into llx_categorie
 
 INSERT INTO llx_categorie (entity, fk_parent, label, type, description, color, position, visible, date_creation)

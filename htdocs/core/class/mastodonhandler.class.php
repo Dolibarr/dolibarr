@@ -65,7 +65,7 @@ class MastodonHandler
 	/**
 	 * Constructor to set the necessary credentials.
 	 *
-	 * @param array   $authParams  parameters for authentication
+	 * @param array{client_id?:string,client_secret?:string,redirect_uri?:string,access_token?:string}	$authParams  parameters for authentication
 	 */
 	public function __construct($authParams)
 	{
@@ -84,8 +84,8 @@ class MastodonHandler
 	 * @param int 		$maxNb 			Maximum number of posts to retrieve
 	 * @param int 		$cacheDelay 	Cache delay in seconds
 	 * @param string 	$cacheDir 		Directory for caching
-	 * @param array 	$authParams 	Authentication parameters
-	 * @return array|false 				Array of posts if successful, False otherwise
+	 * @param array{client_id?:string,client_secret?:string,redirect_uri?:string,access_token?:string}	$authParams		Authentication parameters
+	 * @return false|array{id:string,content:string,created_at:string,url:string,media_url:string}|array{}		Array of posts if successful, False otherwise
 	 */
 	public function fetch($urlAPI, $maxNb = 5, $cacheDelay = 60, $cacheDir = '', $authParams = [])
 	{
@@ -94,6 +94,7 @@ class MastodonHandler
 		}
 		$cacheFile = $cacheDir.'/'.dol_hash($urlAPI, '3');
 		$foundInCache = false;
+		/** @var ?string $data */
 		$data = null;
 
 		// Check cache
@@ -101,11 +102,10 @@ class MastodonHandler
 			$fileDate = dol_filemtime($cacheFile);
 			if ($fileDate >= (dol_now() - $cacheDelay)) {
 				$foundInCache = true;
-				// Read file into cache
-				$data = file_get_contents($cacheFile);
+				// Read file into cache  (false should not happen)
+				$data = (string) file_get_contents($cacheFile);
 			}
 		}
-		$foundInCache = false;	// To force to not use the cache
 
 		if (!$foundInCache) {
 			$headers = [
@@ -116,7 +116,7 @@ class MastodonHandler
 			$result = getURLContent($urlAPI, 'GET', '', 1, $headers, array('http', 'https'), 0);
 
 			if (empty($result['curl_error_no']) && $result['http_code'] == 200 && !empty($result['content'])) {
-				$data = $result['content'];
+				$data = (string) $result['content'];
 
 				if ($cacheDir) {
 					dol_mkdir($cacheDir);

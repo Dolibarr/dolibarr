@@ -226,6 +226,7 @@ if (empty($reshook)) {
 
 		$TFact = array();
 		$TFactThird = array();
+		'@phan-var FactureFournisseur[] $TFactThird';
 		$TFactThirdNbLines = array();
 
 		$nb_bills_created = 0;
@@ -304,7 +305,8 @@ if (empty($reshook)) {
 						}
 					}
 
-					// try get from third-party of reception
+					$soc = null;
+					// try get from third party of reception
 					if (!empty($rcp->thirdparty)) {
 						$soc = $rcp->thirdparty;
 						if (empty($cond_reglement_id) && !empty($soc->cond_reglement_supplier_id)) {
@@ -331,7 +333,9 @@ if (empty($reshook)) {
 				$objecttmp->transport_mode_id = $transport_mode_id;
 
 				// if the VAT reverse-charge is activated by default in supplier card to resume the information
-				$objecttmp->vat_reverse_charge = $soc->vat_reverse_charge;
+				if (is_object($soc)) {
+					$objecttmp->vat_reverse_charge = $soc->vat_reverse_charge;
+				}
 
 				$objecttmp->fk_project			= $rcp->fk_project;
 				//$objecttmp->multicurrency_code = $rcp->multicurrency_code;
