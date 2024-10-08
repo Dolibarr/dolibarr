@@ -511,7 +511,7 @@ if (GETPOST('theme', 'aZ09')) {
 }
 
 // Set global MAIN_OPTIMIZEFORTEXTBROWSER (must be before login part)
-if (GETPOSTINT('textbrowser') || (!empty($conf->browser->name) && $conf->browser->name == 'lynxlinks')) {   // If we must enable text browser
+if (GETPOSTINT('textbrowser') || (!empty($conf->browser->name) && $conf->browser->name == 'textbrowser')) {   // If we must enable text browser
 	$conf->global->MAIN_OPTIMIZEFORTEXTBROWSER = 2;
 }
 
@@ -2514,6 +2514,11 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	global $dolibarr_main_authentication, $dolibarr_main_demo;
 	global $menumanager;
 
+	// Return empty in some case
+	if ($conf->browser->name == 'textbrowser') {
+		return '';
+	}
+
 	$langs->load('companies');
 
 	$userImage = $userDropDownImage = '';
@@ -3051,9 +3056,9 @@ function top_menu_bookmark()
 
 	$html = '';
 
-	// Define $bookmarks
-	if (!isModEnabled('bookmark') || !$user->hasRight('bookmark', 'lire')) {
-		return $html;
+	// Return empty in some case
+	if (!isModEnabled('bookmark') || !$user->hasRight('bookmark', 'lire') || $conf->browser->name == 'textbrowser') {
+		return '';
 	}
 
 	// accesskey is for Windows or Linux:  ALT + key for chrome, ALT + SHIFT + KEY for firefox
