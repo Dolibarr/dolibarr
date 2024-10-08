@@ -35,6 +35,7 @@ StockMovementForId=Movement ID %d
 ListMouvementStockProject=List of stock movements associated to project
 StocksArea=Warehouses area
 AllWarehouses=All warehouses
+SelectedWarehouse=Selected warehouse
 IncludeEmptyDesiredStock=Include also negative stock with undefined desired stock
 IncludeAlsoDraftOrders=Include also draft orders
 Location=Location
