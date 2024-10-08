@@ -3057,9 +3057,14 @@ function top_menu_bookmark()
 	$html = '';
 
 	// Return empty in some case
-	if (!isModEnabled('bookmark') || !$user->hasRight('bookmark', 'lire') || $conf->browser->name == 'textbrowser') {
+	if (!isModEnabled('bookmark') || !$user->hasRight('bookmark', 'lire')) {
 		return '';
 	}
+	/*
+	if ($conf->browser->name == 'textbrowser') {
+		return $html;
+	}
+	*/
 
 	// accesskey is for Windows or Linux:  ALT + key for chrome, ALT + SHIFT + KEY for firefox
 	// accesskey is for Mac:               CTRL + key for all browsers
