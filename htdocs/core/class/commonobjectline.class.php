@@ -269,4 +269,23 @@ abstract class CommonObjectLine extends CommonObject
 	{
 		return 0;
 	}
+
+	/**
+	 * Return clicable link of object line (with eventually picto)
+	 * May (should) also return information about the associated "parent" object
+	 *
+	 * To overlolad
+	 *
+	 * @param      int			$withpicto                Add picto into link
+	 * @return     string          			          String with URL
+	 */
+	public function getNomUrl($withpicto = 0)
+	{
+		$parent_element_properties = getElementProperties($this->parent_element);
+		$parent_classname = $parent_element_properties['classname'];
+		$parent_element = new $parent_classname($this->db);
+		$parent_element->fetch($this->{$this->fk_parent_attribute});
+
+		return $parent_element->getNomUrl($withpicto).' - Line #'.$this->id;
+	}
 }
