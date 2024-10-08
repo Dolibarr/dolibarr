@@ -290,7 +290,7 @@ if ($action == "importSignature") {
 						} else {
 							$soc = new Societe($db);
 							$soc->id = $object->socid;
-							$result = $soc->set_as_client();
+							$result = $soc->setAsCustomer();
 							if ($result < 0) {
 								$error++;
 								$response = $db->lasterror();
