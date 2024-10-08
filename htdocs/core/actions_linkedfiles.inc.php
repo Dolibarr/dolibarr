@@ -116,7 +116,6 @@ if (GETPOST('sendit', 'alpha') && getDolGlobalString('MAIN_UPLOAD_DOC') && !empt
 	}
 }
 
-
 // Delete file/link
 if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissiontoadd)) {
 	$urlfile = GETPOST('urlfile', 'alpha', 0, null, null, 1);
@@ -253,13 +252,14 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 			if ($filenamefrom && $filenameto) {
 				$srcpath = $upload_dir.'/'.$filenamefrom;
 				$destpath = $upload_dir.'/'.$filenameto;
+				/* disabled. Too many bugs. All files of an object must remain into directory of object. link with event should be done in llx_ecm_files with column agenda_id.
 				if ($modulepart == "ticket" && !dol_is_file($srcpath)) {
 					$srcbis = $conf->agenda->dir_output.'/'.GETPOST('section_dir').$filenamefrom;
 					if (dol_is_file($srcbis)) {
 						$srcpath = $srcbis;
 						$destpath = $conf->agenda->dir_output.'/'.GETPOST('section_dir').$filenameto;
 					}
-				}
+				}*/
 
 				$reshook = $hookmanager->initHooks(array('actionlinkedfiles'));
 				$parameters = array('filenamefrom' => $filenamefrom, 'filenameto' => $filenameto, 'upload_dir' => $upload_dir);

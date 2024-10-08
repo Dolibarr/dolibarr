@@ -2,6 +2,56 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 20.0.1 compared to 20.0.0 *****
+
+FIX: #30960 show and search extrafields (#31026)
+FIX: #31076 Bad position of hooks
+FIX: #31152
+FIX: #31237 (#31239)
+FIX: #31241 (#31245)
+FIX: accounting transfer when nb of lines is not zero but amount is zero
+FIX: Add same security test when nuploading files from API than from GUI (#31114)
+FIX: allow "class" into search string in website module
+FIX: autoselect the fiscal period by default
+FIX: avoid odt errors (#31126)
+FIX: Backport fix fatal error on price with some truncating setup
+FIX: better compatibility with some old extrafield syntax filter
+FIX: box_actions.php still uses fk_user_done which no longer exists (#31190)
+FIX: Browser Notification ko with firefox
+FIX: custom CSS for WebPortal (#31022)
+FIX: Debug calculation of the delay of purchase order
+FIX: Debug option WORKFLOW_TICKET_LINK_CONTRACT. Bad id stored. Bad
+FIX: dolFICalculatePaymentReference for Finland in functions_fi.lib.php (#31281)
+FIX: Duplicate trigger printFieldPreListTitle
+FIX: edit contract of intervention broken by CSRF protection
+FIX: error return missing in mo creation when qty to consume is <= 0 (#31134)
+FIX: Extrafields does not appear on form
+FIX: FATAL ERROR abusively triggered due to incomplete regex (#31052)
+FIX: if you call fetchLines several times, your $object->lines contains duplicates (#31167)
+FIX: late order search option (v18+) (#30692)
+FIX: late propal search option (v18+) (#30687)
+FIX: Maxi debug edit/delete accounting transaction
+FIX: member must be found to search the linked partnership (WebPortal) (#30977)
+FIX: Missing picto on user link
+FIX: mysql error during dump for enable sandbox M999999 (#31116)
+FIX: OAuth generation of token for Microsoft, Stripe and Generic
+FIX: param id in website account list from third-party card (#30975)
+FIX: Position of box for shipping address in PDF
+FIX: Protection to avoid an extrafield to be mandatory if computed
+FIX: removed unreachable code (#31141)
+FIX: Remove wrong button
+FIX: retrieving user specific constant
+FIX: Revert storing of ticket files into event dir, too many troubles.
+FIX: Selection of country - state in resource
+FIX: State dropdown is not working on User card #31198 (#31205)
+FIX: Tool to convert into utf8 or utf8mb4
+FIX: use price() to display qty on a product's stats tab to avoid showing too many decimals when rounding errors are possible (#31165)
+FIX: Warning visible when it should not
+FIX: webhook must send POST in body. Add WEBHOOK_POST_SEND_DATA_IN_BODY
+FIX: when qty is not an integer, apply price() (#31138)
+FIX: Wrong price for BOM with workstation (#31142)
+FIX: determine multi-currency price on object line create tpl (#28021)
+
 
 ***** ChangeLog for 20.0.0 compared to 19.0 *****
 

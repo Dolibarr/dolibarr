@@ -174,9 +174,11 @@ class FormResource
 	 *  @param  int		$empty			1=peut etre vide, 0 sinon
 	 *  @param	int		$noadmininfo	0=Add admin info, 1=Disable admin info
 	 *  @param  int		$maxlength      Max length of label
+	 *  @param	int		$usejscombo		1=Use jscombo, 0=No js combo
+	 *  @param	string	$morecss		Add more css
 	 * 	@return	void
 	 */
-	public function select_types_resource($selected = '', $htmlname = 'type_resource', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0)
+	public function select_types_resource($selected = '', $htmlname = 'type_resource', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0, $usejscombo = 0, $morecss = 'minwidth100')
 	{
 		// phpcs:enable
 		global $langs, $user;
@@ -192,7 +194,7 @@ class FormResource
 		}
 
 		$resourcestat->loadCacheCodeTypeResource();
-		print '<select id="select'.$htmlname.'" class="flat maxwidthonsmartphone select_'.$htmlname.'" name="'.$htmlname.'">';
+		print '<select id="select'.$htmlname.'" class="flat maxwidthonsmartphone select_'.$htmlname.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'">';
 		if ($empty) {
 			print '<option value="">&nbsp;</option>';
 		}
@@ -236,6 +238,10 @@ class FormResource
 			}
 		}
 		print '</select>';
+		if ($usejscombo) {
+			print ajax_combobox("select".$htmlname);
+		}
+
 		if ($user->admin && !$noadmininfo) {
 			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}

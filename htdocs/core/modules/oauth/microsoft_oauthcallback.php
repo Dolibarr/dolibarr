@@ -42,7 +42,6 @@ if (empty($keyforprovider) && !empty($_SESSION["oauthkeyforproviderbeforeoauthju
 }
 $genericstring = 'MICROSOFT';
 
-
 /**
  * Create a new instance of the URI class with the current URI, stripping the query string
  */
@@ -64,13 +63,14 @@ $httpClient = new \OAuth\Common\Http\Client\CurlClient();
 //$httpClient->setCurlParameters($params);
 $serviceFactory->setHttpClient($httpClient);
 
-// Dolibarr storage
-$storage = new DoliStorage($db, $conf, $keyforprovider);
-
 // Setup the credentials for the requests
 $keyforparamid = 'OAUTH_'.$genericstring.($keyforprovider ? '-'.$keyforprovider : '').'_ID';
 $keyforparamsecret = 'OAUTH_'.$genericstring.($keyforprovider ? '-'.$keyforprovider : '').'_SECRET';
 $keyforparamtenant = 'OAUTH_'.$genericstring.($keyforprovider ? '-'.$keyforprovider : '').'_TENANT';
+
+// Dolibarr storage
+$storage = new DoliStorage($db, $conf, $keyforprovider, getDolGlobalString($keyforparamtenant));
+
 $credentials = new Credentials(
 	getDolGlobalString($keyforparamid),
 	getDolGlobalString($keyforparamsecret),
@@ -94,7 +94,8 @@ if ($action != 'delete' && empty($requestedpermissionsarray)) {
 // $requestedpermissionsarray contains list of scopes.
 // Conversion into URL is done by Reflection on constant with name SCOPE_scope_in_uppercase
 try {
-	$apiService = $serviceFactory->createService(ucfirst(strtolower($genericstring)), $credentials, $storage, $requestedpermissionsarray);
+	$nameofservice = ucfirst(strtolower($genericstring));
+	$apiService = $serviceFactory->createService($nameofservice, $credentials, $storage, $requestedpermissionsarray);
 } catch (Exception $e) {
 	print $e->getMessage();
 	exit;
@@ -122,6 +123,9 @@ if (!getDolGlobalString($keyforparamid)) {
 if (!getDolGlobalString($keyforparamsecret)) {
 	accessforbidden('Setup of service is not complete. Secret key is missing');
 }
+if (!getDolGlobalString($keyforparamtenant)) {
+	accessforbidden('Setup of service is not complete. Tenant/Annuary ID key is missing');
+}
 
 
 /*
@@ -148,7 +152,7 @@ if (GETPOST('code') || GETPOST('error')) {     // We are coming from oauth provi
 	// We should have
 	//$_GET=array('code' => string 'aaaaaaaaaaaaaa' (length=20), 'state' => string 'user,public_repo' (length=16))
 
-	dol_syslog("We are coming from the oauth provider page code=".dol_trunc(GETPOST('code'), 5)." error=".GETPOST('error'));
+	dol_syslog(basename(__FILE__)." We are coming from the oauth provider page code=".dol_trunc(GETPOST('code'), 5)." error=".GETPOST('error'));
 
 	// This was a callback request from service, get the token
 	try {
@@ -165,7 +169,7 @@ if (GETPOST('code') || GETPOST('error')) {     // We are coming from oauth provi
 			// Microsoft is a service that does not need state to be stored as second parameter of requestAccessToken
 
 			//print $token->getAccessToken().'<br><br>';
-			//print $token->getExtraParams()['id_token'].'<br>';
+			//print $token->getExtraParams()['id_token'].'<br><br>';
 			//print $token->getRefreshToken().'<br>';exit;
 
 			setEventMessages($langs->trans('NewTokenStored'), null, 'mesgs'); // Stored into object managed by class DoliStorage so into table oauth_token
