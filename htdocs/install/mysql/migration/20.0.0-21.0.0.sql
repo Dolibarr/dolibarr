@@ -210,3 +210,23 @@ INNER JOIN llx_categorie AS c
   AND c.type = 8
 SET bl.fk_categ = c.rowid
 WHERE c.rowid IS NOT NULL;
+
+-- Accounting - Add personalized multi-report
+create table llx_c_accounting_report
+(
+  rowid 				integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  entity 				integer NOT NULL DEFAULT 1,
+  code 					varchar(16) NOT NULL,
+  label 				varchar(255) NOT NULL,
+  fk_country 			integer DEFAULT NULL,
+  active 				integer DEFAULT 1
+) ENGINE=innodb;
+
+ALTER TABLE llx_c_accounting_report ADD UNIQUE INDEX uk_c_accounting_report (code,entity);
+
+INSERT INTO llx_c_accounting_report (code, label, active) VALUES ('REP', 'Report personalized', 1);
+
+ALTER TABLE llx_c_accounting_category ADD COLUMN fk_report integer NOT NULL DEFAULT 1 AFTER entity;
+
+ALTER TABLE llx_c_accounting_category DROP INDEX uk_c_accounting_category;
+ALTER TABLE llx_c_accounting_category ADD UNIQUE INDEX uk_c_accounting_category (code,entity,fk_report);

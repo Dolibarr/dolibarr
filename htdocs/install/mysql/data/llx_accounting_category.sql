@@ -1,5 +1,5 @@
--- Copyright (C) 2016 		Alexandre Spangaro   <aspangaro@open-dsi.fr>
--- Copyright (C) 2017 		Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2016-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+-- Copyright (C) 2017		Laurent Destailleur			<eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -16,9 +16,11 @@
 --
 --
 
+-- Insert first personalized report. This is a minimal default setup.
+INSERT INTO llx_c_accounting_report (code, label, fk_country, active) VALUES ('REP', 'Report personalized', 0, 1);
 
 -- Group of accounting accounts for report. This is a minimal default setup.
-INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  1, 'INCOMES',   'Income of products/services',               'Example: 7xxxxx', 0, 0, '',                 '10', 0, 1);
-INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  2, 'EXPENSES',  'Expenses of products/services',             'Example: 6xxxxx', 0, 0, '',                 '20', 0, 1);
-INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  3, 'PROFIT',    'Balance',                                   '',                0, 1, 'INCOMES+EXPENSES', '30', 0, 1);
+INSERT INTO llx_c_accounting_category (rowid, fk_report, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  1, 1, 'INCOMES',   'Income of products/services',               'Example: 7xxxxx', 0, 0, '',                 '10', 0, 1);
+INSERT INTO llx_c_accounting_category (rowid, fk_report, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  2, 1, 'EXPENSES',  'Expenses of products/services',             'Example: 6xxxxx', 0, 0, '',                 '20', 0, 1);
+INSERT INTO llx_c_accounting_category (rowid, fk_report, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  3, 1, 'PROFIT',    'Balance',                                   '',                0, 1, 'INCOMES+EXPENSES', '30', 0, 1);
 
