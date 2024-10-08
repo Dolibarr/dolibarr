@@ -518,9 +518,9 @@ if (empty($reshook)) {
 							}
 							if (!empty($lineid->rowid)) {
 								if (!empty($price_extralabels) && is_array($price_extralabels)) {
-									foreach ($price_extralabels as $label) {
-										$label_array = GETPOST($label, 'array');
-										$object->array_options['options_'.$label] = $label_array[$key];
+									foreach ($price_extralabels as $code => $label) {
+										$code_array = GETPOST($code, 'array');
+										$object->array_options['options_'.$code] = $code_array[$key];
 									}
 									// We need to force table to update product_price and not product extrafields
 									$object->id = $lineid->rowid;
