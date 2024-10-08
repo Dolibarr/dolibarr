@@ -519,15 +519,15 @@ if (empty($reshook)) {
 							if (!empty($lineid->rowid)) {
 								if (!empty($price_extralabels) && is_array($price_extralabels)) {
 									foreach ($price_extralabels as $label) {
-										$label_array = GETPOST($label);
+										$label_array = GETPOST($label, 'array');
 										$object->array_options['options_'.$label] = $label_array[$key];
-										// On force
-										$object->id = $lineid->rowid;
-										$object->table_element = 'product_price';
 									}
+									// We need to force table to update product_price and not product extrafields
+									$object->id = $lineid->rowid;
+									$object->table_element = 'product_price';
+									$result = $object->insertExtraFields();
 								}
-								$result = $object->insertExtraFields();
-								// On rétabli
+								// Back to product table
 								$object->id = $id;
 								$object->table_element = 'product';
 								if ($result < 0) {
