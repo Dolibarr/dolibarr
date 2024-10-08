@@ -939,6 +939,12 @@ if ($action == 'create') {
 
 			$soc = $objectsrc->thirdparty;
 
+			
+			if (!empty($conf->global->INTERVENTION_SET_CUSTOMER_PROPOSAL_REF_WITH_CUSTOMER_INTERVENTION_REF)) {
+			  $ref_client = (!empty($objectsrc->ref_client) ? $objectsrc->ref_client : GETPOST('ref_client', 'alpha'));
+			} else {
+		      $ref_client = GETPOST('ref_client', 'alpha');
+			}
 			$note_private = (!empty($objectsrc->note) ? $objectsrc->note : (!empty($objectsrc->note_private) ? $objectsrc->note_private : GETPOST('note_private', 'restricthtml')));
 			$note_public = (!empty($objectsrc->note_public) ? $objectsrc->note_public : GETPOST('note_public', 'restricthtml'));
 
@@ -987,7 +993,7 @@ if ($action == 'create') {
 
 		// Ref customer
 		print '<tr class="field_ref_client"><td class="titlefieldcreate">'.$langs->trans('RefCustomer').'</td><td class="valuefieldcreate">';
-		print '<input type="text" name="ref_client" value="'.GETPOST('ref_client').'"></td>';
+		print '<input type="text" name="ref_client" value="'.$ref_client.'"></td>';
 		print '</tr>';
 
 		// Description (must be a textarea and not html must be allowed (used in list view)
