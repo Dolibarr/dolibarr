@@ -925,7 +925,7 @@ IMG;
 				if (!empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 					$name=preg_replace('/\.od(x|t)/i', '', $name);
 					header('Content-type: application/pdf');
-					header('Content-Disposition: attachment; filename="'.$name.'.pdf"');
+					header('Content-Disposition: attachment; filename="'.basename($name).'.pdf"');
 					readfile($name.".pdf");
 				}
 			}
