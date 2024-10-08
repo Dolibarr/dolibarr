@@ -1028,7 +1028,7 @@ class BonPrelevement extends CommonObject
 
 		$resql = $this->db->query($sql);
 
-		if (!$resql){
+		if (!$resql) {
 			$this->error = $this->db->lasterror();
 			dol_syslog(__METHOD__ . " Read fk_societe_rib error " . $this->db->lasterror(), LOG_ERR);
 			return -1;
