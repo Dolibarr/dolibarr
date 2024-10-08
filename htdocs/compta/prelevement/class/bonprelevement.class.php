@@ -1028,16 +1028,16 @@ class BonPrelevement extends CommonObject
 
 		$resql = $this->db->query($sql);
 
-		if ($resql->num_rows) {
-			$obj = $this->db->fetch_object($resql);
-			$societeRibID = $obj->fk_societe_rib;
-			$this->db->free($resql);
-		} else {
+		if (!$resql){
 			$this->error = $this->db->lasterror();
 			dol_syslog(__METHOD__ . " Read fk_societe_rib error " . $this->db->lasterror(), LOG_ERR);
 			return -1;
 		}
-
+		if ($resql->num_rows) {
+			$obj = $this->db->fetch_object($resql);
+			$societeRibID = $obj->fk_societe_rib;
+			$this->db->free($resql);
+		}
 
 		$datetimeprev = dol_now('gmt');
 		// Choice of the date of the execution direct debit
