@@ -502,7 +502,7 @@ if (empty($reshook)) {
 							if ($result < 0) {
 								$error++;
 							}
-						} elseif((getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && !empty($extralabels)) {
+						} elseif ((getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && !empty($extralabels)) {
 							$extralabels = $extrafields->fetch_name_optionals_label("product_price");
 							$sql = "SELECT rowid";
 							$sql .= " FROM ".$object->db->prefix()."product_price";
@@ -1508,33 +1508,33 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 	$extralabels = !empty($extrafields->attributes["product"]['label']) ? $extrafields->attributes["product"]['label'] : '';
 	$extrafield_values = $extrafields->getOptionalsFromPost("product");
 	$sql  = "SELECT";
-			$sql .= " fk_object";
-			foreach ($extralabels as $key => $value) {
-				$sql .= ", ".$key;
-			}
-			$sql .= " FROM ".MAIN_DB_PREFIX."product_extrafields";
-			$sql .= " WHERE fk_object = ".((int) $object->id);
-			$resql = $db->query($sql);
-			if ($resql) {
-				$obj = $db->fetch_object($resql);
-				foreach ($extralabels as $key => $value) {
-					if (!empty($extrafields->attributes["product"]['list'][$key]) && ($extrafields->attributes["product"]['list'][$key] == 1 || $extrafields->attributes["product"]['list'][$key] == 3 || ($action == "edit_price" && $extrafields->attributes["product"]['list'][$key] == 4))) {
-						if (!empty($extrafields->attributes["product"]['langfile'][$key])) {
-							$langs->load($extrafields->attributes["product"]['langfile'][$key]);
-						}
-
-						print '<tr><td'.($extrafields->attributes["product"]['required'][$key] ? ' class="fieldrequired"' : '').'>';
-						if (!empty($extrafields->attributes["product"]['help'][$key])) {
-							print $form->textwithpicto($langs->trans($value), $langs->trans($extrafields->attributes["product"]['help'][$key]));
-						} else {
-							print $langs->trans($value);
-						}
-
-						print '<td align="left">'.$extrafields->showOutputField($key, $obj->{$key}, '', 'product')."</td></tr>";
-					}
+	$sql .= " fk_object";
+	foreach ($extralabels as $key => $value) {
+		$sql .= ", ".$key;
+	}
+	$sql .= " FROM ".MAIN_DB_PREFIX."product_extrafields";
+	$sql .= " WHERE fk_object = ".((int) $object->id);
+	$resql = $db->query($sql);
+	if ($resql) {
+		$obj = $db->fetch_object($resql);
+		foreach ($extralabels as $key => $value) {
+			if (!empty($extrafields->attributes["product"]['list'][$key]) && ($extrafields->attributes["product"]['list'][$key] == 1 || $extrafields->attributes["product"]['list'][$key] == 3 || ($action == "edit_price" && $extrafields->attributes["product"]['list'][$key] == 4))) {
+				if (!empty($extrafields->attributes["product"]['langfile'][$key])) {
+					$langs->load($extrafields->attributes["product"]['langfile'][$key]);
 				}
-				$db->free($resql);
+
+				print '<tr><td'.($extrafields->attributes["product"]['required'][$key] ? ' class="fieldrequired"' : '').'>';
+				if (!empty($extrafields->attributes["product"]['help'][$key])) {
+					print $form->textwithpicto($langs->trans($value), $langs->trans($extrafields->attributes["product"]['help'][$key]));
+				} else {
+					print $langs->trans($value);
+				}
+
+				print '<td align="left">'.$extrafields->showOutputField($key, $obj->{$key}, '', 'product')."</td></tr>";
 			}
+		}
+		$db->free($resql);
+	}
 }
 
 print "</table>\n";
@@ -2445,7 +2445,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 		print '<table class="liste centpercent">'."\n";
 
 		if (count($prodcustprice->lines) > 0 || $search_soc) {
-			if(getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
+			if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 				$colspan = 10;
 			} else {
 				$colspan = 11;

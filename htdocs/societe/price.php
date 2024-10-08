@@ -558,7 +558,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 						$db->free($resql);
 					}
 				}
-		}
+			}
 
 			print '</table>';
 
