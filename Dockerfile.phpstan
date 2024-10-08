@@ -1,0 +1,65 @@
+FROM ghcr.io/phpstan/phpstan:latest-php8.2
+RUN set -ex; \
+	apk add --no-cache \
+		bzip2 \
+		icu-libs \
+		imagemagick \
+		libldap \
+		libpq \
+		libpng \
+		mysql-client \
+		rsync \
+		ssmtp \
+		shadow \
+		unzip \
+		zip \
+	; \
+	apk add --no-cache --virtual .build-deps \
+		$PHPIZE_DEPS \
+		autoconf \
+		curl-dev \
+		freetype-dev \
+		gcc \
+		g++ \
+		icu-dev \
+		libjpeg-turbo-dev \
+		imagemagick-dev \
+		imagemagick-libs \
+		libmcrypt-dev \
+		oniguruma-dev \
+		libltdl \
+		libpng-dev \
+		libtool \
+		libxml2-dev \
+		libzip-dev \
+		make \
+		openldap-dev \
+		postgresql-dev \
+		postgresql-libs \
+		unzip \
+		zlib-dev \
+	; \
+	docker-php-ext-configure ldap; \
+	docker-php-ext-configure gd; \
+	docker-php-ext-configure intl; \
+	docker-php-ext-configure zip; \
+	pecl install mcrypt-1.0.6; \
+	docker-php-ext-enable mcrypt; \ 
+	docker-php-ext-install -j "$(nproc)" \
+		calendar \
+		gd \
+		intl \
+		ldap \
+		mbstring \
+		mysqli \
+		pdo \
+		pdo_mysql \
+		pdo_pgsql \
+		pgsql \
+		soap \
+		zip \
+	; \
+	pecl install imagick; \
+	docker-php-ext-enable imagick; \
+	apk --purge del .build-deps; \
+	rm -rf /var/cache/apk/*

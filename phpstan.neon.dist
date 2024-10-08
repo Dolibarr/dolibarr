@@ -1,5 +1,6 @@
 parameters:
-	tmpDir: ./.github/tmp
+	tmpDir: /tmp
+	resultCachePath: /tmp/phpstan_cache
 	parallel:
 		# Commented some of the settings, reminding the defaults:
 		#   should adapt better to target machines

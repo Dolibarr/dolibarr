@@ -1,0 +1,23 @@
+apiVersion: v2
+appVersion: 19.0.0
+description: A modern software package to manage your company or foundation's activity
+home: https://www.dolibarr.org/
+icon: https://raw.githubusercontent.com/Dolibarr/dolibarr/develop/doc/images/dolibarr_256x256_color.svg
+maintainers:
+  - name: bahabenhassine
+    email: bahabenhassine2@gmail.com
+name: dolibarr
+sources:
+  - https://github.com/hbenaissa/dolibarr.git
+  - https://github.com/hbenaissa/dolibarr/charts/dolibarr
+version: 5.1.0
+dependencies:
+  - name: common
+    version: 2.19.0
+    repository: https://charts.bitnami.com/bitnami/
+  - name: mariadb
+    version: 17.0.1
+    repository: https://charts.bitnami.com/bitnami/
+    condition: mariadb.enabled
+annotations:
+  kubeVersion: ">=1.24"

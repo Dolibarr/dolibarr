@@ -1,0 +1,45 @@
+pipeline {
+  agent {
+    kubernetes {
+      yaml '''
+        apiVersion: v1
+        kind: Pod
+        spec:
+          containers:
+          - name: git
+            image: alpine/git:latest
+            command:
+            - cat
+            tty: true
+          - name: docker
+            image: docker:latest
+            command:
+            - cat
+            tty: true
+            volumeMounts:
+             - mountPath: /var/run/docker.sock
+               name: docker-sock
+          volumes:
+          - name: docker-sock
+            hostPath:
+              path: /var/run/docker.sock    
+        '''
+    }
+  }
+  stages {
+  stage('Build Docker Image') {
+      steps {
+        container('docker') {
+          script {
+            // Build the Docker image
+            def appImage = docker.build("iyedbnaissa/phpstan:${env.BUILD_NUMBER}", "-f Dockerfile.phpstan .")
+            // Push the Docker image to your Docker registry
+            docker.withRegistry('', '30') {
+              appImage.push()
+            }
+          }
+        }
+      }
+    }
+  }
+}
