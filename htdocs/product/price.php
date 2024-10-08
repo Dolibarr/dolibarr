@@ -495,15 +495,15 @@ if (empty($reshook)) {
 						if (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES') && !empty($extralabels)) {
 							// Default price
 							$extrafield_values = $extrafields->getOptionalsFromPost("product");
-							foreach ($extrafield_values as $key => $value) {
-								$object->array_options[$key] = $value;
+							foreach ($extrafield_values as $efkey => $value) {
+								$object->array_options[$efkey] = $value;
 							}
 							$result = $object->insertExtraFields();
 							if ($result < 0) {
 								$error++;
 							}
 						} elseif ((getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && !empty($extralabels)) {
-							$extralabels = $extrafields->fetch_name_optionals_label("product_price");
+							$price_extralabels = $extrafields->fetch_name_optionals_label("product_price");
 							$sql = "SELECT rowid";
 							$sql .= " FROM ".$object->db->prefix()."product_price";
 							$sql .= " WHERE entity IN (".getEntity('productprice').")";
@@ -517,12 +517,14 @@ if (empty($reshook)) {
 								$db->free($resql);
 							}
 							if (!empty($lineid->rowid)) {
-								foreach ($extralabels as $label) {
-									$label_array = GETPOST($label);
-									$object->array_options['options_'.$label] = $label_array[$key];
-									// On force
-									$object->id = $lineid->rowid;
-									$object->table_element = 'product_price';
+								if (!empty($price_extralabels) && is_array($price_extralabels)) {
+									foreach ($price_extralabels as $label) {
+										$label_array = GETPOST($label);
+										$object->array_options['options_'.$label] = $label_array[$key];
+										// On force
+										$object->id = $lineid->rowid;
+										$object->table_element = 'product_price';
+									}
 								}
 								$result = $object->insertExtraFields();
 								// On rétabli
@@ -2453,8 +2455,8 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 			if ($mysoc->localtax1_assuj == "1" || $mysoc->localtax2_assuj == "1") {
 				$colspan++;
 			}
-			if (count($extralabels) > 0) {
-				$colspan += count($extralabels);
+			if (!empty($price_extralabels && is_array($price_extralabels))) {
+				$colspan += count($price_extralabels);
 			}
 
 			print '<tr class="liste_titre">';
