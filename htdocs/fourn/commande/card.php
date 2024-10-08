@@ -10,7 +10,7 @@
  * Copyright (C) 2014      Ion Agorria          <ion@agorria.com>
  * Copyright (C) 2018-2024	Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2022      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2022      Charlene Benke       <charlene@patas-monkey.com>
+ * Copyright (C) 2022-2024 Charlene Benke       <charlene@patas-monkey.com>
  * Copyright (C) 2023 	   Joachim Kueter       <git-jk@bloxera.com>
  * Copyright (C) 2024      MDW                  <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024      Nick Fragoulis
@@ -1748,7 +1748,7 @@ if ($action == 'create') {
 			$usehourmin = 1;
 		}
 		print img_picto('', 'action', 'class="pictofixedwidth"');
-		print $form->selectDate($datelivraison ? $datelivraison : -1, 'liv_', $usehourmin, $usehourmin, 0, "set");
+		print $form->selectDate($datelivraison ? $datelivraison : -1, 'liv_', $usehourmin, $usehourmin, 0, "set", 1, 1);
 		print '</td></tr>';
 
 		// Bank Account
