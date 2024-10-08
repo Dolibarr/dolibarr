@@ -493,7 +493,7 @@ if (empty($reshook)) {
 					if ($res > 0) {
 						$extralabels = $extrafields->fetch_name_optionals_label("product");
 						if (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES') && !empty($extralabels)) {
-							// Prix par defaut
+							// Default price
 							$extrafield_values = $extrafields->getOptionalsFromPost("product");
 							foreach ($extrafield_values as $key => $value) {
 								$object->array_options[$key] = $value;
