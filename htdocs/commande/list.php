@@ -2571,12 +2571,12 @@ if ($resql) {
 					$parameters = array('textinfo' => $text_info);
 					$reshook = $hookmanager->executeHooks('modifyTextInfo', $parameters, $object, $action);
 					if ($reshook == 1) {
-						// for add informations
+						// for add information
 						$text_info .= $hookmanager->resPrint;
 					} elseif ($reshook == 0) {
-						// for replace informations
+						// for replace information
 						$text_info = $hookmanager->resPrint;
-					}elseif ($reshook == -1) {
+					} elseif ($reshook == -1) {
 						// for errors
 						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 					}
