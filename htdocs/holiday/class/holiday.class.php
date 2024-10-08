@@ -1577,9 +1577,12 @@ class Holiday extends CommonObject
 	 */
 	public function updateConfCP($name, $value)
 	{
+		global $conf;
+
 		$sql = "UPDATE ".MAIN_DB_PREFIX."holiday_config SET";
 		$sql .= " value = '".$this->db->escape($value)."'";
-		$sql .= " WHERE name = '".$this->db->escape($name)."'";
+		$sql .= " WHERE entity = ".((int) $conf->entity);
+		$sql .= " AND name = '".$this->db->escape($name)."'";
 
 		dol_syslog(get_class($this).'::updateConfCP name='.$name, LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -1600,9 +1603,12 @@ class Holiday extends CommonObject
 	 */
 	public function getConfCP($name, $createifnotfound = '')
 	{
+		global $conf;
+
 		$sql = "SELECT value";
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday_config";
-		$sql .= " WHERE name = '".$this->db->escape($name)."'";
+		$sql .= " WHERE entity = ".((int) $conf->entity);
+		$sql .= " AND name = '".$this->db->escape($name)."'";
 
 		dol_syslog(get_class($this).'::getConfCP name='.$name.' createifnotfound='.$createifnotfound, LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -1612,8 +1618,8 @@ class Holiday extends CommonObject
 			// Return value
 			if (empty($obj)) {
 				if ($createifnotfound) {
-					$sql = "INSERT INTO ".MAIN_DB_PREFIX."holiday_config(name, value)";
-					$sql .= " VALUES('".$this->db->escape($name)."', '".$this->db->escape($createifnotfound)."')";
+					$sql = "INSERT INTO ".MAIN_DB_PREFIX."holiday_config(entity, name, value)";
+					$sql .= " VALUES(".((int) $conf->entity).", '".$this->db->escape($name)."', '".$this->db->escape($createifnotfound)."')";
 					$result = $this->db->query($sql);
 					if ($result) {
 						return $createifnotfound;
@@ -1644,7 +1650,7 @@ class Holiday extends CommonObject
 	 */
 	public function updateSoldeCP($userID = 0, $nbHoliday = 0, $fk_type = 0)
 	{
-		global $user, $langs;
+		global $conf, $user, $langs;
 
 		$error = 0;
 
@@ -1671,7 +1677,8 @@ class Holiday extends CommonObject
 
 				$sql = "UPDATE ".MAIN_DB_PREFIX."holiday_config SET";
 				$sql .= " value = '".$this->db->escape($newdateforlastupdate)."'";
-				$sql .= " WHERE name = 'lastUpdate'";
+				$sql .= " WHERE entity = ".((int) $conf->entity);
+				$sql .= " AND name = 'lastUpdate'";
 				$result = $this->db->query($sql);
 
 				$typeleaves = $this->getTypes(1, 1);
