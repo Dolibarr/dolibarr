@@ -70,12 +70,12 @@ $product_id = GETPOST("product_id", 'intcomma');
 $show_files = GETPOSTINT('show_files');
 
 $search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
-$search_date_startday = GETPOSTINT('search_date_startday');
-$search_date_startmonth = GETPOSTINT('search_date_startmonth');
-$search_date_startyear = GETPOSTINT('search_date_startyear');
-$search_date_endday = GETPOSTINT('search_date_endday');
-$search_date_endmonth = GETPOSTINT('search_date_endmonth');
-$search_date_endyear = GETPOSTINT('search_date_endyear');
+$search_date_startday = GETPOSTSESSIONINT('search_date_startday');
+$search_date_startmonth = GETPOSTSESSIONINT('search_date_startmonth');
+$search_date_startyear = GETPOSTSESSIONINT('search_date_startyear');
+$search_date_endday = GETPOSTSESSIONINT('search_date_endday');
+$search_date_endmonth = GETPOSTSESSIONINT('search_date_endmonth');
+$search_date_endyear = GETPOSTSESSIONINT('search_date_endyear');
 $search_date_start = dol_mktime(0, 0, 0, GETPOSTINT('search_date_startmonth'), GETPOSTINT('search_date_startday'), GETPOSTINT('search_date_startyear'), 'tzuserrel');
 $search_date_end = dol_mktime(23, 59, 59, GETPOSTINT('search_date_endmonth'), GETPOSTINT('search_date_endday'), GETPOSTINT('search_date_endyear'), 'tzuserrel');
 $search_ref = GETPOST('search_ref', 'alpha');

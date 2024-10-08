@@ -69,12 +69,12 @@ $langs->loadLangs(array("companies", "other", "compta", "banks", "bills", "donat
 // Multi journal&search_status=-1
 $id_journal = GETPOSTINT('id_journal');
 
-$date_startmonth = GETPOSTINT('date_startmonth');
-$date_startday = GETPOSTINT('date_startday');
-$date_startyear = GETPOSTINT('date_startyear');
-$date_endmonth = GETPOSTINT('date_endmonth');
-$date_endday = GETPOSTINT('date_endday');
-$date_endyear = GETPOSTINT('date_endyear');
+$date_startmonth = GETPOSTSESSIONINT('date_startmonth');
+$date_startday = GETPOSTSESSIONINT('date_startday');
+$date_startyear = GETPOSTSESSIONINT('date_startyear');
+$date_endmonth = GETPOSTSESSIONINT('date_endmonth');
+$date_endday = GETPOSTSESSIONINT('date_endday');
+$date_endyear = GETPOSTSESSIONINT('date_endyear');
 $in_bookkeeping = GETPOST('in_bookkeeping', 'aZ09');
 
 $only_rappro = GETPOSTINT('only_rappro');

@@ -1097,6 +1097,29 @@ function GETPOSTINT($paramname, $method = 0)
 	return (int) GETPOST($paramname, 'int', $method, null, null, 0);
 }
 
+/**
+ *  Return value of a param into SESSION or GET or POST supervariable.
+ *  main used on accountancy module: user choice date and during the session that date will be "by default"
+ *
+ *  @param  string  $key Name of parameter to found
+ *  @return int                  Value found (int)
+ */
+function GETPOSTSESSIONINT($key)
+{
+	if (!empty($_POST['button_removefilter_x'])) {
+		//unset session value on remove filter button clic
+		unset($_SESSION[$key]);
+	}
+	//getpost is always priority if set : that's the last user choice
+	$getpost=GETPOSTINT($key);
+	if (empty($getpost) &&  !empty($_SESSION[$key])) {
+		return $_SESSION[$key];
+	}
+	//save value in session for next time
+	$_SESSION[$key] = $getpost;
+	return $getpost;
+}
+
 
 /**
  *  Return the value of a $_GET or $_POST supervariable, converted into float.

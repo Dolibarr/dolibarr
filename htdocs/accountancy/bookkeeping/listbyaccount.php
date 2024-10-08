@@ -38,6 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
+
 // Load translation files required by the page
 $langs->loadLangs(array("accountancy", "compta"));
 
@@ -52,30 +53,31 @@ if ($type == 'sub') {
 } else {
 	$context_default = 'bookkeepingbyaccountlist';
 }
+
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : $context_default;
-$search_date_startyear = GETPOSTINT('search_date_startyear');
-$search_date_startmonth = GETPOSTINT('search_date_startmonth');
-$search_date_startday = GETPOSTINT('search_date_startday');
-$search_date_endyear = GETPOSTINT('search_date_endyear');
-$search_date_endmonth = GETPOSTINT('search_date_endmonth');
-$search_date_endday = GETPOSTINT('search_date_endday');
+$search_date_startyear = GETPOSTSESSIONINT('search_date_startyear');
+$search_date_startmonth = GETPOSTSESSIONINT('search_date_startmonth');
+$search_date_startday = GETPOSTSESSIONINT('search_date_startday');
+$search_date_endyear = GETPOSTSESSIONINT('search_date_endyear');
+$search_date_endmonth = GETPOSTSESSIONINT('search_date_endmonth');
+$search_date_endday = GETPOSTSESSIONINT('search_date_endday');
 $search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);
 $search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
-$search_doc_date = dol_mktime(0, 0, 0, GETPOSTINT('doc_datemonth'), GETPOSTINT('doc_dateday'), GETPOSTINT('doc_dateyear'));
-$search_date_export_startyear = GETPOSTINT('search_date_export_startyear');
-$search_date_export_startmonth = GETPOSTINT('search_date_export_startmonth');
-$search_date_export_startday = GETPOSTINT('search_date_export_startday');
-$search_date_export_endyear = GETPOSTINT('search_date_export_endyear');
-$search_date_export_endmonth = GETPOSTINT('search_date_export_endmonth');
-$search_date_export_endday = GETPOSTINT('search_date_export_endday');
+$search_doc_date = dol_mktime(0, 0, 0, GETPOSTSESSIONINT('doc_datemonth'), GETPOSTSESSIONINT('doc_dateday'), GETPOSTSESSIONINT('doc_dateyear'));
+$search_date_export_startyear = GETPOSTSESSIONINT('search_date_export_startyear');
+$search_date_export_startmonth = GETPOSTSESSIONINT('search_date_export_startmonth');
+$search_date_export_startday = GETPOSTSESSIONINT('search_date_export_startday');
+$search_date_export_endyear = GETPOSTSESSIONINT('search_date_export_endyear');
+$search_date_export_endmonth = GETPOSTSESSIONINT('search_date_export_endmonth');
+$search_date_export_endday = GETPOSTSESSIONINT('search_date_export_endday');
 $search_date_export_start = dol_mktime(0, 0, 0, $search_date_export_startmonth, $search_date_export_startday, $search_date_export_startyear);
 $search_date_export_end = dol_mktime(23, 59, 59, $search_date_export_endmonth, $search_date_export_endday, $search_date_export_endyear);
-$search_date_validation_startyear = GETPOSTINT('search_date_validation_startyear');
-$search_date_validation_startmonth = GETPOSTINT('search_date_validation_startmonth');
-$search_date_validation_startday = GETPOSTINT('search_date_validation_startday');
-$search_date_validation_endyear = GETPOSTINT('search_date_validation_endyear');
-$search_date_validation_endmonth = GETPOSTINT('search_date_validation_endmonth');
-$search_date_validation_endday = GETPOSTINT('search_date_validation_endday');
+$search_date_validation_startyear = GETPOSTSESSIONINT('search_date_validation_startyear');
+$search_date_validation_startmonth = GETPOSTSESSIONINT('search_date_validation_startmonth');
+$search_date_validation_startday = GETPOSTSESSIONINT('search_date_validation_startday');
+$search_date_validation_endyear = GETPOSTSESSIONINT('search_date_validation_endyear');
+$search_date_validation_endmonth = GETPOSTSESSIONINT('search_date_validation_endmonth');
+$search_date_validation_endday = GETPOSTSESSIONINT('search_date_validation_endday');
 $search_date_validation_start = dol_mktime(0, 0, 0, $search_date_validation_startmonth, $search_date_validation_startday, $search_date_validation_startyear);
 $search_date_validation_end = dol_mktime(23, 59, 59, $search_date_validation_endmonth, $search_date_validation_endday, $search_date_validation_endyear);
 // Due date start

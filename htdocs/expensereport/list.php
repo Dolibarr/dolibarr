@@ -104,12 +104,12 @@ $search_amount_vat	= GETPOST('search_amount_vat', 'alpha');
 $search_amount_ttc	= GETPOST('search_amount_ttc', 'alpha');
 $search_status		= (GETPOST('search_status', 'intcomma') != '' ? GETPOST('search_status', 'intcomma') : GETPOST('statut', 'intcomma'));
 
-$search_date_startday		= GETPOSTINT('search_date_startday');
-$search_date_startmonth		= GETPOSTINT('search_date_startmonth');
-$search_date_startyear		= GETPOSTINT('search_date_startyear');
-$search_date_startendday	= GETPOSTINT('search_date_startendday');
-$search_date_startendmonth	= GETPOSTINT('search_date_startendmonth');
-$search_date_startendyear	= GETPOSTINT('search_date_startendyear');
+$search_date_startday		= GETPOSTSESSIONINT('search_date_startday');
+$search_date_startmonth		= GETPOSTSESSIONINT('search_date_startmonth');
+$search_date_startyear		= GETPOSTSESSIONINT('search_date_startyear');
+$search_date_startendday	= GETPOSTSESSIONINT('search_date_startendday');
+$search_date_startendmonth	= GETPOSTSESSIONINT('search_date_startendmonth');
+$search_date_startendyear	= GETPOSTSESSIONINT('search_date_startendyear');
 $search_date_start			= dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);	// Use tzserver
 $search_date_startend		= dol_mktime(23, 59, 59, $search_date_startendmonth, $search_date_startendday, $search_date_startendyear);
 

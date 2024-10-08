@@ -7151,9 +7151,14 @@ class Form
 					}
 					$retstring = $retstringbuttom . $retstring;
 
-					$retstring .= '<input type="hidden" id="' . $prefix . 'day"   name="' . $prefix . 'day"   value="' . $sday . '">' . "\n";
-					$retstring .= '<input type="hidden" id="' . $prefix . 'month" name="' . $prefix . 'month" value="' . $smonth . '">' . "\n";
-					$retstring .= '<input type="hidden" id="' . $prefix . 'year"  name="' . $prefix . 'year"  value="' . $syear . '">' . "\n";
+					$retstring .= '<input type="hidden" onChange="sessionUpdateDate(this)" id="' . $prefix . 'day"   name="' . $prefix . 'day"   value="' . $sday . '">' . "\n";
+					$retstring .= '<input type="hidden" onChange="sessionUpdateDate(this)" id="' . $prefix . 'month" name="' . $prefix . 'month" value="' . $smonth . '">' . "\n";
+					$retstring .= '<input type="hidden" onChange="sessionUpdateDate(this)" id="' . $prefix . 'year"  name="' . $prefix . 'year"  value="' . $syear . '">' . "\n";
+
+					//keep session value to be able to detect change in sessionUpdateDate js, no need to name tag : that hidden field will not be sent on POST form
+					$retstring .= '<input type="hidden" id="' . $prefix . 'day_prev"   value="' . $sday . '">' . "\n";
+					$retstring .= '<input type="hidden" id="' . $prefix . 'month_prev" value="' . $smonth . '">' . "\n";
+					$retstring .= '<input type="hidden" id="' . $prefix . 'year_prev"  value="' . $syear . '">' . "\n";
 				} elseif ($usecalendar == 'jquery' || $usecalendar == 'html') {
 					if (!$disabled && $usecalendar != 'html') {
 						// Output javascript for datepicker
@@ -7203,9 +7208,14 @@ class Form
 					}
 
 					$retstring .= '</div>';
-					$retstring .= '<input type="hidden" id="' . $prefix . 'day"   name="' . $prefix . 'day"   value="' . $sday . '">' . "\n";
-					$retstring .= '<input type="hidden" id="' . $prefix . 'month" name="' . $prefix . 'month" value="' . $smonth . '">' . "\n";
-					$retstring .= '<input type="hidden" id="' . $prefix . 'year"  name="' . $prefix . 'year"  value="' . $syear . '">' . "\n";
+					$retstring .= '<input type="hidden" onChange="sessionUpdateDate(this)" id="' . $prefix . 'day"   name="' . $prefix . 'day"   value="' . $sday . '">' . "\n";
+					$retstring .= '<input type="hidden" onChange="sessionUpdateDate(this)" id="' . $prefix . 'month" name="' . $prefix . 'month" value="' . $smonth . '">' . "\n";
+					$retstring .= '<input type="hidden" onChange="sessionUpdateDate(this)" id="' . $prefix . 'year"  name="' . $prefix . 'year"  value="' . $syear . '">' . "\n";
+
+					//keep session value to be able to detect change in sessionUpdateDate js, no need to name tag : that hidden field will not be sent on POST form
+					$retstring .= '<input type="hidden" id="' . $prefix . 'day_prev"   value="' . $sday . '">' . "\n";
+					$retstring .= '<input type="hidden" id="' . $prefix . 'month_prev" value="' . $smonth . '">' . "\n";
+					$retstring .= '<input type="hidden" id="' . $prefix . 'year_prev"  value="' . $syear . '">' . "\n";
 				} else {
 					$retstring .= "Bad value of MAIN_POPUP_CALENDAR";
 				}

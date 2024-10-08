@@ -51,8 +51,8 @@ if ($type == 'sub') {
 }
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : $context_default;
 $show_subgroup = GETPOST('show_subgroup', 'alpha');
-$search_date_start = dol_mktime(0, 0, 0, GETPOSTINT('date_startmonth'), GETPOSTINT('date_startday'), GETPOSTINT('date_startyear'));
-$search_date_end = dol_mktime(23, 59, 59, GETPOSTINT('date_endmonth'), GETPOSTINT('date_endday'), GETPOSTINT('date_endyear'));
+$search_date_start = dol_mktime(0, 0, 0, GETPOSTSESSIONINT('date_startmonth'), GETPOSTSESSIONINT('date_startday'), GETPOSTSESSIONINT('date_startyear'));
+$search_date_end = dol_mktime(23, 59, 59, GETPOSTSESSIONINT('date_endmonth'), GETPOSTSESSIONINT('date_endday'), GETPOSTSESSIONINT('date_endyear'));
 $search_ledger_code = GETPOST('search_ledger_code', 'array');
 $search_accountancy_code_start = GETPOST('search_accountancy_code_start', 'alpha');
 if ($search_accountancy_code_start == - 1) {
@@ -595,20 +595,20 @@ if ($action != 'export_csv') {
 			if ($line->subledger_account) {
 				$urlzoom = DOL_URL_ROOT . '/accountancy/bookkeeping/listbyaccount.php?type=sub&search_accountancy_code_start=' . urlencode($line->subledger_account) . '&search_accountancy_code_end=' . urlencode($line->subledger_account);
 				if (GETPOSTISSET('date_startmonth')) {
-					$urlzoom .= '&search_date_startmonth=' . GETPOSTINT('date_startmonth') . '&search_date_startday=' . GETPOSTINT('date_startday') . '&search_date_startyear=' . GETPOSTINT('date_startyear');
+					$urlzoom .= '&search_date_startmonth=' . GETPOSTSESSIONINT('date_startmonth') . '&search_date_startday=' . GETPOSTSESSIONINT('date_startday') . '&search_date_startyear=' . GETPOSTSESSIONINT('date_startyear');
 				}
 				if (GETPOSTISSET('date_endmonth')) {
-					$urlzoom .= '&search_date_endmonth=' . GETPOSTINT('date_endmonth') . '&search_date_endday=' . GETPOSTINT('date_endday') . '&search_date_endyear=' . GETPOSTINT('date_endyear');
+					$urlzoom .= '&search_date_endmonth=' . GETPOSTSESSIONINT('date_endmonth') . '&search_date_endday=' . GETPOSTSESSIONINT('date_endday') . '&search_date_endyear=' . GETPOSTSESSIONINT('date_endyear');
 				}
 			}
 		} else {
 			if ($line->numero_compte) {
 				$urlzoom = DOL_URL_ROOT . '/accountancy/bookkeeping/listbyaccount.php?search_accountancy_code_start=' . urlencode($line->numero_compte) . '&search_accountancy_code_end=' . urlencode($line->numero_compte);
 				if (GETPOSTISSET('date_startmonth')) {
-					$urlzoom .= '&search_date_startmonth=' . GETPOSTINT('date_startmonth') . '&search_date_startday=' . GETPOSTINT('date_startday') . '&search_date_startyear=' . GETPOSTINT('date_startyear');
+					$urlzoom .= '&search_date_startmonth=' . GETPOSTSESSIONINT('date_startmonth') . '&search_date_startday=' . GETPOSTSESSIONINT('date_startday') . '&search_date_startyear=' . GETPOSTSESSIONINT('date_startyear');
 				}
 				if (GETPOSTISSET('date_endmonth')) {
-					$urlzoom .= '&search_date_endmonth=' . GETPOSTINT('date_endmonth') . '&search_date_endday=' . GETPOSTINT('date_endday') . '&search_date_endyear=' . GETPOSTINT('date_endyear');
+					$urlzoom .= '&search_date_endmonth=' . GETPOSTSESSIONINT('date_endmonth') . '&search_date_endday=' . GETPOSTSESSIONINT('date_endday') . '&search_date_endyear=' . GETPOSTSESSIONINT('date_endyear');
 				}
 			}
 		}

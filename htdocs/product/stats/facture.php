@@ -78,29 +78,30 @@ if (!$sortfield) {
 	$sortfield = "f.datef";
 }
 
+
+$search_date_startday = GETPOSTSESSIONINT('search_date_startday');
 $option = '';
 
-$search_date_startday = GETPOSTINT('search_date_startday');
 if (!empty($search_date_startday)) {
 	$option .= '&search_date_startday='.$search_date_startday;
 }
-$search_date_startmonth = GETPOSTINT('search_date_startmonth');
+$search_date_startmonth = GETPOSTSESSIONINT('search_date_startmonth');
 if (!empty($search_date_startmonth)) {
 	$option .= '&search_date_startmonth='.$search_date_startmonth;
 }
-$search_date_startyear = GETPOSTINT('search_date_startyear');
+$search_date_startyear = GETPOSTSESSIONINT('search_date_startyear');
 if (!empty($search_date_startyear)) {
 	$option .= '&search_date_startyear='.$search_date_startyear;
 }
-$search_date_endday = GETPOSTINT('search_date_endday');
+$search_date_endday = GETPOSTSESSIONINT('search_date_endday');
 if (!empty($search_date_endday)) {
 	$option .= '&search_date_endday='.$search_date_endday;
 }
-$search_date_endmonth = GETPOSTINT('search_date_endmonth');
+$search_date_endmonth = GETPOSTSESSIONINT('search_date_endmonth');
 if (!empty($search_date_endmonth)) {
 	$option .= '&search_date_endmonth='.$search_date_endmonth;
 }
-$search_date_endyear = GETPOSTINT('search_date_endyear');
+$search_date_endyear = GETPOSTSESSIONINT('search_date_endyear');
 if (!empty($search_date_endyear)) {
 	$option .= '&search_date_endyear='.$search_date_endyear;
 }
