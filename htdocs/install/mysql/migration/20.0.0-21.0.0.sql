@@ -230,3 +230,18 @@ ALTER TABLE llx_c_accounting_category ADD COLUMN fk_report integer NOT NULL DEFA
 
 ALTER TABLE llx_c_accounting_category DROP INDEX uk_c_accounting_category;
 ALTER TABLE llx_c_accounting_category ADD UNIQUE INDEX uk_c_accounting_category (code,entity,fk_report);
+
+create table llx_accounting_category_link
+(
+  rowid           			integer AUTO_INCREMENT PRIMARY KEY,
+  fk_accounting_category	integer,
+  fk_accounting_account		bigint
+) ENGINE=innodb;
+
+ALTER TABLE llx_accounting_category_link ADD INDEX idx_accounting_category_link_fk_accounting_category (fk_accounting_category);
+ALTER TABLE llx_accounting_category_link ADD CONSTRAINT fk_accounting_category_link_fk_accounting_category FOREIGN KEY (fk_accounting_category) REFERENCES llx_c_accounting_category (rowid);
+
+ALTER TABLE llx_accounting_category_link ADD INDEX idx_accounting_category_link_fk_accounting_account (fk_accounting_account);
+ALTER TABLE llx_accounting_category_link ADD CONSTRAINT fk_accounting_category_link_fk_accounting_account FOREIGN KEY (fk_accounting_account) REFERENCES llx_accounting_account (rowid);
+
+ALTER TABLE llx_accounting_category_link ADD UNIQUE INDEX uk_accounting_category_link(fk_accounting_category, fk_accounting_account);
