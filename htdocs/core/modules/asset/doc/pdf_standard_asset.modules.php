@@ -559,28 +559,28 @@ class pdf_standard_asset extends ModelePDFAsset
 					$vatrate = (string) $object->lines[$i]->tva_tx;
 
 					// Retrieve type from database for backward compatibility with old records
-					if ((!isset($localtax1_type) || $localtax1_type == '' || !isset($localtax2_type) || $localtax2_type == '') // if tax type not defined
-						&& (!empty($localtax1_rate) || !empty($localtax2_rate))) { // and there is local tax
-						$localtaxtmp_array = getLocalTaxesFromRate($vatrate, 0, $object->thirdparty, $mysoc);
-						$localtax1_type = isset($localtaxtmp_array[0]) ? $localtaxtmp_array[0] : '';
-						$localtax2_type = isset($localtaxtmp_array[2]) ? $localtaxtmp_array[2] : '';
-					}
+					// if ((!isset($localtax1_type) || $localtax1_type == '' || !isset($localtax2_type) || $localtax2_type == '') // if tax type not defined
+					// 	&& (!empty($localtax1_rate) || !empty($localtax2_rate))) { // and there is local tax
+					// 	$localtaxtmp_array = getLocalTaxesFromRate($vatrate, 0, $object->thirdparty, $mysoc);
+					// 	$localtax1_type = isset($localtaxtmp_array[0]) ? $localtaxtmp_array[0] : '';
+					// 	$localtax2_type = isset($localtaxtmp_array[2]) ? $localtaxtmp_array[2] : '';
+					// }
 
 					// retrieve global local tax
-					if ($localtax1_type && $localtax1ligne != 0) {
-						if (empty($this->localtax1[$localtax1_type][$localtax1_rate])) {
-							$this->localtax1[$localtax1_type][$localtax1_rate] = $localtax1ligne;
-						} else {
-							$this->localtax1[$localtax1_type][$localtax1_rate] += $localtax1ligne;
-						}
-					}
-					if ($localtax2_type && $localtax2ligne != 0) {
-						if (empty($this->localtax2[$localtax2_type][$localtax2_rate])) {
-							$this->localtax2[$localtax2_type][$localtax2_rate] = $localtax2ligne;
-						} else {
-							$this->localtax2[$localtax2_type][$localtax2_rate] += $localtax2ligne;
-						}
-					}
+					// if ($localtax1_type && $localtax1ligne != 0) {
+					// 	if (empty($this->localtax1[$localtax1_type][$localtax1_rate])) {
+					// 		$this->localtax1[$localtax1_type][$localtax1_rate] = $localtax1ligne;
+					// 	} else {
+					// 		$this->localtax1[$localtax1_type][$localtax1_rate] += $localtax1ligne;
+					// 	}
+					// }
+					// if ($localtax2_type && $localtax2ligne != 0) {
+					// 	if (empty($this->localtax2[$localtax2_type][$localtax2_rate])) {
+					// 		$this->localtax2[$localtax2_type][$localtax2_rate] = $localtax2ligne;
+					// 	} else {
+					// 		$this->localtax2[$localtax2_type][$localtax2_rate] += $localtax2ligne;
+					// 	}
+					// }
 
 					if (($object->lines[$i]->info_bits & 0x01) == 0x01) {
 						$vatrate .= '*';
