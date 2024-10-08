@@ -124,7 +124,7 @@ class BOMLine extends CommonObjectLine
 	public $description;
 
 	/**
-	 * @var double qty
+	 * @var float qty
 	 */
 	public $qty;
 

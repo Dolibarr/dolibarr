@@ -1716,7 +1716,7 @@ if (empty($reshook)) {
 									if (is_array($lines)) {
 										foreach ($lines as $line) {
 											// We keep ->subprice and ->pa_ht, but we change the qty
-											$line->qty = price2num((float) $line->qty * (float) $valuestandardinvoice / 100, 'MS');
+											$line->qty = (float) price2num((float) $line->qty * (float) $valuestandardinvoice / 100, 'MS');
 										}
 									}
 								}
@@ -1725,7 +1725,7 @@ if (empty($reshook)) {
 									if (is_array($lines)) {
 										foreach ($lines as $line) {
 											// We keep ->subprice and ->pa_ht, but we change the qty
-											$line->qty = price2num((float) $line->qty * (float) $valuedeposit / 100, 'MS');
+											$line->qty = (float) price2num((float) $line->qty * (float) $valuedeposit / 100, 'MS');
 										}
 									}
 								}
