@@ -395,6 +395,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	$parentfortableentity = '';
 
 	// Fix syntax of $features param to support non standard module names.
+	// @todo : use elseif ?
 	$originalfeatures = $features;
 	if ($features == 'agenda') {
 		$tableandshare = 'actioncomm&societe';
@@ -451,6 +452,24 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		$tableandshare = 'paiementcharge';
 		$parentfortableentity = 'fk_charge@chargesociales';
 	}
+	// if commonObjectLine : Using many2one related commonObject
+	// @see commonObjectLine::parentElement
+	if (in_array($features, ['commandedet', 'propaldet', 'facturedet', 'supplier_proposaldet', 'evaluationdet', 'skilldet', 'deliverydet', 'contratdet'])) {
+		$features = substr($features, 0, -3);
+	} elseif (in_array($features, ['stocktransferline', 'inventoryline', 'bomline', 'expensereport_det', 'facture_fourn_det'])) {
+		$features = substr($features, 0, -4);
+	} elseif ($features == 'commandefournisseurdispatch') {
+		$features = 'commandefournisseur';
+	} elseif ($features == 'invoice_supplier_det_rec') {
+		$features = 'invoice_supplier_rec';
+	}
+	// @todo check : project_task
+	// @todo possible ?
+	// elseif (substr($features, -3, 3) == 'det') {
+	// 	$features = substr($features, 0, -3);
+	// } elseif (substr($features, -4, 4) == '_det' || substr($features, -4, 4) == 'line') {
+	// 	$features = substr($features, 0, -4);
+	// }
 
 	//print $features.' - '.$tableandshare.' - '.$feature2.' - '.$dbt_select."\n";
 
