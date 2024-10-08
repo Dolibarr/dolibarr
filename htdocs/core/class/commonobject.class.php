@@ -866,6 +866,11 @@ abstract class CommonObject
 	 */
 	public $isextrafieldmanaged = 0;
 
+	/**
+	 * @var int pagebreak
+	 */
+	public $pagebreak;
+
 
 	// No constructor as it is an abstract class
 
