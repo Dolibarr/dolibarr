@@ -991,7 +991,7 @@ if ($search_user > 0) {
 	$param .= '&search_user='.urlencode((string) ($search_user));
 }
 if ($search_sale > 0) {
-	$param .= '&search_sale='.urlencode($search_sale);
+	$param .= '&search_sale='.urlencode((string) $search_sale);
 }
 if ($search_montant_ht) {
 	$param .= '&search_montant_ht='.urlencode($search_montant_ht);
@@ -1730,9 +1730,9 @@ if (isModEnabled('margin') && (
 	|| !empty($arrayfields['total_margin']['checked'])
 	|| !empty($arrayfields['total_margin_rate']['checked'])
 	|| !empty($arrayfields['total_mark_rate']['checked'])
-	)
-	) {
-		$with_margin_info = true;
+)
+) {
+	$with_margin_info = true;
 }
 
 $total_ht = 0;

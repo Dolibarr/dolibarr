@@ -148,10 +148,10 @@ if ($reshook < 0) {
 
 $TRemindTypes = array();
 if (getDolGlobalString('AGENDA_REMINDER_BROWSER')) {
-	$TRemindTypes['browser'] = array('label' => $langs->trans('BrowserPush'), 'disabled' => (!getDolGlobalString('AGENDA_REMINDER_BROWSER') ? 1 : 0));
+	$TRemindTypes['browser'] = array('label' => $langs->trans('BrowserPush'), 'disabled' => (getDolGlobalString('AGENDA_REMINDER_BROWSER') ? 0 : 1));
 }
 if (getDolGlobalString('AGENDA_REMINDER_EMAIL')) {
-	$TRemindTypes['email'] = array('label' => $langs->trans('EMail'), 'disabled' => (!getDolGlobalString('AGENDA_REMINDER_EMAIL') ? 1 : 0));
+	$TRemindTypes['email'] = array('label' => $langs->trans('EMail'), 'disabled' => (getDolGlobalString('AGENDA_REMINDER_EMAIL') ? 0 : 1));
 }
 
 $TDurationTypes = array('y' => $langs->trans('Years'), 'm' => $langs->trans('Month'), 'w' => $langs->trans('Weeks'), 'd' => $langs->trans('Days'), 'h' => $langs->trans('Hours'), 'i' => $langs->trans('Minutes'));
@@ -1227,7 +1227,29 @@ if ($action == 'create') {
 						console.log("setdatefields");
                         setdatefields();
                     });
-
+					var old_startdate = null;
+					$("#ap").focus(function() {
+						old_startdate = new Date($("#apyear").val(), $("#apmonth").val() - 1, $("#apday").val());
+					});
+					$("#ap").next(".ui-datepicker-trigger").click(function() {
+						old_startdate = new Date($("#apyear").val(), $("#apmonth").val() - 1, $("#apday").val());
+					});
+					$("#ap").change(function() {
+						setTimeout(function() {
+							if ($("#p2").val() !== "") {
+								var new_startdate = new Date($("#apyear").val(), $("#apmonth").val() - 1, $("#apday").val());
+								var old_enddate = new Date($("#p2year").val(), $("#p2month").val() - 1, $("#p2day").val());
+								if (new_startdate > old_enddate) {
+									var timeDiff = old_enddate - old_startdate;
+									var new_enddate = new Date(new_startdate.getTime() + timeDiff);
+									$("#p2").val(formatDate(new_enddate, "' . $langs->trans('FormatDateShortJavaInput') . '"));
+									$("#p2day").val(new_enddate.getDate());
+									$("#p2month").val(new_enddate.getMonth() + 1);
+									$("#p2year").val(new_enddate.getFullYear());
+								}
+							}
+						}, 0);
+					});
                     $("#actioncode").change(function() {
                         if ($("#actioncode").val() == \'AC_RDV\') $("#dateend").addClass("fieldrequired");
                         else $("#dateend").removeClass("fieldrequired");
@@ -1377,15 +1399,15 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	$datep = ($datep ? $datep : (is_null($object->datep) ? '' : $object->datep));
-	if (GETPOSTINT('datep', 1)) {
-		$datep = dol_stringtotime((string) GETPOSTINT('datep', 1), 'tzuserrel');
+	if (GETPOST('datep', 'alpha', 1)) {
+		$datep = dol_stringtotime(GETPOST('datep', 'alpha', 1), 'tzuserrel');
 	}
 	$datef = ($datef ? $datef : $object->datef);
-	if (GETPOSTINT('datef', 1)) {
-		$datef = dol_stringtotime((string) GETPOSTINT('datef', 1), 'tzuserrel');
+	if (GETPOST('datef', 'alpha', 1)) {
+		$datef = dol_stringtotime(GETPOST('datef', 'alpha', 1), 'tzuserrel');
 	}
 	if (empty($datef) && !empty($datep)) {
-		if (GETPOST("actioncode", 'aZ09') == 'AC_RDV' || !getDolGlobalString('AGENDA_USE_EVENT_TYPE_DEFAULT')) {
+		if (GETPOST("actioncode", 'aZ09') == 'AC_RDV' || (!getDolGlobalString('AGENDA_USE_EVENT_TYPE_DEFAULT') || getDolGlobalString('AGENDA_USE_EVENT_TYPE_DEFAULT') == '-1')) {
 			$datef = dol_time_plus_duree($datep, getDolGlobalInt('AGENDA_AUTOSET_END_DATE_WITH_DELTA_HOURS', 1), 'h');
 		}
 	}
@@ -1819,6 +1841,29 @@ if ($id > 0) {
 	            		$("#fullday").change(function() {
 	            			setdatefields();
 	            		});
+						var old_startdate = null;
+						$("#ap").focus(function() {
+							old_startdate = new Date($("#apyear").val(), $("#apmonth").val() - 1, $("#apday").val());
+						});
+						$("#ap").next(".ui-datepicker-trigger").click(function() {
+							old_startdate = new Date($("#apyear").val(), $("#apmonth").val() - 1, $("#apday").val());
+						});
+						$("#ap").change(function() {
+							setTimeout(function() {
+								if ($("#p2").val() !== "") {
+									var new_startdate = new Date($("#apyear").val(), $("#apmonth").val() - 1, $("#apday").val());
+									var old_enddate = new Date($("#p2year").val(), $("#p2month").val() - 1, $("#p2day").val());
+									if (new_startdate > old_enddate) {
+										var timeDiff = old_enddate - old_startdate;
+										var new_enddate = new Date(new_startdate.getTime() + timeDiff);
+										$("#p2").val(formatDate(new_enddate, "' . $langs->trans('FormatDateShortJavaInput') . '"));
+										$("#p2day").val(new_enddate.getDate());
+										$("#p2month").val(new_enddate.getMonth() + 1);
+										$("#p2year").val(new_enddate.getFullYear());
+									}
+								}
+							}, 0);
+						});
 	            		$("#actioncode").change(function() {
                         	if ($("#actioncode").val() == \'AC_RDV\') $("#dateend").addClass("fieldrequired");
                         	else $("#dateend").removeClass("fieldrequired");
@@ -2206,9 +2251,9 @@ if ($id > 0) {
 			print '$(document).ready(function () {
 	            		$("#addreminder").click(function(){
 	            		    if (this.checked) {
-	            		      $(".reminderparameters").show();
+	            		      	$(".reminderparameters").show();
                             } else {
-                            $(".reminderparameters").hide();
+                            	$(".reminderparameters").hide();
                             }
 	            		 });
 
@@ -2336,12 +2381,13 @@ if ($id > 0) {
 		// Type
 		if (getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
 			print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td>';
-			$labeltoshow = $langs->trans("Action".$object->type_code);
+			$labeltype = ($langs->transnoentities("Action".$object->type_code) != "Action".$object->type_code) ? $langs->transnoentities("Action".$object->type_code) : $object->type_label;
+			$labeltoshow = $labeltype;
 			if ($object->code) {
 				$labeltoshow .= ' ('.$object->code.')';
 			}
 			print $object->getTypePicto('pictofixedwidth paddingright', $labeltoshow);
-			print $langs->trans("Action".$object->type_code);
+			print $labeltype;
 			print '</td></tr>';
 		}
 
@@ -2494,9 +2540,11 @@ if ($id > 0) {
 		}
 
 		// Priority
-		print '<tr><td class="nowrap" class="titlefield">'.$langs->trans("Priority").'</td><td>';
-		print($object->priority ? $object->priority : '');
-		print '</td></tr>';
+		if (getDolGlobalString('AGENDA_SUPPORT_PRIORITY_IN_EVENTS')) {
+			print '<tr><td class="nowrap" class="titlefield">' . $langs->trans("Priority") . '</td><td>';
+			print($object->priority ? $object->priority : '');
+			print '</td></tr>';
+		}
 
 		// Object linked (if link is for thirdparty, contact, project it is a recording error. We should not have links in link table
 		// for such objects because there is already a dedicated field into table llx_actioncomm.

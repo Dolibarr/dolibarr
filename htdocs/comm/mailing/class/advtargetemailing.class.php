@@ -1,6 +1,7 @@
 <?php
 /* Advance Targeting Emailing for mass emailing module
- * Copyright (C) 2013  Florian Henry <florian.henry@open-concept.pro>
+ * Copyright (C) 2013  		Florian Henry 			<florian.henry@open-concept.pro>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +18,7 @@
  */
 
 /**
- * 	\file		comm/mailing/class/advtargetemailing.class.php
+ * 	\file		htdocs/comm/mailing/class/advtargetemailing.class.php
  * 	\ingroup	mailing
  * 	\brief		This file is an example CRUD class file (Create/Read/Update/Delete)
  */
@@ -92,7 +93,15 @@ class AdvanceTargetingMailing extends CommonObject
 	 * @var array type status comm prospect
 	 */
 	public $type_statuscommprospect = array();
+
+	/**
+	 * @var int[]
+	 */
 	public $thirdparty_lines;
+
+	/**
+	 * @var int[]
+	 */
 	public $contact_lines;
 
 

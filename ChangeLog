@@ -25,6 +25,7 @@ The following changes may create regressions for some external modules, but were
 * The experimental and deprecated module WebserviceClient is completely removed (SOAP technology is deprecated). May be replaced with the stable module Webhook.
 * The dynamic properties ->no_button_delete, ->no_button_edit, ->no_button_copy for $object Product that could be set by an external module must no more
   be set (not allowed by PHP 8.2). A module can already return an array with key 'no_button_delete', 'no_button_edit', 'no_button_copy' for same purpose.
+* The old function dol_bc($var, $moreclass = '') has been removed. If you called it, just stop to call it.
 
 
 ***** ChangeLog for 20.0.0 compared to 19.0 *****
@@ -164,7 +165,7 @@ NEW: Module Website: Can link/unlink translation between web pages
 NEW: Move dir of cache for widgets
 NEW: multiselect with checkbox in categories/tags search for thirdparty list (#28335)
 NEW: new consts to redirect from massaction createbills (#29436)
-NEW: new global string to preselect yes for one bill per thirparty in orderlist massaction (#29359)
+NEW: new global string to preselect yes for one bill per third party in orderlist massaction (#29359)
 NEW: notification action triggers for cancelling orders and invoices
 NEW: now button when editing an event
 NEW: online signature of shipments (#29559)
@@ -3302,7 +3303,7 @@ FIX: fix checkbox displayed according to module project setup parameters - work 
 FIX: inconsistency in margin recording with option "Force to sale price"
 FIX: invoice PDF generation after payment
 FIX: mask selector fournisseur if module not activate
-FIX: merge thirparty also work for bank URL entry
+FIX: merge third party also works for bank URL entry
 FIX: Missing extrafields into export of agenda record
 FIX: missing parameter in select for POP
 FIX: missing return edit if update error

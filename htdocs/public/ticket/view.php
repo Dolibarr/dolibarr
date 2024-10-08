@@ -441,6 +441,8 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		print '</div>';
 
 		$object->viewTicketMessages(false, true, $object->dao);
+
+		print '<br>';
 	} else {
 		print '<!-- public view ticket -->';
 		print '<div class="ticketpublicarea ticketlargemargin centpercent">';

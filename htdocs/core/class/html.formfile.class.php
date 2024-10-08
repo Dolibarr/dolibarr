@@ -36,6 +36,9 @@
  */
 class FormFile
 {
+	/**
+	 * @var DoliDB
+	 */
 	private $db;
 
 	/**
@@ -43,8 +46,14 @@ class FormFile
 	 */
 	public $error;
 
+	/**
+	 * @var int
+	 */
 	public $numoffiles;
-	public $infofiles; // Used to return information by function getDocumentsLink
+	/**
+	 * @var array{nboffiles:int,extensions:array<string,int>,files:string[]} Used to return information by function getDocumentsLink
+	 */
+	public $infofiles;
 
 
 	/**
@@ -1114,8 +1123,8 @@ class FormFile
 
 				$this->infofiles['nboffiles']++;
 				$this->infofiles['files'][] = $file['fullname'];
-				$ext = pathinfo($file["name"], PATHINFO_EXTENSION);
-				if (empty($this->infofiles[$ext])) {
+				$ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+				if (empty($this->infofiles['extensions'][$ext])) {
 					$this->infofiles['extensions'][$ext] = 1;
 				} else {
 					$this->infofiles['extensions'][$ext]++;
@@ -1398,7 +1407,7 @@ class FormFile
 
 
 					// File name
-					print '<td class="minwith200 tdoverflowmax500" title="'.dolPrintHTMLForAttribute($file['name']).'">';
+					print '<td class="minwidth200 tdoverflowmax500" title="'.dolPrintHTMLForAttribute($file['name']).'">';
 
 					// Show file name with link to download
 					//print "XX".$file['name'];	//$file['name'] must be utf8
@@ -2247,7 +2256,7 @@ class FormFile
 				$out .= '</a>';
 			} else {
 				if ($ruleforpicto < 0) {
-					$out .= img_picto('', 'generic', '', false, 0, 0, '', 'paddingright pictofixedwidth');
+					$out .= img_picto('', 'generic', '', 0, 0, 0, '', 'paddingright pictofixedwidth');
 				}
 			}
 		}

@@ -250,7 +250,7 @@ if ($transvalue) {
 
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-if (isset($optioncss) && $optioncss != '') {
+if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }
 print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -469,7 +469,7 @@ if ($mode == 'searchkey') {
 		$nbempty++;
 	}
 
-	if ($action == 'search' && ($nbempty > 999)) {    // 999 to disable this
+	if ($action == 'search' && ($nbempty > 999)) {    // 999 to disable this @phpstan-ignore-line
 		setEventMessages($langs->trans("WarningAtLeastKeyOrTranslationRequired"), null, 'warnings');
 	} else {
 		// Now search into translation array

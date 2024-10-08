@@ -21,7 +21,7 @@ button.dropdown-item.global-search-item {
 }
 
 #topmenu-bookmark-dropdown .dropdown-menu {
-	min-width: 360px;
+	min-width: 370px;
 	max-width: 400px;
 }
 
@@ -362,7 +362,7 @@ a.dropdown-item {
 	display: block !important;
 	box-sizing: border-box;
 	width: 100%;
-	padding: .3em 1.5em .4em 1em;
+	padding: .5em 1.5em .5em 1em;
 	clear: both;
 	font-weight: 400;
 	color: #212529  !important;
@@ -374,6 +374,15 @@ a.dropdown-item {
 	-moz-box-shadow: none;
 	box-shadow: none;
 }
+.dropdown-item.bookmark-item {
+	padding-left: 0;
+	padding-right: 0;
+}
+.dropdown-item.bookmark-item:before {
+	width: 20px;
+	padding-left: 2px;
+}
+
 
 .dropdown-item::before {
 	/* font part */
@@ -472,7 +481,7 @@ a.dropdown-item {
 }
 
 .quickadd-item {
-	font-size: 1em;
+	font-size: 1.1em;
 	padding-top: 6px;
 	padding-bottom: 6px;
 }

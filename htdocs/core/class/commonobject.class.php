@@ -769,14 +769,14 @@ abstract class CommonObject
 	public $sendtoid;
 
 	/**
-	 * @var	float		Amount already paid from getSommePaiement() (used to show correct status)
-	 * @deprecated		Use $totalpaid instead
+	 * @var	float		Amount already paid from getSommePaiement() + getSumCreditNotesUsed() + getSumDepositsUsed() (used to show correct status)
 	 * @see $totalpaid
 	 */
-	private $alreadypaid;
+	public $alreadypaid;
 
 	/**
-	 * @var	float		Amount already paid from getSommePaiement() (used to show correct status)
+	 * @var	float		Amount already paid from getSommePaiement()
+	 * @see $alreadpaid
 	 */
 	public $totalpaid;
 
@@ -1749,7 +1749,7 @@ abstract class CommonObject
 					} elseif (strpos($obj->element, 'supplier') !== false && $obj->element != 'supplier_proposal') {
 						$modulename = 'fournisseur';
 					}
-					if (!empty($conf->{$modulename}->enabled)) {
+					if (isModEnabled($modulename)) {
 						$libelle_element = $langs->trans('ContactDefault_'.$obj->element);
 						$tmpelement = $obj->element;
 						$transkey = "TypeContact_".$tmpelement."_".$source."_".$obj->code;
@@ -1893,7 +1893,7 @@ abstract class CommonObject
 			$this->thirdparty = $thirdparty;
 
 			// Use first price level if level not defined for third party
-			if (getDolGlobalString('PRODUIT_MULTIPRICES') && empty($this->thirdparty->price_level)) {
+			if ((getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && empty($this->thirdparty->price_level)) {
 				$this->thirdparty->price_level = 1;
 			}
 
@@ -2750,6 +2750,8 @@ abstract class CommonObject
 							case 'propal':
 								/** @var Propal $this */
 								/** @var PropaleLigne $line */
+								'@phan-var-force Propal $this';
+								'@phan-var-force PropaleLigne $line';
 								$this->updateline(
 									$line->id,
 									$line->subprice,
@@ -2778,6 +2780,8 @@ abstract class CommonObject
 							case 'commande':
 								/** @var Commande $this */
 								/** @var OrderLine $line */
+								'@phan-var-force Commande $this';
+								'@phan-var-force OrderLine $line';
 								$this->updateline(
 									$line->id,
 									($line->description ? $line->description : $line->desc),
@@ -2806,6 +2810,8 @@ abstract class CommonObject
 							case 'facture':
 								/** @var Facture $this */
 								/** @var FactureLigne $line */
+								'@phan-var-force Facture $this';
+								'@phan-var-force FactureLigne $line';
 								$this->updateline(
 									$line->id,
 									($line->description ? $line->description : $line->desc),
@@ -2835,6 +2841,8 @@ abstract class CommonObject
 							case 'supplier_proposal':
 								/** @var SupplierProposal $this */
 								/** @var SupplierProposalLine $line */
+								'@phan-var-force SupplierProposal $this';
+								'@phan-var-force SupplierProposalLine $line';
 								$this->updateline(
 									$line->id,
 									$line->subprice,
@@ -2861,6 +2869,8 @@ abstract class CommonObject
 							case 'order_supplier':
 								/** @var CommandeFournisseur $this */
 								/** @var CommandeFournisseurLigne $line */
+								'@phan-var-force CommandeFournisseur $this';
+								'@phan-var-force CommandeFournisseurLigne $line';
 								$this->updateline(
 									$line->id,
 									($line->description ? $line->description : $line->desc),
@@ -2885,6 +2895,8 @@ abstract class CommonObject
 							case 'invoice_supplier':
 								/** @var FactureFournisseur $this */
 								/** @var SupplierInvoiceLine $line */
+								'@phan-var-force FactureFournisseur $this';
+								'@phan-var-force SupplierInvoiceLIne $line';
 								$this->updateline(
 									$line->id,
 									($line->description ? $line->description : $line->desc),
@@ -3664,6 +3676,7 @@ abstract class CommonObject
 
 		$sql = "UPDATE ".$this->db->prefix().$this->table_element;
 		$sql .= " SET ref_ext = '".$this->db->escape($ref_ext)."'";
+		// @phan-suppress-next-line PhanUndeclaredProperty
 		$sql .= " WHERE ".(isset($this->table_rowid) ? $this->table_rowid : 'rowid')." = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update_ref_ext", LOG_DEBUG);
@@ -4024,12 +4037,15 @@ abstract class CommonObject
 			}
 
 			// Add revenue stamp to total
+			// @phan-suppress-next-line PhanUndeclaredProperty
 			$this->total_ttc += isset($this->revenuestamp) ? $this->revenuestamp : 0;
+			// @phan-suppress-next-line PhanUndeclaredProperty
 			$this->multicurrency_total_ttc += isset($this->revenuestamp) ? ($this->revenuestamp * $multicurrency_tx) : 0;
 
 			// Situations totals
-			if (!empty($this->situation_cycle_ref) && !empty($this->situation_counter) && $this->situation_counter > 1 && method_exists($this, 'get_prev_sits')) {
-				include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+			if (!empty($this->situation_cycle_ref) && !empty($this->situation_counter) && $this->situation_counter > 1 && method_exists($this, 'get_prev_sits')) {  // @phan-suppress-current-line PhanUndeclaredProperty
+				'@phan-var-force Facture $this';
+				include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';  // Note: possibly useless as $this is normally already Facture, so the class file should be loaded
 				if ($this->type != Facture::TYPE_CREDIT_NOTE) {	// @phpstan-ignore-line
 					if (getDolGlobalInt('INVOICE_USE_SITUATION') != 2) {
 						$prev_sits = $this->get_prev_sits();
@@ -4353,6 +4369,7 @@ abstract class CommonObject
 							if (class_exists($className)) {
 								foreach ($objectids as $i => $objectid) {	// $i is rowid into llx_element_element
 									$object = new $className($this->db);
+									'@phan-var-force CommonObject $object';
 									$ret = $object->fetch($objectid);
 									if ($ret >= 0) {
 										$this->linkedObjects[$objecttype][$i] = $object;
@@ -4459,13 +4476,13 @@ abstract class CommonObject
 	/**
 	 *	Delete all links between an object $this
 	 *
-	 *	@param	int		$sourceid		Object source id
+	 *	@param	?int	$sourceid		Object source id
 	 *	@param  string	$sourcetype		Object source type
-	 *	@param  int		$targetid		Object target id
+	 *	@param  ?int	$targetid		Object target id
 	 *	@param  string	$targettype		Object target type
 	 *  @param	int		$rowid			Row id of line to delete. If defined, other parameters are not used.
-	 * 	@param	User	$f_user			User that create
-	 * 	@param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
+	 * 	@param	?User	$f_user			User that create
+	 * 	@param	int<0,1>	$notrigger		1=Does not execute triggers, 0= execute triggers
 	 *	@return     					int	>0 if OK, <0 if KO
 	 *	@see	add_object_linked(), updateObjectLinked(), fetchObjectLinked()
 	 */
@@ -4631,7 +4648,7 @@ abstract class CommonObject
 	 *      Set status of an object.
 	 *
 	 *      @param	int		$status			Status to set
-	 *      @param	int		$elementId		Id of element to force (use this->id by default if null)
+	 *      @param	?int	$elementId		Id of element to force (use this->id by default if null)
 	 *      @param	string	$elementType	Type of element to force (use this->table_element by default)
 	 *      @param	string	$trigkey		Trigger key to use for trigger. Use '' means automatic but it is not recommended and is deprecated.
 	 *      @param	string	$fieldstatus	Name of status field in this->table_element
@@ -5269,7 +5286,7 @@ abstract class CommonObject
 	 *	@param  Societe	    		$seller            	Object of seller third party
 	 *	@param  Societe	    		$buyer             	Object of buyer third party
 	 *	@param	int					$selected		   	ID line selected
-	 *  @param  Extrafields			$extrafields		Object of extrafields
+	 *  @param  ?Extrafields		$extrafields		Object of extrafields
 	 *  @param	string				$defaulttpldir		Directory where to find the template (deprecated)
 	 *	@return	void
 	 */
@@ -5458,6 +5475,7 @@ abstract class CommonObject
 
 		//var_dump($line);
 		if (!empty($line->date_start)) {
+			// @phan-suppress-next-line PhanUndeclaredProperty
 			$date_start = $line->date_start;
 		} else {
 			$date_start = $line->date_debut_prevue;
@@ -5466,6 +5484,7 @@ abstract class CommonObject
 			}
 		}
 		if (!empty($line->date_end)) {
+			// @phan-suppress-next-line PhanUndeclaredProperty
 			$date_end = $line->date_end;
 		} else {
 			$date_end = $line->date_fin_prevue;
@@ -5519,6 +5538,7 @@ abstract class CommonObject
 		}
 
 		if (!empty($line->desc)) {
+			'@phan-var-force OrderLine|FactureLigne|ContratLigne|FactureFournisseurLigneRec|SupplierInvoiceLine|SupplierProposalLine $line';
 			if ($line->desc == '(CREDIT_NOTE)') {  // TODO Not sure this is used for source object
 				$discount = new DiscountAbsolute($this->db);
 				$discount->fetch($line->fk_remise_except);
@@ -5854,6 +5874,8 @@ abstract class CommonObject
 		if ($obj instanceof ModelePDFMember) {
 			$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1, 'tmp_cards');
 		} else {
+			// TODO: Try to set type above again
+			'@phan-var-force ModeleBarCode|ModeleDon|ModeleExports|ModeleImports|ModelePDFAsset|ModelePDFContract|ModelePDFDeliveryOrder|ModelePDFEvaluation|ModelePDFFactures|ModelePDFFicheinter|ModelePDFMo|ModelePDFMovement|ModelePDFProduct|ModelePDFProjects|ModelePDFPropales|ModelePDFRecruitmentJobPosition|ModelePDFStock|ModelePDFStockTransfer|ModelePDFSupplierProposal|ModelePDFSuppliersInvoices|ModelePDFSuppliersOrders|ModelePDFSuppliersPayments|ModelePDFTask|ModelePDFTicket|ModelePDFUser|ModelePDFUserGroup|ModelePdfExpedition|ModelePdfReception|ModeleThirdPartyDoc $obj';
 			$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $moreparams);
 		}
 		// After call of write_file $obj->result['fullpath'] is set with generated file. It will be used to update the ECM database index.
@@ -6357,8 +6379,8 @@ abstract class CommonObject
 		if (empty($rowid)) {
 			$rowid = $this->id;
 		}
-		if (empty($rowid) && isset($this->rowid)) {
-			$rowid = $this->rowid; // deprecated
+		if (empty($rowid) && isset($this->rowid)) {  // @phan-suppress-current-line PhanUndeclaredProperty
+			$rowid = $this->rowid; // deprecated  @phan-suppress-current-line PhanUndeclaredProperty
 		}
 
 		// To avoid SQL errors. Probably not the better solution though
@@ -6704,6 +6726,7 @@ abstract class CommonObject
 								$new_array_options[$key] = '';
 							} elseif ($value) {
 								$object = new $InfoFieldList[0]($this->db);
+								'@phan-var-force CommonObject $object';
 								if (is_numeric($value)) {
 									$res = $object->fetch($value); // Common case
 								} else {
@@ -6884,12 +6907,12 @@ abstract class CommonObject
 						if (is_array($value) || (!is_numeric($value) && $value != '')) {
 							$this->errors[] = $langs->trans("ExtraLanguageHasWrongValue", $attributeLabel);
 							return -1;
-						} elseif ($value == '') {
+						} elseif ($value == '') {  // @phan-suppress-current-line PhanTypeComparisonFromArray
 							$new_array_languages[$key] = null;
 						}
 						break;
 					case 'double':
-						$value = price2num($value);
+						$value = price2num((string) $value);
 						if (!is_numeric($value) && $value != '') {
 							dol_syslog($langs->trans("ExtraLanguageHasWrongValue")." on ".$attributeLabel."(".$value."is not '".$attributeType."')", LOG_DEBUG);
 							$this->errors[] = $langs->trans("ExtraLanguageHasWrongValue", $attributeLabel);
@@ -7399,6 +7422,10 @@ abstract class CommonObject
 		} elseif (preg_match('/varchar/', $val['type'])) {
 			$param['options'] = array();
 			$type = 'varchar';
+		} elseif (preg_match('/stars\((\d+)\)/', $val['type'], $reg)) {
+			$param['options'] = array();
+			$type = 'stars';
+			$size = $reg[1];
 		} else {
 			$param['options'] = array();
 			$type = $this->fields[$key]['type'];
@@ -7590,6 +7617,44 @@ abstract class CommonObject
 				$value = price($value);
 			}
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam ? $moreparam : '').'> '.$langs->getCurrencySymbol($conf->currency);
+		} elseif ($type == 'stars') {
+			$out = '<input type="hidden" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
+			$out .= '<div class="star-selection">';
+			$i = 1;
+			while ($i <= $size) {
+				$out .= '<span class="star" data-value="'.$i.'">'.img_picto('', 'fontawesome_star_fas').'</span>';
+				$i++;
+			}
+			$out .= '</div>';
+			$out .= '<script>
+				$(document).ready(function() {
+					let selectedStars = parseInt($("#'.$keyprefix.$key.$keysuffix.'").val()) || 0;
+					$(".star").each(function() {
+						$(this).toggleClass("active", $(this).data("value") <= selectedStars);
+					});
+					$(".star").on("mouseover", function() {
+						let selectedStar = $(this).data("value");
+						$(".star").each(function() {
+							$(this).toggleClass("active", $(this).data("value") <= selectedStar);
+						});
+					});
+					$(".star-selection").on("mouseout", function() {
+						$(".star").each(function() {
+							$(this).toggleClass("active", $(this).data("value") <= selectedStars);
+						});
+					});
+					$(".star").on("click", function() {
+						selectedStars = $(this).data("value");
+						if (selectedStars == 1 && $("#'.$keyprefix.$key.$keysuffix.'").val() == 1) {
+							selectedStars = 0;
+						}
+						$("#'.$keyprefix.$key.$keysuffix.'").val(selectedStars);
+						$(".star").each(function() {
+							$(this).toggleClass("active", $(this).data("value") <= selectedStars);
+						});
+					});
+				});
+			</script>';
 		} elseif (preg_match('/^double(\([0-9],[0-9]\)){0,1}/', (string) $type)) {
 			if (!empty($value)) {		// $value in memory is a php numeric, we format it into user number format.
 				$value = price($value);
@@ -8060,7 +8125,7 @@ abstract class CommonObject
 									$isDependList = 1;
 								}
 
-								$data[$obj->rowid] = $labeltoshow;
+								$data[(int) $obj->rowid] = $labeltoshow;
 							}
 
 							$i++;
@@ -8073,7 +8138,7 @@ abstract class CommonObject
 					}
 				} else {
 					require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-					$data = $form->select_all_categories(Categorie::$MAP_ID_TO_CODE[$InfoFieldList[5]], '', 'parent', 64, $InfoFieldList[6], 1, 1);
+					$data = $form->select_all_categories(Categorie::$MAP_ID_TO_CODE[(int) $InfoFieldList[5]], '', 'parent', 64, $InfoFieldList[6], 1, 1);
 					$out = $form->multiselectarray($keyprefix . $key . $keysuffix, $data, $value_arr, 0, 0, $morecss, 0, '100%');
 				}
 			}
@@ -8255,6 +8320,10 @@ abstract class CommonObject
 		} elseif (preg_match('/^chkbxlst:(.*)/i', $val['type'], $reg)) {
 			$param['options'] = array($reg[1] => 'N');
 			$type = 'chkbxlst';
+		} elseif (preg_match('/stars\((\d+)\)/', $val['type'], $reg)) {
+			$param['options'] = array();
+			$type = 'stars';
+			$size = $reg[1];
 		}
 
 		$langfile = empty($val['langfile']) ? '' : $val['langfile'];
@@ -8342,6 +8411,62 @@ abstract class CommonObject
 			$value = dol_print_phone($value, '', 0, 0, '', '&nbsp;', 'phone');
 		} elseif ($type == 'ip') {
 			$value = dol_print_ip($value, 0);
+		} elseif ($type == 'stars') {
+			$value = '<input type="hidden" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.$this->id.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').'>';
+			$value .= '<div class="star-selection" id="'.$keyprefix.$key.$keysuffix.$this->id.'_selection">';
+			$i = 1;
+			while ($i <= $size) {
+				$value .= '<span class="star" data-value="'.$i.'">'.img_picto('', 'fontawesome_star_fas').'</span>';
+				$i++;
+			}
+			$value .= '</div>';
+			$value .= '<script>
+				$(document).ready(function() {
+						let container = $("#'.$keyprefix.$key.$keysuffix.$this->id.'_selection");
+						let selectedStars = parseInt($("#'.$keyprefix.$key.$keysuffix.$this->id.'").val()) || 0;
+						container.find(".star").each(function() {
+							$(this).toggleClass("active", $(this).data("value") <= selectedStars);
+						});
+						container.find(".star").on("mouseover", function() {
+							let selectedStar = $(this).data("value");
+							container.find(".star").each(function() {
+								$(this).toggleClass("active", $(this).data("value") <= selectedStar);
+							});
+						});
+						container.on("mouseout", function() {
+							container.find(".star").each(function() {
+								$(this).toggleClass("active", $(this).data("value") <= selectedStars);
+							});
+						});
+						container.find(".star").off("click").on("click", function() {
+							selectedStars = $(this).data("value");
+							if (selectedStars == 1 && $("#'.$keyprefix.$key.$keysuffix.$this->id.'").val() == 1) {
+								selectedStars = 0;
+							}
+							container.find("#'.$keyprefix.$key.$keysuffix.$this->id.'").val(selectedStars);
+							container.find(".star").each(function() {
+								$(this).toggleClass("active", $(this).data("value") <= selectedStars);
+							});
+							$.ajax({
+								url: "ajax/'.$this->element.'.php",
+								method: "POST",
+								data: {
+									objectId: "'.$this->id.'",
+									field: "'.$keyprefix.$key.$keysuffix.'",
+									value: selectedStars,
+									token: "'.newToken().'"
+								},
+								success: function(response) {
+									var res = JSON.parse(response);
+									console[res.status === "success" ? "log" : "error"](res.message);
+								},
+								error: function(xhr, status, error) {
+									console.log("Ajax request failed while updating '.$keyprefix.$key.$keysuffix.':", error);
+								}
+							});
+						});
+				});
+			</script>';
 		} elseif ($type == 'price') {
 			if (!is_null($value) && $value !== '') {
 				$value = price($value, 0, $langs, 0, 0, -1, $conf->currency);
@@ -8590,13 +8715,16 @@ abstract class CommonObject
 
 					if ($classname && class_exists($classname)) {
 						$object = new $classname($this->db);
+						'@phan-var-force CommonObject $object';
 						if ($object->element === 'product') {	// Special case for product because default valut of fetch are wrong
+							'@phan-var-force Product $object';
 							$result = $object->fetch($value, '', '', '', 0, 1, 1);
 						} else {
 							$result = $object->fetch($value);
 						}
 						if ($result > 0) {
 							if ($object->element === 'product') {
+								'@phan-var-force Product $object';
 								$get_name_url_param_arr = array($getnomurlparam, $getnomurlparam2, 0, -1, 0, '', 0);
 								if (isset($val['get_name_url_params'])) {
 									$get_name_url_params = explode(':', $val['get_name_url_params']);
@@ -9035,7 +9163,7 @@ abstract class CommonObject
 									$value = $getposttemp;
 								}
 							} elseif (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('int'))) {
-								$value = (!empty($this->array_options["options_".$key]) || $this->array_options["options_".$key] === '0') ? $this->array_options["options_".$key] : '';
+								$value = (!empty($this->array_options["options_".$key]) || (isset($this->array_options["options_".$key]) && $this->array_options["options_".$key] === '0')) ? $this->array_options["options_".$key] : '';
 							} else {
 								$value = (!empty($this->array_options["options_".$key]) ? $this->array_options["options_".$key] : ''); // No GET, no POST, no default value, so we take value of object.
 							}
@@ -9350,6 +9478,20 @@ abstract class CommonObject
 	 */
 	public static function commonReplaceThirdparty(DoliDB $dbs, $origin_id, $dest_id, array $tables, $ignoreerrors = 0)
 	{
+		global $hookmanager;
+
+		$parameters = array(
+			'origin_id' => $origin_id,
+			'dest_id' => $dest_id,
+			'tables' => $tables,
+		);
+		$reshook = $hookmanager->executeHooks('commonReplaceThirdparty', $parameters);
+		if ($reshook) {
+			return true; // replacement code
+		} elseif ($reshook < 0) {
+			return $ignoreerrors === 1; // failure
+		} // reshook = 0 => execute normal code
+
 		foreach ($tables as $table) {
 			$sql = 'UPDATE '.$dbs->prefix().$table.' SET fk_soc = '.((int) $dest_id).' WHERE fk_soc = '.((int) $origin_id);
 
@@ -10266,7 +10408,7 @@ abstract class CommonObject
 	 * Load object in memory from the database. This does not load line. This is done by parent fetch() that call fetchCommon
 	 *
 	 * @param	int			$id				Id object
-	 * @param	string		$ref			Ref
+	 * @param	?string		$ref			Ref
 	 * @param	string		$morewhere		More SQL filters (' AND ...')
 	 * @param	int<0,1>	$noextrafields	0=Default to load extrafields, 1=No extrafields
 	 * @return 	int<-4,1>	      			Return integer <0 if KO, 0 if not found, >0 if OK
@@ -10331,7 +10473,7 @@ abstract class CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param	string		$morewhere		More SQL filters (' AND ...')
+	 * @param	string		$morewhere		More SQL filters (' AND ...'). No user coming from user input are allowed here. Only hard coded values.
 	 * @param	int<0,1>	$noextrafields	0=Default to load extrafields, 1=No extrafields
 	 * @return 	int<-1,1>        			Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
@@ -10360,6 +10502,7 @@ abstract class CommonObject
 		if ($resql) {
 			$num_rows = $this->db->num_rows($resql);
 			$i = 0;
+			$this->lines = array();
 			while ($i < $num_rows) {
 				$obj = $this->db->fetch_object($resql);
 				if ($obj) {

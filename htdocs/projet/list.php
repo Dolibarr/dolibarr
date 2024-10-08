@@ -1038,7 +1038,7 @@ if ($search_public != '') {
 	$param .= '&search_public='.urlencode($search_public);
 }
 if ($search_project_user > 0) {
-	$param .= '&search_project_user='.urlencode($search_project_user);
+	$param .= '&search_project_user='.urlencode((string) $search_project_user);
 }
 if ($search_project_contact > 0) {
 	$param .= '&search_project_contact='.urlencode((string) ($search_project_contact));
@@ -1226,7 +1226,7 @@ if (!empty($moreforfilter)) {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;
 	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
+	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	print '</div>';
 }
@@ -1477,6 +1477,7 @@ if (!empty($arrayfields['s.nom']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.name_alias']['checked'])) {
+	// @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['s.name_alias']['label'], $_SERVER["PHP_SELF"], "s.name_alias", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
@@ -1707,8 +1708,12 @@ while ($i < $imaxinloop) {
 				}
 				foreach ($groupbyvalues as $tmpcursor => $tmpgroupbyvalue) {
 					//var_dump("tmpcursor=".$tmpcursor." groupbyold=".$groupbyold." groupbyvalue=".$groupbyvalue);
-					if (!is_null($groupbyold) && ($tmpcursor <= $groupbyold)) { continue; }
-					if ($tmpcursor >= $groupbyvalue) { continue; }
+					if (!is_null($groupbyold) && ($tmpcursor <= $groupbyold)) {
+						continue;
+					}
+					if ($tmpcursor >= $groupbyvalue) {
+						continue;
+					}
 					// We found a possible column with no value, we output the empty column
 					print '<div class="box-flex-container-column kanban column';
 					if (in_array($tmpcursor, $groupofcollpasedvalues)) {
@@ -1745,7 +1750,9 @@ while ($i < $imaxinloop) {
 				print '</div>';	// end box-flex-container
 				foreach ($groupbyvalues as $tmpcursor => $tmpgroupbyvalue) {
 					//var_dump("tmpcursor=".$tmpcursor." groupbyold=".$groupbyold." groupbyvalue=".$groupbyvalue);
-					if ($tmpcursor <= $groupbyvalue) { continue; }
+					if ($tmpcursor <= $groupbyvalue) {
+						continue;
+					}
 					// We found a possible column with no value, we output the empty column
 					print '<div class="box-flex-container-column kanban column';
 					if (in_array($tmpcursor, $groupofcollpasedvalues)) {

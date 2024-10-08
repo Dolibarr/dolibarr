@@ -83,7 +83,7 @@ function pdf_admin_prepare_head()
  *  @param		'setup'|'auto'	$mode				'setup' = Use setup, 'auto' = Force autodetection whatever is setup
  *  @return     array{width:float|int,height:float|int,unit:string}		Array('width'=>w,'height'=>h,'unit'=>u);
  */
-function pdf_getFormat(Translate $outputlangs = null, $mode = 'setup')
+function pdf_getFormat($outputlangs = null, $mode = 'setup')
 {
 	global $conf, $db, $langs;
 
@@ -180,10 +180,8 @@ function pdf_getInstance($format = '', $metric = 'mm', $pagetype = 'P')
 	//$format=array($arrayformat['width'],$arrayformat['height']);
 	//$metric=$arrayformat['unit'];
 
-	$pdfa = false; // PDF-1.3
-	if (getDolGlobalString('PDF_USE_A')) {
-		$pdfa = getDolGlobalString('PDF_USE_A'); 	// PDF/A-1 ou PDF/A-3
-	}
+	//$pdfa = false; // PDF default version
+	$pdfa = getDolGlobalInt('PDF_USE_A', 0); 	// PDF/A-1 ou PDF/A-3
 
 	if (!getDolGlobalString('MAIN_DISABLE_TCPDI') && class_exists('TCPDI')) {
 		$pdf = new TCPDI($pagetype, $metric, $format, true, 'UTF-8', false, $pdfa);
@@ -209,13 +207,13 @@ function pdf_getInstance($format = '', $metric = 'mm', $pagetype = 'P')
 		$pdfrights = (getDolGlobalString('PDF_SECURITY_ENCRYPTION_RIGHTS') ? json_decode($conf->global->PDF_SECURITY_ENCRYPTION_RIGHTS, true) : array('modify', 'copy')); // Json format in llx_const
 
 		// Password for the end user
-		$pdfuserpass = (getDolGlobalString('PDF_SECURITY_ENCRYPTION_USERPASS') ? $conf->global->PDF_SECURITY_ENCRYPTION_USERPASS : '');
+		$pdfuserpass = getDolGlobalString('PDF_SECURITY_ENCRYPTION_USERPASS');
 
 		// Password of the owner, created randomly if not defined
-		$pdfownerpass = (getDolGlobalString('PDF_SECURITY_ENCRYPTION_OWNERPASS') ? $conf->global->PDF_SECURITY_ENCRYPTION_OWNERPASS : null);
+		$pdfownerpass = (getDolGlobalString('PDF_SECURITY_ENCRYPTION_OWNERPASS') ? getDolGlobalString('PDF_SECURITY_ENCRYPTION_OWNERPASS') : null);
 
 		// For encryption strength: 0 = RC4 40 bit; 1 = RC4 128 bit; 2 = AES 128 bit; 3 = AES 256 bit
-		$encstrength = (getDolGlobalString('PDF_SECURITY_ENCRYPTION_STRENGTH') ? $conf->global->PDF_SECURITY_ENCRYPTION_STRENGTH : 0);
+		$encstrength = getDolGlobalInt('PDF_SECURITY_ENCRYPTION_STRENGTH', 0);
 
 		// Array of recipients containing public-key certificates ('c') and permissions ('p').
 		// For example: array(array('c' => 'file://../examples/data/cert/tcpdf.crt', 'p' => array('print')))
@@ -1010,7 +1008,7 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
  *	@param	TCPDF		$pdf     		The PDF factory
  *  @param  Translate	$outputlangs	Object lang for output
  * 	@param	string		$paramfreetext	Constant name of free text
- * 	@param	Societe		$fromcompany	Object company
+ * 	@param	?Societe	$fromcompany	Object company
  * 	@param	int			$marge_basse	Margin bottom we use for the autobreak
  * 	@param	int			$marge_gauche	Margin left (no more used)
  * 	@param	int			$page_hauteur	Page height
@@ -1036,8 +1034,10 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 	if (empty($hidefreetext) && getDolGlobalString($paramfreetext)) {
 		$substitutionarray = pdf_getSubstitutionArray($outputlangs, null, $object);
 		// More substitution keys
-		$substitutionarray['__FROM_NAME__'] = $fromcompany->name;
-		$substitutionarray['__FROM_EMAIL__'] = $fromcompany->email;
+		if (is_object($fromcompany)) {
+			$substitutionarray['__FROM_NAME__'] = $fromcompany->name;
+			$substitutionarray['__FROM_EMAIL__'] = $fromcompany->email;
+		}
 		complete_substitutions_array($substitutionarray, $outputlangs, $object);
 		$newfreetext = make_substitutions(getDolGlobalString($paramfreetext), $substitutionarray, $outputlangs);
 
@@ -1056,7 +1056,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 	$line3 = "";
 	$line4 = "";
 
-	if ($showdetails == 1 || $showdetails == 3) {
+	if (is_object($fromcompany) && in_array($showdetails, array(1, 3))) {
 		// Company name
 		if ($fromcompany->name) {
 			$line1 .= ($line1 ? " - " : "").$outputlangs->transnoentities("RegisteredOffice").": ".$fromcompany->name;
@@ -1508,7 +1508,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 		$prodser = new Product($db);
 
-		if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
+		if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 			include_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
 		}
 	}
@@ -1687,7 +1687,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 		} else {
 			$ref_prodserv = $prodser->ref; // Show local ref only
 
-			if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
+			if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 				$productCustomerPriceStatic = new ProductCustomerPrice($db);
 				$filter = array('fk_product' => $idprod, 'fk_soc' => $object->socid);
 

@@ -1930,7 +1930,7 @@ class Project extends CommonObject
 				$tasksarray = $taskstatic->getTasksArray(null, null, $fromid, $socid, 0);
 
 				$tab_conv_child_parent = array();
-				$result_clonse = 0;
+				$result_clone = 0;
 
 				// Loop on each task, to clone it
 				foreach ($tasksarray as $tasktoclone) {

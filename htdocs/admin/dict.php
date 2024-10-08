@@ -266,7 +266,7 @@ $tabsql[DICT_ACTIONCOMM] = "SELECT a.id    as rowid, a.code as code, a.libelle A
 $tabsql[DICT_CHARGESOCIALES] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.accountancy_code as accountancy_code, c.code as country_code, c.label as country, a.fk_pays as country_id, a.active FROM ".MAIN_DB_PREFIX."c_chargesociales AS a, ".MAIN_DB_PREFIX."c_country as c WHERE a.fk_pays = c.rowid and c.active = 1";
 $tabsql[DICT_TYPENT] = "SELECT t.id	 as rowid, t.code as code, t.libelle, t.fk_country as country_id, c.code as country_code, c.label as country, t.position, t.active FROM ".MAIN_DB_PREFIX."c_typent as t LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON t.fk_country=c.rowid";
 $tabsql[DICT_CURRENCIES] = "SELECT c.code_iso as code, c.label, c.unicode, c.active FROM ".MAIN_DB_PREFIX."c_currencies AS c";
-$tabsql[DICT_TVA] = "SELECT t.rowid, t.entity, t.type_vat, t.code, t.taux, t.localtax1_type, t.localtax1, t.localtax2_type, t.localtax2, c.label as country, c.code as country_code, t.fk_pays as country_id, t.recuperableonly, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c WHERE t.fk_pays = c.rowid AND t.entity IN (".getEntity($tabname[DICT_TVA]).")";
+$tabsql[DICT_TVA] = "SELECT t.rowid, t.entity, t.code, t.type_vat, t.taux, t.localtax1_type, t.localtax1, t.localtax2_type, t.localtax2, c.label as country, c.code as country_code, t.fk_pays as country_id, t.recuperableonly, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c WHERE t.fk_pays = c.rowid AND t.entity IN (".getEntity($tabname[DICT_TVA]).")";
 $tabsql[DICT_TYPE_CONTACT] = "SELECT t.rowid as rowid, t.element, t.source, t.code, t.libelle, t.position, t.active FROM ".MAIN_DB_PREFIX."c_type_contact AS t";
 $tabsql[DICT_PAYMENT_TERM] = "SELECT c.rowid as rowid, c.code, c.libelle, c.libelle_facture, c.deposit_percent, c.nbjour, c.type_cdr, c.decalage, c.active, c.sortorder, c.entity FROM ".MAIN_DB_PREFIX."c_payment_term AS c WHERE c.entity IN (".getEntity($tabname[DICT_PAYMENT_TERM]).")";
 $tabsql[DICT_PAIEMENT] = "SELECT c.id    as rowid, c.code, c.libelle, c.type, c.active, c.entity FROM ".MAIN_DB_PREFIX."c_paiement AS c WHERE c.entity IN (".getEntity($tabname[DICT_PAIEMENT]).")";
@@ -360,7 +360,7 @@ $tabfield[DICT_ACTIONCOMM] = "code,libelle,type,color,position";
 $tabfield[DICT_CHARGESOCIALES] = "code,libelle,country,accountancy_code";
 $tabfield[DICT_TYPENT] = "code,libelle,country_id,country".(getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? ',position' : '');
 $tabfield[DICT_CURRENCIES] = "code,label,unicode";
-$tabfield[DICT_TVA] = "country_id,country,type_vat,code,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,note";
+$tabfield[DICT_TVA] = "country_id,country,code,type_vat,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,note";
 $tabfield[DICT_TYPE_CONTACT] = "element,source,code,libelle,position";
 $tabfield[DICT_PAYMENT_TERM] = "code,libelle,libelle_facture,deposit_percent,nbjour,type_cdr,decalage,sortorder";
 $tabfield[DICT_PAIEMENT] = "code,libelle,type";
@@ -407,7 +407,7 @@ $tabfieldvalue[DICT_ACTIONCOMM] = "code,libelle,type,color,position";
 $tabfieldvalue[DICT_CHARGESOCIALES] = "code,libelle,country,accountancy_code";
 $tabfieldvalue[DICT_TYPENT] = "code,libelle,country".(getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? ',position' : '');
 $tabfieldvalue[DICT_CURRENCIES] = "code,label,unicode";
-$tabfieldvalue[DICT_TVA] = "country,type_vat,code,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,note";
+$tabfieldvalue[DICT_TVA] = "country,code,type_vat,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,note";
 $tabfieldvalue[DICT_TYPE_CONTACT] = "element,source,code,libelle,position";
 $tabfieldvalue[DICT_PAYMENT_TERM] = "code,libelle,libelle_facture,deposit_percent,nbjour,type_cdr,decalage,sortorder";
 $tabfieldvalue[DICT_PAIEMENT] = "code,libelle,type";
@@ -454,7 +454,7 @@ $tabfieldinsert[DICT_ACTIONCOMM] = "code,libelle,type,color,position";
 $tabfieldinsert[DICT_CHARGESOCIALES] = "code,libelle,fk_pays,accountancy_code";
 $tabfieldinsert[DICT_TYPENT] = "code,libelle,fk_country".(getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? ',position' : '');
 $tabfieldinsert[DICT_CURRENCIES] = "code_iso,label,unicode";
-$tabfieldinsert[DICT_TVA] = "fk_pays,type_vat,code,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,note,entity";
+$tabfieldinsert[DICT_TVA] = "fk_pays,code,type_vat,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,note,entity";
 $tabfieldinsert[DICT_TYPE_CONTACT] = "element,source,code,libelle,position";
 $tabfieldinsert[DICT_PAYMENT_TERM] = "code,libelle,libelle_facture,deposit_percent,nbjour,type_cdr,decalage,sortorder,entity";
 $tabfieldinsert[DICT_PAIEMENT] = "code,libelle,type,entity";
@@ -729,7 +729,7 @@ if ($id == DICT_TYPE_CONTACT) {
 
 // Define type_vatList (used for dictionary "llx_c_tva")
 $type_vatList = array(
-	"0" => $langs->trans("All"),
+	"0" => $langs->trans("Sell").'+'.$langs->trans("Buy"),
 	"1" => $langs->trans("Sell"),
 	"2" => $langs->trans("Buy")
 );
@@ -1308,7 +1308,7 @@ if (GETPOSTINT('id') == DICT_SOCIALNETWORKS && $from == 'socialnetworksetup') {
 $linkback = '';
 if ($id && empty($from)) {
 	$title .= ' - '.$langs->trans($tablib[$id]);
-	$linkback = '<a href="'.$_SERVER['PHP_SELF'].'">'.$langs->trans("BackToDictionaryList").'</a>';
+	$linkback = '<a href="'.$_SERVER['PHP_SELF'].'">'.img_picto($langs->trans("BackToDictionaryList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToDictionaryList").'</span></a>';
 }
 $titlepicto = 'title_setup';
 if ($id == DICT_TVA && GETPOST('from') == 'accountancy') {
@@ -1518,7 +1518,7 @@ if ($id > 0) {
 					}
 					if ($value == 'localtax1') {
 						$valuetoshow = $langs->trans("RateOfTaxN", '2');
-						$class = "center";
+						$class = "center minwidth75";
 					}
 					if ($value == 'localtax2_type') {
 						$valuetoshow = $langs->trans("UseLocalTax")." 3";
@@ -1527,7 +1527,7 @@ if ($id > 0) {
 					}
 					if ($value == 'localtax2') {
 						$valuetoshow = $langs->trans("RateOfTaxN", '3');
-						$class = "center";
+						$class = "center minwidth75";
 					}
 					if ($value == 'type_vat') {
 						$valuetoshow = $langs->trans("VATType");
@@ -1775,7 +1775,7 @@ if ($id > 0) {
 				}
 
 				if (empty($reshook)) {
-					fieldList($fieldlist, $obj, $tabname[$id], 'add');
+					dictFieldList($fieldlist, $obj, $tabname[$id], 'add');
 				}
 
 				if ($id == DICT_COUNTRY) {
@@ -1865,6 +1865,11 @@ if ($id > 0) {
 					print '<input type="text" class="maxwidth100" name="search_code" value="'.dol_escape_htmltag($search_code).'">';
 					print '</td>';
 					$colspan++;
+				} elseif ($value == 'type_vat') {
+					print '<td class="liste_titre">';
+					print $form->selectarray('search_'.$value, $type_vatList, (empty($obj->{$value}) ? '' : $obj->{$value}), 1);
+					print '</td>';
+					$colspan++;
 				} else {
 					print '<td class="liste_titre">';
 					print '</td>';
@@ -1946,27 +1951,27 @@ if ($id > 0) {
 
 			if ($value == 'type_vat') {
 				$valuetoshow = $langs->trans("VATType");
-				$cssprefix = "center ";
+				$cssprefix = "center minwidth75 ";
 				$sortable = 0;
 			}
 			if ($value == 'localtax1_type') {
 				$valuetoshow = $langs->trans("UseLocalTax")." 2";
-				$cssprefix = "center ";
+				$cssprefix = "center minwidth75 ";
 				$sortable = 0;
 			}
 			if ($value == 'localtax1') {
 				$valuetoshow = $langs->trans("RateOfTaxN", '2');
-				$cssprefix = "center ";
+				$cssprefix = "center minwidth75 ";
 				$sortable = 0;
 			}
 			if ($value == 'localtax2_type') {
 				$valuetoshow = $langs->trans("UseLocalTax")." 3";
-				$cssprefix = "center ";
+				$cssprefix = "center minwidth75 ";
 				$sortable = 0;
 			}
 			if ($value == 'localtax2') {
 				$valuetoshow = $langs->trans("RateOfTaxN", '3');
-				$cssprefix = "center ";
+				$cssprefix = "center minwidth75 ";
 				$sortable = 0;
 			}
 			if ($value == 'organization') {
@@ -2280,7 +2285,7 @@ if ($id > 0) {
 
 					// Show fields
 					if (empty($reshook)) {
-						$withentity = fieldList($fieldlist, $obj, $tabname[$id], 'edit');
+						$withentity = dictFieldList($fieldlist, $obj, $tabname[$id], 'edit');
 					}
 
 					print '<td colspan="3" class="center">';
@@ -2429,11 +2434,7 @@ if ($id > 0) {
 							} elseif ($value == 'localtax1' || $value == 'localtax2') {
 								$class = "center";
 							} elseif ($value == 'type_vat') {
-								if ($obj->type_vat != 0) {
-									$valuetoshow = $type_vatList[$valuetoshow];
-								} else {
-									$valuetoshow = $langs->transnoentitiesnoconv("All");
-								}
+								$valuetoshow = $type_vatList[(int) $valuetoshow];
 								$class = "center";
 							} elseif ($value == 'localtax1_type') {
 								if ($obj->localtax1 != 0) {
@@ -2680,7 +2681,7 @@ $db->close();
  *  @param		''|'add'|'edit'|'hide'	$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we don't want it to be rendered
  *	@return		string						'' or value of entity into table
  */
-function fieldList($fieldlist, $obj = null, $tabname = '', $context = '')
+function dictFieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 {
 	global $langs, $db, $mysoc;
 	global $form;
@@ -2808,7 +2809,7 @@ function fieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 				}
 			}
 			if (!$transfound) {
-				print '<textarea cols="30" rows="'.ROWS_2.'" class="flat" name="'. $value .'">'.(!empty($obj->{$value}) ? $obj->{$value} : '').'</textarea>';
+				print '<textarea cols="30" rows="'.ROWS_2.'" class="flat" name="'. $value .'">'.(empty($obj->{$value}) ? '' : $obj->{$value}).'</textarea>';
 			} else {
 				print '<input type="hidden" name="'. $value .'" value="'.$transkey.'">';
 			}
@@ -2819,10 +2820,10 @@ function fieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 			print '<td>';
 			if ($tabname == 'c_paiement' && in_array($obj->{$value}, array('LIQ', 'CB', 'CHQ', 'VIR'))) {
 				// Case of code that should not be modified
-				print '<input type="hidden" class="flat minwidth75 maxwidth100" value="'.(!empty($obj->{$value}) ? $obj->{$value} : '').'" name="'. $value .'">';
+				print '<input type="hidden" class="flat minwidth75 maxwidth100" value="'.(empty($obj->{$value}) ? '' : $obj->{$value}).'" name="'. $value .'">';
 				print $obj->{$value};
 			} else {
-				print '<input type="text" class="flat minwidth75 maxwidth100" value="'.(!empty($obj->{$value}) ? $obj->{$value} : '').'" name="'. $value .'">';
+				print '<input type="text" class="flat minwidth75 maxwidth100" value="'.(empty($obj->{$value}) ? '' : $obj->{$value}).'" name="'. $value .'">';
 			}
 			print '</td>';
 		} elseif ($value == 'unit') {
@@ -2833,27 +2834,27 @@ function fieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 				'point' => $langs->trans('SizeUnitpoint'),
 				'inch' => $langs->trans('SizeUnitinch')
 			);
-			print $form->selectarray('unit', $units, (!empty($obj->{$value}) ? $obj->{$value} : ''), 0, 0, 0);
+			print $form->selectarray('unit', $units, (empty($obj->{$value}) ? '' : $obj->{$value}), 0, 0, 0);
 			print '</td>';
 		} elseif ($value == 'type_vat') {
 			// VAT type 0: all, 1: sell, 2: purchase
 			print '<td class="center">';
-			print $form->selectarray($value, $type_vatList, (!empty($obj->{$value}) ? $obj->{$value} : ''));
+			print $form->selectarray($value, $type_vatList, (empty($obj->{$value}) ? '' : $obj->{$value}), 1);
 			print '</td>';
 		} elseif ($value == 'localtax1_type' || $value == 'localtax2_type') {
 			// Le type de taxe locale
 			print '<td class="center">';
-			print $form->selectarray($value, $localtax_typeList, (!empty($obj->{$value}) ? $obj->{$value} : ''));
+			print $form->selectarray($value, $localtax_typeList, (empty($obj->{$value}) ? '' : $obj->{$value}));
 			print '</td>';
 		} elseif ($value == 'accountancy_code' || $value == 'accountancy_code_sell' || $value == 'accountancy_code_buy') {
 			print '<td>';
 			if (isModEnabled('accounting')) {
 				$fieldname = $value;
-				$accountancy_account = (!empty($obj->$fieldname) ? $obj->$fieldname : 0);
-				print $formaccounting->select_account($accountancy_account, '.'. $value, 1, array(), 1, 1, 'maxwidth200 maxwidthonsmartphone');
+				$accountancy_account = (empty($obj->$fieldname) ? 0 : $obj->$fieldname);
+				print $formaccounting->select_account($accountancy_account, '.'. $value, 1, array(), 1, 1, 'maxwidth125 maxwidthonsmartphone');
 			} else {
 				$fieldname = $value;
-				print '<input type="text" size="10" class="flat" value="'.(isset($obj->$fieldname) ? $obj->$fieldname : '').'" name="'. $value .'">';
+				print '<input type="text" class="flat minwidth100" value="'.(isset($obj->$fieldname) ? $obj->$fieldname : '').'" name="'. $value .'">';
 			}
 			print '</td>';
 		} elseif ($value == 'fk_tva') {

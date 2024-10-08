@@ -1436,7 +1436,7 @@ class ProductAttribute extends CommonObject
 	 *	@param  Societe	    		$seller            	Object of seller third party
 	 *	@param  Societe	    		$buyer             	Object of buyer third party
 	 *	@param	int					$selected		   	Object line selected
-	 *  @param  Extrafields			$extrafields		Object of extrafields
+	 *  @param  ?Extrafields		$extrafields		Object of extrafields
 	 *  @param	string				$defaulttpldir		Directory where to find the template (deprecated)
 	 *	@return	void
 	 */

@@ -720,7 +720,7 @@ function setUserPassword($authentication, $shortuser)
 
 		if ($fuser->hasRight('user', 'user', 'password') || $fuser->hasRight('user', 'self', 'password')) {
 			$userstat = new User($db);
-			$res = $userstat->fetch('', $shortuser['login']);
+			$res = $userstat->fetch(0, $shortuser['login']);
 			if ($res) {
 				$res = $userstat->setPassword($userstat, $shortuser['password']);
 				if (is_int($res) && $res < 0) {

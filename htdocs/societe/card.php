@@ -363,10 +363,6 @@ if (empty($reshook)) {
 			$object->code_client			= GETPOSTISSET('customer_code') ? GETPOST('customer_code', 'alpha') : GETPOST('code_client', 'alpha');
 			$object->code_fournisseur		= GETPOSTISSET('supplier_code') ? GETPOST('supplier_code', 'alpha') : GETPOST('code_fournisseur', 'alpha');
 			$object->capital				= GETPOST('capital', 'alphanohtml');
-			if ($action == 'add') {
-				$object->cond_reglement_id	= GETPOSTINT('cond_reglement_id');
-				$object->mode_reglement_id	= GETPOSTINT('mode_reglement_id');
-			}
 			$object->barcode				= GETPOST('barcode', 'alphanohtml');
 
 			$object->tva_intra				= GETPOST('tva_intra', 'alphanohtml');
@@ -394,6 +390,34 @@ if (empty($reshook)) {
 
 			$object->client					= $prospectcustomer;
 			$object->fournisseur			= (GETPOSTINT('supplier') > 0 ? 1 : 0);
+
+			if ($action == 'add') {
+				// for prospect, customer or supplier
+				if ($object->client > 0 || $object->fournisseur > 0) {
+					$form = new Form($db);
+					$form->load_cache_types_paiements();
+
+					$paymentTermId = GETPOSTINT('cond_reglement_id');
+					$paymentTypeId = GETPOSTINT('mode_reglement_id');
+					if ($object->client > 0) {
+						$object->cond_reglement_id = $paymentTermId;
+
+						$filterPaymentTypeIdArr = array(0, 2, 3); // allow payment type for customer (filter is "CRDT" in "Form::select_types_paiements()" method)
+						if (!empty($form->cache_types_paiements[$paymentTypeId]) && isset($form->cache_types_paiements[$paymentTypeId]['type']) && in_array($form->cache_types_paiements[$paymentTypeId]['type'], $filterPaymentTypeIdArr)) {
+							$object->mode_reglement_id = $paymentTypeId;
+						}
+					}
+
+					if ($object->fournisseur > 0) {
+						$object->cond_reglement_supplier_id	= $paymentTermId;
+
+						$filterPaymentTypeIdArr = array(1, 2, 3); // allow payment type for supplier (filter is "DBIT" in "Form::select_types_paiements()" method)
+						if (!empty($form->cache_types_paiements[$paymentTypeId]) && isset($form->cache_types_paiements[$paymentTypeId]['type']) && in_array($form->cache_types_paiements[$paymentTypeId]['type'], $filterPaymentTypeIdArr)) {
+							$object->mode_reglement_supplier_id = $paymentTypeId;
+						}
+					}
+				}
+			}
 
 			$object->commercial_id			= GETPOSTINT('commercial_id');
 			$object->default_lang			= GETPOST('default_lang');
@@ -1270,6 +1294,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					}
 
                     $("#selectcountry_id").change(function() {
+						console.log("selectcountry_id change");
                        	document.formsoc.action.value="create";
                        	document.formsoc.submit();
                     });
@@ -1279,7 +1304,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 		dol_htmloutput_mesg(is_numeric($error) ? '' : $error, $errors, 'error');
 
-		print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formsoc" autocomplete="off">'; // Chrome ignor autocomplete
+		print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formsoc" autocomplete="off">'; // Chrome ignores autocomplete
 
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -1668,7 +1693,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				}
 				print '<td class="noemail"><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
 				print '<td>';
-				print $form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOSTINT("no_email") : getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS')), 1, false, (getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS') == 2));
+				print $form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOSTINT("no_email") : getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS')), 1, false, (getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS') == 2 ? 1 : 0), 1);
 				print '</td>';
 			}
 			print '</tr>';
@@ -1832,9 +1857,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '<tr><td>'.$form->editfieldkey('Capital', 'capital', '', $object, 0).'</td>';
 			print '<td colspan="3"><input type="text" name="capital" id="capital" class="maxwidth100" value="'.$object->capital.'"> ';
 			if (isModEnabled("multicurrency")) {
-				print '<span class="hideonsmartphone">'.$langs->trans("Currency".$object->multicurrency_code).'</span></td></tr>';
+				print '<span class="hideonsmartphone">';
+				//print $langs->trans("Currency".$object->multicurrency_code);
+				print $langs->getCurrencySymbol($object->multicurrency_code);
+				print '</span></td></tr>';
 			} else {
-				print '<span class="hideonsmartphone">'.$langs->trans("Currency".$conf->currency).'</span></td></tr>';
+				print '<span class="hideonsmartphone">';
+				print $langs->getCurrencySymbol($conf->currency);
+				//print $langs->trans("Currency".$conf->currency);
+				print '</span></td></tr>';
 			}
 			if (getDolGlobalInt('MAIN_MULTILANGS')) {
 				print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">'."\n";
@@ -2207,6 +2238,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				}
 
        			$("#selectcountry_id").change(function() {
+					console.log("selectcountry_id change");
        				document.formsoc.action.value="edit";
       				document.formsoc.submit();
         			});
@@ -2359,6 +2391,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				$s = $modCodeClient->getToolTip($langs, $object, 0);
 				print $form->textwithpicto('', $s, 1);
 				print '</td></tr></table>';
+				print '</td>';
+
+				if ($conf->browser->layout == 'phone') {
+					print '</tr><tr>';
+				}
 
 				print '<td>'.$form->editfieldkey('SupplierCode', 'supplier_code', '', $object, 0).'</td><td>';
 
@@ -2382,7 +2419,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '<tr><td class="tdtop">'.$form->editfieldkey('Gencod', 'barcode', '', $object, 0).'</td>';
 					print '<td colspan="3">';
 					print img_picto('', 'barcode', 'class="pictofixedwidth"');
-					print '<input type="text" name="barcode" id="barcode" value="'.dol_escape_htmltag($object->barcode).'">';
+					print '<input type="text" class="minwidth100 maxwidth200 widthcentpercentminusx" name="barcode" id="barcode" value="'.dol_escape_htmltag($object->barcode).'">';
 					print '</td></tr>';
 				}
 
@@ -2417,7 +2454,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				// Country
 				print '<tr><td>'.$form->editfieldkey('Country', 'selectcounty_id', '', $object, 0).'</td><td colspan="3">';
 				print img_picto('', 'globe-americas', 'class="pictofixedwidth"');
-				print $form->select_country((GETPOSTISSET('country_id') ? GETPOST('country_id') : $object->country_id), 'country_id', '', 0, 'minwidth300 maxwidth500 widthcentpercentminusx');
+				print $form->select_country((GETPOSTISSET('country_id') ? GETPOST('country_id') : $object->country_id), 'country_id', '', 0, 'minwidth200 maxwidth400 widthcentpercentminusx');
 				if ($user->admin) {
 					print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 				}
@@ -2432,7 +2469,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					}
 
 					print img_picto('', 'state', 'class="pictofixedwidth"');
-					print $formcompany->select_state($object->state_id, $object->country_code);
+					print $formcompany->select_state($object->state_id, $object->country_code, 'state_id', 'minwidth200 maxwidth400 widthcentpercentminusx');
 					print '</td></tr>';
 				}
 
@@ -2533,7 +2570,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					}
 					$i++;
 				}
-				if ($NBCOLS > 0 && $j % 2 == 1) {
+				if ($NBCOLS > 0 && ($j % 2) == 1) {
 					print '<td colspan="2"></td></tr>';
 				}
 
