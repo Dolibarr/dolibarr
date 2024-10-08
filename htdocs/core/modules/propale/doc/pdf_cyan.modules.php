@@ -550,6 +550,7 @@ class pdf_cyan extends ModelePDFPropales
 				$pageposbeforeprintlines = $pdf->getPage();
 				$pagenb = $pageposbeforeprintlines;
 				for ($i = 0; $i < $nblines; $i++) {
+					$linePosition = $i + 1;
 					$curY = $nexY;
 					$pdf->SetFont('', '', $default_font_size - 1); // Into loop to work with multipage
 					$pdf->SetTextColor(0, 0, 0);
@@ -570,10 +571,6 @@ class pdf_cyan extends ModelePDFPropales
 
 					$posYAfterImage = 0;
 					$posYAfterDescription = 0;
-
-					if ($this->getColumnStatus('position')) {
-						$this->printStdColumnContent($pdf, $curY, 'position', $i + 1);
-					}
 
 					$newPageAddedForPhoto = false;
 					if ($this->getColumnStatus('photo')) {
@@ -664,6 +661,12 @@ class pdf_cyan extends ModelePDFPropales
 					}
 
 					$pdf->SetFont('', '', $default_font_size - 1); // We reposition the default font
+
+					// Line position
+					if ($this->getColumnStatus('position')) {
+						$this->printStdColumnContent($pdf, $curY, 'position', $linePosition);
+					}
+
 
 					// VAT Rate
 					if ($this->getColumnStatus('vat')) {
