@@ -489,11 +489,7 @@ function dol_compare_file($a, $b)
 function dol_is_dir($folder)
 {
 	$newfolder = dol_osencode($folder);
-	if (is_dir($newfolder)) {
-		return true;
-	} else {
-		return false;
-	}
+	return (bool) @is_dir($newfolder);
 }
 
 /**
@@ -519,7 +515,7 @@ function dol_is_dir_empty($dir)
 function dol_is_file($pathoffile)
 {
 	$newpathoffile = dol_osencode($pathoffile);
-	return is_file($newpathoffile);
+	return (bool) @is_file($newpathoffile);
 }
 
 /**
@@ -787,7 +783,7 @@ function dol_copy($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
 		dol_syslog("files.lib.php::dol_copy failed Permission denied to overwrite target file", LOG_WARNING);
 		return -1;
 	}
-	if (!is_writable($newdirdestfile)) {
+	if (!(bool) @is_writable($newdirdestfile)) {
 		dol_syslog("files.lib.php::dol_copy failed Permission denied to write into target directory ".$newdirdestfile, LOG_WARNING);
 		return -2;
 	}
