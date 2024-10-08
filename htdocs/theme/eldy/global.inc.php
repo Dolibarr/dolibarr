@@ -8635,9 +8635,59 @@ table.jPicker {
 	}
 }
 
+
+/* ============================================================================== */
+/* Dropdown Megamenu Menu                                                         */
+/* ============================================================================== */
+
+:root {
+  --menu-bg-color: rgb(<?php echo colorStringToArray($colorbackhmenu1)[0]/2 .",".colorStringToArray($colorbackhmenu1)[1]/2 .",".colorStringToArray($colorbackhmenu1)[2]/2; ?>);
+	/*join(',', colorStringToArray($colorbackhmenu1)); */	
+	--reduc1-width: <?php echo (empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC1) ? round($nbtopmenuentries * 90, 0) + 240 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC1); ?>px;
+	--reduc2-width: <?php echo (empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2) ? round($nbtopmenuentries * 69, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2); ?>px;
+	--reduc3-width: <?php echo (empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) +  40 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3); ?>px;
+}
+
+
+/* hide menu by default */
+div.submenuroot { 
+	visibility:hidden;
+	opacity:0;
+	display:none;
+}
+
+
+	/* TRANSITION SETUP */
+div.submenuroot {
+  transition: visibility 0s linear 0.2s, opacity 0.2s linear 0.2s, margin 0.2s linear 0.2s;
+	margin-top: 10px;
+}
+	/* END TRANSITION SETUP */
+
+
+/* Reduc2 setup */
+@media only screen
+	and
+(min-width: <?php echo (empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) +  40 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3); ?>px ) 
+	and
+(max-width: <?php echo (empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2) ? round($nbtopmenuentries * 69, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2); ?>px )  
+{
+	#tmenu_tooltip>.tmenudiv>.tmenu, #tmenu_tooltip>.tmenudiv{
+		position:unset !important;
+	}
+	div.submenuroot div.tmenucenter {
+		max-width: unset;
+		text-overflow: unset;
+	}
+}
+
 <?php
+include dol_buildpath($path.'/theme/'.$theme.'/menu.inc.php', 0);
+
+
+
 if (getDolUserString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
-	// Set a max height on multiselect when using multiselect
+	// Set a max height on multiselect when using multiselect on small screen
 	?>
 	select[multiple] {
 		height: 42px;
