@@ -1,14 +1,15 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
- * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2010-2015 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2014      Jean Heimburger      <jean@tiaris.info>
- * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2021       Frédéric France     <frederic.france@netlogic.fr>
+/* Copyright (C) 2001-2005	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2003		Eric Seigne					<erics@rycks.com>
+ * Copyright (C) 2004-2016	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2010-2015	Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2014		Jean Heimburger				<jean@tiaris.info>
+ * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
+ * Copyright (C) 2015		Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2021		Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -106,7 +107,18 @@ if (empty($reshook)) {
 		$action = "";
 	}
 
-	// Set supplier accounting account
+	// set general supplier accounting account
+	if ($action == 'setsupplieraccountancycodegeneral' && $user->hasRight('societe', 'creer')) {
+		$result = $object->fetch($id);
+		$object->accountancy_code_supplier_general = GETPOST("supplieraccountancycodegeneral");
+		$result = $object->update($object->id, $user, 1, 0, 1);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+			$_GET['action'] = 'editsupplieraccountancycode';
+		}
+	}
+
+	// Set auxiliary supplier accounting account
 	if ($action == 'setsupplieraccountancycode' && $user->hasRight('societe', 'creer')) {
 		$result = $object->fetch($id);
 		$object->code_compta_fournisseur = GETPOST("supplieraccountancycode");
@@ -247,6 +259,20 @@ if ($object->id > 0) {
 		}
 		print '</td>';
 		print '</tr>';
+
+		if (isModEnabled('accounting')) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+
+			print '<tr>';
+			print '<td>';
+			print $form->editfieldkey("SupplierAccountancyCodeGeneral", 'supplieraccountancycodegeneral', length_accountg($object->accountancy_code_supplier_general), $object, $user->hasRight('societe', 'creer'));
+			print '</td><td>';
+			print $form->editfieldval("SupplierAccountancyCodeGeneral", 'supplieraccountancycodegeneral', length_accountg($object->accountancy_code_supplier_general), $object, $user->hasRight('societe', 'creer'));
+			$accountingAccountByDefault = " (" . $langs->trans("AccountingAccountByDefaultShort") . ": " . length_accountg(getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER')) . ")";
+			print (getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER') ? $accountingAccountByDefault : '');
+			print '</td>';
+			print '</tr>';
+		}
 
 		$langs->load('compta');
 		print '<tr>';
