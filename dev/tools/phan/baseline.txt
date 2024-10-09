@@ -518,7 +518,6 @@ return [
         'htdocs/eventorganization/conferenceorboothattendee_card.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanUndeclaredGlobalVariable'],
         'htdocs/eventorganization/conferenceorboothattendee_list.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/eventorganization/core/actions_massactions_mail.inc.php' => ['PhanUndeclaredProperty'],
-        'htdocs/eventorganization/lib/eventorganization_conferenceorbooth.lib.php' => ['PhanPluginUnknownArrayFunctionReturnType'],
         'htdocs/expedition/card.php' => ['PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
         'htdocs/expedition/class/api_shipments.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType'],
         'htdocs/expedition/class/expedition.class.php' => ['PhanUndeclaredProperty'],

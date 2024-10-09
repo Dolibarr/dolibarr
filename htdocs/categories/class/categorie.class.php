@@ -361,7 +361,7 @@ class Categorie extends CommonObject
 	/**
 	 * Get MAP_ID
 	 *
-	 * @return	array
+	 * @return	array<string,int>
 	 */
 	public function getMapId()
 	{
