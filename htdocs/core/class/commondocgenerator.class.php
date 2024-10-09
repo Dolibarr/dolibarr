@@ -1118,7 +1118,7 @@ abstract class CommonDocGenerator
 	 * Used for reset afterColsLinePositions var in start of a new pdf draw line loop
 	 * @param float $y the new $y position usually get by TCPDF::GetY()
 	 * @param int $pageNumb the page number to reset at
-	 * @return null
+	 * @return void
 	 */
 	public function resetAfterColsLinePositionsData(float $y, int $pageNumb)
 	{
