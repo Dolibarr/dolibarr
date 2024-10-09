@@ -9559,6 +9559,9 @@ class Form
 		}
 
 		$possiblelinks = array();
+
+		$dontIncludeCompletedItems = getDolGlobalString('DONT_INCLUDE_COMPLETED_ELEMENTS_LINKS');
+		
 		if (is_object($object->thirdparty) && !empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
 			$listofidcompanytoscan = $object->thirdparty->id;
 			if (($object->thirdparty->parent > 0) && getDolGlobalString('THIRDPARTY_INCLUDE_PARENT_IN_LINKTO')) {
@@ -9573,8 +9576,6 @@ class Form
 				}
 				unset($tmpproject);
 			}
-
-			$dontIncludeCompletedItems = getDolGlobalString('DONT_INCLUDE_COMPLETED_ELEMENTS_LINKS');
 
 			$possiblelinks = array(
 				'propal' => array(
