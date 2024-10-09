@@ -786,6 +786,7 @@ class pdf_cyan extends ModelePDFPropales
 					$nexY += 2; // Add space between lines
 				}
 
+
 				// Add last page for document footer if there are not enough size left
 				$afterPosData = $this->getMaxAfterColsLinePositionsData();
 				if ($afterPosData['y'] > $this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforsignature + $heightforinfotot) ) {
@@ -829,7 +830,8 @@ class pdf_cyan extends ModelePDFPropales
 					$drawTabHeight = $drawTabBottom - $drawTabTop;
 					$this->_tableau($pdf, $drawTabTop, $drawTabHeight, 0, $outputlangs, $drawTabHideTop, $hideBottom, $object->multicurrency_code, $outputlangsbis);
 
-					$this->_pagefoot($pdf, $object, $outputlangs, 1);
+					$hideFreeText = $i != $pdf->getNumPages();
+					$this->_pagefoot($pdf, $object, $outputlangs, $hideFreeText);
 
 					$pdf->setPage($i); // in case of _pagefoot or _tableau change it
 
@@ -845,6 +847,8 @@ class pdf_cyan extends ModelePDFPropales
 					}
 				}
 
+				// reset text color before print footers
+				$pdf->SetTextColor(0, 0, 0);
 
 				$pdf->setPage($pdf->getNumPages());
 
@@ -861,8 +865,7 @@ class pdf_cyan extends ModelePDFPropales
 					$posy = $this->drawSignatureArea($pdf, $object, $posy, $outputlangs);
 				}
 
-				// Pagefoot
-				$this->_pagefoot($pdf, $object, $outputlangs);
+				// Add number of pages in footer
 				if (method_exists($pdf, 'AliasNbPages')) {
 					$pdf->AliasNbPages();
 				}
