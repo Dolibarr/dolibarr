@@ -484,6 +484,7 @@ if ($nboftargetok) {
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.stickler.yml`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.travis.yml`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.tx`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/.phan`;
 		$ret=`rm -f  $BUILDROOT/$PROJECT/build.xml`;
 		$ret=`rm -f  $BUILDROOT/$PROJECT/phpstan.neon`;
 		$ret=`rm -f  $BUILDROOT/$PROJECT/pom.xml`;
