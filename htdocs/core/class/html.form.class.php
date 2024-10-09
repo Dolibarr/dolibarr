@@ -5342,11 +5342,12 @@ class Form
 		}
 
 		if ($type === Categorie::TYPE_BANK_LINE) {
-			// TODO Move this into common category feature
+			// TODO Move this into common category feature after migration of llx_category_bankline into llx_categorie_bankline
+			$cat = new Categorie($this->db);
 			$cate_arbo = array();
 			$sql = "SELECT c.label, c.rowid";
-			$sql .= " FROM " . $this->db->prefix() . "category_bank as c";
-			$sql .= " WHERE entity = " . $conf->entity;
+			$sql .= " FROM " . $this->db->prefix() . "categorie as c";
+			$sql .= " WHERE entity = " . $conf->entity . " AND type = " . ((int) $cat->getMapId()[$type]);
 			$sql .= " ORDER BY c.label";
 			$result = $this->db->query($sql);
 			if ($result) {
