@@ -1455,6 +1455,9 @@ if (empty($reshook)) {
 					$db->commit();
 
 					$ret = $object->fetch($id); // Reload to get new records
+					if ($ret > 0) {
+						$object->fetch_thirdparty();
+					}
 
 					if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 						// Define output language
@@ -1463,10 +1466,6 @@ if (empty($reshook)) {
 							$outputlangs = new Translate("", $conf);
 							$newlang = (GETPOST('lang_id', 'aZ09') ? GETPOST('lang_id', 'aZ09') : $object->thirdparty->default_lang);
 							$outputlangs->setDefaultLang($newlang);
-						}
-
-						if ($ret > 0) {
-							$object->fetch_thirdparty();
 						}
 						$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 					}
