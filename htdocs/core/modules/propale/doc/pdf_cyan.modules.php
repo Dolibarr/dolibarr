@@ -835,7 +835,9 @@ class pdf_cyan extends ModelePDFPropales
 
 					// reset page orientation each loop to override it if it was changed by _pagefoot or _tableau change it
 					$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
-					if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
+
+					// Don't print head on first page ($pageposbeforeprintlines) because already added previously
+					if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') && $i != $pageposbeforeprintlines) {
 						$this->_pagehead($pdf, $object, 0, $outputlangs);
 					}
 					if (!empty($tplidx)) {
