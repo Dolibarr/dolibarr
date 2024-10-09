@@ -87,7 +87,7 @@ $tabrclocaltax2 = array();
 $tabpay = array();
 
 $cptcli = 'NotDefined';
-$cptfourn = 'NotDefined';
+$cptfour = 'NotDefined';
 
 /*
  * Actions
