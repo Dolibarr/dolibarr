@@ -140,9 +140,11 @@ $sql  = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.amount_main_c
 $sql .= " ba.courant, ba.ref as baref, ba.account_number, ba.fk_accountancy_journal,";
 $sql .= " soc.rowid as socid, soc.nom as name, soc.email as email, bu1.type as typeop_company,";
 if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
+	$sql .= " spe.accountancy_code_customer_general,";
 	$sql .= " spe.accountancy_code_customer as code_compta_client,";
 	$sql .= " spe.accountancy_code_supplier as code_compta_fournisseur,";
 } else {
+	$sql .= " soc.accountancy_code_customer_general,";
 	$sql .= " soc.code_compta as code_compta_client,";
 	$sql .= " soc.code_compta_fournisseur,";
 }
@@ -225,6 +227,8 @@ $tabmoreinfo = array();
 @phan-var-force array<array{lib:string,date?:int|string,type_payment?:string,ref?:string,fk_bank?:int,ban_account_ref?:string,fk_bank_account?:int,type?:string,bank_account_ref?:string,paymentid?:int,paymentsupplierid?:int,soclib?:string,paymentscid?:int,paymentdonationid?:int,paymentsubscriptionid?:int,paymentvatid?:int,paymentsalid?:int,paymentexpensereport?:int,paymentvariousid?:int,account_various?:string,paymentloanid?:int}> $tabtp
 ';
 
+$account_customer = 'NotDefined';
+
 //print $sql;
 dol_syslog("accountancy/journal/bankjournal.php", LOG_DEBUG);
 $result = $db->query($sql);
@@ -279,10 +283,12 @@ if ($result) {
 
 		// Set accountancy code for thirdparty (example: '411CU...' or '411' if no subledger account defined on customer)
 		$compta_soc = 'NotDefined';
+		$accountancy_code_general = 'NotDefined';
 		if ($lineisapurchase > 0) {
 			$compta_soc = (($obj->code_compta_fournisseur != "") ? $obj->code_compta_fournisseur : $account_supplier);
 		}
 		if ($lineisasale > 0) {
+			$accountancy_code_general = (!empty($obj->accountancy_code_customer_general)) ? $obj->accountancy_code_customer_general : $account_customer;
 			$compta_soc = (!empty($obj->code_compta_client) ? $obj->code_compta_client : $account_customer);
 		}
 
@@ -290,6 +296,7 @@ if ($result) {
 			'id' => $obj->socid,
 			'name' => $obj->name,
 			'code_compta' => $compta_soc,
+			'accountancy_code_general' => $accountancy_code_general,
 			'email' => $obj->email
 		);
 
@@ -1029,7 +1036,8 @@ if ($action == 'exportcsv' && $user->hasRight('accounting', 'bind', 'write')) {	
 					if ($tabtype[$key] == 'payment_supplier') {
 						print '"'.getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER').'"'.$sep;
 					} elseif ($tabtype[$key] == 'payment') {
-						print '"'.getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER').'"'.$sep;
+						$account_ledger = (!empty($obj->accountancy_code_customer_general)) ? $obj->accountancy_code_customer_general : $account_customer;
+						print '"'.$account_ledger.'"'.$sep;
 					} elseif ($tabtype[$key] == 'payment_expensereport') {
 						print '"'.getDolGlobalString('ACCOUNTING_ACCOUNT_EXPENSEREPORT').'"'.$sep;
 					} elseif ($tabtype[$key] == 'payment_salary') {
