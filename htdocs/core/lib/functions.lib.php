@@ -3241,7 +3241,7 @@ function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, 
 			$newemail .= 'mailto:';
 		}
 		$newemail .= $email;
-		$newemail .= '">';
+		$newemail .= '" target="_blank">';
 		$newemail .= dol_trunc($email, $max);
 		$newemail .= '</a>';
 		if ($showinvalid && !isValidEmail($email)) {
