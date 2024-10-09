@@ -7620,7 +7620,7 @@ abstract class CommonObject
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam ? $moreparam : '').'> '.$langs->getCurrencySymbol($conf->currency);
 		} elseif ($type == 'stars') {
 			$out = '<input type="hidden" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
-			$out .= '<div class="star-selection">';
+			$out .= '<div class="star-selection" id="'.$keyprefix.$key.$keysuffix.'_selection">';
 			$i = 1;
 			while ($i <= $size) {
 				$out .= '<span class="star" data-value="'.$i.'">'.img_picto('', 'fontawesome_star_fas').'</span>';
@@ -7628,29 +7628,30 @@ abstract class CommonObject
 			}
 			$out .= '</div>';
 			$out .= '<script>
-				$(document).ready(function() {
+				jQuery(function($) {
+					let container = $("#'.$keyprefix.$key.$keysuffix.'_selection");
 					let selectedStars = parseInt($("#'.$keyprefix.$key.$keysuffix.'").val()) || 0;
-					$(".star").each(function() {
+					container.find(".star").each(function() {
 						$(this).toggleClass("active", $(this).data("value") <= selectedStars);
 					});
-					$(".star").on("mouseover", function() {
+					container.find(".star").on("mouseover", function() {
 						let selectedStar = $(this).data("value");
-						$(".star").each(function() {
+						container.find(".star").each(function() {
 							$(this).toggleClass("active", $(this).data("value") <= selectedStar);
 						});
 					});
-					$(".star-selection").on("mouseout", function() {
-						$(".star").each(function() {
+					container.on("mouseout", function() {
+						container.find(".star").each(function() {
 							$(this).toggleClass("active", $(this).data("value") <= selectedStars);
 						});
 					});
-					$(".star").on("click", function() {
+					container.find(".star").off("click").on("click", function() {
 						selectedStars = $(this).data("value");
-						if (selectedStars == 1 && $("#'.$keyprefix.$key.$keysuffix.'").val() == 1) {
+						if (selectedStars === 1 && $("#'.$keyprefix.$key.$keysuffix.'").val() == 1) {
 							selectedStars = 0;
 						}
 						$("#'.$keyprefix.$key.$keysuffix.'").val(selectedStars);
-						$(".star").each(function() {
+						container.find(".star").each(function() {
 							$(this).toggleClass("active", $(this).data("value") <= selectedStars);
 						});
 					});
