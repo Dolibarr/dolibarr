@@ -288,7 +288,15 @@ if ($action == "importSignature") {
 							$error++;
 							$response = "error in trigger " . $object->error;
 						} else {
-							$response = "success";
+							$soc = new Societe($db);
+							$soc->id = $object->socid;
+							$result = $soc->setAsCustomer();
+							if ($result < 0) {
+								$error++;
+								$response = $db->lasterror();
+							} else {
+								$response = "success";
+							}
 						}
 					} else {
 						$response = "success";
