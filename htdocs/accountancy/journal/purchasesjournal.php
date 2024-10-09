@@ -1193,7 +1193,7 @@ if (empty($action) || $action == 'view') {
 			print "<td>";
 			if (getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER_USE_AUXILIARY_ON_DEPOSIT')) {
 				if ($k == getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT')) {
-					print length_accounta($tabcompany[$key]['code_compta']);
+					print length_accounta($tabcompany[$key]['code_compta_fournisseur']);
 				}
 			} elseif (($accountoshow == "") || $accountoshow == 'NotDefined') {
 				print '<span class="error">' . $langs->trans("ThirdpartyAccountNotDefined") . '</span>';
