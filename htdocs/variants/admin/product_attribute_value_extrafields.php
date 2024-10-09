@@ -66,17 +66,15 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
  * View
  */
 
-$textobject = $langs->transnoentitiesnoconv("ProductAttributeValue");
-
-llxHeader('', $langs->trans("ProductAttributeValueSetup"));
+$title = $langs->trans("ProductAttributeValueExtrafieldsSetup");
+llxHeader('', $title);
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("ProductAttributeValueSetup"), $linkback, 'title_setup');
-print "<br>\n";
+print load_fiche_titre($title, $linkback, 'title_setup');
 
 $head = adminProductAttributePrepareHead();
 
-print dol_get_fiche_head($head, 'product_attribute_value', $langs->trans("ProductAttributeValue"), -1, 'product');
+print dol_get_fiche_head($head, 'product_attribute_value', $title, -1, 'product');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 

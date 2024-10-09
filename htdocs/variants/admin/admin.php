@@ -69,7 +69,7 @@ print load_fiche_titre($title, $linkback, 'title_setup');
 
 $head = adminProductAttributePrepareHead();
 
-print dol_get_fiche_head($head, 'admin', $langs->trans("ProductAttributeValue"), -1, 'product');
+print dol_get_fiche_head($head, 'admin', $title, -1, 'product');
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';

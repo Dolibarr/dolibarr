@@ -73,12 +73,12 @@ function adminProductAttributePrepareHead()
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/variants/admin/product_attribute_extrafields.php';
-	$head[$h][1] = $langs->trans("ProductAttribute");
+	$head[$h][1] = $langs->trans("ProductAttributeExtrafields");
 	$head[$h][2] = 'product_attribute';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/variants/admin/product_attribute_value_extrafields.php';
-	$head[$h][1] = $langs->trans("ProductAttributeValue");
+	$head[$h][1] = $langs->trans("ProductAttributeValueExtrafields");
 	$head[$h][2] = 'product_attribute_value';
 	$h++;
 
