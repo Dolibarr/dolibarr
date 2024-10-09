@@ -476,8 +476,8 @@ if ($sql_select) {
 	if ($optioncss) {
 		$param .= '&optioncss='.urlencode($optioncss);
 	}
-
-	print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, '', 0, '', '', $limit);
+	print_barre_liste($langs->trans('ProductsIntoElements', $langs->trans($elementTypeArray[GETPOST('type_element')] ?? 'SelectElementType')), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, '', 0, '', '', $limit);
+	print $typeElementString.' '.$button;
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="liste centpercent">'."\n";
@@ -746,7 +746,8 @@ if ($sql_select) {
 	}
 	$db->free($resql);
 } elseif (empty($type_element) || $type_element == -1) {
-	print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', (!empty($num) ? $num : 0), '', '');
+	print_barre_liste($langs->trans('ProductsIntoElements', $langs->trans($elementTypeArray[GETPOST('type_element')] ?? 'SelectElementType')), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', (!empty($num) ? $num : 0), '', '');
+	print $typeElementString.' '.$button;
 
 	print '<table class="liste centpercent">'."\n";
 	// Titles with sort buttons
@@ -762,7 +763,8 @@ if ($sql_select) {
 
 	print "</table>";
 } else {
-	print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, '', '');
+	print_barre_liste($langs->trans('ProductsIntoElements', $langs->trans($elementTypeArray[GETPOST('type_element')] ?? 'SelectElementType')), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, '', '');
+	print ' '.$typeElementString.' '.$button;
 
 	print '<table class="liste centpercent">'."\n";
 
