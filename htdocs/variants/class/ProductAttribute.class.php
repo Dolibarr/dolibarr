@@ -255,6 +255,10 @@ class ProductAttribute extends CommonObject
 
 		if (!$error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . $this->table_element);
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
+			}
 		}
 
 		if (!$error && !$notrigger) {
@@ -322,6 +326,7 @@ class ProductAttribute extends CommonObject
 			$this->label = $obj->label;
 			$this->rang = $obj->position; // deprecated
 			$this->position = $obj->position;
+			$this->fetch_optionals();
 		}
 		$this->db->free($resql);
 
@@ -575,6 +580,7 @@ class ProductAttribute extends CommonObject
 				$line->ref = $obj->ref;
 				$line->value = $obj->value;
 				$line->position = $obj->position;
+				$line->fetch_optionals();
 
 				$this->lines[$i] = $line;
 				$i++;
