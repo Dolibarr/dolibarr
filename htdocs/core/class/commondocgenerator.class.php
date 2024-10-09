@@ -1086,7 +1086,7 @@ abstract class CommonDocGenerator
 
 	/**
 	 * Get position in PDF after col display
-	 * @return false|array<array{page:int,y:float|int,col:string}>
+	 * @return false|array{page:int,y:float|int,col:string}
 	 */
 	public function getMaxAfterColsLinePositionsData()
 	{
