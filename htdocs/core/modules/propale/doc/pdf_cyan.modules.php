@@ -618,7 +618,7 @@ class pdf_cyan extends ModelePDFPropales
 					$afterPosData = $this->getMaxAfterColsLinePositionsData();
 					$pdf->setPage($pageposbefore);
 					$pdf->setTopMargin($this->marge_haute);
-					$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+					//                  $pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
 
 
 					// We suppose that a too long description or photo were moved completely on next page
@@ -800,10 +800,9 @@ class pdf_cyan extends ModelePDFPropales
 				// Draw table frames and columns borders
 				$drawTabNumbPage = $pdf->getNumPages();
 				for ($i=$pageposbeforeprintlines; $i<=$drawTabNumbPage; $i++) {
-					// reset page orientation each loop to override it if it was changed
-					$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
-
 					$pdf->setPage($i);
+					// reset page orientation each loop to override it if it was changed
+					$pdf->setPageOrientation('', 0, 0); // The only function to edit the bottom margin of current page to set it.
 
 					$drawTabHideTop = $hidetop;
 					$drawTabTop = $tab_top_newpage;
