@@ -2154,8 +2154,6 @@ class pdf_sponge extends ModelePDFFactures
 				}
 			} else {
 				$text = $this->emetteur->name;
-				// MB 20240917: Company font size
-				$pdf->SetFont('', 'B', $default_font_size * 2);
 				$pdf->MultiCell($w, 4, $outputlangs->convToOutputCharset($text), 0, $ltrdirection);
 			}
 		}
