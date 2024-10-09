@@ -86,6 +86,8 @@ $tabrclocaltax1 = array();
 $tabrclocaltax2 = array();
 $tabpay = array();
 
+$cptcli = 'NotDefined';
+$cptfourn = 'NotDefined';
 
 /*
  * Actions
@@ -433,7 +435,7 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 
 		$companystatic->id = $tabcompany[$key]['id'];
 		$companystatic->name = $tabcompany[$key]['name'];
-		$companystatic->accountancy_code_supplier_general = $tabcompany[$key]['accountancy_code_supplier_customer'];
+		$companystatic->accountancy_code_supplier_general = $tabcompany[$key]['accountancy_code_supplier_general'];
 		$companystatic->code_compta_fournisseur = $tabcompany[$key]['code_compta_fournisseur'];
 		$companystatic->code_fournisseur = $tabcompany[$key]['code_fournisseur'];
 		$companystatic->fournisseur = 1;
@@ -553,7 +555,7 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 
 					if (getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER_USE_AUXILIARY_ON_DEPOSIT')) {
 						if ($k == getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT')) {
-							$bookkeeping->subledger_account = $tabcompany[$key]['code_compta'];
+							$bookkeeping->subledger_account = $tabcompany[$key]['code_compta_fournisseur'];
 							$bookkeeping->subledger_label = $tabcompany[$key]['name'];
 						} else {
 							$bookkeeping->subledger_account = '';
@@ -810,7 +812,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 	foreach ($tabfac as $key => $val) {
 		$companystatic->id = $tabcompany[$key]['id'];
 		$companystatic->name = $tabcompany[$key]['name'];
-		$companystatic->accountancy_code_supplier_general = !empty($tabcompany[$key]['accountancy_code_supplier_general']) ? $tabcompany[$key]['accountancy_code_customer_general'] : $cptfour;
+		$companystatic->accountancy_code_supplier_general = !empty($tabcompany[$key]['accountancy_code_supplier_general']) ? $tabcompany[$key]['accountancy_code_supplier_general'] : $cptfour;
 		$companystatic->code_compta_fournisseur = $tabcompany[$key]['code_compta_fournisseur'];
 		$companystatic->code_fournisseur = $tabcompany[$key]['code_fournisseur'];
 		$companystatic->fournisseur = 1;
