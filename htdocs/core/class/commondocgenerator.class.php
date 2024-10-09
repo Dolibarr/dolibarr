@@ -1123,7 +1123,7 @@ abstract class CommonDocGenerator
 	public function resetAfterColsLinePositionsData(float $y, int $pageNumb)
 	{
 		$this->afterColsLinePositions = [];
-		return $this->setAfterColsLinePositionsData('startLine', $y, $pageNumb);
+		$this->setAfterColsLinePositionsData('startLine', $y, $pageNumb);
 	}
 
 	/**
