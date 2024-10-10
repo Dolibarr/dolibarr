@@ -49,6 +49,7 @@ $search_labelshort = GETPOST('search_labelshort', 'alpha');
 $search_accountparent = GETPOST('search_accountparent', 'alpha');
 $search_pcgtype = GETPOST('search_pcgtype', 'alpha');
 $search_import_key = GETPOST('search_import_key', 'alpha');
+$search_categories = GETPOST('search_categories', 'array');
 $toselect = GETPOST('toselect', 'array');
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $confirm = GETPOST('confirm', 'alpha');
@@ -97,7 +98,6 @@ $arrayfields = array(
 );
 
 if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
-	unset($arrayfields['categories']);
 	unset($arrayfields['aa.reconcilable']);
 }
 
@@ -146,6 +146,7 @@ if (empty($reshook)) {
 		$search_accountparent = "";
 		$search_pcgtype = "";
 		$search_import_key = "";
+		$search_categories = "";
 		$search_array_options = array();
 	}
 	if ((GETPOSTINT('valid_change_chart') && GETPOSTINT('chartofaccounts') > 0)	// explicit click on button 'Change and load' with js on
@@ -239,9 +240,10 @@ if ($action == 'delete') {
 
 $pcgver = getDolGlobalInt('CHARTOFACCOUNTS');
 
-$sql = "SELECT aa.rowid, aa.fk_pcg_version, aa.pcg_type, aa.account_number, aa.account_parent, aa.label, aa.labelshort, aa.fk_accounting_category,";
+$sql = "SELECT aa.rowid, aa.fk_pcg_version, aa.pcg_type, aa.account_number, aa.account_parent, aa.label, aa.labelshort,";
 $sql .= " aa.reconcilable, aa.active, aa.import_key,";
-$sql .= " a2.rowid as rowid2, a2.label as label2, a2.account_number as account_number2";
+$sql .= " a2.rowid as rowid2, a2.label as label2, a2.account_number as account_number2,";
+$sql .= " ac.code as ac_code, ac.label as ac_label, ac.formula as ac_formula";
 
 // Add fields from hooks
 $parameters = array();
@@ -252,6 +254,7 @@ $sql = preg_replace('/,\s*$/', '', $sql);
 $sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as aa";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version AND aa.entity = ".((int) $conf->entity);
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as a2 ON a2.rowid = aa.account_parent AND a2.entity = ".((int) $conf->entity);
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_accounting_category as ac ON aa.fk_accounting_category = ac.rowid AND ac.entity = ".((int) $conf->entity);
 
 // Add table from hooks
 $parameters = array();
@@ -310,6 +313,10 @@ if (strlen(trim($search_import_key))) {
 	$sql .= natural_search("aa.import_key", $search_import_key);
 }
 
+if (is_array($search_categories) && count($search_categories) > 0) {
+	$sql .= " AND ac.rowid IN (".$db->sanitize(implode(',', $search_categories)).")";
+}
+
 // Add where from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -363,6 +370,9 @@ if ($resql) {
 	}
 	if ($search_import_key) {
 		$param .= '&search_import_key='.urlencode($search_import_key);
+	}
+	if ($search_categories) {
+		$param .= '&search_categories='.urlencode(implode(',', $search_categories));
 	}
 	if ($optioncss != '') {
 		$param .= '&optioncss='.urlencode($optioncss);
@@ -507,7 +517,49 @@ if ($resql) {
 	}
 	// Custom groups
 	if (!empty($arrayfields['categories']['checked'])) {
-		print '<td class="liste_titre"></td>';
+		// sql for custom groups
+		$sql2  = 'SELECT ac.code AS ac_code, ac.rowid AS ac_rowid ';
+		$sql2 .= 'FROM '.$db->prefix().'c_accounting_category AS ac ';
+		$sql2 .= 'WHERE ac.active = 1 AND ac.entity = '.((int) $conf->entity);
+		$resql2=$db->query($sql2);
+		print '<td class="liste_titre">';
+		if ($resql2 !== false) {
+			print '<select id="search_categories" class="multiselect multiselectononeline minwidth300 maxwidth500 widthcentpercentminusx maxwidth250 --success select2-hidden-accessible" multiple="" name="search_categories[]" style="width: 100%" data-select2-id="search_categories" tabindex="-1" aria-hidden="true">';
+			while ($obj2 = $db->fetch_object($resql2)) {
+				$id     = $obj2->ac_rowid;
+				$code   = $obj2->ac_code;
+				$selected2 = in_array($id, $search_categories);
+				print '<option '. (($selected2) ? ' selected ' : '')  .'value="'.$id.'" data-html="'.$code.'" data-select2-id="'.$id.'">'.$code.'</option>';
+			}
+			print '</select>';
+			print '<span class="selection"><span class="dropdown-wrapper" aria-hidden="true"></span></span>';
+			print <<<'EOD'
+<script>
+    function formatResult(record, container) {
+    if ($(record.element).attr("data-html") != undefined) { return htmlEntityDecodeJs($(record.element).attr("data-html")); }
+    return record.text;}
+    function formatSelection(record) { return record.text;}
+    $(document).ready(function () {
+    $('#search_categories').select2({		dir: "ltr",
+								containerCssClass: ":all:",					/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag (ko with multiselect) */
+								dropdownCssClass: "minwidth300 maxwidth500 widthcentpercentminusx maxwidth250 --success",				/* Line to add class on the new <span class="select2-selection...> tag (ok with multiselect) */
+								// Specify format function for dropdown item
+								formatResult: formatResult,
+							 	templateResult: formatResult,		/* For 4.0 */
+								escapeMarkup: function (markup) { return markup; }, 	// let our custom formatter work
+								// Specify format function for selected item
+								formatSelection: formatSelection,
+							 	templateSelection: formatSelection		/* For 4.0 */
+							});
+
+							/* Add also morecss to the css .select2 that is after the #htmlname, for component that are show dynamically after load, because select2 set
+								 the size only if component is not hidden by default on load */
+							$('#search_categories + .select2').addClass('minwidth300 maxwidth500 widthcentpercentminusx maxwidth250 --success');
+						});
+</script>
+EOD;
+		}
+		print '</td>';
 	}
 
 	// Fields from hook
@@ -568,7 +620,7 @@ if ($resql) {
 		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['categories']['checked'])) {
-		print_liste_field_titre($arrayfields['categories']['label'], $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '', $arrayfields['categories']['help'], 1);
+		print_liste_field_titre($arrayfields['categories']['label'], $_SERVER["PHP_SELF"], 'ac.code', '', $param, '', $sortfield, $sortorder, '', $arrayfields['categories']['help'], 1);
 		$totalarray['nbfield']++;
 	}
 
@@ -706,7 +758,7 @@ if ($resql) {
 		if (!empty($arrayfields['categories']['checked'])) {
 			print "<td>";
 			// TODO Get all custom groups labels the account is in
-			print dol_escape_htmltag($obj->fk_accounting_category);
+			print dol_escape_htmltag($obj->ac_code) . '&nbsp;';
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
