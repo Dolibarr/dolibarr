@@ -35,7 +35,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
-require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture-rec.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture-rec.class.php';
 require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -47,7 +47,8 @@ if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 if (isModEnabled('accounting')) {
-	require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+    require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 }
 
 // Load translation files required by page
@@ -261,14 +262,21 @@ if ($object->id > 0) {
 		print '</tr>';
 
 		if (isModEnabled('accounting')) {
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+			$formaccounting = new FormAccounting($db);
 
 			print '<tr>';
 			print '<td>';
 			print $form->editfieldkey("SupplierAccountancyCodeGeneral", 'supplieraccountancycodegeneral', length_accountg($object->accountancy_code_supplier_general), $object, $user->hasRight('societe', 'creer'));
 			print '</td><td>';
-			print $form->editfieldval("SupplierAccountancyCodeGeneral", 'supplieraccountancycodegeneral', length_accountg($object->accountancy_code_supplier_general), $object, $user->hasRight('societe', 'creer'));
-			$accountingAccountByDefault = " (" . $langs->trans("AccountingAccountByDefaultShort") . ": " . length_accountg(getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER')) . ")";
+			if ($action == 'editsupplieraccountancycodegeneral' && $user->hasRight('societe', 'creer')) {
+                print $formaccounting->formAccountingAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->accountancy_code_supplier_general, 'supplieraccountancycodegeneral', 0, 1, '', 1);
+            } else {
+                $accountingaccount = new AccountingAccount($db);
+                $accountingaccount->fetch(0, $object->accountancy_code_supplier_general, 1);
+
+                print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
+            }
+            $accountingAccountByDefault = " (" . $langs->trans("AccountingAccountByDefaultShort") . ": " . length_accountg(getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER')) . ")";
 			print (getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER') ? $accountingAccountByDefault : '');
 			print '</td>';
 			print '</tr>';
