@@ -59,6 +59,9 @@ class box_members_last_subscriptions extends ModeleBoxes
 		}
 
 		$this->hidden = !(isModEnabled('member') && $user->hasRight('adherent', 'lire'));
+
+		$this->urltoaddentry = DOL_URL_ROOT.'/adherents/card.php?leftmenu=members&action=create';
+		$this->msgNoRecords = 'NoRecordedMembers';
 	}
 
 	/**
@@ -156,12 +159,6 @@ class box_members_last_subscriptions extends ModeleBoxes
 					$line++;
 				}
 
-				if ($num == 0) {
-					$this->info_box_contents[$line][0] = array(
-						'td' => 'class="center"',
-						'text' => '<span class="opacitymedium">'.$langs->trans("NoRecordedMembers").'</span>',
-					);
-				}
 
 				$this->db->free($result);
 			} else {

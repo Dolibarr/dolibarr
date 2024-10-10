@@ -158,6 +158,14 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 	 * @var string[]  Example  array("accounting")
 	 */
 	public $depends;
+	/**
+	 * @var  string  urltoaddentry
+	 */
+	public $urltoaddentry;
+	/**
+	 * @var  string  msg when no records exist
+	 */
+	public $msgNoRecords = 'NoRecordFound';
 
 
 
@@ -431,63 +439,13 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 				}
 			} else {
 				if (!empty($head['text']) || !empty($head['sublink']) || !empty($head['subpicto']) || $nblines) {
-					$out .= '<tr><td colspan="2" class="center"><span class="opacitymedium">'.$langs->trans("NoRecordFound").' </span>';
-					if (!empty($this->depends)) {
-						if (count($this->depends) > 1) {
-							foreach ($this->depends as $key => $val) {
-								$out .= '<a href="'.$val.'">'.img_picto($langs->trans("New"), 'add', 'pictofixedwidth').'</a>';
-							}
-						} else {
-							$classDep = '';
-							if ($conf->modules[$this->depends[0]] === 'socialnetworks') {
-								$classDep = 'fediverse';
-							} else {
-								$classDep = $conf->modules[$this->depends[0]];
-							}
-							$fileForNewRecord = DOL_DOCUMENT_ROOT."/".$classDep."/card.php";
+					$out .= '<tr><td colspan="2" class="center"><span class="opacitymedium">'.$langs->trans($this->msgNoRecords).' </span>';
 
-							if (dol_is_file($fileForNewRecord)) {
-								$out .= '<a href="'.DOL_URL_ROOT.'/'.$classDep.'/card.php?action=create">'.img_picto($langs->trans("New"), 'add', 'pictofixedwidth').'</a>';
-							} else {
-								$dirVal = dol_dir_list(DOL_DOCUMENT_ROOT, 'directories', 0, '', '', 'name', SORT_ASC, 1);
-
-								$found = false;
-								foreach ($dirVal as $dir) {
-									if ($dir['name'] == $classDep) {
-										$found = true;
-
-										$fileForNewRecord = DOL_DOCUMENT_ROOT.'/'.$classDep.'/card.php';
-										if (dol_is_file($fileForNewRecord)) {
-											$out .= '<a href="'.DOL_URL_ROOT.'/'.$classDep.'/card.php?action=create">'.img_picto($langs->trans("New"), 'add', 'pictofixedwidth').'</a>';
-										}
-										break;
-									}
-								}
-
-								if (!$found) {
-									$fileAdmin = "";
-									$founded = "";
-									$dirVal = dol_dir_list(DOL_DOCUMENT_ROOT.'/admin/');
-
-									foreach ($dirVal as $dir) {
-										if (strpos($dir['name'], '_') !== false) {
-											$normalizedFileName = str_replace('_', '', $dir['name']);
-										} else {
-											$normalizedFileName = $dir['name'];
-										}
-										if ($normalizedFileName == $classDep.'.php') {
-											$fileAdmin = DOL_URL_ROOT.'/admin/'.$dir["name"];
-											$founded = true;
-											break;
-										}
-									}
-									if ($founded) {
-										$out .= '<a href="'.$fileAdmin.'">'.img_picto($langs->trans("New"), 'add', 'pictofixedwidth').'</a>';
-									}
-								}
-							}
-						}
+					// Check if $urltoaddentry is defined for the widget
+					if (!empty($this->urltoaddentry)) {
+						$out .= '<a href="'.$this->urltoaddentry.'">'.img_picto($langs->trans("New"), 'add', 'pictofixedwidth').'</a>';
 					}
+
 					$out .= '</td></tr>';
 				}
 			}

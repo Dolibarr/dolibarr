@@ -50,6 +50,8 @@ class box_factures_fourn extends ModeleBoxes
 		$this->db = $db;
 
 		$this->hidden = !($user->hasRight('fournisseur', 'facture', 'lire'));
+		$this->urltoaddentry = DOL_URL_ROOT.'/fourn/facture/card.php?action=create';
+		$this->msgNoRecords = 'NoModifiedSupplierBills';
 	}
 
 	/**
@@ -193,12 +195,12 @@ class box_factures_fourn extends ModeleBoxes
 					$line++;
 				}
 
-				if ($num == 0) {
-					$this->info_box_contents[$line][0] = array(
-						'td' => 'class="center"',
-						'text' => '<span class="opacitymedium">'.$langs->trans("NoModifiedSupplierBills").'</span>',
-					);
-				}
+				// if ($num == 0) {
+				// 	$this->info_box_contents[$line][0] = array(
+				// 		'td' => 'class="center"',
+				// 		'text' => '<span class="opacitymedium">'.$langs->trans("NoModifiedSupplierBills").'</span>',
+				// 	);
+				// }
 
 				$this->db->free($result);
 			} else {

@@ -50,6 +50,8 @@ class box_fediverse extends ModeleBoxes
 	{
 		$this->db = $db;
 		$this->paramdef = $param;
+		$this->urltoaddentry = DOL_URL_ROOT.'/admin/fediverse.php';
+		$this->msgNoRecords = 'NoRecordFound';
 	}
 
 	/**
