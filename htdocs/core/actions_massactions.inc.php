@@ -488,6 +488,20 @@ if (!$error && $massaction == 'confirm_presend') {
 
 					complete_substitutions_array($substitutionarray, $langs, $objecttmp, $parameters);
 
+					$contactarr = $objecttmp->liste_contact(-1, 'external', 0, '', 1);
+
+					if (is_array($contactarr) && count($contactarr) > 0) {
+						$contactstatic = new Contact($db);
+						foreach ($contactarr as $contact) {
+							$contactstatic->fetch($contact['id']);
+
+							$substitutionarray['__CONTACT_NAME_'.$contact['code'].'__'] = $contactstatic->getFullName($langs, 1);
+							$substitutionarray['__CONTACT_LASTNAME_'.$contact['code'].'__'] = $contactstatic->lastname;
+							$substitutionarray['__CONTACT_FIRSTNAME_'.$contact['code'].'__'] = $contactstatic->firstname;
+							$substitutionarray['__CONTACT_TITLE_'.$contact['code'].'__'] = $contactstatic->getCivilityLabel();
+						}
+					}
+
 					$subjectreplaced = make_substitutions($subject, $substitutionarray);
 					$messagereplaced = make_substitutions($message, $substitutionarray);
 
