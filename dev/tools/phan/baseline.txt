@@ -700,7 +700,7 @@ return [
         'htdocs/partnership/core/modules/partnership/mod_partnership_advanced.php' => ['PhanUndeclaredProperty'],
         'htdocs/partnership/lib/partnership.lib.php' => ['PhanPluginUnknownArrayFunctionReturnType'],
         'htdocs/partnership/partnership_card.php' => ['PhanUndeclaredGlobalVariable'],
-        'htdocs/partnership/partnership_list.php' => ['PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredProperty'],
+        'htdocs/partnership/partnership_list.php' => ['PhanUndeclaredProperty'],
         'htdocs/paypal/lib/paypal.lib.php' => ['PhanPluginUnknownArrayFunctionReturnType'],
         'htdocs/printing/index.php' => ['PhanUndeclaredProperty'],
         'htdocs/printing/lib/printing.lib.php' => ['PhanPluginUnknownArrayFunctionReturnType'],
