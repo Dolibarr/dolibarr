@@ -77,6 +77,7 @@ ErrorUploadBlockedByAddon=Upload blocked by a PHP/Apache plugin.
 ErrorFileSizeTooLarge=File size is too large or file not provided.
 ErrorFieldTooLong=Field %s is too long.
 ErrorSizeTooLongForIntType=Size too long for int type (%s digits maximum)
+ErrorSizeForStarsType=The star size must be a number between 1 and 10
 ErrorSizeTooLongForVarcharType=Size too long for string type (%s chars maximum)
 ErrorNoValueForSelectType=Please fill value for select list
 ErrorNoValueForCheckBoxType=Please fill value for checkbox list
