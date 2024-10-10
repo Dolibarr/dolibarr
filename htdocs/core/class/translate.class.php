@@ -70,7 +70,7 @@ class Translate
 	 */
 	public function setDefaultLang($srclang = 'en_US')
 	{
-		global $conf;
+		global $conf, $mysoc;
 
 		//dol_syslog(get_class($this)."::setDefaultLang srclang=".$srclang,LOG_DEBUG);
 
@@ -89,6 +89,14 @@ class Translate
 		}
 
 		$this->origlang = $srclang;
+
+		if ($srclang == 'auto') {
+			if (!empty($mysoc->defaultlang)) {
+				$srclang = $mysoc->defaultlang;
+			} else if (!empty(getDolGlobalString('MAIN_LANG_DEFAULT', 'auto'))) {
+				$srclang = getDolGlobalString('MAIN_LANG_DEFAULT', 'auto');
+			}
+		}
 
 		if (empty($srclang) || $srclang == 'auto') {
 			// $_SERVER['HTTP_ACCEPT_LANGUAGE'] can be 'fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7,it;q=0.6' but can contains also malicious content
