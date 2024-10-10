@@ -128,12 +128,9 @@ if [ "$DB" = 'mysql' ] || [ "$DB" = 'mariadb' ] || [ "$DB" = 'postgresql' ]; the
 	echo "MySQL flush"
 	${SUDO} "${MYSQL}" -u "$DB_ROOT" -h 127.0.0.1 $PASS_OPT -e 'FLUSH PRIVILEGES;'
 
-	sum=$(find "${TRAVIS_BUILD_DIR}/htdocs/install" -type f -exec md5sum {} + | LC_ALL=C sort | md5sum)
-	cnt=$(find "${TRAVIS_BUILD_DIR}/htdocs/install" -type f -exec md5sum {} + | wc)
-	echo "OLDSUM $sum COUNT:$cnt"
-
 	# shellcheck disable=2046
-	sum=$(md5sum $(find "${TRAVIS_BUILD_DIR}/htdocs/install" -type f) | LC_ALL=C sort | md5sum)
+	# filefunc.inc.php holds the version, so include it"
+	sum=$(md5sum $(find "${TRAVIS_BUILD_DIR}/htdocs/install" -type f ; echo "${TRAVIS_BUILD_DIR}/filefunc.inc.php" ) | md5sum)
 	# shellcheck disable=2046
 	cnt=$(md5sum $(find "${TRAVIS_BUILD_DIR}/htdocs/install" -type f) | wc)
 	echo "NEWSUM $sum COUNT:$cnt"
