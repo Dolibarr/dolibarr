@@ -93,7 +93,7 @@ class Translate
 		if ($srclang == 'auto') {
 			if (!empty($mysoc->defaultlang)) {
 				$srclang = $mysoc->defaultlang;
-			} else if (!empty(getDolGlobalString('MAIN_LANG_DEFAULT', 'auto'))) {
+			} else {
 				$srclang = getDolGlobalString('MAIN_LANG_DEFAULT', 'auto');
 			}
 		}
