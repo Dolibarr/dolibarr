@@ -132,6 +132,8 @@ ALTER TABLE llx_societe ADD COLUMN ip varchar(250);
 ALTER TABLE llx_recruitment_recruitmentcandidature ADD COLUMN ip varchar(250);
 ALTER TABLE llx_socpeople ADD COLUMN ip varchar(250);
 
+ALTER TABLE llx_webhook_target ADD COLUMN trigger_stack text;
+
 -- Product attribut extrafields
 CREATE TABLE llx_product_attribute_extrafields
 (
