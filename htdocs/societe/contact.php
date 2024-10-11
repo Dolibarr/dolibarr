@@ -141,7 +141,7 @@ if ($action == 'confirm_delete' && $user->hasRight('societe', 'contact', 'delete
 		$contact = new Contact($db);
 
 		$result = $contact->fetch($id);
-		$contact->oldcopy = clone $contact;
+		$contact->oldcopy = clone $contact; // @phan-suppress-currentline PhanTypeMismatchProperty
 
 		$result = $contact->delete($user);
 
