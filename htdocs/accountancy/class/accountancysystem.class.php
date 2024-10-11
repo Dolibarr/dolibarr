@@ -58,17 +58,14 @@ class AccountancySystem extends CommonObject
 	public $rowid;
 
 	/**
-	 * @var int ID
-	 */
-	public $fk_pcg_version;
-
-	/**
 	 * @var int pcg version
 	 */
 	public $pcg_version;
 
 	/**
 	 * @var string ref
+	 * @deprecated
+	 * @see $pcg_version
 	 */
 	public $ref;
 
@@ -78,29 +75,9 @@ class AccountancySystem extends CommonObject
 	public $active;
 
 	/**
-	 * @var string pcg type
-	 */
-	public $pcg_type;
-
-	/**
-	 * @var string Accountancy System numero
-	 */
-	public $numero;
-
-	/**
 	 * @var string Accountancy System label
 	 */
 	public $label;
-
-	/**
-	 * @var string account number
-	 */
-	public $account_number;
-
-	/**
-	 * @var string account parent
-	 */
-	public $account_parent;
 
 	/**
 	 * Constructor
