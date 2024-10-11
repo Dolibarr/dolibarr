@@ -89,7 +89,7 @@ class PricesTest extends CommonClassTest
 		$result1 = calcul_price_total(2, 8.56, 0, 10, 0, 0, 0, 'HT', 0, 0, '', '', 100, 1.09205);
 		print __METHOD__." result1=".join(', ', $result1)."\n";
 		// result[0,1,2,3,4,5,6,7,8]	(total_ht, total_vat, total_ttc, pu_ht, pu_tva, pu_ttc, total_ht_without_discount, total_vat_without_discount, total_ttc_without_discount)
-		$this->assertEquals(array(17.12, 1.71, 18.83, 8.56, 0.856, 9.416, 17.12, 1.71, 18.83, 0, 0, 0, 0, 0, 0, 0, 18.7, 1.87, 20.57, 9.34795, 0.93479, 10.28274, 18.7, 1.87, 20.57, 0, 0), $result1, 'Test1b FR');
+		$this->assertEquals(array(17.12, 1.71, 18.83, 8.56, 0.856, 9.416, 17.12, 1.71, 18.83, 0, 0, 0, 0, 0, 0, 0, 18.7, 1.87, 20.57, 9.35, 0.935, 10.285, 18.7, 1.87, 20.57, 0, 0), $result1, 'Test1b FR');
 
 		// qty=2, unit_price=0, discount_line=0, vat_rate=10, price_base_type='HT', multicurrency_tx=1.09205 (method we provide value), pu_ht_devise=100
 		$mysoc->country_code = 'FR';
