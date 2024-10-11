@@ -28,7 +28,7 @@
 /**
  * Class to manage accountancy systems
  */
-class AccountancySystem
+class AccountancySystem extends CommonObject
 {
 	/**
 	 * @var DoliDB Database handler.
