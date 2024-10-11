@@ -75,7 +75,7 @@ class FactureFournisseurLigneRec extends CommonInvoiceLine
 	public $label;
 	/**
 	 * @deprecated	Use desc
-  	 * @var string
+	 * @var string
 	 */
 	public $description;
 
@@ -175,8 +175,8 @@ class FactureFournisseurLigneRec extends CommonInvoiceLine
 	public $fk_user_modif;
 
 	/**
- 	 * @var int
-   	 */
+	 * @var int
+	 */
 	public $skip_update_total;
 
 
