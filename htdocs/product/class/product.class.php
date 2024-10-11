@@ -6132,6 +6132,9 @@ class Product extends CommonObject
 		if (count($warehouseStatus)) {
 			$sql .= " AND w.statut IN (".$this->db->sanitize(implode(',', $warehouseStatus)).")";
 		}
+		if (getDolGlobalString('STOCK_USE_WAREHOUSE_USAGE')) {
+			$sql .= " AND w.warehouse_usage = 1";
+		}
 
 		$sql .= " ORDER BY ps.reel ".(getDolGlobalString('DO_NOT_TRY_TO_DEFRAGMENT_STOCKS_WAREHOUSE') ? 'DESC' : 'ASC'); // Note : qty ASC is important for expedition card, to avoid stock fragmentation;
 
