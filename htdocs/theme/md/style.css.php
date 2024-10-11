@@ -3724,10 +3724,6 @@ div.blockvmenulogo
 	max-width: 100px;
 	vertical-align: middle;
 }
-.backgroundforcompanylogo {
-	background-color: rgba(255,255,255,0.7);
-	border-radius: 5px;
-}
 .menulogocontainer img.mycompany {
 	object-fit: contain;
 	width: inherit;
@@ -5153,6 +5149,18 @@ img.boxhandle, img.boxclose {
 .modulebuilderbox {
 	border: 1px solid #888;
 	padding: 16px;
+}
+.star-selection {
+	font-size: 1rem;
+	cursor: pointer;
+	display: flex;
+}
+.star {
+	color: #ccc;
+	transition: color 0.4s;
+}
+.star:hover, .star.active {
+	color: <?php echo $badgeWarning ?>;
 }
 
 

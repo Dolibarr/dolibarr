@@ -307,7 +307,7 @@ if (empty($reshook)) {
 		}
 
 		$db->begin();
-
+		$old_start_date = null;
 		if (!$error) {
 			$object->oldcopy = clone $object;
 
@@ -622,6 +622,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 	// Search template files
 	$file = '';
 	$classname = '';
+	$reldir = '';
 	$filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
@@ -637,7 +638,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 		$result = dol_include_once($reldir."core/modules/project/".$modele.'.php');
 		if (class_exists($classname)) {
 			$modProject = new $classname();
-
+			'@phan-var-force ModeleNumRefProjects $modProject';
 			$defaultref = $modProject->getNextValue($thirdparty, $object);
 		}
 	}
@@ -891,7 +892,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 		print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PROJECT, '', 'parent', 64, 0, 3);
 		$arrayselected = GETPOST('categories', 'array');
-		print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+		print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 		print "</td></tr>";
 	}
 
@@ -981,7 +982,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 	if ($action == 'delete') {
 		$text = $langs->trans("ConfirmDeleteAProject");
 		$task = new Task($db);
-		$taskarray = $task->getTasksArray(0, 0, $object->id, 0, 0);
+		$taskarray = $task->getTasksArray(null, null, $object->id, 0, 0);
 		$nboftask = count($taskarray);
 		if ($nboftask) {
 			$text .= '<br>'.img_warning().' '.$langs->trans("ThisWillAlsoRemoveTasks", $nboftask);
@@ -993,7 +994,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 	if ($action == 'clone') {
 		$formquestion = array(
 			'text' => $langs->trans("ConfirmClone"),
-			0 => array('type' => 'other', 'name' => 'socid', 'label' => $langs->trans("SelectThirdParty"), 'value' => $form->select_company(GETPOSTINT('socid') > 0 ? GETPOSTINT('socid') : $object->socid, 'socid', '', "None", 0, 0, null, 0, 'minwidth200 maxwidth250')),
+			0 => array('type' => 'other', 'name' => 'socid', 'label' => $langs->trans("SelectThirdParty"), 'value' => $form->select_company(GETPOSTINT('socid') > 0 ? GETPOSTINT('socid') : $object->socid, 'socid', '', "None", 0, 0, array(), 0, 'minwidth200 maxwidth250')),
 			1 => array('type' => 'checkbox', 'name' => 'clone_contacts', 'label' => $langs->trans("CloneContacts"), 'value' => true),
 			2 => array('type' => 'checkbox', 'name' => 'clone_tasks', 'label' => $langs->trans("CloneTasks"), 'value' => true),
 			3 => array('type' => 'checkbox', 'name' => 'move_date', 'label' => $langs->trans("CloneMoveDate"), 'value' => true),

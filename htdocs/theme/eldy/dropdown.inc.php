@@ -482,8 +482,6 @@ a.dropdown-item {
 
 .quickadd-item {
 	font-size: 1.1em;
-	padding-top: 6px;
-	padding-bottom: 6px;
 }
 
 .quickadd-item:before {

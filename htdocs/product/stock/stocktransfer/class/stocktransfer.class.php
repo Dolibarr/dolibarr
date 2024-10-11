@@ -169,22 +169,41 @@ class StockTransfer extends CommonObject
 		'location_incoterms'       => array('type' => 'varchar(255)', 'label' => 'IncotermLabel', 'enabled' => '$conf->incoterm->enabled', 'visible' => -2, 'position' => 225),
 		'status'                   => array('type' => 'smallint', 'label' => 'Status', 'enabled' => 1, 'position' => 1000, 'notnull' => 1, 'visible' => 5, 'index' => 1, 'arrayofkeyval' => array('0' => 'Draft', '1' => 'Validated', '2' => 'StockStransferDecremented', '3' => 'StockStransferIncremented'),),
 	);
+	/**
+	 * @var int
+	 */
 	public $rowid;
+	/**
+	 * @var string
+	 */
 	public $ref;
+	/**
+	 * @var string
+	 */
 	public $label;
+
+	/**
+	 * @var string
+	 */
 	public $description;
 
 	/**
-	 * @var int ID of thirparty
+	 * @var int ID of third party
 	 */
 	public $socid;
 
 	/**
-	 * @var int ID of thirparty
+	 * @var int ID of third party
 	 * @deprecated
 	 */
 	public $fk_soc;
+	/**
+	 * @var int
+	 */
 	public $lead_time_for_warning;
+	/**
+	 * @var int
+	 */
 	public $status;
 
 	/**
@@ -1014,6 +1033,7 @@ class StockTransfer extends CommonObject
 
 			if (class_exists($classname)) {
 				$obj = new $classname();
+				'@phan-var-force ModeleNumRefStockTransfer $obj';
 				$numref = $obj->getNextValue($this);
 
 				if ($numref != '' && $numref != '-1') {
@@ -1038,10 +1058,10 @@ class StockTransfer extends CommonObject
 	 *
 	 *  @param	    string		$modele			Force template to use ('' to not force)
 	 *  @param		Translate	$outputlangs	object lang a utiliser pour traduction
-	 *  @param      int			$hidedetails    Hide details of lines
-	 *  @param      int			$hidedesc       Hide description
-	 *  @param      int			$hideref        Hide ref
-	 *  @param      null|array  $moreparams     Array to provide more information
+	 *  @param      int<0,1>	$hidedetails    Hide details of lines
+	 *  @param      int<0,1>	$hidedesc       Hide description
+	 *  @param      int<0,1>	$hideref        Hide ref
+	 *  @param      ?array<string,mixed>  $moreparams     Array to provide more information
 	 *  @return     int         				0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)

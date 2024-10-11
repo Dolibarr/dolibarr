@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 class Projects extends DolibarrApi
 {
 	/**
-	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var string[]   $FIELDS     Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'ref',
@@ -197,6 +197,8 @@ class Projects extends DolibarrApi
 	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool             $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return  array                               Array of project objects
+	 * @phan-return array{data:Project[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phpstan-return array{data:Project[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $category = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
@@ -302,6 +304,8 @@ class Projects extends DolibarrApi
 	 * Create project object
 	 *
 	 * @param   array   $request_data   Request data
+	 * @phan-param array<string,mixed> $request_data
+	 * @phpstan-param array<string,mixed> $request_data
 	 * @return  int     ID of project
 	 */
 	public function post($request_data = null)
@@ -352,6 +356,7 @@ class Projects extends DolibarrApi
 				$result = dol_include_once($reldir . "core/modules/project/" . $modele . '.php');
 				if ($result !== false && class_exists($classname)) {
 					$modProject = new $classname();
+					'@phan-var-force ModeleNumRefProjects $modProject';
 					$defaultref = $modProject->getNextValue(null, $this->project);
 				} else {
 					dol_syslog("Failed to include module file or invalid classname: " . $reldir . "core/modules/project/" . $modele . '.php', LOG_ERR);
@@ -385,6 +390,8 @@ class Projects extends DolibarrApi
 	 * @param int   $id                     Id of project
 	 * @param int   $includetimespent       0=Return only list of tasks. 1=Include a summary of time spent, 2=Include details of time spent lines
 	 * @return array
+	 * @phan-return Object[]
+	 * @phpstan-return Object[]
 	 *
 	 * @url	GET {id}/tasks
 	 */
@@ -423,6 +430,8 @@ class Projects extends DolibarrApi
 	 * @param   int   $id             Id of project
 	 * @param   int   $userid         Id of user (0 = connected user)
 	 * @return array
+	 * @phan-return Object[]
+	 * @phpstan-return Object[]
 	 *
 	 * @url	GET {id}/roles
 	 */
@@ -465,6 +474,8 @@ class Projects extends DolibarrApi
 	 *
 	 * @param int   $id             Id of project to update
 	 * @param array $request_data   Projectline data
+	 * @phan-param array<string,mixed> $request_data
+	 * @phpstan-param array<string,mixed> $request_data
 	 *
 	 * @url	POST {id}/tasks
 	 *
@@ -532,6 +543,8 @@ class Projects extends DolibarrApi
 	 * @param int   $id             Id of project to update
 	 * @param int   $taskid         Id of task to update
 	 * @param array $request_data   Projectline data
+	 * @phan-param array<string,mixed> $request_data
+	 * @phpstan-param array<string,mixed> $request_data
 	 *
 	 * @url	PUT {id}/tasks/{taskid}
 	 *
@@ -596,7 +609,11 @@ class Projects extends DolibarrApi
 	 *
 	 * @param 	int   	$id             	Id of project to update
 	 * @param 	array 	$request_data   	Datas
+	 * @phan-param ?array<string,mixed> $request_data
+	 * @phpstan-param ?array<string,mixed> $request_data
 	 * @return 	Object						Updated object
+	 * @phan-return Object|false
+	 * @phpstan-return Object|false
 	 */
 	public function put($id, $request_data = null)
 	{
@@ -644,6 +661,8 @@ class Projects extends DolibarrApi
 	 * @param   int     $id         Project ID
 	 *
 	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 */
 	public function delete($id)
 	{
@@ -678,10 +697,14 @@ class Projects extends DolibarrApi
 	 *
 	 * @param   int $id             Project ID
 	 * @param   int $notrigger      1=Does not execute triggers, 0= execute triggers
+	 * @phan-param int<0,1> $notrigger
+	 * @phpstan-param int<0,1> $notrigger
 	 *
 	 * @url POST    {id}/validate
 	 *
 	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 * FIXME An error 403 is returned if the request has an empty body.
 	 * Error message: "Forbidden: Content type `text/plain` is not supported."
 	 * Workaround: send this in the body
@@ -775,8 +798,8 @@ class Projects extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param   array           $data   Array with data to verify
-	 * @return  array
+	 * @param   array<string,mixed>	$data   Array with data to verify
+	 * @return  array<string,mixed>
 	 * @throws  RestException
 	 */
 	private function _validate($data)

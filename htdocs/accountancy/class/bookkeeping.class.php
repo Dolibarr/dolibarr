@@ -465,8 +465,10 @@ class BookKeeping extends CommonObject
 
 		// Call triggers
 		if (! $error && ! $notrigger) {
-			$result=$this->call_trigger('BOOKKEEPING_CREATE', $user);
-			if ($result < 0) $error++;
+			$result = $this->call_trigger('BOOKKEEPING_CREATE', $user);
+			if ($result < 0) {
+				$error++;
+			}
 		}
 
 		// Commit or rollback
@@ -714,8 +716,10 @@ class BookKeeping extends CommonObject
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element.$mode);
 			// Call triggers
 			if (! $notrigger) {
-				$result=$this->call_trigger('BOOKKEEPING_CREATE', $user);
-				if ($result < 0) $error++;
+				$result = $this->call_trigger('BOOKKEEPING_CREATE', $user);
+				if ($result < 0) {
+					$error++;
+				}
 			}
 		}
 
@@ -1480,8 +1484,10 @@ class BookKeeping extends CommonObject
 
 		// Call triggers
 		if (! $error && ! $notrigger) {
-			$result=$this->call_trigger('BOOKKEEPING_MODIFY', $user);
-			if ($result < 0) $error++;
+			$result = $this->call_trigger('BOOKKEEPING_MODIFY', $user);
+			if ($result < 0) {
+				$error++;
+			}
 		}
 
 		// Commit or rollback
@@ -1571,8 +1577,10 @@ class BookKeeping extends CommonObject
 
 		// Call triggers
 		if (! $error && ! $notrigger) {
-			$result=$this->call_trigger('BOOKKEEPING_DELETE', $user);
-			if ($result < 0) $error++;
+			$result = $this->call_trigger('BOOKKEEPING_DELETE', $user);
+			if ($result < 0) {
+				$error++;
+			}
 		}
 
 		if (!$error) {
@@ -2337,7 +2345,7 @@ class BookKeeping extends CommonObject
 		global $conf;
 
 		$alias = trim($alias);
-		$alias = !empty($alias) && strpos($alias, '.') < 0 ? $alias . "." : $alias;
+		$alias = !empty($alias) && strpos($alias, '.') === false ? $alias . "." : $alias;
 
 		if (!isset(self::$can_modify_bookkeeping_sql_cached[$alias]) || $force) {
 			$result = $this->loadFiscalPeriods($force, 'active');
@@ -2421,6 +2429,47 @@ class BookKeeping extends CommonObject
 
 			return 0;
 		}
+	}
+
+	/**
+	 * Generate label operation when operation is transferred into accounting
+	 *
+	 * @param 	string  $thirdpartyname         Thirdparty name
+	 * @param 	string  $reference              Reference of the element
+	 * @param 	string  $labelaccount           Label of the accounting account
+	 * @return	string                          Label of the operation
+	 */
+	public function accountingLabelForOperation($thirdpartyname, $reference, $labelaccount)
+	{
+		global $conf;
+
+		$accountingLabelOperation = '';
+
+		if (!getDolGlobalString('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER') || getDolGlobalString('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER') == 0) {
+			$truncThirdpartyName = 16;
+			// Avoid trunc with dot in accountancy for the compatibility with another accounting software
+			$accountingLabelOperation = dol_trunc($thirdpartyname, $truncThirdpartyName, 'right', 'UTF-8', 1);
+			if (!empty($reference)) {
+				$accountingLabelOperation .= ' - '. $reference;
+			}
+			if (!empty($labelaccount)) {
+				$accountingLabelOperation .= ' - '. $labelaccount;
+			}
+		} elseif (getDolGlobalString('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER') == 1) {
+			$truncThirdpartyName = 32;
+			// Avoid trunc with dot in accountancy for the compatibility with another accounting software
+			$accountingLabelOperation = dol_trunc($thirdpartyname, $truncThirdpartyName, 'right', 'UTF-8', 1);
+			if (!empty($reference)) {
+				$accountingLabelOperation .= ' - '. $reference;
+			}
+		} elseif (getDolGlobalString('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER') == 2) {
+			$truncThirdpartyName = 64;
+			// Avoid trunc with dot in accountancy for the compatibility with another accounting software
+			$accountingLabelOperation = dol_trunc($thirdpartyname, $truncThirdpartyName, 'right', 'UTF-8', 1);
+		}
+		dol_syslog('label'.$accountingLabelOperation, LOG_ERR);
+
+		return $accountingLabelOperation;
 	}
 
 	/**
