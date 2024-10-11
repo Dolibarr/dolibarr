@@ -194,7 +194,7 @@ class AccountancyCategory // extends CommonObject
 		// Put here code to add control on parameters values
 
 		// Insert request
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."c_accounting_category(";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element." (";
 		if ($this->rowid > 0) {
 			$sql .= "rowid, ";
 		}
@@ -269,7 +269,7 @@ class AccountancyCategory // extends CommonObject
 		$sql .= " t.position,";
 		$sql .= " t.fk_country,";
 		$sql .= " t.active";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_accounting_category as t";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
 		if ($id) {
 			$sql .= " WHERE t.rowid = ".((int) $id);
 		} else {
@@ -354,7 +354,7 @@ class AccountancyCategory // extends CommonObject
 		// Put here code to add control on parameters values
 
 		// Update request
-		$sql = "UPDATE ".MAIN_DB_PREFIX."c_accounting_category SET";
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
 		$sql .= " code=".(isset($this->code) ? "'".$this->db->escape($this->code)."'" : "null").",";
 		$sql .= " label=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
 		$sql .= " range_account=".(isset($this->range_account) ? "'".$this->db->escape($this->range_account)."'" : "null").",";
@@ -402,7 +402,7 @@ class AccountancyCategory // extends CommonObject
 		global $conf, $langs;
 		$error = 0;
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."c_accounting_category";
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -439,7 +439,7 @@ class AccountancyCategory // extends CommonObject
 	{
 		global $conf;
 		$sql = "SELECT t.rowid, t.account_number, t.label";
-		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as t";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
 		$sql .= " WHERE t.fk_accounting_category = ".((int) $id);
 		$sql .= " AND t.entity = ".$conf->entity;
 
@@ -729,7 +729,7 @@ class AccountancyCategory // extends CommonObject
 		$sql .= " cat.code, cat.position, cat.label as name_cat, cat.sens, cat.category_type, cat.formula";
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as t, ".MAIN_DB_PREFIX."c_accounting_category as cat";
 		$sql .= " WHERE t.fk_accounting_category IN (SELECT c.rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_accounting_category as c";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as c";
 		$sql .= " WHERE c.active = 1";
 		$sql .= " AND c.entity = ".$conf->entity;
 		$sql .= " AND (c.fk_country = ".((int) $mysoc->country_id)." OR c.fk_country = 0)";
@@ -788,7 +788,7 @@ class AccountancyCategory // extends CommonObject
 		}
 
 		$sql = "SELECT c.rowid, c.code, c.label, c.formula, c.position, c.category_type, c.sens";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_accounting_category as c";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as c";
 		$sql .= " WHERE c.active = " . (int) $active;
 		$sql .= " AND c.entity = ".$conf->entity;
 		if ($categorytype >= 0) {
