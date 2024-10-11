@@ -174,7 +174,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 	// pu calculation from pu_devise if pu empty
 	if (empty($pu) && !empty($pu_devise)) {
 		if (!empty($multicurrency_tx)) {
-			$pu = $pu_devise / $multicurrency_tx;
+			$pu = price2num($pu_devise / $multicurrency_tx, 'MT');
 		} else {
 			dol_syslog('Price.lib::calcul_price_total function called with bad parameters combination (multicurrency_tx empty when pu_devise not) ', LOG_ERR);
 			return array();
@@ -408,7 +408,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 		}
 
 		// Recall function using the multicurrency price as reference price. We must set param $multicurrency_tx to 1 to avoid infinite loop.
-		$newresult = calcul_price_total($qty, $pu_devise, $remise_percent_ligne, $txtva, $uselocaltax1_rate, $uselocaltax2_rate, $remise_percent_global, $price_base_type, $info_bits, $type, $seller, $localtaxes_array, $progress, 1, 0, '');
+		$newresult = calcul_price_total($qty, '', $remise_percent_ligne, $txtva, $uselocaltax1_rate, $uselocaltax2_rate, $remise_percent_global, $price_base_type, $info_bits, $type, $seller, $localtaxes_array, $progress, 1, $pu_devise, '');
 
 		if ($multicurrency_code) {
 			// Restore setup of currency accurency
