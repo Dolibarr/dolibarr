@@ -645,7 +645,7 @@ BILL_SUPPLIER_DELETEInDolibarr=Facture fournisseur supprimée
 UnitPriceXQtyLessDiscount=Prix unitaire x Qté - Remise
 CustomersInvoicesArea=Zone de facturation client
 SupplierInvoicesArea=Zone de facturation fournisseur
-SituationTotalRayToRest=Reste à payer sans taxe
+SituationTotalRayToRest=Reste à payer HT
 PDFSituationTitle=Situation n°%d
 SituationTotalProgress=Avancement total %d %%
 SearchUnpaidInvoicesWithDueDate=Rechercher les factures impayées avec date d'échéance = %s

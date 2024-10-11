@@ -7,12 +7,12 @@ multicurrency_syncronize_error=Грешка при синхронизација:
 MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE=Користете го датумот на документот за да го пронајдете курсот на валутата, наместо да ја користите најновата позната стапка
 multicurrency_useOriginTx=Кога објектот е создаден од друг, чувајте ја оригиналната стапка од изворниот објект (во спротивно користете ја најновата позната стапка)
 CurrencyLayerAccount=CurrencyLayer API
-CurrencyLayerAccount_help_to_synchronize=Мора да креирате сметка на веб-локацијата %s за да ја користите оваа функција.<br>Преземете ја вашата b0aee83fz058<3 /span>АПИ клуч<span class='notranslate'></b>.<br>Ако користите бесплатна сметка, не можете да ја промените <b>изворна валута</b> (стандардно УСД).<br>Ако вашата главна валута не е УСД, апликацијата автоматски повторно ќе ја пресмета.<br><br>Вие сте ограничени на 1000 синхронизации месечно.
+CurrencyLayerAccount_help_to_synchronize=You must create an account on website %s to use this functionality.<br>Get your <b>API key</b>.<br>If you use a free account, you can't change the <b>source currency</b> (USD by default).<br>If your main currency is not USD, the application will automatically recalculate it.<br><br>You are limited to 1000 synchronizations per month.
 multicurrency_appId=API клуч
 multicurrency_appCurrencySource=Изворна валута
 multicurrency_alternateCurrencySource=Алтернативна изворна валута
 CurrenciesUsed=Користени валути
-CurrenciesUsed_help_to_add=Додадете ги различните валути и стапки што треба да ги користите на вашите <b>предлози</b>, <span class='notranslate'833z05<30e /span>нарачки</b> итн.
+CurrenciesUsed_help_to_add=Add the different currencies and rates you need to use on your <b>proposals</b>, <b>orders</b> etc.
 rate=стапка
 MulticurrencyReceived=Примена, оригинална валута
 MulticurrencyRemainderToTake=Преостаната сума, оригинална валута
@@ -25,7 +25,7 @@ CreateRate=Создадете стапка
 FormCreateRate=Оценете го создавањето
 FormUpdateRate=Модификација на стапката
 successRateCreate=Стапката за валута %s е додадена во базата на податоци
-ConfirmDeleteLineRate=Дали сте сигурни дека сакате да ја отстраните стапката %s за валутата %s на <span class='notranslate'>%s</s > датум?
+ConfirmDeleteLineRate=Are you sure you want to remove the %s rate for currency %s on %s date?
 DeleteLineRate=Јасна стапка
 successRateDelete=Оценката е избришана
 errorRateDelete=Грешка при бришење на стапката

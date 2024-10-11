@@ -237,9 +237,22 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 			accessforbidden('', 0);
 		}
 
+		if (!empty($conf->use_javascript_ajax)) {
+			print '<script type="text/javascript">';
+			print '$(document).ready(function () {
+                        $("#selectcountry_id").change(function() {
+							console.log("selectcountry_id change");
+                        	document.formresource.action.value="create";
+                        	document.formresource.submit();
+                        });
+                     });';
+			print '</script>'."\n";
+		}
+
+
 		// Create/Edit object
 
-		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="POST">';
+		print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="POST" name="formresource">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="'.($action == "create" ? "add" : "update").'">';
 
@@ -249,55 +262,10 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("ResourceFormLabel_ref").'</td>';
 		print '<td><input class="minwidth200" name="ref" value="'.($ref ?: $object->ref).'" autofocus="autofocus"></td></tr>';
 
-		// Address
-		print '<tr><td class="tdtop">'.$form->editfieldkey('Address', 'address', '', $object, 0).'</td>';
-		print '<td colspan="3"><textarea name="address" id="address" class="quatrevingtpercent" rows="3" wrap="soft">';
-		print dol_escape_htmltag($object->address, 0, 1);
-		print '</textarea>';
-		print $form->widgetForTranslation("address", $object, $permissiontoadd, 'textarea', 'alphanohtml', 'quatrevingtpercent');
-		print '</td></tr>';
-
-		// Zip / Town
-		print '<tr><td>'.$form->editfieldkey('Zip', 'zipcode', '', $object, 0).'</td><td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>';
-		print $formresource->select_ziptown($object->zip, 'zipcode', array('town', 'selectcountry_id', 'state_id'), 0, 0, '', 'maxwidth100');
-		print '</td>';
-		if ($conf->browser->layout == 'phone') {
-			print '</tr><tr>';
-		}
-		print '<td>'.$form->editfieldkey('Town', 'town', '', $object, 0).'</td><td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>';
-		print $formresource->select_ziptown($object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'));
-		print $form->widgetForTranslation("town", $object, $permissiontoadd, 'string', 'alphanohtml', 'maxwidth100 quatrevingtpercent');
-		print '</td></tr>';
-
-		// Origin country
-		print '<tr><td>'.$langs->trans("CountryOrigin").'</td><td>';
-		print $form->select_country($object->country_id);
-		if ($user->admin) {
-			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-		}
-		print '</td></tr>';
-
-		// State
-		if (!getDolGlobalString('SOCIETE_DISABLE_STATE')) {
-			if ((getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 1 || getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 2)) {
-				print '<tr><td>'.$form->editfieldkey('Region-State', 'state_id', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">';
-			} else {
-				print '<tr><td>'.$form->editfieldkey('State', 'state_id', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">';
-			}
-
-			if ($object->country_id) {
-				print img_picto('', 'state', 'class="pictofixedwidth"');
-				print $formresource->select_state($object->state_id, $object->country_code);
-			} else {
-				print $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
-			}
-			print '</td></tr>';
-		}
-
 		// Type
 		print '<tr><td>'.$langs->trans("ResourceType").'</td>';
 		print '<td>';
-		$formresource->select_types_resource($object->fk_code_type_resource, 'fk_code_type_resource', '', 2);
+		$formresource->select_types_resource($object->fk_code_type_resource, 'fk_code_type_resource', '', 2, 0, 0, 0, 1, 'minwidth200');
 		print '</td></tr>';
 
 		// Description
@@ -307,6 +275,53 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		$doleditor = new DolEditor('description', ($description ?: $object->description), '', '200', 'dolibarr_notes', false);
 		$doleditor->Create();
 		print '</td></tr>';
+
+		// Address
+		print '<tr><td class="tdtop">'.$form->editfieldkey('Address', 'address', '', $object, 0).'</td>';
+		print '<td><textarea name="address" id="address" class="quatrevingtpercent" rows="3" wrap="soft">';
+		print dol_escape_htmltag(GETPOSTISSET('address') ? GETPOST('address') : $object->address, 0, 1);
+		print '</textarea>';
+		print $form->widgetForTranslation("address", $object, $permissiontoadd, 'textarea', 'alphanohtml', 'quatrevingtpercent');
+		print '</td></tr>';
+
+		// Zip
+		print '<tr><td>'.$form->editfieldkey('Zip', 'zipcode', '', $object, 0).'</td><td>';
+		print $formresource->select_ziptown(GETPOSTISSET('zipcode') ? GETPOST('zipcode') : $object->zip, 'zipcode', array('town', 'selectcountry_id', 'state_id'), 0, 0, '', 'maxwidth100');
+		print '</td>';
+		print '</tr>';
+
+		// Town
+		print '<tr>';
+		print '<td>'.$form->editfieldkey('Town', 'town', '', $object, 0).'</td><td>';
+		print $formresource->select_ziptown(GETPOSTISSET('town') ?  GETPOST('town') : $object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'));
+		print $form->widgetForTranslation("town", $object, $permissiontoadd, 'string', 'alphanohtml', 'maxwidth100 quatrevingtpercent');
+		print '</td></tr>';
+
+		// Origin country
+		print '<tr><td>'.$langs->trans("CountryOrigin").'</td><td>';
+		print $form->select_country(GETPOSTISSET('country_id') ? GETPOSTINT('country_id') : $object->country_id, 'country_id');
+		if ($user->admin) {
+			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+		}
+		print '</td></tr>';
+
+		// State
+		$countryid = GETPOSTISSET('country_id') ? GETPOSTINT('country_id') : $object->country_id;
+		if (!getDolGlobalString('SOCIETE_DISABLE_STATE') && $countryid > 0) {
+			if ((getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 1 || getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 2)) {
+				print '<tr><td>'.$form->editfieldkey('Region-State', 'state_id', '', $object, 0).'</td><td class="maxwidthonsmartphone">';
+			} else {
+				print '<tr><td>'.$form->editfieldkey('State', 'state_id', '', $object, 0).'</td><td class="maxwidthonsmartphone">';
+			}
+
+			if ($country_id > 0) {
+				print img_picto('', 'state', 'class="pictofixedwidth"');
+				print $formresource->select_state($countryid, $country_id);
+			} else {
+				print '<span class="opacitymedium">'.$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')</span>';
+			}
+			print '</td></tr>';
+		}
 
 		// Phone
 		print '<td>'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td>';
@@ -326,7 +341,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		print '<tr><td>'.$form->editfieldkey('MaxUsers', 'max_users', '', $object, 0).'</td>';
 		print '<td>';
 		print img_picto('', 'object_user', 'class="pictofixedwidth"');
-		print '<input type="number" name="max_users" id="max_users" value="'.(GETPOSTISSET('max_users') ? GETPOSTINT('max_users') : $object->max_users).'"></td>';
+		print '<input type="text" class="width75 right" name="max_users" id="max_users" value="'.(GETPOSTISSET('max_users') ? GETPOST('max_users', 'int') : $object->max_users).'"></td>';
 		print '</tr>';
 
 		// URL

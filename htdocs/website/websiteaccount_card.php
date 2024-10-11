@@ -143,7 +143,7 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	$backurlforlist = dol_buildpath('/societe/website.php', 1).'?id='.$object->fk_soc;
 
-	if ($action == 'add' && !GETPOST('site')) {
+	if ($action == 'add' && !GETPOST('site')) {		// Test on permission not required
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Website")), null, 'errors');
 		$action = 'create';
 	}

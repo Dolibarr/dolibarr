@@ -85,10 +85,18 @@ if (getDolGlobalString('DAV_RESTRICT_ON_IP')) {
 $entity = (GETPOSTINT('entity') ? GETPOSTINT('entity') : (!empty($conf->entity) ? $conf->entity : 1));
 
 // settings
-$publicDir = $conf->dav->multidir_output[$entity].'/public';
-$privateDir = $conf->dav->multidir_output[$entity].'/private';
-$ecmDir = $conf->ecm->multidir_output[$entity];
-$tmpDir = $conf->dav->multidir_output[$entity]; // We need root dir, not a dir that can be deleted
+$publicDir = DOL_DATA_ROOT.'/dav/public';
+$privateDir = DOL_DATA_ROOT.'/dav/private';
+$ecmDir = DOL_DATA_ROOT.'/ecm';
+$tmpDir = DOL_DATA_ROOT.'/ecm/temp';
+if (isModEnabled('dav')) {
+	$publicDir = $conf->dav->multidir_output[$entity].'/public';
+	$privateDir = $conf->dav->multidir_output[$entity].'/private';
+}
+if (isModEnabled('ecm')) {
+	$ecmDir = $conf->ecm->multidir_output[$entity];
+	$tmpDir = $conf->ecm->multidir_output[$entity]; // We need root dir, not a dir that can be deleted, so we use multidir_output
+}
 //var_dump($tmpDir);mkdir($tmpDir);exit;
 
 

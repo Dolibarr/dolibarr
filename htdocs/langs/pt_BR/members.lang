@@ -46,7 +46,6 @@ MemberStatusNoSubscription=Validado (contribuição dispensada)
 SubscriptionNotNeeded=Nenhuma contribuição exigida.
 PaymentSubscription=Subscrição de Pagamento
 SubscriptionEndDate=data final filiação
-NewSubscription=Nova contribuição
 NewSubscriptionDesc=Este formulário permite que você grave a sua assinatura como um novo membro da fundação. Se você quiser renovar a sua assinatura (se já for membro), por favor, entre em contato com Conselho de Fundadores não por e-mail.
 AnyAmountWithAdvisedAmount=Qualquer quantia à sua escolha, recomendado %s
 AnyAmountWithoutAdvisedAmount=Qualquer quantia à sua escolha

@@ -116,6 +116,8 @@ BoxTitleLastCustomerShipments=Seneste %s ændrede kundeforsendelser
 BoxTitleLastLeaveRequests=Latest %s modified leave requests
 NoRecordedShipments=Ingen registreret kundeforsendelse
 BoxCustomersOutstandingBillReached=Kunder med udestående grænse nået
+BoxTitleLastFediverseInfos=Sidste %s indlæg fra %s
+BoxLastFediverseInfos=Seneste Fediverse-opdateringer: Nyheder og tendenser
 # Pages
 UsersHome=Hjemmebrugere og grupper
 MembersHome=Hjemmemedlemskab

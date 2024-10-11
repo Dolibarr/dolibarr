@@ -1,8 +1,5 @@
 # Dolibarr language file - Source file is en_US - ecm
 ECMSectionManual=Annuaire manuel
-ECMSectionAuto=Annuaire automatique
-ECMSectionsManual=Arbre manuel
-ECMSectionsAuto=Arbre automatique
 ECMAddSection=Ajouter un répertoire
 ECMCreationDate=Date création
 ECMSectionWasRemoved=Le répertoire <b>%s</b> a été supprimé.

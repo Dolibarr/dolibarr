@@ -202,7 +202,7 @@ if ($reshook < 0) {
 
 
 // Define filename with prefix on filters predica (each predica set must have on cache file)
-$shortfilename = 'dolibarrcalendar';
+$shortfilename = 'calendar';
 $filename = $shortfilename;
 // Complete long filename
 foreach ($filters as $key => $value) {

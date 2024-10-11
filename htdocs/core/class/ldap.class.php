@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2021	Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2006-2021	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -355,7 +356,12 @@ class Ldap
 					if ($ldapdebug) {
 						dol_syslog(get_class($this)."::connectBind serverPing true, we try ldap_connect to ".$host, LOG_DEBUG);
 					}
-					$this->connection = ldap_connect($host, $this->serverPort);
+					if (version_compare(PHP_VERSION, '8.3.0', '>=')) {
+						$uri = $host.':'.$this->serverPort;
+						$this->connection = ldap_connect($uri);
+					} else {
+						$this->connection = ldap_connect($host, $this->serverPort);
+					}
 				} else {
 					if (preg_match('/^ldaps/i', $host)) {
 						// With host = ldaps://server, the serverPing to ssl://server sometimes fails, even if the ldap_connect succeed, so
@@ -363,7 +369,12 @@ class Ldap
 						if ($ldapdebug) {
 							dol_syslog(get_class($this)."::connectBind serverPing false, we try ldap_connect to ".$host, LOG_DEBUG);
 						}
-						$this->connection = ldap_connect($host, $this->serverPort);
+						if (version_compare(PHP_VERSION, '8.3.0', '>=')) {
+							$uri = $host.':'.$this->serverPort;
+							$this->connection = ldap_connect($uri);
+						} else {
+							$this->connection = ldap_connect($host, $this->serverPort);
+						}
 					} else {
 						if ($ldapdebug) {
 							dol_syslog(get_class($this)."::connectBind serverPing false, no ldap_connect ".$host, LOG_DEBUG);
@@ -511,14 +522,27 @@ class Ldap
 	/**
 	 * Unbind of LDAP server (close connection).
 	 *
-	 * @return	boolean					true or false
-	 * @see close()
+	 * @return		boolean		true or false
+	 * @see	close()
 	 */
 	public function unbind()
 	{
 		$this->result = true;
-		if (is_resource($this->connection) || is_object($this->connection)) {
-			$this->result = @ldap_unbind($this->connection);
+		if (version_compare(PHP_VERSION, '8.1.0', '>=')) {
+			if (is_object($this->connection)) {
+				try {
+					$this->result = ldap_unbind($this->connection);
+				} catch (Throwable $exception) {
+					$this->error = 'Failed to unbind LDAP connection: '.$exception;
+					$this->result = false;
+					dol_syslog(get_class($this).'::unbind - '.$this->error, LOG_WARNING);
+				}
+			}
+		} else {
+			if (is_resource($this->connection)) {
+				// @phan-suppress-next-line PhanTypeMismatchArgumentInternalReal
+				$this->result = @ldap_unbind($this->connection);
+			}
 		}
 		if ($this->result) {
 			return true;

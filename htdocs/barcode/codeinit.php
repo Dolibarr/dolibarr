@@ -96,7 +96,7 @@ if (getDolGlobalString('BARCODE_THIRDPARTY_ADDON_NUM')) {
 	}
 }
 
-if ($action == 'initbarcodethirdparties') {
+if ($action == 'initbarcodethirdparties' && $user->hasRight('societe', 'lire')) {
 	if (!is_object($modBarCodeThirdparty)) {
 		$error++;
 		setEventMessages($langs->trans("NoBarcodeNumberingTemplateDefined"), null, 'errors');
@@ -202,7 +202,7 @@ if (getDolGlobalString('BARCODE_PRODUCT_ADDON_NUM')) {
 	}
 }
 
-if ($action == 'initbarcodeproducts') {
+if ($action == 'initbarcodeproducts' && $user->hasRight('produit', 'lire')) {
 	if (!is_object($modBarCodeProduct)) {
 		$error++;
 		setEventMessages($langs->trans("NoBarcodeNumberingTemplateDefined"), null, 'errors');

@@ -76,7 +76,8 @@ if (empty($action)) {
 	$action = 'preview';
 }
 
-
+$permissiontoadd = $user->hasRight('collab', 'read');
+$permissiontodelete = $user->hasRight('collab', 'delete');
 
 
 /*
@@ -92,7 +93,7 @@ if (GETPOST('refreshpage')) {
 
 
 // Add a collab page
-if ($action == 'add') {
+if ($action == 'add' && $permissiontoadd) {
 	$db->begin();
 
 	$objectpage->title = GETPOST('WEBSITE_TITLE');
@@ -125,7 +126,7 @@ if ($action == 'add') {
 }
 
 // Update page
-if ($action == 'delete') {
+if ($action == 'delete' && $permissiontodelete) {
 	$db->begin();
 
 	$res = $object->fetch(0, $website);

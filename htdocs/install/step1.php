@@ -162,7 +162,7 @@ $error = 0;
 
 dolibarr_install_syslog("--- step1: entering step1.php page");
 
-pHeader($langs->trans("ConfigurationFile"), "step2");
+pHeader($langs->trans("DolibarrSetup").' - '.$langs->trans("ConfigurationFile"), "step2");
 
 // Test if we can run a first install process
 if (!is_writable($conffile)) {

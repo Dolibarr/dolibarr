@@ -317,7 +317,7 @@ div.pagination li:first-child a.btnTitle {
 	margin: 0 0 0 10px;
 	min-width: 80px;
 	text-align: center;
-	color: rgb(<?php print $colortextlink; ?>);
+	color: var(--btncolortext);
 	border: none;
 	font-size: 12px;
 	font-weight: 300;

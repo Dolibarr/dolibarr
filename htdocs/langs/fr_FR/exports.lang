@@ -67,7 +67,7 @@ ChooseFormatOfFileToImport=Choisissez le format de fichier à importer en cliqua
 ChooseFileToImport=Ajoutez le fichier à importer puis cliquez sur le pictogramme %s pour le sélectionner comme fichier source d'import…
 SourceFileFormat=Format du fichier source
 FieldsInSourceFile=Champs dans le fichier source
-FieldsInTargetDatabase=Champs cibles dans la base Dolibarr (gras=obligatoire)
+FieldsInTargetDatabase=Champs cibles dans la base de données Dolibarr
 NoFields=Aucun champ
 MoveField=Déplacer champ colonne numéro %s
 ExampleOfImportFile=Exemple_de_fichier_import

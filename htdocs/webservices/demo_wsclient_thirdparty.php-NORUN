@@ -61,7 +61,7 @@ $authentication=array(
 
 
 // Test URL
-if ($action=='get')
+if ($action == 'get')
 {
     $parameters = array('authentication'=>$authentication,'id'=>1,'name'=>'','ref_ext'=>'');
     dol_syslog("Call method ".$WS_METHOD_GETTHIRDSPARTY);
@@ -78,7 +78,7 @@ if ($action=='get')
 }
 
 // Test URL
-if ($action=='getList')
+if ($action == 'getList')
 {
     $filterthirdparty=array('category'=>'3');
     $parameters = array('authentication'=>$authentication,$filterthirdparty);
@@ -96,7 +96,7 @@ if ($action=='getList')
 }
 
 // Test URL
-if ($action=='create')
+if ($action == 'create')
 {
 	$newthirdparty=array(
 	'ref'=>'Test WS Create Client',
@@ -109,7 +109,7 @@ if ($action=='create')
 	'zip'=>'75000',
 	'town'=>'Paris',
 	'country_id'=>'1',//France
-	'customer_code'=>'-1',//Generate code regarding module configuration 
+	'customer_code'=>'-1',//Generate code regarding module configuration
 	'supplier_code'=>'0',
 	'phone'=>'0141414141',
 	'fax'=>'0121212121',
@@ -127,8 +127,8 @@ if ($action=='create')
 	//,'options_attr1'=>'Attr1 balbal', //Extra field example where field code is attr1
 	//'options_attr2'=>'Attr2 balbal' //Extra field example where field code is attr2
 	);
-	
-	
+
+
 	$parameters = array('authentication'=>$authentication,'thirdparty'=>$newthirdparty);
 	dol_syslog("Call method ".$WS_METHOD_CREATETHIRDSPARTY);
 	$result = $soapclient->call($WS_METHOD_CREATETHIRDSPARTY,$parameters,$ns,'');
@@ -144,7 +144,7 @@ if ($action=='create')
 }
 
 // Test URL
-if ($action=='update')
+if ($action == 'update')
 {
 	$thirdparty=array(
 	'id'=>'1',

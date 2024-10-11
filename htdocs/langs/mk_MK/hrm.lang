@@ -44,7 +44,7 @@ Eval=Проценка на компетентност
 Evals=Проценки на компетентност
 NewEval=Нова проценка на компетентност
 ValidateEvaluation=Потврдете ја проценката на компетентноста
-ConfirmValidateEvaluation=Дали сте сигурни дека сакате да ја потврдите оваа проценка на компетентност со референцата <b>%s<span class='notranslate'>b09a4b78z09f1 распон>?
+ConfirmValidateEvaluation=Are you sure you want to validate this competency assessment with the reference <b>%s</b>?
 EvaluationCard=Проценка на компетентност
 RequiredRank=Задолжителен ранг за работниот профил
 RequiredRankShort=Потребен ранг

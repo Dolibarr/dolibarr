@@ -153,14 +153,6 @@ if ($action == 'updateMask') {
 		$error++;
 	}
 
-	if (GETPOSTISSET('product_category_id')) {
-		$param_ticket_product_category = GETPOSTINT('product_category_id');
-		$res = dolibarr_set_const($db, 'TICKET_PRODUCT_CATEGORY', $param_ticket_product_category, 'chaine', 0, '', $conf->entity);
-		if (!($res > 0)) {
-			$error++;
-		}
-	}
-
 	$param_delay_first_response = GETPOSTINT('delay_first_response');
 	$res = dolibarr_set_const($db, 'TICKET_DELAY_BEFORE_FIRST_RESPONSE', $param_delay_first_response, 'chaine', 0, '', $conf->entity);
 	if (!($res > 0)) {
@@ -578,22 +570,6 @@ print '<td class="center">';
 print $formcategory->textwithpicto('', $langs->trans("TicketsAutoNotifyCloseHelp"), 1, 'help');
 print '</td>';
 print '</tr>';
-
-if (isModEnabled('product')) {
-	$htmlname = "product_category_id";
-	print '<tr class="oddeven"><td>'.$langs->trans("TicketChooseProductCategory").'</td>';
-	print '<td class="left">';
-	print img_picto('', 'category', 'class="pictofixedwidth"');
-	$formcategory->selectProductCategory(getDolGlobalString('TICKET_PRODUCT_CATEGORY'), $htmlname);
-	if ($conf->use_javascript_ajax) {
-		print ajax_combobox('select_'.$htmlname);
-	}
-	print '</td>';
-	print '<td class="center">';
-	print $formcategory->textwithpicto('', $langs->trans("TicketChooseProductCategoryHelp"), 1, 'help');
-	print '</td>';
-	print '</tr>';
-}
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("TicketsDelayBeforeFirstAnswer")."</td>";

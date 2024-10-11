@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - trips
+# Dolibarr language file - Source file is en_US - trips.lang
 AUTHOR=Registrerad av
 AUTHORPAIEMENT=Betalad av
 AddTrip=Skapa kostnadsrapport
@@ -13,6 +13,8 @@ byEX_EXP=för rad (begränsning till %s)
 byEX_MON=per månad (begränsning till %s)
 byEX_YEA=per år (begränsning till %s)
 CANCEL_USER=Släckt av
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Account (from the Chart of Account) used by default for "users" on expense reports
+ACCOUNTING_ACCOUNT_EXPENSEREPORT_Desc=The dedicated account defined on the user card will be used for Subledger accounting only. This one will be used for General Ledger, and also as the default value of Subledger accounting if no dedicated accounting account is not defined on the user.
 CarCategory=Fordonskategori
 ClassifyRefunded=Märk 'Återbetalas'
 CompanyVisited=Företag / organisation som besökts
@@ -39,7 +41,7 @@ expenseReportCoef=Koefficient
 expenseReportCoefUndefined=(värde ej definierat)
 expenseReportOffset=Offset
 expenseReportPrintExample=offset + (dx coef) = %s
-expenseReportRangeDisabled=Område inaktiverat - se c_exp_tax_range dictionay
+expenseReportRangeDisabled=Range disabled - se c_exp_tax_range-ordboken
 expenseReportRangeFromTo=från %d till %d
 expenseReportRangeMoreThan=mer än %d
 expenseReportTotalForFive=Exempel med <u> d </u> = 5
@@ -70,7 +72,8 @@ ExpenseReportRulesDesc=Du kan definiera maxbeloppsregler för utgiftsrapporter. 
 ExpenseReportWaitingForApproval=En ny kostnadsrapport har skickats in för godkännande
 ExpenseReportWaitingForApprovalMessage=En ny kostnadsrapport har skickats in och väntar på godkännande. <br> - Användare: %s <br> - Period: %s <br> Klicka här för att bekräfta: %s
 ExpenseReportWaitingForReApproval=En kostnadsrapport har lämnats in för omprövning
-ExpenseReportWaitingForReApprovalMessage=En kostnadsrapport har skickats in och väntar på omprövning. <br> %s, du vägrade att godkänna kostnadsrapporten av den anledningen: %s. <br> En ny version har föreslagits och väntar på ditt godkännande. <br> - Användare: %s <br> - Period: %s <br> Klicka här för att godkänna: %s
+ExpenseReportWaitingForReApprovalMessage=An expense report has been submitted and is waiting for re-approval.<br>The %s, you refused to approve the expense report for this reason: %s.<br>A new version has been proposed and waiting for your approval.<br> - User: %s<br> - Period: %s<br>
+ExpenseReportWaitingForReApprovalMessage2=Click here to validate: %s
 ExpenseReportsIk=Konfiguration av körsträcka
 ExpenseReportsRules=Kostnadsrapporteringsregler
 ExpenseReportsToApprove=Rapporter att godkänna
@@ -91,9 +94,9 @@ nolimitbyEX_EXP=efter rad (ingen begränsning)
 nolimitbyEX_MON=per månad (ingen begränsning)
 nolimitbyEX_YEA=per år (ingen begränsning)
 NoTripsToExportCSV=Ingen kostnadsrapport att exportera för denna period.
-NOT_AUTHOR=Du är inte författaren till denna kostnadsrapport. Drift avbruten.
+NOT_AUTHOR=Du är inte författaren till denna utgiftsrapport. Åtgärden avbröts.
 OnExpense=Utläggsrad
-PDFStandardExpenseReports=Standardmall för att skapa ett PDF-dokument för kostnadsrapport
+PDFStandardExpenseReports=Standard template to generate a PDF document for an expense report
 PaidTrip=Betala en kostnadsrapport
 REFUSEUR=Nekad av
 RangeIk=Mileage range
@@ -103,10 +106,10 @@ ShowExpenseReport=Visa kostnadsrapport
 ShowTrip=Visa kostnadsrapport
 TripCard=Kostnadsrapport
 TripId=ID utgiftsrapport
-TripNDF=Informationsutgiftsrapport
+TripNDF=Informationskostnadsrapport
 TripSociete=Informationsföretag
 Trips=Räkningar
-TripsAndExpenses=Kostnadsrapporter
+TripsAndExpenses=Utgiftsrapporter
 TripsAndExpensesStatistics=Kostnadsrapporteringsstatistik
 TypeFees=Typer av avgifter
 UploadANewFileNow=Ladda upp ett nytt dokument nu
@@ -115,6 +118,10 @@ VALIDOR=Godkänd av
 ValidateAndSubmit=Bekräfta och lämna in för godkännande
 ValidatedWaitingApproval=Bekräftat (väntar på godkännande)
 ValideTrip=Godkänn kostnadsrapport
+ExpenseReportPayments=Expense report payments
+TaxUndefinedForThisCategory = Tax is undefined for this category
+errorComputeTtcOnMileageExpense=Error on computing mileage expense
+ErrorOnlyDraftStatusCanBeDeletedInMassAction=Only elements in draft status can be deleted in mass action
 
 ## Dictionary
 EX_BRE=Frukost

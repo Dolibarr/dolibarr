@@ -1534,6 +1534,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		print '<br>';
 	}
 
+
 	// List of bank accounts
 	if ($permissiontoaddupdatepaymentinformation) {
 		$morehtmlright = dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"] . '?socid=' . $object->id . '&amp;action=create');
@@ -1729,8 +1730,8 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 
+			// Show online signature link
 			if (!getDolGlobalInt('SOCIETE_DISABLE_BANKACCOUNT') && getDolGlobalInt("SOCIETE_RIB_ALLOW_ONLINESIGN")) {
-				// Show online signature link
 				print '<td class="width200">';
 				$useonlinesignature = 1;
 				if ($useonlinesignature) {
@@ -1848,15 +1849,16 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				print img_picto($langs->trans("Default"), 'on');
 			}
 			print '</td>';
-			/*
-			print '<td>';
-			print $langs->trans("Remote");
-			//if ($src->cvc_check == 'fail') print ' - CVC check fail';
-			print '</td>';
-			*/
 
+			// Doc gen
 			print '<td>';
 			print '</td>';
+
+			// Online sign
+			if (!getDolGlobalInt('SOCIETE_DISABLE_BANKACCOUNT') && getDolGlobalInt("SOCIETE_RIB_ALLOW_ONLINESIGN")) {
+				print '<td>';
+				print '</td>';
+			}
 
 			// Fields from hook
 			$parameters = array('arrayfields' => array(), 'stripe_card_ref' => $rib->stripe_card_ref, 'stripe_account' => $rib->stripe_account, 'linetype' => 'stripebanremoteonly');

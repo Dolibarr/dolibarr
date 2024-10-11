@@ -19,6 +19,7 @@
 						print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=transfert&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
 					$date = $overview[0]->udate;
 					$dateb = $this->db->jdate($data[$j]->datea);
+					$dateemail = dol_stringtotime((string) $overview[0]->udate, 'gmt');
 					$link->datea = $this->db->jdate($obj->datea);
 					$object->periode = $newdateperiod;
 					$out .= dol_print_date($file->datea, 'dayhour');

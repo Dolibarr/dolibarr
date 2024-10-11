@@ -109,7 +109,7 @@ if (empty($conf->bookmark->enabled)) {
 			$i++;
 		}
 		if ($i == 0) {
-			$bookmarkList .= '<br><span class="opacitymedium">'.$langs->trans("NoBookmarks").'</span>';
+			$bookmarkList .= '<br><div class="opacitymedium center">'.$langs->trans("NoBookmarks").'</div>';
 			$bookmarkList .= '<br><br>';
 		}
 

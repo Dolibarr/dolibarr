@@ -37,11 +37,11 @@ class Login
 	 */
 	public function __construct()
 	{
-		global $conf, $db;
+		global $db;
 		$this->db = $db;
 
-		//$conf->global->MAIN_MODULE_API_LOGIN_DISABLED = 1;
-		if (getDolGlobalString('MAIN_MODULE_API_LOGIN_DISABLED')) {
+		//$conf->global->API_DISABLE_LOGIN_API = 1;
+		if (getDolGlobalString('API_DISABLE_LOGIN_API')) {
 			throw new RestException(403, "Error login APIs are disabled. You must get the token from backoffice to be able to use APIs");
 		}
 	}

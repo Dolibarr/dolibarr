@@ -235,7 +235,7 @@ if (empty($error) && !empty($xml)) {
 		}
 
 		if ($i == 0) {
-			$out .= '<tr class="oddeven"><td colspan="4" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+			$out .= '<tr class="oddeven"><td colspan="4"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 		}
 		$out .= '</table>';
 		$out .= '</div>';
@@ -292,7 +292,7 @@ if (empty($error) && !empty($xml)) {
 				$out .= "</tr>\n";
 			}
 		} else {
-			$out .= '<tr class="oddeven"><td colspan="4" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+			$out .= '<tr class="oddeven"><td colspan="4"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 		}
 		$out .= '</table>';
 		$out .= '</div>';
@@ -345,7 +345,7 @@ if (empty($error) && !empty($xml)) {
 			$out .= '<td class="right"></td>'."\n";
 			$out .= "</tr>\n";
 		} else {
-			$out .= '<tr class="oddeven"><td colspan="7" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+			$out .= '<tr class="oddeven"><td colspan="7"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 		}
 		$out .= '</table>';
 		$out .= '</div>';
@@ -384,7 +384,7 @@ if (empty($error) && !empty($xml)) {
 				$size = dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename']);
 				$totalsize += $size;
 				$out .= '<td class="right">'.dol_print_size($size).'</td>'."\n";
-				$out .= '<td class="right">'.dol_print_date(dol_filemtime(DOL_DOCUMENT_ROOT.'/'.$file['filename']), 'dayhour').'</td>'."\n";
+				$out .= '<td class="right nowraponall">'.dol_print_date(dol_filemtime(DOL_DOCUMENT_ROOT.'/'.$file['filename']), 'dayhour').'</td>'."\n";
 				$out .= "</tr>\n";
 			}
 			$out .= '<tr class="liste_total">';
@@ -396,7 +396,7 @@ if (empty($error) && !empty($xml)) {
 			$out .= '<td class="right"></td>'."\n";
 			$out .= "</tr>\n";
 		} else {
-			$out .= '<tr class="oddeven"><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+			$out .= '<tr class="oddeven"><td colspan="6"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 		}
 		$out .= '</table>';
 		$out .= '</div>';

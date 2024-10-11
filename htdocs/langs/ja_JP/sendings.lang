@@ -63,6 +63,9 @@ NoProductToShipFoundIntoStock=倉庫<b>%s</b>に出荷する製品が見つか�
 WeightVolShort=重量/容量
 ValidateOrderFirstBeforeShipment=出荷を行う前に、まず注文を検証する必要がある。
 NoLineGoOnTabToAddSome=行がありません。タブ「%s」に移動して追加する
+CreateInvoiceForThisCustomerFromSendings=請求書を作成する
+IfValidateInvoiceIsNoSendingStayUnbilled=請求書の検証が「いいえ」の場合、請求書が検証されるまで送信は「未請求」のステータスのままになる。
+OptionToSetSendingBilledNotEnabled=請求書が検証されたときに送信を「請求済み」に設定するモジュール ワークフローのオプション 自動的に が有効になっていないため、請求書が生成された後、送信のステータスを手動で「請求済み」に設定する必要がある。
 
 # Sending methods
 # ModelDocument
@@ -71,16 +74,12 @@ DocumentModelStorm=入庫とフィールド外の互換性のためのより完�
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=定数EXPEDITION_ADDON_NUMBERが定義されていない
 SumOfProductVolumes=製品量の合計
 SumOfProductWeights=製品の重量の合計
-
 # warehouse details
 DetailWarehouseNumber= 倉庫の詳細
 DetailWarehouseFormat= W：%s(数量：%d)
 SHIPPING_DISPLAY_STOCK_ENTRY_DATE=シリアル番号またはバッチの出荷作成中に、在庫 にエントリの最終日付を表示する。
 CreationOptions=出荷作成時に利用可能なオプション
-
 ShipmentDistribution=出荷配信
-
 ErrorTooManyCombinationBatchcode=明細  %s は送達されない。ウェアハウス、製品、バッチ コード の多すぎる組合せ (%s) が見つかったため。
 ErrorNoCombinationBatchcode=行 %s を、warehouse-製品-lot/serial の組合せとして保存できず。( %s、%s、%s）は在庫に見つからない。
-
 ErrorTooMuchShipped=出荷される数量は、明細行 %s の注文数量を超えてはならない

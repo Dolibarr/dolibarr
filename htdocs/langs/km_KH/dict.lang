@@ -295,8 +295,8 @@ CurrencyXPF=ហ្វ្រង់ CFP
 CurrencySingXPF=ហ្វ្រង់ CFP
 CurrencyCentEUR=សេន
 CurrencyCentSingEUR=សេន
-CurrencyCentINR=ប៉ាសា
-CurrencyCentSingINR=បង់
+CurrencyCentINR=paise
+CurrencyCentSingINR=paisa
 CurrencyThousandthSingTND=ពាន់
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=អ៊ីនធឺណិត

@@ -211,11 +211,13 @@ print "</td></tr>\n";
 print '</table>';
 print '</div>';
 
-print '<br>';
-
 print $form->buttonsSaveCancel("Save", '');
 
 print "</form>\n";
+
+
+print '<br>';
+
 
 print load_fiche_titre($langs->trans("Preview"), '', '');
 print '<div style="width: 50%; float:center;background-color:#606060">';

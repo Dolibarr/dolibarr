@@ -592,9 +592,11 @@ function pHeader($subtitle, $next, $action = 'set', $param = '', $forcejqueryurl
 	print DOL_VERSION;
 	print '</div><br>';
 
-	print '<span class="titre">'.$langs->trans("DolibarrSetup");
+	print '<span class="titre">';
 	if ($subtitle) {
-		print ' - '.$subtitle;
+		print $subtitle;
+	} else {
+		print $langs->trans("DolibarrSetup");
 	}
 	print '</span>'."\n";
 

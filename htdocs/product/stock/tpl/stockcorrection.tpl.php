@@ -153,7 +153,7 @@ if ($object->element == 'product') {
 	print img_picto('', 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses($ident, 'id_entrepot', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, null, 'minwidth100 maxwidth300 widthcentpercentminusx');
 	print '</td>';
 }
-if ($object->element == 'stock') {
+if ($object->element == 'stockmouvement') {
 	print '<td class="fieldrequired">'.$langs->trans("Product").'</td>';
 	print '<td>';
 	print img_picto('', 'product');
@@ -162,7 +162,7 @@ if ($object->element == 'stock') {
 }
 print '<td class="fieldrequired">'.$langs->trans("NumberOfUnit").'</td>';
 print '<td>';
-if ($object->element == 'product' || $object->element == 'stock') {
+if ($object->element == 'product' || $object->element == 'stockmouvement') {
 	print '<select name="mouvement" id="mouvement" class="minwidth100 valignmiddle">';
 	print '<option value="0">'.$langs->trans("Add").'</option>';
 	print '<option value="1"'.(GETPOST('mouvement') ? ' selected="selected"' : '').'>'.$langs->trans("Delete").'</option>';
@@ -187,10 +187,10 @@ if (getDolGlobalString('PRODUIT_SOUSPRODUITS') && $object->element == 'product' 
 // Serial / Eat-by date
 if (isModEnabled('productbatch') &&
 (($object->element == 'product' && $object->hasbatch())
-|| ($object->element == 'stock'))
+|| ($object->element == 'stockmouvement'))
 ) {
 	print '<tr>';
-	print '<td'.($object->element == 'stock' ? '' : ' class="fieldrequired"').'>'.$langs->trans("batch_number").'</td><td colspan="3">';
+	print '<td'.($object->element == 'stockmouvement' ? '' : ' class="fieldrequired"').'>'.$langs->trans("batch_number").'</td><td colspan="3">';
 	if ($pdluoid > 0) {
 		// If form was opened for a specific pdluoid, field is disabled
 		print '<input type="text" name="batch_number_bis" size="40" disabled="disabled" value="'.(GETPOST('batch_number') ? GETPOST('batch_number') : $pdluo->batch).'">';

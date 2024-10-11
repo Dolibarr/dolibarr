@@ -122,7 +122,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'builddoc') {
+	if ($action == 'builddoc' && $user->hasRight('barcode', 'read')) {
 		$result = 0;
 		$error = 0;
 

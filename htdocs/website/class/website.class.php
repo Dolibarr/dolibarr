@@ -669,7 +669,7 @@ class Website extends CommonObject
 		$newref = dol_sanitizeFileName($newref);
 
 		if (empty($newref)) {
-			$this->error = 'ErrorBadParameter';
+			$this->error = 'ErrorBadParameter newref';
 			return -1;
 		}
 
@@ -678,7 +678,7 @@ class Website extends CommonObject
 		// Check no site with ref exists
 		if ($object->fetch(0, $newref) > 0) {
 			$this->error = 'ErrorNewRefIsAlreadyUsed';
-			return -1;
+			return -2;
 		}
 
 		$this->db->begin();
@@ -812,7 +812,7 @@ class Website extends CommonObject
 		} else {
 			$this->db->rollback();
 
-			return -1;
+			return -3;
 		}
 	}
 

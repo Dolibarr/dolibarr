@@ -34,4 +34,4 @@ ARollbackWasPerformedOnPostActions=Извршено е враќање на си�
 ValidationOfPaymentFailed=Валидацијата на плаќањето не успеа
 CardOwner=Држач за картичка
 PayPalBalance=Paypal кредит
-OnlineSubscriptionPaymentLine=Онлајн претплата е снимена на %s<br>Платена преку b0ecb2ec87f49fzpan class='span><s notranslate'><br>ИП-адреса со потекло: %s<br>ИД на трансакција: <spanf20000000000000000000000000000000000000000000000000000000000000000000001 </span>
+OnlineSubscriptionPaymentLine=Online subscription recorded on %s<br>Paid via %s<br>Originating IP address: %s<br>Transaction ID: %s

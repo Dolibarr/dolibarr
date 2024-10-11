@@ -192,7 +192,7 @@ foreach ($data as $val) {
 		$oldyear--;
 		print '<tr class="oddeven" height="24">';
 		print '<td class="center">';
-		//print '<a href="month.php?year='.$oldyear.'&amp;mode='.$mode.'">';
+		//print '<a href="month.php?year='.$oldyear.'&mode='.$mode.'">';
 		print $oldyear;
 		//print '</a>';
 		print '</td>';

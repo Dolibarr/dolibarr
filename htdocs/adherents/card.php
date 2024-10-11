@@ -56,6 +56,7 @@ $langs->loadLangs(array("companies", "bills", "members", "users", "other", "payp
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
+$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');	// if not set, $backtopage will be used
 $confirm = GETPOST('confirm', 'alpha');
 $rowid = GETPOSTINT('rowid');
 $id = GETPOST('id') ? GETPOSTINT('id') : $rowid;
@@ -181,7 +182,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'setsocid') {
+	if ($action == 'setsocid' && $caneditfieldmember) {
 		$error = 0;
 		if (!$error) {
 			if ($socid != $object->socid) {	// If link differs from currently in database
@@ -1417,7 +1418,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '</td></tr>';
 
 		// Other attributes. Fields from hook formObjectOptions and Extrafields.
-		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';
 
 		print '</table>';
 		print dol_get_fiche_end();
@@ -2083,7 +2084,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			print '</div><div class="fichehalfright">';
 
-			$MAX = 10;
+			$MAXEVENT = 10;
 
 			$morehtmlcenter = '';
 			$messagingUrl = DOL_URL_ROOT.'/adherents/messaging.php?rowid='.$object->id;
@@ -2093,7 +2094,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 			$formactions = new FormActions($db);
-			$somethingshown = $formactions->showactions($object, $object->element, $socid, 1, 'listactions', $MAX, '', $morehtmlcenter);
+			$somethingshown = $formactions->showactions($object, $object->element, $socid, 1, 'listactions', $MAXEVENT, '', $morehtmlcenter);
 
 			print '</div></div>';
 		}

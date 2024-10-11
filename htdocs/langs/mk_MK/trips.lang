@@ -47,11 +47,11 @@ expenseReportRangeMoreThan=повеќе од %d
 expenseReportTotalForFive=Пример со <u>d</u> = 5
 ExpenseReportApplyTo=Примени на
 ExpenseReportApproved=Беше одобрен извештај за трошоци
-ExpenseReportApprovedMessage=Извештајот за трошоци %s беше одобрен.<br> - Корисник: %s<s class='notranslate'><br></span> - Одобрено од: %s<br>Кликнете тука за да го прикажете извештајот за трошоците: <span> span class='notranslate'>%s</span>
+ExpenseReportApprovedMessage=The expense report %s was approved.<br> - User: %s<br> - Approved by: %s<br>Click here to show the expense report: %s
 ExpenseReportCanceled=Извештајот за трошоци беше откажан
-ExpenseReportCanceledMessage=Извештајот за трошоци %s беше откажан.<br> - Корисник: %s</span class='notranslate'><br> - Откажано од: %s<br> - Мотив за откажување: <span class=: 'notranslate'>%s</span><br>Кликнете тука за да го прикажете извештајот за трошоци: %s
-ExpenseReportConstraintViolationError=Надмината максимална сума (правило %s): %s е повисока од <span class='notranslate'>%s</s> Надминување забрането)
-ExpenseReportConstraintViolationWarning=Надмината максимална сума (правило %s): %s е повисока од <span class='notranslate'>%s</s> Надминување на дозволеното)
+ExpenseReportCanceledMessage=The expense report %s was canceled.<br> - User: %s<br> - Canceled by: %s<br> - Motive for cancellation: %s<br>Click here to show the expense report: %s
+ExpenseReportConstraintViolationError=Max amount exceeded (rule %s): %s is higher than %s (Exceeding forbidden)
+ExpenseReportConstraintViolationWarning=Max amount exceeded (rule %s): %s is higher than %s (Exceeding authorized)
 ExpenseReportDateEnd=Крај на датумот
 ExpenseReportDateStart=Датум за почеток
 ExpenseReportDomain=Домен за аплицирање
@@ -60,19 +60,20 @@ ExpenseReportLimitAmount=Максимален износ
 ExpenseReportLimitOn=Ограничете се
 ExpenseReportLine=Линија за извештај за трошоци
 ExpenseReportPaid=Платен е извештај за трошоци
-ExpenseReportPaidMessage=Извештајот за трошоци %s е платен.<br> - Корисник: %s</span class='notranslate'><br> - Платено од: %s<br>Кликнете тука за да го прикажете извештајот за трошоците: span class='notranslate'>%s</span>
+ExpenseReportPaidMessage=The expense report %s was paid.<br> - User: %s<br> - Paid by: %s<br>Click here to show the expense report: %s
 ExpenseReportPayment=Исплата на извештај за трошоци
 ExpenseReportRef=Уп. извештај за трошоци
 ExpenseReportRefused=Извештајот за трошоците беше одбиен
-ExpenseReportRefusedMessage=Извештајот за трошоци %s беше одбиен.<br> - Корисник: %s</span class='notranslate'><br> - Одбиено од: %s<br> - Мотив за одбивање: 'notranslate'>%s</span><br>Кликнете тука за да го прикажете извештајот за трошоци: %s
+ExpenseReportRefusedMessage=The expense report %s was refused.<br> - User: %s<br> - Refused by: %s<br> - Motive for refusal: %s<br>Click here to show the expense report: %s
 ExpenseReportRestrictive=Надминување забрането
 ExpenseReportRuleErrorOnSave=Грешка: %s
 ExpenseReportRuleSave=Правилото за извештај за трошоците е зачувано
 ExpenseReportRulesDesc=Можете да дефинирате правила за максимален износ за извештаите за трошоци. Овие правила ќе се применуваат кога ќе се додаде нов трошок во извештајот за трошоци
 ExpenseReportWaitingForApproval=Доставен е нов извештај за трошоците на одобрување
-ExpenseReportWaitingForApprovalMessage=Доставен е нов извештај за трошоците и се чека на одобрување.<br> - Корисник: %s <br> - Период: %s<br>Кликнете овде за да потврдите: <span class='notranslate распон>
+ExpenseReportWaitingForApprovalMessage=A new expense report has been submitted and is waiting for approval.<br> - User: %s<br> - Period: %s<br>Click here to validate: %s
 ExpenseReportWaitingForReApproval=Извештај за трошоците е доставен на повторно одобрување
-ExpenseReportWaitingForReApprovalMessage=Извештајот за трошоците е поднесен и се чека за повторно одобрување.<br>%s, одбивте да го одобрите извештајот за трошоците за оваа причина: %s.<br>Предложена е нова верзија и се чека ваше одобрување. <br> - Корисник: %s<br> - Период: <span class='notranslate'8</7>b0cb2ec87f49fz0 <br>Кликнете овде за да потврдите: %s
+ExpenseReportWaitingForReApprovalMessage=An expense report has been submitted and is waiting for re-approval.<br>The %s, you refused to approve the expense report for this reason: %s.<br>A new version has been proposed and waiting for your approval.<br> - User: %s<br> - Period: %s<br>
+ExpenseReportWaitingForReApprovalMessage2=Click here to validate: %s
 ExpenseReportsIk=Конфигурација на надоместоци за километражата
 ExpenseReportsRules=Правила за извештај за трошоци
 ExpenseReportsToApprove=Извештаите за трошоците да се одобрат

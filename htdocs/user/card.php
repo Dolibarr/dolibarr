@@ -401,7 +401,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'update' && $canedituser) {
+	if ($action == 'update' && ($canedituser || $caneditpasswordandsee)) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		if ($caneditfield) {    // Case we can edit all field
@@ -1746,7 +1746,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			// Color user
 			if (isModEnabled('agenda')) {
-				print '<tr><td class="titlefield">'.$langs->trans("ColorUser").'</td>';
+				print '<tr><td class="titlefieldmax45">'.$langs->trans("ColorUser").'</td>';
 				print '<td>';
 				print $formother->showColor($object->color, '');
 				print '</td>';
@@ -1755,8 +1755,8 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			// Categories
 			if (isModEnabled('category') && $user->hasRight("categorie", "read")) {
-				print '<tr><td class="titlefield">'.$langs->trans("Categories").'</td>';
-				print '<td colspan="3">';
+				print '<tr><td>'.$langs->trans("Categories").'</td>';
+				print '<td>';
 				print $form->showCategories($object->id, Categorie::TYPE_USER, 1);
 				print '</td></tr>';
 			}
@@ -1765,7 +1765,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			if (getDolGlobalInt('MAIN_MULTILANGS')) {
 				$langs->load("languages");
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-				print '<tr><td class="titlefield">';
+				print '<tr><td>';
 				print $form->textwithpicto($langs->trans("DefaultLang"), $langs->trans("WarningNotLangOfInterface", $langs->transnoentitiesnoconv("UserGUISetup")));
 				print '</td><td>';
 				//$s=picto_from_langcode($object->default_lang);
@@ -1862,16 +1862,16 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			print '<br>';
 			print '<div class="div-table-responsive-no-min">';
-			print '<table class="border tableforfield centpercent">';
+			print '<table class="noborder tableforfield centpercent">';
 
-			print '<tr class="liste_titre"><td class="liste_titre">';
-			print img_picto('', 'security', 'class="paddingleft pictofixedwidth"').$langs->trans("Credentials");
-			print '</td>';
-			print '<td class="liste_titre"></td>';
+			print '<tr class="liste_titre"><th class="liste_titre">';
+			print img_picto('', 'security', 'class="paddingleft pictofixedwidth"').$langs->trans("Security");
+			print '</th>';
+			print '<th class="liste_titre"></th>';
 			print '</tr>';
 
 			// Date login validity
-			print '<tr class="nooddeven"><td class="titlefield">'.$langs->trans("RangeOfLoginValidity").'</td>';
+			print '<tr class="nooddeven"><td class="titlefieldmax45">'.$langs->trans("RangeOfLoginValidity").'</td>';
 			print '<td>';
 			if ($object->datestartvalidity) {
 				print '<span class="opacitymedium">'.$langs->trans("FromDate").'</span> ';
@@ -1886,7 +1886,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			// Alternative email for OAUth2 login
 			if (!empty($object->email_oauth2) && preg_match('/googleoauth/', $dolibarr_main_authentication)) {
-				print '<tr class="nooddeven"><td class="titlefield">'.$langs->trans("AlternativeEmailForOAuth2").'</td>';
+				print '<tr class="nooddeven"><td class="titlefieldmiddle">'.$langs->trans("AlternativeEmailForOAuth2").'</td>';
 				print '<td>';
 				print dol_print_email($object->email_oauth2);
 				print '</td>';
@@ -1941,7 +1941,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 
 			if (dol_string_nohtmltag($valuetoshow)) {	// If there is a real visible content to show
-				print '<tr class="nooddeven"><td class="titlefield">'.$langs->trans("Password").'</td>';
+				print '<tr class="nooddeven"><td class="titlefieldmiddle">'.$langs->trans("Password").'</td>';
 				print '<td class="wordbreak">';
 				print $valuetoshow;
 				print "</td>";
@@ -2974,12 +2974,19 @@ if ($action == 'create' || $action == 'adduserldap') {
 			$linktoelem = $form->showLinkToObjectBlock($object, null, null);
 			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
+			$MAXEVENT = 10;
+
+			$morehtmlcenter = '<div class="nowraponall">';
+			$morehtmlcenter .= dolGetButtonTitle($langs->trans('FullConversation'), '', 'fa fa-comments imgforviewmode', DOL_URL_ROOT.'/user/messaging.php?id='.$object->id);
+			$morehtmlcenter .= dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/user/agenda.php?id='.$object->id);
+			$morehtmlcenter .= '</div>';
+
 			print '</div><div class="fichehalfright">';
 
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 			$formactions = new FormActions($db);
-			$somethingshown = $formactions->showactions($object, 'user', $socid, 1, 'listactions', 0, '', '', $object->id);
+			$somethingshown = $formactions->showactions($object, 'user', $socid, 1, 'listactions', $MAXEVENT, '', $morehtmlcenter, $object->id);
 
 			print '</div></div>';
 		}

@@ -267,8 +267,8 @@ if (!empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || $
 									continue;
 								}
 
-								//$conf->global->MAIN_MODULE_API_LOGIN_DISABLED = 1;
-								if ($file_searched == 'api_login.class.php' && getDolGlobalString('MAIN_MODULE_API_LOGIN_DISABLED')) {
+								//$conf->global->API_DISABLE_LOGIN_API = 1;
+								if ($file_searched == 'api_login.class.php' && getDolGlobalString('API_DISABLE_LOGIN_API')) {
 									continue;
 								}
 

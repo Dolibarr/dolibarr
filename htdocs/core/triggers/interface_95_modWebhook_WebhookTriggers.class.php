@@ -96,7 +96,17 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 
 				$jsonstr = json_encode($resobject);
 
-				$response = getURLContent($tmpobject->url, 'POST', $jsonstr, 1, array('content-type:application/json'), array('http', 'https'), 2, -1);
+				$headers = array(
+					'Content-Type: application/json'
+					//'Accept: application/json'
+				);
+
+				$method = 'POST';
+				if (getDolGlobalString('WEBHOOK_POST_SEND_DATA_IN_BODY')) {
+					$method = 'POSTALREADYFORMATED';
+				}
+				$response = getURLContent($tmpobject->url, $method, $jsonstr, 1, $headers, array('http', 'https'), 2, -1);
+
 				if (empty($response['curl_error_no']) && $response['http_code'] >= 200 && $response['http_code'] < 300) {
 					$nbPosts++;
 				} else {

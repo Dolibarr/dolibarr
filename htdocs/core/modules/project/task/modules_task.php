@@ -38,7 +38,7 @@ abstract class ModelePDFTask extends CommonDocGenerator
 	/**
 	 *  Return list of active generation modules
 	 *
-	 *  @param	DoliDB	$db     			Database handler
+	 *  @param  DoliDB  	$db                 Database handler
 	 *  @param  integer	$maxfilenamelength  Max length of value to show
 	 *  @return	array						List of templates
 	 */
@@ -62,5 +62,19 @@ abstract class ModelePDFTask extends CommonDocGenerator
  */
 abstract class ModeleNumRefTask extends CommonNumRefGenerator
 {
-	// No overload code
+	/**
+	 *  Return next value
+	 *
+	 *  @param	null|Societe|string	$objsoc	Object third party
+	 *  @param	null|Task|string	$object	Object Task
+	 *  @return	string|int<-1,0>			Value if OK, <=0 if KO
+	 */
+	abstract public function getNextValue($objsoc, $object);
+
+	/**
+	 *  Return an example of numbering
+	 *
+	 *  @return     string      Example
+	 */
+	abstract public function getExample();
 }

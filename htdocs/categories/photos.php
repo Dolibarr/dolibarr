@@ -48,9 +48,6 @@ if ($id == '' && $label == '') {
 	exit();
 }
 
-// Security check
-$result = restrictedArea($user, 'categorie', $id, '&category');
-
 $object = new Categorie($db);
 $result = $object->fetch($id, $label);
 if ($result <= 0) {
@@ -67,9 +64,16 @@ $upload_dir = $conf->categorie->multidir_output[$object->entity];
 
 $hookmanager->initHooks(array('categorycard'));
 
+// Security check
+$result = restrictedArea($user, 'categorie', $id, '&category');
+
+$permissiontoadd = $user->hasRight('categorie', 'creer');
+
+
 /*
  * Actions
  */
+
 $parameters = array('id' => $id,  'label' => $label, 'confirm' => $confirm, 'type' => $type, 'uploaddir' => $upload_dir, 'sendfile' => (GETPOST("sendit") ? true : false));
 // Note that $action and $object may be modified by some hooks
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
@@ -96,11 +100,11 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'confirm_delete' && GETPOST("file") && $confirm == 'yes' && $user->hasRight('categorie', 'creer')) {
+	if ($action == 'confirm_delete' && GETPOST("file") && $confirm == 'yes' && $permissiontoadd) {
 		$object->delete_photo($upload_dir."/".GETPOST("file"));
 	}
 
-	if ($action == 'addthumb' && GETPOST("file")) {
+	if ($action == 'addthumb' && GETPOST("file") && $permissiontoadd) {
 		$object->addThumbs($upload_dir."/".GETPOST("file"));
 	}
 }

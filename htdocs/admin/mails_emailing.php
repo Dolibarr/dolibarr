@@ -695,7 +695,7 @@ if ($action == 'edit') {
 
 
 	if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') == 'mail' && !in_array($action, array('testconnect', 'test', 'testhtml'))) {
-		$text = $langs->trans("WarningPHPMail");
+		$text = $langs->trans("WarningPHPMail", $listofmethods['mail'], $listofmethods['smtps']);
 		print info_admin($text);
 	}
 

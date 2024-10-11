@@ -114,7 +114,7 @@ $reshook = $hookmanager->executeHooks('doActions', $parameters, $user, $action);
 $reload = false;
 
 // Bookkeeping Write
-if ($action == 'writebookkeeping') {
+if ($action == 'writebookkeeping' && $user->hasRight('accounting', 'bind', 'write')) {
 	$error = 0;
 
 	$result = $object->writeIntoBookkeeping($user, $journal_data);
@@ -133,7 +133,7 @@ if ($action == 'writebookkeeping') {
 	}
 
 	$reload = true;
-} elseif ($action == 'exportcsv') {
+} elseif ($action == 'exportcsv' && $user->hasRight('accounting', 'bind', 'write')) {
 	// Export CSV
 	$result = $object->exportCsv($journal_data, $date_end);
 	if ($result < 0) {

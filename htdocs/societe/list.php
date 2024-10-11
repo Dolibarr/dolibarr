@@ -329,7 +329,6 @@ if ($user->socid) {
 $result = restrictedArea($user, 'societe', $socid, '');
 
 
-
 /*
  * Actions
  */

@@ -406,7 +406,7 @@ if ($rowid && $action != 'edit') {
 	/*
 	include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 	$formactions = new FormActions($db);
-	$somethingshown = $formactions->showactions($object, $object->element, $socid, 1);
+	$somethingshown = $formactions->showactions($object, $object->element, $socid, 1, '', $MAXEVENT);
 	*/
 
 	print '</div></div>';

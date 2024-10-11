@@ -152,7 +152,7 @@ class UserGroup extends CommonObject
 
 
 	/**
-	 *  Charge un object group avec toutes ses caracteristiques (except ->members array)
+	 *  Load a group object with all properties (except ->members array that is array of users in group)
 	 *
 	 *	@param      int		$id				Id of group to load
 	 *	@param      string	$groupname		Name of group to load
@@ -161,8 +161,6 @@ class UserGroup extends CommonObject
 	 */
 	public function fetch($id = 0, $groupname = '', $load_members = false)
 	{
-		global $conf;
-
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		if (!empty($groupname)) {
 			$result = $this->fetchCommon(0, '', ' AND nom = \''.$this->db->escape($groupname).'\'');
@@ -174,7 +172,8 @@ class UserGroup extends CommonObject
 
 		if ($result) {
 			if ($load_members) {
-				$this->members = $this->listUsersForGroup();	// This make a lot of subrequests
+				$excludefilter = '';
+				$this->members = $this->listUsersForGroup($excludefilter, 0);	// This make a request to get list of users but may also do subrequest to fetch each users on some versions
 			}
 
 			return 1;

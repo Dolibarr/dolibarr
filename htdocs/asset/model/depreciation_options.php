@@ -110,7 +110,7 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
-	if ($action == "update") {
+	if ($action == "update" && $permissiontoadd) {
 		$result = $assetdepreciationoptions->setDeprecationOptionsFromPost(1);
 		if ($result > 0) {
 			$result = $assetdepreciationoptions->updateDeprecationOptions($user, 0, $object->id);

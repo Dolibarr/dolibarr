@@ -126,7 +126,7 @@ if (isset($_GET["m"]) && isset($_GET["y"])) {
 
 // If parameters provided, we show calendar
 if ($qualified) {
-	displayBox(GETPOSTINT("sd"), GETPOSTINT("m"), GETPOSTINT("y"));
+	displayBox(GETPOST("sd", 'alpha'), GETPOSTINT("m"), GETPOSTINT("y"));
 } else {
 	dol_print_error(null, 'ErrorBadParameters');
 }
@@ -152,7 +152,7 @@ function xyzToUnixTimestamp($mysqldate)
 /**
  * Show box
  *
- * @param	string	$selectedDate	Date YYYMMDD
+ * @param	string	$selectedDate	Date YYYYMMDD
  * @param	int		$month			Month
  * @param 	int		$year			Year
  * @return	void

@@ -25,7 +25,7 @@ $useJNotify = true;
 $context->loadEventMessages();
 // alert success
 if (!empty($context->eventMessages['mesgs'])) {
-	$htmlSuccess = '<div class="success" role="alert">';
+	$htmlSuccess = $useJNotify ? '' : '<div class="success" role="alert">';
 	$msgNum = 0;
 	foreach ($context->eventMessages['mesgs'] as $mesg) {
 		if ($msgNum > 0) {
@@ -34,7 +34,7 @@ if (!empty($context->eventMessages['mesgs'])) {
 		$htmlSuccess .= $langs->trans($mesg);
 		$msgNum++;
 	}
-	$htmlSuccess .= '</div>';
+	$htmlSuccess .= $useJNotify ? '' : '</div>';
 	if ($useJNotify) {
 		$jsSuccess = '
                jQuery.jnotify("' . dol_escape_js($htmlSuccess) . '",
@@ -45,7 +45,7 @@ if (!empty($context->eventMessages['mesgs'])) {
 }
 // alert warning
 if (!empty($context->eventMessages['warnings'])) {
-	$htmlWarning = '<div class="warning" role="alert">';
+	$htmlWarning = $useJNotify ? '' : '<div class="warning" role="alert">';
 	$msgNum = 0;
 	foreach ($context->eventMessages['warnings'] as $mesg) {
 		if ($msgNum > 0) {
@@ -54,14 +54,14 @@ if (!empty($context->eventMessages['warnings'])) {
 		$htmlWarning .= $langs->trans($mesg);
 		$msgNum++;
 	}
-	$htmlWarning .= '</div>';
+	$htmlWarning .= $useJNotify ? '' : '</div>';
 	if ($useJNotify) {
 		$jsWarning .= 'jQuery.jnotify("' . dol_escape_js($htmlWarning) . '", "warning", true);';
 	}
 }
 // alert error
 if (!empty($context->eventMessages['errors'])) {
-	$htmlError = '<div class="error" role="alert">';
+	$htmlError = $useJNotify ? '' : '<div class="error" role="alert">';
 	$msgNum = 0;
 	foreach ($context->eventMessages['errors'] as $mesg) {
 		if ($msgNum > 0) {
@@ -70,7 +70,7 @@ if (!empty($context->eventMessages['errors'])) {
 		$htmlError .= $langs->trans($mesg);
 		$msgNum++;
 	}
-	$htmlError .= '</div>';
+	$htmlError .= $useJNotify ? '' : '</div>';
 	if ($useJNotify) {
 		$jsError .= 'jQuery.jnotify("' . dol_escape_js($htmlError) . '", "error", true );';
 	}

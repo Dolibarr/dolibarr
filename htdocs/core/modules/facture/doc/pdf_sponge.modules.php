@@ -1999,7 +1999,7 @@ class pdf_sponge extends ModelePDFFactures
 			$pdf->SetTextColor(0, 0, 0);
 		}
 
-		$parameters = array('pdf' => &$pdf, 'object' => &$object, 'outputlangs' => $outputlangs, 'index' => &$index);
+		$parameters = array('pdf' => &$pdf, 'object' => &$object, 'outputlangs' => $outputlangs, 'index' => &$index, 'posy' => $posy);
 
 		$reshook = $hookmanager->executeHooks('afterPDFTotalTable', $parameters, $this); // Note that $action and $object may have been modified by some hooks
 		if ($reshook < 0) {
@@ -2457,6 +2457,8 @@ class pdf_sponge extends ModelePDFFactures
 				if (!empty($carac_client_shipping)) {
 					$posy += $hautcadre;
 
+					$hautcadre = $hautcadre - 10;	// Height for the shipping address does not need to be as high as main box
+
 					// Show shipping frame
 					$pdf->SetXY($posx + 2, $posy - 5);
 					$pdf->SetFont('', '', $default_font_size - 2);
@@ -2474,7 +2476,8 @@ class pdf_sponge extends ModelePDFFactures
 					$pdf->SetXY($posx + 2, $posy);
 					$pdf->SetFont('', '', $default_font_size - 1);
 					$pdf->MultiCell($widthrecbox - 2, 2, $carac_client_shipping, '', 'L');
-					$shipp_shift += $hautcadre;
+
+					$shipp_shift += $hautcadre + 10;
 				}
 			}
 		}

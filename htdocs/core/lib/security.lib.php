@@ -200,6 +200,9 @@ function dolDecrypt($chain, $key = '')
 	//var_dump('key='.$key);
 	$reg = array();
 	if (preg_match('/^dolcrypt:([^:]+):(.+)$/', $chain, $reg)) {
+		// Do not enable this log, except during debug
+		//dol_syslog("We try to decrypt the chain: ".$chain, LOG_DEBUG);
+
 		$ciphering = $reg[1];
 		if (function_exists('openssl_decrypt')) {
 			if (empty($key)) {

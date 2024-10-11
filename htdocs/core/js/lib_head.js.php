@@ -1321,7 +1321,7 @@ jQuery(document).ready(function() {
 
 
 jQuery(document).ready(function() {
-	jQuery(".butAction.dropdown-toggle").on("click", function(event) {
+	jQuery(document).on("click", ".butAction.dropdown-toggle", function(event) {
 		console.log("Click on .butAction.dropdown-toggle");
 		var parentholder = jQuery(".butAction.dropdown-toggle").closest(".dropdown");
 			 var offset = parentholder.offset();

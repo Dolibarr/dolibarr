@@ -167,7 +167,7 @@ $arrayfields = array(
 	'd.date_valid' => array('label' => $langs->trans("DateValidation"), 'checked' => 1),
 	'd.date_approve' => array('label' => $langs->trans("DateApprove"), 'checked' => 1),
 	'd.total_ht' => array('label' => $langs->trans("AmountHT"), 'checked' => 1),
-	'd.total_vat' => array('label' => $langs->trans("AmountVAT"), 'checked' => 1),
+	'd.total_vat' => array('label' => $langs->trans("AmountVAT"), 'checked' => -1),
 	'd.total_ttc' => array('label' => $langs->trans("AmountTTC"), 'checked' => 1),
 	'd.date_create' => array('label' => $langs->trans("DateCreation"), 'checked' => 0, 'position' => 500),
 	'd.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => 0, 'position' => 500),
@@ -575,9 +575,6 @@ if (empty($reshook)) {
 if (!empty($moreforfilter)) {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;
-	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
 	print '</div>';
 }
 

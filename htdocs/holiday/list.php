@@ -222,8 +222,6 @@ if (empty($reshook)) {
 }
 
 
-
-
 /*
  * View
  */
@@ -575,9 +573,6 @@ if (empty($reshook)) {
 if (!empty($moreforfilter)) {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;
-	$parameters = array('type' => $type);
-	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
 	print '</div>';
 }
 
@@ -634,7 +629,7 @@ if (!empty($arrayfields['cp.fk_validator']['checked'])) {
 	if ($user->hasRight('holiday', 'readall')) {
 		print '<td class="liste_titre maxwidthonsmartphone left">';
 		$validator = new UserGroup($db);
-		$excludefilter = $user->admin ? '' : 'u.rowid <> '.$user->id;
+		$excludefilter = $user->admin ? '' : 'u.rowid <> '.((int) $user->id);
 		$valideurobjects = $validator->listUsersForGroup($excludefilter, 1);
 		$valideurarray = array();
 		foreach ($valideurobjects as $val) {

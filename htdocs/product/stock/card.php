@@ -94,9 +94,9 @@ if ($id > 0 || !empty($ref)) {
 	}
 }
 
-$usercanread = (($user->hasRight('stock', 'lire')));
-$usercancreate = (($user->hasRight('stock', 'creer')));
-$usercandelete = (($user->hasRight('stock', 'supprimer')));
+$usercanread = $user->hasRight('stock', 'lire');
+$usercancreate = $user->hasRight('stock', 'creer');
+$usercandelete = $user->hasRight('stock', 'supprimer');
 
 
 /*
@@ -198,8 +198,8 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Modification entrepot
-	if ($action == 'update' && !$cancel) {
+	// Update warehouse
+	if ($action == 'update' && !$cancel && $user->hasRight('stock', 'creer')) {
 		if ($object->fetch($id)) {
 			$object->label = GETPOST("libelle");
 			$object->fk_parent   = GETPOST("fk_parent");
@@ -239,7 +239,7 @@ if (empty($reshook)) {
 			$action = 'edit';
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif ($action == 'update_extras') {
+	} elseif ($action == 'update_extras' && $user->hasRight('stock', 'creer')) {
 		$object->oldcopy = dol_clone($object, 2);
 
 		// Fill array 'array_options' with data from update form
@@ -758,10 +758,6 @@ if ($action == 'create') {
 					//print '<td>'.dol_print_date($objp->datem).'</td>';
 					print '<tr class="oddeven">';
 
-					$parameters = array('obj' => $objp, 'totalarray' => &$totalarray);
-					$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
-					print $hookmanager->resPrint;
-
 					$productstatic->id = $objp->rowid;
 					$productstatic->ref = $objp->ref;
 					$productstatic->label = $objp->produit;
@@ -841,6 +837,10 @@ if ($action == 'create') {
 						print $langs->trans("CorrectStock");
 						print "</a></td>";
 					}
+
+					$parameters = array('obj' => $objp, 'totalarray' => &$totalarray);
+					$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
+					print $hookmanager->resPrint;
 
 					print "</tr>";
 

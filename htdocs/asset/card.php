@@ -135,7 +135,7 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 		$action = '';
-	} elseif ($action == "add") {
+	} elseif ($action == "add" && $permissiontoadd) {
 		$object->supplier_invoice_id = GETPOSTINT('supplier_invoice_id');
 	}
 

@@ -566,6 +566,7 @@ SecurityTokenHasExpiredSoActionHasBeenCanceledPleaseRetry=O token de segurança 
 UpToDate=Atualizado
 OutOfDate=Desatualizado
 CreateExternalUser=Criar usuário externo
+ContactRole=Função de contato
 CategTypeNotFound=Nenhum tipo de tag encontrado para o tipo de registro
 CopiedToClipboard=Copiado para a área de transferência
 ClientTZ=Fuso Horário do cliente (usuário)

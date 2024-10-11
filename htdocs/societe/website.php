@@ -327,7 +327,7 @@ llxHeader('', $title);
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
-$param = '';
+$param = 'id='.$object->id;
 if (!empty($mode)) {
 	$param .= '&mode='.urlencode($mode);
 }
@@ -479,9 +479,6 @@ if (empty($reshook)) {
 if (!empty($moreforfilter)) {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;
-	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
 	print '</div>';
 }
 

@@ -292,7 +292,7 @@ class Form
 					// So we convert & into &amp; so a string like 'a &lt; <b>b</b><br>é<br>&lt;script&gt;alert('X');&lt;script&gt;' stay a correct html and is not converted by textarea component when wysiwyg is off.
 					$valuetoshow = str_replace('&', '&amp;', $valuetoshow);
 					$ret .= dol_htmlwithnojs(dol_string_neverthesehtmltags($valuetoshow, array('textarea')));
-					$ret .= '</textarea>';
+					$ret .= '</textarea><div class="clearboth"></div>';
 				} elseif ($typeofdata == 'day' || $typeofdata == 'datepicker') {
 					$addnowlink = empty($moreoptions['addnowlink']) ? 0 : $moreoptions['addnowlink'];
 					$adddateof = empty($moreoptions['adddateof']) ? '' : $moreoptions['adddateof'];
@@ -2260,9 +2260,27 @@ class Form
 						$textforempty = $show_empty;
 					}
 					$out .= '<option class="optiongrey" value="' . ($show_empty < 0 ? $show_empty : -1) . '"' . ((empty($selected) || in_array(-1, $selected)) ? ' selected' : '') . '>' . $textforempty . '</option>' . "\n";
+
+					$outarray[($show_empty < 0 ? $show_empty : -1)] = $textforempty;
+					$outarray2[($show_empty < 0 ? $show_empty : -1)] = array(
+						'id' => ($show_empty < 0 ? $show_empty : -1),
+						'label' => $textforempty,
+						'labelhtml' => $textforempty,
+						'color' => '',
+						'picto' => ''
+					);
 				}
 				if ($show_every) {
 					$out .= '<option value="-2"' . ((in_array(-2, $selected)) ? ' selected' : '') . '>-- ' . $langs->trans("Everybody") . ' --</option>' . "\n";
+
+					$outarray[-2] = '-- ' . $langs->trans("Everybody") . ' --';
+					$outarray2[-2] = array(
+						'id' => -2,
+						'label' => '-- ' . $langs->trans("Everybody") . ' --',
+						'labelhtml' => '-- ' . $langs->trans("Everybody") . ' --',
+						'color' => '',
+						'picto' => ''
+					);
 				}
 
 				$userstatic = new User($this->db);
@@ -3496,7 +3514,7 @@ class Form
 
 		if (isModEnabled('stock') && isset($objp->stock) && ($objp->fk_product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES'))) {
 			if ($user->hasRight('stock', 'lire')) {
-				$opt .= ' - ' . $langs->trans("Stock") . ': ' . price(price2num($objp->stock, 'MS'));
+				$opt .= ' - ' . $langs->trans("Stock") . ': ' . price(price2num($objp->stock, 'MS'), 0, $langs, 0, 0);
 
 				if ($objp->stock > 0) {
 					$outval .= ' - <span class="product_line_stock_ok">';
@@ -3649,9 +3667,7 @@ class Form
 
 		$sql = "SELECT p.rowid, p.ref, p.label, p.price, p.duration, p.fk_product_type, p.stock, p.tva_tx as tva_tx_sale, p.default_vat_code as default_vat_code_sale,";
 		$sql .= " pfp.ref_fourn, pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.quantity, pfp.remise_percent, pfp.remise, pfp.unitprice, pfp.barcode";
-		if (isModEnabled('multicurrency')) {
-			$sql .= ", pfp.multicurrency_code, pfp.multicurrency_unitprice";
-		}
+		$sql .= ", pfp.multicurrency_code, pfp.multicurrency_unitprice";
 		$sql .= ", pfp.fk_supplier_price_expression, pfp.fk_product, pfp.tva_tx, pfp.default_vat_code, pfp.fk_soc, s.nom as name";
 		$sql .= ", pfp.supplier_reputation";
 		// if we use supplier description of the products
@@ -4031,7 +4047,7 @@ class Form
 					'type' => $outtype,
 					'duration_value' => $outdurationvalue,
 					'duration_unit' => $outdurationunit,
-					'disabled' => empty($objp->idprodfournprice),
+					'disabled' => (empty($objp->idprodfournprice) ? true : false),
 					'description' => $objp->description
 				);
 				if (isModEnabled('multicurrency')) {
@@ -8233,7 +8249,24 @@ class Form
 	{
 		global $conf, $extrafields, $user;
 
-		//var_dump($objectdesc); debug_print_backtrace();
+		// Example of common usage for a link to a thirdparty
+
+		// We got this in a modulebuilder form of "MyObject" of module "mymodule".
+		// ->fields is array( ... "fk_soc" => array("type"=>"integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))" ...)
+		// $objectdesc = 'Societe'
+		// $objectfield = 'myobject@mymodule:fk_soc'  ('fk_soc' is code to retrieve myobject->fields['fk_soc'])
+
+		// We got this when showing an extrafields on resource that is a link to societe
+		// extrafields 'link_to_societe' of Resource is 'link' to 'Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))" ...)'
+		// $objectdesc = 'Societe'
+		// $objectfield = 'resource:options_link_to_societe'
+
+		// With old usage:
+		// $objectdesc = 'Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))'
+		// $objectfield = ''
+
+		//var_dump($objectdesc.' '.$objectfield);
+		//debug_print_backtrace();
 
 		$objectdescorig = $objectdesc;
 		$objecttmp = null;
@@ -8346,7 +8379,7 @@ class Form
 
 				$oldValueForShowOnCombobox = 0;
 				foreach ($objecttmp->fields as $fieldK => $fielV) {
-					if (empty($fielV['showoncombobox']) || empty($objecttmp->$fieldK)) {
+					if (!array_key_exists('showoncombobox', $fielV) || !$fielV['showoncombobox'] || empty($objecttmp->$fieldK)) {
 						continue;
 					}
 
@@ -8588,23 +8621,23 @@ class Form
 	 *	Return a HTML select string, built from an array of key+value.
 	 *  Note: Do not apply langs->trans function on returned content, content may be entity encoded twice.
 	 *
-	 * @param string 		$htmlname 			Name of html select area. Try to start name with "multi" or "search_multi" if this is a multiselect
+	 * @param string 				$htmlname 			Name of html select area. Try to start name with "multi" or "search_multi" if this is a multiselect
 	 * @param array{label:string,data-html:string,disable?:int<0,1>,css?:string}	$array 	Array like array(key => value) or array(key=>array('label'=>..., 'data-...'=>..., 'disabled'=>..., 'css'=>...))
-	 * @param string|string[] $id				Preselected key or array of preselected keys for multiselect. Use 'ifone' to autoselect record if there is only one record.
-	 * @param int<0,1>|string 	$show_empty 		0 no empty value allowed, 1 or string to add an empty value into list (If 1: key is -1 and value is '' or '&nbsp;', If placeholder string: key is -1 and value is the string), <0 to add an empty value with key that is this value.
-	 * @param int<0,1>		$key_in_label 		1 to show key into label with format "[key] value"
-	 * @param int<0,1>		$value_as_key 		1 to use value as key
-	 * @param string 		$moreparam 			Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
-	 * @param int<0,1>		$translate 			1=Translate and encode value
-	 * @param int 			$maxlen 			Length maximum for labels
-	 * @param int<0,1>		$disabled 			Html select box is disabled
-	 * @param string 		$sort 				'ASC' or 'DESC' = Sort on label, '' or 'NONE' or 'POS' = Do not sort, we keep original order
-	 * @param string 		$morecss 			Add more class to css styles
-	 * @param int 			$addjscombo 		Add js combo
-	 * @param string 		$moreparamonempty 	Add more param on the empty option line. Not used if show_empty not set
-	 * @param int 			$disablebademail 	1=Check if a not valid email, 2=Check string '---', and if found into value, disable and colorize entry
-	 * @param int 			$nohtmlescape 		No html escaping (not recommended, use 'data-html' if you need to use label with HTML content).
-	 * @return string							HTML select string.
+	 * @param string|string[]|int 	$id					Preselected key or array of preselected keys for multiselect. Use 'ifone' to autoselect record if there is only one record.
+	 * @param int<0,1>|string 		$show_empty 		0 no empty value allowed, 1 or string to add an empty value into list (If 1: key is -1 and value is '' or '&nbsp;', If placeholder string: key is -1 and value is the string), <0 to add an empty value with key that is this value.
+	 * @param int<0,1>				$key_in_label 		1 to show key into label with format "[key] value"
+	 * @param int<0,1>				$value_as_key 		1 to use value as key
+	 * @param string 				$moreparam 			Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
+	 * @param int<0,1>				$translate 			1=Translate and encode value
+	 * @param int 					$maxlen 			Length maximum for labels
+	 * @param int<0,1>				$disabled 			Html select box is disabled
+	 * @param string 				$sort 				'ASC' or 'DESC' = Sort on label, '' or 'NONE' or 'POS' = Do not sort, we keep original order
+	 * @param string 				$morecss 			Add more class to css styles
+	 * @param int 					$addjscombo 		Add js combo
+	 * @param string 				$moreparamonempty 	Add more param on the empty option line. Not used if show_empty not set
+	 * @param int 					$disablebademail 	1=Check if a not valid email, 2=Check string '---', and if found into value, disable and colorize entry
+	 * @param int 					$nohtmlescape 		No html escaping (not recommended, use 'data-html' if you need to use label with HTML content).
+	 * @return string									HTML select string.
 	 * @see multiselectarray(), selectArrayAjax(), selectArrayFilter()
 	 */
 	public static function selectarray($htmlname, $array, $id = '', $show_empty = 0, $key_in_label = 0, $value_as_key = 0, $moreparam = '', $translate = 0, $maxlen = 0, $disabled = 0, $sort = '', $morecss = 'minwidth75', $addjscombo = 1, $moreparamonempty = '', $disablebademail = 0, $nohtmlescape = 0)
@@ -11113,11 +11146,11 @@ class Form
 		$retstring .= $withoutdiv ? '' : '</div>';
 
 		if ($dol_openinpopup) {
-			$retstring .= '<!-- buttons are shown into a $dol_openinpopup=' . $dol_openinpopup . ' context, so we enable the close of dialog on cancel -->' . "\n";
+			$retstring .= '<!-- buttons are shown into a $dol_openinpopup=' . dol_escape_htmltag($dol_openinpopup) . ' context, so we enable the close of dialog on cancel -->' . "\n";
 			$retstring .= '<script nonce="' . getNonce() . '">';
 			$retstring .= 'jQuery(".button-cancel").click(function(e) {
-				e.preventDefault(); console.log(\'We click on cancel in iframe popup ' . $dol_openinpopup . '\');
-				window.parent.jQuery(\'#idfordialog' . $dol_openinpopup . '\').dialog(\'close\');
+				e.preventDefault(); console.log(\'We click on cancel in iframe popup ' . dol_escape_js($dol_openinpopup) . '\');
+				window.parent.jQuery(\'#idfordialog' . dol_escape_js($dol_openinpopup) . '\').dialog(\'close\');
 				 });';
 			$retstring .= '</script>';
 		}

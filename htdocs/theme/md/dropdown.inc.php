@@ -156,6 +156,7 @@ div#topmenu-global-search-dropdown a::after, div#topmenu-quickadd-dropdown a::af
 	/* font part */
 	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_FAMILY', 'Font Awesome 5 Free'); ?>";
 	font-size: 0.7em;
+	line-height: 1.7em;
 	font-weight: 900;
 	font-style: normal;
 	font-variant: normal;

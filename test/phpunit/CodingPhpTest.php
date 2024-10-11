@@ -129,10 +129,10 @@ class CodingPhpTest extends CommonClassTest
 	{
 		$this->nbLinesToShow = 1;
 		//print 'Check php file '.$file['relativename']."\n";
-		$filecontent = file_get_contents($file['fullname']);
+		$filecontentorigin = file_get_contents($file['fullname']);
 
 		// We are not interested in the comments
-		$filecontent = $this->removePhpComments(file_get_contents($file['fullname']));
+		$filecontent = $this->removePhpComments($filecontentorigin);
 
 		// File path for reports
 		$report_filepath = "htdocs/{$file['relativename']}";

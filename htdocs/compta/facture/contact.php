@@ -57,11 +57,11 @@ if ($id > 0 || !empty($ref)) {
 	$ret = $object->fetch($id, $ref, '', '', (getDolGlobalString('INVOICE_USE_SITUATION') ? $conf->global->INVOICE_USE_SITUATION : 0));
 }
 
-$result = restrictedArea($user, 'facture', $object->id);
 $hookmanager->initHooks(array('invoicecontactcard', 'globalcard'));
 
-$usercancreate = $user->hasRight("facture", "creer");
+$result = restrictedArea($user, 'facture', $object->id);
 
+$usercancreate = $user->hasRight("facture", "creer");
 
 /*
  * Actions

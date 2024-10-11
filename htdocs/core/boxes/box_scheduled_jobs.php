@@ -63,7 +63,7 @@ class box_scheduled_jobs extends ModeleBoxes
 		global $user, $langs, $conf, $form;
 
 		$langs->load("cron");
-		$this->info_box_head = array('text' => $langs->trans("BoxScheduledJobs", $max));
+		$this->info_box_head = array('text' => $langs->trans("BoxScheduledJobs", $max), 'nbcol' => 4);
 
 		if ($user->hasRight('cron', 'read')) {
 			include_once DOL_DOCUMENT_ROOT . '/cron/class/cronjob.class.php';
@@ -158,6 +158,8 @@ class box_scheduled_jobs extends ModeleBoxes
 					);
 					$line++;
 				}
+
+				// Line nb job in error
 				$this->info_box_contents[$line][] = array(
 					'td' => 'class="tdoverflowmax300" colspan="3"',
 					'text' => $langs->trans("NumberScheduledJobError")

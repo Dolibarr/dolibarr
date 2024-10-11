@@ -130,7 +130,7 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 			}
 			print '>';
 			$extrafields_collapse_num_old = $extrafields_collapse_num;
-			print '<td class="titlefield">';
+			print '<td>';
 			print '<table class="nobordernopadding centpercent">';
 			print '<tr>';
 

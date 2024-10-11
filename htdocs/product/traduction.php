@@ -67,6 +67,9 @@ if ($object->id > 0) {
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('producttranslationcard', 'globalcard'));
 
+// Permissions
+$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'creer')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'creer')));
+
 
 /*
  * Actions
@@ -83,7 +86,7 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
-	if ($action == 'delete' && GETPOST('langtodelete', 'alpha')) {
+	if ($action == 'delete' && GETPOST('langtodelete', 'alpha') && $usercancreate) {
 		$object = new Product($db);
 		$object->fetch($id);
 		$object->delMultiLangs(GETPOST('langtodelete', 'alpha'), $user);
@@ -92,7 +95,7 @@ if (empty($reshook)) {
 	}
 
 	// Add translation
-	if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
+	if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && $usercancreate) {
 		$object = new Product($db);
 		$object->fetch($id);
 		$current_lang = $langs->getDefaultLang();
@@ -127,7 +130,7 @@ if (empty($reshook)) {
 	}
 
 	// Edit translation
-	if ($action == 'vedit' && $cancel != $langs->trans("Cancel") && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
+	if ($action == 'vedit' && $cancel != $langs->trans("Cancel") && $usercancreate) {
 		$object = new Product($db);
 		$object->fetch($id);
 		$current_lang = $langs->getDefaultLang();
@@ -156,7 +159,7 @@ if (empty($reshook)) {
 	}
 
 	// Delete translation
-	if ($action == 'vdelete' && $cancel != $langs->trans("Cancel") && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
+	if ($action == 'vdelete' && $cancel != $langs->trans("Cancel") && $usercancreate) {
 		$object = new Product($db);
 		$object->fetch($id);
 		$langtodelete = GETPOST('langdel', 'alpha');
