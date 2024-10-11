@@ -190,12 +190,12 @@ class AccountancySystem extends CommonObject
 				$result = $this->rowid;
 			} else {
 				$result = - 2;
-				$this->error = "AccountancySystem::Create Error $result";
+				$this->error = "AccountancySystem::Create Error $result: " . $this->db->lasterror();
 				dol_syslog($this->error, LOG_ERR);
 			}
 		} else {
 			$result = - 1;
-			$this->error = "AccountancySystem::Create Error $result";
+			$this->error = "AccountancySystem::Create Error $result: " . $this->db->lasterror();
 			dol_syslog($this->error, LOG_ERR);
 		}
 
