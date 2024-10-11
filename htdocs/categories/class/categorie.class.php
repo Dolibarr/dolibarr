@@ -1997,7 +1997,7 @@ class Categorie extends CommonObject
 	}
 
 	/**
-	 *	Update ou cree les traductions des infos produits
+	 *	Create or Update translations of categories labels
 	 *
 	 *	@param	User	$user		Object user
 	 *  @param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
@@ -2021,7 +2021,7 @@ class Categorie extends CommonObject
 
 			if ($key == $current_lang) {
 				$sql2 = '';
-				if ($this->db->num_rows($result)) { // si aucune ligne dans la base
+				if ($this->db->num_rows($result)) { // if no line in database
 					$sql2 = "UPDATE ".MAIN_DB_PREFIX."categorie_lang";
 					$sql2 .= " SET label = '".$this->db->escape($this->label)."',";
 					$sql2 .= " description = '".$this->db->escape($this->description)."'";
@@ -2037,7 +2037,7 @@ class Categorie extends CommonObject
 					return -1;
 				}
 			} elseif (isset($this->multilangs[$key])) {
-				if ($this->db->num_rows($result)) { // si aucune ligne dans la base
+				if ($this->db->num_rows($result)) { // if no line in database
 					$sql2 = "UPDATE ".MAIN_DB_PREFIX."categorie_lang";
 					$sql2 .= " SET label='".$this->db->escape($this->multilangs[$key]["label"])."',";
 					$sql2 .= " description='".$this->db->escape($this->multilangs[$key]["description"])."'";
