@@ -918,7 +918,7 @@ return [
         'htdocs/ticket/list.php' => ['PhanTypeComparisonFromArray'],
         'htdocs/ticket/tpl/linkedobjectblock.tpl.php' => ['PhanUndeclaredProperty'],
         'htdocs/user/bank.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanUndeclaredGlobalVariable'],
-        'htdocs/user/card.php' => ['PhanTypeMismatchProperty', 'PhanUndeclaredGlobalVariable'],
+        'htdocs/user/card.php' => ['PhanTypeMismatchProperty'],
         'htdocs/user/class/api_users.class.php' => ['PhanTypeMismatchProperty'],
         'htdocs/user/class/user.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/user/class/usergroup.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType', 'PhanPluginUnknownPropertyType', 'PhanUndeclaredProperty'],
