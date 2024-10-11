@@ -77,29 +77,11 @@ $item = $formSetup->newItem('INVOICE_USE_SITUATION_CREDIT_NOTE')
 
 $item = $formSetup->newItem('INVOICE_USE_RETAINED_WARRANTY');
 $item->nameText = $langs->trans('AllowedInvoiceForRetainedWarranty');
-
 $arrayAvailableType = array(
 	Facture::TYPE_SITUATION => $langs->trans("InvoiceSituation"),
 	Facture::TYPE_STANDARD.'+'.Facture::TYPE_SITUATION => $langs->trans("InvoiceSituation").' + '.$langs->trans("InvoiceStandard"),
 );
-
-switch ($action) {
-	case 'edit':
-		$item->fieldInputOverride = $form->selectarray('INVOICE_USE_RETAINED_WARRANTY', $arrayAvailableType, $conf->global->INVOICE_USE_RETAINED_WARRANTY, 1);
-		break;
-	case 'update':
-		$ret_warranty_val = GETPOST('INVOICE_USE_RETAINED_WARRANTY');
-		if ($ret_warranty_val == -1) {
-			$conf->global->INVOICE_USE_RETAINED_WARRANTY = '';
-			$_POST['INVOICE_USE_RETAINED_WARRANTY'] = '';
-		} else {
-			$conf->global->INVOICE_USE_RETAINED_WARRANTY = $ret_warranty_val;
-		}
-		$item->fieldOutputOverride = $arrayAvailableType[$ret_warranty_val] ?? '';
-		break;
-	default:
-		$item->fieldOutputOverride = $arrayAvailableType[getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')] ?? '';
-}
+$item->setAsSelect($arrayAvailableType);
 
 //$item = $formSetup->newItem('INVOICE_RETAINED_WARRANTY_LIMITED_TO_SITUATION')->setAsYesNo();
 //$item->nameText = $langs->trans('RetainedWarrantyOnlyForSituation');
