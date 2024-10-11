@@ -26,6 +26,7 @@
 
 // Class
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/fiscalyear.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
@@ -327,7 +328,7 @@ class BookKeeping extends CommonObject
 		$this->piece_num = 0;
 
 		// First check if line not yet already in bookkeeping.
-		// Note that we must include 'doc_type - fk_doc - numero_compte - label' to be sure to have unicity of line (because we may have several lines
+		// Note that we must include 'doc_type - fk_doc - numero_compte - label - montant - compte tiers - label compte tiers' to be sure to have unicity of line (because we may have several lines
 		// with same doc_type, fk_doc, numero_compte for 1 invoice line when using localtaxes with same account)
 		// WARNING: This is not reliable, label may have been modified. This is just a small protection.
 		// The page that make transfer make the test on couple (doc_type - fk_doc) only.
@@ -341,6 +342,9 @@ class BookKeeping extends CommonObject
 		}
 		$sql .= " AND numero_compte = '".$this->db->escape($this->numero_compte)."'";
 		$sql .= " AND label_operation = '".$this->db->escape($this->label_operation)."'";
+		$sql .= " AND montant = '".((float) $this->montant)."'";
+		$sql .= " AND subledger_account = '".$this->db->escape($this->subledger_account)."'";
+		$sql .= " AND subledger_label = '".$this->db->escape($this->subledger_label)."'";
 		$sql .= " AND entity = ".$conf->entity; // Do not use getEntity for accounting features
 
 		$resql = $this->db->query($sql);
