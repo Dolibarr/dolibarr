@@ -1904,7 +1904,7 @@ function dol_escape_php($stringtoescape, $stringforquotes = 2)
 }
 
 /**
- *  Returns text escaped for all protocols (so only alpha chars and numbers
+ *  Returns text escaped for all protocols (so only alpha chars and numbers)
  *
  *  @param      string		$stringtoescape		String to escape
  *  @return     string     		 				Escaped string for XML content.
