@@ -2203,7 +2203,7 @@ class BookKeeping extends CommonObject
 		$pcgver = getDolGlobalInt('CHARTOFACCOUNTS');
 
 		$sql = "SELECT DISTINCT ab.numero_compte as account_number, aa.label as label, aa.rowid as rowid, aa.fk_pcg_version";
-		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as ab";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON aa.account_number = ab.numero_compte";
 		$sql .= " AND aa.active = 1";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
@@ -2632,7 +2632,7 @@ class BookKeeping extends CommonObject
 			$sql .= ", SUM(".$this->db->ifsql("MONTH(b.doc_date) = ".((int) $i), "1", "0") . ") AS month".((int) $i);
 		}
 		$sql .= ", COUNT(b.rowid) as total";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as b";
+		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element . " as b";
 		$sql .= " WHERE b.doc_date >= '" . $this->db->idate($date_start) . "'";
 		$sql .= " AND b.doc_date <= '" . $this->db->idate($date_end) . "'";
 		$sql .= " AND b.entity IN (" . getEntity('bookkeeping', 0) . ")"; // We don't share object for accountancy
@@ -2693,7 +2693,7 @@ class BookKeeping extends CommonObject
 		$now = dol_now();
 
 		// Specify as export : update field date_validated on selected month/year
-		$sql = " UPDATE " . MAIN_DB_PREFIX . "accounting_bookkeeping";
+		$sql = " UPDATE " . MAIN_DB_PREFIX . $this->table_element;
 		$sql .= " SET date_validated = '" . $this->db->idate($now) . "'";
 		$sql .= " WHERE entity = " . ((int) $conf->entity);
 		$sql .= " AND DATE(doc_date) >= '" . $this->db->idate($date_start) . "'";
