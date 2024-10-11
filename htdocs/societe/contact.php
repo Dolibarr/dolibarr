@@ -138,23 +138,19 @@ if (empty($reshook)) {
 if ($action == 'confirm_delete' && $user->hasRight('societe', 'contact', 'delete')) {
 	$id = GETPOST('id', 'int');
 	if (!empty($id) && $socid > 0) {
-		$db->begin();
+		$contact = new Contact($db);
 
-		$sql = "DELETE t, et FROM ".MAIN_DB_PREFIX."socpeople AS t";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields AS et ON t.rowid = et.fk_object";
-		$sql .= " WHERE t.fk_soc = ".((int) $socid);
-		$sql .= " AND t.rowid = ".((int) $id);
-		$sql .= " AND ((t.fk_user_creat = ".((int) $user->id)." AND t.priv = 1) OR t.priv = 0)";
+		$result = $contact->fetch($id);
+		$contact->oldcopy = clone $contact;
 
-		$result = $db->query($sql);
-		if (!$result) {
-			setEventMessages($db->lasterror(), null, 'errors');
-			$db->rollback();
-		} else {
-			$db->commit();
+		$result = $contact->delete($user);
+
+		if ($result > 0) {
 			setEventMessages('ContactDeleted', null, 'mesgs');
-			header("Location: ".$_SERVER['PHP_SELF']."?id=".$socid);
+			header("Location: ".$_SERVER['PHP_SELF']."?socid=".$socid);
 			exit();
+		} else {
+			setEventMessages($contact->error, $contact->errors, 'errors');
 		}
 	}
 }
