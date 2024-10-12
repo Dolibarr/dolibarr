@@ -1904,7 +1904,7 @@ function dol_escape_php($stringtoescape, $stringforquotes = 2)
 }
 
 /**
- *  Returns text escaped for all protocols (so only alpha chars and numbers
+ *  Returns text escaped for all protocols (so only alpha chars and numbers)
  *
  *  @param      string		$stringtoescape		String to escape
  *  @return     string     		 				Escaped string for XML content.
@@ -12450,7 +12450,8 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  *                                      ],
  *                                      ]
  * // phpcs:enable
- * @return string               	html button
+ *                                                                                                                                                                                                                                                                                                                                      Example: array('attr' => array('class' => 'reposition'))
+ * @return string               		html button
  */
 function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = '', $id = '', $userRight = 1, $params = array())
 {
