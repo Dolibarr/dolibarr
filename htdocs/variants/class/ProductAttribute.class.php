@@ -423,7 +423,12 @@ class ProductAttribute extends CommonObject
 			$this->errors[] = "Error " . $this->db->lasterror();
 			$error++;
 		}
-
+		if (!$error) {
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
+			}
+		}
 		if (!$error && !$notrigger) {
 			// Call trigger
 			$result = $this->call_trigger('PRODUCT_ATTRIBUTE_MODIFY', $user);
