@@ -5316,7 +5316,7 @@ class Form
 	 * @param 	string 				$selected 		Id of category preselected or 'auto' (autoselect category if there is only one element). Not used if $outputmode = 1.
 	 * @param 	string 				$htmlname 		HTML field name
 	 * @param 	int 				$maxlength 		Maximum length for labels
-	 * @param 	int|string|array	$fromid 		Keep only or Exclude (depending on $include parameter) all categories (including the leaf $fromid) into the tree after this id $fromid.
+	 * @param 	int|string|int[]	$fromid 		Keep only or Exclude (depending on $include parameter) all categories (including the leaf $fromid) into the tree after this id $fromid.
 	 *                             	    	     	$fromid can be an :
 	 *                                 	    	 	- int (id of category)
 	 *                                 		 		- string (categories ids separated by comma)
@@ -5324,7 +5324,7 @@ class Form
 	 * @param 	int<0,3>			$outputmode 	0=HTML select string, 1=Array with full label only, 2=Array extended, 3=Array with full picto + label
 	 * @param 	int<0,1>			$include 		[=0] Removed or 1=Keep only
 	 * @param 	string 				$morecss 		More CSS
-	 * @param	  int<0,2>			$useempty		0=No empty value, 1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries. Default is 1.
+	 * @param	int<0,2>			$useempty		0=No empty value, 1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries. Default is 1.
 	 * @return	string|array<int,string>|array<int,array{id:int,fulllabel:string,color:string,picto:string}>|array<int,array{rowid:int,id:int,fk_parent:int,label:string,description:string,color:string,position:string,visible:int,ref_ext:string,picto:string,fullpath:string,fulllabel:string}>		String list or Array of categories
 	 * @see select_categories()
 	 */
